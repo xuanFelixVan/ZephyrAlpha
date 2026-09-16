@@ -687,7 +687,7 @@ def test_main_publish_alerts_lands_scheduling_entry_on_board(tmp_path, monkeypat
     entries = _read_board(board)
     assert entries and entries[0]["module_id"] == gen.REGEN_PUBLISHER_MODULE_ID
     assert entries[0]["key"] == "sched_truth_drift:<registry>"
-    assert "注册表与三真源漂移" in entries[0]["message"]
+    assert "注册表与四真源漂移" in entries[0]["message"]
 
 
 def test_main_view_freshness_only_for_production_registry(tmp_path, monkeypatch, capsys):

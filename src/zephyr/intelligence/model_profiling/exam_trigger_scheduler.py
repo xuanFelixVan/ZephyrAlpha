@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-054 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §4 Phase 1（06号文 P1-1~P1-4 触发式考试调度器）
 # [MODULE] zephyr.intelligence.model_profiling.exam_trigger_scheduler
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport(CapabilityPassport/QuickProfile/QUICK_PROFILES_DIR); zephyr.intelligence.model_profiling.model_discovery(ModelDiscovery); zephyr.intelligence.reflexion.batch_runner(is_intraday 仅 CLI 懒加载盘中守卫); zephyr.integration.local_model.ollama_chat; zephyr.intelligence.model_profiling.exam_orchestrator
-# [CONSUMERS] zephyr.intelligence.model_routing.runtime_assembly（task_gate_dispatch_hook 经 check_and_record 接 dispatch 硬门，opt-in 默认不启用）；CLI 入口 python -m zephyr.intelligence.model_profiling.exam_trigger_scheduler scan-new-models [--dry-run]（盘中守卫拒跑真实模式）；ModelDiscovery 定时扫描注册待统筹（config/tasks.yaml 未动）
+# [DEPENDENCIES] zephyr.intelligence.model_profiling.capability_passport(CapabilityPassport/QuickProfile/QUICK_PROFILES_DIR); zephyr.intelligence.model_profiling.model_discovery(ModelDiscovery); zephyr.shared.io.paths(REPO_ROOT——E0 闸按路径装载用); scripts.backtest.compute_window_gate(FAC-E0 算力闸门，importlib 按路径装载=盘中/盘外唯一口径，v2 C-3 消双实现); zephyr.integration.local_model.ollama_chat; zephyr.intelligence.model_profiling.exam_orchestrator
+# [CONSUMERS] zephyr.intelligence.model_routing.runtime_assembly（task_gate_dispatch_hook 经 check_and_record 接 dispatch 硬门，opt-in 默认不启用）；CLI 入口 python -m zephyr.intelligence.model_profiling.exam_trigger_scheduler scan-new-models [--dry-run]（盘中守卫拒跑真实模式）；ModelDiscovery 定时扫描注册待统筹（config/tasks.yaml 未动）；scripts/governance/generators/generate_resource_profile_registry（本模块作为触发型实体 event_model_exam_trigger 的排班真源被读，画像见 config/resource_profile_registry.yaml）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 触发器只产「建议/QuickProfile」（Quick 自动；Standard/Deep 始终人工确认 human_gated，本模块无任何 Standard/Deep 调用路径）; 新模型判定=无护照且无 QuickProfile 且未入 seen 快照; 复核建议只发不执行（连续 low_accuracy 超阈 -> 建议落盘+告警）; 单模型考试失败不中断批量（降级留痕）; 可变容器 typing.Final 禁重新赋值
+# [INVARIANTS] 触发器只产「建议/QuickProfile」（Quick 自动；Standard/Deep 始终人工确认 human_gated，本模块无任何 Standard/Deep 调用路径）; 新模型判定=无护照且无 QuickProfile 且未入 seen 快照; 复核建议只发不执行（连续 low_accuracy 超阈 -> 建议落盘+告警）; 单模型考试失败不中断批量（降级留痕）; 可变容器 typing.Final 禁重新赋值; 盘中/盘外判定单源=E0 compute_window_gate（本模块禁自带时窗常数与墙钟工作日自判；E0 不可装载/判定异常一律 fail-closed 拒跑）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -31,6 +31,13 @@ exam_trigger_scheduler — 触发式考试调度器（06号文 §4 Phase 1，P1-
    Standard/Deep 考试始终人工确认后执行（对齐 capability_passport.py /
    exam_orchestrator.py 头部 AI_AUTONOMY=human_gated，本模块无其调用路径）。
 
+盘中守卫（v2 方案 C-3 收编，2026-09-17）
+-----------------------------------------
+真实模式开工前问 **FAC-E0 算力闸门**（`e0_window_refusal()` → scripts/backtest/
+compute_window_gate.py，按路径装载）：交易日 09:00-15:30（含开盘/收盘缓冲带）拒重算力，
+日历不可达 fail-closed 拒跑。本模块不再自带时窗常数——旧
+`reflexion.batch_runner.is_intraday`（墙钟工作日 09:30-15:00 自判）就此退役（双实现归一）。
+
 用法
 ----
     sched = ExamTriggerScheduler()
@@ -43,6 +50,7 @@ exam_trigger_scheduler — 触发式考试调度器（06号文 §4 Phase 1，P1-
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import logging
 import sys
@@ -61,6 +69,8 @@ __all__: Final = [
     "DEFAULT_LOW_ACCURACY_THRESHOLD",
     "ExamTriggerError",
     "ExamTriggerScheduler",
+    "e0_window_refusal",
+    "is_intraday",
     "main",
 ]
 
@@ -279,6 +289,76 @@ class ExamTriggerScheduler:
         return dict(self._block_streaks)
 
 
+# ── 盘中守卫（v2 方案 C-3：唯一实现=FAC-E0 算力闸门，本模块不再自带时窗常数）──
+
+_E0_GATE_RELPATH: Final[tuple[str, ...]] = ("scripts", "backtest", "compute_window_gate.py")
+_E0_PURPOSE: Final[str] = "model_profiling_quick_exam"
+_E0_COMPUTE_CLASS: Final[str] = "local_gpu"  # Quick 考试经本地 Ollama 吃 GPU=重车道
+_E0_MODULE_CACHE: Final[dict[str, Any]] = {}
+
+
+def _load_e0_module() -> Any:
+    """按路径装载 FAC-E0 闸模块（单例缓存；异常上抛由调用方按 fail-closed 处置）。
+
+    与 resource_schedule_gate._load_e0_module 同一口径（scripts 区模块不在包路径内，只能
+    按文件路径装载）。刻意不复用闸本体里那个私有函数：闸是本表被审的对象之一，守卫引闸
+    不得绕道审它的那道闸（否则闸缺席时守卫跟着哑火）。
+    """
+    if "m" in _E0_MODULE_CACHE:
+        return _E0_MODULE_CACHE["m"]
+    from zephyr.shared.io.paths import REPO_ROOT
+
+    path = REPO_ROOT.joinpath(*_E0_GATE_RELPATH)
+    spec = importlib.util.spec_from_file_location("zephyr_e0_compute_window_gate", path)
+    if spec is None or spec.loader is None:  # pragma: no cover — 装载失败走 except 分支
+        raise RuntimeError(f"E0 闸模块装载失败: {path}")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    _E0_MODULE_CACHE["m"] = mod
+    return mod
+
+
+def e0_window_refusal(now: datetime | None = None) -> tuple[bool, str]:
+    """当前时刻 Quick 考试是否该拒跑 → (拒跑?, 理由)。
+
+    判定全权交给 E0：`gate_decision(heavy=True)` 不放行即拒。与旧 reflexion
+    `batch_runner.is_intraday`（墙钟工作日 09:30-15:00 自判）的三处**有意**差异：
+
+    1. 保守带更宽：E0 判交易日 09:00-15:30（开盘前 30min + 收盘后 30min 结算缓冲），
+       旧口径判 09:30-15:00 —— 交易日上新口径拒的是旧口径的**超集**（无一分钟放松）；
+    2. 日历真源替代墙钟工作日：E0 问 c1_market.trade_calendar，故差异只朝"日历说真话"
+       的方向走——法定节假日的周一到周五旧口径误拒（该跑时被拦），新口径按休市放行；
+       调休补班的周末旧口径漏拒（不该跑时裸奔），新口径受闸；
+    3. 日历不可达 fail-closed（E0 铁律"宁停不裸奔"）：CH 断了就拒跑，考试留待下次触发
+       （seen 快照不记，触发不丢），而不是裸奔进盘中。
+    """
+    try:
+        e0 = _load_e0_module()
+    except Exception as exc:  # noqa: BLE001 — 闸装不上=无法自证可跑，fail-closed 拒跑
+        return True, f"E0 闸模块不可装载（fail-closed 拒跑）: {exc}"
+    try:
+        moment = now if now is not None else datetime.now(e0._TZ)
+        is_trading_day = e0.fetch_is_trading_day(moment.astimezone(e0._TZ).date())
+        decision = e0.gate_decision(
+            _E0_PURPOSE, e0.needs_heavy_window(_E0_COMPUTE_CLASS), moment, is_trading_day)
+    except Exception as exc:  # noqa: BLE001 — 判定异常同样 fail-closed（守卫不得因自身故障放行）
+        return True, f"E0 判定异常（fail-closed 拒跑）: {exc}"
+    if decision.get("allowed"):
+        return False, str(decision.get("reason_code") or "allowed")
+    return True, (
+        f"E0 {decision.get('reason_code') or 'gate_deny'}"
+        f"（window={decision.get('window')}，is_trading_day={is_trading_day}）"
+    )
+
+
+def is_intraday(now: datetime | None = None) -> bool:
+    """盘中判定（E0 单源）：True=当前处于 Quick 考试拒跑窗。
+
+    名字沿用旧守卫（CLI 与外部调用点零改口），实现已收编到 E0——C-3 双实现就此归一。
+    """
+    return e0_window_refusal(now)[0]
+
+
 # ── CLI：ModelDiscovery 新模型扫描（06号文 Phase 2 挂点入口；定时注册归统筹 config/tasks.yaml）──
 
 # 生产默认落盘：seen 快照/复核建议与 QuickProfile 同区（data/brain/）
@@ -296,8 +376,9 @@ def main(
 
     --dry-run 只列新模型不跑考试（只读预览，不碰 GPU，盘中可用）；真实模式跑
     Quick 考试落盘 QuickProfile（LLM 仅本地 Ollama 通道，见 _default_quick_exam_runner）。
-    盘中守卫：真实模式复用 reflexion.batch_runner.is_intraday，盘中拒跑返回 2
-    （Quick 考试吃 GPU，盘后是设计口径）。scheduler_factory/intraday_check 为测试注入缝。
+    盘中守卫：真实模式问 FAC-E0 算力闸门（`e0_window_refusal`，v2 C-3 起为唯一口径——
+    旧 reflexion.batch_runner.is_intraday 那套墙钟自判已退役），拒跑返回 2。
+    scheduler_factory/intraday_check 为测试注入缝（intraday_check 保持"零参返回 bool"契约）。
     """
     parser = argparse.ArgumentParser(
         prog="exam_trigger_scheduler",
@@ -327,16 +408,18 @@ def main(
                 )
             )
             return 0
+        reason = ""
         if intraday_check is not None:
-            guard = intraday_check
+            refused = bool(intraday_check())
+            if refused:
+                reason = "注入守卫判盘中（测试路径）"
         else:
-            from zephyr.intelligence.reflexion.batch_runner import is_intraday
-
-            guard = is_intraday
-        if guard():
+            refused, reason = e0_window_refusal()
+        if refused:
             print(
                 "盘中拒跑: Quick 考试吃 GPU，盘后是设计口径"
-                "（is_intraday: 工作日 09:30-15:00 禁止；--dry-run 只读预览盘中可用）",
+                f"（守卫真源=FAC-E0 compute_window_gate，判定={reason or '未放行'}；"
+                "--dry-run 只读预览盘中可用）",
                 file=sys.stderr,
             )
             return 2

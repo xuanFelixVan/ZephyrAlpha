@@ -20,6 +20,9 @@
 #   词表（幽灵池/串维度）时回落本批派生值，人复核不得让幽灵池永生（C-7/R-C）;
 #   pool 必在执行器实测泳道词表内（词表实测提取，禁硬编码；未知池阻断写出）;
 #   C-15 实测对账臂只读且永不阻断再生（改表改不动操作系统任务表，差集只落健康码）;
+#   L-5 演练臂只读真源：缺席/损坏=降级留痕（extraction_warnings），绝不让其余三源再生崩掉;
+#   C-11 声明↔代码反查臂只读源码，finding 码 sched_gate_declaration_gap 仅出 stdout +
+#   notes_zh 幂等哨兵标注（不入告警板/不计退出码，合流归主会话）;
 #   时间值不搬家——window_expr 从真源抽取（ps1 触发器/schedule.yaml cron），人禁填;
 #   resource_class→E0 映射层在本模块，E0 真源（compute_window_gate.py）不动;
 #   阈值不收编——mem_ceiling_gb 仅引用 process_reaper _DANGEROUS_MEM_GB 红线
@@ -57,13 +60,23 @@
 #   name: Windows 计划任务实测态（C-15，只读）
 #   fields: schtasks /query /fo CSV（TaskName/Status）
 #   code: query_schtasks, parse_schtasks_csv
+# - id: I7
+#   name: 应急演练排程真源（L-5，第 4 源）
+#   fields: scripts/governance/meta/drill_schedule.yaml（frequency/day_of_month/months 第三种日期法）
+#   code: parse_drill_entities
+# - id: I8
+#   name: 执行体源码（C-11 反查输入，只读）
+#   fields: schedule_truth_source 直指 .py / ps1 动作链一跳 / data_slot_* 归 DataScheduler 宿主
+#   code: resolve_executor_sources
 # 层: 算法
 # - id: A1
-#   name_zh: ① 三源实体化
+#   name_zh: ① 四源实体化
 #   name_en: build_entities
-#   intro: ps1 触发器→cron/事件窗档；槽位 cron 原样；手动实体窗档=manual/event/dynamic
-#   desc: resource_class 初值+trading_sensitive 按 E0 四值映射推导（local→light，local_gpu/mixed→heavy）
-#   inputs: I1, I2, I3
+#   intro: ps1 触发器→cron/事件窗档；槽位 cron 原样；演练排程（第三种日期法）→归一 cron；
+#          手动/事件实体窗档=manual/event/dynamic
+#   desc: resource_class 初值+trading_sensitive 按 E0 四值映射推导（local→light，local_gpu/mixed→heavy）；
+#         演练无自动触发器→status=planned（R-D 不占闸内存和），起跑档先过备份窗避让
+#   inputs: I1, I2, I3, I7
 #   outputs: 18 字段实体草稿
 # - id: A2
 #   name_zh: ② 合并保全再生
@@ -105,6 +118,16 @@
 #         不落告警板）；本臂只读、永不阻断再生（改表改不动操作系统任务）
 #   inputs: I6, A2
 #   outputs: sched_task_* findings + 豁免留痕
+# - id: A7
+#   name_zh: ⑦ 声明↔代码受闸反查（C-11 第二半）
+#   name_en: check_gate_declaration_gaps
+#   intro: active 且申报 trading_sensitive 的实体 ↔ 其执行体源码是否真调用 E0 闸（纯存在性）
+#   desc: 三态台账 gated/gap/unresolved（"查不动"与"查过没问题"分开留痕）；gap=纸面受管、
+#         裸奔执行（lane_b 型）。finding 码 sched_gate_declaration_gap 只打 stdout + 幂等
+#         notes_zh 哨兵标注（闸/告警桥的理由码清单归 P2-a，本会话禁自加码）——不入告警板、
+#         不计退出码，待主会话合流后升格为健康码；本臂只读源码，永不阻断再生
+#   inputs: A2, I8
+#   outputs: gap findings（stdout）+ notes_zh 机器标注
 # 层: 输出
 # - id: O1
 #   name_zh: 资源画像单一真源
@@ -122,11 +145,15 @@
 # I1 --> A1
 # I2 --> A1
 # I3 --> A1
+# I7 --> A1
 # I5 --> A5
 # I6 --> A6
 # A1 --> A2
 # A2 --> A3
 # A2 --> A6
+# A2 --> A7
+# I8 --> A7
+# A7 --> O1
 # A5 --> A3
 # A6 --> A4
 # A3 --> O1
@@ -137,14 +164,17 @@
 """generate_resource_profile_registry — 资源画像注册表生成器（MOD-RESCHED-PROFILE，B1 库）。
 
 资源排班全景四件套之"库"的产出器（方案 §2.1 十八字段总表/§3 三层地图）。
-把排班真源散落三处（register_*.ps1 / schedule.yaml / E0 日历）收敛为单一真源：
-config/resource_profile_registry.yaml（ROOR tier0 REG-RESCHED-001）。
+把排班真源散落四处（register_*.ps1 / schedule.yaml / drill_schedule.yaml / E0 日历）收敛为
+单一真源：config/resource_profile_registry.yaml（ROOR tier0 REG-RESCHED-001）。
 
-三输入：
+四输入：
 1. scripts/register_*.ps1 —— Windows 计划任务（任务名/触发器/时限/DISABLED 解析）；
 2. src/zephyr/data/config/schedule.yaml —— DataScheduler 21 槽位（cron 原样抽取）；
 3. MANUAL_ENTITY_SEED —— 方案 §3.C 手动/事件盲区实体清单（生成器内种子，时间真源
-   指向方案文档直至有更正式真源）。
+   指向方案文档直至有更正式真源；L-8 收编的触发型实体用可选键 `src` 把真源指针钉在
+   自己的触发代码上）；
+4. scripts/governance/meta/drill_schedule.yaml —— 应急演练定期排程（MOD-INF-005 §13.4，
+   L-5 第 4 真源源：第三种日期法 frequency/day_of_month/months 在此归一为标准 cron）。
 
 合并保全（A2）：再生按 task_id 合并——module_id/map_node_id/pool/peak_mem_gb/
 est_duration_min/exclusive_group/status/notes_zh（人复核字段）与 measured.*/samples_uri
@@ -153,7 +183,7 @@ schedule_truth_source/trading_sensitive）刷新。真源消失的旧实体保�
 status=orphaned_source（不静默删——删除是 Owner 门位）。
 
 排产链自检臂（2026-09-17 P0，v2 方案 L-2/C-5/C-10——"再生"本身也是排产对象）：
-`--check` 除比对三真源与现盘注册表，还顺带自检整条链是否活着：
+`--check` 除比对四真源与现盘注册表，还顺带自检整条链是否活着：
 - C-5 闸/E0/闸注册缺席 → `sched_gate_absent`（block；原先整条告警链在闸缺席时
   静默，本检测刻意放在闸之外——闸无法自证在场）；
 - C-10 周历视图 rw-data.js 内嵌 registry_sha256 ≠ 注册表现盘指纹 →
@@ -175,6 +205,20 @@ APScheduler 执行器字典里真实存在的泳道（实测提取，禁硬编�
 `sched_task_orphan`（系统里有而表里没有）/`sched_task_probe_unavailable`（探针降级，
 不静默）。已登记待裁的差集走 SCHED_TASK_EXEMPTIONS 豁免表（stdout 打 EXEMPT 行留痕、
 不落告警板）。本臂只读、永不阻断再生——注册表改不动操作系统的任务表。
+
+演练排程收编（2026-09-17 P4-α，v2 方案 L-5，第 4 真源源）：MOD-INF-005 §13.4 的三类定期
+演练本就是排班表，却用**第三种日期法**（frequency/day_of_month/months）在表外自转。本臂
+把它归一为标准 cron（`parse_drill_entities`），实体 `drill_*` 与三源同权——合并保全、幂等
+再生、孤儿标记、`--check` 漂移比对一视同仁。起跑档 04:00 由 `avoid_backup_window` 对备份
+禁排窗（06:00-10:00 上包络）判避让；无法归一的频率降级为 `window_type=manual` 并出告警，
+**不猜时间**。演练无自动触发器 → status=planned（R-D：未排产不占闸内存和）。
+
+声明↔代码受闸反查（2026-09-17 P4-α，v2 方案 C-11 第二半）：C-15 治的是"ps1 声称↔系统
+实际"，本臂治"注册表申报 trading_sensitive ↔ 执行体代码真问过闸吗"。执行体定位口径
+（`resolve_executor_sources`）：真源直指 .py → ps1 动作链一跳 → data_slot_* 归 DataScheduler
+宿主；源码里找不到闸调用形态（check_gate(/gate_decision(/runtime_e0_decision(）即
+gap。**finding 码 `sched_gate_declaration_gap` 只打 stdout + 再生 notes_zh 幂等标注**——
+闸与告警桥的理由码清单归 P2-a 所有，合流前不入告警板、不计退出码（不自加码造私码）。
 
 用法:
   python scripts/governance/generators/generate_resource_profile_registry.py            # 生成
@@ -355,6 +399,13 @@ MANUAL_ENTITY_SEED: list[dict] = [
     {"task_id": "ops_qmt_watchdog", "cn": "QMT 行情桥看门狗 qmt_watchdog.ps1（实测每日 08:45）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "manual"},
     {"task_id": "ops_ttl_rejudge_daily", "cn": "TTL 日重判 run_ttl_rejudge_daily.ps1（实测每日 18:05；治理清理）", "class": "light", "dmin": 15, "mem": 0.5, "grp": [], "wt": "manual"},
     {"task_id": "ops_ai_wrapper_inject", "cn": "AI Wrapper 注入保活 ensure_ai_wrapper_injection.ps1（实测每日 12:41；开发工具链）", "class": "light", "dmin": 5, "mem": 0.5, "grp": [], "wt": "manual"},
+    # --- L-8 收编（2026-09-17 P4-α）：唯一漏网的"自动触发重活"——新模型入库即 Quick 考试 ---
+    {"task_id": "event_model_exam_trigger", "cn": "触发式考试调度器（ModelDiscovery 见新模型→自动 Quick 考试 39 次推断，经本地 Ollama 吃 GPU）"
+                                                 "｜窗档=event 参照 sch_resource_regen_check 先例（无 cron 可抽，触发即开工）"
+                                                 "｜盘中拒跑守卫自 v2 C-3 起单源引 E0 compute_window_gate"
+                                                 "｜申报=单批 3 模型上限（每模型 Quick 约 6-8min）",
+     "class": "llm_api_local", "dmin": 30, "mem": 2.0, "grp": ["llm_local"], "wt": "event",
+     "src": "src/zephyr/intelligence/model_profiling/exam_trigger_scheduler.py"},
 ]
 
 # schedule.yaml 槽位 → resource_class/申报时长 特化映射（executor 兜底，槽位覆写）
@@ -1077,10 +1128,140 @@ def parse_schedule_slots(path: Path | None = None) -> tuple[list[dict], list[str
 
 
 # ---------------------------------------------------------------------------
+# ②‖ drill_schedule.yaml 排程（L-5：第 4 真源源=应急演练日程，2026-09-17 P4-α）
+# 病灶（v2 方案 L-5）：MOD-INF-005 §13.4 的三类定期演练本来就是一张排班表（DOM+月列表
+# 结构），但它在注册表之外自转——既不占预算也不进冲突视野，而且它用的是**第三种日期法**
+# （frequency/day_of_month/months 三元组，既非 cron 也非 ps1 触发器）。不收编，就会有
+# 第四、第五种日期法在别处野长（每种野法=一处永不与表对账的排班真源）。
+# 纪律：与 I1/I2 同规——时间值只从真源抽、归一为标准 cron，人禁填；演练由人/Agent 按日程
+# 执行、**无自动触发器**，故 status=planned（R-D：未排产不占闸内存和）。
+# ---------------------------------------------------------------------------
+DRILL_SCHEDULE_RELPATH = "scripts/governance/meta/drill_schedule.yaml"
+# 演练起跑档：04:00 北京 wall time（与 ps1/schedule.yaml 同语义）。选此窗的三条理由全可判：
+# ① 避开备份窗（BACKUP_WINDOW_GUARD）；② 落在 E0 盘外重算力黄金窗（00:00-09:00，
+#    compute_window_gate.OPEN_BUFFER 口径）；③ 避开采样器回写 05:40 与视图发布 05:50。
+DRILL_START_MINUTE_OF_DAY = 4 * 60
+# 备份禁排窗——取上包络：日备份每日 06:00×60min、CH VM 周备份周六 06:00×240min（时刻真源
+# =MANUAL_ENTITY_SEED 里 ops_daily_backup / ops_weekly_vm_backup 的实测备注）。按最坏那天
+# 避总不会错（保守=宁可错避，不可错排：备份中途叠一份恢复演练会把演练变成真事故）。
+BACKUP_WINDOW_GUARD: dict[str, int | str] = {
+    "start_minute": 6 * 60,
+    "end_minute": 10 * 60,
+    "source_task_ids": "ops_daily_backup,ops_weekly_vm_backup",
+}
+# 逐演练申报特化（class/mem/dmin=申报初值，人可复核；与 PS1_TASK_OVERRIDES 同类抽取知识）
+DRILL_OVERRIDES: dict[str, dict] = {
+    "script_failure_drill": {"class": "light", "mem": 1.0, "dmin": 30},
+    "emergency_bypass_drill": {"class": "light", "mem": 0.5, "dmin": 20},
+    "recovery_drill": {"class": "light", "mem": 2.0, "dmin": 60},
+}
+_FREQUENCIES_WITH_DOM = ("monthly", "quarterly")
+
+
+def avoid_backup_window(start_min: int, duration_min: int) -> tuple[int, bool]:
+    """纯函数：演练窗 [start, start+duration) 落进备份禁排窗则整体移出。
+
+    返回 (起始分钟, 是否发生避让)。避让方向=**后置到禁排窗尾之后**（盘外越晚越接近备份
+    完成态，比提前更稳），并按 30min 档对齐。未落窗内原样返回——判得准才动，判不准不动。
+    """
+    lo = int(BACKUP_WINDOW_GUARD["start_minute"])  # type: ignore[arg-type]
+    hi = int(BACKUP_WINDOW_GUARD["end_minute"])  # type: ignore[arg-type]
+    dur = max(int(duration_min or 0), 0)
+    if not (lo <= start_min < hi) and not (start_min < hi and start_min + dur > lo):
+        return start_min, False
+    return hi + (dur // 30) * 30, True
+
+
+def normalize_drill_cron(spec: dict, start_min: int) -> tuple[str | None, str | None]:
+    """演练排程（frequency/day_of_month/months 三元组）→ 标准 cron `m h dom mon dow`。
+
+    第三种日期法在此收口成 cron（真源语义 1:1 平移，不发明时间值）。返回 (cron, 问题)：
+    无法归一的频率（weekly/daily/未知/季频缺 months）→ (None, 说明)，由调用方降级为
+    manual 窗档并出告警——**不猜时间**（猜出来的排班比没排班更危险）。
+    """
+    freq = str(spec.get("frequency") or "").strip().lower()
+    hh, mm = divmod(int(start_min), 60)
+    if freq not in _FREQUENCIES_WITH_DOM:
+        return None, f"frequency={freq or '缺失'!r} 无法归一为 cron（本臂只收 月/季×DOM 法）"
+    dom = spec.get("day_of_month")
+    if dom is None:
+        dom_field = "*"
+    elif isinstance(dom, (list, tuple)):
+        dom_field = ",".join(str(int(x)) for x in dom)
+    else:
+        dom_field = str(int(dom))
+    months = spec.get("months")
+    if isinstance(months, (list, tuple)) and months:
+        mon_field = ",".join(str(int(x)) for x in months)
+    elif freq == "monthly":
+        mon_field = "*"
+    else:
+        return None, "quarterly 但未声明 months（季频无月列表=无法归一）"
+    return f"{mm} {hh} {dom_field} {mon_field} *", None
+
+
+def parse_drill_entities(path: Path | None = None) -> tuple[list[dict], list[str]]:
+    """drill_schedule.yaml → drill_* 实体（L-5 第 4 真源源；文件缺席=告警不静默）。"""
+    warnings: list[str] = []
+    p = Path(path) if path else REPO_ROOT / DRILL_SCHEDULE_RELPATH
+    if not p.exists():
+        return [], [f"drill_source_missing: {p}（第 4 真源源缺席，演练排程不在视野）"]
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except yaml.YAMLError as exc:
+        # 本臂是新加的，缺席/损坏一律降级留痕（不抛崩既有三源再生——排产自检必须能说话）
+        return [], [f"drill_source_unreadable: {p}: {str(exc)[:120]}"]
+    drills = data.get("drills")
+    if not isinstance(drills, dict) or not drills:
+        return [], [f"drill_source_empty: {p} 无 drills 字典（结构变更须同步本解析器）"]
+    entities: list[dict] = []
+    for key, spec in drills.items():
+        if not isinstance(spec, dict):
+            warnings.append(f"drill_skipped {key}: 条目非 dict")
+            continue
+        ov = DRILL_OVERRIDES.get(str(key), {})
+        cls = str(ov.get("class", "light"))
+        dmin = int(ov.get("dmin", 30))
+        start, shifted = avoid_backup_window(DRILL_START_MINUTE_OF_DAY, dmin)
+        cron, why = normalize_drill_cron(spec, start)
+        if why:
+            warnings.append(f"drill_window_unnormalized {key}: {why}→窗档降级 manual（不猜时间）")
+        ent = _base_entity("drill_" + _snake(re.sub(r"_drill$", "", str(key))),
+                           str(spec.get("type") or key)[:40])
+        ent["schedule_truth_source"] = DRILL_SCHEDULE_RELPATH
+        ent["resource_class"] = cls
+        ent["pool"] = derive_pool(cls, ov.get("pool"))
+        ent["peak_mem_gb"] = ov.get("mem", 0.5)
+        ent["est_duration_min"] = dmin
+        ent["exclusive_group"] = list(ov.get("grp", []))
+        ent["window_type"] = "cron" if cron else "manual"
+        ent["window_expr"] = cron
+        ent["status"] = "planned"  # 无自动触发器（按日程人工执行）→ R-D 不占闸内存和
+        ent["trading_sensitive"] = cls in TRADING_SENSITIVE_CLASSES
+        ent["notes_zh"] = (
+            f"{spec.get('type') or key}｜排程真源 {DRILL_SCHEDULE_RELPATH}"
+            f"（frequency={spec.get('frequency')}/day_of_month={spec.get('day_of_month')}"
+            f"/months={spec.get('months')}→归一 cron）"
+            f"｜时刻=生成器档 {DRILL_START_MINUTE_OF_DAY // 60:02d}:{DRILL_START_MINUTE_OF_DAY % 60:02d}"
+            f"（避备份窗 {BACKUP_WINDOW_GUARD['source_task_ids']}）"
+            + ("；已避让出备份窗" if shifted else "；未落备份窗")
+            + f"｜源声明 module_id={data.get('module_id')}（L-6 map_node_id 灌数待挂）"
+            + f"｜{str(spec.get('description') or '')[:60]}"
+        )
+        entities.append(ent)
+    return entities, warnings
+
+
+# ---------------------------------------------------------------------------
 # ③ 手动/事件实体（§3.C 种子）
 # ---------------------------------------------------------------------------
 def manual_entities() -> list[dict]:
-    """§3.C 盲区实体 → manual_*/event_*/dynamic_* 实体（时间真源=方案文档）。"""
+    """§3.C 盲区实体 → manual_*/event_*/dynamic_* 实体（时间真源=方案文档）。
+
+    种子可选键 `src`=该实体自己的触发真源（缺省=方案文档）。L-8 收编的考试触发型实体用它
+    把真源指针钉在触发代码上——C-11 声明↔代码反查臂据此定位执行体源码，不必另立第二套
+    "实体→代码"映射（那会变成没人对账的私有清单）。
+    """
     out: list[dict] = []
     for seed in MANUAL_ENTITY_SEED:
         ent = _base_entity(seed["task_id"], seed["cn"])
@@ -1092,6 +1273,7 @@ def manual_entities() -> list[dict]:
             exclusive_group=list(seed["grp"]),
             window_type=seed["wt"],
             window_expr=None,
+            schedule_truth_source=str(seed.get("src") or PLAN_DOC_REL),
             status="planned",  # 手动实体=画像已登记、行为零变更（方案 §8）
         )
         if seed["wt"] == "dynamic":
@@ -1099,6 +1281,172 @@ def manual_entities() -> list[dict]:
         ent["trading_sensitive"] = ent["resource_class"] in TRADING_SENSITIVE_CLASSES
         out.append(ent)
     return out
+
+
+# ---------------------------------------------------------------------------
+# ③‖ C-11 声明↔代码反查臂（2026-09-17 P4-α，v2 方案 C-11 第二半）
+# C-11 的两半：第一半"ps1 声称 ↔ schtasks 实际"差集已在 C-15 臂（本模块 A6）；本臂补
+# 第二半——"申报受闸 ↔ 代码实闸"脱节。申报口径就是注册表自己的字段：
+#   trading_sensitive=True ⟺ "本实体受 FAC-E0 算力窗闸管辖"（TRADING_SENSITIVE_CLASSES
+#   映射出来的断言，方案 §2.1 定义）。断言写进了表，代码里却从没问过闸，那这一栏就是
+#   自我安慰——lane_b 型事故的形状（纸面受管、裸奔执行）。
+# 判定=纯存在性反查（grep 执行体源码是否调用所声明的闸），不做语义分析：报的是"根本没
+# 问过闸"，不是"问得不对"（后者是 P2-c 运行时准入的活）。
+# 纪律：本臂**只读源码、只出留痕**——finding 码 sched_gate_declaration_gap 尚未进闸/告警桥
+#   的理由码清单（那两个文件归 P2-a 所有，本会话禁自加码），故 findings 只打生成器
+#   stdout + 再生 notes_zh，不入告警板、不计退出码，移交主会话合流后再升格为健康码。
+# ---------------------------------------------------------------------------
+GAP_REASON_CODE = "sched_gate_declaration_gap"
+# notes_zh 机器标注哨兵（幂等：每次反查先剥掉旧哨兵再按需追加，人写的正文永不被动）
+GAP_NOTE_MARK = "〔生成器·C-11 声明↔代码反查〕"
+_RE_GAP_NOTE = re.compile(r"\s*" + re.escape(GAP_NOTE_MARK) + r".*$", re.S)
+# E0 闸的调用面——**只认调用形态，不认裸符号名**：注释/[DEPENDENCIES] 头里写一句
+# "compute_window_gate" 就能把自己洗成已受闸的话，本臂就永远只对着空气点头（红蓝口径）。
+_RE_GATE_CALL = re.compile(r"\bcheck_gate\s*\(|\bgate_decision\s*\(|\bruntime_e0_decision\s*\(")
+_RE_SCRIPT_TOKEN = re.compile(r"[A-Za-z0-9_./\\-]+\.(?:py|ps1)")
+_RE_DASH_M = re.compile(r"(?:^|\s)-m\s+([A-Za-z][A-Za-z0-9_.]*)")
+_ROOT_TOKENS = ("scripts/", "src/")
+
+
+def _norm_script_token(raw: str) -> str | None:
+    """ps1 里的路径碎片 → 仓内相对路径（取最后一个 scripts//src/ 锚点，丢盘符/变量前缀）。
+
+    `$RepoRoot\\scripts\\run_c4_exam.ps1`、`D:/ZephyrAlpha/scripts/x.py`、
+    `scripts\\backtest\\y.py` 三种写法在此归一；锚点前的部分（变量名、盘符）一律是噪音。
+    """
+    s = str(raw or "").replace("\\", "/")
+    cut = max((s.rfind(t) for t in _ROOT_TOKENS), default=-1)
+    if cut < 0:
+        return None
+    rel = s[cut:]
+    return rel if (REPO_ROOT / rel).exists() else None
+
+
+def _ps1_chain_targets(text: str) -> list[str]:
+    """一段 ps1/命令行文本 → 它拉起的仓内脚本清单（.py 直取 + .ps1 递归一跳 + -m 模块）。"""
+    out: list[str] = []
+    for tok in _RE_SCRIPT_TOKEN.findall(text):
+        norm = _norm_script_token(tok)
+        if norm and norm not in out:
+            out.append(norm)
+    for mod in _RE_DASH_M.findall(text):
+        rel = "src/" + mod.replace(".", "/") + ".py"
+        if (REPO_ROOT / rel).exists() and rel not in out:
+            out.append(rel)
+    for hop in [p for p in out if p.endswith(".ps1")]:
+        try:
+            sub = (REPO_ROOT / hop).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        for tok in _RE_SCRIPT_TOKEN.findall(sub):
+            norm = _norm_script_token(tok)
+            if norm and norm.endswith(".py") and norm not in out:
+                out.append(norm)
+    return out
+
+
+def resolve_executor_sources(ent: dict) -> tuple[list[str], str]:
+    """实体 → (执行体源码仓内路径清单, 解析口径标签)。
+
+    口径优先级：schedule_truth_source 直指 .py（L-8 收编实体走这条）→ ps1 真源动作链
+    一跳（sch_* 全量）→ schedule.yaml 槽位归 DataScheduler 宿主（槽位的执行体就是它，
+    21 槽位共用一个进程，逐槽找模块会找到天上去）→ 空表=反查不可达（不猜）。
+    """
+    src = str(ent.get("schedule_truth_source") or "")
+    tid = str(ent.get("task_id") or "")
+    if src.endswith(".py"):
+        return ([src], "py_truth_source") if (REPO_ROOT / src).exists() else ([], "py_unreadable")
+    if src.endswith(".ps1") and (REPO_ROOT / src).exists():
+        try:
+            text = (REPO_ROOT / src).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return [], "ps1_unreadable"
+        targets = [p for p in _ps1_chain_targets(text) if p.endswith(".py")]
+        return (targets, "ps1_chain") if targets else ([], "ps1_chain_empty")
+    if tid.startswith("data_slot_"):
+        host = EXECUTOR_SOURCE_RELPATH
+        return ([host], "data_slot_host") if (REPO_ROOT / host).exists() else ([], "host_unreadable")
+    return ([], "unresolved")
+
+
+def check_gate_declaration_gaps(entities: list[dict]) -> tuple[list[dict], list[dict]]:
+    """C-11 反查：active 且申报受闸（trading_sensitive）的实体 ↔ 执行体是否真问过闸。
+
+    返回 (findings, 审计覆盖台账)。台账逐实体记 verdict∈{gated,gap,unresolved}——
+    "查不动"与"查过没问题"必须分开留痕（降级不静默是本模块的一贯纪律）。
+    """
+    findings: list[dict] = []
+    ledger: list[dict] = []
+    for e in entities:
+        if not isinstance(e, dict):
+            continue
+        if str(e.get("status")) != "active" or not bool(e.get("trading_sensitive")):
+            continue
+        tid = str(e.get("task_id") or "?")
+        srcs, how = resolve_executor_sources(e)
+        if not srcs:
+            ledger.append({"task_id": tid, "verdict": "unresolved", "how": how, "sources": []})
+            continue
+        hits: list[str] = []
+        unreadable: list[str] = []
+        for rel in srcs:
+            try:
+                text = (REPO_ROOT / rel).read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                unreadable.append(rel)
+                continue
+            if _RE_GATE_CALL.search(text):
+                hits.append(rel)
+        if hits:
+            ledger.append({"task_id": tid, "verdict": "gated", "how": how, "sources": hits})
+            continue
+        detail = (f"{tid}: 注册表申报 trading_sensitive=True（受 FAC-E0 算力窗闸管辖），"
+                  f"但执行体源码未见闸调用（{'; '.join(srcs[:4])}"
+                  + (f"，另有 {len(unreadable)} 个文件读不动" if unreadable else "")
+                  + f"；解析口径={how}）——纸面受管、裸奔执行（v2 C-11，lane_b 型）。"
+                  "修法=执行体开工前问 check_gate()，或如实改申报（trading_sensitive=false 须给理由）")
+        findings.append({"reason_code": GAP_REASON_CODE, "severity": "warn",
+                         "task_ids": [tid], "detail": detail})
+        ledger.append({"task_id": tid, "verdict": "gap", "how": how, "sources": srcs})
+    return findings, ledger
+
+
+def annotate_gate_declaration_gaps(entities: list[dict], findings: list[dict]) -> None:
+    """把反查结论幂等写进 notes_zh（就地改，无返回值）。
+
+    notes_zh 是人复核字段（合并保全），所以本函数**先剥旧哨兵再按需追加**：人写的正文
+    一字不动，机器尾巴随事实增删——闸补上了，哨兵下一轮自动消失；闸没补，哨兵年年重打。
+    在 merge_preserve 之后调用（否则磁盘旧 notes_zh 会把标注盖回去，标注永远上不了表）。
+    """
+    gapped = {tid for f in findings for tid in (f.get("task_ids") or [])}
+    for e in entities:
+        if not isinstance(e, dict):
+            continue
+        notes = str(e.get("notes_zh") or "")
+        stripped = _RE_GAP_NOTE.sub("", notes).rstrip()
+        tid = str(e.get("task_id") or "")
+        if tid in gapped:
+            why = next((f.get("detail", "") for f in findings if tid in (f.get("task_ids") or [])), "")
+            e["notes_zh"] = (stripped + " " if stripped else "") + GAP_NOTE_MARK + " " + why.split("——", 1)[-1][:180]
+        elif GAP_NOTE_MARK in notes:  # 只剥旧哨兵：没标注的实体原样不动（None 不被改成空串）
+            e["notes_zh"] = stripped
+
+
+def report_gate_declaration_gaps(entities: list[dict]) -> int:
+    """C-11 反查留痕（只打 stdout，不入 findings/告警板/退出码）→ gap 条数。
+
+    为什么只到 stdout：`sched_gate_declaration_gap` 还没进闸与告警桥的理由码清单（那两份
+    文件归 P2-a 所有，本会话禁自加码）——私码上板=造一条没人解除的哑警报。故这里只留痕，
+    主会话合流后再升格为健康码（届时把它接进 collect_check_findings 即可，本函数不动）。
+    """
+    findings, ledger = check_gate_declaration_gaps(entities)
+    for f in findings:
+        print(f"GAP[{f['reason_code']}][{f['severity']}]: {f['detail']}")
+    gated = sum(1 for l in ledger if l.get("verdict") == "gated")
+    unresolved = sum(1 for l in ledger if l.get("verdict") == "unresolved")
+    print(f"GAP-AUDIT: active 且申报受闸 {len(ledger)} 实体 → 代码实闸 {gated} / 声明缺口 {len(findings)}"
+          f" / 反查不可达 {unresolved}（{GAP_REASON_CODE} 未入闸与告警桥清单：不计退出码，待主会话合流）")
+    return len(findings)
 
 
 # ---------------------------------------------------------------------------
@@ -1148,7 +1496,7 @@ def merge_preserve(fresh: list[dict], existing: list[dict] | None) -> tuple[list
 
 
 def build_registry(existing_path: Path | None = None, output_path: Path | None = None) -> dict:
-    """三源实体化+合并保全 → 注册表 dict（不落盘，测试可断言）。"""
+    """四源实体化+合并保全+C-11 反查标注 → 注册表 dict（不落盘，测试可断言）。"""
     existing: list[dict] = []
     out = output_path or DEFAULT_OUTPUT
     if existing_path and existing_path.exists():
@@ -1165,7 +1513,12 @@ def build_registry(existing_path: Path | None = None, output_path: Path | None =
             existing = []
     ps1_ents, w1 = parse_ps1_entities()
     slot_ents, w2 = parse_schedule_slots()
-    ents, w3 = merge_preserve(ps1_ents + slot_ents + manual_entities(), existing)
+    drill_ents, w4 = parse_drill_entities()
+    ents, w3 = merge_preserve(ps1_ents + slot_ents + drill_ents + manual_entities(), existing)
+    # C-11 反查必须在合并保全**之后**：notes_zh 是人可复核字段，合并会用磁盘旧值覆盖机读值，
+    # 标注写在前面就会被旧账吃掉（写在后面+哨兵幂等剥离 = 人写的正文永不被动）。
+    gap_findings, _gap_ledger = check_gate_declaration_gaps(ents)
+    annotate_gate_declaration_gaps(ents, gap_findings)
     workers, vocab_problems = extract_executor_vocabulary()
     audit_ns, audit_problems = extract_audit_pool_namespace()
     ents.sort(key=lambda e: (str(e.get("task_id", "")).split("_")[0], str(e.get("task_id"))))
@@ -1178,7 +1531,7 @@ def build_registry(existing_path: Path | None = None, output_path: Path | None =
         "generated_at": _now_iso(),
         "generated_by": "scripts/governance/generators/generate_resource_profile_registry.py",
         "maintenance": "auto",
-        "counting_rule": "entities 数组条目数（生成器三源全量再生；条目禁手工增删）",
+        "counting_rule": "entities 数组条目数（生成器四源全量再生；条目禁手工增删）",
         "total_entities": len(ents),
         "field_count": 18,
         "mem_ceiling_gb": MEM_CEILING_GB,
@@ -1196,7 +1549,7 @@ def build_registry(existing_path: Path | None = None, output_path: Path | None =
                     "'落到哪台算力'），与时间维泳道同名不同物，注册表挂它=串维度（C-6）",
         },
         "extraction_warnings": sorted(
-            list(w1) + list(w2) + list(w3) + list(vocab_problems) + list(audit_problems)
+            list(w1) + list(w2) + list(w3) + list(w4) + list(vocab_problems) + list(audit_problems)
         ),
         "cron_convention": "标准 cron（0=周日，croniter 口径）；schedule.yaml 的 APScheduler dow（0=周一）由生成器归一——生成器=映射层",
         "e0_mapping_note": "resource_class←E0 compute_class 映射层在本生成器（local→light，local_gpu/mixed→heavy，api→llm_api_*）；E0 真源 scripts/backtest/compute_window_gate.py 不动",
@@ -1234,7 +1587,7 @@ def registry_content_sha(path: Path | str) -> str:
 
 
 def detect_registry_drift(disk_entities: list[dict], fresh_entities: list[dict]) -> list[str]:
-    """现盘注册表实体 vs 三真源重抽实体逐字段比对 → 漂移描述清单（空=无漂移）。
+    """现盘注册表实体 vs 四真源重抽实体逐字段比对 → 漂移描述清单（空=无漂移）。
 
     口径（既有设计不动）：实体缺失/窗档三字段（window_expr/window_type/
     schedule_truth_source）不一致=漂移；磁盘多出的非 orphaned 实体=ghost。
@@ -1386,7 +1739,7 @@ def collect_check_findings(
         more = f" …（共 {len(drifts)} 条）" if len(drifts) > 5 else ""
         findings.append(
             SimpleNamespace(reason_code=REASON_DRIFT, severity="warn", task_ids=["<registry>"],
-                            detail=f"注册表与三真源漂移 {len(drifts)} 条：{head}{more}", at=None)
+                            detail=f"注册表与四真源漂移 {len(drifts)} 条：{head}{more}", at=None)
         )
     return findings
 
@@ -1414,7 +1767,7 @@ def main() -> int:  # noqa: C901
     ap = argparse.ArgumentParser(description="资源画像注册表生成器（MOD-RESCHED-PROFILE）")
     ap.add_argument("--check", action="store_true",
                     help="自检臂：漂移检测（实体集/window_expr 与磁盘比对）+C-5 闸在场性"
-                         "+C-10 视图新鲜度+C-7 池词表+C-15 计划任务实测对账，不写")
+                         "+C-10 视图新鲜度+C-7 池词表+C-15 计划任务实测对账+C-11 受闸反查留痕，不写")
     ap.add_argument("--publish-alerts", action="store_true",
                     help="与 --check 同用：自检 findings 落 ops 告警板（缺省 .runtime/ops_notifications/"
                          "，测试经 ZEPHYR_OPS_NOTIFICATION_DIR 重定向——不加旗标，板路径单源）")
@@ -1514,6 +1867,7 @@ def main() -> int:  # noqa: C901
             print(f"HEALTH[{f['reason_code']}][{f['severity']}]: {f['detail']}")
         for line in exempt_lines:  # 豁免≠静默：stdout 留痕，只是不落告警板/不计退出码
             print(f"EXEMPT: {line}")
+        report_gate_declaration_gaps(list(registry["entities"]))  # C-11：同上，只留痕不计码
         if args.publish_alerts:
             pub = publish_check_findings(findings, board_dir=None)
             print(f"PUBLISH-ALERTS: ops={len(pub.get('ops', []))} keys={pub.get('active_keys')}")
@@ -1534,6 +1888,7 @@ def main() -> int:  # noqa: C901
     out.parent.mkdir(parents=True, exist_ok=True)
     safe_write_text(out, text, expected_base_sha256=expected)
     print(json.dumps({"ok": True, "total_entities": registry["total_entities"], "output": str(out)}, ensure_ascii=False))
+    report_gate_declaration_gaps(list(registry["entities"]))  # C-11 留痕（不进 JSON 结果契约，不动退出码）
     return 0
 
 

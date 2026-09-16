@@ -2,10 +2,10 @@
  * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。
  */
 window.RW_VIEW_DATA = {
- "generated_at": "2026-09-16T20:15:07+00:00",
+ "generated_at": "2026-09-16T23:07:01+00:00",
  "generator": "scripts/governance/generators/generate_resource_week_view.py",
  "registry": "config\\resource_profile_registry.yaml",
- "registry_sha256": "97bb9de545c0",
+ "registry_sha256": "f25d32147e52",
  "week_start": "2026-09-14",
  "days": [
   "09-14 周一",
@@ -16,7 +16,7 @@ window.RW_VIEW_DATA = {
   "09-19 周六",
   "09-20 周日"
  ],
- "total_entities": 73,
+ "total_entities": 77,
  "scheduled": 30,
  "block_conflicts": 0,
  "conflicts": [],
@@ -387,15 +387,15 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "30 8 * * *",
+   "window_expr": "41 8 * * *",
    "est_duration_min": 10,
    "slots": [
     {
      "dow": 0,
      "ranges": [
       [
-       510,
-       520
+       521,
+       531
       ]
      ]
     },
@@ -403,8 +403,8 @@ window.RW_VIEW_DATA = {
      "dow": 1,
      "ranges": [
       [
-       510,
-       520
+       521,
+       531
       ]
      ]
     },
@@ -412,8 +412,8 @@ window.RW_VIEW_DATA = {
      "dow": 2,
      "ranges": [
       [
-       510,
-       520
+       521,
+       531
       ]
      ]
     },
@@ -421,8 +421,8 @@ window.RW_VIEW_DATA = {
      "dow": 3,
      "ranges": [
       [
-       510,
-       520
+       521,
+       531
       ]
      ]
     },
@@ -430,8 +430,8 @@ window.RW_VIEW_DATA = {
      "dow": 4,
      "ranges": [
       [
-       510,
-       520
+       521,
+       531
       ]
      ]
     },
@@ -439,8 +439,8 @@ window.RW_VIEW_DATA = {
      "dow": 5,
      "ranges": [
       [
-       510,
-       520
+       521,
+       531
       ]
      ]
     },
@@ -448,8 +448,8 @@ window.RW_VIEW_DATA = {
      "dow": 6,
      "ranges": [
       [
-       510,
-       520
+       521,
+       531
       ]
      ]
     }
@@ -1513,7 +1513,7 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "00 9 1 * *",
+   "window_expr": "16 9 1 * *",
    "est_duration_min": 60,
    "slots": [],
    "unscheduled": true
@@ -1529,14 +1529,14 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "*/30 * * * *",
+   "window_expr": "17,47 * * * *",
    "est_duration_min": 180,
    "slots": [
     {
      "dow": 0,
      "ranges": [
       [
-       30,
+       17,
        1440
       ]
      ]
@@ -1546,7 +1546,7 @@ window.RW_VIEW_DATA = {
      "ranges": [
       [
        0,
-       660
+       647
       ]
      ]
     }
@@ -1706,15 +1706,15 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "30 8 * * 1-5",
+   "window_expr": "34 8 * * 1-5",
    "est_duration_min": 15,
    "slots": [
     {
      "dow": 0,
      "ranges": [
       [
-       510,
-       525
+       514,
+       529
       ]
      ]
     },
@@ -1722,8 +1722,8 @@ window.RW_VIEW_DATA = {
      "dow": 1,
      "ranges": [
       [
-       510,
-       525
+       514,
+       529
       ]
      ]
     },
@@ -1731,8 +1731,8 @@ window.RW_VIEW_DATA = {
      "dow": 2,
      "ranges": [
       [
-       510,
-       525
+       514,
+       529
       ]
      ]
     },
@@ -1740,8 +1740,8 @@ window.RW_VIEW_DATA = {
      "dow": 3,
      "ranges": [
       [
-       510,
-       525
+       514,
+       529
       ]
      ]
     },
@@ -1749,8 +1749,8 @@ window.RW_VIEW_DATA = {
      "dow": 4,
      "ranges": [
       [
-       510,
-       525
+       514,
+       529
       ]
      ]
     }
@@ -1876,6 +1876,54 @@ window.RW_VIEW_DATA = {
    "unscheduled": false
   },
   {
+   "task_id": "drill_emergency_bypass",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "cron",
+   "window_expr": "0 4 15 1,4,7,10 *",
+   "est_duration_min": 20,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "drill_recovery",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "cron",
+   "window_expr": "0 4 15 2,5,8,11 *",
+   "est_duration_min": 60,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "drill_script_failure",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 1.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "cron",
+   "window_expr": "0 4 1 * *",
+   "est_duration_min": 30,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
    "task_id": "dynamic_local_replay",
    "resource_class": "db_heavy",
    "pool": "heavy",
@@ -1922,6 +1970,24 @@ window.RW_VIEW_DATA = {
    "window_type": "event",
    "window_expr": null,
    "est_duration_min": 5,
+   "slots": [],
+   "unscheduled": true
+  },
+  {
+   "task_id": "event_model_exam_trigger",
+   "resource_class": "llm_api_local",
+   "pool": "heavy",
+   "exclusive_group": [
+    "llm_local"
+   ],
+   "trading_sensitive": true,
+   "peak_mem_gb": 2.0,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "planned",
+   "window_type": "event",
+   "window_expr": null,
+   "est_duration_min": 30,
    "slots": [],
    "unscheduled": true
   },
@@ -2497,14 +2563,14 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "0 14 * * 6",
+   "window_expr": "0 23 * * 6",
    "est_duration_min": 1440,
    "slots": [
     {
      "dow": 5,
      "ranges": [
       [
-       840,
+       1380,
        1440
       ]
      ]
@@ -2514,7 +2580,7 @@ window.RW_VIEW_DATA = {
      "ranges": [
       [
        0,
-       840
+       1380
       ]
      ]
     }
@@ -2830,8 +2896,8 @@ window.RW_VIEW_DATA = {
    ],
    "trading_sensitive": true,
    "peak_mem_gb": 8.0,
-   "measured_peak_mem_gb": 0.0082,
-   "measured_p90_duration_min": 44,
+   "measured_peak_mem_gb": 0.3604,
+   "measured_p90_duration_min": 78,
    "status": "active",
    "window_type": "event",
    "window_expr": null,
@@ -2930,15 +2996,15 @@ window.RW_VIEW_DATA = {
    "measured_p90_duration_min": null,
    "status": "active",
    "window_type": "cron",
-   "window_expr": "0 9 * * *",
+   "window_expr": "1 9 * * *",
    "est_duration_min": 5,
    "slots": [
     {
      "dow": 0,
      "ranges": [
       [
-       540,
-       545
+       541,
+       546
       ]
      ]
     },
@@ -2946,8 +3012,8 @@ window.RW_VIEW_DATA = {
      "dow": 1,
      "ranges": [
       [
-       540,
-       545
+       541,
+       546
       ]
      ]
     },
@@ -2955,8 +3021,8 @@ window.RW_VIEW_DATA = {
      "dow": 2,
      "ranges": [
       [
-       540,
-       545
+       541,
+       546
       ]
      ]
     },
@@ -2964,8 +3030,8 @@ window.RW_VIEW_DATA = {
      "dow": 3,
      "ranges": [
       [
-       540,
-       545
+       541,
+       546
       ]
      ]
     },
@@ -2973,8 +3039,8 @@ window.RW_VIEW_DATA = {
      "dow": 4,
      "ranges": [
       [
-       540,
-       545
+       541,
+       546
       ]
      ]
     },
@@ -2982,8 +3048,8 @@ window.RW_VIEW_DATA = {
      "dow": 5,
      "ranges": [
       [
-       540,
-       545
+       541,
+       546
       ]
      ]
     },
@@ -2991,8 +3057,8 @@ window.RW_VIEW_DATA = {
      "dow": 6,
      "ranges": [
       [
-       540,
-       545
+       541,
+       546
       ]
      ]
     }
@@ -3068,8 +3134,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": 0.0294,
-   "measured_p90_duration_min": 6,
+   "measured_peak_mem_gb": 0.1666,
+   "measured_p90_duration_min": 5,
    "status": "active",
    "window_type": "event",
    "window_expr": null,
@@ -3324,8 +3390,8 @@ window.RW_VIEW_DATA = {
    "exclusive_group": [],
    "trading_sensitive": false,
    "peak_mem_gb": 0.5,
-   "measured_peak_mem_gb": 0.1058,
-   "measured_p90_duration_min": 275,
+   "measured_peak_mem_gb": 0.4321,
+   "measured_p90_duration_min": 347,
    "status": "active",
    "window_type": "event",
    "window_expr": null,
