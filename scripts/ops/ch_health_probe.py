@@ -18,9 +18,10 @@ CH 状态变化时触发告警（ALIVE→DEAD=CRITICAL，DEAD→ALIVE=INFO 恢�
      start /B python scripts/ops/ch_health_probe.py
 
 配置（环境变量，可选）：
-  CH_PROBE_INTERVAL     探测间隔秒数（默认 60）
-  CH_PROBE_THRESHOLD    连续失败阈值（默认 3，约 3min 后告警）
-  CH_PROBE_LOG          日志文件路径（默认 logs/ch_health_probe.log）
+  CH_PROBE_INTERVAL         探测间隔秒数（默认 60）
+  CH_PROBE_THRESHOLD        连续失败阈值（默认 3，约 3min 后告警）
+  CH_PROBE_LOG              日志文件路径（默认 logs/ch_health_probe.log）
+  CH_PROBE_TICK_STALE_MIN   盘中 tick 新鲜度阈值分钟（默认 15，A3 2026-09-16）
 
 与调度器探针的关系：
   - 调度器 _probe_loop 仅在调度器运行期生效（盘后时段覆盖不到）
@@ -30,6 +31,7 @@ CH 状态变化时触发告警（ALIVE→DEAD=CRITICAL，DEAD→ALIVE=INFO 恢�
 
 from __future__ import annotations
 
+import datetime
 import logging
 import os
 import signal
@@ -43,11 +45,13 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from zephyr.data.alerter import Alerter  # noqa: E402
+from zephyr.data import trading_calendar  # noqa: E402
+from zephyr.data.alerter import Alerter, LEVEL_ERROR  # noqa: E402
 from zephyr.data.redundant_source.heartbeat_monitor import (  # noqa: E402
     HeartbeatMonitor,
     SourceState,
 )
+from zephyr.data.table_registry import get_registry  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 log = logging.getLogger("ch_health_probe")
@@ -56,6 +60,11 @@ _DEFAULT_INTERVAL = 60.0
 _DEFAULT_THRESHOLD = 3
 _DEFAULT_LOG = REPO_ROOT / "logs" / "ch_health_probe.log"
 _PID_FILE = REPO_ROOT / "logs" / "ch_health_probe.pid"
+
+# A3 推进度看门狗（2026-09-16）：盘中 tick 新鲜度阈值（分钟）
+_DEFAULT_TICK_STALE_MIN = 15.0
+_TICK_TRADE_WINDOWS = ((570, 690), (780, 900))  # 09:30-11:30 / 13:00-15:00（当日分钟数）
+_TBL_TICK = get_registry().table("market_tick")  # TableRegistry 真源（#ARCH-CH-024）
 
 
 def _setup_logging(log_path: Path) -> None:
@@ -83,9 +92,65 @@ def _real_ch_ping() -> bool:
         return False
 
 
+def _in_tick_window(now: datetime.datetime | None = None) -> bool:
+    """盘中窗口判定：09:30-11:30 / 13:00-15:00（A3 推进度看门狗）。"""
+    now = now or datetime.datetime.now()
+    m = now.hour * 60 + now.minute
+    return any(a <= m < b for a, b in _TICK_TRADE_WINDOWS)
+
+
+def _check_tick_freshness(
+    stale_min: float,
+    alerter: Alerter,
+    now: datetime.datetime | None = None,
+) -> None:
+    """盘中 tick 数据新鲜度检查（端到端：订阅→WAL→CH 全链路，A3 2026-09-16）。
+
+    今日 09:36 实时链路断供 3 小时而全部监控绿灯的盲区补丁——既有看门狗
+    全部锚定订阅侧 last_tick_ts（回调接收时刻），写入侧断链时照样刷新。
+    本检查锚定 CH 侧 max(timestamp)，独立于任何进程存亡。
+    Alerter 内置 300s 冷却：持续断供时每 5 分钟重复告警。
+    """
+    try:
+        if not _in_tick_window(now) or not trading_calendar.is_trading_day():
+            return
+        from zephyr.data import ch_reader
+
+        tsv = ch_reader.query(
+            f"SELECT max(timestamp) FROM {_TBL_TICK} WHERE trade_date = today() FORMAT TSV",  # noqa: bare-sql  独立探针脚本单一查询，无常驻 SQL 层可集中
+            timeout=10,
+        )
+        max_ts = (tsv or "").strip()
+        now = now or datetime.datetime.now()
+        if not max_ts:
+            # 今日零数据：开盘缓冲（09:45）后仍为空=链路自始断供
+            open_plus = now.replace(hour=9, minute=45, second=0, microsecond=0)
+            if now >= open_plus:
+                alerter.notify(
+                    "tick_freshness",
+                    "盘中无今日 tick 数据（链路断供）",
+                    level=LEVEL_ERROR,
+                    source="tick_pipeline",
+                )
+            return
+        max_dt = datetime.datetime.strptime(max_ts[:19], "%Y-%m-%d %H:%M:%S")
+        age_min = (now - max_dt).total_seconds() / 60
+        if age_min > stale_min:
+            alerter.notify(
+                "tick_freshness",
+                f"盘中 tick 最新数据落后 {age_min:.0f} 分钟（阈值 {stale_min:.0f}），链路疑似断供",
+                level=LEVEL_ERROR,
+                source="tick_pipeline",
+            )
+            log.error("tick 新鲜度告警: max(timestamp)=%s 落后 %.0f 分钟", max_ts, age_min)
+    except Exception as e:  # noqa: BLE001 — 监控自身异常不逃逸
+        log.warning("tick 新鲜度检查异常: %s", e)
+
+
 def main() -> None:
     interval = float(os.environ.get("CH_PROBE_INTERVAL", _DEFAULT_INTERVAL))
     threshold = int(os.environ.get("CH_PROBE_THRESHOLD", _DEFAULT_THRESHOLD))
+    stale_min = float(os.environ.get("CH_PROBE_TICK_STALE_MIN", _DEFAULT_TICK_STALE_MIN))
     log_path = Path(os.environ.get("CH_PROBE_LOG", str(_DEFAULT_LOG)))
 
     _setup_logging(log_path)
@@ -126,10 +191,14 @@ def main() -> None:
     signal.signal(signal.SIGTERM, _signal_handler)
 
     monitor.start()
-    log.info("探针已启动，7×24 监控 CH 连通性。状态变化时自动告警。")
+    log.info(
+        "探针已启动，7×24 监控 CH 连通性 + 盘中 tick 新鲜度（阈值 %.0f 分钟）。状态变化时自动告警。",
+        stale_min,
+    )
 
     # 主循环：等待停止信号
     prev_state = SourceState.UNKNOWN
+    last_freshness = 0.0
     try:
         while not _stop:
             status = monitor.get_status()
@@ -141,6 +210,10 @@ def main() -> None:
                     status.ch_consecutive_failures,
                 )
                 prev_state = status.ch_state
+            # A3：盘中 tick 新鲜度检查（与连通性同频，Alerter 自带冷却）
+            if time.time() - last_freshness >= interval:
+                last_freshness = time.time()
+                _check_tick_freshness(stale_min, alerter)
             time.sleep(1)
     finally:
         monitor.stop()

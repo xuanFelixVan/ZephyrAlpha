@@ -99,6 +99,12 @@ _ch_client = ch_client  # 向后兼容别名（R5 公共化）
 _tcp_fail_ts: float = 0
 _TCP_COOLDOWN_SEC = 15  # TCP 连接失败后 15 秒内不再重试
 
+# HTTP 连续失败自愈（2026-09-16 盘中断供 3h 治本）：5xx/异常连续 N 次→强制
+# 失效 host+TCP 单例重建。4xx（Code 38 等数据错）不计入——那是数据问题不是链路问题。
+_HTTP_FAIL_STREAK_THRESHOLD = 5
+_http_fail_streak = 0
+_http_host_empty_logged = 0  # host 为空静默降级的限频日志计数
+
 # 线程安全锁（run_schedule 并行化后多任务共用 ch_writer 全局状态）
 # clickhouse-driver Client 非线程安全（TCP 长连接并发 execute 会导致协议错乱）
 _ch_lock = threading.Lock()
@@ -333,6 +339,28 @@ def _ch_http_headers() -> dict[str, str]:
     }
 
 
+def _reset_http_fail_streak() -> None:
+    """成功应答后清零连续失败计数（模块级全局，GIL 原子）。"""
+    global _http_fail_streak
+    _http_fail_streak = 0
+
+
+def _note_http_failure(reason: str) -> None:
+    """HTTP 网络级失败计数（A1 连接自愈 2026-09-16）。
+
+    连续失败达阈值→强制失效 HTTP host + TCP 单例（级联弃 DatabaseService 槽），
+    下次写入走全新探测/连接——治"ping 通但 POST 持续失败"类进程内坏死态。
+    """
+    global _http_fail_streak
+    _http_fail_streak += 1
+    if _http_fail_streak == 1 or _http_fail_streak % _HTTP_FAIL_STREAK_THRESHOLD == 0:
+        log.warning("HTTP insert 连续失败 %d 次（%s）", _http_fail_streak, reason)
+    if _http_fail_streak >= _HTTP_FAIL_STREAK_THRESHOLD:
+        _invalidate_http_host(f"连续失败 {_http_fail_streak} 次: {reason}")
+        _invalidate_tcp_client(f"HTTP 连续失败联动自愈: {reason}")
+        _http_fail_streak = 0
+
+
 def http_insert(
     sql: str,
     tsv_bytes: bytes,
@@ -353,9 +381,17 @@ def http_insert(
     Returns:
         是否成功。
     """
+    global _http_host_empty_logged
     http_host = get_http_host()
     if not http_host:
-        return False  # HTTP 不可用（冷却期内或探测失败），调用方降级到本地落盘
+        # host 为空（冷却期/探测失败）→ 静默降级本地落盘是设计行为，但必须
+        # 限频留痕——2026-09-16 断供 3h 此路径零日志，事后无法归因
+        _http_host_empty_logged += 1
+        if _http_host_empty_logged == 1 or _http_host_empty_logged % 500 == 0:
+            log.warning(
+                "HTTP host 不可用，insert 降级本地落盘（累计 %d 次）", _http_host_empty_logged
+            )
+        return False
     path = f"/?query={urllib.parse.quote(sql)}"
     try:
         conn = http.client.HTTPConnection(http_host, _CH_HTTP_PORT, timeout=timeout)
@@ -364,12 +400,18 @@ def http_insert(
         body = resp.read()
         conn.close()
         if resp.status == 200:
+            _reset_http_fail_streak()
             return True
         log.error("HTTP insert 失败: status=%s, body=%s", resp.status, body[:200])
+        if 500 <= resp.status < 600:
+            _note_http_failure(f"status={resp.status}")  # 服务端错→链路自愈计数
+        else:
+            _reset_http_fail_streak()  # 4xx=数据/SQL 错，服务端应答正常
         return False
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         log.error("HTTP insert 异常: %s", e)
         _invalidate_http_host(f"insert HTTP 失败: {e}")
+        _note_http_failure(f"exception: {e}")
         return False
 
 

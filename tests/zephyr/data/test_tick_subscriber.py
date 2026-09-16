@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "sr
 
 import json
 import logging
+import collections
 import queue
 import threading
 import time
@@ -1281,10 +1282,11 @@ class TestIntradayLinkIntegration:
         monkeypatch.setitem(sys.modules, "xtquant", SimpleNamespace(xtdata=fake_xt))
         fake_writer = MagicMock()
         fake_writer.add.return_value = True
-        monkeypatch.setitem(
-            sys.modules,
-            "zephyr.data.wal_writer",
-            SimpleNamespace(WalWriter=lambda *a, **kw: fake_writer),
+        # 显式 save/restore（2026-09-16）：monkeypatch.setitem 的恢复晚于 conftest
+        # sys.modules 哨兵，线程型测试在哨兵窗口内仍持假模块=确定性误报
+        _saved_wal_mod = sys.modules.get("zephyr.data.wal_writer")
+        sys.modules["zephyr.data.wal_writer"] = SimpleNamespace(
+            WalWriter=lambda *a, **kw: fake_writer
         )
 
         sub = ts_module.TickSubscriber()
@@ -1315,6 +1317,11 @@ class TestIntradayLinkIntegration:
             assert payload["pid"] == os.getpid()
         finally:
             sub.stop()
+            # 显式恢复（同 2026-09-16 哨兵时序修复）
+            if _saved_wal_mod is None:
+                sys.modules.pop("zephyr.data.wal_writer", None)
+            else:
+                sys.modules["zephyr.data.wal_writer"] = _saved_wal_mod
         assert fake_xt.unsub_calls >= 1
 
 
@@ -1524,10 +1531,10 @@ class TestBridgeTickSource:
         monkeypatch.setattr(ts_module, "start_metrics_server", lambda *a, **kw: None)
         fake_writer = MagicMock()
         fake_writer.add.return_value = True
-        monkeypatch.setitem(
-            sys.modules,
-            "zephyr.data.wal_writer",
-            SimpleNamespace(WalWriter=lambda *a, **kw: fake_writer),
+        # 显式 save/restore（同 2026-09-16 哨兵时序修复）
+        _saved_wal_mod = sys.modules.get("zephyr.data.wal_writer")
+        sys.modules["zephyr.data.wal_writer"] = SimpleNamespace(
+            WalWriter=lambda *a, **kw: fake_writer
         )
 
         sub = ts_module.TickSubscriber()
@@ -1559,6 +1566,11 @@ class TestBridgeTickSource:
             assert payload["last_tick_ts"] is not None
         finally:
             sub.stop()
+            # 显式恢复（同 2026-09-16 哨兵时序修复）
+            if _saved_wal_mod is None:
+                sys.modules.pop("zephyr.data.wal_writer", None)
+            else:
+                sys.modules["zephyr.data.wal_writer"] = _saved_wal_mod
 
 
 class TestTickDepthBypass:
@@ -1580,7 +1592,10 @@ class TestTickDepthBypass:
             "askVol": [6, 7, 8, 9, 10],
         }
 
-    def test_depth_disabled_by_default(self):
+    def test_depth_disabled_by_default(self, monkeypatch):
+        # 环境隔离（2026-09-16）：生产 shell 可能带 TICK_DEPTH5=1，默认关语义须在
+        # 干净 env 下验证
+        monkeypatch.delenv("TICK_DEPTH5", raising=False)
         sub = _make_sub()
         assert sub._depth_enabled is False
         assert sub._depth_writer is None
@@ -1705,3 +1720,52 @@ class TestTickDepthBypass:
         sub = _make_sub()
         sub._init_depth_writer(MagicMock)
         assert sub._depth_writer is None
+
+
+class TestOverflowSpill:
+    """A4b 溢出旁路（2026-09-16）：队列满暂存不丢弃；背压塞回；保险丝计数。"""
+
+    def _v19(self):
+        return {
+            "time": 1720838403000,
+            "lastPrice": 10.5,
+            "volume": 100,
+            "amount": 1050.0,
+            "bidPrice": [10.49, 10.48, 10.47, 10.46, 10.45],
+            "askPrice": [10.51, 10.52, 10.53, 10.54, 10.55],
+            "bidVol": [5, 4, 3, 2, 1],
+            "askVol": [6, 7, 8, 9, 10],
+        }
+
+    def test_spill_then_flush(self):
+        sub = _make_sub()
+        sub._writer = MagicMock()
+        sub._writer.add.return_value = True
+        sub._tick_queue = queue.Queue(maxsize=1)
+        sub._tick_queue.put(("000001.SZ", self._v19()))
+        before = sub._errors
+        sub._spill_overflow("000002.SZ", self._v19(), "miniqmt")
+        assert len(sub._overflow) == 1
+        assert sub._errors == before  # 暂存不计丢弃
+        flushed = sub._flush_overflow_once()
+        assert flushed == 1
+        assert sub._writer.add.called
+        assert sub._overflow_spilled == 1
+        assert len(sub._overflow) == 0
+
+    def test_backpressure_requeues(self):
+        sub = _make_sub()
+        sub._writer = MagicMock()
+        sub._writer.add.return_value = False
+        sub._spill_overflow("000001.SZ", self._v19(), "miniqmt")
+        assert sub._flush_overflow_once() == 0
+        assert len(sub._overflow) == 1  # 背压拒绝→塞回保活
+        assert sub._overflow_spilled == 0
+
+    def test_deque_fuse_counts_drops(self):
+        sub = _make_sub()
+        sub._overflow = collections.deque(maxlen=2)
+        for i in range(3):
+            sub._spill_overflow("s%d" % i, {"time": 1, "lastPrice": 1.0}, "miniqmt")
+        assert sub._overflow_dropped == 1  # 保险丝丢最旧
+        assert len(sub._overflow) == 2

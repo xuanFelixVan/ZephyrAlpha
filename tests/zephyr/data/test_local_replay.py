@@ -500,3 +500,36 @@ class TestManifestKeyNormalization:
         assert result["skipped"] == 1
         assert result["remaining"] == 0
         assert not manifest_path.exists()
+
+
+class TestReplayCatchup:
+    """A2 追平模式（2026-09-16）：连续排水到清空；零进展即停不空转。"""
+
+    def test_catchup_drains_all(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        manifest_path = tmp_path / "_manifest.jsonl"
+        entries = []
+        for i in range(3):
+            (tmp_path / ("d%d.tsv" % i)).write_bytes(b"v\n")
+            entries.append({"table": "c1_market.test", "file": "d%d.tsv" % i, "rows": 1})
+        manifest_path.write_text("\n".join(json.dumps(e) for e in entries) + "\n", encoding="utf-8")
+        monkeypatch.setattr(local_replay, "_MANIFEST_PATH", manifest_path)
+        with patch("src.zephyr.data.ch_writer.write_tsv", return_value=True):
+            r = local_replay.replay_catchup(time_budget_sec=60)
+        assert r["replayed"] == 3
+        assert r["rounds"] >= 1
+        assert not has_backlog()
+
+    def test_catchup_stops_when_all_failed(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        manifest_path = tmp_path / "_manifest.jsonl"
+        (tmp_path / "alive.tsv").write_bytes(b"v\n")
+        manifest_path.write_text(
+            json.dumps({"table": "c1_market.test", "file": "alive.tsv", "rows": 1}) + "\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(local_replay, "_MANIFEST_PATH", manifest_path)
+        with patch("src.zephyr.data.ch_writer.write_tsv", return_value=False):
+            r = local_replay.replay_catchup(time_budget_sec=60)
+        assert r["rounds"] == 1  # 零进展 1 轮即停（不空转烧预算）
+        assert r["failed"] == 1

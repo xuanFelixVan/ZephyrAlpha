@@ -475,3 +475,45 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
         )
 
     return result
+
+
+def backlog_file_count() -> int:
+    """当前积压文件条目数（manifest 条目数）。"""
+    return len(_read_manifest())
+
+
+def replay_catchup(
+    time_budget_sec: float = 600.0,
+    max_files_per_batch: int = 500,
+) -> dict[str, int]:
+    """追平模式：连续回灌直到清空/零进展/时间预算耗尽（A2 2026-09-16）。
+
+    周期回灌 100 文件/30 分钟在积压上千时追不上盘中新增（当日 3700 文件
+    自动档需 27h，追平档 3 分钟）。积压超阈值时调度器改调本函数。
+
+    Returns:
+        {"replayed": N, "failed": N, "skipped": N, "rounds": N}
+    """
+    total: dict[str, int] = {"replayed": 0, "failed": 0, "skipped": 0, "rounds": 0}
+    t0 = time.monotonic()
+    while time.monotonic() - t0 < time_budget_sec:
+        if not has_backlog():
+            break
+        r = replay_batch(max_files=max_files_per_batch)
+        total["rounds"] += 1
+        for k in ("replayed", "failed", "skipped"):
+            total[k] += r.get(k, 0)
+        if r.get("replayed", 0) == 0 and r.get("skipped", 0) == 0:
+            log.warning(
+                "local_replay: 追平中止——本轮零进展（剩余 %d 条全部 failed）", r.get("remaining", 0)
+            )
+            break
+    log.info(
+        "local_replay: 追平结束 — %d 轮 成功 %d, 失败 %d, 跳过 %d（%.0fs）",
+        total["rounds"],
+        total["replayed"],
+        total["failed"],
+        total["skipped"],
+        time.monotonic() - t0,
+    )
+    return total

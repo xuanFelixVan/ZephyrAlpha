@@ -106,6 +106,10 @@ from . import (
 
 log = logging.getLogger(__name__)
 
+# A2 追平阈值（2026-09-16）：积压超过此条数时周期回灌改用 replay_catchup
+# 连续排水到清空（100 文件/30 分钟追不上盘中新增的实证修正）
+_REPLAY_CATCHUP_THRESHOLD = 200
+
 _DEFAULT_CONFIG_DIR = Path(__file__).parent / "config"
 _DEFAULT_JOBS_DB = "sqlite:///" + str(REPO_ROOT / "data" / "integrator_jobs.db")
 # 单实例锁默认路径（#SCHED-DUAL-INSTANCE 治本，2026-08-25）
@@ -863,7 +867,12 @@ class IntegratorScheduler:
                 time.sleep(1800)  # 30 分钟
                 try:
                     if local_replay.has_backlog():
-                        result = local_replay.replay_batch(max_files=100)
+                        # A2 追平模式（2026-09-16）：积压超阈值改连续排水——
+                        # 100 文件/30 分钟在积压上千时追不上盘中新增
+                        if local_replay.backlog_file_count() > _REPLAY_CATCHUP_THRESHOLD:
+                            result = local_replay.replay_catchup(time_budget_sec=600.0)
+                        else:
+                            result = local_replay.replay_batch(max_files=100)
                         log.info("local_replay: 周期回灌 %s", result)
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     log.error("local_replay: 周期回灌异常: %s", e)

@@ -3657,6 +3657,21 @@ error_codes:
   module: zephyr.pf_core.rl_portfolio_execution
   file: src/zephyr/pf_core/rl_portfolio_execution.py
   introduced: '2026-09-06: Owner 批准占位码转正批（B17-②）——ZA-PF-UNREGISTERED-RL-PORTFOLIO 转正'
+- code: ZA-PA-0031
+  class: AllocationInputError
+  module: zephyr.pf_alloc.allocation_inputs
+  file: src/zephyr/pf_alloc/allocation_inputs.py
+  introduced: '2026-09-16: errcode 一致性补登记（st-tickdrain 提交时 TestCodeToRegistry 扫出 pf_alloc 存量未登记）'
+- code: ZA-PA-0032
+  class: AllocationPersistenceError
+  module: zephyr.pf_alloc.allocation_persistence
+  file: src/zephyr/pf_alloc/allocation_persistence.py
+  introduced: '2026-09-16: errcode 一致性补登记（st-tickdrain 提交时 TestCodeToRegistry 扫出 pf_alloc 存量未登记）'
+- code: ZA-PA-0033
+  class: AllocationConfigError
+  module: zephyr.pf_alloc.allocation_config
+  file: src/zephyr/pf_alloc/allocation_config.py
+  introduced: '2026-09-16: errcode 一致性补登记（st-tickdrain 提交时 TestCodeToRegistry 扫出 pf_alloc 存量未登记）'
 
 # --- 2026-09-06 占位码转正批 PLAN（Owner 批准 B17-②，取号=段内 max+1 顺延）---
 - code: ZA-PLAN-0008

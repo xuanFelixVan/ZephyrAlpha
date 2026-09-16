@@ -234,3 +234,30 @@ class TestSymbolLeadingZerosRegression:
         assert df["close"].dtype == np.float64
         assert df["close"].iloc[0] == pytest.approx(11.19)
         assert df["symbol"].iloc[0] == "000001"  # symbol 仍为字符串
+
+
+class TestHkTradeCalendarFirstDay:
+    """hk 日历首日 pretrade 取自身（2026-09-16 Code 38 回灌死循环治本）。"""
+
+    def test_first_day_pretrade_is_self(self, monkeypatch):
+        from zephyr.data.implementations import internal_compute_provider as icp
+        from zephyr.data.provider_base import FetchPayload
+
+        class _FakeCal:
+            def sessions_in_range(self, a, b):
+                return [datetime.date(2021, 9, 16), datetime.date(2021, 9, 17)]
+
+        monkeypatch.setattr(icp, "_get_xhkg_calendar", lambda: _FakeCal())
+        payload = FetchPayload(
+            table="c1_market.hk_trade_calendar",
+            symbols=None,
+            start=datetime.date(2021, 1, 1),
+            end=datetime.date(2026, 1, 1),
+            incremental=False,
+            extra={"capability": "hk_trade_calendar"},
+        )
+        rows = []
+        for r in icp.InternalComputeProvider()._fetch_hk_trade_calendar(payload):
+            rows.extend(r.rows or [])
+        assert rows[0] == ("2021-09-16", 1, "2021-09-16")  # 首日取自身（原 bug=空串）
+        assert rows[1] == ("2021-09-17", 1, "2021-09-16")

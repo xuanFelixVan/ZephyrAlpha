@@ -114,6 +114,8 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "trading_lifecycle_weekly",  # 三域生命周期周扫（协议 v2.0：因子/策略/指标衰减认证）
         "limit_up_pool",  # 涨停池明细采集（GAP-F-13，裁定#257⑤ LUE-3 接线）
         "daban_board_event",  # 打板日频事件派生（STR-DABAN-022，裁定#257⑤ LUE-3 接线）
+        "kline_index_breadth",  # 指数涨跌家数内生聚合回填真表（车道 G 广度治本 2026-09-16）
+        "breadth_freshness_sentinel",  # 广度断供哨兵→promotion 页（车道 G 施工项3 同日）
     }
 )
 
@@ -405,6 +407,12 @@ class InternalComputeProvider(IngestProviderBase):
             CapabilityContract("limit_up_pool", supports_symbols_null=True),
             # 打板日频事件派生（STR-DABAN-022/裁定#257⑤ LUE-3 2026-09-16）：CH 只读推导三级涨停价解析链，symbols=null=全市场
             CapabilityContract("daban_board_event", supports_symbols_null=True),
+            # 指数涨跌家数内生聚合回填真表（车道 G 广度进料口治本 2026-09-16）：
+            # kline_daily 自算宇宙宽度→整行读-改-写 kline_index 零宽度位，symbols=null=注册表全量
+            CapabilityContract("kline_index_breadth", supports_symbols_null=True),
+            # 广度断供哨兵（车道 G 施工项3 2026-09-16）：扫真表零值/缺行→OpsAlertFeed
+            # （promotion 页），无 CH 落表（table=null 分析型任务），symbols=null=注册表全量
+            CapabilityContract("breadth_freshness_sentinel", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -455,6 +463,18 @@ class InternalComputeProvider(IngestProviderBase):
         Yields:
             FetchResult：每批一个（按标的分批，避免单批过大）
         """
+        # 按 capability 优先路由（车道 G 广度治本 2026-09-16）：
+        #   kline_index_breadth 目标表与外部 kline_index 任务同表（按 table 路由会串台），
+        #   breadth_freshness_sentinel 为 table=null 分析型任务（无落表，只落告警板）——
+        #   两者均以 payload.extra["capability"] 作分派键（同 pattern_weight_sync 先例）。
+        capability = payload.extra.get("capability") if isinstance(payload.extra, dict) else None
+        if capability == "kline_index_breadth":
+            yield from self._fetch_kline_index_breadth(payload, policy)
+            return
+        if capability == "breadth_freshness_sentinel":
+            yield from self._fetch_breadth_freshness_sentinel(payload)
+            return
+
         # 按 table 路由：calendar_event 走日历事件派生，hk_trade_calendar 走 XHKG 日历，
         # index_valuation_daily 走指数估值内部计算（S2 路A），其余走技术指标
         if payload.table == "c1_market.calendar_event":
@@ -717,6 +737,48 @@ class InternalComputeProvider(IngestProviderBase):
                 (m or {}).get("total", 0) for m in merged.values() if isinstance(m, dict)
             ),
             error="; ".join(errors) if errors else None,
+        )
+
+    def _fetch_kline_index_breadth(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
+        """指数涨跌家数路由分支（kline_index_breadth capability 命名约定实现，车道 G 治本）。
+
+        委托 IndexBreadthComputeProvider：kline_daily 全市场日线自算成分宇宙宽度
+        （后复权收益符号计数）→ 整行读-改-写回填 c1_market.kline_index 的双零宽度位
+        （真源优先，官方存量永不改写；禁 DELETE/ALTER，RULE-DATA-OPS）。
+        修复窗由 provider 按 lookback 自行裁定（跨月断档自愈），不取 scheduler 月初 start。
+        """
+        from zephyr.data.implementations.index_breadth_compute import (
+            IndexBreadthComputeProvider,
+        )
+
+        provider = IndexBreadthComputeProvider()
+        provider.connect()
+        try:
+            yield from provider.fetch(payload, policy)
+        finally:
+            provider.disconnect()
+
+    def _fetch_breadth_freshness_sentinel(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """广度断供哨兵路由分支（breadth_freshness_sentinel 命名约定实现，车道 G 施工项3）。
+
+        委托 breadth_freshness_alerts.run_check：扫 kline_index 真表近期零宽度/缺行
+        → OpsAlertFeed 唯一出口落板（promotion 页横幅），缺口消失自动 resolve。
+        刻意不挂进料任务下游（tasks.yaml dependencies 空）——进料任务死亡时本任务
+        仍须能告警，否则断供重新隐身。无 CH 落表（table=null 分析型任务，0 行仅记账）；
+        扫描自身失败以 error 上抛使任务记 FAILED（哨兵失能=断供不可见的等价风险）。
+        """
+        from zephyr.data.implementations.breadth_freshness_alerts import run_check
+
+        t0 = time.monotonic()
+        summary = run_check(today=payload.end)
+        yield FetchResult(
+            table="breadth_freshness_sentinel",
+            columns=[],
+            rows=[],
+            last_key=payload.end.isoformat() if payload.end else "",
+            elapsed_sec=time.monotonic() - t0,
+            rows_fetched=0,
+            error=summary.get("scan_error"),
         )
 
     def _fetch_kline_index_calc(self, payload: FetchPayload, policy) -> Iterator[FetchResult]:
@@ -1116,7 +1178,9 @@ class InternalComputeProvider(IngestProviderBase):
             trading_days.sort()
             rows: list[tuple] = []
             for i, d in enumerate(trading_days):
-                pretrade = trading_days[i - 1].isoformat() if i > 0 else ""
+                # 首日无前交易日取自身（与 A 股日历 prev or d 同语义）——空串写入
+                # 非 Nullable(Date) 会 Code 38 回灌死循环（2026-09-16 兜底池实证）
+                pretrade = trading_days[i - 1].isoformat() if i > 0 else d.isoformat()
                 rows.append((d.isoformat(), 1, pretrade))
 
             self._log.info(

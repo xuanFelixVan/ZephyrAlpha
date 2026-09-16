@@ -37,6 +37,7 @@ import signal as sig_module
 import sys
 import threading
 import time
+import collections
 from datetime import datetime
 from decimal import Decimal
 from pathlib import Path
@@ -279,6 +280,15 @@ class TickSubscriber:
         self._received = 0
         self._written = 0
         self._errors = 0
+        # A4b 溢出旁路（2026-09-16）：队列满不再丢弃——溢出 tick 暂存 deque，
+        # 由专用线程经同源 tick_to_row 写 WalWriter。deque maxlen=内存保险丝
+        # （极端下丢最旧并计数，绝不无限膨胀）。
+        self._overflow: collections.deque = collections.deque(maxlen=100000)
+        self._overflow_lock = threading.Lock()
+        self._overflow_thread: threading.Thread | None = None
+        self._overflow_spilled = 0
+        self._overflow_dropped = 0
+        self._overflow_log_counter = 0
 
         # P0-2: 预热逻辑——订阅完成 + 首个 tick 收到 = ready
         # Event 在 _on_tick 首次成功入队后 set()，start() 中 wait(timeout) 阻塞等待
@@ -343,9 +353,8 @@ class TickSubscriber:
                     if not self._first_tick_received.is_set():
                         self._first_tick_received.set()
                 except queue.Full:
-                    log.warning("tick 队列已满，丢弃 tick symbol=%s", symbol)
-                    self._errors += 1
-                    _get_metrics_registry().inc("zephyr_tick_dropped_total")
+                    # A4b：溢出暂存不丢弃（原实现直接丢 tick=唯一真丢数据路径）
+                    self._spill_overflow(symbol, tick, _DATA_SOURCE)
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                     log.error("入队失败 symbol=%s: %s", symbol, e, exc_info=True)
                     self._errors += 1
@@ -369,9 +378,85 @@ class TickSubscriber:
             self._last_tick_ts = time.time()  # 裁定C：备源 tick 同样视为业务活性
             _get_metrics_registry().inc("zephyr_tick_received_total")
         except queue.Full:
-            log.warning("tick 队列已满，丢弃备源 tick symbol=%s", symbol)
-            self._errors += 1
-            _get_metrics_registry().inc("zephyr_tick_dropped_total")
+            # A4b：备源溢出同样暂存不丢弃
+            self._spill_overflow(symbol, tick, source)
+
+    def _spill_overflow(self, symbol: str, tick: dict, source: str) -> None:
+        """队列满溢出暂存（A4b 2026-09-16）：不丢弃，由溢出线程落盘。
+
+        回调线程只做 deque.append（O(1) 无 I/O），语义从 dropped（真丢）改为
+        spilled（暂存待转储）。deque 满时丢最旧并计数——内存保险丝。
+        """
+        with self._overflow_lock:
+            if len(self._overflow) >= self._overflow.maxlen:
+                self._overflow_dropped += 1
+            self._overflow.append((symbol, tick, source))
+            self._overflow_log_counter += 1
+        _get_metrics_registry().inc("zephyr_tick_overflow_spilled_total")
+        if self._overflow_log_counter == 1 or self._overflow_log_counter % 5000 == 0:
+            log.warning(
+                "tick 队列已满，溢出暂存 %d 个（累计转储 %d / 保险丝丢弃 %d）",
+                len(self._overflow),
+                self._overflow_spilled,
+                self._overflow_dropped,
+            )
+
+    def _flush_overflow_once(self) -> int:
+        """转储当前溢出暂存一批，返回成功写入行数（转储线程与 stop 收尾共用）。
+
+        复用主链同源构造（tick_to_row + _TICK_COLUMNS + WalWriter.add，线程安全：
+        add 内段变更持 _lock）。WalWriter critical 背压拒绝时数据塞回 deque 头部
+        原序保活，等下轮。Redis 缓存双写跳过（best-effort 语义，极端场景豁免）。
+        """
+        if self._writer is None:
+            return 0
+        with self._overflow_lock:
+            if not self._overflow:
+                return 0
+            batch = list(self._overflow)
+            self._overflow.clear()
+        rows: list[tuple] = []
+        for symbol, tick, source in batch:
+            try:
+                r = tick_to_row(symbol, tick, data_source=tick.pop("_data_source", source))
+            except Exception:  # noqa: BLE001 — 单行构造失败只跳该行
+                continue
+            if r:
+                rows.append(r)
+        if not rows:
+            return 0
+        from zephyr.data.provider_base import FetchResult
+
+        try:
+            ok = self._writer.add(
+                FetchResult(
+                    table=_TBL_TICK_DATA,
+                    columns=_TICK_COLUMNS,
+                    rows=rows,
+                    last_key="",
+                    elapsed_sec=0.0,
+                )
+            )
+        except Exception:  # noqa: BLE001 — writer 异常不终止溢出线程
+            ok = False
+        if ok:
+            self._overflow_spilled += len(rows)
+            _get_metrics_registry().inc("zephyr_tick_overflow_spill_flushed_total", n=len(rows))
+            return len(rows)
+        with self._overflow_lock:
+            for item in reversed(batch):
+                self._overflow.appendleft(item)
+        log.warning("溢出转储被 WalWriter 背压拒绝，%d 行塞回暂存", len(rows))
+        return 0
+
+    def _overflow_flush_loop(self) -> None:
+        """溢出转储线程（A4b）：每 2s 清一次暂存，主队列恢复后自动追平。"""
+        while self._running:
+            time.sleep(2.0)
+            try:
+                self._flush_overflow_once()
+            except Exception:  # noqa: BLE001 — 线程永不因异常退出
+                log.error("溢出转储异常", exc_info=True)
 
     def _drain_batch(self, max_n: int = _DRAIN_BATCH_SIZE, timeout: float = 1.0) -> int:
         """批量出队——阻塞等待第一条，然后非阻塞批量取剩余。
@@ -1060,6 +1145,12 @@ class TickSubscriber:
         self._flush_thread = threading.Thread(target=self._flush_loop, daemon=True, name="tick-flush")
         self._flush_thread.start()
 
+        # A4b：溢出转储线程（队列满暂存的 tick 由它落盘，见 _spill_overflow）
+        self._overflow_thread = threading.Thread(
+            target=self._overflow_flush_loop, daemon=True, name="tick-overflow"
+        )
+        self._overflow_thread.start()
+
         # 治本（#ARCH-DATA-TICK-GAP-001 后续，2026-07-31）：
         # tick_subscriber 启动早于 QMT 客户端时，subscribe_quote 静默失败（7-30 0行根因）。
         # 三阶段启动：①等待 QMT 连通性就绪 → ②订阅全市场 → ③等待首个 tick（超时重新订阅）。
@@ -1150,6 +1241,12 @@ class TickSubscriber:
         self._flush_thread = threading.Thread(target=self._flush_loop, daemon=True, name="tick-flush")
         self._flush_thread.start()
 
+        # A4b：溢出转储线程（队列满暂存的 tick 由它落盘，见 _spill_overflow）
+        self._overflow_thread = threading.Thread(
+            target=self._overflow_flush_loop, daemon=True, name="tick-overflow"
+        )
+        self._overflow_thread.start()
+
         self._biz_thread = threading.Thread(
             target=self._biz_watchdog_loop,
             daemon=True,
@@ -1167,6 +1264,15 @@ class TickSubscriber:
         self._running = False
         if self._flush_thread:
             self._flush_thread.join(timeout=30)
+        # A4b：溢出线程收尾 + 停止前同步转储残留（writer 仍存活，必须在 writer.stop 前）
+        if self._overflow_thread:
+            self._overflow_thread.join(timeout=10)
+        try:
+            flushed = self._flush_overflow_once()
+            if flushed:
+                log.info("停止前转储残留溢出 %d 行", flushed)
+        except Exception:  # noqa: BLE001 — 收尾不阻断停止流程
+            log.error("停止前溢出转储失败", exc_info=True)
         if self._biz_thread:
             self._biz_thread.join(timeout=5)
         # P1-3: 停止双源切换器（含备源轮询线程）

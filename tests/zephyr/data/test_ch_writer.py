@@ -415,3 +415,85 @@ class TestEnsureDatabase:
             patch("src.zephyr.data.ch_writer.get_client", return_value=None),
         ):
             assert ensure_database("new_db") is False
+
+
+class TestHttpInsertSelfHeal:
+    """A1 连接自愈（2026-09-16）：5xx 连续失败→强制失效 host+TCP；4xx 不计数。"""
+
+    class _FakeResp:
+        def __init__(self, status, body=b"err"):
+            self.status = status
+            self._body = body
+
+        def read(self):
+            return self._body
+
+    class _FakeConn:
+        def __init__(self, status):
+            self._resp = TestHttpInsertSelfHeal._FakeResp(status)
+
+        def request(self, *a, **kw):
+            pass
+
+        def getresponse(self):
+            return self._resp
+
+        def close(self):
+            pass
+
+    def test_5xx_streak_triggers_invalidate(self, monkeypatch):
+        from src.zephyr.data import ch_writer as cw
+
+        calls = {"host": 0, "tcp": 0}
+        monkeypatch.setattr(cw, "get_http_host", lambda: "fake-host")
+        monkeypatch.setattr(cw, "_invalidate_http_host", lambda r="": calls.__setitem__("host", calls["host"] + 1))
+        monkeypatch.setattr(cw, "_invalidate_tcp_client", lambda r="": calls.__setitem__("tcp", calls["tcp"] + 1))
+        monkeypatch.setattr(cw, "_http_fail_streak", 0)
+        monkeypatch.setattr(cw.http.client, "HTTPConnection", lambda *a, **kw: self._FakeConn(500))
+
+        for _ in range(cw._HTTP_FAIL_STREAK_THRESHOLD - 1):
+            assert cw.http_insert("INSERT INTO t FORMAT TSV", b"1") is False
+        assert calls["host"] == 0 and calls["tcp"] == 0  # 未达阈值不触发
+        assert cw.http_insert("INSERT INTO t FORMAT TSV", b"1") is False
+        assert calls["host"] == 1 and calls["tcp"] == 1  # 达阈值双失效
+        assert cw._http_fail_streak == 0  # 触发后清零
+
+    def test_200_resets_streak(self, monkeypatch):
+        from src.zephyr.data import ch_writer as cw
+
+        calls = {"host": 0}
+        monkeypatch.setattr(cw, "get_http_host", lambda: "fake-host")
+        monkeypatch.setattr(cw, "_invalidate_http_host", lambda r="": calls.__setitem__("host", 1))
+        monkeypatch.setattr(cw, "_invalidate_tcp_client", lambda r="": None)
+        monkeypatch.setattr(cw, "_http_fail_streak", 0)
+        statuses = {"next": [500, 200, 500, 200]}
+
+        def fake_conn(*a, **kw):
+            return self._FakeConn(statuses["next"].pop(0))
+
+        monkeypatch.setattr(cw.http.client, "HTTPConnection", fake_conn)
+        for _ in range(4):
+            cw.http_insert("INSERT INTO t FORMAT TSV", b"1")
+        assert cw._http_fail_streak == 0
+        assert calls["host"] == 0  # 成功穿插重置，永不触发
+
+    def test_4xx_not_counted(self, monkeypatch):
+        from src.zephyr.data import ch_writer as cw
+
+        calls = {"host": 0}
+        monkeypatch.setattr(cw, "get_http_host", lambda: "fake-host")
+        monkeypatch.setattr(cw, "_invalidate_http_host", lambda r="": calls.__setitem__("host", 1))
+        monkeypatch.setattr(cw, "_invalidate_tcp_client", lambda r="": None)
+        monkeypatch.setattr(cw, "_http_fail_streak", 0)
+        monkeypatch.setattr(cw.http.client, "HTTPConnection", lambda *a, **kw: self._FakeConn(400))
+
+        for _ in range(cw._HTTP_FAIL_STREAK_THRESHOLD + 1):
+            assert cw.http_insert("INSERT INTO t FORMAT TSV", b"1") is False
+        assert calls["host"] == 0  # 4xx=数据错，不计入链路自愈
+        assert cw._http_fail_streak == 0
+
+    def test_empty_host_degrades_silently(self, monkeypatch):
+        from src.zephyr.data import ch_writer as cw
+
+        monkeypatch.setattr(cw, "get_http_host", lambda: "")
+        assert cw.http_insert("INSERT INTO t FORMAT TSV", b"1") is False

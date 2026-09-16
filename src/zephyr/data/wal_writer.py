@@ -70,6 +70,7 @@ _DEFAULT_SEGMENT_MAX_SECONDS = 5.0
 _DEFAULT_WAL_DIR_MAX_BYTES = 2 * 1024**3
 _WARNING_RATIO = 0.7
 _CRITICAL_RATIO = 0.9
+_CAPACITY_CACHE_TTL = 5.0  # 容量扫描缓存秒数（rglob 全树 O(文件数)，不可每批执行）
 
 # drain 线程轮询参数
 _DRAIN_IDLE_INTERVAL = 2.0  # 无积压轮询间隔
@@ -138,6 +139,11 @@ class WalWriter:
         self._total_segmented = 0
         self._total_added = 0
         self._segment_count = 0
+        # 容量检查缓存（2026-09-16 治本）：_dir_size_bytes 是 rglob 全树扫描，
+        # O(文件数)/批——兜底池 3700 文件时消费速率崩到 275 行/s（生产 780），
+        # 队列钉死丢弃 44 万行的元凶。TTL 内复用上次扫描结果。
+        self._cap_cache_ts: float = 0.0
+        self._cap_cache_bytes: int = 0
 
     @property
     def drain_thread(self) -> threading.Thread | None:
@@ -218,16 +224,27 @@ class WalWriter:
             return self._flush_segment_locked()
 
     def _check_wal_capacity(self) -> str:
-        """检查 WAL 目录容量，返回 'ok'/'warning'/'critical'。"""
-        # 复用 local_replay 的存储目录（WAL 段与 fallback 文件共用同一目录与 manifest）
-        used = _dir_size_bytes(local_replay._FALLBACK_DIR)
-        get_registry().set_gauge("zephyr_wal_dir_bytes", used)
-        ratio = used / self._wal_dir_max_bytes if self._wal_dir_max_bytes > 0 else 0
+        """检查 WAL 目录容量，返回 'ok'/'warning'/'critical'。
+
+        结果缓存 _CAPACITY_CACHE_TTL 秒（rglob 全树扫描 O(文件数)，不可每批执行）；
+        drain 回灌成功后调 _invalidate_capacity_cache() 立即刷新。
+        """
+        now = time.monotonic()
+        if now - self._cap_cache_ts >= _CAPACITY_CACHE_TTL:
+            # 复用 local_replay 的存储目录（WAL 段与 fallback 文件共用同一目录与 manifest）
+            self._cap_cache_bytes = _dir_size_bytes(local_replay._FALLBACK_DIR)
+            self._cap_cache_ts = now
+            get_registry().set_gauge("zephyr_wal_dir_bytes", self._cap_cache_bytes)
+        ratio = self._cap_cache_bytes / self._wal_dir_max_bytes if self._wal_dir_max_bytes > 0 else 0
         if ratio >= _CRITICAL_RATIO:
             return "critical"
         if ratio >= _WARNING_RATIO:
             return "warning"
         return "ok"
+
+    def _invalidate_capacity_cache(self) -> None:
+        """容量缓存失效（drain 删除文件后调用，下次检查重新扫描）。"""
+        self._cap_cache_ts = 0.0
 
     def _apply_backpressure(self, level: str) -> bool:
         """根据容量级别施加背压。critical 返回 False 阻断写入。"""
@@ -266,6 +283,7 @@ class WalWriter:
                     reg.set_gauge("zephyr_wal_backlog_files", remaining)
                     if replayed > 0:
                         reg.inc("zephyr_drain_replayed_total", n=replayed)
+                        self._invalidate_capacity_cache()  # 文件已删，容量缓存失效
                         log.info("WalWriter(%s) drain: 回灌 %d 段，剩余 %d", self._table, replayed, remaining)
                     if remaining > 0:
                         wait_sec = _DRAIN_FAST_INTERVAL

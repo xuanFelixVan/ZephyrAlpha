@@ -278,3 +278,26 @@ class TestLifecycle:
             assert w.drain_thread.is_alive()
             w.stop()
             assert w.drain_thread is None
+
+
+class TestCapacityCache:
+    """A4a 容量检查缓存（2026-09-16）：TTL 内只扫一次；失效后重扫。"""
+
+    def test_ttl_cache_and_invalidate(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        (tmp_path / "x.tsv").write_bytes(b"123")
+        calls = {"n": 0}
+
+        def _counting(p):
+            calls["n"] += 1
+            return 123
+
+        monkeypatch.setattr(wal_writer, "_dir_size_bytes", _counting)
+        w = WalWriter("c1_market.tick_data")
+        w._cap_cache_ts = 0.0
+        assert w._check_wal_capacity() == "ok"
+        assert w._check_wal_capacity() == "ok"
+        assert calls["n"] == 1  # TTL 内复用扫描
+        w._invalidate_capacity_cache()
+        assert w._check_wal_capacity() == "ok"
+        assert calls["n"] == 2  # 失效后重扫
