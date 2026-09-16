@@ -1,8 +1,8 @@
-# 自动生成于 2026-09-16T09:02:06Z
+# 自动生成于 2026-09-16T14:57:25Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-16T09:02:06Z'
+generated_at: '2026-09-16T14:57:25Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 434
@@ -2509,7 +2509,8 @@ scripts:
   - --warn-only
   - --jsonl
   warn_only: false
-  description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.1 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
+  description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（锚：TRAE-014 蓝图-代码双向对齐 / AGENTS.md
+    RULE-DEPGRAPH — 蓝图路径索引 vs 磁盘交叉比对，幽灵路径+遗漏登记+路径漂移）
   tags:
   - Critical
   - Quick
