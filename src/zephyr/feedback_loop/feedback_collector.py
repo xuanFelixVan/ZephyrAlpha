@@ -31,32 +31,7 @@ Collects feedback from task execution, supporting:
 Feedback entries are stored in-memory and can be flushed to disk
 as JSON for downstream analysis or audit logging.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: store_path 参数
-#   fields: 参数 store_path（无注解）
-#   code: feedback_collector.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① FeedbackCollector
-#   name_en: FeedbackCollector
-#   intro: Collect and manage task execution feedback.
-#   desc: Collect and manage task execution feedback. Parameters ---------- store_path : Path | Non…；公共方法（定义序）: add, ge…
-#   inputs: store_path
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: FeedbackCollector
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/feedback_loop/feedback_collector.yaml
 """
 
 from __future__ import annotations

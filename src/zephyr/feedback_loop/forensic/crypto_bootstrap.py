@@ -23,32 +23,7 @@ Risk: R204 — Attacker rewrites FLE audit trail; first recorded state is fictio
 
 Mitigation: Genesis->Current hash chain; every state transition cryptographically linked to predecessor.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: crypto_bootstrap.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① CryptoBootstrap
-#   name_en: CryptoBootstrap
-#   intro: class CryptoBootstrap 源码 L72-L104
-#   desc: 公共方法（定义序）: genesis, append, verify_chain；源码 L72-L104
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: CryptoBootstrap
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/forensic/crypto_bootstrap.yaml
 """
 
 from __future__ import annotations

@@ -30,32 +30,7 @@ against known-good attestation manifest. Verify config integrity. If any hash
 mismatch -> refuse to start in full-auto mode, degrade to observe-only.
 Require owner attestation override to proceed.
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: boot_integrity_attestation.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① BootIntegrityAttestation
-#   name_en: BootIntegrityAttestation
-#   intro: class BootIntegrityAttestation 源码 L161-L238
-#   desc: 公共方法（定义序）: compute_file_hash, build_manifest, attest, owner_attest_override, get_integrity_status；源码 L161-L238
-#   inputs: 无参数
-#   outputs: 返回值
-#   （注：A1 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（2 定义）
-#   name_en: public defs
-#   intro: BootIntegrityAttestation
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_feedback_loop/algo_flow/forensic/boot_integrity_attestation.yaml
 """
 
 from __future__ import annotations
