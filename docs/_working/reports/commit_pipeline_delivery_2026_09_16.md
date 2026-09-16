@@ -193,3 +193,10 @@ noise 轮：无。矿脉枯竭：R3 五脉全见底，本域收口。
 - 10 会话并发模拟 ALL_GREEN（终版含隔离修复）；belt 守护换新 PID 28648（含阈值告警+环境失败升级）。
 - 红蓝套件（10 用例）随全域三连绿；FILE-COPY 治本双钉（孪生 CLEAN+真克隆仍拦）在库。
 - 收口链：c3729434（8 文件）+ 本节。全链 commit 经 GitCommitGateway，归属逐笔核实。
+
+### 11.6 提交卫生附注（总包欠账清偿战⑤代记，2026-09-16）
+本节由超级长城总包（st-overseer-20260916）按 Owner"解决所有欠账"令代记，归因三笔 message 卫生差的 probe 提交——经逐笔 diff 核实，内容均为正料，仅 message 未描述实际内容：
+- `3e1ff4cfe5`「probe: which gate blocks」=交付报告 §10-§11 内容 143 行入库（当时门禁阻断调查的载体提交）。
+- `78cf40fe7f`「probe preflight block reason」=§11 前期预检归因补记 17 行。
+- `35d792c098`「probe import full detail single file」=**create_guard.py B1 registry 撕裂读重试治本**（解析重试×3/0.3s+解析失败审计 jsonl+now_utc 时区合规+单点读取函数供测试 monkeypatch）——v2.1 W1 系正式加固，非探针代码。
+卫生教训（登记备查）：门禁调查类临时提交应带内容描述性 message 或事后追补归因注记（本节即追补通道）；裸 "probe" 前缀 message 使 git log 失去自解释性，历史不可重写故以附注归因收口。
