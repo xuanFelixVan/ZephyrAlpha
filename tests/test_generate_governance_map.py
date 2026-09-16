@@ -1,5 +1,4 @@
 # [BLUEPRINT] MOD-ALT-001 | (auto-injected by S4 reconciler) | §
-# [TTL] permanent
 # [MODULE] tests.test_generate_governance_map
 # [DOMAIN] D_GOV_SCRIPTS
 # [TTL] permanent

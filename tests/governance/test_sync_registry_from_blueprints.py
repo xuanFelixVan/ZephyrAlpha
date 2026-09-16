@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # [TTL] permanent
 # [MODULE] tests.governance.test_sync_registry_from_blueprints
 # [DOMAIN] D_AUDITTEST
