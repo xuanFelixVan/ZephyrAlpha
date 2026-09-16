@@ -1,11 +1,16 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.core.matching_engine
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.core.portfolio; zephyr.backtest.core.matching_logic; zephyr.data.ch_reader（StkLimitProvider lazy import）; zephyr.data.implementations.akshare_provider（_limit_pct_of lazy import，涨跌幅切片单一真源）; zephyr.execution_simulation.almgren_chriss_impact_model（冲击成本 lazy import，P0-2）
+# [DEPENDENCIES] zephyr.backtest.core.portfolio; zephyr.backtest.core.matching_logic; zephyr.backtest.core.cost_model_calibration（滑点/冲击标定真源：冲击腿 per-tier η/β/σ + 口径开关）; zephyr.data.ch_reader（StkLimitProvider lazy import）; zephyr.data.implementations.akshare_provider（_limit_pct_of lazy import，涨跌幅切片单一真源）; zephyr.execution_simulation.almgren_chriss_impact_model（冲击成本 lazy import，P0-2）
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] A股约束: T+1/涨跌停/停牌/100股整数倍; 委托MatchingLogic保证回测=实盘一致性; 涨跌停价三级解析链=stk_limit表PIT行→limit_pct_of切片规则（ST经st_stock_list最近可得快照）→板块前缀推断（无日期兜底），禁再造第四份口径（#ARCH-DATA-020）
+#              INV-COST-LEGS(#23 H2): 执行成本两腿互斥可加——滑点腿（尺寸无关，价差+逆向
+#              选择）唯一在 MatchingLogic 按 ADV 五分位解析，本引擎只透传「当日成交额」
+#              不重算；冲击腿（尺寸相关，走单位移）唯一在本引擎 _apply_impact_to_books
+#              按同层标定 η/β/σ 计价（IMPACT_GAMMA_RATIO=0 已裁定永久项不再另计，
+#              否则同段位移计费两次）。引擎侧禁出现任何档位 bps/η 字面量（第二真源）。
 #              INV-UNIT-001(车道K 2026-09-16): volumes 入参口径=「股」且与 prices 同复权空间
 #              （由 load_history→market_units 出口一次性归一），本引擎禁再乘 100/禁再乘因子；
 #              参与率与冲击的分子分母必须同源同纲（订单股数 ÷ 当日成交股数）
@@ -14,7 +19,7 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] MatchingError
-# [TESTS] tests/backtest/test_matching_engine.py
+# [TESTS] tests/backtest/test_matching_engine.py, tests/backtest/test_cost_model_wiring.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """回测撮合引擎模块（v1.1.0 重构：委托 MatchingLogic 保证回测=实盘一致性）
@@ -62,8 +67,9 @@ import datetime
 import logging
 from dataclasses import dataclass, replace
 from decimal import ROUND_HALF_UP, Decimal
-from typing import Callable, Iterable, Optional
+from typing import Any, Callable, Iterable, Optional
 
+from zephyr.backtest.core import cost_model_calibration as cost_cal
 from zephyr.backtest.core.matching_logic import (
     MatchingConfig,
     MatchingFill,
@@ -114,7 +120,9 @@ class LiquidityGuardConfig:
         max_participation_rate: 单标的单日成交量参与率上限（0.10=成交 ≤ 当日量 10%）。
             买卖同限；买单向下取整手，卖单向下取整股（清仓允许零股）。
         impact_enabled: 是否按 Almgren-Chriss 冲击模型调整成交价
-            （临时+永久冲击 bps，参与率越高越贵；复用 execution_simulation 真源）。
+            （临时+永久冲击 bps，参与率越高越贵；复用 execution_simulation 真源，
+            η/β/γ/σ 按该标的流动性层从 cost_model_calibration 取标定档，口径开关
+            关闭时回到 legacy 默认档。冲击=尺寸相关腿，与滑点（尺寸无关腿）互斥相加）。
     """
 
     max_participation_rate: Decimal = Decimal("0.10")
@@ -163,6 +171,35 @@ class LimitInfo:
 #: StkLimitProvider 协议：`(trade_date, symbols) -> {symbol: LimitInfo}`。
 #: trade_date 已归一化为 date；symbols 为撮合当日标的的原始 symbol 形态。
 LimitProvider = Callable[[datetime.date, Iterable[str]], dict]
+
+
+def _daily_notional_map(
+    order_books: dict[str, OrderBookSnapshot],
+    volumes: dict[str, Decimal] | None,
+) -> dict[str, Decimal]:
+    """逐笔「当日成交额」（元）= 当日成交量(股) × 当日基准价 —— 两条成本腿的流动性输入。
+
+    本引擎唯一可得的流动性信息就是 ``volumes``（INV-UNIT-001：口径=「股」，与 prices
+    同复权空间），故成交额只能由它 ×当日价 得到。标定表的分层母体是 40 日 ADV，
+    用当日成交额代入是 ``cost_model_calibration.liquidity_tier`` docstring 明确认可的
+    单调近似（同一把尺子，误差只在层间抖动，不会反向）。
+
+    volume 缺失/非正、或价格非正的标的不进表：**不虚构流动性**——缺项由
+    ``MatchingLogic`` 侧回落到标定真源的无信息档（全市场名义加权实证 bps），
+    绝不在引擎里另立一个档位查表（那会是第二真源）。
+    """
+    if not volumes:
+        return {}
+    out: dict[str, Decimal] = {}
+    for symbol, ob in order_books.items():
+        vol = volumes.get(symbol)
+        if vol is None or ob is None or ob.last_price is None or ob.last_price <= 0:
+            continue
+        v = vol if isinstance(vol, Decimal) else Decimal(str(vol))
+        if v <= 0:
+            continue
+        out[symbol] = v * ob.last_price
+    return out
 
 
 def _build_target_orders(
@@ -336,6 +373,10 @@ class MatchingEngine:
                 一个复权空间（两者都由 load_history 出口一次性归一）。直传源表
                 `kline_daily.volume` 原始列会把参与率上限悄悄收紧 100 倍
                 （94.6% 行是「手」）——车道 K P0-1 的病灶，勿再犯。
+                同一个量还驱动**两条成本腿的分层**（#23 H2）：volume×当日价 = 该笔
+                当日成交额，滑点腿据此落 ADV 五分位、冲击腿据此取该层标定 η/σ。
+                不传 volumes 即无流动性信息，成本腿落标定真源的「无信息档」
+                （滑点=全市场名义加权实证 bps，冲击=标定表成本上界层），不是回到 1bp。
 
         Returns:
             BacktestFill 列表（先卖后买排序）
@@ -545,6 +586,8 @@ class MatchingEngine:
           2. 对每个 symbol 计算目标数量（100股整数倍）
           3. 计算差额（目标 - 当前持仓）
           3.5 P0-2 流动性约束（启用时）：成交量参与率上限收缩 + 冲击成本调价
+              （冲击参数按 3.6 的流动性层从标定真源取档，非 DEFAULT_PARAMS）
+          3.6 #23 H2 逐笔当日成交额解析（滑点腿与冲击腿共用的流动性输入）
           4. 先卖后买排序
           5. 委托 MatchingLogic 撮合（市价/限价/Tick）
           6. MatchingFill -> BacktestFill
@@ -576,6 +619,10 @@ class MatchingEngine:
         # P0-2 流动性约束：成交量参与率上限收缩订单（先于冲击调价——参与率按
         # 收缩后的实际订单量计），再按 Almgren-Chriss 冲击调整合成盘口价格。
         # 仅日线合成盘口路径生效（tick_mode 的真实5档深度本身即是约束）。
+        # 3.6 #23 H2：两条成本腿的流动性输入在此一次性解析成「逐笔当日成交额」，
+        # 冲击腿（本引擎）、现金投影（sizing）与实际成交（MatchingLogic）必须消费
+        # 同一个数——否则投影与成交口径分裂，满仓信号会因余量算错被拒单。
+        notionals: dict[str, Decimal] = {} if tick_mode else _daily_notional_map(order_books, volumes)
         liquidity_on = (
             not tick_mode
             and volumes
@@ -593,12 +640,14 @@ class MatchingEngine:
         # 总成本=成交额×(1+滑点)+佣金 必然超现金 → 整单被拒（每日重复 warning、
         # 回测偏离信号意图）。此处按"先卖后买"顺序投影现金，买单预计超支时
         # 收缩到可负担的最大整手；现金充足的非满仓场景逐位不变（零回归）。
-        orders = self._clamp_buys_to_projected_cash(orders, order_books, portfolio)
+        orders = self._clamp_buys_to_projected_cash(orders, order_books, portfolio, notionals)
 
         # 生成 fills
         fills: list[BacktestFill] = []
         for order_dict in orders:
-            fill = self._match_order_dict(order_dict, order_books, tick_mode=tick_mode, ticks=ticks)
+            fill = self._match_order_dict(
+                order_dict, order_books, tick_mode=tick_mode, ticks=ticks, notionals=notionals
+            )
             # Tick 模式下部分成交（quantity>0 但 filled=False）也应当应用
             # 市价单/限价单完全成交才应用（filled=True）
             if fill is not None and (fill.filled or fill.filled_quantity > 0):
@@ -610,6 +659,7 @@ class MatchingEngine:
         orders: list[dict],
         order_books: dict[str, OrderBookSnapshot],
         portfolio: Portfolio,
+        notionals: dict[str, Decimal] | None = None,
     ) -> list[dict]:
         """按投影现金收缩买单至可负担的最大整手（满仓成本摩擦修复）
 
@@ -618,18 +668,28 @@ class MatchingEngine:
         扣减；买单预计超支时收缩数量到可负担整手，不足一手则丢弃。
         Portfolio._apply_buy 的现金非负检查仍是最终防线（本步骤只做 sizing 收缩）。
         （2026-08-21 费率口径统一 #233：估算含双向过户费 万0.1）
+
+        口径纪律（#23 H2）：滑点 bps 不在本引擎取常数，而是逐标的经
+        ``MatchingLogic.slippage_bps_for`` 按当日成交额解析——sizing 投影与实际成交
+        共用同一真源同一优先级（含显式钉住口径），否则两者分裂会让满仓信号误拒。
+        最低佣金按"每单 5 元地板"估（与 ``_calc_commission`` 同式）：它是小额单上的
+        额外约束，不改动万0.854 这个费率本身。
         """
-        slip = self._config.slippage_bps / Decimal("10000")
+        notionals = notionals or {}
         rate = self._config.commission_rate
         min_comm = self._config.min_commission
         stamp = self._config.stamp_tax_rate
         transfer = self._config.transfer_fee_rate
         lot = self._config.lot_size
 
+        def _slip(symbol: str) -> Decimal:
+            return self._logic.slippage_bps_for(notionals.get(symbol)) / Decimal("10000")
+
         projected = portfolio.cash
         out: list[dict] = []
         for order in orders:
             ob = order_books.get(order["symbol"])
+            slip = _slip(order["symbol"])
             if order["side"] == "SELL":
                 base = self._side_base_price(ob, "SELL")
                 exec_price = base * (1 - slip)
@@ -719,6 +779,18 @@ class MatchingEngine:
         BUY 抬 ask1、SELL 压 bid1（冲击恒为不利方向）；last_price 不动——
         组合估值仍按市场价，冲击只影响成交。volume 缺失/非正的标的跳过。
 
+        参数档（#23 H2-C 治本）：η/β/γ/σ 不再无条件消费 ``DEFAULT_PARAMS``
+        （无出处默认档，与标定档的偏离倍数由 ``calibration.DEFAULT_PARAMS_REF`` 披露），而是
+        按该标的流动性层从 ``cost_model_calibration`` 取标定档：层号由与滑点腿
+        **同一个** ``_daily_notional_map``（当日成交额）解析，两腿共用一把尺子。
+        两层含义必须分开看：
+          - 冲击腿=尺寸相关（走单位移，随参与率增长）→ 本方法；
+          - 滑点腿=尺寸无关（价差+逆向选择）→ MatchingLogic._apply_slippage。
+        标定侧 ``IMPACT_GAMMA_RATIO=0`` 的裁定已把永久项折进临时项，故本方法计的是
+        同一段位移的一次计费，与滑点腿互斥相加、不重叠（INV-COST-LEGS）。
+        开关 ``calibration_enabled()`` 关时整条腿回到 legacy ``DEFAULT_PARAMS``，
+        供台账 #23 H2 的 A/B 取证逐位复现接线前口径。
+
         参与率 p = 订单股数 ÷ 当日成交股数（分子分母同纲，INV-UNIT-001）。
         正常路径下 p ≤ max_participation_rate（上游 _cap_orders_by_volume 已收缩）；
         p 越出 [0,1] 说明 A-C 模型会抛"参与率越界"而被本函数兜住 → 该标的按无冲击
@@ -731,13 +803,53 @@ class MatchingEngine:
         try:
             from zephyr.execution_simulation.almgren_chriss_impact_model import (
                 AlmgrenChrissImpactModel,
+                ImpactParams,
             )
         except Exception as e:  # noqa: BLE001 — 冲击模型不可用时退化为仅成交量上限
             _logger.warning("AlmgrenChrissImpactModel 导入失败，冲击成本旁路: %s", e)
             return order_books
-        if getattr(self, "_impact_model", None) is None:
-            self._impact_model = AlmgrenChrissImpactModel()
-        model = self._impact_model
+
+        calibrated = cost_cal.calibration_enabled()
+        models: dict[int, Any] = getattr(self, "_impact_models", None)  # type: ignore[assignment]
+        if models is None:
+            models = self._impact_models = {}
+        # 层参数是层常量（标定表静态），跨日复用安全；-1=legacy 档
+        notionals = _daily_notional_map(order_books, volumes)
+
+        def _model_for(symbol: str) -> AlmgrenChrissImpactModel:
+            """该标的的冲击模型（按流动性层缓存）。
+
+            层未知（本笔无成交额信息）且标定档生效时，落 **Q1_illiquid**：标定表里
+            η·σ 随流动性单调递减，故 Q1 是表内成本上界——Fail-Closed 宁可高估，
+            也不静默旁路成零冲击（档位数值只在标定件里，此处禁止复述）。
+            """
+            if not calibrated:
+                key = -1
+            else:
+                notional = notionals.get(symbol)
+                # 缺成交额时按最不流动层兜底（见 docstring）；不新设档位字面量表
+                key = 0 if notional is None else cost_cal.liquidity_tier(float(notional))
+                if notional is None:
+                    _logger.debug(
+                        "冲击腿无当日成交额信息（%s），按标定表成本上界层 Q1_illiquid 计价", symbol
+                    )
+            model = models.get(key)
+            if model is None:
+                if key < 0:
+                    model = AlmgrenChrissImpactModel()  # legacy 口径（DEFAULT_PARAMS）
+                else:
+                    lvl = cost_cal.impact_level_for_tier(key)
+                    model = AlmgrenChrissImpactModel(
+                        params=ImpactParams(
+                            eta=lvl.eta,
+                            beta=lvl.beta,
+                            gamma=lvl.gamma,
+                            sigma=lvl.sigma,
+                            permanent_exponent=lvl.permanent_exponent,
+                        )
+                    )
+                models[key] = model
+            return model
 
         adjusted = dict(order_books)
         for order in orders:
@@ -758,7 +870,7 @@ class MatchingEngine:
                     vol,
                 )
             try:
-                quote = model.quote(float(order["quantity"]), float(vol))
+                quote = _model_for(symbol).quote(float(order["quantity"]), float(vol))
             except Exception as e:  # noqa: BLE001 — 单标的冲击报价失败不炸整日撮合
                 _logger.warning(
                     "冲击报价失败（%s p=%.3f），该标的按无冲击成交: %s", symbol, participation, e
@@ -792,6 +904,7 @@ class MatchingEngine:
         order_books: dict[str, OrderBookSnapshot],
         tick_mode: bool = False,
         ticks: dict[str, TickSnapshot] | None = None,
+        notionals: dict[str, Decimal] | None = None,
     ) -> MatchingFill | None:
         """根据订单字典和盘口撮合，返回 MatchingFill
 
@@ -800,6 +913,8 @@ class MatchingEngine:
             order_books: 盘口 dict
             tick_mode: True=Tick级5档撮合, False=市价单撮合
             ticks: Tick快照 dict（tick_mode=True 时必填）
+            notionals: {symbol: 当日成交额(元)} 滑点分层输入（#23 H2-A；缺项=None=
+                本笔无流动性信息，由标定真源落「无信息档」，引擎不自造档位）。
         """
         symbol = order_dict["symbol"]
         side = order_dict["side"]
@@ -813,6 +928,7 @@ class MatchingEngine:
             side=side,
             quantity=quantity,
             order_type="TICK" if tick_mode else "MARKET",
+            daily_notional_yuan=None if notionals is None else notionals.get(symbol),
         )
 
         try:

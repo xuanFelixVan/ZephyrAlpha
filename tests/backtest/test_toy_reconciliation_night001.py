@@ -18,7 +18,11 @@
 逐笔对账成交价/量/持仓/现金/成本，错一分钱即 bug。
 
 对账口径（来自模块 docstring/SSoT 的公开规则，独立手算）:
-  - 滑点: BUY 价 = base×(1+1bp) = base×1.0001; SELL 价 = base×0.9999
+  - 滑点（#23 H2-A 标定后）: BUY 价 = base×(1+3.79bp) = base×1.000379;
+    SELL 价 = base×0.999621。默认档位由 cost_model_calibration 逐笔解析，本文件
+    夹具不传 volumes（无流动性信息）→ 恒落第 4 级 3.79bp；场景⑤的长链手算例外地
+    显式钉住接线前 1bp 取证口径（LEGACY_SLIPPAGE_BPS），使 20 余个互锁数值不随
+    标定表漂移。
   - 佣金: max(qty×price×0.0000854, 5)；卖出另加印花税 qty×price×0.0005；
     过户费 qty×price×0.00001 双向（2026-08-21 费率口径统一 #233）
   - total_cost: BUY = qty×price + commission；SELL = qty×price − commission
@@ -57,11 +61,18 @@ from zephyr.backtest.implementations.vectorized_engine import (
 
 D = Decimal
 
-# 撮合默认口径（2026-08-21 费率口径统一 #233）：佣金万0.854/滑点1bp/印花税万5卖出/过户费万0.1双向/最低佣金5元/100股整手
+# 撮合费率口径（2026-08-21 费率口径统一 #233）：佣金万0.854/印花税万5卖出/
+# 过户费万0.1双向/最低佣金5元/100股整手
 COMMISSION_RATE = D("0.0000854")
-SLIPPAGE = D("0.0001")  # 1bp
 STAMP = D("0.0005")
 TRANSFER = D("0.00001")
+# 滑点腿（台账 #23 H2-A 治本后**不是常数一口价**，真源=cost_model_calibration）：
+#   默认口径 = 四级优先序第 4 级「无流动性信息档」= 全市场名义加权实证 3.79bp
+#   （本文件夹具一律不传 volumes，故逐笔落此档）。
+SLIPPAGE_BPS_UNIVERSAL = D("3.79")
+SLIPPAGE = SLIPPAGE_BPS_UNIVERSAL / D("10000")  # 0.000379
+#   legacy 复现口径 = 接线前的 1bp 一口价，仅作 A/B 取证时被显式钉住使用（见场景⑤）。
+LEGACY_SLIPPAGE_BPS = D("1")
 
 
 def _buy_cost(qty: int, base: str) -> D:
@@ -89,7 +100,7 @@ class TestNormalBuySellExactReconciliation:
     """普通买卖：逐分对账 成交价/量/佣金/现金/成本。"""
 
     def test_buy_fill_fields_exact(self):
-        """BUY 50,000股@10.00：价=10.001，佣金+过户费=47.70477，总成本=500,097.70477（#233 新口径）。"""
+        """BUY 50,000股@10.00：价=10.00379，佣金+过户费=47.7180783，总成本=500,237.2180783（#23 H2-A 标定口径）。"""
         engine = MatchingEngine()
         pf = Portfolio(initial_capital=D("1000000"))
         fills = engine.generate_fills(
@@ -102,12 +113,12 @@ class TestNormalBuySellExactReconciliation:
         f = fills[0]
         assert f.side == "BUY"
         assert f.quantity == D("50000")  # floor(500000/10/100)*100
-        assert f.price == D("10.001")  # 10.00×1.0001 精确
-        # 2026-08-21 费率口径统一（#233）：500050×0.0000854=42.70427(>5 不触最低) + 过户费 500050×0.00001=5.0005
-        assert f.commission == D("47.70477")
-        assert f.slippage_cost == D("50")  # 信息字段: 0.001×50000
+        assert f.price == D("10.00379")  # 10.00×1.000379 精确（标定 3.79bp）
+        # 2026-08-21 费率口径统一（#233）：500189.5×0.0000854=42.71618...(>5 不触最低) + 过户费 500189.5×0.00001=5.001895
+        assert f.commission == D("47.7180783")
+        assert f.slippage_cost == D("189.5")  # 信息字段: 0.00379×50000
         # #210 口径: total_cost = gross+comm，不得再加 slippage_cost
-        assert f.total_cost == D("500097.70477")
+        assert f.total_cost == D("500237.2180783")
 
     def test_buy_then_sell_portfolio_bookkeeping_exact(self):
         """买入→记账→卖出一半：现金/avg_cost/realized 逐分对账。"""
@@ -123,11 +134,11 @@ class TestNormalBuySellExactReconciliation:
         )
         for f in fills:
             pf.apply_fill(f)
-        assert pf.cash == D("1000000") - D("500097.70477") == D("499902.29523")
+        assert pf.cash == D("1000000") - D("500237.2180783") == D("499762.7819217")
         pos = pf.get_position("600000")
         assert pos.quantity == D("50000")
-        # avg_cost = (50000×10.001 + 47.70477)/50000 = 10.0019540954 精确（#233 新口径）
-        assert pos.avg_cost == D("10.0019540954")
+        # avg_cost = (50000×10.00379 + 47.7180783)/50000 = 10.004744361566 精确（#23 H2-A 口径）
+        assert pos.avg_cost == D("10.004744361566")
         assert pos.buy_date == "2026-08-03"
 
         # Day2 价格 11.00，降权至 0.25 → 卖 26,200 股
@@ -140,22 +151,22 @@ class TestNormalBuySellExactReconciliation:
         assert len(fills2) == 1
         s = fills2[0]
         assert s.side == "SELL"
-        # NAV = 499902.29523 + 50000×11 = 1049902.29523；target = 0.25×NAV = 262475.5738075
-        # qty = floor(262475.5738075/11/100)×100 = 23800；diff = 23800−50000 = −26200
+        # NAV = 499,762.7819217 + 50000×11 = 1,049,762.7819217；target = 0.25×NAV = 262,440.695480425
+        # qty = floor(262440.695480425/11/100)×100 = 23800；diff = 23800−50000 = −26200
         assert s.quantity == D("26200")
-        assert s.price == D("10.9989")  # 11×0.9999 精确
-        # 费用（#233）= max(288171.18×0.0000854,5) + 印花税 288171.18×0.0005 + 过户费 288171.18×0.00001
-        # = 24.609818772 + 144.08559 + 2.8817118
-        assert s.commission == D("171.577120572")
+        assert s.price == D("10.995831")  # 11×0.999621 精确（标定 3.79bp）
+        # 费用 = max(288090.7722×0.0000854,5)=24.6029519 + 印花税 288090.7722×0.0005=144.0453861
+        #        + 过户费 288090.7722×0.00001=2.8809077 = 171.52924576788
+        assert s.commission == D("171.52924576788")
         # 回款 = gross − comm（不双计滑点）
-        assert s.total_cost == D("288171.18") - D("171.577120572") == D("287999.602879428")
+        assert s.total_cost == D("288090.7722") - D("171.52924576788") == D("287919.24295423212")
 
         pf.apply_fill(s)
-        assert pf.cash == D("499902.29523") + D("287999.602879428") == D("787901.898109428")
+        assert pf.cash == D("499762.7819217") + D("287919.24295423212") == D("787682.02487593212")
         pos2 = pf.get_position("600000")
         assert pos2.quantity == D("23800")
-        # realized = (10.9989 − 10.0019540954)×26200 − 171.577120572 = 25,948.405579948 精确
-        assert pos2.realized_pnl == D("25948.405579948")
+        # realized = (10.995831 − 10.004744361566)×26200 − 171.52924576788 = 25,794.94068120292 精确
+        assert pos2.realized_pnl == D("25794.94068120292")
 
     def test_min_commission_floor(self):
         """小额买入触最低佣金 5 元。"""
@@ -178,9 +189,11 @@ class TestNormalBuySellExactReconciliation:
         )
         assert len(fills2) == 1
         assert fills2[0].quantity == D("100")
-        # 触最低佣金 5 元 + 过户费 1000.10×0.00001=0.010001（#233 新口径）
-        assert fills2[0].commission == D("5.010001")
-        assert fills2[0].total_cost == D("1000.10") + D("5.010001")
+        assert fills2[0].price == D("10.00379")
+        # 触最低佣金 5 元（1000.379×0.0000854=0.0854…<5，地板是小额单的额外约束，
+        # 万0.854 费率本身未动）+ 过户费 1000.379×0.00001=0.01000379（#23 H2-A 口径）
+        assert fills2[0].commission == D("5.01000379")
+        assert fills2[0].total_cost == D("1000.379") + D("5.01000379")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -469,7 +482,17 @@ class TestEngineLevelToyReconciliation:
             },
             index=dates,
         )
-        engine = DefaultBacktestEngine(config=BacktestConfig(enable_pit_universe_filter=False), enable_stk_limit_provider=False)
+        # 本用例是"逐分对账"全链锁（d1 建仓→d4 轮动→终态现金/avg_cost/realized/NAV
+        # 序列共 20 余个互锁手算值）。滑点腿显式钉在 #23 H2 接线前的 1bp 取证口径
+        # （cost_cal 四级优先序第 1 级），使手算独立性不被标定表漂移吃掉；
+        # 标定分层口径的端到端消费锁见 tests/backtest/test_cost_model_wiring.py。
+        engine = DefaultBacktestEngine(
+            config=BacktestConfig(
+                enable_pit_universe_filter=False,
+                slippage_bps=LEGACY_SLIPPAGE_BPS,
+            ),
+            enable_stk_limit_provider=False,
+        )
         result = engine.run(data=data, signals=sig, strategy_name="toy-5d")
         pf = engine.last_portfolio
 
@@ -717,14 +740,14 @@ class TestFullWeightCostFrictionFill:
         with caplog.at_level(logging.WARNING, logger="zephyr.backtest.implementations.vectorized_engine"):
             result = engine.run(data=data, signals=sig, strategy_name="toy-fullweight")
         pf = engine.last_portfolio
-        # 满仓成本收缩：100,000 股成本 1,000,195.40954>1,000,000 → 收缩至 99,900 股
-        # （成本 999,195.21413046 可负担）；day2 NAV 口径下 target=99,900 → diff=0 无单
-        # （2026-08-21 #233 新口径重算，收缩数量不变）
+        # 满仓成本收缩（#23 H2-A 标定 3.79bp）：100,000 股成本 1,000,474.4361566>1,000,000
+        # → 收缩至 99,900 股（成本 999,473.9617204434 可负担）；day2 NAV 口径下
+        # target=99,900 → diff=0 无单（收缩手数与旧 1bp 口径同为 99,900）
         assert result.trades_count == 1
         pos = pf.get_position("600000")
         assert pos.quantity == D("99900")
-        # 逐分对账：cash = 1,000,000 − 999,195.21413046 = 804.78586954
-        assert pf.cash == D("804.78586954")
+        # 逐分对账：cash = 1,000,000 − 999,473.9617204434 = 526.0382795566
+        assert pf.cash == D("526.0382795566")
         # 满仓不再触发拒单 warning（修复目标行为）
         per_fill = [r for r in caplog.records if "Fill skipped" in r.getMessage()]
         summary = [r for r in caplog.records if "fill 被拒绝" in r.getMessage()]

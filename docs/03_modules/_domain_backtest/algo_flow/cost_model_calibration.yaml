@@ -1,0 +1,126 @@
+# ALGO_FLOW 外部真源——cost_model_calibration（_domain_backtest 域，真源 src/zephyr/backtest/core/cost_model_calibration.py）
+# 2026-09-16 车道 M（台账 #23 H2-A/H2-C）随模块出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.core.cost_model_calibration
+source_of_truth: src/zephyr/backtest/core/cost_model_calibration.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: daily_notional_yuan 参数
+    #   fields: 参数 daily_notional_yuan，类型注解 float（日成交额，元）
+    #   code: cost_model_calibration.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: tier 层号参数
+    #   fields: 参数 tier，类型注解 int（0=最不流动 … n_tiers()-1=最流动）
+    #   code: cost_model_calibration.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: participation 参与率参数
+    #   fields: 参数 participation，类型注解 float，语义域 [0,1] 越界 Fail-Closed
+    #   code: cost_model_calibration.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: 费率注入参数（commission_rate / min_commission）
+    #   fields: 参数 commission_rate、min_commission，类型注解 Decimal（真源 matching_logic，本件零费率字面量）
+    #   code: cost_model_calibration.py 顶层公共函数形参（AST 提取）
+    # - id: I5
+    #   name: drag_bps 参数
+    #   fields: 参数 drag_bps，类型注解 float（地板拖累容忍线，须为正）
+    #   code: cost_model_calibration.py 顶层公共函数形参（AST 提取）
+    # 层: 标定证据（常量表，改动 MUST 同步 PROVENANCE）
+    # - id: T1
+    #   name_zh: ① 流动性五分位分层表
+    #   name_en: ADV_QUINTILE_BOUNDS_YUAN
+    #   intro: 4 个横截面等分位边界 → 5 层（Q1 最不流动 … Q5 最流动）
+    #   desc: 窗口 2026-07-24~2026-09-16，5,519 只标的，13,119,233 条五档快照；PROVENANCE 记口径与已知局限
+    #   inputs: I1
+    #   outputs: ADV_QUINTILE_BOUNDS_YUAN TIER_ADV_MEDIAN_YUAN TIER_TICK_BPS
+    # - id: T2
+    #   name_zh: ② 滑点腿档位表
+    #   name_en: SLIPPAGE_TIER_BPS
+    #   intro: 各层有效价差中位（7.24/5.69/4.67/4.00/2.34 bps 单边），尺寸无关
+    #   desc: 替换 matching_logic.SLIPPAGE_BPS=1 一口价；LEGACY_FLAT_SLIPPAGE_BPS 仅披露与回归对照
+    #   inputs: I1
+    #   outputs: Decimal
+    # - id: T3
+    #   name_zh: ③ 冲击腿档位表
+    #   name_en: IMPACT_TIER_ETA
+    #   intro: 各层 η（0.9776…0.3114）+ 全局 β*=0.4205 + 各层 σ；γ=0（静态快照不可辨识）
+    #   desc: 盘口走单 log-log 拟合，Δc 低于 1.5 tick 的点先剔除再拟合；γ=0.5η 会把同一段位移计费两次
+    #   inputs: I2
+    #   outputs: CalibratedImpactLevel
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① liquidity_tier
+    #   name_en: liquidity_tier
+    #   intro: 按日成交额落层（单调非增：越不流动→层号越小→成本越高）
+    #   desc: 线性扫 ADV_QUINTILE_BOUNDS_YUAN；NaN/负/非数值/表长不匹配 → CostCalibrationError（静默夹取被禁）；源码 L199-L215
+    #   inputs: I1 T1
+    #   outputs: int
+    # - id: A2
+    #   name_zh: ② slippage_bps_for_notional
+    #   name_en: slippage_bps_for_notional
+    #   intro: 查表取该层滑点 bps（单边，含价差+逆向选择，不含尺寸冲击）
+    #   desc: SLIPPAGE_TIER_BPS[liquidity_tier(·)]；无流动性信息走 slippage_bps_universal()=3.79bp 实证名义加权
+    #   inputs: I1 A1 T2
+    #   outputs: Decimal
+    # - id: A3
+    #   name_zh: ③ impact_level_for_tier
+    #   name_en: impact_level_for_tier
+    #   intro: 组装单层 Almgren-Chriss 标定档（frozen 值对象，source=offline_table:<版本>）
+    #   desc: tier 越界/非整数 Fail-Closed；cost_ratio_at(p)=η·p^β·σ + γ·p^0.5·σ，cost_bps_at=×1e4；sqrt_law_coefficient 供业界交叉校验
+    #   inputs: I2 I3 T3
+    #   outputs: CalibratedImpactLevel
+    # - id: A4
+    #   name_zh: ④ floor_drag_bps
+    #   name_en: floor_drag_bps
+    #   intro: 地板佣金造成的额外费率 = max(¥5, 比例佣金)/名义×1e4 − 名义费率×1e4
+    #   desc: 非顶地板返回 0（无惩罚）；这是"碎片化下单"的直接代价口径，费率由 I4 注入
+    #   inputs: I4
+    #   outputs: float
+    # - id: A5
+    #   name_zh: ⑤ notional_for_floor_drag_bps
+    #   name_en: notional_for_floor_drag_bps
+    #   intro: 闭式反解「地板拖累 ≤ drag_bps」的最小下单名义 = floor×1e4/(drag_bps + rate×1e4)
+    #   desc: 与 A4 互逆；quantize(0.01) 落元；drag_bps≤0 或费率非正 Fail-Closed
+    #   inputs: I4 I5
+    #   outputs: Decimal
+    # 层: 输出
+    # - id: O1
+    #   name_zh: int
+    #   name_en: int
+    #   intro: liquidity_tier 层号（cost_attribution 分层计费与披露的键）
+    #   downstream: zephyr.backtest.core.cost_attribution.attribute_trade_costs
+    # - id: O2
+    #   name_zh: Decimal
+    #   name_en: Decimal
+    #   intro: 分层滑点 bps（车道 A 待落 diff：matching_logic / vectorized_engine 消费）
+    #   downstream: 车道A diff(zephyr.backtest.core.matching_logic / implementations.vectorized_engine)
+    # - id: O3
+    #   name_zh: CalibratedImpactLevel
+    #   name_en: CalibratedImpactLevel
+    #   intro: 标定冲击档（由 D_EXEC_SIM 转 ImpactParams 消费）
+    #   downstream: zephyr.execution_simulation.impact_calibration
+    # - id: O4
+    #   name_zh: float
+    #   name_en: float
+    #   intro: 地板拖累 bps（order_size_discipline 最小规模政策的输入口径）
+    #   downstream: 预留(zephyr.backtest.core.order_size_discipline)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # T1 --> A1
+    # A1 --> A2
+    # T2 --> A2
+    # A1 --> O1
+    # A2 --> O2
+    # I2 --> A3
+    # I3 --> A3
+    # T3 --> A3
+    # A3 --> O3
+    # I4 --> A4
+    # I4 --> A5
+    # I5 --> A5
+    # A4 --> O4

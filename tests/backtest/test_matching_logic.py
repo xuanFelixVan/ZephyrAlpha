@@ -17,7 +17,11 @@
 覆盖: 三模式撮合（市价/限价/Tick逐档）黄金数、滑点与费用边界（最低佣金/
 印花税卖出单边/过户费双向）、未成交路径、异常输入（数量/side/类型/盘口）、
 纯函数式语义（同输入同输出、frozen 值对象）。
-黄金数口径: 费率 #233 裁定（万0.854/滑点1bps/印花万5卖出/过户万0.1/最低5元不免五）。
+黄金数口径: 费率 #233 裁定（万0.854/印花万5卖出/过户万0.1/最低5元不免五）
++ 滑点 **台账 #23 H2-A 标定口径**——本文件的夹具一律不带「当日成交额」，故每笔
+落在标定真源四级优先序的第 4 级（无流动性信息档 = 全市场名义加权 3.79bp），
+不再是从前无出处的 1bp 一口价。分层/钉住/开关三档的数值真源在
+``cost_model_calibration``，端到端消费锁见 tests/backtest/test_cost_model_wiring.py。
 纯内存合成盘口夹具，不触网不触库。
 """
 
@@ -100,7 +104,9 @@ class TestMatchingConfig:
     def test_default_golden_values(self):
         c = MatchingConfig()
         assert c.commission_rate == Decimal("0.0000854")
-        assert c.slippage_bps == Decimal("1")
+        # 滑点是**固定口径覆写位**，默认 None = 逐笔经 cost_cal.resolve_slippage_bps
+        # 解析（#23 H2-A）。None 不等于"没有滑点"——它落第 4 级无信息档 3.79bp。
+        assert c.slippage_bps is None
         assert c.stamp_tax_rate == Decimal("0.0005")
         assert c.transfer_fee_rate == Decimal("0.00001")
         assert c.min_commission == Decimal("5")
@@ -121,7 +127,7 @@ class TestMatchMarketOrder:
     """市价单撮合（盘口最优价 + 滑点 + 费用黄金数）。"""
 
     def test_buy_golden(self):
-        """BUY 100股@ask1=10.00: 滑点后10.001, 佣金=max(0.085,5)+过户0.010001。"""
+        """BUY 100股@ask1=10.00: 滑点3.79bp→10.00379, 佣金=max(0.085,5)+过户0.01000379。"""
         logic = MatchingLogic()
         fill = logic.match_market_order(_order("BUY", "100"), _book(ask1="10.00"))
         assert fill.filled is True
@@ -129,27 +135,32 @@ class TestMatchMarketOrder:
         assert fill.side == "BUY"
         assert fill.quantity == Decimal("100")
         assert fill.filled_quantity == Decimal("100")
-        assert fill.price == Decimal("10.001")
-        assert fill.commission == Decimal("5.010001")
-        assert fill.slippage_cost == Decimal("0.100")
-        assert fill.total_cost == Decimal("1005.110001")
+        # 10.00×(1+3.79/10000)=10.00379（#23 H2-A 无流动性信息档，替旧 10.001=1bp）
+        assert fill.price == Decimal("10.00379")
+        # gross=100×10.00379=1000.379 → 佣金 1000.379×0.0000854=0.0854…<5 触地板 5
+        # + 过户费 1000.379×0.00001=0.01000379
+        assert fill.commission == Decimal("5.01000379")
+        assert fill.slippage_cost == Decimal("0.379")
+        assert fill.total_cost == Decimal("1005.38900379")
 
     def test_sell_golden(self):
-        """SELL 100股@bid1=9.99: 滑点后9.989001, 佣金+印花(卖出单边)。"""
+        """SELL 100股@bid1=9.99: 滑点3.79bp→9.98621379, 佣金+印花(卖出单边)。"""
         logic = MatchingLogic()
         fill = logic.match_market_order(_order("SELL", "100"), _book(bid1="9.99"))
         assert fill.filled is True
-        assert fill.price == Decimal("9.989001")
-        assert fill.commission == Decimal("5.509439051")
-        assert fill.slippage_cost == Decimal("0.0999")
-        assert fill.total_cost == Decimal("993.390660949")
+        # 9.99×(1−3.79/10000)=9.98621379；gross=998.621379
+        assert fill.price == Decimal("9.98621379")
+        # 佣金=max(0.0852…,5)=5 + 过户0.00998621379 + 印花0.4993106895
+        assert fill.commission == Decimal("5.50929690329")
+        assert fill.slippage_cost == Decimal("0.378621")
+        assert fill.total_cost == Decimal("993.11208209671")
 
     def test_buy_large_order_commission_above_min(self):
-        """大额单佣金超过最低5元: 100000股@10.001 成交额1000100, 佣金85.40854+过户10.001。"""
+        """大额单佣金超过最低5元: 100000股@10.00379 成交额1000379, 佣金85.4323666+过户10.00379。"""
         logic = MatchingLogic()
         fill = logic.match_market_order(_order("BUY", "100000"), _book(ask1="10.00"))
-        assert fill.price == Decimal("10.001")
-        assert fill.commission == Decimal("95.40954")
+        assert fill.price == Decimal("10.00379")
+        assert fill.commission == Decimal("95.4361566")
 
     def test_sell_no_stamp_tax_on_buy(self):
         """印花税卖出单边: BUY 佣金=佣金+过户费, 不含印花税。"""
@@ -238,8 +249,8 @@ class TestMatchLimitOrder:
             _book(ask1="10.00"),
         )
         assert fill.filled is True
-        assert fill.price == Decimal("10.001")
-        assert fill.commission == Decimal("5.010001")
+        assert fill.price == Decimal("10.00379")  # 10.00×(1+3.79/10000)
+        assert fill.commission == Decimal("5.01000379")
 
     def test_buy_limit_below_ask_unfilled(self):
         """BUY 限价9.99 < ask1=10.00 → 不成交。"""
@@ -272,7 +283,7 @@ class TestMatchLimitOrder:
             _book(bid1="9.99"),
         )
         assert fill.filled is True
-        assert fill.price == Decimal("9.989001")
+        assert fill.price == Decimal("9.98621379")  # 9.99×(1−3.79/10000)
 
     def test_sell_limit_above_bid_unfilled(self):
         """SELL 限价10.00 > bid1=9.99 → 不成交。"""
@@ -341,9 +352,9 @@ class TestMatchTickOrder:
         assert fill.filled is True
         assert fill.quantity == Decimal("200")
         assert fill.filled_quantity == Decimal("200")
-        assert fill.price == Decimal("10.10101")
-        assert fill.slippage_cost == Decimal("0.20200")
-        assert fill.commission == Decimal("5.02020202")
+        assert fill.price == Decimal("10.1038279")
+        assert fill.slippage_cost == Decimal("0.76558")
+        assert fill.commission == Decimal("5.0202076558")
 
     def test_sell_two_levels_weighted_average_golden(self):
         """SELL 200股: 消化 bid1(10.00×100)+bid2(9.90×100) → 均价9.95 - 滑点。"""
@@ -358,8 +369,8 @@ class TestMatchTickOrder:
         logic = MatchingLogic()
         fill = logic.match_tick_order(_order("SELL", "200", order_type="TICK"), _tick(book))
         assert fill.filled is True
-        assert fill.price == Decimal("9.949005")
-        assert fill.commission == Decimal("6.01479851")
+        assert fill.price == Decimal("9.94622895")
+        assert fill.commission == Decimal("6.0145153529")
 
     def test_partial_fill_when_exceeding_liquidity(self):
         """流动性约束: 订单10000股 > 5档总卖量1500 → 部分成交1500, filled=False。"""
@@ -400,7 +411,7 @@ class TestMatchTickOrder:
         assert fill.filled is True
         assert fill.quantity == Decimal("100")
         # 第一档 price=0 被跳过, 从 10.00 档成交
-        assert fill.price == Decimal("10.001")
+        assert fill.price == Decimal("10.00379")
 
     def test_limit_tick_delegates_to_limit_matching(self):
         """限价Tick单 → 委托限价单规则撮合。"""
@@ -410,7 +421,7 @@ class TestMatchTickOrder:
             _tick(_book(ask1="10.00")),
         )
         assert fill.filled is True
-        assert fill.price == Decimal("10.001")
+        assert fill.price == Decimal("10.00379")
 
     def test_limit_tick_unfilled(self):
         logic = MatchingLogic()
@@ -482,7 +493,10 @@ class TestPureFunctionSemantics:
         fill_c = logic_custom.match_market_order(_order("BUY", "100"), _book(ask1="10.00"))
         fill_d = logic_default.match_market_order(_order("BUY", "100"), _book(ask1="10.00"))
         assert fill_c.price == Decimal("10.01")
-        assert fill_d.price == Decimal("10.001")
+        # 默认口径不再等于 legacy 1bp：无流动性信息 → 标定第 4 级 3.79bp
+        assert fill_d.price == Decimal("10.00379")
+        assert logic_custom.config.slippage_bps == Decimal("10")
+        assert logic_default.config.slippage_bps is None
 
 
 class TestMatchingFillTotalCost:

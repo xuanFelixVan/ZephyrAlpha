@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.implementations.vectorized_engine
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.core.engine_base; zephyr.backtest.core.metrics; zephyr.backtest.core.portfolio; zephyr.backtest.core.matching_engine; zephyr.backtest.core.matching_logic（T1A-4 费率单一真源 COMMISSION_RATE/SLIPPAGE_BPS）; zephyr.backtest.core.overfitting_detector; zephyr.backtest.core.walk_forward; zephyr.backtest.core.decision_gate; zephyr.data.pit_query（PitUniverseProvider lazy import）; zephyr.execution_simulation.almgren_chriss_impact_model（matching_engine lazy import）
+# [DEPENDENCIES] zephyr.backtest.core.engine_base; zephyr.backtest.core.metrics; zephyr.backtest.core.portfolio; zephyr.backtest.core.matching_engine; zephyr.backtest.core.matching_logic（T1A-4 费率单一真源 COMMISSION_RATE；滑点默认=按标定真源逐笔解析，本件不再钉住 SLIPPAGE_BPS）; zephyr.backtest.core.overfitting_detector; zephyr.backtest.core.walk_forward; zephyr.backtest.core.decision_gate; zephyr.data.pit_query（PitUniverseProvider lazy import）; zephyr.execution_simulation.almgren_chriss_impact_model（matching_engine lazy import）
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -62,7 +62,9 @@ from zephyr.backtest.core.matching_engine import (
     StkLimitProvider,
 )
 # T1A-4 费率单一真源：回测侧不再自写字面量（matching_logic 零依赖，导入不成环）
-from zephyr.backtest.core.matching_logic import COMMISSION_RATE, SLIPPAGE_BPS
+# 滑点不在此导入：SLIPPAGE_BPS 是 #23 H2 的 legacy 对照口径，默认不再生效，
+# 逐笔由 cost_model_calibration 解析（见 BacktestConfig.slippage_bps）。
+from zephyr.backtest.core.matching_logic import COMMISSION_RATE
 from zephyr.backtest.core.metrics import DEFAULT_RISK_FREE_RATE, calculate_full_metrics
 from zephyr.backtest.core.overfitting_detector import OverfittingDetector, OverfittingGateError
 from zephyr.backtest.core.portfolio import Portfolio
@@ -82,7 +84,11 @@ class BacktestConfig:
         commission_rate: 券商佣金费率(万0.854=0.0000854——券商合作价，Owner 实盘协议费率，
             #233 裁定 2026-08-21 + 2026-09-15 复核；单一真源=matching_logic.COMMISSION_RATE，
             回测/实盘同源引用，本处禁止再写字面量)
-        slippage_bps: 滑点(bps,1bp=0.01%，真源=matching_logic.SLIPPAGE_BPS)
+        slippage_bps: 滑点**固定口径覆写位**(bps,1bp=0.01%)。None(默认)=逐笔按标定真源
+            cost_model_calibration 解析：有当日成交额→落 ADV 五分位档，无流动性信息→
+            全市场名义加权实证档，口径开关关→legacy 一口价（#23 H2 A/B 取证）。
+            非 None 时钉住一个平口径（成本敏感性扫描/单笔对照用），不影响佣金口径。
+            档位数值只在标定件里，禁止在此复述。
         benchmark_symbol: 基准标的(默认沪深300)
         risk_free_rate: 无风险利率(默认2.5%,中国10年期国债,来源:D-SIMULATION-23)
         strict_overfitting_gate: SIM-56 严格过拟合门禁(默认 False，显式开启后才 raise)
@@ -106,7 +112,7 @@ class BacktestConfig:
 
     initial_capital: Decimal = Decimal("1000000")
     commission_rate: Decimal = COMMISSION_RATE  # 万0.854（真源=matching_logic.COMMISSION_RATE，T1A-4）
-    slippage_bps: Decimal = SLIPPAGE_BPS  # 1bp（真源=matching_logic.SLIPPAGE_BPS）
+    slippage_bps: Optional[Decimal] = None  # None=逐笔按标定真源解析（非"没有滑点"）
     benchmark_symbol: str = "000300"
     risk_free_rate: float = DEFAULT_RISK_FREE_RATE
     strict_overfitting_gate: bool = False

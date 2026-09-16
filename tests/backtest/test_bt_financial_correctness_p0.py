@@ -27,6 +27,7 @@ from unittest.mock import patch
 import pandas as pd
 import pytest
 
+from zephyr.backtest.core import cost_model_calibration as cal
 from zephyr.backtest.core.engine_base import (
     ImplausibleBacktestError,
     LookaheadExecutionError,
@@ -43,6 +44,7 @@ from zephyr.backtest.io.result_repository import (
     BacktestRunArtifact,
     save_artifact,
 )
+from zephyr.execution_simulation.almgren_chriss_impact_model import AlmgrenChrissImpactModel
 
 
 D = Decimal
@@ -156,33 +158,43 @@ class TestP02LiquidityGuard:
         assert trade["quantity"] == D("1000")
 
     def test_impact_cost_raises_buy_price(self):
-        """冲击成本按参与率加入成交价（同侧 ask 先抬价，再叠滑点）。"""
-        from zephyr.execution_simulation.almgren_chriss_impact_model import (
-            AlmgrenChrissImpactModel,
-        )
+        """冲击成本按参与率加入成交价（同侧 ask 先抬价，再叠滑点）——两腿均取标定档。
 
+        口径（#23 H2-C 接线后）：冲击参数按该标的当日成交额（10000 股 ×10 元
+        =¥100,000）落 ADV 五分位档，滑点腿同层取尺寸无关档；两条腿各计一次。
+        """
         engine = self._engine()
         data = _make_data([10.0, 10.0], volumes=[50000.0, 10000.0])
         sig = _signal_first_day([10.0, 10.0])
         engine.run(data=data, signals=sig)
         trade = engine.last_portfolio.trades_log[0]
 
-        model = AlmgrenChrissImpactModel()
-        quote = model.quote(1000.0, 10000.0)
+        daily_notional = 10000 * 10.0  # 当日成交额（元）= 冲击/滑点共同的分层输入
+        participation = 1000.0 / 10000.0  # 订单股数 ÷ 当日成交股数（INV-UNIT-001）
+        lvl = cal.impact_level_for_notional(daily_notional)
+        slip_bps = cal.slippage_bps_for_notional(daily_notional)
         # 撮合顺序：盘口 ask1 先按冲击抬价，MatchingLogic 再叠滑点
-        expected = D("10") * (D("1") + D(str(quote.cost_bps)) / D("10000")) * D("1.0001")
+        expected = (
+            D("10")
+            * (D("1") + D(str(lvl.cost_bps_at(participation))) / D("10000"))
+            * (D("1") + slip_bps / D("10000"))
+        )
         assert trade["price"] == pytest.approx(float(expected), rel=1e-9)
         # 冲击方向恒为不利（买贵）：高于纯滑点价
-        assert trade["price"] > 10.001
+        assert trade["price"] > float(D("10") * (D("1") + slip_bps / D("10000")))
+        # 标定档必须显著严于被弃用的 DEFAULT_PARAMS 档（否则 H2-C 的"旁路"没被治掉）
+        legacy_default = AlmgrenChrissImpactModel().quote(1000.0, 10000.0)
+        assert lvl.cost_bps_at(participation) > 10 * legacy_default.cost_bps
 
     def test_impact_disabled_price_matches_slip_only(self):
-        """impact_cost_enabled=False 时成交价=纯滑点口径（冲击旁路）。"""
+        """impact_cost_enabled=False 时成交价=纯滑点口径（冲击旁路，只剩标定滑点腿）。"""
         engine = self._engine(impact_cost_enabled=False)
         data = _make_data([10.0, 10.0], volumes=[50000.0, 10000.0])
         sig = _signal_first_day([10.0, 10.0])
         engine.run(data=data, signals=sig)
         trade = engine.last_portfolio.trades_log[0]
-        assert trade["price"] == pytest.approx(10.001, rel=1e-12)
+        slip_only = D("10") * (D("1") + cal.slippage_bps_for_notional(10000 * 10.0) / D("10000"))
+        assert trade["price"] == pytest.approx(float(slip_only), rel=1e-12)
 
     def test_no_volume_column_legacy_behavior(self):
         """无 volume 列：约束旁路，行为与旧版一致（满仓单不被收缩）。"""

@@ -1,11 +1,13 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.io.result_repository
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.io.backtest_result_sink; zephyr.shared.io.paths; zephyr.shared.utils.time_utils
+# [DEPENDENCIES] zephyr.backtest.io.backtest_result_sink; zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.backtest.core.cost_attribution（成本归因注入，lazy import）; zephyr.backtest.core.cost_model_calibration; zephyr.backtest.core.matching_logic（费率真源注入，零字面量）
 # [CONSUMERS] zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.tick_replay
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] PIT铁律(零前瞻偏差); run_id全局唯一; 检索接口对前端透明
+# [INVARIANTS] PIT铁律(零前瞻偏差); run_id全局唯一; 检索接口对前端透明;
+#              成本归因费率只从 matching_logic 注入（本件零费率字面量）;
+#              归因不可算时 MUST 写 status=error + ERROR 日志而非省略字段（沉默禁令）
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
 # [SAFETY] L
@@ -31,6 +33,10 @@
 """
 
 from __future__ import annotations
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class ArtifactNotFoundError(Exception):
@@ -284,6 +290,82 @@ def delete_artifact(
 # ===== 便捷构建函数 =====
 
 
+def _cost_attribution_snapshot(
+    data: "BacktestSinkData",
+    trade_log: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """成交成本归因快照（台账 #23 H2 收口：把"一半亏损是佣金"写成产物里的显式事实）。
+
+    为什么注入点是本函数而不是各调用方：``build_artifact_from_data`` 是所有持久化
+    路径的唯一收口（scripts/run_backtest 与 framework_composer 的 S11 整装回测都经
+    此处）——引擎侧标定得再准，artifact 里没有这一节就等于报告看不见。
+
+    口径纪律：
+      - 费率一律从 ``matching_logic`` 真源注入（本件零费率字面量，RULE-SSOT）；
+      - ``consumed_slippage_bps`` 取**逐笔名义的标定档名义加权**，不取旧 1bp：
+        artifact 不携带引擎实际消费的 bps，而缺 ``decision_price`` 的笔需要补计口径；
+        宁取有出处的实证档（分层 2.34~7.24bp，无流动性信息时 3.79bp），
+        不取无出处的旧一口价，provenance 随盘披露；
+      - 归因失败不阻断落盘（取证通道坏 ≠ 样本坏），但 MUST 留痕 + ERROR 日志——
+        静默省略字段是本仓禁令（沉默禁令）。
+    """
+    from zephyr.backtest.core import cost_model_calibration as cost_cal
+    from zephyr.backtest.core.cost_attribution import attribute_trade_costs
+    from zephyr.backtest.core.matching_logic import (
+        COMMISSION_RATE,
+        MIN_COMMISSION,
+        STAMP_TAX_RATE,
+        TRANSFER_FEE_RATE,
+    )
+
+    schema = "cost_attribution/1.0"
+    if not trade_log:
+        return {"schema": schema, "status": "no_trades"}
+
+    curve = data.equity_curve or ()
+    initial_capital = float(curve[0].equity) if curve and float(curve[0].equity) > 0 else None
+    net_result = initial_capital * float(data.total_return) if initial_capital is not None else None
+
+    notional_sum = 0.0
+    slip_weighted = 0.0
+    for rec in trade_log:
+        try:
+            notional = float(rec["price"]) * float(rec["quantity"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        if notional <= 0:
+            continue
+        notional_sum += notional
+        slip_weighted += float(cost_cal.resolve_slippage_bps(notional)) * notional
+    consumed_bps = slip_weighted / notional_sum if notional_sum > 0 else None
+
+    try:
+        attr = attribute_trade_costs(
+            trade_log,
+            commission_rate=COMMISSION_RATE,
+            stamp_tax_rate=STAMP_TAX_RATE,
+            transfer_fee_rate=TRANSFER_FEE_RATE,
+            min_commission=MIN_COMMISSION,
+            consumed_slippage_bps=consumed_bps,
+            initial_capital=initial_capital,
+            n_trading_days=len(curve) or None,
+            net_result=net_result,
+        )
+    except Exception as exc:  # noqa: BLE001 —— 归因是旁路取证，坏在这里不该拖垮落盘
+        logger.error("成本归因快照失败（artifact 仍落盘，禁静默）: %s: %s", type(exc).__name__, exc)
+        return {"schema": schema, "status": "error", "error": f"{type(exc).__name__}: {exc}"}
+
+    snapshot = attr.to_metrics_dict()
+    snapshot["status"] = "ok"
+    snapshot["consumed_slippage_provenance"] = (
+        "calibrated_per_fill_notional_weighted" if consumed_bps is not None else "calibrated_universal"
+    )
+    for alert in attr.alerts:
+        if alert.severity in ("P0", "P1"):
+            logger.warning("[cost_attribution] %s(%s): %s", alert.code, alert.severity, alert.message)
+    return snapshot
+
+
 def build_artifact_from_data(
     data: BacktestSinkData,
     tick_replay_data: list[dict[str, Any]] | None = None,
@@ -318,6 +400,9 @@ def build_artifact_from_data(
     drawdown_curve = [{"timestamp": p.timestamp, "drawdown": p.drawdown} for p in data.drawdown_curve] or None
     benchmark_curve = [{"timestamp": p.timestamp, "value": p.value} for p in data.benchmark_curve] or None
 
+    metrics = data.to_metrics_dict()
+    metrics["cost_attribution"] = _cost_attribution_snapshot(data, trade_log)
+
     return BacktestRunArtifact(
         strategy_id=data.strategy_id,
         run_id=data.run_id,
@@ -328,7 +413,7 @@ def build_artifact_from_data(
         benchmark_curve=benchmark_curve,
         drawdown_curve=drawdown_curve,
         created_at="",  # save_artifact 时自动填充
-        metrics=data.to_metrics_dict(),
+        metrics=metrics,
     )
 
 

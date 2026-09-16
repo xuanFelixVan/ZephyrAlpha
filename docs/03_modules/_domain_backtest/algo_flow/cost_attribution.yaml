@@ -1,0 +1,103 @@
+# ALGO_FLOW 外部真源——cost_attribution（_domain_backtest 域，真源 src/zephyr/backtest/core/cost_attribution.py）
+# 2026-09-16 车道 M（台账 #23 H2-A/H2-B）随模块出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.core.cost_attribution
+source_of_truth: src/zephyr/backtest/core/cost_attribution.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: trades 参数
+    #   fields: 参数 trades，类型注解 Sequence[Mapping]（artifact trade_log 形态：timestamp/symbol/side/price/quantity[/commission/decision_price]）
+    #   code: cost_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: 费率注入组（commission_rate / stamp_tax_rate / transfer_fee_rate / min_commission）
+    #   fields: 四个 Decimal 参数，真源=matching_logic 常量（本件零费率字面量）
+    #   code: cost_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: consumed_slippage_bps 参数
+    #   fields: 该 run 实际消费滑点 bps（缺省=LEGACY_FLAT_SLIPPAGE_BPS）
+    #   code: cost_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: 规模与结果参数（initial_capital / n_trading_days / net_result）
+    #   fields: 给了才算年化单边换手与成本/结果比；缺算 → 字段为 None（不静默给 0）
+    #   code: cost_attribution.py 顶层公共函数形参（AST 提取）
+    # - id: I5
+    #   name: adv_notional_by_symbol / impact_bps_by_trade 参数
+    #   fields: 标的→日均成交额表（缺失以自身名义落层=成本上界）；逐笔实测冲击 bps（长度须等于笔数）
+    #   code: cost_attribution.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 逐笔名义与佣金腿重构
+    #   name_en: attribute_trade_costs(佣金段)
+    #   intro: 佣金 = max(名义×rate, min_commission) + 过户 + 卖出印花，与 trade.commission 逐笔对账
+    #   desc: 顶地板判定与引擎同口径；相对偏差 > COMMISSION_RECON_TOLERANCE → COMMISSION-RECON-DRIFT；源码 L470-L520
+    #   inputs: I1 I2
+    #   outputs: floor_bound_trades commission_floor_premium_total effective_commission_rate_median_bps
+    # - id: A2
+    #   name_zh: ② 流动性分层两腿成本
+    #   name_en: attribute_trade_costs(滑点+冲击段)
+    #   intro: 滑点腿=标定档位查表（尺寸无关）；冲击腿= max(引擎实测, 标定档)（尺寸相关，反旁路）
+    #   desc: 实测只能抬高应计腿，任何入参组合都无法把 impact_cost_total 清零；实测另记 impact_cost_measured_total 作 as-run 披露
+    #   inputs: I1 I5
+    #   outputs: slippage_cost_total impact_cost_total impact_cost_measured_total
+    # - id: A3
+    #   name_zh: ③ 碎片化统计
+    #   name_en: _quantile
+    #   intro: 线性插值分位数（确定性；空序列 Fail-Closed 抛 CostAttributionError）
+    #   desc: 名义 p10/中位/p90、单标的单日笔数、把地板拖累压进 FLOOR_DRAG_CAP_BPS 所需放大倍数
+    #   inputs: A1
+    #   outputs: notional_median notional_p10 notional_p90 fragmentation_scale_up_needed
+    # - id: A4
+    #   name_zh: ④ 冲击可辨识性签名
+    #   name_en: attribute_trade_costs(执行偏离段)
+    #   intro: 成交价对决策价偏离的截面 σ≈0 ⇔ 冲击项恒零 ⇔ 参数未标定
+    #   desc: σ < IMPACT_SIGNATURE_STDEV_ALERT → IMPACT-TERMS-UNIDENTIFIED；用统计量而不是注释阻止"假装已计费"
+    #   inputs: I1
+    #   outputs: realized_exec_cost_bps_stdev realized_exec_cost_total
+    # - id: A5
+    #   name_zh: ⑤ 阈值→告警翻译（唯一告警出口）
+    #   name_en: _build_alerts
+    #   intro: COST-FLOOR-DOMINANT / COST-DOMINATES-RESULT / TURNOVER-BREAKS-SLIPPAGE-PREMISE / IMPACT-TERMS-UNIDENTIFIED / IMPACT-LEG-BYPASSED / SLIPPAGE-UNDERCHARGED / COMMISSION-RECON-DRIFT
+    #   desc: 告警是数据不是异常——越线不 raise；全阈值通过才给 COST-MODEL-OK（沉默禁令）
+    #   inputs: A1 A2 A3 A4 I3 I4
+    #   outputs: alerts
+    # - id: A6
+    #   name_zh: ⑥ 两轨成本合计
+    #   name_en: cost_total / cost_total_as_run
+    #   intro: 应计轨=佣金上报+标定滑点+max(实测,标定)冲击；as-run 轨=佣金上报+真实执行偏离
+    #   desc: 印花/过户已含在上报佣金内，禁重复相加；decision_price 缺失时 as-run 退化为消费滑点×名义
+    #   inputs: A1 A2 A4 I3 I4
+    #   outputs: cost_total cost_total_as_run cost_share_of_abs_result
+    # 层: 输出
+    # - id: O1
+    #   name_zh: CostAttribution
+    #   name_en: CostAttribution
+    #   intro: frozen 归因快照（frozen 以满足 codegen 契约 CTR-P1-017）
+    #   downstream: zephyr.backtest.io.result_repository.build_artifact_from_data
+    # - id: O2
+    #   name_zh: dict
+    #   name_en: dict
+    #   intro: to_metrics_dict() → metrics["cost_attribution"]（含 provenance 与 alerts）
+    #   downstream: 车道 M 报告与回归用例
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I1 --> A2
+    # I5 --> A2
+    # A1 --> A3
+    # I1 --> A4
+    # A1 --> A5
+    # A2 --> A5
+    # A3 --> A5
+    # A4 --> A5
+    # I3 --> A5
+    # I4 --> A5
+    # A5 --> A6
+    # A5 --> O1
+    # A6 --> O1
+    # O1 --> O2

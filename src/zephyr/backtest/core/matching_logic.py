@@ -1,17 +1,19 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.core.matching_logic
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.backtest.core.cost_model_calibration（滑点腿标定单一真源：resolve_slippage_bps / LEGACY_FLAT_SLIPPAGE_BPS；本件仍是费率字面量唯一位点，标定件零费率字面量）
 # [CONSUMERS] zephyr.backtest.core.matching_engine; zephyr.ex_core.adapters.miniqmt_broker
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 纯函数式无副作用; 回测=实盘一致性; A股约束(100股整数倍/涨跌停/T+1由调用方负责)
+# [INVARIANTS] 纯函数式无副作用; 回测=实盘一致性; A股约束(100股整数倍/涨跌停/T+1由调用方负责);
+#              滑点腿只经 resolve_slippage_bps 取值（禁在本件再写第二份档位表/第二处滑点字面量），
+#              佣金/印花税/过户费率字面量真源在本件、地板佣金是小额单的额外约束而非费率改动
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] MatchingLogicError
-# [TESTS] tests/backtest/test_matching_logic.py
+# [TESTS] tests/backtest/test_matching_logic.py, tests/backtest/test_cost_model_wiring.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """共享撮合逻辑模块（回测=实盘一致性核心）
@@ -43,6 +45,8 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Any, Final, Optional
 
+from zephyr.backtest.core import cost_model_calibration as cost_cal
+
 
 class MatchingLogicError(Exception):
     """撮合逻辑错误"""
@@ -60,8 +64,13 @@ class MatchingLogicError(Exception):
 # "回测以实盘费率为准"）。此前 vectorized_engine.BacktestConfig 与 MatchingConfig 各写
 # 一份字面量、docstring 还残留"万三"示例——同一事实两个真源必然漂移（RULE-SSOT）。
 # 本处是唯一字面量位点：回测引擎与实盘经纪适配层一律同源引用，改费率只改这里。
+# 例外（台账 #23 H2-A）：滑点不再是本件的字面量位点——它的真值由实数据标定，
+# 唯一真源已迁到 cost_model_calibration（那里零费率字面量，两边不成环）。
 COMMISSION_RATE: Final[Decimal] = Decimal("0.0000854")  # 万0.854（券商合作价，双向）
-SLIPPAGE_BPS: Final[Decimal] = Decimal("1")  # 1bp 固定滑点（日频低换手口径，冲击成本另层覆盖）
+#: 旧一口价滑点（1bp）——**仅作 A/B 取证复现口径**，正常运行时不再被消费：
+#: 每笔成交按 ``cost_cal.resolve_slippage_bps(当日成交额)`` 取分层标定值。
+#: 值本体在标定件（LEGACY_FLAT_SLIPPAGE_BPS），此处只留别名以兼容既有导入。
+SLIPPAGE_BPS: Final[Decimal] = cost_cal.LEGACY_FLAT_SLIPPAGE_BPS
 STAMP_TAX_RATE: Final[Decimal] = Decimal("0.0005")  # 万5，卖出单边（2023-08 起法定）
 TRANSFER_FEE_RATE: Final[Decimal] = Decimal("0.00001")  # 万0.1，双向（沪深现行法定）
 MIN_COMMISSION: Final[Decimal] = Decimal("5")  # 5 元下限（不免五，Owner 2026-08-22 确认）
@@ -74,20 +83,32 @@ class MatchingConfig:
     费率口径：2026-08-21 费率口径统一（#233，Owner 裁定：回测以实盘费率为准）。
     费率真源：本模块上方 ``COMMISSION_RATE`` 等常量（单一真源，T1A-4）——
     回测侧 ``vectorized_engine.BacktestConfig`` 同源引用，禁止再出现第二处字面量。
+    滑点真源：不在本件——台账 #23 H2-A 治本后由 ``cost_model_calibration`` 按
+    流动性分层供给（见 ``slippage_bps`` 字段的四级优先序）。
 
     Attributes:
         commission_rate: 券商佣金费率(万0.854=0.0000854，Owner 实盘账户实测协议费率，2026-08-21 裁定)
-        slippage_bps: 滑点(bps, 1bp=0.01%，维持 1bps 假设不变)
+        slippage_bps: **固定口径覆写位**（None=按标定真源逐笔解析）。非 None 时把滑点
+            钉成与该 bps 无关流动性的平口价，供成本敏感性扫描/单笔对照使用。
+            解析优先序（唯一实现=``cost_cal.resolve_slippage_bps``，禁在消费方复制）：
+              1. 本字段非 None → 原样用之（人为钉住的平口径）；
+              2. ``SLIPPAGE_TIERING_ENABLED=False`` → ``LEGACY_FLAT_SLIPPAGE_BPS``
+                 （1bp 旧一口价，A/B 取证复现位点）；
+              3. 该笔「当日成交额」可得 → ADV 五分位分层标定值（2.34~7.24bp）；
+              4. 无流动性信息 → ``slippage_bps_universal()``（3.79bp 全市场名义加权）。
+            方向纪律：3/4 一律严于旧 1bp（只可能多拒单，不可能造幻影 alpha）。
         stamp_tax_rate: 印花税率(卖出单边 万5=0.0005，2023-08 起现行法定)
         transfer_fee_rate: 过户费率(双向 万0.1=0.00001，沪深现行法定)
-        min_commission: 最低佣金(5元；不免五——Owner 2026-08-22 确认实盘万0.854 不免五，保留 5 元下限)
+        min_commission: 最低佣金(5元；不免五——Owner 2026-08-22 确认实盘万0.854 不免五，保留 5 元下限。
+            地板是小额单上的**额外约束**，永不改动万0.854 这个费率本身；地板经济口径的
+            推导（拖累 bps / 不再咬合的最小名义）在 ``cost_model_calibration``，费率字面量仍在本件)
         lot_size: 最小交易单位(A股100股)
         price_limit_pct: 涨跌停板限制(10%=0.10；仅作未知前缀的最后防线兜底，
             历史正确口径见 matching_engine._limit_bounds 三级解析链/#ARCH-DATA-020)
     """
 
     commission_rate: Decimal = COMMISSION_RATE  # 万0.854（真源=本模块 COMMISSION_RATE）
-    slippage_bps: Decimal = SLIPPAGE_BPS
+    slippage_bps: Optional[Decimal] = None  # None=逐笔按标定真源解析（非"没有滑点"）
     stamp_tax_rate: Decimal = STAMP_TAX_RATE  # 万5，卖出单边（2023-08 起法定）
     transfer_fee_rate: Decimal = TRANSFER_FEE_RATE  # 万0.1，双向（沪深现行法定）
     min_commission: Decimal = MIN_COMMISSION  # 不免五（Owner 2026-08-22 确认），保留 5 元下限
@@ -105,6 +126,12 @@ class MatchOrderInput:
         quantity: 委托数量(股)
         order_type: 订单类型 "MARKET" | "LIMIT" | "TICK"
         limit_price: 限价(LIMIT单必填, MARKET/TICK忽略)
+        daily_notional_yuan: 该标的**当日成交额**（元）= 滑点分层的流动性输入
+            （40 日 ADV 的单调近似，同一把尺子，见 cost_model_calibration
+            ``liquidity_tier`` docstring）。由调用方逐笔透传：日线撮合传
+            当日成交量(股)×执行价，Tick 撮合可退 TickSnapshot.amount。
+            None = 本位点拿不到流动性信息 → 用全市场名义加权实证值
+            ``slippage_bps_universal()``，**不**回退到无出处的旧一口价。
     """
 
     symbol: str
@@ -112,6 +139,7 @@ class MatchOrderInput:
     quantity: Decimal
     order_type: str
     limit_price: Decimal | None = None
+    daily_notional_yuan: Decimal | None = None
 
 
 @dataclass(frozen=True)
@@ -280,6 +308,7 @@ class MatchingLogic:
           - BUY: 以 ask1(最低卖价) 成交
           - SELL: 以 bid1(最高买价) 成交
           - 应用滑点: BUY price*(1+bps/10000), SELL price*(1-bps/10000)
+            （bps 按 order.daily_notional_yuan 落流动性层取标定真值，非常数）
           - 计算手续费: 佣金 max(qty*price*rate, min) + 印花税(卖出)
 
         Args:
@@ -305,7 +334,7 @@ class MatchingLogic:
         else:
             raise MatchingLogicError(f"无效side: {order.side}, 必须为BUY或SELL")
 
-        fill_price = self._apply_slippage(base_price, order.side)
+        fill_price = self._apply_slippage(base_price, order.side, order.daily_notional_yuan)
         commission = self._calc_commission(order.quantity, fill_price, order.side)
         slippage_cost = abs(fill_price - base_price) * order.quantity
 
@@ -332,7 +361,7 @@ class MatchingLogic:
         撮合规则:
           - BUY: limit_price >= ask1 -> 以 ask1 成交(优于限价); 否则不成交
           - SELL: limit_price <= bid1 -> 以 bid1 成交(优于限价); 否则不成交
-          - 应用滑点(在成交价基础上)
+          - 应用滑点(在成交价基础上，bps 按 order.daily_notional_yuan 取标定真值)
           - 计算手续费
 
         Args:
@@ -370,7 +399,7 @@ class MatchingLogic:
         else:
             raise MatchingLogicError(f"无效side: {order.side}, 必须为BUY或SELL")
 
-        fill_price = self._apply_slippage(base_price, order.side)
+        fill_price = self._apply_slippage(base_price, order.side, order.daily_notional_yuan)
         commission = self._calc_commission(order.quantity, fill_price, order.side)
         slippage_cost = abs(fill_price - base_price) * order.quantity
 
@@ -418,6 +447,13 @@ class MatchingLogic:
         order_book = tick_data.to_order_book()
         self._validate_order_book(order_book)
 
+        # 滑点分层的流动性输入：优先订单携带的当日成交额；本位点订单未带时以
+        # tick 累计成交额（当日至今）代理。盘中累计值只会 ≤ 全日成交额，即把标的
+        # 推向更低流动性层（更高 bps），方向保守——不会低估成本。
+        notional = order.daily_notional_yuan
+        if notional is None and tick_data.amount > 0:
+            notional = tick_data.amount
+
         # 限价Tick单：委托给限价单撮合
         if order.limit_price is not None:
             return self.match_limit_order(
@@ -427,6 +463,7 @@ class MatchingLogic:
                     quantity=order.quantity,
                     order_type="LIMIT",
                     limit_price=order.limit_price,
+                    daily_notional_yuan=notional,
                 ),
                 order_book,
             )
@@ -458,7 +495,7 @@ class MatchingLogic:
 
         # 加权平均成交价
         base_price = total_value / filled_qty
-        fill_price = self._apply_slippage(base_price, order.side)
+        fill_price = self._apply_slippage(base_price, order.side, notional)
         commission = self._calc_commission(filled_qty, fill_price, order.side)
         slippage_cost = abs(fill_price - base_price) * filled_qty
 
@@ -475,8 +512,28 @@ class MatchingLogic:
             order_type="tick",
         )
 
-    def _apply_slippage(self, price: Decimal, side: str) -> Decimal:
-        """应用滑点（纯函数）
+    def slippage_bps_for(self, daily_notional_yuan: Decimal | float | None = None) -> Decimal:
+        """该笔成交应收取的单边滑点 bps（标定真源解析，纯函数）。
+
+        解析优先序的唯一实现点在 ``cost_model_calibration.resolve_slippage_bps``
+        （本方法只做参数装配，不复制判断）：调用方显式钉住的平口径 > 开关关闭时的
+        旧一口价 > 按当日成交额落 ADV 五分位 > 全市场名义加权。
+
+        公开给撮合 orchestrator（``MatchingEngine._clamp_buys_to_projected_cash``）
+        复用——sizing 投影与实际成交必须是同一个数，否则满仓信号会因余量算错被拒单。
+        """
+        return cost_cal.resolve_slippage_bps(
+            None if daily_notional_yuan is None else float(daily_notional_yuan),
+            pinned_flat_bps=self._config.slippage_bps,
+        )
+
+    def _apply_slippage(
+        self,
+        price: Decimal,
+        side: str,
+        daily_notional_yuan: Decimal | None = None,
+    ) -> Decimal:
+        """应用滑点（纯函数；bps 由流动性标定真源解析）
 
         买入价 = price * (1 + slippage_bps/10000)
         卖出价 = price * (1 - slippage_bps/10000)
@@ -484,11 +541,12 @@ class MatchingLogic:
         Args:
             price: 基础价格
             side: 买卖方向
+            daily_notional_yuan: 该标的当日成交额（元，None=本位点无流动性信息）
 
         Returns:
             含滑点的价格
         """
-        slippage = price * self._config.slippage_bps / Decimal("10000")
+        slippage = price * self.slippage_bps_for(daily_notional_yuan) / Decimal("10000")
         if side == "BUY":
             return price + slippage
         elif side == "SELL":

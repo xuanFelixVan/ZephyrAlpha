@@ -285,6 +285,16 @@ error_codes:
   module: zephyr.backtest.io.result_repository
   file: src/zephyr/backtest/io/result_repository.py
   introduced: '2026-09-14: P0-4 产物隔离——失真产物 quarantine 留证不进正库（外审整改）'
+- code: ZA-BT-0043
+  class: CostAttributionError
+  module: zephyr.backtest.core.cost_attribution
+  file: src/zephyr/backtest/core/cost_attribution.py
+  introduced: '2026-09-16: 车道 M 台账 #23 H2-A 成交成本归因（初取 ZA-BT-0022 与 services.data_quality_checker.InvalidDataFormatError 重码，按「扫描真源+注册表并集 max+1」改取 0043）'
+- code: ZA-BT-0044
+  class: CostCalibrationError
+  module: zephyr.backtest.core.cost_model_calibration
+  file: src/zephyr/backtest/core/cost_model_calibration.py
+  introduced: '2026-09-16: 车道 M 台账 #23 H2-A/H2-C 成本模型标定单一真源（初取 ZA-BT-0021 与 services.param_analyzer.ParamAnalysisError 重码，顺延取 0044）'
 - code: ZA-CMP-0001
   class: ChecklistCheckerError
   module: zephyr.compliance.discipline_must_do_checker
