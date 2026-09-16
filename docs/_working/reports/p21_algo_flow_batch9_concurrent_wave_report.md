@@ -78,3 +78,11 @@ date: 2026-09-15
 2. **整链分段轮转（LogRotationManager 式）**：违反已登记不变量（retention.py INVARIANTS"不碰核心不可变链data/audit_trail/events.jsonl"+paths.py SSoT 注+AuditChainVerifier 同声明）；跨段防篡改证明永久弱化（删归档段不可检）；merkle_hourly/全史查询消费方（query/anomaly/indexer/drift_bridge/forensic）静默丢史；文件活跃写入窗口内备份-轮转-恢复链路有丢事件窗口；且 ~4 个月即复长回 80MB，无车道内常治机制。
 
 **决定**：登记不执行。附新发现移交 Owner：事件 #26810 起的 HMAC 大面积失配 + #35156/#53721 起的链断裂需专项取证（多写方并发 append 互踩嫌疑：两 writer 各持 _last_hash 交错落盘即致 prev 链断），any 轮转/瘦身动作在取证完成前冻结。
+
+### ② GATE-PANORAMA-ALIGNMENT 检测器失效——GW11 复现实证（修复与回归测试已随晨班 6aee30f70b 在库）
+
+失效形态：reconcile_execution_log 留痕 2026-09-14 17:57（st-mktfix-202609）`run_alignment 异常(UnicodeDecodeError: 'utf-8' codec can't decode byte 0xd6...)`。GW11 独立复现：构造含 GBK 孤立 0xd6 的蓝图 fixture——修复前读取方式必抛 UnicodeDecodeError（同事故签名）；现行 B3 硬化（`_fetch_blueprint_nodes` errors="replace"+U+FFFD 检出跳过、`_load_exempt_list` 前置捕获）下检测器存活、坏文件跳过留 WARNING、好文件正常采集（正例抓到/反例放行）。既有回归测试 TestBadEncodingFailOpen 全绿（test_align_panoramas 43/43）。GW11 结论：无新增改动（晨班已闭环），本节为独立复核证据。
+
+### ③ ALGO-NOTE-SYNC 超窗归因漂移治本——GW11 落地实录（cc386251）
+
+修复：`_collect_node_block_changes_by_linenos`——staged/HEAD 全文建行号→node_id 索引，按 hunk 头双侧行号游标精确归属（+新文锚/-旧文锚/上下文双推进，EOF 钳位继承末行锚）；门闭包经 `git show :map`/`git show HEAD:map` 供料，全文不可得回退窗内锚扫描（回退方向=fail-closed，宁误报不放漂移）。测试 8 例（超窗形态钉死/旧缺陷存档/治本放行/删除行旧锚/无尾换行钳位/无锚空归因/闭包布线/回退阻断），单文件 13/13，全量 tests/governance/commit_gates **2452 passed（2444 基线+8 新增，零回归）**。实弹：本节提交即新门代码在真实网关管线首跑（git show 供料布线实测）；归因逻辑实弹以 FakeGateway 闭包级用例覆盖——真实 TDM（config/**）在 GW11 禁碰车道内，未做真实地图修订实弹，如实留痕。
