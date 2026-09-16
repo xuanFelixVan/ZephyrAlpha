@@ -894,7 +894,7 @@ class TestCollectBjBasicRows:
         assert rows == []
 
 
-# ============== 裁定#285 残余治本: stock_indicator circ_mv/total_mv 映射 + 写前主键去重 ==============
+# ============== 裁定#288 残余治本: stock_indicator circ_mv/total_mv 映射 + 写前主键去重 ==============
 
 
 def _indicator_df(dates, total_mv=2.3e11, circ_mv=2.29e11):

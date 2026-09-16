@@ -3184,3 +3184,49 @@ entries:
   related_arch: ['#ARCH-308']
   related_rulings: ['裁定#266', '裁定#267']
   superseded_by: null
+
+- ruling_id: '裁定#288'
+  title: 'stock_indicator circ_mv 断供残余治本——上游字段映射修复（元÷1e4=万元）+ 写前主键幂等去重；synth 回填退出采集面（编号注：初占#285，因 wyf3-v2 会话并行占号 46188c32bd 先行落地 dev，按登记时序改占#288，引用面已同步改号）'
+  date: '2026-09-16'
+  category: '数据治理'
+  status: 'active'
+  summary: >-
+    裁定：stock_indicator 市值缺口的真因收口与采集链治本。①circ_mv 缺失真因=akshare
+    采集链字段映射丢弃：沙箱实证 ak.stock_value_em 全史返回 总市值/流通市值（单位=元），
+    而采集链仅映射 PE/PB/PS/PCF，市值列硬丢弃——tushare_daily_basic 07-01 断供只是历史
+    断供面，akshare 链从未供过 circ_mv；此前 synth_shares_close 一次性回填不是采集链
+    一部分，构成结构性脆弱。②双批（GW-G2 实测 09-14 raw 11112 行=双版本并存）真因=增量
+    断点续传边界日重叠（last_key=最后采集日=下次 start）逐日重插第二版本行 + 回填平行
+    版本；ReplacingMergeTree 无 version 列合并任意版本胜出，09-15 晚间增量重采把 09-14
+    的 synth circ_mv 版本整体吞并（5556 非空→0）。治本三件：a) provider
+    _collect_indicator_rows 补 total_mv/circ_mv 映射（元÷1e4 折万元对齐表口径，
+    daban_load_producer ×1e4 消费契约不变）；b) _fetch_stock_indicator 写前按主键
+    (trade_date,symbol) 完成键预查去重（完成=akshare 且 circ_mv 非空；≤62 天窗口才查，
+    fail-open 降级直插由 ReplacingMergeTree 兜底）——已完成键不重插（消灭边界日双批），
+    未完成键仍插（升级路径）；c) 存量治理走三步验证：备份（data/backup/
+    stock_indicator_circmv_20260916/ 三分区 552,159 行原始全版本+progress db 快照）→
+    采集正道重采（真上游数据替换 synth hack，data_source 诚实回归 akshare）→
+    OPTIMIZE FINAL 收敛后逐日核验 circ_mv 非空率。边界：schemas/categories/market/
+    market_stock_indicator.py DDL-as-Code 缺 total_mv/circ_mv 两列（与 CH 实表漂移，
+    AI_AUTONOMY=human_only 不擅改，登记待 Owner 补真源）；daban_engine_load 已落
+    default 行不强行改写，重算路径=盘后 DAG 同键重放幂等（事件日 09-15 需显式重跑）。
+  evidence: >-
+    前后对比（CH FINAL 视角）：09-15 circ_mv 非空 0/5562→补齐；上游沙箱
+    ak.stock_value_em('000001') 2113 行全史含 总市值 2.2996e11 元/流通市值
+    （09-14/15/16 三日实测）。备份 552,159 行 TSV 三分区+integrator_progress.db.bak。
+    双批仲裁吞并实证：09-14 raw 11112（GW-G2 留痕）→合并后 5562 全 akshare、
+    circ_mv 0；09-11 任意留存 5488 合成行。修复代码：
+    src/zephyr/data/implementations/akshare_provider.py（_yuan_to_wan/
+    _load_indicator_complete_keys/_fetch_stock_indicator/_collect_indicator_rows，
+    d21198d1ad）；测试 tests/zephyr/data/test_akshare_provider.py
+    （TestStockIndicatorCircMvMap/TestStockIndicatorWriteDedup 9 用例，
+    红蓝=超时/空响应/字段改名/CH 不可达/双批重放）。
+  affected_files:
+    - src/zephyr/data/implementations/akshare_provider.py
+    - tests/zephyr/data/test_akshare_provider.py
+    - src/zephyr/data/config/known_data_gaps.yaml
+  related_arch: []
+  related_rulings:
+    - '裁定#277'
+    - '裁定#284'
+  superseded_by: ''

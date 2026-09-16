@@ -248,7 +248,7 @@ _SQL_ADJ_FACTOR_MINIQMT_KEYS = (
     "WHERE data_source = 'miniqmt' AND symbol IN ({symbols}) "
     "AND trade_date >= '{start}' AND trade_date <= '{end}'"
 )
-# 裁定 #285 写前主键去重：窗口内已完成键集（akshare 且 circ_mv 非空=本链路完整行）
+# 裁定 #288 写前主键去重：窗口内已完成键集（akshare 且 circ_mv 非空=本链路完整行）
 _SQL_INDICATOR_COMPLETE_KEYS = (
     "SELECT DISTINCT toString(trade_date), symbol FROM {table} FINAL "
     "WHERE trade_date >= '{start}' AND trade_date <= '{end}' "
@@ -4235,7 +4235,7 @@ class AkshareIngestProvider(IngestProviderBase):
     def _yuan_to_wan(value) -> float | None:
         """元 → 万元（stock_indicator.circ_mv/total_mv 表口径=万元，见 daban_load_producer 实证）。
 
-        裁定 #285 残余治本：上游 ak.stock_value_em 返回 总市值/流通市值 单位=元，
+        裁定 #288 残余治本：上游 ak.stock_value_em 返回 总市值/流通市值 单位=元，
         表口径=万元（tushare daily_basic 惯例承袭），÷1e4 折算；上游缺列/空值返 None。
         """
         f = safe_float(value)
@@ -4246,7 +4246,7 @@ class AkshareIngestProvider(IngestProviderBase):
     def _collect_indicator_rows(self, ak, policy, code: str, start_str: str, end_str: str) -> list[tuple]:
         """获取单只股票的指标行（通用辅助，按日期范围过滤）。
 
-        裁定 #285 残余治本（circ_mv 断供根因）：上游 ak.stock_value_em 本就返回
+        裁定 #288 残余治本（circ_mv 断供根因）：上游 ak.stock_value_em 本就返回
         总市值/流通市值（单位=元），原映射仅取 PE/PB/PS/PCF 将市值列丢弃——
         tushare_daily_basic 07-01 断供后表内 circ_mv/total_mv 永久 NULL。
         现补全映射（÷1e4 折万元对齐表口径）。
@@ -4287,7 +4287,7 @@ class AkshareIngestProvider(IngestProviderBase):
     _INDICATOR_DEDUP_MAX_WINDOW_DAYS = 62
 
     def _load_indicator_complete_keys(self, table: str, start_str: str, end_str: str) -> set[tuple[str, str]]:
-        """预查窗口内已完成主键集 {(trade_date_iso, symbol)}（裁定 #285 双批幂等治本）。
+        """预查窗口内已完成主键集 {(trade_date_iso, symbol)}（裁定 #288 双批幂等治本）。
 
         完成定义=data_source='akshare' 且 circ_mv 非空（本链路产出的完整行）。
         已完成键不再重插（消灭断点续传边界日重采双批）；未完成键仍插=升级路径。
@@ -4336,7 +4336,7 @@ class AkshareIngestProvider(IngestProviderBase):
         原串行 5000只×~1s=90min，逼近6h STALE红线被 reaped。
         改 ThreadPoolExecutor 并行（参照 _fetch_daily_valuation 已验证模式）。
 
-        裁定 #285 残余治本（双批幂等性）：增量窗口与断点续传天然存在边界日重叠
+        裁定 #288 残余治本（双批幂等性）：增量窗口与断点续传天然存在边界日重叠
         （last_key=start=最后采集日），重采即插第二版本行，ReplacingMergeTree 无
         version 列合并时任意胜出——曾把一次性回填的 synth circ_mv 版本整体吞掉。
         治本=写前按主键 (trade_date,symbol) 条件去重：已完成行（akshare 且
@@ -4369,7 +4369,7 @@ class AkshareIngestProvider(IngestProviderBase):
         batch_rows: list[tuple] = []
         t0 = time.monotonic()
 
-        # 写前主键去重（裁定 #285）：已完成键集（增量小窗口才查，防全量重建内存膨胀）
+        # 写前主键去重（裁定 #288）：已完成键集（增量小窗口才查，防全量重建内存膨胀）
         complete_keys = self._load_indicator_complete_keys(table, start_str, end_str)
 
         _MAX_WORKERS = 4  # 保守并发，与 _fetch_daily_valuation 一致
@@ -4420,7 +4420,7 @@ class AkshareIngestProvider(IngestProviderBase):
 
         if skipped:
             self._log.info(
-                f"stock_indicator 写前去重(裁定#285): 跳过已完成键 {skipped} 行"
+                f"stock_indicator 写前去重(裁定#288): 跳过已完成键 {skipped} 行"
                 f"（窗口 {start_str}~{end_str}，完成键 {len(complete_keys)} 个）"
             )
         yield FetchResult(
