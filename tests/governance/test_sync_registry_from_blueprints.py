@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.governance.test_sync_registry_from_blueprints
 # [DOMAIN] D_AUDITTEST
 # [DEPENDENCIES] scripts.governance.d5_architecture.syncers.sync_registry_from_blueprints
