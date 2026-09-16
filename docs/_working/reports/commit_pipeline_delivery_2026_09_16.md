@@ -228,3 +228,16 @@ noise 轮：无。矿脉枯竭：R3 五脉全见底，本域收口。
 - 新增手术测试：38/38（双锁 4+保育 6+write_audit 28）；全域套件累计含既往在库测试约 3487+ 全绿（较晚班 3449 再 +38）。
 - HEAD 哨兵硬验：_GlobalCommitLock=3/orphan_commit_detected=1/stash 吞=1/_load_unmanaged_entries=3/scripts.*True=1——四项全在。
 - 终提交：e9381d33（11 文件）。
+
+## 13. 三新坑排查修复（2026-09-16 晚二批，他会话反馈触发，5736dadf）
+
+反馈六死信取证（st-resched-fix/st-auditfix/st-dbgap-fix/st-tickdrain）→ 三模式分诊+全部治本：
+
+| 坑 | 根因 | 修复 |
+|----|------|------|
+| Mode A：scripts/data/*.py 队列死信（3 条） | scripts/data/* 是 .gitignore 再生产物区（63 号），prestage git add rc=1 整项死+RuntimeError 截断读不到病灶 | 前置 check-ignore 精确点名+两条可行动指引（移出忽略区/精确豁免对齐 sz_open_data 先例）；修 _git_wt 误抛（check-ignore rc=1=正常，check=False） |
+| Mode B：新文件 pathspec did not match（2 条） | 新文件 prestage 已 staged 但 gateway commit 时 index 丢失（微因待观测） | landing 自愈重试：重放 apply+prestage 一次后重试 commit；仍败→死信附 git status 诊断（下次必可归因）；红蓝钉 1 例 |
+| Mode C：新会话首提交撞 LOOKUP 门禁 | CAPABILITY-LOOKUP-REQUIRED 按会话记账（审计设计如此）但不在预检白名单——锁内才撞=白烧+死信一轮 | 进预检白名单（信号型 0ms），1 秒快败+精确指引（find 命令原文）；审计语义不变 |
+| 顺手 | BARE-SUBPROCESS 注册失败（priority 108 被 ALGO-FLOW-LINK 抢占，112/113） | 108→132 让位（后到者让位先例同款），恢复 113/113 全注册 |
+
+Mode B 自愈钉+landing 回归 26/26；预检白名单终态 15 道。
