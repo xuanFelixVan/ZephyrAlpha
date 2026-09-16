@@ -46,36 +46,7 @@ relate 不直接判 extract（预筛结果保守，仅 review/acknowledged），
   - 异常 → degraded=True, 返回空列表
   - 正常执行 → 返回 Finding 列表（severity 仅 review/acknowledged）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: repo_root 参数
-#   fields: 参数 repo_root（无注解）
-#   code: relate_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: relate_adapter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RelateAdapter
-#   name_en: RelateAdapter
-#   intro: relate 快速预筛适配器（Phase C L2/L3 加速器，Path B: datasketch MinHash…
-#   desc: relate 快速预筛适配器（Phase C L2/L3 加速器，Path B: datasketch MinHash LSH）。 封装 datasketch MinHash L…；公共方法（定义序）: health_…
-#   inputs: repo_root config
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: RelateAdapter
-#   downstream: zephyr.clone_guard.orchestrator; zephyr.clone_guard.mcp_server
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/relate_adapter.yaml
 """
 
 from __future__ import annotations

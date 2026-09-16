@@ -1,0 +1,47 @@
+# ALGO_FLOW 外部真源——mcp_server（_domain_gov_enforcement 域，真源 src/zephyr/clone_guard/mcp_server.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.clone_guard.mcp_server
+source_of_truth: src/zephyr/clone_guard/mcp_server.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: repo_root 参数
+    #   fields: 参数 repo_root（无注解）
+    #   code: mcp_server.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: enable_rbac 参数
+    #   fields: 参数 enable_rbac（无注解）
+    #   code: mcp_server.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① create_server
+    #   name_en: create_server
+    #   intro: 工厂函数，返回配置好的 CloneGuardMCPServer 实例。
+    #   desc: 工厂函数，返回配置好的 CloneGuardMCPServer 实例。 Args: repo_root: 仓库根目录（默认当前目录）。 enable_rbac: 是否启用 RBA…；源码 L646-L657
+    #   inputs: repo_root enable_rbac
+    #   outputs: CloneGuardMCPServer
+    # - id: A2
+    #   name_zh: ② main
+    #   name_en: main
+    #   intro: 启动 CloneGuard MCP Server（stdio 传输）。
+    #   desc: 启动 CloneGuard MCP Server（stdio 传输）。 日志输出到 stderr——stdout 保留给 JSON-RPC 协议帧。；源码 L660-L674
+    #   inputs: 无参数
+    #   outputs: 返回值
+    #   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: CloneGuardMCPServer
+    #   name_en: CloneGuardMCPServer
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: config/mcp.json (servers.clone_guard); AI agent (L0 源头预防 + L2 技术债可达性)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> O1

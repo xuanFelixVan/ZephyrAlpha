@@ -26,45 +26,7 @@ D_GOV_CODE_QUALITY — 退役策略指纹库（90 号 Phase2 项，#20 工程细
 注意：本模块为 90 号 Phase2 交付物，MATURITY=testing；echo-guard 拦截链路接线
 挂起待 Owner（宪章 B-007 纪律）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: a 参数
-#   fields: 参数 a，类型注解 np.ndarray | list[float] | tuple[float…
-#   code: strategy_fingerprint.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: b 参数
-#   fields: 参数 b，类型注解 np.ndarray | list[float] | tuple[float…
-#   code: strategy_fingerprint.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① dtw_distance
-#   name_en: dtw_distance
-#   intro: DTW（Dynamic Time Warping）距离——PnL 形态比对（Tier3）。
-#   desc: DTW（Dynamic Time Warping）距离——PnL 形态比对（Tier3）。 经典 O(n×m) DP：局部代价=绝对差，路径=min(上/左/左上) 累积。 允许…；源码 L86-L112
-#   inputs: a b
-#   outputs: float
-# - id: A2
-#   name_zh: ② StrategyFingerprintStore
-#   name_en: StrategyFingerprintStore
-#   intro: 退役策略指纹库（内存 MVP；持久化随 echo-guard 接线排期）。
-#   desc: 退役策略指纹库（内存 MVP；持久化随 echo-guard 接线排期）。 相似判定（裁定口径）：DTW 距离 ≤ dtw_max（形状）且 Pearson ≥ pearson_…；公共方法（定义序）: add, fi…
-#   inputs: dtw_max pearson_min
-#   outputs: 返回值
-#   （注：A2 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: float
-#   name_en: float
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: echo-guard 退役策略相似度拦截（接线待排期，本批仅交付模块本体）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/strategy_fingerprint.yaml
 """
 
 from __future__ import annotations

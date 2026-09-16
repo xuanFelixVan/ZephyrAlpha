@@ -47,36 +47,7 @@ Vendetect JSON 序列化修复后补全）：
   - CLI 崩溃 → degraded=True, 返回空列表
   - 正常执行 → 返回 Finding 列表
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: repo_root 参数
-#   fields: 参数 repo_root（无注解）
-#   code: vendetect_adapter.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: config 参数
-#   fields: 参数 config（无注解）
-#   code: vendetect_adapter.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① VendetectAdapter
-#   name_en: VendetectAdapter
-#   intro: Vendetect 跨仓库合规审计适配器（Phase C L3）。
-#   desc: Vendetect 跨仓库合规审计适配器（Phase C L3）。 封装 Vendetect CLI 调用（位置参数 TEST_REPO SOURCE_REPO + --form…；公共方法（定义序）: health_…
-#   inputs: repo_root config
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: VendetectAdapter
-#   downstream: zephyr.clone_guard.orchestrator
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/vendetect_adapter.yaml
 """
 
 from __future__ import annotations
