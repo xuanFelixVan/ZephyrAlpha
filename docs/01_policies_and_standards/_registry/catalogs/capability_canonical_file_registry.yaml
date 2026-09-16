@@ -27643,6 +27643,10 @@ creation_tokens:
   token: owner-vision-mapping-2026-09-16-owner-vision-system-mapping-20260916
   created_by: st-overseer-20260916
   capability: owner_vision_mapping
+- file: docs/_working/trading_vision/2026-09-16-data-sufficiency-matrix.md
+  token: owner-vision-mapping-2026-09-16-data-sufficiency-matrix-20260916
+  created_by: st-overseer-20260916
+  capability: owner_vision_mapping
 - file: docs/_working/factory/strategy_cards/2026-09-16-s-owner-001-300etf-band-t.md
   token: owner-strategy-cards-2026-09-16-s-owner-001-300etf-band-t-20260916
   created_by: st-overseer-20260916
@@ -27724,6 +27728,14 @@ creation_tokens:
   created_by: st-ailayer-20260917
   capability: ai_layer_vision
 - file: docs/_working/ai_layer_vision/OBJ_R_rules_standards/DESIGN.md
+  token: ai-layer-vision-design-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L4_compare/DESIGN.md
+  token: ai-layer-vision-design-20260916
+  created_by: st-ailayer-20260917
+  capability: ai_layer_vision
+- file: docs/_working/ai_layer_vision/L6_ab_switch/DESIGN.md
   token: ai-layer-vision-design-20260916
   created_by: st-ailayer-20260917
   capability: ai_layer_vision

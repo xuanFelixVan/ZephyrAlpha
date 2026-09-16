@@ -4,7 +4,7 @@ title: L6 切换段——A/B 蓝绿（champion/challenger，进化的安全带�
 owner: ZephyrAlpha-Owner
 session: st-ailayer-20260917
 date: 2026-09-17
-status: skeleton_pending_mining
+status: design_done   # 真源设计稿=[DESIGN.md](DESIGN.md)（模块级影子运行框架/五态状态机/灰度三档成文）
 ---
 
 # L6 切换段骨架卡
@@ -34,4 +34,6 @@ promotion 前端拍板页（Owner 门位）；OwnerTokenGuard。
 5. 回切演练：定时红蓝演练回切通道的可用性（安全带不演练=没有安全带）
 
 ## 状态
-壳已立。策略级已有模拟盘先例，**模块级影子运行是本段最大空白，也是全骨架最大的新机制**。
+**design_done（2026-09-17 挖干）**：真源设计稿=[DESIGN.md](DESIGN.md)——模块级影子运行框架
+（worktree 双检出+不互染三闸）、五态状态机、观察期 T1-T6 自动回切触发器、墓碑规程、
+审批分级（risk_tier 映射）、回切演练挂月度体检、灰度三档成文（EXEMPT-ZONE-FM 先例）。

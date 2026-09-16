@@ -203,3 +203,33 @@ report.jsonl 每行字段：`run_id, commit_hash, commit_date, stratum, files[],
 5. S3 阈值外置化是否立案（触及 gate 源码=治理层资产变更）。
 6. 案例库升格 catalogs 正式注册表的时机（攒案门槛）。
 7. CREATE-GUARD creation_token 未登记留痕：本班硬边界"禁登记 token"，由主会话/Owner 补登 DESIGN.md 的 creation_token。
+
+## 增补（2026-09-17 五轮，Owner 讨论定案：治理物 schema/枚举/模板第四族）
+
+Owner 问"门禁/文档字段/规则文件/模板（如 TTL 枚举值）是否都进升级流程，规则能不能升级"。
+裁定：**全部可升级，包括规则——差别不在能不能升，在笔在谁手里**。治理物按爆炸半径分三级：
+
+| 级 | 例子 | 流程 |
+|----|------|------|
+| T1 参数级（旋钮） | TTL 枚举值新增、堵点阈值、模板字段增补、rubric 数值 | AI 提案（触发率/误拦率证据）→重考历史→治理立案，批得轻 |
+| T2 结构级（家具） | 字段 schema 变更、模板重构、新 gate 引入、枚举值废弃 | AI 提案→治理立案→Owner 批；受宪法 §4 净零预算约束（新 gate 声明替代谁） |
+| T3 语义级（承重墙） | 规则 YAML 权限语义（谁能批谁）、宪法正文、红线清单、fail-open/closed 翻转 | 永不自动——Owner 修宪笔，AI 只备料 |
+
+**不对称规则**：收紧约束可走快车道；**放松约束的提案永不进自动通道**（治理物版利益冲突回避，防自我放大）。
+
+**"不被规则限死"三条正门**（限死多半是忘了后两条）：①改规则（本流水线，慢而治本）；
+②豁免通道（单次留痕，先例=--allow-non-worktree/--allow-overlap/no-lookup 白名单）；
+③裁定成先例（进 ruling_registry 后续引用）。正解顺序=③解今天→②应急→①治本。
+
+**连带义务**：治理物变更必须**同一 commit 自带迁移**（改 TTL 枚举=所有读 TTL 的门禁/清扫器/
+模板同批改，禁止半拉子上线）——MODIFY-GUARD 三件套同步的同构纪律。
+
+**盘点表扩充**：原"尺子清单"七项之外补第四族=治理物 schema 与枚举（frontmatter 必填字段/
+templates/ 全部目录 8 件/TTL·status·doc_type 枚举/各注册表 entry_schema），每把尺真源路径入
+盘点全量表。
+
+**待 Owner 项主会话处置（夜批授权下自裁）**：#1 判据数值=按提案原值追认生效（红蓝轮复核）；
+#3 重放 summary promote 落点=自裁 docs/_working/ai_layer_vision/OBJ_R_rules_standards/replays/
+（ttl task_bound）；#4 首案按本卡记录登记 CASE-2026-0917-001；#7 token 已由主会话 wave1
+ceremony 登记（capability ai_layer_vision）——该待办销项。#2/#5/#6 属治理立案类，保留待
+治理流程（合规不越权）。
