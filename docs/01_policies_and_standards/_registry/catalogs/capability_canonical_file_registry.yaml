@@ -27515,6 +27515,14 @@ creation_tokens:
   token: s11-nodes-mining-coverage-map-cert-gates-mining-20260916
   created_by: st-qoder-t1a-20260915
   capability: s11_nodes_mining
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/nodes/data_ingestion_chain_mining.md
+  token: s11-nodes-mining-data-ingestion-chain-mining-20260916
+  created_by: st-qoder-mining-20260917
+  capability: s11_nodes_mining
+- file: docs/_working/full-auto-chain/S11_assembled_backtest/nodes/gate_self_deception_mining.md
+  token: s11-nodes-mining-gate-self-deception-mining-20260916
+  created_by: st-qoder-mining-20260917
+  capability: s11_nodes_mining
 - file: scripts/governance/d5_architecture/syncers/normalize_blueprint_autogen_anchors.py
   token: blueprint-anchor-sync-normalize-blueprint-autogen-anchors-20260916
   created_by: st-qoder-t1a-20260915
@@ -27675,4 +27683,8 @@ creation_tokens:
   token: trading-vision-audit-2026-09-16-skeleton-coverage-audit-20260916
   created_by: st-skeletonaudit-20260916
   capability: trading_vision_audit
+- file: docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md
+  token: resource-schedule-v2-construction-plan-resource-schedule-v2-construction-plan-20260916
+  created_by: st-govmap-20260915
+  capability: resource_schedule_v2_construction_plan
 di_seam_exemptions: []
