@@ -412,6 +412,13 @@ from schemas.categories.market.market_us_futures_intraday import US_FUTURES_INTR
 from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
 from schemas.categories.meta.meta_stock_profile_ths import STOCK_PROFILE_THS_DDL
 from schemas.categories.meta.meta_stock_profile_ths import TABLE_NAME as _THS_PROFILE_TABLE
+# 判定台账首批四表（2026-09-16，judgment-ledger-standard §三，st-ledgerp1-20260916）：
+# 作战室三任务（盘中状态/次日概率/晨间预案+盘中验证）——DDL-as-Code 真源
+# schemas/categories/judgment/（MergeTree 只增不改；结算列组只许 judgment_settler 回填）
+from schemas.categories.judgment.judgment_intraday_market_state import JUDGMENT_INTRADAY_MARKET_STATE_DDL
+from schemas.categories.judgment.judgment_next_day_forecast import JUDGMENT_NEXT_DAY_FORECAST_DDL
+from schemas.categories.judgment.judgment_daily_plan import JUDGMENT_DAILY_PLAN_DDL
+from schemas.categories.judgment.judgment_plan_verification import JUDGMENT_PLAN_VERIFICATION_DDL
 
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
@@ -487,6 +494,12 @@ _ALL_DDL: list[tuple[str, str]] = [
     # 2026-09-09 DS-223：THS 行业/公司简介全市场主数据（细分行业缺口补齐）
     # 表名经 schema 真源 TABLE_NAME 拼接（TABLE-NAME-REGISTRY：全限定名真源=categories YAML）
     ("c1_market." + _THS_PROFILE_TABLE, STOCK_PROFILE_THS_DDL),
+    # 判定台账首批四表（2026-09-16 judgment-ledger-standard §三）：MergeTree 只增不改，
+    # 判定/结算分离（结算列组只许 zephyr.plan_engine.judgment_settler 回填）
+    ("c1_market.judgment_intraday_market_state", JUDGMENT_INTRADAY_MARKET_STATE_DDL),
+    ("c1_market.judgment_next_day_forecast", JUDGMENT_NEXT_DAY_FORECAST_DDL),
+    ("c1_market.judgment_daily_plan", JUDGMENT_DAILY_PLAN_DDL),
+    ("c1_market.judgment_plan_verification", JUDGMENT_PLAN_VERIFICATION_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -1048,6 +1061,11 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "kline_global": "ReplacingMergeTree",
     # 2026-09-09 DS-223：THS 主数据快照按 (trade_date, symbol) 同键替换幂等
     "stock_profile_ths": "ReplacingMergeTree",
+    # 判定台账首批四表（2026-09-16）：MergeTree 只增不改（判定台账标准 §一.3）
+    "judgment_intraday_market_state": "MergeTree",
+    "judgment_next_day_forecast": "MergeTree",
+    "judgment_daily_plan": "MergeTree",
+    "judgment_plan_verification": "MergeTree",
 }
 
 _DATABASE = "c1_market"

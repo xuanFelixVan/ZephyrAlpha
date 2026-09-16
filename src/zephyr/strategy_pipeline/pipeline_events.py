@@ -122,6 +122,11 @@ PF_ALLOC_TIMEOUT_S = 900
 # kind=零新机制，挂点 A 的本意）+ 播报稳定前缀（日志/告警面可 grep，"腐烂"与"刷新失败"必须出声）
 REGIME_SNAPSHOT_KIND = "regime_snapshot_daily"
 REGIME_SNAPSHOT_PREFIX = "[REGIME-SNAPSHOT]"
+# 判定台账结算件（2026-09-16 judgment-ledger-standard §四，st-ledgerp1-20260916）：同款业务日级
+# marker 幂等键（结算扫描是累积口径——已结算行 evaluated_at 非空天然排除，错过当日不丢账，
+# marker 先落防失败重扫风暴）+ 播报稳定前缀
+JUDGMENT_SETTLE_KIND = "judgment_ledger_settle"
+JUDGMENT_SETTLE_PREFIX = "[JUDGMENT-SETTLE]"
 # ensure_regime_snapshot 返回 action 中视为成功/无异常的两态（其余=refresh_failed/error → ERROR 播报）
 REGIME_SNAPSHOT_OK_ACTIONS = frozenset({"fresh", "refreshed"})
 # 预埋派发（S12/S13 前置契约）：实现模块由后续批次交付，缺失=log-and-skip（不抛、出队留痕）
@@ -731,6 +736,49 @@ def maybe_refresh_regime_snapshot(task_id: Any = None, success: bool = True,
     return {"action": action, "trade_date": day, "brief": brief}
 
 
+# ---------- 判定台账结算产出者（judgment-ledger-standard §四：收盘入库=结算自然唤醒）──
+def maybe_settle_judgment_ledger(task_id: Any = None, success: bool = True,
+                                 **_kwargs) -> dict[str, Any]:
+    """judgment 台账三表的唯一自动结算者：行情日件 SUCCESS=自然唤醒，一业务日至多一扫。
+
+    宪法 §9.3 合规（零新机制，maybe_refresh_regime_snapshot 同款骨架）：不建
+    cron/Timer/sleep 循环，节拍由调度器 task_completed 唤醒给。结算扫描是**累积
+    口径**（已结算行 evaluated_at 非空天然排除，mutation 侧再判一次防并发覆写），
+    故错过当日不丢账——下个成功唤醒点连前账一起结。
+
+    幂等闸=业务日级永久记号（_marker_seen，regime 同款）：键
+    judgment_ledger_settle:<D>，D=行情最新入库日（resolve_pf_alloc_trade_date，
+    禁墙钟猜日）。**记号先落再动手**（regime 先例同款裁定）：失败若不留号=
+    每个行情唤醒点重扫三表（风暴）；失败已 ERROR 出声，行留未结算自愈，人工
+    逃生口=`python -c "from zephyr.plan_engine.judgment_settler import settle_all"`。
+
+    永不抛：结算失败绝不得反噬唤醒钩子链。
+    """
+    tid = str(task_id or "")
+    if not success or not any(k in tid for k in SIM_DAILY_WAKE_TASKS):
+        return {"action": "skipped_wake_point"}
+    day = ""
+    try:
+        day = resolve_pf_alloc_trade_date()  # 共用业务日真源（§9.1 reader 角色）
+        key = f"{JUDGMENT_SETTLE_KIND}:{day}"
+        if _marker_seen(key):
+            return {"action": "already_settled", "trade_date": day}
+        _touch_marker(key)  # 先落号再动手（防失败重扫风暴，regime 同款裁定）
+        from zephyr.plan_engine.judgment_settler import settle_all  # noqa: PLC0415
+
+        reports = settle_all(asof_day=day)  # 业务日单次解析，三表同锚
+        brief = " | ".join(r.brief() for r in reports.values())
+    except Exception as exc:  # noqa: BLE001——钩子永不反噬调度器，失败必须出声
+        msg = (f"{JUDGMENT_SETTLE_PREFIX} 结算未完成（trade_date={day or '未知'}）："
+               f"{type(exc).__name__}: {exc}")
+        log.error(f"{JUDGMENT_SETTLE_PREFIX} 结算异常（不影响唤醒链，人工逃生口 "
+                  f"settle_all()）trade_date={day or '未知'}", exc_info=True)
+        alert(msg[:300], level="ERROR")
+        return {"action": "error", "trade_date": day, "error": type(exc).__name__[:200]}
+    alert(f"{JUDGMENT_SETTLE_PREFIX} 结算体检 trade_date={day}: {brief}", level="INFO")
+    return {"action": "settled", "trade_date": day, "brief": brief}
+
+
 # ---------- 写侧钩子 ----------
 def emit_c4_batch_completed(batch: str, run_id: str, inserted: int) -> dict[str, Any]:
     """C4 批测落账成功后的通知钩子（c4_batch_screen 调用）：记录事件并尝试立即消费。"""
@@ -762,8 +810,9 @@ def wire_data_scheduler(scheduler: Any) -> None:
     """DataScheduler.subscribe("task_completed", ...) 轻钩子：数据任务完成=自然唤醒点。
 
     职责边界：只做 ①轻 kind drain（intake 重放/审计）②翻译件积压扫描→记录 c4_batch_due+告警
-    ③日频产出者唤醒（regime 日序供给 → pf_alloc 分配链 → 模拟盘日件 → 月度档；顺序即下游
-    读到新鲜数据的顺序：先刷新 regime_snapshot_history 再入队分配件，分配链读本表口径；
+    ③日频产出者唤醒（regime 日序供给 → 判定台账结算 → pf_alloc 分配链 → 模拟盘日件 → 月度档；
+    顺序即下游读到新鲜数据的顺序：先刷新 regime_snapshot_history 再入队分配件，分配链读本表口径；
+    判定台账结算挂 regime 之后（同为收盘入库事件的只读+轻 mutation 消费者，失败互不连坐）；
     分配再先于账本入队是"钱包额度来自分配链"这一接通的唯一次序保证）。
     永不抛异常（数据任务完成回调故障不得反噬调度器）；重 kind 不在此消费（见模块裁定）。
     """
@@ -774,6 +823,9 @@ def wire_data_scheduler(scheduler: Any) -> None:
             # 挖矿 F3：regime 日序台账日产出者——须先于分配链（pf_alloc 的 regime 口径读本表，
             # 表旧=分配快照带旧教材）；滞后 ≤3 天时只是一条只读查询，不起子进程
             maybe_refresh_regime_snapshot(**_kwargs)
+            # 判定台账标准 §四（2026-09-16）：三表结算挂收盘入库事件链（累积扫描幂等，
+            # 错过当日不丢账）——置于 regime 之后、分配链之前（纯判定侧负载，不占分配时序）
+            maybe_settle_judgment_ledger(**_kwargs)
             # 车道 D #15：分配链日产出者——必须先于日件入队（journal FIFO=分配先落，
             # 同日账本 ensure_wallet 才读得到 alloc_budget_daily 的真实钱包额度）
             maybe_emit_pf_alloc_daily(**_kwargs)

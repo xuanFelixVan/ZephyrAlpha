@@ -50042,6 +50042,20 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "给模拟盘里的策略打分：OOS 夏普够不够大、回撤够不够浅、成交笔数够不够多、DSR 是不是正的，四条全过才建议转正，缺证据就判继续观察，绝不冤枉也不放水，最后一页报告给 Owner 拍板"
+- module_path: src/zephyr/plan_engine/judgment_ledger.py
+  domain_id: D_PLAN
+  name_zh: "判定台账发射器库件"
+  name_en: "Judgment Ledger Emitter"
+  desc_zh: "通用列契约+ULID id+payload 校验+一行发射 helper"
+  desc_en: ""
+  plain_zh: "任何模块产出预测判断时，用这个工具一行代码就能把判断记进数据库台账表，自动生成唯一编号、检查数据格式，别人之后可以对答案打分"
+- module_path: src/zephyr/plan_engine/judgment_settler.py
+  domain_id: D_PLAN
+  name_zh: "判定台账共享结算器"
+  name_en: "Judgment Settler"
+  desc_zh: "到期扫描+行情联结 outcome+结算回填+聚合报告+DM 对比"
+  desc_en: ""
+  plain_zh: "等行情数据出来后，这个工具自动给之前记录的预测判断对答案算得分，算错的标记原因不偷偷跳过，还能按模块汇总谁预测得准"
 
 battle_map_steps:
 - step_id: BM-BUY-05
