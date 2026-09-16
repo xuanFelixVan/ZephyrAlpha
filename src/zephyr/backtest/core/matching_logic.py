@@ -41,7 +41,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import Any, Optional
+from typing import Any, Final, Optional
 
 
 class MatchingLogicError(Exception):
@@ -55,11 +55,25 @@ class MatchingLogicError(Exception):
             self.error_code = error_code
 
 
+# --- 交易成本常量单一真源（T1A-4，2026-09-16 死成员矿脉治本批）---------------------
+# 裁定背景：万 0.854 = 券商合作价（Owner 2026-09-15 复核确认，#233 裁定 2026-08-21
+# "回测以实盘费率为准"）。此前 vectorized_engine.BacktestConfig 与 MatchingConfig 各写
+# 一份字面量、docstring 还残留"万三"示例——同一事实两个真源必然漂移（RULE-SSOT）。
+# 本处是唯一字面量位点：回测引擎与实盘经纪适配层一律同源引用，改费率只改这里。
+COMMISSION_RATE: Final[Decimal] = Decimal("0.0000854")  # 万0.854（券商合作价，双向）
+SLIPPAGE_BPS: Final[Decimal] = Decimal("1")  # 1bp 固定滑点（日频低换手口径，冲击成本另层覆盖）
+STAMP_TAX_RATE: Final[Decimal] = Decimal("0.0005")  # 万5，卖出单边（2023-08 起法定）
+TRANSFER_FEE_RATE: Final[Decimal] = Decimal("0.00001")  # 万0.1，双向（沪深现行法定）
+MIN_COMMISSION: Final[Decimal] = Decimal("5")  # 5 元下限（不免五，Owner 2026-08-22 确认）
+
+
 @dataclass(frozen=True)
 class MatchingConfig:
     """撮合配置（frozen，实例化后不可变，保证纯函数式语义）
 
     费率口径：2026-08-21 费率口径统一（#233，Owner 裁定：回测以实盘费率为准）。
+    费率真源：本模块上方 ``COMMISSION_RATE`` 等常量（单一真源，T1A-4）——
+    回测侧 ``vectorized_engine.BacktestConfig`` 同源引用，禁止再出现第二处字面量。
 
     Attributes:
         commission_rate: 券商佣金费率(万0.854=0.0000854，Owner 实盘账户实测协议费率，2026-08-21 裁定)
@@ -72,11 +86,11 @@ class MatchingConfig:
             历史正确口径见 matching_engine._limit_bounds 三级解析链/#ARCH-DATA-020)
     """
 
-    commission_rate: Decimal = Decimal("0.0000854")  # 万0.854（Owner 实盘协议费率，#233 裁定 2026-08-21）
-    slippage_bps: Decimal = Decimal("1")
-    stamp_tax_rate: Decimal = Decimal("0.0005")  # 万5，卖出单边（2023-08 起法定）
-    transfer_fee_rate: Decimal = Decimal("0.00001")  # 万0.1，双向（沪深现行法定）
-    min_commission: Decimal = Decimal("5")  # 不免五（Owner 2026-08-22 确认），保留 5 元下限
+    commission_rate: Decimal = COMMISSION_RATE  # 万0.854（真源=本模块 COMMISSION_RATE）
+    slippage_bps: Decimal = SLIPPAGE_BPS
+    stamp_tax_rate: Decimal = STAMP_TAX_RATE  # 万5，卖出单边（2023-08 起法定）
+    transfer_fee_rate: Decimal = TRANSFER_FEE_RATE  # 万0.1，双向（沪深现行法定）
+    min_commission: Decimal = MIN_COMMISSION  # 不免五（Owner 2026-08-22 确认），保留 5 元下限
     lot_size: int = 100
     price_limit_pct: Decimal = Decimal("0.10")
 
@@ -539,6 +553,11 @@ class MatchingLogic:
 
 
 __all__ = [
+    "COMMISSION_RATE",
+    "MIN_COMMISSION",
+    "SLIPPAGE_BPS",
+    "STAMP_TAX_RATE",
+    "TRANSFER_FEE_RATE",
     "MatchingConfig",
     "MatchOrderInput",
     "OrderBookSnapshot",
