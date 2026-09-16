@@ -13,13 +13,6 @@
 # [ERROR_CONTRACT] InvalidPostSettlementInputError(ZA-TR-0021)
 # [TESTS] tests/trading/test_post_settlement_pipeline.py
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: trade_date(结算日 YYYY-MM-DD) + reconcile_fn(结算对账可调用, 注入) + audit_fn(日终审计可调用, 可选注入) + alert_sink(告警出口, 可选注入)
-# F1: build_post_settlement_jobs()——返回盘后 15:30 任务规格(cron=30 15 * * *, trading_day_only=True), 调度层按规格注册(本模块不实际挂任务)
-# F2: run_post_settlement_pipeline(trade_date, ...)——15:30 触发入口: 结算对账→(不一致告警)→日终审计, 逐步捕获异常落步骤状态
-# A1: 对账不一致/步骤异常→alert_sink(trade_date, message) 告警; alert_sink 缺失仅日志(不阻断链路)
-# O1: PostSettlementRunResult(trade_date/reconcile_status/audit_status/errors)——调度层与复盘链路消费
-# [/ALGO_FLOW]
 """
 D_TRADING — 盘后结算对账调度接线入口（54 号 §2.4 横向缺口 #2）。
 

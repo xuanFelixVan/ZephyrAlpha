@@ -14,12 +14,6 @@
 # [TESTS] tests/simulation/test_volume_aware_impact.py
 # [TTL] permanent
 # [A_module] module_id=MOD-SIM-027 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [ALGO_FLOW]
-# I1: delta_weight(权重变化) + notional(组合名义金额) + dollar_volume(标的成交额) + impact_coef
-# A1: volume_aware_sqrt_impact(impact=coef×√(|Δw|×notional/dollar_volume), 零量fallback/符号对称/零系数兼容)
-# A2: volume_aware_sqrt_impact_batch(逐标的批量形式, NAV loop rebalance_cost 用)
-# O1: impact 成本率(标量或list[float], 占notional比例)
-# [/ALGO_FLOW]
 """
 citrusquant volume-aware sqrt impact 形式模块(53号 §3.2 v2.0 候选)
 

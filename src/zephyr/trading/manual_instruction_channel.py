@@ -14,24 +14,6 @@
 # [TESTS] tests/trading/test_manual_instruction_channel.py
 # [A_module] module_id=MOD-TRADING-011 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: ManualInstruction(schema校验Fail-Closed)
-# I2: premarket_check_fn/risk_check_fn(注入委托 MOD-EX-063/MOD-EX-024)
-# A1: 边界闸(premarket_check_fn; False→PREMARKET_NOT_READY; None→PROBE_UNWIRED; 异常→PROBE_ERROR)
-# A2: 风控闸(risk_check_fn C-004面; (False,reason)→RISK_REJECTED; None→PROBE_UNWIRED; 异常→PROBE_ERROR)
-# A3: 裁决(双闸全过→ACCEPTED; 任一不过→REJECTED首因reason_code; 逐事件落审计链)
-# A4: 对账(execution_probe取回报; None→UNFILLED; 异常→PROBE_ERROR; |filled−expected|>tol→DRIFT+alert+audit)
-# O1: IntakeVerdict(frozen,含audit_trail) / ExecutionReconReport(frozen)
-# 边:
-# I1 --> A1
-# I1 --> A2
-# I2 --> A1
-# I2 --> A2
-# A1 --> A3
-# A2 --> A3
-# A3 --> O1
-# A4 --> O1
-# [/ALGO_FLOW]
 """
 C-013 外部指令盯盘 — 人工指令通道 (MOD-TRADING-011, CAND-TRD-003, B1-00192)。
 

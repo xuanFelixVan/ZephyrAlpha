@@ -14,16 +14,6 @@
 # [TESTS] tests/signal_ashare/test_strength_ic_weight_calibrator.py
 # [TTL] permanent
 #
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1  6 维子分数历史序列 {dim: [score_t]} + 前瞻收益序列 [ret_t]（滚动 60 日窗口）
-# 层: 算法
-# - id: A1  compute_rank_ic：Spearman 秩相关（平均秩处理并列）
-# - id: A2  calibrate_dimension_weights_ic：weight_i = max(IC_i,0)/Σmax(IC_j,0)；Σ≈0 或全负 → 回退经验权重
-# - id: A3  should_recalibrate_cusum：CUSUM 偏移 >2σ 触发即时重校准
-# 层: 输出
-# - id: O1  {dim: weight} 归一化权重（Σ=1），供 6 维评分加权合成
-# [/ALGO_FLOW]
 """
 量化短线强度 6 维权重 IC 加权校准（21 号 memo §3.4 路径 A，函数级）。
 

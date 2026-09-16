@@ -14,15 +14,6 @@
 # [TESTS] tests/simulation/test_limit_board_queue.py
 # [TTL] permanent
 # [A_module] module_id=MOD-SIM-025 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [ALGO_FLOW]
-# I1: 订单(side/qty/price/order_type) + 最新价/昨收/涨跌停幅度
-# I2: 封单量/对手盘流量(成交概率估算输入, 调用方注入)
-# A1: detect_board_state(最新价 vs 昨收×(1±limit_pct) 判板态, 0.01最小价位取整)
-# A2: route_order(涨停:BUY排队/SELL即成交;跌停:SELL排队/BUY即成交;市价触板转限价排队)
-# A3: LimitBoardQueue.on_counter_volume(对手盘流量FIFO冲销队列, 支持部分成交)
-# A4: estimate_fill_probability(min(1, counter_volume/(queue_ahead+order_size)), 53号§3.2公式②)
-# O1: OrderRoutingResult(FILLED/QUEUED/CONVERTED_QUEUED) + 队列快照 + 成交概率
-# [/ALGO_FLOW]
 """
 Paper Matching 涨跌停排队引擎(BM-SIM-08)
 

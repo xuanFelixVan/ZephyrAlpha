@@ -14,14 +14,6 @@
 # [TESTS] tests/trading/test_trading_order_aggregate.py
 # [A_module] module_id=MOD-TRADING-009 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: register(order_id/idempotency_key/symbol/side/quantity)——运营订单注册请求; idempotency_key 幂等键
-# I2: transition(order_id/to_status/occurred_at/note)——状态迁移请求(执行段结果/结算事件由编排层翻译后驱动)
-# F1: TradingOrderBook.register()——幂等注册: 同 idempotency_key 返回既有聚合; order_id 冲突异键 Fail-Closed
-# F2: TradingOrderBook.transition()——状态机校验(VALID_TRANSITIONS)→迁移→产出 OrderDomainEvent→event_sink 发布
-# A1: 非法转换/终态再迁移→InvalidOrderTransitionError(Fail-Closed); sink 异常仅日志不阻断
-# O1: TradingOrder 聚合根(只读快照) + OrderDomainEvent 领域事件流(append-only, 可 replay 重建)
-# [/ALGO_FLOW]
 """
 D_TRADING — TradingOrder 订单核心聚合（AGG-TRD-01，D-TRADING §0）。
 

@@ -14,24 +14,6 @@
 # [TESTS] tests/trading/test_eod_processor.py
 # [A_module] module_id=MOD-TRADING-012 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: trade_date + positions(EodPosition) + cash
-# I2: price_probe/risk_reassess_fn/expected_nav/nav_tolerance(注入)
-# A1: 价格快照(逐symbol取日终价; 异常/非正→unpriced按0计如实披露)
-# A2: NAV/P&L(mv=Σqty×price; nav=cash+mv; pnl=Σ(price−cost)×qty; |nav−expected|>tol→DRIFT)
-# A3: 风险重估(委托回调; 异常→ERROR+alert; 未注入→SKIPPED)
-# O1: EodReport(frozen)
-# 边:
-# I1 --> A1
-# I1 --> A2
-# I2 --> A1
-# I2 --> A2
-# I2 --> A3
-# A1 --> A2
-# A1 --> O1
-# A2 --> O1
-# A3 --> O1
-# [/ALGO_FLOW]
 """
 D-TRADING-04 EOD Processor — 日终处理器 (MOD-TRADING-012, CAND-TRD-005, B10-02208)。
 

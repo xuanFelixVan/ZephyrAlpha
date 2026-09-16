@@ -14,13 +14,6 @@
 # [TESTS] tests/simulation/test_divergence_attributor.py
 # [TTL] permanent
 # [A_module] module_id=MOD-SIM-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
-# [ALGO_FLOW]
-# I1: DivergenceObservation(signal_match/slippage_diff_bps/data_lag_ms/latency_ms/pnl_correlation, None=未观测)
-# I2: DivergenceThresholds(默认对齐paper_live_transition key_gates: 99.9%/1bp/0.95/100ms)
-# A1: 四因子逐项门禁判定(滑点A/数据滞后B/前瞻残留C/执行时延D + PnL相关总值)
-# A2: dominant_factor(未通过因子中偏差幅度最大者)
-# O1: DivergenceReport(逐因子verdict + overall_passed + dominant_factor)
-# [/ALGO_FLOW]
 """
 回测-实盘偏差四因子归因模块(BM-BT-05-H)
 

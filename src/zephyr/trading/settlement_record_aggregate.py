@@ -14,15 +14,6 @@
 # [TESTS] tests/trading/test_settlement_record_aggregate.py
 # [A_module] module_id=MOD-TRADING-010 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: register(settlement_id/idempotency_key/trade_date/account_id)——结算记录注册; idempotency_key 幂等键
-# I2: mark_matched/mark_discrepant(drifts)/resolve/confirm——对账结果驱动的状态迁移请求(occurred_at 注入)
-# F1: SettlementRecordBook.register()——幂等注册: 同 idempotency_key 返回既有聚合; id 冲突异键 Fail-Closed
-# F2: classify_drift()——差异三档分类: PRICE_QTY_MISMATCH / MISSING_RECORD / FEE_REFERENCE(费用仅参考不出票)
-# F3: mark_discrepant()——非费用类差异按类别聚合出 DiscrepancyTicket(OPEN) 经 event_sink 发布
-# A1: 非法转换/空差异清单→Fail-Closed; sink 异常仅日志不阻断
-# O1: SettlementRecord 聚合根(只读快照) + DiscrepancyTicket 工单事件流(OPEN/CLOSED)
-# [/ALGO_FLOW]
 """
 D_TRADING — SettlementRecord 结算记录核心聚合（AGG-TRD-02，D-TRADING §0）。
 
