@@ -29,24 +29,7 @@ r"""MOD-RPT-030 — 告警聚合器（GAP-F-28，总览页"今日告警"统一�
 → 严重度+时间排序页面流 → ≥min_dispatch_severity 的经 NotificationManagerBase
 （MOD-L08-001 渠道注册位）派发 Notification。manager 注入位，None=仅页面流。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1 风控告警（Alert 鸭型：level/source/message/timestamp）
-# - id: I2 数据质量失败记录（task_id/error/level/source/timestamp/extra）
-# - id: I3 回测完成事件（run_id/status/summary/finished_at/metrics）
-# 层: 算法
-# - id: A1 三源适配器（→UnifiedAlert 四级严重度）
-# - id: A2 去重+排序（同批 (source,title) 保留 occurred_at 最新）
-# - id: A3 阈值派发（≥min_dispatch_severity → Notification → manager.send）
-# 层: 输出
-# - id: O1 AggregationResult（alerts 页面流 + dispatched/suppressed 计数 + notes）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1,I2,I3 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_reporting/algo_flow/alert_aggregator.yaml
 """
 
 from __future__ import annotations

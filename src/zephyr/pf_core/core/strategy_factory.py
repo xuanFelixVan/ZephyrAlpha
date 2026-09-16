@@ -31,40 +31,7 @@ GP/SR/LLM/FactorMAD 生成器以 discovery_hook 注入（本件不内建实现�
 依据: blueprint.md（MOD-PF-009）§1 规则
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 策略草案
-#   fields: name 非空 + DiscoveryChannel 四通道 + hypothesis
-#   code: intake() 参数
-# - id: I2
-#   name: 门禁/p-hacking/人工证据
-#   fields: gate_verdict bool; dsr/pbo 有限值; approved_by 非空
-#   code: submit_gate_verdict/submit_phacking_metrics/human_adjudicate 参数
-# 层: 算法
-# - id: A1
-#   name_zh: ① 阶段机推进（Fail-Closed）
-#   name_en: _transition
-#   intro: 严格顺序迁移表；REJECTED/RETIREMENT 终态拒绝再迁移
-# - id: A2
-#   name_zh: ② 三重门禁+p-hacking+人工三级闸门
-#   name_en: submit_*/human_adjudicate
-#   intro: gate False→REJECTED; dsr≤0或pbo>pbo_max→REJECTED; approved_by空→抛错
-# - id: A3
-#   name_zh: ③ 注册条目签发
-#   name_en: register
-#   intro: 仅 REGISTRATION 阶段可签发；status 恒 candidate
-# 层: 输出
-# - id: O1
-#   name: StrategyRecord / StrategyRegistryEntry
-#   fields: frozen 记录（stage/channel/history/metrics）+ candidate 注册条目
-# 边:
-# I1 --> A1
-# I2 --> A2
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
-# [/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/strategy_factory.yaml
 """
 
 from __future__ import annotations

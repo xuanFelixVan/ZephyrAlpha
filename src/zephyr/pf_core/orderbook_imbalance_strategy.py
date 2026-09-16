@@ -51,46 +51,7 @@ PIT 铁律：ob_imbalance 仅用当前 tick 的 5 档盘口快照，不预读未
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7（EDE 做T场景）
       docs/03_modules/_domain_portfolio_core/blueprint.md
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: entry_threshold 参数
-#   fields: 参数 entry_threshold（无注解）
-#   code: orderbook_imbalance_strategy.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: exit_threshold 参数
-#   fields: 参数 exit_threshold（无注解）
-#   code: orderbook_imbalance_strategy.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: base_weight 参数
-#   fields: 参数 base_weight（无注解）
-#   code: orderbook_imbalance_strategy.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: use_5levels 参数
-#   fields: 参数 use_5levels（无注解）
-#   code: orderbook_imbalance_strategy.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① OrderBookImbalanceStrategy
-#   name_en: OrderBookImbalanceStrategy
-#   intro: 盘口失衡反转做T策略（A 股 intraday T+0 订单流反转）。
-#   desc: 盘口失衡反转做T策略（A 股 intraday T+0 订单流反转）。 用法： strategy = OrderBookImbalanceStrategy( entry_thre…；公共方法（定义序）: on_tick…
-#   inputs: entry_threshold exit_threshold base_weight use_5levels
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: OrderBookImbalanceStrategy
-#   downstream: zephyr.pf_core.strategy_engine.strategy_runner
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/orderbook_imbalance_strategy.yaml
 """
 
 from __future__ import annotations

@@ -33,31 +33,7 @@ CTR 契约：
 
 SSoT: cross_layer_contracts.yaml -> CTR-P1-009
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: model 参数
-#   fields: 参数 model（无注解）
-#   code: default_attribution_engine.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DefaultAttributionEngine
-#   name_en: DefaultAttributionEngine
-#   intro: 默认归因引擎——Brinson 分解
-#   desc: 默认归因引擎——Brinson 分解；公共方法（定义序）: attribute, record_holdings；源码 L75-L123
-#   inputs: model
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: DefaultAttributionEngine
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_reporting/algo_flow/default_attribution_engine.yaml
 """
 
 from __future__ import annotations

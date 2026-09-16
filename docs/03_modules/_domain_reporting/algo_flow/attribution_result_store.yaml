@@ -1,0 +1,86 @@
+# ALGO_FLOW 外部真源——attribution_result_store（_domain_reporting 域，真源 src/zephyr/reporting/attribution_result_store.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.reporting.attribution_result_store
+source_of_truth: src/zephyr/reporting/attribution_result_store.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: db_path 参数
+    #   fields: 参数 db_path，类型注解 str | Path | None
+    #   code: attribution_result_store.py 顶层公共函数形参（AST 提取）
+    # - id: I2
+    #   name: report 参数
+    #   fields: 参数 report，类型注解 PerformanceAttributionReport
+    #   code: attribution_result_store.py 顶层公共函数形参（AST 提取）
+    # - id: I3
+    #   name: layer 参数
+    #   fields: 参数 layer（无注解）
+    #   code: attribution_result_store.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: net_pnl 参数
+    #   fields: 参数 net_pnl（无注解）
+    #   code: attribution_result_store.py 顶层公共函数形参（AST 提取）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① ensure_attribution_results_table
+    #   name_en: ensure_attribution_results_table
+    #   intro: 幂等建表（CREATE TABLE IF NOT EXISTS；DDL 真源=reconciliation_schem…
+    #   desc: 幂等建表（CREATE TABLE IF NOT EXISTS；DDL 真源=reconciliation_schema）。 Args: db_path: 库路径；None=DB…；源码 L230-L246
+    #   inputs: db_path
+    #   outputs: Path
+    # - id: A2
+    #   name_zh: ② store_attribution_report
+    #   name_en: store_attribution_report
+    #   intro: CTR-P1-009 归因报告落库（幂等：同 idempotency_key 重复写=跳过保首条）。
+    #   desc: CTR-P1-009 归因报告落库（幂等：同 idempotency_key 重复写=跳过保首条）。 Args: report: CTR-P1-009 契约报告（firm 层=账…；源码 L249-L305
+    #   inputs: report layer net_pnl invariant_status db_path
+    #   outputs: int
+    # - id: A3
+    #   name_zh: ③ persist_two_layer_attribution
+    #   name_en: persist_two_layer_attribution
+    #   intro: 两层归因编排落库（54 号 §3.5：firm 层 + 策略层 + 求和不变量硬门禁）。
+    #   desc: 两层归因编排落库（54 号 §3.5：firm 层 + 策略层 + 求和不变量硬门禁）。 流程：①键集一致性 fail-closed → ②求和不变量校验（复用 zephyr.r…；源码 L308-L380
+    #   inputs: firm_report strategy_reports strategy_pnls firm_pnl tolerance_bps db_…
+    #   outputs: TwoLayerPersistResult
+    # - id: A4
+    #   name_zh: ④ query_attribution_results
+    #   name_en: query_attribution_results
+    #   intro: 查询归因结果（过滤器可组合，按 period/id 倒序）。
+    #   desc: 查询归因结果（过滤器可组合，按 period/id 倒序）。 Args: portfolio_id: 组合/策略 ID 过滤（None=不限；给定须非空）。 period: 周期…；源码 L383-L435
+    #   inputs: portfolio_id period layer limit db_path
+    #   outputs: list[dict]
+    # - id: A5
+    #   name_zh: ⑤ get_attribution_by_key
+    #   name_en: get_attribution_by_key
+    #   intro: 按幂等键精确查询归因结果（未命中返回 None）。
+    #   desc: 按幂等键精确查询归因结果（未命中返回 None）。 Raises: ValueError: idempotency_key 非法（fail-closed）。；源码 L438-L453
+    #   inputs: idempotency_key db_path
+    #   outputs: dict | None
+    #   （注：A5 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: Path
+    #   name_en: Path
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 归因报告生成链路(54号 BM-REC-02-B); 55号复盘(归因结果消费)
+    # - id: O2
+    #   name_zh: int
+    #   name_en: int
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: 归因报告生成链路(54号 BM-REC-02-B); 55号复盘(归因结果消费)
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I4 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> A5
+    # A5 --> O1

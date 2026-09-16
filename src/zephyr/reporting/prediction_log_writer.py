@@ -38,67 +38,7 @@ SQLite UNIQUE 中 NULL 互不冲突，故 input_hash 入库前 None 归一为 ''
 新环境/测试库走 ``ensure_prediction_log_table(db_path)`` 幂等建表
 （CREATE TABLE IF NOT EXISTS，DDL 常量即本模块真源，禁止测试侧复刻副本）。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: db_path 参数
-#   fields: 参数 db_path，类型注解 str | Path | None
-#   code: prediction_log_writer.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: trade_date 参数
-#   fields: 参数 trade_date，类型注解 str
-#   code: prediction_log_writer.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: module 参数
-#   fields: 参数 module，类型注解 str
-#   code: prediction_log_writer.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: prediction_type 参数
-#   fields: 参数 prediction_type，类型注解 str
-#   code: prediction_log_writer.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① ensure_prediction_log_table
-#   name_en: ensure_prediction_log_table
-#   intro: 幂等建表（CREATE TABLE IF NOT EXISTS + 两索引）。
-#   desc: 幂等建表（CREATE TABLE IF NOT EXISTS + 两索引）。 Args: db_path: 库路径；None=DB_PATH SSoT（governance.d…；源码 L242-L260
-#   inputs: db_path
-#   outputs: Path
-# - id: A2
-#   name_zh: ② log_prediction
-#   name_en: log_prediction
-#   intro: 写一条预测记录到 prediction_log（幂等：同键重复写=跳过保首条）。
-#   desc: 写一条预测记录到 prediction_log（幂等：同键重复写=跳过保首条）。 Args: trade_date: 交易日 "YYYY-MM-DD"（非法即拒）。 module…；源码 L263-L321
-#   inputs: trade_date module prediction_type payload asof_ts model_version promp…
-#   outputs: int
-# - id: A3
-#   name_zh: ③ query_predictions
-#   name_en: query_predictions
-#   intro: 查询预测记录（过滤器可组合，按 trade_date/id 倒序）。
-#   desc: 查询预测记录（过滤器可组合，按 trade_date/id 倒序）。 Args: trade_date: 交易日过滤（None=不限；给定则须合法 YYYY-MM-DD）。 mo…；源码 L324-L372
-#   inputs: trade_date module prediction_type limit db_path
-#   outputs: list[dict]
-# 层: 输出
-# - id: O1
-#   name_zh: Path
-#   name_en: Path
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 波5 各生产模块（M1 情绪分/M2 边界修正事件/M3 三情景/LLM 盘前分析——44号 §12.1 M4-② 四族）; 92号 §8.7 M4-④ 命中…
-# - id: O2
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 波5 各生产模块（M1 情绪分/M2 边界修正事件/M3 三情景/LLM 盘前分析——44号 §12.1 M4-② 四族）; 92号 §8.7 M4-④ 命中…
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_reporting/algo_flow/prediction_log_writer.yaml
 """
 
 from __future__ import annotations

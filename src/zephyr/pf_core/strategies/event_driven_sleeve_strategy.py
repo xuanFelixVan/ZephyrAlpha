@@ -41,31 +41,7 @@ urgency=next_open（次日开盘，21 号 L255-259 映射表：T+1 开盘买入�
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/21_stock_selection_engine.md §3.5/§3.6
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: event_driven_sleeve_strategy.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① EventDrivenSleeveStrategy
-#   name_en: EventDrivenSleeveStrategy
-#   intro: 事件驱动 sleeve 组装策略——事件冲击评分 × 异动确认取 Top-N。
-#   desc: 事件驱动 sleeve 组装策略——事件冲击评分 × 异动确认取 Top-N。 signals 负载约定（dict[str, dict]，键=标的代码）： { "600519":…；公共方法（定义序）: generat…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: EventDrivenSleeveStrategy
-#   downstream: zephyr.pf_core.strategies（lazy re-export）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/event_driven_sleeve_strategy.yaml
 """
 
 from __future__ import annotations

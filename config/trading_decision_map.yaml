@@ -1735,6 +1735,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L3-07-3
+  note_confirmed: 2026-09-16  # grp4p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 其余sleeve选股链
   market: cn_a
   flow: entry_flow

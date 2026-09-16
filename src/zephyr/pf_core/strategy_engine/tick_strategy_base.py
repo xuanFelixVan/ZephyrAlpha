@@ -30,48 +30,7 @@ EDE callback 契约：Callable[[TickEvent], dict[str, float]]，与本基类 on_
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7（EDE 做T场景）
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: package_path 参数
-#   fields: 参数 package_path，类型注解 str
-#   code: tick_strategy_base.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① TRulesConfig
-#   name_en: TRulesConfig
-#   intro: 做T 四规则配置（90 号 Phase2 项，#21 做T方法论 v2.0.0 裁定补齐）。
-#   desc: 做T 四规则配置（90 号 Phase2 项，#21 做T方法论 v2.0.0 裁定补齐）。 裁定真源：90_methodology_open_questions.md §21（…；公共方法（定义序）: t_posit…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A2
-#   name_zh: ② TickStrategyBase
-#   name_en: TickStrategyBase
-#   intro: Tick 级策略抽象基类（做T专用）。
-#   desc: Tick 级策略抽象基类（做T专用）。 子类 MUST: - 实现 on_tick() - 定义 _meta: TickStrategyMeta - 通过 @TickStrate…；公共方法（定义序）: on_tick…
-#   inputs: 无参数
-#   outputs: 返回值
-# - id: A3
-#   name_zh: ③ autodiscover_tick_strategies
-#   name_en: autodiscover_tick_strategies
-#   intro: 自动发现并注册 tick 策略（扫描 package_path 下的 .py 模块）。
-#   desc: 自动发现并注册 tick 策略（扫描 package_path 下的 .py 模块）。；源码 L229-L248
-#   inputs: package_path
-#   outputs: int
-#   （注：A3 之后另有 1 个公共定义未列入（含 1 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: int
-#   name_en: int
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 见模块头 [CONSUMERS]
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> A2
-# A2 --> A3
-# A3 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/tick_strategy_base.yaml
 """
 
 from __future__ import annotations

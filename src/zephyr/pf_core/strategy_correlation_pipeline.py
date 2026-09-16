@@ -51,55 +51,7 @@ preprocess_strategy_returns——ln(nav_t/nav_{t-1}) ≡ ln(1+r_t)，对数口�
 OverfitAuditResult 映射作留口；第 7 部分（正交性验证）接受策略→正交维度映射
 做覆盖度检查，量化互验以第 4 部分 Neff 为准。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: returns 参数
-#   fields: 参数 returns，类型注解 pd.DataFrame
-#   code: strategy_correlation_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: params 参数
-#   fields: 参数 params（无注解）
-#   code: strategy_correlation_pipeline.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: report 参数
-#   fields: 参数 report，类型注解 StrategyCorrelationReport
-#   code: strategy_correlation_pipeline.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① run_strategy_correlation_pipeline
-#   name_en: run_strategy_correlation_pipeline
-#   intro: G07 策略间相关性验证管线（施工前一次性，非 runtime 周期任务）。
-#   desc: G07 策略间相关性验证管线（施工前一次性，非 runtime 周期任务）。 Args: returns: 策略日收益率面板（算术口径，index=date，columns=策略…；源码 L458-L490
-#   inputs: returns params
-#   outputs: StrategyCorrelationReport
-# - id: A2
-#   name_zh: ② render_markdown
-#   name_en: render_markdown
-#   intro: 按 23 号 memo §3.1⑤ 七部分模板渲染报告（markdown）。
-#   desc: 按 23 号 memo §3.1⑤ 七部分模板渲染报告（markdown）。；源码 L700-L711
-#   inputs: report
-#   outputs: str
-#   （注：A2 之后另有 7 个公共定义未列入（含 7 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: StrategyCorrelationReport
-#   name_en: StrategyCorrelationReport
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: G07 施工前一次性验证批次; MOD-PA-004 门禁(strategy_correlation_gate)上游生产者
-# - id: O2
-#   name_zh: str
-#   name_en: str
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: G07 施工前一次性验证批次; MOD-PA-004 门禁(strategy_correlation_gate)上游生产者
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/strategy_correlation_pipeline.yaml
 """
 
 from __future__ import annotations

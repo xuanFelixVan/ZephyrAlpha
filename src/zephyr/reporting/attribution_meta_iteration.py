@@ -43,50 +43,7 @@ transaction_cost_drag，MOD-RPT-036 守恒口径）。
 依据: 54_reconciliation_attribution §3.1/§5.1 + battle_map_11 BM-REC-03-D + 61 号 §3.3
 Version: 0.1.0
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: strategy_id 参数
-#   fields: 参数 strategy_id，类型注解 str
-#   code: attribution_meta_iteration.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: benchmark_id 参数
-#   fields: 参数 benchmark_id，类型注解 str
-#   code: attribution_meta_iteration.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: reports 参数
-#   fields: 参数 reports，类型注解 Sequence[PerformanceAttributionReport]
-#   code: attribution_meta_iteration.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① window_from_reports
-#   name_en: window_from_reports
-#   intro: 从 CTR-P1-009 归因报告序列构建窗口（MOD-RPT-036/037 产物的消费桥）。
-#   desc: 从 CTR-P1-009 归因报告序列构建窗口（MOD-RPT-036/037 产物的消费桥）。 delta = report.total_return（几何超额 − trans…；源码 L206-L237
-#   inputs: strategy_id benchmark_id reports
-#   outputs: StrategyAttributionWindow
-# - id: A2
-#   name_zh: ② AttributionMetaIterationEngine
-#   name_en: AttributionMetaIterationEngine
-#   intro: 归因反哺元级迭代评审建议引擎（BM-REC-03-D；只产建议，human_gated）。
-#   desc: 归因反哺元级迭代评审建议引擎（BM-REC-03-D；只产建议，human_gated）。 用法：调度方按策略逐期归因结果构建窗口（window_from_reports 或手工…；公共方法（定义序）: channel…
-#   inputs: channel_manager
-#   outputs: 返回值
-#   （注：A2 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: StrategyAttributionWindow
-#   name_en: StrategyAttributionWindow
-#   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
-#   downstream: 调用方(盘后/周度元级迭代评审调度，battle_map_11 BM-REC-03-D); 人工评审裁定方(建议唯一消费出口)
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# A1 --> A2
-# A2 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_reporting/algo_flow/attribution_meta_iteration.yaml
 """
 
 from __future__ import annotations

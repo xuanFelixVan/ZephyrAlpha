@@ -27,47 +27,7 @@ B1-00220（AUD-DRAFT-001-DIGEST P2 波 P2-W10，CAND-RPT-008，C2 C-030）：
 不重复采集，仅消费四段落痕记录）；训练器=分位数语义来源（本件仅消费注入
 映射，不做密度估计）；本件纯内存/DI，不触网不落盘。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: segment_store 参数
-#   fields: 参数 segment_store（无注解）
-#   code: decision_trace_chain.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: factor_contributions 参数
-#   fields: 参数 factor_contributions（无注解）
-#   code: decision_trace_chain.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: quantile_confidence 参数
-#   fields: 参数 quantile_confidence（无注解）
-#   code: decision_trace_chain.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: clock 参数
-#   fields: 参数 clock（无注解）
-#   code: decision_trace_chain.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① DecisionTraceChain
-#   name_en: DecisionTraceChain
-#   intro: 决策溯源链协议件（四段落痕 + 全链反查 + 因子摘要 + 置信度调整）。
-#   desc: 决策溯源链协议件（四段落痕 + 全链反查 + 因子摘要 + 置信度调整）。；公共方法（定义序）: record_segment, segments_of, factor_summary, adjusted_confid…
-#   inputs: segment_store factor_contributions quantile_confidence clock
-#   outputs: 返回值
-#   （注：A1 之后另有 5 个公共定义未列入（含 5 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（6 定义）
-#   name_en: public defs
-#   intro: DecisionTraceChain
-#   downstream: 运行时装配批（决策链四段落痕 / 全链反查 / 因子贡献摘要 / 密度感知置信度调整）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_reporting/algo_flow/decision_trace_chain.yaml
 """
 
 from __future__ import annotations

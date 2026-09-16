@@ -43,31 +43,7 @@ CTR 契约：
 
 SSoT: docs/03_modules/_domain_portfolio_core/blueprint.md
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 模块内部数据
-#   fields: 无公共形参/无再导出（AST 事实）
-#   code: topn_momentum_strategy.py
-# 层: 算法
-# - id: A1
-#   name_zh: ① TopNMomentumStrategy
-#   name_en: TopNMomentumStrategy
-#   intro: TopN 动量等权策略——截面信号打分取前 N 等权。
-#   desc: TopN 动量等权策略——截面信号打分取前 N 等权。 用法： strategy = TopNMomentumStrategy() weights = strategy.gene…；公共方法（定义序）: generat…
-#   inputs: 无参数
-#   outputs: 返回值
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（1 定义）
-#   name_en: public defs
-#   intro: TopNMomentumStrategy
-#   downstream: zephyr.pf_core.strategy_engine.strategy_runner
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/topn_momentum_strategy.yaml
 """
 
 from __future__ import annotations

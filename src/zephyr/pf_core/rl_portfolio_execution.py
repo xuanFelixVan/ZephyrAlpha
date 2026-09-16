@@ -36,47 +36,7 @@ RL **三场景分立编排**——
 查重分工（蓝图 §0）：portfolio_optimizer=确定性组合优化（非 RL）；本件=
 RL 提案的**约束编排与门禁层**，不实现 RL 算法本身。
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: trainer 参数
-#   fields: 参数 trainer（无注解）
-#   code: rl_portfolio_execution.py 顶层公共函数形参（AST 提取）
-# - id: I2
-#   name: backtest_gate 参数
-#   fields: 参数 backtest_gate（无注解）
-#   code: rl_portfolio_execution.py 顶层公共函数形参（AST 提取）
-# - id: I3
-#   name: risk_budget_cap 参数
-#   fields: 参数 risk_budget_cap（无注解）
-#   code: rl_portfolio_execution.py 顶层公共函数形参（AST 提取）
-# - id: I4
-#   name: ac_deviation_threshold 参数
-#   fields: 参数 ac_deviation_threshold（无注解）
-#   code: rl_portfolio_execution.py 顶层公共函数形参（AST 提取）
-# 层: 算法
-# - id: A1
-#   name_zh: ① RlPortfolioExecutionOrchestrator
-#   name_en: RlPortfolioExecutionOrchestrator
-#   intro: RL 三场景编排器（trainer/门禁/风控全注入，纯内存确定性）。
-#   desc: RL 三场景编排器（trainer/门禁/风控全注入，纯内存确定性）。；公共方法（定义序）: run_portfolio_optimization, run_optimal_execution, run_t0…
-#   inputs: trainer backtest_gate risk_budget_cap ac_deviation_threshold t0_risk_…
-#   outputs: 返回值
-#   （注：A1 之后另有 6 个公共定义未列入（含 6 个数据契约/异常/枚举声明类），见源码）
-# 层: 输出
-# - id: O1
-#   name_zh: 模块公共 API 面（7 定义）
-#   name_en: public defs
-#   intro: RlPortfolioExecutionOrchestrator
-#   downstream: 运行时装配批（RL离线评估流水线装配 / Constrained RL trainer 绑定 / C-003 门禁接线）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# I2 --> A1
-# I3 --> A1
-# I4 --> A1
-# A1 --> O1
+# [ALGO_FLOW] external: docs/03_modules/_domain_portfolio_core/algo_flow/rl_portfolio_execution.yaml
 """
 
 from __future__ import annotations
