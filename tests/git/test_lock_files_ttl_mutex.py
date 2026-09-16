@@ -314,3 +314,119 @@ class TestTrackedFileNamingSkip:
         )
         assert rc == 0, out
         assert "ACQUIRED" in out
+
+
+# ---------------------------------------------------------------------------
+# 批量锁接口（P2-1 出仓战役 2026-09-16：千件级 claim 吞吐前置）
+# ---------------------------------------------------------------------------
+class TestBatchLockInterface:
+    """acquire-batch / release-batch：语义等价逐件 + registry 整表只写一次。"""
+
+    def test_acquire_batch_registers_all(self, isolated_lock_root: Path) -> None:
+        opts = lock_files.AcquireOptions(skip_naming_check=True, session_id="sess-1")
+        rc, out = _run(lock_files.cmd_acquire_batch, "sess-1", ["docs/a.md", "docs/b.md", "docs/c.md"], opts)
+        assert rc == 0, out
+        assert "acquired=3 denied=0 total=3" in out
+        locks = _registry(isolated_lock_root)["locks"]
+        assert set(locks) == {"docs/a.md", "docs/b.md", "docs/c.md"}
+        assert all(v["owner_id"] == "sess-1" for v in locks.values())
+        # owner.json 逐件落地（会话绑定与单件 acquire 同构）
+        assert _owner(isolated_lock_root, "docs/a.md")["session_id"] == "sess-1"
+
+    def test_acquire_batch_partial_denial_keeps_rest(self, isolated_lock_root: Path) -> None:
+        foreign = lock_files.AcquireOptions(skip_naming_check=True)
+        _run(lock_files.cmd_acquire, "docs/taken.md", "sess-2", foreign)
+        rc, out = _run(
+            lock_files.cmd_acquire_batch,
+            "sess-1",
+            ["docs/taken.md", "docs/free.md"],
+            foreign,
+        )
+        assert rc == 1  # 有 DENIED → 整体非零，但其余件已获得
+        assert "DENIED — docs/taken.md" in out
+        locks = _registry(isolated_lock_root)["locks"]
+        assert locks["docs/free.md"]["owner_id"] == "sess-1"
+        assert locks["docs/taken.md"]["owner_id"] == "sess-2"
+
+    def test_acquire_batch_idempotent_reentry(self, isolated_lock_root: Path) -> None:
+        opts = lock_files.AcquireOptions(skip_naming_check=True)
+        _run(lock_files.cmd_acquire_batch, "sess-1", ["docs/a.md", "docs/b.md"], opts)
+        rc, out = _run(lock_files.cmd_acquire_batch, "sess-1", ["docs/a.md", "docs/b.md"], opts)
+        assert rc == 0, out
+        assert "acquired=2" in out
+        assert len(_registry(isolated_lock_root)["locks"]) == 2
+
+    def test_acquire_batch_writes_registry_once(self, isolated_lock_root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """O(N²) 治本断言：整表写回次数与件数无关（逐件版=每件一次）。"""
+        calls = {"n": 0}
+        orig_save = lock_files._save_registry
+
+        def _counting(reg):
+            calls["n"] += 1
+            return orig_save(reg)
+
+        monkeypatch.setattr(lock_files, "_save_registry", _counting)
+        opts = lock_files.AcquireOptions(skip_naming_check=True)
+        rc, _ = _run(lock_files.cmd_acquire_batch, "sess-1", [f"docs/f{i}.md" for i in range(60)], opts)
+        assert rc == 0
+        assert calls["n"] == 1, f"批量 claim 整表写了 {calls['n']} 次"
+
+    def test_acquire_batch_mutex_timeout_rolls_back_all(self, isolated_lock_root: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        @contextlib.contextmanager
+        def _fake_mutex():
+            yield False
+
+        monkeypatch.setattr(lock_files, "_registry_mutex", _fake_mutex)
+        opts = lock_files.AcquireOptions(skip_naming_check=True)
+        rc, out = _run(lock_files.cmd_acquire_batch, "sess-1", ["docs/x.md", "docs/y.md"], opts)
+        assert rc == 1 and "已回滚" in out
+        assert not lock_files._lock_dir("docs/x.md").exists()
+        assert not lock_files._lock_dir("docs/y.md").exists()
+
+    def test_release_batch_only_own(self, isolated_lock_root: Path) -> None:
+        opts = lock_files.AcquireOptions(skip_naming_check=True)
+        _run(lock_files.cmd_acquire_batch, "sess-1", ["docs/a.md", "docs/b.md"], opts)
+        _run(lock_files.cmd_acquire, "docs/c.md", "sess-2", opts)
+
+        rc, out = _run(lock_files.cmd_release_batch, "sess-1", ["docs/a.md", "docs/b.md", "docs/c.md"], warn=False)
+        assert rc == 1  # docs/c.md 是他人锁 → DENIED
+        assert "released=2 denied=1" in out
+        locks = _registry(isolated_lock_root)["locks"]
+        assert "docs/a.md" not in locks and "docs/b.md" not in locks
+        assert "docs/c.md" in locks
+
+    def test_tracked_paths_batch_matches_per_file(self) -> None:
+        """批量 git 判定与逐件 _is_git_tracked 真值一致（真实仓环境）。"""
+        tracked_file = "scripts/lock_files.py"
+        untracked_file = "docs/_working/zz_definitely_untracked_batch_probe.md"
+        got = lock_files._tracked_paths_batch([tracked_file, untracked_file])
+        assert (tracked_file in got) is lock_files._is_git_tracked(tracked_file) is True
+        assert (untracked_file in got) is lock_files._is_git_tracked(untracked_file) is False
+
+    def test_collect_path_args_mixes_sources(self, tmp_path: Path) -> None:
+        listing = tmp_path / "files.txt"
+        listing.write_text("docs/one.md\n# 注释行\n\ndocs/two.md\n", encoding="utf-8")
+        args = [
+            "--files-from",
+            str(listing),
+            "--files",
+            "docs/three.md,docs/four.md",
+            "--task",
+            "批量加锁",
+            "--session",
+            "sess-1",
+            "--skip-naming-check",
+            "docs/five.md",
+        ]
+        got = lock_files._collect_path_args(args)
+        assert got == [
+            "docs/one.md",
+            "docs/two.md",
+            "docs/three.md",
+            "docs/four.md",
+            "docs/five.md",
+        ]
+
+    def test_collect_path_args_rejects_bad_list(self) -> None:
+        assert lock_files._collect_path_args(["--files-from", "Z:/no/such/list.txt"]) is None
+        assert lock_files._collect_path_args(["--files"]) is None

@@ -538,6 +538,9 @@ class TestAdoptPriorWork:
         gw.registry = MagicMock()
         gw.registry.claim_file.return_value = True
         gw.capture_baseline_diff = lambda abs_f: baseline_map.get(abs_f, "")
+        # 基线批量预判（生产走一次 git diff --name-only）在本 fixture 里同源由
+        # baseline_map 驱动：保持"哪些件有 diff"唯一真源在 map，测试对真实 git 零依赖
+        gw._files_with_head_diff = lambda: {gw._norm_path(p) for p, b in baseline_map.items() if b}
         return gw
 
     def test_adopt_resets_dirty_baseline_to_empty(self, tmp_path):
@@ -659,6 +662,8 @@ class TestIdempotentClaimPreservesBaseline:
         gw.registry = MagicMock()
         gw.registry.claim_file.return_value = True
         gw.capture_baseline_diff = lambda abs_f: baseline_map.get(abs_f, "")
+        # 基线预判与 capture 同源（见 TestAdoptPriorWork._make_claimable_gateway 注释）
+        gw._files_with_head_diff = lambda: {gw._norm_path(p) for p, b in baseline_map.items() if b}
         return gw
 
     def test_reclaim_preserves_clean_baseline(self, tmp_path):

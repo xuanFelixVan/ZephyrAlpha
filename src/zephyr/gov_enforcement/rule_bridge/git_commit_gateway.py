@@ -956,6 +956,34 @@ class GitCommitGateway:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         return self.warn_non_worktree_commit(session_id, wt_session)
 
+    def _norm_path(self, file_path: str) -> str:
+        """与 SessionRegistry 同源的路径归一（claim 结果/ diff 集比对，防大小写漂移）。"""
+        from zephyr.security.access_control.session_concurrency import (  # noqa: PLC0415
+            _normalize_file_path,
+        )
+
+        return _normalize_file_path(file_path, Path(self.project_root))
+
+    def _files_with_head_diff(self) -> set[str] | None:
+        """一次 git 求得"相对 HEAD 有 diff"的文件归一路径集（claim 基线批量预判）。
+
+        Returns:
+            归一路径集合；git 不可用/异常返回 None（调用方退回逐件 capture_baseline_diff）。
+        """
+        try:
+            result = self.run_git(["git", "diff", "HEAD", "--name-only", "--no-renames"])
+        except Exception:  # noqa: BLE001 — git 不可用退回逐件判定（fail-safe，不丢基线）
+            logger.warning("GitCommitGateway: _files_with_head_diff 失败，退回逐件基线捕获", exc_info=True)
+            return None
+        if result.returncode != 0:
+            return None
+        out: set[str] = set()
+        for ln in result.stdout.splitlines():
+            ln = ln.strip()
+            if ln:
+                out.add(self._norm_path(ln))
+        return out
+
     def claim_files(self, session_id: str, files: list[str], adopt_prior_work: bool = False) -> list[str]:
         """为 session 声明持有本次 commit 的文件。claim 失败的文件从返回列表排除。
 
@@ -968,33 +996,53 @@ class GitCommitGateway:
             gate 放行。与 allow_overlap 的区别：allow_overlap 在 commit 时绕过 gate，
             adopt_prior_work 在 claim 时认领（gate 仍执行、附审计）。默认 False 行为不变。
         """
-        claimed: list[str] = []
-        for f in files:
-            if self.registry.claim_file(session_id, f):
-                claimed.append(f)
-                # HOT-FILE-BASE-FRESHNESS：session 首次 claim 锚定 HEAD（幂等——
-                # 幂等重跑保留首次锚点，语义与基线快照一致；release 后重 claim 刷新）。
-                try:
-                    if session_id not in self.claim_heads:
-                        head_result = self.run_git(["git", "rev-parse", "HEAD"])
-                        if head_result.returncode == 0:
-                            self.claim_heads[session_id] = head_result.stdout.strip()
-                except Exception:  # noqa: BLE001 — git 不可用降级为无锚点（gate fail-open）
-                    logger.warning(
-                        "GitCommitGateway: claim_files HEAD 锚点捕获失败 (session=%s)",
-                        session_id,
-                        exc_info=True,
-                    )
-                # ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
-                try:
-                    abs_f = os.path.abspath(f)
-                    # tracker #92 治本（2026-08-16）：本 session 已有基线记录=此前已 claim，
-                    # 幂等重跑（如 CLI commit 主流程自带重跑）保留首次基线不重捕获——
-                    # 基线语义=「首次 claim 时刻」（FOREIGN-CHANGE gate 判定锚点），
-                    # 重捕获会把 adopt 的空基线/首次干净基线覆盖为 commit 时刻真基线，破坏语义。
-                    # release_files 删快照后重新捕获，生命周期自洽。
-                    if abs_f in self.claim_snapshots.get(session_id, {}):
-                        continue
+        # 千件级 claim 的两处 O(N²)：registry 整表重写（每件一次）+ 每件一个 git 子
+        # 进程。前者走 claim_files_batch，后者用一次 git diff --name-only 预判——
+        # 不在 diff 集内的件基线必为空串，与逐件捕获等价（P2-1 出仓战役实证）。
+        # 判定用 isinstance 而非 getattr：MagicMock 替身会自动补出批量方法名，
+        # 鸭子探测会把 claim 结果误判为空（tests/governance 12 例实证）。
+        from zephyr.security.access_control.session_concurrency import (  # noqa: PLC0415
+            SessionRegistry,
+        )
+
+        if isinstance(self.registry, SessionRegistry):
+            claimed_norms = set(self.registry.claim_files_batch(session_id, files))
+            # claim_file 返回 bool、claim_files_batch 返回归一路径：统一成"原列表中被
+            # 成功 claim 的件"，保持既有调用方对返回值（原样文件路径）的依赖不变。
+            claimed: list[str] = [f for f in files if self._norm_path(f) in claimed_norms]
+        else:
+            claimed = [f for f in files if self.registry.claim_file(session_id, f)]
+        if not claimed:
+            return claimed
+
+        try:
+            if session_id not in self.claim_heads:
+                head_result = self.run_git(["git", "rev-parse", "HEAD"])
+                if head_result.returncode == 0:
+                    self.claim_heads[session_id] = head_result.stdout.strip()
+        except Exception:  # noqa: BLE001 — git 不可用降级为无锚点（gate fail-open）
+            logger.warning(
+                "GitCommitGateway: claim_files HEAD 锚点捕获失败 (session=%s)",
+                session_id,
+                exc_info=True,
+            )
+
+        dirty = self._files_with_head_diff()
+        snapshot_changed = False
+        for f in claimed:
+            # ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
+            try:
+                abs_f = os.path.abspath(f)
+                # tracker #92 治本（2026-08-16）：本 session 已有基线记录=此前已 claim，
+                # 幂等重跑（如 CLI commit 主流程自带重跑）保留首次基线不重捕获——
+                # 基线语义=「首次 claim 时刻」（FOREIGN-CHANGE gate 判定锚点），
+                # 重捕获会把 adopt 的空基线/首次干净基线覆盖为 commit 时刻真基线，破坏语义。
+                # release_files 删快照后重新捕获，生命周期自洽。
+                if abs_f in self.claim_snapshots.get(session_id, {}):
+                    continue
+                if dirty is not None and self._norm_path(f) not in dirty:
+                    baseline = ""  # 预判无 diff：与 git diff HEAD -- f 空输出等价
+                else:
                     actual_baseline = self.capture_baseline_diff(abs_f)
                     if adopt_prior_work and actual_baseline:
                         # 治本(2026-07-23): 认领跨 session 前序工作——审计记录实际基线，
@@ -1003,22 +1051,18 @@ class GitCommitGateway:
                         baseline = ""
                     else:
                         baseline = actual_baseline
-                    self.claim_snapshots.setdefault(session_id, {})[abs_f] = baseline
-                    # S3-C: 持久化到磁盘（进程崩溃后可恢复）
-                    self.save_session_snapshot(session_id)
-                except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    logger.warning(
-                        "GitCommitGateway: claim_files 基线快照捕获失败 — file=%s (session=%s)",
-                        f,
-                        session_id,
-                        exc_info=True,
-                    )
-            else:
+                self.claim_snapshots.setdefault(session_id, {})[abs_f] = baseline
+                snapshot_changed = True
+            except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning(
-                    "GitCommitGateway: claim_files conflict — file=%s held by other session, skipped (session=%s)",
+                    "GitCommitGateway: claim_files 基线快照捕获失败 — file=%s (session=%s)",
                     f,
                     session_id,
+                    exc_info=True,
                 )
+        # S3-C: 持久化到磁盘（进程崩溃后可恢复）——整批一次，替代每件一次写盘
+        if snapshot_changed:
+            self.save_session_snapshot(session_id)
         return claimed
 
     def release_files(self, session_id: str, files: list[str]) -> None:
@@ -1026,13 +1070,27 @@ class GitCommitGateway:
 
         ARCH-054: 同时清理该 session 的基线快照。
         """
-        for f in files:
-            if not self.registry.release_file(session_id, f):
-                logger.debug(
-                    "GitCommitGateway: release_files no-op — file=%s not held by session=%s",
-                    f,
-                    session_id,
-                )
+        from zephyr.security.access_control.session_concurrency import (  # noqa: PLC0415
+            SessionRegistry,
+        )
+
+        if isinstance(self.registry, SessionRegistry):
+            released = set(self.registry.release_files_batch(session_id, files))
+            for f in files:
+                if self._norm_path(f) not in released:
+                    logger.debug(
+                        "GitCommitGateway: release_files no-op — file=%s not held by session=%s",
+                        f,
+                        session_id,
+                    )
+        else:
+            for f in files:
+                if not self.registry.release_file(session_id, f):
+                    logger.debug(
+                        "GitCommitGateway: release_files no-op — file=%s not held by session=%s",
+                        f,
+                        session_id,
+                    )
         # ARCH-054: 清理 session 的基线快照（内存 + 磁盘，S3-C 治本）
         # HOT-FILE-BASE-FRESHNESS: HEAD 锚点与快照同生命周期，一并清理
         try:

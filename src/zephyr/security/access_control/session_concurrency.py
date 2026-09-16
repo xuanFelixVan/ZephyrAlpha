@@ -644,6 +644,41 @@ class SessionRegistry:
                 held.add(_normalize_file_path(f, self._project_root))
         return held
 
+    def _ensure_registered_locked(self, data: dict[str, dict], session_id: str, now: float) -> bool:
+        """懒注册（调用方持 _lock）：session 缺失或死/过期时以当前 PID 重建条目。
+
+        Returns: True=本次新建条目（调用方须立即持久化，即使后续 claim 冲突 session 仍可查询）。
+        """
+        existing = data.get(session_id)
+        if existing is not None and _is_session_alive(SessionInfo.from_dict(existing), now):
+            return False
+        logger.warning(
+            "SessionRegistry: claim_file auto-registering session=%s (not registered or dead/expired)",
+            session_id,
+        )
+        data[session_id] = SessionInfo(
+            session_id=session_id,
+            pid=os.getpid(),
+            start_time=now,
+            held_files=[],
+            last_heartbeat=now,
+            last_activity=now,
+        ).to_dict()
+        return True
+
+    def _foreign_held_locked(self, data: dict[str, dict], session_id: str, now: float) -> dict[str, str]:
+        """其他活跃 session 的持有表：归一路径 → 持有者 session_id（死/过期持有忽略，S3-A）。"""
+        held: dict[str, str] = {}
+        for sid, d in data.items():
+            if sid == session_id:
+                continue
+            other = SessionInfo.from_dict(d)
+            if not _is_session_alive(other, now):
+                continue  # 死/过期 session，忽略其持有（S3-A: PID+TTL 双判据）
+            for f in other.held_files:
+                held.setdefault(_normalize_file_path(f, self._project_root), sid)
+        return held
+
     def claim_file(self, session_id: str, file_path: str) -> bool:
         """为 session 声明持有某文件（动态 claim）。
 
@@ -659,39 +694,18 @@ class SessionRegistry:
             data = self._load()
             now = time.time()
 
-            # 懒注册：session 不存在或死/过期（S3-A: PID 死亡也触发懒注册，用当前 PID 覆盖）
-            existing = data.get(session_id)
-            if existing is None or not _is_session_alive(SessionInfo.from_dict(existing), now):
-                logger.warning(
-                    "SessionRegistry: claim_file auto-registering session=%s (not registered or dead/expired)",
-                    session_id,
-                )
-                data[session_id] = SessionInfo(
-                    session_id=session_id,
-                    pid=os.getpid(),
-                    start_time=now,
-                    held_files=[],
-                    last_heartbeat=now,
-                    last_activity=now,
-                ).to_dict()
+            if self._ensure_registered_locked(data, session_id, now):
                 self._save(data)  # 立即持久化懒注册（即使后续 claim 冲突，session 仍可查询）
 
-            # 检查是否被其他活跃 session 持有
-            for sid, d in data.items():
-                if sid == session_id:
-                    continue
-                other = SessionInfo.from_dict(d)
-                if not _is_session_alive(other, now):
-                    continue  # 死/过期 session，忽略其 claim（S3-A: PID+TTL 双判据）
-                other_held_norm = [_normalize_file_path(f, self._project_root) for f in other.held_files]
-                if norm in other_held_norm:
-                    logger.warning(
-                        "SessionRegistry: claim_file conflict — file=%s held by session=%s, requested by=%s",
-                        norm,
-                        sid,
-                        session_id,
-                    )
-                    return False
+            holder = self._foreign_held_locked(data, session_id, now).get(norm)
+            if holder is not None:
+                logger.warning(
+                    "SessionRegistry: claim_file conflict — file=%s held by session=%s, requested by=%s",
+                    norm,
+                    holder,
+                    session_id,
+                )
+                return False
 
             # 幂等 / 新增
             own = SessionInfo.from_dict(data[session_id])
@@ -703,6 +717,80 @@ class SessionRegistry:
             data[session_id] = own.to_dict()
             self._save(data)
             return True
+
+    def release_files_batch(self, session_id: str, file_paths: list[str]) -> list[str]:
+        """批量释放：一次 _load + 一次 _save 摘除整批持有（语义同逐件 release_file）。
+
+        Returns:
+            成功摘除的归一路径列表（未被持有/session 未注册的件排除）。
+        """
+        with self._lock:
+            data = self._load()
+            if session_id not in data:
+                return []
+            info = SessionInfo.from_dict(data[session_id])
+            index: dict[str, list[str]] = {}
+            for orig in info.held_files:
+                index.setdefault(_normalize_file_path(orig, self._project_root), []).append(orig)
+            released: list[str] = []
+            for file_path in file_paths:
+                norm = _normalize_file_path(file_path, self._project_root)
+                origs = index.get(norm)
+                if not origs:
+                    continue
+                for orig in origs:
+                    info.held_files.remove(orig)
+                index[norm] = []
+                released.append(norm)
+            if released:
+                data[session_id] = info.to_dict()
+                self._save(data)
+            return released
+
+    def claim_files_batch(self, session_id: str, file_paths: list[str]) -> list[str]:
+        """批量 claim：一次 _load + 一次 _save 完成整批（语义同逐件 claim_file）。
+
+        逐件 claim_file 每次都整表重写 registry.json（全部 session + 全部 held_files），
+        N 件即 O(N²) 磁盘写——476 件实测 ~10 分钟，千件级治理批任务（P2-1 ALGO_FLOW
+        逐域出仓）吞吐被这一步锁死。批量版共享一次临界区与一次写回。
+
+        Args:
+            session_id: 会话标识（缺失/死亡时懒注册，同逐件版）。
+            file_paths: 待 claim 文件（相对或绝对，内部归一）。
+
+        Returns:
+            成功（含幂等）的归一路径列表；被其他活跃 session 持有的件被排除并记 warning。
+        """
+        with self._lock:
+            data = self._load()
+            now = time.time()
+            if self._ensure_registered_locked(data, session_id, now):
+                self._save(data)
+
+            foreign = self._foreign_held_locked(data, session_id, now)
+            own = SessionInfo.from_dict(data[session_id])
+            own_norm = {_normalize_file_path(f, self._project_root) for f in own.held_files}
+            claimed: list[str] = []
+            for file_path in file_paths:
+                norm = _normalize_file_path(file_path, self._project_root)
+                holder = foreign.get(norm)
+                if holder is not None:
+                    logger.warning(
+                        "SessionRegistry: claim_file conflict — file=%s held by session=%s, requested by=%s",
+                        norm,
+                        holder,
+                        session_id,
+                    )
+                    continue
+                if norm not in own_norm:
+                    own.held_files.append(norm)
+                    own_norm.add(norm)
+                claimed.append(norm)
+            own.last_heartbeat = now
+            own.last_activity = now
+            data[session_id] = own.to_dict()
+            self._save(data)
+            return claimed
 
     def release_file(self, session_id: str, file_path: str) -> bool:
         """释放 session 对某文件的持有。

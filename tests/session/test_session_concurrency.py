@@ -188,6 +188,55 @@ class TestSessionRegistryClaimRelease:
         reg = SessionRegistry(project_root=tmp_path)
         assert reg.release_file("sess-ghost", str(tmp_path / "a.py")) is False
 
+    def test_claim_files_batch_matches_per_file_semantics(self, tmp_path):
+        """批量版与逐件版结果集等价：他人持有件排除、其余全收。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.claim_file("sess-A", str(tmp_path / "a.py"))
+        got = reg.claim_files_batch("sess-B", ["a.py", "b.py", "c.py"])
+        assert got == [str((tmp_path / p).resolve()) for p in ("b.py", "c.py")]
+        assert len(reg.get_session("sess-B").held_files) == 2
+        # a.py 仍归 sess-A（批量不得越权改写他人持有）
+        holder_a = reg.find_session_by_file(str((tmp_path / "a.py").resolve()))
+        assert holder_a is not None and holder_a.session_id == "sess-A"
+
+    def test_claim_files_batch_idempotent_no_duplicate(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        files = ["a.py", "b.py", "c.py"]
+        first = reg.claim_files_batch("sess-A", files)
+        second = reg.claim_files_batch("sess-A", files)
+        assert first == second
+        assert len(reg.get_session("sess-A").held_files) == 3
+
+    def test_claim_files_batch_writes_registry_once(self, tmp_path, monkeypatch):
+        """O(N²) 治本断言：整表写回次数与件数无关（逐件版每件写一次）。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        calls = {"n": 0}
+        orig_save = reg._save
+
+        def _counting_save(data):
+            calls["n"] += 1
+            return orig_save(data)
+
+        monkeypatch.setattr(reg, "_save", _counting_save)
+        reg.claim_files_batch("sess-A", [f"f{i}.py" for i in range(50)])
+        assert calls["n"] <= 2, f"批量 claim 整表写了 {calls['n']} 次（期望懒注册 1 + 提交 1）"
+        assert len(reg.get_session("sess-A").held_files) == 50
+
+    def test_claim_files_batch_empty_list_is_noop(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        assert reg.claim_files_batch("sess-A", []) == []
+
+    def test_release_files_batch_removes_all_and_skips_unheld(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.claim_files_batch("sess-A", ["a.py", "b.py"])
+        released = reg.release_files_batch("sess-A", ["a.py", "b.py", "ghost.py"])
+        assert released == [str((tmp_path / p).resolve()) for p in ("a.py", "b.py")]
+        assert reg.get_session("sess-A").held_files == []
+
+    def test_release_files_batch_unregistered_session_returns_empty(self, tmp_path):
+        reg = SessionRegistry(project_root=tmp_path)
+        assert reg.release_files_batch("sess-ghost", ["a.py"]) == []
+
     def test_get_session_unregistered_returns_none(self, tmp_path):
         reg = SessionRegistry(project_root=tmp_path)
         assert reg.get_session("sess-x") is None

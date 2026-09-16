@@ -11,13 +11,17 @@
 #   --dry-run 零写入；yaml 块文本 = docstring 内联块逐字节副本（含边段，block-scalar 保留原样）；
 #   只处理 module docstring 含真内联块的文件（锚行不算）；
 #   批级 stem 碰撞预判（P2-1 orchestrator 批实证）：同域非 __init__ 同 stem 多文件时子包件
-#   确定性改道 parent__stem，dry-run 预测=落盘路径（消除盘存在改道的时序依赖）
+#   确定性改道 parent__stem，dry-run 预测=落盘路径（消除盘存在改道的时序依赖）；
+#   批级容量镜像（P2-1 波次 GOV-DOC-018 实证）：域 algo_flow/ 平铺数（盘上+本批）≥ T_soft-20 时
+#   该域本批新件全部改道 algo_flow/<源相对域根子包>/<名>.yaml（域根件入域名桶），桶仍超阈值按
+#   stem 首/次字符分片；落点名逐级消歧且绝不覆盖他人真源 yaml（覆盖即 failed）；
+#   既有 yaml（source_of_truth 反查）永最优先——重跑不改道（防锚错位）
 # [MODIFY-GUARD] 无
-# [STABILITY] evolving
+# [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 单文件失败跳过并计入 failed 列表（不中断批次）；--dry-run 恒 exit 0
-# [TESTS] 无（批次工具，round-trip 自验证即测试）
+# [TESTS] tests/governance/generators/test_externalize_algo_flow_remap.py, tests/governance/generators/test_externalize_algo_flow_mirror.py
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: AI 会话按需调用的批量出仓器（Owner 授权批次施工，非常驻服务）
 """externalize_algo_flow.py — ALGO_FLOW 内联块批量出仓器（P2-1 契约头减负实施器）。
@@ -192,6 +196,186 @@ def _domain_of(py_rel: str) -> str:
     return _DOMAIN_DIRS.get(pkg, f"_domain_{pkg}")
 
 
+# ---------------------------------------------------------------------------
+# GOV-DOC-018 容量镜像（P2-1 波次实证：_domain_data 平铺 116/120、_domain_signal 102/120
+# ——大域（governance/infrastructure/feedback_loop/shared/gov_enforcement/security）单域
+# 余量不足，平铺命名必然撞 folder_capacity_hard_limit 硬阻断。治本=落点按源子包镜像。）
+# ---------------------------------------------------------------------------
+
+
+def _scalability_triggers() -> tuple[int, int]:
+    """(平铺改道触发, 镜像桶分片触发)——真源 thresholds.yaml directory_scalability。
+
+    平铺触发 = T_soft(src_py_error=120) - 20：给同批其他会话的并发落盘留余量。
+    分片触发 = T_hard(src_py_warn=60) + 20：子包本身超大时按 stem 字符再分，
+    仍远低于硬上限，保证任何目录平铺件数有界。
+    """
+    hard, warn = 120, 60
+    try:
+        from _shared.thresholds import get as _tget  # noqa: PLC0415
+
+        hard = int(_tget("directory_scalability.src_py_error", hard))
+        warn = int(_tget("directory_scalability.src_py_warn", warn))
+    except Exception:  # noqa: BLE001 — 阈值不可达回退常量（宁保守勿越限）
+        pass
+    return max(hard - 20, warn + 1), warn + 20
+
+
+_MIRROR_TRIGGER, _BUCKET_TRIGGER = _scalability_triggers()
+
+# 镜像落点表：rel_py → yaml 相对路径（main() 批开始前静态填充，dry-run 预测=落盘路径）
+_PLANNED_MIRROR: dict[str, str] = {}
+# 本批进入镜像模式的域目录（报告用，便于波次核对布局）
+_MIRROR_DOMAINS: list[str] = []
+
+
+def _algo_flow_root(domain_dir: str) -> Path:
+    return REPO_ROOT / "docs" / "03_modules" / domain_dir / "algo_flow"
+
+
+def _flat_yaml_count(domain_dir: str) -> int:
+    root = _algo_flow_root(domain_dir)
+    if not root.is_dir():
+        return 0
+    return sum(1 for p in root.iterdir() if p.is_file() and not p.name.startswith("."))
+
+
+def _src_bucket(rel_py: str) -> tuple[str, str]:
+    """(pkg, 镜像桶路径)：桶 = 源文件相对域根的子包路径；域根件桶空（调用侧补域名）。"""
+    parts = rel_py.split("/")
+    if parts[:2] == ["src", "zephyr"] and len(parts) > 3:
+        return parts[2], "/".join(parts[3:-1])
+    if parts[0] == "scripts" and len(parts) > 2:
+        return parts[1], "/".join(parts[2:-1])
+    return "", ""
+
+
+def _flatten_base(rel_py: str) -> str:
+    """末路消歧名：整条源路径拉平（源路径唯一 ⇒ 名称唯一）。"""
+    parts = rel_py.split("/")
+    return "_".join(parts[:-1] + [Path(parts[-1]).stem]) + ".yaml"
+
+
+def _candidate_bases(py_path: Path, rel_py: str, bucket: str) -> list[str]:
+    """同名消歧阶梯（确定性，与批内处理顺序无关）。
+
+    ``__init__.py`` 沿用既有约定 ``<parent>__init__.yaml``（域根件 = ``<pkg>__init__.yaml``，
+    与盘上 autonomy_core__init.yaml 等既有件同名同形）。
+    """
+    pkg, _ = _src_bucket(rel_py)
+    parent = py_path.parent.name
+    if py_path.name == "__init__.py":
+        owner = parent if parent and parent != "zephyr" else bucket.rsplit("/", 1)[-1]
+        base = f"{owner or 'algo_flow'}__init__.yaml"
+        return [base, f"{pkg}__{base}", _flatten_base(rel_py)]
+    stem = py_path.stem
+    return [
+        f"{stem}.yaml",
+        f"{parent}__{stem}.yaml" if parent and parent != "zephyr" else f"{stem}.yaml",
+        f"{pkg}__{parent}__{stem}.yaml",
+        _flatten_base(rel_py),
+    ]
+
+
+def _yaml_owned_by(yaml_path: Path, rel_py: str) -> bool | None:
+    """盘上 yaml 归属判定：True=本源自有（可复用），False=他人真源占用，None=无主/不可读。"""
+    if not yaml_path.is_file():
+        return None
+    try:
+        head = yaml_path.read_text(encoding="utf-8").splitlines()[:12]
+    except OSError:
+        return False
+    for ln in head:
+        if ln.startswith("source_of_truth:"):
+            return ln.split(":", 1)[1].strip() == rel_py
+    return False
+
+
+def _shard_dir(base: str, depth: int) -> str:
+    ch = base[depth].lower() if len(base) > depth else "_"
+    return ch if ch.isalnum() else "_"
+
+
+def _plan_domain_mirror(domain_dir: str, items: list[tuple[Path, str]]) -> None:
+    """一域本批候选件的镜像落点：分桶 → 整桶逐级消歧 → 超容量桶按 stem 字符分片。
+
+    消歧取"整桶同一阶梯级"而非逐件先到先得——避免批内顺序影响命名（与
+    _plan_stem_collision_remaps 同源的确定性要求）。仅当某件在盘上被他人真源占名时
+    单独升一级；四级用尽仍冲突则不入表（回落既有推导 + 写前占用检测报 failed）。
+    """
+    root = _algo_flow_root(domain_dir)
+    dom_short = domain_dir.removeprefix("_domain_")
+    by_bucket: dict[str, list[tuple[Path, str]]] = {}
+    for p, rel in items:
+        pkg, bucket = _src_bucket(rel)
+        by_bucket.setdefault(bucket or f"{pkg or dom_short}", []).append((p, rel))
+
+    planned: dict[str, str] = {}  # rel → "<bucket>[/<shard>]/<base>"
+    for bucket, es in by_bucket.items():
+        rels = [rel for _, rel in es]
+        ladders = {rel: _candidate_bases(p, rel, bucket) for p, rel in es}
+        bases: dict[str, str] = {}
+        for step in range(max(len(v) for v in ladders.values())):
+            trial = {rel: (ladder[step] if step < len(ladder) else ladder[-1]) for rel, ladder in ladders.items()}
+            if len(set(trial.values())) == len(trial):
+                bases = trial
+                break
+        if not bases:
+            bases = {rel: ladders[rel][-1] for rel in rels}
+        for rel in rels:
+            while _yaml_owned_by(root / bucket / bases[rel], rel) is False:
+                ladder = ladders[rel]
+                idx = ladder.index(bases[rel])
+                if idx + 1 >= len(ladder):
+                    bases.pop(rel)  # 名称空间耗尽：不猜、不覆盖
+                    break
+                bases[rel] = ladder[idx + 1]
+        if not bases:
+            continue
+        # 桶容量分片：盘上实存 + 本批计划 ≥ 触发值 → 按 stem 首字符（再次字符）下钻
+        disk_n = sum(1 for q in (root / bucket).glob("*.yaml") if q.is_file()) if (root / bucket).is_dir() else 0
+        shard_depth = 0
+        if disk_n + len(bases) >= _BUCKET_TRIGGER:
+            for depth in (1, 2):
+                groups: dict[str, int] = {}
+                for base in bases.values():
+                    key = "/".join(_shard_dir(base, i) for i in range(depth))
+                    groups[key] = groups.get(key, 0) + 1
+                shard_depth = depth
+                if max(groups.values(), default=0) < _BUCKET_TRIGGER:
+                    break
+        for rel, base in bases.items():
+            segs = [bucket] + [_shard_dir(base, i) for i in range(shard_depth)]
+            planned[rel] = "/".join(segs + [base])
+    for rel, tail in planned.items():
+        _PLANNED_MIRROR[rel] = f"docs/03_modules/{domain_dir}/algo_flow/{tail}"
+
+
+def _plan_capacity_mirrors(targets: list[Path]) -> None:
+    """批开始前静态镜像规划（与 _plan_stem_collision_remaps 同批调用，顺序无关）。
+
+    触发口径宁多勿少：候选=docstring 区外仍含 ``# [ALGO_FLOW]`` 起标记的文件（含最终
+    会 skipped 的不可解析件）——提前改道只会让布局更碎，延后改道则会撞硬阻断。
+    """
+    _PLANNED_MIRROR.clear()
+    _MIRROR_DOMAINS.clear()
+    by_dom: dict[str, list[tuple[Path, str]]] = {}
+    for p in targets:
+        rel = p.relative_to(REPO_ROOT).as_posix()
+        try:
+            src = p.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if _ANCHOR_RE.search(src) or not _has_inline_algo_flow(src):
+            continue
+        by_dom.setdefault(_domain_of(rel), []).append((p, rel))
+    for dom, items in sorted(by_dom.items()):
+        if _flat_yaml_count(dom) + len(items) < _MIRROR_TRIGGER:
+            continue
+        _MIRROR_DOMAINS.append(dom)
+        _plan_domain_mirror(dom, items)
+
+
 def _docstring_span(src: str) -> tuple[int, int] | None:
     """module docstring 的 (start_line_idx, end_line_idx)（0 基，含端点）。"""
     tree = ast.parse(src)
@@ -293,10 +477,15 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
             ds_node = n
             break
 
-    # 外部 yaml 路径：既有 yaml（source_of_truth 反查）优先，次批级碰撞预判，
-    # 无则按推导命名
+    # 外部 yaml 路径：既有 yaml（source_of_truth 反查）优先，次批级容量镜像，
+    # 次批级碰撞预判，无则按平铺推导命名
     domain_dir = _domain_of(rel)
-    yaml_rel = _existing_yaml_for(rel, domain_dir) or _PLANNED_REMAP.get(rel, "") or _yaml_rel_for(py_path, rel, domain_dir)
+    yaml_rel = (
+        _existing_yaml_for(rel, domain_dir)
+        or _PLANNED_MIRROR.get(rel, "")
+        or _PLANNED_REMAP.get(rel, "")
+        or _yaml_rel_for(py_path, rel, domain_dir)
+    )
     stem = py_path.stem
 
     # 锚行窗口：纯源码坐标实测。值↔源码行映射在含 ``\n`` 转义的 docstring 上不保真
@@ -370,6 +559,9 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
 
     # 写 yaml（safe_write_text CAS）+ 源码替换 + .bak
     yaml_path = REPO_ROOT / yaml_rel
+    if _yaml_owned_by(yaml_path, rel) is False:
+        # 落点已属他人真源——宁漏勿覆盖（丢一张图比静默改写别人的图轻）
+        return {"file": rel, "status": "failed", "reason": f"yaml 落点被他人真源占用: {yaml_rel}"}
     yaml_path.parent.mkdir(parents=True, exist_ok=True)
     safe_write_text(yaml_path, _yaml_for(rel, domain_dir, stem, block))
     bak = py_path.with_suffix(".py.bak")
@@ -439,6 +631,7 @@ def main(argv: list[str] | None = None) -> int:
 
     targets = _iter_targets(args.domain, args.file)
     _plan_stem_collision_remaps(targets)
+    _plan_capacity_mirrors(targets)
     results = []
     done = 0
     for p in targets:
@@ -455,7 +648,31 @@ def main(argv: list[str] | None = None) -> int:
     summary: dict[str, int] = {}
     for r in results:
         summary[r["status"]] = summary.get(r["status"], 0) + 1
-    print(json.dumps({"summary": summary, "results": results}, ensure_ascii=False, indent=1))
+    # 落点目录平铺件数实测（GOV-DOC-018 取证：批后仍须远低于 120 硬上限）
+    dir_counts: dict[str, int] = {}
+    if not args.dry_run:
+        touched_dirs = {
+            (REPO_ROOT / r["yaml"]).parent for r in results if r.get("yaml")
+        }
+        for d in sorted(touched_dirs):
+            try:
+                dir_counts[str(d.relative_to(REPO_ROOT)).replace("\\", "/")] = sum(
+                    1 for q in d.iterdir() if q.is_file() and not q.name.startswith(".")
+                )
+            except OSError:
+                continue
+    print(
+        json.dumps(
+            {
+                "summary": summary,
+                "mirror_domains": list(_MIRROR_DOMAINS),
+                "max_dir_flat_count": max(dir_counts.values(), default=0),
+                "results": results,
+            },
+            ensure_ascii=False,
+            indent=1,
+        )
+    )
     return 0
 
 

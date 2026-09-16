@@ -41,7 +41,9 @@ lock_files.py —— AI 对话文件锁协议（硬规则执行工具）
   python scripts/lock_files.py status                    # 查看所有锁
   python scripts/lock_files.py check src/main.py         # 检查某文件是否被锁
   python scripts/lock_files.py acquire src/main.py conv-abc --task "重构认证" [--ttl 30]  # 加锁（--ttl 分钟）
+  python scripts/lock_files.py acquire-batch conv-abc --files-from .runtime/tmp/files.txt --session conv-abc  # 批量加锁（一次 Mutex）
   python scripts/lock_files.py release src/main.py conv-abc                   # 释放
+  python scripts/lock_files.py release-batch conv-abc --files-from .runtime/tmp/files.txt --no-warn  # 批量释放
   python scripts/lock_files.py release-all conv-abc                           # 批量释放
   python scripts/lock_files.py list [--session conv-abc]                      # 列出锁（可按持有者过滤）
   python scripts/lock_files.py cleanup                                       # 清理死锁
@@ -57,7 +59,7 @@ AI 施工铁律：
   再 os.replace 原子替换，防崩溃半成品。
 
 SSoT: AGENTS.md §4 编码安全（扩展）
-Version: 2.1.0
+Version: 2.2.0
 """
 
 from __future__ import annotations
@@ -391,31 +393,50 @@ class AcquireOptions:
         self.session_id = session_id
 
 
-def cmd_acquire(
+def _ttl_seconds(opts: AcquireOptions) -> float:
+    return (opts.ttl_minutes * 60.0) if opts.ttl_minutes is not None else DEFAULT_TTL_S
+
+
+def _acquire_prepare(
     file_path: str,
     owner_id: str,
-    options: AcquireOptions | None = None,
-) -> int:
-    opts = options or AcquireOptions()
-    _ensure_lock_root()
+    opts: AcquireOptions,
+    *,
+    tracked: bool | None = None,
+) -> tuple[int, str, list[str], bool]:
+    """加锁前半程：命名门禁 + 原子目录创建，**不碰 registry**（登记交调用方）。
+
+    registry 侧是整表 read-modify-write + fsync + 全局 Mutex，逐件登记把 476 件
+    claim 推到 ~10 分钟（P2-1 出仓战役实证）；前半程单独成函数后，批量入口可
+    共享一次 Mutex 与一次 git tracked 判定。
+
+    Args:
+        tracked: 预取的"是否 git 跟踪"判定（None=自查；批量入口传共享结果）。
+
+    Returns:
+        (退出码, 归一化相对路径, 输出行, 本次是否新建锁目录)——重入不新建。
+    """
     normalized = _normalize_path(file_path)
     lock_dir = _lock_dir(file_path)
-    ttl_s = (opts.ttl_minutes * 60.0) if opts.ttl_minutes is not None else DEFAULT_TTL_S
+    ttl_s = _ttl_seconds(opts)
+    lines: list[str] = []
 
     # 命名规范门禁：写入前校验文件名合规性（可跳过，用于历史命名文件）
     # B5③(2026-09-14)：存量已跟踪文件跳过——文件名在创建/提交时已裁决，提交侧
     # 对修改文件本有历史豁免，锁侧重跑全量检查只会误拒存量合法文件
     # （N-11/N-13 误拒实证）。未跟踪新文件仍全量检查（早期反馈，无冤案）。
     # skip_naming_check 保留（显式逃生口，测试与特殊场景已在使用）。
-    if not opts.skip_naming_check and not _is_git_tracked(normalized):
+    if tracked is None:
+        tracked = _is_git_tracked(normalized)
+    if not opts.skip_naming_check and not tracked:
         naming_violations = _check_naming(
             normalized, Path(REPO_ROOT / normalized) if (REPO_ROOT / normalized).exists() else None, REPO_ROOT
         )
         if naming_violations:
-            print(f"NAMING VIOLATION — {normalized} 命名不合规，拒绝写入：")
+            lines.append(f"NAMING VIOLATION — {normalized} 命名不合规，拒绝写入：")
             for v in naming_violations:
-                print(f"  [{v.rule}] {v.message}")
-            return 1
+                lines.append(f"  [{v.rule}] {v.message}")
+            return 1, normalized, lines, False
 
     if lock_dir.is_dir():
         if _is_stale(lock_dir):
@@ -424,14 +445,14 @@ def cmd_acquire(
             owner = _read_owner(lock_dir)
             existing_owner = owner.get("owner_id", "unknown") if owner else "unknown"
             if existing_owner == owner_id:
-                print(f"OK — {normalized} 已被你持有（重入）")
-                return 0
-            print(f"DENIED — {normalized} 已被 {existing_owner} 锁定")
+                lines.append(f"OK — {normalized} 已被你持有（重入）")
+                return 0, normalized, lines, False
+            lines.append(f"DENIED — {normalized} 已被 {existing_owner} 锁定")
             existing_task = owner.get("task", "") if owner else ""
             if existing_task:
-                print(f"  对方任务: {existing_task}")
-            print("  请等待对方释放或协调后重试")
-            return 1
+                lines.append(f"  对方任务: {existing_task}")
+            lines.append("  请等待对方释放或协调后重试")
+            return 1, normalized, lines, False
 
     try:
         os.makedirs(lock_dir, exist_ok=False)
@@ -445,27 +466,41 @@ def cmd_acquire(
             except FileExistsError:
                 owner = _read_owner(lock_dir)
                 existing_owner = owner.get("owner_id", "unknown") if owner else "unknown"
-                print(f"DENIED — {normalized} 已被 {existing_owner} 锁定（并发冲突）")
-                return 1
+                lines.append(f"DENIED — {normalized} 已被 {existing_owner} 锁定（并发冲突）")
+                return 1, normalized, lines, False
         else:
             owner = _read_owner(lock_dir)
             existing_owner = owner.get("owner_id", "unknown") if owner else "unknown"
-            print(f"DENIED — {normalized} 已被 {existing_owner} 锁定")
-            return 1
+            lines.append(f"DENIED — {normalized} 已被 {existing_owner} 锁定")
+            return 1, normalized, lines, False
 
-    if not _add_to_registry(file_path, owner_id, opts.task, ttl_s):
+    lines.append(f"ACQUIRED — {normalized} 已锁定")
+    lines.append(f"  持有者: {owner_id}")
+    if opts.session_id:
+        lines.append(f"  会话绑定: {opts.session_id}（裁定#252：锁存活=会话存活）")
+    lines.append(f"  TTL: {ttl_s / 60.0:g} 分钟（到期自动过期）")
+    if opts.task:
+        lines.append(f"  任务: {opts.task}")
+    return 0, normalized, lines, True
+
+
+def cmd_acquire(
+    file_path: str,
+    owner_id: str,
+    options: AcquireOptions | None = None,
+) -> int:
+    opts = options or AcquireOptions()
+    _ensure_lock_root()
+    rc, normalized, lines, created = _acquire_prepare(file_path, owner_id, opts)
+
+    if created and not _add_to_registry(file_path, owner_id, opts.task, _ttl_seconds(opts)):
         # §7.28 Mutex 超时——回滚锁目录，避免 owner.json 存在但 registry 漏登记的半锁状态
-        shutil.rmtree(lock_dir, ignore_errors=True)
+        shutil.rmtree(_lock_dir(file_path), ignore_errors=True)
         print(f"DENIED — {normalized} registry 互斥锁超时（5s），请重试")
         return 1
-    print(f"ACQUIRED — {normalized} 已锁定")
-    print(f"  持有者: {owner_id}")
-    if opts.session_id:
-        print(f"  会话绑定: {opts.session_id}（裁定#252：锁存活=会话存活）")
-    print(f"  TTL: {ttl_s / 60.0:g} 分钟（到期自动过期）")
-    if opts.task:
-        print(f"  任务: {opts.task}")
-    return 0
+    for ln in lines:
+        print(ln)
+    return rc
 
 
 def _warn_if_uncommitted(file_path: str) -> None:
@@ -501,33 +536,156 @@ def _warn_if_uncommitted(file_path: str) -> None:
             print(f"  git status: {line}")
 
 
-def cmd_release(file_path: str, owner_id: str) -> int:
-    _ensure_lock_root()
+def _release_prepare(file_path: str, owner_id: str, *, warn: bool = True) -> tuple[int, str, list[str], bool]:
+    """释放锁前半程：归属判定 + 锁目录清理（registry 摘除交调用方批量完成）。
+
+    Returns:
+        (退出码, 归一化相对路径, 输出行, 是否需从 registry 摘除)。
+        未被锁定/孤儿锁已清理同样返回需摘除（幂等，摘不存在的路径无害）。
+    """
     normalized = _normalize_path(file_path)
     lock_dir = _lock_dir(file_path)
+    lines: list[str] = []
 
     if not lock_dir.is_dir():
-        print(f"NOT FOUND — {normalized} 未被锁定")
-        return 0
+        lines.append(f"NOT FOUND — {normalized} 未被锁定")
+        return 0, normalized, lines, False
 
     owner = _read_owner(lock_dir)
     if owner is None:
         shutil.rmtree(lock_dir, ignore_errors=True)
-        _remove_from_registry(file_path)
-        print(f"RELEASED — {normalized} （孤儿锁，已清理）")
-        return 0
+        lines.append(f"RELEASED — {normalized} （孤儿锁，已清理）")
+        return 0, normalized, lines, True
 
     if owner.get("owner_id") != owner_id:
-        print(f"DENIED — {normalized} 被 {owner.get('owner_id')} 持有，你不能释放")
-        return 1
+        lines.append(f"DENIED — {normalized} 被 {owner.get('owner_id')} 持有，你不能释放")
+        return 1, normalized, lines, False
 
     # DM-202919: 释放锁前检查未提交修改（仅警告，不阻止）
-    _warn_if_uncommitted(file_path)
+    if warn:
+        _warn_if_uncommitted(file_path)
 
     shutil.rmtree(lock_dir, ignore_errors=True)
-    _remove_from_registry(file_path)
-    print(f"RELEASED — {normalized} 已释放")
-    return 0
+    lines.append(f"RELEASED — {normalized} 已释放")
+    return 0, normalized, lines, True
+
+
+def cmd_release(file_path: str, owner_id: str) -> int:
+    _ensure_lock_root()
+    rc, _normalized, lines, purge = _release_prepare(file_path, owner_id)
+    if purge and not _remove_from_registry(file_path):
+        print(f"DENIED — {file_path} registry 互斥锁超时（5s），请重试")
+        return 1
+    for ln in lines:
+        print(ln)
+    return rc
+
+
+def _tracked_paths_batch(paths: list[str]) -> set[str]:
+    """git ls-files 分片批量判定"已跟踪"子集（返回归一化相对路径）。
+
+    逐件 ``--error-unmatch`` 每件一个子进程，千件级 claim 因此落到分钟级。
+    git 不可用/异常时退回逐件 ``_is_git_tracked``（宁可误拒存量也不放过命名违规，
+    与 B5③ 判定方向一致）。
+    """
+    tracked: set[str] = set()
+    chunk = 200
+    for i in range(0, len(paths), chunk):
+        sub = [_normalize_path(p) for p in paths[i : i + chunk]]
+        try:
+            result = run_subprocess_hidden(
+                ["git", "ls-files", "--", *sub],
+                cwd=str(REPO_ROOT),
+                timeout=60,
+            )
+        except (OSError, subprocess.SubprocessError):
+            result = None
+        if result is None or result.returncode != 0:
+            for p in sub:
+                if _is_git_tracked(p):
+                    tracked.add(p)
+            continue
+        tracked.update(_normalize_path(ln) for ln in result.stdout.splitlines() if ln.strip())
+    return tracked
+
+
+def cmd_acquire_batch(
+    owner_id: str,
+    file_paths: list[str],
+    options: AcquireOptions | None = None,
+) -> int:
+    """批量加锁：一次 git tracked 判定 + 一次 registry 临界区登记。
+
+    Args:
+        owner_id: 持有者标识。
+        file_paths: 待锁文件（相对仓库根；重复项去重后处理）。
+        options: 与单件 acquire 同义（task/ttl/session_id/skip_naming_check）。
+
+    Returns:
+        0=全部获得（含重入）；1=存在 DENIED/登记失败（件级行已逐条打印）。
+    """
+    opts = options or AcquireOptions()
+    _ensure_lock_root()
+    paths = list(dict.fromkeys(_normalize_path(p) for p in file_paths if p.strip()))
+    if not paths:
+        print("ERROR — 批量加锁清单为空")
+        return 1
+
+    tracked = _tracked_paths_batch(paths)
+    ok_paths: list[str] = []
+    created: list[str] = []
+    denied = 0
+    for p in paths:
+        rc, _norm, lines, is_new = _acquire_prepare(p, owner_id, opts, tracked=(p in tracked))
+        for ln in lines:
+            print(ln)
+        if rc == 0:
+            ok_paths.append(p)
+            if is_new:
+                created.append(p)
+        else:
+            denied += 1
+
+    if created and not _add_many_to_registry(created, owner_id, opts.task, _ttl_seconds(opts)):
+        # Mutex 超时——回滚本次新建的全部锁目录，避免半锁状态
+        for p in created:
+            shutil.rmtree(_lock_dir(p), ignore_errors=True)
+        print(f"DENIED — registry 互斥锁超时（5s），本次 {len(created)} 个新锁已回滚")
+        return 1
+
+    print(f"BATCH-SUMMARY — acquired={len(ok_paths)} denied={denied} total={len(paths)}")
+    return 1 if denied else 0
+
+
+def cmd_release_batch(owner_id: str, file_paths: list[str], *, warn: bool = True) -> int:
+    """批量释放：件级清理 + 一次 registry 临界区摘除。
+
+    warn=False 跳过逐件 git status 未提交检查（千件级释放该项本身就是分钟级）。
+    """
+    _ensure_lock_root()
+    paths = list(dict.fromkeys(_normalize_path(p) for p in file_paths if p.strip()))
+    if not paths:
+        print("ERROR — 批量释放清单为空")
+        return 1
+
+    purge: list[str] = []
+    denied = 0
+    for p in paths:
+        rc, _norm, lines, need_purge = _release_prepare(p, owner_id, warn=warn)
+        for ln in lines:
+            print(ln)
+        if rc == 0:
+            if need_purge:
+                purge.append(p)
+        else:
+            denied += 1
+
+    if purge and not _remove_many_from_registry(purge):
+        print(f"DENIED — registry 互斥锁超时（5s），本次 {len(purge)} 个摘除未落")
+        return 1
+
+    print(f"BATCH-SUMMARY — released={len(paths) - denied} denied={denied} total={len(paths)}")
+    return 1 if denied else 0
 
 
 def cmd_release_all(owner_id: str) -> int:
@@ -623,36 +781,53 @@ def cmd_list(session_id: str | None = None) -> int:
     return 0
 
 
-def _add_to_registry(file_path: str, owner_id: str, task: str = "", ttl_s: float = DEFAULT_TTL_S) -> bool:
-    """登记锁进 registry（§7.28 Mutex 临界区内 RMW）。超时/失败返回 False。"""
+def _add_many_to_registry(file_paths: list[str], owner_id: str, task: str = "", ttl_s: float = DEFAULT_TTL_S) -> bool:
+    """批量登记锁进 registry：一次 Mutex + 一次整表写回（§7.28 临界区内 RMW）。
+
+    逐件调用时整表重写 N 次——千件级 claim 因此落到分钟级；批量入口共享本函数
+    的一次临界区。超时/失败返回 False（调用方负责回滚已建的锁目录）。
+    """
     with _registry_mutex() as acquired:
         if not acquired:
             return False
         registry = _load_registry()
-        normalized = _normalize_path(file_path)
+        locks = registry.setdefault("locks", {})
         now = time.time()
-        registry.setdefault("locks", {})[normalized] = {
-            "owner_id": owner_id,
-            "task": task,
-            "timestamp": now,
-            "ttl_s": ttl_s,
-            "expires_at": now + ttl_s,
-            "pid": os.getpid(),
-        }
+        for file_path in file_paths:
+            normalized = _normalize_path(file_path)
+            locks[normalized] = {
+                "owner_id": owner_id,
+                "task": task,
+                "timestamp": now,
+                "ttl_s": ttl_s,
+                "expires_at": now + ttl_s,
+                "pid": os.getpid(),
+            }
         _save_registry(registry)
         return True
+
+
+def _remove_many_from_registry(file_paths: list[str]) -> bool:
+    """批量从 registry 移除锁（一次 Mutex 临界区）。超时/失败返回 False。"""
+    with _registry_mutex() as acquired:
+        if not acquired:
+            return False
+        registry = _load_registry()
+        locks = registry.get("locks", {})
+        for file_path in file_paths:
+            locks.pop(_normalize_path(file_path), None)
+        _save_registry(registry)
+        return True
+
+
+def _add_to_registry(file_path: str, owner_id: str, task: str = "", ttl_s: float = DEFAULT_TTL_S) -> bool:
+    """登记锁进 registry（§7.28 Mutex 临界区内 RMW）。超时/失败返回 False。"""
+    return _add_many_to_registry([file_path], owner_id, task, ttl_s)
 
 
 def _remove_from_registry(file_path: str) -> bool:
     """从 registry 移除锁（§7.28 Mutex 临界区内 RMW）。超时/失败返回 False。"""
-    with _registry_mutex() as acquired:
-        if not acquired:
-            return False
-        registry = _load_registry()
-        normalized = _normalize_path(file_path)
-        registry.get("locks", {}).pop(normalized, None)
-        _save_registry(registry)
-        return True
+    return _remove_many_from_registry([file_path])
 
 
 class FileLockedError(Exception):
@@ -757,7 +932,10 @@ def _print_help() -> None:
     print("  status                    查看所有活跃锁")
     print("  check     <file>          检查文件是否被锁（exit 0=free, 1=locked）")
     print("  acquire   <file> <owner> [--task <desc>] [--ttl <分钟>]  锁定文件（默认 30 分钟）")
+    print("  acquire-batch <owner> --files-from <清单> | --files a,b  批量加锁（一次 Mutex+一次 git 判定）")
+    print("            [--task <desc>] [--ttl <分钟>] [--session <sid>] [--skip-naming-check]")
     print("  release   <file> <owner>  释放文件锁")
+    print("  release-batch <owner> --files-from <清单> [--no-warn]   批量释放（一次 Mutex 摘除）")
     print("  release-all <owner>       释放该持有者的所有锁")
     print("  list      [--session <owner>]  列出活跃锁（可按持有者过滤）")
     print("  cleanup                   清理所有死锁（TTL过期/PID已死）")
@@ -771,6 +949,70 @@ def _parse_opt(args: list[str], flag: str) -> str | None:
         if i + 1 < len(args):
             return args[i + 1]
     return None
+
+
+_VALUE_OPTS = ("--task", "--ttl", "--session", "--files", "--files-from")
+
+
+def _parse_ttl_opt(args: list[str]) -> tuple[float | None, bool]:
+    """解析 --ttl（分钟）。返回 (ttl_minutes|None, 是否出错)；出错已打印原因。"""
+    ttl_raw = _parse_opt(args, "--ttl")
+    if ttl_raw is None:
+        return None, False
+    try:
+        ttl_minutes = float(ttl_raw)
+    except ValueError:
+        print(f"ERROR — --ttl 必须为正数（分钟），收到: {ttl_raw}")
+        return None, True
+    if ttl_minutes <= 0:
+        print(f"ERROR — --ttl 必须为正数（分钟），收到: {ttl_raw}")
+        return None, True
+    return ttl_minutes, False
+
+
+def _collect_path_args(args: list[str]) -> list[str] | None:
+    """收集批量子命令的文件清单：--files-from <每行一路径> + --files <逗号分隔> + 位置参数。
+
+    Returns:
+        路径列表；参数误用（选项串错位/清单文件不可读）时返回 None（已打印原因）。
+    """
+    paths: list[str] = []
+    i = 0
+    while i < len(args):
+        tok = args[i]
+        if tok == "--files-from":
+            i += 1
+            if i >= len(args):
+                print("ERROR — --files-from 缺少清单文件路径")
+                return None
+            try:
+                lines = Path(args[i]).read_text(encoding="utf-8").splitlines()
+            except OSError as e:
+                print(f"ERROR — --files-from 清单读取失败: {e}")
+                return None
+            paths.extend(ln.strip() for ln in lines if ln.strip() and not ln.strip().startswith("#"))
+            i += 1
+            continue
+        if tok == "--files":
+            i += 1
+            if i >= len(args):
+                print("ERROR — --files 缺少逗号分隔清单")
+                return None
+            paths.extend(p.strip() for p in args[i].split(",") if p.strip())
+            i += 1
+            continue
+        if tok in _VALUE_OPTS:
+            i += 2  # 跳过取值型选项
+            continue
+        if tok.startswith("--"):
+            i += 1  # 布尔型开关（--skip-naming-check / --no-warn）
+            continue
+        f = _validate_file_arg(tok)
+        if f is None:
+            return None
+        paths.append(f)
+        i += 1
+    return paths
 
 
 def _validate_file_arg(arg: str) -> str | None:
@@ -804,16 +1046,9 @@ def main() -> int:
     if cmd == "acquire" and len(args) >= 3:
         task = _parse_opt(args, "--task") or ""
         skip_naming = "--skip-naming-check" in args
-        ttl_raw = _parse_opt(args, "--ttl")
-        ttl_minutes: float | None = None
-        if ttl_raw is not None:
-            try:
-                ttl_minutes = float(ttl_raw)
-                if ttl_minutes <= 0:
-                    raise ValueError
-            except ValueError:
-                print(f"ERROR — --ttl 必须为正数（分钟），收到: {ttl_raw}")
-                return 1
+        ttl_minutes, ttl_err = _parse_ttl_opt(args)
+        if ttl_err:
+            return 1
         # 裁定#252：--session 绑定锁存活=会话存活（owner.json 写 session_id，
         # _is_stale 走 SessionRegistry 会话判活；缺省退化旧 PID+TTL 语义）
         bind_session = _parse_opt(args, "--session") or ""
@@ -821,6 +1056,30 @@ def main() -> int:
         if f is None:
             return 1
         return cmd_acquire(f, args[2], AcquireOptions(task=task, skip_naming_check=skip_naming, ttl_minutes=ttl_minutes, session_id=bind_session))
+
+    if cmd == "acquire-batch" and len(args) >= 2:
+        ttl_minutes_b, err = _parse_ttl_opt(args)
+        if err:
+            return 1
+        paths = _collect_path_args(args[2:])
+        if paths is None:
+            return 1
+        return cmd_acquire_batch(
+            args[1],
+            paths,
+            AcquireOptions(
+                task=_parse_opt(args, "--task") or "",
+                skip_naming_check="--skip-naming-check" in args,
+                ttl_minutes=ttl_minutes_b,
+                session_id=_parse_opt(args, "--session") or "",
+            ),
+        )
+
+    if cmd == "release-batch" and len(args) >= 2:
+        paths = _collect_path_args(args[2:])
+        if paths is None:
+            return 1
+        return cmd_release_batch(args[1], paths, warn=("--no-warn" not in args))
 
     if cmd == "release" and len(args) >= 3:
         f = _validate_file_arg(args[1])
