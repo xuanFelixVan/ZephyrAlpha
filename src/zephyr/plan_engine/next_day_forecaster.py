@@ -117,10 +117,12 @@ _KLINE_SQL: Final = (
     "FROM {table} WHERE symbol = '{symbol}' AND quality_flag = 1 "
     "ORDER BY trade_date"
 )
-# 幂等查重：同 module_id + 同业务日（inputs_ref 结构化指纹 LIKE 匹配）
+# 幂等查重：同 module_id + 同业务日（inputs_ref 结构化指纹 LIKE 匹配）。
+# 模式不带前导 '|'——trade_date 是 inputs_ref 首键（首键前无分隔符，'%|key|%' 永远
+# miss=幂等失效三连发事故修复 2026-09-17）；尾 '|' 防日期前缀误配（15 不吃 15X）。
 _ALREADY_EMITTED_SQL: Final = (
     "SELECT count() FROM c1_market.judgment_next_day_forecast "
-    "WHERE module_id = '{module_id}' AND inputs_ref LIKE '%|trade_date:{day}|%'"
+    "WHERE module_id = '{module_id}' AND inputs_ref LIKE '%trade_date:{day}|%'"
 )
 
 

@@ -311,18 +311,36 @@ def test_emit_pit_violation_clamped() -> None:
 # ── 幂等（事件重放）与唤醒点 ──
 
 
+def _sql_like_match(pattern: str, value: str) -> bool:
+    """SQL LIKE 通配语义模拟（% → 任意串）——幂等 fake 的真实语义（防宽匹配假绿）。"""
+    import re
+
+    return re.fullmatch(re.escape(pattern).replace(r"%", ".*"), value) is not None
+
+
+def _emitted_checker(emitted_keys: set[str]):
+    """按真实 LIKE 语义的 count() 查重 fake（模式对真实格式 inputs_ref 做通配匹配）。"""
+    import re
+
+    def fake_count(sql: str) -> list[tuple]:
+        pattern = sql.split("LIKE '")[1].split("'")[0]
+        for key in emitted_keys:
+            ref = f"bar_key:{key}|bar_hash:x|proxy:etf_510300|breadth_ts:|missing:none|"
+            if _sql_like_match(pattern, ref):
+                return [(1,)]
+        return [(0,)]
+
+    return fake_count
+
+
 def test_latest_unemitted_bar_skips_emitted() -> None:
     today = _bars("2026-09-16", ["10:30", "11:30"], base=4040.0)
-    calls: list[str] = []
+    emitted = {format_bar_key(datetime.fromisoformat("2026-09-16 11:30:00"))}
 
     def fake_reader(sql: str) -> list[tuple]:
-        calls.append(sql)
         if "count()" in sql:
-            key = format_bar_key(datetime.fromisoformat("2026-09-16 11:30:00"))
-            if f"bar_key:{key}" in sql:
-                return [(1,)]  # 最新 bar 已发射
-            return [(0,)]
-        return [r for r in _hist() + today]
+            return _emitted_checker(emitted)(sql)
+        return _hist() + today
 
     found = latest_unemitted_bar(reader=fake_reader, today="2026-09-16")
     assert found is not None
@@ -334,10 +352,11 @@ def test_latest_unemitted_bar_skips_emitted() -> None:
 
 def test_latest_unemitted_bar_none_when_all_emitted() -> None:
     today = _bars("2026-09-16", ["10:30"], base=4040.0)
+    emitted = {format_bar_key(datetime.fromisoformat("2026-09-16 10:30:00"))}
 
     def fake_reader(sql: str) -> list[tuple]:
         if "count()" in sql:
-            return [(1,)]
+            return _emitted_checker(emitted)(sql)
         return _hist() + today
 
     assert latest_unemitted_bar(reader=fake_reader, today="2026-09-16") is None

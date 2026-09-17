@@ -28,6 +28,24 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from zephyr.strategy_pipeline import pipeline_events as pe  # noqa: E402
 
 
+@pytest.fixture(autouse=True)
+def _isolate_phase2a_judgment_hooks(monkeypatch):
+    """判定台账 Phase 2a 挂点测试隔离（2026-09-17 三连发事故修复）。
+
+    wire_data_scheduler 的 _on_task_completed 会惰性 import 并执行
+    plan_engine 的两个判定产出钩子——本文件的 wire 测试触发该回调时，
+    钩子若未隔离会走真库（读 kline_index→查重→emit_judgment 真实发射，
+    synthetic=0 生产行）。autouse patch 拦在源头：判定发射是生产副作用，
+    测试进程零豁免。
+    """
+    monkeypatch.setattr(
+        "zephyr.plan_engine.intraday_l1_tracker.maybe_track_intraday_state",
+        lambda *a, **k: {"action": "skipped_test_isolation"})
+    monkeypatch.setattr(
+        "zephyr.plan_engine.next_day_forecaster.maybe_emit_next_day_forecast",
+        lambda *a, **k: {"action": "skipped_test_isolation"})
+
+
 @pytest.fixture()
 def state(tmp_path, monkeypatch):
     monkeypatch.setattr(pe, "STATE_DIR", tmp_path)

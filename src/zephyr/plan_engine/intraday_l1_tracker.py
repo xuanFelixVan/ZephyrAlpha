@@ -163,10 +163,12 @@ _A50_LAST2_SQL: Final = (
     "SELECT trade_date, close FROM {table} WHERE symbol = 'CHA50CFD' "
     "ORDER BY trade_date DESC LIMIT 2"
 )
-# 幂等查重：同 module_id + 同 bar_key（inputs_ref 结构化指纹 LIKE 匹配）
+# 幂等查重：同 module_id + 同 bar_key（inputs_ref 结构化指纹 LIKE 匹配）。
+# 模式不带前导 '|'——bar_key 是 inputs_ref 首键（首键前无分隔符，'%|key|%' 永远
+# miss=幂等失效三连发事故修复 2026-09-17，同 next_day_forecaster）；尾 '|' 防前缀误配。
 _ALREADY_EMITTED_SQL: Final = (
     "SELECT count() FROM c1_market.judgment_intraday_market_state "
-    "WHERE module_id = '{module_id}' AND inputs_ref LIKE '%|bar_key:{bar_key}|%'"
+    "WHERE module_id = '{module_id}' AND inputs_ref LIKE '%bar_key:{bar_key}|%'"
 )
 
 

@@ -290,15 +290,25 @@ def test_emit_t_day_missing_fail_closed() -> None:
 # ── 幂等与唤醒点 ──
 
 
+def _sql_like_match(pattern: str, value: str) -> bool:
+    """SQL LIKE 通配语义模拟（% → 任意串；大小写敏感近似）——幂等 fake 的真实语义。"""
+    import re
+
+    return re.fullmatch(re.escape(pattern).replace(r"%", ".*"), value) is not None
+
+
 def test_hook_idempotent_same_trade_date() -> None:
     rows = _kline_rows()
     day = str(rows[-1][0])
 
     def fake_reader(sql: str) -> list[tuple]:
         if "count()" in sql:
-            if f"trade_date:{day}" in sql:
-                return [(1,)]  # 该业务日已发射
-            return [(0,)]
+            # 真实 LIKE 语义：提取 pattern，对真实格式 inputs_ref 做通配匹配
+            # （此前 fake 用宽子串判断=假绿，放跑了 '%|key|%' 首键 miss 事故——红蓝修复）
+            pattern = sql.split("LIKE '")[1].split("'")[0]
+            sample_ref = (f"trade_date:{day}|inputs_hash:c81cba763bebf69b"
+                          f"|bucket:down:low|n:470|fallback:0|")
+            return [(1,)] if _sql_like_match(pattern, sample_ref) else [(0,)]
         return rows
 
     with pytest.MonkeyPatch.context() as mp:
@@ -307,6 +317,8 @@ def test_hook_idempotent_same_trade_date() -> None:
                    lambda: day)
         out = maybe_emit_next_day_forecast(task_id="daily_kline:20260729", success=True)
     assert out == {"action": "already_emitted", "trade_date": day}  # 事件重放零副作用
+    # 修复断言：pattern 必须匹配首键在前的真实 inputs_ref（防回归 '%|key|%' 写法）
+    assert _sql_like_match("%trade_date:%|", f"trade_date:{day}|x|")
 
 
 def test_hook_wake_point_matching() -> None:
@@ -347,10 +359,16 @@ def test_hook_emitted_happy_path() -> None:
     cap = _CapturedWriter()
     rows = _kline_rows()
     day = str(rows[-1][0])
+
+    def fake_reader(sql: str) -> list[tuple]:
+        if "count()" in sql:
+            # 首次发射场景：已发射清单为空 → 查重恒 0（真实 LIKE 语义由
+            # test_hook_idempotent_same_trade_date 的正反向断言覆盖）
+            return [(0,)]
+        return rows if "SELECT trade_date" in sql else []
+
     with pytest.MonkeyPatch.context() as mp:
-        mp.setattr(nf, "_reader_execute",
-                   lambda sql: ([(0,)] if "count()" in sql
-                                else rows if "SELECT trade_date" in sql else []))
+        mp.setattr(nf, "_reader_execute", fake_reader)
         mp.setattr("zephyr.strategy_pipeline.pipeline_events.resolve_pf_alloc_trade_date",
                    lambda: day)
         import zephyr.plan_engine.judgment_ledger as jl
