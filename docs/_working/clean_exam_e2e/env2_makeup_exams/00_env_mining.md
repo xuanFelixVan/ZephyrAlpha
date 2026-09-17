@@ -4,7 +4,7 @@ title: ENV2 补考线挖干作业簿——16 条 error 策略阻塞链与重考
 owner: ZephyrAlpha-Owner
 session: st-cleanexam-20260918
 date: 2026-09-18
-status: mining_done_construction_running
+status: done
 ---
 
 # ENV2 补考线 · 挖干作业簿
