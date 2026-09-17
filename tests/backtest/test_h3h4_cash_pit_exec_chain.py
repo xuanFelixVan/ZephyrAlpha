@@ -390,6 +390,11 @@ class TestFrameworkArtifactChainEvidence:
         disk = json.loads(saved.read_text(encoding="utf-8"))
         assert disk["metrics"]["cash_ledger_reconciliation"]["within_tolerance"] is True
         assert "execution_model_disclosure" in disk["metrics"]
+        # H4-B 硬验收：现金腿必须**落盘**（只在内存 ts 构造、被 sink 丢掉=不可事后复核）
+        disk_cash = disk["metrics"]["cash_curve"]
+        assert disk_cash == ts["cash_curve"], "落盘现金腿与内存不一致（序列化被改写/截断）"
+        assert len(disk_cash) == len(disk["equity_curve"]), "现金腿与净值腿不等长→逐日轧差不可核"
+        assert {"timestamp", "cash"} <= set(disk_cash[0])
 
     def test_warn_visible_when_cash_ledger_open(self, fw_env) -> None:
         """账本破口必须进 warn（done 响应可见），不能只躺在 metrics 里。"""

@@ -104,6 +104,17 @@ lane: H
 | H4-E | **P2** | 能力缺披露 | 席位/保证金/两融未建模（现货无杠杆长仓） | 在回测能力声明处划界；验收：蓝图信用/多席位宣称与引擎能力对齐（否则标 not-supported） |
 | H4-F | **P2** | 保守偏差 | 闲置现金 0 息 | 可选按风险利率计息并披露；验收：现金腿机会成本单列 |
 
+## 4.1 清偿状态与验收机证（2026-09-17 复跑）
+
+| ID | 状态 | 落点 / 验收机证 |
+|----|------|-----------------|
+| H4-A | ✅ 闭环 | `framework_composer._cash_ledger_reconciliation` 进 `chain` → 产物 `metrics` **且** `_assemble_run_warn`（**缺键也判破**，禁静默通过）+ acceptance 硬闸。端到端真数据探针（未经 monkeypatch，150 标的 / 2026-07-01~09-15，产物写会话 staging；临时件收尾清理）：`samples=55 within_tolerance=True max_abs_residual=5.24e-11 worst_date=2026-08-13` |
+| H4-B | ✅ 本轮补完（此前半落地） | **坑**：`_collect_timeseries` 造的 `cash_curve` 只随内存 `ts` 返回，`sink_backtest_result` 只收 equity/trade/drawdown/benchmark → 落盘 JSON **无现金腿**（端到端探针实测 `persisted cash_curve points: 0`）。旧测试只断 `ts["cash_curve"]`，故对此回归全盲——正是"验收断内存对象、产物却丢字段"的同族自欺（见 `gate_self_deception_mining.md`）。修法：`metrics["cash_curve"]` 落盘（`BacktestRunArtifact` 顶层受 `[MODIFY-GUARD]` 结构冻结，不加键），测试 `test_artifact_metrics_carry_chain_evidence` 升级为**读盘断言**（落盘==内存、与 `equity_curve` 等长、点结构含 timestamp/cash）。<br>**残余 R-H4B-p**：`positions_curve` 未加——引擎无逐日持仓快照序列（`Portfolio` 只有 `nav_series`/`cash_history`/`trades_log`），市值只能由 `equity−cash` 反推，故"任一时点 `cash+Σqty×px≈equity` 独立复算"仍需真独立量（要引擎侧新增逐日持仓快照），非产物侧可补 |
+| H4-C | ✅ 通道已建 + 语义划界 | 持现金意图经 `ShrinkageBacktestEngine`（`config.shrinkage_by_date`，裁定#270）；`vectorized_engine.py:93/451/473/575` 四处 docstring 明示"全零行=当日不下单≠清仓"，`target_weight_renormalization.rows_all_zero` 在产物侧计数披露 |
+| H4-D | ✅ 闭环 | `skipped_fills`（含 `by_reason` 分类）进 `metrics`；端到端实测窗口 `by_reason={}`（无被拒腿，属正常而非缺键——键恒在） |
+| H4-E | ✅ 闭环 | `execution_model_disclosure`（`schema=execution_model_capability/v1`）落产物，能力划界随产物走 |
+| H4-F | ⏳ 未做（P2 排期） | 闲置现金仍 0 息（保守偏差），机会成本未单列 |
+
 ## 5 子节点清单
 
 - H4.a 现金/持仓序列入产物（与 §H1 产物 schema、§H2 cost_attribution 共批）。

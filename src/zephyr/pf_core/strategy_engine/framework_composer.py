@@ -2323,7 +2323,11 @@ def _persist_framework_artifact(
             "dead_weight_disclosed": report.dead_weight_disclosed,
             # T1A-1 验收字段：成员信号契约与降级/缺源披露（含 runner 只喂单因子）
             "member_signal_contracts": dict(contracts or {}),
-            # #24 H3/H4 验收字段：现金腿闭合 + 引擎静默点 + 混频节奏（禁只进日志）
+            # #24 H3/H4 验收字段：现金腿时序 + 现金账本闭合 + 引擎静默点 + 混频节奏
+            # （禁只进日志/只进内存 ts——H4-B：产物不落现金序列则"手续费扣到现金没"
+            #  从不可事后复核）。落 metrics 而非 artifact 顶层：BacktestRunArtifact 顶层
+            #  字段 [MODIFY-GUARD] 结构冻结，metrics 本就是执行链证据载体。
+            "cash_curve": list(ts.get("cash_curve") or []),
             **chain,
         }
     )
