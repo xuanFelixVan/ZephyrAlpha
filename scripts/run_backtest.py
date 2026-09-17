@@ -120,6 +120,27 @@ def _collect_timeseries(runner, data, signals, config, engine) -> dict:
     }
 
 
+def _cash_ledger_reconciliation(engine) -> dict:
+    """现金账本 Σ 闭合对账（E2/S1-T1 CLI 接线）——复用 H4-A 真源 reconcile_cash_ledger。
+
+    输入=引擎 last_portfolio 的 cash_history/trades_log/initial_capital；任一缺失 →
+    within_tolerance=False（fail-closed：缺腿=对账不通过，禁静默缺字段放行）。
+    """
+    from zephyr.backtest.core.portfolio import reconcile_cash_ledger
+
+    portfolio = getattr(engine, "last_portfolio", None)
+    cash_history = getattr(portfolio, "cash_history", None) if portfolio is not None else None
+    trades_log = getattr(portfolio, "trades_log", None) if portfolio is not None else None
+    initial_capital = getattr(portfolio, "initial_capital", None) if portfolio is not None else None
+    if not cash_history or trades_log is None or initial_capital is None:
+        return {
+            "schema": "cash_ledger_reconciliation/v1",
+            "within_tolerance": False,
+            "note": "cash_history/trades_log/initial_capital 缺失——fail-closed 判不通过（E2/S1-T1）",
+        }
+    return reconcile_cash_ledger(cash_history, trades_log, initial_capital)
+
+
 def _sink_strategy_signals(signals, strategy_id: str, run_id: str, factor_ids) -> dict:
     """管道 A（#BT-PIPELINE-001 阶段三）：最新权重面板 → market_signal_history。
 
@@ -360,6 +381,11 @@ def run_one(
     # 落盘键集 == 登记键集，杜绝"造了没落"（#24 H4-B 同族第二生产路径 R-H4B-s）。
     for _k in sorted(_PERSISTED_VIA_METRICS_TS_KEYS):
         artifact.metrics[_k] = list(ts.get(_k) or [])
+    # E2（S1-T1）：现金账本 Σ 闭合对账进产物 metrics——CLI 路径与整装路径同一绊线。
+    # 非标量时序（dict 章），不进 _collect_timeseries 名册（GT-15 只管时序键）；
+    # 缺 cash_history → within_tolerance=False（fail-closed）。
+    _recon_engine = engine if mode != "tick" else getattr(runner, "_last_tick_engine", None)
+    artifact.metrics["cash_ledger_reconciliation"] = _cash_ledger_reconciliation(_recon_engine)
     run_id = save_artifact(artifact)
 
     sig = _sink_strategy_signals(signals, strategy_id, run_id, list(factor_ids))
@@ -382,6 +408,9 @@ def run_one(
         "trades": n_tr,
         "signals_written": sig.get("written", 0),
         "metrics": sink.to_metrics_dict(),
+        "cash_ledger_within_tolerance": artifact.metrics["cash_ledger_reconciliation"].get(
+            "within_tolerance"
+        ),
         "warn": warn,
     }
 
@@ -479,7 +508,8 @@ def main(argv: list[str] | None = None) -> int:
         f"OK run_id={summary['run_id']} equity_points={summary['equity_points']} "
         f"trades={summary['trades']} signals={summary.get('signals_written', 0)} "
         f"total_return={m['total_return']:.4f} "
-        f"sharpe={m['sharpe_ratio']:.2f} max_dd={m['max_drawdown']:.4f}"
+        f"sharpe={m['sharpe_ratio']:.2f} max_dd={m['max_drawdown']:.4f} "
+        f"cash_ledger_within={summary.get('cash_ledger_within_tolerance')}"
     )
     if summary.get("warn"):
         print(f"WARN: {summary['warn']}", file=sys.stderr)
