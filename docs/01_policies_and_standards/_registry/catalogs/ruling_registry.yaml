@@ -4114,3 +4114,47 @@ entries:
   related_rulings: ['裁定#288', '裁定#303']
   related_arch: []
   superseded_by: null
+
+- ruling_id: '裁定#304'
+  title: 'Regime r4/r10 方向失真重校准——HMM 组件锚定落地+态层方向语义退役（预注册协议判据，Owner 开工令"继续开工"）'
+  date: '2026-09-17'
+  category: '策略架构'
+  status: 'active'
+  summary: >-
+    Owner 开工令执行的预注册重校批（协议跑数前 commit 26ac558b，WYF-3 先例纪律）。
+    诊断（run VAL-P0-20260916-230726，1812 日 × 000300 fwd5/10/20，IS≤2023-12-31/OOS≥2024-01-01）：
+    H1 标签失锚成立（r4 季符号一致率 0.571<0.60、相邻季翻转率 0.667>0.40；r1 0.417/r3 0.385；
+    旧 r4 标签日跨季 21%/26%/26%/8% 散布四槽、旧 r3 日 71.5% 实为负斜率态——label switching 实证闭合）；
+    H3 结构突变成立（r1/r3 方向 IS→OOS 完全反转，Welch 双段 p<1e-3；924 后高波/危机态反弹溢价：
+    r4 fwd20 两段非负 +0.23/+0.69、r10 入场中位低点在其后 6 日）；H2 阈值漂移不成立（r10 入场前
+    10 日市场已跌 4.2%=结构性事后确认语义，非阈值问题，TRANSITION_CONFIG 零改动）。
+    乱序对照：真实全表 mean|Δ20|=0.785% vs 置换零分布 p95=0.876%——旧表聚合方向信息弱于零分布。
+    裁决三项：①R1 采纳——RegimeDetector.fit() 组件确定性锚定（r4 槽=训练窗斜率最小组件，
+    r1/r2/r3=其余按波动率均值升序；PIT 只用训练窗；只重排组件参数不改似然/概率集合；
+    anchor_labels=False 留 A/B；n_states≠4/列不足自动跳过），锚定后 r3 季一致率 0.385→0.80、
+    r4 0.571→0.727、r2 相邻季翻转 0.636→0.267，态名跨季可比性恢复，重放幂等（两次逐字节一致）。
+    ②R3 诚实终态——r4/r10/r1 方向语义退役（r4 OOS Δ+3.37 反弹溢价反转、r10 反转持续、r1 无方向
+    信息），态层职责=风险分档（与 #229/#230 合流），方向判别归因子层；保留方向语义核心对
+    r2<r3 双段单调（spread IS +3.46/OOS +1.98 同号，Welch IS p=3.8e-12/OOS p=5.5e-4）。
+    ③r11/r12 死态（1/6 日）合并建议登记，枚举变更=生产门位留 Owner。
+    切换器联测定性结论（S-OWNER-002，未重跑全量）：重校后"r4/r10→清仓"的系统性低位卖出消失；
+    进攻窗应对齐锚定 r3 槽（fwd20 两段均约 +2.2% 绝对，旧 r3 OOS -0.58%）；防御轴按风险分档非态名；
+    924 后 r3 OOS 优势含结构行情红利，上线前须独立 OOS 复验。
+    红蓝三场景全过：乱序对照（置换后 |Δ| 塌向零分布）、锚定置换不变性（组件任意置换后参数与
+    detect 概率逐项还原，单测在案）、重放幂等（逐字节一致）。测试：tests/regime/
+    test_regime_detector.py 两轮 72 passed 0 失败（含锚定 8 新测）。
+    编号注：按登记时点注册表 ruling_id 字段最大值+1 取号（取号时点实测 max=303，主区工作文件与
+    施工 worktree 双查一致；任务简报所引"#304/#305 已存在"与实测不符，以实测为准）。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  - docs/_working/regime_recal/regime_recal_protocol_2026_09_17.md
+  - docs/_working/regime_recal/regime_recal_results_2026_09_17.md
+  - src/zephyr/regime/core/regime_detector.py
+  - tests/regime/test_regime_detector.py
+  - docs/03_modules/_domain_regime/regime_detector/blueprint.md
+  - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  related_rulings:
+  - '裁定#229'
+  - '裁定#230'
+  - '裁定#293'
+  superseded_by: ''

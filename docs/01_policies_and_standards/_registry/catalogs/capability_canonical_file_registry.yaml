@@ -32488,4 +32488,8 @@ creation_tokens:
   created_by: st-anchorfix-20260918
   capability: landing_anchor_closeout
 
+- file: docs/_working/regime_recal/regime_recal_results_2026_09_17.md
+  token: st-regcal-regime-recal-results-20260917
+  created_by: st-regcal-20260917
+  capability: regime_recalibration
 di_seam_exemptions: []
