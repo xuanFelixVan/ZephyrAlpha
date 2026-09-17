@@ -535,11 +535,31 @@ class TestSerializerLease:
         stats = cq.drain_queue(queue_root, lease_timeout=1.0)
         assert stats["done"] == 1, "僵尸 lease MUST 被检测回收后排空"
 
-    def test_expired_lease_reclaimed(self, queue_root: Path) -> None:
+    def test_expired_live_holder_lease_not_stolen(self, queue_root: Path) -> None:
+        """活体持有者超 TTL 绝不被抢（2026-09-18 st-flashspeed-20260918 死信治本回归）。
+
+        病根：旧语义对"活 PID + acquired_at 超 TTL"的租约直接回收 → 并发自举 drain
+        抢锁 → 双 drain 同跑一个 serializer worktree → thief 的 clean -fd 删掉 victim
+        已 materialize 未 commit 的 untracked 新文件 → pathspec did-not-match 死信
+        （2026-09-17 q-…-0013 等 11 条）。修复后：活体持有者即便显示超期（慢项在途、
+        尚未 renew）也判"不抢"，drain 等待至 timeout 放弃（自举语义：拿不到等下次），
+        项安全留 pending 零丢失。
+        """
         _enqueue(queue_root, "AI-L3", "m", [("a.txt", b"v")])
-        # TTL 过期：活 PID 但 acquired_at 超 300s
+        # TTL 过期但持有者是本进程（活体）——模拟慢项在途、renew 尚未刷新的窗口
         (queue_root / "serializer.lease").write_text(
             json.dumps({"pid": os.getpid(), "acquired_at": time.time() - 400}), encoding="utf-8"
+        )
+        with pytest.raises(cq.LeaseUnavailable):
+            cq.drain_queue(queue_root, lease_timeout=0.2)
+        # 项未被动：仍在 pending（等下次自举，绝不因抢锁毁 worktree）
+        assert len(list((queue_root / "pending").glob("q-*.json"))) == 1
+
+    def test_expired_no_pid_lease_reclaimed(self, queue_root: Path) -> None:
+        """无持有者 PID 的超期租约（旧格式/损坏）保留 TTL 回收语义——排空成功。"""
+        _enqueue(queue_root, "AI-L3b", "m", [("a.txt", b"v")])
+        (queue_root / "serializer.lease").write_text(
+            json.dumps({"acquired_at": time.time() - 400}), encoding="utf-8"
         )
         stats = cq.drain_queue(queue_root, lease_timeout=1.0)
         assert stats["done"] == 1
@@ -547,6 +567,39 @@ class TestSerializerLease:
     def test_lease_released_after_drain(self, queue_root: Path) -> None:
         cq.drain_queue(queue_root)
         assert not (queue_root / "serializer.lease").exists(), "排空后 lease MUST 释放"
+
+    def test_renew_refreshes_acquired_at_and_keeps_owner(self, queue_root: Path) -> None:
+        """renew() 把 acquired_at 刷新为当前时间、保留本进程持有——活体保鲜防 TTL 误判。"""
+        cq._ensure_dirs(queue_root)
+        with cq.SerializerLease(queue_root, timeout=1.0) as lease:
+            # 人为做旧 acquired_at（模拟单项墙钟拖长），renew 后 MUST 回到新鲜
+            lease_file = queue_root / "serializer.lease"
+            stale = time.time() - 400
+            lease_file.write_text(
+                json.dumps({"pid": os.getpid(), "acquired_at": stale}), encoding="utf-8"
+            )
+            assert lease.renew() is True
+            data = json.loads(lease_file.read_text(encoding="utf-8"))
+            assert data["pid"] == os.getpid(), "续租后持有者仍是本进程"
+            assert data["acquired_at"] > stale + 300, "acquired_at 已刷新为新鲜时间"
+            assert "renewed_at" in data, "续租时间戳留痕"
+
+    def test_renew_refuses_when_lease_taken_over(self, queue_root: Path) -> None:
+        """续租防易主误覆盖：租约已归属他进程 → renew 返回 False 且不 clobber 新持有者。"""
+        cq._ensure_dirs(queue_root)
+        with cq.SerializerLease(queue_root, timeout=1.0) as lease:
+            lease_file = queue_root / "serializer.lease"
+            # 外部把租约改成另一个 PID——模拟被合法回收后易主（renew 只校验 pid 归属，
+            # 不校验存活，故任意异己 PID 即可触发拒绝）
+            foreign_pid = os.getpid() + 4
+            foreign = json.dumps({"pid": foreign_pid, "acquired_at": time.time()})
+            lease_file.write_text(foreign, encoding="utf-8")
+            assert lease.renew() is False, "租约易主后续租 MUST 拒绝"
+            assert json.loads(lease_file.read_text(encoding="utf-8"))["pid"] == foreign_pid, (
+                "拒绝续租绝不覆盖新持有者租约"
+            )
+        # __exit__ 因 _acquired 已被 renew 置 False，不得移除他进程租约
+        assert lease_file.exists() and json.loads(lease_file.read_text(encoding="utf-8"))["pid"] == foreign_pid
 
 
 # ---------------------------------------------------------------------------

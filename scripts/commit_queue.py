@@ -727,13 +727,30 @@ class SerializerLease:
                             pass
                         continue
                     if time.time() - acquired_at > self._ttl:
-                        # TTL 过期：持有者崩溃未释放，回收
-                        logger.warning("SerializerLease: 租约超 TTL(%ss) 过期，回收", self._ttl)
-                        try:
-                            os.remove(self._lease_file)
-                        except OSError:
-                            pass
-                        continue
+                        if holder_pid is None:
+                            # 无 PID 可校验存活（旧格式/损坏租约）：保留 TTL 回收语义
+                            logger.warning("SerializerLease: 租约超 TTL(%ss) 且无持有者 PID，回收", self._ttl)
+                            try:
+                                os.remove(self._lease_file)
+                            except OSError:
+                                pass
+                            continue
+                        # 持有进程仍存活（死亡持有者已被上面 dead-PID 分支即时回收）=
+                        # 慢项在途（如 reconciler 超时 180s 级拖长单项墙钟），绝不可抢。
+                        # 病根（2026-09-17 q-…-0013 等 11 条 pathspec did-not-match 死信）：
+                        # 抢租约 → 两个 drain 并发跑同一 serializer worktree → thief 的
+                        # _sync_worktree(reset --hard + clean -fd) 删掉 victim 已 materialize
+                        # 未 commit 的 untracked 新文件 → victim 提交期网关 step3a os.path.isfile
+                        # 判 False → git rm --cached 反把它撤暂存 → commit pathspec 不匹配死信
+                        # （tracked 文件被 reset 回 HEAD 仍在盘故 pathspec 仍匹配，只有新文件死
+                        # =死信特征）。活体持有者由 renew() 心跳保鲜 acquired_at，正常不触发 TTL；
+                        # 触发=单项超 TTL 的慢项，等待至 timeout 放弃（自举语义：拿不到等下次）。
+                        logger.warning(
+                            "SerializerLease: 租约超 TTL(%ss) 但持有 PID=%s 仍存活——判定慢项在途，"
+                            "不抢租约（防 worktree 竞态毁未提交新文件），等待至超时放弃",
+                            self._ttl,
+                            holder_pid,
+                        )
                 except (OSError, ValueError, TypeError):
                     logger.warning("SerializerLease: 租约文件损坏，清理后重试")
                     try:
@@ -754,6 +771,57 @@ class SerializerLease:
                 pass
             self._acquired = False
         return False
+
+    def renew(self) -> bool:
+        """心跳续租：把 acquired_at 刷新为当前时间，活体持有者保鲜防 TTL 误判过期。
+
+        病根（2026-09-17 11 条 pathspec did-not-match 死信根因）：原租约 acquired_at 只在
+        获取时写一次、全程不续；drain 处理慢项（reconciler 超时 180s 级）墙钟超 TTL(300s)
+        后并发自举 drain 判其过期抢租约 → 双 drain 同跑一个 serializer worktree → thief 的
+        _sync_worktree(reset --hard + clean -fd) 删掉 victim 已 materialize 未 commit 的
+        untracked 新文件 → 提交期 pathspec 不匹配死信。续租让活体持有者 acquired_at 始终
+        新鲜，TTL 永不对工作中 drain 触发（与 __enter__ 的活体感知不抢租约互为双保险）。
+
+        防易主误覆盖：覆盖前校验租约 pid 仍是本进程（被合法回收/易主则放弃续租并标记
+        未持有，绝不 clobber 新持有者）。原子写（tmp + os.replace）防半写损坏。
+        fail-open：OSError 不抛进排空主循环（返回 False，调用方继续——续租失败不致命，
+        活体感知分支已兜底防抢）。返回 True=续租成功。
+        """
+        if not self._acquired:
+            return False
+        try:
+            cur = json.loads(self._lease_file.read_text(encoding="utf-8"))
+        except (OSError, ValueError, TypeError):
+            logger.warning("SerializerLease: 续租读取租约失败（租约丢失/损坏），放弃续租")
+            self._acquired = False
+            return False
+        if cur.get("pid") != os.getpid():
+            logger.warning(
+                "SerializerLease: 续租发现租约已易主（pid=%s != 本进程 %s），放弃续租",
+                cur.get("pid"),
+                os.getpid(),
+            )
+            self._acquired = False
+            return False
+        _now = time.time()
+        payload = json.dumps(
+            {"pid": os.getpid(), "acquired_at": _now, "renewed_at": _now}, ensure_ascii=False
+        ).encode("utf-8")
+        tmp = self._lease_file.with_name(f"{self._lease_file.name}.renew-{os.getpid()}")
+        try:
+            with open(tmp, "wb") as fh:
+                fh.write(payload)
+                fh.flush()
+                os.fsync(fh.fileno())
+            os.replace(tmp, self._lease_file)
+            return True
+        except OSError as exc:
+            logger.warning("SerializerLease: 续租写入失败（不阻断排空）: %s", exc)
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+            return False
 
 
 # ---------------------------------------------------------------------------
@@ -1004,12 +1072,20 @@ def drain_queue(
         "done_cleaned": 0,  # done/ TTL 清理移除数
     }
 
-    with SerializerLease(root, timeout=lease_timeout):
+    with SerializerLease(root, timeout=lease_timeout) as lease:
         stats["recovered"] = len(_recover_orphans(root))
         processed = 0
         # 排空即退出（66 号 §6.3）：heads 为空 break；循环上界=max_items——有界批处理，
         # 非 while True 时间轮询（PERM-TRIGGER 口径：事件触发自举，无常驻）。
         while max_items is None or processed < max_items:
+            # 逐项心跳续租（2026-09-18 st-flashspeed-20260918 死信治本）：慢项在途
+            # （reconciler ~180s）会撑破 _LEASE_TTL_SECONDS(300s) 单批预算，若租约
+            # acquired_at 不刷新，并发自举 drain 会判租约超期并抢锁——两个 drain 争用
+            # 同一 serializer worktree，抢锁方 _sync_worktree 的 clean -fd 删掉受害方
+            # 已物化未提交的 untracked 新文件（tracked 文件 reset 后仍在，故只有新文件
+            # 死信=pathspec did not match 取证签名）。每处理一项刷新租约，令"活着且在
+            # 干活"的持有者永不被 TTL 误抢（配合 __enter__ 的存活感知 TTL 分支双保险）。
+            lease.renew()
             pending_dir = root / "pending"
             heads = sorted(pending_dir.glob("q-*.json"))  # qid 字典序 == 车道内 FIFO 序
             if not heads:

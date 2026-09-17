@@ -48,6 +48,7 @@ import json
 import logging
 import os
 import subprocess
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -184,6 +185,90 @@ class _StubGateway:
 
     def commit_calls(self) -> list[dict]:
         return [payload for kind, payload in self.events if kind == "commit"]
+
+
+class _PathspecStubGateway:
+    """pathspec 保真桩：commit 走生产同款 `git commit --pathspec-from-file`（:(icase)rel 行）
+    + step3a 同款 add/rm --cached（git_commit_gateway._write_pathspec_file / _add_and_remove_normal_files）。
+
+    为何不用 _StubGateway：后者用 whole-index `git commit`（无 pathspec），对"新文件在
+    commit 前被 worktree 竞态清除"结构性失明——缺失文件被静默跳过不报错，永远 GREEN，
+    无法复现 2026-09-17 q-…-0013 等 11 条 `pathspec did not match` 死信签名。本桩忠实
+    复现该失败（COMMIT_FAILED + git stderr），供 untracked 新文件落地验收能红能绿。
+    git 对象/ref 语义保真（CAS/update-ref/is-ancestor 走真 git），仅豁免门禁链。
+    """
+
+    def __init__(self, worktree_path: Path) -> None:
+        self._wt = worktree_path
+        self.events: list[tuple[str, object]] = []
+
+    def claim_files(self, session_id: str, files: list[str], adopt_prior_work: bool = False) -> list[str]:
+        self.events.append(("claim", (session_id, list(files))))
+        return list(files)
+
+    def release_files(self, session_id: str, files: list[str]) -> None:
+        self.events.append(("release", (session_id, list(files))))
+
+    def commit(
+        self,
+        session_id: str,
+        files: list[str],
+        message: str,
+        allow_non_worktree: bool = False,
+        allow_tracked_drift: bool = False,
+        allow_multi_domain: bool = False,
+        allow_promote: bool = False,
+        lock_wait_timeout: float | None = None,
+    ) -> CommitResult:
+        self.events.append(
+            ("commit", {"session_id": session_id, "files": list(files), "message": message})
+        )
+        # step3a 保真：盘上存在→git add；缺失→git rm --cached --ignore-unmatch（幂等）
+        for f in files:
+            target = Path(f) if Path(f).is_absolute() else self._wt / f
+            if target.is_file():
+                _git(self._wt, "add", "--", f)
+            else:
+                _git(self._wt, "rm", "--cached", "--ignore-unmatch", "--", f)
+        # pathspec 保真：:(icase)rel 行（rel 相对 worktree=project_root），与生产同款
+        rels: list[str] = []
+        for f in files:
+            target = Path(f) if Path(f).is_absolute() else self._wt / f
+            rel = os.path.relpath(str(target), str(self._wt)).replace("\\", "/")
+            rels.append(f":(icase){rel}")
+        ps_fd, pspec = tempfile.mkstemp(prefix="stub_pathspec_", suffix=".txt")
+        with os.fdopen(ps_fd, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write("\n".join(rels) + "\n")
+        msg_fd, msgp = tempfile.mkstemp(prefix="stub_msg_", suffix=".txt")
+        with os.fdopen(msg_fd, "w", encoding="utf-8") as fh:
+            fh.write(message)
+        try:
+            r = _git(self._wt, "commit", "--no-verify", "-F", msgp, f"--pathspec-from-file={pspec}", check=False)
+            if r.returncode != 0:
+                err = (
+                    r.stderr.decode("utf-8", errors="replace").strip()
+                    or r.stdout.decode("utf-8", errors="replace").strip()
+                )
+                return CommitResult(status=CommitStatus.COMMIT_FAILED, message=err)
+            sha = _git_text(self._wt, "rev-parse", "HEAD")
+            return CommitResult(status=CommitStatus.OK, message="stub pathspec committed", commit_hash=sha)
+        finally:
+            for p in (pspec, msgp):
+                try:
+                    os.remove(p)
+                except OSError:
+                    pass
+
+    def commit_calls(self) -> list[dict]:
+        return [payload for kind, payload in self.events if kind == "commit"]
+
+
+def _make_landing_pathspec(repo: Path, qroot: Path) -> tuple[cql.WorktreeLanding, _PathspecStubGateway]:
+    """landing + pathspec 保真桩组装（worktree 路径确定性同 _make_landing）。"""
+    wt = (qroot / "worktree").resolve()
+    stub = _PathspecStubGateway(wt)
+    landing = cql.WorktreeLanding(repo_root=repo, queue_root=qroot, gateway=stub)
+    return landing, stub
 
 
 def _make_landing(repo: Path, qroot: Path) -> tuple[cql.WorktreeLanding, _StubGateway]:
@@ -819,6 +904,88 @@ class TestPathspecSelfHeal:
         with patch.object(type(gw), "commit", flaky_commit):
             result = landing(item, tmp_path / "cq_sh")
         assert result.ok, f"自愈重试后须落地成功: {result.reason}"
+
+
+class TestUntrackedNewFileLanding:
+    """untracked 新文件落地验收（2026-09-18 st-flashspeed-20260918 缺陷包 acceptance ①）。
+
+    缺陷签名（2026-09-17 q-…-0013 等 11 条死信）：含 untracked 新文件的队列项落地时
+    `pathspec ':(icase)<新文件>' did not match any file(s) known to git`。根因=SerializerLease
+    无续租 + TTL 抢活体持有者 → 并发 drain 争用同一 serializer worktree → thief 的
+    _sync_worktree(reset --hard + clean -fd) 删掉 victim 已 materialize 未 commit 的新文件
+    （tracked 文件 reset 后仍在盘，故只有新文件死=签名）。lease 治本修复见
+    test_commit_queue.py::TestSerializerLease（活体不抢 + renew 心跳）；本类用 pathspec
+    保真桩钉住落地侧"新文件正常落地字节级一致"与"一旦被清的确切死信形态"。
+    """
+
+    def test_untracked_new_file_lands_byte_identical_via_pathspec(
+        self, tmp_repo: Path, queue_root: Path
+    ) -> None:
+        """acceptance ①：入队含 untracked 新文件快照 → 落地成功 + blob 字节级一致 + 零自愈重试。"""
+        landing, stub = _make_landing_pathspec(tmp_repo, queue_root)
+        sid = "sess-newfile-ok"
+        content = "新文件 byte-identical 验收\n".encode("utf-8")
+        item = cq.enqueue_item(
+            sid, "feat: untracked 新文件落地", [("docs/brand_new.txt", content)], queue_root=queue_root
+        )
+
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1 and stats["dead"] == 0, f"新文件落地不应死信: {stats}"
+        # pathspec 保真 commit 恰一次（staging 未丢=无需 Mode B 自愈重试）
+        assert len(stub.commit_calls()) == 1, "pathspec commit 恰被调一次（零自愈重试）"
+        # dev 推进且新文件 blob 字节级一致（pathspec 限定本项，零搭便车）
+        assert _dev_commit_count(tmp_repo) == 1
+        assert _git_bytes(tmp_repo, "show", "dev:docs/brand_new.txt") == content, "落盘 blob 字节级一致"
+        # commit message 含队列标记（POST-COMMIT-GUARD 兼容面）
+        marker = cql.queue_marker(sid, item["qid"])
+        dev_msg = _git_bytes(tmp_repo, "show", "-s", "--format=%B", "refs/heads/dev").decode("utf-8")
+        assert marker in dev_msg
+        # done 记录 landed_id == dev HEAD
+        landed_id = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+        done_item = json.loads((queue_root / "done" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+        assert done_item["landed_id"] == landed_id
+
+    def test_new_file_wiped_before_commit_reproduces_pathspec_deadletter(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """能红证明（harness 保真）：新文件在 prestage 后、commit 前被持续清除 → pathspec
+        did-not-match → Mode B 自愈重放仍被清 → 死信带 [诊断]（q-…-0013 取证签名）。
+
+        模拟 thief 的 clean -fd：monkeypatch _prestage_snapshot 在预暂存后删盘上文件
+        （每次 materialize 都被清，复现持续竞态）。lease 治本修复令该并发清除永不发生
+        （活体持有者不被 TTL 抢 + renew 心跳保鲜）；本测试钉住"一旦发生的确切死信形态"，
+        同时证明 pathspec 保真桩对缺陷可见（_StubGateway whole-index commit 对此恒 GREEN）。
+        """
+        landing, stub = _make_landing_pathspec(tmp_repo, queue_root)
+        sid = "sess-newfile-wipe"
+        content = b"will be wiped before commit\n"
+
+        real_prestage = landing._prestage_snapshot
+
+        def prestage_then_wipe(item: dict, commit_files: list[str]) -> None:
+            real_prestage(item, commit_files)
+            # 模拟 thief worktree 竞态清除：删掉刚 materialize+staged 的 untracked 新文件
+            for f in commit_files:
+                try:
+                    os.remove(f)
+                except OSError:
+                    pass
+
+        monkeypatch.setattr(landing, "_prestage_snapshot", prestage_then_wipe)
+        item = cq.enqueue_item(
+            sid, "feat: 必死新文件", [("docs/wiped.txt", content)], queue_root=queue_root
+        )
+
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["dead"] == 1 and stats["done"] == 0, f"新文件被清后应死信: {stats}"
+        # 自愈重放后仍败=commit 被调两次（首次 + Mode B 重试）
+        assert len(stub.commit_calls()) == 2, f"pathspec 失败触发自愈重试一次: {len(stub.commit_calls())}"
+        dead = json.loads((queue_root / "dead" / f"{item['qid']}.json").read_text(encoding="utf-8"))
+        reason = dead["dead_reason"]
+        assert "did not match" in reason and "pathspec" in reason, f"死信签名=pathspec did-not-match: {reason}"
+        assert "[诊断]" in reason, "自愈重试仍败附 git status 诊断（下次可归因）"
+        # dev 未被推进（失败项不落盘）
+        assert _dev_commit_count(tmp_repo) == 0, "死信项不得推进 dev"
 
 
 # ---------------------------------------------------------------------------

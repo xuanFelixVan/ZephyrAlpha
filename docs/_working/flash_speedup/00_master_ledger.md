@@ -26,12 +26,13 @@ status: active
 
 | 包 | 名称 | 授权 | 真源判据 | 依赖 | 状态 | 证据 commit | 子簿 |
 |---|---|---|---|---|---|---|---|
-| F1 | 衍生提交并入原子化 | 免签先干 | R-01 / S18-R2 / 判据书 F1 | — | ⬜ 施工中 | — | `F1_derived_commit_merge/DESIGN.md` |
-| F4 | 生成器并发化 | 免签 | R-08 / 判据书 F4 | 与 F1 同文件需协调 | ⬜ 待工 | — | `F4_generator_concurrency/DESIGN.md` |
+| F1 | 衍生提交并入原子化 | 免签先干 | R-01 / S18-R2 / 判据书 F1 | — | ✅ 已落地 | `fe47296d` | `F1_derived_commit_merge/DESIGN.md` |
+| F4 | 生成器并发化 | 免签 | R-08 / 判据书 F4 | 与 F1 同文件需协调 | ✅ 已落地 | `025df945` | `F4_generator_concurrency/DESIGN.md` |
 | F3 | 头部门禁 diff 化 | 免签（通道类前置） | R-03 / S18-R3② / 判据书 F3 | 需实测耗时榜定白名单 | ⬜ 待工 | — | `F3_head_gate_diff/DESIGN.md` |
 | F5 | DIRECTORY-CONTRACT 摩擦前置化 | 免签（白名单净增=Owner） | A2 堵点本 16 次阻断 | — | ⬜ 待工 | — | `F5_dc_preflight/DESIGN.md` |
 | F6 | 堵点本全量排查修复 | 免签 | 三本全量 4325 行 | 先 F1 后 F6 | ⬜ 待工 | — | `F6_bottleneck/DESIGN.md` + `lane_reports/F6_堵点总账.md` |
-| F2 | 前置件（lease 续租+双通道压测+热文件单通道闸） | 免签部分（通道数=Owner 签 S18-R3） | R-02/R-04 / S18-R3 | 时间不够可砍 | ⬜ 待工 | — | `F2_lease_prereq/DESIGN.md` |
+| F2 | 前置件（lease 续租+双通道压测+热文件单通道闸） | 免签部分（通道数=Owner 签 S18-R3） | R-02/R-04 / S18-R3 | 时间不够可砍 | 🔶 lease 续租已由 F9 交付 | — | `F2_lease_prereq/DESIGN.md`（双通道压测+热文件闸待工） |
+| **F9** | **加餐缺陷包：队列 untracked 新文件落地死信治本（SerializerLease 续租+活体不抢）** | **免签（来源 st-consrep2-20260917）** | **Owner 夜令 #9 §3-§8 / 裁定#280 对齐** | **交付 F2「lease 续租」前置件** | **✅ 已落地（待提交回填 hash）** | **—** | **`F9_queue_newfile_deadletter/DESIGN.md`** |
 | H | 重建 harness + 改写 S18 判据书悬空验收行 | 免签 | P2 收官报告 §四 | F2 验收依赖 | ⬜ 待工 | — | （并入 F2 子簿） |
 | R | 最终报告 + 两轮循环零问题核验 | — | 通宵 SOP §6/§9 | 全部完成后 | ⬜ 待工 | — | `90_report.md` |
 
@@ -47,6 +48,9 @@ status: active
 | 批次 | 时间 | 内容 | 落地 commit | 备注 |
 |---|---|---|---|---|
 | B0 | 2026-09-18 | 冷启动+四真源读透+环节骨架封矿+lock  acquire（gateway/validate） | — | reaper 存活（killed=0），Python 3.12.8，锁区 CLEAN 起步 |
+| B-F1 | 2026-09-18 | F1 衍生提交并入原子化（rules_integrity 重登记→同 commit 折叠） | `fe47296d` | 免签先干 |
+| B-F4 | 2026-09-18 | F4 架构图 15 生成器依赖拓扑分 3 波并发（cap=4，钳[1,20]） | `025df945` | 墙钟 57.4s→~28s，byte-identical（serial×2 证 4 易变非并发引入） |
+| B-F9 | 2026-09-18 | 加餐缺陷包：队列 untracked 新文件落地死信治本——SerializerLease 活体不抢 + renew 心跳 + drain 逐项续租 | （待提交回填） | 根因=租约竞态（活体超 TTL 被抢→双 drain 毁 worktree→clean -fd 删新文件）；queue 83/landing 37/integration 29 全绿；与裁定#280 对齐，未塞 _TRANSIENT_GIT_MARKERS |
 
 ## 4. 挖后自审闸（总簿级，三态裁定）
 
