@@ -32247,6 +32247,18 @@ creation_tokens:
   token: altdata-line-07-industry-chain-repair-workorder-20260917
   created_by: st-altdatamap-20260917
   capability: altdata_line
+- file: docs/_working/altdata_line/08_full_chain_roadmap.md
+  token: altdata-line-08-full-chain-roadmap-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/altdata_line/repair_migration_batch1.sql
+  token: altdata-line-repair-migration-batch1-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/altdata_line/repair_migration_batch1.md
+  token: altdata-line-repair-migration-batch1-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
 - file: docs/_working/residual_construction/pending_items_plan.md
   token: residual-construction-plan-pending-items-plan-20260917
   created_by: st-residual-20260917
@@ -32271,4 +32283,28 @@ creation_tokens:
   token: data-source-candidates-altdata-line-10-20260917
   created_by: st-altdatamap-20260917
   capability: data_source_candidates
+- file: scripts/governance/repair/ig_repair_batch1.sql
+  token: ig-repair-ig-repair-batch1-20260917
+  created_by: st-altdatamap-20260917
+  capability: ig_repair
+- file: docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md
+  token: skeleton-mining-mining-sop-policy-20260917
+  created_by: st-altdatamap-20260917
+  capability: skeleton_mining
+- file: docs/01_policies_and_standards/sop/mining_sop/skeleton_mining_policy.md
+  token: skeleton-mining-skeleton-mining-policy-20260917
+  created_by: st-altdatamap-20260917
+  capability: skeleton_mining
+- file: docs/01_policies_and_standards/sop/mining_sop/trading_decision_map_pathfinding_policy.md
+  token: skeleton-mining-trading-decision-map-pathfinding-policy-20260917
+  created_by: st-altdatamap-20260917
+  capability: skeleton_mining
+- file: docs/_working/kimi_audit/exp_evidence/e5_regime_hysteresis_result.yaml
+  token: kimi-audit-e5-regime-hysteresis-result-20260918
+  created_by: flash-closeout-20260918
+  capability: kimi_audit_exp_evidence
+- file: docs/_working/kimi_audit/redblue_git/p2_git_chain_stress_closeout.md
+  token: kimi-audit-p2-git-chain-stress-closeout-20260918
+  created_by: flash-closeout-20260918
+  capability: kimi_audit_redblue
 di_seam_exemptions: []
