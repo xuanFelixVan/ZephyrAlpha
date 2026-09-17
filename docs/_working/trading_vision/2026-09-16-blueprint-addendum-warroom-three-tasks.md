@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+status: 已完成并入——2026-09-17 由 st-mergewave-20260917 并入 daily-orchestrator-blueprint.md §十一（本文件自此为历史伴生件）
 completes_when: 本附录内容并入日度编排器蓝图（合并回 dev 后补 §十一），作战室三任务产品需求纳入编排器接口契约与施工范围。
 ---
 

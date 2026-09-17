@@ -216,3 +216,23 @@ PackageDecision = {
 - 排班语境：`docs/_working/resource_schedule/resource_schedule_panorama_plan_v1.md`、`docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md`
 - 仪表盘复用：`src/zephyr/frontend/dashboard/components/warroom.py`、`src/zephyr/frontend/dashboard/api_server.py`
 - 工具与纪律：`src/zephyr/shared/io/file_utils.py`（safe_write_text）、`scripts/git_commit.py`、`scripts/governance/d3_metadata/batch_creation_tokens.py`
+
+## 十一、作战室三任务产品需求（2026-09-17 自 2026-09-16-blueprint-addendum-warroom-three-tasks.md 并入，本节起为该附录唯一真源）
+
+> 本节=《判定台账标准 v0.1》伴生件的并入体。原附录文件已完成其 task_bound 使命（completes_when 达成）。
+
+### 定位与分工（互补不打架）
+- **作战室（MOD-PLAN-018）=计划与验证的载体**：晨判计划卡/场景样本积累/Brier 校准/执行不一致记账。
+- **编排器=晨判拍板+分发的心脏**：串 L1-L5 门快照→策略包选择→仓位上限→"今日不交易"判定→决策快照落库。
+- **共同缺口的新增件**：盘中 L1 实时跟踪件（分钟级大盘状态判定）——挂编排器蓝图已预留的 T3 接口签名（intraday_revoke）。
+
+### 三任务产品需求（各接判定台账标准三表，详见 judgment-ledger-standard.md）
+1. **盘中实时走势分析**（原缺口）：新增盘中 L1 跟踪件，分钟级产出五态判定+概率+证据列（量比/涨跌家数比/进攻板块拉板数/缺口/隔夜参照）+尾盘预测，写 judgment_intraday_market_state。证据维度需求示例（Owner 口述直译）：成交量萎缩、低开、防御性板块主导、无券商/半导体拉板→"低迷情绪，大盘走不好，尾盘仍差"。
+2. **明日走势概率**：盘后产出 judgment_next_day_forecast（三态概率+分布分位+隔夜参照指纹），接 brier_calibration 日常校准闭环（次日收盘自动回填打分）。
+3. **验证昨日计划**：场景引擎——晨间 daily_plan（场景触发条件必须可测量）+盘中 scenario_hits 实时归类+EOD actual_scenario/plan_followed/deviations 验证，deviations 对接作战室既有"执行不一致"记账。
+
+### 输入全景（晨间计划的证据清单，Owner 口径）
+昨收全量数据+美股夜盘+股指期货+隔夜新闻情绪+宏观日历+情绪周期（G07 关联待查，见标准 §七）。
+
+### 施工挂点
+三任务施工=蓝图刀 3（编排器本体）的并行前置/伴随件：表与结算器先行（标准 §三/§四），任务件随刀 3 接口接线。首版分发范围遵循蓝图批准点默认（仅留痕+仪表盘，实盘行为零变更）。
