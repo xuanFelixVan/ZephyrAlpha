@@ -5,7 +5,7 @@ title: "CD Pipeline 蓝图 — Shadow Canary 灰度发布基建（簇C，满足 
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.1.5"
+version: "0.1.7"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -71,7 +71,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-CD-001` 的 8 个 file 节点 | production | `extract_depgraph.py --modules MOD-CD-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-CD-001` 的 9 个 file 节点 | production | `extract_depgraph.py --modules MOD-CD-001` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -83,7 +83,7 @@ build_status: generated
 | module_id | MOD-CD-001 | MOD-CD-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 8 文件 | N/A | — |
+| file_count | 9 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -170,11 +170,12 @@ CD 流水线 (.github/workflows/deploy.yml)
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 源码文件
+### 1.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/backtest/test_cash_ledger_cli_wiring.py` | ✅ 已实现 | |
+| `tests/ops/test_shadow_canary_deploy.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

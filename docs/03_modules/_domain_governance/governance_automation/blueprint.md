@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.30
+version: 5.5.32
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -114,7 +114,7 @@ design_maturity: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 489 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-005` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 492 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-005` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -126,7 +126,7 @@ design_maturity: production
 | module_id | MOD-INF-005 | MOD-INF-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 489 文件 | 13 文件（§0.1） | ❌ |
+| file_count | 492 文件 | 13 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1451,7 +1451,58 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/infrastructure/script_system/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/infrastructure/script_system/gate_bridge.py` | ✅ 已实现 | |
+
+### 14.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/blueprint/test_no_stale_agents_numbered_refs_in_scripts.py` | ✅ 已实现 | |
+| `tests/blueprint/test_normalize_blueprint_autogen_anchors.py` | ✅ 已实现 | |
+| `tests/blueprint/test_sync_blueprint_code_index_template.py` | ✅ 已实现 | |
+| `tests/dr/test_backup_lock_stale.py` | ✅ 已实现 | |
+| `tests/f_lifecycle/test_f18_automation.py` | ✅ 已实现 | |
+| `tests/f_lifecycle/test_f18_redblue.py` | ✅ 已实现 | |
+| `tests/git/test_checker_supervisor.py` | ✅ 已实现 | |
+| `tests/git/test_claim_retention_derived_attribution.py` | ✅ 已实现 | |
+| `tests/git/test_dead_session_salvage.py` | ✅ 已实现 | |
+| `tests/git/test_gate_cache_preflight.py` | ✅ 已实现 | |
+| `tests/git/test_git_commit_concurrent.py` | ✅ 已实现 | |
+| `tests/git/test_git_commit_enqueue_partition.py` | ✅ 已实现 | |
+| `tests/git/test_git_commit_extreme.py` | ✅ 已实现 | |
+| `tests/git/test_git_commit_gateway.py` | ✅ 已实现 | |
+| `tests/git/test_lock_files_ttl_mutex.py` | ✅ 已实现 | |
+| `tests/git/test_lock_release_uncommitted.py` | ✅ 已实现 | |
+| `tests/git/test_reconciler_verify_autosync.py` | ✅ 已实现 | |
+| `tests/git/test_release_verify_and_claim_reclaim.py` | ✅ 已实现 | |
+| `tests/governance/code_quality/test_check_frontmatter_metadata.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_add_module_translation.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_batch_creation_tokens.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_check_naming_check_new.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_check_naming_display_dichotomy.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_check_pure_assertion.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_domain_header_maint.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_generate_rule_catalog_idempotent.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_n16_skip_working.py` | ✅ 已实现 | |
+| `tests/governance/d3_metadata/test_pattern_code_fingerprint.py` | ✅ 已实现 | |
+| `tests/governance/governance_e2e/test_naming_e2e.py` | ✅ 已实现 | |
+| `tests/governance/governance_e2e/test_validate_rule_frontmatter_red_blue.py` | ✅ 已实现 | |
+| `tests/governance/rule_bridge/test_session_worktree_cli.py` | ✅ 已实现 | |
+| `tests/governance/shared/test_finding.py` | ✅ 已实现 | |
+| `tests/governance/test_algo_quality.py` | ✅ 已实现 | |
+| `tests/governance/test_architecture_health_dashboard_metrics.py` | ✅ 已实现 | |
+| `tests/governance/test_architecture_health_dashboard_metrics_p2.py` | ✅ 已实现 | |
+| `tests/governance/test_chart_pattern_registry_integrity.py` | ✅ 已实现 | |
+| `tests/governance/test_check_blueprint_code_alignment.py` | ✅ 已实现 | |
+| `tests/governance/test_scaffold_module_registration.py` | ✅ 已实现 | |
+| `tests/governance/test_scaffold_token_registration.py` | ✅ 已实现 | |
+| `tests/governance/test_sync_registry_from_blueprints.py` | ✅ 已实现 | |
+| `tests/infrastructure/adversarial/__init__.py` | ⚠️ 骨架 | |
+| `tests/infrastructure/adversarial/test_f18_governance_adversarial.py` | ✅ 已实现 | |
+| `tests/scripts/test_check_protected_paths_merge.py` | ✅ 已实现 | |
+| `tests/scripts/test_validate_worktree_required.py` | ✅ 已实现 | |
+| `tests/task/test_task_repo_gateway_e2e.py` | ✅ 已实现 | |
 
 ### 14.5 路径索引使用指南
 
