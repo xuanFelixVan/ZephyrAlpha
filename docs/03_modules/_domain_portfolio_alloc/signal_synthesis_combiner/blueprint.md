@@ -5,7 +5,7 @@ doc_type: blueprint
 status: Active
 version: "0.1.7"
 design_maturity: design
-build_status: generated
+build_status: stable
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc
@@ -131,7 +131,7 @@ result = combiner.combine(signals, position_cap=0.05)
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PA-002 | MOD-PA-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
+| build_status | stable | stable | ✅ |
 | file_count | 3 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

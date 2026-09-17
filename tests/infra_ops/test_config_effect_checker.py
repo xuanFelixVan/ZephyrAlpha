@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-072 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.infra_ops.test_config_effect_checker
 # [DOMAIN] D_INFRA_OPS
 # [TTL] permanent

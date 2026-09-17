@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-17T08:55:20Z'
+generated_at: '2026-09-17T18:53:10Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 256
+total_files: 258
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2019,6 +2019,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md
+  module_id: ''
+  title: 数据源全生命周期 SOP——从挖矿到消费端接线（流程编排真源）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/sop/governance_sop/agent_constitution_l0.md
   module_id: SOP-CONSTITUTION-L0
   title: ZephyrAlpha AI Agent 宪法 L0（≤300 行硬规则+索引）
@@ -2070,6 +2085,21 @@ files:
   doc_type: policy
   status: active
   version: 1.4.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/mining_sop/skeleton_mining_policy.md
+  module_id: ''
+  title: 骨架构建 SOP——域骨架的挖掘、分层、判据与防腐（全域适用：数据/因子/消费端/系统功能）
+  doc_type: policy
+  status: active
+  version: 1.0.0
   rule_form: procedural
   scope: ''
   stability: ''
