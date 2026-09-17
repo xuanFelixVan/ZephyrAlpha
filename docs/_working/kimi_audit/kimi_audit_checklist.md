@@ -2,16 +2,19 @@
 ttl: task_bound
 rule_form: data
 verifiability: manual
-title: Kimi 总验收师全仓审核清单（结构化底册，主力会话挖矿产出）
+title: 全仓审核底数真源（对象表；执行归属见两份新案）
 owner: ZephyrAlpha-Owner
 language: zh
 created: 2026-09-16
 ---
 
-# Kimi 总验收师全仓审核清单（v1.0 底册）
+# 全仓审核底数真源（v1.5）
 
-> **一句话**：本文件=主力会话挖矿产出的审核对象底册+审核方式框架；Kimi 开工第一步=按 §7 自挖指令把本清单盲区挖一遍扩充为 v2，再按 §5 方式开审。
-> **分工**（宪法 §9.11）：Kimi 产出=文档=数据，采纳裁定归主力会话；Kimi 禁改任何代码/配置，只产审查报告。截止 2026-09-17，token 剩一半——按 §0 优先级燃烧。
+> **归属重划（Owner 2026-09-17 裁定）**：本案原七战场已拆成两份执行案——
+> ① [kimi_deep_adjudication.md](kimi_deep_adjudication.md)=Kimi 深度裁定主案（只给最强模型的十二战场：钱闸数学/战役可行性/待裁项预消化/审审校器/定尺子/经济解释/成本真实性/数据外推/契约/减法/同族错误抽样/实验规格）；
+> ② [flash_verify_directive.md](flash_verify_directive.md)=Flash 机械复验案（接线核对、全量漂移扫描、八分包机械面、测试套、红蓝执行、长任务编排）。
+> 本文件降级为**全仓底数与审核对象真源**（§1 底数、§2 A1-A8 对象表、§5 五通道拓扑继续有效并被两案引用）；§0/§3/§4/§6 的优先级与执行序由上述两案接管，勿再按本节开工。
+> **一句话**：本文件=主力会话挖矿产出的审核对象底册；分工=模型分派二维法（输入体积×推理密度）落地——强模型只做弱模型错了发现不了的判断。
 > **前置阅读**：`docs/01_policies_and_standards/sop/review_sop/deep_review_policy.md`（六轴法真源）+ `defect_pattern_checklist.md`（14 条缺陷模式，每域开审前逐条对照）。
 
 ## 0. 优先级与 token 预算（好钢用在刀刃上）
@@ -119,7 +122,7 @@ created: 2026-09-16
 - P0 双角色加试：审查者产出后，自己切换"复算反驳者"给最强三条反驳再定级（2×token）。
 - 产出落点：`docs/_working/kimi_audit_reports/`（每战场一份报告+一份 executive summary）。
 - 误报记档：复核判为误报的进误报档案（镜像 deep_review_policy §误报档案），长期修正审查策略。
-- **禁改 src//scripts//config/ 与注册表**（施工单除外）；审出 P0 钱闸洞→标注"插队"置顶交主力会话。
+- **§8 全节已由 [kimi_deep_adjudication.md §5 三问边界](kimi_deep_adjudication.md) 接管**（2026-09-17）：纯技术判据可定=直改；需长回测验证=只挂单；花真钱/改门位/砍战役/删资产=只出裁定书。独占执行期无主力会话兜底，P0 钱闸修复照做但单列"P0 修复待复核"清单交 Owner 逐条过 commit。
 
 ## 9. 收官（战场 G）
 

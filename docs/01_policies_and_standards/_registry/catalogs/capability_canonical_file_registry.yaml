@@ -27859,6 +27859,14 @@ creation_tokens:
   token: automation-linkage-fx-ecb-ingest-20260916
   created_by: st-autolnk-20260917
   capability: automation_linkage
+- file: src/zephyr/data/implementations/fx_ecb_provider.py
+  token: automation-linkage-fx-ecb-provider-20260917
+  created_by: st-autolnk-20260917b
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/blueprints/onboard_source_blueprint.md
+  token: automation-linkage-onboard-source-blueprint-20260917
+  created_by: st-autolnk-20260917b
+  capability: automation_linkage
 - file: scripts/automation/intel_harvester.py
   token: automation-linkage-intel-harvester-20260916
   created_by: st-autolnk-20260917
@@ -27991,6 +27999,14 @@ creation_tokens:
   token: auction-derive-kimi-audit-checklist-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_derive
+- file: docs/_working/kimi_audit/kimi_deep_adjudication.md
+  token: kimi-audit-kimi-deep-adjudication-20260917
+  created_by: qoder-kimipilot-20260917
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/flash_verify_directive.md
+  token: kimi-audit-flash-verify-directive-20260917
+  created_by: qoder-kimipilot-20260917
+  capability: kimi_audit
 - file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
   token: auction-derive-intake-20260917-0300-20260916
   created_by: st-auction-bridge-20260917
@@ -31767,4 +31783,16 @@ creation_tokens:
   token: judgment-ledger-judgment-settler-20260916
   created_by: st-ledgerp1-20260916
   capability: judgment_ledger
+- file: src/zephyr/plan_engine/intraday_l1_tracker.py
+  token: auto-scaffold-intraday_l1_tracker-20260917
+  created_by: scaffold.py
+  capability: intraday_l1_tracker
+- file: src/zephyr/plan_engine/next_day_forecaster.py
+  token: auto-scaffold-next_day_forecaster-20260917
+  created_by: scaffold.py
+  capability: next_day_forecaster
+- file: docs/_working/datavein/2026-09-17-etf60min-depth-workorder.md
+  token: datavein-etf60min-workorder-2026-09-17-etf60min-depth-workorder-20260917
+  created_by: st-datavein-20260917
+  capability: datavein_etf60min_workorder
 di_seam_exemptions: []
