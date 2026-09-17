@@ -31671,6 +31671,10 @@ creation_tokens:
   token: sharpe2-prep-gap-accounts-20260917
   created_by: st-sharpe2gc-20260917
   capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/2026-09-17-sharpe2-prep-final-report.md
+  token: sharpe2-prep-2026-09-17-sharpe2-prep-final-report-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
 - file: scripts/governance/apply_resource_plan.py
   token: resource-plan-apply-apply-resource-plan-20260916
   created_by: st-govmap-20260915

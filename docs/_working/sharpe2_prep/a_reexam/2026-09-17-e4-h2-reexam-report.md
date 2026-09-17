@@ -5,7 +5,7 @@ ttl: task_bound
 # 2026-09-17 E4 及格池全量 H2 真成本重考报告（Sharpe2 决赛准备战·分包A）
 
 - 施工子代理: st-sharpe2a-20260917 | 考尺: MOD-BT-211 WFA 8 折（训24m→测6m 步进6m，全窗 2020-01-01..2025-08-31，真 OOS=折4-7 即 2024-01..2025-08）+ H2 真成本 + 官方 DSR/DecisionGate/OverfittingDetector（判定零重写，全委托既有管线）
-- 产物: pool_manifest.csv / reexam_results.csv / old_vs_new_ranking.csv / correlation_matrix.csv / teaming_schemes.csv / dsr_top20.csv / capacity_profile.csv / gap_accounts.json / 本报告
+- 产物: pool_manifest.csv / reexam_results.csv / old_vs_new_ranking.csv / correlation_matrix.csv / teaming_schemes.csv / dsr_top20.csv / capacity_profile.csv / gap_accounts.yaml（自 json 机械转换，目录契约 DCR-005/008 禁 .json）/ 本报告
 
 ## 1. 定池与"80 vs 160"考证结论
 
