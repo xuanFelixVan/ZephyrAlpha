@@ -198,3 +198,18 @@ get_framework_plan(plan_id)                      ← config/framework_plans.yaml
 - C3 六件落地（91566ed7bc，auto_mount emit 挂钩由 81a3c6c050 同文件收口）：①translated_strategy_adapter（STR-* 前缀路由进 composer 成员契约，翻译件 weights 行 t=≤t 收盘信息目标权重、引擎 exec_lag=1 天然 PIT 安全，零 shift 零归一）；②generate_framework_plan_from_tdm（TDM PP-001 sleeves→fw-tdm-current，纯确定性渲染重跑零 diff+写后重读自校验）；③run_fw_backtest_due 自动触发（重生成方案→整装回测→证据包 fw-auto/，plan 指纹幂等闸+regime 新鲜度闸）。
 - 实弹对账：fw-tdm-current 14 员 Σ=1.0、整装回测 ok=true、242 净值点面板对账逐位过、36.8s、幂等复跑 skip 验证——§1.4"耗时未实测"欠账已回填。
 - 已知边界：MOMTREND 000300 指数腿无 hfq 行情不成交；kline_hfq 09-11 双写 5206 对已由 B3 模板去重解锁、数据域根修留 Owner/数据班；断桥④（regime 日更生产件）未落地维持登记。
+
+## 7.1 端到端真数据链路复跑证据（2026-09-17，H4-B `7186ca49c5` + R-H4B-s `ce14e814c5` 落地后）
+
+此前该证据只活在 `.runtime/sessions/*/staging/`（24h TTL），本节按其真源口径落档。
+
+- 口径：`run_framework_backtest("fw-tdm-current", symbols=150（自 bt-fw-* 最新产物 trade_log 反推 universe 1327 取前 150）, 2026-07-01..2026-09-15)`，只读生产 `data/`，无人工参与、无 monkeypatch。`ok=true`，产物 `run_id=bt-fw-17a8b4a4`。
+- **执行链五键落在落盘产物 `metrics`（不是内存 ts）**：`cash_ledger_reconciliation` / `target_weight_renormalization` / `skipped_fills` / `execution_model_disclosure` / `signal_age_disclosed` 五键均在。
+- 现金腿真落盘：`metrics.cash_curve` 55 点，与 `equity_curve` 55 点等长；首点 2026-07-01 cash=1,000,000.0，末点 2026-09-15 cash=874,166.1344872301，与 `cash_ledger_reconciliation.cash_last` 逐位一致（序列与账本互证）。
+- 现金账本闭合：samples 55 / points_total 56 / trade_rows 1124 / bad_trade_rows 0 / max_abs_residual 5.24e-11（容差 0.01）→ `within_tolerance=true`，worst 2026-08-13。
+- 权重归一：rows_with_signal 54、all_zero 0、`swallowed_cash_mass=0.0`、target_sum min=max=1.0（满仓口径未被引擎吞现金）。
+- 面板级对账（#275 定案口径①）：`max_abs_diff=0.0`、samples 287,100、over_tolerance_cells 0、tolerance 1e-9 → `within_tolerance=true`。
+- 成员面：participants 10 员成交；skipped 4 员并显式披露原因（daban-sleeve=all-zero weight rows；intraday-surge-fall / orderbook-imbalance / vwap-reversion=tick-only 向量化整装跳过+权重显式再归一化）；warn 含 `row normalization MATERIAL (max dev 0.930555556)` ——缺口由幸存成员摊派，属**已披露的口径事实**而非静默缺陷，据此结论不可当"方案原意组合"使用。
+- 成本面在册旧账（H2 域，非本轮新增）：floor_bound_share 98.6%、地板溢价 ¥3,922.27（占佣金 68.4%）、实际费率虚高 6.01×。
+- 复现入口：生产自动路径=`run_fw_backtest_due`（证据包落 `docs/_working/pipeline-research/fw-auto/`）；回归闸=`tests/backtest/test_h3h4_cash_pit_exec_chain.py`（含 GT-15 结构闸，双生产路径 `scripts/run_backtest.py` 与 composer 同登记表）。
+- 更正登记：同日 09:19 的探针产物 `bt-fw-834f9a7f` **不含** `cash_curve`（探针跑在 09:41 H4-B 落地之前，非新破口）；以 `bt-fw-17a8b4a4` 为准。旧 §7"242 净值点"是 09-15 近 12 月窗跑，本次 55 点是近 2.5 月 150 票探针窗，窗口不同勿互比。
