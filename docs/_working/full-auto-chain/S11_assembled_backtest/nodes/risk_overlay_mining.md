@@ -213,3 +213,132 @@ P0（H5-A）建议立即移交——它是"过拟合结果被当合格证据固�
 - 现网证据包形状核验：最新 `fw-auto-20260916-005201-fe90e572.json` 的 acceptance 仅 4 键
   （无 risk_admitted/cash_closure_admitted/gate_passed）→ 产自接线前，按新幂等口径**不会**
   被短路，下轮自动重跑复评（这正是后加闸要求旧证据显式认账的目的）。
+
+
+## 8 施工回填（T3④ 补：板块集中度进料治本 + 单一真源收编，session st-qoder-t1a-20260915，2026-09-17）
+
+> 注：本节第一次撰写（约 07:40）被仓外 reconciler/pre-merge 整文件还原回 HEAD 后**重写**，
+> 与 `repo-test-and-commit-quirks` 记录的"未提交车道成品被还原"同因；重写后随即入 index。
+
+### 8.1 施工前事实核验（CH 只读 + AST，禁按记忆施工）
+
+- **两套实现并行**：`overlay_features.compute_sector_metrics`（新）与
+  `overlay_signals_builder._compute_sector_metrics` / `risk_signal_builder._compute_siphon_inputs`
+  内各自手写 `unstack("code") → pct_change() → share → hhi`——同一数学两处落笔，其中
+  risk_signal_builder 那条是风险信号 #8（板块虹吸）的生产喂数口。
+- **进料伪值**：`sector_daily` 全样本 112,048 个 (日×板块) 单元里 ≈186 个单日涨跌幅绝对值
+  >21%（A 股板块指数无此物理可能），集中在 ≈7 个坏板块码；这些单元把 HHI 顶成"全市场
+  资金挤在一个板块"的假象。
+- **前向填充造出假收益**：`pct_change()` 在 pandas 2.3.3 默认 `fill_method='pad'`，跨
+  上报断档（实测 ≈3 处 >3 交易日空洞）会"用上周的价格算今天的收益"。
+
+### 8.2 落地的三条口径（阈值数值一律未动 ⇒ 不触发预注册裁定）
+
+| 口径 | 落点 | 语义 |
+|---|---|---|
+| 坏值剔除 | `SECTOR_DAILY_RET_ABS_MAX`（0.21 绝对界） | 超界单日收益置 NaN，不猜、不前向造 |
+| 跨断档不造数 | `pct_change(fill_method=None)` | 断档日收益=NaN（诚实缺席） |
+| 覆盖度门 | `MIN_SECTOR_UNIVERSE_SIZE`（板块数下限） | 低覆盖日整条 Sector_HHI/Top_Concentration/昨日Top3今日 置 NaN，并计数 `gated_days` 出声 |
+
+单一真源：`compute_sector_metrics` 是唯一实现，builder 侧改为委托适配器（保留告警位与
+返回形状），risk_signal_builder #8 同址委托——三处读同一函数，AST 级测试钉死"禁再出现
+第二套 unstack/share**2"。
+
+### 8.3 风险信号 #8（板块虹吸）的实际影响面
+
+- 受影响日：#8 取 0.85 的 ≈6 日 + 取 0.60 的 ≈4 日，**全部**落在坏板块码当日（即伪值
+  直接决定过冲档位）；剔除伪值后 sector_hhi 干净最大值 ≈0.0049，远低于最低档阶梯 ⇒
+  #8 在整段样本上恒为基线 1.0（=不再被伪造数据触发）。
+- 这不是"把风险信号关掉"，是**把喂给它的假数据停掉**：如果哪天板块真的虹吸，干净 HHI
+  会真实上行并触发阶梯；触发口径（0.08/0.10/0.15）本轮未改。
+
+### 8.4 复验记录
+
+- 新增 11 条测试（`tests/regime/test_overlay_features.py::TestComputeSectorMetrics` 6 条 +
+  `test_risk_signal_builder.py::TestParam8SectorHhiSingleSource` 4 条 +
+  `test_overlay_signals_builder.py::test_t3_mainline_gated_below_coverage` 1 条），
+  三处红蓝变异实证"测试会咬"：① 去掉坏值剔除 → hhi 从 ≈1/(N-1) 跳到虚高（RED）；
+  ② 去掉 `fill_method=None` → 断档日造出假收益（RED）；③ 关掉覆盖度门 → 低覆盖日不再
+  NaN（RED）。（首轮变异曾把 patch 打在 `Series.pct_change` 而生产调 `DataFrame.pct_change`，
+  得到假绿——变异脚本本身要先证明能红，才算证据。）
+- 台账棘轮：`tests/regime/test_overlay_features.py` 分隔符漂移名单已清空（`assert not non_canonical`）。
+- 教训登记：**台账不承载实测明细**。首轮把 walk-forward 明细数字写进 ALERT 文案后，
+  6 条契约测试同时炸（三段切分被明细里的 `|` 打断 / 未带 `≈` 的实测小数被当成"生产阈值
+  常量"要求仍在宿主源码 / 门槛-命中率成对 claims 被拆散）。台账只写 状态 / 指针 / 处置，
+  明细进报告文件。
+- `tests/regime + tests/backtest + tests/pf_core + tests/strategy_pipeline` 第一轮
+  **3529 passed / 1 failed**（失败项见 §8.5），第二轮全绿。
+
+### 8.5 OVB-4 第五项 `s2_breadth_thrust` 闭环清偿（含一次归因纠错）
+
+- 首轮把 `tests/regime/test_breadth_thrust_walkforward.py` 的红灯记成"他会话在途件"
+  （R-SEC-3，并按 §3.4 不代修）——**归因错误**：该文件与被还原的报告脚本
+  `scripts/regime_breadth_thrust_walkforward.py` 的 `[CONSUMERS]` 头都点名本车道
+  st-qoder-t1a-20260915，预注册 JSON 也落在本会话 `.runtime/tmp/st-qoder-t1a-20260915/`。
+  实情=本班 09-16 23:04 跑完的 s2 复推管线**只落了 harness，报告与台账回填没落盘**，
+  其 ALERT 计数哨兵因此一直红。纠错纪律：**"未跟踪"≠"他会话"**，判归属要查头声明的
+  车道 sid 与产物落点目录，不能只看 `git status` 的 `??`。
+- 补账：报告 `breadth_thrust_walkforward_20260916.md`（全部数字由结果 JSON 程序化生成）+
+  台账 `s2_breadth_thrust` 依据段回填实测（全样本 thrust 分位 p≈87 / washout p≈8.7、
+  on_share≈0.126 超上界、跨折极差比≈6.96 超上限、训练段 4/4 可选值而样本外 2/4 过）+
+  哨兵期望改为**现实值**（3 项 ALERT，本项仍 ALERT）。
+- 裁定口径：**现值 0.615/0.40 保留、不采纳任何新值**（样本外未全折通过 ⇒ 采纳闸门关闭；
+  换值才需要 Owner 门，不改值不需要）⇒ 无预注册口径变更，无新裁定。
+- 残余（登记，非顺手修）：
+  - **R-BT-1** 2005-2013 早期段广度进料（EQW_ALLA 补位）与该段 EMA 分布漂移未单独归因；
+    重推须先补该段覆盖度证据，否则换阈值只是把"偏松"换成"偏紧"。
+  - **R-BT-2** 网格 5×3 粗格、未覆盖 thrust<0.58；改滚动分位口径须另一次预注册（禁覆盖 v1 名）。
+  - **R-SEC-1** 坏板块码在**供应商侧**（进料管道），本轮只在消费侧剔伪；上游治本属数据进料车道。
+  - **R-SEC-2** Sector_HHI 阶梯与 #8 虹吸阈值的重标定受板块史长度限制（现 ≈188 天、
+    剔伪可用 ≈126 天，门槛 ≥500 交易日），当前不可观测 ⇒ 不动数值。
+
+---
+
+## 9 施工回填（OVB-4 五项终态 + 本轮未施工两条的显式登记，2026-09-17）
+
+### 9.1 OVB-4「阈值 A 股校准缺口」五项终态（台账 `THRESHOLD_CALIBRATION_LEDGER` 是真源，本表只是索引）
+
+| 项 | 台账状态 | 本土 walk-forward 是否已跑 | 生产数值 | 实证出处 |
+|---|---|---|---|---|
+| `s2_breadth_thrust` | ALERT（语义已收窄） | 是（预注册 v1，hash 锁） | **未改**（thrust/washout 沿用现值） | `breadth_thrust_walkforward_20260916.md`；harness `scripts/regime_breadth_thrust_walkforward.py` + `tests/regime/test_breadth_thrust_walkforward.py` |
+| `t3_money_effect` | ALERT（语义已收窄） | 是（68×6 候选点，1 个过带且无判别力） | **未改**（三档家数沿用） | `t3_threshold_walkforward_20260917.md` §5 |
+| `t3_mainline` | ALERT（语义已收窄） | 是（放宽带下 12/12 仍全 FAIL） | **未改**（HHI 三档沿用） | 同上 §0/§6；坏码剔伪见 §8.3 |
+| `s2_capitulation_confirm` | RESOLVED | 不适用（confirm 分支未接生产） | 无第二套实阈值 | §2#4 复核 + 签名默认值契约测试 |
+| `s1_vix_panic_s2_vix` | RESOLVED | 不适用（分位秩归一已实证等价） | 无 | CH 实测 rank 分布近似均匀 |
+
+**共同结论**：三项 ALERT 全部**已复推、均未过预注册接受带 ⇒ 按「不炸才用」闸门一律不改数值**。
+改数值属 Owner 门，不改数值不触发裁定登记（RULE-RULING 只对"口径变更"生效）。ALERT 计数棘轮现
+钉在 3 项（`test_ledger_alert_projection_count_does_not_backslide`），回升或误降都会红。台账证据段
+已回填分时代新事实（"全历史命中"是混合时代均值、跨时代差≈54 倍）——**留着旧数字不放=明知有偏
+差仍让下游继续当依据引用**，那才是台账失实。
+
+### 9.2 本轮未施工的两条（H5-E / H5-F）——第一性原理分析 + 为何不自行落地
+
+| ID | 分析（为什么不能顺手做） | 建议归属 | 可验收标准（下一班施工用） |
+|---|---|---|---|
+| **H5-E** 回测风险旗标 → 实盘 pre-trade（**R-H5E-1**） | 落点在 `risk_validation_bridge`＝在途下单链路，属宪章 §5 的 high 域 Owner 门（production 流转）。技术上契约已成形（回测产物 `metrics` 里的 `risk_admitted/overfitting_flag/dsr/gate_passed` 四键即准入输入，零新造字段），但"拒单 vs 显式豁免留痕"的失败语义一旦选错，代价是**真实资金被拦在门外或带病下单**——这不是代码难度问题而是门位问题，自行落地=越权 | Owner 定失败语义 → 治理+实盘车道施工 | 被回测判 `risk_admitted=False` 的策略过 pre-trade 必拒（或走带审批人的豁免并落审计行）；豁免项在仪表盘可见；"旗标缺省=None"不得当作通过（fail-closed 测试覆盖） |
+| **H5-F** sanity 容差过宽（**R-H5F-1**） | 收紧数值本身是**回测验收口径变更**（现网已固化的 `bt-fw-*` 产物可能从"合格"翻成"不合格"），而 §7.4 已证旧证据包会被新幂等闸要求重跑复评——两件事叠加＝触发一轮全量重跑，属排期决策而非补件。且引擎两文件（`vectorized_engine.py`/`event_driven_engine.py`）经 §7.1 核实为车道 A 在途件，HELD-OVERLAP 不硬闯 | 排期（与车道 A 落地合并做） | 改为相对基准/换手分层的合理性判据；极端但落在旧宽区间内的失真须有二次拦截并落 `metrics.degraded_guard` 同族字段 |
+
+### 9.3 工作区清退事故（本轮第二次，观测面缺口已并入 reconciler 脉 RC-15）
+
+`framework_composer.py` 的 #24 执行链接线（`cash_curve` + 五键 metrics + `chain` warn）与
+CloneGuard 治本改动，在未提交状态下**两次**被整文件还原到 HEAD（2026-09-16 一次、本轮
+2026-09-17 一次），事后由 `tests/backtest/test_h3h4_cash_pit_exec_chain.py` 报红才被发现；
+恢复途径＝编辑器 file-history 快照（字节级，sha `6e5b9c0e309bb7b2`），**不是** git 对象库
+（内容从未 commit，git 里没有）。**这是"清退无观测面"**：还原动作不落审计行、不进 stash、
+不通知当事人，只留下一堆自红测试——本轮实测核实：现存 4 个 stash（`stash@{0..3}`，含
+`session_worktree_pre_merge` 两件）内的 `framework_composer.py` 版本 `cash_ledger_reconciliation`
+命中数一律为 0 ⇒ 我的内容**在任何 git 可恢复对象里都不存在**，file-history 是唯一救生索。
+登记位点与验收标准见
+`reconciler_event_trigger_chain_mining.md` §4 **RC-15**。本轮实测教训：未提交的工作区内容
+在本仓**不是安全位置**——改完立刻 `git add`，跨轮次保留的中间产物必须出仓到 `docs/_working/`
+或走队列落地，不信"我改过它就还在"。
+
+**同轮第三次（2026-09-17 08:2x，只清暂存层）**：11 个 lane 文件的**工作区内容完好**，但
+`git diff --cached HEAD` 对 `framework_composer.py`/`overlay_features.py`/本文三文件已归零
+（index 被打回 HEAD），同时 `.ailocks/registry.json` 里自家 11 条 claim 的 `ttl_left` 全为
+**−3 分钟**（claim TTL 30min < 跨轮次实际间隔）。⇒ 上一段"改完立刻 git add"的结论**只覆盖了
+工作区层**：`git add` 后仍可能被整批 unstage，且它发生时不会有任何提示（与 RC-15 同一观测面
+缺口，只是打击面从工作区缩到 index）。修正后的收尾不变式：**commit 前三步一起做**——重新
+`acquire-batch`（过期 claim 会 RECLAIMED，不报错但必须看到）→ `git add --pathspec-from-file`
+→ `git diff --cached --stat HEAD` 逐文件核对插入数与预期一致，任一为空即视为事故重演，禁裸提交。

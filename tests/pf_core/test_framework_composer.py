@@ -780,3 +780,91 @@ def test_run_framework_backtest_reports_panel_reconciliation(fake_runner_panels,
     assert summary["panel_reconciliation"]["within_tolerance"] is True
     d = json.loads((storage / f"{summary['run_id']}.json").read_text(encoding="utf-8"))
     assert d["metrics"]["panel_reconciliation"]["within_tolerance"] is True
+
+
+# ---------------------------------------------------------------------------
+# 状态词表唯一加载通道（CloneGuard extract 级克隆治本后新增的契约）
+# ---------------------------------------------------------------------------
+
+
+def test_states_channel_returns_both_true_sources():
+    """两条腿各自解析到自家真源，值与顺序逐位一致（不是交集、不是并集）。"""
+    from zephyr.pf_core.strategy_engine.framework_composer import (
+        STATES_SOURCE_ACTIVATION,
+        STATES_SOURCE_REGIME,
+        _states_from_source,
+    )
+    from zephyr.regime.core.regime_detector import REGIME_STATES
+    from zephyr.signal_ashare.core.environment_switch import SIX_STATES
+
+    _states_from_source.cache_clear()
+    assert _states_from_source(STATES_SOURCE_REGIME) == tuple(REGIME_STATES)
+    assert _states_from_source(STATES_SOURCE_ACTIVATION) == tuple(SIX_STATES)
+    assert len(set(REGIME_STATES) & set(SIX_STATES)) == 0, "两词表若有交集则分派键失去意义"
+
+
+def test_states_channel_uses_one_cache_leg_for_both_sources():
+    """合并成一条通道后仍须保持进程内缓存语义：两次调用只 miss 两次。"""
+    from zephyr.pf_core.strategy_engine.framework_composer import (
+        _activation_states,
+        _regime_states,
+        _states_from_source,
+    )
+
+    _states_from_source.cache_clear()
+    first = _regime_states()
+    _activation_states()
+    assert _regime_states() is first, "第二次调用未命中缓存 ⇒ 冷导入成本回来了"
+    info = _states_from_source.cache_info()
+    assert info.currsize == 2 and info.misses == 2 and info.hits == 1, info
+
+
+def test_states_channel_unknown_kind_fails_closed():
+    from zephyr.pf_core.strategy_engine.framework_composer import _states_from_source
+
+    _states_from_source.cache_clear()
+    with pytest.raises(FrameworkPlanError, match="未知状态词表真源键"):
+        _states_from_source("not_a_vocabulary")
+
+
+def test_states_channel_empty_source_fails_closed(monkeypatch):
+    """真源为空 = 非法（否则下游"词表校验"退化为全部拒绝或全部放行）。"""
+    import zephyr.signal_ashare.core.environment_switch as env_switch
+    from zephyr.pf_core.strategy_engine.framework_composer import (
+        STATES_SOURCE_ACTIVATION,
+        _states_from_source,
+    )
+
+    _states_from_source.cache_clear()
+    monkeypatch.setattr(env_switch, "SIX_STATES", ())
+    with pytest.raises(FrameworkPlanError, match="真源为空"):
+        _states_from_source(STATES_SOURCE_ACTIVATION)
+    _states_from_source.cache_clear()
+
+
+def test_states_channel_import_failure_fails_closed():
+    """真源模块不可用必须抛 FrameworkPlanError，禁静默放行任意 regime/activation 字符串。
+
+    sys.modules 置 None 必须在同一函数内 try/finally 复原：本仓 #ARCH-107 污染哨兵
+    （tests/conftest.py:415）在 monkeypatch 的 undo 之前跑，用 monkeypatch.setitem 会被判置脏。
+    """
+    import sys
+
+    from zephyr.pf_core.strategy_engine.framework_composer import (
+        STATES_SOURCE_REGIME,
+        _states_from_source,
+    )
+
+    name = "zephyr.regime.core.regime_detector"
+    saved = sys.modules.get(name)
+    sys.modules[name] = None
+    try:
+        _states_from_source.cache_clear()
+        with pytest.raises(FrameworkPlanError, match="真源不可用"):
+            _states_from_source(STATES_SOURCE_REGIME)
+    finally:
+        if saved is not None:
+            sys.modules[name] = saved
+        else:
+            sys.modules.pop(name, None)
+        _states_from_source.cache_clear()

@@ -158,6 +158,8 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 | GT-8 | P2 | 作用域不可见 | 113 条 in-process 门禁 `files_trigger` 恒空、无 `severity/enforce`；25/26 own_scope=True 门禁自述"全量"（§1.6） | 注册表补 `scan_scope`（full-staged / own-session / trigger-only）由 AST 提取调用点生成，禁用 substring |
 | GT-9 | P2 | 自举闭环 | GATE-21（rc=1）的修复提示要求跑 `sync_registry_from_blueprints.py --write`，而后者正是退库死锁的当事件（②下游） | 修复提示改指 BOOTSTRAP 路径；GATE-21 在 HEAD 收敛到 rc=0 或登记为已知豁免 |
 | GT-10 | P2 | 注册表↔现实三源 | 169 注册条目 vs 68 hook vs 116 门禁模块，无对账门禁（`gate-id-uniq` 只校 hook id 唯一，实测"scanned 68 hook declarations, 68 unique ids"） | 新增三向对账门禁：注册条目数==hook数+in-process数，孤儿（注册无实体/实体未注册）为红 |
+| GT-11 | P1 | 判定不可复现（硬阻断门禁偶发失灵） | 实证对：`c4425e60cb`（2026-09-16 23:07，带 `[GW:]` 认证标记）把 3 行含裸 SQL 的 **added 行**放进 HEAD（`git show c4425e60cb -- src/zephyr/strategy_pipeline/screen_source.py \| grep "^+" \| grep -i select` → 3 命中，落点 `screen_source.py:166/…`），同一文件同一规则**今天实测** `_SQL_PATTERN.search(line)=True`、`_is_exempt_line=False`、`noqa: bare-sql` 标记 0 处（不在 `noqa_exempt_registry.yaml`）——门禁没拦；而同类内容在 09-17 拦掉了自家 queue item。**同规则·同内容·两次相反结论** ⇒ "硬阻断"实为偶发阻断 | 先定机制再谈修：`_get_added_lines` 的观测面是 `gateway.run_git(["git","diff","--cached",…,"--",path])`，**空输出（rc=0）与"确实无新增行"不可判别**——worktree/序列化器 index 与主区 index 分歧时该文件在此 context 未 staged 即静默判干净（`_diff_helpers._repo_state_has_file:310-319` 已把"序列化器落地 worktree 未 checkout 的 staged 新文件"列为同盲区家族，2026-09-17 清偿中）。①added 行为空时改判"不可判别"：与本 commit 文件清单交叉核对，清单内而 diff 空 → 红（禁 fail-open）；②可复现性回归：用真实提交 diff 造 fixture 断言 NO-BARE-SQL `passed=False`；③追溯复核门禁：对最近 N 条 HEAD 提交重跑内容型门禁，存量判定与重跑结论不一致者出清单（不是让它红，是让"门禁何时失灵"变成可观测面） |
+| GT-12 | P1 | 恒红测试无观测面 | 实测：`tests/governance/governance_e2e/test_phase1_gate_check.py::test_eight_module_dirs_exist` 与 `::test_each_module_has_init` **已恒红 12 天**（本轮串行复现 `2 failed, 1 passed, 1 skipped`）。红因：`agent-spec / drift-detector / budget-enforcer` 三个 kebab marker 目录被 `441852d976`（2026-09-05，`audit(AI-21)`，提交自述 "no new capability created"）整目录删除，而被删文件第 6 行自述 `# Phase 1 gate marker (kebab-case dir). Implementation in zephyr.gov_drift.` ⇒ 删掉的是**指向实现的占位指针**（每目录仅 1 个 `__init__.py`，共 106 行），能力零损失，但测试"八目录同名存在"的前提自此失效。真正的洞不在测试红，在**红没有归属**：`_registry/catalogs/` 只有 `noqa_exempt`/`panorama_exempt_list`/`registry_master_index_exemptions` 三张豁免表，**没有"已知红/带期限豁免"登记通道**，`known_failures/xfail 名单` 全仓 grep 0 命中 ⇒ 恒红与真回归在观测面上不可区分，任何跑全量的人第一天看到 2 条红、第三天就脱敏 ⇒ "套件全绿"这一验收信号自 09-05 起已被污染，且它正是 GT-1/2/3 那批"门禁不跑"能长期存活的培养基 | 归治理域，本轮**不代修**（宪章 §3.4；该目录 09-16 仍在 `externalize_algo_flow` 480 文件波次中被别的车道动）。两条候选修法：①测试断言对象从"kebab 目录存在"改为"八能力→实现模块可导入"，且该映射须由注册表生成（§9 第 5 条：静态清单禁手工维护——现 `PHASE1_REQUIRED_FILES`/`EIGHT_MODULES` 两张手抄清单本身就是漂移源）；②开"已知红登记表"通道：条目带 `owner`+`到期日`+`到期未修即升 P0`，配一条门禁核对"HEAD 恒红集 ⊆ 登记表"，使长红要么被修要么被点名，禁止无声挂着 |
 
 ## 5 子节点清单（还能挖的）
 
@@ -188,6 +190,8 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 | 1 | GT-1 | 2 条硬阻断门禁当前对任何输入都不可能失败，是最纯粹的门禁虚设 | 2 个脚本补 `__main__`，或 1 处 hook entry 改指 runner | 低 |
 | 2 | GT-2 | 与 GT-1 同批：即使补了入口，触发面仍为 0 | `.pre-commit-config.yaml` 2 个 `files:` + 新可达性断言 | 低 |
 | 3 | GT-3 | 8 条 manual + 176 条 P0 存量 + 1 条崩溃，注册表口径与执行口径系统性背离 | `generate_gate_registry.py` 实读 stages | 中（注册表全量重生成，需 GATE-21 复验） |
-| 4 | GT-5/GT-7 | 结论失真/口径相反，属"能看到但看错" | 2 文件 | 低-中 |
-| 5 | GT-4/GT-6 | 需 Owner 裁定（派生件是否回库、348 HIGH 清偿策略） | 跨派生件治理战役 | 高，勿单批做 |
-| 6 | GT-8/GT-9/GT-10 | 结构性可观测性，随门禁遥测一并做 | 分散 | 低 |
+| 4 | GT-11 | 它使"门禁已阻断"这件事本身不可信：GT-1/2/3 是"门禁不跑"，GT-11 是"门禁跑了也可能判错"——后者污染所有前者的验收证据 | 1 条真实 diff fixture 先定机制，再改 `_get_added_lines` 空输出语义 | 低（判据收紧可能使原本静默放行的提交转红，需与序列化器同盲区家族并批） |
+| 5 | GT-12 | 恒红测试是"全绿"信号失效的培养基——GT-1/2/3 能长存正因没人看套件整体状态；且它的修法是一条登记通道，不是改代码 | 新增豁免表 + 对账门禁；测试侧改断言源归治理域 | 低（但需与治理域并批，勿单点动 `tests/governance/governance_e2e/`） |
+| 6 | GT-5/GT-7 | 结论失真/口径相反，属"能看到但看错" | 2 文件 | 低-中 |
+| 7 | GT-4/GT-6 | 需 Owner 裁定（派生件是否回库、348 HIGH 清偿策略） | 跨派生件治理战役 | 高，勿单批做 |
+| 8 | GT-8/GT-9/GT-10 | 结构性可观测性，随门禁遥测一并做 | 分散 | 低 |

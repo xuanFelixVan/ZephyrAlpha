@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-FWCOMP-001 | docs/03_modules/_domain_portfolio_core/framework_composer_blueprint.md
 # [MODULE] zephyr.pf_core.strategy_engine.framework_composer
 # [DOMAIN] D_PF_CORE
-# [DEPENDENCIES] zephyr.pf_core.strategy_engine.strategy_runner; zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.io.backtest_result_sink; zephyr.backtest.io.result_repository; zephyr.regime.core.regime_detector; zephyr.pf_core.strategy_engine.event_sentiment_adapter（lazy，eventdriven 成员负载路 T1A-1）; zephyr.signal_ashare.core.environment_switch（lazy，六段 activation 词表真源 T1A-3）
+# [DEPENDENCIES] zephyr.pf_core.strategy_engine.strategy_runner; zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.io.backtest_result_sink; zephyr.backtest.io.result_repository; zephyr.regime.core.regime_detector; zephyr.pf_core.strategy_engine.event_sentiment_adapter（lazy，eventdriven 成员负载路 T1A-1）; zephyr.signal_ashare.core.environment_switch（lazy，六段 activation 词表真源 T1A-3）; zephyr.backtest.core.portfolio（lazy，现金账本 Σ 闭合真源 reconcile_cash_ledger）
 # [CONSUMERS] src/zephyr/frontend/dashboard/api_server.py(GET /api/framework-plans; POST|GET /api/framework-backtest-run)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 不重写撮合逻辑（复用 DefaultBacktestEngine/StrategyRunner，与本模块正交）; 合成面板 Σw=1 显式归一化并披露（ablation.py 同款纪律，禁静默再分配）; tick-only 成员跳过必须落报告（skipped 落 artifact metrics）; BacktestResult 15 字段契约冻结（plan_id 走 metrics 扩展字段，不动 artifact 顶层 schema）; 本模块只出净值/面板，不写 market_signal_history（管道 A 语义=子策略权重，禁污染）; 三期动态模式=逐日查 regime_overrides 取 α_i(t)（查表不做判定，禁自造 regime 判定逻辑——宪章 §3 约束三），未覆盖 regime/日期回退基准权重并披露（regime_day_counts），状态词表唯一真源=regime_detector.REGIME_STATES（非法状态 fail-closed 拒绝），静态模式（无 regime 序）行为与二期逐位一致; 死成员（面板非空但恒零权重）必进 skipped 带明确 reason 并落 metrics.dead_weight_disclosed，禁只靠行归一 notes 暗示（T1A-2）; 方案权重合法域 [0,1]——0=显式剔除成员（T1A-3）; activation 非当日六段态的成员 α=0（六段词表真源=environment_switch.SIX_STATES，r→六段映射唯一位点 REGIME_STATE_TO_ACTIVATION_PHASE）; RSC-2 Shrinkage 口径=引擎边界节流（run_framework_backtest 经 ShrinkageBacktestEngine 在归一化后乘当日 Shrinkage，compose 面板保持 Σ=1 纪律；剩余质量一律落现金禁再归一化回填——裁定#270；shrinkage_by_date=None/空=满仓逐位零漂移）
+# [INVARIANTS] 不重写撮合逻辑（复用 DefaultBacktestEngine/StrategyRunner，与本模块正交）; 合成面板 Σw=1 显式归一化并披露（ablation.py 同款纪律，禁静默再分配）; tick-only 成员跳过必须落报告（skipped 落 artifact metrics）; BacktestResult 15 字段契约冻结（plan_id 走 metrics 扩展字段，不动 artifact 顶层 schema）; 本模块只出净值/面板，不写 market_signal_history（管道 A 语义=子策略权重，禁污染）; 三期动态模式=逐日查 regime_overrides 取 α_i(t)（查表不做判定，禁自造 regime 判定逻辑——宪章 §3 约束三），未覆盖 regime/日期回退基准权重并披露（regime_day_counts），状态词表唯一真源=regime_detector.REGIME_STATES（非法状态 fail-closed 拒绝），静态模式（无 regime 序）行为与二期逐位一致; 死成员（面板非空但恒零权重）必进 skipped 带明确 reason 并落 metrics.dead_weight_disclosed，禁只靠行归一 notes 暗示（T1A-2）; 方案权重合法域 [0,1]——0=显式剔除成员（T1A-3）; activation 非当日六段态的成员 α=0（六段词表真源=environment_switch.SIX_STATES，r→六段映射唯一位点 REGIME_STATE_TO_ACTIVATION_PHASE）; RSC-2 Shrinkage 口径=引擎边界节流（run_framework_backtest 经 ShrinkageBacktestEngine 在归一化后乘当日 Shrinkage，compose 面板保持 Σ=1 纪律；剩余质量一律落现金禁再归一化回填——裁定#270；shrinkage_by_date=None/空=满仓逐位零漂移）; #24 执行链证据必落 metrics（cash_ledger_reconciliation 现金腿 Σ 闭合 / target_weight_renormalization 引擎 Σ→1 归一统计 / skipped_fills 拒单分类 / execution_model_disclosure 未建模清单 / signal_age_disclosed 混频龄），缺披露=fail-closed 由 fw_backtest 验收闸否决，禁静默通过
 # [MODIFY-GUARD] blueprint
 # [STABILITY] evolving
 # [SAFETY] L
@@ -112,6 +112,7 @@ import re
 import uuid
 from dataclasses import dataclass, field, replace
 from decimal import Decimal
+from functools import cache, lru_cache, partial
 from pathlib import Path
 from typing import Any, Final, Sequence
 
@@ -139,13 +140,9 @@ _VALID_RISK_PROFILES = ("defensive", "balanced", "aggressive")
 # 动态合成回退组标签：未覆盖 regime / 未覆盖日期的行归入此组（用方案基准权重）
 _FALLBACK_GROUP_KEY = "__base__"
 
-# REGIME_STATES 7 态词表进程内缓存（唯一真源 zephyr.regime.core.regime_detector，
-# 惰性导入——regime 包链冷导入 ~20s，静态路径二期语义零开销）
-_REGIME_STATES_CACHE: tuple[str, ...] | None = None
-
-# 六段情绪态词表进程内缓存（真源 zephyr.signal_ashare.core.environment_switch.SIX_STATES，
-# 惰性导入——该包链冷导入 ~3.5s，静态路径零开销；同 _REGIME_STATES_CACHE 手法）
-_ACTIVATION_STATES_CACHE: tuple[str, ...] | None = None
+# REGIME_STATES（7 态）与 SIX_STATES（六段情绪态）两份词表的加载口径同构（惰性导入 +
+# 进程内缓存 + 真源不可用 fail-closed），统一由 `_states_from_source` 承担——CloneGuard
+# extract 级克隆治本：两条腿共用一条通道，冷导入经济性与缓存语义不变。
 
 #: regime r 态 → 六段情绪态唯一映射位点（T1A-3 activation 折算用）。
 #: 真源现状：同一张表在 scripts/backtest/auto_mount.py 的 ``R2SIX``（挂图侧证据分段），
@@ -185,22 +182,36 @@ _ROW_NORM_MATERIALITY: Final = 0.05
 DEAD_MEMBER_ALPHA_SHARE_LIMIT: Final = 0.25
 
 
-def _activation_states() -> tuple[str, ...]:
-    """六段情绪态词表（真源 environment_switch.SIX_STATES，惰性导入+缓存）。
+#: 状态词表真源键（`_states_from_source` 的唯一分派入参，禁散落字符串）
+STATES_SOURCE_REGIME: Final = "regime"
+STATES_SOURCE_ACTIVATION: Final = "activation"
+_STATES_SOURCE_KINDS: Final = (STATES_SOURCE_REGIME, STATES_SOURCE_ACTIVATION)
 
-    Raises:
-        FrameworkPlanError: 词表真源不可用（fail-closed，禁放行任意 activation 字符串）。
+
+@cache
+def _states_from_source(kind: str) -> tuple[str, ...]:
+    """状态词表唯一加载通道：惰性 import 真源 + 进程内缓存（两份词表共用一条腿）。
+
+    惰性 import 留在函数内且写成静态 ImportFrom——`importlib.import_module(<str>)` 会被
+    depgraph 的 AST 抽取漏记依赖边（generate_project_depgraph 只认 zephyr/scripts 前缀的
+    Import/ImportFrom 节点）。
     """
-    global _ACTIVATION_STATES_CACHE
-    if _ACTIVATION_STATES_CACHE is None:
-        try:
-            from zephyr.signal_ashare.core.environment_switch import SIX_STATES
-        except Exception as exc:  # noqa: BLE001 — 词表真源不可用必须显式暴露
-            raise FrameworkPlanError(
-                f"activation 六段态词表真源不可用（zephyr.signal_ashare.core.environment_switch）: {exc}"
-            ) from exc
-        _ACTIVATION_STATES_CACHE = tuple(SIX_STATES)
-    return _ACTIVATION_STATES_CACHE
+    if kind not in _STATES_SOURCE_KINDS:
+        raise FrameworkPlanError(f"未知状态词表真源键: {kind!r}（合法={_STATES_SOURCE_KINDS}）")
+    try:
+        if kind == STATES_SOURCE_REGIME:
+            from zephyr.regime.core.regime_detector import REGIME_STATES as states
+        else:
+            from zephyr.signal_ashare.core.environment_switch import SIX_STATES as states
+    except Exception as exc:  # noqa: BLE001 — 词表真源不可用必须显式暴露
+        raise FrameworkPlanError(f"状态词表真源不可用（kind={kind}）: {exc}") from exc
+    if not states:
+        raise FrameworkPlanError(f"状态词表真源为空（kind={kind}）")
+    return tuple(states)
+
+
+# partial 绑定而非再写一个 def：调用点 `_activation_states()` 语义不变
+_activation_states = partial(_states_from_source, STATES_SOURCE_ACTIVATION)
 
 
 def _activation_phase(regime_state: str | None) -> str | None:
@@ -210,23 +221,8 @@ def _activation_phase(regime_state: str | None) -> str | None:
     return REGIME_STATE_TO_ACTIVATION_PHASE.get(regime_state)
 
 
-def _regime_states() -> tuple[str, ...]:
-    """REGIME_STATES 7 态词表（唯一真源 regime_detector.REGIME_STATES，惰性导入+缓存）。
-
-    Raises:
-        FrameworkPlanError: regime 真源模块不可用（fail-closed，禁静默放行任意键）。
-    """
-    global _REGIME_STATES_CACHE
-    if _REGIME_STATES_CACHE is None:
-        try:
-            from zephyr.regime.core.regime_detector import REGIME_STATES
-        except Exception as exc:  # noqa: BLE001 — 词表真源不可用必须显式暴露
-            raise FrameworkPlanError(
-                f"regime 状态词表真源不可用（zephyr.regime.core.regime_detector）: {exc}"
-            ) from exc
-        _REGIME_STATES_CACHE = tuple(REGIME_STATES)
-    return _REGIME_STATES_CACHE
-
+# partial 绑定（同 `_activation_states`）：调用点 `_regime_states()` 语义不变
+_regime_states = partial(_states_from_source, STATES_SOURCE_REGIME)
 
 class FrameworkPlanError(Exception):
     """整装方案配置异常（缺失/格式/权重校验失败）。"""
@@ -1712,11 +1708,22 @@ def _collect_timeseries(engine: Any) -> dict[str, Any]:
     """从引擎 last_portfolio 收集时序（与 scripts/run_backtest._collect_timeseries 同契约）。
 
     说明: scripts 层的收集器无法从 src 模块导入（分层边界），本处按同一 sink 契约
-    实现最小集（equity_curve/trade_log/drawdown_curve；benchmark 引擎层无通道，留 None）。
+    实现最小集（equity_curve/cash_curve/trade_log/drawdown_curve；benchmark 引擎层
+    无通道，留 None）。
+
+    cash_curve（H4-A，#24）: 净值腿之外必须单独落现金腿——只有合计曲线时，"手续费/
+    过户费有没有真扣到现金上"这类账本轧差无法外部复核，主动持现金（Shrinkage 节流）
+    的仓位形态也看不见。
     """
     portfolio = getattr(engine, "last_portfolio", None)
     if portfolio is None:
-        return {"equity_curve": [], "trade_log": [], "drawdown_curve": [], "benchmark_curve": None}
+        return {
+            "equity_curve": [],
+            "cash_curve": [],
+            "trade_log": [],
+            "drawdown_curve": [],
+            "benchmark_curve": None,
+        }
     equity_curve: list[dict[str, Any]] = []
     drawdown_curve: list[dict[str, Any]] = []
     nav = portfolio.nav_series
@@ -1729,6 +1736,11 @@ def _collect_timeseries(engine: Any) -> dict[str, Any]:
             peak = float(v) if peak is None else max(peak, float(v))
             dd = (float(v) / peak - 1.0) if peak > 0 else 0.0
             drawdown_curve.append({"timestamp": ts_str, "drawdown": abs(dd)})
+    cash_curve: list[dict[str, Any]] = [
+        {"timestamp": str(d)[:10], "cash": float(c)}
+        for d, c in (getattr(portfolio, "cash_history", []) or [])
+        if d is not None
+    ]
     trade_log: list[dict[str, Any]] = []
     for t in getattr(portfolio, "trades_log", []) or []:
         trade_log.append(
@@ -1747,6 +1759,7 @@ def _collect_timeseries(engine: Any) -> dict[str, Any]:
         )
     return {
         "equity_curve": equity_curve,
+        "cash_curve": cash_curve,
         "trade_log": trade_log,
         "drawdown_curve": drawdown_curve,
         "benchmark_curve": None,
@@ -2162,6 +2175,102 @@ def _member_signal_contracts(
     }
 
 
+def _cash_ledger_reconciliation(engine: Any) -> dict[str, Any]:
+    """现金账本 Σ 闭合对账（H4-A/H4-B，#24）——整装回测自带的账本绊线。
+
+    引擎 NAV 曲线由同一份 `_cash` 算出，"手续费/过户费双计或漏扣"这类账本破口在净值
+    曲线上自洽地看不见——故用成交流水（trades_log.total_cost，佣金/过户费已含、滑点在
+    价内）独立重算现金腿，与逐日 cash_history 快照相减。真源算法在 portfolio
+    （账本属主），本处只接线，容差单一真源 CASH_LEDGER_TOLERANCE。
+
+    fail-closed：无 portfolio / 无 cash_history 属性（引擎被换成不经账本的实现）→
+    samples=0 且 within_tolerance=False，由 fw_backtest 验收闸否决，禁"没数据=通过"。
+    """
+    from zephyr.backtest.core.portfolio import reconcile_cash_ledger
+
+    portfolio = getattr(engine, "last_portfolio", None)
+    cash_history = getattr(portfolio, "cash_history", None)
+    if cash_history is None:
+        return {
+            "schema": "cash_ledger_reconciliation/v1",
+            "samples": 0,
+            "over_tolerance": 1,
+            "within_tolerance": False,
+            "note": "引擎未提供 last_portfolio.cash_history——现金腿不可核对（fail-closed 否决）",
+        }
+    return reconcile_cash_ledger(
+        cash_history,
+        getattr(portfolio, "trades_log", []) or [],
+        portfolio.initial_capital,
+    )
+
+
+def _signal_age_disclosed(panel: pd.DataFrame | None, rebalance_freq: str = "") -> dict[str, Any]:
+    """混频绊线（H3-B，#24）：合成面板的"有效信号龄"逐日分布。
+
+    方案面板按 rebalance_freq（默认 W-FRI）调仓，但引擎**逐日**把持仓拉回目标权重——
+    同一目标被连续交易多日，回测的执行假设是"周内每日都能按同一目标再平衡"。本函数
+    不猜频率，直接从面板行变化反推真实龄（=距上次目标变化的行数），让混频在证据包里
+    可见：age_max 大 = 目标长期不变仍每日撮合（漂移换手主因），rebalance_days 与
+    面板天数之比即实际调仓节奏。引擎另有 execution_lag_days=1 滞后，龄在真实执行上
+    再 +1（口径写进 note，禁消费方自行加减）。
+    """
+    out: dict[str, Any] = {
+        "schema": "signal_age_disclosed/v1",
+        "available": False,
+        "rebalance_freq": rebalance_freq,
+        "days": 0,
+        "rebalance_days": 0,
+        "signal_age_days_mean": None,
+        "signal_age_days_max": None,
+        "note": "合成面板不可用——混频节奏未测量",
+    }
+    if panel is None or len(panel) == 0 or len(panel.columns) == 0:
+        return out
+    values = panel.fillna(0.0)
+    changed = values.ne(values.shift()).any(axis=1)
+    positions = pd.Series(range(len(values)), index=values.index, dtype="float64")
+    last_change = positions.where(changed).ffill()
+    ages = positions - last_change.fillna(0.0)
+    out.update(
+        {
+            "available": True,
+            "days": int(len(values)),
+            "rebalance_days": int(changed.sum()),
+            "signal_age_days_mean": round(float(ages.mean()), 4),
+            "signal_age_days_max": int(ages.max()),
+            "note": (
+                f"龄=距上次目标变化的交易日数（面板真值反推，非按 {rebalance_freq or '配置频率'} 假定）；"
+                "引擎逐日按目标再平衡，故龄内每日都在撮合；执行另有 lag 1 日（引擎侧再加）"
+            ),
+        }
+    )
+    return out
+
+
+def _engine_chain_diagnostics(engine: Any) -> dict[str, Any]:
+    """引擎侧执行链诊断透传（H3-C/H4-C/H4-D/H4-E，#24）——缺失即出声，禁补默认值。
+
+    引擎新增的三个只读口（目标权重行 Σ 统计 / 拒单统计 / 未建模清单）在此原样进产物。
+    属性不存在（引擎被替换成不经该口径的实现）→ 落 `{"available": False}` 占位，
+    让证据包显式说"未测量"，而不是静默缺键（消费方按缺键 fail-closed）。
+    """
+    from zephyr.backtest.implementations.vectorized_engine import EXECUTION_MODEL_CAPABILITY
+
+    out: dict[str, Any] = {"execution_model_disclosure": dict(EXECUTION_MODEL_CAPABILITY)}
+    for key, attr in (
+        ("target_weight_renormalization", "last_signal_row_stats"),
+        ("skipped_fills", "last_skipped_fills"),
+    ):
+        value = getattr(engine, attr, None)
+        out[key] = (
+            dict(value)
+            if isinstance(value, dict)
+            else {"schema": f"{key}/v1", "available": False, "note": f"引擎未提供 {attr}"}
+        )
+    return out
+
+
 def _persist_framework_artifact(
     result: Any,
     engine: Any,
@@ -2181,6 +2290,15 @@ def _persist_framework_artifact(
     from zephyr.backtest.io.result_repository import build_artifact_from_data, save_artifact
 
     ts = _collect_timeseries(engine)
+    # H3/H4 执行链绊线（#24）：现金账本闭合 + 引擎侧静默点 + 混频节奏——同源算一次，
+    # 产物 metrics 与 result_out 共用（两个计算点必然漂移）
+    chain = {
+        "cash_ledger_reconciliation": _cash_ledger_reconciliation(engine),
+        **_engine_chain_diagnostics(engine),
+        "signal_age_disclosed": _signal_age_disclosed(
+            getattr(report, "panel", None), getattr(config, "rebalance_freq", "")
+        ),
+    }
     sink = sink_backtest_result(
         result,
         equity_curve=ts.get("equity_curve"),
@@ -2205,6 +2323,8 @@ def _persist_framework_artifact(
             "dead_weight_disclosed": report.dead_weight_disclosed,
             # T1A-1 验收字段：成员信号契约与降级/缺源披露（含 runner 只喂单因子）
             "member_signal_contracts": dict(contracts or {}),
+            # #24 H3/H4 验收字段：现金腿闭合 + 引擎静默点 + 混频节奏（禁只进日志）
+            **chain,
         }
     )
     if report.regime_day_counts:  # 三期动态模式披露（静态模式不加键，二期产物零漂移）
@@ -2237,16 +2357,28 @@ def _assemble_run_warn(
     ts: dict[str, Any],
     report: ComposeReport,
     panel_recon: dict[str, Any] | None,
+    chain: dict[str, Any] | None = None,
 ) -> str | None:
-    """run_framework_backtest 的 warn 组装（空净值/跳过成员/摊派绊线/面板对账超容差）。
+    """run_framework_backtest 的 warn 组装（空净值/跳过成员/摊派绊线/面板对账超容差/现金账本破）。
 
     摊派绊线（T1A-2）: 死成员 α 占方案份额 >``DEAD_MEMBER_ALPHA_SHARE_LIMIT`` 或行级归一
     显著偏差（>``_ROW_NORM_MATERIALITY``）→ warn——
     整装回测的"组合"若大半来自摊派，回测结论不可用，必须在 done 响应里可见。
+    现金账本（H4-A，#24）: ``chain.cash_ledger_reconciliation.within_tolerance`` 为假 →
+    warn（**含缺键**——引擎/账本没接线也是破口，禁静默通过；acceptance 侧另有硬闸）。
     """
     parts: list[str] = []
     if not ts.get("equity_curve"):
         parts.append("equity_curve empty")
+    cash_recon = (chain or {}).get("cash_ledger_reconciliation")
+    if chain is not None and not cash_recon:
+        parts.append("cash ledger reconciliation MISSING——现金腿未核对（H4-A）")
+    elif cash_recon is not None and not cash_recon.get("within_tolerance"):
+        parts.append(
+            f"cash ledger OPEN (max abs residual {cash_recon.get('max_abs_residual')}"
+            f">容差 {cash_recon.get('tolerance_abs')}, worst {cash_recon.get('worst_date')})"
+            "——成交流水与现金余额不闭合"
+        )
     if report.skipped:
         parts.append("skipped: " + "; ".join(f"{s}({r})" for s, r in report.skipped))
     disclosure = report.dead_weight_disclosed or {}
@@ -2566,7 +2698,8 @@ def _run_framework_backtest_core(
         per_regime = per_regime_summary(plan, ts.get("equity_curve") or [], cfg.regime_by_date)
 
     n_eq = len(ts.get("equity_curve") or [])
-    warn = _assemble_run_warn(ts, report, panel_recon)
+    # chain=产物 metrics：现金账本闭合等执行链绊线在 warn 里也要可见（H4-A）
+    warn = _assemble_run_warn(ts, report, panel_recon, chain=artifact_metrics)
 
     result_out: dict[str, Any] = {
         "ok": True,
