@@ -72,6 +72,9 @@ creation_note: 新建工作文档（CREATE-GUARD token 同批登记 capability_c
 
 ## 4. 分期施工（并发波次）
 
+> **终态回填（2026-09-17，st-govmap-20260915）**：P0-P5 全落地 ✅——P0=c8a688e89e；P1-a=11214864bf（measured 42/42、light 幽灵池归零、schtasks 第5源）；P1-b=aba769181a（C-2/C-4/C-1④⑤收编）；P2-a=4fc6b8ebab（check_pool_concurrency）；P2-b=e52ab434be（apply_resource_plan.py 受闸写回+三角对账）；P2-c=429b68783b（运行时准入三件合一）；P2-d=6a0eca4700（死壳退役+聚合器健康域绑定，含 P4-β）；P3=08dd8c4079+d3b6518f47（错峰腿 6 项+R-F 声明腿 6 实体，block 29→0）；P4-α=3e5bfabde7（drill 第4真源+C-11 声明反查）；P5=0c072ab625+3582798857（校准器+晨报首执行+校正批 flag 12→9）。§6 三臂/§7 红蓝 11 场景两轮 0 问题/两轮 343 passed 的实测留痕=同目录 `resource_schedule_v2_acceptance_evidence.md`。残余（OS 侧改时重跑 register_*.ps1、AltFxECB 外来孤儿、一次性任务删除、禁写区蓝图×2、L-6/C-12 注册表车道）见该件 §6。
+
+
 ### P0 卫生与闭环断点（独立，先走，~1 波）
 1. L-2 再生排产化：2 个 register_resource_regen_*.ps1 + 自登记进注册表（第 21/22 个 sch_ 实体）+reaper keep 白名单登记；
 2. C-5 闸缺席告警、C-9 ROOR 再生顺修、C-10 视图 freshness 检查（并入 --check 臂）；

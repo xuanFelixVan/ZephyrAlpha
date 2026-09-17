@@ -390,10 +390,11 @@ _MISSING = object()
 def _sysmodules_pollution_sentinel():
     import types as _types
 
-    before = {k: v for k, v in sys.modules.items() if k == "zephyr" or k.startswith("zephyr.")}
+    before = {k: v for k, v in list(sys.modules.items()) if k == "zephyr" or k.startswith("zephyr.")}
     yield
     poisoned = []
-    for k, v in sys.modules.items():
+    # 快照迭代：teardown 期他线程可能仍在 import（无快照会 RuntimeError: dict changed size）
+    for k, v in list(sys.modules.items()):
         if not (k == "zephyr" or k.startswith("zephyr.")):
             continue
         prior = before.get(k, _MISSING)

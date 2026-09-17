@@ -587,6 +587,7 @@ def check_pool_vocabulary(entities: list[dict]) -> list[dict]:
             continue
         tid = str(e.get("task_id") or "?")
         cls = str(e.get("resource_class") or "")
+        status = str(e.get("status") or "")
         if pool in audit_ns:
             detail = (f"{tid}.pool={pool!r} 串用了审计准入的空间维池（{AUDIT_POOL_SOURCE_RELPATH} "
                       f"{sorted(audit_ns)} 双池）——排班泳道词表={sorted(vocab)}（v2 C-6/C-7）")
@@ -594,7 +595,13 @@ def check_pool_vocabulary(entities: list[dict]) -> list[dict]:
             detail = (f"{tid}.pool={pool!r} 不在执行器真实词表 {sorted(vocab)}"
                       f"（幽灵池；daily_crypto 事故实证=不存在的 executor 在触发时 job 被摘除，"
                       f"排班等于没排；class={cls} 应挂 {derive_pool(cls)!r}，v2 C-7/R-C）")
-        out.append({"reason_code": REASON_POOL_UNDECLARED, "severity": "block",
+        # 红蓝 BLUE-1 治本（2026-09-17）：retired/orphaned_source 不在任何泳道排班，
+        # merge_preserve 又原样保留其旧池——若照 block 则一条退役幽灵池永久锁死全表
+        # 再生（rc=2 且 --auto-regen 拒写），只能人手改表解锁。退役=降级 warn 留痕可见。
+        sev = "warn" if status in ("retired", "orphaned_source") else "block"
+        if sev == "warn":
+            detail += f"｜status={status} 不排班→降级 warn 防再生死锁（红蓝 BLUE-1）"
+        out.append({"reason_code": REASON_POOL_UNDECLARED, "severity": sev,
                     "task_ids": [tid], "detail": detail})
     return out
 

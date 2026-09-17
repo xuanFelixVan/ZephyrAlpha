@@ -73,3 +73,7 @@ completes_when: 资源排班全景 B1-B4+端到端 已交付并经 Owner 复核�
 - 无跳过项。B1-B4+端到端全量交付。
 - 挂起项（方案既有裁定，非本批新欠账）：CH 并发护栏、阈值三口径统一、reaper 历史画像合并、daemon 资源字段、Prometheus 服务器（均方案 §4/§5 挂起，解锁条件各异）。
 - SYS-MASTER-001 §0.2 dispatch 表两行 REMINDER（scaffold 提示"新任务域需加行"）：未加——该表为治理线机生清单，扩行属 Owner 门位裁量，留待 Owner 复核（scaffold 仅 REMINDER 不阻断）。
+
+## 7. v2 战役增补（2026-09-17，st-govmap-20260915）
+
+v2（挖净联动·双向同步·AI 重排班·覆盖强制·实测校准）P0-P5 已全部落地：13 批提交链与终态见方案文档 §4 回填块（45f0f440e6→3582798857）；§6 三臂端到端、§7 红蓝 11 场景两轮 0 问题、测试两轮 343 passed 的实测证据=`resource_schedule_v2_acceptance_evidence.md`（同目录）。v1 本报告内容保持原样作历史基线。

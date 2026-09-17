@@ -385,8 +385,14 @@ def test_pool_concurrency_absent_field_is_bit_for_bit_legacy_behaviour():
     reg = Path(__file__).resolve().parents[3] / "config" / "resource_profile_registry.yaml"
     if reg.exists():
         ents, _header = load_registry_entities(reg)
-        assert not any("co_start_intent" in e for e in ents), "现盘注册表已有人声明→本钉的存量口径要同步"
-        assert [x for x in run_pool_concurrency_audit(reg, WED) if x.extra.get("kind") == KIND_WAIVED] == []
+        # R-F 声明批（2026-09-17 排班 v2 P3）后现盘口径：声明存在但必须带 notes 理由，
+        # 且豁免是"对"级账——审计须有 waived 痕（不再是零声明存量口径）。
+        declared = [e for e in ents if e.get("co_start_intent") is True]
+        assert len(declared) == 6, "R-F 声明批=6 实体，动这个数须同步本钉"
+        assert all(str(e.get("notes_zh") or "").strip() for e in declared)
+        waived = [x for x in run_pool_concurrency_audit(reg, WED)
+                  if x.extra.get("kind") == KIND_WAIVED]
+        assert sum(x.extra.get("waived_pair_count", 0) for x in waived) >= len(declared)
 
 
 def test_pool_concurrency_declaration_across_different_pools_is_harmless():

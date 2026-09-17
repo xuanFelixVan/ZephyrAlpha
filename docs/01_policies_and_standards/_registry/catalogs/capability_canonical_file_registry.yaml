@@ -31727,4 +31727,8 @@ creation_tokens:
   token: resource-schedule-v2-register-measure-calibration-task-20260917
   created_by: st-govmap-20260915
   capability: resource_schedule_v2
+- file: docs/_working/resource_schedule/resource_schedule_v2_acceptance_evidence.md
+  token: resource-schedule-v2-resource-schedule-v2-acceptance-evidence-20260917
+  created_by: st-govmap-20260915
+  capability: resource_schedule_v2
 di_seam_exemptions: []

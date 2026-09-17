@@ -373,10 +373,16 @@ def test_wildcard_dow_slots_output_unchanged_after_fix() -> None:
 
 
 def test_monthly_gap_beyond_legacy_scan_window_is_now_reported() -> None:
-    """旧实现 8 天扫描上限外静默空显示；croniter 无上限，报真实日期（改进面）。"""
-    base = dt.datetime(2026, 2, 1, 10, 0)  # 下次=3-1 09:00（27 天 23 小时后）
+    """旧实现 8 天扫描上限外静默空显示；croniter 无上限，报真实日期（改进面）。
+
+    时刻从现盘注册表 window_expr 推导（P3 把 monthly_static 挪到 09:16；钉死字面量
+    会让每次合法排班调整连坐此测试，而本测试主题是超 8 天窗仍报真日期）。
+    """
+    expr = REG["monthly_static"]
+    mm, hh = int(expr.split()[0]), int(expr.split()[1])
+    base = dt.datetime(2026, 2, 1, 10, 0)  # 下次=3-1 hh:mm（27 天+）
     assert legacy_next_cron_run(RAW["monthly_static"], base) == ""
-    assert api_server._next_cron_run(REG["monthly_static"], base=base) == "27 天后（03-01 09:00）"
+    assert api_server._next_cron_run(expr, base=base) == f"27 天后（03-01 {hh:02d}:{mm:02d}）"
 
 
 # ---------------------------------------------------------------------------
