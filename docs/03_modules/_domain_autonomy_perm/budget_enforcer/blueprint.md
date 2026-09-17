@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/ops_governance/budget_engine.py
 title: Token/Cost/Time 三维预算强制执行蓝图 — 七级预算 + 全生命周期 + 信任根 + 抗对抗
 doc_type: blueprint
 status: Active
-version: 0.7.11
+version: 0.7.12
 layer: L0_infrastructure
 functional_domain: budget_enforcement
 owner: ZephyrAlpha-Owner
@@ -1431,7 +1431,63 @@ solo_maintainer_optimizations:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/governance/financial_governance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/model_provider_data.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/service_registration.py` | ✅ 已实现 | |
+| `src/zephyr/governance/ops_governance/token_budget.py` | ✅ 已实现 | |
+| `src/zephyr/governance/semantic_audit/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/budget_enforcement/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/budget_enforcement/rbac_bridge.py` | ✅ 已实现 | |
+
+### 10.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/action/test_action_history.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_enforcer_rbac_bridge.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_engine_root.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_event_driven.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_lifecycle_e2e.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_models.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_profile_manager.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_shutdown.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_tracker.py` | ✅ 已实现 | |
+| `tests/context/test_context_budget_root.py` | ✅ 已实现 | |
+| `tests/context/test_context_manager.py` | ✅ 已实现 | |
+| `tests/context/test_context_waste_detector.py` | ✅ 已实现 | |
+| `tests/contracts/test_alerts_bridge.py` | ✅ 已实现 | |
+| `tests/governance/access_control/test_rbac_bridge_bridge.py` | ✅ 已实现 | |
+| `tests/governance/adversarial/test_adversarial_tester.py` | ✅ 已实现 | |
+| `tests/governance/adversarial/test_poison_cascade_detector.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_alerts.py` | ✅ 已实现 | |
+| `tests/governance/audit/test_tamper_evident_log.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_burn_rate_monitor.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_conversation_tax_detector.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_cost_attributor.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_cost_budget_root.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_cost_router.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_degradation_manager.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_pre_flight_gate.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_roi_calculator.py` | ✅ 已实现 | |
+| `tests/governance/budget/test_tco_model.py` | ✅ 已实现 | |
+| `tests/governance/delegation/test_parent_child_attributor.py` | ✅ 已实现 | |
+| `tests/governance/delegation/test_trust_ring_manager.py` | ✅ 已实现 | |
+| `tests/governance/integration/test_bandwidth_optimizer.py` | ✅ 已实现 | |
+| `tests/governance/lifecycle/test_bootstrapping_calibrator.py` | ✅ 已实现 | |
+| `tests/governance/lifecycle/test_time_sync.py` | ✅ 已实现 | |
+| `tests/governance/observability/test_instruction_bloat_detector.py` | ✅ 已实现 | |
+| `tests/governance/ops/test_daily_ops.py` | ✅ 已实现 | |
+| `tests/governance/orchestrator/test_think_time_model.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_fail_mode_manager.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_policy_sandbox.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_spiral_ews.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_stream_abort_guard.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_timeout_guard.py` | ✅ 已实现 | |
+| `tests/governance/rule_enforcement/test_output_quality_gate.py` | ✅ 已实现 | |
+| `tests/governance/security/test_ipi_defense.py` | ✅ 已实现 | |
+| `tests/governance/trading/test_pricing_sync.py` | ✅ 已实现 | |
+| `tests/self_check/test_self_budget_tracker.py` | ✅ 已实现 | |
+| `tests/semantic_auditor/test_semantic_cache.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

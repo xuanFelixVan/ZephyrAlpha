@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "Data Source Core 蓝图+施工图 — 数据接入层"
 doc_type: blueprint
 status: Active
-version: "4.0.12"
+version: "4.0.13"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -159,7 +159,7 @@ design_maturity: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L00-001` 的 21 个 file 节点 | production | `extract_depgraph.py --modules MOD-L00-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L00-001` 的 22 个 file 节点 | production | `extract_depgraph.py --modules MOD-L00-001` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -171,7 +171,7 @@ design_maturity: production
 | module_id | MOD-L00-001 | MOD-L00-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 21 文件 | 6 文件（§0.1） | ❌ |
+| file_count | 22 文件 | 6 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1114,7 +1114,20 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/data/implementations/tick_depth_backfill.py` | ✅ 已实现 | |
+| `src/zephyr/data/satellite_geospatial_engine/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/data/tick_depth_writer.py` | ✅ 已实现 | |
+| `src/zephyr/governance/data_governance/miniqmt_provider.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/portfolio/contracts/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/portfolio/contracts/money.py` | ✅ 已实现 | |
+| `src/zephyr/trading/trading_contracts/portfolio/contracts/strategy_lifecycle_event.py` | ⚠️ 骨架 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/data/test_l00_data_source.py` | ✅ 已实现 | |
+| `tests/zephyr/data/test_tick_depth_backfill.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

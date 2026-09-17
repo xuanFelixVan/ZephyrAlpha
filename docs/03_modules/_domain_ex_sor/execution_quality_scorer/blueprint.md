@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_sor/services/execution_quality_scorer.py
 title: "执行质量评分器蓝图 — 四维评分+加权汇总+评定"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -205,11 +205,11 @@ EXT-002 是聚合层：EXT-001 提供价格+冲击维度，EXT-003 提供成本�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 14.1 源码文件
+### 14.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/ex_sor/test_execution_quality_scorer.py` | ✅ 已实现 | |
 
 ### 14.5 路径索引使用指南
 

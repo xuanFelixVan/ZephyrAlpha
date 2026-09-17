@@ -5,7 +5,7 @@ title: "Agent RBAC 蓝图 — 七层纵深防御·六横切面运行时权限"
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: "1.1.11"
+version: "1.1.12"
 layer: L0_infrastructure
 domain: infra_ops
 owner: ZephyrAlpha-Owner
@@ -7120,7 +7120,102 @@ class PermissionHooks:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/security/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/build_sanitizer.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/cascading_failure_isolator.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/compliance_matrix.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/defense_depth.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/detectors/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/environment_manager.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/guards/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/guards/anti_pattern_guard.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/permission_mode_manager.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/phase_executor.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/secrets_lifecycle.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/verifiers/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/security/access_control/verifiers/bootstrap_verifier.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/verifiers/continuous_verifier.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/verifiers/micro_verifier.py` | ⚠️ 骨架 | |
+| `src/zephyr/security/access_control/verifiers/post_action_verifier.py` | ⚠️ 骨架 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/a2a/test_a2a_check.py` | ✅ 已实现 | |
+| `tests/agent/test_agent_creation_policy.py` | ✅ 已实现 | |
+| `tests/agent_rbac/conftest.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_abac_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_adversarial_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_adversarial_resilience.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_cross_model_consistency.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_crosscut_d.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_cybersec_2026.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_decision_explainer_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_decisions.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_derive_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_dry_run_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_engine_degradation_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_enhanced_security.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_exceptions_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_forensic_a.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_forensic_b.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_forensic_c.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_guard_layers_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_identity.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_immutable_core_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_input_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_integration_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_integration_root.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_integrity_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_intent_binder_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_kill_switch_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_novel_attack.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_observability_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_output_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_permission_guard.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_permissions.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_post_action.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_rbac_auto_lifecycle.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_rbac_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_redteam_adversarial.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_risk_mitigation_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_sequence_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_toctou_guard_agent_rbac.py` | ✅ 已实现 | |
+| `tests/agent_rbac/test_vibe_coding.py` | ✅ 已实现 | |
+| `tests/audit/audit_core/test_audit_log_guard.py` | ✅ 已实现 | |
+| `tests/automation/test_auto_maintenance.py` | ✅ 已实现 | |
+| `tests/blueprint/test_blueprint_fidelity.py` | ✅ 已实现 | |
+| `tests/canary/test_canary_rollout_manager.py` | ✅ 已实现 | |
+| `tests/capability/test_capability_check.py` | ✅ 已实现 | |
+| `tests/capability/test_capability_lookup.py` | ✅ 已实现 | |
+| `tests/cold/test_cold_start_lock.py` | ✅ 已实现 | |
+| `tests/context/test_context_drift_detector.py` | ✅ 已实现 | |
+| `tests/contracts/test_abac_guard_root.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_verifier.py` | ✅ 已实现 | |
+| `tests/contracts/test_rbac_guard_root.py` | ✅ 已实现 | |
+| `tests/cross/test_cross_cutting.py` | ✅ 已实现 | |
+| `tests/cross/test_cross_session_detector.py` | ✅ 已实现 | |
+| `tests/decision/test_decision_explainer_root.py` | ✅ 已实现 | |
+| `tests/decision/test_decision_registry.py` | ✅ 已实现 | |
+| `tests/dependency/test_dependency_auditor.py` | ⚠️ 骨架 | |
+| `tests/escalation/test_escalation_handler.py` | ⚠️ 骨架 | |
+| `tests/governance/security/test_governance_a2a_check.py` | ✅ 已实现 | |
+| `tests/governance/security/test_governance_approver_check.py` | ✅ 已实现 | |
+| `tests/governance/security/test_governance_bootstrap_superadmin.py` | ✅ 已实现 | |
+| `tests/governance/security/test_governance_capability_check.py` | ✅ 已实现 | |
+| `tests/governance/security/test_governance_contracts.py` | ✅ 已实现 | |
+| `tests/guard/test_guard_layers_root.py` | ✅ 已实现 | |
+| `tests/intent/test_intent_binder_root.py` | ✅ 已实现 | |
+| `tests/memory/test_memory_guard.py` | ✅ 已实现 | |
+| `tests/memory/test_memory_provenance_guard.py` | ✅ 已实现 | |
+| `tests/multi/test_multi_agent_collusion_detector.py` | ✅ 已实现 | |
+| `tests/observability/test_observability_root.py` | ✅ 已实现 | |
+| `tests/path/test_path_guard.py` | ✅ 已实现 | |
+| `tests/rollback/test_rollback_sandbox.py` | ✅ 已实现 | |
+| `tests/rule/test_rule_injection_guard.py` | ✅ 已实现 | |
+| `tests/session/test_session_lifecycle.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

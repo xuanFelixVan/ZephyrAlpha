@@ -4,7 +4,7 @@ submodule_path: src/zephyr/signal_fundamental/ + src/zephyr/signal_ashare/ + src
 title: "Signal Generation Core 蓝图+施工图 — 信号工厂·策略生命周期管理"
 doc_type: blueprint
 status: Active
-version: "3.0.10"
+version: "3.0.11"
 layer: L2_domain
 layer_name: signal_generation
 functional_domain: research
@@ -1021,7 +1021,26 @@ D_FACTOR Alpha Factor 层产出因子信号后，需要标准化聚合、合成�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/signal_fundamental/capital/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/capital/capital_allocation_result.py` | ⚠️ 骨架 | |
+| `src/zephyr/signal_fundamental/capital/capital_allocator.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/capital/default_capital_allocator.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/combiner/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/combiner/impl/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/gen/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/gen/aggregator_base.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/gen/implementations/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/signal_fundamental/strategy/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/strategy/capital_allocator.py` | ✅ 已实现 | |
+| `src/zephyr/signal_fundamental/strategy/implementations/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/signal_fundamental/synth/__init__.py` | ⚠️ 骨架 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/signal/test_default_signal_aggregator.py` | ✅ 已实现 | |
+| `tests/trading/pipeline/test_l03_signal_generation.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

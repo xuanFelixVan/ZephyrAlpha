@@ -3,7 +3,7 @@ module_id: MOD-CMP-007
 title: "交易合规检测器蓝图 — 异常交易 2 条 + 市场操纵 4 类"
 doc_type: blueprint
 status: Active
-version: "0.1.23"
+version: "0.1.24"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation
@@ -97,11 +97,16 @@ tests/compliance/test_trading_compliance_detector.py — 17 用例：六类检�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 9.1 源码文件
+### 9.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/compliance/test_compliance_report_registry.py` | ✅ 已实现 | |
+| `tests/compliance/test_discipline_must_do_checker.py` | ✅ 已实现 | |
+| `tests/compliance/test_discipline_prohibition_checker.py` | ✅ 已实现 | |
+| `tests/compliance/test_license_usage_auditor.py` | ✅ 已实现 | |
+| `tests/compliance/test_manipulation_stream_driver.py` | ✅ 已实现 | |
+| `tests/compliance/test_trading_compliance_detector.py` | ✅ 已实现 | |
 
 ### 9.5 路径索引使用指南
 

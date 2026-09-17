@@ -5,7 +5,7 @@ title: "排班冲突检测闸蓝图 — 三检查（互斥组/内存天花板/E0
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.4"
+version: "1.0.5"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -42,7 +42,7 @@ design_maturity: production
 
 # 排班冲突检测闸蓝图 — 三检查（互斥组/内存天花板/E0）+真源漂移·own-scope commit gate（MOD-RESCHED-GATE）
 
-> module_id: MOD-RESCHED-GATE | version: 1.0.4 | status: active | layer: L0_infrastructure
+> module_id: MOD-RESCHED-GATE | version: 1.0.5 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py | 施工批次：资源排班全景 B2（闸）（方案 §8）
 
 ## 1. 背景与定位
@@ -112,7 +112,13 @@ design_maturity: production
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py` | ✅ 已实现 | |
+
+### 5.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/governance/commit_gates/test_resource_schedule_gate.py` | ✅ 已实现 | |
 
 ### 5.5 路径索引使用指南
 

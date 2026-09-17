@@ -3,7 +3,7 @@ module_id: MOD-RK-19
 title: "操作风险监控器蓝图 — 操作风险阈值告警解释层"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -105,11 +105,11 @@ fill_rate / latency p50/p95/max/mean），但**无阈值告警**。本模块不�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/risk/core/test_operational_risk_monitor.py` | ✅ 已实现 | |
 
 ### 6.5 路径索引使用指南
 

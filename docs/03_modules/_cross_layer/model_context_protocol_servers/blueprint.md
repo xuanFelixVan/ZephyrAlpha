@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/mcp
 title: "MCP Servers 蓝图 — MCP 服务器管理与调度"
 doc_type: blueprint
 status: Draft
-version: "0.3.50"
+version: "0.3.51"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -787,7 +787,26 @@ MCP 职责：通过 stdio 向外部 Agent 暴露任务管理/门禁决策等能�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/integration/mcp/handoff_auto_loader.py` | ✅ 已实现 | |
+| `src/zephyr/integration/mcp/prompt_provider.py` | ✅ 已实现 | |
+| `src/zephyr/integration/mcp/resource_provider.py` | ✅ 已实现 | |
+| `src/zephyr/integration/mcp/sandbox_server.py` | ✅ 已实现 | |
+| `src/zephyr/integration/mcp/vector_memory_server.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/a2a/test_mcp.py` | ✅ 已实现 | |
+| `tests/infrastructure/conftest.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/__init__.py` | ⚠️ 骨架 | |
+| `tests/infrastructure/mcp/test_mcp_boot_hooks_integration.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_full_lifecycle_e2e.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_gateway_version_ratelimit.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_health_check_recovery.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_idle_timeout.py` | ✅ 已实现 | |
+| `tests/infrastructure/mcp/test_mcp_signal_shutdown.py` | ✅ 已实现 | |
+| `tests/io/test_mcp_launcher.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

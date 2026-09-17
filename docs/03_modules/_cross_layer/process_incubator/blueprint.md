@@ -5,7 +5,7 @@ title: "统一进程孵化入口蓝图 — 孵化即登记（父PID/预期寿命
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.3"
+version: "1.0.4"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -44,7 +44,7 @@ design_maturity: production
 
 # 统一进程孵化入口蓝图（MOD-INF-PROC-INCUBATOR）
 
-> module_id: MOD-INF-PROC-INCUBATOR | version: 1.0.3 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-PROC-INCUBATOR | version: 1.0.4 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/shared/infra/process_incubator.py | generation: 3 | construction_progress: completed
 
 ## 1. 背景与动因（治理战役 M1+M2，2026-09-16）
@@ -124,7 +124,7 @@ design_maturity: production
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/shared/infra/process_incubator.py` | ✅ 已实现 | |
 
 ### 6.5 路径索引使用指南
 

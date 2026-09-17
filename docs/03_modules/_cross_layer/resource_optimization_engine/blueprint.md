@@ -3,7 +3,7 @@ module_id: MOD-RESOURCE_OPTIMIZATION_ENGINE
 title: "资源优化引擎蓝图"
 doc_type: blueprint
 status: Active
-version: "5.4.7"
+version: "5.4.8"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1368,7 +1368,9 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/trading/gpu_monitor.py` | ✅ 已实现 | |
+| `src/zephyr/trading/process_reaper.py` | ✅ 已实现 | |
+| `src/zephyr/trading/speed_baseline_checker.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

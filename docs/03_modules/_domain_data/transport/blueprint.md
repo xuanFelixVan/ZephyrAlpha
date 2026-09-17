@@ -3,7 +3,7 @@ module_id: MOD-DATA-072
 title: "跨境网络双活传输层蓝图 — 双线路+热切换状态机"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L1_foundation
@@ -69,7 +69,8 @@ docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/94
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/data/transport/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/data/transport/cross_border_dual.py` | ✅ 已实现 | |
 
 ### 11.5 路径索引使用指南
 

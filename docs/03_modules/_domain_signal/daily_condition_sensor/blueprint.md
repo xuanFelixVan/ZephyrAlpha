@@ -3,7 +3,7 @@ module_id: MOD-SIG-135
 title: "日级市场条件传感器蓝图 — 11 信号五档水温聚合"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 design_maturity: production
 ttl: permanent
 layer: L01_market
@@ -85,7 +85,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/signal_ashare/core/daily_condition_sensor.py` | ✅ 已实现 | |
 
 ### 6.5 路径索引使用指南
 

@@ -5,7 +5,7 @@ title: "Agent Orchestrator 蓝图 — Agent 全生命周期编排引擎"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.12"
+version: "1.0.13"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -606,7 +606,77 @@ class DetectionResult(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/orchestrator/contracts/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/context_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/memory_writer.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/script_runner.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/execution/task_context_builder.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/fault_tolerance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/governance/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/lifecycle/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/ke_quality.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/quality/knowledge_freshness.py` | ✅ 已实现 | |
+| `src/zephyr/orchestrator/resilience/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/trading/auto_dispatcher.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/agent/test_agent_orchestrator_root.py` | ✅ 已实现 | |
+| `tests/agent/test_agent_quality.py` | ✅ 已实现 | |
+| `tests/autonomy/test_autonomy_guard.py` | ✅ 已实现 | |
+| `tests/blueprint/test_blueprint_scorer.py` | ✅ 已实现 | |
+| `tests/canary/test_canary_manager.py` | ✅ 已实现 | |
+| `tests/capacity/test_capacity_budget_lane_quota.py` | ✅ 已实现 | |
+| `tests/capacity/test_capacity_budget_root.py` | ✅ 已实现 | |
+| `tests/chaos/test_chaos_engine.py` | ✅ 已实现 | |
+| `tests/chaos/test_chaos_engine_ops.py` | ✅ 已实现 | |
+| `tests/chaos/test_chaos_hooks.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_registry_root.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_router_root.py` | ✅ 已实现 | |
+| `tests/dependency/test_dependency_lock.py` | ✅ 已实现 | |
+| `tests/file/test_file_task_mapper_root.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_deferred_queue.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_data_lifecycle.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_failure_matcher.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_hallucination_detector.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_model_registry.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_rollback_manager.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_task_queue.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_trigger_router.py` | ✅ 已实现 | |
+| `tests/orchestrator/test_orchestrator_wave_generator.py` | ✅ 已实现 | |
+| `tests/path/test_path_index.py` | ✅ 已实现 | |
+| `tests/phase/test_phase_executor_root.py` | ✅ 已实现 | |
+| `tests/prompt/test_prompt_version.py` | ✅ 已实现 | |
+| `tests/risk/test_risk_registry_root.py` | ✅ 已实现 | |
+| `tests/session/test_session_conflict.py` | ✅ 已实现 | |
+| `tests/trading/root/test_design_decisions_root.py` | ✅ 已实现 | |
+| `tests/trading/root/test_dlq_manager_root.py` | ✅ 已实现 | |
+| `tests/trading/root/test_state_propagation_root.py` | ✅ 已实现 | |
+| `tests/trading/root/test_state_synchronizer_root.py` | ✅ 已实现 | |
+| `tests/trading/test_batch_orchestrator.py` | ✅ 已实现 | |
+| `tests/trading/test_benchmark_runner.py` | ✅ 已实现 | |
+| `tests/trading/test_blind_spot_closure.py` | ✅ 已实现 | |
+| `tests/trading/test_bulkhead_manager.py` | ✅ 已实现 | |
+| `tests/trading/test_construction_guide.py` | ✅ 已实现 | |
+| `tests/trading/test_disk_guard.py` | ✅ 已实现 | |
+| `tests/trading/test_fault_types.py` | ✅ 已实现 | |
+| `tests/trading/test_finding_bridge.py` | ✅ 已实现 | |
+| `tests/trading/test_housekeeping.py` | ✅ 已实现 | |
+| `tests/trading/test_incident_postmortem.py` | ✅ 已实现 | |
+| `tests/trading/test_lean_scanner.py` | ✅ 已实现 | |
+| `tests/trading/test_network_partition.py` | ✅ 已实现 | |
+| `tests/trading/test_reconciliation_loop.py` | ✅ 已实现 | |
+| `tests/trading/test_rolling_upgrade.py` | ✅ 已实现 | |
+| `tests/trading/test_schema_migration.py` | ✅ 已实现 | |
+| `tests/trading/test_stability_guard.py` | ✅ 已实现 | |
+| `tests/trading/test_startup_sequencer.py` | ✅ 已实现 | |
+| `tests/trading/test_system_transfer.py` | ✅ 已实现 | |
+| `tests/trading/test_teardown_manager.py` | ✅ 已实现 | |
+| `tests/trading/test_version_manifest.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

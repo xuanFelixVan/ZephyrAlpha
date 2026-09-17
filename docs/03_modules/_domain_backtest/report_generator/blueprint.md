@@ -3,7 +3,7 @@ module_id: MOD-BT-019
 title: "回测报告生成器蓝图 — HTML报告自动生成"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -161,11 +161,11 @@ class BacktestReportGenerator:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 10.1 源码文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/backtest/test_report_generator.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

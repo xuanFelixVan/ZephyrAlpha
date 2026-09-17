@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration/vector_memory
 title: "Vector Memory Service 蓝图+施工图 — ChromaDB 8 Collection 统一向量持久化"
 doc_type: blueprint
 status: Active
-version: "0.12.9"
+version: "0.12.10"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1476,7 +1476,32 @@ class FeedbackEntry(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/gov_drift/_analysis.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/_core.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/_drift.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/_infrastructure.py` | ✅ 已实现 | |
+| `src/zephyr/gov_drift/_scanners.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/context_ingest.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/cross_collection_retriever.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/delegated_vector_memory.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/faiss_collection_manager.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/interface.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/migrate_chroma_to_faiss.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/ollama_embedding.py` | ⚠️ 骨架 | |
+| `src/zephyr/integration/vector_memory/sqlite_metadata_store.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/vector_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/vector_writer.py` | ✅ 已实现 | |
+| `src/zephyr/integration/vector_memory/vms_memory_backend.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/memory/test_vms_adversarial_hijack.py` | ✅ 已实现 | |
+| `tests/memory/test_vms_adversarial_injection.py` | ✅ 已实现 | |
+| `tests/memory/test_vms_automation.py` | ✅ 已实现 | |
+| `tests/memory/test_vms_lifecycle.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

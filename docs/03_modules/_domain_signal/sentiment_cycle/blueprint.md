@@ -3,7 +3,7 @@ module_id: MOD-SIG-140
 title: "五阶段情绪周期蓝图 — 冰点/反核/主升/疯狂/退潮"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 ttl: permanent
 layer: L01_market
@@ -47,7 +47,7 @@ design_memos/28_sentiment_cycle_trading.md §3.2-§3.10（原 [BLUEPRINT] 头引
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/signal_ashare/sentiment/sentiment_cycle.py` | ✅ 已实现 | |
 
 ### 4.5 路径索引使用指南
 
