@@ -262,3 +262,31 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 M4/M5 各炸 2 条，说明"登记名册 → 采集器构造 → 读盘断言"三处互相咬合：任一处单独放松即红，
 这正是 GT-15 要的形态（不是靠人记得同步三处）。M1 是 GT-15 的镜像用法——台账里"实测值"与
 宿主源码落地状态由同一契约测试绑定，改坏措辞即失去豁免并被判红。
+
+
+## 10 双次复验台账（连续两轮同范围，判据=两轮问题数 0 且失败集差为空）
+
+**为什么记在这里**：Owner 的收口判据是"连续两次测试问题=0"。要让这句话可核而不是一句
+修辞，必须锁住被测量——两轮之间若有任何一字节改动（本仓多会话并发是常态），两轮测的就
+不是同一个对象，"两次全绿"退化成"两次各自绿"。故本台账的第一列不是通过率而是**树指纹**。
+
+| 轮 | 树指纹 | 范围 | 结果 | 失败集 |
+|---|---|---|---|---|
+| B5 | HEAD `eb902d3f1a`；`git status --porcelain` 对 src/scripts/tests/config/architecture_model/docs/03_modules 取 sha1=`fc48f1f524cf`；本轮三件落地文件（`scripts/run_backtest.py`、`tests/backtest/test_h3h4_cash_pit_exec_chain.py`、`scripts/governance/d1_structure/validate_config_integrity.py`）合算 sha256=`3cf2ba87329a144e` | 12 目录 + 2 文件，collected 7342，实跑 345 个测试文件 | 1 failed, 7341 passed in 601.25s | `tests/governance/test_error_code_consistency.py::TestCodeToRegistry::test_all_code_definitions_registered` |
+| B6 | **与 B5 同值**（跑后再取一次三指纹全等，两分钟窗口内零漂移） | 同上（同命令同范围） | 1 failed, 7341 passed in 585.85s | 与 B5 逐字一致（两文件 `FAILED` 行 `diff` 输出为空） |
+
+**唯一一条红的归属（不是"我的红"，给到落点级）**：`ZA-INF-RT-ADM` 定义于
+`src/zephyr/infra_runtime/runtime_admission.py:89`，由 `429b68783b`（2026-09-17 07:36，
+st-govmap 车道）落地，而真源 `architecture_model/contracts/error_code_registry.yaml`
+头声明 `ai_autonomy: human_gated` ⇒ 按宪章 §3.4「他会话在途违规不代修」+ RULE-RULING
+「不自登记他人语义」双条拦着，**修法只有其 owner 或 Owner**。剔除这一条，两轮均 7341/7341。
+
+**范围外附加面**（这两项不在上表 12 目录内，单列以免被读成"包含在内"）：
+`tests/governance/integration/test_all_scripts.py -k validate_config_integrity` =
+`1 passed, 4 xpassed, 0 failed in 16.00s`；`python scripts/governance/d1_structure/validate_config_integrity.py --warn-only`
+直跑 `exit 0 / 8.1s`（GT-13 治本前同命令 121s，快层 xfail 的成因就是它跑不完）。
+
+**本台账自身的盲区（写下来，免得被当成"全链路已绿"读）**：范围=回测/组合/风控/治理门禁
+四条链的 12 目录，**未含** altdata/research、frontend/dashboard、data 域与实盘下单链路
+（后者按 §5 high 域 Owner 门位，R-H5E-1 pre-trade 仍在册）。所以本台账支持的句子是
+"这三条链在冻结树上连续两轮无我方可归因红"，不支持"全仓全绿"。
