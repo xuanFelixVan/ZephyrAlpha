@@ -25,7 +25,7 @@ created: 2026-09-17
 - **前置（机读，缺一不开工）**：lease 续租机制落地且 `tests/governance/test_commit_queue_landing.py` 新增"同域同文件双通道并发"压测绿；跨域热文件清单（注册表/ROOR/AGENTS.md/standards.yaml）强制走单一热通道的闸在案；夜间并发峰值连续 7 天>40 车道。
 - **改动文件**：`scripts/commit_queue.py`（drain 按域取队）+`commit_queue_landing.py`（k 通道 worktree 池）+域映射配置。
 - **机读判据**：k=4 下小时落地峰值 ≥76（4×24×0.8）；同域冲突率不升（对照单通道基线）；lease 双写者窗口=0（审计：任一时间点同域活跃 lease≤1）。
-- **验收**：`python .runtime/tmp/rb2/harness.py --workers 20 --channels 4`（P2 harness 复用）+既有队列测试全绿。
+- **验收**：`python .runtime/tmp/rb2/harness.py --workers 20 --mode enqueue --scenario stress`（P2 harness，2026-09-18 自 `.runtime/tmp/closeout_residue_20260918/rb2_harness_preserved.py` 重建至 `.runtime/tmp/rb2/harness.py`，39193B，`py_compile` 通过）+既有队列测试全绿。**通道维说明**：本 harness 无 `--channels` 参（CLI 实参=scenario/workers/minutes/mode/kill-frac/kill-states/run-id/sandbox/results/phase）；k=4 分区通道是 F2 主体改动（`commit_queue.py` drain 按域取队 + landing k 通道 worktree 池 + 域映射配置），须 S18-R3 签署后方施工，届时通道数经域映射配置注入、压测在 k 通道 worktree 池上跑——原悬空行的 `--channels 4` 是 F2 落地后才存在的验收维，前置阶段以 `--workers 20 --mode enqueue` 验单写者通道并发安全（同域同文件双通道压测另见 `tests/governance/test_commit_queue_landing.py`）。
 - **预期**：吞吐 24→82/h（3.4×）。**回滚**：通道数配置回 1（单开关）。
 
 ## F3 头部 O(仓库) 门禁 diff 化（S18-R3②/S18-R4 约束内）

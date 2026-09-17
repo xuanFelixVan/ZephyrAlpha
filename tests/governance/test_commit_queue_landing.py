@@ -49,6 +49,7 @@ import logging
 import os
 import subprocess
 import tempfile
+import threading
 from pathlib import Path
 
 import pytest
@@ -1213,3 +1214,194 @@ class TestWorktreeEnvProvisioning:
         assert stats["done"] == 1 and stats["dead"] == 0
         wt = landing.worktree_path
         assert (wt / "config" / ".env.postgres").is_file() and (wt / "config" / ".env.clickhouse").is_file()
+
+
+# ---------------------------------------------------------------------------
+# F2 前置件（2026-09-18 st-flashspeed，判据书 F2「前置（机读）」行）：
+# ①「同域同文件双通道并发」压测——lease O_EXCL 单写者物化：并发 drain 争用下
+#   零丢失/零死信/零丢失更新/dev 历史全队列标记（双写者窗口=0）；
+# ②跨域热文件单通道闸——channel_key_for_files 域映射配置：热文件强制单一热
+#   通道、同域同文件双项必同键（=同通道串行，k=4 分区后并发安全的路由前提）；
+# ③exit-burst——drain 中途突发注入同轮消化 + lease 释放瞬间双自举竞态零双落。
+# ---------------------------------------------------------------------------
+
+
+class TestF2HotFileChannelGate:
+    """F2 前置②：跨域热文件单通道闸（域映射配置在案，纯函数不变量）。"""
+
+    def test_registry_family_routes_to_hot_channel(self) -> None:
+        f = "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
+        assert cq.channel_key_for_files([f]) == cq.HOT_CHANNEL_KEY
+
+    def test_roor_agents_standards_route_to_hot_channel(self) -> None:
+        for f in (
+            "docs/registry_of_registries.yaml",
+            "AGENTS.md",
+            "docs/01_policies_and_standards/standards.yaml",
+        ):
+            assert cq.channel_key_for_files([f]) == cq.HOT_CHANNEL_KEY, f"{f} 应路由热通道"
+
+    def test_hot_wins_over_domain_mix(self) -> None:
+        files = ["src/zephyr/alt_data/x.py", "AGENTS.md"]
+        assert cq.channel_key_for_files(files) == cq.HOT_CHANNEL_KEY
+
+    def test_same_domain_files_share_one_key(self) -> None:
+        k = cq.channel_key_for_files(["src/zephyr/alt_data/a.py", "src/zephyr/alt_data/b.py"])
+        assert k == "src/zephyr/alt_data"
+
+    def test_same_domain_same_file_dual_items_get_same_key(self) -> None:
+        """核心不变量：同域同文件双队列项必得同键（=同通道串行，双通道并发不撕同域）。"""
+        k1 = cq.channel_key_for_files(["src/zephyr/alt_data/cohort.py"])
+        k2 = cq.channel_key_for_files(["src/zephyr/alt_data/cohort.py", "src/zephyr/alt_data/util.py"])
+        assert k1 == k2 == "src/zephyr/alt_data"
+
+    def test_cross_domain_mix_falls_to_shared_channel(self) -> None:
+        assert cq.channel_key_for_files(["scripts/a.py", "docs/b.md"]) == cq.MIXED_CHANNEL_KEY
+
+    def test_windows_backslash_path_normalized(self) -> None:
+        f = "docs\\01_policies_and_standards\\_registry\\catalogs\\x.yaml"
+        assert cq.channel_key_for_files([f]) == cq.HOT_CHANNEL_KEY
+
+
+class TestF2SameDomainDualChannelConcurrency:
+    """F2 前置①：「同域同文件双通道并发」压测（判据「lease 双写者窗口=0」物化）。
+
+    模拟 k=4 分区后双通道（双 drain 自举）并发处理同域同文件项的竞态：
+    O_EXCL lease 保证任一时间点活跃 drainer ≤1，败者退避（LeaseUnavailable），
+    零死信、零丢失更新、dev 历史单写者（全 commit 带 [GW:sid:qid] 队列标记）。
+    """
+
+    def test_dual_drainer_same_file_no_lost_update_single_writer(
+        self, tmp_repo: Path, queue_root: Path
+    ) -> None:
+        landing, _stub = _make_landing_pathspec(tmp_repo, queue_root)
+        base_sha = _git_text(tmp_repo, "rev-parse", "dev")  # 单写者断言基线（fixture init 笔豁免面）
+        # 同域同文件双项（v1→v2，qid 定序）
+        it1 = cq.enqueue_item("sess-dc-a", "feat: v1", [("src/mod/hot.py", b"v1\n")], queue_root=queue_root)
+        it2 = cq.enqueue_item("sess-dc-b", "feat: v2", [("src/mod/hot.py", b"v2\n")], queue_root=queue_root)
+        # 路由前提：同域同文件双项必得同通道键（分区后必串行）
+        assert cq.channel_key_for_files(["src/mod/hot.py"]) == cq.channel_key_for_files(["src/mod/hot.py"])
+
+        results: dict[str, object] = {}
+        barrier = threading.Barrier(2)
+
+        def _run(name: str) -> None:
+            barrier.wait()  # 同时起跑=最大竞态窗口
+            try:
+                results[name] = cq.drain_queue(queue_root, landing=landing, lease_timeout=0.3)
+            except cq.LeaseUnavailable:
+                results[name] = "backed-off"
+
+        threads = [threading.Thread(target=_run, args=(f"ch{i}",)) for i in (1, 2)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join(timeout=180)
+        assert all(not t.is_alive() for t in threads), "drain 线程未收敛"
+
+        # 败者退避后补排空收敛（自举语义：拿不到等下次）
+        final = cq.drain_queue(queue_root, landing=landing)
+
+        all_stats = [s for s in list(results.values()) + [final] if isinstance(s, dict)]
+        done_total = sum(s["done"] for s in all_stats)
+        dead_total = sum(s["dead"] for s in all_stats)
+        assert done_total == 2, f"双项全落地零丢失: results={results} final={final}"
+        assert dead_total == 0, f"零死信: results={results} final={final}"
+        assert list((queue_root / "pending").glob("q-*.json")) == []
+        assert list((queue_root / "processing").glob("q-*.json")) == []
+        assert list((queue_root / "dead").glob("q-*.json")) == []
+
+        # 零丢失更新：后项（v2）终态胜出；双 commit 定序落地
+        assert _git_bytes(tmp_repo, "show", "dev:src/mod/hot.py") == b"v2\n"
+        assert _dev_commit_count(tmp_repo) == 2
+
+        # 单写者不变量：落地窗内 dev 历史全部带队列标记（双写者窗口=0 的历史面证据；
+        # since=基线 sha——fixture init 笔是队列前直提，属断言函数的 since 豁免口径）
+        assert cql.assert_single_writer_dev_history(tmp_repo, since=base_sha) == []
+
+        # FIFO：v1 commit 是 v2 commit 的祖先（qid 定序未被并发撕乱）
+        done1 = json.loads((queue_root / "done" / f"{it1['qid']}.json").read_text(encoding="utf-8"))
+        done2 = json.loads((queue_root / "done" / f"{it2['qid']}.json").read_text(encoding="utf-8"))
+        r = _git(tmp_repo, "merge-base", "--is-ancestor", done1["landed_id"], done2["landed_id"], check=False)
+        assert r.returncode == 0, "it1 落地 commit 必须是 it2 的祖先（同域同文件定序）"
+
+
+class TestF2ExitBurst:
+    """F2 前置③：exit-burst——drain 中途突发注入同轮消化 + lease 释放瞬间双自举竞态。
+
+    病灶面（P2 压测取证）：drain 排空退出瞬间是 lease 释放→再获取的窗口，
+    突发入队若错过本轮又遇双自举竞态，最坏=饿死（无人再排）或双落（重复 commit）。
+    断言：突发项零丢失（belt 逐项 re-glob 同轮消化或补排空收敛）、双自举零双落、
+    dev 历史单写者。
+    """
+
+    def test_mid_drain_burst_and_exit_race_zero_loss(
+        self, tmp_repo: Path, queue_root: Path
+    ) -> None:
+        landing, _stub = _make_landing_pathspec(tmp_repo, queue_root)
+        base_sha = _git_text(tmp_repo, "rev-parse", "dev")  # 单写者断言基线
+        n_pre, n_burst = 6, 6
+        for i in range(n_pre):
+            cq.enqueue_item(
+                f"sess-burst-p{i}", f"feat: pre-{i}",
+                [(f"docs/burst/p{i}.txt", f"pre-{i}\n".encode())],
+                queue_root=queue_root,
+            )
+
+        main_stats: dict[str, object] = {}
+
+        def _main_drain() -> None:
+            main_stats["stats"] = cq.drain_queue(queue_root, landing=landing)
+
+        def _burst() -> None:
+            # 主 drain 在途时突发注入（belt 逐项 re-glob pending，应同轮消化）
+            for j in range(n_burst):
+                cq.enqueue_item(
+                    f"sess-burst-b{j}", f"feat: burst-{j}",
+                    [(f"docs/burst/b{j}.txt", f"burst-{j}\n".encode())],
+                    queue_root=queue_root,
+                )
+
+        t_main = threading.Thread(target=_main_drain)
+        t_burst = threading.Thread(target=_burst)
+        t_main.start()
+        t_burst.start()
+        t_burst.join(timeout=60)
+        t_main.join(timeout=300)
+        assert not t_main.is_alive(), "主 drain 未收敛"
+
+        # lease 释放瞬间双自举竞态：两个补排空同时起跑，收敛残余且零双落
+        final_results: dict[str, object] = {}
+        barrier = threading.Barrier(2)
+
+        def _final(name: str) -> None:
+            barrier.wait()
+            try:
+                final_results[name] = cq.drain_queue(queue_root, landing=landing, lease_timeout=0.3)
+            except cq.LeaseUnavailable:
+                final_results[name] = "backed-off"
+
+        t_f1 = threading.Thread(target=_final, args=("f1",))
+        t_f2 = threading.Thread(target=_final, args=("f2",))
+        t_f1.start()
+        t_f2.start()
+        t_f1.join(timeout=300)
+        t_f2.join(timeout=300)
+
+        n_total = n_pre + n_burst
+        done_files = list((queue_root / "done").glob("q-*.json"))
+        assert len(done_files) == n_total, f"{n_total} 项全 done 零丢失: {len(done_files)}"
+        assert list((queue_root / "dead").glob("q-*.json")) == [], "零死信"
+        assert list((queue_root / "pending").glob("q-*.json")) == [], "pending 排空"
+        assert list((queue_root / "processing").glob("q-*.json")) == [], "processing 无孤儿"
+
+        # 零双落：dev 恰 n_total 笔、每项 landed_id 唯一且都在 dev 历史
+        assert _dev_commit_count(tmp_repo) == n_total, "零双落（commit 数==项数）"
+        landed_ids = [json.loads(p.read_text(encoding="utf-8"))["landed_id"] for p in done_files]
+        assert len(set(landed_ids)) == n_total, "landed_id 全唯一（无重复落地）"
+        for lid in landed_ids:
+            r = _git(tmp_repo, "merge-base", "--is-ancestor", lid, "dev", check=False)
+            assert r.returncode == 0, f"landed_id {lid[:12]} 必须在 dev 历史"
+
+        # 单写者不变量（burst+双自举竞态全程落地窗内 dev 历史只经队列通道）
+        assert cql.assert_single_writer_dev_history(tmp_repo, since=base_sha) == []

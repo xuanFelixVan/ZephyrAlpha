@@ -179,6 +179,50 @@ _READ_RETRY_INTERVAL = 0.05  # 重试间隔 50ms × 20 = 1s 上限
 
 _DONE_TTL_DAYS_DEFAULT = 7.0  # 66 号 §12 Q3 已闭环：done 保留 7 天 TTL；dead 永不自动清理
 
+# ---------------------------------------------------------------------------
+# F2 前置②（2026-09-18 st-flashspeed，判据书 F2「前置（机读）」行）：跨域热文件
+# 单通道闸——域映射配置在案。S18-R3 签署后 k=4 分区通道的 drain 按域取队 MUST 咨
+# 询本路由：不变量=任一通道键任一时间点活跃 lease≤1（机读判据「lease 双写者窗口
+# =0」的落地基础）；热文件（注册表族/ROOR/AGENTS.md/standards.yaml）强制单一热
+# 通道跨域串行，杜绝多通道并发写注册表的 CAS 风暴。k=1 现状 drain 不咨询本路由
+# ——纯函数零行为变化，「闸在案」=配置+不变量+测试三件齐；主体通道池待 Owner 签。
+# ---------------------------------------------------------------------------
+HOT_CHANNEL_KEY = "hot"  # 热文件单一热通道（判据书 F2 前置：注册表/ROOR/AGENTS.md/standards.yaml）
+MIXED_CHANNEL_KEY = "shared"  # 跨域混合项兜底单通道（防跨域项撕裂多通道产生额外竞态面）
+_HOT_PATH_MARKERS = (
+    "docs/01_policies_and_standards/_registry/",  # 注册表族（capability/module/rule catalogs 等）
+    "docs/registry_of_registries.yaml",  # ROOR（注册表发现唯一真源）
+    "AGENTS.md",  # 宪法 L0
+    "standards.yaml",  # 标准真源
+)
+
+
+def channel_key_for_files(files: list[str]) -> str:
+    """队列项文件清单 → 通道路由键（F2 k=4 域映射配置；判据「同域冲突率不升」基础）。
+
+    规则（优先级降序）：
+    1. 含热文件（_HOT_PATH_MARKERS 任一命中）→ HOT_CHANNEL_KEY（单一热通道跨域串行）；
+    2. 全部文件同域 → 域键（src/zephyr/<域> 三级；其余=顶级目录）；
+    3. 跨域混合 → MIXED_CHANNEL_KEY（兜底单通道）。
+    不变量：同域同文件的双队列项必得同键（=同通道串行）——「同域同文件双通道并发」
+    压测的并发安全前提；lease O_EXCL 在通道内物化单写者。
+    """
+    norm = [str(f).replace("\\", "/") for f in files]
+    if any(marker in f for f in norm for marker in _HOT_PATH_MARKERS):
+        return HOT_CHANNEL_KEY
+    domains: set[str] = set()
+    for f in norm:
+        parts = [p for p in f.split("/") if p]
+        if not parts:
+            domains.add("/")
+        elif parts[0] == "src" and len(parts) > 2:
+            domains.add("/".join(parts[:3]))  # src/zephyr/<域>
+        else:
+            domains.add(parts[0])
+    if len(domains) == 1:
+        return domains.pop()
+    return MIXED_CHANNEL_KEY
+
 # 死信积压告警（2026-09-11 死信率告警最小落地，st-perf-plan-20260910）：
 # 阈值唯一真源=alert_threshold_registry.yaml（REG-ATH-001）THD-ALERT-003（积压项数）
 # /THD-ALERT-004（告警冷却窗口）；告警通道=task_board 专 task 死信标签（66 号 §6.4 同款）。
