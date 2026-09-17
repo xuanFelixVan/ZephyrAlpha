@@ -50,3 +50,18 @@ standards:
       correlation_gate_rho: 0.7          # ρ>0.7 合并算额度（§7 骨架既有裁定）
       preregistration: "criteria_hash 三道锁（时序/不可变/哈希），改判据=新 experiment_id（L4 D-L4 既有）"
     change_rule: "修标须重考历史：对全部在案切换决策用新尺重放，排序不变或变化可解释方可放行"
+  - std_id: STD-SIM-ACCESS-002
+    name_zh: 模拟盘准入组合门 v2（S5 定尺提案——修 STD-SIM-ACCESS-001 的 DSR 口径自相矛盾）
+    version: 1
+    status: draft   # AI 提案（kimi-audit 班次 S5）；draft→frozen 须附全量在架组合新旧尺重考报告
+    source: "docs/_working/kimi_audit/S5_定尺子.md（逐条裁定+反驳者记录+翻转清单）"
+    thresholds:
+      oos_sharpe_min: 1.5              # 不变
+      max_drawdown_max: 0.15           # 口径注记：日频收盘序列（盘中极值更深，另立监控位）
+      min_trades: 30                   # 语义修正：容量与成本计提证明（纪律位）；显著性归 DSR——30 笔仅在胜率≥65% 时 p<0.05，笔数不能当统计门
+      dsr_min: 0.5                     # 由 >0 提到 >0.5；**N 口径改预注册族 N_eff**（族=同批 intake/联赛/网格，封闭集含失败者）
+      dsr_n_caliber: "family_preregistered"  # 废累计 N 棘轮（N=4562 时 DSR>0 需年化 SR≥2.68=数学不可过，v1 自相矛盾实证）；全局账本保留为研究筛选侧折减披露位
+      combo_corr_max: 0.7              # 新增第三条腿①：组合内 ρ̄≤0.7（超者合并算一档，骨架 §7 先例）
+      capacity_evidence: "required"    # 新增第三条腿②：capacity_profile 产物必备
+      ann_turnover_1side_max: 12.0     # 新增第三条腿③：超限触发成本模型分层重估义务（非判死）
+    change_rule: "同 STD-SIM-ACCESS-001：修标须重考历史；本件 draft→frozen 前必须完成 v1→v2 全量重考并附翻转清单复核"
