@@ -28,15 +28,15 @@ updated: 2026-09-18
 | E1 | altdatamap 双提交并入 dev | ✅ | merge commit 含 5 文件+SOP v1.1.0 | `55a8b7a9ab` | 晨间注配方已执行 |
 | E2 | 产业链 T1：R1 精确化（官方对照表→补桥） | ✅ | 63 部门/104 行 official_map；抽 30 正确率 96.7%→103 行 verified=true；1 存疑软退役；58 部门 pending 人工池（图谱节点缺位不硬凑）；官方对照表无电子版已留证 | `71224c42a3` | 07 §1 R1 |
 | E3 | 产业链 T2：R5 IO 2020 回填 flow_wan/coefficient | ✅（核验制） | 实证 io_edge 自建表起 100% 非空（审计误报已更正 07 §7）；独立官方转存件五重核验偏差 5.6e-16；零纠偏；staging io_2020_* 四表留档 | `71224c42a3` | 07 §1 R5 |
-| E4 | 产业链 T4：3,171 无映射 symbol 反哺 ig_node_company | ⬜ | 反哺行数+抽检；宁缺毋假 | | 05 §7 B3 |
-| E5 | 产业链 T5：52 条 contains 桥抽 30 人工核验 | ⬜ | 30 条核验记录+错误率 ≤10% | | 07 §6 R1 预演 |
-| E6 | 产业链 T10：TSM placement 归一+14,070 listed_symbol（与 WP-0 单管线） | ⬜ | ig_entity_code_map 单管线写入；2330.TW 归一 | | 06 §8+st-igalpha 交接 |
+| E4 | 产业链 T4：3,171 无映射 symbol 反哺 | ✅（宁缺毋假版） | 实查 356 symbol：反哺 11 实体/62 边（全人工 curated）；245 无名不可判+100 低置信→人工池 345 | `06918f8911` | 05 §7 B3 |
+| E5 | 产业链 T5：52 条 contains 桥核验 | ✅ | 全 52 条判定：31 真→verified+10 错桥软退役+7 墓碑补 4 新桥+4 存疑留 unverified；正确率 73.1%<90% 只置真子集；桥覆盖 93→88/153 诚实收缩 | `06918f8911` | t5_contains_audit.csv |
+| E6 | 产业链 T10：TSM 归一+listed_symbol 补全 | ✅ | TSM.TW 残留 2 行归一 2330.TW；+66 listed+21 补 market；13,886 无法确证留空；单管线断言 86=86 | `06918f8911` | t10_report.json |
 | E7 | 产业链 T3：主营构成 2022-2025+product_def 词典挂 node_ref | ⬜ | node_ref 填充 ≥90% | | 07 §1 R3 |
 | E8 | 产业链 T6：ig_node_binding 建表+灌绑定 | ⬜ | DDL+绑定行数+抽检 | | 06 §8 |
 | E9 | alpha T9：研报喂链解锁 | ✅ | 根因=id→news_id 一行修；research 适配器（PDF 全文+meta 级联）；50/50 staged 零幻觉零 error，conf 0.9-0.95；未碰 ig_* | `2e789aa96b`+`0c4c249a06` | c_research_feed 台账 |
 | E10 | alpha T8：E4 送审（lane_chain_candidates.csv+intake 注册） | ⬜ | 消费点注册+csv schema 合规 | | a_mining_workbook §7 |
 | E11 | alpha T7：商品两任务端到端复验 | ✅ | spot 756→810 行（+54 同键幂等）；futures 117→234 行回满基线/9 品种 max=09-17；三脚本 self-check PASS | 实跑出证 | c94b3e44c3 基线 |
-| E12 | 数据线波1：D1 日历族+D2 股东户数+D3 宏观第一梯队 | ⬜ | 每区：增量任务+哨兵+抽检 20 条 | | 09 §1 |
+| E12 | 数据线波1：D1 日历族+D2 股东户数 ✅；D3 宏观在飞 | 🔄 | D2 断供段 +11,487 全补+切源 akshare；J5 议息新表 3,086 行；J4 派生 14,763 事件；J2 前瞻+1,475；J1/J9 验活；断供哨兵新件 6/6 绿 | `60f4e46bbb`+`d8419af8e6` | 09 §1 |
 | E13 | 数据线波2：D4 物理另类（油价三件）+D5 跨资产（Hyperliquid 先点火）+D6 行情 | ⬜ | 同上；Hyperliquid 首日快照自积启动 | | 09 §1 |
 | E14 | 数据线波3：D7 文本抽取+D8 质检收口 | ⬜ | 抽取置信度门+计分板刷新 | | 09 §1 |
 | E15 | D9 存量迁移（全夜后台，不占并发） | ⬜ | manifest+hash 抽检 5%+原目录双备份期 30 天 | | 10 SOP §E盘迁移 |
