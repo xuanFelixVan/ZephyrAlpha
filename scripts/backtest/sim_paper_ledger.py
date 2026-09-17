@@ -13,7 +13,9 @@
 #   模拟盘模式 mode 标记 replay_demo/sim_daily；
 #   多策略（S08 C1）：非内置引擎策略的开户行=signal=open（策略引擎未接线不伪造信号/收益，
 #   日账待翻译件重放接线），钱包额度=pf_alloc 分配快照 allocated_capital，链当日无行/表未建
-#   才回退 flat 初始资金且回退原因入 note（禁静默伪造额度），--from-registry 扫 lifecycle==sim 全部条目
+#   才回退 flat 初始资金且回退原因入 note（禁静默伪造额度），--from-registry 扫 lifecycle==sim 全部条目；
+#   WO-2a 危机闸 L3（2026-09-18）：crisis 日 panic entry→cash（持有/强平不动，存量不强平），
+#   判定复用 zephyr.pf_alloc.crisis_gate（现读 CH，零本地内存态），resolver 异常 fail-closed 拦 entry
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -66,11 +68,18 @@ def _q(sql: str):
 
 
 def run(mode: str, start: str, end: str, run_id: str | None = None,
-        strategy_id: str | None = None) -> dict:
+        strategy_id: str | None = None, *, crisis_resolver=None) -> dict:
     """内置引擎策略日账（strategy_id 缺省=STR-VREV-025，既有行为不变）。
 
     仅内置引擎策略（STRATEGY_ID，参数内联）有真实信号口径；传其他 strategy_id 会套用
     内置恐慌反弹参数——开户/多策略场景请走 ensure_wallet（signal=open 开户行），勿用本函数。
+
+    WO-2a 危机闸（L3 账本级，2026-09-18）：entry 分支前置按日危机拦截——crisis 日
+    panic 入场被拦 → signal 保持 'cash'，行 note 记 crisis_gate:entry_blocked；持有/
+    强平逻辑不动（裁定 §2 动作矩阵：存量不强平）。crisis_resolver 注入缝（测试用假件，
+    缺省=crisis_gate.resolve_crisis_state 现读 CH）；resolver 异常按 fail-closed 处理
+    （读不到≠安全，拦 entry 不拦持有）；gate 旁路（crisis_gate.yaml enabled=false）时
+    全程零调用。被拦日不出 sim_trade_log 事件（无交易发生），留痕走 crisis_gate_log。
     """
     sid = strategy_id or STRATEGY_ID
     run_id = run_id or f"sim-{mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
@@ -82,6 +91,36 @@ def run(mode: str, start: str, end: str, run_id: str | None = None,
     panic = (ret.shift(1) <= DROP_PREV) & (ret <= DROP_TODAY)
     dates = list(px.index)
     px_map = px["close"].to_dict()
+
+    # ── WO-2a 危机闸（L3 账本级）：按日 crisis 判定（带缓存，gate 旁路则零调用）──
+    try:
+        from zephyr.pf_alloc.crisis_gate import load_crisis_gate_config
+
+        crisis_enabled = load_crisis_gate_config().enabled
+    except Exception:  # noqa: BLE001 — 配置读不到按启用处理（判定入口失败≠安全）
+        crisis_enabled = True
+    resolver = crisis_resolver or _default_crisis_resolver
+    crisis_cache: dict = {}
+    crisis_blocked_days: list[str] = []
+
+    def _crisis_blocked(day_key: str) -> tuple[bool, str]:
+        """(是否拦 entry, 留痕说明)。resolver 异常=读不到≠安全 → fail-closed 拦截。"""
+        if not crisis_enabled:
+            return False, ""
+        if day_key not in crisis_cache:
+            try:
+                crisis_cache[day_key] = resolver(day_key)
+            except Exception as exc:  # noqa: BLE001 — fail-closed：拦 entry，note 留原因
+                crisis_cache[day_key] = None
+                logger.warning("crisis_resolver 异常（fail-closed 拦 entry）: %s", exc)
+                return True, f"crisis_gate:resolver_error({type(exc).__name__})"
+        cs = crisis_cache[day_key]
+        if cs is None:
+            return True, ""  # 异常原因已在首次求值时记 warning
+        if cs.is_crisis:
+            return True, f"crisis_gate:entry_blocked({cs.state},p_r10={cs.p_r10:.3f})"
+        return False, ""
+
     cash, shares, hold_day = INITIAL_CAPITAL, 0.0, 0
     entry_px = 0.0
     out_rows = []
@@ -90,6 +129,7 @@ def run(mode: str, start: str, end: str, run_id: str | None = None,
     for dt in dates:
         px_now = float(px_map[dt])
         signal = "cash"
+        note = ""
         if shares > 0:
             hold_day += 1
             signal = "holding"
@@ -102,24 +142,53 @@ def run(mode: str, start: str, end: str, run_id: str | None = None,
                 cash, shares, hold_day = proceeds, 0.0, 0
                 signal = "exit"
         elif bool(panic.loc[dt]):
-            buy_cost = cash * BUY_COST
-            shares = cash / px_now * (1 - BUY_COST)
-            entry_px = px_now
-            cash = 0.0
-            hold_day = 1
-            signal = "entry"
-            events.append([dt.strftime("%Y-%m-%d"), sid, SYMBOL, "entry",
-                           shares, px_now, buy_cost, 0.0,
-                           f"恐慌触发:上证两日跌幅达阈值({DROP_PREV}/{DROP_TODAY})", mode, run_id])
+            day_key = dt.strftime("%Y-%m-%d")
+            blocked, block_note = _crisis_blocked(day_key)
+            if blocked:
+                # WO-2a L3：crisis 日 panic 入场被拦 → signal='cash'（无交易，
+                # 不写 sim_trade_log 事件；持有/强平逻辑不动，存量不强平）
+                signal = "cash"
+                note = block_note
+                crisis_blocked_days.append(day_key)
+            else:
+                buy_cost = cash * BUY_COST
+                shares = cash / px_now * (1 - BUY_COST)
+                entry_px = px_now
+                cash = 0.0
+                hold_day = 1
+                signal = "entry"
+                events.append([dt.strftime("%Y-%m-%d"), sid, SYMBOL, "entry",
+                               shares, px_now, buy_cost, 0.0,
+                               f"恐慌触发:上证两日跌幅达阈值({DROP_PREV}/{DROP_TODAY})", mode, run_id])
         pos_val = shares * px_now
         equity = cash + pos_val
         daily_pnl = equity - prev_equity
         prev_equity = equity
         out_rows.append([dt.strftime("%Y-%m-%d"), sid, INITIAL_CAPITAL, round(cash, 2),
                          SYMBOL if shares > 0 else "", round(shares, 2), round(pos_val, 2),
-                         round(equity, 2), round(daily_pnl, 2), signal, mode, run_id, ""])
+                         round(equity, 2), round(daily_pnl, 2), signal, mode, run_id, note])
+    # 被拦日出声+留痕（裁定 D3/D4：失败不阻断账本主流程，函数内自兜底）
+    for day_key in crisis_blocked_days:
+        cs = crisis_cache.get(day_key)
+        if cs is None:
+            continue  # resolver 异常日已记 warning，不伪造 CrisisState 出声
+        from zephyr.pf_alloc.crisis_gate import alert_crisis_level, log_crisis_gate_row
+
+        alert_crisis_level("l3", trade_date=day_key, crisis_state=cs,
+                           detail="L3 entry→cash（恐慌反弹入场被危机闸拦截）")
+        log_crisis_gate_row(trade_date=day_key, crisis_state=cs,
+                            action_l1="not_wired", action_l2="not_applicable",
+                            action_l3="entry_to_cash")
     return {"rows": out_rows, "events": events, "final_equity": round(prev_equity, 2),
-            "days": len(dates), "entry_px_last": entry_px}
+            "days": len(dates), "entry_px_last": entry_px,
+            "crisis_blocked_days": crisis_blocked_days}
+
+
+def _default_crisis_resolver(day: str):
+    """缺省危机判定入口（lazy import：裸脚本场景不拖 pf_alloc 全链）。"""
+    from zephyr.pf_alloc.crisis_gate import resolve_crisis_state
+
+    return resolve_crisis_state(day)
 
 
 def pd_idx(sym: str, start: str, end: str):
