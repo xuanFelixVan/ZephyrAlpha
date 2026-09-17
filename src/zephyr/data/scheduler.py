@@ -1247,6 +1247,12 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.akshare_alt_provider import AkshareAltProvider
 
                 return AkshareAltProvider()
+            elif source == "alt_fx_ecb":
+                # L1.1 正门路由（夜班战役 2026-09-17，台账 §1.5）：上架流水线首源 ECB 汇率
+                # 由 Windows 任务旁路升格调度器正门（capability=fx_ecb_daily，槽位 daily_alt_fx）
+                from zephyr.data.implementations.fx_ecb_provider import FxEcbProvider
+
+                return FxEcbProvider()
             elif source == "alt_regime_signal":
                 # C-1 消费端首批（2026-09-14）：市场级另类 regime 信号计算器
                 # （F4 BDI 动量/F14 BTC 动量/F15 恐贪/F23 涨停情绪/F7 台风日历）

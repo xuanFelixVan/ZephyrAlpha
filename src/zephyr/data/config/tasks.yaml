@@ -3184,3 +3184,16 @@ tasks:
   symbols:
   extra:
     description: "商品现货价格与基差全量刷新（AKShare futures_spot_price_daily，自 2021-01-01 起回补——源数据限 2011+ 但逐日 HTTP 抓取，5 年窗口为 weekend_calibration 单批可行口径；同键幂等重放）"
+
+# ===== L1 上架流水线·正门班（夜班战役 st-autolnk-20260917b，台账 §1.5）=====
+- task_id: alt_fx_ecb_daily_incremental
+  table: c1_market.alt_fx_rate_ecb
+  source: alt_fx_ecb
+  schedule: daily_alt_fx
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: fx_ecb_daily
+  symbols:
+  extra:
+    description: "ECB 日频汇率增量（frankfurter.app 免 key 源，L1 上架流水线首个正门班；保守游标=各货币对最迟日取 min，任一对缺价下一班回查自愈；与 Windows 任务 ZephyrAlpha_AltFxECB 双轨并行，后者退役=挂单 H-06；ReplacingMergeTree 同键幂等）"

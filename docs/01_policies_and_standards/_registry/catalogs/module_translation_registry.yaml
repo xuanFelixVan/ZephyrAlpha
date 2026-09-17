@@ -50140,6 +50140,41 @@ entries:
   desc_zh: "daily_kline SUCCESS 后产出 T+1 三态概率/分位数/预期波动的盘后判定件，v0=历史条件统计基线，经 judgment_ledger 发射到 judgment_next_day_forecast"
   desc_en: ""
   plain_zh: "每天收盘数据齐了以后，它翻历史账找和今天最像的日子，统计他们第二天涨平跌的比例，给出明天上涨横盘下跌的概率和波动幅度预期，写进次日判定台账，收盘后自动结算对账。"
+- module_path: src/zephyr/plan_engine/daily_plan.py
+  domain_id: D_PLAN
+  name_zh: "晨间预案生成器"
+  name_en: "Daily Plan Generator"
+  desc_zh: "T 日收盘后产出 G+1 时段可测量触发式预案分支（v0 N=3）+历史同条件频率先验，经判定台账发射器落 judgment_daily_plan"
+  desc_en: ""
+  plain_zh: "每天收盘后自动写出明天的三种开局剧本（高开进攻、低开防御、平开震荡），每种剧本都带可测量的触发条件和历史概率，第二天盘中逐条对照，不靠感觉说话"
+- module_path: src/zephyr/plan_engine/scenario_classifier.py
+  domain_id: D_PLAN
+  name_zh: "盘中场景归类器"
+  name_en: "Scenario Classifier"
+  desc_zh: "60min bar 到达时按预案触发式逐场景求值，首穿记 scenario_hits 追加验证事实行（闭锁+确定性重放幂等）"
+  desc_en: ""
+  plain_zh: "盘中每小时对着昨天的剧本逐条核对今天走到哪一格，条件一旦命中就记下时间和价格；同一剧本只记第一次，重复核对不重复记账"
+- module_path: src/zephyr/plan_engine/close_verifier.py
+  domain_id: D_PLAN
+  name_zh: "收盘验证器"
+  name_en: "Close Verifier"
+  desc_zh: "T+1 收盘后定格 actual_scenario/plan_quality_score 追加 EOD 验证行，联结 P1 结算链自动回填预案结算列"
+  desc_en: ""
+  plain_zh: "收盘后给当天的预案定案打分：今天实际演的是哪个剧本、预案猜得准不准给一个质量分；剧本没覆盖的日子也如实记下来，不粉饰不硬凑"
+- module_path: src/zephyr/data/implementations/fx_ecb_provider.py
+  domain_id: D_DATA
+  name_zh: "ECB 汇率正门 Provider"
+  name_en: ""
+  desc_zh: "source=alt_fx_ecb/capability=fx_ecb_daily 的正门采集件，保守游标防对级数据洞"
+  desc_en: ""
+  plain_zh: "调度器正门里的 ECB 汇率抓取员：到点去 frankfurter.app 拿三种汇率，哪家没到货就只记到最迟那家的日期，下一班再补，绝不假装满仓"
+- module_path: scripts/backtest/lane_g_stomach_intake.py
+  domain_id: D_BACKTEST
+  name_zh: "车道G-全网搜索进货（胃点菜）"
+  name_en: "lane_g_stomach_intake"
+  desc_zh: "消化情报收件箱→本地LLM抽取可检验策略假说→带出生证卸E1进货台账（⑥号车道）"
+  desc_en: ""
+  plain_zh: "把搜索引擎读来的论文摘要，让本地小模型翻译成一条条可以考试验证的策略点子，登记进策略进货台账"
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -181,3 +181,11 @@ schedules:
     cron: "*/10 15-25 9 * * 0-4"
     executor: realtime
     description: "集合竞价高频层——9:15-9:25每10秒抓取五档盘口快照，用于主力行为分析"
+
+  # L12 另类宏观日频层：工作日 23:35（ECB 参考汇率发布≈北京 22:15-23:15 之后）
+  # L1 上架流水线首个正门槽位（夜班战役台账 §1.5）；假日缺价由保守游标下一班自愈
+  daily_alt_fx:
+    cron: "35 23 * * 0-4"
+    executor: default
+    max_instances: 1
+    description: "另类宏观日频层——ECB 汇率（alt_fx_ecb/frankfurter.app）盘后拉取"
