@@ -31635,6 +31635,42 @@ creation_tokens:
   token: sharpe2-prep-node-triage-20260916
   created_by: st-sharpe2gc-20260917
   capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/a_reexam/2026-09-17-e4-h2-reexam-report.md
+  token: sharpe2-prep-2026-09-17-e4-h2-reexam-report-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/a_reexam/_merged_results.csv
+  token: sharpe2-prep--merged-results-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/a_reexam/capacity_profile.csv
+  token: sharpe2-prep-capacity-profile-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/a_reexam/correlation_matrix.csv
+  token: sharpe2-prep-correlation-matrix-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/a_reexam/dsr_top20.csv
+  token: sharpe2-prep-dsr-top20-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/a_reexam/gap_accounts.json
+  token: sharpe2-prep-gap-accounts-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/a_reexam/old_vs_new_ranking.csv
+  token: sharpe2-prep-old-vs-new-ranking-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/a_reexam/teaming_schemes.csv
+  token: sharpe2-prep-teaming-schemes-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
+- file: docs/_working/sharpe2_prep/a_reexam/gap_accounts.yaml
+  token: sharpe2-prep-gap-accounts-20260917
+  created_by: st-sharpe2gc-20260917
+  capability: sharpe2_prep
 - file: scripts/governance/apply_resource_plan.py
   token: resource-plan-apply-apply-resource-plan-20260916
   created_by: st-govmap-20260915
