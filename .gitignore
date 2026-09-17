@@ -606,6 +606,11 @@ scripts/data/*
 !scripts/data/sz_open_data/
 scripts/data/sz_open_data/*
 !scripts/data/sz_open_data/*.py
+# L1 上架流水线设备件收编（夜班战役 st-autolnk-20260917b 治本：前批 commit message
+# 写了"豁免两件"但 .gitignore 实未合入——两件长期脱管未跟踪，暴露于清扫风险。
+# 方向=收编入库增强追踪，非排除；先例=sz_open_data 同模式）
+!scripts/data/onboard_source.py
+!scripts/data/fx_ecb_ingest.py
 
 # 2026-09-09 工作区卫生(#ARCH-308 分类处置): 运行时产物与数据源二进制留档不入库
 data/asset_index/offrepo_scan_report.json
