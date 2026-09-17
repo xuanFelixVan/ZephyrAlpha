@@ -554,17 +554,42 @@ tasks:
   extra:
     description: "限售解禁增量（AKShare stock_restricted_release_detail_em）"
 
+  fallback_sources:
+  - source: akshare       # 同源不同窗口的 restricted_shares 任务在侧翼（东财同 API 族），主任务挂则全族挂
+    capability: restricted_shares
+
+  # --- J2 解禁前瞻（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1）---
+  # 增量任务只追 [last_key, today] 历史窗口；解禁日历核心价值在前向（被动盘抛压预告），
+  # 本任务按日拉取 [today, today+365d] 前瞻窗口，写同表（ReplacingMergeTree 同键幂等）。
+- task_id: share_unlock_forward_refresh
+  table: c3_fundamental.share_unlock
+  source: akshare
+  schedule: weekend_calibration
+  incremental: true
+  date_col: unlock_date
+  dependencies: []
+  capability: share_unlock_forward
+  symbols:
+  extra:
+    description: "限售解禁前瞻（AKShare stock_restricted_release_detail_em，窗口=[today, today+365d]，provider 内自定窗口）"
+
+  fallback_sources: []    # 显式置空：与 share_unlock_incremental 同接口同源，无独立副源（东财唯一免费口径）
+
 - task_id: shareholder_incremental
   table: c3_fundamental.shareholder_count
-  source: miniqmt
-  schedule: daily_event
+  source: akshare         # 2026-09-18 切源：miniqmt 清退（xtdata 股东人数）→ 东财 datacenter
+                          # RPT_HOLDERNUM_DET 按公告日(HOLD_NOTICE_DATE)窗口（st-datapack-20260918，
+                          # 09 清单 D2 断供续采；「任务存在≠管线活着」SOP 反例本体治本）
+  schedule: daily_capital
   incremental: true
   date_col: announce_date
   dependencies: []
-  capability: shareholder
+  capability: shareholder_count
   symbols:
   extra:
-    description: "股东数据增量（十大股东/股东人数）"
+    description: "股东户数增量（东财 datacenter RPT_HOLDERNUM_DET 公告日窗口；原 miniqmt 十大股东/股东人数已随清退退役）"
+
+  fallback_sources: []    # 显式置空：东财 datacenter 是唯一免费结构化口径（tushare stk_holdernumber 需 2000 分权限未开通）
 
 - task_id: analyst_forecast_incremental
   table: c3_fundamental.analyst_forecast
@@ -1907,6 +1932,44 @@ tasks:
   symbols:
   extra:
     description: "预约披露计划增量（AKShare stock_disclosure_report_cninfo，按日期范围查全部沪深京股票）"
+
+  # ============== 北向资金季度持仓快照（19 号 memo，2026-08-15 AI-NORTH-001 施工）==============
+
+  # --- J5 央行议息日历（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1）---
+  # AKShare macro_bank_*_interest_rate 11 接口（金十口径），每接口一次全量低频拉取，
+  # 日更幂等覆盖：预约场次行（rate_value=NULL）在决议公布后由下次拉取补值=自愈语义。
+- task_id: rate_decision_calendar_refresh
+  table: c1_market.rate_decision_calendar
+  source: akshare
+  schedule: daily_capital
+  incremental: false        # 全量拉取（~2500 行/11 央行低频序列，ReplacingMergeTree 同键替换）
+  date_col: decision_date
+  dependencies: []
+  capability: rate_decision_calendar
+  symbols:
+  extra:
+    description: "央行议息日历（AKShare macro_bank_usa/euro/china/japan/english/australia/india/newzealand/russia/switzerland/brazil_interest_rate ×11）"
+
+  fallback_sources: []    # 显式置空：金十为唯一结构化口径；calendar_event.fomc_meeting 手工台账在侧翼（单央行仅日期）
+
+  # --- J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1）---
+  # 月度成分快照差分 → inclusion/exclusion 事件（000300/000905/000906/000852/000985）。
+  # effective_date 为派生近似（6/12 月=中证第 2 个周五次一交易日规则；其余=上一快照后首个交易日），
+  # announcement_date=新快照日（PIT 诚实锚：变动自快照日起才可观察）。
+- task_id: index_adjustment_derive
+  table: c1_market.index_adjustment
+  source: internal
+  schedule: monthly_static
+  incremental: false        # 全量重算幂等（快照全集差分，~1.5 万事件）
+  date_col: effective_date
+  dependencies:
+  - index_constituent_refresh
+  capability: index_adjustment_derive
+  symbols:
+  extra:
+    description: "指数调仓事件派生（c1_market.index_constituent 月度快照差分，internal compute，快照源=baostock/巨潮月度成分）"
+
+  fallback_sources: []    # 显式置空：internal 派生（源=index_constituent 表，其自身有 akshare fallback）
 
   # ============== 北向资金季度持仓快照（19 号 memo，2026-08-15 AI-NORTH-001 施工）==============
 - task_id: northbound_hold_snapshot_refresh

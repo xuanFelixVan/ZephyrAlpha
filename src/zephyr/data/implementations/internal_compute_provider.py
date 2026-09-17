@@ -117,6 +117,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "daban_engine_load",  # 打板四引擎应用层负载日批（T3⑧/挖矿 LUE-1，口径真源=ex_core.daban_load_producer）
         "kline_index_breadth",  # 指数涨跌家数内生聚合回填真表（车道 G 广度治本 2026-09-16）
         "breadth_freshness_sentinel",  # 广度断供哨兵→promotion 页（车道 G 施工项3 同日）
+        "index_adjustment_derive",  # J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918，月度快照差分）
     }
 )
 
@@ -143,6 +144,15 @@ _SQL_READ_HK_TRADING_DAYS = (
     "AND cal_date >= '{start}' "
     "AND cal_date <= '{end}' "
     "ORDER BY cal_date"
+)
+
+# J4 指数调仓派生（2026-09-18 夜班 st-datapack-20260918）：月度成分快照全集
+# （000300/000905/000906/000852/000985 五指数，2005-04 起；weight 一并携带作"调整后权重"）
+# 表名经 TableRegistry 真源派生（#ARCH-CH-024：禁硬编码表名字符串）
+_TBL_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
+_SQL_READ_INDEX_CONSTITUENT_SNAPSHOTS = (
+    "SELECT index_code, trade_date, symbol, weight FROM " + _TBL_INDEX_CONSTITUENT +
+    " ORDER BY index_code, trade_date, symbol"
 )
 
 _SQL_READ_KLINE = "SELECT {select_cols} FROM {table} WHERE {where_clause} ORDER BY {order_by}"
@@ -236,6 +246,73 @@ def _derive_lpr_announcement(
         if range_start <= lpr_day <= range_end:
             rows.append((lpr_day, "lpr_announcement", f"{year}-{month:02d} LPR公布日", "internal"))
     return rows
+
+
+def _parse_index_constituent_snapshots(
+    tsv: str,
+) -> dict[str, list[tuple[datetime.date, dict[str, float | None]]]]:
+    """解析成分快照 TSV → {index_code: [(快照日, {symbol: weight})]}（快照日升序）。"""
+    snapshots: dict[str, list[tuple[datetime.date, dict[str, float | None]]]] = {}
+    for line in tsv.strip().splitlines():
+        parts = line.split("\t")
+        if len(parts) < 4:
+            continue
+        index_code, trade_date_str, symbol = parts[0], parts[1], parts[2]
+        weight_str = parts[3]
+        weight: float | None = None
+        if weight_str and weight_str not in ("\\N", ""):
+            try:
+                weight = float(weight_str)
+            except ValueError:
+                weight = None
+        by_date = snapshots.setdefault(index_code, [])
+        if by_date and by_date[-1][0].isoformat() == trade_date_str:
+            by_date[-1][1][symbol] = weight
+        else:
+            by_date.append((datetime.date.fromisoformat(trade_date_str), {symbol: weight}))
+    return snapshots
+
+
+def _make_next_trading_day_lookup(bisect_mod, trading_days_sorted):
+    """构造"首个严格晚于 d 的交易日"查找闭包（bisect 依赖注入便于测试）。"""
+
+    def _next_trading_day_strict(d: datetime.date) -> datetime.date | None:
+        i = bisect_mod.bisect_right(trading_days_sorted, d)
+        return trading_days_sorted[i] if i < len(trading_days_sorted) else None
+
+    return _next_trading_day_strict
+
+
+def _derive_adjustment_rows(
+    snapshots: dict[str, list[tuple[datetime.date, dict[str, float | None]]]],
+    next_trading_day,
+) -> list[tuple]:
+    """相邻快照差分生成调整事件行（生效日=中证规则日/快照后首个交易日推定）。"""
+    rows: list[tuple] = []
+    for index_code, by_date in snapshots.items():
+        for (d_prev, prev_set), (d_next, next_set) in zip(by_date, by_date[1:]):
+            effective = _infer_adjustment_effective_date(d_prev, d_next, next_trading_day)
+            if effective is None:
+                continue
+            added = sorted(set(next_set) - set(prev_set))
+            removed = sorted(set(prev_set) - set(next_set))
+            for sym in added:
+                rows.append((d_next.isoformat(), effective.isoformat(), index_code, sym, "inclusion", next_set[sym], "snapshot_diff"))
+            for sym in removed:
+                rows.append((d_next.isoformat(), effective.isoformat(), index_code, sym, "exclusion", None, "snapshot_diff"))
+    return rows
+
+
+def _infer_adjustment_effective_date(d_prev: datetime.date, d_next: datetime.date, next_trading_day) -> datetime.date | None:
+    """生效日推定：6/12 月（中证定期调整窗口）=第 2 个周五次一交易日（收盘后实施，
+    次一交易日生效）；其余月份=上一快照后首个交易日（不规则变动近似下界）。"""
+    if d_next.month in (6, 12):
+        second_friday = _nth_weekday_of_month(d_next.year, d_next.month, 4, 2)
+        effective = next_trading_day(second_friday) if second_friday else None
+        if effective is not None and effective <= d_prev:
+            return next_trading_day(d_prev)
+        return effective
+    return next_trading_day(d_prev)
 
 
 def _dedupe_and_sort_events(rows: list[tuple]) -> list[tuple]:
@@ -421,6 +498,9 @@ class InternalComputeProvider(IngestProviderBase):
             # 广度断供哨兵（车道 G 施工项3 2026-09-16）：扫真表零值/缺行→OpsAlertFeed
             # （promotion 页），无 CH 落表（table=null 分析型任务），symbols=null=注册表全量
             CapabilityContract("breadth_freshness_sentinel", supports_symbols_null=True),
+            # J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918）：月度快照差分，
+            # 全市场事件（无 symbols 概念），全量重算幂等
+            CapabilityContract("index_adjustment_derive", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -481,6 +561,9 @@ class InternalComputeProvider(IngestProviderBase):
             return
         if capability == "breadth_freshness_sentinel":
             yield from self._fetch_breadth_freshness_sentinel(payload)
+            return
+        if capability == "index_adjustment_derive":
+            yield from self._fetch_index_adjustment_derive(payload)
             return
 
         # 按 table 路由：calendar_event 走日历事件派生，hk_trade_calendar 走 XHKG 日历，
@@ -1151,6 +1234,68 @@ class InternalComputeProvider(IngestProviderBase):
                 elapsed_sec=time.monotonic() - start_time,
                 error=f"calendar_event: {e}",
             )
+
+    # ---- J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1） ----
+
+    def _fetch_index_adjustment_derive(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """指数成分股调整事件派生（快照差分），写入 c1_market.index_adjustment。
+
+        源数据：c1_market.index_constituent 月度成分快照（000300.SH 2005-04 起 /
+        000905.SH+000906.SH 2007-01 起 / 000852.SH 2014-10 起 / 000985.SH 2026-08 起）。
+        相邻快照差分 → inclusion/exclusion 事件（巨潮快照源的月度粒度，非官方调样公告）。
+
+        effective_date 口径（声明为派生近似，非公告原值）：
+            - 快照月属 6/12 月（中证定期调整窗口）→ 生效日 = 当月第 2 个周五的
+              下一交易日（中证定期调整实施规则）；
+            - 其余月份（退市/特殊剔除等不规则变动）→ 生效日 = 上一快照后首个交易日。
+        announcement_date 口径 = 新快照日（该变动自快照日起才可被观察——PIT 诚实锚）。
+        weight = 新快照中的权重（inclusion 携带，exclusion 置 NULL）。
+
+        幂等：全量重算（ReplacingMergeTree ORDER BY (index_code, effective_date, symbol)）。
+        拆分说明：解析/推定/生成三段抽为模块级函数（NO-HIGH-COMPLEXITY gate）。
+        """
+        import bisect
+
+        from zephyr.data import ch_reader
+
+        start_time = time.monotonic()
+        table = get_registry().table("market_index_adjustment")
+        columns = ["announcement_date", "effective_date", "index_code", "symbol", "action", "weight", "data_source"]
+        today = datetime.date.today()
+
+        tsv = ch_reader.query(_SQL_READ_INDEX_CONSTITUENT_SNAPSHOTS)
+        if not tsv or not tsv.strip():
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key=today.isoformat(),
+                elapsed_sec=time.monotonic() - start_time,
+                error="index_constituent 无快照数据，无法派生调整事件",
+            )
+            return
+
+        snapshots = _parse_index_constituent_snapshots(tsv)
+        trading_days_sorted = sorted(set(
+            self._read_trading_days(datetime.date(1990, 1, 1), today + datetime.timedelta(days=370))
+        ))
+        next_trading_day = _make_next_trading_day_lookup(bisect, trading_days_sorted)
+
+        rows = _derive_adjustment_rows(snapshots, next_trading_day)
+        rows.sort(key=lambda r: (r[1], r[2], r[3], r[4]))
+        self._log.info(
+            "index_adjustment 派生完成：%d 指数 / %d 事件（快照差分 %s~%s）",
+            len(snapshots), len(rows),
+            min((d for ev in snapshots.values() for d, _ in ev), default=today),
+            today,
+        )
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=today.isoformat(),
+            elapsed_sec=time.monotonic() - start_time,
+        )
 
     # ---- calendar_event 派生子方法（拆分以降低循环复杂度，NO-HIGH-COMPLEXITY gate）----
 

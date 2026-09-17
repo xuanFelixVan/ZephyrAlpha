@@ -422,6 +422,9 @@ from schemas.categories.judgment.judgment_intraday_market_state import JUDGMENT_
 from schemas.categories.judgment.judgment_next_day_forecast import JUDGMENT_NEXT_DAY_FORECAST_DDL
 from schemas.categories.judgment.judgment_daily_plan import JUDGMENT_DAILY_PLAN_DDL
 from schemas.categories.judgment.judgment_plan_verification import JUDGMENT_PLAN_VERIFICATION_DDL
+# J5 央行议息日历（2026-09-18 夜班，st-datapack-20260918，altdata_line D1 波1）：
+# 11 央行×决议值结构化数据集，DDL 真源 schemas/categories/market/market_rate_decision_calendar.py
+from schemas.categories.market.market_rate_decision_calendar import RATE_DECISION_CALENDAR_DDL
 
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
@@ -507,6 +510,8 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.judgment_next_day_forecast", JUDGMENT_NEXT_DAY_FORECAST_DDL),
     ("c1_market.judgment_daily_plan", JUDGMENT_DAILY_PLAN_DDL),
     ("c1_market.judgment_plan_verification", JUDGMENT_PLAN_VERIFICATION_DDL),
+    # J5 央行议息日历（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1）
+    ("c1_market.rate_decision_calendar", RATE_DECISION_CALENDAR_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -1076,6 +1081,8 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "judgment_next_day_forecast": "MergeTree",
     "judgment_daily_plan": "MergeTree",
     "judgment_plan_verification": "MergeTree",
+    # J5 央行议息日历（2026-09-18 夜班 st-datapack-20260918）：低频决议按 (bank_code, decision_date) 幂等
+    "rate_decision_calendar": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

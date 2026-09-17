@@ -233,6 +233,22 @@ def _run_special_schedule(
 
         result = run_catchup_guard(scheduler)
         return {"catchup_guard": result.get("success", False)}
+    # L13 数据断供哨兵层：表侧 max(date) 停更检测（MOD-L00-004-SS，2026-09-18 夜班）
+    # 与 catchup_guard（调度侧档期对账）分工：本层=表内数据新鲜度（SOP §10.2 停更阈值）。
+    if schedule_name == "data_supply_sentinel":
+        from zephyr.data.supply_sentinel import run_supply_sentinel
+
+        try:
+            result = run_supply_sentinel(alerter=scheduler._alerter)
+        except Exception as exc:  # noqa: BLE001 — 哨兵故障降级告警，不炸调度器
+            scheduler._alerter.notify(
+                "data_supply_sentinel",
+                f"断供哨兵执行异常: {str(exc)[:200]}",
+                level="ERROR",
+                source="supply_sentinel",
+            )
+            return {"data_supply_sentinel": False}
+        return {"data_supply_sentinel": bool(result.get("ok", False))}
     # 夜间情绪窗层：MOD-INT-NEWS-NIGHT 日频接线（2026-09-10，known_data_gaps
     # news_sentiment_window_no_scheduler_wiring 治本）。惰性导入 intelligence 域写入器；
     # 任何异常降级 alerter 告警，不炸调度器。

@@ -189,3 +189,12 @@ schedules:
     executor: default
     max_instances: 1
     description: "另类宏观日频层——ECB 汇率（alt_fx_ecb/frankfurter.app）盘后拉取"
+
+  # L13 数据断供哨兵层：每日 06:50（表侧 max(date) 停更检测，MOD-L00-004-SS）
+  # 与 L10.7 catchup_guard(05:30 调度侧对账) 分工：本层=表内数据新鲜度（SOP §10.2 停更阈值）。
+  # 诞生背景=股东户数断供两月无人知（事件日期表被 L11 日频口径强制跳过的盲区）。
+  # 含周末运行：停更检测须在周末继续盯（周末断供周一才报=重演两月盲区）。
+  data_supply_sentinel:
+    cron: "50 6 * * *"
+    executor: default
+    description: "数据断供哨兵——事件日历/慢频表 max(date) 停更检测（配置=config/data_supply_sentinel.yaml，告警经 Alerter）"

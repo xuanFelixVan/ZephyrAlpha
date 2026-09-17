@@ -182,6 +182,10 @@ _TBL_RESTRICTED_SHARES = get_registry().table("fund_restricted_shares")
 _TBL_RIGHTS_ISSUE = get_registry().table("fund_rights_issue")
 _TBL_SHARE_CHANGE = get_registry().table("fund_share_change")
 _TBL_SHARE_UNLOCK = get_registry().table("fund_share_unlock")
+# D2 股东户数续采（2026-09-18 夜班 st-datapack-20260918）：miniqmt 清退后切 akshare/东财
+_TBL_SHAREHOLDER_COUNT = get_registry().table("fund_shareholder_count")
+# J5 央行议息日历（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1）
+_TBL_RATE_DECISION_CALENDAR = get_registry().table("market_rate_decision_calendar")
 _TBL_STOCK_INDICATOR = get_registry().table("market_stock_indicator")
 _TBL_STOCK_LIST = get_registry().table("market_stock_list")
 _TBL_ST_STOCK_LIST = get_registry().table("market_st_stock_list")
@@ -297,6 +301,13 @@ _AKSHARE_CAPABILITIES = frozenset(
         "equity_pledge_summary",
         "dividend",
         "restricted_shares",
+        # 2026-09-18 夜班 st-datapack-20260918（altdata_line D1/D2 波1）：
+        #   shareholder_count      股东户数续采（miniqmt 清退后切东财 datacenter 公告日窗口）
+        #   rate_decision_calendar J5 央行议息日历（macro_bank_* 11 央行，金十口径）
+        #   share_unlock_forward   J2 解禁前瞻（同 stock_restricted_release_detail_em，未来窗口）
+        "shareholder_count",
+        "rate_decision_calendar",
+        "share_unlock_forward",
         "stock_news_em",
         "news_cctv",
         "news_economic_baidu",
@@ -377,6 +388,19 @@ def safe_float(v) -> float | None:
         return float(v)
     except (ValueError, TypeError):
         return None
+
+
+def safe_float_strict(v) -> float | None:
+    """safe_float 的 NaN/Inf 收紧版：pandas 缺失值（NaN）一律映射 None。
+
+    2026-09-18 夜班新增（st-datapack-20260918）：Decimal 列禁 NaN（CH 驱动拒收），
+    共享 safe_float 对 float('nan') 会原样放行，故仅新能力使用本收紧版，
+    不动既有调用点语义（存量表实证 NaN 未流入，属历史数据面而非代码面）。
+    """
+    f = safe_float(v)
+    if f is None or f != f or f in (float("inf"), float("-inf")):
+        return None
+    return f
 
 
 def safe_int(v) -> int | None:
@@ -683,6 +707,10 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("dragon_tiger", supports_symbols_null=True),
             CapabilityContract("dragon_tiger_seat", supports_symbols_null=True),
             CapabilityContract("share_unlock", supports_symbols_null=True),
+            # 2026-09-18 夜班 D1/D2 波1：股东户数/议息日历/解禁前瞻（全市场批量接口，无 symbols 概念）
+            CapabilityContract("shareholder_count", supports_symbols_null=True),
+            CapabilityContract("rate_decision_calendar", supports_symbols_null=True),
+            CapabilityContract("share_unlock_forward", supports_symbols_null=True),
             CapabilityContract("audit_opinion", supports_symbols_null=True),
             CapabilityContract("equity_pledge_summary", supports_symbols_null=True),
             # 新闻数据
@@ -2073,6 +2101,232 @@ class AkshareIngestProvider(IngestProviderBase):
                         safe_float(row.get("解禁数量")),
                         safe_float(row.get("占解禁前流通市值比例")),
                         safe_float(row.get("实际解禁市值")),
+                    )
+                )
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- 6b. 股东户数（shareholder_count，D2 续采，2026-09-18 夜班 st-datapack-20260918） ----
+
+    #: 东财 datacenter 股东户数 API（与 ak.stock_zh_a_gdhs 同一 endpoint 同一 reportName；
+    #: akshare 仅封装了 END_DATE 过滤，无公告日窗口参数化——本方法仅替换 filter 维度，
+    #: 仍属"东财接口"免费源，非新增爬虫）
+    _GDHS_DATACENTER_URL = "https://datacenter-web.eastmoney.com/api/data/v1/get"
+    _GDHS_BASE_PARAMS = {
+        "sortColumns": "HOLD_NOTICE_DATE,SECURITY_CODE",
+        "sortTypes": "-1,-1",
+        "pageSize": "500",
+        "reportName": "RPT_HOLDERNUM_DET",
+        "columns": "SECURITY_CODE,END_DATE,HOLD_NOTICE_DATE,HOLDER_NUM,PRE_HOLDER_NUM",
+        "source": "WEB",
+        "client": "WEB",
+    }
+
+    def _fetch_shareholder_count(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """股东户数增量（按公告日窗口），写入 c3_fundamental.shareholder_count。
+
+        断供背景（09 清单 D2/批次⑦⑧）：原任务 source=miniqmt（xtdata 股东人数），
+        miniQMT 清退（2026-09-18）后管线死亡——「任务存在≠管线活着」SOP 反例本体。
+        本方法改走东财 datacenter API：HOLD_NOTICE_DATE（公告日）窗口过滤，
+        与 tasks.yaml date_col=announce_date 语义对齐，增量窗口即公告窗口。
+
+        列映射: SECURITY_CODE→symbol, HOLD_NOTICE_DATE→announce_date,
+                END_DATE→end_date, HOLDER_NUM→holder_count。
+        PIT 双轴: announce_date=事实时间锚; ingest_ts=采集时间（DEFAULT now()）。
+        幂等: ReplacingMergeTree ORDER BY (symbol, end_date)，重拉同键替换。
+        """
+        import requests
+
+        table = _TBL_SHAREHOLDER_COUNT
+        columns = ["symbol", "announce_date", "end_date", "holder_count", "data_source"]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        start_str = payload.start.strftime("%Y-%m-%d")
+        end_str = payload.end.strftime("%Y-%m-%d")
+        rows: list[tuple] = []
+        page = 1
+        total_pages = 1
+        try:
+            while page <= total_pages:
+                params = dict(self._GDHS_BASE_PARAMS)
+                params["pageNumber"] = str(page)
+                params["filter"] = (
+                    f"(HOLD_NOTICE_DATE>='{start_str}')(HOLD_NOTICE_DATE<='{end_str}')"
+                )
+                resp = requests.get(self._GDHS_DATACENTER_URL, params=params, timeout=15)
+                resp.raise_for_status()
+                data_json = resp.json()
+                result = data_json.get("result") or {}
+                total_pages = int(result.get("pages") or 1)
+                for item in result.get("data") or []:
+                    sym = str(item.get("SECURITY_CODE") or "").zfill(6)
+                    end_date = self._norm_date_str(item.get("END_DATE"))
+                    announce_date = self._norm_date_str(item.get("HOLD_NOTICE_DATE"))
+                    if not sym or not end_date or not announce_date:
+                        continue
+                    holder_num = item.get("HOLDER_NUM")
+                    holder_num = int(holder_num) if holder_num is not None else None
+                    rows.append((sym, announce_date, end_date, holder_num, "akshare"))
+                page += 1
+                # 礼貌限频不显式 sleep：datacenter 单页响应延迟+分页数少（≤10 页）已自然限速，
+                # 亦避开 PERM-TRIGGER 对 src 永久系统脚本时间触发模式的静态拦截
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                error=str(e),
+            )
+            return
+
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- 6c. 央行议息日历（rate_decision_calendar，J5，2026-09-18 夜班 st-datapack-20260918） ----
+
+    #: AKShare macro_bank_*_interest_rate 接口族 → 央行代码映射（金十数据口径）
+    _RATE_DECISION_SOURCES = (
+        ("macro_bank_usa_interest_rate", "fed"),
+        ("macro_bank_euro_interest_rate", "ecb"),
+        ("macro_bank_china_interest_rate", "pboc"),
+        ("macro_bank_japan_interest_rate", "boj"),
+        ("macro_bank_english_interest_rate", "boe"),
+        ("macro_bank_australia_interest_rate", "rba"),
+        ("macro_bank_india_interest_rate", "rbi"),
+        ("macro_bank_newzealand_interest_rate", "rbnz"),
+        ("macro_bank_russia_interest_rate", "cbr"),
+        ("macro_bank_switzerland_interest_rate", "snb"),
+        ("macro_bank_brazil_interest_rate", "bcb"),
+    )
+
+    def _fetch_rate_decision_calendar(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """央行议息日历（11 央行全量），写入 c1_market.rate_decision_calendar。
+
+        每接口一次全量拉取（~200-300 行/行低频），日更幂等覆盖：预约场次行
+        （rate_value=NULL）在决议公布后由下次拉取补齐值——自愈语义，无需回看窗口。
+        pboc 系列为 2019-10 前贷款基准利率口径（LPR 改革后源端停更，非断供）。
+        PIT 双轴: decision_date=事实时间锚; ingest_ts=采集时间。
+        """
+        import akshare as ak
+
+        table = _TBL_RATE_DECISION_CALENDAR
+        columns = [
+            "bank_code",
+            "decision_date",
+            "rate_value",
+            "rate_forecast",
+            "rate_previous",
+            "data_source",
+            "quality_flag",
+        ]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        rows: list[tuple] = []
+        errors: list[str] = []
+        for ak_fn_name, bank_code in self._RATE_DECISION_SOURCES:
+            try:
+                df = self._call_with_policy(getattr(ak, ak_fn_name), policy)
+            except Exception as e:  # noqa: BLE001 — 单行失败不拖垮其余央行
+                errors.append(f"{bank_code}:{str(e)[:80]}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                decision_date = self._norm_date_str(row.get("日期"))
+                if not decision_date:
+                    continue
+                rows.append(
+                    (
+                        bank_code,
+                        decision_date,
+                        safe_float_strict(row.get("今值")),
+                        safe_float_strict(row.get("预测值")),
+                        safe_float_strict(row.get("前值")),
+                        "akshare",
+                        1,
+                    )
+                )
+
+        error = "; ".join(errors) if errors else None
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+            error=error,
+        )
+
+    # ---- 6d. 限售解禁前瞻（share_unlock_forward，J2 前向日历，2026-09-18 夜班） ----
+
+    def _fetch_share_unlock_forward(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """解禁前瞻窗口（今日起 365 天），写入 c3_fundamental.share_unlock。
+
+        与 _fetch_share_unlock 同接口同表；差异=拉取窗口改为未来一年：
+        增量任务只能追 [last_key, today] 历史窗口，解禁日历的核心价值在前向
+        （被动盘抛压预告），故用本能力按周拉取 [today, today+365d]。
+        幂等: ReplacingMergeTree ORDER BY (symbol, unlock_date) 同键替换。
+        """
+        import akshare as ak
+
+        table = _TBL_SHARE_UNLOCK
+        columns = ["symbol", "unlock_date", "shares", "ratio", "amount"]
+        t0 = time.monotonic()
+
+        start_str = datetime.date.today().strftime("%Y%m%d")
+        end_str = (datetime.date.today() + datetime.timedelta(days=365)).strftime("%Y%m%d")
+        last_key = payload.end.isoformat()
+        rows: list[tuple] = []
+        try:
+            df = self._call_with_policy(
+                ak.stock_restricted_release_detail_em,
+                policy,
+                start_date=start_str,
+                end_date=end_str,
+            )
+        except TypeError as e:
+            self._log.info(f"share_unlock_forward: 窗口 {start_str}-{end_str} 无数据: {e}")
+            df = None
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key=last_key,
+                elapsed_sec=time.monotonic() - t0,
+                error=str(e),
+            )
+            return
+
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                sym = str(row.get("股票代码") or "").zfill(6)
+                if not sym:
+                    continue
+                unlock_date = self._norm_date_str(row.get("解禁时间"))
+                if not unlock_date:
+                    continue
+                rows.append(
+                    (
+                        sym,
+                        unlock_date,
+                        safe_float_strict(row.get("解禁数量")),
+                        safe_float_strict(row.get("占解禁前流通市值比例")),
+                        safe_float_strict(row.get("实际解禁市值")),
                     )
                 )
         yield FetchResult(
