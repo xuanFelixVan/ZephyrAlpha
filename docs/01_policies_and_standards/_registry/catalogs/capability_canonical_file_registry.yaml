@@ -28035,6 +28035,34 @@ creation_tokens:
   token: kimi-audit-s13--20260917
   created_by: kimi-audit
   capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/A-01_编排器八项打包裁.md
+  token: kimi-audit-a-01--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/A-02_卖出族整族挂起.md
+  token: kimi-audit-a-02--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/A-03_切换器默认翻转.md
+  token: kimi-audit-a-03--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/C-01_C-02_破坏性清理两批.md
+  token: kimi-audit-c-01-c-02--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/C-05_方法论五选型.md
+  token: kimi-audit-c-05--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/D-01_注册表门位口径统一.md
+  token: kimi-audit-d-01--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/G-01_system_master_12项封挂.md
+  token: kimi-audit-g-01-system-master-12-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
 - file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
   token: auction-derive-intake-20260917-0300-20260916
   created_by: st-auction-bridge-20260917
