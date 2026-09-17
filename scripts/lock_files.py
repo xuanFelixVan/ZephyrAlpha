@@ -46,7 +46,8 @@ lock_files.py —— AI 对话文件锁协议（硬规则执行工具）
   python scripts/lock_files.py release-batch conv-abc --files-from .runtime/tmp/files.txt --no-warn  # 批量释放
   python scripts/lock_files.py release-all conv-abc                           # 批量释放
   python scripts/lock_files.py list [--session conv-abc]                      # 列出锁（可按持有者过滤）
-  python scripts/lock_files.py cleanup                                       # 清理死锁
+  python scripts/lock_files.py cleanup                                       # 清理死锁 + R-10 死会话遗物自动回收（--no-salvage 关闭）
+  python scripts/lock_files.py salvage sess-001 [--dry-run]                  # R-10 死会话遗物回收（双证判死→merge abort+stash归档+释放claim）
 
 AI 施工铁律：
   任何文件修改操作前 MUST 执行 check → 被锁则拒绝操作
@@ -59,7 +60,7 @@ AI 施工铁律：
   再 os.replace 原子替换，防崩溃半成品。
 
 SSoT: quality_standard.md 维度 D-A 编码安全（扩展）
-Version: 2.2.0
+Version: 2.3.0
 """
 
 from __future__ import annotations
@@ -782,7 +783,7 @@ def cmd_release_all(owner_id: str) -> int:
     return 0
 
 
-def cmd_cleanup() -> int:
+def cmd_cleanup(repo_root: str | Path | None = None, auto_salvage: bool = True) -> int:
     _ensure_lock_root()
     with _registry_mutex() as acquired:
         if not acquired:
@@ -790,6 +791,13 @@ def cmd_cleanup() -> int:
             return 1
         registry = _load_registry()
         locks = registry.get("locks", {})
+        # R-10：候选=清扫前全部锁的持有者（须在清理循环前捕获——刚清掉的死锁
+        # 所属会话同样可能有 MERGE_HEAD/staged 遗物待回收）。死会话判定与 git
+        # 回收操作在 Mutex 外做（回收含 git 子进程，5s Mutex 临界区放不下；
+        # 判证失败=零副作用跳过）
+        salvage_candidates = sorted(
+            {str(info.get("owner_id")) for info in locks.values() if isinstance(info, dict) and info.get("owner_id")}
+        )
         cleaned = []
         for file_path in list(locks.keys()):
             lock_dir = _lock_dir(file_path)
@@ -808,7 +816,469 @@ def cmd_cleanup() -> int:
     else:
         print("CLEAN — 无死锁需要清理")
 
+    # R-10 死会话遗物自动回收（lane G1，2026-09-18）：cleanup 是同族家务位
+    # （RULE-GUARDIAN 班前必跑）。双证判死在 salvage_dead_session 内部——
+    # 活会话/证据不足/归属不明一律跳过，cleanup 语义不因回收失败而改变。
+    if auto_salvage:
+        root = Path(repo_root) if repo_root else REPO_ROOT
+        candidates = set(salvage_candidates)
+        try:
+            # 注册表侧死会话一并扫描（覆盖「零 claim 纯 MERGE_HEAD 晾置」遗物形态）
+            if str(_SRC_ROOT) not in sys.path:
+                sys.path.insert(0, str(_SRC_ROOT))
+            from zephyr.security.access_control.session_concurrency import (
+                SessionInfo,
+                SessionRegistry,
+                _is_session_alive,
+            )
+
+            data = SessionRegistry(root).load()
+            now = time.time()
+            for sid, d in data.items():
+                try:
+                    if not _is_session_alive(SessionInfo.from_dict(d), now):
+                        candidates.add(sid)
+                except Exception:
+                    continue
+        except Exception:
+            pass  # registry 不可达——claim 侧候选仍处理（降级不阻断 cleanup）
+        for sid in sorted(candidates):
+            try:
+                r = salvage_dead_session(sid, repo_root=root)
+            except Exception as e:  # noqa: BLE001 — 单个候选回收异常不拖累其余
+                print(f"SALVAGE-ERROR — {sid}: {type(e).__name__}: {e}")
+                continue
+            if r.dead_confirmed:
+                print(
+                    f"SALVAGED — 死会话 {sid} 遗物已回收"
+                    f"（merge={r.merge_abort}, stash={len(r.stashed_paths)}件, "
+                    f"释放claim={len(r.released_locks)}+.ailocks/{len(r.released_session_files)}.registry）"
+                )
+                for note in r.notes:
+                    print(f"  注意: {note}")
+
     return 0
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# R-10 死会话遗物回收 + R-04 失败 claim TTL 收窄
+# （lane G1，2026-09-18；真源 docs/_working/kimi_audit/S18_提交链路根因表.md R-10/R-04 行）
+#
+# R-10 病灶：会话死亡无遗物回收——merge 状态/staged/claim 三件套无托管
+# （e19bc24c 实证：并发会话 merge 到一半死亡，MERGE_HEAD 晾置阻塞全部提交）。
+# 治本：双证判死（①SessionRegistry 心跳/注册表证死 ②该会话全部 claim TTL 过期，
+# 缺一不动——防误收活会话，S18 R-10 反例红线），证死后三件套一并回收：
+#   ① 主区 MERGE_HEAD 归属该死会话 → git merge --abort（被并分支内容零损失）
+#   ② 其 claim 路径的 staged/WIP 改动 → git stash push 归档（禁丢弃，可 pop 恢复）
+#   ③ 释放其全部 claim（.ailocks + SessionRegistry 两登记处，T10 教训：两处都要放）
+# 触发位选择：cleanup 自动扫描（同族家务，班前必跑）+ salvage 显式子命令——
+# 不进 gateway pre-commit：门禁链 P50 已 46.4s（S18 R-03），回收是低频家务，
+# 不该让每笔提交为它付墙钟。
+#
+# R-04 配套：shorten_claim_ttl——claim 释放从「finally 无条件」改为「成功才释放、
+# 失败保留」后，原「失败释放防锁尸」动机由收窄 TTL（默认 300s，git_commit.py
+# --failed-claim-ttl 参数化）+ 既有 stale 回收 + 本条 R-10 回收三层接管。
+# ══════════════════════════════════════════════════════════════════════════════
+
+SALVAGE_MERGE_GRACE_SECONDS = 300.0  # MERGE_HEAD mtime 归属窗口宽限（会话活动窗 ±5min）
+
+
+class SalvageResult:
+    """R-10 死会话回收结果（机读 to_dict + CLI 打印两用）。"""
+
+    def __init__(self, session_id: str) -> None:
+        self.session_id = session_id
+        self.dead_confirmed = False
+        self.evidence1 = ""  # ①心跳/注册表证死
+        self.evidence2 = ""  # ②全部 claim TTL 过期
+        self.merge_abort = "skipped"  # aborted | skipped | not_attributed | failed | dry-run
+        self.merge_head_sha = ""
+        self.stash_ref = ""
+        self.stashed_paths: list[str] = []
+        self.released_locks: list[str] = []
+        self.released_session_files: list[str] = []
+        self.notes: list[str] = []
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "session_id": self.session_id,
+            "dead_confirmed": self.dead_confirmed,
+            "evidence1": self.evidence1,
+            "evidence2": self.evidence2,
+            "merge_abort": self.merge_abort,
+            "merge_head_sha": self.merge_head_sha,
+            "stash_ref": self.stash_ref,
+            "stashed_paths": self.stashed_paths,
+            "released_locks": self.released_locks,
+            "released_session_files": self.released_session_files,
+            "notes": self.notes,
+        }
+
+
+def _salvage_audit(record: dict[str, Any]) -> None:
+    """回收审计落盘（.ailocks/salvage_audit.jsonl，fail-open 不阻断回收）。"""
+    try:
+        audit_path = LOCK_ROOT / "salvage_audit.jsonl"
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(audit_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + chr(10))
+    except Exception:
+        pass
+
+
+def _session_claims(session_id: str) -> dict[str, dict[str, Any]]:
+    """.ailocks registry 中该持有者全部 claim（归一化路径 → 条目）。"""
+    return {
+        fp: info
+        for fp, info in _load_registry().get("locks", {}).items()
+        if isinstance(info, dict) and info.get("owner_id") == session_id
+    }
+
+
+def _raw_session_entry(repo_root: Path, session_id: str) -> tuple[Any | None, bool]:
+    """读 SessionRegistry 原始条目（绕过 get_session「死即 None」语义——
+    回收恰恰要区分「条目在但已死」与「查无此会话」）。
+
+    Returns:
+        (SessionInfo | None, 条目是否存在)。registry 不可读 → (None, False)。
+    """
+    try:
+        if str(_SRC_ROOT) not in sys.path:
+            sys.path.insert(0, str(_SRC_ROOT))
+        from zephyr.security.access_control.session_concurrency import (
+            SessionInfo,
+            SessionRegistry,
+        )
+
+        data = SessionRegistry(repo_root).load()
+        if session_id not in data:
+            return None, False
+        return SessionInfo.from_dict(data[session_id]), True
+    except Exception:
+        return None, False
+
+
+def _alive_sessions(repo_root: Path) -> list[Any] | None:
+    """只读列出存活 SessionInfo（raw load + _is_session_alive 过滤，无 list_active 写副作用）。
+
+    Returns:
+        None=registry 不可读（归属判定按「未知」处理——拒绝 abort，防误收活会话）。
+    """
+    try:
+        if str(_SRC_ROOT) not in sys.path:
+            sys.path.insert(0, str(_SRC_ROOT))
+        from zephyr.security.access_control.session_concurrency import (
+            SessionInfo,
+            SessionRegistry,
+            _is_session_alive,
+        )
+
+        data = SessionRegistry(repo_root).load()
+        now = time.time()
+        return [info for info in (SessionInfo.from_dict(d) for d in data.values()) if _is_session_alive(info, now)]
+    except Exception:
+        return None
+
+
+def _death_evidence(
+    session_id: str,
+    claims: dict[str, dict[str, Any]],
+    repo_root: Path,
+    now: float,
+) -> tuple[bool, str, str, Any | None]:
+    """双证判死（缺一不回收——S18 R-10 反例红线：误收活会话）。
+
+    证据①（心跳/注册表证死）：
+      - registry 有条目且 _is_session_alive=False（心跳超 90s / PID 亡 / TTL 超）→ 成立
+      - registry 无条目 → 进程证据兜底：≥1 条 claim 且全部 claim PID 死/零才成立
+        （零 claim 且无条目=无任何死亡证据 → 不成立）
+    证据②（全部 claim TTL 过期）：
+      - 有 .ailocks claim：全部 expires_at < now 才成立（任一未过期 → 不回收——
+        会话可能处于心跳间隙但 claim 新鲜，正在干活）
+      - 无 .ailocks claim：SessionRegistry held_files 无 TTL，仅当证据①是
+        「registry 条目证死」时成立（裁定#252 锁存活=会话存活：条目死 → 持有可释放）
+
+    Returns:
+        (双证齐全, 证据①描述, 证据②描述, SessionInfo|None)
+    """
+    info, present = _raw_session_entry(repo_root, session_id)
+    ev1 = False
+    ev1_desc = ""
+    if present and info is not None:
+        try:
+            if str(_SRC_ROOT) not in sys.path:
+                sys.path.insert(0, str(_SRC_ROOT))
+            from zephyr.security.access_control.session_concurrency import _is_session_alive
+
+            ev1 = not _is_session_alive(info, now)
+        except Exception:
+            ev1 = False  # 判活设施异常=无法证死（fail-closed，方向=防误收）
+        ev1_desc = f"registry:{'dead' if ev1 else 'alive'}"
+    else:
+        pids = [c.get("pid", 0) for c in claims.values()]
+        if claims and all((not p) or int(p) <= 0 or not is_pid_alive(int(p)) for p in pids):
+            ev1 = True
+            ev1_desc = "registry-absent:all-claim-pids-dead"
+        else:
+            ev1_desc = "registry-absent:no-process-evidence"
+
+    if claims:
+        unexpired = [fp for fp, c in claims.items() if float(c.get("expires_at") or 0.0) >= now]
+        ev2 = not unexpired
+        ev2_desc = f"claims:{len(claims) - len(unexpired)}/{len(claims)} expired"
+    else:
+        held = list(getattr(info, "held_files", None) or []) if info is not None else []
+        ev2 = (not held) or (ev1 and ev1_desc == "registry:dead")
+        ev2_desc = "claims:none" if not held else f"session-held:{len(held)} releasable={ev2}"
+    return ev1 and ev2, ev1_desc, ev2_desc, info
+
+
+def _main_merge_head_path(repo_root: Path) -> Path:
+    """主区 MERGE_HEAD 路径（回收面只覆盖主区——worktree 物理隔离，各自收尾）。"""
+    return repo_root / ".git" / "MERGE_HEAD"
+
+
+def _merge_head_attributed_to(
+    repo_root: Path,
+    session_id: str,
+    info: Any | None,
+    claims: dict[str, dict[str, Any]],
+    now: float,
+) -> tuple[bool, str]:
+    """主区 MERGE_HEAD 归属判定（保守——任一不确定即不归属、拒绝 abort）。
+
+    双条件：
+      a) 无「发起时间先于 MERGE_HEAD」的存活会话——班后 cleanup 的当前会话
+         start_time 晚于晾置 MERGE_HEAD mtime，天然不挡道；而 merge 进行中
+         的会话 start_time 必早于 mtime → 挡住 abort（防误收）。
+      b) 死会话活动窗覆盖 MERGE_HEAD mtime
+         （start_time-grace ≤ mtime ≤ max(last_heartbeat, last_activity)+grace）。
+    """
+    mh = _main_merge_head_path(repo_root)
+    if not mh.is_file():
+        return False, "no-merge-head"
+    try:
+        mtime = mh.stat().st_mtime
+    except OSError:
+        return False, "merge-head-stat-failed"
+    alive = _alive_sessions(repo_root)
+    if alive is None:
+        return False, "registry-unreadable"
+    grace = SALVAGE_MERGE_GRACE_SECONDS
+    owners = [s for s in alive if float(getattr(s, "start_time", 0.0) or 0.0) <= mtime + grace]
+    if owners:
+        return False, f"alive-sessions-predate-merge:{[s.session_id for s in owners][:5]}"
+    if info is not None:
+        t0 = float(getattr(info, "start_time", 0.0) or 0.0)
+        t1 = max(
+            float(getattr(info, "last_heartbeat", 0.0) or 0.0),
+            float(getattr(info, "last_activity", 0.0) or 0.0),
+        )
+    else:
+        t0 = min((float(c.get("timestamp", now)) for c in claims.values()), default=now)
+        t1 = max(
+            (float(c.get("timestamp", 0.0)) + float(c.get("ttl_s", 0.0)) for c in claims.values()),
+            default=0.0,
+        )
+    if t0 and mtime < t0 - grace:
+        return False, f"merge-head-predates-session(mtime<{t0:.0f})"
+    if t1 and mtime > t1 + grace:
+        return False, f"merge-head-after-session-activity(mtime>{t1:.0f})"
+    return True, "attributed"
+
+
+def _stash_claimed_paths(repo_root: Path, session_id: str, rel_paths: list[str]) -> tuple[str, list[str]]:
+    """死会话 claim 路径的 staged/WIP 改动归档 stash。
+
+    pathspec 限定——只动该会话名下文件，禁全量 stash 误卷他人 WIP；
+    归档不丢弃（禁 git stash drop），stash 可用 pop/apply 恢复。
+    无实际改动=幂等跳过（返回空 ref）。
+
+    Returns:
+        (stash_ref, 实际有改动被归档的路径)。
+    """
+    try:
+        st = run_subprocess_hidden(
+            ["git", "status", "--porcelain", "--", *rel_paths],
+            cwd=str(repo_root),
+            timeout=60,
+        )
+        if st.returncode != 0:
+            return "", []
+        changed = [ln[3:].strip().strip('"') for ln in st.stdout.splitlines() if ln.strip()]
+        if not changed:
+            return "", []
+        msg = f"dead-session salvage {session_id}"
+        r = run_subprocess_hidden(
+            ["git", "stash", "push", "-m", msg, "--", *rel_paths],
+            cwd=str(repo_root),
+            timeout=120,
+        )
+        if r.returncode != 0 or "No local changes" in (r.stdout or ""):
+            return "", []
+        ref = run_subprocess_hidden(
+            ["git", "rev-parse", "-q", "--verify", "refs/stash"],
+            cwd=str(repo_root),
+            timeout=30,
+        )
+        return (ref.stdout.strip() if ref.returncode == 0 else "refs/stash"), changed
+    except Exception:
+        return "", []
+
+
+def _force_release_locks(session_id: str, rel_paths: list[str]) -> list[str]:
+    """释放该持有者全部 .ailocks 锁（锁目录 + registry 条目，摘除走 Mutex 临界区）。
+
+    死会话专用——绕过 _release_prepare 的归属校验（持有者已死，无法自释）。
+    """
+    released: list[str] = []
+    for fp in rel_paths:
+        shutil.rmtree(_lock_dir(fp), ignore_errors=True)
+        released.append(_normalize_path(fp))
+    if released:
+        _remove_many_from_registry(released)
+    return released
+
+
+def _force_release_session_registry(repo_root: Path, session_id: str, info: Any | None) -> list[str]:
+    """释放 SessionRegistry 侧持有并注销死会话条目（第二登记处——T10 教训两处都要放）。"""
+    try:
+        if str(_SRC_ROOT) not in sys.path:
+            sys.path.insert(0, str(_SRC_ROOT))
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        registry = SessionRegistry(repo_root)
+        held = list(getattr(info, "held_files", None) or [])
+        if held:
+            registry.release_files_batch(session_id, held)
+        registry.unregister(session_id)
+        return held
+    except Exception:
+        return []
+
+
+def salvage_dead_session(
+    session_id: str,
+    *,
+    repo_root: str | Path | None = None,
+    now: float | None = None,
+    dry_run: bool = False,
+) -> SalvageResult:
+    """R-10 死会话遗物回收主入口：双证判死 → 三件套回收，全程审计。
+
+    三件套：①主区归属该会话的 MERGE_HEAD → git merge --abort（被并分支零损失）；
+    ②其 claim 路径 staged/WIP → git stash push 归档（禁丢弃，可 pop）；
+    ③释放全部 claim（.ailocks + SessionRegistry 两登记处）。
+    双证缺一 → 整体不动；MERGE_HEAD 归属不明 → 仅跳过 abort，claim 释放照常
+    （锁体系证据独立成立；git 状态保守留给人工）。
+    dry_run=True 只判证与归因，不动 git/锁。
+    """
+    res = SalvageResult(session_id)
+    root = Path(repo_root) if repo_root else REPO_ROOT
+    now = time.time() if now is None else now
+    claims = _session_claims(session_id)
+
+    confirmed, ev1, ev2, info = _death_evidence(session_id, claims, root, now)
+    res.evidence1, res.evidence2 = ev1, ev2
+    if not confirmed:
+        res.notes.append("双证不齐全，不回收（防误收活会话）")
+        _salvage_audit({"ts": now, "action": "salvage-skip", **res.to_dict()})
+        return res
+    res.dead_confirmed = True
+
+    # ① MERGE_HEAD abort（归属不明/abort 失败均如实记录，绝不误动）
+    mh = _main_merge_head_path(root)
+    if mh.is_file():
+        try:
+            res.merge_head_sha = mh.read_text(encoding="utf-8", errors="replace").strip()[:40]
+        except OSError:
+            pass
+        attributed, why = _merge_head_attributed_to(root, session_id, info, claims, now)
+        if not attributed:
+            res.merge_abort = "not_attributed"
+            res.notes.append(f"MERGE_HEAD 归属不明（{why}），保留待人工处置——禁误 abort 活会话 merge")
+        elif dry_run:
+            res.merge_abort = "dry-run"
+        else:
+            try:
+                r = run_subprocess_hidden(["git", "merge", "--abort"], cwd=str(root), timeout=60)
+                if r.returncode == 0 or not mh.is_file():
+                    res.merge_abort = "aborted"
+                else:
+                    res.merge_abort = "failed"
+                    res.notes.append(f"merge --abort rc={r.returncode}: {(r.stderr or '')[:200]}")
+            except Exception as e:  # noqa: BLE001 — 回收动作异常不阻断 claim 释放
+                res.merge_abort = "failed"
+                res.notes.append(f"merge --abort 异常: {type(e).__name__}: {e}")
+
+    # ② stash 归档（merge 存续且未 abort 时跳过——merge index 神圣，禁 stash 搅动）
+    paths = sorted(claims)
+    if paths and not _main_merge_head_path(root).is_file():
+        if dry_run:
+            res.stashed_paths = paths
+        else:
+            res.stash_ref, res.stashed_paths = _stash_claimed_paths(root, session_id, paths)
+            if not res.stashed_paths:
+                res.notes.append("claim 路径无 staged/WIP 改动，stash 幂等跳过")
+    elif paths:
+        res.notes.append("merge 存续未 abort——staged 归档跳过（merge index 神圣）")
+
+    # ③ 释放 claim（双登记处；dry-run 不动）
+    if not dry_run:
+        res.released_locks = _force_release_locks(session_id, paths)
+        res.released_session_files = _force_release_session_registry(root, session_id, info)
+
+    _salvage_audit({"ts": now, "action": "salvage", "dry_run": dry_run, **res.to_dict()})
+    return res
+
+
+def cmd_salvage(session_id: str, *, dry_run: bool = False, repo_root: str | Path | None = None) -> int:
+    """CLI：salvage <session_id> [--dry-run]——R-10 死会话遗物显式回收。"""
+    _ensure_lock_root()
+    res = salvage_dead_session(session_id, dry_run=dry_run, repo_root=repo_root)
+    print(json.dumps(res.to_dict(), ensure_ascii=False, indent=2))
+    if dry_run:
+        return 0
+    return 0 if res.dead_confirmed else 1
+
+
+def shorten_claim_ttl(owner_id: str, file_paths: list[str], ttl_s: float) -> list[str]:
+    """R-04 治本①配套（lane G1）：提交失败保留 claim 的 TTL 收窄兜底。
+
+    claim 释放语义切换为「成功才释放、失败保留」后，原「失败释放防锁尸」动机由
+    本函数接管：把该持有者对清单内文件的 claim 过期点收窄为 now+ttl_s（建议 300s，
+    git_commit.py --failed-claim-ttl / ZEPHYR_FAILED_CLAIM_TTL_S 参数化）——
+    会话死亡/放弃时过期即走既有 stale 回收通道（_is_stale + reclaim 审计），
+    锁尸有兜底；存活会话重试通常在 TTL 内完成，互不影响。
+
+    Returns:
+        实际收窄的归一化路径列表（仅该持有者名下且锁存在的件；他人 claim 不动）。
+    """
+    now = time.time()
+    rewritten: list[str] = []
+    for fp in file_paths:
+        lock_dir = _lock_dir(fp)
+        owner = _read_owner(lock_dir)
+        if owner is None or owner.get("owner_id") != owner_id:
+            continue
+        owner["expires_at"] = now + ttl_s
+        owner["retention"] = "commit-failed-retained"  # 审计标记：区别于常规 acquire TTL
+        try:
+            _owner_file(lock_dir).write_text(json.dumps(owner, ensure_ascii=False, indent=2), encoding="utf-8")
+            rewritten.append(_normalize_path(fp))
+        except OSError:
+            pass
+    if rewritten:
+        with _registry_mutex() as acquired:
+            if acquired:
+                registry = _load_registry()
+                locks = registry.get("locks", {})
+                for fp in rewritten:
+                    if fp in locks:
+                        locks[fp]["expires_at"] = now + ttl_s
+                        locks[fp]["retention"] = "commit-failed-retained"
+                _save_registry(registry)
+    return rewritten
 
 
 def cmd_list(session_id: str | None = None) -> int:
@@ -999,7 +1469,8 @@ def _print_help() -> None:
     print("  release-batch <owner> --files-from <清单> [--no-warn]   批量释放（一次 Mutex 摘除）")
     print("  release-all <owner>       释放该持有者的所有锁")
     print("  list      [--session <owner>]  列出活跃锁（可按持有者过滤）")
-    print("  cleanup                   清理所有死锁（TTL过期/PID已死）")
+    print("  cleanup [--no-salvage]    清理所有死锁（TTL过期/PID已死）+ R-10 死会话遗物自动回收")
+    print("  salvage <session_id> [--dry-run]  R-10 死会话遗物显式回收（双证判死→merge abort+stash归档+释放claim）")
     print("  guard-write <file> <session> [--task <desc>]  写前自动门禁（check+acquire原子操作）")
 
 
@@ -1153,7 +1624,10 @@ def main() -> int:
         return cmd_list(_parse_opt(args, "--session"))
 
     if cmd == "cleanup":
-        return cmd_cleanup()
+        return cmd_cleanup(auto_salvage=("--no-salvage" not in args))
+
+    if cmd == "salvage" and len(args) >= 2:
+        return cmd_salvage(args[1], dry_run=("--dry-run" in args))
 
     if cmd == "guard-write" and len(args) >= 3:
         task = _parse_opt(args, "--task") or ""

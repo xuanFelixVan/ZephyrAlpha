@@ -185,6 +185,92 @@ _POLL_INTERVAL = 0.1
 # S3-C: claim 快照持久化目录（FOREIGN_CHANGE gate 崩溃恢复）
 _CLAIM_SNAPSHOTS_DIR = ".runtime/claim_snapshots"
 
+# R-04 治本②（lane G1，2026-09-18；真源 docs/_working/kimi_audit/S18_提交链路根因表.md R-04 行）：
+# 派生写入归属台账。病灶：reconciler/integrity 派生产物写入无归属——脱离触发会话后
+# 混入下一提交者的 staged 集（CLAIM-REQUIRED ×50/24h 两大来源之一）。台账把每笔派生
+# 写入钉回触发会话名下（producer 溯源），供门禁/审计区分「匿名外来变更」与「已归因
+# 派生写入」。fail-open：台账失败永不阻断写入方。
+_DERIVED_WRITE_LEDGER_REL = ".runtime/gate_audit/derived_write_attribution.jsonl"
+
+
+def record_derived_write(
+    project_root: str | Path,
+    session_id: str,
+    files: list[str],
+    *,
+    source: str,
+    committed: bool,
+) -> None:
+    """登记一笔派生写入归属（模块级真源；gateway 方法为薄封装）。
+
+    Args:
+        project_root: 仓库根。
+        session_id: 触发会话（producer——派生写入归属方）。
+        files: 被写入的文件（绝对/相对路径均可，统一存仓库相对 POSIX 路径）。
+        source: 写入点标识（auto_commit / rules_integrity_re_register / reconciler 名）。
+        committed: True=已随 auto-commit 落 HEAD；False=留在工作区（残留也可溯源）。
+    """
+    try:
+        root = Path(project_root)
+        ledger = root / _DERIVED_WRITE_LEDGER_REL
+        ledger.parent.mkdir(parents=True, exist_ok=True)
+        rels: list[str] = []
+        for f in files:
+            try:
+                rels.append(os.path.relpath(str(f), str(root)).replace("\\", "/"))
+            except ValueError:
+                rels.append(str(f).replace("\\", "/"))
+        record = {
+            "ts": time.time(),
+            "session_id": session_id,
+            "source": source,
+            "committed": bool(committed),
+            "files": rels,
+        }
+        with open(ledger, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 台账 fail-open，永不阻断写入方
+        logger.debug("record_derived_write failed (non-blocking)", exc_info=True)
+
+
+def lookup_derived_write_owners(project_root: str | Path, files: list[str]) -> dict[str, dict]:
+    """查台账：仓库相对 POSIX 路径 → 最新一条归属记录 {session_id, source, committed, ts}。
+
+    供 CLAIM-REQUIRED/FOREIGN-CHANGE 类判定与事后审计区分「已归因派生写入」与
+    匿名外来变更。台账缺失/不可读 → 空 dict（调用方按无归因处理，语义不放大）。
+    """
+    root = Path(project_root)
+    ledger = root / _DERIVED_WRITE_LEDGER_REL
+    rels: list[str] = []
+    for f in files:
+        try:
+            rels.append(os.path.relpath(str(f), str(root)).replace("\\", "/"))
+        except ValueError:
+            rels.append(str(f).replace("\\", "/"))
+    wanted = set(rels)
+    out: dict[str, dict] = {}
+    try:
+        with open(ledger, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    rec = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                for rel in rec.get("files") or []:
+                    if rel in wanted:
+                        out[rel] = {
+                            "session_id": rec.get("session_id", ""),
+                            "source": rec.get("source", ""),
+                            "committed": bool(rec.get("committed")),
+                            "ts": rec.get("ts", 0.0),
+                        }
+    except OSError:
+        return {}
+    return out
+
 # Stage 4 公共化：模块级公共别名（primary 仍为私有定义，公共别名为同对象引用）。
 GATEWAY_ENV = _GATEWAY_ENV
 GLOBAL_LOCK_FILE = _GLOBAL_LOCK_FILE
@@ -1105,6 +1191,15 @@ class GitCommitGateway:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             pass
 
+    # ── R-04 治本② 派生写入归属（lane G1，2026-09-18）──
+    def record_derived_write(self, session_id: str, files: list[str], *, source: str, committed: bool) -> None:
+        """登记派生写入归属（薄封装；真源=模块级 record_derived_write）。"""
+        record_derived_write(self.project_root, session_id, files, source=source, committed=committed)
+
+    def derived_write_owners(self, files: list[str]) -> dict[str, dict]:
+        """查派生写入归属台账（薄封装；真源=模块级 lookup_derived_write_owners）。"""
+        return lookup_derived_write_owners(self.project_root, files)
+
     def capture_baseline_diff(self, abs_file: str) -> str:
         """ARCH-054: 捕获文件相对 HEAD 的 diff 基线。
 
@@ -1762,6 +1857,11 @@ class GitCommitGateway:
         _abs_db = str(self.project_root / _db_rel)
         _msg = (
             "chore(integrity): post-flush re-register rules_integrity_db (capture final HEAD, 时序竞态治本 2026-08-02)"
+        )
+        # R-04②（lane G1）：integrity 派生写入先落归属台账再提交——即使 auto-commit
+        # 失败、工作区残留 DB 改动，仍可溯源到触发会话（不混入下一提交者 staged 集）
+        record_derived_write(
+            self.project_root, session_id, [_abs_db], source="rules_integrity_re_register", committed=False
         )
         _cr = self._commit_auto(session_id, [_abs_db], _msg)
         if _cr.status == "OK":
@@ -3156,6 +3256,9 @@ class GitCommitGateway:
                             message=f"git commit failed (auto-commit): {commit_err}",
                         )
                     os.environ[_GATEWAY_ENV] = "1"
+                    # R-04②（lane G1）：reconciler auto-commit 派生写入钉回触发会话名下
+                    # （batcher flush 亦汇入本函数——单点挂账覆盖全部 reconciler 派生提交）
+                    record_derived_write(self.project_root, session_id, existing, source="auto_commit", committed=True)
                     logger.info(
                         "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d",
                         commit_hash,
@@ -3205,6 +3308,8 @@ class GitCommitGateway:
                         message=f"git commit failed (auto-commit): {commit_err}",
                     )
                 os.environ[_GATEWAY_ENV] = "1"
+                # R-04②（lane G1）：fail-open 降级路径同样挂账（派生写入归属不因锁降级丢失）
+                record_derived_write(self.project_root, session_id, existing, source="auto_commit", committed=True)
                 logger.info(
                     "GitCommitGateway: auto-commit 成功 hash=%s marker=%s files=%d",
                     commit_hash,

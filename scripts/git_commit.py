@@ -28,6 +28,12 @@
     # --message-file 成功即删（方案 A 治本 #ARCH-MSG-FILE-RESIDUE-001）：commit 成功
     # （exit 0）自动 unlink；失败（exit≠0）保留供重试。诊断场景用 --keep-message-file 保留。
 
+R-04 治本①（lane G1，2026-09-18）：claim 生命周期与提交事务对齐——成功
+（OK/NOTHING_TO_COMMIT）才释放 claim；失败（gate 阻断/锁超时/异常/预检快败）
+保留供重试，.ailocks TTL 收窄至 --failed-claim-ttl（缺省 300s，env
+ZEPHYR_FAILED_CLAIM_TTL_S）兜底防锁尸（原 finally 无条件释放是 CLAIM-REQUIRED
+×50/24h 循环源）。放弃重试用 --release-only 显式释放。
+
 对标: scripts/git_guard.py（git 命令透传封装），区别：
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
 - git_commit.py 强制走 GitCommitGateway（串行锁+stash 隔离+GW 标记）
@@ -43,6 +49,7 @@ import logging
 import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 
@@ -599,6 +606,131 @@ def _preflight_skip_set(args) -> frozenset[str]:
     return frozenset(skip)
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# R-04 治本①（lane G1，2026-09-18；真源 docs/_working/kimi_audit/S18_提交链路根因表.md
+# R-04 行）：claim 生命周期与提交事务对齐。
+# 病灶：旧语义「finally 无条件释放 claim + 文件保持 staged」→ 重试不 reclaim →
+# CLAIM-REQUIRED ×50/24h。治本：成功（OK/NOTHING_TO_COMMIT）才释放；失败保留
+# 供重试。与既有「失败释放防锁尸」语义的兼容方案：防锁尸动机不由释放动作而由
+# 三层机制接管——①本模块把保留 claim 的 .ailocks TTL 收窄至 FAILED_CLAIM_TTL
+# （默认 300s，--failed-claim-ttl / ZEPHYR_FAILED_CLAIM_TTL_S 参数化），会话死亡
+# 或放弃后过期即走 lock_files 既有 stale 回收；②裁定#252 锁存活=会话存活，
+# SessionRegistry 侧随会话死亡自动失效；③R-10 死会话遗物回收兜底清点。
+# ══════════════════════════════════════════════════════════════════════════════
+FAILED_CLAIM_TTL_DEFAULT_S = 300.0
+
+
+def _failed_claim_ttl(args) -> float:
+    """失败保留 claim 的 TTL（秒）：CLI --failed-claim-ttl > env ZEPHYR_FAILED_CLAIM_TTL_S > 300。"""
+    v = getattr(args, "failed_claim_ttl", None)
+    if v is not None:
+        return max(1.0, float(v))
+    raw = os.environ.get("ZEPHYR_FAILED_CLAIM_TTL_S", "").strip()
+    if raw:
+        try:
+            return max(1.0, float(raw))
+        except ValueError:
+            pass
+    return FAILED_CLAIM_TTL_DEFAULT_S
+
+
+def _retain_claims_after_failure(
+    session_id: str,
+    claimed: list[str],
+    *,
+    reason: str,
+    ttl_s: float,
+    project_root: str,
+) -> None:
+    """提交未成（gate 阻断/锁超时/异常）时保留 claim：.ailocks TTL 收窄兜底 + 审计。
+
+    fail-open：本函数任何失败只告警，绝不掩盖原始 commit 失败。
+    """
+    if not claimed:
+        return
+    rewritten: list[str] = []
+    try:
+        scripts_dir = Path(__file__).resolve().parent
+        if str(scripts_dir) not in sys.path:
+            sys.path.insert(0, str(scripts_dir))
+        import lock_files as _lf  # noqa: PLC0415
+
+        rewritten = _lf.shorten_claim_ttl(session_id, list(claimed), ttl_s)
+    except Exception as e:  # noqa: BLE001 — TTL 收窄失败不掩盖原始失败
+        print(
+            f"WARNING: claim TTL 收窄失败（{type(e).__name__}: {e}）——claim 仍保留，靠既有 TTL 兜底",
+            file=sys.stderr,
+        )
+    try:
+        audit_dir = Path(project_root) / ".runtime" / "claim_snapshots"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        with open(audit_dir / "claim_retention.jsonl", "a", encoding="utf-8") as f:
+            f.write(
+                json.dumps(
+                    {
+                        "ts": time.time(),
+                        "session_id": session_id,
+                        "reason": reason,
+                        "ttl_s": ttl_s,
+                        "claimed": len(claimed),
+                        "ttl_rewritten": len(rewritten),
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
+    except Exception:  # noqa: BLE001 — 审计失败不阻断
+        pass
+    print(
+        f"INFO: commit 未成功（{reason}）——{len(claimed)} 个 claim 保留供重试"
+        f"（.ailocks TTL 收窄至 {ttl_s:.0f}s 兜底；放弃请 --release-only 显式释放）",
+        file=sys.stderr,
+    )
+
+
+def _settle_claims_after_commit(
+    gw,
+    session_id: str,
+    claimed: list[str],
+    status: "CommitStatus",
+    *,
+    ttl_s: float,
+    project_root: str,
+) -> None:
+    """R-04 决策表（单一真源）：OK/NOTHING_TO_COMMIT → 释放；其余 → 保留 + TTL 收窄。
+
+    NOTHING_TO_COMMIT 释放的理由：无 staged 变更落盘即无在途事务可保护，
+    保留只会无意义占锁 300s。
+    """
+    if status in (CommitStatus.OK, CommitStatus.NOTHING_TO_COMMIT):
+        gw.release_files(session_id, claimed)
+    else:
+        _retain_claims_after_failure(
+            session_id, claimed, reason=str(status), ttl_s=ttl_s, project_root=project_root
+        )
+
+
+def _commit_with_claim_lifecycle(
+    gw,
+    session_id: str,
+    claimed: list[str],
+    commit_kwargs: dict,
+    *,
+    ttl_s: float,
+    project_root: str,
+):
+    """gw.commit + R-04 claim 生命周期：异常=保留 claim 后原样上抛；返回=按决策表结算。"""
+    try:
+        result = gw.commit(**commit_kwargs)
+    except BaseException:
+        _retain_claims_after_failure(
+            session_id, claimed, reason="commit-exception", ttl_s=ttl_s, project_root=project_root
+        )
+        raise
+    _settle_claims_after_commit(gw, session_id, claimed, result.status, ttl_s=ttl_s, project_root=project_root)
+    return result
+
+
 def _run_preflight(gw, args, files: list[str], *, mode: str, extra_skip: frozenset[str] = frozenset()) -> int | None:
     """P0-A 锁外预检：blocking 时打印一过式失败清单并返回 exit 8；否则 None 放行。"""
     if getattr(args, "skip_preflight", False) or getattr(args, "merge_finalize", False) or getattr(args, "reconciler_verify", False):
@@ -960,6 +1092,14 @@ def main() -> int:
         help="跳过锁外预检（P0-A；诊断场景逃生。预检只快败确定性违规，"
         "逃生旗对应的 gate 自动跳过，锁内门禁链语义零变化）。",
     )
+    # R-04 治本①（lane G1，2026-09-18）：失败保留 claim 的 TTL 兜底参数化
+    parser.add_argument(
+        "--failed-claim-ttl",
+        type=float,
+        default=None,
+        help="commit 未成功时保留 claim 的 .ailocks TTL 秒数（R-04 治本①：成功才释放、"
+        "失败保留供重试，TTL 兜底防锁尸）。缺省取 ZEPHYR_FAILED_CLAIM_TTL_S，再缺省 300。",
+    )
     args = None
     exit_code: int | None = None
     try:
@@ -1035,14 +1175,24 @@ def main() -> int:
                 file=sys.stderr,
             )
             return 1
-        # P0-A 锁外预检（claim 之后判 CLAIM-REQUIRED 与锁内同口径；失败清单
-        # 一次给全后释放 claim 再退——不留滞留持有）
+        # P0-A 锁外预检（claim 之后判 CLAIM-REQUIRED 与锁内同口径；失败清单一次给全）
         pf_exit = _run_preflight(gw, args, files, mode="direct")
         if pf_exit is not None:
-            gw.release_files(args.session, claimed)
+            # R-04 治本①：预检快败同样保留 claim（工作未落盘，修完直接重试无需
+            # reclaim；TTL 收窄兜底防锁尸）——原「释放后再退」正是 CLAIM-REQUIRED 循环源
+            _retain_claims_after_failure(
+                args.session,
+                claimed,
+                reason="preflight-blocked",
+                ttl_s=_failed_claim_ttl(args),
+                project_root=args.project_root,
+            )
             return pf_exit
-        try:
-            result = gw.commit(
+        result = _commit_with_claim_lifecycle(
+            gw,
+            args.session,
+            claimed,
+            dict(
                 session_id=args.session,
                 files=files,
                 message=message,
@@ -1054,9 +1204,10 @@ def main() -> int:
                 allow_tracked_drift=args.allow_tracked_drift,
                 merge_finalize=args.merge_finalize,
                 lock_wait_timeout=args.wait,
-            )
-        finally:
-            gw.release_files(args.session, claimed)
+            ),
+            ttl_s=_failed_claim_ttl(args),
+            project_root=args.project_root,
+        )
 
         # P2⑨b（#ARCH-310 P0-1）：LOCK_TIMEOUT 自动改道快照入队（在格式化失败横幅
         # 之前分流，避免"先报失败再入队"的混乱输出）。语义不兼容入队的通道
