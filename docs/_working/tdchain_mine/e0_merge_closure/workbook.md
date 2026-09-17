@@ -32,3 +32,15 @@ M1 regcal（独立域，最无冲突面）→ M2 p2b → M3 orchp3（末棒编�
 
 - s-owner002 交接包 §2 三遗留（OPS-GUARD worktree 队列缺陷 / FINAL 查询 CH Code 181 崩溃 / 探针 commit 不代删）——维护班口径，本环节不修，已在 e3/e8 留意 FINAL 坑。
 - 裁定登记合并冲突预案：任何分支带来的 ruling_registry 条目与 dev 冲突时，"保 dev 已有+仅追加缺失条目，编号不撞"。
+
+## 接力情报：p2b 重 merge 的 gate 链实测（flash-nightbuild-20260918 班，09-18 05:2x）
+
+本班已完成 E0 前置：**daily_plan.py 双超标函数已拆**（eval_trigger 21→12 / emit_for_trade_date 23→8，commit a4cb7706 在 ai/st-ledgerp2b-20260916/scenario-engine 分支 tip，37 tests 绿）。E0 重 merge 时将依次撞上以下后冻结 gate（本班逐个实测）：
+
+1. NO-BARE-SQL：分支存量 SQL 常量行 6 处——行级 `# noqa: bare-sql  <理由≥10字>`（注意 bare-sql 后须两个空格）已代打在分支工作副本（未提交，见下）。
+2. NO-LONG-PARAM-LIST：scenario_classifier.write_verification 9 参——def 行 noqa 已代打。
+3. **TABLE-NAME-REGISTRY（硬拦，未过）**：plan_engine 三文件硬编码 c1_market.kline_index / judgment_daily_plan / judgment_plan_verification / market_kline_etf_60min / judgment_next_day_forecast 等，其中 kline_index 与 judgment_* 五表**不在 TableRegistry**——须先注册（含 schema 文件存在性证明）或迁移 get_registry().table()。此为 CH-024 Phase 5 在 plan_engine 域的欠账，本班按边界不代修。
+4. CAPABILITY-LOOKUP-REQUIRED：merge finalize 时 message 须带 `[no-lookup:continuation]`。
+5. 干净 merge 姿势：主区暂存区整夜有他会话 staged 内容——**禁直连 merge**；用临时 worktree（`git worktree add -b temp/xxx dev`）→ merge --no-commit → 解冲突 → `git_commit.py --merge-finalize` → 主区 `git merge --ff-only temp/xxx`。capability/module_translation 两注册表必撞 append-append 冲突，双侧并集解析即可。
+
+分支上未提交的 noqa 改动留在 .worktrees/st-ledgerp2b-20260916 工作区（本班 worktree add 后被后续 stash 扫走两轮，恢复动作见 stash 列表），E0 接手时请先 `git status` 该 worktree 并把 noqa 批次提交到分支。
