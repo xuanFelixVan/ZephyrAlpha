@@ -4290,3 +4290,70 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: ''
+- ruling_id: '裁定#335'
+  title: 'target_layer 词表收编战役总裁定——17 值入 values/8 值别名过渡/D_CONTRACTS 反转独立/D_DATA_GOV 归治理域/responsibility_layer 定名/写手 CAS 治本/差集脚本常驻化'
+  date: '2026-09-18'
+  category: '数据治理'
+  status: 'active'
+  summary: >-
+    st-vocabconsol-20260918 战役四路挖矿（消费方/生成器/门禁/层归属）后自裁定九条：
+    ①A 组 17 值（原 16+D_CONTRACTS 反转独立，取证 07_fix_5_violations.sql 系从 D_SHARED
+    拆出有独立语义，反合并=推翻已修复裁定链）入 target_layer_vocabulary.yaml values 段，
+    is_foundation 全 false（CT-PIPE M5/M6 路由零变化）；②D_DATA_GOV 归治理域（生产者=治理
+    会话、验证口径=规则覆盖率、vision 判例"治理层=不犯错"三判据）；③B 组 8 值
+    （D_GOV/D_INFRA/D_INFRASTRUCTURE/D_EXECUTION/D_PORTFOLIO/D_PLAN_ENGINE/D_SIGNAL/D_RESEARCH）
+    入 canonical 的 aliases，三段式过渡=词表收 aliases(WARNING 指向 canonical)→新写入只用
+    canonical→终局删除留退役审计，本战役零净删（避开注册表净删 Owner 门位）；④折叠前置条件：
+    全部派生消费者（_collect_vocab_values 等）必读 aliases→canonical，否则禁折叠（防 8 值
+    从 WARNING 坠 ERROR 的词表自毁通道）；⑤DB 侧仅 D_INFRASTRUCTURE/D_RESEARCH 有节点，走
+    apply_depgraph --merge-domain 官方通道，其余 6 值 DB 无行免迁；tasks.target_layer 历史
+    数字值 1-7（2026-06-13 单批）不入词表语义，不迁不动仅留案；⑥模块层归属新字段定名
+    responsibility_layer（governance/business/ai/infrastructure 四值），与 layer_vocabulary.yaml
+    v2.0.0（L0-L3 运行时栈，DB layer_id CHECK 真源）正交不撞车，真源=
+    domain_responsibility_layer_mapping.yaml，生成器禁从 layer_id/目录名直推；⑦翻译注册表病灶
+    定性修正=safe_load 层零字面重复，真实病灶=entries 段 30 组重复被 loader dict 折叠
+    （声明 7090 可见 7060）+add_module_translation.py 裸 write_text 违硬规则 13 且整块重写抹
+    扩展字段，治本三件=CAS 通道+全文件唯一键查重自愈+保留未知扩展字段；⑧三源差集收敛脚本
+    check_vocab_domain_convergence.py 常驻 validators 族（漂移=CI 可见红灯而非季度考古）；
+    ⑨GATE-VOCAB 因词表 files_trigger 自触发实测新增命中 +1（test_multi_contract_adapter.py:224）
+    走基线棘轮 noqa，不豁免扫描本体。分析过程全文=
+    docs/_working/2026-09-18_vocab_consolidation_campaign/w2_ruling/w2_self_ruling_335.md。
+  evidence: >-
+    挖矿四文档 docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/
+    （w1a_consumers.md 消费方 12+权威面 5/w1b_generators.md 条目实数 7090/7060 与 2115 空
+    domain 清单/w1c_gates.md 连坐 29 件与豁免现状/w1d_layers.md 79 域归层草案与撞名取证）；
+    DB 取证=depgraph domains 表 16/16 新域已在（词表滞后实证）、merge 可行域 3 值节点数
+    84/2/2；validate_target_layer.py 基线 13 假红（tests/knowledge L1/L2/L3 层位误捕，
+    根因=实现正则背离 docstring 承诺 (D_[A-Z_]+|基础设施)）。
+  affected_files:
+    - docs/_working/2026-09-18_vocab_consolidation_campaign/w2_ruling/w2_self_ruling_335.md
+    - docs/_working/2026-09-18_vocab_consolidation_campaign/00_workorder_施工包.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#336'
+  title: 'Owner 批准退役 ALGO_FLOW 反向孤件 model_capability_exam 镜像及其注册表登记（#ARCH-326 W3 收口）'
+  date: '2026-09-18'
+  category: 'Owner 门位'
+  status: 'active'
+  summary: >-
+    Owner 于 2026-09-18 战役收尾对 W3 明确裁定"批准删除"：ALGO_FLOW 出仓镜像
+    docs/03_modules/_domain_infrastructure/algo_flow/model_capability_exam/model_capability_exam__init__.yaml
+    的真源 src/zephyr/infrastructure/model_capability_exam/__init__.py 已于 6a0eca4700 退役，
+    镜像与 docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+    内 token btfix-p1p2-model-capability-exam--init---20260916 的登记条目静默存活成反向孤件
+    （#ARCH-326 首例实证，观测面已由 GATE-ALGO-FLOW-REVERSE-ORPHAN 常驻普查）。
+    授权范围仅此一件：镜像收纳进 .runtime/recycle_bin（30 天 TTL，非物理删除）+ 注册表
+    creation_tokens 段内该条 CAS 摘除，同一批提交落地；不构成对其它镜像或注册表条目的退役授权。
+    退役通道 = scripts/governance/d8_doc_sync/algo_flow_reverse_orphan_reconciler.py --apply
+    --owner-ruling 336（机判凭据=本条 active 裁定正文点名该镜像；对话口头批准不豁免门禁，
+    宪法 §9.11）。落地后该 gate 下轮触发应转 clean，#ARCH-326 观测面+退役闭环齐备。
+  affected_files:
+    - docs/03_modules/_domain_infrastructure/algo_flow/model_capability_exam/model_capability_exam__init__.yaml
+    - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+    - scripts/governance/d8_doc_sync/algo_flow_reverse_orphan_reconciler.py
+  related_arch:
+    - '#ARCH-326'
+  related_rulings:
+    - '裁定#307'
+  superseded_by: ''
