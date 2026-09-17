@@ -80,6 +80,7 @@ def bh_filter(
             "p": p,
             "bh_rank": k,
             "bh_threshold": round(threshold, 6),
+            "bhy_family_threshold": round(result.threshold, 6),
             "passed": passed,
             "reason": "stepwise_pass" if passed else (
                 f"p>{threshold:.4g}（rank {k}/{m}，q={q}）" if k > last_pass else "beyond_last_pass_step"),

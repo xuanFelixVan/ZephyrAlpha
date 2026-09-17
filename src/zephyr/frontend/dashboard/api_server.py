@@ -4221,8 +4221,10 @@ def pattern_winrate(
 ) -> dict[str, Any]:
     """形态胜率查询（c1_market.market_pattern_win_rate，四窗×regime 切片）。
 
-    min_n=样本数下限（默认 30=low_sample 纪律线，0=全量）；按 Wilson 下界
-    降序返回（前端双格式展示：hit_rate%+n_events 并列）。
+    min_n=样本数下限（默认 30=low_sample 纪律线，0=全量）；按 hit_rate 降序返回
+    （前端双格式展示：hit_rate%+n_events 并列。S1-A2 裁定 2026-09-17：Wilson 下界
+    排序是旧文案漂移，本端点 SQL 实按 hit_rate 排序；Wilson 口径在
+    PatternWinRateProvider.get_conservative）。
     """
     try:
         sql = (

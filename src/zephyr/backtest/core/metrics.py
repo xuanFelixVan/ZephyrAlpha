@@ -233,6 +233,7 @@ def calculate_ic_ir(
 # 车道 L 接线(2026-09-16): 未显式传入时不再直接吃这个默认 10，而是自动向可审计
 # 真源 TrialLedger(MOD-BT-200) 取全局累计机器回测数；仅当账本不可读时才退回此默认并留
 # n_trials_source="fallback_default:..."（禁硬编码拍脑袋基数）。
+# S1-A4(2026-09-17): fallback 路径的 DSR 落 dsr_degenerate=True（欠折减基数出的数不作钱闸证据）。
 DEFAULT_N_TRIALS = 10
 
 
@@ -345,6 +346,13 @@ def calculate_full_metrics(
     result["dsr_degenerate"] = bool(dsr_result.degenerate)
     result["n_trials"] = int(n_trials_resolved)
     result["n_trials_source"] = n_trials_source
+    # S1-A4 裁定（2026-09-17 深度裁定班次）：fallback_default=账本不可读时按 N=10
+    # 出数，DSR 系统性欠折减（偏乐观）——钱闸静默放水。fail-closed：折减基数不可
+    # 判定 => DSR 不可判定，与 SDC-4 退化态同 posture（消费方先读 dsr_degenerate）。
+    if n_trials_source.startswith("fallback_default"):
+        result["dsr"] = 0.0
+        result["dsr_degenerate"] = True
+        result["is_overfitting"] = True
     return result
 
 

@@ -38,7 +38,8 @@
    verdict_reason 由快筛管道代码生成（排除类别/判决原因，禁 AI 手填），对齐 R2 语义。
 6. is_sharpe=IS(2019-2023) Sharpe；deflated_sharpe=按试验次数折减后 Sharpe（SOP-C C4 强制，
    600 条海选的多重检验校正）；oos_years_decay=按年外样本衰减率（C4 验收线）。
-7. num_trials=批内实际参考策略数（DSR 多重比较 N 口径，批级属性，S03-N1 2026-09-15 加列；
+7. num_trials=DSR 多重比较 N 口径（全局累计可审计试验数+本批变体数，累计口径真源=TrialLedger
+   MOD-BT-200；2026-09-15 裁定前旧行=批内口径。S03-N1 2026-09-15 加列；
    Nullable 追加列零回填，历史行 NULL 留痕；apply 脚本=scripts/ch/apply_strategy_screen_num_trials_ddl.py）。
 """
 
@@ -63,7 +64,7 @@ CREATE TABLE IF NOT EXISTS c1_backtest.strategy_screen
     verdict_reason    LowCardinality(String)  DEFAULT '' COMMENT '判决原因枚举(快筛管道代码生成禁手填;粗筛排除类别/判死原因)',
     screened_at       DateTime64(3, 'Asia/Shanghai') COMMENT '快筛结论时间',
     notes             String                  DEFAULT '' COMMENT '一句话备注(AI/人可读)',
-    num_trials        Nullable(UInt32)        COMMENT '多重比较试次数(批内实际参考策略数,DSR N 口径,批级属性;NULL=2026-09-15 前历史批)'
+    num_trials        Nullable(UInt32)        COMMENT '多重比较试次数(DSR N 口径=全局累计可审计试验数+本批变体数,TrialLedger MOD-BT-200 真源,2026-09-15 裁定由批内口径改累计口径;NULL=2026-09-15 前历史批)'
 )
 ENGINE = MergeTree
 PARTITION BY toYYYYMM(screened_at)

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-SIG-149
 # [MODULE] zephyr.signal_ashare.strategy_signal.pattern_lifecycle
 # [DOMAIN] D_ASHARE_SIGNAL
-# [DEPENDENCIES] zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier(四闸记录); zephyr.shared.io.file_utils(safe_write); math
+# [DEPENDENCIES] zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier(四闸记录+binomial_ge_pvalue canonical); zephyr.shared.io.file_utils(safe_write)
 # [CONSUMERS] pattern_evidence_certifier.run_certify(单写手接线:落表前 lifecycle 覆盖); 前端图形库页(退役徽章); 跨域复活协议(策略/因子域接线,协议文档=docs/_working/pattern_line/resurrection-protocol.md)
 # [STARTUP] imported(随 certify 任务同进程;禁 cron 自轮询)
 # [MATURITY] design
@@ -43,7 +43,6 @@
 from __future__ import annotations
 
 import json
-import math
 from pathlib import Path
 from typing import Any
 
@@ -72,23 +71,21 @@ def _key(pattern_id: str, timeframe: str, direction: str, fwd_window: int) -> st
 
 
 def binomial_ge_pvalue_small(hits: float, n: float, p0: float) -> float:
-    """单侧二项检验（148 同法局部复用，避免跨模块私有导入）。"""
-    if n <= 0:
+    """单侧二项检验 P(X >= hits | n, p0)。
+
+    S1-A6 裁定（2026-09-17 深度裁定班次）：本件原为 148 同法克隆，缺
+    p0∈{0,1} 退化分支（p0=0/1 时 math.log(0)/log1p(-1) 直接 domain error）
+    且零入参校验、零直测——克隆漂移治本=收敛到 canonical 公共导出件
+    ``pattern_evidence_certifier.binomial_ge_pvalue``（33b9593ad9 口径），
+    不再局部另写公式（缺陷模式 #4 双份承载漂移）。
+
+    语义保持：hits<=0 或 n<=0（复活闸语境=死后无新增有效证据）→ 1.0（不显著）。
+    """
+    if n <= 0 or hits <= 0:
         return 1.0
-    if hits > n:
-        return 0.0
-    if hits <= 0:
-        return 1.0
-    total = 0.0
-    for i in range(int(math.ceil(hits)), int(n) + 1):
-        logpmf = (
-            math.lgamma(n + 1) - math.lgamma(i + 1) - math.lgamma(n - i + 1)
-            + i * math.log(p0) + (n - i) * math.log1p(-p0)
-        )
-        total += math.exp(logpmf)
-        if total >= 1.0:
-            return 1.0
-    return min(1.0, total)
+    from zephyr.signal_ashare.strategy_signal.pattern_evidence_certifier import binomial_ge_pvalue
+
+    return binomial_ge_pvalue(hits, n, p0)
 
 
 class LifecycleStore:

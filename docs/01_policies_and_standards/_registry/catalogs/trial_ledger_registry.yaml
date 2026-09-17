@@ -49,3 +49,10 @@ batch_records:
   note: 'auto: data/strategy_intake/grid_20260915-060812/summary.json'
   recorded_at: '2026-09-15T04:17:56+00:00'
   recorded_by: st-f06dsr-20260915b
+- batch_id: sharpe2_prep_e4_reexam_20260917
+  n_trials: 81
+  kind: oos_reexam
+  note: sharpe2_prep E4 及格池 81 DISTINCT 策略 H2 真成本重考(docs/_working/sharpe2_prep/a_reexam/);S1-A4
+    裁定补登:重考消费了累计N却未回写账本
+  recorded_at: '2026-09-17T08:20:53+00:00'
+  recorded_by: kimi-audit

@@ -8,12 +8,12 @@
 # [INVARIANTS] PIT（T 日信号用 ≤T-1 数据，T+1 收盘起算收益）；成本=冻结土规（佣金 2.5bp+印花 10bp 卖+滑点 5bp，
 #   与 pilot_002 完全一致）；回测引擎口径全 C4 批次统一（可比性）；数据只用健康表
 #   （kline_daily_hfq/kline_index/kline_etf_daily/stk_limit/index_constituent/stock_basic）
-# [MODIFY-GUARD] tests/backtest/test_c4_engine.py
+# [MODIFY-GUARD] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError(数据缺失)
-# [TESTS] tests/backtest/test_c4_engine.py
+# [TESTS] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py（S1-A8 裁定 2026-09-17：原锚 test_c4_engine.py 从未存在于 git 历史=幽灵引用，改锚真实守护件）
 # [A_module] module_id=MOD-BT-039 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """C4 批量翻译共享引擎——数据装载+统一回测+Deflated Sharpe。
@@ -24,7 +24,8 @@ C4 批测约定（与 pilot_002_ma_cross 试点一致，保证可比）:
   - 窗口: IS 2020-01-01..2023-12-31（ETF 族 2021-04-01 起，kline_etf_daily 覆盖起点，D 声明）；
   - 股票池: 默认沪深300 成分快照（index_constituent，D1 声明）；个股择时策略用原文标的。
 
-Deflated Sharpe（Bailey & López de Prado 2014）: 以批内 N 条策略为试验集，
+Deflated Sharpe（Bailey & López de Prado 2014）: N 口径=全局累计可审计试验数+本批变体数
+（2026-09-15 裁定改累计口径，真源=N 账本 MOD-BT-200；本 docstring 原为批内 N 口径，S1-A4 裁定更正），
 SR0 = sqrt(V[SR]) * ((1-γ)*Φ⁻¹(1-1/N) + γ*Φ⁻¹(1-1/(N·e)))，γ≈0.5772；
 DSR = Φ( (SR-SR0)·sqrt(T-1) / sqrt(1 - γ3·SR + ((γ4-1)/4)·SR²) )，γ3/γ4 为批内日收益合并偏度/峰度。
 """
