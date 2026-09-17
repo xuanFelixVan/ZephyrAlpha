@@ -32463,5 +32463,29 @@ creation_tokens:
   token: "tdchain-mine-20260918-e8_redblue"
   created_by: "st-tdchain-20260917"
   capability: "tdchain_mining_workbook"
+- file: docs/_working/2026-09-18-landing-anchor-algo-flow-closeout/00_skeleton_environments.md
+  token: landing-anchor-closeout-00-skeleton-environments-20260917
+  created_by: st-anchorfix-20260918
+  capability: landing_anchor_closeout
+- file: docs/_working/2026-09-18-landing-anchor-algo-flow-closeout/W1_landing_anchoring.md
+  token: landing-anchor-closeout-w1-landing-anchoring-20260917
+  created_by: st-anchorfix-20260918
+  capability: landing_anchor_closeout
+- file: docs/_working/2026-09-18-landing-anchor-algo-flow-closeout/W2_commit_chain.md
+  token: landing-anchor-closeout-w2-commit-chain-20260917
+  created_by: st-anchorfix-20260918
+  capability: landing_anchor_closeout
+- file: docs/_working/2026-09-18-landing-anchor-algo-flow-closeout/W3_retirement.md
+  token: landing-anchor-closeout-w3-retirement-20260917
+  created_by: st-anchorfix-20260918
+  capability: landing_anchor_closeout
+- file: docs/_working/2026-09-18-landing-anchor-algo-flow-closeout/W4_selfref_exemption.md
+  token: landing-anchor-closeout-w4-selfref-exemption-20260917
+  created_by: st-anchorfix-20260918
+  capability: landing_anchor_closeout
+- file: docs/_working/2026-09-18-landing-anchor-algo-flow-closeout/W5_author_debt.md
+  token: landing-anchor-closeout-w5-author-debt-20260917
+  created_by: st-anchorfix-20260918
+  capability: landing_anchor_closeout
 
 di_seam_exemptions: []
