@@ -32203,4 +32203,40 @@ creation_tokens:
   token: judgment-close-verifier-20260916
   created_by: st-ledgerp2b-20260916
   capability: judgment_ledger
+- file: docs/_working/altdata_line/00_index.md
+  token: altdata-line-00-index-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/altdata_line/01_data_type_skeleton.md
+  token: altdata-line-01-data-type-skeleton-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/altdata_line/02_entity_graph_equity_person.md
+  token: altdata-line-02-entity-graph-equity-person-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/altdata_line/03_announcements_data_factors.md
+  token: altdata-line-03-announcements-data-factors-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/altdata_line/04_metaphysics_data_factors.md
+  token: altdata-line-04-metaphysics-data-factors-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/altdata_line/05_industry_chain_assets_plan.md
+  token: altdata-line-05-industry-chain-assets-plan-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/altdata_line/90_convergence_todo.md
+  token: altdata-line-90-convergence-todo-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/altdata_line/06_transmission_chain_engine.md
+  token: altdata-line-06-transmission-chain-engine-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
+- file: docs/_working/residual_construction/pending_items_plan.md
+  token: residual-construction-plan-pending-items-plan-20260917
+  created_by: st-residual-20260917
+  capability: residual_construction_plan
 di_seam_exemptions: []
