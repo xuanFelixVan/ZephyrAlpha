@@ -292,6 +292,34 @@ class _MissingFeature(Exception):
     """特征缺席（求值内部信号——调用方转译为"条件不可满足"+降级标注）。"""
 
 
+def _eval_arith(op: str, l: float, r: float) -> float:
+    """四则求值（除零=特征缺席语义，调用方统一转译）。"""
+    if op == "+":
+        return l + r
+    if op == "-":
+        return l - r
+    if op == "*":
+        return l * r
+    if r == 0.0:
+        raise _MissingFeature("div_by_zero")
+    return l / r
+
+
+_CMP_OPS: Final = {
+    ">": lambda x, y: x > y,
+    ">=": lambda x, y: x >= y,
+    "<": lambda x, y: x < y,
+    "<=": lambda x, y: x <= y,
+    "==": lambda x, y: x == y,
+    "!=": lambda x, y: x != y,
+}
+
+
+def _eval_cmp(sym: str, l: float, r: float) -> bool:
+    """六比较求值（词表封闭，未知符号由 parse 层拦截，此处兜 KeyError 不可达）。"""
+    return _CMP_OPS[sym](l, r)
+
+
 def eval_trigger(ast: tuple, features: dict[str, float]) -> bool:
     """AST + 特征向量 → 布尔（比较按 Python 数值语义）。
 
@@ -308,32 +336,10 @@ def eval_trigger(ast: tuple, features: dict[str, float]) -> bool:
     if op == "neg":
         return -float(eval_trigger(ast[1], features))
     if op in ("+", "-", "*", "/"):
-        l = float(eval_trigger(ast[1], features))
-        r = float(eval_trigger(ast[2], features))
-        if op == "+":
-            return l + r
-        if op == "-":
-            return l - r
-        if op == "*":
-            return l * r
-        if r == 0.0:
-            raise _MissingFeature("div_by_zero")
-        return l / r
+        return _eval_arith(op, float(eval_trigger(ast[1], features)), float(eval_trigger(ast[2], features)))
     if op == "cmp":
         _, sym, l, r = ast
-        lv = float(eval_trigger(l, features))
-        rv = float(eval_trigger(r, features))
-        if sym == ">":
-            return lv > rv
-        if sym == ">=":
-            return lv >= rv
-        if sym == "<":
-            return lv < rv
-        if sym == "<=":
-            return lv <= rv
-        if sym == "==":
-            return lv == rv
-        return lv != rv
+        return _eval_cmp(sym, float(eval_trigger(l, features)), float(eval_trigger(r, features)))
     if op == "not":
         return not bool(eval_trigger(ast[1], features))
     if op == "and":
@@ -603,34 +609,11 @@ from zephyr.plan_engine.judgment_settler import _reader_execute  # noqa: E402,PL
 # 只读通道单点收口于共享结算器库件（P2a 同款，CLONE-GUARD 预检 acknowledged：注入点复用不改本体）
 
 
-def emit_for_trade_date(
-    day: str,
-    *,
-    reader=None,
-    synthetic: bool = False,
-    asof_ts: Any = None,
-) -> EmitResult:
-    """G 日预案发射（组合入口：读库→特征→先验→双互斥校验→emit_judgment）。
+def _load_optional_inputs(rd, day: str) -> dict[str, Any]:
+    """可选输入读取（缺席降级——每缺一项 confidence 折乘，floor 下限）。
 
-    Raises:
-        ValueError: G 日线不在库/历史不足/场景重叠/历史样本空（fail-closed）。
+    返回 dict：fc/forecaster_jid/forecast_note/regime/breadth/next_session/missing。
     """
-    rd = reader or _reader_execute
-    rows = rd(_KLINE_SQL)
-    day_rows = [r for r in rows if str(r[0]) <= day]
-    if not day_rows or str(day_rows[-1][0]) != day:
-        raise ValueError(f"G 日 {day} 日线不在库（禁猜日发射）")
-    scenarios = build_v0_scenarios()
-    asts = [parse_trigger(str(sc["trigger"])) for sc in scenarios]
-    validate_scenarios(scenarios, day_rows)  # 双互斥探针（结构网格+历史重放）fail-closed
-    prior, n_classified, fallback = _history_priors(day_rows, scenarios, asts, RULE_PARAMS)
-    total = sum(prior.values())
-    for sc in scenarios:
-        sc["path_prior"] = round(prior[str(sc["scenario_id"])] / total, 6)
-    remainder = round(1.0 - sum(sc["path_prior"] for sc in scenarios), 9)
-    scenarios[0]["path_prior"] = round(scenarios[0]["path_prior"] + remainder, 6)
-
-    # 可选输入（缺席降级——每缺一项 confidence 折乘，floor 下限）
     missing: list[str] = []
     fc = _safe_one(rd, _FORECAST_SQL.format(forecaster=_FORECASTER_MODULE, day=day))
     forecaster_jid = ""
@@ -655,7 +638,33 @@ def emit_for_trade_date(
     if breadth is None:
         missing.append("market_breadth")
     next_session = _safe_one(rd, _NEXT_SESSION_SQL.format(day=day))
+    return {
+        "fc": fc,
+        "forecaster_jid": forecaster_jid,
+        "forecast_note": forecast_note,
+        "regime": regime,
+        "breadth": breadth,
+        "next_session": next_session,
+        "missing": missing,
+    }
 
+
+def _build_plan_payload(
+    day: str,
+    day_rows: list,
+    scenarios: list[dict],
+    prior: dict[str, float],
+    n_classified: int,
+    fallback: int,
+    opt: dict[str, Any],
+) -> tuple[str, dict[str, Any]]:
+    """inputs_ref + payload 组装（口径与 P2b 冻结版逐字一致；hash 用未归一 prior）。"""
+    fc = opt["fc"]
+    forecaster_jid = opt["forecaster_jid"]
+    regime = opt["regime"]
+    breadth = opt["breadth"]
+    next_session = opt["next_session"]
+    missing = opt["missing"]
     h = inputs_hash_of(day, day_rows[-1], prior, n_classified, forecaster_jid)
     inputs_ref = (
         f"plan_date:{day}|inputs_hash:{h}|n:{n_classified}|fallback:{int(fallback)}"
@@ -683,7 +692,7 @@ def emit_for_trade_date(
             "g_open": last_open,
             "n_classified": n_classified,
             "missing_inputs": missing,
-            "next_day_forecast": forecast_note,
+            "next_day_forecast": opt["forecast_note"],
             "regime_dominant": str(regime[1]) if regime else None,
             "next_session_date": str(next_session[0]) if next_session and next_session[0] else None,
             "proxy_notes": {
@@ -692,12 +701,49 @@ def emit_for_trade_date(
             },
         },
     }
-    # 置信=归类样本饱和度 ×fallback 折半 ×缺席折乘（口径文档化）
+    return inputs_ref, payload
+
+
+def _plan_confidence(n_classified: int, fallback: int, missing: list[str]) -> float:
+    """置信=归类样本饱和度 ×fallback 折半 ×缺席折乘（口径文档化）。"""
     conf = min(n_classified / float(RULE_PARAMS["conf_n_full"]), float(RULE_PARAMS["conf_cap"]))
     if fallback:
         conf *= 0.5
-    conf = max(float(RULE_PARAMS["conf_floor"]),
+    return max(float(RULE_PARAMS["conf_floor"]),
                conf * float(RULE_PARAMS["missing_input_step"]) ** len(missing))
+
+
+def emit_for_trade_date(
+    day: str,
+    *,
+    reader=None,
+    synthetic: bool = False,
+    asof_ts: Any = None,
+) -> EmitResult:
+    """G 日预案发射（组合入口：读库→特征→先验→双互斥校验→emit_judgment）。
+
+    Raises:
+        ValueError: G 日线不在库/历史不足/场景重叠/历史样本空（fail-closed）。
+    """
+    rd = reader or _reader_execute
+    rows = rd(_KLINE_SQL)
+    day_rows = [r for r in rows if str(r[0]) <= day]
+    if not day_rows or str(day_rows[-1][0]) != day:
+        raise ValueError(f"G 日 {day} 日线不在库（禁猜日发射）")
+    scenarios = build_v0_scenarios()
+    asts = [parse_trigger(str(sc["trigger"])) for sc in scenarios]
+    validate_scenarios(scenarios, day_rows)  # 双互斥探针（结构网格+历史重放）fail-closed
+    prior, n_classified, fallback = _history_priors(day_rows, scenarios, asts, RULE_PARAMS)
+    total = sum(prior.values())
+    for sc in scenarios:
+        sc["path_prior"] = round(prior[str(sc["scenario_id"])] / total, 6)
+    remainder = round(1.0 - sum(sc["path_prior"] for sc in scenarios), 9)
+    scenarios[0]["path_prior"] = round(scenarios[0]["path_prior"] + remainder, 6)
+
+    opt = _load_optional_inputs(rd, day)
+    inputs_ref, payload = _build_plan_payload(
+        day, day_rows, scenarios, prior, n_classified, fallback, opt)
+    conf = _plan_confidence(n_classified, fallback, opt["missing"])
     a_ts = asof_ts or now_utc()
     if a_ts.tzinfo is None:
         raise ValueError("asof_ts 须带时区（RULE-SCHEMA-TZ）")
