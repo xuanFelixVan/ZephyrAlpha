@@ -27947,6 +27947,10 @@ creation_tokens:
   token: automation-linkage-qmt-bridge-smoke-20260918-c3-20260917
   created_by: st-autolnk-20260917
   capability: automation_linkage
+- file: docs/_working/automation/campaign/health/skeleton-health-202609.md
+  token: automation-linkage-skeleton-health-202609-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
 - file: docs/_working/trading_vision/2026-09-16-skeleton-coverage-audit.md
   token: trading-vision-audit-2026-09-16-skeleton-coverage-audit-20260916
   created_by: st-skeletonaudit-20260916
@@ -32492,4 +32496,48 @@ creation_tokens:
   token: st-regcal-regime-recal-results-20260917
   created_by: st-regcal-20260917
   capability: regime_recalibration
+- file: docs/_working/altdata_night/00_master_ledger.md
+  token: altdata-night-00-master-ledger-20260917
+  created_by: st-nightcoord-20260918
+  capability: altdata_night
+- file: src/zephyr/governance/rule_replay.py
+  token: rule-replay-rule-replay-20260917
+  created_by: st-ailayer-20260917
+  capability: rule_replay
+- file: docs/_working/automation/campaign/mining/coordination_st_mineline_20260918.md
+  token: campaign-coordination-coordination-st-mineline-20260918-20260917
+  created_by: st-mineline-20260918
+  capability: campaign_coordination
+- file: docs/_working/clean_exam_e2e/00_master_ledger.md
+  token: clean-exam-e2e-00-master-ledger-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/README.md
+  token: clean-exam-e2e-readme-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env2_makeup_exams/00_env_mining.md
+  token: clean-exam-e2e-00-env-mining-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env2_makeup_exams/makeup_reexam_results.csv
+  token: clean-exam-e2e-makeup-reexam-results-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env2_makeup_exams/rerun_plan.csv
+  token: clean-exam-e2e-rerun-plan-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env3_e2e_bridge/00_env_mining.md
+  token: clean-exam-e2e-00-env-mining-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env3_e2e_bridge/chain_envs.csv
+  token: clean-exam-e2e-chain-envs-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env3_e2e_bridge/smoke_test_design.md
+  token: clean-exam-e2e-smoke-test-design-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
 di_seam_exemptions: []
