@@ -20,6 +20,7 @@ ttl: task_bound
 | **D6 行情补充** | A19 资金流/A11 ETF 申赎/A8 中金所会员持仓/A10 可转债/A2 大宗 | 东财/中金所/交易所 | 5 类表+任务 | 抽检 20 条对得上行情 | 无 | 波2 |
 | **D7 文本抽取** | C4 社媒/C6 互动易/C9 调研纪要/D3 专利/D9 行政处罚 | 互动易官方/巨潮/国知局/地方市监 | 抽取管道+首批评级 | 复用 pdf_forecast_extracted 先例；置信度门 | LLM 管道预热 | 波3（重活） |
 | **D8 质检收口** | 全局 | — | frequency 口径统一/断供哨兵覆盖新表/01 计分板更新/✅行活跃管线核查 | 计分板刷新 | 全部分包 | 波3 收口 |
+| **D9 存量迁移** | E 盘研报库（3 万份/85GB→30_corpus/research_reports/2019_bundle）+ F 盘研报 PDF（约 6 万份）→ G 盘冷库 | 移动拷贝+hash 抽检 5% | manifest 登记齐全+原目录留 30 天双备份期 | 大 I/O 后台跑，不占分包并发名额 | 无 | 全夜后台 |
 
 ## 2. 波次排班（通宵三波，并发 2-3）
 
@@ -35,6 +36,7 @@ ttl: task_bound
 3. **登记义务**：新源进 data_sources_registry；新文件 CREATE-GUARD 令牌（主会话统一办）；fail-closed。
 4. **提交正门**：worktree/claim/git_commit.py；禁碰 ig_* 写与 docs 下的 .sql/.json。
 5. **验收通用线**：有增量任务+有哨兵+抽检 20 条与源对得上；三样缺一不收工。
+6. **上架流程真源**：新源接入全流程走 docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md（v1.1.0，含 §12 存储分层/§13 检查单 16 查）——原文快照进 G 盘冷库、清洗数据只进 CH。
 
 ## 4. 总包晨验表（模板）
 
