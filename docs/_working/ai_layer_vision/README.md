@@ -156,7 +156,7 @@ AI 层自己的尺子升级=OBJ_R（标准与规则线）。
 > 展开）；**治理立案保留**=真需 OBJ_R 四步流水线/治理流程，不越权；**真待 Owner**=唯 Owner
 > 可解（资金/门位/跨稿契约/主文档附录级变更）。
 
-### 已销项（16 项，夜批自裁追认）
+### 已销项（17 项，夜批自裁追认）
 
 | 编号 | 稿件 | 事项 | 处置 |
 |------|------|------|------|
@@ -175,6 +175,7 @@ AI 层自己的尺子升级=OBJ_R（标准与规则线）。
 | L6-#3 | L6_ab_switch | CREATE-GUARD creation_token 补登 | 同上（token ×5 之四） |
 | L7-#1 | L7_heredity | heritage_policy 数值初值（遗忘/防近亲繁殖参数） | 按提案原值追认生效 |
 | L7-#3 | L7_heredity | creation_token 补登 | 同上（token ×5 之五） |
+| OBJ_T-#3 | OBJ_T_tools | creation_token 补登（OBJ_T/DESIGN.md） | 已销：R8 批次前已登记（capability ai_layer_vision），dry-run 全覆盖实证 | 
 | OBJ_S-#1 | OBJ_S_perimeter | 双指标软/硬线数值（金额+回撤百分比） | 按提案原值追认生效；OBJ_M 首月数据后 OBJ_R 定标 |
 
 ### 治理立案保留（9 项，真需流程）
@@ -200,9 +201,8 @@ AI 层自己的尺子升级=OBJ_R（标准与规则线）。
 | L4-#3 | L4_compare | 派考边 `intake_exam_due` 契约对齐（R2 后仅余此边；evidence_ref 增补已随 R2 销账，回执件已改名 intake_exam_receipt） | 跨稿契约变更，需 Owner 确认或 L2 侧修订 |
 | L5-#3 | L5_schedule_gate | 任务书 schema v0 增补 provenance 字段（附录 A 版本化变更） | 主文档附录级变更，设计两可 Owner 定向 |
 | L6-#2 | L6_ab_switch | 墓碑 TTL 清理判据+注册表净删门确认 | 净删=high human_gate（宪法 §5），AI 永远只提案 |
-| OBJ_T-#3 | OBJ_T_tools | creation_token 补登（OBJ_T/DESIGN.md，×5 批次外） | 主会话/Owner 补登动作，登记留痕待办 |
 
-**对账**：已销 16+治理立案保留 9+真待 Owner 6=**31**，与红队 B 计数一致。分稿核验：
+**对账**：已销 17+治理立案保留 9+真待 Owner 5=**31**，与红队 B 计数一致（R9 审计发现 OBJ_T-#3 实已登记，从真待移入已销）。分稿核验：
 L2 共 1（销 1）｜L3 共 2（销 2）｜L4 共 4（销 2/立案 1/待 1）｜L5 共 4（销 2/立案 1/待 1）｜
 L6 共 3（销 2/待 1）｜L7 共 3（销 2/立案 1）｜OBJ_M 共 2（立案 1/待 1）｜OBJ_T 共 3（立案 2/待 1）｜
 OBJ_R 共 7（销 4/立案 3）｜OBJ_S 共 2（销 1/待 1）。
@@ -246,7 +246,7 @@ OBJ_R 共 7（销 4/立案 3）｜OBJ_S 共 2（销 1/待 1）。
 2. **B②**：§2 目录结构表全量刷新（L1-L7/OBJ_M-T-S-R 统一 design_done（DESIGN.md 真源），
    V0-V2=done，主文档行=v2.0 active）；头部一句话、§0 速览"建议升级"、§4"待 Owner 点头"
    等框架类陈旧措辞清除（Owner 已夜批）；真实治理立案类措辞保留。
-3. **B③**：新增 §3.5 待 Owner 项处置总表（全目录 31 项对账：已销 16/治理立案保留 9/真待
+3. **B③**：新增 §3.5 待 Owner 项处置总表（全目录 31 项对账：已销 17/治理立案保留 9/真待
    Owner 6，含 token 补登×5 与数值初值追认逐条编号）。
 
 **红蓝 R3 修复记录**：R3：L4-#3 行同步 R2 后实际余量。
