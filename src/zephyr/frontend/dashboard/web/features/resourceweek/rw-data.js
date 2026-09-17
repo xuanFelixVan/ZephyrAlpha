@@ -2,10 +2,10 @@
  * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。
  */
 window.RW_VIEW_DATA = {
- "generated_at": "2026-09-17T00:00:15+00:00",
+ "generated_at": "2026-09-17T00:22:10+00:00",
  "generator": "scripts/governance/generators/generate_resource_week_view.py",
  "registry": "config\\resource_profile_registry.yaml",
- "registry_sha256": "6b147410120c",
+ "registry_sha256": "d8a2635dedbe",
  "week_start": "2026-09-14",
  "days": [
   "09-14 周一",
@@ -2069,13 +2069,13 @@ window.RW_VIEW_DATA = {
    "pool": "heavy",
    "exclusive_group": [],
    "trading_sensitive": true,
-   "peak_mem_gb": 4.0,
+   "peak_mem_gb": 2.7,
    "measured_peak_mem_gb": 2.602,
    "measured_p90_duration_min": 573,
    "status": "planned",
    "window_type": "manual",
    "window_expr": null,
-   "est_duration_min": 240,
+   "est_duration_min": 580,
    "slots": [],
    "unscheduled": true
   },
@@ -2105,13 +2105,13 @@ window.RW_VIEW_DATA = {
     "gpu_default"
    ],
    "trading_sensitive": true,
-   "peak_mem_gb": 6.0,
+   "peak_mem_gb": 0.5,
    "measured_peak_mem_gb": 0.1616,
    "measured_p90_duration_min": 3,
    "status": "planned",
    "window_type": "manual",
    "window_expr": null,
-   "est_duration_min": 60,
+   "est_duration_min": 5,
    "slots": [],
    "unscheduled": true
   },
@@ -3183,7 +3183,7 @@ window.RW_VIEW_DATA = {
    "status": "active",
    "window_type": "event",
    "window_expr": null,
-   "est_duration_min": 1,
+   "est_duration_min": 6,
    "slots": [],
    "unscheduled": true
   },

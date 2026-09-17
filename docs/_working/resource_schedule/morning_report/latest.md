@@ -1,12 +1,12 @@
 ---
 ttl: task_bound
 status: active
-generated_at: '2026-09-17T00:16:50+00:00'
+generated_at: '2026-09-17T00:22:11+00:00'
 ---
 
 # 资源晨报（L-9） — 2026-09-17（Asia/Shanghai）
 
-> 生成：2026-09-17T00:16:50+00:00 · scripts/governance/generators/generate_resource_morning_report.py
+> 生成：2026-09-17T00:22:11+00:00 · scripts/governance/generators/generate_resource_morning_report.py
 > 数据源：注册表、孵化台账、样本流、通知板、闸同池并发账（只读）（零新数据源，判据全在真源侧）
 
 ## 1. 今日排班时间线（按窗起点排序，26 个实体开工 / 339 个开工窗）
@@ -56,36 +56,35 @@ generated_at: '2026-09-17T00:16:50+00:00'
 
 ## 3. 校准 flag 摘要（申报 vs 实测偏差 >阈值）
 
-- 报告生成：2026-09-17T00:14:08+00:00 · 阈值 30.0%
-- flag 字段数：12（实体 8）｜低估 3｜高估 9｜样本不足 72
+- 报告生成：2026-09-17T00:21:59+00:00 · 阈值 30.0%
+- flag 字段数：9（实体 7）｜低估 1｜高估 8｜样本不足 72
 
 | task_id | 字段 | 申报 | 实测 | 偏差 | 方向 | 建议 |
 |---|---|---|---|---|---|---|
-| manual_factory_grid_executor | est_duration_min | 240.0 | 573.1 | 138.8% | 低估 | 建议上调申报值（实测更长/更大，班次会压到下一班） |
-| manual_factory_grid_executor | peak_mem_gb | 4.0 | 2.602 | -34.9% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
-| manual_kronos_adapter | est_duration_min | 60.0 | 3.1 | -94.8% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
-| manual_kronos_adapter | peak_mem_gb | 6.0 | 0.1616 | -97.3% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
+| manual_kronos_adapter | est_duration_min | 5.0 | 3.1 | -38.0% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
+| manual_kronos_adapter | peak_mem_gb | 0.5 | 0.1616 | -67.7% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
 | sch_c4_exam | est_duration_min | 480.0 | 2.6 | -99.5% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
 | sch_c4_exam | peak_mem_gb | 2.0 | 0.0817 | -95.9% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
 | sch_factory_lane_c | peak_mem_gb | 2.0 | 0.0819 | -95.9% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
 | sch_ollama_serve | peak_mem_gb | 8.0 | 0.3604 | -95.5% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
 | sch_post_settlement | est_duration_min | 30.0 | 0.5 | -98.3% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
-| sch_process_reaper | est_duration_min | 1.0 | 5.2 | 420.0% | 低估 | 建议上调申报值（实测更长/更大，班次会压到下一班） |
 | sch_process_reaper | peak_mem_gb | 0.5 | 0.1666 | -66.7% | 高估 | 建议下调申报值（实测更短/更小，白占并发预算） |
-| sch_worktree_drift_watchdog | est_duration_min | 1.0 | 464.9 | 46390.0% | 低估 | 建议上调申报值（实测更长/更大，班次会压到下一班） |
+| sch_worktree_drift_watchdog | est_duration_min | 1.0 | 473.9 | 47290.0% | 低估 | 建议上调申报值（实测更长/更大，班次会压到下一班） |
 
 > 校正批须经人在环改申报值：measured.* 写权归采样器 writeback，校准器只出报告。
 
-## 4. 告警板未决条目（共 3：critical 0 / warning 3；近期已解除灰显 0）
+## 4. 告警板未决条目（共 5：critical 0 / warning 5；近期已解除灰显 0）
 
+- **[warning]** 计划任务孤儿：系统在跑而注册表不认识（画像与冲突闸双失明）（`sched_task_orphan:ZephyrAlpha_AltFxECB`，×1，首发 2026-09-17T00:21:24+00:00）ZephyrAlpha_AltFxECB: 系统实测在注册（状态 ['Ready']）但注册表不认识它——无 ps1 真源/无别名收编，资源画像与冲突闸双双失明（v2 C-15）
+- **[warning]** 排班视图过期：rw-data.js 内嵌指纹与注册表现盘不一致（`sched_view_stale:<resource_week_view>`，×1，首发 2026-09-17T00:21:24+00:00）view_stale: 视图内嵌 registry_sha256=6b147410120c 现盘注册表=05083d826ec3（待日视图发布任务重渲，24h 内自愈）
 - **[warning]** 计划任务孤儿：系统在跑而注册表不认识（画像与冲突闸双失明）（`sched_task_orphan:ZephyrAlpha_AltFxECB`，×1，首发 2026-09-16T23:21:29+00:00）ZephyrAlpha_AltFxECB: 系统实测在注册（状态 ['Ready']）但注册表不认识它——无 ps1 真源/无别名收编，资源画像与冲突闸双双失明（v2 C-15）
 - **[warning]** 计划任务孤儿：系统在跑而注册表不认识（画像与冲突闸双失明）（`sched_task_orphan:ZephyrAlpha_AltFxECB`，×1，首发 2026-09-16T22:21:36+00:00）ZephyrAlpha_AltFxECB: 系统实测在注册（状态 ['Ready']）但注册表不认识它——无 ps1 真源/无别名收编，资源画像与冲突闸双双失明（v2 C-15）
 - **[warning]** 计划任务孤儿：系统在跑而注册表不认识（画像与冲突闸双失明）（`sched_task_orphan:ZephyrAlpha_AltFxECB`，×1，首发 2026-09-16T21:21:27+00:00）ZephyrAlpha_AltFxECB: 系统实测在注册（状态 ['Ready']）但注册表不认识它——无 ps1 真源/无别名收编，资源画像与冲突闸双双失明（v2 C-15）
 
 ## 5. 再生新鲜度
 
-- 注册表再生时刻：2026-09-16T23:59:52Z（距今 0.3 小时）
+- 注册表再生时刻：2026-09-17T00:21:49Z（距今 0.0 小时）
 - total_entities 声明 81 vs 实盘 81：一致
-- 样本流最近落盘：2026-09-17T00:08:47+00:00（距今 0.1 小时）
-- 孵化台账：418 条（存活 418，坏行 0）
+- 样本流最近落盘：2026-09-17T00:18:46+00:00（距今 0.1 小时）
+- 孵化台账：419 条（存活 419，坏行 0）
 

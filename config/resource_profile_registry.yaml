@@ -7,7 +7,7 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-09-16T23:59:52Z'
+generated_at: '2026-09-17T00:21:49Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器四源全量再生；条目禁手工增删）
@@ -765,8 +765,8 @@ entities:
   map_node_id: null
   resource_class: cpu_heavy
   pool: heavy
-  peak_mem_gb: 4.0
-  est_duration_min: 240
+  peak_mem_gb: 2.7
+  est_duration_min: 580
   exclusive_group: []
   window_type: manual
   window_expr: null
@@ -779,7 +779,8 @@ entities:
     last_at: '2026-09-16T21:40:03+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_factory_grid_executor.jsonl
   status: planned
-  notes_zh: 工厂网格执行器（单批最大算力实体，2万配方）
+  notes_zh: 工厂网格执行器（单批最大算力实体，2万配方）；[P5-calib 2026-09-17 校正] dur 240→580（n=179 P90=573.1 低估，班次会压下一班）、mem 4.0→2.7（max×1.15=2.60
+    高估白占预算）
 - task_id: manual_hypothesis_translator
   module_id: null
   map_node_id: null
@@ -806,8 +807,8 @@ entities:
   map_node_id: null
   resource_class: gpu
   pool: heavy
-  peak_mem_gb: 6.0
-  est_duration_min: 60
+  peak_mem_gb: 0.5
+  est_duration_min: 5
   exclusive_group:
   - gpu_default
   window_type: manual
@@ -821,7 +822,7 @@ entities:
     last_at: '2026-09-16T21:40:03+00:00'
   samples_uri: .runtime/logs/resource_samples/manual_kronos_adapter.jsonl
   status: planned
-  notes_zh: Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）
+  notes_zh: Kronos 适配器（CUDA auto，GPU 与 Ollama/桌面抢显存）；[P5-calib 2026-09-17 校正] dur 60→5、mem 6.0→0.5（n=6 P90=3.1/0.162，取整留余量）
 - task_id: manual_kronos_finetune
   module_id: null
   map_node_id: null
@@ -1403,7 +1404,7 @@ entities:
     last_at: '2026-09-16T21:40:03+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_factory_lane_c.jsonl
   status: active
-  notes_zh: FactoryLaneC
+  notes_zh: FactoryLaneC；[P5-calib HOLD 2026-09-17] mem 0.08 系批次尖刺负载采样落在启动/空闲相位，待下个周六实跑窗样本再校
 - task_id: sch_index_minute_eod
   module_id: null
   map_node_id: null
@@ -1552,14 +1553,14 @@ entities:
     last_at: '2026-09-16T21:40:03+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_post_settlement.jsonl
   status: active
-  notes_zh: PostSettlement
+  notes_zh: PostSettlement；[P5-calib HOLD 2026-09-17] 样本=1 低置信，第二轮再校
 - task_id: sch_process_reaper
   module_id: null
   map_node_id: null
   resource_class: light
   pool: default
   peak_mem_gb: 0.5
-  est_duration_min: 1
+  est_duration_min: 6
   exclusive_group: []
   window_type: event
   window_expr: null
@@ -1572,7 +1573,7 @@ entities:
     last_at: '2026-09-16T21:40:03+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_process_reaper.jsonl
   status: active
-  notes_zh: ProcessReaper
+  notes_zh: ProcessReaper；[P5-calib 2026-09-17 校正] dur 1→6（n=56 P90=5.2 低估）
 - task_id: sch_resource_morning_report
   module_id: null
   map_node_id: null
@@ -1781,4 +1782,4 @@ entities:
     last_at: '2026-09-16T21:40:03+00:00'
   samples_uri: .runtime/logs/resource_samples/sch_worktree_drift_watchdog.jsonl
   status: active
-  notes_zh: WorktreeDriftWatchdog
+  notes_zh: WorktreeDriftWatchdog；[P5-calib HOLD 2026-09-17] lifetime 口径失真：常驻循环进程寿命≠单次执行时长，需 sampler 分段口径修复后重测
