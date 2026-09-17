@@ -415,6 +415,13 @@ from schemas.categories.meta.meta_stock_profile_ths import TABLE_NAME as _THS_PR
 # 商品期货主力连续+商品现货基差（2026-09-17，st-igalpha-20260917，照生猪模式复制）：fail-closed 直接导入
 from schemas.categories.market.market_commodity_futures_main import COMMODITY_FUTURES_MAIN_DDL
 from schemas.categories.market.market_commodity_spot_price import COMMODITY_SPOT_PRICE_DDL
+# 判定台账首批四表（2026-09-16，judgment-ledger-standard §三，st-ledgerp1-20260916）：
+# 作战室三任务（盘中状态/次日概率/晨间预案+盘中验证）——DDL-as-Code 真源
+# schemas/categories/judgment/（MergeTree 只增不改；结算列组只许 judgment_settler 回填）
+from schemas.categories.judgment.judgment_intraday_market_state import JUDGMENT_INTRADAY_MARKET_STATE_DDL
+from schemas.categories.judgment.judgment_next_day_forecast import JUDGMENT_NEXT_DAY_FORECAST_DDL
+from schemas.categories.judgment.judgment_daily_plan import JUDGMENT_DAILY_PLAN_DDL
+from schemas.categories.judgment.judgment_plan_verification import JUDGMENT_PLAN_VERIFICATION_DDL
 
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
@@ -494,6 +501,12 @@ _ALL_DDL: list[tuple[str, str]] = [
     # 同键 (symbol, trade_date) 重跑幂等替换
     ("c1_market.commodity_futures_main", COMMODITY_FUTURES_MAIN_DDL),
     ("c1_market.commodity_spot_price", COMMODITY_SPOT_PRICE_DDL),
+    # 判定台账首批四表（2026-09-16 judgment-ledger-standard §三）：MergeTree 只增不改，
+    # 判定/结算分离（结算列组只许 zephyr.plan_engine.judgment_settler 回填）
+    ("c1_market.judgment_intraday_market_state", JUDGMENT_INTRADAY_MARKET_STATE_DDL),
+    ("c1_market.judgment_next_day_forecast", JUDGMENT_NEXT_DAY_FORECAST_DDL),
+    ("c1_market.judgment_daily_plan", JUDGMENT_DAILY_PLAN_DDL),
+    ("c1_market.judgment_plan_verification", JUDGMENT_PLAN_VERIFICATION_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -1058,6 +1071,11 @@ _EXPECTED_ENGINES: dict[str, str] = {
     # 2026-09-17 商品期货主力连续+现货基差：日频按 (symbol, trade_date) 同键替换幂等
     "commodity_futures_main": "ReplacingMergeTree",
     "commodity_spot_price": "ReplacingMergeTree",
+    # 判定台账首批四表（2026-09-16）：MergeTree 只增不改（判定台账标准 §一.3）
+    "judgment_intraday_market_state": "MergeTree",
+    "judgment_next_day_forecast": "MergeTree",
+    "judgment_daily_plan": "MergeTree",
+    "judgment_plan_verification": "MergeTree",
 }
 
 _DATABASE = "c1_market"
