@@ -28031,6 +28031,10 @@ creation_tokens:
   token: kimi-audit-s2-t-v2--20260917
   created_by: kimi-audit
   capability: kimi_audit
+- file: docs/_working/kimi_audit/S13_切换判据.md
+  token: kimi-audit-s13--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
 - file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
   token: auction-derive-intake-20260917-0300-20260916
   created_by: st-auction-bridge-20260917

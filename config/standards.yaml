@@ -32,3 +32,21 @@ standards:
       monthly_red: 0.10
       blackswan_grace_days: 2
     change_rule: "同上；draft→frozen 须附各组合回测分布校准记录"
+  - std_id: STD-SWITCH-001
+    name_zh: 策略切换统计判据（整装承重墙，S13 六问裁定 v1 提案）
+    version: 1
+    status: draft
+    frozen_at: null
+    source: "docs/_working/kimi_audit/S13_切换判据.md（2026-09-17 kimi-audit 班次六问裁定+反驳者记录）"
+    thresholds:
+      regime_confirmation_days: 3        # 新态须连续 3 交易日同向确认（style_regime_model confirm_periods=3 先例）
+      confidence_floor: 0.50             # max(P)<0.50=未决→保持闩锁态（regime_detector ConfidenceSignal 顶档阈值）
+      min_dwell_days: 5                  # 最短驻留 5 交易日；且不得短于成本回收期=切换往返成本/预期日edge（取大者）
+      crisis_override: true              # overlay CRISIS 态豁免驻留与确认窗（风险优先，当日生效）
+      arbitration: "dominant_latch"      # max(P)≥floor→切换；否则闩锁旧态；overlay CRISIS 优先级最高
+      switch_cost_accounting: "mandatory" # A→B 对照必扣往返调仓成本（H2 真成本口径），显著性在扣费后 delta 序列上判
+      pair_decision_engine: "msprt"      # MOD-PF-008 e-process 序贯判定，anytime-valid α=0.05，最少 30 配对样本才终局
+      league_family_scope: "league_batch" # 联赛多重比较族=同批联赛全体挑战者（BHY q=0.10）；冠军 DSR 的 n_trials=联赛族大小
+      correlation_gate_rho: 0.7          # ρ>0.7 合并算额度（§7 骨架既有裁定）
+      preregistration: "criteria_hash 三道锁（时序/不可变/哈希），改判据=新 experiment_id（L4 D-L4 既有）"
+    change_rule: "修标须重考历史：对全部在案切换决策用新尺重放，排序不变或变化可解释方可放行"
