@@ -28159,6 +28159,26 @@ creation_tokens:
   token: kimi-audit-s8--20260917
   created_by: kimi-audit
   capability: kimi_audit
+- file: docs/_working/kimi_audit/S11_同族错误抽样.md
+  token: kimi-audit-s11--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/S12_实验规格.md
+  token: kimi-audit-s12--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/S15_假绿判读.md
+  token: kimi-audit-s15--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/EF-族_晋升与数据批文.md
+  token: kimi-audit-ef---20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/checklist_v2_addendum.md
+  token: kimi-audit-checklist-v2-addendum-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
 - file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
   token: auction-derive-intake-20260917-0300-20260916
   created_by: st-auction-bridge-20260917
