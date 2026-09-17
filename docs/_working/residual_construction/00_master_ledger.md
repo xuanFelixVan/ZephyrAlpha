@@ -17,7 +17,7 @@ status: campaign_running
 |---|---|---|---|---|---|
 | E1 | WO-2a 危机态三级接线（判读件+L1/L2/L3+crisis_gate_log+告警） | [wo2_blackswan_workbook.md](wo2_blackswan_workbook.md) §1②/§2/§6 | 无 | W1 | ⬜ |
 | E2 | WO-1 收益归因（sim_attribution_report+62 天回放对平） | [wo1_attribution_workbook.md](wo1_attribution_workbook.md) | 无 | W1 | ⬜ |
-| E3 | WO-3 配置生效核对器 | pending_items_plan §1 WORK-ORDER-3 | 无 | W1 | ⬜ |
+| E3 | WO-3 配置生效核对器 | pending_items_plan §1 WORK-ORDER-3 | 无 | W1 | ✅ 32431d66 |
 | E4 | WO-5 一期人群账本（cohort_daily_ledger 结算层+老蔡对账） | [wo5_cohort_ledger_workbook.md](wo5_cohort_ledger_workbook.md) | 无（原料全在库） | W2 | ⬜ |
 | E5 | WO-2c 月度演练（crisis_drill_monthly） | wo2 workbook §4 | 无（与 E1 可并行） | W2 | ⬜ |
 | E6 | WO-2b 纸面对冲腿 | wo2 workbook §3 | **E1 状态机** | W2 | ⬜ |
@@ -46,7 +46,7 @@ status: campaign_running
 |---|---|---|---|---|
 | E1 | ⬜ | | | |
 | E2 | ⬜ | | | |
-| E3 | ⬜ | | | |
+| E3 | ✅ | 32431d66 | W1 | 13 tests 绿+四次真实端到端（含安全窗重启调度器 02:19）；总统筹独立复核通过；GAP：risk_params/TDM 消费方无 loaded-state 钩子（登记在 checker gaps） |
 | E4 | ⬜ | | | |
 | E5 | ⬜ | | | |
 | E6 | ⬜ | | | |
