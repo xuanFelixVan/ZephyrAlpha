@@ -32263,6 +32263,10 @@ creation_tokens:
   token: altdata-line-09-data-subpackage-worklist-20260917
   created_by: st-altdatamap-20260917
   capability: altdata_line
+- file: docs/_working/altdata_line/10_g_drive_cold_storage_sop.md
+  token: altdata-line-10-g-drive-cold-storage-sop-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
 - file: docs/_working/residual_construction/pending_items_plan.md
   token: residual-construction-plan-pending-items-plan-20260917
   created_by: st-residual-20260917
