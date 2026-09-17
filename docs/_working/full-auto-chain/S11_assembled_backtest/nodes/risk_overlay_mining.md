@@ -319,6 +319,25 @@ P0（H5-A）建议立即移交——它是"过拟合结果被当合格证据固�
 | **H5-E** 回测风险旗标 → 实盘 pre-trade（**R-H5E-1**） | 落点在 `risk_validation_bridge`＝在途下单链路，属宪章 §5 的 high 域 Owner 门（production 流转）。技术上契约已成形（回测产物 `metrics` 里的 `risk_admitted/overfitting_flag/dsr/gate_passed` 四键即准入输入，零新造字段），但"拒单 vs 显式豁免留痕"的失败语义一旦选错，代价是**真实资金被拦在门外或带病下单**——这不是代码难度问题而是门位问题，自行落地=越权 | Owner 定失败语义 → 治理+实盘车道施工 | 被回测判 `risk_admitted=False` 的策略过 pre-trade 必拒（或走带审批人的豁免并落审计行）；豁免项在仪表盘可见；"旗标缺省=None"不得当作通过（fail-closed 测试覆盖） |
 | **H5-F** sanity 容差过宽（**R-H5F-1**） | 收紧数值本身是**回测验收口径变更**（现网已固化的 `bt-fw-*` 产物可能从"合格"翻成"不合格"），而 §7.4 已证旧证据包会被新幂等闸要求重跑复评——两件事叠加＝触发一轮全量重跑，属排期决策而非补件。且引擎两文件（`vectorized_engine.py`/`event_driven_engine.py`）经 §7.1 核实为车道 A 在途件，HELD-OVERLAP 不硬闯 | 排期（与车道 A 落地合并做） | 改为相对基准/换手分层的合理性判据；极端但落在旧宽区间内的失真须有二次拦截并落 `metrics.degraded_guard` 同族字段 |
 
+#### 9.2.1 H5-F 落地回填（R-H5F-1 施工完毕，2026-09-18）
+
+车道 st-mineline-rh5f 从死信队列快照取差移植（`qid=q-20260917-st-qoder-t1a-20260915-0055`，
+快照 sha256 核验吻合；快照基线与当时 HEAD 的差异=纯收益带内容，逐文件核对后以补丁形式套上，
+未覆盖他会话后续改动）：
+
+- 单一真源：`engine_base.MAX/MIN_PLAUSIBLE_TOTAL_RETURN=3.0/-0.95`（裁定#293 已在册，
+  ruling_registry.yaml:3435），`plausible_equity_multiple_bounds()` 导出倍数带 (4.0x/0.05x)；
+- 消费侧同源改造：`vectorized_engine.BacktestConfig` 默认值（曾自写 10.0=第二套上限）、
+  `event_driven_engine` getattr 兜底、`result_repository` 落盘兜底（曾自写 11.0x/0.05x）
+  全部改为引用常量，禁在下游复述数值；
+- 收紧依据=现网 52 份产物实证（total_return 最大 1.187 / 倍数带 0.470x~2.187x），
+  新旧口径对现网裁决完全一致，零 retroactive quarantine；放宽/再收紧须走裁定登记；
+- 回归：`tests/backtest/test_bt_financial_correctness_p0.py` 35 passed（含新增
+  `test_plausibility_band_single_source` 两层一致性钉）；tests/backtest 全量 1791 passed，
+  仅 2 失败均与本改无关（`test_chaining_and_summary` 系他会话 staged 的
+  lane_chain_candidates.csv 删行所致、干净 HEAD+本补丁复跑通过；`test_replay_pipeline_consistent`
+  在 HEAD 基线即红）；5 文件 staged 内容与快照字节级一致（cmp 核验）。
+
 ### 9.3 工作区清退事故（本轮第二次，观测面缺口已并入 reconciler 脉 RC-15）
 
 `framework_composer.py` 的 #24 执行链接线（`cash_curve` + 五键 metrics + `chain` warn）与

@@ -172,7 +172,8 @@ class ImplausibleBacktestError(Exception):
     """回测合理性护栏异常（P0-4，2026-09-14 外部审查整改）。
 
     触发条件（引擎默认全开，BacktestConfig.sanity_guard=False 可显式关闭）：
-      - 极端收益：total_return 超出合理带（默认 -95% ~ +1000%，30x 类失真必拦）；
+      - 极端收益：total_return 超出合理带（默认 -95% ~ +300%，30x 类失真必拦；
+        数值单一真源=本模块 MAX/MIN_PLAUSIBLE_TOTAL_RETURN）；
       - 空跑：trades_count == 0 且未显式 allow_empty_trades=True。
     产物层配套：io.result_repository.save_artifact 对失真产物自动隔离至
     quarantine/ 目录，不进正库（ArtifactQuarantinedError）。
@@ -181,12 +182,34 @@ class ImplausibleBacktestError(Exception):
     error_code = "ZA-BT-0041"
 
 
+#: 合理性护栏收益带——**单一真源**（H5-F 治本 2026-09-17）。
+#:
+#: 病根：引擎层（本函数默认 10.0=+1000%）与产物层（io.result_repository 落盘兜底写死
+#: 11.0x/0.05x）各持一套字面量，互不知情——"上限"有两个数，改一个漏一个，等于没有上限。
+#: 现两层的数都从这两个常量推出来（倍数带 = 1+收益带），改口径只有一个落点。
+#:
+#: 为什么从 +1000% 收到 +300%：现网 52 份回测产物实证 total_return 最大 1.187（+118.7%）、
+#: 净值首尾倍数最大 2.187x、最小 0.470x——收到 3.0/−0.95（=4.0x/0.05x）对现网零隔离，
+#: 只砍掉"30x 神话"那段谁也解释不了的失真带。放宽/再收紧都要走裁定登记，禁在下游复述数值。
+MAX_PLAUSIBLE_TOTAL_RETURN = 3.0
+MIN_PLAUSIBLE_TOTAL_RETURN = -0.95
+
+
+def plausible_equity_multiple_bounds() -> tuple[float, float]:
+    """收益带换算成净值首尾倍数带 `(上, 下)`（产物层用，禁再写字面量）。
+
+    净值曲线倍数=1+total_return 的同一条线，只是口径对 fraction/multiple 两种 metrics
+    都稳健，故落盘兜底按倍数判、数值仍由本模块的收益带推出。
+    """
+    return (1.0 + MAX_PLAUSIBLE_TOTAL_RETURN, 1.0 + MIN_PLAUSIBLE_TOTAL_RETURN)
+
+
 def enforce_result_plausibility(
     *,
     total_return: float,
     trades_count: int,
-    max_plausible_total_return: float = 10.0,
-    min_plausible_total_return: float = -0.95,
+    max_plausible_total_return: float = MAX_PLAUSIBLE_TOTAL_RETURN,
+    min_plausible_total_return: float = MIN_PLAUSIBLE_TOTAL_RETURN,
     allow_empty_trades: bool = False,
     result_id: str = "",
 ) -> list[str]:
@@ -195,8 +218,9 @@ def enforce_result_plausibility(
     Args:
         total_return: 总收益率（小数口径，0.10=10%）
         trades_count: 成交笔数
-        max_plausible_total_return: 收益合理上限（小数；默认 10.0=+1000%）
-        min_plausible_total_return: 收益合理下限（默认 -0.95=-95%，
+        max_plausible_total_return: 收益合理上限（小数；默认=MAX_PLAUSIBLE_TOTAL_RETURN，
+            数值与产物层同源，改口径只改本模块常量）
+        min_plausible_total_return: 收益合理下限（默认=MIN_PLAUSIBLE_TOTAL_RETURN=-95%，
             无杠杆 long-only 不可能亏穿）
         allow_empty_trades: 显式放行 trades=0 空跑（对照实验用）
         result_id: 结果 id（仅用于报错信息定位）
@@ -238,4 +262,7 @@ __all__ = [
     "LookaheadExecutionError",
     "ImplausibleBacktestError",
     "enforce_result_plausibility",
+    "MAX_PLAUSIBLE_TOTAL_RETURN",
+    "MIN_PLAUSIBLE_TOTAL_RETURN",
+    "plausible_equity_multiple_bounds",
 ]

@@ -7,7 +7,9 @@
 # [MATURITY] production
 # [INVARIANTS] PIT铁律; BacktestResult全字段填充; 手续费/滑点实际扣除; 静默点必须出声——
 #   目标权重行 Σ 口径逐行统计(last_signal_row_stats)/拒单计数(last_skipped_fills)/未建模
-#   清单(EXECUTION_MODEL_CAPABILITY) 三腿随产物披露，禁止只写日志不进证据
+#   清单(EXECUTION_MODEL_CAPABILITY) 三腿随产物披露，禁止只写日志不进证据;
+#   合理性护栏收益带数值只从 engine_base.MAX/MIN_PLAUSIBLE_TOTAL_RETURN 取
+#   （H5-F 治本 2026-09-17：本件 BacktestConfig 曾自写 10.0 第二套上限，与产物层互不知情）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -51,6 +53,8 @@ import pandas as pd
 
 from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
 from zephyr.backtest.core.engine_base import (
+    MAX_PLAUSIBLE_TOTAL_RETURN,
+    MIN_PLAUSIBLE_TOTAL_RETURN,
     BacktestEngineBase,
     BacktestResult,
     LookaheadExecutionError,
@@ -129,8 +133,10 @@ class BacktestConfig:
         min_listing_age_days: 次新剔除阈值——上市不足 N 自然日剔除（P0-3，默认 120；
             0=不剔次新）
         sanity_guard: 合理性护栏总开关（P0-4，默认开：极端收益/trades=0 空跑 raise）
-        max_plausible_total_return: 收益合理上限（小数，默认 10.0=+1000%）
-        min_plausible_total_return: 收益合理下限（默认 -0.95，无杠杆不可能亏穿）
+        max_plausible_total_return: 收益合理上限（小数；默认=engine_base 单一真源常量，
+            数值与产物层同源，改口径只改 engine_base）
+        min_plausible_total_return: 收益合理下限（默认=engine_base 单一真源常量，
+            无杠杆不可能亏穿）
         allow_empty_trades: 显式放行 trades=0 空跑（对照实验用）
     """
 
@@ -150,10 +156,10 @@ class BacktestConfig:
     enable_pit_universe_filter: bool = True
     exclude_st: bool = True
     min_listing_age_days: int = 120
-    # ---- P0-4 合理性护栏 ----
+    # ---- P0-4 合理性护栏（数值真源=engine_base.MAX/MIN_PLAUSIBLE_TOTAL_RETURN，禁在此复述）----
     sanity_guard: bool = True
-    max_plausible_total_return: float = 10.0
-    min_plausible_total_return: float = -0.95
+    max_plausible_total_return: float = MAX_PLAUSIBLE_TOTAL_RETURN
+    min_plausible_total_return: float = MIN_PLAUSIBLE_TOTAL_RETURN
     allow_empty_trades: bool = False
 
 

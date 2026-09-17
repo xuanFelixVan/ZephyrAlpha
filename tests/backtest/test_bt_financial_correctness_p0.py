@@ -29,9 +29,12 @@ import pytest
 
 from zephyr.backtest.core import cost_model_calibration as cal
 from zephyr.backtest.core.engine_base import (
+    MAX_PLAUSIBLE_TOTAL_RETURN,
+    MIN_PLAUSIBLE_TOTAL_RETURN,
     ImplausibleBacktestError,
     LookaheadExecutionError,
     enforce_result_plausibility,
+    plausible_equity_multiple_bounds,
 )
 from zephyr.backtest.core.matching_engine import LiquidityGuardConfig
 from zephyr.backtest.implementations.vectorized_engine import (
@@ -42,6 +45,7 @@ from zephyr.backtest.implementations.vectorized_engine import (
 from zephyr.backtest.io.result_repository import (
     ArtifactQuarantinedError,
     BacktestRunArtifact,
+    _artifact_plausibility_violations,
     save_artifact,
 )
 from zephyr.execution_simulation.almgren_chriss_impact_model import AlmgrenChrissImpactModel
@@ -337,9 +341,31 @@ class TestP04SanityGuard:
         )
 
     def test_guard_boundary_passes(self):
-        """±合理带内正常通过（+1000% 边界、-95% 边界）。"""
-        assert enforce_result_plausibility(total_return=10.0, trades_count=10) == []
-        assert enforce_result_plausibility(total_return=-0.95, trades_count=10) == []
+        """±合理带内正常通过，越界即拦（数值取自 engine_base 单一真源，禁在此钉死）。"""
+        assert enforce_result_plausibility(total_return=MAX_PLAUSIBLE_TOTAL_RETURN, trades_count=10) == []
+        assert enforce_result_plausibility(total_return=MIN_PLAUSIBLE_TOTAL_RETURN, trades_count=10) == []
+        with pytest.raises(ImplausibleBacktestError):
+            enforce_result_plausibility(total_return=MAX_PLAUSIBLE_TOTAL_RETURN + 0.01, trades_count=10)
+
+    def test_plausibility_band_single_source(self):
+        """H5-F：引擎层收益带与产物层倍数带必须同源（曾各写一套 10.0 / 11.0x 互不知情）。
+
+        现网 52 份回测产物实证：total_return 最大 +118.7%、净值首尾倍数最大 2.187x、
+        最小 0.470x——收到 3.0/−0.95（=4.0x/0.05x）对现网零隔离，只砍"30x 神话"段。
+        """
+        max_multiple, min_multiple = plausible_equity_multiple_bounds()
+        assert max_multiple == pytest.approx(1.0 + MAX_PLAUSIBLE_TOTAL_RETURN)
+        assert min_multiple == pytest.approx(1.0 + MIN_PLAUSIBLE_TOTAL_RETURN)
+        # 引擎默认值不得偏离真源（BacktestConfig 与 getattr 兜底两条路都同源）
+        cfg = BacktestConfig()
+        assert cfg.max_plausible_total_return == MAX_PLAUSIBLE_TOTAL_RETURN
+        assert cfg.min_plausible_total_return == MIN_PLAUSIBLE_TOTAL_RETURN
+        # 实证带内产物（2.187x）两层都放行；越界产物（5x，旧口径曾放行）两层都拦
+        assert enforce_result_plausibility(total_return=1.187, trades_count=10) == []
+        with pytest.raises(ImplausibleBacktestError):
+            enforce_result_plausibility(total_return=4.0, trades_count=10)
+        assert _artifact_plausibility_violations(_artifact(1_000_000.0, 2_187_000.0, 10)) == []
+        assert any("合理上限" in r for r in _artifact_plausibility_violations(_artifact(1_000_000.0, 5_000_000.0, 10)))
 
     def test_engine_extreme_return_blocked(self):
         """引擎级：价格路径 10→10→200 产生 ~19x 收益 → 护栏 raise，结果不产出。"""
@@ -395,7 +421,8 @@ class TestP04ArtifactQuarantine:
         assert q_file.exists()
         assert str(q_file) in str(exc_info.value.quarantine_path)
         reasons = json.loads(q_file.read_text(encoding="utf-8"))["quarantine_reasons"]
-        assert any(">+1000%" in r for r in reasons)
+        max_multiple, _ = plausible_equity_multiple_bounds()
+        assert any(f">合理上限 {max_multiple:.1f}x" in r for r in reasons)
 
     def test_zero_trade_artifact_quarantined(self, tmp_path):
         """trades=0 空跑产物 → 隔离。"""

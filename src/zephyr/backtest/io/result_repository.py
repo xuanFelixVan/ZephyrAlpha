@@ -1,12 +1,15 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.io.result_repository
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.io.backtest_result_sink; zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.backtest.core.cost_attribution（成本归因注入，lazy import）; zephyr.backtest.core.cost_model_calibration; zephyr.backtest.core.matching_logic（费率真源注入，零字面量）
+# [DEPENDENCIES] zephyr.backtest.io.backtest_result_sink; zephyr.shared.io.paths; zephyr.shared.utils.time_utils; zephyr.backtest.core.cost_attribution（成本归因注入，lazy import）; zephyr.backtest.core.cost_model_calibration; zephyr.backtest.core.matching_logic（费率真源注入，零字面量）; zephyr.backtest.core.engine_base（合理性倍数带真源，H5-F）
 # [CONSUMERS] zephyr.frontend.dashboard.components.backtest_results; zephyr.frontend.dashboard.components.tick_replay
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] PIT铁律(零前瞻偏差); run_id全局唯一; 检索接口对前端透明;
 #              成本归因费率只从 matching_logic 注入（本件零费率字面量）;
+#              合理性护栏倍数带只从 engine_base.plausible_equity_multiple_bounds 取
+#              （H5-F 治本 2026-09-17：本件曾自写 11.0x/0.05x 第二套字面量，与引擎层
+#              10.0/-0.95 两条线互不知情，改一处漏一处）;
 #              归因不可算时 MUST 写 status=error + ERROR 日志而非省略字段（沉默禁令）
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
@@ -85,13 +88,15 @@ def _artifact_plausibility_violations(artifact: "BacktestRunArtifact") -> list[s
             first = last = 0.0
         if first > 0 and last > 0:
             multiple = last / first
-            if multiple > 11.0:  # +1000% 上限（30x 类失真必拦）
+            max_multiple, min_multiple = plausible_equity_multiple_bounds()
+            if multiple > max_multiple:  # 倍数带由 engine_base 收益带推出，禁在此复述数值
                 violations.append(
-                    f"equity {first:.0f}->{last:.0f} = {multiple:.1f}x（>+1000% 合理上限，失真嫌疑）"
+                    f"equity {first:.0f}->{last:.0f} = {multiple:.1f}x（>合理上限 {max_multiple:.1f}x，"
+                    "失真嫌疑；口径真源=engine_base.MAX_PLAUSIBLE_TOTAL_RETURN）"
                 )
-            elif multiple < 0.05:  # -95% 下限（无杠杆 long-only 不可能）
+            elif multiple < min_multiple:  # 无杠杆 long-only 不可能亏穿
                 violations.append(
-                    f"equity {first:.0f}->{last:.0f} = {multiple:.3f}x（<-95% 合理下限）"
+                    f"equity {first:.0f}->{last:.0f} = {multiple:.3f}x（<合理下限 {min_multiple:.2f}x）"
                 )
     metrics = artifact.metrics or {}
     if metrics.get("trades_count") == 0:
@@ -133,8 +138,8 @@ def save_artifact(
     蓝图 §16.7: io/result_repository.py 详细规格
 
     P0-4（2026-09-14 外部审查整改）：落盘前合理性护栏默认开启——极端收益
-    （净值首尾倍数 >11x 或 <0.05x）与零成交空跑产物自动隔离至
-    ``<storage>/quarantine/`` 留证并抛 ArtifactQuarantinedError，不进正库。
+    （净值首尾倍数越出 engine_base 收益带推出的倍数带，现=4.0x/0.05x）与零成交空跑
+    产物自动隔离至 ``<storage>/quarantine/`` 留证并抛 ArtifactQuarantinedError，不进正库。
     allow_implausible=True 显式放行（复盘取证用）。
 
     Args:
@@ -451,6 +456,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
 
+from zephyr.backtest.core.engine_base import plausible_equity_multiple_bounds
 from zephyr.backtest.io.backtest_result_sink import (
     BacktestSinkData,
     BenchmarkPoint,

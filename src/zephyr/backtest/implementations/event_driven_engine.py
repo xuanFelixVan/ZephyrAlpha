@@ -67,6 +67,8 @@ import pandas as pd
 
 from zephyr.backtest.core.decision_gate import DecisionGate, DecisionGateConfig, DecisionGateResult
 from zephyr.backtest.core.engine_base import (
+    MAX_PLAUSIBLE_TOTAL_RETURN,
+    MIN_PLAUSIBLE_TOTAL_RETURN,
     BacktestEngineBase,
     BacktestResult,
     current_map_snapshot,
@@ -358,8 +360,12 @@ class EventDrivenEngine(BacktestEngineBase):
             enforce_result_plausibility(
                 total_return=result.total_return,
                 trades_count=result.trades_count,
-                max_plausible_total_return=getattr(self._config, "max_plausible_total_return", 10.0),
-                min_plausible_total_return=getattr(self._config, "min_plausible_total_return", -0.95),
+                max_plausible_total_return=getattr(
+                    self._config, "max_plausible_total_return", MAX_PLAUSIBLE_TOTAL_RETURN
+                ),
+                min_plausible_total_return=getattr(
+                    self._config, "min_plausible_total_return", MIN_PLAUSIBLE_TOTAL_RETURN
+                ),
                 allow_empty_trades=getattr(self._config, "allow_empty_trades", False),
                 result_id=result_id,
             )
