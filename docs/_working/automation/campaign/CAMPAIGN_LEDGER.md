@@ -50,7 +50,7 @@ completes_when: 全线施工完毕+循环检查连续两次 0 问题+红蓝通�
 - 依赖裁定：ZephyrAlpha_AltFxECB Windows 任务退役=在飞任务退役 → **Owner 拍板项 H-06**（双轨期 ReplacingMergeTree 同键幂等无害）。
 - 块：B1 provider+脚本薄壳化；B2 路由/策略/槽位/tasks 四登记；B3 测试（零网）；B4 翻译/token/depgraph 登记；B5 提交；B6 重启窗激活确认（04:00-05:00 值守或晨间 verify）。
 
-### ⑥号车道=车道 G 全网搜索进货（挖矿+施工）【三态：施工完工待提交，本班】
+### ⑥号车道=车道 G 全网搜索进货（挖矿+施工）【三态：已落地 d75df06d4c，本班】
 - 目标（骨架 §4 P1"⑥号车道：E1 加第六车道，从胃点菜找策略"）：E1 加第六车道，消化 L3 胃收件箱→策略假说卸进货台账。
 - 挖矿六向（证据 file:line）：
   - 车道注册机制真源=config/strategy_production_map.yaml 节点（node_type: lane+lane 字母+十必填字段；校验器 scripts/governance/d5_architecture/validators/validate_strategy_production_map.py:38-90，commit 触发 gate=STRATEGY-FACTORY-MAP，data_refs 引用文件必须实存→台账空件先建 header 过闸）。
@@ -113,7 +113,7 @@ completes_when: 全线施工完毕+循环检查连续两次 0 问题+红蓝通�
 
 - fe8fce25b7 联动方案 v1+排班补注册批 → 2a11b88164 骨架 v1 三件 → a240714ea5 骨架 v1→v1.1 → 9729a73390 Owner 拍板批（5 任务退役/WeeklyRest/锦标赛裁定）→ 71257b59b2 六件同批（L1 上架流水线+ECB 实弹 63 行/L3 胃/L4 体检/L5 标准库/L6 红线）→ 40ca90eb88 L2 转正建议书 → dc285476f4 翻译随批 → 383c0af8e1 循环检查第 1 轮修复（缺 import）。
 - 接班会（st-autolnk-20260917b）：
-- L1.1 正门路由班（09-17 14:0x-14:5x，hash 本批随 commit）：provider+四登记+11 测试全绿；实弹=health_check True+collect 9 行（09-14..09-17 窗，缺今日=ECB 未发布，符合预期）；route-meta 零新违规。附带治本三件：①.gitignore 虚报收编（前批 message 称"豁免两件"实未合入，fx_ecb_ingest/onboard_source 一直脱管裸奔）②onboard_source_blueprint.md 悬空指针补齐（四文件引用但从未存在）③调度器 partial-fail 语义坑写入 provider 注释（见 FetchResult.error 即 break 丢整批行，禁带 error 交部分货）。
-- ⑥号车道班（09-17 14:5x-15:0x，hash 随后续 commit）：车道 G 模块+10 测试+工厂图 FAC-E1G+编排接线+实弹两班（首班吞异常教训→补 WARN 留痕）；token×2/翻译×1 已 CAS 登记。**提交窗阻塞实录**：st-mergewave 场景引擎 merge 晾置（MERGE_HEAD=e19bc24c，冲突已解待 finalize）——普通 commit 会截胡（AI-FILL-14 先例），本班停等；另 SESSION-REQUIRED 复发根因=前次失败 finally 注销+lock_files 自动注册 pid=死进程，治本=SessionRegistry.register(pid=0) 心跳模式（先例 st-tv2terrain）。.gitignore+双脚本收编批与 registry 批拆单独提交（PROTECTED-PATHS 预检无 message 视野，锁内 gate 凭 [ARCH-APPROVAL] 标记放行）。
+- L1.1 正门路由班（09-17 14:0x-14:5x，hash=4058b7b1e0 队列正门落地）：provider+四登记+11 测试全绿；实弹=health_check True+collect 9 行（09-14..09-17 窗，缺今日=ECB 未发布，符合预期）；route-meta 零新违规。附带治本三件：①.gitignore 虚报收编（前批 message 称"豁免两件"实未合入，fx_ecb_ingest/onboard_source 一直脱管裸奔）②onboard_source_blueprint.md 悬空指针补齐（四文件引用但从未存在）③调度器 partial-fail 语义坑写入 provider 注释（见 FetchResult.error 即 break 丢整批行，禁带 error 交部分货）。落地侧门禁连环七轮实录（每轮一死信对症修）：STARTUP 生造词'scheduler'→scheduled_task（VOCAB-HARDCODE）、raise 消息带 path→details 结构化字段（MSG-EXPOSURE）、SQL 字面量→模块常量+noqa 留痕（NO-BARE-SQL）、裸 subprocess→process_pool.run_subprocess_hidden 正门（BARE-SUBPROCESS，creationflags 同行判定不认续行）、ALGO_FLOW external 锚指 .md→删锚与同族一致、datetime.date 注解缺 import→from datetime import date。
+- ⑥号车道班（09-17 14:5x-15:0x，hash=d75df06d4c 队列正门落地）：车道 G 模块+10 测试+工厂图 FAC-E1G+编排接线+实弹两班（首班吞异常教训→补 WARN 留痕）；token×2/翻译×1 已 CAS 登记（registry 嵌套误插由 kimi-audit 班 368a01cbb7 归位根列表——教训：热文件锚点用 text.index 首匹配会撞同名嵌套键，追加须定位根键）。**提交窗阻塞实录**：st-mergewave 场景引擎 merge 晾置（MERGE_HEAD=e19bc24c，冲突已解待 finalize）——普通 commit 会截胡（AI-FILL-14 先例），本班停等；另 SESSION-REQUIRED 复发根因=前次失败 finally 注销+lock_files 自动注册 pid=死进程，治本=SessionRegistry.register(pid=0) 心跳模式（先例 st-tv2terrain）。.gitignore+双脚本收编批与 registry 批拆单独提交（PROTECTED-PATHS 预检无 message 视野，锁内 gate 凭 [ARCH-APPROVAL] 标记放行）。车道 G 落地侧另两死信对症：FUNCTION-DUP load_existing_ids→委托 lane_b 同实现（CLONE-GUARD 决议=委托）、run_intake 复杂度 19→拆 _build_rows（NO-HIGH-COMPLEXITY）。
 - 事故实录（本班，两次）：14:0x 与 14:4x merge 波（st-mergewave/st-auction-bridge pre-merge stash 链）横扫主区——台账 §1.5 首版被回滚、四登记未暂存编辑被还原、部分仅存于 stash@{1}（已找回）。教训固化：**每改一个文件立即 git add**，跨文件批次不留裸窗口。
 - 待办接力：正门班次激活需调度器重启（04:00-05:00 安全窗或 Owner 值守窗）；激活后晨间跑 onboard_source --mode verify 对账；连续 7 天打卡后提请 H-06（AltFxECB Windows 任务退役）。
