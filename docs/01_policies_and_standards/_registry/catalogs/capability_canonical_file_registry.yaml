@@ -32243,8 +32243,28 @@ creation_tokens:
   token: altdata-line-06-transmission-chain-engine-20260917
   created_by: st-altdatamap-20260917
   capability: altdata_line
+- file: docs/_working/altdata_line/07_industry_chain_repair_workorder.md
+  token: altdata-line-07-industry-chain-repair-workorder-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
 - file: docs/_working/residual_construction/pending_items_plan.md
   token: residual-construction-plan-pending-items-plan-20260917
   created_by: st-residual-20260917
   capability: residual_construction_plan
+- file: docs/_working/residual_construction/wo2_blackswan_workbook.md
+  token: residual-construction-plan-wo2-blackswan-workbook-20260917
+  created_by: st-residual-20260917
+  capability: residual_construction_plan
+- file: docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md
+  token: data-source-sop-data-source-onboarding-sop-20260917
+  created_by: st-altdatamap-20260917
+  capability: data_source_sop
+- file: architecture_model/data/data_entity_catalog.yaml
+  token: data-source-candidates-data-entity-catalog-20260917
+  created_by: st-altdatamap-20260917
+  capability: data_source_candidates
+- file: architecture_model/data/data_source_candidates.yaml
+  token: data-source-candidates-data-source-candidates-20260917
+  created_by: st-altdatamap-20260917
+  capability: data_source_candidates
 di_seam_exemptions: []
