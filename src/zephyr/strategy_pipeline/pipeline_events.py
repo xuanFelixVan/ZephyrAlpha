@@ -830,6 +830,28 @@ def wire_data_scheduler(scheduler: Any) -> None:
             # 挖矿 F3：regime 日序台账日产出者——须先于分配链（pf_alloc 的 regime 口径读本表，
             # 表旧=分配快照带旧教材）；滞后 ≤3 天时只是一条只读查询，不起子进程
             maybe_refresh_regime_snapshot(**_kwargs)
+            # 判定台账 Phase 2b 产出件（2026-09-16 st-ledgerp2b，作战室任务 3"验证昨日计划"）：
+            # 晨间预案（daily_kline SUCCESS 唤醒，plan_date 查重幂等）+盘中场景归类（60min bar
+            # 到达唤醒，确定性重放对账幂等）+收盘验证定格（daily_kline SUCCESS 唤醒，EOD 行查重
+            # 幂等）。**钩子序契约：必须先于下方结算钩子**——verification 行先落库，settle 的
+            # daily_plan 联结才有 verification 可读（次序颠倒=当日宽限被误判 unresolvable）。
+            # 唯一自动产出者在 plan_engine 对应模块（内部全捕获永不反噬），导入失败独立吞掉
+            # （判定件是增益不是依赖，不反噬结算/分配链）
+            try:
+                from zephyr.plan_engine.daily_plan import maybe_emit_daily_plan
+
+                maybe_emit_daily_plan(**_kwargs)
+                from zephyr.plan_engine.scenario_classifier import (
+                    maybe_classify_intraday_scenario,
+                )
+
+                maybe_classify_intraday_scenario(**_kwargs)
+                from zephyr.plan_engine.close_verifier import maybe_verify_plan_close
+
+                maybe_verify_plan_close(**_kwargs)
+            except Exception:  # noqa: BLE001——导入级故障与模块内异常同待遇：出声不反噬
+                log.warning("[JUDGMENT-LEDGER] Phase 2b 产出件唤醒失败（不影响后续链）",
+                            exc_info=True)
             # 判定台账标准 §四（2026-09-16）：三表结算挂收盘入库事件链（累积扫描幂等，
             # 错过当日不丢账）——置于 regime 之后、分配链之前（纯判定侧负载，不占分配时序）
             maybe_settle_judgment_ledger(**_kwargs)
