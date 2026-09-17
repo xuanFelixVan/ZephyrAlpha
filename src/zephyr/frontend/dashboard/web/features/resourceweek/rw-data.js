@@ -2,10 +2,10 @@
  * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。
  */
 window.RW_VIEW_DATA = {
- "generated_at": "2026-09-16T23:47:26+00:00",
+ "generated_at": "2026-09-17T00:00:15+00:00",
  "generator": "scripts/governance/generators/generate_resource_week_view.py",
  "registry": "config\\resource_profile_registry.yaml",
- "registry_sha256": "dfb206c9182f",
+ "registry_sha256": "6b147410120c",
  "week_start": "2026-09-14",
  "days": [
   "09-14 周一",
@@ -16,8 +16,8 @@ window.RW_VIEW_DATA = {
   "09-19 周六",
   "09-20 周日"
  ],
- "total_entities": 78,
- "scheduled": 30,
+ "total_entities": 80,
+ "scheduled": 32,
  "block_conflicts": 0,
  "conflicts": [],
  "lanes": [
@@ -2906,6 +2906,32 @@ window.RW_VIEW_DATA = {
    "unscheduled": false
   },
   {
+   "task_id": "sch_measure_calibration",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "17 6 * * 6",
+   "est_duration_min": 15,
+   "slots": [
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       377,
+       392
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
+  },
+  {
    "task_id": "sch_ollama_serve",
    "resource_class": "llm_api_local",
    "pool": "heavy",
@@ -3160,6 +3186,86 @@ window.RW_VIEW_DATA = {
    "est_duration_min": 1,
    "slots": [],
    "unscheduled": true
+  },
+  {
+   "task_id": "sch_resource_morning_report",
+   "resource_class": "light",
+   "pool": "default",
+   "exclusive_group": [],
+   "trading_sensitive": false,
+   "peak_mem_gb": 0.5,
+   "measured_peak_mem_gb": null,
+   "measured_p90_duration_min": null,
+   "status": "active",
+   "window_type": "cron",
+   "window_expr": "31 6 * * *",
+   "est_duration_min": 5,
+   "slots": [
+    {
+     "dow": 0,
+     "ranges": [
+      [
+       391,
+       396
+      ]
+     ]
+    },
+    {
+     "dow": 1,
+     "ranges": [
+      [
+       391,
+       396
+      ]
+     ]
+    },
+    {
+     "dow": 2,
+     "ranges": [
+      [
+       391,
+       396
+      ]
+     ]
+    },
+    {
+     "dow": 3,
+     "ranges": [
+      [
+       391,
+       396
+      ]
+     ]
+    },
+    {
+     "dow": 4,
+     "ranges": [
+      [
+       391,
+       396
+      ]
+     ]
+    },
+    {
+     "dow": 5,
+     "ranges": [
+      [
+       391,
+       396
+      ]
+     ]
+    },
+    {
+     "dow": 6,
+     "ranges": [
+      [
+       391,
+       396
+      ]
+     ]
+    }
+   ],
+   "unscheduled": false
   },
   {
    "task_id": "sch_resource_regen_check",

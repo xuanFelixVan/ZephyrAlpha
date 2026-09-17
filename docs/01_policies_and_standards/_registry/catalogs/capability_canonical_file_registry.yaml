@@ -31659,4 +31659,32 @@ creation_tokens:
   token: s11-nodes-mining-reconciler-event-trigger-chain-mining-20260916
   created_by: st-qoder-t1a-20260915
   capability: s11_nodes_mining
+- file: docs/_working/resource_schedule/calibration_report.yaml
+  token: resource-schedule-v2-calibration-report-20260917
+  created_by: st-govmap-20260915
+  capability: resource_schedule_v2
+- file: docs/_working/resource_schedule/morning_report/latest.md
+  token: resource-schedule-v2-latest-20260917
+  created_by: st-govmap-20260915
+  capability: resource_schedule_v2
+- file: docs/_working/resource_schedule/p3_global_replan_report.md
+  token: resource-schedule-v2-p3-global-replan-report-20260917
+  created_by: st-govmap-20260915
+  capability: resource_schedule_v2
+- file: src/zephyr/infrastructure/system_telemetry/measure_calibration.py
+  token: resource-schedule-v2-measure-calibration-20260917
+  created_by: st-govmap-20260915
+  capability: resource_schedule_v2
+- file: scripts/governance/generators/generate_resource_morning_report.py
+  token: resource-schedule-v2-generate-resource-morning-report-20260917
+  created_by: st-govmap-20260915
+  capability: resource_schedule_v2
+- file: scripts/register_resource_morning_report_task.ps1
+  token: resource-schedule-v2-register-resource-morning-report-task-20260917
+  created_by: st-govmap-20260915
+  capability: resource_schedule_v2
+- file: scripts/register_measure_calibration_task.ps1
+  token: resource-schedule-v2-register-measure-calibration-task-20260917
+  created_by: st-govmap-20260915
+  capability: resource_schedule_v2
 di_seam_exemptions: []

@@ -7,11 +7,11 @@ doc_type: register
 ttl: permanent
 title: 资源画像注册表（resource profile registry）
 status: active
-generated_at: '2026-09-16T23:47:23Z'
+generated_at: '2026-09-16T23:59:52Z'
 generated_by: scripts/governance/generators/generate_resource_profile_registry.py
 maintenance: auto
 counting_rule: entities 数组条目数（生成器四源全量再生；条目禁手工增删）
-total_entities: 79
+total_entities: 81
 field_count: 18
 mem_ceiling_gb: 10.0
 mem_ceiling_source: src/zephyr/trading/process_reaper.py _DANGEROUS_MEM_GB（引用不收编）
@@ -1447,6 +1447,27 @@ entities:
   status: active
   notes_zh: IntradayFundFlow；[R-F] 盘中资金流扫描与行情车道组同窗（共享行情时钟），错峰将错过盘口时敏窗口；判据②预算余量充足。
   co_start_intent: true
+- task_id: sch_measure_calibration
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 15
+  exclusive_group: []
+  window_type: cron
+  window_expr: 17 6 * * 6
+  schedule_truth_source: scripts/register_measure_calibration_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+    no_sample_reason_zh: null
+  samples_uri: .runtime/logs/resource_samples/sch_measure_calibration.jsonl
+  status: active
+  notes_zh: MeasureCalibration
 - task_id: sch_ollama_serve
   module_id: null
   map_node_id: null
@@ -1552,6 +1573,27 @@ entities:
   samples_uri: .runtime/logs/resource_samples/sch_process_reaper.jsonl
   status: active
   notes_zh: ProcessReaper
+- task_id: sch_resource_morning_report
+  module_id: null
+  map_node_id: null
+  resource_class: light
+  pool: default
+  peak_mem_gb: 0.5
+  est_duration_min: 5
+  exclusive_group: []
+  window_type: cron
+  window_expr: 31 6 * * *
+  schedule_truth_source: scripts/register_resource_morning_report_task.ps1
+  trading_sensitive: false
+  measured:
+    peak_mem_gb: null
+    p90_duration_min: null
+    samples: 0
+    last_at: null
+    no_sample_reason_zh: null
+  samples_uri: .runtime/logs/resource_samples/sch_resource_morning_report.jsonl
+  status: active
+  notes_zh: ResourceMorningReport
 - task_id: sch_resource_regen_check
   module_id: null
   map_node_id: null

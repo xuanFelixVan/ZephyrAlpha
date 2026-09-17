@@ -50098,6 +50098,20 @@ entries:
   desc_zh: "预注册网格 5×3 + 稀有度双边界验收带（hash 锁），候选评分映射与生产 s2_breadth_thrust_score 逐日等值自检，结果 JSON 落临时区，报告出仓 docs/_working。"
   desc_en: ""
   plain_zh: "换生产阈值之前先把考卷写死：拿 A 股约 20 年涨跌家数广度数据做预注册 walk-forward，训练段挑档位、没见过的年份只判一次分，样本外不过就维持现值并继续挂告警——清偿台账里『这套数字是抄美股的、没在本土考过』这笔欠账。"
+- module_path: src/zephyr/infrastructure/system_telemetry/measure_calibration.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "p90实测校准器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "拿资源采样日志里各任务真实跑了多久、吃了多少内存的实测值，去对注册表里人工申报的估时和内存上限；差超过三成（默认容差）就打标——低估意味着班次会挤压下一班，高估意味着白占预算。只出建议清单（proposed_corrections），绝不自动改申报值，改不改由晨审的人或AI会话决定。"
+- module_path: scripts/governance/generators/generate_resource_morning_report.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "资源排班晨报生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天早上定时跑一次，把当天要开火的排班任务、静默窗、注册表与操作系统的对账结果（冲突块/告警数）、外加p90实测校准的打标摘要，汇总成一份Markdown晨报落到 docs/_working/resource_schedule/morning_report/latest.md。人看一眼就知道今天资源上有没有坑，不用自己翻五份数据源。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

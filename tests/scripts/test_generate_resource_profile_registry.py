@@ -46,7 +46,10 @@ def test_parse_ps1_entities_covers_all_task_names():
     # 该测试解析真实磁盘 ps1（环境敏感），计数随真源走。
     # 2026-09-17 P0（v2 方案 L-2 再生排产化）：再生/视图发布两任务接线 → 20→22
     # （吃自己狗粮：排产动作本身进表，active 计入闸内存求和）。
-    assert len(ents) == 22
+    # 2026-09-17 P5：晨报（每日 06:31）+ 周校准（周六 06:17）两任务排上表 → 22→24
+    assert "sch_resource_morning_report" in tids
+    assert "sch_measure_calibration" in tids
+    assert len(ents) == 24
     # 杂音捕获杜绝：无变量名误捕实体
     assert not any("task_name" in t or t.endswith("_name") or t == "sch_svc" for t in tids)
 
