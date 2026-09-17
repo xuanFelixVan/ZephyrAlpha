@@ -87,4 +87,4 @@ docs/_working/<campaign_name>/          # 字母 snake_case 子目录
 
 ## §10 红线（通宵令也不豁免）
 
-宪法十二硬规则全程适用（ENV/reaper/worktree/claim/正门提交/GW 标记/热文件 safe_write）；测试隔离（tests 写 tmp_path）；RULE-DATA-OPS 三步验证；LLM 调用过 LSG；**交付报告禁止虚报**——「全绿」必须可被 Owner 独立复验，做不到的如实写「未达成+原因」，宁实勿华。
+宪法十二硬规则全程适用（ENV/reaper/worktree/claim/正门提交/GW 标记/热文件 safe_write）；**配额墙≠速率限制**：速率限制等待重试即可，配额墙（额度耗尽）= 现场评估→换模型/换通道接力→**续做勿重做**，跨会话接力先读交接包；测试隔离（tests 写 tmp_path）；RULE-DATA-OPS 三步验证；LLM 调用过 LSG；**交付报告禁止虚报**——「全绿」必须可被 Owner 独立复验，做不到的如实写「未达成+原因」，宁实勿华。
