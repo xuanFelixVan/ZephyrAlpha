@@ -8,8 +8,8 @@ title: 数据源全生命周期 SOP——从挖矿到消费端接线（流程编
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-09-17
+version: "1.1.0"
+date: 2026-09-18
 topic: data_ops_sop
 ---
 
@@ -143,3 +143,28 @@ tasks.yaml 条目模板（字段以现有任务为准）：
 ## §11 一页检查单（新数据源上线 14 查）
 
 ①骨架中类编号？②查重过？③全网挖矿三扫描？④candidates.yaml 登记？⑤报批状态？⑥字段含 PIT 锚+三件套？⑦DDL-as-Code+verify 过？⑧anchored_state+capability 登记？⑨provider 过三闸？⑩fallback_sources 有？⑪schedule 槽位选对+探活？⑫接通三查过？⑬消费者登记且查到？⑭巡检/停更阈值生效？
+
+
+## §12 存储分层与落盘位置（冷热分离，2026-09-18 增补）
+
+> 来源：G 盘冷库建成（3.7T，G:\zephyr_cold）+ 冷热分离定调。本节回答「新数据源接通后，数据放哪」。
+
+**三层存放**：
+| 层 | 位置 | 放什么 |
+|---|---|---|
+| 热 | ClickHouse c1/c3 + 本地数据盘 | 清洗后用于回测/消费的结构化数据（唯一回测真源） |
+| 温 | 本地 Parquet 离线仓（factor/offline_store、E 盘归档器） | 因子离线仓、批量预取 |
+| 冷 | **G:\zephyr_cold**（00_manifest/10_inbox/20_raw 原料/30_corpus 语料/40_migration/50_archive/90_tmp） | 原始抓取物、原文快照（PDF/HTML/网页）、大体积低频原料、旧项目归档 |
+
+**新数据源落盘规则**：
+1. 原始抓取物/网页快照 → 冷库 10_inbox 走入库四步（登记 00_manifest/drawers.jsonl 后归位 20_raw/30_corpus，抽屉=骨架大类编号）；
+2. 清洗后结构化数据 → 只进 CH，**禁入冷库、禁双真源**（冷库副本仅作 archive）；
+3. 完整规程（命名规范/immutable/出库流程/E 盘与 F 盘迁移计划）= [docs/_working/altdata_line/10_g_drive_cold_storage_sop.md](../../../_working/altdata_line/10_g_drive_cold_storage_sop.md)。
+
+**存量迁移令（2026-09-18）**：E 盘 数据下载\研报（3 万份/85GB）→ G:\zephyr_cold_corpus
+esearch_reports9_bundle\；F 盘研报 PDF（约 6 万份）→ 30_corpus
+esearch_reports\。分批搬运、hash 抽检 5%、原目录留 30 天双备份期。执行归数据子分包（09 清单 D9）。
+
+## §13 一页检查单（增补 2 查）
+15. 原文快照/原料是否已存冷库并登记 manifest？（冷热分离）
+16. 清洗数据是否只进 CH、未在冷库留第二工作副本？（禁双真源）
