@@ -32540,6 +32540,26 @@ creation_tokens:
   token: clean-exam-e2e-smoke-test-design-20260917
   created_by: st-cleanexam-20260918
   capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env3_e2e_bridge/seg1_execution_log.md
+  token: clean-exam-e2e-seg1-execution-log-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env1_cleanliness/00_env_mining.md
+  token: clean-exam-e2e-00-env-mining-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env1_cleanliness/execution_plan.md
+  token: clean-exam-e2e-execution-plan-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env1_cleanliness/verdict_files.csv
+  token: clean-exam-e2e-verdict-files-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env1_cleanliness/verdict_tables.csv
+  token: clean-exam-e2e-verdict-tables-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
 - file: schemas/categories/cohort_daily_ledger.py
   token: cohort-daily-ledger-cohort-daily-ledger-20260917
   created_by: st-cohort-ledger-20260918
@@ -32604,5 +32624,17 @@ creation_tokens:
   token: "e4-report-sowner002-20260916"
   created_by: "st-tdchain-20260917"
   capability: "sowner002_cherry_pick"
+- file: src/zephyr/data/quality_sentinel.py
+  token: quality-sentinel-quality-sentinel-20260917
+  created_by: st-mineline-w401
+  capability: quality_sentinel
+- file: config/quality_sentinel_tables.yaml
+  token: quality-sentinel-quality-sentinel-tables-20260917
+  created_by: st-mineline-w401
+  capability: quality_sentinel
+- file: tests/zephyr/data/test_quality_sentinel.py
+  token: quality-sentinel-test-quality-sentinel-20260917
+  created_by: st-mineline-w401
+  capability: quality_sentinel
 
 di_seam_exemptions: []
