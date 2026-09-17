@@ -5,7 +5,7 @@ title: "资产盘点系统蓝图 — 全量资产发现→自动分类→统一�
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "3.1.7"
+version: "3.1.8"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -41,7 +41,7 @@ responsibility_domain:
 build_status: production
 design_maturity: production
 ---
-> module_id: MOD-INF-026 | version: 3.1.7 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-026 | version: 3.1.8 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/asset-inventory/ | generation: 3 | construction_progress: completed
 
 # Asset Inventory 蓝图 — 全量资产发现→自动分类→统一登记→持续对账→生命周期管理
@@ -3859,27 +3859,7 @@ ZephyrAlpha MOD-INF-026 Asset Inventory Blueprint
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/asset_inventory/__main__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/asset_inventory/mcp_server.py` | ✅ 已实现 | |
-| `src/zephyr/integration/mcp_server.py` | ✅ 已实现 | |
-
-### 40.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/asset_inventory/test_asset_inventory.py` | ✅ 已实现 | |
-| `tests/dependency/test_dependency_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/observability/test_telemetry.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_lifecycle_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_classifier_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_dashboard_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_discover_all_registries.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_index_generator_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_metadata.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_reconciler_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_registry_adapter_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_scanner_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_trust_anchor_root.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 40.5 路径索引使用指南
 

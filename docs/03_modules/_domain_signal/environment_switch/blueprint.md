@@ -3,7 +3,7 @@ module_id: MOD-SIG-138
 title: "环境开关蓝图 — 六段状态×链启停查表"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L05_signal
@@ -86,7 +86,7 @@ responsibility_domain:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_ashare/core/environment_switch.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 4.5 路径索引使用指南
 

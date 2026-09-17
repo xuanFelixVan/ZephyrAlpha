@@ -5,7 +5,7 @@ title: TDM 节点验证 runner（validation）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.4"
+version: "1.1.5"
 date: 2026-09-10
 topic: tdm_validation_runner
 scope: module
@@ -100,18 +100,7 @@ report = run_validation()               # 写台账
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `schemas/categories/backtest/backtest_node_verdict.py` | ✅ 已实现 | |
-| `schemas/categories/backtest/backtest_strategy_screen.py` | ✅ 已实现 | |
-| `src/zephyr/trading/validation/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/trading/validation/ablation.py` | ✅ 已实现 | |
-| `src/zephyr/trading/validation/decay_watch.py` | ✅ 已实现 | |
-| `src/zephyr/trading/validation/runner.py` | ✅ 已实现 | |
-
-### 6.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/trading/test_validation_ablation.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 

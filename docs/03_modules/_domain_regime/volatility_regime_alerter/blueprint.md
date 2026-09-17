@@ -3,7 +3,7 @@ module_id: MOD-REGIME-011
 title: "波动率体制转换与关键时点预警蓝图 — GARCH(1,1) 波动预测+RV 压缩标记+突变告警"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L2_domain
 layer_name: regime
@@ -114,11 +114,11 @@ QMLE，不引 arch 库**（AI-FHS-001 #1，MOD-RK-26 fhs_engine 先例）。本�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 7.1 测试文件
+### 7.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/regime/test_volatility_regime_alerter.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 7.5 路径索引使用指南
 

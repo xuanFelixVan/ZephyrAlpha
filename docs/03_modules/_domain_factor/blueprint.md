@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.19"
+version: "4.0.20"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -1105,72 +1105,7 @@ class FactorMeta(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/factor/alpha_signal_pipeline.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/factor/core/backpressure/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/backpressure/limiter.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/batch_output/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/batch_output/buffer.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/config_manager/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/factor/core/config_manager/loader.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/ctr001_consumer/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/factor/core/ctr001_consumer/converter.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/ctr002_producer/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/factor/core/ctr002_producer/converter.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/dag_manager/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/dist_feature_eng/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/dist_feature_eng/engine.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/factor_dag/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/factor/core/factor_dag/dag.py` | ✅ 已实现 | |
-| `src/zephyr/factor/expectations.py` | ✅ 已实现 | |
-| `src/zephyr/factor/fundamentals.py` | ✅ 已实现 | |
-| `src/zephyr/factor/technical_indicators/cycle.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/alpha_signal/test_l02_alpha_factor.py` | ✅ 已实现 | |
-| `tests/factor/__init__.py` | ⚠️ 骨架 | |
-| `tests/factor/test_abs001_gate.py` | ✅ 已实现 | |
-| `tests/factor/test_backpressure.py` | ✅ 已实现 | |
-| `tests/factor/test_batch_output.py` | ✅ 已实现 | |
-| `tests/factor/test_config_manager.py` | ✅ 已实现 | |
-| `tests/factor/test_correlation_analyzer.py` | ✅ 已实现 | |
-| `tests/factor/test_correlation_dedup.py` | ✅ 已实现 | |
-| `tests/factor/test_ctr001_consumer.py` | ✅ 已实现 | |
-| `tests/factor/test_ctr002_producer.py` | ✅ 已实现 | |
-| `tests/factor/test_dag_manager.py` | ✅ 已实现 | |
-| `tests/factor/test_dist_feature_eng.py` | ✅ 已实现 | |
-| `tests/factor/test_evaluation_backtest.py` | ✅ 已实现 | |
-| `tests/factor/test_evaluation_metrics.py` | ✅ 已实现 | |
-| `tests/factor/test_factor_attribution.py` | ✅ 已实现 | |
-| `tests/factor/test_factor_dag.py` | ✅ 已实现 | |
-| `tests/factor/test_factor_decay_monitor.py` | ✅ 已实现 | |
-| `tests/factor/test_factor_optimization.py` | ✅ 已实现 | |
-| `tests/factor/test_fundamentals.py` | ✅ 已实现 | |
-| `tests/factor/test_governance_engine.py` | ✅ 已实现 | |
-| `tests/factor/test_grayscale_rollout.py` | ✅ 已实现 | |
-| `tests/factor/test_ic_decay.py` | ✅ 已实现 | |
-| `tests/factor/test_ic_ir_calc.py` | ✅ 已实现 | |
-| `tests/factor/test_ic_ir_evaluator.py` | ✅ 已实现 | |
-| `tests/factor/test_intraday_factor_loop.py` | ✅ 已实现 | |
-| `tests/factor/test_layered_backtest.py` | ✅ 已实现 | |
-| `tests/factor/test_lifecycle_state_machine.py` | ✅ 已实现 | |
-| `tests/factor/test_multifactor_synthesis.py` | ✅ 已实现 | |
-| `tests/factor/test_six_step_flow.py` | ✅ 已实现 | |
-| `tests/factor/test_three_level_judgment.py` | ✅ 已实现 | |
-| `tests/shared/test_market_units.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/technical_indicators/test_composite.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/technical_indicators/test_cycle.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/technical_indicators/test_indicator_base.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/technical_indicators/test_momentum.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/technical_indicators/test_reversal.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/technical_indicators/test_statistics.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/technical_indicators/test_trend.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/technical_indicators/test_volatility.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/technical_indicators/test_volume.py` | ✅ 已实现 | |
-| `tests/zephyr/factor/test_indicator_reader.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

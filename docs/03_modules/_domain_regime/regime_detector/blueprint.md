@@ -3,7 +3,7 @@ module_id: MOD-REGIME-001
 title: "Regime检测器蓝图 — 12态灰度概率+8转换评分+Shrinkage产出（系统最上游·可验证接口）"
 doc_type: blueprint
 status: Active
-version: "0.1.31"
+version: "0.1.32"
 design_maturity: production
 build_status: generated
 ttl: permanent
@@ -384,19 +384,7 @@ else:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/regime/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/regime/core/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/regime/core/anchored_state_machine.py` | ✅ 已实现 | |
-
-### 10.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/regime/test_chip_distribution_engine.py` | ✅ 已实现 | |
-| `tests/regime/test_regime_detector.py` | ✅ 已实现 | |
-| `tests/regime/test_trend_features.py` | ✅ 已实现 | |
-| `tests/zephyr/regime/__init__.py` | ⚠️ 骨架 | |
-| `tests/zephyr/regime/test_anchored_state_machine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 10.5 路径索引使用指南
 

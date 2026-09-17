@@ -5,7 +5,7 @@ title: "AutoRuntime Core 蓝图 — 系统大脑·三层运行时运营中心"
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "6.0.15"
+version: "6.0.16"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1025,56 +1025,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/feedback_loop/core.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/health_monitor/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/trading/__main__.py` | ✅ 已实现 | |
-| `src/zephyr/trading/action_dispatcher/_annotation_writer.py` | ✅ 已实现 | |
-| `src/zephyr/trading/action_dispatcher/_audit_log_writer.py` | ✅ 已实现 | |
-| `src/zephyr/trading/action_dispatcher/_file_lifecycle_manager.py` | ✅ 已实现 | |
-| `src/zephyr/trading/action_dispatcher/_search_replace_engine.py` | ✅ 已实现 | |
-| `src/zephyr/trading/orphan_detector.py` | ✅ 已实现 | |
-| `src/zephyr/trading/ports.py` | ✅ 已实现 | |
-| `src/zephyr/trading/runtime/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/trading/shift_handover_checklist.py` | ✅ 已实现 | |
-| `src/zephyr/trading/windows_service.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/action/test_action_dispatcher.py` | ✅ 已实现 | |
-| `tests/agent_rbac/test_session_aware_stash_red_blue.py` | ✅ 已实现 | |
-| `tests/ai/test_ai_audit_logger.py` | ✅ 已实现 | |
-| `tests/automation/test_auto_integrator.py` | ✅ 已实现 | |
-| `tests/automation/test_auto_runtime_core.py` | ✅ 已实现 | |
-| `tests/automation/test_auto_runtime_e2e.py` | ✅ 已实现 | |
-| `tests/automation/test_auto_task_generator.py` | ✅ 已实现 | |
-| `tests/capability/test_capability_card.py` | ✅ 已实现 | |
-| `tests/capability/test_capability_registry.py` | ✅ 已实现 | |
-| `tests/capability/test_capability_sync.py` | ✅ 已实现 | |
-| `tests/f_lifecycle/test_f1_event_trigger.py` | ✅ 已实现 | |
-| `tests/feedback/feedback_loop/test_feedback_loop.py` | ✅ 已实现 | |
-| `tests/ops/test_ollama_version_guard.py` | ✅ 已实现 | |
-| `tests/resource/test_resource_optimization.py` | ✅ 已实现 | |
-| `tests/task/test_task_gate.py` | ✅ 已实现 | |
-| `tests/trading/extreme/test_f1_extreme.py` | ✅ 已实现 | |
-| `tests/trading/test_auto_runtime_ops_layers.py` | ✅ 已实现 | |
-| `tests/trading/test_boot_hooks.py` | ✅ 已实现 | |
-| `tests/trading/test_capability_registry_cache.py` | ✅ 已实现 | |
-| `tests/trading/test_conductor.py` | ✅ 已实现 | |
-| `tests/trading/test_degradation_chain.py` | ✅ 已实现 | |
-| `tests/trading/test_dream_cycle.py` | ✅ 已实现 | |
-| `tests/trading/test_finalizer.py` | ✅ 已实现 | |
-| `tests/trading/test_integration_registry.py` | ✅ 已实现 | |
-| `tests/trading/test_lifecycle_manager.py` | ✅ 已实现 | |
-| `tests/trading/test_module_onboarding_scanner.py` | ✅ 已实现 | |
-| `tests/trading/test_night_shift_queue.py` | ✅ 已实现 | |
-| `tests/trading/test_runtime_config.py` | ✅ 已实现 | |
-| `tests/trading/test_shift_handover_checklist.py` | ✅ 已实现 | |
-| `tests/trading/test_status_dashboard.py` | ✅ 已实现 | |
-| `tests/trading/test_stop_gate.py` | ✅ 已实现 | |
-| `tests/trading/test_work_dag.py` | ✅ 已实现 | |
-| `tests/trading/test_work_orchestrator.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

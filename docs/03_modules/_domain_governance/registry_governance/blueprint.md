@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/registry_governance.py
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.8"
+version: "0.2.9"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -1104,12 +1104,11 @@ class OverlapResult:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/infrastructure/test_registry_governance_infrastructure.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_registry_governance_root.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

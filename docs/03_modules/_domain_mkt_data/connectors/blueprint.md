@@ -3,7 +3,7 @@ module_id: MOD-MKT-003
 title: "行情数据连接器蓝图 — 连接生命周期+实时订阅框架"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 ttl: permanent
 layer: L01_foundation
 layer_name: foundation
@@ -204,15 +204,7 @@ class ConnectorManager:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/market_data/connectors/base.py` | ✅ 已实现 | |
-
-### 10.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/market_data/connectors/__init__.py` | ⚠️ 骨架 | |
-| `tests/market_data/connectors/test_connector_base.py` | ✅ 已实现 | |
-| `tests/market_data/connectors/test_connector_manager.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 10.5 路径索引使用指南
 

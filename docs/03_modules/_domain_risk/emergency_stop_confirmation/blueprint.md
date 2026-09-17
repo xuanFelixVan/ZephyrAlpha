@@ -3,7 +3,7 @@ module_id: MOD-RK-36
 title: "紧急停止安全确认蓝图 — 紧急停止/强平双锁二次确认 + 确认留痕"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -102,11 +102,11 @@ vnpy/Lean kill switch 与运维 dead-man switch 的双人授权纪律。
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 测试文件
+### 6.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/risk/core/test_emergency_stop_confirmation.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 

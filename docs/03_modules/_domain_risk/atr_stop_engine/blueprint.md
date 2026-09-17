@@ -3,7 +3,7 @@ module_id: MOD-RK-35
 title: "ATR 动态止损与 Bayesian 参数优化蓝图 — k×ATR 参数化止损/分批止盈/时间止损"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -101,11 +101,11 @@ Wilder(1978) ATR 止损经典落码：止损间距以波动率自适应单位 k�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 测试文件
+### 6.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/risk/test_atr_stop_engine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 

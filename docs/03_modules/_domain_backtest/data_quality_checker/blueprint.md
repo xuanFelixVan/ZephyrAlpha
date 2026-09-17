@@ -3,7 +3,7 @@ module_id: MOD-BT-022
 title: "回测数据质量检查器蓝图 — 缺失检测+异常检测+一致性检查"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -132,11 +132,11 @@ responsibility_domain:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 测试文件
+### 8.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/backtest/test_data_quality_checker.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

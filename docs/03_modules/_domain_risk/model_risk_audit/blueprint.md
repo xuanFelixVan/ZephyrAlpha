@@ -3,7 +3,7 @@ module_id: MOD-RK-18
 title: "模型风险审计器蓝图 — 交易预测模型漂移/衰退/偏差审计"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -98,11 +98,11 @@ D_RISK 域 A 类基础设施——交易预测模型漂移/衰退/偏差审计�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 测试文件
+### 6.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/risk/core/test_model_risk_audit.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 

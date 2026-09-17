@@ -3,7 +3,7 @@ module_id: MOD-POS-029
 title: "仓位配方编译器蓝图 — F-06 网格 schema 一次定型+活性谓词折叠+内容寻址出生证"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -126,7 +126,7 @@ A3-A5 → O1 GridExpansion(recipes/n_raw/folded/schema_digest)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/position_recipe_compiler.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

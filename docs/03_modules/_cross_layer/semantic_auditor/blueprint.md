@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/semantic_audit
 title: "Semantic Auditor 蓝图 — 语义审计器·规则文档LLM桥接"
 doc_type: blueprint
 status: Active
-version: "6.1.8"
+version: "6.1.9"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -1063,32 +1063,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/governance/semantic_audit/alignment_engine.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/compliance_map.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/feedback_self_audit.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/fix_prioritizer.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/fix_result_prioritizer.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/issue_aggregator.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/kb_gate.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/llm_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/orchestrator.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/privacy.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/reference_extractor.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/safety_boundary.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/self_healer.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/self_health.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/spec_auditor.py` | ✅ 已实现 | |
-| `src/zephyr/governance/semantic_audit/trigger_engine.py` | ✅ 已实现 | |
-| `src/zephyr/integration/llm_bridge.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/audit/audit_core/test_audit_self_healer_e2e.py` | ✅ 已实现 | |
-| `tests/semantic_auditor/test_blast_radius.py` | ✅ 已实现 | |
-| `tests/semantic_auditor/test_blast_radius_red_team.py` | ✅ 已实现 | |
-| `tests/semantic_auditor/test_semantic_auditor.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

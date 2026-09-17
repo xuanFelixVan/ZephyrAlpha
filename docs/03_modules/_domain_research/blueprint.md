@@ -4,7 +4,7 @@ submodule_path: src/zephyr/backtest
 title: "Research Innovation Core 蓝图+施工图 — 研究创新层"
 doc_type: blueprint
 status: Active
-version: "2.1.5"
+version: "2.1.6"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -855,13 +855,7 @@ class BacktestConfig:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/research/__init__.py` | ⚠️ 骨架 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/model/test_l09_research_innovation.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

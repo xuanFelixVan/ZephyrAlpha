@@ -3,7 +3,7 @@ module_id: MOD-RK-16
 title: "风险分解引擎蓝图 — 因子/残差分解 + MCR/CCR 贡献"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -127,11 +127,11 @@ build_status: production
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 测试文件
+### 8.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/risk/test_risk_decomposition.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

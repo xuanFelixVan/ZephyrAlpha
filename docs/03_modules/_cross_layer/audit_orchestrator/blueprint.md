@@ -5,7 +5,7 @@ submodule_path: src/zephyr/governance
 title: "Audit Orchestrator 蓝图 — 审计编排器·三子系统架构"
 doc_type: blueprint
 status: Active
-version: "6.1.4"
+version: "6.1.5"
 layer: L1_foundation
 architecture_layer: "L2_编排调度"
 layer_name: cross_layer
@@ -96,7 +96,7 @@ design_maturity: production
 
 # Audit Orchestrator 蓝图 — 审计编排器·三子系统架构
 
-> module_id: MOD-INF-027 | version: 6.1.4 | status: active | layer: cross_layer
+> module_id: MOD-INF-027 | version: 6.1.5 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/audit-orchestrator/ | generation: 6 | construction_progress: partially_implemented | realized: 7/33
 
 ## 概述
@@ -1020,18 +1020,11 @@ STEP 3: 拆分后验证
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/audit/audit_core/test_audit_dim_d1_d4_e2e.py` | ✅ 已实现 | |
-| `tests/audit/audit_core/test_audit_dim_d5_d8_e2e.py` | ✅ 已实现 | |
-| `tests/audit/audit_core/test_audit_dim_d9_d12_e2e.py` | ✅ 已实现 | |
-| `tests/audit/audit_core/test_audit_full_closure_e2e.py` | ✅ 已实现 | |
-| `tests/audit/audit_core/test_audit_full_pipeline_e2e.py` | ✅ 已实现 | |
-| `tests/audit/audit_core/test_audit_orchestrator_e2e.py` | ✅ 已实现 | |
-| `tests/audit/audit_core/test_audit_registry_gate_e2e.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_orchestrator.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

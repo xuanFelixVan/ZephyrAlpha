@@ -5,7 +5,7 @@ submodule_path: src/zephyr/gov_code_quality/code_dedup
 title: "Code Dedup Engine 蓝图 — 代码去重·爆炸半径防护·原子修复"
 doc_type: blueprint
 status: Active
-version: 0.15.9
+version: 0.15.10
 layer: L0_infrastructure
 layer_note: "跨层模块——代码在基础设施域，但与治理域交互（Gate Engine+AiAuditLogger）"
 layer_name: infrastructure
@@ -1745,78 +1745,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/gov_code_quality/code_dedup/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/canary_manager.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/cli.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/phase_executor.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/trackers/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_code_quality/code_dedup/trackers/blind_spot_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/governance/intelligence_governance/self_benchmark.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/automation/test_auto_fixer.py` | ✅ 已实现 | |
-| `tests/canary/test_canary_register.py` | ✅ 已实现 | |
-| `tests/config/test_config_root.py` | ✅ 已实现 | |
-| `tests/contracts/test_contract_consistency_checker.py` | ✅ 已实现 | |
-| `tests/cross/test_cross_boundary_detector.py` | ✅ 已实现 | |
-| `tests/decision/test_decision_auditor.py` | ✅ 已实现 | |
-| `tests/file/test_file_creator.py` | ✅ 已实现 | |
-| `tests/governance/adversarial/test_shadow_verifier.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_false_negative_auditor.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_fifteen_dimension_auditor.py` | ✅ 已实现 | |
-| `tests/governance/budget/test_debt_projector.py` | ✅ 已实现 | |
-| `tests/governance/budget/test_degradation.py` | ✅ 已实现 | |
-| `tests/governance/code_dedup/test_atomic_fixer.py` | ✅ 已实现 | |
-| `tests/governance/code_dedup/test_grandfather_manager.py` | ✅ 已实现 | |
-| `tests/governance/code_dedup/test_policy_tree_validator.py` | ✅ 已实现 | |
-| `tests/governance/code_dedup/test_pre_apply_integrity_gate.py` | ✅ 已实现 | |
-| `tests/governance/code_dedup/test_ssot_registrar.py` | ✅ 已实现 | |
-| `tests/governance/code_quality/test_ast_comparator.py` | ✅ 已实现 | |
-| `tests/governance/code_quality/test_code_analyzer_runner.py` | ✅ 已实现 | |
-| `tests/governance/code_quality/test_code_simulator.py` | ✅ 已实现 | |
-| `tests/governance/code_quality/test_function_discovery.py` | ✅ 已实现 | |
-| `tests/governance/code_quality/test_simplicity_auditor.py` | ✅ 已实现 | |
-| `tests/governance/compliance/test_thematic_clusterer.py` | ✅ 已实现 | |
-| `tests/governance/data_layer/test_dedup_cache_manager.py` | ✅ 已实现 | |
-| `tests/governance/data_layer/test_symbol_index.py` | ✅ 已实现 | |
-| `tests/governance/delegation/test_behavioral_sampler.py` | ✅ 已实现 | |
-| `tests/governance/delegation/test_behavioral_trust_checker.py` | ✅ 已实现 | |
-| `tests/governance/delegation/test_consequence_tracker.py` | ✅ 已实现 | |
-| `tests/governance/delegation/test_shadow_trust_validator.py` | ✅ 已实现 | |
-| `tests/governance/drift/test_dead_module_detector.py` | ✅ 已实现 | |
-| `tests/governance/drift/test_diff_detector.py` | ✅ 已实现 | |
-| `tests/governance/drift/test_micro_clone_detector.py` | ✅ 已实现 | |
-| `tests/governance/drift/test_stale_shared_detector.py` | ✅ 已实现 | |
-| `tests/governance/governance_misc/test_annotations.py` | ✅ 已实现 | |
-| `tests/governance/governance_misc/test_mock_duplicate_generator.py` | ✅ 已实现 | |
-| `tests/governance/governance_misc/test_question_tracker.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_integration_hub.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_integrations.py` | ✅ 已实现 | |
-| `tests/governance/observability/test_hotspot_tracker.py` | ✅ 已实现 | |
-| `tests/governance/observability/test_report.py` | ✅ 已实现 | |
-| `tests/governance/ops/test_exit_codes.py` | ✅ 已实现 | |
-| `tests/governance/ops/test_health_monitor.py` | ✅ 已实现 | |
-| `tests/governance/ops/test_success_validator.py` | ✅ 已实现 | |
-| `tests/governance/ops/test_verifier.py` | ✅ 已实现 | |
-| `tests/governance/orchestrator/test_prioritizer.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_doom_loop_guard.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_observation_window_guard.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_recovery_manifest_writer.py` | ✅ 已实现 | |
-| `tests/governance/security/test_extraction_safety.py` | ✅ 已实现 | |
-| `tests/governance/security/test_import_surface_tracker.py` | ✅ 已实现 | |
-| `tests/governance/security/test_monoculture_guard.py` | ✅ 已实现 | |
-| `tests/governance/security/test_sensitivity_sweeper.py` | ✅ 已实现 | |
-| `tests/governance/security/test_signature_matcher.py` | ✅ 已实现 | |
-| `tests/governance/shared/test_shared_evolver.py` | ✅ 已实现 | |
-| `tests/governance/shared/test_shared_lifecycle_manager.py` | ✅ 已实现 | |
-| `tests/path/test_path_index_validator.py` | ✅ 已实现 | |
-| `tests/path/test_path_tree_generator_design_protection.py` | ✅ 已实现 | |
-| `tests/risk/test_risk_mitigation_tracker.py` | ✅ 已实现 | |
-| `tests/risk/test_risk_mitigator.py` | ✅ 已实现 | |
-| `tests/self_check/test_self_scanner.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

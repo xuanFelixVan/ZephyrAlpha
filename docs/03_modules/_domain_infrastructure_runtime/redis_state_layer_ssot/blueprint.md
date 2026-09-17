@@ -3,7 +3,7 @@ module_id: MOD-INF-063
 title: "Redis 共享状态层 SSOT 蓝图 — 13 命名空间三层结构/TTL 矩阵/混合持久化参数/恢复 runbook"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_runtime
@@ -114,11 +114,11 @@ A9 运维架构 §1.2 的 Redis 7.x 单实例共享状态层是持仓/订单状�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 测试文件
+### 6.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/infrastructure/test_redis_state_layer_ssot.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 

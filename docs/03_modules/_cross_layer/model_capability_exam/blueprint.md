@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Capability Exam 蓝图 — 模型能力考试·多维度能力评估"
 doc_type: blueprint
 status: Active
-version: "2.3.10"
+version: "2.3.11"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1007,21 +1007,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/model_capability_exam/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/activate.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/experiment_tracker/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/implementations/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/notebook_integration/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_evaluation/reranker.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/f_lifecycle/test_f10_red_blue.py` | ✅ 已实现 | |
-| `tests/model/test_model_capability_exam.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

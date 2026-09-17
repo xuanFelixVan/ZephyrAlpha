@@ -4,7 +4,7 @@ submodule_path: src/zephyr/security/adversarial_validation
 title: "Red-Blue Validator 蓝图 — 红蓝对抗验证器·修复有效性确认"
 doc_type: blueprint
 status: Active
-version: "2.2.5"
+version: "2.2.6"
 generation: 17
 layer: L1_foundation
 layer_name: 跨层基础设施
@@ -1265,37 +1265,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/red_blue_validator/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/__main__.py` | ⚠️ 骨架 | |
-| `src/zephyr/security/adversarial_validation/ai_attack_generator.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/attack_registry.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/blast_radius.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/bypass_recorder.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/cleanup.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/cli.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/cold_start.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/commit_trigger.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/constitution_guard.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/convergence_checker.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/defense_runner.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/game_day_runner.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/injection_engine.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/mcp_endpoints.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/scenario_loader.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/steady_state.py` | ✅ 已实现 | |
-| `src/zephyr/security/adversarial_validation/validator.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/audit/audit_core/test_audit_red_blue_e2e.py` | ✅ 已实现 | |
-| `tests/safety/test_commit_trigger.py` | ✅ 已实现 | |
-| `tests/safety/test_constitution_engine.py` | ✅ 已实现 | |
-| `tests/safety/test_phase_manager_integration.py` | ✅ 已实现 | |
-| `tests/safety/test_red_blue_validator.py` | ✅ 已实现 | |
-| `tests/safety/test_red_blue_validator_tests.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.17"
+version: "0.13.18"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -2169,45 +2169,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/gov_enforcement/behavioral_admission/admission_response.py` | ✅ 已实现 | |
-| `src/zephyr/governance/architecture_governance/llm_impact_analyzer.py` | ✅ 已实现 | |
-| `src/zephyr/governance/architecture_governance/local_first_arch.py` | ✅ 已实现 | |
-| `src/zephyr/governance/context_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/context_governance/prompt_lifecycle.py` | ✅ 已实现 | |
-| `src/zephyr/governance/data_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/financial_governance/microstructure_defense.py` | ✅ 已实现 | |
-| `src/zephyr/governance/intelligence_governance/multi_model_consensus.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/drift_observatory_orchestrator.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/factor_promotion_wiring.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/migration_strategy.py` | ✅ 已实现 | |
-| `src/zephyr/governance/lifecycle_governance/msprt_promotion_channel.py` | ✅ 已实现 | |
-| `src/zephyr/governance/observability_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/ops_governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/ops_governance/decision_fatigue.py` | ✅ 已实现 | |
-| `src/zephyr/governance/ops_governance/environment_manager.py` | ✅ 已实现 | |
-| `src/zephyr/governance/resilience_governance/bus_factor_defense.py` | ✅ 已实现 | |
-| `src/zephyr/governance/resilience_governance/offline_autonomy.py` | ✅ 已实现 | |
-| `src/zephyr/governance/resilience_governance/offline_resilience.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/integration/behavioral_admission/__init__.py` | ⚠️ 骨架 | |
-
-### 12.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/governance/lifecycle/test_ai_behavior_baseline.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_drift_observatory_orchestrator.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_factor_promotion_wiring.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_msprt_promotion_channel.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_retirement_workflow.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_strategy_archive.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_strategy_retirement_evaluator.py` | ✅ 已实现 | |
-| `tests/governance/test_alert_threshold_consistency.py` | ✅ 已实现 | |
-| `tests/governance/test_error_code_consistency.py` | ✅ 已实现 | |
-| `tests/governance/test_intelligence_governance_facade.py` | ✅ 已实现 | |
-| `tests/governance/test_llm_registry_reconciliation.py` | ✅ 已实现 | |
-| `tests/governance/test_task_board.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 12.5 路径索引使用指南
 

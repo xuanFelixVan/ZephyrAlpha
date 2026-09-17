@@ -4,7 +4,7 @@ submodule_path: src/zephyr/integration
 title: "Pipeline 蓝图 — 管线编排器·M1-M11门控流水线"
 doc_type: blueprint
 status: Active
-version: "0.39.12"
+version: "0.39.13"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -38,7 +38,7 @@ build_status: generated
 responsibility_domain: 
 ---
 
-> module_id: MOD-INF-009 | version: 0.39.12 | status: active | layer: cross_layer
+> module_id: MOD-INF-009 | version: 0.39.13 | status: active | layer: cross_layer
 > actual_disk_path: src/zephyr/integration/pipeline_orchestrator.py | generation: 2 | construction_progress: partially_implemented
 
 # Pipeline 蓝图 — 管线编排器·M1-M11门控流水线
@@ -1022,33 +1022,11 @@ STEP 3: 拆分后验证
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 任务管线——pipeline_orchestrator+models骨架完成
 
-### 1.1 源码文件
+### 1.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/pipeline/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/integration/ports.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/contracts/test_ct_pipe_routing_root.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_preemption_manager.py` | ✅ 已实现 | |
-| `tests/llm_security/test_llm_gateway.py` | ✅ 已实现 | |
-| `tests/llm_security/test_llm_gateway_route_perf_aware.py` | ✅ 已实现 | |
-| `tests/model/test_model_router.py` | ✅ 已实现 | |
-| `tests/pipeline/conftest.py` | ✅ 已实现 | |
-| `tests/pipeline/test_pipeline_agent_bridge.py` | ✅ 已实现 | |
-| `tests/pipeline/test_pipeline_cost_tracker.py` | ✅ 已实现 | |
-| `tests/pipeline/test_pipeline_lock.py` | ✅ 已实现 | |
-| `tests/pipeline/test_pipeline_models.py` | ✅ 已实现 | |
-| `tests/pipeline/test_pipeline_roadmap.py` | ✅ 已实现 | |
-| `tests/trading/test_backpressure_manager.py` | ✅ 已实现 | |
-| `tests/trading/test_backpressure_types.py` | ✅ 已实现 | |
-| `tests/trading/test_circuit_breaker_manager.py` | ✅ 已实现 | |
-| `tests/trading/test_dead_letter_queue.py` | ✅ 已实现 | |
-| `tests/trading/test_routing_plugins.py` | ✅ 已实现 | |
+| `tests/pipeline/test_pipeline_orchestrator.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

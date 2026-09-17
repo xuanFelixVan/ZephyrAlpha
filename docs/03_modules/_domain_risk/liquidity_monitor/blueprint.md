@@ -98,12 +98,11 @@ is_illiquid = (amihud_illiq > amihud_threshold) OR (volume_shrinkage_ratio < vol
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 测试文件
+### 8.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/risk/core/test_liquidity_monitor.py` | ✅ 已实现 | |
-| `tests/risk/core/test_orchestrator_liquidity_integration.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 8.5 路径索引使用指南
 

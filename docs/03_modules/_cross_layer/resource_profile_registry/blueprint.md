@@ -5,7 +5,7 @@ title: "资源画像注册表+生成器蓝图 — 三源实体化（ps1/schedule
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.3"
+version: "1.0.4"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -42,7 +42,7 @@ design_maturity: production
 
 # 资源画像注册表+生成器蓝图 — 三源实体化（ps1/schedule.yaml/§3.C种子）18字段·合并保全再生（MOD-RESCHED-PROFILE）
 
-> module_id: MOD-RESCHED-PROFILE | version: 1.0.3 | status: active | layer: L0_infrastructure
+> module_id: MOD-RESCHED-PROFILE | version: 1.0.4 | status: active | layer: L0_infrastructure
 > actual_disk_path: scripts/governance/generators/generate_resource_profile_registry.py | 施工批次：资源排班全景 B1（库）（方案 §8）
 
 ## 1. 背景与定位
@@ -110,12 +110,11 @@ design_maturity: production
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 5.1 测试文件
+### 5.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/infrastructure/test_resource_schedule_e2e.py` | ✅ 已实现 | |
-| `tests/scripts/test_generate_resource_profile_registry.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 5.5 路径索引使用指南
 

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
 doc_type: blueprint
 status: Active
-version: 9.0.12
+version: 9.0.13
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
@@ -1669,147 +1669,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/rollback/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/_manifest.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/budget_tracker.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/complexity_budget.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/contracts.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/rollback/rollback_boot_integration.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/a2a/test_a2a_failure.py` | ✅ 已实现 | |
-| `tests/agent/test_agent_cooldown.py` | ✅ 已实现 | |
-| `tests/audit/audit_core/test_audit_write_failure_protector.py` | ✅ 已实现 | |
-| `tests/automation/test_auto_rollback_trigger.py` | ✅ 已实现 | |
-| `tests/autonomy/test_autonomy_dashboard.py` | ✅ 已实现 | |
-| `tests/autonomy/test_autonomy_regressor.py` | ✅ 已实现 | |
-| `tests/blueprint/test_gen_inherited.py` | ✅ 已实现 | |
-| `tests/config/test_config_scanner.py` | ✅ 已实现 | |
-| `tests/context/test_context_switch_governor.py` | ✅ 已实现 | |
-| `tests/cross/test_cross_agent_conflict_detector.py` | ✅ 已实现 | |
-| `tests/cross/test_cross_assistant_adapter.py` | ✅ 已实现 | |
-| `tests/cross/test_cross_platform_shell.py` | ✅ 已实现 | |
-| `tests/cross/test_cross_session_correlator.py` | ✅ 已实现 | |
-| `tests/data/test_data_pipeline_guard.py` | ✅ 已实现 | |
-| `tests/drift/test_drift_fix.py` | ✅ 已实现 | |
-| `tests/escalation/test_escalation_adapter.py` | ✅ 已实现 | |
-| `tests/escalation/test_escalation_contracts.py` | ✅ 已实现 | |
-| `tests/escalation/test_escalation_models.py` | ✅ 已实现 | |
-| `tests/escalation/test_escalation_smoke_tests.py` | ✅ 已实现 | |
-| `tests/external/test_external_merkle_proof.py` | ✅ 已实现 | |
-| `tests/feedback/test_actors_init.py` | ✅ 已实现 | |
-| `tests/git/test_git_hook_pre_scanner.py` | ✅ 已实现 | |
-| `tests/git/test_git_infra_snapshot.py` | ✅ 已实现 | |
-| `tests/governance/access_control/test_account_isolator.py` | ✅ 已实现 | |
-| `tests/governance/access_control/test_approval.py` | ✅ 已实现 | |
-| `tests/governance/access_control/test_credential_guard.py` | ✅ 已实现 | |
-| `tests/governance/access_control/test_credential_rotation_trigger.py` | ✅ 已实现 | |
-| `tests/governance/access_control/test_rbac_bridge.py` | ✅ 已实现 | |
-| `tests/governance/access_control/test_secret_rotation_aware.py` | ✅ 已实现 | |
-| `tests/governance/adversarial/test_anti_automation_bias.py` | ✅ 已实现 | |
-| `tests/governance/adversarial/test_hallucination_guard.py` | ✅ 已实现 | |
-| `tests/governance/adversarial/test_persuasion_detector.py` | ✅ 已实现 | |
-| `tests/governance/adversarial/test_reward_hacking_rebound_detector.py` | ✅ 已实现 | |
-| `tests/governance/adversarial/test_vibe_security_verify.py` | ✅ 已实现 | |
-| `tests/governance/adversarial/test_vibe_verify_integration.py` | ✅ 已实现 | |
-| `tests/governance/adversarial/test_vigil_runtime.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_auditor.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_forensic.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_forensic_package.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_gap_analyzer.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_governance_auditor.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_integrity_verifier.py` | ✅ 已实现 | |
-| `tests/governance/audit/test_merkle_audit.py` | ✅ 已实现 | |
-| `tests/governance/budget/test_governance_budget_tracker.py` | ✅ 已实现 | |
-| `tests/governance/code_quality/test_formal_verifier.py` | ✅ 已实现 | |
-| `tests/governance/code_quality/test_fsm_verifier.py` | ✅ 已实现 | |
-| `tests/governance/compliance/test_owner_absent.py` | ✅ 已实现 | |
-| `tests/governance/compliance/test_right_to_be_forgotten.py` | ✅ 已实现 | |
-| `tests/governance/data_layer/test_s3_snapshot_lifecycle.py` | ✅ 已实现 | |
-| `tests/governance/data_layer/test_sqlite_dumper.py` | ✅ 已实现 | |
-| `tests/governance/delegation/test_continuous_trust.py` | ✅ 已实现 | |
-| `tests/governance/drift/test_governance_drift_fix.py` | ✅ 已实现 | |
-| `tests/governance/escalation/test_alternative_path_blocker.py` | ✅ 已实现 | |
-| `tests/governance/escalation/test_result_types.py` | ✅ 已实现 | |
-| `tests/governance/governance_misc/test_governance_result_types.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_api_response_sanitizer.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_contract.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_protocol_self_context.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_protocol_state_store.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_subagent_hook_propagator.py` | ✅ 已实现 | |
-| `tests/governance/integration/test_submodule_sync.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_checkpoint_gc.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_maintenance_window_adapter.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_post_live_verification.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_startup_shutdown.py` | ✅ 已实现 | |
-| `tests/governance/lifecycle/test_venv_sync.py` | ✅ 已实现 | |
-| `tests/governance/observability/test_confidence_estimator.py` | ✅ 已实现 | |
-| `tests/governance/observability/test_confidence_quantifier.py` | ✅ 已实现 | |
-| `tests/governance/observability/test_meta_confidence.py` | ✅ 已实现 | |
-| `tests/governance/observability/test_meta_observability.py` | ✅ 已实现 | |
-| `tests/governance/ops/test_env_watcher.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_deadlock_detector.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_fault_tolerance.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_flash_crash_guard.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_interrupt_handler.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_knowngoodstate_ledger.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_last_resort_watchdog.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_process_isolator.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_provider_failover.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_warm_standby.py` | ✅ 已实现 | |
-| `tests/governance/resilience/test_witness_isolation.py` | ✅ 已实现 | |
-| `tests/governance/security/test_sandbox_enforcer.py` | ✅ 已实现 | |
-| `tests/governance/security/test_vulnerability_rescanner.py` | ✅ 已实现 | |
-| `tests/governance/trading/test_arbitrage_asymmetry_detector.py` | ✅ 已实现 | |
-| `tests/governance/trading/test_exchange_partition_detector.py` | ✅ 已实现 | |
-| `tests/governance/trading/test_exchange_reg_monitor.py` | ✅ 已实现 | |
-| `tests/governance/trading/test_paper_live_transition.py` | ✅ 已实现 | |
-| `tests/governance/trading/test_strategy_scoper.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_forward_fix_runner.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_topology_change_log.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_commit_quality_gate.py` | ✅ 已实现 | |
-| `tests/intent/test_intent_archiver.py` | ✅ 已实现 | |
-| `tests/memory/test_memory_poison_guard.py` | ✅ 已实现 | |
-| `tests/memory/test_memory_provenance.py` | ✅ 已实现 | |
-| `tests/model/test_model_drift_detector.py` | ✅ 已实现 | |
-| `tests/model/test_model_version_detector.py` | ✅ 已实现 | |
-| `tests/phase/test_phase_check_registry.py` | ✅ 已实现 | |
-| `tests/phase/test_phase_manager.py` | ✅ 已实现 | |
-| `tests/risk/test_risk_matrix.py` | ✅ 已实现 | |
-| `tests/rollback/test_concurrency_guard.py` | ✅ 已实现 | |
-| `tests/rollback/test_concurrency_guard_red_blue.py` | ✅ 已实现 | |
-| `tests/rollback/test_concurrent_mv_guard.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_abuse_detector.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_audit_nexus.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_bootstrap.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_budget.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_concurrent_extreme.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_context_restorer.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_dashboard.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_drill.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_executor_root.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_integration.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_lock.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_loop_detector.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_partial_extreme.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_position_reconciler.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_scheduler.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_simulator.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_state_machine.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_target_staleness.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_verifier_root.py` | ✅ 已实现 | |
-| `tests/rollback/test_rollback_wal.py` | ✅ 已实现 | |
-| `tests/rule/test_rule_canary_manager.py` | ✅ 已实现 | |
-| `tests/scripts/test_git_guard_self_harm.py` | ✅ 已实现 | |
-| `tests/scripts/test_guard_invariants.py` | ✅ 已实现 | |
-| `tests/scripts/test_guard_watchdog.py` | ✅ 已实现 | |
-| `tests/semantic_auditor/test_semantic_rollback_tag.py` | ✅ 已实现 | |
-| `tests/semantic_auditor/test_semantic_similar_detector.py` | ✅ 已实现 | |
-| `tests/temporal/test_temporal_context_adapter.py` | ✅ 已实现 | |
-| `tests/trading/test_trading_kill_switch.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

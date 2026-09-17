@@ -5,7 +5,7 @@ title: "资源实测采样器蓝图 — reaper 兄弟式零侵入 cmdline 匹配
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.3"
+version: "1.0.4"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -42,7 +42,7 @@ design_maturity: production
 
 # 资源实测采样器蓝图 — reaper 兄弟式零侵入 cmdline 匹配·样本 JSONL·实测回写（MOD-RESCHED-SAMPLER）
 
-> module_id: MOD-RESCHED-SAMPLER | version: 1.0.3 | status: active | layer: L0_infrastructure
+> module_id: MOD-RESCHED-SAMPLER | version: 1.0.4 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/infrastructure/system_telemetry/resource_sampler.py | 施工批次：资源排班全景 B1（器）（方案 §8）
 
 ## 1. 背景与定位
@@ -112,13 +112,7 @@ design_maturity: production
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/system_telemetry/resource_sampler.py` | ✅ 已实现 | |
-
-### 5.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/infrastructure/test_resource_sampler.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 5.5 路径索引使用指南
 

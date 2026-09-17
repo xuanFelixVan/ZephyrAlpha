@@ -3,7 +3,7 @@ module_id: MOD-SIG-139
 title: "股票池分层维护蓝图 — 三层就绪度池日更状态机"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L05_signal
@@ -87,7 +87,7 @@ universe_registry=池登记 SSoT（声明层）——均不承载就绪度升降
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_ashare/core/pool_tier_maintenance.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 4.5 路径索引使用指南
 

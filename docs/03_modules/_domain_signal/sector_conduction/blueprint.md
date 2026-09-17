@@ -3,7 +3,7 @@ module_id: MOD-SIG-136
 title: "板块强度加权传导蓝图 — 10 分制传导系数"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 ttl: permanent
 layer: L02_sector
@@ -75,7 +75,7 @@ sector_attribute_rules=攻防属性标注（标签）；sector_gate.admission_ga
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_ashare/core/sector_conduction.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 4.5 路径索引使用指南
 

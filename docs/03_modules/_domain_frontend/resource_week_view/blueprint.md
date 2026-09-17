@@ -5,7 +5,7 @@ title: "周历全景视图蓝图 — 生成器产出 rw-data.js·只读前端页
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.3"
+version: "1.0.4"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -42,7 +42,7 @@ design_maturity: production
 
 # 周历全景视图蓝图 — 生成器产出 rw-data.js·只读前端页·冲突同源标注（MOD-RESCHED-VIEW）
 
-> module_id: MOD-RESCHED-VIEW | version: 1.0.3 | status: active | layer: L2_domain
+> module_id: MOD-RESCHED-VIEW | version: 1.0.4 | status: active | layer: L2_domain
 > actual_disk_path: scripts/governance/generators/generate_resource_week_view.py | 施工批次：资源排班全景 B3（图）（方案 §8）
 
 ## 1. 背景与定位
@@ -107,11 +107,11 @@ design_maturity: production
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 5.1 测试文件
+### 5.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/scripts/test_generate_resource_week_view.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 5.5 路径索引使用指南
 

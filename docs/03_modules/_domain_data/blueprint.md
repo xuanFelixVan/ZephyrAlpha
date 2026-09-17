@@ -4,7 +4,7 @@ submodule_path: src/zephyr/data
 title: "Data Source Core 蓝图+施工图 — 数据接入层"
 doc_type: blueprint
 status: Active
-version: "4.0.11"
+version: "4.0.12"
 layer: L2_domain
 layer_name: data_source
 functional_domain: data
@@ -1114,20 +1114,7 @@ class MiniQmtQuoteProvider(QuoteProviderBase):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/data/implementations/tick_depth_backfill.py` | ✅ 已实现 | |
-| `src/zephyr/data/satellite_geospatial_engine/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/data/tick_depth_writer.py` | ✅ 已实现 | |
-| `src/zephyr/governance/data_governance/miniqmt_provider.py` | ✅ 已实现 | |
-| `src/zephyr/trading/trading_contracts/portfolio/contracts/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/trading/trading_contracts/portfolio/contracts/money.py` | ✅ 已实现 | |
-| `src/zephyr/trading/trading_contracts/portfolio/contracts/strategy_lifecycle_event.py` | ⚠️ 骨架 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/data/test_l00_data_source.py` | ✅ 已实现 | |
-| `tests/zephyr/data/test_tick_depth_backfill.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

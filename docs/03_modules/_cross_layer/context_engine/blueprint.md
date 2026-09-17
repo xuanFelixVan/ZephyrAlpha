@@ -5,7 +5,7 @@ title: Context Engine 集成蓝图 — 上下文引擎集成索引
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: 1.2.9
+version: 1.2.10
 layer: L1_foundation
 blueprint_level: domain
 owner: ZephyrAlpha-Owner
@@ -153,38 +153,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/autonomy_core/context/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/context/local_llm_summarizer.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/autonomy/test_checkpoint_manager.py` | ✅ 已实现 | |
-| `tests/autonomy/test_complexity_budget.py` | ✅ 已实现 | |
-| `tests/autonomy/test_context_injector_task_module.py` | ✅ 已实现 | |
-| `tests/autonomy/test_context_pipeline_red_blue.py` | ✅ 已实现 | |
-| `tests/autonomy/test_integrity_check.py` | ✅ 已实现 | |
-| `tests/autonomy/test_local_llm_summarizer.py` | ✅ 已实现 | |
-| `tests/autonomy/test_lsg_pattern_tracker.py` | ✅ 已实现 | |
-| `tests/autonomy/test_shadow_canary.py` | ✅ 已实现 | |
-| `tests/autonomy/test_solo_dev_safety_net.py` | ✅ 已实现 | |
-| `tests/autonomy/test_staleness_manager.py` | ✅ 已实现 | |
-| `tests/autonomy/test_vector_bridge.py` | ✅ 已实现 | |
-| `tests/autonomy/test_verify_paths.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_bootstrap.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_explain_cli.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_playground_v2.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_vibe_shortcuts.py` | ✅ 已实现 | |
-| `tests/cold/test_cold_start_booster.py` | ✅ 已实现 | |
-| `tests/config/test_config_safety_guard.py` | ✅ 已实现 | |
-| `tests/context/test_context_budget_tracker.py` | ✅ 已实现 | |
-| `tests/context/test_context_debt_score.py` | ✅ 已实现 | |
-| `tests/context/test_context_engine_pipeline.py` | ✅ 已实现 | |
-| `tests/context/test_context_health_score.py` | ✅ 已实现 | |
-| `tests/context/test_context_injector_real_backend_integration.py` | ✅ 已实现 | |
-| `tests/context/test_context_model_strategy.py` | ✅ 已实现 | |
-| `tests/context/test_context_pipeline_auto.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 
