@@ -3432,3 +3432,54 @@ entries:
     - '裁定#274'
     - '裁定#276'
   superseded_by: ''
+- ruling_id: '裁定#305'
+  title: '日度编排器 BT-P1-031 八条批准点保守默认自裁——蓝图刀 1-4 全量施工（Owner 通宵全量施工令）'
+  date: '2026-09-17'
+  category: '架构治理'
+  status: 'active'
+  summary: >-
+    裁定：日度编排器蓝图（docs/_working/trading_vision/2026-09-16-daily-orchestrator-blueprint.md，
+    st-orchbp-20260916 会话分支）§八 八条待 Owner 批准点，在 Owner 通宵全量施工令下按**保守默认**
+    自裁先行施工，全部标注可调、留 Owner 事后终裁权：①'今日不交易'判据=v0 草案值（过渡带最大
+    隶属度<60% 折减×0.5、六段预算带=TDM-F-C1 注释值、regime→六段映射 v0 查表，全部在
+    daily_decision_orchestrator 常量区单点声明）；②首版接入包集合=**空**（S-OWNER-001 考试与 S-OWNER-002 机制验证均 FAIL（判定台账在案，裁定登记见各自交付分支待合并），当前无已毕业包——v1 编排器以'无已毕业包，
+    今日不出手'安全态运行全链，链通电零实盘风险，GRADUATED_PACKAGES 空集常量禁手填）；
+    ③仓位参数=蓝图草案 v0（60% 硬顶 RLM-CONCENTRATION-002/六段预算带/过渡带折减取保守下缘 0.5）；
+    ④日历降级容忍 N=3（data_proven 连续 3 日升级告警，表尾提前量<10 交易日哨兵出声）；
+    ⑤decision_daily 落 c1_backtest（与 alloc_budget_daily/regime_snapshot_history 同库对账），
+    prediction_log 双写暂不做（后续项留登记）；⑥首版分发=仅留痕+仪表盘，实盘行为零变更
+    （不产执行单，BT-P2-055 未在）；⑦盘中修订权 v1 无自动实盘干预（intraday_revoke 仅契约
+    占位，Owner 人工保留）；⑧排班接口 stub 期接受（v1 只读 stub 如实标注，v2 落地后切换）。
+    分析：八点全部收敛于'宁可少给不误禁/无凭证不出手'的保守侧；编排器=调度器不是策略
+    （零新增判断逻辑，判断归各层模型）；降级矩阵 D1-D7 全分支收敛于禁新开仓或维持现状。
+    可逆性：常量区单点可调；表为纯新增；包集空=天然零敞口；Owner 否决任一点=改常量+跑测试，
+    无历史数据迁移负担。
+  evidence: >-
+    施工证据（st-orchp3-20260916，worktree 基于 ai/st-ledgerp2b-20260916/scenario-engine
+    e19bc24cf1）：刀 1 表 c1_backtest.decision_daily 建表 DESCRIBE 19 列复核过+
+    verify_schema_truth.py 零漂移（DECISION_DAILY_DDL 真名发现；红蓝发现 alloc 家族裸名 DDL
+    被发现器静默跳过已记）；刀 2 五层门快照采集器零判定改动（L1/L4/L5 真库读通，L2 如实
+    absent）；刀 3 编排器 S1-S7 全链真库冒烟（expansion@0.9999→cap 60% 硬顶封顶、包集空安全态、
+    幂等重放 skipped_marker、force 新 run_id 追加）+事件链末棒挂点（drain 之后，结算/验证/
+    分配/账本全部落地后才拍板）；刀 4 warroom 今日决策面板最小只读接线（98 行纯新增）。
+    测试 31 项全绿（降级矩阵 D1-D7 每分支/幂等/force/P2b 场景引擎联测读口/写侧 fail-closed），
+    tests/strategy_pipeline+plan_engine+frontend 全量 1361 两轮 0 失败。测试隔离事故一起如实
+    登记：maybe_run_daily_decision 初版未透传注入位致 wake_filter 用例写生产 1 行
+    （run_id=decision-2026-09-15-f2be58），已按 RULE-DATA-OPS 三步验证后按 run_id 精准删除
+    恢复零行+默认 marker 重置，透传缺陷修复有回归测试覆盖。
+  affected_files:
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+    - schemas/categories/decision_daily.py
+    - scripts/ch/apply_decision_daily_ddl.py
+    - src/zephyr/strategy_pipeline/daily_gate_snapshot.py
+    - src/zephyr/strategy_pipeline/daily_decision_orchestrator.py
+    - src/zephyr/strategy_pipeline/pipeline_events.py
+    - src/zephyr/frontend/dashboard/components/warroom.py
+    - tests/strategy_pipeline/test_decision_orchestrator.py
+  related_arch: []
+  related_rulings:
+    - '裁定#20-B'
+  related_branch_refs:
+    - 'ai/st-sowner001-20260916/s-owner-001-300etf-band-t（考试 FAIL 台账裁定登记待合并）'
+    - 'ai/st-sowner002-20260916/s-owner-002-regime-switcher（机制验证 FAIL 台账裁定登记待合并）'
+  superseded_by: ''
