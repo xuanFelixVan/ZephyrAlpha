@@ -67,6 +67,7 @@ class NegativeFacts:
     goodwill_impairment_risk: bool | None = None  # 商誉减值风险（上游模型判定）
     rights_issue_pending: bool | None = None  # 配股圈钱
     blacklisted: bool | None = None  # 黑名单（Owner/风控维护）
+    high_accrual: bool | None = None  # 高应计（Sloan 剔除器，fundamentals.accrual_negative_screen 产出；裁定#231）
 
     def __post_init__(self) -> None:
         for name in ("unlock_ratio",):
@@ -90,6 +91,7 @@ _REASON_KEYS = (
     ("goodwill_impairment_risk", "商誉减值风险"),
     ("rights_issue_pending", "配股圈钱"),
     ("blacklisted", "黑名单"),
+    ("high_accrual", "高应计（Sloan 盈余质量差）"),
 )
 
 

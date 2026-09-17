@@ -1573,7 +1573,7 @@ nodes:
   data_refs: [DS-150]
   module_ref: src/zephyr/signal_fundamental/negative_veto.py
   module_id: MOD-SIG-137
-  note_confirmed: "2026-09-14"
+  note_confirmed: "2026-09-18"
   algo_refs: []
   doc_ref: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml#STR-MULTIFACTOR-034"
   activation: postmarket
@@ -3657,7 +3657,7 @@ nodes:
   # ── 组合资金流 portfolio_flow（cn_a，v1.1 新增：整装仿真系统核心骨架）────
   # 地图终极定位（Owner 2026-09-05 拍板）：整装仿真策略组合的蓝图——本流=资金切分→组合聚合→归因反馈闭环
 - node_id: TDM-F-C1
-  note_confirmed: 2026-09-16  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变
+  note_confirmed: 2026-09-18  # WO-2a 危机 floor 扩参（algo_note_zh 已同步修订）
   name_zh: 预算切分
   market: cn_a
   flow: portfolio_flow
@@ -3975,6 +3975,9 @@ nodes:
   decision_question: 下个月各 sleeve 权重怎么调
   algo_note_zh: >-
     月度调权公式：新权重=normalize(基准权重×PerfScore×Shrinkage)，下限 5% 上限 40%。
+    危机覆盖（WO-2a 2026-09-18）：is_crisis（dominant==r10）或 crisis_floor_active
+    （warning=p_r10≥θ，θ 真源 config/crisis_gate.yaml）任一命中→floor 0.09 降至 0.05；
+    当前参数域 conf≥0.30×risk≥0.30→raw≥0.09，0.05 为前瞻口径不约束。
     防过拟合三纪律：单次调整幅度≤±10pp、调整后 5 交易日锁定、阈值未触发=不动（no-change 默认）。
     大调整（>10pp）分日线性过渡。
     （2026-09-16 裁定#257② 交付状态标注：本节点编排未接线——module_ref MOD-PA-007 为
