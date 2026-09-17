@@ -570,3 +570,32 @@ class TestAcceptanceGateWiring:
         nan_d = _turnover_disclosure({"metrics": {"cost_attribution": {"friction": {
             "turnover_one_side_annualized": float("nan")}}}})
         assert nan_d["measured"] is False and nan_d["over_alert"] is None
+
+
+# ── GT-15 结构闸：内存里造出来的时序，必须真的到得了盘 ─────────────────────────
+
+
+def test_every_timeseries_key_reaches_the_persisted_artifact() -> None:
+    """大白话：组装器给每根曲线做了"落盘名册"，谁没被记上名册，这里当天就报。
+
+    病根（H4-B）：现金腿在内存里造好、落盘那一步没人接手，产物里根本没有它，
+    而旧测试只查内存对象——"看起来有、其实没落盘"这种洞只能靠结构闸堵：
+    `_collect_timeseries` 的每个返回键必须 ∈ (`sink_backtest_result` 形参 ∪ metrics
+    落盘登记表)，多出一个既不进 sink 也不进 metrics 的键即红。
+    """
+    import inspect
+
+    from zephyr.backtest.io.backtest_result_sink import sink_backtest_result
+    from zephyr.pf_core.strategy_engine.framework_composer import (
+        _PERSISTED_VIA_METRICS_TS_KEYS,
+        _collect_timeseries,
+    )
+
+    keys = set(_collect_timeseries(engine=None))  # 无 portfolio → 空骨架，但键集恒定
+    assert keys, "_collect_timeseries 返回键集为空（骨架契约变了，本闸失去意义）"
+    landed = set(inspect.signature(sink_backtest_result).parameters) | set(_PERSISTED_VIA_METRICS_TS_KEYS)
+    unlanded = keys - landed
+    assert not unlanded, (
+        f"这些时序键只进内存不落盘（产物会静默缺字段）：{sorted(unlanded)}；"
+        "要么接进 sink 形参，要么登记进 _PERSISTED_VIA_METRICS_TS_KEYS"
+    )

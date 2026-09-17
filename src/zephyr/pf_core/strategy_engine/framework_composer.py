@@ -1704,6 +1704,13 @@ def _resolve_member_modes() -> tuple[set[str], set[str]]:
     return daily_ids, tick_ids
 
 
+# ts 里**不进** `sink_backtest_result` 形参集、改由 artifact `metrics` 显式落盘的键。
+# sink 只收 equity/trade/drawdown/benchmark 四条（其 [MODIFY-GUARD] 禁结构变更），
+# 其余时序若不在这里登记就会"内存里有、产物里没有"——H4-B 现金腿即栽在此（GT-15）。
+# 新增 `_collect_timeseries` 返回键必须二选一：进 sink 形参 或 进本集合，否则测试结构闸红。
+_PERSISTED_VIA_METRICS_TS_KEYS: frozenset[str] = frozenset({"cash_curve"})
+
+
 def _collect_timeseries(engine: Any) -> dict[str, Any]:
     """从引擎 last_portfolio 收集时序（与 scripts/run_backtest._collect_timeseries 同契约）。
 
@@ -2327,7 +2334,8 @@ def _persist_framework_artifact(
             # （禁只进日志/只进内存 ts——H4-B：产物不落现金序列则"手续费扣到现金没"
             #  从不可事后复核）。落 metrics 而非 artifact 顶层：BacktestRunArtifact 顶层
             #  字段 [MODIFY-GUARD] 结构冻结，metrics 本就是执行链证据载体。
-            "cash_curve": list(ts.get("cash_curve") or []),
+            #  按登记表推导而非逐行手写：使"登记了什么"与"实际落盘了什么"无法漂移。
+            **{k: list(ts.get(k) or []) for k in sorted(_PERSISTED_VIA_METRICS_TS_KEYS)},
             **chain,
         }
     )
