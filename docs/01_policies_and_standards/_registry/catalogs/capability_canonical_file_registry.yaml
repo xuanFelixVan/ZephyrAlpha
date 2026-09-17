@@ -27655,6 +27655,10 @@ creation_tokens:
   token: owner-strategy-cards-2026-09-16-s-owner-002-regime-switcher-20260916
   created_by: st-overseer-20260916
   capability: owner_strategy_cards
+- file: docs/_working/factory/t_v2/2026-09-17-t-v2-campaign-design.md
+  token: owner-strategy-cards-2026-09-17-t-v2-campaign-design-20260917
+  created_by: st-overseer-20260917
+  capability: owner_strategy_cards
 - file: docs/_working/ai_layer_vision/ai_layer_vision_and_roadmap_v1.md
   token: ai-layer-vision-ai-layer-vision-and-roadmap-v1-20260916
   created_by: st-ailayer-20260917
@@ -31731,4 +31735,8 @@ creation_tokens:
   token: resource-schedule-v2-resource-schedule-v2-acceptance-evidence-20260917
   created_by: st-govmap-20260915
   capability: resource_schedule_v2
+- file: docs/_working/regime_recal/regime_recal_protocol_2026_09_17.md
+  token: st-regcal-regime-recal-protocol-20260917
+  created_by: st-regcal-20260917
+  capability: regime_recalibration
 di_seam_exemptions: []

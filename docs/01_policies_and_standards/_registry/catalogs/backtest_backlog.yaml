@@ -1894,3 +1894,25 @@ objects:
   testable: true
   confidence: untested
   plan_note: Owner 愿景映射 L5 缺件；与 H2 真成本模型联调（做T 次数/成本上限参数化）
+- object_id: BT-P1-032
+  node_ids: []
+  node_type: data_terrain
+  layer: L5执行
+  map_layer: execution
+  flow: factory_flow
+  market: cn_a
+  module_ref: 做T v2 前置——数据地形勘测（000300/880板块/510300/代表个股 × 1/5/15/30/60/120min 覆盖质量实测；1min 聚合链评估；指数分钟源缺口确认）
+  testable: true
+  confidence: untested
+  plan_note: 做T v2 战役第一刀（docs/_working/factory/t_v2/2026-09-17-t-v2-campaign-design.md）；只读勘测可立即执行；分钟缺口补全归数据线
+- object_id: BT-P2-056
+  node_ids: []
+  node_type: exam_matrix
+  layer: L5执行
+  map_layer: execution
+  flow: factory_flow
+  market: cn_a
+  module_ref: 做T v2 全矩阵考试——纵向（tick/1/5/15/30/60/120min）×横向（KDJ+MACD/全技术指标/图形/量能/筹码峰+主力线+压力位/大盘指数共振）×三重共振（大盘∧板块∧个股同振才出手）
+  testable: true
+  confidence: untested
+  plan_note: 战役设计书同目录；依赖 BT-P1-032 勘测+tick_depth_5 积累；考试纪律=预注册分批（单因子基线→共振增量→三重旗舰）+敞口匹配对照（#304 教训）+全参数搜索披露（#293 教训）；共振触发引擎复用 MOD-PLAN-031 白名单 AST 求值器
