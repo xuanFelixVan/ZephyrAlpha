@@ -213,6 +213,9 @@ class WarroomData:
         debate: W4 多空辩论 dict（llm_daily_analysis v2 辩论行解析：
             bull/bear 陈词 + analysis 综合席裁决 + model/prompt 版本留痕；
             None=当日无 v2 辩论落库行——debate_mode 未启用/未跑批，正常态非异常）。
+        today_decision: 今日决策快照 dict（BT-P1-031 刀 4：c1_backtest.decision_daily
+            当日最新 run 行解析：market_state/position_cap/no_trade/degraded/包集合；
+            None=当日无拍板行（编排器休眠/未跑，正常态非异常——无快照行=无新开仓令）。
         errors: 各取数通道异常留痕（fail-open 负反馈）。
     """
 
@@ -227,6 +230,7 @@ class WarroomData:
     sit_out: dict | None = None
     netting: dict | None = None
     debate: dict | None = None
+    today_decision: dict | None = None
     errors: list[str] = field(default_factory=list)
 
 
@@ -561,6 +565,102 @@ def fetch_warroom_debate(
         return None, f"辩论台：{type(exc).__name__}"
 
 
+_DECISION_COLS: Final = (
+    "run_id", "trade_date", "asof_data_date", "market_state", "state_confidence",
+    "budget_band_low", "budget_band_high", "position_cap", "package_set_json",
+    "gate_snapshot_json", "no_trade", "no_trade_reason", "sit_out_list_json",
+    "calendar_source", "degraded", "degrade_reasons", "note", "schema_version",
+)
+
+
+# 展示字段规格表（output_key → raw_key/caster/default；查表法降复杂度，§5.158 合规）
+_DECISION_SCALAR_SPECS: Final = (
+    ("run_id", "run_id", str, ""),
+    ("target_date", "trade_date", str, ""),
+    ("asof_data_date", "asof_data_date", str, ""),
+    ("market_state", "market_state", str, ""),
+    ("state_confidence", "state_confidence", float, 0.0),
+    ("position_cap", "position_cap", float, 0.0),
+    ("no_trade", "no_trade", int, 0),
+    ("no_trade_reason", "no_trade_reason", str, ""),
+    ("calendar_source", "calendar_source", str, ""),
+    ("degraded", "degraded", int, 0),
+    ("degrade_reasons", "degrade_reasons", str, ""),
+    ("note", "note", str, ""),
+    ("schema_version", "schema_version", str, ""),
+)
+
+
+def _decision_scalars(raw: dict) -> dict:
+    """标量列按规格表转换（缺列/坏值=默认值，不炸页面）。"""
+    out: dict = {}
+    for key, raw_key, caster, default in _DECISION_SCALAR_SPECS:
+        value = raw.get(raw_key)
+        try:
+            out[key] = caster(value) if value is not None else default
+        except (TypeError, ValueError):
+            out[key] = default
+    out["budget_band"] = [float(raw.get("budget_band_low") or 0.0),
+                          float(raw.get("budget_band_high") or 0.0)]
+    out["no_trade"] = bool(out["no_trade"])
+    out["degraded"] = bool(out["degraded"])
+    return out
+
+
+def _decision_packages(raw: dict) -> dict:
+    """package_set_json →（enabled_packages, package_incomplete）；解析失败=空集降级。"""
+    try:
+        packages = json.loads(str(raw.get("package_set_json") or "{}"))
+    except ValueError:
+        packages = {}
+    if not isinstance(packages, dict):
+        packages = {}
+    return {"enabled_packages": list(packages.get("enabled_packages") or []),
+            "package_incomplete": bool(packages.get("incomplete"))}
+
+
+def _parse_decision_row(row: tuple) -> dict:
+    """decision_daily 单行 → 展示 dict（payload 解析失败=空集降级，不炸页面）。"""
+    raw = dict(zip(_DECISION_COLS, row))
+    out = _decision_scalars(raw)
+    out.update(_decision_packages(raw))
+    return out
+
+
+def fetch_today_decision(
+    trade_date: str,
+    ch_reader_fn: Callable[[str], Any] | None = None,
+) -> tuple[dict | None, str | None]:
+    """今日决策快照（BT-P1-031 刀 4：c1_backtest.decision_daily 当日最新 run 行）。
+
+    数据源=编排器拍板留痕表（写侧唯一=MOD-BT-214）；只读消费，前端零业务重算。
+    SQL 模板取 schemas/categories/decision_daily.py 真源（SQL_LATEST_BY_TARGET_DATE），
+    日期字面量经编排器同款校验后方可入 SQL。
+
+    Returns:
+        (decision dict, error)。当日无拍板行 → (None, None)——休眠/未跑=正常态非异常
+        （无快照行=无新开仓令，页面如实展示）；通道异常 → (None, error) fail-open。
+    """
+    try:
+        from zephyr.pf_alloc.allocation_inputs import validate_date_literal
+        from schemas.categories.decision_daily import SQL_LATEST_BY_TARGET_DATE, TABLE_NAME
+
+        v_date = validate_date_literal(trade_date)
+        sql = SQL_LATEST_BY_TARGET_DATE.format(table=TABLE_NAME, date=v_date)
+        if ch_reader_fn is not None:
+            rows = list(ch_reader_fn(sql))
+        else:
+            from zephyr.infrastructure.database_service import get_db_service
+
+            rows = list(get_db_service().get_clickhouse_conn(role="reader").execute(sql))
+        if not rows:
+            return None, None
+        return _parse_decision_row(rows[0]), None
+    except Exception as exc:  # noqa: BLE001 — fail-open：取数异常不炸页面
+        log.warning("今日决策查询异常 fail-open: %s: %s", type(exc).__name__, exc)
+        return None, f"今日决策：{type(exc).__name__}"
+
+
 def fetch_warroom(
     trade_date: str | None = None,
     db_path: object = None,
@@ -627,6 +727,9 @@ def fetch_warroom(
     debate, err = fetch_warroom_debate(v_date, db_path)
     if err:
         errors.append(err)
+    today_decision, err = fetch_today_decision(v_date)
+    if err:
+        errors.append(err)
 
     return WarroomData(
         trade_date=v_date,
@@ -640,6 +743,7 @@ def fetch_warroom(
         sit_out=sit_out,
         netting=netting,
         debate=debate,
+        today_decision=today_decision,
         errors=errors,
     )
 
@@ -1188,6 +1292,31 @@ def _render_backlog_section() -> Any:
     )
 
 
+def _render_today_decision_section(data: WarroomData) -> Any:
+    """今日决策面板（BT-P1-031 刀 4）：decision_daily 快照只读展示（no_trade/degraded 可视）。"""
+    d = data.today_decision
+    if d is None:
+        return _md("### 今日决策（编排器）\n\n当日无拍板行（休眠/未跑）——**无快照行=无新开仓令**（安全侧）")
+    flag = "🛑 今日不交易（禁新开仓≠清仓）" if d["no_trade"] else f"✅ 限仓交易（上限 {d['position_cap']:.0%}）"
+    lines = [
+        "### 今日决策（编排器）",
+        f"- **状态**: {flag}",
+        f"- 市场状态: `{d['market_state']}` 置信 {d['state_confidence']:.2f}　预算带 "
+        f"[{d['budget_band'][0]:.0%}, {d['budget_band'][1]:.0%}]　生效日 {d['target_date']}"
+        f"（数据日 {d['asof_data_date']}）",
+        f"- 启用包: {d['enabled_packages'] or '∅（无已毕业包，安全态）'}"
+        + ("　⚠ 包选择残缺" if d["package_incomplete"] else ""),
+        f"- 日历源: `{d['calendar_source']}`　run: `{d['run_id']}`",
+    ]
+    if d["no_trade"]:
+        lines.append(f"- 不交易原因: `{d['no_trade_reason'] or '-'}`")
+    if d["degraded"]:
+        lines.append(f"- ⚠ 降级运行: `{d['degrade_reasons']}`")
+    if d["note"]:
+        lines.append(f"- 备注: {d['note'][:200]}")
+    return _md("\n".join(lines))
+
+
 def render_warroom(data: WarroomData) -> dict[str, Any]:
     """渲染作战室页（payload + '_layout' 挂 Panel 布局）。
 
@@ -1211,6 +1340,8 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
         "has_netting": data.netting is not None,
         "debate": data.debate,
         "has_debate": data.debate is not None,
+        "today_decision": data.today_decision,
+        "has_today_decision": data.today_decision is not None,
         "errors": list(data.errors),
         "renderer": "panel" if pn is not None else "dict",
     }
@@ -1232,6 +1363,7 @@ def render_warroom(data: WarroomData) -> dict[str, Any]:
             )
         )
     items.append(_render_plan_section(data))
+    items.append(_render_today_decision_section(data))
     items.append(_render_intraday_section(data))
     items.append(_render_inertia_section(data))
     items.append(_render_index_panel_section(data))
@@ -1252,6 +1384,7 @@ __all__: Final = [
     "fetch_next_day_inertia",
     "fetch_playbook_action",
     "fetch_sit_out_list",
+    "fetch_today_decision",
     "fetch_warroom",
     "fetch_warroom_debate",
     "fetch_warroom_outcome",

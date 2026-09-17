@@ -50224,6 +50224,48 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "危机闸每天的判定流水账建表真源：哪天、看到了什么恐慌概率、判成哪一档、三级各自动了什么动作，一行一条只增不改，供事后回看误报率和月度演练对账。"
+- module_path: schemas/categories/decision_daily.py
+  domain_id: D_BACKTEST
+  name_zh: "日度决策快照表"
+  name_en: "Decision Daily Snapshot Table"
+  desc_zh: "日度编排器 T2 拍板留痕真源表（c1_backtest.decision_daily，MergeTree 只增不改，一行=当日唯一放行凭证）"
+  desc_en: ""
+  plain_zh: "每天收盘后自动记账今天拍板的结果：市场状态、给多少仓位上限、启用哪些策略包、各层门的状态、今天做不做交易和为什么，一行写清可供审计，重拍只追加新行不改旧账"
+- module_path: src/zephyr/strategy_pipeline/daily_gate_snapshot.py
+  domain_id: D_BACKTEST
+  name_zh: "分层参与门快照采集器"
+  name_en: "Daily Gate Snapshot Collector"
+  desc_zh: "L1-L5 五层门态只读采集（零判定改动），缺席如实标 absent 交编排器降级矩阵接管"
+  desc_en: ""
+  plain_zh: "每天收盘后把五道安检门的现状挨个看一遍并记下来：大盘教材、板块门、环境开关、预算额度、熔断器；哪道门看不到就老实写看不到，绝不替门做判断，也绝不乱猜"
+- module_path: src/zephyr/strategy_pipeline/daily_decision_orchestrator.py
+  domain_id: D_BACKTEST
+  name_zh: "日度编排器"
+  name_en: "Daily Decision Orchestrator"
+  desc_zh: "T2 晨判拍板体：查日历读regime采门快照选包定仓位上限合成no_trade三源，落decision_daily快照并分发（事件链末棒，D1-D7降级全收敛禁新开仓）"
+  desc_en: ""
+  plain_zh: "每天收盘数据齐了以后，它像值班调度员一样把各处报上来的情况汇总成一张当天的作战许可单：今天最多能动多少仓位、哪些策略能开工、今天要不要停手；情况不明一律按停手处理，绝不冒险放大风险"
+- module_path: scripts/ch/apply_decision_daily_ddl.py
+  domain_id: D_DATA
+  name_zh: "日度决策快照表部署器"
+  name_en: "Decision Daily DDL Applier"
+  desc_zh: "decision_daily 建表 DDL 部署+列校验+DESCRIBE 复核脚本（双态：默认 dry-run/--apply 真建）"
+  desc_en: ""
+  plain_zh: "一张新表的安装工：先预演给你看要建什么，你点头它才真去数据库把日度决策快照表建出来，建完逐列点验一遍确保和图纸一模一样"
+- module_path: src/zephyr/governance/rule_replay.py
+  domain_id: D_GOVERNANCE
+  name_zh: "历史重放器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给治理门禁用的'重考神器'：想调门禁的阈值时，先用旧考卷（历史提交）让新阈值重考一遍，证明该拦的还在拦、没乱拦新的，才准上线——防止改尺子凑成绩。"
+- module_path: scripts/backtest/crisis_drill_monthly.py
+  domain_id: D_BACKTEST
+  name_zh: "月度危机演练件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把当前纸面组合持仓放进四个历史危机窗口（2015千股跌停/2018贸易战/2020疫情/2024微盘崩盘）里重放，算最大回撤、有没有跌穿破产底线、要多久回本，出一份伤亡报告挂在告警面板上"
 
 battle_map_steps:
 - step_id: BM-BUY-05

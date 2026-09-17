@@ -1,0 +1,22 @@
+# blueprint: MOD-PA-CRISIS-GATE | docs/03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md
+# [MODULE] config.crisis_gate
+# [DOMAIN] D_PF_ALLOC
+# [INVARIANTS] 危机闸唯一配置真源（RULE-SSOT）：θ 与全部参数只认本文件；
+#   代码缺省值仅作文件缺失时的兜底（缺文件=缺省，解析失败=硬错禁静默降级）；
+#   未知键=启动即报错（防拼写漂移静默不生效）
+# [CONSUMERS] zephyr.pf_alloc.crisis_gate（唯一读取方）
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 缺文件=缺省值；解析失败/未知键/θ 越界=CrisisGateError
+# [TESTS] tests/pf_alloc/test_crisis_gate.py
+
+# 危机闸总开关（显式回退真值开关：False=全闸旁路，非删码回退）
+enabled: true
+
+# warning 档阈值 θ：p_r10 ≥ θ → warning（缩额 + 告警）。
+# O1 待 Owner 校准（wo2_blackswan_workbook §2：建议 0.5 起步，月度演练回看误报率后定）。
+warning_theta: 0.5
+
+# crisis 档口径（硬编码于判定语义，不设开关——dominant==r10 是 crisis 唯一口径，登记备查）
+# crisis_state_key: r10

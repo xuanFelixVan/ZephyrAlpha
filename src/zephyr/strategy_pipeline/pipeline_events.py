@@ -880,6 +880,20 @@ def wire_data_scheduler(scheduler: Any) -> None:
             maybe_emit_sim_daily(**_kwargs)  # S09 C2：daily_kline SUCCESS=模拟盘日件自然唤醒
             maybe_emit_monthly()
             drain(allow_heavy=False)
+            # BT-P1-031 日度编排器（2026-09-16 st-orchp3-20260916，蓝图 §三）：daily_kline
+            # SUCCESS 唤醒链**末棒**（钩子序契约：编排器必须最后——S2 消费 regime 快照、
+            # S3/L4 消费当日 alloc run，须等上方 drain 把 pf_alloc 分配真落地后再拍板，
+            # 结算/验证/分配/账本全部完成后才轮到拍板体）。唯一自动产出者在
+            # daily_decision_orchestrator（内部全捕获永不反噬，D7 fail-open），导入失败
+            # 独立吞掉（拍板件是增益不是依赖，不反噬唤醒链）
+            try:
+                from zephyr.strategy_pipeline.daily_decision_orchestrator import (
+                    maybe_run_daily_decision,
+                )
+
+                maybe_run_daily_decision(**_kwargs)
+            except Exception:  # noqa: BLE001——导入级故障与模块内异常同待遇：出声不反噬
+                log.warning("[DAILY-DECISION] 编排器唤醒失败（不影响唤醒链）", exc_info=True)
         except Exception:  # noqa: BLE001——钩子永不反噬调度器
             log.debug("pipeline 唤醒钩子异常", exc_info=True)
 

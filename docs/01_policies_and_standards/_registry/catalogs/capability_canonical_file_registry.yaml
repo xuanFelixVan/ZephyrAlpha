@@ -32544,4 +32544,8 @@ creation_tokens:
   token: cohort-daily-ledger-cohort-daily-ledger-20260917
   created_by: st-cohort-ledger-20260918
   capability: cohort_daily_ledger
+- file: scripts/backtest/crisis_drill_monthly.py
+  token: auto-scaffold-backtest_crisis_drill_monthly-20260918
+  created_by: scaffold.py
+  capability: backtest_crisis_drill_monthly
 di_seam_exemptions: []

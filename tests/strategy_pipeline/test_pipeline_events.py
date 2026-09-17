@@ -44,6 +44,11 @@ def _isolate_phase2a_judgment_hooks(monkeypatch):
     monkeypatch.setattr(
         "zephyr.plan_engine.next_day_forecaster.maybe_emit_next_day_forecast",
         lambda *a, **k: {"action": "skipped_test_isolation"})
+    # BT-P1-031 编排器末棒挂点同款隔离（2026-09-17 st-orchp3 二次事故修复：wire 测试
+    # 触发 maybe_run_daily_decision 走真库拍板写生产 decision_daily 8 行）——autouse 拦源头
+    monkeypatch.setattr(
+        "zephyr.strategy_pipeline.daily_decision_orchestrator.maybe_run_daily_decision",
+        lambda *a, **k: {"action": "skipped_test_isolation"})
 
 
 @pytest.fixture()

@@ -49,7 +49,7 @@ def test_parse_ps1_entities_covers_all_task_names():
     # 2026-09-17 P5：晨报（每日 06:31）+ 周校准（周六 06:17）两任务排上表 → 22→24
     assert "sch_resource_morning_report" in tids
     assert "sch_measure_calibration" in tids
-    assert len(ents) == 24
+    assert len(ents) == 25  # 2026-09-18 追认：新 register ps1 落地（环境敏感计数随真源走）
     # 杂音捕获杜绝：无变量名误捕实体
     assert not any("task_name" in t or t.endswith("_name") or t == "sch_svc" for t in tids)
 
@@ -74,7 +74,7 @@ def test_parse_ps1_triggers_extracted_from_truth():
 
 def test_parse_schedule_slots_21_slots_cron_verbatim():
     ents, warns = gen.parse_schedule_slots()
-    assert len(ents) == 21
+    assert len(ents) == 22  # 2026-09-18 追认：daily_alt_fx 第 22 槽（4058b7b1e0）
     by = {e["task_id"]: e for e in ents}
     assert by["data_slot_daily_kline"]["window_expr"] == "30 16 * * 1-5"  # APScheduler dow 归一为标准 cron
     assert by["data_slot_daily_kline"]["pool"] == "heavy"
