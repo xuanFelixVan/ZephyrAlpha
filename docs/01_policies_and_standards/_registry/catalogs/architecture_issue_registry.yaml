@@ -22056,3 +22056,42 @@ entries:
   status: open
   created: '2026-09-17'
   last_updated: '2026-09-17'
+- issue_id: "#ARCH-330"
+  title: >-
+    提交队列 untracked 新文件落地死信——SerializerLease 全程不续租 + 旧 TTL 分支对活体 PID
+    租约直接回收，并发自举 drain 抢锁后 thief 的 _sync_worktree(reset --hard+clean -fd) 删掉
+    victim 已 materialize 未 commit 的新文件，网关 step3a isfile=False→git rm --cached→
+    pathspec did-not-match 死信（tracked 文件 reset 后仍在盘故只有新文件死=取证签名）
+  severity: P1高
+  adjudication: >-
+    根因取证（来源 st-consrep2-20260917，q-…-0013 等 11 条 pathspec did-not-match 死信）：
+    SerializerLease 获取时写一次 acquired_at 全程不续租；旧 __enter__ TTL 分支对「活 PID +
+    超 TTL(300s)」租约直接 os.remove 回收。drain 处理慢项（reconciler 超时 180s 级）墙钟撑破
+    TTL 后，并发自举 drain 判租约过期抢锁→两个 drain 同跑一个 serializer worktree→thief 的
+    _sync_worktree(reset --hard+clean -fd) 删掉 victim 已 materialize 未 commit 的 untracked
+    新文件→提交期网关 step3a os.path.isfile=False→git rm --cached→commit pathspec did not
+    match 死信。tracked 文件 reset 后仍在盘故 pathspec 仍匹配，只有新文件死=取证签名；Mode B
+    自愈重放期竞态窗口仍在故亦败。与裁定#280 落地可靠性语义对齐：未把 pathspec 错误塞进
+    _TRANSIENT_GIT_MARKERS 改判瞬态环境失败（Owner 明令禁止——会让坏项无限重试卡队），
+    死信分类语义零改动。
+  fix_phase: >-
+    治本三改（均 scripts/commit_queue.py，零碰门禁/网关 pathspec 语义）：①__enter__ TTL 分支
+    改活体感知——超 TTL 且 holder_pid is None（损坏/旧格式）才回收，持有 PID 仍存活=慢项在途
+    绝不抢，等待至 timeout 抛 LeaseUnavailable（自举语义：拿不到等下次，项安全留 pending 零
+    丢失），崩溃回收由僵尸 PID 检测零窗口兜底不变；②新增 SerializerLease.renew() 心跳——原子
+    刷新 acquired_at(tmp+os.replace)+renewed_at 留痕，pid 防易主误覆盖（已易主返回 False 不
+    clobber，__exit__ 不误删他人租约），fail-open(OSError 不抛进排空主循环)；③drain_queue 主
+    循环 as lease 绑定+逐项 lease.renew()——工作中 drain 租约恒新鲜，TTL 对活体永不触发（与①
+    活体感知互为双保险）。非对症（未加大超时/重试/降级日志）：改的是锁正确性语义，消灭「双
+    drain 并发毁 worktree」根因。交付 F2「lease 续租」前置件。修复落地 commit 3c853303da
+    （队列正门 q-20260918-st-flashspeed-20260918-0004，4 文件零搭便车）；测试逐文件绿：
+    test_commit_queue.py 83 passed（基线 80+净增 3，删旧「活体超期被抢」误语义钉
+    test_expired_lease_reclaimed）/ test_commit_queue_landing.py 37 passed（基线 35+新增 2：
+    pathspec 保真桩 acceptance① 新文件字节级一致 + 能红证明复现 did-not-match 死信签名）/
+    test_commit_queue_integration.py 29 passed（真 gateway 全门禁链，3 并发会话 50 新文件零丢失
+    +--name-only 归属正确=acceptance③ 实弹）。作业簿
+    docs/_working/flash_speedup/F9_queue_newfile_deadletter/DESIGN.md。
+  related_adjudication: '#280'
+  status: resolved
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
