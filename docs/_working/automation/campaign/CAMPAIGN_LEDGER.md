@@ -71,7 +71,7 @@ completes_when: 全线施工完毕+循环检查连续两次 0 问题+红蓝通�
 - 块：B1 打分纯函数+报告渲染（scripts/backtest/promotion_combo_gate.py）；B2 测试（tests/backtest/test_promotion_combo_gate.py）；B3 登记（token/translation/depgraph）+提交。
 - 下一步：写 B1。裁定：promotion_advisory 不重建只消费；阈值硬编码+引用出处；CH 不可达→降级仅 advisory 证据（沿 sim_promotion_memo 不变量）。
 
-### L1 数据源上架流水线（P0）【三态：v0 已交付（71257b59b2）；L1.1 正门路由施工中，见 §1.5】
+### L1 数据源上架流水线（P0）【三态：v0 已交付（71257b59b2）；L1.1 正门路由已落地（4058b7b1e0，接班 b 班）——R1 调度器重启激活到窗即做】
 - 目标：`scripts/data/onboard_source.py`（源卡片驱动：probe 沙箱/apply 建表+登记/verify 计数核验）+首个真实免费源端到端上柜（选定：frankfurter.app ECB 汇率日频，免 key，表 c1_market.alt_fx_rate_ecb，自然键 trade_date+base+quote）。
 - 块：B1 卡片 schema+probe；B2 DDL 渲染+建表（直连 ch_writer.query）；B3 采集任务（新 thin provider 或独立脚本走 write_result）；B4 schedule.yaml 槽位+tasks.yaml 任务登记；B5 调度器安全重启激活（04:00-05:00 窗）；B6 verify+台账。
 - 依赖裁定：TableRegistry 在冻结区→表名直写+H-02 挂单；AkshareAltProvider 不动（1448 行他线资产）→新独立薄脚本。
@@ -103,6 +103,30 @@ completes_when: 全线施工完毕+循环检查连续两次 0 问题+红蓝通�
 - H-05 CH-OptimizeMerge register ps1 化（改活任务，需值守窗执行，Owner 已批待安全窗）
 - H-06 ZephyrAlpha_AltFxECB Windows 任务退役（L1.1 正门班次激活+连续 7 天打卡确认后执行；在飞任务退役=Owner 拍板项⑥；双轨期 ReplacingMergeTree 同键幂等无害）
 - 发现登记：tasks.yaml 悬空 source 三值（local_valuation/bdpan/backfill）不在 provider 路由表——另案考古，非本战役修
+
+## 3.5 姊妹战役协调裁定（2026-09-18 02:3x，第三棒开工登记）
+
+- 姊妹战役：st-residual-20260917「残余挂账施工战役」并行在飞（docs/_working/residual_construction/00_master_ledger.md，E1-E7 封矿+W1-W3 波次）。
+- 其 C1 裁定：pipeline_events.py / tasks.yaml / apply_market_tables_ddl.py 三共享文件归其总统筹独占（波次边界统一接线）。
+- 本战役遵约改道：**R3 车道G事件接线的共享文件触点挂起**，本轮只交付本侧事件发射能力（车道G自有文件纯函数）+接线挂单（波次边界由 residual 总统筹或 Owner 批后一行接线）；R1 调度器重启（04:00-05:00 窗）为进程级运维、不碰其文件，按交接令"到窗即做"；QMT 模拟盘 100 股端到端测试为本夜新增 Owner 明令（模拟账户授权明确）。
+- 交叉引用：其 E1-E7=残余挂账施工环节（另一轴）；本战役 8+1 工段=自动化产线轴。两轴互补不重叠。
+
+### QMT 模拟盘 100 股端到端测试（第三棒，Owner 明令）
+
+- 通道裁定：Owner 纠正 MiniQMT 今日（09-18）下线→**正道=大 QMT 文件桥**（MOD-L06-001-QMTFB：HTTP 快路径 18901+指令 CSV+柜台镜像四 CSV）；已拉起的 XtMiniQmt 进程已停。
+- 实测（03:0x 夜间）：环境辨识=仅模拟终端在线（E:\国金QMT交易端模拟，无实盘终端无歧义）→QmtFileBridgeBroker(env="sim")→600000.SH BUY 100 股限价 8.10（深低市价，意图零成交）→**submit→柜台→状态回流 SUBMITTED 全链打穿**→撤单指令受理→终态待柜台夜间批处理（Order.csv 导出批处理晨间复核）。
+- 证据：docs/_working/full-auto-chain/evidence/qmt-bridge-smoke-20260918-c3.yaml；执行手册 qmt_e2e_runbook.md。
+- 阻塞改登记：miniQMT 启动需 GUI 登录一度阻塞→Owner 亲自开终端解除；成交腿（市价附近真成交+持仓验证）留待交易时段 Owner 门执行。
+
+### 第三棒终局态（2026-09-18 04:3x）
+
+- **挖矿文档树封矿**：mining/ 总谱+十工段作业簿全交付（约 226 子模块节点，全 file:line 证据+WO 号）；种子讹误修正 4 处。
+- **QMT 桥 100 股端到端**：SUBMITTED 全链打穿（大 QMT 文件桥+HTTP 18901），证据 yaml 落档；成交腿待交易时段 Owner 门。
+- **R1 达成**：调度器 04:00 窗重启，daily_alt_fx 激活（22 jobs 实证）；R2 打卡 1/7（66 行/09-17）。
+- **R3 改道**：接线触点挂单（residual C1 独占），本侧能力已交付。
+- **循环检查**：两轮 72/72 零问题（含逮出 registry 计数滞后 25/22 追认）。
+- **红蓝**：前夜 5 P1+14 P2 全修/登记；本夜真发现=registry 计数滞后+夜间撤单状态回流滞后（已记晨间复核）。
+- 提交态：q-0006 入袋（17 文件含 mining 树/标准库/catalog），皮带消化中；计数追认批直连落地。
 
 ## 4. 循环检查与红蓝
 
