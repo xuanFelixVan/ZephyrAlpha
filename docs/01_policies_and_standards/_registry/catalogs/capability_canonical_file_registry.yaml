@@ -32848,6 +32848,10 @@ creation_tokens:
   token: rule-replay-rule-replay-20260917
   created_by: st-ailayer-20260917
   capability: rule_replay
+- file: src/zephyr/governance/standards_governance/rule_replay.py
+  token: rule-replay-rule-replay-20260917
+  created_by: st-ailayer-20260917
+  capability: rule_replay
 - file: docs/_working/automation/campaign/mining/coordination_st_mineline_20260918.md
   token: campaign-coordination-coordination-st-mineline-20260918-20260917
   created_by: st-mineline-20260918

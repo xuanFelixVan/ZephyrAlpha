@@ -50295,6 +50295,28 @@ entries:
   desc_en: ""
   plain_zh: "佣金+滑点+冲击+做T加成的单边全成本"
 - module_path: src/zephyr/strategy_factory/owner_band_t/data_loader.py
+- module_path: src/zephyr/strategy_factory/owner_regime_switcher/switcher.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "regime切换器核心"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "看市场现在处于上涨、震荡还是下跌状态，决定今天允许开哪几个策略包、每个包最多能买多少仓位；状态要连续五天确认才换挡，防止来回折腾；市场状态数据断了就退回保守的全包半仓模式。"
+- module_path: src/zephyr/strategy_factory/owner_regime_switcher/packages.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "代理包信号面"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "两个示范用的简单策略：一个看300ETF价格站上20日均线就满仓持有（防御型），一个在五个ETF里挑最近涨得最猛的那个满仓持有（进攻型）；它们只是用来测试切换器框架的替身，不是正式策略。"
+- module_path: src/zephyr/strategy_factory/owner_regime_switcher/costs.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "成本真源封装"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每买卖一次要交的钱（佣金、滑点、冲击成本）统一从全仓库同一套费率真源取数计算，禁止自己另编一套费率数字；红蓝测试时有个旋钮能把滑点放大五十倍做压力测试。"
+- module_path: src/zephyr/strategy_factory/owner_regime_switcher/data_loader.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "数据装载"
   name_en: ""
@@ -50309,6 +50331,8 @@ entries:
   desc_en: ""
   plain_zh: "日内回转的开平仓纯决策函数"
 - module_path: src/zephyr/strategy_factory/owner_band_t/engine.py
+  plain_zh: "从数据库只读地取两类数据：各ETF的日线价格（由小时线拼成的）和每天的市场状态判定记录；取回来的数据在临时目录存个副本，避免反复查库。"
+- module_path: src/zephyr/strategy_factory/owner_regime_switcher/engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "组合引擎"
   name_en: ""
@@ -50316,6 +50340,8 @@ entries:
   desc_en: ""
   plain_zh: "波段金字塔+做T+风控的逐日模拟"
 - module_path: src/zephyr/strategy_factory/owner_band_t/exam.py
+  plain_zh: "按切换器给的指令每天模拟买卖记账：昨天收盘算出的信号今天开盘才执行，只能买整百股，买卖都扣真实费用，最后算出每天的净值、仓位比例、换手次数这些成绩单数据。"
+- module_path: src/zephyr/strategy_factory/owner_regime_switcher/exam.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "E4考试器"
   name_en: ""
@@ -50343,6 +50369,49 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "S-OWNER-001 策略考试的唯一执行入口脚本"
+  plain_zh: "给切换器做对照实验的裁判：同一段行情下，开切换器和不开切换器各跑一遍，比较谁赚得多谁亏得狠，还用一个统计学抽签方法确认差距不是碰运气；顺带列出人工开切换器跟不开的仓位差异还原。"
+- module_path: scripts/strategy_factory/run_s_owner_002_exam.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "切换器考试入口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "在命令行一键启动上面整套对照实验，把所有成绩单数字写进一个JSON文件供出证报告引用。"
+- module_path: src/zephyr/alt_data/cohort_daily_ledger.py
+  domain_id: D_ALT_DATA
+  name_zh: "五人群投资者行为日账本聚合器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天收盘后把全市场资金流拆成散户、杠杆、游资、机构四类人，各算一行当天的买卖方向和活跃度，像记账本一样日结一行，供回测和预测用"
+- module_path: scripts/governance/d8_doc_sync/algo_flow_reverse_orphan_reconciler.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "ALGO_FLOW 反向孤件对账器"
+  name_en: ""
+  desc_zh: "普查 ALGO_FLOW 出仓镜像中源已退役的孤儿镜像并给出 Owner 授权退役通道"
+  desc_en: ""
+  plain_zh: "代码删了、说明还留着：算法流程图镜像文件是从代码注释出仓出去的，源码被退役掉那一笔提交不带镜像，门禁看不见，于是镜像和它在注册表里的户口一起变成没人认领的孤儿。这个对账器每次提交后自动把全库镜像点一遍名，谁的源真没了就报出来；要销户必须由 Owner 裁定点名批准，然后它把镜像收进回收站、摘掉注册表户口、同一批提交走掉。"
+- module_path: src/zephyr/data/supply_sentinel.py
+  domain_id: D_DATA
+  name_zh: "数据断供哨兵"
+  name_en: "data supply sentinel"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天早上检查一遍各个数据表里最新一条数据的日期，发现哪张表太久没有新数据（比如股东户数断供两个月那种事）就写告警文件提醒，专门盯住按事件日期存的日历类数据表，防止任务表面还在实际已经断供的事故重演。"
+- module_path: schemas/categories/market/market_rate_decision_calendar.py
+  domain_id: D_DATA
+  name_zh: "央行议息日历表DDL"
+  name_en: "rate decision calendar DDL"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这张表存放美国、欧洲、中国等十一家央行的每次加息降息记录：哪天开的会、利率变成了多少、市场原来猜多少、上次是多少。建表格式的唯一真源就是这个文件，表坏了要重建照着它来。"
+- module_path: src/zephyr/governance/standards_governance/rule_replay.py
+  domain_id: D_GOVERNANCE
+  name_zh: "历史重放器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给治理门禁用的重考神器：想调门禁阈值时，先用旧考卷让新阈值重考一遍，证明该拦的还在拦、没乱拦新的，才准上线。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

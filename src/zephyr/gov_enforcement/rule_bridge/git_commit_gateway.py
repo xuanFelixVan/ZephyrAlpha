@@ -1587,6 +1587,23 @@ class GitCommitGateway:
         except ImportError as e:
             logger.warning("agents_cheatsheet_drift_reconciler not registered: %s", e)
 
+        # 注册 ALGO_FLOW 反向孤件普查 reconciler（MOD-algo_flow_reverse_orphan，#ARCH-326，2026-09-18）
+        # 源被退役那一笔 commit 不带镜像 → link gate 看不到，镜像+注册表条目静默存活成反向孤件；
+        # 本件把一次性普查固化为事件触发观测面（全库扫描属触碰税，按 #ARCH-326 裁定不进 pre-commit）。
+        # 只检测不退役（裁定#307① Owner 常设门位）：file_ops 仅 read，退役走显式 --apply。
+        # priority=245 落在 ALGO-FLOW-TRANSLATION-DRIFT(240) 与 AGENTS-CHEATSHEET-SYNC(250) 空档。
+        try:
+            import sys as _sys
+
+            _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
+            if _doc_sync_dir not in _sys.path:
+                _sys.path.insert(0, _doc_sync_dir)
+            from algo_flow_reverse_orphan_reconciler import make_algo_flow_reverse_orphan_reconciler  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+
+            self._reconciliation_registry.register(make_algo_flow_reverse_orphan_reconciler(self))
+        except ImportError as e:
+            logger.warning("algo_flow_reverse_orphan_reconciler not registered: %s", e)
+
     # ------------------------------------------------------------------
     # 公开 API
     # ------------------------------------------------------------------
