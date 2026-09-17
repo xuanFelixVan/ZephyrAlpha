@@ -49,3 +49,13 @@ created: 2026-09-17
 | P6 L4/B0 | L4 执行族 15/15 过（滑点 2.56bp）；B0 15 条 14 valid+1 挂 | 采纳（Flash F01-F03 包） |
 | E5 迟滞四臂 | 三方案全负（-37%/-60%/…）；迟滞臂 +5.5pp 方向确认（STD-SWITCH-001 迟滞条款实证），方案本体不可上线（S13 F-1 加固） | 采纳（证据入增补版） |
 | RB/P2 压测 | 两度被中断（内存/人工）——单发低并发重启，极限档留 Flash | 待跑 |
+
+## Flash 业务施工班台账（st-flashbiz-20260918，2026-09-18 凌晨；作业簿=docs/_working/flash_biz/）
+
+| id | 战场 | 启动时刻 | 命令 | 日志 | 产物 | 机读判据（什么算红） | 预计耗时 | 状态 | 结论 |
+|---|---|---|---|---|---|---|---|---|---|
+| biz4 | E1C-09 E4 完整考试 | 2026-09-18 01:58 | `python .runtime/tmp/exp/flashbiz/biz4_e1c09_e4_exam.py` | biz4_e1c09_e4_exam.log | data/backtest_artifacts/runs/E4-E1C09-P3-E1C-09/{summary.json,verdict.md}+哨兵 biz4.done | 双自检 IC 偏差>5e-4=作废；登记对照(sharpe±0.05/DSR±0.02)超限=作废 | 分钟级 | **done** | verdict=**存疑**(fail-closed)：IS 1.469 过/WFA 2/3 折(折2 mining 段 -1.95 灾难)/OOS 2.027 但 DSR 0.732 落 review 带+过拟合检出(CV1.83+灾难折)；对照三值全容差内=考试有效；can_deploy=false 放行权 Owner |
+| biz2 | F02 做T配对重跑 | 2026-09-18 02:05 | `python .runtime/tmp/exp/p6/cost_trio_exam.py` | stdout | .runtime/tmp/exp/p6/cost_trio_result.json（P6 基线快照 *.p6snapshot.* 留档） | 配对数≥30 才出结论 | 秒级 | **done** | 24<30 维持 insufficient_samples：0/24 毛价差≥30bp 前置、净 mean −45bp；与裁定#304 相互印证无翻案；披露报告=biz2 作业簿，零状态变更 |
+| biz1 | F01 L4 批落库 | 2026-09-18 01:54 | `run_validation(batch='L4')` 非 dry | — | c1_backtest.node_verdict run_id=VAL-20260918-015408 + runs/ 档案 finalize | 预期 [('valid',15)]；落库前快照 41 pending+2 valid | 秒级 | **done** | 15 行全 valid（slip 2.56bp/triggers 1467）；B0 15 条全部收尾（终态表=biz1 作业簿） |
+| biz3 | E7 涨跌停闸 | 2026-09-18 02:15 | `pytest tests/backtest/test_c4_limit_gate.py` | — | _c4_engine 闸+测试 7 件 | 两真实反例(601162@0925/000016@0410)不被拦=红 | 秒级 | **done** | 7/7 绿+既有守护 58 绿 1 xfail；闸默认开、gate_limits=False 反例通道；详见 biz3 作业簿 |
+| biz5 | ETF 分钟族时区劈叉 | 2026-09-18 02:20 | `python scripts/ch/repair_etf_minute_tz_split.py`（dry-run） | — | 修复件+known_data_gaps 条目+工单 biz5 | dry-run 前置核验任一不过=拒绝 | 分钟级 | **staged（--execute 等 Owner 门位）** | 缺陷扩面=T lane 15min 一表→全 ETF 分钟族五表 4.12 亿行（93-95%）；边界零违例/trade_date 零错日/修复零碰撞；三步验证全过，破坏性操作按指令停下登记 |
