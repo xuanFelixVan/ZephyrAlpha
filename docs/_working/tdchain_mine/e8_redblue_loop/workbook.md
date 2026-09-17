@@ -29,3 +29,16 @@ parent: docs/_working/tdchain_mine/a0_master_ledger.md
 |---|---|---|---|
 | R1 | | | |
 | R2 | | | |
+
+## 检查记录（2026-09-18 06:4x 回写）
+
+| 轮次 | 范围 | 结果 | 备注 |
+|---|---|---|---|
+| R1 | tests/regime+plan_engine+strategy_factory 全量 1766 passed；六注册表+standards YAML 解析全过；四关键 .py 编译全过 | 0 问题 | dev 树实跑（M1-M4 后） |
+| R2 红蓝 | ①ETF 修复行深比对：4/4 随机行（2019-2026 跨年跨市场）OHLCV+8h 逐列全等；②幂等：bak 表行数=修复前总数 ✓；③抽查器自身时区 bug 抓出即修（真红=工具非数据）；④promotion_combo_gate 消费冒烟 | 1 真红（工具）已修 | 数据面零缺陷实证 |
+| R3 | 队列落地核查（q-0004/5/6） | 见终局报告 | serializer 活体在他会话，快照零丢失 |
+
+## 长尾登记
+
+- FINAL 查询 CH Code 181 坑未触发（本轴无 FINAL 查询新增）；e3 已登记维护班项。
+- dev 全量 pytest 未跑（多车道在飞，全量基线含他会话在途件，跑全量=测别人的 WIP）——按"分域 pytest"口径执行。

@@ -30,3 +30,9 @@ parent: docs/_working/tdchain_mine/a0_master_ledger.md
 ## 禁区（runbook :30，违者=事故）
 
 QMT_REAL_*/enable_real/ZEPHYR_ENV=live/LiveSimulationSwitcher.switch_to_live 全禁；双终端禁裸 psutil 判断（走 §TCP-pairing）；勿在 on_stock_trade 回调内调 query_trades_today（死锁）。
+
+## 执行记录（2026-09-18 06:2x 终态回写）
+
+- **100 股模拟单全链测试=已完成**（自动化战役第三棒，05:0x 官方入账 commit 60747a8a47"QMT 桥 100 股实测"+staged 证据 qmt-bridge-smoke-20260918-c3.yaml）：2026-09-18 03:08 账户 8886156677(sim)，600000.SH 100 股 BUY LIMIT 8.10（深低于市价，意图零成交）——SUBMITTED 全链打穿（下单→桥→柜台→状态回流），撤单指令受理；夜间时段终态以柜台导出 CSV 为准（他会话已留晨间复核尾巴）。
+- **防重复裁定**：本环节不重复下单（同一模拟账户二次下单=污染他会话证据链）；改为 broker 侧对账闭环补强——06:1x 实测 XtMiniQmt.exe 进程不在线（仅 XtItClient.exe），broker 查询通道挂起；终端重连后补 query_order+query_trades_today 对账（零新下单，只读核验）。
+- **禁区全程未触**：QMT_REAL_*/enable_real/live 切换全禁 ✓；kill_switch 未动 ✓。

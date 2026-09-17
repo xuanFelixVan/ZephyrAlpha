@@ -98,59 +98,72 @@ def verify(cli, tbl: str) -> dict:
 
 
 def repair_table(cli, tbl: str, dry_run: bool) -> dict:
-    """影子表重建+EXCHANGE 换名（trade_time 在 ORDER BY 键，ALTER UPDATE 禁改）。"""
+    """冻结台三代流（2026-09-18 st-tdchain 七轮实测定稿）：
+
+    stage(普通 MergeTree 原样快照，CREATE AS SELECT 原子、永不折叠)
+      → shadow(普通 MergeTree，+8h 平移变换) ——fp 对账两侧皆冻结=确定性
+      → final(原 ReplacingMergeTree 引擎) ←shadow 直拷（原子，事后折叠去重=本表常规语义）
+      → RENAME 换名上线，旧表留 bak 可逆。
+    背景：Replacing 影子灌完即被后台合并折叠（首轮起五轮假报/真漂），SYSTEM STOP MERGES
+    需 Owner 未授予的 SYSTEM MERGES 权限（六轮 Code 497），故用普通 MergeTree 冻结台。
+    """
     name = _name(tbl)
     shadow = f"c1_market.{name}_tzfix"
+    stage = f"c1_market.{name}_tzstage"
+    final = f"c1_market.{name}_tzfinal"
     bak = f"c1_market.{name}{BAK_SUFFIX}"
     q = lambda s: cli.execute(s)  # noqa: E731
     ddl = q(f"SHOW CREATE TABLE {tbl}")[0][0]
     engine_clause = ddl[ddl.find("ENGINE"):]
     before_rows = q(f"SELECT count() FROM {tbl}")[0][0]
-    before_vol = q(f"SELECT sum(volume) FROM {tbl}")[0][0]
-    plan = {"table": tbl, "before_rows": before_rows, "shadow": shadow, "bak": bak}
+    plan = {"table": tbl, "before_rows": before_rows, "stage": stage, "shadow": shadow, "bak": bak}
     if dry_run:
         plan["action"] = "dry-run（零写入）"
         return plan
     t0 = time.time()
-    q(f"DROP TABLE IF EXISTS {shadow}")
-    # AS {tbl} 治本（2026-09-18 st-tdchain 实测 Code 80：本版 CH 要求列清单/AS 子句，
-    # 纯 ENGINE 子句建表被拒）；非复制引擎无zk路径冲突，AS 复制列定义最稳。
-    q(f"CREATE TABLE {shadow} AS {tbl} {engine_clause}")
-    q(f"""
-      INSERT INTO {shadow} SELECT * REPLACE (
-        if(trade_date <= '{CUTOFF}', trade_time + INTERVAL 8 HOUR, trade_time) AS trade_time
-      ) FROM {tbl}
-    """)
-    after_rows = q(f"SELECT count() FROM {shadow}")[0][0]
-    # 抗折叠对账（2026-09-18 st-tdchain 实测治本）：ReplacingMergeTree 后台合并会折叠
-    # 重复键行，绝对 count()/sum(volume) 在建表窗口内自然下漂（首轮五表全误报 ABORT，
-    # Δ 与表大小成比例）；uniqExact 复合键聚合态又超服务器 6.9GiB 限额（二轮 Code 241）。
-    # 终版=单查询同快照流式指纹：sum(cityHash64(全载荷)) O(1) 内存（UInt64 环绕对两侧
-    # 同为确定性）+分桶计数平移守恒：影子 hour<=7 == 原表北京行数、影子 date<=CUTOFF
-    # 且 hour∈[9,15] == 原表 UTC 误标行数。
-    _FP_COLS = ("symbol, trade_time, trade_date, open, close, high, low, volume, amount, "
-                "pct_change, amplitude, exchange, symbol_canonical")
+    for t in (shadow, stage, final):
+        q(f"DROP TABLE IF EXISTS {t}")
+    # 1) 冻结台：原子快照，普通 MergeTree 不折叠（ORDER BY tuple 防重排开销）
+    q(f"CREATE TABLE {stage} ENGINE = MergeTree ORDER BY tuple() AS SELECT * FROM {tbl}")
+    # 2) 平移影子（普通 MergeTree，冻结可对账）
+    q(f"CREATE TABLE {shadow} ENGINE = MergeTree ORDER BY (symbol, trade_time, ingest_ts) AS "
+      f"SELECT * REPLACE (if(trade_date <= '{CUTOFF}', trade_time + INTERVAL 8 HOUR, trade_time) AS trade_time) FROM {stage}")
+    # 3) 确定性对账（两侧皆冻结；指纹对 stage 先施加同款平移；分桶守恒配对含 +8h 环绕）
+    # exchange/symbol_canonical 为 MATERIALIZED 列：SELECT * 不携带、INSERT 自动重算，
+    # 指纹与回拷列清单一律排除（round7 Code 47 实测）。
+    _PHYS_COLS = ("trade_date, trade_time, symbol, open, close, high, low, volume, "
+                  "amount, pct_change, amplitude, data_source, ingest_ts")
+    _FP_COLS = ("trade_date, open, close, high, low, volume, amount, "
+                "pct_change, amplitude, data_source")
     inv = q(f"""
       SELECT
-        (SELECT sum(cityHash64({_FP_COLS})) FROM {shadow}),
-        (SELECT sum(cityHash64({_FP_COLS})) FROM {tbl}),
-        (SELECT count() FROM {shadow} WHERE toHour(trade_time) <= 7),
-        (SELECT count() FROM {tbl} WHERE toHour(trade_time) > 7),
+        (SELECT count() FROM {shadow}),
+        (SELECT count() FROM {stage}),
+        (SELECT sum(cityHash64(symbol, trade_time, {_FP_COLS})) FROM {shadow}),
+        (SELECT sum(cityHash64(symbol, if(trade_date <= '{CUTOFF}', trade_time + INTERVAL 8 HOUR, trade_time), {_FP_COLS})) FROM {stage}),
         (SELECT count() FROM {shadow} WHERE toHour(trade_time) BETWEEN 9 AND 15 AND toDate(trade_time) <= '{CUTOFF}'),
-        (SELECT count() FROM {tbl} WHERE toHour(trade_time) <= 7)
+        (SELECT count() FROM {stage} WHERE toHour(trade_time) <= 7),
+        (SELECT count() FROM {shadow} WHERE toHour(trade_time) <= 7),
+        (SELECT count() FROM {stage} WHERE toDate(trade_time) <= '{CUTOFF}' AND toHour(trade_time) >= 16)
     """)[0]
-    sh_fp, src_fp, sh_low, src_gt7, sh_shifted, src_low = [int(x) for x in inv]
-    if sh_fp != src_fp or sh_low != src_gt7 or sh_shifted != src_low:
-        plan.update({"action": "ABORTED（折叠不变量对账不平，影子表保留待查）",
-                     "after_rows": after_rows,
-                     "sh_fp": str(sh_fp), "src_fp": str(src_fp),
-                     "sh_low": sh_low, "src_gt7": src_gt7,
-                     "sh_shifted": sh_shifted, "src_low": src_low})
+    sh_n, st_n, sh_fp, st_fp, sh_shifted, st_low, sh_low, st_night = [int(x) for x in inv]
+    if sh_n != st_n or sh_fp != st_fp or sh_shifted != st_low or sh_low != st_night:
+        plan.update({"action": "ABORTED（冻结台确定性对账不平，表保留待查）",
+                     "sh_n": sh_n, "st_n": st_n,
+                     "sh_fp": str(sh_fp), "st_fp": str(st_fp),
+                     "sh_shifted": sh_shifted, "st_low": st_low,
+                     "sh_low": sh_low, "st_night": st_night})
         return plan
+    # 4) 原引擎 final ←冻结台直拷（原子），换名上线（旧表留 bak 可逆=反向换名即退）
+    q(f"CREATE TABLE {final} AS {tbl} {engine_clause}")
+    q(f"INSERT INTO {final} ({_PHYS_COLS}) SELECT {_PHYS_COLS} FROM {shadow} "
+      f"SETTINGS max_partitions_per_insert_block = 100000")  # 冻结台按 symbol 序混合月份分块（round8 分区数限告诚）
     q(f"DROP TABLE IF EXISTS {bak}")
-    q(f"RENAME TABLE {tbl} TO {bak}, {shadow} TO {tbl}")  # 顺序换名（同库原子段小窗）
+    q(f"RENAME TABLE {tbl} TO {bak}, {final} TO {tbl}")  # 顺序换名（同库原子段小窗）
+    q(f"DROP TABLE IF EXISTS {stage}")
+    q(f"DROP TABLE IF EXISTS {shadow}")
     post = verify(cli, tbl)
-    plan.update({"action": "done", "after_rows": after_rows,
+    plan.update({"action": "done", "after_rows": sh_n,
                  "remaining_utc_rows": post["remaining_utc_rows"],
                  "elapsed_s": round(time.time() - t0, 1)})
     return plan

@@ -28,3 +28,16 @@ parent: docs/_working/tdchain_mine/a0_master_ledger.md
 ## 长尾登记
 
 - regime/kline 表 FINAL 查询触发 ClickHouse Code 181 服务端崩溃（s-owner002 交接包实测，复现路径=c1_backtest.regime_snapshot_history 带 FINAL 多列查询）——全仓 FINAL 查询排查属维护班，本环节只在 e8 红蓝中加一条探针。
+
+## 复核记录（合并后回写，2026-09-18 05:3x）
+
+- **合并落地**：M1 merge=0060289c66，session/st-regcal-20260917 已为 dev 祖先 ✓。
+- **测试**：tests/regime/test_regime_detector.py 随三域冒烟 835 passed（含锚定 8 测，M1 后 dev 树实跑）。
+- **结果报告复核**：regime_recal_results_2026_09_17.md 结论自洽——①重校前 r4 IS +0.23/OOS +0.69 两段非负（名义"熊市看空"语义反向实证）+r10 IS +2.06 反转入场即底部；②重校后 R1 锚定使 r3 季符号一致率 0.385→0.80、r2 翻转率 0.636→0.267；③R3 裁决 r4/r10/r1 方向语义退役、保留风险分档语义；④核心方向对 r2<r3 的 spread OOS +1.98 不反转（Welch p=5.5e-4）——方向语义保留判据达标，退役属"诚实条款"而非凑单调。
+- **裁定链**：分支裁定条目随 M1 union 入 dev registry（title=Regime r4/r10 方向失真重校准——HMM 组件锚定落地+态层方向语义退役，status=active）。
+- **对 S-OWNER-002 的定性**（报告 §3.4）：切换器若重跑，"r4/r10→清仓"系统性低位卖出消失（失真源移除）——与 #310 不予放行不矛盾（复活须按 #305 口径重考）。
+- **任务 2 终态**：✅ 完成（比交接令"降权/下线"更彻底：方向语义整体退役）。
+
+### 长尾登记（补充）
+
+- **裁定#304 撞号 tombstone 实证**：dev registry 中 #304 同时承载 regcal 重校准（M1 union 带入）与 kimi-audit 批做T砍（01fbfad1）两条目，s-owner002 分支又以 #304 登记其 verdict——三方撞号，引用必须带 title 消歧；编号唯一性治理属维护班（V-06/#316 已立法，存量属大赦范围）。

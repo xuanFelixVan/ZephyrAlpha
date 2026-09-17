@@ -30,3 +30,19 @@ parent: docs/_working/tdchain_mine/a0_master_ledger.md
 
 - repair 脚本本身是否入库：.gitignore 白名单制（scripts/data/* 忽略），收编需改 .gitignore（共享文件）——本环节不收编，登记挂单给数据线班次；脚本内容已在执行纪要中留指纹（sha256）。
 - 8803/8804 行业板 132 个无成分映射不参与分钟合成（synth_board_minute INVARIANTS 已登记）——台账记录，暂不施工。
+
+## 执行结果（2026-09-18 06:2x 终态回写）
+
+- **ETF 五表全部修复完成**（冻结台三代流，九轮实跑迭代定稿）：
+  | 表 | 修复行数 | remaining_utc | 修复前 utc 行 |
+  |---|---|---|---|
+  | kline_etf_1min | 326,301,055（含 303,422,787 误标行） | 0 | 303,422,787 |
+  | kline_etf_5min | 71,856,186 | 0 | 68,163,011 |
+  | kline_etf_15min | 24,331,141 | 0 | 23,168,185 |
+  | kline_etf_30min | 11,939,337 | 0 | 11,360,495 |
+  | kline_etf_60min | 5,962,194 | 0 | 5,680,248 |
+- **可逆性**：五张旧表整体保留为 *_tz_bak_20260918（反向换名即退；物理删除留 Owner 门位）。
+- **工具治本三件**（scripts/ch/repair_etf_minute_tz_split.py，随批提交）：①CREATE AS 子句（Code 80）；②冻结台三代流（stage/shadow 普通 MergeTree 确定性对账 → final 原引擎原子拷贝换名）治 ReplacingMergeTree 后台折叠假报（首轮起五轮根因）；③MATERIALIZED 列排除+显式回拷列清单+max_partitions_per_insert_block。
+- **RULE-DATA-OPS 三步验证**：必要性（23.17M+ 误标行毒化下游考试）、真实性（五表 precheck 边界零违例/错日零/零碰撞+平移守恒分桶全等）、可逆性（bak 换名即退）——全过留痕于 etf_tzfix_exec*.log。
+- **板块 15/30/60m 合成**：裁定跳过施工（三问停止判据：无独立消费方+1m 原料系二阶近似+无现成工具且存量 15m 桶时间戳全分钟发散存疑）——缺口如实登记，不为凑数造管线。
+- **已知残留**：①kline_1min/15min 止于 09-16（miniQMT 白班关停，晨间任务自愈）；②kline_index_intraday 不存在（510300 代理在案，新表需 apply_market_tables_ddl=residual C1 独占→挂单）；③repair 脚本 M11 豁免注记已加，随批收编入 git（scripts/ch/ 非 ignore 区）。
