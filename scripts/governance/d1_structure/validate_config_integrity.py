@@ -86,13 +86,12 @@ from _shared.constants import (  # noqa: E402  治本(ARCH-038 P3): 补全 SRC_D
     EXIT_PASS,
     SRC_DIR,
 )
+from _shared.walk import iter_files  # noqa: E402  扫描面真源（目录名剪枝 + 根级点目录规则）
 from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合法值加载 SSoT（D-D-05）
 
 # safety_level 合法值真源是 safety_level_vocabulary.yaml，禁止代码硬编码字面量集合。
 # strict=False 容错：词表缺失时返回空 set，校验逻辑回退（warn-only，不崩溃）。
 _SAFETY_LEVEL_VALUES: set[str] = load_vocabulary_values("safety_level_vocabulary.yaml", strict=False)
-
-EXCLUDE_DIRS: tuple[str, ...] = ()
 
 AUTH_REG_PATH = REPO_ROOT / "docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml"
 DIR_STD_PATH = REPO_ROOT / "docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml"
@@ -315,22 +314,36 @@ def l3_cross_reference(yaml_data: dict) -> tuple[list[str], list[str]]:
     return errors, warnings
 
 
+def _l4_scan_files() -> list[Path]:
+    """L4 观测面=git 视角下的仓内 .py（已跟踪 + 未跟踪未忽略），不是文件系统全量枚举。
+
+    旧口径是手写 ``REPO_ROOT.rglob("*.py")`` 配本地 ``EXCLUDE_DIRS = ()``——该常量自
+    2026-05-04 建文件起就是空元组，把共享真源 ``_shared.constants.EXCLUDE_DIRS`` 顶掉了，
+    等于零剪枝。2026-09-17 实测：枚举 199267 个 .py，其中 190928 个躺在
+    ``.aidrafts``/``.worktrees``/``.runtime`` 会话草稿树里（合计 199k→源码真身 8.3k），
+    L4 因此吐 4018 条告警、4003 条是别人在途草稿，15 条真源码一致性漂移被噪音埋掉，
+    单脚本 121s 撞穿 script-manifest 的 60s quick 冒烟预算——预算被击穿后探测器只剩下
+    "timeout" 一种说法，等于失去信号。口径与 GATE-ERRCODE 同治本先例：观测面=git。
+    git 不可用（非仓/无 git）时退回共享 iter_files，绝不静默返回空清单。
+    """
+    proc = subprocess.run(  # noqa: S603  固定 argv，无用户输入拼接
+        ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z", "--", "*.py"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+    )
+    if proc.returncode != 0 or not proc.stdout:
+        return iter_files(REPO_ROOT, extensions=frozenset({".py"}))
+    paths = [p.decode("utf-8") for p in proc.stdout.split(b"\0") if p]
+    return [REPO_ROOT / p.replace("/", os.sep) for p in paths]
+
+
 def l4_path_constants() -> tuple[list[str], list[str], list[dict]]:
     """L4: 全项目路径常量 parents[N] 一致性扫描（返回fix字典列表）"""
     errors = []
     warnings = []
     fixes = []
 
-    all_py = [
-        f
-        for f in REPO_ROOT.rglob("*.py")
-        if f.is_file()
-        and not any(excl in str(f) for excl in EXCLUDE_DIRS)
-        and ".venv" not in str(f)
-        and "__pycache__" not in str(f)
-        and ".git" not in str(f)
-        and "_DO_NOT_USE" not in str(f)
-    ]
+    all_py = _l4_scan_files()
 
     for f in all_py:
         try:

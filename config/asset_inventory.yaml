@@ -148,7 +148,7 @@ offrepo_assets:
     regenerable: false
     criticality: critical
     backup: none
-    notes: "产业链语料+历史分钟线源头数据（industry_graph P0 扫描源、RAG 语料源头）；2026-09-14 Owner 裁定 backup=none（当日 52.66→118.38GB 持续膨胀，/MIR 镜像同量吃 F 盘空间，F:\offrepo_backup\data_download 副本已删，源 E 盘保留）"
+    notes: "产业链语料+历史分钟线源头数据（industry_graph P0 扫描源、RAG 语料源头）；2026-09-14 Owner 裁定 backup=none（当日 52.66→118.38GB 持续膨胀，/MIR 镜像同量吃 F 盘空间，F:\\offrepo_backup\\data_download 副本已删，源 E 盘保留）"
 
   - id: OFFREPO-AI-CACHE-HF
     path: "E:\\ai_cache\\huggingface"
