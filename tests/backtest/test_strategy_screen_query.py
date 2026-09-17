@@ -63,7 +63,10 @@ def test_trace_full_history():
     assert len(hist) >= 3
     c2 = [h for h in hist if h["batch"].startswith("C2")]
     assert len(c2) == 2 and all(h["verdict"] == "screened_in" for h in c2)
-    is_row = [h for h in hist if h["verdict"] == "translated_c4"]
+    # 冻结 IS 批成绩钉（2026-09-18 SCD-2 重考批追加后，translated_c4 行不再唯一——
+    # 钉冻结批而非行数；台账只增语义下重考批行属预期演化）
+    is_row = [h for h in hist if h["verdict"] == "translated_c4"
+              and str(h.get("batch", "")).startswith("C4-translated")]
     assert len(is_row) == 1 and is_row[0]["is_sharpe"] == 0.727
     assert all(h["run_archive_exists"] for h in hist)
 

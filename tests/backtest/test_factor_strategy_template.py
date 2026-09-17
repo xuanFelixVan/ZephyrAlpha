@@ -74,13 +74,16 @@ class TestAssembleWeights:
 
     def test_top_n_equal_weight(self):
         weights, closes = assemble_weights(self._feats(), top_n=1)
-        assert (weights["000002.SZ"] == 1.0).all()  # factor 高者恒入选
-        assert (weights.sum(axis=1) == 1.0).all()   # 等权归一
+        # T-1 平移语义（edd503ef）：首行无前日信号=全 0 暖机行，入选断言只看信号行
+        assert (weights["000002.SZ"].iloc[1:] == 1.0).all()  # factor 高者恒入选
+        assert (weights.sum(axis=1).iloc[1:] == 1.0).all()   # 等权归一
+        assert (weights.iloc[0] == 0.0).all()                # 暖机行钉
         assert closes.shape == (3, 2)
 
     def test_top_n_two_half_half(self):
         weights, _ = assemble_weights(self._feats(), top_n=2)
-        assert (weights == 0.5).all().all()
+        assert (weights.iloc[1:] == 0.5).all().all()  # 首行暖机 0，信号行半半
+        assert (weights.iloc[0] == 0.0).all()
 
     def test_nan_factor_row_excluded(self):
         feats = self._feats()
