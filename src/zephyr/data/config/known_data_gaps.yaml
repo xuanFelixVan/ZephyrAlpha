@@ -819,4 +819,20 @@ gaps:
     resolution_plan: "空窗日已全部回灌；1min 首 bar 标定研究立卡后置（40 真值日=2026-06 起密集日）；9/15 及 7/8 月缺采日永久缺失（任何渠道不可回）"
     resolution_actual: "2026-09-17 桥接切换施工批（commit 92812a31a0）：回补 32 空窗日 16.6 万行零失败，5 日已有原产被闸跳过；auction_book/auction_snapshot 此后由 qmt_bridge 派生持续累积"
     created: "2026-09-17"
+
+  # === 2026-09-17: kline_etf_60min 深度窗口缺口（数据矿脉盘点 st-datavein-20260917，工单移交数据线）===
+  - id: "kline_etf_60min_depth_windows"
+    table: "c1_market.kline_etf_60min"
+    gap_type: "date_range"
+    start_date: "2021-02-08"   # 孤立散格（159915 单标的单日，1min 源亦无=须 QMT 下载通道）；主窗见 root_cause
+    end_date: "2026-07-28"
+    date_column: "trade_date"
+    detection_threshold: 500   # 当日全族覆盖 <500 只 = 断档日
+    expected_daily_avg: 1600   # 2026-09 全族 ~1,663 只×4 bar
+    actual_daily_avg: 31       # 07 月窗实测（07-20 恢复 1,603）
+    status: "monitoring"   # 工单=docs/_working/datavein/2026-09-17-etf60min-depth-workorder.md，通道评估与执行序见 §三/§六
+    root_cause: "四段结构缺口：①2023-06-05 全族零行（全历史唯一零行交易日，当周家族 758-762 只）；②2026-07-01~07-17（13 交易日）只剩 31 只考试子集（S-OWNER 考试期采集收窄；同窗 5min=438-447 只、15/30min=463-472 只同族受害，1min 反而满覆盖 1,575-1,601 只/日）；③2026-07-28 半日断（545/1,607 只）；④2021-02-08 159915 孤立散格。另 2026-09-16 EOD 五任务全 FAILED（ClickHouse 写入失败 15:36-16:15）留半根（1,663 只仅早市 bar）——属运维瞬断，重跑增量任务即愈，不另立条目。2026-09-17 全链停采同因（采集消费进程未运行），催数据线当日处置。"
+    resolution_plan: "首选通道 C=CH 内 kline_etf_1min（缺口窗满覆盖）合成回补：仿 backfill_lof_minute_history.py 先例把 ch_tick_kline 合成路径 ETF 参数化（零覆盖白名单过滤+BufferedWriter 正道+dry-run 默认+复验清零），覆盖 ~95% 缺格；兜底通道 D=大QMT 沙箱 ContextInfo download_history_data（9/18 后仍可用，服务器保留 ~1 个月）救 2021-02-08 及合成源不覆盖格子。量级：全表约 9.0 万 bar 可回补。"
+    primary_alternative: "60min 缺格日消费方可临时用 30min 两根聚合或 1min 重采样；S-OWNER 考试 OOS 段（09-16 止）不受影响。"
+    created: "2026-09-17"
 last_updated: "2026-09-17"
