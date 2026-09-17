@@ -28,3 +28,15 @@ parent: docs/_working/tdchain_mine/a0_master_ledger.md
 ## 长尾登记
 
 - flip 属"修标"：standards.yaml 头注释流程=AI 提案→治理立案→Owner 修宪；但 #306（Owner 终局授权批）已裁定 v2 提案路径，重考达标后 flip=执行既定裁定，非新修标——留裁定留痕双保险。
+
+## 处置记录（2026-09-18 06:0x 回写）
+
+- **取证结论**（取证代理实查）：E6 双尺重考证据链闭合——输入=reexam_results.csv 81 行（git 已跟踪）×OOS 净值序列；覆盖 81 在架组合=64 CAND+6 FACT+11 VAL，可评 62、19 不可评**逐件标注原因**；v1 放行 56 / v2 放行 1；55 件翻转全部"v1放v2拒"（v1拒v2放=0 件，无放松翻转），逐条 flip_explain 可解释，不可解释 0% ≤ 10% 预注册门（S12_实验规格.md §E6；判读=lane_reports/E.md §E6，随 f654982348 入库）。事实定性：v2 收紧力来自 0.5 阈值而非 N_eff（"族口径救活临界件"叙事不被本批支持，须随尺携带）。
+- **转正动作**：STD-SIM-ACCESS-002 status draft→frozen（frozen_at=2026-09-18，reexam_evidence 内嵌）；v1 留档标 superseded_by；#306 红队③"族 N_eff 下限含历史被毙次数"回写 standards.yaml；①族注册表登记=治理层立案挂单；②B-03 顺序已由 #315 追认。机读产物归档 exp_evidence/e6_dual_ruler_result.yaml。
+- **裁定**：#335（本批原子登记）。
+- **STD-SWITCH-001 处置**：P4 回验 WIN 资格在案（p4_results.yaml 净 Sharpe 1.1297 vs 等权 0.3782，判据线 0.4782；已归档 exp_evidence/p4_switch_reexam_result.yaml），维持 draft——#305 自留门：转正须走修标流程+重考历史，本批不翻。
+- **组合门机器件**：promotion_combo_gate.py 已在产（40ca90eb88），v2 尺参数消费 standards.yaml 真源——flip 后打分器与考纲同源，无二次硬编码。
+
+## 长尾登记
+
+- 交接令任务 5"判据草案"由本簿+standards.yaml STD-SIM-ACCESS-002 终稿承载（S5_定尺子.md 为逐条裁定底稿），不再另立文档（防第二真源）。

@@ -55,7 +55,9 @@ standards:
   - std_id: STD-SIM-ACCESS-002
     name_zh: 模拟盘准入组合门 v2（S5 定尺提案——修 STD-SIM-ACCESS-001 的 DSR 口径自相矛盾）
     version: 1
-    status: draft   # AI 提案（kimi-audit 班次 S5）；draft→frozen 须附全量在架组合新旧尺重考报告
+    status: frozen   # 2026-09-18 转正（裁定#335，st-tdchain-20260917）：E6 双尺重考达标——81 全量覆盖/55 翻转零不可解释（0%≤10% 预注册线，S12_实验规格.md §E6）
+    frozen_at: "2026-09-18"
+    reexam_evidence: "docs/_working/kimi_audit/lane_reports/E.md §E6（f654982348）+ exp_evidence/e6_dual_ruler_result.yaml；#306 红队③族N_eff含历史被毙次数已回写本文件，①族注册表=治理层立案挂单，②B-03 顺序 #315 追认"
     source: "docs/_working/kimi_audit/S5_定尺子.md（逐条裁定+反驳者记录+翻转清单）"
     thresholds:
       oos_sharpe_min: 1.5              # 不变

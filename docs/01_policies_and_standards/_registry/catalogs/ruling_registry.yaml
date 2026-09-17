@@ -4357,3 +4357,31 @@ entries:
   related_rulings:
     - '裁定#307'
   superseded_by: ''
+- ruling_id: '裁定#337'
+  title: 'STD-SIM-ACCESS-002 双尺重考达标转正 frozen；STD-SWITCH-001 维持 draft 留修标流程'
+  date: '2026-09-18'
+  category: '考纲治理'
+  status: 'active'
+  summary: >-
+    E6 复核（st-tdchain-20260917，交接令任务 5 收口）：v1→v2 全量重考证据链闭合——81 在架
+    组合全量覆盖（62 可评+19 不可评逐件标注原因，非静默跳过）、v1 放行 56 / v2 放行 1、
+    55 件翻转全部"v1放v2拒"（v1拒v2放=0 件=无放松翻转）且逐条 flip_explain 可解释，
+    不可解释 0% ≤ 10% 预注册门（S12_实验规格.md §E6；判读报告 lane_reports/E.md §E6 随
+    f654982348 入库，机读产物归档 exp_evidence/e6_dual_ruler_result.yaml）。STD-SIM-ACCESS-002
+    按其 change_rule 翻 frozen（frozen_at=2026-09-18，reexam_evidence 内嵌 standards.yaml）；
+    v1 留档标 superseded_by。#306 红队三条款：③"族 N_eff 下限含历史被毙次数"已回写
+    standards.yaml；②B-03 N_eff 先于 frozen 顺序 #315 已追认；①族注册表登记留治理层立案
+    挂单。事实定性随尺携带：v2 收紧力来自 DSR 0.5 阈值而非族口径（"族口径救活临界件"叙事
+    不被本批数据支持）。STD-SWITCH-001：P4 回验 WIN 资格在案（净 Sharpe 1.1297 vs 等权
+    0.3782，判据线 0.4782；产物归档 exp_evidence/p4_switch_reexam_result.yaml），转正仍须
+    修标流程+重考历史（#305 自留门），维持 draft。
+  affected_files:
+    - config/standards.yaml
+    - docs/_working/kimi_audit/exp_evidence/e6_dual_ruler_result.yaml
+    - docs/_working/kimi_audit/exp_evidence/p4_switch_reexam_result.yaml
+  related_arch: []
+  related_rulings:
+    - '裁定#306'
+    - '裁定#305'
+    - '裁定#315'
+  superseded_by: ''
