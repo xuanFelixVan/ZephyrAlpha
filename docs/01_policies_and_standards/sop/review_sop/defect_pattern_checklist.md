@@ -3,12 +3,12 @@ ttl: permanent
 doc_type: policy
 rule_form: checklist
 verifiability: manual
-title: 缺陷模式库——深度审查强制前置 checklist（14 条，每条带真实案例锚点）
+title: 缺陷模式库——深度审查强制前置 checklist（15 条，每条带真实案例锚点）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-09-15
+version: "1.1.0"
+date: 2026-09-17
 topic: deep_review
 scope: global
 depends_on:
@@ -23,7 +23,7 @@ related_issues: []
 > **退役纪律**：条目已固化为 gate/注册表规则→标"已固化"退役（规范预算净零），每季 T4 审查时清点。
 > **防双真源**：audit_prompts_20_ai.md 已固化的教训（夜班三教训等）只留指针不复制——双份承载漂移本身就是本库模式 #4。
 
-## Checklist（14 条）
+## Checklist（15 条）
 
 | # | 模式 | 历史案例 | 审查问句 | 轴 |
 |---|---|---|---|---|
@@ -41,6 +41,7 @@ related_issues: []
 | 12 | 假完成状态 | 队列假落地 NOTHING_TO_COMMIT（36784c8a62）；假 done landed_id 系他会话（4deb7b97de） | done 状态逐 blob/逐行核验过真落地？ | E |
 | 13 | 外部 API 契约未实测 | QMT price_type LIMIT 0→11 实单拒（ae289436aa） | 三方常量有官方值对照+实单 smoke？ | B |
 | 14 | 重构丢边丢路由 | hk_connect_flow frozenset 误丢（74c25717a3）；depgraph 重建丢手工边（e5df571ac9） | 重构后路由表/依赖边/注册表全量对账？ | D |
+| 15 | 裁定引用不核真源 | 做T v2 战役设计书引"#293"背书 S-OWNER-001 FAIL——在册内容实为收益带收紧（ruling_registry.yaml:3435-3441）；引"#304"查无此号（registry 最大 #303）；"2.7bp/边"无底层产物（2026-09-17 kimi-audit 班次 V-01/V-02 实证，commit f8002ed8 批次） | 引用的裁定号在 ruling_registry 存在吗？在册内容与引用语境一致吗？关键数字有底层产物锚吗？ | D |
 
 ## 轴标签对照
 
@@ -58,3 +59,4 @@ A=深度轴（数学/实现/测试）、A.3=测试正确性、B=上游轴、C=�
 | 日期 | 版本 | 改动内容 | 为什么改 |
 |---|---|---|---|
 | 2026-09-15 | 1.0.0 | 初稿：14 条模式（每条带案例锚点+审查问句+轴标签）+ 入册/退役纪律 | deep_review_policy §8 子节点"缺陷模式库"挖掘落地；DSR 翻案等历史教训需要机械化消费通道 |
+| 2026-09-17 | 1.1.0 | 新增 #15 裁定引用不核真源（V-01 悬空号/V-02 内容不符，做T v2 战役实证） | kimi 深度裁定班次 S2：裁定号引用不核真源导致整个战役立项依据失效，入册机械化拦截 |

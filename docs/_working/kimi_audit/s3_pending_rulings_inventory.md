@@ -175,6 +175,14 @@ created: 2026-09-17
 | V-06 | **大量实质裁定只写"用户裁定/待定"不编号**（E-05/E-06/C-05 等），使 RULE-RULING gate 完全失能——本清单里"未见裁定号"占绝大多数 | 本表 96 条中仅 6 条带编号引用 | P1（机制面，与 S4 同族：门还在、牙没了） |
 | V-07 | **蓝图 frontmatter 与正文自相矛盾**：`rl_execution_training_env` 标 `build_status: production` 而正文自述"design（骨架）"，且其依据 P-4 方法论未裁 | `docs/03_modules/_domain_ex_sor/rl_execution_training_env/blueprint.md:3,31,76` | P2（与 C-06 联动） |
 
+### 9.1 处置回填（kimi-audit 班次 2026-09-17）
+
+| 编号 | 处置 | 落点 |
+|---|---|---|
+| V-01 | **实证成立+已入真源**：#304 悬空坐实（registry 全表最大 #303）；缺陷模式 #15 已入 `defect_pattern_checklist.md` v1.1.0；战役背书失效并入 S2 裁定书 | `adjudications/S2_做T_v2_战役裁定书.md` §1.1 |
+| V-01b | 转 S4 战场（RULING-REFERENCE 门禁 own-diff 作用域审查，为何放过原始违规件） | S4 战场文档 |
+| V-02 | **实证成立+已入真源**：#293 内容不符坐实（在册=收益带收紧）；001 考试全仓零产物（strategy_screen 零行、artifacts 零档、策略卡自述"冻结前禁跑"）——立项依据无证，进 S2 裁定书主论据 | 同上 |
+
 ## 10. 低置信待人工确认（14 条，Kimi 裁前自判是否升格）
 
 1. `sharpe2-prep-final-report.md:82` — `stash_notice.json` 三次扫描未留 notice，待排查（疑运维派工）。

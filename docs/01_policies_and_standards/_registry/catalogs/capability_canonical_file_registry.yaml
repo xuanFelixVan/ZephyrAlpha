@@ -28027,6 +28027,10 @@ creation_tokens:
   token: kimi-audit-experiments-ledger-20260917
   created_by: kimi-audit
   capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/S2_做T_v2_战役裁定书.md
+  token: kimi-audit-s2-t-v2--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
 - file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
   token: auction-derive-intake-20260917-0300-20260916
   created_by: st-auction-bridge-20260917
