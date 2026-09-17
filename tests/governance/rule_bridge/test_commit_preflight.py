@@ -13,8 +13,9 @@ import pytest
 
 from zephyr.gov_enforcement.rule_bridge.commit_preflight import (
     PREFLIGHT_GATES,
-    PreflightFinding,
     CommitPreflightResult,
+    PreflightFinding,
+    _ESCAPE_HINTS,
     run_preflight,
 )
 
@@ -127,3 +128,22 @@ def test_result_dataclass_defaults():
     r = CommitPreflightResult()
     assert r.blocking is False
     assert r.degraded == []
+
+
+def test_directory_contract_preflight_whitelisted_with_guidance(tmp_path):
+    """F5：DC 摩擦前置化——白名单准入+建议合规目录指引+锁外快败阻断。"""
+    assert "DIRECTORY-CONTRACT" in PREFLIGHT_GATES
+    hint = _ESCAPE_HINTS["DIRECTORY-CONTRACT"]
+    # 建议合规目录三类指引齐全
+    assert "scripts/" in hint and "src/" in hint        # .py 去向
+    assert ".yaml" in hint or ".csv" in hint            # .json 转格式去向
+    assert "directory_contract.yaml" in hint            # 兜底查真源
+    assert "Owner" in hint                              # docs/_working/ .json 净增=Owner 门位（不自签）
+
+    specs = [_FakeSpec("DIRECTORY-CONTRACT", passed=False, detail="FAIL: DCR-005 扩展名 .py ∉ docs/_working/ allowed")]
+    gw = _FakeGateway(tmp_path)
+    result = run_preflight(gw, ["docs/_working/foo.py"], "s1", specs=specs)
+    assert result.blocking
+    assert [f.gate_id for f in result.findings] == ["DIRECTORY-CONTRACT"]
+    rendered = result.findings[0].render()
+    assert "scripts/" in rendered and "逃生通道" in rendered  # 建议目录随 finding 渲染

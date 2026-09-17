@@ -45,6 +45,9 @@ commit_preflight.py — 提交通道预检前移（方案 v2.1 P0-A，st-commits
   表/claim/锁态，无文件面）
 - files 驱动：TTL-METADATA / FILE-PLACEMENT-TTL / COMMIT-SCOPE /
   PROTECTED-PATHS（检查对象=本次 commit 的 files 清单）
+- files 驱动 + 磁盘内容：DIRECTORY-CONTRACT（F5 2026-09-18；check_directory_contract.py
+  以内联文件清单校验 ≤500 文件、读其磁盘 doc_type/扩展名，零 git diff --cached 依赖；
+  >500 退 --all-files 与锁内权威链同行为，非新增假阳性面）
 - own-scope：FOLDER-CAPACITY-HARD-LIMIT / REGISTRY-MASS-DELETION（外来 staged
   落审计不阻断，无连坐面）
 - **禁入**：依赖 git diff --cached 全暂存扫描的 gate（DEPGRAPH-PRE-REGISTRATION/
@@ -119,6 +122,15 @@ PREFLIGHT_GATES: frozenset[str] = frozenset(
         # 才知道要 find——进预检后 1 秒快败+精确指引，队列死信类消灭。
         # 输入面审计：信号型（会话 lookup 审计态+files 分类豁免判定），无暂存依赖。
         "CAPABILITY-LOOKUP-REQUIRED",
+        # 2026-09-18（st-flashspeed-20260918 F5 DC 摩擦前置化）：DIRECTORY-CONTRACT
+        # 进预检——DCR-005 扩展名违规（.py/.json 误放 docs/_working/，A2 堵点本 16 次
+        # +本账 58 次 DCR-005）本可锁外 3-5s 快败并给「建议合规目录」，不必烧完整门禁链。
+        # 输入面审计（PASS）：gate 输入=files 清单 ∪ 磁盘内容（check_directory_contract.py
+        # 以**内联文件清单**校验 ≤500 文件，只检本次 commit 的 files、读其磁盘 doc_type/扩展名），
+        # **零 git diff --cached / 零共享暂存区依赖**——满足白名单准入判据（防外来 WIP 假阳性）。
+        # >500 文件退 --all-files 全量扫描=与锁内权威链同行为（非新增假阳性面），且属罕见大批次。
+        # 语义不动：锁内 DIRECTORY-CONTRACT(30) 仍 fail-closed 权威执行，预检只前移快败。
+        "DIRECTORY-CONTRACT",
     }
 )
 
@@ -139,6 +151,15 @@ _ESCAPE_HINTS: dict[str, str] = {
     "TABLE-NAME-REGISTRY": "表名走 TableRegistry 真源，禁硬编码字符串",
     "DATETIME-NOW-FORBIDDEN": "生成器代码禁裸时间戳函数（详情见该门禁消息）——改用 now_utc()",
     "CAPABILITY-LOOKUP-REQUIRED": "施工前能力反查：capability_lookup.CapabilityLookup().find('<关键词>', session_id='<本会话>') 或 MCP rule_discovery（一次即可，审计按会话记账）",
+    # F5 DC 摩擦前置化（2026-09-18）：DCR-005/006 扩展名违规给「建议合规目录」。
+    # 实测主簇=.py/.json 误放 docs/_working/（allowed=.csv/.html/.md/.yaml）。
+    "DIRECTORY-CONTRACT": (
+        "目录契约违规（DCR-005/006 扩展名 ∉ 该目录 allowed 清单，详情见门禁消息含 allowed 清单）——"
+        "建议合规目录：①.py 脚本→挪 scripts/ 或 src/（docs/_working/ 禁 .py）；"
+        "②.json 证据/报告→转 .yaml/.csv，或挪 .runtime/、data/ 等允许 .json 的目录；"
+        "③其余→查 directory_contract.yaml 该路径 directory_extensions.allowed 改用合规扩展名。"
+        "注：docs/_working/ allowed 净增 .json=Owner 门位（见 F5 裁定书提案，勿自签）"
+    ),
 }
 
 _AUDIT_PATH = Path(".runtime/audit/preflight_events.jsonl")
