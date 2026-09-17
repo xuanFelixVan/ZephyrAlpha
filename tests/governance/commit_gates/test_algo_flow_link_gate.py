@@ -413,17 +413,33 @@ def test_dup_inline_check_scoped_to_src_zephyr(tmp_path: Path) -> None:
 
 
 class _FakeGateway:
-    """只提供门禁用到的两个面：project_root 与 run_git（``git show :<path>``）。"""
+    """只提供门禁用到的面：project_root 与 run_git（``git show``/``diff --cached``/``grep``）。"""
 
-    def __init__(self, root: Path, staged: dict[str, str]) -> None:
+    def __init__(
+        self,
+        root: Path,
+        staged: dict[str, str],
+        *,
+        deleted: list[str] | None = None,
+        anchors: dict[str, list[str]] | None = None,
+    ) -> None:
         self.project_root = root
         self._staged = staged
+        self._deleted = deleted or []
+        self._anchors = anchors or {}
         self.calls: list[list[str]] = []
 
     def run_git(self, cmd, cwd=None):  # noqa: ANN001, ARG002 — 契约同 gateway.run_git
         import subprocess
 
         self.calls.append(list(cmd))
+        if cmd[:3] == ["git", "diff", "--cached"]:
+            return subprocess.CompletedProcess(cmd, 0, "\n".join(self._deleted), "")
+        if cmd[:3] == ["git", "grep", "-l"]:
+            assert cmd[3] == "-F" and cmd[5] == "HEAD", cmd
+            hits = self._anchors.get(cmd[4], [])
+            out = "".join(f"{h}\n" for h in hits)
+            return subprocess.CompletedProcess(cmd, 0 if hits else 1, out, "")
         assert cmd[:2] == ["git", "show"] and cmd[2].startswith(":"), cmd
         rel = cmd[2][1:]
         if rel in self._staged:
@@ -455,3 +471,113 @@ def test_gate_spec_reads_staged_blob_not_worktree(tmp_path: Path) -> None:
     clean = _FakeGateway(root, {rel: _PY_ANCHORED})  # index=净
     passed2, msg2 = spec.check(clean, [rel])
     assert passed2 is True, msg2
+
+
+# ---------------------------------------------------------------- 退役方向（#ARCH-326 清偿通道）
+
+_MIRROR_REL = "docs/03_modules/_domain_x/algo_flow/demo.yaml"
+
+
+def _retire_repo(tmp_path: Path) -> Path:
+    """镜像已从盘上消失（退役）的仓库——源侧无锚（源早已随模块外迁/删除）。"""
+    root = _make_repo(tmp_path)
+    (root / _MIRROR_REL).unlink()
+    return root
+
+
+def test_unreadable_yaml_without_delete_declaration_still_blocks(tmp_path: Path) -> None:
+    """默认（未声明 deleted 判据）=旧硬阻断行为一字不改：文件损坏/半写不被"没读到就算删"放过。"""
+    root = _retire_repo(tmp_path)
+    blocked, msg = check_algo_flow_links([_MIRROR_REL], root)
+    assert blocked
+    assert "不可读" in msg
+
+
+def test_declared_delete_without_anchor_probe_blocks(tmp_path: Path) -> None:
+    """核心 API 不许"没查=没锚"：声明了删除却没给探测器，一律 fail-closed。"""
+    root = _retire_repo(tmp_path)
+    blocked, msg = check_algo_flow_links([_MIRROR_REL], root, deleted=lambda _rel: True)
+    assert blocked
+    assert "未提供反向锚探测器" in msg
+
+
+def test_retired_mirror_without_live_anchor_passes(tmp_path: Path) -> None:
+    root = _retire_repo(tmp_path)
+    blocked, msg = check_algo_flow_links(
+        [_MIRROR_REL], root, deleted=lambda _rel: True, reverse_anchor=lambda _rel: []
+    )
+    assert not blocked, msg
+
+
+def test_retired_mirror_with_live_anchor_blocks(tmp_path: Path) -> None:
+    """删早了必须红：仍有 external 锚指着它 = 全景图当场断链，且消息点名锚文件可清。"""
+    root = _retire_repo(tmp_path)
+    blocked, msg = check_algo_flow_links(
+        [_MIRROR_REL],
+        root,
+        deleted=lambda _rel: True,
+        reverse_anchor=lambda _rel: ["src/zephyr/pkg_a/demo.py"],
+    )
+    assert blocked
+    assert "仍有 1 处 external 锚指向它" in msg and "src/zephyr/pkg_a/demo.py" in msg
+
+
+def _spec():
+    from zephyr.gov_enforcement.commit_gates.algo_flow_link_gate import (
+        make_algo_flow_link_gate,
+    )
+
+    return make_algo_flow_link_gate()
+
+
+def test_gate_spec_allows_declared_mirror_retirement(tmp_path: Path) -> None:
+    """接线钉（不 mock 判据本身）：staged 删除清单 + 反向锚探测两条 git 调用必须真被消费。"""
+    root = _retire_repo(tmp_path)
+    gw = _FakeGateway(root, {}, deleted=[_MIRROR_REL], anchors={_MIRROR_REL: []})
+    passed, msg = _spec().check(gw, [_MIRROR_REL])
+    assert passed is True, msg
+    assert any(c[:3] == ["git", "diff", "--cached"] for c in gw.calls), gw.calls
+
+
+def test_gate_spec_blocks_retirement_while_anchor_survives(tmp_path: Path) -> None:
+    root = _retire_repo(tmp_path)
+    gw = _FakeGateway(
+        root, {}, deleted=[_MIRROR_REL], anchors={_MIRROR_REL: ["src/zephyr/pkg_a/demo.py"]}
+    )
+    passed, msg = _spec().check(gw, [_MIRROR_REL])
+    assert passed is False
+    assert "external 锚指向它" in msg, msg
+
+
+def test_gate_spec_keeps_hard_block_when_delete_not_staged(tmp_path: Path) -> None:
+    """反向证明：盘上没有 + 本次没 staged 删除（清单为空/观测故障）→ 回到硬阻断，不 fail-open。"""
+    root = _retire_repo(tmp_path)
+    gw = _FakeGateway(root, {}, deleted=[], anchors={_MIRROR_REL: []})
+    passed, msg = _spec().check(gw, [_MIRROR_REL])
+    assert passed is False
+    assert "不可读" in msg, msg
+
+
+def test_gate_spec_ignores_anchor_in_file_deleted_same_commit(tmp_path: Path) -> None:
+    """整模块退役双向钉：HEAD 里的锚若属同批删除的 .py，随文件一起消失=放行；
+    锚在既没改也没删的文件里=当场断链，必须红。只写第一向可以被"干脆不看锚"蒙过。"""
+    root = _retire_repo(tmp_path)
+    gw_del = _FakeGateway(
+        root,
+        {},
+        deleted=[_MIRROR_REL, "src/zephyr/pkg_a/demo.py"],
+        anchors={_MIRROR_REL: ["src/zephyr/pkg_a/demo.py"]},
+    )
+    passed, msg = _spec().check(gw_del, [_MIRROR_REL])
+    assert passed is True, msg
+
+    root2 = _retire_repo(tmp_path / "second")
+    gw_keep = _FakeGateway(
+        root2,
+        {},
+        deleted=[_MIRROR_REL],
+        anchors={_MIRROR_REL: ["src/zephyr/pkg_a/demo.py"]},
+    )
+    passed2, msg2 = _spec().check(gw_keep, [_MIRROR_REL])
+    assert passed2 is False
+    assert "external 锚指向它" in msg2, msg2

@@ -10,7 +10,11 @@
 #   algo_flow 块可解析（parse_algo_flow 有节点）+ 图可达（validate_graph：节点 id 合法唯一/至少一条边/
 #   边端点已定义/断点一致——图坏=全景图静默空图，判据真源在 algo_flow_validate_marker 不重写第二份），
 #   本 commit 触碰的 */algo_flow/*.yaml 必须自身可解析且
-#   source_of_truth 指向实存源文件（Owner 批7 认可，2026-09-16），且本 commit 触碰的 src/zephyr .py
+#   source_of_truth 指向实存源文件（Owner 批7 认可，2026-09-16）；不可读≠已删除——仅当该 yaml
+#   出现在本次 staged 删除清单（``git diff --cached --diff-filter=D``）**且** HEAD 中无任何
+#   live external 锚指向它（同批删除的 .py 上的锚不计，否则"源+镜像同批退役"永远提不进）
+#   才判退役放行，其余不可读（权限/半写/漏声明删除）照旧硬阻断，
+#   git 探测故障=按"仍有锚"处理（#ARCH-326 清偿通道：镜像该能被删，但删早了必须红），且本 commit 触碰的 src/zephyr .py
 #   不得在 module docstring 之外另留 ALGO_FLOW 机器块，
 #   docstring 之内只允许一个载体（锚或块二选一，两处并存=永不被消费的副本=双真源；P2-1 死块批
 #   2026-09-16 增、体内多块线 2026-09-17 增、锚块并存同日经红蓝实弹哑火后并入同一判据；
@@ -201,6 +205,8 @@ def check_algo_flow_links(
     files: list[str] | None,
     project_root: str | Path,
     read_staged: Callable[[str], str | None] | None = None,
+    deleted: Callable[[str], bool] | None = None,
+    reverse_anchor: Callable[[str], list[str]] | None = None,
 ) -> tuple[bool, str]:
     """纯逻辑核心（可单测，不触 git）。
 
@@ -208,6 +214,10 @@ def check_algo_flow_links(
         files: 本次 commit 文件清单（相对/绝对路径混合容忍）。
         project_root: 仓库根。
         read_staged: staged 内容读取器（测试注入/网关注入）；None=直接读工作区。
+        deleted: 该路径是否为本次 commit 的删除项（网关注入 staged 删除清单判定）；
+            None=按"不可读即违规"旧行为（fail-closed 默认，退役方向必须显式声明）。
+        reverse_anchor: 删除项的反向锚探测（哪些 live .py 仍 ``external:`` 指它）；
+            仅在 deleted=True 时调用。
 
     Returns:
         (blocked, message)
@@ -337,10 +347,35 @@ def check_algo_flow_links(
                     "把多块合并成单一块，或跑 externalize_algo_flow.py 外迁后留一行锚"
                 )
 
+    def _yaml_unreadable(rel: str) -> str | None:
+        """yaml 读不到时的分岔判据：不可读≠已删除。
+
+        旧写法一律判红 ⇒ 镜像退役（源已消失、镜像该删）永远提不进仓，与 #ARCH-326
+        要求的清偿路径正相抵。退役方向改判"还有没有 live 锚指过来"：有锚=删早了必须红，
+        无锚=放行。未声明为删除的不可读（权限/编码/半写）照旧硬阻断，判据不放松；
+        声明了删除却没给探测器=无从确认无锚，同样阻断（核心 API 不许"没查=没锚"）。
+        """
+        if deleted is None or not deleted(rel):
+            return f"{rel} algo_flow yaml 不可读（已删除?）"
+        if reverse_anchor is None:
+            return (
+                f"{rel} 已声明为本次删除，但调用方未提供反向锚探测器——"
+                "无从确认是否仍有 external 锚指向它，按 fail-closed 阻断"
+            )
+        hits = reverse_anchor(rel)
+        if hits:
+            return (
+                f"{rel} 已删除但仍有 {len(hits)} 处 external 锚指向它"
+                f"（{', '.join(hits[:3])}）——先清锚（改锚或删块）再退役镜像"
+            )
+        return None
+
     for rel in yaml_files:
         content = _read(rel)
         if content is None:
-            failures.append(f"{rel} algo_flow yaml 不可读（已删除?）")
+            why = _yaml_unreadable(rel)
+            if why:
+                failures.append(why)
             continue
         ok, why = _validate_block(content)
         if not ok:
@@ -386,7 +421,55 @@ def make_algo_flow_link_gate() -> object:
                 """
                 return _read_staged_file(gateway, rel)
 
-            blocked, msg = check_algo_flow_links(files, project_root, read_staged=_read_staged)
+            def _staged_deleted() -> frozenset[str]:
+                """本次 staged 的删除清单（同 derived_file_deletion_gate 观测姿势）。
+
+                单次 commit 一趟取好即可（每门一次 git 调用）：拿不到=空集，
+                于是所有不可读 yaml 回到旧的硬阻断，不会因观测故障放行。
+                """
+                try:
+                    r = gateway.run_git(
+                        ["git", "diff", "--cached", "--name-only", "--diff-filter=D"]
+                    )
+                except Exception:  # noqa: BLE001 — git 不可达=判不了，退回旧硬阻断
+                    return frozenset()
+                if r.returncode != 0:
+                    return frozenset()
+                return frozenset(
+                    str(x).strip().replace("\\", "/")
+                    for x in (r.stdout or "").splitlines()
+                    if str(x).strip()
+                )
+
+            deleted_set = _staged_deleted()
+
+            def _is_deleted(rel: str) -> bool:
+                return rel in deleted_set
+
+            def _reverse_anchor(rel: str) -> list[str]:
+                """HEAD 里仍把该镜像当 external 真源的 .py（删镜像前的最后一道闸）。
+
+                命中项里扣掉本次同批删除的 .py：整模块退役=源与镜像同 commit 消失，
+                HEAD 侧的锚必然还在（HEAD 是改前快照），不扣就是"该删的删不掉"；被扣文件
+                连自己带锚一起消失，不存在"扣掉后留下坏锚"。既不删也不改的残留锚仍留在
+                命中集里——那种"只删镜像不救锚"=全景图当场断链，照旧红。
+                """
+                try:
+                    r = gateway.run_git(["git", "grep", "-l", "-F", rel, "HEAD", "--", "*.py"])
+                except Exception as exc:  # noqa: BLE001 — 探测失败按"仍有锚"处理（fail-closed）
+                    return [f"<git grep 不可达: {type(exc).__name__}>"]
+                if r.returncode not in (0, 1):  # 1=无命中，其它=git 故障
+                    return [f"<git grep exit={r.returncode}>"]
+                return [
+                    p
+                    for p in (str(x).strip() for x in (r.stdout or "").splitlines())
+                    if p and p not in deleted_set
+                ]
+
+            blocked, msg = check_algo_flow_links(
+                files, project_root, read_staged=_read_staged,
+                deleted=_is_deleted, reverse_anchor=_reverse_anchor,
+            )
             return (not blocked), msg
         except Exception as exc:  # noqa: BLE001 — 基础设施故障 fail-open
             logger.warning("ALGO-FLOW-LINK fail-open: %s", exc)
