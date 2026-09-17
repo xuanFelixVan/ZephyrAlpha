@@ -15,7 +15,7 @@ topic: data_ops_sop
 
 # 数据源全生命周期 SOP——从挖矿到消费端接线（流程编排真源）
 
-> **真源关系**：本件=数据源**流程编排**真源（新数据源从找→建→接→通→消费的标准路径）。纪律真源=data_ops_policy.md（三步验证/写入红线/PIT/判重，本件各阶段引用不重复）；需求真源=骨架总图（docs/_working/altdata_line/01，中类=需求单元）；源资产真源=architecture_model/data/data_sources_registry.yaml（DS-* 条目）；挖矿方法论=mining_sop（三重扫描判据）。
+> **真源关系**：本件=数据源**流程编排**真源（新数据源从找→建→接→通→消费的标准路径）。纪律真源=data_ops_policy.md（三步验证/写入红线/PIT/判重，本件各阶段引用不重复）；需求真源=骨架总图（docs/_working/altdata_line/01，中类=需求单元）；源资产真源=architecture_model/data/data_sources_registry.yaml（DS-* 条目）；挖矿方法论=mining_sop（三重扫描判据）；**骨架层上位=skeleton_mining_policy.md（mining_sop 族，新域开工先挖骨架——本件 §2 是骨架 ⬜ 的中类级下游）**。
 > **诞生背景**：2026-09-17 数据线会话定调。三个真实教训直接催生本件：①股东户数表 7 月断供两月才被发现（任务存在却不生效——「任务存在≠管线活着」）；②macro_data 频率口径混乱（annual/日频混用）；③多个 ⬜ 中类的数据源从未做过全网挖矿。
 
 ## §1 需求立项
@@ -25,6 +25,8 @@ topic: data_ops_sop
 3. 先查重：该中类是否已有表/任务（tasks.yaml + system.tables + known_data_gaps.yaml）——防重复建源。
 
 ## §2 数据源挖矿（全网挖干）
+
+> 上位：域级骨架未建时先走 [skeleton_mining_policy.md](../mining_sop/skeleton_mining_policy.md)（骨架先挖根）；本节 = 骨架 ⬜ 中类的数据源级挖矿。
 
 1. **全景清单**：对该中类做全网数据源挖矿，判据沿用三重扫描（按生产者扫：官方/交易所/协会/公司/海外/另类机构；按获取方式扫：API免费/API注册/文件下载/爬虫/手动；按因子文献扫）。
 2. **获取方式分类与默认立场**：

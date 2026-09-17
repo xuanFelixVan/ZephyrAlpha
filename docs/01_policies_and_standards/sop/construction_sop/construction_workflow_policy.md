@@ -39,7 +39,7 @@ related_modules:
 > **性质**：编排层，**只串联流程+引用真源规则，不重复规则内容**。每一步明确"何时触发 / 做什么 / 怎么做 / 产出什么 / 不通过怎么办"。
 > **适用范围**：仅交易决策域施工（regime/选股/仓位/风控/买卖/执行/对账/治理——对应 docs/02_enterprise_architecture/07_trading_decision_architecture 业务族，"07"只是目录编号勿再当域名使用）。数据层/基础设施/治理脚本走全局规则；数据回灌/修复/判重另必读 [data_ops_policy](../data_ops_sop/data_ops_policy.md)。
 > **管理规范**：[01_design_memo_management_spec](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)。
-> **关联**：[AI_review_instructions](../../../_archive/AI_review_instructions.md)（文档审查指令集，Step 1 真源）｜ [60_cross_cutting_cleanup](../../../_archive/60_cross_cutting_cleanup.md)｜ [65_git_safety_governance](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md)｜ [66_commit_queue_serialization](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)｜ [mining_sop_policy](../mining_sop/mining_sop_policy.md)（挖矿方法论真源，Step 1.9 方案挖矿）
+> **关联**：[AI_review_instructions](../../../_archive/AI_review_instructions.md)（文档审查指令集，Step 1 真源）｜ [60_cross_cutting_cleanup](../../../_archive/60_cross_cutting_cleanup.md)｜ [65_git_safety_governance](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md)｜ [66_commit_queue_serialization](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)｜ [mining_sop_policy](../mining_sop/mining_sop_policy.md)（挖矿方法论真源，Step 1.9 方案挖矿）｜ [skeleton_mining_policy](../mining_sop/skeleton_mining_policy.md)（骨架构建——新域开工先挖骨架，先于 Step 1.9）
 
 ## 1. 主题组信息
 
@@ -245,6 +245,8 @@ python scripts/lock_files.py status
 ### Step 1.9 · 方案挖矿（施工前先做方案：方案先挖矿，把矿挖干再施工）
 
 **何时触发**：任务涉及“建策略/建方案/建设计文档/调研选型”等**内容产出**时（[mining_sop_policy.md](../mining_sop/mining_sop_policy.md) §1 触发表）——施工编码（Step 4）前 MUST 有已挖干的方案背书；纯代码修改、已有 active 方案且方案含挖矿日志的任务可跳过本步
+
+**前置分支（新域开工/新建骨架）**：任务若属「新建某域骨架/域开工」类（先有分类学清单，再有方案），先走 [skeleton_mining_policy.md](../mining_sop/skeleton_mining_policy.md)（骨架先挖根：四层分层/三问停止判据/状态纪律/封矿判据）——骨架产出的 ⬜ 条目才是本步挖矿的对象；骨架未建即提方案 = 无根方案
 **前置条件**：Step 1 文档审查完成（方案缺失或仍是 draft → 先回本步产出/补齐方案，禁止边施工边写方案）
 **操作摘要**：方案动笔前先按六向寻路挖矿（每向=内部反查+全网搜索双动作）→ 防噪音四闸过滤 → 矿脉枯竭封矿（挖干）→ 挖矿日志写进方案 → 挖后自审闸（mining_sop §6：按终局全貌判过度工程）→ 方案定稿后才进 Step 2 设计态登记
 **引用真源**：[mining_sop_policy.md](../mining_sop/mining_sop_policy.md)（通用研究方法论真源，不重复内容）；TDM 地图域专用实例=[trading_decision_map_pathfinding_policy.md](../mining_sop/trading_decision_map_pathfinding_policy.md)（方法论冲突时地图域以 TDM 版为准，其余域以本真源为准）

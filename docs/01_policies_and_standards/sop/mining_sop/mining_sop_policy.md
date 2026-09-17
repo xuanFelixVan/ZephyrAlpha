@@ -17,7 +17,7 @@ topic: mining_sop
 > **一句话**：凡是"建文档、建策略、找方案、找方法、需要全网搜索"的任务，动手写之前 MUST 按本 SOP 先挖矿——六向寻路扫全、防噪音四闸过滤、矿脉枯竭终止收尾；挖矿日志写进产出文档，禁无日志交稿；方案成稿后 MUST 过挖后自审闸（§6）——按终局全貌判过度工程，定施工/挂起/封矿。
 > **诞生**：2026-09-14，Owner 裁定"继续挖，把矿挖干为止"——另类数据消费端方案三批 20 轮挖矿（R1-R20，signal 15/noise 4）的完整流程沉淀升 permanent。
 > **实战范例（方法论唯一完整实例）**：[docs/_working/alt_data_consumption_plan.md](../../../_working/alt_data_consumption_plan.md) §5-§7（三批挖矿日志+因子位 F1-F27 演化）。
-> **亲缘**：[trading_decision_map_pathfinding_policy.md](trading_decision_map_pathfinding_policy.md) = 本 SOP 在 TDM 地图增长域的专用实例（六向协议源头）；本文件 = 通用研究方法论真源。方法论冲突时，地图域以 TDM 版为准，其余域以本版为准。
+> **亲缘**：[trading_decision_map_pathfinding_policy.md](trading_decision_map_pathfinding_policy.md) = 本 SOP 在 TDM 地图增长域的专用实例（六向协议源头）；[skeleton_mining_policy.md](skeleton_mining_policy.md) = 本 SOP 在**骨架/分类学域**的专用实例（新域开工先挖骨架：四层分层/三问停止判据/状态标记纪律/封矿判据）；本文件 = 通用研究方法论真源。方法论冲突时，地图域以 TDM 版为准，骨架域以骨架版为准，其余域以本版为准。
 > **施工闭环挂接**：[construction_workflow_policy.md](../construction_sop/construction_workflow_policy.md) Step 1.9（2026-09-14）——施工前先做方案，方案先挖矿，把矿挖干再施工；本 SOP 的矿脉枯竭封矿+挖后自审闸（§6）=施工准入闸。
 
 ---
