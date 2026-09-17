@@ -59,3 +59,9 @@ ttl: task_bound
 - **B-2（现货接入）=挖干（根因闭合）**：根因=99qh/fx168api 服务端权限墙（匿名 token 仅放行螺纹钢，9/9 品种 401；akshare 1.18.75 与 main 源码一致→升级无用）。**修复裁定=主源切 `ak.futures_spot_price_daily`（生意社）**：54 品种现货+基差，2013-01 起，目标品种实测全覆盖（CU/AL/M/C/LH/SA/TA/RU/FG/SI/PS 全过）。品种名勘误：pta→PTA、浮法玻璃→玻璃。
 - **B-7（备用源）部分挖**：上金所 spot_hist_sge ✓（2016+）；新浪 spot_goods 仅 3 指数不可用作品种源 ✗。
 - 台账更新：B-1/B-2/B-5→挖干；B-7 维持部分挖。
+
+## 8. 首跑通电验证（2026-09-18，终审补录）
+
+- **端到端闭环 ✅**：`python -m zephyr.data run` 实跑两任务成功——commodity_futures_main_full_refresh 落 234 行（9 品种×2026-09-01 起）、commodity_spot_price_refresh 落 756 行（**生意社 54 品种全量进表**），akshare→provider→buffered_writer→CH 只读复验一致。
+- **新发现（登记下一班）**：full_refresh 任务窗口默认仅近 2.5 周（start=2026-09-01），全历史需显式窗口——**这正是 hog_futures_core 当年只有 2025-07 起的同款根因**；全史回补机制（tasks 窗口语义或 staged CSV→CH 导入）列为生产化细目。
+- 遗留段"两方法未真实联网首拉"自本节起关闭。
