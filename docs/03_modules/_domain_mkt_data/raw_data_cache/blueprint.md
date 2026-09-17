@@ -3,7 +3,7 @@ module_id: MOD-MKT-006
 title: "原始数据缓存蓝图 — 行情原始数据 LRU+TTL 缓存"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 ttl: permanent
 layer: L01_foundation
 layer_name: foundation
@@ -207,7 +207,14 @@ class RawDataCache:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/market_data/raw_data_cache/cache.py` | ✅ 已实现 | |
+
+### 10.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/market_data/raw_data_cache/__init__.py` | ⚠️ 骨架 | |
+| `tests/market_data/raw_data_cache/test_raw_data_cache.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

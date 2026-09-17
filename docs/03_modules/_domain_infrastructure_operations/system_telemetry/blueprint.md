@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/system_telemetry
 title: "System Telemetry 蓝图+施工图 — 全系统可观测性"
 doc_type: blueprint
 status: Active
-version: "2.0.10"
+version: "2.0.11"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -58,7 +58,7 @@ design_maturity: production
 
 # System Telemetry 蓝图+施工图 — 全系统可观测性
 
-> module_id: MOD-INF-015 | version: 2.0.10 | status: Active | layer: L0_infrastructure
+> module_id: MOD-INF-015 | version: 2.0.11 | status: Active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/system_telemetry/ | generation: 3 | construction_progress: completed
 
 ## 概述
@@ -1125,7 +1125,35 @@ construction_status=completed | verification_status=passed | code_alignment_veri
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/infrastructure/system_telemetry/_budget_telemetry_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_telemetry/_trace_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_telemetry/ai_behavior/event_sink.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_telemetry/archive/cold_stub.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_telemetry/logs/structured_sink.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_telemetry/metrics_bridge.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_telemetry/profiles/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_telemetry/schema/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_telemetry/traces/span_stub.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/system_telemetry/watchdog.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/automation/test_auto_bootstrap.py` | ✅ 已实现 | |
+| `tests/automation/test_auto_split.py` | ✅ 已实现 | |
+| `tests/blueprint/test_blueprint_metrics.py` | ✅ 已实现 | |
+| `tests/budget/test_budget_telemetry_bridge.py` | ✅ 已实现 | |
+| `tests/cold/test_cold_stub.py` | ✅ 已实现 | |
+| `tests/contracts/test_contract_metrics_root.py` | ✅ 已实现 | |
+| `tests/event/test_event_sink.py` | ✅ 已实现 | |
+| `tests/infrastructure/observability/test_span_stub.py` | ✅ 已实现 | |
+| `tests/observability/test_facade.py` | ✅ 已实现 | |
+| `tests/observability/test_health_aggregator_root.py` | ✅ 已实现 | |
+| `tests/observability/test_health_probes_root.py` | ✅ 已实现 | |
+| `tests/observability/test_structured_sink.py` | ✅ 已实现 | |
+| `tests/observability/test_trace_bridge.py` | ✅ 已实现 | |
+| `tests/observability/test_watchdog.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

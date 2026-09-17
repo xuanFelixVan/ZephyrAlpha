@@ -1,0 +1,268 @@
+---
+ttl: task_bound
+---
+
+# --- 治理锚定 ---
+# module_id: MOD-L00-001 | 域归属同 data_sources_registry.yaml
+# stability: evolving | safety_level: L | ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# v0.1.0: 数据源候选流水线（待注册表）——数据源全生命周期 SOP §3 定义
+#         (docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md)
+# 定位: 候选队列（毕业者晋升 data_sources_registry.yaml DS-* 正式条目并同步 data_source_assets）
+# 状态机: candidate → approved → registering → integrated → promoted(升 DS-*) | rejected
+# ⚠ ROOR 登记报备中（human_gated）；⚠ 原放 architecture_model/data/ 触发 PROTECTED-PATHS（重大修改须 Owner 审批）——09-17 迁至 docs/_working/altdata_line/
+# 批次说明: v0.1.0 首批 16 条=2026-09-17 数据线会话已甄别候选（骨架【快】清单+MVP 油价链缺口+传导链注入源）
+
+version: "0.1.0"
+updated: "2026-09-17"
+lifecycle_sop: "docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md"
+
+candidates:
+  # ── 修复类（非新源，断供续采）──
+  - cand_id: DS-CAND-000
+    name: "股东户数增量续采"
+    vendor: "akshare(接口在)/原 miniqmt 源"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: ""
+    coverage: "A 股全市场股东户数时序"
+    frequency: "随披露(约月/季)"
+    history_depth: "存量已至 1992-2026.07，缺 07 之后增量"
+    anti_crawl_risk: none
+    tos_risk: ""
+    score: {availability: 3, signal: 3, fit: 3, maintenance: 3}
+    target_table: "c3_fundamental.shareholder_count"
+    status: approved
+    notes: "断供修复非新源：任务 shareholder_incremental 在(daily_event 槽)却不生效，真因待查调度槽与 provider；散户进出最干净代理"
+
+  # ── MVP 油价五波缺口 ──
+  - cand_id: DS-CAND-001
+    name: "发改委成品油调价"
+    vendor: "国家发改委"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "92/95/98 号汽油、柴油零售调价"
+    frequency: "约每 10 个工作日"
+    history_depth: "可回溯多年调价窗口"
+    anti_crawl_risk: light
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 3, fit: 3, maintenance: 2}
+    target_table: "c1_market.oil_price_adjustment"
+    status: candidate
+    notes: "油价链波1；E8"
+  - cand_id: DS-CAND-002
+    name: "公路物流运价指数"
+    vendor: "物流与采购联合会"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "公路运价(周度)"
+    frequency: weekly
+    history_depth: ""
+    anti_crawl_risk: light
+    tos_risk: "公开"
+    score: {availability: 3, signal: 2, fit: 3, maintenance: 2}
+    target_table: "c1_market.road_freight_index"
+    status: candidate
+    notes: "油价链波2"
+  - cand_id: DS-CAND-003
+    name: "期货交易所仓单"
+    vendor: "郑商所/大商所/上期所(akshare 接口)"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: ""
+    coverage: "全品种注册仓单日度"
+    frequency: daily
+    history_depth: "多年"
+    anti_crawl_risk: none
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 3, fit: 3, maintenance: 3}
+    target_table: "c1_market.futures_receipt"
+    status: candidate
+    notes: "商品供需核心信号；E3"
+  - cand_id: DS-CAND-004
+    name: "肉蛋菜批发价"
+    vendor: "农业农村部"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: ""
+    coverage: "全国批发价日度"
+    frequency: daily
+    history_depth: "多年"
+    anti_crawl_risk: none
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 2, fit: 3, maintenance: 3}
+    target_table: "c1_market.food_wholesale_price"
+    status: candidate
+    notes: "油价链波5；F13"
+  - cand_id: DS-CAND-005
+    name: "快递业务量与单票收入"
+    vendor: "国家邮政局"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "月度行业量价"
+    frequency: monthly
+    history_depth: "多年"
+    anti_crawl_risk: none
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 2, fit: 2, maintenance: 3}
+    target_table: "c1_market.express_monthly"
+    status: candidate
+    notes: "油价链波3；E10"
+
+  # ── 传导链/宏观注入源 ──
+  - cand_id: DS-CAND-006
+    name: "ACM 期限溢价"
+    vendor: "纽约联储"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "美债期限溢价日度估计"
+    frequency: daily
+    history_depth: "1961+"
+    anti_crawl_risk: none
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 3, fit: 3, maintenance: 3}
+    target_table: "c1_market.macro_data(_indicator 扩展)"
+    status: candidate
+    notes: "黄金-利率链第 7 环；H4"
+  - cand_id: DS-CAND-007
+    name: "US Treasury Fiscal Data"
+    vendor: "美国财政部"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: ""
+    coverage: "利息支付/国债存量/平均利率/拍卖"
+    frequency: daily-monthly
+    history_depth: "全史"
+    anti_crawl_risk: none
+    tos_risk: "官方开放 API"
+    score: {availability: 3, signal: 3, fit: 3, maintenance: 3}
+    target_table: "c1_market.macro_data(_扩展)"
+    status: candidate
+    notes: "财政可持续性叙事的数据底座；H4"
+  - cand_id: DS-CAND-008
+    name: "WGC 全球央行购金"
+    vendor: "世界黄金协会"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "央行净购金季度"
+    frequency: quarterly
+    history_depth: "2010+"
+    anti_crawl_risk: light
+    tos_risk: "公开可下载"
+    score: {availability: 3, signal: 2, fit: 2, maintenance: 2}
+    target_table: "c1_market.central_bank_gold"
+    status: candidate
+    notes: "黄金链第 9 环"
+  - cand_id: DS-CAND-009
+    name: "Fed 言论语料库"
+    vendor: "联邦储备委员会"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "演讲/FOMC 声明纪要/SEP 点阵图全文"
+    frequency: event
+    history_depth: "全史"
+    anti_crawl_risk: none
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 3, fit: 3, maintenance: 2}
+    target_table: "c3_fundamental.fed_communication"
+    status: candidate
+    notes: "C13 主件；鹰鸽指数原料；学术成熟"
+  - cand_id: DS-CAND-010
+    name: "CFTC 持仓"
+    vendor: "CFTC"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "期货期权投机/商业持仓分类"
+    frequency: weekly
+    history_depth: "全史"
+    anti_crawl_risk: none
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 2, fit: 2, maintenance: 3}
+    target_table: "c1_market.cftc_positioning"
+    status: candidate
+    notes: "黄金投机净多头；H7"
+
+  # ── 跨资产/市场结构 ──
+  - cand_id: DS-CAND-011
+    name: "Hyperliquid 永续数据"
+    vendor: "Hyperliquid"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "无 key(读行情)"
+    coverage: "行情/资金费率/清算/全市场仓位透明"
+    frequency: daily
+    history_depth: "官方窗口有限→需日更自积"
+    anti_crawl_risk: none
+    tos_risk: "公开 API"
+    score: {availability: 3, signal: 3, fit: 3, maintenance: 2}
+    target_table: "c1_market.hyperliquid_*"
+    status: candidate
+    notes: "鲸鱼仓位独家面；H1；越早接越早积累"
+  - cand_id: DS-CAND-012
+    name: "中债登国债收益率曲线"
+    vendor: "中央结算公司"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "全期限日度估值"
+    frequency: daily
+    history_depth: "多年"
+    anti_crawl_risk: light
+    tos_risk: "公开"
+    score: {availability: 3, signal: 3, fit: 3, maintenance: 2}
+    target_table: "c1_market.cn_bond_yield_curve"
+    status: candidate
+    notes: "中美利差中国腿；H4"
+  - cand_id: DS-CAND-013
+    name: "美股 13F 机构持仓"
+    vendor: "SEC EDGAR"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: ""
+    coverage: "机构季报持仓"
+    frequency: quarterly
+    history_depth: "2013+ 结构化"
+    anti_crawl_risk: none
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 2, fit: 2, maintenance: 2}
+    target_table: "c1_market.us_13f_holdings"
+    status: candidate
+    notes: "H9；全球大机构调仓跟踪"
+  - cand_id: DS-CAND-014
+    name: "券商金股组合"
+    vendor: "各券商月报(聚合源待选)"
+    acquire_mode: crawler
+    cost: free
+    register_barrier: ""
+    coverage: "月度金股推荐"
+    frequency: monthly
+    history_depth: ""
+    anti_crawl_risk: light
+    tos_risk: "公开但聚合需爬"
+    score: {availability: 2, signal: 2, fit: 2, maintenance: 2}
+    target_table: "c1_market.broker_gold_stocks"
+    status: candidate
+    notes: "金股拥挤度=反向指标候选；G8；爬虫需专项裁定"
+  - cand_id: DS-CAND-015
+    name: "SPDR 贵金属 ETF 持仓"
+    vendor: "SPDR/SSGA"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "GLD/SLV 每日持仓"
+    frequency: daily
+    history_depth: "2004+"
+    anti_crawl_risk: none
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 2, fit: 2, maintenance: 3}
+    target_table: "c1_market.etf_metal_holdings"
+    status: candidate
+    notes: "H8；黄金链第 12 环"

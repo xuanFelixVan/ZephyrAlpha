@@ -3,7 +3,7 @@ module_id: MOD-RK-09
 title: "A股止损规则引擎蓝图 — 6种止损模式 + 亏损限额三级"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -135,11 +135,11 @@ A股止损规则引擎——A股特色止损规则检测, 产出止损信号交�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 源码文件
+### 8.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/risk/test_ashare_stop_loss_engine.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

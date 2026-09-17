@@ -3,7 +3,7 @@ module_id: MOD-SIG-151
 title: "可交易性预检蓝图 — 候选池当日可买性五查聚合"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 design_maturity: production
 ttl: permanent
 layer: L05_signal
@@ -74,7 +74,13 @@ verdict = preflight_tradability(InstrumentSnapshot(...), AccountContext(...), in
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/signal_ashare/tradability_preflight.py` | ✅ 已实现 | |
+
+### 6.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/signal_ashare/test_tradability_preflight.py` | ✅ 已实现 | |
 
 ### 6.5 路径索引使用指南
 

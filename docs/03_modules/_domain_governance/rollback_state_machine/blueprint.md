@@ -3,7 +3,7 @@ module_id: MOD-GOV-045
 title: "降级/回退五态状态机蓝图 — 53 号 §3.8 伪代码代码落地（#ARCH-QUANT-003）"
 doc_type: blueprint
 status: Active
-version: "0.1.22"
+version: "0.1.23"
 ttl: permanent
 layer: L1_foundation
 layer_name: governance
@@ -93,11 +93,11 @@ tests/governance/trading/test_degradation_rollback_fsm.py——五态枚举序/�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 
-### 10.1 源码文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/governance/trading/test_degradation_rollback_fsm.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

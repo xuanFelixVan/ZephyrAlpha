@@ -3,7 +3,7 @@ module_id: MOD-EX-003
 title: "执行审计器蓝图 — 执行事件哈希链审计日志+报告"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -255,7 +255,7 @@ depgraph `blueprint_id=MOD-EX-003` 对应设计文档 `D-EX-CORE-15`（ID 错位
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/ex_core/audit_journal/__init__.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

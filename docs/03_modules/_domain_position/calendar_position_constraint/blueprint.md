@@ -3,7 +3,7 @@ module_id: MOD-POS-017
 title: "日历仓位约束蓝图 — A股风险日历→仓位上限调整"
 doc_type: blueprint
 status: Active
-version: "0.2.3"
+version: "0.2.4"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -104,11 +104,13 @@ A股风险日历仓位约束——根据当前日期和A股风险日历事件, �
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 7.1 源码文件
+### 7.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/position/test_calendar_position_constraint.py` | ✅ 已实现 | |
+| `tests/position/test_drawdown_controller.py` | ✅ 已实现 | |
+| `tests/position/test_position_sizing_engine.py` | ✅ 已实现 | |
 
 ### 7.5 路径索引使用指南
 

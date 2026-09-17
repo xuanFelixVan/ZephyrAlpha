@@ -3,7 +3,7 @@ module_id: MOD-INF-066
 title: "NSSM+5 进程架构与自研 Supervisor 蓝图 — 启动升序/关闭降序编排+分级心跳+崩溃重启策略+服务定义就绪件"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_runtime
@@ -106,11 +106,11 @@ MOD-INF-039 startup_sequencer）齐备，但 **NSSM 服务化注册与 P1~P5 优
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 源码文件
+### 6.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/infrastructure/process_lifecycle/test_process_supervisor.py` | ✅ 已实现 | |
 
 ### 6.5 路径索引使用指南
 

@@ -3,7 +3,7 @@ module_id: MOD-RPT-003
 title: "报告发布器蓝图 — 中心枢纽+归档+分发+哈希链审计(基础版)"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting
@@ -240,11 +240,12 @@ class ReportPublisher:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 10.1 源码文件
+### 10.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/reporting/test_report_publisher.py` | ✅ 已实现 | |
+| `tests/reporting/test_report_publisher_senders.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

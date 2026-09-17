@@ -3,7 +3,7 @@ module_id: MOD-REGIME-002
 title: "Regime特征管道蓝图 — ClickHouse→RegimeFeatures/OverlaySignals/RiskSignalInputs（C1一票否决验证的数据地基）"
 doc_type: blueprint
 status: Active
-version: "0.1.12"
+version: "0.1.13"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -890,7 +890,29 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/regime/features/regime_data_loader.py` | ✅ 已实现 | |
+| `src/zephyr/regime/features/risk_features.py` | ✅ 已实现 | |
+| `src/zephyr/regime/features/wyckoff_engine.py` | ✅ 已实现 | |
+| `src/zephyr/regime/validation/wyckoff_walkforward.py` | ✅ 已实现 | |
+
+### 14.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/regime/features/test_evolution_signals.py` | ✅ 已实现 | |
+| `tests/regime/features/test_lppl_detector.py` | ✅ 已实现 | |
+| `tests/regime/features/test_s2_fund_score.py` | ✅ 已实现 | |
+| `tests/regime/test_breadth_fallback.py` | ✅ 已实现 | |
+| `tests/regime/test_breadth_thrust_walkforward.py` | ✅ 已实现 | |
+| `tests/regime/test_july_case_e2e.py` | ✅ 已实现 | |
+| `tests/regime/test_overlay_features.py` | ✅ 已实现 | |
+| `tests/regime/test_overlay_signals_builder.py` | ✅ 已实现 | |
+| `tests/regime/test_overlay_signals_builder_valuation.py` | ✅ 已实现 | |
+| `tests/regime/test_risk_signal_builder.py` | ✅ 已实现 | |
+| `tests/regime/test_synthetic_vix.py` | ✅ 已实现 | |
+| `tests/regime/test_synthetic_vix_iv_path.py` | ✅ 已实现 | |
+| `tests/regime/test_wyckoff_engine.py` | ✅ 已实现 | |
+| `tests/regime/validation/test_wyckoff_walkforward.py` | ✅ 已实现 | |
 
 ### 14.5 路径索引使用指南
 

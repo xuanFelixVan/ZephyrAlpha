@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_sor/services/slippage_analyzer.py
 title: "滑点分析器蓝图 — 多基准滑点计算+三因子归因+平方根冲击预测"
 doc_type: blueprint
 status: Active
-version: "0.1.6"
+version: "0.1.7"
 design_maturity: production
 build_status: production
 ttl: permanent
@@ -187,11 +187,13 @@ class SlippageAnalyzer:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 13.1 源码文件
+### 13.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/ex_sor/test_execution_route_policy.py` | ✅ 已实现 | |
+| `tests/ex_sor/test_slippage_analyzer.py` | ✅ 已实现 | |
+| `tests/ex_sor/test_t0_cost_model.py` | ✅ 已实现 | |
 
 ### 13.5 路径索引使用指南
 

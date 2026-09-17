@@ -4,7 +4,7 @@ submodule_path: src/zephyr/pf_core
 title: "Portfolio Construction Core 蓝图+施工图 — 组合构建层"
 doc_type: blueprint
 status: Active
-version: "2.1.13"
+version: "2.1.14"
 layer: L2_domain
 layer_name: portfolio_construction
 functional_domain: portfolio
@@ -48,7 +48,7 @@ build_status: generated
 
 > ✅ **业务层已开放，可施工** — C轨（业务价值线·线7）当前状态为 partially_implemented。本蓝图仅供架构参考和预研代码维护，可以此蓝图为依据新增组合构建业务代码。
 
-> module_id: MOD-L05-001 | version: 2.1.13 | status: Active | layer: L2_domain
+> module_id: MOD-L05-001 | version: 2.1.14 | status: Active | layer: L2_domain
 > actual_disk_path: src/zephyr/pf_core/ | generation: 2 | construction_progress: partially_implemented
 
 # Portfolio Construction Core 蓝图+施工图 — 组合构建层
@@ -954,7 +954,29 @@ ZephyrAlpha 量化架构需要从信号层（D_SIGNAL）和风控层（D_RISK）
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/governance/strategies/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/governance/strategies/strategy_registry.py` | ⚠️ 骨架 | |
+| `src/zephyr/pf_core/strategy_engine/__init__.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/cross/test_e2e_redblue_night001.py` | ✅ 已实现 | |
+| `tests/pf_core/test_daban_sleeve_strategy.py` | ✅ 已实现 | |
+| `tests/pf_core/test_daban_sleeve_strategy_load.py` | ✅ 已实现 | |
+| `tests/pf_core/test_eventdriven_sleeve_strategy.py` | ✅ 已实现 | |
+| `tests/pf_core/test_multifactor_constraint_arbitration.py` | ✅ 已实现 | |
+| `tests/pf_core/test_multifactor_holding_drift_monitor.py` | ✅ 已实现 | |
+| `tests/pf_core/test_multifactor_rebalance_trigger.py` | ✅ 已实现 | |
+| `tests/pf_core/test_multifactor_sleeve_strategy.py` | ✅ 已实现 | |
+| `tests/pf_core/test_orderbook_imbalance_strategy.py` | ✅ 已实现 | |
+| `tests/pf_core/test_performance_attribution_engine.py` | ✅ 已实现 | |
+| `tests/pf_core/test_strategy_runner_mvp.py` | ✅ 已实现 | |
+| `tests/pf_core/test_strategy_runner_tick.py` | ✅ 已实现 | |
+| `tests/pf_core/test_t_rules_config.py` | ✅ 已实现 | |
+| `tests/pf_core/test_vwap_reversion_strategy.py` | ✅ 已实现 | |
+| `tests/trading/pipeline/test_l05_portfolio_construction.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

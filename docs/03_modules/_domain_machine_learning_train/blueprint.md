@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ml_train
 title: "ML Platform Core 蓝图+施工图 — 机器学习平台"
 doc_type: blueprint
 status: Active
-version: "2.1.8"
+version: "2.1.9"
 layer: L2_domain
 functional_domain: research
 owner: ZephyrAlpha-Owner
@@ -46,7 +46,7 @@ design_maturity: production
 
 > ✅ **业务层已开放，可施工** — 本蓝图处于 C 轨占位状态，当前仅有 Phase B 骨架代码，可启动新施工。待 B 轨容量升级完成后按 ARB-11 三梯队策略激活。
 
-> module_id: MOD-L11-001 | version: 2.1.8 | status: active | domain: ml_train
+> module_id: MOD-L11-001 | version: 2.1.9 | status: active | domain: ml_train
 > actual_disk_path: src/zephyr/ml_train/ | generation: 2 | construction_progress: partially_implemented
 
 # ML Platform Core 蓝图+施工图 — 机器学习平台
@@ -813,7 +813,19 @@ class ModelMetadata:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/ml_train/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/ml_train/implementations/__init__.py` | ⚠️ 骨架 | |
+| `src/zephyr/ml_train/implementations/default_inference_engine.py` | ✅ 已实现 | |
+| `src/zephyr/ml_train/inference_base.py` | ✅ 已实现 | |
+| `src/zephyr/ml_train/trainer_base.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/ml_train/test_sample_weights.py` | ✅ 已实现 | |
+| `tests/ml_train/test_sentiment_sft_trainer.py` | ✅ 已实现 | |
+| `tests/model/test_l11_ml_platform.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

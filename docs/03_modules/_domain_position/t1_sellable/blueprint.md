@@ -3,7 +3,7 @@ module_id: MOD-POS-028
 title: "T+1可卖持仓口径蓝图 — 底仓/当日仓区分与可卖量"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 ttl: permanent
 layer: L06_execution
@@ -76,7 +76,7 @@ design_memos/32_firm_risk_aggregator.md §6（T+1 可卖持仓口径假设）+ d
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/position/core/t1_sellable.py` | ✅ 已实现 | |
 
 ### 4.5 路径索引使用指南
 

@@ -5,7 +5,7 @@ title: "运营告警供给线蓝图 — OOM critical 水位探针→通知板→
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.3"
+version: "1.0.4"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -44,7 +44,7 @@ design_maturity: production
 
 # 运营告警供给线蓝图（MOD-INF-OPS-ALERT-FEED）
 
-> module_id: MOD-INF-OPS-ALERT-FEED | version: 1.0.3 | status: active | layer: L0_infrastructure
+> module_id: MOD-INF-OPS-ALERT-FEED | version: 1.0.4 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py | generation: 3 | construction_progress: completed
 
 ## 1. 背景与动因（治理战役 A2，2026-09-16）
@@ -123,7 +123,7 @@ design_maturity: production
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/infrastructure/system_telemetry/alerts/ops_alert_feed.py` | ✅ 已实现 | |
 
 ### 6.5 路径索引使用指南
 

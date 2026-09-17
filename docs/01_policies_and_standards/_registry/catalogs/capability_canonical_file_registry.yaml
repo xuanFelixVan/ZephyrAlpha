@@ -32267,4 +32267,8 @@ creation_tokens:
   token: data-source-candidates-data-source-candidates-20260917
   created_by: st-altdatamap-20260917
   capability: data_source_candidates
+- file: docs/_working/altdata_line/10_data_source_candidates.yaml
+  token: data-source-candidates-altdata-line-10-20260917
+  created_by: st-altdatamap-20260917
+  capability: data_source_candidates
 di_seam_exemptions: []

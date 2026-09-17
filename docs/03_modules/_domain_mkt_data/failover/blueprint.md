@@ -3,7 +3,7 @@ module_id: MOD-MKT-004
 title: "故障切换蓝图 — 多数据源主备切换+自动恢复"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 ttl: permanent
 layer: L01_foundation
 layer_name: foundation
@@ -187,7 +187,14 @@ class FailoverManager:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/market_data/failover/manager.py` | ✅ 已实现 | |
+
+### 10.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/market_data/failover/__init__.py` | ⚠️ 骨架 | |
+| `tests/market_data/failover/test_failover_manager.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 

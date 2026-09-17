@@ -3,7 +3,7 @@ module_id: MOD-RK-050
 title: "熔断期减仓与持仓处置蓝图 — 梯度减仓序列"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 ttl: permanent
 layer: L04_risk
@@ -49,7 +49,7 @@ design_memos/35_drawdown_protocol_impl.md §3.5.1/§6.14（原 [BLUEPRINT] 头�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/risk/core/drawdown_liquidation_guard.py` | ✅ 已实现 | |
 
 ### 4.5 路径索引使用指南
 

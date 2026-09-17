@@ -3,7 +3,7 @@ module_id: MOD-MKT-001
 title: "Vendor注册表蓝图 — 行情数据源注册/查询/默认源管理"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 ttl: permanent
 layer: L01_foundation
 layer_name: market_data
@@ -123,11 +123,11 @@ build_status: production
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 源码文件
+### 8.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/market_data/test_vendor_registry.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

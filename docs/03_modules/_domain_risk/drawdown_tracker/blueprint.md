@@ -3,7 +3,7 @@ module_id: MOD-RK-011
 title: "回撤实时追踪器蓝图 — 峰值谷值+三级阈值告警"
 doc_type: blueprint
 status: Active
-version: "0.1.7"
+version: "0.1.8"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -135,7 +135,15 @@ RK-11 是*实时告警*(回撤→分级告警, 监控导向)。RK-11 产出告�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/risk/core/drawdown_broker_side_stop.py` | ✅ 已实现 | |
+| `src/zephyr/risk/core/drawdown_watchdog.py` | ✅ 已实现 | |
+
+### 8.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/risk/test_drawdown_broker_side_stop.py` | ✅ 已实现 | |
+| `tests/risk/test_drawdown_watchdog.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 

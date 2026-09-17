@@ -3,7 +3,7 @@ module_id: MOD-RK-13
 title: "拥挤度监控器蓝图 — 跨参与者因子拥挤度检测"
 doc_type: blueprint
 status: Active
-version: "0.1.5"
+version: "0.1.6"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -136,11 +136,14 @@ is_crowded = crowding_score > threshold (默认 0.6)
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 8.1 源码文件
+### 8.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/risk/core/test_crowding_monitor.py` | ✅ 已实现 | |
+| `tests/risk/core/test_liquidity_stress_exit.py` | ✅ 已实现 | |
+| `tests/risk/core/test_orchestrator_crowding_integration.py` | ✅ 已实现 | |
+| `tests/risk/core/test_survival_line_monitor.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
 
