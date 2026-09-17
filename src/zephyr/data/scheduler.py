@@ -76,6 +76,11 @@ _DEFAULT_CONFIG_DIR = Path(__file__).parent / "config"
 _DEFAULT_JOBS_DB = "sqlite:///" + str(REPO_ROOT / "data" / "integrator_jobs.db")
 # 单实例锁默认路径（#SCHED-DUAL-INSTANCE 治本，2026-08-25）
 _DEFAULT_INSTANCE_LOCK = REPO_ROOT / "tmp" / "scheduler_instance.lock"
+# 已加载配置指纹快照默认路径（WORK-ORDER-3 配置生效核对器，2026-09-18）：
+# load_config() 后原子落盘，供 config_effect_checker 对比磁盘现状（烟雾报警器，非热加载）。
+# 落 tmp/ 而非任务书建议的 .runtime/ 根——宪法 §9.4 禁向 .runtime 根直写，
+# 且调度器运行态文件（instance lock/run log/heartbeat）惯例均在 tmp/。
+_DEFAULT_LOADED_STATE = REPO_ROOT / "tmp" / "scheduler_loaded_state.json"
 
 
 def acquire_single_instance_lock(lock_path: str | Path | None = None):
@@ -1057,9 +1062,46 @@ class IntegratorScheduler:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             log.warning("[TableRegistry] 表名校验失败（不阻断启动）: %s", e)
 
+        # WORK-ORDER-3 配置生效核对器：加载完成后导出指纹快照（失败不阻断启动）
+        self.export_loaded_state()
+
     def _load_config(self) -> None:
         """向后兼容 thin wrapper（Stage 4 公共化）。"""
         self.load_config()
+
+    def export_loaded_state(self, state_path: str | Path | None = None) -> Path | None:
+        """导出已加载配置指纹快照（WORK-ORDER-3，2026-09-18；烟雾报警器，非热加载）。
+
+        把进程内实际生效的 schedules/tasks 与配置文件指纹（sha256/mtime/size）
+        原子落盘 tmp/scheduler_loaded_state.json，供
+        zephyr.infra_ops.config_effect_checker 对比磁盘现状——只在加载时刷新，
+        磁盘改后不重启即报不一致，这正是核对器的判定依据。导出失败仅告警不阻断调度。
+
+        Returns:
+            快照路径；失败返回 None（不抛——遵守本模块 ERROR_CONTRACT）。
+        """
+        try:
+            from zephyr.infra_ops.config_effect_checker import (
+                build_loaded_state_snapshot,
+                write_loaded_state_snapshot,
+            )
+
+            snapshot = build_loaded_state_snapshot(
+                self._config_dir, self._schedules, self._tasks, pid=os.getpid()
+            )
+            path = write_loaded_state_snapshot(
+                snapshot, Path(state_path) if state_path else _DEFAULT_LOADED_STATE
+            )
+            log.info(
+                "已导出配置指纹快照: %s（%d 档时段 / %d 任务）",
+                path,
+                len(self._schedules),
+                len(self._tasks),
+            )
+            return path
+        except Exception as e:  # noqa: BLE001 — 导出失败不阻断调度主流程
+            log.warning("配置指纹快照导出失败（不影响调度）: %s", e)
+            return None
 
     def reload_policies(self) -> bool:
         """热更新策略（手动调用或 config_changed 事件触发）。"""

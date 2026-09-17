@@ -50175,6 +50175,55 @@ entries:
   desc_zh: "消化情报收件箱→本地LLM抽取可检验策略假说→带出生证卸E1进货台账（⑥号车道）"
   desc_en: ""
   plain_zh: "把搜索引擎读来的论文摘要，让本地小模型翻译成一条条可以考试验证的策略点子，登记进策略进货台账"
+- module_path: scripts/data/repair_etf_minute_tz_split.py
+  domain_id: D_DATA
+  name_zh: "ETF分钟线时区劈叉修复件"
+  name_en: ""
+  desc_zh: "ETF 分钟族五表 trade_time 2026-06-30 前 UTC 误标 +8h 影子表重建换名修复"
+  desc_en: ""
+  plain_zh: "这个工具修一个数据表的时差问题：ETF 的分钟K线表里，今年6月底之前的数据存的时间被少记了8小时（原本是北京时间，被当成世界时存进去了），导致早上9点的K线显示成凌晨1点。它会把这批旧数据的时间统一加回8小时。因为要改的列是表的排序键不能直接改，所以它先造一张 corrected 的新表把数据搬过去，核对行数和成交量完全对得上后，再把新旧表名字一换完成修复；旧表改名留着不删，发现问题改回来就行。默认只做检查不动真格，真正开修需要 Owner 点头。"
+- module_path: src/zephyr/infra_ops/config_effect_checker.py
+  domain_id: D_INFRA_OPS
+  name_zh: "配置生效核对器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查你改的配置文件是不是真的被调度器用上了：调度器启动时把吃进去的配置拍个快照，这个小工具每天拿磁盘上的配置和快照对一遍，对不上就报警告诉你该重启调度器了。只报警不自动热加载。"
+- module_path: scripts/backtest/sim_attribution_report.py
+  domain_id: D_BACKTEST
+  name_zh: "模拟盘收益归因例行报告"
+  name_en: "sim attribution daily report"
+  desc_zh: "读 sim_pocket_daily 钱包日账，逐策略逐日三分毛利/成本/净利，输出双基准相对与风险贡献长表"
+  desc_en: ""
+  plain_zh: "这本账回答四个问题：赚的钱是哪个策略挣的、交易成本一共吃掉多少、比大盘多赚还是少赚、风险集中在谁身上。它直接沿用纸面账本自己的成本算法，保证算出来的账和账本一分钱不差。"
+- module_path: schemas/categories/sim_attribution_daily.py
+  domain_id: D_BACKTEST
+  name_zh: "收益归因日账表 DDL"
+  name_en: "sim attribution daily table ddl"
+  desc_zh: "c1_backtest.sim_attribution_daily 表结构唯一真源，ReplacingMergeTree 长表，按策略+交易日键"
+  desc_en: ""
+  plain_zh: "这是归因结果存放的那张表的设计图纸：每天每个策略记一行，写清楚毛赚多少、费用扣多少、到手多少、跑赢大盘多少。表只会往里加东西不改旧账，重复算同一天会自动用最新的那份。"
+- module_path: tests/backtest/test_sim_attribution_report.py
+  domain_id: D_BACKTEST
+  name_zh: "收益归因件质量守卫测试"
+  name_en: "sim attribution report tests"
+  desc_zh: "成本口径一致性/replay幂等/risk_contrib 合计三项守卫，fake CH 合成数据"
+  desc_en: ""
+  plain_zh: "给归因程序请的质检员：专门盯三件事——算成本的方法必须和账本一模一样、同一天重复算不能多出一行、每天的风险占比加起来必须正好等于百分之百。"
+- module_path: src/zephyr/pf_alloc/crisis_gate.py
+  domain_id: D_PF_ALLOC
+  name_zh: "危机态判读件"
+  name_en: "crisis_gate"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天早上看一眼大盘教材里恐慌状态的概率：恐慌成了主导就判危机，直接冻结当天新开仓；恐慌概率过半但还没主导就判预警，把总仓位下限压到最低并喊一嗓子；什么都看不出来就照常干活不乱动。三级各管各的：管线保系统、裁决保语义、账本保本金，每次判定都写一张流水账留底。"
+- module_path: schemas/categories/crisis_gate_log.py
+  domain_id: D_PF_ALLOC
+  name_zh: "危机闸留痕表DDL"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "危机闸每天的判定流水账建表真源：哪天、看到了什么恐慌概率、判成哪一档、三级各自动了什么动作，一行一条只增不改，供事后回看误报率和月度演练对账。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

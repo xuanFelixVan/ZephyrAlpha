@@ -32347,4 +32347,8 @@ creation_tokens:
   token: flash-speedup-design-20260917
   created_by: st-flashspeed-20260918
   capability: flash_speedup
+- file: docs/_working/flash_speedup/F4_generator_concurrency/DESIGN.md
+  token: flash-speedup-f4-design-20260917
+  created_by: st-flashspeed-20260918
+  capability: flash_speedup
 di_seam_exemptions: []

@@ -28,6 +28,11 @@ from __future__ import annotations
 from typing import Final
 
 try:
+    from zephyr.infra_ops.config_effect_checker import check_config_effect
+except ImportError:
+    check_config_effect = None  # type: ignore[assignment]
+
+try:
     from zephyr.infra_ops.wal_checkpoint_monitor import WalCheckpointMonitor
 except ImportError:
     WalCheckpointMonitor = None  # type: ignore[assignment]
@@ -47,7 +52,9 @@ try:
 except ImportError:
     LokiLogPipeline = None  # type: ignore[assignment]
 
-__all__: Final = []
+__all__: Final = [
+    "check_config_effect",
+]
 
 __all__.append("WalCheckpointMonitor")
 
