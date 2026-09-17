@@ -35004,4 +35004,9 @@ creation_tokens:
   created_by: "st-tdchain-20260917"
   capability: "sowner002_cherry_pick"
 
+- file: "docs/_working/tdchain_mine/final_delivery_report.md"
+  token: "tdchain-final-report-20260918"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+
 di_seam_exemptions: []
