@@ -3,7 +3,7 @@ module_id: MOD-PLAN-025
 title: "明日情绪盘中滚动预测蓝图 — 三零件合成+悲观降档预警"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L07_plan
@@ -88,7 +88,7 @@ CapabilityLookup forecast/next_day 零命中；Grep 无既有组合器；`tomorr
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/plan_engine/intraday_tomorrow_forecast.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 5.5 路径索引使用指南
 

@@ -3,7 +3,7 @@ module_id: MOD-PLAN-001
 title: "明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）"
 doc_type: blueprint
 status: Active
-version: "0.1.8"
+version: "0.1.9"
 ttl: permanent
 layer: L2_domain
 functional_domain: plan_engine
@@ -28,7 +28,7 @@ summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静�
 ---
 # Tomorrow Boundary Planner 蓝图+施工图 — 明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）
 
-> module_id: MOD-PLAN-001 | version: 0.1.8 | status: Active | layer: L2_domain (plan_engine)
+> module_id: MOD-PLAN-001 | version: 0.1.9 | status: Active | layer: L2_domain (plan_engine)
 > actual_disk_path: src/zephyr/plan_engine/tomorrow_boundary_planner.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.10.2 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -462,14 +462,11 @@ class TomorrowBoundary:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/plan_engine/test_boundary_revision_engine.py` | ✅ 已实现 | |
-| `tests/plan_engine/test_intraday_tomorrow_forecast.py` | ✅ 已实现 | |
-| `tests/plan_engine/test_llm_premarket_analysis.py` | ✅ 已实现 | |
-| `tests/plan_engine/test_plan_engine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

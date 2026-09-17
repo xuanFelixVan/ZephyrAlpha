@@ -27999,14 +27999,6 @@ creation_tokens:
   token: auction-derive-kimi-audit-checklist-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_derive
-- file: docs/_working/kimi_audit/kimi_deep_adjudication.md
-  token: kimi-audit-kimi-deep-adjudication-20260917
-  created_by: qoder-kimipilot-20260917
-  capability: kimi_audit
-- file: docs/_working/kimi_audit/flash_verify_directive.md
-  token: kimi-audit-flash-verify-directive-20260917
-  created_by: qoder-kimipilot-20260917
-  capability: kimi_audit
 - file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
   token: auction-derive-intake-20260917-0300-20260916
   created_by: st-auction-bridge-20260917

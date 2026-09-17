@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/runtime
 title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"
 doc_type: blueprint
 status: Active
-version: 6.1.15
+version: 6.1.16
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -2010,47 +2010,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/config/app_config.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/database_service.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/runtime/gate_coordinator.py` | ✅ 已实现 | |
-| `src/zephyr/orchestrator/core/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/orchestrator/core/task_queue.py` | ✅ 已实现 | |
-| `src/zephyr/risk/cross_asset/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/risk/cross_asset/cross_market_data_adapter/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/shared/_cross_layer/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/core/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/core/base_event.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/core/factories.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/core/gate_types.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/contracts/core/registry.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/core/runtime_plane_tag.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/core/timestamp.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/automation/test_auto_diagnostics.py` | ✅ 已实现 | |
-| `tests/config/test_config_validator.py` | ✅ 已实现 | |
-| `tests/contracts/test_contract_tester.py` | ✅ 已实现 | |
-| `tests/cross/test_cross_layer.py` | ✅ 已实现 | |
-| `tests/db/test_clickhouse_conn_unify.py` | ✅ 已实现 | |
-| `tests/event/test_event_bus_upgrade.py` | ✅ 已实现 | |
-| `tests/event/test_event_hook.py` | ✅ 已实现 | |
-| `tests/event/test_event_store.py` | ✅ 已实现 | |
-| `tests/event/test_event_store_stress.py` | ✅ 已实现 | |
-| `tests/file/test_file_watcher.py` | ✅ 已实现 | |
-| `tests/infrastructure/observability/__init__.py` | ⚠️ 骨架 | |
-| `tests/infrastructure/observability/test_cost_tracker.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_kill_switch_sim.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_dry_run_simulator.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_finding_task_bridge.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_infrastructure_base.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_pydantic_v2_migrator.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_warm_hot_gate.py` | ✅ 已实现 | |
-| `tests/pipeline/test_alpha_signal_pipeline.py` | ✅ 已实现 | |
-| `tests/risk/test_ml_experiment_pipeline.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

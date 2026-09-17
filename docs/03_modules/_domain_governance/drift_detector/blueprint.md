@@ -3,7 +3,7 @@ module_id: MOD-INF-023
 title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期"
 doc_type: blueprint
 status: Active
-version: "3.1.12"
+version: "3.1.13"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -1302,33 +1302,7 @@ detector_dimensions:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/gov_drift/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_drift/__main__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_drift/alert_router.py` | ✅ 已实现 | |
-| `src/zephyr/gov_drift/detector_core/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_drift/detector_core/bridges/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/gov_drift/detector_core/bridges/drift_bridge.py` | ✅ 已实现 | |
-| `src/zephyr/gov_drift/reconciler.py` | ✅ 已实现 | |
-| `src/zephyr/gov_drift/runbook_generator.py` | ✅ 已实现 | |
-| `src/zephyr/gov_drift/state_machine.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/audit/drift_integrity/test_benchmark_integrity.py` | ✅ 已实现 | |
-| `tests/audit/drift_integrity/test_gov_drift_regime_detector.py` | ✅ 已实现 | |
-| `tests/audit/drift_integrity/test_performance_baseline.py` | ✅ 已实现 | |
-| `tests/audit/quality_static/test_architecture_contracts.py` | ✅ 已实现 | |
-| `tests/audit/quality_static/test_architecture_principles.py` | ✅ 已实现 | |
-| `tests/audit/test_ml_engineering.py` | ✅ 已实现 | |
-| `tests/ba/test_ba_data_lifecycle.py` | ✅ 已实现 | |
-| `tests/ba/test_ba_dependency_manager.py` | ✅ 已实现 | |
-| `tests/cross/test_cross_env_consistency.py` | ✅ 已实现 | |
-| `tests/data/test_data_lifecycle.py` | ✅ 已实现 | |
-| `tests/data/test_data_source_reliability.py` | ✅ 已实现 | |
-| `tests/dependency/test_dependency_manager.py` | ✅ 已实现 | |
-| `tests/model/test_model_drift_monitor.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

@@ -33,6 +33,13 @@
 #   一次（写方=全窗重印 append-only，同日二次自动印=纯台账膨胀零信息增益，故用 _marker_seen
 #   业务日级永久闸；记号先落再动手=失败不得在每个唤醒点重起分钟级重印）、刷新失败只
 #   [REGIME-SNAPSHOT] ERROR 出声、绝不上抛（快照腐烂不许反噬唤醒钩子链）；
+#   判定台账 Phase 2a 产出件（2026-09-16 st-ledgerp2a-20260916）：盘中 L1 跟踪件
+#   maybe_track_intraday_state（60min bars 入库任务 SUCCESS=自然唤醒，bar_key 查重幂等——
+#   intraday_minute 每 5 分钟唤醒对每小时一根 bar 零副作用）与次日概率件
+#   maybe_emit_next_day_forecast（daily_kline SUCCESS=T 日收盘数据齐，trade_date 查重幂等，
+#   业务日真源=resolve_pf_alloc_trade_date 禁墙钟猜日=非交易日唤醒天然抑制）——两者
+#   唯一自动产出者=plan_engine 对应模块（本件只 wire 注册，模块内全捕获永不反噬），挂
+#   结算之后、分配链之前（纯判定侧负载不占分配时序）；
 #   日件幂等双闸=当日 UTC date-marker（消费成功才落）∨ 非 poison 同 kind 在队；月度档毒丸不堵队
 #   （毒丸不算已入队——sim_memo_monthly 从未正常轮转的病根修复，C2/X2）；
 #   OPTIONAL_DUE_KINDS 预埋派发缺失=逐出队跳过（不抛不占 attempts，实现由后续批次交付）；
@@ -826,6 +833,25 @@ def wire_data_scheduler(scheduler: Any) -> None:
             # 判定台账标准 §四（2026-09-16）：三表结算挂收盘入库事件链（累积扫描幂等，
             # 错过当日不丢账）——置于 regime 之后、分配链之前（纯判定侧负载，不占分配时序）
             maybe_settle_judgment_ledger(**_kwargs)
+            # 判定台账 Phase 2a 产出件（2026-09-16 st-ledgerp2a）：盘中 L1 跟踪件（60min bar
+            # 到达=自然唤醒，bar_key 查重幂等）+次日概率件（daily_kline 收盘数据齐=自然唤醒，
+            # trade_date 查重幂等）——唯一自动产出者在 plan_engine 对应模块（内部全捕获永不
+            # 反噬），挂结算之后（结算先结旧账，产出再发新判）。导入失败独立吞掉（不得
+            # 中断后续分配/账本链——判定件是增益不是依赖）
+            try:
+                from zephyr.plan_engine.intraday_l1_tracker import (  # noqa: PLC0415
+                    maybe_track_intraday_state,
+                )
+
+                maybe_track_intraday_state(**_kwargs)
+                from zephyr.plan_engine.next_day_forecaster import (  # noqa: PLC0415
+                    maybe_emit_next_day_forecast,
+                )
+
+                maybe_emit_next_day_forecast(**_kwargs)
+            except Exception:  # noqa: BLE001——导入级故障与模块内异常同待遇：出声不反噬
+                log.warning("[JUDGMENT-LEDGER] Phase 2a 产出件唤醒失败（不影响后续链）",
+                            exc_info=True)
             # 车道 D #15：分配链日产出者——必须先于日件入队（journal FIFO=分配先落，
             # 同日账本 ensure_wallet 才读得到 alloc_budget_daily 的真实钱包额度）
             maybe_emit_pf_alloc_daily(**_kwargs)

@@ -85,8 +85,8 @@ ZephyrAlpha/
 | 指标 | 值 |
 |------|----|
 | module_id 注册数 / Registered module_ids | 74 |
-| src/zephyr 一级子包 / Top-level packages | 53 |
-| scripts/governance .py 总数 / Governance scripts | 496 |
+| src/zephyr 一级子包 / Top-level packages | 54 |
+| scripts/governance .py 总数 / Governance scripts | 493 |
 <!-- AUTO-END:module_counts -->
 
 <!-- AUTO-START:py_file_total -->
@@ -94,10 +94,10 @@ ZephyrAlpha/
 
 | 目录 | .py 文件数（排除 __init__.py） |
 |------|------|
-| `src/zephyr/` | 3042 |
-| `scripts/governance/` | 496 |
-| `tests/` | 3356 |
-| **合计 / Total** | **6894** |
+| `src/zephyr/` | 3071 |
+| `scripts/governance/` | 493 |
+| `tests/` | 3465 |
+| **合计 / Total** | **7029** |
 <!-- AUTO-END:py_file_total -->
 
 ## 4. 外部权威源（全量明细）

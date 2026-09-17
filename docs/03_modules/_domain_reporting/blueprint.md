@@ -4,7 +4,7 @@ submodule_path: src/zephyr/reporting
 title: "Post Trade Analytics Core 蓝图 — 盘后分析层"
 doc_type: blueprint
 status: Active
-version: "2.1.8"
+version: "2.1.9"
 layer: L2_domain
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -45,7 +45,7 @@ build_status: generated
 design_maturity: production
 ---
 
-> module_id: MOD-L07-001 | version: 2.1.8 | status: active | domain: reporting
+> module_id: MOD-L07-001 | version: 2.1.9 | status: active | domain: reporting
 > actual_disk_path: src/zephyr/reporting/ | generation: 2 | construction_progress: partially_implemented
 
 # ✅ Post Trade Analytics Core 蓝图 — 盘后分析层
@@ -842,19 +842,7 @@ class PerformanceAttributionReport:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/governance/audit/default_attribution_engine.py` | ⚠️ 骨架 | |
-| `src/zephyr/governance/observability_governance/analytics_base.py` | ⚠️ 骨架 | |
-| `src/zephyr/reporting/default_attribution_engine.py` | ✅ 已实现 | |
-| `src/zephyr/reporting/default_tca_engine.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/reporting/test_attribution.py` | ✅ 已实现 | |
-| `tests/reporting/test_attribution_registry_mapper.py` | ✅ 已实现 | |
-| `tests/reporting/test_prediction_log_writer.py` | ✅ 已实现 | |
-| `tests/trading/pipeline/test_l07_post_trade_analytics.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

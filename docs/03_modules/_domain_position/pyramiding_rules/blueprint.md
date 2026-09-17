@@ -3,7 +3,7 @@ module_id: MOD-POS-027
 title: "金字塔加仓规则蓝图 — 资格四重门+递减阶梯限次"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -77,13 +77,7 @@ defensive_asset_whitelist=熔断期护盘窄门（特例通道）；position_siz
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/pyramiding_rules.py` | ✅ 已实现 | |
-
-### 4.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/position/test_pyramiding_rules.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 4.5 路径索引使用指南
 

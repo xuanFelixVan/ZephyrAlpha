@@ -3,7 +3,7 @@ module_id: MOD-RK-049
 title: "熔断分级判定蓝图 — 五级离散状态机"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L04_risk
@@ -49,7 +49,7 @@ design_memos/35_drawdown_protocol_impl.md §3.11/§3.14/§3.20/§6.6（原 [BLUE
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/risk/core/drawdown_state_machine.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 4.5 路径索引使用指南
 

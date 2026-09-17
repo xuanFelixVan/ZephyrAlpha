@@ -4,7 +4,7 @@ submodule_path: src/zephyr/compliance
 title: "Compliance Core 蓝图+施工图 — 合规引擎"
 doc_type: blueprint
 status: Active
-version: "2.1.10"
+version: "2.1.11"
 layer: L1_foundation
 layer_name: compliance
 functional_domain: compliance
@@ -913,17 +913,7 @@ AI 指令执行路径缺乏统一安全拦截机制——不同模块各自实�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/compliance/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/governance/compliance_gate_a6/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/governance/implementations/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/governance/implementations/default_security_gateway.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/compliance/test_async_intercept_queue.py` | ✅ 已实现 | |
-| `tests/governance/compliance/test_l10_compliance.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

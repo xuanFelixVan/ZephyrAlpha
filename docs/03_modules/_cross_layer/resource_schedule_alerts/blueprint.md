@@ -5,7 +5,7 @@ title: "排班冲突告警桥蓝图 — findings→OpsAlertFeed 唯一通道·�
 doc_type: blueprint
 template_for: blueprint
 status: Active
-version: "1.0.3"
+version: "1.0.4"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -42,7 +42,7 @@ design_maturity: production
 
 # 排班冲突告警桥蓝图 — findings→OpsAlertFeed 唯一通道·静默窗口去重·晨审可见（MOD-RESCHED-ALERT）
 
-> module_id: MOD-RESCHED-ALERT | version: 1.0.3 | status: active | layer: L0_infrastructure
+> module_id: MOD-RESCHED-ALERT | version: 1.0.4 | status: active | layer: L0_infrastructure
 > actual_disk_path: src/zephyr/infrastructure/system_telemetry/alerts/resource_schedule_alerts.py | 施工批次：资源排班全景 B4（告警）（方案 §8）
 
 ## 1. 背景与定位
@@ -109,13 +109,7 @@ design_maturity: production
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/infrastructure/system_telemetry/alerts/resource_schedule_alerts.py` | ✅ 已实现 | |
-
-### 5.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/infrastructure/test_resource_schedule_alerts.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 5.5 路径索引使用指南
 

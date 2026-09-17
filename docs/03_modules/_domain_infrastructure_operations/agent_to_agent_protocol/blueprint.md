@@ -5,7 +5,7 @@ submodule_path: src/zephyr/infrastructure/a2a_protocol
 title: "A2A Protocol 蓝图 — Agent间通信协议与冲突解决"
 doc_type: blueprint
 status: Active
-version: "0.12.9"
+version: "0.12.10"
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -78,7 +78,7 @@ design_maturity: production
 > **什么时候建**: 当同时活跃 AI Agent ≥3，或跨 Agent 任务依赖 ≥5，或 Owner 要求多 Agent 协作调度时。
 > **自动化宿主**: FLE `_periodic_checks()` → `_a2a_health_check()` + CircadianScheduler `hour=5` → `_a2a_discovery_scan()`
 
-> module_id: MOD-INF-025 | version: 0.12.9 | status: active | domain: infra_ops
+> module_id: MOD-INF-025 | version: 0.12.10 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/infra_ops/a2a_protocol/ | generation: 3 | construction_progress: scaffold
 
 # A2A Protocol 蓝图 — Agent间通信协议与冲突解决
@@ -1456,130 +1456,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/governance/a2a/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/_base_server.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/audit_logger.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/auditor.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/error_codes.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/policy_engine.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/governance/session_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer1_discovery/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer2_communication/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer2_communication/context_package.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer2_communication/handoff_manager.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_consensus.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_core_coordination.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_governance_integration.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_intelligence.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/_security_and_economics.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_agent_blocklist.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_anomaly_detector.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_behavior_fingerprint.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_blame_attribution.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_carbon.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_causal_trace.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_checkpoint.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_collusion_detector.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_consent.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_constitutional.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_context_rot.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_cross_agent_semantic_flow.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_dashboard.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_debate.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_delegation_chain.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_economics.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_forgetting.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_formal_verification.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_frame_negotiation.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_governance_adapter.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_hardware_router.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_hibernate.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_idempotency.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_idle_guard.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_immune.py` | ⚠️ 骨架 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_knowledge_distill.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_latent_comm.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_metrics.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_protocol_gateway.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_red_team.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_security.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_temporal_admission.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_tracing.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/a2a_vector_reputation.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/construction_verifier.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/semantic_diff.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/session_smuggling_defense.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/layer3_coordination/spec_sync.py` | ✅ 已实现 | |
-| `src/zephyr/infrastructure/a2a_protocol/realtime_streaming.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/a2a/test_a2a_agent_blocklist.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_anomaly_detector.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_behavior_fingerprint.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_blame_attribution.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_carbon.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_card_registry.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_causal_trace.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_checkpoint.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_collusion_detector.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_consent.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_constitutional.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_context_rot.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_cross_agent_semantic_flow.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_dashboard.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_debate.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_delegation_chain.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_economics.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_forgetting.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_formal_verification.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_frame_negotiation.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_governance.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_governance_adapter.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_hardware_router.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_hibernate.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_idempotency.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_idle_guard.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_immune.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_knowledge_distill.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_latent_comm.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_layer1_discovery.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_metrics.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_negotiation.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_protocol_gateway.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_red_team.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_saga.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_schemas.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_security.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_state.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_temporal_admission.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_tracing.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_vector_reputation.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_voting.py` | ✅ 已实现 | |
-| `tests/a2a/test_a2a_work_steal.py` | ✅ 已实现 | |
-| `tests/a2a/test_construction_verifier.py` | ✅ 已实现 | |
-| `tests/a2a/test_spec_sync.py` | ✅ 已实现 | |
-| `tests/audit/ops_resilience/test_handoff_manager.py` | ✅ 已实现 | |
-| `tests/context/test_context_package.py` | ✅ 已实现 | |
-| `tests/infrastructure/observability/test_push_notifier.py` | ✅ 已实现 | |
-| `tests/infrastructure/observability/test_streaming.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_cascade_guard.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_conflict_detector.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_deadlock_guard.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_livelock_detector.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_supervisor.py` | ✅ 已实现 | |
-| `tests/infrastructure/process_lifecycle/test_trigger_monitor.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_arbiter.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_arbitrator.py` | ✅ 已实现 | |
-| `tests/infrastructure/test_message_router.py` | ✅ 已实现 | |
-| `tests/multi/test_multi_agent_root.py` | ✅ 已实现 | |
-| `tests/phase/test_phase_hold.py` | ✅ 已实现 | |
-| `tests/semantic_auditor/test_semantic_diff.py` | ✅ 已实现 | |
-| `tests/session/test_session_smuggling_defense.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

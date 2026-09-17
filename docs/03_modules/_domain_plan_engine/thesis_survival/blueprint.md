@@ -3,7 +3,7 @@ module_id: MOD-PLAN-024
 title: "买入逻辑存活判定蓝图 — 按买入理由逐仓回查三态"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 design_maturity: production
 ttl: permanent
 layer: L07_plan
@@ -75,13 +75,7 @@ plan_deviation_monitor=计划收益偏差 z 监控；execution_deviation_attribu
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/plan_engine/thesis_survival.py` | ✅ 已实现 | |
-
-### 4.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/plan_engine/test_thesis_survival.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 4.5 路径索引使用指南
 

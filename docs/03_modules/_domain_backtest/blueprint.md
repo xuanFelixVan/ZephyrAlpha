@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.31
+version: 1.3.32
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -975,62 +975,7 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/backtest/core/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/backtest/core/cost_attribution.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/core/cost_model_calibration.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/implementations/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/io/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/io/backtest_result_sink.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/regime_validation/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/backtest/run_archive.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/backtest/test_backtest_decisiongraph_adapter.py` | ✅ 已实现 | |
-| `tests/backtest/test_backtest_result_sink.py` | ✅ 已实现 | |
-| `tests/backtest/test_bt_financial_correctness_p0.py` | ✅ 已实现 | |
-| `tests/backtest/test_c1_comparator.py` | ✅ 已实现 | |
-| `tests/backtest/test_c1_runner.py` | ✅ 已实现 | |
-| `tests/backtest/test_c2_extreme_event_protection.py` | ✅ 已实现 | |
-| `tests/backtest/test_c3_throttle_attribution.py` | ✅ 已实现 | |
-| `tests/backtest/test_c4_deflated_sharpe_runner.py` | ✅ 已实现 | |
-| `tests/backtest/test_collection_hygiene.py` | ✅ 已实现 | |
-| `tests/backtest/test_cost_attribution.py` | ✅ 已实现 | |
-| `tests/backtest/test_cost_friction_night001.py` | ✅ 已实现 | |
-| `tests/backtest/test_cost_model_calibration.py` | ✅ 已实现 | |
-| `tests/backtest/test_cost_model_wiring.py` | ✅ 已实现 | |
-| `tests/backtest/test_cpcv.py` | ✅ 已实现 | |
-| `tests/backtest/test_deadzone_provider.py` | ✅ 已实现 | |
-| `tests/backtest/test_decision_gate.py` | ✅ 已实现 | |
-| `tests/backtest/test_decision_gate_regime.py` | ✅ 已实现 | |
-| `tests/backtest/test_e2_stationary_bootstrap.py` | ✅ 已实现 | |
-| `tests/backtest/test_e3_param_sensitivity.py` | ✅ 已实现 | |
-| `tests/backtest/test_e4_cost_sensitivity.py` | ✅ 已实现 | |
-| `tests/backtest/test_engine_base.py` | ✅ 已实现 | |
-| `tests/backtest/test_event_driven_engine.py` | ✅ 已实现 | |
-| `tests/backtest/test_h3h4_cash_pit_exec_chain.py` | ✅ 已实现 | |
-| `tests/backtest/test_lane_k_market_caliber_locks.py` | ✅ 已实现 | |
-| `tests/backtest/test_limit_price_rounding_night001.py` | ✅ 已实现 | |
-| `tests/backtest/test_matching_engine.py` | ✅ 已实现 | |
-| `tests/backtest/test_matching_logic.py` | ✅ 已实现 | |
-| `tests/backtest/test_metrics.py` | ✅ 已实现 | |
-| `tests/backtest/test_metrics_dsr.py` | ✅ 已实现 | |
-| `tests/backtest/test_overfitting_detector.py` | ✅ 已实现 | |
-| `tests/backtest/test_pit_leakage_future_date.py` | ✅ 已实现 | |
-| `tests/backtest/test_pit_manager.py` | ✅ 已实现 | |
-| `tests/backtest/test_portfolio.py` | ✅ 已实现 | |
-| `tests/backtest/test_preflight_checker.py` | ✅ 已实现 | |
-| `tests/backtest/test_purged_kfold.py` | ✅ 已实现 | |
-| `tests/backtest/test_run_archive.py` | ✅ 已实现 | |
-| `tests/backtest/test_shrinkage_engine.py` | ✅ 已实现 | |
-| `tests/backtest/test_shrinkage_provider.py` | ✅ 已实现 | |
-| `tests/backtest/test_stk_limit_matching.py` | ✅ 已实现 | |
-| `tests/backtest/test_strategy_validation_pipeline.py` | ✅ 已实现 | |
-| `tests/backtest/test_tick_replay_data_handler.py` | ✅ 已实现 | |
-| `tests/backtest/test_toy_reconciliation_night001.py` | ✅ 已实现 | |
-| `tests/backtest/test_walk_forward.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

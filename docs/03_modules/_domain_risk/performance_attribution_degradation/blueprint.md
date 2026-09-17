@@ -3,7 +3,7 @@ module_id: MOD-RK-37
 title: "统一绩效归因与策略退化检测蓝图 — IC 衰减 60 日均线退化判定 + 拥挤度联动自动降权"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -105,11 +105,11 @@ IC 60 日均线衰减 >50% → 退化判定；拥挤度联动（MOD-RK-13 口径
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 测试文件
+### 6.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/risk/core/test_performance_attribution_degradation.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 

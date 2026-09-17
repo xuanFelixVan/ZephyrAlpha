@@ -3,7 +3,7 @@ module_id: MOD-SIG-137
 title: "负面否决器蓝图 — 候选池一票否决清单"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L03_stock
@@ -77,7 +77,7 @@ risk_veto_engine（MOD-RK-24）=订单级下单硬否决；strategy_cross_vote_f
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_fundamental/negative_veto.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 4.5 路径索引使用指南
 

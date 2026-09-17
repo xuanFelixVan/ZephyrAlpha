@@ -4,7 +4,7 @@ submodule_path: src/zephyr/autonomy_core
 title: "可执行 Agent Spec 蓝图 — 蓝图→Skill 升级引擎"
 doc_type: blueprint
 status: Active
-version: "0.19.10"
+version: "0.19.11"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -75,7 +75,7 @@ build_status: deprecated
 > **什么时候建**: 当未注册 Skill ≥3（新模块大量增加），或 Skill 加载失败率 ≥10%，或 Owner 要求 Skill 自发现自注册时。
 > **自动化宿主**: CircadianScheduler `hour=4` → `_skill_registration_scan()` + FLE `_periodic_checks()` → `_skill_health_check()`
 
-> module_id: MOD-INF-019 | version: 0.19.10 | status: Active | layer: cross_layer
+> module_id: MOD-INF-019 | version: 0.19.11 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/agent-spec/ | generation: 2 | construction_progress: partially_implemented
 
 ## 概述
@@ -1531,142 +1531,7 @@ Factory Agent 问 3 个问题：Q1 核心操作？Q2 独特约束/模式？Q3 �
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/autonomy_core/integration/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/skills/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/autonomy_core/skills/skill_trajectory_miner.py` | ✅ 已实现 | |
-| `src/zephyr/governance/agent_spec/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/governance/agent_spec/registry.py` | ✅ 已实现 | |
-
-### 1.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/agent/test_agent_observability.py` | ✅ 已实现 | |
-| `tests/agent/test_agent_spec_main.py` | ✅ 已实现 | |
-| `tests/agent/test_agent_spec_registry.py` | ✅ 已实现 | |
-| `tests/autonomy/test_adversarial_robustness.py` | ✅ 已实现 | |
-| `tests/autonomy/test_alignment_scorer.py` | ✅ 已实现 | |
-| `tests/autonomy/test_all_skill_modules.py` | ✅ 已实现 | |
-| `tests/autonomy/test_architecture_context_loader.py` | ✅ 已实现 | |
-| `tests/autonomy/test_assembly_context_assembler.py` | ✅ 已实现 | |
-| `tests/autonomy/test_assembly_context_injector.py` | ✅ 已实现 | |
-| `tests/autonomy/test_assembly_context_pipeline.py` | ✅ 已实现 | |
-| `tests/autonomy/test_atomic_injector.py` | ✅ 已实现 | |
-| `tests/autonomy/test_cache_invalidation.py` | ✅ 已实现 | |
-| `tests/autonomy/test_contextual_fetch_api.py` | ✅ 已实现 | |
-| `tests/autonomy/test_curation_loop_root.py` | ✅ 已实现 | |
-| `tests/autonomy/test_diff_injector.py` | ✅ 已实现 | |
-| `tests/autonomy/test_dispatch_table_root.py` | ✅ 已实现 | |
-| `tests/autonomy/test_diversity_constraint.py` | ✅ 已实现 | |
-| `tests/autonomy/test_doc_compressor_root.py` | ✅ 已实现 | |
-| `tests/autonomy/test_domain_decay_config.py` | ✅ 已实现 | |
-| `tests/autonomy/test_fallback_staleness_gate.py` | ✅ 已实现 | |
-| `tests/autonomy/test_host_resource_governor.py` | ✅ 已实现 | |
-| `tests/autonomy/test_ide_watcher.py` | ✅ 已实现 | |
-| `tests/autonomy/test_list_ce_files.py` | ✅ 已实现 | |
-| `tests/autonomy/test_mgmt_context_budget_tracker.py` | ✅ 已实现 | |
-| `tests/autonomy/test_mgmt_context_evictor.py` | ✅ 已实现 | |
-| `tests/autonomy/test_mgmt_context_rot_model.py` | ✅ 已实现 | |
-| `tests/autonomy/test_mode_manager.py` | ✅ 已实现 | |
-| `tests/autonomy/test_otel_instrumentation.py` | ✅ 已实现 | |
-| `tests/autonomy/test_parsing_intent_keyword_mapper.py` | ✅ 已实现 | |
-| `tests/autonomy/test_parsing_intent_parser.py` | ✅ 已实现 | |
-| `tests/autonomy/test_poisoning_monitor.py` | ✅ 已实现 | |
-| `tests/autonomy/test_position_optimizer.py` | ✅ 已实现 | |
-| `tests/autonomy/test_progressive_disclosure_injector.py` | ✅ 已实现 | |
-| `tests/autonomy/test_registry.py` | ✅ 已实现 | |
-| `tests/autonomy/test_sensitivity_classifier.py` | ✅ 已实现 | |
-| `tests/autonomy/test_support_architecture_context_loader.py` | ✅ 已实现 | |
-| `tests/autonomy/test_support_doc_compressor.py` | ✅ 已实现 | |
-| `tests/autonomy/test_support_prompt_registry.py` | ✅ 已实现 | |
-| `tests/autonomy/test_support_system_snapshot.py` | ✅ 已实现 | |
-| `tests/autonomy/test_system_snapshot_root.py` | ✅ 已实现 | |
-| `tests/autonomy/test_token_budget_root.py` | ✅ 已实现 | |
-| `tests/autonomy/test_trigger_router_root.py` | ✅ 已实现 | |
-| `tests/budget/test_budget_forecaster.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_cache_invalidation.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_integrity_check.py` | ✅ 已实现 | |
-| `tests/ce/test_ce_kill_switch.py` | ✅ 已实现 | |
-| `tests/context/test_context_assembler_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_evaluator_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_evictor_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_injector_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_outcome_tracker.py` | ✅ 已实现 | |
-| `tests/context/test_context_pipeline_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_playground.py` | ✅ 已实现 | |
-| `tests/context/test_context_rule_registry_root.py` | ✅ 已实现 | |
-| `tests/context/test_context_value_attribution.py` | ✅ 已实现 | |
-| `tests/dependency/test_dependency_tracker.py` | ✅ 已实现 | |
-| `tests/file/test_file_autoregister.py` | ✅ 已实现 | |
-| `tests/infrastructure/mcp/test_mcp_adapter.py` | ✅ 已实现 | |
-| `tests/intent/test_intent_keyword_mapper_root.py` | ✅ 已实现 | |
-| `tests/intent/test_intent_parser_root.py` | ✅ 已实现 | |
-| `tests/memory/test_memory_bank_root.py` | ✅ 已实现 | |
-| `tests/phase/test_phase_planner.py` | ✅ 已实现 | |
-| `tests/pipeline/test_pipeline_bridge.py` | ✅ 已实现 | |
-| `tests/pipeline/test_pipeline_orchestrator_root.py` | ✅ 已实现 | |
-| `tests/prompt/test_prompt_registry_root.py` | ✅ 已实现 | |
-| `tests/self_check/test_self_diagnosis.py` | ✅ 已实现 | |
-| `tests/self_check/test_self_evolution_fidelity_gate.py` | ✅ 已实现 | |
-| `tests/session/test_session_learner.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_attention.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_breakage_checker.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_cache_provider.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_calibration.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_canary.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_cognitive_preservation.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_compliance.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_consensus.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_constructor.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_context_isolation.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_contract.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_cross_model.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_di.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_discovery.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_durable.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_economics.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_efficacy_calibrator.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_evaluator.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_executor.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_explain.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_factory.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_feature_flags.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_feedback.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_freshness.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_freshness_ext.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_gitops.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_guardrails.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_idempotency.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_kill_switch.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_kya.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_learning.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_lifecycle.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_lineage.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_loader.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_locking.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_model.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_model_evolution.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_observability.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_ontology.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_postmortem.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_prompt_cache.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_prompt_opt.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_registry_root.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_resilience.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_risk_mitigator.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_router.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_sandbox.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_schema_registry.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_security.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_shadow.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_silent_failure.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_team_optimizer.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_telemetry.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_temperature.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_tokenomics.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_trajectory_miner.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_translator.py` | ✅ 已实现 | |
-| `tests/skill/test_skill_workflow.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

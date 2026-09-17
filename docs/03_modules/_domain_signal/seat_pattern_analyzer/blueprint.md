@@ -5,7 +5,7 @@ title: "Seat Pattern Analyzer 蓝图+施工图 — 龙虎榜席位形态分析�
 doc_type: blueprint
 status: Draft
 design_maturity: production
-version: "0.1.5"
+version: "0.1.6"
 layer: L2_domain
 functional_domain: ashare_signal
 responsibility_domain: 
@@ -43,7 +43,7 @@ priority: P1
 
 # Seat Pattern Analyzer 蓝图+施工图 — 龙虎榜席位形态分析（谁在买）
 
-> module_id: MOD-SIG-056 | version: 0.1.5 | status: Draft | layer: L2_domain
+> module_id: MOD-SIG-056 | version: 0.1.6 | status: Draft | layer: L2_domain
 > actual_disk_path: src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py | generation: 1
 
 ## 概述
@@ -570,7 +570,7 @@ design（v0.1 代码已实现+测试，depgraph design 态；merge 后统筹重�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 1.5 路径索引使用指南
 

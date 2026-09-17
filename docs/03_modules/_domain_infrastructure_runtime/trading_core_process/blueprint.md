@@ -3,7 +3,7 @@ module_id: MOD-INF-064
 title: "P3 交易核心进程规格 SSOT 蓝图 — 核 8-11 独占/8GB 禁 swap/心跳 2s/10s/HC-01 不自动重启"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_runtime
@@ -101,11 +101,11 @@ A9 运维架构 §1.1 五进程架构中 P3（trading_core，pri=15）是交易�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 测试文件
+### 6.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/trading/test_trading_core_process_spec.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 

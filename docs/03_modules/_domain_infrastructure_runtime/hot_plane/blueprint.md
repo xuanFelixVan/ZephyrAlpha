@@ -3,7 +3,7 @@ module_id: MOD-INF-065
 title: "Hot 平面（<10ms）蓝图 — Tick→风控→下单 10ms 端到端预算（2/3/5ms 分解）+资源独占声明+超限熔断告警"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.4"
 ttl: permanent
 layer: L00_infrastructure
 layer_name: infrastructure_runtime
@@ -103,11 +103,11 @@ Hot 平面是风控执行生命线。平面标记契约（runtime_plane_tag，MO
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 6.1 测试文件
+### 6.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/infrastructure/test_hot_plane_budget.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 6.5 路径索引使用指南
 

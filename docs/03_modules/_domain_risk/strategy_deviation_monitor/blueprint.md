@@ -3,7 +3,7 @@ module_id: MOD-RK-23
 title: "策略偏离监控器蓝图 — 实盘 vs 回测净值偏离双口径持续度量（55 号 G26 §3.4）"
 doc_type: blueprint
 status: Active
-version: "0.1.23"
+version: "0.1.24"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -93,12 +93,11 @@ tests/risk/core/test_strategy_deviation_monitor.py——阈值加载/三档判�
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 
-### 10.1 测试文件
+### 10.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `tests/risk/core/test_deviation_attribution.py` | ✅ 已实现 | |
-| `tests/risk/core/test_strategy_deviation_monitor.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 10.5 路径索引使用指南
 

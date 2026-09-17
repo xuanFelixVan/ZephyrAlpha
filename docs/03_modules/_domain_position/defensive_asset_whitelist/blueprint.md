@@ -3,7 +3,7 @@ module_id: MOD-POS-026
 title: "护盘资产定向加仓白名单蓝图 — 熔断期窄门三重门"
 doc_type: blueprint
 status: Active
-version: "0.1.4"
+version: "0.1.5"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -86,13 +86,7 @@ TDM-X-R1-03 节点（决策地图）；未来由 X-R1-01 drawdown_state_machine 
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/defensive_asset_whitelist.py` | ✅ 已实现 | |
-
-### 7.2 测试文件
-
-| 文件路径 | 实现状态 | 说明 |
-|---------|:---:|------|
-| `tests/position/test_defensive_asset_whitelist.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 7.5 路径索引使用指南
 

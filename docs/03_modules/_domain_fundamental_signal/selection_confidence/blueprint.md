@@ -3,7 +3,7 @@ module_id: MOD-SIG-141
 title: "顺位排序蓝图 — 候选池 confidence 排序键"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 layer: L03_decision
@@ -76,7 +76,7 @@ design_memos/21_stock_selection_engine.md §3.5/§3.6（原 [BLUEPRINT] 头引�
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/signal_fundamental/selection_confidence.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 4.5 路径索引使用指南
 
