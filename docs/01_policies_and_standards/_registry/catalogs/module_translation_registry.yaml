@@ -50411,7 +50411,14 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "给治理门禁用的重考神器：想调门禁阈值时，先用旧考卷让新阈值重考一遍，证明该拦的还在拦、没乱拦新的，才准上线。"
+  plain_zh: "给治理门禁用的重考神器：调阈值先让新尺子重考历史考卷，该拦的还在拦才准上线。"
+- module_path: scripts/backtest/translated/c4_fact_e293e217.py
+  domain_id: D_BACKTEST
+  name_zh: "e293e217 价值因子快筛桥"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "模板生成的零逻辑策略桥件：把 CAND-606a6e8e89ac 的价值因子表达式接到统一回测引擎上跑快筛考试，本身不含任何策略逻辑，PIT 与冻结规则由引擎保证。"
 
 battle_map_steps:
 - step_id: BM-BUY-05
