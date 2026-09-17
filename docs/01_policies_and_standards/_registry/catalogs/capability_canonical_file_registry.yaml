@@ -31731,4 +31731,8 @@ creation_tokens:
   token: resource-schedule-v2-resource-schedule-v2-acceptance-evidence-20260917
   created_by: st-govmap-20260915
   capability: resource_schedule_v2
+- file: docs/_working/regime_recal/regime_recal_protocol_2026_09_17.md
+  token: st-regcal-regime-recal-protocol-20260917
+  created_by: st-regcal-20260917
+  capability: regime_recalibration
 di_seam_exemptions: []
