@@ -295,6 +295,12 @@ class TestRollbackWiringTrigger:
         session.start()
         try:
             assert len(session.rebalance()) == 1  # NORMAL 态正常下单
+            # rpt_x01 适配：在途同侧抵扣治本后，结算在途单再考 THROTTLED 放行
+            from zephyr.shared.contracts.enums.order_enums import OrderStatus as _OS
+
+            for _o in session._order_manager.orders.values():
+                _o.status = _OS.FILLED
+                _o.filled_quantity = _o.quantity
             broker.submitted.clear()
             # 盘中恶化：dd 1.5% → THROTTLED（仍放行）→ 2.5% → SOFT_HALT（拦买单）
             box["data"] = {"intraday_dd": 0.015, "trade_count": 100}

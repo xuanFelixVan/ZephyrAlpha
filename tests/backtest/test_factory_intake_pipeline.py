@@ -67,6 +67,7 @@ class TestRunPipeline:
                                "verdict": "precheck_rejected"}]}
 
         monkeypatch.setattr(mod_e2, "run", _e2)
+        self._e2_state = state
         return e1b_called
 
     def test_chaining_and_summary(self, monkeypatch):
@@ -75,10 +76,14 @@ class TestRunPipeline:
                                   limit_precheck=2, dry_run=True)
         assert report["lanes"]["D_three_high"]["candidates"] == 7
         assert "B_idea_gen" not in report["lanes"]
-        assert report["e2_precheck"]["prechecked"] == 10  # 五车道台账（D/B/C/C2/G 实存）× limit 2
-        assert report["e2_precheck"]["passed"] == 5
+        # 车道清单随共享文件演进（F/I 等并行会话新增，存在才消费）——
+        # 按 stub 实际被调用次数推导，锁契约（每车道 limit 2、各过 1）不锁车道数
+        lanes_n = self._e2_state["n"]
+        assert lanes_n >= 5  # 基础五车道（D/B/C/C2/G）必须实存
+        assert report["e2_precheck"]["prechecked"] == lanes_n * 2
+        assert report["e2_precheck"]["passed"] == lanes_n
         assert sorted(report["e2_precheck"]["e3_ready_candidates"]) == [
-            "CAND-ok1", "CAND-ok2", "CAND-ok3", "CAND-ok4", "CAND-ok5"]
+            f"CAND-ok{i}" for i in range(1, lanes_n + 1)]
         assert report["started_at"] and report["finished_at"]
 
     def test_lane_b_optional(self, monkeypatch):

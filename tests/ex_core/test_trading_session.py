@@ -556,6 +556,19 @@ def test_three_state_consistency_with_simulation_broker() -> None:
     session.stop()
 
 
+def _settle_inflight(session) -> None:
+    """rpt_x01 P1 适配：rebalance 之间把在途单置 FILLED（模拟成交离场）。
+
+    在途同侧抵扣治本后，未结算的在途单会抑制同向重复下单——频次类测试
+    需要的"多次 rebalance 多次下单"语义现在必须显式结算在途单。
+    """
+    from zephyr.shared.contracts.enums.order_enums import OrderStatus
+
+    for o in session._order_manager.orders.values():
+        o.status = OrderStatus.FILLED
+        o.filled_quantity = o.quantity
+
+
 def test_multiple_rebalances_increment_counts() -> None:
     """多次 rebalance 累计 submitted_count。"""
     broker = MagicMock()
@@ -567,6 +580,7 @@ def test_multiple_rebalances_increment_counts() -> None:
         config=TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker"),
     )
     session.rebalance()
+    _settle_inflight(session)
     session.rebalance()
     report = session.get_session_report()
     assert report["submitted_count"] == 2
@@ -718,6 +732,7 @@ def test_circuit_breaker_symbol_frequency_limit() -> None:
     # 第一次 rebalance：放行（计数 1）
     orders1 = session.rebalance()
     assert len(orders1) == 1
+    _settle_inflight(session)
     # 第二次 rebalance：放行（计数 2）
     orders2 = session.rebalance()
     assert len(orders2) == 1
@@ -794,6 +809,7 @@ def test_circuit_breaker_reset_daily() -> None:
     assert len(orders1) == 1  # 第一笔放行
     orders2 = session.rebalance()
     assert len(orders2) == 0  # 频次超限阻断
+    _settle_inflight(session)
     # 重置当日计数
     session.reset_daily_circuit_breaker()
     orders3 = session.rebalance()
@@ -1313,6 +1329,7 @@ class TestSessionFeedsRiskPipeline:
         monkeypatch.setattr(TradingSession, "build_risk_snapshot", _counting)
         assert len(session.rebalance()) == 2
         assert len(calls) == 1
+        _settle_inflight(session)
         # 下一批必须重装配（不吃上一批的过期真相）
         assert len(session.rebalance()) == 2
         assert len(calls) == 2
