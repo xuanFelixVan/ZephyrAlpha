@@ -257,11 +257,25 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 | M4 清空**整装路径**落盘名册 `_PERSISTED_VIA_METRICS_TS_KEYS` | 同上 | 同上（GT-15 结构差集闸 + 读盘三断同时红） | `2 failed, 23 passed` → RED |
 | M5 清空 **CLI 单策略路径**落盘名册（本轮 R-H4B-s 新增的第二生产路径） | `scripts/run_backtest.py` | 同上（`test_cli_backtest_artifact_carries_cash_leg` 三判据） | `2 failed, 23 passed` → RED |
 | M6 事件账本派生计数 `summary.by_audit_level.medium` 9→8 | `architecture_model/events/domain_events.yaml` | `tests/governance/test_validate_yaml_summaries.py` | `1 failed, 4 passed` → RED |
+| M7 在**未跟踪但未忽略**的新草稿文件里写错 `parents[N]`（`scripts/_gt13_probe_tmp.py:3` 写 `parents[2]`，真值 `[1]`）——专打 GT-13 治本后收窄的观测面是否丢了这半边覆盖 | `scripts/governance/d1_structure/validate_config_integrity.py` L4 | 探针直调 `_l4_scan_files()` + `l4_path_constants()`（该形态无专属测试，见下） | `warnings 15→16`，条目 `[L4] scripts/_gt13_probe_tmp.py:3 REPO_ROOT 使用 parents[2]（期望 parents[1]）`，删探针后回 15 → RED-then-clean |
 
 `restore check`：4 个被变异文件的 `git status --porcelain` 输出 = `''`（字节级原样还原）。
 M4/M5 各炸 2 条，说明"登记名册 → 采集器构造 → 读盘断言"三处互相咬合：任一处单独放松即红，
 这正是 GT-15 要的形态（不是靠人记得同步三处）。M1 是 GT-15 的镜像用法——台账里"实测值"与
 宿主源码落地状态由同一契约测试绑定，改坏措辞即失去豁免并被判红。
+
+**M7 的两条自我推翻（不写下来这条台账就会教出下一个坑）**：
+
+1. 第一次投探针写成 `parents[1]`，检测器**没报警**——不是漏检，是我的"错值"其实是对的
+   （`scripts/*.py` 到根正好一层）。变异若本身不坏，看守侧的沉默就不是失职。故 M7 的
+   真判据是"探针必须先被证明是坏的"：改用 `parents[2]` 后同一形态立刻入警。
+2. M7 只有**直调函数**这一条路，没有等价的红测可跑：L4 的判据在 `validate_config_integrity.py`
+   里，快层只以 `--warn-only` 跑（§8 已记：强制项 `trae_016:117` 把"配置一致"定义成
+   `exit 0`，而快层永远 warn-only ⇒ L4 的 WARN 从不阻断）。收窄观测面这件事本身由
+   §10 的 B5/B6 两轮 7341 passed 兜住回归，但"新增未跟踪草稿即报警"这条**正向能力**目前
+   只有本探针的一次性实证，没进任何测试——登记为残余 **R-GT13-a**（判据：给
+   `tests/governance/d1_structure/` 补一条夹具级断言，在 tmp 造一个 parents 写错的文件、
+   断言 `l4_path_constants()` 命中该路径，随后删除）。
 
 
 ## 10 双次复验台账（连续两轮同范围，判据=两轮问题数 0 且失败集差为空）
