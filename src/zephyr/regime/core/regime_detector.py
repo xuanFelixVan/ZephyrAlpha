@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-PA-007(RegimeMetaAllocator消费RegimeProbabilities+Shrinkage); BM-BT-03-E(回测验证消费7维概率)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] RegimeProbabilities.probabilities Σ=1.0; Shrinkage≤1.0(只减不增); shrinkage_enabled=False时Shrinkage=1.0; HMM 4态walk-forward季度重拟合; 不输出硬标签只输出7维灰度概率(4 HMM+3 overlay)
+# [INVARIANTS] RegimeProbabilities.probabilities Σ=1.0; Shrinkage≤1.0(只减不增); shrinkage_enabled=False时Shrinkage=1.0; HMM 4态walk-forward季度重拟合; 不输出硬标签只输出7维灰度概率(4 HMM+3 overlay); HMM组件锚定（裁定#304：fit后按训练窗特征统计确定性重排到固定语义槽位，跨refit态身份可比）
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -46,12 +46,32 @@ Shrinkage 风险节流因子，供 RegimeMetaAllocator 做 budget 分配。是 r
       r3: vol_pct=+0.58, slope=+0.149, fr_5d=+0.0039（强涨量增，最高正收益）
       r4: vol_pct=-0.44, slope=-0.049, fr_5d=-0.0014（唯一负收益，阴跌）
 
+HMM 组件锚定（裁定#304，2026-09-17 重校批，预注册协议=docs/_working/regime_recal/
+regime_recal_protocol_2026_09_17.md R1；实证诊断=同目录 diagnosis_result.json）：
+    病：walk-forward 季度 refit 的组件顺序无跨期锚（无监督 EM 的经典 label
+    switching），fit() 选择的 n_init=3 最优解组件编号任意——r4 标签在不同季度
+    对应不同真实市场态。实证（VAL-P0-20260916-230726，1812 日）：r4 名义"熊市"
+    但 fwd20 前向收益两段均正（IS Δ+0.23%/OOS Δ+0.69%）、季符号一致率 0.571、
+    相邻季翻转率 0.667；r1/r3 方向 IS→OOS 完全反转（Welch 双段 p<1e-3）；
+    S-OWNER-002 切换器据此系统性卖在低位（方向失真）。
+    治：fit() 后对组件做确定性锚定重排（apply_label_anchored_order）——
+    r4 槽位=训练窗斜率均值最小（负斜率）组件；其余按波动率均值升序占 r1/r2/r3
+    槽位。锚定统计量只用训练窗（PIT），跨 refit 槽位语义可比，label switching
+    结构性消除。锚定只重排组件参数（means_/covars_/startprob_/transmat_），
+    不改似然/概率集合（对数似然与 ΣP 不变，A1/A2 模型质量指标不受影响）。
+    X 列序假设=MOD-REGIME-002 FEATURE_NAMES（列0=realized_vol_pct 主锚，
+    列2=kalman_slope 次锚）；n_states≠4 或列数不足时跳过锚定（降级原行为）。
+    ⚠️ 实证语义警示（裁定同批登记）：锚定恢复的是**标签语义稳定性**，不恢复
+    "态→前向收益方向"的预测力——高波/危机态后的暴跌反弹溢价（r4/r10 fwd20
+    非负）是市场结构性质，方向判别职责按裁定 #229/#230 同批精神归因子层，
+    态层职责=风险分档。消费方（切换器类）禁按名义语义把 r4/r10 直译"看空"。
+
 降级策略（blueprint §7.4）：hmmlearn 不可用 / 拟合失败 → HMM 4 态均匀分布 P=1/4；
 RiskSignalInputs 缺失 → RiskSignal=1.0；OverlaySignals 缺失 → 退化为纯 HMM。
 
-依据: 10_regime_detector_spec v1.3.1（原12态spec）/ 11_regime_backtest_validation_plan v1.0.0（验证方案）/ 13_regime_phase3_engineering_plan §2.1（4态降维）
+依据: 10_regime_detector_spec v1.3.1（原12态spec）/ 11_regime_backtest_validation_plan v1.0.0（验证方案）/ 13_regime_phase3_engineering_plan §2.1（4态降维）/ docs/_working/regime_recal/regime_recal_protocol_2026_09_17.md（重校批预注册协议）
 SSoT: depgraph MOD-REGIME-001
-Version: 0.3.0
+Version: 0.4.0
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml
 """
@@ -78,6 +98,79 @@ _logger = logging.getLogger(__name__)
 REGIME_STATES: list[str] = ["r1", "r2", "r3", "r4", "r10", "r11", "r12"]
 HMM_STATES: list[str] = [f"r{i}" for i in range(1, 5)]
 OVERLAY_STATES: list[str] = ["r10", "r11", "r12"]
+
+# HMM 组件锚定（2026-09-17 重校批，预注册协议 R1）：锚定统计量在 X 矩阵中的列。
+# 列序假设 = MOD-REGIME-002 FEATURE_NAMES 钉死序（列0=realized_vol_pct，列2=kalman_slope）。
+# 主锚=波动率均值升序（r1 低波 → r3 高波），次锚=斜率均值最小（r4 负斜率阴跌）。
+ANCHOR_VOL_COL: int = 0
+ANCHOR_SLOPE_COL: int = 2
+
+
+def anchored_component_order(
+    means: "np.ndarray",
+    vol_col: int = ANCHOR_VOL_COL,
+    slope_col: int = ANCHOR_SLOPE_COL,
+) -> list[int] | None:
+    """按训练窗组件特征均值算确定性槽位重排（纯函数；预注册协议 R1）。
+
+    槽位语义（沿用历史枚举名，实证含义见模块 docstring 锚定节）：
+        槽0 r1 = 其余组件中波动率均值最低（低波）
+        槽1 r2 = 波动率均值次低（中波）
+        槽2 r3 = 波动率均值最高（高波/强趋势）
+        槽3 r4 = 斜率均值最小的组件（负斜率，阴跌；先于波动率排序被挑走）
+
+    Args:
+        means: GaussianHMM.means_，形状 (K, F)（标准化空间，排序不受量纲影响）。
+        vol_col: 波动率特征列号（主锚）。
+        slope_col: 斜率特征列号（次锚）。
+
+    Returns:
+        order：order[槽位] = 原组件索引；不可锚定（K≠4 或列数不足）返回 None。
+    """
+    import numpy as np  # noqa: PLC0415 — 惰性导入范式（与模块一致）
+
+    means = np.asarray(means, dtype=float)
+    k, f = means.shape
+    if k != 4 or f <= max(vol_col, slope_col):
+        return None
+    slope_comp = int(np.argmin(means[:, slope_col]))
+    rest = [i for i in range(k) if i != slope_comp]
+    vol_sorted = sorted(rest, key=lambda i: (float(means[i, vol_col]), i))
+    return [vol_sorted[0], vol_sorted[1], vol_sorted[2], slope_comp]
+
+
+def apply_label_anchored_order(
+    model: Any,
+    vol_col: int = ANCHOR_VOL_COL,
+    slope_col: int = ANCHOR_SLOPE_COL,
+) -> bool:
+    """把拟合好的 GaussianHMM 组件参数按锚定序原地重排（预注册协议 R1）。
+
+    重排 means_/covars_/startprob_/transmat_（tied 协方差无组件维，跳过）。
+    只换组件顺序不改似然/概率集合——A1/A2 模型质量指标与 ΣP 不变量零影响。
+    fit() 后调用，使 detect() 输出的 HMM_STATES[i] 对应固定语义槽位，
+    walk-forward 跨季度 refit 的态身份可比（label switching 结构性消除）。
+
+    Returns:
+        True=已重排；False=跳过（K≠4 / 列数不足 / 排序计算失败，保持原行为）。
+    """
+    try:
+        import numpy as np  # noqa: PLC0415
+
+        order = anchored_component_order(model.means_, vol_col, slope_col)
+        if order is None:
+            return False
+        idx = np.asarray(order, dtype=int)
+        model.means_ = model.means_[idx]
+        if getattr(model, "covariance_type", "") != "tied":
+            model.covars_ = model.covars_[idx]
+        model.startprob_ = model.startprob_[idx]
+        model.transmat_ = model.transmat_[np.ix_(idx, idx)]
+        return True
+    except Exception as exc:  # noqa: BLE001 — 锚定失败不阻断 fit（降级原行为并留痕）
+        _logger.warning("HMM 组件锚定跳过（降级原组件顺序）: %s", exc)
+        return False
+
 
 # 8 转换（10_regime_detector_spec §4，T1-T6 趋势/震荡转换 + S1/S2 恐慌/复苏转换）
 TRANSITIONS: list[str] = ["T1", "T2", "T3", "T4", "T5", "T6", "S1", "S2"]
@@ -359,6 +452,7 @@ class RegimeDetector:
         state_frequencies: dict[str, float] | None = None,
         temperature: float = 1.0,
         overlay_gated: bool = True,
+        anchor_labels: bool = True,
     ) -> None:
         """初始化 Regime 检测器。
 
@@ -381,11 +475,17 @@ class RegimeDetector:
                 (CRISIS→RECOVERY) 在危机结束（#1≥1.0）时点的触发能被 B4 验证捕获。
                 与 _compute_risk_signal 的 #1 门控对齐（#1>=1.0 时 RiskSignal=1.0）。
                 False → overlay 全程生效（ungated，诊断用，如 dump_overlay_triggers.py）。
+            anchor_labels: HMM 组件锚定开关（2026-09-17 重校批，预注册协议 R1）。
+                True（默认）→ fit() 成功后按训练窗特征统计把组件确定性重排到固定语义
+                槽位（apply_label_anchored_order），跨 refit 态身份可比，label switching
+                结构性消除；锚定只用训练窗数据（PIT），不改似然与概率集合。
+                False → 原行为（组件顺序=EM 返回顺序，跨期不可比；A/B 对照用）。
         """
         self.hmm_params = hmm_params or {"n_states": 4, "covariance_type": "full", "n_iter": 100}
         self.shrinkage_enabled = shrinkage_enabled
         self.temperature = float(temperature)
         self.overlay_gated = overlay_gated
+        self.anchor_labels = bool(anchor_labels)
         self._hmm_model: Any = None  # hmmlearn GaussianHMM，fit() 后赋值
         self._hmm_degraded: bool = False  # hmmlearn 不可用 / 拟合失败标记
         # 各态历史频率（稀有态判断用），默认按 13_regime_phase3_engineering_plan §2.1 Viterbi 全历史统计
@@ -517,6 +617,13 @@ class RegimeDetector:
             self._hmm_degraded = True
             self._hmm_model = None
             raise HMMFittingError(f"GaussianHMM.fit 不收敛: {last_exc}") from last_exc
+        # 组件锚定（2026-09-17 重校批，预注册协议 R1）：把最优解组件确定性重排到固定
+        # 语义槽位，使跨季度 refit 的 HMM_STATES 标签可比（label switching 结构性消除）。
+        # 只在训练矩阵上算统计（PIT）；失败/不适用时降级原顺序（返回 False，不阻断 fit）。
+        if self.anchor_labels:
+            applied = apply_label_anchored_order(best_model)
+            if applied:
+                _logger.debug("HMM 组件锚定完成: %s", best_model.means_.tolist())
         self._hmm_model = best_model
         self._hmm_degraded = False
 

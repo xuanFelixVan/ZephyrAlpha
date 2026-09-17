@@ -258,7 +258,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-17
   name_zh: 大盘总闸
   market: cn_a
   flow: entry_flow
@@ -273,6 +273,8 @@ nodes:
     src/zephyr/pf_alloc/core/vol_target_allocator.py（MOD-BT-082），
     蓝图=docs/_working/2026-09-13-tdm-upgrade-blueprint.md；Phase 2 完整凯利待车道 E 分布预测。
     （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变）
+    （裁定#304 2026-09-17：HMM 组件跨季锚定落地——r4 槽=训练窗负斜率、r1-r3 槽=波动率升序，
+    态名跨季可比；实证警示 r4/r10/r1 无稳定方向信息（反弹溢价），谨慎度按风险分档口径读，方向判别归因子层）
   factor_refs: []
   data_refs: [DS-150]
   module_ref: src/zephyr/regime/core/regime_detector.py
@@ -482,7 +484,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1-AGG
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-17
   name_zh: 市场状态判定
   market: cn_a
   flow: entry_flow
@@ -500,7 +502,9 @@ nodes:
     接管）；日级水温受月/周档位封顶"
   algo_note_zh: "双轴相乘：宏观 RegimeSnapshot 概率（月级 7 态）×情绪六段分布（周级）。两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁。输出三件套：预算带（给
     C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。（2026-09-15 ALGO_FLOW 块出仓至
-    docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变）"
+    docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变；
+    裁定#304 2026-09-17：HMM 组件跨季锚定落地（r4=负斜率槽，r1-r3=波动率升序），r4/r10/r1 方向语义退役，
+    概率轴消费口径=风险分档，方向判别归因子层）"
   factor_refs: []
   data_refs: [DS-098]
   module_ref: src/zephyr/regime/core/regime_detector.py

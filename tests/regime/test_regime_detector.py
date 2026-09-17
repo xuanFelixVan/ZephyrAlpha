@@ -36,6 +36,8 @@ import numpy as np
 import pytest
 
 from zephyr.regime.core.regime_detector import (
+    ANCHOR_SLOPE_COL,
+    ANCHOR_VOL_COL,
     HMM_STATES,
     OVERLAY_STATES,
     REGIME_STATES,
@@ -47,6 +49,8 @@ from zephyr.regime.core.regime_detector import (
     RegimeProbabilities,
     ShrinkageResult,
     TransitionTriggered,
+    anchored_component_order,
+    apply_label_anchored_order,
 )
 
 try:
@@ -766,3 +770,120 @@ class TestEndToEnd:
         assert shrink.risk_signal <= 0.31  # 极端风险
         # conf=1.0(≥0.50)×0.85(r10稀有态)=0.85, risk=0.30 → shrink=0.255（强收缩）
         assert abs(shrink.value - 0.85 * 0.30) < 0.01
+
+
+# ── 10. HMM 组件锚定（2026-09-17 重校批，预注册协议 R1）────────────────
+
+
+class TestAnchoredComponentOrder:
+    """anchored_component_order / apply_label_anchored_order（纯函数+端到端）。"""
+
+    def test_order_basic_slots(self):
+        """基础槽位映射：低波→r1、中波→r2、高波→r3、负斜率→r4。"""
+        means = np.array(
+            [
+                [0.2, 0.0],  # comp0 低波
+                [0.5, 0.1],  # comp1 中波
+                [0.9, 0.3],  # comp2 高波
+                [0.4, -0.5],  # comp3 负斜率（熊）
+            ]
+        )
+        order = anchored_component_order(means, vol_col=0, slope_col=1)
+        assert order == [0, 1, 2, 3]
+
+    def test_order_bear_carries_most_negative_slope_not_vol(self):
+        """熊槽位=斜率最小者（即使它同时是最低波），低波槽位顺延给次低波组件。"""
+        means = np.array(
+            [
+                [-1.0, -0.8],  # comp0 最低波且斜率最负 → 被 r4 挑走
+                [0.1, 0.0],  # comp1 → r1（顺延）
+                [0.6, 0.2],  # comp2 → r2
+                [1.2, 0.5],  # comp3 → r3
+            ]
+        )
+        order = anchored_component_order(means, vol_col=0, slope_col=1)
+        assert order == [1, 2, 3, 0]
+
+    def test_order_tie_breaks_by_component_index(self):
+        """波动率完全相同 → 按组件索引升序（确定性）。"""
+        means = np.array(
+            [
+                [0.5, 0.0],
+                [0.5, 0.0],
+                [0.5, 0.0],
+                [0.5, -1.0],
+            ]
+        )
+        order = anchored_component_order(means, vol_col=0, slope_col=1)
+        assert order == [0, 1, 2, 3]
+
+    def test_order_none_on_shape_mismatch(self):
+        """K≠4 或列数不足 → None（跳过锚定，降级原行为）。"""
+        assert anchored_component_order(np.zeros((3, 6))) is None
+        assert anchored_component_order(np.zeros((5, 6))) is None
+        assert anchored_component_order(np.zeros((4, 2))) is None  # 无 slope 列
+
+    @skip_no_hmmlearn
+    def test_apply_permutation_invariance_redblue(self, synthetic_features):
+        """红蓝②：组件任意置换后重放锚定 → 参数与 detect 概率逐项还原。"""
+        detector = RegimeDetector(shrinkage_enabled=True)
+        detector.fit({"X": synthetic_features})
+        model = detector._hmm_model
+        anchored_means = model.means_.copy()
+        anchored_trans = model.transmat_.copy()
+        anchored_start = model.startprob_.copy()
+        X_window = synthetic_features[-60:]
+
+        base_probs, _ = detector.detect({"X": X_window}, {}, {"params": {1: 1.0}})
+
+        # 任意置换组件（模拟另一季 EM 返回不同顺序）
+        perm = [2, 0, 3, 1]
+        idx = np.asarray(perm)
+        model.means_ = model.means_[idx]
+        if getattr(model, "covariance_type", "") != "tied":
+            model.covars_ = model.covars_[idx]
+        model.startprob_ = model.startprob_[idx]
+        model.transmat_ = model.transmat_[np.ix_(idx, idx)]
+
+        assert apply_label_anchored_order(model) is True
+        np.testing.assert_allclose(model.means_, anchored_means, atol=1e-12)
+        np.testing.assert_allclose(model.transmat_, anchored_trans, atol=1e-12)
+        np.testing.assert_allclose(model.startprob_, anchored_start, atol=1e-12)
+        probs2, _ = detector.detect({"X": X_window}, {}, {"params": {1: 1.0}})
+        for s in HMM_STATES:
+            assert abs(probs2.hmm_probabilities[s] - base_probs.hmm_probabilities[s]) < 1e-10
+
+    @skip_no_hmmlearn
+    def test_fit_slots_ordered_after_anchor(self, synthetic_features):
+        """端到端：fit() 后槽位有序（r1≤r2≤r3 波动率升序，r4 斜率最小）。"""
+        detector = RegimeDetector(shrinkage_enabled=True)
+        detector.fit({"X": synthetic_features})
+        means = detector._hmm_model.means_
+        assert means[0, ANCHOR_VOL_COL] <= means[1, ANCHOR_VOL_COL] <= means[2, ANCHOR_VOL_COL]
+        assert int(np.argmin(means[:, ANCHOR_SLOPE_COL])) == 3
+
+    @skip_no_hmmlearn
+    def test_anchor_labels_disabled_skips(self, synthetic_features, monkeypatch):
+        """anchor_labels=False → 不调用锚定（A/B 对照通道）。"""
+        called = []
+        import zephyr.regime.core.regime_detector as mod
+
+        original = mod.apply_label_anchored_order
+
+        def spy(model, *a, **kw):
+            called.append(True)
+            return original(model, *a, **kw)
+
+        monkeypatch.setattr(mod, "apply_label_anchored_order", spy)
+        detector = RegimeDetector(shrinkage_enabled=True, anchor_labels=False)
+        detector.fit({"X": synthetic_features})
+        assert called == []
+
+    @skip_no_hmmlearn
+    def test_detect_sum1_and_states_after_anchor(self, detector, synthetic_features):
+        """锚定默认开：fit 后 detect 输出仍满足 Σ=1 与键集不变（INVARIANTS）。"""
+        detector.fit({"X": synthetic_features})
+        probs, _ = detector.detect({"X": synthetic_features[-30:]}, {}, {"params": {1: 1.0}})
+        assert abs(sum(probs.probabilities.values()) - 1.0) < 1e-6
+        assert set(probs.probabilities) == set(REGIME_STATES)
+
