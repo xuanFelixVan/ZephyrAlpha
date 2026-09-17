@@ -32637,4 +32637,36 @@ creation_tokens:
   created_by: st-mineline-w401
   capability: quality_sentinel
 
+- file: src/zephyr/strategy_factory/owner_regime_switcher/switcher.py
+  token: auto-scaffold-switcher-20260917
+  created_by: scaffold.py
+  capability: switcher
+- file: src/zephyr/strategy_factory/owner_regime_switcher/packages.py
+  token: auto-scaffold-packages-20260917
+  created_by: scaffold.py
+  capability: packages
+- file: src/zephyr/strategy_factory/owner_regime_switcher/costs.py
+  token: auto-scaffold-costs-20260917
+  created_by: scaffold.py
+  capability: costs
+- file: src/zephyr/strategy_factory/owner_regime_switcher/data_loader.py
+  token: auto-scaffold-data_loader-20260917
+  created_by: scaffold.py
+  capability: data_loader
+- file: src/zephyr/strategy_factory/owner_regime_switcher/engine.py
+  token: auto-scaffold-engine-20260917
+  created_by: scaffold.py
+  capability: engine
+- file: src/zephyr/strategy_factory/owner_regime_switcher/exam.py
+  token: auto-scaffold-exam-20260917
+  created_by: scaffold.py
+  capability: exam
+- file: scripts/strategy_factory/run_s_owner_002_exam.py
+  token: auto-scaffold-strategy_factory_run_s_owner_002_exam-20260917
+  created_by: scaffold.py
+  capability: strategy_factory_run_s_owner_002_exam
+- file: docs/_working/kimi_audit/nightbuild/e2e/e2e_result.md
+  token: kimi-audit-nightbuild-e2e-result-20260918
+  created_by: flash-nightbuild-20260918
+  capability: kimi_audit_nightbuild
 di_seam_exemptions: []
