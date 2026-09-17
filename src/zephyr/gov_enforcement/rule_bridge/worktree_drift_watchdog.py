@@ -394,6 +394,20 @@ def _save_state(root: Path, state: dict) -> None:
         os.replace(tmp, p)  # 原子写，防半状态
 
 
+def _heartbeat(root: Path, state: dict) -> None:
+    """低频活着证明（R-05/S18 kimi-audit）：每 UTC 日至多一行 verdict=heartbeat。
+
+    治本后审计主流量=指纹变化，零变化日的唯一落盘即本行——用于区分「watchdog
+    死了」与「全仓零漂移」。须在 _save_state 之前调用（heartbeat_date 随 state
+    一并落盘）；跨进程日界竞态至多双写一行，可接受不硬防。
+    """
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if state.get("heartbeat_date") == today:
+        return
+    state["heartbeat_date"] = today
+    _audit(root, {"ts": _now_iso(), "verdict": "heartbeat", "date": today})
+
+
 def _audit(root: Path, record: dict) -> None:
     """归因审计（P0-2）：.runtime/audit/worktree_drift_watchdog.jsonl，永不回 tracked 区。
     R5.2 红队治本：并发 append 行丢失——进程内锁串行化（跨进程追加由 OS 保证）。"""
@@ -1267,7 +1281,13 @@ def scan_once(
                 files_state.pop(rel, None)
                 summary["healed"] += 1
 
-        _save_state(root, state)
+    # R-05 治本（S18 kimi-audit）：指纹状态持久化与 alert 门控解耦——files_state
+    # 是全模式共享的去重真源，observe-only 即时扫也必须落盘，否则每笔 commit 的
+    # 即时扫重读旧 state、同哈希漂移重复写审计（取证：账本约 37% 为零变化重复写）。
+    # 告警状态（alerted/critical_warn/clean 自愈）仍由 daemon 单写——观察员只推进
+    # 指纹，检测内容与告警语义零变化。
+    _heartbeat(root, state)
+    _save_state(root, state)
     return summary
 
 

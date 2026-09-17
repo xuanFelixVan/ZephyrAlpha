@@ -57,6 +57,10 @@ _LEDGER = Path(".runtime/audit/bottleneck_ledger.jsonl")
 # >24h → 自动写告警行进堵点本+logger.error，供高模型维护班开班信号。
 _LEDGER_ALERT_THRESHOLD = 20
 _LEDGER_ALERT_AGE_S = 86400.0
+# R-06（S18 kimi-audit G2）：堵点本告警冷却窗——同一积压档位在窗口内不重复落盘；
+# 档位翻转（积压↑↓跨档）立即落盘。参数化选型=模块常量（与上方阈值常量同处，
+# 沿用 Owner 自裁口径；冷却只控"什么时候落盘"，阈值判据与告警内容语义零变化）。
+_LEDGER_ALERT_COOLDOWN_S = 1800.0
 # 自举连续环境失败升级阈值（债1 serializer 自举循环的可见化）：连续 3 次
 # drain 环境异常 → 堵点本 CRITICAL 行（不静默循环）。
 _ENV_ABORT_ESCALATE = 3
@@ -165,22 +169,76 @@ def _check_ledger_backlog() -> None:
                 except (ValueError, TypeError):
                     pass
         age_s = (datetime.now().astimezone() - oldest_ts).total_seconds() if oldest_ts else 0.0
-        if n >= _LEDGER_ALERT_THRESHOLD or age_s > _LEDGER_ALERT_AGE_S:
-            from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+        # ── R-06 冷却状态机（S18 kimi-audit G2）────────────────────────────
+        # 改前：无状态变化检测，越阈期间每 tick 重写同一事实（取证：1095 行同事实
+        # 告警落盘间隔 P50 2.0s）。改后：档位翻转立即落盘；同档位冷却窗内不重复；
+        # 冷却期后同档位重报一次并刷新窗口。阈值判据与告警内容语义零变化。
+        level = _backlog_alert_level(n, age_s)
+        prev_level, prev_ts = _load_backlog_alert_state()
+        now = time.time()
+        if not level:
+            if prev_level:
+                _save_backlog_alert_state("", prev_ts)  # 回落清零档位：下次越阈按翻转立即出声
+            return
+        if level == prev_level and (now - prev_ts) < _LEDGER_ALERT_COOLDOWN_S:
+            return  # 同档位冷却窗内：不重复落盘
+        from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
 
-            with _LEDGER.open("a", encoding="utf-8") as fh:
-                fh.write(_json.dumps({
-                    "ts": now_utc().isoformat(),
-                    "kind": "alert",
-                    "alert": "bottleneck_backlog_threshold",
-                    "pending_items": n,
-                    "oldest_age_s": round(age_s),
-                    "protocol": "维护班开班信号：积压超阈（≥20 条或最老>24h）——由高模型维护班清账",
-                }, ensure_ascii=False) + chr(10))
-            logger.error(
-                "belt_daemon: 堵点本积压超阈 items=%d oldest_age_h=%.1f——维护班开班信号已写入",
-                n, age_s / 3600,
-            )
+        with _LEDGER.open("a", encoding="utf-8") as fh:
+            fh.write(_json.dumps({
+                "ts": now_utc().isoformat(),
+                "kind": "alert",
+                "alert": "bottleneck_backlog_threshold",
+                "pending_items": n,
+                "oldest_age_s": round(age_s),
+                "backlog_level": level,
+                "protocol": "维护班开班信号：积压超阈（≥20 条或最老>24h）——由高模型维护班清账",
+            }, ensure_ascii=False) + chr(10))
+        logger.error(
+            "belt_daemon: 堵点本积压超阈 items=%d oldest_age_h=%.1f——维护班开班信号已写入",
+            n, age_s / 3600,
+        )
+        _save_backlog_alert_state(level, now)
+    except OSError:
+        pass
+
+
+def _backlog_alert_level(n: int, age_s: float) -> str:
+    """积压档位签名（R-06）：阈值判据不变，只把越阈组合归一为可比状态。
+
+    ""=未越阈；"count"=条数越阈；"age"=账龄越阈；"count+age"=双越阈。
+    档位翻转（含 ↑↓ 跨档）= 状态变化 → 立即落盘。
+    """
+    parts = []
+    if n >= _LEDGER_ALERT_THRESHOLD:
+        parts.append("count")
+    if age_s > _LEDGER_ALERT_AGE_S:
+        parts.append("age")
+    return "+".join(parts)
+
+
+def _backlog_alert_state_path() -> Path:
+    """冷却状态文件与堵点本同目录（随 _LEDGER 重定位，测试隔离自洽）。"""
+    return _LEDGER.with_name("bottleneck_backlog_alert_state.json")
+
+
+def _load_backlog_alert_state() -> tuple[str, float]:
+    """读冷却状态；缺失/损坏=按未知处理（宁可多报不漏报——红线=冷却期漏报翻转）。"""
+    try:
+        raw = json.loads(_backlog_alert_state_path().read_text(encoding="utf-8"))
+        return str(raw.get("level", "")), float(raw.get("last_alert_ts", 0.0))
+    except Exception:  # noqa: BLE001
+        return "", 0.0
+
+
+def _save_backlog_alert_state(level: str, last_alert_ts: float) -> None:
+    """原子写冷却状态（tmp+os.replace，对齐 drift watchdog 落盘口径）。"""
+    try:
+        p = _backlog_alert_state_path()
+        p.parent.mkdir(parents=True, exist_ok=True)
+        tmp = p.with_name(f"{p.stem}.{os.getpid()}.tmp")
+        tmp.write_text(json.dumps({"level": level, "last_alert_ts": last_alert_ts}, ensure_ascii=False), encoding="utf-8")
+        os.replace(tmp, p)
     except OSError:
         pass
 

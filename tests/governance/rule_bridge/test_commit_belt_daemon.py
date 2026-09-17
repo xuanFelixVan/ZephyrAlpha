@@ -200,3 +200,107 @@ def test_criteria_subtree_only_change_also_reexecs(tmp_path, monkeypatch):
     state: dict = {"epoch": "sha-gate|sha-crit-old"}
     assert mod._check_and_reexec(tmp_path, tmp_path, state) is True
     assert len(calls) == 1
+
+
+class TestBacklogAlertCooldown:
+    """R-06（S18 kimi-audit G2）：堵点本告警冷却状态机。
+
+    改前：越阈期间每 tick 重写同一事实（取证：1095 行同事实告警，落盘间隔
+    P50 2.0s）。改后：同档位 30min 内不重复落盘；档位翻转（↑↓跨档）立即落盘；
+    冷却期后同档位重报。阈值判据与告警内容语义零变化（仅新增 backlog_level 字段）。
+    """
+
+    @staticmethod
+    def _write_ledger(path, items, old_first_hours=None, keep_alerts=False):
+        """重写账本条目；keep_alerts=True 时保留既有 alert 行（生产账本 append-only，
+        告警行永不消失——"清账/账龄翻转"=非告警条目变化，告警历史保留）。"""
+        import json as _json
+        from datetime import datetime, timedelta, timezone
+
+        alerts = []
+        if keep_alerts and path.exists():
+            alerts = [
+                x for x in path.read_text(encoding="utf-8").splitlines()
+                if x.strip() and _json.loads(x).get("kind") == "alert"
+            ]
+        cst = timezone(timedelta(hours=8))
+        with path.open("w", encoding="utf-8") as fh:
+            for i in range(items):
+                ts = (datetime.now(cst) - timedelta(hours=old_first_hours)).isoformat() if (i == 0 and old_first_hours) else datetime.now(cst).isoformat()
+                fh.write(_json.dumps({"ts": ts, "kind": "dead_letter", "qid": f"q-{i}"}) + "\n")
+            for a in alerts:
+                fh.write(a + "\n")
+
+    @staticmethod
+    def _alerts(path):
+        import json as _json
+
+        if not path.exists():
+            return []
+        return [
+            _json.loads(x) for x in path.read_text(encoding="utf-8").splitlines()
+            if x.strip() and _json.loads(x).get("kind") == "alert"
+        ]
+
+    def test_same_level_suppressed_within_cooldown(self, tmp_path, monkeypatch):
+        """同档位连发被冷却：20 条积压连查 3 次 → 只落盘 1 行告警。"""
+        ledger = tmp_path / "bottleneck_ledger.jsonl"
+        monkeypatch.setattr(cbd, "_LEDGER", ledger)
+        self._write_ledger(ledger, 20)  # 新鲜足量 → 档位 "count"
+        for _ in range(3):
+            cbd._check_ledger_backlog()
+        alerts = self._alerts(ledger)
+        assert len(alerts) == 1, alerts
+        assert alerts[0]["backlog_level"] == "count"
+        # 冷却状态已持久化（与账本同目录）
+        state = json.loads(cbd._backlog_alert_state_path().read_text(encoding="utf-8"))
+        assert state["level"] == "count" and state["last_alert_ts"] > 0
+
+    def test_level_flip_writes_immediately(self, tmp_path, monkeypatch):
+        """跨档立即出声：count → count+age（首条变老越龄）→ 冷却窗内也立刻落盘。"""
+        ledger = tmp_path / "bottleneck_ledger.jsonl"
+        monkeypatch.setattr(cbd, "_LEDGER", ledger)
+        self._write_ledger(ledger, 20)  # 档位 "count"
+        cbd._check_ledger_backlog()
+        assert len(self._alerts(ledger)) == 1
+        # 同量但首条 25h → 档位翻转 "count+age"（alert 历史保留，模拟 append-only 账本）
+        self._write_ledger(ledger, 20, old_first_hours=25, keep_alerts=True)
+        cbd._check_ledger_backlog()
+        alerts = self._alerts(ledger)
+        assert len(alerts) == 2, alerts
+        assert alerts[1]["backlog_level"] == "count+age"
+
+    def test_realert_after_cooldown_expires(self, tmp_path, monkeypatch):
+        """冷却期后同档位重报：回拨 last_alert_ts 超窗 → 同档位再落 1 行。"""
+        ledger = tmp_path / "bottleneck_ledger.jsonl"
+        monkeypatch.setattr(cbd, "_LEDGER", ledger)
+        self._write_ledger(ledger, 20)
+        cbd._check_ledger_backlog()
+        assert len(self._alerts(ledger)) == 1
+        # 时光机：把上次告警时间回拨到冷却窗之外
+        state_path = cbd._backlog_alert_state_path()
+        st = json.loads(state_path.read_text(encoding="utf-8"))
+        st["last_alert_ts"] -= cbd._LEDGER_ALERT_COOLDOWN_S + 1
+        state_path.write_text(json.dumps(st), encoding="utf-8")
+        cbd._check_ledger_backlog()
+        alerts = self._alerts(ledger)
+        assert len(alerts) == 2, alerts
+        assert alerts[1]["backlog_level"] == "count"
+
+    def test_clear_below_threshold_resets_level(self, tmp_path, monkeypatch):
+        """回落清零档位：积压消解不写行，但下次再越阈按翻转立即出声。"""
+        ledger = tmp_path / "bottleneck_ledger.jsonl"
+        monkeypatch.setattr(cbd, "_LEDGER", ledger)
+        self._write_ledger(ledger, 20)
+        cbd._check_ledger_backlog()
+        assert len(self._alerts(ledger)) == 1
+        # 维护班清账 → 未越阈：不写行、档位归零（alert 历史保留）
+        self._write_ledger(ledger, 3, keep_alerts=True)
+        cbd._check_ledger_backlog()
+        assert len(self._alerts(ledger)) == 1
+        state = json.loads(cbd._backlog_alert_state_path().read_text(encoding="utf-8"))
+        assert state["level"] == ""
+        # 再次越阈：档位 ""→"count" 翻转 → 冷却窗内也立即落盘
+        self._write_ledger(ledger, 21, keep_alerts=True)
+        cbd._check_ledger_backlog()
+        assert len(self._alerts(ledger)) == 2

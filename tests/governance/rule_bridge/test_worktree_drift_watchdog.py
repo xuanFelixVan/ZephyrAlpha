@@ -1008,3 +1008,78 @@ def test_shielded_add_vanish_escalates_and_recovers(git_repo: Path) -> None:
         cwd=str(git_repo), check=True, capture_output=True, text=True,
     )
     assert f.exists() and f.read_text(encoding="utf-8") == "to be deleted\n"
+
+
+class TestR05StatePersistenceDecoupled:
+    """R-05（S18 kimi-audit G2）：指纹状态持久化与 alert 门控解耦。
+
+    改前：_save_state 被 alert_enabled 门控——observe-only 即时扫写审计但不落
+    state → 每笔 commit 重读旧 state、同哈希漂移重复落盘（账本约 37% 零变化
+    重复写）。改后：files_state 全模式始终持久化；审计行只在指纹变化时落盘
+    + 每 UTC 日一行心跳。检测内容与告警语义零变化。
+    """
+
+    @staticmethod
+    def _non_heartbeat(audit: list[dict]) -> list[dict]:
+        return [r for r in audit if r.get("verdict") != "heartbeat"]
+
+    @staticmethod
+    def _read_state(repo: Path) -> dict:
+        return json.loads(
+            (repo / ".runtime" / "drift_watchdog" / "state.json").read_text(encoding="utf-8")
+        )
+
+    def test_zero_change_rescans_write_once(self, git_repo: Path) -> None:
+        """零变化连扫 5 次 → 非心跳审计行只增 1（首见那行；心跳不算）。"""
+        (git_repo / "hot.txt").write_text("v2-grace\n", encoding="utf-8")
+        # 默认宽限窗 600s 内（刚 commit 完）→ grace_suppressed，observe-only
+        # 即时扫正是 S18 自激发源地（post-commit reconciler 挂点）。
+        for _ in range(5):
+            wd.scan_once(git_repo, alert_enabled=False)
+        audit = self._non_heartbeat(_read_audit(git_repo))
+        assert len(audit) == 1, audit
+        assert audit[0]["verdict"] == "grace_suppressed"
+        # 状态始终持久化：observe-only 也把指纹落了盘
+        state = self._read_state(git_repo)
+        assert state["files"]["hot.txt"]["work_hash"] == audit[0]["work_hash"]
+        # daemon 模式同样幂等（零变化不重复落盘）
+        for _ in range(5):
+            wd.scan_once(git_repo)
+        assert len(self._non_heartbeat(_read_audit(git_repo))) == 1
+
+    def test_fingerprint_change_always_persisted(self, git_repo: Path) -> None:
+        """指纹变化 → 必落盘：observe-only 连改两次，每改必出一行且 state 跟随。"""
+        f = git_repo / "hot.txt"
+        f.write_text("v2\n", encoding="utf-8")
+        wd.scan_once(git_repo, alert_enabled=False)
+        f.write_text("v3\n", encoding="utf-8")
+        wd.scan_once(git_repo, alert_enabled=False)
+        audit = [r for r in self._non_heartbeat(_read_audit(git_repo)) if r.get("file") == "hot.txt"]
+        assert len(audit) == 2, audit
+        assert audit[0]["work_hash"] and audit[0]["work_hash"] != audit[1]["work_hash"]
+        state = self._read_state(git_repo)
+        assert state["files"]["hot.txt"]["work_hash"] == audit[1]["work_hash"]
+
+    def test_heartbeat_daily_cap(self, git_repo: Path) -> None:
+        """心跳每 UTC 日至多一行：连扫只写一次，heartbeat_date 随 state 落盘。"""
+        wd.scan_once(git_repo)  # 干净仓库，零漂移
+        wd.scan_once(git_repo)
+        wd.scan_once(git_repo, alert_enabled=False)
+        hb = [r for r in _read_audit(git_repo) if r.get("verdict") == "heartbeat"]
+        assert len(hb) == 1, hb
+        state = self._read_state(git_repo)
+        assert state.get("heartbeat_date") == hb[0]["date"]
+
+    def test_observe_only_persist_does_not_swallow_daemon_alert(self, git_repo: Path) -> None:
+        """回归护栏：观察员持久化指纹后，真漂移（未豁免分支）仍由 daemon 告警一次。
+
+        observed 分支不推进指纹（防吞设计不变）——本测试钉死该语义，防后续改动
+        把 R-05 的"始终持久化"误推广到告警状态。
+        """
+        (git_repo / "hot.txt").write_text("v2-stale\n", encoding="utf-8")
+        s1 = wd.scan_once(git_repo, grace_seconds=0, alert_enabled=False)
+        assert s1["observed"] == 1, s1
+        s2 = wd.scan_once(git_repo, grace_seconds=0)  # daemon 仍按全状态处置
+        assert s2["alerted"] == 1, s2
+        rows = _read_log_actions(git_repo)
+        assert sum(1 for r in rows if r[1] == "critical_warn") == 1
