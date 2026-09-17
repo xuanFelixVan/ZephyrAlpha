@@ -44,7 +44,7 @@ created: 2026-09-16
 | SOP 方法论 | 九族 24 文件 | `docs/01_policies_and_standards/sop/README.md` |
 | 源码 | 3563 .py | `src/` |
 | 脚本 | 983 .py | `scripts/` |
-| 测试 | 3394 文件（全绿基线：infra 1968+audit 1615 连续多轮 0 失败） | `tests/` |
+| 测试 | 3394 文件（~~全绿基线~~ **注：全绿表述 2026-09-17 起禁用，裁定#325**——metamorphic 基线红件+红蓝检出率不门两实证；绿底只信钱路径变异实证件） | `tests/` |
 | 前端 | 46 .py | `src/zephyr/frontend/` |
 | 全景图 | 十图（align_all 六维硬 0，2026-09-16） | `scripts/governance/d5_architecture/generators/align_all.py` |
 | 八分包交付 | 8 分包+12 跨线+60+ commit | `docs/_working/greatwall_integration/2026-09-16-eight-greatwall-e2e-integration.md`（155d2a16） |

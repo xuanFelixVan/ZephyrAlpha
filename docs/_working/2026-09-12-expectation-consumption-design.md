@@ -204,8 +204,7 @@ PDF 下载（body 列已预留）→ PyMuPDF 解析 → LLM 结构化提取（De
 
 ### 9.3 处置（破坏性操作留 Owner 门位）
 
-1. consensus_daily 历史行处置三选一（Owner 裁）：a) 保留+资产标注"历史=快照回放禁回测消费"
-   （非破坏，默认）b) 物理清 2026-09 前（不可逆）c) 换源重建。
+1. consensus_daily 历史行处置：✅ **已裁定选 a**（09-14 裁，同日政策文件晋升 permanent：expectation_consumption_design_policy.md:191）——保留+标注"历史=快照回放禁回测消费"。本条回写消除「已决未回写」（裁定#323 2026-09-17）。
 2. EXP 族评估（EXP-02 首跑已执行）：④ 出证=data-gap（非 noise 非 valid），FCT-EXP-002 保持
    candidate；IS 2019-2023 窗无有效数据——**改用前向积累+analyst_forecast 双源，积累期复核**
    （预估干净回测窗最早 2027-07，若 analyst_forecast 快照密度支持可提前）。

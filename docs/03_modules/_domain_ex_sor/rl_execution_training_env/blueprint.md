@@ -5,8 +5,8 @@ title: "RL 执行训练环境蓝图 — P-4 裁定组件骨架（环境+硬边�
 doc_type: blueprint
 status: Active
 version: "0.1.3"
-design_maturity: production
-build_status: production
+design_maturity: design
+build_status: design
 ttl: permanent
 layer: L2_domain
 layer_name: execution_routing

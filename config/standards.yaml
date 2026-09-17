@@ -8,6 +8,8 @@ title: 考纲标准库（standards registry v0）
 status: active
 standards:
   - std_id: STD-SIM-ACCESS-001
+    # ⚠ suspect（裁定#306，2026-09-17）：本尺 DSR>0 在累计 N=4562 口径下需年化 SR≥2.68，
+    #   与 oos_sharpe_min=1.5 数学互斥=不可过；修订提案=下方 STD-SIM-ACCESS-002（draft）。
     name_zh: 模拟盘准入组合门
     version: 1
     status: frozen

@@ -948,7 +948,7 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 - iFind 续费后需手动改回 source=ifind（7 类任务），目前 tasks.yaml 已保留 ifind 为 fallback，切换成本低。
 
 **裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
-- [x] iFind 续费 → **待人拍板（费用项），默认建议暂不续费**——akshare/tushare 已兜底 7 类 9 任务、国际宏观已由 #ARCH-EDB-EXPAND 闭合、fallback 配置保留切换成本低（§16.1 Q1）。
+- [x] iFind 续费 → **已拍板（08-16 结案报告）：暂不续费**——（待人拍板→已拍板 回写对齐结案报告，裁定#323 2026-09-17）——akshare/tushare 已兜底 7 类 9 任务、国际宏观已由 #ARCH-EDB-EXPAND 闭合、fallback 配置保留切换成本低（§16.1 Q1）。
 - [x] 中国宏观 EDB 104 指标全量化 → **不做，维持 accepted 缺口**——macro_data（akshare）兜底核心指标，多源拼凑口径漂移风险大于收益；未来按需单点补指标（§16.3 Q2）。
 
 ### 12.2 disabled 任务清单及原因
@@ -971,7 +971,7 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 **裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
 - [x] audit_opinion / rights_issue 替代源 → **暂缓，维持 disabled**——低频事件无当下消费方，26 号事件驱动施工到需要时再启（§16.3 Q3）。
 - [x] MSCI/富时调整爬虫 → **暂缓**——走 #ARCH-SPECIAL-DAYS 补登记后由 17 号特殊日子治理承载，不单开爬虫（§16.3 Q3/Q13）。
-- [x] L2 行情开通 → **待人拍板（费用项），默认建议暂不开通**——24 号打板策略未到需 L2 微观结构的施工阶段，tick_data 降级兜底中（§16.1 Q4）。
+- [x] L2 行情开通 → **已拍板（08-16 结案报告）：暂不开通**——（待人拍板→已拍板 回写对齐结案报告，裁定#323 2026-09-17）——24 号打板策略未到需 L2 微观结构的施工阶段，tick_data 降级兜底中（§16.1 Q4）。
 
 ### 12.3 blocked/broken API（akshare 数据源退化）
 

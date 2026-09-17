@@ -3762,3 +3762,284 @@ entries:
   - 裁定#288
   - 裁定#302
   superseded_by: ''
+- ruling_id: '裁定#304'
+  title: '做T v2 升级战战役砍（现形态）——立项依据无证+累计 N 口径数学不可过+毛边际实证为负'
+  date: '2026-09-17'
+  category: '战役存亡'
+  status: 'active'
+  summary: >-
+    S2 战场+T lane 窄考试实证。三重独立理由各自成立：①立项依据无证——原引用裁定号 304 查无此号（本裁定取号 304 落位，治愈悬空引用，语义承接=本裁定即做T 战役的终局裁定）、293 张冠李戴（在册实为收益带收紧）
+    、2.7bp/边无任何底层考试产物；②统计不可过——N 账本累计 4562 口径下 DSR>0.5 需年化 Sharpe≥2.68（T=471），战役自设 1.2 验收线与之互斥；③毛边际实证为负——T lane 预注册单假设窄考试（510300 15min 三重共振极值点+maker 限价+月≤8 次）
+    ：共振组毛边际 +0.88bp/边 vs 对照组 +0.87bp 统计不可区分（Welch p=0.4997），扣成本净 -7.5bp，判 RED。复活路径=单假设窄考试先行（预注册卡制），现行全矩阵穷举战役形态废止。
+    复用件归库。证据：docs/_working/kimi_audit/adjudications/S2_做T_v2_战役裁定书.md + lane_reports/T.md + exp_evidence/t_exam_result.yaml。
+  affected_files: []
+  related_arch: []
+  related_rulings:
+  - '裁定#293'
+  superseded_by: ''
+- ruling_id: '裁定#305'
+  title: '策略切换统计判据 STD-SWITCH-001 定稿（draft→具备转正资格）'
+  date: '2026-09-17'
+  category: '尺子'
+  status: 'active'
+  summary: >-
+    S13 六问裁定：3 日确认窗+置信度 0.50 闩锁+5 日最短驻留+CRISIS 豁免+切换成本强制计入+mSPRT pair 判定+联赛族 BHY。P4 历史回验 WIN：净 Sharpe 1.13 vs 等权全池 0.38（判据线 0.48）
+    ，九格敏感性全 WIN；代价=maxDD -24.7% 集中度风险+CRISIS 乒乓漏损 83bp——转正附注=CRISIS 禁当日回切兜底。转正须走修标流程+重考历史。
+  affected_files: []
+  related_arch: []
+  related_rulings:
+  - '裁定#270'
+  superseded_by: ''
+- ruling_id: '裁定#306'
+  title: '模拟盘准入组合门 v2 提案 STD-SIM-ACCESS-002——废累计 N 棘轮改预注册族 N_eff 口径'
+  date: '2026-09-17'
+  category: '尺子'
+  status: 'active'
+  summary: >-
+    S5 实证 v1 自相矛盾：DSR>0 在 N=4562/T=471 需年化 SR≥2.68，与 OOS≥1.5 互斥=数学不可过。v2：DSR>0.5（族口径）+OOS≥1.5+DD≤15%+笔数 30 改容量位+补相关性 ρ̄≤0.7/容量证明/换手 12× 三腿。
+    红队附页修正条款三件：族定义强制登记 family_registry/追认先于 frozen/历史被毙次数计入族下限。draft→frozen 前置=E6 双尺重考报告。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#307'
+  title: '注册表门位三档统一口径'
+  date: '2026-09-17'
+  category: '治理门位'
+  status: 'active'
+  summary: >-
+    D-01。①净删/退役/冻结区解锁=Owner 常设门位；②tier0 注册表新增/修改=Owner 或 AI 提案+裁定登记留痕，其余手工注册表=AI 自动+周审计；③机生注册表派生行=全自动（生成器即真相）
+    ；④错误码号段分配全自动，预留码转正/关闭=tier0 待遇。未知表默认 tier0（fail-closed）。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#308'
+  title: '日度编排器 §八 八项打包裁'
+  date: '2026-09-17'
+  category: '资金闸'
+  status: 'active'
+  summary: >-
+    A-01：①no_trade 枚举六件+阈值对齐 STD-SWITCH-001；②首版接入包=空集（S-OWNER-001 随 #304 砍），pending-owner-adoption 格维持空；
+    ③60% 硬顶+六段预算带 confirmed（标未校准，实盘前校准义务）；④data_proven 开市判定接受，N=3；⑤decision_daily 落 c1_backtest 不双写；⑥首版仅留痕不驱动执行单；
+    ⑦intraday_revoke 自动仅限 kill_switch 联动；⑧排班 stub 接受。
+  affected_files: []
+  related_arch: []
+  related_rulings:
+  - '裁定#304'
+  superseded_by: ''
+- ruling_id: '裁定#309'
+  title: '卖出族 12 件待裁定整族挂起'
+  date: '2026-09-17'
+  category: '资金闸'
+  status: 'active'
+  summary: >-
+    A-02：依赖就绪前一律不启用（密度感知/分批/时间加权/阶段 6/7/8）；依赖达成自动回评审队列；MVP 三件套（ATR+移动止损/移动止盈/一次性退出）维持生产。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#310'
+  title: 'S-OWNER-002 切换器默认行为翻转不予放行'
+  date: '2026-09-17'
+  category: '资金闸'
+  status: 'active'
+  summary: >-
+    A-03：考试未出证+STD-SWITCH-001 未 frozen+生产流转门位。解锁条件=按 STD-SWITCH-001 口径出证（扣切换成本 bootstrap CI 不含零+检测器混淆矩阵）
+    。
+  affected_files: []
+  related_arch: []
+  related_rulings:
+  - '裁定#305'
+  superseded_by: ''
+- ruling_id: '裁定#311'
+  title: '破坏性清理两批批准（可逆通道）'
+  date: '2026-09-17'
+  category: '破坏性操作'
+  status: 'active'
+  summary: >-
+    C-01/C-02：空壳表 rename 隔离 7 天再 DROP；CAS tmp 直清；bak 类一律冷存不删除；auction_book_limit_bak_20260908 唯一副本明示豁免。执行走 RULE-DATA-OPS 三步验证留证。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#312'
+  title: '方法论五选型收敛（P-1/P-3/P-4 不上，P-2 三层，P-5 修订采纳）'
+  date: '2026-09-17'
+  category: '方法论'
+  status: 'active'
+  summary: >-
+    C-05：P-1 Wasserstein 四件套不上（A2 PASS 痛点消失）；P-2 Conformal baseline+EWMA+ACI 三层；P-3 Robust HMM 不上（Phase 3+ 对照）
+    ；P-4 RL 执行放弃（Conformal-gated 实证更优+无 LOB/T+1）；P-5 现有体系+PSR 主诊断+DSR 补充+PBO 零假设修正。红队附页：E-01 晋升附标尺修订义务/F-05 查因与重启并行/E-09 触发条件达成自动复活。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#313'
+  title: '_system_master 12 项容量待定 11 项封挂+1 项按现实规模立案'
+  date: '2026-09-17'
+  category: '架构减法'
+  status: 'active'
+  summary: >-
+    G-01：100-AI/万脚本假想规模 11 项封挂（触发条件=并发常态>20 或脚本>5000）；SQLite 多写+锁两项合并按现状 ≤10 并发单独立项（24h 提交堵点 295 次实证为现实痛点）
+    。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#314'
+  title: 'E 族晋升九条+F 族数据十二条批文'
+  date: '2026-09-17'
+  category: '晋升与数据'
+  status: 'active'
+  summary: >-
+    EF-族：E-01/02/04/08 批准；E-03 挂起（RL 联动 #312）；E-05 部分批准（归档迁移+勘误联动）；E-06 不予解锁+补登裁定号；E-07 挂起；E-09 废止（触发条件达成自动复活草案）
+    。F-01 挂起至商品主力表产数；F-02/03/07/08/09/10 批准；F-04 选 B 案重拟；F-05 查因与重启并行；F-06 退役；F-11 现在立项；F-12 维持原令。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#315'
+  title: 'B 族尺子口径六条'
+  date: '2026-09-17'
+  category: '尺子'
+  status: 'active'
+  summary: >-
+    B-01 放行档归零归因=尺子自相矛盾为主因+池子污染为次因；B-02 红线暂不 frozen（先校准）；B-03 N_eff 估计器追认（先于 STD-002 frozen）；B-04 DSR 0.70 标工程约定；
+    B-05 两大批可审计性核后补登（仅影响研究筛选侧）；B-15 组队 A 维持观察档（双前置：污染件重考+S6 死刑处置）。
+  affected_files: []
+  related_arch: []
+  related_rulings:
+  - '裁定#306'
+  superseded_by: ''
+- ruling_id: '裁定#316'
+  title: 'RULING-REFERENCE 门禁检测面扩检裸 #NNN（文档区）'
+  date: '2026-09-17'
+  category: '门禁'
+  status: 'active'
+  summary: >-
+    S4-R1：正则扩 (?:裁定)?#(\d{3,}) 限 docs/ 区+排除字母前缀形态；同日存量扫描+豁免基线登记。方向=加严非放松。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#317'
+  title: '盘中定时对账 Timer 改事件触发+staleness 兜底'
+  date: '2026-09-17'
+  category: '治理红线'
+  status: 'active'
+  summary: >-
+    S4-R2：risk_layer_orchestrator 自续期 Timer（宪法红线唯一在案违规）改挂 ExecutionReport/持仓变更事件+30min staleness 兜底一次；影子并行一周零差异后启用。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#318'
+  title: 'S18-R1 噪声型提醒条件触发改制'
+  date: '2026-09-17'
+  category: 'Git 治理'
+  status: 'active'
+  summary: >-
+    watchdog 状态不变不落盘+心跳每日一行（已落地）；堵点告警同状态 30min 冷却窗（已落地 1800s）；hook_drift 复发件强制周审计消费；DEPGRAPH WARN 超 24h 自动升级待办。
+    判据：watchdog 零变化重复率<5%、同事实告警 30min≤1 条。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#319'
+  title: 'S18-R2 衍生提交并入触发笔原子化'
+  date: '2026-09-17'
+  category: 'Git 治理'
+  status: 'active'
+  summary: >-
+    integrity 重登记+reconciler 派生物并入触发 commit；内容哈希未变不出数。判据：无受保护文件变更时 integrity 独立 commit 24h=0。施工转 Flash（判据包在案）
+    。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#320'
+  title: 'S18-R3 并发通道与锁粒度改制（含红队修正条款）'
+  date: '2026-09-17'
+  category: 'Git 治理'
+  status: 'active'
+  summary: >-
+    ①claim 成功才释放+失败保留 TTL300s+提交中自动续租（静态收窄已撤回）；②头部 6 件 O(仓库) 门禁 diff 化（复用 604f414846 口径）；③serializer k=4 分区通道——前置=lease 续租机制+跨域热文件强制单一热通道+夜间峰值连续 7 天>40 触发器。
+    模型：组合≈112/h（N=50 达标），N=100 需 k=8。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#321'
+  title: 'S18-R4 不可放松门禁白名单'
+  date: '2026-09-17'
+  category: 'Git 治理'
+  status: 'active'
+  summary: >-
+    钱闸族/own-scope 差分口径/内容寻址 golden hash/POST-COMMIT-GUARD/RULING-REFERENCE/CREATE-GUARD/REGISTRY-YAML-PARSE 钉死只许加严；
+    白名单外门禁只许同语义提速；新门禁默认入名单。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#322'
+  title: 'S6 死刑名单：FACT-4db4c41e（beta 伪装）与 CAND-e2e7f033d97c（运气候选）剔除核心池'
+  date: '2026-09-17'
+  category: '策略生死'
+  status: 'active'
+  summary: >-
+    零换手 ann_ret 60%=伪装买入持有；负 IS+DSR 0.0158+正 OOS=运气候选。CAND-e3da6fa71af1 挂起待自证（危机窗全零=空仓或数据洞）。P1 复算：剔除后新最优组队 Sharpe 1.924（纸面）
+    /稳健口径 1.381（剔除危机窗全零日）；三笔账全线恶化（净 0.155）——'差距本质=alpha 供给'成立且加固。新队 4 成员全非放行档=观察档假设，禁部署。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#323'
+  title: 'V-03~V-07 五连裁'
+  date: '2026-09-17'
+  category: '违规处置'
+  status: 'active'
+  summary: >-
+    V-03：pending-owner-rulings 飞书/SMTP 凭据请求作废（被 255 通道删除裁定超越）；V-04：64 号备忘回写 §16.1（Q1/Q4 已拍板形态）；V-05：时区重写+consensus_daily 两件已决回写旧文档；
+    V-06：裁定不编号机制面治本=24h 补登立法+存量大赦登记+新增引用门禁扫描（与 #314 并案）；V-07：rl_execution_training_env 追认骨架+frontmatter/depgraph 降级 design（不撤件，
+    随 C-05 生效）。
+  affected_files: []
+  related_arch: []
+  related_rulings:
+  - '裁定#255'
+  - '裁定#312'
+  superseded_by: ''
+- ruling_id: '裁定#324'
+  title: '红蓝测试检出率门位'
+  date: '2026-09-17'
+  category: '测试有效性'
+  status: 'active'
+  summary: >-
+    B2-①：红蓝套件检出率 0.6667+终闸只断言 total>=9——治本=检出率下限门（≥0.95）+脚本路径漂移修正+测试写 tmp_path 隔离；检出率门位数值属本裁定。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#325'
+  title: '全绿基线表述禁用令'
+  date: '2026-09-17'
+  category: '测试有效性'
+  status: 'active'
+  summary: >-
+    S15：metamorphic 基线红件实证+红蓝检出率不门——'全仓全绿'在变异验证机制入库前为禁用表述；Flash 夜间绿底仅钱路径可信，治理元层打折。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#326'
+  title: 'C4 翻译件污染处置：受影响行标 suspect+修复重考'
+  date: '2026-09-17'
+  category: '前视纠偏'
+  status: 'active'
+  summary: >-
+    S14-1/2/3：成分回灌 15 件+模板同 bar 6 件+gftd 1 件；模板与 gftd 已修复（edd503ef）；strategy_screen 受影响行标 suspect；SCD-2 宇宙 retrofit+85 件全量重考转 Flash（S12-E4）
+    ；重考前 C6 及格集底座冻结引用污染件。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''

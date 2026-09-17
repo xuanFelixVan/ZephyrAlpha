@@ -247,7 +247,7 @@ class TestPrivilegeEscalation:
         # 标记为需人工审查, 不硬阻断
         real_risks = [f for f in findings if "description" not in f[2] and "Python:" not in f[2]]
         if real_risks:
-            pytest.skip(f"发现需人工审查的代码执行: {real_risks[:3]} (归档审计脚本 exec(stmt) 可能是合法审计用途)")
+            pytest.fail(f"发现任意代码执行风险（需人工审查或白名单化）: {real_risks[:3]}")  # B2-③ 修复（裁定#325 同班 2026-09-17）：skip 兜底=检出假绿，改 fail-closed；合法 exec 个案须白名单化
 
     def test_scripts_no_shell_true(self):
         """测试治理脚本不使用 shell=True (排除检测脚本)."""
