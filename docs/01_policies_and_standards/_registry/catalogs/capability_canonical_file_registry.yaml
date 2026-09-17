@@ -27583,6 +27583,10 @@ creation_tokens:
   token: pf-alloc-chain-alloc-shrinkage-daily-20260916
   created_by: st-qoder-t1a-20260915
   capability: pf_alloc_chain
+- file: config/crisis_gate.yaml
+  token: crisis-gate-crisis-gate-20260918
+  created_by: st-crisis-gate-20260918
+  capability: crisis_gate
 - file: src/zephyr/regime/validation/wyckoff_walkforward.py
   token: wyckoff-walkforward-wyckoff-walkforward-20260916
   created_by: st-qoder-t1a-20260915
@@ -32331,14 +32335,6 @@ creation_tokens:
   token: overnight-campaign-frontend-component-split-policy-20260917
   created_by: st-altdatamap-20260918
   capability: overnight_campaign
-- file: docs/01_policies_and_standards/sop/construction_sop/overnight_campaign_policy.md
-  token: overnight-campaign-overnight-campaign-policy-20260917
-  created_by: st-altdatamap-20260918
-  capability: overnight_campaign
-- file: docs/01_policies_and_standards/sop/construction_sop/overnight_campaign_instruction_template.md
-  token: overnight-campaign-overnight-campaign-instruction-template-20260917
-  created_by: st-altdatamap-20260918
-  capability: overnight_campaign
 - file: docs/_working/flash_speedup/00_master_ledger.md
   token: flash-speedup-00-master-ledger-20260917
   created_by: st-flashspeed-20260918
@@ -32351,4 +32347,24 @@ creation_tokens:
   token: flash-speedup-f4-design-20260917
   created_by: st-flashspeed-20260918
   capability: flash_speedup
+- file: docs/_working/flash_biz/biz1_b0_fifteen_closeout.md
+  token: flash-biz-workbooks-biz1-b0-fifteen-closeout-20260917
+  created_by: st-flashbiz-20260918
+  capability: flash_biz_workbooks
+- file: docs/_working/flash_biz/biz2_t0_pairs_disclosure.md
+  token: flash-biz-workbooks-biz2-t0-pairs-disclosure-20260917
+  created_by: st-flashbiz-20260918
+  capability: flash_biz_workbooks
+- file: docs/_working/flash_biz/biz3_e7_fillability.md
+  token: flash-biz-workbooks-biz3-e7-fillability-20260917
+  created_by: st-flashbiz-20260918
+  capability: flash_biz_workbooks
+- file: docs/_working/flash_biz/biz4_e1c09_e4_exam.md
+  token: flash-biz-workbooks-biz4-e1c09-e4-exam-20260917
+  created_by: st-flashbiz-20260918
+  capability: flash_biz_workbooks
+- file: docs/_working/flash_biz/biz5_etf15min_tz_defect.md
+  token: flash-biz-workbooks-biz5-etf15min-tz-defect-20260917
+  created_by: st-flashbiz-20260918
+  capability: flash_biz_workbooks
 di_seam_exemptions: []
