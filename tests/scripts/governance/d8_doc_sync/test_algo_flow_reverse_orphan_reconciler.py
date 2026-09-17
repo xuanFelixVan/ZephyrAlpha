@@ -62,9 +62,11 @@ def registry_text(entries: list[str], *, tail_key: str = "di_seam_exemptions") -
 
 
 def rulings_text(ruling_id: str, *, status: str, target: str) -> str:
+    # 根键=entries：与仓内 ruling_registry.yaml 实际 schema 对齐（unique_key=ruling_id）
     return (
         "module_id: REG-RULING-TEST\n"
-        "rulings:\n"
+        "unique_key: ['ruling_id']\n"
+        "entries:\n"
         f"- ruling_id: '{ruling_id}'\n"
         f"  status: '{status}'\n"
         f"  summary: >-\n    批准退役 {target}\n"
@@ -305,6 +307,41 @@ def test_retire_refuses_when_ruling_is_not_active(repo):
     _grant(repo, status="superseded")
     with pytest.raises(rev.RetireRefused, match="非 active"):
         rev.retire_orphan(repo.gw(), MIRROR_REL, owner_ruling="901")
+
+
+def test_grant_check_speaks_real_registry_schema():
+    """真源 schema 钉：fixture 自造键名会让全例绿而真仓 --apply 恒判"未登记"。
+
+    2026-09-18 05:55 实证：本件 fixture 原写 rulings: 根键，真源 ruling_registry.yaml
+    实为 entries:——检测面全绿、门位机判在真仓永远拒授权（假绿 + 假拒双向失真）。
+    判据必须"真表里存在的授权裁定问得出结果"，只断言文件结构不算钉。
+    """
+    real = _REPO_ROOT / RULING_REL
+    if not real.is_file():
+        pytest.skip("真仓裁定登记表不在检出内")
+    data = yaml.safe_load(real.read_text(encoding="utf-8"))
+    entries = [e for e in (data.get("entries") or []) if isinstance(e, dict)]
+    assert entries
+    donor = next(
+        (
+            e
+            for e in entries
+            if str(e.get("status", "")).strip() == "active"
+            and any(isinstance(p, str) and "/" in p for p in (e.get("affected_files") or []))
+        ),
+        None,
+    )
+    assert donor is not None, "真表里找不到一条 active 且点名文件的裁定——判据无从校验"
+    target = next(p for p in donor["affected_files"] if isinstance(p, str) and "/" in p)
+
+    class _RealGw:
+        project_root = _REPO_ROOT
+
+    gw = _RealGw()
+    rid = str(donor["ruling_id"])
+    assert rev.assert_owner_grant(gw, target, rid.removeprefix("裁定#")) == rid
+    with pytest.raises(rev.RetireRefused, match="未登记"):
+        rev.assert_owner_grant(gw, "docs/_no_such_mirror.yaml", "999999")
 
 
 def test_retire_refuses_on_unconfirmed_orphan(repo):

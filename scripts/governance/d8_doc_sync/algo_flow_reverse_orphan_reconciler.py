@@ -336,7 +336,12 @@ def assert_owner_grant(gateway: Any, mirror_rel: str, ruling_ref: str) -> str:
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
     except (OSError, yaml.YAMLError) as e:
         raise RetireRefused(f"裁定登记表不可读/解析失败，拒退役（fail-closed）: {e}") from e
-    rulings = data.get("rulings") if isinstance(data, dict) else data
+    if not isinstance(data, dict) or not isinstance(data.get("entries"), list):
+        # 真源键=entries（unique_key=ruling_id）；键漂移时明说，别让"结构变了"冒充"裁定没登记"
+        raise RetireRefused(
+            f"{_RULING_REL} 缺根键 entries（列表），裁定登记表结构漂移，拒退役（fail-closed）"
+        )
+    rulings = data["entries"]
     want = _normalize_ruling_id(ruling_ref)
     hit = next((r for r in (rulings or []) if isinstance(r, dict) and str(r.get("ruling_id", "")) == want), None)
     if hit is None:
