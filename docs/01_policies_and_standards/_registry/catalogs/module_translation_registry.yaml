@@ -50266,6 +50266,83 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把当前纸面组合持仓放进四个历史危机窗口（2015千股跌停/2018贸易战/2020疫情/2024微盘崩盘）里重放，算最大回撤、有没有跌穿破产底线、要多久回本，出一份伤亡报告挂在告警面板上"
+- module_path: src/zephyr/strategy_factory/owner_band_t/td_sequence.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "TD序列自实现"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "德马克 TD 序列的买入 setup 和 countdown 计数器"
+- module_path: src/zephyr/strategy_factory/owner_band_t/signals.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "波段信号面"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "布林上轨/前高/涨幅分位/波动率分位信号"
+- module_path: src/zephyr/strategy_factory/owner_band_t/regime_gate.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "regime门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "读 regime 快照决定策略开关(翻转次日生效)"
+- module_path: src/zephyr/strategy_factory/owner_band_t/costs.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "成本封装"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "佣金+滑点+冲击+做T加成的单边全成本"
+- module_path: src/zephyr/strategy_factory/owner_band_t/data_loader.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "数据装载"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "指数日线与ETF小时线的只读装载与缓存"
+- module_path: src/zephyr/strategy_factory/owner_band_t/intraday_t.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "做T决策"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "日内回转的开平仓纯决策函数"
+- module_path: src/zephyr/strategy_factory/owner_band_t/engine.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "组合引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "波段金字塔+做T+风控的逐日模拟"
+- module_path: src/zephyr/strategy_factory/owner_band_t/exam.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "E4考试器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "IS网格全记录+OOS单次三臂归因"
+- module_path: src/zephyr/strategy_factory/__init__.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "策略工厂包"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "策略卡转译实现的总包,每张卡一个子包"
+- module_path: src/zephyr/strategy_factory/owner_band_t/__init__.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "S-OWNER-001策略包"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "震荡期300ETF波段加底仓T策略卡的完整实现"
+- module_path: scripts/strategy_factory/run_s_owner_001_exam.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "E4考试入口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "S-OWNER-001 策略考试的唯一执行入口脚本"
 
 battle_map_steps:
 - step_id: BM-BUY-05

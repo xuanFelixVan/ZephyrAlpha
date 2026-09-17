@@ -32548,4 +32548,48 @@ creation_tokens:
   token: auto-scaffold-backtest_crisis_drill_monthly-20260918
   created_by: scaffold.py
   capability: backtest_crisis_drill_monthly
+- file: src/zephyr/strategy_factory/__init__.py
+  token: s-owner-001-strategy---init---20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: src/zephyr/strategy_factory/owner_band_t/__init__.py
+  token: s-owner-001-strategy---init---20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: src/zephyr/strategy_factory/owner_band_t/costs.py
+  token: s-owner-001-strategy-costs-20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: src/zephyr/strategy_factory/owner_band_t/data_loader.py
+  token: s-owner-001-strategy-data-loader-20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: src/zephyr/strategy_factory/owner_band_t/engine.py
+  token: s-owner-001-strategy-engine-20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: src/zephyr/strategy_factory/owner_band_t/exam.py
+  token: s-owner-001-strategy-exam-20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: src/zephyr/strategy_factory/owner_band_t/intraday_t.py
+  token: s-owner-001-strategy-intraday-t-20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: src/zephyr/strategy_factory/owner_band_t/regime_gate.py
+  token: s-owner-001-strategy-regime-gate-20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: src/zephyr/strategy_factory/owner_band_t/signals.py
+  token: s-owner-001-strategy-signals-20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: src/zephyr/strategy_factory/owner_band_t/td_sequence.py
+  token: s-owner-001-strategy-td-sequence-20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
+- file: scripts/strategy_factory/run_s_owner_001_exam.py
+  token: s-owner-001-strategy-run-s-owner-001-exam-20260916
+  created_by: st-sowner001-20260916
+  capability: s_owner_001_strategy
 di_seam_exemptions: []
