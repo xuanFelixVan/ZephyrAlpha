@@ -64,6 +64,7 @@ import yaml
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import _norm_rel
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.shared.io.paths import anchor_main_root
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +96,7 @@ def _declaration_stale(entry: dict) -> bool:
 
 def _load_active_splits(gateway) -> tuple[list[dict], str]:
     """读声明文件，返回 (splits, skip_reason)——skip_reason 非空表示放行（零声明/损坏 fail-open）。"""
-    decl_path = Path(str(getattr(gateway, "project_root", "."))) / DECLARATION_REL
+    decl_path = anchor_main_root(Path(str(getattr(gateway, "project_root", ".")))) / DECLARATION_REL
     if not decl_path.exists():
         return [], "skip: 无拆分声明文件（协调窗口全关）"
     try:

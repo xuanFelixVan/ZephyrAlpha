@@ -94,7 +94,7 @@ from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import 
     is_exempt_reason,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
-from zephyr.shared.io.paths import MAIN_REPO_ROOT, REPO_ROOT
+from zephyr.shared.io.paths import MAIN_REPO_ROOT, REPO_ROOT, anchor_main_root
 
 logger = logging.getLogger(__name__)
 
@@ -118,9 +118,17 @@ _DOC_ONLY_EXTENSIONS = (".md", ".rst", ".txt")
 # 均来自 capability_lookup_bypass_policy.py，gate 和 reconciler 共用。
 
 
+def _audit_dir() -> Path:
+    """lookup_audit 权威目录——主仓根（#ARCH-324：MAIN_REPO_ROOT 在队列落地 worktree 内
+    被钉到 worktree 根 [REPO_ROOT=worktree + strip_session_worktree 不识别 .runtime/commit_queue]，
+    门禁读端会读到空目录→fail-closed 永久假红；改经唯一真源 anchor_main_root 归主仓）。
+    写入端在主进程写主仓 lookup_audit，读端必须同源。普通仓/tmp 仓 anchor 为恒等，测试 patch 不破。"""
+    return anchor_main_root(MAIN_REPO_ROOT) / LOOKUP_AUDIT_DIR_REL
+
+
 def _get_audit_log_path(session_id: str) -> Path:
-    """构造 session 的 audit log 文件路径。"""
-    return MAIN_REPO_ROOT / LOOKUP_AUDIT_DIR_REL / f"{session_id}.jsonl"
+    """构造 session 的 audit log 文件路径（锚主仓权威目录，#ARCH-324）。"""
+    return _audit_dir() / f"{session_id}.jsonl"
 
 
 def _audit_log_dir_exists() -> bool:
@@ -129,7 +137,7 @@ def _audit_log_dir_exists() -> bool:
     目录不存在视为"AI session 启动 smoke test 失败"——fail-closed 阻断。
     红蓝攻击向量：删目录绕过 audit log 检查。
     """
-    return (MAIN_REPO_ROOT / LOOKUP_AUDIT_DIR_REL).is_dir()
+    return _audit_dir().is_dir()
 
 
 def _has_business_code_changes(files: list[str], root: Path | str | None = None) -> bool:

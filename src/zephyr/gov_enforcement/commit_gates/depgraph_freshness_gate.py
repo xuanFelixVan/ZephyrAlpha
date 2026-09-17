@@ -71,6 +71,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
+from zephyr.shared.io.paths import main_worktree_root
 
 logger = logging.getLogger(__name__)
 
@@ -109,27 +110,13 @@ def _parse_saved_at(saved_at_raw: str) -> datetime | None:
 
 
 def _main_worktree_root(project_root: Path) -> Path | None:
-    """linked worktree → 主工作树根；主工作树/无法判定 → None（纯文件判定，不起 git 子进程）。
+    """linked worktree → 主工作树根；主工作树/无法判定 → None。
 
-    linked worktree 的 ``.git`` 是文件，内容形如 ``gitdir: <main>/.git/worktrees/<name>``；
-    上溯到名为 ``.git`` 的祖先，其父即主工作树根。
+    判据唯一真源在 :func:`zephyr.shared.io.paths.main_worktree_root`（#ARCH-324 收敛：
+    本门禁曾自带一份 gitdir 指针判定，与 shared 判据构成第二份真源→漂移风险，删除）。
+    此处仅保留模块内符号供 ``_resolve_cache_path`` 与本门禁测试按旧名引用。
     """
-    git_path = project_root / ".git"
-    if not git_path.is_file():
-        return None
-    try:
-        raw = git_path.read_text(encoding="utf-8", errors="replace").strip()
-    except OSError:
-        return None
-    if not raw.startswith("gitdir:"):
-        return None
-    gitdir = Path(raw[len("gitdir:"):].strip())
-    if not gitdir.is_absolute():
-        gitdir = (project_root / gitdir).resolve()
-    for ancestor in gitdir.parents:
-        if ancestor.name == ".git":
-            return ancestor.parent
-    return None
+    return main_worktree_root(project_root)
 
 
 def _resolve_cache_path(project_root: Path) -> tuple[Path, str]:

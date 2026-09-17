@@ -131,21 +131,21 @@ def is_session_worktree_root(root: Path) -> bool:
     return root.parent.name in (".worktrees", ".aidrafts")
 
 
-def _git_worktree_main_root(root: Path) -> Path | None:
-    """git worktree 链接识别：root/.git 为文件（gitdir: 链接）时返回主仓根，否则 None。
+def main_worktree_root(root: Path) -> Path | None:
+    """git worktree 链接识别：linked worktree 根 → 主仓根；非 linked worktree → None。
 
-    git 自身是 worktree→主仓关系的唯一真源：git worktree add 会在 root/.git
-    写入单行文本 ``gitdir: <主仓根>/.git/worktrees/<name>``——worktrees 段
-    的爷爷目录即主仓 .git，再上一级即主仓根。
+    本函数是 worktree→主仓 gitdir 判定的**唯一真源**（#ARCH-324：消费方禁各自重实现
+    ——session_concurrency 目录名猜测漏掉队列落地 worktree、depgraph 门禁曾复制第二份判据，
+    均由此收敛）。git 自身是 worktree→主仓关系的唯一真源：linked worktree 的 ``root/.git``
+    是文件，内容形如 ``gitdir: <主仓根>/.git/worktrees/<name>``；从其指向的 gitdir
+    上溯名为 ``.git`` 的祖先，其父即主仓根。
 
-    B5①(2026-09-14) 治本：serializer 专用 worktree 落在
-    ``.runtime/commit_queue/worktree``——不满足 .worktrees/.aidrafts 父目录结构，
-    anchor_main_root 原判定不识别 → 落盘门禁链（project_root=worktree）的
-    reconcile_execution_log 审计写进 worktree 副本 governance.db（主库 59072 行
-    vs 副本 3702 行分裂实证），drain 结束后副本成孤儿，审计不可查询。
+    比原"必须恰好是 ``.git/worktrees/<name>``"的严格判定更稳——覆盖 submodule
+    ``.git/modules/...`` 等一切以 ``.git`` 为祖先的布局；纯文件判定，不起 git 子进程。
 
     安全性：.git 是目录（普通仓/pytest tmp 仓）→ 返回 None 原样返回；
-    链接文本畸形/目标越界 → 返回 None（fail-open 退回调用方原判定，不阻断）。
+    链接文本畸形/无 gitdir 前缀/无 .git 祖先 → 返回 None（fail-open 退回调用方原判定，
+    不阻断；亦禁靠在 worktree 内植入新鲜副本逃逸——权威优先由调用方 _resolve_cache_path 决定）。
     """
     dot_git = root / ".git"
     if not dot_git.is_file():
@@ -164,11 +164,15 @@ def _git_worktree_main_root(root: Path) -> Path | None:
         gd = gd.resolve()
     except OSError:
         return None
-    # 期望形态 <主仓根>/.git/worktrees/<name>：gd=…/.git/worktrees/<name>，
-    # parent=worktrees 段、爷爷=.git，主仓根=.git 的 parent
-    if gd.parent.name == "worktrees" and gd.parent.parent.name == ".git":
-        return gd.parent.parent.parent
+    for ancestor in gd.parents:
+        if ancestor.name == ".git":
+            return ancestor.parent
     return None
+
+
+def _git_worktree_main_root(root: Path) -> Path | None:
+    """向后兼容别名——唯一真源判定见 :func:`main_worktree_root`（#ARCH-324 收敛）。"""
+    return main_worktree_root(root)
 
 
 def anchor_main_root(root: Path) -> Path:
@@ -298,5 +302,6 @@ __all__ = [
     "get_config_dir",
     "get_data_dir",
     "get_tmp_dir",
+    "main_worktree_root",
     "strip_session_worktree",
 ]

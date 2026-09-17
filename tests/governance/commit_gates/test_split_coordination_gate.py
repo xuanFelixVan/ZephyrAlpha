@@ -334,3 +334,43 @@ class TestTool:
         assert sc.main(["sweep"]) == 0
         data = yaml.safe_load(target.read_text(encoding="utf-8"))
         assert [s["dir"] for s in data["splits"]] == ["live"]
+
+
+class TestLoadActiveSplitsAnchoredToMain:
+    """#ARCH-324 双向钉：协调声明是仓级事实，落地 worktree 内仍读主仓 active_splits.yaml。
+
+    旧：读 gateway.project_root（=落地 worktree），worktree 无 .runtime/coordination →
+    队列门永远 "skip: 无拆分声明文件" = 反双存保护结构失明。
+    """
+
+    @staticmethod
+    def _mk(tmp_path: Path):
+        main = tmp_path / "main"
+        (main / ".git" / "worktrees" / "worktree").mkdir(parents=True)
+        (main / ".runtime" / "coordination").mkdir(parents=True)
+        (main / ".runtime" / "coordination" / "active_splits.yaml").write_text(
+            "splits:\n  - dir: foo\n    declared_at: '2026-09-18T00:00:00+00:00'\n",
+            encoding="utf-8",
+        )
+        wt = tmp_path / "elsewhere" / "wt"
+        wt.mkdir(parents=True)
+        (wt / ".git").write_text(
+            f"gitdir: {main / '.git' / 'worktrees' / 'worktree'}\n", encoding="utf-8"
+        )
+        return main, wt
+
+    def test_reads_main_declaration_from_landing_worktree(self, tmp_path):
+        from zephyr.gov_enforcement.commit_gates.split_coordination_gate import _load_active_splits
+
+        _main, wt = self._mk(tmp_path)
+        splits, skip = _load_active_splits(_FakeGW(wt))
+        assert skip == "", "主仓有声明时必须读到（保护在队列门生效）"
+        assert [s["dir"] for s in splits] == ["foo"]
+
+    def test_unanchored_is_blind_at_queue_door(self, tmp_path, monkeypatch):
+        import zephyr.gov_enforcement.commit_gates.split_coordination_gate as g
+
+        monkeypatch.setattr(g, "anchor_main_root", lambda r: r)  # 打回旧 worktree 相对读
+        _main, wt = self._mk(tmp_path)
+        splits, skip = g._load_active_splits(_FakeGW(wt))
+        assert splits == [] and "无拆分声明文件" in skip  # 旧=失明，证红：修复确承重

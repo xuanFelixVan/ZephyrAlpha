@@ -531,3 +531,57 @@ class TestSessionRegistryPidLiveness:
         assert "sess-dead-1" in data
         assert "sess-dead-2" in data
         assert "sess-alive" in data
+
+
+class TestSessionRegistryAnchorsLandingWorktree:
+    """#ARCH-324 治本双向钉：队列落地 worktree 必须锚主仓 registry。
+
+    旧判据只认父目录名 ".worktrees"，漏掉队列落地 worktree
+    （…/.runtime/commit_queue/worktree，父名 "commit_queue"）→ 落地面读到 worktree
+    自带的小 session_registry.json → SESSION-REQUIRED 假红（已实测）。
+    """
+
+    @staticmethod
+    def _make_commit_queue_worktree(tmp_path):
+        """构造主仓 + 队列落地 worktree（.git 为 gitdir 指针文件，父名 commit_queue）。"""
+        main = tmp_path / "main"
+        (main / ".git" / "worktrees" / "worktree").mkdir(parents=True)
+        (main / ".runtime").mkdir(parents=True, exist_ok=True)
+        (main / ".runtime" / "session_registry.json").write_text(
+            json.dumps({"alice": {"pid": 0, "held_files": [], "last_heartbeat": time.time()}}),
+            encoding="utf-8",
+        )
+        wt = main / ".runtime" / "commit_queue" / "worktree"
+        (wt / ".runtime").mkdir(parents=True, exist_ok=True)
+        (wt / ".git").write_text(
+            f"gitdir: {main / '.git' / 'worktrees' / 'worktree'}\n", encoding="utf-8"
+        )
+        # worktree 自带空 registry——旧代码读到它即产生假红
+        (wt / ".runtime" / "session_registry.json").write_text("{}", encoding="utf-8")
+        return main, wt
+
+    def test_landing_worktree_anchors_main_registry(self, tmp_path):
+        """绿向钉：落地 worktree 经唯一真源判据锚主仓，读到主仓共享 registry。"""
+        main, wt = self._make_commit_queue_worktree(tmp_path)
+        assert wt.parent.name == "commit_queue"  # 旧 ".worktrees" 名猜测命不中的形态
+        reg = SessionRegistry(project_root=wt)
+        assert reg._project_root == main
+        assert reg._registry_path == main / ".runtime" / "session_registry.json"
+        assert "alice" in reg.load()  # 读主仓内容，非 worktree 空副本
+
+    def test_old_name_guess_would_not_anchor(self, tmp_path, monkeypatch):
+        """变异承重钉：把判据打回旧 ".worktrees" 名猜测 → 落地 worktree 不再锚主仓（证红）。"""
+
+        def _old_guess(root):
+            if root.parent.name == ".worktrees":
+                return root.parent.parent
+            return root
+
+        monkeypatch.setattr(
+            "zephyr.security.access_control.session_concurrency.anchor_main_root", _old_guess
+        )
+        main, wt = self._make_commit_queue_worktree(tmp_path)
+        reg = SessionRegistry(project_root=wt)
+        assert reg._project_root != main  # 旧行为漏判——不锚主仓（此即被治好的病根）
+        assert reg._registry_path == wt / ".runtime" / "session_registry.json"
+        assert reg.load() == {}  # 读到 worktree 空副本 → 若据此判活必假红

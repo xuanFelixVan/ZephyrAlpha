@@ -59,6 +59,7 @@ from enum import Enum
 from pathlib import Path
 
 from zephyr.shared.infra.process_pool import is_pid_alive
+from zephyr.shared.io.paths import anchor_main_root
 
 logger = logging.getLogger(__name__)
 
@@ -303,14 +304,15 @@ class SessionRegistry:
 
     def __init__(self, project_root: str | Path | None = None) -> None:
         root = Path(project_root) if project_root else Path.cwd()
-        # 锚主仓根（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T2 实证治本）：
-        # session registry 是仓级共享状态——worktree（.worktrees/<sid>/ 结构）内
-        # 构造时自动锚定主仓，消除 claim（worktree 内网关进程写 worktree registry）
-        # 与 worker 三证（锚主仓读主仓 registry）的双 registry 分裂——合法 worker
-        # 被证3 误判"session 已死"拒启（2026-08-14 两例实证）。
-        # 嵌套 fake worktree（测试 tmp_repo/.worktrees/<sid>）同样锚宿主根，语义一致。
-        if root.parent.name == ".worktrees":
-            root = root.parent.parent
+        # 锚主仓根（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T2 + #ARCH-324 治本）：
+        # session registry 是仓级共享状态——worktree 内构造时自动锚定主仓，消除
+        # claim（worktree 内网关进程写 worktree registry）与 worker 三证（锚主仓读主仓
+        # registry）的双 registry 分裂——合法 worker 被证3 误判"session 已死"拒启。
+        # #ARCH-324 病根：原判定只认父目录名为 ".worktrees"，漏掉队列落地 worktree
+        # （…/.runtime/commit_queue/worktree，父名 "commit_queue"）→ 落地面读到 worktree
+        # 自带的小 session_registry.json → SESSION-REQUIRED 假红。改判据唯一真源
+        # anchor_main_root：gitdir 指针解析覆盖 .worktrees/.aidrafts/commit_queue/嵌套沙箱。
+        root = anchor_main_root(root)
         self._project_root: Path = root
         self._registry_path: Path = self._project_root / _REGISTRY_PATH
         self._registry_path.parent.mkdir(parents=True, exist_ok=True)

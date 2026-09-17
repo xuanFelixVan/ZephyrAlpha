@@ -538,3 +538,71 @@ class TestEndToEnd:
             passed, msg = spec.check(gw, files, session_id="sess-no-lookup")
         assert passed is False, "gate should block without lookup"
         assert "未调用" in msg
+
+
+class TestLandingWorktreeAuditAnchoredToMain:
+    """#ARCH-324 双向钉：MAIN_REPO_ROOT 被钉到落地 worktree 时仍读主仓 lookup_audit。
+
+    队列落地工位内 REPO_ROOT=worktree，strip_session_worktree 不识别
+    .runtime/commit_queue → MAIN_REPO_ROOT==worktree 根 → 旧代码读 worktree 空
+    lookup_audit → fail-closed 永久假红（业务 .py 提交在队列门被卡）。
+    """
+
+    @staticmethod
+    def _make_landing_worktree(tmp_path: Path):
+        main = tmp_path / "main"
+        (main / ".git" / "worktrees" / "worktree").mkdir(parents=True)
+        wt = tmp_path / "elsewhere" / "wt"
+        (wt / ".git").parent.mkdir(parents=True, exist_ok=True)
+        (wt / ".git").write_text(f"gitdir: {main / '.git' / 'worktrees' / 'worktree'}\n", encoding="utf-8")
+        (wt / ".runtime" / "lookup_audit").mkdir(parents=True, exist_ok=True)  # 空——旧代码读它
+        return main, wt
+
+    def test_landing_worktree_reads_main_audit_passes(self, tmp_path):
+        """绿向钉：主仓有 audit、worktree 空 → 锚主仓后放行。"""
+        from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
+            make_capability_lookup_required_gate,
+        )
+
+        main, wt = self._make_landing_worktree(tmp_path)
+        _write_audit_log(
+            main / ".runtime" / "lookup_audit",
+            "sess-land",
+            [{"ts": "2026-09-18T08:00:00Z",
+              "tool": "rule_discovery.discover_applicable_rules",
+              "query": {"operation": "file_write"},
+              "result_count": 1, "rule_ids": ["TRAE-001"]}],
+        )
+        gw = _make_zephyr_gateway(wt)
+        files = [str(wt / "src" / "zephyr" / "foo.py")]
+        with patch(
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT", wt
+        ):
+            passed, msg = make_capability_lookup_required_gate().check(gw, files, session_id="sess-land")
+        assert passed is True, msg
+
+    def test_unanchored_reverts_to_false_red(self, tmp_path):
+        """变异承重钉：把 anchor_main_root 打回恒等（旧 worktree-pinned 行为）→ 读空 worktree audit → 假红阻断。"""
+        from zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate import (
+            make_capability_lookup_required_gate,
+        )
+
+        main, wt = self._make_landing_worktree(tmp_path)
+        _write_audit_log(
+            main / ".runtime" / "lookup_audit",
+            "sess-land",
+            [{"ts": "2026-09-18T08:00:00Z",
+              "tool": "rule_discovery.discover_applicable_rules",
+              "query": {"operation": "file_write"},
+              "result_count": 1, "rule_ids": ["TRAE-001"]}],
+        )
+        gw = _make_zephyr_gateway(wt)
+        files = [str(wt / "src" / "zephyr" / "foo.py")]
+        with (
+            patch("zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT", wt),
+            patch("zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.anchor_main_root",
+                  lambda r: r),
+        ):
+            passed, msg = make_capability_lookup_required_gate().check(gw, files, session_id="sess-land")
+        assert passed is False, "未锚主仓时必须复现假红（证明绿向确由本修复承重）"
+        assert "未调用" in msg

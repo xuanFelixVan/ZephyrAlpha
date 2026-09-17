@@ -56,6 +56,12 @@ from pathlib import Path
 import yaml
 
 _REPO = Path(__file__).resolve().parents[2]
+try:  # #ARCH-324：worktree 内运行须锚主仓，使写入端与 gate 读端同源（主树/普通仓为恒等）
+    from zephyr.shared.io.paths import anchor_main_root as _anchor
+
+    _REPO = _anchor(_REPO)
+except Exception:  # noqa: BLE001 — 锚定不可用退回本树（既有 fail-open 面）
+    pass
 DECL_PATH = _REPO / ".runtime" / "coordination" / "active_splits.yaml"
 
 
