@@ -28115,6 +28115,26 @@ creation_tokens:
   token: kimi-audit-owner-addendum-v2-20260917-20260917
   created_by: kimi-audit
   capability: kimi_audit
+- file: docs/_working/kimi_audit/S18_提交链路根因表.md
+  token: kimi-audit-s18--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/S18-R1_噪声降级清单.md
+  token: kimi-audit-s18-r1--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/S18-R2_衍生提交并入.md
+  token: kimi-audit-s18-r2--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/S18-R3_并发通道与锁粒度.md
+  token: kimi-audit-s18-r3--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/adjudications/S18-R4_不可放松门禁白名单.md
+  token: kimi-audit-s18-r4--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
 - file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
   token: auction-derive-intake-20260917-0300-20260916
   created_by: st-auction-bridge-20260917
