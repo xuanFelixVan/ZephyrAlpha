@@ -133,6 +133,12 @@ _TRANSITION_DIMS: dict[str, list[str]] = {
 #   数据缺失时对应输入 None → 维度=0.0 降级（C1 不退化）。
 _STUB_DIMS: set[str] = set()  # P1-E3: policy/bad_news_flat 已激活
 
+# 北向资金断供披露阈值（OVB-3）：目标日历上最后有效日之后的空窗交易日数超过此值即出声。
+# 背景=港交所 2024-08-16 起停止公布每日明细（缺口已登记为 known_data_gaps.yaml 的
+# hk_connect_flow_source_discontinued 条目），此后融合项逐日恒为 0——生产数值不变，
+# 但"北向在融合资金确认"这句话不再成立，故补运行期披露而非继续静默加零。
+_HK_FLOW_STALE_TRADE_DAYS = 5
+
 
 class OverlaySignalsConstructor:
     """8 转换 OverlaySignals 构造器（MOD-REGIME-002 Phase 2b）。
@@ -643,12 +649,39 @@ class OverlaySignalsConstructor:
             _logger.warning("合成 VIX 计算失败，回退 None（s1/s2 vix 用 vol_pct 代理）: %s", exc)
             return None
 
+    def _disclose_hk_flow_staleness(self, hk_net: pd.Series) -> None:
+        """北向资金断供一次性披露（OVB-3：把"静默加零"改成"出声"，数值路径零改动）。
+
+        判据=目标日历上最后一个有效日之后的空窗交易日数 > _HK_FLOW_STALE_TRADE_DAYS。
+        本方法只读不改 hk_net——融合项仍按既有 fillna(0) 语义加零，因此断供段的
+        inflow_pct 与"根本没有 hk 输入"时逐位相同（不变式由
+        tests/regime/test_overlay_signals_builder.py 钉住，防后人把披露误读成已停用融合）。
+        每实例一次，与 _warn_threshold_ledger_debt 同一旗标语义。
+        """
+        if getattr(self, "_hk_stale_warned", False):
+            return
+        self._hk_stale_warned = True
+        valid = hk_net.dropna()
+        if valid.empty:
+            return
+        blackout_days = int((hk_net.index > valid.index[-1]).sum())
+        if blackout_days > _HK_FLOW_STALE_TRADE_DAYS:
+            _logger.warning(
+                "北向资金断供：最后有效日 %s，其后 %d 个交易日的融合项恒为 0"
+                "（缺口已登记为 known_data_gaps.yaml: hk_connect_flow_source_discontinued）"
+                "— T3 money_effect 的资金确认实际仅由主力净流入驱动",
+                valid.index[-1],
+                blackout_days,
+            )
+
     def _compute_t3_inputs(self, index: pd.DatetimeIndex) -> dict[str, pd.Series | None]:
         """Phase 2c: 加载 money_flow/sector/limit_up_down/hk_connect_flow，算 4 T3 维度的 7 输入。
 
         北向资金（hk_connect_flow）作为主力净流入的辅助确认信号：
         z-score > 1 时加成 inflow_pct，z-score < -1 时削弱（P1-E5 融合）。
         任一数据源缺失 → 对应输入 None（维度降级 0.0，C1 不退化）。
+        注意：北向自 2024-08-16 起源停发，此后 hk_adj 恒为 0（等价于不融合），
+        由 _disclose_hk_flow_staleness 运行期出声一次——勿据本段文字判断"当前有北向贡献"。
         """
         inputs: dict[str, pd.Series | None] = {
             "inflow_pct": None,
@@ -668,6 +701,7 @@ class OverlaySignalsConstructor:
         hk_flow = self._fb_call("get_hk_connect_flow")
         if hk_flow is not None and not hk_flow.empty and "net_buy_amount" in hk_flow:
             hk_net = hk_flow["net_buy_amount"].reindex(index)
+            self._disclose_hk_flow_staleness(hk_net)
             # 20 日滚动 z-score（北向资金相对于自身近期的异常程度）
             hk_mean = hk_net.rolling(20, min_periods=5).mean()
             hk_std = hk_net.rolling(20, min_periods=5).std()

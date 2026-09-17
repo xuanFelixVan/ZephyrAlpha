@@ -51,6 +51,7 @@ from zephyr.regime.features.overlay_features import (
     THRESHOLD_CALIBRATION_LEDGER,
 )
 from zephyr.regime.overlay_signals_builder import (
+    _HK_FLOW_STALE_TRADE_DAYS,
     _STUB_DIMS,
     _TRANSITION_DIMS,
     OverlaySignalsConstructor,
@@ -187,6 +188,22 @@ def _make_money_flow(dates: pd.DatetimeIndex, inflow_pct: float = 0.0) -> pd.Dat
         {"avg_main_net_inflow_pct": np.full(len(dates), inflow_pct)},
         index=dates,
     )
+
+
+def _make_hk_connect_flow(
+    dates: pd.DatetimeIndex,
+    valid_until_idx: int | None = None,
+) -> pd.DataFrame:
+    """北向资金每日净额（index=trade_date, col=net_buy_amount）。
+
+    取值走斜坡而非定值：定值会让 20 日滚动 std=0 → z=NaN → 融合项恒 0，
+    测不出"新鲜源下融合仍在生效"。valid_until_idx=i 表示仅 dates[:i+1] 有值、
+    其后全 NaN（复刻 2024-08-16 停发后 reindex 出的空窗）。
+    """
+    values = np.linspace(-1e9, 1e9, len(dates))
+    if valid_until_idx is not None:
+        values[valid_until_idx + 1 :] = np.nan
+    return pd.DataFrame({"net_buy_amount": values}, index=dates)
 
 
 def _make_sector_kline(
@@ -912,6 +929,62 @@ class TestPhase2cT3Dims:
         assert result["transitions"]["T5"]["leader_break"] == 0.0, (
             "无个股龙头源须降级 0.0，禁指数冒充"
         )
+
+
+class TestNorthboundBlackoutDisclosure:
+    """OVB-3：北向停发后融合项恒为 0——须出声，且不得改动生产数值。"""
+
+    @staticmethod
+    def _ctor(dates: pd.DatetimeIndex, hk_df: pd.DataFrame | None) -> OverlaySignalsConstructor:
+        feat = _make_features(dates, vol_pct=0.3, corr=0.5)
+        idx_df = _make_index_df(dates, np.linspace(3000, 3100, len(dates)), np.full(len(dates), 1e8))
+        fb = _MockFeatureBuilder(
+            feat,
+            idx_df,
+            money_flow=_make_money_flow(dates, inflow_pct=0.0),
+            hk_connect_flow=hk_df,
+        )
+        return OverlaySignalsConstructor(
+            backtest_start="2020-01-01",
+            backtest_end="2021-03-01",
+            data_load_start="2020-01-01",
+            feature_builder=fb,
+        )
+
+    @staticmethod
+    def _blackout_msgs(caplog) -> list[str]:
+        return [r.getMessage() for r in caplog.records if "北向资金断供" in r.getMessage()]
+
+    def test_blackout_disclosed_once_and_numeric_path_unchanged(self, caplog):
+        """断供段：一次性告警 + inflow_pct 与"无北向输入"逐位相同（披露≠停用融合）。"""
+        dates = _make_dates(300)
+        hk = _make_hk_connect_flow(dates, valid_until_idx=249)
+        with caplog.at_level(logging.WARNING, logger="zephyr.regime.overlay_signals_builder"):
+            fused = self._ctor(dates, hk)._compute_t3_inputs(dates)["inflow_pct"]
+            baseline = self._ctor(dates, None)._compute_t3_inputs(dates)["inflow_pct"]
+        msgs = self._blackout_msgs(caplog)
+        assert len(msgs) == 1, f"须每实例一次性披露，实际 {len(msgs)} 条：{msgs}"
+        assert f"{len(dates) - 250} 个交易日" in msgs[0], f"告警须点名空窗长度，实际 {msgs[0]}"
+        tail = fused.loc[dates[250] :]
+        assert (tail == baseline.loc[dates[250] :]).all(), (
+            f"断供段融合项须恒 0（等价不融合、不改生产数值），实际差异 {tail.diff().dropna().unique()[:5]}"
+        )
+
+    def test_gap_within_threshold_stays_silent(self, caplog):
+        """空窗 ≤ _HK_FLOW_STALE_TRADE_DAYS 属正常抖动，不得告警（否则噪声淹没真断供）。"""
+        dates = _make_dates(300)
+        hk = _make_hk_connect_flow(dates, valid_until_idx=len(dates) - 1 - _HK_FLOW_STALE_TRADE_DAYS)
+        with caplog.at_level(logging.WARNING, logger="zephyr.regime.overlay_signals_builder"):
+            self._ctor(dates, hk)._compute_t3_inputs(dates)
+        assert self._blackout_msgs(caplog) == [], f"阈值内空窗不得告警：{self._blackout_msgs(caplog)}"
+
+    def test_fresh_source_still_fuses(self):
+        """新鲜源下融合必须仍然生效——防后人把"加披露"做成"顺手停用"。"""
+        dates = _make_dates(300)
+        fused = self._ctor(dates, _make_hk_connect_flow(dates))._compute_t3_inputs(dates)["inflow_pct"]
+        baseline = self._ctor(dates, None)._compute_t3_inputs(dates)["inflow_pct"]
+        diff = (fused - baseline).abs()
+        assert float(diff.max()) > 0.1, f"新鲜北向源应改变 inflow_pct，实际最大差 {float(diff.max())}"
 
 
 # ---------------------------------------------------------------------------

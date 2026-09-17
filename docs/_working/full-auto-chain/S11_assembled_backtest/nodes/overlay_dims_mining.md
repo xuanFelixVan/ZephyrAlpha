@@ -72,6 +72,16 @@ parent: S11_assembled_backtest
 | OVB-4 | P1 | 阈值校准欠账台账（§2#4 五项） | 统一登记 §4.5 校准闭环 backlog（预注册纪律同 capitulation）；每项验收=walk-forward 报告或显式降格披露 |
 | OVB-5 | P2 | T5 leader_break 指数冒充 | 二选一：接真实领涨股池（连板股/涨幅榜，数据在 limit_up_down/kline_daily）或 spec+docstring 降格为"指数破位"并评估对 T5 trigger 行为的影响 |
 
+## 4.1 清偿状态与验收机证（2026-09-17 复跑）
+
+| id | 状态 | 落点 / 机证（可复跑） |
+|----|------|----------------------|
+| OVB-1 | ✅ 闭环 | 消费侧补洞 `dd04d9d20c`；S2 breadth_thrust 本土 walk-forward 已跑完并出报告（`breadth_thrust_walkforward_20260916.md`，预注册 `s2_breadth_thrust_walkforward_v1`），结论=不采纳换值 |
+| OVB-2 | ✅ 治本 + 验收升级通过 | 治本 `3cde575142`/`105b0d02d7`。原验收口径"抽样 5 只已知连板股对照真值（±0 误差）"**加强为全日历逐日对照**：事件行走生产加载层 `RegimeDataLoader.load_limit_up_down()`（2023-01-01~2026-06-30 该表 0 行 ⇒ 自动走 `kline_daily×stk_limit` 精确派生路，与治本实测同一进料口），独立算法=纯 python 集合成员判定 + 显式循环（与生产 `groupby/cumcount/get_indexer(cp)` 无共享代码路径）。实测：日历 843 日 / 事件 82532 行 / 5142 标的，**逐日不一致 = 0/843**；`max_consec_limit` 全日均值 6.237（治本注记声称 6.24）、≥7 连板交易日占比 37.485%（声称 94.5%→37.5%）。Top-5 个股连板真值（末日：该标的高度 / 当日全市场最高）：000506 2024-11-12 21/21、000609 2025-11-12 19/19、000908 2024-07-25 17/17、603268 2024-11-05 14/16、002693 2024-10-09 14/14——后两行非矛盾，`max_consec_limit` 是**当日全市场最高**（16/14 由别的标的贡献），故只能作"当日上界 ≥ 个股高度"读，逐位判据看上文的 0/843 |
+| OVB-3 | ✅ 走"显式披露"分支 | 裁定=二选一里取**最小风险支**：不删融合逻辑、不换源（换盘后 CLH 口径属数据源战役，且删逻辑会改动 2024-08 前窗口的生产数值），改为运行期出声——`overlay_signals_builder._disclose_hk_flow_staleness`（空窗 > `_HK_FLOW_STALE_TRADE_DAYS`=5 交易日 ⇒ 每实例一次性 WARNING，指向 `known_data_gaps.yaml: hk_connect_flow_source_discontinued`）+ `_compute_t3_inputs` docstring 同步披露。数值不变式由 `TestNorthboundBlackoutDisclosure` 三条钉住：断供段 `inflow_pct` 与"无北向输入"逐位相同 / 阈值内空窗静默 / 新鲜源下融合仍生效（防后人把"加披露"做成"顺手停用"）。**残余**：盘后口径换源仍是未做的可选项（R-OVB-3b） |
+| OVB-4 | ✅ 台账落地（换值属 Owner 门） | `THRESHOLD_CALIBRATION_LEDGER` 五项 3 ALERT／2 RESOLVED；s2_breadth_thrust、t3_money_effect、t3_mainline 三项各自跑完预注册 walk-forward 且**按闸门判不采纳**（详见 §4.5 与两份报告），告警语义已从"从未复推"收窄为"复推未过带" |
+| OVB-5 | ✅ 治本 | 换真实个股龙头 cohort 大面率（`105b0d02d7`），`test_leader_break_uses_individual_cohort` / `test_leader_break_degrades_without_limit_data` 两钉 |
+
 ## 5 子节点清单
 
 | 节点 | 为什么值得挖 | 入口 |
