@@ -7970,6 +7970,7 @@ def make_arch_diagram_reconciler(gateway: object) -> ReconcilerSpec:
     import os
     import subprocess
     import sys
+    from concurrent.futures import ThreadPoolExecutor
 
     project_root = gateway.project_root
 
@@ -8040,6 +8041,62 @@ def make_arch_diagram_reconciler(gateway: object) -> ReconcilerSpec:
         "docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_flow.md",  # generate_data_acquisition_flow.py
     )
 
+    # F4 波次并发（依赖拓扑分组；波内并发、波间串行屏障）。原 15 生成器串联 ~57s。
+
+    # 分组依据=静态 DAG 核验（每个生成器读/写哪些 _OUTPUTS）+ serial×2 确定性实证：
+
+    #   wave0(11)：互不读对方产物；HTML 子目录 06_(decision)/05_(dataflow) 互斥，无清除竞争。
+
+    #   wave1(3)：navigation_index 聚合 5 张 wave0 图 / align_panoramas 读 wave0 capacity_report /
+
+    #             data_acquisition_flow 写 05_ HTML（须在 dataflow_diagram 清目录之后，故不入 wave0）。
+
+    #   wave2(1)：panorama_registry 聚合 wave0+wave1 全部产物，必须最后。
+
+    # byte-identical：波内无 read-after-write → 确定性生成器输出逐字节相同。
+
+    # 例外（非并发引入）：navigation_index/panorama_registry/align_panoramas/data_inventory
+
+    #   自身非确定（实时 DB 行数 + align_panoramas 的 wall-clock 时间戳），serial 连跑两遍亦 DIFF。
+
+    _WAVES = (
+        (
+            "generate_decision_diagram.py",
+            "generate_dataflow_diagram.py",
+            "generate_integration_topology.py",
+            "generate_design_vs_production.py",
+            "generate_cross_domain_matrix.py",
+            "generate_constraint_violations.py",
+            "generate_capacity_report.py",
+            "generate_capability_heatmap.py",
+            "generate_asset_catalog.py",
+            "generate_policies.py",
+            "generate_data_inventory.py",
+        ),
+        (
+            "align_panoramas.py",
+            "generate_navigation_index.py",
+            "generate_data_acquisition_flow.py",
+        ),
+        ("generate_panorama_registry.py",),
+    )
+
+    # 波次必须精确划分 _GENERATORS——防新增/删除生成器漏排波次导致静默跳过（构造期硬失败）。
+
+    if sorted(_g for _w in _WAVES for _g in _w) != sorted(_GENERATORS):
+        raise ValueError("F4 _WAVES 与 _GENERATORS 不一致：新增/删除生成器须同步波次表")
+
+    # F4 并发上限：默认 4（serial ~57s → ~28s，对 <180s 判据留 6x 余量；cap=11 实测 17.9s/3.2x
+
+    # 但 CPU 爆炸半径大）。env ZEPHYR_ARCH_GEN_WORKERS 可调，硬钳 [1,20]——本机压测红线 worker≤20，
+
+    # 多个 post-commit reconcile 叠加时限制单 reconciler 子进程爆炸半径。
+
+    try:
+        _MAX_GEN_WORKERS = max(1, min(20, int(os.environ.get("ZEPHYR_ARCH_GEN_WORKERS", "4"))))
+    except (ValueError, TypeError):
+        _MAX_GEN_WORKERS = 4
+
     def _trigger(committed_files: list[str]) -> bool:
 
         for f in committed_files:
@@ -8082,25 +8139,36 @@ def make_arch_diagram_reconciler(gateway: object) -> ReconcilerSpec:
 
             # auto-commit 失败 → 落回原逻辑跑生成器（兜底，不阻断）
 
-        # 1. 串联跑 15 个生成器（无 --all 参数，直接运行；幂等：相同输入->相同输出）
+        # 1. 波次并发跑 15 个生成器（F4：依赖拓扑分 3 波，波内并发、波间串行屏障；原串联 ~57s）
+
+        #    幂等：相同输入->相同输出；波内无 read-after-write（DAG 核验见 _WAVES 处注释）。
 
         failed_gens: list[str] = []
 
-        for gen_name in _GENERATORS:
-            gen_result = _run_subprocess(
-                [sys.executable, f"{_GEN_DIR}/{gen_name}"],
-                cwd=str(project_root),
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-                errors="replace",
-                timeout=180,  # 单个生成器最多 3 分钟（depgraph 查询 + MD 写入）
-            )
+        def _run_one(gen_name: str) -> tuple[str, int, str]:
+            """跑单个生成器 -> (名, rc, 错误摘要)。超时/异常不抛出，降级 rc=-1 计入 failed_gens。"""
+            try:
+                r = _run_subprocess(
+                    [sys.executable, f"{_GEN_DIR}/{gen_name}"],
+                    cwd=str(project_root),
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    timeout=180,  # 单个生成器最多 3 分钟（depgraph 查询 + MD 写入）
+                )
+                return gen_name, r.returncode, (r.stderr or "").strip()[:120]
+            except subprocess.TimeoutExpired:
+                return gen_name, -1, "TIMEOUT(180s)"
+            except Exception as exc:  # noqa: BLE001 — 单生成器异常不阻断其余（部分漂移修复优于全跳过）
+                return gen_name, -1, f"{type(exc).__name__}: {str(exc)[:100]}"
 
-            if gen_result.returncode != 0:
-                failed_gens.append(f"{gen_name}: {gen_result.stderr.strip()[:120]}")
-
-                # 不 return，继续跑剩余生成器（部分漂移修复优于全跳过）
+        with ThreadPoolExecutor(max_workers=_MAX_GEN_WORKERS) as _ex:
+            for _wave in _WAVES:
+                # ex.map 阻塞至本波全部完成 = 波间串行屏障（wave1 读到 wave0 产物，wave2 聚合全部）
+                for gen_name, rc, err in _ex.map(_run_one, _wave):
+                    if rc != 0:
+                        failed_gens.append(f"{gen_name}: {err}")
 
         if failed_gens and len(failed_gens) == len(_GENERATORS):
             # 全部失败 -> warn 直接返回（无漂移可检测）

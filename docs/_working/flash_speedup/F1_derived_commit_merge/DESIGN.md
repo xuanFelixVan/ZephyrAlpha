@@ -92,9 +92,35 @@ pre-flush HEAD = 滞后基线（这正是 2026-08-02 audit-02 当初引入 post-
 
 ## 6. 施工日志
 
-- [ ] register_fold 落地 validate_rules_integrity.py
-- [ ] _fold_rules_integrity_into_batch 落地 gateway + 两处 with-batcher 块内接线
-- [ ] pytest -k "integrity or reconciler"
-- [ ] TAMPERED 检测断言
-- [ ] 真仓试点 commit + git log 核无尾笔
-- [ ] GitCommitGateway 提交（一战场一批）
+- [x] register_fold 落地 validate_rules_integrity.py（+ --fold CLI + _save_db 返回落盘结果）
+- [x] _fold_rules_integrity_into_batch 落地 gateway + 两处 with-batcher 块内接线（sync L1927 / worker L1991）
+- [x] pytest -k "integrity or reconciler" → **772 passed, 3 skipped, 7 xfailed, 49 xpassed**（0 fail）
+- [x] 新增 test_validate_rules_integrity_fold.py 4 例 → **4 passed**（折入重基线/no-op/判据②TAMPERED/WIP篡改检测保住）
+- [x] 真仓试点 commit `fe47296d`（7 文件）→ `git log fe47296d..HEAD` 无 `chore(integrity)` 尾笔；近 30 笔零 integrity 尾笔 ✓
+- [x] 提交后 DB 自愈：worker（39 reconciler，异步 detached）跑完 → `--check` 全 17 文件完整 ✓
+
+### 验收结论：判据全过
+
+| 判据 | 结果 |
+|------|------|
+| pytest -k "integrity or reconciler" 全绿 | ✓ 772 passed |
+| 真仓一笔试点 git log -1 无衍生尾笔 | ✓ fe47296d 后无 integrity 尾笔 |
+| 手动编辑 rules_integrity_db hash → 必报 TAMPERED | ✓ test_manual_db_hash_edit_reports_tampered |
+| 无受保护改动提交 → 独立 integrity commit=0 | ✓ fold 对此类提交 no-op（单测 test_fold_noop_when_no_protected_change） |
+
+### 施工期观测（留给 F4/F6 的实证）
+
+1. **异步 reconcile worker 极慢**：本笔 commit 的 detached worker（pid 6100）跑满 39 个
+   reconciler 耗时 ~6 分钟（GATE-REGENERATE 卡 180s、GATE-DELETE-AUDIT 卡 120s）。
+   worker 是 detached 后台进程，**不阻塞 CLI commit 返回**（commit 本身 ~2s+gate），但
+   fold 在 reconcile_for 之后才跑 → DB 自愈延迟到 worker 收尾。这正是 R-08 / F4 靶子。
+2. **热 DB 并发 clobber**：施工期 altdata 会话（st-altdatamap-20260917）并发活动，其
+   post-flush register 在 17:54:34 读 pre-commit HEAD 重写了 DB，把我手动 pre-fold 的
+   DB 覆盖回旧 hash → 我 commit 时 git-add 吸收的是被 clobber 的旧 DB（HEAD:DB 滞后）。
+   worker 收尾 fold 在 18:06:30 用工作树（==已提交 HEAD 内容）重新治愈工作树 DB。
+   **教训**：DB 是热争用文件；F1 fold 在 worker 内原子执行可自愈，但跨会话并发窗口内
+   HEAD:DB 可能滞后一笔，由下一笔 commit 的 fold 吸收（check() 始终基于工作树，不阻断）。
+3. **workspace_hygiene 还原 6 个 auto-sync 文件**（worker errors 实证）——
+   #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001 同族：buffered 文件被后序 reconciler git restore，
+   flush 可能 NOTHING_TO_COMMIT。F6 需排查此交互对 fold buffer 的影响。
+
