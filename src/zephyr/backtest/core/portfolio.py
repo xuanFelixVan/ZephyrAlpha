@@ -40,6 +40,7 @@ SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.2
 
 from __future__ import annotations
 
+from datetime import datetime
 import re
 from bisect import bisect_right
 from dataclasses import dataclass, field
@@ -265,7 +266,16 @@ class Portfolio:
         pos = self._positions[symbol]
 
         # T+1检查
-        if not allow_t_plus_1 and pos.buy_date == fill.date:
+        # rpt_b01 P1：buy_date 与 fill.date 在 tick 粒度是带时刻的 datetime，
+        # 旧码全等比较 → 同日不同秒即绕过 T+1。归一化到日历日比较（兼容 str/datetime/date）。
+        def _cal_day(v: Any) -> str:
+            if isinstance(v, str):
+                return v[:10]
+            if isinstance(v, datetime):
+                return v.date().isoformat()
+            return v.isoformat()[:10]
+
+        if not allow_t_plus_1 and pos.buy_date is not None                 and _cal_day(pos.buy_date) == _cal_day(fill.date):
             raise PortfolioError(f"T+1锁定: {symbol} 当天买入不能卖出 (date={fill.date})")
 
         if fill.quantity > pos.quantity:

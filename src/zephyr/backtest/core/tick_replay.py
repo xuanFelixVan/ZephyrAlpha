@@ -326,7 +326,7 @@ class TickReplayEngine:
 
         # 合并所有 symbol 的 tick，按 timestamp 排序
         merged = pd.concat(all_ticks, ignore_index=True)
-        merged = merged.sort_values("timestamp").reset_index(drop=True)
+        merged = merged.sort_values("timestamp", kind="stable").reset_index(drop=True)  # rpt_b06：并列时间戳序不确定违反严格排序不变式
 
         # 转换为 dict 列表（避免 pandas 行迭代开销）
         self._merged_ticks = merged.to_dict("records")
