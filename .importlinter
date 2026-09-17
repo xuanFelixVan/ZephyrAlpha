@@ -68,6 +68,7 @@ forbidden_modules =
     zephyr.signal_fundamental
     zephyr.signal_quality
     zephyr.simulation
+    zephyr.strategy_pipeline
     zephyr.trading
 # ignore_imports（AI-01 S1-3 治本，2026-08-01）：以下 4 处为已记录的跨层技术债，
 #   治本（下沉类型到 shared / 重构 _cross_layer）属独立架构专项，超出 S1 机制治本边界。

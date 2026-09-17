@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-16T18:20:34Z
+# 自动生成于 2026-09-17T05:26:18Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-16T18:20:34Z'
+generated_at: '2026-09-17T05:26:18Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 435
+total_scripts: 439
 with_manifest: 408
-missing_manifest: 27
+missing_manifest: 31
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 55
+  governance: 56
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -25,7 +25,7 @@ categories:
   governance:d8_doc_sync: 14
   governance:d9_knowledge: 2
   governance:data_quality: 2
-  governance:generators: 13
+  governance:generators: 15
   governance:git_hooks: 1
   governance:meta: 47
   governance:migrate_sqlite_to_pg: 2
@@ -34,6 +34,7 @@ categories:
   governance:oneoff: 7
   governance:repair: 7
   governance:shared: 1
+  governance:standards: 1
   governance:vms: 9
 scripts:
 - name: _sync/check_p0_status.py
@@ -174,6 +175,16 @@ scripts:
   description: depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   tags:
   - Quick
+- name: apply_resource_plan.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: architecture_health_dashboard.py
   owner: governance
   dimensions:
@@ -557,9 +568,8 @@ scripts:
   - --warn-only
   - --jsonl
   warn_only: false
-  description: '扫描 .yaml/.md/.py 文件的 UTF-8 BOM，阻断 BOM 污染。 对标 quality_standard.md 维度
-    D-A 编码安全 — open() 禁止省略 encoding=''utf-8''。 本门禁是 generate_registry_master_index.py
-    BOM 免疫的编码层预防防线。
+  description: '扫描 .yaml/.md/.py 文件的 UTF-8 BOM，阻断 BOM 污染。 对标 AGENTS.md §4 编码安全 — open()
+    禁止省略 encoding=''utf-8''。 本门禁是 generate_registry_master_index.py BOM 免疫的编码层预防防线。
 
     '
   tags:
@@ -907,7 +917,7 @@ scripts:
   args:
   - --fix
   warn_only: false
-  description: 全库孤儿.py文件检测（GATE-17 — .py只允许在scripts/** / src/zephyr/** / tests/**
+  description: 全库孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/** / src/zephyr/** / tests/**
     任意子目录）
   tags:
   - Critical
@@ -1310,8 +1320,7 @@ scripts:
   args:
   - --check
   warn_only: true
-  description: GATE-GENERATE — 枚举自动派生生成器（锚：GATE-VOCAB / 裁定#206 — vocabulary YAML →
-    派生文件枚举列表自动同步，--check/--apply/--diff）
+  description: GATE-GENERATE — 枚举自动派生生成器（§6.14 Level 3 — vocabulary YAML → 派生文件枚举列表自动同步，--check/--apply/--diff）
   tags:
   - Disruptive
   - Quick
@@ -1522,7 +1531,7 @@ scripts:
   timeout_seconds: 60
   args: []
   warn_only: false
-  description: depends_on 依赖链路深度审计（TRAE-029 — 引用链不超过3层，rules/trae_029_doc_operation_security.yaml）
+  description: depends_on 依赖链路深度审计（AGENTS.md §6.2 — 引用链不超过3层）
   tags:
   - Critical
   - Periodic
@@ -2523,8 +2532,7 @@ scripts:
   - --warn-only
   - --jsonl
   warn_only: false
-  description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（锚：TRAE-014 蓝图-代码双向对齐 / AGENTS.md
-    RULE-DEPGRAPH；路径索引 vs 磁盘交叉比对）
+  description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.1 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
   tags:
   - Critical
   - Quick
@@ -2836,8 +2844,8 @@ scripts:
   - --warn-only
   - --jsonl
   warn_only: false
-  description: parse AGENTS.md task menu (SKIP until authored), verify referenced
-    files exist. GATE-22 AI加载路径不可漂移
+  description: parse AGENTS.md §8.2 task menu (SKIP until §8.2 authored), verify referenced
+    files exist. Anchored to AI加载路径不可漂移铁律
   tags:
   - Critical
 - name: d5_architecture/validators/validate_module_schema.py
@@ -4157,6 +4165,16 @@ scripts:
   - Critical
   - Disruptive
   - Quick
+- name: generators/generate_resource_morning_report.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generators/generate_resource_profile_registry.py
   owner: governance:generators
   dimensions: []
@@ -4215,6 +4233,16 @@ scripts:
   - Critical
   - Disruptive
   - Quick
+- name: generators/generate_skeleton_health.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generators/inject_manifests.py
   owner: governance:generators
   dimensions:
@@ -5273,6 +5301,16 @@ scripts:
   - Quick
 - name: split_coordination.py
   owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: standards/standards_lib.py
+  owner: governance:standards
   dimensions: []
   priority: P2
   timeout_seconds: 60
