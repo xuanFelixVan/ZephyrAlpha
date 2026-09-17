@@ -21876,6 +21876,19 @@ entries:
     本次未并发改 commit_queue.py / commit_belt_daemon.py（F1/F4 提速车道在途、其 DESIGN 文档仍 staged，
     且 02:35 实测有他会话正在该 worktree 内 requeue+跑门禁）。daemon 是否重启=不重启（旧形态单序列化器
     与裁定#320③ k=4 分区通道前置冲突；当前由会话 requeue/drain 驱动，实测可落地）。
+    追加实证④（2026-09-18 夜，同一病根“落地面与主树的锚定态/路径空间不一致”的另外三面）：
+    ①daemon 死后**多会话 requeue/drain 自身成为并发序列化器**——同一 qid 出现双次落地尝试
+    （qid q-20260918-st-btfix-p17-20260916-0082：02:41:15 done(e88262fc1e) 与 02:41:29
+    dead(CLAIM_REQUIRED_VIOLATION) 并存，间隔 14s），故“单序列化器”不能只靠 daemon 存活，
+    落地侧需幂等（qid 已 done 即短路）；②claim 判定的路径空间错配——dead_reason 中目标文件被
+    解析成 landing worktree 绝对路径（…\.runtime\commit_queue\worktree\docs\…），而 claim
+    登记在主树 repo 相对路径上，同一 claim 在落地面读不到；③落地后主树 index 滞留旧 blob——
+    本批 3 件已落地文件均呈 MM（实测 index==HEAD^ 且 worktree==HEAD），即共享索引里躺着一份
+    “把刚落地改动回退掉”的幻象 staged 差分；own-diff 型门禁读 index（git show :<path>），
+    此时判的是旧内容，与 #ARCH-316 治的观测面错位同病。已做处置：对本人 3 件 git add 把索引
+    对齐 HEAD（index blob 与 HEAD^ 逐字节相同=零独有内容，刷新不丢任何工作），并核过提交归属
+    （ba17062144：3 文件/175 插入，零吸收）。治本候选（提交链车道）：落地成功后对涉及路径
+    同步主树 index（git add 等价语义）+ qid done 短路幂等 + claim 判定统一 repo 相对路径空间。
   status: open
   created: '2026-09-17'
   last_updated: '2026-09-18'
