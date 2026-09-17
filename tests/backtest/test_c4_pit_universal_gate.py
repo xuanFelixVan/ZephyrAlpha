@@ -7,8 +7,8 @@
 # [MATURITY] design
 # [INVARIANTS] S12-E4 通用 PIT 闸（B1 探针泛化版，一闸罩全族）：两份仅 X 日后分歧的
 #   行情/成分输入 → 宇宙与权重在 X 日及之前必须逐位不变。红=X 日前的决策用到 X 日后的信息。
-#   现状钉扎：fw_backtest SCD-2 范式=绿（正确范式锚）；_c4_engine 当前名单宇宙=红
-#   （xfail strict，retrofit 落地后 XPASS 强制摘除）；模板族权重轴=实测钉。
+#   现状（2026-09-18 SCD-2 retrofit 落地后）：fw_backtest 范式=绿；_c4_engine 窗口并集
+#   宇宙=绿（原 xfail strict 真红件已摘除转正）；模板族权重轴=实测钉。
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,7 +16,7 @@
 # [ERROR_CONTRACT] 断言失败->测试失败（xfail strict 件=已知真红，retrofit 后必须摘除）
 # [TESTS] pytest tests/backtest/test_c4_pit_universal_gate.py
 # [TTL] permanent
-"""C4 翻译件通用 PIT 闸（S12-E4 交付②骨架，retrofit 本体在 Flash 活）。
+"""C4 翻译件通用 PIT 闸（S12-E4 交付②；SCD-2 retrofit 已落地 2026-09-18）。
 
 双世界构造：世界 A/B 仅在分界日 X=2024-03-31 之后分歧（成分表 M_EXIT 是否调出 /
 行情价格在 X 后走异），断言 X 日（含）前的宇宙/权重逐位不变。
@@ -55,6 +55,16 @@ def _constituent_rows(world: str) -> list[tuple]:
     return rows
 
 
+def _scd2_window_filter(rows: list[tuple], start: str, end: str) -> list[tuple]:
+    """模拟引擎 SCD-2 窗口 SQL 谓词：valid_from<=end ∧ (valid_to 未失效 ∨ >start)。"""
+    out = []
+    for s, vf, vt in rows:
+        vts = vt if vt is not None else ""
+        if vf <= end and (vts in ("", "1900-01-01") or vts > start):
+            out.append((s, vt))
+    return out
+
+
 class _FakeChClient:
     """按 SQL 文本分发：成分表查询 → 本世界行；其余报错（防静默走真库）。"""
 
@@ -64,10 +74,17 @@ class _FakeChClient:
     def execute(self, sql, params=None):
         if "index_constituent" in sql:
             rows = _constituent_rows(self.world)
+            if "valid_from <=" in sql:
+                # SCD-2 窗口口径（_c4_engine retrofit 2026-09-18 / fw_backtest）：谓词模拟
+                import re
+
+                m_end = re.search(r"valid_from <= toDate\('([\d-]+)'\)", sql)
+                m_start = re.search(r"valid_to > toDate\('([\d-]+)'\)", sql)
+                assert m_end and m_start, f"窗口谓词缺参: {sql[:160]}"
+                return _scd2_window_filter(rows, m_start.group(1), m_end.group(1))
             if "valid_to IS NULL" in sql:
-                # _c4_engine 当前名单口径：只回 valid_to 为空的（模拟 FINAL+过滤）
+                # 旧当前名单口径（已废，保留分发仅防意外复辟）
                 return [(s,) for s, _vf, vt in rows if vt is None]
-            # fw_backtest SCD-2 口径：valid_from/valid_to 原样回（过滤在 Python 侧）
             return [(s, vt) for s, _vf, vt in rows]
         raise AssertionError(f"fake client 收到非预期 SQL: {sql[:120]}")
 
@@ -81,14 +98,14 @@ def _load_c4_engine():
     return _c4_engine
 
 
-def _universe_c4_current_list(world: str) -> set[str]:
+def _universe_c4_window(world: str, start: str, end: str) -> set[str]:
+    """retrofit 后 _c4_engine.load_hs300（SCD-2 窗口并集）双世界取宇宙。"""
     eng = _load_c4_engine()
     client = _FakeChClient(world)
-    # load_hs300 → _q(SQL_HS300_VALID)；空集时回落 latest 两问（本 fake 不会空）
     orig_q = eng._q
     eng._q = client.execute
     try:
-        return eng.load_hs300()
+        return eng.load_hs300(start, end)
     finally:
         eng._q = orig_q
 
@@ -130,20 +147,31 @@ def test_scd2_window_paradigm_pit_green():
     assert set(_BASE_MEMBERS) | {_EXIT_MEMBER} == set(a)  # 窗内在册者都入池（含期末调出者）
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "S14-1/E4 已知真红：_c4_engine.load_hs300 用当前名单（valid_to IS NULL），"
-        "X 后调出事件反向改写历史宇宙——SCD-2 retrofit（Flash 活）落地后本件 XPASS 摘除"
-    ),
-)
-def test_c4_engine_current_list_universe_pit_gate():
-    """通用 PIT 闸·宇宙轴（当前对 _c4_engine 族应红）：X 后分歧不得改变历史宇宙。"""
-    a = _universe_c4_current_list("A")
-    b = _universe_c4_current_list("B")
+def test_c4_engine_universe_pit_gate():
+    """通用 PIT 闸·宇宙轴（retrofit 落地 2026-09-18，xfail 已摘）：X 后分歧不得改写 ≤X 宇宙。"""
+    a = _universe_c4_window("A", "2024-01-01", "2024-03-31")
+    b = _universe_c4_window("B", "2024-01-01", "2024-03-31")
     assert a == b, (
         f"宇宙被 X 后信息改写: A-B={sorted(set(a) - set(b))} B-A={sorted(set(b) - set(a))}"
     )
+    # 窗口并集语义：期末已调出者（世界 A 的 300750，valid_to 在窗后）仍入池
+    assert set(a) == set(_BASE_MEMBERS) | {_EXIT_MEMBER}
+    # 鉴别力 sanity（跨调出日窗口）：宇宙 PIT 仍成立（A==B），但披露把 X 后调出事件
+    # 可见化——世界 A since_exit_n=1、世界 B=0（幸存者偏差禁静默，且不影响成员资格）
+    a2 = _universe_c4_window("A", "2024-01-01", "2024-12-31")
+    b2 = _universe_c4_window("B", "2024-01-01", "2024-12-31")
+    assert a2 == b2 == set(_BASE_MEMBERS) | {_EXIT_MEMBER}
+    eng = _load_c4_engine()
+    _universe_c4_window("A", "2024-01-01", "2024-12-31")
+    da = eng.last_universe_disclosure()
+    assert da is not None and da["since_exit_n"] == 1
+    _universe_c4_window("B", "2024-01-01", "2024-12-31")
+    db = eng.last_universe_disclosure()
+    assert db is not None and db["since_exit_n"] == 0
+    # 结构钉：引擎宇宙 SQL 必须带窗口谓词+未失效哨兵（防 Snapshot 口径复辟）
+    assert "valid_from <=" in eng.SQL_INDEX_CONS_WINDOW
+    assert "{sentinel}" in eng.SQL_INDEX_CONS_WINDOW
+    assert eng._NO_EXPIRY_SENTINEL == "1900-01-01"
 
 
 # ── 权重轴：模板族双世界行情（X 后价格分歧） ──────────────────────────────────

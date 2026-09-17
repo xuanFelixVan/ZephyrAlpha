@@ -51,7 +51,7 @@ _MAX_HOLD = 5
 def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     load_start = str(pd.Timestamp(start) - pd.Timedelta(days=60))[:10]
     px = load_px(load_start, end, fields=("close",))
-    hs = load_hs300()
+    hs = load_hs300(start, end)
     px = px[px["symbol"].isin(hs)]
     closes = filter_st(wide(px).ffill(), load_st_flags(load_start, end))
     bull = closes.rolling(5).mean() > closes.rolling(20).mean()

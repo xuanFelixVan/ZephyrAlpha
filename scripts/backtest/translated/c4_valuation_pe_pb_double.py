@@ -33,7 +33,7 @@ def build(s, e):
     from _c4_engine import filter_st, load_st_flags
     load_start = str(pd.Timestamp(s) - pd.Timedelta(days=30))[:10]
     px = load_px(load_start, e, fields=("close",))
-    uni = load_hs300()
+    uni = load_hs300(s, e)
     px = px[px["symbol"].isin(uni)]
     closes = filter_st(wide(px).ffill(), load_st_flags(load_start, e))
     pe_raw = load_valuation_cross_section(load_start, e, "pe")

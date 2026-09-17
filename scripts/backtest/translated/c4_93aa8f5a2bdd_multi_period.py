@@ -57,7 +57,7 @@ _TRAIN_N, _TOP_N, _REBAL = 25, 5, 7
 def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     load_start = str(pd.Timestamp(start) - pd.Timedelta(days=900))[:10]
     px = load_px(load_start, end, fields=("close", "open"))
-    uni = load_index_constituents("000010.SH")
+    uni = load_index_constituents("000010.SH", start, end)
     px = px[px["symbol"].isin(uni)] if uni else px
     close = filter_st(wide(px, "close").ffill(), load_st_flags(load_start, end))
     opn = wide(px, "open").ffill().reindex(close.index).reindex(columns=close.columns)

@@ -52,7 +52,7 @@ _TOP_N = 5
 def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     load_start = str(pd.Timestamp(start) - pd.Timedelta(days=90))[:10]
     px = load_px(load_start, end, fields=("close", "high", "volume"))
-    hs = load_hs300()
+    hs = load_hs300(start, end)
     px = px[px["symbol"].isin(hs)]
     close = filter_st(wide(px, "close").ffill(), load_st_flags(load_start, end))
     high = wide(px, "high").ffill().reindex(close.index).reindex(columns=close.columns)

@@ -53,7 +53,7 @@ _WIN, _TOP_N = 120, 2
 def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     load_start = str(pd.Timestamp(start) - pd.Timedelta(days=260))[:10]
     px = load_px(load_start, end, fields=("close", "high", "volume"))
-    hs = load_hs300()
+    hs = load_hs300(start, end)
     px = px[px["symbol"].isin(hs)]
     px = px[~px["symbol"].str.startswith("68")]
     close = filter_st(wide(px, "close").ffill(), load_st_flags(load_start, end))

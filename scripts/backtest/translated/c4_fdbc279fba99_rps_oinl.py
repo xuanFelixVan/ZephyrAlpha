@@ -55,7 +55,7 @@ _EXCL_GAIN, _SELL_WIN, _SELL_GAIN = 0.5, 90, 0.3
 def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     load_start = str(pd.Timestamp(start) - pd.Timedelta(days=250))[:10]
     px = load_px(load_start, end, fields=("close",))
-    hs = load_hs300()
+    hs = load_hs300(start, end)
     px = px[px["symbol"].isin(hs)]
     close = filter_st(wide(px).ffill(), load_st_flags(load_start, end))
 

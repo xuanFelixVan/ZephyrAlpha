@@ -140,14 +140,14 @@ def _load_engine():
     return load_px, wide, filter_st, load_st_flags, run_backtest, daily_net_returns
 
 
-def _load_universe(universe: str) -> set[str]:
+def _load_universe(universe: str, start: str, end: str) -> set[str]:
     """G_universe → {hs300, zz500, all_a_ex_st}（成分快照，index_constituent 真源）。"""
     from _c4_engine import load_index_constituents
 
     if universe == "hs300":
-        return load_index_constituents("000300.SH")
+        return load_index_constituents("000300.SH", start, end)
     if universe == "zz500":
-        return load_index_constituents("000905.SH")
+        return load_index_constituents("000905.SH", start, end)
     if universe == "all_a_ex_st":
         rows = _engine_query_all_a()
         return rows
@@ -690,7 +690,7 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
         g = r.values["G_universe"]
         if g not in universe_cache:
             try:
-                universe_cache[g] = _load_universe(g)
+                universe_cache[g] = _load_universe(g, start, end)
             except Exception as exc:  # noqa: BLE001
                 negatives.append(NegativeRecord(r.recipe_id, "eval", f"universe_load_fail:{type(exc).__name__}",
                                                 r.values, "", str(exc)[:120]))

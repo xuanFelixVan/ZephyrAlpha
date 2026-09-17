@@ -52,7 +52,7 @@ _N, _M, _MAX_HOLD = 29, 19, 50
 def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     load_start = str(pd.Timestamp(start) - pd.Timedelta(days=60))[:10]
     px = load_px(load_start, end, fields=("close",))
-    hs = load_hs300()
+    hs = load_hs300(start, end)
     px = px[px["symbol"].isin(hs)]
     closes = wide(px).ffill()
     closes = filter_st(closes, load_st_flags(load_start, end))

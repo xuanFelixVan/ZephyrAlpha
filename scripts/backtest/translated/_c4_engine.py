@@ -64,6 +64,9 @@ _T_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
 # 涨跌停封板判定容差（E7 探针同口径 2026-09-17：close_raw >= limit_up*(1-1e-4)）
 _LIMIT_SEAL_TOL = 1e-4
 
+# 最近一次窗口宇宙加载的披露（E4 retrofit：幸存者偏差可见化，禁静默）
+_UNIVERSE_DISCLOSURE: dict | None = None
+
 # SQL 集中化常量（§5.160.2；Replacing 表读侧全 FINAL——09-15 批考双份行事故治本 2026-09-16）
 SQL_PX = (
     "SELECT trade_date, symbol, {cols} FROM " + _T_KLINE_DAILY_HFQ + " FINAL "
@@ -82,20 +85,16 @@ SQL_ST_FLAGS = (
     "SELECT trade_date, symbol, toUInt8(st_flag) AS st_flag FROM " + _T_STK_LIMIT + " FINAL "
     "WHERE trade_date >= '{start}' AND trade_date <= '{end}'"
 )
-SQL_HS300_VALID = (
-    "SELECT symbol_canonical FROM " + _T_INDEX_CONSTITUENT + " FINAL "
-    "WHERE index_code = '000300.SH' AND valid_to IS NULL"
-)
-SQL_HS300_LATEST_DATE = (
-    "SELECT max(trade_date) FROM " + _T_INDEX_CONSTITUENT + " WHERE index_code = '000300.SH'"
-)
-SQL_HS300_LATEST = (
-    "SELECT symbol FROM " + _T_INDEX_CONSTITUENT + " FINAL "
-    "WHERE index_code = '000300.SH' AND trade_date = '{latest}'"
-)
-SQL_INDEX_CONS_VALID = (
-    "SELECT symbol_canonical FROM " + _T_INDEX_CONSTITUENT + " FINAL "
-    "WHERE index_code = '{index_code}' AND valid_to IS NULL"
+# SCD-2 窗口并集口径（E4 retrofit 2026-09-18，fw_backtest._hs300_symbols 同范式，#326 治本）：
+# 旧 `valid_to IS NULL` 当前快照口径拿"今天还在指数里"的名字回灌历史窗（幸存者偏差，
+# 近 12 个月窗 300→331、9.4% 已调出/退市票整批缺席）；窗口并集=窗内曾为成份即入池。
+# 1900-01-01 未失效哨兵与 zephyr.data.pit_query 口径同源。
+_NO_EXPIRY_SENTINEL = "1900-01-01"
+SQL_INDEX_CONS_WINDOW = (
+    "SELECT symbol_canonical, valid_to FROM " + _T_INDEX_CONSTITUENT + " "
+    "WHERE index_code = '{index_code}' "
+    "AND valid_from <= toDate('{end}') "
+    "AND (valid_to IS NULL OR valid_to = toDate('{sentinel}') OR valid_to > toDate('{start}'))"
 )
 
 
@@ -237,23 +236,53 @@ def fin_history(as_of: str, metrics: tuple[str, ...]) -> pd.DataFrame:
     return ok.groupby(["symbol", "report_period"], as_index=False).last()
 
 
-def load_hs300() -> set[str]:
-    """沪深300 成分快照（纯 6 位代码）。失败时抛 RuntimeError（D1 不静默降级）。"""
-    rows = _q(SQL_HS300_VALID)
-    hs = {(r[0] or "")[:6] for r in rows if r[0]}
-    if not hs:
-        latest = _q(SQL_HS300_LATEST_DATE)[0][0]
-        rows = _q(SQL_HS300_LATEST.format(latest=latest))
-        hs = {(r[0] or "")[:6] for r in rows if r[0]}
-    if not hs:
-        raise RuntimeError("index_constituent 沪深300 成分缺失")
-    return hs
+def load_index_constituents(index_code: str, start: str, end: str) -> set[str]:
+    """指数成份**窗口内并集**（SCD-2 时点口径，E4 retrofit 2026-09-18）。
+
+    窗口 [start, end] 内曾为成份即入池（含期内调出/退市者），消灭幸存者偏差；
+    与 fw_backtest._hs300_symbols 同范式（valid_from<=end ∩ valid_to 未失效或 >start）。
+    空结果抛 RuntimeError（D1 不静默降级）；旧"当前快照"口径已废——快照语义
+    （择时用）禁走本函数，勿以无窗调用复辟。
+    披露：_UNIVERSE_DISCLOSURE 记录窗口并集 vs 期末快照差额（幸存者偏差可见化）。
+    """
+    global _UNIVERSE_DISCLOSURE
+    rows = _q(SQL_INDEX_CONS_WINDOW.format(
+        index_code=index_code, start=start, end=end, sentinel=_NO_EXPIRY_SENTINEL))
+    universe: set[str] = set()
+    still_in_at_end: set[str] = set()
+    for raw, valid_to in rows:
+        code = (str(raw) if raw else "")[:6]
+        if not code:
+            continue
+        universe.add(code)
+        vt = "" if valid_to is None else str(valid_to)[:10]
+        if vt in ("", _NO_EXPIRY_SENTINEL) or vt > end:
+            still_in_at_end.add(code)
+    if not universe:
+        raise RuntimeError(f"index_constituent {index_code} 窗口 [{start}..{end}] 成分缺失")
+    exited = sorted(universe - still_in_at_end)
+    _UNIVERSE_DISCLOSURE = {
+        "schema": "universe_disclosure/v1",
+        "mode": "pit_index_window",
+        "index_code": index_code,
+        "window": {"start": start, "end": end},
+        "universe_n": len(universe),
+        "snapshot_n": len(still_in_at_end),
+        "since_exit_n": len(exited),
+        "since_exit_share": round(len(exited) / len(universe), 4),
+        "note": "窗口内曾为成份即入池；snapshot_n=旧 valid_to IS NULL 口径会给的只数",
+    }
+    return universe
 
 
-def load_index_constituents(index_code: str) -> set[str]:
-    """任意指数成分快照（如 000905.SH 中证500）。"""
-    rows = _q(SQL_INDEX_CONS_VALID.format(index_code=index_code))
-    return {(r[0] or "")[:6] for r in rows if r[0]}
+def load_hs300(start: str, end: str) -> set[str]:
+    """沪深300 窗口内成份并集（纯 6 位代码）。失败时抛 RuntimeError（D1 不静默降级）。"""
+    return load_index_constituents("000300.SH", start, end)
+
+
+def last_universe_disclosure() -> dict | None:
+    """最近一次窗口宇宙加载的披露（幸存者偏差可见化；无加载返回 None）。"""
+    return _UNIVERSE_DISCLOSURE
 
 
 def load_st_flags(start: str, end: str) -> pd.DataFrame:

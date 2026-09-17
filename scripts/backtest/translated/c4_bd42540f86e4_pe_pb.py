@@ -39,7 +39,7 @@ _TOP_N = 5
 def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     load_start = str(pd.Timestamp(start) - pd.Timedelta(days=30))[:10]
     px = load_px(load_start, end, fields=("close",))
-    hs = load_hs300()
+    hs = load_hs300(start, end)
     px = px[px["symbol"].isin(hs)]
     closes = filter_st(wide(px).ffill(), load_st_flags(load_start, end))
     # 估值截面（stock_indicator 按日取最近不晚于 T-1 的行）

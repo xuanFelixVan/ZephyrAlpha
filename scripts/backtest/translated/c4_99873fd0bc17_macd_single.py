@@ -52,7 +52,7 @@ _MAX_HOLD = 100
 def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
     load_start = str(pd.Timestamp(start) - pd.Timedelta(days=60))[:10]
     px = load_px(load_start, end, fields=("close",))
-    uni = load_index_constituents("000905.SH")
+    uni = load_index_constituents("000905.SH", start, end)
     px = px[px["symbol"].isin(uni)]
     closes = filter_st(wide(px).ffill(), load_st_flags(load_start, end))
     dif = closes.ewm(span=12, adjust=False).mean() - closes.ewm(span=26, adjust=False).mean()

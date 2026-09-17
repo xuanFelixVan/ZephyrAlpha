@@ -531,7 +531,7 @@ class TestNetReturnsArchive:
     def _run_batch(self, tmp_path, monkeypatch, seed: int = 7) -> tuple[dict, int]:
         closes = _synth_closes(self.N_DAYS, 36, seed=seed)  # 36 列 ≥ universe_too_small 门槛
         monkeypatch.setattr(mod, "_load_engine", lambda: self._stub_engine(closes))
-        monkeypatch.setattr(mod, "_load_universe", lambda u: set(closes.columns))
+        monkeypatch.setattr(mod, "_load_universe", lambda u, start, end: set(closes.columns))  # 2026-09-18 SCD-2 retrofit 同步三参
         monkeypatch.setattr(mod, "_load_mkt_cap_wide", lambda s, e, c: None)
         monkeypatch.setattr(mod, "_industry_map", lambda: None)
         monkeypatch.setattr(mod, "INTAKE_DIR", tmp_path)

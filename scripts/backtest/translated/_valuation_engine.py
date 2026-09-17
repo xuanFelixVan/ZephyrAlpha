@@ -95,9 +95,9 @@ def build_valuation_strategy(
     fund_load_start = str(pd.Timestamp(start) - pd.Timedelta(days=_FUND_LOAD_PRELOAD_DAYS))[:10]
     px = load_px(load_start, end, fields=("close",))
     if universe == "hs300":
-        uni = load_hs300()
+        uni = load_hs300(start, end)
     elif universe == "zz500":
-        uni = load_index_constituents("000905.SH")
+        uni = load_index_constituents("000905.SH", start, end)
     else:
         uni = set(px["symbol"].unique())
     px = px[px["symbol"].isin(uni)]
