@@ -50056,6 +50056,20 @@ entries:
   desc_zh: "到期扫描+行情联结 outcome+结算回填+聚合报告+DM 对比"
   desc_en: ""
   plain_zh: "等行情数据出来后，这个工具自动给之前记录的预测判断对答案算得分，算错的标记原因不偷偷跳过，还能按模块汇总谁预测得准"
+- module_path: src/zephyr/plan_engine/intraday_l1_tracker.py
+  domain_id: D_PLAN
+  name_zh: "盘中L1大盘状态跟踪件"
+  name_en: "Intraday L1 Market State Tracker"
+  desc_zh: "60min bars 到达事件驱动的盘中大盘五态判定件，特征=量比/涨跌家数比/拉板数/隔夜参照，经 judgment_ledger 发射到 judgment_intraday_market_state"
+  desc_en: ""
+  plain_zh: "交易时段里每当一根六十分钟K线落库，它就给当前大盘拍一张快照判五态：低迷防御震荡进攻亢奋，算好概率和尾盘方向，写进盘中判定台账，让盘中判断可回测可追责。"
+- module_path: src/zephyr/plan_engine/next_day_forecaster.py
+  domain_id: D_PLAN
+  name_zh: "次日概率件"
+  name_en: "Next Day Forecaster"
+  desc_zh: "daily_kline SUCCESS 后产出 T+1 三态概率/分位数/预期波动的盘后判定件，v0=历史条件统计基线，经 judgment_ledger 发射到 judgment_next_day_forecast"
+  desc_en: ""
+  plain_zh: "每天收盘数据齐了以后，它翻历史账找和今天最像的日子，统计他们第二天涨平跌的比例，给出明天上涨横盘下跌的概率和波动幅度预期，写进次日判定台账，收盘后自动结算对账。"
 
 battle_map_steps:
 - step_id: BM-BUY-05

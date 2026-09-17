@@ -46,27 +46,29 @@ from zephyr.plan_engine import (
 )
 
 __all__: Final = [
-    "tomorrow_boundary_planner",
+    "IntradayL1Tracker",
+    "NextDayForecaster",
+    "auction_hit_recorder",
+    "batch_boundary_runner",
+    "boundary_revision_engine",
+    "brier_calibration",
+    "closing_session_decision",
+    "daily_trade_plan",
+    "evidence_chain_decision",
+    "llm_premarket_analysis",
+    "overnight_boundary_reviser",
     "premarket_constraint_loader",
     "premarket_workflow",
-    "closing_session_decision",
-    "overnight_boundary_reviser",
+    "scenario_attribution_stats",
+    "scenario_plan_recorder",
     "scenario_planner",
     "scenario_playbook",
-    "boundary_revision_engine",
-    "llm_premarket_analysis",
-    "scenario_plan_recorder",
-    "scenario_attribution_stats",
-    "brier_calibration",
-    "daily_trade_plan",
-    "batch_boundary_runner",
-    "trading_debate",
-    "trading_analyst_agents",
-    "evidence_chain_decision",
-    "sit_out_list",
-    "auction_hit_recorder",
     "scenario_probability_model",
+    "sit_out_list",
+    "tomorrow_boundary_planner",
     "track_fusion",
+    "trading_analyst_agents",
+    "trading_debate",
 ]
 
 # ORPHAN-MODULE: 引用登记（让 depgraph 发现 import 边）
@@ -74,3 +76,5 @@ from zephyr.plan_engine.similar_day_evaluator import evaluate_similar_day_hit_ra
 
 # ORPHAN-MODULE: 引用登记（gw-tdm-20260909：C8 买入逻辑存活判定）
 from zephyr.plan_engine.thesis_survival import evaluate_thesis  # noqa: F401
+from zephyr.plan_engine.intraday_l1_tracker import IntradayL1Tracker
+from zephyr.plan_engine.next_day_forecaster import NextDayForecaster

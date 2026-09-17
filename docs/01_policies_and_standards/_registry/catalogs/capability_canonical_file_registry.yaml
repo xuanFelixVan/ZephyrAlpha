@@ -28023,4 +28023,12 @@ creation_tokens:
   token: judgment-ledger-judgment-settler-20260916
   created_by: st-ledgerp1-20260916
   capability: judgment_ledger
+- file: src/zephyr/plan_engine/intraday_l1_tracker.py
+  token: auto-scaffold-intraday_l1_tracker-20260917
+  created_by: scaffold.py
+  capability: intraday_l1_tracker
+- file: src/zephyr/plan_engine/next_day_forecaster.py
+  token: auto-scaffold-next_day_forecaster-20260917
+  created_by: scaffold.py
+  capability: next_day_forecaster
 di_seam_exemptions: []
