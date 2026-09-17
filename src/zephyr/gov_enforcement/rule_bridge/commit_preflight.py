@@ -144,7 +144,10 @@ _ESCAPE_HINTS: dict[str, str] = {
     "PROTECTED-PATHS": "受保护路径须 Owner 审批（无 CLI 逃生旗）",
     "TTL-METADATA": "补 frontmatter ttl/completes_when 字段",
     "FOLDER-CAPACITY-HARD-LIMIT": "文件挪子目录（平铺目录容量上限）",
-    "REGISTRY-MASS-DELETION": "注册表只应增长——检查是否误删条目",
+    "REGISTRY-MASS-DELETION": (
+        "注册表只应增长——检查是否误删条目；确属合法净删（去重/退役/账实修正）"
+        "在 commit message 加标记 [allow-mass-deletion:<理由≥10字>]（预检已可读 message，随批永久留痕）"
+    ),
     "MANUAL-ONLY-PERMANENT": "permanent 脚本必须事件触发——补事件订阅注册",
     "PERM-TRIGGER": "时间触发模式须注册事件订阅（禁 cron/Timer/sleep-loop）",
     "TEST-SOURCE-CONSISTENCY": "测试 import 的符号须与源码一致（名称漂移）",
@@ -232,6 +235,7 @@ def run_preflight(
     *,
     specs: "list[GateSpec] | None" = None,
     audit_event: str = "direct",
+    commit_message: str = "",
 ) -> CommitPreflightResult:
     """锁外预检白名单 gate（一过式收集，不短路）。
 
@@ -242,6 +246,10 @@ def run_preflight(
         skip_gate_ids: 逃生旗对应跳过的 gate 集（由调用方按 argparse 旗映射）。
         specs: 测试注入位（缺省=gateway._gate_registry.specs_sorted()）。
         audit_event: 审计事件标签（direct/enqueue）。
+        commit_message: 本次提交信息（缺省空串）。标记豁免型 gate（如
+            REGISTRY-MASS-DELETION 的 [allow-mass-deletion:]）以此为输入面——
+            2026-09-18 治本：此前预检不传 message，带合法逃生标记的批次被预检
+            假红硬拦，而锁内权威链/落地侧会放行（预检与权威判据错位）。
 
     Returns:
         CommitPreflightResult——findings 非空=应快败；degraded=设施异常不阻断。
@@ -255,7 +263,7 @@ def run_preflight(
         targets = [s for s in specs if s.gate_id in PREFLIGHT_GATES and s.gate_id not in skip_gate_ids]
         for spec in targets:
             try:
-                result = spec.check(gateway, list(files), session_id=session_id)
+                result = spec.check(gateway, list(files), session_id=session_id, commit_message=commit_message)
                 passed, detail = (result[0], result[1] if len(result) > 1 else "") if isinstance(result, tuple) else (True, "")
                 if not passed:
                     findings.append(

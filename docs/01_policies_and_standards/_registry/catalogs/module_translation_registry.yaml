@@ -1847,11 +1847,11 @@ entries:
   plain_zh: '- 参数网格展开：将 {param: [v1, v2, ...]} 展开为所有组合'
 - module_path: src/zephyr/compliance/async_intercept_queue.py
   domain_id: D_COMPLIANCE
-  name_zh: 异步intercept队列
-  name_en: async_intercept_queue
-  desc_zh: 异步intercept队列模块
-  desc_en: ''
-  plain_zh: 异步intercept队列，合规的同步器，保持数据同步一致。
+  name_zh: "异步拦截队列"
+  name_en: "async_intercept_queue"
+  desc_zh: "SecurityGateway同步拦截延迟的异步化升级(GAP-L10-001)+内容缓存"
+  desc_en: ""
+  plain_zh: "合规安检的异步传送带，AI生成的内容先排队再过安检，相同内容直接走缓存；队伍满了或安检机故障都按拦截处理，不放行。"
 - module_path: src/zephyr/compliance/behavioral_auditor/__init__.py
   domain_id: D_COMPLIANCE
   name_zh: 包入口
@@ -3566,11 +3566,11 @@ entries:
   plain_zh: 成交处理器，执行核心的处理器，处理加工数据。
 - module_path: src/zephyr/ex_core/live_simulation_switcher.py
   domain_id: D_EX_CORE
-  name_zh: 实盘仿真切换器
-  name_en: live_simulation_switcher
-  desc_zh: 实盘仿真切换器（live_simulation_switcher.py）
-  desc_en: ''
-  plain_zh: 实盘仿真切换器，支撑交易核心流程（live simulation switcher）
+  name_zh: "实盘/模拟切换开关"
+  name_en: "live_simulation_switcher"
+  desc_zh: "默认模拟盘；切实盘须显式确认令牌+留痕（令牌只存指纹）；切回模拟免令牌"
+  desc_en: ""
+  plain_zh: "实盘和模拟盘的总闸门：生下来就是模拟盘；想切实盘必须掏出Owner签发的令牌，验证不过就原地不动；切回模拟随时放行；每次切换都留痕，但令牌原文绝不落盘。"
 - module_path: src/zephyr/ex_core/order_manager.py
   domain_id: D_EX_CORE
   name_zh: 订单管理器
@@ -3580,11 +3580,11 @@ entries:
   plain_zh: 管理订单全生命周期：创建->风控校验->路由->状态跟踪
 - module_path: src/zephyr/ex_core/order_splitter.py
   domain_id: D_EX_CORE
-  name_zh: 订单拆分器
-  name_en: order_splitter
-  desc_zh: 订单拆分器（order_splitter.py）
-  desc_en: ''
-  plain_zh: 订单拆分器，支撑交易核心流程（order splitter）
+  name_zh: "拆单器"
+  name_en: "order_splitter"
+  desc_zh: "TWAP/VWAP拆单（无Level-2依赖，日线/分钟线历史量能曲线权重注入），整手对齐+Decimal守恒"
+  desc_en: ""
+  plain_zh: "把大单切成小单的纯函数：TWAP平均分，VWAP按历史量能曲线分；每片都对齐到合法申报股数，末片兜底零股；量能曲线没给就拒单，绝不偷偷降级。"
 - module_path: src/zephyr/ex_core/position_tracker/
   domain_id: D_EX_CORE
   name_zh: 持仓追踪器
@@ -3608,11 +3608,11 @@ entries:
   plain_zh: 卖priority调度器，ex_core的调度器，按时间或优先级安排任务执行。
 - module_path: src/zephyr/ex_core/services/live_portfolio.py
   domain_id: D_EX_CORE
-  name_zh: 实时组合
-  name_en: live_portfolio
-  desc_zh: 实时组合（live_portfolio.py）
-  desc_en: ''
-  plain_zh: 实时组合，支撑交易核心流程（live portfolio）
+  name_zh: "实盘组合服务"
+  name_en: "live_portfolio"
+  desc_zh: "持仓/可用资金/净值视图，数据唯一入口=MOD-RK-25 RiskSnapshot注入"
+  desc_en: ""
+  plain_zh: "实盘账户的读数窗口：持仓、可用资金、净值都从一个统一快照来；快照供不上就拒绝出视图，绝不给你看一个假空仓；缺价的持仓如实标缺，不补零。"
 - module_path: src/zephyr/ex_core/signal_providers.py
   domain_id: D_EX_CORE
   name_zh: 信号提供器
@@ -6452,18 +6452,18 @@ entries:
   plain_zh: 'trade_panel · 实盘交易面板组件（v3.0.0 Panel+HoloViz 重构, #ARCH-047, human_gated）'
 - module_path: src/zephyr/frontend/implementations/default_approval_gateway.py
   domain_id: D_FRONTEND
-  name_zh: 默认审批网关
-  name_en: default_approval_gateway
-  desc_zh: 默认approval网关模块
-  desc_en: ''
-  plain_zh: 默认approval网关，前端的门禁，在关键节点检查是否放行。
+  name_zh: "默认审批网关"
+  name_en: "default_approval_gateway"
+  desc_zh: "B-007人工审批载体——submit/decide/pending闭环+决策留痕"
+  desc_en: ""
+  plain_zh: "人工审批的收发室，AI要上新策略先在这里挂单，人批准或打回都留痕；过期的单子自动作废，不许补批。"
 - module_path: src/zephyr/frontend/implementations/default_notification_manager.py
   domain_id: D_FRONTEND
-  name_zh: 默认通知管理器
-  name_en: default_notification_manager
-  desc_zh: 默认通知管理器模块
-  desc_en: ''
-  plain_zh: 默认通知管理器，前端的通知器，把消息推送给接收方。
+  name_zh: "默认通知管理器"
+  name_en: "default_notification_manager"
+  desc_zh: "通知分发管理器——log内建渠道+外部渠道注册(微信通知能力③接线位)"
+  desc_en: ""
+  plain_zh: "系统的传话筒，内置日志渠道，微信等外部渠道留好接线口；多个渠道有一个没送达就如实报失败，不装成都送到了。"
 - module_path: src/zephyr/frontend/interface_base.py
   domain_id: D_FRONTEND
   name_zh: 接口基类
@@ -9916,32 +9916,32 @@ entries:
     hook避免拖慢每次提交
 - module_path: src/zephyr/signal_ashare/cross_market_conduction_sensor.py
   domain_id: D_ASHARE_SIGNAL
-  name_zh: 跨市场传导感知
-  name_en: Cross-Market Conduction Sensing
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 美股、港股、汇率、商品一异动，立刻算出对A股的传导系数和影响幅度，触发全量或板块重算。
+  name_zh: "跨市场传导传感器"
+  name_en: "Cross-Market Conduction Sensor"
+  desc_zh: "外盘指数→A股领先滞后相关+回归传导系数+隔夜冲击影响幅度量化"
+  desc_en: ""
+  plain_zh: "美股一异动，立刻算出对A股的传导系数和影响幅度——外盘昨夜涨跌乘以历史回归系数就是预估冲击，分市场汇总成总影响预测；只量化幅度，不喊买喊卖。"
 - module_path: src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py
   domain_id: D_ASHARE_SIGNAL
-  name_zh: 体制转换检测
-  name_en: Regime Change Detection
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 盯着市场脾气会不会变——趋势转震荡、牛转熊的切换点提前预警。
+  name_zh: "体制转换检测器"
+  name_en: "Regime Change Detector"
+  desc_zh: "牛/熊2态+CUSUM变点预警+触发→确认状态机（BM-BUY-02-A-1-d）"
+  desc_en: ""
+  plain_zh: "盯着市场脾气会不会变——跌破60日线或从高点回撤两成就判熊，刚翻转先挂\"待确认\"，连跌三天以上才坐实切换；切换概率随确认天数爬升，给风控提前拉警报。"
 - module_path: src/zephyr/signal_ashare/adjustment_cycle_tracker.py
   domain_id: D_ASHARE_SIGNAL
-  name_zh: 调整周期追踪
-  name_en: Adjustment Cycle Tracking
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 追踪板块调整走到哪了——进度≥80%才允许分批低吸，初期<40%直接拦截。
+  name_zh: "调整周期追踪器"
+  name_en: "Adjustment Cycle Tracker"
+  desc_zh: "市场级调整周期追踪——自动找峰/算持续天数/回撤深度，复用板块级进度引擎"
+  desc_en: ""
+  plain_zh: "追踪大盘这波调整走到哪了——从最高点跌了多久、多深、广度修复几成，合成进度百分比：不到四成拦截低吸，超过八成允许分批接，创新高宣布调整结束。"
 - module_path: src/zephyr/signal_ashare/market_lifecycle_phase.py
   domain_id: D_ASHARE_SIGNAL
-  name_zh: 行情生命周期阶段
-  name_en: Market Lifecycle Phase
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 判断行情在春夏秋冬哪一季——冬季禁止抄底，秋季突破失败更倾向强制离场。
+  name_zh: "市场生命周期相位"
+  name_en: "Market Lifecycle Phase"
+  desc_zh: "春夏秋冬4阶段判定（板块新高占比水位×趋势2×2）+季节禁为约束"
+  desc_en: ""
+  plain_zh: "给行情分春夏秋冬——看板块创新高的比例水位和走势：低位回升是春、高位扩张是夏、高位滞涨是秋、低位阴跌是冬；冬天禁抄底、秋天强制离场，约束交给风控执行。"
 - module_path: src/zephyr/signal_ashare/ml_forecast/causal_inference_engine.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: 知识图谱与因果推演
@@ -11833,11 +11833,11 @@ entries:
   plain_zh: 共享基础·可观测性的链路追踪：处理链路追踪的具体事务，给共享基础·可观测性这条线打下手，保证日常运转不出岔子。
 - module_path: src/zephyr/sell_decision/core/scaling_out_architect.py
   domain_id: D_SELL_DECISION
-  name_zh: 缩放出架构师
-  name_en: Scaling Out Architect
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 卖出决策的扩量出架构师：把扩量出架构师的逻辑集中在一处，卖出决策别处直接拿来用，避免重复造轮子。
+  name_zh: "分批卖出架构师"
+  name_en: "scaling_out_architect"
+  desc_zh: "紧迫度→分批节奏（前重/均匀/后重）+批次触发结构设计"
+  desc_en: ""
+  plain_zh: "设计\"分几批卖、每批卖多少、什么条件卖\"的计划表：越急首批卖越多，越从容越往后留；首批绝不超今天能卖的数量，超出的自动顺延。"
 - module_path: tests/governance/audit/test_alerts.py
   domain_id: D_GOV_AUDIT
   name_zh: Alerts测试
@@ -12302,11 +12302,11 @@ entries:
   plain_zh: 任务编排·故障容错包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
 - module_path: src/zephyr/ex_core/miniqmt_channel_manager.py
   domain_id: D_EX_CORE
-  name_zh: MiniqmtChannel管理器
-  name_en: Miniqmt Channel Manager
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 执行核心的miniqmt 通道管家：miniqmt 通道的大事小情都归它管，执行核心各模块找它对接，省得各自为政。
+  name_zh: "miniQMT通道管理器"
+  name_en: "miniqmt_channel_manager"
+  desc_zh: "xtquant通道底座——连接生命周期/心跳/断线重连状态机，通道不可用全Fail-Closed"
+  desc_en: ""
+  plain_zh: "miniQMT下单通道的看门人：负责连上、心跳探活、断了有界重连；通道没连好时任何下单调用一律拦下，绝不放行；它自己不真连QMT，传输层是注入的，测试用假货就能全验。"
 - module_path: tests/trading/root/test_dlq_manager_root.py
   domain_id: ''
   name_zh: Dlq管理器根入口测试
@@ -13907,11 +13907,11 @@ entries:
   plain_zh: 测试：安全门禁 l56 l57能不能正常工作，有问题尽早暴露。
 - module_path: src/zephyr/position/core/position_behavior_classifier.py
   domain_id: D_POSITION
-  name_zh: 持仓行为分类器
-  name_en: Position Behavior Classifier
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 仓位管理的持仓行为分类器：处理持仓行为分类器的具体事务，给仓位管理这条线打下手，保证日常运转不出岔子。
+  name_zh: "持仓行为分类器"
+  name_en: "position_behavior_classifier"
+  desc_zh: "行为金融学规则分类（套牢/急卖/趋势持有/呆滞/中性）+处置效应预警"
+  desc_en: ""
+  plain_zh: "给持仓做\"行为体检\"：亏着死扛的标成处置效应套牢，赚点就跑的标成过早止盈，呆滞不动的提示占用资金；只贴标签供复盘，不自动操作。"
 - module_path: src/zephyr/factor/core/factor_dag/
   domain_id: D_FACTOR
   name_zh: 因子Dag
@@ -14223,11 +14223,11 @@ entries:
   plain_zh: 任务编排·生命周期包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
 - module_path: src/zephyr/sell_decision/core/strategy_specific_stop_framework.py
   domain_id: D_SELL_DECISION
-  name_zh: 策略Specific止损Framework
-  name_en: Strategy Specific Stop Framework
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 卖出决策的策略专属停止框架：把策略专属停止框架的逻辑集中在一处，卖出决策别处直接拿来用，避免重复造轮子。
+  name_zh: "策略特异止损框架"
+  name_en: "strategy_specific_stop_framework"
+  desc_zh: "风格画像→止损参数映射+初始/移动/保本/时间四类止损计算"
+  desc_en: ""
+  plain_zh: "不同风格的策略配不同的止损尺：趋势策略放宽些、均值回归卡紧些；它只认\"风格\"不认具体策略，算出当前最紧的那条止损线和触发原因。"
 - module_path: src/zephyr/simulation/implementations/default_experiment_pipeline.py
   domain_id: D_SIMULATION
   name_zh: 默认实验管道
@@ -15170,11 +15170,11 @@ entries:
   plain_zh: 漂移检测的相关性发动机：把相关性的动力输出给整条链路，没它漂移检测就跑不起来。
 - module_path: src/zephyr/sell_decision/core/sell_strategy_ab_tester.py
   domain_id: D_SELL_DECISION
-  name_zh: 卖策略Ab测试器
-  name_en: Sell Strategy Ab Tester
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 卖出决策的卖出策略 ab 测试器：把卖出策略 ab 测试器的逻辑集中在一处，卖出决策别处直接拿来用，避免重复造轮子。
+  name_zh: "卖出策略AB测试器"
+  name_en: "sell_strategy_ab_tester"
+  desc_zh: "两卖出策略变体双样本z检验→ADOPT_B/KEEP_A/INCONCLUSIVE"
+  desc_en: ""
+  plain_zh: "新旧卖出策略的裁判：拿两组实战结果做统计检验，新策略显著更好才建议换，样本不够一律\"再观察\"，防止被小样本骗了换错人。"
 - module_path: scripts/governance/meta/gate_engine_selfcheck.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 门禁引擎Selfcheck
@@ -15254,11 +15254,11 @@ entries:
   plain_zh: 基础设施·归档包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
 - module_path: src/zephyr/sell_decision/core/sell_signal_scorer.py
   domain_id: D_SELL_DECISION
-  name_zh: 卖信号Scorer
-  name_en: Sell Signal Scorer
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 卖出决策的卖出信号打分器：把卖出信号打分器的逻辑集中在一处，卖出决策别处直接拿来用，避免重复造轮子。
+  name_zh: "卖出信号评分器"
+  name_en: "sell_signal_scorer"
+  desc_zh: "置信度×强度×贝叶斯准确率×跨周期共振加成的信号综合评分"
+  desc_en: ""
+  plain_zh: "给每个卖出信号打综合分：信号本身多自信、力度多强、这类信号历史上准不准（样本少就往中间靠）、多个周期一起喊卖还加分；分高者优先处理。"
 - module_path: tests/contracts/test_ct_ce_lsg_001.py
   domain_id: ''
   name_zh: CT Ce Lsg 001测试
@@ -17188,11 +17188,11 @@ entries:
   plain_zh: 归档·迁移的更新导入：处理更新导入的具体事务，给归档·迁移这条线打下手，保证日常运转不出岔子。
 - module_path: src/zephyr/position/core/cross_strategy_position_merger.py
   domain_id: D_POSITION
-  name_zh: 跨策略持仓合并器
-  name_en: Cross Strategy Position Merger
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 仓位管理的跨策略持仓合并器：管跨策略持仓合并器这块的活，仓位管理需要时来找它，确保链路不卡壳。
+  name_zh: "跨策略仓位合并器"
+  name_en: "cross_strategy_position_merger"
+  desc_zh: "多子策略权重簿按资金占比净额合并为组合级目标权重"
+  desc_en: ""
+  plain_zh: "多个子策略各开各的\"购物清单\"，它按各策略分到的资金比例合成一张组合总单；同一股票多空意图相互抵消，完全抵消的不留痕迹。"
 - module_path: src/zephyr/trading/trading_contracts/factories.py
   domain_id: D_TRADING
   name_zh: 交易域数据契约工厂方法
@@ -20809,11 +20809,11 @@ entries:
   plain_zh: 测试：A2A phase4 保持的行为要符合预期，有偏差尽早抓住。
 - module_path: src/zephyr/sell_decision/core/t_trade_coordinator.py
   domain_id: D_SELL_DECISION
-  name_zh: T交易协调器
-  name_en: T Trade Coordinator
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 卖出决策的t 交易管理器：统一负责t 交易的安排和收尾，卖出决策别处要用都通过它，避免各管一段乱套。
+  name_zh: "做T协调器"
+  name_en: "t_trade_coordinator"
+  desc_zh: "T+1规则内日内做T规划（两腿≤可卖底仓+净价差门槛+日终复原）"
+  desc_en: ""
+  plain_zh: "日内做T的合规管家：不管正T倒T，卖出的那部分只能动可卖底仓，收盘前必须买回来保持仓位不变；差价扣完成本不够门槛就劝退。"
 - module_path: config/resource_optimization.yaml
   domain_id: ''
   name_zh: 资源优化
@@ -21089,11 +21089,11 @@ entries:
   plain_zh: 测试：隔离是否符合预期，别让毛病悄悄溜过去。
 - module_path: src/zephyr/ex_core/performance_monitor.py
   domain_id: D_EX_CORE
-  name_zh: 性能监控器
-  name_en: Performance Monitor
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 执行核心的性能监视：实时看性能的表现，不对劲就响铃，防止执行核心出状况没人知道。
+  name_zh: "性能监控器"
+  name_en: "Performance Monitor"
+  desc_zh: "MOD-EX-036。单机轻量实现——滑动窗口记录执行链路延迟样本（count/mean/min/max/p95），阈值越线经注入 alerter 回调外发；无 DB/网络/后台线程。"
+  desc_en: "MOD-EX-036. Single-machine lightweight perf monitor — sliding-window latency samples (count/mean/min/max/p95), threshold breach via injected alerter; no DB/network/threads."
+  plain_zh: "执行核心的体温计。下单快不快它实时记账，超过红线就按铃，全在一台机器内存里跑。"
 - module_path: tests/feedback/governance_audit/test_docs_init.py
   domain_id: ''
   name_zh: Docs包入口测试
@@ -23009,11 +23009,11 @@ entries:
   plain_zh: 韧性治理的沙箱引擎：驱动沙箱这套流程运转，吃进输入、吐出结果，是韧性治理干活的核心。
 - module_path: src/zephyr/signal_ashare/market_state_sensor.py
   domain_id: D_ASHARE_SIGNAL
-  name_zh: 市场状态Sensor
-  name_en: Market State Sensor
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: A股特色信号的市场 sensor约定：市场 sensor长什么样、怎么传，都在这里写清楚，各模块照这个来。
+  name_zh: "市场状态传感器"
+  name_en: "Market State Sensor"
+  desc_zh: "规则驱动3×3市场状态分类（趋势×波动率9网格）+分解得分+置信度"
+  desc_en: ""
+  plain_zh: "市场的体感温度计，看指数价量回答\"现在是什么市\"——涨还是跌、颠簸还是平稳，二合一给出9宫格状态和把握度；只报状态不出买卖建议，给下游风控当节流依据。"
 - module_path: tests/capability/test_capability_unit.py
   domain_id: ''
   name_zh: 能力单元测试
@@ -23226,11 +23226,11 @@ entries:
   plain_zh: 测试：上下文评估器根是否符合预期，别让毛病悄悄溜过去。
 - module_path: src/zephyr/ex_core/pre_execution_checker.py
   domain_id: D_EX_CORE
-  name_zh: Pre执行检查器
-  name_en: Pre Execution Checker
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 执行核心的事前执行校验：按既定规则核对事前执行，不合规就拦住或报出来，防止执行核心出问题。
+  name_zh: "执行前检查器"
+  name_en: "pre_execution_checker"
+  desc_zh: "下单前四级硬检查(熔断→交易时段→风控快照→否决引擎)，全环节Fail-Closed"
+  desc_en: ""
+  plain_zh: "订单出门前的最后一道岗：先看熔断拉没拉、是不是交易时间、风控数据齐不齐、风险裁判放不放行；任何一环出问题都默认拒单。"
 - module_path: src/zephyr/trading/action_dispatcher/__init__.py
   domain_id: D_TRADING
   name_zh: 推理结果 -> 直接回写源文件
@@ -24627,11 +24627,11 @@ entries:
   plain_zh: 治理·D6 安全的密钥检测：盯着密钥找毛病，发现不对就报出来，不让问题在治理·D6 安全里潜伏。
 - module_path: src/zephyr/sell_decision/core/sell_signal_accuracy_monitor.py
   domain_id: D_SELL_DECISION
-  name_zh: 卖信号Accuracy监控器
-  name_en: Sell Signal Accuracy Monitor
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 卖出决策的卖出信号 accuracy监控：持续盯着卖出信号 accuracy的运行状态，一有异常就告警，让卖出决策的问题能及时被发现。
+  name_zh: "卖出信号准确度监控器"
+  name_en: "sell_signal_accuracy_monitor"
+  desc_zh: "按信号类型聚合命中率回喂评分器+衰退预警"
+  desc_en: ""
+  plain_zh: "信号质量的复盘员：统计每类卖出信号历史上灵不灵，准确率回喂给评分器；哪类信号明显不如从前且样本够多，就预警它可能失效了。"
 - module_path: architecture_model/contracts/cross_layer_contracts.yaml
   domain_id: ''
   name_zh: 跨层契约
@@ -27861,11 +27861,11 @@ entries:
   plain_zh: 测试：把混沌引擎跑一遍，确认这块逻辑没毛病。
 - module_path: src/zephyr/sell_decision/core/exit_scenario_planner.py
   domain_id: D_SELL_DECISION
-  name_zh: Exit场景Planner
-  name_en: Exit Scenario Planner
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 卖出决策的exit 场景管理器：统一负责exit 场景的安排和收尾，卖出决策别处要用都通过它，避免各管一段乱套。
+  name_zh: "离场情景规划器"
+  name_en: "exit_scenario_planner"
+  desc_zh: "立即/分批/条件持有/持有四情景菜单+推荐，T+1可卖量内生"
+  desc_en: ""
+  plain_zh: "给每个持仓开\"离场菜单\"：紧急的全出（但当天买的部分依法顺延）、中等的先卖一半、不急的守住止损线；每个选项附理由，选择权留给决策层。"
 - module_path: tests/model/test_exam_test_cases.py
   domain_id: ''
   name_zh: 考试测试用例测试
@@ -28857,11 +28857,11 @@ entries:
   plain_zh: 归档·D3 元数据的派生检查：一条一条过派生的规矩，错的漏的都挑出来，给归档·D3 元数据把关。
 - module_path: src/zephyr/position/core/position_time_budget.py
   domain_id: D_POSITION
-  name_zh: 持仓时间预算
-  name_en: Position Time Budget
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 仓位管理的持仓时间记账本：持仓时间的每笔变动都留下痕迹，仓位管理想查能翻旧账。
+  name_zh: "持仓时间预算"
+  name_en: "position_time_budget"
+  desc_zh: "持仓持有天数对时间预算的三态巡检（WITHIN/APPROACHING/EXPIRED）"
+  desc_en: ""
+  plain_zh: "每只持仓都有\"最大持有天数\"闹钟，快到期的提醒、超期的标记为时间止损候选；它只报状态不动手，卖不卖由卖出域决定。"
 - module_path: tests/a2a/test_a2a_protocol_gateway.py
   domain_id: ''
   name_zh: A2AProtocol网关测试
@@ -30427,11 +30427,11 @@ entries:
   plain_zh: 测试：检查ba 混沌注入器在各种情况下表现对不对，守住质量关。
 - module_path: src/zephyr/position/core/correlation_regime_monitor.py
   domain_id: D_POSITION
-  name_zh: 相关性状态监控器
-  name_en: Correlation Regime Monitor
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 仓位管理的相关性市场状态监视：实时看相关性市场状态的表现，不对劲就响铃，防止仓位管理出状况没人知道。
+  name_zh: "相关性regime监控器"
+  name_en: "correlation_regime_monitor"
+  desc_zh: "组合平均成对相关→LOW/NORMAL/HIGH三档regime+分散失效预警"
+  desc_en: ""
+  plain_zh: "组合分散度的哨兵，盯着持仓之间的平均相关性；相关性飙高就说明\"看似分散实则同向\"，立刻亮黄灯提醒风险预算要收紧。"
 - module_path: src/zephyr/integration/vector_memory/in_memory_memory_backend.py
   domain_id: D_INTEGRATION
   name_zh: In记忆记忆后端
@@ -33264,11 +33264,11 @@ entries:
   plain_zh: 测试：A2A latent comm的行为要符合预期，有偏差尽早抓住。
 - module_path: src/zephyr/position/core/covariance_estimator.py
   domain_id: D_POSITION
-  name_zh: 协方差估计器
-  name_en: Covariance Estimator
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 仓位管理的covariance estimator：把covariance estimator的逻辑集中在一处，仓位管理别处直接拿来用，避免重复造轮子。
+  name_zh: "协方差估计器"
+  name_en: "covariance_estimator"
+  desc_zh: "Ledoit-Wolf收缩协方差估计（等方差对角目标+自适应收缩强度）"
+  desc_en: ""
+  plain_zh: "风险估计的底座计算器，把各标的收益率收成一张稳健的\"联动表\"；样本少时自动向保守的对角阵收缩，绝不算出病态矩阵。"
 - module_path: src/zephyr/security/adversarial_validation/__main__.py
   domain_id: D_SECURITY
   name_zh: 主入口
@@ -34237,11 +34237,11 @@ entries:
   plain_zh: 测试：模型版本语义漂移能不能正常工作，有问题尽早暴露。
 - module_path: src/zephyr/sell_decision/core/sell_execution_quality_tracker.py
   domain_id: D_SELL_DECISION
-  name_zh: 卖执行Quality跟踪器
-  name_en: Sell Execution Quality Tracker
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 卖出决策的卖出执行质量监控：持续盯着卖出执行质量的运行状态，一有异常就告警，让卖出决策的问题能及时被发现。
+  name_zh: "卖出执行质量追踪器"
+  name_en: "sell_execution_quality_tracker"
+  desc_zh: "卖出滑点加权聚合+GOOD/ACCEPTABLE/DEGRADED分级+超阈留痕"
+  desc_en: ""
+  plain_zh: "卖出执行的对账员：每笔成交和决策价比一比亏了多少滑点，加权汇总打分；平均滑点超标就报执行通道劣化，单笔异常单独留痕。"
 - module_path: tests/trading/unit/test_money_unit.py
   domain_id: ''
   name_zh: Money单元测试
@@ -34545,11 +34545,11 @@ entries:
   plain_zh: 基础设施·L3 协调的A2A voting：把A2A voting的逻辑集中在一处，基础设施·L3 协调别处直接拿来用，避免重复造轮子。
 - module_path: src/zephyr/position/core/intraday_position_constraint.py
   domain_id: D_POSITION
-  name_zh: 日内持仓约束
-  name_en: Intraday Position Constraint
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 仓位管理的盘中持仓约束：处理盘中持仓约束的具体事务，给仓位管理这条线打下手，保证日常运转不出岔子。
+  name_zh: "盘中仓位约束"
+  name_en: "intraday_position_constraint"
+  desc_zh: "盘中交易意图校验——T+1冻结+单标的/总仓上限，Fail-Closed"
+  desc_en: ""
+  plain_zh: "盘中下单前的仓位安检：今天买的今天不能卖（T+1内生），单票和总仓位不许越线；任何一条不合格都拦下并写明原因。"
 - module_path: tests/governance/commit_gates/test_capability_lookup_bypass_policy.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: CAPABILITY-LOOKUP bypass 策略共享模块单测
@@ -34685,11 +34685,11 @@ entries:
   plain_zh: 测试：ocp extension points 单元能不能正常工作，有问题尽早暴露。
 - module_path: src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py
   domain_id: D_ASHARE_SIGNAL
-  name_zh: NextDay8状态Forecast
-  name_en: Next Day 8state Forecast
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: A股特色信号的next 日 8state forecast：把next 日 8state forecast的逻辑集中在一处，A股特色信号别处直接拿来用，避免重复造轮子。
+  name_zh: "次日8状态预测"
+  name_en: "Next Day 8-State Forecast"
+  desc_zh: "8种T+1走势形态（高开高走等）马尔可夫转移矩阵概率分布预测"
+  desc_en: ""
+  plain_zh: "用历史\"今天什么走势→明天什么走势\"的转移频率，给出明天8种走势形态的概率分布；只出概率不出点位（90号裁定点预测暂缓），给下游修正信号权重用。"
 - module_path: tests/skill/test_skill_durable.py
   domain_id: ''
   name_zh: Skill Durable测试
@@ -34805,11 +34805,11 @@ entries:
   plain_zh: 测试：数据流水线守卫能不能正常工作，有问题尽早暴露。
 - module_path: src/zephyr/position/core/position_risk_budget_allocator.py
   domain_id: D_POSITION
-  name_zh: 持仓风险预算分配器
-  name_en: Position Risk Budget Allocator
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: 仓位管理的持仓风险预算管家：持仓风险预算的大事小情都归它管，仓位管理各模块找它对接，省得各自为政。
+  name_zh: "风险预算分配器"
+  name_en: "position_risk_budget_allocator"
+  desc_zh: "按风险预算分配权重（等预算=ERC等风险贡献），消费MOD-POS-011"
+  desc_en: ""
+  plain_zh: "按\"每只股票贡献的风险相等\"来分钱，而不是按金额平分；波动大的少给、波动小的多给，还能按自定义预算比例调配。"
 - module_path: tests/governance/budget/test_gct_024_hard_checks.py
   domain_id: D_GOV_OPS_RESILIENCE
   name_zh: GCT-024 硬检查：验证 BudgetEngine 实例化、三维覆盖、策略文件存在"""
@@ -41931,48 +41931,6 @@ entries:
   desc_en: ''
   plain_zh: 提交前检查：你认领（claim）的热注册表文件，在你认领之后有没有被别人抢先提交过新版本。如果被抢先了，说明你的修改是基于旧版本做的，直接提交会把别人的新改动覆盖掉——门禁会拦下这次提交，让你确认文件已包含别人的修改后重新认领再提交。和你写文件时的
     CAS 校验（safe_write_text）是两层互补防线：CAS 管写盘那一刻，本门禁管提交那一刻。
-- module_path: src/zephyr/signal_ashare/market_state_sensor.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: 市场状态传感器
-  name_en: Market State Sensor
-  desc_zh: 规则驱动3×3市场状态分类（趋势×波动率9网格）+分解得分+置信度
-  desc_en: ''
-  plain_zh: 市场的体感温度计，看指数价量回答"现在是什么市"——涨还是跌、颠簸还是平稳，二合一给出9宫格状态和把握度；只报状态不出买卖建议，给下游风控当节流依据。
-- module_path: src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: 体制转换检测器
-  name_en: Regime Change Detector
-  desc_zh: 牛/熊2态+CUSUM变点预警+触发→确认状态机（BM-BUY-02-A-1-d）
-  desc_en: ''
-  plain_zh: 盯着市场脾气会不会变——跌破60日线或从高点回撤两成就判熊，刚翻转先挂"待确认"，连跌三天以上才坐实切换；切换概率随确认天数爬升，给风控提前拉警报。
-- module_path: src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: 次日8状态预测
-  name_en: Next Day 8-State Forecast
-  desc_zh: 8种T+1走势形态（高开高走等）马尔可夫转移矩阵概率分布预测
-  desc_en: ''
-  plain_zh: 用历史"今天什么走势→明天什么走势"的转移频率，给出明天8种走势形态的概率分布；只出概率不出点位（90号裁定点预测暂缓），给下游修正信号权重用。
-- module_path: src/zephyr/signal_ashare/cross_market_conduction_sensor.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: 跨市场传导传感器
-  name_en: Cross-Market Conduction Sensor
-  desc_zh: 外盘指数→A股领先滞后相关+回归传导系数+隔夜冲击影响幅度量化
-  desc_en: ''
-  plain_zh: 美股一异动，立刻算出对A股的传导系数和影响幅度——外盘昨夜涨跌乘以历史回归系数就是预估冲击，分市场汇总成总影响预测；只量化幅度，不喊买喊卖。
-- module_path: src/zephyr/signal_ashare/adjustment_cycle_tracker.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: 调整周期追踪器
-  name_en: Adjustment Cycle Tracker
-  desc_zh: 市场级调整周期追踪——自动找峰/算持续天数/回撤深度，复用板块级进度引擎
-  desc_en: ''
-  plain_zh: 追踪大盘这波调整走到哪了——从最高点跌了多久、多深、广度修复几成，合成进度百分比：不到四成拦截低吸，超过八成允许分批接，创新高宣布调整结束。
-- module_path: src/zephyr/signal_ashare/market_lifecycle_phase.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: 市场生命周期相位
-  name_en: Market Lifecycle Phase
-  desc_zh: 春夏秋冬4阶段判定（板块新高占比水位×趋势2×2）+季节禁为约束
-  desc_en: ''
-  plain_zh: 给行情分春夏秋冬——看板块创新高的比例水位和走势：低位回升是春、高位扩张是夏、高位滞涨是秋、低位阴跌是冬；冬天禁抄底、秋天强制离场，约束交给风控执行。
 - module_path: src/zephyr/risk/core/risk_data_pipeline.py
   domain_id: D_RISK
   name_zh: 风控数据管道
@@ -41994,20 +41952,6 @@ entries:
   desc_zh: 硬规则veto清单+优先级+否决理由结构化输出
   desc_en: ''
   plain_zh: 下单前的风险裁判，按一票否决的硬规则逐条核：缺价、停牌、卖超、T+1、单仓超限、杠杆超限，谁碰线就拦下并给出结构化理由；规则自己出错也按拦截处理。
-- module_path: src/zephyr/ex_core/pre_execution_checker.py
-  domain_id: D_EX_CORE
-  name_zh: 执行前检查器
-  name_en: pre_execution_checker
-  desc_zh: 下单前四级硬检查(熔断→交易时段→风控快照→否决引擎)，全环节Fail-Closed
-  desc_en: ''
-  plain_zh: 订单出门前的最后一道岗：先看熔断拉没拉、是不是交易时间、风控数据齐不齐、风险裁判放不放行；任何一环出问题都默认拒单。
-- module_path: src/zephyr/compliance/async_intercept_queue.py
-  domain_id: D_COMPLIANCE
-  name_zh: 异步拦截队列
-  name_en: async_intercept_queue
-  desc_zh: SecurityGateway同步拦截延迟的异步化升级(GAP-L10-001)+内容缓存
-  desc_en: ''
-  plain_zh: 合规安检的异步传送带，AI生成的内容先排队再过安检，相同内容直接走缓存；队伍满了或安检机故障都按拦截处理，不放行。
 - module_path: src/zephyr/compliance/compliance_tech_enabler.py
   domain_id: D_COMPLIANCE
   name_zh: 合规技术使能器
@@ -42022,20 +41966,6 @@ entries:
   desc_zh: 合规常态巡检(审计留存B-016/规则新鲜度/拦截队列积压)输出健康报告
   desc_en: ''
   plain_zh: 合规的日常体检医生，定期查审计日志留没留够年头、规则有没有过时、拦截队列堵不堵；查不到数据的按违规处理，出具体检报告。
-- module_path: src/zephyr/frontend/implementations/default_approval_gateway.py
-  domain_id: D_FRONTEND
-  name_zh: 默认审批网关
-  name_en: default_approval_gateway
-  desc_zh: B-007人工审批载体——submit/decide/pending闭环+决策留痕
-  desc_en: ''
-  plain_zh: 人工审批的收发室，AI要上新策略先在这里挂单，人批准或打回都留痕；过期的单子自动作废，不许补批。
-- module_path: src/zephyr/frontend/implementations/default_notification_manager.py
-  domain_id: D_FRONTEND
-  name_zh: 默认通知管理器
-  name_en: default_notification_manager
-  desc_zh: 通知分发管理器——log内建渠道+外部渠道注册(微信通知能力③接线位)
-  desc_en: ''
-  plain_zh: 系统的传话筒，内置日志渠道，微信等外部渠道留好接线口；多个渠道有一个没送达就如实报失败，不装成都送到了。
 - module_path: src/zephyr/plan_engine/scenario_plan_recorder.py
   domain_id: D_PLAN
   name_zh: 预案落库与实际回写器
@@ -42148,111 +42078,6 @@ entries:
   desc_en: 'OHLCV daily-bar normalizer: column aliases, type coercion, negative-price/high<low
     validation, (symbol,date) sort + keep-last dedup.'
   plain_zh: OHLCV 归一化器。中文列名、YYYYMMDD 日期、字符串数字统统归一成标准行情记录。
-- module_path: src/zephyr/position/core/covariance_estimator.py
-  domain_id: D_POSITION
-  name_zh: 协方差估计器
-  name_en: covariance_estimator
-  desc_zh: Ledoit-Wolf收缩协方差估计（等方差对角目标+自适应收缩强度）
-  desc_en: ''
-  plain_zh: 风险估计的底座计算器，把各标的收益率收成一张稳健的"联动表"；样本少时自动向保守的对角阵收缩，绝不算出病态矩阵。
-- module_path: src/zephyr/position/core/correlation_regime_monitor.py
-  domain_id: D_POSITION
-  name_zh: 相关性regime监控器
-  name_en: correlation_regime_monitor
-  desc_zh: 组合平均成对相关→LOW/NORMAL/HIGH三档regime+分散失效预警
-  desc_en: ''
-  plain_zh: 组合分散度的哨兵，盯着持仓之间的平均相关性；相关性飙高就说明"看似分散实则同向"，立刻亮黄灯提醒风险预算要收紧。
-- module_path: src/zephyr/position/core/position_risk_budget_allocator.py
-  domain_id: D_POSITION
-  name_zh: 风险预算分配器
-  name_en: position_risk_budget_allocator
-  desc_zh: 按风险预算分配权重（等预算=ERC等风险贡献），消费MOD-POS-011
-  desc_en: ''
-  plain_zh: 按"每只股票贡献的风险相等"来分钱，而不是按金额平分；波动大的少给、波动小的多给，还能按自定义预算比例调配。
-- module_path: src/zephyr/position/core/cross_strategy_position_merger.py
-  domain_id: D_POSITION
-  name_zh: 跨策略仓位合并器
-  name_en: cross_strategy_position_merger
-  desc_zh: 多子策略权重簿按资金占比净额合并为组合级目标权重
-  desc_en: ''
-  plain_zh: 多个子策略各开各的"购物清单"，它按各策略分到的资金比例合成一张组合总单；同一股票多空意图相互抵消，完全抵消的不留痕迹。
-- module_path: src/zephyr/position/core/intraday_position_constraint.py
-  domain_id: D_POSITION
-  name_zh: 盘中仓位约束
-  name_en: intraday_position_constraint
-  desc_zh: 盘中交易意图校验——T+1冻结+单标的/总仓上限，Fail-Closed
-  desc_en: ''
-  plain_zh: 盘中下单前的仓位安检：今天买的今天不能卖（T+1内生），单票和总仓位不许越线；任何一条不合格都拦下并写明原因。
-- module_path: src/zephyr/position/core/position_time_budget.py
-  domain_id: D_POSITION
-  name_zh: 持仓时间预算
-  name_en: position_time_budget
-  desc_zh: 持仓持有天数对时间预算的三态巡检（WITHIN/APPROACHING/EXPIRED）
-  desc_en: ''
-  plain_zh: 每只持仓都有"最大持有天数"闹钟，快到期的提醒、超期的标记为时间止损候选；它只报状态不动手，卖不卖由卖出域决定。
-- module_path: src/zephyr/position/core/position_behavior_classifier.py
-  domain_id: D_POSITION
-  name_zh: 持仓行为分类器
-  name_en: position_behavior_classifier
-  desc_zh: 行为金融学规则分类（套牢/急卖/趋势持有/呆滞/中性）+处置效应预警
-  desc_en: ''
-  plain_zh: 给持仓做"行为体检"：亏着死扛的标成处置效应套牢，赚点就跑的标成过早止盈，呆滞不动的提示占用资金；只贴标签供复盘，不自动操作。
-- module_path: src/zephyr/sell_decision/core/sell_signal_scorer.py
-  domain_id: D_SELL_DECISION
-  name_zh: 卖出信号评分器
-  name_en: sell_signal_scorer
-  desc_zh: 置信度×强度×贝叶斯准确率×跨周期共振加成的信号综合评分
-  desc_en: ''
-  plain_zh: 给每个卖出信号打综合分：信号本身多自信、力度多强、这类信号历史上准不准（样本少就往中间靠）、多个周期一起喊卖还加分；分高者优先处理。
-- module_path: src/zephyr/sell_decision/core/strategy_specific_stop_framework.py
-  domain_id: D_SELL_DECISION
-  name_zh: 策略特异止损框架
-  name_en: strategy_specific_stop_framework
-  desc_zh: 风格画像→止损参数映射+初始/移动/保本/时间四类止损计算
-  desc_en: ''
-  plain_zh: 不同风格的策略配不同的止损尺：趋势策略放宽些、均值回归卡紧些；它只认"风格"不认具体策略，算出当前最紧的那条止损线和触发原因。
-- module_path: src/zephyr/sell_decision/core/exit_scenario_planner.py
-  domain_id: D_SELL_DECISION
-  name_zh: 离场情景规划器
-  name_en: exit_scenario_planner
-  desc_zh: 立即/分批/条件持有/持有四情景菜单+推荐，T+1可卖量内生
-  desc_en: ''
-  plain_zh: 给每个持仓开"离场菜单"：紧急的全出（但当天买的部分依法顺延）、中等的先卖一半、不急的守住止损线；每个选项附理由，选择权留给决策层。
-- module_path: src/zephyr/sell_decision/core/scaling_out_architect.py
-  domain_id: D_SELL_DECISION
-  name_zh: 分批卖出架构师
-  name_en: scaling_out_architect
-  desc_zh: 紧迫度→分批节奏（前重/均匀/后重）+批次触发结构设计
-  desc_en: ''
-  plain_zh: 设计"分几批卖、每批卖多少、什么条件卖"的计划表：越急首批卖越多，越从容越往后留；首批绝不超今天能卖的数量，超出的自动顺延。
-- module_path: src/zephyr/sell_decision/core/t_trade_coordinator.py
-  domain_id: D_SELL_DECISION
-  name_zh: 做T协调器
-  name_en: t_trade_coordinator
-  desc_zh: T+1规则内日内做T规划（两腿≤可卖底仓+净价差门槛+日终复原）
-  desc_en: ''
-  plain_zh: 日内做T的合规管家：不管正T倒T，卖出的那部分只能动可卖底仓，收盘前必须买回来保持仓位不变；差价扣完成本不够门槛就劝退。
-- module_path: src/zephyr/sell_decision/core/sell_signal_accuracy_monitor.py
-  domain_id: D_SELL_DECISION
-  name_zh: 卖出信号准确度监控器
-  name_en: sell_signal_accuracy_monitor
-  desc_zh: 按信号类型聚合命中率回喂评分器+衰退预警
-  desc_en: ''
-  plain_zh: 信号质量的复盘员：统计每类卖出信号历史上灵不灵，准确率回喂给评分器；哪类信号明显不如从前且样本够多，就预警它可能失效了。
-- module_path: src/zephyr/sell_decision/core/sell_strategy_ab_tester.py
-  domain_id: D_SELL_DECISION
-  name_zh: 卖出策略AB测试器
-  name_en: sell_strategy_ab_tester
-  desc_zh: 两卖出策略变体双样本z检验→ADOPT_B/KEEP_A/INCONCLUSIVE
-  desc_en: ''
-  plain_zh: 新旧卖出策略的裁判：拿两组实战结果做统计检验，新策略显著更好才建议换，样本不够一律"再观察"，防止被小样本骗了换错人。
-- module_path: src/zephyr/sell_decision/core/sell_execution_quality_tracker.py
-  domain_id: D_SELL_DECISION
-  name_zh: 卖出执行质量追踪器
-  name_en: sell_execution_quality_tracker
-  desc_zh: 卖出滑点加权聚合+GOOD/ACCEPTABLE/DEGRADED分级+超阈留痕
-  desc_en: ''
-  plain_zh: 卖出执行的对账员：每笔成交和决策价比一比亏了多少滑点，加权汇总打分；平均滑点超标就报执行通道劣化，单笔异常单独留痕。
 - module_path: src/zephyr/frontend/services/dashboard_feeds.py
   domain_id: D_FRONTEND
   name_zh: 前端结论级查询接口层
@@ -42267,27 +42092,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 用内存 mock 数据验证九条查询接口的输出结构与异常纪律，不连真实数据库。
-- module_path: src/zephyr/ex_core/miniqmt_channel_manager.py
-  domain_id: D_EX_CORE
-  name_zh: miniQMT通道管理器
-  name_en: miniqmt_channel_manager
-  desc_zh: xtquant通道底座——连接生命周期/心跳/断线重连状态机，通道不可用全Fail-Closed
-  desc_en: ''
-  plain_zh: miniQMT下单通道的看门人：负责连上、心跳探活、断了有界重连；通道没连好时任何下单调用一律拦下，绝不放行；它自己不真连QMT，传输层是注入的，测试用假货就能全验。
-- module_path: src/zephyr/ex_core/order_splitter.py
-  domain_id: D_EX_CORE
-  name_zh: 拆单器
-  name_en: order_splitter
-  desc_zh: TWAP/VWAP拆单（无Level-2依赖，日线/分钟线历史量能曲线权重注入），整手对齐+Decimal守恒
-  desc_en: ''
-  plain_zh: 把大单切成小单的纯函数：TWAP平均分，VWAP按历史量能曲线分；每片都对齐到合法申报股数，末片兜底零股；量能曲线没给就拒单，绝不偷偷降级。
-- module_path: src/zephyr/ex_core/live_simulation_switcher.py
-  domain_id: D_EX_CORE
-  name_zh: 实盘/模拟切换开关
-  name_en: live_simulation_switcher
-  desc_zh: 默认模拟盘；切实盘须显式确认令牌+留痕（令牌只存指纹）；切回模拟免令牌
-  desc_en: ''
-  plain_zh: 实盘和模拟盘的总闸门：生下来就是模拟盘；想切实盘必须掏出Owner签发的令牌，验证不过就原地不动；切回模拟随时放行；每次切换都留痕，但令牌原文绝不落盘。
 - module_path: src/zephyr/ex_core/execution_strategy_selector.py
   domain_id: D_EX_CORE
   name_zh: 执行策略选择器
@@ -42295,13 +42099,6 @@ entries:
   desc_zh: 按订单占ADV比例分档选限价直发/TWAP/VWAP，>15%ADV拒判须上游拆分
   desc_en: ''
   plain_zh: 给订单挑执行方式的分诊台：小单（<1%日均量）直接限价发，中单走TWAP，大单走VWAP，超过15%日均量的巨单直接拒收让上游先拆；没有日均量数据就拒判，不拍脑袋。
-- module_path: src/zephyr/ex_core/services/live_portfolio.py
-  domain_id: D_EX_CORE
-  name_zh: 实盘组合服务
-  name_en: live_portfolio
-  desc_zh: 持仓/可用资金/净值视图，数据唯一入口=MOD-RK-25 RiskSnapshot注入
-  desc_en: ''
-  plain_zh: 实盘账户的读数窗口：持仓、可用资金、净值都从一个统一快照来；快照供不上就拒绝出视图，绝不给你看一个假空仓；缺价的持仓如实标缺，不补零。
 - module_path: src/zephyr/plan_engine/trading_debate.py
   domain_id: D_PLAN
   name_zh: 交易域多空辩论编排器
@@ -42677,15 +42474,6 @@ entries:
   desc_en: MOD-INF-050. No duplicate engine — delegates to orchestrator CoVe detector;
     wrapper adds hash-chained audit trail (claim hash only) + stats.
   plain_zh: 幻觉检测的哨兵。真检测还是老引擎干，它只负责把每次检测结果盖章记账，账本想偷偷改一页都会被发现。
-- module_path: src/zephyr/ex_core/performance_monitor.py
-  domain_id: D_EX_CORE
-  name_zh: 性能监控器
-  name_en: Performance Monitor
-  desc_zh: MOD-EX-036。单机轻量实现——滑动窗口记录执行链路延迟样本（count/mean/min/max/p95），阈值越线经注入 alerter
-    回调外发；无 DB/网络/后台线程。
-  desc_en: MOD-EX-036. Single-machine lightweight perf monitor — sliding-window latency
-    samples (count/mean/min/max/p95), threshold breach via injected alerter; no DB/network/threads.
-  plain_zh: 执行核心的体温计。下单快不快它实时记账，超过红线就按铃，全在一台机器内存里跑。
 - module_path: src/zephyr/orchestrator/voting_first_multi_agent.py
   domain_id: D_ORCHESTRATOR
   name_zh: 投票优先多智能体编排器
@@ -50411,7 +50199,14 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "给治理门禁用的重考神器：调阈值先让新尺子重考历史考卷，该拦的还在拦才准上线。"
+  plain_zh: "给治理门禁用的重考神器：想调门禁阈值时，先用旧考卷让新阈值重考一遍，证明该拦的还在拦、没乱拦新的，才准上线。"
+- module_path: scripts/governance/d5_architecture/validators/check_vocab_domain_convergence.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "词表域差集收敛校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "定期检查：治理/翻译两张注册表里实际在用的领域名，是否都已经收进受控词表；有漏网的就报红，防止词表账目越落越后"
 - module_path: scripts/backtest/translated/c4_fact_e293e217.py
   domain_id: D_BACKTEST
   name_zh: "e293e217 价值因子快筛桥"
@@ -50419,6 +50214,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "模板生成的零逻辑策略桥件：把 CAND-606a6e8e89ac 的价值因子表达式接到统一回测引擎上跑快筛考试，本身不含任何策略逻辑，PIT 与冻结规则由引擎保证。"
+- module_path: tests/governance/d5_architecture/test_check_vocab_domain_convergence.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "三源词表差集收敛校验测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给差集收敛校验器当考官：喂进假词表和假注册表，验证三源差集非空时报红、收敛时放绿、注释和通配不算数、数据库只旁听不翻案，并用真实仓库跑一遍全绿验收"
 
 battle_map_steps:
 - step_id: BM-BUY-05

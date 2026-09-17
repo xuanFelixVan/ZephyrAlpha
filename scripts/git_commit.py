@@ -744,12 +744,24 @@ def _run_preflight(gw, args, files: list[str], *, mode: str, extra_skip: frozens
     try:
         from zephyr.gov_enforcement.rule_bridge.commit_preflight import run_preflight  # noqa: PLC0415
 
+        # 标记豁免型 gate（REGISTRY-MASS-DELETION 等）输入面=message（2026-09-18 治本：
+        # 预检不传 message=合法标记被假红硬拦，与锁内权威判据错位）
+        _msg = ""
+        if getattr(args, "message_file", None):
+            try:
+                _msg = Path(args.message_file).read_text(encoding="utf-8")
+            except (OSError, UnicodeDecodeError):
+                _msg = ""
+        elif getattr(args, "message", None):
+            _msg = str(args.message)
+
         result = run_preflight(
             gw,
             files,
             args.session,
             _preflight_skip_set(args) | extra_skip,
             audit_event=mode,
+            commit_message=_msg,
         )
     except Exception as exc:  # noqa: BLE001 — 预检自身异常=放行走锁内现行路径
         logger.warning("preflight 异常降级放行（锁内兜底）: %s", exc)
