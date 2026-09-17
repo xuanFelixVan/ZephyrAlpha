@@ -32271,6 +32271,10 @@ creation_tokens:
   token: residual-construction-plan-wo5-cohort-ledger-workbook-20260917
   created_by: st-residual-20260917
   capability: residual_construction_plan
+- file: docs/_working/residual_construction/wo1_attribution_workbook.md
+  token: residual-construction-plan-wo1-attribution-workbook-20260917
+  created_by: st-residual-20260917
+  capability: residual_construction_plan
 - file: docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md
   token: data-source-sop-data-source-onboarding-sop-20260917
   created_by: st-altdatamap-20260917
@@ -32311,4 +32315,16 @@ creation_tokens:
   token: kimi-audit-p2-git-chain-stress-closeout-20260918
   created_by: flash-closeout-20260918
   capability: kimi_audit_redblue
+- file: docs/01_policies_and_standards/sop/construction_sop/document_review_and_optimization_policy.md
+  token: overnight-campaign-document-review-and-optimization-policy-20260917
+  created_by: st-altdatamap-20260918
+  capability: overnight_campaign
+- file: docs/01_policies_and_standards/sop/construction_sop/frontend_component_split_policy.md
+  token: overnight-campaign-frontend-component-split-policy-20260917
+  created_by: st-altdatamap-20260918
+  capability: overnight_campaign
+- file: docs/01_policies_and_standards/sop/construction_sop/overnight_campaign_policy.md
+  token: overnight-campaign-overnight-campaign-policy-20260917
+  created_by: st-altdatamap-20260918
+  capability: overnight_campaign
 di_seam_exemptions: []
