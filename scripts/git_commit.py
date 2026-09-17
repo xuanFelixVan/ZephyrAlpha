@@ -603,6 +603,12 @@ def _preflight_skip_set(args) -> frozenset[str]:
         skip.add("COMMIT-SCOPE")
     if getattr(args, "allow_promote", False):
         skip.add("FILE-PLACEMENT-TTL")
+    if getattr(args, "allow_overlap", False):
+        # 映射一致性修（2026-09-18 st-flashspeed）：SESSION-REQUIRED gate 锁内本就
+        # 认 allow_overlap 逃生（session_required_gate.py L70），预检漏映射导致
+        # 带旗仍假阳性快败——违反 commit_preflight MODIFY-GUARD「escape_flag/skip_gates
+        # 映射与 argparse 旗标一一对应」。锁内权威判定不变。
+        skip.add("SESSION-REQUIRED")
     return frozenset(skip)
 
 
