@@ -45,6 +45,7 @@ if str(REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(REPO_ROOT / "src"))
 
 from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: E402
+from zephyr.shared.utils.time_utils import now_utc, now_utc_str  # noqa: E402
 
 logger = logging.getLogger(__name__)
 
