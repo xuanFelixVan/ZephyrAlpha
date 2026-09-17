@@ -32,6 +32,8 @@ from __future__ import annotations
 import json
 from datetime import date
 from decimal import Decimal
+from pathlib import Path
+from types import SimpleNamespace
 
 import pandas as pd
 import pytest
@@ -591,6 +593,8 @@ def test_every_timeseries_key_reaches_the_persisted_artifact() -> None:
         _collect_timeseries,
     )
 
+    import pandas as pd
+
     keys = set(_collect_timeseries(engine=None))  # 无 portfolio → 空骨架，但键集恒定
     assert keys, "_collect_timeseries 返回键集为空（骨架契约变了，本闸失去意义）"
     landed = set(inspect.signature(sink_backtest_result).parameters) | set(_PERSISTED_VIA_METRICS_TS_KEYS)
@@ -599,3 +603,73 @@ def test_every_timeseries_key_reaches_the_persisted_artifact() -> None:
         f"这些时序键只进内存不落盘（产物会静默缺字段）：{sorted(unlanded)}；"
         "要么接进 sink 形参，要么登记进 _PERSISTED_VIA_METRICS_TS_KEYS"
     )
+
+    # 同一条闸盖住第二条生产路径（CLI 单策略回测 scripts/run_backtest.py，R-H4B-s）：
+    # 它与整装路径共用同一个 sink，却有一份自己的采集器——历史上这份连 cash_curve 都不造。
+    rb = _load_run_backtest()
+    cli_keys = set(
+        rb._collect_timeseries(None, None, None, None, _FakeEngine(_fake_portfolio(pd)))
+    )
+    cli_landed = set(inspect.signature(sink_backtest_result).parameters) | set(
+        rb._PERSISTED_VIA_METRICS_TS_KEYS
+    )
+    assert cli_keys - cli_landed == set(), (
+        f"CLI 路径这些时序键只进内存不落盘：{sorted(cli_keys - cli_landed)}"
+    )
+
+
+def _fake_portfolio(pd_module):
+    """最小引擎产物替身：nav/现金/成交各两条（含 cash_history 首行 None 建仓前快照）。"""
+    d1 = pd_module.Timestamp("2026-01-05")
+    d2 = pd_module.Timestamp("2026-01-06")
+    return SimpleNamespace(
+        nav_series={d1: 100000.0, d2: 101000.0},
+        cash_history=[(None, 100000), (d1, 90000), (d2, 91000)],
+        trades_log=[
+            {
+                "date": d1,
+                "symbol": "600519",
+                "side": "BUY",
+                "price": 100.0,
+                "quantity": 100,
+                "commission": 5.0,
+            }
+        ],
+    )
+
+
+class _FakeEngine:
+    def __init__(self, portfolio) -> None:
+        self.last_portfolio = portfolio
+
+
+def _load_run_backtest():
+    """按路径加载 scripts/run_backtest.py（CLI 采集器不在包内，只能 spec 加载）。"""
+    import importlib.util
+
+    path = Path(__file__).resolve().parents[2] / "scripts" / "run_backtest.py"
+    spec = importlib.util.spec_from_file_location("run_backtest_under_test", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_cli_backtest_artifact_carries_cash_leg() -> None:
+    """大白话：点仪表盘"运行回测"跑出来的产物，事后要能查到当天口袋里还剩多少现金。
+
+    判据打在采集器 + 落盘名册两处：`cash_curve` 必须①被造出来（含逐日现金、
+    丢掉建仓前那行 None 快照），②被登记进 metrics 落盘名册。两者缺一即红——
+    这正是 H4-B 在整装路径上栽过的同一条坑（R-H4B-s 是它的第二条生产路径）。
+    """
+    import pandas as pd
+
+    rb = _load_run_backtest()
+    ts = rb._collect_timeseries(None, None, None, None, _FakeEngine(_fake_portfolio(pd)))
+    assert ts["cash_curve"] == [
+        {"timestamp": "2026-01-05", "cash": 90000.0},
+        {"timestamp": "2026-01-06", "cash": 91000.0},
+    ], "现金腿内容与 cash_history 不一致（None 首行应被丢弃，其余逐日等值）"
+    assert "cash_curve" in rb._PERSISTED_VIA_METRICS_TS_KEYS, (
+        "现金腿未登记进落盘名册——产物里不会有它（sink 形参集不含该键）"
+    )
+    assert len(ts["cash_curve"]) == len(ts["equity_curve"]), "现金腿与净值腿不等长→逐日轧差不可核"

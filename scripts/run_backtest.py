@@ -52,14 +52,23 @@ def _ts_key(ts) -> str:
     return s[:10]  # 日级（或恰好 00:00 的边界值归日级显示）
 
 
+# 不进 sink 形参集、改由 artifact `metrics` 显式落盘的时序键（与
+# zephyr.pf_core.strategy_engine.framework_composer 同名登记表同口径：sink 只收
+# equity/trade/drawdown/benchmark 四条，其 [MODIFY-GUARD] 禁结构变更；新增返回键
+# 必须二选一——进 sink 形参 或 进本集合，否则 tests/backtest 结构差集闸判红）。
+_PERSISTED_VIA_METRICS_TS_KEYS: frozenset[str] = frozenset({"cash_curve"})
+
+
 def _collect_timeseries(runner, data, signals, config, engine) -> dict:
-    """从引擎 last_portfolio 收集四条时序（sink 契约格式）。
+    """从引擎 last_portfolio 收集五条时序（四条进 sink 契约 + 现金腿走 metrics）。
 
     - equity_curve: nav_series → [{timestamp, equity}]（净值=初始资金归一前的总资产）
     - trade_log:    trades_log → [{timestamp, symbol, side, price, quantity, commission,
                     decision_price?, order_type?}]（X 流验证批 T1 两可空字段）
     - drawdown_curve: 净值滚动峰值回撤 → [{timestamp, drawdown}]（正数小数）
     - benchmark_curve: 基准未接（引擎层无基准数据通道），留 None 由前端显示"无基准"
+    - cash_curve:     cash_history → [{timestamp, cash}]（H4-B：手续费扣到的现金腿
+                    必须可事后复核；只进内存不进产物=自欺，见 R-H4B-s）
 
     side 映射：Portfolio 记 BUY/SELL（大写），sink 契约 buy/sell（小写）。
     timestamp 键：日级 [:10] / 分钟级 [:16]（_ts_key）。
@@ -80,6 +89,12 @@ def _collect_timeseries(runner, data, signals, config, engine) -> dict:
             peak = float(v) if peak is None else max(peak, float(v))
             dd = (float(v) / peak - 1.0) if peak > 0 else 0.0
             drawdown_curve.append({"timestamp": ts_str, "drawdown": abs(dd)})
+    # 首行 (None, initial_capital) 是建仓前快照，无日期键 → 丢弃（与 equity_curve 对齐）
+    cash_curve: list[dict] = [
+        {"timestamp": _ts_key(d), "cash": float(c)}
+        for d, c in (getattr(portfolio, "cash_history", None) or [])
+        if d is not None
+    ]
     trade_log: list[dict] = []
     for t in portfolio.trades_log:
         trade_log.append(
@@ -101,6 +116,7 @@ def _collect_timeseries(runner, data, signals, config, engine) -> dict:
         "trade_log": trade_log,
         "drawdown_curve": drawdown_curve,
         "benchmark_curve": None,
+        "cash_curve": cash_curve,
     }
 
 
@@ -340,6 +356,10 @@ def run_one(
         benchmark_curve=ts.get("benchmark_curve"),
     )
     artifact = build_artifact_from_data(sink)
+    # 名册内时序不经 sink（sink 形参集冻结），显式进 metrics 落盘：
+    # 落盘键集 == 登记键集，杜绝"造了没落"（#24 H4-B 同族第二生产路径 R-H4B-s）。
+    for _k in sorted(_PERSISTED_VIA_METRICS_TS_KEYS):
+        artifact.metrics[_k] = list(ts.get(_k) or [])
     run_id = save_artifact(artifact)
 
     sig = _sink_strategy_signals(signals, strategy_id, run_id, list(factor_ids))
