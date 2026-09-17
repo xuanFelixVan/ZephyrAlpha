@@ -7,13 +7,15 @@
 # [MATURITY] experimental
 # [INVARIANTS] PIT（T 日信号用 ≤T-1 数据，T+1 收盘起算收益）；成本=冻结土规（佣金 2.5bp+印花 10bp 卖+滑点 5bp，
 #   与 pilot_002 完全一致）；回测引擎口径全 C4 批次统一（可比性）；数据只用健康表
-#   （kline_daily_hfq/kline_index/kline_etf_daily/stk_limit/index_constituent/stock_basic）
+#   （kline_daily_hfq/kline_index/kline_etf_daily/stk_limit/index_constituent/stock_basic）；
+#   涨跌停可成交性闸默认开（E7 引擎洞修复 2026-09-18：封板收盘禁开仓/跌停收盘禁出逃，
+#   判定单位对齐原始价 kline_daily vs stk_limit；gate_limits=False 仅供反例对照）
 # [MODIFY-GUARD] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] RuntimeError(数据缺失)
-# [TESTS] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py（S1-A8 裁定 2026-09-17：原锚 test_c4_engine.py 从未存在于 git 历史=幽灵引用，改锚真实守护件）
+# [TESTS] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py; tests/backtest/test_c4_limit_gate.py（S1-A8 裁定 2026-09-17：原锚 test_c4_engine.py 从未存在于 git 历史=幽灵引用，改锚真实守护件）
 # [A_module] module_id=MOD-BT-039 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """C4 批量翻译共享引擎——数据装载+统一回测+Deflated Sharpe。
@@ -52,11 +54,15 @@ ETF_START = "2021-04-01"  # kline_etf_daily 覆盖起点 2021-03-08，留缓冲
 # 表名经 TableRegistry 真源（#ARCH-CH-024；TABLE-NAME-REGISTRY gate 合规）
 from zephyr.data.table_registry import get_registry  # noqa: E402 — 依赖区在 docstring 后
 
+_T_KLINE_DAILY = get_registry().table("market_kline_daily")
 _T_KLINE_DAILY_HFQ = get_registry().table("market_kline_daily_hfq")
 _T_KLINE_INDEX = get_registry().table("market_index_kline")
 _T_KLINE_ETF_DAILY = get_registry().table("market_kline_etf_daily")
 _T_STK_LIMIT = get_registry().table("market_stk_limit")
 _T_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
+
+# 涨跌停封板判定容差（E7 探针同口径 2026-09-17：close_raw >= limit_up*(1-1e-4)）
+_LIMIT_SEAL_TOL = 1e-4
 
 # SQL 集中化常量（§5.160.2；Replacing 表读侧全 FINAL——09-15 批考双份行事故治本 2026-09-16）
 SQL_PX = (
@@ -275,15 +281,92 @@ def filter_st(wide_close: pd.DataFrame, flags: pd.DataFrame) -> pd.DataFrame:
     return wide_close.mask(mask)
 
 
-def run_backtest(weights: pd.DataFrame, px_close: pd.DataFrame) -> dict[str, Any]:
-    """T+1 收盘执行向量化回测——与 pilot_002_ma_cross.run_backtest 逐行同口径。
+def _load_seal_masks(index: pd.DatetimeIndex, columns: pd.Index) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """涨跌停封板掩码（E7 引擎洞修复 2026-09-18）：返回 (sealed_up, sealed_down) 布尔宽表。
+
+    判定必须单位对齐原始价（E7 假绿追加 §3 实锤：hfq 与涨停价直接比较=单位错配误报）——
+    raw close 取 kline_daily，limit_up/limit_down 取 stk_limit（原始价口径）；
+    缺价/停牌/无涨跌幅限制（NULL）或非股票标的（ETF 等 stk_limit 无行）→ False 不闸
+    （fail-open 如实披露，不编造可成交性）。
+    """
+    empty = pd.DataFrame(False, index=index, columns=columns)
+    syms = [str(c)[:6] for c in columns]
+    if not syms or len(index) == 0:
+        return empty, empty
+    start = index.min().strftime("%Y-%m-%d")
+    end = index.max().strftime("%Y-%m-%d")
+    sym_list = ", ".join(f"'{s}'" for s in sorted(set(syms)))
+    try:
+        raw_rows = _q(
+            f"SELECT trade_date, symbol, toFloat64(close) FROM {_T_KLINE_DAILY} FINAL "
+            f"WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND symbol IN ({sym_list})"
+        )
+        lim_rows = _q(
+            f"SELECT trade_date, symbol, toFloat64(limit_up), toFloat64(limit_down) "
+            f"FROM {_T_STK_LIMIT} FINAL "
+            f"WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND symbol IN ({sym_list})"
+        )
+    except Exception:
+        # 闸原料不可得=不阻断回测（fail-open），但不得伪装成已闸——调用方 stats 里带注记
+        return empty, empty
+    raw = {(str(d)[:10], str(s)[:6]): float(c) for d, s, c in raw_rows}
+    sealed_up = empty.copy()
+    sealed_down = empty.copy()
+    idx_map = {d.strftime("%Y-%m-%d"): i for i, d in enumerate(index)}
+    col_map = {str(c)[:6]: j for j, c in enumerate(columns)}
+    for d, s, up, dn in lim_rows:
+        i, j = idx_map.get(str(d)[:10]), col_map.get(str(s)[:6])
+        if i is None or j is None:
+            continue
+        c_raw = raw.get((str(d)[:10], str(s)[:6]))
+        if c_raw is None:
+            continue
+        if up is not None and c_raw >= float(up) * (1 - _LIMIT_SEAL_TOL):
+            sealed_up.iat[i, j] = True
+        if dn is not None and c_raw <= float(dn) * (1 + _LIMIT_SEAL_TOL):
+            sealed_down.iat[i, j] = True
+    return sealed_up, sealed_down
+
+
+def apply_fillability_gate(weights: pd.DataFrame, gate_limits: bool = True) -> pd.DataFrame:
+    """涨跌停可成交性闸（E7 引擎洞修复）：封板日禁开新仓/禁出逃。
+
+    语义（向量化 T+1 框架下 w_t 的隐含成交价=close_t）：目标权重较已执行权重增加（买入）
+    且当日收盘封涨停 → 买单不可成交，已执行权重保持前值；减少（卖出）且收盘封跌停 → 同理。
+    未封板日目标权重正常生效。等权不变（|Δ|≤1e-12 视为无交易）。
+    """
+    if not gate_limits:
+        return weights
+    sealed_up, sealed_down = _load_seal_masks(weights.index, weights.columns)
+    W = weights.to_numpy(dtype=float)
+    SU = sealed_up.to_numpy(dtype=bool)
+    SD = sealed_down.to_numpy(dtype=bool)
+    out = np.empty_like(W)
+    prev = np.zeros(W.shape[1], dtype=float)
+    for i in range(W.shape[0]):
+        target = W[i]
+        cur = np.where(
+            ((target > prev + 1e-12) & SU[i]) | ((target < prev - 1e-12) & SD[i]),
+            prev,
+            target,
+        )
+        out[i] = cur
+        prev = cur
+    return pd.DataFrame(out, index=weights.index, columns=weights.columns)
+
+
+def run_backtest(weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: bool = True) -> dict[str, Any]:
+    """T+1 收盘执行向量化回测——与 pilot_002_ma_cross 逐行同口径。
 
     weights: index=trade_date, columns=symbol，目标权重（收盘再平衡）；
-    px_close: 同结构收盘价宽表（可含额外列，内部 reindex 对齐）。
+    px_close: 同结构收盘价宽表（可含额外列，内部 reindex 对齐）；
+    gate_limits: 涨跌停可成交性闸（默认开，E7 引擎洞修复 2026-09-18——封板买入/跌停卖出
+    不可成交；False=旧行为，仅供反例对照）。
     """
     closes = px_close.reindex(weights.index.union(weights.index)).ffill()
     rets = closes.pct_change()
     w = weights.reindex(closes.index).ffill().fillna(0.0)
+    w = apply_fillability_gate(w, gate_limits=gate_limits)
     gross = (w.shift(1) * rets).sum(axis=1).fillna(0.0)
     turnover = (w - w.shift(1)).abs().sum(axis=1).fillna(0.0) / 2.0
     cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + SLIPPAGE_BP * 2) / 10000.0
@@ -303,11 +386,17 @@ def run_backtest(weights: pd.DataFrame, px_close: pd.DataFrame) -> dict[str, Any
     }
 
 
-def daily_net_returns(weights: pd.DataFrame, px_close: pd.DataFrame) -> pd.Series:
-    """与 run_backtest 同口径的净收益序列（供 DSR 批内偏度/峰度合并计算）。"""
+def daily_net_returns(
+    weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: bool = True
+) -> pd.Series:
+    """与 run_backtest 同口径的净收益序列（供 DSR 批内偏度/峰度合并计算）。
+
+    gate_limits: 涨跌停可成交性闸（默认开，与 run_backtest 一致）。
+    """
     closes = px_close.reindex(weights.index.union(weights.index)).ffill()
     rets = closes.pct_change()
     w = weights.reindex(closes.index).ffill().fillna(0.0)
+    w = apply_fillability_gate(w, gate_limits=gate_limits)
     gross = (w.shift(1) * rets).sum(axis=1).fillna(0.0)
     turnover = (w - w.shift(1)).abs().sum(axis=1).fillna(0.0) / 2.0
     cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + SLIPPAGE_BP * 2) / 10000.0
