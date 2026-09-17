@@ -1091,8 +1091,19 @@ objects:
   module_ref: src/zephyr/ex_core/daban_execution.py
   testable: true
   confidence: untested
-  plan: null
-  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+  plan:
+    validation_method: exec_quality
+    min_samples: 每桶触发>=30（土规；桶=order_type 真实类型 / EXA 算法）
+    thresholds:
+      slip_bp_valid: 20.0
+      slip_bp_pending: 40.0
+    verdict_mapping: 滑点均值<=20bp→valid；<=40bp→pending；>40bp→noise（registry exec_quality 土规线，分桶不另造门柱）
+    caliber_note: 真判据=order_type 分桶考（排板/限价桶独立出数）；现役 trade_log order_type 全 market 且无排板标记（60 件产物核查 2026-09-18，缺口登记 known_data_gaps bt_trade_log_attribution_fields_missing）→字段落地前按全量代理口径出数并披露"代理受限"，禁编造分桶数据
+    threshold_status: frozen
+    source: validation_method_registry.yaml exec_quality（裁定土规线，非 AI 提案）
+    frozen_by: st-flashbiz-20260918
+    frozen_at: '2026-09-18'
+    freeze_ruling: 批次决策点公开修订（SOP-B 护栏③）：Owner 快签总表行 28（B0 15 条收尾=F01-F03 Flash 包）+ lane P6 交接包 F03 判缺处置——阈值引 REG-VALM-001 既定 20/40bp 土规线零平移，新增 caliber_note 仅登记分桶字段前置与代理口径，不改判定线
 - object_id: BT-P2-046
   node_ids:
   - TDM-E-L4-06
@@ -1104,8 +1115,19 @@ objects:
   module_ref: src/zephyr/ex_sor/core/algo_execution_selector.py
   testable: true
   confidence: untested
-  plan: null
-  plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+  plan:
+    validation_method: exec_quality
+    min_samples: 每桶触发>=30（土规；桶=order_type 真实类型 / EXA 算法）
+    thresholds:
+      slip_bp_valid: 20.0
+      slip_bp_pending: 40.0
+    verdict_mapping: 滑点均值<=20bp→valid；<=40bp→pending；>40bp→noise（registry exec_quality 土规线，分桶不另造门柱）
+    caliber_note: 真判据=6 个 EXA 算法逐桶出数；现役 trade_log 无 algo_id 归因字段（60 件产物核查 2026-09-18，缺口登记 known_data_gaps bt_trade_log_attribution_fields_missing）→字段落地前按全量代理口径出数并披露"代理受限"，禁编造分桶数据
+    threshold_status: frozen
+    source: validation_method_registry.yaml exec_quality（裁定土规线，非 AI 提案）
+    frozen_by: st-flashbiz-20260918
+    frozen_at: '2026-09-18'
+    freeze_ruling: 批次决策点公开修订（SOP-B 护栏③）：Owner 快签总表行 28（B0 15 条收尾=F01-F03 Flash 包）+ lane P6 交接包 F03 判缺处置——阈值引 REG-VALM-001 既定 20/40bp 土规线零平移，新增 caliber_note 仅登记分桶字段前置与代理口径，不改判定线
 - object_id: BT-P2-047
   node_ids:
   - TDM-E-L4-07

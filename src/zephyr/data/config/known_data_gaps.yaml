@@ -835,4 +835,25 @@ gaps:
     resolution_plan: "首选通道 C=CH 内 kline_etf_1min（缺口窗满覆盖）合成回补：仿 backfill_lof_minute_history.py 先例把 ch_tick_kline 合成路径 ETF 参数化（零覆盖白名单过滤+BufferedWriter 正道+dry-run 默认+复验清零），覆盖 ~95% 缺格；兜底通道 D=大QMT 沙箱 ContextInfo download_history_data（9/18 后仍可用，服务器保留 ~1 个月）救 2021-02-08 及合成源不覆盖格子。量级：全表约 9.0 万 bar 可回补。"
     primary_alternative: "60min 缺格日消费方可临时用 30min 两根聚合或 1min 重采样；S-OWNER 考试 OOS 段（09-16 止）不受影响。"
     created: "2026-09-17"
+
+  # === 2026-09-18: 回测 trade_log 归因字段缺失（Flash F03 分桶真考判缺，st-flashbiz-20260918 登记）===
+  - id: "bt_trade_log_attribution_fields_missing"
+    table: "c1_backtest 回测产物 trade_log（data/backtest_artifacts/bt-*.json）"
+    gap_type: "field_missing"   # backfill_checker 仅消费 date_range/empty_table，此类型登记供治理发现面
+    status: "no_source"
+    root_cause: "回测引擎 TradeRecord 只落 order_type='market' 常量且无 algo_id 归因字段——60 件 bt-*.json 全量核查（2026-09-18）：order_type 无一非 market、algo_id 无一非空。E-L4-05 打板执行专项（排板/限价桶）与 E-L4-06 执行算法（6 EXA 算法逐桶）真分桶考试因此不可行（kimi-audit lane P6/F03 交接包判缺；非下载缺口=引擎不产此字段，历史产物无从回补）。"
+    resolution_plan: "归属 X 流验证批 TradeRecord 扩展后续项：引擎落 algo_id+真实 order_type（排板/限价标记）后，新产生的 D 后 fill 才可分桶（旧产物不回补）。分桶判据=REG-VALM-001 exec_quality 同线（桶内 n>=30 且滑点均值<=20bp→valid / <=40bp→pending / >40bp→noise，分桶不另造门柱），分桶脚本=.runtime/tmp/exp/p6/flash/F03_bucketed_exam_algo.md。"
+    primary_alternative: "字段落地前两节点维持 L4 批全量代理口径（run_id=VAL-20260918-015408，15/15 valid），代理受限已在台账 notes 与 lane P6 报告披露；BT-P2-045/046 plan 判据口径已按批次决策点修订冻结（backtest_backlog.yaml）。"
+    created: "2026-09-18"
+
+  # === 2026-09-18: ETF 分钟族 trade_time 时区劈叉（kimi-audit T lane 发现→Flash 包5 就绪待批）===
+  - id: "etf_minute_tz_split_pre_202607"
+    table: "c1_market.kline_etf_{1min,5min,15min,30min,60min}"
+    gap_type: "field_missing"   # 值层纪元混存（非缺行）：backfill_checker 不消费此类型
+    status: "monitoring"   # 修复件已就绪待 Owner 门位批准（RULE-DATA-OPS 破坏性操作=Owner gate）
+    root_cause: "2026-06-30 及以前写入侧按 UTC 墙钟落 trade_time（日内小时∈[1,7]），列类型却为 Asia/Shanghai；2026-07-01 起写入侧改北京墙钟（∈[9,15]）。全族五表 ~4.12 亿行受累（1min 303.4M/5min 68.2M/15min 23.2M/30min 11.4M/60min 5.7M，占各表 93-95%）；两纪元日期边界零违例（≤06-30 全 UTC、≥07-01 全北京）；trade_date 列本身已是北京日零错日；+8h 平移落点与北京段零碰撞（2026-09-18 五表逐一实证，st-flashbiz-20260918）。个股分钟族（kline_1min/15min/30min/60min）零受累；kline_5min 有 8,195 行 2026-09-08 单日小时<=7 零星行=另一独立瞬断（写入侧当晨异常），不在本工单范围。"
+    resolution_plan: "修复件已就绪：scripts/ch/repair_etf_minute_tz_split.py（默认 dry-run 五表前置核验全过；--execute 走影子表重建+RENAME 换名，trade_time 在 ORDER BY 键禁 ALTER UPDATE；旧表保留 *_tz_bak_20260918 可逆=反向换名即退）。**等 Owner 批准 --execute**（RULE-DATA-OPS 破坏性操作三步验证已过：必要性=T lane 及后续任何分钟级消费需正确日内时序；真实性=上列五表实证；可逆性=换名回退+行数量和对账）。"
+    primary_alternative: "批准前消费方读 2026-06-30 前数据须自带『小时<=7 → +8h』逐行归一（kimi-audit T lane 已按此处置 510300/510500 极值分析，结论不受累）；api_server 数据总览仅计数不受累。工单=docs/_working/flash_biz/biz5_etf15min_tz_defect.md"
+    created: "2026-09-18"
+
 last_updated: "2026-09-17"
