@@ -101,6 +101,10 @@ def build(start: str, end: str) -> tuple[pd.DataFrame, pd.DataFrame]:
         if dt in signal:
             pos = signal[dt]
         weights.loc[dt, "000300"] = pos
+    # PIT 修复（S14-2，2026-09-17 kimi-audit 班次）：signal[t] 用 ≤t 的 bar 判定，
+    # 权重须落 t+1 行才符合"C4 约定 T 日信号用 ≤T-1 数据，T+1 收盘起算"——旧码直接盖 t 日
+    # =看着 t 收盘按 t 收盘成交（同 bar 前视，探针 test_b1_gftd_samebar_probe 实锤）。
+    weights["000300"] = weights["000300"].shift(1).fillna(0.0)
     closes_w = closes.to_frame(name="000300")
     return weights, closes_w
 

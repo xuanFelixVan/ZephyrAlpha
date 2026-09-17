@@ -45,7 +45,6 @@ def _feats(x_day_flip: bool) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=["date", "s", "close", "factor"])
 
 
-@pytest.mark.xfail(strict=True, reason="B1-V3 实锤未修：assemble_weights 缺 ≤T-1 平移（修复后 XPASS-strict 自动报警）")
 def test_assemble_weights_at_x_must_not_use_day_x_factor():
     w_a, _ = fst.assemble_weights(_feats(False), top_n=2)
     w_b, _ = fst.assemble_weights(_feats(True), top_n=2)

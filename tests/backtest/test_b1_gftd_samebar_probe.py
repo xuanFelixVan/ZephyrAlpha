@@ -57,12 +57,12 @@ def _build_with(day41: float) -> pd.DataFrame:
     return weights
 
 
-@pytest.mark.xfail(strict=True, reason="B1-V2 实锤未修：gftd 同 bar 前视（修复后 XPASS-strict 自动报警）")
 def test_gftd_signal_at_x_must_not_use_day_x_bar():
     w_a = _build_with(10.35)
     w_b = _build_with(10.00)
-    # 非空检验：variant A 在 X 日必须真的触发买入（否则探针空转）
-    assert float(w_a.loc[_X].iloc[0]) == 1.0, "探针构造失败：A 在 X 日未触发买入"
+    # 非空检验：variant A 必须真的触发买入——PIT 修复后触发落在 X+1 行（≤X-1 数据决策）
+    _x1 = _DATES[42]
+    assert float(w_a.loc[_x1].iloc[0]) == 1.0, "探针构造失败：A 在 X+1 日未触发买入"
     assert w_a.loc[:_X].equals(w_b.loc[:_X]), (
         "同 bar 前视实锤：X 日权重被 X 日 close/high/low 改写"
         "（signal[dt] 用当日 bar 判定，引擎 shift(1) 后=看着收盘价按收盘价成交）"

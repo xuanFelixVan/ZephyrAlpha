@@ -179,7 +179,13 @@ def _dedup_kline_rows(k: pd.DataFrame) -> pd.DataFrame:
 
 
 def assemble_weights(feats: pd.DataFrame, top_n: int) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """因子值→top_n 等权多头宽表（纯函数）：closes 同源透视，供引擎 T+1 执行。"""
+    """因子值→top_n 等权多头宽表（纯函数）：closes 同源透视，供引擎 T+1 执行。
+
+    PIT 修复（S14-3，2026-09-17 kimi-audit 班次）：d 日截面选出的权重必须落在 d+1 行
+    （weights[d+1]=selection(factor[d])），引擎 shift(1) 后才符合模块自述"T 日信号用
+    ≤T-1 数据，T+1 收盘起算收益"。旧码无此平移=看着 d 收盘按 d 收盘成交（同 bar 前视，
+    探针 tests/backtest/test_b1_fact_assemble_samebar_probe.py 实锤）。
+    """
     closes = feats.pivot(index="date", columns="s", values="close").sort_index()
     weights = pd.DataFrame(index=closes.index, columns=closes.columns, dtype=float)
     for d, grp in feats.groupby("date"):
@@ -187,6 +193,7 @@ def assemble_weights(feats: pd.DataFrame, top_n: int) -> tuple[pd.DataFrame, pd.
         if day.empty:
             continue
         weights.loc[d, day] = 1.0 / len(day)
+    weights = weights.shift(1)  # ≤T-1 平移：d 行权重只含 d-1 及之前的因子截面
     return weights.fillna(0.0), closes
 
 
@@ -198,12 +205,14 @@ def compute_features_importable() -> bool:
 
 
 def universe_syms(cli, start: str, n: int) -> tuple:
-    """考卷 universe=窗内成交额 top N（与挖矿面板同口径）。"""
+    """考卷 universe=成交额 top N（PIT 修复：改为 start 之前 365 自然日的滚动窗均值——
+    旧码用全窗均值，未来才流动的股票被回灌选入历史期=前视/幸存者偏差，S14-3 同案）。"""
     from zephyr.data.table_registry import get_registry
 
     rows = cli.execute(
         "SELECT symbol_canonical FROM (SELECT symbol_canonical, avg(amount) AS a "
-        "FROM {t} WHERE trade_date >= %(start)s GROUP BY 1 ORDER BY a DESC LIMIT %(n)s)".format(
+        "FROM {t} WHERE trade_date >= toDate(%(start)s) - 365 AND trade_date < %(start)s "
+        "GROUP BY 1 ORDER BY a DESC LIMIT %(n)s)".format(
             t=get_registry().table("market_kline_daily_hfq")),
         {"start": start, "n": n})
     return tuple(r[0] for r in rows)

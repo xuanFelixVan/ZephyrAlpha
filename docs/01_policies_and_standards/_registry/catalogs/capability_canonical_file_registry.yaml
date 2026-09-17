@@ -28143,6 +28143,22 @@ creation_tokens:
   token: kimi-audit-b---20260917
   created_by: kimi-audit
   capability: kimi_audit
+- file: docs/_working/kimi_audit/S14_前视偏差.md
+  token: kimi-audit-s14--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/S6_经济解释.md
+  token: kimi-audit-s6--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/S7_成本容量账实.md
+  token: kimi-audit-s7--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/S8_外推合法性.md
+  token: kimi-audit-s8--20260917
+  created_by: kimi-audit
+  capability: kimi_audit
 - file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
   token: auction-derive-intake-20260917-0300-20260916
   created_by: st-auction-bridge-20260917

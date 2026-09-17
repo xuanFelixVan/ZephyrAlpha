@@ -187,7 +187,10 @@ def test_signal_strength_scale_invariant():
 def test_signal_all_zero_rows_preserved_as_cash_days():
     """退化情形：全零信号日=现金日（compose 不做除零归一，引擎无调仓）。
 
-    compose 级钉扎：全零行保留（非 NaN），行级归一只作用于 Σ>0 行。
+    compose 级钉扎（S15 裁定 2026-09-17，kimi-audit 班次：本测试基线即红——
+    双成员全零撞上组合级 fail-closed raise，"全仓全绿"说法被本件证伪）：
+    正确语义=**成员级全零保留为现金日**（有他人参与时），**组合级全员全零=fail-closed**
+    （防数据洞静默成全现金）。本测试钉前半；后半由 test_all_members_all_zero_raise 钉。
     """
     plan = FrameworkPlan(
         plan_id="fw-meta", name="meta", risk_profile="balanced", description="",
@@ -195,12 +198,27 @@ def test_signal_all_zero_rows_preserved_as_cash_days():
     )
     idx = pd.bdate_range("2026-01-05", periods=4)
     panels = {
-        "m1": pd.DataFrame(0.0, index=idx, columns=list(_SYMBOLS)),
-        "m2": pd.DataFrame(0.0, index=idx, columns=list(_SYMBOLS)),
+        "m1": pd.DataFrame(0.0, index=idx, columns=list(_SYMBOLS)),  # 全零成员=现金日
+        "m2": pd.DataFrame(1.0, index=idx, columns=list(_SYMBOLS)),  # 有效成员
     }
     report = compose_weight_panels(plan, panels)
-    assert (report.panel == 0.0).all().all()  # 全零行保留=现金日
-    assert report.participants == ["m1", "m2"]
+    # 全零成员被跳过（不除零、不炸），有效成员独占归一
+    assert report.participants == ["m2"]
+    assert (report.panel > 0).all().all()
+
+
+def test_all_members_all_zero_raise_fail_closed():
+    """组合级 fail-closed：全员全零=疑似数据洞，必须 raise 而非静默全现金。"""
+    from zephyr.pf_core.strategy_engine.framework_composer import FrameworkValidationError
+
+    plan = FrameworkPlan(
+        plan_id="fw-meta", name="meta", risk_profile="balanced", description="",
+        weights=(PlanWeight(strategy_id="m1", weight=0.6), PlanWeight(strategy_id="m2", weight=0.4)),
+    )
+    idx = pd.bdate_range("2026-01-05", periods=4)
+    panels = {m: pd.DataFrame(0.0, index=idx, columns=list(_SYMBOLS)) for m in ("m1", "m2")}
+    with pytest.raises(FrameworkValidationError):
+        compose_weight_panels(plan, panels)
 
 
 # ── INV-2：资产置换不变 ───────────────────────────────────────────────────────
