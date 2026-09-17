@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] dual-threshold——depgraph 新鲜度 >30min WARNING(打印告警不阻断)，>24h 阻断 commit；数据源 .runtime/depgraph_scan_cache.json 的 _meta.saved_at 字段(generate_project_depgraph.py 写入，反映整体同步完成时间，优于 PG MAX(last_verified)——后者是单节点级时间戳，无法代表整体快照新鲜度)；fail-open——cache 文件缺失/JSON 解析失败/saved_at 缺失时放行(不阻断 commit，因 depgraph 同步可能是首次启动或新环境)
+# [INVARIANTS] dual-threshold——depgraph 新鲜度 >30min WARNING(打印告警不阻断)，>24h 阻断 commit；数据源 .runtime/depgraph_scan_cache.json 的 _meta.saved_at 字段(generate_project_depgraph.py 写入，反映整体同步完成时间，优于 PG MAX(last_verified)——后者是单节点级时间戳，无法代表整体快照新鲜度)；linked worktree 内以**主工作树副本为权威**、主树缺失才回落本地副本(落地 worktree 自带 .runtime 无人维护会停更→永久假红，#ARCH-324 实证③；权威优先亦禁植入本地新鲜副本逃逸)；fail-open——cache 文件缺失/JSON 解析失败/saved_at 缺失时放行(不阻断 commit，因 depgraph 同步可能是首次启动或新环境)
 # [MODIFY-GUARD] gate_id="DEPGRAPH-FRESHNESS"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -47,6 +47,11 @@ depgraph_freshness_gate.py — depgraph 新鲜度门禁（dual-threshold，#ARCH
    冲突，迁移到 67（同属"代码结构/架构"层级，语义无冲突）。
 5. **always-on**：不限文件类型，每次 commit 都检查（depgraph 新鲜度与本次 commit 的
    文件无关，是项目整体状态检查）
+6. **linked worktree 内读主工作树副本（#ARCH-324 实证③）**：新鲜度是项目整体事实，
+   但队列落地 worktree / 会话 worktree 自带的 ``.runtime`` 副本无人维护会长期停更
+   （实测落地 worktree 停在 09-16 21:55，主树 09-18 01:58 已新鲜 → 落地面永久假红，
+   33 件死信）。故权威源=主工作树副本；主树副本缺失才回落本地副本（不放松既有 fail-open
+   面），且权威优先顺带封死"在 worktree 内植入新鲜副本"的逃逸路径。
 
 Usage::
 
@@ -103,6 +108,52 @@ def _parse_saved_at(saved_at_raw: str) -> datetime | None:
     return dt.astimezone(timezone.utc)
 
 
+def _main_worktree_root(project_root: Path) -> Path | None:
+    """linked worktree → 主工作树根；主工作树/无法判定 → None（纯文件判定，不起 git 子进程）。
+
+    linked worktree 的 ``.git`` 是文件，内容形如 ``gitdir: <main>/.git/worktrees/<name>``；
+    上溯到名为 ``.git`` 的祖先，其父即主工作树根。
+    """
+    git_path = project_root / ".git"
+    if not git_path.is_file():
+        return None
+    try:
+        raw = git_path.read_text(encoding="utf-8", errors="replace").strip()
+    except OSError:
+        return None
+    if not raw.startswith("gitdir:"):
+        return None
+    gitdir = Path(raw[len("gitdir:"):].strip())
+    if not gitdir.is_absolute():
+        gitdir = (project_root / gitdir).resolve()
+    for ancestor in gitdir.parents:
+        if ancestor.name == ".git":
+            return ancestor.parent
+    return None
+
+
+def _resolve_cache_path(project_root: Path) -> tuple[Path, str]:
+    """解析 depgraph 缓存的权威副本（#ARCH-324 实证③：落地面锚定态被 worktree 钉死）。
+
+    depgraph 新鲜度是**项目整体**事实，而 linked worktree（队列落地 worktree、会话
+    worktree）自带的 ``.runtime`` 副本无人维护会长期停更——以本地副本判定即产生永久
+    假红（实测 landing worktree 停在 09-16 21:55 而主树 09-18 01:58 已新鲜，33 件死信）。
+    故：主工作树副本存在即以它为权威（禁靠在 worktree 内植入新鲜副本逃逸）；主树副本
+    缺失才回落本地副本，保持既有 fail-open 面不放松。
+
+    Returns:
+        (缓存路径, 来源标记)——来源标记 ∈ {"main-worktree", "local", "local(no-main-root)"}。
+    """
+    local = project_root / _CACHE_REL
+    main_root = _main_worktree_root(project_root)
+    if main_root is None:
+        return local, "local(no-main-root)"
+    authoritative = main_root / _CACHE_REL
+    if authoritative.is_file():
+        return authoritative, "main-worktree"
+    return local, "local"
+
+
 def make_depgraph_freshness_gate() -> GateSpec:
     """构造 depgraph 新鲜度门禁 GateSpec（dual-threshold，阻断型）。
 
@@ -115,11 +166,11 @@ def make_depgraph_freshness_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         project_root: Path = gateway.project_root
-        cache_path = project_root / _CACHE_REL
+        cache_path, cache_src = _resolve_cache_path(project_root)
 
         # 1. 文件缺失——fail-open（首次启动/新环境）
         if not cache_path.is_file():
-            return True, (f"depgraph scan cache not found ({_CACHE_REL}); skip freshness check (first-run or new env)")
+            return True, (f"depgraph scan cache not found ({_CACHE_REL}, source={cache_src}); skip freshness check (first-run or new env)")
 
         # 2. 读取 + JSON 解析——fail-open
         try:
@@ -178,7 +229,7 @@ def make_depgraph_freshness_gate() -> GateSpec:
             hours = int(age_seconds // 3600)
             detail = (
                 f"depgraph scan stale: {hours}h since last sync "
-                f"(saved_at={saved_at_raw}). "
+                f"(saved_at={saved_at_raw}, source={cache_src}). "
                 f"超过 24h 阈值——AI 在过期快照上设计=幻觉温床(L2铁律)。"
                 f"请先运行 generate_project_depgraph.py 刷新 depgraph，再 commit。"
             )
@@ -188,13 +239,13 @@ def make_depgraph_freshness_gate() -> GateSpec:
             minutes = int(age_seconds // 60)
             detail = (
                 f"WARN: depgraph scan {minutes}min since last sync "
-                f"(saved_at={saved_at_raw}). 建议运行 generate_project_depgraph.py 刷新。"
+                f"(saved_at={saved_at_raw}, source={cache_src}). 建议运行 generate_project_depgraph.py 刷新。"
             )
             logger.warning(detail)
             # 保留 print：gate 告警需直接出现在操作员控制台（commit UX），不依赖 logging 配置
             print(f"[GATE DEPGRAPH-FRESHNESS] {detail}")
             return True, detail
 
-        return True, f"depgraph fresh (age={int(age_seconds)}s)"
+        return True, f"depgraph fresh (age={int(age_seconds)}s, source={cache_src})"
 
     return GateSpec(gate_id="DEPGRAPH-FRESHNESS", check=_check, priority=67)

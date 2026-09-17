@@ -16,8 +16,8 @@ algo_flow: |
     # - id: A1
     #   name_zh: ① make_depgraph_freshness_gate
     #   name_en: make_depgraph_freshness_gate
-    #   intro: 构造 depgraph 新鲜度门禁 GateSpec（dual-threshold，阻断型）。
-    #   desc: 构造 depgraph 新鲜度门禁 GateSpec（dual-threshold，阻断型）。 Returns: GateSpec(gate_id="DEPGRAPH-FRESH…；源码 L130-L224
+    #   intro: 构造 depgraph 新鲜度门禁 GateSpec（dual-threshold，阻断型）；缓存权威源=主工作树副本。
+    #   desc: 构造 depgraph 新鲜度门禁 GateSpec（dual-threshold，阻断型）。 Returns: GateSpec(gate_id="DEPGRAPH-FRESH…；新鲜度是项目整体事实，故 linked worktree（队列落地 worktree/会话 worktree）内以主工作树 .runtime 副本为权威，主树副本缺失才回落本地副本（fail-open 面不放松），权威优先同时封死"在 worktree 内植入新鲜副本"的逃逸；源码 L157-L251
     #   inputs: 无参数
     #   outputs: GateSpec
     # 层: 输出

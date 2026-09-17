@@ -24,6 +24,11 @@
   - WARN（30min ~ 24h）→ 放行 + warning
   - BLOCK（> 24h）→ 阻断
   - saved_at 在未来（时钟漂移）→ 放行
+- TestLinkedWorktreeAuthoritativeCache: linked worktree 内锚定态权威副本解析（#ARCH-324 实证③）
+  - wt 副本陈旧 + 主树新鲜 → 放行（落地面假红治本）
+  - 主树陈旧 + wt 植入新鲜副本 → 阻断（禁逃逸）
+  - 主树副本缺失 → 回落本地副本（既有 fail-open 面不放松）
+  - gitdir 相对 / 非法 / 无 .git 祖先 → 不误指他处
 
 测试隔离：tmp_path fixture 提供 project_root，每个测试独立 .runtime/ 目录。
 """
@@ -43,7 +48,9 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate import (  # noqa: E402
+    _main_worktree_root,
     _parse_saved_at,
+    _resolve_cache_path,
     make_depgraph_freshness_gate,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec  # noqa: E402
@@ -294,4 +301,113 @@ class TestPgOfflineExemption:
         gw = _make_gateway(tmp_path)
         gate = make_depgraph_freshness_gate()
         passed, detail = gate.check(gw, [])
+        assert passed is False
+
+
+# ---------------------------------------------------------------------------
+# TestLinkedWorktreeAuthoritativeCache（#ARCH-324 实证③：落地面锚定态被 worktree 钉死）
+# ---------------------------------------------------------------------------
+
+
+def _make_linked_worktree(tmp_path: Path) -> tuple[Path, Path]:
+    """构造 主工作树 + linked worktree（.git 为 gitdir 指针文件）。"""
+    main = tmp_path / "main"
+    (main / ".git" / "worktrees" / "wt").mkdir(parents=True)
+    wt = tmp_path / "wt"
+    (wt / ".runtime").mkdir(parents=True, exist_ok=True)
+    (wt / ".git").write_text(
+        f"gitdir: {main / '.git' / 'worktrees' / 'wt'}\n", encoding="utf-8"
+    )
+    return main, wt
+
+
+def _fresh_ts() -> str:
+    return (datetime.now(timezone.utc) - timedelta(seconds=60)).isoformat()
+
+
+def _stale_ts() -> str:
+    return (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+
+
+class TestLinkedWorktreeAuthoritativeCache:
+    """linked worktree 内以主工作树副本为权威：假红治本 + 逃逸封堵 + fail-open 面不放松。"""
+
+    def test_main_worktree_root_resolved(self, tmp_path: Path) -> None:
+        """linked worktree → 主树根；主树自身（.git 是目录）→ None。"""
+        main, wt = _make_linked_worktree(tmp_path)
+        assert _main_worktree_root(wt) == main
+        assert _main_worktree_root(main) is None
+
+    def test_stale_local_fresh_main_passes(self, tmp_path: Path) -> None:
+        """落地 worktree 副本停更 48h、主树新鲜 → 放行（假红治本，实证 33 件死信）。"""
+        main, wt = _make_linked_worktree(tmp_path)
+        _write_cache(main, saved_at=_fresh_ts())
+        _write_cache(wt, saved_at=_stale_ts())
+        path, src = _resolve_cache_path(wt)
+        assert src == "main-worktree"
+        assert path == main / ".runtime" / "depgraph_scan_cache.json"
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(_make_gateway(wt), [])
+        assert passed is True, detail
+        assert "source=main-worktree" in detail
+
+    def test_fresh_local_stale_main_blocks(self, tmp_path: Path) -> None:
+        """红蓝钉·禁逃逸：worktree 内植入新鲜副本、主树停更 → 仍阻断。"""
+        main, wt = _make_linked_worktree(tmp_path)
+        _write_cache(main, saved_at=_stale_ts())
+        _write_cache(wt, saved_at=_fresh_ts())
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(_make_gateway(wt), [])
+        assert passed is False
+        assert "source=main-worktree" in detail
+
+    def test_main_cache_missing_falls_back_local(self, tmp_path: Path) -> None:
+        """主树副本缺失 → 回落本地副本；本地陈旧仍阻断（fail-open 面不放松）。"""
+        main, wt = _make_linked_worktree(tmp_path)
+        _write_cache(wt, saved_at=_stale_ts())
+        path, src = _resolve_cache_path(wt)
+        assert src == "local"
+        assert path == wt / ".runtime" / "depgraph_scan_cache.json"
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(_make_gateway(wt), [])
+        assert passed is False
+        assert "source=local" in detail
+
+    def test_relative_gitdir_resolved(self, tmp_path: Path) -> None:
+        """gitdir 为相对路径 → 仍解析到主树并以主树副本判定。"""
+        main, wt = _make_linked_worktree(tmp_path)
+        (wt / ".git").write_text(
+            "gitdir: ../main/.git/worktrees/wt\n", encoding="utf-8"
+        )
+        _write_cache(main, saved_at=_fresh_ts())
+        _write_cache(wt, saved_at=_stale_ts())
+        assert _main_worktree_root(wt) == main
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(_make_gateway(wt), [])
+        assert passed is True, detail
+
+    def test_malformed_git_file_no_crash(self, tmp_path: Path) -> None:
+        """.git 文件内容非法 → 不抛异常、回落本地副本判定。"""
+        main, wt = _make_linked_worktree(tmp_path)
+        (wt / ".git").write_text("garbage-without-gitdir\n", encoding="utf-8")
+        _write_cache(wt, saved_at=_stale_ts())
+        assert _main_worktree_root(wt) is None
+        path, src = _resolve_cache_path(wt)
+        assert src == "local(no-main-root)"
+        assert path == wt / ".runtime" / "depgraph_scan_cache.json"
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(_make_gateway(wt), [])
+        assert passed is False
+
+    def test_gitdir_pointing_outside_no_ancestor(self, tmp_path: Path) -> None:
+        """gitdir 路径无 .git 祖先（异常布局）→ 回落本地，不误指他处。"""
+        main, wt = _make_linked_worktree(tmp_path)
+        (wt / ".git").write_text(
+            f"gitdir: {tmp_path / 'elsewhere' / 'meta'}\n", encoding="utf-8"
+        )
+        _write_cache(main, saved_at=_fresh_ts())
+        _write_cache(wt, saved_at=_stale_ts())
+        assert _main_worktree_root(wt) is None
+        gate = make_depgraph_freshness_gate()
+        passed, _ = gate.check(_make_gateway(wt), [])
         assert passed is False
