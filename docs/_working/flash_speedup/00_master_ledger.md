@@ -22,6 +22,25 @@ status: active
 > **本机红线**：压测 worker ≤20，禁跑 50+ 档（P2 三度压死宿主，50/100 档正式关闭）。
 > **并发纪律**：altdata 会话本机并发——改前 `lock_files.py acquire`、毕后 release；子代理禁 commit，主会话统一走 GitCommitGateway（一战场一批）；热文件 `safe_write_text`。
 
+## 0. 提速前后对照（Owner 必交件①·实测非外推）
+
+> 数据真源：`.runtime/audit/commit_block_events.jsonl`（`commit_ok_sample.total_ms`=全程墙钟：锁等待+门禁链+提交，n=37）+ `git log`（dev 实测提交率）+ F3 gate-chain 耗时榜。聚合脚本 `.runtime/tmp/throughput.py`。
+
+| 指标 | 提速前（P2 基线） | 提速后（本战役实测） | 说明 |
+|---|---|---|---|
+| 每笔墙钟 P50 | —（基线未采样） | **39.1s** | commit_ok_sample n=37 全程墙钟 |
+| 每笔墙钟 P90 | — | **115.9s** | 重试环/锁排队尾延迟（F5 预检快败正对此尾） |
+| 门禁链 P50（gate-chain） | **41.6s**（全史） | **29.0s**（近段） | F3 实证 604f414846 口径推广+A1 memoization，**-30%** |
+| 串行天花板 | 24/h（门禁常数） | **92/h**（3600/P50 39.1s） | 提交锁串行→全场吞吐=3600/每笔墙钟 |
+| 锁容量（非瓶颈） | 870/h @10w | 870/h @10w（540/h @20w，饿死 45%） | P2 实证：**锁不是瓶颈，门禁是**（24/h=门禁常数） |
+| dev 实测提交率 | ~24/h（持续） | 峰值 **18/h**、近段 11-18/h、8h 均 9.2/h | 8h 窗含 tdchain 大合并扰动（03-04h）+低活跃时段（20-22h 各 1 笔） |
+
+**结论（诚实口径，勿粉饰）**：
+1. **提交链本身已接近 100/h 串行能力**（天花板 92/h，锁容量 870/h）——24/h 的病根是**门禁链墙钟 × 串行 × 重试环**，非锁。
+2. **本战役已落地杠杆**（摩擦+重试类消除，非通道扩容）：F1 派生提交折叠（R-01 派生写入簇 222 行堵点根因端掉→NOTHING_TO_COMMIT/冲突/index.lock 重试消失）；F4 架构图生成器 57.4s→28s（-51%）；F5 DC 预检快败（违规 ~2s 锁外快败 vs ~40s 烧全链，正打 P90 116s 重试尾）；F9 队列新件死信治本（免返工）。门禁链 P50 41.6→29.0s（-30%）即其合力实证。
+3. **100/h 待 Owner 杠杆**（本战役禁动，只提案）：①**F2 通道扩容 k=4**（S18-R3 待签）——串行 92/h × 并行通道=破百的唯一结构性路径；②**门禁退役/解析缓存**（§4.2 退役审计=Owner 门位 AI 禁用；F3 残余 parse-cache 治本挂 harness 门）——把每笔墙钟 P50 39s 压到 <36s 以下。
+4. **实测 12-18/h < 24/h 基线**之因：近 8h 是**大合并扰动窗**（tdchain 12 stash sweep+32min 合并晾置，见 B-INCIDENT）+夜间低活跃时段，非链退化；剔除扰动后活跃时段（23h/01h/03h）达 11/14/18 笔。
+
 ## 1. 环节全景骨架（施工包×状态×证据）
 
 | 包 | 名称 | 授权 | 真源判据 | 依赖 | 状态 | 证据 commit | 子簿 |
@@ -29,10 +48,10 @@ status: active
 | F1 | 衍生提交并入原子化 | 免签先干 | R-01 / S18-R2 / 判据书 F1 | — | ✅ 已落地 | `fe47296d` | `F1_derived_commit_merge/DESIGN.md` |
 | F4 | 生成器并发化 | 免签 | R-08 / 判据书 F4 | 与 F1 同文件需协调 | ✅ 已落地 | `025df945` | `F4_generator_concurrency/DESIGN.md` |
 | F3 | 头部门禁 diff 化 | 免签（通道类前置） | R-03 / S18-R3② / 判据书 F3 | 需实测耗时榜定白名单 | 🔶 挖矿封矿（命题已落地，残余治本挂 harness 门） | — | `F3_head_gate_diff/DESIGN.md` |
-| F5 | DIRECTORY-CONTRACT 摩擦前置化 | 免签（白名单净增=Owner） | A2 堵点本 16 次阻断 | — | 🔶 免签代码核已落地（DC 入预检白名单+建议合规目录指引，语义零改，9 测全绿）；docs/_working/ .json 净增=Owner 裁定提案（不自签）；工作簿挂热注册表 token 待清 | （代码笔待回填） | `F5_dc_preflight/DESIGN.md`（新件待 token） |
+| F5 | DIRECTORY-CONTRACT 摩擦前置化 | 免签（白名单净增=Owner） | A2 堵点本 16 次阻断 | — | ✅ 免签代码核已落地（DC 入预检白名单+建议合规目录指引，语义零改，9 测全绿）；docs/_working/ .json 净增=Owner 裁定提案 S18-F5-①（不自签）；工作簿新件挂热注册表 token 待清 | `1fb04f6e` | `F5_dc_preflight/DESIGN.md`（已恢复·待 token 提交） |
 | F6 | 堵点本全量排查修复 | 免签 | 三本全量 4325 行 | 先 F1 后 F6 | ✅ 已落地（3572 行四态归属·零无主） | —（挖矿+总账，无代码改） | `F6_bottleneck/DESIGN.md` + `lane_reports/F6_堵点总账.md` |
 | F2 | 前置件（lease 续租+双通道压测+热文件单通道闸） | 免签部分（通道数=Owner 签 S18-R3） | R-02/R-04 / S18-R3 | 时间不够可砍 | 🔶 lease 续租已由 F9 交付 | — | `F2_lease_prereq/DESIGN.md`（双通道压测+热文件闸待工） |
-| **F9** | **加餐缺陷包：队列 untracked 新文件落地死信治本（SerializerLease 续租+活体不抢）** | **免签（来源 st-consrep2-20260917）** | **Owner 夜令 #9 §3-§8 / 裁定#280 对齐** | **交付 F2「lease 续租」前置件** | **✅ 已落地（待提交回填 hash）** | **—** | **`F9_queue_newfile_deadletter/DESIGN.md`** |
+| **F9** | **加餐缺陷包：队列 untracked 新文件落地死信治本（SerializerLease 续租+活体不抢）** | **免签（来源 st-consrep2-20260917）** | **Owner 夜令 #9 §3-§8 / 裁定#280 对齐** | **交付 F2「lease 续租」前置件** | **✅ 已落地** | **`3c853303da`（+#ARCH-330 `6ea82b9cfb`）** | **`F9_queue_newfile_deadletter/DESIGN.md`（已恢复·待 token 提交）** |
 | H | 重建 harness + 改写 S18 判据书悬空验收行 | 免签 | P2 收官报告 §四 | F2 验收依赖 | ⬜ 待工 | — | （并入 F2 子簿） |
 | R | 最终报告 + 两轮循环零问题核验 | — | 通宵 SOP §6/§9 | 全部完成后 | ⬜ 待工 | — | `90_report.md` |
 
@@ -53,7 +72,8 @@ status: active
 | B-F9 | 2026-09-18 | 加餐缺陷包：队列 untracked 新文件落地死信治本——SerializerLease 活体不抢 + renew 心跳 + drain 逐项续租 | `3c853303da`（+#ARCH-330 `6ea82b9cfb`） | 根因=租约竞态（活体超 TTL 被抢→双 drain 毁 worktree→clean -fd 删新文件）；queue 83/landing 37/integration 29 全绿；与裁定#280 对齐，未塞 _TRANSIENT_GIT_MARKERS |
 | B-F3 | 2026-09-18 | F3 头部门禁 diff 化挖矿封矿：604f414846 口径**已推广**（裁定#279/#273/#214+A1，ERRCODE mean 16.09→4.75s 实证）；头部 git-内容门禁 P50 合计 **7.62s<10s 判据达标**；真天花板=113 门禁长尾墙钟（gate-chain P50 41.6s 全量/29.0s 近段，P90 123-127s） | —（挖矿，无代码改） | 残余治本=进程级内容哈希 YAML 解析缓存（1.67MB 注册表被 7+ 门禁重复解析），设计封矿挂 Task #7 replay harness 门；真 100/h 杠杆=门禁退役（§4.2）=Owner 门位 AI 禁用，出提案不自签 |
 | B-F6 | 2026-09-18 | F6 堵点本全量排查：三本 **3572 行四态归属·UNCLASSIFIED=0（零无主）✓**。(a)已覆盖 1983（本战役 F1/F4/F9 已治本 ≈167：R-01 派生写入簇 222 行根因被 F1 端掉、F9 pathspec 22、F4 freshness 36；R-06 告警自激纯噪声 1095=全场 31%）/(b)净新病灶仅 26（gate_id 归因观测缺口，非吞吐阻断，登记留 Owner）/(c)门禁判对=使用摩擦 1433（全路由 F5，语义不动）/(d)残留/基线 130 | —（挖矿+总账，无代码改） | 已知疑点全消解：「空 gate_id×221」=commit_slow/ok_sample 性能采样非堵点；NOTHING_TO_COMMIT×87/git reset×48+18/冲突×30 根因=`rules_integrity_db.json` 派生写入（R-01）→F1 已治本。一页全场总账=`lane_reports/F6_堵点总账.md`（Owner 必交件）；真 100/h 杠杆=门禁退役（§4.2）=Owner 门位 |
-| B-F5 | 2026-09-18 | F5 DIRECTORY-CONTRACT 摩擦前置化：DC 入 `PREFLIGHT_GATES` 白名单（输入面审计 PASS=files 清单 ∪ 磁盘内容，内联 ≤500 只检本次 files、零 git diff --cached/零共享暂存依赖，>500 退 --all-files 与锁内权威链同行为）+ `_ESCAPE_HINTS` 建议合规目录（.py→scripts/src、.json→转 .yaml/.csv 或挪 .runtime/data、余查 directory_contract.yaml）；**语义零改**（锁内 DC(30) 仍 fail-closed 权威，预检只锁外 3-5s 快败）；9 测全绿（新增 DC 白名单+指引+阻断渲染测） | （代码笔待回填） | 主簇实证=DCR-005 .py/.json 误放 docs/_working/（allowed=.csv/.html/.md/.yaml；A2 堵点本 16 次+本账 58 次 DCR-005）。**docs/_working/ allowed 净增 .json=Owner 门位**，只出裁定书提案不自签（见 F5 子簿 §Owner裁定项）。工作簿新件挂热注册表 token（外来 st-cohort-ledger 在途）待清后补登记 |
+| B-F5 | 2026-09-18 | F5 DIRECTORY-CONTRACT 摩擦前置化：DC 入 `PREFLIGHT_GATES` 白名单（输入面审计 PASS=files 清单 ∪ 磁盘内容，内联 ≤500 只检本次 files、零 git diff --cached/零共享暂存依赖，>500 退 --all-files 与锁内权威链同行为）+ `_ESCAPE_HINTS` 建议合规目录（.py→scripts/src、.json→转 .yaml/.csv 或挪 .runtime/data、余查 directory_contract.yaml）；**语义零改**（锁内 DC(30) 仍 fail-closed 权威，预检只锁外 3-5s 快败）；9 测全绿（新增 DC 白名单+指引+阻断渲染测） | `1fb04f6e` | 主簇实证=DCR-005 .py/.json 误放 docs/_working/（allowed=.csv/.html/.md/.yaml；A2 堵点本 16 次+本账 58 次 DCR-005）。**docs/_working/ allowed 净增 .json=Owner 门位**，只出裁定书提案不自签（见 F5 子簿 §Owner裁定项）。工作簿新件挂热注册表 token（外来 st-cohort-ledger 在途）待清后补登记 |
+| B-INCIDENT | 2026-09-18 | **外来 pre-merge sweep 删件事故+恢复**：st-tdchain-20260917 合并前净窗 sweep（`git clean -fd`+12 个 stash）**删掉本战役全部 untracked 工作簿**（F3/F5/F6/F9 DESIGN.md + Owner 必交件 `F6_堵点总账.md`），并把 3 个 tracked-改动的 F5 代码件卷进 `stash@{1}`（tdchain-sweep8）。**恢复**：①tracked F5 代码件用 `git restore --source=stash@{1}` 外科式还原（**不 pop**——该 stash 混 26 个外来 WIP，pop=搭便车），pathspec 隔离提交 `1fb04f6e`（核实零搭便车）；②untracked 工作簿从会话 transcript jsonl 提取重写，并备份到 `.runtime/tmp/flash_speedup_workbook_backup/`（gitignored，免疫 clean -fd） | `1fb04f6e` | **教训**：共享主区 untracked 交付件对他会话 pre-merge `clean -fd` 无防御（正是 F9 缺陷类，但 tdchain 手动 sweep 走的是另一码路）；交付件未提交前 MUST 在 `.runtime`（gitignored）留备份。12 个 tdchain/nightcoord sweep stash 仍待其本人 pop 恢复，本会话未碰（§3.4 他会话在途不代修） |
 
 ## 4. 挖后自审闸（总簿级，三态裁定）
 
