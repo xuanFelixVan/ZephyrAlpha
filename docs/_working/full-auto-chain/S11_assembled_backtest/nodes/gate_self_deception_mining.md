@@ -240,3 +240,25 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 | **R-GT17-b**：`[L1] config/chainmap_cluster_names.yaml` 解析为 None | 13 行全注释、零数据条目；声明消费方 `industry_chain_map_gate.py`、`dashboard/api_server.py`（"空契约文件"＝GT-14 幻影证据面同族） | 归 chainmap 车道（`47df41167f`，2026-09-10）：要么填要么删，不代修（宪章 §3.4） |
 | **R-GT17-c**：`[L5] trae_028_doc_structure_naming.yaml 缺少 config/ 目录结构定义` | 规则 YAML 自身缺 `config/` 目录条目，而该规则正是"目录结构命名"真源 | 归规则域（`e2fede99f4`，2026-08-18） |
 | ~~`[L1] config/asset_inventory.yaml` YAML 语法错误~~ **本轮已消** | `:151` notes 双引号标量里 `F:\offrepo_backup\data_download` 单反斜杠 → `found unknown escape character 'o'` → **整文件 `yaml.safe_load` 失败**，消费者 `scan_offrepo_assets.py` 等一读即抛 | `2ba9536a` 反斜杠双写；解析后 notes 文本与原意逐字相同（`offrepo_assets` 15 条完整可读） |
+
+## 9 红蓝变异探针台账（2026-09-17 收尾轮，6 条变异全部转红）
+
+**为什么记在这里**：本节点母题是"契约写在纸上、执行链不兑现"。要证伪"我自己也在写纸面声明"，
+唯一办法是把每句声明**反向改坏**，看守侧测试是否变红（变异=攻，测试=守）。探针脚本用完即删
+（`.runtime/tmp` 收尾清零），故台账落文档留可复核性。还原用字节级备份而非 `git checkout`——
+本仓 `.gitattributes` 声明 `eol=lf` 而工作区是 CRLF，走 git 还原会整文件重写换行、把一次探针
+变成一次全文件 diff。
+
+| 变异（攻） | 目标真源 | 应接住的测试（守） | 实测 |
+|---|---|---|---|
+| M1 台账测量值去掉 `≈` 前缀（把"未在宿主源码落地的裸小量"伪装成已落地） | `regime/features/overlay_features.py` | `tests/regime/test_overlay_features.py` | `1 failed, 63 passed` → RED |
+| M2 删掉"状态词表真源为空即抛"的 fail-closed | `pf_core/strategy_engine/framework_composer.py` | `test_states_channel_empty_source_fails_closed` | `1 failed, 38 passed` → RED |
+| M3 执行链少披露一个键（`signal_age_disclosed` 改名使其不落 metrics） | 同上 | `tests/backtest/test_h3h4_cash_pit_exec_chain.py` | `1 failed, 24 passed` → RED |
+| M4 清空**整装路径**落盘名册 `_PERSISTED_VIA_METRICS_TS_KEYS` | 同上 | 同上（GT-15 结构差集闸 + 读盘三断同时红） | `2 failed, 23 passed` → RED |
+| M5 清空 **CLI 单策略路径**落盘名册（本轮 R-H4B-s 新增的第二生产路径） | `scripts/run_backtest.py` | 同上（`test_cli_backtest_artifact_carries_cash_leg` 三判据） | `2 failed, 23 passed` → RED |
+| M6 事件账本派生计数 `summary.by_audit_level.medium` 9→8 | `architecture_model/events/domain_events.yaml` | `tests/governance/test_validate_yaml_summaries.py` | `1 failed, 4 passed` → RED |
+
+`restore check`：4 个被变异文件的 `git status --porcelain` 输出 = `''`（字节级原样还原）。
+M4/M5 各炸 2 条，说明"登记名册 → 采集器构造 → 读盘断言"三处互相咬合：任一处单独放松即红，
+这正是 GT-15 要的形态（不是靠人记得同步三处）。M1 是 GT-15 的镜像用法——台账里"实测值"与
+宿主源码落地状态由同一契约测试绑定，改坏措辞即失去豁免并被判红。
