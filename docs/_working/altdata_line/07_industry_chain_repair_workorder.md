@@ -59,3 +59,16 @@ ttl: task_bound
 - **R4a/R6/R1 遇权限墙**：应用连接对 ig_* 只读（属主 postgres），DML/DDL 无法经 DatabaseService 执行。已产出 **repair_migration_batch1.sql**（R4a 改名 96 行/R6 加列/R1 桥表 DDL/R5 回填模板，全部带备份与验收注释），**待 Owner/DBA 执行**。改名备份：.runtime/tmp/backup_renaming_20260918.json。
 - **R1 第一遍桥预演：完成。** 纯名称匹配产 55 桥（精确 3+包含 52），92 部门零命中（IO 产品部门口径 vs ig_node 行业环节口径，名称空间不同）——精确化需下载官方《投入产出部门分类↔国民经济行业分类对照表》，已列 R1 工作项。预演产物：.runtime/tmp/sector_bridge_draft.json。
 - 全链路环节清单与各段方案总览见 **08_full_chain_roadmap.md**（P0-P8）。
+
+
+## 6. 执行完成记录（2026-09-18，Owner 授权属主通道）
+
+经 get_depgraph_pg_connection(superuser=True) 属主通道（current_user=postgres）执行 repair_migration_batch1：
+
+- **R4a 完成**：96 行「行业聚合」改名「链名+聚合」（如 铜产业链聚合@铜产业链），剩余同名 0；抽查 5 条合格
+- **R6 完成**：ig_edge 补 valid_from 列 + 1,726 行回填，残留空值 0
+- **R1 完成（表+预演桥）**：ig_sector_bridge 建表+双索引；55 条预演桥装载（verified=false 待人工抽检 30 条）
+- **R2 完成**：噪声审计（63%）+ supplies_to 降级 C 级 + 表注释登记
+- **未完（不阻塞结构层三达标中的两项）**：R1 精确化（92 部门待官方对照表）、R3 产品收入挂接补年（akshare 批量）、R5 IO 流量系数回填（待下载 2020 表）、company_edge 3,171 映射反哺——全部已列工作项
+
+**结构层达标状态**：全挂接（改名后节点/边一致性 ✅，io_edge 桥 55/153 预演挂接）；可溯源（source 列+表注释 ✅，新 fact 走 chunk 待研报线）；有水量（⏳ R5 待 IO 表下载）。
