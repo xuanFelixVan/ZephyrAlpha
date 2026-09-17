@@ -1,0 +1,65 @@
+# --- 治理锚定 ---
+# blueprint: MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+# module_id: MOD-L00-004-SS
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 数据断供哨兵阈值配置（唯一真源；模块=zephyr.data.supply_sentinel）
+#
+# 诞生背景（2026-09-18 夜班 st-datapack-20260918，altdata_line 09 清单 D1/D2 波1）：
+#   股东户数表 2026-07 断供两月无人知（miniqmt 清退后任务空挂）——事件日期列表
+#   （公告日/解禁日/决议日）被 L11 integrity_check 的 _BUSINESS_EVENT_DATE_COLS
+#   口径强制跳过（日频必误报），成为停更检测盲区。本配置补上表侧 max(date) 停更检测。
+#
+# 字段：
+#   table         全限定表名
+#   date_col      判停更的日期列（业务事实锚，非采集时间）
+#   max_lag_days  允许的最大落后天数（超限=断供嫌疑，告警）
+#   past_only     true=只对 <=today 的行取 max（前瞻/预约类未来行不稀释新鲜度）
+#   allow_empty   true=空表放行（新建表首轮回填前宽限）
+#
+# 阈值定档依据（SOP §10.2：日频>3 天/月频>45 天，按数据节奏折档）：
+#   3-10 天   = 逐日有增量的表
+#   15-45 天  = 月度节奏/跨披露季节奏的表
+#   70 天     = 不规则事件表（月度派生但个别月份可为空）
+
+tables:
+  # --- D2 股东户数（断供教训本体；公告日逐日有增量，节假日顺延留余量） ---
+  - table: c3_fundamental.shareholder_count
+    date_col: announce_date
+    max_lag_days: 10
+    past_only: true
+
+  # --- J2 限售解禁（增量+前瞻双任务同表；解禁日逐日几乎必有，前瞻行在未来故 past_only） ---
+  - table: c3_fundamental.share_unlock
+    date_col: unlock_date
+    max_lag_days: 5
+    past_only: true
+
+  # --- J1/B9 预约披露（披露季节性：1-4/7-8/10 月密集，5-6/9/11-12 月可为空 → 阈值放宽跨季） ---
+  - table: c3_fundamental.disclosure_plan
+    date_col: announce_date
+    max_lag_days: 60
+    past_only: true
+
+  # --- J5 央行议息（采集心跳口径：决策日历的源端节奏不均——金十预约场次行可长期
+  # 停在最后一场已排会议（2026-09 实查 max(decision_date)=2025-10-30 属源端现实），
+  # 按 decision_date 判停更会把"源端没排新会"误报为断供；管线存活的正确度量=ingest_ts 新鲜度） ---
+  - table: c1_market.rate_decision_calendar
+    date_col: ingest_ts
+    max_lag_days: 2
+    past_only: false
+
+  # --- J4 指数调仓（月度快照差分派生；中证定期调整在 6/12 月，平常月靠不规则变动，个别月可为空） ---
+  - table: c1_market.index_adjustment
+    date_col: effective_date
+    max_lag_days: 70
+    past_only: true
+
+  # --- J9 交割/到期日历（calendar_event 派生月批；futures_delivery 等事件逐月必有，past_only 判 past 窗口） ---
+  - table: c1_market.calendar_event
+    date_col: event_date
+    max_lag_days: 35
+    past_only: true

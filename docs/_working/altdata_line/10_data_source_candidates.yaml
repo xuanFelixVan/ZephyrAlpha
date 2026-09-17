@@ -14,8 +14,8 @@ ttl: task_bound
 # ⚠ ROOR 登记报备中（human_gated）；⚠ 原放 architecture_model/data/ 触发 PROTECTED-PATHS（重大修改须 Owner 审批）——09-17 迁至 docs/_working/altdata_line/
 # 批次说明: v0.1.0 首批 16 条=2026-09-17 数据线会话已甄别候选（骨架【快】清单+MVP 油价链缺口+传导链注入源）
 
-version: "0.1.0"
-updated: "2026-09-17"
+version: "0.2.0"
+updated: "2026-09-18"
 lifecycle_sop: "docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md"
 
 candidates:
@@ -33,8 +33,8 @@ candidates:
     tos_risk: ""
     score: {availability: 3, signal: 3, fit: 3, maintenance: 3}
     target_table: "c3_fundamental.shareholder_count"
-    status: approved
-    notes: "断供修复非新源：任务 shareholder_incremental 在(daily_event 槽)却不生效，真因待查调度槽与 provider；散户进出最干净代理"
+    status: integrated
+    notes: "断供修复非新源：任务 shareholder_incremental 在(daily_event 槽)却不生效，真因待查调度槽与 provider；散户进出最干净代理。2026-09-18 夜班毕业（st-datapack-20260918）：真因=miniqmt 清退（xtdata 股东人数接口随之死亡）；治本=切东财 datacenter RPT_HOLDERNUM_DET 公告日窗口（capability shareholder_count），断供段 2026-07-03~09-18 已回填 11487 行，抽检 20/20 对上"
 
   # ── MVP 油价五波缺口 ──
   - cand_id: DS-CAND-001
@@ -266,3 +266,36 @@ candidates:
     target_table: "c1_market.etf_metal_holdings"
     status: candidate
     notes: "H8；黄金链第 12 环"
+
+  # ── 2026-09-18 夜班波1 追加（D1 日历族施工甄别）──
+  - cand_id: DS-CAND-016
+    name: "MSCI 指数调仓公告"
+    vendor: "MSCI 官网"
+    acquire_mode: download
+    cost: free
+    register_barrier: "官网下载需注册账号（免费）；调样公告为 PDF/CSV 混合"
+    coverage: "MSCI 中国/全球指数半年度/季度调样（msci_adjustment 表已建未填充）"
+    frequency: "季度/半年度"
+    history_depth: "官方提供历次 review 公告下载"
+    anti_crawl_risk: light
+    tos_risk: "官网条款禁批量再分发；自用研究归档需复核"
+    score: {availability: 2, signal: 4, fit: 3, maintenance: 2}
+    target_table: "c1_market.msci_adjustment"
+    status: candidate
+    notes: "akshare 无 MSCI 调仓接口（2026-09-18 实查 dir(ak) 零命中）；J4 波1 先以中证族快照差分落地（index_adjustment 14763 事件），MSCI 需注册下载另行报批"
+
+  - cand_id: DS-CAND-017
+    name: "国证指数历史调样（cnindex 下载端点）"
+    vendor: "深证信息/国证指数"
+    acquire_mode: download
+    cost: free
+    register_barrier: ""
+    coverage: "国证系列指数样本调整历史 Excel"
+    frequency: "半年度"
+    history_depth: "官方历史调样文件"
+    anti_crawl_risk: light
+    tos_risk: ""
+    score: {availability: 2, signal: 3, fit: 3, maintenance: 2}
+    target_table: "c1_market.index_adjustment"
+    status: rejected
+    notes: "akshare index_detail_hist_adjust_cni 依赖的 download-adjustment 端点已失效（2026-09-18 实测 BadZipFile 空返回，399005/399001/399303/980017 全空）；官网若恢复再评估"

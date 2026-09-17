@@ -12,8 +12,8 @@
 # 同步到 DB data_source_assets 表,派生 asset_catalog.md;派生 policies.yaml(generate_policies.py)
 
 module_id: MOD-L00-001
-version: "2.4.0"
-description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。v2.2.0: 补登 DS-CLS(财联社电报,RSSHub路由)和 DS-EASTMONEY_NEWS(东方财富7x24快讯,HTTP直连),修复 policy_registry 运行时无注册策略 WARNING。v2.3.0: DS-IFIND 退役(#ARCH-DATA-IFIND-RETIRE-001,2026-08-14 用户裁定彻底删除+留痕)——provider 代码/tasks/policies/健康检查全项目切除,本条仅留痕。v2.4.0: 新增 DS-IO_TABLE(国家统计局投入产出表,低频结构锚,io_ingest 装载 ig_io_edge)。"
+version: "2.5.0"
+description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。v2.2.0: 补登 DS-CLS(财联社电报,RSSHub路由)和 DS-EASTMONEY_NEWS(东方财富7x24快讯,HTTP直连),修复 policy_registry 运行时无注册策略 WARNING。v2.3.0: DS-IFIND 退役(#ARCH-DATA-IFIND-RETIRE-001,2026-08-14 用户裁定彻底删除+留痕)——provider 代码/tasks/policies/健康检查全项目切除,本条仅留痕。v2.4.0: 新增 DS-IO_TABLE(国家统计局投入产出表,低频结构锚,io_ingest 装载 ig_io_edge)。v2.5.0: 新增 DS-EASTMONEY_DATACENTER(东财数据中心 API,RPT_HOLDERNUM_DET 股东户数公告日窗口——2026-09-18 夜班 st-datapack-20260918，miniqmt 清退后 D2 股东户数续采正门；DS-CAND-000 毕业)。"
 
 data_sources:
   - id: DS-IFIND
@@ -555,3 +555,26 @@ data_sources:
       extra:
         requires_vpn: false
         note: "国内服务不需 VPN；QWeather key 免费注册（1000次/天）；写入 c1_market.weather_data，每日积累"
+
+  - id: DS-EASTMONEY_DATACENTER
+    runtime_id: eastmoney_datacenter
+    name: "东方财富数据中心"
+    name_en: "EastMoney DataCenter"
+    type: open_source
+    account_type: free
+    category: fundamental_data
+    vendor: "东方财富"
+    interface_types: ["HTTP REST(datacenter-web api/data/v1/get)"]
+    api_count: 1
+    auth_required: false
+    auth_method: "无(匿名HTTP直连,与 akshare stock_zh_a_gdhs 同源同端点)"
+    rate_limit: "无明确限制,分页礼貌限速(单次任务≤10页)"
+    status: active
+    coverage: "股东户数明细(RPT_HOLDERNUM_DET,含公告日 HOLD_NOTICE_DATE 窗口过滤——akshare 官方封装仅 END_DATE 维度)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "src/zephyr/data/implementations/akshare_provider.py _fetch_shareholder_count docstring"
+    policy:
+      rpm: 30
+      concurrency: 1
+      max_retries: 3
+      backoff: exponential
