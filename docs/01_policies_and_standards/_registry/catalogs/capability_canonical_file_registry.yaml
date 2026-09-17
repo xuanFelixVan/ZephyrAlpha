@@ -32259,6 +32259,10 @@ creation_tokens:
   token: altdata-line-repair-migration-batch1-20260917
   created_by: st-altdatamap-20260917
   capability: altdata_line
+- file: docs/_working/altdata_line/09_data_subpackage_worklist.md
+  token: altdata-line-09-data-subpackage-worklist-20260917
+  created_by: st-altdatamap-20260917
+  capability: altdata_line
 - file: docs/_working/residual_construction/pending_items_plan.md
   token: residual-construction-plan-pending-items-plan-20260917
   created_by: st-residual-20260917
@@ -32327,4 +32331,16 @@ creation_tokens:
   token: overnight-campaign-overnight-campaign-policy-20260917
   created_by: st-altdatamap-20260918
   capability: overnight_campaign
+- file: docs/01_policies_and_standards/sop/construction_sop/overnight_campaign_instruction_template.md
+  token: overnight-campaign-overnight-campaign-instruction-template-20260917
+  created_by: st-altdatamap-20260918
+  capability: overnight_campaign
+- file: docs/_working/flash_speedup/00_master_ledger.md
+  token: flash-speedup-00-master-ledger-20260917
+  created_by: st-flashspeed-20260918
+  capability: flash_speedup
+- file: docs/_working/flash_speedup/F1_derived_commit_merge/DESIGN.md
+  token: flash-speedup-design-20260917
+  created_by: st-flashspeed-20260918
+  capability: flash_speedup
 di_seam_exemptions: []

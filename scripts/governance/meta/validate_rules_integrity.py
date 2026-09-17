@@ -237,10 +237,14 @@ def _load_db() -> dict:
         return json_mod.load(f)
 
 
-def _save_db(data: dict) -> None:
-    """_save_db implementation."""
+def _save_db(data: dict) -> bool:
+    """_save_db implementation。
+
+    返回 atomic_write_safe 结果（True=落盘成功，False=写失败被吞）——供 register_fold
+    区分"基线已变且落盘"与"基线已变但落盘失败"（后者 gateway 不应 buffer 脏 DB）。
+    """
     _INTEGRITY_DB.parent.mkdir(parents=True, exist_ok=True)
-    atomic_write_safe(_INTEGRITY_DB, json_mod.dumps(data, ensure_ascii=False, indent=2))
+    return atomic_write_safe(_INTEGRITY_DB, json_mod.dumps(data, ensure_ascii=False, indent=2))
 
 
 def register() -> dict:
@@ -289,6 +293,85 @@ def register() -> dict:
     }
     _save_db(data)
     return {"status": "registered", "count": len(new_files), "at": now}
+
+
+def register_fold(changed_files: set[str]) -> bool:
+    """F1 治本（衍生提交并入原子化，2026-09-18）：flush 前用工作树混合算"最终态基线"。
+
+    病根（R-01）：post-commit 链路在 reconciler 批提交（flush squash）之后再跑
+    ``--register``（``_hash_git_head`` 读 post-flush HEAD），只要 reconciler 改动了受保护
+    文件（典型 capability_canonical_file_registry.yaml），DB 漂移 → 触发独立尾笔
+    ``chore(integrity): post-flush re-register``（24h 实测 31 笔）。尾笔根因是时序约束：
+    register 读 HEAD，而 reconciler 改动只有 flush 后才入 HEAD，故 register 被钉死在 flush 后。
+
+    治本洞察：受保护文件被本链路改动时，其**工作树内容 == 即将提交内容**（flush 只 git-add
+    现盘字节，不改内容）。故可在 flush **前**对 changed_files 用工作树 hash 算出最终态 DB，
+    无需等 HEAD；其余未改动文件复用旧 DB hash（保持 check() 对 WIP 篡改的检测，不降级红蓝发现3）。
+
+    与 register() 的差异：register() 全量 ``_hash_git_head``（HEAD-based）；register_fold 仅对
+    changed_files 用工作树 hash，其余复用旧 DB。对**已提交内容**两者等价（工作树==HEAD）；
+    对**未入 commit 的 WIP 篡改**，register_fold 复用旧 hash → check() 工作树 hash 不匹配 →
+    仍报 TAMPERED（与 register 的 HEAD-based 防护等价）。
+
+    Args:
+        changed_files: 本次提交链涉及的受保护文件相对路径集（POSIX 风格，
+            = ``rel(existing) ∪ batcher.buffered_files()``）。
+
+    Returns:
+        True = DB 已写盘（new_files != old_files）；False = 基线未变（不写盘）。
+    """
+    now = datetime.now(UTC).isoformat()
+    old_db = _load_db()
+    old_files = old_db.get("files", {})
+
+    # normalize changed_files 为 POSIX 相对路径集（容错反斜杠/前导 ./）
+    def _norm(p: str) -> str:
+        q = p.replace("\\", "/")
+        return q[2:] if q.startswith("./") else q
+
+    changed = {_norm(c) for c in changed_files}
+
+    new_files: dict = {}
+    for entry in RULES_MANIFEST:
+        rel = entry["path"].replace("\\", "/")
+        meta = {"critical": entry["critical"], "desc": entry["desc"]}
+        if rel in changed:
+            # 本链路改动 → 工作树 hash（== 即将提交内容）；文件缺失回退 HEAD
+            fp = _REPO_ROOT / rel
+            if fp.exists():
+                new_files[rel] = {"hash": _hash_file(fp), **meta}
+            else:
+                git_hash = _hash_git_head(rel)
+                if git_hash is not None:
+                    new_files[rel] = {"hash": git_hash, **meta}
+        else:
+            # 未改动 → 复用旧 DB hash（保持 WIP 篡改检测）；旧 DB 缺失则 HEAD/工作树兜底
+            old_entry = old_files.get(rel)
+            if old_entry and old_entry.get("hash"):
+                new_files[rel] = {
+                    "hash": old_entry["hash"],
+                    "critical": old_entry.get("critical", entry["critical"]),
+                    "desc": old_entry.get("desc", entry["desc"]),
+                }
+            else:
+                git_hash = _hash_git_head(rel)
+                if git_hash is not None:
+                    new_files[rel] = {"hash": git_hash, **meta}
+                else:
+                    fp = _REPO_ROOT / rel
+                    if fp.exists():
+                        new_files[rel] = {"hash": _hash_file(fp), **meta}
+
+    if new_files == old_files:
+        return False
+
+    return _save_db(
+        {
+            "files": new_files,
+            "registered_at": now,
+            "last_check_at": old_db.get("last_check_at", ""),
+        }
+    )
 
 
 def check() -> dict:
@@ -392,12 +475,33 @@ def main() -> None:
         help="注册当前文件状态为可信基线（需 ZEPHYR_RECONCILER_MODE=1 门禁）",
     )
     parser.add_argument("--check", action="store_true", help="验证文件未被篡改")
+    parser.add_argument(
+        "--fold",
+        action="store_true",
+        help=(
+            "F1 折入模式：从 stdin 读 changed_files（每行一个相对路径），"
+            "用工作树混合算最终态基线（需 ZEPHYR_RECONCILER_MODE=1 门禁）；"
+            "DB 变更 stdout 输出 FOLDED，未变更输出 UNCHANGED"
+        ),
+    )
     parser.add_argument("--diff", action="store_true", help="显示 git diff")
     parser.add_argument("--json", action="store_true", help="JSON 格式输出")
     parser.add_argument("--warn-only", action="store_true", help="警告模式不阻断")
     args = parser.parse_args()
 
-    if args.register:
+    if args.fold:
+        # F1 治本：折入模式与 --register 同为基线重置，复用红蓝发现4 门禁。
+        if os.environ.get("ZEPHYR_RECONCILER_MODE") != "1":
+            print(
+                "[INTEGRITY] 🔴 --fold 被门禁阻断：未设置 ZEPHYR_RECONCILER_MODE=1。",
+                file=sys.stderr,
+            )
+            sys.exit(EXIT_FINDINGS)
+        changed = {line.strip() for line in sys.stdin if line.strip()}
+        wrote = register_fold(changed)
+        # stdout 机器可读信号（gateway 据此决定是否 buffer DB 进批提交）
+        print("FOLDED" if wrote else "UNCHANGED")
+    elif args.register:
         # 红蓝发现4 治本：--register 重置基线 = 合法化当前状态，是危险操作。
         # 加环境变量门禁：只有 ZEPHYR_RECONCILER_MODE=1（reconciler 设置）才允许注册。
         if os.environ.get("ZEPHYR_RECONCILER_MODE") != "1":

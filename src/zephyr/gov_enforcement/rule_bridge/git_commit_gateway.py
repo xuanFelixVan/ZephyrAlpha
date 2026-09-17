@@ -1802,6 +1802,95 @@ class GitCommitGateway:
         except Exception:  # noqa: BLE001 — 快照 best-effort，失败不阻断 commit
             logger.debug("worktree status snapshot write failed (non-blocking)", exc_info=True)
 
+    def _fold_rules_integrity_into_batch(
+        self,
+        existing: list[str],
+        session_id: str,
+        batcher: "object",
+    ) -> None:
+        """F1 治本（衍生提交并入原子化，2026-09-18）：flush 前把 rules_integrity_db 折入批提交。
+
+        病根（R-01）：``_post_flush_rules_integrity_re_register`` 在 flush **后**用 HEAD-based
+        ``--register`` 重算基线，只要 reconciler 改动受保护文件就产生独立尾笔
+        ``chore(integrity): post-flush re-register``（24h 实测 31 笔，13.1% 死信源）。
+
+        治本：本方法在 ``with self._batcher`` 块内、``reconcile_for`` 之后、flush 之前调用。
+        受保护文件被本链路改动时其工作树内容 == 即将提交内容（flush 只 git-add 现盘字节），
+        故用 ``validate_rules_integrity.py --fold``（工作树混合）算出最终态 DB；DB 变更则
+        ``batcher.buffer`` 进同一批 → flush squash 时并入，**消除独立尾笔**。
+
+        安全等价（见 F1 DESIGN.md §3）：对已提交内容与 HEAD-based register 等价；对未入 commit
+        的 WIP 篡改，--fold 复用旧 DB hash → check() 工作树 hash 不匹配 → 仍报 TAMPERED，
+        不降级红蓝发现3 防护。保留 ``_post_flush_rules_integrity_re_register`` 作自愈兜底：
+        折入后 DB 已含最终态 → post-flush register 见 unchanged → 无尾笔。
+
+        fail-open：任何异常仅 warning，降级回 post-flush 尾笔路径，不阻断主流程。
+        """
+        import os as _os
+        import subprocess as _sp
+        import sys as _sys
+
+        _db_rel = "scripts/governance/meta/rules_integrity_db.json"
+        _script = "scripts/governance/meta/validate_rules_integrity.py"
+        try:
+            _root_abs = _os.path.abspath(str(self.project_root))
+            # changed = rel(existing) ∪ batcher.buffered_files()
+            changed: set[str] = set()
+            for f in existing:
+                try:
+                    changed.add(_os.path.relpath(_os.path.abspath(f), _root_abs).replace("\\", "/"))
+                except ValueError:
+                    continue
+            try:
+                changed |= set(batcher.buffered_files())  # type: ignore[attr-defined]
+            except Exception:  # noqa: BLE001 — buffered_files 不可用时仅用 existing
+                pass
+
+            _env = dict(_os.environ)
+            _env["ZEPHYR_RECONCILER_MODE"] = "1"
+            fold_result = _sp.run(
+                [_sys.executable, _script, "--fold"],
+                cwd=str(self.project_root),
+                input="\n".join(sorted(changed)),
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=30,
+                env=_env,
+            )
+        except Exception as e:  # noqa: BLE001 — fail-open 降级回 post-flush 尾笔路径
+            logger.warning("F1 rules_integrity fold error (降级 post-flush): %s", e)
+            return
+
+        if fold_result.returncode != 0:
+            logger.warning(
+                "F1 rules_integrity --fold failed (rc=%d, 降级 post-flush): %s",
+                fold_result.returncode,
+                (fold_result.stderr or "")[:200],
+            )
+            return
+
+        if "FOLDED" not in (fold_result.stdout or ""):
+            # UNCHANGED：基线未变（本链路无受保护文件改动）→ 不 buffer，post-flush 亦 no-op
+            return
+
+        # DB 已写盘（工作树）→ buffer 进批提交，flush 时 squash 并入（消除独立尾笔）
+        _abs_db = str(self.project_root / _db_rel)
+        _msg = "chore(integrity): fold rules_integrity_db into reconciler batch (F1 衍生提交并入原子化)"
+        # R-04②（lane G1）：派生写入先落归属台账（committed=False——真正提交在 flush）
+        record_derived_write(
+            self.project_root, session_id, [_abs_db], source="rules_integrity_fold", committed=False
+        )
+        try:
+            batcher.buffer(session_id, [_abs_db], _msg)  # type: ignore[attr-defined]
+            logger.info(
+                "F1 rules_integrity_db folded into batch (session=%s, 消除独立尾笔)",
+                session_id,
+            )
+        except Exception as e:  # noqa: BLE001 — buffer 失败降级 post-flush 尾笔
+            logger.warning("F1 rules_integrity buffer failed (降级 post-flush): %s", e)
+
     def _post_flush_rules_integrity_re_register(self, session_id: str) -> None:
         """flush 后重注册 rules_integrity 基线（治本时序竞态，2026-08-02 audit-02）。
 
@@ -1925,9 +2014,12 @@ class GitCommitGateway:
                     session_id,
                     commit_message=commit_message,
                 )
+                # F1 治本（衍生提交并入原子化）：flush 前折入 rules_integrity_db，消除独立尾笔。
+                self._fold_rules_integrity_into_batch(existing, session_id, _batcher_ctx)
             # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线，
             # 读 post-flush HEAD（含所有 reconciler 变更）→ 消除 DB 滞后导致的永久 TAMPERED。
             # GATE-INTEGRITY-AUDIT 在 reconcile_for 内已 defer（见 _reconcile_rules_integrity）。
+            # F1 后此调用通常 no-op（折入已使 DB == 最终态 HEAD），仅作自愈/空 buffer 兜底。
             self._post_flush_rules_integrity_re_register(session_id)
             if result is not None:
                 result.reconcile = reconcile_results
@@ -1989,8 +2081,11 @@ class GitCommitGateway:
                 commit_message=commit_message,
                 heartbeat=heartbeat,
             )
+            # F1 治本（衍生提交并入原子化）：flush 前折入 rules_integrity_db，消除独立尾笔。
+            self._fold_rules_integrity_into_batch(existing, session_id, _batcher_ctx)
         # 治本（2026-08-02 audit-02 时序竞态）：flush 后重注册 rules_integrity 基线，
         # 读 post-flush HEAD（含所有 reconciler 变更）→ 消除 DB 滞后导致的永久 TAMPERED。
+        # F1 后此调用通常 no-op（折入已使 DB == 最终态 HEAD），仅作自愈/空 buffer 兜底。
         self._post_flush_rules_integrity_re_register(session_id)
         # 治本 #ARCH-ASSET-INDEX-FALSE-AUTO-COMMIT-001：flush() 失败时降级
         # auto_committed → warn，防止日志误报"已自动提交"但文件未真正提交。
