@@ -27895,6 +27895,58 @@ creation_tokens:
   token: automation-linkage-intel-20260916-20260916
   created_by: st-autolnk-20260917
   capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/00_总环节谱.md
+  token: automation-linkage-00--20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/01_数据源发现/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/02_原料入库/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/03_自动上架/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/04_洗数据/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/05_因子合成/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/06_策略合成/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/07_两级回测/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/08_模拟盘转正门/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/09_骨架体检/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/mining/10_横向系统/工段作业簿.md
+  token: automation-linkage-file-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/automation/campaign/qmt_e2e_runbook.md
+  token: automation-linkage-qmt-e2e-runbook-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/full-auto-chain/evidence/qmt-bridge-smoke-20260918-c3.yaml
+  token: automation-linkage-qmt-bridge-smoke-20260918-c3-20260917
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
 - file: docs/_working/trading_vision/2026-09-16-skeleton-coverage-audit.md
   token: trading-vision-audit-2026-09-16-skeleton-coverage-audit-20260916
   created_by: st-skeletonaudit-20260916
@@ -32367,4 +32419,45 @@ creation_tokens:
   token: flash-biz-workbooks-biz5-etf15min-tz-defect-20260917
   created_by: st-flashbiz-20260918
   capability: flash_biz_workbooks
+- file: "docs/_working/tdchain_mine/a0_master_ledger.md"
+  token: "tdchain-mine-20260918-master"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+- file: "docs/_working/tdchain_mine/e0_merge_closure/workbook.md"
+  token: "tdchain-mine-20260918-e0_merge"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+- file: "docs/_working/tdchain_mine/e1_tdata_infra/workbook.md"
+  token: "tdchain-mine-20260918-e1_tdata"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+- file: "docs/_working/tdchain_mine/e2_tv2_revival/workbook.md"
+  token: "tdchain-mine-20260918-e2_tv2"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+- file: "docs/_working/tdchain_mine/e3_regime_recal/workbook.md"
+  token: "tdchain-mine-20260918-e3_regcal"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+- file: "docs/_working/tdchain_mine/e4_wyf3_closeout/workbook.md"
+  token: "tdchain-mine-20260918-e4_wyf3"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+- file: "docs/_working/tdchain_mine/e5_g07_linkage/workbook.md"
+  token: "tdchain-mine-20260918-e5_g07"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+- file: "docs/_working/tdchain_mine/e6_sim_admission/workbook.md"
+  token: "tdchain-mine-20260918-e6_admission"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+- file: "docs/_working/tdchain_mine/e7_qmt_e2e/workbook.md"
+  token: "tdchain-mine-20260918-e7_qmte2e"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+- file: "docs/_working/tdchain_mine/e8_redblue_loop/workbook.md"
+  token: "tdchain-mine-20260918-e8_redblue"
+  created_by: "st-tdchain-20260917"
+  capability: "tdchain_mining_workbook"
+
 di_seam_exemptions: []
