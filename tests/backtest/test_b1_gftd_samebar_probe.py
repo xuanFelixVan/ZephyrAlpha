@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-BT-089 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.backtest.test_b1_gftd_samebar_probe
 # [DOMAIN] D_BACKTEST
 # [TESTS] self
