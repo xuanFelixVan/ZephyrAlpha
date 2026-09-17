@@ -185,6 +185,7 @@ class TestPrivilegeEscalation:
             "subprocess.Popen(['sudo'",
         ]
         findings = []
+        unreadable: list[str] = []  # kimi-audit B2-③ 直改：read 失败必须计数，禁静默豁免安全扫描
         for py_file in gov_dir.rglob("*.py"):
             if py_file.name.startswith("_"):
                 continue
@@ -197,9 +198,12 @@ class TestPrivilegeEscalation:
                             if pattern in line and not line.strip().startswith("#"):
                                 findings.append((py_file.name, pattern, line.strip()))
             except Exception:
-                pass
+                # kimi-audit B2-③ 直改（裁定#325 同班）：read 失败按 unreadable 计数出声，不得静默豁免
+                unreadable.append(py_file.name)
         # 蓝队: 不应有权限提升代码 (允许在注释中提及)
         # 注意: os.chmod 可能在合法场景中使用, 需要人工审查
+        # kimi-audit B2-③ 直改：读取失败的文件必须出声，不得静默缩小扫描面
+        assert not unreadable, f"{len(unreadable)} 个治理脚本读取失败（静默豁免权限扫描）: {unreadable}"
         assert len(findings) == 0, f"发现权限提升风险: {findings[:5]}"
 
     def test_scripts_no_arbitrary_code_execution(self):
@@ -221,6 +225,7 @@ class TestPrivilegeEscalation:
             "__import__('os')",
         ]
         findings = []
+        unreadable: list[str] = []  # kimi-audit B2-③ 直改：read 失败必须计数，禁静默豁免安全扫描
         for py_file in gov_dir.rglob("*.py"):
             if py_file.name.startswith("_") or py_file.name in detection_scripts:
                 continue
@@ -235,6 +240,11 @@ class TestPrivilegeEscalation:
                             # 排除函数定义 (def _exec)
                             if pattern == "exec(" and "def _exec" in line:
                                 continue
+                            # kimi-audit B2-③ 白名单（裁定#325 fail-closed 后合法个案落码豁免）：
+                            # update_progress.py 的 PID-tmp 原子写入惯用法 __import__('os').getpid()
+                            # 仅取进程号拼 .tmp 临时文件名，非任意代码执行；白名单外一律 fail。
+                            if pattern == "__import__('os')" and ".getpid()" in line and ".tmp" in line:
+                                continue
                             # 排除描述性字符串
                             if pattern == "os.system(" and (
                                 "description" in line or "Python:" in line or "-" in stripped[:3]
@@ -242,9 +252,12 @@ class TestPrivilegeEscalation:
                                 continue
                             findings.append((py_file.name, pattern, stripped))
             except Exception:
-                pass
+                # kimi-audit B2-③ 直改（裁定#325 同班）：read 失败按 unreadable 计数出声，不得静默豁免
+                unreadable.append(py_file.name)
         # 蓝队: 不应有任意代码执行 (归档审计脚本的 exec(stmt) 需人工审查)
         # 标记为需人工审查, 不硬阻断
+        # kimi-audit B2-③ 直改：读取失败的文件必须出声，不得静默缩小扫描面
+        assert not unreadable, f"{len(unreadable)} 个治理脚本读取失败（静默豁免任意代码执行扫描）: {unreadable}"
         real_risks = [f for f in findings if "description" not in f[2] and "Python:" not in f[2]]
         if real_risks:
             pytest.fail(f"发现任意代码执行风险（需人工审查或白名单化）: {real_risks[:3]}")  # B2-③ 修复（裁定#325 同班 2026-09-17）：skip 兜底=检出假绿，改 fail-closed；合法 exec 个案须白名单化
@@ -260,6 +273,7 @@ class TestPrivilegeEscalation:
             "detect_git_dangerous.py",
         }
         findings = []
+        unreadable: list[str] = []  # kimi-audit B2-③ 直改：read 失败必须计数，禁静默豁免安全扫描
         for py_file in gov_dir.rglob("*.py"):
             if py_file.name.startswith("_"):
                 continue
@@ -288,8 +302,11 @@ class TestPrivilegeEscalation:
                         else:
                             findings.append((py_file.name, stripped))
             except Exception:
-                pass
+                # kimi-audit B2-③ 直改（裁定#325 同班）：read 失败按 unreadable 计数出声，不得静默豁免
+                unreadable.append(py_file.name)
         # 蓝队: 非检测脚本不应使用 shell=True
+        # kimi-audit B2-③ 直改：读取失败的文件必须出声，不得静默缩小扫描面
+        assert not unreadable, f"{len(unreadable)} 个治理脚本读取失败（静默豁免 shell=True 扫描）: {unreadable}"
         assert len(findings) == 0, f"发现 shell=True 使用: {findings[:5]}"
 
     def test_scripts_file_operations_within_project(self):
@@ -305,6 +322,7 @@ class TestPrivilegeEscalation:
             "C:\\Users\\Public\\",
         ]
         findings = []
+        unreadable: list[str] = []  # kimi-audit B2-③ 直改：read 失败必须计数，禁静默豁免安全扫描
         for py_file in gov_dir.rglob("*.py"):
             if py_file.name.startswith("_"):
                 continue
@@ -321,8 +339,11 @@ class TestPrivilegeEscalation:
                         if dp.lower() in sanitized.lower():
                             findings.append((py_file.name, dp, line.strip()))
             except Exception:
-                pass
+                # kimi-audit B2-③ 直改（裁定#325 同班）：read 失败按 unreadable 计数出声，不得静默豁免
+                unreadable.append(py_file.name)
         # 蓝队: 不应硬编码系统路径
+        # kimi-audit B2-③ 直改：读取失败的文件必须出声，不得静默缩小扫描面
+        assert not unreadable, f"{len(unreadable)} 个治理脚本读取失败（静默豁免系统路径扫描）: {unreadable}"
         assert len(findings) == 0, f"发现系统路径引用: {findings[:5]}"
 
 
@@ -376,6 +397,7 @@ class TestExtremeCombined:
         # 检查治理脚本是否使用原子写入模式
         gov_dir = _PROJECT_ROOT / "scripts" / "governance"
         atomic_write_count = 0
+        unreadable: list[str] = []  # kimi-audit B2-③ 直改：read 失败必须计数，禁静默豁免安全扫描
         for py_file in gov_dir.rglob("*.py"):
             if py_file.name.startswith("_"):
                 continue
@@ -384,8 +406,11 @@ class TestExtremeCombined:
                 if "os.replace" in text or "atomic_write" in text:
                     atomic_write_count += 1
             except Exception:
-                pass
+                # kimi-audit B2-③ 直改（裁定#325 同班）：read 失败按 unreadable 计数出声，不得静默豁免
+                unreadable.append(py_file.name)
         # 至少有一些脚本使用原子写入
+        # kimi-audit B2-③ 直改：读取失败的文件必须出声，不得静默缩小统计面
+        assert not unreadable, f"{len(unreadable)} 个治理脚本读取失败（静默豁免原子写入统计）: {unreadable}"
         assert atomic_write_count > 0, "应有脚本使用原子写入模式"
 
 

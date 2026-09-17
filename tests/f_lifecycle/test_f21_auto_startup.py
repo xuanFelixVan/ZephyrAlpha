@@ -55,8 +55,7 @@ class TestAutoStartup:
         if fn is not None:
             # 调用不应抛异常（内部有 try/except 保护）
             fn()
-        # 即使 fn 是 None（可能是私有），源码中存在即可
-        assert True
+        assert fn is not None and callable(fn), "_init_shared_monitoring_modules 缺失或不可调用"  # kimi-audit B2-④
 
     def test_longevity_monitor_importable(self) -> None:
         """LongevityMonitor 模块可导入。"""
@@ -133,7 +132,7 @@ class TestAutoStartup:
         if fn is not None:
             fn()
             fn()  # 重复调用
-        assert True
+        assert fn is not None and callable(fn), "_init_shared_monitoring_modules 缺失或不可调用"  # kimi-audit B2-④
 
     def test_boot_hooks_exception_safety(self) -> None:
         """boot_hooks 初始化异常安全（即使部分模块失败也不影响整体）。"""
@@ -146,4 +145,4 @@ class TestAutoStartup:
                 fn()
             except Exception as e:
                 pytest.fail(f"_init_shared_monitoring_modules 抛异常: {e}")
-        assert True
+        assert fn is not None and callable(fn), "_init_shared_monitoring_modules 缺失或不可调用"  # kimi-audit B2-④

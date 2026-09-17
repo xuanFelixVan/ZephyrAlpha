@@ -1,7 +1,7 @@
 # [A_test] module_id: MOD-GOV_rule_red_blue | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
 # [MODULE] tests.test_rule_red_blue
-# [INVARIANTS] 红蓝对抗测试：故意违反规则→验证检测率; 报告输出到 governance_metadata/red_blue_report.json
+# [INVARIANTS] 红蓝对抗测试：故意违反规则→验证检测率; 报告输出到 pytest tmp_path（禁写生产路径）
 # [MODIFY-GUARD] rule_engine.py; audit_registration.py; gate_engine.py
 # [CONSUMERS] CI pipeline; governance audit
 # [STABILITY] evolving
@@ -23,8 +23,7 @@ import pytest
 from zephyr.shared.io.paths import REPO_ROOT
 
 _PROJECT_ROOT = REPO_ROOT
-_REPORT_DIR = _PROJECT_ROOT / "data" / "databases" / "governance_metadata"
-_REPORT_PATH = _REPORT_DIR / "red_blue_report.json"
+# kimi-audit B2-① 直改（裁定#324）：报告只写 pytest tmp_path，禁写 data/databases 生产目录
 
 L0_RULES = [
     {"rule_id": "TRAE-001", "title": "文件操作安全协议", "violation": "create_file_without_lock"},
@@ -42,7 +41,8 @@ _results: list[dict] = []
 
 
 def _run_audit_registration() -> tuple[int, str]:
-    script = _PROJECT_ROOT / "scripts" / "governance" / "audit_registration.py"
+    # kimi-audit B2-① 路径漂移修正：脚本实际在 d11_compliance 子目录（扁平旧路径必 not found → 假 RED）
+    script = _PROJECT_ROOT / "scripts" / "governance" / "d11_compliance" / "audit_registration.py"
     if not script.exists():
         return -1, "audit_registration.py not found"
     try:
@@ -111,6 +111,22 @@ def _record(rule_id: str, title: str, violation: str, detection: str, detail: st
     )
 
 
+_VALID_DETECTION_STATUSES = {"GREEN", "YELLOW", "RED"}
+
+
+def _assert_recorded(rule_id: str):
+    """断言该规则的红蓝结果已落账且字段合法（kimi-audit B2-①：防 _record 未被调用/用例静默短路）。"""
+    entries = [r for r in _results if r["rule_id"] == rule_id]
+    assert entries, f"{rule_id}: 未记录任何红蓝结果（检测用例被静默跳过）"
+    for r in entries:
+        assert r["detection_status"] in _VALID_DETECTION_STATUSES, (
+            f"{rule_id}: 非法检测状态 {r['detection_status']!r}"
+        )
+        assert isinstance(r["detection_detail"], str) and r["detection_detail"].strip(), (
+            f"{rule_id}: 检测详情为空"
+        )
+
+
 class TestTRAE001CreateWithoutLock:
     def test_create_file_without_lock(self, tmp_path):
         target = tmp_path / "orphan_test.py"
@@ -140,7 +156,7 @@ class TestTRAE001CreateWithoutLock:
                 "RED",
                 "No detection by audit_registration.py",
             )
-        assert True
+        _assert_recorded("TRAE-001")
 
 
 class TestTRAE002CreateWithoutRegister:
@@ -166,7 +182,7 @@ class TestTRAE002CreateWithoutRegister:
             )
         else:
             _record("TRAE-002", "反孤儿与搜索先行协议", "create_py_without_register", "RED", "No orphan detection")
-        assert True
+        _assert_recorded("TRAE-002")
 
 
 class TestTRAE003TaskCardOverGranularity:
@@ -210,7 +226,7 @@ class TestTRAE003TaskCardOverGranularity:
                 "YELLOW",
                 f"TaskRepository not usable: {exc}",
             )
-        assert True
+        _assert_recorded("TRAE-003")
 
 
 class TestTRAE004SerialSubprocess:
@@ -243,16 +259,17 @@ for f in files:
 
 class TestTRAE005SkipDepgraphSimulation:
     def test_skip_depgraph_simulation(self):
-        script = _PROJECT_ROOT / "scripts" / "governance" / "diagnose_depgraph.py"
+        # kimi-audit B2-① 路径漂移修正：脚本实际在 d5_architecture 子目录（扁平旧路径必 not found → 假 skip）
+        script = _PROJECT_ROOT / "scripts" / "governance" / "d5_architecture" / "diagnose_depgraph.py"
         if not script.exists():
             _record(
                 "TRAE-005",
                 "修改原则与治理施工协议",
                 "skip_depgraph_simulation",
-                "YELLOW",
+                "RED",
                 "diagnose_depgraph.py not found",
             )
-            pytest.skip("diagnose_depgraph.py not found")
+            # 不再 pytest.skip 兜底：脚本缺失按 RED 落账，由终闸检出率门统一翻红
         try:
             proc = subprocess.run(
                 [os.sys.executable, str(script)],
@@ -289,7 +306,7 @@ class TestTRAE005SkipDepgraphSimulation:
             )
         except Exception as exc:
             _record("TRAE-005", "修改原则与治理施工协议", "skip_depgraph_simulation", "RED", f"diagnose failed: {exc}")
-        assert True
+        _assert_recorded("TRAE-005")
 
 
 class TestTRAE006MissingTenFieldHeader:
@@ -359,7 +376,7 @@ class TestTRAE008ImportWithoutVerify:
                 "GREEN",
                 "ImportError raised for nonexistent module (runtime guard)",
             )
-        assert True
+        _assert_recorded("TRAE-008")
 
 
 class TestTRAE009SQLStringConcat:
@@ -390,8 +407,7 @@ def get_user(user_id):
 
 
 class TestRedBlueReport:
-    def test_generate_report(self):
-        _REPORT_DIR.mkdir(parents=True, exist_ok=True)
+    def test_generate_report(self, tmp_path):
         green = sum(1 for r in _results if r["detection_status"] == "GREEN")
         yellow = sum(1 for r in _results if r["detection_status"] == "YELLOW")
         red = sum(1 for r in _results if r["detection_status"] == "RED")
@@ -407,6 +423,14 @@ class TestRedBlueReport:
             "detection_rate": round(detection_rate, 4),
             "results": _results,
         }
-        with open(_REPORT_PATH, "w", encoding="utf-8") as f:
+        # kimi-audit B2-① 直改（裁定#324）：报告落 tmp_path，禁写 data/databases 生产目录
+        report_path = tmp_path / "red_blue_report.json"
+        with open(report_path, "w", encoding="utf-8") as f:
             json.dump(report, f, ensure_ascii=False, indent=2)
         assert total >= 9, f"Expected at least 9 test results, got {total}"
+        # 终闸检出率下限门（kimi-audit B2-①，裁定#324）：检出漏洞数/注入漏洞总数 ≥ 0.95 才 PASS
+        assert report_path.exists() and report_path.stat().st_size > 0, "红蓝报告未成功写出"
+        assert detection_rate >= 0.95, (
+            f"红蓝检出率门位失守: detection_rate={detection_rate:.4f} < 0.95 "
+            f"(GREEN={green}, YELLOW={yellow}, RED={red}, total={total})"
+        )

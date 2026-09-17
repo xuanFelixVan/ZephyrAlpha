@@ -54,7 +54,7 @@ class TestHealthMonitorAutoRun:
         hm.start()
         time.sleep(0.2)  # 让监控循环跑一会
         hm.stop()
-        assert True
+        assert not hm.running  # stop 必须真正落停（kimi-audit B2-④ 最小断言补强）
 
     def test_health_monitor_event_driven_no_daemon_thread(self) -> None:
         """Event-driven contract (2026-07-05 P1): start() spawns no polling thread."""
@@ -88,7 +88,7 @@ class TestHealthMonitorAutoRun:
 
         hm = HealthMonitor()
         hm.register_shared_monitoring_probes()
-        assert True  # 不抛异常即可
+        assert len(hm.probe_fns) > 0, "register_shared_monitoring_probes 未注册任何 probe"  # kimi-audit B2-④
 
     def test_health_monitor_reconcile(self) -> None:
         """HealthMonitor reconcile 可调用。"""
@@ -100,11 +100,18 @@ class TestHealthMonitorAutoRun:
 
     def test_health_monitor_collect_metrics(self) -> None:
         """HealthMonitor _collect_metrics 可调用。"""
-        from zephyr.trading.health_monitor import HealthMonitor
+        from zephyr.trading.health_monitor import HealthMonitor, ProbeResult
 
         hm = HealthMonitor()
+        invoked: list[bool] = []
+
+        def _probe() -> ProbeResult:
+            invoked.append(True)
+            return ProbeResult(capability_id="test.collect_metrics", alive=True, ready=True)
+
+        hm.register_probe("test.collect_metrics", _probe)
         hm.collect_metrics()
-        assert True  # 不抛异常即可
+        assert invoked, "collect_metrics 未执行任何已注册 probe"  # kimi-audit B2-④ 最小断言补强
 
 
 class TestCircadianSchedulerAutoRun:

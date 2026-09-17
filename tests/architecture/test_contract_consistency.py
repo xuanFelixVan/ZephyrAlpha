@@ -166,8 +166,9 @@ class TestContractYamlPythonConsistency:
                                 violations.append(
                                     f"{ctr['id']}.{yaml_field['name']}: YAML 标记 required=true 但 Python 有默认值"
                                 )
-            except Exception:
-                pass
+            except Exception as e:
+                # kimi-audit B2-② 直改：except 必须记 violation，禁静默豁免 required 校验（对齐兄弟测试语义）
+                violations.append(f"{ctr['id']}: 契约加载/检查异常 — {e}")
 
         if violations:
             pytest.fail("\n".join(violations))
@@ -271,8 +272,9 @@ class TestContractYamlPythonConsistencyP1:
                                 violations.append(
                                     f"{ctr['id']}.{yaml_field['name']}: YAML 标记 required=true 但 Python 有默认值"
                                 )
-            except Exception:
-                pass
+            except Exception as e:
+                # kimi-audit B2-② 直改：except 必须记 violation，禁静默豁免 required 校验（对齐兄弟测试语义）
+                violations.append(f"{ctr['id']}: 契约加载/检查异常 — {e}")
 
         if violations:
             pytest.fail("\n".join(violations))

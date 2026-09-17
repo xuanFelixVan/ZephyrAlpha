@@ -59,17 +59,21 @@ class TestEventDrivenMonitoring:
 
     def test_subscribe_monitoring_events_callable(self) -> None:
         """subscribe_monitoring_events 可调用。"""
+        import zephyr.shared.lifecycle.health as health_mod
         from zephyr.shared.lifecycle.health import subscribe_monitoring_events
 
         subscribe_monitoring_events()
-        assert True
+        # kimi-audit B2-④ 最小断言补强：订阅必须真实置位（setup_method 已复位为 False）
+        assert health_mod._monitoring_events_subscribed is True, "subscribe_monitoring_events 调用后订阅标志未置位"
 
     def test_subscribe_metrics_events_callable(self) -> None:
         """subscribe_metrics_events 可调用。"""
+        import zephyr.shared.observability.metrics as metrics_mod
         from zephyr.shared.observability.metrics import subscribe_metrics_events
 
         subscribe_metrics_events()
-        assert True
+        # kimi-audit B2-④ 最小断言补强：订阅必须真实置位（setup_method 已复位为 False）
+        assert metrics_mod._metrics_events_subscribed is True, "subscribe_metrics_events 调用后订阅标志未置位"
 
     def test_event_subscription_idempotent(self) -> None:
         """事件订阅幂等（重复订阅不重复注册）。"""
@@ -186,6 +190,10 @@ class TestEventDrivenMonitoring:
         def _bad_handler(payload):
             raise RuntimeError("intentional test error")
 
+        # kimi-audit B2-④ 断言补强：正常 handler 注册在坏 handler 之前（emit 的 try/except
+        # 包裹整个 handler 循环，坏 handler 抛异常会中断其后的 handler），以其被调用为可观测结果
+        handled: list[str] = []
+        bus.subscribe("test.exception_safety", lambda _event: handled.append("ok"))
         bus.subscribe("test.exception_safety", _bad_handler)
 
         # emit 不应抛异常（即使 handler 抛异常）
@@ -194,7 +202,8 @@ class TestEventDrivenMonitoring:
         except Exception as e:
             pytest.fail(f"emit 抛异常: {e}")
 
-        assert True
+        assert handled == ["ok"], f"坏 handler 之前的正常 handler 未被调用: handled={handled}"
+        bus.unsubscribe_all("test.exception_safety")  # 清理订阅，防污染后续用例
 
     def test_health_log_capped(self) -> None:
         """健康日志有上限（防止内存泄漏）。"""
