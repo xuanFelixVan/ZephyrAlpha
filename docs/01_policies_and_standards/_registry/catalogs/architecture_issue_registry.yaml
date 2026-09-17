@@ -21956,7 +21956,21 @@ entries:
     （token=btfix-p1p2-model-capability-exam--init---20260916，created_by=st-btfix-p17-20260916），
     同批落地；可逆性=单 commit revert 即恢复，RULE-DATA-OPS 三步齐（必要性=消孤件、真实性=src 树与
     git ls-files 均无该包、可逆性=revert）。机制侧（反向孤件普查并入 d8_doc_sync 事件触发对账）仍未实施。
-  status: open
+    ④终局（2026-09-18 晨，检测面+清偿面全链落地）：
+    机制面 562320d091 落 d8_doc_sync 事件触发 reconciler（GATE-ALGO-FLOW-REVERSE-ORPHAN，
+    post-commit priority=245；检测面常驻 3232 件镜像/0.7s，退役面锁在 裁定#336 Owner 门位
+    机判 assert_owner_grant，无授权即 RetireRefused 且盘上零改动）；c9008bf91e 修实仓 schema
+    键漂移（读 rulings 不读 entries=门位恒假拒，配真仓验收钉+变异证明）。
+    清偿面 8559bf00d7 登记 裁定#336（affected_files 点名本镜像）；b0c2999b80 补 ALGO-FLOW-LINK 退役方向判据——不可读≠已删除，改判
+    staged 删除清单 + HEAD 无 live external 锚双条件放行（四条护栏各配变异证明；缺它则本条
+    要求的清偿动作被自己防断裂的判据结构性挡死，死信 q-20260918-st-anchorfix-20260918-0010
+    实证）；e4df828ddc 镜像经 ops_guard.guard_recycle 入回收站（30 天可逆）+ capability
+    注册表 CAS 摘 creation_token btfix-p1p2-model-capability-exam--init---20260916
+    （7329→7328，写后进程外自检）。
+    复跑普查：HEAD 树镜像 3231 件、反向孤件 0、引用异常 0（原判据 3227 件/1 孤件）。
+    原“执行包（等窗口）”三项前置——连坐吸收窗口、Owner 门位、机制未实施——全部消解；
+    本条按 裁定#307① 未自主降级门位，退役动作始终经授权机判后执行。
+  status: resolved
   created: '2026-09-17'
   last_updated: '2026-09-18'
 - issue_id: "#ARCH-327"

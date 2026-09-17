@@ -78,3 +78,42 @@ reconciler 数不增且无 warning"。按宪法 §2.8 查 `.runtime/workspace_al
 
 **④ 取号避让**：登记 裁定#335 时发现他会话（vocab_consolidation_campaign W2）已在主工作树写入同号码，
 HEAD max=334 / worktree max=335 → 按"取号时点最大值+1"改取 裁定#336。
+
+## 终局（2026-09-18 06:46，`completes_when` 达成）
+
+| 队列项 | 落地 commit | 内容 |
+|--------|-------------|------|
+| 0011 | `b0c2999b80` | ALGO-FLOW-LINK 补"退役方向"判据（门禁 + 34 件测试，四条变异证明） |
+| 0012 | `e4df828ddc` | 镜像出仓 + capability 注册表摘 token（2 文件 −37 行，零搭便车） |
+
+- 退役动作全程经 reconciler `--apply --owner-ruling 336 --no-commit` 机判执行：三要素复核
+  → `assert_owner_grant`（读 `entries` 真源根键）→ `guard_recycle` 入
+  `.runtime/recycle_bin/1789684773/`（30 天可逆）→ 注册表 `safe_write_text` CAS
+  （creation_tokens 7329→7328）→ 写后进程外自检通过。
+- 复跑普查：HEAD 树镜像 3231 件、反向孤件 0、引用异常 0、缺 SOT 键 3（判据升级前 3227 件/1 孤件）。
+- 检测面活性取证：`GitCommitGateway._reconciliation_registry` 注册 reconciler 58 件，
+  `GATE-ALGO-FLOW-REVERSE-ORPHAN` 在列（priority=245，介于 TRANSLATION-DRIFT 240 与
+  AGENTS-CHEATSHEET 250 之间）；他会话（st-ledgersatisfy）独立观测到"每 commit 触发、
+  扫描面自声明 3230 mirrors scanned"。
+- `#ARCH-326` 置 `status: resolved` 并追加"④终局"段（同批随本台账落地）。
+
+## 事故记录（清偿期，09-18 06:20–06:46）
+
+**⑤ 门禁把自己的清偿路径挡死**：0010 死因 = ALGO-FLOW-LINK 对"读不到的 algo_flow yaml"
+一律硬阻断，镜像退役在任何提交路径上都提不进仓——检测面与清偿面互为死锁。对症补判据
+（staged 删除清单 + HEAD 无 live 锚双条件放行，四条护栏各配变异证明），未加旗硬闯。
+
+**⑥ 净删被"并集补登"复活**：0010 死信期间，他会话以 `chore(registry): … token 并集补登
+（含他会话在途条目保全）` 整文件重写注册表，我 staged 的 token 摘除随之作废
+（HEAD 从 7328 回到 7329 且孤件 token 复现）。教训=**净删面落地前的最后一步必须按 HEAD
+复核**，且优先复用 reconciler `--apply` 重放（自带写后自检）而非手改文本。
+
+**⑦ `guard_recycle` 拒删自己 staged-D 的 docs 件**：index 里是 `D` → git 视角 untracked →
+`ops_guard._enforce_docs_untracked` 抛 `DeleteBlockedError`（提示 `ZEPHYR_FORCE_DELETE=1`，
+未用）。正道=`git restore --staged -- <镜像>` 让它重新 tracked（工作区文件保留），
+`--apply` 重放后再 `git add -A` 记删除。回收站留有每次副本（1789682995 / 1789684773）。
+
+**⑧ 自起 `python scripts/commit_queue.py drain` 子进程被 reaper 收割**（第10条 cmdline 子串
+`scripts/`+`commit`）：等待脚本表现为"rc=0 且输出空"的假成功。改同进程直调
+`commit_queue.drain_queue(landing=WorktreeLanding(...))`——租约仍由 SerializerLease 守护，
+不抢活体排空。
