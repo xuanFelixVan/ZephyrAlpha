@@ -4043,3 +4043,74 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: ''
+
+- ruling_id: '裁定#327'
+  title: 'Owner 六项裁定之①②④⑤ 追认登记（组队 E7/B0 开跑/alpha 车道/三项方法论）'
+  date: '2026-09-18'
+  category: '执行追认'
+  status: 'active'
+  summary: >-
+    Owner 晨会口头批准六项后续裁定，其中 ①组队方案 A 进 E7 评审（按"观察档组合假设"降级表述；
+    kimi-audit 班 P1 翻案复算剔除双死刑件后纸面 1.924/稳健 1.381，原 1.541 已标 suspect）②B0 决赛前
+    15 条 backlog 开跑（1e5a810eb8：L4 执行族 15/15 过+B0 15 条开跑）④alpha 车道排序（E1C 13 候选
+    1 PASS/12 RED+撮合 20→6 首批 0/6）⑤三项方法论（N_eff 冻结=其 B-03/0.70 标工程约定=其 B-04/
+    台账补登）由 kimi-audit 班于 2026-09-17 晚执行完毕，本条补登记闭合 RULE-RULING。
+  affected_files: []
+  related_arch: []
+  related_rulings: ['裁定#328', '裁定#329']
+  superseded_by: ''
+- ruling_id: '裁定#328'
+  title: '清洁零风险三件·附三层调查条件批准（空壳表/CAS tmp/纯重复 bak）'
+  date: '2026-09-18'
+  category: '清洁执行'
+  status: 'active'
+  summary: >-
+    Owner 附条件批准删除三类零风险件：10 张空壳 CH 表、~110 件 CAS tmp 残留、integrator_progress.db.bak
+    纯重复三选一。条件=逐件三层调查（真安全/真无人用/真无价值）全过才删，任一层不过即保留留档；中风险
+    8 件与疑似死配置 4 件不在批准范围保持原状。执行=st-cleanexam-20260918 战役 ENV1。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#329'
+  title: '16 条补考排期与执行（品类阻塞已解实证）'
+  date: '2026-09-18'
+  category: '回测补考'
+  status: 'active'
+  summary: >-
+    Owner 批准 16 条 error 策略补考。阻塞机理=akshare_provider 表清单全局校验连坐（table_registry.py:147，
+    昨晚真源 YAML 缺 market_commodity_futures_main 注册）；数据班 9322ce6710 补注册+建表后本班单条冒烟
+    3 秒 ok 实证解锁；16 条经 cleanexam_makeup_reexam.py（sharpe2a 驱动路径重定向副本，算法零改动）
+    全量补考，结果落 docs/_working/clean_exam_e2e/env2_makeup_exams/。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#330'
+  title: 'kline_daily 09-16/09-17 双日缺口 baostock+tushare 双链补采终态——daily_kline 槽位 fallback 单票退化+SUCCESS 游标推进复合缺陷的转正修复'
+  date: '2026-09-18'
+  category: '数据修复'
+  status: 'active'
+  summary: >-
+    终审发现（Owner 关闭前审计令）：09-17 16:30 daily_kline 槽位因 miniqmt 下线走 baostock
+    fallback，而 baostock CapabilityContract("kline_daily", supports_symbols_null=False)
+    在 symbols=null 时退化为单票 sh.600000（baostock_provider.py 实证形态），且任务记
+    SUCCESS(2 行) 并推进 last_key=09-17——缺口叠加游标推进=若不人工干预永不再采（L10
+    2026-08-24 同款）。16:30/17:00/23:00 三网中 23:00 integrity_check 按设计鸣警（PARTIAL
+    /156）。修复（生产路径零代码修改直驱，两链分治）：①SH/SZ 5217 符号=BaostockProvider
+    .fetch(kline_daily, symbols=canonical 全量清单, 09-16..09-17)→ch_writer，10,434 行
+    （baostock 不复权口径与 miniqmt 对齐=#196 既有纪律）；②BJ 344 符号=TushareProvider
+    .fetch(kline_daily_bj, pro.daily 按日全市场过滤 .BJ)→688 行（akshare 备源实测 written=0
+    证实东财反爬封锁在案，转 tushare 主源一次成功）。终态 CH FINAL：09-16=5561、09-17=5561
+    （close 100% 非空，含 BJ 344），600000 孤行被全量版本 RMT 超写，09-15 基线 5553 无扰动。
+    游标裁定：last_key=2026-09-17 在补齐后即为正确值（后续增量自 09-18 起），不回拨。
+    根因登记（防复发建议，移交维护班评估）：baostock fallback 在 symbols=null 时应显式
+    FAIL 而非退化单票（单票 SUCCESS+游标推进=静默缺口制造机）；daily_kline 槽位可增
+    「行数<阈值→告警不推进游标」闸（integrity_check 已有告警，缺联动）。
+    related=#288（stock_indicator circ_mv 同日断供修复）、#303（双网武装裁定）。
+  affected_files:
+    - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_rulings: ['裁定#288', '裁定#303']
+  related_arch: []
+  superseded_by: null
