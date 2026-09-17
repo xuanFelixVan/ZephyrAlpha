@@ -90,3 +90,28 @@ S12 实验规格八件全带机读判据：E1 metamorphic 三新不变式、E2 C
 
 - `.runtime/tmp/exp/`（本班实验脚本+产物）**保留未清**——五件产物被已提交文档引用为证据锚；产物已晋升 `docs/_working/kimi_audit/exp_evidence/*.yaml`（DCR-008 禁 .json/.py 入 docs/_working，故转 yaml；脚本留原目录）。`.runtime/tmp` 其余数百件历史残留属他会话遗产，未代清（Owner 决策）。
 - MERGE_HEAD 晾置（e19bc24c 判定台账 Phase 2b）经 finalize 尝试被 NO-HIGH-COMPLEXITY 拦（daily_plan.py 两个函数复杂度 21/23 超 15）→ 已 abort，分支完好，工单：拆分两函数后重 merge。
+
+---
+
+# 增补版（终局指令轮 2026-09-17 22:00-23:2x，授权升级：自动裁定+登记）
+
+## 本轮新增交付
+
+1. **裁定登记 23 件**（裁定#304-#326，ruling_registry 同 commit 原子，commit `01fbfad1`）——本班全部裁定书转为在册裁定；#304 落位治愈了 V-01 悬空引用（原引用语义由本裁定承接）。
+2. **优先级 1 组队复算翻案加固**：剔除 S6 双死刑件后新最优组队 Sharpe 纸面 1.924/稳健口径 1.381，"组队杠杆神话破灭（<1.3）"硬判据未触发但三笔账全线恶化（净 0.307→0.155）——**"差距本质=alpha 供给"成立且加固**；新队 4 成员全部非放行档，任何组队数字在 E8 装配层上线前禁作部署依据（lane_reports/P1.md）。
+3. **做T 砍裁定获实证加固**：T lane 预注册窄考试 RED——共振组 +0.88bp/边 vs 无差别对照 +0.87bp（Welch p=0.4997 统计不可区分），扣成本净 -7.5bp/边；裁定#304 的三重理由全部维持（lane_reports/T.md + T_preregister.md）。
+4. **S13 切换规则回验 WIN**：净 Sharpe 1.13 ≥ 等权全池+0.1 判据线，九格敏感性全 WIN，具备转正资格；代价=maxDD -24.7%（集中度）+CRISIS 乒乓漏损 83bp——转正附注=CRISIS 禁当日回切（lane_reports/P4.md，裁定#305）。
+5. **alpha 点火首批**：E1C 稳健池 13 候选 1 PASS/12 RED（唯一过三关=P3-E1C-09：strict_oos 毛超额 +6.82bp/日、DSR 0.7256）；B 撮合窄化 20→6（保功效裁定）首批 0 PASS 不捞；意外复核发现=consensus repaired 表 2022-01..2026-07 整段 0 行（"9.6 年覆盖完整"不成立，数据线新债）（lane_reports/P3.md + p3_prereg/ 20 卡）。
+6. **L4 执行族 15/15 过**（1,467 笔真 fill，滑点均值 2.56bp）；B0 决赛前 15 条 14 valid；Flash 交接包 F01-F03（lane_reports/P6.md）。
+7. **E5 regime 迟滞四臂**：迟滞方向确认（-31.2% vs -36.7%，+5.5pp），但三套 framework 方案窗内全负（-37%~-60%）——S13 F-1"regime_overrides 不得作上线依据"获实证加固（.runtime/tmp/exp/e5/）。
+8. **收口批**：V-03~V-05 已决回写四文档；V-07 蓝图降级 design；八条翻案在库执行三处 suspect 标注（sharpe2 报告横幅/底册全绿注记/STD-001 旁注）；B2 残余两件 fail-closed 直改（01fbfad1）。
+9. **Owner 结果总表** `owner_fast_sign_20260917.md`（30 行八列，一页读全场）。
+
+## 新增被推翻/加固结论（并入 §1 翻案单）
+
+- ⑨"组队杠杆 +1.234"神话——剔除污染与死刑件后稳健口径 1.381（同档但不再神话）；⑩"consensus 9.6 年覆盖完整"——2022-2026.07 整段 0 行；⑪"framework 三方案可上线候选"——窗内全负，S13 F-1 加固。
+
+## 未竟与移交
+
+- P2 Git 链真并发压测：两度中断（内存/人工），单发低并发重启中，极限档留 Flash（harness 判据内置）。
+- E4 C4 SCD-2 retrofit+85 件重考、S18-R2/R-03 通道施工、数据线时区劈叉修复、e19bc24c 拆分重 merge——全部 Flash 夜班（判据在 S12 规格与 S18 根因表）。
