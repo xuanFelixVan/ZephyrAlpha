@@ -75,10 +75,10 @@ class TestRunPipeline:
                                   limit_precheck=2, dry_run=True)
         assert report["lanes"]["D_three_high"]["candidates"] == 7
         assert "B_idea_gen" not in report["lanes"]
-        assert report["e2_precheck"]["prechecked"] == 8  # 四车道台账 × limit 2
-        assert report["e2_precheck"]["passed"] == 4
+        assert report["e2_precheck"]["prechecked"] == 10  # 五车道台账（D/B/C/C2/G 实存）× limit 2
+        assert report["e2_precheck"]["passed"] == 5
         assert sorted(report["e2_precheck"]["e3_ready_candidates"]) == [
-            "CAND-ok1", "CAND-ok2", "CAND-ok3", "CAND-ok4"]
+            "CAND-ok1", "CAND-ok2", "CAND-ok3", "CAND-ok4", "CAND-ok5"]
         assert report["started_at"] and report["finished_at"]
 
     def test_lane_b_optional(self, monkeypatch):

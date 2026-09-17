@@ -58,6 +58,10 @@ _LANE_SPECS = [
     # recipe 行非因子假说——E2 消费器需按 recipe_id/values_json 解析（跨线协作项，E2 侧适配器待挂）。
     {"lane": "F", "name": "f06_grid_recipes", "compute_class": "local",
      "intake": "data/strategy_intake/grid_latest_manifest.csv"},
+    # 车道G 全网搜索进货（⑥号车道，夜班战役 2026-09-17）：消化 L3 胃收件箱→假说卸台账。
+    # 干活在 lane_g_stomach_intake 自身 CLI（车道干完活即卸台账，本编排只幂等消费）。
+    {"lane": "G", "name": "e1g_stomach_intake", "compute_class": "local",
+     "intake": "data/strategy_intake/lane_g_candidates.csv"},
 ]
 
 
@@ -125,6 +129,11 @@ def run_pipeline(top_sectors: int = 20, with_lane_b: bool = False,
         intake_sources["C"] = lane_c_formula_miner._INTAKE_CSV
         intake_sources["C2"] = lane_c2_agentic_miner._INTAKE_CSV
     except Exception:  # noqa: BLE001 — 车道模块缺位不阻断其余车道
+        pass
+    try:
+        from scripts.backtest import lane_g_stomach_intake
+        intake_sources["G"] = lane_g_stomach_intake._INTAKE_CSV
+    except Exception:  # noqa: BLE001 — 同上
         pass
     for lane, src in intake_sources.items():
         if not Path(src).exists():
