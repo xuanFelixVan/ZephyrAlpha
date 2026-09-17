@@ -32544,6 +32544,10 @@ creation_tokens:
   token: cohort-daily-ledger-cohort-daily-ledger-20260917
   created_by: st-cohort-ledger-20260918
   capability: cohort_daily_ledger
+- file: src/zephyr/alt_data/cohort_daily_ledger.py
+  token: auto-scaffold-cohort_daily_ledger-20260918
+  created_by: scaffold.py
+  capability: cohort_daily_ledger
 - file: scripts/backtest/crisis_drill_monthly.py
   token: auto-scaffold-backtest_crisis_drill_monthly-20260918
   created_by: scaffold.py
@@ -32592,4 +32596,13 @@ creation_tokens:
   token: s-owner-001-strategy-run-s-owner-001-exam-20260916
   created_by: st-sowner001-20260916
   capability: s_owner_001_strategy
+- file: "docs/_working/factory/strategy_cards/e4_freeze_s_owner_002_regime_switcher.md"
+  token: "e4-freeze-sowner002-20260916"
+  created_by: "st-tdchain-20260917"
+  capability: "sowner002_cherry_pick"
+- file: "docs/_working/factory/strategy_cards/e4_report_s_owner_002_regime_switcher.md"
+  token: "e4-report-sowner002-20260916"
+  created_by: "st-tdchain-20260917"
+  capability: "sowner002_cherry_pick"
+
 di_seam_exemptions: []
