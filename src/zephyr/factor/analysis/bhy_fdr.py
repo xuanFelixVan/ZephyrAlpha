@@ -36,6 +36,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import math
 import numpy as np
 
 __all__ = ["BHYFDRResult", "bhy_fdr"]
@@ -66,6 +67,11 @@ def bh_qvalues(p_values: list[float]) -> list[float]:
     m = len(p_values)
     if m == 0:
         return []
+    # NaN/Inf/越界一律拒绝（deep_review rpt_v03 P2：NaN 曾被静默排进序产出貌似合理的错数；
+    # canonical q 值件与 bhy_fdr 同持 ERROR_CONTRACT，不得裸奔）
+    for i, pv in enumerate(p_values):
+        if pv is None or not math.isfinite(pv) or pv < 0.0 or pv > 1.0:
+            raise ValueError(f"bh_qvalues: p 值非法 index={i}: {pv!r}（NaN/Inf/越界拒绝）")
     order = sorted(range(m), key=lambda i: p_values[i])
     q_sorted = [0.0] * m
     running = 1.0

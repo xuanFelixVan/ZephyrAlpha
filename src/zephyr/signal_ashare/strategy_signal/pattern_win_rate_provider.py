@@ -49,6 +49,9 @@ def _wilson_lower_bound(rate: float, n: int, *, z: float = _Z95) -> float:
     if n <= 0:
         return 0.0
     p = float(rate)
+    if p != p or p < 0.0 or p > 1.0:
+        # fail-closed（rpt_v01+反驳者反例：越界 rate 曾致负方差开方产复数→TypeError，NaN 曾静默出 0）
+        raise ValueError(f"win rate 非法: {rate!r}（须为 [0,1] 内有限值）")
     denom = 1.0 + z * z / n
     centre = p + z * z / (2.0 * n)
     margin = z * ((p * (1.0 - p) + z * z / (4.0 * n)) / n) ** 0.5

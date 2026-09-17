@@ -291,8 +291,9 @@ def load_family_rows(client, *, timeframe: str, direction: str, fwd_window: int)
             pooled.append(item)
         else:
             regime_by_pattern.setdefault(pid, []).append(item)
-    if baseline_pooled == 0.5 and "__pooled__" not in baseline_by_regime:
-        baseline_by_regime["__pooled__"] = 0.5
+    # __pooled__ 键恒等于真实池化基线（deep_review rpt_v02 P2-1：曾只在缺基线时补 0.5，
+    # 池化基线=0.64 时键仍 0.5，within_regime_edge 缺 regime 回退读键 → 闸C 判决翻转）
+    baseline_by_regime["__pooled__"] = baseline_pooled
     return pooled, regime_by_pattern, baseline_pooled, baseline_by_regime  # noqa: RET504
 
 

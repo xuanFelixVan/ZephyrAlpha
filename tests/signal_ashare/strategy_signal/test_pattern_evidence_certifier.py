@@ -183,3 +183,29 @@ def test_load_family_rows_filters_baseline_and_low_sample():
     ids = [r["pattern_id"] for r in pooled]
     assert "弱样本" not in ids and "__baseline__" not in ids
     assert set(regime) == {"双顶"}
+
+
+def test_load_family_rows_pooled_key_tracks_real_baseline():
+    """rpt_v02 P2-1 回归：__pooled__ 键必须恒等于真实池化基线。
+
+    曾在池化基线≠0.5 时（如 0.64）键仍留 0.5，within_regime_edge 对缺
+    regime 基线的切片回退读键 → 闸C edge 由 -0.04 翻转为 +0.10（判决翻转）。
+    """
+    rows = [
+        ("形态A", "", 0.60, 5000, 0),
+        ("形态A", "rX", 0.60, 1000, 0),   # rX 无基线行 → 回退 __pooled__
+        ("__baseline__", "", 0.64, 100000, 0),
+    ]
+
+    class _FakeRows:
+        def execute(self, sql, params=None):
+            return rows
+
+    _, _, base_pooled, bases = load_family_rows(_FakeRows(), timeframe="day", direction="向上", fwd_window=10)
+    assert base_pooled == pytest.approx(0.64)
+    assert bases["__pooled__"] == pytest.approx(0.64)
+    # 端到端：缺基线 regime 的切片按 0.64 计 edge（0.60-0.64=-0.04，probation 方向）
+    weighted, _ = within_regime_edge(
+        [{"regime_tag": "rX", "hit_rate": 0.60, "n_events": 1000}], bases
+    )
+    assert weighted == pytest.approx(-0.04)

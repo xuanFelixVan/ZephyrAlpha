@@ -464,7 +464,7 @@ def perturbation_stability(
         points=tuple(points),
     )
     _logger.debug(
-        "扰动裁定: %d点 pct=%.0%% max_decay=%.4f robust_share=%.2f stable=%s",
+        "扰动裁定: %d点 pct=%.0f%% max_decay=%.4f robust_share=%.2f stable=%s",
         report.n_points,
         pct,
         max_decay,

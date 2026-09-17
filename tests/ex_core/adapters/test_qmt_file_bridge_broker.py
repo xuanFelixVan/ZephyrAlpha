@@ -18,6 +18,7 @@
 
 from __future__ import annotations
 
+import csv
 import tempfile
 import time
 from decimal import Decimal
@@ -259,6 +260,104 @@ class TestHttpFastPath:
     def test_http_down_by_default(self, broker):
         """端口无监听时 _http_post_order 返回 False（连接拒绝路径）"""
         assert broker._http_post_order("X,order,510300.SH,buy,100,limit,4.00") is False
+
+
+class TestDistinctKeyPairing:
+    """P0-1 回归：order_id 与 idempotency_key 为独立 uuid4（OM.create_order 生产形态）
+
+    柜台侧 remark=指令 order_id 列=idempotency_key；挂单同步/成交配对/撤单都必须
+    经 remark 解析回本地 order_id（qmt_file_bridge_broker 双键配对视图）。
+    历史教训：旧测试全部以两键相同造单，掩盖配对断裂（深度审查 rpt_x08 P0-1）。
+    """
+
+    @pytest.fixture
+    def temp_bridge_dir(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            yield Path(tmpdir)
+
+    @pytest.fixture
+    def broker(self, temp_bridge_dir):
+        config = QmtFileBridgeBroker.ENV_CONFIG["sim"].copy()
+        config["bridge_dir"] = str(temp_bridge_dir)
+        config["orders_file"] = str(temp_bridge_dir / "orders_sim.csv")
+        config["ack_file"] = str(temp_bridge_dir / "ack_sim.csv")
+        config["stock_dir"] = str(temp_bridge_dir / "Stock")
+        with patch.dict(QmtFileBridgeBroker.ENV_CONFIG, {"sim": config}):
+            b = QmtFileBridgeBroker(env="sim", sync_interval=0.1)
+            b.connect()
+            yield b
+            b.disconnect()
+
+    @staticmethod
+    def _make_order() -> Order:
+        return Order(
+            order_id="oid-1",
+            idempotency_key="idem-abc-123",
+            symbol="510300.SH",
+            side=OrderSide.BUY,
+            order_type=OrderType.LIMIT,
+            quantity=Decimal("100"),
+            limit_price=Decimal("4.50"),
+            strategy_id="strat-a",
+        )
+
+    def test_order_sync_pairs_by_remark(self, broker, temp_bridge_dir):
+        """柜台挂单以 remark（=idem）回查：broker_order_id 回填+状态推进必须命中"""
+        order = self._make_order()
+        assert broker.submit_order(order) == "oid-1"
+
+        row = [""] * 26
+        row[9] = "idem-abc-123"
+        row[10] = "510300"
+        row[11] = "510300.SH"
+        row[13] = "4.50"
+        row[14] = "100"
+        row[15] = "SYS-001"
+        row[16] = "已报"
+        row[17] = "0"
+        row[25] = "买入"
+        with open(temp_bridge_dir / "Stock" / "Order.csv", "a", encoding="gbk", newline="") as f:
+            csv.writer(f).writerow(row)
+
+        broker._mirror.sync_all(broker._pairing_cache, broker._dispatch_fill)
+        assert order.broker_order_id == "SYS-001"
+        assert order.status == OrderStatus.SUBMITTED
+        assert broker.query_order("oid-1") is order
+
+    def test_fill_pairs_back_to_local_order_id(self, broker, temp_bridge_dir):
+        """柜台成交 remark=idem：Fill.order_id 必须解析回本地 order_id（OM 配对键）"""
+        order = self._make_order()
+        broker.submit_order(order)
+        fills: list = []
+        broker._fill_callbacks.append(fills.append)
+
+        row = [""] * 24
+        row[9] = "idem-abc-123"
+        row[11] = "510300"
+        row[12] = "510300.SH"
+        row[14] = "D-001"
+        row[17] = "4.50"
+        row[18] = "100"
+        row[19] = "20260918"
+        row[20] = "093001"
+        row[21] = "5.10"
+        row[23] = "买入"
+        with open(temp_bridge_dir / "Stock" / "Deal.csv", "a", encoding="gbk", newline="") as f:
+            csv.writer(f).writerow(row)
+
+        broker._mirror.sync_all(broker._pairing_cache, broker._dispatch_fill)
+        assert len(fills) == 1
+        assert fills[0].order_id == "oid-1"
+        assert fills[0].strategy_id == "strat-a"
+        assert order.status == OrderStatus.FILLED
+
+    def test_cancel_targets_remark(self, broker, temp_bridge_dir):
+        """撤单指令 symbol 列必须写 remark（柜台配对键），而非本地 order_id"""
+        order = self._make_order()
+        broker.submit_order(order)
+        assert broker.cancel_order("oid-1") is True
+        content = (temp_bridge_dir / "orders_sim.csv").read_text(encoding="ascii")
+        assert "Coid-1,cancel,idem-abc-123,,0,,0.0" in content
 
 
 class TestFileBridgeInstruction:

@@ -42,7 +42,7 @@ import logging
 import socket
 import threading
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import Final
@@ -380,6 +380,10 @@ class QmtFileBridgeBroker(BrokerInterface):
         # 状态缓存
         self._order_cache: dict[str, Order] = {}
         self._idempotency_map: dict[str, str] = {}  # idempotency_key -> order_id
+        # 柜台侧以指令 order_id 列（=idempotency_key，即回执/挂单/成交的 remark）回查本地订单；
+        # 生产链 order_id 与 idempotency_key 是两个独立 uuid4，配对必须走双键视图
+        self._remark_to_order_id: dict[str, str] = {}  # 指令order_id(remark) -> 本地order_id
+        self._pairing_cache: dict[str, Order] = {}  # order_id 与 remark 双键均可命中
         self._connected = False
         self._lock = threading.Lock()
 
@@ -501,23 +505,36 @@ class QmtFileBridgeBroker(BrokerInterface):
         with self._lock:
             self._order_cache[order.order_id] = order
             self._idempotency_map[order.idempotency_key] = order.order_id
+            self._remark_to_order_id[order.idempotency_key] = order.order_id
+            self._pairing_cache[order.order_id] = order
+            self._pairing_cache[order.idempotency_key] = order
 
         _logger.info("指令写入 %s: %s %s %s x%d %s", self._env, inst.order_id, inst.symbol, inst.side, qty, pricetype)
         return order.order_id
 
     def cancel_order(self, broker_order_id: str) -> bool:
-        """写入撤单指令（仅表示指令已写入，不表示柜台已撤）"""
+        """写入撤单指令（仅表示指令已写入，不表示柜台已撤）
+
+        broker_order_id 是 submit_order 返回的本地 order_id；柜台按指令 order_id
+        列（=remark=idempotency_key）匹配目标单，必须先解析回 remark 再写入。
+        """
+        remark = broker_order_id
+        cached = self._order_cache.get(broker_order_id)
+        if cached is not None:
+            remark = cached.idempotency_key
+        else:
+            _logger.warning("撤单目标不在本地缓存（回退用 order_id 作 remark）: %s", broker_order_id)
         inst = FileBridgeInstruction(
             order_id=f"C{broker_order_id}",
             action="cancel",
-            symbol=broker_order_id,  # 目标订单 remark
+            symbol=remark,  # 目标订单 remark（柜台配对键）
             side="",
             qty=0,
             pricetype="",
             price=0.0,
         )
         self._append_instruction(inst)
-        _logger.info("撤单指令写入 %s: target=%s", self._env, broker_order_id)
+        _logger.info("撤单指令写入 %s: target=%s remark=%s", self._env, broker_order_id, remark)
         return True
 
     def query_order(self, broker_order_id: str) -> Order | None:
@@ -647,19 +664,22 @@ class QmtFileBridgeBroker(BrokerInterface):
         while not self._sync_stop.is_set():
             try:
                 self._sync_local_channel()
-                self._mirror.sync_all(self._order_cache, self._dispatch_fill)
+                self._mirror.sync_all(self._pairing_cache, self._dispatch_fill)
             except Exception as e:  # 同步失败不杀线程，下轮重试
                 _logger.warning("柜台同步异常(env=%s): %r", self._env, e)
             self._sync_stop.wait(self._sync_interval)
 
     def _sync_local_channel(self) -> None:
         """扫描指令文件状态标记 + 增量读取回执文件"""
-        _scan_instruction_states(self._orders_file, self._order_cache)
+        _scan_instruction_states(self._orders_file, self._pairing_cache)
         acks, self._ack_offset = _read_new_acks(self._ack_file, self._ack_offset)
-        _apply_acks(acks, self._order_cache)
+        _apply_acks(acks, self._pairing_cache)
 
     def _dispatch_fill(self, fill: Fill) -> None:
-        """成交回调扇出"""
+        """成交回调扇出（remark 解析回本地 order_id，下游 OM 按其自己的 order_id 索引配对）"""
+        local_id = self._remark_to_order_id.get(fill.order_id)
+        if local_id and local_id != fill.order_id:
+            fill = replace(fill, order_id=local_id)  # Fill 为 frozen dataclass
         for cb in self._fill_callbacks:
             try:
                 cb(fill)

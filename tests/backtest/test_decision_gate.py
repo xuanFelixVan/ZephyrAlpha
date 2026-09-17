@@ -173,7 +173,12 @@ class TestWFAStage:
     def test_majority_boundary_fail(self):
         gate = DecisionGate()
         # 2/4=0.5 不严格大于0.5 → 不通过
-        windows = [{"sharpe": 0.8}, {"sharpe": 0.8}, {"sharpe": -0.1}, {"sharpe": -0.1}]
+        windows = [
+            {"sharpe": 0.8, "max_drawdown": 0.10},
+            {"sharpe": 0.8, "max_drawdown": 0.10},
+            {"sharpe": -0.1, "max_drawdown": 0.10},
+            {"sharpe": -0.1, "max_drawdown": 0.10},
+        ]  # rpt_v05 收紧后窗口须带 max_drawdown
         r = gate.check_wfa_stage(windows)
         assert r.passed is False
         assert r.windows_passed == 2
@@ -193,15 +198,29 @@ class TestWFAStage:
         assert r.has_disaster is True
 
     def test_passed_field_preferred(self):
+        # rpt_v05 收紧：窗口必须带 max_drawdown 才可计通过（灾难否决可验证）
         gate = DecisionGate()
-        windows = [{"passed": True, "sharpe": -5.0}, {"passed": True}, {"passed": False}]
+        windows = [
+            {"passed": True, "sharpe": -5.0, "max_drawdown": 0.10},
+            {"passed": True, "max_drawdown": 0.10},
+            {"passed": False, "max_drawdown": 0.10},
+        ]
         r = gate.check_wfa_stage(windows)
         assert r.windows_passed == 2
 
     def test_missing_fields_counted_fail(self):
+        # rpt_v05 收紧：缺 max_drawdown 与缺 passed/sharpe 同罪=窗口计未通过
         gate = DecisionGate()
-        r = gate.check_wfa_stage([{}, {"sharpe": 0.8}])
+        r = gate.check_wfa_stage([{}, {"sharpe": 0.8, "max_drawdown": 0.10}])
         assert r.windows_passed == 1
+
+    def test_missing_max_drawdown_window_fails(self):
+        """回归：缺 max_drawdown 的窗口不得计通过（旧码按 0 处理=灾难否决可被旁路）"""
+        gate = DecisionGate()
+        r = gate.check_wfa_stage([{"sharpe": 0.8} for _ in range(4)])
+        assert r.windows_passed == 0
+        assert r.passed is False
+        assert any("max_drawdown" in reason for reason in r.reasons)
 
     def test_invalid_window_structure_raises(self):
         gate = DecisionGate()
@@ -484,3 +503,18 @@ class TestStrategyRiskAdmission:
         cfg = DecisionGateConfig()
         assert cfg.backtest_live_deviation_warn == pytest.approx(0.30)
         assert cfg.backtest_live_deviation_retire == pytest.approx(0.50)
+
+class TestRefuterRegressions:
+    """反驳者反例回归（deep_review refute_p0_round1）"""
+
+    def test_wfa_passed_non_bool_raises(self):
+        """passed:"0" 字符串真值曾计通过 → 非布尔一律 raise fail-closed"""
+        gate = DecisionGate()
+        with pytest.raises(DecisionGateError, match="passed字段非布尔"):
+            gate.check_wfa_stage([{"passed": "0", "sharpe": 0.8, "max_drawdown": 0.1}])
+
+    def test_monitor_exact_threshold_is_ok(self):
+        """1.0 vs 0.7 恰 30% 偏差：浮点噪声曾致误判 warn → 修后=ok"""
+        gate = DecisionGate()
+        r = gate.monitor_backtest_live_deviation(1.0, 0.7)
+        assert r["action"] == "ok"

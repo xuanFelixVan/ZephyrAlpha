@@ -44,6 +44,7 @@ Version: 0.1.0 (Phase 1)
 
 from __future__ import annotations
 
+import math
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -279,6 +280,10 @@ class VaRCalculator:
             ExcessiveNonFiniteDataError: 非有限值 (NaN/±Inf) 占比 > max_nonfinite_ratio
         """
         returns, nan_dropped = self._validate_returns(returns)
+        # NaN 穿透防御（deep_review rpt_k05 P2）：NaN<=0 恒 False 曾绕过正数校验，
+        # NaN VaR 静默流入下游风控链
+        if not math.isfinite(portfolio_value):
+            raise InvalidVaRConfigError(f"portfolio_value must be finite, got {portfolio_value}")
         if portfolio_value <= 0:
             raise InvalidVaRConfigError(f"portfolio_value must be positive, got {portfolio_value}")
         now = now or datetime.now(timezone.utc)

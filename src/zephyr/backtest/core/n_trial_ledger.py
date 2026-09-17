@@ -68,6 +68,14 @@ LEDGER_REGISTRY_PATH = (
 )
 _GRID_ROOT = REPO_ROOT / "data" / "strategy_intake"
 
+
+def _rel_to_repo(path: Path) -> str:
+    """相对 REPO_ROOT 的 posix 路径；仓外路径（tmp_path 注入）原样 posix 化，不崩。"""
+    try:
+        return path.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return str(path).replace("\\", "/")
+
 REGISTRY_SKELETON: dict[str, Any] = {
     "schema_version": "1.0.0",
     "ttl": "permanent",
@@ -216,7 +224,13 @@ class TrialLedger:
         sr = data.get("screen_runs") or {}
         total = int(sr.get("total_trials") or 0)
         for rec in data.get("batch_records") or []:
-            total += int(rec.get("n_trials") or 0)
+            nt = rec.get("n_trials")
+            if nt is None:
+                # fail-closed（文件头不变量）：缺失读数拒绝按 0 计入，否则分母缩水=DSR 欠折减放水
+                raise ValueError(
+                    f"n_trial 台账 batch_records[{rec.get('batch_id', '?')}] 缺 n_trials——拒猜测，先补登记再读数"
+                )
+            total += int(nt)
         return total
 
     def snapshot(self) -> TrialLedgerSnapshot:
@@ -413,7 +427,7 @@ class TrialLedger:
                     "batch_id": f"grid_{m.group(1)}",
                     "n_trials": int(n),
                     "kind": "factory_grid_batch_a",
-                    "note": f"auto: {summary_path.relative_to(REPO_ROOT).as_posix()}",
+                    "note": f"auto: {_rel_to_repo(summary_path)}",
                 })
 
         state = {"added": []}

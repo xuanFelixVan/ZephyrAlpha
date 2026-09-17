@@ -76,3 +76,17 @@ class TestValidation:
         res = bhy_fdr([0.001], q=0.10)
         assert isinstance(res, BHYFDRResult)
         assert isinstance(np.asarray(res.rejected), np.ndarray)
+
+def test_bh_qvalues_rejects_nan_and_out_of_range():
+    """rpt_v03 回归：NaN/Inf/越界 p 值一律拒绝（旧码 NaN 被静默排序产出貌似合理错数）"""
+    import math
+    from zephyr.factor.analysis.bhy_fdr import bh_qvalues
+    with pytest.raises(ValueError, match="非法"):
+        bh_qvalues([float("nan"), 0.5, 0.1])
+    with pytest.raises(ValueError, match="非法"):
+        bh_qvalues([float("inf"), 0.5])
+    with pytest.raises(ValueError, match="非法"):
+        bh_qvalues([-0.1, 0.5])
+    with pytest.raises(ValueError, match="非法"):
+        bh_qvalues([1.1])
+    assert bh_qvalues([]) == []

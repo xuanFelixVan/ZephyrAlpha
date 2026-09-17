@@ -227,3 +227,13 @@ class TestEffectiveRank:
         assert snap2.n_trials_effective == 9
         d = led.load_registry()
         assert d["n_trials_effective"]["previous"]["value"] == 7
+
+def test_count_of_missing_n_trials_fails_closed():
+    """rpt_v04 回归：batch_records 缺 n_trials 必须 raise（旧码 or 0 静默缩水分母=DSR 欠折减）"""
+    from zephyr.backtest.core.n_trial_ledger import TrialLedger
+    data = {"screen_runs": {"total_trials": 10}, "batch_records": [{"batch_id": "b1", "n_trials": None}]}
+    with pytest.raises(ValueError, match="n_trials"):
+        TrialLedger._count_of(data)
+    # 正常路径不受影响
+    ok = {"screen_runs": {"total_trials": 10}, "batch_records": [{"batch_id": "b1", "n_trials": 5}]}
+    assert TrialLedger._count_of(ok) == 15

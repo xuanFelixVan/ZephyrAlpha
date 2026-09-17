@@ -678,7 +678,11 @@ class DecisionGate:
             # P2-2 修正: WFA使用独立的wfa_sharpe_threshold(非IS门槛),
             # 因为WFA关注的是Walk-Forward各fold的相对稳定性, 而非IS绝对准入
             if "passed" in window:
-                w_passed = bool(window["passed"])
+                flag = window["passed"]
+                if not isinstance(flag, bool):
+                    # fail-closed（反驳者反例：字符串"0"曾按真值计通过）
+                    raise DecisionGateError(f"窗口{idx}的passed字段非布尔: {flag!r}")
+                w_passed = flag
             elif "sharpe" in window:
                 try:
                     w_passed = float(window["sharpe"]) > self.config.wfa_sharpe_threshold
@@ -691,7 +695,17 @@ class DecisionGate:
                 windows_passed += 1
 
             # 灾难否决判定:max_drawdown取绝对值(兼容正负号表达)
-            md_raw = window.get("max_drawdown", 0.0)
+            if "max_drawdown" not in window:
+                # fail-closed（deep_review rpt_v05 P2）：缺字段曾按 0 处理=灾难否决对该窗口
+                # 永不触发且窗口照常通过。对齐本函数"缺字段按未通过处理"契约：
+                # 缺回撤=无法验证无灾难 → 该窗口强制计未通过并留痕，不 raise 不猜测。
+                if w_passed:
+                    w_passed = False
+                    windows_passed -= 1  # 抵消本窗口已计入的通过
+                    reasons.append(f"窗口{idx}缺少max_drawdown字段,按未通过处理(灾难否决无法验证)")
+                md_raw = 0.0
+            else:
+                md_raw = window["max_drawdown"]
             try:
                 md_abs = abs(float(md_raw))
             except (TypeError, ValueError) as exc:
@@ -1202,7 +1216,7 @@ class DecisionGate:
         if bt == 0:
             raise DecisionGateError("backtest_sharpe为0,无法计算相对偏差")
 
-        deviation = abs(bt - lv) / abs(bt)
+        deviation = round(abs(bt - lv) / abs(bt), 12)  # 抵浮点恰界噪声（反驳者：1.0/0.7 恰 30% 曾误判 warn）
         # 先判高阈值(退役),再判低阈值(告警)
         if deviation > self.config.backtest_live_deviation_retire:
             action = "retire"

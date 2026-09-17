@@ -608,6 +608,31 @@ class TradingSession:
         )
         return {symbol: weight * factor for symbol, weight in target_weights.items()}
 
+    def _inflight_qty_by_symbol(self) -> dict[str, tuple[Decimal, Decimal]]:
+        """在途未结订单量：symbol -> (open_buy_qty, open_sell_qty)。
+
+        rpt_x01 P1：rebalance delta 原本只对照持仓快照、不抵扣在途单——
+        事件重投/双触发时首批未成交前二次 rebalance 会生成同向重复订单。
+        """
+        inflight: dict[str, tuple[Decimal, Decimal]] = {}
+        try:
+            orders = self._order_manager.orders
+        except Exception as e:  # OM 不可用时按无在途处理并留痕（下轮调仓再校准）
+            _logger.warning("读取在途订单失败，按无在途处理: %r", e)
+            return inflight
+        for order in orders.values():
+            if order.status not in _ACTIVE_STATUSES:
+                continue
+            remaining = order.quantity - order.filled_quantity
+            if remaining <= 0:
+                continue
+            buy, sell = inflight.get(order.symbol, (Decimal("0"), Decimal("0")))
+            if order.side == OrderSide.BUY:
+                inflight[order.symbol] = (buy + remaining, sell)
+            else:
+                inflight[order.symbol] = (buy, sell + remaining)
+        return inflight
+
     def _compute_order_deltas(
         self,
         target_weights: dict[str, float],
@@ -618,7 +643,7 @@ class TradingSession:
 
         - total_asset = cash + total_market_value
         - target_qty = (total_asset * weight / price) 按板块规则向下取整（board_lot 真源）
-        - delta_qty = target_qty - current_qty，忽略小于板块最小申报单位的微调
+        - delta_qty = target_qty - current_qty - 同侧在途量，忽略小于板块最小申报单位的微调
         - 持仓中但不在 target_weights 的标的 → 全部卖出（含零股一次性清仓）
         """
         total_asset = positions.cash + positions.total_market_value
@@ -626,16 +651,20 @@ class TradingSession:
             _logger.warning("total_asset <= 0, skip rebalance: %s", total_asset)
             return []
 
+        inflight = self._inflight_qty_by_symbol()
         orders: list[Order] = []
         for symbol, weight in target_weights.items():
-            order = self._make_delta_order(symbol, weight, total_asset, positions, prices)
+            open_buy, open_sell = inflight.get(symbol, (Decimal("0"), Decimal("0")))
+            order = self._make_delta_order(symbol, weight, total_asset, positions, prices,
+                                           open_buy=open_buy, open_sell=open_sell)
             if order:
                 orders.append(order)
 
         # 持仓中但不在目标权重 → 清仓卖出
         for symbol, qty in positions.holdings.items():
             if qty > 0 and symbol not in target_weights:
-                order = self._make_sell_all_order(symbol, qty, prices)
+                open_sell = inflight.get(symbol, (Decimal("0"), Decimal("0")))[1]
+                order = self._make_sell_all_order(symbol, qty - open_sell, prices)
                 if order:
                     orders.append(order)
         return orders
@@ -647,8 +676,13 @@ class TradingSession:
         total_asset: Decimal,
         positions: PositionSnapshot,
         prices: dict[str, Decimal],
+        open_buy: Decimal = Decimal("0"),
+        open_sell: Decimal = Decimal("0"),
     ) -> Order | None:
-        """单个标的的目标权重 → 买入/卖出 delta 订单（板块差异化整手）。"""
+        """单个标的的目标权重 → 买入/卖出 delta 订单（板块差异化整手）。
+
+        open_buy/open_sell=同侧在途未结量，先抵扣再取整（防重复触发双下单）。
+        """
         price = prices.get(symbol)
         if price is None or price.is_nan() or price <= 0:
             _logger.debug("skip %s: no valid price", symbol)
@@ -657,13 +691,19 @@ class TradingSession:
         current_qty = positions.holdings.get(symbol, Decimal("0"))
         delta = target_qty - current_qty
         if delta > 0:
+            delta -= open_buy
+            if delta <= 0:
+                return None
             # 买入申报量按板块规则向下取整（科创板 200 股起 1 股递增）
             qty = round_buy_qty(delta, symbol)
             side = OrderSide.BUY
         else:
+            sell_delta = -delta - open_sell
+            if sell_delta <= 0:
+                return None
             # 卖出申报网格与买入同构（min_unit+increment），取整后过零股规则：
             # 卖出后剩余不足一个最小申报单位 → 一次性清仓（board_lot §决策⑰）
-            qty = round_buy_qty(-delta, symbol)
+            qty = round_buy_qty(sell_delta, symbol)
             qty = adjust_sell_for_odd_lot(qty, current_qty, symbol)
             side = OrderSide.SELL
         if qty <= 0:
