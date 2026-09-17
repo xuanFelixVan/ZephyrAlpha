@@ -215,15 +215,20 @@ class TestTransitionIntegration:
             ),
             patch.object(repo, "_run_circular_acceptance"),
         ):
+            # B2 审计修复（2026-09-17）：原实现吞异常后只断言 hasattr（恒真），
+            # "transition(COMPLETED) 调用 _auto_commit_on_completion" 名不副实。
+            # 改为条件真断言：迁移一旦成功，自动 commit 钩子必须真的被调用。
             try:
                 repo.transition("DM-FAKE-001", "COMPLETED", note="test")
+                transition_ok = True
             except Exception:
-                pass  # 可能因为任务不存在而失败，但mock应被调用
+                transition_ok = False  # 任务不存在=场景未搭起来，本就无可断言
 
-            # 如果任务存在且transition成功，mock应被调用
-            # 如果任务不存在，mock不会被调用——这是预期的
-            # 我们只验证方法存在且可被patch
-            assert hasattr(repo, "_auto_commit_on_completion")
+            if transition_ok:
+                mock_auto_commit.assert_called()
+            else:
+                # 显式记录：本环境下该用例是空转（任务不存在），不比恒真断言强装绿
+                pytest.skip("DM-FAKE-001 任务不存在，transition 未走到 COMPLETED——场景未覆盖")
 
 
 if __name__ == "__main__":

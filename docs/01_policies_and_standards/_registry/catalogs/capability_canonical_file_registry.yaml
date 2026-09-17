@@ -28063,6 +28063,38 @@ creation_tokens:
   token: kimi-audit-g-01-system-master-12-20260917
   created_by: kimi-audit
   capability: kimi_audit
+- file: docs/_working/kimi_audit/lane_reports/A1.md
+  token: kimi-audit-a1-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/lane_reports/A2.md
+  token: kimi-audit-a2-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/lane_reports/A3.md
+  token: kimi-audit-a3-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/lane_reports/B1.md
+  token: kimi-audit-b1-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/lane_reports/B2.md
+  token: kimi-audit-b2-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/lane_reports/B3.md
+  token: kimi-audit-b3-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/lane_reports/C1.md
+  token: kimi-audit-c1-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
+- file: docs/_working/kimi_audit/lane_reports/C2.md
+  token: kimi-audit-c2-20260917
+  created_by: kimi-audit
+  capability: kimi_audit
 - file: docs/_working/pipeline-research/reports/intake-20260917-0300.md
   token: auction-derive-intake-20260917-0300-20260916
   created_by: st-auction-bridge-20260917

@@ -559,25 +559,25 @@ class TestFindTargetInActiveSessions:
         import zephyr.gov_enforcement.commit_gates.import_integrity_gate as gate_mod
 
         original = gate_mod.find_target_in_active_sessions
-        try:
-            # 模拟 SessionRegistry 构造抛异常
-            with pytest.MonkeyPatch.context() as mp:
+        # B2 审计修复（2026-09-17）：原外层 try/except Exception: pass 把
+        # `assert hits == []` 与被测函数抛出的异常一起吞掉——fail-open 失效也恒绿。
+        # fail-open 的本义就是"registry 崩了也要返回 []"，异常外溢必须让测试红。
+        # 模拟 SessionRegistry 构造抛异常
+        with pytest.MonkeyPatch.context() as mp:
 
-                def _boom(*args, **kwargs):
-                    raise RuntimeError("simulated registry failure")
+            def _boom(*args, **kwargs):
+                raise RuntimeError("simulated registry failure")
 
-                mp.setattr(
-                    "zephyr.security.access_control.session_concurrency.SessionRegistry",
-                    _boom,
-                )
-                hits = original(
-                    tmp_path,
-                    "zephyr.forged_gw_marker_gate",
-                    current_session_id="sess-A",
-                )
-            assert hits == []  # fail-open
-        except Exception:
-            pass
+            mp.setattr(
+                "zephyr.security.access_control.session_concurrency.SessionRegistry",
+                _boom,
+            )
+            hits = original(
+                tmp_path,
+                "zephyr.forged_gw_marker_gate",
+                current_session_id="sess-A",
+            )
+        assert hits == []  # fail-open
 
     def test_multiple_candidates_match(self, tmp_path):
         """多候选路径匹配——module.py 或 module/__init__.py。"""

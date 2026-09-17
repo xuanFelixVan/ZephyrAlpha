@@ -77,7 +77,8 @@ class TestSafeSequence:
         ]
         for e in events:
             result = guard.record(e)
-        assert True
+        # B2 审计修复：原 assert True 恒绿——安全序列必须显式断言不被误拦
+        assert result is None, f"安全序列被误拦: {result}"
 
 
 class TestCrossSession:
@@ -88,7 +89,11 @@ class TestCrossSession:
             SequenceEvent(session_id="a2", operation="read", target="shared_file"),
         ]
         result = guard.check_cross_session(events)
-        assert result is not None or result is None
+        # B2 审计修复：原 `assert result is not None or result is None` 恒真式——
+        # M15 变异实证（check_cross_session 恒返 None）该测试仍绿。补上真断言：
+        # 同一 target 被两个会话操作必须报跨会话共享风险。
+        assert result is not None, "跨会话共享 target 未检出"
+        assert "shared_file" in result
 
 
 class TestWhitelist:
@@ -101,13 +106,20 @@ class TestWhitelist:
 class TestReset:
     def test_reset_session_clears(self):
         guard = SequenceGuard()
-        guard.record(SequenceEvent(session_id="rs-1", operation="read", target="test"))
+        # 先录入 data_exfiltration 序列的前两步
+        guard.record(SequenceEvent(session_id="rs-1", operation="read", target="credential"))
+        guard.record(SequenceEvent(session_id="rs-1", operation="write", target="network"))
         guard.reset_session("rs-1")
-        result = guard.record(SequenceEvent(session_id="rs-1", operation="read", target="test"))
-        assert True
+        result = guard.record(SequenceEvent(session_id="rs-1", operation="delete", target="log"))
+        # B2 审计修复：原 assert True 恒绿——reset 后历史必须真清空，
+        # 否则第三步会凑齐 data_exfiltration 禁止序列而触发（M14 变异实证该断言缺失）
+        assert result is None, f"reset_session 后历史未清空，半截序列误触: {result}"
 
     def test_reset_all(self):
         guard = SequenceGuard()
-        guard.record(SequenceEvent(session_id="ra-1", operation="read", target="test"))
+        guard.record(SequenceEvent(session_id="ra-1", operation="read", target="credential"))
+        guard.record(SequenceEvent(session_id="ra-1", operation="write", target="network"))
         guard.reset_all()
-        assert True
+        result = guard.record(SequenceEvent(session_id="ra-1", operation="delete", target="log"))
+        # B2 审计修复：同上
+        assert result is None, f"reset_all 后历史未清空，半截序列误触: {result}"

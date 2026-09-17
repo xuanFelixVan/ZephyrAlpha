@@ -15,6 +15,9 @@ from __future__ import annotations
 
 import json
 
+import pytest
+from pydantic import ValidationError
+
 from zephyr.trading.work_dag import WorkDAG, WorkEdge, WorkItem, WorkNode
 
 
@@ -50,11 +53,10 @@ class TestWorkNode:
         assert restored.params == node.params
 
     def test_missing_required_field(self):
-        try:
+        # B2 审计修复（2026-09-17）：原 try/assert False/except Exception: pass 自我中和——
+        # assert False 抛出的 AssertionError 被自己的 except 吞掉，永不红。改 pytest.raises。
+        with pytest.raises(ValidationError):
             WorkNode(node_id="n4")
-            assert False, "Should have raised validation error"
-        except Exception:
-            pass
 
 
 class TestWorkEdge:
@@ -115,11 +117,9 @@ class TestWorkDAG:
         assert len(restored.edges) == 1
 
     def test_missing_dag_id(self):
-        try:
+        # B2 审计修复：同上去自我中和
+        with pytest.raises(ValidationError):
             WorkDAG()
-            assert False, "Should have raised validation error"
-        except Exception:
-            pass
 
 
 class TestWorkItem:
@@ -167,11 +167,9 @@ class TestWorkItem:
         assert restored.result == {"output": "done"}
 
     def test_missing_required_fields(self):
-        try:
+        # B2 审计修复：同上去自我中和
+        with pytest.raises(ValidationError):
             WorkItem(item_id="wi-4")
-            assert False, "Should have raised validation error"
-        except Exception:
-            pass
 
     def test_empty_depends_on(self):
         item = WorkItem(item_id="wi-5", capability_id="cap-5")
