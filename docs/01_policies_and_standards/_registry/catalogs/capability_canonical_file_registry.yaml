@@ -27999,6 +27999,18 @@ creation_tokens:
   token: auction-derive-kimi-audit-checklist-20260916
   created_by: st-auction-bridge-20260917
   capability: auction_derive
+- file: scripts/backtest/lane_g_stomach_intake.py
+  token: autolnk-lane-g-stomach-intake-20260917
+  created_by: st-autolnk-20260917b
+  capability: strategy_factory_intake
+- file: docs/_working/automation/campaign/blueprints/lane_g_stomach_intake_blueprint.md
+  token: autolnk-lane-g-blueprint-20260917
+  created_by: st-autolnk-20260917b
+  capability: strategy_factory_intake
+- file: docs/_working/kimi_audit/s3_pending_rulings_inventory.md
+  token: kimi-audit-s3-pending-rulings-inventory-20260917
+  created_by: qoder-kimipilot-20260917
+  capability: kimi_audit
 - file: docs/_working/kimi_audit/kimi_deep_adjudication.md
   token: kimi-audit-kimi-deep-adjudication-20260917
   created_by: qoder-kimipilot-20260917
