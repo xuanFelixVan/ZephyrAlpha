@@ -32540,4 +32540,8 @@ creation_tokens:
   token: clean-exam-e2e-smoke-test-design-20260917
   created_by: st-cleanexam-20260918
   capability: clean_exam_e2e
+- file: schemas/categories/cohort_daily_ledger.py
+  token: cohort-daily-ledger-cohort-daily-ledger-20260917
+  created_by: st-cohort-ledger-20260918
+  capability: cohort_daily_ledger
 di_seam_exemptions: []
