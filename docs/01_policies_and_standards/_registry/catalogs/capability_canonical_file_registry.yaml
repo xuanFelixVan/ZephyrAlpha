@@ -32267,6 +32267,10 @@ creation_tokens:
   token: residual-construction-plan-wo2-blackswan-workbook-20260917
   created_by: st-residual-20260917
   capability: residual_construction_plan
+- file: docs/_working/residual_construction/wo5_cohort_ledger_workbook.md
+  token: residual-construction-plan-wo5-cohort-ledger-workbook-20260917
+  created_by: st-residual-20260917
+  capability: residual_construction_plan
 - file: docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md
   token: data-source-sop-data-source-onboarding-sop-20260917
   created_by: st-altdatamap-20260917
