@@ -32669,4 +32669,8 @@ creation_tokens:
   token: kimi-audit-nightbuild-e2e-result-20260918
   created_by: flash-nightbuild-20260918
   capability: kimi_audit_nightbuild
+- file: docs/_working/kimi_audit/nightbuild/e4/flip_comparison.csv
+  token: kimi-audit-nightbuild-flip-comparison-20260918
+  created_by: flash-nightbuild-20260918
+  capability: kimi_audit_nightbuild
 di_seam_exemptions: []
