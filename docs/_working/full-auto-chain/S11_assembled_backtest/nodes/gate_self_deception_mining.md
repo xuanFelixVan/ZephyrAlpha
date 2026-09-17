@@ -35,8 +35,8 @@ lane: J
 | `own_scope` | True 26 / False 87 / **字段缺失 56**（缺失的正是 55 条 pre-commit + 1 条 manual） |
 | `entry` 目标脚本存在性 | 53 条 script 型门禁，**缺文件 0**，存在但未跟踪 0 ✅ |
 
-真实执行面：`.pre-commit-config.yaml` 68 个 hook（全 `repo: local`）+ `commit_gates/` 116 个模块
-（113 已注册，`_reference_helpers.py` / `capability_lookup_bypass_policy.py` / `gate_repo.py` 3 个非门禁）。
+真实执行面：`.pre-commit-config.yaml` 68 个 hook（全 `repo: local`）+ `commit_gates/` 117 个模块（`*.py` 去 `__init__.py`）
+（113 已注册 + 4 个非门禁 helper：`_reference_helpers.py` / `_diff_helpers.py` / `capability_lookup_bypass_policy.py` / `gate_repo.py`；113+4=117 闭合）。
 
 ### 1.2 【验伪】两条"已转硬阻断"的门禁，脚本根本没有入口——运行=空操作
 
@@ -47,7 +47,7 @@ AST 实测（`gate_executability.json`，53 条 script 型门禁中仅 3 条无 
 
 | 门禁 | 脚本 | 实测 |
 |---|---|---|
-| GATE-13 | `scripts/governance/d11_compliance/validate_blueprint_overlap.py`（108 行） | **无 `__main__`、无 argparse**。文件最后一句是 `:102 return [], 0`。`python … --ci` → rc=0、**0 行输出**（实测 `gate_head_run.json`） |
+| GATE-13 | `scripts/governance/d11_compliance/validate_blueprint_overlap.py`（108 行） | **无 `__main__`、无 argparse**。`return [], 0` 在 `:102`（`run_validation` 的早退分支），末句是 `:108 return overlaps, len(component_map)`——两句都在没人调用的 `run_validation()` 体内。`python … --ci` → rc=0、**0 行输出**（实测 `gate_head_run.json`） |
 | GATE-14 | `scripts/governance/d5_architecture/validators/validate_authority_registry.py`（173 行） | 同上：无 `__main__`。`--ci` → rc=0、0 行输出 |
 
 即：注册表 `status: active` + 配置头"已转硬阻断" + 实测 rc=0 三重口径下，这两条门禁
@@ -57,7 +57,7 @@ AST 实测（`gate_executability.json`，53 条 script 型门禁中仅 3 条无 
 
 | 门禁 | hook `files:`（决定何时触发） | 脚本实际读的输入 | 实测存在性 |
 |---|---|---|---|
-| GATE-14 | `^docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry\.md$` | `REGISTRY_PATH = docs/01_policies_and_standards/policies/ai_autonomy_authority_registry.md`（`:24-30`） | **两个路径都不存在**；真源实为 `…_registry/catalogs/ai_autonomy_authority_registry.yaml`（`.yaml`，异目录异扩展名） |
+| GATE-14 | `^docs/01_policies_and_standards/_registry/catalogs/ai-autonomy-authority-registry\.md$` | `REGISTRY_PATH = docs/01_policies_and_standards/policies/ai_autonomy_authority_registry.md`（`:48-54`） | **两个路径都不存在**；真源实为 `…_registry/catalogs/ai_autonomy_authority_registry.yaml`（`.yaml`，异目录异扩展名） |
 | GATE-13 | `^docs/19_development_workspace/drafts-and-audits/.*\.md$` | `DRAFTS_ROOT = docs/03_modules/_drafts`（`:33-35`） | **两个目录都不存在** |
 
 后果（可复算）：仓库里永不可能出现匹配 `files:` 的提交文件 → 这两条 hook **触发次数恒 0**；
@@ -97,7 +97,7 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 
 - `own_scope=True` 且 AST 调用点=0 的：**0 条**；
 - `own_scope!=True` 但 AST 有调用点的：**0 条**；
-- `_build_own_scope` 定义：`commit_gates/_diff_helpers.py:438-460`，`files` 与 `session_id` 皆空 → `return None`（`:455`）"退化为旧行为扫全量"，registry 读异常 → 降级 files-only（`:462` 注释"fail-open 红线"）。
+- `_build_own_scope` 定义：`commit_gates/_diff_helpers.py:475-494`，`files` 与 `session_id` 皆空 → `return scope or None`（`:494`）"退化为旧行为扫全量"，registry 读异常 → 降级 files-only（`:492` 注释"fail-open 红线"）。
 
 即字段本身准确，但**生成方式是被禁止的 substring 判定**，一致属侥幸（任何在注释里提到
 `_build_own_scope` 的 gate 都会被误标 True）。
@@ -108,7 +108,7 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 
 | 门禁 | 自述 | 实际实现 |
 |---|---|---|
-| `ASYNCIO-RUN-IN-CONTEXT:8` | "检测 `src/zephyr/` **全量**代码(.py)新增行…阻断" | staged ∩ 本 session（`:438-460`） |
+| `ASYNCIO-RUN-IN-CONTEXT:8` | "检测 `src/zephyr/` **全量**代码(.py)新增行…阻断" | staged ∩ 本 session（`:475-494`） |
 | `DATETIME-NOW-FORBIDDEN:8` | "src/zephyr/ **全量**代码" | 同上 |
 | `NO-BARE-SQL:113` / `BARE-SUBPROCESS:221` / `CAP-CONSISTENCY:147` / `MSG-EXPOSURE:411` / `NOQA-VALIDATION:232` / `UNSAFE-DICT-SPREAD:163` / `ZEPHYR-ENV-DIRECT-ACCESS:127` | "退化旧行为**扫全量**；**本 session 自身违规仍硬阻断**" | 外来 staged **不硬阻断**（降级审计） |
 | `DECISION-MAP:8,31` | "触发式（2026-09-11 Owner 批准收窄）：本 commit 触及地图输入面才跑全量" | 不触即完全不跑 |
@@ -132,7 +132,7 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 | ④后端（崩溃） | GATE-ARCH 实跑 **rc=1 + FileNotFoundError: YAML 文件不存在: D:\ZephyrAlpha\architecture_model**（`scripts/governance/_shared/yaml_utils.py:72` 把目录当 YAML 读）→ 若真接入 commit 链会全红；因 `stages:[manual]` 无人踩到 | `gate_head_run.json` |
 | ⑤前端（面板） | 见 `data_ingestion_chain_mining.md` §2 ⑤前端：告警面板唯一生产者旗标默认关，`.runtime/ops_notifications/notifications.jsonl` 不存在 | 交叉引用 |
 | ⑥数据字段（输入缺失→判康） | AST 普查 46 脚本得 **9 处**"输入不存在即返回 空/0/True"：`check_architecture_gates.py:914`（缺 `ssot-issue-tracking.yaml` → `return True`，实测该文件**不存在**，且 `:913` 把 SKIP 塞进 errors 后仍返回 True）、`validate_blueprint_overlap.py:102`、`validate_authority_registry.py:165`、`triple_alignment.py:110`、`validate_worktree_required.py:155`（缺 skip 日志 → 0）、`check_canonical_yaml_drift.py:107`、`verify_schema_truth.py:243`、`check_test_symbol_validity.py:140`、`validate_nested_flat_dirs.py:95` | `gate_noinput.json` |
-| ⑥数据字段（HEAD 实跑台账） | 49 条 script 门禁 HEAD 实跑 rc 分布：**rc=0 24 条 / rc=1 20 条 / rc=2 5 条**；其中 0 输出行数（standalone 无输入嫌疑）：`GATE-PROTECTED-PATHS`、`GATE-ALGO-FLOW`、`GATE-NAMING`、`GATE-14`、`GATE-13`、`GATE-SRC-NO-DATA`、`GATE-VMS-SSOT`、`GATE-NO-TESTS-UNIT`、`GATE-NO-COMMIT-DERIVED`、`GATE-GEN-NO-REALTIME-TIME` | `gate_head_run.json` |
+| ⑥数据字段（HEAD 实跑台账） | 49 条 script 门禁 HEAD 实跑 rc 分布：**rc=0 27 条 / rc=1 18 条 / rc=2 4 条**（`gate_head_run.json` 共 52 条记录，另有 3 条 rc=None 进程崩溃无退出码：`GATE-INTEGRITY`/`GATE-VOCAB`/`GATE-SCHEMA-TRUTH`；52−3=本行 49）；其中 0 输出行数（standalone 无输入嫌疑）：`GATE-PROTECTED-PATHS`、`GATE-ALGO-FLOW`、`GATE-NAMING`、`GATE-14`、`GATE-13`、`GATE-SRC-NO-DATA`、`GATE-VMS-SSOT`、`GATE-NO-TESTS-UNIT`、`GATE-NO-COMMIT-DERIVED`、`GATE-GEN-NO-REALTIME-TIME` | `gate_head_run.json` |
 
 ## 3 业界与开源对照（四闸）
 
@@ -160,7 +160,7 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 | GT-10 | P2 | 注册表↔现实三源 | 169 注册条目 vs 68 hook vs 116 门禁模块，无对账门禁（`gate-id-uniq` 只校 hook id 唯一，实测"scanned 68 hook declarations, 68 unique ids"） | 新增三向对账门禁：注册条目数==hook数+in-process数，孤儿（注册无实体/实体未注册）为红 |
 | GT-11 | P1 | 判定不可复现（硬阻断门禁偶发失灵） | 实证对：`c4425e60cb`（2026-09-16 23:07，带 `[GW:]` 认证标记）把 3 行含裸 SQL 的 **added 行**放进 HEAD（`git show c4425e60cb -- src/zephyr/strategy_pipeline/screen_source.py \| grep "^+" \| grep -i select` → 3 命中，落点 `screen_source.py:166/…`），同一文件同一规则**今天实测** `_SQL_PATTERN.search(line)=True`、`_is_exempt_line=False`、`noqa: bare-sql` 标记 0 处（不在 `noqa_exempt_registry.yaml`）——门禁没拦；而同类内容在 09-17 拦掉了自家 queue item。**同规则·同内容·两次相反结论** ⇒ "硬阻断"实为偶发阻断 | 先定机制再谈修：`_get_added_lines` 的观测面是 `gateway.run_git(["git","diff","--cached",…,"--",path])`，**空输出（rc=0）与"确实无新增行"不可判别**——worktree/序列化器 index 与主区 index 分歧时该文件在此 context 未 staged 即静默判干净（`_diff_helpers._repo_state_has_file:310-319` 已把"序列化器落地 worktree 未 checkout 的 staged 新文件"列为同盲区家族，2026-09-17 清偿中）。①added 行为空时改判"不可判别"：与本 commit 文件清单交叉核对，清单内而 diff 空 → 红（禁 fail-open）；②可复现性回归：用真实提交 diff 造 fixture 断言 NO-BARE-SQL `passed=False`；③追溯复核门禁：对最近 N 条 HEAD 提交重跑内容型门禁，存量判定与重跑结论不一致者出清单（不是让它红，是让"门禁何时失灵"变成可观测面） |
 | GT-12 | P1 | 恒红测试无观测面 | 实测：`tests/governance/governance_e2e/test_phase1_gate_check.py::test_eight_module_dirs_exist` 与 `::test_each_module_has_init` **已恒红 12 天**（本轮串行复现 `2 failed, 1 passed, 1 skipped`）。红因：`agent-spec / drift-detector / budget-enforcer` 三个 kebab marker 目录被 `441852d976`（2026-09-05，`audit(AI-21)`，提交自述 "no new capability created"）整目录删除，而被删文件第 6 行自述 `# Phase 1 gate marker (kebab-case dir). Implementation in zephyr.gov_drift.` ⇒ 删掉的是**指向实现的占位指针**（每目录仅 1 个 `__init__.py`，共 106 行），能力零损失，但测试"八目录同名存在"的前提自此失效。真正的洞不在测试红，在**红没有归属**：`_registry/catalogs/` 只有 `noqa_exempt`/`panorama_exempt_list`/`registry_master_index_exemptions` 三张豁免表，**没有"已知红/带期限豁免"登记通道**，`known_failures/xfail 名单` 全仓 grep 0 命中 ⇒ 恒红与真回归在观测面上不可区分，任何跑全量的人第一天看到 2 条红、第三天就脱敏 ⇒ "套件全绿"这一验收信号自 09-05 起已被污染，且它正是 GT-1/2/3 那批"门禁不跑"能长期存活的培养基 | 归治理域，本轮**不代修**（宪章 §3.4；该目录 09-16 仍在 `externalize_algo_flow` 480 文件波次中被别的车道动）。两条候选修法：①测试断言对象从"kebab 目录存在"改为"八能力→实现模块可导入"，且该映射须由注册表生成（§9 第 5 条：静态清单禁手工维护——现 `PHASE1_REQUIRED_FILES`/`EIGHT_MODULES` 两张手抄清单本身就是漂移源）；②开"已知红登记表"通道：条目带 `owner`+`到期日`+`到期未修即升 P0`，配一条门禁核对"HEAD 恒红集 ⊆ 登记表"，使长红要么被修要么被点名，禁止无声挂着 |
-| GT-13 | P1 | 已知红制度化＝xfail 毯子化 | 实测：`tests/governance/integration/test_all_scripts.py` `--collect-only` **2122 items，其中 2044 条（96.3%）挂 blanket `xfail(strict=False)`**（`_XFAIL_ARCH092`:64 / `_XFAIL_JSONL`:68，未挂毯子仅 78 条），reason 自述"待专项清偿批修脚本后摘除"（2026-08-30 落地）。`strict=False` 把三种相反状态压成同一绿色：**脚本仍崩=XFAIL 绿 / 脚本已被别人修好=XPASS 绿 / 新崩=XFAIL 绿**——本轮进度带里 XPASS（大写 X）与 xfail（小写 x）混排即证："已修未摘毯子"与"未修"同时存在且不可分。它与 GT-12 同根（无"已知红/带期限豁免"登记通道），但比 GT-12 更隐蔽：恒红至少还在终端输出里可见，毯子把红**制度化成期望值**，并且这 2044 条正是"治理脚本健康探测"的全部覆盖面——探测器自己不可信时，GT-1/2/3 那批"门禁不跑"就永远只以 xfail 形态存在，不会以红形态逼任何人清账 | ①`strict=True` + baseline 文件（只对 baseline 内条目豁免；修好即 XPASS→硬报，逼摘毯子）；②reason 里的"待专项清偿"转成可核对债项（owner+到期日，与 GT-12 同一条登记通道）；③`xpassed` 计数进 CI 观测面（当前无通道读它），非零=存量债已清偿但毯子未摘 |
+| GT-13 | P1 | 已知红制度化＝xfail 毯子化 | 实测：`tests/governance/integration/test_all_scripts.py` `--collect-only` **2122 items，其中 2044 条（96.3%）挂 blanket `xfail(strict=False)`**（`_XFAIL_ARCH092`:64 / `_XFAIL_JSONL`:68，未挂毯子仅 78 条），reason 自述"待专项清偿批修脚本后摘除"（`860e4c2787`，2026-08-31 落地）。`strict=False` 把三种相反状态压成同一绿色：**脚本仍崩=XFAIL 绿 / 脚本已被别人修好=XPASS 绿 / 新崩=XFAIL 绿**——本轮进度带里 XPASS（大写 X）与 xfail（小写 x）混排即证："已修未摘毯子"与"未修"同时存在且不可分。它与 GT-12 同根（无"已知红/带期限豁免"登记通道），但比 GT-12 更隐蔽：恒红至少还在终端输出里可见，毯子把红**制度化成期望值**，并且这 2044 条正是"治理脚本健康探测"的全部覆盖面——探测器自己不可信时，GT-1/2/3 那批"门禁不跑"就永远只以 xfail 形态存在，不会以红形态逼任何人清账 | ①`strict=True` + baseline 文件（只对 baseline 内条目豁免；修好即 XPASS→硬报，逼摘毯子）；②reason 里的"待专项清偿"转成可核对债项（owner+到期日，与 GT-12 同一条登记通道）；③`xpassed` 计数进 CI 观测面（当前无通道读它），非零=存量债已清偿但毯子未摘 |
 | GT-14 | P1 | 登记工具产幻影证据面，且被下游门禁当真值消费 | `apply_depgraph.py:1102` `blueprint_path = f"docs/03_modules/{blueprint_id}/"` 是**纯字符串拼接**；同函数 `:1096-1099` 确有存在性检查，但只 `print("WARNING: ... 蓝图文件不存在", file=sys.stderr)` 后**照样 INSERT/UPDATE**。只读取证（PG `nodes` 表，探针跑完即删）：**166 条带 `blueprint_path` 的节点里 164 条指向盘上不存在的目录（98.8%）**——例：`docs/03_modules/MOD-SIG-142/`、`docs/03_modules/MOD-DAT-daban_engine_payload/`、`docs/03_modules/MOD-L08-001/`（真蓝图实为 `docs/03_modules/_domain_<X>/<module>/blueprint.md` 三级布局，id 拼一级目录结构上必然不存在）。**下游把它当事实**：`triple_alignment.py:186` `SELECT DISTINCT blueprint_id, path, blueprint_path FROM nodes WHERE blueprint_id ~ '^(MOD-\|SH-\|SYS-)'` → `_ModuleCheckContext.bp_path` ⇒ **GT-5 那 38 条"模块 NOT FOUND"WARN 的根因在此**：蓝图没丢，是登记器写了一个从未存在的路径，而门禁用它判"模块不存在" | ①存在性检查改硬失败（或存在才写、不存在写空 + 单独 pending 列），禁"warn 后照样落库"；②蓝图路径不得由 id 推导——由 `capability_canonical_file_registry.yaml`/blueprint 目录反查（真源已有，拼接是伪造）；③`triple_alignment` 对盘缺路径单独归因 `PHANTOM_PATH_FROM_REGISTRAR`（不计入"模块缺失"，与 GT-5 修法并批）；④存量 164 条一次性重推 + 出清单（生成器产出，勿手改，宪章 §9 第 5 条） |
 | GT-15 | P1 | 验收断内存对象、产物却丢字段（本轮已治本） | H4-B 实证：`_collect_timeseries` 造的 `cash_curve` 只随内存 `ts` 返回，而 `sink_backtest_result` 的具名参数集只有 equity/trade/drawdown/benchmark → **端到端真数据落盘产物 `cash_curve points=0`**，同时测试 `assert ts["cash_curve"]` 自接线当日起**一直全绿**。这是本节点母题的最纯形态：验收语句写的是"产物现金腿可事后复核"，断言对象却是函数返回值。已修：`metrics["cash_curve"]` 落盘（`BacktestRunArtifact` 顶层 `[MODIFY-GUARD]` 结构冻结，不加键）+ 测试改**读盘三断**（落盘==内存逐位等、与 `equity_curve` 等长、点结构含 timestamp/cash），commit `7186ca49c5` | 通用判据（推广普查，本条**未做完**）：凡验收语义含"产物/落盘/上报/可事后复核"，断言对象 MUST 是读盘结果。可机证化：①`_collect_timeseries` 返回键集 ⊖ `sink_backtest_result` 参数集 的差集非空即红（一条结构性防漏门禁，成本极低）；②普查 `tests/` 内"只断返回值不断落盘"的产物类测试（`grep -rn "assert ts\[" tests/` 起步），逐条判定是否该升级为读盘断言 |
 | GT-16 | P2 | 自家文档把门禁能力写强/写反，据此放弃正当修法 | 本车道挖矿文档 `reconciler_event_trigger_chain_mining.md` RC-14 曾以"NO-HIGH-COMPLEXITY **扫整文件**且无 noqa 通道 ⇒ 存量圈复杂度越门禁故暂不改"为两条硬理由之一。读码证伪：`high_complexity_gate.py:168-186`（裁定#214 专治此误判）只罚 `node.lineno ∈ added_lines` **且** `node.name ∉ HEAD 函数名集合` 的**真新增**函数，改存量函数（`reconcile_for`=29）根本不触发；"无 noqa"那半条为真。危害不在记错事实，在**据此把可做的修法判成不可做**（文档是后续会话的施工依据，写强门禁＝自造假约束）。同一条事实其实早已记在长期记忆里，落文档时未回核代码 | ①写门禁行为 MUST 附 `file:line` 判据（本表 GT-1~GT-10 全部如此，RC-14 是本战役唯一裸断言处，已改）；②把"门禁判据范围"从散文升成注册表字段：`gate_registry.yaml` 增 `scope: added-new-functions \| whole-file \| staged-lines`，由门禁自述+生成器同步，文档/记忆引用字段而非脑补；③已修正=RC-14 现只保留 HELD-OVERLAP 一条真理由（受害草稿数实测已从 8 增至 13） |
@@ -171,14 +171,14 @@ AST 复算（`commit_gate_scope.json`，116 文件逐个解析 `_build_own_scope
 2. 55 条 pre-commit 门禁的 `own_scope` 字段缺失 = 该维度对读注册表者不可见（本文只核了 in-process 侧）。
 3. `.pre-commit-config.yaml:1-45` 的 warn-only→硬阻断"过渡时间表"是**手写**的，与 hook args 无机器绑定；GATE-22 记"仍 warn-only 骨架（当前 SKIP）"，需实跑核实 SKIP 语义。
 4. `scripts/governance/run_gate_chain.py`（GATE-VOCAB 用它串两条子检查、逗号传参）——串链内任一子件失败是否被聚合掩盖。
-5. 3 条 rc=2（用法错误类：`GATE-TEST`/`GATE-RETURN-CONTRACT`/`GATE-WORKTREE-OPS-TELEMETRY`/`GATE-ENCODING`）：注册 entry 与脚本 argparse 不匹配，值得逐条查是否等价"从未真正跑过"。
+5. 4 条 rc=2（用法错误类：`GATE-TEST`/`GATE-RETURN-CONTRACT`/`GATE-WORKTREE-OPS-TELEMETRY`/`GATE-ENCODING`）：注册 entry 与脚本 argparse 不匹配，值得逐条查是否等价"从未真正跑过"。
 6. `.runtime/gate_audit/worktree_skip.jsonl`（实测存在，3756 字节，末次 09-08）——worktree 侧 skip 计数的真实触发史。
 
 ## 6 封矿判定
 
 **部分封矿（本节点主脉已枯，留 3 条活脉）**：
 
-- 枯：注册表账面/字段一致性（§1.1、§1.5 已穷举，own_scope 侥幸准确）；派生件 registry 消费族（§1.4 已逐个定性，含 1 条 `return []`、1 条 BOOTSTRAP 认账）；"脚本无入口"族（AST 全量 53 条，命中 2 条，无更多）。
+- 枯：注册表账面/字段一致性（§1.1、§1.5 已穷举，own_scope 侥幸准确）；派生件 registry 消费族（§1.4 已逐个定性，含 1 条 `return []`、1 条 BOOTSTRAP 认账）；"脚本无入口"族（AST 全量 53 条，命中 3 条：`GATE-13`/`GATE-14` 无入口 + `GATE-ERRCODE`（其 entry 指向 `tests/governance/test_error_code_consistency.py`，本身不是可执行门禁脚本），无更多）。
 - 活脉 A：GT-3 的 manual 门禁存量（GATE-BP-PLACE 176 P0 这类"永远不跑的红"）逐个量化——本文只跑了 4 条 manual。
 - 活脉 B：10 条 0 输出门禁的"没输入 vs 真干净"需伪造 staged index 才能判，本轮受只读约束未做。
 - 活脉 C：门禁触发计数遥测（§3 末行）一旦落地，本文全部 GT-* 可由一条门禁自证；那是下一节点的矿脉，不是本节点的。

@@ -160,7 +160,7 @@ class TestE2EFullPipeline:
             nav=Decimal("1000000"),
         )
 
-        orders = strategy.generate_target_weights()
+        orders = strategy.generate_orders()
 
         assert len(orders) > 0
         for order in orders:
@@ -263,16 +263,18 @@ class TestE2EFullPipeline:
         engine = DefaultBacktestEngine()
 
         dates = pd.date_range("2025-01-01", periods=20, freq="B")
+        # 引擎价量契约=MultiIndex(symbol, date)（vectorized_engine.run docstring）；
+        # 旧的 flat+无 symbol 列面板取不到任何标的价 → 0 成交，会被 P0-4 合理性护栏拦成红。
         data = pd.DataFrame(
             {
-                "date": dates,
                 "open": 100.0,
                 "high": 102.0,
                 "low": 98.0,
                 "close": 101.0,
                 "volume": 1000000,
-            }
-        ).set_index("date")
+            },
+            index=pd.MultiIndex.from_product([["600519"], dates], names=["symbol", "date"]),
+        )
 
         signals = pd.DataFrame(
             1.0,

@@ -3,7 +3,7 @@
 # [DEPENDENCIES] numpy; pandas
 # [CONSUMERS] zephyr.factor.core.evaluation.backtest(load_history 消费端边界)；
 #             zephyr.backtest.core.matching_engine(仅引用单位常量与判定tolerance)
-# [STARTUP] on_demand
+# [STARTUP] imported
 # [MATURITY] trial
 # [INVARIANTS] 归一后 amount ≈ close × volume（中位比 ∈[0.9,1.1]）；
 #              返回 close × adj_factor == 后复权真值（逐符号常数锚定）；

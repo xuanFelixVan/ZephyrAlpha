@@ -286,7 +286,7 @@ class TestPhaseEL03L04ToL05:
             mode=RebalanceMode.EQUAL_WEIGHT,
             nav=Decimal("1000000"),
         )
-        orders = strategy.generate_target_weights()
+        orders = strategy.generate_orders()
         assert len(orders) > 0
         for order in orders:
             assert isinstance(order, Order)
@@ -319,7 +319,7 @@ class TestPhaseEL03L04ToL05:
             nav=Decimal("1000000"),
             risk_limits={"max_single_position": 0.10},
         )
-        orders = strategy.generate_target_weights()
+        orders = strategy.generate_orders()
         for order in orders:
             target_weight = float(order.quantity * (order.limit_price or Decimal("100"))) / 1000000.0
             if target_weight > 0.15:
@@ -662,7 +662,7 @@ class TestPhaseEFullPipelineE2E:
 
         # L05: generate orders from aggregated signals
         strategy.update_signals(all_signals)
-        orders = strategy.generate_target_weights()
+        orders = strategy.generate_orders()
         assert len(orders) > 0, "Strategy produced no orders"
 
         # L04: validate each order

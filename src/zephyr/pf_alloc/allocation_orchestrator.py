@@ -12,7 +12,7 @@
 # [CONSUMERS] scripts/backtest/sim_paper_ledger（AutoRuntime 事件链上的纸面盘日账，计划中的唯一
 #   生产消费方——接线 diff 待主会话落地）; handle_pf_alloc_daily_event（事件正门，kind 派发待登记）;
 #   CLI python -m zephyr.pf_alloc.allocation_orchestrator（人工/排障）
-# [STARTUP] event（DataScheduler task_completed → SIM_DAILY_WAKE_TASKS → run_sim_ledger_daily → 本件）
+# [STARTUP] event_driven（DataScheduler task_completed → SIM_DAILY_WAKE_TASKS → run_sim_ledger_daily → 本件）
 # [MATURITY] experimental
 # [INVARIANTS] 本件=MOD-PA-007 五模块链的 **G15→G14 装配体**（挖矿 PFA-1 判"链从未被组装"的治本件）：
 #   regime → RegimeMetaAllocator → BudgetChangeHandler → StrategyBook → AdjudicationCenter

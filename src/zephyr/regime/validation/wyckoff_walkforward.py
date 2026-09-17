@@ -3,7 +3,7 @@
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas; zephyr.regime.features.wyckoff_engine; zephyr.regime.features.market_features; zephyr.regime.validation.overfitting_guard; zephyr.data.table_registry; zephyr.infrastructure.database_service
 # [CONSUMERS] WYF-3 重校施工（一次性 CLI 跑批）+ tests/regime/validation/test_wyckoff_walkforward.py
-# [STARTUP] on_demand（离线校准，非运行时热路径）
+# [STARTUP] manual（离线校准，非运行时热路径：人工按需一次性触发，startup_vocabulary 无 on_demand 值）
 # [MATURITY] validation
 # [INVARIANTS] 校准段/评估段严格分离（test 段永不参与选值）; 决策日只用 ≤T-1（引擎 PIT + 段截断）; 网格与验收带先写死后跑数; 数据只读（CH reader role）; 输出只落 tmp/工作区，禁写 data/
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
