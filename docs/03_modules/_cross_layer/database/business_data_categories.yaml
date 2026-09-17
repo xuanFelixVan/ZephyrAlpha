@@ -3022,3 +3022,40 @@
   frequency: 日频
   data_source: [akshare]
   blueprint: null
+
+
+- category_id: market_rate_decision_calendar
+  name: "央行议息日历(11家央行利率决议值/预测值/前值,金十口径年化%)"
+  engine: clickhouse
+  database: c1_market
+  table: rate_decision_calendar
+  schema_file: schemas/categories/market/market_rate_decision_calendar.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+
+- category_id: research_report
+  name: "券商研报主表（标题+元数据+PDF链接，每晚20:30日更；全文不留DB=版权边界，全文走 c4_pdf_cache）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: research_report
+  schema_file: schemas/categories/fundamental/fundamental_research_report.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+  # 消费方=MOD-BT-193 graph_enrich_staging 研报源适配器（线C 研报喂链）；
+  # 此前无品类条目、SQL 以字面量承载（同 pdf_forecast_extracted 2026-09-17 先例），
+  # 2026-09-18 st-igalpha2-20260918 补登记，TABLE-NAME-REGISTRY 治本。
