@@ -54,3 +54,29 @@ ttl: task_bound
 - **A-2（生猪因子快检）**：`hog_chain_quickcheck.py` v1.1 出证：修复后诚实口径=119 对齐周（残周剔除+日历周校验+完整周前向窗），Spearman +0.028，上行 regime -0.23% vs 下行 -1.12%（n=72/47）——**方向支持 regime 因子**（上行占优 ~0.9pp/4周），幅度弱-中，符合"regime/择时而非选股"预判。
 - **A-4/A-5**：未动（维持"接近挖干"），下一班按 E4 登记面推进。
 - 台账更新：A-1→已建件(v1.1)；A-2→快检出证；六向台账中 ③④ 两向对应格转"已挖"。
+
+## 7. lane_chain_candidates.csv schema（E4 送审真源，T8 补登 2026-09-18）
+
+> master_ledger E10 行所指"schema 真源"即本节。消费契约=`hypothesis_precheck.load_candidates`
+> 必需 4 列；其余列为本车道预注册登记（防过拟合铁律：方向与检验先写死后考试）。
+
+| 列 | 语义 | 约束 |
+|----|------|------|
+| candidate_id | `CAND-<md5_12>('E1I:'+hypothesis_zh)` | 内容寻址跨批稳定（车道 G 先例） |
+| theme | 链名/主题 | 非空 |
+| hypothesis_zh | 完整可检验假说（含预注册方向） | 非空，E2 预审主输入 |
+| mechanism_hint | 传导机制提示 | |
+| horizon | 持有期 | |
+| universe | 股票域 | |
+| birth_channel | 固定 `I`（产业链车道） | E2 漏斗/E4 赛马聚合键 |
+| birth_batch | `E1I-YYYYMMDD-<批次>` | 出生证 |
+| birth_source | 证据行级出处+指纹 | 逐行可追溯 |
+| evidence_path | 证据文件路径（`;`分隔） | 必填 |
+| pre_registered_direction | 预注册方向（写死） | 必填 |
+| pre_registered_test | 预注册检验（快检/E4 口径，写死） | 必填 |
+
+- 存放=`data/strategy_intake/lane_chain_candidates.csv`；消费点=`factory_intake_pipeline`
+  `_LANE_SPECS`+`run_pipeline.intake_sources`（幂等，存在才消费）。
+- 候选来源优先级：①研报喂链 batch1 暂存台账高置信供应链对；②敞口矩阵指纹
+  9e4133661160ffb2/生猪快检 2b46f30b9b40dda1（红蓝 R2 循环检查指纹 3c11be7181770f69=commit
+  30cec4fa49）；③四本 workbook 已登记待挖条目。首批 10 行（2026-09-18 T8，batch=E1I-20260918-T8）。

@@ -62,6 +62,10 @@ _LANE_SPECS = [
     # 干活在 lane_g_stomach_intake 自身 CLI（车道干完活即卸台账，本编排只幂等消费）。
     {"lane": "G", "name": "e1g_stomach_intake", "compute_class": "local",
      "intake": "data/strategy_intake/lane_g_candidates.csv"},
+    # 车道I 产业链候选进货（线alpha T8，2026-09-18）：研报喂链/敞口矩阵/workbook 待挖三来源。
+    # 干活在产业链接挖矿班自身流程（schema 真源=a_mining_workbook §7），本编排只幂等消费。
+    {"lane": "I", "name": "e1i_chain_candidates", "compute_class": "local",
+     "intake": "data/strategy_intake/lane_chain_candidates.csv"},
 ]
 
 
@@ -135,6 +139,8 @@ def run_pipeline(top_sectors: int = 20, with_lane_b: bool = False,
         intake_sources["G"] = lane_g_stomach_intake._INTAKE_CSV
     except Exception:  # noqa: BLE001 — 同上
         pass
+    # 车道I 产业链候选：csv=挖矿班直产（无车道模块），存在才消费（T8 2026-09-18）
+    intake_sources["I"] = _ROOT / "data" / "strategy_intake" / "lane_chain_candidates.csv"
     for lane, src in intake_sources.items():
         if not Path(src).exists():
             continue
@@ -290,6 +296,7 @@ def cmd_race() -> int:
         "B": _ROOT / "data" / "strategy_intake" / "lane_b_candidates.csv",
         "C": _ROOT / "data" / "strategy_intake" / "lane_c_candidates.csv",
         "C2": _ROOT / "data" / "strategy_intake" / "lane_c2_candidates.csv",
+        "I": _ROOT / "data" / "strategy_intake" / "lane_chain_candidates.csv",
     }
     counts = {lane: (len(pd.read_csv(p, encoding="utf-8-sig")) if p.exists() else 0)
               for lane, p in intakes.items()}
