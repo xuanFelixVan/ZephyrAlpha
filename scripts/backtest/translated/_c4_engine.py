@@ -91,7 +91,7 @@ SQL_ST_FLAGS = (
 # 1900-01-01 未失效哨兵与 zephyr.data.pit_query 口径同源。
 _NO_EXPIRY_SENTINEL = "1900-01-01"
 SQL_INDEX_CONS_WINDOW = (
-    "SELECT symbol_canonical, valid_to FROM " + _T_INDEX_CONSTITUENT + " "
+    "SELECT symbol_canonical, valid_to FROM " + _T_INDEX_CONSTITUENT + " FINAL "
     "WHERE index_code = '{index_code}' "
     "AND valid_from <= toDate('{end}') "
     "AND (valid_to IS NULL OR valid_to = toDate('{sentinel}') OR valid_to > toDate('{start}'))"

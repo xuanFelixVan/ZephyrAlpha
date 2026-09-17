@@ -48,6 +48,11 @@ def _constituent_rows(world: str) -> list[tuple]:
     两世界在 X 前逐位相同；唯一分歧=M_EXIT 在 X 后是否调出。
     """
     rows = [(s, "2020-01-01", None) for s in _BASE_MEMBERS]
+    # 边界行（红队 R3 假绿洞封堵：谓词腐蚀变异必须被夹具鉴别）：
+    #   _BOUNDARY_EXIT：valid_to == 窗口 start（[start,end) 闭开语义=排除）
+    #   _SENTINEL_MEMBER：哨兵 1900-01-01=未失效（须入池）
+    rows.append(("900001", "2020-01-01", "2024-01-01"))   # valid_to==start 边界
+    rows.append(("900002", "2020-01-01", "1900-01-01"))   # 哨兵未失效
     if world == "A":
         rows.append((_EXIT_MEMBER, "2020-01-01", "2024-06-30"))  # X 后调出
     else:
@@ -121,11 +126,7 @@ def _universe_fw_scd2(world: str, start: str, end: str) -> list[str]:
             # 谓词过滤——但该函数在 SQL 里就过滤了 valid_from/valid_to，故此处按
             # 查询里的 end/start 参数模拟同样的集合语义。
             rows = _constituent_rows(world)
-            out = []
-            for s, _vf, vt in rows:
-                # 模拟 SQL: valid_from <= end AND (valid_to NULL/sentinel OR valid_to > start)
-                if vt is None or vt == "1900-01-01" or vt > start:
-                    out.append((s, vt))
+            out = _scd2_window_filter(rows, start, end)
             return out
 
     import zephyr.data.ch_writer as chw
@@ -144,7 +145,8 @@ def test_scd2_window_paradigm_pit_green():
     a = _universe_fw_scd2("A", "2024-01-01", "2024-03-31")
     b = _universe_fw_scd2("B", "2024-01-01", "2024-03-31")
     assert a == b, "fw_backtest SCD-2 范式在 X 后分歧下产生了不同历史宇宙=范式退化"
-    assert set(_BASE_MEMBERS) | {_EXIT_MEMBER} == set(a)  # 窗内在册者都入池（含期末调出者）
+    assert set(a) == set(_BASE_MEMBERS) | {_EXIT_MEMBER} | {"900002"}
+    assert "900001" not in set(a)  # valid_to==start 边界排除（闭开口径同源钉）
 
 
 def test_c4_engine_universe_pit_gate():
@@ -154,13 +156,15 @@ def test_c4_engine_universe_pit_gate():
     assert a == b, (
         f"宇宙被 X 后信息改写: A-B={sorted(set(a) - set(b))} B-A={sorted(set(b) - set(a))}"
     )
-    # 窗口并集语义：期末已调出者（世界 A 的 300750，valid_to 在窗后）仍入池
-    assert set(a) == set(_BASE_MEMBERS) | {_EXIT_MEMBER}
+    # 窗口并集语义：期末已调出者（世界 A 的 300750，valid_to 在窗后）仍入池；
+    # 哨兵行入池、valid_to==start 边界行排除（[start,end) 闭开口径钉）
+    assert set(a) == set(_BASE_MEMBERS) | {_EXIT_MEMBER} | {"900002"}
+    assert "900001" not in set(a)
     # 鉴别力 sanity（跨调出日窗口）：宇宙 PIT 仍成立（A==B），但披露把 X 后调出事件
     # 可见化——世界 A since_exit_n=1、世界 B=0（幸存者偏差禁静默，且不影响成员资格）
     a2 = _universe_c4_window("A", "2024-01-01", "2024-12-31")
     b2 = _universe_c4_window("B", "2024-01-01", "2024-12-31")
-    assert a2 == b2 == set(_BASE_MEMBERS) | {_EXIT_MEMBER}
+    assert a2 == b2 == set(_BASE_MEMBERS) | {_EXIT_MEMBER} | {"900002"}
     eng = _load_c4_engine()
     _universe_c4_window("A", "2024-01-01", "2024-12-31")
     da = eng.last_universe_disclosure()
@@ -168,9 +172,15 @@ def test_c4_engine_universe_pit_gate():
     _universe_c4_window("B", "2024-01-01", "2024-12-31")
     db = eng.last_universe_disclosure()
     assert db is not None and db["since_exit_n"] == 0
-    # 结构钉：引擎宇宙 SQL 必须带窗口谓词+未失效哨兵（防 Snapshot 口径复辟）
-    assert "valid_from <=" in eng.SQL_INDEX_CONS_WINDOW
-    assert "{sentinel}" in eng.SQL_INDEX_CONS_WINDOW
+    # 结构钉（红队 R3 假绿洞封堵）：SQL 全文字面钉——谓词任何腐蚀（OR→AND、>→>=、
+    # 丢 FINAL）都必须有意改本测试才过闸
+    expected_sql = (
+        "SELECT symbol_canonical, valid_to FROM c1_market.index_constituent FINAL "
+        "WHERE index_code = '{index_code}' "
+        "AND valid_from <= toDate('{end}') "
+        "AND (valid_to IS NULL OR valid_to = toDate('{sentinel}') OR valid_to > toDate('{start}'))"
+    )
+    assert eng.SQL_INDEX_CONS_WINDOW == expected_sql
     assert eng._NO_EXPIRY_SENTINEL == "1900-01-01"
 
 
@@ -238,7 +248,6 @@ def test_template_family_weights_pit_axis():
     """
     wa = _template_weights("A")
     wb = _template_weights("B")
-    assert wa.equals(wb.loc[wa.index]) or True  # 索引同源；逐格断言在下
     x_key = X_DAY.date()  # weights 索引=datetime.date（模板透视自 synth 行）
     pre_a = wa.loc[[d <= x_key for d in wa.index]]
     pre_b = wb.loc[[d <= x_key for d in wb.index]]

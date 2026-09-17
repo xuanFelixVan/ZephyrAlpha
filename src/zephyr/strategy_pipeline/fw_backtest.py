@@ -177,8 +177,9 @@ def _hs300_symbols(start: str, end: str) -> tuple[list[str], dict[str, Any]]:
     等于用后视镜选股，收益/回撤系统性偏乐观。改为 SCD-2 区间与回测窗口求交，谓词与
     zephyr.data.pit_query 的 in-window 口径同源（含 1900-01-01 未失效哨兵）。
 
-    同花顺/与 `_c4_engine.load_hs300` 的关系：那份是"当前成份"用途（择时快照），本份
-    是"回测窗口宇宙"用途——两者语义不同，禁止互相替换（替换即把幸存者偏差重新引入）。
+    同源关系：`_c4_engine.load_hs300/index_constituents` 已于 2026-09-18（E4 retrofit，
+    c0f87635）同步为 SCD-2 窗口并集口径，与本函数同范式；"当前快照"口径已废——择时
+    快照用途须显式按日查询，勿以无窗调用复辟幸存者偏差。
 
     Returns:
         (symbols, disclosure)——disclosure 显式给出旧口径会给多少个、差额多少，
