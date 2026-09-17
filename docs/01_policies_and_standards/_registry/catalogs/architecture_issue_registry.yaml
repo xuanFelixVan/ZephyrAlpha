@@ -21863,9 +21863,22 @@ entries:
     cwd 执行，正是 scripts/session_worktree 注释所警告的"同一 worktree 树被 import 时 REPO_ROOT
     指向该树自身"。含义：污染不只来自双 drain，也来自**任何在队列 worktree 内被拉起的治理进程**，
     故 A 案的"重启窗"必须连带收 anchored-path 面（否则新守护一样被污染）。
+    追加实证③（2026-09-18 夜，落地面第三形态=锚定态被 landing worktree 钉死）：belt daemon 实测已死
+    （PID 28648 不存在，belt_daemon.lock 的 ts 仍停在 09-16 07:17），故本条原先的“重启窗”待裁对象消失——
+    无需 kill、裁定#281③ 不再触发。但队列死信主因换面：落地面门禁以 project_root=landing worktree 解析
+    .runtime 锚定态，而 worktree 自带副本长期停更——depgraph_scan_cache.json saved_at=2026-09-16T21:55:35
+    （主树同刻为 2026-09-18T01:58:36）→ DEPGRAPH-FRESHNESS 在落地面永久假红（死信直方图 33 件实证）；
+    session_registry.json 仅 2 字节（主树 4844B/7 会话）→ SESSION-REQUIRED 同源假红；
+    depgraph_di_seam_cache.json 停在 09-14T20:42。已做一次性解阻（原子替换 3 个锚定文件，陈旧副本备份于
+    .runtime/tmp/wt_anchor_bak_*），并按“判通过的脚本须先证明能红”双向验证：scratch root 放陈旧副本
+    block=True、同步后 landing worktree block=False（exit=0）。治本未做：.runtime 锚定态须在落地面解析到
+    主工作树（或 landing 前同步），属提交链车道结构改动（与裁定#320② “O(仓库) 门禁测量面修正”同族）；
+    本次未并发改 commit_queue.py / commit_belt_daemon.py（F1/F4 提速车道在途、其 DESIGN 文档仍 staged，
+    且 02:35 实测有他会话正在该 worktree 内 requeue+跑门禁）。daemon 是否重启=不重启（旧形态单序列化器
+    与裁定#320③ k=4 分区通道前置冲突；当前由会话 requeue/drain 驱动，实测可落地）。
   status: open
   created: '2026-09-17'
-  last_updated: '2026-09-17'
+  last_updated: '2026-09-18'
 - issue_id: "#ARCH-325"
   title: >-
     工作区清退无观测面：两轮未提交施工被无声还原到 HEAD（git status clean / worktree_ops_log
@@ -21920,9 +21933,19 @@ entries:
     普查并入 d8_doc_sync 事件触发对账，勿进 pre-commit——3227 件全库扫描属触碰税，
     perf 方案 §2.6 的分级不允许；本役的一次性普查脚本判据（source_of_truth 对 dev 树存在性）
     可直接搬。
+    复核结论（2026-09-18 夜，AI 自裁不改判）：①裁定#307① 已把“净删/退役/冻结区解锁”定为 Owner 常设门位
+    （active，2026-09-17），AI 自裁不得翻转已登记裁定，故本条不降级为自动执行；②时间线核证孤件归属=
+    退役车道残留而非出仓批缺陷——token 行 b5455d5602（09-16 17:06）与镜像 79fc49e89f（09-16 17:22）落地时
+    源包仍在，源包由 6a0eca4700（09-17 05:35，P4-β 死壳退役）删除，故清理义务在退役批；③现实阻却：
+    capability_canonical_file_registry.yaml 此刻为 MM（他会话 staged+工作区双改），现在动手必致整文件吸收
+    （#ARCH-329 已实证 897 条 foreign token 被吸收）。执行包（等窗口，Owner 一句准或退役车道自执）：
+    git rm 该镜像 yaml + safe_write_text CAS 摘 capability_canonical_file_registry.yaml 中该 file 行
+    （token=btfix-p1p2-model-capability-exam--init---20260916，created_by=st-btfix-p17-20260916），
+    同批落地；可逆性=单 commit revert 即恢复，RULE-DATA-OPS 三步齐（必要性=消孤件、真实性=src 树与
+    git ls-files 均无该包、可逆性=revert）。机制侧（反向孤件普查并入 d8_doc_sync 事件触发对账）仍未实施。
   status: open
   created: '2026-09-17'
-  last_updated: '2026-09-17'
+  last_updated: '2026-09-18'
 - issue_id: "#ARCH-327"
   title: >-
     双锁统一加固自落地即静默失效：队列 CAS 给 _GlobalCommitLock 传 str（契约是 Path），
