@@ -1926,7 +1926,11 @@ def _multifactor_payload_runner_cls() -> type:
 
         def _build_signal_panel(self, factor_panels: dict, config) -> pd.DataFrame:
             signal_panel = super()._build_signal_panel(factor_panels, config)
-            shift = max(int(config.pit_shift), 0)
+            # S14 裁定（2026-09-17）：max(...,0) 钳位把 pit_shift<0 静默吞成 0=前视放行，
+            # 与 strategy_runner.py:413 同型同修——负值 fail-closed raise。
+            if int(config.pit_shift) < 0:
+                raise ValueError(f"pit_shift 必须 >= 0（<0=用未来因子=前视注入）: {config.pit_shift}")
+            shift = int(config.pit_shift)
             self._raw_factor_panels = {
                 fid: (fp.shift(shift) if shift > 0 else fp) for fid, fp in factor_panels.items()
             }

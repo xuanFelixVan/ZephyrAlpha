@@ -410,6 +410,11 @@ class StrategyRunner:
             return pd.DataFrame(index=dates, columns=symbols, dtype=float)
         signal_panel = pd.DataFrame(rows).T.reindex(index=dates, columns=symbols)
         # PIT 铁律：signal[t] = factor[t-pit_shift]，今日决策只用昨日因子值
+        # S14 裁定（2026-09-17 kimi-audit 班次）：pit_shift<0=索要未来因子=真前视，旧码
+        # `>0` 守卫静默吞掉负值（效果=同bar信号；实测探针 pit=-1 与 pit=0 产物逐字节相同，
+        # .runtime/tmp/exp/s14_result.json）——负值改 fail-closed 当场 raise，禁静默降级。
+        if config.pit_shift < 0:
+            raise ValueError(f"pit_shift 必须 >= 0（<0=用未来因子=前视注入）: {config.pit_shift}")
         if config.pit_shift > 0:
             signal_panel = signal_panel.shift(config.pit_shift)
         return signal_panel

@@ -184,6 +184,18 @@ class TestPitShiftMechanism:
         assert signal.iloc[0]["A"] == 1.0
         assert signal.iloc[2]["A"] == 3.0
 
+    def test_pit_shift_negative_raises_fail_closed(self):
+        """pit_shift<0=索要未来因子（真前视），S14 裁定 fail-closed 当场 raise。
+
+        钉前史：旧码 `if pit_shift > 0` 守卫静默吞掉负值，pit=-1 与 pit=0 产物
+        逐字节相同（s14 前视探针 2026-09-17 实测）——门卫放行前视无任何报错。
+        """
+        dates = pd.bdate_range("2024-01-01", periods=3)
+        fp = pd.DataFrame({"A": [1.0, 2.0, 3.0]}, index=dates)
+        config = StrategyRunnerConfig(strategy_id="topn-momentum", factor_ids=("f",), pit_shift=-1)
+        with pytest.raises(ValueError, match="pit_shift"):
+            StrategyRunner()._build_signal_panel({"f": fp}, config)
+
 
 class TestMvpE2e:
     """端到端：mock ch_reader + 真实 momentum_20d → BacktestResult。"""
