@@ -35831,4 +35831,8 @@ creation_tokens:
   token: mod-bt-211-req-rbstats-01-20260918
   created_by: st-ff-rb-stats-20260918
   capability: MOD-BT-211
+- file: docs/01_policies_and_standards/sop/review_sop/rule_disposition_policy.md
+  token: rule-disposition-rule-disposition-policy-20260918
+  created_by: st-ruledisp-20260918
+  capability: rule_disposition
 di_seam_exemptions: []

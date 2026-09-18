@@ -25,7 +25,7 @@ language: zh
 | `trading_decision_map_sop/` | **TDM 地图族**：逐层讨论六步法（trading_decision_map_layering_policy：四道前置检查防撞车）+消费场景规程（tdm_consumption_policy：S1-S9 九场合——什么场合必须打开地图、读什么、验证什么） | TDM 地图结构讨论、血肉填充、建蓝图锚/策略挂图/回测预检/改判据/引擎变更/退役/复盘/转级 前 |
 | `ops_sop/` | **运维协作与应急族**：冲突三分法（merge_conflict_resolution_policy：全项目冲突处理唯一真源）+ worktree 四证清理（worktree_cleanup_policy）+ 保命轨人工 Runbook（emergency_runbook，D-L1~D-L3） | 合并冲突时；清理 worktree 前（四证缺一不可）；系统应急时 |
 | `data_audit_sop/` | **数据审计族**：产业链数据审计修复循环（industry_chain_data_audit_policy，配套标准=policies/graph_quality_standard.md） | 图谱数据质量修复、数据审计班次开工前 |
-| `review_sop/` | **深度审查族**：代码与算法深度审查六轴法（deep_review_policy：数学正确性四问+上游/下游/旁系传导+红蓝对抗+SOTA 新鲜度+证据纪律+收口闭环；与 audit_prompts 广度撒网、document_review 文档七轮、mining_sop 机会挖矿四象限分工） | 强模型审查窗口开工前；新算法/管线转 production 验收前；系统性漏洞横向排查（T3）前 |
+| `review_sop/` | **深度审查族**：代码与算法深度审查六轴法（deep_review_policy：数学正确性四问+上游/下游/旁系传导+红蓝对抗+SOTA 新鲜度+证据纪律+收口闭环）+ 缺陷模式库（defect_pattern_checklist：15 条历史系统性缺陷机械 checklist）+ **规则处置程序法**（rule_disposition_policy：六道闸判定 × 六类归宿，每条规则/每台裁判的唯一判决流程，是前三者与 audit_prompts 的共同下游） | 强模型审查窗口开工前；新算法/管线转 production 验收前；系统性漏洞横向排查（T3）前；**判任何一条规则该留/该改/该退役时** |
 | 根下 `audit_prompts_20_ai.md` | **全仓打扫卫生+自主审计治本闭环 v4**：AI-00 总控 + 公共指令（唯一真源）+ AI-01~AI-22 域差异表（含门位优先、能红自证、无主区收编）。文件名保留 `audit_prompts_20_ai` 以稳引用（禁删/禁改名/禁挪路径；只读属性保护，修改走 attrib -r → claim → Gateway 提交 → 复位；旧 `skip-worktree` 声明实测已失效，见文件头） | 发起多模型交叉审计前（design memo 68 的执行蓝本） |
 
 ## 使用纪律
