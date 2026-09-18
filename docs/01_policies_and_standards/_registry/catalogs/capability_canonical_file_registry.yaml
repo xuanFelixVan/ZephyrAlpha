@@ -35927,4 +35927,12 @@ creation_tokens:
   token: bizmine-alpha-mining-survivor-regime-report-20260918
   created_by: st-bizmine-r-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/regime_axis/sector_regime_design.md
+  token: bizmine-alpha-mining-sector-regime-design-20260918
+  created_by: st-bizmine-r-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/regime_axis/teaming_regime_brief.md
+  token: bizmine-alpha-mining-teaming-regime-brief-20260918
+  created_by: st-bizmine-r-20260919
+  capability: bizmine_alpha_mining
 di_seam_exemptions: []
