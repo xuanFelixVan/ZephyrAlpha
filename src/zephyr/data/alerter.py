@@ -1,11 +1,17 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.alerter
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] logging(标准库); pathlib; zephyr.shared.security.secrets
+# [DEPENDENCIES] logging(标准库); pathlib; zephyr.shared.security.secrets;
+#   zephyr.data.alert_webhook_dispatch(CRITICAL 落盘成功后的同进程事件外发钩子，函数内延迟 import)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 失败汇总文件写到 failures/ 目录; 告警级别 INFO/WARN/ERROR/CRITICAL; 不抛异常(所有错误log后吞掉); 外推通道已裁撤(2026-09-15 Owner 裁定:通知以前端页面为准,转正建议走 promotion 页)
+# [INVARIANTS] 失败汇总文件写到 failures/ 目录; 告警级别 INFO/WARN/ERROR/CRITICAL; 不抛异常(所有错误log后吞掉);
+#   厂商外推通道(飞书/SMTP)已裁撤(2026-09-15 Owner 裁定:通知以前端页面为准,转正建议走 promotion 页);
+#   **CRITICAL 事件外发钩子**：仅在失败汇总**落盘成功后**同进程触发 zephyr.data.alert_webhook_dispatch
+#   .dispatch_on_failure_event（宪法 §9.3 事件触发，本件无 cron/Timer/sleep-loop）；缺省 fail-closed
+#   （无配置/无端点=不推送，但"通道不可用"投影到 OpsAlertFeed 通知板）；钩子异常永不反噬本件，
+#   且**绝不在钩子失败路径再写 failure 文件**（那会再次触发钩子=递归）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -25,8 +31,11 @@
 告警方式：
 - 日志（logging，输出到 logs/integrator.log）
 - 失败汇总文件（failures/{date}_{task_id}.json）
-- 外推通道（飞书/SMTP）已于 2026-09-15 按 Owner 裁定裁撤——通知以前端页面为准
-  （转正建议=promotion 页拍板），无凭据依赖；如需手机推送再立项（企业微信机器人）
+- 厂商外推通道（飞书/SMTP）已于 2026-09-15 按 Owner 裁定裁撤——通知以前端页面为准
+  （转正建议=promotion 页拍板），无凭据依赖
+- CRITICAL 事件外发钩子：失败汇总**落盘成功后**同进程调
+  zephyr.data.alert_webhook_dispatch.dispatch_on_failure_event（可插拔通用 webhook，
+  零内置厂商通道，缺省 enabled=false=不推送并如实 blocked + 投影通知板，绝不静默）
 
 设计要点：
 - 所有方法不抛异常（告警失败不应影响主流程）
@@ -163,17 +172,55 @@ class Alerter:
             with self._lock, open(filepath, "w", encoding="utf-8") as f:
                 json.dump(record, f, ensure_ascii=False, indent=2)
             log.info("失败汇总已写入: %s", filepath)
-            return True
+            landed = True
         except Exception as e:  # noqa: BLE001 — 告警落盘异常不回抛（调用方按返回值决定重试）
             # BRK-049 收口：兜底日志不预设失败类别 —— 真实异常类型名进正文 +
             # exc_info 保留栈（本仓教训：把类型缺陷写成"锁竞争/超时"会误导归因）。
+            landed = False
             log.error(
                 "写失败汇总文件异常: %s: %s",
                 type(e).__name__,
                 e,
                 exc_info=True,
             )
-            return False
+
+        # CRITICAL 且**确已落盘**才外推：落盘失败时 failure 文件本身就是证据，
+        # 再把一个"没落盘"的事件往外推会给外系统一个本仓无档可查的告警。
+        if landed and level == LEVEL_CRITICAL:
+            self._dispatch_critical_event(record, filename)
+        return landed
+
+    def _dispatch_critical_event(self, record: dict, filename: str) -> None:
+        """CRITICAL 落盘成功后的同进程事件外发（宪法 §9.3：事件触发，本件无 cron/Timer/sleep-loop）。
+
+        - 经**模块属性**调用（非 from-import 绑定），既避免 import 期耦合，也让测试能替换
+          `alert_webhook_dispatch.dispatch_on_failure_event` 验证钩子真在被调；
+        - 本方法**永不抛**（alerter [ERROR_CONTRACT]=不抛），但**也永不静默**：未送达/异常都
+          loud log；**绝不在此再写 failure 文件**（那会再次触发本钩子=递归）；
+        - 派发报告（sent/failed/blocked + 逐端点结果）由被调件同时落 trail JSONL 并投影
+          OpsAlertFeed 通知板，本处只做"未送达"的日志可见性补强。
+        """
+        try:
+            from zephyr.data import alert_webhook_dispatch
+
+            report = alert_webhook_dispatch.dispatch_on_failure_event(record, file_name=filename)
+        except Exception as e:  # noqa: BLE001 — 外发面全炸也不反噬告警器，但必须出声
+            log.critical(
+                "CRITICAL 告警外发钩子异常（告警已落盘，外发未执行）: %s: %s",
+                type(e).__name__,
+                e,
+                exc_info=True,
+            )
+            return
+        action = str(report.get("action") or "")
+        if action in ("blocked", "failed", "error") or int(report.get("failed") or 0) > 0:
+            log.error(
+                "CRITICAL 告警外发未全部送达 action=%s reason=%s endpoints=%s（留痕见 %s）",
+                action,
+                report.get("reason") or report.get("error") or "见逐端点结果",
+                report.get("endpoints") or [],
+                report.get("trail_path") or "alert_webhook trail",
+            )
 
     # ============== 告警条件检查 ==============
 

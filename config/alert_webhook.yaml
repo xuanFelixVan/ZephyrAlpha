@@ -1,0 +1,60 @@
+# blueprint: MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
+# [MODULE] config.alert_webhook
+# [DOMAIN] D_DATA
+# [INVARIANTS] 告警外推唯一配置真源（RULE-SSOT）；未知键=启动即报错；端点 URL 只从本册来（禁硬编码）；
+#   凭据只写 secrets **键名**（禁把 token 明文写进本册）；缺省 enabled:false = fail-closed 不推送
+# [CONSUMERS] zephyr.data.alert_webhook_dispatch（唯一读取方）
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT] 缺文件=enabled:false（不抛、不推送）；解析失败/未知键/URL scheme 非法=AlertWebhookError
+# [TESTS] tests/data/test_alert_webhook_dispatch.py
+
+# ── 为何缺省关闭且零端点（Owner 已裁定，勿重开）──────────────────────────
+# 2026-09-15 飞书/SMTP 通道被彻底删除，通知以前端 promotion 页为准。故本件是**机器侧骨架**：
+# 可插拔（端点=配置里一条记录）、缺省 fail-closed（无端点=不推送并如实返回 blocked）、
+# 代码里零厂商耦合（Server酱/钉钉/飞书/Telegram 都只是一条端点配置）。
+# 推送凭据属 Owner 四类事（账号注册/API 申请）——COORDINATION_LEDGER §7 已登记门位，
+# 缺凭据不算未达成（总簿裁定 C4）。Owner 提供后：enabled 置 true + 填 endpoints 即通电。
+
+enabled: false
+
+# 触发源一：alerter 的失败汇总目录（只读；level=CRITICAL 的行才触发）
+failures_dir: data/failures
+
+# 触发源二：kill_switch 探针（非 normal=触发；探针失败也按"疑似触发"出声，fail-closed）
+include_kill_switch: true
+
+# 指纹去重状态文件（同一 CRITICAL 只推一次；进程崩不丢）
+state_path: data/runtime/alert_webhook_state.json
+
+# 派发留痕 JSONL（含 HTTP 状态码，绝不含凭据明文）
+trail_path: data/runtime/alert_webhook_trail.jsonl
+
+# 通道自身不可用时投影到 promotion 页通知板（OpsAlertFeed）的 module_id
+# —— "写了没人读"是 BRK-005/R-021 的病灶，故本件把 blocked/failed 也投到**已被前端读**的那块板
+board_module_id: alert-webhook-dispatch
+
+# 扫描窗口（小时，仅用于报告口径；实际去重靠指纹）
+scan_window_hours: 24
+
+# 单请求超时（秒）与 payload 上限（字节，超限只保第一条 + truncated 标记，禁把通道打爆）
+timeout_s: 10.0
+max_payload_bytes: 8192
+
+# 端点清单（缺省为空 = fail-closed 不推送）。
+# 每条端点字段：
+#   name         端点名（自取，进留痕）
+#   url          推送地址（只允许 http/https；本地桩验证用 http://127.0.0.1:<port>/hook）
+#   secret_key   zephyr.shared.security.secrets 注册表里的**键名**（不是凭据值；空=不注入凭据）
+#   header_name  凭据注入的请求头名（空=不注入）；声明了 secret_key 却取不到值 → 该端点拒发（fail-closed）
+#   method       POST|PUT（缺省 POST）
+#   content_type 缺省 application/json
+#
+# 示例（Owner 提供凭据后取消注释并替换；本地桩双验证见 tests/data/test_alert_webhook_dispatch.py）：
+# endpoints:
+#   - name: owner_phone_push
+#     url: https://<push-gateway>/send
+#     secret_key: ALERT_WEBHOOK_OWNER_TOKEN
+#     header_name: Authorization
+endpoints: []

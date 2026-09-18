@@ -448,3 +448,27 @@ def _isolate_audit_key_eras(monkeypatch):
     """
     monkeypatch.setenv("ZEPHYR_AUDIT_KEY_ERAS", str(Path(__file__).parent / "_nonexistent_audit_key_eras.yaml"))
 
+
+# ---------------------------------------------------------------------------
+# 告警外推通道隔离（FF-16 / alert_webhook_dispatch 接线批）
+# ---------------------------------------------------------------------------
+@pytest.fixture(autouse=True)
+def _isolate_alert_webhook_sinks(tmp_path_factory, monkeypatch):
+    """autouse：pytest 全域禁让告警外推通道写**真实**落点。
+
+    zephyr.data.alerter 的 CRITICAL 事件钩子会在失败汇总落盘后同进程外发；
+    缺省配置 enabled=false → 走 fail-closed 分支，会写
+      ① data/runtime/alert_webhook_{state.json,trail.jsonl}（去重账本+留痕）
+      ② .runtime/ops_notifications/notifications.jsonl（前端 promotion 页真读的板）
+    ②尤其致命：测试跑一次就在**生产通知板**挂一条"告警外发通道不可用"红条，
+    Owner 看到的是假告警。故本 fixture 把两处都重定向到 tmp：
+      ZEPHYR_ALERT_WEBHOOK_DIR → state/trail 锚定根（本批在 _sink_root 新建的覆盖位）
+      ZEPHYR_OPS_NOTIFICATION_DIR → 通知板目录（ops_alert_feed.board_dir 既有覆盖位）
+    先例同型：_isolate_commit_queue_root / _isolate_audit_key_eras。
+    通道语义专测（tests/data/test_alert_webhook_dispatch.py）在自身 fixture 内
+    显式注入 tmp 配置/板（后执行者生效，不受本 fixture 影响）。
+    """
+    iso = tmp_path_factory.mktemp("alert_webhook_iso")
+    monkeypatch.setenv("ZEPHYR_ALERT_WEBHOOK_DIR", str(iso / "sinks"))
+    monkeypatch.setenv("ZEPHYR_OPS_NOTIFICATION_DIR", str(iso / "ops_notifications"))
+
