@@ -35778,5 +35778,9 @@ creation_tokens:
   token: fullflow-test-integrity-ci-prereq-testint-ci-prereq-20260918
   created_by: st-ff-testint-20260918
   capability: fullflow_test_integrity_ci_prereq
+- file: docs/_working/fullflow_campaign/lanes/newsrc_relay.md
+  token: newsrc-relay-newsrc-relay-20260918
+  created_by: st-ff-newsrc-20260918
+  capability: newsrc-relay
 
 di_seam_exemptions: []
