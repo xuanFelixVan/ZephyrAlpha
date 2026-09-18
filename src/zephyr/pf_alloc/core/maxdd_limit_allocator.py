@@ -133,8 +133,8 @@ class StrategyDdBudget:
     def __post_init__(self) -> None:
         if not self.strategy_id:
             raise InvalidMaxDdInputError("strategy_id 不能为空")
-        if self.base_weight <= 0:
-            raise InvalidMaxDdInputError(f"base_weight 须为正: {self.base_weight}")
+        if not (self.base_weight > 0):  # NaN 一并拒绝（rpt_w07：NaN 曾穿透归一产出全 NaN 权重）
+            raise InvalidMaxDdInputError(f"base_weight 须为正有限值: {self.base_weight}")
         if not 0.0 < self.max_dd_budget <= 1.0:
             raise InvalidMaxDdInputError(f"max_dd_budget 须 ∈(0,1]: {self.max_dd_budget}")
 
@@ -200,6 +200,9 @@ class MaxDdLimitAllocator:
         raw: dict[str, float] = {}
         for b in budgets:
             dd = current_drawdowns[b.strategy_id]
+            if dd != dd:
+                # rpt_w07 P1：NaN 三重比较全 False 曾判 NORMAL 满配——回撤爆表被静默洗白
+                raise InvalidMaxDdInputError(f"当前回撤非有限值（NaN 拒收，Fail-Closed）: {b.strategy_id}={dd}")
             if dd < 0:
                 raise InvalidMaxDdInputError(f"当前回撤须非负: {b.strategy_id}={dd}")
             utilization = dd / b.max_dd_budget
