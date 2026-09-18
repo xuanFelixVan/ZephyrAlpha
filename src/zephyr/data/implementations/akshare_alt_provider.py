@@ -32,6 +32,12 @@
     alt_shipping_index  航运运价指数长表   -> c1_market.alt_shipping_index
                         （BDI 1988 起含日涨跌幅 + BCI/BSI/BHMI/HRCI/BCTI/BDTI 约 2006 起；
                           BDI 双源重叠以 macro_shipping_bdi 为准，免重）
+    cftc_positioning    CFTC 持仓报告(COT) -> c1_market.cftc_positioning
+                        （四报表宽转长 81,270 行/轮，1986-01-15 起周频；全量幂等）
+    gold_etf_holdings   SPDR 黄金 ETF 持仓 -> c1_market.gold_etf_holdings
+                        （macro_cons_gold，2004-11-19 起日频 2,871 行；全量幂等）
+                        ⚠ 两表品类未并入 business_data_categories.yaml 时经
+                          _resolve_category_table() 读片段同值回退表名（见该函数注释）
 
 PIT 三公理：快照/指数即所得，无前视；trade_date 取接口自带日期列（千股千评"交易日"
 常为 T-1），不信运行日。
@@ -253,6 +259,13 @@ _TBL_NDRC_FUEL_PRICE = get_registry().table("market_ndrc_fuel_price")
 _TBL_FUTURES_WAREHOUSE_RECEIPT = get_registry().table("market_futures_warehouse_receipt")
 _TBL_ROAD_FREIGHT_INDEX = get_registry().table("market_road_freight_index")
 _TBL_AGRI_WHOLESALE_INDEX = get_registry().table("market_agri_wholesale_index")
+# D5 跨资产·H7/H8（2026-09-18 全流通战役 st-ff-newsrc-20260918 补 provider 腿）：
+# 两个品类尚未并入 business_data_categories.yaml（载体 docs/03_modules/** 属战役禁写域，
+# 片段=docs/_working/fullflow_campaign/lanes/altdataF_categories_yaml_fragment.yaml），
+# 而 get_registry().table() 在模块顶层调用=导入期 KeyError → 会打死 gateway 全员提交通道。
+# 故此处只登记 category_id，表名经 _resolve_category_table() 在 fetch 时惰性派生。
+_CAT_CFTC_POSITIONING: Final = "market_cftc_positioning"
+_CAT_GOLD_ETF_HOLDINGS: Final = "market_gold_etf_holdings"
 
 # 统计月报列名兼容映射（各系列列名不一，取首个非空）
 _STAT_MONTH_KEYS = ("BENYUE", "BNBJD", "BY")
@@ -273,6 +286,61 @@ _FREIGHT_INDEX_MAP: tuple[tuple[str, str, str], ...] = (
 # 情绪面板通用列（与 sentiment_panel 表 INSERT_COLUMNS 对齐）
 _CB_PANEL_COLUMNS = ("metric", "trade_date", "value", "value_classification", "source", "extra")
 
+# D5 跨资产·CFTC 持仓 / SPDR 黄金 ETF 持仓（列序与 schemas/categories/market/
+# market_cftc_positioning.py|market_gold_etf_holdings.py 的 INSERT_COLUMNS 逐字对齐；
+# ingest_ts/data_source/quality_flag 中后两者显式给值，ingest_ts 走 DDL DEFAULT now()）
+_CFTC_POSITIONING_COLUMNS: Final = (
+    "report_date", "trader_class", "asset_class", "market_name",
+    "long_positions", "short_positions", "net_positions", "data_source", "quality_flag",
+)
+_GOLD_ETF_HOLDINGS_COLUMNS: Final = (
+    "fund_code", "trade_date", "fund_name", "total_tonnes",
+    "change_tonnes", "total_value_usd", "data_source", "quality_flag",
+)
+# (akshare 接口名, trader_class, asset_class) —— 四报表实测列数 37/28/37/28 =
+# 1 日期列 + 12/9 品种 × 3（多头/空头/净仓位），实测 1935 行/表（2026-09-18）
+_CFTC_SOURCES: Final[tuple[tuple[str, str, str], ...]] = (
+    ("macro_usa_cftc_c_holding", "non_commercial", "goods"),
+    ("macro_usa_cftc_nc_holding", "non_commercial", "currency"),
+    ("macro_usa_cftc_merchant_goods_holding", "commercial", "goods"),
+    ("macro_usa_cftc_merchant_currency_holding", "commercial", "currency"),
+)
+_CFTC_LONG_SUFFIX: Final = "-多头仓位"
+_GOLD_FUND_CODE: Final = "GLD"
+
+# 品类片段合并前的同值回退表名（真源仍是 business_data_categories.yaml；本表仅在
+# registry KeyError 分支被读到，片段合并后 registry 恒命中→本表休眠）。
+# 值与 docs/_working/fullflow_campaign/lanes/altdataF_categories_yaml_fragment.yaml 逐字一致。
+_PENDING_CATEGORY_TABLES: Final[dict[str, str]] = {
+    "market_cftc_positioning": "c1_market.cftc_positioning",
+    "market_gold_etf_holdings": "c1_market.gold_etf_holdings",
+}
+
+
+def _resolve_category_table(category_id: str) -> str:
+    """按 category_id 派生全限定表名：registry 优先，未注册时读片段同值回退。
+
+    Args:
+        category_id: 品类标识（如 market_cftc_positioning）。
+
+    Returns:
+        全限定表名（如 c1_market.cftc_positioning）。
+
+    Raises:
+        KeyError: 既未注册也无回退（fail-closed，禁止凭记忆编表名）。
+    """
+    try:
+        return get_registry().table(category_id)
+    except KeyError:
+        pending = _PENDING_CATEGORY_TABLES.get(category_id)
+        if pending is None:
+            raise
+        log.warning(
+            "品类 %s 未并入 business_data_categories.yaml，暂用片段同值回退表名 %s",
+            category_id, pending,
+        )
+        return pending
+
 # 口岸月度 4 系列(51400001/2/5/20)与水库水位表(1952552493)已验证可调但未接线
 # （DDL/解析器/任务缺），下批补——勿在此加入半接线 cap（2026-09-14）
 _AKSHARE_ALT_CAPABILITIES = frozenset({
@@ -288,6 +356,8 @@ _AKSHARE_ALT_CAPABILITIES = frozenset({
     "alt_typhoon_landfall_history", "alt_typhoon_names", "cb_premium_median",
     # D4 物理另类·油价链三件+F13（2026-09-18 夜班，altdata_line D4 波2）
     "ndrc_fuel_price", "futures_warehouse_receipt", "road_freight_index", "agri_wholesale_index",
+    # D5 跨资产·H7/H8（2026-09-18 全流通战役 st-ff-newsrc-20260918 补 provider 腿）
+    "cftc_positioning", "gold_etf_holdings",
     })
 
 
@@ -643,6 +713,14 @@ class AkshareAltProvider(IngestProviderBase):
             # 农产品批发价格 200 指数两序列（全量幂等，日度长历史）
             CapabilityContract("agri_wholesale_index", supports_symbols_null=True,
                                supports_incremental=False, requires_date_range=False),
+            # D5 跨资产·H7/H8（2026-09-18 全流通战役 st-ff-newsrc-20260918）：
+            # 源端无日期过滤参数→全量幂等重拉（ReplacingMergeTree 同键替换，无版本列）
+            CapabilityContract("cftc_positioning", supports_symbols_null=True,
+                               supports_incremental=False, supports_full_refresh=True,
+                               requires_date_range=False),
+            CapabilityContract("gold_etf_holdings", supports_symbols_null=True,
+                               supports_incremental=False, supports_full_refresh=True,
+                               requires_date_range=False),
         ],
         known_issues=[
             "千股千评接口仅返回当日快照，无历史回补通道（每日累积模式）",
@@ -1953,6 +2031,114 @@ class AkshareAltProvider(IngestProviderBase):
         error = "; ".join(errors) if errors else None
         yield FetchResult(table=table, columns=_AGRI_INDEX_COLUMNS, rows=rows,
                           last_key=last_key, elapsed_sec=time.monotonic() - t0, error=error)
+
+    # ---- D5 跨资产·H7 CFTC 持仓报告（COT）/ H8 SPDR 黄金 ETF 持仓 ----
+
+    def _fetch_cftc_positioning(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """CFTC 持仓报告四报表宽转长，全量幂等 → c1_market.cftc_positioning。
+
+        四接口（商品/外汇 × 商业/非商业）各 1935 行 37 或 28 列，长表化后
+        1935×(12+9)×2 = 81,270 行/轮，实测全量 4.1s（2026-09-18 本机）。
+        report_date 取接口自带"日期"列（PIT 锚=报告 as-of 周二，非运行日）；
+        单接口失败只记 error 不拖垮其余三张（与 agri 两序列同约定）。
+        """
+        import akshare as ak
+
+        table = payload.table or _resolve_category_table(_CAT_CFTC_POSITIONING)
+        t0 = time.monotonic()
+        rows: list[tuple] = []
+        errors: list[str] = []
+        for ak_fn, trader_class, asset_class in _CFTC_SOURCES:
+            try:
+                df = self._call_with_policy(getattr(ak, ak_fn), policy)
+            except Exception as e:  # noqa: BLE001 — 单报表失败不拖垮其余三张
+                errors.append(f"{ak_fn}:{str(e)[:80]}")
+                continue
+            if df is None or len(df) == 0:
+                errors.append(f"{ak_fn}:返回空")
+                continue
+            rows.extend(_cftc_frame_rows(df, trader_class, asset_class))
+        rows.sort(key=lambda t: (t[1], t[2], t[3], t[0]))
+        last_key = max((r[0] for r in rows), default="")
+        error = "; ".join(errors) if errors else None
+        yield FetchResult(table=table, columns=_CFTC_POSITIONING_COLUMNS, rows=rows,
+                          last_key=last_key, elapsed_sec=time.monotonic() - t0, error=error)
+
+    def _fetch_gold_etf_holdings(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """SPDR Gold Trust(GLD) 持仓吨位日频，全量幂等 → c1_market.gold_etf_holdings。
+
+        akshare macro_cons_gold 返回 2004-11-19 起 2,871 行（实测 59s，源端限速）。
+        trade_date 取接口"日期"列（PIT 锚）；"增持/减持"源端已是日环比差分，
+        原样落库不做二次差分（避免口径二义）。
+        """
+        import akshare as ak
+
+        table = payload.table or _resolve_category_table(_CAT_GOLD_ETF_HOLDINGS)
+        t0 = time.monotonic()
+        try:
+            df = self._call_with_policy(ak.macro_cons_gold, policy)
+        except Exception as e:  # noqa: BLE001 — 接口异常转 FetchResult.error 不抛出
+            yield FetchResult(table=table, columns=_GOLD_ETF_HOLDINGS_COLUMNS, rows=[],
+                              last_key="", elapsed_sec=time.monotonic() - t0,
+                              error=f"macro_cons_gold:{str(e)[:120]}")
+            return
+        if df is None or len(df) == 0:
+            yield FetchResult(table=table, columns=_GOLD_ETF_HOLDINGS_COLUMNS, rows=[],
+                              last_key="", elapsed_sec=time.monotonic() - t0,
+                              error="macro_cons_gold 返回空")
+            return
+        rows = _gold_etf_rows(df)
+        last_key = max((r[1] for r in rows), default="")
+        yield FetchResult(table=table, columns=_GOLD_ETF_HOLDINGS_COLUMNS, rows=rows,
+                          last_key=last_key, elapsed_sec=time.monotonic() - t0, error=None)
+
+
+def _cftc_market_triples(columns: list[str]) -> list[tuple[str, str, str, str]]:
+    """从 CFTC 宽表列名解析 (品种, 多头列, 空头列, 净仓位列) 四元组，保持源列序。"""
+    triples: list[tuple[str, str, str, str]] = []
+    for col in columns:
+        if not col.endswith(_CFTC_LONG_SUFFIX):
+            continue
+        market = col[: -len(_CFTC_LONG_SUFFIX)]
+        short_col, net_col = f"{market}-空头仓位", f"{market}-净仓位"
+        if short_col in columns and net_col in columns:
+            triples.append((market, col, short_col, net_col))
+    return triples
+
+
+def _cftc_frame_rows(df, trader_class: str, asset_class: str) -> list[tuple]:
+    """单张 CFTC 宽表 → (report_date, trader_class, asset_class, market, 多, 空, 净, 源, 质量) 长行。"""
+    columns = [str(c) for c in df.columns]
+    triples = _cftc_market_triples(columns)
+    rows: list[tuple] = []
+    for _, r in df.iterrows():
+        report_date = _norm_date(r.get("日期"))
+        if not report_date:
+            continue
+        for market, long_col, short_col, net_col in triples:
+            rows.append((report_date, trader_class, asset_class, market,
+                         _to_int(r.get(long_col)), _to_int(r.get(short_col)),
+                         _to_int(r.get(net_col)), "akshare_alt", 1))
+    return rows
+
+
+def _gold_etf_rows(df) -> list[tuple]:
+    """macro_cons_gold → (fund_code, trade_date, fund_name, 总库存, 增减持, 总价值, 源, 质量)。"""
+    rows: list[tuple] = []
+    for _, r in df.iterrows():
+        trade_date = _norm_date(r.get("日期"))
+        if not trade_date:
+            continue
+        rows.append((_GOLD_FUND_CODE, trade_date, _tsv_safe(r.get("商品")) or "黄金",
+                     _round_or_none(r.get("总库存"), 3), _round_or_none(r.get("增持/减持"), 3),
+                     _round_or_none(r.get("总价值"), 2), "akshare_alt", 1))
+    return rows
+
+
+def _round_or_none(v, digits: int) -> float | None:
+    """按小数位四舍五入（Decimal(18,3)/Decimal(24,2) 列防超精度写入）；非数值→None。"""
+    f = _to_float(v)
+    return None if f is None else round(f, digits)
 
 
 def _warehouse_month_chunks(start: datetime.date, end: datetime.date) -> list[datetime.date]:
