@@ -925,10 +925,12 @@ class TradingSession:
                 current_holdings=current_holdings,
                 limits=self._config.risk_limits,
             )
+            # 红队批修正：HALT 扫描同入 try——第三方校验器返回 None/非可迭代时
+            # 旧写法在 try 外抛 TypeError 直接炸出本方法（拒单语义未被拦截面接住）。
+            halt = any(v.severity == "HALT" for v in violations)
         except Exception:  # noqa: BLE001 — 校验失效类型不可枚举，Fail-Closed 必须全捕获
             _logger.exception("风控校验失效，Fail-Closed 拒单: symbol=%s", symbol)
             return True
-        halt = any(v.severity == "HALT" for v in violations)
         if halt:
             _logger.warning(
                 "order blocked by risk HALT: symbol=%s violations=%s",

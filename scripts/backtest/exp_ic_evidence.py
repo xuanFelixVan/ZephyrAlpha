@@ -49,6 +49,7 @@ import 复用，保证与既有 exp_r36 出证逐键可比。
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from collections.abc import Callable
 from datetime import datetime
@@ -565,6 +566,10 @@ def render_zero_data(reason: str) -> str:
     """零数据诚实件：表空/不可达时如实记录不可考，禁造数（结构完整可独立归档）。"""
     run_ts = datetime.now(ZoneInfo("UTC")).isoformat(timespec="seconds")
     proto = ev._PROTOCOLS["exp_r36"]
+    # 红队批修正：reason 经 json.dumps 引号壳——异常摘要必含 "类型: 消息" 的 ": "
+    # （YAML plain scalar 中第二个 ": "=mapping 错误），旧裸拼出件自身不可解析
+    # （与主件 reason/red_reasons 引号壳同病，e3eeb51e57 漏了零数据支路）。
+    reason_json = json.dumps(reason, ensure_ascii=False)
     return (
         "# WO-⑤-12 EXP 族 IC 出证——零数据诚实件（表空/不可达，禁造数）\n"
         "evidence_id: exp_ic_evidence_ds271\n"
@@ -573,7 +578,7 @@ def render_zero_data(reason: str) -> str:
         "ruling: 裁定#338④（commit 08e09187a2）\n"
         "status: NOT_EVALUABLE\n"
         "zero_data: true\n"
-        f"reason: {reason}\n"
+        f"reason: {reason_json}\n"
         "caliber:\n"
         "  ruling_338_4_verbatim: |\n"
         f"    {RULING_338_4_VERBATIM}\n"

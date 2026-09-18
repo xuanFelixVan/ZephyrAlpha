@@ -268,6 +268,18 @@ class TestRender:
         assert doc["zero_data"] is True and doc["status"] == "NOT_EVALUABLE"
         assert doc["factors"] == {}
 
+    def test_zero_data_reason_with_exception_colon_parsable(self):
+        """红队批回归：_fail_reason 摘要恒含 "类型: 消息" 的 ": "（异常格式化必有），
+        裸拼时 YAML 把第二个 ": " 当 mapping → 零数据件自身不可解析（实证
+        ScannerError line 8）。引号壳后须可解析且内容原样。"""
+        import yaml
+
+        reason = ("探表失败（HTTPError: 404 bad gateway @ ch_reader.py:50 query）——"
+                  "数据不可考，零造数")
+        doc = yaml.safe_load(exe.render_zero_data(reason))
+        assert doc["zero_data"] is True
+        assert doc["reason"].startswith("探表失败（HTTPError: 404")
+
 
 if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])

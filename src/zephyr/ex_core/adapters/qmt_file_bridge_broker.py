@@ -378,6 +378,13 @@ class QmtFileBridgeBroker(BrokerInterface):
         self._sync_interval = sync_interval
         self._max_retry = max_retry
         self._risk_validator = risk_validator
+        if env == "sim" and risk_validator is None:
+            # R-H5E-1 可见性：sim 未注入校验器=进桥前闸不生效（向后兼容放行语义）。
+            # 运维红线留痕：装配层忘了注入时日志可见，而不是静默裸奔。
+            _logger.warning(
+                "sim Broker 未注入 risk_validator——进桥前风控前置校验不生效"
+                "（向后兼容放行）；需要 R-H5E-1 闸门须显式传入 risk_validator"
+            )
 
         # 文件路径
         self._bridge_dir = Path(self._config["bridge_dir"])
@@ -545,6 +552,11 @@ class QmtFileBridgeBroker(BrokerInterface):
                 current_holdings=self._holdings_as_weights(),
                 limits=self._pretrade_limits(order),
             )
+            # 红队批修正：HALT 扫描必须在 try 内——有 bug 的第三方校验器返回
+            # None/非可迭代/元素缺 severity 时，旧写法在 try 外抛 TypeError/
+            # AttributeError，违反本方法 QmtFileBridgeError 错误契约（虽仍不放行，
+            # 但拒单原因与异常链失真）。
+            halt_violations = [v for v in violations if v.severity == "HALT"]
         except Exception as exc:  # noqa: BLE001 — 校验失效类型不可枚举，Fail-Closed 必须全捕获
             _logger.error(
                 "进桥前风控校验失效，Fail-Closed 拒单: env=%s order=%s symbol=%s error=%r",
@@ -557,7 +569,6 @@ class QmtFileBridgeBroker(BrokerInterface):
                 f"风控校验失效（fail-closed 拒单，订单不进桥）: order={order.order_id} symbol={order.symbol}: {exc}"
             ) from exc
 
-        halt_violations = [v for v in violations if v.severity == "HALT"]
         if halt_violations:
             reasons = "; ".join(v.description for v in halt_violations)
             _logger.error(

@@ -180,6 +180,36 @@ class TestSimBridgePretradeGate:
             broker.disconnect()
         assert "rh5e-001" in _instruction_ids(sim_orders_file)
 
+    def test_sim_without_validator_logs_visibility_warning(self, tmp_bridge, caplog):
+        """红队批回归：sim 未注入校验器=闸不生效（向后兼容语义），但必须日志留痕——
+        装配层忘注入时可见，而不是静默裸奔。"""
+        import logging
+
+        with caplog.at_level(logging.WARNING,
+                             logger="zephyr.ex_core.adapters.qmt_file_bridge_broker"):
+            broker = _patched_broker("sim", _tmpdir=tmp_bridge)
+        try:
+            assert any("未注入 risk_validator" in r.message for r in caplog.records)
+        finally:
+            broker.disconnect()
+
+    def test_sim_validator_none_return_fail_closed(self, tmp_bridge, sim_orders_file):
+        """红队批回归：有 bug 的第三方校验器返回 None → 仍 QmtFileBridgeError 拒单
+        且不进桥（旧写法 HALT 扫描在 try 外抛 TypeError，错误契约失真）。"""
+
+        class BuggyNone:
+            def validate_order(self, **kwargs):
+                return None
+
+        broker = _patched_broker("sim", risk_validator=BuggyNone(), _tmpdir=tmp_bridge)
+        try:
+            assert broker.connect() is True
+            with pytest.raises(QmtFileBridgeError, match="fail-closed"):
+                broker.submit_order(_make_order())
+        finally:
+            broker.disconnect()
+        assert "rh5e-001" not in _instruction_ids(sim_orders_file)
+
 
 # ── real 分流：实盘路径不触校验（裁定 #338⑤ Owner 门）─────────────────────
 
@@ -231,6 +261,17 @@ class TestTradingSessionRiskFailClosed:
     def test_halt_violation_blocks_order(self):
         """HALT 违规 → 拦单（既有行为回归钉）。"""
         session = _make_session(_FakeValidator(violations=[_halt_violation()]))
+        assert session._is_blocked_by_risk("600519.SH", 0.05, {}) is True
+
+    def test_validator_none_return_blocks_order(self):
+        """红队批回归：校验器返回 None（非可迭代）→ Fail-Closed 拦单 True，
+        TypeError 不向调用方泄漏（旧写法 HALT 扫描在 try 外抛出）。"""
+
+        class BuggyNone:
+            def validate_order(self, **kwargs):
+                return None
+
+        session = _make_session(BuggyNone())
         assert session._is_blocked_by_risk("600519.SH", 0.05, {}) is True
 
 

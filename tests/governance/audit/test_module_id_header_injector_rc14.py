@@ -310,3 +310,18 @@ class TestDedupTool:
 
         assert hit is False
         assert why == "line1-not-injected-block"
+
+    def test_parse_args_accepts_documented_dry_run_flag(self, monkeypatch):
+        """红队批回归：docstring 与工单口径均写 `--dry-run`，但 argparse 未注册该旗标
+        → 按文档调用直接 unrecognized arguments（exit 2）。注册后 --dry-run 显式生效
+        并压过 --apply（双旗标歧义取保守侧）。"""
+        import sys
+
+        tool = self._load_tool()
+        monkeypatch.setattr(sys, "argv", ["dedup_ttl_headers.py", "--dry-run"])
+        args = tool._parse_args()
+        assert args.dry_run is True and args.apply is False
+
+        monkeypatch.setattr(sys, "argv", ["dedup_ttl_headers.py", "--apply", "--dry-run"])
+        args2 = tool._parse_args()
+        assert args2.dry_run is True and args2.apply is True  # main 内 apply_mode= dry-run 胜

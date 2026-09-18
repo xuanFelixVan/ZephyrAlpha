@@ -120,41 +120,58 @@ def derive_source_id(name: str, url: str = "", taken: set[str] | None = None) ->
     return cand
 
 
+_REPLY_CAP = 1_000_000  # LLM 回包钳制（合法 7 字段 JSON 远小于此；防异常超大回包 DoS）
+
+
 def _parse_source_json(raw: str) -> dict | None:
-    """LLM 回包 → 第一个平衡花括号 JSON 对象（宽松截取，损坏返回 None）。"""
-    if not raw or "{" not in raw:
+    """LLM 回包 → 第一个合法 JSON 对象（raw_decode 按语法定位，损坏返回 None）。
+
+    红队批修正：旧实现手扫平衡花括号，字符串值内的 '{'/'}' 字面量被当结构符
+    （如 notes 含 JSON 样例）→ 非平衡即整包误判损坏 → 无辜降级模板卡。
+    raw_decode 按 JSON 语法解析，字符串内的花括号不再破坏定位。
+    """
+    if not raw:
         return None
-    start = raw.index("{")
-    depth = 0
-    for i in range(start, len(raw)):
-        if raw[i] == "{":
-            depth += 1
-        elif raw[i] == "}":
-            depth -= 1
-            if depth == 0:
-                try:
-                    obj = json.loads(raw[start:i + 1])
-                except json.JSONDecodeError:
-                    return None
-                return obj if isinstance(obj, dict) else None
+    raw = raw[:_REPLY_CAP]
+    dec = json.JSONDecoder()
+    idx = raw.find("{")
+    while idx != -1:
+        try:
+            obj, _end = dec.raw_decode(raw[idx:])
+        except json.JSONDecodeError:
+            idx = raw.find("{", idx + 1)  # 该 '{' 起头非法（如噪声文本），试下一个
+            continue
+        return obj if isinstance(obj, dict) else None
     return None
+
+
+def _yaml_scalar(s: str) -> str:
+    """值 → 合法 YAML 双引号标量（JSON 字符串字面量是 YAML 子集）。
+
+    红队批修正：LLM 可控字符串（source_name/source_url/notes/category）含引号/
+    冒号/换行时，旧 f-string 裸拼会破形整卡（实测 ParserError）甚至改写语义结构。
+    指令注入防线：LLM 回包只按已知键取值、恒经本函数壳进卡——注入文本只能成为
+    字符串数据，不能成为 YAML 结构（宪法 §9.11）。
+    """
+    return json.dumps(s, ensure_ascii=False)
 
 
 def _card_header(features: dict, entry: dict, *, mode: str, model: str) -> tuple[list[str], str, str, str, str]:
     """红线横幅+身份段；返回 (行, sid, task_name, url, notes)。"""
-    name = str(features.get("source_name") or "").strip() or entry["title"]
+    name = (str(features.get("source_name") or "").strip() or entry["title"])[:200]  # 钳长防异常大卡
     url = str(features.get("source_url") or "").strip()
     if not url.startswith(("http://", "https://")):
         url = entry["url"]  # LLM 给不出合法 URL → 回退条目链接（有据可查）
     notes = str(features.get("notes") or "").strip()[:200]
     sid = features.get("_source_id") or slugify_source_id(name)
     task_name = "ZephyrAlpha_" + "".join(w[:1].upper() + w[1:] for w in sid.split("_")[:4])
+    entry_brief = " ".join(str(entry["title"]).split())[:200]  # 注释行禁换行（换行后文本会被当 YAML 代码）
     lines = [
         f"# {DRAFT_BANNER}",
         f"# draft=模式 {mode} | 模型 {model} | 生成器 scripts/automation/source_card_drafter.py（重跑幂等：卡体零时间戳）",
-        f"# draft=来源条目: {entry['title']} ({entry['url']})",
+        f"# draft=来源条目: {entry_brief} ({entry['url']})",
         f"source_id: {sid}",
-        f'title: "{name}"',
+        f"title: {_yaml_scalar(name)}",
     ]
     return lines, sid, task_name, url, notes
 
@@ -193,8 +210,8 @@ def _render_llm_body(sid: str, task_name: str, url: str, notes: str,
         "probe_days: 2  # TODO(人工确认): 沿用 fx_ecb 先例默认",
         "backfill_days: 30  # TODO(人工确认): 沿用 fx_ecb 先例默认",
         "compliance:",
-        f"  source_url: {url}",
-        f'  tos_note: "{notes or "TODO(人工确认): 数据许可/限频/鉴权情况待核"}"',
+        f"  source_url: {_yaml_scalar(url)}",
+        f"  tos_note: {_yaml_scalar(notes or 'TODO(人工确认): 数据许可/限频/鉴权情况待核')}",
     ]
     return lines
 
@@ -215,8 +232,8 @@ def _render_template_body(url: str, category: str, keywords: list, notes: str) -
         "probe_days: 2  # TODO(人工确认)",
         "backfill_days: 30  # TODO(人工确认)",
         "compliance:",
-        f"  source_url: {url}",
-        f'  tos_note: "TODO(人工确认): 类别线索={category or kw or "无"}；{notes or "许可/限频待核"}"',
+        f"  source_url: {_yaml_scalar(url)}",
+        f"  tos_note: {_yaml_scalar('TODO(人工确认): 类别线索=' + (category or kw or '无') + '；' + (notes or '许可/限频待核'))}",
     ]
 
 

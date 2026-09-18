@@ -158,6 +158,9 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--scan", action="store_true", help="只出清单统计")
     parser.add_argument("--scan-loose", action="store_true", help="附报非注入形态的重复 TTL 文件（人工批）")
     parser.add_argument("--apply", action="store_true", help="执行去重（默认 dry-run）")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="只报不动（缺省即 dry-run；显式旗标对齐 docstring/工单口径，"
+                             "并强制压过 --apply 防双旗标歧义）")
     parser.add_argument("--files", default=None, help="限定文件清单（文本文件，每行一个仓内相对路径）")
     parser.add_argument("--json", default=None, help="清单落盘路径")
     parser.add_argument("--limit", type=int, default=0, help="最多处理 N 个文件（0=不限）")
@@ -218,6 +221,9 @@ def main() -> int:
     root = Path(args.root).resolve()
     only = _load_only_files(args.files)
 
+    # --dry-run 显式声明时强制只读（压过 --apply，双旗标歧义取保守侧）
+    apply_mode = bool(args.apply) and not args.dry_run
+
     hits = _collect_hits(root, only, args.limit)
     loose = loose_scan(root, only) if args.scan_loose else []
 
@@ -225,7 +231,7 @@ def main() -> int:
         "root": str(root),
         "duplicate_injected_block_files": len(hits),
         "loose_duplicate_files": len(loose),
-        "mode": "apply" if args.apply else "dry-run",
+        "mode": "apply" if apply_mode else "dry-run",
     }
     print(json.dumps(summary, ensure_ascii=False))
 
@@ -241,7 +247,7 @@ def main() -> int:
     if not hits:
         return 0
 
-    if not args.apply:
+    if not apply_mode:
         _print_dry_run_preview(hits)
         return 1
 
