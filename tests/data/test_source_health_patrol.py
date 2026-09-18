@@ -158,3 +158,59 @@ def test_alert_no_alert_fn_default_uses_alerter(tmp_path, monkeypatch):
                         lambda self, task_id, error, **kw: sent.append((task_id, kw.get("level"))))
     shp.alert(report)  # 不注入 alert_fn → 走 Alerter 正门
     assert sent == [(shp.TASK_ID, "WARN")]
+
+
+# ============== 红队批（REDA-20260918） ==============
+
+def test_main_empty_cards_dir_exit_2_no_false_green(tmp_path, monkeypatch, capsys):
+    """空目录/路径拼错：旧版 total=0 谎报 overall=pass exit 0（假绿），新版 exit 2 且不落报告。"""
+    d = tmp_path / "no_cards"
+    d.mkdir()
+    monkeypatch.setattr(sys, "argv", ["source_health_patrol.py", "--cards-dir", str(d),
+                                      "--report-dir", str(tmp_path / "r"), "--no-alert"])
+    assert shp.main() == 2
+    capsys.readouterr()
+    assert list((tmp_path / "r").glob("*.json")) == []
+
+
+def test_main_nonexistent_cards_dir_exit_2(tmp_path, monkeypatch, capsys):
+    """目录不存在（glob 空转）同样收敛 exit 2，不假绿。"""
+    monkeypatch.setattr(sys, "argv", ["source_health_patrol.py", "--cards-dir", str(tmp_path / "ghost"),
+                                      "--report-dir", str(tmp_path / "r"), "--no-alert"])
+    assert shp.main() == 2
+    capsys.readouterr()
+
+
+def test_main_alerter_crash_does_not_mask_verdict(tmp_path, monkeypatch, capsys):
+    """alerter 挂掉：main 不炸（留痕 stderr），退出码仍按巡检结论（fail=1）。"""
+    d = _card_dir(tmp_path, names=("only.yaml",))
+    monkeypatch.setattr(shp.ob, "verify",
+                        lambda c: {"table": c["table"], "rows": 0, "latest_date": None,
+                                   "task_state": "Ready"})
+
+    def boom(*a, **k):
+        raise RuntimeError("alerter down")
+
+    monkeypatch.setattr(shp, "alert", boom)
+    monkeypatch.setattr(sys, "argv", ["source_health_patrol.py", "--cards-dir", str(d),
+                                      "--report-dir", str(tmp_path / "r")])
+    assert shp.main() == shp.EXIT_FAIL  # 旧版此处直接 RuntimeError 炸穿
+    err = capsys.readouterr().err
+    assert "alerter down" in err
+
+
+def test_patrol_malformed_verify_payload_is_fail_not_crash(tmp_path):
+    """verify 载荷 rows=None（畸形）：旧版裸 TypeError 炸批，新版该卡 FAIL 不炸批。"""
+    d = _card_dir(tmp_path, names=("x.yaml", "y.yaml"))
+    report = shp.patrol(d, verify_fn=lambda c: {"table": c["table"], "rows": None,
+                                                "latest_date": None, "task_state": "Ready"})
+    assert report["overall"] == "fail"
+    assert all(c["status"] == "fail" for c in report["cards"])
+
+
+def test_patrol_empty_overall_semantics(tmp_path):
+    """patrol 编程接口：零卡报告显式 overall=empty（不再谎报 pass）。"""
+    d = tmp_path / "cards"
+    d.mkdir()
+    report = shp.patrol(d, verify_fn=_ok_verify)
+    assert report["overall"] == "empty" and report["total"] == 0

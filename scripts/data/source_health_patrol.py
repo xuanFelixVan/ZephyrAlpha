@@ -89,16 +89,25 @@ def patrol(
             result = verify_fn(card)
         except Exception as exc:  # noqa: BLE001 — verify 抛异常按卡级故障记，不炸批
             result = {"error": f"{type(exc).__name__}: {exc}"}
+        try:
+            rows = int(result.get("rows", 0))
+        except (TypeError, ValueError):
+            rows = None  # 载荷畸形（rows=None/非数值）按卡级故障判，禁裸 TypeError 炸批
         if "error" in result:
             entry.update(status="error", detail=result)
-        elif int(result.get("rows", 0)) == 0:
+        elif rows is None:
+            entry.update(status="fail", detail={"reason": "verify 载荷 rows 非整数（对账结果畸形）", **result})
+        elif rows == 0:
             entry.update(status="fail", detail={"reason": "空表（rows=0）", **result})
         else:
             entry.update(status="pass", detail=result)
         cards.append(entry)
 
     errored = [c for c in cards if c["status"] == "error"]
-    if cards and len(errored) == len(cards):
+    if not cards:
+        # 空目录/路径拼错：报 "pass" 是最危险的假绿——显式 empty 态，由 main 收敛为非零退出
+        overall = "empty"
+    elif len(errored) == len(cards):
         overall = "degraded"  # CH 断连签名：全卡 error
     elif any(c["status"] in ("fail", "error") for c in cards):
         overall = "fail"
@@ -158,6 +167,10 @@ def main() -> int:
     args = ap.parse_args()
 
     report = patrol(args.cards_dir)
+    if report["total"] == 0:
+        # 空目录/路径拼错：禁止假绿（旧版报 overall=pass exit 0），对齐 run_batch 目录无卡=2
+        print(f"巡检对象为零：目录无 *.yaml 卡片或目录不存在: {args.cards_dir}", file=sys.stderr)
+        return 2
     try:
         path = write_report(report, args.report_dir)
     except Exception as exc:  # noqa: BLE001 — fail-visible：报告落盘失败必须露出
@@ -169,7 +182,12 @@ def main() -> int:
         mark = {"pass": "PASS", "fail": "FAIL", "error": "ERR "}[c["status"]]
         print(f"  [{mark}] {c['card']} {c['detail'].get('error') or c['detail'].get('reason') or ''}")
     if not args.no_alert:
-        alert(report)
+        try:
+            alert(report)
+        except Exception as exc:  # noqa: BLE001 — 告警失败不炸主流程（ERROR_CONTRACT）：
+            # 报告已落盘留痕，stderr 露出，退出码仍按巡检结论判定
+            print(f"告警发送失败（报告已落盘，结论不受影响）: {type(exc).__name__}: {exc}",
+                  file=sys.stderr)
     return EXIT_OK if report["overall"] in ("pass", "degraded") else EXIT_FAIL
 
 
