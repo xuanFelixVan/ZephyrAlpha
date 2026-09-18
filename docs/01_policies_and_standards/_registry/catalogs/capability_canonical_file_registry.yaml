@@ -35987,6 +35987,62 @@ creation_tokens:
   token: bizmine-alpha-mining-strategy-sop-gap-report-20260918
   created_by: st-bizmine-f-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sensors_b1/bt_p1_001_index_sensor_daily.csv
+  token: bizmine-alpha-mining-bt-p1-001-index-sensor-daily-20260918
+  created_by: st-bizmine-b1-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sensors_b1/bt_p1_001_index_sensor_tier_stats.csv
+  token: bizmine-alpha-mining-bt-p1-001-index-sensor-tier-stats-20260918
+  created_by: st-bizmine-b1-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sensors_b1/bt_p1_005_overseas_leg_probe.csv
+  token: bizmine-alpha-mining-bt-p1-005-overseas-leg-probe-20260918
+  created_by: st-bizmine-b1-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sensors_b1/bt_p1_006_news_sentiment_daily.csv
+  token: bizmine-alpha-mining-bt-p1-006-news-sentiment-daily-20260918
+  created_by: st-bizmine-b1-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sensors_b1/bt_p1_006_news_sentiment_tier_stats.csv
+  token: bizmine-alpha-mining-bt-p1-006-news-sentiment-tier-stats-20260918
+  created_by: st-bizmine-b1-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sensors_b1/sensor_monotonicity_b1_exam.md
+  token: bizmine-alpha-mining-sensor-monotonicity-b1-exam-20260918
+  created_by: st-bizmine-b1-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/etf_family/etf_lane_report.md
+  token: bizmine-alpha-mining-etf-lane-report-20260918
+  created_by: st-bizmine-etf-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/etf_family/etf_rotation_backtest.md
+  token: bizmine-alpha-mining-etf-rotation-backtest-20260918
+  created_by: st-bizmine-etf-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/etf_family/etf_rotation_screen.csv
+  token: bizmine-alpha-mining-etf-rotation-screen-20260918
+  created_by: st-bizmine-etf-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/etf_family/etf_timing_screen.csv
+  token: bizmine-alpha-mining-etf-timing-screen-20260918
+  created_by: st-bizmine-etf-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/etf_family/prereg_etf_timing_rotation.md
+  token: bizmine-alpha-mining-prereg-etf-timing-rotation-20260918
+  created_by: st-bizmine-etf-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sector_family/b_sector_signal_screen.csv
+  token: bizmine-alpha-mining-b-sector-signal-screen-20260918
+  created_by: st-bizmine-sec-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sector_family/c_sector_rotation_backtest.md
+  token: bizmine-alpha-mining-c-sector-rotation-backtest-20260918
+  created_by: st-bizmine-sec-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sector_family/d_sector_family_report.md
+  token: bizmine-alpha-mining-d-sector-family-report-20260918
+  created_by: st-bizmine-sec-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
