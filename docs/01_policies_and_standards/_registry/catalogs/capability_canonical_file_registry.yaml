@@ -35903,4 +35903,8 @@ creation_tokens:
   token: fullflow-last-last-prescriptions-20260918
   created_by: st-ff-last-20260918
   capability: fullflow-last
+- file: docs/_working/bizmine_night/bizmine_general_order.md
+  token: bizmine-alpha-mining-bizmine-general-order-20260918
+  created_by: st-bizmine-20260919
+  capability: bizmine_alpha_mining
 di_seam_exemptions: []
