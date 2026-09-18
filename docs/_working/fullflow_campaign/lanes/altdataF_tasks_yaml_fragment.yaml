@@ -1,0 +1,42 @@
+# altdataF 车道 tasks.yaml 片段（交总包转 residG 合并 —— src/zephyr/data/config/tasks.yaml 归 residG 独占）
+# 来源车道: st-ff-altdataF-20260918（全流通战役·数据源接入）
+# 日期: 2026-09-18
+# 合并方式: 文本追加到 tasks 列表尾部（建议紧跟 agri_wholesale_index_refresh 之后的 D5 跨资产段）
+# 前置依赖（本车道已落地，合并后即可跑）:
+#   - 表已建并 verify OK: c1_market.cftc_positioning / c1_market.gold_etf_holdings
+#     （部署件 scripts/ch/apply_cross_asset_ddl.py，DDL 真源 schemas/categories/market/market_cftc_*.py|market_gold_etf_holdings.py）
+#   - provider 能力已接: akshare_alt_provider 新增 capability cftc_positioning / gold_etf_holdings
+#   - 哨兵阈值行已加: src/zephyr/data/config/data_supply_sentinel.yaml 末尾两条
+#   - 品类条目片段（需并入 docs/03_modules/_cross_layer/database/business_data_categories.yaml）:
+#     docs/_working/fullflow_campaign/lanes/altdataF_categories_yaml_fragment.yaml
+# 首跑实证（2026-09-18 本机全量回填）:
+#   cftc_positioning   inserted=81,270 行  区间 1986-01-15 ~ 2026-09-08  21 品种 × 2 交易者类别
+#   gold_etf_holdings  inserted=2,871  行  区间 2004-11-19 ~ 2026-09-17
+
+- task_id: cftc_positioning_refresh
+  table: c1_market.cftc_positioning
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: false        # 全量幂等（源端无日期过滤参数；~81k 行/轮，实测 6.6s）
+  date_col: report_date
+  dependencies: []
+  capability: cftc_positioning
+  symbols:
+  extra:
+    description: "CFTC 持仓报告(COT)四报表宽转长——AKShare macro_usa_cftc_c_holding(商品非商业)+macro_usa_cftc_nc_holding(外汇非商业)+macro_usa_cftc_merchant_goods_holding(商品商业)+macro_usa_cftc_merchant_currency_holding(外汇商业)；1986- 周频全史；上游=金十 datacenter dc_cftc_* 族(实测仍周更,与 2025-10 停更的议息日历族不同报表)"
+
+  fallback_sources: []    # 显式置空：CFTC 官网 publicreportfile 需自行解析 ZIP/CSV，akshare 金十封装是当前唯一结构化免费通道；停更则改走官网下载(SOP §2 download 路径)，备源建设已登记 DS-CAND-024 notes
+
+- task_id: gold_etf_holdings_refresh
+  table: c1_market.gold_etf_holdings
+  source: akshare_alt
+  schedule: daily_capital
+  incremental: false        # 全量幂等（~2.9k 行，实测 104.6s 含源端限速）
+  date_col: trade_date
+  dependencies: []
+  capability: gold_etf_holdings
+  symbols:
+  extra:
+    description: "SPDR Gold Trust(GLD)持仓吨位日频——AKShare macro_cons_gold(上游=金十 datacenter dc_etf_gold)；2004-11-19 起；列=总库存(吨)/增持减持(吨)/总价值(USD)；与 cftc_positioning market_name='黄金' 非商业净持仓交叉验证(实物配置盘 vs 投机盘)"
+
+  fallback_sources: []    # 显式置空：SPDR 官网 spdrgoldshares.com 提供历史 CSV 下载(可作 download 型备源,未接)；akshare 金十封装为当前唯一 API 通道

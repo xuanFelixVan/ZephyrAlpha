@@ -1,0 +1,176 @@
+---
+ttl: task_bound
+completes_when: 2026-09 模拟盘月度备忘录被下一次月结取代
+---
+
+# sim 绩效月报+转正建议书——202609
+
+> 2026-09-18 20:01｜MOD-BT-193 机器备料｜**sim→production = Owner 门（OwnerTokenGuard），本件非裁定、仅评估要点**
+
+## sim 档（2 条）
+
+### STR-E-TIMING-001 恐慌反弹分布预测
+- 类别：value_reversal｜代码：`scripts/backtest/lane_e_quantile_baseline.py`
+- IS Sharpe：None｜OOS：无
+- 入库证据：三窗口全绿：IS 2020-2023 Sharpe=+1.15 / OOS 2024-2026 Sharpe=+0.83 / S3 2016-2019 Sharpe=+0.98；年衰减11%；唯一三窗全绿策略（run=SCR-C4-OOS2-20260913/SCR-C4-2016-2019-sample3）；台账=C
+- Owner 评估要点：①模拟盘成交/滑点与回测口径偏差 ②最近一段 OOS 是否仍>0 ③与实盘 sleeve 相关系数 ④容量与换手可执行性
+
+### STR-VREV-025 None
+- 类别：value_reversal｜代码：`scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py`
+- IS Sharpe：1.15｜OOS：C4-OOS-2024-2026:SR=0.834(衰减0.1099); C4-OOS2-20260913:SR=0.834(衰减0.1099); C4-2016-2019-sample3:SR=0.983(衰减0.0581); C4-OOS2-20260914:SR=0.834(衰减0.1099)
+- 入库证据：C4 三窗全绿：IS 2020-2023 Sharpe=1.15(DSR=0.53) / OOS 2024-2026H1 Sharpe=0.83(年衰减11%) / 2016-2019 Sharpe=0.98(DSR=0.98)；参数网格 81 格 77 正（95% 稳健，唯一退化区=10 日短持）；逐年全正；短板=十
+- Owner 评估要点：①模拟盘成交/滑点与回测口径偏差 ②最近一段 OOS 是否仍>0 ③与实盘 sleeve 相关系数 ④容量与换手可执行性
+
+## candidate 档留观（151 条）
+
+- STR-MULTIFACTOR-027 双底右侧确认四条件（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-001 右侧确认三条件（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-002 双均线交叉趋势策略（momentum_trend）：IS=None，OOS 段数=0
+- STR-DABAN-001 板块内选股 5 步漏斗（daban）：IS=None，OOS 段数=0
+- STR-DABAN-002 板块资金流入三日规则（daban）：IS=None，OOS 段数=0
+- STR-DABAN-003 板块强度数量档（daban）：IS=None，OOS 段数=0
+- STR-MOMTREND-003 板块启动/熄火条件库（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-028 2:30 时间节点（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-004 尾盘 2:57 竞价进场（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-029 周末变量应对（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-005 外围消息影响层级与应对（momentum_trend）：IS=None，OOS 段数=0
+- STR-VREV-001 情绪回暖干超跌（value_reversal）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-030 大阴线次日"该弱不弱"（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-031 4 分钟涨速资金异动（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-032 主力游资打架与国家队操纵应对矩阵（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-006 短趋势选股四步法（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-007 波段选股四步法（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-033 股票池建立与管住手（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-034 空仓等主线（multifactor）：IS=None，OOS 段数=0
+- STR-VREV-002 下跌趋势不选/不抄底（value_reversal）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-035 充分调整条件（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-036 板块容量（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-037 启动前不加速（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-038 选股四要素（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-039 孤立拉升规避（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-040 老题材反抽不追（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-041 估值分不适用于周期股（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-042 选票九阶段 SOP（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-043 全市场无偏扫描（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-044 可交易池剔除规则（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-008 短线池 5 分制打分（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-009 波段池 5 分制打分（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-045 双策略 5 分（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-046 三维共振体检（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-047 护盘蓝筹 ≠ 进攻标的（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-048 板块内个股区间涨幅>板块指数（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-010 辅助确认工具指定法（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-049 ETF 多只对比四维选优法（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-050 研报分类投研体系（data_asset）：IS=None，OOS 段数=0
+- STR-MOMTREND-011 波段调整 50% 趋势走坏阈值（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-012 强中强双重共振筛选（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-013 强趋势独立品种画像（momentum_trend）：IS=None，OOS 段数=0
+- STR-DABAN-004 强势股首次回踩 5 日线先手（daban）：IS=None，OOS 段数=0
+- STR-DABAN-005 缩量环境两策略（daban）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-051 次日溢价思维（multifactor）：IS=None，OOS 段数=0
+- STR-DABAN-006 左侧先手成本规则（daban）：IS=None，OOS 段数=0
+- STR-VREV-003 抄底资金成本位法则（value_reversal）：IS=None，OOS 段数=0
+- STR-MOMTREND-014 机构评分模型（momentum_trend）：IS=None，OOS 段数=0
+- STR-DABAN-007 连板潜力评分卡（daban）：IS=None，OOS 段数=0
+- STR-MOMTREND-015 0-100 综合分排名与角色瑕疵标注体系（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-052 "中字头+资金流入"双条件选股（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-016 个股放量+超大单同向 B 类入选条件（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-017 "接飞刀"判定标准（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-053 "单列观察"中间分类（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-054 庄股选股四标准与防范规则（multifactor）：IS=None，OOS 段数=0
+- STR-DABAN-008 涨停板潜力 IC 加权评分（daban）：IS=None，OOS 段数=0
+- STR-DABAN-009 风格体制-策略映射（daban）：IS=None，OOS 段数=0
+- STR-DABAN-010 量能突变风险信号（daban）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-055 板块指数前置检验三判据（multifactor）：IS=None，OOS 段数=0
+- STR-DABAN-011 大阳线/涨停板半分位以上横盘选股形态（daban）：IS=None，OOS 段数=0
+- STR-DABAN-012 策略池管理体系（daban）：IS=None，OOS 段数=0
+- STR-MOMTREND-018 策略模板库与默认参数组（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-019 突破型第一买点（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-020 回踩确认第二买点（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-021 加速第三买点（risk_rule）：IS=None，OOS 段数=0
+- STR-SECTOR-001 震荡潜伏买点（sector_rotation）：IS=None，OOS 段数=0
+- STR-VREV-004 超短尾盘套利买点（value_reversal）：IS=None，OOS 段数=0
+- STR-MOMTREND-022 分批建仓/金字塔加仓（momentum_trend）：IS=None，OOS 段数=0
+- STR-VREV-005 买反弹不买阴线（value_reversal）：IS=None，OOS 段数=0
+- STR-MOMTREND-023 ETF 定投/越跌越买（momentum_trend）：IS=None，OOS 段数=0
+- STR-DABAN-013 双策略共振买入信号（daban）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-056 共振触发条件矩阵（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-057 板块-个股一致性校验（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-058 买点三档裁决（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-059 盈亏比 <2:1 不做（multifactor）：IS=None，OOS 段数=0
+- STR-VREV-006 反弹概率分级（value_reversal）：IS=None，OOS 段数=0
+- STR-VREV-007 三种开盘情形应对矩阵（value_reversal）：IS=None，OOS 段数=0
+- STR-DABAN-014 全仓四硬条件（daban）：IS=None，OOS 段数=0
+- STR-VREV-008 主案+备案双情景应对（value_reversal）：IS=None，OOS 段数=0
+- STR-VREV-009 切换只活一天基率（value_reversal）：IS=None，OOS 段数=0
+- STR-DABAN-015 半路回踩均价线套利（daban）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-060 竞价弱转强买点（multifactor）：IS=None，OOS 段数=0
+- STR-DABAN-016 回封打板金额确认（daban）：IS=None，OOS 段数=0
+- STR-VREV-010 筑底五原则（value_reversal）：IS=None，OOS 段数=0
+- STR-MOMTREND-024 多维底部确认与右侧入场（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-061 开仓期望值门槛（multifactor）：IS=None，OOS 段数=0
+- STR-VREV-011 次日上涨概率门槛体系（value_reversal）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-062 J 值极端超买降级 B 类等回调（risk_rule）：IS=None，OOS 段数=0
+- STR-DABAN-017 弱修复次日操作前置（daban）：IS=None，OOS 段数=0
+- STR-DABAN-018 一进二节点与首板共振（daban）：IS=None，OOS 段数=0
+- STR-MOMTREND-025 强势股分时突破买点精确口径（momentum_trend）：IS=None，OOS 段数=0
+- STR-VREV-012 分时五大经典卖点（value_reversal）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-063 移动止盈法/移动挂单法（multifactor）：IS=None，OOS 段数=0
+- STR-VREV-013 新股上市首日卖出（value_reversal）：IS=None，OOS 段数=0
+- STR-MOMTREND-026 分时急反应卖法（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-027 趋势对应卖点（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-064 分批卖出法（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-028 锚定法卖出（momentum_trend）：IS=None，OOS 段数=0
+- STR-MOMTREND-029 板块见顶四特征预警（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-065 解放套牢盘不卖（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-066 共振卖出信号（multifactor）：IS=None，OOS 段数=0
+- STR-VREV-014 持仓处置规则（value_reversal）：IS=None，OOS 段数=0
+- STR-VREV-015 弱资产换仓（value_reversal）：IS=None，OOS 段数=0
+- STR-DABAN-019 连板止盈三规则（daban）：IS=None，OOS 段数=0
+- STR-VREV-016 阶梯式减仓 SOP（value_reversal）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-067 追踪止损与分批止盈参数（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-068 目标价到达分批止盈（multifactor）：IS=None，OOS 段数=0
+- STR-DABAN-020 前排股 10:00-10:30 不封板部分止盈（daban）：IS=None，OOS 段数=0
+- STR-VREV-020 筑底/极限施压正向 T+0 纪律（risk_rule）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-070 行情三分仓位法（risk_rule）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-071 宽基 ETF 配置 2-3 成（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-072 资金体量差异化（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-030 分仓管理（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-073 首批+二批+现金机动仓位分配（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-074 加仓路径预埋（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-075 哑铃对冲（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-076 相关性矩阵+敞口合并计算（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-077 单板块上限 20%总资产（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-078 共振等级→仓位映射（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-079 共振策略首仓即终仓（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-080 底仓+活仓模式（multifactor）：IS=None，OOS 段数=0
+- STR-MOMTREND-031 放量阳线推仓位+次日多头思维切换（momentum_trend）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-081 仓位双系数公式（multifactor）：IS=None，OOS 段数=0
+- STR-VREV-021 市场状态-策略-仓位动态映射（value_reversal）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-082 策略分级标准（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-083 止损"用仓位换宽度"策略（multifactor）：IS=None，OOS 段数=0
+- STR-VREV-022 情景预案三套应对（value_reversal）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-084 因子 IC/IR 入库阈值（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-085 回测绩效目标（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-086 波动率体制转换预警（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-087 买卖模式统计验证门槛（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-088 动态信号权重（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-089 交易计划偏差检测与异常机会评估（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-090 策略生命周期八阶段与通过标准（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-091 信号强度五级分级（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-092 机构级量化标准与策略目标（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-093 Barra 风格因子 A 股适配（multifactor）：IS=None，OOS 段数=0
+- STR-DABAN-021 扳机清单理念（daban）：IS=None，OOS 段数=0
+- STR-MOMTREND-032 竞价验证/盘中验证/盘后复核闭环（knowledge_only）：IS=None，OOS 段数=0
+- STR-VREV-023 历史同形态胜率统计思维（value_reversal）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-094 双策略共振统计独立性（multifactor）：IS=None，OOS 段数=0
+- STR-MULTIFACTOR-095 波段成功率预期心法（multifactor）：IS=None，OOS 段数=0
+- STR-TSMALL-001 None（multifactor）：IS=1.066，OOS 段数=1｜BH-FDR 留观（q≤0.10 未过，强证据批次出现时自动流转）
+- STR-VAL-001 None（multifactor）：IS=0.563，OOS 段数=1｜BH-FDR 留观（q≤0.10 未过，强证据批次出现时自动流转）
+- STR-MOMTREND-033 None（momentum_trend）：IS=0.204，OOS 段数=3｜BH-FDR 留观（q≤0.10 未过，强证据批次出现时自动流转）
+- STR-VREV-026 None（value_reversal）：IS=0.16，OOS 段数=3｜BH-FDR 留观（q≤0.10 未过，强证据批次出现时自动流转）
+- STR-DABAN-023 None（daban）：IS=0.07，OOS 段数=3｜BH-FDR 留观（q≤0.10 未过，强证据批次出现时自动流转）
+- STR-VREV-027 蓝筹&均线多头持有（MA5>MA20 前 5）（value_reversal）：IS=0.091，OOS 段数=3｜BH-FDR 留观（q≤0.10 未过，强证据批次出现时自动流转）
+- STR-MULTIFACTOR-097 C4 公式轨多因子合成（rank_cs 动量残差×换手/波动）（multifactor）：IS=0.901，OOS 段数=1｜BH-FDR 留观（q≤0.10 未过，强证据批次出现时自动流转）
+- STR-MULTIFACTOR-098 small_cap_hl（multifactor）：IS=0.518，OOS 段数=1｜BH-FDR 留观（q≤0.10 未过，强证据批次出现时自动流转）
+- STR-MULTIFACTOR-099 snake_cap（multifactor）：IS=0.397，OOS 段数=1｜BH-FDR 留观（q≤0.10 未过，强证据批次出现时自动流转）

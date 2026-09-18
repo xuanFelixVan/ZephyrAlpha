@@ -611,6 +611,68 @@ python 进程数 **80-84 个**（16 个代理各自派生 pytest/git/python 子�
   **L5 排班闸未建、`intake_e2_handoff` 出口无人消费**；且喂进去的是**人工构造的真材料**（L1 源注册表未建）
   → 车道明说"**不能说 L1→L2 已自动接通**"。**采纳其口径，本轮交付文本照此写。**
 
+**R-032 · z-verifier2 因模型服务连接中断而失败（非做完），其成品全部未落地**
+- 实测（总包亲验）：`flowthrough_verifier.py` 122,655B、`test_flowthrough_verifier.py` 15,804B、
+  `04_sixway_ledger.md` 48,311B **全部不在 HEAD**。第一腿报 82,948B / 7,642B →
+  **第二腿净加 ~40KB 实现 + ~8KB 测试，全数悬空**。122KB 那件**只有磁盘态 + G 盘快照两处存在**。
+- 死因（`dead_reason` 现值）：**VOCAB-CHAIN** —— 新增 .py 含 SSoT 路径硬编码，
+  要求经 `capability_canonical_file_registry` 反查发现。**非内容错误，可治本解。**
+- → 派 **`z-verifier3`** 接力腿（T0 先盘点前腿半成品再动手）。
+- ⚠️ **接力腿任务书里我显式撤销了两条伪 T 项**：它们的前提来自我 §6.6 的那次幻觉
+  （"prove-red 漏检 2 跳"、"93 项未归簇"）—— **不得照着修不存在的缺陷**。
+  真实缺口是第一腿自己申报的那组：⑤哨兵在岗未实现、⑥仅静态推演、`--e2e` 下游读取为近似值。
+- **本战役已出现两种类别的车道终止**：轮数耗尽（z-land、z-land2 部分）与连接中断（z-verifier2）。
+  → **共同对策**：每完成一项立即落地，禁攒批；成品双份备份 + G 盘三态快照。
+
+**R-033 · 战役协调主干四件由总包自持落地（曾是我的疏漏单点）**
+- 疏漏：我建 `CONSTRUCTION_DISCIPLINE/COORDINATION_LEDGER/FLOWTHROUGH_ACCEPTANCE_SPEC` 三件时
+  **未登记 creation_token**（CREATE-GUARD 覆盖含 .md 的七格式），致四件协调主干长期**无法提交**，
+  只以"暂存旧版 + 工作区新版"双态存在于磁盘 —— 一次车道 `git checkout HEAD --` 即可抹掉
+  §6.6 幻觉自纠与 R-029 手册更正。**总包自产物的保护责任在我，此前漏了。**
+- 已补：三件新 .md 的 token（capability=`fullflow_campaign_docs`，CAS 一次成功），
+  连同 `MAX_REVIEW_CHECKLIST.md` 与 token 注册表**入队 `q-20260918-st-fullflow-20260918-0001`（files=5）**。
+- 提交信息内已**显式声明连带吸收了他车道约 12 行 token 净增**（队列侧要求 token 与代码同批，无法拆分；净增非净删）。
+- ⚠️ 工具坑记档：`lock_files.py acquire-batch --files-from <(...)` 在本机失败
+  （Windows python 读不到 `/proc/<pid>/fd/63`）→ **清单必须走真实临时文件路径**，禁 bash 进程替换。
+
+**R-034 · z-drift 交工 + 总包拆雷 + ⚠️ 总包任务书引用失实已成规模（须如实上报）**
+- **落地 `8b12ffa789`**（第 9 笔）：`schemas/categories/intraday/market_execution_report.py` 代码真源由 `Float64`
+  对齐线上 `Nullable(Float64)` → `verify_schema_truth.py --table execution_report` **exit 0 / 0 漂移**；
+  能红证据=按字节改回 `Float64` → exit 1 且精确指名该列。回归 33+47=80 passed 零红。
+- **漂移是物理单向门（实测复现矩阵）**：`Nullable→Float64` 报 **ClickHouse Code 36**，且**与有无 NULL 数据无关**；
+  加 `DEFAULT 0` 会"成功"但**把 NULL 静默写成 0.0** → 回退路径本身就是造错数的那条路。
+  故裁定路径 A（代码对齐 DB）与路径 B **不等价**，B 若坚持=推翻 R-014 前提。
+- **"HTTP 500" 是传输层伪报**（根因二）：`ch_writer.py:427` TCP 失败降级 HTTP 用 **GET**（`:471`）
+  → `Code 164: readonly mode`，且非 200 分支**不读错误体**（`:477`）→ **真因永久丢失**。
+  → 登记为断点候选（他人面，未代修）。**这与 §5.3 里 `.runtime/tmp` 归档那次是同一类病：
+  兜底通道把真错吞成看不懂的表层码。**
+- **污染行 `-10000.0` 未处置（有意）**：车道选路③（追加新版本行，ReplacingMergeTree **无版本列**故仍可收敛），
+  但**时序绑契约批准**，本批零写。前手 5 字段备份不足回滚 → 本车道已补**全 18 列**备份内嵌案卷 §6。
+- **⚠️ 需 Owner/Max 审批（A 类，真门位）**：`architecture_model/contracts/cross_layer_contracts.yaml:806`
+  仍写 `type: float, required: true` → 契约今天**拦得住 NULL、却放行 `-10000.0` 错数**（双向探针实测 `ZA-SH-0054`）。
+  不批则 R-014 落不了地。车道**未走审批旗、未硬闯 PROTECTED-PATHS**，判定正确。
+  申请单：`adjudications/req_drift_01_contract_approval.md`（含落地配方/影响面/回滚：YAML 单行 revert + 重跑生成器，DB 侧零 ALTER）。
+- **★ 总包拆雷（本车道报回，总包亲验并处置）**：`execution_report_producer.py` 与其测试处于
+  **在 HEAD + 被暂存成删除 + 磁盘未跟踪** 三态并存，而 HEAD 的 `qmt_file_bridge_integration.py:40` 正 import 它
+  → 任何按现暂存面落地的提交会**复活 G1 崩溃、打断整条 ex_core（含前端健康面板）**。
+  → 总包处置：实测磁盘与 HEAD **逐字节相同**（sha256 `779a34e3`/`ec0684a5`）→ `git add` 抹平索引，工作区未动。
+  → **全仓同类扫查已跑**（`.runtime/tmp/ff-recon/landmine_sweep.py`，可重跑）：
+  暂存删除 **0** / 在 HEAD 但磁盘缺 **0** / 活跃 import 地雷 **0** → 那枚是唯一一个，已清。
+- **⚠️⚠️ 须如实上报Owner/Max：总包任务书里的引用失实已成规模，且我此前的"单发"结论是错的**
+  z-drift 纠正了我给它的两条事实：
+  ① 我要求它"复用前手的 NULL 测试钉"——**那些钉在仓库里不存在**（`grep zero_fill_has_no_slippage|
+     SlippageNullSemantics|one_lot_fill_still tests/` → **0 命中**，前手整体回退了，
+     我引用的"85 passed/变异 4 红"根本无从复跑）；
+  ② 我让它"把变更登记进 `schema_changes`"并给了 SOP 路径 ——
+     **`docs/.../data_ops_sop/schema_change_sop/` 不存在，且全仓无 `schema_changes` 机制**（我凭空造的）。
+  → **合计已发现 4 处**：`840515288a`（编造 commit）/ `src/.../validation/f06_e4_wfa_exam.py`（编造目录）/
+    NULL 测试钉（编造存在）/ `schema_changes`+SOP（编造机制）。
+  → **为什么我上次说"单发"是错的**：我那两次自审脚本只扫了 `COORDINATION_LEDGER` + `01_break_census` + `checklist`，
+    **没有扫我发给车道的任务书本身** —— 而任务书正是幻觉最集中的地方（我要在几十分钟内凭记忆引用大量路径）。
+  → **对后续操作的处置**：①余下车道的任务书里凡具体路径，我已改为"以你实测为准，别照我写的硬做"
+    并要求先盘点（z-verifier3/z-arch 等已带此条款）；②**收工时 Max 须对我全部任务书做一次引用存在性审计**，
+    方法同 §5.1/§5.2 但**对象换成 prompt 文本**；③本条进入复查清单**第一条之后**，作为"单发"结论的更正。
+
 ## 7. Owner 门位（登记不催，禁自行执行）
 
 以下是宪法 §5 的 high 域门位，**任何车道都不得执行**，只登记：
@@ -666,3 +728,31 @@ python 进程数 **80-84 个**（16 个代理各自派生 pytest/git/python 子�
 另：本车道另见 MANUAL-ONLY-PERMANENT 全仓扫描命中外来件
 `src/zephyr/governance/resilience_governance/emergency_track_guardian.py`（非本车道文件，
 按 §3.4 不代修），它使落地批 1b 在 preflight 即被拦——同属维护班清账范围。
+
+### 落地第三腿 st-ff-land3-20260918 · 交工与接力（2026-09-18 20:1x）
+
+**R-032 · 任务书"其余 staged 260 件"的前提被机械推翻（本腿逐件 numstat 实证）**
+- 实测 `.runtime/tmp/ff-land/rest.txt` 260 件对 HEAD 的 staged numstat 分档：
+  **revert-only（零 insert）**= tests 122 / src 43 / scripts 20 = **185 件**；
+  **has-add** = docs 34 / scripts 23 / src 14 / tests 3 / other 1 = **75 件**。
+  分类清单 `.runtime/tmp/ff-land3/rest_class.txt`（可重跑：脚本口径见本腿交工报告）。
+- 185 件里至少两类混装，**必须分诊不得整批落**：①BRK-086 式 TTL/BLUEPRINT **重复行去重**
+  （合法待落，去重后仍留一条 `# [TTL]`）；②stale index **纯回退**（删掉 HEAD 里唯一一条
+  `# [BLUEPRINT] …(auto-injected by S4 reconciler)` + `# [TTL] permanent`，落它即回退 HEAD 且触
+  TTL-METADATA）。本腿实测样本：`tests/pf_alloc/test_correlation_persistence.py`（删后无 TTL=②）、
+  `tests/signal_ashare/sector/test_sector_conduction.py`（删后仍有 TTL=①）→ **两型同存，肉眼不可分**。
+- → 判据交付：**"260 件未落"应改述为"75 件有待落增量 + 185 件待分诊"**；
+  后续任何整批 add `rest.txt` 的写法一律禁用。
+
+**R-033 · 热注册表与 TDM 的并发写实测（本腿三次撞窗）**
+- `config/trading_decision_map.yaml`：`safe_write_text` 首投 `WinError 32`（他进程读写中），
+  重试成功；期间前手留在工作区的 2 处 `algo_note_zh` 换行重包被**外部还原回 HEAD**（非本腿动作）。
+  本腿两次 TDM 改动均为 CAS 单行（TDM-E-L4-10 / TDM-F-C3-03），零覆盖他人。
+- `capability_canonical_file_registry.yaml`：登记 12 条 docs token 后对 HEAD 仍 **48 insert / 0 delete**
+  （纯 insert 达成，§3.3 判据 `grep -c '^<'`=0 通过）。
+- → 固化：**TDM/注册表写入后必须在同一条命令链内完成入队**，且入队前重跑
+  `git diff --numstat HEAD -- <册>` 自证纯 insert（本腿照此执行，两次入队未见 HOT-FILE-BASE-FRESHNESS）。
+
+| 编号 | 车道 | 主题 | 状态 |
+|---|---|---|---|
+| req_land3_01 | st-ff-land3-20260918 | 六项：residG 半截接线件 `_crisis_l1_check` 零定义（8 红+盘上破件，本腿不代修）/ G1 两件在 index 里是删除态的地雷 / `tests/pf_alloc/__init__.py` 派工项盘上不存在判陈旧 / sim-memo-202609.json 无落点 / crisis_drill 复杂度预裁已失效（复跑 over15=空集）/ TDM 并发写窗 | 待总包裁（本腿未停等，T1/T2/T3 已连落） |

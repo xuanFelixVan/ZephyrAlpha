@@ -1,0 +1,27 @@
+# altdataF 车道 business_data_categories.yaml 品类条目片段
+# 交总包合并 —— 载体 docs/03_modules/_cross_layer/database/business_data_categories.yaml 属战役全员禁写域
+# （COORDINATION_LEDGER §2），本车道只出片段不动手。
+# 来源车道: st-ff-altdataF-20260918  日期: 2026-09-18
+#
+# 为什么必须并入：TableRegistry.table(category_id) 对未登记品类抛 KeyError（fail-closed，
+# src/zephyr/data/table_registry.py:145）。为保证本车道 provider 代码在片段落地前仍可导入
+# 并实跑出证，akshare_alt_provider._resolve_category_table() 内置同值回退表
+# _PENDING_CATEGORY_TABLES（仅 2 条，片段合并后回退分支自然休眠，registry 路径优先）。
+# 合并后建议：删掉 _PENDING_CATEGORY_TABLES 或保留为 fail-safe，二者同值不产生双真源风险
+# （真源仍是本 YAML；回退表只在 KeyError 时被读到，且值与 YAML 逐字一致）。
+#
+# 字段格式照 market_agri_wholesale_index 条目（同文件既有 D5/D4 段）。
+
+- category_id: market_cftc_positioning
+  name: "CFTC持仓报告(COT)"
+  database: c1_market
+  table: cftc_positioning
+  schema_file: schemas/categories/market/market_cftc_positioning.py
+  ddl_applier: scripts/ch/apply_cross_asset_ddl.py
+
+- category_id: market_gold_etf_holdings
+  name: "SPDR黄金ETF持仓"
+  database: c1_market
+  table: gold_etf_holdings
+  schema_file: schemas/categories/market/market_gold_etf_holdings.py
+  ddl_applier: scripts/ch/apply_cross_asset_ddl.py
