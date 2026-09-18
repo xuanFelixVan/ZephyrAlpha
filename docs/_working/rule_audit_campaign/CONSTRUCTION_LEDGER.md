@@ -148,6 +148,40 @@ completes_when: 规则与审计一条龙战役波1-波5 全部收口，且本册
   ⇒ 这条与 C-37 合起来构成一族**"配置/分派的静默旁路"通用治法**：
   ①键集/分支集从强类型真源派生；②未知即 fail-loud；③红证必须"改前能红 + 改后不误伤真配置"两腿。
 
+- **R-A50｜两份宪法的分叉被逐 hunk 量清：条文级 6 处、元数据级 1 处、纯排版级 0 处**，
+  并**更正总包早前报的两个数**：①"实质分叉 5 处"漏计末节（B 侧末节仍把切换写成**未来待办**、
+  却自称现行真源 ⇒ 时态互斥属条文级，应为 6 处；只计正文则两侧同为 5）；
+  ②"重叠率 88.18%"的分子可复现（唯一非空行交集 97）但**分母 110 来路不明**，实测 A 侧唯一非空行 113 ⇒ 85.84%；
+  另附全口径谱（行级 2M/T 0.8542 / 匹配÷lenA 0.8723 / 匹配÷lenB 0.8367 / 字符级 0.9053）——
+  ⇒ **同一个"重叠率"必须有分母口径，否则两数并存就是文档矛盾**（宪法 §4.3）。
+  ★ 分叉清单判据的红证形态很好：剥 CR ⇒ 42 差异行/8 hunk；不剥 ⇒ 286 行（＝140+146 整文件假象）。
+  这与我记的"手册 §13 一切字节级比对先归一化行尾"是同一条判据的第二次独立撞实。
+- **R-A51｜★ WP17 的关键增量：补 `description` 一个字段救不回判分，"一字段修复"的设想被证伪**。
+  实测 before→after 的**来源分布**确实变了（`fail_closed 53 → gate_engine 18 + fail_closed 35`），
+  但 **`blocked_rate` 前后都是 1.0**——残余两条独立病根：
+  ①35/53 场景的 `gate_id` 在 GateEngine 未注册（`GateEngineError: 未知 gate_id='sandbox_enforcer.enforce'`，
+  还有整句散文被当 gate_id）；②18 个真判场景**全部 passed=True ⇒ 卷子没有阴性样本**，指标定义上就红不了。
+  ⇒ 卡片（WP13③）设想的"改后按场景真判"对照**不成立**；本轮 `adversarial_validation` 运行**不构成门禁面回归护栏**，
+  车道已明确拒绝把它当绿。这条同时给 WP17 定范围：三件（补字段 / 兜底不进分子 / 补阴性场景+对齐 gate_id），少一件都还是假绿。
+- **R-A52｜worktree 拆除面挖出三个新缺陷，其中一个能直接骗过操作者**。
+  ①`scripts/session_worktree.py abort <不存在的 sid>` 打印"worktree 不存在"却返回 **rc=0**
+  ⇒ 对"册籍已摘、盘上还在"的目标跑 abort 会得到**假绿成功且不删任何文件**；
+  ②`.runtime/gate_audit/worktree_abort.jsonl` 显示 09-18 20:51:15 前手已对 `st-auditdoc-v4` 跑完四证并判 `ALLOWED`，
+  册籍/`.git` 件确实被摘，**但盘上 15,533 文件的目录仍在** ⇒ 审计说拆了、盘上没拆；
+  ③该孤儿目录已完全脱离 git 管辖——对它跑 `git -C <dir> status` 看到的是**主仓**脏文件（判读陷阱）。
+  另两笔：`worktree_cleanup_policy.md:128` 要求的 `--coordinator-approved` 旗标在实现里**不存在**（只有 `--force-skip-checks`）
+  ＝policy↔实现漂移；abort 审计里 `dirty_files` 值被截成 `ocs/...`（疑 `path[1:]` 切片 bug）。
+- **R-A53｜`rule_form` 这类词表字段其实**零机械执法**——卡片说的"1 件违规"实测是 6 件**。
+  `src/zephyr/gov_enforcement/` 对 `rule_form` 零命中；gate-frontmatter 只查 ttl+doc_type（靶文件实跑 PASS）；
+  gate-vocab 只扫 `src|scripts/*.py` 与 `vocabularies/*.yaml`，不读 .md frontmatter；VR 清单无此条。
+  ⇒ 改与不改都不会被任何闸拦下——**"有词表册"不等于"词表在被执法"**；同类违规另有 5 件 `rule_form: standard`。
+- **R-A54｜C-44 的 17 个高危写点：5 文件 7 点已落地（`428898272a`），最毒的一处按证据停手**。
+  红证形态＝把每条 `safe_write_text(...)` 调用语句**逐字**从改前版与改后版摘出、同一命名空间 exec 到临时件再数 CR
+  （7 点全部 pre_CR=4→post_CR=0，判别力自检 PASS）；真链路 e2e 用 HEAD 版周历生成器跑出 `CRLF 3846`
+  与生产件实测 **3846 逐数吻合** ⇒ 坐实该点即元凶，且**未对任何生产目标运行**。
+  `externalize_algo_flow.py` 5 点未入批：该文件工作区带**他人 112 行未提交在途内容**（摘掉自己的 6 行后
+  diff 仍 112/7、零 `newline=` 指纹）⇒ 硬闯即连坐，已逐字节还原并留可套用处方。
+
 ## 2. 波1 车道回执全文（§5 六项格式，逐条嵌入，未做删改）
 ### WP1 · 两坏写入端（`st-ramp-wp1-20260919`）
 
@@ -743,6 +777,18 @@ $ git log --oneline -3 -- $C
 
 
 | **C-59** | ★ **队列正门不拦"他会话活 claim 的文件"**（本总包自我申报）：`--claim-only` 明确报 `CONFLICT: src/zephyr/data/quality_sentinel.py held by AI-NIGHT-CF1-001`、只 claim 到 1/2，随后 `--enqueue` 的**两文件项照样 done** 并成 `b3c166f988` | 判归：这是"快照入袋即所有权声明"的设计语义，还是落地面漏了 claim 对账 | 若设计如此，则 `--claim-only` 的 CONFLICT 输出是**误导**（它不该让人以为挡住就能阻止入队） | 本批**未造成连坐**（入队前我逐 hunk 核过 `git diff --numstat`=23/1，diff 里只有我自己的 4 处；且复核 `AI-NIGHT-CF1-001` 的 claim 至今仍在，说明落地没替别人释放）。但同一条路径下，若工作区当时带着他人的未提交编辑，**快照会把别人的半成品一起落库**——与宪法 §3.4 owner 责任制冲突，需 Max 定性 |
+
+
+| **C-60** | B 组处方（`ab_materials/PRESCRIPTION_B.md`，B_core 12+ 处逐行旧→新）的落地对象是真源 `AGENTS.md`＝受保护路径 + high 档，须 `[ARCH-APPROVAL:ISSUE_ID]` | Max 批准后我按处方逐行改 | 继续只留案卷 | 不点：一行未改（实况），处方停在案卷 |
+| **C-61** | ★ `agent_constitution_l0.md` 收敛方向（改指针／删除／保留）——它自称现行真源却停在切换前快照，其 F2 段给出**反向指令**（"降级走正门即可"＝不要申请制/审计） | 改成指针一行 | 删除（净删文档＝Owner 门） | **本轮唯一能直接导致违规写主区的分叉**，不点则新会话仍可能照 F2 办 |
+| **C-62** | `B_plus` 省行不省字：实测 118 行 vs A 139 行，却 **+183 字节**（7889 vs 7863 chars） | 接受"要真减必须走有损"，有损点逐条裁 | 拿 B_plus 当减肥方案 | 不点：白折腾一轮；上下文预算看字节不看行数 |
+| **C-63** | 本套卷子对"双写合并"零敏感（B_core 与 B_plus 同分 1.0），C 组 0.6584 才显著差 | 采用 B_plus 前补速查/引用型题面 | 直接用现有分数决策 | 不点：测出的是噪声（与前车道 paper_coverage 盲区同族，本轮新增一类） |
+| **C-64** | WP17 三件处方（①补 `description` ②fail_closed 兜底不进分子 ③补阴性场景 + 对齐 gate_id 册） | 三件同批 | 只做① | 只做①仍是恒 1.0（本轮实测），＝又一个"改了但没修好"的形态 |
+| **C-65** | 前一趟 `st-ramp-wp13-20260919` 也交过 WP13 ①②③（台账 L1180-1215 在案），其 `ab_pack/` 仍在 TTL tmp 里且**与我这 10 题不同卷** | 两份卷子并卷后交 Max | 只留新版 | 不点：TTL 到点丢一份，或后人再跑第三遍 |
+| **C-66** | "重叠率"两数并存（88.18% 分母 110 vs 实测 85.84% 分母 113，差 3 行的排除规则） | 统一到一个口径并写明分母定义 | 两个都留 | 文档纪律 §4.3：同一指标两个数＝矛盾隐患，**总包自己先前那个数就是分子可复现、分母来路不明** |
+| **C-67** | R-A52 四件：abort 对不存在目标 rc=0（假绿）、15,533 文件孤儿目录需 policy 射程外授权、`--coordinator-approved` 旗标不存在、`dirty_files` 截断 | ①abort 改 fail-closed 返回码 ②拆孤儿目录（先全量 sha256 入冷库）③policy 与实现对齐（改哪边由 Max 定）④修切片 | 只做①③ | ②＝**盘上删除**，破坏性 + 规模，Owner 门位；本战役只出案卷 |
+| **C-68** | R-A53 词表无执法：要不要新增一条 `rule_form ∈ rule_form_vocabulary.yaml` 的 project_wide VR | 加 VR（属新增 gate，须按 §4.1 声明替代条目） | 先把 6 件违规值改成合法值（处方 A 可粘贴，改后激活休眠 VR-011 但不引入新红） | 不点：6 件继续合规地不合规；两案可并行 |
+| **C-69** | `externalize_algo_flow.py` 5 个写点（含写 **src/\*\*/\*.py 源码本体** 的三处，最毒）——他人 112 行在途未提交 | 等其落地后套用 `.runtime/tmp/st-eolguard-20260919/pending.patch` | 由该在途会话自己吸收 | 处方已验可套用性；C-44 剩余面只剩这一家 |
 
 
 ## 4. 事实修正表（后续车道任务书必带对应行）
@@ -3167,3 +3213,40 @@ Pass 2 的纯格式清单消除）；冷库 `wp16/` 树共 **66** 个文件 = 63
   ⇒ **结论：内容安全，但程序上我没走正道**（正道＝等其释放或先与持有者错开）。把这条钉在台账里而不是删掉，
   是因为它同时暴露了 C-59——如果正门拦不住，那"claim 即排他"这个全战役都赖以避撞的前提就是假的，
   影响比一次孤立越界大得多。
+
+## 14. 波2/波3 车道回执摘要（WP13 / WP15c / eolguard，07:2x-07:5x）
+
+### 14.1 `st-wp13-20260919`（WP13 分叉清单 + A/B/C 材料 + 回归护栏判定）
+- tracked 改动 0；禁令执行有机证：三文件 sha256(16) 与前车道收工值**逐字相同**
+  （`AGENTS.md 22e1c246d8db93d2` / `agent_constitution_l0.md 1aa67ab326d0e159` / `project_rules.md 683f94e2f54a1152`）。
+- 产物 22 件双镜像（`.runtime/tmp/st-wp13-20260919/` + 冷库 `wp13/`），`sha256sum -c` 22×OK、`diff -r` 逐字节一致。
+  含 `fork_list.json`（机读 8 hunk）、`gen_fork_list.py`、`ab_materials/`（A/B_core/B_plus/C + `PRESCRIPTION_B.md` +
+  `HOWTO_run_double_blind.md`）、`discrimination.json`、`wp17_evidence.md`。
+- 实测：`lines: A=139 Bcore=119 Bplus=118 C=122; joins=20; moved=8`；卷子 A/B 均 1.0、C 0.6584、11 处锚点缺口。
+- **自曝一次工具错**（好样本，值得记）：`task_probe.py` 首版用 `"description" in mode` 判分支，
+  而模式串里就含 `description` ⇒ 两分支都走 True、假报"构造 OK"；改显式布尔才拿到真抛。首版结论作废。
+- A/B/C 跑批**未跑**（按卡片属 Max 判读），只交题面 + 材料 + 可执行命令。
+
+### 14.2 `st-wp15c-20260919`（WP15 第 6/2/1 件）
+- 第 6 件结论**写死**：`AGENTS.md` 入库 blob CR=0/LF=140、工作副本 CR=140/140、`i/lf w/crlf`、status clean
+  ⇒ **本地现象，不必改**（三态一致 f2c4aac6ff41b097…）；未修改 AGENTS.md。
+- 第 2 件：违规 1 处（`defect_pattern_checklist.md:4 rule_form: checklist`，dev blob 与盘上同）＋同类 5 处 `rule_form: standard`；
+  词表真源 `vocabularies/rule_form_vocabulary.yaml`（4 值，`total_values: 4`）与交叉册 `doc_type_vocabulary.yaml:59`；
+  处方 A/B 均可粘贴，B 须三件同批（两册 + `generate_derived_files.py --apply`，CLI 实测只有 `--check/--apply/--diff/--warn-only`）。
+- 第 1 件：**已停止拆除，只出案卷**——四证里证 2 不过（`ruledisp` 领先 14 提交/cherry 11 个 `+`、落后 95；
+  `auditdoc` 领先 2 提交、落后 153）；未用任何强制原语；tracker 未回填（清理没发生，回填＝造假）。
+  ★ 判归点：两件的"未合入"**按祖先口径成立、按内容口径不成立**（auditdoc 3 件与 tip blob 逐字节 SAME、
+  其文档件与 dev 差 6 行且**dev 侧更新**；ruledisp 唯一内容差是 5 件机器再生件）。
+- 产物 8 件双镜像 sha256 全 OK。
+
+### 14.3 `st-eolguard-20260919`（C-44 高危写点）
+- 落地 `428898272a`：5 文件 7 写点补 `newline="\n"`（profile_registry :1860/:1906、week_view :273、
+  morning_report :454、measure_calibration :388、dsr_recalc_backfill :218）；任务书给的 4 条路径**已漂移**，
+  车道现场 grep 重定位（＝又一条"派活前先 grep 被引路径"的实证）。
+- 测试：`108 passed, 1 failed`——唯一红是 `test_parse_schedule_slots_21_slots_cron_verbatim`（22≠24），
+  判读器 `classify_workspace_wip.py` 把 `config/resource_profile_registry.yaml` 归为 **stale_rollback**
+  （109/22 行外来脏，mtime<HEAD）⇒ 非本车道引入，但说明**该热册现在盘上就是旧稿态**（并入 C-16 家族观测）。
+- `resource_sampler.py:784` 的死信成因（HEAD 既有的 `registry_path`↔`ledger_path` extract 100%）由总包
+  按 R-A43 当场消掉：三处同构路径解析收敛为 `_path_from_env`，等价性两腿（缺省 + env 重定向）逐函数比对全等、
+  `tests/infrastructure/test_resource_sampler.py` 21 passed、prerun 硬阻断 0。
+- 未新增回归测试的原因（车道自报，合理）：唯一自然归宿 `tests/io/test_io_file_utils.py` 当时被活会话持有 ⇒ 按"claim 即放弃"。
