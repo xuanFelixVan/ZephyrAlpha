@@ -264,3 +264,34 @@ class TestSchedulerInjection:
         result = sched._handle_inference(self._task("task_classification", {"text": "anything"}))
         assert result["category"] == "audit"
         gw.scan_input.assert_not_awaited()
+
+
+# ── 红队加严回归（st-ff-rb-safe-20260918 攻面二④⑤）────────────────────
+# 攻击面：环境变量 ZEPHYR_LSG_LOCAL_MODEL_ENABLED=0 一次性旁路三通道全部
+# LSG 闸门，而此前该路径**零审计零日志**——llm_call_log 里 status=ok 与
+# "LSG 真放行"不可区分，"所有 LLM 调用必经 LSG" 无载体可证伪。
+# 加严只加"出声 + 台账"，放行/拦截语义逐字不变（禁用一个危险换另一个危险）。
+
+
+def test_lsg_disabled_path_leaves_bypass_ledger_trace(monkeypatch):
+    """enabled=False 必须进旁路台账并首见 WARNING（此前静默 return）。"""
+    from zephyr.integration.local_model import lsg_gate as gate_mod
+
+    monkeypatch.setattr(gate_mod, "_BYPASS_LEDGER", {})
+    gate_mod.enforce_input("anything", source="rb.offprobe", enabled=False)
+    gate_mod.enforce_output("anything", source="rb.offprobe", enabled=False)
+    gate_mod.enforce_input("again", source="rb.offprobe", enabled=False)
+    ledger = gate_mod.lsg_bypass_ledger()
+    assert ledger == {"input|rb.offprobe": 2, "output|rb.offprobe": 1}
+
+
+def test_lsg_enabled_path_records_no_bypass(monkeypatch):
+    """对照：闸门参与时不得记旁路（否则台账=噪声，度量载体失效）。"""
+    from zephyr.integration.local_model import lsg_gate as gate_mod
+
+    gw, _ = _make_gw(input_decision=SecurityDecision.ALLOW)
+    monkeypatch.setattr(gate_mod, "_gateway", gw)
+    monkeypatch.setattr(gate_mod, "_BYPASS_LEDGER", {})
+    gate_mod.enforce_input("clean text", source="rb.onprobe", enabled=True)
+    assert gate_mod.lsg_bypass_ledger() == {}
+    gw.scan_input.assert_awaited()

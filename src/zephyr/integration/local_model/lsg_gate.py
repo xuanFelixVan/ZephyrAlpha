@@ -51,7 +51,9 @@ from __future__ import annotations
 import logging
 import os
 import threading
-from typing import TYPE_CHECKING, Final
+from dataclasses import dataclass
+from functools import partial
+from typing import TYPE_CHECKING, Final, Protocol
 
 if TYPE_CHECKING:
     from zephyr.security.llm_defense.llm_security.gateway import LSGSecurityGateway, ScanResult
@@ -143,55 +145,153 @@ def _record_decision(
         _log.debug("lsg_gate: L6 审计记录失败（fail-open 不阻断主流程）", exc_info=True)
 
 
-def enforce_input(text: str, *, source: str, enabled: bool = True) -> None:
-    """LLM 调用前输入闸门：L0->L1->L2->L5 链式判决（fail-closed）。
+_BYPASS_LEDGER: dict[str, int] = {}
+_bypass_lock = threading.Lock()
 
-    - enabled=False（开关关闭）或空文本：直接放行（测试/应急通道）。
-    - 判决 BLOCK/DENY：抛 LSGBlockedError，调用方不得发起 API 调用。
-    - LSG 不可用/扫描异常：fail-closed 抛 LSGBlockedError。
-    - 每次判决（含 ALLOW）均落 L6 审计。
+
+def lsg_bypass_ledger() -> dict[str, int]:
+    """只读快照：LSG **未参与**的调用计数（键="方向|source"）。
+
+    红队加严（st-ff-rb-safe-20260918 攻面二④⑤）：环境变量
+    `ZEPHYR_LSG_LOCAL_MODEL_ENABLED=0` 会一次性旁路三通道全部输入/输出闸门，
+    而此前该路径**零审计零日志**——llm_call_log 里 status=ok 的行与"LSG 真放行"
+    逐字段不可区分，于是"所有 LLM 调用必经 LSG"既无载体可证伪、也无法事后
+    反推哪天没扫。本台账 + 首见 WARNING 就是这个载体（不改任何放行语义）。
     """
-    if not enabled or not text:
+    with _bypass_lock:
+        return dict(_BYPASS_LEDGER)
+
+
+def _record_bypass(direction: str, source: str) -> None:
+    """记"闸门未参与"——只出声，不判放行/拦截（放行语义逐字不变）。"""
+    key = f"{direction}|{source}"
+    with _bypass_lock:
+        first_seen = key not in _BYPASS_LEDGER
+        _BYPASS_LEDGER[key] = _BYPASS_LEDGER.get(key, 0) + 1
+    gw = _gateway  # 仅在网关已构造时借道 L6；绝不为记旁路去构造网关（防递归/防开销）
+    if gw is not None:
+        try:
+            layer = gw.get_layer("l6_observability")
+            if layer is not None:
+                layer.log_security_event(
+                    event_type="lsg_local_model_gate_bypass",
+                    message=f"local_model {direction} 闸门未参与 source={source} "
+                            f"（LSG enabled=False，本次调用未经安全扫描）",
+                    severity="HIGH",
+                )
+        except Exception:  # noqa: BLE001 — 审计失败不得改变放行语义
+            _log.debug("lsg_gate: 旁路审计记录失败（不阻断）", exc_info=True)
+    if first_seen:
+        _log.warning(
+            "LSG %s 闸门未参与（enabled=False, source=%s）——该通道调用未经安全扫描",
+            direction, source,
+        )
+
+
+def _bypass_guard(direction: str, source: str, *, enabled: bool, text: str) -> bool:
+    """闸门跳过判决的统一前置（红队 st-ff-rb-safe2-20260918 收口 CloneGuard）。
+
+    返回 True ⇒ 调用方直接 return（不进 L0-L5 / L3-L6 链）。
+    两条语义与前手逐字一致：enabled=False → 记一次"闸门未参与"后放行；
+    空文本 → 静默放行（不记旁路，旁账面只承载"闸被关"这一种失真）。
+    抽成单一前置是因为 `enforce_input`/`enforce_output` 各写一份同形前置
+    会构成 extract 级克隆（RULE-CLONEGUARD 无逃生，裁定口径=合并而非登记豁免）。
+
+    Args:
+        direction: "input" | "output"（进旁路台账的键，也进 WARNING 文案）。
+        source: 调用侧通道标识。
+        enabled: LSG 总闸开关（False=旁路）。
+        text: 待检文本。
+
+    Returns:
+        True=本次不经安全扫描，调用方应立即返回。
+    """
+    if not enabled:
+        _record_bypass(direction, source)
+        return True
+    return not text
+
+
+@dataclass(frozen=True)
+class _GateDirection:
+    """一个方向上 LSG 闸门**唯一真实存在**的两点文案差异（其余流水线共用）。
+
+    Attributes:
+        label: 报错文案中的方向名词（"输入"/"输出"）。
+        refusal: BLOCK/DENY 判决的处置动作——入向=调用不得发起，出向=响应不得返回。
+    """
+
+    label: str
+    refusal: str
+
+
+# 方向真源表：新增方向必须同时扩本表与 _enforce 的分派分支，
+# 未登记方向在入口即 KeyError（任何扫描都不会发生）——fail-closed 方向不放宽。
+_DIRECTIONS: Final[dict[str, _GateDirection]] = {
+    "input": _GateDirection(label="输入", refusal="拒绝发起 LLM 调用"),
+    "output": _GateDirection(label="输出", refusal="拒绝返回该响应"),
+}
+
+
+def _enforce(text: str, *, direction: str, source: str, enabled: bool = True) -> None:
+    """LSG 判决闸门的**唯一一份**实现（入/出向共用，方向差异只落在 _DIRECTIONS）。
+
+    控制流（与合并前的 enforce_input/enforce_output 逐字一致）：
+      1. _bypass_guard 前置：enabled=False 记旁路后放行；空文本静默放行。
+      2. 网关不可用 → 抛 LSGBlockedError（fail-closed，不发起/不返回）。
+      3. 按 direction 分派 gw.scan_input / gw.scan_output，经 run_sync 取判决；
+         扫描异常 → 先落 error 判决再抛 LSGBlockedError（from exc 保留链）。
+      4. 正常判决落 L6 审计。
+      5. 判决 BLOCK/DENY → 抛 LSGBlockedError（含 decision.value/blocked_by/source）。
+
+    红队 st-ff-rb-safe2/3-20260918 收口说明：入/出向在扫描方法名与报错文案之外
+    **没有任何结构差别**，两份同形实现即 extract 级克隆（RULE-CLONEGUARD 无逃生，
+    裁定口径 R-002/R-054=合并而非豁免）。故真差异降级为数据（_DIRECTIONS），
+    流水线只留一份；enforce_input/enforce_output 以 partial 绑定方向，模块内
+    不再存在第二份可比对的函数体。
+
+    Args:
+        text: 待检文本（入向=prompt，出向=模型响应）。
+        direction: "input" | "output"，须已在 _DIRECTIONS 登记。
+        source: 调用侧通道标识。
+        enabled: LSG 总闸开关（False=旁路，仍记台账）。
+    """
+    spec = _DIRECTIONS[direction]
+    if _bypass_guard(direction, source, enabled=enabled, text=text):
         return
     gw = get_gateway()
     if gw is None:
-        raise LSGBlockedError(f"LSG 不可用，fail-closed 拒绝输入 (source={source})")
+        raise LSGBlockedError(  # noqa: MSG-EXPOSURE — source=LSG 通道标签（如 OllamaChat.qwen3），非路径/凭据/连接串
+            f"LSG 不可用，fail-closed 拒绝{spec.label} (source={source})"
+        )
     from zephyr.shared.contracts.security.security_decision import SecurityDecision
     from zephyr.shared.utils.async_utils import run_sync
 
     try:
-        result = run_sync(gw.scan_input(text, source=source))
+        # 方向分派：入口 _DIRECTIONS 已保证 direction ∈ {"input","output"}，
+        # 未登记方向在扫描发生前即 KeyError fail-loud（不放宽任何判据）。
+        scan = gw.scan_input if direction == "input" else gw.scan_output
+        result = run_sync(scan(text, source=source))
     except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-        _record_decision(gw, direction="input", source=source, error=type(exc).__name__)
-        raise LSGBlockedError(f"LSG 输入扫描异常，fail-closed 拒绝 (source={source}): {exc}") from exc
-    _record_decision(gw, direction="input", source=source, result=result)
+        _record_decision(gw, direction=direction, source=source, error=type(exc).__name__)
+        raise LSGBlockedError(  # noqa: MSG-EXPOSURE — source=通道标签、{exc}=fail-closed 必需留痕，均非凭据面
+            f"LSG {spec.label}扫描异常，fail-closed 拒绝 (source={source}): {exc}"
+        ) from exc
+    _record_decision(gw, direction=direction, source=source, result=result)
     if result.decision in (SecurityDecision.BLOCK, SecurityDecision.DENY):
-        raise LSGBlockedError(
-            f"LSG 输入判决 {result.decision.value}，拒绝发起 LLM 调用 (blocked_by={result.blocked_by}, source={source})"
+        raise LSGBlockedError(  # noqa: MSG-EXPOSURE — source=通道标签、blocked_by=LSG 层名，均为审计定位所需非敏感枚举
+            f"LSG {spec.label}判决 {result.decision.value}，{spec.refusal} "
+            f"(blocked_by={result.blocked_by}, source={source})"
         )
 
 
-def enforce_output(text: str, *, source: str, enabled: bool = True) -> None:
-    """LLM 响应返回前输出闸门：L3->L6 链式判决（fail-closed）。
+class _Enforcer(Protocol):
+    """enforce_input/enforce_output 的公开签名（partial 绑定方向后仍受静态检查）。"""
 
-    语义同 enforce_input；判决 BLOCK/DENY 时抛 LSGBlockedError，
-    违规输出不得返回给调用方。
-    """
-    if not enabled or not text:
-        return
-    gw = get_gateway()
-    if gw is None:
-        raise LSGBlockedError(f"LSG 不可用，fail-closed 拒绝输出 (source={source})")
-    from zephyr.shared.contracts.security.security_decision import SecurityDecision
-    from zephyr.shared.utils.async_utils import run_sync
+    def __call__(self, text: str, *, source: str, enabled: bool = True) -> None: ...
 
-    try:
-        result = run_sync(gw.scan_output(text, source=source))
-    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
-        _record_decision(gw, direction="output", source=source, error=type(exc).__name__)
-        raise LSGBlockedError(f"LSG 输出扫描异常，fail-closed 拒绝 (source={source}): {exc}") from exc
-    _record_decision(gw, direction="output", source=source, result=result)
-    if result.decision in (SecurityDecision.BLOCK, SecurityDecision.DENY):
-        raise LSGBlockedError(
-            f"LSG 输出判决 {result.decision.value}，拒绝返回该响应 (blocked_by={result.blocked_by}, source={source})"
-        )
+
+# 公开入口：名字与签名逐字保留（ollama_chat/deepseek_chat/local_model_scheduler/
+# embedding_router/llm_runtime_gateway 五处消费者按 enforce_x(text, source=, enabled=) 调用）。
+enforce_input: _Enforcer = partial(_enforce, direction="input")
+enforce_output: _Enforcer = partial(_enforce, direction="output")
