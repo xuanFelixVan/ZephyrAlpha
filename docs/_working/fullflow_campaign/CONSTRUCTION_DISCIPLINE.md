@@ -141,6 +141,7 @@ completes_when: <一句话>
   正解 **只** `git restore --staged -- <册>`（把 index 拉回 HEAD，**工作区增量保留**）→ 重提即过。
   ⚠️ **此时禁 `git checkout HEAD -- <册>`** —— 那会把自家 token 增量一起抹掉（原手册这条处方对本型是错的）。
   · **A 型**：工作区确实比 HEAD 旧（盘上被还原过）⇒ 才用 `git checkout HEAD -- <册>` 取真值 → 重放增量 → 重新 claim → 重提，
+    ★ **硬前置**：动手前必须证明**盘上不存在任何未进 HEAD 的他人条目**（`git diff --numstat HEAD -- <册>` 为 `0 N` 且 N 行全是自家刚写的、且 `git status --porcelain -- <册>` 的 worktree 面与自家增量一致）；证明不了 ⇒ 一律走**增量恢复缺条目**，不整片覆写。（`batch_creation_tokens.py` 的守恒闸报错语已按此写：它在报错点无法证明，所以只许增量。）
   **三步压进一条命令**（分步必撞）。
 - 入队热注册表必带 `--base-head $(git rev-parse dev)`（缺省=无基底校验，整文件快照会静默回退他人条目）。
 - 他会话吸收你的 token 条目是**常态非事故**：提交前 `git show HEAD:<注册表> | grep <我的token>`，已在 HEAD 就从清单剔除。
