@@ -36,7 +36,11 @@ from zephyr.regime.cross_sectional_features import (
     CrossSectionalFeatureError,
     compute_cross_sectional_features,
 )
-from zephyr.regime.regime_feature_builder import FEATURE_NAMES, RegimeFeatureBuilder
+from zephyr.regime.regime_feature_builder import (
+    FEATURE_NAMES,
+    RegimeFeatureBuilder,
+    RegimeFeatureError,
+)
 
 # ---------------------------------------------------------------------------
 # 面板构造工具
@@ -293,3 +297,85 @@ class TestBuilderSwitch:
         assert _make_builder(dates, enable_cross_sectional=True).active_feature_names() == (
             FEATURE_NAMES + CROSS_SECTIONAL_FEATURE_NAMES
         )
+
+
+# ---------------------------------------------------------------------------
+# ALG2-2 复权腿：真源指向 + 失维绊线（红队车道 st-ff-rb-pit-20260918 攻面二）
+#
+# 现场实证（2026-09-18，本机 CH 只读）：c1_market.adj_factor 专表日行数 2026-07-03
+# 前 ~7,470 → 07-06 起 2~60；服务端 join_use_nulls=0 且该列 Decimal(18,8) 非
+# Nullable ⇒ LEFT JOIN 未命中填 0 而非 NULL ⇒ 旧 SQL 的 ifNull(...,nan) 永不触发，
+# close_hfq 实为 0 价（面板 31.7% 的行），C1/C2/C3 全 NaN、C4 报 0.07%（真值 28%）。
+# 下列三件断言各自锁死一处防线，任一处回退即红。
+# ---------------------------------------------------------------------------
+
+
+def _panel_with_hfq(days: int, per_day: int, hfq_ratio: float) -> pd.DataFrame:
+    """构造 days×per_day 长表，close_hfq 按 hfq_ratio 比例给正价、其余填 0（塌缩复刻）。"""
+    rng = np.random.default_rng(20260918)
+    dates = pd.bdate_range("2026-08-03", periods=days)
+    rows = []
+    for d in dates:
+        for i in range(per_day):
+            price = float(rng.uniform(5, 50))
+            hfq = price * 1.1 if rng.random() < hfq_ratio else 0.0
+            rows.append((d, f"{i:06d}", price, 1e6, 1e8, hfq))
+    return pd.DataFrame(rows, columns=["trade_date", "symbol", "close", "volume", "amount", "close_hfq"])
+
+
+class TestStockPanelAdjustmentSource:
+    def test_zero_fill_collapse_must_raise(self):
+        """复权塌缩（0 价占绝大多数）必须硬失败，不得带 0 价出特征。"""
+        dates = pd.bdate_range("2026-08-03", periods=30)
+        b = _make_builder(dates, enable_cross_sectional=True)
+        panel = _panel_with_hfq(days=30, per_day=20, hfq_ratio=0.005)
+        with pytest.raises(RegimeFeatureError, match="复权覆盖率"):
+            b._assert_hfq_coverage(panel)
+
+    def test_healthy_coverage_passes_silently(self):
+        """覆盖率达标（>50%）时绊线不动作。"""
+        dates = pd.bdate_range("2026-08-03", periods=30)
+        b = _make_builder(dates, enable_cross_sectional=True)
+        panel = _panel_with_hfq(days=30, per_day=20, hfq_ratio=0.97)
+        b._assert_hfq_coverage(panel)  # 不抛 = 通过
+
+    def test_sql_points_at_hfq_truth_and_guards_zero(self):
+        """面板 SQL 必须读后复权真值表，且把非正复权价显式置 NULL（不靠 ifNull 拦 0）。"""
+        dates = pd.bdate_range("2026-08-03", periods=30)
+        b = _make_builder(dates, enable_cross_sectional=True)
+        captured: dict[str, str] = {}
+
+        def _fake_query(sql: str, context: str) -> str:
+            captured["sql"] = sql
+            body = [
+                f"2026-08-03\t000001\t10.0\t1000\t1e7\t11.0",
+                "2026-08-03\t000002\t12.0\t1000\t1e7\t\\N",
+            ]
+            return "\n".join(body) + "\n"
+
+        b._safe_query = _fake_query  # type: ignore[method-assign]  # 离线注入，免 CH
+        df = b._load_stock_panel()
+        sql = captured["sql"]
+        assert "kline_daily_hfq" in sql, "复权源必须指向后复权真值表 kline_daily_hfq"
+        assert "c1_market.adj_factor" not in sql and "market_adj_factor" not in sql, (
+            "禁再读 adj_factor 专表当整窗乘子（日覆盖已塌缩到 2~60 行）"
+        )
+        assert "ifNull(a.adj_factor" not in sql, "ifNull 拦不住 join 未命中的 0 填充（join_use_nulls=0）"
+        assert "> 0" in sql and "NULL" in sql, "非正复权价必须显式 NULL 化"
+        assert float(df["close_hfq"].iloc[0]) == pytest.approx(11.0)
+        assert pd.isna(df["close_hfq"].iloc[1]), "CH 侧 NULL 必须落成 NaN（被截面剔除而非当 0 用）"
+
+    def test_loader_wires_the_tripwire(self):
+        """绊线必须挂在 _load_stock_panel 上：面板全 0 复权价时加载即失败。"""
+        dates = pd.bdate_range("2026-08-03", periods=30)
+        b = _make_builder(dates, enable_cross_sectional=True)
+
+        def _zero_tsv(sql: str, context: str) -> str:
+            lines = [f"2026-08-0{i + 3}\t00000{j}\t10.0\t1000\t1e7\t0" for i in range(5) for j in range(4)]
+            return "\n".join(lines) + "\n"
+
+        b._safe_query = _zero_tsv  # type: ignore[method-assign]  # 离线注入，免 CH
+        with pytest.raises(RegimeFeatureError, match="复权覆盖率"):
+            b._load_stock_panel()
+
+

@@ -59,7 +59,7 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from datetime import datetime
-from typing import Any
+from typing import Any, Final
 
 import numpy as np
 import pandas as pd
@@ -114,6 +114,12 @@ MARKET_PROXY = "000300"
 CROSS_ASSET_INDICES = ["000300", "000905", "399006"]
 # 涨跌家数源（F4，深证综指 399106，advance_count/decline_count）
 BREADTH_INDEX = "399106"
+
+# 复权真源失维绊线（红队车道 st-ff-rb-pit-20260918 攻面二实证，2026-09-18）：
+# 近端 _CS_HFQ_TAIL_DAYS 个交易日的 close_hfq 覆盖率低于 _CS_HFQ_MIN_COVERAGE 即
+# 判定"复权真源断供"→ 抛 RegimeFeatureError，绝不带着零值/NaN 面板出 C1-C4 特征。
+_CS_HFQ_TAIL_DAYS: Final = 20
+_CS_HFQ_MIN_COVERAGE: Final = 0.5
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -662,16 +668,32 @@ class RegimeFeatureBuilder:
         同日 C4 池口径 25.8% vs 全市场 4.3% 六倍失真）。C2 分层抽样本为 O(N²) 而设，
         全市场面板直接可算。
 
-        ALG2-2 复权修复：LEFT JOIN c1_market.adj_factor 出 close_hfq=close×adj_factor
-        （后复权口径），C1-C4 全部吃 hfq 收益——旧实现不复权 close 2023-12~2026-06
-        混入 494 条假收益（含 300857 2026-04-22 符号翻转）。factor 缺失日 close_hfq=NULL，
-        该 symbol-day 收益置 NaN 剔除出截面（宁缺毋假）。
+        ALG2-2 复权修复 v2（红队车道 st-ff-rb-pit-20260918 攻面二，2026-09-18 实证改）：
+        复权源由 `c1_market.adj_factor` 专表改指 `c1_market.kline_daily_hfq`（后复权
+        收盘价真值表，车道 K 认定的唯一可用复权源）。原实现的三处硬伤（全部实测）：
+          1) 覆盖塌缩：adj_factor 专表日行数 2026-07-03 前 ~7,470 → 07-06 起 2~60
+             （bdpan 累计口径 2026-07-03 停更，miniqmt dr 只覆盖零星事件日）；
+          2) 缺失被填 0 而非 NULL：服务端 `join_use_nulls=0`（CH 默认）且
+             `adj_factor Decimal(18,8)` 非 Nullable ⇒ LEFT JOIN 未命中返回类型默认值 0
+             ⇒ 源码里的 `ifNull(a.adj_factor, nan)` **永远不触发**（实测 ifNull(0,nan)=0）
+             ⇒ "factor 缺失日 close_hfq=NULL 剔除出截面"这条护身符是纸面的；
+          3) 混存两口径无过滤：bdpan 累计因子与 miniqmt dr 点因子同表同键（Replacing
+             MergeTree(ingest_ts) 后写覆盖先写），跨口径相乘注入 −68%~−84% 幻影。
+        后果实测（窗口 2026-01-05..2026-09-18，全市场 A_share quality_flag=1）：
+        959,185 面板行里 close_hfq==0 占 303,817 行、NULL 0 行；近 20 交易日
+        C1/C2/C3 全为 NaN、C4 momentum_breadth 报 0.07%~0.51%（真值 21%~63%）；
+        而本函数旧日志按 `notna()` 统计覆盖率 ⇒ 把 0 计成"已覆盖"⇒ 自我掩盖。
+        现口径：`h.close_hfq > 0` 才采信，否则显式 NULL（真缺失，被 pct_change 剔除）；
+        并用 `_assert_hfq_coverage` 把"复权真源断供"变成硬失败而非静默失维。
 
         Returns:
             长表 DataFrame：trade_date / symbol / close / volume / amount / close_hfq。
+
+        Raises:
+            RegimeFeatureError: 面板为空，或近端复权覆盖率低于 _CS_HFQ_MIN_COVERAGE。
         """
         table = self._registry.table("market_kline_daily")
-        adj = self._registry.table("market_adj_factor")
+        hfq_table = self._registry.table("market_kline_daily_hfq")
         top_n_clause = (
             f"AND (trade_date, symbol) IN ("
             f"SELECT trade_date, symbol FROM {table} FINAL "
@@ -683,10 +705,16 @@ class RegimeFeatureBuilder:
         )
         sql = (
             f"SELECT k.trade_date, k.symbol, k.close, k.volume, k.amount, "
-            f"k.close * ifNull(a.adj_factor, nan) AS close_hfq "
+            f"if(h.close_hfq > 0, h.close_hfq, NULL) AS close_hfq "
             f"FROM {table} AS k FINAL "
-            f"LEFT JOIN {adj} AS a FINAL "
-            f"ON k.symbol = a.symbol AND k.trade_date = a.trade_date "
+            f"LEFT JOIN ("
+            f"SELECT symbol, trade_date, argMax(toFloat64(close), ingest_ts) AS close_hfq "
+            f"FROM {hfq_table} "
+            f"WHERE trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"GROUP BY symbol, trade_date"
+            f") AS h "
+            f"ON k.symbol = h.symbol AND k.trade_date = h.trade_date "
             f"WHERE k.market_type = 'A_share' AND k.quality_flag = 1 "
             f"AND k.trade_date >= toDate('{self.data_load_start}') "
             f"AND k.trade_date <= toDate('{self.backtest_end}') "
@@ -702,6 +730,7 @@ class RegimeFeatureBuilder:
         df["trade_date"] = pd.to_datetime(df["trade_date"])
         for c in ["close", "volume", "amount", "close_hfq"]:
             df[c] = pd.to_numeric(df[c], errors="coerce")
+        self._assert_hfq_coverage(df)
         _logger.info(
             "stock_panel 加载: %d 行, %d 只, %s~%s (hfq 覆盖 %.1f%%)",
             len(df),
@@ -711,6 +740,42 @@ class RegimeFeatureBuilder:
             100.0 * df["close_hfq"].notna().mean(),
         )
         return df
+
+    def _assert_hfq_coverage(self, df: pd.DataFrame) -> None:
+        """复权真源失维绊线：覆盖率只按"真值可用"计，0 价一律不算覆盖。
+
+        存在理由（红队 st-ff-rb-pit-20260918 实证）：LEFT JOIN 未命中在
+        `join_use_nulls=0` 下填类型默认值 0 而非 NULL，旧 `notna()` 口径把 0 计成
+        已覆盖 ⇒ 塌缩 99.5% 时日志仍报 100% ⇒ 静默失维。本绊线把"近端复权断供"
+        从"算出错特征"改成"当场失败"。
+
+        Args:
+            df: _load_stock_panel 组装的长表面板（含 trade_date/close_hfq）。
+
+        Raises:
+            RegimeFeatureError: 近端 _CS_HFQ_TAIL_DAYS 交易日覆盖率均值
+                < _CS_HFQ_MIN_COVERAGE（复权真源断供）。
+        """
+        flagged = df.assign(_hfq_ok=df["close_hfq"].gt(0) & df["close_hfq"].notna())
+        per_day = flagged.groupby("trade_date")["_hfq_ok"].mean().sort_index()
+        if per_day.empty:
+            raise RegimeFeatureError("stock_panel 无交易日，复权覆盖率不可判定")
+        dead_days = per_day[per_day <= 0.0]
+        if len(dead_days):
+            _logger.warning(
+                "stock_panel 复权真源缺席 %d 个交易日（首个 %s）——这些日子 C1-C4 为 NaN，"
+                "禁以不复权价或零值补齐",
+                len(dead_days),
+                dead_days.index.min().date(),
+            )
+        tail_cov = float(per_day.tail(_CS_HFQ_TAIL_DAYS).mean())
+        if tail_cov < _CS_HFQ_MIN_COVERAGE:
+            raise RegimeFeatureError(
+                f"stock_panel 近端 {min(_CS_HFQ_TAIL_DAYS, len(per_day))} 交易日复权覆盖率 "
+                f"{tail_cov:.1%} < 下限 {_CS_HFQ_MIN_COVERAGE:.0%}"
+                f"（窗口 [{self.data_load_start}, {self.backtest_end}] top_n={self._cs_top_n}）"
+                "——复权真源断供，宁可不特征也不出错特征"
+            )
 
     # ── 私有：工具 ────────────────────────────────────────────────────────
 
