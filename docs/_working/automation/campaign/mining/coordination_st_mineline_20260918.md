@@ -39,4 +39,4 @@ completes_when: 挖矿 11 簿入袋且各车道施工分工被认领
 | WO-①-01（源注册表化） | st-mineline-w101 | 已交付（config/intel_sources.yaml+intel_harvester.py 消费改造+validate_intel_registry.py，行为等价 305 passed） |
 | WO-①-03（词表外置） | st-mineline-w101 | 已交付（config/intel_keywords.yaml 28 词干外置+加载器降级，随上同批） |
 | WO-①-05（源卡片草案转化器） | st-mineline-w105 | 已交付（scripts/automation/source_card_drafter.py+tests 13 件零网零 LLM，24 passed 合批回归；草案仅落 config/source_cards/drafts/、CLI 无生效路径、Owner 门保留；depgraph 14799410/14799411；commit=1f3f9de02b 经队列 q-20260918-st-mineline-w105-0009 落地） |
-| WO-③-03+WO-③-04（批量上架 --cards-dir+四登记 checklist+源健康度巡检器 source_health_patrol.py）| st-mineline-w304 | 已交付（onboard_source 批量模式+onboarding_checklist.md+巡检器+测试 20 件零网零 CH，31 passed 合批回归；.gitignore 收编+CREATE-GUARD/翻译/depgraph 14815765/14815766 同批；commit 待填） |
+| WO-③-03+WO-③-04（批量上架 --cards-dir+四登记 checklist+源健康度巡检器 source_health_patrol.py）| st-mineline-w304 | 已交付（onboard_source 批量模式+onboarding_checklist.md+巡检器+测试 20 件零网零 CH，31 passed 合批回归；.gitignore 收编+CREATE-GUARD/翻译/depgraph 14815765/14815766 同批；commit=2b855d6abd 经队列 q-20260918-st-mineline-w304-0001 落地（恰 7 文件零连坐；翻译注册表条目在盘随 st-datapack 批次落地，token 已随 vocab 班入 HEAD）） |
