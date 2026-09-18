@@ -30,6 +30,7 @@ per-source 自动熔断器（64号 Q17，P1，2026-08-20 AI-NIGHT-001 施工）�
 from __future__ import annotations
 
 import enum
+import logging
 import threading
 import time
 from collections import deque
@@ -41,6 +42,8 @@ DEFAULT_COOLDOWN_SECONDS = 1800.0  # M：熔断冷却 30 分钟
 DEFAULT_WINDOW_SIZE = 20  # 滑窗样本数
 DEFAULT_ERROR_RATE = 0.6  # 滑窗错误率阈值
 DEFAULT_MIN_SAMPLES = 10  # 错误率判定的最小样本量（防小样本误判）
+
+log = logging.getLogger(__name__)
 
 
 class CircuitState(enum.Enum):
@@ -78,6 +81,10 @@ class SourceCircuitBreaker:
         self._consecutive_failures = 0
         self._window: deque[bool] = deque(maxlen=window_size)  # True=成功 False=失败
         self._opened_at = 0.0
+        #: 跳闸升级回调失败可观测面（BRK-049）：失败计数 + 最近一次真实错误。
+        #: 回调通常是"发告警/写审计/通知调度器"，吞掉即等于"熔断了却没人知道"。
+        self.trip_callback_failures = 0
+        self.last_trip_callback_error: str | None = None
         self._probe_in_flight = False
         self._probe_started_at = 0.0
 
@@ -147,8 +154,22 @@ class SourceCircuitBreaker:
         if self._on_trip is not None:
             try:
                 self._on_trip(self.source, reason)
-            except Exception:  # noqa: BLE001 — 回调异常不得影响状态机
-                pass
+            except Exception as exc:  # noqa: BLE001 — 回调异常不得回滚状态机
+                # BRK-049 收口：状态保持 OPEN 是正确的降级方向（回调故障不能
+                # 让熔断器"复原放行"），但**零痕迹**会把"升级链已断"这个事实
+                # 一起吞掉。故：不回滚状态、不抛给调用方，但必须计数+留痕，
+                # 使外部可机械判"熔断器在跑而升级通道是死的"。
+                # 日志不预设失败类别（类型缺陷/IO/锁竞争一律以真实类型名呈现）。
+                self.trip_callback_failures += 1
+                self.last_trip_callback_error = f"{type(exc).__name__}: {exc}"
+                log.error(
+                    "熔断跳闸升级回调失败 source=%s reason=%s %s: %s",
+                    self.source,
+                    reason,
+                    type(exc).__name__,
+                    exc,
+                    exc_info=True,
+                )
 
 
 class CircuitBreakerRegistry:

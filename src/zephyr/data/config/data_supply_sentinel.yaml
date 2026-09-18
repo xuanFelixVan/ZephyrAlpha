@@ -18,7 +18,11 @@
 #   date_col      判停更的日期列（业务事实锚，非采集时间）
 #   max_lag_days  允许的最大落后天数（超限=断供嫌疑，告警）
 #   past_only     true=只对 <=today 的行取 max（前瞻/预约类未来行不稀释新鲜度）
-#   allow_empty   true=空表放行（新建表首轮回填前宽限）
+#   allow_empty   true=空表放行 —— **永久静默开关，不是"暂时宽限"**：置了它，该表可以永远 0 行
+#                 而不告警（BRK-046 实证：在册 12 张 allow_empty 表**全部当日有数**，豁免早已过期
+#                 却无人撤）。收口纪律：新建表回填完成即须删除本行；确属稀疏/条件性供数才保留，
+#                 且**必须同行写 rationale_zh + reviewed_at + reviewed_by**（结构性测试钉
+#                 tests/zephyr/data/test_failopen_brk049.py 会拦无凭据的豁免）。
 #
 # 阈值定档依据（SOP §10.2：日频>3 天/月频>45 天，按数据节奏折档）：
 #   3-10 天   = 逐日有增量的表
@@ -132,21 +136,18 @@ tables:
     date_col: snapshot_date
     max_lag_days: 2
     past_only: true
-    allow_empty: true
 
   # --- 持仓/OI 快照：同行情快照口径 ---
   - table: c1_market.hl_oi_snapshot_daily
     date_col: snapshot_date
     max_lag_days: 2
     past_only: true
-    allow_empty: true
 
   # --- 资金费率：小时事件表，源端逐小时必有增量，3 天档（币圈无节假日） ---
   - table: c1_market.hl_funding_history
     date_col: funding_time
     max_lag_days: 3
     past_only: true
-    allow_empty: true
 
   # --- 清算流：采样口径按采集心跳判（capture_mode=ws_trades_bounded 逐日 30min 窗口，
   # 个别窗口零清算属市场正常态，按 trade_date 判会把"没爆仓"误报为断供；
@@ -155,7 +156,6 @@ tables:
     date_col: ingest_ts
     max_lag_days: 2
     past_only: false
-    allow_empty: true
 
   # --- D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）---
   # 中债估值日频（节假日顺延），5 天档；源滚动窗口≈1年，断供即窗口外历史永久失位
@@ -163,7 +163,6 @@ tables:
     date_col: trade_date
     max_lag_days: 5
     past_only: true
-    allow_empty: true
 
   # --- D6 行情补充·新建四表（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）---
   # 大盘资金流：东财大盘口径日频（源滚动窗口~120交易日），日频 5 天档；断供即窗口外历史永久失位
@@ -171,21 +170,18 @@ tables:
     date_col: trade_date
     max_lag_days: 5
     past_only: true
-    allow_empty: true
 
   # ETF 份额快照：日频 5 天档；快照积累制断供即差分基线断档
   - table: c1_market.market_etf_share_snapshot
     date_col: trade_date
     max_lag_days: 5
     past_only: true
-    allow_empty: true
 
   # 中金所前20会员排名：交易日日更 5 天档；接口按日期可回查，断供可补但任务失效须告警
   - table: c1_market.market_cffex_member_ranking
     date_col: trade_date
     max_lag_days: 5
     past_only: true
-    allow_empty: true
 
   # 可转债条款快照：快照积累制 5 天档；断供即条款状态演变轨迹断档
   - table: c1_market.market_convertible_bond_clause
@@ -193,6 +189,9 @@ tables:
     max_lag_days: 5
     past_only: true
     allow_empty: true
+    rationale_zh: "条款类快照=事件驱动低频供数（可转债条款仅在公告/回售/赎回事件时变更，非事件周可整周零行）；以 allow_empty 显性豁免空窗，属设计意图豁免而非偷懒放行。收口核验 2026-09-18：表内 315 行 / distinct(snapshot_date)=1。若后续接入逐日全量刷新任务，应撤销本豁免。"
+    reviewed_at: "2026-09-18"
+    reviewed_by: st-ff-failopen-20260918
 
   # --- D6 行情补充·既有表验活补哨兵（2026-09-18 夜班 st-datapack-20260918）---
   # 以下表已存在且有活跃任务（本次查重核实 max(date) 新鲜），此前不在哨兵覆盖，补齐：
@@ -207,7 +206,6 @@ tables:
     date_col: trade_date
     max_lag_days: 5
     past_only: true
-    allow_empty: true
 
   # 大宗交易（每日明细+每日统计双任务，交易日日更）
   - table: c1_market.block_trade
@@ -242,4 +240,33 @@ tables:
   - table: c3_fundamental.ir_activity_record
     date_col: publish_date
     max_lag_days: 45
+    past_only: true
+
+  # --- D5 跨资产·H7/H8（2026-09-18 全流通战役 st-ff-altdataF-20260918，DS-CAND-024/025 毕业）---
+  # CFTC 持仓报告(COT)：周频，as-of 周二 / 发布周五（滞后 3 个交易日）。阈值=一个发布周期
+  # +美国长周末余量 → 12 天档。⚠ 上游为金十 datacenter dc_cftc_* 族——与 2025-10 停更的
+  # 议息日历族（dc_*_calendar）不是同一报表：2026-09-18 实测 max(report_date)=2026-09-08 仍周更，
+  # 故本行按 report_date 业务口径判停更（非 ingest_ts 心跳口径）；一旦金十整站退役，本行会先于
+  # 任何人工巡检报警，届时按 known_data_gaps resolution_plan 切 CFTC 官网 publicreportfile 下载。
+  - table: c1_market.cftc_positioning
+    date_col: report_date
+    max_lag_days: 12
+    past_only: true
+
+  # SPDR Gold Trust(GLD) 持仓吨位：日频（美东工作日），5 天档；2004-11 起长历史已回填，
+  # 断供即差分基线断档（总库存是存量序列，缺口不可由后续值反推）
+  - table: c1_market.gold_etf_holdings
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+
+  # --- 全流通战役 · 日终对账（R-015 / 车道 st-ff-dag-20260918）---
+  # execution_report 生产者已接通（commit eef42ae008，普查 BRK-020 的"建了没接线"半边已闭合），
+  # 本行补六向⑤"哨兵在岗"。阈值取 10 天而非 3 天：本表按**成交事件**产行，无成交日不落行
+  # （模拟盘当前单账户、非连续交易），3 天档必然常态误报；10 天=一个自然交易旬，超出即
+  # "生产者静默或事件链断裂"。判据列用 trade_date（业务事实锚）而非 ingest_ts（心跳口径会漏检
+  # "任务活着拉不到数"型半死管线，见 BRK-040 教训）。
+  - table: c1_market.execution_report
+    date_col: trade_date
+    max_lag_days: 10
     past_only: true

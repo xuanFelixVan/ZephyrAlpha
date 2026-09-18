@@ -164,8 +164,15 @@ class Alerter:
                 json.dump(record, f, ensure_ascii=False, indent=2)
             log.info("失败汇总已写入: %s", filepath)
             return True
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            log.error("写失败汇总文件异常: %s", e)
+        except Exception as e:  # noqa: BLE001 — 告警落盘异常不回抛（调用方按返回值决定重试）
+            # BRK-049 收口：兜底日志不预设失败类别 —— 真实异常类型名进正文 +
+            # exc_info 保留栈（本仓教训：把类型缺陷写成"锁竞争/超时"会误导归因）。
+            log.error(
+                "写失败汇总文件异常: %s: %s",
+                type(e).__name__,
+                e,
+                exc_info=True,
+            )
             return False
 
     # ============== 告警条件检查 ==============

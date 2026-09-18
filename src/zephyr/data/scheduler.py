@@ -683,6 +683,50 @@ class IntegratorScheduler:
 
     # ============== ClickHouse 健康探活（裁定 #ARCH-CH-011） ==============
 
+    def _deliver_alert_with_latch(
+        self,
+        *,
+        task_id: str,
+        error: str,
+        level: str,
+        source: str,
+    ) -> bool:
+        """投递告警并返回**真实**投递结果（BRK-049 吞异常收口·钱路径告警面）。
+
+        Alerter.notify 自己不抛异常、而以返回值表态（False=未落盘）。调用方
+        丢弃该返回值即等于假处置：置"已告警"而告警从未落地。本 helper 把
+        异常与 False 统一归为"未投递"，并留下不预设失败类别的痕迹，
+        由调用方决定是否重试。
+
+        Returns:
+            True 仅当告警确已投递（notify 无异常且返回真值）。
+        """
+        try:
+            delivered = bool(
+                self._alerter.notify(
+                    task_id=task_id,
+                    error=error,
+                    level=level,
+                    source=source,
+                )
+            )
+        except Exception as exc:  # noqa: BLE001 — 告警通道故障不得影响主流程
+            log.error(
+                "告警投递异常（判为未投递，调用方应重试）task=%s %s: %s",
+                task_id,
+                type(exc).__name__,
+                exc,
+                exc_info=True,
+            )
+            return False
+        if not delivered:
+            log.error(
+                "告警未落盘（notify 返回 False）task=%s level=%s —— 调用方保留未告警态并重试",
+                task_id,
+                level,
+            )
+        return delivered
+
     def _start_ch_health_probe(self) -> None:
         """启动 ClickHouse 健康探活后台守护线程。
 
@@ -731,22 +775,24 @@ class IntegratorScheduler:
                     self._ch_probe_fail_count = 0
                     if self._ch_probe_alerted_dead:
                         # 恢复通知（DEAD→ALIVE）
-                        self._ch_probe_alerted_dead = False
-                        try:
-                            self._alerter.notify(
-                                task_id="ch_health_probe",
-                                error="CH 健康探活已恢复（SELECT 1 成功），服务可达。",
-                                level="INFO",
-                                source="clickhouse",
-                            )
-                        except Exception:  # noqa: BLE001
-                            pass
+                        # BRK-049 收口：原实现丢弃 notify 返回值、无条件清闩 →
+                        # 恢复通知从未落地也当作"已通知"（假处置）。仅在真投递成功后清闩。
+                        if self._deliver_alert_with_latch(
+                            task_id="ch_health_probe",
+                            error="CH 健康探活已恢复（SELECT 1 成功），服务可达。",
+                            level="INFO",
+                            source="clickhouse",
+                        ):
+                            self._ch_probe_alerted_dead = False
                 else:
                     self._ch_probe_fail_count += 1
                     if self._ch_probe_fail_count >= ch_probe_fail_threshold and not self._ch_probe_alerted_dead:
-                        self._ch_probe_alerted_dead = True
-                        try:
-                            self._alerter.notify(
+                        # BRK-049 收口（CRITICAL 级）：原实现先无条件置
+                        # _ch_probe_alerted_dead=True，再把 notify 的异常与 False 返回值
+                        # 一并 pass 掉 → 告警从未落盘而闩已锁死，**本进程余生不再尝试**。
+                        # CH 真断供时哨兵自身静默失明，比没有哨兵更危险。
+                        # 现改为"投递成功才置闩"，失败保留未告警态、下一轮探活重试。
+                        self._ch_probe_alerted_dead = self._deliver_alert_with_latch(
                                 task_id="ch_health_probe",
                                 error=(
                                     f"CH 健康探活连续 {self._ch_probe_fail_count} 次失败"
@@ -755,11 +801,9 @@ class IntegratorScheduler:
                                     f"服务不可达。灾时若在实盘运行期将导致数据中断，"
                                     f"请立即检查 CH 服务状态（systemctl status clickhouse-server）。"
                                 ),
-                                level="CRITICAL",
-                                source="clickhouse",
-                            )
-                        except Exception:  # noqa: BLE001
-                            pass
+                            level="CRITICAL",
+                            source="clickhouse",
+                        )
                 # 等待下次探活（用 Event 实现可中断的 sleep 更优雅，但此处简单实现）
                 time.sleep(self._ch_health_interval)
 
@@ -1373,18 +1417,18 @@ class IntegratorScheduler:
         out = ch_query(SQL_TABLE_EXISTS.format(cond=cond), timeout=30)
         exists = out.strip().splitlines()[-1].strip() if out.strip() else "0"
         if exists == "0":
-            _MISSING_TABLE_ALERT_TS[table_full] = now
             log.error("DDL 前置校验: 目标表不存在 %s（任务继续，写入将进 local_fallback）", table_full)
-            try:
-                self._alerter.notify(
-                    "ddl_preflight",
-                    f"目标表不存在: {table_full}（DDL 未应用？）——"
-                    "任务继续执行，写入将进 local_fallback 待表创建后回灌",
-                    level="ERROR",
-                    source="ddl_preflight",
-                )
-            except Exception:  # noqa: BLE001 — 告警通道自身故障不上抛
-                pass
+            # BRK-049 收口：原实现在告警**之前**就写去重戳，又把 notify 的异常与
+            # False 全部 pass → 告警从未落地也被 4h 去重静默（假处置）。
+            # 现改为"投递成功才记去重戳"，未落地则下一轮任务执行仍会重试。
+            if self._deliver_alert_with_latch(
+                task_id="ddl_preflight",
+                error=f"目标表不存在: {table_full}（DDL 未应用？）——"
+                "任务继续执行，写入将进 local_fallback 待表创建后回灌",
+                level="ERROR",
+                source="ddl_preflight",
+            ):
+                _MISSING_TABLE_ALERT_TS[table_full] = now
         else:
             _MISSING_TABLE_ALERT_TS.pop(table_full, None)
 

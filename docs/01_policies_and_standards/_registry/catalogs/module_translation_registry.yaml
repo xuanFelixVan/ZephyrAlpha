@@ -55506,6 +55506,14 @@ entries:
   desc_en: ""
   plain_zh: "订单成交后自动生成执行报告并写入台账表"
   responsibility_layer: business
+- module_path: scripts/governance/d7_code/generate_fail_open_register.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "fail-open登记册生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扫出全仓所有有意或无意放行错误的地方并分档成册"
+  responsibility_layer: governance
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -1686,8 +1686,16 @@ def _resolve_member_modes() -> tuple[set[str], set[str]]:
 
         try:
             autodiscover_strategies("zephyr.pf_core")
-        except Exception:  # noqa: BLE001 — 已注册集合仍可用
-            pass
+        except Exception as exc:  # noqa: BLE001 — 已注册集合仍可用（降级须留痕）
+            # BRK-049 收口：自动发现失败 → 日频成员集可能不完整，而成员集决定
+            # reconcile_composed_nav 的日频/tick 判定 → 静默吞掉会让净值对账用错成员。
+            # 降级方向保留（不抛），但必须留真实类型与栈。
+            logger.warning(
+                "日频策略自动发现失败（成员集可能不完整）: %s: %s",
+                type(exc).__name__,
+                exc,
+                exc_info=True,
+            )
         daily_ids = set(StrategyRegistry.list_all().keys())
     except Exception as exc:  # noqa: BLE001 — 注册表不可用时 tick 判定降级
         logger.warning("日频策略注册表不可用: %s", exc)
@@ -1696,8 +1704,13 @@ def _resolve_member_modes() -> tuple[set[str], set[str]]:
 
         try:
             autodiscover_tick_strategies("zephyr.pf_core")
-        except Exception:  # noqa: BLE001
-            pass
+        except Exception as exc:  # noqa: BLE001 — 同上：降级保留但必须留痕
+            logger.warning(
+                "tick 策略自动发现失败（成员集可能不完整）: %s: %s",
+                type(exc).__name__,
+                exc,
+                exc_info=True,
+            )
         tick_ids = set(getattr(TickStrategyBase, "_registry", {}).keys())
     except Exception as exc:  # noqa: BLE001
         logger.warning("tick 策略注册表不可用: %s", exc)

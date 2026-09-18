@@ -107,13 +107,27 @@ def _should_print_warn(project_root, sig: str) -> bool:
         st = json.loads(state_path.read_text(encoding="utf-8"))
         if st.get("sig") == sig and now - float(st.get("ts", 0)) < _WARN_DEDUP_SECONDS:
             return False
-    except Exception:  # noqa: BLE001 — 状态缺失/损坏=首次打印
-        pass
+    except FileNotFoundError:
+        pass  # 状态文件本就尚未生成 = 首次打印（真·正常路径，不需要噪音）
+    except Exception as exc:  # noqa: BLE001 — 状态损坏=首次打印（宁多报不漏报）
+        # BRK-049 收口：降级方向本就是加严（多打印），但**零痕迹**会让
+        # "去重永久失效 → 每轮刷屏" 或 "每次读都抛" 这类病态无人知晓。
+        logger.warning(
+            "RECONCILER-HEALTH 去重状态不可读（按首次打印处理）: %s: %s",
+            type(exc).__name__,
+            exc,
+            exc_info=True,
+        )
     try:
         state_path.parent.mkdir(parents=True, exist_ok=True)
         state_path.write_text(json.dumps({"sig": sig, "ts": now}), encoding="utf-8")
-    except Exception:  # noqa: BLE001 — 落盘失败不阻断打印
-        pass
+    except Exception as exc:  # noqa: BLE001 — 落盘失败不阻断打印
+        logger.warning(
+            "RECONCILER-HEALTH 去重状态落盘失败（下一轮将重复打印）: %s: %s",
+            type(exc).__name__,
+            exc,
+            exc_info=True,
+        )
     return True
 
 
