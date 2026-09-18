@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_cascading_rollback_analyzer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_cascading_rollback_analyzer
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] max_cascade_depth=5; min_dependency_confidence=0.5
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

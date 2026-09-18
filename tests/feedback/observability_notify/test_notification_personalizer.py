@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_notification_personalizer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_notification_personalizer
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] personalize returns dict with personalized=True
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

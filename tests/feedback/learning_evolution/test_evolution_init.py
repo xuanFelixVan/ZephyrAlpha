@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_evolution_init | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_evolution_init
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

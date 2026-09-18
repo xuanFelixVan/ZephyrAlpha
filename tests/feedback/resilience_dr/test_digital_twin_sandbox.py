@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_digital_twin_sandbox | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_digital_twin_sandbox
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] fidelity default=0.8
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

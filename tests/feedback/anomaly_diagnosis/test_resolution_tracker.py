@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_resolution_tracker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_resolution_tracker
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] ResolutionTracker.tracked is dict[str,str]; mark sets key=value
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

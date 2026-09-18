@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_metric_cardinality_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_metric_cardinality_guard
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

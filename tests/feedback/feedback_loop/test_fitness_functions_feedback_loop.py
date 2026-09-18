@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_fitness_functions_feedback_loop | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-499 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.feedback_loop.test_fitness_functions
+# [DOMAIN] D_FEEDBACK_LOOP
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

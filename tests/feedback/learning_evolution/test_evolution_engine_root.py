@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_evolution_engine_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_evolution_engine
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] Q-learning update: Q(s,a) += lr*(reward+gamma*max_Q(s')-Q(s,a)); EWC penalty applied when fisher>0
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

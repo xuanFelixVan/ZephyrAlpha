@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_validator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §3-§9
 # [MODULE] tests.test_validator
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] MOD-FEEDBACK_LOOP 检测-诊断-动作链不可绕过; GateQueue 全局串行
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [CONSUMERS] CI pipeline
