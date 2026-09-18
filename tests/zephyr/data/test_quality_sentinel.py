@@ -648,6 +648,47 @@ class TestRedTeamConfigPoisoning:
         with pytest.raises(qs.QualitySentinelError):
             load_specs(p)
 
+    @pytest.mark.parametrize("bad_key", ["non_trading_max_row", "epoch_max_rowz", "tz_suspect_hourz"])
+    def test_unknown_threshold_key_fails_loud(self, tmp_path, bad_key):
+        """C-56：拼错的阈值名旧版被**静默忽略**⇒对应腿整腿不跑，报告里却像"该表已巡检"。
+
+        与"无 else 的白名单分派把跳过计入 checked"同族（指标自证清白型假绿）。
+        红证：改前版 load_specs 对该条目返回 spec 且 non_trading_max_rows is None（腿关掉）。
+        """
+        p = self._cfg(
+            tmp_path,
+            "defaults: {}\ntables:\n  - table: c1_market.k\n    date_col: trade_date\n"
+            f"    {bad_key}: 0\n",
+        )
+        with pytest.raises(qs.QualitySentinelError, match="未知键"):
+            load_specs(p)
+
+    def test_unknown_key_in_defaults_fails_loud(self, tmp_path):
+        p = self._cfg(
+            tmp_path,
+            "defaults: {epoch_max_rowz: 0}\ntables:\n  - table: c1_market.k\n    date_col: trade_date\n",
+        )
+        with pytest.raises(qs.QualitySentinelError, match="未知键") as ei:
+            load_specs(p)
+        assert ei.value.details["where"] == "defaults"  # type: ignore[attr-defined]
+
+    def test_error_details_name_the_offending_key(self, tmp_path):
+        """报错面可用性：只说"配置非法"不指键名，运维仍要逐字比对 YAML。
+
+        本仓 MSG-EXPOSURE 口径＝敏感信息走 details 结构化字段（CLI 侧 `log.critical(..., details=%s)`
+        已在位），故键名从 details 出，不塞进消息文本。
+        """
+        p = self._cfg(
+            tmp_path,
+            "defaults: {}\ntables:\n  - table: c1_market.k\n    date_col: trade_date\n    non_trading_max_row: 0\n",
+        )
+        with pytest.raises(qs.QualitySentinelError) as ei:
+            load_specs(p)
+        det = ei.value.details  # type: ignore[attr-defined]
+        assert det["unknown"] == ["non_trading_max_row"]
+        assert det["where"] == "tables[c1_market.k]"
+        assert "non_trading_max_rows" in det["legal"]  # 合法键集同屏给出，免查册
+
 
 # ============== g) 排班托管 run_hosted_sweep（四要素正门，st-ff-sentinel-20260918） ==============
 

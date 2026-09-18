@@ -75,7 +75,7 @@ import json
 import logging
 import re
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, fields
 from datetime import date, timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING, Final, Protocol
@@ -208,6 +208,26 @@ class TableSpec:
     non_trading_max_rows: int | None = None
 
 
+#: 配置合法键集＝TableSpec 字段名（派生，禁手工维护清单——宪法 §9.5）
+_SPEC_FIELD_NAMES: Final = frozenset(_f.name for _f in fields(TableSpec))
+
+
+def _reject_unknown_keys(mapping: dict, *, where: str) -> None:
+    """未知键 fail-loud。
+
+    拼错的阈值名（如 `non_trading_max_row`）过去被静默忽略 ⇒ 该条腿整腿不跑、
+    报告里看起来"该表已巡检"＝指标自证清白型假绿（同族：无 else 的白名单分派）。
+    """
+    unknown = sorted(set(mapping) - _SPEC_FIELD_NAMES)
+    if unknown:
+        raise _config_error(
+            "哨兵配置含未知键（拼错的阈值名会让对应腿静默不跑却看起来在岗）",
+            where=where,
+            unknown=unknown,
+            legal=sorted(_SPEC_FIELD_NAMES),
+        )
+
+
 @dataclass(frozen=True)
 class SentinelFinding:
     """一条变异发现（exit code 与告警的计数单元）。"""
@@ -308,6 +328,7 @@ def _specs_from_entries(table_entries: list, defaults: dict, days: int | None) -
     for entry in table_entries:
         if not isinstance(entry, dict) or not entry.get("table") or not entry.get("date_col"):
             raise _config_error("哨兵表条目非法（须含 table/date_col）", entry=repr(entry))
+        _reject_unknown_keys(entry, where=f"tables[{entry['table']}]")
         merged = {**defaults, **{k: v for k, v in entry.items() if k != "table"}}
         spec = _parse_spec_fields(entry, merged, days)
         _validate_spec(spec)
@@ -352,6 +373,7 @@ def load_specs(
     defaults = raw.get("defaults") or {}
     if not isinstance(defaults, dict):
         raise _config_error("哨兵表配置 defaults 须为映射", value=repr(defaults))
+    _reject_unknown_keys(defaults, where="defaults")
     if days is not None and int(days) < 1:
         # 0/负数窗口会让回看窗失效、巡检静默空转还谎报"干净"——哨兵最危险形态，fail-closed
         raise _config_error("days 须 >=1（0/负数=巡检静默空转）", value=days)
