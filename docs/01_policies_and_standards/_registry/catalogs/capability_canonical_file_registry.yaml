@@ -36315,6 +36315,14 @@ creation_tokens:
   token: bizmine-alpha-mining-tick-t0-results-20260918
   created_by: st-bizmine-tick-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_definition_audit/deviation_table.csv
+  token: bizmine-alpha-mining-deviation-table-20260918
+  created_by: st-bizmine-patd-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_definition_audit/pattern_definition_audit_report.md
+  token: bizmine-alpha-mining-pattern-definition-audit-report-20260918
+  created_by: st-bizmine-patd-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
