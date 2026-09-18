@@ -29,6 +29,7 @@
 # concept_factor_mapper 行首 eager import + 类名 append），按上方同款约定归一为
 # 模块名条目。
 __all__ = [
+    "cohort_daily_ledger",
     "concept_factor_mapper",
     "filing_nlp_engine",
     "policy_theme_mapper",

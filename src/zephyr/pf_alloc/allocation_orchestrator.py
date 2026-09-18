@@ -90,6 +90,15 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.pf_alloc.allocation_config import AllocationConfig, load_allocation_config
+from zephyr.pf_alloc.crisis_gate import (
+    STATE_CRISIS,
+    STATE_NORMAL,
+    STATE_WARNING,
+    alert_crisis_level,
+    classify_crisis_state,
+    load_crisis_gate_config,
+    log_crisis_gate_row,
+)
 from zephyr.pf_alloc.allocation_inputs import (
     AllocationInputError,
     BaseWeightTable,
@@ -445,12 +454,24 @@ def _portfolio_layer(facts: _LayerFacts) -> Callable[[AdjudicationRequest], Laye
 
 
 def _strategy_layer(facts: _LayerFacts) -> Callable[[AdjudicationRequest], LayerVerdict]:
-    """策略层：budget 硬约束 + Tier1/Tier3 冻结新开仓（MOD-POS-022 指令落地为下单语义）。"""
+    """策略层：budget 硬约束 + Tier1/Tier3 冻结新开仓（MOD-POS-022 指令落地为下单语义）。
+
+    WO-2a L2：CRISIS 危机闸冻结新开仓（优先于 Tier1——安全闸优先级最高）；
+    只禁 OPEN，存量减持走常规通道（不动存量、不强平）。
+    """
 
     def _run(request: AdjudicationRequest) -> LayerVerdict:
         ctx = request.context or {}
         budget = float(ctx.get("strategy_effective_budget", 1.0))
         sid = request.strategy_id
+        if facts.is_crisis:
+            return LayerVerdict(
+                layer="strategy",
+                allowed=False,
+                adjusted_weight=0.0,
+                violations=("CRISIS_FREEZE_NEW_POSITIONS",),
+                reason="CRISIS 危机闸冻结新开仓：不动存量、不强平（存量减持走常规通道）",
+            )
         if facts.freeze.get(sid):
             return LayerVerdict(
                 layer="strategy",
@@ -758,6 +779,34 @@ def run_daily_allocation(
     regime = load_regime_input(day, cfg, reader=reader)
     if not regime.has_snapshot:
         warnings.append("regime_no_snapshot: 无 PIT 教材→平坦概率（ConfidenceSignal 最低档 0.30）")
+
+    # ── WO-2a 危机闸 L1 接线（裁定 D1-D3；enabled=False=全闸旁路零行为变化）──
+    # 双档判读复用本函数已装载的同一 regime 快照（RULE-SSOT 禁二次读）；
+    # crisis 档（dominant==r10）→ 冻结新开仓+0.05 floor；warning 档（p_r10≥θ）→
+    # 仅激活 floor 不改 is_crisis 归因；normal 档 → 零告警零留痕零行为变化。
+    crisis_cfg = load_crisis_gate_config()
+    crisis_state = classify_crisis_state(regime, warning_theta=crisis_cfg.warning_theta)
+    gate_crisis = crisis_cfg.enabled and crisis_state.state == STATE_CRISIS
+    gate_floor_active = crisis_cfg.enabled and crisis_state.state in (STATE_WARNING, STATE_CRISIS)
+    if crisis_cfg.enabled and crisis_state.state != STATE_NORMAL:
+        alert_crisis_level(
+            "l1", trade_date=day, crisis_state=crisis_state,
+            detail="run_daily_allocation 双档接线（floor+freeze）",
+        )
+        log_crisis_gate_row(
+            trade_date=day,
+            crisis_state=crisis_state,
+            action_l1="crisis_freeze" if gate_crisis else "warning_floor",
+            action_l2="freeze_new" if gate_crisis else "pass",
+        )
+        warnings.append(
+            f"crisis_gate_{crisis_state.state}: p_r10={crisis_state.p_r10:.3f} "
+            f"dominant={crisis_state.dominant} "
+            f"floor={'0.05_active' if gate_floor_active else 'off'}"
+            + (" freeze_new_positions" if gate_crisis else "")
+        )
+    crisis_is_crisis = bool(regime.is_crisis) or gate_crisis
+
     base = build_base_weights(strategy_ids, cfg)
     if base.plan_id == "":
         warnings.append("pp001_unavailable: PP-001 先验缺席→等权先验")
@@ -796,8 +845,9 @@ def run_daily_allocation(
             "opportunity_recovery": 0.0,
         },
         strategy_sample_days={sid: int(perf.sample_days.get(sid, 0)) for sid in alive},
-        is_crisis=regime.is_crisis,
+        is_crisis=crisis_is_crisis,
         cold_start_ratios=cold_ratios,
+        crisis_floor_active=gate_floor_active,
     )
     verify_allocation_invariants(allocation, alive)
     effective: dict[str, float] = {k: float(v) for k, v in allocation.effective_budgets.items()}
@@ -863,7 +913,7 @@ def run_daily_allocation(
         symbol_aggregate=symbol_aggregate,
         freeze=freeze_flags,
         retain=retains,
-        is_crisis=bool(regime.is_crisis),
+        is_crisis=crisis_is_crisis,
         **_calendar_facts(_as_date(day)),
     )
     center = build_adjudication_center(centers_facts)

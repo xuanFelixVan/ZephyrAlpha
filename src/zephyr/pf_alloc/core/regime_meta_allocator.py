@@ -256,6 +256,7 @@ class RegimeMetaAllocator:
         strategy_sample_days: dict[str, int] | None = None,
         is_crisis: bool = False,
         cold_start_ratios: dict[str, float] | None = None,
+        crisis_floor_active: bool = False,
     ) -> BudgetAllocation:
         """主入口：Shrinkage 节流 + PerformanceScore 后验分配 → BudgetAllocation。
 
@@ -314,7 +315,10 @@ class RegimeMetaAllocator:
                 ratios[sid] = float(ratio)
 
         # ── Step 1: 计算 global_shrinkage（§3.2.3）──
-        shrinkage = self._compute_shrinkage(regime_probabilities, risk_signal_inputs, is_crisis)
+        shrinkage = self._compute_shrinkage(
+            regime_probabilities, risk_signal_inputs, is_crisis,
+            crisis_floor_active=crisis_floor_active,
+        )
 
         # ── Step 2: 三因子乘法 raw_allocation（§3.1 实现注记 + §3.4 施工要点 #4）──
         #    Shrinkage 是全局的，归一化时约掉，raw_allocation 不含 Shrinkage
@@ -387,6 +391,7 @@ class RegimeMetaAllocator:
         regime_probabilities: Any,
         risk_signal_inputs: dict[str, Any],
         is_crisis: bool = False,
+        crisis_floor_active: bool = False,
     ) -> ShrinkageDetail:
         """Shrinkage = ConfidenceSignal × RiskSignal（可开关，含 CRISIS floor）。
 
@@ -396,6 +401,8 @@ class RegimeMetaAllocator:
         §3.2.2 危机态覆盖：is_crisis=True 时 floor 从 0.09 降至 0.05（对齐 31号 crisis cap）。
         #208-① 口径：当前参数域 conf≥0.30×risk≥0.30→raw≥0.09>0.05，0.05 floor
         数学不可达（前瞻保留，参数域放宽时生效），见 CRISIS_SHRINKAGE_FLOOR 注释。
+        crisis_floor_active（WO-2a warning 档）：仅激活同款 0.05 floor，**不改** is_crisis
+        归因语义（归因仍以 dominant==r10 为准，缺省 False=既有行为零变化）。
         """
         if not self.shrinkage_enabled:
             return ShrinkageDetail(
@@ -414,7 +421,10 @@ class RegimeMetaAllocator:
         # CRISIS 态 floor 降级（§3.2.2 危机态覆盖说明 + §3.4 施工要点 #12）
         # #208-①：当前参数域 raw_shrinkage≥0.09>0.05，crisis floor 不约束结果
         # （前瞻口径保留），日志如实说明不夸大生效范围。
-        effective_floor = CRISIS_SHRINKAGE_FLOOR if is_crisis else SHRINKAGE_FLOOR
+        # crisis_floor_active（WO-2a warning 档）与 is_crisis 共享同一 floor 值。
+        effective_floor = (
+            CRISIS_SHRINKAGE_FLOOR if (is_crisis or crisis_floor_active) else SHRINKAGE_FLOOR
+        )
         final_shrinkage = max(effective_floor, min(1.0, raw_shrinkage))
 
         if is_crisis:

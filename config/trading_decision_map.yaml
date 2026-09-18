@@ -3975,7 +3975,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-F-C3-03
-  note_confirmed: 2026-09-16  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变
+  note_confirmed: 2026-09-18  # grp5p1s3 出仓复核：机器块搬 yaml，算法口径逐字未变；land3 危机闸批（crisis_gate L1/L2 接线）复确认
   name_zh: sleeve权重调权
   market: cn_a
   flow: portfolio_flow
