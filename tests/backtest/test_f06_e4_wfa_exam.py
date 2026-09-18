@@ -5,7 +5,7 @@
 # [CONSUMERS] pytest
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 折切分无泄露（每折训练窗全部早于测试窗+测试窗互不重叠，合成数据机械验证）；三线 verdict 映射经真实 DecisionGate+OverfittingDetector 管线驱动（零真库依赖）；阈值全取注册常量
+# [INVARIANTS] 折切分无泄露（每折训练窗全部早于测试窗+测试窗互不重叠，合成数据机械验证）；三线 verdict 映射经真实 DecisionGate+OverfittingDetector 管线驱动（零真库依赖）；阈值全取注册常量；判定族夹具三维度全供数（R-055b 起"缺维=不可判定=不通过"，缺位维数由检测器实报的 not_assessed_dimensions 反推，禁写死）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -127,8 +127,26 @@ class TestStitchAndFoldMetrics:
             assert r["days"] == seg_days
 
 
+def _dim2_perturbed_stable(base_sharpe: float) -> list[dict]:
+    """过拟合维度2（参数敏感性）供数：微调后 Sharpe 相对变化 ≤3%，远低于 PARAM_MAX_CHANGE_THRESHOLD(0.30)。"""
+    return [{"sharpe_ratio": base_sharpe * 0.97}, {"sharpe_ratio": base_sharpe * 1.02}]
+
+
+def _dim3_periods_stable(oos_sharpe: float) -> list[dict]:
+    """过拟合维度3（泛化能力）供数：跨时段 Sharpe 全正，变异系数远低于 GEN_CV_THRESHOLD(1.50)。"""
+    spans = (0.90, 1.00, 0.80)
+    return [{"sharpe_ratio": oos_sharpe * f} for f in spans]
+
+
 def _drive_pipeline(fold_sharpes: list[float], fold_mdds: list[float], is_sharpe: float, oos_sharpe: float, dsr: float | None):
-    """经真实管线（run_strategy_validation→DecisionGate+OverfittingDetector）产出判定输入。"""
+    """经真实管线（run_strategy_validation→DecisionGate+OverfittingDetector）产出判定输入。
+
+    本夹具是"三线 verdict 映射"族的正对照基线：R-055b 把过拟合检测器的口径从
+    "未提供的维度=默认稳定"改成"**未提供=不可判定=不通过**"后，只灌维度1 的样本
+    不再是"干净通过"而是必然被否决——故此处三维全供数，让每个用例只破它要测的那一条线。
+    `n_dims_evaluated` 由检测器实报的 not_assessed_dimensions 反推（旧夹具用默认值 3，
+    等于替被测件谎报"证据已评满"，是一条假绿通道）。
+    """
     pipe = run_strategy_validation(
         StrategyValidationRequest(
             strategy_id="t-E4WFA",
@@ -140,15 +158,20 @@ def _drive_pipeline(fold_sharpes: list[float], fold_mdds: list[float], is_sharpe
             ],
             oos_sharpe=oos_sharpe,
             params_locked=True,
+            perturbed_results=_dim2_perturbed_stable(is_sharpe),
+            period_results=_dim3_periods_stable(oos_sharpe),
             dsr=dsr,
         )
     )
     band = evaluate_dsr(dsr).band
-    return mod.map_exam_verdict(pipe.gate, pipe.overfitting, band), pipe
+    n_dims = mod.OVERFIT_DIMENSIONS_TOTAL - len(pipe.overfitting.get("not_assessed_dimensions", ()))
+    return mod.map_exam_verdict(pipe.gate, pipe.overfitting, band, n_dims_evaluated=n_dims), pipe
 
 
 class TestExamVerdictThreeLines:
     def test_pass_all_stages_clean(self) -> None:
+        # 正对照：三维度全供数 + 三线全绿 ⇒ 唯一合法的 VERDICT_PASS 面
+        # （缺任一维即被 R-055b 判不可判定，见 test_rb_stats_validator_teeth.py 的对照件）
         (verdict, _), pipe = _drive_pipeline(
             fold_sharpes=[1.0] * 8, fold_mdds=[-0.05] * 8, is_sharpe=1.5, oos_sharpe=1.2, dsr=0.99
         )
