@@ -171,3 +171,112 @@ class TestBoundaryConditions:
         result = reconciler.reconcile(internal, external)
         assert result["count"] == 1
         assert result["diffs"]["A"]["diff"] == -1
+
+
+class TestHandleExecutionReportFailClosed:
+    """BRK-016 加严钉：事件入口禁把"拿不到数据"判成"对平了"。
+
+    旧实现 `execution_report.get("internal_positions", {})` 对缺键静默补空
+    → 两侧都缺时返回 match=True（假对账，与 #ARCH-327 同型：防线在
+    输入侧空转而测试全绿）。这些用例是**能红证据**：把 fail-closed 改回
+    .get(key, {}) 则本类整片转红。
+    """
+
+    def test_missing_both_keys_is_not_match(self):
+        reconciler = PositionReconciler()
+        result = reconciler.handle_execution_report({})
+        assert result["match"] is False
+        assert result["status"] == "input_unavailable"
+        assert result["rule_id"] == "POS-RECON-002"
+        assert set(result["missing"]) == {"internal_positions", "external_positions"}
+        assert result["escalate"] is True
+
+    def test_missing_one_key_is_not_match(self):
+        reconciler = PositionReconciler()
+        result = reconciler.handle_execution_report({"internal_positions": {"A": 1}})
+        assert result["match"] is False
+        assert result["missing"] == ["external_positions"]
+
+    def test_none_positions_is_not_match(self):
+        """键在但值为 None（上游查询失败回填 None）= 不可得，禁当空仓。"""
+        reconciler = PositionReconciler()
+        result = reconciler.handle_execution_report(
+            {"internal_positions": None, "external_positions": {"A": 1}}
+        )
+        assert result["match"] is False
+        assert "internal_positions:not_mapping" in result["missing"]
+
+    def test_non_mapping_event_is_not_match(self):
+        reconciler = PositionReconciler()
+        for bad in (None, [], "", 42):
+            result = reconciler.handle_execution_report(bad)  # type: ignore[arg-type]
+            assert result["match"] is False
+            assert result["missing"] == ["event_not_mapping"]
+
+    def test_unproven_double_empty_is_not_match(self):
+        """双空且无出处声明 → 无法区分"真空仓"与"两侧都瞎"→ 判不可得。"""
+        reconciler = PositionReconciler()
+        result = reconciler.handle_execution_report(
+            {"internal_positions": {}, "external_positions": {}}
+        )
+        assert result["match"] is False
+        assert result["missing"] == ["unproven_empty_positions"]
+
+    def test_declared_flat_book_is_match(self):
+        """显式声明出处（空仓合法态）→ 真判平，且不误升级。"""
+        reconciler = PositionReconciler()
+        result = reconciler.handle_execution_report({
+            "internal_positions": {},
+            "external_positions": {},
+            "positions_provenance": "broker PositionStatics.csv @2026-09-18T15:00+08:00",
+        })
+        assert result["match"] is True
+        assert result["status"] == "ok"
+        assert result["escalate"] is False
+
+    def test_event_entry_reconciles_real_diff(self):
+        reconciler = PositionReconciler()
+        result = reconciler.handle_execution_report({
+            "internal_positions": {"510300.SH": 100},
+            "external_positions": {"510300.SH": 200},
+        })
+        assert result["match"] is False
+        assert result["status"] == "mismatch"
+        assert result["rule_id"] == "POS-RECON-001"
+        assert result["diffs"]["510300.SH"]["diff"] == -100
+
+    def test_escalation_sink_invoked_on_input_unavailable(self):
+        """P0-FATAL 必须真有人接：输入不可得也要走 sink（旧实现根本无此路径）。"""
+        got: list[dict] = []
+        reconciler = PositionReconciler(escalation_sink=got.append)
+        reconciler.handle_execution_report({})
+        assert len(got) == 1
+        assert got[0]["rule_id"] == "POS-RECON-002"
+
+    def test_escalation_sink_invoked_on_threshold_breach(self):
+        got: list[dict] = []
+        reconciler = PositionReconciler(escalation_sink=got.append)
+        reconciler.handle_execution_report({
+            "internal_positions": {"A": 1, "B": 2, "C": 3},
+            "external_positions": {"A": 9, "B": 9, "C": 9},
+        })
+        assert len(got) == 1
+        assert got[0]["rule_id"] == "POS-RECON-001"
+
+    def test_escalation_sink_exception_does_not_break_reconcile(self):
+        """sink 抛异常必须被 Fail-Loud 兜住（计数与结果仍出，禁空转）。"""
+        def _boom(_payload: dict) -> None:
+            raise RuntimeError("sink down")
+
+        reconciler = PositionReconciler(escalation_sink=_boom)
+        result = reconciler.handle_execution_report({})
+        assert result["status"] == "input_unavailable"
+        assert reconciler.unavailable_count == 1
+
+    def test_unavailable_count_accumulates(self):
+        reconciler = PositionReconciler()
+        for _ in range(3):
+            reconciler.handle_execution_report({})
+        assert reconciler.unavailable_count == 3
+        assert reconciler.mismatch_count == 0
+

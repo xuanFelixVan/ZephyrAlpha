@@ -35350,5 +35350,61 @@ creation_tokens:
   token: "n5-e4-reconcile-20260918"
   created_by: "st-tdchain-20260917"
   capability: "residual_e4_finals"
+- file: schemas/categories/market/market_cftc_positioning.py
+  token: cftc-gold-etf-onboarding-market-cftc-positioning-20260918
+  created_by: st-ff-altdataF-20260918
+  capability: cftc_gold_etf_onboarding
+- file: schemas/categories/market/market_gold_etf_holdings.py
+  token: cftc-gold-etf-onboarding-market-gold-etf-holdings-20260918
+  created_by: st-ff-altdataF-20260918
+  capability: cftc_gold_etf_onboarding
+- file: scripts/ch/apply_cross_asset_ddl.py
+  token: cftc-gold-etf-onboarding-apply-cross-asset-ddl-20260918
+  created_by: st-ff-altdataF-20260918
+  capability: cftc_gold_etf_onboarding
+- file: src/zephyr/risk/paper_hedge_leg.py
+  token: auto-scaffold-paper_hedge_leg-20260918
+  created_by: scaffold.py
+  capability: paper_hedge_leg
+- file: docs/_working/n5_closure/n5_disposition_ledger.md
+  token: n5-closure-n5-disposition-ledger-20260918
+  created_by: st-ff-landA-20260918
+  capability: n5_closure
+- file: docs/_working/tdchain_mine/pending_for_max.md
+  token: tdchain-mining-workbook-pending-for-max-20260918
+  created_by: st-ff-tdchainJ-20260918
+  capability: tdchain_mining_workbook
+- file: docs/_working/fullflow_campaign/adjudications/req_tdchainJ_01.md
+  token: fullflow-campaign-coordination-req-tdchainj-01-20260918
+  created_by: st-ff-tdchainJ-20260918
+  capability: fullflow_campaign_coordination
+- file: docs/_working/fullflow_campaign/adjudications/req_tdchainJ_02.md
+  token: fullflow-campaign-coordination-req-tdchainj-02-20260918
+  created_by: st-ff-tdchainJ-20260918
+  capability: fullflow_campaign_coordination
+- file: docs/_working/fullflow_campaign/adjudications/req_tdchainJ_03.md
+  token: fullflow-campaign-coordination-req-tdchainj-03-20260918
+  created_by: st-ff-tdchainJ-20260918
+  capability: fullflow_campaign_coordination
+- file: docs/_working/fullflow_campaign/lanes/tdchainJ_kline_index_intraday_spec.md
+  token: fullflow-campaign-coordination-tdchainj-kline-index-intraday-spec-20260918
+  created_by: st-ff-tdchainJ-20260918
+  capability: fullflow_campaign_coordination
+- file: docs/_working/fullflow_campaign/lanes/wirerecon_BRK020_gap.md
+  token: ff12-wirerecon-e4-gapfile-wirerecon-brk020-gap-20260918
+  created_by: st-ff-wirerecon-20260918
+  capability: ff12-wirerecon-e4-gapfile
+- file: docs/_working/fullflow_campaign/stages/FF-12_recon_feedback/ledger_sixway.md
+  token: ff12-wirerecon-sixway-ledger-ledger-sixway-20260918
+  created_by: st-ff-wirerecon-20260918
+  capability: ff12-wirerecon-sixway-ledger
+- file: src/zephyr/governance/resilience_governance/emergency_track_guardian.py
+  token: wiresafe-emergency-track-emergency-track-guardian-20260918
+  created_by: st-ff-wiresafe-20260918
+  capability: wiresafe-emergency-track
+- file: config/emergency_track.yaml
+  token: wiresafe-emergency-track-emergency-track-20260918
+  created_by: st-ff-wiresafe-20260918
+  capability: wiresafe-emergency-track
 
 di_seam_exemptions: []
