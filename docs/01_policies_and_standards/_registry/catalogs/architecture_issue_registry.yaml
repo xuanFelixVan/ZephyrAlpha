@@ -22143,3 +22143,237 @@ entries:
   related_adjudication: '#335'
   created: '2026-09-18'
   last_updated: '2026-09-18'
+
+- issue_id: "#ARCH-338"
+  title: >-
+    执行域孤儿族接线或退役裁定：OrderExecutionSaga/ExecutionEngine/ex_sor 全域/order_splitter/process_fill 零生产接线（grep
+    实证），钱路径实跑=TradingSession→OrderManager 裸路径，蓝图声称的补偿/超时/算法切片保障纸面化；X04 SOR 参与率 5%
+    监管红线只估算不强制、LOT_SIZE=100 科创板废单隐患
+  severity: P1高
+  adjudication: >-
+    裁定选项：①接线（Saga 补偿链+SOR 红线强制+科创板 lot
+    规则）②显式退役删码。锚点：docs/_working/deep_review_full/p0_money_path/rpt_x02/x03/x04/x06/x07.md；E03/E05
+    同域已先矫两处
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309/#304'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-339"
+  title: >-
+    风控孤儿闸族产而不消：K03 StopGate 生产零调用（实为会话质量闸需重分类）、K06 A股止损规则引擎零调用（per-position 止损整体缺位，RK-04/35/40 同族四件）、K09
+    清仓执行保护双守卫零接线（恰是 K01 缺的验证环）、K07 BS-007 黑天鹅分支生产休眠
+  severity: P1高
+  adjudication: >-
+    裁定选项：整族接线（kill switch 触发→清仓→复核闭环）或退役。锚点：rpt_k01/k03/k06/k07/k09.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-340"
+  title: >-
+    K02 资金事故假处置+系统级开关纯内存：kill_switch_orchestrator.route_incident('funds') 翻动的 trading 五级旗无任何下单路径消费；系统级
+    kill switch 重启即丢
+  severity: P0高
+  adjudication: >-
+    裁定选项：五级旗接入下单路径 + 开关状态持久化（crash-only 对标 Nautilus）。锚点：rpt_k02.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#317'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-341"
+  title: >-
+    K08 先报告后交易闸从未武装：compliance_report_registry 闸码完整测试全绿，但 report_gate= 全仓零注入、broker_ack 0/6——监管红线 C-002
+    在任何生产装配未生效
+  severity: P0高
+  adjudication: >-
+    武装前置=券商 ack 数据流（0 ack 下武装=C-002 全拒单砖化交易）；需 Owner 定武装时点与 ack 数据源。锚点：rpt_k08.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-342"
+  title: >-
+    对账链双零接线+结算单缺失日绿灯：ThreeWayReconEngine 与 EodReconciler 均只在测试中；eod cash_checked=False 不告警；R04 L3
+    公式忽略买卖方向（Fill 契约无 side）；15:30 硬时点纸面（build_post_settlement_jobs 零调用方）；R05 avg_cost 重启归零→浮盈=全市值（修复点在
+    #317 改造区防冲突挂起）
+  severity: P1高
+  adjudication: >-
+    随 #317 盘中对账改造一并接线；Fill 契约加 side 字段。锚点：rpt_r01-r05.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#317'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-343"
+  title: >-
+    pf_alloc 整域接线/退役裁定：7 件仅 W03 真接线；W01/W02 信号合成上半段整链缺位；W04/W07 名为 production 实为空转；C02/C04/C05/C07
+    孤儿；W05 risk_parity 与 inverse_var 逐位相同（模式开关无效）；W05/W06 CVaR 双承载窗口漂移（checklist#4 实锤）；C04 veto 路径
+    total_exposure=0/cash_reserve=全额（接线即 P0，实测复现）；W07/D03/D04 同型 NaN fail-open 已在本战役先行矫治
+  severity: P1高
+  adjudication: >-
+    整域裁决：接线（含 W05 真 ERC 立卡 Quantpedia/PO book §6.5）或退役。锚点：rpt_c02-c07/w01-w07.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#304/#306'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-344"
+  title: >-
+    Regime 断供即满部署三腿：D01 _run_hmm 异常→均匀分布、D12 参数缺失→1.0、D05 detect
+    异常→1.0——局部保守合成全局'风险机制静默失效'，数据事故日叠加危机时全账户敞口放大（三报告互证）
+  severity: P1高
+  adjudication: >-
+    fallback 语义统一裁定：hold-prev / 防御上限 / 告警显化三选一。锚点：rpt_d01/d05/d12.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-345"
+  title: >-
+    Wyckoff 证伪旁路：WYF-3 证伪置零只封引擎主出口，overlay_features.s2_wyckoff_score MVP 回退支在
+    overlay_signals_builder.py:394 弱 guard 下静默接管（可达 70>门槛 60）
+  severity: P1高
+  adjudication: >-
+    旁路拆除或等强证伪门。锚点：rpt_d09/d11.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-346"
+  title: >-
+    验证链 embargo/purge 双承载与缺省归零：B05 pit_query 默认 0 且全仓零传参=生产财务 PIT 实际零隔离（本件默认 5 日闲置）；B09 CPCV 缺省
+    t1=None/embargo=0=名义 CPCV 实为裸组合 CV；B08 三模式切分无 purge/embargo 能力
+  severity: P1高
+  adjudication: >-
+    embargo/purge 默认值与消费方统一裁定（LdP 语义）。锚点：rpt_b05/b08/b09.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#306'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-347"
+  title: >-
+    策略管线三洞：T02 intake decay=None/空 segments 三条件静默通过（活闸 fail-open，收紧需灰度）；T05 滚动窗口不在指纹内→证据窗永久冻结陈窗直供
+    promotion；T06 晋升建议 API token=None 服务端自取密钥×零认证×CORS *=drive-by 可批晋升
+  severity: P1高
+  adjudication: >-
+    T02 收紧灰度；T05 指纹语义裁定；T06 认证半径裁定。锚点：rpt_t02/t05/t06.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-348"
+  title: >-
+    卖出族族内对账（#309 挂起态下先记账）：E03/E06 同 spec 双实现分化（E03 降级锚已矫、E06 为正确示范）；E02/E01 对 UNKNOWN 共振口径相反；E02
+    无统计全体×0.5 降权；E04 RISK 子串匹配脆弱
+  severity: P1高
+  adjudication: >-
+    接电前必须族内对账统一。锚点：rpt_e01-e06.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-349"
+  title: >-
+    信号域接线期地雷：S03 单 NaN 毒化全横截面排名（实证）；S08 粗筛漏斗五维默认值=通过值（全域唯一 fail-open 反例）；S11 缺数据双向各拿满分；S01/S04
+    双承载；S05/S12 loader 模板级复制同族病根；MATURITY=production 标签漂移 5 例
+  severity: P1高
+  adjudication: >-
+    接线前逐件矫治+MATURITY 治理。锚点：rpt_s01-s12.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-350"
+  title: >-
+    数据基建三洞：I03 pause/resume 仅本进程内存生效对常驻调度器熔断无效；I08 ch_writer 引擎缓存投毒（空串永久缓存 invalidate 不清→CH 故障后 FINAL
+    全表永久失效）+主写入链绕过 quality_gate；I09 FINAL 注入三通道静默失效
+  severity: P1高
+  adjudication: >-
+    缓存失效治理+熔断落盘裁定。锚点：rpt_i03/i08/i09.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-351"
+  title: >-
+    自动化任务族退路与 DAG 系统洞：9/18 miniQMT 退役命中 24 任务无可用退路（TF01 8 主源/TF02 16 全裸/TF10 ex_dividend_event 为
+    stk_limit 公式法唯一输入）；TF07 daban 日频消费←周频生产名义 DAG 边（task_queue 自动视为满足，周二至周五装载上周事件，实盘相关）；TF15
+    trade_calendar 不在哨兵 16 表
+  severity: P1高
+  adjudication: >-
+    退役映射表落地+跨时段依赖时窗校验设计。锚点：rpt_tf01/tf02/tf07/tf10/tf15.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-352"
+  title: >-
+    告警无推送通道：飞书/SMTP 2026-09-15 按 Owner 裁定裁撤后告警=日志+failures json+前端页纯被动；主源 health 失败→run_task
+    continue→mark_failed 无 notify（miniqmt 退役后整族走此路径，唯一兜底=23:00 integrity 聚合，时延最坏 14h）
+  severity: P1高
+  adjudication: >-
+    推送通道重建或值班轮询机制裁定（TF 波系统级发现①②）。锚点：rpt_tf01/tf04 + scheduler.py:1543-1591
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-353"
+  title: >-
+    F02 因子阶段闸：ITERATION→VALIDATION 后底层 FSM=retired 且回炉因子照常注册（复算实锤）+三重门禁缺省 lambda:True 全开；G01 基本面合成器确认
+    stub（全仓零实现/registry 恒空/幂等键含 uuid 复算实锤）
+  severity: P2中
+  adjudication: >-
+    F06 挖矿基建接线前必修；G01 stub 填实或退役。锚点：rpt_f02/g01.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-354"
+  title: >-
+    预测域接线期必修：M04 044 主件（生产唯一消费变体）NaN→区间 (nan,nan)；M03 NaN 全链裸奔（window=0 与 config 校验已矫）；M02 symbol 直插 SQL
+  severity: P2中
+  adjudication: >-
+    接线前补 NaN 防御+参数化 SQL。锚点：rpt_m02/m03/m04.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-355"
+  title: >-
+    X05 价格笼子实盘路径形同虚设：文件桥调 check_price_cage 不传基准价→CageStatus 恒 UNKNOWN 原价通过（官方 ±2%+0.1 元规则实现本身与交易所细则一致）
+  severity: P2中
+  adjudication: >-
+    券商层 quote 源接入设计。锚点：rpt_x05.md
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+- issue_id: "#ARCH-356"
+  title: >-
+    轴F 立卡清单（本战役 SOTA 对照产出）：K02 系统级开关持久化（crash-only）；K05 VaR min_history=30 对 95% 分位统计不足（Hendricks
+    1996）；B08 purge/embargo 对齐（LdP）；W05 真 ERC 迭代解；B01 metrics 频率感知年化；D01 HMM 平滑 Hungarian 匹配；D08 ATM
+    方差互换口径（CBOE/iVX）；F05 TA-Lib 数值对拍
+  severity: P2中
+  adjudication: >-
+    逐项按 mining_sop 立卡评估。锚点：各 rpt §3 SOTA 节
+  fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
+  status: open
+  related_adjudication: '#309'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
