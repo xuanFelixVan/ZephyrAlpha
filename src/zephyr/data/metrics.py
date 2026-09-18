@@ -60,6 +60,20 @@ _DEFAULT_METRICS_FILE = REPO_ROOT / "data" / "metrics.prom"
 _DURATION_BUCKETS = [0.1, 0.5, 1.0, 5.0, 10.0, 30.0, 60.0, 300.0, 900.0, 1800.0, 3600.0]
 
 
+def _discard_tmp(fd: int | None, tmp_path: str | None) -> None:
+    """回收 mkstemp 半成品：先关句柄（Windows 持柄 unlink 会失败）再 unlink。永不抛。"""
+    if fd is not None:
+        try:
+            os.close(fd)
+        except OSError:
+            pass
+    if tmp_path is not None:
+        try:
+            os.unlink(tmp_path)
+        except OSError:
+            pass
+
+
 class IntegratorMetrics:
     """数据源集成器可观测性指标采集器。
 
@@ -210,10 +224,17 @@ class IntegratorMetrics:
         使用 tempfile.mkstemp 生成唯一 tmp 文件名，避免固定名碰撞。
         _lock 为 RLock，持锁后调 render()(内部也 acquire)可重入不死锁。
 
+        治本(ENV1 长尾 L2)：except 路径回收 mkstemp 生成的 tmp 文件。
+        原实现 render/mkstemp/fdopen/replace 任一抛异常即 return False，
+        已创建的 tmp 永不 unlink ⇒ 每次失败在正本目录泄漏一个 .metrics_prom_*.tmp
+        （与 atomic_write 的异常清理语义对齐；进程被硬杀绕过清理的存量属 ENV1 长尾 L1，另案）。
+
         Returns:
             是否写入成功。
         """
         with self._lock:  # 全程持锁，串行化文件 I/O（RLock 可重入，render 内部 acquire 不死锁）
+            tmp_path: str | None = None
+            fd: int | None = None
             try:
                 self._output_file.parent.mkdir(parents=True, exist_ok=True)
                 content = self.render()
@@ -224,11 +245,14 @@ class IntegratorMetrics:
                     suffix=".tmp",
                 )
                 with os.fdopen(fd, "w", encoding="utf-8") as f:
+                    fd = None  # 已移交 fdopen 持有，避免清理路径二次 close
                     f.write(content)
                 os.replace(tmp_path, str(self._output_file))
+                tmp_path = None  # 已被 replace 消费，不再属于待回收残留
                 return True
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 log.warning(f"metrics.flush 失败: {e}")
+                _discard_tmp(fd, tmp_path)
                 return False
 
 

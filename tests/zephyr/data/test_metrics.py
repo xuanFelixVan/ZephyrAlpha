@@ -97,6 +97,36 @@ class TestIntegratorMetrics:
         assert ok is True
         assert nested.exists()
 
+    def test_flush_failure_leaves_no_tmp_residue(self, tmp_path, monkeypatch):
+        """ENV1 长尾 L2 红证：flush 异常路径必须回收 mkstemp 半成品，不留 .metrics_prom_*.tmp。
+
+        尺子能红=改前跑同一注入场景盘上必然残留 1 件（探针 .runtime/tmp/
+        st-leakfix-20260919/probe_metrics_leak.py 实测 RED）；改后残留计数 0，
+        且正常路径行为不变（返回 False / 不抛异常 / 正本不落盘，符合
+        [ERROR_CONTRACT] 所有方法不抛异常）。
+        """
+        out = tmp_path / "metrics.prom"
+        m = IntegratorMetrics(output_file=out)
+        m.record_task("t1", "akshare", "SUCCESS", 1.0, 10)
+
+        def _boom(_src, _dst):
+            msg = "injected os.replace failure (simulates WinError 5/32 file-lock)"
+            raise OSError(msg)
+
+        monkeypatch.setattr(os, "replace", _boom)
+        assert m.flush() is False
+        assert not out.exists(), "异常路径不得产出正本"
+        assert list(tmp_path.glob(".metrics_prom_*.tmp")) == [], "异常路径残留 tmp 未回收"
+
+    def test_flush_success_consumes_tmp(self, tmp_path):
+        """阴性对照：正常路径 replace 已消费 tmp，正本目录不留 .metrics_prom_*.tmp。"""
+        out = tmp_path / "metrics.prom"
+        m = IntegratorMetrics(output_file=out)
+        m.record_task("t1", "akshare", "SUCCESS", 1.0, 10)
+        assert m.flush() is True
+        assert out.exists()
+        assert list(tmp_path.glob(".metrics_prom_*.tmp")) == []
+
     def test_render_includes_all_metric_types(self, metrics):
         """render 输出包含所有 6 个指标类型。"""
         metrics.record_task("t1", "akshare", "SUCCESS", 1.0, 10)
