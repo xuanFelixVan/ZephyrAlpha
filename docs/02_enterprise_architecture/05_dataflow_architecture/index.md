@@ -29,7 +29,7 @@ ttl: permanent
 ## 自动生成文档（本目录）
 
 > **禁止手工编辑**——以下文档由 `generate_dataflow_diagram.py` 从 PostgreSQL `dataflow_*` 表自动生成。
-> 真源：`dataflow_graph_registry.yaml`（YAML 真源）→ `dataflow_*` 表（DB 缓存）→ 本目录（派生文档）。
+> 真源：`docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml`（YAML 真源）→ `dataflow_*` 表（DB 缓存）→ 本目录（派生文档）。
 
 | 文档 | 内容 |
 |------|------|

@@ -181,7 +181,7 @@ verifiability: manual
 | 企业架构视图（TOGAF） | 架构模型不是规则 | `docs/02_enterprise_architecture/` |
 | 架构决策记录（KB 决策记录） | 架构决策不是规则标准；凭证真源为 KB | **`KB:decisions`**（Git-backed） |
 | 模块生命周期文档 | 蓝图+施工图+交付 | `docs/03_modules/` |
-| 知识库条目 | 经验积累不是规则 | **KB 知识库**（KE 管线检索；索引=`_registry/catalogs/knowledge_article_registry.yaml`；docs/08_knowledge/ 已退役） |
+| 知识库条目 | 经验积累不是规则 | **KB 知识库**（KE 管线检索；索引=`_registry/catalogs/_archive/knowledge_article_registry.yaml`；docs/08_knowledge/ 已退役） |
 | 审计报告 | 事后评估不是规则 | `docs/_working/audit/` |
 | 业务代码 | 可执行代码 | `src/zephyr/` |
 | 治理/审计脚本 | 工具不是规则 | `scripts/governance/` / `scripts/audit/` |

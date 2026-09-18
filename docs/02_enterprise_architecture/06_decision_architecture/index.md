@@ -28,8 +28,8 @@ ttl: permanent
 
 ## 自动生成文档
 
-> **禁止手工编辑**——以下文档由 `generate_decision_diagram.py` 从 PostgreSQL `decision_*` 表 + `decision_graph_model.yaml` 自动生成。
-> 真源：`decision_graph_model.yaml`（YAML 真源）→ `decision_*` 表（DB 缓存）→ 本目录（派生文档）。
+> **禁止手工编辑**——以下文档由 `generate_decision_diagram.py` 从 PostgreSQL `decision_*` 表 + `architecture_model/domain/decision_graph_model.yaml` 自动生成。
+> 真源：`architecture_model/domain/decision_graph_model.yaml`（YAML 真源）→ `decision_*` 表（DB 缓存）→ 本目录（派生文档）。
 > Mermaid 图表通过 ```mermaid 代码块内嵌在 `decision_index.md` 中（与 `02_domain_architecture_docs/` 模式一致），无需单独 `.mmd` 文件。
 
 | 文档 | 内容 |
@@ -40,7 +40,7 @@ ttl: permanent
 
 - **脚本**：[`scripts/governance/d5_architecture/generators/generate_decision_diagram.py`](../../../scripts/governance/d5_architecture/generators/generate_decision_diagram.py)
 - **触发**：手动运行（`python scripts/governance/d5_architecture/generators/generate_decision_diagram.py`）
-- **数据源**：PostgreSQL `decision_tracks` / `decision_layers` / `decision_nodes` / `decision_edges` 表 + `decision_graph_model.yaml`（invariants 真源）
+- **数据源**：PostgreSQL `decision_tracks` / `decision_layers` / `decision_nodes` / `decision_edges` 表 + `architecture_model/domain/decision_graph_model.yaml`（invariants 真源）
 - **输出**：`docs/02_enterprise_architecture/06_decision_architecture/`（1 份文档，本目录）
 
 ## 四轨架构（Four Tracks）
