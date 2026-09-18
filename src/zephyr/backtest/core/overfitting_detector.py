@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 过拟合三维度三层; 样本外Sharpe<70%样本内->否决
+# [INVARIANTS] 过拟合三维度三层; 样本外Sharpe<70%样本内->否决; 比率门双向(R-055c: OOS/IS>1+容差=泄漏信号,不是"更好"); detect()未提供的维度=不可判定=不通过(R-055b fail-closed,禁"缺位维默认稳定")
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -30,7 +30,9 @@
 
 约束:
   - 三维度任一不稳定 -> is_overfitting=True
+  - 三维度任一**未提供数据** -> 不可判定 -> is_overfitting=True(R-055b, 禁"缺位维默认稳定")
   - 样本内外比率使用Sharpe(年化), 样本内Sharpe<=0时不适用比率判定
+  - OOS/IS 比率门**双向**: <0.70 否决(P0-9) 且 >1+容差(=1.30) 亦否决(疑似选参泄漏, R-055c)
 
 SSoT: docs/03_modules/_domain_backtest/blueprint.md §16.7
 # [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/overfitting_detector.yaml
@@ -60,6 +62,16 @@ GEN_CV_THRESHOLD = 1.50
 # decision_gate.DecisionGateConfig.oos_sharpe_ratio_threshold 通过单向导入使用此常量,
 # 禁止在其他位置重复定义 0.70/0.7 等等价字面量(SSoT 单真源原则)
 DEFAULT_OOS_SHARPE_THRESHOLD_RATIO: float = 0.70
+
+# ★ R-055c：比率门**上界**（防反向击穿）。红队实测：纯噪声经"全样本选参"后
+# OOS/IS=2.311 > 0.70，只有下界的比率门会把这种泄漏签名当成"样本外比样本内还好"的
+# 优质证据加分（E2 实验，见 docs/_working/fullflow_campaign/lanes/rbstats_prescriptions.md P-7）。
+# 上界取值依据（**不是本车道凭记忆造的数**）：本模块已登记的"Sharpe 相对变化不可接受"
+# 容差 = PARAM_MAX_CHANGE_THRESHOLD(0.30，维度2 参数扰动判据)，故上界 = 1.0 + 0.30 = 1.30；
+# 同族既有语义锚还有 decision_gate.stability_plateau_tolerance=0.20（高原容差，更严）。
+# ⚠️ 若 Owner 另有偏好（例如取 1.0+0.20 与高原容差齐平），只改本常量即可——单真源。
+OOS_IS_RATIO_LEAK_TOLERANCE: float = PARAM_MAX_CHANGE_THRESHOLD
+OOS_IS_RATIO_UPPER_BOUND: float = 1.0 + OOS_IS_RATIO_LEAK_TOLERANCE
 
 
 class OverfittingError(Exception):
@@ -314,25 +326,37 @@ class OverfittingDetector:
         }
 
     def compare_in_out_sample(self, is_sharpe: float, oos_sharpe: float) -> dict:
-        """样本内外对比(SIM-38 / P0-9否决阈值)
+        """样本内外对比(SIM-38 / P0-9否决阈值 + R-055c 上界)
 
         样本外Sharpe < oos_sharpe_threshold_ratio * 样本内Sharpe -> 否决上线。
+        ★ R-055c: 比率**显著大于 1**(> OOS_IS_RATIO_UPPER_BOUND)同样否决——"样本外比
+        样本内好得多"在锁定配方的滚动考核里不是好消息，它是**泄漏签名**(参数搜索空间
+        跨过了样本外切分)。只设下界的比率门会被反向击穿(实测噪声 OOS/IS=2.311 被判健康)。
 
         Args:
             is_sharpe: 样本内(in-sample)Sharpe
             oos_sharpe: 样本外(out-of-sample)Sharpe
 
         Returns:
-            dict: is_overfitting, is_sharpe, oos_sharpe, ratio, reason
+            dict: is_overfitting, is_sharpe, oos_sharpe, ratio, leak_suspected, reason
         """
         is_sharpe = float(is_sharpe)
         oos_sharpe = float(oos_sharpe)
         threshold = self.config.oos_sharpe_threshold_ratio
+        upper = OOS_IS_RATIO_UPPER_BOUND
 
+        leak_suspected = False
         if is_sharpe > 1e-10:
             ratio = oos_sharpe / is_sharpe
-            is_overfitting = ratio < threshold
-            if is_overfitting:
+            leak_suspected = bool(ratio > upper)
+            is_overfitting = ratio < threshold or leak_suspected
+            if leak_suspected:
+                reason = (
+                    f"样本外Sharpe({oos_sharpe:.4f})/样本内Sharpe({is_sharpe:.4f})"
+                    f"={ratio:.2%}显著高于1(上界{upper:.0%}, 容差取PARAM_MAX_CHANGE_THRESHOLD"
+                    f"={OOS_IS_RATIO_LEAK_TOLERANCE:.0%})->疑似选参泄漏, 否决(R-055c)"
+                )
+            elif is_overfitting:
                 reason = (
                     f"样本外Sharpe({oos_sharpe:.4f})/样本内Sharpe({is_sharpe:.4f})"
                     f"={ratio:.2%}低于阈值{threshold:.0%}->否决上线(P0-9)"
@@ -350,6 +374,7 @@ class OverfittingDetector:
             "is_sharpe": is_sharpe,
             "oos_sharpe": oos_sharpe,
             "ratio": float(ratio),
+            "leak_suspected": leak_suspected,
             "reason": reason,
         }
 
@@ -363,21 +388,31 @@ class OverfittingDetector:
     ) -> dict:
         """综合过拟合检测(三维度 + 样本内外对比, SIM-56上线前自动门禁)
 
-        三维度任一不稳定或样本内外比率触发否决 -> is_overfitting=True。
-        未提供的维度视为未检测(默认稳定, 不触发否决)。
+        三维度任一不稳定/任一维度不可判定 或 样本内外比率触发否决 -> is_overfitting=True。
+        ★ R-055b(改，方向=加严)：**未提供的维度 = 不可判定 = 不通过**。
+          旧口径"未提供的维度视为未检测(默认稳定, 不触发否决)"是 fail-open：实测同一批
+          入参补上维度2/3 判 is_overfitting=True，而**省掉**它们就判 False——"没考试"
+          被记成"考了满分"。现缺位维计入否决，并在 reasons 与本结果的
+          not_assessed_dimensions 里显式留名，使"证据缺失"与"检出过拟合"可区分。
+          注意：这**会改变既有考试结论**——凡不灌维度2/3的调用方一律转"不通过"，
+          这是有意的(#321 只许加严；禁以白名单/放水分母消警 #273)。
 
         Args:
-            walk_forward_results: Walk-Forward各fold结果(维度1), None则跳过
-            perturbed_results: 参数微调结果(维度2), None则跳过; 基准Sharpe取is_sharpe
-            period_results: 跨时段结果(维度3), None则跳过
+            walk_forward_results: Walk-Forward各fold结果(维度1), None/空=不可判定=不通过
+            perturbed_results: 参数微调结果(维度2), None/空=不可判定=不通过; 基准Sharpe取is_sharpe
+            period_results: 跨时段结果(维度3), None/空=不可判定=不通过
             is_sharpe: 样本内Sharpe(同时作为参数敏感性基准), 默认0
             oos_sharpe: 样本外Sharpe, 默认0
 
         Returns:
             dict: is_overfitting, oos_is_ratio, walk_forward_stable,
-                  parameter_stable, generalization_stable, reasons
+                  parameter_stable, generalization_stable, not_assessed_dimensions,
+                  leak_suspected, reasons
+                  (*_stable=False 表示"本维未通过"，其成因是"不稳定"还是"没数据"
+                  由 not_assessed_dimensions 区分)
         """
         reasons: list[str] = []
+        not_assessed: list[str] = []
         walk_forward_stable = True
         parameter_stable = True
         generalization_stable = True
@@ -388,6 +423,10 @@ class OverfittingDetector:
             walk_forward_stable = wf["is_stable"]
             if not walk_forward_stable:
                 reasons.extend(wf["reasons"])
+        else:
+            walk_forward_stable = False
+            not_assessed.append("walk_forward")
+            reasons.append("维度1(Walk-Forward稳定性)未提供数据->不可判定->按不通过处理(R-055b)")
 
         # 维度2: 参数敏感性(基准Sharpe = 样本内Sharpe)
         if perturbed_results:
@@ -396,6 +435,10 @@ class OverfittingDetector:
             parameter_stable = ps["is_stable"]
             if not parameter_stable:
                 reasons.extend(ps["reasons"])
+        else:
+            parameter_stable = False
+            not_assessed.append("parameter_sensitivity")
+            reasons.append("维度2(参数敏感性)未提供数据->不可判定->按不通过处理(R-055b)")
 
         # 维度3: 泛化能力
         if period_results:
@@ -403,8 +446,12 @@ class OverfittingDetector:
             generalization_stable = gen["is_stable"]
             if not generalization_stable:
                 reasons.extend(gen["reasons"])
+        else:
+            generalization_stable = False
+            not_assessed.append("generalization")
+            reasons.append("维度3(泛化能力)未提供数据->不可判定->按不通过处理(R-055b)")
 
-        # SIM-38 / P0-9: 样本内外对比(硬否决)
+        # SIM-38 / P0-9 + R-055c: 样本内外对比(硬否决, 双向)
         io = self.compare_in_out_sample(is_sharpe, oos_sharpe)
         oos_is_ratio = io["ratio"]
         if io["is_overfitting"]:
@@ -420,6 +467,8 @@ class OverfittingDetector:
             "walk_forward_stable": bool(walk_forward_stable),
             "parameter_stable": bool(parameter_stable),
             "generalization_stable": bool(generalization_stable),
+            "not_assessed_dimensions": tuple(not_assessed),
+            "leak_suspected": bool(io["leak_suspected"]),
             "reasons": reasons,
         }
 
@@ -430,6 +479,8 @@ __all__ = [
     "OverfittingError",
     "OverfittingGateError",
     "DEFAULT_OOS_SHARPE_THRESHOLD_RATIO",
+    "OOS_IS_RATIO_LEAK_TOLERANCE",
+    "OOS_IS_RATIO_UPPER_BOUND",
     "WF_POSITIVE_RATIO_THRESHOLD",
     "WF_CV_THRESHOLD",
     "WF_DISASTER_SHARPE",

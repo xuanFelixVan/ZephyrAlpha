@@ -5,7 +5,7 @@
 # [CONSUMERS] pytest
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 本件是"验证器自身能红"的反假牙测试：全部输入为 numpy 生成的 iid 零均值高斯收益（真值年化 Sharpe=0，不存在 alpha），故任何"通过"判定都是假阳性；DSR 折减分母必须可对账复算，分母不可核验时 E4 禁判通过；过拟合检测器未评估维默认计"稳定"的 fail-open 形态须被本件显式钉住（改判据即断言失败）；零真库依赖（合成数据 + tmp_path）
+# [INVARIANTS] 本件是"验证器自身能红"的反假牙测试：全部输入为 numpy 生成的 iid 零均值高斯收益（真值年化 Sharpe=0，不存在 alpha），故任何"通过"判定都是假阳性；DSR 折减分母必须可对账复算，分母不可核验时 E4 禁判通过；过拟合检测器未评估维=R-055b fail-closed（不可判定=不通过），比率门=R-055c 双向（异常好=泄漏否决）；零真库依赖（合成数据 + tmp_path）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -23,8 +23,9 @@
   1. 诚实折减分母下，纯噪声挑最优**过不了** E4（尺子有牙）。
   2. 把 DSR 分母写小（等价改 f06_survivors.csv 的 n_trials_eff 一列），纯噪声
      **能过**——故 E4 必须对分母做可复算对账，不可核验时禁判"通过"。
-  3. OverfittingDetector 三维度中未提供的维度按"未检测=稳定"计入（fail-open），
-     故"未检出过拟合"≠"已排除过拟合"——E4 只评估 1 维时不得据此放行。
+  3. OverfittingDetector 三维度中未提供的维度 = **不可判定 = 不通过**（R-055b 治掉了
+     原"未检测=默认稳定"的 fail-open）；比率门自 R-055c 起**双向**——OOS/IS 显著>1 是
+     选参泄漏签名而非加分项。E4 只评估 1 维时同样不得据此放行。
   4. N_eff 对账函数的三态（verified/mismatch/unverifiable）机械可判。
 """
 
@@ -46,7 +47,7 @@ sys.modules[_spec.name] = mod
 _spec.loader.exec_module(mod)
 
 from zephyr.backtest.core.n_trial_ledger import compute_effective_rank
-from zephyr.backtest.core.overfitting_detector import OverfittingDetector
+from zephyr.backtest.core.overfitting_detector import OOS_IS_RATIO_UPPER_BOUND, OverfittingDetector
 from zephyr.backtest.core.strategy_validation_pipeline import (
     StrategyValidationRequest,
     run_strategy_validation,
@@ -72,14 +73,27 @@ def _dsr(returns, n_trials: int) -> float:
     )
 
 
-def _verdict(is_sharpe: float, oos_sharpe: float, dsr: float | None, **kw):
-    """用真实管线（DecisionGate + OverfittingDetector）驱动三线 verdict，零 mock 判定件。"""
+def _verdict(
+    is_sharpe: float,
+    oos_sharpe: float,
+    dsr: float | None,
+    perturbed_results: list[dict] | None = None,
+    period_results: list[dict] | None = None,
+    **kw,
+):
+    """用真实管线（DecisionGate + OverfittingDetector）驱动三线 verdict，零 mock 判定件。
+
+    过拟合维度2/3 由入参显式供数（R-055b 起"不供数=不可判定=不通过"，
+    故凡想测"四线全绿"的对照组都必须真把三维灌满，否则绿是假的）。
+    """
     pipe = run_strategy_validation(
         StrategyValidationRequest(
             strategy_id="RB-STATS-NOISE",
             is_sharpe=float(is_sharpe),
             params={"probe": "noise"},
             walk_forward_results=[{"sharpe": float(oos_sharpe), "max_drawdown": -0.05}] * 8,
+            perturbed_results=perturbed_results or [],
+            period_results=period_results or [],
             oos_sharpe=float(oos_sharpe),
             params_locked=True,
             dsr=dsr,
@@ -130,31 +144,69 @@ class TestPureNoiseCannotPass:
             f"噪声序列 DSR：诚实分母={honest} / N=1={bypassed} —— 分母敏感性未被测出"
         )
 
-    def test_full_sample_selection_defeats_the_oos_ratio_gate(self) -> None:
-        """攻击②得手证明：搜索用全样本 ⇒ OOS/IS 比率门(0.70)被反向击穿。
+    def test_full_sample_selection_is_caught_by_the_ratio_ceiling(self) -> None:
+        """攻击②得手过（改前）+ 已被 R-055c 治好：全样本选参 ⇒ OOS/IS 远超 1 = 泄漏签名。
 
-        纯噪声经全样本挑选后 OOS/IS 可远大于 1（"样本外比样本内还好"），
-        而现行比率门只有下界、无上界，也无法察觉"IS 段是被事后挑出来的"。
-        本件把它钉成回归保护：比率门一旦加上"异常好=可疑"的判别，本断言须同步更新。
+        改前此处断言"比率门被反向击穿 ⇒ 唯一还站得住的闸是 DSR"；R-055c 给比率门补了
+        上界（=1+PARAM_MAX_CHANGE_THRESHOLD=1.30），本件现在**双向钉死**：
+        ①比率确实异常（>上界）②门控确实因此不通过（reasons 里有泄漏字样）。
         """
         is_sh, oos_sh, oos_ret = _noise_winner(leak=True)
         honest = _dsr(oos_ret, M_TRIALS)
         (verdict, _), pipe = _verdict(is_sh, oos_sh, honest)
         assert pipe.gate.oos_stage.oos_is_ratio > mod.DEFAULT_OOS_SHARPE_THRESHOLD_RATIO
-        assert verdict != mod.VERDICT_PASS  # 唯一还站得住的闸是 DSR
+        assert pipe.gate.oos_stage.oos_is_ratio > OOS_IS_RATIO_UPPER_BOUND
+        assert any("疑似选参泄漏" in x for x in pipe.gate.oos_stage.reasons), "上界未生效=比率门仍是单向"
+        assert verdict != mod.VERDICT_PASS
+
+    def test_ratio_ceiling_holds_even_when_dsr_denominator_is_bypassed(self) -> None:
+        """★ R-055c 的独立验牙（考试三闸互不替代）：把 DSR 分母放水成 N=1 后，
+        改前 E2 会**判通过**（唯一拦它的是 DSR，而 DSR 已被放水）；现比率上界独立拦住。
+        """
+        is_sh, oos_sh, oos_ret = _noise_winner(leak=True)
+        bypassed_dsr = _dsr(oos_ret, 1)
+        assert bypassed_dsr >= 0.95, "前提不成立：N=1 的 DSR 未达显著线，本件验不到'放水仍被拦'"
+        (verdict, _), pipe = _verdict(
+            is_sh,
+            oos_sh,
+            bypassed_dsr,
+            perturbed_results=[{"sharpe_ratio": is_sh * 1.02}],
+            period_results=[{"sharpe_ratio": oos_sh}, {"sharpe_ratio": oos_sh}],
+        )
+        assert pipe.gate.oos_stage.oos_is_ratio > OOS_IS_RATIO_UPPER_BOUND
+        assert verdict != mod.VERDICT_PASS, "分母被放水时比率上界必须独立成立（三闸并列）"
 
 
 class TestEvidenceSufficiencyGates:
     """判据②③的后半：分母不可核验 / 维度未评满时，**任何**输入都不得判通过。"""
 
-    # 门控全绿的构造性入参（IS/WFA/OOS/DSR 四线全过）——用于验证"证据闸"独立生效
-    GREEN = {"is_sharpe": 1.5, "oos_sharpe": 1.2, "dsr": 0.99}
+    # 门控全绿的构造性入参（IS/WFA/OOS/DSR 四线全过 + 过拟合三维**全供数**）
+    # R-055b 后维度2/3 必须供满，否则"绿"本身就是不可判定的假绿（见该案的对照面测试）。
+    GREEN = {
+        "is_sharpe": 1.5,
+        "oos_sharpe": 1.2,
+        "dsr": 0.99,
+        "perturbed_results": [{"sharpe_ratio": 1.45}, {"sharpe_ratio": 1.52}],
+        "period_results": [{"sharpe_ratio": 1.2}, {"sharpe_ratio": 1.3}, {"sharpe_ratio": 1.1}],
+    }
 
     def test_baseline_all_green_does_pass(self) -> None:
-        """对照组：无 RB-STATS-01 加严（默认参数）时四线全绿即判通过——证明闸门确有放行面。"""
+        """对照组：三维供满 + 分母已对账时四线全绿即判通过——证明闸门确有放行面。"""
         (verdict, _), pipe = _verdict(**self.GREEN)
         assert pipe.gate.overall_passed and not pipe.overfitting["is_overfitting"]
         assert verdict == mod.VERDICT_PASS
+
+    def test_missing_dimensions_no_longer_pass_by_default(self) -> None:
+        """R-055b 行为变更（有意的加严）：同样的四线全绿，**省掉维度2/3** 即不得判通过。
+
+        改前此处 verdict==PASS（"没考的两门按满分计入"）——本件的存在使"缺位维默认稳定"
+        一旦回退立刻变红。
+        """
+        green = {k: v for k, v in self.GREEN.items() if k not in ("perturbed_results", "period_results")}
+        (verdict, _), pipe = _verdict(**green)
+        assert pipe.overfitting["is_overfitting"] is True
+        assert pipe.overfitting["not_assessed_dimensions"] == ("parameter_sensitivity", "generalization")
+        assert verdict != mod.VERDICT_PASS
 
     def test_unverifiable_dsr_denominator_blocks_pass(self) -> None:
         (verdict, reasons), _ = _verdict(dsr_denominator_verified=False, **self.GREEN)
@@ -174,22 +226,24 @@ class TestEvidenceSufficiencyGates:
         assert verdict != mod.VERDICT_PASS
 
 
-class TestOverfittingDetectorFailOpenPinned:
-    """判据③：把"未评估维默认稳定"的 fail-open 形态钉住。
+class TestOverfittingDetectorFailClosedAfterR055b:
+    """判据③（R-055b 落地后改写）：**未提供的维度 = 不可判定 = 不通过**。
 
-    本件**不**改判据（改它属蓝队/总包职权），只保证：若哪天 detect() 改成
-    fail-closed，本断言会红并强迫作者显式更新，而不是让 E4 的语义悄悄漂移。
+    改前此件名为 TestOverfittingDetectorFailOpenPinned，钉的是"缺位维默认稳定"的
+    fail-open 形态；总包裁定 R-055b 把方向定为加严后，同一组入参的期望值翻转。
     """
 
-    def test_omitted_dimensions_count_as_stable(self) -> None:
+    def test_omitted_dimensions_count_as_not_passed(self) -> None:
         det = OverfittingDetector()
         sparse = det.detect(
             walk_forward_results=[{"sharpe": 1.2, "max_drawdown": -0.05}] * 8,
             is_sharpe=1.5,
             oos_sharpe=1.2,
         )
-        assert sparse["is_overfitting"] is False
-        assert sparse["parameter_stable"] is True and sparse["generalization_stable"] is True
+        assert sparse["is_overfitting"] is True, "省掉维度必须转'不通过'，不得转绿(R-055b)"
+        assert sparse["parameter_stable"] is False and sparse["generalization_stable"] is False
+        assert sparse["not_assessed_dimensions"] == ("parameter_sensitivity", "generalization")
+        assert any("不可判定" in x for x in sparse["reasons"]), "缺位维须留名，禁与'判为过拟合'混淆"
 
     def test_same_inputs_with_dims_supplied_are_vetoed(self) -> None:
         det = OverfittingDetector()
@@ -201,6 +255,7 @@ class TestOverfittingDetectorFailOpenPinned:
             oos_sharpe=1.2,
         )
         assert full["is_overfitting"] is True
+        assert full["not_assessed_dimensions"] == (), "供满三维 ⇒ 否决必须来自数据本身，不是缺位兜底"
 
 
 class TestNTrialsProvenance:

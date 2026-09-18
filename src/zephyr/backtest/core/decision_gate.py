@@ -46,6 +46,7 @@ from typing import Any, Final
 
 from zephyr.backtest.core.overfitting_detector import (
     DEFAULT_OOS_SHARPE_THRESHOLD_RATIO,
+    OOS_IS_RATIO_UPPER_BOUND,
 )
 from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.simulation.deflated_sharpe_calculator import (
@@ -748,9 +749,14 @@ class DecisionGate:
 
         检查项:
           - 参数锁定:进入OOS后参数不可调整(params_locked必须为True)
-          - 样本外Sharpe比率:oos_sharpe/is_sharpe >= oos_sharpe_ratio_threshold(默认0.7)
+          - 样本外Sharpe比率(**R-055c 起双向**):
+              oos_sharpe/is_sharpe >= oos_sharpe_ratio_threshold(默认0.7) 才算通过;
+              且比率 > OOS_IS_RATIO_UPPER_BOUND(=1+PARAM_MAX_CHANGE_THRESHOLD=1.30,
+              真源在 overfitting_detector) 亦**不通过**——异常好的 OOS 是选参泄漏签名
           - DSR判定器(默认开启 dsr_threshold=0.95):config.dsr_threshold=None 时才不参与判定
             dsr >= dsr_threshold;已配置但未注入dsr按不通过处理(fail-closed)
+            ★ R-055d: 显式跳过时**必须**往 reasons 追加一行留痕, 禁静默(否则档案里
+            看不出"DSR 根本没参与判定")
 
         Args:
             is_sharpe: 样本内Sharpe比率
@@ -778,20 +784,29 @@ class DecisionGate:
         else:
             reasons.append("参数未锁定,OOS阶段要求参数锁定")
 
-        # 样本外Sharpe比率检查
+        # 样本外Sharpe比率检查（R-055c: 比率门**双向**——真源常量在 overfitting_detector）
         if is_f <= 0:
             oos_is_ratio = 0.0
             reasons.append(f"样本内Sharpe={is_f:.4f}<=0,无法满足OOS/IS比率门槛")
             ratio_passed = False
         else:
             oos_is_ratio = oos_f / is_f
-            ratio_passed = oos_is_ratio >= self.config.oos_sharpe_ratio_threshold
-            if ratio_passed:
-                reasons.append(f"OOS/IS Sharpe比率通过: {oos_is_ratio:.4f} >= {self.config.oos_sharpe_ratio_threshold}")
-            else:
+            lower = self.config.oos_sharpe_ratio_threshold
+            if oos_is_ratio > OOS_IS_RATIO_UPPER_BOUND:
+                # ★ R-055c 上界：OOS/IS 显著>1 不是"更好"，是**选参泄漏签名**
+                # （参数搜索空间跨过样本外切分时，被挑出的噪声会"样本外比样本内还好"，
+                #  实测纯噪声 OOS/IS=2.311 曾被单向比率门判"比率健康"）。
+                ratio_passed = False
                 reasons.append(
-                    f"OOS/IS Sharpe比率未通过: {oos_is_ratio:.4f} < {self.config.oos_sharpe_ratio_threshold}"
+                    f"OOS/IS Sharpe比率={oos_is_ratio:.4f} 超过上界{OOS_IS_RATIO_UPPER_BOUND:.2f}"
+                    f"(容差{OOS_IS_RATIO_UPPER_BOUND - 1.0:.2f})——疑似选参泄漏, 否决(R-055c)"
                 )
+            else:
+                ratio_passed = oos_is_ratio >= lower
+                if ratio_passed:
+                    reasons.append(f"OOS/IS Sharpe比率通过: {oos_is_ratio:.4f} >= {lower}")
+                else:
+                    reasons.append(f"OOS/IS Sharpe比率未通过: {oos_is_ratio:.4f} < {lower}")
 
         # DSR可选判定器(52号§7③): **默认开启**——DecisionGateConfig.dsr_threshold 的默认值
         # = DSR_SIGNIFICANCE_THRESHOLD(0.95)，见本文件 :445；传 None 才不参与判定。
@@ -813,6 +828,14 @@ class DecisionGate:
             dv = evaluate_dsr(dsr_f, threshold=self.config.dsr_threshold)
             dsr_passed = dv.passed
             reasons.append(dv.reason)
+        else:
+            # ★ R-055d：显式跳过 DSR 是**一扇逃生门**，此前它连一行 reasons 都不留——
+            # "DSR 根本没参与判定"这件事在档案里不可见（实测 src/scripts 无生产调用方传
+            # None，只 2 处测试用，故当前无实害；治的是"不留痕"本身）。
+            reasons.append(
+                "DSR判定被显式跳过(config.dsr_threshold=None)——本次OOS裁决未使用DSR证据, "
+                "dsr_passed=True 是跳过值而非显著性通过值(R-055d 留痕)"
+            )
 
         passed = bool(params_locked) and ratio_passed and dsr_passed
         if passed:

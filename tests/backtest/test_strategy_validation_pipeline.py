@@ -72,8 +72,11 @@ class TestPipelineHappyPath:
         verdict = run_strategy_validation(_clean_request())
         assert verdict.strategy_id == "strat_mf_v1"
 
-    def test_minimal_request(self):
-        # 可选维度全缺省: 仅必填字段+dsr(默认门控强制项), 过拟合维度默认稳定
+    def test_minimal_request_is_vetoed_by_missing_dimensions(self):
+        """R-055b 行为变更：可选维度(2/3)缺省不再是"默认稳定可上线"，而是不可判定=不通过。
+
+        改前此件断言 can_deploy is True（等价于"没考的两门按满分计入"）。
+        """
         req = StrategyValidationRequest(
             strategy_id="s1",
             is_sharpe=1.0,
@@ -83,7 +86,11 @@ class TestPipelineHappyPath:
             dsr=0.97,
         )
         verdict = run_strategy_validation(req)
-        assert verdict.can_deploy is True
+        assert verdict.overfitting["not_assessed_dimensions"] == ("parameter_sensitivity", "generalization")
+        assert verdict.overfitting["is_overfitting"] is True
+        assert verdict.can_deploy is False
+        assert any("R-055b" in x for x in verdict.overfitting["reasons"])
+        assert verdict.gate.overall_passed is True, "缺位维否决来自过拟合检测器, 不是三阶段硬线"
 
 
 class TestGateVetoPropagation:

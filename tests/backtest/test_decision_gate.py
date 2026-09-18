@@ -30,6 +30,7 @@ from zephyr.backtest.core.decision_gate import (
     evaluate_dsr,
     evaluate_strategy_risk_admission,
 )
+from zephyr.backtest.core.overfitting_detector import OOS_IS_RATIO_UPPER_BOUND
 from zephyr.simulation.deflated_sharpe_calculator import (
     DSR_OVERFITTING_FLOOR,
     DSR_SIGNIFICANCE_THRESHOLD,
@@ -273,6 +274,25 @@ class TestOOSStage:
         with pytest.raises(DecisionGateError):
             gate.check_oos_stage("a", 0.8)
 
+    def test_leak_ratio_above_upper_bound_fails(self):
+        """R-055c：OOS/IS 显著>1（上界 1.30）判**不通过**，不是"更好"。
+
+        改前此处 r.passed is True ——纯噪声全样本选参后 OOS/IS=2.311 被单向比率门
+        判"比率健康"（红队 E2 反向击穿实证）。
+        """
+        gate = DecisionGate()
+        r = gate.check_oos_stage(0.838, 1.936, params_locked=True, dsr=0.99)
+        assert r.oos_is_ratio == pytest.approx(1.936 / 0.838)
+        assert r.oos_is_ratio > OOS_IS_RATIO_UPPER_BOUND
+        assert r.passed is False
+        assert any("疑似选参泄漏" in x for x in r.reasons)
+
+    def test_ratio_just_below_upper_bound_passes(self):
+        """对照面：上界不是"越好越拒"，1.29 仍应通过（防把门做成反向惩罚真 alpha）。"""
+        gate = DecisionGate()
+        r = gate.check_oos_stage(1.0, 1.29, params_locked=True, dsr=0.99)
+        assert r.passed is True
+
 
 # ============== DSR 可选判定器(52号 §7③) ==============
 
@@ -287,12 +307,25 @@ class TestDSROptionalJudge:
         assert r.dsr == pytest.approx(0.0)
         assert any("DSR判定未通过" in x for x in r.reasons)
 
-    def test_explicit_disable_ignores_dsr(self):
-        """显式 dsr_threshold=None 才关闭判定器（不参与判定，向后兼容可信内部场景）。"""
+    def test_explicit_disable_ignores_dsr_but_leaves_trace(self):
+        """显式 dsr_threshold=None 才关闭判定器（不参与判定，向后兼容可信内部场景）。
+
+        ★ R-055d：跳过本身**必须留痕**——改前此分支连一行 reasons 都不追加，
+        档案上"DSR 根本没参与判定"这件事不可见（无实害但属不留痕的逃生门）。
+        """
         gate = DecisionGate(DecisionGateConfig(dsr_threshold=None))
         r = gate.check_oos_stage(1.0, 0.9, params_locked=True, dsr=0.0)
         assert r.passed is True
         assert r.dsr is None
+        assert any("DSR判定被显式跳过" in x for x in r.reasons), "显式跳过必须留痕(R-055d)"
+        assert any("未使用DSR证据" in x for x in r.reasons)
+
+    def test_default_enabled_never_writes_skip_trace(self):
+        """对照组：默认配置(dsr_threshold=0.95)下不得出现"显式跳过"留痕（防把留痕写死）。"""
+        gate = DecisionGate()
+        r = gate.check_oos_stage(1.0, 0.9, params_locked=True, dsr=0.99)
+        assert r.passed is True
+        assert not any("显式跳过" in x for x in r.reasons)
 
     def test_enabled_pass(self):
         gate = DecisionGate(DecisionGateConfig(dsr_threshold=0.5))

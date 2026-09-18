@@ -16,7 +16,8 @@
 
 覆盖: 配置校验、维度1 WF稳定性(正Sharpe占比/CV/灾难fold)、维度2参数敏感性
 (相对变化阈值/基准Sharpe≈0跳过)、维度3泛化(占比/CV)、SIM-38样本内外对比
-(0.70否决阈值/IS非正跳过)、detect 综合(任一维度不稳即否决/未提供维度默认稳定)。
+(0.70否决下界 + R-055c 泄漏上界/IS非正跳过)、detect 综合(任一维度不稳或
+任一维度**未供数**即否决——R-055b 起"未提供=不可判定=不通过")。
 """
 
 from __future__ import annotations
@@ -25,10 +26,13 @@ import pytest
 
 from zephyr.backtest.core.overfitting_detector import (
     DEFAULT_OOS_SHARPE_THRESHOLD_RATIO,
+    OOS_IS_RATIO_LEAK_TOLERANCE,
+    OOS_IS_RATIO_UPPER_BOUND,
     OverfittingConfig,
     OverfittingDetector,
     OverfittingError,
     OverfittingGateError,
+    PARAM_MAX_CHANGE_THRESHOLD,
 )
 
 
@@ -188,6 +192,47 @@ class TestInOutSample:
         assert "跳过" in r["reason"]
 
 
+class TestOosRatioUpperBoundR055c:
+    """R-055c：比率门必须双向——"样本外比样本内好得多"是**泄漏签名**，不是加分项。
+
+    红队实测改前病灶：纯噪声经全样本选参后 OOS/IS=2.311，只设下界的比率门判"健康"。
+    """
+
+    def test_upper_bound_is_registered_as_single_source(self):
+        assert OOS_IS_RATIO_UPPER_BOUND == pytest.approx(1.0 + PARAM_MAX_CHANGE_THRESHOLD)
+        assert OOS_IS_RATIO_LEAK_TOLERANCE == pytest.approx(PARAM_MAX_CHANGE_THRESHOLD)
+
+    def test_leak_ratio_vetoed(self):
+        r = OverfittingDetector().compare_in_out_sample(0.838, 1.936)  # 红队 E2 实测值
+        assert r["ratio"] == pytest.approx(1.936 / 0.838)
+        assert r["ratio"] > OOS_IS_RATIO_UPPER_BOUND
+        assert r["is_overfitting"] is True
+        assert r["leak_suspected"] is True
+        assert "泄漏" in r["reason"]
+
+    def test_just_below_upper_bound_still_passes(self):
+        r = OverfittingDetector().compare_in_out_sample(1.0, 1.29)
+        assert r["is_overfitting"] is False
+        assert r["leak_suspected"] is False
+
+    def test_just_above_upper_bound_vetoed(self):
+        r = OverfittingDetector().compare_in_out_sample(1.0, 1.31)
+        assert r["is_overfitting"] is True
+        assert r["leak_suspected"] is True
+
+    def test_detect_propagates_leak_with_all_dims_clean(self):
+        r = OverfittingDetector().detect(
+            walk_forward_results=_wf([0.8, 0.9, 0.85]),
+            perturbed_results=_wf([0.95, 1.02]),
+            period_results=_wf([0.7, 0.8, 0.9]),
+            is_sharpe=0.838,
+            oos_sharpe=1.936,
+        )
+        assert r["not_assessed_dimensions"] == ()
+        assert r["leak_suspected"] is True
+        assert r["is_overfitting"] is True, "三维全干净时，唯一能拦住泄漏的就是比率上界"
+
+
 # ============== detect 综合 ==============
 
 
@@ -203,31 +248,51 @@ class TestDetect:
         assert r["is_overfitting"] is False
         assert r["oos_is_ratio"] == pytest.approx(0.85)
 
-    def test_no_dimensions_defaults_stable(self):
+    def test_no_dimensions_is_not_assessed_and_vetoed(self):
+        """R-055b 改前口径"未提供=默认稳定=不触发否决"是 fail-open，现已翻成不通过。"""
         r = OverfittingDetector().detect(is_sharpe=1.0, oos_sharpe=0.9)
-        assert r["is_overfitting"] is False
+        assert r["is_overfitting"] is True
+        assert r["not_assessed_dimensions"] == ("walk_forward", "parameter_sensitivity", "generalization")
+        assert r["walk_forward_stable"] is False
+        assert r["parameter_stable"] is False
+        assert r["generalization_stable"] is False
+        assert any("R-055b" in x for x in r["reasons"]), "缺位维必须在 reasons 里显式留名"
 
     def test_wf_unstable_triggers(self):
         r = OverfittingDetector().detect(
             walk_forward_results=_wf([0.8, 0.9, -0.6]),
+            perturbed_results=[{"sharpe_ratio": 1.0}],
+            period_results=[{"sharpe_ratio": 1.0}],
             is_sharpe=1.0,
             oos_sharpe=0.9,
         )
         assert r["is_overfitting"] is True
         assert r["walk_forward_stable"] is False
+        assert r["not_assessed_dimensions"] == ()
 
     def test_param_unstable_triggers(self):
+        # 三维全供数：否决必须来自"参数敏感性不稳"本身，而不是缺位维兜底（防假绿）
         r = OverfittingDetector().detect(
+            walk_forward_results=_wf([0.8, 0.9, 0.85]),
             perturbed_results=_wf([0.4]),
+            period_results=_wf([0.7, 0.8, 0.9]),
             is_sharpe=1.0,
             oos_sharpe=0.9,
         )
         assert r["is_overfitting"] is True
         assert r["parameter_stable"] is False
+        assert r["not_assessed_dimensions"] == ()
 
     def test_oos_veto_triggers(self):
-        r = OverfittingDetector().detect(is_sharpe=1.0, oos_sharpe=0.5)
+        r = OverfittingDetector().detect(
+            walk_forward_results=_wf([0.8, 0.9, 0.85]),
+            perturbed_results=_wf([0.95, 1.02]),
+            period_results=_wf([0.7, 0.8, 0.9]),
+            is_sharpe=1.0,
+            oos_sharpe=0.5,
+        )
         assert r["is_overfitting"] is True
+        assert r["not_assessed_dimensions"] == ()
 
     def test_result_keys(self):
         r = OverfittingDetector().detect(is_sharpe=1.0, oos_sharpe=0.9)
@@ -237,6 +302,8 @@ class TestDetect:
             "walk_forward_stable",
             "parameter_stable",
             "generalization_stable",
+            "not_assessed_dimensions",
+            "leak_suspected",
             "reasons",
         }
 

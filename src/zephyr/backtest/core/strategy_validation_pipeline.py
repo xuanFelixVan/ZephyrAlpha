@@ -21,7 +21,11 @@
   - 统一"策略验证流水线"调用入口: 过拟合三维度检测 → IS→WFA→OOS 三阶段门控
     → 综合裁决, 供首批策略上线前验证使用
   - 只编排不重造: 过拟合检测委托 OverfittingDetector, 门控委托 DecisionGate,
-    DSR 由调用方预计算后经 DecisionGate 可选判定器注入(默认关闭)
+    DSR 由调用方预计算后经 DecisionGate 可选判定器注入(**默认开启**:
+    DecisionGateConfig.dsr_threshold 默认=DSR_SIGNIFICANCE_THRESHOLD=0.95, fail-closed;
+    显式传 None 才跳过, 且跳过必按 R-055d 往 reasons 留痕)
+    ——旧注释此处曾写"默认关闭", 与 decision_gate.py:445 的真实默认和 :8 的 INVARIANTS
+    相反(2026-09-18 红队 F-11 第三处同源矛盾, 本车道更正, 纯注释零行为改动)
 
 约束:
   - can_deploy 仅技术门控通过, 正式上线仍需人工审批(52号 §4 裁定)
@@ -75,10 +79,11 @@ class StrategyValidationRequest:
         oos_sharpe: 样本外 Sharpe
         param_sensitivity: 参数敏感性扫描 {参数名: [(值, Sharpe)]}, None=跳过稳定性门控
         params_locked: OOS 阶段参数是否已锁定(默认 True)
-        perturbed_results: 参数微调±10% 结果列表(过拟合维度2), None=跳过
-        period_results: 跨时段/跨标的结果列表(过拟合维度3), None=跳过
-        dsr: 调用方预计算的 DSR 值(官方件 MOD-SIM-024 或 metrics.calculate_full_metrics 产出), None=不注入;
-            仅当 DecisionGateConfig.dsr_threshold 显式配置时参与 OOS 判定
+        perturbed_results: 参数微调±10% 结果列表(过拟合维度2), None/空=**不可判定=不通过**(R-055b)
+        period_results: 跨时段/跨标的结果列表(过拟合维度3), None/空=**不可判定=不通过**(R-055b)
+        dsr: 调用方预计算的 DSR 值(官方件 MOD-SIM-024 或 metrics.calculate_full_metrics 产出),
+            None=未注入(默认判定器已开启时按 fail-closed 判不通过, 见 evaluate_dsr unavailable);
+            仅当 DecisionGateConfig.dsr_threshold 显式设为 None 时 DSR 才完全不参与判定(留痕=R-055d)
     """
 
     strategy_id: str
