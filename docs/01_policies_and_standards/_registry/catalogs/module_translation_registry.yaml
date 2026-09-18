@@ -55530,6 +55530,94 @@ entries:
   desc_en: ""
   plain_zh: "扫出全仓所有有意或无意放行错误的地方并分档成册"
   responsibility_layer: governance
+- module_path: src/zephyr/data/alert_webhook_dispatch.py
+  domain_id: D_DATA
+  name_zh: "告警外推派发器（可插拔 webhook 机器侧）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "系统出严重故障时把告警通过网页钩子推给外部，没配端点就明确报不可用，绝不假装已送达"
+  responsibility_layer: business
+- module_path: scripts/derive_task_dependencies.py
+  domain_id: D_DATA
+  name_zh: "任务依赖推导器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "翻遍每个采集任务的实现代码和它自己写的说明，看它要读的表是被哪个任务写出来的，据此把任务先后顺序自动填进 tasks.yaml，省得两百多个任务全靠人手工记谁等谁"
+  responsibility_layer: business
+- module_path: src/zephyr/ai_layer/__init__.py
+  domain_id: D_GOVERNANCE
+  name_zh: "AI 层进化引擎顶层包"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "AI 自我进化引擎的工程落点总包，按 L1-L7 七段组织，首批只装 L2 收集库，产线代码禁止从这里取数"
+  responsibility_layer: governance
+- module_path: src/zephyr/ai_layer/intake/__init__.py
+  domain_id: D_GOVERNANCE
+  name_zh: "AI 层 L2 收集段工程包"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把外部研报、图表与算法流程等原材料先存进生食库的五个零件总入口：入库闸、卡库、查重、事件账本与周度 KPI"
+  responsibility_layer: governance
+- module_path: src/zephyr/ai_layer/intake/card_store.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L2 原材料卡库读写服务"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把过了闸的知识卡片存进 PostgreSQL 卡表，管住状态只能按合法边单向流转，并给同一行为格的精英排名保优淘汰"
+  responsibility_layer: governance
+- module_path: src/zephyr/ai_layer/intake/dedup.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L2 五比对面查重器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用 SimHash 指纹与汉明距离判断新卡片是不是旧内容的换皮版，逐面登记比过还是没比，命中即拒绝重复入库"
+  responsibility_layer: governance
+- module_path: src/zephyr/ai_layer/intake/events.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L2 收集段事件账本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把入库、清洗、否决、出分等待办事项逐条追加进本地 JSONL 账本，靠事件唤醒消费并用毒丸计数拦住反复失败的消息"
+  responsibility_layer: governance
+- module_path: src/zephyr/ai_layer/intake/gate.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L2 入库准入闸"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "对每张候选知识卡先问进货费两问、再跑四道预检与硬过滤并核对当日配额，不合格就给出一条可机读的拒因"
+  responsibility_layer: governance
+- module_path: src/zephyr/ai_layer/intake/kpi.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L2 淘汰率周度 KPI"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按周统计各域知识卡真正进入考试环节的比例，连续偏低就把该来源配额减半，阈值一律从 YAML 统读不许写死"
+  responsibility_layer: governance
+- module_path: scripts/ai_layer/apply_ai_intake_ddl.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L2 原材料库建表器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "在 PostgreSQL 里幂等创建 ai_intake 生食库的表、视图与索引，并提供只读核对模式列出缺件"
+  responsibility_layer: governance
+- module_path: scripts/ai_layer/gen_intake_ref_snapshots.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L2 比对面快照生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把图表册、指标册和代码算法标记批量算成 SimHash 指纹存进对照表，供查重器逐面比对使用"
+  responsibility_layer: governance
 
 battle_map_steps:
 - step_id: BM-BUY-05

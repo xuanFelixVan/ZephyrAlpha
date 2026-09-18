@@ -5,10 +5,10 @@ completes_when: 全流通战役 BRK-050 验收（tasks.yaml 无依赖任务数�
 
 # BRK-050 · 任务依赖推导建议清单（derive_task_dependencies.py 产物，禁手改）
 
-- 任务总数 266；本次运行快照无 `dependencies` 声明 226 个（普查基线 262 任务 / 235 无依赖）。
-- 高置信（表级唯一生产者 + 实现码或任务自述证据）建议任务数：**22**（本次 --apply 已写入 tasks.yaml）。
+- 任务总数 264；本次运行快照无 `dependencies` 声明 225 个（普查基线 262 任务 / 235 无依赖）。
+- 高置信（表级唯一生产者 + 实现码或任务自述证据）建议任务数：**21**（本次 --apply 已写入 tasks.yaml）。
 - 单任务扇入预算 4：超预算同族边不落地、在本文件 §2.1 登记（避免任一上游 FAILED 即 BLOCKED 的耦合放大）。
-- 低置信（跨文件一跳歧义/多生产者）建议任务数：**11**（登记交总包，禁硬编）。
+- 低置信（跨文件一跳歧义/多生产者）建议任务数：**12**（登记交总包，禁硬编）。
 
 ## 1. 高置信（已落地）
 
@@ -20,8 +20,6 @@ completes_when: 全流通战役 BRK-050 验收（tasks.yaml 无依赖任务数�
 | `anchored_state_build` | `kline_index_incremental` | `c1_market.kline_index` | impl_module | src/zephyr/data/implementations/internal_compute_provider.py:623 → src/zephyr/regime/core/anchored_state_machine.py（一跳模块读取） |
 | `dividend_incremental` | `ex_dividend_event_incremental` | `c3_fundamental.ex_dividend_event` | impl_direct | src/zephyr/data/implementations/miniqmt_provider.py:2241（实现函数体内表级读取） |
 | `dividend_incremental` | `ex_dividend_event_incremental` | `c3_fundamental.ex_dividend_event` | task_prose | tasks.yaml[dividend_incremental] 自述点名任务 ex_dividend_event_incremental |
-| `ex_dividend_event_incremental` | `dividend_incremental` | `c3_fundamental.dividend` | impl_direct | src/zephyr/data/implementations/akshare_provider.py:3468（实现函数体内表级读取） |
-| `ex_dividend_event_incremental` | `dividend_incremental` | `c3_fundamental.dividend` | impl_direct | src/zephyr/data/implementations/miniqmt_provider.py:2241（实现函数体内表级读取） |
 | `kline_daily_full_refresh` | `crypto_kline_daily_incremental` | `c1_market.crypto_kline_daily` | impl_direct | src/zephyr/data/implementations/crypto_provider.py:285（实现函数体内表级读取） |
 | `research_report_incremental` | `research_report_detail_incremental` | `c3_fundamental.research_report` | impl_direct | src/zephyr/data/implementations/akshare_provider.py:4059（实现函数体内表级读取） |
 | `calendar_event_refresh` | `trade_calendar_refresh` | `c1_market.trade_calendar` | impl_direct | src/zephyr/data/implementations/internal_compute_provider.py:1149（实现函数体内表级读取） |
@@ -43,7 +41,8 @@ completes_when: 全流通战役 BRK-050 验收（tasks.yaml 无依赖任务数�
 | `daban_engine_load_daily` | `kline_index_incremental` | `c1_market.kline_index` | impl_module | src/zephyr/data/implementations/internal_compute_provider.py:821 → src/zephyr/ex_core/daban_load_producer.py（一跳模块读取） |
 | `daban_engine_load_daily` | `market_breadth_snapshot_minute` | `c1_market.market_breadth_snapshot` | impl_module | src/zephyr/data/implementations/internal_compute_provider.py:821 → src/zephyr/ex_core/daban_load_producer.py（一跳模块读取） |
 | `road_freight_index_full_refresh` | `road_freight_index_refresh` | `c1_market.road_freight_index` | task_prose | tasks.yaml[road_freight_index_full_refresh] 自述点名任务 road_freight_index_refresh |
-| `gold_etf_holdings_refresh` | `cftc_positioning_refresh` | `c1_market.cftc_positioning` | task_prose | tasks.yaml[gold_etf_holdings_refresh] 自述点名任务 cftc_positioning_refresh |
+| `dividend_incremental_akshare` | `dividend_incremental` | `c3_fundamental.dividend` | task_prose | tasks.yaml[dividend_incremental_akshare] 自述点名任务 dividend_incremental |
+| `dividend_incremental_akshare` | `ex_dividend_event_incremental` | `c3_fundamental.ex_dividend_event` | impl_direct | src/zephyr/data/implementations/miniqmt_provider.py:2241（实现函数体内表级读取） |
 
 ## 2. 低置信 / 冲突（登记交总包，禁硬编）
 
@@ -55,6 +54,10 @@ completes_when: 全流通战役 BRK-050 验收（tasks.yaml 无依赖任务数�
 | `market_breadth_snapshot_minute` | `st_status_premarket` | medium | impl_module | src/zephyr/data/implementations/miniqmt_provider.py:5062 → src/zephyr/data/market_breadth_collector.py（一跳模块读取） |
 | `market_breadth_snapshot_minute` | `st_namechange_backfill` | medium | impl_module | src/zephyr/data/implementations/miniqmt_provider.py:5062 → src/zephyr/data/market_breadth_collector.py（一跳模块读取） |
 | `market_breadth_snapshot_minute` | `st_namechange_backfill` | medium | impl_module | src/zephyr/data/implementations/miniqmt_provider.py:5062 → src/zephyr/data/market_breadth_collector.py（一跳模块读取） |
+| `ex_dividend_event_incremental` | `dividend_incremental_akshare` | medium | impl_direct | src/zephyr/data/implementations/akshare_provider.py:3468（实现函数体内表级读取） |
+| `ex_dividend_event_incremental` | `dividend_incremental_akshare` | medium | impl_direct | src/zephyr/data/implementations/miniqmt_provider.py:2241（实现函数体内表级读取） |
+| `ex_dividend_event_incremental` | `dividend_incremental` | medium | impl_direct | src/zephyr/data/implementations/akshare_provider.py:3468（实现函数体内表级读取） |
+| `ex_dividend_event_incremental` | `dividend_incremental` | medium | impl_direct | src/zephyr/data/implementations/miniqmt_provider.py:2241（实现函数体内表级读取） |
 | `option_iv_surface_incremental` | `option_kline_incremental` | medium | impl_direct | src/zephyr/data/implementations/miniqmt_provider.py:2503（实现函数体内表级读取） |
 | `option_iv_surface_incremental` | `option_kline_full_refresh` | medium | impl_direct | src/zephyr/data/implementations/miniqmt_provider.py:2503（实现函数体内表级读取） |
 | `st_namechange_backfill` | `kline_daily_full_refresh` | medium | impl_direct | src/zephyr/data/implementations/tushare_provider.py:1393（实现函数体内表级读取） |
@@ -86,8 +89,10 @@ completes_when: 全流通战役 BRK-050 验收（tasks.yaml 无依赖任务数�
 | `kline_index_calc_refresh` | `kline_daily_delisted_backfill` | medium | impl_module | src/zephyr/data/implementations/internal_compute_provider.py:933 → src/zephyr/data/implementations/index_eqw_compute.py（一跳模块读取） |
 | `futures_warehouse_receipt_backfill_czce` | `futures_warehouse_receipt_incremental` | medium | task_prose | tasks.yaml[futures_warehouse_receipt_backfill_czce] 自述点名任务 futures_warehouse_receipt_incremental |
 | `futures_warehouse_receipt_backfill_czce` | `futures_warehouse_receipt_backfill_shfe` | medium | task_prose | tasks.yaml[futures_warehouse_receipt_backfill_czce] 自述点名任务 futures_warehouse_receipt_incremental |
-| `futures_warehouse_receipt_backfill_shfe` | `futures_warehouse_receipt_incremental` | medium | task_prose | tasks.yaml[futures_warehouse_receipt_backfill_shfe] 自述点名任务 futures_warehouse_receipt_incremental |
-| `futures_warehouse_receipt_backfill_shfe` | `futures_warehouse_receipt_backfill_czce` | medium | task_prose | tasks.yaml[futures_warehouse_receipt_backfill_shfe] 自述点名任务 futures_warehouse_receipt_incremental |
+| `index_valuation_daily_compute_after_ingest` | `macro_data_full_refresh` | medium | impl_module | src/zephyr/data/implementations/internal_compute_provider.py:950 → src/zephyr/data/implementations/index_valuation_compute.py（一跳模块读取） |
+| `index_valuation_daily_compute_after_ingest` | `eia_full_refresh` | medium | impl_module | src/zephyr/data/implementations/internal_compute_provider.py:950 → src/zephyr/data/implementations/index_valuation_compute.py（一跳模块读取） |
+| `index_valuation_daily_compute_after_ingest` | `macro_worldbank_full_refresh` | medium | impl_module | src/zephyr/data/implementations/internal_compute_provider.py:950 → src/zephyr/data/implementations/index_valuation_compute.py（一跳模块读取） |
+| `index_valuation_daily_compute_after_ingest` | `macro_fred_full_refresh` | medium | impl_module | src/zephyr/data/implementations/internal_compute_provider.py:950 → src/zephyr/data/implementations/index_valuation_compute.py（一跳模块读取） |
 
 ### 2.1 丢弃边与跨日界标注
 
@@ -166,7 +171,6 @@ completes_when: 全流通战役 BRK-050 验收（tasks.yaml 无依赖任务数�
 - `technical_indicator_incremental` ← kline_daily_delisted_backfill：超单任务扇入预算 4（同族冗余边，登记待裁）
 - `technical_indicator_incremental` ← kline_futures_full：超单任务扇入预算 4（同族冗余边，登记待裁）
 - `technical_indicator_incremental` ← kline_us_daily_full_refresh：超单任务扇入预算 4（同族冗余边，登记待裁）
-- `technical_indicator_incremental` ← kline_index_intraday_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
 - `technical_indicator_full_refresh` ← kline_15min_incremental：跨日界依赖（intraday_minute 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
 - `technical_indicator_full_refresh` ← kline_1min_incremental：跨日界依赖（intraday_minute 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
 - `technical_indicator_full_refresh` ← kline_30min_incremental：跨日界依赖（intraday_minute 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
@@ -191,7 +195,6 @@ completes_when: 全流通战役 BRK-050 验收（tasks.yaml 无依赖任务数�
 - `technical_indicator_full_refresh` ← kline_hk_daily_incremental：跨日界依赖（intraday_realtime 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
 - `technical_indicator_full_refresh` ← kline_index_incremental：跨日界依赖（daily_kline 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
 - `technical_indicator_full_refresh` ← kline_index_calc_refresh：跨日界依赖（daily_kline 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
-- `technical_indicator_full_refresh` ← kline_index_intraday_incremental：跨日界依赖（disabled 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
 - `technical_indicator_full_refresh` ← kline_lof_15min_incremental：跨日界依赖（intraday_minute 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
 - `technical_indicator_full_refresh` ← kline_lof_1min_incremental：跨日界依赖（intraday_minute 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
 - `technical_indicator_full_refresh` ← kline_lof_30min_incremental：跨日界依赖（intraday_minute 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
@@ -256,7 +259,6 @@ completes_when: 全流通战役 BRK-050 验收（tasks.yaml 无依赖任务数�
 - `technical_indicator_full_refresh` ← kline_sector_60min_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
 - `technical_indicator_full_refresh` ← global_wti_daily_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
 - `technical_indicator_full_refresh` ← global_gold_daily_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
-- `technical_indicator_full_refresh` ← kline_index_intraday_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
 - `kline_sector_1min_incremental` ← kline_sector_incremental：跨日界依赖（daily_kline 晚于 intraday_sector，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
 - `kline_sector_5min_incremental` ← kline_sector_incremental：跨日界依赖（daily_kline 晚于 intraday_sector，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
 - `kline_sector_15min_incremental` ← kline_sector_incremental：跨日界依赖（daily_kline 晚于 intraday_sector，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
@@ -277,6 +279,16 @@ completes_when: 全流通战役 BRK-050 验收（tasks.yaml 无依赖任务数�
 - `index_valuation_daily_backfill` ← macro_fred_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
 - `daban_engine_load_daily` ← daban_board_event_derive：超单任务扇入预算 4（同族冗余边，登记待裁）
 - `daban_engine_load_daily` ← stock_indicator_full_refresh：超单任务扇入预算 4（同族冗余边，登记待裁）
+- `dividend_incremental_akshare` ← ex_dividend_event_incremental：跨日界依赖（daily_event 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
+- `dividend_incremental_akshare` ← dividend_incremental：跨日界依赖（disabled 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
+- `index_valuation_daily_compute_after_ingest` ← kline_index_incremental：跨日界依赖（daily_kline 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
+- `index_valuation_daily_compute_after_ingest` ← macro_data_incremental：跨日界依赖（event_driven 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
+- `index_valuation_daily_compute_after_ingest` ← eia_petroleum_incremental：跨日界依赖（daily_capital 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
+- `index_valuation_daily_compute_after_ingest` ← macro_fred_incremental：跨日界依赖（event_driven 晚于 weekend_calibration，运行时按'前一交易日已满足'处理，供 catchup 拓扑重放）
+- `index_valuation_daily_compute_after_ingest` ← eia_petroleum_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
+- `index_valuation_daily_compute_after_ingest` ← kline_index_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
+- `index_valuation_daily_compute_after_ingest` ← macro_data_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
+- `index_valuation_daily_compute_after_ingest` ← macro_fred_incremental：超单任务扇入预算 4（同族冗余边，登记待裁）
 
 ## 3. 同源争用面（BRK-067 型，供串行化排班核对）
 

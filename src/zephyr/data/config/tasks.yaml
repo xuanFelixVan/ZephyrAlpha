@@ -55,7 +55,7 @@ tasks:
   schedule: daily_kline
   incremental: true
   date_col: trade_date
-  dependencies: []    # kline_daily 独立，不依赖 hfq
+  dependencies: ["crypto_kline_daily_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导    # kline_daily 独立，不依赖 hfq
   capability: kline_daily
   symbols:
   fallback_sources:
@@ -622,7 +622,7 @@ tasks:
   schedule: research_nightly
   incremental: true
   date_col: trade_date
-  dependencies: ["research_report_detail_incremental"]    # DAG: 研报明细落库后重建一致预期矩阵（C1.5）
+  dependencies: ["research_report_detail_incremental", "trade_calendar_refresh"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导    # DAG: 研报明细落库后重建一致预期矩阵（C1.5）
   capability: fund_consensus_daily
   symbols:
   fallback_sources: []    # internal 派生源天然无副源
@@ -704,7 +704,7 @@ tasks:
   schedule: disabled
   incremental: true
   date_col: announce_date
-  dependencies: []
+  dependencies: ["ex_dividend_event_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: dividend
   symbols:
   extra:
@@ -1111,7 +1111,7 @@ tasks:
   source: miniqmt
   schedule: weekend_calibration
   incremental: false
-  dependencies: []
+  dependencies: ["crypto_kline_daily_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: kline_daily
   symbols:
   extra:
@@ -1386,7 +1386,7 @@ tasks:
   incremental: true
   date_col: publish_time
   buffer_max_seconds: 300    # 防复发：news_data flush 间隔 30s→300s，减少 parts 产生（裁定 #ARCH-CH-013 Phase 4）
-  dependencies: []
+  dependencies: ["research_report_detail_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: research_report
   symbols:
   extra:
@@ -2264,7 +2264,7 @@ tasks:
   schedule: daily_kline
   incremental: true
   date_col: trade_date
-  dependencies: ["kline_daily_incremental"]    # DAG: 日K线落库后计算日线指标
+  dependencies: ["kline_daily_hfq_incremental", "kline_daily_incremental", "kline_etf_daily_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导    # DAG: 日K线落库后计算日线指标
   capability: technical_indicator
   symbols:
   fallback_sources: []    # internal 计算源天然无副源
@@ -2410,7 +2410,7 @@ tasks:
   schedule: intraday_sector
   incremental: true
   date_col: trade_date
-  dependencies: []
+  dependencies: ["kline_sector_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: kline_sector
   symbols:
   extra:
@@ -2425,7 +2425,7 @@ tasks:
   schedule: intraday_sector
   incremental: true
   date_col: trade_date
-  dependencies: []
+  dependencies: ["kline_sector_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: kline_sector
   symbols:
   extra:
@@ -2440,7 +2440,7 @@ tasks:
   schedule: intraday_sector
   incremental: true
   date_col: trade_date
-  dependencies: []
+  dependencies: ["kline_sector_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: kline_sector
   symbols:
   extra:
@@ -2455,7 +2455,7 @@ tasks:
   schedule: intraday_sector
   incremental: true
   date_col: trade_date
-  dependencies: []
+  dependencies: ["kline_sector_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: kline_sector
   symbols:
   extra:
@@ -2470,7 +2470,7 @@ tasks:
   schedule: intraday_sector
   incremental: true
   date_col: trade_date
-  dependencies: []
+  dependencies: ["kline_sector_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: kline_sector
   symbols:
   extra:
@@ -3351,7 +3351,7 @@ tasks:
   schedule: daily_kline
   incremental: true
   date_col: certified_at
-  dependencies: ["pattern_win_rate_materialize"]   # DAG: 统计落库才认证（反过拟合方案 v1.0，禁 cron 自轮询）
+  dependencies: ["pattern_event_incremental", "pattern_win_rate_materialize"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导    # DAG: 统计落库才认证（反过拟合方案 v1.0，禁 cron 自轮询）
   capability: pattern_evidence_certify
   symbols:
   fallback_sources: []    # internal 派生源天然无副源
@@ -3376,7 +3376,7 @@ tasks:
   schedule: daily_kline
   incremental: true
   date_col: updated_at
-  dependencies: ["pattern_evidence_certify"]   # DAG: 认证落表才调权（消费班 W-CC：sync 消费 shrunk/certified 口径）
+  dependencies: ["pattern_event_incremental", "pattern_evidence_certify"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导    # DAG: 认证落表才调权（消费班 W-CC：sync 消费 shrunk/certified 口径）
   capability: pattern_weight_sync
   symbols:
   fallback_sources: []    # internal 派生源天然无副源
@@ -3390,7 +3390,7 @@ tasks:
   schedule: daily_kline    # 盘后批（trade_date=打板事件日=决策日 T 的 T-1，T 日盘前消费）
   incremental: true    # 按事件日窗口产出（ReplacingMergeTree (trade_date, symbol) 同键重放幂等）
   date_col: trade_date
-  dependencies: ["daban_board_event_derive"]    # DAG: 事件派生落库后才有负载原料
+  dependencies: ["daban_board_event_derive", "index_quote_snapshot", "kline_index_incremental", "market_breadth_snapshot_minute"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导    # DAG: 事件派生落库后才有负载原料
   capability: daban_engine_load
   symbols:         # null=全市场（当日真封板事件集，由上游派生表界定）
   fallback_sources: []    # internal 派生源天然无副源
@@ -3549,7 +3549,7 @@ tasks:
   disabled_reason: "全历史一次性爬取（2015-09 起约 550 篇报告，~15 分钟礼貌爬取）；后续增量由 road_freight_index_refresh 承担"
   incremental: false
   date_col: trade_date
-  dependencies: []
+  dependencies: ["road_freight_index_refresh"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: road_freight_index
   symbols:
   extra:
@@ -3673,7 +3673,7 @@ tasks:
   schedule: weekend_calibration
   incremental: true
   date_col: announce_date
-  dependencies: []
+  dependencies: ["dividend_incremental", "ex_dividend_event_incremental"]    # [DAG-DERIVED] derive_task_dependencies.py 依表级血缘推导
   capability: dividend
   symbols:
   extra:
