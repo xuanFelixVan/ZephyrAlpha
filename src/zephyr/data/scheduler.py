@@ -1285,6 +1285,12 @@ class IntegratorScheduler:
                 from zephyr.data.implementations.crypto_provider import CryptoProvider
 
                 return CryptoProvider()
+            elif source == "hyperliquid":
+                # D5 跨资产 H1（altdata_line 09 清单，2026-09-18）：Hyperliquid 官方免费公开 API
+                # 四类=行情快照/持仓 OI 快照/资金费率/清算流（hl_ 前缀与 crypto 影子线隔离）
+                from zephyr.data.implementations.hyperliquid_provider import HyperliquidProvider
+
+                return HyperliquidProvider()
             elif source == "fred":
                 # #ARCH-EDB-EXPAND（2026-08-04）：FRED + 世界银行免费宏观数据
                 from zephyr.data.implementations.fred_provider import FredProvider
@@ -1330,12 +1336,6 @@ class IntegratorScheduler:
                 )
 
                 return InternalComputeProvider()
-            elif source == "irm":
-                # D7 文本抽取（altdata_line 09 清单，2026-09-18）：深交所互动易官方接口
-                # C6 问答对+C9 调研纪要；原文快照先行（G 盘冷库），抽取物走 irm_extract_batch
-                from zephyr.data.implementations.irm_provider import IrmProvider
-
-                return IrmProvider()
             else:
                 log.warning("未知数据源: %s", source)
                 return None
