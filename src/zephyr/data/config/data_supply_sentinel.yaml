@@ -457,6 +457,79 @@ tables:
     past_only: false
     leg_name: "清算业务时间"
 
+  # --- FF-12 判定链四表（st-ff-judgment2-20260918，六向 ⑤ 红治本）---
+  # 病根（实测 2026-09-18）：本册与 config/quality_sentinel_tables.yaml 对 judgment_* 四表
+  #   0 命中 ⇒ 判定链停更无任何自动检测；叠加 ⑥"表空静默"（judgment_settler.settle_table
+  #   对 rows=[] 直接返回零报告）⇒ 判定链停更不会以红牌出现。
+  # 口径依据（逐条实测后重写，**未照抄**提案片段 lanes/judgment_sentinel_yaml_fragment.yaml）：
+  #   ① 引擎=MergeTree 非 Replacing（system.tables 实测四表全 MergeTree）⇒ 本族禁配 FINAL，
+  #      "ReplacingMergeTree 必带 FINAL"的提示对本族不适用；
+  #   ② date_col 取业务判定时刻 asof_ts / verified_at（DateTime64(3,'UTC')，由 now_utc() 写入、
+  #      结构性不可能在未来）⇒ **past_only: false**：past_only 生成的谓词是 `col <= toDate(今日)`
+  #      （Date 口径=当日 00:00），实测把 09-18 当日全部判定行排除、max 退回 09-17 —— 对未来行
+  #      稀释型（预约/前瞻）表才有用的上界，对本族只会制造一天假滞后；
+  #   ③ 节奏=交易日（发射挂在 daily_kline / 60min bar SUCCESS 事件上）⇒ lag_basis=trading_days
+  #      而不是把 max_lag_days 掰宽去容忍周末；阈值 2 ⇒ 红牌出现在"连续 3 个交易日零判定行"
+  #      （SOP §10.2 日频档），日历不可用时按本件不变量降级为日历日（更严方向）；
+  #   ④ row_filter 切 synthetic=0：本族 synthetic=1=冒烟合成行（判定台账标准 §一.3），
+  #      只看表级 max 会让"只剩冒烟行"的停更管线看起来新鲜（与本册 kline_sector_intraday
+  #      的 tdx 真值腿同型）。实测当前 9 行全 synthetic=0 ⇒ 本腿今日不改判，只堵未来假新鲜；
+  #   ⑤ 三张判定表配 confidence 非零率腿（实测非零 2/2、3/3、4/4，min_ratio 0.9、
+  #      window_days 10）：判定行在、confidence 全 0 = N-1 型错数进闭环，前两条腿兜不住。
+  #      verification 表无 confidence 列，其 plan_quality_score 现 0 行无从定档 ⇒ 不配该腿。
+  # 未配 min_rows_in_window：窗口式行数地板在长假（国庆 8 日）必假红，而"零产出"已由
+  #   trading_days 新鲜度腿单点覆盖——重复且更弱的判据不配（本册禁配清单③）。
+  # 立即真红一条（是真信号，非误报）：judgment_plan_verification 实测 0 行，
+  #   max(verified_at) 返 1970-01-01 → _is_empty_max 命中 → empty table 红 ⇒ T2/T3 段
+  #   （盘中归类器/收盘定格器）产线从未落一条验证行，"作战室任务3"只有判定没有验证。
+  #   **未加 allow_empty**：该字段是永久静默开关（BRK-046 教训），判定链补产出行后本腿自愈转绿。
+  - table: c1_market.judgment_intraday_market_state
+    date_col: asof_ts
+    max_lag_days: 2
+    lag_basis: trading_days
+    past_only: false
+    row_filter: "synthetic = 0"
+    column_fill_ratio:
+      cols: [confidence]
+      min_ratio: 0.9
+      window_days: 10
+      treat_zero_as_missing: true
+    leg_name: "真生产行"
+
+  - table: c1_market.judgment_next_day_forecast
+    date_col: asof_ts
+    max_lag_days: 2
+    lag_basis: trading_days
+    past_only: false
+    row_filter: "synthetic = 0"
+    column_fill_ratio:
+      cols: [confidence]
+      min_ratio: 0.9
+      window_days: 10
+      treat_zero_as_missing: true
+    leg_name: "真生产行"
+
+  - table: c1_market.judgment_daily_plan
+    date_col: asof_ts
+    max_lag_days: 2
+    lag_basis: trading_days
+    past_only: false
+    row_filter: "synthetic = 0"
+    column_fill_ratio:
+      cols: [confidence]
+      min_ratio: 0.9
+      window_days: 10
+      treat_zero_as_missing: true
+    leg_name: "真生产行"
+
+  - table: c1_market.judgment_plan_verification
+    date_col: verified_at
+    max_lag_days: 2
+    lag_basis: trading_days
+    past_only: false
+    row_filter: "synthetic = 0"
+    leg_name: "真生产行"
+
   # --- c1_market.edb_data：故意不设阈值行（iFind 2026-08-14 退役，实测 0 行、
   #     max(report_date) 返 1970-01-01）。设一行就是逼后人去填一张永久无源的表；
   #     禁删表=Owner 净删门位，故以注释留痕而非配假阈值。
