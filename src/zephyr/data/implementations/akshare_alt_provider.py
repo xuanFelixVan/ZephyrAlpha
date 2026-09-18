@@ -44,6 +44,9 @@ import json
 import logging
 import re
 import time
+from collections import Counter
+from pathlib import Path
+from typing import Final
 
 import pandas as pd
 import urllib.parse
@@ -245,6 +248,11 @@ _TBL_ALT_SZ_GROUND_OBS = get_registry().table("market_alt_sz_ground_obs")
 _TBL_ALT_LANDFALL = get_registry().table("market_typhoon_landfall_history")
 _TBL_ALT_TYNAMES = get_registry().table("market_typhoon_names")
 _TBL_ALT_TYPHOON = get_registry().table("market_alt_typhoon_track")
+# D4 物理另类·油价链三件+F13（2026-09-18 夜班 st-datapack-20260918，altdata_line D4 波2）
+_TBL_NDRC_FUEL_PRICE = get_registry().table("market_ndrc_fuel_price")
+_TBL_FUTURES_WAREHOUSE_RECEIPT = get_registry().table("market_futures_warehouse_receipt")
+_TBL_ROAD_FREIGHT_INDEX = get_registry().table("market_road_freight_index")
+_TBL_AGRI_WHOLESALE_INDEX = get_registry().table("market_agri_wholesale_index")
 
 # 统计月报列名兼容映射（各系列列名不一，取首个非空）
 _STAT_MONTH_KEYS = ("BENYUE", "BNBJD", "BY")
@@ -277,7 +285,10 @@ _AKSHARE_ALT_CAPABILITIES = frozenset({
     "alt_sz_house_area", "alt_sz_house_listing", "alt_sz_house_presale",
     "alt_sz_market_subject", "alt_sz_stat_analysis", "alt_sz_enterprise_year",
     "alt_sz_reservoir_level", "alt_sz_env_meteor", "alt_sz_climate_hist", "alt_sz_ground_obs",
-    "alt_typhoon_landfall_history", "alt_typhoon_names", "cb_premium_median"})
+    "alt_typhoon_landfall_history", "alt_typhoon_names", "cb_premium_median",
+    # D4 物理另类·油价链三件+F13（2026-09-18 夜班，altdata_line D4 波2）
+    "ndrc_fuel_price", "futures_warehouse_receipt", "road_freight_index", "agri_wholesale_index",
+    })
 
 
 
@@ -321,6 +332,219 @@ def _to_int(v) -> int | None:
         return int(float(v))
     except (TypeError, ValueError):
         return None
+
+
+# ---- D4 物理另类常量（2026-09-18 夜班 st-datapack-20260918，altdata_line D4 波2） ----
+
+#: 公路运价分车型序列（文章解析 -> index_code/中文名）
+_ROAD_FREIGHT_SERIES: tuple[tuple[str, str, str], ...] = (
+    ("整车", "CFLP_ROAD_FTL", "公路运价整车指数"),
+    ("零担轻货", "CFLP_ROAD_LTL_LIGHT", "公路运价零担轻货指数"),
+    ("零担重货", "CFLP_ROAD_LTL_HEAVY", "公路运价零担重货指数"),
+)
+_CW_BASE = "http://www.chinawuliu.com.cn"
+_CW_LIST_URL = _CW_BASE + "/xsyj/tjsj/"
+_CW_LIST_MAX_PAGES = 140          # 列表页天花板（实测 134 页，防御性上限）
+_CW_TITLE_KEY = "中国公路物流运价周指数报告"
+# 礼貌爬取节流=call_with_policy 的 rate_limit_sleep（RPM 60→1s/请求），
+# 禁显式 time.sleep（PERM-TRIGGER：permanent 模块时间触发模式硬阻断）
+# G 盘冷库原文快照（10_g_drive_cold_storage_sop：网页类源爬时存快照+manifest 登记）
+_CW_SNAPSHOT_DIR = Path("G:/zephyr_cold/30_corpus/web_snapshots/20260918_chinawuliu_roadfreight")
+_CW_MANIFEST = Path("G:/zephyr_cold/00_manifest/drawers.jsonl")
+# SHFE 仓单归档窗口（源端实测：dailydata/*.dat 仅 serving 至 2025-11 中旬，
+# 之后 404=近端改版/WAF；窗口硬界=避免增量任务天天打 404）
+_SHFE_ARCHIVE_START = datetime.date(2014, 5, 19)
+_SHFE_ARCHIVE_END = datetime.date(2025, 11, 30)
+# CZCE 仓单回填起点（旧 .xls 格式 2018 前解析失败实测：20150105 Excel 引擎报错）
+_CZCE_BACKFILL_START = datetime.date(2018, 1, 1)
+
+_ROAD_FREIGHT_COLUMNS: Final = ["index_code", "trade_date", "index_name", "index_value",
+                         "change_pct", "source_url", "data_source", "quality_flag"]
+_NDRC_FUEL_COLUMNS: Final = ["announce_date", "effective_date", "gasoline_price", "diesel_price",
+                      "gasoline_change", "diesel_change", "data_source", "quality_flag"]
+_AGRI_INDEX_COLUMNS: Final = ["index_code", "trade_date", "index_name", "index_value",
+                       "change_pct", "data_source", "quality_flag"]
+_WAREHOUSE_COLUMNS: Final = ["exchange", "symbol", "trade_date", "row_type", "warehouse_name",
+                      "region", "detail_attrs", "premium_discount",
+                      "receipts", "delta", "valid_forecast", "data_source", "quality_flag"]
+
+#: CZCE 仓单表异构列归一 spec（27 品种 20+ 种列形，2026-09-18 全量实测归并）
+_WH_CODE_COLS = ("仓库编号", "厂库编号", "机构编号")
+_WH_NAME_COLS = ("仓库简称", "厂库简称", "机构简称")
+#: 数量列（多列并存=完税+保税分列，语义=合计；如 PTA/MA）
+_WH_QTY_COLS = ("仓单数量", "仓单数量(完税)", "仓单数量(保税)", "确认书数量", "预报数量")
+_WH_CORE_COLS = frozenset(_WH_CODE_COLS) | frozenset(_WH_NAME_COLS) | set(_WH_QTY_COLS) | {
+    "当日增减", "有效预报", "升贴水",
+}
+
+
+def _warehouse_pick(columns, names):
+    """取列清单中首个存在的列名（columns=DataFrame.columns；CZCE 异构列形归一）。"""
+    for c in names:
+        if c in columns:
+            return c
+    return None
+
+
+def _warehouse_receipts_sum(r) -> float | None:
+    """数量列求和（完税+保税分列品种=合计；全缺/全 NaN=NULL）。"""
+    vals = [_to_float(r.get(c)) for c in _WH_QTY_COLS if c in r.index]
+    vals = [v for v in vals if v is not None]
+    return sum(vals) if vals else None
+
+
+def _disambiguate_rows(rows: list[tuple]) -> list[tuple]:
+    """同键行追加 seq 序号（源表同仓库多数量段的行除顺序外无判别列）。
+
+    键=前 7 元组（exchange..detail_attrs）。同键行数值一致时无害，不一致时
+    ReplacingMergeTree 会任意保留一行=数据丢失——seq 保证源行 1:1 落表；
+    sheet 逐日 immutable，序号稳定=幂等。"""
+    seen: Counter = Counter()
+    out: list[tuple] = []
+    for r in rows:
+        key = tuple(r[:7])
+        n = seen[key]
+        seen[key] += 1
+        if n:
+            attrs = f"{r[6]}|seq={n}" if r[6] else f"seq={n}"
+            out.append(r[:6] + (attrs,) + r[7:])
+        else:
+            out.append(r)
+    return out
+
+
+def _clean_str(v) -> str:
+    """源端 NaN/None/'nan' -> 空串（String 列防 'nan' 污染）。"""
+    if v is None:
+        return ""
+    s = str(v).strip()
+    return "" if s in ("nan", "None", "NaT", "NULL") else s
+
+#: 农产品批发价格 200 指数两序列（akshare 接口 -> 指数代码/中文名）
+_AGRI_INDEX_SOURCES: tuple[tuple[str, str, str], ...] = (
+    ("macro_china_agricultural_product", "AJC200", "农产品批发价格200指数"),
+    ("macro_china_vegetable_basket", "CLZ200", "菜篮子产品批发价格200指数"),
+)
+
+
+def _cw_change_sign(word: str) -> float:
+    """环比措辞 -> 带符号数值（回落/下降=负，回升/上升/上涨=正，持平=0）。"""
+    if word in ("回落", "下降", "下跌"):
+        return -1.0
+    if word in ("回升", "上升", "上涨", "抬头"):
+        return 1.0
+    return 0.0
+
+
+def _cw_fetch_text(session, url: str) -> str:
+    """单次 GET 取文本（供 _call_with_policy 重试包裹；UA 伪装+超时内建）。"""
+    import requests
+
+    resp = session.get(
+        url, timeout=25,
+        headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0 Safari/537.36"},
+    )
+    resp.raise_for_status()
+    resp.encoding = "utf-8"
+    return resp.text
+
+
+def _cw_strip_tags(html: str) -> str:
+    """HTML -> 平文本（去 script/style/标签/压缩空白）。"""
+    text = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
+    text = re.sub(r"<[^>]+>", " ", text)
+    return re.sub(r"\s+", " ", text)
+
+
+def _cw_snapshot(article_id: str, html: str) -> bool:
+    """原文快照落 G 盘冷库（immutable 一次写入；冷库不可达时 warn 放行不阻断数据管线）。"""
+    try:
+        _CW_SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
+        target = _CW_SNAPSHOT_DIR / f"{article_id}.html"
+        if target.exists():  # immutable：已存在不覆盖
+            return True
+        target.write_text(html, encoding="utf-8")
+        return True
+    except OSError as e:
+        log.warning("公路运价原文快照写冷库失败（数据继续入库）: %s", e)
+        return False
+
+
+def _cw_register_manifest_once() -> None:
+    """drawers.jsonl 批次登记（幂等：同 path 已登记则跳过）。"""
+    line = (
+        '{"date": "2026-09-18", "source": "chinawuliu", '
+        '"path": "30_corpus/web_snapshots/20260918_chinawuliu_roadfreight", '
+        '"drawer": "30_corpus/web_snapshots", '
+        '"skeleton_ref": "E8/E3 油价链运价节点", '
+        '"note": "中国公路物流运价周指数报告原文快照(altdata_line D4 波2 st-datapack-20260918)", '
+        '"registered": "2026-09-18"}'
+    )
+    try:
+        if _CW_MANIFEST.exists():
+            if "20260918_chinawuliu_roadfreight" in _CW_MANIFEST.read_text(encoding="utf-8"):
+                return
+        else:
+            _CW_MANIFEST.parent.mkdir(parents=True, exist_ok=True)
+        with _CW_MANIFEST.open("a", encoding="utf-8") as fh:
+            fh.write(line + "\n")
+    except OSError as e:
+        log.warning("冷库 manifest 登记失败: %s", e)
+
+
+def _cw_parse_article(html: str, url: str) -> list[tuple]:
+    """解析周指数报告文章 -> road_freight_index 行集（总指数+分车型，缺序列跳过）。"""
+    text = _cw_strip_tags(html)
+    week = re.search(
+        r"本周\s*[（(]\s*(\d{4})年(\d{1,2})月(\d{1,2})日\s*[-—~至]\s*"
+        r"(\d{4})年(\d{1,2})月(\d{1,2})日\s*[）)]",
+        text,
+    )
+    if not week:
+        return []
+    trade_date = datetime.date(int(week.group(4)), int(week.group(5)), int(week.group(6))).isoformat()
+
+    def _row(value_match, index_code: str, index_name: str) -> tuple | None:
+        if not value_match:
+            return None
+        value = _to_float(value_match.group(1))
+        if value is None:
+            return None
+        change = round(_cw_change_sign(value_match.group(2)) * float(value_match.group(3)), 4)
+        return (index_code, trade_date, index_name, value, change, url, "chinawuliu_web", 1)
+
+    rows = []
+    total = re.search(
+        r"中国公路物流运价指数为\s*([\d.]+)\s*点[，,]?比上周(回落|下降|下跌|回升|上升|上涨|持平|不变)\s*([\d.]+)",
+        text,
+    )
+    total_row = _row(total, "CFLP_ROAD_TOTAL", "中国公路物流运价指数")
+    if total_row is None:
+        return []  # 无总指数=解析失败/文章异常，整篇跳过（防半截数据）
+    rows.append(total_row)
+    for cn_key, index_code, index_name in _ROAD_FREIGHT_SERIES:
+        m = re.search(
+            rf"{cn_key}指数为\s*([\d.]+)\s*点[，,]?比上周(回落|下降|下跌|回升|上升|上涨|持平|不变)\s*([\d.]+)",
+            text,
+        )
+        sub_row = _row(m, index_code, index_name)
+        if sub_row is not None:
+            rows.append(sub_row)
+    return rows
+
+
+def _warehouse_decimal(v):
+    """仓单数值清洗（'-'/'NaN'/空 -> None；float 透传）。"""
+    return _to_float(v)
+
+
+def _warehouse_date_iter(start: datetime.date, end: datetime.date):
+    """交易日近似迭代（周一~周五；节假日由源端失败静默跳过，周末本地跳过省重试开销）。"""
+    for offset in range((end - start).days + 1):
+        d = start + datetime.timedelta(days=offset)
+        if d.weekday() >= 5:
+            continue
+        yield d
 
 
 class AkshareAltProvider(IngestProviderBase):
@@ -394,6 +618,19 @@ class AkshareAltProvider(IngestProviderBase):
                                supports_incremental=False, requires_date_range=False),
             CapabilityContract("cb_premium_median", supports_symbols_null=True,
                                supports_incremental=True, requires_date_range=True),
+            # D4 物理另类·油价链三件+F13（2026-09-18 夜班，altdata_line D4 波2）
+            # E8 发改委成品油调价（energy_oil_hist 全量幂等，低频事件表无增量通道）
+            CapabilityContract("ndrc_fuel_price", supports_symbols_null=True,
+                               supports_incremental=False, requires_date_range=False),
+            # 交易所仓单（extra.exchange=CZCE|SHFE；CZCE 日更 / SHFE 归档回填窗口硬界）
+            CapabilityContract("futures_warehouse_receipt", supports_symbols_null=True,
+                               supports_incremental=True, requires_date_range=True),
+            # 公路运价周指数（中物联网页爬取+G 盘原文快照；增量=列表页早停）
+            CapabilityContract("road_freight_index", supports_symbols_null=True,
+                               supports_incremental=True, requires_date_range=True),
+            # 农产品批发价格 200 指数两序列（全量幂等，日度长历史）
+            CapabilityContract("agri_wholesale_index", supports_symbols_null=True,
+                               supports_incremental=False, requires_date_range=False),
         ],
         known_issues=[
             "千股千评接口仅返回当日快照，无历史回补通道（每日累积模式）",
@@ -1436,6 +1673,282 @@ class AkshareAltProvider(IngestProviderBase):
             self._log.warning(f"{cap} 获取失败: {e}")
             yield FetchResult(table=table, columns=columns, rows=[], last_key="",
                               elapsed_sec=time.monotonic() - t0, error=str(e))
+
+
+    # ---- D4 物理另类·油价链三件+F13（2026-09-18 夜班 st-datapack-20260918，altdata_line D4） ----
+
+    def _fetch_ndrc_fuel_price(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """E8 发改委成品油调价（energy_oil_hist 全量幂等）→ c1_market.ndrc_fuel_price。
+
+        ~330 行低频事件表（2000-06 起），ReplacingMergeTree 同键 (announce_date) 替换。
+        PIT 双轴：announce_date=源端调整日期（调价窗口日）；effective_date=次日历日
+        （调价自公告日 24 时起执行）。error 列留单源故障证据（fallback_sources 显式空）。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_NDRC_FUEL_PRICE
+        t0 = time.monotonic()
+        try:
+            df = self._call_with_policy(ak.energy_oil_hist, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标
+            yield FetchResult(table=table, columns=_NDRC_FUEL_COLUMNS, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0, error=f"energy_oil_hist: {str(e)[:150]}")
+            return
+        rows: list[tuple] = []
+        for _, r in df.iterrows():
+            announce = _norm_date(r.get("调整日期"))
+            if not announce:
+                continue
+            announce_date = datetime.date.fromisoformat(announce)
+            effective = (announce_date + datetime.timedelta(days=1)).isoformat()
+            rows.append((
+                announce, effective,
+                _to_float(r.get("汽油价格")), _to_float(r.get("柴油价格")),
+                _to_float(r.get("汽油涨跌")), _to_float(r.get("柴油涨跌")),
+                "akshare_alt", 1,
+            ))
+        rows.sort(key=lambda t: t[0])
+        last_key = rows[-1][0] if rows else ""
+        yield FetchResult(table=table, columns=_NDRC_FUEL_COLUMNS, rows=rows,
+                          last_key=last_key, elapsed_sec=time.monotonic() - t0)
+
+    def _fetch_futures_warehouse_receipt(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """交易所仓单日报（extra.exchange=CZCE|SHFE）→ c1_market.futures_warehouse_receipt。
+
+        CZCE：ak.futures_warehouse_receipt_czce 按日 xls（日更增量+2018 起回填，
+        旧 .xls 格式解析失败属源端现实）。SHFE：ak.futures_shfe_warehouse_receipt
+        归档窗口硬界 [_SHFE_ARCHIVE_START, _SHFE_ARCHIVE_END]（2025-12 起源端 404 实测，
+        近端缺口登记 known_data_gaps；窗口硬界避免增量任务天天打 404）。
+        非交易日源端失败=静默跳过（工作日近似迭代）。分批 yield（每月一批）断点友好。
+        """
+        exchange = str((payload.extra or {}).get("exchange", "CZCE")).upper()
+        table = payload.table or _TBL_FUTURES_WAREHOUSE_RECEIPT
+        t0 = time.monotonic()
+        start, end, call_policy = self._warehouse_window(exchange, payload, policy)
+        if start > end:
+            return
+        yield from self._fetch_warehouse_chunks(exchange, table, start, end, call_policy, t0)
+
+    def _warehouse_window(self, exchange: str, payload: FetchPayload, policy: SourcePolicy):
+        """解析拉取窗口与调用策略（回填路径=provider 内硬界+零重试轻策略）。"""
+        is_backfill = exchange == "SHFE" or (payload.extra or {}).get("full_history")
+        if is_backfill:
+            import dataclasses
+
+            call_policy = dataclasses.replace(policy, max_retries=0) if policy else policy
+        else:
+            call_policy = policy
+        if exchange == "SHFE":
+            return _SHFE_ARCHIVE_START, min(payload.end, _SHFE_ARCHIVE_END), call_policy
+        if (payload.extra or {}).get("full_history"):
+            return _CZCE_BACKFILL_START, payload.end, call_policy
+        return payload.start, payload.end, call_policy
+
+    def _fetch_warehouse_chunks(self, exchange: str, table: str, start: datetime.date,
+                                end: datetime.date, call_policy, t0: float) -> Iterator[FetchResult]:
+        """按自然月分批拉取（断点友好；非交易日失败静默，全月无行才上报错误）。"""
+        import akshare as ak
+
+        for chunk_start in _warehouse_month_chunks(start, end):
+            next_month = (chunk_start.replace(day=28) + datetime.timedelta(days=4)).replace(day=1)
+            chunk_end = min(next_month - datetime.timedelta(days=1), end)
+            rows: list[tuple] = []
+            errors: list[str] = []
+            for d in _warehouse_date_iter(chunk_start, chunk_end):
+                date_str = d.strftime("%Y%m%d")
+                try:
+                    if exchange == "SHFE":
+                        rows.extend(self._shfe_day_rows(ak, call_policy, date_str, d))
+                    else:
+                        rows.extend(self._czce_day_rows(ak, call_policy, date_str, d))
+                except Exception as e:  # noqa: BLE001 — 非交易日/源端偶发失败静默跳过
+                    errors.append(f"{date_str}:{str(e)[:60]}")
+            if not (rows or errors):
+                continue
+            # errors 全为"无数据"性质（非交易日），不作为任务失败（error=None）；
+            # 全月无行且全有错才上报（真实断供信号）
+            error = "; ".join(errors[:3]) if (errors and not rows) else None
+            yield FetchResult(table=table, columns=_WAREHOUSE_COLUMNS, rows=rows,
+                              last_key=chunk_end.isoformat(),
+                              elapsed_sec=time.monotonic() - t0,
+                              error=error)
+
+    def _czce_day_rows(self, ak, policy: SourcePolicy, date_str: str, d: datetime.date) -> list[tuple]:
+        """CZCE 单日仓单 dict {品种: df} -> 行集（含源端小计行 row_type=subtotal）。
+
+        源表两重现实：①"位置续行"（仓库列空=承上行），ffill 仓库列；②27 品种列名
+        异构（厂库/机构/提货点/完税保税分列），spec 归一——非核心列全进 detail_attrs
+        入键（k=v| 串），行行唯一键防 ReplacingMergeTree 等键塌缩（2026-09-18 实证）。
+        """
+        data = self._call_with_policy(ak.futures_warehouse_receipt_czce, policy, date=date_str)
+        rows: list[tuple] = []
+        for variety, df in (data or {}).items():
+            rows.extend(self._czce_variety_rows(variety, df, d))
+        return _disambiguate_rows(rows)
+
+    def _czce_variety_rows(self, variety: str, df, d: datetime.date) -> list[tuple]:
+        """单品种仓单 df -> 行集（ffill 仓库列 + 异构列归一 + detail_attrs 入键）。"""
+        work = df.copy()
+        code_col = _warehouse_pick(work.columns, _WH_CODE_COLS)
+        name_col = _warehouse_pick(work.columns, _WH_NAME_COLS)
+        attr_cols = [c for c in work.columns if c not in _WH_CORE_COLS]
+        if code_col is not None:
+            work[code_col] = work[code_col].ffill()
+        if name_col is not None:
+            work[name_col] = work[name_col].ffill()
+        rows: list[tuple] = []
+        for _, r in work.iterrows():
+            wh_code = _clean_str(r.get(code_col)) if code_col else ""
+            wh_name = _clean_str(r.get(name_col)) if name_col else ""
+            if not wh_name and not wh_code:
+                continue
+            rows.append(self._czce_row_tuple(variety, r, d, wh_code, wh_name, attr_cols))
+        return rows
+
+    def _czce_row_tuple(self, variety: str, r, d: datetime.date,
+                        wh_code: str, wh_name: str, attr_cols: list) -> tuple:
+        """单行 -> 元组（小计行判定 + attrs 串 + 数量列合计）。"""
+        is_subtotal = "小计" in wh_code or "小计" in wh_name or "合计" in wh_code or "合计" in wh_name
+        attrs = "|".join(
+            f"{c}={_clean_str(r.get(c))}" for c in attr_cols if _clean_str(r.get(c))
+        )
+        return (
+            "CZCE", str(variety), d.isoformat(),
+            "subtotal" if is_subtotal else "detail",
+            wh_name or wh_code or "TOTAL", "",
+            attrs,
+            _warehouse_decimal(r.get("升贴水")),
+            _warehouse_receipts_sum(r), _warehouse_decimal(r.get("当日增减")),
+            _warehouse_decimal(r.get("有效预报")),
+            "akshare_alt", 1,
+        )
+
+    def _shfe_day_rows(self, ak, policy: SourcePolicy, date_str: str, d: datetime.date) -> list[tuple]:
+        """SHFE 单日仓单 dict {品种: df} -> 行集（VARID=品种代码，REGNAME=地区）。"""
+        data = self._call_with_policy(ak.futures_shfe_warehouse_receipt, policy, date=date_str)
+        rows: list[tuple] = []
+        for variety, df in (data or {}).items():
+            for _, r in df.iterrows():
+                wh_name = _clean_str(r.get("WHABBRNAME"))
+                if not wh_name or "小计" in str(r.get("VARNAME", "")):
+                    continue
+                rows.append((
+                    "SHFE", _clean_str(r.get("VARID")) or str(variety), d.isoformat(), "detail",
+                    wh_name, _clean_str(r.get("REGNAME")),
+                    "", "", "", None,
+                    _warehouse_decimal(r.get("WRTWGHTS")), _warehouse_decimal(r.get("WRTCHANGE")),
+                    None,
+                    "akshare_alt", 1,
+                ))
+        return _disambiguate_rows(rows)
+
+    def _fetch_road_freight_index(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """中国公路物流运价周指数（中物联网页爬取+G 盘原文快照）→ c1_market.road_freight_index。
+
+        网页类源正门：akshare index_price_cflp 底层站 index.0256.cn 已死（超时实测 rejected），
+        改爬中物联官网「统计数据」频道周指数报告文章序列（2015-09 起）。
+        礼貌爬取（请求间隔 _CW_CRAWL_INTERVAL_SEC）；每篇文章原文快照 G 盘冷库 immutable
+        + manifest drawers.jsonl 一次性登记。增量=列表页 URL 日期早停（payload.start）。
+        """
+        import requests
+
+        table = payload.table or _TBL_ROAD_FREIGHT_INDEX
+        t0 = time.monotonic()
+        session = requests.Session()
+        articles = self._cw_collect_articles(session, payload, policy)
+        if articles is None:
+            yield FetchResult(table=table, columns=_ROAD_FREIGHT_COLUMNS, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0, error="中物联列表页枚举失败")
+            return
+        rows: list[tuple] = []
+        for url, _title, article_id in articles:
+            try:
+                html = self._call_with_policy(_cw_fetch_text, policy, session, url)
+            except Exception as e:  # noqa: BLE001 — 单篇失败不拖垮整批
+                self._log.warning("公路运价文章获取失败 %s: %s", url, str(e)[:80])
+                continue
+            _cw_snapshot(article_id, html)
+            rows.extend(_cw_parse_article(html, url))
+        _cw_register_manifest_once()
+        rows.sort(key=lambda t: (t[0], t[1]))
+        last_key = max((r[1] for r in rows), default="")
+        yield FetchResult(table=table, columns=_ROAD_FREIGHT_COLUMNS, rows=rows,
+                          last_key=last_key, elapsed_sec=time.monotonic() - t0)
+
+    def _cw_collect_articles(self, session, payload: FetchPayload, policy: SourcePolicy) -> list[tuple] | None:
+        """枚举列表页 -> [(url, title, article_id)]（周指数报告文章；增量按 URL 日期早停）。"""
+        import requests
+
+        collected: list[tuple] = []
+        seen: set[str] = set()
+        # 早停游标仅增量模式生效（全量刷新 payload.start=调度月初，非真实历史起点）
+        start_iso = payload.start.isoformat() if (payload.start and payload.incremental) else ""
+        for page in range(1, _CW_LIST_MAX_PAGES + 1):
+            page_url = _CW_LIST_URL if page == 1 else f"{_CW_LIST_URL}index_{page}.shtml"
+            try:
+                html = self._call_with_policy(_cw_fetch_text, policy, session, page_url)
+            except requests.RequestException as e:
+                self._log.warning("中物联列表页第 %s 页失败: %s", page, str(e)[:80])
+                if page == 1:
+                    return None  # 首页失败=源不可达
+                break  # 翻页中失败=取已有结果（断点重跑幂等）
+            items = re.findall(r'href="([^"]*/xsyj/(\d{6})/(\d{2})/(\d+)\.shtml)"[^>]*>([^<]*' + _CW_TITLE_KEY + r'[^<]*)', html)
+            page_hit_old = False
+            for url_path, ym, dd, art_id, title in items:
+                url = _CW_BASE + url_path
+                if url in seen:
+                    continue
+                seen.add(url)
+                url_date = f"{ym[:4]}-{ym[4:6]}-{dd}"
+                if start_iso and url_date < start_iso:
+                    page_hit_old = True
+                    continue
+                collected.append((url, title.strip(), art_id))
+            if page_hit_old:
+                break  # 本页已见早于增量的文章 → 后面只会更老，停止翻页
+        return collected
+
+    def _fetch_agri_wholesale_index(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """F13 农产品批发价格 200 指数两序列全量幂等 → c1_market.agri_wholesale_index。
+
+        macro_china_agricultural_product（AJC200）+ macro_china_vegetable_basket（CLZ200），
+        2005-09 起 ~5800 行/序列。分品种（猪肉/鸡蛋/蔬菜细分）pfsc.agri.cn API 源端坏
+        （pageList 404/业务 500 实测 2026-09-18）rejected 留痕，指数层先行满足挂价铁律。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_AGRI_WHOLESALE_INDEX
+        t0 = time.monotonic()
+        rows: list[tuple] = []
+        errors: list[str] = []
+        for ak_fn_name, index_code, index_name in _AGRI_INDEX_SOURCES:
+            try:
+                df = self._call_with_policy(getattr(ak, ak_fn_name), policy)
+            except Exception as e:  # noqa: BLE001 — 单序列失败不拖垮另一序列
+                errors.append(f"{index_code}:{str(e)[:80]}")
+                continue
+            for _, r in df.iterrows():
+                trade_date = _norm_date(r.get("日期"))
+                value = _to_float(r.get("最新值"))
+                if not trade_date or value is None:
+                    continue
+                rows.append((index_code, trade_date, index_name, value,
+                             _to_float(r.get("涨跌幅")), "akshare_alt", 1))
+        rows.sort(key=lambda t: (t[0], t[1]))
+        last_key = max((r[1] for r in rows), default="")
+        error = "; ".join(errors) if errors else None
+        yield FetchResult(table=table, columns=_AGRI_INDEX_COLUMNS, rows=rows,
+                          last_key=last_key, elapsed_sec=time.monotonic() - t0, error=error)
+
+
+def _warehouse_month_chunks(start: datetime.date, end: datetime.date) -> list[datetime.date]:
+    """[start, end] 按自然月切块，返回各月首日列表（断点友好分批）。"""
+    chunks: list[datetime.date] = []
+    cursor = start.replace(day=1)
+    while cursor <= end:
+        chunks.append(cursor)
+        cursor = (cursor.replace(day=28) + datetime.timedelta(days=4)).replace(day=1)
+    return chunks
 
 
 def _make_sz_fetcher(cap: str):
