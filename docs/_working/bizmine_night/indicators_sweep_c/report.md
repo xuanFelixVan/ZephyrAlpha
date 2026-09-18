@@ -97,7 +97,7 @@ prereg: docs/_working/bizmine_night/indicators_sweep_c/prereg_slice3_protocol.md
 | 2 | 首次 commit 尝试（prereg+token 载体注册表同批）被 REGISTRY-MASS-DELETION 拦截：注册表 index 含他会话 staged 净删 4 条 crypto_probe token 条目 | gate 正确拦截外来净删；按 RULE-GIT-SAFE「每轮修改即 git add」重载 worktree 版（纯插入 12 行/0 删）后 requeue 队列项成功，prereg commit 6a439f93e7 归属核实无误；净删归属仍留他会话，本车道未代修未吸收 |
 | 3 | token 载体注册表改随本批（最终 commit）同落 | 时序调整，非内容变更 |
 | 4 | 心跳首启遇 SessionRegistry 并发写冲突（WinError 5，他会话心跳同窗写注册表），register 本身已成功 | 瞬态竞态，登记 |
-| 5 | 台账行 CAS 追加连续 15+ 次 StaleWriteRefused（多车道同窗高频追加 bizmine_campaign_ledger.md），按总包令「锁忙写进自己报告登记代追加」处置：**请总包代追加**本切片台账行，全文见 `.runtime/tmp/bizmine/indc/ledger_row.txt`（TTL 清理前可取），内容=§0 一句话+§1 top-10+§3 重叠+§6 偏离的压缩版 | 并发冲突，代追加登记 |
+| 5 | 台账行追加首 25+ 次尝试被 StaleWriteRefused 拒，**根因=本代理 base-hash 算法错**（对原始 CRLF 字节做 sha256，而 safe_write_text 参照值=content_sha256(decoded text)），非多车道竞争；改用 content_sha256 后一次写入成功，台账行已落并随本批 commit（含 PB 车道在途 bullet 一行随批落，共享台账追加语义） | 工具误用根因更正（诚实条款），初版报告误诊为并发冲突，以本条为准 |
 
 ## 7. 产物
 
