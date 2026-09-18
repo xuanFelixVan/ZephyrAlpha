@@ -80,3 +80,14 @@ ttl: task_bound
 - 计算脚本：`.runtime/tmp/bizmine/r/compute_regime_matrix.py`
 - 状态资产评估：`regime_status_assessment.md`
 - 上游成绩单：`docs/_working/sharpe2_prep/a_reexam/reexam_results.csv`（81 行；注意总包令写 82，实测 81 数据行，如实记录）
+
+## 5. 红蓝勘误（st-bizmine-rb-20260919 追加节，2026-09-19；原文与 csv 零改动）
+
+红蓝对抗（W2.2）对本报告做边界敏感性重跑与独立复算，两处计数更正（方向结论不变）：
+
+1. **「14 条最优桶=HIGH」更正为 13/17**：按 `survivor_regime_matrix.csv` 逐行判最优桶（CAND-e3da6fa71af1 的 LOW 桶全零日 Sharpe=nan 不参与），HIGH 最优=13 条；原 14 系把 LOW≈HIGH 平局的 CAND-eaddc3f9db4e 计入。
+2. **「15/17 条 MID 桶 Sharpe 低于自身 LOW 与 HIGH」更正为 12/17**（MID 为自身最差桶的严格口径；原 15 实为「MID<HIGH」口径 15/17 或「MID 非最优」口径 16/17，与字面陈述不符）。
+3. 边界敏感性重跑（0.3200/0.7040 ±0.05，`.runtime/tmp/bizmine/rb/r_boundary_sensitivity.csv`）：三组边界下 POOLED HIGH 恒最优（2.09/2.48/3.11）、MID 恒最差（0.15/0.21/-0.12），极差 1.94-3.24 均远超判读门 0.5——**方向结论存活**。
+4. 乘法位置量化补足：17 条独立零假设下 P(≥12 条 HIGH 最优)≈0.0019；n_eff=10/7/5 时 p≈0.020/0.045/0.045——维持 §3.4「存在集中性证据，待下窗复考」定级。
+5. 机制命名补足：幸存者集（oos_sharpe_h2>0）与本考试窗同源，POOLED HIGH 相对无选择基线偏乐观（详见 `../redblue_report.md` §11.3）。
+6. 下游引用（总包令 §6 W2.4、台账、mid_valley 两件、teaming_regime_brief）中的 14/17、15/17 请按本节更正；POOLED 三桶 Sharpe 数字经独立复算逐位无误。
