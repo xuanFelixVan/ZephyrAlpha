@@ -18,6 +18,16 @@
 #   date_col      判停更的日期列（业务事实锚，非采集时间）
 #   max_lag_days  允许的最大落后天数（超限=断供嫌疑，告警）
 #   past_only     true=只对 <=today 的行取 max（前瞻/预约类未来行不稀释新鲜度）
+#   --- 2026-09-18 全流通战役 st-ff-sentinel 新增判据维度（详见文末同批注释块）---
+#   row_filter           附加 SQL 谓词，把一条腿切到某维度/某数据源（治"表级 max 被单维掩护"）
+#   lag_basis            calendar_days(默认) | trading_days（周末/长假/停牌按交易日数，不掰宽阈值）
+#   cadence              incremental(默认) | static_backfill（一次性回填/全量刷新表改判行数地板）
+#   min_rows_in_window   {window_days, min_rows} 行数地板；window_days=0 即全表计数
+#   column_fill_ratio    {cols, min_ratio, window_days, treat_zero_as_missing} 关键列非零/非空率
+#   heartbeat_leg        true=本腿是采集心跳腿（date_col 为 ingest_ts 类时必须声明）；
+#                        某表**只有**心跳腿 -> 计入 blind_spots 并出 WARN（业务新鲜度无人盯）
+#   leg_name             腿标签（同表多腿时告警文案区分"哪条腿红"）
+#   gap_id               与 known_data_gaps 台账条目绑定的编号（allow_empty 长期静默的凭据字段）
 #   allow_empty   true=空表放行 —— **永久静默开关，不是"暂时宽限"**：置了它，该表可以永远 0 行
 #                 而不告警（BRK-046 实证：在册 12 张 allow_empty 表**全部当日有数**，豁免早已过期
 #                 却无人撤）。收口纪律：新建表回填完成即须删除本行；确属稀疏/条件性供数才保留，
@@ -50,11 +60,15 @@ tables:
 
   # --- J5 央行议息（采集心跳口径：决策日历的源端节奏不均——金十预约场次行可长期
   # 停在最后一场已排会议（2026-09 实查 max(decision_date)=2025-10-30 属源端现实），
-  # 按 decision_date 判停更会把"源端没排新会"误报为断供；管线存活的正确度量=ingest_ts 新鲜度） ---
+  # 按 decision_date 判停更会把"源端没排新会"误报为断供；管线存活的正确度量=ingest_ts 新鲜度）
+  # 2026-09-18 全流通战役 st-ff-sentinel 更正本段因果口径：本腿是**管线存活腿**，它绿只证明
+  # "我们在写"；"数据新不新"由文末 decision_date 业务腿独立守（实测表级停更 323 天、
+  # pboc 维度 2494 天；普查 BRK-038 曾把本行读成"必然天天告警的噪音"，方向相反 ---
   - table: c1_market.rate_decision_calendar
     date_col: ingest_ts
     max_lag_days: 2
     past_only: false
+    heartbeat_leg: true   # 本腿只证明"采集在写"；业务新鲜度由文末 decision_date 腿守
 
   # --- J4 指数调仓（月度快照差分派生；中证定期调整在 6/12 月，平常月靠不规则变动，个别月可为空） ---
   - table: c1_market.index_adjustment
@@ -156,6 +170,7 @@ tables:
     date_col: ingest_ts
     max_lag_days: 2
     past_only: false
+    heartbeat_leg: true   # 存活腿；业务新鲜度由文末 trade_time 腿守（盲点收口，禁只留本腿）
 
   # --- D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）---
   # 中债估值日频（节假日顺延），5 天档；源滚动窗口≈1年，断供即窗口外历史永久失位
@@ -266,7 +281,189 @@ tables:
   # （模拟盘当前单账户、非连续交易），3 天档必然常态误报；10 天=一个自然交易旬，超出即
   # "生产者静默或事件链断裂"。判据列用 trade_date（业务事实锚）而非 ingest_ts（心跳口径会漏检
   # "任务活着拉不到数"型半死管线，见 BRK-040 教训）。
+  # 2026-09-18 本车道更正 z-dag 同批登记的阈值行：原写 date_col: trade_date，但 system.columns
+  # 实测本表**无 trade_date 列**（列集=order_id/symbol/direction/.../execution_start/
+  # execution_end/broker_id/algo_type/idempotency_key/schema_version/ingest_ts/exchange），
+  # 该行永远取不到值；而旧代码把"CH 查询失败(raw='')"和"表真空了"都写成 empty table，
+  # 于是「假在岗」与「真断供」共用一条文案、谁也没发现这条腿从未生效过（本轮拆开：
+  # _scalar 空返回按 query error 上报）。execution_start 才是本表业务事实时间
+  # （实测 max=2026-09-18 10:26:15Z，列型 DateTime64(3,'UTC')）；阈值 10 天沿用原行。
   - table: c1_market.execution_report
+    date_col: execution_start
+    max_lag_days: 10
+    past_only: false
+    leg_name: "成交业务时间"
+
+  # ===========================================================================
+  # 全流通战役 · 供数新鲜度致盲治理（2026-09-18 车道 st-ff-sentinel-20260918）
+  # ===========================================================================
+  # 合并自 z-datagap 交接口片段 docs/_working/fullflow_campaign/lanes/
+  #   datagap_sentinel_yaml_fragment.yaml（11 张无哨兵表的业务锚 + 三项机制需求）。
+  # 治的不是某一张表，是**判据维度本身**：旧哨兵一条腿（表级 max(date_col) 落后日历日）
+  # 兜不住实测四型盲点（复测数字见 docs/_working/fullflow_campaign/lanes/
+  # sentinel_premise_recheck.md）：
+  #   A 心跳口径致盲  rate_decision_calendar  ingest 腿 lag=0 全绿，max(decision_date)
+  #                   =2025-10-30 → 业务滞后 323 天完全不可见（普查 BRK-038 把因果说反）
+  #   B 半死管线      alt_sz_reservoir_level  max(tdate)=2026-07-31 vs max(ingest_ts)
+  #                   =2026-09-18 → 业务滞后 49 天/采集滞后 0 天，且本表原先**无阈值行**
+  #   C 维度掩护      futures_warehouse_receipt 表级 lag=0，SHFE 实停 2025-11-17（305 天）
+  #   D 错数进闭环    daily_valuation FINAL 259238 行，close/amount/turnover 非零命中 0 行
+  # 对应新增字段（语义与降级方向的真源在 src/zephyr/data/quality_sentinel 同族文件
+  # src/zephyr/data/supply_sentinel.py 头 INVARIANTS，此处只写定档依据）：
+  #   row_filter           维度/源切片谓词（治 C，也让"真值源有没有数"可判）
+  #   lag_basis            trading_days=按交易日数落后（治周末/长假/停牌合法滞后，
+  #                        从此不必为降噪把 max_lag_days 掰宽——掰宽就是把尺子弯了）
+  #   cadence              static_backfill=一次性回填/全量刷新表，无日更语义，
+  #                        新鲜度腿让位于 min_rows_in_window 行数地板
+  #   min_rows_in_window   行数地板（window_days=0 即全表），治"调度成功零产出"
+  #   column_fill_ratio    关键列非零率/非空率，治 D 型（非 Nullable 列把无值写成 0）
+  #   heartbeat_leg        心跳腿显性声明；**只有**心跳腿的表=盲点，run 时必出 WARN 声
+  # allow_empty 与业务日期腿的交互（本轮定义清楚，防白名单洗白）：
+  #   allow_empty 只豁免"查不到任何行"（空表/空维度切片），**不豁免**"有行但业务日滞后"，
+  #   也不豁免"有行但关键列全 0"；因此给曾有数后断源的表挂 allow_empty 无效且危险，
+  #   确需长期静默须同行绑 gap_id（指向 known_data_gaps 台账条目）。
+
+  # --- B 型：深圳水库水位（实测节奏：近 6 个自然月每月 28-31 个业务日 = 日频）---
+  # 片段原提 40 天档（按"月末快照"猜），实测否：202509..202607 每月 distinct(tdate)=28~31，
+  # 是日频表；40 天档会把本次 49 天断供的前 40 天洗成"正常"，属把尺子掰弯，故按日频定 5 天。
+  - table: c1_market.alt_sz_reservoir_level
+    date_col: tdate          # 业务事实日；禁配 ingest_ts（本表采集腿 lag=0 已实证必然漏检）
+    max_lag_days: 5
+    past_only: true
+
+  # --- A 型：央行议息日历业务腿（上方 J5 的 ingest_ts 心跳腿保留=管线存活腿）---
+  # 合并后本腿**立即报红且是真阳性**（max(decision_date)=2025-10-30，停更 323 天）。
+  # 阈值 75 天依据：11 央行合计每 6-8 周必有决议，75 天=两个议息周期；换源落地前若要止噪，
+  # 只可临时把本值提到 400 并留 reviewed_at/reviewed_by，禁删本行（删行=回到永不告警）。
+  - table: c1_market.rate_decision_calendar
+    date_col: decision_date
+    max_lag_days: 75
+    past_only: false
+    leg_name: "业务决议日"
+    rationale_zh: "本表另有 heartbeat_leg(ingest_ts) 存活腿；本腿度量'数据新不新'，心跳腿度量'我们在不在写'"
+
+  # A 型的**维度**版本（C 型机制的第二个活例）：11 央行不是同一节奏，表级 max 会互相掩护。
+  # 实测 2026-09-18 按 bank_code 分组 max(decision_date)：fed 2025-10-30 / boj 2025-10-30 /
+  # snb 2025-09-25 / boe 2025-09-18 / bcb 2025-09-18 / cbr 2025-09-12 / ecb 2025-09-11 /
+  # rbnz 2025-08-20 / rba 2025-08-12 / rbi 2025-08-06 / **pboc 2019-11-20**（218 行）
+  # -> 表级"停 323 天"其实只由 fed/boj 掩护，pboc 维度已停 6.8 年（普查原文的 2019-11-20
+  #    就是它，与表级 323 天是两个口径，本轮分开钉住）。中国央行决议无公开日历，国内腿。
+  - table: c1_market.rate_decision_calendar
+    date_col: decision_date
+    max_lag_days: 90
+    past_only: false
+    row_filter: "bank_code = 'pboc'"
+    leg_name: "pboc 维度"
+
+  # --- C 型：期货仓单 SHFE 维度腿（表级腿由上方既有行继续守"表有没有新行"）---
+  # 实测 2026-09-18：CZCE 至当日正常（1,9971 行/月），SHFE 停于 2025-11-17=305 天，
+  # 表级 max(trade_date) 被 CZCE 掩护 → 维度腿才看得见。
+  - table: c1_market.futures_warehouse_receipt
     date_col: trade_date
     max_lag_days: 10
     past_only: true
+    row_filter: "exchange = 'SHFE'"
+    leg_name: "SHFE 维度"
+
+  # --- D 型：个股估值（非零率判据 + 业务日期腿）---
+  # 实测 data_source=local_valuation 派生腿在写（09-01 起 87377 行，trade_date 新鲜到 09-17），
+  # 但 close/amount/turnover 非零命中 0 行（pe_ttm 非零 87111/87377=99.7%）→
+  # 派生只算估值比、行情三列恒 0 = 错数进闭环。本腿点亮后**必红**，红是对的方向：
+  # 修复属派生车道（处方 lanes/sentinel_daily_valuation_prescription.md），禁为过检降级断言。
+  - table: c1_market.daily_valuation
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+    column_fill_ratio:
+      cols: [close, amount, turnover]
+      min_ratio: 0.95
+      window_days: 10
+      treat_zero_as_missing: true
+
+  # --- ⑤哨兵在岗=0 的其余表补阈值行（片段原值，实测锚已逐表复核）---
+  # 指数估值日频：计算列实测 8125/8125 行全 NULL（含 08-01 起 72 行）→ 非空率腿立即真红
+  - table: c1_market.index_valuation_daily
+    date_col: trade_date
+    max_lag_days: 7
+    past_only: true
+    column_fill_ratio:
+      cols: [cape_5y, pe_pct, erp]
+      min_ratio: 0.9
+      window_days: 0
+      treat_zero_as_missing: false
+
+  # 北向持股快照：季度末快照（实测 max=2026-06-30，Q3 要等 09-30）→ 跨季档 120 天
+  - table: c1_market.northbound_hold_snapshot
+    date_col: trade_date
+    max_lag_days: 120
+    past_only: true
+
+  # 板块分钟K：本腿只能证明"表有行"（09-11 起近端全是 synth_* 合成行）→
+  # 真值判定由下面第二条 tdx 腿负责（机制需求 source_min_rows 的落地形态）
+  - table: c1_market.kline_sector_intraday
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+
+  - table: c1_market.kline_sector_intraday
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+    row_filter: "data_source = 'tdx'"
+    min_rows_in_window:
+      window_days: 5
+      min_rows: 100000        # 实测 tdx 真值源近月日均 ~25 万行（09-01 起 2,274,652 行/月）
+    leg_name: "tdx 真值源"
+
+  # 集合竞价快照：交易日日频（实测 max=2026-09-16）
+  - table: c1_market.auction_snapshot
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+
+  # 宏观主表（edb_data 退役后的第一真源）：实测 max(report_date)=2026-09-18 当天
+  - table: c1_market.macro_data
+    date_col: report_date
+    max_lag_days: 45
+    past_only: true
+
+  # 分红：实测 max(announce_date)=2026-07-01，202608/202609 两个整月 0 行
+  # （对照 202508=5366 行）→ 本腿立即真红；根因候选=dividend_incremental 的
+  # schedule=disabled（tasks.yaml 实测），断供可归因而非阈值噪音。
+  - table: c3_fundamental.dividend
+    date_col: announce_date
+    max_lag_days: 30
+    past_only: true
+
+  # 审计意见/配股：年报季脉冲披露 + 两表增量任务当前 extra.disabled=true
+  # → 窗口按"跨到下一披露季"定 240 天（实测 max 分别 2026-05-29 / 2026-06-30）
+  - table: c3_fundamental.audit_opinion
+    date_col: announce_date
+    max_lag_days: 240
+    past_only: true
+
+  - table: c3_fundamental.rights_issue
+    date_col: announce_date
+    max_lag_days: 240
+    past_only: true
+
+  # --- 盲点收口：HL 清算流原先只有 ingest_ts 心跳腿 = 业务新鲜度无人盯 ---
+  # 本表业务时间是 trade_time（DateTime64，7×24 市场无节假日）；原 ingest 腿继续留册
+  # 作为管线存活腿（其"个别窗口零清算属常态"的论证只对行数成立，对"最后一次清算距今
+  # 多久"不成立——币圈连续 5 日零清算本身就是异常）。
+  - table: c1_market.hl_liquidation_raw
+    date_col: trade_time
+    max_lag_days: 5
+    past_only: false
+    leg_name: "清算业务时间"
+
+  # --- c1_market.edb_data：故意不设阈值行（iFind 2026-08-14 退役，实测 0 行、
+  #     max(report_date) 返 1970-01-01）。设一行就是逼后人去填一张永久无源的表；
+  #     禁删表=Owner 净删门位，故以注释留痕而非配假阈值。
+  # --- 禁配清单（写明不要走回头路）---
+  # ① 禁把 date_col: ingest_ts 用作任何"业务事实"表的唯一覆盖：本簇三个活例
+  #    （alt_sz_reservoir_level / rate_decision_calendar / futures_warehouse_receipt）
+  #    全部是 ingest 新鲜而业务数据停更 49 / 323 / 305 天。裸用心跳列现在会被
+  #    _validate_entry 直接报错（须声明 heartbeat_leg 且不得是唯一腿，否则进 blind_spots）。
+  # ② 禁把 allow_empty 叠加在"曾有数据后断源"的表上（须绑 gap_id）。
+  # ③ 禁为本簇任何一张表写"永真阈值"来让哨兵看起来有配（恒真门禁=裁定#325 反例）。

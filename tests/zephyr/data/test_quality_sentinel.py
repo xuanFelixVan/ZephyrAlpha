@@ -17,7 +17,7 @@
 from __future__ import annotations
 
 import json
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
@@ -494,3 +494,151 @@ class TestRedTeamConfigPoisoning:
         p = self._cfg(tmp_path, "defaults: 42\ntables:\n  - table: c1_market.k\n    date_col: trade_date\n")
         with pytest.raises(qs.QualitySentinelError):
             load_specs(p)
+
+
+# ============== g) 排班托管 run_hosted_sweep（四要素正门，st-ff-sentinel-20260918） ==============
+
+
+_HOSTED_CFG = (
+    "wiring:\n  host_schedule: data_supply_sentinel\n  sweep_cadence_days: {cadence}\n"
+    "defaults: {{}}\ntables:\n  - table: c1_market.kline_daily\n    date_col: trade_date\n"
+)
+
+
+class TestHostedSweep:
+    """托管接线的四要素各自能被红：总闸关->跳过；节奏未到->跳过；节奏到->真跑；
+    全表 degraded->禁报干净。被断言的防线（run_sentinel 判定链）是真对象，
+    只把 CH 传输/日历两个协作方换成 fake。"""
+
+    @staticmethod
+    def _cfg(tmp_path: Path, cadence: int = 7) -> Path:
+        p = tmp_path / "qs_hosted.yaml"
+        p.write_text(_HOSTED_CFG.format(cadence=cadence), encoding="utf-8")
+        return p
+
+    @staticmethod
+    def _clean_executor() -> FakeExecutor:
+        """干净盘面：纪元残留 0 行（"< toDate(" 谓词）、近端有行（">= toDate(" 谓词）。
+
+        测试必须自己造出"无变异"的事实，不能靠忽略 empty_segment 误报来过关——
+        否则 run_sentinel 会经真 Alerter 往 data/failures/ 写生产留痕（测试隔离红线，
+        本车道第一版就踩过一次，已按该教训加固）。
+        """
+        def _handler(sql: str):
+            if ">= toDate(" in sql:
+                return [(5,)]
+            if "< toDate(" in sql or "toDateTime64(" in sql:
+                return [(0,)]
+            return [(0,)]
+
+        return FakeExecutor(_handler)
+
+    @staticmethod
+    def _wire(monkeypatch, executor: FakeExecutor) -> None:
+        monkeypatch.setattr(qs, "_default_executor", lambda: executor)
+        monkeypatch.setattr(qs, "_default_calendar", lambda: FakeCalendar())
+
+    def test_clean_sweep_reports_ok_and_lands_report(self, tmp_path, monkeypatch):
+        executor = self._clean_executor()
+        self._wire(monkeypatch, executor)
+        out_dir = tmp_path / "reports"
+        result = qs.run_hosted_sweep(
+            alerter=FakeAlerter(), config_path=self._cfg(tmp_path),
+            report_dir=out_dir, ref_date=REF_DATE,
+        )
+        assert result["ok"] is True and result["tables_checked"] == 1
+        # 报告落盘=节奏闸的状态真源（下一班据此跳过），必须真读盘核实
+        assert (out_dir / f"{REF_DATE.isoformat()}_report.json").exists()
+
+    def test_findings_make_sweep_not_ok(self, tmp_path, monkeypatch):
+        """检出变异却回 ok=True = 托管腿是假的（宿主据此永不告警）。"""
+        executor = FakeExecutor(lambda sql: [(7,)] if "< toDate(" in sql else [(5,)])
+        self._wire(monkeypatch, executor)
+        result = qs.run_hosted_sweep(
+            alerter=FakeAlerter(), config_path=self._cfg(tmp_path),
+            report_dir=tmp_path / "r", ref_date=REF_DATE,
+        )
+        assert result["ok"] is False and result["findings_count"] >= 1
+
+    def test_all_degraded_never_reports_clean(self, tmp_path, monkeypatch):
+        """CH 全线不可达 -> 全表 degraded，必须 ok=False（禁"没查"当"查了且干净"）。"""
+        def _boom(_sql):
+            raise AssertionError("CH 不可达")
+
+        self._wire(monkeypatch, FakeExecutor(_boom))
+        result = qs.run_hosted_sweep(
+            alerter=FakeAlerter(), config_path=self._cfg(tmp_path),
+            report_dir=tmp_path / "r", ref_date=REF_DATE,
+        )
+        assert result["ok"] is False and result["all_degraded"] is True
+
+    def test_master_switch_skips_without_querying(self, tmp_path, monkeypatch):
+        flag = tmp_path / "quality_sentinel.disabled"
+        flag.write_text("", encoding="utf-8")
+        monkeypatch.setattr(qs, "_DISABLED_FLAG_PATH", flag)
+        executor = self._clean_executor()
+        self._wire(monkeypatch, executor)
+        result = qs.run_hosted_sweep(
+            alerter=FakeAlerter(), config_path=self._cfg(tmp_path), report_dir=tmp_path / "r"
+        )
+        assert result == {"ok": True, "skipped": "master_switch_off"}
+        assert executor.calls == [], "总闸关闭仍打 CH = 关不掉的自动关闭"
+
+    def test_cadence_gate_throttles_within_window(self, tmp_path, monkeypatch):
+        executor = self._clean_executor()
+        self._wire(monkeypatch, executor)
+        out_dir = tmp_path / "r"
+        out_dir.mkdir()
+        (out_dir / f"{(REF_DATE - timedelta(days=2)).isoformat()}_report.json").write_text(
+            "{}", encoding="utf-8"
+        )
+        result = qs.run_hosted_sweep(
+            alerter=FakeAlerter(), config_path=self._cfg(tmp_path, cadence=7),
+            report_dir=out_dir, ref_date=REF_DATE,
+        )
+        assert result["ok"] is True and "cadence_7d" in result["skipped"]
+        assert executor.calls == []
+
+    def test_cadence_expiry_triggers_a_fresh_sweep(self, tmp_path, monkeypatch):
+        executor = self._clean_executor()
+        self._wire(monkeypatch, executor)
+        out_dir = tmp_path / "r"
+        out_dir.mkdir()
+        (out_dir / f"{(REF_DATE - timedelta(days=30)).isoformat()}_report.json").write_text(
+            "{}", encoding="utf-8"
+        )
+        result = qs.run_hosted_sweep(
+            alerter=FakeAlerter(), config_path=self._cfg(tmp_path, cadence=7),
+            report_dir=out_dir, ref_date=REF_DATE,
+        )
+        assert "skipped" not in result and executor.calls
+
+    @pytest.mark.parametrize("cadence", [0, -3])
+    def test_non_positive_cadence_fail_closed(self, tmp_path, monkeypatch, cadence):
+        """节奏闸配 0/负数=每班静默跳过却报 ok（巡检静默空转），必须 fail-closed。"""
+        self._wire(monkeypatch, self._clean_executor())
+        with pytest.raises(qs.QualitySentinelError):
+            qs.run_hosted_sweep(
+                alerter=FakeAlerter(),
+                config_path=self._cfg(tmp_path, cadence=cadence),
+                report_dir=tmp_path / "r", ref_date=REF_DATE,
+            )
+
+    def test_wiring_block_is_read_from_real_config(self):
+        """真源核对：出厂 config/quality_sentinel_tables.yaml 的 wiring 必须指向 L13 槽位。
+        配错 host_schedule（或漏配）= 托管关系只存在于注释里，下一班会以为有人在跑。"""
+        wiring = qs._load_wiring()
+        assert wiring["host_schedule"] == "data_supply_sentinel"
+        assert int(wiring["sweep_cadence_days"]) == 7
+
+    def test_shipped_quality_tables_have_their_anchor_columns(self, tmp_path, monkeypatch):
+        """出厂册的 date_col 必须互不相同地覆盖各族表——本轮实测抓到 kline_5min 配了
+        本表不存在的 trade_date 列，三项检查一起 degraded 却仍 exit 0（假在岗）。
+        此处钉住"kline_5min 用业务时间列"这条更正，还原成 HEAD 形态即红。"""
+        specs = {s.table: s for s in load_specs()}
+        five = specs["c1_market.kline_5min"]
+        assert five.date_col == "trade_time", (
+            "kline_5min 无 trade_date 列（实测 system.columns），配不存在的列=三项检查"
+            "全 degraded 而 findings=0 -> 看起来干净"
+        )
+        assert five.ts_col == "trade_time"

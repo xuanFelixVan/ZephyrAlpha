@@ -35522,6 +35522,26 @@ creation_tokens:
   token: flowthrough-verification-test-flowthrough-verifier-20260918
   created_by: st-ff-verifier-20260918
   capability: flowthrough_verification
+- file: docs/_working/fullflow_campaign/lanes/verifier3_relay_start.md
+  token: flowthrough-verification-verifier3-relay-start-20260918
+  created_by: st-ff-verifier3-20260918
+  capability: flowthrough_verification
+- file: docs/_working/fullflow_campaign/lanes/verifier3_relay.md
+  token: flowthrough-verification-verifier3-relay-20260918
+  created_by: st-ff-verifier3-20260918
+  capability: flowthrough_verification
+- file: docs/_working/fullflow_campaign/skeleton/05_census_reconciliation.md
+  token: flowthrough-verification-census-reconciliation-20260918
+  created_by: st-ff-verifier3-20260918
+  capability: flowthrough_verification
+- file: docs/_working/fullflow_campaign/adjudications/req_verifier3_01.md
+  token: flowthrough-verification-req-verifier3-01-20260918
+  created_by: st-ff-verifier3-20260918
+  capability: flowthrough_verification
+- file: docs/_working/fullflow_campaign/adjudications/req_verifier3_02.md
+  token: flowthrough-verification-req-verifier3-02-20260918
+  created_by: st-ff-verifier3-20260918
+  capability: flowthrough_verification
 - file: docs/_working/fullflow_campaign/skeleton/03_omission_crosscheck.md
   token: flowthrough-verification-03-omission-crosscheck-20260918
   created_by: st-ff-verifier-20260918

@@ -3630,3 +3630,75 @@ tasks:
     description: "可转债条款日快照（AKShare bond_cb_redeem_jsl，集思录强赎汇总：触发价/触发比/天计数/强赎状态/最后交易日/到期日；回售条款计数源端未含挂账 DS-CAND）"
 
   fallback_sources: []    # 显式置空：集思录强赎汇总唯一聚合口径（bond_zh_cov_info 逐券解析另行评估）
+
+  # ===========================================================================
+  # 全流通战役 · 供数新鲜度致盲治理并入（2026-09-18 车道 st-ff-sentinel-20260918）
+  # 来源片段 docs/_working/fullflow_campaign/lanes/datagap_tasks_yaml_fragment.yaml
+  # （tasks.yaml/schedule.yaml 由 z-dag 收工时移交本车道独占）
+  # 片段 8 条逐条处置（禁"整片合入"式省事——未验真的 source 落进来就是 R-021 假任务）：
+  #   ①分红切源      -> **合并**（source=akshare 的 dividend 能力实测在册：
+  #                       akshare_provider.py:920 CapabilityContract("dividend")，
+  #                       写目标经 get_registry().table("fund_dividend") 解析=
+  #                       c3_fundamental.dividend，与任务 table 一致）
+  #   ②③议息双源+改道 -> **处方**（fed_official / eastmoney_datacenter 两个 source 未注册，
+  #                       本车道禁写 provider 面；登记=fetch 必失败的空挂任务，
+  #                       正是本轮要消灭的"任务在册=有数据"错觉。见
+  #                       lanes/sentinel_rate_decision_prescription.md）
+  #   ④计算列必跑    -> **合并**（internal_compute_provider.py:466 已声明
+  #                       CapabilityContract("index_valuation_daily") 且 :577 按
+  #                       payload.table 路由，前置 index_valuation_daily_backfill 在册）
+  #   ⑤停 intraday_sector 档期 -> **待裁 req_sentinel_02**（停 5 个盘中任务是生产切换，
+  #                       且 synth_* 合成分区正是这些任务产出的；本车道只把"真值源无行"
+  #                       点亮成哨兵红（tdx 腿实测 rows=0 < floor），不代做停用决定）
+  #   ⑥alt_sz 保持 enabled -> **合并为注释修正**（片段称"源为月末快照"，实测近 6 个月
+  #                       每月 28-31 个业务日 = 日频；据此把哨兵阈值从片段提的 40 天
+  #                       改回日频 5 天档，见 data_supply_sentinel.yaml 同批注释）
+  #   ⑦BRK-043 幂等说明 -> 无 tasks.yaml 动作（provider 侧已改，本车道禁写）
+  #   ⑧票房不建任务 -> 无动作（表不存在，实测确认）
+  # 另：minelineI 片段（quality_sentinel 排班）实测文件不存在；且本仓特殊时段槽位
+  #     （integrity_check/catchup_guard/data_supply_sentinel）一律不入 tasks.yaml
+  #     ——任务条目须绑 source/capability/provider，哨兵不是数据源。质量变异巡检的
+  #     排班正门改由 L13 data_supply_sentinel 托管（config/quality_sentinel_tables.yaml
+  #     wiring 块 + quality_sentinel.run_hosted_sweep），不开第二个有名无实的空槽位。
+  # ===========================================================================
+
+  # ① 分红预案/明细切 akshare（承接实测断供：max(announce_date)=2026-07-01，
+  #    202608/202609 两个整月 0 行；对照 202508=5366 行；旧 miniqmt 任务 2026-09-09
+  #    方案D 停用留在册不删）。片段原提 daily_event，本车道改 weekend_calibration：
+  #    akshare dividend 逐标的拉取（~5200 只 stock_history_dividend_detail），
+  #    日频全市场长占 heavy 通道；哨兵阈值 30 天，周更节奏足够。
+- task_id: dividend_incremental_akshare
+  table: c3_fundamental.dividend
+  source: akshare
+  schedule: weekend_calibration
+  incremental: true
+  date_col: announce_date
+  dependencies: []
+  capability: dividend
+  symbols:
+  extra:
+    description: "分红明细 akshare 承接（BRK-030；旧 dividend_incremental(miniqmt) 已 2026-09-09 方案D 停用留册不删；配方参照 A4 股东户数切 akshare 先例；本任务与 c3_fundamental.dividend 哨兵阈值行同批，停更即报）"
+
+  fallback_sources: []    # 显式置空：唯一历史备源 miniqmt 因字段名与东财 20 列 schema 不匹配、
+                          # 写入持续失败才于 2026-09-09 停用（见旧任务 dividend_incremental 的
+                          # description）——把它当备源=把已知坏通道接回来；备源建设走
+                          # eastmoney_datacenter（见 lanes/sentinel_rate_decision_prescription.md）。
+
+  # ④ 指数估值计算列"必跑"腿（BRK-034）：internal_compute 此前只挂在
+  #    index_valuation_daily_backfill 的 fallback_sources，而 fallback 仅在 akshare
+  #    报错时才走 -> akshare 一成功，CAPE/分位/ERP 就永久 None
+  #    （实测 2026-09-18 FINAL 8125 行三列 NULL=100%，含 08-01 起 72 行全 NULL）。
+  #    顺序铁律：重灌（携带逻辑已在位）后必跟一次重算回写。
+- task_id: index_valuation_daily_compute_after_ingest
+  table: c1_market.index_valuation_daily
+  source: internal    # 本地计算（读库自算 CAPE/分位/ERP 回写同表，internal_compute_provider:577 按 payload.table 路由）
+  schedule: weekend_calibration
+  incremental: false
+  date_col: trade_date
+  dependencies: ["index_valuation_daily_backfill"]    # DAG: 全量重灌后必跟一次重算（fallback 语义兜不住"源成功但计算列空"）
+  capability: index_valuation_daily
+  symbols:
+  extra:
+    description: "指数估值计算列重算回写（CAPE/pe_pct/erp；治 BRK-034 的'akshare 成功即永不重算'；与 index_valuation_daily 哨兵 column_fill_ratio 腿同批，NULL 率不达标即报）"
+
+  fallback_sources: []    # internal 计算源天然无副源（同族 kline_index_calc_refresh 口径）

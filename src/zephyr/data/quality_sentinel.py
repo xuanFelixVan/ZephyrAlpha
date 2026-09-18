@@ -2,7 +2,7 @@
 # [MODULE] zephyr.data.quality_sentinel
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.alerter; zephyr.data.calendar(懒加载); zephyr.infrastructure.database_service(懒加载); zephyr.shared.io.file_utils; zephyr.shared.utils.time_utils
-# [CONSUMERS] (暂无直连)建议排班槽位=integrity_check 同族 L11；注册正门=tasks.yaml+schedule.yaml，待 residual 波次边界接线
+# [CONSUMERS] zephyr.data.supply_sentinel.run_supply_sentinel -> run_hosted_sweep（L13 data_supply_sentinel 排班腿托管，2026-09-18 全流通战役 st-ff-sentinel 接线）；CLI 独立运行
 # [STARTUP] manual
 # [MATURITY] trial
 # [INVARIANTS] 只读检测禁修数; CH 访问唯一入口=DatabaseService.get_clickhouse_conn(reader)禁裸连接(宪法§9.1); 告警唯一正门=Alerter.notify禁自造通道; 当前时间统一 now_utc() 入口禁 datetime.now()/time.time() 散落(RULE-SCHEMA-TZ); DateTime64 列显式 Asia/Shanghai 口径; 报告 JSON 落 data/quality_sentinel/ 经 safe_write_text; 单表查询失败=degraded 不中断全表巡检; 计数不带 FINAL(ReplacingMergeTree 未合并重复对变异检测无影响); exit code=发现变异数(0=干净,封顶255)
@@ -31,9 +31,13 @@
   3) empty_segment 空段：最近 N 个交易日（交易日历口径）整表零行。
 
 排班登记说明（工单要求，留档防丢）：
-  建议槽位 = integrity_check 同族 L11（盘后检测班次，紧随 run_daily_check）；
-  注册正门 = tasks.yaml + schedule.yaml；待 residual 波次边界接线
-  （tasks.yaml 属 residual 战役 C1 共享禁区，本工单禁碰，故只留此说明）。
+  2026-09-18 全流通战役 st-ff-sentinel-20260918 实测更正：本仓**特殊时段类槽位（L11
+  integrity_check / L10.7 catchup_guard / L13 data_supply_sentinel / consensus_crosscheck）
+  一律不走 tasks.yaml**——tasks.yaml 条目须绑 source/capability/provider 三件，
+  哨兵不是数据源，硬塞一条"任务"就是 R-021 型假通道（排班真源 config 里有个名字、调度器侧无实现=
+  调度器空跑并 log"时段 X 无任务"后静默返回成功）。故本件的排班正门=**由 L13
+  data_supply_sentinel 槽位托管**（run_hosted_sweep，见 config/quality_sentinel_tables.yaml
+  的 wiring 块），不为哨兵族另开第二个空槽位。
   独立触发：python -m zephyr.data.quality_sentinel [--tables t1,t2] [--days N]
 
 使用方式：
@@ -81,6 +85,7 @@ __all__: Final = [
     "check_tz_shift",
     "check_empty_segment",
     "run_sentinel",
+    "run_hosted_sweep",
     "main",
 ]
 
@@ -88,6 +93,13 @@ _SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
 
 _DEFAULT_CONFIG_PATH = REPO_ROOT / "config" / "quality_sentinel_tables.yaml"
 _DEFAULT_OUTPUT_DIR = REPO_ROOT / "data" / "quality_sentinel"
+
+#: 服务总闸（宪法 §9.3 四要素之"自动关闭"在排班批里的家族制式：标记文件存在=停用，
+#: 每次触发实查、即时生效、无需重启宿主调度器——同 nightly_sentiment/consensus_crosscheck）
+_DISABLED_FLAG_PATH = REPO_ROOT / "data" / "runtime" / "quality_sentinel.disabled"
+
+#: 托管巡检默认节奏（日）；真源=config/quality_sentinel_tables.yaml 的 wiring.sweep_cadence_days
+_DEFAULT_SWEEP_CADENCE_DAYS: Final = 7
 
 #: exit code 保留段（变异数占 0-255；253/254 为运维保留码，见 ERROR_CONTRACT）
 _EXIT_ALL_DEGRADED = 253
@@ -287,6 +299,9 @@ def check_epoch(executor: QueryExecutor, spec: TableSpec) -> list[SentinelFindin
     cols = [spec.date_col] if spec.date_col else []
     if spec.ts_col:
         cols.append(spec.ts_col)
+    # 同列去重：无独立 date 列的表（本轮实测 kline_5min）date_col==ts_col，
+    # 不去重会把同一张亿行表的全史纪元扫描跑两遍。
+    cols = list(dict.fromkeys(cols))
     for col in cols:
         if col == spec.ts_col:
             sql = _SQL_EPOCH_COUNT_TS.format(table=spec.table, col=col, cutoff=spec.epoch_cutoff)
@@ -567,6 +582,97 @@ def _default_alerter():
 def _to_exit_code(findings_count: int) -> int:
     """变异数 -> 进程退出码（>255 封顶 255，POSIX 退出码语义）。"""
     return min(int(findings_count), _EXIT_CODE_CAP)
+
+
+# ============== 排班托管（L13 data_supply_sentinel 腿，四要素正门） ==============
+
+
+def _load_wiring(config_path: str | Path | None = None) -> dict:
+    """读 wiring 块（托管节奏等运维参数）；缺块=用默认值，非映射=配置错。"""
+    path = Path(config_path) if config_path else _DEFAULT_CONFIG_PATH
+    if not path.exists():
+        raise _config_error("哨兵表配置缺失", path=str(path))
+    raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    wiring = raw.get("wiring") or {}
+    if not isinstance(wiring, dict):
+        raise _config_error("哨兵配置 wiring 须为映射", value=repr(wiring))
+    return wiring
+
+
+def _latest_report_date(report_dir: Path) -> date | None:
+    """最近一次巡检日（**报告文件名即状态真源**，不另立 state 文件造成第二真源）。"""
+    if not report_dir.is_dir():
+        return None
+    dates: list[date] = []
+    for path in report_dir.glob("*_report.json"):
+        try:
+            dates.append(date.fromisoformat(path.name[:10]))
+        except ValueError:
+            continue
+    return max(dates) if dates else None
+
+
+def run_hosted_sweep(
+    alerter: object | None = None,
+    *,
+    config_path: str | Path | None = None,
+    report_dir: str | Path | None = None,
+    ref_date: date | None = None,
+) -> dict:
+    """由 L13 `data_supply_sentinel` 排班腿托管的变异巡检（§4.3 自动化四要素的正门形态）。
+
+    四要素各自的落点：
+      自动触发 = 宿主槽位（宿主排班批经 L13 data_supply_sentinel 槽位；本件是数据哨兵不是
+                 自愈 reconciler 环，故不适用宪法 §9.3"reconciler 必须事件触发"令）；
+      自动运行 = 本函数（配置 -> load_specs -> run_sentinel，CH 只读经 DatabaseService）；
+      自动维护 = sweep_cadence_days 节奏闸（全史 epoch 扫描代价高，按报告日期自愈节流）；
+      自动关闭 = data/runtime/quality_sentinel.disabled 标记文件（实查、即时生效）。
+
+    Args:
+        alerter: 复用宿主 Alerter（None 则 run_sentinel 自装配正门 Alerter）。
+        config_path: 表配置路径（None=config/quality_sentinel_tables.yaml）。
+        report_dir: 报告目录（None=data/quality_sentinel/；测试传 tmp_path 禁写生产目录）。
+        ref_date: 基准日（None=上海时区今日，经 now_utc 统一入口）。
+
+    Returns:
+        {ok, findings_count, tables_checked, degraded_tables, report_path} 或
+        {ok: True, skipped: <原因>}（总闸关闭 / 节奏未到）。
+    """
+    if _DISABLED_FLAG_PATH.exists():
+        log.info("质量哨兵总闸关闭（%s 存在），本次托管巡检跳过", _DISABLED_FLAG_PATH)
+        return {"ok": True, "skipped": "master_switch_off"}
+    wiring = _load_wiring(config_path)
+    raw_cadence = wiring.get("sweep_cadence_days", _DEFAULT_SWEEP_CADENCE_DAYS)
+    try:
+        cadence_days = int(raw_cadence)
+    except (TypeError, ValueError) as ex:
+        raise _config_error("sweep_cadence_days 须为整数", value=repr(raw_cadence)) from ex
+    if cadence_days < 1:
+        # 0/负数=每班都跳过却回 ok=True（巡检静默空转还谎报干净），比报错更危险，fail-closed
+        raise _config_error("sweep_cadence_days 须 >=1（0/负数=巡检静默空转）", value=cadence_days)
+    out_dir = Path(report_dir) if report_dir else _DEFAULT_OUTPUT_DIR
+    ref = ref_date or now_utc().astimezone(_SHANGHAI_TZ).date()
+    last = _latest_report_date(out_dir)
+    if last is not None and (ref - last).days < cadence_days:
+        log.info("质量哨兵按节奏跳过: last=%s cadence=%dd", last.isoformat(), cadence_days)
+        return {"ok": True, "skipped": f"cadence_{cadence_days}d_last_{last.isoformat()}"}
+    specs = load_specs(config_path)
+    if not specs:
+        raise _config_error("托管巡检无可巡检表（配置 tables 过滤后为空）")
+    report = run_sentinel(
+        specs, alerter=alerter, output=SentinelOutput(report_dir=out_dir), ref_date=ref
+    )
+    degraded = sum(1 for r in report["results"] if r["degraded"])
+    all_degraded = bool(report["results"]) and degraded == len(report["results"])
+    return {
+        "ok": report["findings_count"] == 0 and not all_degraded,
+        "findings_count": report["findings_count"],
+        "tables_checked": len(report["results"]),
+        "degraded_tables": degraded,
+        "all_degraded": all_degraded,
+        "report_path": report.get("report_path"),
+        "ref_date": ref.isoformat(),
+    }
 
 
 # ============== CLI ==============

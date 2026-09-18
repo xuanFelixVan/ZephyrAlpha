@@ -194,7 +194,16 @@ schedules:
   # 与 L10.7 catchup_guard(05:30 调度侧对账) 分工：本层=表内数据新鲜度（SOP §10.2 停更阈值）。
   # 诞生背景=股东户数断供两月无人知（事件日期表被 L11 日频口径强制跳过的盲区）。
   # 含周末运行：停更检测须在周末继续盯（周末断供周一才报=重演两月盲区）。
+  # 2026-09-18 全流通战役 st-ff-sentinel 托管扩权：本槽位同时是 **quality_sentinel
+  # （L11 同族变异巡检：1970 纪元/时区偏移/空段）的排班正门**——宿主
+  # supply_sentinel.run_supply_sentinel -> _run_hosted_quality_sweep ->
+  # quality_sentinel.run_hosted_sweep。为什么不在本文件另开 `quality_sentinel:` 槽位：
+  # scheduler.py:_run_special_schedule 是硬编码白名单（scheduler.py 非本车道可写面），
+  # 新开有名无实的槽位会落到 run_schedule 的"时段 X 无任务"分支后静默返回成功
+  # （scheduler.py:2110）= R-021 假通道。四要素落点与 7 天节奏闸真源见
+  # config/quality_sentinel_tables.yaml 的 wiring 块；停摆总闸=
+  # data/runtime/quality_sentinel.disabled（每次触发实查，即时生效）。
   data_supply_sentinel:
     cron: "50 6 * * *"
     executor: default
-    description: "数据断供哨兵——事件日历/慢频表 max(date) 停更检测（配置=config/data_supply_sentinel.yaml，告警经 Alerter）"
+    description: "数据断供哨兵——业务新鲜度/维度切片/行数地板/关键列填充率停更检测（配置=config/data_supply_sentinel.yaml）+ 托管 quality_sentinel 三类变异巡检（配置=config/quality_sentinel_tables.yaml，7 天节奏闸），告警经 Alerter"

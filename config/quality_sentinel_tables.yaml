@@ -36,7 +36,12 @@ tables:
     date_col: trade_date
     ts_col: trade_time             # DateTime64(3,'Asia/Shanghai')，epoch+tz 双检
   - table: c1_market.kline_5min
-    date_col: trade_date
+    # 2026-09-18 全流通战役 st-ff-sentinel 更正：原配 date_col: trade_date，但 system.columns
+    # 实测本表**无 trade_date 列**（列集=trade_time/symbol/open/high/low/close/volume/amount/
+    # data_source/ingest_ts/exchange/symbol_canonical）-> 三项检查一起 degraded，恰好把
+    # "kline_1min 2635 万行 1970 错位"同族的 5 分钟表放回无哨兵态（degraded 只进日志与
+    # results[].degraded，不进 findings 计数 -> CLI exit 0 看起来干净）。改用业务时间列。
+    date_col: trade_time
     ts_col: trade_time
   - table: c1_market.tick_data
     date_col: trade_date
@@ -49,3 +54,33 @@ tables:
     tz_max_suspect_ratio: 0.35
   - table: c1_market.stock_indicator
     date_col: trade_date
+  # --- 全流通战役 st-ff-sentinel-20260918 补册（epoch 检测在本簇实测到真实残留）---
+  # 议息日历：实测 435 行 decision_date < 1990-01-01（min=1970-01-01，全表 3086 行）
+  # = 纪元残留坐在此表；此前该表只在 data_supply_sentinel 的"新鲜度"维度被度量，
+  #   "值本身坏掉"这一维无人盯。不配 ts_col -> 只做 epoch + empty_segment。
+  - table: c1_market.rate_decision_calendar
+    date_col: decision_date
+  # 个股估值：N-1 型（close/amount/turnover 全 0）由 data_supply_sentinel 的
+  # column_fill_ratio 腿守；本册只补 epoch/空段两维，避免第二真源。
+  - table: c1_market.daily_valuation
+    date_col: trade_date
+
+# =============================================================================
+# 排班接线（自动化四要素；2026-09-18 全流通战役 st-ff-sentinel-20260918 落地）
+# =============================================================================
+# 本件**不在 tasks.yaml 登记任务条目**——本仓特殊时段类槽位（integrity_check /
+# catchup_guard / data_supply_sentinel / consensus_crosscheck）一律不走 tasks.yaml：
+# 任务条目须绑 source/capability/provider 三件，哨兵不是数据源，硬塞=调度器空跑
+# "时段 X 无任务"后静默返回成功的 R-021 型假通道（实测判据见
+# src/zephyr/data/scheduler.py:204 _run_special_schedule 与 :2110 空任务分支）。
+# 正门形态=由 L13 data_supply_sentinel 槽位托管（宿主 src/zephyr/data/supply_sentinel.py
+# 的 _run_hosted_quality_sweep 调 run_hosted_sweep），四要素落点：
+#   自动触发 schedule.yaml data_supply_sentinel（06:50 日批，APScheduler）
+#   自动运行 run_hosted_sweep -> load_specs -> run_sentinel（CH 只读经 DatabaseService）
+#   自动维护 sweep_cadence_days 节奏闸（全史 epoch 扫描代价高，按报告日期自愈节流；
+#            报告文件名即状态真源，不另立第二 state 文件）
+#   自动关闭 data/runtime/quality_sentinel.disabled 标记文件（每次触发实查，即时生效）
+wiring:
+  host_schedule: data_supply_sentinel
+  sweep_cadence_days: 7
+  disabled_flag: data/runtime/quality_sentinel.disabled
