@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_canary_repair | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_canary_repair
+# [DOMAIN] D_INFRA_RECOVERY
 # [INVARIANTS] canary_pct default=0.1
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

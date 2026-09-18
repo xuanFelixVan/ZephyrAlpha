@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ba_dependency_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-infra_ops/drift-detector/blueprint.md
 # [MODULE] tests.test_ba_dependency_manager
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] Git-native漂移检测;自动对账;漂移预算
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/drift-detector/blueprint.md;src/zephyr/behavioral-auditor/__init__.py
 # [CONSUMERS] pytest

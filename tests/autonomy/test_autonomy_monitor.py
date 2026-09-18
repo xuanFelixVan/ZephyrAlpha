@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_autonomy_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-349 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_autonomy_monitor
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] AutonomyLevel order: FULL>SUPERVISED>RESTRICTED>READ_ONLY; downgrade never goes up; upgrade never goes down
 # [MODIFY-GUARD] 仅当autonomy_monitor公开API变更时修改
 # [CONSUMERS] pytest

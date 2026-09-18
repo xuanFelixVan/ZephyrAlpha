@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_bridges_spec_auditor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] tests.test_bridges_spec_auditor
+# [DOMAIN] D_INFRA_A2A
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

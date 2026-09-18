@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_host_resource_governor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §tests
 # [MODULE] zephyr.autonomy_core.host_resource_governor
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

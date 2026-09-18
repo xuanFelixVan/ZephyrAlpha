@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_autonomy_maturity | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_autonomy_maturity
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] Level must be non-negative integer
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

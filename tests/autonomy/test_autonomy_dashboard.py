@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_autonomy_dashboard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_autonomy_dashboard
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] dashboard data isolated via tmp_path
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

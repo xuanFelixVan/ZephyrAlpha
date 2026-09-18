@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_autonomy_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_autonomy_guard
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] 3 autonomy levels; get_allowed_actions returns list; can_autonomously returns bool
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

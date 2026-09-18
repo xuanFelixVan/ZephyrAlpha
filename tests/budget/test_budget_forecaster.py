@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_budget_forecaster | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_budget_forecaster
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

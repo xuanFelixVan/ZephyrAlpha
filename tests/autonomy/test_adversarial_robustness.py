@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_adversarial_robustness | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §tests
 # [MODULE] zephyr.autonomy_core.adversarial_robustness
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

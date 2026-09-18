@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_registry | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §3
 # [MODULE] tests.test_registry
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] register must be atomic; get returns None for unknown; list_all returns list of dicts
 # [MODIFY-GUARD] skill-registry.yaml; engine.py; __init__.py
 # [CONSUMERS] pytest

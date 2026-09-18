@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-TEST-354 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 
 # [MODULE] tests.test_blueprint_decomposer
+# [DOMAIN] D_GOV_SCRIPTS
 
 # [INVARIANTS] none
 

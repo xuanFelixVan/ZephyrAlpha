@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ba_events | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_ba_events
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] 事件定义不可修改
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [CONSUMERS] behavioral_auditor包内所有模块

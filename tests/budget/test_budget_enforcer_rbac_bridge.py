@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_budget_enforcer_rbac_bridge | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §12
 # [MODULE] tests.test_budget_enforcer_rbac_bridge
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] RBAC配额降级规则不可绕过;权限降级必须审计
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/budget-enforcer/blueprint.md
 # [CONSUMERS] CI

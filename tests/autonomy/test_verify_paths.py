@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 
 # [MODULE] tests.test_verify_paths
+# [DOMAIN] D_AUTONOMY_CORE
 
 # [INVARIANTS] verify_all returns dict with keys source_files/test_files/stats; stats keys are fixed
 

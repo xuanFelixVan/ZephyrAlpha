@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_autonomy_credit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_autonomy_credit
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] Score must be non-negative float; decay must reduce score
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

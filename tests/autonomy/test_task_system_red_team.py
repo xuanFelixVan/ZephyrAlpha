@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-TEST-214 | tests/autonomy/test_task_system_red_team.py | §
 # [BLUEPRINT] MOD-GOV_TASK_SYSTEM_RED_TEAM | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_task_system_red_team
+# [DOMAIN] D_AUTONOMY_CORE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

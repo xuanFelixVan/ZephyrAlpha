@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ba_chaos_injector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_ba_chaos_injector
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] 混沌注入必须金丝雀保护
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [CONSUMERS] CI;drift_engine

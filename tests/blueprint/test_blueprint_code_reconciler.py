@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_blueprint_code_reconciler | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_blueprint_code_reconciler
+# [DOMAIN] D_GOV_SCRIPTS
 # [INVARIANTS] Scan must return DriftReport list; autofix must return dict
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

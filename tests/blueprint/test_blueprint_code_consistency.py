@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 
 # [MODULE] tests.test_blueprint_code_consistency
+# [DOMAIN] D_GOV_SCRIPTS
 
 # [INVARIANTS] none
 

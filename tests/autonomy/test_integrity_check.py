@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 
 # [MODULE] tests.test_integrity_check
+# [DOMAIN] D_AUTONOMY_CORE
 
 # [INVARIANTS] none
 

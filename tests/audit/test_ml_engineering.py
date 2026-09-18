@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ml_engineering | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-infra_ops/drift-detector/blueprint.md
 # [MODULE] tests.test_ml_engineering
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] Git-native漂移检测;自动对账;漂移预算
 # [MODIFY-GUARD] src/zephyr/behavioral-auditor/ml_engineering.py
 # [CONSUMERS] CI pytest

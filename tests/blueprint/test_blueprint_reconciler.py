@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_blueprint_reconciler | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_blueprint_reconciler
+# [DOMAIN] D_GOV_SCRIPTS
 # [INVARIANTS] must test all public classes and methods of blueprint_reconciler
 # [MODIFY-GUARD] blueprint_reconciler.py changes require sync
 # [CONSUMERS] pytest

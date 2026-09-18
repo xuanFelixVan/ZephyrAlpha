@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_prompt_registry_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-672 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_prompt_registry
+# [DOMAIN] D_AUTONOMY_CORE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

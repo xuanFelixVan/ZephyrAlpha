@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 
 # [MODULE] tests.test_checkpoint_manager
+# [DOMAIN] D_AUTONOMY_CORE
 
 # [INVARIANTS] Checkpoint round-trip: save then restore yields identical object
 

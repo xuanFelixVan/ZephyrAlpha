@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_verification_engine | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_verification_engine
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] Verdict thresholds: delta<-0.01=HARMFUL; |delta|<0.01=INEFFECTIVE; else=EFFECTIVE
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

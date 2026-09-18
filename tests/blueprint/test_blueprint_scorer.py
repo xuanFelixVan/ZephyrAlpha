@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_blueprint_scorer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_blueprint_scorer
+# [DOMAIN] D_GOV_SCRIPTS
 # [INVARIANTS] score_blueprint_route returns 0 for no match; score_and_rank_routes sorts desc by score
 # [MODIFY-GUARD] src/zephyr/orchestrator/blueprint_scorer.py
 # [CONSUMERS] CI

@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-TEST-351 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 
 # [MODULE] tests.test_blueprint_code_sync
+# [DOMAIN] D_GOV_SCRIPTS
 
 # [INVARIANTS] test coverage for zephyr.infrastructure.shared_services.blueprint_code_sync
 

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_incremental_scanner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_incremental_scanner
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] 增量扫描不可遗漏变更
 # [MODIFY-GUARD] src/zephyr/behavioral-auditor/incremental_scanner.py
 # [CONSUMERS] CI pytest
