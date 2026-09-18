@@ -64,3 +64,28 @@ completes_when: 总包对本文件四项申请逐条出裁定号（车道不自�
 - **申请**：甲=生产路径禁 `dsr_threshold=None`（加机械校验，测试路径经显式旗标豁免）；
   乙=保留但强制往 `reasons` 追加"DSR 未参与判定"留痕（**本车道建议乙**，成本最低且把
   不可见变可见）；丙=仅修注释。
+
+---
+
+## A5 【施工阻塞，需总包动手】本车道 regime 治本件被 ALGO-NOTE-SYNC 硬拦，而解锁件是"总包代管只读"文件
+
+- 队列项 `q-20260918-st-ff-rb-stats-20260918-0002`（2 件：
+  `src/zephyr/regime/core/regime_detector.py` + `tests/regime/test_rb_stats_regime_failopen.py`）
+  状态 **dead**，dead_reason 原文：
+  > 门禁 ALGO-NOTE-SYNC 阻断：TDM-E-L1（module_ref=src/zephyr/regime/core/regime_detector.py）
+  > ——实现代码被触碰，algo_note_zh 未同 commit 修订（改写该节点 algo_note_zh，或加
+  > `note_confirmed: 2026-09-18`）；TDM-E-L1-AGG 同。
+- **冲突点**：解锁只有两条路，都要写 `config/trading_decision_map.yaml`，
+  而 COORDINATION_LEDGER §2 明文该文件"**总包代管**，TDM 地图……**本轮只读**"。
+  车道侧无合法路径自愈（门禁本身正确，是所有权矩阵与门禁的交集出了空洞）。
+- 已读门禁源码确认（不猜）：`src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py:70`
+  `_NOTE_KEYS = ("algo_note_zh", "note_confirmed")`，且归因锚在 TDM 节点块内——
+  `note_confirmed` 无法放在任何其他文件里生效。
+- **请总包**（择一）：
+  1. 由总包在 `TDM-E-L1` / `TDM-E-L1-AGG` 两节点加 `note_confirmed: 2026-09-18`
+     后 `python scripts/commit_queue.py requeue q-20260918-st-ff-rb-stats-20260918-0002`
+     （本车道**未改**这两节点的算法语义——只加了缺数可观测位 + 一处 NULL 崩溃治理，
+     `note_confirmed` 而非改写 `algo_note_zh` 是贴切的；实测 `Shrinkage` 数值零漂移）；或
+  2. 显式授权 rb-stats 车道临时写 TDM 这两行（登记例外，GW 计数）。
+- 现状保护：两文件已 `git add` 进暂存区，未被队列丢弃；工作区字节与
+  `.runtime/tmp/st-ff-rb-stats-20260918/orig_regime.py.bak` 一致可核。
