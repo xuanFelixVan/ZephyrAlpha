@@ -35770,5 +35770,13 @@ creation_tokens:
   token: fullflow-red-team-review-red-zero-vs-none-20260918
   created_by: st-ff-red-20260918
   capability: fullflow_red_team_review
+- file: docs/_working/fullflow_campaign/lanes/testint_census.md
+  token: fullflow-test-integrity-census-testint-census-20260918
+  created_by: st-ff-testint-20260918
+  capability: fullflow_test_integrity_census
+- file: docs/_working/fullflow_campaign/lanes/testint_ci_prereq.md
+  token: fullflow-test-integrity-ci-prereq-testint-ci-prereq-20260918
+  created_by: st-ff-testint-20260918
+  capability: fullflow_test_integrity_ci_prereq
 
 di_seam_exemptions: []
