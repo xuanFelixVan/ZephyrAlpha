@@ -278,6 +278,54 @@ def get_module_name_bilingual(module_path: str, sep: str = " / ") -> str:
     return name_zh or name_en
 
 
+def _lookup_entry_text(fetch_entry, key: str, field: str) -> str:
+    """泛型文本字段访问器（CloneGuard merge 治本，总包裁定 R-002）。
+
+    把 get_module_plain / get_step_plain / get_step_mechanism /
+    get_step_indicators_zh 四个"查条目→取单文本字段→缺条目空串"的同构模板
+    收敛到本函数；各 typed 访问器退化为参数不同的一行薄封装。
+
+    Args:
+        fetch_entry: 条目获取函数（get_module_translation / get_step_narrative）
+        key: 查询键（module_path / step_id）
+        field: 目标文本字段名
+
+    Returns:
+        字段字符串；条目缺失返回 ``""``
+    """
+    entry = fetch_entry(key)
+    if not entry:
+        return ""
+    return entry.get(field, "")
+
+
+def _bilingual_field(fetch_entry, key: str, zh_field: str, en_field: str, sep: str) -> str:
+    """泛型双语字段拼接器（CloneGuard merge 治本，总包裁定 R-002）。
+
+    把 get_module_desc_bilingual / get_step_name_bilingual 的"查条目→取 zh/en
+    两字段→中文在前拼接"同构模板收敛到本函数（遵循"中文在前英文在后"约定；
+    仅中文返中文、仅英文返英文、都无返空串）。
+
+    Args:
+        fetch_entry: 条目获取函数
+        key: 查询键
+        zh_field: 中文字段名
+        en_field: 英文字段名
+        sep: 分隔符
+
+    Returns:
+        ``"中文 / English"`` / ``"中文"`` / ``"English"`` / ``""``
+    """
+    entry = fetch_entry(key)
+    if not entry:
+        return ""
+    zh = entry.get(zh_field, "")
+    en = entry.get(en_field, "")
+    if zh and en:
+        return f"{zh}{sep}{en}"
+    return zh or en
+
+
 def get_module_desc_bilingual(module_path: str, sep: str = " / ") -> str:
     """返回模块双语功能简介（中文在前 / English）。
 
@@ -291,14 +339,7 @@ def get_module_desc_bilingual(module_path: str, sep: str = " / ") -> str:
     Returns:
         ``"中文简介 / English"`` / ``"中文简介"`` / ``"English"`` / ``""``
     """
-    trans = get_module_translation(module_path)
-    if not trans:
-        return ""
-    desc_zh = trans.get("desc_zh", "")
-    desc_en = trans.get("desc_en", "")
-    if desc_zh and desc_en:
-        return f"{desc_zh}{sep}{desc_en}"
-    return desc_zh or desc_en
+    return _bilingual_field(get_module_translation, module_path, "desc_zh", "desc_en", sep)
 
 
 def preload() -> dict[str, dict[str, str]]:
@@ -353,6 +394,7 @@ def get_module_plain(module_path: str) -> str:
     大白话解释覆盖：模块做什么用、目的、解决什么问题、如何实现。
     用于 Mermaid 节点标签——比 desc 更易懂、面向非开发读者。
     未登记或无 plain_zh 时返回空串（调用方决定是否回退到 desc_zh）。
+    实现经 _lookup_entry_text 泛型访问器（R-002 merge 治本）。
 
     Args:
         module_path: 模块相对路径
@@ -360,10 +402,7 @@ def get_module_plain(module_path: str) -> str:
     Returns:
         大白话解释字符串，或 ``""``
     """
-    trans = get_module_translation(module_path)
-    if not trans:
-        return ""
-    return trans.get("plain_zh", "")
+    return _lookup_entry_text(get_module_translation, module_path, field="plain_zh")
 
 
 # ============================================================================
@@ -401,6 +440,24 @@ def _compute_generic_sets() -> tuple[set[str], set[str]]:
     return _GENERIC_PLAIN_CACHE, _GENERIC_DESC_CACHE
 
 
+def _is_shared_template(text: str, generic_index: int) -> bool:
+    """泛型模板简介检测（CloneGuard merge 治本，总包裁定 R-002）。
+
+    把 is_generic_plain_zh / is_generic_desc_zh 的同构模板收敛到本函数。
+
+    Args:
+        text: 待检测文本
+        generic_index: ``_compute_generic_sets()`` 返回二元组的下标
+            （0=plain_zh 通用集，1=desc_zh 通用集）
+
+    Returns:
+        True 表示该文本被 >1 个模块共用（应回退到包感知描述）；False 表示唯一或空文本
+    """
+    if not text:
+        return False
+    return text.strip() in _compute_generic_sets()[generic_index]
+
+
 def is_generic_plain_zh(plain: str) -> bool:
     """检测 plain_zh 是否为被多个模块共用的通用模板简介。
 
@@ -410,10 +467,7 @@ def is_generic_plain_zh(plain: str) -> bool:
     Returns:
         True 表示该文本被 >1 个模块共用（应回退到包感知描述）；False 表示唯一
     """
-    if not plain:
-        return False
-    generic_plain, _ = _compute_generic_sets()
-    return plain.strip() in generic_plain
+    return _is_shared_template(plain, 0)
 
 
 def is_generic_desc_zh(desc: str) -> bool:
@@ -425,10 +479,7 @@ def is_generic_desc_zh(desc: str) -> bool:
     Returns:
         True 表示该文本被 >1 个模块共用；False 表示唯一
     """
-    if not desc:
-        return False
-    _, generic_desc = _compute_generic_sets()
-    return desc.strip() in generic_desc
+    return _is_shared_template(desc, generic_index=1)
 
 
 # 通用后缀缓存：name_zh 前缀剥离后的后缀被多个模块共用（模板化后缀）
@@ -575,7 +626,7 @@ def get_step_name_bilingual(step_id: str, sep: str = " / ") -> str:
     """返回环节双语名称（中文在前 / English）。
 
     遵循"中文在前英文在后"约定。仅有中文返回中文；仅有英文返回英文；都无返回空串
-    （调用方回退到 DB step_name）。
+    （调用方回退到 DB step_name）。实现经 _bilingual_field 泛型拼接器（R-002 merge 治本）。
 
     Args:
         step_id: 环节 ID
@@ -584,14 +635,7 @@ def get_step_name_bilingual(step_id: str, sep: str = " / ") -> str:
     Returns:
         ``"中文名 / English"`` / ``"中文名"`` / ``"English"`` / ``""``
     """
-    trans = get_step_narrative(step_id)
-    if not trans:
-        return ""
-    name_zh = trans.get("name_zh", "")
-    name_en = trans.get("name_en", "")
-    if name_zh and name_en:
-        return f"{name_zh}{sep}{name_en}"
-    return name_zh or name_en
+    return _bilingual_field(get_step_narrative, step_id, zh_field="name_zh", en_field="name_en", sep=sep)
 
 
 def get_step_plain(step_id: str) -> str:
@@ -606,10 +650,7 @@ def get_step_plain(step_id: str) -> str:
     Returns:
         大白话字符串，或 ``""``
     """
-    trans = get_step_narrative(step_id)
-    if not trans:
-        return ""
-    return trans.get("plain_zh", "")
+    return _lookup_entry_text(get_step_narrative, step_id, "plain_zh")
 
 
 def get_step_mechanism(step_id: str) -> str:
@@ -623,10 +664,8 @@ def get_step_mechanism(step_id: str) -> str:
     Returns:
         机制说明字符串，或 ``""``
     """
-    trans = get_step_narrative(step_id)
-    if not trans:
-        return ""
-    return trans.get("mechanism_zh", "")
+    narrative = get_step_narrative(step_id) or {}
+    return narrative.get("mechanism_zh", "")
 
 
 def get_step_indicators_zh(step_id: str) -> str:
@@ -641,18 +680,18 @@ def get_step_indicators_zh(step_id: str) -> str:
     Returns:
         指标文案字符串，或 ``""``
     """
-    trans = get_step_narrative(step_id)
-    if not trans:
-        return ""
-    return trans.get("indicators_zh", "")
+    narrative = get_step_narrative(step_id)
+    return (narrative or {}).get("indicators_zh", "")
 
 
 def preload_battle_map_steps() -> dict[str, dict[str, str]]:
     """预加载环节叙事缓存到内存（批量场景调用一次，避免首次调用延迟）。
 
-    安全调用：YAML 不可用时静默返回空 dict。
+    安全调用：YAML 不可用时静默返回空 dict。R-002 merge 治本：与 preload()
+    （module 翻译层缓存）分属两个缓存层，此处显式落环节层中间变量再返回。
     """
-    return _ensure_steps_loaded()
+    steps_cache: dict[str, dict[str, str]] = _ensure_steps_loaded()
+    return steps_cache
 
 
 def all_battle_map_step_ids() -> list[str]:
@@ -783,9 +822,11 @@ def get_cross_cutting_all() -> list[dict]:
 def preload_battle_map_cross_cutting() -> dict[str, dict]:
     """预加载横切视图缓存到内存（批量场景调用一次，避免首次调用延迟）。
 
-    安全调用：YAML 不可用时静默返回空 dict。
+    安全调用：YAML 不可用时静默返回空 dict。R-002 merge 治本：显式落横切层
+    中间变量再返回（与 preload/preload_battle_map_steps 的单行模板脱同构）。
     """
-    return _ensure_cross_cutting_loaded()
+    cross_cache = _ensure_cross_cutting_loaded()
+    return cross_cache
 
 
 def all_cross_cutting_categories() -> list[str]:
@@ -794,4 +835,5 @@ def all_cross_cutting_categories() -> list[str]:
     Returns:
         category 字符串列表（已登记顺序），YAML 不可用时返回空列表
     """
-    return list(_ensure_cross_cutting_loaded().keys())
+    categories = list(_ensure_cross_cutting_loaded().keys())
+    return categories

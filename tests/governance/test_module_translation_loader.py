@@ -200,3 +200,160 @@ class TestResponsibilityLayerPassthrough:
         loader_tmp(_mini_registry(tmp_path, _ENTRY_A_CURATED + weaker_with_layer))
         hit = mtl.preload()["src/zephyr/aaa.py"]
         assert hit["name_en"] == "Curated"  # 翻译 5 字段口径：curated 仍胜出
+
+
+# ============================================================================
+# R-002 merge 治本回归面（总包裁定，全流通战役 st-ff-vocabM-20260918）：
+# 六对 extract 级克隆合并为泛型访问器 _lookup_entry_text/_bilingual_field/
+# _is_shared_template 后，module 族与 step 族薄封装的行为契约必须零回归。
+# ============================================================================
+
+_STEP_FULL = """\
+- step_id: BM-T-02
+  flow_stage: 测试阶段
+  name_zh: "环节中文名"
+  name_en: "Step Name"
+  plain_zh: "环节大白话一句话"
+  mechanism_zh: "环节机制说明多行文案"
+  indicators_zh: "环节指标人读文案"
+"""
+
+_STEP_ZH_ONLY = """\
+- step_id: BM-T-03
+  flow_stage: 测试阶段
+  name_zh: "仅中文环节"
+  name_en: ""
+  plain_zh: "仅中文环节大白话"
+  mechanism_zh: ""
+  indicators_zh: ""
+"""
+
+_ENTRY_SHARED_PLAIN_1 = """\
+- module_path: src/zephyr/shared1.py
+  domain_id: D_TEST
+  name_zh: "共享模板一"
+  name_en: ""
+  desc_zh: "独有简介一"
+  desc_en: ""
+  plain_zh: "提供包入口和模块加载功能"
+"""
+
+_ENTRY_SHARED_PLAIN_2 = """\
+- module_path: src/zephyr/shared2.py
+  domain_id: D_TEST
+  name_zh: "共享模板二"
+  name_en: ""
+  desc_zh: "独有简介二"
+  desc_en: ""
+  plain_zh: "提供包入口和模块加载功能"
+"""
+
+
+def _mini_registry_with_steps(tmp_path: Path, entries_text: str, steps_text: str) -> Path:
+    """构造含 entries + battle_map_steps 双段的 tmp 迷你注册表。"""
+    f = tmp_path / "module_translation_registry.yaml"
+    f.write_text(
+        "version: 0.0.0-test\nentries:\n" + entries_text + "\nbattle_map_steps:\n" + steps_text,
+        encoding="utf-8",
+        newline="\n",
+    )
+    return f
+
+
+_ALL_CACHES = (
+    "_PATH_CACHE",
+    "_PATH_CACHE_MTIME",
+    "_STEP_CACHE",
+    "_GENERIC_PLAIN_CACHE",
+    "_GENERIC_DESC_CACHE",
+    "_GENERIC_SUFFIX_CACHE",
+)
+
+
+@pytest.fixture()
+def loader_full(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    """重置全部模块级缓存（含 step/泛型简介缓存）+ 指向 tmp 注册表。"""
+
+    def _point_to(path_file: Path) -> Path:
+        monkeypatch.setattr(mtl, "_REGISTRY_YAML", path_file)
+        for name in _ALL_CACHES:
+            monkeypatch.setattr(mtl, name, None)
+        return path_file
+
+    yield _point_to
+    for name in _ALL_CACHES:
+        monkeypatch.setattr(mtl, name, None)
+
+
+class TestMergedAccessorsR002:
+    """六对克隆合并后的行为契约（module 族 + step 族薄封装零回归）。"""
+
+    def test_step_text_fields(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_B, _STEP_FULL))
+        assert mtl.get_step_plain("BM-T-02") == "环节大白话一句话"
+        assert mtl.get_step_mechanism("BM-T-02") == "环节机制说明多行文案"
+        assert mtl.get_step_indicators_zh("BM-T-02") == "环节指标人读文案"
+
+    def test_step_text_fields_missing_step_empty(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_B, _STEP_FULL))
+        assert mtl.get_step_plain("BM-NOPE") == ""
+        assert mtl.get_step_mechanism("BM-NOPE") == ""
+        assert mtl.get_step_indicators_zh("BM-NOPE") == ""
+
+    def test_module_plain_still_works(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_A_CURATED, _STEP_FULL))
+        assert mtl.get_module_plain("src/zephyr/aaa.py") == "实质大白话简介内容"
+        assert mtl.get_module_plain("src/zephyr/missing.py") == ""
+
+    def test_step_name_bilingual_both(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_B, _STEP_FULL + _STEP_ZH_ONLY))
+        assert mtl.get_step_name_bilingual("BM-T-02") == "环节中文名 / Step Name"
+
+    def test_step_name_bilingual_zh_only(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_B, _STEP_FULL + _STEP_ZH_ONLY))
+        assert mtl.get_step_name_bilingual("BM-T-03") == "仅中文环节"
+
+    def test_step_name_bilingual_missing_empty(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_B, _STEP_FULL))
+        assert mtl.get_step_name_bilingual("BM-NOPE") == ""
+
+    def test_module_desc_bilingual_both(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_A_CURATED, _STEP_FULL))
+        assert mtl.get_module_desc_bilingual("src/zephyr/aaa.py") == "实质技术简介 / real desc"
+
+    def test_module_desc_bilingual_zh_only(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_B, _STEP_FULL))
+        assert mtl.get_module_desc_bilingual("src/zephyr/bbb.py") == "B简介"
+        assert mtl.get_module_desc_bilingual("src/zephyr/missing.py") == ""
+
+    def test_preload_battle_map_steps(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_B, _STEP_FULL + _STEP_ZH_ONLY))
+        cache = mtl.preload_battle_map_steps()
+        assert set(cache.keys()) == {"BM-T-02", "BM-T-03"}
+        assert cache["BM-T-02"]["name_zh"] == "环节中文名"
+
+    def test_preload_battle_map_steps_missing_file_empty(self, loader_full, tmp_path) -> None:
+        loader_full(tmp_path / "not_exists.yaml")
+        assert mtl.preload_battle_map_steps() == {}
+
+    def test_is_generic_plain_vs_desc_sets_distinct(self, loader_full, tmp_path) -> None:
+        """plain 集与 desc 集必须各查各的（防 _is_shared_template 下标互换变异）。"""
+        loader_full(
+            _mini_registry_with_steps(tmp_path, _ENTRY_SHARED_PLAIN_1 + _ENTRY_SHARED_PLAIN_2, _STEP_FULL)
+        )
+        # plain_zh 被 2 模块共用 → 通用
+        assert mtl.is_generic_plain_zh("提供包入口和模块加载功能") is True
+        # desc_zh 各自独有 → 非通用（若下标互换，此处会误查 plain 集）
+        assert mtl.is_generic_desc_zh("独有简介一") is False
+        assert mtl.is_generic_plain_zh("独有简介一") is False
+
+    def test_is_generic_desc_shared(self, loader_full, tmp_path) -> None:
+        dup_desc = _ENTRY_SHARED_PLAIN_1.replace("独有简介一", "共用简介").replace("shared1", "shared3")
+        dup_desc2 = _ENTRY_SHARED_PLAIN_1.replace("独有简介一", "共用简介").replace("shared1", "shared4")
+        loader_full(_mini_registry_with_steps(tmp_path, dup_desc + dup_desc2, _STEP_FULL))
+        assert mtl.is_generic_desc_zh("共用简介") is True
+
+    def test_is_generic_empty_text_false(self, loader_full, tmp_path) -> None:
+        loader_full(_mini_registry_with_steps(tmp_path, _ENTRY_B, _STEP_FULL))
+        assert mtl.is_generic_plain_zh("") is False
+        assert mtl.is_generic_desc_zh("") is False

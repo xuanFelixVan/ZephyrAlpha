@@ -153,30 +153,6 @@ acknowledged:
   verdict: intentional
   stable_key: "src/zephyr/gov_audit/contracts.py:__init__||src/zephyr/gov_audit/event_store.py:__init__"
   note: 审计契约/事件存储构造样板同构（同为 dataclass 风格字段直存），P2-1 尾池出仓批 t00/t01 零可执行行变更（两侧函数 AST dump HEAD==工作区 899B/860B 实测同形）=既有克隆被触碰税判给 本批，非本批引入；处置同上（合并须由 gov_audit 责任人裁定）。
-- id: cg-vocabmod-plain-20260918
-  verdict: intentional
-  stable_key: scripts/governance/_shared/module_translation_loader.py:get_module_plain||scripts/governance/_shared/module_translation_loader.py:get_step_plain
-  note: 三层翻译 loader 同层 typed 访问器样板（module/step 平行族，签名语义不同不可参数化合并），W5 同族假红豁免之延伸（st-vocabconsol-20260918）
-- id: cg-vocabmod-mech-20260918
-  verdict: intentional
-  stable_key: scripts/governance/_shared/module_translation_loader.py:get_module_plain||scripts/governance/_shared/module_translation_loader.py:get_step_mechanism
-  note: 三层翻译 loader 同层 typed 访问器样板（module/step 平行族，签名语义不同不可参数化合并），W5 同族假红豁免之延伸（st-vocabconsol-20260918）
-- id: cg-vocabmod-ind-20260918
-  verdict: intentional
-  stable_key: scripts/governance/_shared/module_translation_loader.py:get_module_plain||scripts/governance/_shared/module_translation_loader.py:get_step_indicators_zh
-  note: 三层翻译 loader 同层 typed 访问器样板（module/step 平行族，签名语义不同不可参数化合并），W5 同族假红豁免之延伸（st-vocabconsol-20260918）
-- id: cg-vocabmod-descbi-20260918
-  verdict: intentional
-  stable_key: scripts/governance/_shared/module_translation_loader.py:get_module_desc_bilingual||scripts/governance/_shared/module_translation_loader.py:get_step_name_bilingual
-  note: 三层翻译 loader 同层 typed 访问器样板（module/step 平行族，签名语义不同不可参数化合并），W5 同族假红豁免之延伸（st-vocabconsol-20260918）
-- id: cg-vocabmod-gen-20260918
-  verdict: intentional
-  stable_key: scripts/governance/_shared/module_translation_loader.py:is_generic_plain_zh||scripts/governance/_shared/module_translation_loader.py:is_generic_desc_zh
-  note: 三层翻译 loader 同层 typed 访问器样板（module/step 平行族，签名语义不同不可参数化合并），W5 同族假红豁免之延伸（st-vocabconsol-20260918）
-- id: cg-vocabmod-preload-20260918
-  verdict: intentional
-  stable_key: scripts/governance/_shared/module_translation_loader.py:preload||scripts/governance/_shared/module_translation_loader.py:preload_battle_map_steps
-  note: 三层翻译 loader 同层 typed 访问器样板（module/step 平行族，签名语义不同不可参数化合并），W5 同族假红豁免之延伸（st-vocabconsol-20260918）
 - id: cg-rc14-baseline-reconciler-makers-20260918
   verdict: intentional
   stable_key: "src/zephyr/governance/audit/reconciliation_registry.py:make_undefined_name_baseline_reconciler||src/zephyr/governance/audit/reconciliation_registry.py:make_consumers_accuracy_baseline_reconciler"
