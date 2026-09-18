@@ -4,7 +4,6 @@
 # [MODULE] tests.governance.rule_bridge.test_worktree_drift_watchdog
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [MATURITY] production
-# [TTL] permanent
 """worktree_drift_watchdog 单元测试（#ARCH-WORKTREE-WRITE-INTEGRITY-001 P0-1/P0-2）。
 
 覆盖：漂移检出+快照+告警落库+归因审计 / claimed 豁免 / grace 宽限窗 / dedup /

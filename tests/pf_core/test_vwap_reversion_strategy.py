@@ -7,7 +7,6 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
-# [TTL] permanent
 """VWAPReversionStrategy 单元测试（路径 B 均值回归策略）。
 
 覆盖做 T 状态机的核心决策点：

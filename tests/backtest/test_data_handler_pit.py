@@ -4,7 +4,6 @@
 # [A_module] module_id=MOD-BT-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [TESTS] tests/backtest/test_data_handler_pit.py
-# [TTL] permanent
 """BacktestDataHandler PIT 财务数据合并测试（#ARCH-CH-021 P0-5）。
 
 验证 PIT 三公理在 data_handler 层的落实：

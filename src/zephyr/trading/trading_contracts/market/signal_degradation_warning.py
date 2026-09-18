@@ -29,7 +29,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] permanent
 from dataclasses import dataclass, field
 from typing import List, Optional
 

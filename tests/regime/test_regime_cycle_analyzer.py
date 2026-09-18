@@ -8,7 +8,6 @@
 # [MATURITY] design
 # [INVARIANTS] 纯合成数据零外部依赖（不连 ClickHouse）; 显著性用例以人造效应自证（非断言 A 股真实效应存在）
 # [A_module] module_id=TST-REGIME-006 | layer=test | stability=evolving | safety=M | ai_autonomy=ai_modifiable
-# [TTL] permanent
 
 """MOD-REGIME-006 RegimeCycleAnalyzer 单元测试。
 

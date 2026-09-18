@@ -7,7 +7,6 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] self
-# [TTL] permanent
 """OrderBookImbalanceStrategy 单元测试（路径 B 盘口失衡反转策略）。
 
 覆盖做 T 状态机的核心决策点：

@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] YAML 不可达/解析失败->抛异常(fail-closed, 上层工具/引擎终止)
 # [TESTS] tests/industry_graph/test_field_dictionary_alignment.py 四方对齐(YAML↔DDL↔工具↔引擎)
-# [TTL] permanent
 """产业链图谱词表加载器（字段字典单一真源的消费入口，Owner 2026-09-10 方案 A）。
 
 用法::

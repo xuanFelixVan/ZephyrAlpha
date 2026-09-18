@@ -8,7 +8,6 @@
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [TESTS] —
-# [TTL] permanent
 """test_translation_coverage_reconciler.py — 翻译覆盖率存量对账 reconciler 单测
 
 权威依据：src/zephyr/governance/audit/translation_coverage_reconciler.py

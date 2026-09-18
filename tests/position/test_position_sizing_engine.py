@@ -5,7 +5,6 @@
 # [MODULE] tests.position.test_position_sizing_engine
 # [DOMAIN] D_POSITION
 # [TESTED] zephyr.position.core.position_sizing_engine
-# [TTL] permanent
 
 """Position Sizing Engine 测试 (MOD-POS-001 阶段1)。
 

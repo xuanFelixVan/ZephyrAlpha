@@ -2,7 +2,6 @@
 # [TTL] permanent
 # [MODULE] tests.nlp.test_sentiment_aggregator
 # [DOMAIN] D_DATA
-# [TTL] permanent
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

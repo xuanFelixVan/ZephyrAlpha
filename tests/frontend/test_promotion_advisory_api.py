@@ -2,7 +2,6 @@
 # [TTL] permanent
 # [MODULE] tests.frontend.test_promotion_advisory_api
 # [DOMAIN] D_FRONTEND
-# [TTL] permanent
 """C5 验收单测：策略转正审批两端点（api_server 第 4 获准写端点 + 只读清单）。
 
 覆盖：
