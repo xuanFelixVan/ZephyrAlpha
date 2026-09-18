@@ -73,6 +73,17 @@ git diff HEAD --numstat -- src/zephyr/data/config/tasks.yaml   # 16 16（全是 
   `cohort_ledger_daily`、`kline_index_intraday_incremental` 四块只存在于该过期快照内（各 owner 车道自有工作树），
   本批按 HEAD 基线落地 ⇒ 它们**未被删除、也未被本批代表**。
 
+## 5b. 二次同签名事件（本车道落地后 4 分钟内，实测于 commit `7894946ae0` 之后）
+
+- 观测：`scripts/derive_task_dependencies.py` 已在 HEAD（磁盘==HEAD，sha256 `e8f287e9…`），
+  但**索引面被写入一笔 `D`（对该文件的暂存删除）**，同时 `dag_dependency_proposals.md` 的索引面被退回
+  我提交前的旧内容（`--cached` 面 = +11/−23 对我已落地版）。签名与 R-038 的"tracked/staged 件被无声改写"同类。
+- 若不拦：任何后续按现暂存面落地的提交会**把刚进版本保护的推导器再删一次**（回到"生成器不在版本保护"的原点）。
+- 处置：`git restore --staged -- <自家 2 路径>`（只动 index，不带 `--source`、不带 `--worktree`，手册 §8 许可形态）
+  → 复测五路径三态全等（HEAD==index==worktree）。
+- 同窗口内**他人** staged 删除 2 件未触碰、只登记：`tests/backtest/test_rb_stats_validator_teeth.py`、
+  `tests/zephyr/data/test_silent_latch_before_delivery.py`（owner 责任制，宪法 §3.4 不代修）。
+
 ## 6. 未达成 / 欠账（如实）
 
 1. `schedule.yaml` / `known_data_gaps.yaml` / `data_supply_sentinel.yaml` 在死信快照 q-0001/q-0002 里的
