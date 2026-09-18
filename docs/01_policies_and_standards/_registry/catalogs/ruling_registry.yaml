@@ -4400,3 +4400,23 @@ entries:
   related_rulings:
     - '裁定#337'
   superseded_by: ''
+- ruling_id: '裁定#339'
+  title: '数据源切换裁决——93 备忘 §2.2 三选一落定：按能力族分主线（QMT 桥+akshare 互补）'
+  date: '2026-09-18'
+  category: '数据架构'
+  status: 'active'
+  summary: >-
+    miniQMT 9/18 退役，tasks.yaml 63 任务 source=miniqmt 的接管裁决（实测证据
+    docs/_working/kimi_audit/nightbuild/source_switch_verdict.md）：①tick/盘口/竞价/
+    QMT 独有族（futures_position/margin_trading/期权族等）=QMT 桥主线（akshare 无能力，
+    桥当日实证 116 万 tick/7936 标的落地）；②分钟族 1-60min=QMT 桥合成主线（方案 b）、
+    akshare 副线——收盘即有零外网依赖 vs akshare 限流+浅深度；③日线族=akshare 主线
+    （主备双接口强制：东财主接口当日实证断连 5/5+重试 2 次，sina 备胎可用）+QMT 合成
+    副线；④财务族=akshare 唯一线；⑤交叉族（dragon_tiger/block_trade/stock_list/
+    index_weight/sector_list）=akshare。落地义务：tasks.yaml 拆分归 residual C1
+    总统筹、桥 K 线族实现归数据线、声明面（policies/health_check）同步、切换后首个
+    收盘缺口体检为完成门。
+  affected_files: []
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''

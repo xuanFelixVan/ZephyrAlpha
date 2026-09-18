@@ -35229,4 +35229,8 @@ creation_tokens:
   created_by: st-mineline-w512
   capability: backtest_evidence
 
+- file: docs/_working/kimi_audit/nightbuild/source_switch_verdict.md
+  token: kimi-audit-source-switch-verdict-20260918
+  created_by: flash-nightbuild-20260918
+  capability: kimi_audit_nightbuild
 di_seam_exemptions: []
