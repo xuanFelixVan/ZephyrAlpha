@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_classifier_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §
 # [MODULE] tests.test_classifier
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] Classifier.classify returns ClassificationResult; type mapping rules are deterministic
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

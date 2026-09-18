@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_llm_impact_analyzer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-403 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_llm_impact_analyzer
+# [DOMAIN] D_SECURITY_LLM
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

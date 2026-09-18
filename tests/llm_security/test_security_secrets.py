@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_security_secrets
+# [DOMAIN] D_SECURITY_LLM
 
 # [INVARIANTS] sanitize_secret绝不暴露原始值;EnvSecretProvider从environ读取;DotEnvSecretProvider优先级env>.env
 

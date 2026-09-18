@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_cost_tracker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §cost_tracker
 # [MODULE] tests.test_cost_tracker
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] CostTracker.record_usage必须返回UsageRecord; UsageRecord.tokens_total=tokens_in+tokens_out
 # [MODIFY-GUARD] 仅当cost_tracker公开API变更时修改
 # [CONSUMERS] pytest

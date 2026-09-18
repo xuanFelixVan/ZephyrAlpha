@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_shadow_workspace | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_shadow_workspace
+# [DOMAIN] D_SECURITY_LLM
 # [INVARIANTS] 预演失败MUST阻止应用;沙箱目录MUST在验证后清理
 # [MODIFY-GUARD] blueprint.md §3;auto_fix_config.yaml shadow_workspace段
 # [CONSUMERS] CI/CD;pytest

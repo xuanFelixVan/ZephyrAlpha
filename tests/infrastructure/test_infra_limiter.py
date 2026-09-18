@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_infra_limiter
+# [DOMAIN] D_INFRA_RUNTIME
 
 # [INVARIANTS] TokenBucketLimiter令牌桶算法;acquire成功扣令牌;超max_wait抛RateLimitError
 

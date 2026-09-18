@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_cross_module_integration_llm_security | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
 # [MODULE] tests.llm_security.test_cross_module_integration
+# [DOMAIN] D_SECURITY_LLM
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_runtime_core | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-555 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.runtime.test_runtime_core
+# [DOMAIN] D_INFRA_RUNTIME
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

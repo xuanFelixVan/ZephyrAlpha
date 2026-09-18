@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_reconciler_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §
 # [MODULE] tests.test_reconciler
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] Reconciler.reconcile returns ReconciliationReport; detects orphans/ghosts/drifts
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_quality_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-421 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_quality_monitor
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS]

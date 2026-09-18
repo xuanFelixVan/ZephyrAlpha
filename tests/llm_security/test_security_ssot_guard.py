@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_security_ssot_guard
+# [DOMAIN] D_SECURITY_LLM
 
 # [INVARIANTS] _extract_declared_paths去重保序;_validate_path_format拒绝绝对路径和反斜杠;CheckResult不可变语义
 

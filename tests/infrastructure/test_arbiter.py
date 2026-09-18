@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_arbiter | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md | §
 # [MODULE] tests.test_arbiter
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_registry_governance_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §3
 # [MODULE] tests.test_registry_governance
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] FunctionalDomainRegistry.register必须检测重叠; DomainEntry必须有domain+subdomain+ssot_module
 # [MODIFY-GUARD] 仅当registry_governance公开API变更时修改
 # [CONSUMERS] pytest

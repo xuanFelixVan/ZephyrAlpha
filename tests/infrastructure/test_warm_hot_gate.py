@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_warm_hot_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §warm_hot_gate
 # [MODULE] tests.test_warm_hot_gate
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] WarmHotGate.check必须返回GateCheckResult; BLOCKING问题必须导致BLOCKED状态
 # [MODIFY-GUARD] 仅当warm_hot_gate公开API变更时修改
 # [CONSUMERS] pytest

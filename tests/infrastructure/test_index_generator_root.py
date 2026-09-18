@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_index_generator_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §
 # [MODULE] tests.test_index_generator
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] IndexGenerator.generate produces UnifiedAssetIndex; save uses atomic write
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

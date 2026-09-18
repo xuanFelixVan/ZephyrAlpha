@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_offline_resilience | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-413 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_offline_resilience
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

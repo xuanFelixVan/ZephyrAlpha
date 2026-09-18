@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_trace_decorator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-440 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_trace_decorator
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS]

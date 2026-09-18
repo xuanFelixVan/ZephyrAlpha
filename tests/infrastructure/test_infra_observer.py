@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_infra_observer
+# [DOMAIN] D_INFRA_RUNTIME
 
 # [INVARIANTS] subscribe后emit必调用;once只调用一次;线程安全
 

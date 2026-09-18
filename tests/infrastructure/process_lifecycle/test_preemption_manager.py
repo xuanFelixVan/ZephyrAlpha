@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_preemption_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_preemption_manager
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] P0/P1 can preempt P2/P3; preempt with None task_repo returns []; save_state/load_state roundtrip must be lossless
 # [MODIFY-GUARD] zephyr.infrastructure.pipeline.preemption_manager
 # [CONSUMERS] pytest

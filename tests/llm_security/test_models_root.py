@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_models_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §4.2
 # [MODULE] tests.test_models
+# [DOMAIN] D_SECURITY_LLM
 # [INVARIANTS] FixAction.fingerprint MUST be deterministic; FixStatus transitions MUST be legal
 # [MODIFY-GUARD] blueprint.md §4.2; models.py
 # [CONSUMERS] CI pipeline

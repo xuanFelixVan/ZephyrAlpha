@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_telemetry_facade | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-695 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_telemetry_facade
+# [DOMAIN] D_INFRA_RUNTIME
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

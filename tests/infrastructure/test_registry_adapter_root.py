@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_registry_adapter_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §
 # [MODULE] tests.test_registry_adapter
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] RegistryAdapter subclasses parse raw content into list[RegistryEntry]
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

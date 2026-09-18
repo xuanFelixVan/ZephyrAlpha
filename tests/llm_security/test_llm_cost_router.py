@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_llm_cost_router | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_llm_cost_router
+# [DOMAIN] D_SECURITY_LLM
 # [INVARIANTS] Route decision must be deterministic for same priority
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

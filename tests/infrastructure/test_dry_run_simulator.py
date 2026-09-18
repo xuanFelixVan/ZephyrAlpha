@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_dry_run_simulator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §dry_run_simulator
 # [MODULE] tests.test_dry_run_simulator
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] DryRunSimulator.simulate必须返回SimulationResult; 危险操作必须BLOCKED
 # [MODIFY-GUARD] 仅当dry_run_simulator公开API变更时修改
 # [CONSUMERS] pytest

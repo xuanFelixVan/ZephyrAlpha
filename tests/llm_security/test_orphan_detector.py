@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_orphan_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan_judge/blueprint.md | §5.6
 # [MODULE] tests.test_orphan_detector
+# [DOMAIN] D_SECURITY_LLM
 # [INVARIANTS] must test all public classes and methods of orphan_detector
 # [MODIFY-GUARD] orphan_detector.py changes require sync
 # [CONSUMERS] pytest

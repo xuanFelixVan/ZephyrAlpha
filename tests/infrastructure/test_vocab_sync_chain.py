@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_vocab_sync_chain | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-700 | docs/03_modules/_domain_governance/blueprint.md | §vocab-sync-chain
 # [MODULE] tests.unit.test_vocab_sync_chain
+# [DOMAIN] D_INFRA_RUNTIME
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_infra_lock
+# [DOMAIN] D_INFRA_RUNTIME
 
 # [INVARIANTS] MemoryLock单进程互斥;acquire返回LockHandle;release释放锁
 

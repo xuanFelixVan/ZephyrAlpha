@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_security_capability
+# [DOMAIN] D_SECURITY_LLM
 
 # [INVARIANTS] deny规则不可绕过;default_deny兜底;glob匹配fnmatch语义
 

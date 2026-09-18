@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_scaffold_registrar | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_scaffold_registrar
+# [DOMAIN] D_SECURITY_LLM
 # [INVARIANTS] 只注册不删除;注册到manifest/registry/__init__.py
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml scaffold_registrar段
 # [CONSUMERS] CI/CD;pytest

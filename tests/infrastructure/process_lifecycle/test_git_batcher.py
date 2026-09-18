@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_git_batcher | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-003 | docs/03_modules/_domain_infrastructure/runtime_integration/blueprint.md | §ARCH-GIT-CALL-BUDGET
 # [MODULE] tests.infrastructure.test_git_batcher
+# [DOMAIN] D_INFRA_RUNTIME
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

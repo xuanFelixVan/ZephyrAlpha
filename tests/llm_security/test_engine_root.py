@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_engine_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_engine
+# [DOMAIN] D_SECURITY_LLM
 # [INVARIANTS] Fixes MUST pass SafetyGate+FixBudget+CascadeBreaker; behavioral_audit_red MUST never auto-fix
 # [MODIFY-GUARD] blueprint.md §3; engine.py
 # [CONSUMERS] CI pipeline

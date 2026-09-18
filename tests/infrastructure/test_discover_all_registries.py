@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_discover_all_registries | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §
 # [MODULE] tests.infrastructure.test_discover_all_registries
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] discover_all_registries() 读 ROOR（SSoT）返回全量 REG-* registry；AGENTS.md 不含硬编码计数
 # [CONSUMERS] pytest
 # [STABILITY] evolving

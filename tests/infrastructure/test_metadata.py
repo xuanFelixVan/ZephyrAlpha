@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_metadata | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §
 # [MODULE] tests.test_metadata
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] GitMetadataExtractor.extract returns GitAssetMetadata or None; MultiIDERuleGenerator generates files
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

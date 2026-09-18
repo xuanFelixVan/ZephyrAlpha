@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_infra_outbox
+# [DOMAIN] D_INFRA_RUNTIME
 
 # [INVARIANTS] append→PENDING;mark_published→PUBLISHED;mark_failed→FAILED+retry_count++
 

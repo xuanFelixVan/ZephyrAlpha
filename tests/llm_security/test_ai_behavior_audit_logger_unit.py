@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ai_behavior_audit_logger_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-586 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_ai_behavior_audit_logger
+# [DOMAIN] D_SECURITY_LLM
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_llm_fix_adapter | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_llm_fix_adapter
+# [DOMAIN] D_SECURITY_LLM
 # [INVARIANTS] LLM输出MUST经SecretLeakGuard扫描;置信度<MEDIUM不自动应用
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml llm_fix_adapter段
 # [CONSUMERS] CI/CD;pytest

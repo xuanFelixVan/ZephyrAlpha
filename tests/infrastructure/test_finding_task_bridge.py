@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_finding_task_bridge | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §finding_task_bridge
 # [MODULE] tests.test_finding_task_bridge
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] AuditFinding.severity必须在SEVERITY_TO_PRIORITY中; BridgeResult.success_rate计算正确
 # [MODIFY-GUARD] 仅当finding_task_bridge公开API变更时修改
 # [CONSUMERS] pytest

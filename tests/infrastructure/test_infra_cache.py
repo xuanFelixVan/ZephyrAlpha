@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_infra_cache
+# [DOMAIN] D_INFRA_RUNTIME
 
 # [INVARIANTS] TTL过期自动驱逐;LRU超容量驱逐;stats准确
 

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_fail_closed | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
 # [MODULE] tests.llm_security.test_fail_closed
+# [DOMAIN] D_SECURITY_LLM
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
