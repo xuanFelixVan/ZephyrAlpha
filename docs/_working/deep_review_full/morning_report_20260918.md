@@ -82,3 +82,10 @@ created: 2026-09-18
 - 共享暂存吸收声明：注册表批按"registry 竞态三步"配方随批携带共享 token 载体（capability_canonical_file_registry.yaml 纯增 4 行+他会话 token 同批落袋）。
 - 本会话 claim 将在收尾全部 release；.runtime/tmp 探针脚本按 TTL 自清。
 - **无遗留待办未登记**：所有未施工发现均已入 #ARCH-338..356 或台账挂起列；无待裁定内容未列明（§1 十项即全部）。
+
+## 6. 收尾后记（2026-09-18 晚追加）：189 件报告的落地面
+
+- **事实**：189 件战役报告处于 staged 保护态，其中 **145 件含未落地内容**（各波审查者的完整报告正文+§7 收口节——落地批的队列快照早于报告重写，落的是脚手架版；44 件为纯 stale add 内容已落地）。
+- **三重保护**：①工作区最终态；②git index blob（对象库已固化「已审」版，240 件在册，gc 不可达剪枝不触及 index 引用）；③队列死信快照袋 15 袋（q-0042/0043 等）。
+- **落地面阻塞点（精确）**：直连与队列双通道被 N-5 共享暂存区脏件连坐——`scripts/backtest/crisis_drill_monthly.py`（N-5 清单 317 staged 之一）BLUEPRINT 头非法（module_id 未用 MOD-/SH- 前缀），卡锁内 BLUEPRINT 门禁，全仓所有会话的 commit 一并被拦；队列序列化器另现基线分叉（NOTHING_TO_COMMIT 快照未真应用，防线已自动死信回退）。**该件属 N-5 登记（待 Owner/Max 定夺恢复 or 废弃）范围，本战役未代修未动其 index 态。**
+- **恢复指令（N-5 处置后执行）**：`git add docs/_working/deep_review_full/` 后按 p0/p2、p1、tdm_supplement 三批 `git_commit.py --files ... --allow-non-worktree --allow-overlap --enqueue` 即全量归位；或任何会话修复该外来件头注释后本批自动可落。
