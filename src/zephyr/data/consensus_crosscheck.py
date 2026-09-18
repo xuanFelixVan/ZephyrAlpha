@@ -86,9 +86,13 @@ _SQL_PIT_PROBE = (
     "FROM c3_fundamental.consensus_daily FINAL "
     "WHERE symbol='600519' AND trade_date >= toDate('{win_start}') "
     "AND trade_date <= toDate('{d}') GROUP BY forecast_year ORDER BY forecast_year FORMAT TSV")
+# rpt_i15：forecast_year 曾硬编码 2026——2027-01 起探针恒空=每日假 ERROR（时间炸弹）。
+# 改取"≤当日最新 forecast_year"（近因年），语义不变且跨年自愈。
 _SQL_PROBE_MOUTAI = (
     "SELECT eps_consensus FROM c3_fundamental.consensus_daily FINAL "
-    "WHERE symbol='600519' AND trade_date = toDate('{d}') AND forecast_year = 2026 "
+    "WHERE symbol='600519' AND trade_date = toDate('{d}') "
+    "AND forecast_year = (SELECT max(forecast_year) FROM c3_fundamental.consensus_daily FINAL "
+    "  WHERE symbol='600519' AND trade_date <= toDate('{d}') AND forecast_year <= toYear(toDate('{d}'))) "
     "ORDER BY forecast_year LIMIT 1 FORMAT TSV")
 _SQL_CLEAN_WINDOW_DAYS = (
     "SELECT uniqExact(trade_date) FROM c3_fundamental.consensus_daily FINAL "

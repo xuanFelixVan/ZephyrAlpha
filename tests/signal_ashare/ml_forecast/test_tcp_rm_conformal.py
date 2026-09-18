@@ -225,8 +225,10 @@ class TestBacktestCpVar:
         assert rep.breach_indices == (0, 2)  # 下轨破位：-0.5 与 -0.2
         assert rep.n_breaches == 2
         assert rep.breach_rate == pytest.approx(0.5)
-        assert rep.target_breach_rate == pytest.approx(0.2)
-        assert rep.breach_gap == pytest.approx(0.3)
+        # rpt_m04 口径修正：破位只统计下轨（单侧）→ target=(1−coverage)/2，双侧 1−τ 曾把
+        # 2× 欠覆盖显示为"优于目标"
+        assert rep.target_breach_rate == pytest.approx(0.1)
+        assert rep.breach_gap == pytest.approx(0.4)  # 0.5 − 0.1（单侧 target，rpt_m04）
         assert rep.ran_at == _T0
 
     def test_backtest_length_mismatch_raises(self) -> None:

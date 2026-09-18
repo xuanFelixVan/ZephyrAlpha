@@ -261,7 +261,9 @@ class TcpRmConformal:
                 breaches.append(i)
         n = len(pts)
         rate = len(breaches) / n
-        target = 1.0 - self._cfg.target_coverage
+        # rpt_m04 P1：破位只统计下轨（单侧），target 用双侧 1−τ 曾把 2× 欠覆盖显示为"优于目标"
+        # （对称残差下单侧均衡破位率=(1−τ)/2）。保持历史口径字段的读者请同时读 n_breaches 统计侧。
+        target = (1.0 - self._cfg.target_coverage) / 2.0
         return CpVarBacktestReport(
             n=n,
             n_breaches=len(breaches),

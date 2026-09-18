@@ -68,6 +68,18 @@ class ConditionalDensityConfig:
     quantiles: tuple[float, ...] = _DEFAULT_QUANTILES
     var_level: float = 0.95
 
+    def __post_init__(self) -> None:
+        # rpt_m03：window=0 曾致 r_list[-0:] 全量切片静默不截断（Python 陷阱）
+        if self.window < 1:
+            raise ValueError(f"window 须 ≥1（旧码 0 会静默退化为全量）: {self.window}")
+        if self.min_samples < 1:
+            raise ValueError(f"min_samples 须 ≥1: {self.min_samples}")
+        q = list(self.quantiles)
+        if not q or any(not (0.0 <= x <= 1.0) for x in q) or q != sorted(q) or len(set(q)) != len(q):
+            raise ValueError(f"quantiles 须为 (0,1) 内严格单调递增: {q}")
+        if not (0.0 < self.var_level < 1.0):
+            raise ValueError(f"var_level 须 ∈(0,1): {self.var_level}")
+
 
 @dataclass(frozen=True)
 class DensitySummary:
