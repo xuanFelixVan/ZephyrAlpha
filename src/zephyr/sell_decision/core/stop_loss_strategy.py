@@ -183,12 +183,16 @@ class StopLossStrategy:
             fallback_pct = (
                 _FALLBACK_PCT_SHORT if position.strategy_type == StrategyType.SHORT_TERM else _FALLBACK_PCT_LONG
             )
-            logger.debug(
-                "ATR缺失, symbol=%s 降级固定%%止损 %.2f%%",
+            # rpt_e03 P1：降级锚曾用 entry——盈利期止损悬崖跌回入场价下方（全部浮盈裸奔且仅 debug 日志）。
+            # 锚点同构降级（与主路 Highest_Close 同锚，E06 同 spec 正确示范）：锚=max(最高收盘, entry)。
+            anchor = max(float(highest_close_fn(_PROFIT_N)), float(position.entry_price))
+            logger.warning(
+                "ATR缺失, symbol=%s 锚点同构降级固定%%止损 %.2f%%（锚=最高收盘与入场价的较大者 %.4f）",
                 position.symbol,
                 fallback_pct * 100,
+                anchor,
             )
-            return position.entry_price * (1 - fallback_pct)
+            return anchor * (1 - fallback_pct)
 
         # 按持仓阶段取参数
         if phase == PositionPhase.LOSS:

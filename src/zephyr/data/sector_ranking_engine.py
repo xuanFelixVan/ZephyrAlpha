@@ -143,7 +143,9 @@ def _compute_factors(rows: list[tuple]) -> dict[str, list[float]]:
 
     # 大盘涨跌幅基准
     benchmark_change = _get_benchmark_change(rows)
-    relatives = [abs(_calc_change_pct(float(r[1]), float(r[2])) - benchmark_change) for r in rows]
+    # rpt_p12 P1：abs() 曾使"弱于大盘同样高分"（弱板块居首、强板块垫底，推送池系统性纳入弱势板块）。
+    # 设计语义=相对强度（强于大盘=高分）：保留符号，升序百分位=跑赢大盘越多分越高。
+    relatives = [_calc_change_pct(float(r[1]), float(r[2])) - benchmark_change for r in rows]
 
     return {
         "codes": codes,

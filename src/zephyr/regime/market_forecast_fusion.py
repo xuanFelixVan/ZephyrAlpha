@@ -88,6 +88,9 @@ def _validate_state_distribution(probabilities: Mapping[str, float]) -> dict[str
     probs = {k: float(v) for k, v in probabilities.items()}
     if any(v < 0.0 for v in probs.values()):
         raise InvalidExternalForecastError(f"存在负概率: {probs}")
+    # rpt_d04 F-A1：NaN 曾使 total=NaN 绕过 Σ≤0 检查，归一后 8 态全 NaN 静默畸形
+    if any(v != v or v == float("inf") for v in probs.values()):
+        raise InvalidExternalForecastError(f"存在 NaN/Inf 概率（畸形 Fail-Closed）: {probs}")
     total = sum(probs.values())
     if total <= 0.0:
         raise InvalidExternalForecastError("概率和为 0（无法归一）")

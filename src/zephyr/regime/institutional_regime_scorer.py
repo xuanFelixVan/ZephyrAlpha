@@ -305,6 +305,11 @@ class InstitutionalRegimeScorer:
     ) -> None:
         """IV 绝对值映射（§4.9 / §4.11.10）。"""
         detail["synthetic_vix"] = synthetic_vix
+        # rpt_d03 F-A1：NaN 曾被当低 IV 计 20 分且 available=True（与 percentile 路域检查不对称）
+        if synthetic_vix is None or synthetic_vix != synthetic_vix or synthetic_vix < 0.0:
+            detail["iv_absolute_degraded"] = "non_finite_or_negative"
+            scores.append(50.0)  # 中性分+degraded 留痕，不计入可用维度语义由调用方读 detail
+            return
         # 绝对值映射（§4.9 / §4.11.10：>25 恐慌 / >35 极端 / >40 历史极端）
         if synthetic_vix >= IV_ABSOLUTE_EXTREME:
             scores.append(95.0)

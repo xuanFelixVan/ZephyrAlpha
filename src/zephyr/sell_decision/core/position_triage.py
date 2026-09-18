@@ -148,6 +148,10 @@ def _triage_atr(
     watch_abs = _WATCH_ATR_MULTIPLIER * atr_value - delta_abs
     hold_abs = _HOLD_ATR_MULTIPLIER * atr_value - delta_abs
 
+    # rpt_e05 P1：价格已跌破止损线=最大险情，旧码 abs 对称化把它当普通距离判 MONITOR
+    if current <= stop_loss_price:
+        return TriageLevel.WATCH
+
     # 距止损近 → WATCH(亏损区或盈利回撤接近止损)
     if distance_abs < watch_abs:
         return TriageLevel.WATCH
