@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_observability_metrics
+# [DOMAIN] D_INFRA_RUNTIME
 
 # [INVARIANTS] Counter只增;Gauge可设任意值;Histogram观察值追加;prometheus_text格式合规
 

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_benchmark_suite | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] tests.test_benchmark_suite
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] BenchmarkCase数据模型;7维度测试用例完整性;CATEGORY_MAP键覆盖
 # [MODIFY-GUARD] src/zephyr/pipeline/model-profiler/benchmark_suite.py
 # [CONSUMERS] MOD-INF-034

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_orchestrator_failure_matcher | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_orchestrator_failure_matcher
+# [DOMAIN] D_ORCHESTRATOR
 # [INVARIANTS] FailurePatternMatcher has 7 built-in patterns; analyze returns highest severity match
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

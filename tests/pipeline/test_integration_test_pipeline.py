@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_integration_test_pipeline | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_integration_test_pipeline
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] CI pipeline

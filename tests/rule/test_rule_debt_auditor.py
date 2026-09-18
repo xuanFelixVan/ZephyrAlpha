@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 
 # [MODULE] tests.test_rule_debt_auditor
+# [DOMAIN] D_GOV_ENFORCEMENT
 
 # [INVARIANTS] 测试必须覆盖空输入/None/异常边界;不可跳过
 

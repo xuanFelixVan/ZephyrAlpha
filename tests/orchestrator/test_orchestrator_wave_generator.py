@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_orchestrator_wave_generator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_orchestrator_wave_generator
+# [DOMAIN] D_ORCHESTRATOR
 # [INVARIANTS] WaveGenerator uses real SQLite via db_utils; tests create in-memory DB with tasks schema
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

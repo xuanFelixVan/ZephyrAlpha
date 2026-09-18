@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_adversarial_ml_experiment | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-339 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.ml_experiment.test_adversarial
+# [DOMAIN] D_ML_TRAIN
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 
 # [MODULE] tests.test_risk_ssot
+# [DOMAIN] D_RISK
 
 # [INVARIANTS] load_risk_params_ssot returns dict; never raises; returns {} on missing/invalid input
 

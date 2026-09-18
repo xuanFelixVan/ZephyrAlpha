@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-ML-006 | docs/03_modules/_domain_machine_learning_train/blueprint.md
 # [MODULE] tests.ml_train.test_strategy_digital_twin
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

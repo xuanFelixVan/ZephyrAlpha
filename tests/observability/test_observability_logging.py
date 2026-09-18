@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_observability_logging
+# [DOMAIN] D_INFRA_RUNTIME
 
 # [INVARIANTS] trace_context自动传播trace_id;get_logger缓存;ZephyrLogger注入z_trace_id
 

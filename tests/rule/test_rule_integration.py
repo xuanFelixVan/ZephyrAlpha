@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_rule_integration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
 # [MODULE] tests.test_rule_integration
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] RuleLoader 与 Skill/Gate/Depgraph/路径全景图集成正确; 性能<500ms; 并发无冲突
 # [MODIFY-GUARD] rule_engine.py; skill_registry.yaml; gate_engine.py
 # [CONSUMERS] CI pipeline

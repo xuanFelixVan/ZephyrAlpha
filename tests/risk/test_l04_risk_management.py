@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_l04_risk_management | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L04-001 | docs/03_modules/_domain_risk/blueprint.md | §test
 # [MODULE] zephyr.risk
+# [DOMAIN] D_RISK
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

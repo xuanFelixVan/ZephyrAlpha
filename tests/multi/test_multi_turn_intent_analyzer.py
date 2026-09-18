@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 
 # [MODULE] tests.test_multi_turn_intent_analyzer
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] 测试不可跳过;覆盖实例化+公开方法+边界
 

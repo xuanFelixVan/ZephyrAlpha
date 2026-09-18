@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_vms_adversarial_hijack | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md | §14 F5
 # [MODULE] tests.unit.vector_memory.test_vms_adversarial_hijack
+# [DOMAIN] D_AUTONOMY_CORE
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

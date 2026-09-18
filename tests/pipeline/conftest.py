@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_conftest | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.unit.pipeline.conftest
+# [DOMAIN] D_INTELLIGENCE
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

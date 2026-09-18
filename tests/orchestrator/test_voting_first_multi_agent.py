@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-048 | docs/03_modules/MOD-INF-048/
 # [MODULE] tests.orchestrator.test_voting_first_multi_agent
+# [DOMAIN] D_ORCHESTRATOR
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

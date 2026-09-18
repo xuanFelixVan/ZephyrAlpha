@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_phase_c_import_chain | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-329 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.integration.test_phase_c_import_chain
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

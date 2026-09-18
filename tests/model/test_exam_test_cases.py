@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_exam_test_cases | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] tests.test_exam_test_cases
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] test_exam_test_cases完整性
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

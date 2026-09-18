@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_observability_health
+# [DOMAIN] D_INFRA_RUNTIME
 
 # [INVARIANTS] ALL_HEALTHY当全部healthy;UNHEALTHY当任一不healthy;collect_health聚合
 

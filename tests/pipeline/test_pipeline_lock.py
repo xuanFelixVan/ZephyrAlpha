@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_pipeline_lock | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_pipeline_lock
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] MemoryLockBackend acquire/release cycle must be symmetric; PipelineLock timeout=0 must be non-blocking
 # [MODIFY-GUARD] zephyr.infrastructure.pipeline.pipeline_lock
 # [CONSUMERS] pytest

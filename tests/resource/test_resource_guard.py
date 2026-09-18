@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_resource_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_resource_guard
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] hard_limits_immutable;degradation_monotonic;pool_size_non_negative
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

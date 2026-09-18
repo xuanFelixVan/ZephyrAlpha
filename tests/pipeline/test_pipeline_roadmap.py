@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_pipeline_roadmap | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_pipeline_roadmap
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] ConstructionPhaseTracker total = IMPLEMENTED + BACKLOG + PLANNED_VERSIONS; ROICalculator denominator >= 0.01; MutationTestResult mutation_score = killed/total when total > 0
 # [MODIFY-GUARD] PROFILES/PIPELINE_DEPENDENCIES/PIPELINE_VERSION_MAP changes require test updates
 # [CONSUMERS] pytest

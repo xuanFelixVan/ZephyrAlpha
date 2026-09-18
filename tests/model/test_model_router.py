@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_model_router | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_model_router
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] resolve_model returns "none" for C pipeline; fallback_chain_for returns list
 # [MODIFY-GUARD] only when ModelRouter public API changes
 # [CONSUMERS] pytest

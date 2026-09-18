@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_io_cache | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-549 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.resource_optimization.test_io_cache
+# [DOMAIN] D_INFRA_RUNTIME
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

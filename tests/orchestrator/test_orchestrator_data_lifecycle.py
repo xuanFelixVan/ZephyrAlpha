@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_orchestrator_data_lifecycle | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_orchestrator_data_lifecycle
+# [DOMAIN] D_ORCHESTRATOR
 # [INVARIANTS] 8 data types; should_purge only True when archive_policy=purge and age>cold_days; unknown type returns None/False
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

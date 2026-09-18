@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_phase_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_phase_manager
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] PHASE_SEQUENCE covers all ConstructionPhase values;phase_resolver returns lowest incomplete phase
 # [MODIFY-GUARD] src/zephyr/rollback/phase_manager.py
 # [CONSUMERS] pytest

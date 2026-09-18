@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_resource_optimization_engine | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-423 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_resource_optimization_engine
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] ResourceOptimizationEngine is singleton; must reset between tests
 # [MODIFY-GUARD] resource_optimization_engine.py
 # [CONSUMERS] CI

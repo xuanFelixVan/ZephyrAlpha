@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_resource_optimization | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_resource_optimization
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] ResourceOptimizationEngine是单例;每个测试前必须reset
 # [MODIFY-GUARD] src/zephyr/runtime/resource_optimization.py
 # [CONSUMERS] pytest

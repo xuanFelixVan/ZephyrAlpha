@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_calibrate_model_diff | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §test
 # [MODULE] tests.test_calibrate_model_diff
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] 零成本合成数据;不调真实模型;覆盖退出码0/1/2/3
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

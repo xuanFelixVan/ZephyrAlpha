@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_observability_tracing
+# [DOMAIN] D_INFRA_RUNTIME
 
 # [INVARIANTS] start_span无OTEL时返回NoopSpan;traced装饰器保留__name__;_NoopSpan所有方法空操作
 

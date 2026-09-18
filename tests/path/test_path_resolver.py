@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_path_resolver | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-416 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_path_resolver
+# [DOMAIN] D_SHARED
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

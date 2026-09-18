@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_observability_dashboard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-411 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_observability_dashboard
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] DashboardPanel has 4 panels; SLI has 11 indicators; default config has all panels
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

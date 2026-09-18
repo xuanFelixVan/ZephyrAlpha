@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_model_drift_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_model_drift_detector
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] DriftResult fields immutable after creation;baseline file must be valid JSON
 # [MODIFY-GUARD] src/zephyr/rollback/model_drift_detector.py
 # [CONSUMERS] pytest

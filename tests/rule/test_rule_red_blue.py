@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_rule_red_blue | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV-019 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §rule_engine
 # [MODULE] tests.test_rule_red_blue
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] 红蓝对抗测试：故意违反规则→验证检测率; 报告输出到 pytest tmp_path（禁写生产路径）
 # [MODIFY-GUARD] rule_engine.py; audit_registration.py; gate_engine.py
 # [CONSUMERS] CI pipeline; governance audit

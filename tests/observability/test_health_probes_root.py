@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_health_probes_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] tests.test_health_probes
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] 11-system triple-state probes (knowledge_base 已随 KB 系统退役移除); ProbeStatus enum stability
 # [MODIFY-GUARD] health_probes.py
 # [CONSUMERS] CI

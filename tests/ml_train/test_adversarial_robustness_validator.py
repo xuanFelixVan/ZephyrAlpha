@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-ML-005 | docs/03_modules/_domain_machine_learning_train/blueprint.md
 # [MODULE] tests.ml_train.test_adversarial_robustness_validator
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

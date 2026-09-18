@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_model_discovery | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] tests.test_model_discovery
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] DiscoveredModel数据模型;ModelDiscovery构造;DEFAULT_OLLAMA_URL
 # [MODIFY-GUARD] src/zephyr/pipeline/model-profiler/model_discovery.py
 # [CONSUMERS] MOD-INF-034

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_alpha_signal_pipeline | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §
 # [MODULE] tests.test_alpha_signal_pipeline
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] must test all public classes and methods of alpha_signal_pipeline
 # [MODIFY-GUARD] alpha_signal_pipeline.py changes require sync
 # [CONSUMERS] pytest

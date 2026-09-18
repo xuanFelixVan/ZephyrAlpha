@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_wave_generator_orchestrator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-541 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.orchestrator.test_wave_generator
+# [DOMAIN] D_ORCHESTRATOR
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

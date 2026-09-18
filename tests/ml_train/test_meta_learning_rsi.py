@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-ML-008 | docs/03_modules/_domain_machine_learning_train/blueprint.md
 # [MODULE] tests.ml_train.test_meta_learning_rsi
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

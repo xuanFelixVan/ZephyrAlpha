@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_pipeline_cost_tracker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_pipeline_cost_tracker
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] CostTracker.total_cost must return rounded float; estimate_cost uses ModelRouter pricing
 # [MODIFY-GUARD] only when CostTracker public API changes
 # [CONSUMERS] pytest

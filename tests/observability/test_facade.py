@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_facade | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] tests.test_facade
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] test_mode=True silences all outbound; shutdown idempotent; no background threads in test mode
 # [MODIFY-GUARD] facade.py
 # [CONSUMERS] CI

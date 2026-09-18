@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_profiler | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-034 | docs/03_modules/_cross_layer/model_profiler/blueprint.md | §3
 # [MODULE] tests.test_profiler
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] CaseResult数据模型;ModelProfile数据模型;MAX_OLLAMA_MODELS;SKIP_MODEL_PATTERNS
 # [MODIFY-GUARD] src/zephyr/pipeline/model-profiler/profiler.py
 # [CONSUMERS] MOD-INF-034

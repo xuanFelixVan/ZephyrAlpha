@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_prompt_version | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_prompt_version
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] get_version returns v0.0.0 for unregistered; diff returns bool
 # [MODIFY-GUARD] src/zephyr/orchestrator/prompt_version.py
 # [CONSUMERS] CI

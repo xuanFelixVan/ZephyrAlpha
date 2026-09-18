@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_resource_starvation_aware | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
 # [MODULE] tests.test_resource_starvation_aware
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] zephyr.feedback_loop.resilience.resource_starvation_aware

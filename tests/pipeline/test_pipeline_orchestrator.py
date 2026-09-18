@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_pipeline_orchestrator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-545 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.pipeline.test_pipeline_orchestrator
+# [DOMAIN] D_INTELLIGENCE
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

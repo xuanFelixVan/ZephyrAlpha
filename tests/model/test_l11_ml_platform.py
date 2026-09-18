@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_l11_ml_platform | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L11-001 | docs/03_modules/_domain_machine_learning_train/blueprint.md | §test
 # [MODULE] zephyr.ml_serve.serving_orchestrator
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline
