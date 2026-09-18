@@ -32936,6 +32936,10 @@ creation_tokens:
   token: altdata-night-00-master-ledger-20260917
   created_by: st-nightcoord-20260918
   capability: altdata_night
+- file: docs/_working/altdata_night/01_morning_report.md
+  token: altdata-night-01-morning-report-20260918
+  created_by: st-nightcoord-20260918
+  capability: altdata_night
 - file: src/zephyr/governance/rule_replay.py
   token: rule-replay-rule-replay-20260917
   created_by: st-ailayer-20260917
