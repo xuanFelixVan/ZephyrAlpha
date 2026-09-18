@@ -46,7 +46,7 @@ version: 2.1.0
 <!--
 COMPLIANCE_CHECKLIST — 机器可解析合规清单
 蓝图 MUST 包含以下所有标题（精确匹配关键词）。缺一 = 不合规。
-脚本：python scripts/governance/check_blueprint_compliance.py <蓝图路径>
+脚本：python scripts/governance/d3_metadata/check_blueprint_compliance.py <蓝图路径>
 -->
 <!--
 REQUIRED_SECTIONS:
