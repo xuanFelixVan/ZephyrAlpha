@@ -2035,3 +2035,21 @@ z-rb-stats 实测我口径错：**台账 R-026 原文是「八型」，而我在
   本会话 claim 归零（`.ailocks/registry.json` 余 2 条全归 bizmine）；项目根临时件清零
   （`mutate.py`/`probe_ab.py`/`prerun1.log`/`prerun2.log` 移 `.runtime/tmp/st-ff-last-20260918/`，
   `sitecustomize.py` 经查为在册生产件未动）。
+- **R-074（收口后追加，02:2x）**：**Q-1"index 陈旧回退快照"已由收口班逐件判归口并结构性解除**（不是登记移交，是真清）。
+  - 普查件 `.runtime/tmp/ff-recon/threestate_sweep.py`（只读；三态=在 HEAD + index 判删/大删 + 磁盘仍在，
+    比对一律 `tr -d '\r'` 归一化后再 sha256）。
+  - 抓到 **13 件**属"**index 比 HEAD 旧、磁盘=HEAD**"的半落地态：11 件 `MM`（含本役已落地的
+    `flowthrough_verifier.py` −24 / `f06_e4_wfa_exam.py` −117 / `overfitting_detector.py` −63 / `decision_gate.py` −36 /
+    `akshare_alt_provider.py` −186 / `regime_feature_builder.py` −74 / `source_health_check.py` −22 /
+    `data_sources_registry.yaml` −48 + 三份被测件同名测试），2 件 `D `+`??`
+    （`test_rb_stats_validator_teeth.py` 307 行牙齿测试、`test_silent_latch_before_delivery.py` 265 行——
+    **牙齿测试被 index 判删**是本役最阴的一颗雷：任何人一次具名外的全量 add 就把"能红证据"静默删掉）。
+  - 处置：**全部 `git add` 抹平**（磁盘==HEAD ⇒ 抹平是**零内容变化**，只把 index 从"旧版"拉回真值）。
+    复核：抹平后 `git diff --cached --numstat` 对 13 件为空、纯 staged 删除归零。
+  - 残余 **1 件刻意不动**：`scripts/governance/oneoff/data_domain_audit_report_db.md`（`+4246 −614`，
+    磁盘≠HEAD）——这是**真在途的生成器重出件**，不是快照腐烂，保持 staged 交落地班判。
+  - **仍不动热册**（R-073 的 bizmine 面）：`capability_canonical_file_registry.yaml` 的 `+0 −4` 磁盘也缺那 4 行，
+    抹平=往磁盘写他人条目 ⇒ 属他道在途面（§3.4），只登记不代修。
+  - ⇒ **裁定 R-074a**：`B21`（clean HEAD 态复跑）的**前置已扫清**，只剩"确认工作区干净"一步；
+    ⇒ **R-074b**：`threestate_sweep.py` 这类"三态一致性普查"应升为**每轮收口固定动作**
+    （它和 B22/B23 是同一判据的三个观测面：写侧只增不减 / 提交侧净删即拦 / 收口侧三态互校）。

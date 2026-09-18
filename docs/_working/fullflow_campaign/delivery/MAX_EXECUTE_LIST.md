@@ -203,6 +203,15 @@ completes_when: 全流通战役收官且本清单每项都被执行或明确移�
   字面量黑名单随机假红（≈1.1e-4/次）、`msg_style_gate.py` 的 `"commit_gates/" in` 子串自豁免、
   `GATE-ERRCODE-CONSISTENCY` 观测面=live index（**B18** 同源）。
 
+### B21 前置状态更新（02:2x 收口班实测，**Q-1 已解**）
+- ★ 本项的前置"逐件判归口清掉回退快照"**已做完**：13 件"index 比 HEAD 旧、磁盘==HEAD"已 `git add` 抹平（零内容变化），
+  其中含两件**被 index 判删的牙齿测试**（`test_rb_stats_validator_teeth.py` 307 行 / `test_silent_latch_before_delivery.py` 265 行）。
+  普查与处置全在 **R-074**；复跑命令 `.runtime/tmp/ff-recon/threestate_sweep.py`（只读）。
+- 残余：`scripts/governance/oneoff/data_domain_audit_report_db.md`（`+4246 −614`，磁盘≠HEAD）=**真在途生成件**，勿抹平；
+  `capability_canonical_file_registry.yaml` 的 `+0 −4` 见 **B23**（要连磁盘一起补，属他道在途面）。
+
+---
+
 ### B22 给 token 工具补"只增不减"自检（并把 B19 的优先级上调为"下一役第一件事"）
 - 见 B19（同一件，优先级上调）：`batch_creation_tokens.py` 实弹吃掉过他道刚入 HEAD 的 4 行 token 并自报"落盘 True (CAS)"，
   **只有进程内门预跑抓到** ⇒ 预跑器不是"锦上添花"而是**当前唯一能拦住热册蒸发的面**。
