@@ -250,3 +250,128 @@ def test_insert_block_survives_concurrent_interleaved_write(lab, monkeypatch):
     assert "race_cap" in caps, "我方条目必须存活"
     assert "other_new_cap" in caps, "他会话条目必须存活（后写不吞先写）"
     assert data["creation_tokens"][-1]["capability"] in {"race_cap", "other_new_cap", "anchor_cap", "stray_cap_zone"}
+
+
+# ── B22 治本：写侧"只增不减"守恒闸（2026-09-19，全流通战役热册蒸发第 1/5 例的机制补强）──
+_HEAD_EXTRA = """creation_tokens:
+- file: docs/existing/anchor.md
+  token: anchor-token-20260913
+  created_by: someone
+  capability: anchor_cap
+- file: docs/existing/other.md
+  token: other-token-20260913
+  created_by: someone
+  capability: anchor_cap
+- file: docs/existing/evicted-by-stale-snapshot.md
+  token: evicted-token-20260919
+  created_by: st-other-lane
+  capability: anchor_cap
+di_seam_exemptions: []
+"""
+
+
+def _patch_git(monkeypatch, fake_files, head_text=None):
+    """同时喂 ls-files 与 show HEAD:<registry> 两个 git 面（HEAD 面=None 表示读不到）。"""
+
+    def _fake(*a):
+        if "ls-files" in a:
+            return fake_files
+        if a and a[0] == "show" and head_text is not None:
+            return [ln for ln in head_text.splitlines() if ln.strip()]
+        return []
+
+    monkeypatch.setattr(bct, "_git_output", _fake)
+
+
+def test_stale_base_vs_head_refuses_write(lab, monkeypatch, capsys):
+    """写前闸：盘上基底相对 HEAD 已缺条目 ⇒ 拒写 + 点名少了哪几条 + **磁盘零改动**。"""
+    reg, files = lab
+    pre = reg.read_bytes()
+    _patch_git(monkeypatch, files, _HEAD_EXTRA)  # HEAD 有 3 条，盘上只有 2 条
+    block = bct.build_block(files[:1], "sess-A", "lab_cap", "20260919")
+    with pytest.raises(bct.TokenInsertError) as ei:
+        bct.insert_block(block, "anchor_cap")
+    msg = str(ei.value)
+    assert "只增不减" in msg and "evicted-token-20260919" in msg, f"未点名被蒸发条目: {msg}"
+    assert reg.read_bytes() == pre, "拒写必须是真零写入（fail-safe=不写）"
+    assert "未落盘任何改动" in msg
+    assert capsys is not None
+
+
+def test_head_matched_base_still_lands(lab, monkeypatch):
+    """阴性对照：基底与 HEAD 一致（正常路径）⇒ 守恒闸不得拦，登记照旧成功。"""
+    reg, files = lab
+    _patch_git(monkeypatch, files, _REG_BODY)
+    block = bct.build_block(files[:1], "sess-A", "lab_cap", "20260919")
+    bct.insert_block(block, "anchor_cap")  # 不得抛
+    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
+    assert len(data["creation_tokens"]) == 3, "正常路径条目数应只增"
+    assert [e["token"] for e in data["creation_tokens"] if e["capability"] == "lab_cap"] == [
+        "lab-cap-seg-001-20260919"
+    ]
+
+
+def test_head_unreadable_skips_pre_gate_without_fabricating(lab, monkeypatch):
+    """HEAD 读不到（临时副本/非 git 环境）⇒ 跳过对照面，**不得**拿空集当基线把所有写入判死。"""
+    reg, files = lab
+    _patch_git(monkeypatch, files, None)
+    assert bct._head_entry_keys() is None
+    block = bct.build_block(files[:1], "sess-A", "lab_cap", "20260919")
+    bct.insert_block(block, "anchor_cap")  # 不抛=未被假基线误杀
+    assert len(yaml.safe_load(reg.read_text(encoding="utf-8"))["creation_tokens"]) == 3
+
+
+def test_concurrent_overwrite_after_write_is_refused_and_named(lab, monkeypatch):
+    """写后闸实弹面：他会话在我们落盘后整片压回陈旧快照 ⇒ 必须判"条目数净减"并拒收。
+
+    回滚同样不得整片覆写对方——磁盘已推进 ⇒ 放弃回滚，报错里写明"未回滚，需人工分诊"。
+    """
+    import zephyr.shared.io.file_utils as fu
+
+    reg, files = lab
+    _patch_git(monkeypatch, files, _REG_BODY)
+    real_safe_write = fu.safe_write_text
+    state = {"raced": False}
+    shorter = (
+        "creation_tokens:\n"
+        "- file: docs/existing/other.md\n  token: other-token-20260913\n"
+        "  created_by: someone\n  capability: anchor_cap\n"
+        "di_seam_exemptions: []\n"
+    )
+
+    def racy_writer(*args, **kwargs):
+        res = real_safe_write(*args, **kwargs)
+        if not state["raced"]:
+            state["raced"] = True
+            reg.write_text(shorter, encoding="utf-8")  # 模拟他会话压回只含 1 条的陈旧快照
+        return res
+
+    monkeypatch.setattr(fu, "safe_write_text", racy_writer)
+    block = bct.build_block(files[:1], "sess-A", "lab_cap", "20260919")
+    with pytest.raises(bct.TokenInsertError) as ei:
+        bct.insert_block(block, "anchor_cap")
+    msg = str(ei.value)
+    assert "净减" in msg and "只增不减" in msg, f"守恒闸未触发: {msg}"
+    assert "anchor-token-20260913" in msg, f"未点名被蒸发条目: {msg}"
+    assert "未回滚" in msg and "人工分诊" in msg, f"回滚面失守（会二次蒸发）: {msg}"
+
+
+def test_rollback_refuses_when_disk_moved(lab):
+    """回滚基底校验：磁盘已被推进 ⇒ 返回 False 且**不改一个字节**（不制造第二次蒸发）。"""
+    reg, _files = lab
+    pre = reg.read_bytes()
+    assert bct._rollback(pre, expect_sha="0" * 64) is False
+    assert reg.read_bytes() == pre
+
+
+def test_rollback_restores_when_disk_untouched(lab):
+    """回滚正向腿：磁盘未动 ⇒ 按 expect_sha 放行并逐字节还原（含 CRLF 原样）。"""
+    from zephyr.shared.io.file_utils import content_sha256
+
+    reg, _files = lab
+    pre = reg.read_bytes()
+    reg.write_text("creation_tokens:\n- file: x.md\n  token: t\n", encoding="utf-8")
+    assert bct._rollback(pre, expect_sha="") is True
+    assert reg.read_bytes() == pre
+    assert bct._rollback(pre, expect_sha=content_sha256(reg.read_text(encoding="utf-8"))) is True
+    assert reg.read_bytes() == pre
