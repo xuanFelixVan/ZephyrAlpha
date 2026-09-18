@@ -21,7 +21,12 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
-from zephyr.infrastructure.rollback.rollback_verifier import RollbackVerifier
+import pytest
+
+from zephyr.infrastructure.rollback.rollback_verifier import (
+    HealRefusedError,
+    RollbackVerifier,
+)
 
 
 @contextmanager
@@ -48,16 +53,34 @@ def _temp_dir():
                 time.sleep(0.01)
 
 
-def _create_test_db(db_path: Path, *, tasks: bool = True, gates: bool = True, events: bool = True):
+# gates/tasks 的建库语句来自 conftest 的活库真源夹具（live_gates_ddl /
+# live_tasks_projection_ddl）——旧版此处自建 gates(gate_id, result) 幻影表，
+# 生产库无 result 列，与坏写入端共谋出静默空转（WP1 改 1 / 台账 R-A4）。
+def _create_test_db(
+    db_path: Path,
+    *,
+    gates_ddl: str,
+    tasks_ddl: str,
+    tasks: bool = True,
+    gates: bool = True,
+    events: bool = True,
+):
     conn = sqlite3.connect(str(db_path))
     if tasks:
-        conn.execute("CREATE TABLE tasks (task_id TEXT PRIMARY KEY, title TEXT, status TEXT)")
+        conn.execute(tasks_ddl)
     if gates:
-        conn.execute("CREATE TABLE gates (gate_id TEXT PRIMARY KEY, result TEXT)")
+        conn.execute(gates_ddl)
     if events:
         conn.execute("CREATE TABLE events (event_id TEXT PRIMARY KEY, type TEXT, data TEXT)")
     conn.commit()
     conn.close()
+
+
+# 活库真实列的行模板（differential_check 只比行数，但建库列集仍须与活库一致）
+_DIFF_GATE_INSERT = (
+    "INSERT INTO gates (gate_run_id, gate_id, passed, details, created_at) "
+    "VALUES ('{}', '{}', 1, '{{}}', '2026-09-19T00:00:00Z')"
+)
 
 
 class TestG0Verify:
@@ -141,7 +164,7 @@ class TestCleanPycache:
 
 
 class TestHealDBConsistency:
-    """heal_db_consistency() — DB 一致性自愈"""
+    """heal_db_consistency() — DB 一致性自愈（用例按活库真实列建库，禁幻影表）"""
 
     def test_db_not_found(self):
         verifier = RollbackVerifier(project_root=Path(tempfile.mkdtemp()))
@@ -149,63 +172,117 @@ class TestHealDBConsistency:
         assert not report.healed
         assert "DB not found" in report.details
 
-    def test_fixes_invalid_task_status(self):
+    def test_fixes_invalid_task_status(self, live_gates_ddl, live_tasks_projection_ddl):
         with _temp_dir() as root:
             db_path = root / "test_invalid_status.db"
-            _create_test_db(db_path, tasks=True, gates=True, events=True)
+            _create_test_db(db_path, gates_ddl=live_gates_ddl, tasks_ddl=live_tasks_projection_ddl)
             conn = sqlite3.connect(str(db_path))
             conn.execute("INSERT INTO tasks VALUES ('TASK-001', 'Test', 'INVALID_STATUS')")
+            # READY 属真源 _DDL_TASKS 的 10 值（旧实现只认 5 值 ⇒ 230 行现值会被冤改）
+            conn.execute("INSERT INTO tasks VALUES ('TASK-002', 'Test', 'READY')")
             conn.commit()
             conn.close()
 
             verifier = RollbackVerifier(project_root=root)
-            report = verifier.heal_db_consistency(db_path=db_path)
+            report = verifier.heal_db_consistency(db_path=db_path, dry_run=False, max_rows=10)
             assert report.healed
             assert report.tasks_fixed == 1
 
-    def test_fixes_invalid_gate_result(self):
-        with _temp_dir() as root:
-            db_path = root / "test_invalid_gate.db"
-            _create_test_db(db_path, tasks=True, gates=True, events=True)
             conn = sqlite3.connect(str(db_path))
+            statuses = dict(conn.execute("SELECT task_id, status FROM tasks").fetchall())
+            conn.close()
+            assert statuses == {"TASK-001": "FAILED", "TASK-002": "READY"}
+
+    def test_fixes_unparseable_gate_details(self, live_gates_ddl, live_tasks_projection_ddl, insert_live_gate_row):
+        with _temp_dir() as root:
+            db_path = root / "test_bad_gate_details.db"
+            _create_test_db(db_path, gates_ddl=live_gates_ddl, tasks_ddl=live_tasks_projection_ddl)
+            conn = sqlite3.connect(str(db_path))
+            insert_live_gate_row(conn, "GATE-001", details="MAYBE")
+            conn.commit()
+            conn.close()
+
+            verifier = RollbackVerifier(project_root=root)
+            dry = verifier.heal_db_consistency(db_path=db_path)
+            assert dry.dry_run is True
+            assert dry.gates_fixed == 1
+            conn = sqlite3.connect(str(db_path))
+            assert conn.execute("SELECT details FROM gates WHERE gate_run_id='GATE-001'").fetchone()[0] == "MAYBE"
+            conn.close()
+
+            report = verifier.heal_db_consistency(db_path=db_path, dry_run=False, max_rows=10)
+            assert report.healed
+            assert report.gates_fixed == 1
+            conn = sqlite3.connect(str(db_path))
+            # 修复值=活库 gates.details 的列默认值（逐字照抄活库 DDL）
+            assert conn.execute("SELECT details FROM gates WHERE gate_run_id='GATE-001'").fetchone()[0] == "{}"
+            conn.close()
+
+    def test_phantom_gate_shape_raises_instead_of_silent_noop(self, live_tasks_projection_ddl):
+        """负向用例：旧幻影结构 gates(gate_id, result) 在生产库不存在。
+
+        改前：读不存在的 result 列 ⇒ 每行 IndexError ⇒ 被内层 except 吞 ⇒ 恒 gates_fixed=0
+        的静默空转（旧用例断言 ==1 只是幻影表自证的假绿）。
+        改后：明确抛出，不再"看起来在工作"。
+        """
+        with _temp_dir() as root:
+            db_path = root / "test_phantom_shape.db"
+            conn = sqlite3.connect(str(db_path))
+            conn.execute(live_tasks_projection_ddl)
+            conn.execute("CREATE TABLE gates (gate_id TEXT PRIMARY KEY, result TEXT)")
             conn.execute("INSERT INTO gates VALUES ('GATE-001', 'MAYBE')")
             conn.commit()
             conn.close()
 
             verifier = RollbackVerifier(project_root=root)
-            report = verifier.heal_db_consistency(db_path=db_path)
-            assert report.healed
-            assert report.gates_fixed == 1
+            with pytest.raises(HealRefusedError, match="列集与活库实列不符"):
+                verifier.heal_db_consistency(db_path=db_path)
 
-    def test_valid_data_unchanged(self):
+    def test_valid_data_unchanged(self, live_gates_ddl, live_tasks_projection_ddl, insert_live_gate_row):
         with _temp_dir() as root:
             db_path = root / "test_valid.db"
-            _create_test_db(db_path, tasks=True, gates=True, events=True)
+            _create_test_db(db_path, gates_ddl=live_gates_ddl, tasks_ddl=live_tasks_projection_ddl)
             conn = sqlite3.connect(str(db_path))
             conn.execute("INSERT INTO tasks VALUES ('TASK-001', 'Test', 'COMPLETED')")
-            conn.execute("INSERT INTO gates VALUES ('GATE-001', 'PASS')")
+            insert_live_gate_row(conn, "GATE-001", passed=1, details="[]")
             conn.commit()
             conn.close()
 
             verifier = RollbackVerifier(project_root=root)
-            report = verifier.heal_db_consistency(db_path=db_path)
+            report = verifier.heal_db_consistency(db_path=db_path, dry_run=False, max_rows=10)
             assert not report.healed
+
+    def test_real_write_without_cap_is_refused(self, live_gates_ddl, live_tasks_projection_ddl, insert_live_gate_row):
+        with _temp_dir() as root:
+            db_path = root / "test_no_cap.db"
+            _create_test_db(db_path, gates_ddl=live_gates_ddl, tasks_ddl=live_tasks_projection_ddl)
+            conn = sqlite3.connect(str(db_path))
+            insert_live_gate_row(conn, "GATE-001", details="MAYBE")
+            conn.commit()
+            conn.close()
+
+            verifier = RollbackVerifier(project_root=root)
+            with pytest.raises(HealRefusedError, match="max_rows"):
+                verifier.heal_db_consistency(db_path=db_path, dry_run=False)
+            conn = sqlite3.connect(str(db_path))
+            assert conn.execute("SELECT details FROM gates WHERE gate_run_id='GATE-001'").fetchone()[0] == "MAYBE"
+            conn.close()
 
 
 class TestDifferentialCheck:
     """differential_check() — 回滚前后逐行比较"""
 
-    def test_identical_databases_pass(self):
+    def test_identical_databases_pass(self, live_gates_ddl, live_tasks_projection_ddl):
         with _temp_dir() as root:
             db_before = root / "before.db"
             db_after = root / "after.db"
 
             for db_name in (db_before, db_after):
-                _create_test_db(db_name, tasks=True, gates=True, events=True)
+                _create_test_db(db_name, gates_ddl=live_gates_ddl, tasks_ddl=live_tasks_projection_ddl)
                 conn = sqlite3.connect(str(db_name))
                 conn.execute("INSERT INTO tasks VALUES ('T-1', 'T1', 'PENDING')")
                 conn.execute("INSERT INTO tasks VALUES ('T-2', 'T2', 'COMPLETED')")
-                conn.execute("INSERT INTO gates VALUES ('G-1', 'PASS')")
+                conn.execute(_DIFF_GATE_INSERT.format("R-1", "G-1"))
                 conn.execute("INSERT INTO events VALUES ('E-1', 'drift', '{}')")
                 conn.commit()
                 conn.close()
@@ -215,22 +292,24 @@ class TestDifferentialCheck:
             assert report.passed
             assert report.rows_mismatched == 0
 
-    def test_divergent_row_counts_detected(self):
+    def test_divergent_row_counts_detected(self, live_gates_ddl, live_tasks_projection_ddl):
         with _temp_dir() as root:
             db_before = root / "before2.db"
             db_after = root / "after2.db"
 
-            _create_test_db(db_before, tasks=True, gates=True, events=True)
-            _create_test_db(db_after, tasks=True, gates=True, events=True)
+            _create_test_db(db_before, gates_ddl=live_gates_ddl, tasks_ddl=live_tasks_projection_ddl)
+            _create_test_db(db_after, gates_ddl=live_gates_ddl, tasks_ddl=live_tasks_projection_ddl)
 
             conn = sqlite3.connect(str(db_before))
             conn.execute("INSERT INTO tasks VALUES ('T-1', 'T1', 'PENDING')")
             conn.execute("INSERT INTO tasks VALUES ('T-2', 'T2', 'COMPLETED')")
+            conn.execute(_DIFF_GATE_INSERT.format("R-1", "G-1"))
             conn.commit()
             conn.close()
 
             conn = sqlite3.connect(str(db_after))
             conn.execute("INSERT INTO tasks VALUES ('T-1', 'T1', 'PENDING')")
+            conn.execute(_DIFF_GATE_INSERT.format("R-1", "G-1"))
             conn.commit()
             conn.close()
 

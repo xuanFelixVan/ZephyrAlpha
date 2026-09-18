@@ -36,12 +36,123 @@ logger = logging.getLogger(__name__)
 
 import ast
 import json
+import re
 import shutil
 import sqlite3
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from zephyr.governance.persistence.sqlite_schema import _DDL_TASKS
 from zephyr.shared.io.sqlite_factory import get_db_connection
+
+# ── 活库真源指针（2026-09-19 由 governance.db 的 sqlite_master 逐字读取，非源码 DDL 推断）──
+# gates 实列 = gate_run_id TEXT PRIMARY KEY
+#              / gate_id TEXT NOT NULL
+#              / passed INTEGER NOT NULL CHECK(passed IN (0,1))
+#              / details TEXT NOT NULL DEFAULT '{}'
+#              / artifact_path TEXT / session_id TEXT
+#              / task_id TEXT / created_at TEXT NOT NULL
+#   ⇒ 无 result 列：旧实现读 gate["result"] 每行抛 IndexError，被内层 except 吞成
+#     "0 行需修"的静默空转（WP1 改 1 的病根本体）。
+#   ⇒ gate_id 非唯一：实测 1791 行只有 1008 个 distinct gate_id ⇒ UPDATE 定位一律用主键 gate_run_id。
+#   ⇒ gate_runs 与 gates 列集完全相同（同构兼容表，实测 6445 行）：本方法写的是 gates，不是 gate_runs。
+#   ⇒ tasks.status 在活库是 `TEXT DEFAULT 'PENDING'`（**无 CHECK**，与 _DDL_TASKS 源码 DDL 已漂移），
+#     所以"什么算脏状态"没有库内约束可依赖，只能从单一真源 _DDL_TASKS 派生 + 写前护栏（台账 R-A2/C-0）。
+_SQL_TASKS_SCAN = "SELECT task_id, status FROM tasks"
+_SQL_TASK_MARK_FAILED = "UPDATE tasks SET status='FAILED' WHERE task_id=?"
+_SQL_GATES_SCAN = "SELECT gate_run_id, gate_id, passed, details FROM gates"
+_SQL_GATE_MARK_NOT_PASSED = "UPDATE gates SET passed=0 WHERE gate_run_id=?"
+_SQL_GATE_RESET_DETAILS = "UPDATE gates SET details=? WHERE gate_run_id=?"
+
+# '{}' 逐字照抄活库 gates.details 的列默认值（DEFAULT '{}'）——不自造修复值。
+_GATE_DETAILS_DEFAULT = "{}"
+# 报告里保留的非法 details 原文长度（取证用，非真源值）
+_GATE_DETAILS_PREVIEW = 120
+# tasks.status 合法值集唯一真源 = _DDL_TASKS 的 CHECK(status IN (...))；派生失败即抛，不猜值。
+_TASK_STATUS_CHECK_RE = re.compile(r"CHECK\s*\(\s*status\s+IN\s*\(\s*(?P<values>.*?)\s*\)\s*\)", re.DOTALL)
+_QUOTED_LITERAL_RE = re.compile(r"^'[^']+'$")
+
+
+class HealRefusedError(RuntimeError):
+    """heal_db_consistency 的 fail-closed 信号：宁可拒写，也不冤改（C-0 护栏）。
+
+    触发面（全部为"没有唯一现场来源就不能写"）：
+    ① 目标表列集与活库实列不符（幻影结构）；② 词表无法从 _DDL_TASKS 派生；
+    ③ 真写却没给 max_rows；④ 计划修正行数超过 max_rows。
+    """
+
+
+def _derive_task_status_vocabulary() -> frozenset[str]:
+    """tasks.status 合法值集 ← 单一真源 `_DDL_TASKS` 的 CHECK(status IN (...))。
+
+    治本（台账 R-A2/C-0）：旧实现硬编码 5 值，而真源声明 10 值 ⇒ READY/BLOCKED/WAITING/
+    RETRY/VERIFIED 全被判脏；实测生产库 BLOCKED=152 + READY=78 = 230 行现值会被静默改成 FAILED。
+    派生不出来（真源结构变更）一律抛 HealRefusedError —— 不猜词表。
+    """
+    match = _TASK_STATUS_CHECK_RE.search(_DDL_TASKS)
+    if match is None:
+        raise HealRefusedError("无法从 _DDL_TASKS 派生 tasks.status 合法值集（CHECK(status IN (...)) 未命中）")
+    tokens = [t.strip() for t in match.group("values").split(",") if t.strip()]
+    bad = [t for t in tokens if not _QUOTED_LITERAL_RE.match(t)]
+    if not tokens or bad:
+        raise HealRefusedError(f"_DDL_TASKS 的 tasks.status 词表形态异常，拒绝猜测合法值: tokens={tokens} bad={bad}")
+    return frozenset(t.strip("'") for t in tokens)
+
+
+def _fetch_rows(conn: sqlite3.Connection, sql: str, table: str) -> list[sqlite3.Row]:
+    """读表；列集与活库实列不符时**抛出**（旧行为是被吞成"0 行需修"的假绿）。"""
+    try:
+        return conn.execute(sql).fetchall()
+    except sqlite3.OperationalError as e:
+        raise HealRefusedError(f"{table} 列集与活库实列不符 ⇒ 拒绝自愈（不读幻影列）: {e}") from e
+
+
+def _json_is_parseable(text: str) -> bool:
+    try:
+        json.loads(text)
+    except ValueError:  # json.JSONDecodeError 是 ValueError 子类
+        return False
+    return True
+
+
+def _gate_row_fixes(gate: sqlite3.Row) -> list[tuple[str, tuple[object, ...], str]]:
+    """单条 gates 行的修正计划（活库实列版）。空列表 = 该行一致。"""
+    run_id = gate["gate_run_id"]
+    fixes: list[tuple[str, tuple[object, ...], str]] = []
+    if gate["passed"] not in (0, 1):
+        # 修复方向 fail-closed：判定不可信时按"未通过"记（与旧支路 result->FAIL 同方向）
+        fixes.append((_SQL_GATE_MARK_NOT_PASSED, (run_id,), f"gate {run_id}: passed={gate['passed']!r} -> 0"))
+    raw_details = gate["details"]
+    if isinstance(raw_details, str) and not _json_is_parseable(raw_details):
+        fixes.append((
+            _SQL_GATE_RESET_DETAILS,
+            (_GATE_DETAILS_DEFAULT, run_id),
+            f"gate {run_id}: details 非 JSON -> 列默认值（原值前 {_GATE_DETAILS_PREVIEW} 字符="
+            f"{raw_details[:_GATE_DETAILS_PREVIEW]!r}）",
+        ))
+    return fixes
+
+
+def _plan_gate_fixes(conn: sqlite3.Connection) -> list[tuple[str, tuple[object, ...], str]]:
+    fixes: list[tuple[str, tuple[object, ...], str]] = []
+    for gate in _fetch_rows(conn, _SQL_GATES_SCAN, "gates"):
+        fixes.extend(_gate_row_fixes(gate))
+    return fixes
+
+
+def _plan_task_fixes(
+    conn: sqlite3.Connection, valid_statuses: frozenset[str]
+) -> list[tuple[str, tuple[object, ...], str]]:
+    fixes: list[tuple[str, tuple[object, ...], str]] = []
+    for task in _fetch_rows(conn, _SQL_TASKS_SCAN, "tasks"):
+        status = task["status"]
+        if status is None or status not in valid_statuses:
+            fixes.append((
+                _SQL_TASK_MARK_FAILED,
+                (task["task_id"],),
+                f"task {task['task_id']}: status {status!r} -> FAILED",
+            ))
+    return fixes
 
 
 @dataclass
@@ -59,6 +170,9 @@ class DBHealReport:
     gates_fixed: int
     events_fixed: int
     details: list[str] = field(default_factory=list)
+    # dry_run=True 时 tasks_fixed/gates_fixed 是"**计划**修正行数"，库未被写入；
+    # 旧实现无此栏 ⇒ 计划与落库不可分（C-0 护栏要求先 dry-run）。
+    dry_run: bool = False
 
 
 @dataclass
@@ -161,59 +275,60 @@ class RollbackVerifier:
                 logger.warning("suppressed error in rollback_verifier", exc_info=True)
         return removed
 
-    def heal_db_consistency(self, db_path: Path | None = None) -> DBHealReport:
+    def heal_db_consistency(
+        self,
+        db_path: Path | None = None,
+        *,
+        dry_run: bool = True,
+        max_rows: int | None = None,
+    ) -> DBHealReport:
+        """DB 一致性自愈（WP1 改 1 按活库实列重写 + 台账 R-A2/C-0 写前护栏）。
+
+        行为变更（相对旧实现，务必读）：
+        1. gates 支路按活库实列读 `passed`/`details`，UPDATE 以主键 `gate_run_id` 定位
+           （旧支路读不存在的 `result` 列 ⇒ 每行 IndexError ⇒ 被内层 except 吞 ⇒ 恒 0 的空转）。
+        2. 不再吞异常：表结构与活库实列不符 / 词表派生失败 / 缺 max_rows / 超上限 ⇒ 抛
+           HealRefusedError（生产调用方实测为 0，故取 fail-closed 抛出而非降级）。
+        3. **默认 dry_run=True**：只出计划不写库；真写须显式 dry_run=False **且**显式 max_rows
+           （上限值无现场真源 ⇒ 本方法不自拍数字，由调用方决定，见 D-13）。
+        4. tasks.status 合法值集从单一真源 `_DDL_TASKS` 派生（旧实现硬编码 5 值 ⇒ 生产库
+           BLOCKED=152/READY=78 共 230 行会被静默改成 FAILED）。
+        """
         db = db_path or (self._project_root / "data" / "databases" / "governance.db")
         if not db.exists():
             return DBHealReport(healed=False, tasks_fixed=0, gates_fixed=0, events_fixed=0, details=["DB not found"])
+        if not dry_run and max_rows is None:
+            raise HealRefusedError(
+                "dry_run=False 必须显式给出 max_rows：修正行数上限没有现场真源可读，本方法不自拍数字（D-13）"
+            )
 
-        tasks_fixed = 0
-        gates_fixed = 0
-        events_fixed = 0
-        details: list[str] = []
-
+        valid_statuses = _derive_task_status_vocabulary()
+        conn = get_db_connection(str(db))
         try:
-            conn = get_db_connection(str(db))
             conn.row_factory = sqlite3.Row
-
-            tasks = conn.execute("SELECT * FROM tasks").fetchall()
-            for task in tasks:
-                tid = task["task_id"]
-                try:
-                    status = task["status"]
-                    valid_statuses = {"PENDING", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"}
-                    if status not in valid_statuses:
-                        conn.execute("UPDATE tasks SET status='FAILED' WHERE task_id=?", (tid,))
-                        tasks_fixed += 1
-                        details.append(f"task {tid}: status {status} -> FAILED")
-                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    logger.warning("suppressed error in rollback_verifier", exc_info=True)
-
-            gates = conn.execute("SELECT * FROM gates").fetchall()
-            for gate in gates:
-                gid = gate["gate_id"]
-                try:
-                    result = gate["result"]
-                    valid_results = {"PASS", "FAIL", "SKIP", "PENDING"}
-                    if result and result not in valid_results:
-                        conn.execute("UPDATE gates SET result='FAIL' WHERE gate_id=?", (gid,))
-                        gates_fixed += 1
-                        details.append(f"gate {gid}: result {result} -> FAIL")
-                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    logger.warning("suppressed error in rollback_verifier", exc_info=True)
-
-            conn.commit()
+            task_fixes = _plan_task_fixes(conn, valid_statuses)
+            gate_fixes = _plan_gate_fixes(conn)
+            planned = task_fixes + gate_fixes
+            if max_rows is not None and len(planned) > max_rows:
+                raise HealRefusedError(f"计划修正 {len(planned)} 行 > 上限 max_rows={max_rows} ⇒ 拒写（C-0 护栏）")
+            notes: list[str] = []
+            for sql, params, note in planned:
+                if not dry_run:
+                    conn.execute(sql, params)
+                notes.append(note)
+            if not dry_run:
+                conn.commit()
+        finally:
             conn.close()
 
-            healed = (tasks_fixed + gates_fixed + events_fixed) > 0
-            return DBHealReport(
-                healed=healed,
-                tasks_fixed=tasks_fixed,
-                gates_fixed=gates_fixed,
-                events_fixed=events_fixed,
-                details=details,
-            )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            return DBHealReport(healed=False, tasks_fixed=0, gates_fixed=0, events_fixed=0, details=["internal error"])
+        return DBHealReport(
+            healed=bool(planned),
+            tasks_fixed=len(task_fixes),
+            gates_fixed=len(gate_fixes),
+            events_fixed=0,
+            details=notes,
+            dry_run=dry_run,
+        )
 
     def differential_check(self, db_before: Path, db_after: Path) -> DifferentialReport:
         rows_compared = 0
