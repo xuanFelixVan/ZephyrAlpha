@@ -69,8 +69,10 @@ from zephyr.risk.atr_stop_engine import AtrStopEngine
 from zephyr.risk.manipulation_avoidance_detector import ManipulationAvoidanceDetector
 from zephyr.risk.post_entry_instant_validator import PostEntryInstantValidator
 from zephyr.risk.risk_signal_sequencer import RiskSignalSequencer
+from zephyr.risk.paper_hedge_leg import PaperHedgeLeg
 
 __all__ = [
+    "PaperHedgeLeg",
     "cross_asset",
     "risk_limits",
     "risk_manager",

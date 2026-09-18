@@ -1,0 +1,52 @@
+# blueprint: MOD-RK-042 | docs/03_modules/_domain_risk/hedge_execution_skill/blueprint.md
+# [MODULE] config.paper_hedge
+# [DOMAIN] D_RISK
+# [INVARIANTS] 纸面对冲腿唯一配置真源（RULE-SSOT）；未知键=启动即报错（防拼写漂移静默不生效）；
+#   real_channel_locked 恒为 true——翻转=Owner high 门位（COORDINATION_LEDGER §7），代码侧拒绝 false
+# [CONSUMERS] zephyr.risk.paper_hedge_leg（唯一读取方）
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
+# [ERROR_CONTRACT] 缺文件=enabled:false（fail-closed 不开腿）；解析失败/未知键/比例越界=PapaperHedgeLegError
+# [TESTS] tests/risk/test_paper_hedge_leg.py
+
+# ── 为何独立成册而不并入 config/crisis_gate.yaml ──────────────────────────
+# crisis_gate.yaml 的读取方 zephyr.pf_alloc.crisis_gate 声明 known={"enabled","warning_theta"}，
+# 未知键=CrisisGateError 硬错（防拼写漂移静默不生效）。往里加对冲参数会当场打死危机闸主链路，
+# 故对冲腿参数独立成册。θ（warning 阈值）仍只在 crisis_gate.yaml，本册不重复定义（禁双真源）。
+# 已登记待裁定：docs/_working/fullflow_campaign/adjudications/req_residG_01.md
+
+# 纸面对冲腿总开关。true=危机确认日开纸面腿（虚拟资金，零真实下单）。
+enabled: true
+
+# 对冲合约（总包预裁 O2 采纳）：IM=中证1000股指期货。
+# 第一性原理：对冲腿的目的是抵消组合的**系统性风险暴露**；本仓主战场是 A 股中小盘信号
+# （signal_ashare 族 / 板块传导 / 涨停情绪），其 beta 更接近中证1000 而非沪深300（IF）或上证50（IH）。
+# 选 IM 与现货风格匹配度最高、基差风险最小。**仅在纸面演练生效**，真实期货通道仍禁碰（Owner 门位）。
+index_code: IM
+
+# 组合 beta（对 IM 标的指数）。一期用 1.0 起步（未做回归估计，如实标注：这是假设值不是测得值；
+# 长尾 M-6：用 sim_attribution_daily 的日收益序列对 000852 回归出实测 beta 后回写本键）。
+portfolio_beta: "1.0"
+
+# 对冲比例系数（裁定 D5：beta×0.5 起步）。有效对冲比例 = portfolio_beta × hedge_ratio_of_beta。
+hedge_ratio_of_beta: "0.5"
+
+# 纸面自动确认：HedgeExecutionSkill 的 human_gated 双确认在**纸面**（虚拟资金）下由本开关代确认。
+# 硬约束：仅当 real_channel_locked=true 时生效（见 paper_hedge_leg._build_skill）；
+# 真实通道解锁后本键必须置 false，人工确认回到 Owner。
+paper_auto_confirm: true
+
+# 真实期货通道锁（Owner high 门位，禁代码侧翻转）。解锁条件=纸面闭环跑满 ≥3 次演练 + Owner 批准。
+# 置 false 会被 PaperHedgeConfig.__post_init__ 直接拒绝（PaperHedgeLegError）。
+real_channel_locked: true
+
+# 在途腿状态文件（零内存态，进程崩不丢——裁定 D2 同款纪律）
+state_path: data/runtime/paper_hedge_state.json
+
+# 留痕目录（JSONL 逐笔 + 演练可对账）
+trail_dir: data/backtest_artifacts/paper_hedge
+
+# 敞口覆盖（元）。留空=从 c1_backtest.sim_pocket_daily 最新日 equity 合计解析；
+# 演练/单测时给显式值可绕开账本依赖（生产留空）。
+exposure_override: null
