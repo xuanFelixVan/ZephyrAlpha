@@ -15,7 +15,7 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 # 规则与审计一条龙施工总方案
 
 > **怎么用这份文件**（三条，读完再动手）：
-> 1. **裁定已封口**：第 1 节 D-1～D-13 是 Max 已做完的全部判断。施工队**不得自行判断**、不得"顺手优化"。
+> 1. **裁定已封口**：第 1 节 D-1～D-16 是 Max 已做完的全部判断。施工队**不得自行判断**、不得"顺手优化"。
 > 2. **遇到裁定未覆盖的分叉 → 停手回执**（见第 6 节回流条件），不要猜。
 > 3. **每个工作包（WP）自包含**：目标 / 改动点 / 命令 / 验收判据 / 红证要求 / 禁止事项。回执按第 5 节格式。
 >
@@ -24,7 +24,7 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 
 ## 0. 全局纪律（违反即返工）
 
-1. 隔离 worktree 施工；**禁止从主区提交**（主区长期有他会话在途 staged 内容）。并发窗口一律 `git_commit.py --enqueue` 走队列正门，直连与队列不混抢。
+1. 隔离 worktree 施工优先；**禁止主区直连提交**（主区长期有他会话在途 staged 内容，直连会被 `WORKTREE-REQUIRED` 拦且可能吸收他人 WIP）。并发窗口一律 `git_commit.py --enqueue` 走队列正门——**主区具名 + `--enqueue` 是合规正门，不算降级**（见 D-15，含三条硬前置与落地后三态核实），直连与队列不混抢。
 2. 热文件（注册表/宪法/tracker）写入必经 `zephyr.shared.io.file_utils.safe_write_text(path, content, expected_base_sha256=...)`，写后进程外核实。
 3. 撞 `HOT-FILE-BASE-FRESHNESS` 时的治本处置：`git merge dev` → 逐字证实工作区已含上游全部内容（`dev` 的行 100% 出现在副本里）→ 确认对 dev 是**纯 insert 零 delete** → release 后重新 claim → 仍拦才用 `--allow-overlap`（留痕）。**禁止**不做上述证实就直接加旗。
 4. 每个 WP 的验收**必须先出红证**：改前注入一个已知违规、看到红、撤样、再看绿。没有红证的"通过"一律记为未证绿（程序法 0.3）。
@@ -46,11 +46,14 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 | **D-6** | **案卷判据收窄**（见 WP8 的新判据原文）。闸1 悬空强制与闸3 多真源两个数**作废重算** | 现判据把"正常引用关系"误判为多真源（948/1404 命中，明显过宽）；把"本就不该有门禁的方法论条款"误判为悬空强制（962 含 379 条 md 条款） | WP8、WP9 |
 | **D-7** | 规则面风险档 = **两轴派生，不新增字段、不逐条判断**：`safety_level` 决定**应然退化方向**（H→fail-closed；M→fail-closed 但只拦本次改动面；L→可 fail-open 但必须留痕）；`ai_autonomy` 决定**门位**（`immutable_core`/`human_gated`→需 Owner；`ai_modifiable`→可自裁） | 两字段 86/86 齐备（safety_level H40/M32/L14；ai_autonomy immutable_core34/human_gated30/ai_modifiable22），语义本就是"多危险"与"谁能改"，无需发明新键 | WP7、WP8 |
 | **D-8** | 记忆/宪法文档 A/B **照抄 #ARCH-310 R3 原法，零新代码**：双盲全新子代理，A 组只持现行文档、B 组只持简化版、**C 组持故意砍掉冷启动序列的阳性对照**，各答同一套 10 个实战场景，按 `docs/_working/2026-09-13-xtreme-redblue-v3-plan.md` 的判定口径（L72-75）计分；**C 组必须显著差于 A**（否则废卷重出题）；**B 组缺口数 ≤ A 且连续两轮零新增缺口**才允许切换。`python -m zephyr.security.adversarial_validation run` 只作门禁面回归护栏——它测的是提交门禁管线，**不能替代行为测试** | 该方法已有成功先例（v1→L0 宪法替换，commit `c964c376c0`/`f2e92de716`，32 场景/9 维度/A-B 双基准） | WP13 |
-| **D-9** | 文档瘦身第一目标 = **`AGENTS.md` ↔ `agent_constitution_l0.md` 全文镜像**（正文≈100% 重复，仅差 frontmatter 与 3 行头部）。**不是** `.trae/rules/project_rules.md`——实测二者文本重叠≈0（共享非空字面行 1 条=表格分隔符、共享 `trae_*` 锚点 1 个、共享 `RULE-*` 键 1 个），"正交"声明成立，不得动它 | 实测重叠率；双真源判定按程序法闸3 收窄后的判据 | WP13 |
+| **D-9（2026-09-19 修订，原判定被施工队 WP13 推翻并经 Max 复核证实）** | `AGENTS.md` 与 `agent_constitution_l0.md` **不是镜像，是已分叉的双真源**：剥掉行尾符后实测 42 行真实差异，其中 `AGENTS.md` 独有而 l0 缺失的**条文级**内容包括 RULE-WORKTREE 的"降级直改主区=显式申请制（登记原因+GW 计数+周审计）"（正文与硬规则表第 3 行两处）、RULE-CAPABILITY-LOOKUP 的施工 SOP 必读指针、§6.2 的九族方法论地图；而 l0 的 frontmatter 自称"现行宪法真源"。另实测 `AGENTS.md` 工作副本为 **CRLF**（`.gitattributes` 要求 LF）。**裁定：真源＝`AGENTS.md`**（实测被 agent CLI 自动注入，且条文更全）；`agent_constitution_l0.md` 属过期镜像且自称真源 → 出口 D1 合并（改为指针文件或删除并同步指向）。**改宪法族＝high 档 + 受保护路径，一律回流 Max/Owner，施工队不得动**。`.trae/rules/project_rules.md` 仍不得动（与 AGENTS.md 文本重叠≈0，正交声明成立） | Max 亲自 `diff --strip-trailing-cr` 复核（注意：不剥行尾符会得到"整文件全差异"的假象，本条曾因此被我误判为镜像） | WP13 |
 | **D-10** | T0 机械减肥波**只用已验红证的 6 台卡**（C-01 表头 / C-02 frontmatter / C-03 词表硬编码 / C-04 命名 / C-10 错误码对账 / C-18 纯陈述），其余卡先补红证再用。首批做 C-01（表头缺栏，实测 4346 文件），**按域分批**，一批一提交 | 未验红证的卡不能当真理用；4346 一批做完无法复核 | WP14 |
 | **D-11** | `blueprint_registry.yaml` 悬空引用按取证结论 **(B) 故意退库**处置（`git rm --cached` 于 commit `03df6215e8`，ROOR 条目由裁定#231/`f275c1d079` 删除，`#ARCH-BP-REGISTRY-DELETION-001` status=resolved）。**不是改名、不是丢失**，禁止"恢复该文件" | 完整取证链见 WP11 | WP11 |
 | **D-12** | `GATE-RULE-CATALOG` 的 trigger 前缀从 `docs/01_policies_and_standards/rules/` **扩到整个 `docs/01_policies_and_standards/`** | 现前缀导致改 `sop/`、`_registry/` 下文档永不触发重生，登记册必然滞后（实测已滞后：2 条未登记 + 3 条字段陈旧） | WP12 |
 | **D-13** | **施工队（Flash 档）写权限＝"可读取即确定值才改"**：只有当栏位/取值能**从现场直接读取确定**（真实 import、词表合法值、文件字节、注册表既有格式）时才允许就地改；凡需要**推断、猜测、语义判断**才能定值的，一律只出案卷与处方，回流 Max。此为 Owner 2026-09-18 裁定，**收窄**程序法 0.15 的六类白名单口径（白名单仍适用，但逐项加"值可现场确定"前置）。每批必须复跑同一张卡，**违规数不下降即返工**。 | 弱模型在"补一个看起来合理的值"上的失败模式是编造——假身份证比缺栏更坏；而机械补栏交给 Max 是浪费强模型窗口 | 全部 WP，尤其 WP6/WP10/WP14 |
+| **D-14（解决施工队报的方案内矛盾①）** | **`docs/01_policies_and_standards/rules/` 全域冻结，直到 WP9 判案完成**。施工队对 rules/ 下文件**只出案卷 + 替换文本**（旧指向 → 实存新指向，逐字给出可直接粘贴的替换段），**不直接改**；落地由 Max 在判案后一次性执行（受保护路径，commit message 须含 `[ARCH-APPROVAL:ISSUE_ID]`）。WP15 第 4 项（9 条路径陈旧）与 WP10 的 B 类据此收窄：靶文件在 rules/ 下 → 只出替换文本；靶在其他可写路径且值有唯一现场来源 → 才可就地改。 | 两层理由：① rules/ 是受保护路径，本就需 ARCH-APPROVAL；② **更强的一层**——rules/ 正是 WP9 的判决对象，一边判一边改会造成判决对象漂移（审的版本≠改的版本），案卷号失去意义 | WP6、WP10、WP15 |
+| **D-15（解决施工队报的方案内矛盾②）** | **主区具名 + `--enqueue` 是合规正门，不算降级、不需登记降级原因**。本文件第 0 节第 1 条原文"禁止从主区提交"过严，据此修订为：**禁止的是主区直连提交**（`git_commit.py` 不带 `--enqueue`，会被 `WORKTREE-REQUIRED` 拦且可能吸收他人 staged 内容）。走队列时须满足三条硬前置：① `--files` 只列自己的文件，绝不含他人 staged 内容；② 热文件必须逐字证实"对 dev 纯 insert 零 delete"（`git diff --numstat dev -- <file>` 须为 `N 0`，且上游每一行都出现在自己副本里）；③ **落地后必须做三态核实**（`git show HEAD:<f>` / `git ls-files -s` 的 blob / 工作区字节三者 sha 一致）——队列落地只写工作区不动 index，会留下"index 压着旧 blob"的回退隐患，实测曾出现新文件 index 位是**空 blob** 的情形，任何人一次 `commit -a` 就会把已交付内容清空。 | AGENTS §2.6 明写"多会话并发窗口优先 `--enqueue` 走队列（serializer worktree 干净暂存区，结构性免疫连坐）"；三态隐患为本轮实测 | 全部 WP |
+| **D-16（案卷 TTL 处置）** | 采纳施工队做法（双份镜像 + 逐件 sha256 核对），并追加**小件入库、大件留 `.runtime`**：`dossiers_summary.json` 与 `dossiers_index.json`（机读索引，小体积、是判决依据）promote 到 `docs/_working/` 作为 tracked 交付物；逐份案卷正文（14MB 级）留 `.runtime` 双镜像，**不入 git**（程序法第 7 节：案卷是派生物）。 | 24h TTL 会吃掉判决依据；但把 14MB 案卷入 git 违反派生产物纪律。分开处置两头都保住 | WP8、WP9 |
 
 ## 2. 工作包总表
 
@@ -113,8 +116,8 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 - **附带**：同批重跑 `python scripts/governance/d3_metadata/generate_rule_catalog.py` 消除既有滞后（幂等，零风险）。
 
 ### WP13 · 记忆/宪法文档收敛 + A/B（Max 设计 / Flash 跑批）
-- **裁定**：D-9（目标是 AGENTS↔l0 镜像，不动 project_rules.md）、D-8（A/B 用 ARCH-310 R3 原法）。
-- **Flash 可做的部分**：① 实测重叠率并出报告（`AGENTS.md` vs `agent_constitution_l0.md` 逐行 diff，给出"仅差 frontmatter + N 行头部"的机证）；② 按 D-8 准备三组材料（A 现行 / B 简化版 / C 阳性对照）与 10 个场景题面；③ 跑 `python -m zephyr.security.adversarial_validation run` 作门禁面回归护栏并留 JSON。
+- **裁定**：D-9 修订版（两份宪法**已分叉**，真源＝`AGENTS.md`，l0 属过期镜像且自称真源；不动 `project_rules.md`）、D-8（A/B 用 ARCH-310 R3 原法）。
+- **Flash 可做的部分**：① 出**分叉清单**（按 D-9 修订：两份不是镜像）——`diff --strip-trailing-cr AGENTS.md docs/01_policies_and_standards/sop/governance_sop/agent_constitution_l0.md`，逐条列出"哪一份独有、独有内容属条文级还是排版级"，并各自标注行号。**必须剥行尾符**（`AGENTS.md` 工作副本是 CRLF，不剥会得到"整文件全差异"的假象）；② 按 D-8 准备三组材料（A 现行 / B 简化版 / C 阳性对照）与 10 个场景题面；③ 跑 `python -m zephyr.security.adversarial_validation run` 作门禁面回归护栏并留 JSON。
 - **必须回流 Max 的部分**：决定镜像收敛方向（保留哪一份为真源、另一份改成指针还是删除）、判定 A/B 结果是否达标、以及任何改 `AGENTS.md` 的动作（宪法=high 档 + 受保护路径，commit message 须含 `[ARCH-APPROVAL:ISSUE_ID]`）。
 - **禁止**：Flash 不得直接改 `AGENTS.md` / `agent_constitution_l0.md`；不得因为"看起来重复"就删任一份。
 
@@ -130,12 +133,13 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 - **验收**：每批跑 `python scripts/ops/verify_header_completeness.py`，缺栏数**必须严格下降**；不降即返工。回执须给"本批改了哪些栏位 / 哪些栏位只报未改（附数量）"两个数。
 - **红证**：首批开工前先对该命令做一次阴性对照（造一个缺栏文件→确认报红→删掉→确认绿），贴命令与退出码。
 
-### WP15 · 收尾杂项（Flash，5 件，各自独立提交）
+### WP15 · 收尾杂项（Flash，6 件，各自独立提交；第 3/4/5/6 件只出证据或案卷，不落地）
 1. **工棚拆除**：`.worktrees/st-auditdoc-v4-20260918` 与 `.worktrees/st-ruledisp-20260918` 按 `sop/ops_sop/worktree_cleanup_policy.md` 四证清理（in-process 删除会被 OPS-GUARD 拦，必须走正规通道）。
 2. **词表违规**：`docs/01_policies_and_standards/sop/review_sop/defect_pattern_checklist.md` 的 `rule_form: checklist` 不在 `rule_form_vocabulary.yaml`（合法值 declarative/procedural/data/structural）→ 改为 `procedural`，或走词表新增流程（**二选一由 Max 定，施工队先只出证据**）。
 3. **悬空 gate_id**：`TRAE-079` 声称 `COMMIT-CRITICAL-SECTION-LOCK`（两册零命中、全历史命中 1 次）→ 按程序法闸1 取证二分后处置；**取证结果交 Max 判**，不许自行改规则。
-4. **路径陈旧 9 条**（规则里写的执行体路径与实物不符，清单见 `.runtime/sessions/st-ruledisp-20260918/staging/rules_enforcement_census.json` 的 `stale` 段）→ 逐条改指向，一条一提交。
-5. **`gate_registry` 真漂移 2 条**（`source: pre-commit` 但 `.pre-commit-config.yaml` 无同名 hook）→ 先出证据（哪 2 条、册内 entry 与 config 实参），**处置方式交 Max 判**。
+4. **路径陈旧 9 条**（规则里写的执行体路径与实物不符，清单见 `.runtime/sessions/st-ruledisp-20260918/staging/rules_enforcement_census.json` 的 `stale` 段）→ **靶文件全部在 `rules/` 下，按 D-14 冻结：只出案卷 + 可直接粘贴的替换文本（旧指向 → 实存新指向，逐条给出行号），不落地、不提交**。
+5. **`gate_registry` 真漂移 2 条**（`source: pre-commit` 但 `.pre-commit-config.yaml` 无同名 hook）→ 先出证据（哪 2 条、册内 entry 与 config 实参逐字对比），**处置方式交 Max 判**。
+6. **`AGENTS.md` 工作副本行尾为 CRLF**（`.gitattributes` 要求 `eol=lf`；实测 140 行全 CRLF）→ **只出证据不修改**（宪法族 = 受保护路径 + high 档，按第 6 节第 2 条回流）。证据须含：入库 blob 的行尾形态与工作副本的行尾形态是否一致——若 blob 已是 LF 则属工作副本本地现象，不必改；若 blob 也是 CRLF 才是真缺陷。
 
 ## 4. 施工顺序（波次）
 
@@ -160,7 +164,7 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 ## 6. 必须停手回流 Max 的六种情形
 
 1. 需要删文件/删注册表条目/删规则小节（D-3 授权仅限 DB 死数据）；
-2. 需要改 `AGENTS.md`、`architecture_model/`、`rules/` 下任何内容（受保护路径）；
+2. 需要改 `AGENTS.md`、`architecture_model/`、`rules/` 下任何内容（受保护路径）。**`rules/` 全域冻结至 WP9 判案完成（D-14）**：只出案卷与可直接粘贴的替换文本，不落地；其余两处一律停手回流。本条与各 WP 内"改指向"类动作冲突时，**以本条为准**；
 3. 需要改门禁的判定逻辑、阈值、flag 出厂默认；
 4. 案卷或普查出现与本文件裁定矛盾的证据；
 5. 任何"绿"没能先出红证；
