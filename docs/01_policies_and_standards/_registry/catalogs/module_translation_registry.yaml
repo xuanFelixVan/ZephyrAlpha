@@ -54748,6 +54748,22 @@ entries:
   desc_en: ""
   plain_zh: "每天去 arXiv 上把量化相关的新论文标题抓回来，按关键词筛一遍，再让本地大模型用中文给你写一句话它对咱们的工厂有啥可借鉴的，攒进一个收件箱文件里等人来看，绝不自作主张往库里塞东西"
   responsibility_layer: governance
+- module_path: scripts/automation/flowthrough_verifier.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "全流通验收仪"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一把专门量从数据进来一直到钱出去这一整条路到底通不通的尺子：它自己什么业务都不干，只挨个环节去问六个问题——进门有没有货、中间能不能真跑起来、出门有没有落住、下游能不能取到、没人送的时候哨兵会不会叫、出了事报警会不会响，六个角度都实测完才敢给这个环节标个绿还是红；它还故意往自己身上拔管子做断供试验，证明这把尺子真遇到断链时会红，不会当一台永远说好的绿灯机"
+  responsibility_layer: governance
+- module_path: tests/automation/test_flowthrough_verifier.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "全流通验收仪测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给上面那把尺子做校验的用例：先证明它遇到真断链会红、遇到没货会红，再证明它拔了管子之后确实指得准是哪一跳被断，免得尺子自己变成又一个只会说好的东西"
+  responsibility_layer: governance
 - module_path: scripts/governance/apply_resource_plan.py
   domain_id: D_GOV_SCRIPTS
   name_zh: "资源排班方案写回工具"
