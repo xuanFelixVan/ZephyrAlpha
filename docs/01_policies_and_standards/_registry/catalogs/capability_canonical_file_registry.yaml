@@ -36043,6 +36043,18 @@ creation_tokens:
   token: bizmine-alpha-mining-d-sector-family-report-20260918
   created_by: st-bizmine-sec-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_events/pattern_event_study.csv
+  token: bizmine-alpha-mining-pattern-event-study-20260918
+  created_by: st-bizmine-pat-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_events/preregistration.md
+  token: bizmine-alpha-mining-preregistration-20260918
+  created_by: st-bizmine-pat-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_events/report.md
+  token: bizmine-alpha-mining-report-20260918
+  created_by: st-bizmine-pat-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
