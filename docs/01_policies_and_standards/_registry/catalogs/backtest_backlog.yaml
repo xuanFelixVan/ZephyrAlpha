@@ -194,9 +194,10 @@ objects:
   market: cn_a
   module_ref: src/zephyr/regime/features/index_sensor.py
   testable: true
-  confidence: untested
+  confidence: valid
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+  evidence: docs/_working/bizmine_night/sensors_b1/sensor_monotonicity_b1_exam.md §2（2026-09-19 批算实测——sensor_monotonicity 判 valid（主读法=趋势跟随），rho=+0.800 全 8 格（N=1/5/10/20×lag0/1，n=8428，lag=1 无前视嫌疑）；+2 档结构性不可达=规格发现待决策点；反向读法全 noise，方向语义冻结待决策点）
 - object_id: BT-P1-002
   node_ids:
   - TDM-E-L1-S2
@@ -246,9 +247,10 @@ objects:
   market: cn_a
   module_ref: src/zephyr/alt_data/policy_expectation_analyzer.py
   testable: true
-  confidence: untested
+  confidence: pending
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+  evidence: docs/_working/bizmine_night/sensors_b1/sensor_monotonicity_b1_exam.md §4（2026-09-19 批算实测——整体不可判，pending 挂起——四腿缺三数据缺口（非脚本缺口）——货币腿 Shibor 仅 76 行/流动性腿两融约 2 个月/政策腿无历史表，拼不出规格分档禁自创口径；海外腿探针已交（纳指隔夜跌>2% n=559，1 日压制、20 日反强）；待 Shibor/两融历史回补（B2-a）+政策腿数据化后重考）
 - object_id: BT-P1-006
   node_ids:
   - TDM-E-L1-S0-1
@@ -259,9 +261,10 @@ objects:
   market: cn_a
   module_ref: src/zephyr/intelligence/news_sentiment_analyzer.py
   testable: true
-  confidence: untested
+  confidence: valid
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
+  evidence: docs/_working/bizmine_night/sensors_b1/sensor_monotonicity_b1_exam.md §3（2026-09-19 批算实测——h20 valid/短中窗 pending（rho=+0.800（h20）与 +0.5~0.6（短中窗），总触发 3518，情绪延续语义全格正向）；标题-only 降级口径（content 未参与，全文版待回补）；持久化窗 news_sentiment_window 全落 holdout 0 窗可考→按模块规则法重算 2010-2024；方向语义冻结待决策点）
 - object_id: BT-P1-007
   node_ids:
   - TDM-E-L1-S5
@@ -1024,7 +1027,8 @@ objects:
   market: cn_a
   module_ref: null
   testable: false
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考随批聚合出数（D108 容器语义，不独立出数）——批判 slip_mean=2.56bp、triggers=1467、verdict=valid）
   testable_note: 结构点/容器环节——行为由子节点或全流承载（D108 合并判据），不独立开回测对象
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
@@ -1038,7 +1042,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/ex_core/order_splitter.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid——slip_mean=2.56bp、triggers=1467、decision_price 真基准；分批建仓全量代理口径）
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P1-028
@@ -1051,7 +1056,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/plan_engine/closing_session_decision.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid——slip_mean=2.56bp、triggers=1467；买入时序全量代理口径）
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-043
@@ -1064,7 +1070,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/ex_core/pricing_policy.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid——decision_price 真基准直接考限价/市价选择（1467/1467 覆盖），本批信息量最大；slip p50=2.34/p99=7.24bp）
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-044
@@ -1077,7 +1084,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/signal_fundamental/capital/capital_allocator.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid——slip_mean=2.56bp、triggers=1467；资金分配全量代理口径）
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-045
@@ -1090,7 +1098,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/ex_core/daban_execution.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid（代理受限）——order_type 全 market 排板单不可分桶，专项判据降级全量代理（slip_mean=2.56bp、triggers=1467）；真分桶考待 bt_trade_log_attribution_fields_missing 字段落地（Flash F03））
   plan:
     validation_method: exec_quality
     min_samples: 每桶触发>=30（土规；桶=order_type 真实类型 / EXA 算法）
@@ -1114,7 +1123,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/ex_sor/core/algo_execution_selector.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid（代理受限）——fill 无 algo_id，6 个 EXA 算法不可逐判，全量代理口径（slip_mean=2.56bp、triggers=1467）；真分桶考待 bt_trade_log_attribution_fields_missing 字段落地（Flash F03））
   plan:
     validation_method: exec_quality
     min_samples: 每桶触发>=30（土规；桶=order_type 真实类型 / EXA 算法）
@@ -1138,7 +1148,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/ex_core/local_order_queue.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid——slip_mean=2.56bp、triggers=1467；条件触发队列全量代理口径）
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-048
@@ -1151,7 +1162,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/sell_decision/core/breakout_failure_detector.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid——slip_mean=2.56bp、triggers=1467；突破失败降级全量代理口径）
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-049
@@ -1164,7 +1176,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/ex_core/order_manager.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid（代理）——订单生命周期状态机全量代理；未成交/撤改流水不可见，成交率轴不可评（如实披露，REG-VALM-001 双轴判据单轴降级为既定裁定口径））
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-050
@@ -1177,7 +1190,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/ex_core/fill_handler.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid（代理）——部分成交与撤改处理全量代理口径，成交率轴不可评同 BT-P2-049 披露）
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-051
@@ -1190,7 +1204,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/ex_core/pre_execution_checker.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid——slip_mean=2.56bp、triggers=1467；订单级预检全量代理口径）
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-052
@@ -1203,7 +1218,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/trading/three_way_reconciliation.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid（代理）——执行容灾对账增强判据 c1_market.reconciliation_differences 实测 0 行（空表不阻断）；全量代理口径）
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P2-053
@@ -1216,7 +1232,8 @@ objects:
   market: cn_a
   module_ref: src/zephyr/ex_sor/services/execution_quality_scorer.py
   testable: true
-  confidence: untested
+  confidence: valid
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md（2026-09-17 L4 批考 valid——成本反馈闭环可实算（commission 1467/1467 在，实证均值 buy 10.77bp/sell 22.01bp，小额单 min5 地板主导=CST-ASTOCK-001 已建模行为））
   plan: null
   plan_note: 验收阈值未预注册——批次决策点填写并冻结前禁跑（SOP-B 护栏③）
 - object_id: BT-P3-004
@@ -1867,7 +1884,8 @@ objects:
   market: cn_a
   module_ref: cost_model_registry(CST-ASTOCK-001/CST-T0-001)
   testable: true
-  confidence: untested
+  confidence: pending
+  evidence: docs/_working/kimi_audit/lane_reports/P6.md + .runtime/tmp/exp/p6/cost_trio_result.json（2026-09-17 成本三件套部分完考——E-L4-09 过（滑点 2.56bp+成本项 1467/1467 逐笔零偏差符合 CST-ASTOCK-001）、X-S2-01 过（卖侧 858 笔滑点 2.65bp≤20）；P-P2-01/P-P2-03 存疑（做T配对 24<30 土规 insufficient_samples→Flash F02 重考；披露（0/24 配对毛价差≥30bp 开仓前置，净价差 mean −45.0bp，代理口径同 symbol×day 配对））
   merge_note: 成本模型三件套（SOP-A P0 铁行）：cost_model_refs 承载节点族合并验证
   plan:
     validation_method: exec_quality
@@ -1925,8 +1943,9 @@ objects:
   market: cn_a
   module_ref: 做T v2 前置——数据地形勘测（000300/880板块/510300/代表个股 × 1/5/15/30/60/120min 覆盖质量实测；1min 聚合链评估；指数分钟源缺口确认）
   testable: true
-  confidence: untested
+  confidence: verified
   plan_note: 做T v2 战役第一刀（docs/_working/factory/t_v2/2026-09-17-t-v2-campaign-design.md）；只读勘测可立即执行；分钟缺口补全归数据线
+  evidence: docs/_working/bizmine_night/t0_regime/t0_regime_narrow_test_results.md + docs/_working/bizmine_night/tick_t0/（勘测完成 2026-09-19 销账——裁定 #304 证据链四环关闭（T3 行情条件化 TERMINATE uplift 1.284<1.5 + tick 执行侧无救援全 FAIL），做T 议题在 A股 ETF 15min 级维度终结；分钟缺口补全仍归数据线）
 - object_id: BT-P2-056
   node_ids: []
   node_type: exam_matrix
