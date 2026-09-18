@@ -36343,8 +36343,16 @@ creation_tokens:
   token: bizmine-alpha-mining-pattern-backfill-execution-20260918
   created_by: st-bizmine-pb-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/bizmine_wakeup_report.md
+  token: bizmine-alpha-mining-bizmine-wakeup-report-20260918
+  created_by: st-bizmine-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
   capability: rule_audit_campaign
+- file: scripts/governance/meta/gate_prerun.py
+  token: governance-gate-prerun-gate-prerun-20260918
+  created_by: st-ffb19-20260919
+  capability: governance_gate_prerun
 di_seam_exemptions: []
