@@ -33,6 +33,23 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
     不受标度影响）；int→UInt64（契约校验 intended>0/actual>=0）；str 时间戳
     （ISO 8601 UTC）→DateTime64(3,'UTC')（写入侧 datetime 化，读回侧 isoformat）；
     枚举串（direction/algo_type/broker_id/schema_version）→LowCardinality(String)。
+    唯一例外：slippage_bps→Nullable(Float64)——本列必须能表达"无有效执行样本"
+    （撤单/拒单/零成交）；非 Nullable 列会把"读不到值"与"值为 0"混成一谈，
+    正是 R-014 要治的"0 伪装合法数值进闭环"病。契约层 CTR-P1-007 目前仍声明
+    float/required（NULL 语义须 Owner 批受保护契约，见
+    docs/_working/fullflow_campaign/adjudications/req_drift_01_contract_approval.md）
+    → 表侧先与线上一致消除漂移，producer 侧 NULL 实现在契约批准后另批落地。
+
+变更记录：
+    2026-09-18 st-ff-drift-20260918 漂移收口（RULE-SSOT：表 schema 属架构数据，
+    真源=本 DDL-as-Code）：slippage_bps Float64 → Nullable(Float64)。
+    背景=前手车道对生产表执行 MODIFY COLUMN→Nullable(Float64) 成功后回改
+    Float64 失败（本车道实测根因=ClickHouse Code 36：Nullable→非 Nullable
+    必须带 DEFAULT 表达式；带 DEFAULT 0 实测"成功"但把 NULL 静默写成 0.0
+    =伪造数值，故回退方向本身被数据库否决）。线上现为目标态 Nullable(Float64)，
+    漂移收口方向=代码对齐线上（零 ALTER、零行为变化：非 NULL 值写入 Nullable
+    列语义不变；本表 slippage_bps 全库零程序读者，无 NOT NULL 依赖方）。
+    复跑判据：python scripts/ch/verify_schema_truth.py --table execution_report → 0 漂移。
 
 V2 codegen 字段扩展预留：
     schema_version 列承载契约版本（v1.0）；codegen 新增字段（V2）经
@@ -69,7 +86,7 @@ CREATE TABLE IF NOT EXISTS c1_market.execution_report
     actual_quantity   UInt64                  COMMENT '实际成交数量(股,<=intended;actual<intended隐含部分成交)',
     intended_price    Decimal(18, 4)          COMMENT '意图价格(决策价,40号§2.4 DECISION滑点基准)',
     vwap_price        Decimal(18, 4)          COMMENT '实际成交VWAP(单券商MVP=成交均价)',
-    slippage_bps      Float64                 COMMENT '滑点(bps,带方向符号,正=不利成本/买贵卖贱)',
+    slippage_bps      Nullable(Float64)       COMMENT '滑点(bps,带方向符号,正=不利成本;NULL=无有效执行样本(撤单/拒单/零成交))',
     commission        Decimal(18, 4)          COMMENT '佣金(元,>=0)',
     execution_start   DateTime64(3, 'UTC')    COMMENT '执行开始时间(契约口径ISO 8601 UTC)',
     execution_end     DateTime64(3, 'UTC')    COMMENT '执行结束时间(契约口径ISO 8601 UTC,>=start)',

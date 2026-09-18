@@ -35590,5 +35590,41 @@ creation_tokens:
   token: ai-intake-l2-gen-intake-ref-snapshots-20260918
   created_by: st-ff-aibase-20260918
   capability: ai_intake_l2
+- file: docs/_working/fullflow_campaign/stages/FF-16_delivery_channel/ledger_sixway.md
+  token: ff16-alarm-channel-ledger-sixway-20260918
+  created_by: st-ff-alarm-20260918
+  capability: ff16_alarm_channel
+- file: docs/_working/fullflow_campaign/stages/FF-16_delivery_channel/escalation_flip_prereq.md
+  token: ff16-alarm-channel-escalation-flip-prereq-20260918
+  created_by: st-ff-alarm-20260918
+  capability: ff16_alarm_channel
+- file: docs/_working/fullflow_campaign/adjudications/req_alarm_01.md
+  token: ff16-alarm-channel-req-alarm-01-20260918
+  created_by: st-ff-alarm-20260918
+  capability: ff16_alarm_channel
+- file: docs/_working/fullflow_campaign/adjudications/req_drift_01_contract_approval.md
+  token: fullflow-drift-adjudication-req-drift-01-contract-approval-20260918
+  created_by: st-ff-drift-20260918
+  capability: fullflow-drift-adjudication
+- file: docs/_working/fullflow_campaign/lanes/arch_338_356_dossiers.md
+  token: arch-338-356-dossiers-arch-338-356-dossiers-20260918
+  created_by: st-ff-arch-20260918
+  capability: arch-338-356-dossiers
+- file: docs/_working/fullflow_campaign/CONSTRUCTION_DISCIPLINE.md
+  token: fullflow-campaign-docs-construction-discipline-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_campaign_docs
+- file: docs/_working/fullflow_campaign/FLOWTHROUGH_ACCEPTANCE_SPEC.md
+  token: fullflow-campaign-docs-flowthrough-acceptance-spec-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_campaign_docs
+- file: docs/_working/fullflow_campaign/delivery/MAX_REVIEW_CHECKLIST.md
+  token: fullflow-campaign-docs-max-review-checklist-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_campaign_docs
+- file: docs/_working/fullflow_campaign/adjudications/req_arch_01.md
+  token: arch-338-356-req-req-arch-01-20260918
+  created_by: st-ff-arch-20260918
+  capability: arch-338-356-req
 
 di_seam_exemptions: []
