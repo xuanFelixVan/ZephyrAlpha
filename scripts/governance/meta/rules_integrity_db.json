@@ -11,22 +11,22 @@
       "desc": "AI Session 冷启动卡片"
     },
     "scripts/governance/_shared/thresholds.yaml": {
-      "hash": "5626b0a9eaea4f8b",
+      "hash": "a6d65e46ba813101",
       "critical": true,
       "desc": "关键阈值 SSoT"
     },
     "config/runtime/kill_switch_state.yaml": {
-      "hash": "a7892be4ad86206a",
+      "hash": "83973fa9d7c0d8a0",
       "critical": true,
       "desc": "Kill Switch 状态"
     },
     "config/runtime/shadow_mode_state.yaml": {
-      "hash": "faefef61380e5201",
+      "hash": "b734896861e0967d",
       "critical": false,
       "desc": "Shadow Mode 状态"
     },
     "config/runtime/error_budget_state.yaml": {
-      "hash": "b3a535adbb088fd4",
+      "hash": "b1cf7651581d808a",
       "critical": true,
       "desc": "Error Budget 状态"
     },
@@ -41,22 +41,22 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "41dc2c0975f7d158",
+      "hash": "3eeee393aa47a601",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "84d7ca0ba6b110e5",
+      "hash": "eccc9d3783ab7e08",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
     "scripts/governance/meta/validate_rules_integrity.py": {
-      "hash": "8332dc88fe0f8382",
+      "hash": "6a440b3a91332a0d",
       "critical": true,
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "1693c476c229671c",
+      "hash": "89d5c2a287578b8c",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -86,6 +86,6 @@
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-09-17T19:05:38.646506+00:00",
+  "registered_at": "2026-09-18T18:32:51.190226+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
