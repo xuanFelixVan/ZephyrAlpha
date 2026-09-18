@@ -35374,6 +35374,10 @@ creation_tokens:
   token: auto-scaffold-paper_hedge_leg-20260918
   created_by: scaffold.py
   capability: paper_hedge_leg
+- file: config/paper_hedge.yaml
+  token: paper-hedge-leg-paper-hedge-20260918
+  created_by: st-ff-harvest-20260918
+  capability: paper_hedge_leg
 - file: docs/_working/n5_closure/n5_disposition_ledger.md
   token: n5-closure-n5-disposition-ledger-20260918
   created_by: st-ff-landA-20260918
@@ -35626,6 +35630,10 @@ creation_tokens:
   token: ai-intake-l2-gen-intake-ref-snapshots-20260918
   created_by: st-ff-aibase-20260918
   capability: ai_intake_l2
+- file: src/zephyr/ai_layer/intake/intake_events.py
+  token: ai-intake-l2-intake-events-20260918
+  created_by: st-ff-ailayer2-20260918
+  capability: ai_intake_l2
 - file: docs/_working/fullflow_campaign/stages/FF-16_delivery_channel/ledger_sixway.md
   token: ff16-alarm-channel-ledger-sixway-20260918
   created_by: st-ff-alarm-20260918
@@ -35835,4 +35843,48 @@ creation_tokens:
   token: rule-disposition-rule-disposition-policy-20260918
   created_by: st-ruledisp-20260918
   capability: rule_disposition
+- file: docs/_working/fullflow_campaign/lanes/rbpit_prescriptions.md
+  token: pit-attestation-prescriptions-rbpit-prescriptions-20260918
+  created_by: st-ff-rb-pit-20260918
+  capability: pit_attestation_prescriptions
+- file: docs/_working/fullflow_campaign/adjudications/req_rbpit_01.md
+  token: pit-attestation-prescriptions-req-rbpit-01-20260918
+  created_by: st-ff-rb-pit-20260918
+  capability: pit_attestation_prescriptions
+- file: docs/_working/fullflow_campaign/adjudications/req_rbsafe2_01.md
+  token: fullflow-req-rbsafe2-01-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_req_rbsafe2_01
+- file: docs/_working/fullflow_campaign/delivery/FINAL_DELIVERY_REPORT.md
+  token: fullflow-final-delivery-report-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_final_delivery_report
+- file: docs/_working/fullflow_campaign/lanes/census_reverify_CD.md
+  token: fullflow-census-reverify-cd-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_census_reverify_cd
+- file: docs/_working/fullflow_campaign/lanes/rbsafe2_prescriptions.md
+  token: fullflow-rbsafe2-prescriptions-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_rbsafe2_prescriptions
+- file: docs/_working/fullflow_campaign/lanes/rbsafe_prescriptions.md
+  token: fullflow-rbsafe-prescriptions-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_rbsafe_prescriptions
+- file: docs/_working/fullflow_campaign/recovered/2026-09-18-HANDOFF-PROMPT.md
+  token: fullflow-2026-09-18-handoff-prompt-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_2026_09_18_handoff_prompt
+- file: docs/_working/fullflow_campaign/recovered/2026-09-18-institutional-architecture-review.md
+  token: fullflow-2026-09-18-institutional-architecture-review-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_2026_09_18_institutional_architecture_review
+- file: docs/_working/fullflow_campaign/recovered/2026-09-18-issue-inventory-full.md
+  token: fullflow-2026-09-18-issue-inventory-full-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_2026_09_18_issue_inventory_full
+- file: docs/_working/fullflow_campaign/adjudications/req_teeth_01.md
+  token: fullflow-r055-execution-req-teeth-01-20260918
+  created_by: st-ff-teeth-20260918
+  capability: fullflow_r055_execution
 di_seam_exemptions: []
