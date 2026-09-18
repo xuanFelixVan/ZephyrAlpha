@@ -20,3 +20,5 @@
 通用回测/成本/数据设施一律复用 zephyr.backtest / zephyr.infrastructure，
 本包零复制（RULE-CLONEGUARD）。
 """
+
+__all__: list[str] = []

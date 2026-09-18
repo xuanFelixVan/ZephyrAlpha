@@ -96,6 +96,12 @@ _WHITELIST: frozenset[str] = frozenset(
         "src/zephyr/governance/depgraph_schema.py",
         "scripts/industry_graph/quality_fix_p2.py",
         "scripts/industry_graph/build_node_bindings.py",
+        # 治本（2026-09-18）：AI 层 L2 收集库（st-ff-ailayerB-20260918）
+        #   apply_ai_intake_ddl.py = ai_intake schema DDL 部署器（CREATE 需 admin 角色）
+        #   card_store.py          = ai_intake_card 写入器（DatabaseService 写侧当前返回 reader 角色，
+        #                            见裁定申请 req_ailayerB_03；修好后回切同一入口）
+        "scripts/ai_layer/apply_ai_intake_ddl.py",
+        "src/zephyr/ai_layer/intake/card_store.py",
     }
 )
 

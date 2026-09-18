@@ -79,19 +79,19 @@ def test_atr_none_fallback_short():
         None,
         _highest_close_fn,
     )
-    assert price == pytest.approx(9.6)
+    assert price == pytest.approx(11.52)  # rpt_e03 锚点同构 12.0×0.96
 
 
 def test_atr_none_fallback_medium():
     """ATR缺失+中长线 → 8%: 10.0×0.92=9.2。"""
     price = TakeProfitStrategy.compute_exit_price(_pos(current=10.4), None, _highest_close_fn)
-    assert price == pytest.approx(9.2)
+    assert price == pytest.approx(11.04)  # rpt_e03 锚点同构 12.0×0.92
 
 
 def test_atr_zero_fallback():
     """ATR=0 同样降级固定%。"""
     price = TakeProfitStrategy.compute_exit_price(_pos(current=10.4), 0.0, _highest_close_fn)
-    assert price == pytest.approx(9.2)
+    assert price == pytest.approx(11.04)  # rpt_e03 锚点同构 12.0×0.92
 
 
 # ── 输入校验 ──

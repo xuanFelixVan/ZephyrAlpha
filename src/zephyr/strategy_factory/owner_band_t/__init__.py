@@ -26,3 +26,5 @@
   engine        波段+做T 组合引擎（金字塔三档/镜像三档减仓/回撤熔断）
   exam          E4 考试器（IS 网格全记录 + OOS 单次三臂归因）
 """
+
+__all__: list[str] = ["costs", "data_loader", "engine", "exam", "intraday_t", "regime_gate", "signals", "td_sequence"]

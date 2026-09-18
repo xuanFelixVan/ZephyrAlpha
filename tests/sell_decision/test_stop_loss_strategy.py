@@ -99,25 +99,25 @@ def test_short_term_m_unchanged():
 
 
 def test_atr_none_fallback_short_term():
-    """ATR缺失+短线 → 固定4%: 10.0×0.96 = 9.6。"""
+    """ATR缺失+短线 → 锚点同构固定4%（rpt_e03：锚=max(最高收盘,entry)，曾锚 entry 致盈利期悬崖）。"""
     price = StopLossStrategy.compute_stop_loss(
         _pos(strategy_type=StrategyType.SHORT_TERM),
         atr_value=None,
         highest_close_fn=_highest_close_fn,
         phase=PositionPhase.LOSS,
     )
-    assert price == pytest.approx(9.6)
+    assert price == pytest.approx(11.52)  # 12.0×0.96（fixture 最高收盘=12）
 
 
 def test_atr_none_fallback_long_term():
-    """ATR缺失+非短线 → 固定8%: 10.0×0.92 = 9.2。"""
+    """ATR缺失+非短线 → 锚点同构固定8%: 12.0×0.92 = 11.04（rpt_e03 锚点同构）。"""
     price = StopLossStrategy.compute_stop_loss(
         _pos(strategy_type=StrategyType.TREND),
         atr_value=None,
         highest_close_fn=_highest_close_fn,
         phase=PositionPhase.PROFIT,
     )
-    assert price == pytest.approx(9.2)
+    assert price == pytest.approx(11.04)  # 12.0×0.92（rpt_e03 锚点同构）
 
 
 def test_atr_zero_fallback():
@@ -129,7 +129,7 @@ def test_atr_zero_fallback():
         phase=PositionPhase.LOSS,
     )
     # OTHER 走非短线分支 8%
-    assert price == pytest.approx(9.2)
+    assert price == pytest.approx(11.04)  # 12.0×0.92（rpt_e03 锚点同构）
 
 
 # ── 输入校验 ──
@@ -199,3 +199,15 @@ def test_time_stop_atr_none_not_triggered():
 def test_time_stop_negative_days_rejected():
     with pytest.raises(SellStopLossInputError):
         StopLossStrategy.check_time_stop(_pos(), 0.5, -1)
+
+
+def test_atr_fallback_no_profit_cliff():
+    """rpt_e03 P1 回归：盈利期 ATR 断供时止损不得跌破入场价（锚点同构降级）。"""
+    pos = _pos(strategy_type=StrategyType.TREND)
+    price = StopLossStrategy.compute_stop_loss(
+        pos,
+        atr_value=None,
+        highest_close_fn=_highest_close_fn,
+        phase=PositionPhase.PROFIT,
+    )
+    assert price >= pos.entry_price, f"盈利期降级止损 {price} 跌破入场价 {pos.entry_price}（悬崖回归）"
