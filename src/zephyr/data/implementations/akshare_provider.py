@@ -1058,7 +1058,9 @@ class AkshareIngestProvider(IngestProviderBase):
         列"季度"如"2025年第1季度" -> 季度末日期；
         "国内生产总值-绝对值" -> indicator_name="GDP"，unit="亿元"；
         "国内生产总值-同比增长" -> indicator_name="GDP_同比"，unit="%"。
-        frequency="季度"。
+        frequency="quarterly"（D8 口径统一 20260918：枚举锁英文
+        daily/monthly/quarterly/annual/weekly/event，映射表见
+        schemas/categories/macro/macro_macro_data.py 头注）。
         """
         rows: list[tuple] = []
         for _, row in df.iterrows():
@@ -1069,11 +1071,11 @@ class AkshareIngestProvider(IngestProviderBase):
             # GDP 绝对值
             val = safe_float(row.get("国内生产总值-绝对值"))
             if val is not None:
-                rows.append((report_date, "GDP", val, "亿元", "季度"))
+                rows.append((report_date, "GDP", val, "亿元", "quarterly"))
             # GDP 同比
             yoy = safe_float(row.get("国内生产总值-同比增长"))
             if yoy is not None:
-                rows.append((report_date, "GDP_同比", yoy, "%", "季度"))
+                rows.append((report_date, "GDP_同比", yoy, "%", "quarterly"))
         return rows
 
     def _transform_monthly(self, df) -> list[tuple]:
@@ -1081,7 +1083,7 @@ class AkshareIngestProvider(IngestProviderBase):
 
         第一列如"2025年6月" -> 月末日期；其余列各自作为 indicator_name。
         unit 根据列名推断（治本修复：原 unit="" 硬编码导致 5554 行空 unit）。
-        frequency="月度"。
+        frequency="monthly"（D8 口径统一 20260918，原"月度"）。
 
         unit 推断规则（覆盖 CPI/PMI/货币供应量全部 25 个列名）：
         - 含"同比增长"/"环比增长" → "%"（百分比）
@@ -1116,7 +1118,7 @@ class AkshareIngestProvider(IngestProviderBase):
                     unit = "指数"
                 else:
                     unit = ""
-                rows.append((report_date, col, val, unit, "月度"))
+                rows.append((report_date, col, val, unit, "monthly"))
         return rows
 
     # ---- EDB 替代：利率类指标 fetch wrappers（#ARCH-IFIND-FAILOVER）----
@@ -1194,7 +1196,7 @@ class AkshareIngestProvider(IngestProviderBase):
         """转换 Shibor DataFrame。
 
         输入: 报告日/利率/涨跌/tenor（8 个期限合并）
-        输出: (报告日, "Shibor_{tenor}", 利率, "%", "日频")
+        输出: (报告日, "Shibor_{tenor}", 利率, "%", "daily")
         """
         if df is None or len(df) == 0:
             return []
@@ -1204,14 +1206,14 @@ class AkshareIngestProvider(IngestProviderBase):
             tenor = str(row.get("tenor", ""))
             val = safe_float(row.get("利率"))
             if val is not None and date and tenor:
-                rows.append((date, f"Shibor_{tenor}", val, "%", "日频"))
+                rows.append((date, f"Shibor_{tenor}", val, "%", "daily"))
         return rows
 
     def _transform_repo(self, df) -> list[tuple]:
         """转换回购定盘利率 DataFrame。
 
         输入: date/FR001/FR007/FR014/FDR001/FDR007/FDR014
-        输出: (date, "回购_{col}", val, "%", "日频")
+        输出: (date, "回购_{col}", val, "%", "daily")
         """
         if df is None or len(df) == 0:
             return []
@@ -1224,7 +1226,7 @@ class AkshareIngestProvider(IngestProviderBase):
             for col in rate_cols:
                 val = safe_float(row.get(col))
                 if val is not None:
-                    rows.append((date, f"回购_{col}", val, "%", "日频"))
+                    rows.append((date, f"回购_{col}", val, "%", "daily"))
         return rows
 
     def _transform_cn_yield(self, df) -> list[tuple]:
@@ -1232,7 +1234,7 @@ class AkshareIngestProvider(IngestProviderBase):
 
         输入: 曲线名称/日期/3月/6月/1年/3年/5年/7年/10年/30年
         过滤: 中债国债 + 中债国开债 + 中债中短期票据(AAA) + 中债商业银行普通债(AAA)
-        输出: (日期, "{曲线简称}_{期限}", val, "%", "日频")
+        输出: (日期, "{曲线简称}_{期限}", val, "%", "daily")
         """
         if df is None or len(df) == 0:
             return []
@@ -1255,14 +1257,14 @@ class AkshareIngestProvider(IngestProviderBase):
             for col in tenor_cols:
                 val = safe_float(row.get(col))
                 if val is not None:
-                    rows.append((date, f"{short}_{col}", val, "%", "日频"))
+                    rows.append((date, f"{short}_{col}", val, "%", "daily"))
         return rows
 
     def _transform_us_cn_yield(self, df) -> list[tuple]:
         """转换中美国债收益率 DataFrame。
 
         输入: 日期/中国国债收益率2年/5年/10年/30年/美国国债收益率2年/5年/10年/30年
-        输出: (日期, col_name, val, "%", "日频")
+        输出: (日期, col_name, val, "%", "daily")
         跳过 GDP 和利差列（10年-2年）。
         """
         if df is None or len(df) == 0:
@@ -1277,14 +1279,14 @@ class AkshareIngestProvider(IngestProviderBase):
                     continue
                 val = safe_float(row.get(col))
                 if val is not None:
-                    rows.append((date, col, val, "%", "日频"))
+                    rows.append((date, col, val, "%", "daily"))
         return rows
 
     def _transform_lpr(self, df) -> list[tuple]:
         """转换 LPR DataFrame。
 
         输入: TRADE_DATE/LPR1Y/LPR5Y/RATE_1/RATE_2
-        输出: (TRADE_DATE, "LPR_1年"/"LPR_5年", val, "%", "月频")
+        输出: (TRADE_DATE, "LPR_1年"/"LPR_5年", val, "%", "monthly")
         只取最近 90 天避免数据量过大。
         """
         if df is None or len(df) == 0:
@@ -1297,17 +1299,17 @@ class AkshareIngestProvider(IngestProviderBase):
                 continue
             lpr1y = safe_float(row.get("LPR1Y"))
             if lpr1y is not None:
-                rows.append((date, "LPR_1年", lpr1y, "%", "月频"))
+                rows.append((date, "LPR_1年", lpr1y, "%", "monthly"))
             lpr5y = safe_float(row.get("LPR5Y"))
             if lpr5y is not None:
-                rows.append((date, "LPR_5年", lpr5y, "%", "月频"))
+                rows.append((date, "LPR_5年", lpr5y, "%", "monthly"))
         return rows
 
     def _transform_social_financing(self, df) -> list[tuple]:
         """转换社会融资规模 DataFrame。
 
         输入: 月份(YYYYMM)/社会融资规模增量/其中-人民币贷款/...
-        输出: (月末日期, indicator_name, val, "亿元", "月频")
+        输出: (月末日期, indicator_name, val, "亿元", "monthly")
         """
         if df is None or len(df) == 0:
             return []
@@ -1320,14 +1322,14 @@ class AkshareIngestProvider(IngestProviderBase):
             for col in df.columns[1:]:
                 val = safe_float(row.get(col))
                 if val is not None:
-                    rows.append((report_date, col, val, "亿元", "月频"))
+                    rows.append((report_date, col, val, "亿元", "monthly"))
         return rows
 
     def _transform_fed_rate(self, df) -> list[tuple]:
         """转换美联储利率 DataFrame。
 
         输入: 商品/日期/今值/预测值/前值
-        输出: (日期, "美联储利率", 今值, "%", "事件")
+        输出: (日期, "美联储利率", 今值, "%", "event")
         只取最近 20 条（事件驱动，频率低）。
         """
         if df is None or len(df) == 0:
@@ -1338,14 +1340,14 @@ class AkshareIngestProvider(IngestProviderBase):
             date = str(row.get("日期", ""))
             val = safe_float(row.get("今值"))
             if val is not None and date:
-                rows.append((date, "美联储利率", val, "%", "事件"))
+                rows.append((date, "美联储利率", val, "%", "event"))
         return rows
 
     def _transform_cb_balance(self, df) -> list[tuple]:
         """转换央行资产负债表 DataFrame。
 
         输入: 统计时间(YYYY.M)/国外资产/外汇/对其他存款性公司债权/储备货币/政府存款/...
-        输出: (月末日期, indicator_name, val, "亿元", "月频")
+        输出: (月末日期, indicator_name, val, "亿元", "monthly")
         只取最近 12 个月。
         """
         if df is None or len(df) == 0:
@@ -1370,7 +1372,7 @@ class AkshareIngestProvider(IngestProviderBase):
             for src_col, indicator in field_map.items():
                 val = safe_float(row.get(src_col))
                 if val is not None:
-                    rows.append((report_date, indicator, val, "亿元", "月频"))
+                    rows.append((report_date, indicator, val, "亿元", "monthly"))
         return rows
 
     @staticmethod

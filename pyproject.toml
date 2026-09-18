@@ -94,6 +94,9 @@ demo = [
     "akshare>=1.12.0",
     # Phase 4: 数据源依赖（按需安装，非核心包）。clickhouse-driver 已升级为核心依赖（见上）
     "baostock>=0.8.8,<0.9.0",          # 交易日历/沪深300成分股（baostock_provider）
+    # D5 跨资产 H1（altdata_line 09 清单，2026-09-18）：Hyperliquid 清算流 WS 有界捕获
+    # （hyperliquid_provider 惰性导入；未装时仅 hl_liquidation_capture FAIL-VISIBLE，其余三能力不受影响）
+    "websockets>=10.0",
 ]
 # CloneGuard 多引擎克隆检测集成防御体系（#ARCH-FORCE-MERGE-DEDUP-001，按需安装，非核心包）
 # 安装：pip install -e ".[clone-guard]"；未装时各适配器 detect() 降级返回 ([], True) 不阻断

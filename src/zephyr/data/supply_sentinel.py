@@ -119,7 +119,9 @@ def check_tables(config_path: Path | None = None) -> dict[str, Any]:
         try:
             raw = ch_reader.query(sql)
             max_date_raw = (raw or "").strip().split("\n")[0].strip() if raw else ""
-            if not max_date_raw or max_date_raw in ("\\N", "NULL", ""):
+            # 1970-01-01=DateTime64/Date 空表 max() 返回 epoch 而非 NULL（D5 2026-09-18 实测：
+            # 空 DateTime64(3) 表 max() → 1970-01-01，绕过下方 allow_empty 宽限判空）——归入空表语义
+            if not max_date_raw or max_date_raw in ("\\N", "NULL", "") or max_date_raw.startswith("1970-01-01"):
                 # 空表/全 NULL：若配置 allow_empty 则跳过，否则计为违规
                 if entry.get("allow_empty"):
                     results.append({"table": table, "max_date": None, "lag_days": None,
