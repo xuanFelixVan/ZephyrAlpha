@@ -35786,5 +35786,9 @@ creation_tokens:
   token: fullflow-test-integrity-adjudication-req-testint-01-20260918
   created_by: st-ff-testint-20260918
   capability: fullflow_test_integrity_adjudication
+- file: docs/_working/fullflow_campaign/lanes/testint_relay.md
+  token: fullflow-test-integrity-relay-testint-relay-20260918
+  created_by: st-ff-testint-20260918
+  capability: fullflow_test_integrity_relay
 
 di_seam_exemptions: []
