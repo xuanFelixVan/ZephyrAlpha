@@ -915,8 +915,7 @@ scripts:
   - D1
   priority: P0
   timeout_seconds: 30
-  args:
-  - --fix
+  args: []
   warn_only: false
   description: 全库孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/** / src/zephyr/** / tests/**
     任意子目录）

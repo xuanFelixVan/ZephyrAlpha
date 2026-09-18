@@ -27,16 +27,20 @@ detect_orphan_py.py — 全库孤儿 .py 文件检测
     - 递归扫描 REPO_ROOT 下所有 .py 文件（排除 .git/__pycache__/node_modules 等）
     - 合法目录前缀: scripts/、src/zephyr/、tests/——不在这些前缀下的 .py 即为孤儿
     - 根目录级 Python 约定文件（__init__.py/conftest.py/setup.py/sitecustomize.py）豁免
-    - --fix 模式：自动删除检测到的孤儿文件
+    - 会话工作树豁免：.aidrafts/、.worktrees/（.gitignore /* 根目录全忽略项，
+      内容是同一批仓库文件的会话副本，不是"会话留下的垃圾"——2026-09-19 CF1 治本，
+      修复前主区实测 339,043 条发现中 339,013 条来自这两个目录的副本，真孤儿 0）
 
-exit codes: 0=pass, 1=findings, 2=error
+退出码（0=pass, 1=findings, 2=error）。本脚本自 2026-09-19 起**不再提供 --fix**：
+    自动 unlink 属删除类动作=Owner 门位，且 pre-commit hook 早在 2026-09-02
+    CAND-GATEMECH-004 已把 --fix 摘出 hook 调用链（全仓无任何调用方传 --fix，
+    git grep 实证），留着 CLI 开关只是给弱模型一次手滑批量毁件的机会。
 """
 
 from __future__ import annotations
 
 __manifest__ = """
-args:
-- --fix
+args: []
 description: 全库孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/** / src/zephyr/**
   / tests/** 任意子目录）
 dimensions:
@@ -87,6 +91,11 @@ def find_orphan_py_files() -> list[Path]:
         "tmp",
         ".pytest_tmp",
         "agent_inbox",
+        # .aidrafts/.worktrees=会话草稿区与会话工作树（.gitignore /* 根忽略项）：
+        # 里面是整仓 .py 的副本，判成孤儿是拿检测器扫自己的影子（2026-09-19 CF1 治本，
+        # 修复前主区实测 339,043 条发现里 339,013 条出自这两棵子树，真孤儿 0）。
+        ".aidrafts",
+        ".worktrees",
     }  # agent_inbox=会话草稿投箱豁免区（2026-09-02 Owner 裁定：草稿 .py 在箱合法，晋升时才迁入合法目录）
     try:
         for root, dirs, files in os.walk(REPO_ROOT):
@@ -109,28 +118,12 @@ def find_orphan_py_files() -> list[Path]:
     return findings
 
 
-def fix_orphans(files: list[Path]) -> int:
-    """fix orphans."""
-    removed = 0
-    "fix_orphans."
-    for f in files:
-        try:
-            f.unlink()
-            print(f"  DELETED: {f.relative_to(REPO_ROOT)}")
-            removed += 1
-        except OSError as exc:
-            print(f"  ERROR deleting {f.relative_to(REPO_ROOT)}: {exc}", file=sys.stderr)
-    return removed
-    "fix orphans."
-
-
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="检测并修复项目根目录下的孤儿 .py 文件（对标 AGENTS.md §6.5）")
     parser.add_argument(
         "--warn-only", action="store_true", default=False, help="仅警告不阻断（exit 0，即使发现孤儿文件）"
     )
-    parser.add_argument("--fix", action="store_true", default=False, help="自动删除检测到的孤儿 .py 文件")
     args = parser.parse_args()
     try:
         orphans = find_orphan_py_files()
@@ -142,16 +135,13 @@ def main() -> None:
     print(f"FOUND {len(orphans)} orphan .py file(s) outside legal directories:")
     for f in orphans:
         print(f"  {f.relative_to(REPO_ROOT)}")
-    if args.fix:
-        removed = fix_orphans(orphans)
-        print(f"FIXED: {removed} file(s) deleted")
-        sys.exit(0 if removed == len(orphans) else 1)
     print()
     print("AGENTS.md §6.5 规定: .py 文件只允许放在以下根域的任意子目录中:")
     for d in LEGAL_DIRS:
         print(f"  - {REPO_ROOT / d}")
     print("请删除上述孤儿文件，或移动至合法目录。")
-    print("提示: 使用 --fix 自动删除。")
+    print("注意: 本脚本不再提供 --fix 自删除——删除属 Owner 门位（2026-09-19 CF1 治本）。")
+    print("      孤儿文件须由施工会话显式删除并随其任务 commit。")
     if args.warn_only:
         print("WARN-ONLY: 不阻断，exit 0")
         sys.exit(EXIT_PASS)

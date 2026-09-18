@@ -52,9 +52,9 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_PY
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_PY
 from _shared.encoding import ensure_utf8_stdout
-from _shared.walk import iter_files
+from _shared.walk import iter_files, resolve_scan_dir, zero_scan_error
 
 ensure_utf8_stdout()
 import argparse
@@ -108,14 +108,18 @@ def scan_file_ast(filepath: Path) -> list[dict]:
 
 
 def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
-    """扫描仓库并返回发现列表."""
-    if scan_dir is None:
-        scan_dir = REPO_ROOT
+    """扫描仓库并返回发现列表.
+
+    治本（2026-09-19 CF1 F3）：入参先 resolve()——原实现传相对目录时
+    `filepath.relative_to(REPO_ROOT)` 必抛 ValueError 被 continue 吞掉，
+    0 发现 0 计数照样 exit 0（假绿）。
+    """
+    scan_dir = resolve_scan_dir(scan_dir) or REPO_ROOT
     all_findings = []
     files_scanned = 0
     for filepath in iter_files(scan_dir, extensions=SCAN_EXTENSIONS_PY, exclude_files=frozenset(WHITELIST_FILES)):
         try:
-            rel = filepath.relative_to(REPO_ROOT)
+            rel = str(filepath.relative_to(REPO_ROOT))
         except ValueError:
             continue
         if str(rel).startswith("_DO_NOT_USE") or str(rel).startswith(".trae"):
@@ -132,8 +136,12 @@ def main() -> None:
     parser.add_argument("--scan-dir", default=None, help="扫描目录")
     parser.add_argument("--warn-only", action="store_true", help="警告模式")
     args = parser.parse_args()
-    scan_dir = Path(args.scan_dir) if args.scan_dir else None
+    scan_dir = resolve_scan_dir(args.scan_dir)
     findings, files_scanned, errors = scan_repo(scan_dir)
+    err = zero_scan_error(scan_dir, files_scanned, "SHELL-SCAN", len(findings))
+    if err:
+        print(err, file=sys.stderr)
+        sys.exit(EXIT_ERROR)
     if findings:
         print(
             f"\n[SHELL-SCAN] {len(findings)} shell=True/os.system 调用发现（扫描 {files_scanned} 文件）:\n",

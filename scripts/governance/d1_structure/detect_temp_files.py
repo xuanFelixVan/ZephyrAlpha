@@ -58,9 +58,9 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXCLUDE_DIRS, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import EXCLUDE_DIRS, EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.walk import iter_files
+from _shared.walk import iter_files, rel_for_display, resolve_scan_dir, zero_scan_error
 
 ensure_utf8_stdout()
 
@@ -87,9 +87,14 @@ TEMP_DIR_NAMES = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
 
 
 def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
-    """扫描临时文件与缓存目录，返回 (发现列表, 已扫描文件数)。"""
-    if scan_dir is None:
-        scan_dir = REPO_ROOT
+    """扫描临时文件与缓存目录，返回 (发现列表, 已扫描文件数)。
+
+    治本（2026-09-19 CF1 F2）：入参先 resolve() 归一为绝对路径，展示路径改走
+    rel_for_display()——原实现 `relative_to(REPO_ROOT)` 失败即 continue，
+    传相对 --scan-dir 时所有发现被静默丢弃，而 files_scanned 照常计数，
+    报"扫了 N 文件 / 无临时文件 / exit 0"＝恒绿假通过。
+    """
+    scan_dir = resolve_scan_dir(scan_dir) or REPO_ROOT
 
     findings = []
     files_scanned = 0
@@ -101,10 +106,7 @@ def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
         for d in dirnames:
             if d in TEMP_DIR_NAMES:
                 full = Path(dirpath) / d
-                try:
-                    rel = str(full.relative_to(REPO_ROOT)).replace("\\", "/")
-                except ValueError:
-                    continue
+                rel = rel_for_display(full)
                 findings.append(
                     {
                         "file": rel,
@@ -119,10 +121,7 @@ def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
     for filepath in iter_files(scan_dir):
         files_scanned += 1
 
-        try:
-            rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-        except ValueError:
-            continue
+        rel = rel_for_display(filepath)
 
         for pattern, label in TEMP_FILE_PATTERNS:
             if pattern.search(filepath.name):
@@ -140,9 +139,11 @@ def scan_temp_files(scan_dir: Path | None = None) -> tuple[list[dict], int]:
 
 
 def clean_temp_files(scan_dir: Path | None = None, dry_run: bool = True) -> tuple[list[str], int]:
-    """清理临时文件与缓存目录，返回 (已清理列表, 已扫描文件数)。"""
-    if scan_dir is None:
-        scan_dir = REPO_ROOT
+    """清理临时文件与缓存目录，返回 (已清理列表, 已扫描文件数)。
+
+    治本口径与 scan_temp_files 一致：入参 resolve()、展示路径不丢发现。
+    """
+    scan_dir = resolve_scan_dir(scan_dir) or REPO_ROOT
 
     cleaned: list[str] = []
     files_scanned = 0
@@ -152,25 +153,19 @@ def clean_temp_files(scan_dir: Path | None = None, dry_run: bool = True) -> tupl
         for d in dirnames:
             if d in TEMP_DIR_NAMES:
                 full = Path(dirpath) / d
-                try:
-                    rel = str(full.relative_to(REPO_ROOT)).replace("\\", "/")
-                except ValueError:
-                    continue
+                rel = rel_for_display(full)
                 if dry_run:
                     cleaned.append(f"[DRY] {rel}/")
                 else:
                     import shutil
 
-                    shutil.rmtree(full, ignore_errors=True)
+                    shutil.rmtree(full, ignore_errors=True)  # ops-guard-exempt: 存量非新增，显式 --clean 人工指令路径
                     cleaned.append(f"[DEL] {rel}/")
         dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS and not d.startswith(".")]
 
     for filepath in iter_files(scan_dir):
         files_scanned += 1
-        try:
-            rel = str(filepath.relative_to(REPO_ROOT)).replace("\\", "/")
-        except ValueError:
-            continue
+        rel = rel_for_display(filepath)
         for pattern, label in TEMP_FILE_PATTERNS:
             if pattern.search(filepath.name):
                 if dry_run:
@@ -195,10 +190,14 @@ def main() -> None:
     parser.add_argument("--dry-run", action="store_true", help="模拟清理（不实际删除）")
     args = parser.parse_args()
 
-    scan_dir = Path(args.scan_dir) if args.scan_dir else None
+    scan_dir = resolve_scan_dir(args.scan_dir)
 
     if args.clean or args.dry_run:
         cleaned, files_scanned = clean_temp_files(scan_dir, dry_run=args.dry_run or False)
+        err = zero_scan_error(scan_dir, files_scanned, "TEMP-CLEAN", len(cleaned))
+        if err:
+            print(err, file=sys.stderr)
+            sys.exit(EXIT_ERROR)
         if cleaned:
             print(f"\n[TEMP-CLEAN] {len(cleaned)} 项（扫描 {files_scanned} 文件）:")
             for c in cleaned:
@@ -208,6 +207,13 @@ def main() -> None:
         sys.exit(EXIT_PASS)
 
     findings, files_scanned = scan_temp_files(scan_dir)
+
+    # 治本（2026-09-19 CF1 F2）：显式传了目录却 0 文件进入统计＝入参口径失效，
+    # 报 error 退出而不是"无临时文件"exit 0（否则打错路径/目录不在仓内即假绿）。
+    err = zero_scan_error(scan_dir, files_scanned, "TEMP-FILES", len(findings))
+    if err:
+        print(err, file=sys.stderr)
+        sys.exit(EXIT_ERROR)
 
     if findings:
         print(f"\n[TEMP-FILES] {len(findings)} 个临时文件/目录（扫描 {files_scanned} 文件）:", file=sys.stderr)

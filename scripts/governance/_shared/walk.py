@@ -79,6 +79,58 @@ def iter_files(
     return result
 
 
+# ─── 扫描目录入参口径（治本 2026-09-19 CF1 F2-F6，单一真源，禁止各检测器复制）─────
+# 病根：五个检测器（detect_temp_files / detect_shell_true / detect_threading_lock /
+# detect_vague_terms / detect_ruins_references）在遍历循环里写
+#     try: rel = filepath.relative_to(REPO_ROOT)
+#     except ValueError: continue
+# 展示路径算不出来就把"发现"整条丢掉，而 files_scanned 照常计数（或不计数后
+# 0==0 通过）——于是 `--scan-dir src`（相对口径）永远报"扫了 N 文件 / 0 发现 /
+# exit 0"。传错目录、目录不存在、目录不在仓内同样 exit 0＝君子协定式假绿。
+
+
+def resolve_scan_dir(raw: str | Path | None) -> Path | None:
+    """把扫描目录入参归一为绝对路径；空/None 入参返回 None（调用方走默认全库口径）。
+
+    Args:
+        raw: CLI `--scan-dir` 原值或调用方传入的 Path（可能是相对路径）。
+
+    Returns:
+        绝对化后的 Path；入参为空时返回 None。
+    """
+    if raw is None:
+        return None
+    text = str(raw).strip()
+    if not text:
+        return None
+    return Path(text).expanduser().resolve()
+
+
+def rel_for_display(path: Path) -> str:
+    """仓内文件给相对路径（正斜杠），仓外文件给绝对路径——绝不因算不出相对就丢发现。"""
+    try:
+        return str(path.relative_to(REPO_ROOT)).replace("\\", "/")
+    except ValueError:
+        return str(path).replace("\\", "/")
+
+
+def zero_scan_error(
+    explicit_dir: Path | None, files_scanned: int, label: str, found_count: int = 0
+) -> str | None:
+    """显式传了扫描目录、却 0 文件进入统计且 0 发现 → 返回错误文案；否则 None。
+
+    0 文件进入统计只有三种成因，全部必须出声：
+    目录不存在 / 目录下无可扫扩展名文件 / 目录不在 REPO_ROOT 相对口径内。
+    found_count>0 时不报（例如目录下只有子目录、无文件，但临时目录本身已被计入发现）。
+    """
+    if explicit_dir is not None and files_scanned == 0 and found_count == 0:
+        return (
+            f"ERROR [{label}] 显式扫描目录 {explicit_dir} 下 0 个文件进入统计"
+            "（目录不存在 / 无可扫文件 / 不在仓内口径）——入参口径失效，拒绝按通过处理"
+        )
+    return None
+
+
 # iter_staged_files 实现已移至 _shared/staged_files.py（轻量模块，无 psycopg2 传递依赖）
 # 本模块通过上方 `from _shared.staged_files import iter_staged_files` re-export
 # 治本（2026-08-03）：消除 check_any_abuse.py 23 行内联 git diff 重复代码
