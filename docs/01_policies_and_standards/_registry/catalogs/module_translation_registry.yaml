@@ -55618,6 +55618,30 @@ entries:
   desc_en: ""
   plain_zh: "把图表册、指标册和代码算法标记批量算成 SimHash 指纹存进对照表，供查重器逐面比对使用"
   responsibility_layer: governance
+- module_path: src/zephyr/ai_layer/intake/intake_events.py
+  domain_id: D_GOVERNANCE
+  name_zh: "L2 收集段事件账本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "知识卡到货、清洗、否决、出分、交接、出证、KPI告警这七类待办先逐行追加进本地 JSONL 流水账，再按事件唤醒消费，连续失败三条即转毒丸留档"
+  responsibility_layer: governance
+- module_path: src/zephyr/risk/paper_hedge_leg.py
+  domain_id: D_RISK
+  name_zh: "纸面股指期货对冲腿演练器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "危机确认日自动在纸面开一手股指期货对冲腿并次日自动平，用来量化保命动作的效果，全程不碰真实下单通道"
+  responsibility_layer: business
+- module_path: scripts/governance/standards_governance/generate_standard_family_registry.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "标准族派生册生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把标准与治理族的对应关系自动算成一张册，重跑即再生"
+  responsibility_layer: governance
 
 battle_map_steps:
 - step_id: BM-BUY-05
