@@ -203,7 +203,9 @@ class TrialLedger:
                 import yaml
 
                 text = yaml.safe_dump(REGISTRY_SKELETON, allow_unicode=True, sort_keys=False)
-                safe_write_text(self._path, text)
+                # newline="\n"：本册受 .gitattributes `*.yaml eol=lf` 钉定，缺省 newline=None
+                # 在 Windows 上会把 \n 翻成 os.linesep（CRLF），污染字节级行尾真源。
+                safe_write_text(self._path, text, newline="\n")
                 _logger.info("N 账本骨架初始化: %s", self._path)
             else:
                 raise TrialLedgerError(f"N 账本不存在: {self._path}")
@@ -281,7 +283,16 @@ class TrialLedger:
             if not isinstance(reparsed, dict) or "screen_runs" not in reparsed:
                 raise TrialLedgerError("N 账本回读预检失败（结构非法），拒写")
             try:
-                safe_write_text(self._path, new_text, expected_base_sha256=base_sha)
+                # newline="\n" 是必需项，不是风格选择（CRLF 治本，st-crlffix-20260919）：
+                # 本册受 .gitattributes `*.yaml eol=lf` 钉定，而 safe_write_text 缺省
+                # newline=None → open(newline=None) 在 Windows 把 "\n" 翻成 os.linesep，
+                # 每次 CAS 写都往 LF 真源注入 CRLF。写法对齐在册先例
+                # scripts/backtest/generate_backtest_backlog.py:284。
+                # 注意 safe_write_text 的写后回读校验走 universal-newlines，对 CRLF 免疫，
+                # 故该污染不会被自家 CAS 校验发现——必须由调用点禁翻译。
+                safe_write_text(
+                    self._path, new_text, expected_base_sha256=base_sha, newline="\n"
+                )
                 # 写后进程外核实
                 final = yaml.safe_load(safe_read(self._path))
                 if final != reparsed:  # pragma: no cover - 并发窗口极窄，兜底

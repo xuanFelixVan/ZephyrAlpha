@@ -9,11 +9,17 @@
 - CAS：并发写冲突退避后成功（monkeypatch safe_write_text 前两次抛错）
 - 骨架初始化：create_if_missing 落盘可读
 - n_eff 预留位：恒 None（批次 B 落地前）
+- 行尾真源（st-crlffix-20260919）：写 .gitattributes 钉 eol=lf 的册后**裸字节 CRLF=0**；
+  另锁 safe_write_text 的 newline 默认未被翻转
 """
 
 from __future__ import annotations
 
+import inspect
 import json
+import shutil
+import subprocess
+from pathlib import Path
 
 import pytest
 import yaml
@@ -171,6 +177,91 @@ def test_yaml_structure_valid(ledger):
     data = yaml.safe_load(ledger._path.read_text(encoding="utf-8"))  # noqa: SLF001
     for key in REGISTRY_SKELETON:
         assert key in data
+
+
+# ── CRLF 治本回归（st-crlffix-20260919）───────────────────────────────────────
+# 缺陷：_cas_update / load_registry 落骨架两处调 safe_write_text 未传 newline，
+# 而 safe_write_text 缺省 newline=None → open(newline=None) 在 Windows 把 "\n"
+# 翻成 os.linesep，每次写都往 .gitattributes 钉 LF 的注册表注入 CRLF。
+# 危险点：safe_write_text 自家"写后回读校验"用 universal-newlines 读，对 CRLF
+# 免疫 ⇒ 污染不被发现。故断言必须看**裸字节**，不能走 read_text。
+
+GIT = shutil.which("git")
+
+
+def _git(cwd: Path, *args: str) -> str:
+    r = subprocess.run([GIT, *args], cwd=str(cwd), capture_output=True, text=True, encoding="utf-8")
+    assert r.returncode == 0, f"git {' '.join(args)} 失败: {r.stderr}"
+    return (r.stdout or "").strip()
+
+
+def _eol_counts(path: Path) -> tuple[int, int]:
+    """(CRLF 数, 裸 LF 数)——裸字节口径，绕开 universal newlines。"""
+    raw = path.read_bytes()
+    lf = raw.count(b"\n")
+    crlf = raw.count(b"\r\n")
+    return crlf, lf - crlf
+
+
+@pytest.fixture()
+def lf_pinned_repo(tmp_path):
+    """一次性小仓：真 git init + .gitattributes 钉 *.yaml eol=lf，册以 LF 出生。"""
+    if not GIT:
+        pytest.skip("git 不可用，无法构造真 eol=lf 钉定面")
+    root = tmp_path / "pinned_repo"
+    root.mkdir()
+    _git(root, "init", "-q", ".")
+    (root / ".gitattributes").write_text("* text=auto eol=lf\n*.yaml text eol=lf\n", encoding="utf-8")
+    reg = root / "trial_ledger_registry.yaml"
+    # LF 出生（显式 newline="\n"，与本探针无关的基准真源）
+    with open(reg, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(yaml.safe_dump(REGISTRY_SKELETON, allow_unicode=True, sort_keys=False))
+    _git(root, "add", ".")
+    _git(root, "-c", "user.email=t@invalid", "-c", "user.name=t", "commit", "-q", "-m", "birth LF")
+    assert _git(root, "check-attr", "eol", "--", "trial_ledger_registry.yaml").endswith("eol: lf")
+    assert _eol_counts(reg) == (0, reg.read_bytes().count(b"\n")), "出生证必须是纯 LF"
+    return reg
+
+
+def test_cas_update_keeps_lf_on_lf_pinned_registry(lf_pinned_repo):
+    """① 主修点：_cas_update 写 LF 钉定册后，盘上 CRLF 必须为 0（裸字节断言）。"""
+    reg = lf_pinned_repo
+    before = reg.read_bytes()
+
+    TrialLedger(registry_path=reg).record_run("manual", "B-crlf", 5, note="crlf 治本回归")
+
+    crlf, bare_lf = _eol_counts(reg)
+    assert crlf == 0, f"_cas_update 往 eol=lf 钉定册注入了 {crlf} 个 CRLF"
+    assert bare_lf > 0, "文件应仍有行尾（防空文件假绿）"
+    # 语义不变：剥掉 CR 后逐行应与"LF 口径读入"一致，且新记录确实落账
+    assert reg.read_bytes().count(b"\r") == 0
+    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
+    assert [r["batch_id"] for r in data["batch_records"]] == ["B-crlf"]
+    assert before.count(b"\r\n") == 0  # 前提自证：写前是干净的
+
+
+def test_skeleton_bootstrap_keeps_lf_on_lf_pinned_registry(lf_pinned_repo):
+    """② 副修点：load_registry(create_if_missing=True) 落骨架同样不得注 CRLF。"""
+    reg = lf_pinned_repo.parent / "brand_new_registry.yaml"
+    TrialLedger(registry_path=reg).load_registry(create_if_missing=True)
+    crlf, bare_lf = _eol_counts(reg)
+    assert crlf == 0, f"骨架初始化注入了 {crlf} 个 CRLF"
+    assert bare_lf > 0
+    assert yaml.safe_load(reg.read_text(encoding="utf-8"))["screen_runs"]["total_trials"] == 0
+
+
+def test_default_newline_channel_not_flipped():
+    """③ 阴性对照护栏：本车道只修调用点，未翻 safe_write_text 默认。
+
+    钉 LF 的册由调用点禁翻译；未钉定的目标经默认通道仍按平台默认走
+    ——默认值一改影响全部调用方（门位级行为变更），此断言锁死"不顺手改默认"。
+    """
+    from zephyr.shared.io.file_utils import safe_write_text
+
+    sig = inspect.signature(safe_write_text)
+    assert sig.parameters["newline"].default is None, (
+        "safe_write_text 的 newline 默认值被改动——默认变更属门位级，本车道未授权"
+    )
 
 
 class TestEffectiveRank:
