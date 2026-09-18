@@ -78,3 +78,66 @@ def test_build_task_cmd_shape():
     assert "/sc" in cmd and "weekly" in cmd
     assert "MON,TUE,WED,THU,FRI" in cmd and "23:30" in cmd
     assert "fx_ecb_ingest.py" in " ".join(cmd)
+
+
+# ---- 批量模式（WO-③-03：--cards-dir 单卡失败不炸批+末尾汇总表）----
+
+def _write_card(tmp_path, name, **over):
+    p = tmp_path / name
+    p.write_text(yaml.safe_dump(_card(**over), allow_unicode=True), encoding="utf-8")
+    return p
+
+
+def test_batch_verify_all_ok(tmp_path, monkeypatch, capsys):
+    _write_card(tmp_path, "a.yaml")
+    _write_card(tmp_path, "b.yaml")
+    monkeypatch.setattr(ob, "verify",
+                        lambda card: {"table": card["table"], "rows": 5,
+                                      "latest_date": "2026-09-17", "task_state": "Ready"})
+    rc = ob.run_batch(tmp_path, "verify")
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "a.yaml" in out and "b.yaml" in out
+    assert '"fail": 0' in out
+    assert "rows=5" in out
+
+
+def test_batch_single_card_failure_continues(tmp_path, monkeypatch, capsys):
+    _write_card(tmp_path, "good.yaml")
+    bad = _card()
+    bad.pop("task_name")  # 缺必备字段 → load_card KeyError
+    (tmp_path / "bad.yaml").write_text(yaml.safe_dump(bad, allow_unicode=True), encoding="utf-8")
+    monkeypatch.setattr(ob, "verify",
+                        lambda card: {"table": card["table"], "rows": 1,
+                                      "latest_date": "2026-09-17", "task_state": "Ready"})
+    rc = ob.run_batch(tmp_path, "verify")
+    out = capsys.readouterr().out
+    assert rc == 1  # 单卡失败→批非零退出，但不炸批
+    lines = [ln for ln in out.splitlines() if ln.startswith(("good.yaml", "bad.yaml"))]
+    assert any("ok" in ln.split() for ln in lines if ln.startswith("good.yaml"))
+    assert any("fail" in ln.split() and "KeyError" in ln for ln in lines if ln.startswith("bad.yaml"))
+    assert '"fail": 1' in out and '"ok": 1' in out
+
+
+def test_batch_verify_error_payload_counts_fail(tmp_path, monkeypatch):
+    """fail-visible：verify 载荷带 error（CH 故障）不得伪装成 ok。"""
+    _write_card(tmp_path, "a.yaml")
+    monkeypatch.setattr(ob, "verify", lambda card: {"table": card["table"],
+                                                    "error": "CH 查询失败: connection refused"})
+    rc = ob.run_batch(tmp_path, "verify")
+    assert rc == 1
+
+
+def test_batch_empty_dir_returns_2(tmp_path, capsys):
+    rc = ob.run_batch(tmp_path, "verify")
+    out = capsys.readouterr().out
+    assert rc == 2 and "batch_error" in out
+
+
+def test_cli_card_and_cards_dir_mutually_exclusive(monkeypatch, capsys):
+    monkeypatch.setattr(sys, "argv", ["onboard_source.py", "--card", "x.yaml",
+                                      "--cards-dir", "d", "--mode", "verify"])
+    with pytest.raises(SystemExit) as ei:
+        ob.main()
+    assert ei.value.code == 2  # argparse 互斥组冲突
+    capsys.readouterr()

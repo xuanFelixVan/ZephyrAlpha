@@ -611,6 +611,8 @@ scripts/data/sz_open_data/*
 # 方向=收编入库增强追踪，非排除；先例=sz_open_data 同模式）
 !scripts/data/onboard_source.py
 !scripts/data/fx_ecb_ingest.py
+# WO-③-04 源健康度周期巡检器收编（st-mineline-w304 2026-09-18，同上先例=收编入库增强追踪）
+!scripts/data/source_health_patrol.py
 
 # 2026-09-09 工作区卫生(#ARCH-308 分类处置): 运行时产物与数据源二进制留档不入库
 data/asset_index/offrepo_scan_report.json
