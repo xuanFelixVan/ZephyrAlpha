@@ -116,3 +116,5 @@ completes_when: 本车道六项断点与六个待合并片段全部要么落地�
   复核命令：`python -m zephyr.data sentinel`（或等 L13 `data_supply_sentinel` 06:50 自动跑）。
 - 幂等实证：`python scripts/derive_task_dependencies.py --apply` 二次跑 = `tasks_touched: 0`，
   计数稳定 `266 226`（基线 `262 235`）。
+
+<!-- gov2-hook-smoke 2026-09-18 st-ff-gov2-20260918：本行是 post-commit/reference-transaction 两个 guard 的真实端到端冒烟占位行（无内容语义，可在下次文档整理时删除） -->

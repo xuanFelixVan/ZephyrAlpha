@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.gate_auto_registrar（YAML 驱动自动注册）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 登记表 mass-deletion 门禁——staged 登记表类 YAML 净删行（删>插）→ 阻断（2026-09-09 险些蒸发 4703 行治本，nodebt 晨报裁定 7）；YAML 条目数减少 → 无论行数直接阻断；白名单=commit message 标记 [allow-mass-deletion:reason]（reason≥10 字，随 message 永久留痕，对标 capability_lookup_required_gate [no-lookup:reason] 先例）；阈值内合法重排（整文件重生成等）走标记逃生；阻断与放行均落审计 .runtime/gate_audit/registry_mass_deletion.jsonl；fail-open（HEAD 缺失/YAML 解析失败/文件不可读 → 跳过该文件，不误报）
+# [INVARIANTS] 登记表 mass-deletion 门禁——staged 登记表类 YAML 净删行（删>插）**或条目身份消失（HEAD 有而 staged 无的条目键）**→ 阻断（2026-09-09 险些蒸发 4703 行治本，nodebt 晨报裁定 7）；YAML 条目数减少 → 无论行数直接阻断；白名单=commit message 标记 [allow-mass-deletion:reason]（reason≥10 字，随 message 永久留痕，对标 capability_lookup_required_gate [no-lookup:reason] 先例）；阈值内合法重排（整文件重生成等）走标记逃生；阻断与放行均落审计 .runtime/gate_audit/registry_mass_deletion.jsonl；fail-open（HEAD 缺失/YAML 解析失败/文件不可读 → 跳过该文件，不误报）
 # [MODIFY-GUARD] gate_id="REGISTRY-MASS-DELETION"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -22,12 +22,18 @@ registry_mass_deletion_gate.py — 登记表 mass-deletion 门禁（防蒸发第
     registry_batch_edit 工具（第一道保险）强制纯插入；本 gate 是第二道保险——
     即使绕过工具直接改登记表，commit 阶段净删行也会被拦截。
 
-检测逻辑（双信号）：
+检测逻辑（三信号）：
     1. 净删行：difflib opcodes 累计 delete/replace 原行数 vs insert/replace 新行数，
        deleted > added → 阻断（4703 删/0 插必命中；改 1 行=1删1插 不命中；
        纯插入不命中；整文件重排这种高净删操作走 message 标记逃生）
     2. 条目数断言：两侧 yaml.safe_load 后顶层条目数 new < old → 无论行数直接阻断
        （防"大改小删"漏网；YAML 解析失败 fail-open 交 encoding/syntax 类 gate）
+    3. 条目身份断言（红队加固③ st-ff-rb-gov-20260918，2026-09-18 攻面二 E1 实弹）：
+       HEAD 侧条目身份集 - staged 侧 = 非空 → 阻断。信号 1/2 都是**计数型**，
+       会被"删他人 16 条 + 插自己 25 条"的代数抵消批次整体放行（E1 实测三判据全绿、
+       16 条静默蒸发）；身份比对不看代数只看"哪一条没了"。
+       身份 = 每条首个标量字段（登记表惯例主键：capability_id/path/module_path/gate_id…）；
+       条目非 dict 或首字段非标量 → 该条不计入身份集（判不了不误报，fail-open 同向）。
 
 触发范围：staged 相对路径命中 _REGISTRY_DIR_MARKER（登记表目录）或 _WATCH_FILES
 （目录外登记类 YAML）；_EXEMPT_FILES 豁免。
@@ -141,6 +147,44 @@ def _yaml_entry_count(text: str) -> int | None:
     return None
 
 
+def _entry_identity_keys(text: str) -> set[str] | None:
+    """登记表条目**身份集**：每条首个标量字段 → `"key=value"` 集合。
+
+    红队加固③（st-ff-rb-gov-20260918，2026-09-18 全流通战役攻面二 E1 实弹）：
+    本 gate 原两信号都是**计数型**（净删行 deleted>added / 条目数 new<old），
+    故"删他人 16 条 + 插自己 25 条"这种**代数为正**的批次双双放行，
+    而被删的 16 条就此蒸发——计数守不住身份，身份只能按身份比。
+    scratch 实测：三方合并（base=dev）对陈旧 ours 会静默采纳"我方删除"，
+    `grep -c '^<'`=0（人工判据绿）+ 净删<净插（本 gate 绿）+ 条目数增加（信号2 绿）。
+
+    Returns:
+        身份集合；YAML 解析失败 / 无 list 结构 / 条目非 dict → None（调用方跳过本信号，
+        与原 fail-open 语义同向：判不了就不误报，交 encoding/syntax 类 gate 管）。
+    """
+    try:
+        import yaml  # noqa: PLC0415 — lazy import，与原 _yaml_entry_count 同风格
+
+        data = yaml.safe_load(text)
+    except Exception:  # noqa: BLE001 — 解析失败 fail-open（交 syntax 类 gate）
+        return None
+    if isinstance(data, list):
+        lists: list[list] = [data]
+    elif isinstance(data, dict):
+        lists = [v for v in data.values() if isinstance(v, list)]
+    else:
+        return None
+    keys: set[str] = set()
+    for lst in lists:
+        for item in lst:
+            if not isinstance(item, dict) or not item:
+                continue
+            first = next(iter(item))
+            value = item[first]
+            if isinstance(value, (str, int, float, bool)):
+                keys.add(f"{first}={value}")
+    return keys or None
+
+
 def _audit(gateway, record: dict) -> None:
     """审计落盘（jsonl append；fail-open：写失败不阻断）。"""
     try:
@@ -217,10 +261,24 @@ def make_registry_mass_deletion_gate() -> GateSpec:
             entry_shrunk = n_head is not None and n_staged is not None and n_staged < n_head
             net_delete = deleted > added
 
-            if net_delete or entry_shrunk:
+            # 信号3（红队加固③ st-ff-rb-gov-20260918）：条目**身份**消失——计数型判据
+            # 会被"删他人 N 条 + 插自己 M 条（M>N）"的批次代数抵消掉，身份比对不会。
+            k_head = _entry_identity_keys(head_text)
+            k_staged = _entry_identity_keys(staged_text)
+            lost_keys: set[str] = set()
+            if k_head is not None and k_staged is not None:
+                lost_keys = k_head - k_staged
+            identity_loss = bool(lost_keys)
+
+            if net_delete or entry_shrunk or identity_loss:
                 hits.append(
                     f"  {rel}: 净删行 deleted={deleted} added={added}"
                     + (f"（条目数 {n_head} -> {n_staged} 减少）" if entry_shrunk else "")
+                    + (
+                        f"（条目身份消失 {len(lost_keys)} 条，示例 {sorted(lost_keys)[:3]}）"
+                        if identity_loss
+                        else ""
+                    )
                 )
                 _audit(
                     gateway,
@@ -234,6 +292,8 @@ def make_registry_mass_deletion_gate() -> GateSpec:
                         "added": added,
                         "entries_head": n_head,
                         "entries_staged": n_staged,
+                        "lost_identity_count": len(lost_keys),
+                        "lost_identity_sample": sorted(lost_keys)[:10],
                     },
                 )
 

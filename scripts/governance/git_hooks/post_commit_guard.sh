@@ -83,9 +83,40 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
     # 逐标记校验：任一未注册 → 记为待处理标记（进入下方 env 检查，
     # 与 Python gate 的 session_id kwarg 判定互补——本 hook 看到的是含
     # 网关追加标记的 full message，无法得知提交时的 session 归属）
+    #
+    # === 红队加固（st-ff-rb-gov-20260918，2026-09-18 全流通战役攻面一）===
+    # 病根（scratch 实弹 A1-3/A1-4）：原判定 `grep -q "\"$sid\"" registry_file` 是
+    # **对整份 JSON 文本的子串匹配**，不是"该 sid 是不是一个注册会话"。后果：
+    #   ① 任何在注册表里出现过的**字段名**都是万能通行证——注册表恒含
+    #      "pid"/"held_files"/"last_heartbeat" 等键，故 `[GW:pid]` 恒被判"已注册"，
+    #      零知识即可伪造合法标记（且 --no-verify 已跳 pre-commit，post-commit
+    #      是唯一活着的防线）；
+    #   ② 任一**在活的**他人会话 sid 同样直接通过 → 裸 commit 可把归因嫁祸给
+    #      别的车道（A1-3 实测：冒充 st-victim-lane 的尾注落库未被回滚）。
+    # 治本：只认注册表的**会话键**（SessionRegistry._save 以 indent=2 美化写，
+    # 顶层会话键在 2 缩进、旧版嵌套 {"sessions":{...}} 在 4 缩进），并剔除容器名
+    # sessions；字段名/字段值/路径片段一律不再充当通行证。
+    # 失效语义（如实登记，不装作无风险）：解析不到任何会话键时=表内无注册会话，
+    # 网关合法提交（ZEPHYR_COMMIT_GATEWAY=1）走 warn-only 分支不死，
+    # 但会喂给 24h warn-only 计数器（阈值默认 3）——真发生 layout 漂移时需按
+    # .runtime/reconcile_reports/post_commit_guard_*.json 排查，勿直接放宽回子串匹配。
+    #
+    # ★ 残余风险（本车道 st-ff-gov2 2026-09-18 23:0x 真注册表布局端到端冒烟实测，
+    #   一次性 tmp 仓 + 主仓 .runtime/session_registry.json 原样副本，勿据此宣称"不可伪造"）：
+    #   本次收紧只关掉 ①（字段名当通行证：`[GW:pid]` 裸提交已被回滚 ✅），
+    #   **没关 ②**：冒充**任一在活的他人会话键**（实测 `[GW:st-ff-harvest-20260918]`
+    #   配 `git commit --no-verify`、无 GW env）仍**落地不回滚**——因为本层判据是
+    #   "sid ∈ 会话键"，不是"sid == 本次提交的归属"；归属信息只存在于网关进程内
+    #   （post-commit 拿不到），GW env 又只用于 warn-only 分流而非阻断。
+    #   ⇒ 嫁祸/搭便车这条攻面**仍在**，治本需要"提交时把 sid 写进可验证载体"
+    #   （如 commit graph 上的 note/HMAC 尾签），属跨车道设计变更，本车道不擅动，
+    #   已登记交总包裁定。此处注释与 reference_transaction_guard.sh 的孪生段同步。
+    registered_sids=$(grep -oE '^[[:space:]]{2,4}"[A-Za-z0-9_][A-Za-z0-9_-]*"[[:space:]]*:[[:space:]]*\{' "$registry_file" 2>/dev/null \
+        | sed -E 's/.*"([^"]+)".*/\1/' | grep -vx sessions | sort -u)
     session_id=""
     for sid in $session_ids; do
-        if ! grep -q "\"$sid\"" "$registry_file" 2>/dev/null; then
+        # -x 整行 + -F 定长串：会话键必须逐字相等（不做子串匹配）
+        if ! printf '%s\n' "$registered_sids" | grep -qxF "$sid"; then
             session_id="$sid"
             break
         fi
