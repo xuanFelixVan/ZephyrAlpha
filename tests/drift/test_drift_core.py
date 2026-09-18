@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_drift_core | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-491 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.drift_detector.test_drift_core
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

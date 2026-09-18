@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_escalation_loop_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_escalation_loop_detector
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] 跨模块循环检测不可跳过;DFS必须覆盖所有活跃升级
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md
 # [CONSUMERS] pytest

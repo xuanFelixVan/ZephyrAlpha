@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_event_bus | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-381 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_event_bus
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] EventBus subscribe+publish must deliver events to all matching subscribers
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

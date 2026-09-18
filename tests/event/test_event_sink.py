@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_event_sink | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | 蓝图特有§A
 # [MODULE] tests.test_event_sink
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] ring buffer capped at _EVENT_RING_MAX; ErrorContext validation; AIBehaviorEvent snapshot
 # [MODIFY-GUARD] ai_behavior/event_sink.py
 # [CONSUMERS] CI

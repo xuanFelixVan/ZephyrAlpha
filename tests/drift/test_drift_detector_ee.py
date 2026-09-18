@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_drift_detector_ee | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §8
 # [MODULE] tests.test_drift_detector_ee
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] SSoT=zephyr.drift_detector(MOD-INF-023);本文件为兼容别名;API保持不变
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md
 # [CONSUMERS] pytest

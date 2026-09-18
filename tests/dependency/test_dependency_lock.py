@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_dependency_lock | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_dependency_lock
+# [DOMAIN] D_GOV_SCRIPTS
 # [INVARIANTS] 5 default deps; get returns "unknown" for missing pkg; check_safety returns empty list
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

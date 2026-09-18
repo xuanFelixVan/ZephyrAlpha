@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_drift_engine | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_drift_engine
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] 39检测器必须全部执行;不可跳过检测器
 # [MODIFY-GUARD] blueprint.md §4; __init__.py __all__
 # [CONSUMERS] CI/CD;drift_engine

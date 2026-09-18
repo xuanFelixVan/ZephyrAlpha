@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_drift_detector_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_drift_detector_gate
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] trigger_recovery always returns dict with 9 keys; hotfix_bypass only True when HotfixBypass.is_hotfix_commit returns True; scan_level invalid falls back to STANDARD
 # [MODIFY-GUARD] changes must preserve test coverage for trigger_recovery/hotfix_bypass/scan_level/empty_payload/ImportError paths
 # [CONSUMERS] CI pytest

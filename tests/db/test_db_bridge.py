@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
 
 # [MODULE] tests.test_db_bridge
+# [DOMAIN] D_FEEDBACK_LOOP
 
 # [INVARIANTS] tests must not modify production database; all DB ops use tmp_path
 

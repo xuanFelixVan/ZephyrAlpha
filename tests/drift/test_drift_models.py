@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_drift_models | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_drift_models
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] 数据模型不可破坏兼容性
 # [MODIFY-GUARD] src/zephyr/behavioral-auditor/drift_models.py
 # [CONSUMERS] CI pytest

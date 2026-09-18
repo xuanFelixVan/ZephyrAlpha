@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_decision_fatigue | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-375 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_decision_fatigue
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] classify always returns valid EisenhowerPriority; triage covers all priorities
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

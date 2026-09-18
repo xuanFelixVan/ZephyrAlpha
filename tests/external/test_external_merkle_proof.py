@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 
 # [MODULE] tests.test_external_merkle_proof
+# [DOMAIN] D_INTEGRATION
 
 # [INVARIANTS] ExternalMerkleProof merkle tree root hash is deterministic and verifiable
 

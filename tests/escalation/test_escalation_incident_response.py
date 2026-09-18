@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §test
 
 # [MODULE] tests.test_escalation_incident_response
+# [DOMAIN] D_AUTONOMY_CORE
 
 # [INVARIANTS] test_escalation_incident_response covers IncidentLevel+IncidentProtocol+get_protocol+escalate
 

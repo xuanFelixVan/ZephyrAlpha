@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_lifecycle_hooks
+# [DOMAIN] D_GOV_AUDIT
 
 # [INVARIANTS] LifecycleManager按注册顺序init+startup;反向shutdown;异常传播
 

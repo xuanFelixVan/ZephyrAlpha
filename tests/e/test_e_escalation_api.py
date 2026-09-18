@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_e_escalation_api | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_e_escalation_api
+# [DOMAIN] D_SHARED
 # [INVARIANTS] test完整性
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

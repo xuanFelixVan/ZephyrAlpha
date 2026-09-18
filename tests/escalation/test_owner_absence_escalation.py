@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_owner_absence_escalation | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_owner_absence_escalation
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] owner_ack resets state to PRESENT; critical+ABSENT triggers auto_approved
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

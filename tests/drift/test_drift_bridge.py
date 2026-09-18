@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_drift_bridge | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] tests.test_drift_bridge
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] DriftBridge.sync returns BridgeResult; critical_gaps calculation
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

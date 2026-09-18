@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_event_store | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §event_store
 # [MODULE] tests.test_event_store
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] EventStore.record必须返回event_id; StoredEvent.to_row/from_row必须可逆
 # [MODIFY-GUARD] 仅当event_store公开API变更时修改
 # [CONSUMERS] pytest

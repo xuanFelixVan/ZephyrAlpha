@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_lazy_loader_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-402 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_lazy_loader
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] LazyModuleRegistry is per-instance; thread-safe
 # [MODIFY-GUARD] lazy_loader.py
 # [CONSUMERS] CI

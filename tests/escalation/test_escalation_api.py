@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_escalation_api | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_escalation_api
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] 模块接口签名不可变
 # [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [CONSUMERS] pytest

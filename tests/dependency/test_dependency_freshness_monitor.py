@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_dependency_freshness_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_dependency_freshness_monitor
+# [DOMAIN] D_GOV_SCRIPTS
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

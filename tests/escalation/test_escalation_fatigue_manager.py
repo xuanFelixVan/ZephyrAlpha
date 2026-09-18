@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_escalation_fatigue_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §tests
 # [MODULE] zephyr.governance.escalation.escalation_fatigue_manager
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] 升级疲劳管理不可禁用;adaptive阈值不可手动覆盖
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_incident_priority_triage_automator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_incident_priority_triage_automator
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] classify score→Severity mapping; triage auto-pages at/below threshold
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

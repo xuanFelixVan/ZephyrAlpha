@@ -1,6 +1,7 @@
 # [A_test] test_id=F18-AUTO | module_id=MOD-INF-005 | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md
 # [MODULE] tests.test_f18_automation
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] Tests F18 automation: auto-startup, event-driven, auto-run, auto-close
 # [MODIFY-GUARD] DM-202815 task card
 # [CONSUMERS] DM-202815 acceptance

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_escalation_bridge | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_escalation_bridge
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] 测试覆盖escalate/escalate_dead_letter/get_escalation_history;边界:空输入/None/异常
 # [MODIFY-GUARD] blueprint.md §3
 # [CONSUMERS] CI

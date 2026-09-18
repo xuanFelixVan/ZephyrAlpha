@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 
 # [MODULE] tests.test_drift_fix
+# [DOMAIN] D_GOV_AUDIT
 
 # [INVARIANTS] DriftFixHandler.on_drift_fix returns correct action for auto_fixable and manual events
 

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_event_bus_upgrade | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §event_bus_upgrade
 # [MODULE] tests.test_event_bus_upgrade
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] event_bus_upgrade是deprecated compat shim; import时必须发出DeprecationWarning
 # [MODIFY-GUARD] 仅当event_bus_upgrade公开API变更时修改
 # [CONSUMERS] pytest

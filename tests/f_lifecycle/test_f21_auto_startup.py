@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_f21_auto_startup | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] tests.test_f21_auto_startup
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] CI

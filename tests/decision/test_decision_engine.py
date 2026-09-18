@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_decision_engine | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_decision_engine
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] test_coverage>=2_public_methods;boundary_tests_included
 # [MODIFY-GUARD] sync_with_source_on_refactor
 # [CONSUMERS] pytest

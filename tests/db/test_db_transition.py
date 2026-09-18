@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_db_transition | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-DATABASE | docs/03_modules/_cross_layer/database/blueprint.md
 # [MODULE] tests.test_db_transition
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 状态转换必须遵循有限状态机
 # [MODIFY-GUARD] task_repo.py 组合入口; gates/task_types.py TaskStatus
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_daemon_registry | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-372 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_daemon_registry
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] DaemonRegistry uses ClassVar state; must reset between tests
 # [MODIFY-GUARD] daemon_registry.py
 # [CONSUMERS] CI

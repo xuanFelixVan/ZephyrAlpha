@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_external_tool_audit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] tests.test_external_tool_audit
+# [DOMAIN] D_INTEGRATION
 # [INVARIANTS] ExternalToolCallAuditor chain depth tracking; validation logic
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_db_red_blue | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] tests.db.test_db_red_blue
+# [DOMAIN] D_SHARED
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

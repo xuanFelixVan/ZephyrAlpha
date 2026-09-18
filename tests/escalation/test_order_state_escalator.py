@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_order_state_escalator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §
 # [MODULE] tests.test_order_state_escalator
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] 订单状态机升级不可跳过;超时必须触发升级
 # [MODIFY-GUARD] docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md
 # [CONSUMERS] CI pipeline

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_f5_auto_shutdown | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md | §2
 # [MODULE] tests.test_f5_auto_shutdown
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] shutdown is idempotent; signal handlers never raise; atexit hook safe to call multiple times; persist_state writes atomic; restore_state never raises
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

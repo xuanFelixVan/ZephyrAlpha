@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_event_hook | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §
 # [MODULE] tests.test_event_hook
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] test_register_and_fire;test_priority_order;test_unregister;test_exception_isolation
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

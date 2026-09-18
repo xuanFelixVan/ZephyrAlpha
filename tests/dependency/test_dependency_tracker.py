@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_dependency_tracker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 # [MODULE] tests.test_dependency_tracker
+# [DOMAIN] D_GOV_SCRIPTS
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

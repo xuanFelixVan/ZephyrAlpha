@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_restore_from_backup | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §dr-drill
 # [MODULE] tests.dr.test_restore_from_backup
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

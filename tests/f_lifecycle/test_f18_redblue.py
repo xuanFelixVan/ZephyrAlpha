@@ -1,6 +1,7 @@
 # [A_test] test_id=F18-REDBLUE | module_id=MOD-INF-005 | layer=test | stability=evolving | safety=L
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md
 # [MODULE] tests.test_f18_redblue
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] Red-blue adversarial tests for F18 automation edge cases
 # [MODIFY-GUARD] DM-202815 task card
 # [CONSUMERS] F18 acceptance
