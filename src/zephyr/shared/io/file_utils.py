@@ -74,6 +74,9 @@ class AtomicWriteFn(Protocol):
 
 
 __all__: Final = [
+    "ATOMIC_TMP_PREFIX_TEMPLATE",
+    "ATOMIC_TMP_RAND_LEN",
+    "ATOMIC_TMP_SUFFIX",
     "AtomicWriteError",
     "AtomicWriteFn",
     "DEFAULT_HOT_FILES",
@@ -82,6 +85,8 @@ __all__: Final = [
     "UnsafeDeleteRefused",
     "WriteVerificationError",
     "assert_safe_rmtree_target",
+    "atomic_tmp_glob",
+    "atomic_tmp_to_canonical",
     "atomic_write",
     "backup_and_rollback",
     "backup_file",
@@ -92,6 +97,33 @@ __all__: Final = [
     "safe_rmtree",
     "safe_write_text",
 ]
+
+
+# atomic_write 临时件命名真源（ENV1 长尾 L3）：清扫/回收侧不得另立一份模式，
+# 否则命名一改即双源漂移（RULE-SSOT + trae_071 同族精神）。
+ATOMIC_TMP_PREFIX_TEMPLATE: Final = ".{name}_"
+ATOMIC_TMP_SUFFIX: Final = ".tmp"
+# tempfile 随机表 = "abcdefghijklmnopqrstuvwxyz0123456789_"，长度固定 8 且**含下划线**
+# ⇒ 不能用 rsplit("_") 反推正本名，必须按定长剥尾。
+ATOMIC_TMP_RAND_LEN: Final = 8
+
+
+def atomic_tmp_glob(name: str = "*") -> str:
+    """返回匹配 atomic_write 临时件文件名的 glob（name=正本文件名，缺省匹配全部）。
+
+    mkstemp 随机后缀占 8 字符（tempfile 默认），故固定为 ``.{name}_????????{suffix}``，
+    避免 ``_*.tmp`` 把 ``.foo_bar.tmp``（人工命名）误判成半成品。
+    """
+    rand = "?" * ATOMIC_TMP_RAND_LEN
+    return f"{ATOMIC_TMP_PREFIX_TEMPLATE.format(name=name)}{rand}{ATOMIC_TMP_SUFFIX}"
+
+
+def atomic_tmp_to_canonical(name: str) -> str:
+    """临时件文件名 → 正本文件名（反向解析与 atomic_tmp_glob 同处一源，禁调用方自切）。"""
+    prefix_len = len(ATOMIC_TMP_PREFIX_TEMPLATE.split("{")[0])
+    cut = ATOMIC_TMP_RAND_LEN + 1 + len(ATOMIC_TMP_SUFFIX)
+    stem = name[prefix_len:] if name.startswith(".") else name
+    return stem[: len(stem) - cut] if len(stem) > cut else stem
 
 
 class AtomicWriteError(OSError):
@@ -144,8 +176,8 @@ def atomic_write(
         backup_file(target, max_backups=max_backups)
 
     fd, tmp_path_str = tempfile.mkstemp(
-        suffix=".tmp",
-        prefix=f".{target.name}_",
+        suffix=ATOMIC_TMP_SUFFIX,
+        prefix=ATOMIC_TMP_PREFIX_TEMPLATE.format(name=target.name),
         dir=str(target.parent),
     )
     tmp_path = Path(tmp_path_str)
@@ -327,10 +359,9 @@ DEFAULT_HOT_FILES: Final = frozenset(
 _SAFE_WRITE_AUDIT_REL = ".runtime/audit/safe_write.jsonl"
 
 
-class StaleWriteRefused(RuntimeError):
-    """热文件未声明 base-hash，或 base-hash 与磁盘内容不符（陈旧缓冲区）。
-
-    路径/哈希等细节入 details 字段（MSG-EXPOSURE 合规：消息文本不含敏感信息）。
+class DetailsCarryingError(RuntimeError):
+    """带 details 载荷的治理异常基类——MSG-EXPOSURE 合规：消息文本不含路径/哈希等敏感信息，
+    细节一律入 details 字段。三个下游类共享同一构造语义（勿再各自复制 __init__）。
     """
 
     def __init__(self, message: str, *, details: dict | None = None):
@@ -338,12 +369,15 @@ class StaleWriteRefused(RuntimeError):
         self.details = details or {}
 
 
-class WriteVerificationError(RuntimeError):
-    """写后回读校验失败——落盘内容与预期不符（details 字段承载路径/哈希）。"""
+class StaleWriteRefused(DetailsCarryingError):
+    """热文件未声明 base-hash，或 base-hash 与磁盘内容不符（陈旧缓冲区）。
 
-    def __init__(self, message: str, *, details: dict | None = None):
-        super().__init__(message)
-        self.details = details or {}
+    路径/哈希等细节入 details 字段（MSG-EXPOSURE 合规：消息文本不含敏感信息）。
+    """
+
+
+class WriteVerificationError(DetailsCarryingError):
+    """写后回读校验失败——落盘内容与预期不符（details 字段承载路径/哈希）。"""
 
 
 @dataclass
@@ -468,15 +502,11 @@ def safe_write_text(
 FILE_ATTRIBUTE_REPARSE_POINT: Final = 0x400
 
 
-class UnsafeDeleteRefused(RuntimeError):
+class UnsafeDeleteRefused(DetailsCarryingError):
     """删除目标硬断言失败——路径越出允许前缀，或目标树内含 reparse point。
 
     路径等细节入 details 字段（MSG-EXPOSURE 合规：消息文本不含敏感标识）。
     """
-
-    def __init__(self, message: str, *, details: dict | None = None):
-        super().__init__(message)
-        self.details = details or {}
 
 
 def _is_reparse_point(path: Path) -> bool:

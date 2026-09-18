@@ -21,11 +21,17 @@
 # [TTL] task_bound
 
 import hashlib
+from pathlib import Path
 
 import pytest
 
 from zephyr.shared.io.file_utils import (
+    ATOMIC_TMP_PREFIX_TEMPLATE,
+    ATOMIC_TMP_RAND_LEN,
+    ATOMIC_TMP_SUFFIX,
     AtomicWriteError,
+    atomic_tmp_glob,
+    atomic_tmp_to_canonical,
     atomic_write,
     backup_and_rollback,
     backup_file,
@@ -152,3 +158,40 @@ class TestBackupAndRollback:
 class TestAtomicWriteError:
     def test_inherits_os_error(self):
         assert issubclass(AtomicWriteError, OSError)
+
+
+class TestAtomicTmpNamingSSOT:
+    """.tmp 半成品命名的真源锁：命名 pattern 与反解析必须由 file_utils 单点导出。
+
+    红证：改坏 ATOMIC_TMP_RAND_LEN（或把反解改成 rsplit("_")）⇒ 第 1/2 条即失败。
+    清扫脚本侧的"复用同一函数对象"恒等锁随其换源改动同批落地（本批只出真源）。
+    """
+
+    def test_glob_is_derived_from_constants(self):
+        assert atomic_tmp_glob("x.yaml") == ".x.yaml_" + "?" * ATOMIC_TMP_RAND_LEN + ATOMIC_TMP_SUFFIX
+        assert atomic_tmp_glob() == ".*_" + "?" * ATOMIC_TMP_RAND_LEN + ATOMIC_TMP_SUFFIX
+
+    def test_mkstemp_produced_name_round_trips(self, tmp_path):
+        import fnmatch
+        import os
+        import tempfile
+
+        target_name = "probe_registry.yaml"
+        fd, made = tempfile.mkstemp(
+            suffix=ATOMIC_TMP_SUFFIX,
+            prefix=ATOMIC_TMP_PREFIX_TEMPLATE.format(name=target_name),
+            dir=str(tmp_path),
+        )
+        os.close(fd)
+        name = Path(made).name
+        try:
+            assert fnmatch.fnmatch(name, atomic_tmp_glob())
+            assert atomic_tmp_to_canonical(name) == target_name
+        finally:
+            Path(made).unlink()
+
+    def test_human_named_tmp_is_not_matched(self):
+        # tempfile 随机表含下划线 ⇒ 只能按定长剥尾；人工命名不得被当成本半成品族
+        import fnmatch
+
+        assert not fnmatch.fnmatch(".foo_bar.tmp", atomic_tmp_glob())
