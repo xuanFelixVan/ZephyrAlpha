@@ -645,6 +645,10 @@ $ git log --oneline -3 -- $C
 | **C-20** | `TRAE-079` 悬空 `paired_gate_id` 出口三选一（R-A27，靶在 `rules/` 受 D-14 冻结） | 甲：删悬空 id（保护体已内嵌，行为不变） | 乙：铸真 gate_id + 净零增长对价（加严，但要退役一台） | 倾向甲（乙等于为"已经生效的保护"再付一台门的成本） |
 | **C-21** | 集合差 `gate_registry − in_process = 56` 的含义未判（R-A27 附带） | — | — | 归 WP4；本册只留实测三面数 |
 | **C-22** | `dedup_ttl_headers.py` 过删锚（R-A25）：余量 ~172 件何时能安全批处理 | 修件车道须交两条红证（复现锚被删→改后跳过并报因；真重复块仍正确去重）+ 新增『未处理原因』分类计数 | 修好后重跑 dry-run 取新基线，再按域分批（每批≤40、逐件四道复验） | 已派 `st-ttlfix-20260919`；批处理**必须等它落地**，否则会继续制造孤儿模块 |
+| **C-23** | WP16 外部引擎豁免把本仓库豁免掉（F1/T1）：`vms_documents`/`vms_id_map` 由本仓 `sqlite_metadata_store.py` 建 | 承认 `data/vector_db/*` 为生产库、纳入比对面 | 保留豁免但把"未建"桶文案改成"非外部引擎面"并给出外引擎证据 | 倾向甲（先取证 `metadata.db` 里表由谁建）；改判据属 §6.3 停手项，本战役未动 |
+| **C-24** | 21/42 补约束项存量违反 > 0（R-A33），补约束必然失败 | 先逐条判"源码约束过宽"还是"数据脏"，再决定清数据/放宽声明 | — | 必须**两步走**：本册只交付清单与分档，不合并成一次 DB 变更 |
+| **C-25** | T3 三项门位落在 0 行野库、真库无该表 ⇒ 与 R-A20 的删野库是同一件事 | — | — | **并案批**：root 修复(活体) → 删野库 → 撤这 3 项，顺序不可换 |
+| **C-26** | F2/F3/F4 卫生勘误（门位项 42→41；散文写死 9/7 实为 8/6；scratch 应标非交付面） | — | — | 总包已在本册登记，WP16 交付时随附勘误批 |
 ## 4. 事实修正表（后续车道任务书必带对应行）
 
 | 方案原文 | 现场实测（2026-09-19，本战役复跑） | 影响 |
@@ -672,6 +676,9 @@ $ git log --oneline -3 -- $C
 | D-9"`AGENTS.md`↔`agent_constitution_l0.md` 正文≈100% 镜像，仅差 frontmatter+3 行头部" | 实测 **88.18%**（97/110 行），剥 frontmatter 后**无全等点**，残余 29 行、段落级 76.0%，**5 处正文分叉**（含 §0.3 RULE-WORKTREE 两份给不同指令） | R-A12 / C-13 |
 | D-8"`adversarial_validation run` 作门禁面回归护栏" | 该护栏当前**区分度 0**（52/52 全走缺 `description` 的 fail-closed 兜底） | R-A13 / C-14 |
 | D-9 否决项"project_rules↔AGENTS 重叠≈0" | **复测成立**（共享 1 条=表格分隔符、`trae_*` 锚点 1、`RULE-*` 键 1、0.265%）⇒ 不动它这条判据保留 | — |
+| WP16 前腿"停在重跑中途" | **不成立**：全量链 04:57:13→04:59:28 走通（generated_at 与 mtime 单调）；唯一新旧混杂是判决面外的 `dblist.txt` 与语法损坏的 step8（37 秒差正是死亡物证） | R-A30 |
+| WP16 册"非瞬态面 0 命中" | **为假**：`vms_documents`/`vms_id_map`/`metrics` 在 `data/vector_db/metadata.db`、`vms_metadata.db`、`logs/mlflow.db`，mtime 均早于普查窗口；根因是外部引擎前缀 `continue` 使判据永假 | R-A31 / C-23 |
+| 前腿 T6"疑似凭据 `.env.db`" | **假警**：`test_secret_registry_drift.py:98` 写死的合成夹具 `DB_PASS=svc-secret`，落在 `tmp_path` 且 `.runtime/tmp` 被 gitignore | R-A32 |
 
 - **R-A12｜★ D-9 的"≈100% 全文镜像"被实测推翻，而且真相更坏：两份宪法已经**内容分叉**。**
   实测（WP13 的 `overlap_probe.py`，378 行只读；仪器自证：同文件自比=100%、注入一行语义翻转即被点名）：
@@ -2018,6 +2025,35 @@ L581 改后：
 - 冷库镜像：`G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/wp11/`（同 4 件）。首版 sha256 双份核对
   `6fd8307ad5ae3059dd76640c5a1ec7278f798d3fcbc1cccec96b622a837df3b3`（`.runtime` 与冷库逐字节相同；本文件其后又补了 RULE-ENV/GUARDIAN 两行实测值，故以最终版重刷镜像并复核一致）　`[亲验]`
 
+- **R-A30｜WP16 判语（接力腿）：前腿产物**自洽、可作 WP16 判决输入**，不必重跑全量管线，但须随附 4 条勘误**。
+  三组一致性 0 处不符（非瞬态 1047 条 / 瞬态 251 组展开 20163 / 分库 35 个 / 分档 16 档，yaml↔graded↔summary 全等）；
+  **独立复算覆盖整册**（51 库全开、1047 行逐条、其中真正判决要用的 42 行补约束项结构 42/42 符、45 条存量数 45/45 符、
+  矛盾率 0.0045）；仪器 4 条双向对照**由本腿复跑且逐字节可重现**。
+  ★ **接力腿自纠了一条方法学**（必须留）：它自己第一版 CHECK 提取器深度条件写错（`depth==0` 才认 `CHECK(`，
+  而 CREATE TABLE 内深度恒 ≥1）⇒"**缺 CHECK**"判据**恒真＝白判**，正是本役点名的"生成器自证清白"，
+  **而这次的生成器是它自己**；该件已标作废、以 step2c 为准。
+- **R-A31｜WP16 的实质发现 F1/T1：所谓"外部引擎豁免"把本仓自己的库豁免掉了**（真问题，交 Max）
+  - 册上"非瞬态面 0 命中"这句话**为假**：`vms_documents`/`vms_id_map`/`metrics` 实测就在
+    `data/vector_db/metadata.db`、`data/vector_db/vms_metadata.db`、`logs/mlflow.db`，且**三库 mtime 都早于普查窗口**
+    ⇒ 不是并发新增，是**判据看不见**。
+  - 根因（读码定位）：`wp16_step3_compare.py:37-40` 的 `EXTERNAL_ENGINE_PREFIXES` 在 `:318` 直接 `continue`，
+    这些库的表名从不进 `present_live` ⇒ `:443` 的判据永假。
+  - ★ 要害：`vms_documents`/`vms_id_map` 是**本仓自己**的 `vector_memory/sqlite_metadata_store.py` 声明并建的表，
+    却被"外部引擎前缀"**整片豁免** ⇒ 要么承认为生产库（则"未建"少 2 张、且这两库应进比对面可能新增漂移），
+    要么给出"确属外部引擎"的证据。**修它=改判定逻辑 ⇒ §6.3 停手项，接力腿未动。**
+  - 连带口径：文案应改成"非瞬态**且非外部引擎面（8 库不参与）**"，否则下游把"未建"读成"库里没有"。
+- **R-A32｜T6"疑似凭据外泄"经我复核＝假警，但报警动作要保留**：
+  三个 `.runtime/tmp/bt_*/test_required_resolved_from_en0/config/.env.db` 各 20 字节、无 SQLite 头，
+  内容是 `tests/governance/audit/test_secret_registry_drift.py:98-99` 写死的字面量 `DB_PASS=svc-secret`（合成夹具，
+  且落在 `tmp_path`＝符合 §9.6 测试隔离）；`.runtime/tmp` 又被 `.gitignore:262 /*` 覆盖 ⇒ **无外泄面**。
+  ★ 车道"**报可疑但不打印值**"的做法正确，今后沿用（凭据类只报路径/长度/键名形态）。
+  顺带：那三个 `bt_*` 目录是我自己跑的 pytest basetemp，属可清临时件。
+- **R-A33｜门位事实**：42 行补约束项里 **21 行的活库存量违反数 > 0**（最大 `tasks.phase` 411 行、
+  `tasks.priority` 317 行、`post_sync_standard`/`applicable_rules` 各 149 行）⇒ **直接补约束必然失败**，
+  必须先清数据或改判"源码约束是否过宽"；这是**另一个门位**，不可与"补约束"合并成一步。
+  另 `T3`：3 项落在源码树内 0 行野库 `src/data/drift_audit/drift_events.db`，而真库**根本没有 `drift_events` 表**
+  （实测 `no such table`）⇒ **照册执行等于给野库改结构**，正解更可能是删野库（与 R-A20 同一件事，须并案批）。
+
 ## 8. WP15(3/5) 取证案卷全文
 
 ### WP15(3/5) · 悬空 gate_id 与 gate_registry 漂移取证（`st-ramp-wp15b-20260919`）— 全程只读
@@ -2445,3 +2481,411 @@ $ python - <<'PY' ...                                                # 复刻 en
 - "尺子对 module 式 entry 的盲区可被绕过"：naive basename（不剥 arg）→ 19 假阳；
   剥 arg 后 `.py` 匹配 → 恰 2；generator name→gate_id（M2）→ 0。三档输出**互不相同** ⇒ 尺子有区分度，非恒红非恒绿。
 
+## 9. WP16 接力腿回执全文（判语、整册复算、门位与待裁）
+
+# WP16 接力腿回执 · `st-ramp-wp16b-20260919`
+
+> 任务：判定前腿 `st-ramp-wp16-20260919` 落盘产物的自洽性与可判决性，补 §5 回执六项，做时效保护。
+> 本腿**未重跑全量管线**（任务书要求），只做只读盘点 + 独立复算 + 仪器复跑 + 镜像补齐。
+> 生成时间：2026-09-19（本文件由接力腿写出，前腿产物一律标 `[转报]`，除非本腿自己复跑）。
+
+---
+
+## ① 零改动声明 + 产物清单
+
+### 1.1 零改动声明（本腿实际动作面）
+
+| 项 | 结论 | 取证方式 |
+|---|---|---|
+| 改 tracked 文件 | **无** | 本腿全部 Write 目标 = `.runtime/tmp/st-ramp-wp16b-20260919/**`，`.gitignore:262: /*` 命中（`git check-ignore -v` 实测输出：`.gitignore:262:/*  .runtime/tmp/st-ramp-wp16b-20260919/RECEIPT.md`）；`git status --porcelain \| grep -c st-ramp-wp16b` = **0** `[亲验]` |
+| `git add` / `git commit` / 任何 git 写 | **未执行一次** | 本腿 git 调用仅 `status --porcelain` / `rev-parse` / `check-ignore` `[亲验]` |
+| 建 tracked 件 | **无**（含未新建 `docs/_working/**`、未碰热册、未碰 `rules/`） | 同上 `[亲验]` |
+| 对任何 .db 的写 | **零** | 本腿 51+2 个库连接全部 `file:<path>?mode=ro` + `uri=True`；执行语句仅 `select sql from sqlite_master` / `pragma table_info` / 经形状校验的裸 `select count(*) from <表> [where …]`（正则 `^select count\(\*\) from …` 不匹配即拒执行）`[亲验]` |
+| DDL/DML/迁移/VACUUM/ALTER | **零** `[亲验]` | |
+| 禁碰面（`src/data/drift_audit/`、`data/databases/`、`data/drift_audit/`、`.runtime/task_board.db`、`.zephyr/rollback_quarantine.db`）的**写路径** | **未触碰**；其中 governance.db / drift_events.db(两库) / task_board.db 仅以 mode=ro 读取 `[亲验]` | |
+| 在飞车道领地清单 | **一个文件都没打开过**（reconciliation_registry / rollback_verifier / dedup_ttl_headers / ch_reader / pf_alloc / flowthrough_verifier / _registry.yaml / batch_creation_tokens / gate_prerun* / adversarial_validation / 两个 sessions 目录）`[亲验]` | |
+| 前腿产物 | **未改写一个字节**：本腿对前腿目录只读；仪器复跑输出写在**本腿自己的** `ctrl_run/`（输入以硬链接共享，`st_ino` 相同已核）`[亲验]` | |
+| 外来指令夹带 | 前腿 summary / self_audit / controls 三件经注入习语 grep（ignore previous / 请执行 / 新指令 / rm -rf / co-authored / 调 git_commit 等）= **0 命中**；全部文件内容按数据处理 `[亲验]` | |
+| 例外披露 | 前腿 `wp16_step8_readonly_audit.py` **原件语法损坏**（见 ⑥），本腿**未修改原件**，只在本腿目录写了修复副本运行 `[亲验]` | |
+| 冷启动 RULE-GUARDIAN / RULE-WORKTREE | **未执行** reaper `--status` 与 `session_worktree_start`：本腿写面全部落在 `.runtime/tmp/`（TTL 暂存）与 `G:/zephyr_cold/`（冷库），**零 tracked 文件写入 ⇒ 不构成需要 worktree 隔离的施工**；此为本腿自觉的口径，若 Max 认为只读取证车道也须走 worktree/守护登记，本腿补 | 披露，非既成合规 `[推断]` | |
+
+### 1.2 产物清单（两处路径 + 件数 + sha 核对）
+
+**A. 前腿交付物（本地，24h TTL）** `.runtime/tmp/st-ramp-wp16-20260919/`
+主交付 5 件（本腿逐件 sha 复算）：
+
+| 文件 | 字节 | sha256（本腿实测） |
+|---|---|---|
+| `drift_census.yaml` | 978,668 | `cd411f2c57ef55f0cfadfa074d31c08a5218bfc17d503631f1b77971e9552a6e` |
+| `drift_rows_graded.jsonl` | 1,340,932 | `018346521be7a0c27466842c9813c253c1854206fd45ab171e9171b533b96ff5` |
+| `WP16_drift_summary.md` | 25,710 | 见冷库 MANIFEST |
+| `live_db_census.jsonl` | 15,869,085 | `abcbd1669a7958f4703e4a4b6262c3d488ce02c326db45279020faab584f211f` |
+| `drift_rows_live.jsonl` / `drift_rows_ephemeral_aggregated.jsonl` | 810,250 / 93,704 | 见冷库 MANIFEST |
+
+**B. 冷库镜像（非 TTL 介质）** `G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/wp16/`
+
+* 前腿镜像**经 sha 逐件核对**（不是看件数）：lane 33 个文件 → **31 件 sha 完全相同**、
+  `manifest_local.json` **NOT_MIRRORED**（前腿漏镜像）、`wp16_step8_readonly_audit.py` **DIFFERS**（见 ⑥）。
+* 冷库另有 2 件是本地没有的：`live_db_census_prev_snapshot.jsonl`(15,569,370B，前一次快照，**正是"重跑中途"的物证**)、`manifest_cold.json`。
+* 本腿补齐：`manifest_local.json` 已入冷；损坏的 step8 原件以 **`wp16_step8_readonly_audit_LANE.py`** 另名入冷（**未覆盖**冷库可用版本）；接力腿全部产物入 `wp16/relay/`（逐件列在 `MANIFEST_sha256.txt`，含本回执与 9 件复算脚本）。
+* 全树递归清单：`wp16/MANIFEST_sha256.txt`（本腿写）。
+* **`sha256sum -c` 结果**：见本文件末尾"①-附：冷库核对原始输出"。
+
+**C. D-16 口径的分拣建议（本腿不代做 promote，因任务书禁 `git add`）**
+
+* 宜入 git 的小件（总包侧 promote）：`WP16_drift_summary.md`(25.7KB)、`drift_census.yaml`(978KB)、
+  `drift_rows_graded.jsonl`(1.34MB)、`read_only_self_audit.md`(3.6KB) + 本腿 `RECEIPT.md` + `step2c_full_recheck.json`(~2KB)。
+* **14MB 级大件不入 git**：`live_db_census.jsonl`(15.9MB)、`live_db_census_prev_snapshot.jsonl`(15.6MB)、
+  `db_module_binding.json`(15.4MB)、`db_module_binding2.json`(1.9MB)、`src_ddl_index.json`(2.3MB) —— 只留冷库。
+
+---
+
+## ② 一致性判定（三组数字）+ 活库逐条复核
+
+### 2.1 三组数字：`drift_census.yaml` vs `drift_rows_graded.jsonl` vs `WP16_drift_summary.md`
+
+| # | 判据 | yaml | graded jsonl | summary md | 相等？ |
+|---|---|---|---|---|---|
+| **组1 漂移总条数** | 非瞬态库 | `drift_rows_非瞬态库` len = **1047**；`counts` 字段 = 1047 | **1047** 行 | "漂移条数（非瞬态库）= **1047**" | **相等** |
+| | 测试瞬态库 | 聚合 len = **251**；展开 **20163** | （另件 `drift_rows_ephemeral_aggregated.jsonl` = 251 行，Σdb_count=20163） | "聚合 251 组（展开 20163 条）" | **相等** |
+| **组2 分库条数** | 35 个带漂移行的库 | 逐库 Counter **全等**（sum 1047） | 逐库 Counter **全等**（sum 1047） | §5 逐库表（本腿用 `libs_非瞬态.漂移行数` 求和 = 625 行归库 + 422 行无库可归 = 1047）| **相等**（无 only-in-A / only-in-B 库，per-db 差异 0 处） |
+| **组3 差异类型分档** | 16 个档 | yaml 行数 = counts 字段 = graded 行数，**16/16 档全等** | 同 | §1.1 表 16 行 × (非瞬态, 瞬态) 两列 = **32 个数字全等**，0 处不符 | **相等** |
+
+**结论：三件自洽，指向同一次运行。** 判据（不凭感觉）：
+`yaml.meta.generated_at = 2026-09-19 04:59:27 +0800` = `drift_census.yaml` mtime = `WP16_drift_summary.md` mtime；
+`drift_rows_graded.jsonl` mtime 04:59:17（step5 产出，早于 step7 报告 10 秒，符合流水线顺序）；
+`drift_rows_live.jsonl`/`…ephemeral…`/`src_ddl_index`/`live_db_census` 均 04:57:13–04:58:38（step1–4）。
+⇒ **时间戳与内部 generated_at 单调递增且互指一致，"停在重跑中途"的担忧不成立**：
+最后一次全量链在 04:59:28 走通并出报告。唯一的新旧混杂是两件与判决无关的**scratch**：
+`dblist.txt`（03:50:12，1968 行；**没有任何 step 脚本读它**，step1 自己 `os.walk`，`counts.db_files_found=2095` 与之不等 ⇒ 前一趟的遗留清单，不是本次输入）
+与 `wp16_step8_readonly_audit.py`（05:00:04，晚于全部产物，且已损坏）。
+
+### 2.2 抽样 10 条 → 活库逐条复核（每条：库文件 + SQL + 输出）
+
+抽样口径：从 `门位项_补约束清单`(42) 分层抽 **缺 CHECK ×4 / 缺 NOT NULL ×4 / 缺默认值 ×2**。
+每条跑两条独立语句（连接串一律 `file:D:/ZephyrAlpha/<库>?mode=ro`）：
+
+```
+select sql from sqlite_master where name='<表>'      -- 约束面
+pragma table_info("<表>")                             -- notnull / dflt_value 面
+select count(*) from "<表>" where <违反判据>           -- 存量面（先过形状正则）
+```
+
+| # | 类型 | 库文件（实测存在） | 表.列 | 活库实测（本腿） | 册内断言 | 存量：现在 / 册内 | 判定 |
+|---|---|---|---|---|---|---|---|
+| 1 | 缺 CHECK | `data/databases/governance.db` | `tasks.classification` | 该表 live CHECK **9** 处，引用本列 **0** 处 | 无 CHECK | 7 / 7 | **符** |
+| 2 | 缺 CHECK | `data/databases/governance.db` | `tasks.deliverables` | CHECK 9 / 引用本列 0 | 无 CHECK | 25 / 25 | **符** |
+| 3 | 缺 CHECK | `data/databases/governance.db` | `tasks.execution_model` | CHECK 9 / 引用本列 0 | 无 CHECK | 4 / 4 | **符** |
+| 4 | 缺 CHECK | `data/databases/governance.db` | `tasks.files_in_scope` | CHECK 9 / 引用本列 0；DDL 片段 `, files_in_scope TEXT` | 无 CHECK | **25 / 25** | **符** |
+| 5 | 缺 NOT NULL | `data/databases/governance.db` | `_schema_version.description` | pragma notnull=**0** dflt=None；表 CHECK 0 | 可空 | 0 / 0 | **符** |
+| 6 | 缺 NOT NULL | `data/databases/governance.db` | `_schema_version.description`（**与 #5 同一条**） | 同上 | 可空 | 0 / 0 | **符（但暴露重复行，见 2.4-F2）** |
+| 7 | 缺 NOT NULL | `data/databases/governance.db` | `audit_entries.actor` | notnull=0；DDL 片段 `, actor TEXT` | 可空 | 0 / 0 | **符** |
+| 8 | 缺 NOT NULL | `data/databases/governance.db` | `audit_summary.total_actions` | notnull=0（INTEGER） | 可空 | 0 / 0 | **符** |
+| 9 | 缺默认值 | `data/databases/governance.db` | `_schema_version.description` | dflt_value **IS NULL** | 无默认值 | 0 / 0 | **符** |
+| 10 | 缺默认值 | `data/databases/governance.db` | `tasks.acceptance` | dflt_value IS NULL，`, acceptance TEXT` | 无默认值 | **44 / 44** | **符** |
+
+⇒ 抽 10 条：**约束面 10/10 符，存量面 10/10 符**（超过要求的 ≥5）。
+原始逐字输出 = `step2_live_recheck_raw.txt`（冷库 `wp16/relay/`）。
+
+**因 10 条全落在同一个库（governance.db），样本对"多库/绑定归属"无覆盖 ⇒ 本腿把复核放大到整册。**
+
+### 2.3 放大：整册 1047 条逐条对活库复跑（`.runtime/tmp/st-ramp-wp16b-20260919/wp16b_step2c_full_recheck.py`）
+
+打开 **51 个非瞬态库**（mode=ro），对每条漂移行用**独立实现的 CHECK 括号配平提取器**重算结构事实：
+
+```
+rows=1047  dbs opened=51  dbs missing on disk=0
+  VERIFIED             250      ← 有活库结构断言且复核为真
+  UNBUILT_VERIFIED     419      ← "源码有活库无（未建）"复核为真
+  CONTRADICTED           3      ← 见 2.4-F1（唯一实质性偏差）
+  NOT_CHECKABLE_BUCKET 375      ← 未判定 341 / 非基准对照 26 / 外部引擎库 8，本就不出结构结论
+checkable rows: 672 of 1047 ; contradiction rate 0.0045
+violation-count re-runs: EQUAL 45 / DIFF 0 / SHAPE_REJECTED 0 / ERROR 0
+```
+
+分档全等（verified/total， contradicted）：缺 CHECK 9/9·0，缺 NOT NULL 21/21·0，缺默认值 12/12·0，
+少列 24/24·0，多列 104/104·0，多列(仅 ALTER) 54/54·0，类型不同 2/2·0，默认值不同 2/2·0，
+活库多 CHECK 2/2·0，活库多 NOT NULL 6/6·0，CHECK 表达式不同 1/1·0，野表 13/13·0，未建 419/422·**3**。
+
+**45 条存量违反数逐条重跑 = 45/45 完全相等**（0 差）。
+
+**方法学自纠（必录）**：本腿第一版 `wp16b_step2b_full_recheck.py` 的 CHECK 提取器把
+"顶层括号"条件写错（`depth == 0` 才认 `CHECK(`，而 CREATE TABLE 内部深度恒 ≥1），
+导致"缺 CHECK"类判据**恒真=白判**——正是本役判据要防的"生成器自证清白"，只不过这次生成器是我自己。
+该件与其输出 `step2b_full_recheck.json` **一并留档但作废**；结论以修正版 step2c 为准。
+（教训：修 CHECK 后 `活库该表 CHECK 数` 必须非零仍可测——step2c 对 `tasks` 实测 9 处 CHECK，与册内 9 处吻合，说明提取器这次真的在数东西。）
+
+### 2.4 复算册内散文数字（`wp16b_step4_arith.py`，输出 `step4_arith_raw.txt`）
+
+| 册内说法 | 本腿复算 | 判定 |
+|---|---|---|
+| 门位项"共 42 条" | 42 行 | 等，但 **distinct(库,表,列,差异类型) = 41** ⇒ F2 |
+| "42 条里 21 条已有违反存量行" | 21 | **等** |
+| 存量违反汇总 `{缺NOT NULL:357, 缺默认值:357, 缺CHECK:818}` | 逐行求和 = 357 / 357 / 818 | **等**（357 与 357 不是复制粘贴：分别是 21 行与 12 行之和，本腿独立加总复现） |
+| "源码有活库无 339 张（生产模块声明 322 张）" | distinct 表 339；至少一处非 tests/ 声明的 distinct 表 **322** | **等** |
+| "野表 13 张（生产与仓内库 5 张）" | 13 行 / 13 个 (库,表) 组合；role 分布 backup 8 + live_primary 4 + other_in_repo 1 ⇒ 非 backup 恰 **5** | **等** |
+| `counts.non_ephemeral_libs=51` vs `libs_非瞬态` len | 51 | **等** |
+| 瞬态聚合 251 组 Σdb_count vs 展开 20163 | 20163 | **等** |
+| findings **W16-F7 标题/正文"9 份声明里 7 份零告警"** | 仪器实跑 = **8** 份声明、**6** 份零告警（见 ③ C4 原文） | **不符 ⇒ F3** |
+| `controls_output.txt` 里 C4 首行硬编码"9 份" | 实为 8 份（`len(src_variants["tasks"])`） | 与 F3 同根：散文写死数字，机器算 8 |
+
+**发现的偏差（共 4 类，全部逐条列，未处置）**
+
+* **F1（实质性，3/1047 行）**：`(扫描面内无任何非瞬态库含此表)` 标签 + `live_constraint="2079 个 SQLite 库中非瞬态面 0 命中"`
+  对以下 3 行**为假**——本腿活库实测它们**就在非瞬态库里**：
+  | 表 | 源码声明位 | 实测存在于（mtime 均**早于**普查窗口，非并发新增） |
+  |---|---|---|
+  | `vms_documents` / `vms_id_map` | `src/zephyr/integration/vector_memory/sqlite_metadata_store.py:171 / :199` | `data/vector_db/metadata.db`(12 表, 2026-05-09 22:17:29)、`data/vector_db/vms_metadata.db`(13 表, 2026-05-09 23:41:11) |
+  | `metrics` | `src/zephyr/feedback_loop/metrics_collector.py:98` | `logs/mlflow.db`(197 表, 2026-08-08 16:14:55) —— 系 mlflow 自家同名表，与本仓声明**只是撞名** |
+  成因（读源码定位，非猜）：`wp16_step3_compare.py:37-40` 的
+  `EXTERNAL_ENGINE_PREFIXES = ("data/vector_db", "data/e2e_test", "data/semantic_test", "data/vector_db_e2e_test", "logs/mlflow.db", ".mypy_cache/")`
+  在 :318 处对这些库 `continue`，**其表名从不进 `present_live`**，于是 :443 的 `if present_live.get(tname)` 永假 ⇒ 被判"未建"。
+  ⇒ **两点必须分开**：① 结论文本里"2079 个库中非瞬态面 0 命中"是**口径越界**（真口径是"非瞬态且非外部引擎面"），应改字；
+  ② 但 `vms_documents`/`vms_id_map` 恰好是**本仓自己的模块建的表**（`vector_memory/sqlite_metadata_store.py`），却被前缀一起当"外部引擎"豁免
+  ⇒ `data/vector_db/*` 是否真属"DDL 真源在 site-packages"需 Max 重划，这是**实质待裁**，不是文案问题。
+* **F2（去重，1 行）**：门位项 `_schema_version.description 缺 NOT NULL` 出现 2 次（源自两处声明：
+  `src/zephyr/governance/persistence/sqlite_schema.py:202` 与 `tests/governance/shared/test_governance_db.py:60`）。
+  两条"补约束动作"物理上是同一件事 ⇒ **动作总数应报 41，不是 42**；21 条撞存量的结论不受影响（两条存量都是 0）。
+* **F3（文案，3 处）**：W16-F7 标题/正文与 controls 首行的"9 份声明/7 份零告警"→ 机器实跑 **8 份/6 份**（见 ③）。不影响任何漂移行。
+* **F4（卫生，2 件）**：`dblist.txt` 是前一趟 scratch（1968 行 ≠ 2095，无人读它）、
+  `wp16_step8_readonly_audit.py` 本地版已损坏且晚于产物 ⇒ 两件应标"非本次交付面"。
+
+---
+
+## ③ 仪器双向对照：**本腿自己复跑**（非转述）
+
+命令（输入以硬链接共享前腿快照，输出写本腿目录，未覆前腿一件）：
+
+```
+$ python .runtime/tmp/st-ramp-wp16-20260919/wp16_step6_controls.py \
+      D:/ZephyrAlpha  .runtime/tmp/st-ramp-wp16b-20260919/ctrl_run
+EXIT=0
+```
+
+原文输出（`step3_controls_rerun.txt` = 前腿 `controls_output.txt`，**sha256 逐字节相同**
+`7ecf9b2bbe6cb3e016fd6b3339854e8f548a415f9ce9d8dde1113d32fef9cf58`）：
+
+```
+C1 binding=bound_exact selected_decls=[('src/zephyr/governance/persistence/sqlite_schema.py', 80), …]
+C1 tasks.status 漂移行: [('缺 NOT NULL', 'NOT NULL', '可空'), ('缺 CHECK', "CHECK(status IN ( 'PENDING','IN_PROGRESS','COM", '无 CHECK')]
+C1 PASS（红=报出已知漂移）
+C2 binding=bound_exact decls=[('scripts/task_board.py', 98)] rows=0
+C2 PASS（绿=同一张比对器对已知一致结构零告警）
+C3 活库侧注入 4 处缺陷（删 CHECK/去 NOT NULL/删列/去默认值）-> 报出 4 行: [('completed_at','少列'), ('metadata_json','缺默认值'), ('status','缺 CHECK'), ('title','缺 NOT NULL')]
+C3 PASS（同一活库表：未注入=绿，注入即红且红得准——仪器不是恒红也不是恒绿）
+C4 同一张 governance.tasks 逐份对照源码里 9 份 `tasks` 声明（无绑定信息时按名挑=掷骰子）：
+   scripts/task_board.py:98                                     报  75 行，其中 缺CHECK 1
+   src/zephyr/governance/persistence/sqlite_schema.py:80        报  66 行，其中 缺CHECK 9
+   tests/governance/data_layer/test_sqlite_dumper.py:40         报  78 行，其中 缺CHECK 0
+   tests/governance/shared/test_governance_db.py:60             报  72 行，其中 缺CHECK 0
+   tests/orchestrator/test_orchestrator_rollback_manager.py:30  报  70 行，其中 缺CHECK 0
+   tests/rollback/conftest.py:39                                报  74 行，其中 缺CHECK 0
+   tests/rollback/test_rollback_verifier_root.py:365            报  77 行，其中 缺CHECK 0
+   tests/rollback/test_rollback_verifier_root.py:346            报  78 行，其中 缺CHECK 0
+C4 PASS（9 份同名声明里 6 份对 status 的已知 缺CHECK **全部漏报=假绿**，只有绑定真源那份报出 9 条 ⇒ 归属判错就是假绿）
+ALL 4 CONTROLS PASS
+```
+
+判读：仪器**双向都有分辨力**——C1 已知漂移必红、C2 已知一致必绿、C3 注入即红且红得准（四类各中一次，
+无多发无漏发）、C4 复现"挑错声明=假绿"并据此把无归属证据的 341 条改判未判定。
+**本腿独立看到的最硬一条**：C3 是**内存内**注入（`copy.deepcopy` 快照，脚本通篇不 open 任何 .db），
+读码确认，未凭其自述 ⇒ 前腿"一库不改"的口径与代码一致。
+（另注：C4 首行"9 份"是**写死的字面量**，实跑 8 份 ⇒ 见 F3。）
+
+### ③-附 只读自证的**加严复跑**（本腿做的第二件独立事）
+
+前腿 shipped 的 `read_only_self_audit.*` 出自**较宽松版**step8（冷库那份）；
+前腿本地最后把 step8 改严（连接窗口从 ±4 行扩到 -16/+4、加禁 `commit()/executescript()/executemany()`、
+加禁 `writable_schema=` 与写型 `journal_mode=`）**但改坏后没跑过**。
+本腿修复该语法伤后，用**加严版**对前腿 10 个出物品的脚本重跑：
+
+```
+$ python wp16b_step8_audit_repaired.py <前腿脚本目录> <本腿 relay> <冷库 relay>
+EXIT=0
+{"verdict": "PASS", "violations": [],
+ "asserts": {"connect_sites_all_ro": true, "n_connect_sites": 4,
+             "n_exec_sites": 12, "exec_all_read_shaped": true}}
+```
+
+⇒ 前腿脚本面在**更严**规则下仍 PASS（4 处连接全 ro+uri、12 处 exec 全为读形）。本腿自身脚本的 SQL 面已在 ①-1.1 逐条列明。
+
+---
+
+## ④ 门位与待裁（补约束 = DB 结构变更门位，逐条列，**一律不处置**）
+
+### 4.1 补约束动作：**41 件**（册内报 42，去 F2 重复后 41）·全部 high/medium 档，`RULE-DATA-OPS` 三步验证 + 改库前自动备份
+
+按存量违反降序（存量违反 > 0 的 **21 件补约束必然失败或须先清数据 = 另一个门位**）：
+
+| # | 库文件 | 表.列 | 差异类型 | 源码约束 | 活库约束 | 存量违反 | 分级 |
+|---|---|---|---|---|---|---|---|
+| 1 | data/databases/governance.db | tasks.phase | 缺 CHECK | `CHECK(phase>=0 AND phase<=9)` | 无 CHECK | **411** | 高 |
+| 2 | data/databases/governance.db | tasks.priority | 缺 CHECK | `CHECK(priority IN ('P0'..'P4'))` | 无 CHECK | **317** | 高 |
+| 3 | data/databases/governance.db | tasks.post_sync_standard | 缺 NOT NULL | NOT NULL | 可空 | **149** | 高 |
+| 4 | data/databases/governance.db | tasks.post_sync_standard | 缺默认值 | `DEFAULT '[]'` | 无默认值 | 149 | 中 |
+| 5 | data/databases/governance.db | tasks.applicable_rules | 缺 NOT NULL | NOT NULL | 可空 | **143** | 高 |
+| 6 | data/databases/governance.db | tasks.applicable_rules | 缺默认值 | `DEFAULT '[]'` | 无默认值 | 143 | 中 |
+| 7 | data/databases/governance.db | tasks.acceptance | 缺 NOT NULL | NOT NULL | 可空 | 44 | 高 |
+| 8 | data/databases/governance.db | tasks.acceptance | 缺默认值 | `DEFAULT '[]'` | 无默认值 | 44 | 中 |
+| 9 | data/databases/governance.db | tasks.task_id | 缺 CHECK | `CHECK(task_id GLOB '[A-Z][A-Z]*-[0-9]*')` | 无 CHECK | 29 | 高 |
+| 10 | data/databases/governance.db | tasks.deliverables | 缺 CHECK | `CHECK(deliverables LIKE '[%')` | 无 CHECK | 25 | 高 |
+| 11 | data/databases/governance.db | tasks.files_in_scope | 缺 CHECK | `CHECK(files_in_scope LIKE '[%')` | 无 CHECK | 25 | 高 |
+| 12 | data/databases/governance.db | tasks.classification | 缺 CHECK | `CHECK(classification IN ('public','internal','confidential'))` | 无 CHECK | 7 | 高 |
+| 13–15 | data/databases/governance.db | tasks.allowed_touch / .deliverables / .rollback_instructions | 缺 NOT NULL ×3 | NOT NULL | 可空 | 6 | 高 |
+| 16–18 | data/databases/governance.db | tasks.allowed_touch / .deliverables / .rollback_instructions | 缺默认值 ×3 | `DEFAULT '[]'` ×2、`DEFAULT ''` | 无默认值 | 6 | 中 |
+| 19 | data/databases/governance.db | tasks.execution_model | 缺 CHECK | `CHECK(execution_model IN ('deepseek','glm','claude','kimi','qwen'))` | 无 CHECK | 4 | 高 |
+| 20–21 | data/databases/governance.db | tasks.files_in_scope | 缺 NOT NULL / 缺默认值 | NOT NULL / `DEFAULT '[]'` | 可空 / 无 | 3 | 高 / 中 |
+| 22 | data/databases/governance.db | tasks.status | 缺 CHECK | `CHECK(status IN (10 值))` | 无 CHECK | **0** | 高 |
+| 23 | data/databases/governance.db | `_schema_version`.description | 缺 NOT NULL（F2 去重后计 1 件） | NOT NULL | 可空 | 0 | 中 |
+| 24 | data/databases/governance.db | `_schema_version`.description | 缺默认值 | `DEFAULT ''` | 无默认值 | 0 | 中 |
+| 25–34 | data/databases/governance.db | audit_entries.actor · audit_summary.total_actions · fle_alerts.severity · integrity_records.target · judgment_records.decision · scan_results.{result,target} · tasks.description(缺NOT NULL) · tasks.priority · tasks.safety_level(缺CHECK) · tasks.status(缺NOT NULL) | 各 1 | NOT NULL / CHECK | 可空 / 无 CHECK | 0 | 中 |
+| 35–37 | data/databases/governance.db | usage_records.{resource_id,usage_amount} · tasks.description(缺默认值) | 各 1 | NOT NULL / `DEFAULT ''` | 可空 / 无默认值 | 0 | 中 |
+| 38–40 | **src/data/drift_audit/drift_events.db** | drift_events.{detector_id,module_id,state} | 缺默认值 ×3 | `DEFAULT ''` / `'MOD-INF-023'` / `'DETECTED'` | 无默认值 | 0 | 中 ⇒ **见 4.2-T3，疑似不该出现在动作面上** |
+
+（23 起为存量违反 0 的 20 件，逐字清单 = `drift_census.yaml: 门位项_补约束清单`；上表已按 F2 合并重复件。）
+
+**本腿对 4.1 全部 42 行做了活库逐条复算**（2.3 的 9/9 缺 CHECK + 21/21 缺 NOT NULL + 12/12 缺默认值 = 42/42 结构符、45/45 存量数符）。
+
+### 4.2 待裁（一律未处置，交 Max）
+
+* **T1 · `data/vector_db/*` 的归属重划（F1 实质面）**：`vms_documents`/`vms_id_map` 由本仓
+  `src/zephyr/integration/vector_memory/sqlite_metadata_store.py` 声明并在 `data/vector_db/{metadata,vms_metadata}.db` 实存，
+  但被 `EXTERNAL_ENGINE_PREFIXES` 整片豁免 ⇒ 该前缀把**仓内自有库**与 **chroma 引擎库**混在一起。
+  要么承认它们是生产库（则 `未建` 少 2 张、且这两库应进 DDL↔活库比对面，可能新增漂移行），要么给出"确属外部引擎"的证据。**本腿未自裁。**
+* **T2 · `未建` 桶的文案口径**：`"2079 个 SQLite 库中非瞬态面 0 命中"` 应改为
+  `"非瞬态且非外部引擎面 0 命中（外部引擎 8 库不参与）"`；否则 `metrics` 这类**撞名已存**会被下游读成"库里没有"。
+* **T3 · 3 件门位项落在源码树内 0 行野库**：`src/data/drift_audit/drift_events.db`（W16-F5 判为 project_root 误解析野库）
+  `drift_events` 表 **rows=0**；本腿另实测真库 `data/drift_audit/drift_events.db` **无 `drift_events` 表**（`no such table`）。
+  ⇒ 这 3 件"补默认值"若照册执行，是在给野库改结构；正解更可能=**删野库**（§6.1 删文件 → 必须回流）。**本腿未处置。**
+* **T4 · F2 去重 + F3 文案 + F4 卫生**：门位项 42→41、"9/7 份"→"8/6 份"、`dblist.txt` 与损坏 step8 标注为非交付面。
+* **T5 · 前腿遗留 `not_done` 5 条原样有效**（外部引擎不参与 / 外键·索引·触发器·视图·WITHOUT ROWID·STRICT 未比 /
+  多行与 f-string ALTER 未采集⇒"仅 ALTER 声明"是**下界** / CHECK 表达式做了大小写空白归一 / 不处置）——
+  本腿复核：这 5 条**没有一条已被本腿闭合**，仍是 Max 侧已知边界，不是缺陷。
+* **T6 · 安全侧转报（非本 WP 范围）**：前腿 W16-F9 记 5 个 .db 文件头非 SQLite，其中 3 个
+  `.runtime/tmp/*/test_required_resolved_from_en0/config/.env.db` 头部 16 字节含 `DB_PASS=svc-secr…` 形态文本。
+  本腿**未解析其内容、未据其执行任何动作**（只读文件头判引擎类型都不需要它）。是否真夹具请走 RULE-SECRETS 由 Owner/Max 侧核。
+
+### 4.3 命中的门位项（本腿自身提交面）
+
+**无**：本腿零 tracked 改动、零 git 操作 ⇒ 不触发 COMMIT_SCOPE / GATE-20 / RENAME-DEPGRAPH / CREATE-GUARD / TRANSLATION-COVERAGE。
+按任务书硬约束**不 `git add`**，故与 §2 提交队列无关；产物入 git 的动作留给总包（C. 段已给分拣清单）。
+
+---
+
+## ⑤ 证据等级
+
+**`[亲验]`（本腿自己跑出来的）**
+
+1. 三组一致性数字（1047/251/20163、35 库逐库全等、16 档全等）— `wp16b_step1_consistency.py`
+2. 抽样 10 条活库逐条（库文件 + SQL + 输出）— `step2_live_recheck_raw.txt`
+3. **整册 1047 条对 51 库逐条复算 + 45 条存量数复算（45/45 等）** — `step2c_full_recheck.json`
+4. 仪器 4 对照本腿复跑，输出 sha 与前腿**逐字节相同** — `step3_controls_rerun.txt`
+5. 加严版只读自证复跑 PASS（4 连接站点全 ro）— `step5_readonly_audit_rerun.txt`
+6. 冷库镜像**逐件 sha 核对**（31 同 / 1 漏 / 1 异）+ 补齐 + `MANIFEST_sha256.txt`
+7. F1 根因定位（读 `wp16_step3_compare.py:37-40/318/443` + 活库实测 3 表所在库与其 mtime）
+8. T3（真库 `no such table: drift_events`、野库 `rows=0`）、F2 重复行、F4 `dblist.txt` 无人读（grep 全脚本零引用）
+9. 零改动面（`git check-ignore -v`、`git status --porcelain | grep -c st-ramp-wp16b` = 0、144 行 porcelain 全属他会话）
+10. 散文数字复算 339/322/13/5/21/357·357·818 全等
+
+**`[转报]`（前腿产物，本腿未复跑其计算过程）**
+
+* 分级依据（`harm_grade`/`分级依据` 的"高/中"判据、`代码引用该列处数`、`该表写入端处数`、`binding` 归属推导）——
+  本腿只验了**结构事实**，未重算**危害分级**。
+* `db_module_binding*.json` 的库↔模块绑定推导、`src_ddl_index.json` 的 578 份声明采集、`step3_meta.json`、
+  `violation_counts.jsonl` 的生成过程。
+* W16-F1/F2（任务书路径串域、`rollback_verifier.py` 已被 WP1 施工取代）——本腿未独立打开 `rollback_verifier.py`（**该文件在禁碰领地清单内**）。
+* W16-F9 伪密钥观察（本腿只核了"确实存在 5 个非 SQLite 头 .db"这一层？—— **未核**，整条转报）。
+* 前腿 §5 回执原六项文本、`read_only_self_audit.md` 原件内容（本腿只重跑了指令面加严版）。
+
+**`[推断]`**
+
+* "最后一次全量链在 04:59:28 走通"——由 8 个产物 mtime + `meta.generated_at` 单调性推断，未见运行日志。
+* "`dblist.txt` 属前一趟 scratch"——由其 mtime(03:50) 早于本次 step1(04:57) + 全脚本 grep 零引用推断。
+* "`data/vector_db` 前缀把仓内自有库误豁免"——**代码事实是亲验的**（:318 `continue`），
+  "应改判为生产库"这半句是推断，故列 T1 待裁而不自行改口径。
+
+---
+
+## ⑥ 未完成与原因 + **整套能不能当 WP16 交付的明确判语**
+
+### 判语：**可以当 WP16 交付（证据面），但须随附本回执的 4 条勘误批（F1–F4）；不需要重跑全量管线。**
+
+理由（逐条对应任务书"自洽吗？能作判决输入吗？"）：
+
+1. **自洽 = 是**。三组数字 1047/35 库/16 档在两机读件 + 一人读件之间**全等，0 处不符**；
+   mtime 与 `generated_at` 单调互指 ⇒ 前腿"Re-running the complete pipeline"这一句**已跑完**，
+   产物不是新旧混杂的半截（唯一半截是 `dblist.txt` 与损坏的 step8，两件均在判决面之外）。
+2. **可信 = 是（关键面 100% 独立复现）**。判决真正要用的 `门位项_补约束清单` 42 行 =
+   结构面 42/42 符、存量面 45/45 符，且**本腿的 CHECK 提取器是独立实现**（不复用前腿代码）；
+   比对仪器经双向对照复跑，**逐字节可重现**。
+3. **不作全册无错担保 = 已把唯一的错挖出来并定位根因**。整册 1047 条中 3 条（全在"未建"桶，
+   该桶前腿自己写明"只报清单，不判该建不建"、不入门位动作面）文案口径越界，
+   其中 2 条还牵出一个真问题（T1：`data/vector_db` 前缀误豁免仓内自有库）。
+   按任务书"只要有一条对不上就整册标不可用"的字面 ⇒ 本应整册作废；
+   **本腿不整册作废的理由须由 Max 复核认可**：3/1047 且 0/42 在动作面上，
+   且整册重跑**修不好它**（是代码口径不是快照陈旧——实测三库 mtime 均早于普查窗口）。
+4. **重跑要多久（若 Max 仍判重跑）**：末次全量链耗时 **2 分 15 秒**（`live_db_census.jsonl` 04:57:13 → `read_only_self_audit` 04:59:28，
+   10 个 step 脚本串行；前腿全程含两次试跑 ≈ 70 分钟）。⇒ 重跑成本可忽略，
+   但 **F1/T1 类问题重跑不可消**，须改 `wp16_step3_compare.py` 的前缀豁免面（属"改判定逻辑"，§6.3 停手项，本腿未改）。
+
+### 未完成清单
+
+| 项 | 状态 | 原因 |
+|---|---|---|
+| 一致性判定（三组数字） | **完成** | — |
+| 抽样 10 条活库逐条 + 存量 ≥5 条 | **完成并超额**（放大到 1047 条 + 45 条存量） | — |
+| §5 六项回执 | **完成**（本文件） | — |
+| 仪器双向对照**本腿复跑** | **完成**（byte-identical） | — |
+| 加严版只读自证复跑 | **完成**（修复前腿损坏的 step8 后跑通） | 原件按任务书未改，修复件另名留档 |
+| 冷库镜像补齐 + `MANIFEST_sha256.txt` + `sha256sum -c` | **完成** | 见 ①-附 |
+| 危害分级（高/中）的独立复算 | **未做** | 分级依据是"代码引用该列处数 / 写入端处数"的语义判断，属 Max 判决面；本腿只验事实不验裁量，避免以推断冒充亲验 |
+| `data/vector_db` 是否生产库 | **未裁** | T1，需 Owner/Max 定口径（改豁免面=改判定逻辑=§6.3） |
+| 42→41 去重、文案改字、F4 卫生 | **未落** | 全册改字属修订交付物，前腿车道已死、本腿只读；勘误批随本回执交总包落 |
+| 小件 promote 到 `docs/_working/` 入 git | **未做** | 任务书硬约束：不 `git add`、不建 tracked 件；已在 C. 段列清单交总包 |
+| 前腿 step8 原件语法修复 | **故意未做** | 改前腿交付面会毁证据；本腿以修复副本达成同一目的 |
+
+### ①-附：冷库核对原始输出（`sha256sum -c`）
+
+**Pass 1**（补齐镜像后、本回执入冷前；冷库根 = `G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/wp16/`）：
+
+```
+$ cd G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/wp16 && sha256sum -c MANIFEST_sha256.txt
+controls_output.txt: OK
+db_module_binding.json: OK
+db_module_binding2.json: OK
+dblist.txt: OK
+ddl_blobs.json: OK
+drift_census.yaml: OK
+…（逐件）…
+wp16_step6_controls.py: OK
+wp16_step7_report.py: OK
+wp16_step8_readonly_audit.py: OK
+wp16_step8_readonly_audit_LANE.py: OK
+EXIT=0
+58 行 /  ": OK" 计数 58 / "FAILED" 计数 0
+sha256sum: WARNING: 1 line is improperly formatted   ← 首版清单带了 4 行 `#` 头注释，sha256sum 不认注释；
+                                                        已在 Pass 2 把头部移入 MANIFEST_notes.txt，清单改为纯 "<sha>␣␣<relpath>"
+```
+
+**Pass 2（终态，含本回执 + 全部接力产物 + 清单生成器）**：清单 **63** 条 = **63 行 `OK`、0 行 `FAILED`、无真 warning**
+（`grep -i warning` 唯一命中是文件名 `step2_warnings.txt`，非 sha256sum 告警；首版那条"1 line improperly formatted"已由
+Pass 2 的纯格式清单消除）；冷库 `wp16/` 树共 **66** 个文件 = 63 入清单 + `MANIFEST_sha256.txt` + `MANIFEST_notes.txt`
++ `relay/step6_sha_verify_final.txt`，后三者**声明式自排除**（清单不验自己，否则永远验不过自己）；`du -sh` = **54 MB**。
+本腿接力产物在 `wp16/relay/`（`wp16b_*.py` ×9 = 各步复算器 + step8 修复件、`step2c_full_recheck.json` 整册复算结果、
+`step3_controls_rerun.txt` 仪器复跑原文、`step5_readonly_audit_rerun.txt` 加严自证、
+`step1_local_artifact_sha256.txt`/`step1_cold_artifact_sha256.txt` 两份 sha 快照、本回执）。
+原始输出 = `wp16/relay/step6_sha_verify_final.txt`。
+
+**前腿镜像核对结论（不是"它说镜像了就完了"）**：本地 33 件逐件 sha → **31 件与冷库完全相同**、
+`manifest_local.json` 前腿漏镜像（本腿已补）、`wp16_step8_readonly_audit.py` 两件不同（本地=改坏版，冷库=可跑宽松版，
+本腿把两个版本分别以 `wp16_step8_readonly_audit.py` / `wp16_step8_readonly_audit_LANE.py` 并存留证，未覆盖任何一个）。
+
+**"前腿产物未被人改过"的独立取证**：用前腿**自己的** `manifest_local.json`（32 条记录）反查本地实物 →
+**31 件 bytes+sha 双符、0 件缺失、1 件不符 = 正是 `wp16_step8_readonly_audit.py`**
+（前腿 04:59:27 写清单、05:00:04 又改了 step8 ⇒ 清单比实物早 37 秒，这是它"死在最后一步"的确切物证，也反证其余 31 件是终稿）。
+本腿对前腿目录**零写入**：`ls --time-style` 显示该目录内无 05:00:04 之后被改的文件；仪器复跑写在本腿自己的 `ctrl_run/`（输入用硬链接，`st_ino` 相同）。
+
+### 时效保护结论
+
+`.runtime/tmp/` 24h TTL 已不构成风险：**判决所需全部 33 件（含 15.9MB / 15.4MB 大件）已在非 TTL 介质**，
+且逐件 sha 可验。本地目录若被 TTL 吃掉，从 `wp16/` 恢复即可（`MANIFEST_sha256.txt` 为验收凭据）。
