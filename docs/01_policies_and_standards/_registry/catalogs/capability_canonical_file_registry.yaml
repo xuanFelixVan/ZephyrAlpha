@@ -35935,4 +35935,40 @@ creation_tokens:
   token: bizmine-alpha-mining-teaming-regime-brief-20260918
   created_by: st-bizmine-r-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/t0_regime/t0_conversion_table.csv
+  token: bizmine-alpha-mining-t0-conversion-table-20260918
+  created_by: st-bizmine-t0-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/t0_regime/t0_conversion_table.md
+  token: bizmine-alpha-mining-t0-conversion-table-20260918
+  created_by: st-bizmine-t0-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/t0_regime/t0_crypto_research.md
+  token: bizmine-alpha-mining-t0-crypto-research-20260918
+  created_by: st-bizmine-t0-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/t0_regime/t0_prereg_funding_carry.md
+  token: bizmine-alpha-mining-t0-prereg-funding-carry-20260918
+  created_by: st-bizmine-t0-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/t0_regime/t0_prereg_vwap_revert.md
+  token: bizmine-alpha-mining-t0-prereg-vwap-revert-20260918
+  created_by: st-bizmine-t0-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/t0_regime/t0_regime_narrow_test_results.md
+  token: bizmine-alpha-mining-t0-regime-narrow-test-results-20260918
+  created_by: st-bizmine-t0-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/t0_regime/t0_regime_prereg_card.md
+  token: bizmine-alpha-mining-t0-regime-prereg-card-20260918
+  created_by: st-bizmine-t0-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/t0_regime/t0_subjective_methods.md
+  token: bizmine-alpha-mining-t0-subjective-methods-20260918
+  created_by: st-bizmine-t0-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
+  token: rule-audit-campaign-construction-ledger-20260918
+  created_by: st-fullflow-20260918
+  capability: rule_audit_campaign
 di_seam_exemptions: []

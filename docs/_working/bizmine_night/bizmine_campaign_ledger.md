@@ -23,3 +23,4 @@ ttl: task_bound
 | 02:3x | R | R2 预注册卡（IS 三分位 0.3200/0.7040，T-1 PIT）+17 幸存者×状态桶矩阵+报告：POOLED LOW 1.12/MID 0.21/HIGH 2.48，14/17 最优桶=HIGH，收益集中于高波灰度桶（暂定，复权链未修复） | docs/_working/bizmine_night/regime_axis/{prereg_card_survivor_regime_buckets.md,survivor_regime_matrix.csv,survivor_regime_report.md} @ 6fa8fd2cc7 |
 | 02:5x | R | R3 组队备料 regime 版：三档观察档（稳健 1.815/均衡 1.838/进攻 1.470）+按桶切换示意+弹药三笔账（≈4 条 @H2 Sharpe≥1.4 或 1-2 场 80+ 候选战役；MID 洼地最缺弹药）；B-15 待 Owner | docs/_working/bizmine_night/regime_axis/teaming_regime_brief.md（本批落） |
 | 02:5x | R | R4 板块灰度层 v0 设计段（只设计不实现）：880 表实测 469 板块/2022 起成熟 4.5 年；成分快照仅 2 天=历史广度缺口；strength∈[0,1] 定义+三假设方向 | docs/_working/bizmine_night/regime_axis/sector_regime_design.md（本批落） |
+| 03:5x | T | T车道四件全落：主观做T方法库(12+4手法三路来源)/转换表+2预注册卡/行情条件化窄测**TERMINATE**(G1挂:uplift 1.284<1.5;H桶req_cap 0.355,净@10%捕获-5bp,304证据链第三环闭合)/币圈研究报告(funding小时级466万行,BTC年化均值14%,清算流空表,C1卡勘误) | docs/_working/bizmine_night/t0_regime/ (commit 本批) |
