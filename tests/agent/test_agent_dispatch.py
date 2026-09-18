@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_agent_dispatch | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-345 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_agent_dispatch
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] DISPATCH_TABLE keys must be unique; resolve_domain returns None for unknown
 # [MODIFY-GUARD] Changes must sync with agent_dispatch.py
 # [CONSUMERS] CI pipeline

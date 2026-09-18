@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_agent_debate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-344 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_agent_debate
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] DebateVerdict must be consistent with content comparison
 # [MODIFY-GUARD] Changes must sync with agent_debate.py
 # [CONSUMERS] CI pipeline

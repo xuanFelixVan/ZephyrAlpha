@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_action_side_effect_cumulative_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_action_side_effect_cumulative_detector
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

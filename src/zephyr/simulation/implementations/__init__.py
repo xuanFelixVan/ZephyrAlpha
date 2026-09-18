@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-GOV-init | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L13-001 | docs/03_modules/_domain_simulation/blueprint.md
 # [MODULE] zephyr.simulation.implementations
+# [DOMAIN] D_SIMULATION
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

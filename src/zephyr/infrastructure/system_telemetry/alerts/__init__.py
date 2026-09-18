@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-INF-alerts | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.alerts
+# [DOMAIN] D_INFRA_TELEMETRY
 # [INVARIANTS] INFO<WARNING<ERROR<CRITICAL severity order; rules loaded from config/alert_rules.yaml; fail-safe on missing config
 # [MODIFY-GUARD] facade.py; schema.py; config/alert_rules.yaml
 # [CONSUMERS] facade.py (same-package facade); tests/infrastructure/observability/test_telemetry_facade.py

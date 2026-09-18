@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-UNK-capital | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.capital
+# [DOMAIN] D_FUNDAMENTAL_SIGNAL
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

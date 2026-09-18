@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-SEC-security_contracts_security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] zephyr.shared.contracts.security
+# [DOMAIN] D_INFRA_OPS
 # [INVARIANTS] SecurityDecision enum values are frozen; no additions without ADR
 # [MODIFY-GUARD] enum member changes require cross-package impact review
 # [CONSUMERS] infrastructure_runtime_integration; l10-compliance; llm-security

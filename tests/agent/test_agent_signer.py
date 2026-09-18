@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_agent_signer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §7
 # [MODULE] tests.test_agent_signer
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] Ed25519 sign/verify roundtrip; signature hex format
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

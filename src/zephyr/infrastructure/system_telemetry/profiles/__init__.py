@@ -1,6 +1,7 @@
 # [A_module] module_id: MOD-GOV-init | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] zephyr.infrastructure.system_telemetry.profiles
+# [DOMAIN] D_INFRA_TELEMETRY
 # [INVARIANTS] start/stop/snapshot must not block; test_mode returns mock data; thread-safe using threading.Lock
 # [MODIFY-GUARD] facade.py; __init__.py
 # [CONSUMERS] zephyr.security.access_control

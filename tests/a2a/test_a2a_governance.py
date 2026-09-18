@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_a2a_governance | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md | §governance
 # [MODULE] tests.test_a2a_governance
+# [DOMAIN] D_INFRA_A2A
 # [INVARIANTS] GovernanceAdapter.verify_pair必须返回A2AGovernanceRecord; Phase4Hold.can_proceed仅Phase4为True
 # [MODIFY-GUARD] 仅当a2a governance公开API变更时修改
 # [CONSUMERS] pytest

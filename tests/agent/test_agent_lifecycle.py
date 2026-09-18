@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_agent_lifecycle | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_agent_lifecycle
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] retire sets agent status to RETIRED
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

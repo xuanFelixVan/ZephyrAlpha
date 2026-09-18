@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-INF-health_monitor | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.infrastructure.health_monitor
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [CONSUMERS]

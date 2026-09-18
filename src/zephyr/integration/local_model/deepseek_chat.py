@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-042 | docs/03_modules/_domain_integration/blueprint.md | §3.1
 # [MODULE] zephyr.integration.local_model.deepseek_chat
-# [DOMAIN]
+# [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.integration.local_model.lsg_gate; zephyr.governance.ops_governance.budget_engine; zephyr.shared.foundation.constants; zephyr.shared.io.paths; zephyr.shared.security.secrets
 # [CONSUMERS] auto_runtime_core.py; local_model_scheduler.py
 # [STARTUP] imported

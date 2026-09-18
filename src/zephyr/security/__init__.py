@@ -2,6 +2,7 @@
 # [TTL] permanent
 # [A_module] module_id=MOD-SEC-security | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] zephyr.security
+# [DOMAIN] D_SECURITY
 
 """
 

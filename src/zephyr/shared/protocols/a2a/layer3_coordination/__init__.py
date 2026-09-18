@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-GOV-init | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SHARED-001 | docs/03_modules/_domain-shared/protocols/blueprint.md
 # [MODULE] zephyr.shared.protocols.a2a.layer3_coordination
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] Protocol interfaces and data contracts only; no imports from zephyr.infrastructure or zephyr.integration
 # [MODIFY-GUARD] no concrete implementations; no cross-domain imports
 # [STABILITY] stable

@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-INF-script_system | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-005 | docs/03_modules/_domain_governance/governance_automation/blueprint.md
 # [MODULE] zephyr.infrastructure.script_system
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving
