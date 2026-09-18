@@ -35907,4 +35907,24 @@ creation_tokens:
   token: bizmine-alpha-mining-bizmine-general-order-20260918
   created_by: st-bizmine-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/bizmine_campaign_ledger.md
+  token: bizmine-alpha-mining-bizmine-campaign-ledger-20260918
+  created_by: st-bizmine-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/regime_axis/prereg_card_survivor_regime_buckets.md
+  token: bizmine-alpha-mining-prereg-card-survivor-regime-buckets-20260918
+  created_by: st-bizmine-r-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/regime_axis/regime_status_assessment.md
+  token: bizmine-alpha-mining-regime-status-assessment-20260918
+  created_by: st-bizmine-r-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/regime_axis/survivor_regime_matrix.csv
+  token: bizmine-alpha-mining-survivor-regime-matrix-20260918
+  created_by: st-bizmine-r-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/regime_axis/survivor_regime_report.md
+  token: bizmine-alpha-mining-survivor-regime-report-20260918
+  created_by: st-bizmine-r-20260919
+  capability: bizmine_alpha_mining
 di_seam_exemptions: []
