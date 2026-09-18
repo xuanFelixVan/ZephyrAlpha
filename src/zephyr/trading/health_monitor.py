@@ -235,8 +235,13 @@ class HealthMonitor:
                     )
 
             self.register_probe("shared.longevity_monitor", _longevity_probe)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.debug("longevity probe registration failed", exc_info=True)
+        except Exception as reg_exc:  # noqa: BLE001 — P4 收口：注册失败必须可见
+            logger.warning(
+                "longevity probe 注册失败（看护探针数少于预期，健康视图偏乐观）: %s: %s",
+                type(reg_exc).__name__,
+                reg_exc,
+                exc_info=True,
+            )
 
         # 2. HealthcheckService
         try:
@@ -265,9 +270,15 @@ class HealthMonitor:
                     )
 
             self.register_probe("shared.healthcheck_service", _healthcheck_probe)
-        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-            # 5.12.1 修复：原 except: pass 静默吞注册失败
-            logger.debug("healthcheck probe registration failed", exc_info=True)
+        except Exception as reg_exc:  # noqa: BLE001 — P4 收口：注册失败必须可见
+            # 5.12.1 修复：原 except: pass 静默吞注册失败；本轮再收口 DEBUG→WARNING
+            # （DEBUG 级在生产日志档位下不可见 = 哨兵自身失明无人知晓）。
+            logger.warning(
+                "healthcheck probe 注册失败（看护探针数少于预期，健康视图偏乐观）: %s: %s",
+                type(reg_exc).__name__,
+                reg_exc,
+                exc_info=True,
+            )
 
     def tick(self) -> None:
         """事件驱动入口：采集指标 + 条件性健康检查 reconcile。

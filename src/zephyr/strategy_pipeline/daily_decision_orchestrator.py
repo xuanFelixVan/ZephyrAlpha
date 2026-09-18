@@ -472,8 +472,16 @@ def _alert(alert_fn: AlertFn | None, message: str, level: str = "INFO") -> None:
             from zephyr.strategy_pipeline.pipeline_events import alert
 
             alert(message, level=level)
-    except Exception:  # noqa: BLE001 — 告警通道故障不反噬拍板主流程
-        log.debug("[DAILY-DECISION] 告警通道不可达", exc_info=True)
+    except Exception as alert_exc:  # noqa: BLE001 — 不反噬拍板主流程，但必须可见
+        # P4 收口：告警通道本身故障只留 DEBUG 痕 = 最需要发声时静默；
+        # 拍板链的播报未送达必须在生产日志档位下可见。
+        log.error(
+            "[DAILY-DECISION] 告警通道不可达，本条播报未送达（level=%s）: %s: %s",
+            level,
+            type(alert_exc).__name__,
+            alert_exc,
+            exc_info=True,
+        )
 
 
 def _resolve_kline_day(rd: Reader) -> str:

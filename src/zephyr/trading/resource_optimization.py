@@ -534,7 +534,10 @@ class _ExternalNotifier:
             return
         if snap.pressure == engine.last_pressure_level:
             return
-        engine.last_pressure_level = snap.pressure
+        # 静默失效扫查收口（车道 st-ff-silent，P1 闩前置）：原实现在 bus.emit
+        # **之前**推进档位闩，emit 抛异常时该档位已被记作『已通知』→ 同一压力
+        # 档位在进程余生内不再外发（自愈回路收不到资源压力信号）。现改为送达
+        # 成功后才推进档位，失败保留旧值下轮重试。
         try:
             from zephyr.shared.event_bus import bus
 
@@ -548,8 +551,14 @@ class _ExternalNotifier:
                     "timestamp": snap.timestamp,
                 },
             )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            logger.warning("suppressed error in resource_optimization", exc_info=True)
+        except Exception as e:  # noqa: BLE001 — 外发故障不得反噬优化主流程
+            logger.warning("资源压力事件外发失败（档位未推进，下轮重试）: %s: %s",
+                type(e).__name__,
+                e,
+                exc_info=True,
+            )
+            return
+        engine.last_pressure_level = snap.pressure
 
     @staticmethod
     def audit_optimization(engine: ResourceOptimizationEngine, record: OptimizationRecord) -> None:

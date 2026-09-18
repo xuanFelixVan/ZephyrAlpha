@@ -370,7 +370,9 @@ class DataAnomalyAlerter:
             last_ts, count = self._dedup_state.get(key, (0.0, 0))
             merged = now_ts - last_ts < self._merge_window_sec
             new_count = count + 1 if merged else 1
-            self._dedup_state[key] = (now_ts, new_count)
+            # 静默失效扫查收口（车道 st-ff-silent，P1 闩前置）：原实现在**路由之前**就推进去重戳 → _alert_sink 抛异常时
+            # 该信号已被记作『已处理』，合并窗口内后续同键信号全被 merged→continue
+            # 抑制 = 告警从未送达却永不重试。现改为『送达或有意跳过』才推进去重戳。
             alerts.append(
                 AnomalyAlert(
                     signal=sig,
@@ -395,6 +397,7 @@ class DataAnomalyAlerter:
             )
             # 路由：维护窗口静默 / 合并窗口内重复 → 不路由（与 Alerter 冷却同哲学）
             if silenced or merged:
+                self._dedup_state[key] = (now_ts, new_count)  # 有意跳过=视为已处理
                 continue
             try:
                 self._alert_sink(
@@ -410,7 +413,14 @@ class DataAnomalyAlerter:
                     },
                 )
             except Exception as exc:  # noqa: BLE001 — 通道异常不阻断判定（对齐 alerter 不变式）
-                _log.error("告警通道路由异常（已吞掉）: %s", exc)
+                _log.error(
+                    "告警通道路由异常（本条未送达，去重戳未推进→下轮重试）: %s: %s",
+                    type(exc).__name__,
+                    exc,
+                    exc_info=True,
+                )
+                continue
+            self._dedup_state[key] = (now_ts, new_count)
         return alerts, events
 
     # ── 一站式：四路检测 + 评估 ──

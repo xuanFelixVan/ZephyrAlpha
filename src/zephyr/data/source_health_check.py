@@ -105,7 +105,12 @@ def _update_failure_streaks(results: list[dict]) -> None:
                 streak = 1
             alerted = entry.get("alerted", False)
             if streak >= _STREAK_ALERT_DAYS and not alerted:
-                alerter.notify(
+                # 静默失效扫查收口（车道 st-ff-silent，P1 闩前置）：原实现丢弃 notify 返回值并无条件 alerted=True，
+                # 而该闩随后**落盘**进 streaks JSON → 告警从未写盘、
+                # 「已告警」却跨进程重启永久生效（比 scheduler 同族病例只锁
+                # 进程余生更严重）。现改为真落盘才置闩，未落盘保留未告警态、
+                # 下一轮健康检查重试。
+                delivered = alerter.notify(
                     f"source_health:{source}",
                     (
                         f"数据源 {source} 连续 {streak} 天异常（{status}: {r.get('error', '')}）。"
@@ -115,8 +120,16 @@ def _update_failure_streaks(results: list[dict]) -> None:
                     level=LEVEL_ERROR,
                     source=source,
                 )
-                alerted = True
-                log.warning("数据源 %s 连续 %d 天异常，已触发告警", source, streak)
+                alerted = bool(delivered)
+                if alerted:
+                    log.warning("数据源 %s 连续 %d 天异常，已触发告警", source, streak)
+                else:
+                    log.error(
+                        "数据源 %s 连续 %d 天异常的告警未落盘（notify 返回假值）"
+                        "——保留未告警态，下一轮健康检查重试",
+                        source,
+                        streak,
+                    )
             streaks[source] = {
                 "streak": streak,
                 "alerted": alerted,
@@ -127,7 +140,12 @@ def _update_failure_streaks(results: list[dict]) -> None:
         _STREAKS_PATH.parent.mkdir(parents=True, exist_ok=True)
         _STREAKS_PATH.write_text(json.dumps(streaks, ensure_ascii=False, indent=1), encoding="utf-8")
     except Exception as e:  # noqa: BLE001 — 告警链路故障不阻塞健康检查
-        log.warning("连续失败告警更新失败（不影响健康检查）: %s", e)
+        log.warning(
+            "连续失败告警更新失败（不影响健康检查，但告警/状态可能未落盘）: %s: %s",
+            type(e).__name__,
+            e,
+            exc_info=True,
+        )
 
 
 # ---- API 拉取探针（connect_only 源升级为真实数据拉取测试，2026-08-04）----
