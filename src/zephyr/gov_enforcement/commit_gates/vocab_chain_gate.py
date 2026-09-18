@@ -85,6 +85,8 @@ _EXEMPT_PATH_FRAGMENTS = (
     "governance\\generators\\",
     "governance/d3_metadata/",
     "governance\\d3_metadata\\",
+    "governance/d5_architecture/validators/",
+    "governance\\d5_architecture\\validators\\",
     "registry/catalogs/",
     "registry\\catalogs\\",
     "rule_bridge/",
