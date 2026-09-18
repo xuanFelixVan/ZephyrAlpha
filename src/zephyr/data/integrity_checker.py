@@ -79,7 +79,9 @@ def _should_run_today(tasks: list[dict]) -> dict[str, str]:
             continue
         sched = t.get("schedule", "")
         disabled = bool(t.get("disabled")) or bool(t.get("extra", {}).get("disabled"))
-        if disabled or sched in _NON_DAILY_SCHEDULES:
+        # rpt_tf15：schedule: disabled 是停用任务的表达方式（tasks.yaml 4 条），
+        # 不识别则每个交易日进"应跑"名单 → 23:00 对账永久假红（告警疲劳）
+        if disabled or sched in _NON_DAILY_SCHEDULES or sched == "disabled":
             continue
         should_run[tid] = sched
     return should_run
