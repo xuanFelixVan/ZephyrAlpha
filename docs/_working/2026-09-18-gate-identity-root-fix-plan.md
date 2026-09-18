@@ -78,8 +78,12 @@ session: st-ruledisp-20260918
 
 | 位置 | 症状 | 证据 |
 |---|---|---|
-| `src/zephyr/infrastructure/rollback/rollback_verifier.py:191-198` | 读 `gate["result"]`，而 `gates` 实表列为 `gate_run_id/gate_id/passed/details/artifact_path/session_id/task_id/created_at`——**无 result 列**；异常被内层 try 吞掉 → 门禁面校验**空转** | 实表列取自 `governance.db` information_schema；DDL 见 `src/zephyr/governance/persistence/sqlite_schema.py:952` |
-| `src/zephyr/gov_drift/gate_persistence.py:210-219` | `INSERT INTO gate_decisions(module_id, gate, decision, detail, decided_at)`，实表列为 `decision_id/gate_id/decision/reason/decided_at/decided_by` → **每次调用必失败**，故该表停在 2026-07-27（35 行、1 个身份） | DDL 见 `sqlite_schema.py:850` |
+| `src/zephyr/infrastructure/rollback/rollback_verifier.py` → `heal_db_consistency()` 的 gates 循环 | 读 `gate["result"]`，而 `governance.db` 的 `gates` 实表列为 `gate_run_id/gate_id/passed/details/artifact_path/session_id/task_id/created_at`——**无 result 列**；每行抛错被内层 `except Exception` 收成一句泛化 `logger.warning` → 门禁面自愈**静默空转**（§2.4A 信号④）。**此条经复核成立**（行号会漂，按方法名定位） | `pragma table_info(gates)` 读活库 + 读该方法源码 |
+| ~~`src/zephyr/gov_drift/gate_persistence.py`~~ **本行原判定已被推翻，见下** | 原判定"INSERT 列名与实表不符 → 每次调用必失败"**是错的**：该模块写的是 `data/drift_audit/drift_events.db`（构造函数里 `_db_path = <project_root>/data/drift_audit/drift_events.db`），**不是** `governance.db`；其自有库的 `gate_decisions` 列实测为 `id/module_id/gate/decision/detail/decided_at`，与 INSERT **完全匹配**。原判定错在拿另一个库的同名表比列名 | Max 复核：`pragma table_info` 读 `data/drift_audit/drift_events.db` |
+| `src/zephyr/gov_drift/gate_persistence.py` → `persist_gate_decision()` | **真缺陷换了形态**：`data/drift_audit/drift_events.db` 的 `gate_decisions` 实测 **0 行**（`src/data/drift_audit/drift_events.db` 那个副本也是 0 行）→ 该写入路径**无人调用**（程序法 §2.4A 信号①零调用者），不是"调用必失败" | 两库 `select count(*)` 实测 |
+| `src/data/drift_audit/drift_events.db`（**源码树内的野库**） | `data/drift_audit/` 之外还存在 `src/data/drift_audit/`，说明 `project_root` 曾被解析到 `src/` 并在源码树内建库建表 → 属 §2.4A 信号④（路径解析静默出错）。**这也是下面 rmtree 地雷成立的前提证据** | 实测两库并存 |
+| `src/zephyr/infrastructure/rollback/rollback_verifier.py` → `clean_pycache()` | **破坏性地雷（原方案未列）**：`for cache_dir in self._project_root.glob("**/__pycache__"): shutil.rmtree(cache_dir)`，靶子完全由 `_project_root` 决定、无白名单无深度上限，且外层 `except Exception` 只 `logger.warning`。一旦 `_project_root` 解析错（上一条已证明本仓发生过），即在错误根下递归删目录 | 读该方法源码；同文件 `heal_db_consistency` 默认库为 `data/databases/governance.db` |
+| `governance.db` 活库 vs `sqlite_schema.py` DDL | **DDL↔活库漂移**：源码 DDL 为 `status TEXT NOT NULL DEFAULT 'PENDING' CHECK(status IN (...))`，活库实测 `status TEXT DEFAULT 'PENDING'`——**无 NOT NULL、无 CHECK**。成因：`CREATE TABLE IF NOT EXISTS` 不会给已存在表补约束。后果：依赖 status 合法值的写入在活库上不受任何约束。对照 `.runtime/task_board.db` 的 `tasks.status` **有** CHECK | `select sql from sqlite_master where name='tasks'` 逐库实测 |
 
 其余写入端（活）：`src/zephyr/gov_enforcement/commit_gates/gate_repo.py:93`（INSERT INTO gate_runs）、`scripts/governance/meta/gate_engine_selfcheck.py:176`、`scripts/governance/meta/validate_gate_engine_external.py:197`、`scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py:598`（INSERT INTO gates）。
 
@@ -106,11 +110,14 @@ Flash 案卷面报"133 条册内门禁在 `.pre-commit-config.yaml` 无同名 ho
 
 > 每个 WP 都必须满足：① 隔离 worktree 施工；② 有红证（改前先证明检查器会红，改后证明变绿）；③ 热文件走 `safe_write_text` CAS；④ 命中门位四类的动作先登记待裁不自裁。
 
-### WP1 · 修好两个坏写入端（最高优先，其他 WP 的证据源）
-- **改**：`rollback_verifier.py:191-198` 按实表列名重写（`passed` 而非 `result`；`UPDATE` 用 `gate_run_id` 而非 `gate_id`，后者非唯一）；内层 `except` 不得静默吞——按 `fail_open_register` 五轴口径登记或改为抛出。
-- **改**：`gate_persistence.py:210-219` 的 INSERT 列名对齐实表（`gate_id/decision/reason/decided_at/decided_by`），并补 `decided_by` 来源。
-- **验收**：各写一个负向用例（故意给错列名/坏值）证明**改前会失败、改后会拦**；再跑一次真实调用，`db.gate_decisions` 行数增加且 `decided_at` 为当前时间。
-- **门位**：改的是门禁/治理自身 → high 档。**不涉及**四类动作（非净删、非 flag 翻转、非 production 流转、非资金），可施工，但 commit message 须声明行为变更。
+### WP1 · 修静默空转 + 拆破坏性地雷（最高优先，其他 WP 的证据源）
+> **本 WP 已按 2026-09-19 复核结论重写**：原"两个坏写入端"里有一个判定是错的（见 §1.3），照原文施工会去修一个没坏的东西。
+- **改 1（成立）**：`rollback_verifier.py` 的 `heal_db_consistency()` gates 循环——按活库实列重写（用 `passed` 而非 `result`；`UPDATE` 定位用 `gate_run_id`，`gate_id` 非唯一）；内层 `except Exception` 不得静默吞，按 `fail_open_register` 五轴口径登记或改为抛出。
+- **改 2（新增，破坏性地雷）**：`rollback_verifier.py` 的 `clean_pycache()`——`shutil.rmtree` 的靶子由 `_project_root.glob("**/__pycache__")` 决定，**必须加三重护栏**：① 删除前断言 `cache_dir` 在 `_project_root` 之内（`Path.resolve()` 后 `is_relative_to`）；② 断言 `_project_root` 本身可验证为仓根（存在 `.git` 或 `AGENTS.md`）；③ 命中护栏时**拒删并报错**，不得退化为"照删"。fail-safe 方向：故障只许退化为不删。
+- **改 3（新增，源码树野库）**：`src/data/drift_audit/drift_events.db` 属 `project_root` 误解析产物 → 先取证"谁把 root 解析到 `src/`"（grep 调用方传参），再决定移除；**移除属删文件，按门位登记待裁，不自行删**。
+- **不做**：`gate_persistence.persist_gate_decision()` 的 INSERT **不需要改**（列名与其自有库匹配）。它真的问题是 0 行=零调用者 → 按 §2.4A 走 salvage 取证（谁本该调它），**结论交 Max 判**（属"该不该存在"）。
+- **验收**：改 1 与改 2 各写一个负向用例，证明**改前会失败/会误删、改后会拦**（改 2 的红证＝把 `_project_root` 指向一个临时目录树，确认护栏拒删并报错）；改 3 只出取证报告。
+- **门位**：改的是门禁/治理自身 → high 档；不涉及四类动作（非净删、非 flag 翻转、非 production 流转、非资金），可施工，commit message 须声明行为变更。改 3 的删除动作**属门位第②类，须先登记待裁**。
 
 ### WP2 · 提交门禁持久触发台账（治本核心）
 - **新建**：`governance.db` 一张 `gate_trigger_log`（或复用 `gate_runs` 并统一身份口径），列至少含 `gate_id`（**必须是册内身份**）、`passed`（**放行也记**）、`session_id`、`ts`、`trigger_source`。保留期 ≥ 90 天，超期由既有清理机制按 TTL 收敛（禁新建常驻守护；OS 托管 one-shot）。
