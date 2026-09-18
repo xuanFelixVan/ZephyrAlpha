@@ -36183,6 +36183,26 @@ creation_tokens:
   token: bizmine-alpha-mining-tick-inventory-total-20260918
   created_by: st-bizmine-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/factor_sop_screen/altdata_probe_report.md
+  token: bizmine-alpha-mining-altdata-probe-report-20260918
+  created_by: st-bizmine-f-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/factor_sop_screen/altdata_probe_results.csv
+  token: bizmine-alpha-mining-altdata-probe-results-20260918
+  created_by: st-bizmine-f-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/altdata_probes_b/altdata_b_preregistration.md
+  token: bizmine-alpha-mining-altdata-b-preregistration-20260918
+  created_by: st-bizmine-altb-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/altdata_probes_b/altdata_b_report.md
+  token: bizmine-alpha-mining-altdata-b-report-20260918
+  created_by: st-bizmine-altb-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/altdata_probes_b/altdata_b_results.csv
+  token: bizmine-alpha-mining-altdata-b-results-20260918
+  created_by: st-bizmine-altb-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
