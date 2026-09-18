@@ -125,6 +125,19 @@ completes_when: 规则与审计一条龙战役波1-波5 全部收口，且本册
   ★ 同批证伪的还有普查面口径：**案卷"全仓 173 件"在当日盘上测不出**（同定义实测 450 件），
   156 件可复现 ⇒ 后续一律按 **450 普查面 / 156 危险子集** 双基线，"173" 既不当结论也不当反证。
 
+- **R-A47｜C-36 污染尺腿落地（`7202cc5455`），且总包独立复核三数全等——本案卷第一次由"检测面"闭环**。
+  我另起只读查询直打 CH 复算：`ghosts=77,668` / `total=259,238` / `trade_calendar(SSE) count=8,797 且 sum(is_open)=count(*)=8,797`
+  ⇒ 与 B15 案卷、与车道自报**三方逐字相同**（不是"车道说、我转述"）。
+  ★ 车道这次的红证形态值得升成**判据模板**：一条"该尺子既不能恒不响也不能恒响"的**双反例**测试——
+  `is_open = 0` ⇒ 0 行（恒不响＝机器面假绿）；`NOT IN (… is_open=0)` ⇒ 259,238 行（NOT IN 空集＝恒真＝全表判脏）；
+  只有 `NOT IN (… is_open=1)` ⇒ 77,668 才是要的。再加**运行时日历守卫**（开市日数=0 或 `cal_date` 有 NULL ⇒ 抛错转 degraded 拒绝出数）。
+  另一条可复用的证法：`dayOfWeek IN (1,7)` 在幽灵日数上**也是 14 天**（条数对上），但含 7 假阳 + 7 假阴
+  ⇒ **"计数吻合"绝不等于判据正确**（手册 §13 之外再钉这条）。
+- **R-A48｜"分单风险"的正确答法：检测面与写端闸可分，且不因未清行而撤检测**。
+  车道判定＝可分：检测面落地让脏数据立刻可见，写端日历闸（C-34）落地后本尺自愈绿，清行（C-35）必须排在其后。
+  代价被如实报出（C-34/C-35 落地前 L13 每班都会真报一条 CRITICAL），并预先写死"若 Owner 不接受噪音，
+  处方是加 `reviewed_at/reviewed_by` 临时阈值＝放松，须 Owner 点头，而不是摘腿"⇒ 符合"门禁只许加严"。
+
 ## 2. 波1 车道回执全文（§5 六项格式，逐条嵌入，未做删改）
 ### WP1 · 两坏写入端（`st-ramp-wp1-20260919`）
 
@@ -712,6 +725,11 @@ $ git log --oneline -3 -- $C
 | **C-53** | 注入器删块后会不会**重注真锚**（C-27 的备选出路"删 + 等重注入"）仍未取证 | 另派腿跑 `_classify_headerless_files` 单测面 | — | 案卷原本就标 `[推断]`；不验则"删+等重注入"这条路不可用 |
 | **C-54** | 替换文本行式：车道采**三槽** `# [BLUEPRINT] <id> \| <蓝图路径> \| §`（与在册注入器 `_module_id_inject_header` 同形），非任务书示例的二槽 | 三槽＝让 N-15 正则**开始真检查路径存在性**（实测注入行现状中槽是散文⇒不被识别⇒门形同虚设） | 二槽（`paste_ready/` 每件已备 `alt_line_two_slot`） | 采三槽＝一次性打开一门此前从未真正生效的检查 ⇒ Max 拍，拍了我再统一 |
 | **C-55** | 文件正文自称未在册 id（`news_collector.py` 自称 MOD-DATA-NEWS-001，全仓零声明，而注入行为 MOD-L00-001） | 为它造蓝图（净增） | 改正文（他文件语义） | 不构成本件否决（已行内注记），但属"自称身份与在册不符"一族 |
+
+
+| **C-56** | `quality_sentinel.load_specs` 对**未知键静默忽略**（同册 `supply_sentinel` 会抛）⇒ 阈值名拼错＝该腿不跑却看起来在岗 | 与 supply_sentinel 同制：未知键 fail-loud（只加严） | 在册加"合法键集"对账门 | 与 C-37（无 else 的白名单分派把跳过计入 checked）同族＝"指标自证清白"型；车道已用直读真配置的测试钉住键名，**治本未做** |
+| **C-57** | 污染尺腿上线后，C-34/C-35 落地前 L13 每班**必报一条 CRITICAL**（设计意图，但 Owner 可能读成"系统在坏"） | 保持现状（噪音=提醒） | 加 `reviewed_at` 临时阈值（＝放松，Owner 门） | 建议保持现状并把这条写进起床报告首屏；**未做白名单消警**（宪法禁） |
+| **C-58** | 幽灵日清理范围目前只钉 1 张表（`daily_valuation`），其余 A 股表**未逐表实测**故不加钉 | 逐表实测 `count(*) NOT IN 开市日` 后按表 opt-in | 全表一把加钉 | 一把加钉会让全表扫吃 CH 且把未证实的表拖进对账面；车道按"不拿未实测的表上生产"停手，属正确保守 |
 
 
 ## 4. 事实修正表（后续车道任务书必带对应行）
@@ -3109,3 +3127,21 @@ Pass 2 的纯格式清单消除）；冷库 `wp16/` 树共 **66** 个文件 = 63
   `forbidden_list.md`＋`manual_list.tsv`＋`mishang_dirlevel.tsv`＋`calibration.json`。
 - **待主验**：本道产物未入库（任务书硬约束：不新建 tracked 件）；`.runtime` 24h TTL ⇒ 冷库是唯一长命载体。
   判定器若要转成入库工具须补能力反查 + 走 worktree 正门（现刻意留在 `.runtime`）。
+
+## 13. C-36 污染尺车道（`st-sentpoll-20260919`）回执要点
+
+- **落点判定（车道自裁、总包复验同意）**：腿接 `zephyr.data.quality_sentinel` + `config/quality_sentinel_tables.yaml`，
+  **不接** `data_supply_sentinel.yaml`——理由是该册全册只有地板/比率、没有上限型判据（在那边加"上限"才是自造），
+  而 `epoch_max_rows` 在册先例可直接照抄制式；且手册"滞后尺与污染尺是两把尺"禁合并。新键 `non_trading_max_rows` 表级 opt-in，
+  未配阈值的表一次 CH 都不打 ⇒ 既有 8 张表三条腿行为逐字未变。
+- **不改常驻形态**：不新建守护、不加 cron/Timer，骑既有 L13 `data_supply_sentinel` 托管腿（`run_hosted_sweep`），`wiring` 块一字未改。
+- **改前/改后现网对照**：改前（旧码同命令）`findings=0 degraded=0 exit 0`；改后 `non_trading_day 1`、`exit 1`，
+  报 77,668 行 / 14 个非交易日，**14 日逐日与 B15 §1.3 FINAL 列全等**（`date_set_equal=true, extra=[], missing=[]`）。
+- **测试**：`tests/zephyr/data/test_quality_sentinel.py` 64 passed（新增 11 例，含谓词文本钉：出现 `is_open = 0`/`dayOfWeek`/
+  `calendar_date`/缺 FINAL/缺库名 ⇒ 测试即红）；`test_supply_sentinel.py` 22 passed（未改，防连坐）。总包独立复跑 64 passed。
+- **门禁实踩两拦并已按正道改**：`TABLE-NAME-REGISTRY`（硬编码表名 → `get_registry().table("market_trade_calendar")`）、
+  `COMMIT_SCOPE`（src/tests/config 判 2 域 → `--allow-multi-domain` 留痕，属宪法 §2.4 合法同批）。
+- **未做（正确停手）**：清行（C-35 Owner 门）、写端日历闸（C-34 另案）、其余表加钉（C-58）、
+  `known_data_gaps.yaml` 补登（该文件当时 `MM` 脏＝他人 WIP，按"脏即跳过"未碰）。
+- **产物**：`.runtime/tmp/st-sentpoll-20260919/` 与冷库 `.../sentpoll/` 各 6 件，`RECEIPT.md` 两处 sha256 一致
+  （`897a51de…05c7d1`）。
