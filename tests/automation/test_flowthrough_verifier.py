@@ -289,3 +289,19 @@ def test_orphan_verdict_does_not_call_dynamically_loaded_module_orphan(monkeypat
                         lambda mods, cap=40: [{"module": mods[0], "registered_in": ["r.yaml"]}])
     assert "假阳性" in fv.orphan_verdict("src/zephyr/ai_layer/foo.py", "foo")[0]
 
+
+def test_universe_guard_payload_rejects_machine_ledger_without_universe(tmp_path) -> None:
+    """R-024 论域禁令的**机读件**版本：04_sixway_machine_ledger.yaml 是下游按字段读的件，
+    缺字段/伪空必须抛错——否则下游 .get(k, []) 会把"没扫到"读成"扫了且为零"。"""
+    good = fv.universe_declaration({"G_depgraph_runtime": ({"D_A"}, {"missing": False}),
+                                    "B_functional_domain_registry": ({"D_A", "D_ORDER"}, {})},
+                                   {"FF-01": {"kind": "supply"}}, "测试论域")
+    fv.universe_guard_payload(good)                      # 完整论域块必须放行
+    for field in ("scope", "counts", "registered_without_entity", "residual_domains_no_flow_stage"):
+        hole = dict(good)
+        hole.pop(field)
+        with pytest.raises(fv.UniverseDeclarationError):
+            fv.universe_guard_payload(hole)              # 任一必备字段缺失都得拦，不是只查 scope
+    blank = dict(good, scope="   ")
+    with pytest.raises(fv.UniverseDeclarationError):
+        fv.universe_guard_payload(blank)                 # 有键但空串=伪声明，同样拦

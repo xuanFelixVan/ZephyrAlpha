@@ -1543,6 +1543,7 @@ def _write_ledger(records: list[dict[str, Any]], sources: dict[str, tuple[set[st
                "source_freshness": {t: _source_age_warning(m) for t, (_, m) in sources.items()},
                "source_sizes": {t: m.get("count") for t, (_, m) in sources.items()},
                "stages": records}
+    universe_guard_payload(universe)  # 机读件同受 R-024 论域禁令，口径换成字段级断言
     LEDGER_YAML.write_text(yaml.safe_dump(payload, allow_unicode=True, sort_keys=False), encoding="utf-8")
     lines = ["---", "ttl: task_bound", "completes_when: 全流通战役收官且六向台账连续两轮红件=0", "---", "",
              "# 六向台账（验收仪实测产出，勿手改；生成件=`scripts/automation/flowthrough_verifier.py`）", "",
@@ -2243,6 +2244,29 @@ def universe_guard(text: str) -> None:
     if "## 论域声明" not in text or "本结论论域" not in text:
         raise UniverseDeclarationError(
             "报表缺『论域声明』块——R-024：未声明论域的结论会被下游当成全域完备证明使用")
+
+
+# 机器读件（04_sixway_machine_ledger.yaml）的论域块必备字段——下游是按字段读的，
+# 故这里的断言口径必须比 markdown 版更强：不能只查"有没有这段字"，要查每个判据字段都在且非伪空。
+FF_UNIVERSE_REQUIRED_KEYS: tuple[str, ...] = (
+    "scope", "domains_in_universe", "registered_without_entity", "entity_without_registration",
+    "stages_covered", "stages_outside_report", "residual_domains_no_flow_stage",
+    "scan_exclusions", "caps", "sources_missing", "counts")
+
+
+def universe_guard_payload(u: dict[str, Any]) -> None:
+    """机器读件写盘前的论域硬断言（与 `universe_guard` 同一禁令，换了机读口径的实现）。
+
+    防的正是 R-024 那类失误的机读版：论域块整块缺失或字段被静默置空，
+    下游 `yaml.safe_load` 后 `.get(k, [])` 一律拿到空表 → 把"没扫到"读成"扫了且为零"。
+    """
+    missing = [k for k in FF_UNIVERSE_REQUIRED_KEYS if k not in u]
+    if missing:
+        raise UniverseDeclarationError(f"机读件论域块缺字段 {missing}——缺字段=论域未声明，不得落盘")
+    if not str(u["scope"] or "").strip():
+        raise UniverseDeclarationError("机读件论域 scope 为空——未声明论域的结论会被当成全域完备证明")
+    if not isinstance(u["counts"], dict) or "universe_domains" not in u["counts"]:
+        raise UniverseDeclarationError("机读件论域 counts.universe_domains 缺失——分母不可核则结论不可用")
 
 
 def _render_universe(u: dict[str, Any]) -> None:
