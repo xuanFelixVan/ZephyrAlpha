@@ -32,7 +32,7 @@ updated: 2026-09-18
 | E5 | 产业链 T5：52 条 contains 桥核验 | ✅ | 全 52 条判定：31 真→verified+10 错桥软退役+7 墓碑补 4 新桥+4 存疑留 unverified；正确率 73.1%<90% 只置真子集；桥覆盖 93→88/153 诚实收缩 | `06918f8911` | t5_contains_audit.csv |
 | E6 | 产业链 T10：TSM 归一+listed_symbol 补全 | ✅ | TSM.TW 残留 2 行归一 2330.TW；+66 listed+21 补 market；13,886 无法确证留空；单管线断言 86=86 | `06918f8911` | t10_report.json |
 | E7 | 产业链 T3：主营构成补年+挂词典 | ✅ | 全市场 5,565 家零失败 +112,851 行（总量 165,255，覆盖 99.96%≥95%）；PIT 公告日锚兜底 0 启用；词典挂接可匹配文本 935/935=100%≥90%（全表 2.18% 诚实不硬凑，人工池 56,359 文本）；2021 对账=粒度错位已按 source 隔离 | `6f68d2303c` | 07 §9 |
-| E8 | 产业链 T6：ig_node_binding 建表+灌绑定 | ⬜ | DDL+绑定行数+抽检 | | 06 §8 |
+| E8 | 产业链 T6：ig_node_binding 建表+灌绑定 | ✅ | §8 照建+5 项适配留痕（07 §10）；油价五波 6 缺绑定全通（与 D4 物理代理跨包会师）；59 绑定/37 节点每节点恰 1 主绑定（挂价铁律）；抽检 20/20 | `ac2ada55d0`+`d6068fcd45` | 06 §8 |
 | E9 | alpha T9：研报喂链解锁 | ✅ | 根因=id→news_id 一行修；research 适配器（PDF 全文+meta 级联）；50/50 staged 零幻觉零 error，conf 0.9-0.95；未碰 ig_* | `2e789aa96b`+`0c4c249a06` | c_research_feed 台账 |
 | E10 | alpha T8：E4 送审 | ✅ | 10 候选（喂链5+指纹2+workbook3）宁缺毋假；intake 注册 +7 行；dry-run 10/10 消费 6 过 4 拒；schema 真源补登 a 簿 §7 | `d1d719a7` | lane_chain_candidates.csv |
 | E11 | alpha T7：商品两任务端到端复验 | ✅ | spot 756→810 行（+54 同键幂等）；futures 117→234 行回满基线/9 品种 max=09-17；三脚本 self-check PASS | 实跑出证 | c94b3e44c3 基线 |
