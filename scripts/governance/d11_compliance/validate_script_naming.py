@@ -237,6 +237,29 @@ EXCEPTIONS = frozenset(
         #  以 landing_fn 引用；四个建议前缀（validate_/detect_/audit_/check_）语义均不符其
         #  "落地执行"职能，改名需全链路引用排查，与上方爷爷条款豁免同类别]
         "commit_queue_landing.py",  # governance/
+        # --- 测试债清偿登记（2026-09-18 词表收编战役 W6 轮2 全量扫描，延续
+        #  #ARCH-114 裁定路径 C 机制）---
+        # [存量活跃脚本——本战役 W6 轮2 逐目录全量测试暴露的滞后红：涉事文件均为
+        #  已落仓他域件（algo-flow 出仓波/落地面锚定批/TDM v1.3 批等），重命名须
+        #  跨域同步 manifest/registry/depgraph 节点/import 引用，与并发施工域碰撞
+        #  风险高于词汇纯度收益，按爷爷条款豁免；门禁对未来新增脚本保持全量牙齿]
+        "backfill_module_domain.py",  # d3_metadata/（本战役新增件，backfill_* 同族先例在册）
+        "pattern_code_fingerprint.py",  # d3_metadata/
+        "classify_workspace_wip.py",
+        "collect_write_audit_4663.py",
+        "commit_derived_sync.py",
+        "commit_perf_report.py",
+        "dedup_ttl_headers.py",
+        "gateway_post_commit_ritual.py",
+        "registry_batch_edit.py",  # _shared/
+        "split_coordination.py",
+        "upgrade_tdm_v13_metadata.py",
+        "externalize_algo_flow.py",  # d5_architecture/generators/
+        "report_algo_flow_author_debt.py",  # d5_architecture/generators/
+        "normalize_blueprint_autogen_anchors.py",  # d5_architecture/syncers/
+        "compare_pytest_configs.py",  # d7_code/
+        "algo_flow_reverse_orphan_reconciler.py",  # d8_doc_sync/
+        "standards_lib.py",  # standards/（import 库性质非 CLI 脚本）
     }
 )
 

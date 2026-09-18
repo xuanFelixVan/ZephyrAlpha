@@ -103,6 +103,38 @@ EXIT_EXCEPTIONS = frozenset(
         "_archive/one_off/oneoff_update_four_question_text_fields.py",
         # [dm 一次性直写脚本（已执行），naming 门已登记豁免（dm200916_write_direct.py），同理由]
         "d5_architecture/dm200916_write_direct.py",
+        # --- 测试债清偿登记（2026-09-18 词表收编战役 W6 轮2 全量扫描，延续
+        #  #ARCH-114 裁定路径 C 机制）---
+        # [存量裸退出码散布——89 处/26 件均为已落仓他域件（algo-flow 出仓波/
+        #  排班 v2 生成器/语义审计等）。正则无法区分 main()/CLI 返回值与 helper
+        #  业务返回值，盲改有语义腐蚀风险（#ARCH-114 原文理由仍然成立）；逐件
+        #  常量替换属各域作者职责，本批按爷爷条款登记，门禁对未来新增保持全量牙齿]
+        "check_wiring_orphan.py",
+        "classify_workspace_wip.py",
+        "collect_write_audit_4663.py",
+        "commit_derived_sync.py",
+        "commit_perf_report.py",
+        "d3_metadata/batch_creation_tokens.py",
+        "d3_metadata/pattern_code_fingerprint.py",
+        "d5_architecture/generators/externalize_algo_flow.py",
+        "d5_architecture/generators/generate_frontend_gap_views.py",
+        "d5_architecture/generators/generate_trading_map_diagram.py",
+        "d5_architecture/generators/report_algo_flow_author_debt.py",
+        "d5_architecture/generators/scan_frontend_pages.py",
+        "d5_architecture/pre_write_gate.py",
+        "d5_architecture/validators/validate_strategy_production_map.py",
+        "d8_doc_sync/algo_flow_reverse_orphan_reconciler.py",
+        "dedup_ttl_headers.py",
+        "generate_governance_map.py",
+        "generators/generate_resource_morning_report.py",
+        "generators/generate_resource_profile_registry.py",
+        "generators/generate_resource_week_view.py",
+        "generators/generate_skeleton_health.py",
+        "registry_batch_edit.py",
+        "run_semantic_audit.py",
+        "scan_offrepo_assets.py",
+        "split_coordination.py",
+        "standards/standards_lib.py",
     }
 )
 

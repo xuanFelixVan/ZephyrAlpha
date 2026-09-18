@@ -18,43 +18,38 @@ from zephyr.shared.io.paths import REPO_ROOT
 
 GOVERNANCE_DIR = REPO_ROOT / "src" / "zephyr" / "governance"
 
-PHASE1_REQUIRED_FILES = [
-    "governance/__init__.py",
-    "governance/agent-rbac/__init__.py",
-    "governance/agent-spec/__init__.py",
-    "governance/audit-trail/__init__.py",
-    "governance/rollback/__init__.py",
-    "governance/escalation/__init__.py",
-    "governance/drift-detector/__init__.py",
-    "governance/budget-enforcer/__init__.py",
-    "governance/a2a/__init__.py",
+# Phase-1 八模块壳目录现状（2026-09-18 W6 轮2 核实，锚=AI-21 审计批 441852d976）：
+# - agent-spec 空壳已删，实现真身在 snake_case 包 agent_spec（连字符目录不可 import）；
+# - drift-detector / budget-enforcer 空壳从未落地于 governance/，能力件实际位于
+#   src/zephyr/gov_drift 与 src/zephyr/integration/budget_enforcer。
+# 本门按"能力模块存在且可 import（含 __init__.py）"断言，路径对齐实测真身。
+PHASE1_CAPABILITY_MODULES = [
+    ("agent-rbac", "governance/agent-rbac"),
+    ("agent-spec", "governance/agent_spec"),
+    ("audit-trail", "governance/audit-trail"),
+    ("rollback", "governance/rollback"),
+    ("escalation", "governance/escalation"),
+    ("drift-detector", "gov_drift"),
+    ("budget-enforcer", "integration/budget_enforcer"),
+    ("a2a", "governance/a2a"),
 ]
 
-EIGHT_MODULES = [
-    "agent-rbac",
-    "agent-spec",
-    "audit-trail",
-    "rollback",
-    "escalation",
-    "drift-detector",
-    "budget-enforcer",
-    "a2a",
-]
+SRC_ROOT = REPO_ROOT / "src" / "zephyr"
 
 
 class TestPhase1Gate:
-    """Phase 1 Gate: 8 模块目录 + SYS-MASTER/MOD-MASTER 注册."""
+    """Phase 1 Gate: 8 能力模块目录 + SYS-MASTER/MOD-MASTER 注册."""
 
     def test_eight_module_dirs_exist(self):
-        for mod in EIGHT_MODULES:
-            mod_dir = GOVERNANCE_DIR / mod
-            assert mod_dir.exists(), f"Missing: governance/{mod}/"
-            assert mod_dir.is_dir(), f"Not a directory: governance/{mod}/"
+        for cap, rel in PHASE1_CAPABILITY_MODULES:
+            mod_dir = SRC_ROOT / rel
+            assert mod_dir.exists(), f"Missing: {cap} -> {rel}/"
+            assert mod_dir.is_dir(), f"Not a directory: {cap} -> {rel}/"
 
     def test_each_module_has_init(self):
-        for mod in EIGHT_MODULES:
-            init = GOVERNANCE_DIR / mod / "__init__.py"
-            assert init.exists(), f"Missing: governance/{mod}/__init__.py"
+        for cap, rel in PHASE1_CAPABILITY_MODULES:
+            init = SRC_ROOT / rel / "__init__.py"
+            assert init.exists(), f"Missing: {rel}/__init__.py (capability {cap})"
 
     def test_gct_blueprint_registered(self):
         bp = GOVERNANCE_DIR / "__init__.py"
@@ -69,4 +64,5 @@ class TestPhase1Gate:
             if d.is_dir() and not d.name.startswith("_") and not d.name.startswith(".")
         ]
         for child in children:
-            assert child in EIGHT_MODULES or child == "__pycache__", f"Orphan directory: governance/{child}/"
+            pinned = {rel.split("/")[-1] for _, rel in PHASE1_CAPABILITY_MODULES if rel.startswith("governance/")}
+            assert child in pinned or child == "__pycache__", f"Orphan directory: governance/{child}/"
