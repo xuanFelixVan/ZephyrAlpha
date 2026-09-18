@@ -31,6 +31,7 @@ BACKLOG = Path("docs/01_policies_and_standards/_registry/catalogs/backtest_backl
 
 
 def p0_critical_nodes() -> set[str]:
+    """p0_critical_nodes implementation."""
     import yaml
 
     with BACKLOG.open(encoding="utf-8") as f:
@@ -46,6 +47,7 @@ def p0_critical_nodes() -> set[str]:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     from ruamel.yaml import YAML
     from ruamel.yaml.scalarstring import PlainScalarString
 

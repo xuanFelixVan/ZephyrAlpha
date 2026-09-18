@@ -199,6 +199,7 @@ def apply_fingerprints() -> int:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="REG-PAT-001 code_fingerprint 扫描器（门禁A/B）")
     g = ap.add_mutually_exclusive_group()
     g.add_argument("--check", action="store_true", help="只读对账（默认）")

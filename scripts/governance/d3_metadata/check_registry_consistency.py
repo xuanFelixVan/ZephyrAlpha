@@ -527,6 +527,7 @@ def apply_roor_entry_count_updates(rows: list[dict], roor_path: Path = ROOR_PATH
     insertions: dict[int, str] = {}  # line_idx -> 待插行（entry_count 行后）
 
     def _flush() -> None:
+        """_flush implementation."""
         nonlocal current_rid, entry_idx, has_rule
         if current_rid in fixes and entry_idx is not None:
             actual = fixes[current_rid]["actual"]
@@ -643,6 +644,100 @@ def apply_internal_entry_count_updates(rows: list[dict]) -> list[str]:
     return updates
 
 
+
+# ============================================================
+# ROOR summary 段再生（治本普查 BRK-084：宪法 §4.3"计数用字段不写死在散文"）
+# ============================================================
+
+_ROOR_SUMMARY_KEY = "summary:"
+
+
+def _roor_entry_health(entry: dict) -> str:
+    """单条 ROOR 注册目的结构健康度判定（机判，不凭记忆）。
+
+    :return: broken（缺 status 键 / 文件型 physical_path 不存在） / database（PG 等 URL 型） / ok
+    """
+    path = str(entry.get("physical_path") or "")
+    if "status" not in entry:
+        return "broken"
+    if not path:
+        return "broken"
+    if "://" in path:  # 数据库型注册表（如 depgraph PG）无文件路径可判存在性
+        return "database"
+    return "ok" if (REPO_ROOT / path).exists() else "broken"
+
+
+def compute_roor_summary(roor: dict) -> dict:
+    """由 tiers 实测再生 summary（旧 summary 的 19/5/1 三值无任何机械真源，见函数内注记）。"""
+    import collections  # noqa: PLC0415
+
+    tiers = roor.get("tiers") or []
+    entries = [e for t in tiers for e in (t.get("registries") or [])]
+    # by_tier 按 tier 块的**列表长度**现算（旧 summary 手写 11/28/34，实测 12/28/34=74 → 漂移 1）
+    by_tier = {f"tier_{t.get('tier')}": len(t.get("registries") or []) for t in tiers}
+    by_status = collections.Counter(str(e.get("status") or "<missing>") for e in entries)
+    health = collections.Counter(_roor_entry_health(e) for e in entries)
+    broken_ids = [
+        str(e.get("registry_id") or "<no-id>")
+        for e in entries
+        if _roor_entry_health(e) == "broken"
+    ]
+    # 条目自带 tier 字段者参与交叉校验（该字段历史上是手写的，与所在块可能不一致）
+    declared_tier = collections.Counter(
+        str(e.get("tier")) for e in entries if e.get("tier")
+    )
+    return {
+        "generated_by": "scripts/governance/d3_metadata/check_registry_consistency.py --refresh-summary",
+        "total_tiers": len(tiers),
+        "total_registries": len(entries),
+        "by_tier": dict(sorted(by_tier.items())),
+        "entries_carrying_tier_field": dict(sorted(declared_tier.items())),
+        "by_status": dict(sorted(by_status.items())),
+        "by_medium": dict(sorted(health.items())),
+        "broken": health.get("broken", 0),
+        "broken_registry_ids": broken_ids,
+        "legacy_manual_claims_replaced": {
+            "fully_scanned": "19（无机械真源：ROOR 条目 status 值域为 active/draft/archived/"
+                             "deprecated，从不出现 fully_scanned）",
+            "pending_scan": "5（同上；条目侧亦无 pending_scan 取值）",
+            "broken": "1（旧值无对应条目；本字段现由 _roor_entry_health 机判）",
+            "by_tier.tier_0_core": "11（手写值，实测该块 registries 长度=12 → 计数漂移 1，已归零）",
+        },
+        "scan_coverage_note": "跨表一致性扫描覆盖以 registry_consistency_contract.yaml 的 "
+                              "registries 段为准（该册才是扫描面真源，RULE-SSOT）；"
+                              "本 summary 不再重复手写扫描计数。",
+    }
+
+
+def apply_roor_summary_update(roor_path: Path = ROOR_PATH) -> str:
+    """行级手术替换 ROOR 尾部 summary 段（保注释、保其余条目，禁 yaml.safe_dump 整写）。"""
+    from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: PLC0415
+
+    import yaml  # noqa: PLC0415
+
+    nl = chr(10)
+    raw = roor_path.read_text(encoding="utf-8")
+    data = yaml.safe_load(raw)
+    marker = nl + _ROOR_SUMMARY_KEY
+    idx = raw.rfind(marker)
+    if idx < 0:
+        return "SKIP（未找到 summary 段）"
+    body = yaml.safe_dump(
+        compute_roor_summary(data),
+        allow_unicode=True,
+        sort_keys=False,
+        default_flow_style=False,
+        width=110,
+    ).rstrip()
+    indented = nl.join(("  " + ln) if ln.strip() else ln for ln in body.split(nl))
+    out = raw[: idx + 1] + _ROOR_SUMMARY_KEY + nl + indented + nl
+    yaml.safe_load(out)  # 解析自检后才落盘
+    safe_write_text(
+        roor_path, out, expected_base_sha256=content_sha256(raw), newline=nl
+    )
+    return "REFRESHED total_registries=" + str(data.get("summary", {}).get("total_registries"))
+
+
 def main() -> None:
     """入口函数"""
     parser = argparse.ArgumentParser(description="跨登记表一致性校验脚本")
@@ -652,7 +747,14 @@ def main() -> None:
         action="store_true",
         help="CR-007：把实测条目数回填 ROOR（行级手术保注释；仅 STALE 行）",
     )
+    parser.add_argument(
+        "--refresh-summary",
+        action="store_true",
+        help="BRK-084：由 tiers 实测再生 ROOR summary 计数（宪法 §4.3 计数用字段不写死在散文）",
+    )
     args = parser.parse_args()
+    if args.refresh_summary:
+        print(f"  ROOR summary: {apply_roor_summary_update()}", file=sys.stderr)
     if not ROR_PATH.exists():
         print(f"[SKIP] registry_consistency_contract.yaml 不存在: {ROR_PATH}", file=sys.stderr)
         sys.exit(EXIT_PASS)

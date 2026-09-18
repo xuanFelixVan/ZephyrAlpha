@@ -108,6 +108,7 @@ def iter_candidate_dirs() -> list[Path]:
     candidates = []
 
     def hit(name: str) -> bool:
+        """hit implementation."""
         low = name.lower()
         if any(re.search(p, name, re.I) for p in EXCLUDE_PATTERNS):
             return False
@@ -129,6 +130,7 @@ def iter_candidate_dirs() -> list[Path]:
 
 
 def dir_size_gb(p: Path) -> float:
+    """dir_size_gb implementation."""
     total = 0
     try:
         for f in p.rglob("*"):
@@ -143,6 +145,7 @@ def dir_size_gb(p: Path) -> float:
 
 
 def cmd_scan() -> int:
+    """cmd_scan implementation."""
     assets = load_inventory_assets()
     known_paths = {Path(a["path"]).resolve() for a in assets}
     report = {"timestamp": datetime.now().isoformat(), "candidates": [], "missing": [], "junction_issues": []}
@@ -196,6 +199,7 @@ def cmd_scan() -> int:
 
 
 def cmd_adopt(path: str, type_: str, criticality: str, regenerable: bool, backup: str, notes: str) -> int:
+    """cmd_adopt implementation."""
     p = Path(path)
     if not p.exists():
         print(f"[ERR] 路径不存在: {p}")
@@ -228,6 +232,7 @@ def cmd_adopt(path: str, type_: str, criticality: str, regenerable: bool, backup
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="仓外资产扫描器（MOD-INF-026 扩展）")
     sub = ap.add_subparsers(dest="cmd")
     sub.add_parser("scan", help="扫描并 diff 清单")

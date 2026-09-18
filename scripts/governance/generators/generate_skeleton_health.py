@@ -63,6 +63,7 @@ _ELECTRIC_RE = re.compile(
 
 
 def check_tdm(tdm_path: Path) -> dict:
+    """Check compliance and report findings."""
     out: dict = {"exists": tdm_path.exists()}
     if not out["exists"]:
         return out
@@ -79,6 +80,7 @@ def check_tdm(tdm_path: Path) -> dict:
 
 
 def check_audit(audit_path: Path, tdm_nodes: int | None) -> dict:
+    """Check compliance and report findings."""
     out: dict = {"exists": audit_path.exists()}
     if not out["exists"]:
         return out
@@ -100,6 +102,7 @@ def check_audit(audit_path: Path, tdm_nodes: int | None) -> dict:
 
 
 def check_registry(registry_path: Path) -> dict:
+    """Check compliance and report findings."""
     out: dict = {"exists": registry_path.exists()}
     if not out["exists"]:
         return out
@@ -118,6 +121,7 @@ def check_registry(registry_path: Path) -> dict:
 
 
 def check_samples(samples_dir: Path) -> dict:
+    """Check compliance and report findings."""
     out: dict = {"exists": samples_dir.exists()}
     if not out["exists"]:
         return out
@@ -130,6 +134,7 @@ def check_samples(samples_dir: Path) -> dict:
 
 
 def check_decay(decay_path: Path) -> dict:
+    """Check compliance and report findings."""
     out: dict = {"exists": decay_path.exists()}
     if not out["exists"]:
         return out
@@ -156,6 +161,7 @@ def check_decay(decay_path: Path) -> dict:
 
 
 def build_report(tdm: dict, audit: dict, registry: dict, samples: dict, decay: dict) -> str:
+    """build_report implementation."""
     now = now_utc().strftime("%Y-%m")
     flesh: list[str] = []
     bone: list[str] = []
@@ -210,6 +216,7 @@ def build_report(tdm: dict, audit: dict, registry: dict, samples: dict, decay: d
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="⑨骨架体检月度报告（只读盘点）")
     ap.add_argument("--tdm", type=str, default=str(TDM_DEFAULT))
     ap.add_argument("--audit", type=str, default=str(AUDIT_DEFAULT))

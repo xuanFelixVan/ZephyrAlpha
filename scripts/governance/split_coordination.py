@@ -90,6 +90,7 @@ def _atomic_write_retry(path: Path, text: str) -> None:
 
 
 def load_declarations() -> list[dict]:
+    """load_declarations implementation."""
     if not DECL_PATH.exists():
         return []
     try:
@@ -104,6 +105,7 @@ def load_declarations() -> list[dict]:
 
 
 def save_declarations(splits: list[dict]) -> None:
+    """save_declarations implementation."""
     body = yaml.safe_dump(
         {"splits": splits}, allow_unicode=True, sort_keys=False, default_flow_style=False
     )
@@ -132,6 +134,7 @@ def _stale(entry: dict, max_age_h: float = 48.0) -> bool:
 
 
 def cmd_begin(args: argparse.Namespace) -> int:
+    """cmd_begin implementation."""
     if args.old_paths_file:
         old_paths = sorted(
             ln.strip().replace("\\", "/")
@@ -161,6 +164,7 @@ def cmd_begin(args: argparse.Namespace) -> int:
 
 
 def cmd_finish(args: argparse.Namespace) -> int:
+    """cmd_finish implementation."""
     splits = load_declarations()
     entry = next((s for s in splits if s.get("dir") == args.dir), None)
     if entry is None:
@@ -179,6 +183,7 @@ def cmd_finish(args: argparse.Namespace) -> int:
 
 
 def cmd_status(_args: argparse.Namespace) -> int:
+    """cmd_status implementation."""
     splits = load_declarations()
     if not splits:
         print("无活跃拆分声明")
@@ -206,6 +211,7 @@ def cmd_sweep(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="拆分搬移协调声明工具（SPLIT-COORDINATION 协议）")
     sub = ap.add_subparsers(dest="cmd", required=True)
 

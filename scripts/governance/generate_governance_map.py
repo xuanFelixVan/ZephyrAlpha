@@ -112,6 +112,7 @@ _PIPELINE_DEFAULT = {
 
 
 def classify_family(text: str) -> str | None:
+    """classify_family implementation."""
     for fam, pat in _FAMILY_PATTERNS:
         if re.search(pat, text, re.IGNORECASE):
             return fam
@@ -119,6 +120,7 @@ def classify_family(text: str) -> str | None:
 
 
 def parse_header(path: Path) -> dict[str, Any]:
+    """parse_header implementation."""
     try:
         text = "\n".join(path.read_text(encoding="utf-8", errors="replace").splitlines()[:_HEADER_SCAN_LINES])
     except OSError:
@@ -132,6 +134,7 @@ def parse_header(path: Path) -> dict[str, Any]:
 
 
 def _iter_py_files() -> list[Path]:
+    """_iter_py_files implementation."""
     files: list[Path] = []
     for root in SCAN_ROOTS:
         base = REPO_ROOT / root
@@ -146,6 +149,7 @@ def _iter_py_files() -> list[Path]:
 
 
 def _import_spec(path: Path) -> str:
+    """_import_spec implementation."""
     rel = path.relative_to(REPO_ROOT).with_suffix("")
     parts = list(rel.parts)
     if parts[0] == "src":
@@ -298,6 +302,7 @@ def _wiring_tier(c: dict[str, Any], idx: dict[str, Any]) -> str:
 
 
 def scan() -> dict[str, Any]:
+    """scan implementation."""
     files = _iter_py_files()
     candidates: list[dict[str, Any]] = []
     for p in files:
@@ -353,6 +358,7 @@ def _build_counts(families: dict[str, Any]) -> dict[str, int]:
 
 
 def build_document(dry_run: bool) -> dict[str, Any]:
+    """build_document implementation."""
     families = scan()
     human_keys: dict[str, Any] = {}
     if OUTPUT_PATH.exists():
@@ -388,6 +394,7 @@ def build_document(dry_run: bool) -> dict[str, Any]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="治理运行地图(GOMAP-001)骨架生成器")
     ap.add_argument("--dry-run", action="store_true", help="只打印摘要,零写入")
     args = ap.parse_args()

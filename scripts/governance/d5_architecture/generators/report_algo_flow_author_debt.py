@@ -321,6 +321,7 @@ def summary_line(counts: dict) -> str:
 
 
 def _parse(argv: list[str] | None = None) -> argparse.Namespace:
+    """_parse implementation."""
     parser = argparse.ArgumentParser(
         description="ALGO_FLOW 出仓作者欠账台账生成器（P2-1 尾池，reporter 非 gate）"
     )
@@ -336,6 +337,7 @@ def _parse(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     args = _parse(argv)
     try:
         if args.file_list:

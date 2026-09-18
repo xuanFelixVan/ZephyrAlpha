@@ -129,6 +129,7 @@ def _ensure_sibling_paths() -> None:
 
 
 def _root_of(gateway: Any) -> Path:
+    """_root_of implementation."""
     return Path(str(getattr(gateway, "project_root", None) or _DEFAULT_ROOT))
 
 
@@ -320,6 +321,7 @@ class RetireRefused(RuntimeError):
 
 
 def _normalize_ruling_id(raw: str) -> str:
+    """_normalize_ruling_id implementation."""
     s = str(raw).strip()
     return s if s.startswith("裁定#") else f"裁定#{s.lstrip('#')}"
 
@@ -514,9 +516,11 @@ def make_algo_flow_reverse_orphan_reconciler(gateway: Any):
     from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec
 
     def _trigger(committed_files: list[str]) -> bool:
+        """_trigger implementation."""
         return _should_trigger(_root_of(gateway), committed_files)
 
     def _reconcile_fn(committed_files: list[str], session_id: str) -> Any:
+        """_reconcile_fn implementation."""
         return _reconcile(gateway, committed_files, session_id)
 
     return ReconcilerSpec(
@@ -529,6 +533,7 @@ def make_algo_flow_reverse_orphan_reconciler(gateway: Any):
 
 
 def _main(argv: list[str] | None = None) -> int:
+    """_main implementation."""
     import argparse
 
     parser = argparse.ArgumentParser(description="ALGO_FLOW 反向孤件普查 / Owner 授权退役（#ARCH-326）")
@@ -545,9 +550,11 @@ def _main(argv: list[str] | None = None) -> int:
         """CLI 侧最小 gateway 面（run_git + project_root；退役提交时才需要真 gateway）。"""
 
         def __init__(self, project_root: str) -> None:
+            """__init__ implementation."""
             self.project_root = Path(project_root)
 
         def run_git(self, cmd: list[str]):
+            """run_git implementation."""
             # trae_067 铁律2：Windows 裸 subprocess 闪控制台窗——走统一无窗入口
             from zephyr.shared.infra.process_pool import run_subprocess_hidden
 

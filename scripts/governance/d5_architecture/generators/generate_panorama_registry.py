@@ -387,6 +387,7 @@ BUILT_PANORAMAS: list[dict] = [
         "generator": "(手工维护)",
         "output_path": "_archive/",
         "artifact_path": "architecture_debt_registry_v2.md",
+        "status": "retired",  # 2026-09-18 补标（BRK-062）：产物在 _archive/，手工维护，不得计入"已建"
         "description": "已归档（2026-07-24 裁定#221/#222）。活跃治理改由 architecture_model/cross_cutting/invariants.yaml + trae_081_audit_dimensions_framework.yaml + architecture_issue_registry.yaml 三件套承接（原 ai_first_governance_principles.md 已删 2026-07-30，git 历史可查）",
     },
 ]
@@ -994,6 +995,17 @@ def _check_artifact(artifact_path: str) -> tuple[str, int]:
     return ("✅存在", len(files))
 
 
+_RETIRED_LABEL = "🗃已退役"
+
+
+def _build_status_label(entry: dict) -> str:
+    # 已建清单条目的状态标签（治本 BRK-062：status=retired 不得再显示为"✅已建"）。
+    # 根因：BUILT_PANORAMAS 早有 3 条目带 status=retired（PAN-BUILT-03/17/21）、PAN-BUILT-16
+    # 产物在 _archive/ 且手工维护，但渲染层从不读该字段而一律硬编码"✅已建" →
+    # 注册表声称"已建"而产物不存在，索引说谎（宪法 §9.5）。
+    return _RETIRED_LABEL if entry.get("status") == "retired" else "✅已建"
+
+
 def _generate_stats_section(built: list[dict], pending: list[dict], db_stats: dict) -> list[str]:
     """生成统计概览章节。"""
     lines = []
@@ -1001,15 +1013,24 @@ def _generate_stats_section(built: list[dict], pending: list[dict], db_stats: di
     lines.append("")
     lines.append("| 维度 | 值 |")
     lines.append("|------|:---:|")
-    lines.append(f"| 已建全景图总数 | {len(built)} |")
+    # 现役 / 已退役拆分（治本 BRK-062：条目标了 status=retired 却仍在散文里被称"已建"
+    #   = 索引指向空气。退役项单列，不再计入"已建"口径，去向仍在本表逐条可查）
+    retired = [p for p in built if p.get("status") == "retired"]
+    active = [p for p in built if p.get("status") != "retired"]
+    lines.append(f"| 现役已建全景图 | {len(active)} |")
+    lines.append(f"| 已退役全景图（产物不存在，不计入已建口径） | {len(retired)} |")
+    lines.append(f"| 登记条目总数（现役+退役） | {len(built)} |")
     lines.append(f"| 待建全景图总数 | {len(pending)} |")
     lines.append(f"| 全景图总数 | {len(built) + len(pending)} |")
-    lines.append(f"| 已建覆盖率 | {len(built) / (len(built) + len(pending)) * 100:.1f}% |")
+    lines.append(
+        f"| 已建覆盖率（分母=待建+现役已建，退役项剔除） | "
+        f"{len(active) / (len(active) + len(pending)) * 100:.1f}% |"
+    )
     lines.append("")
 
-    # 产物存在性统计
-    ok_count = sum(1 for p in built if _check_artifact(p["artifact_path"])[0] == "✅存在")
-    lines.append(f"| 已建产物存在 | {ok_count}/{len(built)} |")
+    # 产物存在性统计（只判现役项——退役项产物本就不该存在）
+    ok_count = sum(1 for p in active if _check_artifact(p["artifact_path"])[0] == "✅存在")
+    lines.append(f"| 现役产物存在 | {ok_count}/{len(active)} |")
     lines.append("")
 
     # DB 真源健康度
@@ -1172,7 +1193,7 @@ def _generate_detail_section(built: list[dict], pending: list[dict]) -> list[str
     # 合并已建和待建
     all_items = []
     for p in built:
-        all_items.append({**p, "build_status": "✅已建"})
+        all_items.append({**p, "build_status": _build_status_label(p)})
     for p in pending:
         all_items.append({**p, "build_status": "⏳待建"})
 
@@ -1252,7 +1273,7 @@ def _generate_detail_section(built: list[dict], pending: list[dict]) -> list[str
         lines.append("| ID | 名称 | 状态 | 来自架构图 | 内容描述 | 真源/规划 |")
         lines.append("|------|------|:---:|------|------|------|")
         for item in items:
-            if item["build_status"] == "✅已建":
+            if item["build_status"] in ("✅已建", _RETIRED_LABEL):  # 退役项仍渲染跳转（去向可查）
                 # 已建项：真源列显示真源名 + 生成器跳转链接 + 产物跳转链接
                 gen_name = item["generator"]
                 # 生成器做成跳转链接（如果存在）；候选目录含上级 governance/d5_architecture（域级生成器如

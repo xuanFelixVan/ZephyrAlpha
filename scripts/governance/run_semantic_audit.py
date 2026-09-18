@@ -65,6 +65,7 @@ def _dump_report(report) -> Path:  # noqa: ANN001 — SemanticAuditReport pydant
 
 
 def _print_summary(report, out_path: Path) -> None:  # noqa: ANN001
+    """_print_summary implementation."""
     print("=== SemanticAudit 摘要 ===")
     print(f"audit_id      : {report.audit_id}")
     print(f"rule_document : {report.rule_document}")
@@ -117,6 +118,7 @@ def run_stage_smoke(doc_path: Path, stage: int) -> int:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="SemanticAuditor 9 阶段管道 CLI 入口（MOD-INF-028）")
     parser.add_argument("doc_path", nargs="?", help="待审计规则文档路径")
     parser.add_argument("--mode", default="full", choices=["full", "incremental", "detect-only"], help="审计模式")

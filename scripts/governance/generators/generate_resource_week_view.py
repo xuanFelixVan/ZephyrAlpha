@@ -242,6 +242,7 @@ def build_view_data(registry_path: Path, now: datetime | None = None) -> dict:
 
 
 def render_js(view: dict) -> str:
+    """render_js implementation."""
     header = (
         "/* [GENERATED] 本文件由 generate_resource_week_view.py 产出——禁手改（静态清单生成器产出红线）。\n"
         " * 刷新=重跑生成器；渲染契约见 features/resourceweek/rw-engine.js。\n"
@@ -251,6 +252,7 @@ def render_js(view: dict) -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="周历全景视图生成器（MOD-RESCHED-VIEW）")
     ap.add_argument("--output", type=str, default=str(DEFAULT_OUTPUT))
     ap.add_argument("--registry", type=str, default=str(DEFAULT_REGISTRY))

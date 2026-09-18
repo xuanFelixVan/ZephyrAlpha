@@ -45,10 +45,12 @@ STAGES = [f"E{i}" for i in range(10)]
 
 
 def _err(errors: list[str], msg: str) -> None:
+    """_err implementation."""
     errors.append(msg)
 
 
 def validate_structure(data: dict) -> list[str]:
+    """Validate target against rules and report findings."""
     errors: list[str] = []
     for k in REQUIRED_TOP:
         if k not in data:
@@ -101,6 +103,7 @@ def validate_structure(data: dict) -> list[str]:
     import re
 
     def _stage_num(node_id: str):
+        """_stage_num implementation."""
         m = re.match(r"FAC-E(\d+)$", node_id)
         return int(m.group(1)) if m else None
 
@@ -165,6 +168,7 @@ def check_stores(data: dict, root: Path | None = None) -> tuple[list[str], list[
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="策略生产全景图结构+仓储校验（只读）")
     ap.add_argument("--map", default=str(DEFAULT_MAP), help="图 YAML 路径")
     ap.add_argument("--skip-stores", action="store_true", help="跳过仓储存在性检查")

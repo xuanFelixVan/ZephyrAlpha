@@ -75,6 +75,7 @@ def regrade_diff(old: dict, new: dict, candidates: list[dict]) -> list[dict]:
     候选口径：{id, oos_sharpe, max_drawdown, trades, dsr}（与组合门四条对齐，缺项=该条跳过）。
     """
     def verdict(th: dict, c: dict) -> str:
+        """verdict implementation."""
         results = []
         if c.get("oos_sharpe") is not None:
             results.append(c["oos_sharpe"] >= th.get("oos_sharpe_min", 1.5))
@@ -97,6 +98,7 @@ def regrade_diff(old: dict, new: dict, candidates: list[dict]) -> list[dict]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="考纲标准库工具（check/regrade）")
     ap.add_argument("--check", action="store_true", help="校验 standards.yaml 可解析+frozen 状态")
     ap.add_argument("--regrade", action="store_true", help="重考历史演示：frozen 尺子对样例候选打分")

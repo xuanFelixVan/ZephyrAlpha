@@ -57,6 +57,7 @@ class TokenInsertError(RuntimeError):
 
 
 def _git_output(*args: str) -> list[str]:
+    """_git_output implementation."""
     r = subprocess.run(  # noqa: bare-subprocess  轻量登记工具直调 git ls-files，避免反向依赖 zephyr.shared（拉入 process_pool 重依赖），窗口闪现无影响
         ["git", *args], capture_output=True, text=True, encoding="utf-8", errors="replace", cwd=str(_REPO)
     )
@@ -77,11 +78,13 @@ def scan_unregistered(prefix: str, registered: set[str]) -> list[str]:
 
 
 def load_registered() -> set[str]:
+    """load_registered implementation."""
     data = yaml.safe_load(_REGISTRY.read_text(encoding="utf-8"))
     return {str(e.get("file", "")) for e in (data.get("creation_tokens") or [])}
 
 
 def build_block(files: list[str], created_by: str, capability: str, today: str) -> str:
+    """build_block implementation."""
     lines: list[str] = []
     cap_norm = capability.strip().lower().replace("_", "-")
     for f in files:
@@ -209,6 +212,7 @@ def insert_block(block: str, anchor_capability: str, expect_files: list[str] | N
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="creation_token 批量登记（CREATE-GUARD 批量通道，纯插入幂等）")
     ap.add_argument("--prefix", required=True, help="目录/路径前缀（相对仓库根，如 docs/_working/xt_lab）")
     ap.add_argument("--created-by", required=True, help="登记会话名（如 my-session）")

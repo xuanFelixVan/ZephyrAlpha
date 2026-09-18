@@ -275,10 +275,12 @@ def write_text(path: Path, text: str, newline: str = "\n", expected_base_sha256:
 
 
 def sha256_bytes(data: bytes) -> str:
+    """sha256_bytes implementation."""
     return hashlib.sha256(data).hexdigest()
 
 
 def _utc_ts() -> str:
+    """_utc_ts implementation."""
     return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
 
 
@@ -289,6 +291,7 @@ class _DupKeyLoader(yaml.SafeLoader):
     """同层重复键即抛的 SafeLoader。"""
 
     def construct_mapping(self, node, deep: bool = False):  # noqa: FBT001, FBT002
+        """construct_mapping implementation."""
         seen: list = []
         for key_node, _ in node.value:
             key = self.construct_object(key_node, deep=deep)
@@ -375,11 +378,13 @@ def expr_sig(window_expr: object) -> frozenset[str]:
 
 
 def single_int(tok: object) -> int | None:
+    """single_int implementation."""
     s = str(tok).strip()
     return int(s) if s.isdigit() else None
 
 
 def hhmm(tok: object) -> tuple[int, int] | None:
+    """hhmm implementation."""
     m = _RE_HHMM.match(str(tok).strip())
     if not m:
         return None
@@ -388,6 +393,7 @@ def hhmm(tok: object) -> tuple[int, int] | None:
 
 
 def fmt_hh(h: int, mi: int, pad_hour: bool) -> str:
+    """fmt_hh implementation."""
     return f"{h:02d}:{mi:02d}" if pad_hour else f"{h}:{mi:02d}"
 
 
@@ -500,6 +506,7 @@ class TimeSpec:
     times: list[str] | None = None
 
     def describe(self) -> str:
+        """describe implementation."""
         if self.mode == "times":
             return f"new_times={self.times}"
         if self.mode == "cron":
@@ -610,6 +617,7 @@ def _check_crons(spec: TimeSpec, what: str) -> None:
 
 
 def _require_int(tok: str, band: str, current_expr: object, what: str) -> int:
+    """_require_int implementation."""
     v = single_int(tok)
     if v is None:
         raise PlanError(f"{what}现值 {current_expr!r} 的 {band} 段={tok!r} 不是单值，"
@@ -654,6 +662,7 @@ def locate_all(gen, root: Path) -> dict[str, Located]:
     warnings: list[str] = [str(x) for x in list(w_ps1) + list(w_slot)]
 
     def _common(e: dict) -> dict:
+        """_common implementation."""
         return dict(
             window_type=e.get("window_type"), window_expr=e.get("window_expr"),
             status=e.get("status"), pool=e.get("pool"), resource_class=e.get("resource_class"),
@@ -925,6 +934,7 @@ def patch_registry_group(text: str, task_id: str, groups: list[str]) -> tuple[st
 
 
 def unified_diff(rel: str, old_text: str, new_text: str) -> str:
+    """unified_diff implementation."""
     return "".join(difflib.unified_diff(
         old_text.splitlines(keepends=True), new_text.splitlines(keepends=True),
         fromfile=f"a/{rel}", tofile=f"b/{rel}", lineterm="\n",
@@ -948,6 +958,7 @@ def build_patches(gen, root: Path, located: dict[str, Located], items: dict,
     groups_vocab = set(gen.GROUPS)
 
     def _text(rel: str) -> tuple[str, str]:
+        """_text implementation."""
         if rel not in texts:
             try:
                 texts[rel] = read_text(root / rel)
@@ -1102,6 +1113,7 @@ def _requested_std(spec: TimeSpec) -> str:
 
 
 def _norm(rel: str) -> str:
+    """_norm implementation."""
     return str(rel).replace("\\", "/")
 
 
@@ -1189,6 +1201,7 @@ def gate_findings(gate, entities: list[dict], repo_root: Path, now: datetime,
     投递——兄弟代理在途改签名是常态，参数不存在就降级并留痕，不炸整条验收链路。
     """
     def _sig_names(fn) -> set[str]:
+        """_sig_names implementation."""
         try:
             return set(inspect.signature(fn).parameters)
         except (TypeError, ValueError):  # noqa: PERF203 — builtin/部分装饰器不可省
@@ -1197,6 +1210,7 @@ def gate_findings(gate, entities: list[dict], repo_root: Path, now: datetime,
     notes: list[str] = []
 
     def _run(name: str, *a, focus_arg: set[str] | None = None, repo_root_arg: Path | None = None):
+        """_run implementation."""
         fn = getattr(gate, name, None)
         if fn is None:
             return {"error": f"check_absent: {name}"}
@@ -1505,6 +1519,7 @@ def run_child(root: Path, rel: str, extra: list[str] | None = None) -> dict:
 # 编排：run_plan
 # ---------------------------------------------------------------------------
 def default_plan_path(root: Path, sid: str) -> Path:
+    """default_plan_path implementation."""
     return Path(root) / ".runtime/sessions" / sid / PLAN_STAGING_REL / PLAN_DEFAULT_NAME
 
 
@@ -1530,6 +1545,7 @@ def pin_eval_now(t: datetime) -> datetime:
 def stable_hash(report: dict) -> str:
     """幂等指纹：剔除时间/路径等易变字段后对报告取 sha（同方案两次 dry-run 必须同值）。"""
     def _scrub(o):
+        """_scrub implementation."""
         if isinstance(o, dict):
             return {k: _scrub(v) for k, v in o.items()
                     if k not in {"ts_utc", "elapsed_s", "sandbox", "archive_dir", "generated_at",
@@ -1569,6 +1585,7 @@ def run_plan(
     base_extra_rels: frozenset[str] = frozenset()
 
     def _stub(plan_id: str) -> dict:
+        """_stub implementation."""
         return {
             "tool": "scripts/governance/apply_resource_plan.py",
             "plan_id": plan_id, "plan_path": _norm(plan_path), "session": session,
@@ -1895,6 +1912,7 @@ def _render_view(root: Path) -> dict:
 
 
 def _disk_entities(root: Path) -> list[dict]:
+    """_disk_entities implementation."""
     p = Path(root) / REGISTRY_REL
     if not p.exists():
         raise EnvError(f"注册表不存在: {p}")
@@ -1918,6 +1936,7 @@ def _slot_aps_cron(spec: TimeSpec) -> str:
 
 
 def _diff_stats(diff_text: str) -> dict:
+    """_diff_stats implementation."""
     add = sum(1 for ln in diff_text.splitlines() if ln.startswith("+") and not ln.startswith("+++"))
     rem = sum(1 for ln in diff_text.splitlines() if ln.startswith("-") and not ln.startswith("---"))
     return {"added_lines": add, "removed_lines": rem, "hunks": sum(1 for ln in diff_text.splitlines()
@@ -1938,6 +1957,7 @@ def render_map(located: dict[str, Located]) -> str:
 # CLI
 # ---------------------------------------------------------------------------
 def _build_argparser() -> argparse.ArgumentParser:
+    """_build_argparser implementation."""
     p = argparse.ArgumentParser(
         prog="apply_resource_plan.py",
         description="排班方案→时间真源受闸写回一竿子（MOD-RESCHED-APPLY，v2 方案 P2-b；R-A：产 patch 不产表）",
@@ -1967,6 +1987,7 @@ def _build_argparser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     args = _build_argparser().parse_args(argv)
     root = Path(args.root).resolve()
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
@@ -2022,6 +2043,7 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _print_human(report: dict, located: dict[str, Located]) -> None:
+    """_print_human implementation."""
     print(f"PLAN {report.get('plan_id')} mode={report.get('mode')} verdict={report.get('verdict', '-')}")
     for it in report.get("items", []):
         loc = it["located"]

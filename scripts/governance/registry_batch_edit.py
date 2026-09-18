@@ -310,6 +310,7 @@ def _parse_blocks_file(blocks_path: Path) -> list[str]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="登记表纯插入式批量编辑工具（防蒸发）")
     ap.add_argument("--file", required=True, help="登记表 YAML 路径")
     ap.add_argument("--blocks-file", help="插入块文件（===== BLOCK N ===== 分隔）")

@@ -37,6 +37,7 @@ WATCHDOG_JSONL = _REPO / ".runtime/audit/worktree_drift_watchdog.jsonl"
 
 
 def _classify_log_line(subject: str) -> str:
+    """_classify_log_line implementation."""
     if subject.startswith("chore(reconciler)"):
         return "机器伴生:reconciler 收编"
     if subject.startswith("chore(integrity)"):
@@ -47,6 +48,7 @@ def _classify_log_line(subject: str) -> str:
 
 
 def commit_mix(hours: int) -> tuple[Counter, int]:
+    """commit_mix implementation."""
     since = (datetime.now(timezone.utc) - timedelta(hours=hours)).strftime("%Y-%m-%dT%H:%M:%S")
     r = subprocess.run(
         ["git", "log", f"--since={since}", "--format=%s"],
@@ -82,6 +84,7 @@ def drift_events(hours: int, path: Path | None = None) -> int:
 
 
 def watchdog_rows() -> int:
+    """watchdog_rows implementation."""
     if not WATCHDOG_JSONL.exists():
         return 0
     return sum(1 for _ in WATCHDOG_JSONL.open(encoding="utf-8", errors="ignore"))
@@ -161,6 +164,7 @@ def aggregate_verdict(rows: list[tuple[str, str, str]]) -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="提交性能与并发健康报表")
     parser.add_argument("--hours", type=int, default=24, help="统计窗口（小时）")
     args = parser.parse_args()

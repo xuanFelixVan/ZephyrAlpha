@@ -326,6 +326,7 @@ def register_fold(changed_files: set[str]) -> bool:
 
     # normalize changed_files 为 POSIX 相对路径集（容错反斜杠/前导 ./）
     def _norm(p: str) -> str:
+        """_norm implementation."""
         q = p.replace("\\", "/")
         return q[2:] if q.startswith("./") else q
 

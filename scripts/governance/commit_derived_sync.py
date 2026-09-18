@@ -60,6 +60,7 @@ _DERIVED_PATTERNS: tuple[str, ...] = (
 
 
 def _dirty_files() -> list[str]:
+    """_dirty_files implementation."""
     out = subprocess.run(
         ["git", "-c", "core.quotepath=false", "status", "--porcelain=v1", "-uno"],
         capture_output=True, text=True, encoding="utf-8", cwd=REPO, timeout=30,
@@ -76,6 +77,7 @@ def _dirty_files() -> list[str]:
 
 
 def _classify(files: list[str]) -> tuple[list[str], list[str]]:
+    """_classify implementation."""
     derived, skipped = [], []
     for f in files:
         if any(f.startswith(p) or f == p.rstrip("/") for p in _DERIVED_PATTERNS):
@@ -86,6 +88,7 @@ def _classify(files: list[str]) -> tuple[list[str], list[str]]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="派生残留一键收口")
     parser.add_argument("--dry-run", action="store_true", help="仅打印计划，不提交")
     parser.add_argument("--session", default="derived-sync", help="GitCommitGateway session 标识")

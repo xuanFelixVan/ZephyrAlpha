@@ -445,6 +445,7 @@ PS1_FALLBACK_HINTS: dict[str, dict] = {}
 
 
 def _now_iso() -> str:
+    """_now_iso implementation."""
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
@@ -984,15 +985,18 @@ def reconcile_sched_tasks(
         declared.setdefault(name, tid)
 
     def _status_of(name: str) -> list[str]:
+        """_status_of implementation."""
         return list(live.get(name) or [])
 
     def _disabled(names: list[str]) -> bool:
+        """_disabled implementation."""
         return bool(names) and all(_RE_DISABLED_TOKEN.search(s or "") for s in names)
 
     findings: list[dict] = []
     exempted: list[dict] = []
 
     def _emit(code: str, name: str, tid: str, detail: str) -> None:
+        """_emit implementation."""
         ex = exemptions.get(name)
         if ex and str(ex.get("reason_code") or code) == code:
             exempted.append({"task_name": name, "task_id": tid, "reason_code": code,
@@ -1047,6 +1051,7 @@ def _aps_dow_to_standard(field: str) -> str:
         return field
 
     def shift_int(d: int) -> int:
+        """shift_int implementation."""
         return (d + 1) % 7  # APScheduler 0=周一 → 标准 cron 0=周日：+1 平移
 
     def shift_tok(tok: str) -> list[str]:
@@ -1569,6 +1574,7 @@ def build_registry(existing_path: Path | None = None, output_path: Path | None =
 
 
 def registry_text(registry: dict) -> str:
+    """registry_text implementation."""
     header = (
         "# [GENERATED] 本文件由生成器产出，禁手工增删条目（静态清单生成器产出红线）。\n"
         "# 人可复核字段（module_id/map_node_id/pool/peak_mem_gb/est_duration_min/\n"
@@ -1773,6 +1779,7 @@ def publish_check_findings(findings: list, board_dir: str | None = None) -> dict
 
 
 def main() -> int:  # noqa: C901
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="资源画像注册表生成器（MOD-RESCHED-PROFILE）")
     ap.add_argument("--check", action="store_true",
                     help="自检臂：漂移检测（实体集/window_expr 与磁盘比对）+C-5 闸在场性"
@@ -1799,6 +1806,7 @@ def main() -> int:  # noqa: C901
     pool_block = [f for f in pool_findings if str(f.get("severity")) == "block"]
 
     def _pool_blocked_print() -> None:
+        """_pool_blocked_print implementation."""
         print(f"POOL-BLOCK: 词表守卫阻断写出（{len(pool_block)} 项未知池，v2 C-7/R-C）")
         for f in pool_block[:20]:
             print("  ", f["detail"])

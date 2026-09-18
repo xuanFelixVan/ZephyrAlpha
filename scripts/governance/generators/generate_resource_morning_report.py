@@ -93,6 +93,7 @@ def _day_start(now: datetime) -> datetime:
 
 
 def _hhmm(dt: datetime) -> str:
+    """_hhmm implementation."""
     return dt.astimezone(_tz()).strftime("%H:%M")
 
 
@@ -315,6 +316,7 @@ def build_report(
 
 
 def _table_header(cols: list[str]) -> list[str]:
+    """_table_header implementation."""
     return ["| " + " | ".join(cols) + " |", "|" + "|".join(["---"] * len(cols)) + "|"]
 
 
@@ -342,6 +344,7 @@ def render_markdown(rep: dict[str, Any]) -> str:
 
 
 def _render_timeline(tl: dict[str, Any]) -> list[str]:
+    """_render_timeline implementation."""
     out = [f"## 1. 今日排班时间线（按窗起点排序，{len(tl['fires'])} 个实体开工 / "
            f"{tl['total_fires']} 个开工窗）", ""]
     if not tl["fires"]:
@@ -368,6 +371,7 @@ def _render_timeline(tl: dict[str, Any]) -> list[str]:
 
 
 def _render_conflicts(cf: dict[str, Any]) -> list[str]:
+    """_render_conflicts implementation."""
     out = [f"## 2. 当前同刻冲突（第四查 sched_pool_concurrency，地平线 {cf['horizon_days']} 天）", "",
            f"- 待清零（block）：**{cf['block']}**", f"- 留痕（warn）：{cf['warn']}",
            f"- co_start_intent 豁免对（裁定 R-F，不计冲突）：{cf['waived_pairs']}", ""]
@@ -382,6 +386,7 @@ def _render_conflicts(cf: dict[str, Any]) -> list[str]:
 
 
 def _render_calibration(cal: dict[str, Any]) -> list[str]:
+    """_render_calibration implementation."""
     out = ["## 3. 校准 flag 摘要（申报 vs 实测偏差 >阈值）", ""]
     if not cal.get("present"):
         out += [f"> 校准报告未生成（{cal.get('path')}）——跑 "
@@ -410,6 +415,7 @@ def _render_calibration(cal: dict[str, Any]) -> list[str]:
 
 
 def _render_alerts(al: dict[str, Any]) -> list[str]:
+    """_render_alerts implementation."""
     out = [f"## 4. 告警板未决条目（共 {al['total']}：critical {al['critical']} / "
            f"warning {al['warning']}；近期已解除灰显 {al['resolved_recent']}）", ""]
     if not al["items"]:
@@ -425,6 +431,7 @@ def _render_alerts(al: dict[str, Any]) -> list[str]:
 
 
 def _render_freshness(fr: dict[str, Any]) -> list[str]:
+    """_render_freshness implementation."""
     ok = "一致" if fr["entity_count_consistent"] else "**不一致（计数漂移，须再生）**"
     out = ["## 5. 再生新鲜度", "",
            f"- 注册表再生时刻：{fr['registry_generated_at']}（距今 {fr['registry_age_hours']} 小时）",
