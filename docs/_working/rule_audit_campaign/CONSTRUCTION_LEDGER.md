@@ -114,6 +114,17 @@ completes_when: 规则与审计一条龙战役波1-波5 全部收口，且本册
   ②对任何"字节级比对/幂等重放"的判据，**必须先归一化行尾**（本役所有 diff 一律 `--strip-trailing-cr`
   或 `--ignore-cr-at-eol`，否则 6 万行假差异会把你引向"他人在途回退"的误判）。
 
+- **R-A46｜"id 在册"只构成候选集，不构成施工许可——R-A36 的"95 件可先行"实测是在册假象**。
+  C-27 逐件验归属普查（`st-anchormap-20260919`，只读、零改动）把 156 件基线逐字复现后逐件判：
+  其中"id 在册"确为 **95 件**（与 R-A36 数字独立复算相同），但过得了**逐件归属验证**的只剩 **1 件**
+  （7 件禁落 + 87 件需人工）。⇒ 若按 R-A36 原口径"按 id 批量替换路径"动手，会把 **94 件写成新的假身份证**。
+  本总包采信的落真判据升为**四证同向**：①在册声明（`submodule_path`/`module_path`）覆盖本件路径；
+  ②该蓝图文件实存；③本件自身 `# [A_module]` 头同 id；④`path_ownership_map.yaml` 对本件同 id。
+  实测可落的两件（`src/zephyr/data/news_collector.py`·MOD-L00-001 四证全同向；
+  `src/zephyr/frontend/dashboard/services_registry.py`·MOD-L08-001 第四证 `existence=generated` 故强度低一档）。
+  ★ 同批证伪的还有普查面口径：**案卷"全仓 173 件"在当日盘上测不出**（同定义实测 450 件），
+  156 件可复现 ⇒ 后续一律按 **450 普查面 / 156 危险子集** 双基线，"173" 既不当结论也不当反证。
+
 ## 2. 波1 车道回执全文（§5 六项格式，逐条嵌入，未做删改）
 ### WP1 · 两坏写入端（`st-ramp-wp1-20260919`）
 
@@ -692,6 +703,16 @@ $ git log --oneline -3 -- $C
 | **C-45** | ★ 三态普查 T1 两件：`algo_mining_digest.md`（index 吞 58 行）/ `prereg_screen_slice_a.md`（吞 6 行），index 压的是**从未提交过**的改前快照 | 由该两文件 owner 车道 `git add` 抹平（工作区==HEAD ⇒ 零风险） | 先用冷库 `at_risk_index_blobs/` 复核再抹 | bizmine 家族在途面，本总包未动；**悬空 blob 一次 `git gc` 即灭**，取证件（50/50 sha256 校验）是当前唯一稳定基线 |
 | **C-46** | `backtest_backlog.yaml` index 那份会把 **19 条已实测销账条目退回 `untested`**（+19 −38）；`bizmine_campaign_ledger.md` 吞总包台账 2 行 | 重跑销账批 或 具名 `git add` 抹平 | — | **注册表净删=Owner 门** 且属他会话域 ⇒ 只登记不动 |
 | **C-47** | 队列落地后 index 不刷新＝**C-16 第七次现场复现**：本次 16 件纯 `+2 −0` 与落地件 `68b80cd512` 的文件集 **16/16 集合相等** | 甲=serializer 落地成功后对自家文件刷新 index（机制治本） | 乙=每车道自抹（D-15③） | 甲改的是**常驻守护体内**的代码 ⇒ 判旧进程盲区（#ARCH-323 族，重启才生效）；本总包已按乙自抹 16/16 并复验三态全等、工作区字节零改动 |
+
+| **C-48** | 缺蓝图声明的净增面：注入 id 在 `docs/03_modules` 零声明 ⇒ 落真锚＝先造 .md（**65 个 id / 169 件**，Top：MOD-SIG-038×22、MOD-D5_ARCH_TOOLS×18、MOD-E2E-001×10） | 逐族补蓝图（净增文档资产） | 只落四证同向的 1-2 件，其余挂账 | 净增文档＝Owner 门；本战役禁写 `docs/03_modules/**` ⇒ 只登记 |
+| **C-49** | 在册 563 个 id 只有 **78** 个带 `module_path`/`submodule_path` 类 frontmatter ⇒ 归属的机械证据面天然只有 14% | 补 `submodule_path`（又是净增） | 承认"锚无机械归属"并改门禁/工单口径 | **不裁则此类工单永远只能出 1-2 件可落**（本车道实测就是 1 件） |
+| **C-50** | "一 id 多文件"的挑法：单 id 普查面内最多挂 **28** 件（MOD-L02-001），且目录级合法覆盖与真错挂同桶 | 按 depgraph 节点逐件认领 | 规定"一 id 只留主件锚，其余走 `[TESTS]`/被测约定" | 需 Max 选形；选形前 11 件（156 子集内一id多文件）不动 |
+| **C-51** | `tests/**` 挂被测模块 id 的锚语义**无真源条款**（普查面 tests/** 共 337 件，156 子集 110 件） | 承认约定 ⇒ 这 337 件多数可直接落真 | 不承认 ⇒ 一律按需人工 | 裁前车道**一件替换文本都不给**（已执行）；这是 110 件 vs 0 件的分水岭 |
+| **C-52** | 126 件在册声明是**目录级**（多为 tests 挂被测模块目录），按任务书字面"另一个明确文件"不构成禁落 | 单列 `mishang_dirlevel.tsv` 全量 | 并入禁落 | 车道两边都没藏，属**口径收紧**：禁落只有 12 件是真"文件级错挂" |
+| **C-53** | 注入器删块后会不会**重注真锚**（C-27 的备选出路"删 + 等重注入"）仍未取证 | 另派腿跑 `_classify_headerless_files` 单测面 | — | 案卷原本就标 `[推断]`；不验则"删+等重注入"这条路不可用 |
+| **C-54** | 替换文本行式：车道采**三槽** `# [BLUEPRINT] <id> \| <蓝图路径> \| §`（与在册注入器 `_module_id_inject_header` 同形），非任务书示例的二槽 | 三槽＝让 N-15 正则**开始真检查路径存在性**（实测注入行现状中槽是散文⇒不被识别⇒门形同虚设） | 二槽（`paste_ready/` 每件已备 `alt_line_two_slot`） | 采三槽＝一次性打开一门此前从未真正生效的检查 ⇒ Max 拍，拍了我再统一 |
+| **C-55** | 文件正文自称未在册 id（`news_collector.py` 自称 MOD-DATA-NEWS-001，全仓零声明，而注入行为 MOD-L00-001） | 为它造蓝图（净增） | 改正文（他文件语义） | 不构成本件否决（已行内注记），但属"自称身份与在册不符"一族 |
+
 
 ## 4. 事实修正表（后续车道任务书必带对应行）
 
@@ -3068,3 +3089,23 @@ Pass 2 的纯格式清单消除）；冷库 `wp16/` 树共 **66** 个文件 = 63
   第三批（上收真源）由本总包接力（§10），换源那一半成 C-40 处方。
   ★ 车道留下的一条反推陷阱已进手册：**tempfile 随机表含下划线 ⇒ `rsplit("_")` 会把长名册错切**（实测 6 件误判），
   必须按定长剥尾。
+
+## 12. C-27 落真锚普查车道（`st-anchormap-20260919`）要点与产物坐标
+
+- **零改动实证**：被判可落的 2 件靶件 + 被引的 2 个禁改面 `git status` 全空；450 件普查面的
+  `injected_line_orig` 逐字在盘 450/450；未 `git add`、未建 tracked 件、未跑任何 `--apply`。
+- **判定器能红（双向对照 7/7）**：任务书两例（`shared/infra/__init__.py`·MOD-INF-016→可落/一致、
+  `scripts/compute_signals.py`·MOD-CD-001→禁落）被**同一条代码路径**分开；另含 `__init__.py` 门面件、
+  R-A36 第二例、净增面负控。设计要点＝把"pair 一致性（几何）"与"归属判定（可否就地改写）"拆成两轴，
+  避免自证绿灯。
+- **基线**：`python scripts/governance/dedup_ttl_headers.py --dry-run` ⇒
+  `{"duplicate_injected_block_files":156,"dedup_targets":0,"skipped_files":156,
+  "skipped_by_reason":{"would-drop-last-anchor:BLUEPRINT":156}}`——**逐字复现**，
+  即 L1b 收口后的"零可删 + 100% 单一跳过原因"稳态成立。
+- **产物**：`.runtime/tmp/st-anchormap-20260919/`（20 文件）与冷库
+  `G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/anchormap/`（同 20 文件）双镜像，
+  `MANIFEST_sha256.txt` 覆盖 18 件交付物，两处各 `sha256sum -c` ⇒ **18 OK / 0 非 OK**。
+  逐件机读表 `anchor_map.json`（450 行 × 18 字段）＋人读 `ANCHOR_MAP.md`＋`paste_ready/`＋
+  `forbidden_list.md`＋`manual_list.tsv`＋`mishang_dirlevel.tsv`＋`calibration.json`。
+- **待主验**：本道产物未入库（任务书硬约束：不新建 tracked 件）；`.runtime` 24h TTL ⇒ 冷库是唯一长命载体。
+  判定器若要转成入库工具须补能力反查 + 走 worktree 正门（现刻意留在 `.runtime`）。
