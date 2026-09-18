@@ -220,8 +220,10 @@ python -c "import yaml;print(yaml.safe_load(open('config/governance_operations_m
 ### 1.4 考尺 OOS/IS 两口径不可比 → 同口径重算，不降级为参考指标（R-E1）｜推断｜P0
 - **裁定**：`f06_e4_wfa_exam.py:355-367` 属**计算缺陷**非指标选型问题；缺陷的正确处置是修缺陷，
   不是把它标注为"仅供参考"继续留在链路里。历史 verdict 须显式标"基于旧口径已作废需重考"。
-- **复核命令**：`git log --oneline -- src/zephyr/backtest/validation/f06_e4_wfa_exam.py`；
-  `git grep -n "is_sharpe" -- src/zephyr/backtest/`
+- **复核命令**（★ 21:3x 修正：本条原写 `src/zephyr/backtest/validation/…` 是我凭空造的目录，真身在 `scripts/backtest/`；
+  行号锚 355-367 已复测**内容对得上**=该处确为 `run_strategy_validation(... is_sharpe=…, oos_sharpe=…)` 调用点）：
+  `git log --oneline -- scripts/backtest/f06_e4_wfa_exam.py`；
+  `git grep -n "is_sharpe" -- scripts/backtest/ src/zephyr/backtest/core/strategy_validation_pipeline.py`
 - **Flash 可能错在哪**：**这条会翻历史结论**（车道被要求出"翻案清单"）。
   若同口径重算后大量 verdict 由通过转红 → 涉及**已毕业策略包/已签裁定**的追溯效力，
   属"影响历史回测结论"的 Owner/Max 级判断，**Flash 不该独自扛**。
@@ -388,3 +390,110 @@ git log --since="2026-09-18 17:00" --format="%h %s%n%b" | grep -inE "skip-prefli
    → 复核面：`git status --porcelain` 与 `.runtime/tmp/ff_quarantine/` 归档对账。
 4. 本清单不覆盖"Flash 根本没做的事"（遗漏不可自证）。
    → Max 若要覆盖该面，应拿 `skeleton/01_break_census.md` 的 85 条逐条对账本轮处置率。
+
+---
+
+# §7 21:2x 增量复核面（z-judgment / z-verifier3 / z-sentinel 三车道交工后新增）
+
+> 三条施工车道在 20:5x~21:1x 收工。**它们合计推翻了总包任务书里的 5 条前提**，
+> 并新产出一批"看起来已达标、实际未达标"的件。以下每条都给一条可直接跑的验真命令。
+
+## 7.0 ★★ 先读这条：**85 条断点里只有 5 条被独立复跑过**
+
+z-verifier3 实测四态计数：仍成立 3 / 已闭合 0 / 归属错 0 / 口径不符 2 / **未复测 80**
+（载体 `docs/_working/fullflow_campaign/skeleton/05_census_reconciliation.md`）。
+
+- **含义**：Owner 要的"没有任何遗漏"目前**没有可信分母**。任何"还剩 N 条断点""断点已清"的话都还没资格被说。
+- **总包已采取的动作**：派 3 条复测车道（`st-ff-rv1/rv2/rv3-20260918`）按 A-I 十族切片重跑原始实测命令，
+  产出 `lanes/census_reverify_{AB,CD,EFGHI}.md`。
+- **Max 验真**：
+  `python -c "import pathlib;t=pathlib.Path('docs/_working/fullflow_campaign/skeleton/05_census_reconciliation.md').read_text(encoding='utf-8');print(t.count('仍成立'),t.count('未复测'))"`
+  以及查三份 reverify 件是否真落盘（**未落盘=复测没发生，别信回报**）。
+- **同类事实第二条**：z-verifier3 的尺子"真实通过数 = 22 passed"，而前腿报 11、第二腿报 21，**两个旧数都还在文档里**。
+  ⇒ 复核任何"通过率/通过数"时先问：**这是本轮跑的还是继承的**（同 R-019 病）。
+
+## 7.1 总包被推翻的前提清单（**第二批**，共 5 条；累计 8 条）
+
+| # | 我在任务书里写的 | 车道实测 | 后果与处置 |
+|---|---|---|---|
+| P-1 | "裁定 e19bc24c 至今合不进去，须重 merge" | `git merge-base --is-ancestor e19bc24c HEAD`=真，经 merge `259b15c612` 并入，**距 HEAD 347 commit** | 我的 R-H3"重 merge"子任务**整条作废**；已入账 R-039。**Max：核查我还有哪些"待 merge"挂单其实早已在 HEAD** |
+| P-2 | "judgment_* 五表" | `system.tables LIKE 'judgment%'` → **4 张**，引擎全 **MergeTree** 非 Replacing ⇒ 我"带 FINAL"的提示对本族不适用 | 数量口径错第 N 次（与 §0 的 93 件/15 不一致同型） |
+| P-3 | R-029 修法"SQL 常量用 plain `SQL_X = `" | **不完整**：豁免要 `ast.Assign` **且** 名字匹配 `^_?SQL_\w+$`；既有 `_X_SQL: Final = ` **双重不豁免** | 已修手册 §7。**Max：读 `_extract_sql_constant_lines` 函数体一次，确认这两个维度**（我三次栽在"不读判据函数体就设协议"：R-020/R-024/R-037） |
+| P-4 | "把 `alt_sz_reservoir_level` 按月末快照定 40 天档"（转报自片段） | 实测 202509~202607 每月 **28~31 个 distinct tdate = 日频** ⇒ 定 **5 天** | 按我说的做=把尺子掰弯 8 倍。**"唯一被改小的阈值是按实测改的，无一条为降噪放宽"** |
+| P-5 | "给 quality_sentinel 建 tasks.yaml 条目 + 新开时段槽位" | 五类特殊时段槽位**无一在 tasks.yaml 有条目**；`scheduler.py:_run_special_schedule` 是硬编码白名单（对车道是禁写面），新开空槽会落到 `:2110` 后**静默返回成功=R-021 假通道** | 车道改走 L13 托管，形态取舍登记为 **`req_sentinel_01` 待裁**（A 类清单）。**Max：这条该不该固化成家族惯例** |
+
+## 7.2 车道拒绝执行总包指令的两例（**均判车道正确**，但需 Max 复核判据）
+
+- `req_sentinel_01`：拒绝按字面建 tasks.yaml 条目（见 P-5）。
+- `req_drift_01` 之续：`cross_layer_contracts.yaml:806` 契约 `float/required` → `Optional[float]/false` 的改动
+  属 **PROTECTED-PATHS（Owner 授权面，无 CLI 逃生旗）**，z-drift 未硬闯、把案卷做全（18 列备份内嵌）。
+  ⇒ **R-014 的置 NULL 至今未落地**（§1.3 的结论未变，红队已实证 `execution_report_producer.py:414` 的
+  `f"{float(v):.6f}"` 让 NULL 永不可达）。**这是"我在清单上写 P0、实际没人能动"的典型：Max 一批准即可闭环。**
+
+## 7.3 ★ 两条"配了行=覆盖了"的假在岗（新发现，值得 Max 亲眼看一次）
+
+z-sentinel 复出：`execution_report.date_col=trade_date` 与 `kline_5min.date_col=trade_date` —— **本表根本没有这一列**。
+旧代码把"CH 查询失败"与"真空表"**同写 `empty table`**，所以引用不存在的列永远看不破。
+- 验真：`python -c "import pathlib,sys;sys.path.insert(0,'src');from zephyr.data.supply_sentinel import check_tables as c;s=c();print(s['checked'],s['breached'],s.get('blind_spots'))"`
+  （z-sentinel 落地后基线=**checked 51 / breached 8 / blind_spots 0**；改前 36 / 1）。
+- **为什么这条要进首屏**：它是"哨兵在册 36 张表，实际有效覆盖多少"的**唯一硬反例**。
+  普查与台账里同型"看起来在跑"（BRK-040 半死管线、BRK-029 从未灌数、R-021 只写不读）都该按这个视角重看。
+
+## 7.4 ★ 台账与尺子互斥 → 04 两件**刻意未入库**，引用前必须重生成
+
+`04_sixway_ledger.md` 记 FF-01 ⑤=**绿**，但落地版 `sentinel_verdict()` 在 `return "绿"` 前有 `if blind: return "黄"`
+⇒ **代码不可能出绿**。z-verifier3 据此**拒绝提交已失真产物**（总包判为正确："把已知失真钉进版本库比不钉更坏"）。
+- **Max 复核点**：任何引用 392KB `04_sixway_machine_ledger.yaml` 数字的文档/裁定，都要先确认引用的是
+  **重生成后**的数（硬指令：`python scripts/automation/flowthrough_verifier.py --all` 先跑再引）。
+- 同时注意尺子自己的两处 PROVISIONAL：**⑤ 的滞后判定整块外包给 z-sentinel**（尺子无独立业务日期判据）、
+  **⑥ 是静态五模式而非动态注入**（输出显式标 `dynamic_injection=False`）。**"六向都填了"≠"六向都验了"。**
+
+## 7.5 编号撞号病不止裁定号：**模块号也撞**
+
+z-verifier3 实测：前腿申报的 `MOD-AUTO-L3-002` ① 带后缀被门判死 ② **`002` 已被 HEAD 里 `source_card_drafter.py` 占用**。
+- 验真：`git grep -n "MOD-AUTO-L3-002" HEAD -- scripts/`
+- **Max 复核动作**：抽 20 个本役新取 `MOD-*` 号，逐个 `git grep -c "<号>" HEAD` 看有无 1 号多主。
+  （战役背景：09-17 `ruling_registry` #290-294 曾被五件他会话覆盖；#304 三方撞号案卷见 `req_tdchainJ_01`。）
+
+## 7.6 车道自曝的一次测试隔离失守（要确认没留残渣）
+
+z-sentinel 自报：`run_hosted_sweep` 未传 alerter ⇒ **真 Alerter 往 `data/failures/` 写了 1 条伪造留痕**，
+已定位删除并加固（`_clean_executor` 造"无变异"事实）。
+- **Max 验真**：`git status --porcelain data/failures/ | head` 应为空；
+  并抽查 `data/failures/` 里 09-18 20:0x~21:0x 时间窗的件，看有无测试来源的 CRITICAL 残留。
+- **同型风险仍未攻**：本役所有"测试禁写生产路径"的判据只有宪法 §9.6 一句话，**没有机械 gate**。
+  这是"灌水"最容易被伪造的地方——**建议 Max 把它列为下一役第一条新增门禁**。
+
+## 7.7 两笔损失事件的排查结论（含总包自己那笔，不遮蔽）
+
+- **确认责任**：R-038 里 12 件消失件，**3 件是总包亲手删的**
+  （`git restore --source=HEAD --staged --worktree` 把 0 字节 staged 新件判成换行搅动）。已全部救回，
+  配方已修（搅动剥离只准 `git restore --staged --`），**硬护栏已入册**：
+  "暂存新增件（HEAD 无该 blob）无条件不得判为换行搅动"。
+- **另 9 件 + z-sentinel 报的 tracked 成品整体还原：肇事者仍未查明**（R-042）。已排除的三个嫌疑：
+  commit_queue serializer（`main_workspace_sync.jsonl` **1411 条 event 全 = `skipped_dirty`，非 skipped 计数 0**）、
+  `git stash` 自动保存（`git stash list` 空；`stash_notice.json` 今日 0 事件）、drift_watchdog（尾部全是 `status=skipped`）。
+  今日 reflog 有 **20 条空 subject 条目**（19:36~20:58，无 `commit:`/`merge:` 前缀）。
+- **★ 这条是清单里最重要的方法论**：抹除**不在 git 面上留证据** ⇒
+  **只能靠事前归档防，不能靠事后取证查**。归档四条判据（三态全覆盖 / 逐件 sha256 / 非 TTL 介质 /
+  **④早于任何破坏性操作**）里，**④ 是本轮由红队补给我、我自己原本没有的那条**——
+  我的三态快照取在 R-008 还原之后，对我自己那次还原**天然盲区**。**侥幸不是控制。**
+- **Max 若要查真凶**：唯一还没翻的观测面 = IDE/工作区侧的还原日志（不在 git 里）+ `process_reaper` 的执行记录。
+
+## 7.8 一条卫生断点（15 分钟能清，但不清会长期误导）
+
+`docs/01_policies_and_standards/_registry/catalogs/` 下遗留 **18 个
+`.capability_canonical_file_registry.yaml_*.tmp`**（CAS 中断残留，21:1x 实测计数 18）。
+- 验真：`ls -a docs/01_policies_and_standards/_registry/catalogs/ | grep -c "^\.capability"`
+- **注意**：这批位置在**注册表目录**里，会被 glob 型扫描器/人对注册表的肉眼检索当成"还有一个版本"。
+  已派 `st-ff-rb-gov-20260918` 逐件比对 sha 后清理；**Max 复核它是否清干净、有没有误清真件**。
+
+## 7.9 §7 小结：Max 进场后的**前 3 件事**（按性价比排序）
+
+1. **批 `cross_layer_contracts.yaml:806` 的契约行**（Owner 授权面）⇒ 唯一卡住 R-014 置 NULL 的门闩；
+   批完 `execution_report.slippage_bps` 的 ±10000.0 错数才能停止继续产出。
+2. **修 `begin_signal_batch` 零调用者**（R-L3 命门：键退化成 `sha256(strategy|symbol|UTC日|side)`，
+   实测**误吞合法同日第二笔并复用上一笔 broker_order_id** + **跨 UTC 日界漏拦重放**）⇒ 这是唯一一处
+   "已交工但判据反了"的资金级缺陷，且**修复点明确、无待裁**。
+3. **看 5/85 分母**：等三份 reverify 件到齐后，重算断点总数与"全流通"完成度，
+   再决定下一役范围。**在此之前不要接受本战役任何"已完成"表述。**

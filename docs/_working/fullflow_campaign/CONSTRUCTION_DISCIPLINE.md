@@ -64,7 +64,14 @@ python scripts/governance/d3_metadata/batch_creation_tokens.py \
   --prefix <完整相对路径> --created-by <sid> --capability <cap>
 ```
 - `--prefix` 是**单值 argparse**：一条命令重复传多个只登记最后一个且不报错 → **每个文件单独跑一次**，且前缀必须到完整文件路径。
-- token 载体 `docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml` **必须与代码同批提交**（滞留 worktree 会让 drain 撞 CREATE-GUARD 死信）。
+- token 载体 `docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml` 与代码同批提交的**精确判据**（门源码定论，z-orphan 反例校正）：
+  `create_guard.py::_read_registry_text` 读的是 **`project_root` 文件系统**，**不是 HEAD、不是 index**。
+  队列 serializer 的 `project_root` 是**它自己的干净工作树** → 规则是
+  **「token 必须对那棵工作树可见」= ①已在 HEAD，或 ②随本批入提交面，二者必居其一**。
+  只在主仓工作区写了 token、而 HEAD 与本批都没有 → 不可见 → CREATE-GUARD 死信。
+  → 推论：他车道已把 token 送进 HEAD 时**不必再带注册表**（本役 G3 即此）；
+    token 是你在 `batch_creation_tokens.py` 新插的则**必须同批**。
+    **别简化成"永远同批"** —— 那会把他人 staged 的注册表增删无谓地卷进你的提交面。
 
 新 `.py` 另需：
 ```bash
@@ -132,9 +139,9 @@ python -m pytest <files> -q -p no:cacheprovider -W "ignore::pytest.PytestConfigW
 | NO-HIGH-COMPLEXITY | 阈值 15，**只算新函数**（HEAD 已有同名函数跳过） | 抽模块级 `_parse_xxx()` helper，别指望豁免 |
 | NO-LONG-PARAM-LIST | >7 参数（posonly+args+kwonly，self/cls 扣） | 同批把参数收进**带域前缀**的 dataclass |
 | CREATE-GUARD CLASS-UNIQUENESS | 新 class 名与全仓任意既有 class 同名即拦（`_`前缀也参与） | 写前 `grep "class <Name>\b"` 预扫；合法 re-export 加 `# class-name-alias: <理由>` |
-| NO-BARE-SQL | 裸 SQL 字符串 | 提为**模块级 `SQL_*` 常量**，**但必须用 plain `SQL_X = "..."`，不能写 `SQL_X: Final = "..."`** ⚠️<br/>**实测根因（z-aibase 车道 19 处实证）**：门用的 `_extract_sql_constant_lines` **只识别 `ast.Assign`**，
-  带 `ast.AnnAssign`（即 `Final` 注解）的定义**不被豁免** → 照本手册上一条同时加 `Final` 会必然死信。
-  二者只能择一：SQL 常量走 `SQL_X = `（不加注解），非 SQL 常量才加 `Final`。或行尾 `# noqa: bare-sql <理由≥10字符>` |
+| NO-BARE-SQL | 裸 SQL 字符串 | 提为**模块级 SQL 常量**，豁免**双条件同时成立**才生效 ⚠️（z-verifier3 实测补全命名维度）：<br/>①**必须是 `ast.Assign`** —— 写成 `SQL_X: Final = "..."`（`ast.AnnAssign`）**不被豁免**；<br/>②**名字必须匹配正则 `^_?SQL_\w+$`** —— 既有的 `_X_SQL: Final = (...)` 式（后缀式命名）两条都不满足，**双重不豁免**。
+  故修法=**改名 + 去注解**一步到位（`_ALREADY_SQL: Final = ...` → `_SQL_ALREADY = ...`；仓内既有 295 处同款房规）。
+  注：MUTABLE-CONST-WITHOUT-FINAL 只查可变容器，**字符串常量去 `Final` 是安全的**。或行尾 `# noqa: bare-sql <理由≥10字符>` |
 | BARE-SUBPROCESS | 裸 subprocess.run/Popen | `from zephyr.shared.infra.process_pool import run_subprocess_hidden`（签名同 subprocess.run）或 `# noqa: bare-subprocess  <理由≥10字>` |
 | TABLE-NAME-REGISTRY | 硬编码已注册表名，**无 noqa 逃生**；精确+最长优先**子串**双匹配；`scripts/**` 不豁免 | `get_registry().table("<category_id>")`；模块顶层调用=导入期 fail-closed，品类 YAML 必须同批落地 |
 | ORPHAN-MODULE | 只 `git grep` `src/**/*.py`，**scripts/ 里的 import 不算引用** | 接进 `internal_compute_provider.fetch` 的 `payload.table == "<库.表>"` 路由分支 |
@@ -146,10 +153,16 @@ python -m pytest <files> -q -p no:cacheprovider -W "ignore::pytest.PytestConfigW
 
 其它硬红线：
 - 时间戳 `from zephyr.shared.utils.time_utils import now_utc`（**禁 datetime.now()/time.time()**）。
-- 模块常量加 `Final` 标注。
+- 模块常量加 `Final` 标注 —— **但 SQL 常量例外（见 §7 NO-BARE-SQL：加 `Final` 会让它不被豁免）**。
 - CLI 工具加 `# noqa: m11-perm-manual-legitimate  M11豁免: <理由≥10字符>`。
+- **受保护路径审批标记有正则硬约束**：`\[(ARCH-APPROVAL):(#?ARCH-[A-Z0-9_-]+)\]`
+  （门 `protected_paths_gate.py:81` / 真源 `check_protected_paths.py:69`）⇒ 标记值**必须以 `ARCH-` 开头**，
+  自造如 `[ARCH-APPROVAL:ALTDATA-09-WORKLIST]` 会被硬拦。用在册值（先例 `ARCH-MODEL-LIFECYCLE-001`）。
 - 数据库访问一律 `DatabaseService`（`zephyr.infrastructure.database_service`），**禁裸 duckdb.connect**。
   DatabaseService **默认只读**；ig_* 表写入要 `get_depgraph_pg_connection(superuser=True, read_only=False, autocommit=True)`。
+  ★ **CH 取数真接口（实测，别再猜）**：`get_clickhouse_conn()` 返回 **`clickhouse_driver.client.Client`**
+  （`database_service.py:186`）⇒ 用 **`.execute(sql, params)`**；它既无 `.query()` 也无 `.cursor()`，
+  `DatabaseService` 自身也无 `.query()`（本役三条车道各猜一次）。
   `c1_market` 全系 K 线/成分表是 ReplacingMergeTree，**查询必须带 FINAL**。CREATE 一律 admin 角色（writer 无 CREATE 权限）。
 - LLM 调用必经 `LSGSecurityGateway`。密钥走 `zephyr.security.secrets`，禁裸 os.getenv。
 - 破坏性 DB 操作三步验证（必要性/真实性/可逆性）+ 必备份可回滚。

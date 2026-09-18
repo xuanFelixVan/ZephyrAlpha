@@ -35791,4 +35791,28 @@ creation_tokens:
   created_by: st-ff-testint-20260918
   capability: fullflow_test_integrity_relay
 
+- file: docs/_working/fullflow_campaign/delivery/MAX_ADJUDICATE_LIST.md
+  token: fullflow-delivery-max-adjudicate-list-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_delivery_adjudicate_list
+- file: docs/_working/fullflow_campaign/delivery/MAX_EXECUTE_LIST.md
+  token: fullflow-delivery-max-execute-list-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_delivery_execute_list
+- file: docs/_working/fullflow_campaign/lanes/census_reverify_AB.md
+  token: fullflow-census-reverify-ab-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_census_reverify_ab
+- file: docs/_working/fullflow_campaign/lanes/census_reverify_EFGHI.md
+  token: fullflow-census-reverify-efghi-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_census_reverify_efghi
+- file: docs/_working/fullflow_campaign/lanes/cold_archive_diff.md
+  token: fullflow-cold-archive-diff-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_cold_archive_diff
+- file: docs/_working/fullflow_campaign/lanes/cold_archive_diff.yaml
+  token: fullflow-cold-archive-diff-yaml-20260918
+  created_by: st-fullflow-20260918
+  capability: fullflow_cold_archive_diff_machine
 di_seam_exemptions: []
