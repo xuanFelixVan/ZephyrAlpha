@@ -413,6 +413,17 @@ def _disambiguate_rows(rows: list[tuple]) -> list[tuple]:
     return out
 
 
+#: SHFE 品种中文名 -> 交易所代码（旧归档 .dat 无 VARID 列，2014-2020 段实测；
+#: 新段(2021+)自带 VARID 优先用源端值，本映射仅作旧段回退。未收录品种回退中文名留痕）
+_SHFE_VARNAME_TO_CODE: Final = {
+    "铜": "CU", "铝": "AL", "锌": "ZN", "铅": "PB", "镍": "NI", "锡": "SN",
+    "氧化铝": "AO", "黄金": "AU", "白银": "AG", "螺纹钢": "RB", "线材": "WR",
+    "热轧卷板": "HC", "不锈钢": "SS", "天然橡胶": "RU", "20号胶": "NR",
+    "燃料油": "FU", "石油沥青": "BU", "沥青": "BU", "低硫燃料油": "LU", "纸浆": "SP",
+    "橡胶": "RU", "热轧板卷": "HC",
+    "丁二烯橡胶": "BR", "集运指数（欧线）": "EC", "原油": "SC", "20号胶仓库": "NR",
+}
+
 def _clean_str(v) -> str:
     """源端 NaN/None/'nan' -> 空串（String 列防 'nan' 污染）。"""
     if v is None:
@@ -1828,12 +1839,15 @@ class AkshareAltProvider(IngestProviderBase):
         data = self._call_with_policy(ak.futures_shfe_warehouse_receipt, policy, date=date_str)
         rows: list[tuple] = []
         for variety, df in (data or {}).items():
+            varname = _clean_str(variety).removesuffix("仓库").removesuffix("厂库")
+            symbol = _SHFE_VARNAME_TO_CODE.get(varname, varname)
             for _, r in df.iterrows():
                 wh_name = _clean_str(r.get("WHABBRNAME"))
                 if not wh_name or "小计" in str(r.get("VARNAME", "")):
                     continue
+                symbol = _clean_str(r.get("VARID")) or symbol
                 rows.append((
-                    "SHFE", _clean_str(r.get("VARID")) or str(variety), d.isoformat(), "detail",
+                    "SHFE", symbol, d.isoformat(), "detail",
                     wh_name, _clean_str(r.get("REGNAME")), "", None,
                     _warehouse_decimal(r.get("WRTWGHTS")), _warehouse_decimal(r.get("WRTCHANGE")),
                     None,
