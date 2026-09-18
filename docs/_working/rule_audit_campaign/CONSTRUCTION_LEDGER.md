@@ -641,6 +641,10 @@ $ git log --oneline -3 -- $C
 | **C-16** | 队列 `--enqueue` 落地后主区 index 仍压改前 blob（R-A23，两次独立复现） | serializer 落地后对受影响路径刷新主区 index | 落地回执强制输出三态 sha，不一致由网关拦 | 两者都要；短期靠 D-15③ 施工侧自核，但这是**纪律补不是机制补** |
 | **C-17** | `data/rule_optimization/key_facts.yaml`：`must_not_appear_as.pattern` 与推荐写法自相矛盾（F-2）+ 三条 `must_appear_in` 永假（F-3）+ 唯一消费者在 `_archive` | 逐条重判该册存活性：活→修 pattern 与 must_appear_in；死→按 D3/D4 退役 | — | 先判存活再修，**别在僵尸台账上做精细修正**（浪费且可能永不被消费） |
 | **C-18** | 断链类判据不可二值化：模板占位符与存量断链使 `--ci` 恒红（F-4）；处方验收命令 `:!`×2 并用在本机 fatal（exit 128，须改 `:(exclude)`） | 观测面改"特定串断链条数"+排除式收窄到具体行/锚（F-5 那条活链接要能露出来） | — | 甲；同时把 F-5/F-6 四处同类文本位并进来一次性判 |
+| **C-19** | 案卷判据 `entry_drift` 只按 `.py` 脚本名匹配 hook entry，对 module 式 entry 产生**精确假数**（R-A26） | 改判据：按"hook entry 第一个可执行 token + 是否含 `-m <module>`/`-c`"归一后再比 | 交 WP4 的对账门统一判（它本就管门禁↔规则身份） | 先甲（这是**普查工具缺陷**，不修会持续污染 WP9 的判决输入） |
+| **C-20** | `TRAE-079` 悬空 `paired_gate_id` 出口三选一（R-A27，靶在 `rules/` 受 D-14 冻结） | 甲：删悬空 id（保护体已内嵌，行为不变） | 乙：铸真 gate_id + 净零增长对价（加严，但要退役一台） | 倾向甲（乙等于为"已经生效的保护"再付一台门的成本） |
+| **C-21** | 集合差 `gate_registry − in_process = 56` 的含义未判（R-A27 附带） | — | — | 归 WP4；本册只留实测三面数 |
+| **C-22** | `dedup_ttl_headers.py` 过删锚（R-A25）：余量 ~172 件何时能安全批处理 | 修件车道须交两条红证（复现锚被删→改后跳过并报因；真重复块仍正确去重）+ 新增『未处理原因』分类计数 | 修好后重跑 dry-run 取新基线，再按域分批（每批≤40、逐件四道复验） | 已派 `st-ttlfix-20260919`；批处理**必须等它落地**，否则会继续制造孤儿模块 |
 ## 4. 事实修正表（后续车道任务书必带对应行）
 
 | 方案原文 | 现场实测（2026-09-19，本战役复跑） | 影响 |
@@ -661,6 +665,10 @@ $ git log --oneline -3 -- $C
 | WP11 验收命令 `git grep … -- ':!*_archive*' ':!<path>'` | 本环境两条 `:!` 并用即 `fatal: outside repository`（exit 128）⇒ 改 `':(exclude)…'`，排除集等价 | R-A24 / C-18 |
 | `gates` 活库结构（D-17 口径，总包复跑） | 8 列；`gate_run_id` 为 PK、`gate_id` **非唯一**（1791 行/1008 distinct）；`passed` **有** CHECK、`details` **无** CHECK；`gates`≡`gate_runs` 列集；**无任何活库有 `result` 列** | R-A22 |
 | 处方"§7 说 `170cba56e0` 的真实件是 `feac5f7b28`"（我原写） | 更正：`6933dbcff3` 才是 R100 迁移件，`feac5f7b28` 是出生件 | R-A11 更正 |
+| 方案 §7/WP15.5"gate_registry 真漂移 **2 条**" | **伪影**：`source: pre-commit` 55 条，同名 hook **55/55 实存**，真漂移 0；成因是取证判据按 `.py` 文件名匹配（module 式 entry 匹配不到） | R-A26 / C-19 |
+| WP15.3 把 `TRAE-079` 归入"实现面零命中→D4 退役" | 口径需纠正：**行为面命中充分**（`_GlobalCommitLock` 已内嵌），只是**门禁身份未铸造** | R-A27 / T-2 |
+| `dedup_ttl_headers.py --apply`（上一役判"通过"） | 对"1 份 BLUEPRINT + 2 份 TTL"件会**删掉锚的最后一份**（24/38 命中）⇒ 已冻结余量并派修 | R-A25 / C-22 |
+| WP16 车道状态 | **死于 150 轮上限**（本役第 12 条），产物已在 `.runtime` + 冷库但时间戳混杂（疑似停在一次重跑中途）⇒ 已派接力腿做一致性判定与活库抽样复核 | — |
 | D-9"`AGENTS.md`↔`agent_constitution_l0.md` 正文≈100% 镜像，仅差 frontmatter+3 行头部" | 实测 **88.18%**（97/110 行），剥 frontmatter 后**无全等点**，残余 29 行、段落级 76.0%，**5 处正文分叉**（含 §0.3 RULE-WORKTREE 两份给不同指令） | R-A12 / C-13 |
 | D-8"`adversarial_validation run` 作门禁面回归护栏" | 该护栏当前**区分度 0**（52/52 全走缺 `description` 的 fail-closed 兜底） | R-A13 / C-14 |
 | D-9 否决项"project_rules↔AGENTS 重叠≈0" | **复测成立**（共享 1 条=表格分隔符、`trae_*` 锚点 1、`RULE-*` 键 1、0.265%）⇒ 不动它这条判据保留 | — |
@@ -1296,6 +1304,40 @@ stderr 计数（实测）：`real_gate_failed` **52**、`fail_closed … BLOCKED
   F-4 热册 CONSUMERS 虚假声明 · F-5 蓝图指向不存在路径 + DEP-025d 声称 runtime/hard 而代码零实现 ·
   F-6 生产库 35+45 行测试残留（净删门位）· F-7 注释 commit 号错指 · F-8 词表 5/10/14 三源不一（闸3 多真源）·
   F-9 `:241` str.get 潜在 AttributeError（未取证调用面）。
+
+- **R-A25｜★ 我自己车道的事故：`dedup_ttl_headers.py --apply` 会删掉 `# [BLUEPRINT]` 模块锚的最后一份**（L1 车道，05:0x）。
+  - 事实（总包逐件 Counter 级复验，**不是转述车道**）：38 件被改，其中 **24 件 `# [BLUEPRINT]` 从 1 份变 0 份**
+    （触发形态＝"1 份 BLUEPRINT + 2 份 TTL"的件，工具把锚连带删了）；16 件是正常去重（锚与 TTL 各存活 ≥1 份）。
+  - 处置：**24 件逐件还原到 HEAD**（先验证每件 diff 恰为 `0 增 2 删` 且删除行全是头栏 ⇒ 不含他人内容，
+    才用**具名清单** `git checkout HEAD -- <24 件>`；未用任何通配/全仓命令）；
+    16 件经四道复验（只删头栏 / 锚存活 / 对 HEAD 纯删除 / 无 CRLF 搅动）后入队 `q-...0002`（跨 9 域，
+    走 `--allow-multi-domain` 留痕，理由=单一机械判据的批处理，非多职责混合）。
+  - **我这两处错要记下来**：① 我第一反应是"车道越界"，**没先验就下判断**——实际车道是照工具办的，
+    错在工具；② 我自己的分类脚本先写错一版（拿 `hd not in hd_set` 判删除行，恒为空 ⇒ 把 37 件全误判为"他人件"），
+    第二版又用"数量下降"当损坏判据（应是"**归零**"）——两版都会导出错误处置。
+    **真正缺的是我给的验收判据里没有"锚必须存活"这一条**（我只要求了行数与 CRLF）。⇒ 判据已补进修件车道任务书：
+    **删除前逐类断言"删完后该类仍 ≥1 份"，不满足即跳过该件并计入"未处理原因"**（fail-safe=不删）。
+  - 余量 **~172 件冻结**，等 `st-ttlfix-20260919` 把工具修好再批处理（修件车道须交两条红证：
+    复现"锚被删"→改后跳过并报因；以及"真重复块仍能正确去重"，不得修成什么都不做的假绿）。
+- **R-A26｜WP15(5) 被现场推翻：所谓"gate_registry 真漂移 2 条"是**取证判据自己的盲区伪影****。
+  - 实测：`source: pre-commit` 条目现场 **55 条**，逐字能找到同名 hook **55/55**，**真·行为漂移 = 0**。
+  - 方案那"2 条"能精确复现，但成因是案卷判据 `entry_drift`（`_tools/dossier_core.py:258-278`）**只按 `.py` 脚本名匹配**，
+    对 module 式 entry（`python -B -c ...`、`python -m zephyr.behavioral_auditor ...`）取不到 token ⇒ 判成漂移；
+    而这两个 hook 在 `.pre-commit-config.yaml` **L531 / L962 逐字实存**，`git log -S` 证从未改名或被摘。
+  - ⇒ 方案的三出口（改 `source` / 补 hook / 退役）**前提全部不成立**（source 正确、hook 已存、退役会丢两台真门）；
+    **真靶面应是"改取证判据"**。⇒ 列 C-19。这条与本役已确立的"复现脚本自身失效"失效型同型，但性质更重：
+    **它不是脚本跑不动，而是脚本能跑且给出看起来精确的假数**。
+- **R-A27｜WP15(3) 把"假强制"这个标签救回来了——`TRAE-079` 是"身份未铸造"而非"无保护体"**。
+  - 实测：`paired_gate_id: COMMIT-CRITICAL-SECTION-LOCK` 在两册/config/in-process 清单命中 **0/0/0**，全历史无登记行
+    ⇒ **门禁身份从未铸造**，判 (b) 成立；
+  - **但不能记成"假强制"**：该铁律的保护体**确已内嵌落地**（`git_commit_gateway._GlobalCommitLock` 临界区 +
+    `session_worktree.py` 的降级审计），且规则自身 `type: code_embedded_plus_doc` 与此吻合；
+    它的两个 `executors`（`..._critical_section_guard` / `..._escape_hatch_demotion`）在代码里 grep `def|class` = 0
+    ⇒ 属"**对得上行为、对不上符号名**"的描述性伪符号。最近邻 `HELD-OVERLAP`/`COMMIT-SCOPE` 语义正交 ⇒ 排除"改名漂移"。
+  - 三出口（甲删悬空 id / 乙铸真 gate_id 并附净零对价 / 丙仅案卷）已备可粘贴文本，**不选**（D-14 冻结 + 门位）。
+  - 附带：`TRAE-079` 引的 `ARCH-COMMIT-SERIALIZATION-001` 在 `ruling_registry.yaml` **0 命中**（悬空，车道已用不触正则的写法记录）。
+  - 同族一面（只报数不判谁对，属 WP4）：`|in_process − gate_registry| = 0`、`|gate_registry − in_process| = 56`、overlap 113
+    ⇒ 进程内册是提交门禁册的**严格子集**。
 
 ## 7. 波1/加料批次回执（WP1-施工 / WP11）
 
