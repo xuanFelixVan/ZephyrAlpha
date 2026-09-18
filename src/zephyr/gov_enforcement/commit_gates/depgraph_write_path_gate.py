@@ -82,6 +82,7 @@ _WRITE_PARAM_RE = re.compile(r"(read_only\s*=\s*False|superuser\s*=\s*True|allow
 # 治本（2026-08-01）：新增 apply_battle_map.py（battle_map_* 表写入器，用 depgraph_writer 角色）
 # 治本（2026-08-05）：新增 add_acquisition_fields.py（nodes_metadata schema 迁移，superuser DDL）
 # 治本（2026-09-11）：新增 quality_fix_p2.py（ig_* 图谱质量修复写入器，PIT 关闭/废弃闭环/链名修正）
+# 治本（2026-09-18）：新增 build_node_bindings.py（ig_node_binding 绑定表写入器，T6/REPAIR-WO-001，st-igchain-20260918）
 _WHITELIST: frozenset[str] = frozenset(
     {
         "scripts/governance/apply_depgraph.py",
@@ -94,6 +95,7 @@ _WHITELIST: frozenset[str] = frozenset(
         "scripts/governance/migrations/add_acquisition_fields.py",
         "src/zephyr/governance/depgraph_schema.py",
         "scripts/industry_graph/quality_fix_p2.py",
+        "scripts/industry_graph/build_node_bindings.py",
     }
 )
 
