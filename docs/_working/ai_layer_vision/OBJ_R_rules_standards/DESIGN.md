@@ -89,7 +89,7 @@ status: design_v1
 ### F. CLI 设计草图（设计稿，不写代码）
 
 ```
-python -m zephyr.governance.rule_replay replay \
+python -m zephyr.governance.standards_governance.rule_replay replay \
   --since 2026-06-15 --until 2026-09-17 \
   --strata blocked=30,passed=50,special=10,random=10 \
   --gates ALL_CONTENT_SCAN            # 或 --gates NO-BARE-GETENV,FOLDER-CAPACITY-HARD-LIMIT \
@@ -242,3 +242,5 @@ ceremony 登记（capability ai_layer_vision）——该待办销项。#2/#5/#6 
 | 编号 | 修复内容 | 落点 |
 |------|---------|------|
 | B6 | casebook schema 补 signature/recipe/pattern_norm 三具名字段（与 L7 `ai_heritage_defect` H4 同名同义，pattern_norm=同案归并键）；声明 pattern 词表真源=L7 heritage 词表、casebook 只引用不扩展（禁自造新 pattern 值） | §⑤ |
+
+**红蓝后施工班路径修正（ARCH-031）**：模块落位=src/zephyr/governance/standards_governance/rule_replay.py（governance/ 根冻结禁新增 .py，ARCH-031 门禁裁定）；CLI 相应=python -m zephyr.governance.standards_governance.rule_replay。depgraph 节点 14799393（file 粒度，MOD-INF-037/D_GOVERNANCE），token capability=rule_replay，翻译条目已登记。
