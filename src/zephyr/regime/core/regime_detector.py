@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-PA-007(RegimeMetaAllocator消费RegimeProbabilities+Shrinkage); BM-BT-03-E(回测验证消费7维概率)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] RegimeProbabilities.probabilities Σ=1.0; Shrinkage≤1.0(只减不增); shrinkage_enabled=False时Shrinkage=1.0; HMM 4态walk-forward季度重拟合; 不输出硬标签只输出7维灰度概率(4 HMM+3 overlay); HMM组件锚定（裁定#304：fit后按训练窗特征统计确定性重排到固定语义槽位，跨refit态身份可比）
+# [INVARIANTS] RegimeProbabilities.probabilities Σ=1.0; Shrinkage≤1.0(只减不增); shrinkage_enabled=False时Shrinkage=1.0; HMM 4态walk-forward季度重拟合; 不输出硬标签只输出7维灰度概率(4 HMM+3 overlay); HMM组件锚定（裁定#304：fit后按训练窗特征统计确定性重排到固定语义槽位，跨refit态身份可比); 缺数降级必须可观测(RB-STATS-02: RiskSignal 缺数腿由 missing_risk_legs 判定并写入 ShrinkageResult.degraded_legs + WARNING 出声, 与"确无风险"同值不同义; 该函数分支须与 _compute_risk_signal 的三条 return 1.0 严格同构, 由 tests/regime/test_rb_stats_regime_failopen.py 钉住)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -68,6 +68,12 @@ regime_recal_protocol_2026_09_17.md R1；实证诊断=同目录 diagnosis_result
 
 降级策略（blueprint §7.4）：hmmlearn 不可用 / 拟合失败 → HMM 4 态均匀分布 P=1/4；
 RiskSignalInputs 缺失 → RiskSignal=1.0；OverlaySignals 缺失 → 退化为纯 HMM。
+⚠️ 降级的**可观测性**（RB-STATS-02，2026-09-18 红队 st-ff-rb-stats 车道）：上述降级
+与"确无风险/确无危机"输出逐位同形（实测断供时 r10 危机概率被清零、Shrinkage 从
+0.255 松到 0.80，即危机中反而多给 3.1 倍仓位），故 ShrinkageResult.degraded_legs
+非空即代表"这一轮的降级是没数造成的"，并同步 WARNING 出声。消费方**必须**把
+degraded_legs 非空的交易日从误报率/校准统计的分母中剔除或另行 fail-closed 处置，
+不得读作"无事发生"（R-K9 的可执行前提）。
 
 依据: 10_regime_detector_spec v1.3.1（原12态spec）/ 11_regime_backtest_validation_plan v1.0.0（验证方案）/ 13_regime_phase3_engineering_plan §2.1（4态降维）/ docs/_working/regime_recal/regime_recal_protocol_2026_09_17.md（重校批预注册协议）
 SSoT: depgraph MOD-REGIME-001
@@ -337,6 +343,52 @@ TRANSITION_CONFIG: dict[str, dict[str, Any]] = {
 _STAGE_ORDER: tuple[str, ...] = ("strong_confirm", "confirm", "trigger", "fail")
 
 
+#: RiskSignal 缺数腿标签（RB-STATS-02）——与 _compute_risk_signal 的三条降级分支一一对应
+RISK_LEG_INPUTS_ABSENT = "risk_inputs_absent"
+RISK_LEG_PARAMS_ABSENT = "risk_params_absent"
+RISK_LEG_PRIMARY_ABSENT = "risk_primary_param_1_absent"
+
+
+def _primary_risk_coef(risk_inputs: Any) -> float:
+    """读 RiskSignal 主腿 #1（realized_vol）系数；缺数/NULL/非数值一律返回 1.0。
+
+    1.0 = "主腿未触发风险"。三处读取点（detect 的 overlay 门控、_compute_risk_signal
+    的 #1 门控、missing_risk_legs 的判腿）共用本函数，消除"同一个 NULL 只有一处会崩"
+    的口径分叉（RB-STATS-02）。
+    """
+    params = risk_inputs.get("params") if isinstance(risk_inputs, dict) else None
+    raw = params.get(1) if isinstance(params, dict) else None
+    try:
+        return 1.0 if raw is None else float(raw)
+    except (TypeError, ValueError):
+        return 1.0
+
+
+def missing_risk_legs(risk_inputs: Any) -> tuple[str, ...]:
+    """判定 RiskSignal 是否"没供上数"（纯观测函数；不改任何数值路径）。
+
+    存在的理由：`_compute_risk_signal` 的三条缺数分支都返回 **1.0**，而"13 参数
+    全部正常=1.0"也返回 1.0——两条语义相反的路径输出逐位相同（实测见
+    tests/regime/test_rb_stats_regime_failopen.py）。R-K9 要求断供即 fail-closed，
+    但 fail-closed 的前提是"能机械判定断供"，本函数就是那个判定的载体。
+
+    与 `_compute_risk_signal` 的分支严格同构（改那边须同步改这边，由测试钉住）。
+    """
+    if not isinstance(risk_inputs, dict) or not risk_inputs:
+        return (RISK_LEG_INPUTS_ABSENT,)
+    params = risk_inputs.get("params") or {}
+    if not isinstance(params, dict) or not params:
+        return (RISK_LEG_PARAMS_ABSENT,)
+    if 1 not in params or params.get(1) is None:
+        return (RISK_LEG_PRIMARY_ABSENT,)
+    try:
+        if float(params[1]) >= 1.0:  # 主腿有数且确为"无风险"——不是缺数
+            return ()
+    except (TypeError, ValueError):
+        return (RISK_LEG_PRIMARY_ABSENT,)
+    return ()
+
+
 @dataclass(frozen=True)
 class RegimeProbabilities:
     """7 维灰度概率分布（CTR-SIG-012）。
@@ -371,6 +423,12 @@ class ShrinkageResult:
     shrinkage_enabled: bool  # 验证开关（C1 一票否决）
     timestamp: datetime
     schema_version: str = "1.0"
+    #: 缺数腿标记（RB-STATS-02）：无数据与"真的没风险"在数值上不可分辨是 fail-open
+    #: 的温床——RiskSignal 缺数降级为 1.0（§7.4），与"全参数正常=1.0"逐位相同。
+    #: 本字段把可观测性补齐：非空 ⇒ 本轮至少有一条腿没供上数，**任何**下游（哨兵、
+    #: 误报率统计、回测归因）都须据此把该日剔出分母或另行处置，不得当作"无事发生"。
+    #: 纯观测位，不改变 value（历史 C1/B 系列验证数字零漂移）。
+    degraded_legs: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -530,6 +588,8 @@ class RegimeDetector:
         hmm_probs = self._run_hmm(regime_features)
         # 子模块②：覆盖层 3 特殊态 + 8 转换评分（始终评估，记录 _last_transitions 供 B4 验证）
         overlay_probs = self._run_overlay(overlay_signals)
+        # RB-STATS-02：先记录"哪些腿没供上数"（纯观测，不改任何数值路径）
+        degraded: list[str] = list(missing_risk_legs(risk_signal_inputs))
         # 方案A门控（#ARCH-REGIME-OVERLAY-001）：overlay 仅在危机期（#1<1.0）生效。
         # 非危机期屏蔽 overlay 概率注入（避免 T1/S1 假阳性触发系统性压仓致 Sharpe 退化
         # 0.02），但保留转换评估记录（_last_transitions）——S2(CRISIS→RECOVERY) 在危机
@@ -537,15 +597,26 @@ class RegimeDetector:
         # 评估，致 B4 验证 S2 recovery 0/3 漏触发（Phase 2 不闭环）。故门控改为在
         # _run_overlay 之后屏蔽概率注入，与 RiskSignal #1 门控（#1>=1.0 时=1.0）对齐。
         if self.overlay_gated:
-            _params = (risk_signal_inputs or {}).get("params") or {}
-            if float(_params.get(1, 1.0)) >= 1.0:
+            if _primary_risk_coef(risk_signal_inputs) >= 1.0:
+                # RB-STATS-02：屏蔽前若覆盖层已触发非零危机/复苏/突破概率，则本次清零
+                # **可能是断供所致而非确无危机**——留痕，禁下游当"无事发生"读。
+                if any(v > 0.0 for v in overlay_probs.values()):
+                    degraded.append("crisis_overlay_zeroed_by_primary_gate")
                 overlay_probs = {s: 0.0 for s in OVERLAY_STATES}
         # 7 维合并归一化
         probs = self._merge_probabilities(hmm_probs, overlay_probs)
         # 子模块③④⑤：Shrinkage 链
         confidence = self._compute_confidence_signal(probs)
         risk = self._compute_risk_signal(risk_signal_inputs)
-        shrinkage = self._compute_shrinkage(confidence, risk)
+        shrinkage = self._compute_shrinkage(confidence, risk, tuple(degraded))
+        if degraded:
+            _logger.warning(
+                "regime 供数降级(RB-STATS-02): degraded_legs=%s risk_signal=%.4f "
+                "shrinkage=%.4f —— 本值与'确无风险'逐位同形，禁据此判'无事'",
+                degraded,
+                risk,
+                shrinkage.value,
+            )
         return probs, shrinkage
 
     def fit(self, train_features: dict[str, Any]) -> None:
@@ -888,8 +959,11 @@ class RegimeDetector:
         if not params:
             return 1.0
         # #1 门控：主风险信号未触发 → 附加参数不参与（避免假阳性致 Sharpe 退化）
-        primary = float(params.get(1, 1.0))
-        if primary >= 1.0:
+        # RB-STATS-02：#1 存在但为 None/非数值（CH 缺列回 NULL 的常态形态）此前直接
+        # float(None) 抛 TypeError 打断整条 regime 链——与 docstring 承诺的
+        # "缺失时降级为 1.0（§7.4）"不一致。读取统一走 _primary_risk_coef（三处共读
+        # 一个口径）；降级不再静默（degraded_legs + WARNING，见 detect）。
+        if _primary_risk_coef(risk_inputs) >= 1.0:
             return 1.0
         # #1 已触发 → 附加参数可加深收缩（min(all) ≤ #1）
         risk_param_ids = [i for i in list(range(1, 11)) + [12]]
@@ -909,12 +983,19 @@ class RegimeDetector:
         risk = risk_base * resonance + recovery
         return max(0.30, min(1.00, risk))
 
-    def _compute_shrinkage(self, confidence: float, risk: float) -> ShrinkageResult:
+    def _compute_shrinkage(
+        self,
+        confidence: float,
+        risk: float,
+        degraded_legs: tuple[str, ...] = (),
+    ) -> ShrinkageResult:
         """子模块⑤：Shrinkage = ConfidenceSignal × RiskSignal（可开关）。
 
         - shrinkage_enabled=True  → value = confidence × risk
         - shrinkage_enabled=False → value = 1.0（C1 验证基准）
         value ≤ 1.0（只减不增，INVARIANTS）。
+
+        degraded_legs（RB-STATS-02）：纯观测位，不参与 value 计算。
         """
         if not self.shrinkage_enabled:
             return ShrinkageResult(
@@ -922,6 +1003,7 @@ class RegimeDetector:
                 confidence_signal=confidence,
                 risk_signal=risk,
                 shrinkage_enabled=False,
+                degraded_legs=tuple(degraded_legs),
                 timestamp=datetime.now(),  # noqa: m46-time — 存量 naive 时间戳契约（消费方按本地时间解析），UTC 迁移登记专项
             )
         value = confidence * risk
@@ -932,6 +1014,7 @@ class RegimeDetector:
             confidence_signal=confidence,
             risk_signal=risk,
             shrinkage_enabled=True,
+            degraded_legs=tuple(degraded_legs),
             timestamp=datetime.now(),  # noqa: m46-time — 存量 naive 时间戳契约（消费方按本地时间解析），UTC 迁移登记专项
         )
 

@@ -258,7 +258,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1
-  note_confirmed: 2026-09-17
+  note_confirmed: 2026-09-18
   name_zh: 大盘总闸
   market: cn_a
   flow: entry_flow
@@ -484,7 +484,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1-AGG
-  note_confirmed: 2026-09-17
+  note_confirmed: 2026-09-18
   name_zh: 市场状态判定
   market: cn_a
   flow: entry_flow
