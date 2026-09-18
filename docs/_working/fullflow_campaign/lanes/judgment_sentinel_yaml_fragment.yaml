@@ -1,0 +1,100 @@
+# --- 治理锚定 ---
+# lane: st-ff-judgment2-20260918（接手死信 q-20260918-st-ff-judgment-20260918-0001）
+# date: 2026-09-18
+# status: 已落地（本批直写目标文件，不再由总包代持）
+# target: src/zephyr/data/config/data_supply_sentinel.yaml 的 `tables:` 列表
+#         （插入点=hl_liquidation_raw 之后、edb_data 留痕注释块之前）
+# --- 治理锚定结束 ---
+# FF-12 判定链四表停更哨兵——**落地版实抄**（本文件与目标文件逐字段一致，供复核）
+#
+# 与前手提案（st-ff-judgment-20260918 版）的差异，全部来自先读落地版判据源码
+# （src/zephyr/data/supply_sentinel.py 的 _validate_entry/_predicates/_check_date_leg/
+# _check_fill_ratio_leg）+ 实测，而不是照抄旧片段：
+#   1) past_only: true → **false**。past_only 生成 `date_col <= toDate(今日)`，而本族
+#      date_col 是 DateTime64(3,'UTC')：实测该谓词把 09-18 当日 4/2/3 条判定行全部排除、
+#      max 退回 09-17 ⇒ 白造一天滞后。asof_ts/verified_at 由 now_utc() 写入，结构性
+#      不可能在未来，past_only 的"前瞻行稀释"问题对本族不存在。
+#   2) 新增 row_filter: "synthetic = 0"。本族 synthetic=1=冒烟合成行（判定台账标准 §一.3），
+#      无此谓词时"只剩冒烟行"的停更管线会被表级 max 判成新鲜——正是 z-sentinel 为
+#      kline_sector_intraday 立 tdx 真值腿的同型盲区。实测当前 9 行全 synthetic=0，
+#      故本腿今日不改判，只堵未来的假新鲜。
+#   3) 新增 column_fill_ratio（三张判定表的 confidence）。实测非零 2/2、3/3、4/4，
+#      min_ratio 0.9 + window_days 10 ⇒ 今日绿；"行在而信心全 0"属 N-1 型错数进闭环，
+#      新鲜度腿与行数地板腿都兜不住。verification 表无 confidence 列 ⇒ 不配该腿。
+#   4) 未配 min_rows_in_window：窗口式地板在长假（国庆 8 日）必假红，而"零产出"已由
+#      lag_basis=trading_days 的新鲜度腿单点覆盖；重复且更弱的判据不配（目标文件
+#      文末"禁配清单③"= 禁为看起来有配而配）。
+#   5) 未带 FINAL：system.tables 实测四表引擎=MergeTree（非 ReplacingMergeTree），
+#      "c1_market 全系查询必带 FINAL"的房规对本族不成立，照抄会引入无意义归并。
+#   6) 未加 allow_empty：judgment_plan_verification 实测 0 行（max(verified_at) 返
+#      1970-01-01 命中 _is_empty_max）⇒ 本片段置下即报红，这是真信号（T2/T3 段产线
+#      从未落一条验证行）。allow_empty 是永久静默开关（BRK-046 实证豁免早已过期无人撤），
+#      故不加，待判定链补产出行后本腿自愈转绿。
+#
+# 实测账（check_tables() 实跑，本机 2026-09-18）：
+#   改前 checked=51 / breached=8 / blind_spots=0
+#   改后 checked=55 / breached=9 / blind_spots=0
+#   新增的唯一 breach = c1_market.judgment_plan_verification "empty table or dimension
+#   slice"，判读=**真阳**（非误报），另三张判定表 lag=0 且填充率 1.0 均绿。
+# 能红证据（全部经 check_tables(runner=…) 注入点，零生产写、零 ALTER/DELETE）：
+#   max(date) 返 2026-08-01 → 四条腿全红 lag=35d(trading_days) > 2d；
+#   countIf 返 "9\t0"（confidence 全 0 而日期新鲜）→ 三张判定表红 低填充列 {'confidence': 0.0}；
+#   row_filter 改 synthetic=7（空切片）→ 四条腿全红 empty table or dimension slice；
+#   把 max_lag_days 拼成 max_lag_day → SupplySentinelError 拒载（未知字段 fail-closed）。
+#
+# 本批**未**写入 config/quality_sentinel_tables.yaml（该册三轴=epoch/tz_shift/empty_segment）：
+#   - tz 轴对本族必假红：suspect_hours=[0..7] 是 Asia/Shanghai 口径，而本族时间列是
+#     DateTime64(3,'UTC')，09:30 判定行落在 UTC 01:30 ⇒ 结构性质命中嫌疑窗（实测 asof_ts
+#     01:47/08:07/08:34/11:11），配 ts_col 等于造一台天天误报的机器；
+#   - empty_segment 轴与本腿重复且口径更弱：_SQL_RANGE_COUNT 用 `<= toDate(end)`，对
+#     DateTime64 会漏掉窗口末日的盘中行（本族恰是盘中/收盘发射），新表首周必产噪声；
+#   - epoch 轴（1970 残留）对本族有价值 ⇒ 列为后手项，处方见
+#     stages/FF-12_recon_feedback/judgment_chain.md §5.5。
+
+tables:
+  - table: c1_market.judgment_intraday_market_state
+    date_col: asof_ts
+    max_lag_days: 2
+    lag_basis: trading_days
+    past_only: false
+    row_filter: "synthetic = 0"
+    column_fill_ratio:
+      cols: [confidence]
+      min_ratio: 0.9
+      window_days: 10
+      treat_zero_as_missing: true
+    leg_name: "真生产行"
+
+  - table: c1_market.judgment_next_day_forecast
+    date_col: asof_ts
+    max_lag_days: 2
+    lag_basis: trading_days
+    past_only: false
+    row_filter: "synthetic = 0"
+    column_fill_ratio:
+      cols: [confidence]
+      min_ratio: 0.9
+      window_days: 10
+      treat_zero_as_missing: true
+    leg_name: "真生产行"
+
+  - table: c1_market.judgment_daily_plan
+    date_col: asof_ts
+    max_lag_days: 2
+    lag_basis: trading_days
+    past_only: false
+    row_filter: "synthetic = 0"
+    column_fill_ratio:
+      cols: [confidence]
+      min_ratio: 0.9
+      window_days: 10
+      treat_zero_as_missing: true
+    leg_name: "真生产行"
+
+  - table: c1_market.judgment_plan_verification
+    date_col: verified_at
+    max_lag_days: 2
+    lag_basis: trading_days
+    past_only: false
+    row_filter: "synthetic = 0"
+    leg_name: "真生产行"
