@@ -35967,6 +35967,26 @@ creation_tokens:
   token: bizmine-alpha-mining-t0-subjective-methods-20260918
   created_by: st-bizmine-t0-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/sector_family/a_sector_signal_prereg.md
+  token: bizmine-alpha-mining-a-sector-signal-prereg-20260918
+  created_by: st-bizmine-sec-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/factor_sop_screen/factor_mining_sop_v0_1.md
+  token: bizmine-alpha-mining-factor-mining-sop-v0-1-20260918
+  created_by: st-bizmine-f-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/factor_sop_screen/screen_report.md
+  token: bizmine-alpha-mining-screen-report-20260918
+  created_by: st-bizmine-f-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/factor_sop_screen/screen_results.csv
+  token: bizmine-alpha-mining-screen-results-20260918
+  created_by: st-bizmine-f-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/factor_sop_screen/strategy_sop_gap_report.md
+  token: bizmine-alpha-mining-strategy-sop-gap-report-20260918
+  created_by: st-bizmine-f-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
