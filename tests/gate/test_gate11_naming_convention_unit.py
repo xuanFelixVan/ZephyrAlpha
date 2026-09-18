@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gate11_naming_convention_unit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-643 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_gate11_naming_convention
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

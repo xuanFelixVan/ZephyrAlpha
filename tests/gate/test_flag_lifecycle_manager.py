@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_flag_lifecycle_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_flag_lifecycle_manager
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] Retired flags must be marked RETIRED
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

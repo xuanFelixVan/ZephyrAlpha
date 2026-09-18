@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3.2
 
 # [MODULE] tests.test_gate_types
+# [DOMAIN] D_GOV_ENFORCEMENT
 
 # [INVARIANTS] GateViolation fields immutable after creation; GateResult.passed is bool; GateViolationError.result is GateResult
 

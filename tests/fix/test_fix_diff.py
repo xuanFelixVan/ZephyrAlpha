@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_fix_diff | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_fix_diff
+# [DOMAIN] D_SHARED
 # [INVARIANTS] diff MUST show before/after; MUST be reversible
 # [MODIFY-GUARD] blueprint.md §3; fix_diff.py
 # [CONSUMERS] CI pipeline

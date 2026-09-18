@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_meta_performance_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_meta_performance_gate
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] Gate thresholds must be deterministic
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

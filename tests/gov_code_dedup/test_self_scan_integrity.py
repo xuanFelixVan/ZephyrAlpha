@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_self_scan_integrity | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-365 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.gov_code_dedup.test_self_scan_integrity
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

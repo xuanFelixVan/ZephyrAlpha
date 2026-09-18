@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_fle_generator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_fle_generator
+# [DOMAIN] D_FRONTEND
 # [INVARIANTS] generate() returns (created, skipped, errors); atomic write via tmp+os.replace
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3.1
 
 # [MODULE] tests.test_gate_simulator
+# [DOMAIN] D_GOV_ENFORCEMENT
 
 # [INVARIANTS] GateSimulator.simulate must not modify pipeline or ctx state; history must be append-only
 

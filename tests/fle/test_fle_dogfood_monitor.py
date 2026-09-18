@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_fle_dogfood_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
 # [MODULE] tests.test_fle_dogfood_monitor
+# [DOMAIN] D_FRONTEND
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] zephyr.feedback_loop.diagnosers.health.fle_dogfood_monitor

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_timezone_semantic_reasoner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
 # [MODULE] tests.test_timezone_semantic_reasoner
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.timezone_semantic_reasoner

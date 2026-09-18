@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_rumor_noise_filter | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_rumor_noise_filter
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] min_sources>=1; CONFIRMED only when unique_sources>=min_sources
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

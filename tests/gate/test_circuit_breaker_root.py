@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_circuit_breaker_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-357 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_circuit_breaker
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS]

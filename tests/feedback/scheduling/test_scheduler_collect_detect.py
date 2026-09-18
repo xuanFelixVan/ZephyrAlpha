@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_scheduler_collect_detect | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_scheduler_collect_detect
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] CollectDetectHandler.run_collect/detect/diagnose return bool (should_early_return)
 # [MODIFY-GUARD] none
 # [CONSUMERS] CI pipeline

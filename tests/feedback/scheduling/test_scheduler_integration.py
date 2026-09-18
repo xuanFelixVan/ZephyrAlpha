@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_scheduler_integration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §4-§5
 # [MODULE] tests.unit.feedback_loop.test_scheduler_integration
+# [DOMAIN] D_FEEDBACK_LOOP
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

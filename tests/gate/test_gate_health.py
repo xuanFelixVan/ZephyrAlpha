@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §J
 
 # [MODULE] tests.test_gate_health
+# [DOMAIN] D_GOV_ENFORCEMENT
 
 # [INVARIANTS] no placeholder code; all assertions deterministic
 

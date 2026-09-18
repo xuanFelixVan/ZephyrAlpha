@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_fix_budget | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §5
 # [MODULE] tests.test_fix_budget
+# [DOMAIN] D_SHARED
 # [INVARIANTS] FixBudget daily<=50; monthly<=500; LLM tokens<=500000; FixStormGuard MUST detect storms
 # [MODIFY-GUARD] blueprint.md §5; auto_fix_config.yaml budget section
 # [CONSUMERS] CI pipeline

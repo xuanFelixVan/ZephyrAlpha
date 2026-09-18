@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gate_persistence | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_gate_persistence
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

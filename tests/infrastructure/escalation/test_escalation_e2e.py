@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_escalation_e2e | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-312 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.infrastructure.test_escalation_e2e
+# [DOMAIN] D_INFRA_RUNTIME
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

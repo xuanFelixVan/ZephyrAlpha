@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3.3
 
 # [MODULE] tests.test_gate_override
+# [DOMAIN] D_GOV_ENFORCEMENT
 
 # [INVARIANTS] OverrideRecord.is_expired reflects UTC now vs expires_at; GateOverride.active keys are gate_id strings; audit-trail is append-only
 

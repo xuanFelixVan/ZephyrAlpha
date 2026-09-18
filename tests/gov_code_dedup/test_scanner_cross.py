@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_scanner_cross | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-363 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.gov_code_dedup.test_scanner_cross
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

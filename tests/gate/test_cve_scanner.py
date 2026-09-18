@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_cve_scanner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_cve_scanner
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] CVE scan must return matching CVEs for given dependency
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_deployment_suppression | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_deployment_suppression
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] DeploymentSuppression state transitions must be deterministic
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

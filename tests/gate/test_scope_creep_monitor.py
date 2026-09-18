@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_scope_creep_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_scope_creep_monitor
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] Scope audit must be deterministic for same inputs
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

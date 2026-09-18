@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | tests/infrastructure/test_f18_governance_adversarial.py | §3.1
 # [MODULE] tests.red_blue.test_f18_governance_adversarial
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] red-blue adversarial test; no production data modification
 # [MODIFY-GUARD] test cases; attack vector definitions
 # [STABILITY] evolving

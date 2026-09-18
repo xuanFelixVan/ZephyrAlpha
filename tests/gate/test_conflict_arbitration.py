@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_conflict_arbitration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_conflict_arbitration
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] Higher priority proposal must always win
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

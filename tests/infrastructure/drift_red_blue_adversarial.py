@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_drift_red_blue_adversarial | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-302 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.infrastructure.drift_red_blue_adversarial
+# [DOMAIN] D_INFRA_RUNTIME
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_guard_configuration_drift_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
 # [MODULE] tests.test_guard_configuration_drift_monitor
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] zephyr.feedback_loop.forensic.guard_configuration_drift_monitor

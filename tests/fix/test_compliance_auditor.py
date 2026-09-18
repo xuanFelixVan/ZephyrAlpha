@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_compliance_auditor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §test
 # [MODULE] tests.test_compliance_auditor
+# [DOMAIN] D_SHARED
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

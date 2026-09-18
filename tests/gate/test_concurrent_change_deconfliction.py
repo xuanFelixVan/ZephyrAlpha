@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_concurrent_change_deconfliction | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_concurrent_change_deconfliction
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] Optimistic locking must reject version mismatches
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

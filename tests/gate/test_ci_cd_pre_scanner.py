@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ci_cd_pre_scanner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_ci_cd_pre_scanner
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] Empty artifacts must fail pre-check
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

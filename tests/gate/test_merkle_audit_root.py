@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_merkle_audit_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_merkle_audit_root
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] Merkle hash must be deterministic for same input
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

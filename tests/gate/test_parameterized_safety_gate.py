@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_parameterized_safety_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_parameterized_safety_gate
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] HARD REJECT must short-circuit; is_blocked must reflect results
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

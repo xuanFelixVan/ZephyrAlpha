@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_fle_metrics_collector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_fle_metrics_collector
+# [DOMAIN] D_FRONTEND
 # [INVARIANTS] MetricsCollector uses SQLite; record returns metric_id; query returns list[dict]
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

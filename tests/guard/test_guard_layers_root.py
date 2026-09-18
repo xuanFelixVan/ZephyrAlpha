@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_guard_layers_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-018 | docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md | §tests
 # [MODULE] zephyr.security.access_control.guard_layers
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gate_integrity_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_gate_integrity_guard
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] IntegrityReport fields immutable after creation; verify always returns IntegrityReport; all_valid reflects cumulative reports
 # [MODIFY-GUARD] changes must preserve test coverage for verify/verify_self/_load_manifest/_compute_sha256/reports/all_valid
 # [CONSUMERS] CI pytest

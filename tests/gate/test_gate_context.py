@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §4.2
 
 # [MODULE] tests.test_gate_context
+# [DOMAIN] D_GOV_ENFORCEMENT
 
 # [INVARIANTS] GateStatus has exactly 5 members; GateResult.passed is derived from status; GateContext.deserialize must accept serialize output
 

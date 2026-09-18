@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_fle_exceptions | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_fle_exceptions
+# [DOMAIN] D_FRONTEND
 # [INVARIANTS] FLEBaseException always carries forensic_context; ForensicContext defaults are safe
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

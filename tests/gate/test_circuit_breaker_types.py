@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_circuit_breaker_types | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §test
 # [MODULE] tests.test_circuit_breaker_types
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] Values MUST align with shared.schema.severity_types.CircuitBreakerState
 # [MODIFY-GUARD] src/zephyr/shared/schema/severity_types.py
 # [CONSUMERS] pytest

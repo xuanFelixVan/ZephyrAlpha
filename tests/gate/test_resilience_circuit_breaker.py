@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_resilience_circuit_breaker
+# [DOMAIN] D_GOV_ENFORCEMENT
 
 # [INVARIANTS] CLOSED→OPEN需达阈值;OPEN→HALF_OPEN需超时;HALF_OPEN→CLOSED需成功
 

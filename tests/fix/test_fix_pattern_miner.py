@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_fix_pattern_miner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_fix_pattern_miner
+# [DOMAIN] D_SHARED
 # [INVARIANTS] 测试覆盖mine/get_patterns/predict_fix_type;边界:空输入/None/异常
 # [MODIFY-GUARD] blueprint.md §3
 # [CONSUMERS] CI

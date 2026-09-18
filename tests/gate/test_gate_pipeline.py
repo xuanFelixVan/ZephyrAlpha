@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §3.1
 
 # [MODULE] tests.test_gate_pipeline
+# [DOMAIN] D_GOV_ENFORCEMENT
 
 # [INVARIANTS] Combinator has exactly 3 members; GateStep.checker must accept GateContext and return GateResult; GatePipeline.run returns empty list for empty pipeline; evaluate returns PASS for empty results
 

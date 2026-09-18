@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_dynamic_llm_cost_router | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_dynamic_llm_cost_router
+# [DOMAIN] D_GOV_ENFORCEMENT
 # [INVARIANTS] Budget check must be deterministic
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

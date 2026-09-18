@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_global_action_scheduler | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_global_action_scheduler
+# [DOMAIN] D_FEEDBACK_LOOP
 # [INVARIANTS] queue sorted by priority desc; max_concurrent limits running; deadlock detects shared resources
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest
