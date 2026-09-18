@@ -315,3 +315,39 @@ class TestCheckDateRangeGapCalendar:
             crypto = bc.run_known_gap_backfill(calendar=get_market_calendar("crypto"))
         assert ashare["details"][0]["total_dates"] == 2  # A股：周五+周一
         assert crypto["details"][0]["total_dates"] == 4  # 币：全自然日
+
+
+class TestUnknownGapTypeFailLoud:
+    """C-37：未识别 gap_type 不得"静默跳过却计入 checked"（指标自证清白型假绿）。
+
+    红证＝改前版（无 else 分支）跑同一条畸形注册表：`still_missing=0` 且 details 里
+    根本没有这条目的任何行——`checked=1` 看起来"已检测"，实际一分派都没发生。
+    """
+
+    _GAPS = [{"id": "gX", "table": "c1_market.t", "gap_type": "date_rage", "status": "open"}]
+
+    def test_unknown_type_is_counted_as_missing_not_clean(self):
+        with patch.object(bc, "_load_known_gaps", return_value=list(self._GAPS)):
+            r = bc.run_known_gap_backfill()
+        assert r["unrecognized_gap_type"] == 1
+        assert r["still_missing"] == 1  # 永不可能被读成"干净"
+        assert r["details"][0]["dispatched"] is False
+        assert "date_range" in r["details"][0]["known_gap_types"]  # 报错面直接给出词表
+
+    def test_recognized_types_do_not_enter_unrecognized_counter(self):
+        """阴性对照：真在册的两种类型不得被新 else 误伤（否则=把已检测的判成未检测）。"""
+        gaps = [
+            {"id": "gA", "table": "c1_market.t", "gap_type": "empty_table",
+             "detection_threshold": 0, "status": "open"},
+            {"id": "gB", "table": "c1_market.t", "gap_type": "date_range",
+             "start_date": "2026-08-14", "end_date": "2026-08-17",
+             "detection_threshold": 100, "date_column": "trade_date", "status": "open"},
+        ]
+        with (
+            patch.object(bc, "_load_known_gaps", return_value=gaps),
+            patch.object(bc.ch_reader, "query", return_value=""),
+        ):
+            r = bc.run_known_gap_backfill()
+        assert r["unrecognized_gap_type"] == 0
+        assert r["checked"] == 2
+        assert all("dispatched" not in d for d in r["details"])

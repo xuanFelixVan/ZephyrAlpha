@@ -1028,6 +1028,11 @@ def _check_empty_table_gap(gap: dict) -> dict:
     }
 
 
+#: 已实现分派的 gap_type 词表（与下方 if/elif 分支同源；新分支落地时必须同批加进来）。
+#: 之所以不读注册表反推：注册表里出现什么类型是数据，"我们实现了哪几种"是代码事实。
+_KNOWN_GAP_TYPES: Final = frozenset({"date_range", "empty_table"})
+
+
 def run_known_gap_backfill(scheduler=None, *, calendar: MarketCalendar | None = None) -> dict:
     """检测并补下载已知数据缺口（audit 2.7/3.8 治本，#ARCH-CH-029）。
 
@@ -1047,13 +1052,16 @@ def run_known_gap_backfill(scheduler=None, *, calendar: MarketCalendar | None = 
     5. backfill 成功的缺口标记 status=completed（需人工确认后更新 YAML）
 
     Returns:
-        {"checked": int, "still_missing": int, "backfilled_rows": int, "details": [...]}
+        {"checked": int, "still_missing": int, "backfilled_rows": int,
+         "unrecognized_gap_type": int, "details": [...]}
+        ——checked 是真被分派过的条数上界，unrecognized_gap_type>0 表示有条目
+        gap_type 不在已实现分派内（它们同时被计入 still_missing，不会被读成"干净"）。
     """
     gaps = _load_known_gaps()
     active_gaps = [g for g in gaps if g.get("status") != "completed"]
     if not active_gaps:
         log.info("已知缺口注册表: 无活跃缺口（全部 completed 或为空）")
-        return {"checked": 0, "still_missing": 0, "backfilled_rows": 0, "details": []}
+        return {"checked": 0, "still_missing": 0, "backfilled_rows": 0, "unrecognized_gap_type": 0, "details": []}
 
     log.info("=" * 60)
     log.info("已知缺口检测开始 (%d 条活跃缺口)", len(active_gaps))
@@ -1062,6 +1070,7 @@ def run_known_gap_backfill(scheduler=None, *, calendar: MarketCalendar | None = 
     details: list[dict] = []
     total_backfilled = 0
     still_missing_count = 0
+    unrecognized = 0
 
     for gap in active_gaps:
         gap_type = gap.get("gap_type", "")
@@ -1106,6 +1115,29 @@ def run_known_gap_backfill(scheduler=None, *, calendar: MarketCalendar | None = 
             else:
                 log.info("缺口 %s: %s 已有数据 (行数=%d)", gap_id, result["table"], result["row_count"])
 
+        else:
+            # C-37：旧版这里**没有 else**——未识别的 gap_type 被静默跳过分派，
+            # 却仍计入 checked（=len(active_gaps)），于是"注册表里有条目"被读成"条目已检测过"
+            # ＝指标自证清白型假绿（与 quality_sentinel.load_specs 忽略未知键同族）。
+            # 不 raise：一条拼错的注册表条目不该掀掉整班缺口检测；
+            # 但必须 ①进 details ②计入 still_missing（永不可能看起来干净）③log.error 指词表。
+            unrecognized += 1
+            still_missing_count += 1
+            log.error(
+                "缺口 %s: gap_type=%r 不在已实现分派内（已实现=%s），本条未检测，已计入 still_missing",
+                gap_id,
+                gap_type,
+                sorted(_KNOWN_GAP_TYPES),
+            )
+            details.append(
+                {
+                    "id": gap_id,
+                    "gap_type": gap_type,
+                    "dispatched": False,
+                    "known_gap_types": sorted(_KNOWN_GAP_TYPES),
+                }
+            )
+
     log.info("=" * 60)
     log.info("已知缺口检测完成: 仍缺失=%d 补下载行数=%d", still_missing_count, total_backfilled)
     log.info("=" * 60)
@@ -1114,6 +1146,7 @@ def run_known_gap_backfill(scheduler=None, *, calendar: MarketCalendar | None = 
         "checked": len(active_gaps),
         "still_missing": still_missing_count,
         "backfilled_rows": total_backfilled,
+        "unrecognized_gap_type": unrecognized,
         "details": details,
     }
 
