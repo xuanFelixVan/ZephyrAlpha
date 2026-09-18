@@ -55306,6 +55306,78 @@ entries:
   desc_en: ""
   plain_zh: "每天早上给所有数据源做体检的工具：挨个检查每张源卡片的表里有没有数据、数据新不新鲜、定时任务在不在跑，把体检报告按日期存档，发现哪个源坏了就写告警条给运维看。数据库整个连不上时不慌不炸，统一标记降级。"
   responsibility_layer: business
+- module_path: src/zephyr/data/quality_sentinel.py
+  domain_id: D_DATA
+  name_zh: "数据质量哨兵"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天给大数据库里的行情表做体检的小警卫：专查三种病——时间戳错成1970年、时区偏移八小时、最近几天整表没数据；发现病就写体检报告并拉警报"
+  responsibility_layer: business
+- module_path: scripts/automation/validate_intel_registry.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "情报源注册表校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查情报源名单和关键词名单两本账是否填对：网址格式对不对、关键词正则能不能用、计数对不对；有错就报错退出"
+  responsibility_layer: governance
+- module_path: scripts/industry_graph/build_node_bindings.py
+  domain_id: D_DATA
+  name_zh: "节点绑定灌装"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把产业链图谱里的节点挂上可观测的行情序列：先在图库建 ig_node_binding 绑定表，再把油价五波样板链的成品油调价、公路运价、农产品批发价、板块指数、仓单等六类缺口连同铜铝豆粕棉花等商品码批量挂到对应节点，传导链引擎按主绑定取数开工"
+  responsibility_layer: business
+- module_path: scripts/governance/dedup_ttl_headers.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "TTL重复头去重工具"
+  name_en: "TTL duplicate header deduplicator"
+  desc_zh: "删除S4头注入器历史上造成的重复[BLUEPRINT]+[TTL]前置注入块，保留文件原头部真值，幂等可复跑"
+  desc_en: ""
+  plain_zh: "以前有个自动程序给代码文件贴标签时会手抖贴重，导致一个文件开头贴了两遍一模一样的标签。这个工具专门把重复贴上的那遍撕掉，只留最早写好的那张真标签；撕完再跑一遍它不会再动任何东西（幂等）。"
+  responsibility_layer: governance
+- module_path: schemas/categories/market/market_fund_flow_daily.py
+  domain_id: D_DATA
+  name_zh: "大盘资金流日频宽表DDL"
+  name_en: "market fund flow daily DDL"
+  desc_zh: "c1_market.market_fund_flow_daily 表 DDL 唯一真源：沪深两市收盘/涨跌幅×主力/超大单/大单/中单/小单净流入净额与占比，东财大盘资金流口径，源滚动窗口约120交易日"
+  desc_en: ""
+  plain_zh: "这张表每天记一笔整个A股大盘的钱往哪流：主力、超大单、大单、中单、小单各买了多少（净流入）。数据来自东方财富的公开接口，程序每天盘后自动取最新约半年的数据补齐。"
+  responsibility_layer: business
+- module_path: schemas/categories/market/market_etf_share_snapshot.py
+  domain_id: D_DATA
+  name_zh: "ETF份额日快照DDL"
+  name_en: "ETF share snapshot DDL"
+  desc_zh: "c1_market.market_etf_share_snapshot 表 DDL 唯一真源：全市场ETF最新份额/IOPV/折溢价/成交/主力净流入日快照，相邻日差分=净申赎，东财ETF列表口径"
+  desc_en: ""
+  plain_zh: "这张表每天给全市场每只ETF拍一张快照：份额有多少、价格和净值差多少、成交了多少。拿今天的份额减昨天的，就知道这天是被净申购还是净赎回。"
+  responsibility_layer: business
+- module_path: schemas/categories/market/market_cffex_member_ranking.py
+  domain_id: D_DATA
+  name_zh: "中金所前20会员持仓排名DDL"
+  name_en: "CFFEX member ranking DDL"
+  desc_zh: "c1_market.market_cffex_member_ranking 表 DDL 唯一真源：中金所成交/持买单/持卖单前20会员排名长表（合约×榜位），中金所官网口径"
+  desc_en: ""
+  plain_zh: "这张表每天记金融期货市场（IF/IH/IC/IM等合约）里最大的20家期货公司各买了多少单、卖了多少单。数据来自中金所官网的每日公开排名。"
+  responsibility_layer: business
+- module_path: schemas/categories/market/market_convertible_bond_clause.py
+  domain_id: D_DATA
+  name_zh: "可转债条款日快照DDL"
+  name_en: "convertible bond clause DDL"
+  desc_zh: "c1_market.market_convertible_bond_clause 表 DDL 唯一真源：转债强赎触发价/触发比/天计数/状态/最后交易日/到期日快照积累，集思录口径"
+  desc_en: ""
+  plain_zh: "这张表每天给每只可转债记一次条款状态：强赎触发了没、什么时候停止交易、什么时候到期。快照一天存一份，能回看条款状态的变化过程。"
+  responsibility_layer: business
+- module_path: scripts/backtest/exp_ic_evidence.py
+  domain_id: D_BACKTEST
+  name_zh: "EXP六因子IC出证编排"
+  name_en: "EXP six-factor IC evidence pipeline"
+  desc_zh: "裁定#338④口径执行端：DS-275修复源上按exp_r36协议出EXP01-06六因子秩IC/覆盖度/t检验证据YAML，统计核全量复用eval_exp_expectations，零判据复制"
+  desc_en: ""
+  plain_zh: "给六个分析师预期因子打分出证：按预注册的降权口径（只用2019到2021这36个月的数据），算每个因子选股准不准，写成证据文件存档，不打分不晋级"
+  responsibility_layer: business
 
 battle_map_steps:
 - step_id: BM-BUY-05

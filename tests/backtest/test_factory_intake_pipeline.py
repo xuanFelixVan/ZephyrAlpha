@@ -32,16 +32,54 @@ class TestPreflightGate:
         results = fip.preflight_compute_gate()
         lanes = [r["lane"] for r in results]
         assert {"D", "B"} <= set(lanes)  # 基础两车道必在（F 车道=并行会话新增网格配方）
-        assert all(r["allowed"] for r in results)
+        light = [r for r in results if r["lane"] != "C"]
+        assert all(r["allowed"] for r in light)
 
     def test_lane_specs_dynamic(self):
         # 车道清单随共享文件演进（并行会话可加车道），测试只锁契约不锁清单
         lanes = {s["lane"] for s in fip._LANE_SPECS if s["lane"]}
         assert {"D", "B"} <= lanes
 
-    def test_unbuilt_lane_excluded(self):
+    def test_heavy_lane_c_gated_declaration_active(self):
+        """WO-⑤-06 漂移修正后 C 车道受 E0 闸（heavy 档在预检结果中出现）。
+
+        零网环境日历不可达 → C 走 fail-closed 拒（REASON_DENY_CALENDAR_UNKNOWN）；
+        盘外黄金窗+日历可达 → 放行。契约=出现在结果里且 allowed 是布尔，
+        编排层不越权代闸放行（不预设其值）。
+        """
         results = fip.preflight_compute_gate()
-        assert all("e1c" not in r["purpose"] for r in results)
+        c_rows = [r for r in results if r["purpose"] == "intake_e1c_formula_mine"]
+        assert len(c_rows) == 1 and c_rows[0]["lane"] == "C"
+        assert isinstance(c_rows[0]["allowed"], bool)
+
+    def test_lane_specs_no_drift_all_lanes_lettered(self):
+        """断言测试（WO-⑤-06）：_LANE_SPECS 每项 lane 字母非空（禁 lane=None 漂移回归）。"""
+        for spec in fip._LANE_SPECS:
+            assert spec["lane"], f"车道 {spec['name']} lane 漂移（空值=未登记车道字母）"
+            assert isinstance(spec["lane"], str) and len(spec["lane"]) <= 2
+
+    def test_lane_letters_match_factory_map(self):
+        """断言测试（WO-⑤-06）：每项 lane 与工厂图（config/strategy_production_map.yaml）
+        节点 lane 字段一致（图是真源，禁在编排层自造车道字母）。
+
+        已知图缺件（他线资产，登记不代修）：F=F06 网格仅代码车道、图节点补挂=2.4 跨线
+        欠账（map :71/:204 自述）；I=线alpha T8 2026-09-18 新增、图补挂待他线。缺件清单
+        之外的新漂移照样红。
+        """
+        import yaml
+
+        known_map_gaps = frozenset({"F", "I"})
+        mp = yaml.safe_load(
+            (fip._ROOT / "config" / "strategy_production_map.yaml").read_text(
+                encoding="utf-8"))
+        map_lanes = {n.get("lane") for n in mp.get("nodes", []) if n.get("lane")}
+        assert map_lanes, "工厂图 nodes.lane 全空=图数据缺件（他线资产，另行登记）"
+        for spec in fip._LANE_SPECS:
+            if spec["lane"] in known_map_gaps:
+                continue
+            assert spec["lane"] in map_lanes, (
+                f"车道 {spec['name']} lane={spec['lane']} 不在工厂图节点 lane 集"
+                f"{sorted(map_lanes)} 中——编排层与工厂图漂移")
 
 
 class TestRunPipeline:
@@ -107,10 +145,13 @@ class TestRunPipeline:
 
 
 class TestLaneSpecs:
-    def test_heavy_lane_registered_for_future_gate(self):
+    def test_heavy_lane_c_registered(self):
+        """WO-⑤-06 漂移修正（2026-09-18）：E1C 三轨已建成（gplearn/智能体/MCTS），
+        lane 不再是 None"待施工"——与生产图 FAC-E1C lane=C 对齐；local_gpu=heavy 受 E0 闸。"""
         e1c = next(s for s in fip._LANE_SPECS if s["name"] == "e1c_formula_mine")
-        assert e1c["lane"] is None  # 未施工
-        assert e1c["compute_class"] == "local_gpu"  # 将来受 E0 闸
+        assert e1c["lane"] == "C"
+        assert e1c["compute_class"] == "local_gpu"  # heavy 档受 E0 闸
+        assert e1c["intake"].endswith("lane_c_candidates.csv")
 
 
 if __name__ == "__main__":  # pragma: no cover

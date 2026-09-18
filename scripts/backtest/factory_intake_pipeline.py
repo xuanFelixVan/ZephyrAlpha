@@ -10,7 +10,7 @@
 # [INVARIANTS] 薄编排层（学讨论稿 v4 结论"自研薄调度层"）：只做函数级接续与汇总，
 #   不复制各车道业务逻辑；事件语义=本命令被触发即一次进货事件，无常驻循环/定时器；
 #   车道干完活即卸台账，E2 幂等消费新增候选；运动员不兼任裁判——编排层不评分；
-#   重算力车道（未来 E1C）开工前必经 E0 问闸（MOD-BT-151），本编排接线点已在
+#   重算力车道（E1C 三轨）开工前必经 E0 问闸（MOD-BT-151），本编排接线点已在
 #   _LANE_SPECS 声明
 # [STABILITY] experimental
 # [SAFETY] L
@@ -52,8 +52,11 @@ _LANE_SPECS = [
      "intake": "data/strategy_intake/three_high_candidates.csv"},
     {"lane": "B", "name": "e1b_idea_gen", "compute_class": "api",
      "intake": "data/strategy_intake/lane_b_candidates.csv"},
-    {"lane": None, "name": "e1c_formula_mine", "compute_class": "local_gpu",
-     "intake": "待 E1C 施工（设计稿 docs/_working/2026-09-14-fac-e1c-formula-mining-design.md）"},
+    # E1C 公式挖掘（三轨已建成：gplearn MOD-BT-155=lane_c_candidates / 智能体 MOD-BT-158=
+    # lane_c2_candidates / MCTS=lane_c3_candidates；生产图 FAC-E1C lane=C，WO-⑤-06 漂移修正
+    # 2026-09-18：原 lane=None"待施工"标注落后于实况）。重算力=local_gpu，E0 问闸 heavy 档生效。
+    {"lane": "C", "name": "e1c_formula_mine", "compute_class": "local_gpu",
+     "intake": "data/strategy_intake/lane_c_candidates.csv"},
     # F-06 组合层网格（2.4 接线，2026-09-15）：intake=最新 grid 批次 manifest（执行器 MOD-BT-196 落盘）。
     # recipe 行非因子假说——E2 消费器需按 recipe_id/values_json 解析（跨线协作项，E2 侧适配器待挂）。
     {"lane": "F", "name": "f06_grid_recipes", "compute_class": "local",

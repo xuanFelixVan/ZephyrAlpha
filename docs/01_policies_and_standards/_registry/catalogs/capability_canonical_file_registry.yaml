@@ -32743,6 +32743,22 @@ creation_tokens:
   token: altdata-line-hyperliquid-provider-20260918
   created_by: st-datapack-20260918
   capability: altdata_line
+- file: schemas/categories/market/market_cffex_member_ranking.py
+  token: altdata-line-market-cffex-member-ranking-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/market/market_convertible_bond_clause.py
+  token: altdata-line-market-convertible-bond-clause-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/market/market_etf_share_snapshot.py
+  token: altdata-line-market-etf-share-snapshot-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/market/market_fund_flow_daily.py
+  token: altdata-line-market-fund-flow-daily-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
 - file: docs/_working/residual_construction/pending_items_plan.md
   token: residual-construction-plan-pending-items-plan-20260917
   created_by: st-residual-20260917
@@ -35192,5 +35208,25 @@ creation_tokens:
   token: intel-registry-validate-intel-registry-20260918
   created_by: st-mineline-w101
   capability: intel_registry
+- file: scripts/governance/dedup_ttl_headers.py
+  token: rc14-dedup-ttl-headers-dedup-ttl-headers-20260918
+  created_by: st-mineline-rc14
+  capability: rc14_dedup_ttl_headers
+- file: tests/governance/audit/test_module_id_header_injector_rc14.py
+  token: ttl-dedup-test-module-id-header-injector-rc14-20260918
+  created_by: st-mineline-rc14b
+  capability: ttl_dedup
+- file: scripts/backtest/exp_ic_evidence.py
+  token: backtest-evidence-exp-ic-evidence-20260918
+  created_by: st-mineline-w512
+  capability: backtest_evidence
+- file: tests/backtest/test_exp_ic_evidence.py
+  token: backtest-evidence-test-exp-ic-evidence-20260918
+  created_by: st-mineline-w512
+  capability: backtest_evidence
+- file: docs/_working/kimi_audit/exp_evidence/exp_ic_evidence_ds271.yaml
+  token: backtest-evidence-exp-ic-evidence-ds271-20260918
+  created_by: st-mineline-w512
+  capability: backtest_evidence
 
 di_seam_exemptions: []
