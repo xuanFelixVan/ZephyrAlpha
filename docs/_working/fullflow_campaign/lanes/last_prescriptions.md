@@ -223,6 +223,15 @@ completes_when: 最后一条收口红判读被总包采纳或转裁定，且两�
 - 未做的口径：本表只覆盖 16 个被役改过的目录，不等于 `tests/` 全量（宪法 §6 与手册 §6：
   单进程 `pytest tests/` 必然收集失败）。
 
-## 6. 提交记录
-（预跑 → `git_commit.py --session st-ff-last-20260918 --files <具名> --enqueue` ≤2 笔；
- 落地判据=队列项 `state=done` + `git log -1 --name-only`）
+## 6. 提交记录（本车道共 1 笔，≤2 笔授权内）
+- 批 1 入队 `q-20260919-st-ff-last-20260918-0001` → **`state=done` / landed=`cbddfa2a2b16fcffcb8ef7bc106a85142f93dc03`**。
+  归属核实 `git log -1 --name-only cbddfa2a2b` = **恰好 3 件、零外来吸收**：
+  `tests/backtest/test_sim_paper_ledger.py`(+90/-13)、
+  `docs/_working/fullflow_campaign/lanes/last_prescriptions.md`(新 228 行)、
+  `capability_canonical_file_registry.yaml`(+4/-0 纯插入 token)。
+- 提交前预跑：`.runtime/tmp/st-ff-last-20260918/gate_prerun.py`（113 GateSpec，进程内门）
+  → 第 1 次 1 条硬阻断（REGISTRY-MASS-DELETION，即 Q-7）→ 修复后 **0 硬阻断 / 0 环境信号 / 0 gate 异常**。
+  这条预跑**就是 Q-7 不被静默吞掉的唯一原因**（`run_gate_chain.py` 预跑不到进程内门）。
+- 落地后复验：`pytest tests/backtest/test_sim_paper_ledger.py` **13 passed**（HEAD=cbddfa2a2b 字节）；
+  claim 已全部 release（`--release-only` released=3，`.ailocks/locks`=0）。
+- 轮数纪律：本车道交工时约第 6x 轮（≤110 轮门槛内），未攒批——测试件写完即 `git add`、判清即入队。
