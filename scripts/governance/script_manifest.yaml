@@ -1,28 +1,28 @@
-# 自动生成于 2026-09-17T05:26:18Z
+# 自动生成于 2026-09-18T18:30:46Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-17T05:26:18Z'
+generated_at: '2026-09-18T18:30:46Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 439
-with_manifest: 408
-missing_manifest: 31
+total_scripts: 445
+with_manifest: 411
+missing_manifest: 34
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 56
+  governance: 57
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
   governance:d1_structure: 25
   governance:d2_links: 2
-  governance:d3_metadata: 27
+  governance:d3_metadata: 28
   governance:d4_paths: 4
-  governance:d5_architecture: 122
+  governance:d5_architecture: 123
   governance:d6_security: 15
-  governance:d7_code: 42
-  governance:d8_doc_sync: 14
+  governance:d7_code: 43
+  governance:d8_doc_sync: 15
   governance:d9_knowledge: 2
   governance:data_quality: 2
   governance:generators: 15
@@ -35,6 +35,7 @@ categories:
   governance:repair: 7
   governance:shared: 1
   governance:standards: 1
+  governance:standards_governance: 1
   governance:vms: 9
 scripts:
 - name: _sync/check_p0_status.py
@@ -1151,6 +1152,21 @@ scripts:
   args: []
   warn_only: false
   description: 批量回填 frontmatter doc_type 字段（doc_type 存量治理 Stage 2.1）
+  tags:
+  - Quick
+- name: d3_metadata/backfill_module_domain.py
+  owner: governance:d3_metadata
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 900
+  args:
+  - --list
+  - --apply
+  - --batch
+  - --all
+  warn_only: false
+  description: 模块 [DOMAIN] 头字段确定性补标生成器（三级证据推断 + 可执行回填，W4c）
   tags:
   - Quick
 - name: d3_metadata/backfill_ttl_metadata.py
@@ -2587,6 +2603,19 @@ scripts:
     (single source of truth enforcement)'
   tags:
   - Critical
+- name: d5_architecture/validators/check_vocab_domain_convergence.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P1
+  timeout_seconds: 60
+  args:
+  - --with-db
+  - --quiet
+  warn_only: false
+  description: 词表×FDR×翻译注册表在用域差集收敛校验（裁定#335 常驻观测件）
+  tags:
+  - Critical
 - name: d5_architecture/validators/lifecycle/validate_lifecycle_refs.py
   owner: governance:d5_architecture
   dimensions:
@@ -3534,6 +3563,16 @@ scripts:
   tags:
   - Disruptive
   - Quick
+- name: d7_code/generate_fail_open_register.py
+  owner: governance:d7_code
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d7_code/rewrite_imports.py
   owner: governance:d7_code
   dimensions:
@@ -3731,6 +3770,24 @@ scripts:
   warn_only: true
   description: AGENTS.md 速查区硬编码数字漂移检测 reconciler——post-commit 触发，校验 AGENTS.md 速查表计数（18
     表体系/明细行/告警阈值/能力计数）与 ROOR/capability 注册表真值一致性（warn-only 不重写）
+  tags:
+  - Quick
+- name: d8_doc_sync/algo_flow_reverse_orphan_reconciler.py
+  owner: governance:d8_doc_sync
+  dimensions:
+  - D8
+  priority: P1
+  timeout_seconds: 120
+  args:
+  - --json
+  - --apply
+  - --mirror
+  - --owner-ruling
+  - --session
+  - --no-commit
+  - --dry-run
+  warn_only: false
+  description: algo_flow_reverse_orphan_reconciler.py — ALGO_FLOW 反向孤件普查对账（#ARCH-326）
   tags:
   - Quick
 - name: d8_doc_sync/algo_flow_translation_reconciler.py
@@ -3949,6 +4006,16 @@ scripts:
   description: decision_node_plain_zh_backfill.py — 一次性补齐 213 决策节点的 plain_zh 大白话简介。
   tags:
   - Quick
+- name: dedup_ttl_headers.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: extract_decisiongraph.py
   owner: governance
   dimensions:
@@ -5311,6 +5378,16 @@ scripts:
   _manifest_missing: true
 - name: standards/standards_lib.py
   owner: governance:standards
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: standards_governance/generate_standard_family_registry.py
+  owner: governance:standards_governance
   dimensions: []
   priority: P2
   timeout_seconds: 60

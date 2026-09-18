@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-17T18:53:10Z'
+generated_at: '2026-09-18T18:31:11Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 258
+total_files: 261
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1856,7 +1856,7 @@ files:
   section_count: 0
 - path: docs/01_policies_and_standards/sop/audit_prompts_20_ai.md
   module_id: ''
-  title: 21个AI审计一键复制提示词
+  title: 全仓打扫卫生+自主审计治本闭环 v4（AI-00 总控 + 22 域）
   doc_type: index
   status: ''
   version: ''
@@ -2024,7 +2024,7 @@ files:
   title: 数据源全生命周期 SOP——从挖矿到消费端接线（流程编排真源）
   doc_type: policy
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: procedural
   scope: ''
   stability: ''
@@ -2191,6 +2191,21 @@ files:
   status: active
   version: 1.1.0
   rule_form: checklist
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/review_sop/rule_disposition_policy.md
+  module_id: ''
+  title: 规则处置程序法——六道闸判定 × 六类归宿（每条规则/每台裁判的唯一判决流程）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
   scope: global
   stability: ''
   layer: ''
@@ -2694,6 +2709,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/domain_responsibility_layer_mapping.yaml
+  module_id: REG-DOMAIN-RESP-LAYER-001
+  title: 域→职责层映射真源（responsibility_layer）
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/event_calendar_registry.yaml
   module_id: ''
   title: ''
@@ -2760,6 +2790,21 @@ files:
   doc_type: ''
   status: active
   version: 1.3.1
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml
+  module_id: ''
+  title: ''
+  doc_type: register
+  status: active
+  version: ''
   rule_form: ''
   scope: ''
   stability: ''
@@ -4229,7 +4274,7 @@ files:
   title: target_layer 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
