@@ -809,3 +809,79 @@ thresholds:
     tags: [退役, 回撤漂移, 评审]
     evidence: "55 号 §3.5/§7⑤；LuxAlgo 2026-08（回撤漂移 1.5-2x 为评审触发器非自动关停）；裁定取区间下限 1.5=风险优先早触发侧"
     last_verified: '2026-08-15'
+
+  - threshold_id: "THD-INTAKE-001"
+    module_id: MOD-GOVERNANCE
+    name: "Intake Exam Pass Rate Lower Bound"
+    name_zh: "入考率下界（贫矿判据）"
+    category: ai_intake
+    metric_zh: "周×域 入考率（funnel_stage>=E2 卡数占比）"
+    value: 5.0
+    param_origin: "L2 设计稿裁定（DESIGN §2.7 v0）"
+    unit: "percent"
+    comparator: "lt"
+    severity_action: "连续 demote_weeks 周触发贫矿降级（quota 减半）"
+    source_code: "src/zephyr/ai_layer/intake/kpi.py（THD-INTAKE-001）"
+    consumer: "ai_layer/intake/kpi.py"
+    status: active
+    doc_ref: "docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md §2.7"
+    tags: [AI层, L2收集库, 入考率]
+    evidence: "DESIGN §2.7 裁定 5%-30% 健康区间下界；依据=2026-09-13 甄别轮经验（真矿是少数，过松=淹死考试管线）"
+    last_verified: '2026-09-18'
+
+  - threshold_id: "THD-INTAKE-002"
+    module_id: MOD-GOVERNANCE
+    name: "Intake Exam Pass Rate Upper Bound"
+    name_zh: "入考率上界（放水判据）"
+    category: ai_intake
+    metric_zh: "周×域 入考率（funnel_stage>=E2 卡数占比）"
+    value: 30.0
+    param_origin: "L2 设计稿裁定（DESIGN §2.7 v0）"
+    unit: "percent"
+    comparator: "gt"
+    severity_action: "触发收紧 L1 判据建议（附当周被 E2 拒样本清单供 rubric 复盘）"
+    source_code: "src/zephyr/ai_layer/intake/kpi.py（THD-INTAKE-002）"
+    consumer: "ai_layer/intake/kpi.py"
+    status: active
+    doc_ref: "docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md §2.7"
+    tags: [AI层, L2收集库, 入考率]
+    evidence: "DESIGN §2.7 健康区间上界；入考率过高=甄别太松放水，违『量越大及格线越狠』铁律"
+    last_verified: '2026-09-18'
+
+  - threshold_id: "THD-INTAKE-003"
+    module_id: MOD-GOVERNANCE
+    name: "Intake Demote Consecutive Weeks"
+    name_zh: "贫矿降级连周数"
+    category: ai_intake
+    metric_zh: "入考率低于下界的连续统计周数"
+    value: 2
+    param_origin: "L2 设计稿裁定（DESIGN §2.7 v0）"
+    unit: "week"
+    comparator: "ge"
+    severity_action: "该域/该源 daily_quota 减半"
+    source_code: "src/zephyr/ai_layer/intake/kpi.py（THD-INTAKE-003）"
+    consumer: "ai_layer/intake/kpi.py"
+    status: active
+    doc_ref: "docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md §2.7"
+    tags: [AI层, L2收集库, 入考率]
+    evidence: "DESIGN §2.7 动作一；配额减半而非清零=多样性保底（宪法级约束的进货端落点）"
+    last_verified: '2026-09-18'
+
+  - threshold_id: "THD-INTAKE-004"
+    module_id: MOD-GOVERNANCE
+    name: "Intake Longtail Consecutive Weeks"
+    name_zh: "移长尾连周数"
+    category: ai_intake
+    metric_zh: "入考率低于下界的连续统计周数"
+    value: 4
+    param_origin: "L2 设计稿裁定（DESIGN §2.7 v0）"
+    unit: "week"
+    comparator: "ge"
+    severity_action: "移长尾（quota=1，禁清零）"
+    source_code: "src/zephyr/ai_layer/intake/kpi.py（THD-INTAKE-004）"
+    consumer: "ai_layer/intake/kpi.py"
+    status: active
+    doc_ref: "docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md §2.7"
+    tags: [AI层, L2收集库, 入考率]
+    evidence: "DESIGN §2.7 动作二；quota=1 保留最小探测通道，禁清零防源永久熄灭"
+    last_verified: '2026-09-18'

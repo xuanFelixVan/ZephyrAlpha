@@ -1733,4 +1733,186 @@ entries:
   stability: evolving
   ai_autonomy: ai_modifiable
   note: 2026-08-30 补登（候选核销批 CAND-RES-030 落地触发）。**冲突留痕**：2026-08-22 统筹裁定曾将本域归并 D_KNOWLEDGE（research/ 下既有 12 文件标 D_FACTOR/D_KNOWLEDGE），本次按新件落地需要补登；归并 vs 独立的终局裁定留 Owner 窗口，现状两口径并存已如实登记。
+- domain: D_ARCH_GUARD
+  subdomain: arch_guard_scripts
+  domain_name_zh: 架构守护脚本
+  ssot_module: MOD-INF-005
+  ssot_path: scripts/arch_guard/
+  covers:
+  - "架构守护契约校验（import_linter / fitness_functions），depgraph 实测 3 节点"
+  aliases:
+  - arch_guard_scripts
+  - 架构守护脚本
+  stability: stable
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
 
+- domain: D_ARCH_SCRIPTS
+  subdomain: arch_governance_scripts
+  domain_name_zh: 架构治理脚本
+  ssot_module: MOD-INF-005
+  ssot_path: scripts/governance/d5_architecture/
+  covers:
+  - "架构全景图生成器/分析器/检测器，depgraph 实测 18 节点"
+  aliases:
+  - arch_governance_scripts
+  - 架构治理脚本
+  stability: stable
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+- domain: D_CODE_SCRIPTS
+  subdomain: code_quality_scripts
+  domain_name_zh: 代码质量脚本
+  ssot_module: MOD-INF-005
+  ssot_path: scripts/governance/d7_code/
+  covers:
+  - "代码质量治理脚本，depgraph 实测 1 节点"
+  aliases:
+  - code_quality_scripts
+  - 代码质量脚本
+  stability: stable
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+- domain: D_COMPLIANCE_SCRIPTS
+  subdomain: compliance_scripts
+  domain_name_zh: 合规治理脚本
+  ssot_module: MOD-INF-005
+  ssot_path: scripts/governance/d11_compliance/
+  covers:
+  - "合规检查脚本（audit_registration / check_test_structure），depgraph 实测 2 节点"
+  aliases:
+  - compliance_scripts
+  - 合规治理脚本
+  stability: stable
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+- domain: D_DATA_SCRIPTS
+  subdomain: metadata_scripts
+  domain_name_zh: 元数据治理脚本
+  ssot_module: MOD-INF-005
+  ssot_path: scripts/governance/d3_metadata
+  covers:
+  - "注册表元数据与域回填脚本，depgraph 实测 1 节点"
+  aliases:
+  - metadata_scripts
+  - 元数据治理脚本
+  stability: stable
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+- domain: D_META_SCRIPTS
+  subdomain: meta_governance_scripts
+  domain_name_zh: 元治理脚本
+  ssot_module: MOD-INF-005
+  ssot_path: scripts/governance/meta
+  covers:
+  - "元治理脚本（pre_op_check / false_negative_cases），depgraph 实测 2 节点"
+  aliases:
+  - meta_governance_scripts
+  - 元治理脚本
+  stability: stable
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+- domain: D_SEC_SCRIPTS
+  subdomain: security_scripts
+  domain_name_zh: 安全治理脚本
+  ssot_module: MOD-INF-005
+  ssot_path: scripts/governance/d6_security
+  covers:
+  - "安全治理脚本，depgraph 实测 1 节点"
+  aliases:
+  - security_scripts
+  - 安全治理脚本
+  stability: stable
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+- domain: D_STRUCT_SCRIPTS
+  subdomain: structure_scripts
+  domain_name_zh: 结构治理脚本
+  ssot_module: MOD-INF-005
+  ssot_path: scripts/governance/d1_structure
+  covers:
+  - "结构治理脚本，depgraph 实测 1 节点（该目录无 blueprint_id 登记）"
+  aliases:
+  - structure_scripts
+  - 结构治理脚本
+  stability: stable
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+- domain: D_ARCHIVE_SCRIPTS
+  subdomain: archived_scripts
+  domain_name_zh: 归档脚本
+  ssot_module: MOD-INF-005
+  ssot_path: scripts/governance/_archive
+  covers:
+  - "已归档一次性脚本，depgraph 实测 2 节点且 domains.lifecycle=deprecated（净删属 Owner 门位）"
+  aliases:
+  - archived_scripts
+  - 归档脚本
+  stability: deprecated
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+- domain: D_CONTRACTS
+  subdomain: shared_contracts
+  domain_name_zh: 共享契约
+  ssot_module: MOD-CON-001
+  ssot_path: src/zephyr/shared/contracts
+  covers:
+  - "跨环节契约对象（ctr002 生产侧/消费侧 2 节点），depgraph 实测 2 节点"
+  aliases:
+  - shared_contracts
+  - 共享契约
+  stability: stable
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+- domain: D_TEST
+  subdomain: test_domain_placeholder
+  domain_name_zh: 测试占位域
+  ssot_module: MOD-INF-027
+  ssot_path: '(depgraph domains.ssot_path 为空)'
+  covers:
+  - "空壳域：depgraph 实测 0 节点（普查 BRK-083 登记项）；保留登记以维持 FDR↔depgraph 两册一致，净删属 Owner 门位"
+  aliases:
+  - test_domain_placeholder
+  - 测试占位域
+  stability: deprecated
+  ai_autonomy: ai_modifiable
+  note: 2026-09-18 补登（全流通战役注册表一致性车道 st-ff-registry-20260918，治本普查 BRK-082：depgraph domains 表在册而 FDR 漏登，违反 RULE-REGISTRY 两册一致）。域元数据取自 depgraph domains/nodes 表实测，非手工拟定。父路径 scripts/governance/（D_GOV_SCRIPTS）与本类子目录是有意分层而非域冲突——FDR 既有条目已有 13 处 ssot_path 前缀重叠先例。
+
+
+# ===== 退役未清域登记（2026-09-18 全流通战役 BRK-082，Owner 门位净删项）=====
+# 下列 4 域在 FDR 在册、depgraph domains 表已无（subdomain 均为 *_legacy）→ 册间双向漂移的 FDR 侧。
+# 注册表净删属 Owner 门位（COORDINATION_LEDGER §7），本车道不删条目，只做显式登记 + 指认收敛判据：
+#   收敛判据 = FDR entries[].domain 与 depgraph `SELECT domain_id FROM domains` 的差集两侧同时为空。
+#   机械校验落点 = align_battle_map.py BM-INV-008（幻影引用侧）+ 本段（FDR 侧在册清单）。
+retirement_pending_owner_gate:
+  entries:
+    - domain: D_EXECUTION
+      subdomain: execution_legacy
+      reason_zh: "源系统已退役、depgraph 已无节点；FDR 条目留存以保历史可追溯"
+      owner_gate: "注册表净删=Owner 门位，登记不执行"
+      review_frequency: quarterly
+    - domain: D_ORDER
+      subdomain: order_legacy
+      reason_zh: "源系统已退役、depgraph 已无节点；FDR 条目留存以保历史可追溯"
+      owner_gate: "注册表净删=Owner 门位，登记不执行"
+      review_frequency: quarterly
+    - domain: D_PORTFOLIO
+      subdomain: portfolio_legacy
+      reason_zh: "源系统已退役、depgraph 已无节点；FDR 条目留存以保历史可追溯"
+      owner_gate: "注册表净删=Owner 门位，登记不执行"
+      review_frequency: quarterly
+    - domain: D_SIGNAL
+      subdomain: signal_legacy
+      reason_zh: "源系统已退役、depgraph 已无节点；FDR 条目留存以保历史可追溯"
+      owner_gate: "注册表净删=Owner 门位，登记不执行"
+      review_frequency: quarterly
+  note: "D_SIGNAL 同时是 battle_map_domain_policy.yaml §retired_domain_references 登记的幻影引用（普查 BRK-079 同源）——一册退役不彻底会让 BM-INV-004 对该域永远空转，故两册同批登记。"

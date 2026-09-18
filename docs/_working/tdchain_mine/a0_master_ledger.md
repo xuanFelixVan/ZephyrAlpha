@@ -80,5 +80,73 @@ date: 2026-09-18
 | E5 | ✅ | e5 簿关账 |
 | E6 | ✅ | 裁定#337+q-0005 |
 | E7 | ✅（他会话 03:08 实弹+我方不重复下单） | 60747a8a47 |
-| E8 | ⬜ | | |
-| Q1 | ⬜ | | |
+| E8 | ✅（依终局报告§二） | R1/R2 连续两轮 1766 件通过+红蓝抓出 1 真红已修 | f21ba9b286 |
+| Q1 | ✅（依终局报告；临时件清零=部分，tdchainJ 登记） | 裁定#337=c1bddad9db+报告 f21ba9b286/bf65648609 | 详见下节验收复核 |
+
+### 验收复核（st-ff-tdchainJ-20260918，2026-09-18 午后，HEAD=36c9ca4db2）
+
+#### 6.1 十一件 sha 祖先核实（`git merge-base --is-ancestor <sha> HEAD` 逐条实测）
+
+| 件 | sha | 结果 |
+|---|---|---|
+| M1 regcal 方向语义退役 | 0060289c66 | ANCESTOR-YES |
+| M2 p2b 场景引擎 | 259b15c612 | ANCESTOR-YES |
+| M3 orchp3 编排器 | 2fa92002 | ANCESTOR-YES |
+| M4 s-owner001 factory merge | 29967c99ad | ANCESTOR-YES |
+| cp1 冻结文档 cherry-pick | 08d3fa97 | ANCESTOR-YES |
+| cp4 收尾交接包 | 324cf187d7 | ANCESTOR-YES |
+| E6 批（裁定#337 转正） | c1bddad9db | ANCESTOR-YES |
+| ETF 修复工具收编 | 60ed3aa49c | ANCESTOR-YES |
+| 挖矿总谱+九簿 | e7a17a9012 | ANCESTOR-YES |
+| 终局报告 | f21ba9b286 | ANCESTOR-YES |
+| 终局报告 cp3 修正段 | bf65648609 | ANCESTOR-YES |
+
+11/11 均为 HEAD 祖先，前夜战役交付全部在 dev 链上。
+
+#### 6.2 ETF 五表只读核验（repair_etf_minute_tz_split.py --verify，仅只读通道）
+
+- remaining_utc=0 ×5 实测：1min=327,074,832 / 5min=72,070,158 / 15min=23,950,305 /
+  30min=11,973,785 / 60min=5,975,672（全 beijing 口径，ok=true）。
+- 备份五表 `*_tz_bak_20260918` 在库（DatabaseService system.tables 实测）：
+  1min=326,301,055 / 5min=71,856,186 / 15min=24,331,141 / 30min=11,939,337 / 60min=5,962,194 行。
+- 边界：本车道未跑 dry-run/--execute（instL 独占脚本；--execute=Owner 门位）。
+
+#### 6.3 测试基线
+
+- `tests/regime/ tests/plan_engine/ tests/strategy_factory/` 实测 **1766 passed**（61.93s），
+  与基线 1766 差值=0（口径遵裁定#325：该套件本轮检出 1766 件通过）。
+- 他会话 unstaged 件（test_stop_loss_strategy.py / test_take_profit_strategy.py）本轮未造成漂移。
+
+#### 6.4 QMT 只读对账（XtMiniQmt 在线，模拟目录双重断言过）
+
+- connect→get_positions（cash=9,651,613.46；510300.SH 1100 股/600036.SH 100 股）→
+  query_trades_today=4 笔（全 510300.SH，与柜台 Deal.csv 4 行一致）→query_order 抽样 None→
+  disconnect；零新下单、零撤单、禁区未触。详见 e7 作业簿回写节。
+- D3 晨间复核：c3 隔夜单本地 #DONE/ack 仅 SENT，今日柜台 Order.csv（828 行，全 20260918）无
+  600000 委托——与 e7 簿契约缺口②（隔夜单静默丢弃）一致，登记不处置；成交腿=今日 4 笔 510300
+  （test-002），c3 600000.SH 零成交 ✓；循环单 801 笔（smoke-e2e-1789694891，09:30:01-11:30:22，
+  800 已报+1 已撤）已停 6h+，批量撤单=Owner 门（flash-nightbuild 簿已请）。
+
+#### 6.5 队列死信处置（tdchain 系）
+
+- q-20260918-st-tdchain-20260917-0001/0002：内容已被 q-0003（e7a17a9012）取代 → 判定已取代。
+- 同 -0004/0009/0010/0011/0012（cp3 切换器批）：裁定停止强推+总包预裁②（待门禁触发随批做），
+  内容保全于分支 89dd33dd8a → 判定已取代，不 requeue（requeue 必再撞 NO-LONG-PARAM-LIST，违预裁②）。
+- 同 -0014（危机闸收编批）：pf_alloc=landA 独占且现 staged（R-001：landA 按原批次配方落地），
+  对症修需改 TDM algo_note=本车道禁写 → 不 requeue 不 purge，移交 landA/总包。
+- **工具事实**：commit_queue.py 无 `purge` 子命令（enqueue/status/drain/requeue/cleanup/health），
+  且 cleanup 明文"dead/ 永不清理"→ 死信原件按设计保留=取证材料，仅登记判定。
+- 积压：pending=0 / processing=0（health 实测，dead 总 939 为历史代际，非本车道范围）。
+
+#### 6.6 .runtime/tmp 临时件
+
+- 多会话并发写同目录窗口实测仍在（16:5x/17:3x 有他会话新 msg 文件）→ 按纪律"并发窗口禁 rm"
+  **跳过删除，登记留档**：tdchain 系已落地批 msg（msg_e1final/msg_e6/msg_final/msg_final2/
+  msg_m5b/msg_m5d、tdchain_* 7 件）待并发窗关闭后由总包/收尾班统一清；msg_m5c.md 对应
+  q-0004 未落地批（内容在分支），保留。
+
+#### 6.7 裁定清单登记
+
+- pending_for_max.md（七项，①R-001 关闭/②⑦预裁落档/⑤Owner 门位登记不催）+
+  req_tdchainJ_01..03（③tombstone 实证/④family_registry 立案书/⑥建表申请）+
+  lanes/tdchainJ_kline_index_intraday_spec.md（⑥规格）；COORDINATION_LEDGER §6 待裁表已回写 3 行。

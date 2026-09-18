@@ -335,8 +335,19 @@ tiers:
         status: draft
         description: 全项目统一资产索引 SSoT——自动发现六大目录下全部文件资产，四维分类（type/layer/status/priority）登记，与 24 个注册表持续对账。蓝图 MOD-INF-026
 
+      - registry_id: REG-STD-FAMILY-001
+        name: 标准↔治理族派生注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/standard_family_registry.yaml
+        format: yaml
+        maintenance: auto （scripts/governance/standards_governance/generate_standard_family_registry.py）
+        counting_rule: entries 条目数 = config/standards.yaml 中带 std_id 的条目数（生成器现算）
+        status: active
+        description: 每条 STD-* 的治理族归属/状态/历史被毙与重考证据计数——#306 红队条款①的可执行判据载体（派生自动档）
+        owned_by: standards_governance
+
       - registry_id: REG-FUNC-DOMAIN-001
         name: 功能域注册表
+        status: active  # 2026-09-18 补（BRK-084：该条目原缺 status 键，是 ROOR 唯一"结构不完整"条目）
         description: 模块/脚本功能域声明的唯一真源。创建新模块/脚本时SSoT门禁检查功能域重叠。
         owner: MOD-INF-037
         physical_path: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
@@ -844,12 +855,29 @@ known_issues:
 # ============================================================
 
 summary:
+  generated_by: scripts/governance/d3_metadata/check_registry_consistency.py --refresh-summary
   total_tiers: 3
-  total_registries: 73  # 2026-09-12 +1：REG-BTB-001 回测对象预注册登记表；+1：REG-RISK-TIER-001 域风险分级与人机门位注册表（#ARCH-310 R5）
-  fully_scanned: 19
-  pending_scan: 5
-  broken: 1
+  total_registries: 75
   by_tier:
-    tier_0_core: 11
-    tier_1_governance: 28  # 2026-09-12 +1：REG-BTB-001
-    tier_2_runtime: 34  # #172 漂移修正：手写 29 → 2026-08-19 实测 33
+    tier_0: 12
+    tier_1: 29
+    tier_2: 34
+  entries_carrying_tier_field:
+    tier_1_governance: 7
+  by_status:
+    active: 65
+    archived: 2
+    deprecated: 1
+    draft: 7
+  by_medium:
+    database: 2
+    ok: 73
+  broken: 0
+  broken_registry_ids: []
+  legacy_manual_claims_replaced:
+    fully_scanned: 19（无机械真源：ROOR 条目 status 值域为 active/draft/archived/deprecated，从不出现 fully_scanned）
+    pending_scan: 5（同上；条目侧亦无 pending_scan 取值）
+    broken: 1（旧值无对应条目；本字段现由 _roor_entry_health 机判）
+    by_tier.tier_0_core: 11（手写值，实测该块 registries 长度=12 → 计数漂移 1，已归零）
+  scan_coverage_note: 跨表一致性扫描覆盖以 registry_consistency_contract.yaml 的 registries 段为准（该册才是扫描面真源，RULE-SSOT）；本 summary
+    不再重复手写扫描计数。

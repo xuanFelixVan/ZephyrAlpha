@@ -40,15 +40,23 @@ status: campaign_running
 - **W2**：总统筹 W1 接线 commit（pipeline_events L1 拦截/归因 emit/crisis_gate_log 注册）→ E4 + E5 + E6 三代理并行（E6 依赖 E1 状态机，W1 验收后放行）。
 - **W3**：E7 + Q1 循环检查与红蓝（连续两次 0 问题才收口）+ Q2 收尾。
 
+## 3.5 事故与处置日志（运行中）
+
+- **R1 速率限制（03:0x）**：W1 三并发触发账户级速率限制，E1/E2 代理中途死亡——但代码建造实际已完成（"限流死亡代理完成论"），总统筹从工作树收编+blob 快照恢复。
+- **R2 serializer 回滚吞件（03:3x-06:2x）**：队列 serializer 落地期间回滚主工作树未提交改动，E1/E2 全部文件+总统筹 pipeline_events/apply 接线被抹。处置=从 .runtime/commit_queue/blobs/（8527 个内容寻址快照）按 dead/*.json 的 blob_sha256 逐文件还原（36 文件全哈希校验通过）；共享注册表类文件回退 HEAD 防连坐。教训入册：**共享工作区+战役期，改完立即入队快照，禁止攒批**。
+- **R3 会话注册静默失败**：session_worktree_start 返回 ok=False(WORKSPACE_DRIFT_BLOCKED) 被忽略+pid0 会话 90s 心跳过期——治本=注册必带 allow_workspace_drift=True + _spawn_heartbeat_daemon 全会话拉满+每次注册后验 get_session FOUND。
+- **R4 admin 建表**：writer 无 c1_backtest CREATE 权限（Code 497），按工厂惯例 admin 角色建表（crisis_gate_log/sim_attribution_daily 两表已建成验证）。
+- **R5 队列拥堵**：flash-nightbuild processing 项占用序列器 45min+，FIFO 20 项——活体租约不抢（6ea82b9cfb 治本行为），我方 items 快照在袋零丢失，等传送带消化。
+
 ## 4. 状态回写（收尾时填）
 
 | 环节 | 状态 | commit hash | 批次 | 备注 |
 |---|---|---|---|---|
-| E1 | ⬜ | | | |
-| E2 | ⬜ | | | |
+| E1 | 🟡已建待落地 | 队列 q-...-0010 | W1 | 23 tests 绿;真实 CH 判读探针 normal/r3 通过;L2/L3 已落地(e1a975b158) |
+| E2 | 🟡已建待落地 | 队列 q-...-0002 | W1 | 9 tests;62 天回放 recon_diff=0.0(73,747.04 对平);daily 模式 6 行已入 CH 表 |
 | E3 | ✅ | 32431d66 | W1 | 13 tests 绿+四次真实端到端（含安全窗重启调度器 02:19）；总统筹独立复核通过；GAP：risk_params/TDM 消费方无 loaded-state 钩子（登记在 checker gaps） |
-| E4 | ⬜ | | | |
-| E5 | ⬜ | | | |
+| E4 | 🟡schema已落地/builder待落地 | 2fd61ca135+队列q-...-0006 | W2 | 13 tests;老蔡对账真实数字完成(方向吻合+游资足迹验证;日期映射 O-1 待 Owner) |
+| E5 | 🟡已建待落地 | 队列 q-...-0005 | W2 | 16 tests;首跑真实演练:W2024 击穿破产地板 min_nav=0.8267 CRITICAL 已告警 |
 | E6 | ⬜ | | | |
 | E7 | ⬜ | | | |
 | Q1 | ⬜ | | | |
