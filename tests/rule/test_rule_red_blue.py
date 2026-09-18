@@ -209,7 +209,10 @@ def _probe_trae005(scratch: Path) -> tuple[str, str]:  # noqa: ARG001  探针签
             [os.sys.executable, str(script)],
             capture_output=True,
             text=True,
-            timeout=120,
+            # 实测该脚本单进程 108s（2026-09-18），-n 2 下被挤压过 120s →
+            # 探针自身超时会把"检得出"误报成 YELLOW（检出率门因此假红）。
+            # 这里放宽的是 I/O 预算，不是判定口径：跑完仍按有无 cycle 判 GREEN/YELLOW。
+            timeout=300,
             cwd=str(_PROJECT_ROOT),
         )
     except subprocess.TimeoutExpired:
@@ -336,7 +339,7 @@ class TestTRAE004SerialSubprocess:
 class TestTRAE005SkipDepgraphSimulation:
     # 探针本身是分钟级 subprocess（实测 diagnose_depgraph.py ≈108s），并发跑时更易越过
     # pyproject 的全局 timeout=120 兜底 → 按既有约定用 marker 覆盖（不改任何断言口径）。
-    @pytest.mark.timeout(300)
+    @pytest.mark.timeout(420)
     def test_skip_depgraph_simulation(self, tmp_path):
         _run_rule_probe("TRAE-005", tmp_path)
         _assert_recorded("TRAE-005")
@@ -367,7 +370,7 @@ class TestTRAE009SQLStringConcat:
 
 
 class TestRedBlueReport:
-    @pytest.mark.timeout(600)
+    @pytest.mark.timeout(900)
     def test_generate_report(self, tmp_path, red_blue_baseline):
         # 自包含：九项红蓝结果由 red_blue_baseline 夹具自行采集（z-testint 治 R-035 顺序依赖），
         # 不再依赖 TestTRAE001-009 是否在同进程先跑过。

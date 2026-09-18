@@ -35782,5 +35782,9 @@ creation_tokens:
   token: newsrc-relay-newsrc-relay-20260918
   created_by: st-ff-newsrc-20260918
   capability: newsrc-relay
+- file: docs/_working/fullflow_campaign/adjudications/req_testint_01.md
+  token: fullflow-test-integrity-adjudication-req-testint-01-20260918
+  created_by: st-ff-testint-20260918
+  capability: fullflow_test_integrity_adjudication
 
 di_seam_exemptions: []

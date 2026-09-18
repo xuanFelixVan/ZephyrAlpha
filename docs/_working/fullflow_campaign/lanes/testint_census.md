@@ -13,7 +13,7 @@ completes_when: 全仓测试自包含性普查完成且确证件全部修复或�
 
 扫描 `tests/**/test_*.py` **3507** 件，
 七类非自包含形态共命中 **1864** 条线索，其中
-**确证不自包含（单跑实测失败）= 0 件**（另 1 件为账本 R-035 已实锤并本车道已修的 `tests/rule/test_rule_red_blue.py`）；**单跑实测判自包含（= 模式命中被推翻）= 92 件**；无法判定 0 件。
+**确证不自包含（单跑实测失败）= 0 件**（另 1 件为账本 R-035 已实锤并本车道已修的 `tests/rule/test_rule_red_blue.py`）；**单跑实测判自包含（= 模式命中被推翻）= 132 件**；无法判定 0 件。
 
 ## 1. 分档口径（判据，不是形容词）
 
@@ -34,7 +34,7 @@ completes_when: 全仓测试自包含性普查完成且确证件全部修复或�
 |---|---|---|---|---|
 | 形1 模块级可变累积（跨测试写→读） | 1 | 1 | 4 | 跨测试副作用累积——**最危险**，并行/分片必爆红 |
 | 形3 顺序敏感命名/注释 | 383 | 194 | 16 | 命名含数字/first/again 或注释写顺序；多数只是用例名，需实测才判 |
-| 形4 真实时钟作窗口条件 | 363 | 149 | 88 | `now()` 出现在窗口语义行——须区分「now 只作时间戳」（无害）与「now 作过滤窗」（跨日漂移假红） |
+| 形4 真实时钟作窗口条件 | 363 | 149 | 100 | `now()` 出现在窗口语义行——须区分「now 只作时间戳」（无害）与「now 作过滤窗」（跨日漂移假红） |
 | 形5 读外部产物而本地不建不删 | 299 | 105 | 16 | 读生产文件/表而自身不建不删——低置信，多为读测试内构造的假数据 |
 | 形6 就地 mutate 生产单例 | 1 | 1 | 0 | 就地 mutate 全进程单例 |
 | 形4b 真实时钟仅作时间戳（判无害） | 817 | 300 | — | 只作时间戳（本表判无害，不计缺陷） |
@@ -76,7 +76,7 @@ completes_when: 全仓测试自包含性普查完成且确证件全部修复或�
 
 ## 6. 单跑实证明细（T3）
 
-实证文件数 = **23**，nodeid 单跑次数 = **92**。
+实证文件数 = **33**，nodeid 单跑次数 = **132**。
 
 | node | 单跑 | 整文件 | 判定 |
 |---|---|---|---|
@@ -172,6 +172,46 @@ completes_when: 全仓测试自包含性普查完成且确证件全部修复或�
 | `tests/escalation/test_owner_absence_escalation.py::TestCheckAbsence::test_present_within_warning_timeout` | rc=0 | rc=0 | 自包含 |
 | `tests/escalation/test_owner_absence_escalation.py::TestCheckAbsence::test_unresponsive_after_warning_timeout` | rc=0 | rc=0 | 自包含 |
 | `tests/escalation/test_owner_absence_escalation.py::TestCheckAbsence::test_absent_after_critical_timeout` | rc=0 | rc=0 | 自包含 |
+| `tests/gate/test_gate_override.py::TestOverrideRecord::test_instantiation_defaults` | rc=0 | rc=0 | 自包含 |
+| `tests/gate/test_gate_override.py::TestOverrideRecord::test_is_expired_false` | rc=0 | rc=0 | 自包含 |
+| `tests/gate/test_gate_override.py::TestOverrideRecord::test_is_expired_true` | rc=0 | rc=0 | 自包含 |
+| `tests/gate/test_gate_override.py::TestOverrideRecord::test_custom_created_at` | rc=0 | rc=0 | 自包含 |
+| `tests/risk/test_l04_risk_management.py::TestEvaluateStopLoss::test_time_based_triggered` | rc=0 | rc=0 | 自包含 |
+| `tests/risk/test_l04_risk_management.py::TestRiskReport::test_empty_checks_no_failures` | rc=0 | rc=0 | 自包含 |
+| `tests/risk/test_l04_risk_management.py::TestRiskReport::test_failed_checks_property` | rc=0 | rc=0 | 自包含 |
+| `tests/risk/test_l04_risk_management.py::TestRiskCheckResult::test_frozen_immutability` | rc=0 | rc=0 | 自包含 |
+| `tests/skill/test_skill_freshness.py::TestCompute::test_old_timestamp_low_score` | rc=0 | rc=0 | 自包含 |
+| `tests/skill/test_skill_freshness.py::TestCompute::test_very_old_timestamp_zero` | rc=0 | rc=0 | 自包含 |
+| `tests/skill/test_skill_freshness.py::TestCompute::test_half_life_approximate` | rc=0 | rc=0 | 自包含 |
+| `tests/skill/test_skill_freshness.py::TestCurrentState::test_old_registered_skill` | rc=0 | rc=0 | 自包含 |
+| `tests/frontend/test_alert_center.py::TestStats::test_empty_records` | rc=0 | rc=0 | 自包含 |
+| `tests/frontend/test_alert_center.py::TestStats::test_active_by_severity` | rc=0 | rc=0 | 自包含 |
+| `tests/frontend/test_alert_center.py::TestStats::test_mttr_known_answer` | rc=0 | rc=0 | 自包含 |
+| `tests/frontend/test_alert_center.py::TestStats::test_ack_and_false_positive_rate` | rc=0 | rc=0 | 自包含 |
+| `tests/context/test_context_health_score.py::TestHealthScoreReport::test_creation` | rc=0 | rc=0 | 自包含 |
+| `tests/context/test_context_health_score.py::TestContextHealthScore::test_empty_metrics_returns_healthy` | rc=0 | rc=0 | 自包含 |
+| `tests/context/test_context_health_score.py::TestContextHealthScore::test_high_scores_healthy` | rc=0 | rc=0 | 自包含 |
+| `tests/context/test_context_health_score.py::TestContextHealthScore::test_medium_scores_degraded` | rc=0 | rc=0 | 自包含 |
+| `tests/regime/features/test_s2_capitulation_score.py::TestDecayWeighting::test_single_day_not_sticky_decays` | rc=0 | rc=0 | 自包含 |
+| `tests/regime/features/test_s2_capitulation_score.py::TestDecayWeighting::test_single_day_numeric_boundary` | rc=0 | rc=0 | 自包含 |
+| `tests/regime/features/test_s2_capitulation_score.py::TestDecayWeighting::test_cluster_scores_higher_than_single` | rc=0 | rc=0 | 自包含 |
+| `tests/regime/features/test_s2_capitulation_score.py::TestDecayWeighting::test_halflife_stage_parameterization` | rc=0 | rc=0 | 自包含 |
+| `tests/audit/drift_integrity/test_value_added_baseline.py::TestValueAddedBaselineInstantiation::test_default_params` | rc=0 | rc=0 | 自包含 |
+| `tests/audit/drift_integrity/test_value_added_baseline.py::TestValueAddedBaselineInstantiation::test_custom_params` | rc=0 | rc=0 | 自包含 |
+| `tests/audit/drift_integrity/test_value_added_baseline.py::TestValueAddedBaselineInstantiation::test_is_dataclass` | rc=0 | rc=0 | 自包含 |
+| `tests/audit/drift_integrity/test_value_added_baseline.py::TestRoi::test_positive_roi` | rc=0 | rc=0 | 自包含 |
+| `tests/autonomy/test_task_system_red_team.py::test_00_imports` | rc=0 | rc=0 | 自包含 |
+| `tests/autonomy/test_task_system_red_team.py::test_01_taskcard_minimal` | rc=0 | rc=0 | 自包含 |
+| `tests/autonomy/test_task_system_red_team.py::test_01_taskcard_full` | rc=0 | rc=0 | 自包含 |
+| `tests/autonomy/test_task_system_red_team.py::test_01_taskcard_extra_forbid` | rc=0 | rc=0 | 自包含 |
+| `tests/infrastructure/mcp/test_mcp_red_team.py::test_00_imports_all_mcp_modules` | rc=0 | rc=0 | 自包含 |
+| `tests/infrastructure/mcp/test_mcp_red_team.py::test_01_gateway_initializes_all_routes` | rc=0 | rc=0 | 自包含 |
+| `tests/infrastructure/mcp/test_mcp_red_team.py::test_02_gateway_registered_tools` | rc=0 | rc=0 | 自包含 |
+| `tests/infrastructure/mcp/test_mcp_red_team.py::test_03_initialize` | rc=0 | rc=0 | 自包含 |
+| `tests/governance/commit_gates/test_bare_sql_gate.py::TestGateSpecFields::test_is_gate_spec` | rc=0 | rc=0 | 自包含 |
+| `tests/governance/commit_gates/test_bare_sql_gate.py::TestGateSpecFields::test_gate_id` | rc=0 | rc=0 | 自包含 |
+| `tests/governance/commit_gates/test_bare_sql_gate.py::TestGateSpecFields::test_priority` | rc=0 | rc=0 | 自包含 |
+| `tests/governance/commit_gates/test_bare_sql_gate.py::TestSqlPattern::test_select_from_double_quote` | rc=0 | rc=0 | 自包含 |
 
 ## 7. 本车道另案（仪器诚实性附注，非顺序依赖）
 
@@ -183,10 +223,16 @@ completes_when: 全仓测试自包含性普查完成且确证件全部修复或�
 - **A2 探针耗时=CI flake 源**：TRAE-005 的 `diagnose_depgraph.py` 单进程实测 **108s**
   （`real 1m48.0s`，2026-09-18），而 `pyproject.toml` 全局 `timeout = 120` → 有负载时该用例
   直接被 pytest-timeout 打死（本车道首轮实测即复现：`+ Timeout +` traceback 打在 `subprocess.run` 上）。
-  已按仓库既有约定加 `@pytest.mark.timeout(300/600)`，**未改任何断言**。
+  本车道先按 pyproject 既有约定加 `@pytest.mark.timeout` 覆盖用例级兜底，**未改任何断言**；剩下的内部探针超时问题见下条 A4。
 - **A3 原 `_probe_trae005` 等价体在脚本缺失时会记两条 RED**（旧代码 `if not script.exists(): _record(...)`
   后无 `return`，随后 `subprocess.run` 抛 `FileNotFoundError` 再记一条）。该分支当前不可达
   （脚本在盘，已实测运行），本车道补 `return` 收敛为一条证据，不影响判定方向。
+- **A4 并行实测（本车道第二笔修）**：`pytest tests/rule/test_rule_red_blue.py -n 2` 修前 
+  `1 failed, 9 passed`（136.5s）——**报告测试自包含已生效**（`total=9` 而非 0），
+  但 TRAE-005 探针在 `-n 2` 下被挤过内部 `subprocess.run(timeout=120)` → YELLOW → 
+  `detection_rate=0.8889 < 0.95` 假红。放宽的是 **I/O 预算**（120→300s，用例级 marker 420/900s），
+  **判定口径未动**（跑完仍按有无 cycle 判 GREEN/YELLOW，`>= 9` / `>= 0.95` 两处断言原样）。
+  修后 `-n 2` = `10 passed`（224.6s，即探针确实跑了 >120s，反证修前的红是环境性假红）。
 
 ## 8. 复跑命令（Max 验真用）
 

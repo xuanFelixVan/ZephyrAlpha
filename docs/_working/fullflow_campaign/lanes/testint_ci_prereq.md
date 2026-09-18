@@ -31,8 +31,11 @@ completes_when: CI 从 collect-only 切到真跑（含并行）的前置条件�
 - **H3 · 单条用例的全局超时是 120s**（`pyproject.toml` `[tool.pytest.ini_options] timeout = 120`）。
   实测已有一件**红蓝仪器**单跑需 122s（`tests/rule/test_rule_red_blue.py`，其 TRAE-005 探针跑
   `scripts/governance/d5_architecture/diagnose_depgraph.py` 单进程实测 108s）→ 本车道已按仓库既有约定
-  加 `@pytest.mark.timeout(300/600)`。**其余目录里同类"分钟级 subprocess 探针"未穷举**，
-  切真跑前须先量出各目录最慢用例（命令见 §3 的 M1），否则 CI 会把这些用例判成超时红。
+  加 `@pytest.mark.timeout(420/900)`。**并行下的二次实测更硬**：`-n 2` 修前 `1 failed, 9 passed`
+  （探针被挤过内部 `subprocess.run(timeout=120)` → YELLOW → `detection_rate=0.8889<0.95` **假红**），
+  把 I/O 预算 120→300s 后 `-n 2` = `10 passed`（224.6s）。
+  **其余目录里同类"分钟级 subprocess 探针"未穷举**，切真跑前须先量出各目录最慢用例（命令见 §3 的 M1），
+  否则 CI 会把这些用例判成超时红。
 - **H4 · 测试写生产路径的欠账未清**：`tests/**` 里 244 件提及 `data/`（粗口径 grep），
   宪法 §9.6/手册 §6 要求测试输出一律 `tmp_path`。真跑会把这些写盘行为放大成
   "CI 改坏生产数据 / 因数据在而时好时坏"。→ 先做 §3 的 M2 巡检，命中件进"测试隔离欠账"清单。
