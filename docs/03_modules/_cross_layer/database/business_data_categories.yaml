@@ -3040,6 +3040,73 @@
   data_source: [akshare]
   blueprint: null
 
+# --- D4 物理另类·油价链三件+F13（2026-09-18 夜班 st-datapack-20260918，altdata_line D4 波2）---
+# 两包交界面：产业链分包 06 传导链引擎 N1a/N1b/N5 节点挂价绑定消费（P2 解锁件）
+
+- category_id: market_ndrc_fuel_price
+  name: "发改委成品油调价(汽柴油最高零售价元/吨+调价幅度,公告日/生效日双PIT轴,2000-06起)"
+  engine: clickhouse
+  database: c1_market
+  table: ndrc_fuel_price
+  schema_file: schemas/categories/market/market_ndrc_fuel_price.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_futures_warehouse_receipt
+  name: "交易所仓单日报(品种×交割仓库明细+小计,CZCE日更+SHFE归档回填;DCE/GFEX源坏未接入)"
+  engine: clickhouse
+  database: c1_market
+  table: futures_warehouse_receipt
+  schema_file: schemas/categories/market/market_futures_warehouse_receipt.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_road_freight_index
+  name: "中国公路物流运价周指数(中物联×林安,总指数+整车+零担轻货/重货,2015-09起;原文快照进G盘冷库)"
+  engine: clickhouse
+  database: c1_market
+  table: road_freight_index
+  schema_file: schemas/categories/market/market_road_freight_index.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: weekly
+  data_source: [chinawuliu_web]
+  blueprint: null
+
+- category_id: market_agri_wholesale_index
+  name: "农业农村部批发价格200指数(农产品200+菜篮子200,日度,2005-09起;分品种API源坏待恢复)"
+  engine: clickhouse
+  database: c1_market
+  table: agri_wholesale_index
+  schema_file: schemas/categories/market/market_agri_wholesale_index.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare_alt]
+  blueprint: null
+
 
 - category_id: research_report
   name: "券商研报主表（标题+元数据+PDF链接，每晚20:30日更；全文不留DB=版权边界，全文走 c4_pdf_cache）"
@@ -3059,3 +3126,104 @@
   # 消费方=MOD-BT-193 graph_enrich_staging 研报源适配器（线C 研报喂链）；
   # 此前无品类条目、SQL 以字面量承载（同 pdf_forecast_extracted 2026-09-17 先例），
   # 2026-09-18 st-igalpha2-20260918 补登记，TABLE-NAME-REGISTRY 治本。
+
+
+# --- D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918，altdata_line 09 清单 D3）---
+# 月频宽表五张（report_date=统计期月末事实锚）+ 宏观日频宽表（trade_date）；
+# 源=东财 datacenter fresh 口径（金十系 2025-10 起源端退役实测留痕于 schema docstring）
+
+- category_id: macro_price_gauge
+  name: "价格总量gaug宽表(CPI当月指数/同比/环比/累计+PPI当月指数/同比/累计,东财datacenter口径,月频)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_price_gauge
+  schema_file: schemas/categories/macro/macro_price_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_pmi_gauge
+  name: "景气gaug宽表(官方制造业/非制造业PMI+财新制造业/服务业PMI,月频;财新列为金十历史段2012-2025.09)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_pmi_gauge
+  schema_file: schemas/categories/macro/macro_pmi_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_credit_money
+  name: "金融信用与货币供应宽表(社融增量/社融口径贷款/新增人民币贷款当月累计/M0M1M2存量+同比,月频,亿元)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_credit_money
+  schema_file: schemas/categories/macro/macro_credit_money.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_activity_gauge
+  name: "实体活动宽表(工业增加值同比/社零当月累计/固定资产投资累计/城镇调查失业率,月频)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_activity_gauge
+  schema_file: schemas/categories/macro/macro_activity_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_trade_gauge
+  name: "外需海关进出口宽表(当月/累计出口进口额亿美元+同比环比,源千美元换算亿美元,月频)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_trade_gauge
+  schema_file: schemas/categories/macro/macro_trade_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_daily_gauge
+  name: "宏观高频日度宽表(六大电库存日耗可用天数历史段2016-2019+生意社商品/能源/建材指数日更)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_daily_gauge
+  schema_file: schemas/categories/macro/macro_daily_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null

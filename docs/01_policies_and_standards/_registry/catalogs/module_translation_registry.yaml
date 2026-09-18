@@ -15424,11 +15424,11 @@ entries:
   plain_zh: 架构守卫·导入 linter包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
 - module_path: src/zephyr/governance/financial_governance/budget_enforcement.py
   domain_id: D_GOV_REPAIR
-  name_zh: 延迟导入 BudgetEngine 避免循环依赖."""
-  name_en: Budget Enforcement
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: financial 治理的强制执行跟踪：记下强制执行的每次变化，情况不对就提醒，防止financial 治理不知不觉出格。
+  name_zh: "延迟导入 BudgetEngine 避免循环依赖.\"\"\""
+  name_en: "Budget Enforcement"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "financial 治理的强制执行跟踪：记下强制执行的每次变化，情况不对就提醒，防止financial 治理不知不觉出格。"
   responsibility_layer: governance
 - module_path: tests/utils/test_cost_budget_shared.py
   domain_id: ''
@@ -55289,6 +55289,14 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "扫描全仓缺业务域标记的源码文件，用兄弟文件投票、路径归属图和依赖库证据三级推断出域名，安全批量回填到头注释里"
+  responsibility_layer: governance
+- module_path: tests/governance/rule_bridge/test_commit_preflight_mass_deletion_message.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "提交预检净删标记透传测试"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用假门禁做耳朵，验证预检会把提交信息原样递给净删门禁：带 allow-mass-deletion 标记或普通信息时门禁都能看到，防止预检再次失明。"
   responsibility_layer: governance
 
 battle_map_steps:

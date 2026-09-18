@@ -63,3 +63,65 @@ tables:
     date_col: event_date
     max_lag_days: 35
     past_only: true
+
+  # --- D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918，altdata_line D3 波1）---
+  # 月频五表：report_date=统计期月末。阈值按"下次公布落表前的最大空窗"折档：
+  #   PMI 月末次月初公布（空窗≤35d）/ 价格·金融·外贸 次月 10-13 日公布（≤45d）/
+  #   实体活动（工增 15 日、固投/失业率最晚 20 日）取 55d。
+  - table: c1_market.macro_price_gauge
+    date_col: report_date
+    max_lag_days: 45
+    past_only: true
+
+  - table: c1_market.macro_pmi_gauge
+    date_col: report_date
+    max_lag_days: 35
+    past_only: true
+
+  - table: c1_market.macro_credit_money
+    date_col: report_date
+    max_lag_days: 45
+    past_only: true
+    # 注：表内社融列（macro_china_shrzgm）源端 2026-04 起滞更，整表 max(report_date)
+    # 由货币/信贷列维持——源端恢复前本阈值不承担社融列单独停更检测。
+
+  - table: c1_market.macro_activity_gauge
+    date_col: report_date
+    max_lag_days: 55
+    past_only: true
+
+  - table: c1_market.macro_trade_gauge
+    date_col: report_date
+    max_lag_days: 45
+    past_only: true
+
+  # --- 宏观日频表：生意社三指数日更（T-1），按日频 5 天档；六大电列为历史段不参与活性 ---
+  - table: c1_market.macro_daily_gauge
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+
+  # --- D4 物理另类·油价链三件+F13（2026-09-18 夜班 st-datapack-20260918，altdata_line D4 波2）---
+  # E8 发改委调价：调价窗口=每 10 个工作日（跨假期最长 ~17 历日），取 25 天档
+  - table: c1_market.ndrc_fuel_price
+    date_col: announce_date
+    max_lag_days: 25
+    past_only: true
+
+  # --- 交易所仓单（CZCE 日更维持 max(trade_date)；SHFE 近端 404 缺口由 CZCE 掩护，归档段不算活） ---
+  - table: c1_market.futures_warehouse_receipt
+    date_col: trade_date
+    max_lag_days: 10
+    past_only: true
+
+  # --- 公路运价周指数（周频节奏；源端 2026-08-21 后周报暂停仅月报在发——实测现实，阈值放宽至月度档） ---
+  - table: c1_market.road_freight_index
+    date_col: trade_date
+    max_lag_days: 35
+    past_only: true
+
+  # --- F13 农产品批发价格 200 指数（日更 T-1，日频 5 天档） ---
+  - table: c1_market.agri_wholesale_index
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true

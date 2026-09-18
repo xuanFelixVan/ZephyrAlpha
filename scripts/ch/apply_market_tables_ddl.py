@@ -425,6 +425,22 @@ from schemas.categories.judgment.judgment_plan_verification import JUDGMENT_PLAN
 # J5 央行议息日历（2026-09-18 夜班，st-datapack-20260918，altdata_line D1 波1）：
 # 11 央行×决议值结构化数据集，DDL 真源 schemas/categories/market/market_rate_decision_calendar.py
 from schemas.categories.market.market_rate_decision_calendar import RATE_DECISION_CALENDAR_DDL
+# D3 宏观高频第一梯队六表（2026-09-18 夜班，st-datapack-20260918，altdata_line D3）：
+# 价格/景气/信用货币/实体活动/外需五张月频宽表 + 宏观日频宽表，
+# DDL 真源 schemas/categories/macro/（月度源=东财 datacenter fresh 口径，金十系 2025-10 起源端退役）
+from schemas.categories.macro.macro_price_gauge import MACRO_PRICE_GAUGE_DDL
+from schemas.categories.macro.macro_pmi_gauge import MACRO_PMI_GAUGE_DDL
+from schemas.categories.macro.macro_credit_money import MACRO_CREDIT_MONEY_DDL
+from schemas.categories.macro.macro_activity_gauge import MACRO_ACTIVITY_GAUGE_DDL
+from schemas.categories.macro.macro_trade_gauge import MACRO_TRADE_GAUGE_DDL
+from schemas.categories.macro.macro_daily_gauge import MACRO_DAILY_GAUGE_DDL
+# D4 物理另类·油价链三件+F13（2026-09-18 夜班，st-datapack-20260918，altdata_line D4 波2）：
+# E8 发改委成品油调价/交易所仓单/公路运价指数/农产品批发价格指数，
+# DDL 真源 schemas/categories/market/（两包交界面：产业链分包 06 传导链引擎消费）
+from schemas.categories.market.market_ndrc_fuel_price import NDRC_FUEL_PRICE_DDL
+from schemas.categories.market.market_futures_warehouse_receipt import FUTURES_WAREHOUSE_RECEIPT_DDL
+from schemas.categories.market.market_road_freight_index import ROAD_FREIGHT_INDEX_DDL
+from schemas.categories.market.market_agri_wholesale_index import AGRI_WHOLESALE_INDEX_DDL
 
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
@@ -512,6 +528,18 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.judgment_plan_verification", JUDGMENT_PLAN_VERIFICATION_DDL),
     # J5 央行议息日历（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1）
     ("c1_market.rate_decision_calendar", RATE_DECISION_CALENDAR_DDL),
+    # D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918，altdata_line D3）
+    ("c1_market.macro_price_gauge", MACRO_PRICE_GAUGE_DDL),
+    ("c1_market.macro_pmi_gauge", MACRO_PMI_GAUGE_DDL),
+    ("c1_market.macro_credit_money", MACRO_CREDIT_MONEY_DDL),
+    ("c1_market.macro_activity_gauge", MACRO_ACTIVITY_GAUGE_DDL),
+    ("c1_market.macro_trade_gauge", MACRO_TRADE_GAUGE_DDL),
+    ("c1_market.macro_daily_gauge", MACRO_DAILY_GAUGE_DDL),
+    # D4 物理另类·油价链三件+F13（2026-09-18 夜班 st-datapack-20260918，altdata_line D4）
+    ("c1_market.ndrc_fuel_price", NDRC_FUEL_PRICE_DDL),
+    ("c1_market.futures_warehouse_receipt", FUTURES_WAREHOUSE_RECEIPT_DDL),
+    ("c1_market.road_freight_index", ROAD_FREIGHT_INDEX_DDL),
+    ("c1_market.agri_wholesale_index", AGRI_WHOLESALE_INDEX_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -1083,6 +1111,18 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "judgment_plan_verification": "MergeTree",
     # J5 央行议息日历（2026-09-18 夜班 st-datapack-20260918）：低频决议按 (bank_code, decision_date) 幂等
     "rate_decision_calendar": "ReplacingMergeTree",
+    # D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918）：月频/日频宽表按期次锚同键替换幂等
+    "macro_price_gauge": "ReplacingMergeTree",
+    "macro_pmi_gauge": "ReplacingMergeTree",
+    "macro_credit_money": "ReplacingMergeTree",
+    "macro_activity_gauge": "ReplacingMergeTree",
+    "macro_trade_gauge": "ReplacingMergeTree",
+    "macro_daily_gauge": "ReplacingMergeTree",
+    # D4 物理另类·油价链三件+F13（2026-09-18 夜班 st-datapack-20260918）：低频序列同键替换幂等
+    "ndrc_fuel_price": "ReplacingMergeTree",
+    "futures_warehouse_receipt": "ReplacingMergeTree",
+    "road_freight_index": "ReplacingMergeTree",
+    "agri_wholesale_index": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

@@ -186,6 +186,13 @@ _TBL_SHARE_UNLOCK = get_registry().table("fund_share_unlock")
 _TBL_SHAREHOLDER_COUNT = get_registry().table("fund_shareholder_count")
 # J5 央行议息日历（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1）
 _TBL_RATE_DECISION_CALENDAR = get_registry().table("market_rate_decision_calendar")
+# D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918，altdata_line D3）
+_TBL_MACRO_PRICE_GAUGE = get_registry().table("macro_price_gauge")
+_TBL_MACRO_PMI_GAUGE = get_registry().table("macro_pmi_gauge")
+_TBL_MACRO_CREDIT_MONEY = get_registry().table("macro_credit_money")
+_TBL_MACRO_ACTIVITY_GAUGE = get_registry().table("macro_activity_gauge")
+_TBL_MACRO_TRADE_GAUGE = get_registry().table("macro_trade_gauge")
+_TBL_MACRO_DAILY_GAUGE = get_registry().table("macro_daily_gauge")
 _TBL_STOCK_INDICATOR = get_registry().table("market_stock_indicator")
 _TBL_STOCK_LIST = get_registry().table("market_stock_list")
 _TBL_ST_STOCK_LIST = get_registry().table("market_st_stock_list")
@@ -308,6 +315,14 @@ _AKSHARE_CAPABILITIES = frozenset(
         "shareholder_count",
         "rate_decision_calendar",
         "share_unlock_forward",
+        # D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918，altdata_line D3）：
+        #   价格/景气/信用货币/实体活动/外需五张月频宽表 + 宏观日频宽表（东财 fresh 口径）
+        "macro_price_gauge",
+        "macro_pmi_gauge",
+        "macro_credit_money",
+        "macro_activity_gauge",
+        "macro_trade_gauge",
+        "macro_daily_gauge",
         "stock_news_em",
         "news_cctv",
         "news_economic_baidu",
@@ -412,6 +427,76 @@ def safe_int(v) -> int | None:
         return int(f)
     except (ValueError, TypeError):
         return None
+
+
+# ==== D3 宏观高频月度/日度宽表共用助手（2026-09-18 夜班 st-datapack-20260918）====
+
+
+def _macro_eom(year: int, month: int) -> str:
+    """年月 → 该月月末 ISO 日期串（月度宏观序列统计期锚）。"""
+    last_day = calendar.monthrange(year, month)[1]
+    return f"{year:04d}-{month:02d}-{last_day:02d}"
+
+
+def _macro_month_key(raw) -> str:
+    """多源月份键归一 → 月末 ISO 日期串；无法解析返回 ''。
+
+    覆盖 D3 六表各源四种月份格式：
+      '2026年08月份'（东财 wide）/ '2025年6月' / '202604'（东财 shrzgm/失业率）/
+      '2026.8'（东财 supply_of_money）。
+    """
+    s = str(raw).strip() if raw is not None else ""
+    m = re.match(r"^(\d{4})年(\d{1,2})月", s)
+    if m:
+        return _macro_eom(int(m.group(1)), int(m.group(2)))
+    m = re.match(r"^(\d{4})[.\-](\d{1,2})$", s)
+    if m:
+        return _macro_eom(int(m.group(1)), int(m.group(2)))
+    if re.match(r"^\d{6}$", s):
+        return _macro_eom(int(s[:4]), int(s[4:]))
+    return ""
+
+
+def _macro_publish_to_stat_eom(raw) -> str:
+    """金十公布日 → 统计期月末 ISO 日期串（月度指标次月公布：统计月=公布月上月）；空返回 ''。
+
+    例：财新制造业 PMI 2025-09-01 公布 → 统计月 2025-08 → '2025-08-31'。
+    """
+    s = str(raw).strip() if raw is not None else ""
+    m = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})", s)
+    if not m:
+        return ""
+    year, month = int(m.group(1)), int(m.group(2)) - 1
+    if month == 0:
+        year, month = year - 1, 12
+    return _macro_eom(year, month)
+
+
+def _macro_slot(merged: dict, key: str, n_cols: int) -> list:
+    """按期次锚取（或建）宽行值槽：merged[key] 为 n_cols 长的 None 列表。"""
+    row = merged.get(key)
+    if row is None:
+        row = [None] * n_cols
+        merged[key] = row
+    return row
+
+
+def _macro_wan_usd(v) -> float | None:
+    """海关进出口源值（千美元）→ 亿美元（/100000）；缺失/非法返回 None。
+
+    单位判定依据（2026-09-18 双点回代核验）：2026-08 当月出口源值 401440956.924
+    ÷1e5=4014.41 亿美元（$401.4B），同比 25.0% 回代 2025-08 出口 3218 亿美元吻合、
+    累计同比 19.3% 回代 Jan-Aug 2025 2.44 万亿美元吻合——判定源值单位=千美元。
+    """
+    f = safe_float_strict(v)
+    if f is None:
+        return None
+    return round(f / 100000, 4)
+
+
+def _macro_emit_rows(merged: dict, fixed_tail: tuple) -> list[tuple]:
+    """merged 值槽 → (key, *values, *fixed_tail) 行集，按键排序稳定输出。"""
+    return [(key, *merged[key], *fixed_tail) for key in sorted(merged)]
 
 
 def _cn_code_to_symbol(code: str) -> str:
@@ -711,6 +796,13 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("shareholder_count", supports_symbols_null=True),
             CapabilityContract("rate_decision_calendar", supports_symbols_null=True),
             CapabilityContract("share_unlock_forward", supports_symbols_null=True),
+            # 2026-09-18 夜班 D3 宏观高频第一梯队六表（月度/日度总量序列，无 symbols 概念）
+            CapabilityContract("macro_price_gauge", supports_symbols_null=True),
+            CapabilityContract("macro_pmi_gauge", supports_symbols_null=True),
+            CapabilityContract("macro_credit_money", supports_symbols_null=True),
+            CapabilityContract("macro_activity_gauge", supports_symbols_null=True),
+            CapabilityContract("macro_trade_gauge", supports_symbols_null=True),
+            CapabilityContract("macro_daily_gauge", supports_symbols_null=True),
             CapabilityContract("audit_opinion", supports_symbols_null=True),
             CapabilityContract("equity_pledge_summary", supports_symbols_null=True),
             # 新闻数据
@@ -2335,6 +2427,320 @@ class AkshareIngestProvider(IngestProviderBase):
             rows=rows,
             last_key=last_key,
             elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- 6e. D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918，altdata_line D3）----
+    # 供给现实：金十系接口 2025-10 起源端退役（尾部 nan 今值+预约行，实测留痕），
+    # 梯队主源选东财 datacenter fresh 口径；源端退役的历史段列（财新 PMI/六大电）保留回测价值。
+
+    def _fetch_macro_price_gauge(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """价格总 gaug 宽表（CPI/PPI，东财口径全量），写入 c1_market.macro_price_gauge。
+
+        macro_china_cpi（2008-）+ macro_china_ppi（2006-）按统计期月末合并；
+        日更幂等（ReplacingMergeTree 同键替换）。PIT 双轴: report_date=统计期月末; ingest_ts=采集。
+        """
+        import akshare as ak
+
+        table = _TBL_MACRO_PRICE_GAUGE
+        columns = ["report_date", "cpi_index", "cpi_yoy", "cpi_mom", "cpi_cum",
+                   "ppi_index", "ppi_yoy", "ppi_cum", "data_source", "quality_flag"]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        # 值列位序: 0=cpi_index 1=cpi_yoy 2=cpi_mom 3=cpi_cum 4=ppi_index 5=ppi_yoy 6=ppi_cum
+        merged: dict[str, list] = {}
+        errors: list[str] = []
+        for fn_name, col_map in (
+            ("macro_china_cpi", {"全国-当月": 0, "全国-同比增长": 1, "全国-环比增长": 2, "全国-累计": 3}),
+            ("macro_china_ppi", {"当月": 4, "当月同比增长": 5, "累计": 6}),
+        ):
+            try:
+                df = self._call_with_policy(getattr(ak, fn_name), policy)
+            except Exception as e:  # noqa: BLE001 — 单源失败不拖垮其余价格序列
+                errors.append(f"{fn_name}:{str(e)[:80]}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                eom = _macro_month_key(row.get("月份"))
+                if not eom:
+                    continue
+                slot = _macro_slot(merged, eom, 7)
+                for src_col, idx in col_map.items():
+                    slot[idx] = safe_float_strict(row.get(src_col))
+
+        error = "; ".join(errors) if errors else None
+        rows = _macro_emit_rows(merged, ("akshare", 1))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0, error=error,
+        )
+
+    def _fetch_macro_pmi_gauge(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """景气 gaug 宽表（官方制造业/非制造业 PMI + 财新双 PMI），写入 c1_market.macro_pmi_gauge。
+
+        macro_china_pmi（东财 wide，fresh）为活性主序列；财新两列走金十接口
+        （历史段 2012-2025.09，源端 2025-10 起退役，公布日换算统计月=公布月上月）。
+        """
+        import akshare as ak
+
+        table = _TBL_MACRO_PMI_GAUGE
+        columns = ["report_date", "pmi_mfg", "pmi_mfg_yoy", "pmi_nonmfg", "pmi_nonmfg_yoy",
+                   "caixin_mfg", "caixin_services", "data_source", "quality_flag"]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        # 值列位序: 0=pmi_mfg 1=pmi_mfg_yoy 2=pmi_nonmfg 3=pmi_nonmfg_yoy 4=caixin_mfg 5=caixin_services
+        merged: dict[str, list] = {}
+        errors: list[str] = []
+        jobs = (
+            ("macro_china_pmi", "月份",
+             {"制造业-指数": 0, "制造业-同比增长": 1, "非制造业-指数": 2, "非制造业-同比增长": 3}),
+            ("macro_china_cx_pmi_yearly", "日期", {"今值": 4}),
+            ("macro_china_cx_services_pmi_yearly", "日期", {"今值": 5}),
+        )
+        for fn_name, key_col, col_map in jobs:
+            try:
+                df = self._call_with_policy(getattr(ak, fn_name), policy)
+            except Exception as e:  # noqa: BLE001 — 单源失败不拖垮其余景气序列
+                errors.append(f"{fn_name}:{str(e)[:80]}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                # 东财 wide 用统计月；金十用公布日换算统计月（次月公布口径）
+                eom = _macro_month_key(row.get(key_col)) if key_col == "月份" else _macro_publish_to_stat_eom(row.get(key_col))
+                if not eom:
+                    continue
+                slot = _macro_slot(merged, eom, 6)
+                for src_col, idx in col_map.items():
+                    slot[idx] = safe_float_strict(row.get(src_col))
+
+        error = "; ".join(errors) if errors else None
+        rows = _macro_emit_rows(merged, ("akshare", 1))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0, error=error,
+        )
+
+    def _fetch_macro_credit_money(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """金融信用与货币供应宽表（社融/新增信贷/M0M1M2），写入 c1_market.macro_credit_money。
+
+        macro_china_shrzgm（社融，源端 2026-04 起滞更观察中）+ macro_china_new_financial_credit
+        （新增信贷，fresh）+ macro_china_supply_of_money（货币供应，深至 1978，fresh）按月末合并。
+        """
+        import akshare as ak
+
+        table = _TBL_MACRO_CREDIT_MONEY
+        columns = ["report_date", "sf_increment", "sf_rmb_loans", "new_rmb_loans", "new_rmb_loans_cum",
+                   "m0", "m0_yoy", "m1", "m1_yoy", "m2", "m2_yoy", "data_source", "quality_flag"]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        # 值列位序: 0=sf_increment 1=sf_rmb_loans 2=new_rmb_loans 3=new_rmb_loans_cum
+        #           4=m0 5=m0_yoy 6=m1 7=m1_yoy 8=m2 9=m2_yoy
+        merged: dict[str, list] = {}
+        errors: list[str] = []
+        jobs = (
+            ("macro_china_shrzgm", "月份",
+             {"社会融资规模增量": 0, "其中-人民币贷款": 1}),
+            ("macro_china_new_financial_credit", "月份",
+             {"当月": 2, "累计": 3}),
+            ("macro_china_supply_of_money", "统计时间",
+             {"流通中现金(M0)": 4, "流通中现金(M0)同比增长": 5,
+              "货币(狭义货币M1)": 6, "货币(狭义货币M1)同比增长": 7,
+              "货币和准货币（广义货币M2）": 8, "货币和准货币（广义货币M2）同比增长": 9}),
+        )
+        for fn_name, key_col, col_map in jobs:
+            try:
+                df = self._call_with_policy(getattr(ak, fn_name), policy)
+            except Exception as e:  # noqa: BLE001 — 单源失败不拖垮其余金融序列
+                errors.append(f"{fn_name}:{str(e)[:80]}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                eom = _macro_month_key(row.get(key_col))
+                if not eom:
+                    continue
+                slot = _macro_slot(merged, eom, 10)
+                for src_col, idx in col_map.items():
+                    slot[idx] = safe_float_strict(row.get(src_col))
+
+        error = "; ".join(errors) if errors else None
+        rows = _macro_emit_rows(merged, ("akshare", 1))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0, error=error,
+        )
+
+    def _fill_macro_unemployment(self, policy: SourcePolicy, merged: dict, errors: list[str]) -> None:
+        """城镇调查失业率长表提取（date/item/value → 总口径单序列填充 merged[8]）。
+
+        从 _fetch_macro_activity_gauge 拆出（NO-HIGH-Complexity 治本：长表形状
+        与其余三源 wide 形状不同，分支独立成件）。
+        """
+        import akshare as ak
+
+        try:
+            df = self._call_with_policy(ak.macro_china_urban_unemployment, policy)
+        except Exception as e:  # noqa: BLE001 — 单源失败不拖垮其余活动序列
+            errors.append(f"macro_china_urban_unemployment:{str(e)[:80]}")
+            return
+        if df is None or len(df) == 0:
+            return
+        for _, row in df.iterrows():
+            item = str(row.get("item") or "").strip()
+            if item != "全国城镇调查失业率":
+                continue
+            eom = _macro_month_key(row.get("date"))
+            if not eom:
+                continue
+            _macro_slot(merged, eom, 9)[8] = safe_float_strict(row.get("value"))
+
+    def _fetch_macro_activity_gauge(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """实体活动宽表（工业增加值/社零/固投/城镇调查失业率），写入 c1_market.macro_activity_gauge。
+
+        四源按统计期月末合并；urban_unemployment 为 date/item/value 长表，
+        仅取 item='全国城镇调查失业率' 总口径单序列（提取件 _fill_macro_unemployment）。
+        """
+        import akshare as ak
+
+        table = _TBL_MACRO_ACTIVITY_GAUGE
+        columns = ["report_date", "industrial_va_yoy", "industrial_va_cum_yoy", "retail_sales",
+                   "retail_sales_yoy", "retail_sales_cum", "retail_cum_yoy", "fai_ytd", "fai_yoy",
+                   "urban_unemployment", "data_source", "quality_flag"]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        # 值列位序: 0=industrial_va_yoy 1=industrial_va_cum_yoy 2=retail_sales 3=retail_sales_yoy
+        #           4=retail_sales_cum 5=retail_cum_yoy 6=fai_ytd 7=fai_yoy 8=urban_unemployment
+        merged: dict[str, list] = {}
+        errors: list[str] = []
+        wide_jobs = (
+            ("macro_china_gyzjz", {"同比增长": 0, "累计增长": 1}),
+            ("macro_china_consumer_goods_retail",
+             {"当月": 2, "同比增长": 3, "累计": 4, "累计-同比增长": 5}),
+            ("macro_china_gdzctz", {"自年初累计": 6, "同比增长": 7}),
+        )
+        for fn_name, col_map in wide_jobs:
+            try:
+                df = self._call_with_policy(getattr(ak, fn_name), policy)
+            except Exception as e:  # noqa: BLE001 — 单源失败不拖垮其余活动序列
+                errors.append(f"{fn_name}:{str(e)[:80]}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                eom = _macro_month_key(row.get("月份"))
+                if not eom:
+                    continue
+                slot = _macro_slot(merged, eom, 9)
+                for src_col, idx in col_map.items():
+                    slot[idx] = safe_float_strict(row.get(src_col))
+
+        self._fill_macro_unemployment(policy, merged, errors)
+        error = "; ".join(errors) if errors else None
+        rows = _macro_emit_rows(merged, ("akshare", 1))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0, error=error,
+        )
+
+    def _fetch_macro_trade_gauge(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """外需海关进出口宽表（当月/累计出口进口额+同比环比），写入 c1_market.macro_trade_gauge。
+
+        macro_china_hgjck（东财 RPT_ECONOMY_CUSTOMS，2008-，fresh）单源全量。
+        单位核验（2026-09-18 yoy 双点回代）：源值单位=千美元，统一换算亿美元（源值/10000）。
+        """
+        import akshare as ak
+
+        table = _TBL_MACRO_TRADE_GAUGE
+        columns = ["report_date", "export_usd100m", "export_yoy", "export_mom", "import_usd100m",
+                   "import_yoy", "import_mom", "export_cum_usd100m", "export_cum_yoy",
+                   "import_cum_usd100m", "import_cum_yoy", "data_source", "quality_flag"]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        rows: list[tuple] = []
+        error: str | None = None
+        try:
+            df = self._call_with_policy(ak.macro_china_hgjck, policy)
+        except Exception as e:  # noqa: BLE001
+            df = None
+            error = str(e)[:200]
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                eom = _macro_month_key(row.get("月份"))
+                if not eom:
+                    continue
+                rows.append((
+                    eom,
+                    _macro_wan_usd(row.get("当月出口额-金额")),
+                    safe_float_strict(row.get("当月出口额-同比增长")),
+                    safe_float_strict(row.get("当月出口额-环比增长")),
+                    _macro_wan_usd(row.get("当月进口额-金额")),
+                    safe_float_strict(row.get("当月进口额-同比增长")),
+                    safe_float_strict(row.get("当月进口额-环比增长")),
+                    _macro_wan_usd(row.get("累计出口额-金额")),
+                    safe_float_strict(row.get("累计出口额-同比增长")),
+                    _macro_wan_usd(row.get("累计进口额-金额")),
+                    safe_float_strict(row.get("累计进口额-同比增长")),
+                    "akshare",
+                    1,
+                ))
+
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0, error=error,
+        )
+
+    def _fetch_macro_daily_gauge(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """宏观高频日度宽表（六大电煤耗历史段+生意社三指数），写入 c1_market.macro_daily_gauge。
+
+        macro_china_daily_energy（2016-01~2019-06 历史段，六大电停披属源端退役）+
+        生意社商品/能源/建材三指数（2011-12 起，日更 T-1）按日合并；表级活性由三指数维持。
+        """
+        import akshare as ak
+
+        table = _TBL_MACRO_DAILY_GAUGE
+        columns = ["trade_date", "coal_inventory", "daily_consumption", "coal_available_days",
+                   "commodity_price_index", "energy_price_index", "construction_price_index",
+                   "data_source", "quality_flag"]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        # 值列位序: 0=coal_inventory 1=daily_consumption 2=coal_available_days
+        #           3=commodity_price_index 4=energy_price_index 5=construction_price_index
+        merged: dict[str, list] = {}
+        errors: list[str] = []
+        jobs = (
+            ("macro_china_daily_energy", {"沿海六大电库存": 0, "日耗": 1, "存煤可用天数": 2}),
+            ("macro_china_commodity_price_index", {"最新值": 3}),
+            ("macro_china_energy_index", {"最新值": 4}),
+            ("macro_china_construction_index", {"最新值": 5}),
+        )
+        for fn_name, col_map in jobs:
+            try:
+                df = self._call_with_policy(getattr(ak, fn_name), policy)
+            except Exception as e:  # noqa: BLE001 — 单源失败不拖垮其余日度序列
+                errors.append(f"{fn_name}:{str(e)[:80]}")
+                continue
+            if df is None or len(df) == 0:
+                continue
+            for _, row in df.iterrows():
+                day = self._norm_date_str(row.get("日期"))
+                if not day:
+                    continue
+                slot = _macro_slot(merged, day, 6)
+                for src_col, idx in col_map.items():
+                    slot[idx] = safe_float_strict(row.get(src_col))
+
+        error = "; ".join(errors) if errors else None
+        rows = _macro_emit_rows(merged, ("akshare", 1))
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0, error=error,
         )
 
     # ---- 7. 审计意见（audit_opinion） ----

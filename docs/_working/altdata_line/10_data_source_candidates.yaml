@@ -14,7 +14,7 @@ ttl: task_bound
 # ⚠ ROOR 登记报备中（human_gated）；⚠ 原放 architecture_model/data/ 触发 PROTECTED-PATHS（重大修改须 Owner 审批）——09-17 迁至 docs/_working/altdata_line/
 # 批次说明: v0.1.0 首批 16 条=2026-09-17 数据线会话已甄别候选（骨架【快】清单+MVP 油价链缺口+传导链注入源）
 
-version: "0.2.0"
+version: "0.3.0"
 updated: "2026-09-18"
 lifecycle_sop: "docs/01_policies_and_standards/sop/data_ops_sop/data_source_onboarding_sop.md"
 
@@ -299,3 +299,97 @@ candidates:
     target_table: "c1_market.index_adjustment"
     status: rejected
     notes: "akshare index_detail_hist_adjust_cni 依赖的 download-adjustment 端点已失效（2026-09-18 实测 BadZipFile 空返回，399005/399001/399303/980017 全空）；官网若恢复再评估"
+
+  # ── 2026-09-18 夜班波1 追加（D3 宏观高频施工甄别，st-datapack-20260918）──
+  # 背景：akshare 226 个 macro_ 接口三桶盘点（已接 20 / 梯队接 18 / 挂账 188）。
+  # 供给现实：金十系接口 2025-10 起源端退役（尾部 nan 今值+预约行），梯队主源改东财 datacenter。
+  - cand_id: DS-CAND-018
+    name: "国家统计局树形查询 API（nbs_nation/nbs_region）"
+    vendor: "国家统计局"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "需 (kind,path) 树形指标定位，接口复杂度高；无官方配额"
+    coverage: "全国/地区月度数据全量（粗钢/水泥产量、发电量、出口交货值、货运量等 D3 缺口正门）"
+    frequency: monthly
+    history_depth: "多年（按指标树）"
+    anti_crawl_risk: none
+    tos_risk: "官方公开"
+    score: {availability: 3, signal: 4, fit: 3, maintenance: 2}
+    target_table: "c1_market.macro_nbs_indicator"
+    status: candidate
+    notes: "D3 最大遗留缺口：粗钢/水泥/发电量/出口交货值无独立 akshare macro_ 接口，本 API 为正门；【快】P1，波2 首选"
+  - cand_id: DS-CAND-019
+    name: "存款准备金率调整事件表"
+    vendor: "akshare(macro_china_reserve_requirement_ratio,东财)"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: ""
+    coverage: "58 次调整事件（大中小机构调整前后+次日指数涨跌）"
+    frequency: event
+    history_depth: "1985- 全史"
+    anti_crawl_risk: none
+    tos_risk: "公开"
+    score: {availability: 3, signal: 3, fit: 3, maintenance: 3}
+    target_table: "c1_market.reserve_requirement_event"
+    status: candidate
+    notes: "事件研究价值高（政策冲击日历）；【快】P2"
+  - cand_id: DS-CAND-020
+    name: "消费者信心指数/财政收入（月度补充对）"
+    vendor: "akshare(macro_china_xfzxx/macro_china_czsr,东财)"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: ""
+    coverage: "消费者信心指数三序列+财政收入当月/累计"
+    frequency: monthly
+    history_depth: "2008- 起（fresh 实测 2026-08）"
+    anti_crawl_risk: none
+    tos_risk: "公开"
+    score: {availability: 3, signal: 2, fit: 2, maintenance: 3}
+    target_table: "c1_market.macro_activity_gauge(扩列)"
+    status: candidate
+    notes: "D3 波1 落选（边际价值次于梯队主线），可作 activity_gauge 扩列；【快】P3"
+  - cand_id: DS-CAND-021
+    name: "金十中国系退役件（预测值/前值 surprise 维度）"
+    vendor: "akshare 金十口径（cpi_yearly/exports_yoy/industrial_production_yoy/fx_reserves_yearly/gdp_yearly 等）"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "源端 2025-10 起退役（实测尾部 nan 今值），恢复时间未知"
+    coverage: "历史段含预测值/前值（事件研究 surprise 口径唯一来源）"
+    frequency: monthly
+    history_depth: "1990-2025.09（exports_yoy 深至 1996）"
+    anti_crawl_risk: none
+    tos_risk: "公开"
+    score: {availability: 1, signal: 3, fit: 2, maintenance: 1}
+    target_table: "c1_market.macro_event_surprise"
+    status: candidate
+    notes: "源复活即接（surprise 维度梯队未覆盖）；maintenance=1 拉低总分，P3"
+  - cand_id: DS-CAND-022
+    name: "海外宏观接口批（usa×48/euro×15/germany×7/uk×15/japan×5/canada×9/australia×7/swiss×6）"
+    vendor: "akshare macro_{region}_*（金十口径）"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "金十系退役波及面未全量实测（中国系确认退役，海外系待抽查）"
+    coverage: "美欧日英加澳瑞核心宏观月度序列（非农/CPI/PMI/利率等）"
+    frequency: "monthly/event"
+    history_depth: "多为 1970- 全史"
+    anti_crawl_risk: none
+    tos_risk: "公开"
+    score: {availability: 2, signal: 3, fit: 2, maintenance: 2}
+    target_table: "c1_market.macro_global_gauge"
+    status: candidate
+    notes: "波3-4 批量矿脉（112 接口）；先抽查海外系是否同批退役再定优先级；P2"
+  - cand_id: DS-CAND-023
+    name: "货运量/外储黄金（源端解码坏对）"
+    vendor: "akshare(macro_china_society_traffic_volume/macro_china_foreign_exchange_gold)"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "实测 'No value to decode'（2026-09-18），源端 JS 载荷变更"
+    coverage: "全社会货运量月度/外储+黄金储备月度"
+    frequency: monthly
+    history_depth: "多年"
+    anti_crawl_risk: none
+    tos_risk: "公开"
+    score: {availability: 1, signal: 2, fit: 2, maintenance: 1}
+    target_table: "c1_market.macro_activity_gauge(扩列)"
+    status: rejected
+    notes: "akshare 上游 demjson 解码坏，升级 akshare 或源端修复后复评；外储可由 fx_reserves_yearly(金十,亦退役)侧翼补"

@@ -1952,6 +1952,95 @@ tasks:
 
   fallback_sources: []    # 显式置空：金十为唯一结构化口径；calendar_event.fomc_meeting 手工台账在侧翼（单央行仅日期）
 
+  # --- D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918，altdata_line D3）---
+  # 五张月频宽表（report_date=统计期月末）+ 一张日频宽表；主源=东财 datacenter fresh 口径
+  # （金十系 2025-10 起源端退役实测留痕于 schema docstring）。月度表挂 daily_event 日更
+  # 全量幂等拉取（单表 200-600 行，公布日当日即采，规避 monthly_static 月初跑漏月中公布）；
+  # 日度表挂 daily_capital。哨兵阈值=data_supply_sentinel.yaml。
+- task_id: macro_price_gauge_refresh
+  table: c1_market.macro_price_gauge
+  source: akshare
+  schedule: daily_event
+  incremental: false        # 全量拉取（CPI 2008- / PPI 2006-，~470 行，ReplacingMergeTree 同键替换）
+  date_col: report_date
+  dependencies: []
+  capability: macro_price_gauge
+  symbols:
+  extra:
+    description: "价格总量gaug（AKShare macro_china_cpi+macro_china_ppi 东财口径：CPI 指数/同比/环比/累计+PPI 指数/同比/累计）"
+
+  fallback_sources: []    # 显式置空：东财 datacenter 为唯一 fresh 口径（金十 CPI/PPI 2025-10 起源端退役）
+
+- task_id: macro_pmi_gauge_refresh
+  table: c1_market.macro_pmi_gauge
+  source: akshare
+  schedule: daily_event
+  incremental: false        # 全量拉取（官方 2008- + 财新历史段 2012-2025.09，~440 行）
+  date_col: report_date
+  dependencies: []
+  capability: macro_pmi_gauge
+  symbols:
+  extra:
+    description: "景气gaug（AKShare macro_china_pmi 官方制造业/非制造业+macro_china_cx_pmi_yearly/cx_services_pmi_yearly 财新历史段）"
+
+  fallback_sources: []    # 显式置空：官方 PMI 东财 fresh 主序列；财新金十源退役（历史段保留）
+
+- task_id: macro_credit_money_refresh
+  table: c1_market.macro_credit_money
+  source: akshare
+  schedule: daily_event
+  incremental: false        # 全量拉取（货币 1978- / 信贷 2008- / 社融 2015-，~590 行）
+  date_col: report_date
+  dependencies: []
+  capability: macro_credit_money
+  symbols:
+  extra:
+    description: "金融信用与货币供应（AKShare macro_china_shrzgm 社融+macro_china_new_financial_credit 新增信贷+macro_china_supply_of_money M0/M1/M2）"
+
+  fallback_sources: []    # 显式置空：东财 datacenter 口径（社融列源端 2026-04 起滞更观察中，留痕 schema docstring）
+
+- task_id: macro_activity_gauge_refresh
+  table: c1_market.macro_activity_gauge
+  source: akshare
+  schedule: daily_event
+  incremental: false        # 全量拉取（工增 2008- / 社零 2008- / 固投 2012- / 失业率 2018-，~600 行）
+  date_col: report_date
+  dependencies: []
+  capability: macro_activity_gauge
+  symbols:
+  extra:
+    description: "实体活动gaug（AKShare macro_china_gyzjz 工增+consumer_goods_retail 社零+gdzctz 固投+urban_unemployment 城镇调查失业率）"
+
+  fallback_sources: []    # 显式置空：东财 datacenter/统计局口径为唯一结构化源
+
+- task_id: macro_trade_gauge_refresh
+  table: c1_market.macro_trade_gauge
+  source: akshare
+  schedule: daily_event
+  incremental: false        # 全量拉取（海关进出口 2008-，~220 行）
+  date_col: report_date
+  dependencies: []
+  capability: macro_trade_gauge
+  symbols:
+  extra:
+    description: "外需海关进出口（AKShare macro_china_hgjck：当月/累计出口进口额亿美元+同比环比，源千美元/1e5 换算）"
+
+  fallback_sources: []    # 显式置空：东财 RPT_ECONOMY_CUSTOMS 为唯一结构化源
+
+- task_id: macro_daily_gauge_refresh
+  table: c1_market.macro_daily_gauge
+  source: akshare
+  schedule: daily_capital
+  incremental: false        # 全量拉取（生意社 2011-12- + 六大电历史段 2016-2019，~4600 行）
+  date_col: trade_date
+  dependencies: []
+  capability: macro_daily_gauge
+  symbols:
+  extra:
+    description: "宏观高频日度（AKShare macro_china_daily_energy 六大电历史段+commodity_price_index/energy_index/construction_index 生意社三指数日更）"
+
+  fallback_sources: []    # 显式置空：生意社（东财页）为唯一日频口径
+
   # --- J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1）---
   # 月度成分快照差分 → inclusion/exclusion 事件（000300/000905/000906/000852/000985）。
   # effective_date 为派生近似（6/12 月=中证第 2 个周五次一交易日规则；其余=上一快照后首个交易日），
@@ -3260,3 +3349,116 @@ tasks:
   symbols:
   extra:
     description: "ECB 日频汇率增量（frankfurter.app 免 key 源，L1 上架流水线首个正门班；保守游标=各货币对最迟日取 min，任一对缺价下一班回查自愈；与 Windows 任务 ZephyrAlpha_AltFxECB 双轨并行，后者退役=挂单 H-06；ReplacingMergeTree 同键幂等）"
+
+
+# ============== D4 物理另类·油价链三件+F13（2026-09-18 夜班 st-datapack-20260918，altdata_line D4 波2）==============
+# 两包交界面：产业链分包 06 传导链引擎 N1a/N1b/N5 节点挂价绑定消费（P2 解锁件）。
+# 源探测证据（2026-09-18 夜班实测）：energy_oil_hist/CZCE 仓单/两指数 akshare 通道活；
+# SHFE 仓单归档窗口 [2014-05-19, 2025-11-30]（近端 404 改版）；DCE 仓单源站 412 WAF rejected；
+# akshare index_price_cflp 底层站 index.0256.cn 超时死 rejected（公路运价改中物联官网爬取+G盘快照）；
+# pfsc.agri.cn 分品种 API 业务 500/404 rejected（指数层先行）。
+
+- task_id: ndrc_fuel_price_refresh
+  table: c1_market.ndrc_fuel_price
+  source: akshare_alt
+  schedule: daily_capital
+  incremental: false        # 全量拉取（~330 行低频调价事件表，ReplacingMergeTree 同键替换）
+  date_col: announce_date
+  dependencies: []
+  capability: ndrc_fuel_price
+  symbols:
+  extra:
+    description: "E8 发改委成品油调价（AKShare energy_oil_hist，汽柴油最高零售价元/吨+调价幅度，公告日/生效日双PIT轴，2000-06起）"
+
+  fallback_sources: []    # 显式置空：发改委调价结构化唯一免费口径（东财/生意社转载同源；备源=手动台账）
+
+- task_id: futures_warehouse_receipt_incremental
+  table: c1_market.futures_warehouse_receipt
+  source: akshare_alt
+  schedule: daily_capital
+  incremental: true         # CZCE 按日增量（交易日日报，last_key 断点）
+  date_col: trade_date
+  dependencies: []
+  capability: futures_warehouse_receipt
+  symbols:
+  extra:
+    exchange: CZCE
+    description: "交易所仓单日增·郑商所（AKShare futures_warehouse_receipt_czce 按日 xls，品种×仓库明细+小计）"
+
+  fallback_sources: []    # 显式置空：DCE 源站 412 WAF、GFEX 不可达（2026-09-18 实测 rejected）；SHFE 近端 404 见回填任务
+
+- task_id: futures_warehouse_receipt_backfill_czce
+  table: c1_market.futures_warehouse_receipt
+  source: akshare_alt
+  schedule: disabled
+  disabled_reason: "CZCE 一次性历史回填 2018-01-01 起（旧 .xls 格式 2018 前解析失败=源端现实）；增量由 futures_warehouse_receipt_incremental 承担"
+  incremental: false
+  date_col: trade_date
+  dependencies: []
+  capability: futures_warehouse_receipt
+  symbols:
+  extra:
+    exchange: CZCE
+    full_history: true
+    description: "交易所仓单回填·郑商所（futures_warehouse_receipt_czce，2018-01 起按月分批幂等回填）"
+
+  fallback_sources: []
+
+- task_id: futures_warehouse_receipt_backfill_shfe
+  table: c1_market.futures_warehouse_receipt
+  source: akshare_alt
+  schedule: disabled
+  disabled_reason: "SHFE 一次性归档回填 [2014-05-19, 2025-11-30]（源端 dailydata 归档仅 serving 至 2025-11 中旬，近端 404 改版实测；源端修复后手动重跑）"
+  incremental: false
+  date_col: trade_date
+  dependencies: []
+  capability: futures_warehouse_receipt
+  symbols:
+  extra:
+    exchange: SHFE
+    description: "交易所仓单回填·上期所（futures_shfe_warehouse_receipt 归档窗口硬界在 provider 内，近端缺口登记 known_data_gaps）"
+
+  fallback_sources: []
+
+- task_id: road_freight_index_refresh
+  table: c1_market.road_freight_index
+  source: akshare_alt
+  schedule: weekend_calibration
+  incremental: true         # 列表页 URL 日期早停增量（每周 ~1 篇新报告；周六凌晨爬=报告发布后）
+  date_col: trade_date
+  dependencies: []
+  capability: road_freight_index
+  symbols:
+  extra:
+    description: "公路运价周指数（中物联官网 chinawuliu.com.cn 周指数报告爬取，礼貌 1.2s/请求，原文快照 G 盘冷库+manifest 登记；akshare CFLP 接口底层站已死 rejected）"
+
+  fallback_sources: []    # 显式置空：akshare index_price_cflp 底层站 index.0256.cn 超时死（2026-09-18 实测）；林安/汇通无结构化公开 API
+
+- task_id: road_freight_index_full_refresh
+  table: c1_market.road_freight_index
+  source: akshare_alt
+  schedule: disabled
+  disabled_reason: "全历史一次性爬取（2015-09 起约 550 篇报告，~15 分钟礼貌爬取）；后续增量由 road_freight_index_refresh 承担"
+  incremental: false
+  date_col: trade_date
+  dependencies: []
+  capability: road_freight_index
+  symbols:
+  extra:
+    description: "公路运价周指数全量爬取（列表页 134 页天花板内全枚举+快照+入库，幂等重跑）"
+
+  fallback_sources: []
+
+- task_id: agri_wholesale_index_refresh
+  table: c1_market.agri_wholesale_index
+  source: akshare_alt
+  schedule: daily_capital
+  incremental: false        # 全量拉取（两序列 ~5800 行/序列，ReplacingMergeTree 同键替换）
+  date_col: trade_date
+  dependencies: []
+  capability: agri_wholesale_index
+  symbols:
+  extra:
+    description: "F13 农产品批发价格200指数（AKShare macro_china_agricultural_product+macro_china_vegetable_basket，农业农村部口径 2005-09 起；分品种 pfsc.agri.cn API 源坏待恢复）"
+
+  fallback_sources: []    # 显式置空：农业农村部 200 指数唯一结构化免费口径（分品种 API 源坏 rejected 留痕）

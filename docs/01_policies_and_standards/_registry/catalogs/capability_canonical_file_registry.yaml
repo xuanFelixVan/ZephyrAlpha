@@ -32667,6 +32667,38 @@ creation_tokens:
   token: altdata-line-market-us-index-20260917
   created_by: st-datapack-20260918
   capability: altdata_line
+- file: schemas/categories/macro/macro_activity_gauge.py
+  token: altdata-line-macro-activity-gauge-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/macro/macro_credit_money.py
+  token: altdata-line-macro-credit-money-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/macro/macro_daily_gauge.py
+  token: altdata-line-macro-daily-gauge-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/macro/macro_edb_data.py
+  token: altdata-line-macro-edb-data-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/macro/macro_macro_data.py
+  token: altdata-line-macro-macro-data-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/macro/macro_pmi_gauge.py
+  token: altdata-line-macro-pmi-gauge-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/macro/macro_price_gauge.py
+  token: altdata-line-macro-price-gauge-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/macro/macro_trade_gauge.py
+  token: altdata-line-macro-trade-gauge-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
 - file: docs/_working/residual_construction/pending_items_plan.md
   token: residual-construction-plan-pending-items-plan-20260917
   created_by: st-residual-20260917
