@@ -71,9 +71,12 @@ from datetime import datetime
 from typing import Any, Final, Sequence
 
 from zephyr.plan_engine.judgment_ledger import (
+    JUDGMENT_TABLES,
     EmitResult,
     JudgmentDraft,
+    JudgmentEmitHook,
     emit_judgment,
+    make_judgment_emit_hook,
 )
 from zephyr.shared.utils.time_utils import now_utc
 
@@ -120,8 +123,9 @@ _KLINE_SQL: Final = (
 # 幂等查重：同 module_id + 同业务日（inputs_ref 结构化指纹 LIKE 匹配）。
 # 模式不带前导 '|'——trade_date 是 inputs_ref 首键（首键前无分隔符，'%|key|%' 永远
 # miss=幂等失效三连发事故修复 2026-09-17）；尾 '|' 防日期前缀误配（15 不吃 15X）。
-_ALREADY_EMITTED_SQL: Final = (
-    "SELECT count() FROM c1_market.judgment_next_day_forecast "
+_SQL_ALREADY_EMITTED = (
+    "SELECT count() "
+    "FROM {table} "
     "WHERE module_id = '{module_id}' AND inputs_ref LIKE '%trade_date:{day}|%'"
 )
 
@@ -378,37 +382,33 @@ def emit_for_trade_date(
     )
 
 
-def maybe_emit_next_day_forecast(task_id: Any = None, success: bool = True,
-                                 **_kwargs) -> dict[str, Any]:
-    """次日概率的**唯一自动产出者**：daily_kline SUCCESS=自然唤醒（T 日数据齐）。
+#: P2a 次日概率钩子：本模块只登记表侧参数，骨架与委托体单点于 judgment_ledger。
+#: （与 P2b 晨间预案件曾互为 100% extract 级克隆——reDUP 组 06c56c3a9d5495e5，
+#:  按 R-002 同原则 merge 治本；不走 ack 白名单消警。）
+_EMIT_HOOK: Final = JudgmentEmitHook(
+    leg="P2a 次日概率",
+    entry="maybe_emit_next_day_forecast",
+    already_sql=_SQL_ALREADY_EMITTED,
+    table=JUDGMENT_TABLES["next_day_forecast"],
+    module_id=MODULE_ID,
+    date_key="trade_date",  # 对外键名口径保持改造前原样（消费方可见，禁顺手统一）
+    doc_zh="""次日概率的**唯一自动产出者**：daily_kline SUCCESS=自然唤醒（T 日数据齐）。
 
-    宪法 §9.3 合规（零新机制，maybe_settle_judgment_ledger 同款骨架）：不建
-    cron/Timer/sleep 循环。业务日 D=行情最新入库日（resolve_pf_alloc_trade_date，
-    禁墙钟猜日）——非交易日/行情停更唤醒时 D 不变且已发射→零副作用跳过（非交易
-    日触发抑制是数据驱动的结构性质，非日历硬编码）。发射失败 WARN 出声不反噬唤醒链。
-    """
-    tid = str(task_id or "")
-    if not success or not any(k in tid for k in ("daily_kline", "kline_daily", "kline_index")):
-        return {"action": "skipped_wake_point"}
-    day = ""
-    try:
-        from zephyr.strategy_pipeline.pipeline_events import resolve_pf_alloc_trade_date
+    宪法 §9.3 合规（零新机制）：不建 cron/Timer/sleep 循环。业务日 D=行情最新入库日
+    （resolve_pf_alloc_trade_date，禁墙钟猜日）——非交易日/行情停更唤醒时 D 不变且已
+    发射→零副作用跳过（非交易日触发抑制是数据驱动的结构性质，非日历硬编码）。
+    发射失败出声不反噬唤醒链。骨架与 P2b 共用 judgment_ledger.run_judgment_emit_hook
+    （R-002 merge）。
+    """,
+)
 
-        day = resolve_pf_alloc_trade_date()  # 共用业务日真源（禁墙钟猜日）
-        rows = _reader_execute(_ALREADY_EMITTED_SQL.format(module_id=MODULE_ID, day=day))
-        if rows and int(rows[0][0]) > 0:
-            return {"action": "already_emitted", "trade_date": day}
-        result = emit_for_trade_date(day)
-        if not result.committed:
-            return {"action": "emit_not_committed", "disposition": result.disposition,
-                    "trade_date": day, "judgment_id": result.judgment_id}
-        return {"action": "emitted", "trade_date": day, "judgment_id": result.judgment_id}
-    except ValueError as exc:
-        # 必需数据缺席=fail-closed 漏判（出声留痕，不编造）——T 日线未齐时下个唤醒点自愈
-        return {"action": "data_insufficient", "trade_date": day, "reason": str(exc)[:200]}
-    except Exception as exc:  # noqa: BLE001——钩子永不反噬调度器，失败必须出声
-        return {"action": "error", "trade_date": day,
-                "error": f"{type(exc).__name__}: {exc}"[:200]}
+# reader/emit 以 lambda 惰性取本模块全局——既有测试 monkeypatch 的是模块属性，
+# import 期绑定会让注入点静默失效（tests/plan_engine/test_next_day_forecaster.py 会打到真库）
+maybe_emit_next_day_forecast: Final = make_judgment_emit_hook(
+    _EMIT_HOOK,
+    reader=lambda sql: _reader_execute(sql),
+    emit=lambda day: emit_for_trade_date(day),
+)
 
 
 class NextDayForecaster:

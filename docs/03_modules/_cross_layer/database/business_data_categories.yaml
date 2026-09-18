@@ -3440,3 +3440,74 @@
   frequency: daily
   data_source: [akshare]
   blueprint: null
+
+# --- 判定台账四表（判定台账标准 v0.1 §三/§六 作战室三任务；2026-09-18 注册迁移 st-ff-judgment-20260918）---
+# 病根：四表 DDL-as-Code 真源 2026-09-16 已建（schemas/categories/judgment/），但品类条目缺失 →
+#   get_registry().table() 查不到 = 判定链没有表名 SSoT，消费方（plan_engine 六件）只能硬编码表名，
+#   且 TABLE-NAME-REGISTRY 门按"注册表名"匹配 added 行，对未注册表名结构性失明（改表即断链无人知）。
+# 本批为**纯元数据新增**：零线上表变更（四表实测 engine=MergeTree，已在 c1_market 生产，
+#   2026-09-18 行数 4/3/2/0）。SSoT 方向按裁定 #ARCH-CH-024：表名=声明态规则数据→真源 YAML。
+
+- category_id: judgment_intraday_market_state
+  name: "盘中大盘状态判定台账（作战室任务1：低迷/防御/震荡/进攻/亢奋五态概率+证据，60min bar 粒度）"
+  engine: clickhouse
+  database: c1_market
+  table: judgment_intraday_market_state
+  schema_file: schemas/categories/judgment/judgment_intraday_market_state.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "判定/结算分离铁律（判定台账标准 v0.1 §一）：判定列组判定时刻写死（PIT 锚 asof_ts+input_cutoff_ts）；结算列组 outcome_*/eval_*/evaluated_* 只许 zephyr.plan_engine.judgment_settler 回填，判定模块无写通道；MergeTree 只增不改，修订=新 judgment_id 追加（禁 UPDATE）；synthetic=1 为冒烟合成行"
+  calc_mode: preload
+  frequency: 60分钟
+  data_source: [internal]
+  blueprint: null
+
+- category_id: judgment_next_day_forecast
+  name: "次日概率判定台账（作战室任务2：up/flat/down 概率+分位数+期望波幅，T 日盘后发射）"
+  engine: clickhouse
+  database: c1_market
+  table: judgment_next_day_forecast
+  schema_file: schemas/categories/judgment/judgment_next_day_forecast.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "同上判定/结算分离铁律；outcome 由 T+1 收盘结算回填（realized_return/realized_label/brier_score/log_loss/calibration_bucket）；任何准确率统计 MUST 可由 judgment_id 联结 outcome 独立复算（标准 §一.4）"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
+- category_id: judgment_daily_plan
+  name: "晨间预案判定台账（作战室任务3上半：场景清单 scenario_id+可测量 trigger+action+path_prior）"
+  engine: clickhouse
+  database: c1_market
+  table: judgment_daily_plan
+  schema_file: schemas/categories/judgment/judgment_daily_plan.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "trigger 必须是可测量表达式（'如果走弱'不合格——标准 §三铁律）；实际兑现场景由 judgment_plan_verification 联结后由结算器回填，判定器禁写结算列组；幂等锚=inputs_ref 首键 plan_date"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
+- category_id: judgment_plan_verification
+  name: "预案盘中验证台账（作战室任务3下半：scenario_hits/actual_scenario_id/plan_followed/plan_quality_score）"
+  engine: clickhouse
+  database: c1_market
+  table: judgment_plan_verification
+  schema_file: schemas/categories/judgment/judgment_plan_verification.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "本表是结算侧事实表而非判定表：只增不改，双写方=盘中归类器（scenario_classifier，actual_scenario_id 恒空串）+收盘定格器（close_verifier，EOD 定格行冻结，晚到 bar 不得以空行覆盖）；发射器注册表 JUDGMENT_TABLES 不得含本表（守卫 tests/plan_engine/test_judgment_ledger.py）；无通用判定列骨架（键=verification_id+plan_judgment_id 联结 judgment_daily_plan）"
+  calc_mode: preload
+  frequency: 日内累积
+  data_source: [internal]
+  blueprint: null

@@ -79,6 +79,7 @@ from typing import Any, Final, Sequence
 from zoneinfo import ZoneInfo
 
 from zephyr.plan_engine.judgment_ledger import (
+    JUDGMENT_TABLES,
     EmitResult,
     JudgmentDraft,
     emit_judgment,
@@ -166,8 +167,9 @@ _A50_LAST2_SQL: Final = (
 # 幂等查重：同 module_id + 同 bar_key（inputs_ref 结构化指纹 LIKE 匹配）。
 # 模式不带前导 '|'——bar_key 是 inputs_ref 首键（首键前无分隔符，'%|key|%' 永远
 # miss=幂等失效三连发事故修复 2026-09-17，同 next_day_forecaster）；尾 '|' 防前缀误配。
-_ALREADY_EMITTED_SQL: Final = (
-    "SELECT count() FROM c1_market.judgment_intraday_market_state "
+_SQL_ALREADY_EMITTED = (
+    "SELECT count() "
+    "FROM {table} "
     "WHERE module_id = '{module_id}' AND inputs_ref LIKE '%bar_key:{bar_key}|%'"
 )
 
@@ -483,7 +485,8 @@ def latest_unemitted_bar(
     # 当日最新 bar（未发射的第一优先：从最新往旧找首个未发射的）
     for bar in reversed(today_bars):
         bar_key = format_bar_key(bar[1])
-        rows = rd(_ALREADY_EMITTED_SQL.format(module_id=MODULE_ID, bar_key=bar_key))
+        rows = rd(_SQL_ALREADY_EMITTED.format(table=JUDGMENT_TABLES["intraday_market_state"],
+                                      module_id=MODULE_ID, bar_key=bar_key))
         if rows and int(rows[0][0]) > 0:
             continue  # 该 bar 已发射
         hist: list[tuple] = [

@@ -55,9 +55,10 @@ import sys
 import threading
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, Final
+from typing import Any, Callable, Final
 
 from zephyr.data import ch_writer
+from zephyr.data.table_registry import get_registry
 from zephyr.shared.utils.time_utils import now_utc
 
 __all__: Final = [
@@ -65,9 +66,13 @@ __all__: Final = [
     "JUDGMENT_TABLE_KEYS",
     "JUDGMENT_TABLES",
     "JudgmentDraft",
+    "JudgmentEmitHook",
+    "VERIFICATION_TABLE",
     "emit_judgment",
     "format_utc3",
+    "make_judgment_emit_hook",
     "new_judgment_id",
+    "run_judgment_emit_hook",
     "validate_payload",
 ]
 
@@ -77,20 +82,33 @@ if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
 # fail-closed 导入（无内联 fallback——JOB-077 治本：防静默使用漂移副本）
-from schemas.categories.judgment.judgment_daily_plan import INSERT_COLUMNS as _COLS_DAILY_PLAN
-from schemas.categories.judgment.judgment_daily_plan import TABLE_NAME as _TBL_DAILY_PLAN
-from schemas.categories.judgment.judgment_intraday_market_state import (
+# 注：此处只 import INSERT_COLUMNS（列清单真源=DDL 文件）；**表名不从这里取**——
+# 表名 SSoT 是 business_data_categories.yaml，经下方 TableRegistry 派生
+# （2026-09-18 判定链注册迁移 st-ff-judgment-20260918，裁定 #ARCH-CH-024）。
+# schemas.* 的静态不可解析=尺子盲区（仓根由上方 sys.path 注入后运行时可导，四件目标
+# 均在 HEAD：git cat-file -e HEAD:schemas/categories/judgment/<name>.py 可验）⇒ 行级豁免。
+from schemas.categories.judgment.judgment_daily_plan import (  # noqa: import-integrity  仓根运行时 sys.path 注入，静态 find_spec 不可解析（目标件在 HEAD）
+    INSERT_COLUMNS as _COLS_DAILY_PLAN,
+)
+from schemas.categories.judgment.judgment_intraday_market_state import (  # noqa: import-integrity  仓根运行时 sys.path 注入，静态 find_spec 不可解析（目标件在 HEAD）
     INSERT_COLUMNS as _COLS_INTRADAY,
 )
-from schemas.categories.judgment.judgment_intraday_market_state import TABLE_NAME as _TBL_INTRADAY
-from schemas.categories.judgment.judgment_next_day_forecast import (
+from schemas.categories.judgment.judgment_next_day_forecast import (  # noqa: import-integrity  仓根运行时 sys.path 注入，静态 find_spec 不可解析（目标件在 HEAD）
     INSERT_COLUMNS as _COLS_NEXT_DAY,
 )
-from schemas.categories.judgment.judgment_next_day_forecast import TABLE_NAME as _TBL_NEXT_DAY
+
+# ── 表名派生（判定链表名唯一真源=business_data_categories.yaml）──
+# 模块顶层调用=导入期 fail-closed：品类若从 YAML 缺失即 KeyError（宁可启动炸，
+# 不静默退回硬编码表名——那正是"改表即断链且无人知晓"的病根）。
+_TBL_INTRADAY: Final = get_registry().table("judgment_intraday_market_state")
+_TBL_NEXT_DAY: Final = get_registry().table("judgment_next_day_forecast")
+_TBL_DAILY_PLAN: Final = get_registry().table("judgment_daily_plan")
+# 结算侧事实表（只增不改，非判定发射表）：故意不进 JUDGMENT_TABLES 发射器注册表，
+# 守卫=tests/plan_engine/test_judgment_ledger.py::test_verification_table_ssot_untouched_by_emitter
+VERIFICATION_TABLE: Final = get_registry().table("judgment_plan_verification")
 
 # ── 口径常量 ──
 
-_DB: Final = "c1_market"
 _PROB_SUM_TOLERANCE: Final = 1e-6  # 概率分布和≈1 容差（与 brier_calibration 同口径）
 # 可测量触发式机械初检：须含比较符/等号/感叹号或数字（"如果走弱"不合格——标准 §三铁律）
 _MEASURABLE_TRIGGER_RE: Final = re.compile(r"[><=!]|\d")
@@ -110,17 +128,17 @@ class _TableSpec:
 
 _TABLE_SPECS: Final[dict[str, _TableSpec]] = {
     "intraday_market_state": _TableSpec(
-        table=f"{_DB}.{_TBL_INTRADAY}",
+        table=_TBL_INTRADAY,
         insert_columns=_COLS_INTRADAY,
         default_horizon="intraday_rest",
     ),
     "next_day_forecast": _TableSpec(
-        table=f"{_DB}.{_TBL_NEXT_DAY}",
+        table=_TBL_NEXT_DAY,
         insert_columns=_COLS_NEXT_DAY,
         default_horizon="next_day",
     ),
     "daily_plan": _TableSpec(
-        table=f"{_DB}.{_TBL_DAILY_PLAN}",
+        table=_TBL_DAILY_PLAN,
         insert_columns=_COLS_DAILY_PLAN,
         default_horizon="intraday_session",
     ),
@@ -441,3 +459,136 @@ def emit_judgment(
         committed=outcome.disposition == ch_writer.WriteDisposition.CH_COMMITTED,
         disposition=str(outcome.disposition.value),
     )
+
+
+# ── 判定发射钩子唯一骨架（R-002 同原则 merge 治本，2026-09-18 全流通战役 st-ff-judgment2）──
+#
+# 病根（CloneGuard CAPABILITY-OVERLAP 死信 q-20260918-st-ff-judgment-20260918-0001 实测）：
+#   plan_engine 两件 maybe_emit_*（MOD-PLAN-030 晨间预案 / MOD-PLAN-029 次日概率）是同一
+#   "唤醒过滤→业务日→幂等查重→发射→五态出声"骨架的两份逐行副本。reDUP 组
+#   06c56c3a9d5495e5 判 structural 相似度 1.0、actionability=refactor（同组件内重复）
+#   → extract 级硬阻断。两份都在 HEAD 里（本批只改表名派生即触出），按 R-002/R-O1 先例
+#   走 merge 治本，不走 ack 白名单消警（裁定#273 禁白名单消警、#321 门禁只许加严）。
+#
+# 行为保真：骨架**只做编排**，业务日真源/查重 SQL/发射函数全部由调用方注入——
+#   reader 与 emit 在薄封装里按调用时刻取模块全局（= 测试注入点，禁改成 import 时绑定），
+#   否则既有 monkeypatch（tests/plan_engine/test_daily_plan.py、test_next_day_forecaster.py）
+#   会静默失效。返回 dict 的键序与 date_key 字面量（plan_date vs trade_date）逐字段保持
+#   改造前口径，守卫=tests/plan_engine/test_judgment_ledger.py 金样本比对。
+
+#: 判定链唯一自然唤醒点（daily_kline 系 SUCCESS=行情到位，宪法 §9.3 事件触发禁轮询）
+_EMIT_WAKE_POINT_KEYS: Final = ("daily_kline", "kline_daily", "kline_index")
+
+
+@dataclass(frozen=True)
+class JudgmentEmitHook:
+    """一条判定发射钩子的表侧参数（NO-LONG-PARAM-LIST 合规：一组参数走数据类不进签名）。
+
+    Attributes:
+        leg: 台账腿标签（诊断与哨兵 leg_name 同词，如 "P2b 晨间预案"）。
+        entry: 公开入口名（生成闭包的 __name__，如 "maybe_emit_daily_plan"）。
+        already_sql: 幂等查重 SQL 模板，含 {table}/{module_id}/{day} 三个占位——
+            首键前无分隔符、尾 '|' 防日期前缀误配（P2a 幂等三连发事故修法，两族共用一条口径）。
+        table: 全限定表名（必须经 JUDGMENT_TABLES 派生，禁字面量——TABLE-NAME-REGISTRY）。
+        module_id: 判定模块号（查重锚，与发射行 module_id 列同源）。
+        date_key: 返回 dict 的业务日键（"plan_date" | "trade_date"——两族历史对外口径不同，
+            合并骨架不得顺手统一键名，那是消费方可见的行为变更）。
+        doc_zh: 公开入口的大白话说明（挂到生成闭包的 __doc__，文档不因合并而丢）。
+    """
+
+    leg: str
+    entry: str
+    already_sql: str
+    table: str
+    module_id: str
+    date_key: str
+    doc_zh: str = ""
+
+
+def run_judgment_emit_hook(
+    hook: JudgmentEmitHook,
+    task_id: Any = None,
+    success: bool = True,
+    *,
+    reader: Callable[[str], list[tuple]],
+    emit: Callable[[str], EmitResult],
+) -> dict[str, Any]:
+    """判定发射钩子唯一骨架：唤醒过滤→业务日→幂等查重→发射→五态出声。
+
+    Args:
+        hook: 本条钩子的表侧参数（查重 SQL/表名/模块号/业务日键）。
+        task_id: 调度器传入的任务标识（唤醒点判别锚）。
+        success: 被唤醒任务是否成功（false=数据未必齐，直接跳过）。
+        reader: 只读查询通道（调用方模块级函数=测试注入点）。
+        emit: 该腿的发射函数（调用方模块级函数=测试注入点）。
+
+    Returns:
+        有序 dict，action ∈ {skipped_wake_point, already_emitted, emitted,
+        emit_not_committed, data_insufficient, error}；除 skipped 外每条都带
+        `{hook.date_key: 业务日}`（resolve 失败时为空串）。
+
+    不变式（两件 maybe_emit_* 改造前即成立，合并后由本函数单点承担）：
+        1. 非唤醒点/任务失败 → 零副作用（一次查询都不发）。
+        2. 同业务日重复唤醒 → already_emitted 且绝不再 emit（幂等）。
+        3. 必需数据缺席（ValueError）→ data_insufficient 留痕，不编造判定。
+        4. 任何异常都不反噬唤醒链（钩子挂在调度器 SUCCESS 事件上，抛出=拖死采集链），
+           但必须转成 action=error 出声。
+    """
+    tid = str(task_id or "")
+    if not success or not any(k in tid for k in _EMIT_WAKE_POINT_KEYS):
+        return {"action": "skipped_wake_point"}
+    day = ""
+    try:
+        from zephyr.strategy_pipeline.pipeline_events import resolve_pf_alloc_trade_date
+
+        day = resolve_pf_alloc_trade_date()  # 共用业务日真源（禁墙钟猜日）
+        rows = reader(hook.already_sql.format(table=hook.table, module_id=hook.module_id, day=day))
+        if rows and int(rows[0][0]) > 0:
+            return {"action": "already_emitted", hook.date_key: day}
+        result = emit(day)
+        if not result.committed:
+            return {"action": "emit_not_committed", "disposition": result.disposition,
+                    hook.date_key: day, "judgment_id": result.judgment_id}
+        return {"action": "emitted", hook.date_key: day, "judgment_id": result.judgment_id}
+    except ValueError as exc:
+        # 必需数据缺席=fail-closed 漏判（出声留痕，不编造）——下个唤醒点自愈
+        return {"action": "data_insufficient", hook.date_key: day, "reason": str(exc)[:200]}
+    except Exception as exc:  # noqa: BLE001——钩子永不反噬调度器，失败必须出声
+        return {"action": "error", hook.date_key: day,
+                "error": f"{type(exc).__name__}: {exc}"[:200]}
+
+
+def make_judgment_emit_hook(
+    hook: JudgmentEmitHook,
+    *,
+    reader: Callable[[str], list[tuple]],
+    emit: Callable[[str], EmitResult],
+) -> Callable[..., dict[str, Any]]:
+    """把一条 JudgmentEmitHook 生成为公开唤醒入口（maybe_emit_* 家族的唯一生成处）。
+
+    为什么用工厂而不是在各模块各写一个 `def`：委托体 `return run_judgment_emit_hook(...)`
+    写两遍，在 reDUP 眼里仍是 100% 结构克隆（其 --min-lines 默认 3，委托块尺寸兜不住），
+    那样只是把 25 行重复压成 3 行重复——重复仍在两处。工厂化后**骨架与委托都只有一份**，
+    各腿只登记参数，无任何可重复的代码体。
+
+    Args:
+        hook: 本腿的表侧参数。
+        reader: 只读通道访问器（调用方以 `lambda sql: _reader_execute(sql)` 传入——
+            **必须惰性**：既有测试 monkeypatch 的是调用模块的全局函数名，import 期绑定
+            会让注入点静默失效并让测试打到真库）。
+        emit: 发射函数访问器（同上，惰性取本模块全局）。
+
+    Returns:
+        与改造前 `def maybe_emit_xxx(task_id, success, **_kwargs) -> dict` 同签名的入口，
+        __name__/__doc__ 由 hook.entry / hook.doc_zh 还原（文档与可发现性不因合并而降级）。
+    """
+
+    def _entry(task_id: Any = None, success: bool = True, **_kwargs: Any) -> dict[str, Any]:
+        return run_judgment_emit_hook(hook, task_id, success, reader=reader, emit=emit)
+
+    _entry.__name__ = hook.entry
+    _entry.__qualname__ = hook.entry
+    if hook.doc_zh:
+        _entry.__doc__ = hook.doc_zh
+    return _entry
+

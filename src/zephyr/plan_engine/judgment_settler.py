@@ -60,7 +60,10 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Any, Final, Sequence
 
 from zephyr.plan_engine.brier_calibration import brier_score, brier_score_multiclass
-from zephyr.plan_engine.judgment_ledger import JUDGMENT_TABLES  # 表名注册单一真源（发射器侧）
+from zephyr.plan_engine.judgment_ledger import (  # 表名注册单一真源（四表经 TableRegistry 派生）
+    JUDGMENT_TABLES,
+    VERIFICATION_TABLE,
+)
 
 __all__: Final = [
     "SettleReport",
@@ -422,9 +425,9 @@ def _backfill_unresolvable(table: str, judgment_id: str, reason: str, settled_at
 # ── 组合入口 ──
 
 _SCAN_UNSETTLED_SQL: Final = "SELECT {cols} FROM {table} WHERE evaluated_at IS NULL"  # noqa: bare-sql  未结算扫描查询集中为模块常量
-_VERIFICATION_LATEST_SQL: Final = (
+_SQL_VERIFICATION_LATEST = (
     "SELECT plan_judgment_id, actual_scenario_id, plan_followed, scenario_hits, verified_at "
-    "FROM {db}.judgment_plan_verification "
+    "FROM {table} "
     "ORDER BY plan_judgment_id, verified_at, verification_id"
 )
 
@@ -437,7 +440,7 @@ def _scan_unsettled(table: str) -> list[dict[str, Any]]:
 
 def _load_verifications() -> dict[str, dict[str, Any]]:
     """plan_judgment_id → 最新 verification 行。"""
-    rows = _reader_execute(_VERIFICATION_LATEST_SQL.format(db=_DB))
+    rows = _reader_execute(_SQL_VERIFICATION_LATEST.format(table=VERIFICATION_TABLE))
     out: dict[str, dict[str, Any]] = {}
     for r in rows:
         out[str(r[0])] = {

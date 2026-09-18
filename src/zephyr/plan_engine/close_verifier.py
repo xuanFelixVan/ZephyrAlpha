@@ -74,6 +74,7 @@ from zephyr.plan_engine.daily_plan import (
     load_plan_for_session,
     parse_trigger,
 )
+from zephyr.plan_engine.judgment_ledger import VERIFICATION_TABLE
 from zephyr.plan_engine.judgment_settler import _reader_execute  # noqa: PLC2701 —— 注入点单点收口
 from zephyr.plan_engine.scenario_classifier import (  # noqa: PLC2701 —— 私有复用通道（只 import 不改）
     earliest_actual,
@@ -103,8 +104,9 @@ _PREV_DAY_SQL: Final = (
     "SELECT max(trade_date) FROM c1_market.kline_index "
     "WHERE symbol = '000300' AND quality_flag = 1 AND trade_date < '{day}'"
 )
-_EOD_VERIFIED_SQL: Final = (
-    "SELECT count() FROM c1_market.judgment_plan_verification "
+_SQL_EOD_VERIFIED = (
+    "SELECT count() "
+    "FROM {table} "
     "WHERE plan_judgment_id = '{jid}' AND verified_by LIKE 'close_verifier%'"
 )
 # 60min bars 拉取（降级判定用——缺席走日线兜底，不经手 tracker 私有 SQL：此处只判有无）
@@ -204,7 +206,7 @@ def verify_for_session(
     scenarios = scenarios_from_payload(plan["payload"])
 
     # 已定格→幂等零写入（EOD 行查重）
-    cnt = rd(_EOD_VERIFIED_SQL.format(jid=plan["judgment_id"]))
+    cnt = rd(_SQL_EOD_VERIFIED.format(table=VERIFICATION_TABLE, jid=plan["judgment_id"]))
     if cnt and int(cnt[0][0]) > 0:
         return {"action": "already_verified", "session": day, "plan_date": g_day,
                 "judgment_id": plan["judgment_id"]}

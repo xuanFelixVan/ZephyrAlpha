@@ -94,9 +94,12 @@ import re
 from typing import Any, Final, Sequence
 
 from zephyr.plan_engine.judgment_ledger import (
+    JUDGMENT_TABLES,
     EmitResult,
     JudgmentDraft,
+    JudgmentEmitHook,
     emit_judgment,
+    make_judgment_emit_hook,
 )
 from zephyr.shared.utils.time_utils import now_utc
 
@@ -552,12 +555,14 @@ _KLINE_SQL: Final = (
 )
 # 幂等查重：plan_date 是 inputs_ref 首键（首键前无分隔符——P2a 幂等三连发事故同款修法；
 # 尾 '|' 防日期前缀误配）
-_ALREADY_SQL: Final = (
-    "SELECT count() FROM c1_market.judgment_daily_plan "
+_SQL_ALREADY = (
+    "SELECT count() "
+    "FROM {table} "
     "WHERE module_id = '{module_id}' AND inputs_ref LIKE '%plan_date:{day}|%'"
 )
-_FORECAST_SQL: Final = (
-    "SELECT judgment_id, payload FROM c1_market.judgment_next_day_forecast "
+_SQL_FORECAST = (
+    "SELECT judgment_id, payload "
+    "FROM {table} "
     "WHERE module_id = '{forecaster}' AND inputs_ref LIKE '%trade_date:{day}|%' "
     "ORDER BY asof_ts DESC, judgment_id DESC LIMIT 1"
 )
@@ -574,8 +579,9 @@ _NEXT_SESSION_SQL: Final = (
     "WHERE cal_date > '{day}' AND is_open = 1 AND exchange = 'SSE'"
 )
 # 计划装载（盘中归类/收盘验证消费方共用——T2/T3 import 复用，禁另拼第二份）
-_PLAN_SQL: Final = (
-    "SELECT judgment_id, payload, asof_ts, inputs_ref FROM c1_market.judgment_daily_plan "
+_SQL_PLAN = (
+    "SELECT judgment_id, payload, asof_ts, inputs_ref "
+    "FROM {table} "
     "WHERE module_id = '{module_id}' AND inputs_ref LIKE '%plan_date:{day}|%' "
     "ORDER BY asof_ts DESC, judgment_id DESC LIMIT 1"
 )
@@ -588,7 +594,7 @@ def load_plan_for_session(day: str, *, reader=None) -> dict[str, Any] | None:
         {judgment_id, payload(dict), asof_ts, inputs_ref} 或 None（无计划）。
     """
     rd = reader or _reader_execute
-    rows = rd(_PLAN_SQL.format(module_id=MODULE_ID, day=day))
+    rows = rd(_SQL_PLAN.format(table=JUDGMENT_TABLES["daily_plan"], module_id=MODULE_ID, day=day))
     if not rows:
         return None
     import json as _json
@@ -615,7 +621,8 @@ def _load_optional_inputs(rd, day: str) -> dict[str, Any]:
     返回 dict：fc/forecaster_jid/forecast_note/regime/breadth/next_session/missing。
     """
     missing: list[str] = []
-    fc = _safe_one(rd, _FORECAST_SQL.format(forecaster=_FORECASTER_MODULE, day=day))
+    fc = _safe_one(rd, _SQL_FORECAST.format(table=JUDGMENT_TABLES["next_day_forecast"],
+                              forecaster=_FORECASTER_MODULE, day=day))
     forecaster_jid = ""
     forecast_note: dict[str, Any] | None = None
     if fc is not None:
@@ -768,37 +775,32 @@ def emit_for_trade_date(
 _FORECASTER_MODULE: Final = "MOD-PLAN-029"  # 次日概率件（P2a）——只引用编号读台账，不 import 其私有符号
 
 
-def maybe_emit_daily_plan(task_id: Any = None, success: bool = True,
-                          **_kwargs) -> dict[str, Any]:
-    """晨间预案的**唯一自动产出者**：daily_kline SUCCESS=自然唤醒（T 日数据齐）。
+#: P2b 晨间预案钩子：本模块只登记表侧参数，骨架与委托体单点于 judgment_ledger。
+#: （CloneGuard 实测本件与 P2a maybe_emit_next_day_forecast 是 100% extract 级克隆
+#:  reDUP 组 06c56c3a9d5495e5，按 R-002 同原则 merge 治本；不走 ack 白名单消警。）
+_EMIT_HOOK: Final = JudgmentEmitHook(
+    leg="P2b 晨间预案",
+    entry="maybe_emit_daily_plan",
+    already_sql=_SQL_ALREADY,
+    table=JUDGMENT_TABLES["daily_plan"],
+    module_id=MODULE_ID,
+    date_key="plan_date",  # 对外键名口径保持改造前原样（消费方可见，禁顺手统一）
+    doc_zh="""晨间预案的**唯一自动产出者**：daily_kline SUCCESS=自然唤醒（T 日数据齐）。
 
-    宪法 §9.3 合规（零新机制，P2a maybe_emit_next_day_forecast 同款骨架）：不建
-    cron/Timer/sleep 循环。业务日 G=resolve_pf_alloc_trade_date()（禁墙钟猜日）；
-    plan_date:<G> 查重幂等——重复唤醒/非交易日零副作用。发射失败 WARN 出声不反噬
-    唤醒链。与 P2a 次日概率件同拍（读其台账产出作为输入之一）。
-    """
-    tid = str(task_id or "")
-    if not success or not any(k in tid for k in ("daily_kline", "kline_daily", "kline_index")):
-        return {"action": "skipped_wake_point"}
-    day = ""
-    try:
-        from zephyr.strategy_pipeline.pipeline_events import resolve_pf_alloc_trade_date
+    宪法 §9.3 合规（零新机制）：不建 cron/Timer/sleep 循环。业务日 G=
+    resolve_pf_alloc_trade_date()（禁墙钟猜日）；plan_date:<G> 查重幂等——重复唤醒/
+    非交易日零副作用。发射失败出声不反噬唤醒链。与 P2a 次日概率件同拍（读其台账产出
+    作为输入之一）。骨架与 P2a 共用 judgment_ledger.run_judgment_emit_hook（R-002 merge）。
+    """,
+)
 
-        day = resolve_pf_alloc_trade_date()  # 共用业务日真源（禁墙钟猜日）
-        rows = _reader_execute(_ALREADY_SQL.format(module_id=MODULE_ID, day=day))
-        if rows and int(rows[0][0]) > 0:
-            return {"action": "already_emitted", "plan_date": day}
-        result = emit_for_trade_date(day)
-        if not result.committed:
-            return {"action": "emit_not_committed", "disposition": result.disposition,
-                    "plan_date": day, "judgment_id": result.judgment_id}
-        return {"action": "emitted", "plan_date": day, "judgment_id": result.judgment_id}
-    except ValueError as exc:
-        # 必需数据缺席=fail-closed 漏判（出声留痕，不编造）——下个唤醒点自愈
-        return {"action": "data_insufficient", "plan_date": day, "reason": str(exc)[:200]}
-    except Exception as exc:  # noqa: BLE001——钩子永不反噬调度器，失败必须出声
-        return {"action": "error", "plan_date": day,
-                "error": f"{type(exc).__name__}: {exc}"[:200]}
+# reader/emit 以 lambda 惰性取本模块全局——既有测试 monkeypatch 的是模块属性，
+# import 期绑定会让注入点静默失效（tests/plan_engine/test_daily_plan.py 会打到真库）
+maybe_emit_daily_plan: Final = make_judgment_emit_hook(
+    _EMIT_HOOK,
+    reader=lambda sql: _reader_execute(sql),
+    emit=lambda day: emit_for_trade_date(day),
+)
 
 
 if __name__ == "__main__":  # pragma: no cover — 手工补跑逃生口（非自动链路）

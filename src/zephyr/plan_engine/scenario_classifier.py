@@ -86,7 +86,7 @@ from zephyr.plan_engine.intraday_l1_tracker import (  # noqa: PLC2701 —— 私
     _SHANGHAI,
     format_bar_key,
 )
-from zephyr.plan_engine.judgment_ledger import format_utc3, new_judgment_id
+from zephyr.plan_engine.judgment_ledger import VERIFICATION_TABLE, format_utc3, new_judgment_id
 from zephyr.plan_engine.judgment_settler import _reader_execute  # noqa: PLC2701 —— 注入点单点收口
 from zephyr.shared.utils.time_utils import now_utc
 
@@ -105,8 +105,8 @@ __all__: Final = [
 MODULE_ID: Final = "MOD-PLAN-031"
 VERIFIED_BY_PREFIX: Final = "scenario_engine"  # 盘中验证行写方前缀（T3 用 close_verifier 前缀）
 
-_VERIFICATION_TABLE: Final = "c1_market.judgment_plan_verification"
-from schemas.categories.judgment.judgment_plan_verification import (  # noqa: E402
+_VERIFICATION_TABLE: Final = VERIFICATION_TABLE  # 表名经 TableRegistry 真源派生（#ARCH-CH-024；2026-09-18 判定链注册迁移 st-ff-judgment-20260918），单点=judgment_ledger
+from schemas.categories.judgment.judgment_plan_verification import (  # noqa: E402  # noqa: import-integrity  仓根 sys.path 由 judgment_ledger 运行时注入，静态 find_spec 不可解析（目标件在 HEAD）
     INSERT_COLUMNS as _VER_INSERT_COLS,
 )
 
