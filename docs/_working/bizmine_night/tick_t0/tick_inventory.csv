@@ -1,0 +1,17 @@
+database,table,symbol_filter,row_count,days,date_min,date_max,quotes_l1_rows,direction_enums,notes
+c1_market,tick_data,ALL,8857286202,,2025-01-02,2026-09-18,,,market_type: stock 59.98亿(2025-01-02起全深)/sector 9.70亿/index 8.90亿/etf 4.52亿(仅2026-07-10起)/cb 2.72亿/stock_bj 1.48亿; sources: bdpan 77.7亿/miniqmt 10.5亿/qmt_hist 3952万/qmt_bridge 146万; 1970残留=0行; symbol格式: 带后缀2369+裸码9472; cadence≈3秒快照流(按行数/交易时长推断,非逐笔)
+c1_market,tick_data,510300.SH,1576372,338,2025-01-02,2026-05-29,0,买入/卖出/中性盘(bdpan),bdpan时代无L1报价; 与裸码510300时段不重叠
+c1_market,tick_data,510300,97847,28,2026-07-10,2026-09-18,97251,中性盘/空(miniqmt),miniqmt时代99.4%行含bid/ask; direction全部失效(中性盘/空)
+c1_market,tick_data,300561,1320004,414,2025-01-02,2026-09-18,187679,买盘/卖盘(bdpan时代);空/中性盘(miniqmt时代),创业板; 2026-07起71%行含bid/ask; 全窗深样本
+c1_market,tick_data,300469,1364769,416,2025-01-02,2026-09-18,169241,买盘/卖盘(bdpan时代);空/中性盘(miniqmt时代),创业板; 2026-07起67%行含bid/ask; 全窗深样本
+c1_market,tick_depth_5,ALL,30400341,,2026-07-24,2026-09-18,30400341,,五档量价齐全( Nullable 但主覆盖日全非空); 仅裸码symbol(8710只); 真实bulk日=2026-09-14/15/16/18(每日8650+symbol/万行级); 07-24..09-11为稀散测试行(<5107行/日)
+c1_market,tick_depth_5,510300,25940,9,2026-09-03,2026-09-18,25940,,510300五档覆盖=9日; 其中bulk级仅4-5日
+c1_market,tick_depth_5,300561,4802,5,2026-09-11,2026-09-18,4802,,bulk级仅2026-09-14/15/16/18
+c1_market,tick_depth_5,300469,3751,5,2026-09-11,2026-09-18,3751,,同上
+c1_market,tick_data_tzbak_20260914,ALL,507700,2,2026-09-09,2026-09-10,,,tz事故备份表(裸码); 不用于考试
+c1_market,l2_tick,ALL,0,,,,,,,,空壳(1970桩; 勘误件已登记)
+c1_market,realtime_snapshot,ALL,0,,,,,,,,空壳
+c1_market,index_quote,ALL,219857,,,指数快照(非逐笔); 与本考无关仅登记
+c1_market,board_index_tick,ALL,5564,,,,,,测试数据(总包勘误: 仅2分钟); 不用于考试
+c1_market,auction_snapshot,ALL,251598,,,,,,竞价快照面板(非逐笔); 本考不用; 另类车道已用
+c1_market,block_trade_detail,ALL,1461,,,,,,大宗交易明细; 本考不用仅登记
