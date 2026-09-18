@@ -45,35 +45,35 @@ depends_on:
 
 | 域目录 | 域 ID | 责任 | 状态 |
 |--------|------|------|------|
-| [_domain_data/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_data/index.md) | D-DATA | 数据源（待拆分: D_MKT_DATA/D_DATA_ENG/D_DATA_GOV/D_DATA_SEC） | 待拆分 |
-| [_domain_signal/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_signal/index.md) | signal 层（D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC） | 信号生成（3子域） | 活跃 |
-| [_domain_simulation/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_simulation/index.md) | D_SIMULATION | 实验仿真（待拆分: 4域） | 待拆分 |
-| [_domain_factor/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_factor/index.md) | D_FACTOR | Alpha 因子 | 活跃 |
-| [_domain_portfolio_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_portfolio_core/index.md) | D_PF_CORE | 组合核心 | 活跃 |
-| [_domain_execution_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_execution_core/index.md) | D_EX_CORE | 执行核心 | 活跃 |
-| [_domain_risk/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_risk/index.md) | D_RISK | 风险管理 | 活跃 |
-| [_domain_research/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_research/index.md) | D-RESEARCH | 研究创新 | 活跃 |
-| [_domain_backtest/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_backtest/blueprint.md) | D_BACKTEST | 回测引擎（双模式：向量化+事件驱动，2026-07-02 从 D-RESEARCH 独立） | 活跃 |
-| [_domain_reporting/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_reporting/index.md) | D_REPORTING | 报表分析 | 活跃 |
-| [_domain_machine_learning_train/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_machine_learning_train/index.md) | D_ML_TRAIN | ML 训练 | 活跃 |
-| [_domain_knowledge/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_knowledge/index.md) | D_KNOWLEDGE | 知识库 | 活跃 |
-| [_domain_frontend/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_frontend/index.md) | D_FRONTEND | 前端 | 活跃 |
-| [_domain_compliance/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_compliance/index.md) | D_COMPLIANCE | 合规 | 活跃 |
-| [_domain_governance/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_governance/index.md) | D_GOVERNANCE | 治理 | 活跃 |
-| [_domain_infrastructure_operations/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/index.md) | D-INFRA-OPS | 基础设施运维 | 活跃 |
-| [_domain_infrastructure_runtime/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_runtime/index.md) | D_INFRA_RUNTIME | 基础设施运行时 | 活跃 |
-| [_domain_integration/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_integration/blueprint.md) | D_INTEGRATION | 集成 | 活跃 |
-| [_domain_autonomy_core/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md) | D_AUTONOMY_CORE | 自治核心 | 活跃 |
-| [_domain_autonomy_perm/](file:///D:/ZephyrAlpha/docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md) | D_AUTONOMY_PERM | 自治权限 | 活跃 |
+| [_domain_data/](_domain_data/index.md) | D-DATA | 数据源（待拆分: D_MKT_DATA/D_DATA_ENG/D_DATA_GOV/D_DATA_SEC） | 待拆分 |
+| [_domain_signal/](_domain_signal/index.md) | signal 层（D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC） | 信号生成（3子域） | 活跃 |
+| [_domain_simulation/](_domain_simulation/index.md) | D_SIMULATION | 实验仿真（待拆分: 4域） | 待拆分 |
+| [_domain_factor/](_domain_factor/index.md) | D_FACTOR | Alpha 因子 | 活跃 |
+| [_domain_portfolio_core/](_domain_portfolio_core/index.md) | D_PF_CORE | 组合核心 | 活跃 |
+| [_domain_execution_core/](_domain_execution_core/index.md) | D_EX_CORE | 执行核心 | 活跃 |
+| [_domain_risk/](_domain_risk/index.md) | D_RISK | 风险管理 | 活跃 |
+| [_domain_research/](_domain_research/index.md) | D-RESEARCH | 研究创新 | 活跃 |
+| [_domain_backtest/](_domain_backtest/blueprint.md) | D_BACKTEST | 回测引擎（双模式：向量化+事件驱动，2026-07-02 从 D-RESEARCH 独立） | 活跃 |
+| [_domain_reporting/](_domain_reporting/index.md) | D_REPORTING | 报表分析 | 活跃 |
+| [_domain_machine_learning_train/](_domain_machine_learning_train/index.md) | D_ML_TRAIN | ML 训练 | 活跃 |
+| [_domain_knowledge/](_domain_knowledge/index.md) | D_KNOWLEDGE | 知识库 | 活跃 |
+| [_domain_frontend/](_domain_frontend/index.md) | D_FRONTEND | 前端 | 活跃 |
+| [_domain_compliance/](_domain_compliance/index.md) | D_COMPLIANCE | 合规 | 活跃 |
+| [_domain_governance/](_domain_governance/index.md) | D_GOVERNANCE | 治理 | 活跃 |
+| [_domain_infrastructure_operations/](_domain_infrastructure_operations/index.md) | D-INFRA-OPS | 基础设施运维 | 活跃 |
+| [_domain_infrastructure_runtime/](_domain_infrastructure_runtime/index.md) | D_INFRA_RUNTIME | 基础设施运行时 | 活跃 |
+| [_domain_integration/](_domain_integration/blueprint.md) | D_INTEGRATION | 集成 | 活跃 |
+| [_domain_autonomy_core/](_domain_autonomy_core/agent_role_based_access_control/blueprint.md) | D_AUTONOMY_CORE | 自治核心 | 活跃 |
+| [_domain_autonomy_perm/](_domain_autonomy_perm/budget_enforcer/blueprint.md) | D_AUTONOMY_PERM | 自治权限 | 活跃 |
 
 ### 2.2 平台域/跨层（12平台域 + 跨层模块）
 
 | 目录 | 说明 | 入口 |
 |------|------|------|
-| [_cross_layer/](file:///D:/ZephyrAlpha/docs/03_modules/_cross_layer/index.md) | 跨层模块（agent_orchestrator, context_engine, feedback_loop, gate_engine, llm_security, mcp_servers, pipeline, shared_core 等 17 模块） | index.md |
-| [_b_track_interfaces/](file:///D:/ZephyrAlpha/docs/03_modules/_cross_layer/_b_track_interfaces/index.md) | B 轨 6 大核心服务接口合同 | index.md（位于 _cross_layer/ 下） |
-| [_master_blueprint/](file:///D:/ZephyrAlpha/docs/03_modules/_master_blueprint/index.md) | 集成总蓝图（MOD-MASTER_BLUEPRINT） | blueprint.md |
-| [_system_master/](file:///D:/ZephyrAlpha/docs/03_modules/_system_master/index.md) | 系统主蓝图（SYS-MASTER-001） | blueprint.md |
+| [_cross_layer/](_cross_layer/index.md) | 跨层模块（agent_orchestrator, context_engine, feedback_loop, gate_engine, llm_security, mcp_servers, pipeline, shared_core 等 17 模块） | index.md |
+| [_b_track_interfaces/](_cross_layer/_b_track_interfaces/index.md) | B 轨 6 大核心服务接口合同 | index.md（位于 _cross_layer/ 下） |
+| [_master_blueprint/](_master_blueprint/index.md) | 集成总蓝图（MOD-MASTER_BLUEPRINT） | blueprint.md |
+| [_system_master/](_system_master/index.md) | 系统主蓝图（SYS-MASTER-001） | blueprint.md |
 
 ### 2.3 遗留目录（已标记 Deprecated）
 
@@ -88,10 +88,10 @@ depends_on:
 
 | 注册表文件 | 说明 | 格式 |
 |-----------|------|:---:|
-| [blueprint_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml) | 蓝图注册表（全项目模块清单·SSoT） | YAML |
-| [template_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/template_registry.yaml) | 模板注册表 | YAML |
-| [path_ownership_map.yaml](file:///D:/ZephyrAlpha/docs/03_modules/path_ownership_map.yaml) | 路径归属映射 | YAML |
-| [system_pathway_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/system_pathway_registry.yaml) | [已删除 2026-09-14 裁定#231] 系统路径注册表（空壳退役；功能早已被 path_ownership_map.yaml 覆盖） | YAML |
+| `blueprint_registry.yaml` | 蓝图注册表（全项目模块清单·SSoT） | YAML |
+| [template_registry.yaml](template_registry.yaml) | 模板注册表 | YAML |
+| [path_ownership_map.yaml](path_ownership_map.yaml) | 路径归属映射 | YAML |
+| `system_pathway_registry.yaml` | [已删除 2026-09-14 裁定#231] 系统路径注册表（空壳退役；功能早已被 path_ownership_map.yaml 覆盖） | YAML |
 
 ---
 
@@ -124,4 +124,4 @@ depends_on:
 
 - 上级目录
 - 架构真源
-- [能力定位书](file:///D:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
+- [能力定位书](../02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md)
