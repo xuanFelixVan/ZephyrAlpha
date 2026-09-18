@@ -231,3 +231,15 @@ tables:
     date_col: trade_date
     max_lag_days: 5
     past_only: true
+
+  # --- D7 文本抽取（2026-09-18 夜班 st-datapack-20260918，altdata_line D7 波3）---
+  # C6 互动易问答：平台工作日问答持续产出，节假日减少——7 天档防周末误报
+  - table: c3_fundamental.irm_interactive_qa
+    date_col: question_date
+    max_lag_days: 7
+    past_only: true
+  # C9 调研纪要：披露呈脉冲（财报季后密集、淡季可数周稀疏）——45 天档
+  - table: c3_fundamental.ir_activity_record
+    date_col: publish_date
+    max_lag_days: 45
+    past_only: true

@@ -1330,6 +1330,12 @@ class IntegratorScheduler:
                 )
 
                 return InternalComputeProvider()
+            elif source == "irm":
+                # D7 文本抽取（altdata_line 09 清单，2026-09-18）：深交所互动易官方接口
+                # C6 问答对+C9 调研纪要；原文快照先行（G 盘冷库），抽取物走 irm_extract_batch
+                from zephyr.data.implementations.irm_provider import IrmProvider
+
+                return IrmProvider()
             else:
                 log.warning("未知数据源: %s", source)
                 return None

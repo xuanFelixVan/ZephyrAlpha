@@ -55426,6 +55426,62 @@ entries:
   desc_en: ""
   plain_zh: "这个适配器负责从 Hyperliquid 官方免费接口把数据搬回自家仓库：价格、持仓、资金费率一次搬全市场，爆仓流水靠听直播流抓。"
   responsibility_layer: business
+- module_path: schemas/categories/fundamental/irm_interactive_qa.py
+  domain_id: D_DATA
+  name_zh: "互动易问答原文表DDL"
+  name_en: "irm interactive qa DDL"
+  desc_zh: "c3_fundamental.irm_interactive_qa 表 DDL 唯一真源：深交所互动易问答对原文层（提问+公司回答+G盘快照路径）"
+  desc_en: ""
+  plain_zh: "这张表存投资者在互动易上问公司的问题和公司的官方回答原文。每条记录都能反查当时网页的存档快照，防止以后源头删帖查不到。"
+  responsibility_layer: business
+- module_path: schemas/categories/fundamental/irm_interactive_extraction.py
+  domain_id: D_DATA
+  name_zh: "互动易问答LLM抽取表DDL"
+  name_en: "irm interactive extraction DDL"
+  desc_zh: "c3_fundamental.irm_interactive_extracted 表 DDL 唯一真源：LLM 抽取产物（产品/供应链/情绪/置信度），review_status=approved 唯一消费态"
+  desc_en: ""
+  plain_zh: "这张表存电脑从问答里读出来的要点：公司提到什么产品、供应链关系、语气是乐观还是悲观，以及它自己有多大把握。把握不够的进人工复核池，不会直接被策略当成可信信号用。"
+  responsibility_layer: business
+- module_path: schemas/categories/fundamental/ir_activity_record.py
+  domain_id: D_DATA
+  name_zh: "调研纪要原文表DDL"
+  name_en: "ir activity record DDL"
+  desc_zh: "c3_fundamental.ir_activity_record 表 DDL 唯一真源：投资者关系活动记录表元数据（PDF 原件快照落 G 盘冷库）"
+  desc_en: ""
+  plain_zh: "这张表记录每份投资者调研纪要的基本信息：哪家公司、哪天披露、PDF 存在冷盘哪里。纪要原件一张不少地存档，随时能翻原文核对。"
+  responsibility_layer: business
+- module_path: schemas/categories/fundamental/ir_activity_extraction.py
+  domain_id: D_DATA
+  name_zh: "调研纪要LLM抽取表DDL"
+  name_en: "ir activity extraction DDL"
+  desc_zh: "c3_fundamental.ir_activity_extracted 表 DDL 唯一真源：调研纪要 LLM 抽取产物（接待机构/产品/供应链/情绪/置信度）"
+  desc_en: ""
+  plain_zh: "这张表存电脑从调研纪要 PDF 里读出来的要点：哪些机构来调研、公司谈到什么产品、语气如何、可信度多少。低置信度的进人工池不直接使用。"
+  responsibility_layer: business
+- module_path: src/zephyr/data/implementations/irm_provider.py
+  domain_id: D_DATA
+  name_zh: "深交所互动易Provider"
+  name_en: "irm cninfo provider"
+  desc_zh: "irm.cninfo.com.cn 官方接口 Provider：C6 问答对+C9 调研纪要爬取，原文快照先行落 G 盘冷库"
+  desc_en: ""
+  plain_zh: "这个程序负责去深交所互动易官网抓投资者问答和调研纪要，抓到的网页原文和 PDF 都先存档到冷备盘，再入数据库，保证数据可溯源。"
+  responsibility_layer: business
+- module_path: scripts/ch/apply_irm_extraction_ddl.py
+  domain_id: D_DATA
+  name_zh: "D7抽取四表DDL部署件"
+  name_en: "apply irm extraction DDL"
+  desc_zh: "C6/C9 四表（raw+抽取层各二）DDL 部署与验证脚本，DDL 真源在 schemas/categories/fundamental/"
+  desc_en: ""
+  plain_zh: "这个脚本一键在数据库里建好互动易和调研纪要的四张表，建完自动检查表是否在、类型对不对。"
+  responsibility_layer: business
+- module_path: scripts/ch/irm_extract_batch.py
+  domain_id: D_DATA
+  name_zh: "D7文本抽取批处理件"
+  name_en: "irm extract batch"
+  desc_zh: "C6 互动易问答+C9 调研纪要 LLM 抽取批处理：反幻觉逐字校验+置信度门 0.7，fail-closed 入人工池"
+  desc_en: ""
+  plain_zh: "这个程序用本地大模型批量阅读问答和调研纪要，提炼产品、供应链、情绪等信息。它要求每个结论都附原文依据并逐字核对，防止模型编造；没把握的结果进人工复核池。"
+  responsibility_layer: business
 
 battle_map_steps:
 - step_id: BM-BUY-05
@@ -65310,19 +65366,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: ① Agent上手上下文生成
+  name_zh: 维护手册
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: ② 任务卡模板提供
+  name_zh: 维护手册
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: ③ 目录地图提供
+  name_zh: 维护手册
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py

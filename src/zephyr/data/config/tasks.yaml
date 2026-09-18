@@ -2011,6 +2011,40 @@ tasks:
 
   fallback_sources: []    # 显式置空：金十为唯一结构化口径；calendar_event.fomc_meeting 手工台账在侧翼（单央行仅日期）
 
+  # --- D7 文本抽取·C6 互动易问答（2026-09-18 夜班 st-datapack-20260918，altdata_line D7 波3）---
+  # 官方接口 irm.cninfo.com.cn/newircs/index/search（匿名公开），滚动近窗重扫幂等；
+  # 原文快照先行（整页 JSON 落 G 盘冷库），抽取物走 scripts/ch/irm_extract_batch.py（置信度门 0.7）。
+- task_id: irm_interactive_qa_refresh
+  table: c3_fundamental.irm_interactive_qa
+  source: irm
+  schedule: daily_capital
+  incremental: false        # 近窗全量（最近 5 页×100 条，ReplacingMergeTree 同 qa_id 替换）
+  date_col: question_date
+  dependencies: []
+  capability: irm_interactive_qa
+  symbols:
+  extra:
+    pages: 5
+    page_size: 100
+    description: "互动易问答对滚动近窗（C6；提问+回答原文，G盘快照可反查）"
+
+  fallback_sources: []    # 显式置空：深交所官方平台为唯一源（无副源）
+- task_id: ir_activity_record_refresh
+  table: c3_fundamental.ir_activity_record
+  source: irm
+  schedule: daily_capital
+  incremental: false        # 近窗全量（最近 3 页×50 条，ReplacingMergeTree 同 record_id 替换）
+  date_col: publish_date
+  dependencies: []
+  capability: ir_activity_record
+  symbols:
+  extra:
+    pages: 3
+    page_size: 50
+    description: "投资者关系活动记录表（C9；元数据+PDF 快照落 G 盘，抽取走 irm_extract_batch）"
+
+  fallback_sources: []    # 显式置空：深交所官方平台为唯一源（无副源）
+
   # --- D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918，altdata_line D3）---
   # 五张月频宽表（report_date=统计期月末）+ 一张日频宽表；主源=东财 datacenter fresh 口径
   # （金十系 2025-10 起源端退役实测留痕于 schema docstring）。月度表挂 daily_event 日更

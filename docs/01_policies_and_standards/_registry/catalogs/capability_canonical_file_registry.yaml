@@ -35233,4 +35233,33 @@ creation_tokens:
   token: kimi-audit-source-switch-verdict-20260918
   created_by: flash-nightbuild-20260918
   capability: kimi_audit_nightbuild
+- file: schemas/categories/fundamental/irm_interactive_qa.py
+  token: altdata-line-irm-interactive-qa-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/fundamental/irm_interactive_extraction.py
+  token: altdata-line-irm-interactive-extraction-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/fundamental/ir_activity_record.py
+  token: altdata-line-ir-activity-record-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/fundamental/ir_activity_extraction.py
+  token: altdata-line-ir-activity-extraction-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: src/zephyr/data/implementations/irm_provider.py
+  token: altdata-line-irm-provider-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: scripts/ch/apply_irm_extraction_ddl.py
+  token: altdata-line-apply-irm-extraction-ddl-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: scripts/ch/irm_extract_batch.py
+  token: altdata-line-irm-extract-batch-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+
 di_seam_exemptions: []

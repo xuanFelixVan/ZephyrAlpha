@@ -483,3 +483,36 @@ candidates:
     target_table: ""
     status: rejected
     notes: "D6 实测 rejected 留痕（2026-09-18 夜班 st-datapack-20260918，A11 申赎族源调查）；份额日序列改由 c1_market.market_etf_share_snapshot（fund_etf_spot_em 快照积累）承担"
+
+  # ── D7 波3 本班挂账（2026-09-18 夜班 st-datapack-20260918）：时间窗内完成 C6/C9 主件，D3/D9 挂账 ──
+  - cand_id: DS-CAND-030
+    name: "专利族（D3：发明人×公司/引用网络/IPC 图谱）"
+    vendor: "国家知识产权局(CNIPA)/incoPat/智慧芽等"
+    acquire_mode: "api_free|download"
+    cost: "free(官检索页)|paid(商业库)"
+    register_barrier: "官方检索页无结构化批量 API；商业库涉授权"
+    coverage: "A 股公司专利申请/授权/引用/IPC 分类"
+    frequency: "周级增量即可"
+    history_depth: "官方可检索全史，批量导出受限额约束"
+    anti_crawl_risk: heavy
+    tos_risk: "官方检索服务条款限自动化批量访问"
+    score: {availability: 2, signal: 3, fit: 3, maintenance: 2}
+    target_table: "c3_fundamental.patent_family(拟)"
+    status: candidate
+    notes: "D7 波3 时间窗内未开工（C6/C9 主件+试点占满本班）；akshare 1.18.75 实查无 patent 接口；后续路径=CNIPA 检索页人工导出试点或商业库报批，骨架 D3 行=发明人×公司🔨（02 线）已有归口"
+
+  - cand_id: DS-CAND-031
+    name: "行政处罚族（D9：环保/税务/市监/安监/海关）"
+    vendor: "信用中国/地方市监局/统计局处罚公示/海关总署"
+    acquire_mode: crawler
+    cost: free
+    register_barrier: "多源分散无统一结构化接口；处罚决定书 PDF 为主"
+    coverage: "A 股公司行政处罚事件（主体×类型×处罚日×金额）"
+    frequency: "事件驱动"
+    history_depth: "信用中国可查多年（检索页分页限流）"
+    anti_crawl_risk: heavy
+    tos_risk: "官方公示平台，自动化采集需控频复核"
+    score: {availability: 2, signal: 4, fit: 3, maintenance: 1}
+    target_table: "c3_fundamental.admin_penalty(拟)"
+    status: candidate
+    notes: "D7 波3 时间窗内未开工（挂账如实报）；骨架 D9 行⬜；akshare 1.18.75 实查无 punish/penalty 接口；信用中国检索接口需逆向+控频，后续班次按 announcement_provider 模式另立件"
