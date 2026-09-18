@@ -2,18 +2,26 @@
 # 数据质量常驻哨兵——表清单与阈值配置（WO-④-01）
 # 真源消费者: src/zephyr/data/quality_sentinel.py（zephyr.data.quality_sentinel）
 # =============================================================================
-# 三类变异检测（三起亿行级事故的共性根因闭环，见
-# docs/_working/automation/campaign/mining/04_洗数据/工段作业簿.md §10 WO-④-01）：
+# 四类变异检测（三起亿行级事故的共性根因闭环，见
+# docs/_working/automation/campaign/mining/04_洗数据/工段作业簿.md §10 WO-④-01；
+# 第四类"污染尺"=C-36/续工车道 st-sentpoll-20260919，2026-09-19 加）：
 #   a) epoch   纪元变异：业务时间列出现 1970-01-01 附近（< epoch_cutoff）的行
 #   b) tz_shift 时区偏移：DateTime64 列盘中小时分布异常（-8h 偏移把 09:30-15:00
 #      挪进 01:30-07:00，suspect_hours 密度超比例即告警）
 #   c) empty_segment 空段：最近 N 个交易日整表零行
+#   d) non_trading_day 污染尺：业务日期落在**非交易日**上的行数 > non_trading_max_rows
+#      即告警（滞后尺量"多久没写"，本尺量"写进来的是不是真值"——两把尺禁合并）
 #
 # 口径说明：
 #   - epoch 检测恒为全史扫描（count() 单列谓词，CH 列存代价可接受；历史残留
 #     如 tick_data 1970 段只有限全史才能兜住）。
 #   - 计数不带 FINAL（ReplacingMergeTree 未合并重复行对变异检测无影响，
-#     换取亿行表免 FINAL 全归并开销）。
+#     换取亿行表免 FINAL 全归并开销）。**例外**：non_trading_day 腿两段查询都带
+#     FINAL——幽灵日计数须与 B15 案卷的 FINAL 口径逐日可比（手册硬约束）。
+#   - non_trading_day 腿按表 opt-in：不写该键=不启用（全史 GROUP BY 代价高，
+#     只给已证实有病灶的表配）。判据只准用库内权威日历的负向谓词
+#     （NOT IN 开市日），禁 dayOfWeek 判周末（ClickHouse 实测 ISO 序，与官方文档
+#     相反）、禁 is_open=0 判非交易日（该表只存开市日 ⇒ 恒空＝假绿）。
 #   - DateTime64 列显式 'Asia/Shanghai' 口径（RULE-SCHEMA-TZ）。
 schema_version: 1
 
@@ -62,8 +70,20 @@ tables:
     date_col: decision_date
   # 个股估值：N-1 型（close/amount/turnover 全 0）由 data_supply_sentinel 的
   # column_fill_ratio 腿守；本册只补 epoch/空段两维，避免第二真源。
+  # ★ 2026-09-19 C-36 补第四维"污染尺"（本车道，只加严不放松）：B15 实测本表
+  #   77,668/259,238 FINAL 行（29.96%）落在 14 个非交易日（2026-08-01..09-13 的周六周日），
+  #   而 epoch/空段/新鲜度/填充率四路全绿 ⇒ "日期根本不该有数"这一维此前无人盯。
+  #   阈值取 0=零容忍（幽灵行 >0 即告警）；禁为降噪拍一个百分比容忍度（那等于给脏数据发通行证）。
+  #   判据谓词与三条硬约束（负向 NOT IN 开市日 / 禁 dayOfWeek / 禁 is_open=0）见
+  #   src/zephyr/data/quality_sentinel.py 模块头 + CONSTRUCTION_DISCIPLINE.md §7。
+  #   活库实测口径（D-17，2026-09-19 system.columns/system.tables）：
+  #     daily_valuation.trade_date = Date（业务日期列，非 ingest_ts DateTime64(3,'UTC')）；
+  #     trade_calendar = ReplacingMergeTree(exchange, cal_date)，列 cal_date Date（非 calendar_date）；
+  #     trade_calendar 仅 exchange='SSE' 一档，8797 行且 sum(is_open)=count(*)=8797 ⇒ 只存开市日。
+  #   治的是**检测面**；那 77,668 行的清理（DB 净删=Owner 门位）与写入端日历闸是 C-35/C-34 另案。
   - table: c1_market.daily_valuation
     date_col: trade_date
+    non_trading_max_rows: 0
 
 # =============================================================================
 # 排班接线（自动化四要素；2026-09-18 全流通战役 st-ff-sentinel-20260918 落地）

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [TTL] permanent
-"""quality_sentinel 单测（WO-④-01：1970 纪元/时区偏移/空段三类变异检测器）。
+"""quality_sentinel 单测（WO-④-01：1970 纪元/时区偏移/空段 + C-36 污染尺四类变异检测）。
 
 零网零 CH：QueryExecutor / MarketCalendar / Alerter 全部 fake 注入；
 报告输出走 tmp_path fixture（宪法 §9.6 测试禁写生产路径）。
@@ -9,6 +9,9 @@
 - epoch：date_col 命中 / ts_col 命中 / 容忍阈值内不报
 - tz_shift：-8h 偏移形态命中 / 正常盘中分布不报 / 低于阈值不报 / 无 ts_col 跳过
 - empty_segment：整表零行命中 / 有行不报
+- non_trading_day（C-36 污染尺）：非交易日有行命中并报出日期 / 全开市日不报 / 零容忍方向 /
+  未配阈值=不启用且不打 CH / 谓词文本钉（禁 is_open=0、禁 dayOfWeek、必带 FINAL）/
+  日历空或 cal_date 有 NULL 时拒绝出数 / degraded 不混进"干净" / 出厂册只钉一张表
 - run_sentinel：干净通过 / 告警正门 / 单表降级不中断 / 报告开关
 - CLI：exit code=变异数 / 干净=0 / 配置缺失=254 / 封顶 255
 - load_specs：默认+覆盖合并 / 表过滤 / days 覆盖 / 仓内真配置可解析
@@ -29,6 +32,7 @@ from src.zephyr.data.quality_sentinel import (
     _to_exit_code,
     check_empty_segment,
     check_epoch,
+    check_non_trading_day,
     check_tz_shift,
     load_specs,
     main,
@@ -194,6 +198,152 @@ class TestCheckEmptySegment:
         """窗口内有行 -> 不报。"""
         ex = FakeExecutor(lambda sql: [(42,)] if "count() FROM" in sql else None)
         assert check_empty_segment(ex, make_spec(), REF_DATE, FakeCalendar()) == []
+
+
+# ============== d) non_trading_day 污染尺（C-36 续工车道 st-sentpoll-20260919） ==============
+
+#: 两条 SQL 的路由标记：日历守卫（open_days 计数）/ 幽灵日分组计数
+CAL_GUARD_MARK = "AS open_days"
+GHOST_ROWS_MARK = "NOT IN (SELECT cal_date"
+
+
+def ghost_spec(**overrides) -> TableSpec:
+    """污染尺在册表（B15 病灶本体），零容忍。"""
+    base = {
+        "table": "c1_market.daily_valuation",
+        "date_col": "trade_date",
+        "non_trading_max_rows": 0,
+    }
+    base.update(overrides)
+    return TableSpec(**base)
+
+
+class TestCheckNonTradingDay:
+    """污染尺四条红证在单测面的对应物：能红 / 不误报 / 不静默 / 谓词写错即钉红。"""
+
+    @staticmethod
+    def _executor(ghost_rows, guard=(8797, 0)):
+        def handler(sql: str):
+            if CAL_GUARD_MARK in sql:
+                return [tuple(guard)]
+            if GHOST_ROWS_MARK in sql:
+                return ghost_rows
+            return None
+
+        return FakeExecutor(handler)
+
+    def test_leg_off_when_threshold_unset_and_no_query(self):
+        """未配 non_trading_max_rows = 本腿不启用，且一次 CH 都不打（opt-in 的代价面）。"""
+        ex = self._executor([])
+        assert check_non_trading_day(ex, make_spec()) == []
+        assert ex.calls == []
+
+    def test_ghost_rows_detected_and_dates_reported(self):
+        """非交易日有行 -> 命中，且告警文案/metric 报出具体日期与逐日行数。"""
+        ex = self._executor([(date(2026, 8, 1), 5534), (date(2026, 8, 2), 5534)])
+        findings = check_non_trading_day(ex, ghost_spec())
+        assert len(findings) == 1
+        f = findings[0]
+        assert f.check == "non_trading_day" and f.severity == "CRITICAL"
+        assert f.metric["non_trading_rows"] == 11068
+        assert f.metric["non_trading_dates"] == ["2026-08-01", "2026-08-02"]
+        assert f.metric["rows_per_non_trading_date"] == {"2026-08-01": 5534, "2026-08-02": 5534}
+        assert "2026-08-01" in f.detail and "11068" in f.detail
+
+    def test_zero_tolerance_fires_on_single_row(self):
+        """0 容忍方向：哪怕 1 行幽灵也红（禁"拍个百分比"的稀释口径）。"""
+        ex = self._executor([(date(2026, 10, 1), 1)])
+        assert len(check_non_trading_day(ex, ghost_spec())) == 1
+        ex2 = self._executor([(date(2026, 10, 1), 1)])
+        assert check_non_trading_day(ex2, ghost_spec(non_trading_max_rows=1)) == []
+
+    def test_all_trading_days_no_finding(self):
+        """样本全是开市日 -> CH 返回零组 -> 不命中（不误报）。"""
+        ex = self._executor([])
+        assert check_non_trading_day(ex, ghost_spec()) == []
+
+    def test_predicate_is_negative_authoritative_calendar(self):
+        """谓词文本钉（三条硬约束的反例都在这里变红）：
+        负向 NOT IN 开市日 / 禁 is_open=0 / 禁 dayOfWeek / 必带 FINAL / 列名 cal_date / 库名显式。"""
+        ex = self._executor([])
+        check_non_trading_day(ex, ghost_spec())
+        ghost_sql = next(s for s in ex.calls if GHOST_ROWS_MARK in s)
+        cal_sql = next(s for s in ex.calls if CAL_GUARD_MARK in s)
+        for sql in (ghost_sql, cal_sql):
+            assert "is_open = 1" in sql
+            assert "is_open = 0" not in sql, "is_open=0 恒空=尺子永不响（机器面假绿）"
+            assert "dayOfWeek" not in sql, "实测 ClickHouse 返回 ISO 序，dayOfWeek 判周末必错"
+            assert "calendar_date" not in sql, "活列名是 cal_date，写错被 CH Code: 47 打回"
+            assert "c1_market.trade_calendar" in sql, "D-17：日历断言必须写库名"
+        assert "FINAL" in ghost_sql.split("FROM")[1], "目标表计数须带 FINAL（与 B15 口径逐日可比）"
+
+    def test_empty_calendar_degrades_instead_of_false_green(self):
+        """日历返回 0 个开市日 -> 拒绝出数（本腿判据分母为空，硬出数就是假绿/假红）。"""
+        ex = self._executor([(date(2026, 8, 1), 5534)], guard=(0, 0))
+        with pytest.raises(qs.QualitySentinelError):
+            check_non_trading_day(ex, ghost_spec())
+
+    def test_null_cal_date_in_calendar_degrades(self):
+        """cal_date 出现 NULL -> NOT IN 三值逻辑会静默放行真幽灵，本腿拒绝出数。"""
+        ex = self._executor([], guard=(8797, 5))
+        with pytest.raises(qs.QualitySentinelError):
+            check_non_trading_day(ex, ghost_spec())
+
+    def test_run_sentinel_lands_finding_and_alerts(self, tmp_path):
+        """编排面：第四腿进 checks 计数、finding 进告警正门（宿主据此 ok=False）。"""
+        def handler(sql: str):
+            if CAL_GUARD_MARK in sql:
+                return [(8797, 0)]
+            if GHOST_ROWS_MARK in sql:
+                return [(date(2026, 9, 13), 5562)]
+            if "toHour(" in sql:
+                return [(9, 100)]
+            if ">= toDate(" in sql:            # 空段窗口有行（否则 empty_segment 也报，混进分母）
+                return [(5,)]
+            return [(0,)]                      # epoch 计数=0
+
+        alerter = FakeAlerter()
+        report = run_sentinel(
+            [ghost_spec()],
+            executor=FakeExecutor(handler),
+            calendar=FakeCalendar(),
+            alerter=alerter,
+            output=SentinelOutput(report_dir=tmp_path),
+            ref_date=REF_DATE,
+        )
+        assert report["results"][0]["checks"]["non_trading_day"]["finding_count"] == 1
+        assert report["findings_count"] == 1
+        assert alerter.calls[0]["extra"]["check"] == "non_trading_day"
+        assert alerter.calls[0]["level"] == "CRITICAL"
+
+    def test_calendar_failure_is_degraded_not_clean(self, tmp_path):
+        """本腿查不到数 -> degraded 出声（禁 degraded 混进 findings=0 里当"干净"）。"""
+        def handler(sql: str):
+            if CAL_GUARD_MARK in sql:
+                raise RuntimeError("CH 不可达")
+            if "toHour(" in sql:
+                return [(9, 100)]
+            return [(0,)]
+
+        report = run_sentinel(
+            [ghost_spec()],
+            executor=FakeExecutor(handler),
+            calendar=FakeCalendar(),
+            alerter=FakeAlerter(),
+            output=SentinelOutput(report_dir=None),
+            ref_date=REF_DATE,
+        )
+        degraded = report["results"][0]["degraded"]
+        assert any(d.startswith("non_trading_day:") for d in degraded)
+
+    def test_shipped_config_arms_daily_valuation_only(self):
+        """出厂册：污染尺只给已证实病灶的表配（零容忍），其余表不被静默拉进全史扫描。"""
+        specs = {s.table: s for s in load_specs()}
+        assert specs["c1_market.daily_valuation"].non_trading_max_rows == 0
+        assert specs["c1_market.daily_valuation"].date_col == "trade_date", "本腿走业务日期腿"
+        assert [t for t, s in specs.items() if s.non_trading_max_rows is not None] == [
+            "c1_market.daily_valuation"
+        ]
 
 
 # ============== run_sentinel 编排 ==============
@@ -459,6 +609,9 @@ class TestRedTeamConfigPoisoning:
         "    tz_suspect_hours: [0, 99]\n",       # 小时越界 -> 检测语义失效
         "    tz_check_days: -3\n",               # 负窗口 -> 回看窗漂到未来、巡检静默空转
         "    epoch_cutoff: 12345\n",             # cutoff 非 ISO 日期 -> CH 端才炸（应配置期拦）
+        "    non_trading_max_rows: -1\n",        # 负上限 -> 干净表也永久误报（C-36）
+        "    non_trading_max_rows: true\n",      # bool 投毒 -> int(True)=1，零容忍被悄悄放宽
+        "    non_trading_max_rows: abc\n",       # 非数值 -> 裸 ValueError 炸穿 254 契约
     ])
     def test_poisoned_thresholds_fail_closed(self, tmp_path, entry_yaml):
         p = self._cfg(tmp_path, "defaults: {}\ntables:\n  - table: c1_market.k\n    date_col: trade_date\n" + entry_yaml)
