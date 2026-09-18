@@ -73,6 +73,7 @@ import math
 import re
 import threading
 import time
+from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 from typing import TYPE_CHECKING, Final, Iterator
 
@@ -291,6 +292,25 @@ _SQL_ST_SNAPSHOTS = "SELECT trade_date, symbol FROM {table} WHERE trade_date >= 
 # 一次查询全市场传入，不逐行查库）
 _SQL_LIST_DATES = (
     "SELECT symbol, argMax(list_date, trade_date) FROM {table} WHERE trade_date <= '{end}' GROUP BY symbol"
+)
+# --- BRK-034/BRK-043 止血（2026-09-18 st-ff-datagap-20260918）---
+# 写前读回既有派生值（carry-forward，裁定 #288 同款配方）：ReplacingMergeTree 无 version 列，
+# 多写者同表时任一写者整窗重灌都会把它不拥有的列写成默认值（NULL/0）并在合并仲裁中胜出，
+# 真实受害者=index_valuation_daily 2026-09-13 全史重采 8111 行把 internal_compute 回写的
+# cape_5y/cape_5y_pct/pe_pct/erp/erp_pct 全部抹为 NULL（FINAL 视角 8125/8125 行 NULL）。
+_SQL_PRESERVED_VALUES = (
+    "SELECT symbol, toString(trade_date) AS kdate, {value_cols} FROM {table} FINAL "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}' "
+    "AND ({preserve_pred}) {symbol_filter}"
+)
+# 断点续跑完成键预查：窗口内已到"最新可得事实日"且估值列真有值的标的本次跳过，
+# 重跑只补未完成标的（daily_valuation_full_refresh 11h 批跑被杀后不必从零重来）。
+_SQL_VALUATION_COMPLETE_SYMBOLS = (
+    "SELECT symbol FROM {table} FINAL "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND toFloat64(pe_ttm) > 0 "
+    "GROUP BY symbol HAVING max(trade_date) = "
+    "(SELECT max(trade_date) FROM {table} FINAL "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND toFloat64(pe_ttm) > 0)"
 )
 _TBL_TOP10_CIRCULATING_SHAREHOLDERS = get_registry().table("fund_top10_circulating_shareholders")
 _TBL_TOP10_SHAREHOLDERS = get_registry().table("fund_top10_shareholders")
@@ -704,6 +724,110 @@ _INDEX_VALUATION_COLUMNS: Final[tuple[str, ...]] = (
     "buffett_ratio",
     "data_source",
 )
+
+# --- BRK-034/BRK-043 止血配置（2026-09-18 st-ff-datagap-20260918）---
+# 本能力只产原始列，下表列由别的写者（internal_compute 回写 / 行情腿）拥有：
+# 重灌时必须把库中既有非默认值携带进新版本行，否则无 version 列的 ReplacingMergeTree
+# 合并仲裁会让 NULL/0 版本胜出=整表派生列归零（index_valuation_daily 已实证）。
+_INDEX_VALUATION_PRESERVED_COLS: Final[tuple[str, ...]] = (
+    "pb_mrq",
+    "cape_5y",
+    "cape_5y_pct",
+    "pe_pct",
+    "pb_pct",
+    "erp",
+    "erp_pct",
+    "broken_net_ratio",
+    "buffett_ratio",
+)
+_INDEX_VALUATION_PRESERVE_PRED: Final[str] = (
+    "cape_5y IS NOT NULL OR cape_5y_pct IS NOT NULL OR pe_pct IS NOT NULL "
+    "OR erp IS NOT NULL OR pb_mrq IS NOT NULL"
+)
+_DAILY_VALUATION_PRESERVED_COLS: Final[tuple[str, ...]] = (
+    "open",
+    "high",
+    "low",
+    "close",
+    "preclose",
+    "volume",
+    "amount",
+    "turnover",
+    "pct_change",
+)
+_DAILY_VALUATION_PRESERVE_PRED: Final[str] = (
+    "toFloat64(`close`) != 0 OR toFloat64(`amount`) != 0 OR volume != 0 "
+    "OR toFloat64(`turnover`) != 0"
+)
+_PRESERVE_QUERY_TIMEOUT_SEC: Final[int] = 120
+# 探值 SQL 里内联标的名单的上限（超过则改走"整窗口一次读、不按 symbol 过滤"）
+_PRESERVE_MAX_SYMBOLS: Final[int] = 200
+# 断点续跑开关：全量重采时跳过"已到窗口最新事实日"的标的（0=始终重拉）
+_VALUATION_RESUME_SKIP_DONE: Final[bool] = True
+# 触发续跑预查的最小窗口天数（≥此天数视为重采语义，而非日常增量）
+_VALUATION_RESUME_MIN_WINDOW_DAYS: Final[int] = 15
+
+
+@dataclass(frozen=True)
+class _ValuationPreserveSpec:
+    """写前派生值携带规格（BRK-034/043；键列固定 symbol、日期列固定 trade_date）。"""
+
+    table: str
+    value_cols: tuple[str, ...]
+    preserve_pred: str
+
+
+# 两表携带规格（表名一律取 table_registry 真源，禁硬编码）
+_INDEX_VALUATION_PRESERVE_SPEC: Final[_ValuationPreserveSpec] = _ValuationPreserveSpec(
+    table=_TBL_INDEX_VALUATION_DAILY,
+    value_cols=_INDEX_VALUATION_PRESERVED_COLS,
+    preserve_pred=_INDEX_VALUATION_PRESERVE_PRED,
+)
+_DAILY_VALUATION_PRESERVE_SPEC: Final[_ValuationPreserveSpec] = _ValuationPreserveSpec(
+    table=_TBL_DAILY_VALUATION,
+    value_cols=_DAILY_VALUATION_PRESERVED_COLS,
+    preserve_pred=_DAILY_VALUATION_PRESERVE_PRED,
+)
+
+
+def _coerce_preserved_value(raw: str) -> object:
+    """TSV 字符串 → 可写入 Decimal/UInt 列的数值；解析失败返回 None（保持原 None 槽位）。"""
+    try:
+        if "." in raw or "e" in raw.lower():
+            return float(raw)
+        return int(raw)
+    except ValueError:
+        return None
+
+
+def _parse_preserved_tsv(tsv: str, value_cols: tuple[str, ...]) -> dict:
+    """CH TSV → {(symbol, date_iso): {col: value_str}}，NULL(\\N)/空串不算既有值。"""
+    parsed: dict = {}
+    for line in tsv.splitlines():
+        fields = line.split("\t")
+        if len(fields) != 2 + len(value_cols):
+            continue
+        vals = {
+            col: raw
+            for col, raw in zip(value_cols, fields[2:])
+            if raw not in ("", "\\N", "NULL")
+        }
+        if vals:
+            parsed[(fields[0], fields[1])] = vals
+    return parsed
+
+
+def _apply_preserved_values(row: list, col_positions: dict, preserved: dict) -> None:
+    """把既有非默认值填进本行的 None 槽位（本能力自采到的非 None 值优先，不覆盖）。"""
+    for col, raw in preserved.items():
+        idx = col_positions.get(col)
+        if idx is None or row[idx] is not None:
+            continue
+        coerced = _coerce_preserved_value(raw)
+        if coerced is not None:
+            row[idx] = coerced
+
+
 _A50_FUTURES_DEFAULT_SYMBOLS: Final[tuple[str, ...]] = ("CHA50CFD",)
 # a50_futures_daily 表列序（与 schemas/categories/market/market_a50_futures_daily.py
 # INSERT_COLUMNS 一致；MATERIALIZED 列 exchange/symbol_canonical 由 CH 派生不写入；
@@ -1575,6 +1699,37 @@ class AkshareIngestProvider(IngestProviderBase):
         end_str = payload.end.isoformat()
         batch_rows: list[tuple] = []
         t0 = time.monotonic()
+        # BRK-043 治本（幂等 + 断点续跑）：宽窗重采语义下跳过"已到窗口最新事实日且 pe 有值"
+        # 的标的——旧行为是 5558 只全量从零重拉（实测 39564s/11h 仅落 8 日量即中断），
+        # 被杀/超时后重跑等于再花 11 小时且再次可能中断=缺口反复复发的根因。
+        resume_wide_window = (payload.end - payload.start).days >= _VALUATION_RESUME_MIN_WINDOW_DAYS
+        if resume_wide_window or not payload.incremental:
+            done_symbols = self._load_valuation_complete_symbols(table, start_str, end_str)
+            if done_symbols:
+                kept = [
+                    s for s in symbols
+                    if str(s).split(".")[0].zfill(6) not in done_symbols
+                ]
+                self._log.info(
+                    f"daily_valuation 续跑: {len(symbols)} → {len(kept)} 只待补"
+                    f"（已完成 {len(done_symbols)} 只跳过）"
+                )
+                symbols = kept
+                if not symbols:
+                    yield FetchResult(
+                        table=table,
+                        columns=columns,
+                        rows=[],
+                        last_key=last_key,
+                        elapsed_sec=time.monotonic() - t0,
+                        rows_fetched=0,
+                    )
+                    return
+        # BRK-034 同款止血：行情腿（open..pct_change）本能力不产出（置 None→非 Nullable
+        # 列落成 0），重灌前携带库中既有真值，防把别的写者的行情腿抹成 0。
+        preserved_price = self._load_preserved_valuation_values(
+            _DAILY_VALUATION_PRESERVE_SPEC, [], start_str, end_str
+        )
 
         # 指标映射: (AKShare indicator, 目标列名)
         indicators = [
@@ -1623,15 +1778,18 @@ class AkshareIngestProvider(IngestProviderBase):
                 if done % 100 == 0:
                     self._log.info(f"daily_valuation 完成进度: {done}/{total}")
                 if len(batch_rows) >= 500:
+                    pending = batch_rows[:]
+                    self._apply_preserved_map(pending, columns, preserved_price)
                     yield FetchResult(
                         table=table,
                         columns=columns,
-                        rows=batch_rows[:],
+                        rows=pending,
                         last_key=last_key,
                         elapsed_sec=time.monotonic() - t0,
                     )
                     batch_rows.clear()
 
+        self._apply_preserved_map(batch_rows, columns, preserved_price)
         yield FetchResult(
             table=table,
             columns=columns,
@@ -9972,6 +10130,108 @@ class AkshareIngestProvider(IngestProviderBase):
             elapsed_sec=time.monotonic() - t0,
         )
 
+    # ---- BRK-034/BRK-043 止血：写前派生值携带 + 断点续跑完成键预查 ----
+
+    def _load_preserved_valuation_values(
+        self,
+        spec: _ValuationPreserveSpec,
+        symbols: list,
+        start_str: str,
+        end_str: str,
+    ) -> dict:
+        """读回同表既有非默认派生值 {(symbol, date_iso): {col: value_str}}。
+
+        只读经 ch_reader（zephyr_reader 账号，与 #288 写前主键预查同款先例）；
+        读失败/表不可达一律返回空 dict=降级为"不携带"（绝不因探值失败阻断采集）。
+        标的数超阈值时省略 symbol IN 过滤（全窗口一次读，避免上万键拼进 SQL）。
+        """
+        from zephyr.data import ch_reader
+
+        symbol_filter = ""
+        if 0 < len(symbols) <= _PRESERVE_MAX_SYMBOLS:
+            quoted = ", ".join("'" + str(s).replace("'", "") + "'" for s in symbols)
+            symbol_filter = f" AND symbol IN ({quoted})"
+        sql = _SQL_PRESERVED_VALUES.format(
+            value_cols=", ".join(f"`{c}`" for c in spec.value_cols),
+            table=spec.table,
+            start=start_str,
+            end=end_str,
+            preserve_pred=spec.preserve_pred,
+            symbol_filter=symbol_filter,
+        )
+        try:
+            tsv = ch_reader.query(sql, timeout=_PRESERVE_QUERY_TIMEOUT_SEC)
+        except Exception as exc:  # noqa: BLE001 — 探值失败降级为不携带，不阻断采集
+            self._log.warning(f"{spec.table} 写前派生值读取失败（降级不携带）: {exc}")
+            return {}
+        return _parse_preserved_tsv(tsv, spec.value_cols)
+
+    def _apply_preserved_map(self, rows: list, columns: list, preserved: dict) -> None:
+        """就地携带既有非默认派生值（preserved 由调用方一次预查，避免逐批重读库）。"""
+        if not rows or not preserved:
+            return
+        col_positions = {c: i for i, c in enumerate(columns)}
+        sym_i, date_i = col_positions.get("symbol"), col_positions.get("trade_date")
+        if sym_i is None or date_i is None:
+            return
+        patched = 0
+        for idx, row in enumerate(rows):
+            mutable = list(row)
+            hit = preserved.get((str(mutable[sym_i]), str(mutable[date_i])[:10]))
+            if not hit:
+                continue
+            _apply_preserved_values(mutable, col_positions, hit)
+            rows[idx] = tuple(mutable)
+            patched += 1
+        self._log.info(f"写前派生值携带: {patched}/{len(rows)} 行")
+
+    def _preserve_existing_computed(
+        self,
+        spec: _ValuationPreserveSpec,
+        columns: list,
+        symbols: list,
+        start_str: str,
+        end_str: str,
+        rows: list,
+    ) -> list:
+        """把库中既有非默认派生值携带进本批行（本能力自采值优先，不覆盖非 None 槽位）。
+
+        BRK-034 实证病灶：全史重采把 internal_compute 回写的 CAPE/分位/ERP 抹成 NULL，
+        无 version 列的 ReplacingMergeTree 让后到的 NULL 版本胜出=派生列整表归零。
+        """
+        if not rows or not spec.value_cols:
+            return rows
+        preserved = self._load_preserved_valuation_values(spec, symbols, start_str, end_str)
+        self._apply_preserved_map(rows, columns, preserved)
+        return rows
+
+    def _load_valuation_complete_symbols(
+        self, table: str, start_str: str, end_str: str
+    ) -> set:
+        """断点续跑预查：窗口内已落到"最新可得事实日"且 pe 真有值的标的集。
+
+        全量重采被杀/超时后重跑只补未完成标的（daily_valuation_full_refresh 实测
+        11h 仅落 8 日量=无幂等无续跑，BRK-043 根因）。读失败返回空集=按旧行为全量重拉。
+        """
+        if not _VALUATION_RESUME_SKIP_DONE:
+            return set()
+        from zephyr.data import ch_reader
+
+        try:
+            tsv = ch_reader.query(
+                _SQL_VALUATION_COMPLETE_SYMBOLS.format(
+                    table=table, start=start_str, end=end_str
+                ),
+                timeout=_PRESERVE_QUERY_TIMEOUT_SEC,
+            )
+        except Exception as exc:  # noqa: BLE001 — 预查失败降级为全量重拉，不阻断采集
+            self._log.warning(f"{table} 断点续跑预查失败（降级全量重拉）: {exc}")
+            return set()
+        done = {line.strip() for line in tsv.splitlines() if line.strip()}
+        if done:
+            self._log.info(f"{table} 断点续跑: 窗口 {start_str}~{end_str} 已完成 {len(done)} 标的")
+        return done
+
     # ---- S2 估值路A：指数估值日频（index_valuation_daily，2026-08-29）----
 
     def _fetch_index_valuation_daily(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
@@ -10073,6 +10333,13 @@ class AkshareIngestProvider(IngestProviderBase):
                 error=f"index_valuation_daily 全部符号失败 {failed_syms} [{start_str}~{end_str}]",
             )
             return
+        # BRK-034 止血：本能力计算列一律置 None，重灌前必须携带库中既有 CAPE/分位/ERP，
+        # 否则无 version 列的 ReplacingMergeTree 合并仲裁会让 None 版本胜出=派生列整表归零
+        # （2026-09-13 weekend_calibration 全史重采 8111 行实证抹零，2026-09-18 复测
+        #  FINAL 视角 cape_5y_pct/pe_pct/erp NULL 8125/8125=100%）。
+        all_rows = self._preserve_existing_computed(
+            _INDEX_VALUATION_PRESERVE_SPEC, columns, symbols, start_str, end_str, all_rows
+        )
         yield FetchResult(
             table=table,
             columns=columns,
