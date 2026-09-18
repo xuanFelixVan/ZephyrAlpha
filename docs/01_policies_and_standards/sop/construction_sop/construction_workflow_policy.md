@@ -25,7 +25,7 @@ related_modules:
   - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/generate_project_depgraph.py
   - scripts/governance/generate_project_path_tree.py
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   - scripts/git_commit_gateway.py
   - scripts/session_worktree.py
   - scripts/lock_files.py
@@ -552,7 +552,7 @@ python scripts/governance/generate_project_path_tree.py --write
 python scripts/governance/d5_architecture/generators/align_all.py
 
 # 6. 依赖图诊断
-python scripts/governance/diagnose_depgraph.py
+python scripts/governance/d5_architecture/diagnose_depgraph.py
 ```
 
 **通过判据**：depgraph design_maturity=production / 五图对齐通过 / path_tree 无旧引用 / diagnose exit 0
@@ -1032,7 +1032,7 @@ A/D/E 类不涉及代码时一行 N/A。
 | **extract_depgraph.py** | `scripts/governance/` | depgraph 只读查询（--summary/--paths） | Step 0 冷启动 |
 | **generate_project_depgraph.py** | `scripts/governance/` | 重生成 depgraph（⚠️架构升级期禁用 --force） | Step 8 |
 | **generate_project_path_tree.py** | `scripts/governance/` | 重生成 path_tree | Step 8 |
-| **diagnose_depgraph.py** | `scripts/governance/` | depgraph 诊断 | Step 8 |
+| **diagnose_depgraph.py** | `scripts/governance/d5_architecture/` | depgraph 诊断 | Step 8 |
 | **git_commit_gateway.py** | `scripts/` | 网关提交入口 | Step 10 |
 | **session_worktree.py** | `scripts/` | worktree 管理（create/start/commit/merge/abort/sweep） | Step 10/Step 12 |
 | **lock_files.py** | `scripts/` | 文件锁管理（cleanup/status/release） | Step 0/Step 11 |
