@@ -1731,3 +1731,160 @@ z-rb-stats 实测我口径错：**台账 R-026 原文是「八型」，而我在
   而**外来条目已经先在磁盘上没了**）。
 - **同族第二条证据**：`docs/01_policies_and_standards/_registry/catalogs/` 下 **18 个 `.capability_*_.tmp`** 残留
   （中断的 atomic_write 临时件），与本次 `PermissionError` 三连是同一现场的两面。
+
+## 6.12.2 R-064 · z-teeth 交回三条、阵亡于第四条：**ALGO-NOTE-SYNC 的真实语义是"同 commit 内改到该节点块"，一次 bump 不是一劳永逸**
+
+`st-ff-teeth-20260918`（我给的窄任务书第一条）落 `0072c6a59f` = **R-055b/c/d 三条裁定全部进 HEAD**
+（过拟合检测器缺位维 fail-closed + 比率门上界 + DSR 跳过留痕；6 files：
+`decision_gate.py` `overfitting_detector.py` `strategy_validation_pipeline.py` + 三件测试）。
+第四条 **R-055a（regime fail-closed）被 ALGO-NOTE-SYNC 拦成死信**，该车道随即在 150 轮上限阵亡（第 8 条）。
+
+- **★ 我 22:06 那次解锁其实只解锁了一次提交**（总包前提需更正）。读门判据体
+  `src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py:32-35,89,247` 实测其语义：
+  命中节点须满足 **(a) 同 commit 内该节点块 `algo_note_zh` 行被修订**，
+  或 **(b) 同 commit 内该节点块新增/更新 `note_confirmed: <当日>`**——
+  **归因主路径是"staged diff 的 hunk 行号 → node_id"**，即**看的是本批 diff 有没有动那个块**，
+  不是"当前 YAML 里那个键是不是今天"。⇒ 我已把两节点写成 `2026-09-18`，
+  **再提交同一文件时该块 diff 为空 ⇒ 门必然再拦**（且**同日重复 bump 产生不了 diff**，此路在当天封死）。
+- **裁定 R-064a：限定写权授予（TDM 两节点的 `algo_note_zh`）**——这是 **R-012 同型处方**：
+  `st-ff-teeth2`（接手车道）获准在**同一批内**修订
+  `config/trading_decision_map.yaml` 里 **仅 `TDM-E-L1` 与 `TDM-E-L1-AGG` 两个节点的 `algo_note_zh` 字段**，
+  内容须如实描述新的 fail-closed 降级语义（禁空话、禁只改日期、禁动其它节点/其它字段）。
+  理由：**门要的就是"大白话跟着算法改"**，本次行为真的变了（断供从"清零危机态、放量 3.14×"
+  改成"收紧到最低档 + 可溯源"），**该写的是说明文，不是豁免戳**。
+  边界：①只这两节点此二字段；②批后由总包复核文字是否名副其实，不合格我回退；
+  ③**不得为了过门造 diff**（那正是 #273 禁的"白名单消警"的文档版）。
+- **裁定 R-064b（入手册）**：把这条语义写进 `CONSTRUCTION_DISCIPLINE.md` §7 门禁表——
+  **"ALGO-NOTE-SYNC 是 per-commit 的，不是 per-day 的；同日第二次触碰同一 `module_ref` 必须改 `algo_note_zh` 本身"**，
+  否则每条改 regime/decision-map 节点的车道都会在第二次提交上死信（本役已为此白烧两轮）。
+- **车道纪律再确认**：z-teeth 在被拦后**没有自行写 TDM**（任务书明令禁止），而是登记冲突后耗尽轮数——
+  处置正确，但**暴露我的窄任务书还不够窄**：我给了它 4 条裁定 + 1 个 A16 准备，实际它做完 3 条才死。
+  ⇒ 第 9 条运营判据：**"≤3 个动词"要按"每条动词都可能撞一道新门"折算，一批 ≤2 条**。
+
+## 6.13 R-065 · 阵亡计数到 **10 条**，但救回面已归零暴露；两条车道撞同一门 = **我调度重叠的代价**
+
+- **阵亡 10 条**（150 轮上限、无回报）：`rb-safe` `judgment2` `rb-pit` `rb-gov` `switch` `ailayer2` `teeth` `harvest` `pit2`(+ 早先 `land2` 一类未计)。
+  **成果存活率 10/10**——靠的正是 R-058 那三条（即刻 `git add` / 死前入队 / 非 TTL 备份）。
+  其中 3 条死前已完成落地：`switch`（`825130d794` S-OWNER-002 十一件）、
+  `teeth`（`0072c6a59f` R-055b/c/d）、`harvest`（`f22764df16`/`104d417bfb`/`4fc94b60b6` 共 39 件）、
+  `pit2`（`885005f8fd` 红队 PIT 案卷更正）。**"阵亡"不等于"白跑"，这条要写进今后每一次派工的心理预期。**
+- **保护性收网（总包 23:0x 实测）**：对 `cold_archive_diff.yaml` 标记 `restored=True` 的 **121 件**逐件重测 git 状态：
+  `已 staged 或 MM` **79** · `A` **3** · `CLEAN(==HEAD)` **39** · **未跟踪 `??` = 0**。
+  ⇒ **救回面已无"蒸发面"**（未跟踪是唯一可被无声抹掉的形态）。
+  当前全仓 staged **153 件**（含我代落的文档与三张热册）——**收口批的唯一剩余风险是"落不完"，不是"会丢"**。
+- **★ 一条我自己造的撞车（如实入账）**：我给 `st-ff-pit2` 的任务书含"给 FINAL 门加牙"，
+  而阵亡车道 `st-ff-rb-gov` 早已把 `ch_final_gate.py` 改了 +187 行悬在工作区。
+  后果：**两条车道在同一文件上串行死信**——`pit2` 的 `-0001` 死于 NOQA-VALIDATION（未登记 `ch-final` 标记），
+  最终由 `st-ff-gov2` 以 `f45e205fad` 落地（表名截断治本 + import 子句辨伪 + 测试源 ast 合法性自检防空转）。
+  ⇒ **调度判据补一条**：派工前先跑一次 `git status --porcelain` 的"未提交改动面"盘点，
+  **把工作区里悬着的半成品先归口给一条车道**，再派新车道；不能只按"独占文件地图"派（地图是 12 小时前画的）。
+- **P-01 的数字被接手车道更正**：无 FINAL 生产读路径 **82 处 → 91 处**（`st-ff-pit2` 复跑），
+  并附三处计数更正。**原 82 是阵亡车道 z-rb-gov 的数，未经复核被我引用过一次**（R-060 已标转报）。
+- **R-058/R-065 合起来的运营结论（写给自己也写给下一班）**：
+  本夜的**瓶颈不是模型能力，是"提交门 × 轮数上限"的组合**——
+  车道能查出真缺陷、能写对修法，但**每撞一道新门就要烧 5~15 轮**，而门有 ~288 道。
+  ⇒ 下一役最划算的一笔投资**不是多派车道，而是把"门战况"做成开工前的预跑面**：
+  `z-judgment3` 已经这么干了（**入队前用真门源码本地预跑 113 gate**，把本批自身违规从 2 项修到 0 再提交，
+  一次通过），而它也正是本夜唯一"两笔全过、零白烧"的车道。
+  → **裁定 R-065a**：把"提交前本地预跑门禁"写进手册 §2 作为标准动作，配方取自 `st-ff-judgment3` 的做法。
+
+## 6.14 R-066 · 三条窄任务书车道全部交工（**唯一零白烧的一段**）：FINAL 门长牙 / LSG 克隆合并 / 告警通道代落
+
+- **`st-ff-gov2`（窄任务书）落 2 笔**：`f45e205fad`（CH-FINAL-GATE 表名截断治本 + 测试源自检）·
+  `c6c2f0a69c`（两个 `.sh` 加固 + `registry_mass_deletion_gate` + 其测试 + `test_git_hooks_marker_forgery`）。
+  ★ **它推翻我三条前提**：① 我给的"31 passed/5 failed"现场已推进为 **31 件全通过**
+    （我 22:2x 取样后 z-pit2 又推过），且我清单里 `test_multi_line_constant_any_added_line_counts`
+    **在盘上/归档/冷存三份里都不存在** ⇒ 我引用的是更早一版测试名（**又一次"我给的现场数据过期"**）；
+    ② 我列的 diff 量全部偏小（`+187→+212` 等），且**漏了一件必须同批的 `test_registry_mass_deletion_gate.py`（+114）**；
+    ③ "半成品具备可落地性"不成立——阵亡车道的 `_scan_missing_final_reads` 圈复杂度 **19>15**，
+    被 NO-HIGH-COMPLEXITY 硬拦，它按语义逐行不变拆成三个 helper 才落得下去。
+  ★ **它抓出 3 个假绿测试**（含阵亡车道 1 个）：多行隐式拼接写成**无括号**形式=非法 Python ⇒
+    门撞 `SyntaxError` fail-open ⇒ 断言恒真。修法=补括号 + 在 `_scan()` 入口加 `_parses` 自检。
+    ⇒ **这条要记进全役判据**：**"测试源本身是否合法 Python"是个没人查过的面**，而 fail-open 的门会把它变成静默假绿。
+  ★ hook 加固的真证据：一次性 tmp 仓装工作区版 guard + **真 session_registry 副本** ⇒
+    真 sid 合法尾注不被误回滚、`[GW:pid]` 类伪造被拦并回滚；**HEAD 版（加固前）7 failed** ⇒
+    "伪造 `[GW:]` 标记"在加固前**畅通**（这条直接推翻宪法 §9.8 的"不可伪造"宣称——**此前是文档承诺不是实装**）。
+    残余攻面（它如实不宣称）：**冒充在活的他人会话键**仍可通过，治本需"提交时把 sid 写进可验证载体（note/HMAC）"，跨车道设计变更。
+- **`st-ff-lsg`（窄任务书）落 1 笔 `9527ab0cb8`**，并给出**本役对 CloneGuard 最有用的一条知识**（已写进手册 §7）：
+  reDUP 0.4.46 的 structural 指纹=`ast.parse` 后 BFS 的**节点类型 token 序列**，
+  **名字/字面量/docstring/注释/缩进全归一化** ⇒ **"抽 helper 后只剩字面量差别"永远消不掉克隆**
+  （这正是 z-judgment、z-rb-safe2、z-lsg 三笔死信的机制）。唯一解=**让模块内不存在第二份可比对函数体**。
+  行为零变化用"冻结旧版 vs 新版同喂 17 场景矩阵"逐项比（返回值/异常类型/异常文案/被调扫描腿/事件名/台账计数），
+  并**自曝第一轮把 `enabled` 写成必填被探针抓到**——这是"等价性探针"该有的样子。
+- **总包代落告警外发通道**（车道 `st-ff-alarm2` 已耗尽轮数无回报）：批 5 件入队 `q-…-st-fullflow-…-0011`
+  （`alert_webhook_dispatch.py` + `alerter.py` 同进程事件钩子 + 测试 + `config/alert_webhook.yaml` + `tests/conftest.py`）。
+  ★ 我按 **R-044 判例**把 `error_code` 从自造的 `ZA-DATA-ALERT-WEBHOOK` 改成 **`None`**
+  （PROTECTED 的 `error_code_registry.yaml` 待 Owner 分配 `ZA-DATA-0030`，见 A1-b），
+  改后 `tests/data/test_alert_webhook_dispatch.py` 本轮实跑 **19 passed**、`py_compile` 通过。
+  ⇒ 这一改同时**灭掉了一条全仓连坐红**：`test_errcode_consistency_gate::test_current_repo_is_clean`
+  此前因我 staged 着这件外来件而恒红（z-gov2 按 §3.4 未代修，只登记）。
+- **两条被推翻/被补的手册条目已就地改**：§7 CloneGuard 加 reDUP 判据真身；§7 新增 ALGO-NOTE-SYNC 行（per-commit 语义）；
+  §8 加"150 轮阵亡三条保命动作"与"救回≠可落（须查被调符号闭合）"；§4 加 REGISTRY-MASS-DELETION 的 A/B 分诊。
+- **待办（不在本单，登记）**：① `ch-final` 这个 noqa 标记**未登记**进 `noqa_exempt_registry.yaml`（该册 `ai_autonomy: human_gated`）
+  ⇒ **CH-FINAL-GATE 的文档化逃生通道目前是装饰性的**：谁真写那行就被 NOQA-VALIDATION 硬拦（方向是 fail-closed，安全但文档失真）；
+  ② `ch_final_gate` 未接 `_build_own_scope` ⇒ "当下 29 个外来 staged 不连坐是运气不是设计"；
+  ③ `MANUAL-ONLY-PERMANENT` 对 modified 文件按 `"input(" in line` **子串**判 manual，会误伤 `gw.scan_input(...)`
+  （自家 AST 判据 `_is_input_call` 要求裸 `input()`）⇒ 建议改判据为自家 AST 版（精确化，不算放松）。
+
+## 6.15 R-067 · R-055a 进 HEAD（`eb9e18f846`）+ **我给的 R-064a 授权不完整，被车道补了半句** + 总包自伤一次假红潮
+
+- **`st-ff-teeth2` 一笔落地 `eb9e18f84622f36d40baf71957baa086b3a57922`**（7 件零外来），
+  行为变更=**前手实现随批生效**：缺供数 RiskSignal 由 `1.0` 改落 `RISK_SIGNAL_FLOOR=0.30`；
+  overlay 主腿门改判"正证据"（缺数时危机概率**不清零**）；`ShrinkageResult` schema 1.0→1.1 + 新增 `risk_signal_source`。
+  **三条验收全部真跑**：断腿 ⇒ `Shrinkage 0.255→0.255`（改前是 `0.255→0.800` = 放量 3.137×）；
+  `{}`/`None`/空壳/缺 #1 四形态与"13 参数全正常"逐位可分（`0.240 / neutral_fail_closed` vs `0.800 / params_supplied`）；
+  变异 4 处 fail-closed 改回 fail-open ⇒ `tests/regime` **16 failed / 1020 passed，rc=1**，还原 sha 与 HEAD blob 一致。
+  回归 `tests/regime` **1036 passed**（落地前后各一次）。
+- **★ 推翻我 R-064a 授权的充分性（真正的死因，我的处方差半句）**：
+  我写"带上 TDM、只改两节点 `algo_note_zh` 即可过门"——**实测不够**：
+  判据体 `algo_note_sync_gate.py:186-191` 要求 `+/-` 行文本里**含 `algo_note_zh:` 字面量**；
+  在 `>-` 块标量**内部追加散文行不计**（`_collect_node_block_changes_by_linenos` 里 `if key + ":" in body`）。
+  ⇒ 它第一笔也死在同一处（与前手同因），**必须把新口径写进键行本身**才过门。
+  → **R-064a/R-064b 已就地补正**（手册 §7 ALGO-NOTE-SYNC 行补这半句；台账此条为凭）。
+  ⇒ **元教训第 N 次成型**：**我给车道的"过门配方"必须自己先读判据体到"字面量匹配"这一层**，
+  否则车道会替我反复撞同一道门（本役 ALGO-NOTE-SYNC 连吃 3 笔死信：rb-stats / teeth / teeth2）。
+- **一条新 HEAD 自带红（任务书未预告，只预告了一条外来红）**：
+  `tests/backtest/test_f06_e4_wfa_exam.py::TestExamVerdictThreeLines::test_pass_all_stages_clean`
+  —— 由前手 **R-055b（缺维=不通过）** 造成：该测试的构造样本只灌 1/3 维。
+  ⇒ 这不是回归被藏住，是**加严把一个原本"喂半套数据也判通过"的用例照出来了**。
+  处方（已派 `st-ff-close1`）：补灌维度 2/3 使其成为真"全通过"样本，**或**把断言改成"不可上线"——
+  **禁**为消除红色而回退 R-055b（那是 #321 禁的放松方向）。
+- **★ 总包自伤实录（记进 C 类清单，因为它与本役所有"假红/假绿"同族）**：
+  我为"连续两轮 0 问题"写的逐目录扫描脚本 `.runtime/tmp/ff-recon/loopcheck.py`
+  用 `--basetemp=<父目录>/<名>` **而没先建父目录** ⇒ pytest 每个 `tmp_path` fixture 抛
+  `FileNotFoundError` ⇒ **14 个目录 100% rc=1、1036 errors**，看起来像"全役把仓库改崩了"。
+  单跑一个用例 → 通过；跑整个目录 → 通过；建父目录后重跑 → **48 passed / 18 skipped**。
+  ⇒ **判据**：**"自写测量脚本必须先证明自己不背锅"**——先跑一个已知为绿的套件，
+  若它也红，第一嫌疑人是脚本不是被测面。本役这条已在 `autoclaw` 战役记忆里有先例，我自己又犯了一次。
+  ⇒ 已修脚本（`bt.mkdir(parents=True, exist_ok=True)` + 注释写明病根）。
+- **车道纪律再记一笔**：该车道**没有**因为"任务书说 A16 不在本单"就擅自把前手磁盘里捆着的
+  A16 机械准备（`confidence_band_divergence()` 探针 + 5 条 `A16-pending` 测试）剔除或重写，
+  而是判"按'别重写'只能整批带、剔除=重写"并**如实报告这超出我划的边界**，交我处置。
+  ⇒ **裁定：随批合法**（未改任何已定档位数值，探针只报 `identical_tables=False / max_abs_gap>0.5`），
+  A16 的**数值选择**仍挂 Owner。
+
+## 6.16 R-068 · 23:5x 战况汇总：dev 今日 **85 笔**；告警通道与判定链进 HEAD；AI 层剩最后一道门
+
+- **总包代落/代解的三笔**（车道耗尽轮数后由总包接手落地）：
+  · `c58f2e8fe2`（23:12）战役控制文档批：台账 R-047~R-060 + 交付三清单 + 8 件文档 token + 三份救回日报（迁出 `docs/_working` 顶格区）。
+  · `0808dd8757`（23:24）**告警外发通道收口**：`alert_webhook_dispatch.py` + `alerter.py` 同进程事件钩子 + 测试 + `config/alert_webhook.yaml` + `tests/conftest.py`。
+    ⇒ 这条把 R-021"写了没人读"与 R-041"最后一米"两头接上：CRITICAL 落盘成功即事件触发外发，端点×指纹独立去重，失败三处出声。
+    ★ `error_code` 按 **R-044 判例置 `None`**（PROTECTED 的 error-code 册待 Owner 分配 `ZA-DATA-0030`，A1-b），
+    同时灭掉一条全仓连坐红（`test_errcode_consistency_gate::test_current_repo_is_clean`）。
+  · R-055a 由 `st-ff-teeth2` 落 `eb9e18f846`（23:25）：**regime 断供数值侧 fail-closed 进 HEAD**
+    （缺数落地板值 0.30 + 主腿门要"正证据" + `risk_signal_source` 溯源；断腿场景 Shrinkage 从"放量 3.137×"改为持平收紧；
+    变异 4 处改回 fail-open ⇒ 16 failed/rc=1；`tests/regime` 1036 passed 两轮）。
+- **AI 层 intake 全族（12 件）离 HEAD 只差一道门**，途中把三条"门的暗坑"逼出来（全部已入手册或本册）：
+  1. **DEPGRAPH 状态链不可跳级**：合法边只有 `planned→generated→testing→stable→production` 与 `stable→deprecated`，
+     我一开始直接 `planned→production` 被拒且**输出被我的 grep 过滤掉看不见了**（表现成"命令跑了没效果"）。
+     ⇒ 逐步走完 4 步 × 5 节点即通过。**这条值得进手册**（车道遇到"planned 但已施工"时普遍会想一步跳）。
+  2. **`capability_canonical_file_registry.yaml` 的 index 陈旧快照又触发一次 REGISTRY-MASS-DELETION**：
+     工作区==HEAD（我的 token 已在 `c58f2e8fe2` 落进 HEAD）、index 却指着旧版 ⇒ 判为 **B 型**，
+     正解 `git restore --staged -- <那个册>` 并**把该册从 `--files` 里摘掉**（HEAD 已有，不必随批）。
+  3. **`MUTABLE-CONST-WITHOUT-FINAL` 与 NO-BARE-SQL 是**相反方向**的两条门**：
+     前者要 `X: Final = [...]`（AnnAssign），后者要 `SQL_X = "..."`（Assign，**不加 Final**）。
+     ⇒ 手册 §7 两条并存易被车道读成"一律加/一律不加"，已派 `st-ff-ailayer3` 按判据体逐条核。
+- **在飞两条收口车道**：`st-ff-close1`（修 HEAD 自带红 + 连续两轮逐目录回归）、`st-ff-ailayer3`（AI 层最后一道门）。
+- **★ 总包自伤一次并公开记账**：我为"两轮回归"写的扫描脚本因 `--basetemp` 父目录未建，
+  令 14 个目录 **100% rc=1 / 1036 errors** 的假故障差点被当成"全仓被改崩"上报。
+  单文件复跑→通过、建父目录后复跑→48 passed。**判据**：整片红 + 耗时异常短 ⇒ 先怀疑测量脚本与环境，再怀疑被测面。

@@ -5,7 +5,7 @@ completes_when: Owner 醒来后确认接方（Max 或续开 Flash 班）并已�
 
 # 全流通战役 · 交付报告（总包=st-fullflow-20260918 · Flash 系执行）
 
-> 时点：2026-09-18 **22:15**（还有 9 条车道在飞，本报告在收口时会自动补终值）。
+> 时点：2026-09-18 **24:00**（两条收口车道在飞：`st-ff-close1` 跑连续两轮回归、`st-ff-ailayer3` 过 AI 层最后一道门）。
 > 写法约定（Owner 偏好）：先说人话，再给数字，每个数字给一条能重跑的命令。
 > **表述禁令（裁定#325）**：本文不出现"全绿/全部打通/零遗留"这类词。
 
@@ -15,14 +15,17 @@ completes_when: Owner 醒来后确认接方（Max 或续开 Flash 班）并已�
 
 你睡前期望听到的是："全套自动化链路全部打通、红蓝极限对抗全过、全绿、零遗留、零待裁、全自动"。
 
-**22:15 的真实状态是**：
+**24:00 的真实状态是**：
 - **骨架与真值面立起来了**：16 个环节的端到端骨架、85 条断点、六向验收规范、一把可重跑的尺子，都已进版本保护。
 - **断点从"没人知道有几个"推进到"85 条全部逐条重跑过，57 条确认仍成立"**（另有 14 条普查时就已经是旧账、13 条记载口径错、1 条永不可判）。
-- **今天有 69 笔提交进 dev**，其中至少 **21 笔是"具体缺陷治本 + 变异能红证据"**，不是文档。
-- **但"零待裁"不成立**：有 **20 项**我判自己不该替 you 判的事挂在清单上，其中三条（A00 / A16 / A17）性质是
+  **这是本役最硬的产出**——在此之前，"还剩多少断点"这句话没有可信答案。
+- **今日 85 笔提交进 dev**（12:00 起），其中至少 **24 笔是"具体缺陷治本 + 变异能红证据"**，不是文档。
+- **四条最要命的缺陷今晚治本**：幂等键批次判别符（部分）、regime 断供 fail-open（已治）、
+  告警"最后一米"（已接）、判定四表停更无哨兵（已治）。
+- **但"零待裁"不成立**：有 **20 项**我判自己不该替你判的事挂在清单上，其中三条（A00 / A16 / A17）性质是
   "已经发生的既成事实要你定性"或"风险偏好数值你定"，**Flash 无权签**。
-- **"零遗留"也不成立**：红蓝 12 个攻击面里首役只打了 4 面，我今晚补派了 8 面，其中 **3 条车道在 150 轮上限处阵亡**，
-  成品还在救回与落地途中。
+- **"零遗留"也不成立**：红蓝 12 个攻击面首役只打了 4 面，我今晚补派 8 面，**10 条车道在 150 轮上限处阵亡**
+  （成果全部救回，见 §五），仍有面的覆盖面未做完。
 
 **如果只允许你读一段**：本役最有价值的产出不是"修好了多少"，而是**第一次让"修好了多少"这个问题有了可信答案**——
 在此之前，本仓的进度声明是散文（详见 §四"四条最贵的发现"）。
@@ -33,12 +36,12 @@ completes_when: Owner 醒来后确认接方（Max 或续开 Flash 班）并已�
 
 | 维度 | 数值 | 怎么重跑 |
 |---|---|---|
-| 今日进 dev 的提交 | **69 笔**（12:00 起） | `git log --oneline --since="2026-09-18 12:00" \| wc -l` |
+| 今日进 dev 的提交 | **85 笔**（12:00 起） | `git log --oneline --since="2026-09-18 12:00" \| wc -l` |
 | 断点总数与状态 | **85 条全部独立复跑**：仍成立 **57** / 已闭合 **14** / 口径不符 **13** / 未可判 **1** | `grep -c "^| BRK-" docs/_working/fullflow_campaign/skeleton/01_break_census.md` → 85；四态判见 `lanes/census_reverify_{AB,CD,EFGHI}.md` |
 | 环节骨架 | **16 个环节 FF-01..FF-16**（含 mermaid E2E 图 + 12 源遗漏互查） | `docs/_working/fullflow_campaign/skeleton/00_stage_skeleton.md` |
 | 六向验收（尺子） | 22:15 最新一轮 **红 16 / 黄 2 / 绿 0**——**但这数不可作验收**（15 条红是 ClickHouse 查询超时的"测不到"被同码判红，见 B16） | `python scripts/automation/flowthrough_verifier.py --all` |
-| 供数哨兵 | `checked 36→51`、`breached 1→8`，新点亮 7 条**逐条判为真阳性**，唯一改小的阈值是按实测从 40 天改成 5 天 | `python -c "import sys;sys.path.insert(0,'src');from zephyr.data.supply_sentinel import check_tables as c;s=c();print(s['checked'],s['breached'])"` |
-| 队列吞吐真相 | 战役期 44 条死信 / 25 条 done（当日）；实测单通道 ~24 笔/小时 | `python scripts/governance/commit_perf_report.py --hours 24` |
+| 供数哨兵 | `checked 36→51→**55**`、`breached 1→8→**9**`（23:2x 判定四表四腿入 HEAD 后），新点亮逐条判为真阳性，唯一改小的阈值是按实测从 40 天改成 5 天；**首鸣要等 09-19 06:50**（配置 20:54 落地晚于当日排班） | `python -c "import sys;sys.path.insert(0,'src');from zephyr.data.supply_sentinel import check_tables as c;s=c();print(s['checked'],s['breached'])"` |
+| 队列吞吐真相 | 战役期当日 **75 条死信 / 41 条 done**（死信多数被同车道后续重试吸收，**终态只认 `git log` 查得到的 hash**）；实测单通道 ~24 笔/小时 | `python scripts/governance/commit_perf_report.py --hours 24` |
 | 救回工作 | 冷备差集 **121 件**已恢复到盘 · 队列 blob 反查 **12 件 GONE**（AI 层 intake 全族 11 件 + 推导器） | `python .runtime/tmp/ff-recon/dead_inventory.py`（只读可重跑）；`lanes/cold_archive_diff.yaml` |
 
 ---
@@ -58,6 +61,24 @@ completes_when: Owner 醒来后确认接方（Max 或续开 Flash 班）并已�
    —— 复发出两条"假在岗"（两张表配了不存在的 `date_col`，旧代码把"查询失败"与"真空表"同写一条文案 ⇒ **永远看不破**）。
 6. **`cca12c8ce7`** 门禁指定的唯一登记入口 `add_module_translation.py` 已坏（shim 漏转出 **3** 项不是 1 项）——
    补全 + 538 行契约测试（判据"引用集 ⊆ 壳供给集"，符号集由测试自扫 `scripts/**`，**禁硬编码**）。
+
+---
+
+## 三·补 23:0x~24:0x 又进 HEAD 的七笔（本役后半段的主力，全部带归属核实）
+
+| hash | 内容 | 归属车道 / 状态 |
+|---|---|---|
+| `37388478ae` | **判定链 SSoT 九件同批**：判定四表注册进 TableRegistry 真源 + `plan_engine` 六件表名派生单点 + 测试 +180 行 | z-judgment3（两笔全过、零白烧） |
+| `0f4971547e` | **判定四表停更哨兵四腿**（六向 ⑤ 从"暂存区的绿"变成 HEAD 的绿；`checked 51→55 / breached 8→9`，新亮的 `judgment_plan_verification` 空表红是**真阳**） | z-judgment3 |
+| `825130d794` | **S-OWNER-002 大盘切换器 11 件**（含 3 件红蓝测试；"H 不成立"案底在册归档） | z-switch（死前入队，serializer 落地） |
+| `9527ab0cb8` | LSG 闸门 `enforce_input/enforce_output` **合并为单份流水线**（收口 CloneGuard extract 级克隆；17 场景等价性探针证明行为逐字不变） | z-lsg |
+| `f45e205fad` + `c6c2f0a69c` | **CH-FINAL-GATE 长牙**（经 `execute()` 直连的无 FINAL 读此前完全不过门；表名截断病根=`(?!\s*\.)` 可被回溯绕过，改 `(?![\w.])(?!\s+import\b)`）+ **两个 git hook 的 `[GW:]` 伪造加固**（实测 HEAD 版 7 failed / 工作区版 11 passed ⇒ "不可伪造"此前是文档承诺不是实装） | z-gov2 |
+| `eb9e18f846` | **R-055a regime 断供 fail-closed**（缺数落地板值 0.30 + 主腿门要"正证据" + `risk_signal_source`；断腿场景从"放量 3.137×"变"持平收紧"；变异 4 处 ⇒ 16 failed） | z-teeth2 |
+| `0808dd8757` | **告警外发通道收口**（webhook 派发件 + `alerter` 同进程事件钩子 + 配置 + 测试 19 passed） | 总包代落（车道耗尽轮数） |
+| `2a80340b51` | **E6 纸面对冲腿三件套同批落地**（R-047 那颗"炸雷"：`risk/__init__.py` 已 import 而模块原为未跟踪 ⇒ 拆道即崩风控全域）。★ 途中被 `GATE-ERRCODE-CONSISTENCY` 拦两次，按 R-044 判例把未在册的 `ZA-RK-0075` 置 `None` 后落地（A1-b 待你分配） | 总包代落 |
+| `73ac06b1fe` | 前一笔 R-055b 加严照出来的**正对照缺维红**对症修（F06 E4 考试补灌过拟合维度 2/3，**未回退加严**） | z-close1 |
+
+★ 一张图看今晚：**治本重心已从"补功能"转向"让声明能被检验"**——上面七笔里有四笔是"某把尺子此前量不到 / 曾自我掩盖"的门禁与哨兵（FINAL 门、GW 标记、告警出口、判定表停更）。
 
 ---
 

@@ -106,8 +106,16 @@ completes_when: <一句话>
 - 提交前必与 dev 三方合并：`git merge-file -p -L ours -L base -L dev <ours副本> <base=git show HEAD:f> <theirs=dev>`。
   参数序反了会得到"我的改动全没了"的静默假成功。要求对 dev **纯 insert、`grep -c '^<'`=0**。
 - 防回退 diff 必加 `--strip-trailing-cr`（否则 CRLF→LF 报 6 万行假差异）。
-- 注册表被 REGISTRY-MASS-DELETION / HOT-FILE-BASE-FRESHNESS 拦 = 盘上册比 HEAD 旧 →
-  `git checkout HEAD -- <册>` 取真值 → 重放增量 → 重新 claim → 重提。**三步压进一条命令**（分步必撞）。
+- 注册表被 REGISTRY-MASS-DELETION / HOT-FILE-BASE-FRESHNESS 拦：**先分诊，两种病处方相反**（z-testint 实测 + 总包 22:1x 复现）：
+  ```bash
+  git diff HEAD --numstat -- <册>      # 工作区 vs HEAD（我的真增量）
+  git diff --cached --numstat -- <册>  # index vs HEAD（门读的是这个）
+  ```
+  · **B 型（本役最常见）**：工作区 `+N/-0` 纯插入、index 有删除列 ⇒ **index 存着他会话的陈旧快照**。
+  正解 **只** `git restore --staged -- <册>`（把 index 拉回 HEAD，**工作区增量保留**）→ 重提即过。
+  ⚠️ **此时禁 `git checkout HEAD -- <册>`** —— 那会把自家 token 增量一起抹掉（原手册这条处方对本型是错的）。
+  · **A 型**：工作区确实比 HEAD 旧（盘上被还原过）⇒ 才用 `git checkout HEAD -- <册>` 取真值 → 重放增量 → 重新 claim → 重提，
+  **三步压进一条命令**（分步必撞）。
 - 入队热注册表必带 `--base-head $(git rev-parse dev)`（缺省=无基底校验，整文件快照会静默回退他人条目）。
 - 他会话吸收你的 token 条目是**常态非事故**：提交前 `git show HEAD:<注册表> | grep <我的token>`，已在 HEAD 就从清单剔除。
 
@@ -145,11 +153,12 @@ python -m pytest <files> -q -p no:cacheprovider -W "ignore::pytest.PytestConfigW
 | BARE-SUBPROCESS | 裸 subprocess.run/Popen | `from zephyr.shared.infra.process_pool import run_subprocess_hidden`（签名同 subprocess.run）或 `# noqa: bare-subprocess  <理由≥10字>` |
 | TABLE-NAME-REGISTRY | 硬编码已注册表名，**无 noqa 逃生**；精确+最长优先**子串**双匹配；`scripts/**` 不豁免 | `get_registry().table("<category_id>")`；模块顶层调用=导入期 fail-closed，品类 YAML 必须同批落地 |
 | ORPHAN-MODULE | 只 `git grep` `src/**/*.py`，**scripts/ 里的 import 不算引用** | 接进 `internal_compute_provider.fetch` 的 `payload.table == "<库.表>"` 路由分支 |
-| CloneGuard CAPABILITY-OVERLAP | extract 级克隆 100% 相似硬拦 | 合并而非新建；合理重复走 `resolve_finding` 标 acknowledged（**手工登记必须补 `stable_key`，否则白名单不生效**） |
+| CloneGuard CAPABILITY-OVERLAP | extract 级克隆 100% 相似硬拦 | 合并而非新建；合理重复走 `resolve_finding` 标 acknowledged（**手工登记必须补 `stable_key`，否则白名单不生效**）<br/>★ **判据真身（z-lsg 读进已安装的 reDUP 0.4.46 实测，本役两条车道在此白烧）**：structural 指纹=`ast.parse` 后 BFS 逐节点的**类型 token 序列**，**函数名/变量名/字面量/docstring 内容/注释/空行/缩进全被归一化掉**。⇒ **"抽公共 helper 后两个函数只剩字面量差别"永远不会消克隆**（字面量正是被归一化成 `CONST` 的那一类）；"相似度 100%"=**指纹相同，不是文本相同**。唯一解=**让模块内不存在第二份可比对函数体**（合并成一份 + 方向差异降级为数据），或把函数压到 `min_lines=3` 索引门槛以下（**侥幸非治本，别用**）。<br/>复跑尺子：`CloneGuardOrchestrator(Path('.').resolve()).check([<file>]).passed` |
 | IMPORT-INTEGRITY noqa | gate_id 后需 **2+ 空格**再接 reason | `# noqa: import-integrity  理由`（1 空格静默失效） |
 | DEPGRAPH-FRESHNESS | >24h 阻断；`--force` 刷新要 2-3 分钟 | 队列 serializer 缓存旧 saved_at 时改直连提交 |
 | CH-BATCH-SIZE | staged .py 的 added 行里 `write_result` 出现在 for 体内即硬拦，**无豁免** | `BufferedWriter(table, max_rows=N)` + 循环内 `writer.add(fr)` + 循环后 `writer.flush()` |
 | SSOT-REDEFINITION | 读 **index 面**，他会话 staged 新件重复定义 `REPO_ROOT` 会连坐阻断**所有人** | `from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  SSOT` |
+| ALGO-NOTE-SYNC | ★**per-commit 而非 per-day**（判据体 `algo_note_sync_gate.py:32-35,89,247`）：本批 diff 碰到某节点 `module_ref` 指向的 .py，就必须在**本批 diff 里**改到该节点的 `algo_note_zh` 行**或**新增/更新 `note_confirmed: <当日>`；归因主路径=staged diff 的 hunk 行号→node_id，**看的是本批动没动那个块**，不是 YAML 当前值 | 行为真变了就**老实改 `algo_note_zh`**（TDM 是总包代管面，需总包按 R-012/R-064a 形制**限定授予**"仅哪几个节点哪一字段"）；<br/>行为没变才用 `note_confirmed` 当日戳——**但同一天第二次触碰同节点时 bump 产生不了 diff，此路当天封死** ⇒ 只能改说明文。<br/>**禁**为凑 diff 造空话（那是 #273 禁的"白名单消警"的文档版）。<br/>★★ **改 `algo_note_zh` 还有字面量门槛**（判据体 `algo_note_sync_gate.py:186-191`，本役在此连吃 3 笔死信）：判据看 `+/-` 行文本里**是否含 `algo_note_zh:` 字面量** ⇒ 在 `>-` **块标量内部追加散文行不算数**，**必须把新口径写进键行本身**（或让 diff 覆盖到 `algo_note_zh:` 那一行）才算"修订了该字段"。本役三条车道在此白烧 |
 
 其它硬红线：
 - 时间戳 `from zephyr.shared.utils.time_utils import now_utc`（**禁 datetime.now()/time.time()**）。
@@ -169,6 +178,14 @@ python -m pytest <files> -q -p no:cacheprovider -W "ignore::pytest.PytestConfigW
 
 ## 8. 并发安全（血泪教训）
 
+- ★ **本役 8 条车道死于 150 轮上限且未交回报**（2026-09-18 夜实测）。三条保命动作**每次都做，缺一条就是永久损失**：
+  ① 成品写完**即刻 `git add`**；② **每完成一项立刻入队提交，禁攒批**（车道被杀时队列里的东西会由 serializer 落地）；
+  ③ **工作目录 `.runtime/tmp/<lane>/` 有 TTL** ⇒ 变异台/探针/备份须同步到**非 TTL 介质**
+  （`G:\zephyr_cold\` 或 `.runtime/tmp/ff-recon/backup_*`）。
+  任务书按"一条车道 ≤3 个动词、跑到约 110 轮先落地再写回报"来设计；**一批 ≤2 条改动项**（每条都可能撞一道新门）。
+- ★ **从冷备/队列 blob 恢复文件后，必须先查"被调符号有无定义"再谈落地**（R-049/R-053 实证：
+  救回的 `pipeline_events.py` 调用侧齐全、三个 helper 全无 def ⇒ 单落会让每日主链运行期 NameError）。
+  **救回 ≠ 可落。** 恢复动作本身也可能引入风险，本役已两次。
 - **未提交的车道成品会被外部 reconciler / pre-merge 整文件还原回 HEAD**（夜班 12 波先例，曾 04:45 全丢一轮）。
   对策三条同时上：①成品**双份备份** `.runtime/tmp/<lane>/backup/`；②写**幂等重放脚本**；③**写完立刻 git add + 尽快提交**，勿排队。
 - 编辑"消失"先查 `.runtime/workspace_alerts/stash_notice.json` + `git stash list` —— 是被 stash 保存了不是丢失。
