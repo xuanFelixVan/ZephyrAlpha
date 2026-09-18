@@ -623,18 +623,18 @@ $ git log --oneline -3 -- $C
 |---|---|---|---|---|
 | **C-0** | `heal_db_consistency` tasks 支路 = 230 行破坏性地雷（R-A2） | status 合法值从 `_DDL_TASKS` 单一真源派生 + 写前 dry-run/行数上限护栏 | 整方法退役（与 C-1 并案） | **甲**（退役会连带 C-1，且该方法仍可能被治理面需要） |
 | **C-1** | 站点一 gates 支路：0 生产调用方 + 处方恒真化（R-A4） | 把校验目标改到真实可非法面（`details` JSON 可解析性、`passed`×`gate_id` 完整性链）+ 同步重写幻影 fixture 与 2 处断言 + except 走 `fail_open_register` 生成器口径 | 删 gates 支路（涉删代码=§6.1 停手） | 甲，但**必须先定"测试是真源 vs 实表是真源"谁让步** |
-| **C-2** | 站点二：写的是 shadow DB 的同名异构表、真表 0 行、无人调用（R-A1） | 目标库改指 `governance.db` 并按 `sqlite_schema.py:850` 列名写——**`decided_by` 取值来源未定 ⇒ D-13 不许自填** | 认定历史空壳（`drift_events.db` 已被 #62 裁"空壳 schema 废止"，同表是否同类须按 #62 原文判） | 乙的可能性更大（0 行 + 0 调用方），但要 Max 按 #62 原文判 |
+| **C-2** | 站点二：写的是 shadow DB 的同名异构表、真表 0 行、无人调用（R-A1） | 目标库改指 `governance.db` 并按 `sqlite_schema.py:850` 列名写——**`decided_by` 取值来源未定 ⇒ D-13 不许自填** **→ Max 已判（改法作废）**：INSERT 不改（自有库列匹配）；真问题=零调用者，salvage 取证在飞 `st-ramp-wp1c`，结论交 Max。 | 认定历史空壳（`drift_events.db` 已被 #62 裁"空壳 schema 废止"，同表是否同类须按 #62 原文判） | 乙的可能性更大（0 行 + 0 调用方），但要 Max 按 #62 原文判 |
 | **C-3** | 方案 §1.3/§7 两处事实需更正（防后续车道沿用错口径） | 由 Max 在方案原文改注 | 本册 §4 已代持事实修正 | 乙已做，甲待 Max 顺手 |
-| **C-4** | D-3 第②③步（表退役/清行）依赖新事实 | `gates`(1791 行，止 2026-06-29) 是 `gate_runs`(6445 行，止 2026-09-15) 的**同构兼容表**；`governance.db.gate_decisions` 35 行**树内无写方**；`drift_events.db.gate_decisions` 0 行 | — | 判死表前须补 `git log -S` 全历史归因（车道此项标 `[推断]`） |
+| **C-4** | D-3 第②③步（表退役/清行）依赖新事实 | `gates`(1791 行，止 2026-06-29) 是 `gate_runs`(6445 行，止 2026-09-15) 的**同构兼容表**；`governance.db.gate_decisions` 35 行**树内无写方**；`drift_events.db.gate_decisions` 0 行 | — | 判死表前须补 `git log -S` 全历史归因（车道此项标 `[推断]`） **→ 03:1x 更新**：D-17 已判此条口径部分修正（活库无 CHECK 与源码 DDL 有 CHECK 同时成立），雷仍真；另开 **WP16** 治漂移根因。`st-ramp-wp16` 在飞。 |
 | **C-5** | D-12 处方是否作废（R-A3） | (a) 把 `spec_catalog` 从 `_compose_reconcilers` 摘出独立注册 | (b) 改合成器让子 body 受子 trigger 门控（**影响全部复合 reconciler，风险面大**） | 先 (c)：只把 §1 D-12 的"影响"句改成事实描述（零代码），(a)/(b) 待 WP4 上线时一并判 |
 | **C-6** | 波2/波3 验收观测面需统一重定（R-A3 连带） | 判"父 gate_id + detail 串 + 生成物 hash" | 给复合体补子归因（改落库面，涉门禁行为=§6.3） | 甲（乙属门禁语义变更，风险大于收益） |
-| **C-7** | 9 条陈旧指向的落地通道（R-A6，方案 §6.2⊥WP15.4） | 登记 1 个 `ARCH-*` issue 供 9 条共用，一条一提交（净改动 17 行列表值） | 判 Max 直改 / 或拆口径（列表值豁免、散文与 changelog 保留人工） | 倾向"拆口径 + 一条一提交"；A 类 17 行已备可盲执行替换文本 |
+| **C-7** | 9 条陈旧指向的落地通道（R-A6，方案 §6.2⊥WP15.4） | 登记 1 个 `ARCH-*` issue 供 9 条共用，一条一提交（净改动 17 行列表值） | 判 Max 直改 / 或拆口径（列表值豁免、散文与 changelog 保留人工） | 倾向"拆口径 + 一条一提交"；A 类 17 行已备可盲执行替换文本 **→ Max 已裁 D-14**：`rules/` 全域冻结至 WP9，只出案卷+可粘贴替换文本，**不落地**（判决对象不得漂移）。 |
 | **C-8** | WP15.2 词表违规（M-2/M-3/M-4） | 处方甲：改 `procedural`（词表定义原文含"检查清单"，语义等价） | 处方乙：走词表新增流程（必触发 GATE-VOCAB，**放开面 35 份 `doc_type: policy` 文档**） | 甲，但**必须连带 `alignment_checklist.md`** 否则不清零；version/date bump 属 D-13 禁自定 |
 | **C-9** | 两条 `archived`（TRAE-032/TRAE-055）归 B 搬家还是 D3 退役（M-5） | — | — | 需先补"谁替代 `assign_module_id`/`audit_domain_nodes`"的 salvage（车道标 `[推断]`，未穷尽） |
 | **C-10** | `reconciliation_registry.py:5419` 引不存在的 commit（R-A11） | 逐件修正引用 | **升成门禁**：引用 commit/裁定号/路径前先验存在（本役已三次：#343 / 本条 / 方案 §7 自陈需复跑） | 乙（本役反复出现的缺陷类，纪律拦不住） |
 | **C-11** | D-7 的案卷生成器侧未接线（R-A10） | WP8 若在跑就导入 `derive_rule_risk` | 波2 单开一刀接线（改 `_tools/dossier_core.py` 的 `risk_tier_for` 判据） | 先等 WP8 回执，未接则走乙 |
 | **C-12** | `rule_form` 取值三处独立承载（M-7：词表 + `doc_type_vocabulary` + 派生 `frontmatter_schema.json`）+ `trae_043:427` 与词表自相矛盾（M-8） | — | — | 属 WP8 收窄后闸3 的 D1 合并特征，归 Max 案卷面一并判 |
-| **C-13** | 两份宪法正文已分叉（R-A12）：谁是真源、另一份改指针还是删；** RULE-WORKTREE 该以哪份为准** | — | — | 施工侧临时措施：后续任务书引用宪法条款一律**写明份别**；本役我自己引的是 AGENTS 版 |
+| **C-13 ✅已由 Max 裁（D-9 修订）** | 两份宪法正文已分叉（R-A12）：谁是真源、另一份改指针还是删；** RULE-WORKTREE 该以哪份为准** | — | — | 施工侧临时措施：后续任务书引用宪法条款一律**写明份别**；本役我自己引的是 AGENTS 版 |
 | **C-14** | `adversarial_validation` 护栏假绿（R-A13）+ `:213` 用 `datetime.now(UTC)` 与 RULE-SCHEMA-TZ 口径待核 | 补 `description` 传参 + 宽 except 改登记（`fail_open_register` 生成器口径） | 顺带把"兜底记账混入分子"的同类面（WP2/D-2 的 gate_id 归因）一起治 | 甲先做（否则 D-8 的 A/B 批没有可用护栏）；另建议 WP14/WP13 的验收脚本一律带"**自证能红**"注入 |
 | **C-15** | A/B 双盲是否现在跑（波5）+ **B 组砍法未选**（128/134/89 行三案，影响面已实测）+ 卷子 §3–§9（72 行、占全文 51%）**零题面覆盖** | — | — | 若瘦身目标是"砍后半段"，**现有卷必报"零损失"**——先补题再跑批，否则测出的是噪声 |
 
@@ -676,6 +676,50 @@ $ git log --oneline -3 -- $C
   ⇒ **`blocked=total` 与门禁真实能力无关，区分度=0**（改宪法前后都必然报 1.0）。
   这正是我在全流通战役记下的"假处置一族"里的**恒真返回 + 投递前置闩**混合体：**它看起来在工作，而且报的是满分**。
   ⇒ D-8 说这条只作护栏不替代行为测试；实测后进一步降级：**修好 `description` 之前它连护栏都不是**。列 C-14。
+
+## 1b. Max 更正批的采纳与自我口径修正（`d622d4d180` + `47a7426b7f`，03:0x 复核）
+
+- **R-A14｜本战役报给 Max 的两条"方案内矛盾"均已被裁掉，且 Max 另修了 D-9**：
+  - **D-14（矛盾①）**：`docs/01_policies_and_standards/rules/` **全域冻结至 WP9 判案完成**；施工队只出案卷 + **可直接粘贴的替换文本**（逐条给行号），
+    落地由 Max 判案后一次性做（须 `[ARCH-APPROVAL:ISSUE_ID]`）。理由里比"受保护路径"更强的一层＝**rules/ 正是 WP9 的判决对象**，
+    一边判一边改会造成判决对象漂移、案卷号失去意义。⇒ 我此前给 WP15 定的"只出案卷"处置由裁定升级为明文，WP15.4 的 9 条**确定不落地**。
+  - **D-15（矛盾②）**：**主区具名 + `--enqueue` 是合规正门，不算降级、不需登记降级原因**；禁的是"主区直连提交"。
+    并追加三条硬前置：① `--files` 只列自己文件；② 热文件须逐字证"对 dev 纯 insert 零 delete"；
+    ③ **落地后三态核实**（`git show HEAD:<f>` / `git ls-files -s` 的 blob / 工作区字节三者 sha 一致）——
+    队列落地只写工作区不动 index，会留"index 压旧 blob"的回退隐患，实测出现过**新文件 index 位是空 blob**。
+  - **D-9 修订（采纳 R-A12）**：两份宪法**不是镜像而是已分叉的双真源**；Max 亲自 `diff --strip-trailing-cr` 复核得 **42 行真实差异**
+    （★ 并自陈教训：**不剥行尾符会得到"整文件全差异"的假象，他此前因此误判为镜像**——与我 §4 修正表第 6 行同源）；
+    **真源＝`AGENTS.md`**（被 CLI 自动注入且条文更全），`agent_constitution_l0.md` 属过期镜像却自称真源 ⇒ 出口 D1 合并；
+    改宪法族一律回流 Max/Owner。另实测 `AGENTS.md` 工作副本是 **CRLF 而 `.gitattributes` 要求 LF**（新记一条隐患，未处置）。
+  - **D-16（案卷 TTL）**：小件（`dossiers_summary.json`/`dossiers_index.json`，判决依据）**promote 入 git**；
+    逐份案卷正文（14MB 级）留 `.runtime` 双镜像**不入 git**（程序法第 7 节：案卷是派生物）。⇒ 我此前"全部由总包代持"的做法按此拆开。
+- **R-A15｜D-17 对我自己 R-A2/C-0 的部分更正**（这条对我最重要，写下来防我再犯）：
+  同一个坑 Max 与我各踩一半——他拿 `governance.db` 的 `gate_decisions` 列判 `drift_events.db` 的写入端（误判"必失败"），
+  我拿 `sqlite_schema.py` 的 **DDL 源码**判**活库** `tasks.status`（我说"无 CHECK"对活库成立，他说"有 CHECK"对源码成立）。
+  ⇒ 判据改硬：**任何表结构断言必须写库文件名 + 从活库读**（`pragma table_info` / `sqlite_master`）。
+  ⇒ 真问题升格为独立 WP：**WP16 逐库逐表 DDL↔活库漂移清单**（只出证据，补约束属 DB 结构变更=门位）。已派车道 `st-ramp-wp16-20260919`。
+- **R-A16｜D-15 ③ 三态核实已对本战役全部已落件复跑，全 OK**：
+  `rule_audit_campaign/CONSTRUCTION_LEDGER.md`（队列件 `-0021`）/ `kimi_audit/lane_reports/C2.md` 与
+  `ai_layer_vision/OBJ_S_perimeter/DESIGN.md`（L2 队列件 `dd8badd2c3`，该车道落地后**自己发现并修好了 index 压旧 blob**）/
+  `fullflow_campaign/COORDINATION_LEDGER.md` 四件均 `HEAD==index==disk`。命令：
+  `git rev-parse HEAD:<f>` × `git ls-files -s <f>` × `git hash-object <f>`。
+- **R-A17｜同一次自检抓到"陈旧快照压 index"机制**第三次复发**（非我件，只登记不代修）**：
+  `git diff --cached --numstat --ignore-cr-at-eol | awk '$1==0 && $2>0'` 实测：
+  ① `docs/_working/bizmine_night/bizmine_campaign_ledger.md` staged 比 HEAD **少 4 行**——少的是已交付台账行
+  （`05:5x 币圈 st-bizmine-cry 两卡实测全落（T0-PRERG-01 VWAP RED / T0-PRERG-02 funding carry RED…）`、
+  `05:0x 总包 Owner 睡前终令`、`05:0x IND-A/B/C 三切片发车`、`05:0x ALT-B 发车`）；
+  ② `tests/frontend/*.py` **11 件各少 3 行治理头**（`[STABILITY]` / `[SAFETY]` / `[AI_AUTONOMY]`）；
+  ③ 两类件 worktree 均与 index 不一致（`MM`）⇒ **任何人一次 `commit -a`/全量 add 就把已交付内容清空**。
+  与 R-063（写侧 token 蒸发）/R-073（热册 `+0 -4`）/R-074（13 件回退快照，含两件被 index 判删的牙齿测试）**同机制、第四例**。
+  ⇒ 结论：`提交侧净删即拦`（B23/B22 配对）不能再等"下一役"，它是本仓**当前复发率最高**的一类缺陷；已按 §3.4 不代修他人 staged 面。
+- **R-A18｜C-14 我按 Flash 边界停手（复现完成，不自签落地）**：
+  最小复现：`Task.model_fields` 必填集含 `description`，而 `defense_runner.py:200-215` 构造时未传 ⇒
+  `ValidationError: description Field required` 被 `:219` 宽 `except` 吞掉、按 fail-closed 记 BLOCKED ⇒
+  `blocked=total=52 / blocked_rate=1.0` **零区分度**。可粘贴处方三条：
+  ① 补 `description`（值取场景自身字段的组合，**属语义选择 ⇒ 待 Max 定口径**）；
+  ② 把 `source`（`real_gate` / `fail_closed` / `simulate`）单列计数进 report，`blocked_rate` 只在 `real_gate` 分母上成立
+  （与 D-2"拿不到身份即拒记"同判据）；③ `:213/:214` 的 `datetime.now(UTC)` 换成在册 `zephyr.shared.utils.time_utils.now_utc`
+  （我实测 `now_utc()` 可用；`DATETIME-NOW-FORBIDDEN` 会在改这两行的 diff 上命中）。
 
 ## 5. 波1 追加回执与案卷（WP7 / WP15·2·4）
 
