@@ -132,6 +132,17 @@ completes_when: <一句话>
 - 提交前必与 dev 三方合并：`git merge-file -p -L ours -L base -L dev <ours副本> <base=git show HEAD:f> <theirs=dev>`。
   参数序反了会得到"我的改动全没了"的静默假成功。要求对 dev **纯 insert、`grep -c '^<'`=0**。
 - 防回退 diff 必加 `--strip-trailing-cr`（否则 CRLF→LF 报 6 万行假差异）。
+- ★ **批量改头栏/锚类机械件的验收判据（R-A39，车道 L1b 顶回总包处方后修正）**：
+  错误判据＝"`# [BLUEPRINT]` 份数不得比改前少"——**A 型（删重复注入块）按定义必然 2→1**，照它执行会把合法修复全判成事故。
+  正确判据＝**改后 `[BLUEPRINT]` ≥1 份，且存活锚的 id 与被删注入行的 id 一致、其指向的蓝图文件实存**（三者齐才算安全）。
+  另两道必做：`--numstat` 与 `--numstat --ignore-cr-at-eol` **两值必须相同**（不同⇒引入换行搅动，还原该件并停手）；
+  改后字节 == 改前字节精确删去计划行（byte-exact 自验）+ 对父提交 diff **零新增行**。
+- ★ **`--claim-only` 会用它的活 pid 覆写 `.runtime/session_registry.json` 同一条目** ⇒
+  "先 `SessionRegistry.register(pid=0)` 再单独 claim"会被冲掉，提交时吃 `SESSION-REQUIRED`。
+  **正解＝注册与提交写在同一条命令链里**（本役多车道重复踩）。
+- ★ **能力反查的可用形式是 `CapabilityLookup().find(query, *, session_id=sid)`**——
+  模块级没有 `find` 函数（`AGENTS.md` §0.4 的写法不可执行）；预跑器报 `CAPABILITY-LOOKUP-REQUIRED` 时
+  **真跑几个词补审计**（落 `.runtime/lookup_audit/<sid>.jsonl`），别用 `[no-lookup:]` 逃生旗糊过去。
 - 注册表被 REGISTRY-MASS-DELETION / HOT-FILE-BASE-FRESHNESS 拦：**先分诊，两种病处方相反**（z-testint 实测 + 总包 22:1x 复现）：
   ```bash
   git diff HEAD --numstat -- <册>      # 工作区 vs HEAD（我的真增量）

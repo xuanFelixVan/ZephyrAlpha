@@ -2115,6 +2115,22 @@ L581 改后：
     E 数仓 `strategy_screen.num_trials` 与台账不同源一致（表内 4,482/4,487/4,497 vs 台账 20632）；
     F 队列落地不刷主区 index **第七次复现**（本车道首测 `HEAD=8d5953bb8f` / `index=5a671ac949` 旧 blob / `disk` 新，已具名抹平）。
 
+- **R-A39｜L1b 把可安全批收干（`23ada56a0d`，16 件），并**顶回了我写反的一条判据****（总包已独立复验三处）。
+  我派单里的第③道"改后 `[BLUEPRINT]` 份数不得比改前少"**是错的**：A 型（删重复注入块）按定义必然 2→1，
+  照它执行会把合法修复全判成事故。车道没硬凑、也没擅自跳过，而是**举证要求改判据**——
+  我复验 `src/zephyr/shared/infra/__init__.py`：改前 2 条锚（第 1 行=`(auto-injected by S4 reconciler)`、
+  第 15 行=真锚），改后只剩真锚且**同 id `MOD-INF-016` 指向实存蓝图** ⇒ 判据已改成
+  "≥1 份存活 **且** 存活锚 id 与被删注入行 id 一致 **且** 指向文件实存"，回写手册 §7。
+  复验值：收尾 `--dry-run` = `duplicate_injected_block_files:156 / dedup_targets:0 / skipped:156（100% would-drop-last-anchor:BLUEPRINT）`；
+  commit 恰 16 件零吸收；156 危险件**一件未动、锚归零 0 件**。⇒ **C-22 的"可安全批"到此收口，余量全部转 C-27 落真锚工单。**
+- **R-A40｜C-16 队列落地不刷 index 已第四次复现并由车道自查抹平**（L1b：16/16 首查 MISMATCH）。
+  车道做的是**先证明 index 里那个旧 blob 恰是本批父提交的改前 blob**（16/16 命中 ⇒ 非他人内容），再具名 `git add` 抹平——
+  这个"先证 blob 来历再抹平"的顺序应升为 D-15③ 的标准动作（抹平前必须能说明 index 那份旧 blob 属于谁）。
+  ⇒ C-16 已七次案证，**纪律补（D-15③）已被反复证明有效但它是人祸闸门**；机制补（serializer 刷 index / 网关强拦三态）仍是 Max 域。
+- 手册另钉两条本役实测坑：① `--claim-only` 会用活 pid 覆写 `session_registry` 条目 ⇒ 注册与提交必须同一条命令链；
+  ② 能力反查只能用 `CapabilityLookup().find(query, *, session_id=...)`（`AGENTS.md` §0.4 的模块级写法不可执行），
+  预跑报 `CAPABILITY-LOOKUP-REQUIRED` 时**真跑几个词补审计**，不拿 `[no-lookup:]` 逃生旗糊。
+
 ## 8. WP15(3/5) 取证案卷全文
 
 ### WP15(3/5) · 悬空 gate_id 与 gate_registry 漂移取证（`st-ramp-wp15b-20260919`）— 全程只读
