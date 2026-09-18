@@ -1339,6 +1339,21 @@ stderr 计数（实测）：`real_gate_failed` **52**、`fail_closed … BLOCKED
   - 同族一面（只报数不判谁对，属 WP4）：`|in_process − gate_registry| = 0`、`|gate_registry − in_process| = 56`、overlap 113
     ⇒ 进程内册是提交门禁册的**严格子集**。
 
+- **R-A28｜B19 落地：进程内门禁预跑器从此可用**（`85fe86c61a`，395 行工具 + 237 行测试 + 手册回写 + 翻译登记，四件同批）。
+  落点 `scripts/governance/meta/gate_prerun.py`（避开 ARCH-031 的 `governance/` 根禁新增）。
+  **总包独立验器**：`python scripts/governance/meta/gate_prerun.py --self-check` ⇒
+  `[self-check] 干净腿 exit=0（期望 0）| 违规腿 exit=1（期望 1）hard=1 errors=1` / `OK：预跑器具备报红能力`，exit=0。
+  ⇒ 意义：本役 Q-7/R-063 那条"**只有进程内门禁预跑抓得到热册蒸发**"的判断，从此有了入库载体；
+  它遍历 113 个进程内 `GateSpec` 按真门调用形只读预跑，把死信在入队前清零（`run_gate_chain.py` 只能聚合脚本型子门禁，预跑不到这些）。
+  ⇒ **后续车道任务书一律加一步**：入队前先跑它（手册 §1/§7 已写）。三条使用坑在它的 docstring 里
+  （不传 `session_id` ⇒ 四类伪红；不 claim ⇒ CLAIM-REQUIRED 伪红；`claim_files` 返回的是**成功清单**不是冲突清单）。
+- **R-A29｜150 轮阵亡已 13 条，但接力打法两次跑通**：`WP16`（死在"为了可复现快照重跑全量"的最后一步，
+  产物其实已基本齐、时间戳混杂 ⇒ 接力腿做的是**一致性判定 + 活库抽样复核**，不是重跑）；
+  `B19+B22`（B19 已入库、B22 半成品 **+134 −11 悬在未提交态** ⇒ 我先冻结双备份（磁盘字节 + `git diff --binary` 补丁）
+  再派接力腿，任务书第一动作是"**核对磁盘与我备份的 sha 是否一致，不一致就停手报冲突**"）。
+  ⇒ 打法固化：**派工时把"每完成一项立即落地"写进任务书 + 死亡后立即备份未提交态 + 接力腿任务书第一条是"盘点前腿已落盘半成品、禁止推倒重写"**；
+  并且**任务粒度要再降一档**（B19+B22 这本就是一"件"塞了两包，WP16 那种全量普查本就该先拆 3 包）。
+
 ## 7. 波1/加料批次回执（WP1-施工 / WP11）
 
 ### WP1-施工（改 1 + 改 2，`st-ramp-wp1b-20260919`）— 已落地 `ee54c976f1` / `413edaff0e`
@@ -2002,3 +2017,431 @@ L581 改后：
 - 本车道工作物：`.runtime/tmp/st-ramp-wp11-20260919/{apply_stack1.py, red_evidence.py, msg.md, RECEIPT.md}`（有 24h TTL ⇒ 已同步冷库）。
 - 冷库镜像：`G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/wp11/`（同 4 件）。首版 sha256 双份核对
   `6fd8307ad5ae3059dd76640c5a1ec7278f798d3fcbc1cccec96b622a837df3b3`（`.runtime` 与冷库逐字节相同；本文件其后又补了 RULE-ENV/GUARDIAN 两行实测值，故以最终版重刷镜像并复核一致）　`[亲验]`
+
+## 8. WP15(3/5) 取证案卷全文
+
+### WP15(3/5) · 悬空 gate_id 与 gate_registry 漂移取证（`st-ramp-wp15b-20260919`）— 全程只读
+
+#### 附件：RECEIPT_WP15b.md
+
+# WP15(3/5) 车道回执 · `st-ramp-wp15b-20260919`（§5 六项格式）
+
+两件均为**取证件**：只出证据与可粘贴替换文本，一律不处置（处置交 Max/判案）。
+靶文件在 `rules/` 下（件一）⇒ D-14 冻结，只出文本；派生册（件二）⇒ §0.5 禁手改，全程只读。
+
+---
+
+## ① 零改动声明 + 产物清单（两处路径 + 件数 + sha256 核对）
+
+**零改动声明**：本车道未修改任何 tracked 文件、未 `git add`、未建任何 tracked 件、未跑任何写库/写册动作、
+未跑任何生成器（`generate_gate_registry.py` 等一律未执行）。所有命令为 `git grep`/`git log -S`/`grep`/`yaml.safe_load` 只读。
+
+产物（`.runtime/tmp/` 热区 + 冷库镜像，各 4 件；`sha256sum -c` 两处均 OK，见下）：
+
+| 件 | 路径 |
+|---|---|
+| 件一案卷 | `.runtime/tmp/st-ramp-wp15b-20260919/item1_dangling_gate_id_forensics.md` |
+| 件二案卷 | `.runtime/tmp/st-ramp-wp15b-20260919/item2_gate_registry_drift_forensics.md` |
+| 件二探针 | `.runtime/tmp/st-ramp-wp15b-20260919/_drift_probe.py` |
+| 校验和 | `.runtime/tmp/st-ramp-wp15b-20260919/SHA256SUMS.txt` |
+
+冷库镜像：`G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/wp15b/`（同 4 件）。
+（冷备/核对输出原文贴在主回复里，两处 `sha256sum -c` 全 `OK`。）
+
+## ② 仪器能红（每条判据在已知正例 + 已知负例上各跑一次）
+
+件一（悬空 gate_id 尺）：
+```
+正例 COMMIT-SCOPE（在册真 gate） : grep -cE COMMIT-SCOPE gate_registry.yaml = 3   （能命中）
+负例 COMMIT-CRITICAL-SECTION-LOCK : grep -cE …gate_registry.yaml            = 0   （该归零）
+同尺 HELD-OVERLAP（在册）        : grep -c = 3 ; 悬空 id = 0
+实现面（防"假强制"误判的正例）    : git grep _GlobalCommitLock HEAD -- git_commit_gateway.py = 6+ 命中（能红）
+退役证据尺（pickaxe 负例）        : git log --all -S "COMMIT-CRITICAL-SECTION-LOCK" -- gate_registry.yaml = 空（确无登记史）
+```
+件二（漂移尺，三档输出互不相同 ⇒ 有区分度，非恒红/恒绿）：
+```
+正例真 hook id  : grep -c gate-zr-zero-residue .pre-commit-config.yaml = 1
+负例杜撰 hook id: grep -c gate-zr-does-not-exist-xyz .pre-commit-config.yaml = 0 (EXIT=1)
+naive basename（不剥 arg）  → 19（假阳，被识破）
+剥 arg 后 .py 匹配          → 2（复现方案值）
+generator name→gate_id(M2)  → 0（真漂移口径）
+```
+
+## ③ 每条结论的实测命令与输出原文
+
+见两份案卷（item1/item2 各含逐条命令 + 输出）。核心现场复跑值与方案对照：
+
+| 结论 | 现场复跑值 | 方案声称 |
+|---|---|---|
+| 件一：paired_gate_id 两册/配置/in-process 清单命中 | **0 / 0 / 0** | "两册零命中" ✓ |
+| 件一：全历史铸登记该 gate_id 的 commit | **0**（仅 `b8f7eb52f7` 登记规则 + 6 笔文档提及） | "全历史命中 1 次" 口径需注意（见下⑤） |
+| 件一：铁律 1/4/5/6 执行体（`_GlobalCommitLock`/session_worktree:7969） | **存在（代码内嵌）** | — |
+| 件二：source:pre-commit 条目数 | **55** | 55 ✓ |
+| 件二：逐字能找到同名 hook | **55/55** | — |
+| 件二：真·行为漂移 | **0** | "2" ✗（不成立） |
+| 件二：entry_drift 口径复现 | **2**（GATE-ZR/GATE-DRIFT，均为 module 式 entry 盲区） | 2 ✓（可复现，但是伪影） |
+| 件二 step4：in_process − gate_registry | **0**；gate_registry − in_process = **56**；overlap 113 | — |
+
+## ④ 门位 / 待裁清单（预期 = 全部处置动作）
+
+**全部为处置动作，本车道一律不自裁，交 Max/判案**：
+- 件一 T-1：`COMMIT-CRITICAL-SECTION-LOCK` 悬空 paired_gate_id 的出口选择——
+  甲(删悬空 id，承认 code_embedded)/乙(铸造并登记真 gate_id，需 WP4 净零对价+改门禁)/丙(仅案卷留痕)。靶在 `rules/` ⇒ D-14 冻结不落地。
+- 件一 T-2：**纠正方案 §7 把本条归入"27 个实现面历史零命中执行体"的口径**——本条实现面命中充分，只缺身份登记面；若按 D4"判无效"会误废一台真在跑的保护。
+- 件一 T-3（附带）：TRAE-079 引用的裁定号 `ARCH-COMMIT-SERIALIZATION-001` 在 `ruling_registry.yaml` 查无（0 命中）⇒ 另一处悬空，一并交 Max。
+- 件二 T-4：**三种处方处置（改 source/补 hook/退役）前提均不成立**（hook 实存、source 正确），本车道判为"伪漂移"。
+  若确要收敛，建议靶面是**取证判据 `entry_drift`**（让其认 module 式 entry / 按 hook id·name 反推），非 registry。此判归 Max（且涉 WP9/WP8 工具面）。
+- 件二 T-5：三面一致性集合差 56/0（in_process ⊆ gate_registry）**只报数不判谁对**——补哪一面是 WP4 对账门职责。
+- 件二 T-6（附带，只报）：book `generated_at` 停 2026-09-16 但内容随 config 同步——时间戳滞后属 D-4/WP5 派生面话题，不处置。
+
+## ⑤ 逐项证据等级
+
+件一：
+- 两册/配置/in-process 清单 0 命中、全历史 pickaxe、per-artifact pickaxe、`_GlobalCommitLock` 代码命中、
+  session_worktree:7969、executors 逐字段 `git grep`、b8f7eb52f7 归属 —— **`[亲验]`**（本车道实跑）。
+- "TRAE-079 有保护体" = `_GlobalCommitLock` 临界区确在 `commit()` 主/降级两路径包裹 gate→stage→commit —— **`[亲验]`**（读源码 2256/2305/2351/2391）。
+- 出口甲/乙/丙 各自的"动什么文件/代价" —— **`[推断]`**（基于注册架构与净零对价规则，未实做验证）。
+- rule_discovery_mcp/ai_pre_action_check 属"通用跨规则标签" —— **`[亲验]`**（grep 命中多文件）其"算不算合格执行体四类之一"—— **`[推断]`**（MCP/人工流程口径交 Max）。
+
+件二：
+- 55 计数、三档匹配(19/2/0)、两条 entry 原文、config L531/L962 逐字比对、`git log -S` 稳定性、集合差 169/113/0/56 —— **`[亲验]`**（本车道实跑）。
+- "2 系 entry_drift `.py`-basename 盲区伪影" 的因果解释 —— **`[亲验]`**（读 dossier_core.py:258-291 判据体 + 复算）。
+- gate0_identity_census.json / surfaces.json 的 56/113 等数 —— **`[转报]`**（他人产物，仅作旁证，现值以 §③ 亲跑为准）。
+
+关于"全历史命中 1 次"（方案措辞）：本车道实测该串在全历史出现于 7 笔 commit（1 登记 + 6 文档）。
+方案"1 次"若指"门禁登记面命中数"则为 **0**；若指"除文档外的实质提及"则为 1（b8f7eb52f7）。此措辞差 **`[亲验]`** 已列出，判读交 Max。
+
+## ⑥ 未完成与原因
+
+- 两件取证均已完成并落盘 + 冷备 + sha256 核对，**无半拉子**。
+- 未做（有意，符合任务边界）：
+  - 未处置（不选出口/不改 rules/不跑生成器/不碰派生册）——任务明令"只取证件不处置"。
+  - 未执行 WP15 第 1 项"拆工棚"——任务明令本车道不执行（另一车道仍用其案卷/采集器）。
+  - 未复跑生成器验证"改 source 会被覆盖"——§0.5 本车道只读，跑生成器属写动作。
+  - entry_drift 因果的"改工具→漂移归零"仅以 M2 口径旁证（M2=0），未实改 `_tools/dossier_core.py`（越界 + 只读纪律）。
+
+#### 附件：item1_dangling_gate_id_forensics.md
+
+# WP15(3/5) 件一案卷 · 悬空 gate_id `COMMIT-CRITICAL-SECTION-LOCK` 取证
+
+- 车道：`st-ramp-wp15b-20260919`（WP15 第 3 项，处方口径见 master-plan §3 WP15.3）
+- 性质：**只出证据 + 可粘贴替换文本，一律不处置**（D-14：靶在 `rules/` 下 → 冻结；处置交 Max/判案）
+- 全程只读：未改任何文件、未 `git add`、未建 tracked 件、未跑任何写库/写册动作
+- 环境：Python 3.12.8；分支 `dev`；每条命令均可重跑
+
+## 0. 一句话结论（先行）
+
+`paired_gate_id: COMMIT-CRITICAL-SECTION-LOCK` 是一个**从未被铸造（never minted）的 gate 身份**——它从未出现在两册、
+`.pre-commit-config.yaml`、in-process 注册清单或任何历史 commit 的登记行里。
+**但它所声称的保护体并非不存在**：TRAE-079 铁律 1/4/5/6 的**行为**已作为**内嵌代码**落地在
+`git_commit_gateway.py`（`_GlobalCommitLock` 临界区）与 `session_worktree.py`（worktree 降级），
+与规则自身 `enforcement.type: code_embedded_plus_doc` 的声明一致。
+
+⇒ 取证二分落点 = **(b) 身份从未存在** 为主，**但不是"假强制"**：缺的是 **gate_id 登记面**，不缺执行体。
+（"假强制＝条文写了个不存在的实现"这一支被现场实测**证伪**——见 §2。）
+
+## 1. 取证二分（程序法闸1 口径）逐支证据
+
+### (a) 门禁"曾存在后被退役" —— 证伪
+
+可重跑命令 + 实测输出：
+
+```
+$ git log --all --oneline -S "COMMIT-CRITICAL-SECTION-LOCK"
+47a7426b7f docs(working): 施工方案更正批...
+68b8619e37 docs(working): 施工方案更正批...
+85cd86f522 docs(working): 规则与审计一条龙施工总方案...
+c5bba14a7c docs(working): 规则与审计一条龙施工总方案...
+dd39de9b6c docs(working): 门禁身份与触发台账治本施工方案...
+5aa9568aae docs(working): 门禁身份与触发台账治本施工方案...
+b8f7eb52f7 feat(gov): 登记 TRAE-079 commit临界区文件锁串行化铁律
+
+$ git log --all --oneline -S "COMMIT-CRITICAL-SECTION-LOCK" -- docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
+（空输出 → 该 id 从未进过提交门禁册）
+
+$ git log --all --oneline -S "COMMIT-CRITICAL-SECTION-LOCK" -- .pre-commit-config.yaml
+（空输出 → 从未进过 pre-commit 配置）
+```
+
+- pickaxe（`-S`，逐 commit 统计该串增减）在全历史只命中 7 笔：1 笔是**规则登记** `b8f7eb52f7`（2026-07-22，
+  TRAE-079 出生即带此悬空 paired_gate_id），其余 6 笔是本役 `docs/_working/` 方案文档的**讨论性提及**。
+- **没有任何一笔 commit 铸造过再删除过**一个名为该 id 的门禁登记行。→ (a) 不成立。
+- `git log --grep` 全历史命中 0（无 commit message 提及）。
+
+### (b) 身份从未存在（条文写了个不存在的 gate_id）—— 成立，但须与"假强制"切割
+
+两册 + 配置 + in-process 清单逐字查：
+
+```
+$ grep -rn "COMMIT-CRITICAL-SECTION-LOCK" \
+    docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml \
+    docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml \
+    .pre-commit-config.yaml
+（EXIT=1，零命中）
+```
+
+仪器能红（同尺正/负对照，见 §4）。→ **gate_id 身份层面：从未存在**。
+
+★ **但"保护体不存在＝假强制"这一推论被现场实测证伪**（这是本案卷最要紧的一处，防 Max 按 §7 现口径误判）：
+
+```
+$ git grep -nE "_GlobalCommitLock|TRAE-079" HEAD -- src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
+:385 class _GlobalCommitLock:
+:2256  # TRAE-079 铁律1：[gate → stage → commit] 整体在 _GlobalCommitLock 临界区内，消除 TOCTOU
+:2305  with _GlobalCommitLock(...):
+:2243  # TRAE-079 铁律5：allow_overlap 降级为 last-resort（仅文件锁不可用时），落审计
+:500   """TRAE-079 铁律6：文件锁 fail-open 降级落审计。"""
+:2358  # TRAE-079 铁律6：... MUST 落审计
+:2360  _audit_commit_lock_fallback(...)  →  写 commit_lock_fallback.jsonl
+
+$ git grep -nE "TRAE-079" HEAD -- src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+:7969  "...TRAE-079 Phase 2：worktree 已降级为可选——...直接走 GitCommitGateway 文件锁串行提交（Phase 1 临界区已落地）。"
+```
+
+即：铁律 1（临界区文件锁串行）、铁律 5（allow_overlap 降级 last-resort）、铁律 6（fail-open 落审计 `.runtime/gate_audit/commit_lock_fallback.jsonl`）、
+铁律 4（worktree 降级为可选）**都已在代码里执行**，只是**没有以"可被 gate_id 发现的独立门禁"形态存在**——它是 code-embedded。
+
+### (c) 名字漂移（实存一个近义门禁）—— 无干净匹配
+
+在册 gate_id 里含 COMMIT/LOCK/OVERLAP/SECTION/ATOMIC 的候选（`grep -niE "^\s*(gate_id|id|name):\s*\S*(COMMIT|LOCK|OVERLAP|SECTION)"` gate_registry.yaml）：
+
+| 在册 gate_id | 语义 | 是否=临界区文件锁 |
+|---|---|---|
+| `HELD-OVERLAP`（CommitGate, priority=50） | 检测他会话持锁文件重叠（搭便车**症状**） | 否——是本规则要防的失败模式，非锁本身；TRAE-079 已单独把它列在 `triggers` 里，非 paired |
+| `COMMIT-SCOPE`（CommitGate, priority=50） | 提交范围/跨域检查 | 否 |
+| `GATE-COMMIT-GW` | 裸 commit 检测 | 否——检测绕过 Gateway，非 Gateway 内串行化 |
+| `RULING-COMMIT-VERIFIED` / `CAPABILITY-OVERLAP` / `GATE-PRECOMMIT-OFFLINE` | 裁定核实/能力重叠/离线 | 均否 |
+
+- 字符串相似度层面：无任一在册 id 共享 `CRITICAL`/`SECTION`/`LOCK` 三 token；最近邻仅共享 `COMMIT` 一词，语义正交。
+- 结论：**(c) 不成立**——不存在"改了名的同义门禁"。真正的映射是"内嵌代码 `git_commit_gateway._GlobalCommitLock`"，
+  该实现**从未被授予任何 gate_id**，故无从谈"漂移"，只能谈"未注册身份"。
+
+### 二分落点
+
+主判 **(b) 身份从未存在**；且以现场证据明确排除"假强制（实现也不存在）"这一误读。
+处方 §3 WP15.3 的"两册零命中"表述准确，但 §7 把它列入"取件顺序 27 个实现面历史零命中执行体 → 出口 D4"的语境需 Max 复核：
+**本条不属于"实现面零命中"那一族**——它实现面命中充分，只是**身份面（gate_id）零命中**。
+
+## 2. 影响面：TRAE-079 到底有没有执行体（逐字段实测）
+
+`enforcement` 段（`rules/trae_079_commit_serialization.yaml`）逐字段：
+
+| 字段 | 声明值 | 实测 |
+|---|---|---|
+| `paired_gate_id` (:210) | `COMMIT-CRITICAL-SECTION-LOCK` | 两册/配置/in-process 清单 **0 命中**；全历史从未铸造 → **身份悬空** |
+| `type` (:211) | `code_embedded_plus_doc` | 与实测吻合：保护体确以**内嵌代码**存在（`_GlobalCommitLock`）——**非**"注册门禁"型 |
+| `executors[0]` (:213) | `git_commit_gateway_critical_section_guard` | `git grep -E "(def\|class) …"` **0 命中**；此名**不存在**为真实符号——但它**指代的**行为=§1(b) 的 `_GlobalCommitLock` 临界区（铁律1），行为在，符号名不在 |
+| `executors[1]` (:214) | `session_worktree_escape_hatch_demotion` | 同上：无同名符号；其行为=session_worktree.py:7969 的 worktree 降级（铁律4），行为在，符号名不在 |
+| `executors[2]` (:215) | `rule_discovery_mcp` | 跨 8+ 条 trae_*.yaml 复用的通用 MCP 执行体标签，非本规则专属，也非"临界区锁"的执行者 |
+| `executors[3]` (:216) | `ai_pre_action_check` | 跨 15+ 条规则复用的通用"AI 事前自查"人工/流程类标签，非专属 |
+| `bypass_allowed` (:217) | `true`（文件锁不可用时 fail-open） | 与铁律6 的 `_audit_commit_lock_fallback` 一致 |
+
+⇒ **净结论**：TRAE-079 **有执行体**（内嵌代码级，铁律 1/4/5/6 均落地），
+但**没有一个可通过 `paired_gate_id` 被机械发现/对账的门禁身份**。
+两个专属 `executors` 是"描述性别名"（对得上行为、对不上 `def/class` 符号）。
+→ WP4 对账门（gate-identity §2 WP4 判据 1：`paired_gate_id` 非空则须两册可解析）一旦上线，
+  **会命中本条为悬空**；但命中原因是"身份未注册"，不是"无保护"。
+
+## 3. 可直接粘贴的替换文本（D-14：靶在 rules/ 下 → 只出文本，不落地）
+
+**靶文件**：`docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml`
+**现原文（逐字，含行号）**：
+
+```
+210:  paired_gate_id: COMMIT-CRITICAL-SECTION-LOCK  # Phase 1 落地：commit 临界区文件锁 gate（warn-only 起步→P2 硬阻断）
+```
+
+以下三案**并列供 Max 判，本车道不选**（各自动什么文件/代价）：
+
+### 出口候选 甲 — 承认 code_embedded，删除悬空 paired_gate_id
+把 :210 整行删除（或改注释为"无独立 gate_id，保护体为 code_embedded，见 executors/铁律1"）。
+```
+（改后：删除第 210 行）
+```
+- 动：仅 `rules/trae_079_commit_serialization.yaml` 一处；`type` 已是 `code_embedded_plus_doc`，删后自洽。
+- 代价：最小、零行为变更、零新代码；但**丢失"这条规则声称由 X 门禁强制"的可对账锚点**——
+  依赖 paired_gate_id 做三面一致性统计的 WP4 会把它归入"未声明强制体"而非"悬空"。
+
+### 出口候选 乙 — 为该内嵌锁铸造并登记一个真 gate_id
+保留 `paired_gate_id` 语义，但把值改成一个**在册身份**，并让 `git_commit_gateway._GlobalCommitLock` 路径以该名注册/落 gate_id。
+```
+210:  paired_gate_id: <新登记 gate_id，须先进 gate_registry / in_process 册>
+```
+- 动：`rules/trae_079…yaml` + 门禁注册面（`commit_gates/` 工厂或 in-process 清单）+ 两册重生（走各自生成器，禁手改 §0.5）。
+- 代价：最大——把已有 code_embedded 行为"包装成可发现门禁"属**新增门禁**，触发 WP4 净零增长对价（宪法 §4.1）、
+  且 `_GlobalCommitLock` 现非 CommitGate 架构（它是 Gateway 内部锁），包装有真实改造工作量。
+
+### 出口候选 丙 — 改判据/改措辞交 WP9（本条不动，仅案卷留痕）
+按 D-14：`rules/` 全域冻结至 WP9 判案完成，本车道不改；本案卷即交 Max，由 WP9 判决决定甲/乙。
+- 代价：零（当前状态）。
+
+> 本车道倾向性**不作为裁定**：甲与现实现事实最贴合（type 已 code_embedded）；乙最贴合"paired_gate_id 字面意图"但代价高。判归 Max。
+
+## 4. 仪器能红（每条判据的正/负对照，同一次跑）
+
+| 判据 | 已知正例（应命中） | 实测 | 已知负例（应为 0） | 实测 |
+|---|---|---|---|---|
+| 两册/配置查 gate_id | `COMMIT-SCOPE`（在册实gate） | `grep -cE COMMIT-SCOPE gate_registry.yaml` = **3** | `COMMIT-CRITICAL-SECTION-LOCK` | `grep -cE … gate_registry.yaml` = **0** |
+| 同尺 | `HELD-OVERLAP`（在册） | grep -c = **3** | 悬空 id | = **0** |
+| pickaxe 全历史 | `HELD-OVERLAP` | 有命中（在册门禁） | 悬空 id：仅规则登记+文档，**无门禁登记行** | 见 §1(a) |
+
+→ 尺子能在实存 gate_id 上命中、在悬空 id 上归零，**非恒绿**；§1(b) 的"实现存在"证据另以 `git grep _GlobalCommitLock` 命中 6+ 处坐实（非恒红）。
+
+## 5. 附带发现（只报，不处置）
+
+- **F-1｜TRAE-079 引的裁定号未登记**：该规则 title/provenance/original_rules 反复引用
+  裁定号 `ARCH-COMMIT-SERIALIZATION-001`，但 `docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml`
+  内 `grep -c ARCH-COMMIT-SERIALIZATION-001` = **0**。属 RULE-RULING（裁定须先登记、同 commit 原子）范畴的另一处悬空，
+  与本案卷 gate_id 悬空同族，一并交 Max。（★ 记法说明：此处刻意**不**用"裁定#+数字"连写形式，以免被 RULING-REFERENCE 门判为悬空引用。）
+- **F-2｜处方路径已实测存在**（吸取 R-A7/R-A24 教训）：本案卷引用的两册、config、
+  `git_commit_gateway.py`、`session_worktree.py`、`held_overlap_gate.py`、`lock_files.py` 全部 `git ls-files` 核实 TRACKED 存在。
+
+## 6. 回执六项映射见主回执文件 RECEIPT_WP15b.md（件一部分）。
+
+#### 附件：item2_gate_registry_drift_forensics.md
+
+# WP15(3/5) 件二案卷 · `gate_registry` "真漂移 2 条" 取证
+
+- 车道：`st-ramp-wp15b-20260919`（WP15 第 5 项，处方 master-plan §3 WP15.5；背景 gate-identity §1.4/§2 WP4 判据4）
+- 性质：**只出证据，不处置**（交 Max 判）；全程只读，未跑任何生成器、未改任何册/文件（派生册 §0.5 禁手改）
+- 环境：Python 3.12.8；分支 `dev`；所有计数现场实测（§0.6），逐条命令可重跑
+
+## 0. 一句话结论（先行）
+
+`gate_registry.yaml` 里 `source: pre-commit` 的条目 **55 条**，其中**逐字能找到同名 hook 的 = 55/55**，
+**真·行为漂移（在册但 config 无对应 hook）= 0**。
+方案 §1.4/§7 所称"**2 条**"经现场复跑**能精确复现**，但其成因是**取证判据（`entry_drift`，dossier_core.py:258-278）按 `.py` 脚本名匹配 hook**，
+而 `GATE-ZR` / `GATE-DRIFT` 两条的 `entry` 是 **module 调用式**（`python -B -c "…"` / `python -m …`，不含任何 `.py` token）⇒ 匹配器取不到脚本名 ⇒ 判"无同名 hook"。
+**这两条的 hook 在 config 里确实存在、`entry` 与册内逐字相同、且从未改名/摘除**（见 §2）。
+
+⇒ **"2 真漂移"是取证工具判据的伪影，不是登记面缺陷**；方案给的三种处置（改 source / 补 hook / 退役）
+**全部打在错误的靶面上**（与 R-A3 D-12 空改动、R-A24 处方靶路径错同类）。
+
+## 1. 先复跑计数（现场实测，非引用）
+
+| 量 | 现场复跑值 | 方案 §1.4 对照 |
+|---|---|---|
+| gate_registry `total_gates` 字段 | 169 | 169 ✓ |
+| 解析出的 gates 实际条数 | 169 | — |
+| `generated_at` | `2026-09-16T14:22:32Z` | 2026-09-16 ✓（时间戳未刷新，但内容随 config 自动重生，见下） |
+| `source` 分布 | pre-commit **55** / commit-gate 113 / manual 1 | 55 / 113 / 1 ✓ |
+| source:pre-commit 中逐字找到同名 hook（生成器 name→gate_id 口径，权威） | **55** | — |
+| **真·行为漂移（在册、config 无对应 hook）** | **0** | 方案称 2 ✗ |
+| 方案口径复现（entry_drift：按 `.py` 名匹配，取不到即算漂移） | **2**（GATE-ZR / GATE-DRIFT） | 2 ✓（可复现） |
+
+复现命令（只读，读文件不写）：
+
+```
+$ python .runtime/tmp/st-ramp-wp15b-20260919/_drift_probe.py        # M1 verbatim / M2 generator-faithful → 均 0
+$ python - <<'PY' ...                                                # 复刻 entry_drift（去 arg 干净口径）→ 2
+```
+
+三条独立尺子：
+- **M1（gate_id 串逐字出现在 config）**：55 present / 0 missing。
+- **M2（generator-faithful：从当前 config 每个 hook 的 `name` 用正则 `GATE-(…)` 反推 gate_id 集）**：
+  config 当前派生 55 个 gate_id，与 55 条 source:pre-commit 条目**一一对上**，0 落空。
+- **entry_drift 复刻**（按 `.py` 脚本 basename 双向匹配）：**恰 2** 落空，且都是 "no-.py-in-entry"。
+  （若不先把 config hook entry 里的 inline `--staged` 之类 arg 剥净，naive `PurePath(entry).name` 会得到 19 条假阳——
+   本车道已修正该解析，19→2，证明 19 是 arg 污染而非漂移。）
+
+旁证（三面一致性快照）：`.runtime/sessions/st-ruledisp-20260918/staging/gate0_identity_census.json` 记
+`yaml.precommit=169 / inprocess=113 / overlap=113 / only_inprocess=[]`（此为**数据**引用，非现值；现值见 §4）。
+
+## 2. 逐条："为什么会漂"的证据链（改名 / 被摘 / 登记写错 —— 逐一排除）
+
+### GATE-ZR
+- **册内 entry 原文**（`gate_registry.yaml`）：
+  ```
+  - gate_id: GATE-ZR
+    name: GATE-ZR: 零残留强制门禁（IRN-011）
+    entry: python -B -c "from zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner; import sys; r=ZeroResidueScanner().scan(); sys.exit(0 if r.is_clean else 1)"
+    files_trigger: \.(py|yaml|md)$
+    status: active
+    source: pre-commit
+  ```
+- **config 里对应 hook（应"未出现"、实际出现）的位置**：`.pre-commit-config.yaml` **L531-533**
+  ```
+  - id: gate-zr-zero-residue
+    name: "GATE-ZR: 零残留强制门禁（IRN-011）"
+    entry: python -B -c "from zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check import ZeroResidueScanner; import sys; r=ZeroResidueScanner().scan(); sys.exit(0 if r.is_clean else 1)"
+  ```
+  ⇒ hook `name`/`entry` **与册内逐字相同**，`id: gate-zr-zero-residue` 也在册。
+- **为什么被 `entry_drift` 判漂**：该函数用 `re.findall(r"[\w/\.\-]+\.py", entry)` 抽脚本名——
+  module 调用式 `entry` 里唯一的 `.py` 线索在 `-c` 的 import 串里（`zero_residue_check` 无 `.py` 后缀），抽不到 ⇒
+  registry 侧 scripts=[] → 无法在 config by_base 命中 → 记 "无同名 hook"。**纯格式盲区，非缺失。**
+- **排除 改名/被摘/写错**：
+  ```
+  $ git log --oneline -S "gate-zr-zero-residue" -- .pre-commit-config.yaml
+  d974296e2e backup: depgraph before gate batch creation
+  60b5c6fdcd backup: depgraph before task2 max_modules reset
+  787f7a6ba4 audit: CI pip install -e .[dev] + audit fixes …
+  ```
+  该 hook id 自早期加入后持续存在，无"删除笔"（pickaxe 只给新增侧）。⇒ **非改名、非被摘、非登记写错**。
+
+### GATE-DRIFT
+- **册内 entry 原文**：
+  ```
+  - gate_id: GATE-DRIFT
+    name: GATE-DRIFT: 漂移检测 LIGHT scan（MOD-INF-023）
+    entry: python -m zephyr.behavioral_auditor scan --level LIGHT
+    files_trigger: ^src/zephyr/.*\.py$
+    status: active
+    source: pre-commit
+  ```
+- **config 对应 hook**：`.pre-commit-config.yaml` **L962-964**（`- id: gate-drift-light-scan`），
+  `name`/`entry` **与册内逐字相同**。
+- **为什么被判漂**：`python -m <module>` 里无 `.py` ⇒ 同上盲区。
+- **排除 改名/被摘/写错**：
+  ```
+  $ git log --oneline -S "GATE-DRIFT" -- .pre-commit-config.yaml
+  d974296e2e backup: depgraph before gate batch creation
+  60b5c6fdcd backup: depgraph before task2 max_modules reset
+  c0c5a48cfd chore: update .gitignore — …
+  ```
+  亦为持续存在、无删除笔。⇒ **非改名、非被摘、非登记写错**。
+
+**结论（step 2）**：两条都不是 hook 改名 / 被摘 / 登记写错——登记面与执行面**完全一致**。
+唯一的"漂"来自取证判据把 module 式 entry 误当无 hook。
+
+## 3. 处置口径对比（交 Max 判，本车道不选；★ 三案的前提均不成立，见每案备注）
+
+| 出口 | 动什么文件 | 代价 | 本车道实测评估 |
+|---|---|---|---|
+| **甲 改 `source` 标注** | `gate_registry.yaml`（派生册，禁手改，须改生成器） | 中 | **不宜**：`source: pre-commit` 是**正确的**——两条确由 pre-commit hook 执行（config L531/L962）。改成别的值＝**主动制造登记面失真**，与事实相反。 |
+| **乙 补 hook（"行为变更=加严"）** | `.pre-commit-config.yaml` | — | **无的放矢**：hook 已存在且 entry 逐字一致，没有可补的 hook。若理解为"改 entry 成 `.py` 包装以让工具看得见"，则改的是**取证可见性**不是行为，且会动 GATE-ZR/GATE-DRIFT 的实际执行方式（评估风险）。 |
+| **丙 退役该条** | `gate_registry.yaml` + config + `commit_gates`/脚本 | 高（注册表净删=门位第②类） | **破坏有效门禁**：GATE-ZR 零残留、GATE-DRIFT 漂移扫描都是 active 真门；退役＝真丢两台门禁，方向错误。 |
+| **★ 丁（本案卷建议交 Max 考虑的真靶面）改取证判据** | WP9/WP8 的 `_tools/dossier_core.py::entry_drift`（或 WP4 对账门的 entry→hook 匹配） | 低 | **命中病灶**：让匹配器同时按 hook `id`/`name` 反推 gate_id（即本车道 M2 口径），两条伪漂移即归零，且不碰任何在册门禁。属"处方靶面从 registry 挪回工具"，与 R-A3/R-A24 同族教训。 |
+
+> 依 D-13：判"改 source/补 hook/退役"都需要语义判断且**值无唯一现场来源**（因为前提"漂移"是伪影），
+> ⇒ 一律只出案卷，处置交 Max；本车道不改任何册/config/工具。
+
+## 4. 同族一面核对：`in_process_gate_registry` vs `gate_registry` gate_id 集合差（只出计数，不判谁对）
+
+现场实测（非引用快照 JSON）：
+
+| 量 | 值 |
+|---|---|
+| gate_registry distinct gate_id | **169** |
+| in_process distinct gate_id | **113** |
+| \|in_process − gate_registry\|（仅进程内有） | **0** |
+| \|gate_registry − in_process\|（仅提交门禁册有） | **56** |
+| overlap | **113** |
+
+⇒ 进程内册是提交门禁册的**严格子集**（`inprocess_subset_of_precommit=true`，与 gate-identity §1.1 一致）。
+差集 56 主要是 `source: commit-gate` 未同时登记进进程内册 + 少量 pre-commit 独有项。
+★ 按任务边界，**只报集合差计数，不判谁对/谁该补齐**——那是 WP4 对账门（三面一致性心脏）的判据职责（本案卷不越界）。
+
+## 5. 派生册纪律声明（step 5，遵守中）
+
+`gate_registry.yaml`（`generated_by: scripts/governance/generators/generate_gate_registry.py`）与
+`in_process_gate_registry.yaml` 均为派生册：本车道**全程只读**，未跑任何生成器、未 Edit/Write 任一册。
+（顺带记一条事实：book `generated_at` 停在 2026-09-16，但 `8566527d00` 等后续提交**同时**改动 config 与 book
+⇒ 时间戳字段滞后、内容实已随 config 同步——此滞后属 D-4/WP5 生成器派生面话题，非本 WP 对象，只登记不处置。）
+
+## 6. 仪器能红（本案卷每条判据的正/负对照，见主回执 §②）
+
+- "同尺能命中真名"：`grep -c "gate-zr-zero-residue" .pre-commit-config.yaml` = **1**（正例）、
+  `grep -c "gate-zr-zero-residue" docs/…/gate_registry.yaml` 派生侧亦由 M2 命中（在册）。
+- "尺子对 module 式 entry 的盲区可被绕过"：naive basename（不剥 arg）→ 19 假阳；
+  剥 arg 后 `.py` 匹配 → 恰 2；generator name→gate_id（M2）→ 0。三档输出**互不相同** ⇒ 尺子有区分度，非恒红非恒绿。
+
