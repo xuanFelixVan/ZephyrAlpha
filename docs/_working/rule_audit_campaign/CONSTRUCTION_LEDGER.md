@@ -92,6 +92,28 @@ completes_when: 规则与审计一条龙战役波1-波5 全部收口，且本册
   `--all` 亦无；★ **同处真实迁移 commit 是 `6933dbcff3`**（本总包起初写成 `feac5f7b28`，经 WP1-取证车道纠正并由我独立复跑证实：`feac5f7b28` 只是该文件的**出生提交**（`git show --stat feac5f7b28` = 单文件 524 insertions），R100 改名件在 `6933dbcff3`（2026-07-02，message 里的『批次4b』与注释逐字对应）。⇒ **这是我本役第 5 处自记错误，也是『引用了他物但指错号』的第二例**）。与我在 §7.10 记的"裁定号 343（该号从未登记）经任务书二级传播"同族，
   **但代码注释面此前未查过** ⇒ 建议把"引用 commit/裁定号/路径前先验存在"从车道纪律升成**门禁**（列 C-10）。
 
+- **R-A43｜"不代修"的边界：门禁克隆配对若在我本次必须改的文件内，消配对就是本批义务**。
+  L3 车道把 `file_utils.py` 里两个异常类的同体 `__init__` 配对判成"他文件的语义改动（宪法 §3.4 不代修）"，
+  于是回退了自己的上收改动、改用本地字面量并登记双源债——**判错了半个前提**：`file_utils.py` 正是它本次要改的文件，
+  配对就在该文件内部，消它属于本批前置。真实约束只是"CloneGuard 无 noqa 通道"。
+  ⇒ 本总包接手：三份相同 `__init__` 上收为 `DetailsCarryingError`（仍 `RuntimeError` 子类，签名 `(message, *, details)` 不变），
+  CAPABILITY-OVERLAP 预跑由红转绿；命名真源（`ATOMIC_TMP_*` + `atomic_tmp_glob()` / `atomic_tmp_to_canonical()`）同批导出。
+  证据：盘上 45 件真实 `.tmp` 半成品新旧反解**逐件相等（mismatches=0）**；真 mkstemp 产出名命中 glob 且反解回正本、
+  人工命名 `.foo_bar.tmp` 不命中（阴性对照）；tests/io + tests/shared/test_safe_write.py **37 passed**。
+- **R-A44｜半批落地 + 处方成 patch = 收口，不是半途而废**。
+  清扫脚本换源那一半撞 `AI-NIGHT-CF1-001`（心跳 1 分钟前的活会话）的 claim ⇒ 按 RULE-WORKTREE
+  "HELD-OVERLAP 不硬闯"+overlap 配额纪律**没抢**。处置：只落真源侧（2 件），把换源侧做成
+  75 行 patch，并现场跑 `git apply --check` 证明**当下可一键套用**，sha256 进冷库。
+  ⇒ 升一条手册判据：*被 claim 挡住的成品，交付标准是"可套用处方 + 可验证哈希"，不是"我尽力了"*。
+- **R-A45｜worktree CRLF 污染的机制不是某个生成器，而是任何一次 `newline=None` 的文本写盘（自我实证）**。
+  本总包自己 06:26 落地的那件 `scripts/ops/cleanup_runtime_tmp_residue.py` 实测
+  `i/lf  w/crlf  attr/text eol=lf`、`git status` **判 clean**、`git hash-object` 与 HEAD blob **相等**——
+  即"入库正确、盘上带毒、状态面失明"三件事同时成立。crlffix 车道普查的全盘面
+  **7,654/14,830 件（51.6%）/ 1,270,474 处**、HEAD blob 抽样 12 件全 CRLF=0 ⇒ 污染只在盘上。
+  ⇒ 两个结论：①只改 `safe_write_text` 默认值治不了（`Path.write_text` / `open('w')` 同样致病）；
+  ②对任何"字节级比对/幂等重放"的判据，**必须先归一化行尾**（本役所有 diff 一律 `--strip-trailing-cr`
+  或 `--ignore-cr-at-eol`，否则 6 万行假差异会把你引向"他人在途回退"的误判）。
+
 ## 2. 波1 车道回执全文（§5 六项格式，逐条嵌入，未做删改）
 ### WP1 · 两坏写入端（`st-ramp-wp1-20260919`）
 
@@ -662,6 +684,15 @@ $ git log --oneline -3 -- $C
 | **C-37** | `backfill_checker.py:1046` 无 `permission_required` 分支也无 `else` ⇒ **静默跳过却计入 checked** | 补分派 + 未识别类型**显式报错**（fail-closed） | 顺手把 `checked` 改名成"已分派数" | 甲；这台是"指标自证清白"型的新实例（无 else 的白名单分派） |
 | **C-38** | `is_st` 写端硬编码 0（259,238/259,238 全 0）而 `api_server.py:3900` 当真相用 | 补真值来源 + 在读端显式披露"该列不可用" | 摘掉读端对该列的依赖 | 先乙后甲：现在最坏的不是没值，是**下游以为有值** |
 | **C-39** | 普查文档 `01_break_census.md:81` 把从未建过的 `alt_movie_boxoffice` 列进"空表族" | 改措辞（未建 ≠ 空表） | — | 与 C-33/R-A7/R-A24 同族：**引用不存在之物** |
+| **C-40** | `cleanup_runtime_tmp_residue.py` 换用真源 + "复用同一函数对象"恒等锁——被活会话 claim 挡住 | 处方 patch `.runtime/tmp/eolssot/cleanup_ssot.patch`（冷库副本 sha256 `6e76b295e4…`，已 `git apply --check` 验可套用） | 等 `AI-NIGHT-CF1-001` 释放后本总包同批落 | Max 判归：要不要让持有者自己吸收 |
+| **C-41** | `safe_write_text` 默认 `newline` 翻转，或按 `git check-attr eol==lf` 自动选 | 折中案（调用点零改动、按属性选）| 不翻（现状） | **61 调用点同变** 且会把未钉定的 CRLF 目标拉成 LF（车道阴性对照实证）⇒ Max/Owner |
+| **C-42** | 全盘 7,654 件 / 1,270,474 处 worktree CRLF 清盘 | 只清"eol=lf 钉定 + status clean"子集 | 全量 `checkout-index -f` | Owner 门位（规模 + 连坐）：全量重写=覆盖所有在途工作，须错峰 + 可逆快照 |
+| **C-43** | 裸字节 EOL 观测门（own-scope，首月只报不拦）补 `git status` / 写后回读双盲区 | 甲=加观测门 | 乙=只钉手册 | 门禁只许加严（宪法 §裁定321 族）⇒ 建议甲，但占"规范净零增长"额度，须声明替代项 |
+| **C-44** | 高危 `newline` 缺省 17 点（crlffix 具名清单，含写**源码本体**的 `externalize_algo_flow.py:928/993/1173`） | 按 externalize_algo_flow > resource_profile_registry 三写点 > 其余生成器 排序逐点修 | — | Flash 可做；须与各写者车道错峰（这些是热生成器）⇒ 待派 |
+| **C-45** | ★ 三态普查 T1 两件：`algo_mining_digest.md`（index 吞 58 行）/ `prereg_screen_slice_a.md`（吞 6 行），index 压的是**从未提交过**的改前快照 | 由该两文件 owner 车道 `git add` 抹平（工作区==HEAD ⇒ 零风险） | 先用冷库 `at_risk_index_blobs/` 复核再抹 | bizmine 家族在途面，本总包未动；**悬空 blob 一次 `git gc` 即灭**，取证件（50/50 sha256 校验）是当前唯一稳定基线 |
+| **C-46** | `backtest_backlog.yaml` index 那份会把 **19 条已实测销账条目退回 `untested`**（+19 −38）；`bizmine_campaign_ledger.md` 吞总包台账 2 行 | 重跑销账批 或 具名 `git add` 抹平 | — | **注册表净删=Owner 门** 且属他会话域 ⇒ 只登记不动 |
+| **C-47** | 队列落地后 index 不刷新＝**C-16 第七次现场复现**：本次 16 件纯 `+2 −0` 与落地件 `68b80cd512` 的文件集 **16/16 集合相等** | 甲=serializer 落地成功后对自家文件刷新 index（机制治本） | 乙=每车道自抹（D-15③） | 甲改的是**常驻守护体内**的代码 ⇒ 判旧进程盲区（#ARCH-323 族，重启才生效）；本总包已按乙自抹 16/16 并复验三态全等、工作区字节零改动 |
+
 ## 4. 事实修正表（后续车道任务书必带对应行）
 
 | 方案原文 | 现场实测（2026-09-19，本战役复跑） | 影响 |
@@ -2999,3 +3030,41 @@ Pass 2 的纯格式清单消除）；冷库 `wp16/` 树共 **66** 个文件 = 63
 
 `.runtime/tmp/` 24h TTL 已不构成风险：**判决所需全部 33 件（含 15.9MB / 15.4MB 大件）已在非 TTL 介质**，
 且逐件 sha 可验。本地目录若被 TTL 吃掉，从 `wp16/` 恢复即可（`MANIFEST_sha256.txt` 为验收凭据）。
+
+## 10. 总包亲手批次回执（06:5x 批 · L3 接力：命名真源上收 + 克隆配对消除）
+
+- **落地**：队列项 `q-20260919-st-fullflow-20260918-0034` → commit **`db80e3132e`**（2 件；落地后 index 仍压父提交 blob＝C-16 第八次现场，已按 D-15③ 具名 `git add` 抹平并复验三态全等）：
+  `src/zephyr/shared/io/file_utils.py`、`tests/io/test_io_file_utils.py`；三态核实见 §10.3）。
+- **改动清单**：①`__all__` 加 5 个符号；②新增 `ATOMIC_TMP_PREFIX_TEMPLATE` / `ATOMIC_TMP_SUFFIX` /
+  `ATOMIC_TMP_RAND_LEN` + `atomic_tmp_glob()` / `atomic_tmp_to_canonical()`；③`atomic_write` 的 mkstemp
+  改读常量（行为不变）；④三胞胎 `__init__` → `DetailsCarryingError`；⑤测试 3 条新类 `TestAtomicTmpNamingSSOT`。
+- **红证（判据先证明能红）**：把 HEAD 版清扫脚本（仍是本地字面量）物化到临时目录跑同一条恒等断言 ⇒
+  `AttributeError: module has no attribute 'atomic_tmp_to_canonical'`＝**断言非恒真**；
+  阴性对照：`.foo_bar.tmp` 不被 glob 命中（防 rsplit 型误切，正是车道实测踩过 6 件的那个坑）。
+- **等价性（改聚合/映射代码不重跑全量的便宜自证）**：对盘上 **45 件真实 `.tmp` 半成品**
+  跑新旧两版反解 ⇒ mismatches=0；脚本 dry-run `EXIT=0` 且报告形态与落地前一致。
+- **门禁面**：CAPABILITY-OVERLAP 由红转绿（同一把尺：车道证"改前 passed=True / 加 19 行 passed=False"，
+  本批复跑 passed=True）；`gate_prerun.py` 全 113 只 GateSpec 预跑＝**0 硬阻断**，只剩两条 ENV 信号
+  （WORKTREE-REQUIRED / COMMIT-SCOPE，均已按 §2.4 走留痕逃生旗）。
+- **未做**：清扫脚本换源（C-40，活 claim）、`safe_write_text` 默认值（C-41）、清盘（C-42）、新增加严门（C-43）。
+
+## 11. 车道回执摘要（全文在 `.runtime/tmp/<车道>/` + 冷库 `G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/`）
+
+- **crlffix（`73f2e54339` 已落地）**：`n_trial_ledger.py:208/294` 两处 CAS 写补 `newline="\n"`，
+  向 eol=lf 钉定的 `trial_ledger_registry.yaml` 注入 CRLF 的路被堵；测试 18→21 passed；
+  红证=同一份红检查脚本跑未修版注入 27/21 个 CRLF ⇒ 2 failed。
+  ★ **对任务书的一处实证更正**：`newline=""` 与 `newline="\n"` 在写侧**逐字节等价**（4×2 组实测），
+  任务书里"`"\n"` 会强行改写行尾"的论断被证伪 ⇒ 取册内既有真源写法 `"\n"`（先例 `generate_backtest_backlog.py:284`）。
+  另证 `newline=None` 遇内容自带 CRLF 会写成 `\r\r\n`（双 CR）——本链路不触发，但记档。
+  全仓同型面：61 调用点＝传 newline 33 / 未传 28 ⇒ 高危 17 + 低危 10（清单在车道产物）。
+- **threestate 普查（只普查、零修复、零写命令）**：快照 `23ada56a0db1`，353 条受检路径 ⇒
+  **T1=2 / T2=0 / T3=1 / T3mix=1 / T4=22 / T5=0 / T6=0 / T1b=2 / CRONLY=12 / 无风险留档 315**；
+  方向标 T-LOSE=8、T-AHEAD=20 ⇒ **一次全量 `commit -a` 的连坐面=353 条，其中 12 件落地即造成已交付内容回退或被删**。
+  仪器自身红过两次并当场修掉（① 磁盘 sha 漏 `blob <len>\0` 头 ⇒ 全仓 5/5 误报；
+  ② `git rev-parse --stdin` 在 Windows/git 2.48 不解析 `<c>:<path>` ⇒ T4 全被误判成 T1）
+  ⇒ 这条与"造雷必须放在所有提交之后"（小仓第 1、2 版失败原因）一起进手册：**普查器上线前先在自己造的小仓里红一遍**。
+- **L3 车道（`st-leakfix-20260919`，150 轮阵亡）**：两批已落地（`5c05be73c1` metrics.flush 异常路径 tmp 回收、
+  `cdbdbf8181` 清扫脚本扩面＋`.tmp` 文件族观测面，改前对 `.tmp` 族命中 **0 件**＝完全不在观测面上）；
+  第三批（上收真源）由本总包接力（§10），换源那一半成 C-40 处方。
+  ★ 车道留下的一条反推陷阱已进手册：**tempfile 随机表含下划线 ⇒ `rsplit("_")` 会把长名册错切**（实测 6 件误判），
+  必须按定长剥尾。
