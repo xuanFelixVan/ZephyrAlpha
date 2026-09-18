@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FE-011 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.frontend.test_frontend_api_proxy
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/frontend/frontend_api_proxy.py
 """MOD-FE-011 单元测试：frontend_api_proxy 前端 API 代理。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FE-003 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.frontend.test_alert_center
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/frontend/dashboard/components/alert_center.py
 """MOD-FE-003 单元测试：alert_center 告警中心面板。
 

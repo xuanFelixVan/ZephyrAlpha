@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FE-012 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.frontend.test_feishu_bot_sender
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/frontend/feishu_bot_sender.py
 """MOD-FE-012 单元测试：feishu_bot_sender 飞书机器人推送器。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FE-007 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.frontend.test_value_stream_view
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/frontend/value_stream_view.py
 """MOD-FE-007 单元测试：value_stream_view 价值流泳道视图器。
 

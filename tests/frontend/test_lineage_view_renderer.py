@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FE-008 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.frontend.test_lineage_view_renderer
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/frontend/lineage_view_renderer.py
 """MOD-FE-008 单元测试：lineage_view_renderer 血缘DAG渲染数据器。
 

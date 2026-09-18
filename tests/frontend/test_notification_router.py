@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FE-004 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.frontend.test_notification_router
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/frontend/notification_router.py
 """MOD-FE-004 单元测试：notification_router 通知路由器。
 

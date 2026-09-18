@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-L28-QMTBH | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.frontend.test_qmt_bridge_health
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/frontend/dashboard/components/qmt_bridge_health.py
 """MOD-L28-QMTBH 单元测试：qmt_bridge_health 文件桥健康监控面板。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-L28-WARROOM | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.frontend.test_warroom
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/frontend/dashboard/components/warroom.py
 """MOD-L28-WARROOM 单元测试：作战指挥室页组件（45号作战手册 P1）。
 
