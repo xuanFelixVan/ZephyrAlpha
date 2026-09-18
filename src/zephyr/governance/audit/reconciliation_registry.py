@@ -119,7 +119,7 @@ import subprocess
 import threading
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable
+from typing import Callable, Final
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 from zephyr.shared.utils.time_utils import now_utc
@@ -458,6 +458,82 @@ SQL_SELECT_BLOCKS = (
 )
 
 SQL_DELETE_BLOCKS = "DELETE FROM reconcile_execution_log WHERE action = 'block_next' AND logged_at >= ?"
+
+
+# ══════════════════════════════════════════════════════════════════════════
+# WP7 · 规则面风险档两轴派生（裁定 D-7：修"闸4 风险档失明"）
+# ══════════════════════════════════════════════════════════════════════════
+# 旧链：按 rule.domain/scope 去 risk_tier_registry 查档 → 规则 domain 一律 TRAE/None
+#       → 未登记 → default_tier=low → 应然退化方向恒为"未规定" → 闸4 结构性失明。
+# D-7 改法：不新增字段、不逐条判断，直接读规则两轴派生（映射值照抄裁定 D-7）：
+#   - safety_level → 应然退化方向：H→fail-closed；M→fail-closed 但只拦本次改动面；
+#                    L→可 fail-open 但必须留痕。
+#   - ai_autonomy  → 人机门位：immutable_core/human_gated→需 Owner；ai_modifiable→可自裁。
+# 未知/缺失取值一律返回 None（不可判），交调用方如实上报——绝不臆测填值（D-13）。
+
+SAFETY_LEVEL_TO_DEGRADATION: Final[dict[str, str]] = {
+    "H": "fail-closed",
+    "M": "fail-closed-own-scope",
+    "L": "fail-open-with-trace",
+}
+
+AI_AUTONOMY_TO_GATE_POSITION: Final[dict[str, str]] = {
+    "immutable_core": "owner-required",
+    "human_gated": "owner-required",
+    "ai_modifiable": "ai-self-decide",
+}
+
+
+def _derive_axis(value: object, mapping: dict[str, str]) -> str | None:
+    """按 D-7 映射表把单轴取值派生为目标档位（两轴共用一份实现）。
+
+    未知/缺失一律返回 None（不可判），交调用方如实上报——绝不臆测填值（D-13）。
+    """
+    if value is None:
+        return None
+    return mapping.get(str(value))
+
+
+def derive_rule_risk(rule: object) -> dict:
+    """给定解析后的规则 YAML dict，派生两轴结果 + 可判标记（只读派生，不做任何判定）。"""
+    src = rule if isinstance(rule, dict) else {}
+    safety_level = src.get("safety_level")
+    ai_autonomy = src.get("ai_autonomy")
+    direction = _derive_axis(safety_level, SAFETY_LEVEL_TO_DEGRADATION)
+    position = _derive_axis(ai_autonomy, AI_AUTONOMY_TO_GATE_POSITION)
+    return {
+        "safety_level": safety_level,
+        "ai_autonomy": ai_autonomy,
+        "degradation_direction": direction,
+        "gate_position": position,
+        "degradation_judgeable": direction is not None,
+        "gate_position_judgeable": position is not None,
+    }
+
+
+def derive_two_axis_risk_for_rules(project_root: object, rel_paths: list[str]) -> list[dict]:
+    """读取变更规则文件的 safety_level/ai_autonomy 产两轴派生记录（只读，不改判定/不阻断）。
+
+    载入失败或字段未知的条目以 *_judgeable=False / error 如实上报，交人工审查，
+    本函数自身永不臆测填值（D-13 写权限总闸）。
+    """
+    import yaml
+
+    out: list[dict] = []
+    for rp in rel_paths:
+        try:
+            raw = (Path(project_root) / rp).read_text(encoding="utf-8")
+            data = yaml.safe_load(raw)
+        except (OSError, yaml.YAMLError) as e:
+            out.append({
+                "file": rp,
+                "error": f"load-failed: {type(e).__name__}",
+                "degradation_judgeable": False,
+                "gate_position_judgeable": False,
+            })
+            continue
+        out.append({"file": rp, **derive_rule_risk(data)})
+    return out
 
 
 @dataclass
@@ -6194,6 +6270,8 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
             "timestamp": ts_iso,
             "session_id": session_id,
             "rule_files_changed": rule_files_changed,
+            # WP7/D-7：对账门直接读两轴派生（只记录应然退化方向/门位，不新增判定、不改 warn 语义）
+            "derived_two_axis_risk": derive_two_axis_risk_for_rules(project_root, rule_files_changed),
             "note": "规则文件变更需人工审查（约束可能被放宽）",
         }
 
