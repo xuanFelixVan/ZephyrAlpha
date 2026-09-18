@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_preventive_repair | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_preventive_repair
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] predict_failure always returns 0.0
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

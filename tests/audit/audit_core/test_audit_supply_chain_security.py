@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_audit_supply_chain_security | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] tests.test_audit_supply_chain_security
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

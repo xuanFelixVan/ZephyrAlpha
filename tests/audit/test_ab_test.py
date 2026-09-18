@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ab_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_ab_test
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] lift = treatment_group - control_group
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

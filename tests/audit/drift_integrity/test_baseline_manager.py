@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_baseline_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §baseline_manager
 # [MODULE] tests.test_baseline_manager
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] BaselineManager.capture必须写入版本化JSON; full_diff必须返回DiffReport
 # [MODIFY-GUARD] 仅当baseline_manager公开API变更时修改
 # [CONSUMERS] pytest

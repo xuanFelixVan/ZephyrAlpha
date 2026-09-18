@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_asset_inventory | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure_operations/asset_inventory/blueprint.md | §test
 # [MODULE] zephyr.asset_inventory
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

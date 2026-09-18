@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_dependency_asset_inventory | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-228 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.asset_inventory.test_dependency
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

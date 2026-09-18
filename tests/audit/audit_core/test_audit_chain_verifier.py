@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §4
 
 # [MODULE] tests.test_audit_chain_verifier
+# [DOMAIN] D_GOV_AUDIT
 
 # [INVARIANTS] chain hash integrity; no placeholder code
 

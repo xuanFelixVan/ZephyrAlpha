@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_audit_full_pipeline_e2e | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §test
 # [MODULE] tests.test_audit_full_pipeline_e2e
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] e2e_tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_import_smoke_audit_trail | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-455 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.audit_trail.test_import_smoke
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_audit_bridge | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §
 # [MODULE] tests.test_audit_bridge
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] write_to_core returns None when writer unavailable
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

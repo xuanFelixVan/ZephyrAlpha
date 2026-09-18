@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_audit_adversarial | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-204 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.adversarial.test_audit_adversarial
+# [DOMAIN] D_GOV_AUDIT
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_build_reproducibility_verifier_v2 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_build_reproducibility_verifier_v2
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] max_drift_tolerance=0.05; build_retention=10
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

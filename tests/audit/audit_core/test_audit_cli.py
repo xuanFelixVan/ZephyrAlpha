@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_audit_cli | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §8
 # [MODULE] tests.test_audit_cli
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] COMMANDS dict contains all subcommands; main exits on unknown
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_audit_dim_d1_d4_e2e | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §test
 # [MODULE] tests.test_audit_dim_d1_d4_e2e
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] e2e_tests_must_pass
 # [MODIFY-GUARD] only_add_tests
 # [CONSUMERS] pytest;CI_pipeline

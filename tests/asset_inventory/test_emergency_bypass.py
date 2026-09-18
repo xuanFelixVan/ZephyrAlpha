@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_emergency_bypass | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-229 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.asset_inventory.test_emergency_bypass
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

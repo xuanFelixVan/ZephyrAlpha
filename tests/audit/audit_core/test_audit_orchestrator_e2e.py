@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_audit_orchestrator_e2e | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-027 | docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md | §test
 # [MODULE] tests.test_audit_orchestrator_e2e
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] AuditAdmissionController 5模块健康检查覆盖; ResourceAwarePool 双池路由正确
 # [MODIFY-GUARD] audit_orchestrator/blueprint.md; test_audit_orchestrator_e2e.py
 # [CONSUMERS] CI; pytest

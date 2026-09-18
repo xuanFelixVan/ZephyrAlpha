@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_architecture_contracts | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-infra_ops/drift-detector/blueprint.md
 # [MODULE] tests.test_architecture_contracts
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

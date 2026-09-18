@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_regime_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [MODULE] tests.test_gov_drift_regime_detector
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] MacroFactor_enum_complete;MacroRegime_enum_complete;MACRO_INDICATORS_covers_all_factors
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

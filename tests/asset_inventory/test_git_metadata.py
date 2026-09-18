@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_git_metadata | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-230 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.asset_inventory.test_git_metadata
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

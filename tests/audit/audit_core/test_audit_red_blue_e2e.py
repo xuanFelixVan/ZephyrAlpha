@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_audit_red_blue_e2e | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §test-e2e
 # [MODULE] tests.test_audit_red_blue_e2e
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] e2e tests MUST use real GateEngine/ConstitutionGuard/SteadyState; no mocking core logic; MUST NOT raise on defense failure
 # [MODIFY-GUARD] Adding e2e scenarios MUST update this file; do not modify source modules
 # [CONSUMERS] pytest;CI_pipeline

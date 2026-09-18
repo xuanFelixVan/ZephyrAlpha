@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 
 # [MODULE] tests.test_ai_capability_guard
+# [DOMAIN] D_INTELLIGENCE
 
 # [INVARIANTS] CapabilityLevel enum has exactly 3 members; _level_meets_min is deterministic
 

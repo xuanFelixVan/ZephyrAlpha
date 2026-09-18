@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ai_audit_logger | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_ai_audit_logger
+# [DOMAIN] D_INTELLIGENCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

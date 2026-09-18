@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_performance_baseline | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [MODULE] tests.test_performance_baseline
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] PERFORMANCE_BASELINE_immutable;E2E_MAX_MS=500;validate_e2e_budget_check
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

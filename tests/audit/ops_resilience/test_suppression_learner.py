@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_suppression_learner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_suppression_learner
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] SUPPRESSION_THRESHOLD=3;pattern_hash_deterministic;suppress_only_when_active
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest
