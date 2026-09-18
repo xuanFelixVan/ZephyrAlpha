@@ -105,7 +105,7 @@ completes_when: 规则与审计一条龙战役波1-波5 全部收口，且本册
 
 ---
 
-## 1. 改动文件清单 + commit hash
+### 1. 改动文件清单 + commit hash
 
 **无。本车道未修改任何 tracked 文件，未产生提交。**
 
@@ -131,7 +131,7 @@ $ git diff --cached --name-only | wc -l
 
 ---
 
-## 2. 红证
+### 2. 红证
 
 ### 2.1 站点一 `rollback_verifier.py:195` —— 红证成立，但**方案处方不可实现**
 
@@ -246,7 +246,7 @@ CREATE TABLE gate_decisions (id INTEGER PRIMARY KEY AUTOINCREMENT, module_id TEX
 
 ---
 
-## 3. 验收命令与本次实测输出
+### 3. 验收命令与本次实测输出
 
 ### 3.1 真表列名（全部走在册真源，未裸 connect 写）
 命令：`python .runtime/tmp/st-ramp-wp1-20260919/_schema_probe.py`（EXIT=0）
@@ -330,7 +330,7 @@ collected 2 items … 2 passed in 0.41s        EXIT=0
 
 ---
 
-## 4. 命中的门位项与待裁清单
+### 4. 命中的门位项与待裁清单
 
 命中停手条款：
 - **§6.4** 普查出现与裁定矛盾的证据（站点二 `[亲验]` 被现场推翻）。
@@ -349,7 +349,7 @@ collected 2 items … 2 passed in 0.41s        EXIT=0
 
 ---
 
-## 5. 证据等级（逐项）
+### 5. 证据等级（逐项）
 
 - `[亲验]` 站点一：`gates` 真列名无 `result`、`gate["result"]` 抛 IndexError、内层 except 吞 2 条、`gates_fixed=0`、`passed` 受 CHECK 约束故非法值不可入库。
 - `[亲验]` 站点一（处方反证）：处方代码副本在幻影 fixture 库上 `gates_fixed=0`（⇒ root:148 / unit:178 由绿转红）、在真结构库上 `gates_fixed=0 且 swallowed=0`（⇒ 改后为构造性恒绿，非修复）。
@@ -363,7 +363,7 @@ collected 2 items … 2 passed in 0.41s        EXIT=0
 
 ---
 
-## 6. 未做完的部分与原因
+### 6. 未做完的部分与原因
 
 1. **未改代码**（两站点）：非"没做"，是**做了前置实测后判定处方不成立**——站点二前提为假，站点一改后必恒真。按 D-13/§6.4/§6.6 停手，处方与证据在 §2、§4 交回 Max。
 2. **未做 D-3 第②③步**（声明表退役、清行）：任务书明令禁止本 WP 执行，亦未做任何 DB 删除。
@@ -377,7 +377,7 @@ collected 2 items … 2 passed in 0.41s        EXIT=0
 
 日期：2026-09-19 · 环境：Python 3.12.8 [亲验] · 分支 dev · 主区 cwd `D:/ZephyrAlpha`
 
-## 0. 一句话结论
+### 0. 一句话结论
 
 **主改停在案卷，未落地**：`GATE-RULE-CATALOG` 的 trigger 前缀扩写在现行架构下是**对外零效应的空改动**，
 且方案给定的验收观测面（`reconcile_execution_log` 出现 `GATE-RULE-CATALOG` 新行）**在本仓从未存在过**
@@ -387,7 +387,7 @@ collected 2 items … 2 passed in 0.41s        EXIT=0
 
 ---
 
-## ① 改动清单 + hash
+### ① 改动清单 + hash
 
 **本车道未产生任何 commit**（无 tracked 改动可归属）。三项交付物全在非 tracked 介质：
 
@@ -430,7 +430,7 @@ $ git grep -n '_RULES_PREFIX' -- …
 
 ---
 
-## ② 红证（照方案原法做不到，附证伪证据；未做处如实标注，不用 mock 冒充）
+### ② 红证（照方案原法做不到，附证伪证据；未做处如实标注，不用 mock 冒充）
 
 ### 2.1 阴性/阳性对照在本仓不可执行——两条独立理由，各自实测
 
@@ -499,7 +499,7 @@ trigger(src/zephyr/shared/io/file_utils.py)                                     
 
 ---
 
-## ③ 验收命令与本次实测输出（数字全是本次跑的）
+### ③ 验收命令与本次实测输出（数字全是本次跑的）
 
 ### 3.1 附带项：重跑 `generate_rule_catalog.py` 消除滞后 + 幂等实测（两次跑）
 
@@ -563,7 +563,7 @@ $ git log --oneline -3 -- $C
 
 ---
 
-## ④ 命中的门位项与待裁清单
+### ④ 命中的门位项与待裁清单
 
 **本车道未触发任何门位**（零提交、零 tracked 改动，未过 GitCommitGateway）。注册会话 `st-ramp-wp12-20260919`（pid=0），
 未 claim 任何文件，`.ailocks/registry.json` 内 9 把锁无一落在我两个目标件上（施工前后各查一次）。
@@ -590,7 +590,7 @@ $ git log --oneline -3 -- $C
 
 ---
 
-## ⑤ 证据等级（逐项）
+### ⑤ 证据等级（逐项）
 
 | 结论 | 等级 |
 |---|---|
@@ -608,7 +608,7 @@ $ git log --oneline -3 -- $C
 
 ---
 
-## ⑥ 未完成部分与原因
+### ⑥ 未完成部分与原因
 
 1. **主改（扩前缀）未落地** —— §6.4 + §6.5/§6.6：裁定依据句被实测证伪、验收判据不可二值化；处方补丁已备好待裁（④.1/④.2）。
 2. **注入式红证未做** —— 无可区分输入（②2.1），且目标文件被 WP7 在途改动占据，注入提交会吸收他人 83 行未落地内容；已按任务书改出 patch。
@@ -638,6 +638,9 @@ $ git log --oneline -3 -- $C
 | **C-14** | `adversarial_validation` 护栏假绿（R-A13）+ `:213` 用 `datetime.now(UTC)` 与 RULE-SCHEMA-TZ 口径待核 | 补 `description` 传参 + 宽 except 改登记（`fail_open_register` 生成器口径） | 顺带把"兜底记账混入分子"的同类面（WP2/D-2 的 gate_id 归因）一起治 | 甲先做（否则 D-8 的 A/B 批没有可用护栏）；另建议 WP14/WP13 的验收脚本一律带"**自证能红**"注入 |
 | **C-15** | A/B 双盲是否现在跑（波5）+ **B 组砍法未选**（128/134/89 行三案，影响面已实测）+ 卷子 §3–§9（72 行、占全文 51%）**零题面覆盖** | — | — | 若瘦身目标是"砍后半段"，**现有卷必报"零损失"**——先补题再跑批，否则测出的是噪声 |
 
+| **C-16** | 队列 `--enqueue` 落地后主区 index 仍压改前 blob（R-A23，两次独立复现） | serializer 落地后对受影响路径刷新主区 index | 落地回执强制输出三态 sha，不一致由网关拦 | 两者都要；短期靠 D-15③ 施工侧自核，但这是**纪律补不是机制补** |
+| **C-17** | `data/rule_optimization/key_facts.yaml`：`must_not_appear_as.pattern` 与推荐写法自相矛盾（F-2）+ 三条 `must_appear_in` 永假（F-3）+ 唯一消费者在 `_archive` | 逐条重判该册存活性：活→修 pattern 与 must_appear_in；死→按 D3/D4 退役 | — | 先判存活再修，**别在僵尸台账上做精细修正**（浪费且可能永不被消费） |
+| **C-18** | 断链类判据不可二值化：模板占位符与存量断链使 `--ci` 恒红（F-4）；处方验收命令 `:!`×2 并用在本机 fatal（exit 128，须改 `:(exclude)`） | 观测面改"特定串断链条数"+排除式收窄到具体行/锚（F-5 那条活链接要能露出来） | — | 甲；同时把 F-5/F-6 四处同类文本位并进来一次性判 |
 ## 4. 事实修正表（后续车道任务书必带对应行）
 
 | 方案原文 | 现场实测（2026-09-19，本战役复跑） | 影响 |
@@ -654,6 +657,10 @@ $ git log --oneline -3 -- $C
 | WP15.4"路径陈旧 **9 条**→ 逐条改指向" | 9 条 = **21 处文本位**（17 列表值 + 3 散文 + **1 历史 changelog 禁改**） | R-A9 |
 | 波1 各车道报"主区 staged 现值" | 111（WP1）→ 112→117（WP15）——**任务书里我写的 107 是发单时刻**，一律以现场 `git diff --cached --name-only | wc -l` 为准 | §0.6 计数现场实测 |
 | WP7 改前"退化方向可判分母" | 0（现行 domain→risk_tier_registry→default low 链，86 份全"未规定"）；改后 86 | R-A10 |
+| WP11 处方靶 `architecture_model/data/rule_optimization/key_facts.yaml` | **不存在**；真身 `data/rule_optimization/key_facts.yaml`（行号逐字吻合） | R-A24 / C-17 |
+| WP11 验收命令 `git grep … -- ':!*_archive*' ':!<path>'` | 本环境两条 `:!` 并用即 `fatal: outside repository`（exit 128）⇒ 改 `':(exclude)…'`，排除集等价 | R-A24 / C-18 |
+| `gates` 活库结构（D-17 口径，总包复跑） | 8 列；`gate_run_id` 为 PK、`gate_id` **非唯一**（1791 行/1008 distinct）；`passed` **有** CHECK、`details` **无** CHECK；`gates`≡`gate_runs` 列集；**无任何活库有 `result` 列** | R-A22 |
+| 处方"§7 说 `170cba56e0` 的真实件是 `feac5f7b28`"（我原写） | 更正：`6933dbcff3` 才是 R100 迁移件，`feac5f7b28` 是出生件 | R-A11 更正 |
 | D-9"`AGENTS.md`↔`agent_constitution_l0.md` 正文≈100% 镜像，仅差 frontmatter+3 行头部" | 实测 **88.18%**（97/110 行），剥 frontmatter 后**无全等点**，残余 29 行、段落级 76.0%，**5 处正文分叉**（含 §0.3 RULE-WORKTREE 两份给不同指令） | R-A12 / C-13 |
 | D-8"`adversarial_validation run` 作门禁面回归护栏" | 该护栏当前**区分度 0**（52/52 全走缺 `description` 的 fail-closed 兜底） | R-A13 / C-14 |
 | D-9 否决项"project_rules↔AGENTS 重叠≈0" | **复测成立**（共享 1 条=表格分隔符、`trae_*` 锚点 1、`RULE-*` 键 1、0.265%）⇒ 不动它这条判据保留 | — |
@@ -761,7 +768,7 @@ $ git log --oneline -3 -- $C
 
 ---
 
-## ① 改动清单 + commit hash（归属核实）
+### ① 改动清单 + commit hash（归属核实）
 
 **commit `f8c1fc044a`** — `fix(gov/audit): WP7 修闸4风险档失明——对账门直读两轴派生(裁定 D-7)`
 
@@ -782,7 +789,7 @@ $ git log --oneline -3 -- $C
 
 ---
 
-## ② 红证（零基线证明 + 改后非零，输出原文）
+### ② 红证（零基线证明 + 改后非零，输出原文）
 
 **改后代码已落 HEAD，为出"改前 = 0"的对照，harness 的"现行派生链"分支照抄轨A详案
 `generate_dossiers.py` 的旧语义（`risk_tier_for(domain/scope)→risk_tier_registry→default low
@@ -821,7 +828,7 @@ CloneGuard 复跑 `passed=True` 后 `requeue` 生成 `q-...-0002` 落地成功�
 
 ---
 
-## ③ 验收命令与本次实测输出
+### ③ 验收命令与本次实测输出
 
 - `python --version` → `Python 3.12.8`　`[亲验]`
 - `python .runtime/tmp/st-ramp-wp7-20260919/wp7_harness.py` → 见 ② 全量输出。　`[亲验]`
@@ -841,7 +848,7 @@ derive_two_axis_risk_for_rules('.', ['__nope__.yaml'])
 
 ---
 
-## ④ 门位项与待裁
+### ④ 门位项与待裁
 
 - **本 WP 门位：否（D-7 明示）**。改动为纯可观测派生字段，未改任何门禁判定逻辑/阈值/flag 出厂默认
   （GATE-RULE-FILE-AUDIT 仍 `action=warn`），不触发 §6.3 停手条件。
@@ -855,7 +862,7 @@ derive_two_axis_risk_for_rules('.', ['__nope__.yaml'])
 
 ---
 
-## ⑤ 证据等级（逐项）
+### ⑤ 证据等级（逐项）
 
 - 86 份规则两字段现场复测（H40/M32/L14；immutable_core34/human_gated30/ai_modifiable22；86/86 齐备）：`[亲验]`
 - 改前可判分母 = 0（现行链语义复现）：`[亲验]`（复现逻辑照抄轨A详案 generate_dossiers.py，属 `[亲验]` 复跑）
@@ -869,7 +876,7 @@ derive_two_axis_risk_for_rules('.', ['__nope__.yaml'])
 
 ---
 
-## ⑥ 未完成部分与原因
+### ⑥ 未完成部分与原因
 
 1. **案卷生成器侧接线未完成**：WP8 拥有 `_tools/dossier_core.py`，本车道按并发隔离硬约束禁改，
    故只提供公共派生函数供其导入，未代改判据。**不是"没跑成通过"，是越权边界，已回流留痕（④）**。
@@ -892,7 +899,7 @@ derive_two_axis_risk_for_rules('.', ['__nope__.yaml'])
 
 ---
 
-## ① 改动清单 + hash
+### ① 改动清单 + hash
 
 **零改动。** 未新建任何 tracked 文件（按令："总包代持入库"）。
 
@@ -920,7 +927,7 @@ derive_two_axis_risk_for_rules('.', ['__nope__.yaml'])
 
 ---
 
-## ② 红证
+### ② 红证
 
 ### (a) 开工第 0 动作 — census 时效抢救（**含一处必须报告的路径更正**）
 
@@ -976,7 +983,7 @@ $ python scripts/governance/d3_metadata/validate_rule_frontmatter.py ; EXIT=1
 
 ---
 
-## ③ 验收命令与本次实测输出（数字全部现跑）
+### ③ 验收命令与本次实测输出（数字全部现跑）
 
 | 验收问题 | 命令 | 本次实测 |
 |---|---|---|
@@ -997,7 +1004,7 @@ $ python scripts/governance/d3_metadata/validate_rule_frontmatter.py ; EXIT=1
 
 ---
 
-## ④ 门位项与待裁
+### ④ 门位项与待裁
 
 ### M-1【必记 · 方案内矛盾，本车道未自行拍板】§6.2 ⊥ §3 WP15.4（并波及 §2 表与 WP10）
 
@@ -1030,7 +1037,7 @@ $ python scripts/governance/d3_metadata/validate_rule_frontmatter.py ; EXIT=1
 
 ---
 
-## ⑤ 逐项证据等级
+### ⑤ 逐项证据等级
 
 **第 0 动作（census 抢救）**
 - 任务书路径不存在、真身在 `st-auditdoc-v4` 会话目录：`[亲验]`（ls/find/sha256）
@@ -1073,7 +1080,7 @@ $ python scripts/governance/d3_metadata/validate_rule_frontmatter.py ; EXIT=1
 
 ---
 
-## ⑥ 未完成部分与原因（含"没跑"清单）
+### ⑥ 未完成部分与原因（含"没跑"清单）
 
 1. **第 2 件按设计不改** — 方案 §3 明文"施工队先只出证据，二选一由 Max 定"。已交甲/乙影响面各一份，未择一，**非欠账**。
 2. **第 4 件 9 条全部未落地** — §6.2 与 PROTECTED-PATHS 门拦（M-1）。已备可盲执行的逐字替换文本（A 类 17 行）；缺的是 approval issue 或 Max 直改授权。
@@ -1095,7 +1102,7 @@ $ python scripts/governance/d3_metadata/validate_rule_frontmatter.py ; EXIT=1
 
 ---
 
-## ① 产物清单与路径（**tracked 改动＝0，因此无 commit hash**）
+### ① 产物清单与路径（**tracked 改动＝0，因此无 commit hash**）
 
 全部产物在 `.runtime/` 下（`.gitignore:262` 的 `/*` 规则覆盖 ⇒ 不入库），并已冷备到非 TTL 介质
 `G:\zephyr_cold\wp13_st-ramp-wp13-20260919_20260919\`（24 个文件 / 250KB）。
@@ -1121,7 +1128,7 @@ $ python scripts/governance/d3_metadata/validate_rule_frontmatter.py ; EXIT=1
 `rollback_verifier.py` / `gate_persistence.py` / `st-ruledisp-20260918/staging/_tools/` 全程未触碰（本车道连只读都不需要）。
 未新建任何 tracked 文件 ⇒ 无 CREATE-GUARD / 翻译登记欠账；未提交 ⇒ 无归属核实项（`git log -1 --name-only` 不适用，见 ⑥）。
 
-## ② 红证＝C 组可区分性（本车道具体化）
+### ② 红证＝C 组可区分性（本车道具体化）
 
 D-8 要求"C 必须显著差于 A，否则废卷重出题"。**行为面**（真派子代理答题）本车道按指令未跑，
 所以我出的是**材料面的可区分性机证**：把每题"正确答案必须含的字面锚点"拿出来，验它在 A 在不在、在 C 还差不差。
@@ -1146,7 +1153,7 @@ D-8 要求"C 必须显著差于 A，否则废卷重出题"。**行为面**（真
 - **诚实边界**：以上证明的是"C 组拿不到这些答案要素"，"因此被试答案会变差"这一步是 `[推断]`
   （推断依据＝这 5 题的必含判分点就是这些字面命令，文档里没有第二处可推）。真正达标与否要等 HOWTO 跑批。
 
-## ③ 验收命令与本次实测输出
+### ③ 验收命令与本次实测输出
 
 ### (a) 重叠率三组数字
 
@@ -1186,7 +1193,7 @@ stderr 计数（实测）：`real_gate_failed` **52**、`fail_closed … BLOCKED
 ⇒ `blocked=total` 与门禁真实能力**无关**，这条护栏当前**区分度为 0**（改宪法前后都必然报 1.0）。
 按 D-8 原限定＋本实测：**本条 JSON 不构成、也不能被写成"A/B 已通过"**（回执通篇未这样用）。
 
-## ④ 门位项与待裁清单
+### ④ 门位项与待裁清单
 
 | # | 事项 | 性质 | 交给谁 |
 |---|---|---|---|
@@ -1197,7 +1204,7 @@ stderr 计数（实测）：`real_gate_failed` **52**、`fail_closed … BLOCKED
 | 5 | **`defense_runner.py:200` 缺 `description`** ⇒ 护栏假绿；同类病＝WP2/D-2"拿不到 gate_id 即拒写并告警"（分子混入兜底）。另 `:213` 用 `datetime.now(UTC)`，与 RULE-SCHEMA-TZ"生成器禁 datetime.now()"的口径需对齐核查 | 非本车道范围（属 WP2/WP4 门禁执行链） | 回流 Max / WP2、WP4 owner |
 | 6 | 是否要把本案卷（重叠率＋A/B 材料）promote 到 `docs/_working/`（`.runtime/tmp/` 有 24h TTL，现已冷备 G: 一份） | 新建 tracked 治理文档＝三连门风险（FILE-PLACEMENT-TTL / N-11 / creation_token），且需与他会话 107 件 staged 抢队 | 待总包裁；本车道未提交 |
 
-## ⑤ 证据等级（逐项）
+### ⑤ 证据等级（逐项）
 
 - `[亲验]`（本车道自己跑出来的）：
   1. AGENTS↔l0 三组数字（97 条 / 16 & 13 条 / 无全等点、残余 29 行、段落级 76.0%）与 6 处分叉点位（5 处正文＋1 处末节）的原文摘录；
@@ -1217,7 +1224,7 @@ stderr 计数（实测）：`real_gate_failed` **52**、`fail_closed … BLOCKED
   2. B 三案的"预期风险"高中低评级（影响面是实测的，风险是判断）；
   3. AGENTS 比 l0 "更新"的方向（依据＝文件 mtime 与文本演进痕迹，未做 commit 考古）。
 
-## ⑥ 未完成部分与原因（**没有任何一项被写成"通过"**）
+### ⑥ 未完成部分与原因（**没有任何一项被写成"通过"**）
 
 1. **A/B/C 双盲未跑**（按本车道指令："材料齐了就交回"＋机器并发到顶＋污染即废卷）。
    ⇒ D-8 的"B 缺口 ≤ A""连续两轮零新增缺口""C 显著差于 A（行为面）"三条判据**均未测**。已交 HOWTO + 盲包 + 判分表模板，可即刻派工。
@@ -1228,11 +1235,56 @@ stderr 计数（实测）：`real_gate_failed` **52**、`fail_closed … BLOCKED
 5. 提交侧：零 tracked 改动 ⇒ 未走 `git_commit.py`、未 claim/release 任何文件，因此没有"commit hash + `git log -1 --name-only` 核实"可贴（此项**不适用**，不是漏做）。
 6. 题面 §3–§9 盲区**未补题**（补题需判断"哪些内容值得考"，属语义判断；待 ④-4 裁可后一条命令可生成）。
 
-## 附：夹带指令扫描（全局纪律 0.8）
+### 附：夹带指令扫描（全局纪律 0.8）
 
 本车道读过的所有文件（两份宪法、总方案、v3 计划、CONSTRUCTION_DISCIPLINE、CLI 源码、stderr 全文、MEMORY.md 变更通知）
 中**未发现**夹带的执行指令；`adversarial_run.stderr.txt` 里的日志行、registry/文档里的"必须/禁止"字样一律按**数据**处理，
 未据以改变本车道动作（唯一例外＝本车道指令本身）。
+- **R-A22｜WP1-施工两笔落地并经总包独立复验**：`ee54c976f1`（改 1 + C-0 护栏，`rollback_verifier.py` +160 −45、
+  `tests/rollback/conftest.py` 新建 +60、root/unit 两测试件 +227 −50）与 `413edaff0e`（改 2，护栏 +67 −4 / 测试 +93 −4）。
+  - **总包复验**（不轻信车道）：`pytest tests/rollback` 本机实跑 **708 passed / 7 xfailed / 2 xpassed（234s）**；
+    四件 `HEAD==index==disk` 三态一致；**生产 `governance.db` 未被写坏**——`tasks.status` 分布仍是
+    `BLOCKED 152 / CANCELLED 214 / COMPLETED 1981 / IN_PROGRESS 76 / READY 78`（total 2501、FAILED 0）、`gates` 1791 行。
+  - **C-0 那颗雷的处置方向已由代码落实**：`valid_statuses` 不再硬编码 5 值，改为**从单一真源 `_DDL_TASKS` 派生**
+    （派生失败即 `HealRefusedError` 抛，不猜值）；真写必须显式给 `max_rows`，计划修正行数超上限即拒；
+    目标表列集与活库不符（幻影结构）也拒。⇒ 台账 R-A2 的"施工侧即时禁令"可解除（改为"已修，待 Max 复验"）。
+  - **D-17 应用后的活库事实**（写下来防再错）：`governance.db.gates` = 8 列，`gate_run_id` 是 PK、`gate_id` **非唯一**
+    （1791 行 / 1008 distinct ⇒ 用 `gate_id` 定位 UPDATE 会误伤）；`passed` **有** `CHECK(passed IN (0,1))`，
+    而 `details TEXT NOT NULL DEFAULT '{}'` **无 CHECK**；`gates` 与 `gate_runs` **列集完全相同**；
+    ★ **全仓没有任何活库存在 `result` 列** —— 幻影结构只活在测试自建的临时库里（这正是"52 例全绿却查不出空转"的根因）。
+  - ⚠️ 遗留两件小账：① 那 **2 个 xpassed**（xfail 标记因本次修复而失效，应摘帽，属测试卫生）；
+    ② 改 1 的"合法面重定向"里，可非法面已挪到 `details` JSON 可解析性与 `passed`×`gate_run_id` 完整性链，
+    但**"这台校验现在到底能拦什么"应进 WP4 对账门的一次实测复核**（不凭本次自述结案）。
+- **R-A23｜★ 队列落地不刷主区 index——同一隐患第二次独立复现，升为系统性缺陷（C-16）**。
+  L2 车道先发现（它自己具名 `git add` 抹平），WP11 再撞上：`--enqueue` 落地后
+  `HEAD=<新 blob>` / `index=<改前旧 blob>` / `worktree=<新内容>` 三态不一致（`git status` 显 `MM`）。
+  ⇒ **后果**：任何人此后一次 `commit -a`/全量 add，就把该文件**静默回退到改前版本**——
+  与 R-063（写侧 token 蒸发）、R-073/R-074（陈旧快照压 index）**同族第四、五例**，但这次的成因不是坏写入端，
+  而是**队列落地语义本身**。⇒ 治本方向交 Max：serializer 落地后应对受影响路径做一次主区 index 刷新
+  （或落地回执里强制输出三态 sha 并由网关拦不一致）；施工侧对策已生效=**D-15③ 每次队列落地后必做三态核实**。
+- **R-A24｜WP11 堆一落地 + 六条新缺陷（F-1..F-6），其中一条会让校验器惩罚正确写法**。
+  - 落地：`7f68805b98`（`_registry/catalogs/index.md` 删"外部登记表"僵尸行 + 模板第 666 行改为
+    `frontmatter → 生成器` 链）。断链尺子（在册 `audit_broken_links.py`）实测 `blueprint_registry` 断链 **2 → 0**、
+    全量断链 5 → 3，并做了**注入-撤样双向阴性对照**；`git grep` 基线 383 行/119 件 → 381/118，变化的**恰是那两行**。
+  - **处方第 5 条被车道按 §6.6 拒绝执行**（三条理由：前置未成立 / 该括号目前为真 / 该文件在 WP9 判决对象面上）
+    ⇒ 总包认同，这比"照单全做"更对。
+  - **F-1 方案路径又错**：`architecture_model/data/rule_optimization/key_facts.yaml` **不存在**，
+    真身 `data/rule_optimization/key_facts.yaml`（行号 113-114/323-332/545-554/581 与真身逐字吻合）。
+    ⇒ 与 R-A7（census 路径错）同族第二例：**处方里的路径必须逐条实测后再派工**。
+  - **F-2 ★ 命名事实自相矛盾**：`key_facts.yaml` 里 `fact` 与 `must_not_appear_as.pattern` **是同一个串**
+    （`blueprint_registry.yaml`），`reason` 还写着"连字符写法错误，实际文件名用下划线 blueprint_registry.yaml"
+    ——即**被判"错误"的 pattern 就是它推荐的正确写法**；成因疑似历次"把连字符全量 sed 成下划线"时把 pattern 一起改了。
+    ⇒ **任何按此册跑的校验都会把正确写法判成违规**。修法需语义判断 ⇒ 未自拟，列 C-17。
+  - **F-3 派生退库留下不可满足断言**：同册三条 `must_appear_in` 指向 ROOR / `registry_of_registries.yaml` /
+    `project_rules.md`，实测 **ROOR 命中 0、project_rules 命中 0** ⇒ "必须出现"永假；
+    且该册在册消费者只找到一个，还在 `scripts/governance/_archive/`（归档 one-off）⇒ 疑似僵尸台账（同 C-17 并案）。
+  - **F-5 验收排除式屏蔽了一条活体链接**：处方按"历史 changelog"意图写 `':!docs/03_modules/_cross_layer/*/blueprint.md'`，
+    却连带屏蔽 `context_engine/blueprint.md:125` 的**真 file:/// 链接**（非 changelog 行）⇒ 判据自身有洞。
+  - **F-6 同类缺陷另有 4 处未列**（含可写路径上的 `scripts/governance/d7_code/fix_n13_snake_case.py:22` 自指矛盾：
+    "删除 1 个遗留存根 blueprint_registry.yaml（真源为 blueprint_registry.yaml）"）。
+  - **F-4 判据不可二值化**：`audit_broken_links --ci` 对模板件改前改后**都是 exit 1**（占位符 `tests/xxx.py` 等常驻红）
+    ⇒ 若有门以它硬阻断模板文件，信号只能取"特定串断链条数"，不能用文件级退出码（列 C-18）。
+
 ## 6. WP1-取证车道案卷（改 3 + salvage，全程只读，零改动）
 
 - 产物 13 件双镜像：`.runtime/tmp/st-ramp-wp1c-20260919/` 与冷库 `G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/wp1c/`
@@ -1244,3 +1296,667 @@ stderr 计数（实测）：`real_gate_failed` **52**、`fail_closed … BLOCKED
   F-4 热册 CONSUMERS 虚假声明 · F-5 蓝图指向不存在路径 + DEP-025d 声称 runtime/hard 而代码零实现 ·
   F-6 生产库 35+45 行测试残留（净删门位）· F-7 注释 commit 号错指 · F-8 词表 5/10/14 三源不一（闸3 多真源）·
   F-9 `:241` str.get 潜在 AttributeError（未取证调用面）。
+
+## 7. 波1/加料批次回执（WP1-施工 / WP11）
+
+### WP1-施工（改 1 + 改 2，`st-ramp-wp1b-20260919`）— 已落地 `ee54c976f1` / `413edaff0e`
+
+# WP1-施工（改 1 + 改 2）回执 · 车道 `st-ramp-wp1b-20260919`
+
+日期：2026-09-19　分支：`dev`　范围：`docs/_working/2026-09-18-gate-identity-root-fix-plan.md` §WP1 的**改 1、改 2**两条（逐字照办，未自扩）
+冷启动：`python --version` = **Python 3.12.8**；`python -m zephyr.trading.process_reaper --status` → `last_run=2026-09-18 19:10:55`（计划任务存活，写操作前提满足）。
+本车道改前逐件 `git status --porcelain -- <f>` 全为 FREE/干净 + `lock_files.py acquire` 成功（4 件：源文件、两个测试文件、`tests/rollback/conftest.py`）。
+`CapabilityLookup().find(...)` 已按 RULE-CAPABILITY-LOOKUP 以本会话 id 留审计（三次查询全部 0 命中，见④.6）。
+
+---
+
+### ① 改动清单 + 各批 hash（归属核实）
+
+两批，各自带用例，同一文件族，每批完成立即落地（无攒批）。
+
+### 批 1（改 1 + C-0 护栏）= commit `ee54c976f11e4e8600a7bd6a3f231cdd741ec172`
+
+```
+$ git log -1 --name-only --format='%H %s' ee54c976f1
+ee54c976f11e4e8600a7bd6a3f231cdd741ec172 fix(rollback/gov): WP1改1 heal_db_consistency 按活库实列重写 + 拆 C-0 破坏性地雷
+
+src/zephyr/infrastructure/rollback/rollback_verifier.py
+tests/rollback/conftest.py
+tests/rollback/test_rollback_verifier_root.py
+tests/rollback/test_rollback_verifier_unit.py
+```
+numstat（`git diff --cached --numstat` 于提交前）：源 `160/45`、conftest `60/0`、root 测试 `125/27`、unit 测试 `102/23`。
+
+### 批 2（改 2）= commit `413edaff0e7d43309fca0c49f5458b7d030aeaca`
+
+```
+$ git log -1 --name-only --format='%H %s' 413edaff0e
+413edaff0e7d43309fca0c49f5458b7d030aeaca fix(rollback/gov): WP1改2 clean_pycache 加三重护栏——拆 shutil.rmtree 破坏性地雷
+
+src/zephyr/infrastructure/rollback/rollback_verifier.py
+tests/rollback/test_rollback_verifier_root.py
+tests/rollback/test_rollback_verifier_unit.py
+```
+
+### D-15③ 队列落地后三态核实（HEAD blob / index blob / 工作区字节）
+
+```
+批 1：rollback_verifier.py            HEAD=bd3f0714… IDX=bd3f0714… WT=bd3f0714… TRIPLE_MATCH
+      tests/rollback/conftest.py      HEAD=96558196… IDX=96558196… WT=96558196… TRIPLE_MATCH
+      test_rollback_verifier_root.py  HEAD=d85dfe62… IDX=d85dfe62… WT=d85dfe62… TRIPLE_MATCH
+      test_rollback_verifier_unit.py  HEAD=bdb93c7a… IDX=bdb93c7a… WT=bdb93c7a… TRIPLE_MATCH
+批 2：rollback_verifier.py / root / unit 三件全 TRIPLE_MATCH（`git status --porcelain` 对 4 件均为空）
+```
+两笔 commit 的文件清单**恰为本车道具名清单**，未吸收任何他会话 staged 内容（主区 staged 现量在发单时为 203 件，实测见⑤）。
+
+### 逐条对处方
+
+| 处方条目 | 落点 | 状态 |
+|---|---|---|
+| 改 1：按活库实列重写（用 `passed` 不用 `result`） | `_SQL_GATES_SCAN` + `_gate_row_fixes()` | 完成 |
+| 改 1：UPDATE 定位用 `gate_run_id` | `_SQL_GATE_MARK_NOT_PASSED` / `_SQL_GATE_RESET_DETAILS` | 完成 |
+| 改 1：内层 `except Exception` 不得静默吞 | 三处宽 except 全删；改抛 `HealRefusedError`（口径不匹配 ⇒ 取抛出，见④.1） | 完成（选"抛出"分支） |
+| 改 1 附：负向用例 | root/unit 各 1 条幻影结构用例 + `details` 非 JSON 真非法面用例 + 上限护栏用例 | 完成 |
+| 改 1 附：同批修幻影 fixture（root:124/140/155、unit:56）+ 同步 root:148/unit:178 断言 | `conftest.py: live_gates_ddl`（活库 DDL 逐字照抄）；两处 `gates_fixed == 1` 断言改挂到真实可非法面 | 完成 |
+| 改 2：三重护栏 ①`is_relative_to` ②仓根可验证 ③命中拒删并报错、先验后删 | `clean_pycache()` + `_require_verifiable_repo_root()` + `_escaped_pycache_targets()` | 完成 |
+| 改 2：外层 `except Exception` 只 `logger.warning` 的旧行为改掉、但不炸穿调用方 | 读调用方后取抛出（生产调用方 0，见④.5） | 完成 |
+| C-0 (a) 词表单一真源派生 | `_derive_task_status_vocabulary()` 读 `sqlite_schema._DDL_TASKS` 的 `CHECK(status IN (...))`，派生不出即抛 | 完成 |
+| C-0 (b) 真写前 dry-run + 行数上限护栏 | 默认 `dry_run=True`；真写必须显式 `max_rows`；超限抛 `HealRefusedError` | 完成（上限值不自拍，见④.2） |
+| 不做：`gate_persistence.persist_gate_decision()` INSERT | 未触碰该文件 | 遵守 |
+| 不碰：`src/data/drift_audit/drift_events.db` / 任何库文件删除 | 全程只 `mode=ro` URI 读；未删任何文件 | 遵守 |
+
+---
+
+### ② 红证
+
+### 2.1 改 2（处方指定：`_project_root` 指向临时目录树，确认护栏拒删并报错）
+
+仪器：`.runtime/tmp/st-ramp-wp1b-20260919/_pycache_guard_probe.py`（同树同输入分别喂 HEAD 版与新版模块）。
+**全程只在 `tempfile.mkdtemp()` 造的树上跑，未在真仓根执行过任何删除。**
+仪器自证：HEAD 副本与 `git show ee54c976f1^:src/.../rollback_verifier.py` 逐字节相同
+（sha256 前缀均为 `608450b8b004f8d1`，脚本比对输出 `identical: True`）。
+
+```
+$ python .runtime/tmp/st-ramp-wp1b-20260919/_pycache_guard_probe.py
+--- 改前（HEAD 原始实现） ---
+project_root = C:\Users\fanzi\AppData\Local\Temp\wp1b_pycache_cutg6470\old\misresolved_root
+仓根标记检查: .git exists=False  AGENTS.md exists=False
+删除前目录清单（8 项）: ['KEEP_ME.txt', 'deep', 'deep\\nested', 'deep\\nested\\__pycache__',
+  'deep\\nested\\__pycache__\\b.pyc', 'src', 'src\\__pycache__', 'src\\__pycache__\\a.pyc']
+结果: clean_pycache() 返回 removed=2
+删除后目录清单（4 项）: ['KEEP_ME.txt', 'deep', 'deep\\nested', 'src']
+清单差异: 消失的项 = ['deep\\nested\\__pycache__', 'deep\\nested\\__pycache__\\b.pyc',
+                     'src\\__pycache__', 'src\\__pycache__\\a.pyc']
+EXIT(用例退出码)=0
+
+--- 改后（三重护栏） ---
+project_root = C:\Users\fanzi\AppData\Local\Temp\wp1b_pycache_cutg6470\new\misresolved_root
+仓根标记检查: .git exists=False  AGENTS.md exists=False
+删除前目录清单（8 项）: [同上 8 项]
+结果: 抛出 PycacheGuardError: 拒删 __pycache__：project_root=...\new\misresolved_root
+      缺 ['.git', 'AGENTS.md'] 任一标记 ⇒ 不可验证为仓根（fail-safe：宁可不删）
+删除后目录清单（8 项）: [与删除前逐项相同]
+清单差异: 消失的项 = []
+EXIT(用例退出码)=42
+
+PASS  改前：临时树里的 __pycache__ 被真删（这就是破坏性地雷的实物面）
+PASS  改后：护栏②命中 → 拒删并抛出 PycacheGuardError
+PASS  改后：整棵树零删除（清单与删除前逐项相同，fail-safe 只退化为不删）
+PROBE_EXIT=0
+```
+
+护栏①（越界靶子）与"不吞异常"的通路级红绿对照在 pytest 内（`_pycache_guard_probe.py` 只覆盖②）：
+- `test_guard_rejects_targets_resolving_outside_root`：monkeypatch `Path.glob` 产出树外靶子
+  ⇒ `PycacheGuardError: ... 之外 ...`，并断言**树内树外一个都没删**（护栏③"先验后删"的可观测面）。
+  Windows 端到端 symlink 版需 `SeCreateSymbolicLink` 权限 ⇒ 不写成会 SKIP 的判据，改用 glob 输出等价形态 + 谓词直测。
+- `test_rmtree_failure_is_reported_not_swallowed`：注入 `PermissionError` ⇒ 必须抛出（旧行为：`logger.warning` 咽掉后照常返回计数）。
+
+### 2.2 改 1（负向用例：改前空转 / 改后能拦能修对）
+
+仪器：`.runtime/tmp/st-ramp-wp1b-20260919/_redblue_probe.py`——**建库 DDL 逐字照抄活库 `sqlite_master`**，
+三种场景各喂 HEAD 版 + 新版（默认 dry_run）+ 新版（显式真写）。
+
+```
+$ python .runtime/tmp/st-ramp-wp1b-20260919/_redblue_probe.py    （PROBE_EXIT=0）
+
+S1 活库结构 + details 非 JSON（活库真能非法的面）
+  [改前(HEAD)]                tasks_fixed=0 gates_fixed=0 healed=False dry_run=n/a(旧版无此栏) 吞异常=1
+                             库内值 前=('COMPLETED','{not json') 后=('COMPLETED','{not json')     ← 空转
+  [改后 默认 dry_run=True]    tasks_fixed=0 gates_fixed=1 healed=True  dry_run=True 吞异常=0
+                             details=["gate R-1: details 非 JSON -> 列默认值（原值前 120 字符='{not json'）"]
+                             库内值 前=后=('COMPLETED','{not json')                                ← 计划不落库
+  [改后 dry_run=False,max_rows=10] gates_fixed=1 dry_run=False
+                             库内值 前=('COMPLETED','{not json') 后=('COMPLETED','{}')              ← 修对
+
+S2 活库结构 + tasks.status=READY（C-0 地雷现值）
+  [改前(HEAD)]  tasks_fixed=1  details=['task T-1: status READY -> FAILED']  库内值 前=('READY',…) 后=('FAILED',…)
+                ^^^ C-0 地雷实锤：READY 被静默改成 FAILED
+  [改后 两种模式] tasks_fixed=0 gates_fixed=0 healed=False  库内值 前=后=('READY','{}')
+
+S3 旧幻影 fixture 结构 gates(gate_id,result)
+  [改前(HEAD)]  gates_fixed=1 details=['gate G-1: result BROKEN -> FAIL'] 库内 BROKEN→FAIL
+                ← "假绿"：只在生产不存在的表上"能修"（旧 root:135-148 用例正是这一档）
+  [改后 两种模式] 抛出 HealRefusedError: gates 列集与活库实列不符 ⇒ 拒绝自愈（不读幻影列）:
+                  no such column: gate_run_id      库内值 前后不变
+```
+
+**用例文件级"改前红"的诚实标注**：把 HEAD 版源文件临时放回工作区跑新用例，得到的是
+**收集期 `ImportError: cannot import name 'HealRefusedError'`（两文件均 ERROR，2 errors in 1.53s）**——
+新符号在旧版不存在，因此"用例改前红"在 pytest 层只能以 ImportError 形式呈现（红但不是断言级红）；
+**断言级的改前红/改后绿由上面两支探针承担**（同输入、同库结构、HEAD 副本与工作区版本对拍）。
+窗口处置：swap 期间只动工作区不动索引，跑完立即 `git show :<f> > <f>` 还原，
+还原后工作区 sha256 == 索引 blob sha256（`07f3bb7ee3cb5bf9…`，逐件核对通过）。
+
+### 2.3 测试实测
+
+```
+$ PYTHONPATH=src python -m pytest tests/rollback/test_rollback_verifier_root.py tests/rollback/test_rollback_verifier_unit.py -q
+42 passed in 3.06s            （批 1 后 38 → 批 2 后 42）
+
+$ PYTHONPATH=src python -m pytest tests/rollback/ -q
+批 1 后：704 passed, 7 xfailed, 2 xpassed in 134.09s
+批 2 后：708 passed, 7 xfailed, 2 xpassed in 220.62s
+```
+（坑记录：`-o cache_dir=…` 与 `-p no:cacheprovider` 都会让本仓 pytest 直接 INTERNALERROR
+——前者是未知配置项、后者关掉 `cache_dir` 的注册方，`filterwarnings=error` 升级为异常；
+CONSTRUCTION_DISCIPLINE §6 已记前半条，本车道补后半条。）
+
+---
+
+### ③ 验收命令与本次实测输出（含活库 DDL 原文 · D-17）
+
+### 3.1 从**活库**读的 `gates` / `gate_runs` DDL 与 `pragma table_info`（`mode=ro`）
+
+```
+$ python .runtime/tmp/st-ramp-wp1b-20260919/_d17_schema_probe.py .      （EXIT=0）
+
+### DB=governance.db  path=data\databases\governance.db  exists=True
+
+--- table 'gates' ---
+DDL_SQL_BEGIN
+CREATE TABLE "gates" (
+                gate_run_id TEXT PRIMARY KEY,
+                gate_id TEXT NOT NULL,
+                passed INTEGER NOT NULL CHECK(passed IN (0,1)),
+                details TEXT NOT NULL DEFAULT '{}',
+                artifact_path TEXT,
+                session_id TEXT,
+                task_id TEXT REFERENCES tasks(task_id) ON DELETE SET NULL,
+                created_at TEXT NOT NULL
+            )
+DDL_SQL_END
+PRAGMA_TABLE_INFO:
+   (0, 'gate_run_id', 'TEXT', 0, None, 1)
+   (1, 'gate_id', 'TEXT', 1, None, 0)
+   (2, 'passed', 'INTEGER', 1, None, 0)
+   (3, 'details', 'TEXT', 1, "'{}'", 0)
+   (4, 'artifact_path', 'TEXT', 0, None, 0)
+   (5, 'session_id', 'TEXT', 0, None, 0)
+   (6, 'task_id', 'TEXT', 0, None, 0)
+   (7, 'created_at', 'TEXT', 1, None, 0)
+ROWCOUNT=1791
+
+--- table 'gate_runs' ---
+CREATE TABLE gate_runs (
+    gate_run_id  TEXT PRIMARY KEY,
+    gate_id      TEXT NOT NULL,
+    passed       INTEGER NOT NULL CHECK(passed IN (0,1)),
+    details      TEXT NOT NULL DEFAULT '{}',
+    artifact_path TEXT,
+    session_id   TEXT,
+    task_id      TEXT REFERENCES tasks(task_id) ON DELETE SET NULL,
+    created_at   TEXT NOT NULL
+)
+PRAGMA_TABLE_INFO: 与 gates 逐项相同（8 列同序）    ROWCOUNT=6445
+```
+⇒ **明确断言（处方要求写清"哪个库的哪张表"）**：本车道改的是
+**`data/databases/governance.db` 的 `gates` 表**（不是同名同构的 `gate_runs`，
+也不是别的库的同名表：实测 `.runtime/task_board.db` 只有 `tasks`（status 词表是
+`pending/claimed/completed` 另一套）、`data/drift_audit/drift_events.db` 只有
+`gate_decisions/scan_results`、`.zephyr/rollback_quarantine.db` 只有 `cooldown`——
+四库里 `gates`/`gate_runs` 只在 governance.db 存在）。
+⇒ **`result` 列的出处经全仓 SQLite 扫描被否证**（`.zephyr/.runtime/data/databases/logs/runtime`
+下 2018 个 .db 逐库读 `pragma table_info(gates)`）：唯一带 `gates(gate_id, result)` 结构的库
+**全是 tests 的 tmp 产物**（如 `.runtime/tmp/st-ramp-wp1-20260919/bt/test_db_with_invalid_gate_resu0/data/databases/governance.db`），
+无任何活库有该列 ⇒ 旧代码的"幻影列"真身就是 R-A4 说的**幻影 fixture 自我印证**，
+不是"曾经存在过的另一张活表"（唯一未穷尽面=PostgreSQL depgraph 的 11 列 `gates`，
+`auto_runner.py:296,324` 读的是它，含 `event_driven/auto_start/status` 列，与本方法无关）。
+⇒ 处方"UPDATE 定位用 `gate_run_id`（`gate_id` 非唯一）"经活库实测成立：
+`gates` 1791 行只有 **1008 个 distinct `gate_id`**，而 `gate_run_id` 是 PRIMARY KEY。
+
+### 3.2 活库 `tasks` 关键列（C-0 前提）
+
+```
+--- table 'tasks' (governance.db) ---
+CREATE TABLE tasks (
+        task_id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        description TEXT,
+        status TEXT DEFAULT 'PENDING',          ← 无 NOT NULL、无 CHECK（源码 _DDL_TASKS 有 10 值 CHECK）
+        priority TEXT DEFAULT 'MEDIUM',
+        ... (76 列，其余含 namespace/seq/is_deleted 等 9 处 CHECK，均在别的列)
+ROWCOUNT=2501
+status distribution: COMPLETED=1981  CANCELLED=214  BLOCKED=152  READY=78  IN_PROGRESS=76
+tasks 行 status 为空/NULL 计数 = 0
+```
+对照组（D-17 的多库同名表陷阱，同一次探针）：`.runtime/task_board.db` 的 `tasks.status`
+= `TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending','claimed','completed'))`——
+与 governance.db 完全不同词表，绝不可混用。
+
+### 3.3 生产库上的"改前会计划改多少 / 改后多少"（只读 URI，物理不可写）
+
+```
+$ PYTHONPATH=src python -c "…用新代码的 _plan_task_fixes/_plan_gate_fixes 直接吃 mode=ro 连接…"
+派生词表(单一真源 _DDL_TASKS): ['BLOCKED','CANCELLED','COMPLETED','FAILED','IN_PROGRESS',
+                               'PENDING','READY','RETRY','VERIFIED','WAITING'] n=10
+改后计划: tasks=0  gates=0
+改前计划(旧 5 值词表): tasks=230   ← 这些行会被静默改成 FAILED
+改前误伤明细: Counter({'BLOCKED': 152, 'READY': 78})
+```
+落地后复核生产分布未变（与 3.2 逐项相等）：`tasks` 五档 1981/214/152/78/76、
+`gates` 1791 行 / `sum(passed)=1557` / `json_valid(details)=0` 计数为 0。
+
+### 3.4 门禁自检（写前读判据体，写后复跑尺子）
+
+```
+NO-HIGH-COMPLEXITY：新函数 cc 最大 heal_db_consistency=10、_derive_task_status_vocabulary=6，
+                    clean_pycache=4，其余 ≤4（用 gate 自己的 _cyclomatic_complexity 实测）  阈值 15 → 通过
+CloneGuard（手册给的尺子）：
+  CloneGuardOrchestrator(Path('.').resolve()).check(
+      ['src/zephyr/infrastructure/rollback/rollback_verifier.py']) → passed=True findings=[]   （两批各跑一次）
+NO-BARE-SQL：4 条 SQL 提为模块级 `ast.Assign` 且命名匹配 `^_?SQL_\w+$`（不带 Final，避 §7 互斥坑）
+TABLE-NAME-REGISTRY：`gates`/`tasks`/`gate_runs`/`events` 经 TableRegistry.is_registered 实测全 False
+                    （注册面 210 个名字皆为 `c*_*.xxx` 式）⇒ 不命中
+GATE-ERRCODE-CONSISTENCY：本批未新增任何 error_code（新异常只带消息）⇒ 不涉册
+MUTABLE-CONST-WITHOUT-FINAL：新增模块常量全是字符串/整数/tuple/编译正则，无可变容器字面量 ⇒ 不命中
+DATETIME-NOW-FORBIDDEN：未引入 datetime.now()/time.time()；用例里的时间戳是字面量
+commit 实跑：两批的锁内门禁链均无阻断项（preflight 首跑拦下 3 项：SESSION-REQUIRED、
+COMMIT-SCOPE(2 域→按处方加 --allow-multi-domain 留痕)、CAPABILITY-LOOKUP-REQUIRED，逐项治本后通过）
+```
+
+---
+
+### ④ 门位项与待裁清单
+
+命中门位：**high 档（改的是门禁/治理自身）**，两批 commit message 首段均为【行为变更声明】。
+四类动作（production 流转 / 注册表净删 / flag 出厂翻转 / 资金破坏性操作）**一件未做**；
+未改任何门禁判定阈值/flag 出厂默认（`fail_open_register.yaml` 等派生册未手改）；
+未删任何文件；未对任何 DB 做 DDL/DML（生产库全程 `mode=ro`）。
+
+| # | 待裁事项 | 我停在哪 / 选了什么 | 交谁 |
+|---|---|---|---|
+| ④.1 **`fail_open_register` 口径与本需求不匹配** | 生成器只按 `fail[_\-]?open` 词元对 src/scripts 做**静态点名分档**（五轴=file:line/stage/money/trace/hard_permit），没有"该吞点已被改为抛出/已修好"的表达面；若要"登记"就必须往代码里写 `fail_open=True`/`FAIL_OPEN`，而那恰好落进最差档 `hardcoded_default_permit`（= 把修好的东西重新标成硬编码放行）⇒ **按处方取"改为抛出"（fail-closed）**，派生册未手改、也未重跑生成器（本批未新增该词元，重跑只会引入他会话在途漂移）。 | 未自裁口径问题 | Max |
+| ④.2 **`max_rows` 上限取多少** | 全仓 grep 无同类"单次自愈行数上限"的现成值（`fix_result_prioritizer.max_affected` 是打分归一，不是护栏）⇒ 无唯一现场来源，**不拍数**：真写（`dry_run=False`）**必须显式传 max_rows**，不传即抛 `HealRefusedError`。如 Max 要一个出厂默认，请给值的来源（裁定/规则册/现成常量），我给不出。 | 停在"由调用方决定" | Max |
+| ④.3 **`passed NOT IN (0,1)` 分支在活库 `gates` 上不可达** | 活库实测 `CHECK(passed IN (0,1))` 存在且 1791 行 `typeof(passed)` 全为 `integer` ⇒ 该分支**在真约束下不可达**（处方允许的两种处置里我选第一种的另一半：不伪造非法值，用例的非法面改到活库**真能非法**的 `details`（该列 `TEXT NOT NULL DEFAULT '{}'`、无 CHECK）+ 幻影结构；同时**保留** `passed` 校验作为"活库丢 CHECK 的同类表"的防线——同类漂移本仓已实测发生：`tasks.status` 源码有 CHECK 而活库无）。"该分支退役 / 等 WP16 补约束后再定"属语义判断，未自裁。 | 已按"不伪造非法值"施工，分支去留待裁 | Max（与 WP16 并案） |
+| ④.4 **C-0 我做到哪一步** | 只做处方允许的两件：(a) 词表从单一真源 `_DDL_TASKS` 派生（实测 10 值，替换硬编码 5 值）；(b) 真写前 dry-run + 行数上限护栏（默认 `dry_run=True`，超限拒写并抛）。**未**整方法退役（§6.1 涉删代码/改公共 API），**未**给 `heal_db_consistency` 新增任何调用方（R-A2 波2/波3 禁令：本车道也没有让它被链路调起），**未**改 tasks 支路的"脏值→FAILED"修复语义（处方禁止），**未**在生产库上跑过一次真写（RULE-DATA-OPS 三步验证未做 → 见⑥.3）。`dry_run` 默认值取 True 是我按"fail-safe=只退化为不写"选的；若 Max 判"heal 应当默认落库"，翻一个参数默认即可。 | 停在退役与阈值之外的一切 | Max |
+| ④.5 **clean_pycache 报错形态：抛出 vs 返回可见对象** | 调用方普查（`git grep clean_pycache` + 逐文件读）：`scripts/rollback.py:138-141` 只调 `g0_verify`；`rollback_boot_integration.py:101-106` 只构造 `RollbackVerifier` 不调方法；`venv_sync.py/warm_standby.py/cross_platform_shell.py` 只在注释/deprecated 文案里提到本类；其余命中全在 `tests/rollback` 两文件 ⇒ **生产调用方 0**，故取抛 `PycacheGuardError`（fail-closed）而不炸穿任何生产路径；root 测试头 `[ERROR_CONTRACT]` 原句"All public methods return dataclass results even on error"已按事实改写（该行本就与 `clean_pycache->int` 不符）。 | 已按实测调用方决定 | — |
+| ④.6 **能力反查 0 命中** | 三次 `CapabilityLookup().find(q, session_id='st-ramp-wp1b-20260919')`（rollback_verifier 自愈 / pycache 删除护栏 / 活库 DDL 列名校验）全部 `0 hits`——即"活库列名校验 + 删除护栏"这一能力在能力卡面无条目可复用，属**新建能力面**；是否补 capability 登记（连同 WP2 的触发台账）未自裁。 | 留了审计，未造轮子外的登记 | 总包/Max |
+| ④.7 **护栏②的残留面** | 处方逐字用 `.git` 或 `AGENTS.md` 验仓根。残留风险：若 `project_root` 误解析到**另一个含这两个标记的目录**（别的仓 checkout、或仓根父目录恰好放了 AGENTS.md），护栏②会放行、随后只靠①的相对性判定拦（同仓内的 sibling `__pycache__` 会被合法删）。第四护栏"与 `zephyr.shared.io.paths.REPO_ROOT` 真源比对"要不要加属语义判断 ⇒ **未自加**，报裁。旁证（同方案改 3 的取证车道 R-A19/R-A20，本次读到）：`project_root = dirname×N(__file__)` 这类误解析在 HEAD 仍是活体（`drift_detector.py:59` 实测 `_PROJECT_ROOT=D:\ZephyrAlpha\src`），全仓同类派生 137 处/落点异常 23 处 ⇒ 建议与本护栏并案判。 | 未自加第四护栏 | Max |
+| ④.8 **台账 R-A4 的一行需补更正** | 台账原句"按处方改成 `passed` 后 `CHECK` 使非法值不可入库 ⇒ 得到一台构造上永不为真的门"：对 `passed` 成立（活库确有 CHECK），但**不成立于 `details`**（活库无 CHECK，真可非法）⇒ 处方不是"只能退役"。建议总包在 §4 事实修正表补一行（我不改 §1 原句）。 | 已在③.1/③.3 给实测原文 | 总包 |
+
+---
+
+### ⑤ 证据等级
+
+`[亲验]`（本车道自己跑的命令与输出）
+- 活库 `gates`/`gate_runs`/`tasks` 的 `select sql from sqlite_master` 与 `pragma table_info` 原文（③.1/③.2），含"gates 与 gate_runs 同构（8 列同序）"、`gates` 1791 行 / distinct `gate_id`=1008、`typeof(passed)` 全 integer、`json_valid(details)=0` 的行数=0、`tasks.status` 无 CHECK 且 2501 行分布 1981/214/152/78/76、`.runtime/task_board.db` 与 `.zephyr/rollback_quarantine.db`/`data/drift_audit/drift_events.db` 的同名表列集差异。
+- 全仓 SQLite 扫描（2018 个 .db，逐库 `pragma table_info(gates)`）：无任何活库存在 `result` 列，命中 `gates(gate_id,result)` 的库全部是 tests 的 tmp 产物——把"幻影列出处"从猜测变成否证。
+- 改 2 红证：HEAD 版真删 2 个 `__pycache__`（返回 removed=2、清单 8→4、EXIT=0）vs 新版拒删并抛 `PycacheGuardError`（清单 8→8、EXIT=42）。
+- 改 1 红证：S1 改前 `gates_fixed=0`+吞异常 1 vs 改后 `gates_fixed=1`（dry-run 不落库 / 真写落库为 `{}`）；S2 改前 READY→FAILED 真写 vs 改后 0 改写；S3 改前在幻影表上报 `gates_fixed=1` vs 改后抛 `no such column: gate_run_id`。
+- 生产库只读计划普查：改前 230（BLOCKED 152 + READY 78）/ 改后 0；以及落地后分布未变。
+- 测试实测：两批 42 例（root 25 + unit 17）与 `tests/rollback/` 708 passed / 7 xfailed / 2 xpassed。
+- 门禁尺子：CloneGuard `passed=True findings=[]`、新函数 cc 值、TableRegistry 注册判定、两批的三态 hash 核实、HEAD 副本与工作区版本逐字节相同。
+- 调用方普查：`clean_pycache`/`heal_db_consistency` 生产调用方 0（逐文件读 `scripts/rollback.py`、`rollback_boot_integration.py` 等）。
+- preflight 被拦三项及其处置（含 `--allow-multi-domain` 为处方 §2.4 明示的"gate+自家测试同批留痕"用法）。
+
+`[转报]`（他人产物，我未复跑）
+- 施工台账 R-A19/R-A20 的 `project_root` 误解析普查（137 处 / 23 处异常）与 `drift_detector.py:59` 现值——只读取证车道的结论，我只用于④.7 的旁证，未独立复跑。
+- 主区并发/staged 现量与"活跃外部会话 `st-bizmine-*` 高频提交"（我发单时实测 203 件 staged，只数过件数，未核归属）。
+- `CONSTRUCTION_DISCIPLINE.md` §7 各门判据口径（我读了判据体，但"仓内既有 295 处同款房规"等计数未复跑）。
+
+`[推断]`
+- 新用例的"改前红"在 pytest 层表现为收集期 ImportError（新符号不存在）；断言级红/绿由探针复现，探针里 HEAD 副本与工作区版本对拍逐字节相同 ⇒ 从探针外推到用例层这一跳是推断。
+- "生产库结构 = 用例结构"的等价性：结构为真（活库 DDL 逐字照抄），数据为假（tmp 库自建行）；未在真 governance.db 上做过端到端写读（见⑥.3）。
+- `_derive_task_status_vocabulary()` 的正则真只读 `_DDL_TASKS` 的 `CHECK(status IN (…))`，实测唯一命中 1 处、10 值全解析；若真源换写法（例如改成引用 YAML）该函数会抛 `HealRefusedError` 而非猜值——这一"未来失效形态"是推断。
+
+---
+
+### ⑥ 未完成的部分与原因（没跑的写成没跑）
+
+1. **改 3（`src/data/drift_audit/drift_events.db`）未做**：任务书明令另一车道在做；我只在 `clean_pycache` 的护栏②docstring 里把它当**成因旁证**引用，未取证、未移除、未删文件。
+2. **`fail_open_register` 生成器未重跑**（④.1）：口径不匹配已按处方改走"抛出"；不重跑的原因是派生册是热文件（§0.5 禁手改、重跑会把他人未落地的漂移一起吸进我的批次）。**不是"已核验通过"**。
+3. **`heal_db_consistency` 端到端真库写读未做**：在生产 `governance.db` 上执行 `UPDATE` 需 RULE-DATA-OPS 三步验证 + 备份，属另一门位；我只做到"只读连接上算出计划行数(0)"+"tmp 库真写"。等价性标 `[推断]`。
+4. **未给 `heal_db_consistency` 接任何调用方，也未退役它**：R-A2 波2/波3 禁令 + §6.1（退役涉删代码）。⇒ 站点一修好的是"一旦有人调它就不再空转"，不是"它已在治理链上跑起来"。
+5. **未跑全仓测试**：只跑 `tests/rollback/`（708 例）+ 与两方法调用方的普查；未跑 `python -m zephyr.security.adversarial_validation run`（台账 R-A13 实测其区分度=0，跑了也不构成证据，故不以它冒充护栏）。
+6. **`gates.passed` 不可达分支的去留、`max_rows` 出厂默认、护栏②是否加 `REPO_ROOT` 真源比对**：均出案卷未落地（④.2/④.3/④.7）。
+7. **`root` 测试里 `TestDifferentialCheck` 自带的 `gates(id,name)` 简化表未改**：`differential_check` 只做 `COUNT(*)`，不涉及列名语义，且处方点名的幻影位是 root:124/140/155 与 unit:56（全部已改到活库真实列）。范围外，未顺手改。
+8. **本回执未 promote 到 `docs/_working/`**：新建 tracked .md 需 creation_token（热册正被高频写），任务书要求"能不建就不建"；本文即 `.runtime/tmp/st-ramp-wp1b-20260919/RECEIPT.md`，请总包代持入库。探针/HEAD 副本/两批 commit message 备份同目录：
+   `_d17_schema_probe.py`、`d17_schema_output.txt`、`_redblue_probe.py`、`_pycache_guard_probe.py`、`rollback_verifier_HEAD.py`、`msg_batch1_backup.md`、`msg_batch2_backup.md`。
+9. **收尾状态**：两批均 `ENQUEUED → done → landed`（`ee54c976f1`、`413edaff0e`），三态核实通过；本车道 4 件 claim 已释放。
+
+### WP11 · `blueprint_registry` 悬空引用处置（`st-ramp-wp11-20260919`）— 堆一落地 `7f68805b98`，堆二 19 处只报
+
+# WP11 回执 · `blueprint_registry.yaml` 悬空引用处置（堆一落地 + 堆二只出案卷）
+
+会话：`st-ramp-wp11-20260919`　分支：`dev`　日期：2026-09-19
+处方真源：`docs/_working/2026-09-18-rule-audit-master-construction-plan.md` WP11 施工卡 + 裁定 D-11 / D-14 / D-15 / §0 全局纪律（第 9 条 D-17 附带）
+裁定基线复核（本车道独立只读取证，全部实存）：
+- commit `03df6215e8` 存在，`git log -1` = "chore(governance): 遗留裁定②blueprint_registry.yaml 派生退库…"，日期 2026-08-18　`[亲验]`
+- `#ARCH-BP-REGISTRY-DELETION-001` 在册：`architecture_issue_registry.yaml:10824`，`status: resolved`　`[亲验]`
+- 生成器实存：`scripts/governance/d5_architecture/syncers/sync_registry_from_blueprints.py`（16962 字节）　`[亲验]`
+- ROOR 实测：`grep -c "blueprint_registry" docs/registry_of_registries.yaml` = **0** ⇒ 该注册表已无 ROOR 条目　`[亲验]`
+- 本批未恢复该文件、未改 `.gitignore`、未改 `rules/**` / `architecture_model/**` / `docs/03_modules/**` / `AGENTS.md`
+
+---
+
+### ① 改动清单 + hash
+
+**落地（堆一，2 件 1 提交）**
+
+| 文件 | 处方条 | 改动 |
+|---|---|---|
+| `docs/01_policies_and_standards/_registry/catalogs/index.md` | 逐点处方 2 | 删"外部登记表"里的蓝图注册表整行（原 L49） |
+| `docs/01_policies_and_standards/templates/blueprint_construction_template.md` | 逐点处方 3（该条列举的 templates 靶） | "需更新的文件"表第 2 行由"手工同步该 YAML"改为 frontmatter → 生成器 链（原 L666） |
+
+**提交归属核实**（`git log -1 --name-only`，`[亲验]`）：
+
+```
+7f68805b98ab934f4d92de16c7f156f9e9a5dac6
+lane
+Sat Sep 19 04:34:16 2026 +0800
+docs(wp11): 蓝图注册表悬空引用处置·堆一可写面两件（派生退库后不再被当真源）
+
+docs/01_policies_and_standards/_registry/catalogs/index.md
+docs/01_policies_and_standards/templates/blueprint_construction_template.md
+```
+
+⇒ 本 commit **只含自家 2 件，零外来内容**。队列凭据：`q-20260919-st-ramp-wp11-20260919-0001`，
+`commit_queue.py status --session` 实测 `state=done landed_id=7f68805b98ab934f4d92de16c7f156f9e9a5dac6`，`done=1 dead=0`。
+
+**D-15③ 落地后三态核实**　`[亲验]`
+
+首次核实（**发现隐患并已抹平**）——队列落地只写工作区，index 仍压着改前旧 blob：
+
+| 文件 | `git rev-parse HEAD:<f>` | `git ls-files -s <f>` | `git hash-object <f>` | 判定 |
+|---|---|---|---|---|
+| catalogs/index.md | `00cf8416be546196f3b4e92209fc5c4de68cd716` | `6bf1b5389a2a51924b6a1640fce27d0372932ae1` ← **改前旧 blob** | `00cf8416be546196f3b4e92209fc5c4de68cd716` | ❌ 不一致 |
+| blueprint_construction_template.md | `896cd0f21c634935ec8b206f24ca893747d52f78` | `39aa4a319af68611ac841fe73256f57c8b777413` ← **改前旧 blob** | `896cd0f21c634935ec8b206f24ca893747d52f78` | ❌ 不一致 |
+
+`git status --porcelain` 当时两件均为 `MM` ⇒ 正是本役 R-A17 记的"陈旧快照压 index"第四例的同机制复发（**不是**我造成的写侧蒸发，是队列落地语义）。
+按 D-15③ 指示具名 `git add` 抹平后复验　`[亲验]`：
+
+| 文件 | HEAD | INDEX | DISK | 判定 |
+|---|---|---|---|---|
+| catalogs/index.md | `00cf8416be…` | `00cf8416be…` | `00cf8416be…` | ✅ 三态一致 |
+| blueprint_construction_template.md | `896cd0f21c…` | `896cd0f21c…` | `896cd0f21c…` | ✅ 三态一致 |
+
+`git status --porcelain -- <两件>` 终态 = 空（clean）。
+
+**D-15② 热文件"对 dev 纯 insert 零 delete"——本批是处方明令的删除，字面无法成立，改用等价证明**　`[亲验]`
+
+```
+$ git diff --numstat dev -- <两件>
+0	1	docs/01_policies_and_standards/_registry/catalogs/index.md
+1	1	docs/01_policies_and_standards/templates/blueprint_construction_template.md
+```
+⇒ 字面 `N 0` 对"删一行"的处方不可能成立（那是 A 项删除本身）。等价证明已做：
+(a) 动手前两件 `git status --porcelain` 均为空 ⇒ 工作区＝index＝HEAD，非陈旧快照；
+(b) 全量 diff 逐字复核：**每件的唯一删除行就是处方点名的那一行**（`git diff` 输出全文已核，
+见 ② 与 ③ 的原文），零外来 hunk；(c) 写入走 `safe_write_text` CAS（`expected_base_sha256` 现读现传，
+`written=True`），before/after sha 已打印。⇒ 该前置的**目的**（不吃掉上游行）达成，字面不达成，如实记为偏差。
+
+---
+
+### ② 红证
+
+**用了真判据，不是自造 grep**：在册脚本 `scripts/governance/d2_links/audit_broken_links.py`（断链/幽灵引用检测）。
+
+改前（基线，红）　`[亲验]`：
+```
+$ python scripts/governance/d2_links/audit_broken_links.py \
+    docs/01_policies_and_standards/_registry/catalogs/index.md \
+    docs/01_policies_and_standards/templates/blueprint_construction_template.md
+❌ 发现 5 条断链:
+  → 断链: docs/03_modules/blueprint_registry.yaml ← index.md                       ← 靶 A
+  → 断链: docs/03_modules/blueprint_registry.yaml ← blueprint_construction_template.md  ← 靶 B
+  → 断链: scripts/governance/d5_architecture/validators/validate_path_alignment.py ← blueprint_construction_template.md
+  → 断链: tests/xxx.py ← blueprint_construction_template.md
+  → 断链: src/zephyr/.../file-name.py ← blueprint_construction_template.md
+```
+改后（绿）　`[亲验]`：`5 条 → 3 条`，其中 `blueprint_registry` 断链 **2 → 0**，余 3 条为模板占位符与一条与本批无关的存量断链（见"发现 F-4"，只报未改）。
+
+阴性对照（证明这把尺子有区分度，不是恒绿/恒红）　`[亲验]`：
+```
+$ python .runtime/tmp/st-ramp-wp11-20260919/red_evidence.py
+[STATE-0 现状] rc=0 blueprint_registry 断链数=0
+[STATE-1 注入后] rc=0 blueprint_registry 断链数=1
+   原文: → 断链: docs/03_modules/blueprint_registry.yaml ← index.md
+[STATE-2 撤样后] rc=0 blueprint_registry 断链数=0
+[VERDICT] 尺子有区分度（红可注、绿可复）= True
+```
+注入手法＝把已删那行按 CAS 原样注回，跑尺子，再 CAS 撤样；全程不碰 git，跑后 `git status --porcelain` 仍为空。
+
+**退出码面（无法二值化的部分，写实不粉饰）**　`[亲验]`：
+```
+audit_broken_links.py --ci docs/01_policies_and_standards/_registry/catalogs/index.md   → exit 0（✅ 无断链）
+audit_broken_links.py --ci docs/01_policies_and_standards/templates/blueprint_construction_template.md → exit 1
+```
+⇒ 模板件改前改后**文件级 exit 均为 1**（存量 4→3 条非本批断链），故该件的信号只能取
+"blueprint_registry 断链条数 1→0"，不能用文件级退出码。此判据不闭合之处已全部写实。
+
+**可写面 `git grep` 计数对照**　`[亲验]`：处方枚举的文本位上，含 `blueprint_registry` 字面的行数
+`docs/01_policies_and_standards/_registry/catalogs/index.md` 1 → **0**；
+`docs/01_policies_and_standards/templates/blueprint_construction_template.md`（第 666 行该位）1 → **0**。
+
+---
+
+### ③ 验收命令与本次实测输出
+
+**处方原文命令在本机/本仓不可执行**（如实报，不偷换）　`[亲验]`：
+```
+$ git grep -n "blueprint_registry" -- ':!*_archive*' ':!docs/03_modules/_cross_layer/*/blueprint.md'
+fatal: :\!*_archive*: '\!*_archive*' is outside repository at 'D:/ZephyrAlpha'
+EXIT=128
+```
+单条 `:!` 排除可用、两条 `:!` 并用即 fatal（换第二条内容可复现；`':!docs/03_modules/**'`+`':!*_archive*'` 反而正常）。
+⇒ 改用语义等价的 `:(exclude)` 书写，**排除集完全相同**：
+```
+git grep -n "blueprint_registry" -- ':(exclude)*_archive*' ':(exclude)docs/03_modules/_cross_layer/*/blueprint.md'
+```
+
+| 时点 | 命中行数 | 命中件数 |
+|---|---|---|
+| 基线（动手前） | **383** | **119** |
+| 堆一落地后（终态，commit `7f68805b98` 之后） | **381** | **118** |
+
+`diff` 逐行核对，**变化的正是且仅是**处方点名的两行：
+```
+< docs/01_policies_and_standards/_registry/catalogs/index.md:49:| 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | REG-BLUEPRINT-001 |
+< docs/01_policies_and_standards/templates/blueprint_construction_template.md:666:| 2 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | {新增/修改什么} | {为什么} |
+```
+
+**判据的后半句（"剩余命中全部是派生件/生成器语义，无一处再声称 SSoT 或给 file:/// 链接"）本次不能全绿**　`[亲验]`：
+```
+$ git grep ... | grep "file:///.*blueprint_registry"
+docs/03_modules/index.md:91:| [blueprint_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml) | 蓝图注册表（全项目模块清单·SSoT） | YAML |
+```
+⇒ 剩余唯一 file:/// 链接命中在 `docs/03_modules/index.md:91`，属堆二禁写面（本役红线"禁写 `docs/03_modules/**`" + 处方逐点第 1 条）。
+**该判据要等 Max 落堆二才能全绿；本车道未为了让命令好看而改受保护件。**
+另：除 file:/// 外仍有 19 个处方枚举的受保护文本位声称"真源/SSoT"（schema 3 + key_facts 13 + 能力册 2 + 03_modules/index 1），全部在堆二，见 ④。
+
+---
+
+### ④ 堆二"只报未改"清单（逐条可直接粘贴；行号＝本次实测，处方给的号已复验会漂）
+
+> 通用表述口径：**`blueprint.md` frontmatter 是真源 → `sync_registry_from_blueprints.py` 运行时重生派生件 → 派生件不入 git（退库 commit `03df6215e8`）**。
+> "WP9 面"＝是否落在 WP9 判决对象（实测案卷面 `dossiers_v2_index.json` 共 1404 件，分布
+> `docs/01_policies_and_standards/` 下 rules 1025 / sop 346 / policies 30 / templates 3；下面逐件按该清单判定）。
+
+### S2-1　`docs/03_modules/index.md`　L91（处方第 1 条）｜WP9 面：**否**｜禁写理由：本役红线"禁写 `docs/03_modules/**`"
+现原文（逐字）：
+```
+| [blueprint_registry.yaml](file:///D:/ZephyrAlpha/docs/03_modules/blueprint_registry.yaml) | 蓝图注册表（全项目模块清单·SSoT） | YAML |
+```
+改后文本（逐字，去 file:/// 与 SSoT 声称；本表其余行链接真存故保留链接）：
+```
+| `blueprint_registry.yaml`（不入 git） | 蓝图注册表＝**纯派生件**：真源=各 `blueprint.md` frontmatter，由 `scripts/governance/d5_architecture/syncers/sync_registry_from_blueprints.py` 运行时重生（派生退库 commit `03df6215e8`）；全项目模块清单请读本目录实际 `blueprint.md` 集 | YAML（派生） |
+```
+（同件 L103 只是 snake_case 命名示例、不含 SSoT 声称，处方未列 ⇒ 不动。）
+
+### S2-2　`architecture_model/layers/schema.yaml`　L3 / L12-15 / L55（处方第 3 条）｜WP9 面：**否**｜禁写理由：`architecture_model/**` 受保护（PROTECTED_PATTERNS 实读 L75 + §6.2）
+
+L3 现原文：
+```
+# 真源：与 MOD-MASTER-001（CT-* 集成契约）及 docs/03_modules/blueprint_registry.yaml 对齐校验。
+```
+L3 改后：
+```
+# 真源：MOD-MASTER-001（CT-* 集成契约，在册实存）。蓝图侧对账对象是派生件 docs/03_modules/blueprint_registry.yaml——
+# 不入 git，真源=各 blueprint.md frontmatter，由 sync_registry_from_blueprints.py 运行时重生（派生退库 commit 03df6215e8）；
+# 故本行校验前 MUST 先重生派生件，禁把缺失当"真源缺失"。
+```
+
+L12-15 现原文（`>` 折叠标量，缩进 2 空格，勿破坏）：
+```
+id_namespace_note: >
+  根树中模块条目 id（小写 slug，如 l02-*）与 docs/03_modules/blueprint_registry.yaml
+  的 module_id（MOD-*）属于不同命名空间：slug 用于本层 YAML 内索引；MOD-* 用于蓝图
+  跨登记对账。
+```
+L12-15 改后（逐字，保持折叠标量形状）：
+```
+id_namespace_note: >
+  根树中模块条目 id（小写 slug，如 l02-*）与派生件 docs/03_modules/blueprint_registry.yaml
+  （由 blueprint.md frontmatter 经 sync_registry_from_blueprints.py 运行时重生，不入 git）
+  的 module_id（MOD-*）属于不同命名空间：slug 用于本层 YAML 内索引；MOD-* 用于蓝图
+  跨登记对账。
+```
+
+L55 现原文：
+```
+      description: "可选，对应 blueprint_registry.yaml 顶层 blueprints[] 的 module_id"
+```
+L55 改后：
+```
+      description: "可选，对应蓝图派生注册表（blueprint_registry.yaml：frontmatter→生成器运行时重生，不入 git）顶层 blueprints[] 的 module_id"
+```
+
+### S2-3　★ 路径更正：`architecture_model/data/rule_optimization/key_facts.yaml` **不存在**；真身＝`data/rule_optimization/key_facts.yaml`
+`find architecture_model -iname "key_facts*"` 零命中；`git ls-files | grep key_facts` 唯一命中 = `data/rule_optimization/key_facts.yaml`。
+处方给的行号（113-114 / 323-332 / 545-554 / 581）**与真身逐字吻合** ⇒ 只是目录前缀错，内容定位有效。
+WP9 面：**否**（案卷面只覆盖 `docs/01_policies_and_standards/`）。
+禁写理由：改判后落 `data/`＝生产数据目录（宪法 §9.6 测试禁写生产路径同源红线），且本车道任务书把它列堆二 ⇒ **只报**。
+
+L113-114 现原文：
+```
+    description: "蓝图数量（blueprint_registry.yaml total_blueprints: 60）"
+    ssot_source: "docs/03_modules/blueprint_registry.yaml total_blueprints"
+```
+L113-114 改后：
+```
+    description: "蓝图数量（派生件 blueprint_registry.yaml 的 total_blueprints，本次实值 60；该文件不入 git）"
+    ssot_source: "docs/03_modules/**/blueprint.md frontmatter -> scripts/governance/d5_architecture/syncers/sync_registry_from_blueprints.py -> docs/03_modules/blueprint_registry.yaml（纯派生件，不入 git，派生退库 commit 03df6215e8）"
+```
+
+L326 现原文：`    ssot_source: "docs/03_modules/blueprint_registry.yaml"`　⇒ 改后同 L114 括号内口径（`… -> … （纯派生件，不入 git，派生退库 commit 03df6215e8）`）。
+L548 现原文：与 L326 **逐字同串** ⇒ 同一替换（`git diff` 时须用更长上下文区分，两处不可合并成一次替换）。
+L581 现原文：
+```
+    ssot_source: "docs/03_modules/blueprint_registry.yaml total_blueprints: 60"
+```
+L581 改后：
+```
+    ssot_source: "docs/03_modules/**/blueprint.md frontmatter -> sync_registry_from_blueprints.py -> docs/03_modules/blueprint_registry.yaml（派生件）total_blueprints: 60"
+```
+
+★ **该文件另有两类缺陷超出 WP11 处方，值需语义判断 ⇒ 不自拟，列待裁**（见发现 F-2/F-3）。
+
+### S2-4　`docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml`　L160-161（处方第 3 条）｜WP9 面：**否**｜禁写理由：★ 热册（正被他会话高频写）＋ 该册是否生成器产出未查（§0.5 派生册禁手改的前置未排除）
+现原文（逐字，L160-162 是一个折叠标量的三行，替换须保持缩进）：
+```
+  description: 蓝图磁盘路径查询的唯一入口。从 blueprint_registry.yaml（SSoT 派生）按 module_id 查询， 不硬编码路径。真源链：blueprint.md
+    frontmatter → sync_registry_from_blueprints.py → blueprint_registry.yaml → load_blueprint_path(module_id)。
+    消除连字符/下划线漂移根因。
+```
+改后文本（只动 L160 括注，其余两行逐字保留）：
+```
+  description: 蓝图磁盘路径查询的唯一入口。从 blueprint_registry.yaml（纯派生件：不入 git，真源=blueprint.md frontmatter，派生退库 commit 03df6215e8）按 module_id 查询， 不硬编码路径。真源链：blueprint.md
+    frontmatter → sync_registry_from_blueprints.py → blueprint_registry.yaml → load_blueprint_path(module_id)。
+    消除连字符/下划线漂移根因。
+```
+落地要求：CAS（`safe_write_text` + 现读 `expected_base_sha256`）**单独一批**，写后立即进程外复验。
+
+### S2-5　处方第 5 条 · `docs/01_policies_and_standards/sop/audit_prompts_20_ai.md` L168 括号 —— **本车道未删，三条独立理由**
+现原文（逐字，L168 行首 3 空格）：
+```
+   ⚠ **`blueprint_registry.yaml` 在本仓不存在**（`docs/03_modules/index.md` 留有一处指向它的悬空链接）。蓝图索引真源=`docs/03_modules/` 实际结构 + 生成器产出；凡见把该文件当真源的条目，一律按锚点漂移记问题清单转总控。
+```
+改后文本（逐字，S2-1 落地后使用＝删该括号，其余一字不动）：
+```
+   ⚠ **`blueprint_registry.yaml` 在本仓不存在**（纯派生件：各 blueprint.md frontmatter → sync_registry_from_blueprints.py 运行时重生，不入 git）。蓝图索引真源=`docs/03_modules/` 实际结构 + 生成器产出；凡见把该文件当真源的条目，一律按锚点漂移记问题清单转总控。
+```
+未删理由　`[亲验]`：
+1. 处方原文的条件是 **"上述 1 落地后"**，"上述 1"＝逐点处方第 1 条 `docs/03_modules/index.md:91`，属堆二禁写面 ⇒ 前置未成立（车道任务书把该项归堆一并写"等上面那条落地后"，与处方原文的前置对象不一致 ⇒ 按 §6.6 停手，取更严的一侧）。
+2. 该括号目前**为真**：本次实测剩余 file:/// 命中恰为 1 条，就在 `docs/03_modules/index.md:91`。删掉等于抹掉一条准确的在途审计指针。
+3. 该文件**在 WP9 判决对象面上**（案卷 18 个小节命中） ⇒ D-14 更强那一层理由（判决对象漂移）适用。
+（同件 L325 的 `（本清单不含 blueprint_registry.yaml——该文件在本仓不存在，处置见 8.2。）` 为真且处方未列 ⇒ 不动。）
+
+### S2-6　处方第 4 条 · 历史 changelog **不动**（改＝伪造历史）；按行号重定位后的实测位｜WP9 面：均为 blueprint 文档，非案卷面对象
+- `docs/03_modules/_cross_layer/audit_orchestrator/blueprint.md`：**L656、L936、L1011、L1064**（处方只列 656/1011；936/1064 是同件同类"同步更新/派生"表述，实测新增）
+- `docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md`：**L716、L909、L1045、L1223**（处方只列 716）
+- `docs/03_modules/_cross_layer/context_engine/blueprint.md`：**L125 含真实 file:/// 链接**（指向已退库的该 YAML），另有 L141/L142 把它当对齐对象 ⇒ 处方未列、且被验收排除式 `'_cross_layer/*/blueprint.md'` 整体屏蔽（见发现 F-5）
+⇒ 三件全部**未改**，只登记。
+
+---
+
+### ⑤ 逐项证据等级
+
+| 断言 | 等级 |
+|---|---|
+| 两件的改前/改后文本、CAS `written=True`、before/after sha | `[亲验]` |
+| commit `7f68805b98` 归属（`git log -1 --name-only` 只见自家 2 件） | `[亲验]` |
+| D-15③ 三态：首轮 index 压旧 blob → 具名 `git add` 抹平 → 三态一致 | `[亲验]` |
+| 红证（audit_broken_links 5→3、blueprint 断链 2→0、注入-撤样双向、`--ci` 退出码 0/1） | `[亲验]` |
+| 验收 grep 基线 383/119 与终态 381/118、变化的恰为两行 | `[亲验]` |
+| 处方原文命令 exit 128（两条 `:!` 并用即 fatal） | `[亲验]` |
+| D-11 取证链（`03df6215e8` / `#ARCH-BP-REGISTRY-DELETION-001` status=resolved / 生成器实存 / ROOR 零命中） | `[亲验]`（D-11 结论本身＝`[转报]` Max 已封口） |
+| `key_facts.yaml` 路径不存在 + 真身在 `data/` + 行号吻合 | `[亲验]` |
+| key_facts 的 `must_not_appear_as` 自相矛盾、`must_appear_in` 不可满足 | `[亲验]`（读到原文与零命中实测） |
+| WP9 判决对象面分布（1404 = rules1025/sop346/policies30/templates3） | `[亲验]`（读 `dossiers_v2_index.json`） |
+| 处方第 5 条前置不成立（S2-1 未落地 ⇒ 括号仍为真） | `[亲验]` + 条件式为`[推断]` |
+| 堆二各替换文本"落地后能过断链/悬空门" | `[推断]`——本车道未在受保护件上试落 |
+| `#231` 在册性（本回执正文未引用该号，仅 D-11 原文引用） | `[转报]`——另见 `docs/03_modules/index.md:94` 字面"裁定#231"存在，未回查 ruling_registry |
+
+---
+
+### ⑥ 未完成部分与原因（禁把"没跑"写成"通过"）
+
+1. **验收判据未全绿**——只完成堆一（2 件），堆二 19 个处方枚举文本位未动（受保护/热册/`data/` 生产面）。已给全量可粘贴文本（④）。**该判据需 Max 落堆二后才能全绿。**
+2. **处方第 5 条（S2-5）未执行**——前置未成立，三条理由见④；已给替换文本待与 S2-1 同批落地。
+3. **D-15② 字面不达成**——"纯 insert 零 delete"对处方明令的删除不可能成立，改用等价证明（①）。
+4. **处方原文验收命令不可执行**——本环境 `git grep` 两条 `:!` 并用 fatal（exit 128），改用同排除集的 `:(exclude)` 写法。
+
+### 附：本车道新发现（全部只报未改，交 Max；不含越权处置）
+
+- **F-1｜处方路径不存在**：`architecture_model/data/rule_optimization/key_facts.yaml` 无此件，真身 `data/rule_optimization/key_facts.yaml`。⇒ 归入台账 §4 事实修正表素材（与前役"案卷路径写错"同族）。
+- **F-2｜`key_facts.yaml` 两条"命名"事实自相矛盾**：L323-332 与 L545-554 的 `fact` 与 `must_not_appear_as.pattern` **是同一个串**（`blueprint_registry.yaml`），且 `reason` 写"连字符写法错误，实际文件名用下划线 blueprint_registry.yaml"——被判"错误"的 pattern 就是被推荐的正确写法。成因疑似历次把连字符变体全量 sed 成下划线时把 pattern 一起改了。⇒ 任何按此册跑的校验会把**正确写法判成违规**。修法需语义判断，未自拟。
+- **F-3｜派生退库留下不可满足断言**：`key_facts.yaml` 三条 `must_appear_in` 指向 ROOR（L550）/ `docs/registry_of_registries.yaml`（L583）/ `.trae/rules/project_rules.md`（L116、L328），实测 **ROOR 命中 0、project_rules 命中 0** ⇒ 这些"必须出现"永假。另 `data/rule_optimization/key_facts.yaml` 的在册消费者**只找到一个**：`scripts/governance/_archive/one_off/check_rule_coverage.py`（归档 one-off）⇒ 该册可能是僵尸台账（交 Max 判 D3/D4）。
+- **F-4｜处方与验收判据不闭合**：处方只列 7 个靶，但 `--ci` 尺子在同目录另有存量断链（`scripts/governance/d5_architecture/validators/validate_path_alignment.py` 已不存在于该路径）；模板占位符 `tests/xxx.py` / `src/zephyr/.../file-name.py` 亦常驻红。⇒ 若某门禁以 `audit_broken_links --ci` 硬阻断模板文件，本批改前改后都是红，判据无法二值化。
+- **F-5｜验收排除式把一条真 file:/// 链接屏蔽掉**：`':!docs/03_modules/_cross_layer/*/blueprint.md'` 按"历史 changelog"意图写，但同时屏蔽了 `context_engine/blueprint.md:125` 的**活体 file:/// 链接**（非 changelog 行）。⇒ 建议 Max 把排除式收窄到具体行/具体锚，或把该行并入 S2-6 之外的处置项。
+- **F-6｜处方未枚举但同类缺陷另 4 处**（均为"声称该 YAML 是真源"）：
+  `scripts/governance/d7_code/fix_n13_snake_case.py:22`（"删除 1 个遗留存根 blueprint_registry.yaml（真源为 blueprint_registry.yaml）"——自指矛盾，且该件在可写路径）、
+  `docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml:942,950`（`- 真源：blueprint_registry.yaml`；10784/10815 属历史裁定文字不动）、
+  `tests/gate/test_sys_master_compliance.py:69`（注释"从 blueprint_registry.yaml SSoT 查询"）、
+  `docs/03_modules/_domain_factor/blueprint.md:387` 与 `_domain_signal/blueprint.md:335`（"不进入 blueprint_registry"）。
+  ⇒ 未动（禁"顺手优化" + 热册 + 历史裁定文本），列此供 Max 决定是否扩方。
+- **F-7｜`docs/01_policies_and_standards/_registry/catalogs/index.md` 的"外部登记表"表头未动**：删掉蓝图行后该表仅剩 2 行且仍声明"registry_id 以 ROOR 为准"，与本件历史约定（d37a8b1f61）一致 ⇒ 无需追加说明；若 Max 希望留一条"已退库"注记，可粘贴：`（原"蓝图注册表 REG-BLUEPRINT-001"行已删：ROOR 查无该 id，该 YAML 系派生退库件，见 commit 03df6215e8）`。
+
+### 冷启动/纪律自查
+- RULE-ENV：`python --version` = **Python 3.12.8**（本 shell 实测，未出现 3.10 注入）　`[亲验]`
+- RULE-GUARDIAN：`Get-ScheduledTask -TaskName '*reaper*'` → `ZephyrAlpha_ProcessReaper  State=Ready`；`python -m zephyr.trading.process_reaper --status` 正常输出（scanned=10 killed=4）　`[亲验]`
+- RULE-WORKTREE：主区具名 + `--enqueue`（D-15 合规正门），未直连提交；改前两件 `--porcelain` 均为空，改前 `lock_files.py acquire` 两件、提交后自动释放（实测 `release` 报 NOT FOUND＝已由网关释放）　`[亲验]`
+- 未碰：`AGENTS.md` / `architecture_model/**` / `rules/**` / `docs/03_modules/**` / `.gitignore` / `capability_canonical_file_registry.yaml` / `.runtime/sessions/**/staging/**` / `reconciliation_registry.py` / `rollback_verifier.py` / `ch_reader.py` / `flowthrough_verifier.py` / `src/zephyr/pf_alloc/**` / `_registry.yaml`　`[亲验]`
+- 未跑 `capability_lookup` / `rule_discovery` 留审计（本批为文档改动，处方即真源）；未跑 `apply_depgraph --add-design-node`（无新增设计节点）⇒ 记为**未做**，非"通过"。
+- 本车道工作物：`.runtime/tmp/st-ramp-wp11-20260919/{apply_stack1.py, red_evidence.py, msg.md, RECEIPT.md}`（有 24h TTL ⇒ 已同步冷库）。
+- 冷库镜像：`G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/wp11/`（同 4 件）。首版 sha256 双份核对
+  `6fd8307ad5ae3059dd76640c5a1ec7278f798d3fcbc1cccec96b622a837df3b3`（`.runtime` 与冷库逐字节相同；本文件其后又补了 RULE-ENV/GUARDIAN 两行实测值，故以最终版重刷镜像并复核一致）　`[亲验]`
