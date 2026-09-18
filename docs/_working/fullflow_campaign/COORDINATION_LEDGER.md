@@ -1888,3 +1888,71 @@ z-rb-stats 实测我口径错：**台账 R-026 原文是「八型」，而我在
 - **★ 总包自伤一次并公开记账**：我为"两轮回归"写的扫描脚本因 `--basetemp` 父目录未建，
   令 14 个目录 **100% rc=1 / 1036 errors** 的假故障差点被当成"全仓被改崩"上报。
   单文件复跑→通过、建父目录后复跑→48 passed。**判据**：整片红 + 耗时异常短 ⇒ 先怀疑测量脚本与环境，再怀疑被测面。
+
+## 6.17 R-069 · AI 层 intake 全族进 HEAD（`84007a1d6a`）+ **四条"总包前提被推翻"值得单独立账**
+
+车道 `st-ff-ailayer3-20260918` 一笔落地 12 件（`__all__: Final` 五处、零豁免通道；CloneGuard 第二对克隆已合并去重）。
+**它交回四条纠正，每条都会误导下一班，故逐条入账：**
+
+1. **库口径错**：这族的表**不在 ClickHouse，在 PostgreSQL 的 `ai_intake` schema**（与 depgraph 同实例），
+   生产 schema **9 表 + 3 视图齐备、`ai_intake_card=6 行 / ref_snapshot=3595 行` ⇒ DDL 早已部署，一行都不用跑**。
+   ⇒ 我任务书让它"用 `system.tables` 查表存在性"**必得零表假红**。**教训**：查表在不在，先确认**这族归哪个引擎**，
+   别把 CH 目录当全仓目录（本役已第三次栽在"目录口径选错"：judgment 族 MergeTree、`_norm_key` 假阳、此次 PG/CH）。
+2. **"唯一剩余死因"不唯一**：同批还压着 (a) `card_store.py:149 hamming` 与 `dedup.py:155 hamming_distance`
+   **100% extract 级克隆**（它按 R-002 合并治本，删副本 + 测试改引）；
+   (b) **`GATE-ERRCODE-CONSISTENCY` 连坐**——见下条，这条最要紧。
+3. **★ 一条门禁自身违反宪法 §3.1**：`GATE-ERRCODE-CONSISTENCY` 的 `_check(gateway, files, **_kwargs)`
+   **吞掉 kwargs、无 own-scope、观测面=全 git index** ⇒ 它这次是被**他人 staged 的 `paper_hedge_leg.py`**
+   （`ZA-RK-0075` 撞 HEAD 里 `hedge_execution_skill.py`）连坐，**只因对方车道 `2a80340b51` 先落地把违规转成"存量"而侥幸自解**。
+   ⇒ **裁定 R-069a**：给该门补 `_build_own_scope`（或按 §3.3 登记"全仓扫描"理由）——
+   **不修则任何直连车道都会随机背他人锅**，与本役已知的"观测面口径"家族（errcode-gate-global-jam 604f414846）同根。
+   进 B 类可执行清单（无方向分叉）。
+4. **R-065a 的手法载体是错的**：`scripts/governance/run_gate_chain.py` **只聚合脚本型子门禁**，
+   本役所有死因门都是**进程内 GateSpec** ⇒ 预跑不到。该车道自己写了只读预跑器
+   （遍历 **113 个 GateSpec**，按真门调用形 `spec.check(gateway, files, **flags)`，
+   `.runtime/tmp/st-ff-ailayer3-20260918/gate_prerun.py`，已同步冷库），并给出三条踩坑：
+   ① 不传 `session_id` ⇒ SESSION/WORKTREE/HELD-OVERLAP/CLAIM-REQUIRED **四类伪红**；
+   ② 不调 `claim_files` ⇒ CLAIM-REQUIRED 伪红；
+   ③ **`claim_files` 返回的是"成功清单"**（失败者被排除），**别读成冲突清单**。
+   ⇒ **R-069b**：`gate_prerun.py` 这类"提交前预跑进程内门"的载体**必须入库**（现在它躺在 TTL 目录里）。
+   总包处置：随收口批登记 token + 三件套进 `scripts/governance/`，**下一役的标准动作**。
+5. **宪法 L0 §0.4 的字面步骤不可执行**：`capability_lookup.find(<kw>, session_id=...)` 不存在模块级函数，
+   实为 `CapabilityLookup().find(query, session_id=...)` 类方法，照抄即 AttributeError。
+   ⇒ `AGENTS.md` 是禁写面（本役全员禁写），**登记交 Owner 改一字**，不自行修宪。
+
+- **该车道同时判自己"过门 ≠ 能跑"**：`git grep "zephyr.ai_layer" -- "src/**/*.py"` 排除自家目录 = **零 import**
+  ⇒ **本族只写不读，判红不判绿**，且 12 项测试全在 `test_dedup.py`（`gate/kpi/card_store/intake_events` 四模块零测试）。
+  ⇒ 这正是六向第 ④ 向的标准红例，**没有为了交工造假消费者**，记为房内标准。
+- **顺带发现两处测试残留**：PG 里 `ai_intake_test_smoke` / `ai_intake_test_smoke2` 两个 schema（各 12 件）。
+  清理属破坏性操作 ⇒ **登记，不自行删**。与 §9.6"测试禁写生产路径"同族——**这条也没有门禁**。
+- **★ 总包自我入账（同一错误我今夜第二次）**：我落控制文档时用了一次
+  `git add docs/_working/fullflow_campaign/`（**目录级 add**），正是我写进手册、并反复要求车道执行的
+  "永不 `git add -A`／只具名清单"的反面。后果：把 `skeleton/04_sixway_*`（z-verifier3 判"已知失真、刻意不入库"）
+  等 8 件一起推进了 index。已逐件 `git restore --staged` 撤回，提交面仍只含我具名的 4 件（`dd6d7ef16f` 归属已核）。
+  ⇒ **规则对制定者同样有效**，且这是"要求别人做、自己做反"的典型，写入 Max 清单 §7 供复核。
+
+## 6.18 R-070 · close1 交工后阵亡（第 11 条）：两轮回归 **3 红 → 1 红**，剩最后一条收口红
+
+`st-ff-close1-20260918` 落 2 笔（`73ac06b1fe` 修 R-055b 照出的考试正对照红 · `7c420513fe` 处方册+两轮台账），
+随后在 150 轮上限阵亡（无终报，但**台账与处方已在 HEAD**）。它自己跑的两轮：
+
+| 轮 | 目录数 | 有问题的目录 |
+|---|---|---|
+| round1 | 16 | 3 个：`tests/backtest` 1 红 · `tests/governance/commit_gates` 3 红 · `tests/security` 1 红 |
+| round2 | 16 | **1 个**：`tests/backtest` 1833 collected / **1 failed** / 1832 passed（278s） |
+
+- **剩的唯一一条红 = `tests/backtest/test_sim_paper_ledger.py::test_replay_pipeline_consistent`**
+  （`assert res["rows"] and res["events"]` ⇒ **rows 非空、events 空表**）。总包 00:5x 单跑复现，日志三条线索：
+  ① `crisis_gate[l3] state=crisis p_r10=0.600 L3 entry→cash` ⇒ **危机闸在拦**；
+  ② `CRITICAL 告警外发未全部送达 action=blocked reason=enabled=false endpoints=[]`
+     ⇒ **这是我们今晚刚落的 `0808dd8757` 在正常工作**（无端点即 fail-closed 出声），**不是它坏了**；
+  ③ `crisis_gate.py:402 crisis_gate_log 留痕失败: 'str' object has no attribute 'year'`
+     ⇒ **一条独立真缺陷**（写留痕时把日期当 datetime 用）。
+- **已派 `st-ff-last-20260918` 收最后一条**：要求先判"空事件是正确行为被当成失败、还是今晚 R-055a 加严照出来的真实行为改变"，
+  **重做 A/B 不沿用前手结论**，并禁止用"删断言/`xfail`/放宽危机闸"消红（#273/#321）。
+- **该车道关了一条假绿通道，方法值得记**：旧夹具走 `map_exam_verdict` 的默认参数 `n_dims_evaluated=3`
+  ⇒ **等于替被测件谎报"三维已评满"**；它改成按检测器实报的 `not_assessed_dimensions` 反推。
+  并且它**否决了"把断言改成不可上线"的方案**，理由=那会删掉 `VERDICT_PASS` 唯一正对照 ⇒ **覆盖面净减少**（放松方向）。
+  ⇒ 这是本役第 N 次出现"修法看似加严、实则减少覆盖"，判据"覆盖面不得净减少"应固化。
+- **R-067 的教训被下一条车道直接引用**：`--basetemp` 父目录未建导致整目录假红——
+  close1 与 last 都按"整片红 + 耗时异常短 ⇒ 先怀疑脚本"的判据走，**说明入账有效**。

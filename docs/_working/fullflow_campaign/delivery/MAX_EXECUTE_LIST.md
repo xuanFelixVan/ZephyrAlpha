@@ -151,6 +151,31 @@ completes_when: 全流通战役收官且本清单每项都被执行或明确移�
 
 ---
 
+## 00:3x 增补两条（R-069 交回的，判据明确、无方向分叉）
+
+### B18 ★ 给 `GATE-ERRCODE-CONSISTENCY` 补 own-scope（它现在违反宪法 §3.1）
+- **实测**：`_check(gateway, files, **_kwargs)` **吞掉 kwargs、无 own-scope、观测面=全 git index**
+  ⇒ 车道会被**他人 staged** 的未在册错误码连坐（本役 `paper_hedge_leg.py` 的 `ZA-RK-0075` 差点拦死一条无关批次，
+  **只因对方车道先落地把它变成"存量"才侥幸自解**）。
+- **改法**：按 `_build_own_scope` 模式（宪法 §3.1 房内标准）改成本批 diff 作用域，外来 staged 违规走 warn+审计（`_audit_foreign_staged`）；
+  **或**按 §3.3 显式登记"全仓扫描"理由（结构校验型允许，但要登记）。
+- **同根先例**：`604f414846`（"全仓对账门禁观测面=git index + HEAD 基线差分 + 全绿短路"）
+  ⇒ **这条门是那次治本的漏网之鱼**，先读那次改动为什么没覆盖它。
+- **验收**：造一条"他人 staged 未在册码" ⇒ 本批提交**不被连坐**且留下 warn 审计；自家批内引入未在册码 ⇒ 必拦。
+
+### B19 把"提交前预跑进程内门禁"的载体入库（`gate_prerun.py`，下一役标准动作）
+- **来源**：`st-ff-ailayer3` 自写。`run_gate_chain.py` 只聚合**脚本型**子门禁，
+  **预跑不到本役任何一条死因门**（它们都是进程内 `GateSpec`）；它遍历 **113 个 GateSpec**、
+  按真门调用形 `spec.check(gateway, files, **flags)` 只读预跑，把死信在入队前清到 0。
+- **现状**：脚本躺在 `.runtime/tmp/`（TTL）。已三处留档：`.runtime/tmp/ff-recon/backup_prerun/gate_prerun.py`（97 行）
+  + `G:/zephyr_cold/30_corpus/fullflow_harvest/prerun_20260919/`。
+- **改法**：搬进 `scripts/governance/` 的**子包**（ARCH-031：`governance/` 根禁新增 .py），走新件三件套；
+  并写进 `CONSTRUCTION_DISCIPLINE.md` §2 作为**入队前的标准一步**（R-065a 手法保留，载体换掉）。
+- **三条使用坑（务必进 docstring）**：① 不传 `session_id` ⇒ SESSION/WORKTREE/HELD-OVERLAP/CLAIM-REQUIRED 四类**伪红**；
+  ② 不调 `claim_files` ⇒ CLAIM-REQUIRED 伪红；③ **`claim_files` 返回的是"成功清单"**（失败者被排除），别读成冲突清单。
+
+---
+
 ## 附：本清单的产生方式
 1. 各车道回报的 §"未达成 / 处方 / 指派"段 + 台账 `COORDINATION_LEDGER.md` R-039~R-057 的落点。
 2. `dead_inventory.py`（**只读可重跑**）扫出的 12 件 GONE + 44 件 on-disk-unlanded；
