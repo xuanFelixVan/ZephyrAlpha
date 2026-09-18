@@ -519,11 +519,13 @@ def attribute_trade_costs(
             symbol_day[(sym, ts)] += 1
 
         # ---- 分层与两腿成本 ----
-        adv = adv_map.get(sym)
-        if adv is not None and adv > 0:
+        adv_raw = adv_map.get(sym)
+        adv_is_real = adv_raw is not None and adv_raw > 0
+        if adv_is_real:
             adv_hits += 1
+            adv = adv_raw
         else:
-            adv = g_float  # 保守退化：小名义 → 高成本层
+            adv = g_float  # 保守退化：小名义 → 高成本层（仅用于分层）
         try:
             tier = liquidity_tier(adv)
         except CostCalibrationError as exc:
@@ -532,7 +534,11 @@ def attribute_trade_costs(
         tier_notional[tier] += g_float
         slip_bps = float(SLIPPAGE_TIER_BPS[tier])
         slip_cost += g_float * slip_bps / 1e4
-        participation = g_float / max(adv, TIER_ADV_MEDIAN_YUAN[tier] * 1e-12)
+        # rpt_b11 P1：旧码分母=max(g, tier_median×1e-12)，ADV 缺失时 g/max(g,ε)≡1.0
+        # → 落在标定拟合域外 2 个数量级，冲击腿 199.7bp/边（55× 虚高）。
+        # 对齐 docstring 契约：ADV 缺失时分母退化到该层代表 ADV。
+        part_denom = adv if adv_is_real else float(TIER_ADV_MEDIAN_YUAN[tier])
+        participation = g_float / max(part_denom, TIER_ADV_MEDIAN_YUAN[tier] * 1e-12)
         calibrated_imp_bps = impact_level_for_tier(tier).cost_bps_at(min(max(participation, 0.0), 1.0))
         imp_cost_calibrated += g_float * calibrated_imp_bps / 1e4
         if impact_bps_by_trade is not None:
