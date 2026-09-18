@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/fix_n06_module_id_prefix.py | §
 # [MODULE] scripts.governance.d3_metadata.fix_n06_module_id_prefix
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] scope prefix mapping is append-only; number assignment must be unique per scope
 # [MODIFY-GUARD] SCOPE_PREFIX_RULES changes require Owner approval
 # [CONSUMERS] check_naming_convention.py N-06; validate_module_id.py DIM-3

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_DEEPSEEK_API
 # [MODULE]# [MODULE] scripts.construction.test_deepseek_api
-# [DOMAIN]
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] imported

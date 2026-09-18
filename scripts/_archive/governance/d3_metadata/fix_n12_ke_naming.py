@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/fix_n12_ke_naming.py | §
 # [MODULE] scripts.governance.d3_metadata.fix_n12_ke_naming
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] N-12 target pattern: ^ke-\d{3}-[a-z][a-z0-9-]+\.md$; sequence numbers are 3-digit zero-padded starting from 001; content never modified
 # [MODIFY-GUARD] _CATEGORY_PREFIXES, _CATEGORY_AND_SECTION_RE changes require Owner approval
 # [CONSUMERS] check_naming_convention.py N-12; pre_commit GATE-11

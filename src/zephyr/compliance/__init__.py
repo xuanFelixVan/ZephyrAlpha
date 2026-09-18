@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-CMP-compliance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L10-001 | docs/03_modules/_domain_compliance/blueprint.md
 # [MODULE] zephyr.compliance
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] frozen

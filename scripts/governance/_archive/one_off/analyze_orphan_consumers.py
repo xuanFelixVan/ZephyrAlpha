@@ -4,7 +4,7 @@ from __future__ import annotations
 
 # [BLUEPRINT] MOD-GOV_ANALYZE_ORPHAN_CONSUMERS
 # [MODULE]# [MODULE] scripts.governance.analyze_orphan_consumers
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

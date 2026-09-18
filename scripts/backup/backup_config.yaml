@@ -5,6 +5,7 @@
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_GOVERNANCE
 # --- 治理锚定结束 ---
 
 # 灾备备份系统配置 v2.1.0 (versioned vault + robocopy + CH incremental, 2026-09-14)

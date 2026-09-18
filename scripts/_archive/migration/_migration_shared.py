@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
 # [MODULE] scripts.migration._migration_shared
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 所有搬家脚本共享的数据加载和批次筛选逻辑
 # [MODIFY-GUARD] mapping/import格式变更时需同步更新
 # [CONSUMERS] preflight_check; create_target_dirs; execute_move; update_imports; update_non_import_refs; verify_batch; rollback_batch; lock_batch

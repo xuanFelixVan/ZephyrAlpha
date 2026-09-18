@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # ZephyrAlpha — Owner 离线协议 (盲点 #42)
 # 当 Owner 连续 7 天以上不活跃时自动激活

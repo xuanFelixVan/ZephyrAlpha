@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.3
 # [MODULE] scripts.migration.update_non_import_refs
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 扫描蓝图头部/注册表/YAML/__init__.py中的旧路径引用并替换
 # [MODIFY-GUARD] 新增引用类型需同步TC-6-3~6验收标准
 # [CONSUMERS] TC-6-3/4/5/6非import引用更新步骤

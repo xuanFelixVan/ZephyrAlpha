@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-INF-draft | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md
 # [MODULE] zephyr.infrastructure.draft
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_GENERATE_DOMAIN_DOC
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_domain_doc
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] event_driven

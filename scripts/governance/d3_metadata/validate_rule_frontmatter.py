@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d3_metadata/validate_rule_frontmatter.py | §
 # [MODULE] scripts.governance.d3_metadata.validate_rule_frontmatter
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS] phase_manager;pre_commit
 # [STARTUP] manual

@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # MOD-INF-001 M-18 — 容量 SLI/SLO 注册表（机读 SSoT）
 # 对齐: docs/03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md §13 示例

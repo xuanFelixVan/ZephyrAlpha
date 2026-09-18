@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # dr_policy.yaml — 灾难恢复策略真源（RTO/RPO 定义，5.33.5 治本）
 # 真源说明：本文件是 RTO/RPO 量化目标的唯一真源（SSoT）。operations_architecture.md

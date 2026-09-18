@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_GENERATE_NAVIGATION_INDEX
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_navigation_index
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

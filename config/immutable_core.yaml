@@ -5,6 +5,7 @@
 # safety_level: H
 # ai_autonomy: human_gated
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # immutable_core.yaml — 不可变核心验证器配置（SSoT 真源）
 # 真源说明：ALWAYS_BLOCKED_OPERATIONS / PROTECTED_PATHS 的唯一真源。

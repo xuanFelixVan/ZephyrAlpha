@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_PERF_DEPGRAPH_BASELINE
 # [MODULE]# [MODULE] scripts.governance.perf_depgraph_baseline
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

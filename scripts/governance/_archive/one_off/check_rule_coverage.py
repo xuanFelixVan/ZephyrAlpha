@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_CHECK_RULE_COVERAGE
 # [MODULE]# [MODULE] scripts.governance.check_rule_coverage
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # ZephyrAlpha — 外部看门狗配置
 # 真源：盲点 #55 外部取证审计

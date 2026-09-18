@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # ============================================================================
 # ZephyrAlpha 容量参数统一配置（SSoT — Single Source of Truth）

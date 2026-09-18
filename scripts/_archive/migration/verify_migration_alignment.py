@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
 # [MODULE] scripts.migration.verify_migration_alignment
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] --dry-run MUST NOT modify any file; exit 0 only when all alignments verified
 # [MODIFY-GUARD] migration-registry.yaml (read-only); panorama YAML (read-only)
 # [CONSUMERS] safe_delete_operational.py; DM-310; migration pipeline

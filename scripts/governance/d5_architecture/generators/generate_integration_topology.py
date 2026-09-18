@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_GENERATE_INTEGRATION_TOPOLOGY
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_integration_topology
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

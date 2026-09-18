@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_GENERATE_CAPABILITY_HEATMAP
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_capability_heatmap
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

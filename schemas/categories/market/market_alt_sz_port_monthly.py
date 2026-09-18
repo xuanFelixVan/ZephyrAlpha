@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-L04-001
 # [MODULE] schemas.categories.market.market_alt_sz_port_monthly
-# [DOMAIN] D_DATA
+# [DOMAIN] D_MKT_DATA
 # [DEPENDENCIES] none
 # [CONSUMERS] apply_market_tables_ddl; zephyr.data.implementations.akshare_alt_provider
 # [STARTUP] imported

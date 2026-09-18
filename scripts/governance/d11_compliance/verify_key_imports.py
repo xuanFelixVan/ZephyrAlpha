@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_VERIFY_KEY_IMPORTS
 # [MODULE]# [MODULE] scripts.governance.verify_key_imports
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

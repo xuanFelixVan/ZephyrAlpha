@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.8
 # [MODULE] scripts.migration.execute_move
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 按文件逐个复制(非目录级移动); 复制到新位置旧文件暂不删除; 每步记录migration_log; 失败不中断; 排除scripts/migration/和data/asset_index/
 # [MODIFY-GUARD] log格式变更需同步rollback_batch.py
 # [CONSUMERS] TC-6-3/4/5/6搬家步骤

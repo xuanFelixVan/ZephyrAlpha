@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.8
 # [MODULE] scripts.migration.unnest_from_mcp_server
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 将integration/mcp_server/下的文件移回src/zephyr/; 仅复制不删除源; 排除scripts/migration/和data/asset_index/
 # [MODIFY-GUARD] 需同步generate_path_migration_mapping.py
 # [CONSUMERS] TC-6-3前置步骤

@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.4
 # [MODULE] scripts.migration.domain_prefix_import_fix
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 从域目录结构推导old->new模块路径映射; 域前缀插入; 原子写入; 并行
 # [MODIFY-GUARD] 域目录变更需同步
 # [CONSUMERS] TC-6-4 import域前缀修复

@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.4
 # [MODULE] scripts.migration.test_import_fix
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 磁盘索引+后缀剥离+后缀匹配; 最长前缀替换; 原子写入; 并行
 # [MODIFY-GUARD] 域目录结构变更需同步
 # [CONSUMERS] TC-6-7 tests/ import修复

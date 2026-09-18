@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: human_gated
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # title: 脚本退役状态
 # status: active

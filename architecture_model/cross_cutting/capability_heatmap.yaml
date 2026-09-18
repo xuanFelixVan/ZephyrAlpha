@@ -5,6 +5,7 @@
 # safety_level: L
 # ai_autonomy: human_gated
 # ttl: permanent
+# [DOMAIN] D_GOVERNANCE
 # --- 治理锚定结束 ---
 # v3.0.1: 50域×10能力域矩阵（depgraph派生）
 module_id: MOD-GOVERNANCE

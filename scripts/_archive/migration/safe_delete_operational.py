@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §
 # [MODULE] scripts.migration.safe_delete_operational
+# [DOMAIN] D_GOVERNANCE
 # [TTL] task_bound
 # [INVARIANTS] --dry-run MUST NOT modify/delete any file; MUST NOT run without verify_migration_alignment exit 0
 # [MODIFY-GUARD] panorama YAML (lifecycle field updates); migration-registry.yaml (status updates)

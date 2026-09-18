@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_GENERATE_CROSS_DOMAIN_MATRIX
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_cross_domain_matrix
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

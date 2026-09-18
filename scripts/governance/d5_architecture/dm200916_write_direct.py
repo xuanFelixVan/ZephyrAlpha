@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_DM200916_WRITE_DIRECT
 # [MODULE] scripts.governance.d5_architecture.dm200916_write_direct
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

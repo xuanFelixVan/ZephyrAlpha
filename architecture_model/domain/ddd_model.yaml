@@ -5,6 +5,7 @@
 # safety_level: L
 # ai_autonomy: human_gated
 # ttl: permanent
+# [DOMAIN] D_GOVERNANCE
 # --- 治理锚定结束 ---
 module_id: MOD-GOVERNANCE
 schema_version: "2.1"

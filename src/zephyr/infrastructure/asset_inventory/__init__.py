@@ -1,6 +1,7 @@
 # [A_module] module_id=MOD-INF-asset_inventory | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-026 | docs/03_modules/_domain_infrastructure/asset_inventory/blueprint.md
 # [MODULE] zephyr.infrastructure.asset_inventory
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
 # [STABILITY] evolving

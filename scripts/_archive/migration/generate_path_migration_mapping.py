@@ -1,5 +1,7 @@
 # [BLUEPRINT] MOD-INF-037 | docs/02_enterprise_architecture/phase_d_full_test_construction_plan.md | §6.8
 # [MODULE] scripts.migration.generate_path_migration_mapping
+# [TTL] permanent
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] 输出YAML格式; 数据源=depgraph.db; 每条mapping是单个文件(非目录); domain_group从path-tree补充; 同一源文件多模块声明用最具体优先; 目标路径冲突用模块名消歧
 # [MODIFY-GUARD] mapping格式变更需同步STEP 6搬家脚本
 # [CONSUMERS] STEP 6 execute_move.py; update_imports.py; verify_batch.py

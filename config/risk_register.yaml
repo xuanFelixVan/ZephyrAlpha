@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # risk_register.yaml — 容量保障体系风险注册表（R1~R16）
 # 对标蓝图 §14 风险与缓解 + 多轮盲点审计扩展

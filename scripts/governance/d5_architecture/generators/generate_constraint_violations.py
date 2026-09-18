@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GOV_GENERATE_CONSTRAINT_VIOLATIONS
 # [MODULE]# [MODULE] scripts.governance.d5_architecture.generators.generate_constraint_violations
-# [DOMAIN]
+# [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
 # [CONSUMERS]
 # [STARTUP] manual

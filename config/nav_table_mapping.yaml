@@ -5,6 +5,7 @@
 # safety_level: M
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # nav_table_mapping.yaml — 七阶段流程 × 十维审计框架 × 十问 mantra 的机读配置 v1.1.0
 # 2026-08-17 AI-02 审计治本：原头部声明"AGENTS.md §5.2 SSoT + generate_nav_table.py 自动刷新"已失实——

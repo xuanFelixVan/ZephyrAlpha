@@ -5,6 +5,7 @@
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # SLA Targets — 服务等级协议目标（SSoT）
 # 消费者: zephyr.infrastructure.sla.sla_monitor

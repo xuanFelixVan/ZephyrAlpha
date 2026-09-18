@@ -5,6 +5,7 @@
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # ttl: task_bound
+# [DOMAIN] D_GOV_SCRIPTS
 # --- 治理锚定结束 ---
 # ---
 # module_id: SCRIPT_RETIREMENT-001

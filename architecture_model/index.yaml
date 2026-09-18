@@ -5,6 +5,7 @@
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # ttl: permanent
+# [DOMAIN] D_GOVERNANCE
 # --- 治理锚定结束 ---
 # v3.0.3: 治本版（b_track 从 layers/b_*.yaml 物理蓝图文件派生，消除手工模板第二真源）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。

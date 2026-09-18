@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §16
 # [MODULE] scripts.record_session_start_commit
-# [DOMAIN]
+# [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
 # [CONSUMERS] project_rules.md 进门流程; PostDocReviewScanner._get_session_start_commit()
 # [STARTUP] manual
