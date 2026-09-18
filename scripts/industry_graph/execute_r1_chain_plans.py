@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 方案文件缺失->exit 2; 目标链不存在->计入 skipped 不阻断
 # [TESTS] 2026-09-09 首跑: 撞名并入4/废弃29/新建母链3/补指向80; 幂等复跑零新增
-# [TTL] permanent
 """R1 链级治理方案执行器（Owner 2026-09-08 预审批准的四方案，链级处置）。
 
 执行对象（链级：改名/deprecated+merged_into/新建母链；节点与公司并集归并明细不在本通道，

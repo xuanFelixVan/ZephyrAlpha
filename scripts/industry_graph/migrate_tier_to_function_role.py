@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PG 不可达->exit 2; 零迁移行->exit 0(幂等语义)
 # [TESTS] 2026-09-09 首跑: 1433 行职能迁移/幂等复跑 0/引擎 S6 同 commit 切换后旧职能值清零
-# [TTL] permanent
 """tier 职能化迁移治理脚本（Owner 2026-09-09 v0.4 裁定）。
 
 语义收窄：位置（上游/中游/下游）是相对概念随链变，职能（设备/原料/工艺/服务）

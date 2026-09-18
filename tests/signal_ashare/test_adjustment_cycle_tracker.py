@@ -1,7 +1,6 @@
 # [BLUEPRINT] MOD-SIG-040 | (auto-injected by S4 reconciler，gw-tdm-20260909 修正为模块级 ID) | §
 # [TTL] permanent
 # [DOMAIN] D_ASHARE_SIGNAL
-# [TTL] permanent
 """调整周期追踪器 单元测试（市场级，复用 sector_adjustment 进度引擎，MOD-SIG-040）"""
 
 import pytest

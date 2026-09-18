@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PG 不可达->exit 2
 # [TESTS] 2026-09-09 首跑: s1=2/s5=256/s8垃圾链30/s12=1/s17=113/s19=17/s20豁免22
-# [TTL] permanent
 """P2 合规修复 + P1 尾项综合治理脚本（子命令，全幂等）::
 
     s1-rename        S1 残余 2 链改规范名

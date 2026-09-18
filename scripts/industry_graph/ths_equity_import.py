@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 原档缺失->exit 2; ingest 校验拒绝->exit 3(批次拒收不落库)
 # [TESTS] 2026-09-09 首跑: 621 条入 ig_equity_edge/263 缺口台账/幂等复跑
-# [TTL] permanent
 """THS 被投清单导入 ig_equity_edge（Owner 2026-09-09 裁定执行）。
 
 数据源：docs/_working/同花顺资料/个股1 (1).xlsx / 个股1 (2).xlsx（GBK TSV 伪 xlsx）

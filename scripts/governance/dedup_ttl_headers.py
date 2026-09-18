@@ -6,7 +6,7 @@
 # [CONSUMERS] RC-14 存量修复批（后续批：python scripts/governance/dedup_ttl_headers.py --apply）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只删确定性注入块（line1=BLUEPRINT+auto-injected prose 且 line2=# [TTL] permanent 且其后仍有 # [TTL] 行）；注入块是唯一 TTL 时禁删（防造无 TTL 半成品）；幂等（删后复跑零改动）；原头部真值（含 [TTL] limited）原样保留；禁启发式改写非注入形态的重复头（--scan-loose 只列清单归人工批）
+# [INVARIANTS] 只删确定性注入块（line1=BLUEPRINT+auto-injected prose 且 line2=# [TTL] permanent 且其后仍有 # [TTL] 行）；注入块是唯一 TTL 时禁删（防造无 TTL 半成品）；幂等（删后复跑零改动）；原头部真值（含 [TTL] limited）原样保留；禁启发式改写非注入形态的重复头（--scan-loose 只列清单归人工批）；换行保真（BRK-086 治本）=读写一律按字节（read_bytes + splitlines(keepends) + write_bytes），禁文本模式整篇读写把 CRLF 折叠成 LF 造出差评级假差异
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
@@ -69,6 +69,10 @@ _INJECTED_LINE1_RE = re.compile(
 )
 _INJECTED_LINE2_RE = re.compile(r"^# \[TTL\] permanent\s*$")
 _TTL_LINE_RE = re.compile(r"^\s*#\s*\[TTL\]", re.M)
+# 形态 B（确定形态，非启发式）：文件自带 BLUEPRINT 头，头部注释块内出现第 2 条
+# `# [TTL] permanent` 重复行（S4 旧注入器把整块模板追加到头部块尾所致）。
+_BLUEPRINT_HEADER_RE = re.compile(r"^# \[BLUEPRINT\] ")
+_DUP_TTL_LINE_RE = re.compile(r"^# \[TTL\] permanent\s*$")
 
 
 def _iter_py_files(root: Path, only: set[str] | None = None) -> list[Path]:
@@ -101,39 +105,93 @@ def _iter_py_files(root: Path, only: set[str] | None = None) -> list[Path]:
     return files
 
 
+def _read_raw_lines(path: Path) -> list[bytes]:
+    """BRK-086 治本：按字节读并切行，保留每条物理行自己的换行符。
+
+    禁 read_text()/write_text() 整篇读写——文本模式的 universal-newlines 会把
+    CRLF 折叠成 LF，使"只删 1 行"的改动被 git 报成整篇重写（+N -(N±1) 差评级假差异，
+    毁 blame 且触 REGISTRY-MASS-DELETION 误判）。判定用解码后的视图，改写用字节。
+    """
+    return path.read_bytes().splitlines(keepends=True)
+
+
+def _decoded_view(raw_lines: list[bytes]) -> list[str]:
+    """仅供正则判定的文本视图：逐行解码并把行尾 CRLF 归一为 LF（不参与回写）。"""
+    return [ln.decode("utf-8", errors="replace").replace("\r\n", "\n") for ln in raw_lines]
+
+
+def _header_block_len(lines: list[str]) -> int:
+    """头部注释块长度：自 line0 起连续以 '#' 开头的行数（遇到首个非注释行即止）。"""
+    n = 0
+    for ln in lines:
+        if not ln.lstrip().startswith("#"):
+            break
+        n += 1
+    return n
+
+
+def _duplicate_ttl_index(lines: list[str]) -> int | None:
+    """形态 B 判定：头部块内 ≥2 条 `# [TTL] permanent` 时返回应删下标（最后一条）。
+
+    只删重复的最后一条、保留首条真值 → 幂等，且永不制造无 TTL 半成品；
+    头部块之外（如 docstring 里提到的 `[TTL]`）一律不参与。
+    """
+    span = _header_block_len(lines)
+    idx = [i for i in range(span) if _DUP_TTL_LINE_RE.match(lines[i])]
+    return idx[-1] if len(idx) >= 2 else None
+
+
+def _classify_injected_block(lines: list[str]) -> tuple[bool, str]:
+    """形态 A：整块前置注入（line1=BLUEPRINT(auto-injected)+line2=# [TTL] permanent）。"""
+    if not _INJECTED_LINE1_RE.match(lines[0]):
+        return False, "line1-not-injected-block"
+    if not _INJECTED_LINE2_RE.match(lines[1]):
+        return False, "line2-not-injected-ttl"
+    if not _TTL_LINE_RE.search("".join(lines[2:])):
+        return False, "injected-block-is-only-ttl"
+    return True, "duplicate-injected-block"
+
+
 def dedup_file(path: Path) -> tuple[bool, str]:
-    """对单文件执行去重（幂等）：命中重复注入块则删前两行，保原头部真值。
+    """对单文件执行去重（幂等）：删重复注入块或头部块内重复 TTL 行，保原真值与原始换行字节。
 
     :return: (是否改动, 说明)
     """
     hit, why = classify_file(path)
     if not hit:
         return False, why
-    lines = path.read_text(encoding="utf-8", errors="replace").splitlines(keepends=True)
-    path.write_text("".join(lines[2:]), encoding="utf-8", newline="")
-    return True, "dropped-injected-block"
+    raw_lines = _read_raw_lines(path)
+    if why == "duplicate-header-ttl-line":
+        idx = _duplicate_ttl_index(_decoded_view(raw_lines))
+        if idx is None:
+            return False, "already-clean"
+        kept = raw_lines[:idx] + raw_lines[idx + 1 :]
+        action = "dropped-duplicate-ttl-line"
+    else:
+        kept = raw_lines[2:]
+        action = "dropped-injected-block"
+    path.write_bytes(b"".join(kept))
+    return True, action
 
 
 def classify_file(path: Path) -> tuple[bool, str]:
-    """判定单文件是否为可去重形态。
+    """判定单文件是否为可去重形态（形态 A 优先，未命中再判形态 B）。
 
     :return: (是否命中, 说明)
     """
     try:
-        text = path.read_text(encoding="utf-8", errors="replace")
+        raw_lines = _read_raw_lines(path)
     except OSError as e:
         return False, f"read-failed:{e}"
-    lines = text.splitlines(keepends=True)
+    lines = _decoded_view(raw_lines)
     if len(lines) < 3:
         return False, "too-short"
-    if not _INJECTED_LINE1_RE.match(lines[0]):
-        return False, "line1-not-injected-block"
-    if not _INJECTED_LINE2_RE.match(lines[1]):
-        return False, "line2-not-injected-ttl"
-    rest = "".join(lines[2:])
-    if not _TTL_LINE_RE.search(rest):
-        return False, "injected-block-is-only-ttl"
-    return True, "duplicate-injected-block"
+    hit, why = _classify_injected_block(lines)
+    if hit:
+        return True, why
+    if _BLUEPRINT_HEADER_RE.match(lines[0]) and _duplicate_ttl_index(lines) is not None:
+        return True, "duplicate-header-ttl-line"
+    return False, why
 
 
 def loose_scan(root: Path, only: set[str] | None = None) -> list[dict]:
@@ -141,7 +199,7 @@ def loose_scan(root: Path, only: set[str] | None = None) -> list[dict]:
     report = []
     for path in _iter_py_files(root, only):
         try:
-            text = path.read_text(encoding="utf-8", errors="replace")
+            text = "\n".join(_decoded_view(_read_raw_lines(path)))
         except OSError:
             continue
         n = len(_TTL_LINE_RE.findall(text))
@@ -153,6 +211,7 @@ def loose_scan(root: Path, only: set[str] | None = None) -> list[dict]:
 
 
 def _parse_args() -> argparse.Namespace:
+    """_parse_args implementation."""
     parser = argparse.ArgumentParser(description="S4 重复 TTL 头去重（RC-14 存量修复）")
     parser.add_argument("--root", default=str(REPO_ROOT), help="仓库根（默认自动探测）")
     parser.add_argument("--scan", action="store_true", help="只出清单统计")
@@ -168,6 +227,7 @@ def _parse_args() -> argparse.Namespace:
 
 
 def _load_only_files(files_arg: str | None) -> set[str] | None:
+    """_load_only_files implementation."""
     if not files_arg:
         return None
     return {
@@ -178,21 +238,31 @@ def _load_only_files(files_arg: str | None) -> set[str] | None:
 
 
 def _collect_hits(root: Path, only: set[str] | None, limit: int) -> list[dict]:
+    """_collect_hits implementation."""
     hits: list[dict] = []
     for path in _iter_py_files(root, only):
         hit, _why = classify_file(path)
         if not hit:
             continue
         rel = path.relative_to(root).as_posix()
-        lines = path.read_text(encoding="utf-8", errors="replace").splitlines(keepends=True)
-        injected_id = _INJECTED_LINE1_RE.match(lines[0]).group("id")  # noqa: B905 — 已过 classify
-        hits.append({"file": rel, "injected_id": injected_id, "action": "drop-first-2-lines"})
+        lines = _decoded_view(_read_raw_lines(path))
+        # 与 dedup_file 用同一判据选动作，避免 dry-run 清单与实际改写口径分叉
+        shape_a, _why = _classify_injected_block(lines)
+        matched = _INJECTED_LINE1_RE.match(lines[0]) if shape_a else None
+        hits.append(
+            {
+                "file": rel,
+                "injected_id": matched.group("id") if matched else "header-block-dup",
+                "action": "drop-first-2-lines" if shape_a else "drop-duplicate-ttl-line",
+            }
+        )
         if limit and len(hits) >= limit:
             break
     return hits
 
 
 def _apply_hits(root: Path, hits: list[dict]) -> int:
+    """_apply_hits implementation."""
     failed = 0
     for h in hits:
         path = root / h["file"]
@@ -209,6 +279,7 @@ def _apply_hits(root: Path, hits: list[dict]) -> int:
 
 
 def _print_dry_run_preview(hits: list[dict]) -> None:
+    """_print_dry_run_preview implementation."""
     for h in hits[:30]:
         print(f"  [dry-run] {h['file']} (injected {h['injected_id']})")
     if len(hits) > 30:
@@ -216,6 +287,7 @@ def _print_dry_run_preview(hits: list[dict]) -> None:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     args = _parse_args()
 
     root = Path(args.root).resolve()

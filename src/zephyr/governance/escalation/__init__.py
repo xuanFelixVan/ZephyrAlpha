@@ -1,7 +1,6 @@
 # [BLUEPRINT] MOD-INF-021 | (auto-injected by S4 reconciler) | §
 # [TESTS] tests/infrastructure/test_delegation_safety.py; tests/infrastructure/adversarial/test_escalation_adversarial.py; tests/infrastructure/escalation/test_escalation_e2e.py; tests/infrastructure/escalation/test_escalation_engine.py; tests/infrastructure/escalation/test_escalation_hooks.py  # 2026-09-05 STEWARD B20 重锚：AI-00 修复脚本 src. 前缀 bug 漏网（AST/patch 直查 5 个测试）
 # [TTL] permanent
-# [TTL] permanent
 # 代理包：将 zephyr.governance.escalation 重定向到实际模块
 # 测试文件导入 from zephyr.governance.escalation import EscalationEngine, RuleCategory, ...
 # 实际定义在 escalation_engine.py 和 escalation_models.py

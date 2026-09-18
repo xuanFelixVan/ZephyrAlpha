@@ -1,7 +1,6 @@
 # [BLUEPRINT] MOD-POS-027 | (auto-injected by S4 reconciler，gw-tdm-20260909 修正为模块级 ID) | §
 # [TTL] permanent
 # [DOMAIN] D_POSITION
-# [TTL] permanent
 """MOD-POS-027 pyramiding_rules 单元测试（红蓝对抗：红-边界/红-竞态语义/红-契约）。"""
 
 from __future__ import annotations

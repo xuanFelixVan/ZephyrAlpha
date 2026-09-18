@@ -325,3 +325,125 @@ class TestDedupTool:
         monkeypatch.setattr(sys, "argv", ["dedup_ttl_headers.py", "--apply", "--dry-run"])
         args2 = tool._parse_args()
         assert args2.dry_run is True and args2.apply is True  # main 内 apply_mode= dry-run 胜
+
+
+_BRK086_TOOL = _PROJECT_ROOT / "scripts" / "governance" / "dedup_ttl_headers.py"
+
+
+def _brk086_git(repo: Path, *args: str):
+    """临时仓 git 调用：关 autocrlf 与 hooksPath，保证字节口径可复现（BRK-086 钉）。"""
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    return run_subprocess_hidden(
+        ["git", "-c", "core.autocrlf=false", "-c", "core.hooksPath=", *args],
+        cwd=str(repo),
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
+
+
+def _brk086_make_crlf_repo(repo: Path, n_body_lines: int = 9) -> Path:
+    """造一个 HEAD 侧为 CRLF 的小仓，工作文件的头部块含第 2 条重复 TTL 行（BRK-086 复现夹具）。
+
+    形态与仓内 31 件存量一致：line1 是文件自带的 BLUEPRINT 头（非 auto-injected），
+    头部块尾部多出一条 `# [TTL] permanent` → 真实改动恰为删 1 行。
+    """
+    header = [
+        "# [BLUEPRINT] GREATWALL-BRK086 | (fixture) | §",
+        "# [TTL] permanent",
+        "# [MODULE] dup_crlf",
+        "# [TTL] permanent",
+    ]
+    body = [f"VALUE_{i} = {i}" for i in range(n_body_lines)]
+    target = repo / "dup_crlf.py"
+    target.write_bytes(("\r\n".join(header + body) + "\r\n").encode("utf-8"))
+    assert _brk086_git(repo, "init", "-q").returncode == 0
+    _brk086_git(repo, "config", "user.email", "brk086@example.invalid")
+    _brk086_git(repo, "config", "user.name", "brk086")
+    assert _brk086_git(repo, "add", "--", "dup_crlf.py").returncode == 0
+    committed = _brk086_git(repo, "commit", "-q", "--no-verify", "-m", "seed CRLF baseline")
+    assert committed.returncode == 0, committed.stderr
+    return target
+
+
+class TestDedupLineEndingFidelityBrk086:
+    """BRK-086 换行保真钉：去重只许删目标行，禁把 CRLF 折叠成 LF（差评级假差异）。
+
+    能红判据：把改写改回文本模式整篇读写（read_text + write_text），
+    `test_apply_on_crlf_file_reports_plus_zero_minus_one` 即以 +12 -13 形态失败
+    （实测修前为 `+N -(N±1)` 的整篇重写），字节保真用例同时失败。
+    """
+
+    def test_apply_on_crlf_file_reports_plus_zero_minus_one(self, tmp_path):
+        """CLI 端到端：对 CRLF 编码 .py 跑 --apply 后 git diff --numstat 必须是 +0 -1。"""
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        target = _brk086_make_crlf_repo(tmp_path)
+        before = target.read_bytes()
+        assert before.count(b"\r\n") == before.count(b"\n")  # 前置：全篇 CRLF
+
+        run = run_subprocess_hidden(
+            [sys.executable, str(_BRK086_TOOL), "--root", str(tmp_path), "--apply"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        assert run.returncode == 0, f"apply 失败 rc={run.returncode}\n{run.stdout}\n{run.stderr}"
+
+        after = target.read_bytes()
+        stray_lf = after.count(b"\n") - after.count(b"\r\n")
+        assert stray_lf == 0, f"--apply 改写了换行符：{stray_lf} 行由 CRLF 变成 LF（BRK-086 复发）"
+
+        numstat = _brk086_git(tmp_path, "diff", "--numstat", "--", "dup_crlf.py")
+        assert numstat.returncode == 0, numstat.stderr
+        fields = numstat.stdout.split("\t")
+        assert len(fields) == 3, f"numstat 异常（可能被报成整篇重写）: {numstat.stdout!r}"
+        added, removed = int(fields[0]), int(fields[1])
+        assert (added, removed) == (0, 1), (
+            f"真实只差 1 行却报成 +{added} -{removed}：换行污染回归（BRK-086），"
+            "必须是 +0 -1"
+        )
+
+        # 幂等复跑：二次 --apply 不得再动字节，diff 仍为 +0 -1
+        again = run_subprocess_hidden(
+            [sys.executable, str(_BRK086_TOOL), "--root", str(tmp_path), "--apply"],
+            cwd=str(tmp_path),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+        assert again.returncode == 0, again.stderr
+        assert target.read_bytes() == after, "复跑 --apply 必须零改动（幂等）"
+
+    def test_dedup_file_preserves_per_line_ending_bytes(self, tmp_path):
+        """单元口径：删前两行注入块，其余每一行的字节（含各自换行符）逐字不变。"""
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location("dedup_ttl_headers_brk086", _BRK086_TOOL)
+        tool = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(tool)
+
+        f = tmp_path / "mixed.py"
+        original = f.with_suffix(".orig")
+        payload = (
+            "# [BLUEPRINT] MOD-BRK086 | (auto-injected by S4 reconciler) | §\r\n"
+            "# [TTL] permanent\r\n"
+            "# [MODULE] mixed\r\n"
+            "# [TTL] permanent\n"
+            "A = 1\r\n"
+            "B = 2\n"
+        )
+        f.write_bytes(payload.encode("utf-8"))
+        original.write_bytes(payload.encode("utf-8"))
+
+        changed, _why = tool.dedup_file(f)
+        assert changed is True
+
+        kept_tail = original.read_bytes().splitlines(keepends=True)[2:]
+        assert f.read_bytes() == b"".join(kept_tail), "保留部分必须与原始字节逐字相同（含 CRLF/LF 混排）"
+        assert f.read_bytes().count(b"\r\n") == 2, "原 CRLF 行必须仍是 CRLF"

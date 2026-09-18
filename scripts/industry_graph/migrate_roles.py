@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PG 不可达->exit 2
 # [TESTS] 2026-09-09 首跑: 9180 行归一/幂等复跑 0/引擎 S10 清零
-# [TTL] permanent
 """S10 role 归一治理脚本（Owner 2026-09-09 五值裁定：龙头/核心/主要/参与/提及）。
 
 映射规则（机械语义，全表落盘 role_migration.yaml）::

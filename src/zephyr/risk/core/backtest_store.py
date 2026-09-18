@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidBacktestStoreError; StateCorruptError(读取损坏上抛)
 # [TESTS] tests/risk/test_backtest_store.py
-# [TTL] permanent
 
 """
 Backtest Store — VaR 回测/基线/双轨 P&L/entry_var 持久化门面 (36号 §3.4/§3.13/§3.18)

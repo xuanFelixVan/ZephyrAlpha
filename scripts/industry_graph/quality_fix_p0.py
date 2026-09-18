@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] PG 不可达->exit 2
 # [TESTS] 2026-09-09 首跑: s15=1874/s4=129/s16=105/s14 甄别关闭1898+豁免1; 引擎 S4/S14/S15/S16 清零
-# [TTL] permanent
 """Phase2 P0 污染源清除治理脚本（SOP §12.3 优先级1，SOP v1.5.0）。
 
 子命令（全部幂等，PIT 关闭=唯一处置，零物理 DELETE）::

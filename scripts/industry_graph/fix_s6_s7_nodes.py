@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 方案文件缺失->exit 2
 # [TESTS] 2026-09-09 首跑: tier-plan 380落地+306豁免; strip 686保留+2225墓碑; dedupe 2225; 引擎 S6/S7/S9 清零
-# [TTL] permanent
 """S6 tier 方案落地 + S7 后缀名剥离合并治理脚本。
 
 子命令::

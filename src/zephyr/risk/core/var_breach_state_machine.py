@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidVarBreachConfigError; StateCorruptError(快照损坏上抛)
 # [TESTS] tests/risk/test_var_breach_state_machine.py
-# [TTL] permanent
 
 """
 VaR Breach State Machine — VaR breach 恢复/复位状态机 (36号 §3.15)

@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS] self
-# [TTL] permanent
 """tests for sync_registry_from_blueprints.py — registry 派生件自举（bootstrap）回归锚。
 
 钉住 2026-09-16 治本：registry 被裁定转 gitignore 派生件后，"文件不存在"是干净 worktree
