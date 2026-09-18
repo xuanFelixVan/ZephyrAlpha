@@ -47,6 +47,27 @@ python scripts/lock_files.py acquire <file> <sid>       # TTL=30min，消耗品�
 - claim/release/queue 命令**必须在主仓 cwd 执行**（在 worktree 里跑会落进 worktree 私有登记处 → 死信）。
 - 跨批续投同一文件**先重新 claim**。
 
+### 入队前标准一步：进程内门禁预跑（B19 载体，R-065a 手法保留）
+```bash
+python scripts/governance/meta/gate_prerun.py --session <sid> \
+  --files "<与 git_commit.py --files 同值的逗号清单>" \
+  --message-file .runtime/tmp/<sid>/msg_<批名>.md
+```
+- **为什么必须是标准一步**：`run_gate_chain.py` 只聚合**脚本型**子门禁，**预跑不到本役任何一条死因门**
+  （它们全是进程内 `GateSpec`）。本件遍历注册表全部 GateSpec、按 gateway 锁内的真调用形
+  `spec.check(gateway, files, **flags)` 只读预跑，把死信在入队前清到 0——它是**当前唯一能拦住
+  热册条目蒸发的观测面**（`batch_creation_tokens.py` 吃条目那次只有它抓到）。
+- **exit 1 就别入队**：明细里 `[FAIL ]` 是本批内容违规（修到 0 再投）；`[ENV ]` 是环境信号
+  （WORKTREE/SESSION/COMMIT-SCOPE/TRACKED-DRIFT，落地侧由 serializer/旗标处置，不计失败）；
+  `[ERROR ]` 是门自身抛异常，**同样计失败**，不许当噪声。
+- **三条坑（不读会误判整批）**：① 不传 `--session` ⇒ SESSION/WORKTREE/HELD-OVERLAP/CLAIM-REQUIRED
+  四类**伪红**（本件因此直接 exit 2 拒跑）；② 不做 claim 前移 ⇒ CLAIM-REQUIRED 伪红（默认已带
+  `claim_files`，`--no-claim` 才关）；③ **`claim_files` 返回的是"成功清单"**（失败者被排除），
+  本件打印的 `unclaimed` 才是差集，别把返回值读成冲突清单。
+- 判据真源只有一个：本件**不自带第二份门禁清单**，spec 快照来自 `gw._gate_registry.specs_sorted()`。
+  自检 `--self-check`（双跑：违规腿必红 + 干净腿必绿，否则 exit 3）——
+  **没被证明能红的检查器等于没有检查器**。
+
 ### 队列死信
 ```bash
 python scripts/commit_queue.py status
@@ -80,8 +101,13 @@ python scripts/governance/d3_metadata/add_module_translation.py --path <file> --
 ```
 - **翻译登记必须在主仓跑**（TRANSLATION-COVERAGE 读主仓工作区真源，worktree 里同批提交永远判"无 plain_zh"）。
 - depgraph 新文件门只查 `src/zephyr`+`scripts` 下新 **.py**。
-- `governance/` 根**禁新增 .py**（ARCH-031），一律进 `standards_governance/` 子包。
+- `governance/` 根**禁新增 .py**（ARCH-031），一律进子包。⚠️ 判据真身 `create_guard._check_governance_root`
+  的 `path.count("/")==3` 只匹配 `src/zephyr/governance/<name>.py`——**`scripts/governance/` 根不在硬拦面内**，
+  但房规同样禁根增：`scripts/governance/` 按功能子包归位（治理自检类进 `meta/`，标准族进 `standards_governance/`），
+  别为此发明新顶层结构。
 - .py 头部 15 字段全齐（含 TTL/ERROR_CONTRACT/TESTS）。**TTL-METADATA 扫 staged 全部 .py 含 tests/ 与 `__init__.py`** → 都要 `# [TTL] permanent`。
+- ★ 三件套齐了 ≠ 能过：入队前 MUST 跑 **§1「入队前标准一步」的 `scripts/governance/meta/gate_prerun.py`**
+  （进程内门只有它能预跑；`run_gate_chain.py` 抓不到）。
 
 ## 3. docs/_working 新 .md frontmatter（两门禁方向相反，一次写对）
 

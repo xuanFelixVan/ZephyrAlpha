@@ -55642,6 +55642,14 @@ entries:
   desc_en: ""
   plain_zh: "把标准与治理族的对应关系自动算成一张册，重跑即再生"
   responsibility_layer: governance
+- module_path: scripts/governance/meta/gate_prerun.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "门禁链入队前本地预跑器"
+  name_en: ""
+  desc_zh: "遍历全部进程内 GateSpec，按 gateway 锁内真调用形只读预跑并三分类输出"
+  desc_en: ""
+  plain_zh: "提交入队之前先在本地把一百多道进程内门禁真跑一遍，只读不提交，提前把会被拦的死信清成零"
+  responsibility_layer: governance
 
 battle_map_steps:
 - step_id: BM-BUY-05
