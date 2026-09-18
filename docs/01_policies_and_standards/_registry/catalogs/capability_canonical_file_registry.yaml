@@ -35891,4 +35891,8 @@ creation_tokens:
   token: fullflow-close1-close1-prescriptions-20260918
   created_by: st-ff-close1-20260918
   capability: fullflow-close1
+- file: docs/_working/2026-09-18-gate-identity-root-fix-plan.md
+  token: gate-identity-root-fix-2026-09-18-gate-identity-root-fix-plan-20260918
+  created_by: st-ruledisp-20260918
+  capability: gate_identity_root_fix
 di_seam_exemptions: []
