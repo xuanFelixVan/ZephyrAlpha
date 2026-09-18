@@ -36203,6 +36203,38 @@ creation_tokens:
   token: bizmine-alpha-mining-altdata-b-results-20260918
   created_by: st-bizmine-altb-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_narrow_exam/exam_card_01_tower_bottom.md
+  token: bizmine-alpha-mining-exam-card-01-tower-bottom-20260918
+  created_by: st-bizmine-patx-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_narrow_exam/exam_card_02_double_bottom.md
+  token: bizmine-alpha-mining-exam-card-02-double-bottom-20260918
+  created_by: st-bizmine-patx-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_narrow_exam/exam_card_03_tower_top.md
+  token: bizmine-alpha-mining-exam-card-03-tower-top-20260918
+  created_by: st-bizmine-patx-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_narrow_exam/exam_card_04_marubozu.md
+  token: bizmine-alpha-mining-exam-card-04-marubozu-20260918
+  created_by: st-bizmine-patx-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_narrow_exam/exam_card_05_shooting_star.md
+  token: bizmine-alpha-mining-exam-card-05-shooting-star-20260918
+  created_by: st-bizmine-patx-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_narrow_exam/exam_card_06_limit_up_flat.md
+  token: bizmine-alpha-mining-exam-card-06-limit-up-flat-20260918
+  created_by: st-bizmine-patx-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_narrow_exam/narrow_exam_report.md
+  token: bizmine-alpha-mining-narrow-exam-report-20260918
+  created_by: st-bizmine-patx-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_narrow_exam/pattern_narrow_results.csv
+  token: bizmine-alpha-mining-pattern-narrow-results-20260918
+  created_by: st-bizmine-patx-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
