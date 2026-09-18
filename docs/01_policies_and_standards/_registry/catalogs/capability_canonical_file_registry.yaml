@@ -36179,6 +36179,10 @@ creation_tokens:
   token: bizmine-alpha-mining-etft0-screen-results-20260918
   created_by: st-bizmine-etft0-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/tick_inventory_total.md
+  token: bizmine-alpha-mining-tick-inventory-total-20260918
+  created_by: st-bizmine-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
