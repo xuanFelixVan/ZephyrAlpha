@@ -882,4 +882,36 @@ gaps:
     primary_alternative: "相关表 alt_sz_reservoir_rain_day/month 与 station 同源待一并核查。"
     created: "2026-09-18"
 
+  # === 2026-09-18 红蓝夜验收补登（st-redblue-night-20260918 R5①：修复「声称已登记但实际缺失」）===
+  # ①provider docstring（akshare_alt_provider _fetch_futures_warehouse_receipt）声称"近端缺口登记
+  #   known_data_gaps"，实测登记缺失——本条补登闭环。
+  - id: "futures_warehouse_receipt_shfe_archive_cap"
+    table: "c1_market.futures_warehouse_receipt"
+    gap_type: "date_range"
+    start_date: "2025-11-18"
+    end_date: "2026-09-18"
+    date_column: "trade_date"
+    detection_threshold: 0  # 结构性缺口：SHFE 交易所维度整体停更，非行数阈值问题
+    status: "no_source"
+    root_cause: "SHFE 官网仓单归档接口自 2025-12 起 404（ak.futures_shfe_warehouse_receipt 实测 2026-09-18 复现），provider 归档窗口硬界 [_SHFE_ARCHIVE_START=2014-05-19, _SHFE_ARCHIVE_END=2025-11-30]；库内 SHFE 维度最后数据 2025-11-17（901,911 行无损），CZCE 维度日更正常至 2026-09-17。表级哨兵 max(trade_date) 由 CZCE 满足，SHFE 维度停更被表级新鲜度掩盖（同一张表内单维度停更盲区）。"
+    resolution_plan: "换源=SHFE 官网周报页/期货仓单日报新端点（data_source_onboarding_sop 换源流程），或按 F4 先例『平台停更留痕』降级留史；换源后 provider _SHFE_ARCHIVE_END 顺延。"
+    primary_alternative: "SHFE 901,911 行历史在库无损；CZCE 27 品种日更在续，产业链 ig_node_binding 仓单绑定（8 条）均挂 CZCE 品种，不受 SHFE 停更影响。"
+    created: "2026-09-18"
+
+  # ②J5 央行议息日历：管线活（ingest_ts 日更）但业务数据停更 323 天——哨兵 date_col=ingest_ts
+  #   掩盖业务停更（reservoir_level_source_stale 同型盲区），按 dividend_plan_miniqmt_retired
+  #   先例补登记（金十退役波及面 CAND-022）。
+  - id: "rate_decision_calendar_jin10_retired"
+    table: "c1_market.rate_decision_calendar"
+    gap_type: "date_range"
+    start_date: "2025-11-01"
+    end_date: "2026-09-18"
+    date_column: "decision_date"
+    detection_threshold: 0  # 决议行零新增（尾部预约行 rate_value=NULL 不构成新决议）
+    status: "no_source"
+    root_cause: "akshare macro_bank_*（金十口径）11 央行议息接口源端 2025-10 起退役（E12 波1 决定性发现，退役波及面登记 10_data_source_candidates DS-CAND-021/022）：Fed 决议止于 2025-10-30、BOE 2025-09-18，2026 年全零行。管线本身日更活（全量幂等重拉，ingest_ts 新鲜），哨兵 date_col 配 ingest_ts 按采集时间判活——业务日期 decision_date 停更 323 天不可见（reservoir 同型『任务活着但拉不到新数据』盲区）。红蓝独立复拉实测：接口返回与库内容逐行一致（294 行，DB 忠实转写，非管线数据错）。"
+    resolution_plan: "换源=东财 datacenter 宏观接口或各央行官网决议表（与 D3 宏观换源同配方）；换源批同步把哨兵 date_col 改 decision_date（业务时间锚）恢复真实新鲜度判定。"
+    primary_alternative: "11 央行历史决议 2,386 行在库无损（1991/1970 起）；停更窗内决议值可按央行官网公告回补。"
+    created: "2026-09-18"
+
 last_updated: "2026-09-18"
