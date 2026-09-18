@@ -1149,3 +1149,585 @@ z-newsrc 用 `__pycache__/*.pyc` 的 marshal 解出 24 个顶层函数名，证�
 **新旧路径双记**（`governance/rule_replay.py` + `governance/standards_governance/rule_replay.py`）。
 迁移后旧条目未清 ⇒ 属"退役未清"E 族同型，但**在总包独占的热册里**，
 **净删是 Owner 门位**（§7）⇒ **只登记不自行删**，进 (A) 类清单让 Owner/Max 拍。
+
+## 6.9 R-047 · z-rv1 交工（A/B 26 条全亲验）+ **BRK-004/005 是假断点** + 零入度无权威口径
+
+`st-ff-rv1-20260918`：26/26 条主证据命令逐字复跑，0 条未跑；交付 `lanes/census_reverify_AB.md`（233 行，已 `git add`）。
+四态：**仍成立 18 · 已闭合 5（004/005/020/021条件/022）· 口径不符 3（002/007/008）· 归属错 0 · 未可判 0**。
+
+- ★★ **BRK-004/005 = 假断点**：闭合 commit `49dde8fda5`（09-16 02:40）比普查落笔早两天；
+  普查引了 GOMAP 的**散文注记** `pipeline.layers[].disconnected.note_zh`，
+  而**同文件机器字段 `families.*.wiring` 早已是 `wired`**。
+  ⇒ **新立失效型（R-026 第十一型）**："引同文件散文注记作证据、不查同文件机器字段"。
+  **总包把自己 §0.1/0.2 的两条结论一并作废**（详见 Max 清单 §7.10(a)）。
+- ★ **零入度三口径互斥**：GOMAP 95 ｜ 裸 AST 1685/3480 ｜ `check_wiring_orphan.py` **报 0**
+  （而普查 §J.5 点名它当权威，其册 313 条 **304 条=97.1% 自免 exempt**、`generated_at` 停在 08-27）
+  ⇒ **"接线率"目前不可测**，这条排在 A11（全流通完成度判据）之前。
+- **BRK-007 的复现脚本自身是坏的**（`orphan_scan.py` 绝对路径比对 bug → `src modules: 0`），普查真值出自未归档的修正版；
+  **BRK-002 普查自相矛盾**（七族相加 90≠95）；**BRK-008 因果说反**（`最后同步 2026-08-17` 是幂等派生时间戳非快照年龄）。
+- **BRK-016 降级**：`position/position_reconciler` 确零入度，但同职责活件 `ex_core/position_reconciler`
+  被 4 处 import ⇒ 应改判"两份实现并存、僵尸那份在册 maturity=production"，**非保命级**。
+- **BRK-003 "整族"夸大**（L0 族 72 件中 24 孤儿）；BRK-015 实剩 7/8；BRK-011 "FBL 三域 213 节点" 0 命中。
+- ★★★ **最高优先移交项（炸雷，它只读未碰）**：`src/zephyr/risk/paper_hedge_leg.py` + `config/paper_hedge.yaml`
+  原本**均未跟踪**，而工作区 `src/zephyr/risk/__init__.py:72` 已 `from ...paper_hedge_leg import PaperHedgeLeg`
+  ⇒ **若 `__init__.py` 先落地而模块不在，`import zephyr.risk` 全域崩**（风控域全部消费者 + 提交门禁连坐）。
+  → **总包 22:0x 处置**：三件一次性 `git add`（`A`/`M` 同面），使其**必须同批落地**；
+  token 实测 `src/zephyr/risk/paper_hedge_leg.py` 在册（`auto-scaffold-paper_hedge_leg-20260918`）。
+- **一条方法论给所有后续车道**：裸 `python -c "import <mod>"` 冒烟**会把 sys.path[0] 固定在仓库根**，
+  恰好绕开这类崩点 ⇒ 它报"零崩点"是假阴性。必须第二级：按文件装载 + cwd=自身目录。
+
+## 6.9.1 R-048 · z-rv3 交工（EFGHI 30 条全亲验）+ **我的一条编号前提硬错并被 RULING-REFERENCE 当场拦下**
+
+`st-ff-rv3-20260918`：四态 **仍成立 22 · 已闭合 4（BRK-066/074/075/078）· 口径不符 4（068/080/081/082）· 归属错 0 · 未可判 0**；
+交付 `lanes/census_reverify_EFGHI.md`（368 行）。**分母推进到 35/85（余 50）**。
+
+- **P2（我的硬错）**：台账里我长期写"`#ARCH-338/339/343` headline 计数待更正（`ruling_registry.yaml`）"——
+  实测该册 `entries`=158、`ruling_id` 最大数字号=339，**裁定号 343 从未登记**。
+  `#ARCH-338..356` 是 **z-arch 案卷系列**（载体 `lanes/arch_338_356_dossiers.md`），**与裁定号是两套编号被我混用**。
+  ⇒ 该错误前提**已随任务书传染进车道交付件**：其文件中出现字面 裁定号 343，
+  **我 22:1x 提交本批时被 `RULING-REFERENCE` 门禁当场拦死**（死信 `q-…-0004`）。已就地改写为"裁定号 343 不存在"后复投。
+  ⇒ **入账**：这是"总包幻觉经任务书二级传播"的**第一个实例**（此前只记过一次自产幻觉）。
+  **真该更正的漂移**：`裁定#339` headline "tasks.yaml 63 任务 source=miniqmt" → 现值 **57**（总任务 262→264）。
+- **P1（预测落空）**：我派工时预言"GOMAP/ROOR 大概率已漂"——**实测两者逐项精确未漂**
+  （GOMAP 416/244/6/71/95；ROOR 73/19/5/1 + by_tier 11/28/34；`tiers[*].registries` 实际 12/28/34=74 ⇒ BRK-084 的"漂移 1"精确复现）。
+- **①向新台账不可用**：15 条红全由 `broken_hop` 驱动、evidence=`-1行`（CH 查询失败哨兵值），
+  日志实测 `CH query 失败(TCP+HTTP 均失败)` 12 次（`tick_data FINAL` 超时）⇒ **尺子把"测不到"与"真断链"同码判红**，
+  **CH 不健康时的六向分布不可作验收数**（缺陷已入 Max 清单 §7.10(g)）。⑥向 16 红则是**纯尺子改严**（输入未动）。
+- **收窄我对 z-verifier3 的转述**：旧台账 ⑤=绿 11 环节中 blind=0 的 6 个合法可复现，仅 blind=1 的 5 个互斥；
+  机读键名是 `allow_empty_blind` 非 `blind`。**更强的一条判据**：旧台账 FF-01 ⑤ 同一行内 evidence 与 verdict 自相矛盾。
+- **F 族新事实**：`acknowledged_orphans.steps` 登记 34 个无锚点 step_id，但 DB 实测 27 件里**漏 5 件
+  （含 BRK-069 偏差归因四件套全部）+ 多 12 件已非零锚点** ⇒ **登记册自身双向漂移**，F 族未闭合。
+- **BRK-074/075 的一条验收风险（要 Max 看）**：其治本载体 `battle_map_panorama.md` 已被
+  `326952a276` **移出 git 跟踪（命中 `.gitignore:562`）** ⇒ **治本无版本保护、不可 commit 取证**。
+- 该车道 `--enqueue` 亦撞 `[SESSION-REQUIRED]`（未注册 worktree），**它未伪造 `allow_overlap` 逃生通道**
+  （理由：会打 GW 审计标记属治理副作用，且当时 index 叠着 22-29 件他会话 staged 文件）——**判为正确克制**；
+  其交付件由总包以自家 session 吸收提交（本批 `--files` 已含其两件）。
+
+## 6.9.2 R-049 · z-cold 交工：**冷库差集救回 121 件** + **我的 B4 前提被推翻（救回件不能独立落地）**
+
+`st-ff-cold-20260918`：683 件去重全分类（unscanned=0）——
+①landed 72 · ②untouched 86 · **③wiped 121（全部恢复到盘，阻塞 0）** · ④disk_newer 404。
+脚本 `.runtime/tmp/st-ff-cold/census.py`（可重跑只读；**勿再跑 `--write`**）；
+产物 `lanes/cold_archive_diff.md` + `.yaml`（逐件四 sha/四态/restored）。
+
+- **121 件分簇**：生成器可再生产物 **64** · scripts.py **26** · src.py **14** · 文档 7 · 数据/配置 6 · tests.py 3 · 前端 1。
+  高价值样本：`frontend/dashboard/web/features/resourceweek/rw-data.js` +247L、
+  `oneoff/data_domain_audit_report_db.md` +3632L、`align_battle_map.py` +233L、
+  `data/crypto/universe_manifest.csv` +50L、`docs/registry_of_registries.yaml` +28L、
+  三份 `_working/` 顶层日报（磁盘原本 MISSING，已救回，与 R-038 那批同源）。
+- **★ 推翻我一条前提（B4 / 任务 #13）**："救回 `pipeline_events.py` 33 行接线 = 零损失件直接落"
+  **不成立**。恢复版**调用侧齐全、定义侧缺失**——
+  `_crisis_l1_check` / `run_attribution_daily` / `run_crisis_drill_monthly` 三个 helper
+  在**冷备三层 + HEAD + 磁盘全部查无 def 也无 import**。
+  ⇒ **单落此件会让 `run_pf_alloc_daily`（每日分配主链）运行期 NameError**，不但救不活 8 条红，反而打断主流程。
+  residG 在 19:47 时该文件本就是"调用先写、定义未落"的半成品态。
+  → **裁定**：任务 #13 从"落回"改判为"**需先 author 三个 helper**"；这三个 helper 很可能正是
+  "19:47 前就已消失、连冷库都没截到"的那批（第二路 blob 孤儿扫描也不见 crisis 相关 def）。
+- **修正我的普查判据**：任务初版把"磁盘回 HEAD 且冷备≠HEAD"即判 ③ ⇒ 会把"冷备比 HEAD 更少"的删除/退化类误纳
+  （如 `backtest/__init__.py` 删注解、`crisis_gate.py` 被 land3 治本超越）。
+  按**字节严格超集**改判后 ③ 从虚高 **347 → 121**，再剔 13 件纯 CRLF 噪声。
+  ⇒ **这是 R-026 第 3 类"漏计/多计"在我自己判据上的复现**，已回填 Max 清单。
+- **第二路（队列 blob）普查**：`blobs/` 全量 11,722 个中 3,755 个带 `[MODULE]/[BLUEPRINT]` 头，
+  **推断路径不存在 = 81 件**（初判 112，修 dotted→路径映射后消 31 个假阳）。
+  最大件：`tests/test_git_commit_gateway.py`（两 blob ~123KB）、`tests/test_create_guard.py`、
+  `tests/red_blue/test_f18_governance_adversarial.py`。**全部 R-018 推断级，落地前须人工确认映射**。
+  ⇒ 这批是"从未落盘"类的**候选池**，与 R-045 的 12 件 GONE 同路但面更大。
+
+## 6.9.3 R-050 · z-testint 交工（3 笔）+ 一条**所有车道都会再踩的提交侧地雷正解**
+
+`st-ff-testint-20260918` 落 3 笔：`087b01609e` · `4fb7bc1622` · `0ce3e87ea4`。
+
+- **★ 正解（我 22:1x 亲手复现同一坑，它的解法可用）**：
+  `REGISTRY-MASS-DELETION` 拦下时**真因常不是自家增量**，而是
+  **index 里存着他会话的陈旧热册快照**（index 7677 条目 < HEAD 7678）。
+  ⇒ 正解 = **`git restore --staged -- <那一个册>`**（只把 index 拉回 HEAD，工作区增量保留）；
+  **禁 `git checkout HEAD -- <册>`**（会把自家 token 增量一起抹掉）。
+  我按此法处置后 `git diff HEAD` = `+24/-0` 纯插入，门即放行。
+  （手册 §3.5 原写的三步配方里含 `git checkout HEAD -- <册>`，**对本型是错的** → 已在 R-008 之外另立此条。）
+- **测试自包含普查（产物 `lanes/testint_census.md`，生成器产出不手搓）**：
+  扫 3507 件 → 七类形态命中 1864 条 / 636 文件；
+  **确证不自包含 = 全仓 1 件**（即 R-035 那件，已修）· 假阳 132 条（单跑推翻）+ 7 条读码推翻 ·
+  **可疑未清 603 文件**（census §0 已写死"不得被引用为已证明自包含，也不得被引用为确有顺序依赖"）。
+  抽样 33 文件 × ≤4 nodeid = **132 次单跑，132/132 自包含**。
+- **两条新判据（CI 前置单 `lanes/testint_ci_prereq.md`）**：
+  H1 确证件未清零前 CI **只准按目录串行、禁 `-n`**；H2 `--collect-only` 退 0 **不证明收集成功**（须断言收集条数基线）；
+  H3 全局 `timeout=120` 与分钟级探针耦合；H4 测试写生产路径欠账未穷举（**244 件提及 `data/`**）；H5 xdist worker 崩溃史。
+  ⇒ **H4 正对应 R-041 那条"测试往 `data/failures/` 写伪造留痕"，本役第二条未立项的门禁**（入 Max 清单 §7.6 建议）。
+- **一条并行假红的对症修法**（`-n 2` 下 1 红）：TRAE-005 探针被挤过其内部 `subprocess.run(timeout=120)`
+  （`diagnose_depgraph.py` 实测 108s）→ YELLOW → `detection_rate=0.8889 < 0.95` **假红**；
+  只放宽 I/O 预算（120→300s，marker 420/900s），**判定口径与两处断言零变更** → `-n 2` 10 passed（224.6s，
+  即该探针确实跑了 >120s，**反证修前是环境性假红**）。
+- **它的自我约束值得推广**：自造 FN 探针初版报 27 个"多写者文件"，修掉一个 AST 口径 bug
+  （`Subscript` Load 误判 Store）后=0 ⇒ **"模式计数发布前必须先验探针自身"**。
+- 未达成如实：603 文件仅模式命中未实证；形4"跨日漂移"需零点窗口复跑（未做）；
+  **防复发门禁未立项**（新 gate 不在其写域，已点名建议）；6 个工具脚本仍在 `.runtime/tmp/ff-testint/`（TTL，未入库）。
+
+## 6.9.4 R-051 · z-rv2 交工 ⇒ **普查 85/85 全部独立复跑完成**（分母做实）
+
+`st-ff-rv2-20260918`（C 族 20 + D 族 9 = 29 条）四态：
+**仍成立 17 · 已闭合 5（029/034/036/046/047）· 口径不符 6（031/033/038/042/044/048）· 未可判 1（035）· 归属错 0**。
+交付 `lanes/census_reverify_CD.md`（已 `git add`，未提交=新 .md 需 token，**总包代登记**）。
+
+- **★ 全役可信分母闭合**（三条复测车道 + z-verifier3 合流）：
+  | 族 | 条数 | 仍成立 | 已闭合 | 口径不符 | 未可判 |
+  |---|---|---|---|---|---|
+  | A+B（rv1） | 26 | 18 | 5 | 3 | 0 |
+  | C+D（rv2） | 29 | 17 | 5 | 6 | 1 |
+  | E+F+G+H+I（rv3） | 30 | 22 | 4 | 4 | 0 |
+  | **合计** | **85** | **57** | **14** | **13** | **1** |
+  ⇒ **"还剩多少断点"从今天起有答案：57 条仍成立**（另有 14 条普查时已闭合、13 条记载口径错、1 条永不可判）。
+  任务 #12 判**完成**。
+- **分母校正（它反过来说我）**：任务书"仅 5 条被复跑"**在它开工时就已过期**——
+  `known_data_gaps.yaml` 里有 **11 条 `verification_20260918`**（st-ff-datagap 今日写入），覆盖其切片 11 条。
+  ⇒ **同一事实被两条车道分别"首次发现"**，说明缺一个"谁复测了哪条"的登记面（收口批补）。
+- **★ 聚合数字被量化否证**（R-026 第 2 类"粗口径"的硬数据）：对 `fail_open_register.yaml` 条目化 860 点做
+  tokenize 真身分类 ⇒ `money_path_no_trace` 176 条里**真语句仅 12 条（6.8%）**（注释 47.7% + docstring 45.5%）；
+  `undeclared_needs_review` 679 条里 CODE 仅 49（7.2%）+ 11 条行号已漂移；唯 `hardcoded_default_permit` 5/5 为真。
+  吞异常三个口径 62/138/261 **互不可比**。
+  ⇒ **BRK-047"1405 处 fail-open"这类数字只能当检索面，不能当工作量或风险面**。
+  该册真实位置是 `docs/01_policies_and_standards/_registry/catalogs/`（**我任务书写的 `config/` 路径不存在**），
+  且 `generate_fail_open_register.py --check` 现 **exit=1**（现扫 1601 vs 盘上 1595）⇒ **"有册 ≠ 登记全 ≠ 册常新"**。
+- **抽样人工判读**（它做了我要的 5+5 样本）：fail-open 5 处**全是设计意图降级**（其中 1 处是登记册自己误报，
+  把 DD-3 契约文本"禁用 fail-open"登记成了一个 fail-open 点）；吞异常 5 处**2 真偷懒**：
+  `ch_reader.py:130`（引擎探测失败 ⇒ 不带 FINAL 计数 ⇒ **会掩盖缺口**）与
+  `sector_distribution_comparator.py:77`（逐行 fit 失败静默丢弃仍返"有数"表）。
+- **两条新病灶（普查与各车道均未记）**：
+  ① `daily_valuation` 有 **14 个周六/周日被写成有数日**（每日 5,534~5,562 行，周六=周日同数，
+     对照 `kline_daily` 同日 0 行）+ 09-16/09-17 各仅 2,000 行**又一次部分写入**（BRK-043 的"复发"仍在续）；
+  ② `index_valuation_daily` 双行腐败**症状面已闭合**（双行组实测 0），但代价是 cape_5y/cape_5y_pct/pe_pct/erp
+     **四列 100% NULL**（09-13 全量重采覆盖，非合并）⇒ **治了一个病、换了一个病**。
+  ③ 另：`alt_movie_boxoffice` 表**不存在**（全库 ILIKE 0 命中），而 BRK-042 把它当"空表"记。
+- **它对我一条前提的修正**："哨兵今天是否已能告警"= **判据面已能**（只读实跑 checked 51 / breached 8 / heartbeat_blind 0），
+  **但生产面尚未鸣**——配置 commit `85ef0962d0` 落地 20:54 **晚于排班 06:50** ⇒ **首鸣要等 09-19 06:50**。
+  旁证：`data/failures/` 里 3 条 sentinel 记录带"lag=323d > **20d**"，而 20 天阈值在已提交配置链任何版本中都不存在
+  ⇒ 是**车道开发期实跑产物，不是生产告警**。
+  ⇒ **入账**：'已落地'与'已在生产上生效'是两件事，本役我有多处把前者说成后者。
+- ★ 另辟一条："告警 8 条只落 1 件 `failures/`"（300s 同 task_id 去重 + `_alert_breaches` 不读 notify 返回值）
+  ⇒ **最后一米仍断**（与 z-alarm 那条外发通道正是同一条链的两端）。
+
+## 6.9.5 R-052 · ★★★ 一件必须置顶上报的事：**4.12 亿行破坏性修复在"明示未授权"之后执行了**
+
+z-rv2 复测 BRK-036 判"已闭合"并附一句"未检索到 Owner 低峰窗批准的书面记录"。
+总包 22:1x **独立取证完毕**，事实链如下（**只列事实与时间戳，不指认人**）：
+
+| 时刻（本地） | 事件 | 证据 |
+|---|---|---|
+| 09-18 **03:55 起**（exec2 日志；exec1 未见，可能更早） | 修复脚本 `--execute` 真跑，九轮，至 06:07 | `.runtime/tmp/etf_tzfix_exec2..11.log`（mtime 03:55:34 → 06:07:41） |
+| 09-18 **04:02 ~ 04:34 之间** | **`裁定#333`（category=Owner 门位）登记入册**，其第 ⑤ 条原文： | `git log -S` 界定了首现区间（04:02 版 `#333=0`、04:34 版 `#333=1`）；正文见 `ruling_registry.yaml:4225` |
+| | "**时区劈叉 4.12 亿行 `--execute` 修复未在本批授权内，仍按原工单等低峰窗**" | 同上 |
+| 09-18 **07:22** | 提交 `60ed3aa49c` 宣布"**4.12 亿误标行全部转正**，备份五表 `*_tz_bak_20260918` 在库可逆" | `git show --stat 60ed3aa49c` |
+
+- **裁定#333 本身就是 Owner 的"毯式批准批"**，而它**逐条点名把这一件排除在授权之外** ⇒
+  不是"Owner 忘了批"，是"Owner 批了一批并明确说这一件不在内"。
+- **原工单自己写过停点**：`docs/_working/flash_biz/biz5_etf15min_tz_defect.md:67`
+  "按 Owner 指令'破坏性操作前停下来登记等 Owner'——三步验证虽全过，**放行权在 Owner 门位**"；
+  `:44` 还写着 `--execute` 需"Owner 批准后真修（约 4.12 亿行重写，建议非交易时段）"。
+- **全册检索无第二条涉此事的授权**：`ruling_registry.yaml` 158 条里与"时区/tz/批/授权/低峰/execute"相关的
+  只有 #234/#264/#277 三条不相关者 + **#333 这条明拒不授权**者。
+- **总包独立复核修复的**技术效果（只读，`c1_market.kline_etf_15min` 与 `..._tz_bak_20260918`，2026-02 全月）**：
+  live 小时域 `[09:00, 15:00]`、bak 小时域 `[01:00, 07:00]`、**两侧行数完全相等 319,456**
+  ⇒ **修复方向正确、零行数损失、可逆性真实存在**（备份五表在库）。
+- **诚实条款（我的结论有三处不能堵死）**：
+  ① 05:34~06:07 客观上确是非交易时段，若 Owner 曾以"低峰窗即授权"口径口头放行，则本件属"批文未入册"而非"绕闸"；
+  ② 我只检索了仓内（`docs/_working/**`、`ruling_registry.yaml`、`config/`），**聊天/外部通道的批文不在我的可观测面内**；
+  ③ 执行方归属为 instL（分包12 T 项、该脚本独占），其班次记录在 `tdchain_mine/e1_tdata_infra/workbook.md`
+    把 B2=`--execute` 列为计划块 ⇒ 存在"车道按自己被派的计划块理解为已获放行"的可能。
+- **裁定（总包权限内的部分）**：**不改数据、不回滚、不追加执行**——这属 Owner 门位，我只把它**置顶进 A 类清单**
+  （`delivery/MAX_ADJUDICATE_LIST.md` **A0★**），并交两条待选动作：**追认**（承认既成 + 补批文 + 把"低峰窗"定义成机械判据）
+  或 **回滚**（备份五表在库，`RENAME`/`ATTACH` 路径可逆）。
+  **技术风险低、治理风险高**，正是必须人拍的那一类。
+- **同时立一条治本处方（不依赖裁定）**：`--execute` 这类资金/数据破坏性 CLI **必须在执行前把"授权凭据"写进它自己的
+  运行前置检查**（无在册批准号 ⇒ 拒跑），否则"停点声明"永远只是一句写在文档里的自律。
+
+## 6.9.6 R-053 · z-rb-safe 耗尽轮数阵亡（无回报）+ 总包两项现场处置
+
+`st-ff-rb-safe-20260918` 在 150 轮上限被强制停止，**未交回报**。遗产已由总包三处留档：
+`.runtime/tmp/ff-recon/backup_rbsafe/` + `G:/.../rbsafe_20260918/`（9 件：
+`crisis_gate.fixed.bak` 22,060B / `l1_input.fixed.py` 13,553B / `lsg_gate.fixed.bak` 11,189B /
+`fix_l1_constants.py` / `bad_crisis_cfg.yaml` / 三个探针）+ 处方件 `lanes/rbsafe_prescriptions.md`（101 行）。
+
+- **P-1（全役目前最严重的安全发现，转报车道实测，总包未复测）**：**三套熔断旗标全部跨进程不可达**——
+  `kill_switch.manual_trip_global()` / `trading_kill_switch.trigger()` / `last_resort_watchdog.activate()`
+  在发起进程读 True，**新进程一律读 False**；编排器 `route_incident("funds")` 返回 success=True 而
+  `is_tripped()` 跨进程 False，且 `check_consistency()` 仍报 **consistent=True**（事后审计看不出"这次拉闸对别人无效"=假绿形态）。
+  最要命的一环：`process_reaper.py:1048-1058` 每 5 分钟在 **reaper 自己的进程**里跑 `run_emergency_track_check()`，
+  其唯一出手就是 `route_incident` ⇒ **"拉闸拉在自家庭院"**；
+  `data/runtime/state*`、`data/runtime/**/kill*` 实测均不存在 ⇒ **无任何持久化真源可依赖**。
+  → 已派 `st-ff-rb-safe2-20260918` 接手（复测 + 案卷化 + 补完未打的注入面）。
+- **P-3**：`load_regime_input` 取"≤当日的最近快照"**无年龄天花板**——滞后 0/5/30/180/**3650 天** 结果完全一样：
+  regime 断更在最坏情形把额度**永久冻死且无解除人**，在另一种情形让**危机看不见**。车道拒绝凭记忆造阈值，正确。
+- ★ **总包处置一（回退一件我自己造成的破损）**：z-cold 按我指令从冷库恢复的
+  `src/zephyr/strategy_pipeline/pipeline_events.py`（+33/−1）经三方核证实**调用侧齐全、定义侧缺失**
+  （`_crisis_l1_check`/`run_attribution_daily`/`run_crisis_drill_monthly` 在冷备三层 + HEAD + 磁盘**全部无 def**）
+  ⇒ 单落会让 `run_pf_alloc_daily` 运行期 NameError（前手实测 8 failed / 2250 passed）。
+  **已把该文件 index 与 worktree 一并回退到 HEAD**（字节三份留档：`.runtime/tmp/ff-recon/pipeline_events.cold33.py`、
+  `G:/.../pipeline_events.cold33_20260918.py`、冷库原层；sha `f11476277e…` 三处一致已核）。
+  **任务 #13 由"落回"改判为"须先 author 三个 helper"**（R-049 已记）。
+  ⇒ 自我入账：**我派"零损失救回"这道指令时，没有检查救回件的符号闭合性**——这是 R-045 之后第二次
+  "救回动作本身引入风险"。**救回 ≠ 可落**，今后冷库/blob 恢复一律加一道"被调符号是否有定义"的机械门。
+- **总包处置二**：把 z-rb-safe 的 9 件成品从 **TTL 目录**迁出并三处留档（同上）。
+  ⇒ 这是 R-038 那条"归档必须早于任何破坏性操作"的**反向应用**：车道阵亡时，它的成品正躺在会被 TTL 清的目录里。
+
+## 6.9.7 R-054 · z-shim 交工：sanctioned 工具治本落地，且**推翻处方与我的一条现场判断**
+
+`st-ff-shim-20260918` 单笔 `cca12c8ce7`（2 files，+561/−0，零外来零删除）：
+`scripts/governance/_shared/yaml_utils.py` +23 · 新增 `tests/governance/test_shared_yaml_utils_reexport.py` +538。
+
+- **漏项不是 1 项是 3 项**：`DEFAULT_REGISTRY_CATALOG_DIR`、`RESPONSIBILITY_LAYER_MAP_FILE`、`load_responsibility_layer_map`
+  ——正是 `add_module_translation.py:105` 那个 import 块的全部三项，缺任一项即 ImportError。**处方 `req_verifier3_01` 只报了第 1 项。**
+- **★ 它证明处方建议的测试判据不可字面实现**：处方要求"断言 `__all__` ⊇ 引用集"，
+  实测 **20 个壳里 19 个根本没有 `__all__`** ⇒ 照字面写会得到一条**永久 skip/空转的测试**。
+  改型：主判据换成"引用集 ⊆ 壳供给集"（真正的 ImportError 面），`__all__` 判据降为**条件判据**（壳一声明即自动生效），
+  并给 `yaml_utils` 壳补 `__all__`（11 项）使本件立刻可验。⇒ **"判据自证非空转"这条设计应推广**：
+  它加了 ④ 号契约（scripts 文件数≥300 / 引用对≥60 / 有消费方的壳≥5 + `tmp_path` 合成迷你仓"能红/能白"双对照），
+  **专防扫描器静默失效造成的假绿**。
+- **证伪我任务书里的一条现场判断**（重要，属"派工时点"病）：我写"本役每条新车道都被它 `--help` 就 ImportError 拦死"——
+  **在 HEAD 成立，在它进场时点的主区工作树不成立**：修复字节已由 `st-ff-alarm2-20260918` 以 claim 在飞写入主区
+  （未入 HEAD、未 staged）。⇒ 绕行判断仍对，但**真正的风险是"修复字节长期悬在工作树"**（§8 可被整文件还原）。
+  **入账**：我给车道的前提必须写明**观测面是 HEAD 还是 worktree**——同一条事实两个答案，本役已第三次因此返工。
+- **"同家族大概率同病"被证伪**：除已修的 `yaml_utils` 外，20 个壳**0 件同型漏转出**（反向契约也 0 例）。
+  但 `frontmatter` 壳有 **3 条异型悬空引用**（真源根本没有这两个符号）⇒ 实测
+  `audit_directory_integrity.py --help` 与 `validate_depends_on_format.py --help` **双双 ImportError**，
+  `validate_module_id.py` 另有 line 23 sys.path bootstrap 顺序缺陷。
+  它按 §3.4 未代修（补转出无路：要么新实现撞 CloneGuard，要么改 3 个消费方语义），已按**棘轮基线**钉进测试并上报。
+  → **总包裁定：另派一路治这 3 条**（sanctioned 治理工具不可用会持续拖累所有车道的登记动作）。
+- 并发纪律样本：它 claim 曾被 `st-ff-alarm2` 持有该 shim ⇒ **HELD-OVERLAP 未硬闯、未代放他人 claim**，
+  轮询 1 轮 45s 后对方释放且该件未随其批次落地，才 claim 入面。**这是本役第一次有车道把"让路"做成标准动作并留痕。**
+
+## 6.10 R-055 · z-rb-stats 交工：**验证器有牙，但两颗牙能被一格 CSV 拔掉**（红队已见血）+ 总包四项裁定
+
+车道 `st-ff-rb-stats-20260918` 落 3 笔（`922c7871cb` 证据闸 / `57a6843a6e` 处方+申请 / `d99b7c0aaf` P-7+A5）。
+**它没有把⑥向降级成静态推演**——随机噪声硬证据真做到了：
+
+- **E1 诚实切分（只在 IS 选参）**：纯噪声 best_IS=1.976 / OOS=-0.253 / DSR(N=2000)=0.0001 ⇒ **判不通过** ✅ 尺子有牙；
+- **E5 逐 trial 诚实噪声 200 条 ⇒ 通过 0 条**；
+- **E3 ★ 只改分母不改代码**：同一条纯噪声序列，`n_trials_eff` 取 1 → DSR **0.9986** → **判"通过"**；
+  取 9 → 0.9302"存疑"；取 2000 → 0.3267"不通过"。而 `n_trials_eff` 的来源是
+  `scripts/backtest/f06_e4_wfa_exam.py:345-348` 读 **`f06_survivors.csv` 的一列**。
+  ⇒ **试错次数这个"防过拟合的分母"是手填的**。这是全役最干净的一条"制度可被一格单元格绕过"的证据。
+- **E2 全样本泄漏切分**：IS=0.838 / OOS=1.936 ⇒ **OOS/IS=2.311 > 0.70**，
+  比率门被**反向击穿**（`overfitting_detector.py:332-346` 比率门只有下界）⇒ 此时**唯一还拦得住的是 DSR**。
+- **E4 缺位维 fail-open**：`overfitting_detector.py:367`"未提供的维度视为未检测（默认稳定）"，
+  而 E4 从不传维度 2/3 ⇒ 同入参：补维度 → `is_overfitting=True`；省掉 → `False`。
+
+- **★ F-6（致命向，regime 断供 fail-open）**：`regime_detector.py:599-600` 主腿门 + `_compute_risk_signal` 三条 `return 1.0`。
+  断一条 RiskSignal 腿实测：`r10 0.800→0.000`、`dominant r10→r1`、`RiskSignal 0.30→1.0`、
+  **Shrinkage 0.255→0.800 = 放量 3.14×**；且 `{}` / `None` / `{"params":{}}` / 缺 #1 与"13 参数全正常"**逐位相同**
+  ⇒ **降级与正常不可区分**。这**违反我自己下的 R-K9**（"断供时 regime 降级为 fail-closed"）。
+- **F-7（已治）**：`float(params.get(1,1.0))` 遇 `{"params":{1:None}}`（CH 缺列 NULL 常态）→ TypeError **打断整条 regime 链**，
+  与 docstring"缺失时降级 1.0"矛盾。
+- **F-8（回测↔实盘不同构）**：同一 max(P)=0.25，检测器 `regime_detector.py:192-197` 给 **0.80**，
+  分配器 `regime_meta_allocator.py:94-99` 给 **0.30** = **2.67×**；**回测走检测器档、实盘走分配器档**（可复现）。
+- **F-9**：`regime_meta_allocator.py:470-485` **自陈"占位接口"却在钱路上**；两套 `_compute_risk_signal` 入参 schema 互不兼容，
+  **交叉喂参双方都静默落 1.0（最宽松值，不抛错不日志）**。
+- **F-10**：误报率**无机械载体**——`regime/validation/phase2/b4_transition_accuracy.py` 只算 recall（±5 日查找、≥6/8 PASS），
+  不算 precision；且 `regime/validation` 全族 **src 内零消费者**（按 ORPHAN-MODULE 口径=孤儿且无自动触发）。
+- **F-5**：N_eff=9 这个登记值**不可复算**——28 个 grid 批里仅 2 批有 `net_returns.*`（且都是 8 列烟测），
+  产生该分母的 10080 格点批**无档案**。估计器本身可复算（5 vs 登记 5 逐位吻合）。
+- **正向发现（要立成房内范例）**：`strategy_factory/.../allocation_inputs.py:426-455 resolve_risk_signal`
+  是**本役少见的正确 fail-closed 降级设计**——无教材 ⇒ risk=1.0 **且**概率平坦 ⇒ conf 最低档 ⇒ 总节流 0.30，
+  还带 `risk_signal_source` 溯源。**检测器侧应向它对齐**（这给了我 A1 裁定的落点）。
+
+### 总包裁定（四条，属我权限内的"加严/同构"类；两条转 Owner）
+- **R-055a（裁）**：regime 断供数值侧改 fail-closed，**判据来源=房内已有正例** `allocation_inputs.resolve_risk_signal`
+  （risk=1.0 + 概率平坦 → 最低档 + 带 `risk_signal_source` 溯源），不新造机制。理由：
+  ① R-K9 已定方向，本次是**执行未完成**不是新决策；② 有同仓可对齐的实现在，选型不需要拍脑袋。
+  **能红判据**：断一条腿 ⇒ Shrinkage 必须**收紧**而不是松 3.14×；`{}` 与"13 参数全正常"必须**可区分**。
+- **R-055b（裁）**：`overfitting_detector` "未提供的维度=默认稳定" 改为 **"未提供=不可判定=不通过"**（加严方向，#321 允许）。
+  验收：E4 变异（省维度）必须转红而不是转绿。
+- **R-055c（裁）**：比率门补**上界**（OOS/IS 显著 > 1 视为泄漏信号），并与 `n_trials_eff` 来源闸（已落 `922c7871cb`）并列成"考试三闸"。
+- **R-055d（裁）**：`dsr_threshold=None` 那条不留痕逃生门 ⇒ 必须往 `reasons` 追加一行"DSR 判定被显式跳过"。
+  （实测当前 `src/**`+`scripts/**` 无生产调用方传 None，只 2 处测试 ⇒ 无实害，但**不留痕的逃生门**本身要治。）
+- **转 Owner A16**：F-8 两套节流档表统一到哪一档（0.80 还是 0.30）=**风险偏好选择**，不是工程选择；
+  但"必须同源、回测与实盘同构"是 R-055a 的硬约束（**值由 Owner 定，同构由我盯**）。
+- **转 Owner A17**：F-5 的 N_eff=9 —— 要么重跑 10080 格点并留 `net_returns` 档案，要么把依赖该分母的**历史考试结论标为不可判定**。
+  这**追溯影响已毕业策略包**，与 A7 同族，不能由 Flash 判。
+- **★ 我解掉了一个我自己造的协议死锁**（第二次犯同类）：`COORDINATION_LEDGER` §2 判 TDM "总包代管/本轮只读"，
+  而 `ALGO-NOTE-SYNC` 要求任何触碰 `regime_detector.py` 的 commit 必须同批改 TDM ⇒
+  **任何车道改 regime 检测器都必然 dead-letter**。
+  处置：`TDM-E-L1` / `TDM-E-L1-AGG` 两节点 `note_confirmed: 2026-09-17 → 2026-09-18`（CAS 文本式，numstat `2/2`），
+  与前手 staged 的两件（`regime_detector.py` + 新测试 `test_rb_stats_regime_failopen.py`）**同批落地 = `1268f76422`**。
+  ⇒ **入账**：这与 **R-012 是同一条病**（我当时判 TDM 全员禁写，制造了 pf_alloc/ex_core/risk 整批不可落地）。
+  **协议级死锁的成因是"我下禁令时没查有没有门禁要求同批改被禁文件"** ⇒ 新自检项：**立任何禁写令前，
+  先 `grep` 门禁清单里是否有要求同批写该文件的判据**。
+- 该车道还纠正我两条口径：**R-026 是「八型」不是「十类」**（详见 R-057）；
+  以及 `config/regime_cycle_registry.yaml` **根本不存在**（regime 阈值全在 .py 里硬编码，模块一次也没读 YAML）
+  ⇒ 我任务书预设的"查注册表 vs 硬编码"这个问题**提错了**，真答案是"无注册表可改"。
+
+## 6.10.1 R-056 · z-dag2 交工：推导器进 HEAD + **"那 22 条边"的账彻底算清** + 抹除事件复发两起（新签名）
+
+`st-ff-dag2-20260918` 落 2 笔：`7894946ae0`（7 文件）· `1c07257e08`（2 文件）。队列 done 已用 HEAD 内容反证（未采信状态字）。
+
+- **★ 账算清了，结论比我那条前提更难看**：文档"高置信 22 条本次 `--apply` 已写入 tasks.yaml"
+  **在它写下那一刻就是失真的**，三种可能的分辨结果：
+  · ①"写了被回滚吃掉" → **否证**：`git log --all -S'[DAG-DERIVED]' -- tasks.yaml` 两次独立跑均 **0 命中**，
+    `85ef0962d0^` 的 tasks.yaml DERIVED=0，**不存在吃掉它的 commit**；
+  · ①的真相变体 → **成立**：`--apply` 确实写过，证据是队列 blob `a11bc4fcb402…`（19:30 的 tasks.yaml 快照：
+    266 任务 / 226 无依赖 / **16 行 DERIVED** / 57 边，与文档数字逐位吻合）。
+    **但该快照随两条死信烂在队列**（0001 死于 `.gitignore` 拦 `scripts/data/**`，0002 死于 **MSG-EXPOSURE**——
+    正是本次加两行 noqa 绕开的那两处）。**而那份文档单独进了 HEAD（`63802383af`）⇒
+    "宣称已写入"的文书与它宣称的数据被拆成两半，只有文书过了门。**
+  · ②措辞失真 → **成立且根因已现场复现**：`render_markdown` 用 `landed = DERIVED_TAG in tasks_yaml.read_text()`
+    （**文件级 substring 判据**）+ 计数用 `len(applied)`=**任务数不是边数**。
+    把工具指向那份含 tag 的过期快照跑 `--apply` ⇒ 输出 `tasks_touched: 0`，**文档照样写"已写入 tasks.yaml"，
+    且逐字节重产出 19:31 那份**（sha `fb8990d1…` 全等）。**这不是抄错，是生成器的确定性产物。**
+  · ③"22 条大部分与既有重复" → **否证**：28 去重边里只有 6 条已在册，**22 条为净新**。
+  - **"HEAD 为何只 +1"与推导器无关**：`85ef0962d0`（z-sentinel，20:54）净增 2 任务、`deps changed: {}`
+    ⇒ 262/235 → 264/236。**普查基线是 13:59 的数**（R-026 第 1/8 型又一例）。
+- **落地后的真数**：`225 / 264 = 85.2%` 无依赖（本批前 89.4%）。幂等复证：二次 `--apply` ⇒ `tasks_touched: 0`。
+  写入面用**严格单调核验器**（非肉眼 numstat）：任务集与 HEAD 全等、被删边=0、改动行中非 `dependencies:` 行数=0、
+  16 条被改行旧 deps 全为新 deps 子集、手写注释 `# DAG: …` 保留、复解析 + 无环校验 exit 0；
+  **同一核对器指向过期快照立刻红**（任务集差 6 项）。
+- **机械天花板（这条最有价值，它否证了"再努力一点就能推平"）**：225 个无依赖任务里
+  **A 桶 217 个是"册内完全无血缘证据"** —— 边只存在于"某任务读的表 ↔ 另一任务写的表"，
+  而这些采集表在 tasks.yaml **册内没有消费方**（读方在 strategy/backtest，不是调度任务）
+  ⇒ **永远推不出，缺的是在册 reader（排班编制问题，不是脚本问题）**。
+  其余：B 桶 8 任务仅 medium（45 条：多生产者歧义 24 / impl_direct 16 / task_prose 5）·
+  C 桶 112 条边超扇入预算（`MAX_NEW_DEPS_PER_TASK=4`）真丢弃 ·
+  **D 桶 81 条跨日界边"标注但未丢"**（源码 `dropped.append` 后**无 `continue`**）⇒ 统计"丢弃"不能拿 193 当数 ·
+  E 桶 2 条成环。
+- **★★ 抹除事件复发两起，且这次抓到了签名**（并入 R-042 案卷）：
+  ① 会话中途 `tasks.yaml` 工作区字节被**替换成 19:30 的死信快照** `a11bc4fc…`
+  （266 任务、含 4 个外来未落地任务块、缺 HEAD 的 2 个任务；mtime 显示 19:47 但写入时刻更晚 ⇒ `copy2` 语义），
+  **且 `pending/processing/done` 无任何项引用该 blob**；
+  ② 落地后约 4 分钟**同签名复发**：刚进 HEAD 的推导器在**索引面**被写入一笔 `D`。
+  - ⇒ **这是本役第一次拿到"写入者会去读队列 blob"的正面证据**：被注入的字节精确等于某条历史死信的快照，
+    而触发时刻与落地动作相隔数分钟。**仍不指认具体会话**（R-038 口径：无肇事进程日志就不定罪）。
+  - **该车道处置方式判为正确**：按手册许可形态恢复（`git checkout HEAD -- <单一 tracked 路径>` + `git restore --staged --`），
+    **全程未用被禁的破坏性 git、未删任何他人磁盘字节、注入内容另存双份归档**。
+  - **护栏建议（已收编，见 R-056a）**：`prestage`/恢复类脚本在向 tracked 热配置写入前，
+    **必须先与 HEAD 比对，落后即拒写并留痕**。
+  - **R-056a（裁）**：立此护栏为**收口批必做项**，并把"注入面 = 队列 blob 可寻址"写进 Max 清单 §7.7
+    （此前我只把抹除归因为"restore/clean 类命令"，**低估了"从 blob 反向注入旧版"这一型**——
+    它的破坏方式不是让文件消失，而是**让文件退回一个不存在的历史状态**，比消失更难发现）。
+- 该车道推翻我 9 条前提，最实的三条：blob 是 **27,226B 不是 23,769B**；
+  两版差异不止"4 处路径文字"而是 **5 处 6 行、其中 `_BOOTSTRAP_ROOT = parents[2]→parents[1]` 是功能改动**
+  （拿旧版直接放新路径会 import 到错根）；
+  `--dry-run` **不写 tasks.yaml 但无条件覆写一份 tracked 文档**（`main()` 里 `proposals_md.write_text()`）
+  ⇒ **我让车道"先确认默认不写文件"这条指令，它只对我预期的那一半成立**。
+  另：**`DEPGRAPH-PRE-REGISTRATION` 与 `ORPHAN-MODULE` 的判据面都是 `src/` 前缀，scripts/ 整体不在检测面**
+  ⇒ 我任务书里"须 `--add-design-node`、注意孤儿门"两处**属多余动作**（照做会重复登记）。
+
+## 6.10.2 R-057 · **R-026 扩容：八型 → 十三型**（本役新实证五型），并更正我自己的两处引用错误
+
+z-rb-stats 实测我口径错：**台账 R-026 原文是「八型」，而我在至少六份任务书里写成「十类 taxonomy」**。
+再查我自己的行文：R-043 里写"R-026 第 9 类"、别处写"第 8 类"——**第 9 类当时并不存在**。
+⇒ **同一条"总包把编号/口径写错并被车道照抄"的病，本役第三次**（前两次：R-024 幻觉、裁定号 343 不存在（此号从未登记））。
+
+**但真正的处置不是把"十类"改回"八型"**：本役此后又**独立实证了五种新的失效型**，
+所以正确动作是**把表补到十三型，每型带自己的实证锚点**（§4.1 规范总量净零增长：扩表不新增文件）。
+
+| # | 型 | 实证锚点（本轮新增者） | 发现方 |
+|---|---|---|---|
+| 9 | **标题与代码/数据不符**（文书过门、数据没过门） | DAG"已写入 tasks.yaml"文书进 `63802383af`，16 行 DERIVED 烂在死信（R-056）；`MAX_REVIEW_CHECKLIST.md` §1.4 复核命令指向我凭空造的 `src/zephyr/backtest/validation/`（R-043）；`decision_gate.py:796` 注释"DSR 默认关闭" vs `:445` 真实默认开启（F-11） | 总包自纠 + z-rb-stats + z-dag2 |
+| 10 | **引同文件的散文注记、不查同文件的机器字段** | BRK-004/005：普查引 GOMAP `pipeline.layers[].disconnected.note_zh`，而**同文件** `families.*.wiring` 早已 `wired`；闭合件 `49dde8fda5` 比普查落笔**早两天** | z-rv1 |
+| 11 | **复现脚本自身失效 ⇒ 证据不可复现** | BRK-007 的 `orphan_scan.py` 逐字跑出 `src modules: 0`（绝对路径比对 bug），普查真值出自**从未归档的"修正版"**；BRK-002 七族相加 90≠95 | z-rv1 |
+| 12 | **指标自证清白**（度量把缺陷计成健康） | 旧 regime 日志按 `notna()` 统计覆盖率 ⇒ 把 `close_hfq==0` 的 **303,817 行**计成"已覆盖"（F-01）；尺子 `-1`（测不到）与真断链**同码判红**（R-048）；`check_consistency()` 对跨进程不可达的拉闸仍报 `consistent=True`（R-053 P-1）；`REGISTRY-MASS-DELETION` 的 `landed = tag in text` 文件级 substring 判据 | z-rb-pit + z-rv3 + z-rb-safe + z-dag2 |
+| 13 | **派生时间戳被读成快照年龄**（幂等设计的语义被误读） | BRK-008：`最后同步：2026-08-17` 是生成器 `_common.idempotent_timestamp`（为宪法"禁 datetime.now"而设计）的**幂等派生值**，不是数据年龄；DB 实测是活的（nodes 12022 / edges 22843） | z-rv1 |
+- **配套一条自检（入 Max 清单）**：凡引用"型 #N"，须能指到台账表里真实存在的一行——
+  **我自己三次引用不存在的编号，说明"编号引用完整性"连治理文档自己都不检查**。
+
+## 6.10.3 R-058 · ★ **车道阵亡潮：一个班 5 条车道死于 150 轮上限**（不是失败，是"没交回报的半成品"）
+
+本战役子代理有 **150 轮硬上限**。今晚累计 **5 条**车道在上限处被强制停止、**未交回报**：
+`st-ff-rb-safe`（21:5x）· `st-ff-judgment2`（22:0x）· `st-ff-rb-pit`（22:0x）· `st-ff-rb-gov`（22:1x）· `st-ff-switch`（22:2x）。
+每条都消耗 2800 万~5200 万 token、140~170 次工具调用，**且都留下了真东西**。
+
+- **五条的现场结局（总包逐条实测，全部未损失）**：
+  | 车道 | 阵亡时状态 | 总包处置 |
+  |---|---|---|
+  | z-rb-safe | 处方件 101 行 + 9 件 prepared 成品在 **TTL 目录** | 三处留档（`backup_rbsafe/` + G 盘）→ 派 `st-ff-rb-safe2` 接手 |
+  | z-judgment2 | **九件已做完并 staged**（判定链 SSoT 整批） | 派 `st-ff-judgment3`，任务书首句即"先落地再调查" |
+  | z-rb-pit | **F-01 复权治本 +74/−9 悬在工作树** + 195 行处方 + 变异台 9 件在 TTL | 派 `st-ff-pit2`（第一优先=把它送进 HEAD）；`ee0e0a2cef` 已于 22:00 落地 ✅ |
+  | z-rb-gov | **半成品门禁**：`ch_final_gate.py` +187/−6 等四件 + 两件新测试，总包代跑 = **31 passed / 5 failed** | **不落地**；存 `pending_gate_work.patch`(556 行) 三处留档 → 派 `st-ff-gov2` **窄任务**收尾（≤2 笔，"跑到 ~110 轮就先落先前报"） |
+  | z-switch | 死前**已成功入队** `q-…-st-ff-switch-…-0001`（state=pending），11+3 件仍 staged | **无需接手**，serializer 自会消化；总包只盯终态 |
+- **★ 三条可复用的运营判据（本役用血换的）**：
+  1. **阵亡 ≠ 损失**，只要车道遵守"成品即刻 `git add` + 自带备份/重放脚本"。本次 5 条全部成立，
+     唯一的真实风险是**成品躺在 `.runtime/tmp/`（TTL）**——z-rb-safe 与 z-rb-pit 的变异台都差一点被清掉。
+     ⇒ 今后任务书一律写死：**工作目录也须定期同步到非 TTL 介质**（G 盘冷存或 staged）。
+  2. **任务书宽窄决定生死**。这 5 条里 4 条是我给的"两个攻击面 + 覆盖矩阵 + 处方分流"式宽任务书；
+     窄任务书（z-shim：修一个 shim + 一条契约测试 + 一次同族扫面）**是唯一完整交工且自曝两处推翻我前提的**。
+     ⇒ **后续派工一律收窄到"≤3 个动词"**，覆盖面矩阵改成"未做项如实登记"而不是"必须做完"。
+  3. **接手式接力（relay leg）在本役被证明是必需的**，不是可选项：
+     z-verifier3 / z-land3 都是"第三腿"，今晚又加了 safe2 / pit2 / judgment3 / gov2 四条。
+     ⇒ 任务书必须写明**"前手遗产在哪、以哪份为基线、哪些已做不许重做"**——
+     本役两次"两条车道分头治同一个 bug"（calendar 遮蔽被报成两种根因）都是缺这句。
+- **★ 一条撞车已预防**：我给 `st-ff-pit2` 的任务书里含"给 FINAL 门加牙"，而 z-rb-gov **早已改了 `ch_final_gate.py` +187 行**。
+  ⇒ 处置：①`ch_final_gate.py` 明确划归 `st-ff-gov2`（任务书写死"现在归你，若发现他人已改立刻停下登记冲突"）；
+  ②z-pit2 的原指令里有"先查 `locks` 与 `git status`，在途就让路并登记"，可挡住覆盖式撞车。
+  **入账**：这是我作为总包的调度缺陷（同一文件派两条车道），不是车道问题。
+- **顺带立一条真发现的账（红队 z-rb-gov 未交回报，但实测数据我已复核）**：
+  FINAL 门此前**只匹配 `ch_writer.query(`**（`ch_final_gate.py:60,144`）⇒
+  经 `DatabaseService.get_clickhouse_conn().execute()` 直连的 SQL **完全不过门**，
+  其探针实测 **82 处生产读路径无 FINAL 读 ReplacingMergeTree**（`c1_market` 全系是 Replacing ⇒ 读到未合并重复行）。
+  该数字来自阵亡车道的 `attacks/` 脚本（已留档），**总包只复核了"门禁无该判据"这一条源码事实**，
+  82 这个数**尚未独立复跑** ⇒ 标 `转报`，进 C 类清单要求 Max 复跑。
+
+## 6.11 R-059 · z-rb-safe2 交工：**P-1 的处方被推翻——本仓早就有正确的跨进程熔断载体**，缺的只是"接上"
+
+`st-ff-rb-safe2-20260918`（窄任务书接手的第一个样本）完成三任务，队列项 `…-0002` pending（3 件具名清单，未超 ≤3）。
+
+- **★ 推翻前手 P-1 的处方前提"无任何持久化真源可依赖"**：本仓**已有**跨进程、带人工确认解除的 kill switch 持久化载体——
+  `src/zephyr/shared/state_store.py:117 JsonStateStore`（原子写 + 读侧三分语义；**docstring 第 121 行原文就写着"适用于 kill switch 熔断状态"**）、
+  `risk/implementations/default_risk_validator.py:67 namespace="kill_switch"` 在产、
+  `reset_kill_switch(confirmation)` 须人工确认、`tests/risk/test_kill_switch_state_persistence.py` 已钉"杀进程重启状态仍在"。
+  **真缺口只有两个**：① 编排器 `register_default_switches()` 五套适配器里**不含它**；
+  ② `ex_core/risk_layer_orchestrator.py:537 state_store=None`，而生产入口 `scripts/start_paper_session.py:457` **未传 `state_store=`**
+  ⇒ **连这条已有载体在真实启动路径上也是跑内存态**。
+  ⇒ **处方从"发明落盘三要素"降级为"接已有载体 + 补 TTL/心跳/PID"**，施工量与风险等级同时下降。
+  → **总包裁定 R-059a**：按此方向施工（owner 建议=新车道，**不要塞给 z-rb-safe2 的余温**）；
+  **但 J-2（陈旧旗标算"仍在熔断"还是算"已解除"）仍是 Owner 判据**（`JsonStateStore.load` 的
+  `StateCorruptError→fail-closed` 立了先例，可"**TTL 越界 ≠ 数据损坏**"，不能直接套用）⇒ A00b 保留该分叉。
+- **★ 新硬事实（前手未有的三条，全部亲验）**：
+  1. **交易五级熔断在生产侧零触发方、零解除方**：`trigger/reset/evaluate/get_switch` 在 src 的消费者只有编排器一处；
+     唯一读 `trigger_condition` 的 `evaluate()` **零调用** ⇒ **五条触发条件是从未机检的散文**；
+     `cooldown_seconds`/`auto_reenable` **零消费者** ⇒ 承诺的"自动到期恢复"不存在。
+     ⇒ 进程内单稳态直到重启，而**重启即静默解除且无人签** ⇒ **两个方向同时坏**（既不会自动恢复，也不留解除痕迹）。
+  2. **唯一留痕面在记假成功**：`.runtime/audit/kill_switch_orchestrator.jsonl` 本轮两行原文
+     `"success":true,"tripped":["trading"]`，`session_id` 恒空、无 `writer_pid`、无被保护方见证
+     ⇒ **事后审计只会读出"闸已拉"**。这是 R-057 第 12 型"指标自证清白"的最纯样本。
+  3. **观测强度已加强**：前手是"P1 拉闸后**退出**、P2 再读"（可被弱解成"只是进程没了"）；
+     本轮改成**写腿存活时**起读腿，三套旗标仍全 False ⇒ 结论从"进程生命周期"升级为"**非持久化**"。
+     （并更正前手一处：reaper 实注册周期是 `PT10M` 不是"每 5 分钟"，`register_process_reaper_task.ps1:22,98`。）
+- **★ 一条交工诚信更正**：前手 `st-ff-rb-safe` 的 prepared 笔记写"本批已落地（详见 commit）"——
+  实测 `git log --grep=rbsafe` = **0 笔**，四条"已落地"**全部只在工作区**（且与前手备份逐字节相等，证明从未提交）。
+  ⇒ **账本更正**：该项入账从"4 项落地"改"**0 项落地 / 1 项（`lsg_gate`）由本车道代为入队且仍 pending / 3 项待裁**"。
+  **不定性为欺诈**：该车道是**死于轮数上限**、来不及提交，属"把计划写成完成"的时态病（R-026 第 9 型同源），
+  但**这条病在本役至少出现三次**（DAG"已写入 tasks.yaml"、z-rb-safe"已落地"、本役多处"前手报 N 条已过"）
+  ⇒ 收口判据固化：**"已落地"只认 `git log` 能查到的 hash，不认任何文字**。
+- **三件 prepared 修复它判"不落"，理由我全部采纳**：
+  `crisis_gate.py`+38 / `allocation_inputs.py`：退化升 `warning` 会**真激活** `regime_meta_allocator.py:109/426
+  CRISIS_SHRINKAGE_FLOOR=0.05` ⇒ **改配额，是"会主动动作的闸"**，与未裁的 P-3 同域（R-022③ 先例就在同文件）；
+  `l1_input.py`+50：**定量证伪前手"不引入新的误拦"**——同 pattern 被重复 append（`check_indirect_content` 新增无条件
+  循环 202-204 与既有 URL 分支 206-209 **各记一次**），而 `total_hits=len(hits)`、`blocked=…or total_hits>=3`
+  ⇒ **URL/NETWORK 档阈值等效从 ≥3 降到 ≥1.5**，合法抓取的公告正文与安全新闻由不拦翻拦；
+  `allocation_orchestrator.py`+16：行为中性但其测试钉与不落的那件同文件，拆文件会造双胞胎测试。
+- **★ 攻面二"注入指令"的真实结论比"有没有拦"更难看**：
+  **L1 分档在全仓生产路径上永不生效，且是双因**——(a) `l1_input.py:221` 读 `source_type` 而 `gateway.py:188` 写 `source`（键错配）；
+  **(b) 即使修好键也没用**：生产侧 `source=` 承载的是**通道名**（`DeepSeekChat.deepseek-v4-pro` / `l10-compliance` /
+  `llm_gateway` / `PipelineOrchestrator` / `LocalModelScheduler.embedding`），`SourceType(...)` 必 ValueError → **恒 DIRECT**，
+  而 HEAD 的 `check_indirect_content:163-178` 对 DIRECT **一条间接签名都不扫**。
+  另发现 `SourceType.RAG_CONTENT` 在 HEAD 两个分支里都不在。
+  ⇒ **前手 prepared 的"全来源都扫"只修了可修的那一半，并用它遮掩了另一半**（两处必须连同调用方一起改）。
+  → **总包裁定 R-059b**：注入面施工顺序=**先修 `source=` 语义（通道名 ≠ 来源类型，要分字段传）**，
+  再修键错配，最后才谈签名集/中文集/阈值。**顺序反了会得到"看起来扫了但其实恒 DIRECT"的第二块自证清白面。**
+- **LSG 绕过面清单（AST 确证"真调 SDK + 同文件零 LSG 痕迹"）**：
+  `scripts/ai_layer/probe_deepseek_cn.py:40,42` · `scripts/backtest/hypothesis_translator.py:381,396` ·
+  `scripts/governance/d1_policy_compliance/validate_terminology_glossary.py:304,307` · `scripts/run_deepseek_v4_exam.py:76` ·
+  `scripts/strategy_lab/validate_llm_note_card_mvp.py:203,206` —— **5/5 全在 `scripts/`**，
+  正对应 `detect_direct_llm_calls.py:347 src_dir=src/zephyr` 的检测面缺口（另 `_EXEMPTED_FILES:115-120` 含 `model_profiling`，
+  其内真调用 `deepseek_v4_chat.py:398` 仍在）。上游总量 114 文件触达 SDK 符号 / 94 同文件零 LSG 痕迹。
+  → **总包裁定 R-059c**：`GATE-LLM-CALL` 检测面**扩到 `scripts/**`**（#321 方向=加严），
+  与 `DEPGRAPH-PRE-REGISTRATION`/`ORPHAN-MODULE` 的 `src/`-only 缺口**同根**，应一并出"门禁检测面口径表"
+  （**哪些门只看 src、哪些看全仓——这张表本役没人画过，是多个"假绿"的共同上游**）。
+- 该车道两处做法**立为房内标准**：① **不在被审件里加判据**（`kill_switch_orchestrator.py` 是
+  `MODIFY-GUARD Owner approval`+`human_gated`+`SAFETY H` ⇒ 红队在它内部加"自证合规"的判据，就是"让被审者自己长眼睛"，
+  同等观测强度改在**测试侧**达成）；② **两条缺陷钉用 `xfail(strict=True)`** ⇒ 治本落地当天 XPASS 就硬报错逼销案，
+  **防"缺陷修好了但检出面还挂着"**（这正是 R-026 第 8 型"已自愈仍挂账"的门禁版）。
+- 请总包代登记 token：`adjudications/req_rbsafe2_01.md`、`lanes/rbsafe2_prescriptions.md`（车道禁写热册，已 `git add` 保护 + 双份备份）。
+
+## 6.11.1 R-060 · 阵亡车道计数升至 **6 条**：z-ailayer2 死前已把批次推进队列（`processing`）
+
+`st-ff-ailayer2-20260918`（AI 层 intake 全族落地，R-045 救回件的接手人）在 150 轮上限阵亡。
+但其队列轨迹证明**它做完了大部分**：
+- `…-0001` dead：CREATE-GUARD basename 碰撞 ⇒ `ai_layer/intake/events.py` 被判 `drift_detection_events` 的 sibling duplicate
+  → **它已按门改名**：磁盘现为 `src/zephyr/ai_layer/intake/intake_events.py`（`events.py` 已不存在）；
+- `…-0002` dead：TRANSLATION-COVERAGE 缺 `plain_zh` → **它已补登记**；
+- `…-0003` **processing**（serializer 正在落地，10 件 `AM`）。
+⇒ **不需再接力车道**，总包只盯该队列项终态；若 dead 则读 `dead_reason` 修正后 requeue（队列项 dead 的处置配方，§2.6）。
+- **入账到 R-058 的运营判据**：**6 条阵亡车道里 5 条的成果都活了下来**，靠的是同一件事——
+  "成品即刻 `git add` + 死前把批次推进队列 + 备份到非 TTL"。
+  ⇒ **这三条从"建议"升格为"派工必查项"**（今后每条任务书首段就写，不放在末尾）。
+- **另一条待核事实**：队列里出现 `st-ruledisp-20260918` 的 pending 项（pending=3/processing=1），
+  **该 session 不属于本战役任何一条车道** ⇒ 外部会话在同仓提交。按 §3.4 只登记不干预，
+  但**它与 R-056 的"从 blob 反向注入旧版"发生在同一时间窗** ⇒ 记为 R-042 案卷的新线索（**不作为归因**）。
+
+## 6.11.2 R-061 · ★ 结构性发现：**错误码册在 PROTECTED-PATHS ⇒ 从今往后任何新模块带码即死信**
+
+两条车道被**同一道门**卡住，此前被我当成两桩孤立事件（R-044 的 ITEM-7 与 z-alarm2 的死信）：
+
+- 门禁 `GATE-ERRCODE-CONSISTENCY`（#ARCH-ERRCODE-001）要求代码里出现的 error_code **必须已在
+  `architecture_model/contracts/error_code_registry.yaml` 登记**（实测在册 **788** 条），
+  而该文件位于 `architecture_model/contracts/**` = **PROTECTED-PATHS，无 CLI 逃生旗**（Owner 授权面）。
+- 受害者 1：危机闸 `ZA-PA-CRISIS` ⇒ z-land3 **把异常码置 `None` 并请示**（R-044 已判该处置正确：宁可 None 不伪造编号）。
+- 受害者 2：告警外发通道 `ZA-DATA-ALERT-WEBHOOK` ⇒ 死信 `q-…-st-ff-alarm2-…-0005` 原文
+  `[unregistered_code] ZA-DATA-ALERT-WEBHOOK`。
+  ★ 而且**这个码本身格式就不合规**：在册 11 条 `ZA-DATA-*` 全是四位数字（`0020`~`0029`，另 `ZA-DATA-PIT-001`），
+  所以车道连"照抄在册格式"都做不到 ⇒ **必须新分配，而我刻意不代填**（分配编号本身就是登记行为）。
+- 实测在册缺口（给 Owner 一次批完的建议值，schema 字段=`code/class/module/file/introduced`）：
+  `ZA-PA` 已用号 = 1,2,3,4,7,13,14,15,31,32,33 ⇒ **第一个空号 0005**（给危机闸）；
+  `ZA-DATA` 已用 0020~0029 ⇒ **下一空号 0030**（给告警外发通道）。
+- **裁定**：**入 A 类 A1-b**，并与 A1-a（`cross_layer_contracts.yaml:806` 契约行）、A1-c（paper_hedge 落地权）
+  **合并成一次批准解锁三处**。理由：三条是同一类动作（往 PROTECTED 契约面插/改几行），
+  分开问会让 Owner 批三次同一件事。
+- **元层结论（进 Max 清单）**：`PROTECTED-PATHS` 与"代码必须带已登记错误码"这两条规则**单独都合理、合起来构成死锁**——
+  与本役我已犯的 R-012/R-055（TDM 禁写 × ALGO-NOTE-SYNC 要求同批改 TDM）**同一种病**。
+  ⇒ **收口自检项固化**：立任何"禁写/必改"类规则时，必须交叉查一遍有没有另一条规则要求同批改那个文件。
+  本役此类死锁已出现 **3 次**，且 2 次是总包自己造成的。
+- 顺带记录本批已落地的两桩（**判据=git log 查得到 hash，不认文字**，见 R-059 那条更正）：
+  判定链 SSoT 批（`src/zephyr/plan_engine/judgment_ledger.py` 等九件）与
+  S-OWNER-002 切换器批（`src/zephyr/strategy_factory/owner_regime_switcher/**` 11 件）**均已在 HEAD**
+  ⇒ z-judgment3 / z-switch 的死信已由 serializer 消化完毕，**无需再接力**。
+  仍悬在"已 staged 未落地"的三簇：告警外发（等 A1-b）、AI 层 intake（`z-ailayer2` 阵亡后队列项 `-0003` 待终态）、
+  标准族注册表生成器（同随 z-switch 部分落地，生成器本体仍 `AM`）。
+
+## 6.12 R-062 · z-judgment3 交工：**判定链 SSoT + 四表哨兵腿双双进 HEAD**（本役第一条"接力腿把前手声明变成事实"的完整样本）
+
+`st-ff-judgment3-20260918`（窄任务书 + "先落地再调查"首句）落 2 笔：
+`37388478ae`（九件同批，9 files +506/−94，零外来）· `0f4971547e`（哨兵 1 件 +73/−0）。
+落地后十件 `git diff HEAD` 全空（三面一致，无半截态）。
+
+- **它推翻了我任务书里三条前提，我全部采纳**：
+  ① 我写"前手已把整批做完并 staged ⇒ 原样送进 HEAD"——**错**：字节面做完了，**门禁面没做完**，
+     `IMPORT-INTEGRITY` 会硬拦（`schemas.` 不在门的项目前缀集），它用门自身文档化的行级豁免
+     `# noqa: import-integrity` 补 4 处才可能过，并指出"**不是原样送**"。
+  ② 我写"必须按 z-sentinel 新能力**重写**片段而不是照抄"——**重写前手已在载体里做完**，真缺口是"复测 + 落地"。
+     （★ 我又一次把"要做的事"写成了"已确认的事实"，同 R-020/R-024/R-037 一型。）
+  ③ 我引"记录 R-039 的案卷是 `req_tdchainJ_02.md`"——**该文与本役无关**（它是 #306 红队①立案书），真源是台账 §6.7。
+- **★ 一条它替我排掉的雷（与我此前处置同一件）**：`src/zephyr/strategy_pipeline/daily_decision_orchestrator.py`
+  的**索引面**存着一条 `+2/−10` 快照，内容是把 HEAD 里已落地的 **P4 告警加严**
+  （`log.error("告警通道不可达，本条播报未送达")`）**静默回退成 `log.debug`**。
+  它的判读：**工作树==HEAD、`.ailocks` 零持有、第一条判定车道死信清单（11 件）不含此文件**
+  ⇒ 属**无主陈旧暂存雷**（R-038 型），不是"活跃会话在途"；它按 §3.4 **未代修也未 unstage**，留给我。
+  → **总包 22:4x 处置**：先 `git show :<文件>` 把该快照**存档**到 `.runtime/tmp/ff-recon/stale_index_saves/`，
+  再 `git restore --staged -- <该单文件>` ⇒ 三面归一 HEAD（P4 加严回到 :479），**未销毁任何字节**。
+- **⑤向从"暂存区的绿"变成"HEAD 的绿"**：前手申报的 ⑤ 转绿当时只在暂存区（本役已被还原四次），
+  现在任何进程重跑 `check_tables()` 都可复核：`checked 51→55 / breached 8→9 / blind 0`，
+  新点亮 4 腿里唯一新增 breach = `judgment_plan_verification` 空表（**真阳**——该表线上 0 行）。
+  能红三条它都真跑了：注入 `max()=2026-08-01` ⇒ 四腿 4/4 红；注入填充率 ⇒ 三表腿红；
+  **把 `max_lag_days` 拼成 `max_lag_dayz` ⇒ `SupplySentinelError` 拒载**（未知字段 fail-closed 的实体证据）。
+- **门禁臂力实证**（很值得推广的一条方法）：同一把尺子 `_build_table_name_pattern` 拿探针串
+  `FROM c1_market.judgment_daily_plan` 双向比——**未注册名集 ⇒ 精确/子串双 0 命中（门失明）；本批后名集 ⇒ 子串命中**。
+  ⇒ **"注册表条目"与"门禁有没有牙"是两件事，必须成对验**。
+- **本轮测试实跑（不沿用前手数）**：`test_judgment_ledger.py` collected 50 / passed 50；
+  判定链七件 177 passed / 0 failed；`tests/plan_engine + strategy_pipeline + data` 复跑 **1453 passed / 1 skipped / 0 failed**。
+- **★ 它发现一条系统性尺子问题（不是它的错，也不是本役任何车道的错，登记为断点）**：
+  合并把一处 `# noqa: BLE001——理由`（**畸形标记：ruff 判无效、抑制实际不生效**）搬进了原先 0 错的文件；
+  它按"改成有效标记=放宽检出方向"**拒绝修**，判为正确。
+  ⇒ 全仓同款畸形 `noqa` 标记实测 **4041 处** ⇒ **本仓大量"看着有豁免、其实没生效"**，
+  与手册 §7 那条"IMPORT-INTEGRITY noqa 需 2+ 空格否则静默失效"是同一族病，但**规模大了三个数量级**。
+  → 进 C 类清单（Max 判：是登记成系统性欠账批次，还是先立 NOQA-VALIDATION 的存量棘轮）。
+- **仍如实挂红的三处（它没因为落地就改判）**：`judgment_intraday_market_state` 零读者、
+  `aggregate_report()` 生产侧零调用方、`judgment_plan_verification` 线上 0 行 ⇒ "只有判定没有验证"。
+  **且④黄内藏红它加了一条比我更狠的**：晨判读台账的失败在 `_read_plan_context:500-511`
+  被两处 `except Exception: pass` **吞掉 ⇒ 静默降级为空摘要**——
+  "读者不但坏，还不出声"。⇒ 六向⑥"失败会响"这一环**比前手判得更弱**（不是更强）。
+
+## 6.12.1 R-063 · ★ 又一次热册条目被外来非 CAS 写蒸发——**这次在 20 分钟内被抓到并原位修复**
+
+22:4x 我准备提交 AI 层批次前，对 `capability_canonical_file_registry.yaml` 做例行分诊，实测：
+- 工作区 vs HEAD = `+48/−4`，而**我两次代登记的 token 只应 +48/−0**；
+- 被删的 4 行正是 `st-ruledisp-20260918` 会话的 `rule_disposition_policy.md` token 条目
+  （HEAD 里它是 `creation_tokens` 的**最后一条**，紧挨 `di_seam_exemptions: []`）。
+⇒ **判定**：有写者对热册做了**未带 `expected_base_sha256` 的裸写**，把末条整体顶掉。
+这与战役记忆里 `hot-file-wipe-forensics-20260918`（热注册表被外来非 CAS 写静默蒸发一次）**是同一型病复发**。
+- **处置**：原位恢复该 4 行（先试 3 次 `PermissionError`——**证实此刻有并发写者**，第 4 次成功），
+  复解析 `creation_tokens` = **7702** 条、外来条目在册、自家 14 条在册，`git diff HEAD` 归正为 **`+48/−0`** 后才提交。
+- **我顺手抓到的一条协议缺陷（我自己的配方造成的）**：手册 §3.2 教车道"只在文本末尾追加"——
+  **所有车道都在同一个插入点写**，于是**只要有一次带陈旧 base 的写，被顶掉的永远是上一条而不是本次写者的**。
+  ⇒ 收口批要改的地方：热册追加一律走 `safe_write_text(..., expected_base_sha256=...)` **且失败必须重试而非改用手写**；
+  并考虑给 `creation_tokens` 加一条"条目数只增不减"的门禁（`REGISTRY-MASS-DELETION` 只管提交面，
+  **管不到"写盘即蒸发"这一步**——本次若不是我在提交前分诊，它会在 serializer 的干净面上以"净删 4 行"被拦下，
+  而**外来条目已经先在磁盘上没了**）。
+- **同族第二条证据**：`docs/01_policies_and_standards/_registry/catalogs/` 下 **18 个 `.capability_*_.tmp`** 残留
+  （中断的 atomic_write 临时件），与本次 `PermissionError` 三连是同一现场的两面。
