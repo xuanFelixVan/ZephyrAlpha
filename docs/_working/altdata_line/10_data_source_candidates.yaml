@@ -204,8 +204,9 @@ candidates:
     tos_risk: "公开 API"
     score: {availability: 3, signal: 3, fit: 3, maintenance: 2}
     target_table: "c1_market.hyperliquid_*"
-    status: candidate
-    notes: "鲸鱼仓位独家面；H1；越早接越早积累"
+    status: graduated
+    register_barrier: "已消除（2026-09-18 全流通战役 st-ff-newsrc-20260918 补登 DS-HYPERLIQUID 资产条目；provider/tasks 此前已在 HEAD 在跑）"
+    notes: "鲸鱼仓位独家面；H1；越早接越早积累。实测 2026-09-18：hl_perp_snapshot_daily=234 行、hl_oi_snapshot_daily=234 行、hl_funding_history=4,655,619 行(至 2023-05-12 起)、hl_liquidation_raw=1 行"
   - cand_id: DS-CAND-012
     name: "中债登国债收益率曲线"
     vendor: "中央结算公司"

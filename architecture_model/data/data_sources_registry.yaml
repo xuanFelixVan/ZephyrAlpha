@@ -12,8 +12,8 @@
 # 同步到 DB data_source_assets 表,派生 asset_catalog.md;派生 policies.yaml(generate_policies.py)
 
 module_id: MOD-L00-001
-version: "2.5.0"
-description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。v2.2.0: 补登 DS-CLS(财联社电报,RSSHub路由)和 DS-EASTMONEY_NEWS(东方财富7x24快讯,HTTP直连),修复 policy_registry 运行时无注册策略 WARNING。v2.3.0: DS-IFIND 退役(#ARCH-DATA-IFIND-RETIRE-001,2026-08-14 用户裁定彻底删除+留痕)——provider 代码/tasks/policies/健康检查全项目切除,本条仅留痕。v2.4.0: 新增 DS-IO_TABLE(国家统计局投入产出表,低频结构锚,io_ingest 装载 ig_io_edge)。v2.5.0: 新增 DS-EASTMONEY_DATACENTER(东财数据中心 API,RPT_HOLDERNUM_DET 股东户数公告日窗口——2026-09-18 夜班 st-datapack-20260918，miniqmt 清退后 D2 股东户数续采正门；DS-CAND-000 毕业)。"
+version: "2.6.0"
+description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。v2.2.0: 补登 DS-CLS(财联社电报,RSSHub路由)和 DS-EASTMONEY_NEWS(东方财富7x24快讯,HTTP直连),修复 policy_registry 运行时无注册策略 WARNING。v2.3.0: DS-IFIND 退役(#ARCH-DATA-IFIND-RETIRE-001,2026-08-14 用户裁定彻底删除+留痕)——provider 代码/tasks/policies/健康检查全项目切除,本条仅留痕。v2.4.0: 新增 DS-IO_TABLE(国家统计局投入产出表,低频结构锚,io_ingest 装载 ig_io_edge)。v2.5.0: 新增 DS-EASTMONEY_DATACENTER(东财数据中心 API,RPT_HOLDERNUM_DET 股东户数公告日窗口——2026-09-18 夜班 st-datapack-20260918，miniqmt 清退后 D2 股东户数续采正门；DS-CAND-000 毕业)。v2.6.0: 补登 DS-IRM(深交所互动易官方接口,C6 问答对+C9 调研纪要)与 DS-HYPERLIQUID(官方免费 info+WS,四 capability)——两源 provider/tasks 早在 HEAD 在跑而资产册缺席,属「有源无册」登记债(2026-09-18 全流通战役 st-ff-newsrc-20260918,DS-CAND-011 毕业)。"
 
 data_sources:
   - id: DS-IFIND
@@ -575,6 +575,52 @@ data_sources:
     operation_manual: "src/zephyr/data/implementations/akshare_provider.py _fetch_shareholder_count docstring"
     policy:
       rpm: 30
+      concurrency: 1
+      max_retries: 3
+      backoff: exponential
+
+  - id: DS-IRM
+    runtime_id: irm
+    name: "深交所互动易"
+    name_en: "SZSE Interactive Easy (irm.cninfo.com.cn)"
+    type: open_source
+    account_type: free
+    category: fundamental_data
+    vendor: "深圳证券交易所"
+    interface_types: ["HTTP POST(irm.cninfo.com.cn/newircs/index/search, 网页端同款)"]
+    api_count: 2
+    auth_required: false
+    auth_method: "无(官方公开接口匿名访问,爬虫礼貌限速)"
+    rate_limit: "provider rate_limit_default=30;页间/PDF 间限速等待"
+    status: active
+    coverage: "C6 投资者问答对(searchTypes=11,提问+公司回答)+C9 投资者关系活动记录表(searchTypes=4,附件 PDF);原文快照先行落 G 盘冷库 30_corpus/web_snapshots 且行内携 snapshot_path"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "src/zephyr/data/implementations/irm_provider.py 模块 docstring;下游抽取=scripts/ch/irm_extract_batch.py"
+    policy:
+      rpm: 30
+      concurrency: 1
+      max_retries: 3
+      backoff: exponential
+
+  - id: DS-HYPERLIQUID
+    runtime_id: hyperliquid
+    name: "Hyperliquid 全市场永续"
+    name_en: "Hyperliquid"
+    type: open_source
+    account_type: free
+    category: alt_data
+    vendor: "Hyperliquid"
+    interface_types: ["HTTP POST(api.hyperliquid.xyz info)", "WebSocket(wss://api.hyperliquid.xyz/ws)"]
+    api_count: 4
+    auth_required: false
+    auth_method: "无(官方公开 info/WS 匿名只读,无 key 无签名,免费)"
+    rate_limit: "provider rate_limit_default=240"
+    status: active
+    coverage: "四 capability:hl_perp_snapshot_daily/hl_oi_snapshot_daily(234 永续日更自积,起点 2026-09-18,历史不可回补)+hl_funding_history(逐小时资金费率,实测回溯至 2023-05-12)+hl_liquidation_capture(trades 流清算账本地址标记;REST recentLiquidations 实测 422 不存在、WS 无公开清算频道)"
+    owner: ZephyrAlpha-Owner
+    operation_manual: "src/zephyr/data/implementations/hyperliquid_provider.py 模块 docstring(DS-CAND-011 毕业)"
+    policy:
+      rpm: 240
       concurrency: 1
       max_retries: 3
       backoff: exponential
