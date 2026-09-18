@@ -51,9 +51,9 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 import yaml
-from _shared.constants import EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_CODE
+from _shared.constants import EXIT_ERROR, EXIT_PASS, REPO_ROOT, SCAN_EXTENSIONS_CODE
 from _shared.encoding import ensure_utf8_stdout
-from _shared.walk import iter_files
+from _shared.walk import iter_files, resolve_scan_dir, zero_scan_error
 
 ensure_utf8_stdout()
 import argparse
@@ -143,19 +143,21 @@ def scan_file(filepath: Path) -> list[dict]:
 
 
 def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
-    """扫描仓库并返回发现列表."""
-    if scan_dir is None:
-        "扫描仓库并返回发现列表."
-        "扫描并返回发现列表."
-        scan_dir = REPO_ROOT
+    """扫描仓库并返回发现列表.
+
+    治本（2026-09-19 CF1 F6）：入参先 resolve()——相对目录入参下所有文件在
+    `relative_to(REPO_ROOT)` 处抛 ValueError 被 continue 吞掉，
+    恒报"0 文件 / 0 发现 / exit 0"＝假绿。
+    """
+    scan_dir = resolve_scan_dir(scan_dir) or REPO_ROOT
     all_findings = []
     files_scanned = 0
     for filepath in iter_files(scan_dir, extensions=SCAN_EXTENSIONS_CODE, exclude_files=frozenset(_WHITELIST_FILES)):
         try:
-            rel = filepath.relative_to(REPO_ROOT)
+            rel = str(filepath.relative_to(REPO_ROOT))
         except ValueError:
             continue
-        rel_str = str(rel).replace("\\", "/")
+        rel_str = rel.replace("\\", "/")
         if rel_str.startswith("_DO_NOT_USE") or rel_str.startswith(".trae"):
             continue
         # 以下目录排除原因：文件内容必然引用废弃路径/废墟目录，属正常语义而非违规
@@ -194,8 +196,12 @@ def main() -> None:
     parser.add_argument("--scan-dir", default=None, help="扫描目录")
     parser.add_argument("--warn-only", action="store_true", help="警告模式")
     args = parser.parse_args()
-    scan_dir = Path(args.scan_dir) if args.scan_dir else None
+    scan_dir = resolve_scan_dir(args.scan_dir)
     findings, files_scanned, errors = scan_repo(scan_dir)
+    err = zero_scan_error(scan_dir, files_scanned, "RUINS-SCAN", len(findings))
+    if err:
+        print(err, file=sys.stderr)
+        sys.exit(EXIT_ERROR)
     if findings:
         print(f"\n[RUINS-SCAN] {len(findings)} 残骸路径引用发现（扫描 {files_scanned} 文件）:\n", file=sys.stderr)
         for f in findings:
