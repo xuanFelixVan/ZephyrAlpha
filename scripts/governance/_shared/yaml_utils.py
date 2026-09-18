@@ -44,14 +44,37 @@ if _SRC not in _sys.path:
     _sys.path.insert(0, _SRC)
 
 # re-export 真源函数（SSoT：src/zephyr/shared/io/yaml_utils.py）
+# 注：路径常量与 responsibility_layer 映射读取器同样必须在此可见——
+# d3_metadata/add_module_translation.py 走 `from _shared.yaml_utils import ...`，
+# 缺这三个名字会让该脚本与其测试**连收集都失败**（ImportError，HEAD 实证）。
 from zephyr.shared.io.yaml_utils import (  # noqa: E402,F401
+    DEFAULT_REGISTRY_CATALOG_DIR,
+    RESPONSIBILITY_LAYER_MAP_FILE,
     evaluate_ttl,
     load_all_vocabulary_values,  # #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 2: 批量加载
     load_decision_tree,
+    load_responsibility_layer_map,
     load_vocabulary_deprecated_map,
     load_vocabulary_entries,
     load_vocabulary_values,
 )
+
+# 导出面契约（SSoT re-export + 本模块自有加载器）：漏项=消费方运行期 ImportError。
+# 与 scripts/** 实际引用集由 tests/governance/test_shared_yaml_utils_reexport.py 机械核对，
+# 本清单不手工漂移（宪法 §9.5）。
+__all__ = [
+    "DEFAULT_REGISTRY_CATALOG_DIR",
+    "RESPONSIBILITY_LAYER_MAP_FILE",
+    "evaluate_ttl",
+    "load_all_vocabulary_values",
+    "load_decision_tree",
+    "load_responsibility_layer_map",
+    "load_vocabulary_deprecated_map",
+    "load_vocabulary_entries",
+    "load_vocabulary_values",
+    "load_yaml",
+    "load_yaml_safe",
+]
 
 
 def load_yaml(file_path: str | Path) -> Any:
