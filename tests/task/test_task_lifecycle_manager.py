@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_task_lifecycle_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-437 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_task_lifecycle_manager
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] TaskLifecycleManager is per-instance; no shared state
 # [MODIFY-GUARD] task_lifecycle_manager.py
 # [CONSUMERS] CI

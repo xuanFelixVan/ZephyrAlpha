@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_foundation_env
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] Env枚举唯一;current_env缓存;ZEPHYR_ENV优先级最高
 

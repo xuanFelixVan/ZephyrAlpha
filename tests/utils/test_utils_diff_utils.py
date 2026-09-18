@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_utils_diff_utils
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] compute_diff无变更返回空串;apply_patch严格模式行号匹配;similarity_ratio 0-1
 

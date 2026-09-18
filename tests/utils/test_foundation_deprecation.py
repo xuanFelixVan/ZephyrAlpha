@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_foundation_deprecation
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] deprecated装饰器保留__name__;strict模式抛异常;silent模式零开销
 

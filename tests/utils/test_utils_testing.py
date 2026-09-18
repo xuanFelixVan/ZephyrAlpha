@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_utils_testing
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] make_valid_task返回合法Task;make_p0_task优先级P0;make_completed_task状态COMPLETED
 

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_task_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_task_gate
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] TaskGate依赖CapabilityPassport;测试使用mock构造护照
 # [MODIFY-GUARD] src/zephyr/runtime/task_gate.py
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_async_runtime | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_ASYNC_RUNTIME | docs/02_enterprise_architecture/architecture_upgrade_discussion.md | §4.1
 # [MODULE] tests.trading.runtime.test_async_runtime
+# [DOMAIN] D_TRADING
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

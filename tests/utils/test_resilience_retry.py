@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_resilience_retry
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] RetryConfig.delay_for_attempt指数退避;should_retry黑白名单;RetryExhaustedError继承ZephyrBaseError
 

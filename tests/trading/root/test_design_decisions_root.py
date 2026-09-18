@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_design_decisions_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_design_decisions
+# [DOMAIN] D_TRADING
 # [INVARIANTS] DECISIONS dict has 14 entries; get returns None for unknown; list_active filters ACTIVE
 # [MODIFY-GUARD] src/zephyr/orchestrator/design_decisions.py
 # [CONSUMERS] CI

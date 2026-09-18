@@ -1,6 +1,7 @@
 # [A_test] module_id=MOD-GOV_conductor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §3.1
 # [MODULE] tests.test_conductor
+# [DOMAIN] D_TRADING
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

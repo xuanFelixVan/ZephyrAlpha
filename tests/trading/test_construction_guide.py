@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_construction_guide | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_construction_guide
+# [DOMAIN] D_TRADING
 # [INVARIANTS] get_mock_strategy returns STUB for unknown; require_phase0_context_check returns bool
 # [MODIFY-GUARD] src/zephyr/orchestrator/construction_guide.py
 # [CONSUMERS] CI

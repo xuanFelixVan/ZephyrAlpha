@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_utils_time_utils
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] now_utc返回UTC;freeze_time上下文管理器恢复;parse_iso严格
 

@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_utils_pagination
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] OffsetPagination验证offset>=0/limit1-1000;Page计算属性一致
 

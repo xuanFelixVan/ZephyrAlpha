@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_dlq_manager_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_dlq_manager
+# [DOMAIN] D_TRADING
 # [INVARIANTS] DLQManager uses in-memory dict; max_attempts=3 by default
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

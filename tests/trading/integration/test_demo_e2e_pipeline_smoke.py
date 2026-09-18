@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_demo_e2e_pipeline_smoke | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-624 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.unit.test_demo_e2e_pipeline_smoke
+# [DOMAIN] D_TRADING
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

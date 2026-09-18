@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_schema_migration | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §test
 # [MODULE] tests.test_schema_migration
+# [DOMAIN] D_TRADING
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

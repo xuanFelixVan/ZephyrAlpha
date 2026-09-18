@@ -1,0 +1,319 @@
+# [A_config] module_id=REG-DOMAIN-RESP-LAYER-001 | layer=config | stability=evolving | safety=M | ai_autonomy=human_gated
+module_id: REG-DOMAIN-RESP-LAYER-001
+ttl: permanent
+title: 域→职责层映射真源（responsibility_layer）
+doc_type: register
+registry_id: REG-DOMAIN-RESP-LAYER-001
+name: 域→职责层映射真源
+owner: ZephyrAlpha-Owner
+tier: tier_1_governance
+status: active
+version: 1.0.0
+created: '2026-09-18'
+last_updated: '2026-09-18'
+unique_key: domain
+description: >-
+  裁定#335 结论⑥落地（战役 st-vocabconsol-20260918 环节 W4a）。为全部功能域登记
+  responsibility_layer 四值：governance（不犯错）/ business（赚钱）/ ai（进化）/
+  infrastructure（保运行）——取自三层愿景判例（docs/_working/ai_layer_vision/
+  ai_layer_vision_and_roadmap_v1.md）。本字段与 layer_vocabulary.yaml v2.0.0
+  （L0-L3 运行时栈，DB layer_id CHECK/trigger 真源）正交：职责分层≠运行时栈，
+  L2_domain 里 governance 与 business 域混装（争点 C1）。消费方约束：新字段只可
+  命名 responsibility_layer；生成器禁从 layer_id/目录名直推（争点 C17：目录≠域≠层），
+  真源只能是本文件；叶级（模块→层）条目由生成器从本域级映射自动派生（宪法 §9.5
+  静态清单禁手工维护——本文件是"人工+裁定"域级真源，非生成物；其下游派生件才是生成物）。
+  归层判据三把尺（W1d §1 收敛）：①服务对象（谁消费产出）②职能性质
+  （防错=治理/赚钱=业务/进化=AI/兜运行=基础设施）③KPI 反查（漏拦/收益/进化速度/可用性）。
+  跨层复合域按主职能/KPI 定层，其余职能在 reason 留痕（裁定#335 结论⑥ / P4/P5）。
+
+# 域全集口径（并集，勿背数——以本表 entries 实时统计为准）：
+#   target_layer_vocabulary.yaml v1.1.0 的 62 values
+#   ∪ 其 10 aliases（别名折叠可见性：#335 结论③要求派生消费者必读 aliases→canonical，
+#     别名行层随 canonical，防止折叠后层缺失）
+#   ∪ functional_domain_registry.yaml 全部 registry 域
+#   ∪ W1d §3.2 depgraph 在用增量（9 个脚本族域 + D_TEST；D_CONTRACTS 已在词表 values）
+universe_sources:
+  - docs/01_policies_and_standards/_registry/vocabularies/target_layer_vocabulary.yaml
+  - docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
+  - docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1d_layers.md
+ruling_basis: 裁定#335（ruling_registry.yaml REG-335；结论⑥定名 responsibility_layer 四值真源）
+generated_by: "manual+adjudication（本文件=人工+裁定真源，非生成物；下游叶级派生件才是生成物输出）"
+responsibility_layer_values:
+  governance: "不犯错——门禁/网关/审计/纠察/规则执行/标准定义权（P3/P5/P6）"
+  business: "赚钱——行情/因子/信号/回测/风控/组合/执行/前端/数据接入/报表"
+  ai: "进化——编排器/自主核心/反馈循环/ML 训练与推理/知识/LLM 安全/自我进化"
+  infrastructure: "保运行——进程守护/备份容灾/遥测/数据库服务/消息总线/跨层连接件"
+total_domains: 84
+entry_schema:
+  domain: string (required, unique) — D_XXX 域标识（canonical 或别名行）
+  responsibility_layer: string (required) — governance | business | ai | infrastructure
+  reason: string (required) — 归层依据一句话（判例锚点 P*/争点 C* 见 w1d_layers.md）
+  alias_of: string (optional) — 别名行专用：折叠目标 canonical（#335 三段式过渡）
+  pending_owner_review: bool (optional) — 自裁定未终局，待 Owner 复核
+entries:
+  # === governance（不犯错：门禁/纠察/标准定义权）===
+  - domain: D_GOVERNANCE
+    responsibility_layer: governance
+    reason: "注册表/生命周期元治理=治理自身的真源域"
+  - domain: D_GOV_ENFORCEMENT
+    responsibility_layer: governance
+    reason: "门禁引擎/规则强制=二线实时拦（判例 P3）"
+  - domain: D_GOV_SCRIPTS
+    responsibility_layer: governance
+    reason: "脚本治理/自动化审计注册（P3）"
+  - domain: D_GOV_DRIFT
+    responsibility_layer: governance
+    reason: "漂移检测=三线独立抽查纠察，不因自动化落 ai（P3）"
+  - domain: D_GOV_AUDIT
+    responsibility_layer: governance
+    reason: "审计追踪/法证审计=独立保证+审计链（P3/P7 时间刹车）"
+  - domain: D_GOV_REPAIR
+    responsibility_layer: governance
+    reason: "治理修复/回滚/Checkpoint=三层刹车之时间刹车（P7）"
+  - domain: D_GOV_RULE
+    responsibility_layer: governance
+    reason: "规则治理/规则注册表=标准与尺子的定义权（P5：AI 层不持自己的尺子）"
+  - domain: D_GOV_DOCS
+    responsibility_layer: governance
+    reason: "架构文档治理/全图对齐=文档态防错"
+  - domain: D_GOV_CODE_QUALITY
+    responsibility_layer: governance
+    reason: "代码质量治理/提交门禁/克隆防重=合入前拦截（P3）"
+  - domain: D_GOV_OPS_RESILIENCE
+    responsibility_layer: governance
+    reason: "运维/安全/弹性治理——升级协议与标准定义权定层；熔断/混沌等韧性底座执行件留 infrastructure 痕（C18 裁定）"
+  - domain: D_COMPLIANCE
+    responsibility_layer: governance
+    reason: "合规校验/前置审批门禁=二线拦截；监管报告生成子项归业务输出留痕（C3 裁定）"
+  - domain: D_AUDITTEST
+    responsibility_layer: governance
+    reason: "审计测试套件=质量防错，KPI 反查命中治理层（违规漏拦=0），不作运行层排除（C19 裁定）"
+  - domain: D_FBL_VERIFICATION
+    responsibility_layer: governance
+    reason: "反馈循环门禁/结果验证器/安全门禁/AB 验证=二线实时拦；验证器与考纲定义权归治理，父域 FLE 属 ai 不改变本域职能（P3/P5，C20 裁定）"
+  - domain: D_SECURITY
+    responsibility_layer: governance
+    reason: "registry 主职能=对抗验证：孤儿审判/三步删除/注册表检查=三线独立纠察（P3），ai_autonomy=immutable_core 旁证；红蓝对抗子职能=AI 进化安全带留 ai 痕（C13/C21 裁定）"
+  - domain: D_AUTONOMY_PERM
+    responsibility_layer: governance
+    reason: "预算/超时守卫/升级协议/委托护栏=权限与资源护栏（P6 必须留人底线）+标准定义权（P5）；配额调度子项=ai 运营轴留痕（C11 裁定）"
+  - domain: D_DATA_GOV
+    responsibility_layer: governance
+    reason: "裁定#335 结论④判例：生产者=治理会话非数据管道、验证口径=规则覆盖率、数据治理=对数据域的二线门禁；业界先例=数据治理归 governance 家族（DataHub vs Great Expectations 分工）"
+  - domain: D_DATA_SEC
+    responsibility_layer: governance
+    reason: "数据分级/访问控制/加密标准=安全边界定义权+门禁执行，与 D_DATA_GOV 判例同构；加密/契约校验运行时执行引擎留 infrastructure 痕（C5 裁定）"
+  - domain: D_ARCH_SCRIPTS
+    responsibility_layer: governance
+    reason: "架构治理脚本族（depgraph 在用，W1d §3.2）"
+  - domain: D_META_SCRIPTS
+    responsibility_layer: governance
+    reason: "元治理脚本族（depgraph 在用）"
+  - domain: D_ARCH_GUARD
+    responsibility_layer: governance
+    reason: "架构守护脚本=结构防错拦截（depgraph 在用）"
+  - domain: D_COMPLIANCE_SCRIPTS
+    responsibility_layer: governance
+    reason: "合规治理脚本族（depgraph 在用）"
+  - domain: D_DATA_SCRIPTS
+    responsibility_layer: governance
+    reason: "数据治理脚本族，随 D_DATA_GOV 判例（depgraph 在用）"
+  - domain: D_CODE_SCRIPTS
+    responsibility_layer: governance
+    reason: "代码质量治理脚本族（depgraph 在用）"
+  - domain: D_SEC_SCRIPTS
+    responsibility_layer: governance
+    reason: "安全治理脚本族（depgraph 在用）"
+  - domain: D_STRUCT_SCRIPTS
+    responsibility_layer: governance
+    reason: "结构治理脚本族（depgraph 在用）"
+  - domain: D_ARCHIVE_SCRIPTS
+    responsibility_layer: governance
+    reason: "已归档脚本=退役治理，随脚本族整组归治理（depgraph 在用）"
+  - domain: D_TEST
+    responsibility_layer: governance
+    reason: "depgraph 0 节点占位域（C24）：按'质量保障=不犯错'KPI 归 governance（D_AUDITTEST 同构先例）；0 节点=无运行面误伤，若整域退役走 §7 变更纪律改行即可"
+  - domain: D_GOV
+    responsibility_layer: governance
+    reason: "别名折叠→D_GOVERNANCE（#335 B 组三段式过渡），层随 canonical"
+    alias_of: D_GOVERNANCE
+  # === business（赚钱：交易链路与业务原料/输出）===
+  - domain: D_MKT_DATA
+    responsibility_layer: business
+    reason: "行情接入/清洗/存储/分发=策略原料供给交易链路（P1 业务层点菜）"
+  - domain: D_FACTOR
+    responsibility_layer: business
+    reason: "因子计算/因子库=收益生产核心件"
+  - domain: D_ASHARE_SIGNAL
+    responsibility_layer: business
+    reason: "A 股信号策略集=策略生产"
+  - domain: D_FUNDAMENTAL_SIGNAL
+    responsibility_layer: business
+    reason: "基本面信号=策略生产"
+  - domain: D_SIGQC
+    responsibility_layer: business
+    reason: "信号质控服务营收信号产出的链路内质控，非跨资产独立纠察（与治理纠察区分）"
+  - domain: D_SIGLEGACY
+    responsibility_layer: business
+    reason: "旧版信号兼容层=策略资产残值，随信号族"
+  - domain: D_SIGNAL
+    responsibility_layer: business
+    reason: "registry 登记遗留图示用名，词表已折叠→D_SIGLEGACY；层随信号族"
+    alias_of: D_SIGLEGACY
+  - domain: D_BACKTEST
+    responsibility_layer: business
+    reason: "回测引擎/框架/报告=策略收益验证"
+  - domain: D_RISK
+    responsibility_layer: business
+    reason: "风控/限额/止损=盈亏边界控制，属赚钱链路；资金破坏性动作另触发治理门位（P6）"
+  - domain: D_PF_CORE
+    responsibility_layer: business
+    reason: "组合构建/策略生命周期=整装收益载体"
+  - domain: D_PF_ALLOC
+    responsibility_layer: business
+    reason: "资产配置/再平衡=组合收益管理"
+  - domain: D_PORTFOLIO
+    responsibility_layer: business
+    reason: "registry 登记遗留图示用名，词表已折叠→D_PF_CORE；层随组合族"
+    alias_of: D_PF_CORE
+  - domain: D_POSITION
+    responsibility_layer: business
+    reason: "持仓管理/对账=交易链路状态"
+  - domain: D_EX_CORE
+    responsibility_layer: business
+    reason: "订单执行/撮合=收益实现最后一公里"
+  - domain: D_EX_SOR
+    responsibility_layer: business
+    reason: "执行路由/券商接口（QMT）=交易链路接入"
+  - domain: D_EXECUTION
+    responsibility_layer: business
+    reason: "registry 登记遗留图示用名，词表已折叠→D_EX_CORE；层随执行族"
+    alias_of: D_EX_CORE
+  - domain: D_ORDER
+    responsibility_layer: business
+    reason: "订单对象/订单流=交易链路数据"
+  - domain: D_TRADING
+    responsibility_layer: business
+    reason: "交易会话/编排=赚钱链路本体"
+  - domain: D_PLAN
+    responsibility_layer: business
+    reason: "预案引擎/盘前约束=次日交易决策"
+  - domain: D_REGIME
+    responsibility_layer: business
+    reason: "regime 覆盖层触发（CRISIS/RECOVERY/BREAKOUT）服务交易择时，KPI=收益时点；HMM 仅为实现手段（C9 裁定：不因 ML 味道落 ai）"
+  - domain: D_SELL_DECISION
+    responsibility_layer: business
+    reason: "卖出决策链/退出逻辑=收益兑现"
+  - domain: D_SIMULATION
+    responsibility_layer: business
+    reason: "交易模拟/纸上交易=策略彩排"
+  - domain: D_EXEC_SIM
+    responsibility_layer: business
+    reason: "撮合模拟/滑点建模=执行链路仿真"
+  - domain: D_DIGITAL_TWIN
+    responsibility_layer: business
+    reason: "市场镜像/组合模拟/场景推演=交易彩排，与仿真族同构（C7 裁定）"
+  - domain: D_CROSS_ASSET
+    responsibility_layer: business
+    reason: "跨资产信号/套利策略=收益来源"
+  - domain: D_FRONTEND
+    responsibility_layer: business
+    reason: "仪表盘/面板=业务的人机界面（Owner/运营消费交易与报表信息）"
+  - domain: D_DATA
+    responsibility_layer: business
+    reason: "数据接入层（Provider 集成器/多源下载编排）=业务原料供给，与行情族同构"
+  - domain: D_ALT_DATA
+    responsibility_layer: business
+    reason: "另类数据（公告/舆情）接入=策略原料"
+  - domain: D_DATA_ENG
+    responsibility_layer: business
+    reason: "ETL/数据质量监控管道与行情族同构供策略原料，KPI=新鲜度→收益；跨域通用管道件如沉淀为公共底座再迁 infrastructure（C6 裁定）"
+  - domain: D_REPORTING
+    responsibility_layer: business
+    reason: "投资/风险/合规报告生成分发=业务输出面"
+  - domain: D_PORTFOLIO_CORE
+    responsibility_layer: business
+    reason: "别名折叠→D_PF_CORE（#335 B 组），层随 canonical"
+    alias_of: D_PF_CORE
+  - domain: D_EXECUTION_CORE
+    responsibility_layer: business
+    reason: "别名折叠→D_EX_CORE（#335 B 组），层随 canonical"
+    alias_of: D_EX_CORE
+  - domain: D_PLAN_ENGINE
+    responsibility_layer: business
+    reason: "别名折叠→D_PLAN（#335 B 组），层随 canonical"
+    alias_of: D_PLAN
+  # === ai（进化：引擎轴/自我改进/知识与记忆）===
+  - domain: D_AUTONOMY_CORE
+    responsibility_layer: ai
+    reason: "Skill 渐进披露/Agent 生命周期=自主进化主体"
+  - domain: D_INTELLIGENCE
+    responsibility_layer: ai
+    reason: "上下文引擎=AI 层核心机构"
+  - domain: D_FEEDBACK_LOOP
+    responsibility_layer: ai
+    reason: "反馈循环引擎=自我进化七段闭环（P8）"
+  - domain: D_FBL_DETECTORS
+    responsibility_layer: ai
+    reason: "异常/漂移反馈检测器=进化感知段（P8）"
+  - domain: D_FBL_DIAGNOSERS
+    responsibility_layer: ai
+    reason: "根因诊断/模型健康监控=进化诊断段（P8）"
+  - domain: D_ORCHESTRATOR
+    responsibility_layer: ai
+    reason: "代理编排/任务队列/幻觉检测=进化调度"
+  - domain: D_ML_TRAIN
+    responsibility_layer: ai
+    reason: "ML 训练/模型能力考试=模型能力生产段（原则明列训练服务=ai）"
+  - domain: D_ML_SERVE
+    responsibility_layer: ai
+    reason: "模型部署/在线推理=训练→服务→反馈进化管道最后一公里（P8 传承段），生产者=AI 训练管线；业务层是消费方而非生产方（C12 裁定：按生产者与进化 KPI 定层，收益消费留痕）"
+  - domain: D_KNOWLEDGE
+    responsibility_layer: ai
+    reason: "知识库/向量记忆=进化记忆银行（P8 传承段）"
+  - domain: D_SECURITY_LLM
+    responsibility_layer: ai
+    reason: "LSG 九层防御/提示注入=AI 层安全带（原则明列 LLM 安全=ai）"
+  - domain: D_RESEARCH
+    responsibility_layer: ai
+    reason: "词表已折叠为 D_INTELLIGENCE 别名（#335 B 组，DB 2 节点走 --merge-domain 官方通道），机械一致性要求别名层随 canonical=ai；'研究域独立'争点 C10 已由 #335 折叠结论终结，无新证不重开"
+    alias_of: D_INTELLIGENCE
+  # === infrastructure（保运行：底座/总线/连接件/恢复）===
+  - domain: D_SHARED
+    responsibility_layer: infrastructure
+    reason: "共享服务（事件总线/熔断/配置/文件工具）=跨层兜运行底座"
+  - domain: D_INFRASTRUCTURE
+    responsibility_layer: infrastructure
+    reason: "registry 实体=跨层契约基础设施；词表侧该拼写已折叠→D_INFRA_OPS，两侧语义同层无冲突"
+    alias_of: D_INFRA_OPS
+  - domain: D_INFRA_OPS
+    responsibility_layer: infrastructure
+    reason: "容量保障/SLI/SLO/资产盘点=运行兜底"
+  - domain: D_INFRA_RUNTIME
+    responsibility_layer: infrastructure
+    reason: "运行时集成/DB 持久化/连接池=兜运行底座，KPI=可用性；'系统大脑'编排子职能留 ai 痕（C15 裁定）"
+  - domain: D_INFRA_A2A
+    responsibility_layer: infrastructure
+    reason: "A2A 通信=消息总线"
+  - domain: D_INFRA_RECOVERY
+    responsibility_layer: infrastructure
+    reason: "回滚恢复/容灾=可用性兜底"
+  - domain: D_INFRA_TELEMETRY
+    responsibility_layer: infrastructure
+    reason: "可观测性/遥测=运行感知底座"
+  - domain: D_OPS
+    responsibility_layer: infrastructure
+    reason: "自动引导/会话连续性/阶段追踪/遥测采集=兜运行集合，KPI=可用性；feedback-loop 语义已由 D_FEEDBACK_LOOP 承接，本域待随 C22 收敛（裁定：按主职能归 infrastructure，双身份留痕）"
+  - domain: D_INTEGRATION
+    responsibility_layer: infrastructure
+    reason: "M1-M11 管线路由/背压/死信队列/LLM 网关=跨层连接中间件（消息基建类比），KPI=管道可用性与成本；路由智能度演进属 ai 消费（P7 配额侧留痕）（C14 裁定）"
+  - domain: D_INTEGRATION_GATEWAY
+    responsibility_layer: infrastructure
+    reason: "11 个 MCP 服务端+Gateway=能力暴露/接入连接件；内部门禁/哨兵语义归各自真源域，网关本体按可用性考核——'网关'字面≠治理门禁（C23 裁定）"
+  - domain: D_CONTRACTS
+    responsibility_layer: infrastructure
+    reason: "跨层契约/契约校验=从 D_SHARED 拆出的 schema 基建（#335 取证反转独立）"
+  - domain: D_INFRA
+    responsibility_layer: infrastructure
+    reason: "别名折叠→D_INFRA_OPS（#335 B 组），层随 canonical"
+    alias_of: D_INFRA_OPS

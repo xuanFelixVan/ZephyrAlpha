@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_foundation_errors
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] ZephyrBaseError为所有业务异常根;details默认空dict;__str__返回message
 

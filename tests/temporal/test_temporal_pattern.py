@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_temporal_pattern | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_temporal_pattern
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] TemporalPattern.hourly_patterns is dict[int,float]; learn sets key=value
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

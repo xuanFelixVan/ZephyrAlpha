@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_temporal_coherence_of_self_model | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_temporal_coherence_of_self_model
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] check_coherence needs >=2 snapshots; coherence = avg of cap/limit/health similarity
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

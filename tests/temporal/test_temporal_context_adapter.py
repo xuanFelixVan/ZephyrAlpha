@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_temporal_context_adapter | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_temporal_context_adapter
+# [DOMAIN] D_INFRA_RUNTIME
 # [INVARIANTS] TOTP verification within window;HMAC time proof;exit code 26 on attestation failure
 # [MODIFY-GUARD] src/zephyr/rollback/temporal_context_adapter.py
 # [CONSUMERS] CI

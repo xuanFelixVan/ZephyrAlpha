@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_l05_portfolio_construction | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L05-001 | docs/03_modules/_domain_portfolio_core/blueprint.md | §test
 # [MODULE] zephyr.pf_core
+# [DOMAIN] D_TRADING
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

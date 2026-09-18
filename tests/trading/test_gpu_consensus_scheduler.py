@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_gpu_consensus_scheduler | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §17
 # [MODULE] tests.test_gpu_consensus_scheduler
+# [DOMAIN] D_TRADING
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

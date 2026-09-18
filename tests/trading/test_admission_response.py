@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_admission_response | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-343 | docs/03_modules/_domain_governance/blueprint.md | §3.9
 # [MODULE] tests.test_admission_response
+# [DOMAIN] D_TRADING
 # [INVARIANTS] REJECTED must include rejection_reason; queue_position only valid for QUEUED
 # [MODIFY-GUARD] Changes must sync with admission_response.py
 # [CONSUMERS] CI pipeline

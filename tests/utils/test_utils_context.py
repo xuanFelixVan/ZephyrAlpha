@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_utils_context
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] RequestContext不可变;contextvars传播;set_context返回Token
 

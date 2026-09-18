@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_system_transfer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §test
 # [MODULE] tests.test_system_transfer
+# [DOMAIN] D_TRADING
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

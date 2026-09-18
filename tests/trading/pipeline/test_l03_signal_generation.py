@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_l03_signal_generation | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md | §test
 # [MODULE] zephyr.signal
+# [DOMAIN] D_TRADING
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

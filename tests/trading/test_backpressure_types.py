@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_backpressure_types | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_backpressure_types
+# [DOMAIN] D_TRADING
 # [INVARIANTS] All three types are frozen dataclasses; action and schema_version have correct defaults; trace_context defaults to None
 # [MODIFY-GUARD] zephyr.infrastructure.pipeline.backpressure_types
 # [CONSUMERS] pytest

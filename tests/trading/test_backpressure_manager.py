@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_backpressure_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_backpressure_manager
+# [DOMAIN] D_TRADING
 # [INVARIANTS] BackpressureManager state transitions must be PAUSED/THROTTLED→NORMAL via resume; is_blocked auto-resumes on timeout
 # [MODIFY-GUARD] zephyr.infrastructure.pipeline.backpressure_manager
 # [CONSUMERS] pytest

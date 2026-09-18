@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §6.2
 # [MODULE] tests.trading.test_auto_runtime_ops_layers
+# [DOMAIN] D_TRADING
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

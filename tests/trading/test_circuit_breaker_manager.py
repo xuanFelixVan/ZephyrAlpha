@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_circuit_breaker_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §
 # [MODULE] tests.test_circuit_breaker_manager
+# [DOMAIN] D_TRADING
 # [INVARIANTS] CLOSED->OPEN when failures>=threshold; OPEN->HALF_OPEN after cooldown; HALF_OPEN->CLOSED on success
 # [MODIFY-GUARD] only when CircuitBreakerManager public API changes
 # [CONSUMERS] pytest

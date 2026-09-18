@@ -2,6 +2,7 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_conftest | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.trading.conftest
+# [DOMAIN] D_TRADING
 # [INVARIANTS] 每个测试获得独立 event loop，避免跨测试 event loop 污染
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest tests/trading/

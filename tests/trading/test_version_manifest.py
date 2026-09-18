@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_version_manifest | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_version_manifest
+# [DOMAIN] D_TRADING
 # [INVARIANTS] get_version returns v0.0.0 for unknown; get_path returns empty str for unknown
 # [MODIFY-GUARD] src/zephyr/orchestrator/version_manifest.py
 # [CONSUMERS] CI

@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-TEST-392 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 
 # [MODULE] tests.test_healthcheck_service
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] HealthcheckService must return HealthReport with 5 components from check_all; HealthStatus must have all 5 fields populated
 

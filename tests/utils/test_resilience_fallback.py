@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_resilience_fallback
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] FallbackChain至少一步;全部失败抛FallbackExhaustedError;策略链按序执行
 

@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_version
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] __version__格式PEP440;version_compatible同MAJOR兼容;VersionMismatchError继承Exception
 

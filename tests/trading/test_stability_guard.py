@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_stability_guard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_stability_guard
+# [DOMAIN] D_TRADING
 # [INVARIANTS] lock_api returns locked=True; check_breaking returns list of removed export messages
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

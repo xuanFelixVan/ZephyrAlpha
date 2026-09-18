@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_foundation_flags
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] FeatureFlag不可变;FlagRegistry单次注册;FlagNotFoundError继承ZephyrBaseError
 

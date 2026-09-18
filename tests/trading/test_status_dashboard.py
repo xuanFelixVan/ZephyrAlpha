@@ -4,6 +4,7 @@ from __future__ import annotations
 # [A_test] module_id=MOD-GOV_status_dashboard | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §
 # [MODULE] tests.test_status_dashboard
+# [DOMAIN] D_TRADING
 # [INVARIANTS] StatusDashboard依赖多个runtime组件;测试使用mock
 # [MODIFY-GUARD] src/zephyr/runtime/status_dashboard.py
 # [CONSUMERS] pytest

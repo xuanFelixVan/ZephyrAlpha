@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §testing
 
 # [MODULE] tests.test_utils_migration
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] migrate_task幂等;MigrationError路径不存在时抛出;latest_schema_version一致
 
