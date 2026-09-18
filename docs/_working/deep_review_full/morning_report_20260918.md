@@ -88,4 +88,5 @@ created: 2026-09-18
 - **事实**：189 件战役报告处于 staged 保护态，其中 **145 件含未落地内容**（各波审查者的完整报告正文+§7 收口节——落地批的队列快照早于报告重写，落的是脚手架版；44 件为纯 stale add 内容已落地）。
 - **三重保护**：①工作区最终态；②git index blob（对象库已固化「已审」版，240 件在册，gc 不可达剪枝不触及 index 引用）；③队列死信快照袋 15 袋（q-0042/0043 等）。
 - **落地面阻塞点（精确）**：直连与队列双通道被 N-5 共享暂存区脏件连坐——`scripts/backtest/crisis_drill_monthly.py`（N-5 清单 317 staged 之一）BLUEPRINT 头非法（module_id 未用 MOD-/SH- 前缀），卡锁内 BLUEPRINT 门禁，全仓所有会话的 commit 一并被拦；队列序列化器另现基线分叉（NOTHING_TO_COMMIT 快照未真应用，防线已自动死信回退）。**该件属 N-5 登记（待 Owner/Max 定夺恢复 or 废弃）范围，本战役未代修未动其 index 态。**
-- **恢复指令（N-5 处置后执行）**：`git add docs/_working/deep_review_full/` 后按 p0/p2、p1、tdm_supplement 三批 `git_commit.py --files ... --allow-non-worktree --allow-overlap --enqueue` 即全量归位；或任何会话修复该外来件头注释后本批自动可落。
+- **终局（Owner 授权后已全部落地）**：Owner 指示直修坏头注释。①`crisis_drill_monthly.py` 头已修复取号 MOD-BT-219（编号纪律：仓内最大 MOD-BT-218 后取号；该件另撞 NO-HIGH-COMPLEXITY=其 750 行 WIP 自身复杂度债，修头版留工作区归其车道落地，本战役未代修复杂度）；②两件外来件（cohort_daily_ledger.py / crisis_drill_monthly.py）按"index==工作区"无损条件撤下暂存旗（内容零丢失，N-5 清单口径同步）；③i18 报告引用笔误修正（CLASS-CLASS→CLASS，真实 id #ARCH-CH-INDUSTRY-CLASS-MIGRATE 在册）；④tf01/07/09/10/14/15 六报告 frontmatter 冒号病灶修复。
+- **归位凭据**：终批 A/B/C 三连 c6cb80e3/63ecf7f8/b63dadbd30，`git status docs/_working/deep_review_full` = **0 残留**；本战役 240 件全部在 dev。
