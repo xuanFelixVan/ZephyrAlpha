@@ -55,7 +55,7 @@ class TestQmtFileBridgeBroker:
         config["stock_dir"] = str(temp_bridge_dir / "Stock")
 
         with patch.dict(QmtFileBridgeBroker.ENV_CONFIG, {"sim": config}):
-            broker = QmtFileBridgeBroker(env="sim", sync_interval=0.1)
+            broker = QmtFileBridgeBroker(env="sim", sync_interval=0.1, http_port=None)  # 测试封闭化：禁 HTTP 快路径（默认 18901 会打真 EXEC）
             yield broker
             broker.disconnect()
 
@@ -283,7 +283,7 @@ class TestDistinctKeyPairing:
         config["ack_file"] = str(temp_bridge_dir / "ack_sim.csv")
         config["stock_dir"] = str(temp_bridge_dir / "Stock")
         with patch.dict(QmtFileBridgeBroker.ENV_CONFIG, {"sim": config}):
-            b = QmtFileBridgeBroker(env="sim", sync_interval=0.1)
+            b = QmtFileBridgeBroker(env="sim", sync_interval=0.1, http_port=None)  # 测试封闭化：禁 HTTP 快路径（默认 18901 会打真 EXEC）
             b.connect()
             yield b
             b.disconnect()
