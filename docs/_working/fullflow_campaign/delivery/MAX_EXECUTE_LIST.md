@@ -207,6 +207,22 @@ completes_when: 全流通战役收官且本清单每项都被执行或明确移�
 - ★ 本项的前置"逐件判归口清掉回退快照"**已做完**：13 件"index 比 HEAD 旧、磁盘==HEAD"已 `git add` 抹平（零内容变化），
   其中含两件**被 index 判删的牙齿测试**（`test_rb_stats_validator_teeth.py` 307 行 / `test_silent_latch_before_delivery.py` 265 行）。
   普查与处置全在 **R-074**；复跑命令 `.runtime/tmp/ff-recon/threestate_sweep.py`（只读）。
+- ★ **口径边界已实测收窄（02:3x，R-074 之后）**：工作区字节 vs HEAD 的**代码面**分歧只剩 **17 件**
+  （复跑：`git diff HEAD --numstat --ignore-cr-at-eol -- 'src/**/*.py' 'scripts/**/*.py' 'tests/**/*.py'`）。
+  其中 **8 件是纯增量（`-0`）**=未落车道的新脚本/新测试（`qmt_bridge_regression_smoke.py` +328、
+  `generate_standard_family_registry.py` +236、`tests/pf_alloc/test_crisis_gate.py` +121、
+  `tests/llm_security/test_l1_input_defense.py` +55、`tests/governance/rule_bridge/test_session_worktree_audit_wrapper.py` +26、
+  `session_worktree.py` +8、`generate_trading_map_diagram.py` +10、`standards_governance/__init__.py` +11）
+  ⇒ HEAD 口径下这些件**不存在**，只会**覆盖面变小，不会变红**；
+  另 **9 件有删改**（`align_battle_map.py` +234 −1、`externalize_algo_flow.py` +111 −6、
+  `generate_battle_map_diagram.py` +145 −2、`l1_input.py` +46 −4、`allocation_inputs.py` +45 −5、
+  `crisis_gate.py` +31 −7、`engine_base.py` +15 −12、`allocation_orchestrator.py` +13 −4、
+  `backtest/core/__init__.py` +1 −1）。
+  ⇒ **残余风险面收窄为"并发车道落地之间的交叉作用"**（HEAD 自洽性已由每笔 commit 的 same-batch 门禁保证）；
+  跑一次 HEAD 口径两轮主要是**买确定性**，不再是"结果可能翻"。
+  ⚠️ 若在 worktree 里跑，先补 `.runtime`/`.ailocks`/`data` 缓存等**未跟踪但被测试依赖**的面，
+  否则会撞 R-067 那条"整片红+耗时异常短 ⇒ 先怀疑脚本"。
+
 - 残余：`scripts/governance/oneoff/data_domain_audit_report_db.md`（`+4246 −614`，磁盘≠HEAD）=**真在途生成件**，勿抹平；
   `capability_canonical_file_registry.yaml` 的 `+0 −4` 见 **B23**（要连磁盘一起补，属他道在途面）。
 
