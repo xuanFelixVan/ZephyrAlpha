@@ -1956,3 +1956,70 @@ z-rb-stats 实测我口径错：**台账 R-026 原文是「八型」，而我在
   ⇒ 这是本役第 N 次出现"修法看似加严、实则减少覆盖"，判据"覆盖面不得净减少"应固化。
 - **R-067 的教训被下一条车道直接引用**：`--basetemp` 父目录未建导致整目录假红——
   close1 与 last 都按"整片红 + 耗时异常短 ⇒ 先怀疑脚本"的判据走，**说明入账有效**。
+
+## 6.19 R-071 · **连续两轮逐目录 0 问题达成（16 目录 ×2）**，但**"HEAD 态 == 被测态"这条还没闭合**
+
+`st-ff-last-20260918` 交回（截至 01:34，车道仍在跑）：
+
+| 轮 | 目录数 | rc≠0 的目录 | 关键实测 |
+|---|---|---|---|
+| round1 | **16** | **0** | `tests/backtest` collected **1836 / passed 1836**（249s）· `tests/security` 177 collected / 175 passed / 2 skipped（9.5s） |
+| round2 | **16** | **0** | 同目录同数复跑（275s / 10.1s） |
+
+- **Owner 的"连续两次测试问题=0"这条判据，在 16 个目录范围内达成**（不是全仓 `tests/`——全仓单进程跑本就必败收集，见手册 §8；
+  也**不等于**"所有测试都通过过"，只是**这两轮 16 目录检出 0 失败**）。
+- **最后一条红 `test_sim_paper_ledger::test_replay_pipeline_consistent` 的定性**（车道的判读，`lanes/last_prescriptions.md` 228 行在册）：
+  取"**危机闸 L3 语义显式化**"方向修——`events=[]` **不是回归**，是危机态下 L3 正确拦停的产物；
+  旧测试隐含"必有事件"的假设不成立 ⇒ **补受控 3 腿判据 + 现读链反静默腿**，而不是把危机闸调松（#321 方向）。
+  已落 `cbddfa2a2b`（测试 103+/13-、处方册、token 4 行）。
+- ⚠️ **未闭合的一处（总包 01:4x 实测并记账）**：`src/zephyr/pf_alloc/crisis_gate.py` 的 **+31/−7 仍在暂存区未落地**
+  ⇒ **上面那两轮"0 问题"是在工作区态跑出来的，不等于 HEAD 态**。
+  已把该文件三处留档（`.runtime/tmp/ff-recon/backup_last/` + `G:/.../last_20260919/` + index），
+  **待该车道落地或总包代落之后，用 HEAD 干净态复跑一轮才算这条判据真正闭合**。
+  ⇒ 这条本身就是本役反复出现的一型：**"测的是工作区，报的却是达成"**——写进 Max 清单要求复核。
+
+## 6.20 R-072 · **收口定案：连续两轮 16 目录 0 失败（12229 collected / 12181 passed / 0 failed / 0 error，两轮各一次）**
+
+`st-ff-last-20260918` 在第 68 轮交工（**唯一一条在轮数门槛内主动收尾的车道**），落 2 笔：
+`cbddfa2a2b`（`test_sim_paper_ledger.py` +90/-13 · 处方册 228 行 · token +4/-0）·
+`953b75ce76`（处方册 §6 提交记录）。今日 dev 累计 **97 笔**。
+
+- **最后一条红的定性被推翻两次、最终判清**：`events=[]` **不是今晚 R-055a 造成的**，也**不是"外来在途未落地件"**，
+  而是 **`e1a975b158`（WO-2a，09-18 02:40:45）落地时没同步改测试** ⇒ **这条红自 02:40 起就是 HEAD 自带**。
+  三条独立否证：① 任何 import `regime_detector` 即抛 ⇒ `import_attempts=[]`（**该模块根本不在这条链上**）；
+  ② 预置 `eb9e18f846^` 旧版 regime_detector 再跑 ⇒ 与 HEAD **完全同结果**；
+  ③ 判据快照 `ingest_ts=2026-09-16 15:08:06`，**比 R-055a 早两天**；`resolve_crisis_state` 读的是**已落库快照**（PIT），
+  R-055a 改的是生产者不是读者。
+  ⇒ **更正两处前人定责**：z-rb-stats 的 P-6"外来在途"、close1 的 P-4 定性，都要改判为"**已落地批的测试欠账**"。
+- **★ 该缺陷的自陈文案是假的（第二次"缺陷文案把施工者往错方向带"）**：`crisis_gate.py:402` 的 warning 说
+  "表可能未注册 DDL，由总统筹 apply"——实测 `EXISTS TABLE c1_backtest.crisis_gate_log = 1`、列类型就是 `Date`；
+  **真因**是 `log_crisis_gate_row` 把 `validate_date_literal()` 返回的**字符串** `'2026-07-17'` 塞进 `Date` 列槽位，
+  客户端本地序列化取 `value.year` → `AttributeError` → 被 `except Exception` 吞成一条 warning。
+  **⇒ 总包不需要为这条红跑任何 DDL。** 一行 `date.fromisoformat(day)` 即正解（驱动级 `write_column` 复现证：str 抛 / date OK / tz-aware datetime OK）。
+- **★ 一条测试面上的假绿通道（该缺陷为何能随 HEAD 存活）**：
+  `tests/pf_alloc/test_crisis_gate.py:534` 的 `test_log_crisis_gate_row_column_order_and_insert`
+  注入假 writer（**只查列序、不查驱动序列化**）⇒ 这个缺陷在测试面上天然不可见。
+- **收口处置（判据"覆盖面不得净减少"，非掰尺子）**：断言 **3 → 14**、用例 **1 → 4**（collected 1833→1836），
+  原三处期望一条不少地搬进"放行日"腿，另加三腿（危机日 0 事件+`signal=cash`+留痕+权益不动 /
+  resolver 异常必 fail-closed 且记 `resolver_error` / **现读真链禁"既无成交又无拦截留痕"的静默空转**）；
+  **零断言删除、零 xfail、零阈值放松**；MT1~MT4 四个变异各自把对应腿打红。
+- **★ 两轮 0 问题的口径限定（车道自己附的，总包采纳并前置）**：
+  ① 两轮跑的是**工作区字节**，其中 `src/zephyr/pf_alloc/` 三件含**已死车道 `st-ff-rb-safe` 的未提交在途件**
+  （`crisis_gate.py` +31/-7、`allocation_inputs.py` +45/-5、`allocation_orchestrator.py` +13/-4）
+  ⇒ **严格 HEAD 口径尚未复跑**；② close1 的 P-7（`test_key_hierarchy` 随机假红 ≈1.1e-4/次）与 P-8（观测面=live index）
+  **本轮未触发 ≠ 已消失**，那三处源码/测试都没改。
+- **★★ 该在途件的处置裁定（R-072a：不落，交 Max）**：`crisis_gate.py` 那 +31/-7 与 z-rb-safe2 §③ 判"**不落**"的是同一件——
+  它会把 B1~B5/B7 退化升 `warning` ⇒ **真激活 `CRISIS_SHRINKAGE_FLOOR=0.05`**（`regime_meta_allocator.py:109/426`）
+  = **会主动动作的改配额闸**，与**未裁的 A00c（regime 陈旧天花板）/ A16（节流档表 2.67×）同域**。
+  ⇒ **保持 staged（防蒸发）+ 不入 HEAD**；补丁件另存 `.runtime/tmp/ff-recon/backup_last/` 与 `G:/.../last_20260919/`。
+  那**一行日期修复**已单独验好（`backup/crisis_gate_proposed_datefix.py`），**可脱离配额部分单独落**——
+  列为 B 类可执行项（B20），不等 A00c/A16。
+- **★ Q-7：官方 token 工具就是 R-063 那次"热册条目蒸发"的肇事机制**（实弹抓到，机制未做对照实验 ⇒ 标推断）：
+  `batch_creation_tokens.py` 把 `st-ruledisp-20260918` **刚进 HEAD 的 4 行 token 整条吃掉**，
+  且自报"落盘 True (CAS attempt 1)"——**只有进程内门禁预跑抓到了它**（`run_gate_chain.py` 预跑不到）。
+  ⇒ **R-069b 的优先级上调**：`gate_prerun.py` 必须入库；且该工具写侧自检须补"**只增不减**"（条目数守恒）。
+  ⇒ 与本役已知"投递前置闩/恒真返回"同族：**一个自称 CAS 安全、实际会静默覆盖他人条目的登记工具**，
+  是热文件蒸发的**上游**，不是车道纪律问题。
+- **Q-1 仍需收**：index 里成批"回退快照"复测未清且更宽（新增 `akshare_alt_provider.py` 186 删/0 增、
+  `tests/zephyr/data/test_silent_latch_before_delivery.py` 265 删/0 增，`locks`=0）⇒ **收口批必须逐件判归口**，
+  否则任何一次全量 add 会把它们变成"合法提交"。

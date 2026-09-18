@@ -176,6 +176,40 @@ completes_when: 全流通战役收官且本清单每项都被执行或明确移�
 
 ---
 
+## 01:4x 增补三条（R-072 收口后剩下的，均已判清、无方向分叉）
+
+### B20 ★ 单独落 `crisis_gate` 的一行日期修复（可脱离配额部分，不等 A00c/A16）
+- **缺陷**：`log_crisis_gate_row` 把 `validate_date_literal()` 返回的**字符串** `'2026-07-17'` 塞进 `Date` 列槽位
+  ⇒ 驱动取 `value.year` 抛 `AttributeError` ⇒ **被 `except Exception` 吞成一条 warning ⇒ 留痕静默蒸发**。
+  ★ 缺陷自陈文案"表可能未注册 DDL，由总统筹 apply"是**假的**（`EXISTS TABLE c1_backtest.crisis_gate_log = 1`，列就是 `Date`）
+  ⇒ **不要为它跑任何 DDL**（本役第二例"缺陷文案把施工者往错方向带"）。
+- **正解**：行元组里 `day` → `date.fromisoformat(day)`（**一行**；`day` 作 SQL 字面量的口径不受影响）。
+  驱动级已复现三种输入：str 抛 / `date` OK / tz-aware `datetime` OK。补丁件在 `.runtime/tmp/ff-recon/backup_last/`
+  与 `G:/zephyr_cold/30_corpus/fullflow_harvest/last_20260919/`（另见车道 `backup/crisis_gate_proposed_datefix.py`）。
+- **必须同时关掉那条假绿通道**：`tests/pf_alloc/test_crisis_gate.py:534`
+  `test_log_crisis_gate_row_column_order_and_insert` 注入假 writer（只查列序、不查驱动序列化）
+  ⇒ 该缺陷**在测试面上天然不可见**，这就是它能随 HEAD 存活的原因。补一条"真驱动序列化"级断言（`write_column` 或等价）。
+- **注意别顺手带走配额改动**：同一文件里 `B1~B5/B7 退化 → warning` 那部分会**真激活 `CRISIS_SHRINKAGE_FLOOR=0.05`**
+  （`regime_meta_allocator.py:109/426`）=改配额的主动闸 ⇒ **属 A18，不得混进本笔**。
+
+### B21 用 clean HEAD 态复跑 16 目录（把"两轮 0 问题"从工作区口径升成 HEAD 口径）
+- 现状：`st-ff-last` 两轮 12229 collected / 12181 passed / 0 failed，但**跑的是工作区字节**，
+  其中 `src/zephyr/pf_alloc/{crisis_gate,allocation_inputs,allocation_orchestrator}.py` 含死车道未提交件（+31/-7、+45/-5、+13/-4）。
+- **步骤**：先把 index 里的"回退快照"逐件判归口清掉（**Q-1**：`akshare_alt_provider.py` 186 删/0 增、
+  `tests/zephyr/data/test_silent_latch_before_delivery.py` 265 删/0 增、`locks`=0）
+  ⇒ 再 `git stash`-free 地确认 `git status` 干净 ⇒ 用 `.runtime/tmp/ff-recon/loopcheck.py` 重跑两轮
+  （★ 先 `--only ai_layer` 自证脚本不产假红；**`--basetemp` 父目录必须先建**，见 R-067）。
+- **同时确认两条"未触发≠已消失"的偶发面**：`tests/security/access_control/test_key_hierarchy.py:182`
+  字面量黑名单随机假红（≈1.1e-4/次）、`msg_style_gate.py` 的 `"commit_gates/" in` 子串自豁免、
+  `GATE-ERRCODE-CONSISTENCY` 观测面=live index（**B18** 同源）。
+
+### B22 给 token 工具补"只增不减"自检（并把 B19 的优先级上调为"下一役第一件事"）
+- 见 B19（同一件，优先级上调）：`batch_creation_tokens.py` 实弹吃掉过他道刚入 HEAD 的 4 行 token 并自报"落盘 True (CAS)"，
+  **只有进程内门预跑抓到** ⇒ 预跑器不是"锦上添花"而是**当前唯一能拦住热册蒸发的面**。
+- 工具侧要补：写后条目数**守恒或只增**（`len(creation_tokens)` 单调），减少即拒写并留痕。
+
+---
+
 ## 附：本清单的产生方式
 1. 各车道回报的 §"未达成 / 处方 / 指派"段 + 台账 `COORDINATION_LEDGER.md` R-039~R-057 的落点。
 2. `dead_inventory.py`（**只读可重跑**）扫出的 12 件 GONE + 44 件 on-disk-unlanded；

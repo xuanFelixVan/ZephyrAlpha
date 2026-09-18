@@ -497,3 +497,85 @@ z-sentinel 自报：`run_hosted_sweep` 未传 alerter ⇒ **真 Alerter 往 `dat
    "已交工但判据反了"的资金级缺陷，且**修复点明确、无待裁**。
 3. **看 5/85 分母**：等三份 reverify 件到齐后，重算断点总数与"全流通"完成度，
    再决定下一役范围。**在此之前不要接受本战役任何"已完成"表述。**
+
+## 7.10 ★★ 复测三车道回来后，**本清单 §0 的两条我自己下的结论也被推翻**（21:5x）
+
+z-rv1（A/B 26 条）与 z-rv3（EFGHI 30 条）已把复跑面从 5 条推进到 **35/85**（余 50 条待 z-rv2 的 29 条）。
+它们回来的是**坏消息，其中一条是打在我自己脸上的**：
+
+### (a) BRK-004 / BRK-005 的正确判词是「**假断点**」，不是"陈旧"也不是"口径过粗"
+- 我在 §0.1 判"BRK-004 普查记载确实陈旧"、§0.2 判"BRK-005 是普查口径太粗"——**两条都比真相浅一层**。
+- z-rv1 实测：闭合 commit `49dde8fda5` 落在 **09-16 02:40**，比普查落笔（`01_break_census.md` mtime 09-18 17:47）**早两天**；
+  根因是普查引了 `config/governance_operations_map.yaml` 的**散文注记**
+  `pipeline.layers[].disconnected.note_zh`，而**同一个文件里的机器字段 `families.*.wiring` 早已是 `wired`**。
+  ⇒ 它另用 AST 独立验到 `boot_hooks:608` / `emergency_track_guardian:551` 与 `escalation_engine:390` / `guardian:402` 四方真导入。
+- **要新立的失效型（R-026 第十一型）**：「**引同一文件里的散文注记作证据，而不查同文件的机器字段**
+  ⇒ 把两天前已闭合的项当新断点登出」。这条比"数据陈旧"更机械可防，**值得固化成一条门**：
+  凡断点证据引用 YAML 内文本字段，须同时带出该文件的机器字段值。
+- ⇒ **Max 请以此为标准动作**：本清单里我给的每条"复核实测"，都用**机器字段优先**再核一遍。
+
+### (b) ★ "零入度"在本仓**没有权威口径**，三个数互斥且差两个数量级
+| 口径 | 结果 | 备注 |
+|---|---|---|
+| GOMAP `families.*.wiring` | **95** 件 | 普查主引，但同文件散文注记会与机器字段互相打脸（见 (a)） |
+| 裸 AST 静态扫描 | **1685** 件 / 3480 模块 | z-rv1 重跑值（普查原记 1585/3477）；原复现件 `orphan_scan.py` **本身是坏的** |
+| `check_wiring_orphan.py` | **orphans 0** | ★ 普查 §J.5 点名当权威的那个门禁，其册 313 条里 **304 条(97.1%) 自免 exempt**、`generated_at` 停在 08-27 |
+
+⇒ **"接线率"这个本役核心指标目前不可测**。Owner 要的"所有模块全流通"若用这三个数之一来验收，
+会得到 95 / 1685 / 0 三种完全不同的结论。**这条应排在 A11（完成度判据）之前解决。**
+- 验真：`python scripts/governance/check_wiring_orphan.py --json | head -c 300`
+  与 `python -c "import yaml;c=yaml.safe_load(open('config/governance_operations_map.yaml',encoding='utf-8'));print(c['counts'])"`
+
+### (c) 普查里有**一条的复现脚本本身就是坏的**（证据不可复现）
+`BRK-007` 的证据命令是 `python .runtime/tmp/ff-mine0/orphan_scan.py`，z-rv1 在仓库根逐字跑出 `src modules: 0`
+（绝对路径比对 bug），**普查真值出自一个从未归档的"修正版"**。
+⇒ 普查 §"复现脚本落 `.runtime/tmp/ff-mine0/`"这句话给人的"可复现"印象**不成立**。
+同类：`BRK-002` 普查自相矛盾（七族孤儿数相加=90 ≠ 记载的 95，三种口径均不可复现）；
+`BRK-068` 标题写"15 件/44%"但同行列了 **16 个** step_id、DB 实测 16/34=47%；
+`BRK-008` **因果说反**——`最后同步：2026-08-17` 是生成器的幂等派生时间戳
+（`_common.idempotent_timestamp`，为宪法"禁 datetime.now"而设计），**不是快照年龄**；DB 是活的
+（nodes 12022 / edges 22843 / 孤儿 388，域 `updated_at` 09-18T13:06Z）。
+⇒ **真断点是"手册 HEAD 块落后 DB 130 节点/680 边，且重生成的 388/22845 仍躺工作区未提交"**。
+
+### (d) 我派工时的一次预测落空（如实记，供校准"总包预判可靠度"）
+我在 z-rv3 任务书里写"GOMAP/ROOR 今日多车道落地，**这两个数大概率已漂**"——
+实测**两者逐项精确未漂**（GOMAP 416/244/6/71/95 五字段；ROOR 73/19/5/1 + by_tier 11/28/34，
+且 `tiers[*].registries` 实际 12/28/34=74 ⇒ BRK-084 的"漂移 1"精确复现）。
+⇒ 我的漂移预测**这次是错的**；但另一条预测（"引用面存在假阳"）对了。
+**校准含义**：总包关于"什么会漂"的先验不可当作证据用，只能当作"值得复测"的提示。
+
+### (e) ★ 一条**推翻我自己交付物结构**的编号错误（且它已传染进车道件）
+我在台账/待裁清单里长期写"`#ARCH-338 / #ARCH-339 / #ARCH-343` 的 headline 计数待更正（`ruling_registry.yaml`）"。
+z-rv3 实测：**`ruling_registry.yaml` 里没有这三条**——该册 `entries`=158 条，`ruling_id` 最大数字号 = 339，
+**数字号 343 从未登记**（341/342/344 亦无）。`#ARCH-338..356` 是 **z-arch 案卷系列**
+（载体 `lanes/arch_338_356_dossiers.md`），**与裁定号是两套编号，被我混用了**。
+- 后果：该错误前提**已随任务书传染进车道的交付件**——`census_reverify_EFGHI.md` 里出现了
+  "裁定"紧跟井号与 343 的字面引用，被 `RULING-REFERENCE` 门禁当场拦死（我 22:1x 提交本批时命中，已就地改写为"裁定号 343 不存在"）。
+  ⇒ **这是"总包幻觉经任务书二级传播"的第一个实例**，此前我只记过一次幻觉，这次是它的**扩散版**。
+- 顺带实测出的真漂移（该改的）：`裁定#339` headline 写"tasks.yaml 63 任务 source=miniqmt"，**现值 57**（总任务 262→264）。
+- **给 Max 的判据**：本役凡见 `#ARCH-NNN` 与"裁定#"并列出现，先查它到底指案卷系列还是裁定号。
+
+### (f) 我此前对 z-verifier3「代码不可能出绿」结论的**过宽表述**（rv3 收窄）
+z-rv3 实测：旧台账 ⑤=绿的 11 个环节里，**blind=0 的 6 个（FF-05/07/09/11/12/15）现行代码仍判绿、合法可复现**；
+仅 **blind=1 的 5 个（FF-01/02/03/04/06）互斥**。且机读键名是 **`allow_empty_blind` 非 `blind`**（它自己首跑也踩）。
+⇒ 改判依据换成**更强的一条**：旧台账 FF-01 ⑤ **同一行内** evidence 写"白名单不判绿"而 verdict=`绿`，
+**自我反驳、无需引代码**。"先 `--all` 重生成再引用"的硬指令仍成立。
+
+### (g) ★ 尺子本身有一个新缺陷（本轮实测暴露，尚未修）
+`--all` 重生成后分布从 红13/黄5 变 **红16/黄2/绿0**，但 ①向 15 条红**全部由 `broken_hop` 驱动、
+evidence 是 `=-1行`（查询失败的哨兵值）而非 `0行`**；新台账 30 处 `-1行`（旧仅 2 处），
+日志实测 `CH query 失败(TCP+HTTP 均失败)` **12 次**（`tick_data FINAL` 超时）。同表对照：
+`strategy_screen` 旧 1306 行 → 新 `-1 行`。
+⇒ **尺子把"测不到"与"真断链"同码判红**（`_row_count` 已有 -1/-2 三态，但 ①向判据没区分）。
+**CH 不健康时的六向分布不可作为验收数**。⑥向 16 红则是**纯尺子改严**（`silent_except_count` 两版都是 324，
+输入未动，新版新增 `pattern_counts` 34 处改判红）——这两类要分开读。
+- 另：**"②入口 import 期即崩"这个族名被推翻**（rv1+rv3 双证）。真机理是
+  `from schemas…` 解析到仓库根 `D:\ZephyrAlpha\schemas\`（非仓库根宿主必炸）+
+  `src/zephyr/data/calendar/__init__.py` **遮蔽 stdlib `calendar`** ⇒ `zephyr.data.__init__` →
+  `data_service` → `shared.contracts` → pandas → `_strptime:96` 撞 `day_abbr`，
+  **同一次运行紧随其后才打出 `pandas has no attribute '_pandas_datetime_CAPI'`**。
+  ⇒ **一个根因两个症状**，z-verifier3 报的"两种崩法两种根因"若照做会**两条车道分头治同一个 bug、一条白干**。
+  分母：`src/zephyr/data/` 下 **67 件** .py 同受遮蔽；全仓 **23 件** src 模块顶层 import `schemas.`（11 件模块级顶格）。
+  复现：`cd src/zephyr/data && python -B -c "import calendar;print(calendar.__file__)"`。
+  **且第 4 个崩点是 `quality_sentinel.py` → `ImportError: cannot import name '_has_surrogates' from partially initialized module 'email.utils'`
+  ——它是哨兵本体，⑤向真跑依赖它 ⇒ ⑤向可信度与②向崩族同源。**

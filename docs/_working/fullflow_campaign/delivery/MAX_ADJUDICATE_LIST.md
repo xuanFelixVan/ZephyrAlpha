@@ -13,7 +13,7 @@ completes_when: 全流通战役收官且本清单每一项要么被 Owner/Max �
 ## A0 · 一句话背景
 
 本战役（全流通=所有链路灌上真数据跑通）由 Flash 系模型执行。Owner 令：**执行与大部分裁定用 Flash，
-只把"必须 Max/Owner"的留下**。以下 20 项是 Flash 判自己**不该判**或**无权判**的；
+只把"必须 Max/Owner"的留下**。以下 22 项是 Flash 判自己**不该判**或**无权判**的；
 **`A00` 是唯一的"既成事实要定性"类**（4.12 亿行破坏性操作在明示未授权之后执行），其余都是"要不要放行下一步"。
 其中 **A1 是唯一一处"批一行就解锁一条主链"的**，其余多为方向选择。
 
@@ -269,6 +269,29 @@ live 小时域 `[09:00, 15:00]`、bak 小时域 `[01:00, 07:00]`、**两侧行�
 - **两种动作的代价**：重跑 10080 格点=一次大计算批（且需留 `net_returns` 档案，处方 P-5）；
   或把受影响 verdict 显式标"基于不可复算分母，需重考"（与 A7 同族，**会翻历史结论**）。
 - **验真**：`find data/strategy_intake -name "net_returns*"` → 2 件；`ls data/strategy_intake/grid_20260916-123551/`
+
+---
+
+## A18 ★ `crisis_gate` 那份"退化升 warning"要不要落（它会**真激活 0.05 节流地板**=改配额）
+- **案卷**：`lanes/last_prescriptions.md` Q-3 + `lanes/rbsafe2_prescriptions.md` §③；台账 R-072a。
+- **现场**：死车道 `st-ff-rb-safe` 的在途件仍挂在暂存区——
+  `src/zephyr/pf_alloc/crisis_gate.py` +31/−7 · `allocation_inputs.py` +45/−5 · `allocation_orchestrator.py` +13/−4，`locks`=0（无主）。
+  接手车道 `st-ff-rb-safe2` 实测：**这份改动会把 B1~B5/B7 退化一律升 `warning` ⇒ `floor_active=True`
+  ⇒ `regime_meta_allocator.py:109/426 的 CRISIS_SHRINKAGE_FLOOR=0.05` 被真正激活**
+  = **一个会主动动作、直接改配额的闸**，与**未裁的 A00c（regime 陈旧天花板）/ A16（两档节流表）同域**。
+- **总包处置**：**不落、也不丢**——保持 staged（防再被蒸发）+ 补丁三处留档；
+  并把其中**唯一无争议的一行日期修复**剥出来单列（B20，可立刻做，不等本项）。
+- **要你拍的**：① 这份"退化→warning"要不要落、以什么条件落（它和 A00c 的"陈旧算 crisis 还是算不可判定"是同一枚硬币两面）；
+  ② 若落，0.05 地板是否为其正确值（A16 未裁时它可能与检测器档 0.80 冲突，等于**在同一批里同时激活两个互相矛盾的口径**）。
+- **不点的代价**：`crisis_gate` 的留痕日期缺陷继续单独存在（B20 可解），
+  而"退化时到底收紧还是放行"这个口径**在 HEAD 里仍是原样**（现状=不激活地板，即退化不参与缩额）。
+
+## A19 `ai_intake_test_smoke*` 两个测试残留 schema 要不要清（PG，破坏性）
+- **案卷**：台账 R-069；`st-ff-ailayer3` 只读查 `information_schema` 实测：生产 schema `ai_intake` 9 表 + 3 视图齐备，
+  另有 `ai_intake_test_smoke` / `ai_intake_test_smoke2` 各 12 件——**是测试写进生产库实例的残留**。
+- **不点的代价不大，但方向重要**：它同时坐实了两件事——
+  ① §9.6"测试禁写生产路径"**至今没有机械门禁**（本役第二条：前一条是 z-sentinel 往 `data/failures/` 写伪造留痕）；
+  ② 清理属 DROP schema，**破坏性 DB 操作 = Owner 门位**，车道与总包都不得自行执行。
 
 ---
 
