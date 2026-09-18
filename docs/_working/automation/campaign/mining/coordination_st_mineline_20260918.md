@@ -36,3 +36,6 @@ completes_when: 挖矿 11 簿入袋且各车道施工分工被认领
 | 工单 | 认领车道 | 状态 |
 |---|---|---|
 | WO-④-01 / WO-①-01+03 / WO-①-05 / R-H5F-1 | st-mineline-20260918 | 施工中 |
+| WO-①-01（源注册表化） | st-mineline-w101 | 已交付（config/intel_sources.yaml+intel_harvester.py 消费改造+validate_intel_registry.py，行为等价 305 passed） |
+| WO-①-03（词表外置） | st-mineline-w101 | 已交付（config/intel_keywords.yaml 28 词干外置+加载器降级，随上同批） |
+| WO-①-05（源卡片草案转化器） | st-mineline-w105 | 已交付（scripts/automation/source_card_drafter.py+tests 13 件零网零 LLM，24 passed 合批回归；草案仅落 config/source_cards/drafts/、CLI 无生效路径、Owner 门保留；depgraph 14799410/14799411；commit=1f3f9de02b 经队列 q-20260918-st-mineline-w105-0009 落地） |
