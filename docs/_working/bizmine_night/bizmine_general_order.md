@@ -2,58 +2,73 @@
 ttl: task_bound
 ---
 
-# 业务层 Alpha 挖掘通宵战 · 总包令（st-bizmine-20260919）
+# 业务层 Alpha 挖掘通宵战 · 总包令 v2（st-bizmine-20260919）
 
-> 战役窗口：2026-09-19 夜 → 09:00。总包=主会话（复杂裁定唯一归属）；车道执行=子代理（机械执行）。
-> 立项依据：Sharpe2 差距三笔账（docs/_working/sharpe2_prep/a_reexam/gap_accounts.yaml）结论=**缺口在 alpha 不在工程**（alpha 缺口 0.796，距 2.0 剩 0.46）。本战役只做一件事：**供给新 alpha + 把既有弹药考完**。挖矿已由白日战役完成（P3 挂起件、撮合预审 305 条），本战役不重新挖矿，直接消费挖矿产物。
+> 战役窗口：2026-09-19 凌晨 → 09:00。总包=主会话（复杂裁定唯一归属）；车道执行=子代理。
+> v2 修订（Owner 睡前定调）：①做T 不放弃，走「行情条件化」复活正路；②战役主纲=**灰度大盘状态 → 选因子选策略**（Owner 原话：先算准市场状态，再按状态选因子，这套不通夏普永远上不去）；③补挖因子 SOP；④另类数据入挖。
+
+## 0. 战役主纲：灰度状态轴（Owner 论点，本战役第一优先）
+
+- Owner 论点：市场状态是**灰度**（连续），不是 A/B 二值；大盘灰度→板块灰度→逐级选择当下最适合的因子与策略；状态突变（震荡 50→单边 100）时因子与策略选择跟着切。79 严选只活 1 条的疑似病根=考试不看行情状态。
+- 实测家底（侦察已证）：regime 模块族已输出**连续灰度**（`src/zephyr/regime/core/regime_detector.py` GaussianHMM 7 维概率+confidence_signal）；`c1_backtest.regime_state_anchored` 4469 行（2017-07..2026-09-18）、`c1_market.alt_regime_signal` 10425 行、`regime_snapshot_history` 3621 行（PIT）；判定台账三表（排班表）已在产（`c1_market.judgment_*`，09-18 已出真行五态"进攻"p=0.72）。
+- **断环**：没有任何"状态×因子条件化考试"。本战役把这一环接上（考试层），不碰生产层。
 
 ## 1. 禁碰清单（硬边界，违反即事故）
 
-- 他队在飞件（今日实测 git status）：`src/zephyr/backtest/core/{decision_gate,engine_base,overfitting_detector,strategy_validation_pipeline}.py`、`src/zephyr/pf_alloc/**`、`src/zephyr/data/implementations/akshare_alt_provider.py`、`src/zephyr/data/source_health_check.py`、`src/zephyr/data_eng/data_anomaly_alerter.py`、`src/zephyr/regime/regime_feature_builder.py`、`src/zephyr/trading/**`、`scripts/backtest/f06_e4_wfa_exam.py`（他队 MM 在飞：**只可运行不可改**，运行前先确认可 import）、`data/strategy_intake/**`（工厂 intake 车道今晨 01:24 在飞）、`scripts/backtest/crisis_drill_monthly.py`、`docs/03_modules/**`、AGENTS.md、`config/trading_decision_map.yaml`、`src/zephyr/data/config/tasks.yaml`、`src/zephyr/strategy_pipeline/pipeline_events.py`、`scripts/ch/apply_market_tables_ddl.py`、N-5 纠缠件（22 schema 删+46 src 改+189 deeprev docs+stash aa43e3b530）。
-- 复权链修复归整改队 T1：禁碰 `src/zephyr/backtest/core/data_handler.py`、`src/zephyr/data/implementations/akshare_provider.py`。
-- BT-P2-056 做T 全矩阵已被裁定 #304 关闭（毛边际 +0.88bp/边 vs 门槛 12bp，Owner 快签 01 条），**禁复活**；复活唯一正路=新因子族新单假设预注册卡（Owner 快签 24 条），本战役最多起草卡片不执行。
+- 他队在飞件：`src/zephyr/backtest/core/{decision_gate,engine_base,overfitting_detector,strategy_validation_pipeline,data_handler}.py`、`src/zephyr/pf_alloc/**`、`src/zephyr/regime/regime_feature_builder.py`（**只读**，他队在改）、`src/zephyr/data/**`、`src/zephyr/trading/**`、`scripts/backtest/f06_e4_wfa_exam.py`（只可运行不可改）、`data/strategy_intake/**`、`scripts/backtest/crisis_drill_monthly.py`、`docs/03_modules/**`、AGENTS.md、`config/trading_decision_map.yaml`、tasks.yaml、pipeline_events.py、apply_market_tables_ddl.py、N-5 纠缠件。
+- regime 切换器（分支 ai/st-sowner002-20260916）**不 merge 不 cherry-pick**（tdchain 车道任务，未到窗口）。
+- #ARCH-344（Regime 断供三腿）是生产层裁定项：只登记引用，不禁用不修改生产行为。
+- BT-P2-056 做T全矩阵维持 #304 关闭；复活唯一正路=新单假设预注册卡（Owner 快签 24 条），本战役**只做条件化窄测试+卡片**，不做全矩阵，不动实盘/模拟盘。
 - 组队部署=Owner 门位（B-15）：只备料，禁出部署结论。
-- 禁裸 git commit / git add -A / reset --hard / stash；禁 `lock_files.py cleanup`；禁写生产库。
+- 禁裸 git commit / git add -A / reset --hard / stash；禁 lock_files.py cleanup；禁写生产库；测试/探针全部只读查库。
 
-## 2. 复权缺陷诚实条款（全战役适用）
+## 2. 诚实条款（全战役适用）
 
-- 实证：`kline_daily.adj_factor` 恒 1（近窗 0/27795 非 1；akshare_provider.py:237 注释自曝 965 万行恒 1），回测日线路径未复权（data_handler.py:379-385 无 adj_factor 读取）。
-- 因此今夜一切日线考试结论=**暂定（provisional）**，每份产出必须带「待复权链修复后复核」标注。
-- 减缓措施：IC 快筛窗内剔除有除权事件的标的（`c3_fundamental.ex_dividend_event` 乘子链）；ETF/指数宇宙不受影响。
+- 复权：`kline_daily.adj_factor` 恒 1（回测日线路径未复权），一切日线结论=**暂定**，每份产出带「待复权链修复后复核」。
+- 成本双口径并存：引擎现行=佣金万0.854 双向+¥5 地板+卖出印花税万5+滑点五分位（Q1 7.24..Q5 2.34bp/单边，`matching_logic.py:69-76`、`cost_model_calibration.py:229-235`；Q5 往返 8.4bp）；Owner-001 口径档=滑点 1.5bp。做T 件另用 `ex_sor/services/t0_cost_model.py`（HIGH_LIQUIDITY=10bp）。报告必须写明用的哪个口径。
+- 多重检验：状态分桶×因子数会放大假阳性——桶边界/规则一律在 IS 期钉死（预注册），全部结果如实报告（含负结果），筛≠考。
+- 做不到/被拦/数据缺 → 写「未达成+原因」，禁虚报禁降断言。
 
 ## 3. 车道清单
 
-### L1 量能族第二批 14 档（P3-B-NARROWING 挂起件，弹药最熟，第一优先）
-- 前置：同源预检+族内去重（P3 裁定书要求）→ 预注册卡 → 沙箱三关考试 → PASS 上 E4 正考。
-- 真源：`docs/_working/kimi_audit/lane_reports/P3.md`（§P3-B-NARROWING+§1 再生脚本）、`docs/_working/kimi_audit/lane_reports/p3_prereg/`（卡片模板）、`.runtime/tmp/exp/p3/`（考试脚本模式，TTL 件可能已清，按 P3.md 内记录重建于 `.runtime/tmp/bizmine/l1/`）、候选清单=`docs/_working/sharpe2_prep/b_match_mine/prereview.csv` 中 indicator/volume+statistics 值得考档。
-- 验收：14 档逐档有预注册卡+考试结果（PASS/RED+证据）；≥1 PASS 则产出 E4 survivors 行并尝试 E4 正考（f06_e4_wfa_exam.py 可运行时）；台账行全落。
+### R 车道：灰度状态×因子 条件化考试（st-bizmine-r，第一优先）
+1. 灰度现状评估件：7 维 HMM 概率 vs 五态判定台账 vs confidence_signal 的关系一页纸（谁生产谁消费、PIT 口径、断供三腿 #ARCH-344 现状引用）。
+2. **核心硬产出：17 幸存者×状态桶条件化重算**——逐日 OOS 净收益在 `.runtime/tmp/sharpe2a_oos_nets/*.csv`（73 份，date,net，2024-01..2025-08；TTL 件若被清，从 `data/backtest_artifacts/bt-*.json` 的 equity_curve 重构并如实记录）× `c1_backtest.regime_state_anchored`（无 FINAL，plain MergeTree）状态序列 → 每策略每状态桶 Sharpe/胜率/占比 → 「哪个因子在什么状态下赚钱」矩阵（csv+md）。桶规则预注册：按主力状态概率或 confidence_signal 的 IS 期分位切 3 桶，边界钉死。
+3. 结论回答 Owner 论点：幸存者收益是否集中于特定状态（若各状态表现接近则如实说"状态条件化暂无证据"，不硬凑）。
+4. 组队备料 regime 版：三档候选名单（稳健/均衡/进攻，全标观察档，引 B-15 待 Owner）+「按状态切换」组队示意（不部署）+弹药需求清单（到 2.0 还差多少条多少强度的 alpha）。
+5. 板块灰度层（时间富余才做）：880 板块日线（6.5 年）板块强度灰度 v0 定义+数据探针，只出设计段。
+落点：`docs/_working/bizmine_night/regime_axis/`。
 
-### L2 因子库+图形库 IC 快筛（撮合预审 305 值得考的屏幕批）
-- 范围：`prereview.csv` 中因子库值得考（~126）剔除 L1 已覆盖的 volume/statistics 档；图形库值得考（78）为延伸目标（事件对齐 IC，时间不够则留二波）。
-- 协议（预注册后执行，禁改口）：Spearman 秩 IC，IS 窗 2019-01~2023-12，前瞻 5/10/20 日三档，月度聚合 IC_IR=mean/std，|t|>3 显著标记；**全部结果如实报告**（含负结果），按 |IC_IR| 排序；top-20 只升「待考池」不判 PASS（屏幕≠考试）；除权标的窗内剔除。
-- 数据：`c1_market.technical_indicator`（162 列宽表，3.54 亿行，2019-01 起）分块读取 + `kline_daily`（FINAL）前瞻收益；中间缓存一律 `.runtime/tmp/bizmine/l2/`；CH 只读。
-- 验收：screen_results.csv（全候选×统计量）+ screen_report.md（top-20 待考池+诚实节：多重检验警示/除权条款/数据缺口）。
+### T 车道：做T 行情条件化复活轴（st-bizmine-t0）
+1. **主观做T方法库挖矿**（Owner 令）：A股主观做T手法清单（底仓T/正T反T/竞价缺口/开盘脉冲/尾盘异动/网格/事件驱动/涨停撬板等，每个=适用行情+信号+仓位+风控+失败形态）。来源三路：仓内（docs/_working/tv2 或 factory/t_v2 设计稿、Owner 愿景文档、daban 链文档）+全网搜索（主观做T方法、知乎/雪球若可及，来源如实列）+模型知识（标注来源级别）。币圈对应物专节：永续 funding、网格、maker-taker 返佣、清算链、7×24 无涨跌停结构差异。
+2. **转换表**：每方法 → 所需数据（映射到本仓真实表/字段，用已盘家底：kline_etf_1min 40万行/日、auction_book 267万、tick_depth_5、funding、清算流等）→ 算法伪码 → 可考假设卡草案；挑 1-2 个最可考的升正式预注册卡。
+3. **Regime 条件化做T窄测（预注册后执行）**：新单假设卡="510300 做T 仅在高振幅/高波动灰度状态执行，其余空仓"。用 `kline_etf_1min`（至 09-18）复测：无条件基线 vs 条件化，双成本口径（Q5 8.4bp 往返 + Owner-001 1.5bp 档），按状态桶分解毛/净边际。**即便为负也如实入册**——这是翻案或终结 #304 的正式证据。禁碰实盘/模拟盘，禁下单。
+4. 币圈做T研究报告：现有币圈数据盘点（daily_crypto/funding 465 万行/Hyperliquid 清算流）+与 A股做T的结构差异+2-3 张可考策略卡（只设计，不回测不实盘）。
+落点：`docs/_working/bizmine_night/t0_regime/`。
 
-### L3 组队复核备料（E7 评审包，Owner 门位只备料）
-- 输入：`docs/_working/sharpe2_prep/a_reexam/reexam_results.csv`（17 幸存者）+ `teaming_schemes.csv`、`docs/_working/kimi_audit/lane_reports/P1.md` 重算件（机读 `.runtime/tmp/exp/p1/teaming_recalc.yaml`+`corr_matrix_u15.csv`，TTL 件若已清则从 reexam_results 底层日收益序列重算，如实记录重算口径）、`docs/_working/kimi_audit/lane_reports/P3.md`（13 E1C 清单）。
-- 产出：①成本调整后逐成员稳健 Sharpe 表（含危机窗/最差滚动 12m）；②相关性聚类；③三档候选名单（稳健/均衡/进攻，全部标「观察档」，引裁定 B-15 待 Owner）；④到 2.0 的差距数学（给定池内相关性，还需多少条多少 Sharpe 的新 alpha 才够——给 Owner 一张「弹药需求清单」）；⑤E7 评审包 md。
-- 禁部署结论；所有数字带复权条款标注。
+### F 车道：因子 SOP + 大海选 + 另类数据（st-bizmine-f）
+1. SOP 审计+补链：现有覆盖=通用挖矿方法论（mining_sop_policy v1.4）+回测七步循环（sop_b_node_loop：假设登记/预注册/宽窄测）+策略入库（sop_c）；缺"假设→IC筛→预注册→沙箱→E4→组队"全流程缝合册与 regime 条件化条款。产出《因子挖掘 SOP v0.1》工作稿（落 `docs/_working/bizmine_night/factor_sop/`，转正升 sop/ 走 Owner 过目，登记待裁定）+《挖策略 SOP 缺口报告》。
+2. 宽表因子 IC 大海选：`prereview.csv` 因子库值得考（~126，剔除 L1 量能 14 档）→ 总体 IC + **按 regime 桶条件 IC**（alt_regime_signal 日度状态）双版；IS 2019-01..2023-12，前瞻 5/10/20 日，除权标的窗内剔除；全部结果入册，top-20 升「待考池」。
+3. 另类数据快筛（时间盒 ≤3 小时）：top5 面板各挑 2-4 个构造因子做 IC 探针——stock_indicator（11.5 年 pe/pb/mv）、consensus_daily（9.7 年 EPS 修正漂移）、dragon_tiger_seat（4.6 年席位净买）、money_flow（3.5 月，标注功效低）、margin_trading（2 月，备选）。零结果也入册（另类挖矿 0/5 前科，这次留正式台账）。
+落点：`docs/_working/bizmine_night/factor_sop_screen/`。
 
-### L4（二波，一波任一车道完成后由总包派发）
-B2 板块族 L2 批脚本首批（BT-P1-008..013，880 日线 6.5 年齐）；一波 PASS 件的 E4 正考；红蓝对抗（PIT/过拟合/成本/多重检验四向攻击今夜产出）；销账（BT-P1-032 勘测销账+B0 15 条 exec_quality 判定写回，按 P6 lane 复算件）；做T 新假设卡草案（不执行）；起床报告。
+### L1 车道：量能族第二批 14 档（st-bizmine-l1，二波发车，车位空出即上）
+前置同源预检+族内去重 → 预注册卡 → 沙箱三关 → 报告加 regime 分桶段。真源：`docs/_working/kimi_audit/lane_reports/P3.md` §P3-B-NARROWING、p3_prereg/ 模板、prereview.csv。
+
+### Wave 2（总包派发）：红蓝对抗（四向：regime 分桶多重检验/前视 PIT/复权/成本口径混用）→ 销账（BT-P1-032 勘测销账+B0 15 条 exec_quality 写回，总包亲做注册表件）→ 起床报告 `bizmine_wakeup_report.md`。
 
 ## 4. 施工纪律（每车道必读）
 
-1. 冷启动三件套：`export PATH="/c/Users/fanzi/AppData/Local/Programs/Python/Python312:/c/Users/fanzi/AppData/Local/Programs/Python/Python312/Scripts:$PATH"` → `python --version` 须 3.12.x → `python -m zephyr.trading.process_reaper --status` 须存活。
-2. 会话注册+心跳+commit 同一 shell 链（90s 活性窗）：先 `python -c "from zephyr.security.access_control.session_concurrency import SessionRegistry; SessionRegistry().register('<sid>', pid=0)"` 再 `nohup python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <sid> . 30 &`。
-3. 改前 claim：`python scripts/lock_files.py acquire <file> <sid>`；毕后 release。
-4. 新文件（.md/.yaml/.json）必须 token 登记：`python scripts/governance/d3_metadata/batch_creation_tokens.py --prefix <目录> --created-by <sid> --capability bizmine_alpha_mining`，token 载体（capability_canonical_file_registry.yaml）随批同落；.md 带 ttl frontmatter、文件名字母开头纯 snake_case。
-5. 提交唯一正门：`python scripts/git_commit.py --session <sid> --files <逗号清单> --message-file <.runtime/tmp 下 UTF-8 文件> --enqueue --allow-non-worktree --allow-multi-domain --wait 900`；失败重试带 `--adopt-prior-work`；commit 后必 `git log -1 --name-only` 核归属。
-6. 产出落点：`docs/_working/bizmine_night/`（台账+卡片+报告）+ `data/backtest_artifacts/runs/E4-BIZMINE-*`（考试件）；临时脚本/中间件一律 `.runtime/tmp/bizmine/`（勿交付、勿提交）。
-7. 数据库只读 FINAL；测试禁写生产路径；禁 LLM 调用（本战役不需要）。
-8. 诚实条款：做不到/被拦/数据缺 → 如实写「未达成+原因」，禁虚报、禁降断言、禁改预注册协议口径。
+1. 冷启动：`export PATH="/c/Users/fanzi/AppData/Local/Programs/Python/Python312:/c/Users/fanzi/AppData/Local/Programs/Python/Python312/Scripts:$PATH"` → python 3.12.x → `python -m zephyr.trading.process_reaper --status` 存活。
+2. 会话注册+心跳+commit 同 shell 链（90s 活性窗）。
+3. 改前 claim（lock_files.py acquire），毕后 release；注册表等热文件只文本式追加（safe_write_text CAS）。
+4. 新文件 token 登记：`python scripts/governance/d3_metadata/batch_creation_tokens.py --prefix <目录> --created-by <sid> --capability bizmine_alpha_mining`，token 载体随批同落；.md 带 ttl frontmatter、字母开头纯 snake_case。
+5. 提交唯一正门：`python scripts/git_commit.py --session <sid> --files <清单> --message-file <.runtime/tmp UTF-8 文件> --enqueue --allow-non-worktree --allow-multi-domain --wait 900`；重试带 `--adopt-prior-work`；commit 后 `git log -1 --name-only` 核归属。共享注册表若被 st-bizmine-20260919 持锁，等待重试勿硬闯。
+6. 落点：`docs/_working/bizmine_night/` 各子目录 + `data/backtest_artifacts/runs/`；临时脚本/中间缓存一律 `.runtime/tmp/bizmine/<lane>/`。
+7. 查库只读 FINAL（judgment_* 与 regime_state_anchored 是 plain MergeTree **不带 FINAL**）；CH 分块读取防内存；禁 LLM 调用。
+8. 每完成一段落盘一段（台账行+commit），防 sweep 吞文件；台账=`docs/_working/bizmine_night/bizmine_campaign_ledger.md`。
 
 ## 5. 验收与收尾
 
-- 每车道：产物落盘+台账行（`docs/_working/bizmine_night/bizmine_campaign_ledger.md`）+commit hash。
-- 总包：循环检查连续两轮 0 问题；红蓝一轮；起床报告 `docs/_working/bizmine_night/bizmine_wakeup_report.md`（六要素：车道×状态×hash／证据链／端到端实录含失败／遗留声明／待裁定清单／清理确认）。
+- 每车道：产物落盘+台账行+commit hash；总包验收。
+- 收官：循环检查连续两轮 0 问题；红蓝一轮；起床报告六要素（车道×状态×hash/证据链/端到端实录含失败/遗留声明/待 Owner 裁定清单/清理确认）。
