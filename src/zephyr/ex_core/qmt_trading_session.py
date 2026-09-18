@@ -40,6 +40,7 @@ from decimal import Decimal
 
 from zephyr.ex_core.adapters.qmt_file_bridge_integration import QmtFileBridgeAssembly
 from zephyr.ex_core.order_manager import OrderManager
+from zephyr.governance.adapters.risk_validation_bridge import RiskValidationPort
 from zephyr.governance.strategies.strategy_base import StrategyBase
 from zephyr.shared.contracts.position import PositionSnapshot
 
@@ -82,6 +83,7 @@ class QmtTradingSession:
         signal_provider: Callable[[list[str]], dict[str, float]],
         price_provider: Callable[[list[str]], dict[str, Decimal]],
         options: QmtSessionOptions | None = None,
+        risk_validator: RiskValidationPort | None = None,
     ):
         """初始化会话
 
@@ -92,6 +94,9 @@ class QmtTradingSession:
             signal_provider: 信号函数 symbols -> {symbol: signal}
             price_provider: 价格函数 symbols -> {symbol: price}
             options: 可选调优参数（QmtSessionOptions）
+            risk_validator: 风控校验端口（R-H5E-1，可选）。仅作用于 sim 实例——
+                sim 订单进桥前强制前置校验（fail-closed）；env="real" 保持现状
+                不触校验（实盘账户启用=Owner 门，裁定 #338⑤）。
 
         Raises:
             ValueError: 非法环境标识
@@ -115,6 +120,7 @@ class QmtTradingSession:
             sync_interval=opts.sync_interval,
             enable_algo_queue=opts.enable_algo_queue,
             queue_interval=opts.queue_interval,
+            risk_validator=risk_validator,
         )
         self._started = False
 

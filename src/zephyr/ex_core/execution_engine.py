@@ -188,19 +188,31 @@ class ExecutionEngine:
         """执行单笔订单"""
         algo = algo or self._config.default_algo
 
-        violations = self._risk_validator.validate_order(
-            symbol=order.symbol,
-            # 5.105.5 修复: 在Decimal域内计算后再转float, 避免大数量Decimal->float精度丢失
-            target_weight=float(Decimal(str(order.quantity)) / Decimal("1000000"))
-            if not isinstance(order.quantity, Decimal)
-            else float(order.quantity / Decimal("1000000")),
-            current_holdings={},
-            limits=RiskLimits(
-                as_of_date=datetime.now(UTC),
-                idempotency_key=f"exec-{order.order_id}",
-                max_single_position=0.10,
-            ),
-        )
+        # R-H5E-1（裁定 #338⑤ paper/sim 前置校验准施工）：校验器异常 Fail-Closed
+        # 拒单——校验失效≠放行，异常包装为既有 ValueError 拒单契约（execute_batch
+        # 同口径跳过），留 error 级执行证据日志，不许 fail-open。
+        try:
+            violations = self._risk_validator.validate_order(
+                symbol=order.symbol,
+                # 5.105.5 修复: 在Decimal域内计算后再转float, 避免大数量Decimal->float精度丢失
+                target_weight=float(Decimal(str(order.quantity)) / Decimal("1000000"))
+                if not isinstance(order.quantity, Decimal)
+                else float(order.quantity / Decimal("1000000")),
+                current_holdings={},
+                limits=RiskLimits(
+                    as_of_date=datetime.now(UTC),
+                    idempotency_key=f"exec-{order.order_id}",
+                    max_single_position=0.10,
+                ),
+            )
+        except Exception as exc:  # noqa: BLE001 — 校验失效类型不可枚举，Fail-Closed 必须全捕获
+            _logger.error(
+                "风控校验失效，Fail-Closed 拒单: order_id=%s symbol=%s error=%r",
+                order.order_id,
+                order.symbol,
+                exc,
+            )
+            raise ValueError(f"risk validation failed (fail-closed): {exc}") from exc
 
         halt_violations = [v for v in violations if v.severity == "HALT"]
         if halt_violations:

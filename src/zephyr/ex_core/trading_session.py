@@ -911,13 +911,23 @@ class TradingSession:
         target_weight: float,
         current_holdings: dict[str, float],
     ) -> bool:
-        """风控验证：存在 HALT 级违规则返回 True（阻断）。"""
-        violations: list[RiskViolation] = self._risk_validator.validate_order(
-            symbol=symbol,
-            target_weight=target_weight,
-            current_holdings=current_holdings,
-            limits=self._config.risk_limits,
-        )
+        """风控验证：存在 HALT 级违规则返回 True（阻断）。
+
+        校验器异常一律 Fail-Closed 拒单并留痕（R-H5E-1 接线批，裁定 #338⑤
+        paper/sim 前置校验准施工）：校验失效≠放行，逐单拦截不牵连整批——
+        与执行前闸门（MOD-EX-024）/C-004 合规闸同口径，不许 fail-open。
+        实盘账户启用本身属 Owner 门（#338⑤），本方法不改变任何实盘放行语义。
+        """
+        try:
+            violations: list[RiskViolation] = self._risk_validator.validate_order(
+                symbol=symbol,
+                target_weight=target_weight,
+                current_holdings=current_holdings,
+                limits=self._config.risk_limits,
+            )
+        except Exception:  # noqa: BLE001 — 校验失效类型不可枚举，Fail-Closed 必须全捕获
+            _logger.exception("风控校验失效，Fail-Closed 拒单: symbol=%s", symbol)
+            return True
         halt = any(v.severity == "HALT" for v in violations)
         if halt:
             _logger.warning(

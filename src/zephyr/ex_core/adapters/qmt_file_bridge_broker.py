@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 # [MODULE] zephyr.ex_core.adapters.qmt_file_bridge_broker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.ex_core.board_lot; zephyr.ex_core.price_cage; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.fill; zephyr.shared.utils.time_utils
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.ex_core.board_lot; zephyr.ex_core.price_cage; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.fill; zephyr.shared.utils.time_utils
 # [CONSUMERS] zephyr.ex_core.order_manager
 # [STARTUP] manual
 # [MATURITY] draft
-# [INVARIANTS] 文件状态机幂等(#SENDING→#DONE); 3秒轮询柜台同步; 双实例物理隔离(env=real/sim)
+# [INVARIANTS] 文件状态机幂等(#SENDING→#DONE); 3秒轮询柜台同步; 双实例物理隔离(env=real/sim); sim 进桥前风控前置校验 fail-closed(R-H5E-1: 注入 risk_validator 即生效; env=real 保持现状不触校验——实盘账户启用=Owner 门裁定#338⑤)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -49,9 +49,11 @@ from typing import Final
 
 from zephyr.ex_core.board_lot import get_board_lot_rule
 from zephyr.ex_core.price_cage import CageStatus, check_price_cage
+from zephyr.governance.adapters.risk_validation_bridge import RiskValidationPort, RiskViolation
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order, OrderSide, OrderStatus, OrderType
 from zephyr.shared.contracts.position import PositionSnapshot
+from zephyr.shared.contracts.risk_limits import RiskLimits
 from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface, FillCallback
 
@@ -354,6 +356,7 @@ class QmtFileBridgeBroker(BrokerInterface):
         sync_interval: float = 3.0,
         max_retry: int = 3,
         http_port: int = 18901,
+        risk_validator: RiskValidationPort | None = None,
     ):
         """初始化 QMT 文件桥 Broker
 
@@ -362,6 +365,10 @@ class QmtFileBridgeBroker(BrokerInterface):
             sync_interval: 柜台同步轮询间隔（秒），默认 3 秒
             max_retry: #SENDING 超时重试最大次数，默认 3 次
             http_port: HTTP 桥快路径端口（93 号备忘 §12），默认 18901
+            risk_validator: 风控校验端口（R-H5E-1，可选注入）。注入后仅 sim 环境
+                在订单进桥前执行前置校验（HALT 违规或校验异常 → Fail-Closed 拒单
+                不进桥）；env="real" 保持现状不触校验——实盘账户启用=Owner 门
+                （裁定 #338⑤），装配层不得向 real 实例传入本参数。
         """
         if env not in self.ENV_CONFIG:
             raise QmtFileBridgeError(f"非法环境标识: {env}，必须是 'real' 或 'sim'")
@@ -370,6 +377,7 @@ class QmtFileBridgeBroker(BrokerInterface):
         self._config = self.ENV_CONFIG[env]
         self._sync_interval = sync_interval
         self._max_retry = max_retry
+        self._risk_validator = risk_validator
 
         # 文件路径
         self._bridge_dir = Path(self._config["bridge_dir"])
@@ -465,6 +473,10 @@ class QmtFileBridgeBroker(BrokerInterface):
             _logger.info("幂等命中 idem=%s -> %s", order.idempotency_key, existing_id)
             return existing_id
 
+        # R-H5E-1 进桥前风控前置校验（仅 sim；real 保持现状——实盘 Owner 门裁定 #338⑤）
+        if self._env == "sim" and self._risk_validator is not None:
+            self._pretrade_risk_check(order)
+
         # A股约束校验：整手
         rule = get_board_lot_rule(order.symbol)
         qty = int(order.quantity)
@@ -511,6 +523,83 @@ class QmtFileBridgeBroker(BrokerInterface):
 
         _logger.info("指令写入 %s: %s %s %s x%d %s", self._env, inst.order_id, inst.symbol, inst.side, qty, pricetype)
         return order.order_id
+
+    def _pretrade_risk_check(self, order: Order) -> None:
+        """sim 进桥前风控前置校验（R-H5E-1，裁定 #338⑤ paper/sim 准施工）。
+
+        Fail-Closed 双闸（不许 fail-open）：
+          - HALT 级违规 → 抛 QmtFileBridgeError，订单不进桥（不写指令文件、
+            不走 HTTP 快路径），拒绝原因落 error 级执行证据日志；
+          - 校验器自身异常 → 同样抛 QmtFileBridgeError 拒单（校验失效≠放行），
+            异常链留痕。
+
+        target_weight 口径：桥层无策略权重语义，以订单名义金额/账户总资产近似；
+        柜台镜像未就绪（同步线程首轮未完成）时按 0.0 处理——此时仍可拦截
+        Kill Switch 级状态违规（校验器自带状态）；权重类校验真源在上游
+        TradingSession._is_blocked_by_risk / Saga step1（两层互补，不互替）。
+        """
+        try:
+            violations: list[RiskViolation] = self._risk_validator.validate_order(
+                symbol=order.symbol,
+                target_weight=self._estimate_order_weight(order),
+                current_holdings=self._holdings_as_weights(),
+                limits=self._pretrade_limits(order),
+            )
+        except Exception as exc:  # noqa: BLE001 — 校验失效类型不可枚举，Fail-Closed 必须全捕获
+            _logger.error(
+                "进桥前风控校验失效，Fail-Closed 拒单: env=%s order=%s symbol=%s error=%r",
+                self._env,
+                order.order_id,
+                order.symbol,
+                exc,
+            )
+            raise QmtFileBridgeError(
+                f"风控校验失效（fail-closed 拒单，订单不进桥）: order={order.order_id} symbol={order.symbol}: {exc}"
+            ) from exc
+
+        halt_violations = [v for v in violations if v.severity == "HALT"]
+        if halt_violations:
+            reasons = "; ".join(v.description for v in halt_violations)
+            _logger.error(
+                "进桥前风控拒单（订单不进桥）: env=%s order=%s symbol=%s side=%s qty=%s violations=%s",
+                self._env,
+                order.order_id,
+                order.symbol,
+                order.side.value,
+                order.quantity,
+                reasons,
+            )
+            raise QmtFileBridgeError(f"风控拒单（fail-closed，订单不进桥）: {reasons}")
+
+    def _estimate_order_weight(self, order: Order) -> float:
+        """订单名义金额 / 账户总资产 的权重近似（卖出为负；净值不可得=0.0）。"""
+        total = self._mirror.get_account().get("total", Decimal("0"))
+        if total <= 0:
+            return 0.0
+        order_value = order.quantity * (order.limit_price or Decimal("0"))
+        weight = float(order_value / total)
+        return -weight if order.side == OrderSide.SELL else weight
+
+    def _holdings_as_weights(self) -> dict[str, float]:
+        """柜台镜像持仓 → 权重字典（市值/总资产；总资产不可得=空字典）。"""
+        account = self._mirror.get_account()
+        total = account.get("total", Decimal("0"))
+        if total <= 0:
+            return {}
+        return {
+            bare: float(pos.get("market_value", Decimal("0")) / total)
+            for bare, pos in self._mirror.get_positions().items()
+        }
+
+    def _pretrade_limits(self, order: Order) -> RiskLimits:
+        """进桥校验限额（保守默认：单标的 10%、杠杆 1.0，与 Saga 默认同口径）。"""
+        now = now_utc()
+        return RiskLimits(
+            as_of_date=now,
+            idempotency_key=f"qmtfb-{self._env}-{order.order_id}",
+            max_single_position=0.10,
+            max_gross_leverage=1.0,
+        )
 
     def cancel_order(self, broker_order_id: str) -> bool:
         """写入撤单指令（仅表示指令已写入，不表示柜台已撤）

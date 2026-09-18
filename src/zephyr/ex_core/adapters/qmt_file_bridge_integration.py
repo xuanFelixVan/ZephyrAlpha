@@ -39,6 +39,7 @@ from zephyr.ex_core.adapters.qmt_file_bridge_broker import (
 from zephyr.ex_core.adapters.qmt_file_bridge_quote import QmtFileBridgeQuoteProvider
 from zephyr.ex_core.local_order_queue import LocalOrderQueue
 from zephyr.ex_core.order_manager import OrderManager
+from zephyr.governance.adapters.risk_validation_bridge import RiskValidationPort
 
 _logger = logging.getLogger(__name__)
 
@@ -66,6 +67,7 @@ class QmtFileBridgeAssembly:
         sync_interval: float = 3.0,
         enable_algo_queue: bool = False,
         queue_interval: float = 180.0,
+        risk_validator: RiskValidationPort | None = None,
     ):
         """初始化装配器
 
@@ -76,6 +78,9 @@ class QmtFileBridgeAssembly:
             sync_interval: 柜台同步轮询间隔（秒）
             enable_algo_queue: 是否为各实例创建 LocalOrderQueue
             queue_interval: 队列默认发送间隔（秒）
+            risk_validator: 风控校验端口（R-H5E-1，可选）。仅注入 sim 实例——
+                sim 订单进桥前强制前置校验（fail-closed）；real 实例**显式不注入**
+                （保持现状，实盘账户启用=Owner 门，裁定 #338⑤）。
         """
         self._order_manager = order_manager
         self._enable_real = enable_real
@@ -83,6 +88,7 @@ class QmtFileBridgeAssembly:
         self._sync_interval = sync_interval
         self._enable_algo_queue = enable_algo_queue
         self._queue_interval = queue_interval
+        self._risk_validator = risk_validator
 
         self._brokers: dict[str, QmtFileBridgeBroker] = {}
         self._queues: dict[str, LocalOrderQueue] = {}
@@ -102,7 +108,13 @@ class QmtFileBridgeAssembly:
             envs.append("real")
 
         for env in envs:
-            broker = QmtFileBridgeBroker(env=env, sync_interval=self._sync_interval)
+            # R-H5E-1：风控校验仅注入 sim 实例（sim 进桥前 fail-closed 闸）；
+            # real 实例显式不注入——实盘路径保持现状，启用=Owner 门（裁定 #338⑤）
+            broker = QmtFileBridgeBroker(
+                env=env,
+                sync_interval=self._sync_interval,
+                risk_validator=self._risk_validator if env == "sim" else None,
+            )
             # 成交回调接线：broker → OrderManager._on_fill
             broker.register_fill_callback(self._order_manager._on_fill)
             self._order_manager.register_broker(broker.broker_id, broker)
