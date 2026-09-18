@@ -656,6 +656,12 @@ $ git log --oneline -3 -- $C
 | **C-31** | `n_trials_effective` 披露位 HEAD 零命中，但三批 summary 各带该值（18/9/2）⇒ 疑热册蒸发 | — | — | 需 `git log -p --all` 全史归因后才能立案；**未补写**（estimator 版本未冻结=B-03 遗留，自造即伪造披露） |
 | **C-32** | 数仓 `strategy_screen.num_trials` 与台账不同源（表内 4,482/4,487/4,497 vs 台账 20632） | — | — | 属 DB 回填班域；本战役 DB 只读，未动 |
 | **C-33** | 手册 `--base-head` 未写命令名，`git_commit.py` 实际**没有**该旗（总包复验 `--help` 命中 0；`commit_queue.py enqueue` 有） | 已改手册：写清"走 `git_commit.py --enqueue` 不要带它；要基底校验就直走 `commit_queue.py enqueue --base-head`" | — | 已修（R-A38 附带），并作为"处方里的命令必须实跑一次再发"的第 N 例记档 |
+| **C-34** | 写入链不接交易日历 ⇒ `daily_valuation` 30% 幽灵日（B15，已复验 77,668/259,238） | 甲：写端加日历闸（负向 `NOT IN 开市日`，禁 `is_open=0`） | 乙：只在读端过滤 | **甲**（乙等于让脏数据继续长，且读端过滤面不可穷举） |
+| **C-35** | ★ **清 77,668 行幽灵数据 = DB 净删，Owner 门位** | — | — | **不得与 C-34 分开做**：先停写入端（P1）再清行（P2），否则删完长回来（D-3 顺序） |
+| **C-36** | 哨兵缺"污染尺"腿（现只量新鲜度+填充率 ⇒ 幽灵日全仓不可见） | 加一条"非交易日有行即告警"腿（只加严，合规 §321） | — | 可即时施工；谓词/`exchange`/`FINAL` 三条硬约束见手册新钉条 |
+| **C-37** | `backfill_checker.py:1046` 无 `permission_required` 分支也无 `else` ⇒ **静默跳过却计入 checked** | 补分派 + 未识别类型**显式报错**（fail-closed） | 顺手把 `checked` 改名成"已分派数" | 甲；这台是"指标自证清白"型的新实例（无 else 的白名单分派） |
+| **C-38** | `is_st` 写端硬编码 0（259,238/259,238 全 0）而 `api_server.py:3900` 当真相用 | 补真值来源 + 在读端显式披露"该列不可用" | 摘掉读端对该列的依赖 | 先乙后甲：现在最坏的不是没值，是**下游以为有值** |
+| **C-39** | 普查文档 `01_break_census.md:81` 把从未建过的 `alt_movie_boxoffice` 列进"空表族" | 改措辞（未建 ≠ 空表） | — | 与 C-33/R-A7/R-A24 同族：**引用不存在之物** |
 ## 4. 事实修正表（后续车道任务书必带对应行）
 
 | 方案原文 | 现场实测（2026-09-19，本战役复跑） | 影响 |
@@ -2130,6 +2136,33 @@ L581 改后：
 - 手册另钉两条本役实测坑：① `--claim-only` 会用活 pid 覆写 `session_registry` 条目 ⇒ 注册与提交必须同一条命令链；
   ② 能力反查只能用 `CapabilityLookup().find(query, *, session_id=...)`（`AGENTS.md` §0.4 的模块级写法不可执行），
   预跑报 `CAPABILITY-LOOKUP-REQUIRED` 时**真跑几个词补审计**，不拿 `[no-lookup:]` 逃生旗糊。
+
+- **R-A41｜B15 数据面取证落地（零改动），三条承重断言我已独立复验**：
+  `dayOfWeek(2026-08-03 周一)=1` ⇒ **ClickHouse 实测是 ISO 序，与官方文档"周日=1"相反**；
+  幽灵日 **77,668 / 259,238 FINAL 行 = 29.96%** 的 `daily_valuation` 是**非交易日数据**（7 个周六 + 7 个周日，逐日清单在案卷）；
+  `is_st=1` 的行数 = **0**（写端 `akshare_provider.py:1857` 硬编码 0，而 `api_server.py:3900` 把它当真相用）。
+  - 病灶定性三路取证后＝**日历存在且正确，是写入链从来没接它**：
+    `tasks.yaml:67/:1205 → _fetch_daily_valuation:1652 → _fetch_valuation_one_symbol:1801 →
+    _build_valuation_col_map:609 取上游 `row["date"]` → :1835 逐日发一行，零日历校验`；
+    "上游日期本身错"部分成立（周末点带自己的值，copy-forward 率非 100%，如 08-29/30 只 86.18% 等于 08-28），
+    "把时间戳当业务日期"**被否**（`trade_date` 与 `ingest_ts` 解耦 27–29 天，后者是服务端 `DEFAULT now()`），
+    "节假日历缺失"**被否**（`c1_market.trade_calendar` 与 `calendar/ashare.py:57` 俱在，别处已在消费）。
+  - **检测缺口**：两条现成哨兵腿（`data_supply_sentinel.yaml:373`、`quality_sentinel_tables.yaml:65`）只量新鲜度+填充率
+    ⇒ 幽灵日**全仓不可见**。影响面实测：`api_server.py:3954/:241` 有 **10/4094** 只股票拿到非交易日 `valuation_asof`；
+    回测侧已把该表拉黑（`pilot_001_ml_multifactor.py:8`）⇒ 因子链目前干净。
+  - 第二条断点方向纠正：`alt_movie_boxoffice` **从未建过**（`SHOW TABLES` 192 + `system.tables` 393 行零命中、28 个 `alt_*` 兄弟无一同族、全仓零同名文件）；
+    ★ **我任务书的前提"某处代码/任务在引用它"是假的**——生产 Python 0、`tasks.yaml` 任务 0、哨兵 0、schemas 0，
+    15 处命中全是文档散文 + `known_data_gaps.yaml:601/602` 两个机器字段（`tasks.yaml:3657` 是**禁令**不是引用）；
+    真正该改的是普查文档 `01_break_census.md:81` 把不存在的表列进"空表族"。
+  - ★ 顺带抓到一台**机器面假绿**：`backfill_checker.py:1046` 的 `run_known_gap_backfill` 只处理
+    `date_range`/`empty_table`，**没有 `permission_required` 分支也无 `else`** ⇒ 该条目**静默跳过却计入 `checked`**。
+    "断供会不会响"的答案是**三层全静默**（无任务、无分派分支、无哨兵行）。
+- **R-A42｜我又一次把引用写错地方（第 6 处自记错误）**：我给 B15 的任务书让车道去
+  `COORDINATION_LEDGER.md` / `CONSTRUCTION_DISCIPLINE.md` 读"R-A 系列"——**R-A* 只存在于
+  `rule_audit_campaign/CONSTRUCTION_LEDGER.md`**，那两份文件里 `grep 'R-A[0-9]'` = **0 命中**。
+  车道没编内容，改按 R-026 十三型 + R-019 执行并**如实报了这个引用失效**
+  （与台账 R-035 自报的"任务书引用不存在之物"同型）。⇒ 派工模板要加一条自检：
+  **引用任何编号前先在被引文件里 `grep` 一次**（同 R-A7/A24 的"路径先实测"，只是这次栽在编号上）。
 
 ## 8. WP15(3/5) 取证案卷全文
 

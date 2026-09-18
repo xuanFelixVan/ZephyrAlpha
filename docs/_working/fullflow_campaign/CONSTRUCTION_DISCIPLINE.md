@@ -132,6 +132,17 @@ completes_when: <一句话>
 - 提交前必与 dev 三方合并：`git merge-file -p -L ours -L base -L dev <ours副本> <base=git show HEAD:f> <theirs=dev>`。
   参数序反了会得到"我的改动全没了"的静默假成功。要求对 dev **纯 insert、`grep -c '^<'`=0**。
 - 防回退 diff 必加 `--strip-trailing-cr`（否则 CRLF→LF 报 6 万行假差异）。
+- ★ **日期函数编号序不得信文档，必须实测**（B15 实弹，本役新增失效型）：
+  ClickHouse 26.6.1 的 `dayOfWeek`/`toDayOfWeek` **返回 ISO 序（周一=1…周日=7）**，
+  与官方文档口径（周日=1…周六=7）**相反**（实测 `2026-08-03`(周一)→1、`08-02`(周日)→7）。
+  ⇒ 判周末写 `dayOfWeek IN (1,7)` 会**恰好返回同样条数**（14 天），但内含 **7 个假阳（真周一）+ 7 个假阴（真周六）**——
+  **条数对上不代表判据对**。正解：用库内权威日历做负向判定
+  `trade_date NOT IN (SELECT cal_date FROM c1_market.trade_calendar FINAL WHERE exchange='SSE' AND is_open=1)`；
+  ★ 两条硬约束：**禁写 `is_open=0`**（该表只存开市日，`sum(is_open)=count(*)` ⇒ 该谓词恒空＝假绿）、
+  活列名是 **`cal_date` 不是 `calendar_date`**（D-17 口径，写错会被 `Code: 47` 打回）。
+- ★ **滞后尺与污染尺是两把尺**（B15）：`max(ingest_ts)` 与 `max(trade_date)` 双双"新鲜"（滞后 1.2d / 1d）的表，
+  实测**近 30% 行是幽灵日**。⇒ 哨兵/台账只量"新鲜度+填充率"就**结构性看不见污染**；
+  任何"这条链路有水"的判据，必须分清问的是"多久没写"还是"写进来的是不是真值"。
 - ★ **批量改头栏/锚类机械件的验收判据（R-A39，车道 L1b 顶回总包处方后修正）**：
   错误判据＝"`# [BLUEPRINT]` 份数不得比改前少"——**A 型（删重复注入块）按定义必然 2→1**，照它执行会把合法修复全判成事故。
   正确判据＝**改后 `[BLUEPRINT]` ≥1 份，且存活锚的 id 与被删注入行的 id 一致、其指向的蓝图文件实存**（三者齐才算安全）。
