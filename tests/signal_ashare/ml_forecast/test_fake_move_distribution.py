@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-124 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_fake_move_distribution
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/signal_ashare/ml_forecast/fake_move_distribution.py
 """MOD-SIG-124 单元测试：fake_move_distribution 主力假动作与筹码派发识别。
 

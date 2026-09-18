@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-121 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_orderflow_network_panic
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/signal_ashare/orderflow_network_panic.py
 """MOD-SIG-121 单元测试：orderflow_network_panic 跨资产订单流网络与亏钱扩散。
 

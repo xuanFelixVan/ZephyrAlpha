@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-114 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_crowd_game_simulator
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/signal_ashare/crowd_game_simulator.py
 """MOD-SIG-114 单元测试：crowd_game_simulator 群体博弈模拟器。
 

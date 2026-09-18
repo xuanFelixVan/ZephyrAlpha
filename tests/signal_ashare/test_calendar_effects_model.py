@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-122 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_calendar_effects_model
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/signal_ashare/calendar_effects_model.py
 """MOD-SIG-122 单元测试：calendar_effects_model A股日历效应模型。
 

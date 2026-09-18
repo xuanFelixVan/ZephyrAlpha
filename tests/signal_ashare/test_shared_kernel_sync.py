@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-133 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_shared_kernel_sync
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/signal_ashare/shared_kernel_sync.py
 """MOD-SIG-133 单元测试：shared_kernel_sync 策略共享内核同步器。
 

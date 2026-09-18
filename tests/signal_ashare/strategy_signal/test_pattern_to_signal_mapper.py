@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-115 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_pattern_to_signal_mapper
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/signal_ashare/strategy_signal/pattern_to_signal_mapper.py
 """MOD-SIG-115 单元测试：pattern_to_signal_mapper 形态信号转化层。
 

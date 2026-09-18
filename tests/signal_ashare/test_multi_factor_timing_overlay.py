@@ -1,6 +1,9 @@
 # [A_test] module_id: MOD-SIG-108 | layer=test | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SIG-108 | docs/03_modules/_domain_signal/multi_factor_timing_overlay/blueprint.md
 # [MODULE] tests.signal_ashare.test_multi_factor_timing_overlay
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # [DEPENDENCIES] zephyr.signal_ashare.multi_factor_timing_overlay
 

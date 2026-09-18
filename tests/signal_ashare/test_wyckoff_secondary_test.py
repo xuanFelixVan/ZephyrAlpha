@@ -1,6 +1,9 @@
 # [A_test] module_id: MOD-SIG-116 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-SIG-116 | docs/03_modules/_domain_signal/wyckoff_secondary_test/blueprint.md
 # [MODULE] tests.signal_ashare.test_wyckoff_secondary_test
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TTL] permanent
 # [DEPENDENCIES] zephyr.signal_ashare.wyckoff_secondary_test
 

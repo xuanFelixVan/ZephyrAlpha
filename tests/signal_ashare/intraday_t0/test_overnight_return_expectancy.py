@@ -1,6 +1,9 @@
 # [A_test] module_id: MOD-SIG-107 | layer=test | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SIG-107 | docs/03_modules/_domain_signal/overnight_return_expectancy/blueprint.md
 # [MODULE] tests.signal_ashare.test_overnight_return_expectancy
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # [DEPENDENCIES] zephyr.signal_ashare.intraday_t0.overnight_return_expectancy
 

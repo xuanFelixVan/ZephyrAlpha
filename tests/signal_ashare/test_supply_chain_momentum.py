@@ -1,6 +1,9 @@
 # [A_test] module_id: MOD-SIG-118 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-SIG-118 | docs/03_modules/_domain_signal/supply_chain_momentum/blueprint.md
 # [MODULE] tests.signal_ashare.test_supply_chain_momentum
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TTL] permanent
 # [DEPENDENCIES] zephyr.signal_ashare.supply_chain_momentum
 

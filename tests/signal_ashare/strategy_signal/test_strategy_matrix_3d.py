@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-130 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_strategy_matrix_3d
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/signal_ashare/strategy_signal/strategy_matrix_3d.py
 """MOD-SIG-130 单元测试：strategy_matrix_3d 量能体制风格三维策略矩阵。
 

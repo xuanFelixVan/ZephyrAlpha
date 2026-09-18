@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-SIG-132 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.signal_ashare.test_day_trade_pnl_estimator
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/signal_ashare/intraday_t0/day_trade_pnl_estimator.py
 """MOD-SIG-132 单元测试：day_trade_pnl_estimator 做T盈亏预估器。
 

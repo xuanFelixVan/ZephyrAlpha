@@ -1,6 +1,9 @@
 # [A_test] module_id: MOD-SIG-119 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-SIG-119 | docs/03_modules/_domain_signal/sector_crowding_launch/blueprint.md
 # [MODULE] tests.signal_ashare.test_sector_crowding_launch
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TTL] permanent
 # [DEPENDENCIES] zephyr.signal_ashare.sector.sector_crowding_launch
 

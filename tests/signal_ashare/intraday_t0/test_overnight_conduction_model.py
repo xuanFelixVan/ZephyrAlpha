@@ -1,6 +1,9 @@
 # [A_test] module_id: MOD-SIG-117 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [BLUEPRINT] MOD-SIG-117 | docs/03_modules/_domain_signal/overnight_conduction_model/blueprint.md
 # [MODULE] tests.signal_ashare.test_overnight_conduction_model
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TTL] permanent
 # [DEPENDENCIES] zephyr.signal_ashare.intraday_t0.overnight_conduction_model
 

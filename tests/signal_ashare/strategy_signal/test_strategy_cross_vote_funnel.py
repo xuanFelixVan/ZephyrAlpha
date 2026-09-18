@@ -1,6 +1,9 @@
 # [A_test] module_id: MOD-SIG-109 | layer=test | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SIG-109 | docs/03_modules/_domain_signal/strategy_cross_vote_funnel/blueprint.md
 # [MODULE] tests.signal_ashare.test_strategy_cross_vote_funnel
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # [DEPENDENCIES] zephyr.signal_ashare.strategy_signal.strategy_cross_vote_funnel
 

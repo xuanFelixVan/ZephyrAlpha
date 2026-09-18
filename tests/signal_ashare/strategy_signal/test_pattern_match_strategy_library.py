@@ -1,6 +1,9 @@
 # [A_test] module_id: MOD-SIG-105 | layer=test | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SIG-105 | docs/03_modules/_domain_signal/pattern_match_strategy_library/blueprint.md
 # [MODULE] tests.signal_ashare.test_pattern_match_strategy_library
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # [DEPENDENCIES] zephyr.signal_ashare.strategy_signal.pattern_match_strategy_library
 

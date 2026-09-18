@@ -1,6 +1,9 @@
 # [A_test] module_id: MOD-SIG-106 | layer=test | stability=volatile | safety=M | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-SIG-106 | docs/03_modules/_domain_signal/sell_news_overdraft_detector/blueprint.md
 # [MODULE] tests.signal_ashare.test_sell_news_overdraft_detector
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 # [DEPENDENCIES] zephyr.signal_ashare.sentiment.sell_news_overdraft_detector
 
