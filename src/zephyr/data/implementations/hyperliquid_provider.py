@@ -105,6 +105,20 @@ def _f(x: object) -> float | None:
     return v
 
 
+def _dec_or_none(x: object) -> str | None:
+    """源端字符串数值 → Decimal 列字面量（NaN/Inf/空 → None）。
+
+    Decimal 列拒绝 NaN 字面量：2026-09-18 实测 PANDORA premium=NaN 致 TSV insert
+    整批 HTTP 400 降级本地落盘——源端 NaN 属"无值"语义，归 NULL 如实。
+    """
+    if x is None:
+        return None
+    s = str(x).strip()
+    if s == "" or s.lower() in ("nan", "inf", "-inf", "+inf", "infinity", "-infinity"):
+        return None
+    return s
+
+
 class HyperliquidProvider(IngestProviderBase):
     """Hyperliquid Provider——官方免费公开 API 四类跨资产数据（行情/持仓/资金费/清算）。"""
 
@@ -269,7 +283,7 @@ class HyperliquidProvider(IngestProviderBase):
             for h in batch:
                 rows.append((
                     coin, _ms_to_dt64_str(int(h["time"])),
-                    h.get("fundingRate"), h.get("premium"), DATA_SOURCE, 1,
+                    _dec_or_none(h.get("fundingRate")), _dec_or_none(h.get("premium")), DATA_SOURCE, 1,
                 ))
             last_ms = int(batch[-1]["time"])
             nxt = last_ms + 1
