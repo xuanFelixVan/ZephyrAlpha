@@ -72,12 +72,13 @@ support_resistance 2（Volume Profile、Murrey 日线版）+ candlestick 1（Sid
 
 ## 7. 补扫执行（任务 B）与考后登记
 
-- 通道：`scripts/data/pattern_event_backfill.py`（JOB-108 正身，PatternEventStore→ReplacingMergeTree 幂等 append，
-  reader 无 INSERT 权限、走 ch_writer 通道）。先 `--start 2025-09-19 --pilot 500` 试扫验证事件率，再放全窗
-  `--start 2021-09-01`。长批已登记 data/runtime/process_reaper_keep.txt（子串 pattern_event_backfill）。
-- 验收：补扫后按 name 查六名最早锚日应回到 2021-09/2022 段；结果行数记入台账；快考（任务 C）若时间富余按
-  P 车道事件研究协议（前瞻 5/10/20 日、vol 三桶 0.212/0.532、T-1 PIT）出首轮读数，标"筛≠考"。
-- 诚实条款：adj_factor 恒 1，一切日线结论=暂定；筛≠考；负结果如实入册。
+- **执行结果（2026-09-19 收口，详见同目录 pattern_backfill_execution.md）**：试扫 1 年×500 股（427,775 事件/0 错误）
+  放行后全窗 `pb-2021-09-01-2026-09-19` 扫 5,766 股、写 24,428,254 事件、0 错误、42 分钟。
+  六名（含表内 PAT-CANDLE-078 内包日）全部回到 2021-09 全窗：内包日 826,259 行/周线反转 566,645/钩形反转 377,335/
+  枢轴点反转 312,048/开收反转 217,819/鲨鱼32 6,330。清册 CSV 已加 backfill_status 列（5 条=backfilled）。
+- 快考（筛≠考）：开收反转/向上（ex10=+29.6bp、分年 6/6 正、高波桶 +50.3）与枢轴点反转/向下（+20.8bp、6/6 正）
+  为首轮亮点；毛口径 close 锚未计成本，正考须走 PATX 窄考卡协议（T+1 开盘+成本+NW/bootstrap）。
+- 验收：补后按 name 六名最早锚日均回到 2021-09/2022 段 ✓；生产表只 append（ReplacingMergeTree 幂等）✓。
 
 ## 8. 复现
 

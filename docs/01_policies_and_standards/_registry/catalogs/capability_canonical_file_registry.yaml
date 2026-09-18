@@ -36339,6 +36339,10 @@ creation_tokens:
   token: bizmine-alpha-mining-owner-package-20260918
   created_by: st-bizmine-op-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/pattern_backfill/pattern_backfill_execution.md
+  token: bizmine-alpha-mining-pattern-backfill-execution-20260918
+  created_by: st-bizmine-pb-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
