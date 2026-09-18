@@ -36,3 +36,9 @@ QMT_REAL_*/enable_real/ZEPHYR_ENV=live/LiveSimulationSwitcher.switch_to_live 全
 - **100 股模拟单全链测试=已完成**（自动化战役第三棒，05:0x 官方入账 commit 60747a8a47"QMT 桥 100 股实测"+staged 证据 qmt-bridge-smoke-20260918-c3.yaml）：2026-09-18 03:08 账户 8886156677(sim)，600000.SH 100 股 BUY LIMIT 8.10（深低于市价，意图零成交）——SUBMITTED 全链打穿（下单→桥→柜台→状态回流），撤单指令受理；夜间时段终态以柜台导出 CSV 为准（他会话已留晨间复核尾巴）。
 - **防重复裁定**：本环节不重复下单（同一模拟账户二次下单=污染他会话证据链）；改为 broker 侧对账闭环补强——06:1x 实测 XtMiniQmt.exe 进程不在线（仅 XtItClient.exe），broker 查询通道挂起；终端重连后补 query_order+query_trades_today 对账（零新下单，只读核验）。
 - **禁区全程未触**：QMT_REAL_*/enable_real/live 切换全禁 ✓；kill_switch 未动 ✓。
+
+## 晨间循环下单体观察（flash-nightbuild-20260918 班 12:5x 只读核验，非本班下单）
+
+- 柜台日志（8886156677_TaskDetail.txt，GBK）今日 828 条委托记录，其中 **801 条来自会话 `smoke-e2e-1789694891`**（510300.SH buy 100 @4.07 限价，10:07-10:45 窗内反复委托，状态"全部委托!"），**零成交记录**，12:5x 核验已停止增长（最后一笔 10:45）。
+- 判定=桥客户端侧的循环/重试体（非 tdchain、非 flash 班、非 automation 台账在案任何一方）。**午休后 13:00 若这些单仍挂着会恢复有效**——请在 QMT 终端委托列表批量撤单清理，并在桥客户端侧找到并停掉循环源，防明日再发。
+- 两个桥客户端契约缺口实录（本班与 red team 独立确认）：①撤单指令须用柜台回填的 broker id（ack_sim.csv），用本地 id 撤单=FAIL（flash-nightbuild-e2e-20260918-01 的 cancel #FAIL 即此因）；②隔夜单被标 #DONE 但从未进柜台（静默丢弃）——QMT 侧接管切换时应把这两条写进桥客户端验收。
