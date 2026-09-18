@@ -13,7 +13,11 @@ ttl: task_bound
 | 02:0x | R | 发车 st-bizmine-r：灰度×因子条件化考试（17幸存者×状态桶） | - |
 | 02:0x | T | 发车 st-bizmine-t0：主观做T方法库挖矿+行情条件化窄测+币圈研究 | - |
 | 02:0x | F | 发车 st-bizmine-f：因子SOP v0.1+IC大海选+另类数据探针 | - |
-| 待 | L1 | 量能族 14 档（二波，车位空出发） | - |
+| 02:3x | L1 | 发车 st-bizmine-l1：量能族 14 档（同源预检+去重+预注册+沙箱考） | - |
+| 02:3x | S | 发车 st-bizmine-sec：板块族首批（强度/轮动信号 IC+周频轮动快测） | - |
+| 02:3x | P | 发车 st-bizmine-pat：图形库 78 条值得考事件研究 | - |
+| 02:3x | E | 发车 st-bizmine-etf：ETF 波段择时+横截面轮动（Owner 愿景对齐） | - |
+| 待 | 预备 | B1 三传感器批计算（BT-P1-001/005/006）、BT-P1-029/054 晋升登记（车位空出递补） | - |
 | 待 | W2 | 红蓝对抗+销账（BT-P1-032/B0 15条）+起床报告 | - |
 | 02:3x | R | R1 灰度现状一页纸（三套状态资产/PIT 口径/条件化选列=regime_state_anchored.vol_pct；#ARCH-344 只引用） | docs/_working/bizmine_night/regime_axis/regime_status_assessment.md @ 6fa8fd2cc7 |
 | 02:3x | R | R2 预注册卡（IS 三分位 0.3200/0.7040，T-1 PIT）+17 幸存者×状态桶矩阵+报告：POOLED LOW 1.12/MID 0.21/HIGH 2.48，14/17 最优桶=HIGH，收益集中于高波灰度桶（暂定，复权链未修复） | docs/_working/bizmine_night/regime_axis/{prereg_card_survivor_regime_buckets.md,survivor_regime_matrix.csv,survivor_regime_report.md} @ 6fa8fd2cc7 |
