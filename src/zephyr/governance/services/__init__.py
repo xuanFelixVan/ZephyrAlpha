@@ -1,7 +1,6 @@
 # [BLUEPRINT] MOD-INF-022 | (auto-injected by S4 reconciler) | §
 # [TESTS] none
 # [TTL] permanent
-# [TTL] permanent
 # governance/services
 
 """

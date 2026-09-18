@@ -13,7 +13,6 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidIntradayRecalcConfigError
 # [TESTS] tests/risk/test_var_intraday_recalc.py
-# [TTL] permanent
 
 """
 Intraday VaR Recalc — 盘中 VaR/ES 重算触发与执行 (36号 §3.12)

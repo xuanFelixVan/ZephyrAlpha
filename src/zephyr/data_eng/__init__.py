@@ -1,5 +1,3 @@
-# [BLUEPRINT] MOD-DATA_ENG | (auto-injected by S4 reconciler) | §
-# [TTL] permanent
 """
 
 
