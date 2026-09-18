@@ -535,10 +535,10 @@ def render_yaml(probe: dict, factors: dict, mes: list[str], is_total: int) -> st
                 lines.append(f"    oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）")
             if v.get("red_reasons"):
                 lines.append("    red_reasons:")
-                lines += [f"      - {r}" for r in v["red_reasons"]]
+                lines += [f"      - \"{r}\"" for r in v["red_reasons"]]  # 引号壳防 | 开头（同 reason）
         else:
             lines.append(f"    status: {v['status']}")
-            lines.append(f"    reason: {v['reason']}")
+            lines.append(f"    reason: \"{v['reason']}\"")  # 双引号壳（reason 可能以 | 开头=YAML 块标量指示符，首跑件实证）
         lines.append(f"    promotion_authority: {v.get('promotion_authority', 'none')}")
     lines += [
         "comparison_with_legacy:   # 旧口径既有出证对照（只读引用，不改旧件）",

@@ -237,6 +237,30 @@ class TestRender:
         assert doc["probe"]["exp_grade_counts"]["high"] == 30
         assert doc["caliber"]["ruling_338_4_verbatim"].strip() == exe.RULING_338_4_VERBATIM
 
+    def test_yaml_parseable_with_red_factor_and_reasons(self):
+        """回归（首跑件实证）：reason/red_reasons 以 | 开头（如 |IC|=0.0191）会被 YAML
+        当块标量指示符 → 整件不可解析。生成器必须加引号壳。"""
+        import yaml
+
+        factors = {
+            "exp06_rating_momentum": {
+                "verdict": exe.VERDICT_RED, "n_months": 36,
+                "ic_mean": -0.0191, "rank_ic_mean": -0.0191, "t_stat": -1.3242,
+                "t_p": 0.19403, "coverage_mean": 190.0, "coverage_ratio": 1.0,
+                "mom_ic_mean": -0.0122,
+                "red_reasons": ["|IC|=0.0191 < 0.02（效应量地板不动）",
+                                "|t|=1.3242 未超 3.0（Harvey-Liu-Zhu 收紧门槛）"],
+                "promotion_authority": "none"},
+            "exp02_revision_momentum": exe.not_evaluable_entry(
+                "exp02", exe._NOT_EVALUABLE_REASONS["exp02"]),
+        }
+        doc = yaml.safe_load(exe.render_yaml(self._probe(), factors,
+                                             ["2019-01-31"], 36))
+        f = doc["factors"]["exp06_rating_momentum"]
+        assert f["verdict"] == "RED"
+        assert f["red_reasons"][0].startswith("|IC|=")  # 引号壳后内容原样保留
+        assert doc["factors"]["exp02_revision_momentum"]["status"] == "NOT_EVALUABLE"
+
     def test_zero_data_yaml_parseable_and_honest(self):
         import yaml
 

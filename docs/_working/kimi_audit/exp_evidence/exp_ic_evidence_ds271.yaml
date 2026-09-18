@@ -1,7 +1,7 @@
 # WO-⑤-12 EXP 族 IC 出证（裁定 #338④ 口径执行端；统计核/SQL 全量复用
 # scripts/backtest/eval_exp_expectations.py——评估器=口径真源，本件零复制判据）
 evidence_id: exp_ic_evidence_ds271
-run_ts: '2026-09-18T03:54:36+00:00'
+run_ts: '2026-09-18T04:47:05+00:00'
 work_order: WO-⑤-12
 ruling: 裁定#338④（commit 08e09187a2）
 caliber:
@@ -39,12 +39,12 @@ factors:
     mom_ic_mean: -0.1238
     oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）
     red_reasons:
-      - |IC|=0.0094 < 0.02（效应量地板不动）
-      - |t|=0.2877 未超 3.0（Harvey-Liu-Zhu 收紧门槛）
+      - "|IC|=0.0094 < 0.02（效应量地板不动）"
+      - "|t|=0.2877 未超 3.0（Harvey-Liu-Zhu 收紧门槛）"
     promotion_authority: none
   exp02_revision_momentum:
     status: NOT_EVALUABLE
-    reason: DS-275 的 eps_std 结构性不可得（A 段=窗口聚合值不经原始离散度、B 段=源快照本身是聚合值），表内恒 0；exp02 分歧归一项分母为 0 ⇒ 因子退化（评估器eval_exp_expectations.py 已 fail-closed 钉死，0 不是零分歧）
+    reason: "DS-275 的 eps_std 结构性不可得（A 段=窗口聚合值不经原始离散度、B 段=源快照本身是聚合值），表内恒 0；exp02 分歧归一项分母为 0 ⇒ 因子退化（评估器eval_exp_expectations.py 已 fail-closed 钉死，0 不是零分歧）"
     promotion_authority: none
   exp03_revision_breadth:
     verdict: RED
@@ -57,8 +57,8 @@ factors:
     mom_ic_mean: 0.0105
     oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）
     red_reasons:
-      - |IC|=0.0110 < 0.02（效应量地板不动）
-      - |t|=1.1898 未超 3.0（Harvey-Liu-Zhu 收紧门槛）
+      - "|IC|=0.0110 < 0.02（效应量地板不动）"
+      - "|t|=1.1898 未超 3.0（Harvey-Liu-Zhu 收紧门槛）"
     promotion_authority: none
   exp04_anomaly_coverage:
     verdict: RED
@@ -71,11 +71,11 @@ factors:
     mom_ic_mean: -0.0055
     oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）
     red_reasons:
-      - |t|=2.3510 未超 3.0（Harvey-Liu-Zhu 收紧门槛）
+      - "|t|=2.3510 未超 3.0（Harvey-Liu-Zhu 收紧门槛）"
     promotion_authority: none
   exp05_dispersion:
     status: NOT_EVALUABLE
-    reason: 同 exp02 根因：exp05_dispersion=eps_std/|eps_mean|，修复源 eps_std 恒 0 ⇒ 因子全市场恒 0 零方差，截面 Spearman 无定义（跑出一个常数因子的 IC 是对不存在数据的断言）
+    reason: "同 exp02 根因：exp05_dispersion=eps_std/|eps_mean|，修复源 eps_std 恒 0 ⇒ 因子全市场恒 0 零方差，截面 Spearman 无定义（跑出一个常数因子的 IC 是对不存在数据的断言）"
     promotion_authority: none
   exp06_rating_momentum:
     verdict: RED
@@ -88,8 +88,8 @@ factors:
     mom_ic_mean: -0.0122
     oos: not_evaluable（exp_r36 协议无 OOS 窗，结构性）
     red_reasons:
-      - |IC|=0.0191 < 0.02（效应量地板不动）
-      - |t|=1.3242 未超 3.0（Harvey-Liu-Zhu 收紧门槛）
+      - "|IC|=0.0191 < 0.02（效应量地板不动）"
+      - "|t|=1.3242 未超 3.0（Harvey-Liu-Zhu 收紧门槛）"
     promotion_authority: none
 comparison_with_legacy:   # 旧口径既有出证对照（只读引用，不改旧件）
   exp02: {run: EXP-FACTOR-EVAL-004（logs/experiment_tracking_fallback/exp02_eval_run1_r36_20260916.json）, result: not_evaluable（DS-275 eps_std 结构性不可得，分歧归一分母恒 0）}
