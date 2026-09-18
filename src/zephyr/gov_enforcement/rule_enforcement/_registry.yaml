@@ -2,7 +2,7 @@ module_id: MOD-GATE_ENGINE
 schema_version: '1.0'
 doc_type: register
 ttl: permanent
-last_updated: '2026-06-22'
+last_updated: '2026-09-18'
 gates:
 - gate_id: G1
   gate_name: ingest
@@ -49,7 +49,7 @@ gates:
   title: G6 CTR Compliance Gate
   category: compliance
   file: g6_ctr_compliance.yaml
-  status: implemented
+  status: active
   scope: global
   execution_plane: warm
   note: 2026-05-04 执行引擎落地 — scripts/governance/d5_architecture/check_g6_ctr_compliance.py
@@ -288,7 +288,7 @@ gates:
   title: EN-001 Circular Dependency Scanner
   category: invariants
   file: invariants/en_001_circular_dependency.yaml
-  status: implemented
+  status: active
   scope: global
   execution_plane: warm
   note: Phase D — Kahn algorithm topological sort over 15-node layer import DAG
@@ -297,7 +297,7 @@ gates:
   title: EN-002 Enforcement Mode Validator
   category: invariants
   file: invariants/en_002_enforcement_validator.yaml
-  status: implemented
+  status: active
   scope: global
   execution_plane: warm
   note: Phase D — validates enforcement_mode declared for all P0 contracts
@@ -306,7 +306,7 @@ gates:
   title: EN-003 Contract Compatibility Checker
   category: invariants
   file: invariants/en_003_contract_compatibility.yaml
-  status: implemented
+  status: active
   scope: global
   execution_plane: warm
   note: Phase D — diffs dataclass fields against cross_layer_contracts.yaml spec
@@ -836,19 +836,17 @@ gates:
     的文件。扫描器 scripts/governance/d7_code/detect_forward_reference.py。exit 0=clean, exit 1=findings(阻断),
     exit 2=error
 summary:
-  total: 93
+  total: 91
   by_category:
     kms: 5
     compliance: 55
-    lifecycle: 1
     trading: 3
     residue: 1
     infrastructure: 8
-    governance: 9
+    governance: 8
     task: 3
     invariants: 3
     admission: 5
   by_status:
-    active: 87
-    implemented: 4
+    active: 90
     draft: 1

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/auto_sync_all_registries.py | §
 # [MODULE] scripts.governance.auto_sync_all_registries
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] scripts.governance.__init__
+# [DEPENDENCIES] scripts.governance.__init__；zephyr.shared.utils.time_utils(now_utc, RULE-SCHEMA-TZ)
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -50,9 +50,19 @@ import os
 import re
 import sys
 from pathlib import Path
+from typing import Final
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+
+if str(REPO_ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT / "src"))
+
+from zephyr.shared.io.file_utils import (  # noqa: E402  热文件 CAS 写纪律（宪法 §0.2/§0.13）
+    StaleWriteRefused,
+    WriteVerificationError,
+)
+from zephyr.shared.utils.time_utils import now_utc  # noqa: E402  RULE-SCHEMA-TZ: 生成器禁 datetime.now()/time.time()
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +84,22 @@ FEEDBACK_LOOP_DIR = PROJECT_ROOT / "src" / "zephyr" / "feedback_loop"
 
 FLE_GATE_CATEGORY = "fle_self_defense"
 FLE_MODULE_ID = "MOD-FEEDBACK_LOOP"
+
+# WP5/D-4（2026-09-19）第四册派生段总闸：summary/last_updated 一律由 gates 派生，
+# 禁手工维护（宪法 §9.5 静态清单禁手工维护）。裁定真源=
+# docs/_working/2026-09-18-rule-audit-master-construction-plan.md §1 D-4。
+GATE_STATUS_ALIASES: Final[dict[str, str]] = {
+    # D-4 归一规则的现场判定：implemented 不在 module_lifecycle_status 词表合法值
+    # （docs/01_policies_and_standards/_registry/vocabularies/
+    #   module_lifecycle_status_vocabulary.yaml = planned/in_design/in_dev/testing/
+    #   active/suspended/deprecated/archived 8 值）⇒ "不在册则归并为 active"。
+    # draft 在 status_vocabulary.yaml（文档 3 值词表）在册，D-4 未裁 → 不归并，只报。
+    "implemented": "active",
+}
+# summary 块 = 顶格 `summary:` 起至下一个顶格键（或文件尾）
+_GATE_SUMMARY_BLOCK_RE: Final[str] = r"(?ms)^summary:.*?(?=^\S|\Z)"
+# volatile 行（P0② 生成器时间戳非幂等治本同款）：仅时戳差异时跳写
+_LAST_UPDATED_LINE_RE: Final[re.Pattern[str]] = re.compile(r"(?m)^last_updated: .*$")
 
 
 def _load_yaml(path: Path) -> dict | None:
@@ -179,6 +205,158 @@ def _extract_blueprint_version(blueprint_path: Path) -> str | None:
     return None
 
 
+def _derive_gate_summary(gates: list[dict]) -> dict:
+    """由 gates 列表派生第四册 summary（D-4/WP5：total/by_category/by_status 全派生）。
+
+    计数按 gates 出现顺序生成键，保持册内既有排布（不重排=零无意义 diff）。
+    """
+    by_category: dict[str, int] = {}
+    by_status: dict[str, int] = {}
+    for gate in gates:
+        category = str(gate.get("category") or "uncategorized")
+        status = str(gate.get("status") or "unknown")
+        by_category[category] = by_category.get(category, 0) + 1
+        by_status[status] = by_status.get(status, 0) + 1
+    return {"total": len(gates), "by_category": by_category, "by_status": by_status}
+
+
+def _render_gate_summary(summary: dict) -> str:
+    """渲染 summary 块文本（键序固定 total→by_category→by_status，保证两次运行字节一致）。"""
+    lines = ["summary:", f"  total: {summary['total']}"]
+    for group in ("by_category", "by_status"):
+        lines.append(f"  {group}:")
+        lines.extend(f"    {name}: {count}" for name, count in summary[group].items())
+    return "\n".join(lines) + "\n"
+
+
+def _apply_gate_status_aliases(text: str) -> str:
+    """按 D-4 归一 gates 块内的非法 status（文本级，只碰 `status: <alias>` 行）。"""
+    for illegal, legal in GATE_STATUS_ALIASES.items():
+        text = re.sub(rf"(?m)^(\s*status: ){re.escape(illegal)}\s*$", rf"\g<1>{legal}", text)
+    return text
+
+
+def _gate_summary_diff(declared: dict, derived: dict) -> list[str]:
+    """册内 summary 与派生 summary 的逐栏差异（用于红证/漂移报告）。"""
+    rows = []
+    for key in ("total", "by_category", "by_status"):
+        if declared.get(key) != derived.get(key):
+            rows.append(f"summary.{key}: 册内 {declared.get(key)!r} ≠ 派生 {derived.get(key)!r}")
+    return rows
+
+
+def _derive_gate_registry_text(raw: str, stamp: str) -> tuple[str, dict, dict] | None:
+    """归一 status → 派生 summary → 拼接派生段。
+
+    Returns:
+        (新文本, 派生 summary, 册内 declared)；gates 面不可用时返回 None
+        （拒绝在坏输入面上派生）。
+    """
+    import yaml
+
+    text = _apply_gate_status_aliases(raw)
+    declared = yaml.safe_load(raw) or {}
+    gates = (yaml.safe_load(text) or {}).get("gates")
+    if not isinstance(gates, list):
+        logger.error("gate registry: gates 非列表（type=%s），拒绝派生", type(gates).__name__)
+        return None
+    summary = _derive_gate_summary(gates)
+    text = re.sub(_GATE_SUMMARY_BLOCK_RE, lambda _m: _render_gate_summary(summary), text, count=1)
+    if _LAST_UPDATED_LINE_RE.search(text):
+        text = _LAST_UPDATED_LINE_RE.sub(f"last_updated: {stamp!r}", text, count=1)
+    else:
+        text = re.sub(r"(?m)^gates:", f"last_updated: {stamp!r}\ngates:", text, count=1)
+    return text, summary, declared
+
+
+def _gate_drift_rows(declared: dict, summary: dict, stamp: str) -> list[str]:
+    """派生前册内值 vs 派生值的逐栏差异（红证/漂移报告用）。"""
+    rows = _gate_summary_diff(declared.get("summary") or {}, summary)
+    if str(declared.get("last_updated")) != stamp:
+        rows.append(f"last_updated: 册内 {declared.get('last_updated')!r} → 派生 {stamp!r}")
+    return rows
+
+
+def _gate_text_matches(text: str, raw: str) -> bool:
+    """一致判定：完全相等，或仅 volatile ``last_updated`` 时戳差异（幂等跳写）。"""
+    return text == raw or _LAST_UPDATED_LINE_RE.sub("", text) == _LAST_UPDATED_LINE_RE.sub("", raw)
+
+
+def _write_gate_registry_text(path: Path, text: str, base_text: str) -> int:
+    """派生文本写前自校验 + CAS 落盘（损坏/基底陈旧一律不落盘）。"""
+    import yaml
+
+    from zephyr.shared.io.file_utils import content_sha256, safe_write_text  # noqa: PLC0415
+
+    try:
+        yaml.safe_load(text)  # 派生后自校验：损坏即不落盘（防写坏唯一输入面）
+    except yaml.YAMLError as exc:
+        logger.error("派生文本 YAML 自校验失败，拒绝落盘: %s", exc)
+        return EXIT_ERROR
+    try:
+        safe_write_text(
+            path,
+            text,
+            expected_base_sha256=content_sha256(base_text),
+            repo_root=PROJECT_ROOT,
+            newline="\n",
+        )
+    except (StaleWriteRefused, WriteVerificationError) as exc:  # 热文件 CAS/回读校验契约
+        logger.error("gate registry 派生段拒写: %s", exc)
+        return EXIT_ERROR
+    return EXIT_PASS
+
+
+def sync_gate_registry_derived(dry_run: bool = False) -> int:
+    """第四册（rule_enforcement/_registry.yaml）派生段重生——WP5/D-4。
+
+    契约：
+    - ``gates`` 是唯一的输入面；``summary``（total/by_category/by_status）与
+      ``last_updated`` 一律由它派生，禁手工维护（宪法 §9.5）；
+    - status 归一（GATE_STATUS_ALIASES）先于派生，故 by_status 是归一后的现值；
+    - 文本级局部替换，gates 块逐字节不动——禁 yaml.dump 整写本册（实测本册
+      load→dump round-trip 与磁盘字节不等：12 处折行差异，会造出假 diff）；
+    - last_updated 基准=**生成器写盘时刻的 UTC 日期**（现场先例两处：
+      scripts/governance/d5_architecture/generators/align_panoramas.py:144
+      ``now_utc().strftime("%Y-%m-%d")``；本册旧写入端 scripts/scaffold.py:943 也是
+      写盘时刻戳）。时区口径经 now_utc() SSoT（RULE-SCHEMA-TZ 禁 datetime.now()/
+      time.time()）。mtime 基准被否：工作区 mtime 是 checkout/他会话触碰时刻
+      （实测 gate YAML 全为 2026-08-27 checkout 时刻，admission/ 子目录 2026-09-18），
+      不承载内容真值；
+    - 写盘走 ``safe_write_text``（热文件 CAS：base 陈旧拒写，防吞并发改）
+      + ``newline="\\n"``（.gitattributes 钉 *.yaml eol=lf，行尾字节级约定）
+      + volatile ``last_updated`` 行跳写（内容未变即不写 ⇒ 连跑两次零 diff，
+      字段语义收敛为"内容最近一次实际再生时间"，P0② 生成器时间戳非幂等治本同款）。
+    """
+    path = REGISTRIES["gate"]
+    if not path.exists():
+        logger.error("gate registry 不存在: %s", path)
+        return EXIT_FINDINGS
+    on_disk = path.read_bytes().decode("utf-8")
+    eol_drift = "\r\n" in on_disk
+    raw = on_disk.replace("\r\n", "\n")
+    stamp = now_utc().strftime("%Y-%m-%d")
+    derived = _derive_gate_registry_text(raw, stamp)
+    if derived is None:
+        return EXIT_FINDINGS
+    text, summary, declared = derived
+    if _gate_text_matches(text, raw) and not eol_drift:
+        logger.info("gate registry 派生段一致（gates=%d, last_updated=%s）— 无需改写", summary["total"], stamp)
+        return EXIT_PASS
+
+    for row in _gate_drift_rows(declared, summary, stamp) or ["summary 键序/行尾排布漂移（内容等值）"]:
+        logger.warning("DRIFT: %s", row)
+    if eol_drift:
+        logger.warning("DRIFT: 磁盘行尾为 CRLF，.gitattributes 钉 *.yaml eol=lf → 归一为 LF")
+    if dry_run:
+        logger.info("[DRY-RUN] 将重生派生段（未写盘）→ %s", path)
+        return EXIT_FINDINGS
+    rc = _write_gate_registry_text(path, text, raw)
+    if rc == EXIT_PASS:
+        logger.info("已派生重生 gate registry summary/last_updated（gates=%d）→ %s", summary["total"], path)
+    return rc
+
+
 def sync_fle_gates(dry_run: bool = False) -> int:
     """Synchronize target with source of truth."""
     logger.info("=== Syncing FLE gates to gate registry ===")
@@ -202,13 +380,11 @@ def sync_fle_gates(dry_run: bool = False) -> int:
         logger.info("No new FLE gates to register")
         return EXIT_PASS
 
-    gate_registry["last_updated"] = "2026-05-08"
-    summary = gate_registry.setdefault("summary", {})
-    summary["total"] = len(gate_registry["gates"])
-    cats = summary.setdefault("by_category", {})
-    cats[FLE_GATE_CATEGORY] = new_count + cats.get(FLE_GATE_CATEGORY, 0)
-    stats = summary.setdefault("by_status", {})
-    stats["active"] = stats.get("active", 0) + new_count
+    # WP5/D-4 治本：原此处手工增量累加（cats[FLE_GATE_CATEGORY]=new_count+旧值、
+    # stats["active"]+=new_count、last_updated 硬编码 "2026-05-08"）是派生面漂移的
+    # 根因之一——改为整体由 gates 派生。
+    gate_registry["summary"] = _derive_gate_summary(gate_registry["gates"])
+    gate_registry["last_updated"] = now_utc().strftime("%Y-%m-%d")
 
     if _save_yaml(REGISTRIES["gate"], gate_registry, dry_run):
         logger.info("Registered %d new FLE gates", new_count)
@@ -397,6 +573,11 @@ def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Auto-sync all registries from source files")
     parser.add_argument("--sync-gates", action="store_true", help="Register FLE gates in gate registry")
+    parser.add_argument(
+        "--sync-gate-summary",
+        action="store_true",
+        help="派生重生第四册 summary/last_updated（WP5/D-4）；配 --dry-run 只做一致性校验",
+    )
     parser.add_argument("--sync-versions", action="store_true", help="Sync blueprint versions across registries")
     parser.add_argument("--sync-deps", action="store_true", help="Sync cross-module dependencies")
     parser.add_argument("--verify-all", action="store_true", help="Verify __init__.py __all__ completeness")
@@ -406,7 +587,9 @@ def main() -> None:
     args = parser.parse_args()
 
     run_all = args.all
-    if not any([args.sync_gates, args.sync_versions, args.sync_deps, args.verify_all, args.all]):
+    if not any(
+        [args.sync_gates, args.sync_gate_summary, args.sync_versions, args.sync_deps, args.verify_all, args.all]
+    ):
         parser.print_help()
         sys.exit(EXIT_PASS)
 
@@ -414,6 +597,8 @@ def main() -> None:
 
     if run_all or args.sync_gates:
         total_errors += sync_fle_gates(dry_run=args.dry_run)
+    if run_all or args.sync_gate_summary:
+        total_errors += sync_gate_registry_derived(dry_run=args.dry_run)
     if run_all or args.sync_versions:
         total_errors += sync_versions(dry_run=args.dry_run)
     if run_all or args.sync_deps:
