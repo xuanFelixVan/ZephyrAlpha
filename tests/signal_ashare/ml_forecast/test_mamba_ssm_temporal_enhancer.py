@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-SIG-051 | docs/03_modules/MOD-SIG-051/
 # [MODULE] tests.signal_ashare.test_mamba_ssm_temporal_enhancer
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

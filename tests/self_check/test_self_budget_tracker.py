@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_self_budget_tracker | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_self_budget_tracker
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] usage_ratio in [0,1]; remaining >= 0
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

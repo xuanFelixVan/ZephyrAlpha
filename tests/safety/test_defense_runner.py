@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_defense_runner | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §16
 # [MODULE] zephyr.security.adversarial_validation.defense_runner
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

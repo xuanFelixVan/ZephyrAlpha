@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_safety_gate_l64_l65 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L64_L65
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] pre-trade risk fail must reject; PnL unreconciled must observe
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

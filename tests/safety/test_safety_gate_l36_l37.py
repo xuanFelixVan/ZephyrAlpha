@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_safety_gate_l36_l37 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L36_L37
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] context_rot>0.35+dilution>0.3 must observe; trust_decay>1.5*baseline must reject
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

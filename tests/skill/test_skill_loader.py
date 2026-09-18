@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_skill_loader | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_skill_loader
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] SkillLoader must use registry_path; no path traversal allowed
 # [MODIFY-GUARD] changes require review of skill_loader.py API
 # [CONSUMERS] pytest

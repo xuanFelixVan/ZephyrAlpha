@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_self_heal_agent | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-031 | docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md | §3
 # [MODULE] tests.test_self_heal_agent
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] OODA最大5轮;熔断器3次连续失败触发;不自动修复行为审计RED
 # [MODIFY-GUARD] blueprint.md §3;_fixer-registry.yaml self_heal_agent段
 # [CONSUMERS] CI/CD;pytest

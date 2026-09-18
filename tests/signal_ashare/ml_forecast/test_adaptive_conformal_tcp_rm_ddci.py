@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-SIG-052 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/91_density_prediction.md §2
 # [MODULE] tests.signal_ashare.test_adaptive_conformal_tcp_rm_ddci
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

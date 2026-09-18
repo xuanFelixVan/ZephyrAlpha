@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_semantic_similar_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §7
 # [MODULE] tests.test_semantic_similar_detector
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] morphing detected when AST similarity > 70% and text differs; exit code 12 on morphing
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

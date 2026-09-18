@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-SIG-053 | docs/03_modules/MOD-SIG-053/
 # [MODULE] tests.signal_ashare.test_xlstm_long_memory
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

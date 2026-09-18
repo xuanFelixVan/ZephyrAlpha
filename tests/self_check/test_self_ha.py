@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_self_ha | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_self_ha
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] SelfHA.active_instance is str; standby_instances is list[str]
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_safety_gate_l66_l67 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_l66_l67
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] compliance fail must reject L66; upstream reject must reject L67
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

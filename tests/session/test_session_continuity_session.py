@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_session_continuity_session | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-432 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 # [MODULE] tests.test_session_continuity_session
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS]

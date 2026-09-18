@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_attack_simulator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_attack_simulator
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] scenarios is list[dict]
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

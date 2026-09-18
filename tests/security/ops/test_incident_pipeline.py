@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-053 | docs/03_modules/MOD-INF-053/
 # [MODULE] tests.security.ops.test_incident_pipeline
+# [DOMAIN] D_SECURITY
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

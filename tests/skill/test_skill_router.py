@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_skill_router | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_system_master/blueprint.md | §
 # [MODULE] tests.test_skill_router
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] SkillRouter uses FALLBACK_TASK_ROUTING when registry YAML missing
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_skill_idempotency | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_skill_idempotency
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] must clear class-level _execution_history between tests to avoid cross-contamination
 # [MODIFY-GUARD] skill_idempotency.py
 # [CONSUMERS] CI pipeline

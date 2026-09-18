@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-INF-055 | docs/03_modules/MOD-INF-055/
 # [MODULE] tests.security.ops.test_ops_maturity
+# [DOMAIN] D_SECURITY
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

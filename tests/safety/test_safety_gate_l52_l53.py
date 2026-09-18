@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_safety_gate_l52_l53 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L52_L53
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] Boot measurement mismatch must reject; SPDX non-compliant must reject
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-TEST-276 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-metric_count_drift | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
 # [MODULE] tests.scripts.governance.d8_doc_sync.test_metric_count_drift_reconciler
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] volatile
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

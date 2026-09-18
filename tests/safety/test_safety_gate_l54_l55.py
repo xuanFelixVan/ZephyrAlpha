@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_safety_gate_l54_l55 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L54_L55
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] L54 and L55 must always pass in default state
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

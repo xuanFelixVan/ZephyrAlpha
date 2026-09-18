@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_semantic_rollback_tag | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §6.12
 # [MODULE] tests.test_semantic_rollback_tag
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] tag format: rollback/{type}-{id}:{phase}; returns None on git failure
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

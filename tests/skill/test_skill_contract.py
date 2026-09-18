@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_skill_contract | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_skill_contract
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] SkillContract.validate_contracts must detect missing/short contracts
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

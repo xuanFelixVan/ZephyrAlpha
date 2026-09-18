@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 
 # [MODULE] tests.test_self_evolution_fidelity_gate
+# [DOMAIN] D_GOV_AUDIT
 
 # [INVARIANTS] none
 

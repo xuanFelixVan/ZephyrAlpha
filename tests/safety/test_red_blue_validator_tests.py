@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_red_blue_validator_tests | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-030 | docs/03_modules/_cross_layer/red_blue_validator/blueprint.md | §test
 # [MODULE] zephyr.red_blue_validator
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline

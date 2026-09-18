@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_safety_gate_l40_l41 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L40_L41
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] Immutable core violation must reject; image drift must reject
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

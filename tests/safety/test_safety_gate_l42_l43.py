@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_safety_gate_l42_l43 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_safety_gate_L42_L43
+# [DOMAIN] D_SECURITY
 # [INVARIANTS] CF harm>0.2 must reject; data_expired must reject; no checkpoints must block upgrade
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

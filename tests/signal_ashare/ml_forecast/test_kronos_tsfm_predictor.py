@@ -1,5 +1,6 @@
 # [BLUEPRINT] MOD-SIG-050 | docs/03_modules/MOD-SIG-050/
 # [MODULE] tests.signal_ashare.test_kronos_tsfm_predictor
+# [DOMAIN] D_AUDITTEST
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

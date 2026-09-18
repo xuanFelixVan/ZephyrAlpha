@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 
 # [MODULE] tests.test_skill_attention
+# [DOMAIN] D_AUTONOMY_CORE
 
 # [INVARIANTS] none
 

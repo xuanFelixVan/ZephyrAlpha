@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_skill_tokenomics | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md | §
 # [MODULE] tests.test_skill_tokenomics
+# [DOMAIN] D_AUTONOMY_CORE
 # [INVARIANTS] TokenBudget.remaining >= 0; usage_ratio in [0.0, 1.0] for max_tokens > 0
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

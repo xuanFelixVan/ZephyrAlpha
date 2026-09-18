@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-TEST-430 | docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md | §
 
 # [MODULE] tests.test_session_continuity
+# [DOMAIN] D_AUTONOMY_CORE
 
 # [INVARIANTS] tests must not pollute real project data; all paths use tmp_path
 

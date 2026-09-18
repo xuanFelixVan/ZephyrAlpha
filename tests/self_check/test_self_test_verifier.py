@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_self_test_verifier | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_self_test_verifier
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] MIN_CHECKS=8;run_all_returns_VerifierResult;each_check_returns_status
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-requirements_version_sync_test | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-requirements_version_sync | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §FP-ISO.4C
 # [MODULE] tests.scripts.governance.d8_doc_sync.test_requirements_version_sync_reconciler
+# [DOMAIN] D_AUDITTEST
 # [TESTS] —
 # [TTL] permanent
 """test_requirements_version_sync_reconciler.py — requirements↔pyproject 依赖一致性校验 reconciler 测试

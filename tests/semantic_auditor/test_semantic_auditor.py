@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_semantic_auditor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-028 | docs/03_modules/_cross_layer/semantic_auditor/blueprint.md | §test
 # [MODULE] zephyr.security.semantic_auditor
+# [DOMAIN] D_GOV_AUDIT
 # [INVARIANTS] tests_must_pass;no_todo_no_pass_no_fixme
 # [MODIFY-GUARD] only_add_tests;do_not_modify_source
 # [CONSUMERS] pytest;CI_pipeline
