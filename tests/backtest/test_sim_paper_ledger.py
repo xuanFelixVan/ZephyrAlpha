@@ -18,8 +18,8 @@
 from __future__ import annotations
 
 import importlib.util
-import json
 import sys
+from datetime import date
 from io import StringIO
 from pathlib import Path
 
@@ -33,30 +33,107 @@ sys.modules["sim_paper_ledger"] = mod
 spec.loader.exec_module(mod)
 
 
-def _run_replay() -> str:
+def _replay(**kwargs) -> dict:
+    """跑一次内置引擎回放（吞 stdout，返回值交调用方逐条断言）。
+
+    断言一律放在用例里而非本 helper：同一句 `assert res["rows"] and res["events"]`
+    写在 helper 里会让"危机日正确拦单"与"管线真的坏了"两种病塌缩成同一条红、
+    且无法归因（本役 #273 反例形态）。
+    """
     buf = StringIO()
     orig = sys.stdout
     sys.stdout = buf
     try:
-        res = mod.run("replay_demo", "2026-07-01", "2026-09-11")
+        return mod.run("replay_demo", "2026-07-01", "2026-09-11", **kwargs)
     finally:
         sys.stdout = orig
-    assert res["rows"] and res["events"]
-    return json.dumps({"final_equity": res["final_equity"], "rows": len(res["rows"]),
-                       "events": len(res["events"])})
+
+
+def _crisis_state(day: str, *, state: str, p_r10: float, dominant: str):
+    """造 CrisisState 判据（run() 文档明示 crisis_resolver 注入缝=测试用假件）。"""
+    from zephyr.pf_alloc.crisis_gate import CrisisState
+
+    return CrisisState(state=state, p_r10=p_r10, dominant=dominant,
+                       source_date=date.fromisoformat(day), lag_days=0)
+
+
+_NORMAL = lambda d: _crisis_state(d, state="normal", p_r10=0.02, dominant="r1")  # noqa: E731
+_CRISIS = lambda d: _crisis_state(d, state="crisis", p_r10=0.60, dominant="r10")  # noqa: E731
+_PANIC_ENTRY_DAY = "2026-07-17"   # 窗口内唯一 panic 信号日（2026-09-19 实测）
+_FORCED_EXIT_DAY = "2026-08-13"   # 入场后满 HOLD_N 交易日强平日
 
 
 def test_replay_pipeline_consistent():
-    """回放：钱包行=窗口交易日数（>=52 下限，随指数源日历漂移容忍），事件=2（一进一出），权益>初始。
+    """危机闸放行日的一进一出全链：行数=窗口交易日数（>=52 下限，随指数源日历漂移容忍）、
+    事件=2（一进一出）、权益>初始。
 
     2026-09-14：行数硬等值 52 放宽为下限断言——指数源在窗口内回补/新增交易日
-    会使回放行数自然增长（钱包行=交易日数由实现结构性保证），硬编码天数会
-    随数据漂移误报；一进一出事件数与权益增长才是本守卫的核心不变量。
+    会使回放行数自然增长（钱包行=交易日数由实现结构性保证），硬编码天数会随数据漂移误报。
+    2026-09-19（本车道）：**判据显式受控**——原用例现读 CH regime 快照，而 e1a975b158
+    （WO-2a L3 危机闸，2026-09-18）落地后"危机日拦单不出事件"成为设计语义，于是
+    "events==2" 从不变量退化为"取决于当日 regime 快照"的偶发事实。此处改用 run()
+    既有的 crisis_resolver 注入缝钉住"放行"这一前提，让这条守卫重新只测它想测的东西
+    （钱包/事件/权益的账实一致），而不是替 CH 数据状态背锅。断言只增不减。
     """
-    out = json.loads(_run_replay())
-    assert out["rows"] >= 52
-    assert out["events"] == 2
-    assert out["final_equity"] > mod.INITIAL_CAPITAL
+    res = _replay(crisis_resolver=_NORMAL)
+    assert res["rows"] and res["events"]
+    assert len(res["rows"]) >= 52
+    assert len(res["events"]) == 2
+    assert [e[3] for e in res["events"]] == ["entry", "exit"]
+    assert [e[0] for e in res["events"]] == [_PANIC_ENTRY_DAY, _FORCED_EXIT_DAY]
+    assert res["final_equity"] > mod.INITIAL_CAPITAL
+    assert res["crisis_blocked_days"] == []
+
+
+def test_replay_crisis_day_blocks_entry_with_trace():
+    """WO-2a L3 新腿（加严方向，裁定 #321 允许）：crisis 日 panic 入场必须
+    ① 不产生成交事件（0 事件，且不是"静默吞单"）、② 当日 signal=cash、
+    ③ 行 note 留痕 crisis_gate:entry_blocked、④ 权益不动（存量不强平）。
+
+    本车道 2026-09-19 实测：窗口内唯一 panic 日 2026-07-17 的 regime 快照
+    dominant=r10 / p_r10=0.600 ⇒ 现读链当日正是此态，故上一用例的"2 事件"
+    在现读口径下不成立——那不是我掰尺子，是尺子量的是两个东西。
+    """
+    res = _replay(crisis_resolver=_CRISIS)
+    assert len(res["rows"]) >= 52
+    assert res["events"] == []
+    assert res["crisis_blocked_days"] == [_PANIC_ENTRY_DAY]
+    row = next(r for r in res["rows"] if r[0] == _PANIC_ENTRY_DAY)
+    assert row[9] == "cash"
+    assert "crisis_gate:entry_blocked" in row[12]
+    assert res["final_equity"] == pytest.approx(mod.INITIAL_CAPITAL)
+
+
+def test_replay_crisis_resolver_error_fails_closed():
+    """resolver 抛异常=读不到判据≠安全：必须 fail-closed 拦 entry 并在行 note 留原因。
+
+    牙齿由变异证明：把该 except 腿改成 return False（fail-open）⇒ 本件红。
+    """
+    def _boom(day):
+        raise RuntimeError("CH 不可读")
+
+    res = _replay(crisis_resolver=_boom)
+    assert res["events"] == []
+    assert res["crisis_blocked_days"] == [_PANIC_ENTRY_DAY]
+    row = next(r for r in res["rows"] if r[0] == _PANIC_ENTRY_DAY)
+    assert "crisis_gate:resolver_error" in row[12]
+
+
+def test_replay_live_chain_never_swallows_tradesilently():
+    """现读 CH 的真链（无注入）必须落在可解释的两档之一，禁"既无事件又无留痕"。
+
+    保留原 `assert res["rows"] and res["events"]` 的守门语义（管线不得空转），
+    但把它从"必须 2 事件"改写成"必须要么成交、要么拦单留痕"——危机闸在 crisis 日
+    正确地不成交，若仍钉死 2 事件就等于要求危机闸失效（放松方向，#321 禁）。
+    """
+    res = _replay()
+    assert len(res["rows"]) >= 52
+    assert res["events"] or res["crisis_blocked_days"], \
+        "回放既无成交也无拦截留痕=静默空转（panic 信号或危机闸判据已失联）"
+    noted = {r[0] for r in res["rows"] if r[12].startswith("crisis_gate:")}
+    assert noted == set(res["crisis_blocked_days"]), "拦单日与留痕日不一致（审计缺口）"
+    traded_days = {e[0] for e in res["events"]}
+    assert not (traded_days & set(res["crisis_blocked_days"])), "被拦日仍出事件=闸漏了"
 
 
 def test_rebuild_matches_pocket():

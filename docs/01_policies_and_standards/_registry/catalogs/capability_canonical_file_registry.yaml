@@ -35899,4 +35899,8 @@ creation_tokens:
   token: rule-audit-master-plan-2026-09-18-rule-audit-master-construction-plan-20260918
   created_by: st-ruledisp-20260918
   capability: rule_audit_master_plan
+- file: docs/_working/fullflow_campaign/lanes/last_prescriptions.md
+  token: fullflow-last-last-prescriptions-20260918
+  created_by: st-ff-last-20260918
+  capability: fullflow-last
 di_seam_exemptions: []
