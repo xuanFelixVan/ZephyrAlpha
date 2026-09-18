@@ -5,7 +5,7 @@
 # [CONSUMERS] data/backtest_artifacts/runs/E4-F06-38b453ca/（E4 正考档案 verdict.md+summary.json）；F-06 E2 消费面（后续幸存者正考复用）
 # [STARTUP] manual
 # [MATURITY] experimental
-# [INVARIANTS] 判定逻辑零重写（IS→WFA→OOS 三线裁决/过拟合检测全委托 strategy_validation_pipeline+DecisionGate+OverfittingDetector，本件只编排）；折切分无泄露（build_folds 机械保证每折训练窗全部早于测试窗、测试窗互不重叠）；配方参数全程锁定（E4=锁定配方的滚动考核，非再优化；训练窗仅作滚动状态预热，配方求值全链路因果/PIT）；回测口径全复用 _c4_engine 冻结土规成本 T+1（w.shift(1)）；DSR 由官方件 MOD-SIM-024 预计算注入（fail-closed：注入失败按 unavailable 判不通过）；OOS 阶段口径=真 OOS 段（test_start>=IS 窗尾的折拼接），WFA 稳定性用全折
+# [INVARIANTS] 判定逻辑零重写（IS→WFA→OOS 三线裁决/过拟合检测全委托 strategy_validation_pipeline+DecisionGate+OverfittingDetector，本件只编排）；折切分无泄露（build_folds 机械保证每折训练窗全部早于测试窗、测试窗互不重叠）；配方参数全程锁定（E4=锁定配方的滚动考核，非再优化；训练窗仅作滚动状态预热，配方求值全链路因果/PIT）；回测口径全复用 _c4_engine 冻结土规成本 T+1（w.shift(1)）；DSR 由官方件 MOD-SIM-024 预计算注入（fail-closed：注入失败按 unavailable 判不通过）；OOS 阶段口径=真 OOS 段（test_start>=IS 窗尾的折拼接），WFA 稳定性用全折；RB-STATS-01 证据充分性闸=DSR 折减分母 N_eff 未从批次档案对账复算(非 verified) 或 过拟合三维未评满 ⇒ 禁判"通过"（最多存疑；实测纯噪声 N=1 时 DSR=0.9986 曾判通过，一列改字即放水）
 # [MODIFY-GUARD] tests/backtest/test_f06_e4_wfa_exam.py
 # [STABILITY] experimental
 # [SAFETY] L
@@ -51,6 +51,10 @@ _REPO = Path(__file__).resolve().parents[2]
 
 from zephyr.backtest.core.decision_gate import DSR_OVERFITTING_FLOOR, DSR_SIGNIFICANCE_THRESHOLD, evaluate_dsr
 from zephyr.backtest.core.overfitting_detector import DEFAULT_OOS_SHARPE_THRESHOLD_RATIO
+
+STRATEGY_INTAKE_DIR = _REPO / "data" / "strategy_intake"
+#: 过拟合检测器三维中，本考实际评估到的维数上限（维度2 参数扰动/维度3 跨时段本考不评估）
+OVERFIT_DIMENSIONS_TOTAL = 3
 
 SURVIVORS_CSV = _REPO / "data" / "strategy_intake" / "f06_survivors.csv"
 DEFAULT_OUT_DIR = _REPO / "data" / "backtest_artifacts" / "runs" / "E4-F06-38b453ca"
@@ -167,7 +171,14 @@ def fold_metrics_from_net(net: pd.Series, folds: list[dict]) -> list[dict]:
     return rows
 
 
-def map_exam_verdict(gate_result, overfitting: dict, dsr_band: str) -> tuple[str, list[str]]:
+def map_exam_verdict(
+    gate_result,
+    overfitting: dict,
+    dsr_band: str,
+    *,
+    n_dims_evaluated: int = OVERFIT_DIMENSIONS_TOTAL,
+    dsr_denominator_verified: bool = True,
+) -> tuple[str, list[str]]:
     """E4 exam 三线 verdict 映射（阈值全取注册常量，禁自造门限）。
 
     语义（按序机械判定）:
@@ -177,10 +188,28 @@ def map_exam_verdict(gate_result, overfitting: dict, dsr_band: str) -> tuple[str
                   DSR 落否决带(overfitting/unavailable, fail-closed)
       3. 存疑   = 其余情形（门控各硬线全过，仅 DSR 中间带 review 或 WFA 60% 稳定性
                   边际未达——需补样本/人工复核，fail-closed 不放行）
+
+    RB-STATS-01 加严（两道"证据充分性"闸，只收不放行的方向，不改任何统计阈值）:
+      - n_dims_evaluated < 3：过拟合检测器三维中未评估的维**默认判"稳定"**
+        （overfitting_detector.detect 实测：perturbed/period 缺位时
+        is_overfitting 恒 False），故"未检出过拟合"≠"检出无过拟合"——证据不全，
+        不得判通过，最多存疑。
+      - dsr_denominator_verified=False：DSR 折减分母 N_eff 不可复算/与登记不符
+        （见 verify_n_trials_provenance）⇒ 尺子本身未经校验，不得判通过。
     """
     ratio = float(gate_result.oos_stage.oos_is_ratio)
     wfa_ok = bool(gate_result.wfa_stage.passed) and not bool(gate_result.wfa_stage.has_disaster)
     if bool(gate_result.overall_passed) and not bool(overfitting["is_overfitting"]):
+        gaps = []
+        if int(n_dims_evaluated) < OVERFIT_DIMENSIONS_TOTAL:
+            gaps.append(
+                f"过拟合检测仅评估 {int(n_dims_evaluated)}/{OVERFIT_DIMENSIONS_TOTAL} 维"
+                "（缺位维按'未检测=稳定'计入，'未检出过拟合'不构成过拟合证据）"
+            )
+        if not dsr_denominator_verified:
+            gaps.append("DSR 折减分母 N_eff 未能从批次档案复算对账（尺子未经校验，禁据此放行）")
+        if gaps:
+            return VERDICT_REVIEW, ["各硬线全过, 但放行证据不充分(fail-closed 降级为存疑)"] + gaps
         return VERDICT_PASS, [
             f"三阶段(IS→WFA→OOS)门控全部通过且未检出过拟合(OOS/IS比率={ratio:.3f}, DSR落带={dsr_band}); "
             "正式上线仍需 Owner 人工审批"
@@ -213,6 +242,66 @@ def map_exam_verdict(gate_result, overfitting: dict, dsr_band: str) -> tuple[str
     return VERDICT_FAIL, [
         f"OOS阶段未通过(DSR落带={dsr_band}, OOS/IS比率={ratio:.3f}); fail-closed判不通过"
     ]
+
+
+def verify_n_trials_provenance(
+    birth_batch: str,
+    recorded_n_eff: int | None,
+    recorded_n_raw: int | None,
+    intake_dir: Path = STRATEGY_INTAKE_DIR,
+) -> dict:
+    """DSR 折减分母 N_eff 的可复算性核验（红队 RB-STATS-01 治本，只加严不放宽）。
+
+    病：DSR 的分母此前**盲信** f06_survivors.csv 的 n_trials_eff 一列——实测把该列
+    从 9 改成 1，同一条纯噪声序列的 DSR 从 0.3267 跳到 0.9986、E4 判定从"不通过"
+    翻成"通过"（一列改字即可放水，尺子无牙）。
+
+    治：从批次档案 net_returns.parquet|csv.gz 用官方估计器 compute_effective_rank
+    原地复算 N_eff，与登记值逐位对账：
+      - 档案缺失          -> status="unverifiable"（档案未落=不可审计，禁据此放行）
+      - 复算 != 登记      -> status="mismatch"
+      - 复算 == 登记      -> status="verified"
+    任何非 verified 态都不得支撑"通过"判定（由 map_exam_verdict 机械执行）。
+
+    Returns:
+        dict: {"status", "recorded_n_eff", "recomputed_n_eff", "detail"}
+    """
+    base = {
+        "recorded_n_eff": recorded_n_eff,
+        "recorded_n_raw": recorded_n_raw,
+        "recomputed_n_eff": None,
+        "archive": None,
+        "detail": "",
+    }
+    if not birth_batch or recorded_n_eff is None:
+        return {**base, "status": "unverifiable", "detail": "birth_batch/n_trials_eff 缺失"}
+    batch_dir = Path(intake_dir) / birth_batch
+    archive = None
+    for name in ("net_returns.parquet", "net_returns.csv.gz"):
+        if (batch_dir / name).exists():
+            archive = batch_dir / name
+            break
+    if archive is None:
+        return {
+            **base,
+            "status": "unverifiable",
+            "detail": f"批次档案无 net_returns（折减分母不可复算）: {batch_dir}",
+        }
+    try:
+        from zephyr.backtest.core.n_trial_ledger import compute_effective_rank
+
+        frame = pd.read_parquet(archive) if archive.suffix == ".parquet" else pd.read_csv(archive, compression="gzip")
+        recomputed, meta = compute_effective_rank({str(c): frame[c] for c in frame.columns})
+    except Exception as exc:  # noqa: BLE001 — 复算失败按不可核验处理（fail-closed），绝不信登记值
+        return {**base, "status": "unverifiable", "detail": f"复算异常 {type(exc).__name__}: {exc}"}
+    status = "verified" if int(recomputed) == int(recorded_n_eff) else "mismatch"
+    return {
+        **base,
+        "status": status,
+        "recomputed_n_eff": int(recomputed),
+        "archive": str(archive),
+        "detail": f"meta={meta}",
+    }
 
 
 def load_survivor_record(survivors_csv: Path, recipe_id: str) -> dict:
@@ -367,7 +456,17 @@ def run_exam(
         )
     )
     band = evaluate_dsr(dsr_eff).band
-    verdict, verdict_reasons = map_exam_verdict(pipe.gate, pipe.overfitting, band)
+    # RB-STATS-01：DSR 折减分母必须可对账复算；本考只评估过拟合维度1（WFA），
+    # 维度2(参数扰动)/维度3(跨时段)未评估 => 检测器按"稳定"计入，不得当过拟合证据用。
+    n_eff_prov = verify_n_trials_provenance(rec["birth_batch"], rec["n_trials_eff"], rec["n_trials_raw"])
+    n_dims = 1
+    verdict, verdict_reasons = map_exam_verdict(
+        pipe.gate,
+        pipe.overfitting,
+        band,
+        n_dims_evaluated=n_dims,
+        dsr_denominator_verified=(n_eff_prov["status"] == "verified"),
+    )
 
     sharpes = [r["sharpe"] for r in fold_rows]
     summary = {
@@ -409,6 +508,14 @@ def run_exam(
             "registered_is_normal_approx": rec["dsr_eff_registered"],
             "band": band,
             "error": dsr_error,
+            "n_eff_provenance": n_eff_prov,
+        },
+        "overfitting_coverage": {
+            "dimensions_total": OVERFIT_DIMENSIONS_TOTAL,
+            "dimensions_evaluated": n_dims,
+            "evaluated": ["walk_forward_stability"],
+            "not_evaluated": ["parameter_perturbation", "cross_period_generalization"],
+            "failopen_note": "overfitting_detector 对未评估维默认计'稳定'，故 is_overfitting=False 不等于过拟合已排除",
         },
         "gate": {
             "overall_passed": bool(pipe.gate.overall_passed),
@@ -481,6 +588,13 @@ def _write_artifacts(out_dir: Path, s: dict, folds: list[dict]) -> None:
 
 - N_eff={s['dsr']['n_trials_eff']} 口径: {s['dsr']['exact_eff_caliber']}（门控注入口径）；N_raw={s['dsr']['n_trials_raw']} 口径: {s['dsr']['exact_raw_caliber']}（双口径并报纪律）
 - 批次 B 正态近似 IS 窗登记值（对照）: {s['dsr']['registered_is_normal_approx']}；落带={s['dsr']['band']}
+- **折减分母对账**: status={s['dsr']['n_eff_provenance']['status']}；复算 N_eff={s['dsr']['n_eff_provenance']['recomputed_n_eff']} vs 登记 {s['dsr']['n_eff_provenance']['recorded_n_eff']}；档案={s['dsr']['n_eff_provenance']['archive']}；{s['dsr']['n_eff_provenance']['detail']}
+  （非 verified 时本考禁判"通过"——分母可被一列改字放水，实测纯噪声 N=1 时 DSR=0.9986 判通过）
+
+## 过拟合检测覆盖面（RB-STATS-01 诚实披露）
+
+- 三维中本考实际评估 **{s['overfitting_coverage']['dimensions_evaluated']}/{s['overfitting_coverage']['dimensions_total']}** 维：已评={s['overfitting_coverage']['evaluated']} 未评={s['overfitting_coverage']['not_evaluated']}
+- ⚠️ {s['overfitting_coverage']['failopen_note']}
 
 ## 诚实边界
 

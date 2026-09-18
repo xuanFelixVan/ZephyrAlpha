@@ -749,7 +749,7 @@ class DecisionGate:
         检查项:
           - 参数锁定:进入OOS后参数不可调整(params_locked必须为True)
           - 样本外Sharpe比率:oos_sharpe/is_sharpe >= oos_sharpe_ratio_threshold(默认0.7)
-          - DSR可选判定器(默认关闭):config.dsr_threshold配置后追加第四条件
+          - DSR判定器(默认开启 dsr_threshold=0.95):config.dsr_threshold=None 时才不参与判定
             dsr >= dsr_threshold;已配置但未注入dsr按不通过处理(fail-closed)
 
         Args:
@@ -793,7 +793,10 @@ class DecisionGate:
                     f"OOS/IS Sharpe比率未通过: {oos_is_ratio:.4f} < {self.config.oos_sharpe_ratio_threshold}"
                 )
 
-        # DSR可选判定器(52号§7③): 默认关闭(dsr_threshold=None时不参与判定)。
+        # DSR可选判定器(52号§7③): **默认开启**——DecisionGateConfig.dsr_threshold 的默认值
+        # = DSR_SIGNIFICANCE_THRESHOLD(0.95)，见本文件 :445；传 None 才不参与判定。
+        # （注释曾写"默认关闭"，与 :445 的默认值和 :8 的 INVARIANTS 相反，2026-09-18
+        #   红队 st-ff-rb-stats 车道实测更正；语义以代码为准。）
         # 三线语义（2026-09-15 A5 裁定，SSOT=MOD-SIM-024 常量）:
         #   dsr >= dsr_threshold(默认0.95)        -> 通过
         #   dsr < DSR_OVERFITTING_FLOOR(=0.5)     -> 判不通过(低于运气中值,无超出运气的证据)
