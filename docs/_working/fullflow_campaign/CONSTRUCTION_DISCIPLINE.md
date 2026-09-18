@@ -283,3 +283,38 @@ python -m pytest <files> -q -p no:cacheprovider -W "ignore::pytest.PytestConfigW
 - `510300` 在 `kline_daily`/`kline_etf_daily` 的 symbol = **裸码 '510300'**；`market_index_kline` 的 symbol 也是裸码（`000001` 非 `000001.SH`）。
 - 统计时务必排除 worktree 副本：`.aidrafts/` 与 `.worktrees/`，否则计数放大约 33 倍。
 - `data/c4_pdf_cache/`（6 万+ 文件）是数据缓存，非代码，勿计入盘点。
+
+## 13. 行尾（EOL）面：三条实测判据，违者必误判
+
+- **`git status` 对 worktree CRLF 污染天生失明**：实测本仓 `* text=auto eol=lf` + `core.autocrlf=false`
+  下，一件文件可以是 `i/lf  w/crlf`（入库正确、盘上带毒）而 `git status` 判 **clean**。
+  查法只有一条：`git ls-files --eol -- <文件>`（看 `w/` 那一段），或裸字节 `read_bytes().count(b"\r\n")`。
+- **一切字节级比对/幂等重放判据必须先归一化行尾**：`git diff --strip-trailing-cr`、
+  `--ignore-cr-at-eol`，或 Python 侧先 `replace(b"\r\n", b"\n")`。本役实测：
+  盘上 7,654/14,830 件（51.6%）带 CRLF，不归一化就会报出**数万行"全文件都变了"的假差异**，
+  并把你引向"他人在途整体回退"的误判（真回退只看 `grep -c '^<'`＝0）。
+- **写盘一律显式 `newline="\n"`**（`Path.write_text` / `open(p,"w")` / `safe_write_text` 三个入口同规）。
+  致病面不是某个生成器，而是**任何一次 `newline=None` 的文本写盘**——本总包自己落地的那件
+  （`scripts/ops/cleanup_runtime_tmp_residue.py`）就被实测抓到 `w/crlf`，所以没有"我没动它就没事"这回事。
+  归一化是**可验证的安全操作**：`sha1("blob %d\0" % len(lf_bytes) + lf_bytes) == git rev-parse HEAD:<f>`
+  成立 ⇒ 工作区改回 LF 与库内容逐字节全等，`git status` 只会因 stat 缓存短暂显 ` M` 而 `git diff` 为空。
+
+## 14. 判据与被挡成品的交付标准
+
+- **"不代修"的边界**：门禁克隆配对（CloneGuard extract 级）若就在**你本次必须改的文件内部**，
+  消配对是本批义务，不是"代修他人文件"。只有别人持有、且你不碰的文件才适用 §3.4 不代修。
+  实例：L3 车道把 `file_utils.py` 内三份相同 `__init__` 判成"他文件语义改动"而回退了自己的上收，
+  本总包接手合并成基类后 CAPABILITY-OVERLAP 由红转绿（`db80e3132e`）。
+- **被活会话 claim 挡住的成品，交付标准＝可套用处方 + 可验证哈希**，不是"我尽力了"：
+  ①`git diff -- <文件> > .runtime/tmp/<本批>/<名字>.patch`；②把文件还原到 HEAD blob（先证工作区
+  除你这一处外无别人改动：`git hash-object` 与 `HEAD:<文件>` blob 相等才叫"只有我改过"）；
+  ③现场跑 `git apply --check <patch>` 证明当下可套用；④patch 双镜像（`.runtime/tmp` + 冷库）并出 sha256。
+- **判据三问（每条新判据发出前先自答）**：①它在已知正例上红过吗（改前版必红，否则无判别力）？
+  ②它在阴性对照上不误报吗（例：人工命名的 `.foo_bar.tmp` 不该被 `.tmp` 半成品族命中）？
+  ③"数量变少"是否被我当成了"数量归零"（清零必须用绝对判据；`n not in m` 型表达式恒 False 是常见假绿写法）？
+- **`git status` 显 ` M` 不等于有改动**：stat 缓存刷不动（多会话抢 `.git/index.lock` 时常态）会留下
+  "内容全等却报 modified"的幽灵。判据只能是 `git hash-object <f>` 与 `git rev-parse HEAD:<f>` 是否相等，
+  辅查 `git diff -- <f> | wc -l`（＝0 即无内容差异）。
+- **队列落地后 index 恒陈旧（本役第 8、9 次现场复现，含 `68b80cd512` 那 16 件）**：
+  每笔落地后必须 D-15③ 三态核实——先证 index blob == **本批父提交** blob（`git rev-parse <landed>^:<f>`，
+  注意 `^` 后面要跟冒号），再具名 `git add -- <自家文件>`，复验三态全等。**绝不**用 `git add .`。
