@@ -221,7 +221,8 @@ def _rsi_wilder(closes: list[float], n: int = 14) -> float | None:
         avg_gain = (avg_gain * (n - 1) + max(diff, 0.0)) / n
         avg_loss = (avg_loss * (n - 1) + max(-diff, 0.0)) / n
     if avg_loss == 0:
-        return 100.0
+        # rpt_s10 P1：平坦序列 avg_gain 同为 0 时本应中性，旧码无条件 100 判 +1
+        return 50.0 if avg_gain == 0 else 100.0
     rs = avg_gain / avg_loss
     return 100.0 - 100.0 / (1.0 + rs)
 
@@ -303,7 +304,7 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
 
     # F1 MACD
     dif, dea = _macd_dif_dea(closes)
-    v = 0 if dif is None else (1 if dif > dea else -1)
+    v = 0 if dif is None else (1 if dif > dea else (-1 if dif < dea else 0))  # rpt_s10 等值边界中性化
     votes.append(
         FamilyVote(
             "macd",
@@ -315,7 +316,7 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
     )
     # F2 KDJ
     k, d = _kdj(closes, highs, lows)
-    v = 0 if k is None else (1 if k > d else -1)
+    v = 0 if k is None else (1 if k > d else (-1 if k < d else 0))  # rpt_s10 等值边界中性化
     votes.append(
         FamilyVote(
             "kdj", _FAMILY_NAME_ZH["kdj"], v, weights["kdj"], f"K={k:.1f} vs D={d:.1f}" if k is not None else "样本不足"
@@ -371,7 +372,7 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
         reason = f"收{close:.2f} vs MA{cfg.ma_window}={ma_now:.2f} 方向混合"
     votes.append(FamilyVote("ma", _FAMILY_NAME_ZH["ma"], v, weights["ma"], reason))
     # F6 BOLL（中轨=MA20）
-    v = 0 if ma_now is None else (1 if close > ma_now else -1)
+    v = 0 if ma_now is None else (1 if close > ma_now else (-1 if close < ma_now else 0))  # rpt_s10
     votes.append(
         FamilyVote(
             "boll",
@@ -383,7 +384,7 @@ def compute_resonance(bars: list[DailyBar], config: ResonanceConfig | None = Non
     )
     # F7 趋势
     ref = closes[-1 - cfg.trend_lookback]
-    v = 1 if close > ref else -1
+    v = 1 if close > ref else (-1 if close < ref else 0)  # rpt_s10 等值边界中性化
     votes.append(
         FamilyVote(
             "trend",

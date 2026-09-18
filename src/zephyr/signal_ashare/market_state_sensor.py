@@ -252,8 +252,10 @@ def sense_market_state(
     """
     cfg = config or MarketStateConfig()
     n = len(closes)
-    if n < cfg.min_history:
-        raise ValueError(f"closes 长度 {n} 不足 min_history={cfg.min_history}")
+    # rpt_s05：门槛须覆盖趋势窗需求 long_window+1，否则恰好 60 样本在 compute_trend_score 内崩
+    effective_min = max(cfg.min_history, cfg.long_window + 1)
+    if n < effective_min:
+        raise ValueError(f"closes 长度 {n} 不足 effective_min={effective_min}（min_history={cfg.min_history}, long_window+1={cfg.long_window + 1}）")
 
     trend_score = compute_trend_score(closes, cfg.short_window, cfg.long_window)
     returns = [closes[i] / closes[i - 1] - 1.0 for i in range(1, n)]

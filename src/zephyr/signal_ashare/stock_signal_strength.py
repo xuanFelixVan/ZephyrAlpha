@@ -185,7 +185,11 @@ def _score_rsi(closes: np.ndarray, cfg: StrengthConfig) -> tuple[float, str]:
 
 
 def _score_volume(closes: np.ndarray, volumes: np.ndarray, cfg: StrengthConfig) -> tuple[float, str]:
-    ratio = float(np.mean(volumes[-cfg.vol_short :]) / np.mean(volumes[-cfg.vol_long :]))
+    vol_long_mean = float(np.mean(volumes[-cfg.vol_long :]))
+    if vol_long_mean <= 0.0:
+        # rpt_s06 P1：全零量（长期停牌股合法输入）旧码 0/0=NaN 静默落"弱"标签
+        return 50.0, "量比不可得（零成交/停牌）→中性降级"
+    ratio = float(np.mean(volumes[-cfg.vol_short :]) / vol_long_mean)
     ret5 = float(closes[-1] / closes[-6] - 1.0)
     if ret5 == 0.0:
         return 50.0, f"量比={ratio:.2f} 价格走平"
