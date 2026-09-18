@@ -177,3 +177,19 @@ acknowledged:
   verdict: intentional
   stable_key: scripts/governance/_shared/module_translation_loader.py:preload||scripts/governance/_shared/module_translation_loader.py:preload_battle_map_steps
   note: 三层翻译 loader 同层 typed 访问器样板（module/step 平行族，签名语义不同不可参数化合并），W5 同族假红豁免之延伸（st-vocabconsol-20260918）
+- id: cg-rc14-baseline-reconciler-makers-20260918
+  verdict: intentional
+  stable_key: "src/zephyr/governance/audit/reconciliation_registry.py:make_undefined_name_baseline_reconciler||src/zephyr/governance/audit/reconciliation_registry.py:make_consumers_accuracy_baseline_reconciler"
+  note: 两个 baseline reconciler maker 样板同构（undefined_name/consumers_accuracy 各自注册），HEAD 既有 9193/9318，queue serializer 快照整文件伪 added 暴露，非本批引入（st-mineline-rc14b RC-14）
+- id: cg-rc14-trigger-closure-20260918
+  verdict: intentional
+  stable_key: "src/zephyr/governance/audit/reconciliation_registry.py:_trigger||src/zephyr/governance/audit/reconciliation_registry.py:_trigger"
+  note: 各 reconciler maker 内局部 _trigger 闭包样板同构（同文件多实例，HEAD 既有含 2959），queue serializer 快照整文件伪 added 暴露，非本批引入（st-mineline-rc14b RC-14）
+- id: cg-rc14-ack-vs-commit-msg-column-20260918
+  verdict: intentional
+  stable_key: "src/zephyr/governance/audit/reconciliation_registry.py:_ensure_ack_column||src/zephyr/governance/audit/reconciliation_registry.py:_ensure_commit_message_column"
+  note: ALTER TABLE 加列样板双实例（ack/commit_message 各自表结构），_ensure_ack_column 来自 e359ed1c8e HEAD 既有，queue serializer 快照暴露，非本批引入（st-mineline-rc14b RC-14）
+- id: cg-rc14-ack-vs-error-pattern-column-20260918
+  verdict: intentional
+  stable_key: "src/zephyr/governance/audit/reconciliation_registry.py:_ensure_ack_column||src/zephyr/governance/audit/reconciliation_registry.py:_ensure_error_pattern_id_column"
+  note: ALTER TABLE 加列样板双实例（ack/error_pattern_id 各自表结构），两侧均 HEAD 既有，queue serializer 快照暴露，非本批引入（st-mineline-rc14b RC-14）
