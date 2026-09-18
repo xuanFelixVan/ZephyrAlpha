@@ -49,6 +49,18 @@ batch_records:
   note: 'auto: data/strategy_intake/grid_20260915-060812/summary.json'
   recorded_at: '2026-09-15T04:17:56+00:00'
   recorded_by: st-f06dsr-20260915b
+- batch_id: grid_20260916-123551
+  n_trials: 10080
+  kind: factory_grid_batch_a
+  note: 'auto: data/strategy_intake/grid_20260916-123551/summary.json'
+  recorded_at: '2026-09-18T21:55:10+00:00'
+  recorded_by: st-ledgerp4-20260919
+- batch_id: grid_20260916-123552
+  n_trials: 5990
+  kind: factory_grid_batch_a
+  note: 'auto: data/strategy_intake/grid_20260916-123552/summary.json'
+  recorded_at: '2026-09-18T21:55:10+00:00'
+  recorded_by: st-ledgerp4-20260919
 - batch_id: sharpe2_prep_e4_reexam_20260917
   n_trials: 81
   kind: oos_reexam
