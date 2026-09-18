@@ -32719,6 +32719,30 @@ creation_tokens:
   token: altdata-line-build-node-bindings-20260918
   created_by: st-igchain-20260918
   capability: altdata_line
+- file: schemas/categories/crypto/hl_funding_history.py
+  token: altdata-line-hl-funding-history-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/crypto/hl_liquidation_raw.py
+  token: altdata-line-hl-liquidation-raw-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/crypto/hl_oi_snapshot_daily.py
+  token: altdata-line-hl-oi-snapshot-daily-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/crypto/hl_perp_snapshot_daily.py
+  token: altdata-line-hl-perp-snapshot-daily-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/market/market_china_bond_yield.py
+  token: altdata-line-market-china-bond-yield-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: src/zephyr/data/implementations/hyperliquid_provider.py
+  token: altdata-line-hyperliquid-provider-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
 - file: docs/_working/residual_construction/pending_items_plan.md
   token: residual-construction-plan-pending-items-plan-20260917
   created_by: st-residual-20260917
@@ -32970,6 +32994,10 @@ creation_tokens:
   capability: clean_exam_e2e
 - file: docs/_working/clean_exam_e2e/env3_e2e_bridge/seg2_execution_log.md
   token: clean-exam-e2e-seg2-execution-log-20260918
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/2026-09-18-campaign-final-report.md
+  token: clean-exam-e2e-2026-09-18-campaign-final-report-20260918
   created_by: st-cleanexam-20260918
   capability: clean_exam_e2e
 - file: schemas/categories/cohort_daily_ledger.py
