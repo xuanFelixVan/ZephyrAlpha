@@ -1834,8 +1834,7 @@ class AkshareAltProvider(IngestProviderBase):
                     continue
                 rows.append((
                     "SHFE", _clean_str(r.get("VARID")) or str(variety), d.isoformat(), "detail",
-                    wh_name, _clean_str(r.get("REGNAME")),
-                    "", "", "", None,
+                    wh_name, _clean_str(r.get("REGNAME")), "", None,
                     _warehouse_decimal(r.get("WRTWGHTS")), _warehouse_decimal(r.get("WRTCHANGE")),
                     None,
                     "akshare_alt", 1,
