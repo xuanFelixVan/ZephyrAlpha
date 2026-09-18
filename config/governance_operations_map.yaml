@@ -68,6 +68,7 @@ pipeline:
     - zephyr.trading.resource_optimization
     - zephyr.trading.gpu_monitor
     - zephyr.data_eng.gpu_resource_manager
+    - zephyr.infrastructure.capacity_assurance.host_resource_governor
     - zephyr.security.llm_defense.llm_security.layers.l5_resource_protection
     config_refs:
     - config/resource_optimization.yaml
@@ -77,7 +78,7 @@ pipeline:
     - mod: zephyr.infrastructure.hot_plane_budget
       note_zh: 未反查到消费方(A5)
     - mod: 系统级看护空白
-      note_zh: 无人看护全系统提交内存水位(M2 门禁候选;resource_guard 只护 gov_drift,L5 只护 LLM 成本)
+      note_zh: 已补真闸（2026-09-18 wiresafe BRK-066）——capacity_assurance.host_resource_governor 由硬编码 12.5%/OK 假通道治本为实探（RAM＋Windows 提交内存 commit charge＋CPU），阈值真源 config/alert_rules.yaml 的 ALERT-SYS-003/004/005，消费方 zephyr.trading.process_reaper（OS 计划任务 10min 心跳）→ OpsAlertFeed 通知板；resource_guard 只护 gov_drift、L5 只护 LLM 成本的原口径不变
   - id: GOM-L3
     name_zh: 熔断降级
     desc_zh: kill_switch/熔断器/降级级联/死人开关
@@ -88,15 +89,17 @@ pipeline:
     - zephyr.trading.trading_contracts.risk.trading_kill_switch
     - zephyr.shared.resilience.circuit_breaker
     - zephyr.feedback_loop.resilience.deadman_switch
+    - zephyr.governance.resilience_governance.emergency_track_guardian
+    - zephyr.autonomy_core.killswitch_response_levels
     disconnected:
     - mod: zephyr.autonomy_core.kill_switch_orchestrator
-      note_zh: 五域编排层无人 import(A3 降级执行：先接域目标再挂 boot)
+      note_zh: 普查记载已陈旧并更正——A3/裁定#254 已于 2026-09-16 接线（boot_hooks._init_kill_switch_orchestrator 注册系统级＋skills/trading/rollback/capacity 四域）；2026-09-18 wiresafe 批同批注册 MOD-AU-004 响应策略层为唯一权威 dispatcher，保命动作唯一入口＝route_incident（见 emergency_track_guardian）
     - mod: zephyr.governance.resilience_governance.last_resort_watchdog
-      note_zh: 蓝图声明 CONSUMERS=escalation 但无 import(A4 待接线)
+      note_zh: 写方已接（A4/escalation_engine L4 末端 activate）；读方 2026-09-18 wiresafe 批补＝emergency_track_guardian 把旗标当一条失效判据腿消费，旗标只写不读的静默兜底已消除；头注释 CONSUMERS 原写 zephyr.infrastructure.escalation 系蓝图↔代码漂移，已改真名
     - mod: zephyr.orchestrator.fault_tolerance.degrade_cascade
       note_zh: 已删（2026-09-15 治理减法批 A5 收官 9deb35e709 确认死码删除，零生产引用；原 A5 待裁定项已结）
     - mod: KillSwitch×5/CircuitBreaker×9 重复族
-      note_zh: R4 收敛战役——活链 KS=2(access_control/rollback)、CB=4(shared.resilience/resilience_governance/rule_enforcement/adversarial_validation)；死员已删(reliability
+      note_zh: 2026-09-18 wiresafe 入口收敛——策略层 MOD-AU-004（该停什么）→路由层 MOD-AU-002 route_incident（停哪里）→5 套本体（怎么停），boot 同批注册且进程级持有；生产侧 respond() 调用点仍为 0（记黄，施工包 lanes/wiresafe_BRK-064_construction_pack.md）；净删候选只登记不删（注册表净删＝Owner 门位）＝infrastructure/kill_switch_sim.py 与 capacity_assurance/kill_switch 域重复面。原 R4 记载 活链 KS=2(access_control/rollback)、CB=4(shared.resilience/resilience_governance/rule_enforcement/adversarial_validation)；死员已删(reliability
         CB/failover_coordinator/api_lifecycle×2/ghost_scan)，daban_instant+trade_level 系业务特性保留
   - id: GOM-L4
     name_zh: 收割清理

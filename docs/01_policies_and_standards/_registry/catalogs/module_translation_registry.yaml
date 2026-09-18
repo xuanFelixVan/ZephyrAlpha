@@ -55482,6 +55482,30 @@ entries:
   desc_en: ""
   plain_zh: "这个程序用本地大模型批量阅读问答和调研纪要，提炼产品、供应链、情绪等信息。它要求每个结论都附原文依据并逐字核对，防止模型编造；没把握的结果进人工复核池。"
   responsibility_layer: business
+- module_path: scripts/ch/apply_cross_asset_ddl.py
+  domain_id: D_DATA
+  name_zh: "跨资产两表DDL部署脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把CFTC持仓表和黄金ETF持仓表的建表语句真正发到数据库并回头核对建成功没有"
+  responsibility_layer: business
+- module_path: src/zephyr/governance/resilience_governance/emergency_track_guardian.py
+  domain_id: D_GOV_OPS_RESILIENCE
+  name_zh: "应急保命轨守门人"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "开盘时段内如果信号、策略、模型三条心跳同时过期且都曾经活着，就经唯一熔断入口拉总闸保命；文件缺失只算没启动不算失效，盘后只看不拉，每次判断都留一行账"
+  responsibility_layer: governance
+- module_path: src/zephyr/ex_core/execution_report_producer.py
+  domain_id: D_EX_CORE
+  name_zh: "执行报告生产端"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "订单成交后自动生成执行报告并写入台账表"
+  responsibility_layer: business
 
 battle_map_steps:
 - step_id: BM-BUY-05

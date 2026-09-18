@@ -1,12 +1,15 @@
 # [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [MODULE] zephyr.governance.resilience_governance.last_resort_watchdog
 # [DOMAIN] D_GOV_OPS_RESILIENCE
-# [DEPENDENCIES] zephyr.governance.__init__
-# [CONSUMERS] zephyr.infrastructure.escalation
+# [DEPENDENCIES] (none — stdlib only)
+# [CONSUMERS] zephyr.governance.escalation.escalation_engine(写方：L4 且重试耗尽时 activate 点亮旗标);
+#   zephyr.governance.resilience_governance.emergency_track_guardian(读方：旗标作一条失效判据腿,
+#   BRK-005 治本——旗标此前只写不读=静默兜底)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 终极逃生舱必须可用;ALL_STOP必须可触发
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [INVARIANTS] 终极逃生舱必须可用;ALL_STOP必须可触发;本件不自我触发（activate 只点亮旗标，
+#   emergency_shutdown 须由人或显式授权链调用——裁定#254 口径,本批未改）
+# [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

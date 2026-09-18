@@ -42,6 +42,44 @@ rules:
     notify: ["dashboard"]
     silence_window: "5m"
 
+  # 全系统水位真闸（全流通战役 BRK-066，2026-09-18，生产者=
+  # zephyr.infrastructure.capacity_assurance.host_resource_governor.check_system_watermark，
+  # 由 process_reaper 每 10min 心跳驱动）。与 ALERT-SYS-002 的口径区别：002 是"项目自身
+  # 进程树 RSS"（9-15 孤儿 llama-server 事故线），下面三条是**主机整机面**——本仓 16 路并发
+  # 曾把 20 核打到 99%、RAM 可用从 32GB 掉到 17.6GB，而旧 host_resource_governor.probe()
+  # 是恒返 12.5%/OK 的硬编码假通道（已治本为实探）。阈值取战役实测水位线，非拍脑袋：
+  # 12GB = 各车道自守推迟重活的既有线（COORDINATION_LEDGER 资源自守协议），90% = 页面文件
+  # 扩容待重启期间的保守线。
+  - id: ALERT-SYS-003
+    name: "commit_charge_exhaustion"
+    severity: critical
+    metric: "system.commit_mem_pct"
+    condition: "> 90"
+    duration: "5m"
+    description: "Windows 提交内存(commit charge)超 90%，进程即将无法申请内存（提交流程/pytest 会静默崩）"
+    notify: ["dashboard"]
+    silence_window: "10m"
+
+  - id: ALERT-SYS-004
+    name: "ram_available_low"
+    severity: critical
+    metric: "system.mem_avail_gb"
+    condition: "< 12"
+    duration: "5m"
+    description: "整机物理内存可用不足 12GB（车道自守线，超线应推迟并发重活）"
+    notify: ["dashboard"]
+    silence_window: "10m"
+
+  - id: ALERT-SYS-005
+    name: "ram_used_high"
+    severity: warning
+    metric: "system.mem_used_pct"
+    condition: "> 85"
+    duration: "5m"
+    description: "整机物理内存使用率超 85%"
+    notify: ["dashboard"]
+    silence_window: "10m"
+
   - id: ALERT-DB-001
     name: "slow_queries"
     severity: warning

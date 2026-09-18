@@ -588,11 +588,21 @@ def _hook_triple_align_event(event: object) -> None:
         logger.debug("hook triple_align_event: %s", exc, exc_info=True)
 
 
+_KILLSWITCH_DISPATCHER: object | None = None
+#: BRK-064 熔断唯一权威入口的进程级持有位（策略层实例被 GC 即等于入口又变回不唯一）
+
+
 def _init_kill_switch_orchestrator() -> None:
     """A3 接线（裁定#254）：kill switch 五域编排器开机注册生效。
 
     编排器只编排不持态——注册失败的单套开关仅告警，不阻断启动；
     后续运维入口经 get_orchestrator() 取同一单例发 trip/reset。
+
+    BRK-064（全流通战役，2026-09-18）追加：同批注册 **三级响应策略层 MOD-AU-004**
+    （killswitch_response_levels），使"谁决定拉哪套开关"在运行时确有唯一权威入口——
+    策略层（裁决该停什么）→ 路由层（本编排器）→ 执行机构层（5 套开关本体）。
+    仅注册不代调用：本批生产侧对 respond() 的调用点仍为 0（如实记黄，见
+    docs/_working/fullflow_campaign/lanes/wiresafe_BRK-064_construction_pack.md）。
     """
     try:
         from zephyr.autonomy_core.kill_switch_orchestrator import get_orchestrator
@@ -602,6 +612,18 @@ def _init_kill_switch_orchestrator() -> None:
         logger.info("KillSwitchOrchestrator booted: system=%s domains=%s", orch._system is not None, domains)
     except Exception as exc:  # noqa: BLE001 — 启动链不因编排器故障失败
         logger.warning("KillSwitchOrchestrator boot failed (kill switches remain independently usable): %s", exc, exc_info=True)
+        return
+
+    try:
+        from zephyr.autonomy_core.killswitch_response_levels import KillSwitchResponseLayer
+
+        global _KILLSWITCH_DISPATCHER  # noqa: PLW0603 — 进程级单例引用，禁被 GC（否则注册即失效）
+        _KILLSWITCH_DISPATCHER = KillSwitchResponseLayer(orchestrator=orch, runtime_dir=REPO_ROOT / ".runtime")
+        logger.info(
+            "KillSwitch 响应策略层已注册（唯一权威 dispatcher，16号文 §3.4 三级映射）：level_1/2/3 → 编排器 route_incident"
+        )
+    except Exception as exc:  # noqa: BLE001 — 策略层注册失败不得阻断编排器已完成的注册
+        logger.warning("KillSwitchResponseLayer 注册失败（五域开关仍各自可用，但失去三级裁决入口）: %s", exc, exc_info=True)
 
 
 def register_boot_hooks(

@@ -1,0 +1,84 @@
+# [BLUEPRINT] MOD-INF-022 | docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
+# [MODULE] config.emergency_track
+# [DOMAIN] D_GOV_OPS_RESILIENCE
+# [INVARIANTS] 应急保命轨唯一配置真源（RULE-SSOT）：判据阈值与动作口径只认本文件；
+#   代码缺省值仅作文件缺失时的兜底；未知键=启动即报错（防拼写漂移静默不生效）；
+#   enabled=false 是显式回退真值开关（旁路而非删码），回退必须留痕
+# [CONSUMERS] zephyr.governance.resilience_governance.emergency_track_guardian（唯一读取方）
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 缺文件=缺省值；解析失败/未知键/阈值越界=EmergencyTrackConfigError
+# [TESTS] tests/governance/resilience/test_emergency_track_guardian.py
+# [TTL] permanent
+
+# ── 治什么（BRK-078）──────────────────────────────────────────────
+# depgraph decision_tracks 有 `emergency`（应急保命轨，priority=4，
+# activation_condition="所有模型/策略/信号失效时"），但 decision_nodes 213 行全
+# planned → 该轨有登记、有优先级、零落地节点。本册把 activation_condition 翻译成
+# 可机检判据，并把"保命动作"接到已有唯一入口（KillSwitchOrchestrator.route_incident）。
+
+# 总开关（显式回退真值：false=只评估不动作，且每次评估留痕 reason=disabled）
+enabled: true
+
+# 失效判据腿（"所有模型/策略/信号失效"的机检分解）。
+# 口径（防误触发，验收规范 §6 "crisis 误报代价"攻击面）：
+#   alive   = 心跳文件存在且 mtime 年龄 ≤ max_stale_seconds
+#   stale   = 心跳文件存在但年龄 > max_stale_seconds —— 这是唯一计入"失效"的状态
+#   unknown = 心跳文件缺失 / 不可读 / 无 mtime —— **不计入失效**（未启动≠已失效）
+# 触发要求 = 所有已配置腿**全部 stale** 且无 unknown 腿（证据不足不动作，但会大声报告）。
+legs:
+  - id: signal
+    desc_zh: 信号/行情供给轨（tick 订阅业务心跳）
+    path: tmp/tick_subscriber_biz.heartbeat
+    max_stale_seconds: 600
+  - id: strategy
+    desc_zh: 策略执行轨（模拟盘会话业务心跳）
+    path: tmp/live_strategy_biz.heartbeat
+    max_stale_seconds: 600
+  - id: model
+    desc_zh: 模型/决策编排轨（调度器心跳）
+    path: tmp/scheduler.heartbeat
+    max_stale_seconds: 900
+
+# 连续确认次数：单次判据成立只 arming，达到本值才动作（防抖，与 OOM 滞回同族思路）
+consecutive_confirmations: 2
+
+# 证据视界（秒）：心跳文件比这更老 = **未运行**（unknown，不计入失效），而不是"失效"。
+# 缺这条会在开盘前把昨天的旧心跳集体判成"三腿齐失效"而误熔断——干净收市不是事故。
+# 4h = 覆盖"盘中 10:00 停跳到 10:20 被抓"（1200s ≪ 4h）同时排除隔夜。
+evidence_horizon_seconds: 14400
+
+# 生效窗口（保命动作只在盘内下闸；窗口外仍评估、仍留痕、仍出声，只是不下单——
+# 盘后主机失控由 process_reaper 收割处置，不需要拉资金闸）。
+active_window:
+  enabled: true
+  start_hhmm: "09:00"
+  end_hhmm: "15:30"
+  timezone: Asia/Shanghai
+
+# 终极逃生舱旗标（last_resort_watchdog）参与判定：
+# true = 升级协议末端已点亮 last_resort → 视为单腿失效（加严，不放松）
+count_last_resort_as_stale_leg: true
+
+# ── 保命动作（唯一入口，禁旁路）────────────────────────────────────
+# 动作经 zephyr.autonomy_core.kill_switch_orchestrator.get_orchestrator().route_incident()
+# 下单（BRK-064 收敛后的单一权威 dispatcher；本件不 import 任何一套 KillSwitch 本体）。
+# incident_kind 取值表见 route_incident：global=只拉系统级总开关（域级一致生效由编排器传播）。
+action:
+  incident_kind: global
+  reason_zh: 应急保命轨触发：模型/策略/信号三腿全部确认失效
+  # 复位不在本件职责内（reset 须 approver 非空=Owner 批准语义，15号文 §4.1 S0.3）
+
+# 危机快照（BM-RC-12 极端事件与黑天鹅 的消费端口径）
+# crisis_drill_monthly.py 月度演练产出 data/backtest_artifacts/drills/<run_id>/casualty_report.json，
+# 本件读"最新一份"作为黑天鹅侧的**加重证据**（不参与"三腿失效"的必要条件，避免演练产物
+# 新鲜度问题误触发熔断）。
+crisis_snapshot:
+  dir: data/backtest_artifacts/drills
+  report_file: casualty_report.json
+  # 演练逾期告警线（月频演练 + 30 天宽限）：超线=哨兵 breach（只告警不熔断）
+  max_age_days: 60
+
+# 审计留痕（相对仓根；每次 evaluate 一行 JSONL）
+audit_path: .runtime/audit/emergency_track.jsonl

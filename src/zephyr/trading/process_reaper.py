@@ -239,6 +239,7 @@ class ReapReport:
     ghosts: dict[str, int] = field(default_factory=lambda: {"scanned": 0, "killed": 0})
     drift: dict[str, Any] = field(default_factory=dict)
     errors: list[str] = field(default_factory=list)
+    safety_wires: dict[str, Any] = field(default_factory=dict)
 
 
 # ============== 白名单 ==============
@@ -1033,8 +1034,42 @@ def reap(dry_run: bool = False) -> ReapReport:
     # 3) drift 指标
     report.drift = _collect_drift_metrics(dry_run)
 
+    # 4) 保命链接线（全流通战役 wiresafe 车道）：应急保命轨评估 + 全系统内存水位真闸。
+    #    本任务是仓内唯一由 OS 计划任务托管的 10min one-shot 常驻脉冲，故两条"自动触发"
+    #    挂在这里——**不新建 cron/Timer/sleep-loop**（宪法 §9.3）。任一失败只入
+    #    report.errors 并大声告警，绝不阻断收割主链（收割本身也是保命动作）。
+    _run_safety_wires(report)
+
     _write_status(report)
     return report
+
+
+def _run_safety_wires(report: ReapReport) -> None:
+    """一轮保命链评估：应急保命轨（BRK-078）+ 系统内存/提交水位（BRK-066）。
+
+    永不抛：两条链各自独立 try，任一失能不吞另一件，且失能本身记入 report.errors
+    （静默失能=假绿，正是本仓 #ARCH-327 事故的形态）。
+    """
+    wires: dict[str, Any] = {}
+    try:
+        from zephyr.governance.resilience_governance.emergency_track_guardian import (
+            run_emergency_track_check,
+        )
+
+        wires["emergency_track"] = run_emergency_track_check()
+    except Exception as exc:  # noqa: BLE001 — 保命轨失能不得反噬收割主链
+        logger.error("应急保命轨评估不可用（保命链缺件，请人工介入）: %r", exc)
+        report.errors.append(f"emergency_track_unavailable: {exc!r}")
+    try:
+        from zephyr.infrastructure.capacity_assurance.host_resource_governor import (
+            check_system_watermark,
+        )
+
+        wires["system_watermark"] = check_system_watermark()
+    except Exception as exc:  # noqa: BLE001 — 水位看护失能不得反噬收割主链
+        logger.error("全系统内存水位看护不可用（BRK-066 复断，请人工介入）: %r", exc)
+        report.errors.append(f"system_watermark_unavailable: {exc!r}")
+    report.safety_wires = wires
 
 
 def _print_status() -> int:
@@ -1054,6 +1089,16 @@ def _print_status() -> int:
     print(f"killed={len(data.get('killed', []))} reported={len(data.get('reported', []))}")
     print(f"ghosts={data.get('ghosts')}")
     print(f"drift={data.get('drift')}")
+    wires = data.get("safety_wires") or {}
+    if wires:
+        track = wires.get("emergency_track") or {}
+        mark = wires.get("system_watermark") or {}
+        print(
+            f"safety_wires: emergency_track_state={track.get('state')} "
+            f"confirmations={track.get('confirmations')} "
+            f"breaches={len(track.get('breaches') or [])} | "
+            f"watermark={mark.get('watermark')} breached={mark.get('breached')}"
+        )
     if data.get("errors"):
         print(f"errors={data.get('errors')}")
     return 0

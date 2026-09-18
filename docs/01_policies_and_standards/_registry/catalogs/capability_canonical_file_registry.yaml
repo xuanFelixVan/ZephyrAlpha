@@ -35406,5 +35406,29 @@ creation_tokens:
   token: wiresafe-emergency-track-emergency-track-20260918
   created_by: st-ff-wiresafe-20260918
   capability: wiresafe-emergency-track
+- file: docs/_working/fullflow_campaign/COORDINATION_LEDGER.md
+  token: wiresafe-pack-coordination-ledger-20260918
+  created_by: st-ff-wiresafe-20260918
+  capability: wiresafe-pack
+- file: docs/_working/fullflow_campaign/adjudications/req_wiresafe_01.md
+  token: wiresafe-pack-req-wiresafe-01-20260918
+  created_by: st-ff-wiresafe-20260918
+  capability: wiresafe-pack
+- file: docs/_working/fullflow_campaign/lanes/wiresafe_BRK-078_construction_pack.md
+  token: wiresafe-pack-wiresafebrk-078-construction-pack-20260918
+  created_by: st-ff-wiresafe-20260918
+  capability: wiresafe-pack
+- file: docs/_working/fullflow_campaign/lanes/wiresafe_BRK-072_construction_pack.md
+  token: wiresafe-pack-wiresafebrk-072-construction-pack-20260918
+  created_by: st-ff-wiresafe-20260918
+  capability: wiresafe-pack
+- file: docs/_working/fullflow_campaign/lanes/wiresafe_BRK-064_construction_pack.md
+  token: wiresafe-pack-wiresafebrk-064-construction-pack-20260918
+  created_by: st-ff-wiresafe-20260918
+  capability: wiresafe-pack
+- file: src/zephyr/ex_core/execution_report_producer.py
+  token: ctr-p1-007-execution-report-producer-execution-report-producer-20260918
+  created_by: st-ff-land2-20260918
+  capability: CTR-P1-007-execution-report-producer
 
 di_seam_exemptions: []

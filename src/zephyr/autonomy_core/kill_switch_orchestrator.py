@@ -2,7 +2,10 @@
 # [MODULE] zephyr.autonomy_core.kill_switch_orchestrator
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] (lazy) zephyr.security.access_control.kill_switch; zephyr.autonomy_core.skills.skill_kill_switch; zephyr.trading.trading_contracts.risk.trading_kill_switch; zephyr.infrastructure.rollback.kill_switch; zephyr.infrastructure.capacity_assurance.kill_switch
-# [CONSUMERS] tests/autonomy/test_kill_switch_orchestrator.py
+# [CONSUMERS] zephyr.trading.boot_hooks(A3 接线：开机注册系统级+四域开关);
+#   zephyr.autonomy_core.killswitch_response_levels(MOD-AU-004 策略层，只经本件公开 API 下单);
+#   zephyr.governance.resilience_governance.emergency_track_guardian(BRK-078 保命动作唯一入口
+#   route_incident); tests/autonomy/test_kill_switch_orchestrator.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 编排器不持有开关状态(状态分散在各开关本体,编排器故障则各开关独立可用); 复位须 approver 非空(Owner 批准语义); 系统级 TRIPPED 时域级一致生效且域级不可单独复位
