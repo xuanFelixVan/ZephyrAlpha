@@ -55420,11 +55420,11 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/data/implementations/hyperliquid_provider.py
   domain_id: D_DATA
-  name_zh: "Hyperliquid 跨资产采集 provider"
+  name_zh: "Hyperliquid数据源适配器"
   name_en: "Hyperliquid provider"
-  desc_zh: "Hyperliquid 官方 API 采集器：永续行情快照/持仓OI/资金费率历史/清算流采样四能力，接入 c1_market.hl_* 四表（altdata_line D5 波2）"
+  desc_zh: "官方免费公开 API 四能力：行情快照/持仓OI快照/资金费率/清算流捕获（urllib 直连+websockets 惰性依赖）"
   desc_en: ""
-  plain_zh: "这个采集器连 Hyperliquid 币圈交易所的官方接口，每天记下所有永续合约的价格、持仓量、资金费率和爆仓流水，存进四张表供跨资产研究用。"
+  plain_zh: "这个适配器负责从 Hyperliquid 官方免费接口把数据搬回自家仓库：价格、持仓、资金费率一次搬全市场，爆仓流水靠听直播流抓。"
   responsibility_layer: business
 
 battle_map_steps:
