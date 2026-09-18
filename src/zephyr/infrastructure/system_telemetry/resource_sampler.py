@@ -146,34 +146,33 @@ STATIC_OBSERVE_PATTERNS: dict[str, str] = {
 _PS1_SCRIPT_RE = re.compile(r"(?:-File\s+|python(?:\.exe)?\s+)[^\r\n]*?([A-Za-z0-9_\-]+\.(?:ps1|py))", re.IGNORECASE)
 
 
-def samples_dir() -> Path:
-    """样本流目录：环境变量可重定向（测试隔离），缺省生产 .runtime 路径。"""
-    env = os.environ.get(ENV_SAMPLES_DIR, "")
+def _path_from_env(env_var: str, default_rel: str | Path) -> Path:
+    """环境变量优先的仓根相对路径解析。
+
+    samples_dir / registry_path / ledger_path 三处旧版各写一份同构实现（CloneGuard
+    extract 级 100% 相似）——收敛成一处：改重定向语义只需改这里。
+    """
+    env = os.environ.get(env_var, "")
     if env:
         return Path(env)
     from zephyr.shared.io.paths import REPO_ROOT
 
-    return REPO_ROOT / ".runtime" / "logs" / DEFAULT_SAMPLES_DIRNAME
+    return REPO_ROOT / default_rel
+
+
+def samples_dir() -> Path:
+    """样本流目录：环境变量可重定向（测试隔离），缺省生产 .runtime 路径。"""
+    return _path_from_env(ENV_SAMPLES_DIR, f".runtime/logs/{DEFAULT_SAMPLES_DIRNAME}")
 
 
 def registry_path() -> Path:
     """注册表路径：环境变量可重定向，缺省 config/resource_profile_registry.yaml。"""
-    env = os.environ.get(ENV_REGISTRY, "")
-    if env:
-        return Path(env)
-    from zephyr.shared.io.paths import REPO_ROOT
-
-    return REPO_ROOT / DEFAULT_REGISTRY_PATH
+    return _path_from_env(ENV_REGISTRY, DEFAULT_REGISTRY_PATH)
 
 
 def ledger_path() -> Path:
     """L-1 孵化台账路径：环境变量可重定向（单测合成 fixture），缺省生产 .runtime 台账。"""
-    env = os.environ.get(ENV_LEDGER, "")
-    if env:
-        return Path(env)
-    from zephyr.shared.io.paths import REPO_ROOT
-
-    return REPO_ROOT / DEFAULT_LEDGER_PATH
+    return _path_from_env(ENV_LEDGER, DEFAULT_LEDGER_PATH)
 
 
 def _utc_now_iso() -> str:
@@ -781,7 +780,8 @@ class ResourceSampler:
                 from zephyr.shared.io.file_utils import content_sha256
 
                 expected = content_sha256(old_text)
-            safe_write_text(p, new_text, expected_base_sha256=expected)
+            # 见 73f2e54339 先例：目标受 .gitattributes eol=lf 钉定，缺省 newline=None 在 Windows 会把 \n 翻成 CRLF（safe_write_text 回读校验走 universal-newlines 看不见）
+            safe_write_text(p, new_text, expected_base_sha256=expected, newline="\n")
         return {"updated": updated, "noted": noted, "registry": str(p)}
 
     # ── L-1 申报寿命 vs 实测寿命 偏差对账（P5 p90 校准器的数据面）──
