@@ -663,7 +663,7 @@ class {DataModel}(BaseModel):
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 模块 ID 注册表 | `architecture_model/module_id_registry.yaml` | {新增/修改什么} | {为什么} |
-| 2 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | {新增/修改什么} | {为什么} |
+| 2 | 蓝图注册表（纯派生件，不入 git） | 运行时由 `scripts/governance/d5_architecture/syncers/sync_registry_from_blueprints.py` 从各 `blueprint.md` frontmatter 重生（派生退库 commit `03df6215e8`） | 无需手工登记：改蓝图 frontmatter 后由生成器重生成 | {为什么} |
 | 3 | 治理资产清单 | `docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml` | {新增/修改什么} | {为什么} |
 | 4 | 依赖图 | PostgreSQL depgraph（`extract_depgraph.py --modules {module_id}`）+ [dependency_path_panorama.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md) | {新增/修改什么} | {为什么} |
 

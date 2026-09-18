@@ -46,7 +46,6 @@ ttl: permanent
 | 文件 | 位置 | registry_id（以 ROOR 为准） |
 |------|------|:--:|
 | 模块 ID 注册表 | `architecture_model/module_id_registry.yaml` | REG-MOD-ID-001 |
-| 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | REG-BLUEPRINT-001 |
 | Embedding 模型注册表 | `config/embedding_model_registry.yaml` | REG-EMBED-001 |
 
 ## 排除规则（不应放入本目录的内容）
