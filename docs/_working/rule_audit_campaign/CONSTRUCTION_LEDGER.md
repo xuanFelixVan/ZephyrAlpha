@@ -791,6 +791,9 @@ $ git log --oneline -3 -- $C
 | **C-69** | `externalize_algo_flow.py` 5 个写点（含写 **src/\*\*/\*.py 源码本体** 的三处，最毒）——他人 112 行在途未提交 | 等其落地后套用 `.runtime/tmp/st-eolguard-20260919/pending.patch` | 由该在途会话自己吸收 | 处方已验可套用性；C-44 剩余面只剩这一家 |
 
 
+| **C-70** | 全流通验收仪的 ②/① 两向**测量法**会把“尺子的跑法”记成模块的罪：②以脚本路径直跑 `src/**` 模块 ⇒ stdlib `calendar` 被包内 `calendar.py` 遮蔽、顶层 `schemas` 依赖 cwd，两条都是伪红（`-m` 方式实测正常）；①对 88.6 亿行的 `c1_market.tick_data` 做 `count() … FINAL` 实测撞 25s CH 超时 | 甲：②同时记“脚本形态 + `-m` 形态”两栏，只有两者都失败才判红；①改两级探测（存在性 `LIMIT 1` + 分区裁剪新鲜度），并把“测量失败”显式记成**未测**而非红 | 乙：只改 harness 的运行方式为 `-m`，不动判定语义 | ★ 不裁的后果：Owner 把“红=16”读成 16 个待办，一整班花在伪红上；本总包按 D-13（值无唯一现场来源⇒只出案卷）**未自改验收仪**
+| **C-71** | WP7 导出的两轴派生公共函数（`derive_rule_risk` / `derive_two_axis_risk_for_rules`）**无任何测试**（`grep -rl derive_rule_risk tests` 零命中），且 WP7 侧接线后 86 分母只在车道回执里自证一次 | 补两条测试：①在册风险档全量分母恒等于 `len(gates)`（防再失明）②未知值必须为 0 的断言 | 交 WP8 案卷侧同批补（D-7 的另一半接线本来就未完） | 本夜班**未自补**（改 `reconciliation_registry` 面绑 WP8/ WP4 在飞车道，避免同文件对撞）；这是"治本落地但无守护测试"的又一实例，与 C-44 测试归宿问题同源 |
+
 ## 4. 事实修正表（后续车道任务书必带对应行）
 
 | 方案原文 | 现场实测（2026-09-19，本战役复跑） | 影响 |
@@ -3250,3 +3253,100 @@ Pass 2 的纯格式清单消除）；冷库 `wp16/` 树共 **66** 个文件 = 63
   按 R-A43 当场消掉：三处同构路径解析收敛为 `_path_from_env`，等价性两腿（缺省 + env 重定向）逐函数比对全等、
   `tests/infrastructure/test_resource_sampler.py` 21 passed、prerun 硬阻断 0。
 - 未新增回归测试的原因（车道自报，合理）：唯一自然归宿 `tests/io/test_io_file_utils.py` 当时被活会话持有 ⇒ 按"claim 即放弃"。
+
+## 15. 夜班终局报告（2026-09-19 00:0x → 08:2x，总包 `st-fullflow-20260918`）
+
+### 15.1 一句话结论
+**代码面能做的都做完了；剩下的卡在三类东西上：Owner 门位（盘上删除/DB 净删/宪法改）、
+Max 判归（69 条待裁）、以及一处测量法本身的问题（全流通仪表盘的"16 红"不能直接当 16 个待办）。**
+本轮不说"全绿"（永不说），只说：哪些尺子检出了什么、以及这些尺子已被证明能红。
+
+### 15.2 落地面（可核）
+- 00:00 起主分支前进 **117 笔**（全仓所有会话合计；`git log --since="2026-09-19 00:00" --oneline | wc -l`）。
+- 其中本战役名义（总包 + 直属车道：`st-ramp-*`/`st-leakfix`/`st-sentpoll`/`st-eolguard`/`st-wp15*`/
+  `st-threestate`/`st-anchormap`/`st-crlffix`/`[GW:st-fullflow-20260918]` 等）**87 笔**
+  （`git log --since="2026-09-19 00:00" --grep="st-ramp\|st-fullflow\|总包\|车道\|..." --oneline | wc -l`）。
+- 治本件（改代码，逐件带红证）：`f8c1fc044a` WP7 两轴派生 · `74f64538cf` WP5 第四册派生 ·
+  `d0bf4750ed` B22 写入侧守恒门 · `85fe86c61a` B19 门禁预跑器 · `46bdda1798` ttlfix 锚存活契约 ·
+  `23ada56a0d` L1b 去重首批 · `4bb2cab577` N 账本补登 · `5c05be73c1` metrics.flush tmp 回收 ·
+  `cdbdbf8181` 清扫脚本扩面 · `73f2e54339` N 账本 newline · `db80e3132e` .tmp 命名真源上收 ·
+  `7202cc5455` C-36 污染尺腿 · `428898272a` 6 处生成器 newline · `b3c166f988` C-56 未知键 fail-loud ·
+  `37d6819daa` C-37 gap_type else 分派 · `58411edb2a` resource_sampler newline + 三处同构收敛。
+- 案卷/台账面：本文件 §1..§15 + `docs/_working/fullflow_campaign/CONSTRUCTION_DISCIPLINE.md`（车道手册，
+  本夜班新钉 §13 行尾面、§14 判据与处方面）。
+- **未落地的成品一律做成"可套用处方"**：`cleanup_ssot.patch`（C-40）、
+  `st-eolguard-20260919/pending.patch`（C-69，externalize_algo_flow 5 点）——均 `git apply --check` 现场验过。
+
+### 15.3 A 清单（裁定面：本战役累计 **54 条** R-A1..R-A54，全部在 §1）
+施工侧裁定，不含价值判断。夜班后段新增的 12 条里，Owner 该先看的五条：
+- **R-A43** "不代修"的边界（克隆配对在本次必改文件内＝本批义务）——直接决定后续所有 L1/L3 类工单的判法。
+- **R-A45 + R-A49 + R-A54** 行尾面三连：机制不是某个生成器而是任何 `newline=None` 写盘；
+  静默配置失效的通用治法三条；已落 6+7 个写点。
+- **R-A46** "id 在册"只构成候选集不构成施工许可（95 件里只剩 1 件过逐件归属验证）。
+- **R-A51** ★ WP17 一字段修复设想被证伪（补 description 后 `blocked_rate` 仍恒 1.0）。
+- **R-A52** worktree 拆除面三缺陷（abort 对不存在目标 rc=0 假绿 / 审计说拆了盘上没拆 / `git -C 孤儿目录` 看到主仓）。
+
+### 15.4 B 清单（执行面：Owner 只需知"做了什么、怎么验"）
+| 件 | 效 | 复核命令（直接粘） |
+|---|---|---|
+| C-36 污染尺腿 | 非交易日有行即检出；现网真表改前 exit 0 无检出 → 改后 exit 1 报 14 日 77,668 行 | `python -m zephyr.data.quality_sentinel --tables daily_valuation --no-report --no-alert` |
+| WP7 两轴派生 | 风险档可判分母 0→86（=H40+M32+L14） | `git show --stat f8c1fc044a`；★ 复核实测：`grep -rl "derive_rule_risk" tests` **零命中** ⇒ 该函数无专属测试（列 C-71） |
+| WP5 第四册 | summary/last_updated 全派生，实测零改写 | `python scripts/governance/d8_doc_sync/auto_sync_all_registries.py --sync-gate-summary --dry-run` |
+| C-56/C-37 | 未知键/未知类型不再静默旁路 | `python -m pytest tests/zephyr/data/test_quality_sentinel.py tests/zephyr/data/test_backfill_checker_kline_index.py -q` |
+| .tmp 命名真源 | 清扫与写入共用一处，改一处即同步 | `python -m pytest tests/io/test_io_file_utils.py -q` |
+
+### 15.5 C 清单（复查看板：本夜班我自己犯过并被纠正的，Owner 可抽查）
+1. 误判 L1 车道删头栏（实为我的分类表达式 `l not in hd_set` 恒 False）→ 具名更正并救回 24 件；
+2. 下发的头栏判据写反（"份数不得变少"）→ 被车道带证据推回，改成"锚存活契约"；
+3. 台账里写错 commit（`feac5f7b28` 当成迁移件，实为出生件；真迁移件 `6933dbcff3`）→ 原地保留原文+更正；
+4. 任务书抄了方案里的错路径（`st-ruledisp` vs 真 `st-auditdoc-v4`）→ 新增"派活前先 grep 被引路径"；
+5. 报数用了未登记的裁定号写法（形如"裁定号 343"却带井号）→ 被自家门禁连拦三次，第三拦就发生在本报告入队瞬间（§15.5 自己就是触发件），改口径=只写"裁定号 NNN"不带井号；
+6. 早前报的"重叠率 88.18%"分母来路不明（实测 85.84%）→ 已并进 C-66；
+7. **越界自我申报（§13.1）**：在未持有 claim 的情况下入队并落地了 `quality_sentinel.py`
+   （内容面逐 hunk 验纯；程序面没走正道）→ 顺带暴露 C-59：队列正门根本不拦活 claim。
+
+### 15.6 待裁汇总（§3 表 **69 条** C-1..C-69）
+- **Owner 门位（不可代裁）**：C-35（清 77,668 行＝DB 净删）、C-42（7,654 件/1.27M 处盘上 CRLF 清盘）、
+  C-67②（15,533 文件孤儿 worktree 目录删除）、C-61（`agent_constitution_l0.md` 删除/改指针）、
+  注册表净删与 flag 翻转各件。
+- **Max 判归（Flash 只出案卷）**：C-14/R-A13 对抗校验器假绿（=WP17，见 R-A51 三件处方）、
+  C-16 队列落地不刷 index 的机制治本（甲=serializer 侧 / 乙=每车道自抹）、C-60 B 组处方落地对象、
+  C-63/C-66 卷子与重叠率口径、C-68 词表执法缺 VR、C-48..C-55 落真锚六项口径。
+- **数据/写端联动（顺序敏感）**：C-34 写端日历闸 → C-35 清行 → 本尺自愈绿；D-3 顺序不可颠倒。
+- **已被本夜班消化**：C-36（已落）、C-37（已落）、C-44（部分落，剩 C-69）、C-56（已落）。
+
+### 15.7 全流通仪表盘本轮复测（08:0x，总包亲手跑）
+- `--verdict`：**红=16 / 黄=2 / 绿=0**（17 环节 + COVERAGE-DIFF）。
+- `--crosscheck` 与 `--stage FF-01` 复跑把"红"拆开了，构成是：
+  ①入口有料＝1 件**断链**（`c1_backtest.regime_state_anchored` 读回 -1 行）+ **限流未测 136 表（绿不外推）**；
+  ②转化能跑＝两处运行形态失败：`ch_parts_monitor.py` 以脚本方式跑时 **stdlib `calendar` 被包内
+  `src/zephyr/data/calendar.py` 遮蔽**（`AttributeError: module 'calendar' has no attribute 'day_abbr'`，
+  以 `-m` 方式跑则正常），`cohort_daily_ledger.py:60` 的 `from schemas.categories...` 顶层包依赖 cwd（
+  `-m` 方式正常）；⑤＝93 表在哨兵两册**无阈值行** + 实跑检出 3 条 breach；
+  ⑥＝AST 静默 except 324 处 / fail_open_default 10 处（静态推演，非动态注入，R-024）。
+- ⇒ **判读**：②的两条是"尺子的跑法"与"仓的入口约定（`python -m zephyr.…`）"不一致造成的伪红，
+  不是两个模块坏了（都单独验过 `-m` 正常）；①的大头是**限流未测**而非确证无数据；
+  ⑤⑥是**真实的欠账**（哨兵覆盖 + 静默放行），这两向才是明天该干的主力。
+  ⇒ 立案 **C-70**：验收仪 ② 应同时记录"脚本形态 + `-m` 形态"两栏，只有两者都失败才判红；
+  ① 的 `count() FROM 巨大表 FINAL` 已实测撞 25s CH 超时（`c1_market.tick_data` 88.6 亿行），
+  须改两级探测（存在性 `LIMIT 1` + 带分区裁剪的新鲜度），并把"测量失败"显式记成未测而不是红。
+- ⚠ 复跑会**整文件重写** `docs/_working/fullflow_campaign/skeleton/03_*.md / 04_*.md/.yaml`；
+  我用 `git cat-file blob` + sha1 逐字节比对还原了这三件（还原后 `git hash-object` 与 HEAD 全等），
+  复测样本另存 `.runtime/tmp/logs/sixway_rerun_0805.md` 与 `ff_verdict.txt`。
+
+### 15.8 未完成与原因
+1. 在飞车道的回执未全部归拢：WP14 已落 4 批（`c28e0606b0`/`dc6c3e12ba`/`09a166da53`/`ef70b6b139`，
+   tests 四域表头缺栏首批）但**回执未交**；WP8 案卷重跑 / WP2 触发台账 / B16 六向尺 / B13 ch_reader
+   仍在飞。返回即按 §5 六项嵌进 §16，并逐条独立复验后才采信。
+2. C-40/C-69 两处处方未套用（他人活 claim / 他人 112 行在途）。
+3. 循环检查两轮未收口（round-1 在跑 tests/io+shared+governance；代码面最后三批落地后要跑满两轮）。
+4. 冷库救回 121 件（任务 #14）与 pipeline_events 三 helper（任务 #13，须先拍 A18）未动——
+   前者是"要不要恢复 121 件陈旧成件"的价值判断，后者绑 L1 危机闸激活。
+5. 本夜班**未新增任何 gate**（规范净零增长额度未占用），建议的 C-43/C-68 两条加严门留待 Max 配平。
+
+### 15.9 给 Max 的开工顺序建议（不是裁定）
+① 先裁 **C-70 测量法**（否则 16 红会被当 16 待办，浪费一整班）→
+② 裁 C-16 甲/乙（机制治本，止住每晚 9 次以上的 index 回退复发）→
+③ 判 WP17 三件（⑤⑥之外的第二个"永远红"的尺子）→
+④ Owner 门位一次性过堂：C-34/C-35 顺序、C-42 清盘、C-67② 拆棚、C-61 宪法镜像、C-23..C-33 遗留；
+⑤ 再回到 B 类规则审判（WP8→WP9 判案→WP10 执行）与落真锚（C-48..C-55 口径先定）。
