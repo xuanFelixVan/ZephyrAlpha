@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-046 | .trae/documents/runtime-tmp-test-residue-auto-cleanup.md | Part 1
 # [MODULE] scripts.ops.cleanup_runtime_tmp_residue
 # [DOMAIN] D_INFRA_OPS
-# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry（共享判定函数 _should_remove_test_dir 等）
+# [DEPENDENCIES] zephyr.governance.audit.reconciliation_registry（共享判定函数 _should_remove_test_dir 等）, zephyr.shared.io.file_utils（atomic_write 临时件命名真源 atomic_tmp_glob）, zephyr.shared.infra.process_pool.is_pid_alive（PID 存活真源唯一）
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] volatile
-# [INVARIANTS] 一次性清理工具，默认 dry-run（只统计不删），--execute 才实清；判定真源复用 reconciliation_registry 共享函数（禁止内联实现形成双源漂移）；PID 存活+TTL 双判定防误删活跃测试
+# [INVARIANTS] 一次性清理工具，默认 dry-run（只统计不删），--execute 才实清；判定真源复用 reconciliation_registry 共享函数（禁止内联实现形成双源漂移）；PID 存活+TTL 双判定防误删活跃测试；.tmp 半成品文件族的**命名**真源=file_utils.atomic_tmp_glob（禁本地复制模式）、**孤儿时限**无真源 ⇒ 必须显式 --older-than 才进入删除面，缺省只报告
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] M
@@ -49,7 +49,9 @@ GATE-RUNTIME-CLEANUP reconciler 原用 os.rmdir 只删空目录，但 pytest_<PI
 from __future__ import annotations
 
 import argparse
+import fnmatch
 import os
+import re
 import shutil
 import stat
 import sys
@@ -58,6 +60,160 @@ from pathlib import Path
 
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 _RUNTIME_TMP = _PROJECT_ROOT / ".runtime" / "tmp"
+
+# ── ENV1 长尾 L3：扫描根扩面（原范围只有 .runtime/tmp，且只处理目录）──────────────
+# 现场实测（.runtime/tmp/st-leakfix-20260919/measure_scope_gap.py，2026-09-19）：
+#   trae_071 §test_residue_reclaim 目录族在 .runtime/tmp 之外命中 **0 件**
+#   ⇒ 目录判据不需要扩根；真正漏的是 **CAS 半成品 .tmp 文件族**，它们落在正本自己的目录里：
+#     scripts=5（3 atomic_write 风格 + 2 pid 风格） config=1 catalogs=40 data=0
+# 判据出处：docs/_working/clean_exam_e2e/env1_cleanliness/00_env_mining.md §6 L3
+# （catalogs/config/data）+ 交接任务书 L3 追加 scripts/。
+DEFAULT_TMP_FILE_ROOTS = (
+    "scripts",
+    "config",
+    "docs/01_policies_and_standards/_registry/catalogs",
+    "data",
+    ".runtime/tmp",
+)
+
+# ── .tmp 半成品命名模式（**已登记的双源债**，见下方 _ATOMIC_TMP_* 注释）──────────────
+# 字面量逐字取自唯一产出方 file_utils.atomic_write 的 mkstemp 调用
+# （src/zephyr/shared/io/file_utils.py:146-150，实测 2026-09-19）：
+#   prefix=f".{target.name}_"   suffix=".tmp"   随机位=tempfile 默认 8 字符
+# ★ 为什么不 import：本想把这三个值上收为 file_utils 的 ATOMIC_TMP_* 常量 +
+#   atomic_tmp_glob()/atomic_tmp_to_canonical()，但 file_utils.py 一旦被本次改动撑高
+#   行号，即触发 CloneGuard extract 级硬拦（该文件内两个既有异常类的 __init__ 结构 100%
+#   相同：改前 ruler passed=True，加 19 行后 passed=False，配对 __init__<->__init__）。
+#   合并那两个 __init__ 属他人文件的语义改动（宪法 §3.4 不代修）⇒ 本车道改为本地取字面量，
+#   并登记双源债回流（回执 §4 待裁：命名上收 file_utils + 消该配对）。
+_ATOMIC_TMP_LEAD = "."
+_ATOMIC_TMP_SEP = "_"
+_ATOMIC_TMP_SUFFIX = ".tmp"
+_ATOMIC_TMP_RAND_LEN = 8
+_ATOMIC_TMP_GLOB = ".{name}_" + "?" * _ATOMIC_TMP_RAND_LEN + _ATOMIC_TMP_SUFFIX
+_ATOMIC_TMP_GLOB_ALL = _ATOMIC_TMP_GLOB.format(name="*")
+
+# pid 风格命名 = 散落写者自造的 f"{path}.{os.getpid()}.tmp"（**不是** file_utils 真源产物，
+# 收敛义务见 ENV1 长尾 L4）。此处只做识别，不做命名真源声明。
+_PID_TMP_RE = re.compile(r"^.+\.(?P<pid>\d+)\.tmp$")
+
+
+def _atomic_tmp_to_canonical(name: str) -> str:
+    """临时件文件名 → 正本文件名。
+
+    ★ tempfile 随机表 = "abcdefghijklmnopqrstuvwxyz0123456789_"，**含下划线**，
+    故不可 rsplit("_")（实测把 .capability_canonical_file_registry.yaml_7dypj_ec.tmp
+    错切成 ...yaml_7dypj ⇒ 6 件被判 no-canonical）⇒ 必须按定长剥尾。
+    """
+    cut = _ATOMIC_TMP_RAND_LEN + len(_ATOMIC_TMP_SEP) + len(_ATOMIC_TMP_SUFFIX)
+    stem = name[len(_ATOMIC_TMP_LEAD) :] if name.startswith(_ATOMIC_TMP_LEAD) else name
+    return stem[: len(stem) - cut] if len(stem) > cut else stem
+
+
+def _load_pid_liveness():
+    """加载 PID 存活真源（process_pool.is_pid_alive，红蓝对抗归一后的唯一实现）。"""
+    src = _PROJECT_ROOT / "src"
+    if str(src) not in sys.path:
+        sys.path.insert(0, str(src))
+    try:
+        from zephyr.shared.infra.process_pool import is_pid_alive
+    except ImportError as exc:
+        print(
+            f"[FATAL] 无法加载 PID 存活真源（process_pool.is_pid_alive）：{exc}\n"
+            "本脚本拒绝内联复制存活判定，故直接退出。",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+    return is_pid_alive
+
+
+def _classify_tmp_file(full: Path) -> tuple[str, int | None]:
+    """给单个 .tmp 半成品定性。返回 (类别, 文件名内嵌 pid 或 None)。
+
+    类别（全部由现场字节/存在性读出，不含任何拍定的时限）：
+      tmp-newer        正本存在且 tmp 更新 ⇒ 内含"从未发布"的数据，禁删（须人工判）
+      canonical-not-newer 正本存在且不比 tmp 新 ⇒ 与挖矿判决口径同判据（tmp 零信息量）
+      no-canonical     正本不存在/不可比 ⇒ 无法判决，须人工判
+      other            不属于两个已知族（人工命名的 .tmp），本工具不管
+    """
+    name = full.name
+    pid: int | None = None
+    m = _PID_TMP_RE.match(name)
+    if m:
+        pid = int(m.group("pid"))
+        canonical_name = _PID_TMP_RE.sub("", name)
+    elif fnmatch.fnmatch(name, _ATOMIC_TMP_GLOB_ALL):
+        canonical_name = _atomic_tmp_to_canonical(name)
+    else:
+        return "other", None
+    canonical = full.parent / canonical_name
+    if not canonical.exists():
+        return "no-canonical", pid
+    try:
+        if full.stat().st_mtime > canonical.stat().st_mtime:
+            return "tmp-newer", pid
+    except OSError:
+        return "no-canonical", pid
+    return "canonical-not-newer", pid
+
+
+def _rel(full: Path) -> str:
+    """相对仓根的 posix 路径（报告用）。"""
+    return full.relative_to(_PROJECT_ROOT).as_posix()
+
+
+def _scan_tmp_files(roots, is_pid_alive, now: float, older_than: float | None):
+    """扫描扩面根下的 .tmp 半成品（只分类统计，删除面另判）。
+
+    Returns:
+        (rows, by_category) — rows=[(rel_path, category, pid_dead, deletable_age)]
+    """
+    rows: list[tuple[str, str, bool, float | None]] = []
+    by_category: dict[str, int] = {}
+    skip_dirs = {"__pycache__", ".git", "node_modules"}
+    for rel in roots:
+        root = _PROJECT_ROOT / rel
+        if not root.exists():
+            continue
+        for dirpath, dirnames, filenames in os.walk(root):
+            dirnames[:] = [d for d in dirnames if d not in skip_dirs]
+            for fn in filenames:
+                if not fn.endswith(".tmp"):
+                    continue
+                full = Path(dirpath) / fn
+                category, pid = _classify_tmp_file(full)
+                if category == "other":
+                    continue
+                try:
+                    age = now - full.stat().st_mtime
+                except OSError:
+                    continue
+                # 孤儿判据之一（有真源）：pid 风格名内嵌 PID 已死 ⇒ 写者必已消失
+                pid_dead = pid is not None and not is_pid_alive(pid)
+                in_window = older_than is not None and age > older_than
+                deletable_age = age if (in_window and (pid_dead or category == "canonical-not-newer")) else None
+                rows.append((_rel(full), category, pid_dead, deletable_age))
+                by_category[category] = by_category.get(category, 0) + 1
+    return rows, by_category
+
+
+def _print_tmp_file_report(rows, by_category, older_than: float | None) -> int:
+    """打印 .tmp 半成品报告（扩面后新增的观测面）。返回可删候选数。"""
+    print("\n== .tmp 半成品文件族（ENV1 长尾 L3 扩面新增观测）==")
+    if not rows:
+        print("  命中 0 件")
+        return 0
+    for cat, cnt in sorted(by_category.items(), key=lambda x: -x[1]):
+        print(f"  {cat}: {cnt}")
+    print(f"  合计: {len(rows)}")
+    print(f"  孤儿时限 --older-than: {older_than if older_than is not None else '未给出（该文件族只报告，不进入删除面）'}")
+    candidates = [r for r in rows if r[3] is not None]
+    print(f"  可删候选（过 --execute 才删）: {len(candidates)}")
+    for rel, cat, pid_dead, age in rows[:20]:
+        # 标签必须与上面的计数同一判据（age 非 None 才算候选），否则报告自相矛盾
+        note = f"{cat}{', pid dead' if pid_dead else ''}"
+        print(f"    [{'候选' if age is not None else '保留'}] {rel} ({note})")
+    return len(candidates)
 
 
 def _load_shared_predicates():
@@ -164,6 +320,29 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         default=True,
         help="只统计不删（默认）",
+    )
+    parser.add_argument(
+        "--tmp-file-roots",
+        default=",".join(DEFAULT_TMP_FILE_ROOTS),
+        help=(
+            ".tmp 半成品文件族扫描根（逗号分隔，相对仓根）。ENV1 长尾 L3 扩面，"
+            "缺省含 scripts/（原范围漏掉的根）"
+        ),
+    )
+    parser.add_argument(
+        "--no-tmp-file-scan",
+        action="store_true",
+        help="关闭 .tmp 半成品文件族扫描（回到扩面前的行为，用于阴性对照）",
+    )
+    parser.add_argument(
+        "--older-than",
+        type=float,
+        default=None,
+        metavar="SECONDS",
+        help=(
+            ".tmp 半成品进入删除面的最小龄（本文件族无孤儿时限真源，故不给缺省值；"
+            "不传=只报告不删）"
+        ),
     )
     return parser.parse_args()
 
@@ -321,9 +500,44 @@ def main() -> int:
     will_delete, kept_reasons, category_counts, top_level_files = _scan_entries(match_residue, should_remove, now)
     _print_summary(will_delete, kept_reasons, category_counts, top_level_files, args.execute)
 
+    # ENV1 长尾 L3：.tmp 半成品文件族（原范围完全看不见）
+    tmp_file_candidates = 0
+    if not args.no_tmp_file_scan:
+        is_pid_alive = _load_pid_liveness()
+        roots = tuple(r.strip() for r in args.tmp_file_roots.split(",") if r.strip())
+        rows, by_cat = _scan_tmp_files(roots, is_pid_alive, now, args.older_than)
+        tmp_file_candidates = _print_tmp_file_report(rows, by_cat, args.older_than)
+        if args.execute:
+            tmp_file_candidates = _execute_tmp_files(rows, tmp_file_candidates)
+
     if not args.execute:
         return 0
-    return _execute_deletion(will_delete, match_residue)
+    rc = _execute_deletion(will_delete, match_residue)
+    return rc if tmp_file_candidates == 0 else 1
+
+
+def _execute_tmp_files(rows, candidates: int) -> int:
+    """删除已过 --older-than 且判据成立的 .tmp（逐个 stat 复核，不复用扫描期结论）。"""
+    if candidates == 0:
+        return 0
+    is_pid_alive = _load_pid_liveness()
+    deleted = kept = 0
+    for rel, _cat, _pid_dead, age in rows:
+        if age is None:
+            continue
+        full = _PROJECT_ROOT / rel
+        category, pid = _classify_tmp_file(full)
+        pid_dead = pid is not None and not is_pid_alive(pid)
+        if category in ("tmp-newer", "no-canonical") or not (pid_dead or category == "canonical-not-newer"):
+            kept += 1  # R-A25 教训：判据不过即跳过并报因，绝不为凑数删
+            continue
+        try:
+            full.unlink(missing_ok=True)
+            deleted += 1
+        except OSError:
+            kept += 1
+    print(f"\n[EXECUTE] .tmp 半成品：已删 {deleted}, 复核后保留 {kept}")
+    return kept
 
 
 if __name__ == "__main__":
