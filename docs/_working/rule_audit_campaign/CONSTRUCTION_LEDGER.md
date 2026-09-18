@@ -650,6 +650,12 @@ $ git log --oneline -3 -- $C
 | **C-24** | 21/42 补约束项存量违反 > 0（R-A33），补约束必然失败 | 先逐条判"源码约束过宽"还是"数据脏"，再决定清数据/放宽声明 | — | 必须**两步走**：本册只交付清单与分档，不合并成一次 DB 变更 |
 | **C-25** | T3 三项门位落在 0 行野库、真库无该表 ⇒ 与 R-A20 的删野库是同一件事 | — | — | **并案批**：root 修复(活体) → 删野库 → 撤这 3 项，顺序不可换 |
 | **C-26** | F2/F3/F4 卫生勘误（门位项 42→41；散文写死 9/7 实为 8/6；scratch 应标非交付面） | — | — | 总包已在本册登记，WP16 交付时随附勘误批 |
+| **C-28** | `trial_ledger_registry.yaml` 无一致性校验器（在册 count 与条目/源实算可对不上，L4 红证 A 已证可检） | 升为门 ⇒ **须净零增长对价**（§4.1） | 只做"生成器写前自检 + 定期对账报告"，不新增门 | 倾向乙（先要成本最低的常开自检；真要加门，得指一台该退役的旧门做对价） |
+| **C-29** | `n_trial_ledger.py:284` `safe_write_text` 未传 `newline` ⇒ 往 LF 热册注入 CRLF（总包复验成立） | 一行修 + 红证（改前 CRLF=70，改后 =0 且内容不变） | — | 甲，已派 `st-crlffix-20260919`；同类面全仓另扫（见回执） |
+| **C-30** | 5 个有 `summary.json` 的 grid 批不在册（`012207/233634/20260917-000940/001854/003812`），另有 2 个空目录批生成器不可发现 | 逐批核"可审计性"后补登 | 等下次全量 sync 自动吸入 | **先裁再 sync**——盲目全量 sync 会把未裁批次一次性吸进 count |
+| **C-31** | `n_trials_effective` 披露位 HEAD 零命中，但三批 summary 各带该值（18/9/2）⇒ 疑热册蒸发 | — | — | 需 `git log -p --all` 全史归因后才能立案；**未补写**（estimator 版本未冻结=B-03 遗留，自造即伪造披露） |
+| **C-32** | 数仓 `strategy_screen.num_trials` 与台账不同源（表内 4,482/4,487/4,497 vs 台账 20632） | — | — | 属 DB 回填班域；本战役 DB 只读，未动 |
+| **C-33** | 手册 `--base-head` 未写命令名，`git_commit.py` 实际**没有**该旗（总包复验 `--help` 命中 0；`commit_queue.py enqueue` 有） | 已改手册：写清"走 `git_commit.py --enqueue` 不要带它；要基底校验就直走 `commit_queue.py enqueue --base-head`" | — | 已修（R-A38 附带），并作为"处方里的命令必须实跑一次再发"的第 N 例记档 |
 ## 4. 事实修正表（后续车道任务书必带对应行）
 
 | 方案原文 | 现场实测（2026-09-19，本战役复跑） | 影响 |
@@ -2089,6 +2095,25 @@ L581 改后：
     （RC-14 缺陷④的遗留面）。可批余量实测：35 个 id 有声明蓝图（覆盖 95 件）/ 34 个 id 无声明（覆盖 61 件）。
   - 另记一条车道卫生观察：该车道报"队列里 `-0002` 以 `FOREIGN_STAGED` 死、`-0003` 出现过又消失"，
     重复项被消化的机制**未取证**（结果无害，全史只有一笔它的 commit）⇒ 归 C-16/队列族另案。
+
+- **R-A37｜WP5 落地并经总包按 D-4 判据复验**（`74f64538cf`）：第四册 `summary.total=91 == len(gates)`、
+  `by_category` 与逐条实算**逐值相等**、`by_status` 派生一致（`active 90 / draft 1`，4 条 `implemented` 已按词表归并进 `active`），
+  `last_updated` 不再是停摆的 `2026-06-22` ⇒ **D-4 的"静态清单禁手工维护"欠账清掉**。
+- **R-A38｜L4 台账补登落地 `4bb2cab577`，方法学是这批最大的收获**：两条既定批次原本**确实不在册**，
+  补登**没有手改 YAML**，而是走该册的唯一机器写入口 `TrialLedger.record_run`（CAS+预检+写后核读），
+  派生计数 **4562 → 20632 全由实算**（`screen_runs` 未触碰），幂等三跑（第三跑全 `exists`、`sha256` 不变），
+  两批 n 各出**双证**（`summary.evaluated` 与 `manifest.csv` 行数扣表头，123552 另有 `5990+10 negatives=6000=n_sampled` 守恒）。
+  红证两条（篡 `n_trials`、沿用旧 count）都 exit=1，撤样转绿；`tests/backtest/test_n_trial_ledger.py` **18 passed**。
+  ★ 顺带确认该册是**半派生册**（`screen_runs` 纯派生 / `batch_records` 半派生半显式 / `manual_population` Owner 手工且永不入 count）
+  ⇒ "禁裸手插条目"的判据来自 `n_trial_ledger.py:11` 的自述真源条款，不是我们猜的。
+  - **随批带出 6 条待裁**（列 C-28..C-33）：
+    A 该册**无一致性校验器**（在册 count 与条目/源实算无门对账；`gate_registry`/arch_guard manifest 对该模块**零命中**）；
+    B ★ **生成器 `_cas_update` 调 `safe_write_text` 未传 `newline`** ⇒ 往 LF 钉定的热册里**注入 CRLF**
+      （`n_trial_ledger.py:284`；先例 `generate_backtest_backlog.py:284` 是传了的）——**总包已独立复验该调用点确无 `newline`**；
+    C **另有 5 个含 `summary.json` 的 grid 批不在册**（下次全量 sync 会自动吸入 ⇒ 要先裁放行）；
+    D 册内 `n_trials_effective` 披露位 **HEAD 从未有过**而生成器会写它 ⇒ 疑热册蒸发家族又一例（**未补写**，自造=伪造披露位）；
+    E 数仓 `strategy_screen.num_trials` 与台账不同源一致（表内 4,482/4,487/4,497 vs 台账 20632）；
+    F 队列落地不刷主区 index **第七次复现**（本车道首测 `HEAD=8d5953bb8f` / `index=5a671ac949` 旧 blob / `disk` 新，已具名抹平）。
 
 ## 8. WP15(3/5) 取证案卷全文
 
