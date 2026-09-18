@@ -72,8 +72,8 @@ created: 2026-09-18
 ## 4. 循环检查与红蓝
 
 - **R1（全域）**：6971 passed；11 红全部分诊——8 红他会话 crisis_gate 在途前瞻规格（非本线）、1 红外来 crisis 级联（已移交车道作者）、1 红 alert_generator flaky（复跑过）、1 红我方文件桥测试不封闭（已修，18/18）。
-- **R2（终跑）**：后台执行中，结果将回填本节；metamorphic 不变式套件 73/73（含四闸/S11/S12）。
-- **红蓝检出率门**（裁定#324 ≥0.95）：首跑撞锁超时，重试安排在队列消化后（锁竞争缓解）。
+- **R2（终跑）**：**7055 passed / 10 failed**——红全部外来归属（8=他会话 crisis_gate 在途前瞻规格、1=外来 crisis 级联已移交、1=alert_generator flaky）；**本线 25 项修复两轮稳定零回归**，R1 的文件桥 flake 已被封闭化修复消掉（11→10）。metamorphic 不变式 73/73。
+- **红蓝检出率门**（裁定#324）：9/10——失败项=报告生成器空结果（0 vs ≥9），归属 rule 车道（本战役未触 rule 域），如实登记不移交修复。
 - 门禁演进全程适应：R5-DIGIT-SUFFIX（目录改名）、EXEMPT-ZONE-FM（238 文件剥 doc_type）、CREATE-GUARD（token 随批）、ALGO-NOTE-SYNC（四节点大白话跟改+note_confirmed）、ARCH-REFERENCE（登记先落）、REGISTRY-MASS-DELETION（放弃整写改文本式追加——整写手法已自纠，±2.5 万行重排版未入历史）。
 
 ## 5. 提交账单与遗留
