@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML-017 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.ml_train.implementations.test_kan_density_head
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/ml_train/implementations/kan_density_head.py
 """MOD-ML-017 单元测试：kan_density_head KAN 密度预测头。
 

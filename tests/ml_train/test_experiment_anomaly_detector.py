@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML-023 | layer=test | stability=volatile | safety=L | ai_autonomy=human_gated
 # [MODULE] tests.ml_train.test_experiment_anomaly_detector
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/ml_train/experiment_anomaly_detector.py
 """MOD-ML-023 单元测试：experiment_anomaly_detector 实验指标异常检测。
 

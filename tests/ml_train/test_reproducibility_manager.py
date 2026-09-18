@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML-020 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.ml_train.test_reproducibility_manager
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/ml_train/reproducibility_manager.py
 """MOD-ML-020 单元测试：reproducibility_manager 可复现性管理器。
 

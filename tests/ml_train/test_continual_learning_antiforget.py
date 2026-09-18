@@ -3,6 +3,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML-018 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.ml_train.test_continual_learning_antiforget
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/ml_train/continual_learning_antiforget.py
 """MOD-ML-018 单元测试：continual_learning_antiforget 持续学习抗遗忘框架。
 

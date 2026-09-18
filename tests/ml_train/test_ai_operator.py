@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML_test_ai_operator | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_ai_operator
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/ml_train/ai_operator/operator.py
 # [TTL] task_bound
 """MOD-ML-002 AI 操作员 toy 断言（上线/下线/巡检封装，全操作留痕+批准令牌）。

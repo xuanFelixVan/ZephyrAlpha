@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_sample_weights | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_sample_weights
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/ml_train/core/sample_weights.py
 # [TTL] task_bound
 """90 号 Phase2 项（#9 数据分层）：半衰期样本权重已知答案 toy 断言。

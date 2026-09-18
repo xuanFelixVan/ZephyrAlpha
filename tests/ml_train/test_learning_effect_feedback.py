@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML_test_learning_effect_feedback | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_learning_effect_feedback
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/ml_train/learning_effect_feedback.py
 # [TTL] task_bound
 """MOD-ML-009 学习效果反馈回喂 toy 断言。"""

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML_test_training_dataset_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_training_dataset_manager
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/ml_train/training_dataset_manager/manager.py
 # [TTL] task_bound
 """MOD-ML-003 训练数据集管理器 toy 断言（版本化/快照/血缘登记）。

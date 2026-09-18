@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML-016 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.ml_train.test_decision_tree_decision_architecture
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/ml_train/decision_tree_decision_architecture.py
 """MOD-ML-016 单元测试：decision_tree_decision_architecture 决策树交易决策架构。
 

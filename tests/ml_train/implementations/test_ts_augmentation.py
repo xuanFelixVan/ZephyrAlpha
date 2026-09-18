@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML-015 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.ml_train.implementations.test_ts_augmentation
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/ml_train/implementations/ts_augmentation.py
 """MOD-ML-015 单元测试：ts_augmentation 金融时序数据增强库。
 

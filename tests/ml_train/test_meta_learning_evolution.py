@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML_test_meta_learning_evolution | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_meta_learning_evolution
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/ml_train/meta_learning_evolution.py
 # [TTL] task_bound
 """MOD-ML-007 元学习演进 toy 断言（跨任务经验库，轻量）。"""

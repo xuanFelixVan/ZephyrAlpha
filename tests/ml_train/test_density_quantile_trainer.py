@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML_test_density_quantile_trainer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_density_quantile_trainer
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/ml_train/implementations/density_quantile_trainer.py
 # [TTL] task_bound
 """GAP-F-34 密度预测主路线 MVP（ML-DENSITY-001 轻量密度头）toy 断言。

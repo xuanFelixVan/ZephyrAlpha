@@ -3,6 +3,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML-014 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.ml_train.test_decision_annotation_dataset
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/ml_train/decision_annotation_dataset.py
 """MOD-ML-014 单元测试：decision_annotation_dataset 交易决策标注数据集。
 

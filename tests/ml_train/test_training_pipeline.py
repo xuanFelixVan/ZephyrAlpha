@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML_test_training_pipeline | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_training_pipeline
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/ml_train/training_pipeline/pipeline_orchestrator.py
 # [TTL] task_bound
 """MOD-ML-001 训练管线编排 toy 断言（数据→训练→评估→登记四段全链）。

@@ -3,6 +3,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML-019 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.ml_train.test_research_data_manager
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/ml_train/research_data_manager.py
 """MOD-ML-019 单元测试：research_data_manager 研究数据管理器。
 

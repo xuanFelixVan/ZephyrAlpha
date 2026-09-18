@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML_test_gap_f35_skeletons | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_gap_f35_candidate_skeletons
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/ml_train/implementations/limit_up_classifier.py; src/zephyr/ml_train/implementations/seat_pattern_classifier.py; src/zephyr/ml_train/services/sentiment_sft_entry.py
 # [TTL] task_bound
 """GAP-F-35 ML 外围三候选骨架 toy 断言（禁真训练——只验管线骨架+数据接口位）。

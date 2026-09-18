@@ -3,6 +3,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML-013 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.ml_train.test_ml_model_factory
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/ml_train/ml_model_factory.py
 """MOD-ML-013 单元测试：ml_model_factory ML 模型工厂。
 

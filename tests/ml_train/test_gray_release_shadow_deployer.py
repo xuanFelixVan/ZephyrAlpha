@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ML_test_gray_release_shadow_deployer | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.ml_train.test_gray_release_shadow_deployer
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/ml_train/gray_release_shadow_deployer.py
 # [TTL] task_bound
 """MOD-ML-004 灰度/影子部署 toy 断言（影子只记录不生效）。"""
