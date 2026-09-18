@@ -1,0 +1,86 @@
+# datagap 车道 · tasks.yaml / schedule.yaml 合并片段（z-dag 独占，本车道禁直改）
+# 来源: docs/_working/fullflow_campaign/lanes/datagap_tasks_yaml_fragment.yaml
+# 车道: st-ff-datagap-20260918  日期: 2026-09-18
+# 待总包转 z-dag 合并。每条都附实测依据与"不合并会怎样"。
+# 注：全部为**新增任务或 schedule 改道**，无任何删除动作（净删=Owner 门位）。
+tasks:
+  # 1) BRK-030 分红预案切源（miniqmt 已 9/18 清退，旧任务 schedule=disabled 空挂）
+  - task_id: dividend_incremental_akshare
+    table: c3_fundamental.dividend
+    source: akshare
+    capability: dividend
+    schedule: daily_event          # 与 ex_dividend_event 同槽（该槽实测活至 2026-09-16，证非行情侧问题）
+    dependencies: []
+    note_zh: >-
+      实测 c3_fundamental.dividend FINAL 116334 行，但 max(announce_date)=2026-07-01，
+      8/9 月零行（半年报分红披露季本应密集）。旧任务 dividend_incremental
+      （source=miniqmt, schedule=disabled）保持在册不删（净删=Owner 门位），由本任务承接。
+      配方参照"A4 股东户数切 akshare"。不合并后果：股息率/除权因子停在 2026-07-01。
+
+  # 2) BRK-038 议息日历双源并接（总包 R-F 前裁：Fed 官网为权威主源 + 东财为国内备源）
+  - task_id: rate_decision_calendar_fed_refresh
+    table: c1_market.rate_decision_calendar
+    source: fed_official           # 需新增 provider 能力（本车道 provider 面独占，但受轮数预算未落地，见 §说明）
+    capability: rate_decision_calendar
+    schedule: weekly_capital
+    params:
+      snapshot_raw: true           # G 盘原文快照：权威源必须留证据，防再次"第三方转述停更 323 天"
+    note_zh: "承接现 rate_decision_calendar_refresh 的 Fed/BOE/ECB 等 10 家海外央行决议。"
+  - task_id: rate_decision_calendar_pbcn_refresh
+    table: c1_market.rate_decision_calendar
+    source: eastmoney_datacenter
+    capability: rate_decision_calendar
+    schedule: weekly_capital
+    params:
+      snapshot_raw: true
+    note_zh: "中国央行利率决议无公开日历，必须靠东财补国内腿（实测 pboc 维度 decision_date 停在 2019-11-20）。"
+
+  # 3) 现任务改道：停用金十腿（禁删条目，schedule 改 disabled 并留痕）
+  - task_id: rate_decision_calendar_refresh
+    schedule: disabled
+    note_zh: >-
+      源端 akshare macro_bank_*（金十口径）2025-10 起退役，实测 max(decision_date)=2025-10-30、
+      11 央行全停，但管线日更、ingest_ts 新鲜（2026-09-18）→ 任务"成功"却零新数。
+      保留条目=不净删（Owner 门位），由 fed/pbcn 两任务承接。
+
+  # 4) BRK-034 补数：internal_compute 从"仅 fallback"升级为"akshare 之后必跑"
+  - task_id: index_valuation_daily_compute_after_ingest
+    table: c1_market.index_valuation_daily
+    source: internal
+    capability: index_valuation_daily
+    schedule: weekend_calibration
+    dependencies: ["index_valuation_daily_backfill"]   # 顺序铁律：重灌（携带逻辑已在位）后必跟一次重算回写
+    note_zh: >-
+      现状 internal_compute 只挂在 index_valuation_daily_backfill 的 fallback_sources，
+      而 fallback 仅在 akshare 报错时才走 → akshare 一成功，CAPE/分位/ERP 就永久 None
+      （实测 2026-09-18 FINAL 8125 行计算列 NULL=100%）。provider 侧写前携带已止血，
+      但**已有的 NULL 必须靠本任务的"必跑"语义才能补回来**；不补这条依赖，BRK-034 每个周末复发。
+
+  # 5) BRK-037 mootdx/tdx 板块盘中分钟档期空转（intraday_sector 5 任务，cron "*/5 9-15 * * 0-4"）
+  - task_group: intraday_sector    # 具体 task_id 清单请 z-dag 按档期核对后逐个落 schedule: disabled
+    schedule: disabled
+    note_zh: >-
+      真值通道 data_source='tdx' 自 2026-09-11 起零行（实测：09-11/09-15=synth_sh 279560 行、
+      09-14=synth_eq 139780 行，tdx 真值止于 09-10 且为半日残缺 563 code/37857 行）。
+      任务继续每 5 分钟空转=白烧 mootdx TCP 连接与算力，并制造"有调度=有数据"的假象。
+      禁删任务定义（净删=Owner 门位），只停档期触发 + 台账留痕。
+
+  # 6) BRK-040 半死管线：任务保持 enabled，但必须挂业务日期哨兵（见 sentinel 片段第①腿）
+  - task_id: alt_sz_reservoir_level_incremental
+    note_zh: >-
+      保持 enabled（存量 75,159,520 行，源为月末快照，任务在做全史重拉）。
+      问题不在任务而在"该表根本没有哨兵阈值行"。若 Owner 裁定省水文平台退役，
+      则本任务转 disabled 并按 F4 先例降级留史，禁删表；
+      同族 alt_sz_reservoir_rain_day / rain_month / station 三表需一并核查后再定。
+
+  # 7) BRK-043 幂等语义说明（不改任务定义，只登记本车道 provider 侧改造的触发条件）
+  - task_id: daily_valuation_full_refresh
+    note_zh: >-
+      provider 侧已改：宽窗（>=15 天）或 incremental=False 时预查"已到窗口最新事实日且
+      pe_ttm>0"的标的并跳过（akshare_provider._load_valuation_complete_symbols）。
+      故本任务重跑语义从"5558 只从零重拉 11h"变为"只补未完成标的"。
+      tasks.yaml 本体无需改；若 z-dag 愿意，可给它加 dependencies: ["kline_daily_incremental"]
+      与 daily_valuation_incremental 对齐（BRK-050 的 235/262 无 dependencies 同族）。
+
+  # 8) BRK-042 票房：不建任务（表不存在，源无免费通道）
+  # 禁建 alt_movie_boxoffice_* 任务；若将来做，须先过第 3 批爬虫试点 + compliance_reviewer。

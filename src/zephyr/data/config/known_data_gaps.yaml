@@ -79,6 +79,7 @@ gaps:
     root_cause: "iFind EDB 月度配额耗尽(-4318)，edb_data 表至今 0 行；iFind 已于 2026-08-14 退役"
     resolution_plan: "iFind 已退役（2026-08-14）：edb 任务已删除，以 macro_data (akshare)+FRED/EIA 作为主宏观源"
     primary_alternative: "c1_market.macro_data（akshare，285K 行，主宏观数据源）"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑：edb_data 实测 0 行 0 parts（表在册，engine ReplacingMergeTree）确认；替代源 macro_data FINAL 50168 行、max(report_date)=2026-09-18（当天）=主宏观源活着且新鲜 → 下游 FF-06 L2C 不存在无输入，本条严重度应降。edb_data 是否清撤=净删门位，只登记不执行。该表亦无哨兵阈值行（故意不设，见 sentinel 片段注释）"
     created: "2026-07-23"
     last_updated: "2026-07-23"
 
@@ -282,6 +283,7 @@ gaps:
     resolution_plan: "择期合并双写（OPTIMIZE/ALTER DELETE 原始空 cape 行或重写入校）；
       399006 若需启用先跑历史回填；消费端兜底逻辑保留。"
     primary_alternative: "消费端 FINAL+drop_duplicates 兜底（已在位，实证有效）"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑更正：普查同键双行并存已不成立（pre-FINAL 8125 = FINAL 8125，按 (symbol,trade_date) 分组 count>1 命中 0 组，全字段 GROUP BY ALL HAVING count()>1 命中 0，判重按全字段口径非聚合数）。病灶恶化为计算列整表归零：cape_5y/cape_5y_pct/pe_pct/pb_pct/erp/erp_pct/pb_mrq NULL 8125/8125=100%（000300 4062 行 + 000905 4063 行，2010-01-01~2026-09-17 全史）。结构根因=表无 version 列 + 双写者（akshare 采原始列 / internal_compute 回写计算列），2026-09-13 全史重采 8111 行把计算列抹为 NULL（后到 None 版本在合并仲裁胜出）。止血已落地：akshare_provider 写前携带既有非默认派生值（裁定 #288 同款配方，变异证据=注释掉携带则测试红 assert None==31.05）。清创不需 DELETE（全体缺派生列，非坏行混好行）；补数=backfill 后必跟 internal_compute 重算（任务片段 lanes/datagap_tasks_yaml_fragment.yaml 第 4 条）。全文 lanes/datagap_corrupt_rows.md §1-2"
     created: "2026-08-30"
     last_updated: "2026-08-30"
 
@@ -306,6 +308,7 @@ gaps:
       （宁缺毋错）。待 tushare 上游修复后每日全量重拉自动自愈（无需回填动作）；
       若判别失效组数 >0 需告警复查规则。"
     primary_alternative: "无（官方交易所直抓为预案，memo 19 §4.2 方案 A，未施工）"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑：库内已无污染行——pre-FINAL 30574 = FINAL 30574 = uniqExact(ts_code,trade_date) 30574；2026-06-30 快照 4065 行 / 4065 唯一 ts_code（HAVING rows>uniq 命中 0）。普查正在静默污染的表述已失效，拦阻件在位 northbound_hold_fetcher.py:154 _resolve_code_collisions（调用点 :232）。残余缺陷=本条 resolution_plan 自述的判别失效告警未落地：fetcher 返回 (df, _salvaged, _dropped) 但调用点未消费该计数做门位/告警 → 判别一旦失效即静默整组丢真主行。登记为治理需求（建议归 z-failopen DLQ 面，与 BRK-054 同批）"
     created: "2026-08-15"
     last_updated: "2026-08-15"
 
@@ -417,7 +420,7 @@ gaps:
     end_date: "2026-09-09"   # 本次已回填；结构性缺口=写入器从未接入调度
     date_column: "window_date"
     detection_threshold: 1
-    status: "monitoring"  # 2026-09-10 已按日回填 78 天（77+边界 1）；结构缺口挂账
+    status: "completed"  # 2026-09-10 已按日回填 78 天；2026-09-18 全流通战役复核：接线已落（见 resolution_plan 尾），结构缺口已闭合
     root_cause: "写入器 MOD-INT-NEWS-NIGHT compute_nightly_sentiment 全仓零生产调用方
       （data_asset_registry 口径'由夜间批/盘前流程调用'——该夜间批未接线）。表内存量
       2026-02-24~08-21 为 D4SENT ad-hoc 回填（脚本未入库），8/21 断更点=回填截止点。
@@ -425,10 +428,10 @@ gaps:
     resolution_plan: "结构修复=把 compute_nightly_sentiment(trade_date, persist=True) 接入
       夜间批/盘前流程（92号 §8.4③ 统筹范围，涉及 tasks.yaml/scheduler special schedule，
       宜单独立项）；接线前该表将持续断更。2026-09-10 已回填历史段（规则法 PIT 回算，
-      market 粒度 78 行）。"
+      market 粒度 78 行）。2026-09-18 全流通战役 st-ff-dag-20260918 复核=已接线（BRK-022 判定与实测一致）：scripts/data/run_nightly_sentiment.py 第 41-42 行调 compute_nightly_sentiment(persist=True)，schedule.yaml 槽位 nightly_sentiment（cron 20 8 * * *，executor default，当日窗口+近 7 日缺口自愈）已在册；原 root_cause 所述未接线自 2026-09-10 接线批起失效，故本 gap 由 monitoring 改 completed，闭合证据为上述两处 文件:行号 双点。"
     primary_alternative: "无"
     created: "2026-09-10"
-    last_updated: "2026-09-10"
+    last_updated: "2026-09-18"
 
   # === 2026-09-10: index_list 错宇宙垃圾 PIT 关死（数据总览全库体检 P8）===
   - id: "index_list_wrong_universe"
@@ -614,6 +617,7 @@ gaps:
       （DDL 届时按 alt_* 模板补）；③ 若 Owner 认可影视板块因子价值，可评估灯塔/艺恩
       付费层（当前裁定=不买付费另类，除非分析师预期历史级别例外）。"
     primary_alternative: "无直接替代；传媒/院线景气短期用既有 L2/L1 量价+新闻情绪代理"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑：system.tables 查 c1_market.alt_movie_boxoffice 命中 0 = 表不存在（与本条目注释一致；普查把它写成 open 未处置的既有表缺口易被误读为有表无数据）。结论=无免费源且未建表，status=open 的正确改法是转无源留痕，不建表不建任务；若要做须先过第 3 批爬虫试点 + compliance_reviewer 评估，付费层属 Owner 门位"
     created: "2026-09-12"
     last_updated: "2026-09-12"
 
@@ -635,6 +639,7 @@ gaps:
     resolution_plan: "①补跑 daily_valuation 2026-09-10（akshare 全量，实测约 10h/次，D 日数据 D+1 落库属常态）；②视补跑结果决定是否重刷 09-09；③治理侧：daily_valuation_incremental 多次以 source=mock rows=0 空转通过却不告警——需给'增量任务 0 行成功'加告警（同族问题已在 news_sentiment_window 登记过）。"
     primary_alternative: "对拍/回测窗口可暂时用 09-08 与 09-11 权重插值，或按 symbol 复用最近有效日市值（需在消费侧显式标记口径）。"
     evidence: ".runtime/fetch_perf/fetch_perf_20260909.jsonl / _20260910.jsonl / _20260912.jsonl / _20260913.jsonl / _20260914.jsonl"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑：行数已恢复但主病灶未愈——daily_valuation FINAL 259238 行，close!=0 / amount!=0 / turnover!=0 命中 0 行（0.00%，全表跨 2026-08-01~09-17）；且 09-16/09-17 各仅 2000 行=又一次部分写入。幂等/断点续跑已落地（_load_valuation_complete_symbols 跳过已到窗口最新事实日且 pe>0 的标的，11h 批跑被杀后重跑只补未完成标的）+ 行情腿写前携带。列语义缺陷另立新条 daily_valuation_price_legs_zero_mislabeled（非 Nullable 列把无值写成 0 + ps_ttm 实为市盈率(静) + data_source 恒 local_valuation）"
     created: "2026-09-15"
     last_updated: "2026-09-15"
   # === 2026-09-15: stock_basic 基准宇宙无北交所（st-bsefix 会话回补批附带发现）===
@@ -691,6 +696,7 @@ gaps:
     resolution_plan: "不施工（本条仅登记留痕）。若后续方案 J 需要更长真值窗口，再评估 kline_sector_intraday 是否随 kline_sector 一并换源 tqcenter——属独立立项范围。"
     resolution_actual: "2026-09-15 st-circmv-synthcw-20260915：断供日 09-11/09-14 已由方案 J Phase 3 合成器回填（data_source='synth_sh' 流通股本加权，580 板块×241 根=139,780 行/日，逐板块分批写入，写前精准 DELETE 旧 synth_eq/synth_cw 幂等）；校准对拍（09-08/09-09 mootdx 真值）：行业段 8811-8814 corr 中位 0.9954-0.9990、地区 8802x 0.9953-0.9980 达标，概念段 8805-8809 0.85-0.95（成分回溯误差，见 sector_constituent_8803_8804_missing）。原 mootdx 真值行未被触碰（真值保护跳过）。"
     primary_alternative: "kline_sector（日线，tqcenter 源，2020-03 起六年半零缺日）可作低频校准真值；分钟级真值暂无替代。"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑：真值断供仍成立且需新增一项风险登记——按 data_source 分组，2026-09-10 之后 tdx 零行，09-11/09-15 全部是 synth_sh（279,560 行）、09-14 是 synth_eq（139,780 行）各 580 code。即库内合成行冒充真值外观，消费方不按 data_source 过滤即会把方案 J 合成值当实测真值使用（方案 J 已如实标记，风险在下游不自知）。intraday_sector 档期 5 任务空转的停用建议见 tasks 片段第 5 条；哨兵需 source_min_rows（按 data_source 设行数地板）方能机械分辨"
     evidence: "kline_sector_intraday 近 12 日序列：09-07=727/315799、09-08=727/304228、09-09=727/295983、09-10=563/37857、09-11 起无；max(trade_date)=2026-09-10"
     created: "2026-09-15"
     last_updated: "2026-09-15"
@@ -767,6 +773,7 @@ gaps:
     impact: "逆势榜卡2 永久降级（设计内 fail-closed 不出伪榜）。"
     resolution_plan: "资金流采集独立立项（THS/东财板块资金流源评估）；接入后卡2 自动恢复（注入位已留）。"
     primary_alternative: "无（卡2 降级为设计内行为，不影响其余三卡）。"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑：普查 BRK-029 的从未有一行/假通道表述已失效——现 FINAL 1467 行、sector_type=industry、90 板块、覆盖 4 个交易日（2026-09-15 17:27:13 → 2026-09-18 15:06:22），哨兵 lag=0 breach=false。通道 09-15 已建成（采集器 scripts/data/collect_sector_fund_flow.py + 计划任务 ZephyrAlpha_IntradayFundFlow 五时点）。残余=历史不可回补（THS 仅即时口径），建议改判历史永久不可得 + 未来逐日累积。另注：本表哨兵行仍带 allow_empty: true，而它 09-15 之前正是 0 行状态 → 白名单曾把永久无数据洗成永久无告警，是 BRK-046 的活体证据"
     evidence: "SELECT max(trade_date), countIf(trade_date='2026-09-11') FROM sector_fund_flow → 1970-01-01, 0"
     created: "2026-09-15"
     last_updated: "2026-09-15"
@@ -818,6 +825,7 @@ gaps:
     root_cause: "竞价窗口(9:15-9:25)数据仅 live 采集产生：miniqmt 时代只有'采集链 09:15 前活着'的日期有货（2026-06 起共 40 密集日；盘后回补通道不含盘前时段=结构性缺口）。查历史竞价数据从这些口子走：①空窗日回灌 scripts/backfill_auction_snapshot_history.py（防覆盖闸，源=tick_data 竞价窗口）；②竞价'末态价'=kline_1min 首 bar open（2021-09 起精确，量=混合口径需 40 真值日标定，未立卡）；③2015-2021 用日线 open 代理。**竞价'过程'数据（9:15-9:25 挂撤单序列）任何渠道都不存在，只能自 2026-09-18 桥流（tick_depth_5）起逐日积累**。详见 docs/_working/auction_bridge_switch_mining_2026_09_17.md §8"
     resolution_plan: "空窗日已全部回灌；1min 首 bar 标定研究立卡后置（40 真值日=2026-06 起密集日）；9/15 及 7/8 月缺采日永久缺失（任何渠道不可回）"
     resolution_actual: "2026-09-17 桥接切换施工批（commit 92812a31a0）：回补 32 空窗日 16.6 万行零失败，5 日已有原产被闸跳过；auction_book/auction_snapshot 此后由 qmt_bridge 派生持续累积"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑：FINAL 251,598 行 / 47 个密集日（2026-06-01~2026-09-16；普查记 40 日已增至 47）→ 逐日累积中，历史仍不可回补（9:15-9:25 挂撤单序列任何渠道都不存在）。样本充分性说明：若 FF-06 竞价信号按 REG-VALM-001 同线判据（桶内 n>=30 且滑点均值 <=20bp→valid / <=40bp→pending / >40bp→noise），按每因子每日一观测口径需 >=30 个交易日（现 47 日已达门槛），缺的是 2026-06 前的历史深度而非天数；按标的乘日口径样本充足。判据请 FF-06 侧立卡后回填"
     created: "2026-09-17"
 
   # === 2026-09-17: kline_etf_60min 深度窗口缺口（数据矿脉盘点 st-datavein-20260917，工单移交数据线）===
@@ -880,6 +888,7 @@ gaps:
     root_cause: "采集任务活（max(ingest_ts)=2026-09-17 仍逐日跑）但源端数据停于 2026-07-31（lag=49d，7579 万行存量无损）——疑似省水文平台停更/接口换版。属『任务活着但拉不到新数据』型半死管线，哨兵此前未覆盖本表（按 ingest_ts 判活会漏检）。"
     resolution_plan: "人工核源（省水文站点页是否改版/换域名）；若换版走 data_source_onboarding_sop 换源重挂；若确认平台退役按 F4 先例『平台停更留痕』降级留史。"
     primary_alternative: "相关表 alt_sz_reservoir_rain_day/month 与 station 同源待一并核查。"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑确认半死管线仍成立：FINAL 75,159,520 行，max(tdate)=2026-07-31（业务日）而 max(ingest_ts)=2026-09-18 11:02 UTC（采集日）→ 业务滞后 49 天、采集滞后 0 天。近三次灌入 09-14 8,400,000 行 / 09-15 66,660,000 行 / 09-18 99,520 行，拉回的最大业务日仍是 07-31 → 源端确无 8 月后数据（非解析失败，解析失败不会落 99,520 行）。该表在 data_supply_sentinel.yaml 中根本没有阈值行（实跑 check_tables: checked 35 / breached 0），业务日期新鲜度片段见 lanes/datagap_sentinel_yaml_fragment.yaml 第①腿。同族 rain_day / rain_month / station 待一并核查"
     created: "2026-09-18"
 
   # === 2026-09-18 红蓝夜验收补登（st-redblue-night-20260918 R5①：修复「声称已登记但实际缺失」）===
@@ -896,6 +905,7 @@ gaps:
     root_cause: "SHFE 官网仓单归档接口自 2025-12 起 404（ak.futures_shfe_warehouse_receipt 实测 2026-09-18 复现），provider 归档窗口硬界 [_SHFE_ARCHIVE_START=2014-05-19, _SHFE_ARCHIVE_END=2025-11-30]；库内 SHFE 维度最后数据 2025-11-17（901,911 行无损），CZCE 维度日更正常至 2026-09-17。表级哨兵 max(trade_date) 由 CZCE 满足，SHFE 维度停更被表级新鲜度掩盖（同一张表内单维度停更盲区）。"
     resolution_plan: "换源=SHFE 官网周报页/期货仓单日报新端点（data_source_onboarding_sop 换源流程），或按 F4 先例『平台停更留痕』降级留史；换源后 provider _SHFE_ARCHIVE_END 顺延。"
     primary_alternative: "SHFE 901,911 行历史在库无损；CZCE 27 品种日更在续，产业链 ig_node_binding 仓单绑定（8 条）均挂 CZCE 品种，不受 SHFE 停更影响。"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑并写死结论：FINAL 分组 CZCE 1,980,170 行至 2026-09-18（当天，日更正常）、SHFE 901,911 行至 2025-11-17 后无 → **SHFE 维度 2025-11-18 起历史永久不可回补**（官网归档接口 2025-12 起 404 + provider 归档硬界 _SHFE_ARCHIVE_END=2025-11-30），后人勿再试。新增盲区类型：表级哨兵 max(trade_date) 由 CZCE 满足，实跑本表 breach=false / lag_days=0，即单维度停更被表级新鲜度完全掩盖 → 哨兵需 dimension_filter（(表,维度) 粒度）方能治，已登记为机制需求"
     created: "2026-09-18"
 
   # ②J5 央行议息日历：管线活（ingest_ts 日更）但业务数据停更 323 天——哨兵 date_col=ingest_ts
@@ -912,6 +922,22 @@ gaps:
     root_cause: "akshare macro_bank_*（金十口径）11 央行议息接口源端 2025-10 起退役（E12 波1 决定性发现，退役波及面登记 10_data_source_candidates DS-CAND-021/022）：Fed 决议止于 2025-10-30、BOE 2025-09-18，2026 年全零行。管线本身日更活（全量幂等重拉，ingest_ts 新鲜），哨兵 date_col 配 ingest_ts 按采集时间判活——业务日期 decision_date 停更 323 天不可见（reservoir 同型『任务活着但拉不到新数据』盲区）。红蓝独立复拉实测：接口返回与库内容逐行一致（294 行，DB 忠实转写，非管线数据错）。"
     resolution_plan: "换源=东财 datacenter 宏观接口或各央行官网决议表（与 D3 宏观换源同配方）；换源批同步把哨兵 date_col 改 decision_date（业务时间锚）恢复真实新鲜度判定。"
     primary_alternative: "11 央行历史决议 2,386 行在库无损（1991/1970 起）；停更窗内决议值可按央行官网公告回补。"
+    verification_20260918: "st-ff-datagap 2026-09-18 复跑更正普查 BRK-038 的因果方向：普查称哨兵仍设 max_lag_days:2 会必然天天告警（噪音）——实跑 supply_sentinel.check_tables() 得 checked 35 / breached 0，本表 max_date=2026-09-18 lag_days=0 detail=ok，即**永不告警**（现配 date_col=ingest_ts 按管线存活判定，配置文件 L46-49 注释自述其理由）。真缺陷=业务日 decision_date 停更不可见：FINAL 3086 行 / 11 央行，max(decision_date)=2025-10-30（fed/boj 止 10-30、boe 09-18、pboc 更停在 2019-11-20）。换源按总包 R-F 前裁双源并接（Fed FOMC 权威主源 + 东财国内备源，两源都做 G 盘原文快照），任务片段与 decision_date 口径片段已出（tasks 片段第 2-3 条、sentinel 片段第①腿）；按 decision_date 配阈值后会立即告警且是**真阳性**，不是噪音"
     created: "2026-09-18"
 
+  # === 2026-09-18: daily_valuation 行情腿以 0 值形态存在 + 列语义失真（st-ff-datagap 复跑新发现）===
+  - id: "daily_valuation_price_legs_zero_mislabeled"
+    table: "c1_market.daily_valuation"
+    gap_type: "upstream_data_corruption"
+    start_date: "2026-08-01"
+    end_date: ""   # 持续中——写侧口径缺陷，非日期窗口
+    date_column: "trade_date"
+    detection_threshold: 0  # 结构性：非零率判据哨兵尚不支持
+    status: "open"
+    root_cause: "该表是行情腿+估值腿复合表，唯一在跑的写者是 akshare 百度估值链路（fallback 里的 miniqmt/local_valuation 均无实体：全仓 grep local_valuation 仅命中本 provider 文件与 DDL DEFAULT）。其 _fetch_valuation_one_symbol 对 9 个行情腿列（open/high/low/close/preclose/volume/amount/turnover/pct_change）传 None，而 DDL 这些列是非 Nullable Decimal/UInt64 → 落库成 0，即无值以合法数值形态进闭环。另两处失真：ps_ttm 列写入的是 akshare 指标市盈率(静)（该函数指标映射处自述 AKShare 无 PS，用静态PE替代）；data_source 因 DDL DEFAULT 恒为 local_valuation，而真实写者是 akshare 链路（出处标注失真）。"
+    impact: "实测 FINAL 259238 行中 close!=0 / amount!=0 / turnover!=0 命中 0 行（0.00%）。消费侧已知规避（api_server.py:206 注明价格列全 0 不可用、:265 turnover 全 0 暂无真源→None），故不阻断他人；但任何新消费方直读即中招——流通市值权重 amount/turnover 已被此坑过一次（见 stock_indicator_circ_mv_outage 条目）。0 是错数不是缺数，比空表危险（R-014 同判据）。"
+    resolution_plan: "本车道已落地 provider 侧止血（行情腿写前携带 + 宽窗重采幂等/断点续跑）；口径裁定三选一交总包/Owner（A1 9 列改 Nullable，推荐；A2 行情腿由 kline_daily 同步；A3 摘除 9 列=净删列 Owner 门位）——见 adjudications/req_datagap_01.md 议题 A。"
+    primary_alternative: "行情/换手一律取 kline_daily 与 stock_indicator（circ_mv 已按股本反推法回填）"
+    evidence: "lanes/datagap_corrupt_rows.md §0/§4（含复跑 SQL 与输出）"
+    created: "2026-09-18"
 last_updated: "2026-09-18"

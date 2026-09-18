@@ -1,0 +1,112 @@
+# datagap 车道 · data_supply_sentinel.yaml 合并片段（单一写者制：待总包转 z-failopen 合并）
+# 来源: docs/_working/fullflow_campaign/lanes/datagap_sentinel_yaml_fragment.yaml
+# 车道: st-ff-datagap-20260918  日期: 2026-09-18
+# 本车道禁直改 src/zephyr/data/config/data_supply_sentinel.yaml（z-failopen 正在改 BRK-046 allow_empty）。
+#
+# 实测依据（2026-09-18 直接调用 zephyr.data.supply_sentinel.check_tables 的返回）:
+#   checked 35 / breached 0 / ok True
+#   c1_market.rate_decision_calendar     max_date=2026-09-18 lag_days=0 breached=false  <- 业务日停更 323 天不可见
+#   c1_market.futures_warehouse_receipt  max_date=2026-09-18 lag_days=0 breached=false  <- SHFE 维度停更 305 天不可见
+#   c1_market.sector_fund_flow           max_date=2026-09-18 lag_days=0 breached=false  <- 已恢复但 allow_empty 仍开着
+# 覆盖率实测：本簇 14 张表中 11 张在哨兵配置里**完全没有阈值行**（六向之"⑤哨兵在岗"=0）：
+#   index_valuation_daily / daily_valuation / northbound_hold_snapshot / alt_sz_reservoir_level /
+#   kline_sector_intraday / auction_snapshot / edb_data / macro_data /
+#   c3_fundamental.dividend / c3_fundamental.audit_opinion / c3_fundamental.rights_issue
+# 已覆盖仅 3 张：futures_warehouse_receipt / rate_decision_calendar(按 ingest_ts) / sector_fund_flow
+#
+# 合并方式：把下面 tables 列表里的每个条目直接追加进 data_supply_sentinel.yaml 的 tables 列表即可
+# （check_tables 按列表逐条判定，同一表允许多条 = 管线存活腿 + 业务新鲜度腿，不冲突）。
+tables:
+  # --- ①业务日期新鲜度腿：治"任务活着但拉不到新数"（BRK-040/038 实证）---
+
+  # 深圳水库水位：实测 max(tdate)=2026-07-31、max(ingest_ts)=2026-09-18，lag=49d / 采集 lag=0d
+  - table: c1_market.alt_sz_reservoir_level
+    date_col: tdate          # 业务事实日；禁配 ingest_ts（本表按采集时间判活必然漏检，已实证）
+    max_lag_days: 40         # 源为月末快照（07-31 是月末），40 天容忍发布延迟；>40 = 真断供
+    past_only: true
+
+  # 央行议息日历：改按 decision_date（业务时间锚）。
+  # 合并后本表会**立即告警且是真阳性**（实测 max(decision_date)=2025-10-30，停更 323 天）。
+  # 普查称"天天告警=噪音"方向相反：现配 ingest_ts 才导致永不告警。
+  # 若换源（Fed FOMC + 东财）落地前要先止噪，只可临时把 max_lag_days 提到 400，禁删本行。
+  - table: c1_market.rate_decision_calendar
+    date_col: decision_date
+    max_lag_days: 75         # 11 央行合计每 6-8 周必有决议；换源后未来预约行使 past_only=false 成立
+    past_only: false
+
+  # 期货仓单——维度盲区（实测：CZCE 至 2026-09-18 正常，SHFE 停于 2025-11-17，表级哨兵 lag=0 不报）
+  # 现行为 trade_date/max_lag_days=10/past_only=true 保留不动（它守的是"表有没有新行"）。
+  # 本车道**不产出必然永真的假阈值行**，改登记机制需求：
+  #   机制需求 A：tables[] 增加可选 dimension_filter（如 "exchange = 'SHFE'"），
+  #             使 (表, 交易所/维度) 粒度可判停更；
+  #   机制需求 B：或 tables[] 增加可选 source_min_rows（按 data_source 设行数地板），
+  #             同治 kline_sector_intraday 的 synth_* 冒充 tdx 真值问题。
+  # 二者任一落地前，BRK-039 型单维度停更与合成行冒充真值都不可见。
+
+  # --- ②缺失覆盖腿（⑤哨兵在岗=0 的 11 张表，按业务锚配）---
+
+  - table: c1_market.index_valuation_daily
+    date_col: trade_date
+    max_lag_days: 7
+    past_only: true
+    # 追加机制需求（哨兵当前不支持，先登记，别配假行）：
+    #   computed_non_null_ratio: {cols: [cape_5y, pe_pct, erp], min_ratio: 0.9}
+    # 否则 2026-09-13 那次"计算列整表归零"会在哨兵全绿下再次发生（实测 NULL 100%）。
+
+  - table: c1_market.daily_valuation
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+    # 追加机制需求：value_non_zero_ratio: {cols: [close, amount, turnover], min_ratio: 0.95}
+    # 当前实测非零率 0/259238=0% → 该判据一旦落地即红，属**真红**（错数进闭环），
+    # 禁为过哨兵降级断言（验收规范 §2 诚实条款）。
+
+  - table: c1_market.northbound_hold_snapshot
+    date_col: trade_date
+    max_lag_days: 120        # 季度末快照表，非日频（实测 max=2026-06-30）
+    past_only: true
+
+  - table: c1_market.kline_sector_intraday
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+    # 本行只能证明"表有行"，不能证明"有真值"（09-11 起全是 synth_* 合成行）→
+    # 真值判定依赖上面的机制需求 B（source_min_rows）。
+
+  - table: c1_market.auction_snapshot
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+
+  - table: c1_market.macro_data
+    date_col: report_date
+    max_lag_days: 45         # 实测 max=2026-09-18（当天），edb_data 退役后的主宏观源
+    past_only: true
+
+  - table: c3_fundamental.dividend
+    date_col: announce_date
+    max_lag_days: 30         # 实测 max=2026-07-01（8/9 月零行）→ 合并后立即真告警，非噪音
+    past_only: true
+
+  - table: c3_fundamental.audit_opinion
+    date_col: announce_date
+    max_lag_days: 240        # 年报季脉冲披露，窗口必须宽；实测 max=2026-05-29
+    past_only: true
+
+  - table: c3_fundamental.rights_issue
+    date_col: announce_date
+    max_lag_days: 240        # 实测 max=2026-06-30
+    past_only: true
+
+  # c1_market.edb_data：**故意不设阈值行**。iFind 2026-08-14 退役、永久 0 行，
+  # 设了就是逼后人去填一张永久无源的表；禁删表=净删门位，故在此以注释留痕。
+  # 若 z-failopen 给 allow_empty 白名单加宽限，请同时要求"allow_empty 必须携带 gap_id
+  # 关联 known_data_gaps 台账条目"——否则白名单会把"永久断源"洗成"永久静默"，
+  # sector_fund_flow（现带 allow_empty: true，而它 09-15 之前正是 0 行）就是活例。
+
+  # --- ③禁配清单（写明不要这样做，防后人走回头路）---
+  # 禁 date_col: ingest_ts 用于任何"业务事实"表：ingest_ts 新鲜只证明进程活着。
+  #   本簇 3 个活例（alt_sz_reservoir_level / rate_decision_calendar /
+  #   futures_warehouse_receipt）全都是 ingest 新鲜而业务数据停更 49 / 323 / 305 天。
+  # 禁 allow_empty: true 叠加在"曾有数据后断源"的表上（须与 gap_id 绑定才允许）。
+  # 禁为本簇任何一张表写"永真阈值"来让哨兵看起来有配（恒真门禁 = 裁定#325 反例）。

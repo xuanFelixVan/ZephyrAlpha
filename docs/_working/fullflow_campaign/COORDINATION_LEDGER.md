@@ -202,6 +202,7 @@ python 进程数 **80-84 个**（16 个代理各自派生 pytest/git/python 子�
 
 | 编号 | 车道 | 主题 | 状态 |
 |---|---|---|---|
+| req_datagap_01 | st-ff-datagap-20260918 | 三议题：**A** daily_valuation 9 个行情腿列的无值表达口径（实测 FINAL 259238 行 close/amount/turnover 非零 0 行；A1 改 Nullable 推荐 / A2 由 kline_daily 同步 / A3 摘列=净删门位）；**B** 两份片段合并授权（lanes/datagap_sentinel_yaml_fragment.yaml 目标文件归 z-failopen、lanes/datagap_tasks_yaml_fragment.yaml 目标文件归 z-dag，本车道按单一写者制未直改）；**C 因果链锁定**：BRK-054（strict_mode=false + dlq_enabled=false + runtime drift 未实现）正是 BRK-034（计算列被抹 NULL 100%）与 N-1（0 值伪装合法数值）能落库且长期不可见的结构性原因，**不补 DLQ 本簇修完仍会复发**——本车道只挡住同表多写者互相抹值，挡不住新整窗重灌语义/列类型放宽/新写者接入。另报普查失效 4 条：BRK-029（sector_fund_flow 现 1467 行，假通道已愈）/BRK-034（双行 0 组，恶化为归零）/BRK-035（库内 0 撞码，拦阻在位）/BRK-038（哨兵实跑 breached 0，非噪音而是盲区）。证据 lanes/datagap_corrupt_rows.md、lanes/datagap_source_triage.md、adjudications/req_datagap_01.md | 待裁（车道未停等：止血与片段已落地） |
 | req_tdchainJ_01 | st-ff-tdchainJ-20260918 | 裁定#304 三方撞号 tombstone 治理（总包预裁=采纳、总包统一执行；三方实证已交：regcal 保留#304/做T砍改号#331/切换器分支档声称） | 预裁已给·待总包执行 tombstone |
 | req_tdchainJ_02 | st-ff-tdchainJ-20260918 | #306 红队条款① family_registry 立案（总包预裁=立案；立案书三要素已交：生成器落点 standards_governance/条目来源 standards.yaml+governance_family 词表/计数字段 total_families） | 预裁已给·待总包批+分配裁定号 |
 | req_tdchainJ_03 | st-ff-tdchainJ-20260918 | kline_index_intraday 新表立项（总包预裁=立项、residG 执行；DDL 规格已交 lanes/tdchainJ_kline_index_intraday_spec.md） | 预裁已给·待总包转交 residG |
@@ -209,6 +210,7 @@ python 进程数 **80-84 个**（16 个代理各自派生 pytest/git/python 子�
 | req_wirerecon_01 | st-ff-wirerecon-20260918 | **BRK-020 落地地雷 + 数据质量缺陷转 z-land**：G1 producer 与其测试 untracked、broker 四个接线方法 unstaged（按现 staged 面落地即断整条 ex_core import）；G4 未成交终态真单实证 `slippage_bps=-10000.0` 污染 TCA 回流入口（`eef42ae008` 已把台账从 0 行打通到 1 行，见案卷 §1 E3）；G2/G3 验收仪两处检测法缺陷。处方=file:line+改法已落 `lanes/wirerecon_BRK020_gap.md` | 待总包转 z-land（本车道未碰 ex_core/pf_alloc） |
 | req_wirerecon_02 | st-ff-wirerecon-20260918 | **对账域六件实现并存且全部零程序消费**（position/ex_core×2/trading×2/orchestrator），提请按 R-002 同原则裁"盘中=position 事件入口（本车道已 Fail-Closed）+ 日终=recon_runner"，并把 `reconciliation_loop` 从 GOMAP `families.L5_selfheal` 摘出（普查 BRK-017 系误归因，它调的是编排器自完整性 5 不变量） | 待裁·待总包 |
 | req_wirerecon_03 | st-ff-wirerecon-20260918 | 日终对账调度片段（`recon_runner.run_daily_reconciliation` / `eod_reconciliation` 需 15:30 档期）+ `execution_report` 的 `data_supply_sentinel.yaml` 阈值行——**tasks.yaml 归 residG 单一写者**，本车道不代写，片段待 G1 落地后另批 | 待总包转 residG |
+| req_dag_01 | st-ff-dag-20260918 | **排班车道五件跨权登记**（A1 altdataF 品类片段载体 docs/03_modules 全员禁写；A2 instL/minelineI 两片段文件实测不存在=催重出；A3 pipeline_events --due 月频挂载属 z-land/pf_alloc 载体；A4 kline_index_intraday 建表 DDL 归总包（采集条目已受控落地 tasks.yaml）；A5 两项机制地雷：.gitignore `scripts/data/*` 静默排除新建永久工具 + dataflow 注册表无表级血缘故 BRK-050 不可自闭） | 待裁·待总包（本车道未停等：可落部分已全部落地） |
 
 **R-007 · Wave 1/2 停车收割（总包亲执，2026-09-18 18:1x）**
 - 停车实测：车道全停后仅剩 5 进程 / 0.5GB / CPU 26-35%，6 分钟内无文件写入 → **烧钱已止**。
@@ -366,6 +368,88 @@ python 进程数 **80-84 个**（16 个代理各自派生 pytest/git/python 子�
     "对冲合约选 IM" 标为**全清单最弱一条**（纯结构推断、未做 beta 回归实测）。
 - 三清单收工口径：**（A）需 Max 裁定** / **（B）需 Max 执行** / **（C）需 Max 复查**，
   均带完整路径（文件:行号 / 命令 / 证据位置），使 Owner 切 Max 后**直接开工不需重新勘察**。
+
+**R-019 · ⚠️ 断点普查来源系统性陈旧（z-wire-safety 实证）—— 85 条断点数不能当基线用**
+- 实测：本簇 7 条断点里 **4 条记载已陈旧**。`BRK-004`/`BRK-005` 的 A3/A4 接线**早在 2026-09-16 `49dde8fda5` 就已在 HEAD**，
+  普查却按 GOMAP `pipeline.disconnected` 报成"零消费"。
+- **根因（结构性，非一次性错误）**：`config/governance_operations_map.yaml` 的 `pipeline.disconnected` 是
+  **人工语义层**（生成器保留、**落地后无刷新义务**）→ 接线一旦完成，该字段不会自动更新，于是"已修"被持续报成"待修"。
+- 影响面：普查 §A（19 条孤儿）与 §E（12 条死管线）**大量依赖 GOMAP 与蓝图注释** →
+  **这些条目的"待修"状态可信度低于 §B/§C/§D 里带 `grep`/SQL 直查证据的条目**。
+  叠加 R-013（BRK-017 误归因）与 R-016（前任声称"全绿"被推翻）→
+  **"85 条断点"是检出面上界，不是可靠基线；本轮"闭合率"分母不可信。**
+- **裁定：所有在飞与后续车道，施工每条断点前必须先复跑普查给出的原始证据命令**（普查每条都带了命令与实测输出，
+  照抄跑一遍 30 秒）。复跑不符者标"已闭合，建议关闭"并**回写普查该行**，禁按陈旧记载重复施工。
+  → 已要求把"施工前复测原始命令"作为一步写进验收规范（z-wire-safety 提交了 `req_wiresafe_01.md` 第④项，总包采纳）。
+- **已采纳并落地**：本裁定的载体 = 验收规范 §1 六向第①向"入口有料"补一条前置：
+  **"复测"先于"施工"** —— 断点的①向证据必须是**本次实跑**，不得引用普查登记的快照值。
+
+**R-020 · 总包指令被车道实测推翻（记为协议级更正，防后人沿用我的错）**
+- 我在 z-wire-safety 任务书里写"比例 `beta×0.5` 进 `config/crisis_gate.yaml`"。
+  车道实测：`src/zephyr/pf_alloc/crisis_gate.py:155` **对未知键是硬错** → 照我说的加会**当场打死危机闸主链**。
+  车道拒绝执行并改用 `config/paper_hedge.yaml` 独立载体（含 `IM` / `beta×0.5` / `real_channel_locked`）。
+- **裁定：车道抗命正确，予以确认。** 教训固化：**总包在任务书里给出的"改哪个文件"属结构推断，
+  未经读码验证；车道以实测为准，与实测冲突时服从实测并回报。**
+  → 后续任务书凡涉及"往某配置文件加键"，一律要求车道**先读该文件的未知键处理逻辑**再决定落点。
+- 同源第二条：`BRK-021`/`BRK-072` 的标的已由他道**未落地件**占据
+  （`src/zephyr/risk/paper_hedge_leg.py` + `config/paper_hedge.yaml` 实测 untracked）
+  → **总包须把这两件的落地权明确指派给一条车道**（原 z-residG 已停，其 E6 纸面对冲腿产物无人认领）。
+  → **指派给 z-land2**（其正在做落地接力，同一提交通道，避免并发写 `src/zephyr/risk/**`）。
+
+**R-021 · 假通道的一个新形态（值得永久化到门禁判据）**
+- z-wire-safety 在 BRK-066 实测：`host_resource_governor` 的旧 `probe()`
+  **恒返 `16000MB / 12.5% / OK`** —— docstring 自称用 psutil，全件零调用方。
+  即：**它不是"没接"，是"接了也不会报真值"，而且看起来在工作。**
+- 已修为实探 RAM + Windows commit charge（`GlobalMemoryStatusEx`）+ CPU，阈值零代码副本
+  （`alert_rules` 新增 `ALERT-SYS-003/004/005`），命中走既有通知板。
+- **通用判据（提请 Max 考虑立门禁）**：*"函数返回带单位的数值 + docstring 声称某数据来源 + 但该来源库/对象在函数体内未被引用"*
+  = 硬编码假通道嫌疑。本仓"全流通"验收第⑥向（失败会响）应把这类**恒真返回**列为必查项。
+- **同族第二例**：BRK-005 的看门狗旗标此前**只写不读**（`escalation_engine:383` 写，全仓零读方）
+  → 与 R-K6"假处置"同型：**写了不等于有人看**。已让 guardian 把它计作一条失效判据腿。
+
+**R-022 · 车道上报的待裁四项（z-wire-safety `req_wiresafe_01.md`）—— 总包裁定**
+- ①`BRK-021`/`072` 标的转交落地 → **裁定：转 z-land2**（见 R-020）。
+- ②`kill_switch_sim.py` 净删候选 → **裁定：不删，登记为 Owner/Max 门位项**（注册表净删=§7 门位）。
+  本轮只做"确立唯一入口"（已做：策略层 MOD-AU-004→路由层 MOD-AU-002→5 套本体三层已明，boot 同批注册策略层 + grep 型唯一性测试钉）。
+- ③**保命轨 `enabled:true` 盘内自动拉系统闸是否可接受** → **裁定：列入 Max/Owner 待裁清单（A 类），Flash 不签。**
+  理由：车道自己的判断准确 —— 默认启用属"加严"（不触 #321 禁止），但它**会在数据抖动时自动影响交易**，
+  是**资金影响面的生产流转**（宪法 §5 high 域门位）。"加严所以不必申请"这条规则**不适用于会主动动作的闸**：
+  加严免申请的前提是该改动只收紧"能不能做"，而不是系统**自己开始做某件花钱的事**。
+  → 本轮保持车道实现的**四道防误触发**（unknown≠失效 / 4h 证据视界 / 盘外只判不动作 / 连续确认），
+    但**不启用盘内自动拉闸**，等 Owner 判。
+- ④普查复测步进规范 → **采纳**（见 R-019）。
+- 未闭项如实记录：`respond()` 生产调用点仍 **0**；CB×9 未收敛；escalation L4→`respond()` 需改 human_gated 件；
+  BM-RC-12 锚点 DB 登记未做；`docs/03_modules/**` 禁写致 ALGO_FLOW 只能走内联形态。
+
+**R-023 · Wave 3 首批交工入账（z-wire-safety / z-datagap / z-failopen 三笔落地）**
+- 落地实测（截至 19:24，共 6 笔进 HEAD）：`7b451b7f76` 保命链批1 / `35690242e7` datagap 止血批 / `8a8a3f9290` 假通道收口。
+- **z-failopen 头号发现（P0 级假处置实例）**：`src/zephyr/data/scheduler.py:732-762 / 1376-1388` 的 CH 探活 CRITICAL 告警，
+  原实现=**先无条件置 `_ch_probe_alerted_dead=True` → 再 try notify → `except: pass`**；
+  而 `Alerter.notify` **本就不抛异常、以返回值表态** →
+  **告警从未落盘而闩已锁死，该进程余生不再重试**。
+  → 已改为 `_deliver_alert_with_latch`（真落盘才置闩、失败下轮重试）；DDL 缺失告警的 4h 去重戳同病同治。
+  → **可泛化缺陷类（提请 Max 考虑立门禁）**："**投递前先置去重/已处理闩**" ——
+    凡 `set_latch(); try deliver(); except: pass` 三段式都属此类，**且它在告警/熔断/自愈路径上时最致命**
+    （恰在最需要发声时静默）。全仓同类扫查已派工（见 R-024 车道编制）。
+- **普查可信度新增两条同型证据**（并入复查清单 §0）：
+  ①**漏计**：`except…pass` 普查口径 144（"次行偏移"启发式），AST 严口径（handler 唯一语句为 pass）实测 **261** → 普查不完备；
+  ②**归因放大**：`BRK-048` 报"5 处硬编码 fail-open 放行点"，实测是 **1 个定义 + 4 个消费点、同属 LSG `FAIL_OPEN_LAYERS={l6_observability,l7_validation}`**，
+    且 L1-L5 本就 fail-closed 并留有 decision 痕 → **1 个构造被报成 5 个独立风险点**（与 R-013 同型）。
+  ③普查所称 `BRK-029 sector_fund_flow` "从未灌入一行"**已不成立**（现实测 1467 行 / 4 快照日，被在途车道补线）。
+- **总包前置裁定被机械印证**：R-K/R-047 令"1405 处不得无差别改造"→ 登记册实测 `total_fail_open=1595`、
+  四档分布 hardcoded 5 / money_path_no_trace 176 / designed_with_trace 735 / undeclared 679，
+  **FF-14 独占 1027（64%）** → 该裁定的"多数是有意降级"判断成立。
+- **诚实入账两条负面**：①因加严而转红的测试 **0 条**（说明无既有测试依赖被吞行为 —— 这是好消息但也意味着
+  既有测试面**覆盖不到这些路径**，本身是缺陷）；②`allow_empty` 收口 11/12 后 breach **0→0**，
+  原因是那 12 张表当日**全部有数** → **白名单是过期死重量而非活风险**（收口动作正确，但收益是"消除未来盲点"而非"发现当下断供"）。
+- ⚠️ **总包自记保护网漏洞（R-007 过度声称）**：我曾在 R-007 写"自此任何后续操作均可回滚，零丢失风险"，
+  **但归档脚本只覆盖了 staged 与 worktree-modified 文件，未跟踪文件没进归档**。
+  而未跟踪态**恰恰是最易被 sweep 掉的形态**，且本次未跟踪区里有 `execution_report_producer.py`（G1 地雷正主）、
+  `owner_regime_switcher/` 7 件、`alert_webhook_dispatch.py`、`generate_standard_family_registry.py` 等成件产出。
+  → **已补洞**：82 件未跟踪（除 `c4_pdf_cache`）全量镜像至 `.runtime/tmp/ff_quarantine/untracked_snapshot/`
+    + `MANIFEST_untracked.json`（67MB），三个关键件核验在内。
+  → **R-007 的"零丢失风险"表述作废**，更正为"staged/worktree/untracked 三面已全镜像"。
+  → 教训：**"归档完成"必须以"覆盖三种 git 状态"为判据，不能只数 `git diff` 出来的那两面。**
 
 ## 7. Owner 门位（登记不催，禁自行执行）
 
