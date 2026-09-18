@@ -1857,7 +1857,8 @@ def main() -> int:  # noqa: C901
                 text = registry_text(registry)
                 expected = content_sha256(out.read_text(encoding="utf-8")) if out.exists() else None
                 out.parent.mkdir(parents=True, exist_ok=True)
-                safe_write_text(out, text, expected_base_sha256=expected)
+                # 见 73f2e54339 先例：目标受 .gitattributes eol=lf 钉定，缺省 newline=None 在 Windows 会把 \n 翻成 CRLF（safe_write_text 回读校验走 universal-newlines 看不见）
+                safe_write_text(out, text, expected_base_sha256=expected, newline="\n")
                 disk_after = yaml.safe_load(out.read_text(encoding="utf-8")) or {}
                 drifts_after = detect_registry_drift(list(disk_after.get("entities") or []),
                                                      list(build_registry(existing_path=out, output_path=out)["entities"]))
@@ -1903,7 +1904,7 @@ def main() -> int:  # noqa: C901
     if out.exists():
         expected = content_sha256(out.read_text(encoding="utf-8"))
     out.parent.mkdir(parents=True, exist_ok=True)
-    safe_write_text(out, text, expected_base_sha256=expected)
+    safe_write_text(out, text, expected_base_sha256=expected, newline="\n")
     print(json.dumps({"ok": True, "total_entities": registry["total_entities"], "output": str(out)}, ensure_ascii=False))
     report_gate_declaration_gaps(list(registry["entities"]))  # C-11 留痕（不进 JSON 结果契约，不动退出码）
     return 0

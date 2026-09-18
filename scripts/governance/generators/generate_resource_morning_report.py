@@ -451,7 +451,8 @@ def write_markdown(text: str, output: str | Path) -> Path:
     out = Path(output)
     out.parent.mkdir(parents=True, exist_ok=True)
     expected = content_sha256(out.read_text(encoding="utf-8")) if out.exists() else None
-    safe_write_text(out, text, expected_base_sha256=expected)
+    # 见 73f2e54339 先例：目标受 .gitattributes eol=lf 钉定，缺省 newline=None 在 Windows 会把 \n 翻成 CRLF（safe_write_text 回读校验走 universal-newlines 看不见）
+    safe_write_text(out, text, expected_base_sha256=expected, newline="\n")
     return out
 
 

@@ -215,8 +215,9 @@ def write_report(path: str, meta: dict[str, Any], plan: list[dict[str, Any]],
         "recalc_rows": plan,
         "skipped_rows": skipped,
     }
+    # 见 73f2e54339 先例：目标受 .gitattributes eol=lf 钉定，缺省 newline=None 在 Windows 会把 \n 翻成 CRLF（safe_write_text 回读校验走 universal-newlines 看不见）
     safe_write_text(path, yaml.safe_dump(report, allow_unicode=True, sort_keys=False),
-                    encoding="utf-8")
+                    encoding="utf-8", newline="\n")
 
 
 def main() -> None:
