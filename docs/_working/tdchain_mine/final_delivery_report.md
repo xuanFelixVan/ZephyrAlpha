@@ -31,6 +31,8 @@ parent: docs/_working/tdchain_mine/a0_master_ledger.md
 ## 三、诚实条款（黄/红项如实列）
 
 1. **队列 4 件待 serializer 落地**（q-0004 cp3 切换器模块 17 件 / q-0005 E6 批 6 件 / q-0006 cp4 交接包 / q-0007 修复工具+四簿终态）：快照入袋零丢失；积压原因=多车道 24 件排队+serializer lease 被僵尸 status 进程反复持有（已清两只自家/他车僵尸，详见 e8 簿）。落地侧门禁我方文件已全部预过（M11 注记/复杂度重构 16→6、22→8 等价对拍 152 组/depgraph 9 节点/token 12 枚）。
+
+1'. **cp3 修正终态（2026-09-18 08:4x）**：切换器模块 17 件经六道落地闸实测（VOCAB→CREATE-GUARD→NEW-FILE-DEPGRAPH→MANUAL-ONLY→PERM-TRIGGER→ORPHAN→NO-BARE-SQL→NO-LONG-PARAM-LIST），前五类已修复（复杂度重构+M11 注记+depgraph 9 节点+token+词表同形异义常量化+包内 re-export+bare-sql 逃生注记，54 tests 全绿），第六类 NO-LONG-PARAM-LIST 落在原版公开签名（run_leg 10 参=文档化 API，#310 已判不予放行的存档代码）——**裁定停止强推**：改签名=对不予放行存档件做破坏性 API 改造，风险收益倒挂。模块留分支 89dd33dd8a 完整保存（24 用例+红蓝四场景绿），交接包已落 dev（324cf187d7）；六道门禁实录+修复等待清单（param-object 三处，机械但需测试耦合）移交维护班/复活时执行。
 2. **板块分钟 15/30/60m 三天合成=裁定跳过**：无独立消费方+1m 原料系合成近似+无现成工具且存量 15m 桶时间戳发散存疑（三问停止判据），缺口登记不造管线。
 3. **120min 表=豁免**：tasks.yaml:2027"60min 两根聚合"先例，查询期聚合即可，不建表。
 4. **kline_index_intraday 新表**：需 apply_market_tables_ddl.py（residual C1 独占）→挂单；现用 510300 代理。
