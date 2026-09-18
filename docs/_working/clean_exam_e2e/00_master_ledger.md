@@ -4,7 +4,7 @@ title: 清洁+补考+E2E冒烟战役总簿——环节全景（已封矿）/波�
 owner: ZephyrAlpha-Owner
 session: st-cleanexam-20260918
 date: 2026-09-18
-status: construction_running
+status: closing
 ---
 
 # 清洁+补考+E2E 冒烟战役 · 总簿

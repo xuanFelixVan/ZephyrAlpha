@@ -32715,6 +32715,10 @@ creation_tokens:
   token: altdata-line-market-road-freight-index-20260918
   created_by: st-datapack-20260918
   capability: altdata_line
+- file: scripts/industry_graph/build_node_bindings.py
+  token: altdata-line-build-node-bindings-20260918
+  created_by: st-igchain-20260918
+  capability: altdata_line
 - file: docs/_working/residual_construction/pending_items_plan.md
   token: residual-construction-plan-pending-items-plan-20260917
   created_by: st-residual-20260917
@@ -32962,6 +32966,10 @@ creation_tokens:
   capability: clean_exam_e2e
 - file: docs/_working/clean_exam_e2e/env2_makeup_exams/2026-09-18-makeup-results-report.md
   token: clean-exam-e2e-2026-09-18-makeup-results-report-20260917
+  created_by: st-cleanexam-20260918
+  capability: clean_exam_e2e
+- file: docs/_working/clean_exam_e2e/env3_e2e_bridge/seg2_execution_log.md
+  token: clean-exam-e2e-seg2-execution-log-20260918
   created_by: st-cleanexam-20260918
   capability: clean_exam_e2e
 - file: schemas/categories/cohort_daily_ledger.py
