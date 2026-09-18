@@ -1,0 +1,38 @@
+# [REGISTRY] config/intel_keywords.yaml —— intel_harvester 关键词词表（WO-①-03，净零增长声明：替代 intel_harvester.py 硬编码正则）
+# [MODULE] MOD-AUTO-L3-001(暂编号) | 真源消费者=scripts/automation/intel_harvester.py（load_keyword_stems → compile_keywords）
+# [INVARIANTS] 词表只做命中标记不做硬剔除（feed 已限定 q-fin，未命中条目进收件箱兜底段）;
+#   flags 仅支持 IGNORECASE（大小写不敏感=行为等价锚点）;
+#   静态清单红线：stem_count 计数字段由校验器核对（validate_intel_registry.py），禁手工漂移
+# 登记流程：追加/修改词干 → python scripts/automation/validate_intel_registry.py 自检绿 → 提交
+# [TTL] permanent
+stem_count: 28
+flags: IGNORECASE
+stems:
+  - factor
+  - alpha
+  - momentum
+  - regime
+  - risk parit
+  - drawdown
+  - backtest
+  - overfitting
+  - reinforcement
+  - LLM
+  - agent
+  - microstructure
+  - liquidity
+  - volatil
+  - hedg
+  - portfolio
+  - markowitz
+  - extreme value
+  - option
+  - derivative
+  - trading
+  - market mak
+  - skew
+  - tail
+  - sentiment
+  - crypto
+  - seasonality
+  - forecast

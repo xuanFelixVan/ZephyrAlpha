@@ -1,0 +1,36 @@
+# [REGISTRY] config/intel_sources.yaml —— intel_harvester 情报源注册表（WO-①-01）
+# [MODULE] MOD-AUTO-L3-001(暂编号) | 真源消费者=scripts/automation/intel_harvester.py（load_sources）
+# [INVARIANTS] 静态清单红线：本清单改动必须过 scripts/automation/validate_intel_registry.py 校验（schema/URL 格式/计数一致性）;
+#   礼貌抓取：politeness=UA 声明，官方端点优先，日 1 班;
+#   kind 扩展位：rss（现役直连 RSS/Atom）| rsshub（预留：route 经本地 RSSHub 实例拼 URL，
+#   v1 只允许注册、enabled=false 时采集侧跳过——抓取适配挂蓝图扩展位 intel_harvester_blueprint.md:25）;
+#   只搜不入册：本注册表只描述"搜什么"，不构成任何数据入册/上架授权（Owner 门，intel_harvester.py:8）
+# 登记流程：追加/修改条目 → python scripts/automation/validate_intel_registry.py 自检绿 → 提交
+# [TTL] permanent
+source_count: 4
+sources:
+  - source_id: arxiv-qfin-rm
+    kind: rss
+    url: http://rss.arxiv.org/rss/q-fin.RM
+    enabled: true
+    politeness: "Mozilla/5.0 (compatible; ZephyrAlpha-intel/1.0; research use)"
+    category: 风险管理
+  - source_id: arxiv-qfin-pm
+    kind: rss
+    url: http://rss.arxiv.org/rss/q-fin.PM
+    enabled: true
+    politeness: "Mozilla/5.0 (compatible; ZephyrAlpha-intel/1.0; research use)"
+    category: 组合管理
+  - source_id: arxiv-qfin-tr
+    kind: rss
+    url: http://rss.arxiv.org/rss/q-fin.TR
+    enabled: true
+    politeness: "Mozilla/5.0 (compatible; ZephyrAlpha-intel/1.0; research use)"
+    category: 交易
+  # ---- kind 扩展位（rsshub 预留实条：enabled=false 仅登记不采集，抓取适配未实现）----
+  - source_id: rsshub-wallstreetcn-live
+    kind: rsshub
+    route: /wallstreetcn/live/global
+    enabled: false
+    politeness: "Mozilla/5.0 (compatible; ZephyrAlpha-intel/1.0; research use)"
+    category: 华尔街见闻
