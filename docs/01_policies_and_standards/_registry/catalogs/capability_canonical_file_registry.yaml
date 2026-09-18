@@ -35029,6 +35029,10 @@ creation_tokens:
   token: deep-review-full-rpt-p76-20260917
   created_by: st-deeprev-20260918
   capability: deep_review_full
+- file: docs/_working/deep_review_full/morning_report_20260918.md
+  token: deep-review-full-morning-report-20260918-20260918
+  created_by: st-deeprev-20260918
+  capability: deep_review_full
 - file: scripts/backtest/translated/c4_fact_e293e217.py
   token: c4-fact-e293e217-bridge-20260918
   created_by: flash-nightbuild-20260918
@@ -35176,5 +35180,17 @@ creation_tokens:
   token: source-patrol-onboarding-checklist-20260918
   created_by: st-mineline-w304
   capability: source_patrol
+- file: config/intel_sources.yaml
+  token: intel-registry-intel-sources-20260918
+  created_by: st-mineline-w101
+  capability: intel_registry
+- file: config/intel_keywords.yaml
+  token: intel-registry-intel-keywords-20260918
+  created_by: st-mineline-w101
+  capability: intel_registry
+- file: scripts/automation/validate_intel_registry.py
+  token: intel-registry-validate-intel-registry-20260918
+  created_by: st-mineline-w101
+  capability: intel_registry
 
 di_seam_exemptions: []

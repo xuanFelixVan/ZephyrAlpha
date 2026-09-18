@@ -15,16 +15,21 @@
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 r"""
-对标：target_layer_vocabulary.yaml v1.0.0——target_layer 字段值体系多真源不一致修复
+对标：target_layer_vocabulary.yaml v1.1.0（裁定#335 收编）——target_layer 字段值体系校验
 职责：校验代码/测试中的 target_layer 赋值是否使用 target_layer_vocabulary.yaml 合法值
-     检测废弃值（D_DATA/基础设施/D_COMPLIANCE 等）并提示替换
+     检测废弃值（D_DATA/基础设施/D_COMPLIANCE 等）并提示替换；
+     检测别名值（v1.1.0 B 组三段式过渡：D_GOV/D_INFRA/D_EXECUTION/D_PORTFOLIO/
+     D_PLAN_ENGINE/D_SIGNAL/D_RESEARCH/D_INFRASTRUCTURE 等）→ WARNING 指向 canonical
 
 检测逻辑：
 - 扫描 src/ 和 tests/ 下 .py 文件
-- 正则匹配 target_layer\s*=\s*["'](D_[A-Z_]+|基础设施)["'] 模式
-- 校验值是否在 target_layer_vocabulary.yaml 的 values 或 deprecated_values 中
-- 废弃值 → warning + 建议替换
-- 未知值（不在 values 也不在 deprecated_values）→ error
+- 正则匹配 target_layer\s*=\s*["']((?:D[-_][A-Z_]+|基础设施))["'] 模式
+ （2026-09-18 裁定#335 治本：归位 docstring 承诺的 D_ 前缀限定，消 L1/L2/L3 层位误捕
+   13 假红；保留 D[-_] 连字符形态使废弃值防再发 WARNING 不脱落）
+- 校验值是否在词表 values / deprecated_values / values[].aliases 中
+- 废弃值 → warning + 建议替换；别名值 → warning + 指向 canonical
+- 未知值（三集合均不含）→ error
+- 启动自校：total_values 字段与 values 段实测数不一致 → error（防散文计数漂移复发）
 
 三层防线定位：Layer 2 — 检测（pre_commit/CI 手动运行）
 
@@ -75,23 +80,37 @@ VOCAB_PATH = (
     REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies" / "target_layer_vocabulary.yaml"
 )
 
-# target_layer 赋值正则（匹配 target_layer="D_XXX" 或 target_layer='D_XXX' 或 target_layer="基础设施"）
-_TARGET_LAYER_RE = re.compile(r'target_layer\s*=\s*["\']([^"\']+)["\']')
+# target_layer 赋值正则：仅捕 D_ 下划线/D- 连字符形态与中文废弃值，
+# 排除 L1/L2/L3 等异语义字段撞名（裁定#335，docstring 承诺归位）
+_TARGET_LAYER_RE = re.compile(r'target_layer\s*=\s*["\']((?:D[-_][A-Z_]+|基础设施))["\']')
 
 
-def load_vocabulary() -> tuple[set[str], dict[str, str]]:
-    """加载 target_layer_vocabulary.yaml，返回 (合法值集合, 废弃值→替换值映射)。"""
+def load_vocabulary() -> tuple[set[str], dict[str, str], dict[str, str], list[str]]:
+    """加载词表，返回 (合法值集合, 废弃值→替换值映射, 别名→canonical 映射, 自校错误列表)。"""
     if not VOCAB_PATH.exists():
         print(f"ERROR: 词表文件不存在: {VOCAB_PATH}", file=sys.stderr)
         sys.exit(EXIT_ERROR)
 
     data = yaml.safe_load(VOCAB_PATH.read_text(encoding="utf-8"))
     valid_values = {v["value"] for v in data.get("values", [])}
+    alias_map: dict[str, str] = {}
+    for v in data.get("values", []):
+        for a in v.get("aliases", []) or []:
+            alias_map[a] = v["value"]
     deprecated_map = {v["value"]: v.get("replacement", "") for v in data.get("deprecated_values", [])}
-    return valid_values, deprecated_map
+    selfcheck_errors: list[str] = []
+    declared = data.get("total_values")
+    if declared is not None and declared != len(valid_values):
+        selfcheck_errors.append(
+            f"词表自校失败：total_values 字段={declared} 与 values 段实测={len(valid_values)} 不一致"
+            "（散文计数漂移复发，按 §4 文档纪律修字段或修 values 段）"
+        )
+    return valid_values, deprecated_map, alias_map, selfcheck_errors
 
 
-def scan_files(valid_values: set[str], deprecated_map: dict[str, str]) -> list[dict]:
+def scan_files(
+    valid_values: set[str], deprecated_map: dict[str, str], alias_map: dict[str, str]
+) -> list[dict]:
     """扫描 src/ 和 tests/ 下 .py 文件，检测 target_layer 赋值。"""
     findings: list[dict] = []
     scan_dirs = [REPO_ROOT / "src", REPO_ROOT / "tests"]
@@ -124,6 +143,16 @@ def scan_files(valid_values: set[str], deprecated_map: dict[str, str]) -> list[d
                                 "detail": f"废弃值 '{val}'，建议替换为 '{replacement}'",
                             }
                         )
+                    elif val in alias_map:
+                        findings.append(
+                            {
+                                "file": rel,
+                                "line": line_no,
+                                "value": val,
+                                "severity": "WARNING",
+                                "detail": f"别名值 '{val}'（裁定#335 三段式过渡），新写入请用 canonical '{alias_map[val]}'",
+                            }
+                        )
                     else:
                         findings.append(
                             {
@@ -143,12 +172,20 @@ def main() -> None:
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻断 exit 0）")
     args = parser.parse_args()
 
-    valid_values, deprecated_map = load_vocabulary()
+    valid_values, deprecated_map, alias_map, selfcheck_errors = load_vocabulary()
 
-    print(f"\n[TARGET-LAYER] 词表合法值: {len(valid_values)} 个，废弃值: {len(deprecated_map)} 个", file=sys.stderr)
+    print(
+        f"\n[TARGET-LAYER] 词表合法值: {len(valid_values)} 个，废弃值: {len(deprecated_map)} 个，"
+        f"别名值: {len(alias_map)} 个",
+        file=sys.stderr,
+    )
     print("[TARGET-LAYER] 扫描 src/ 和 tests/ 下 .py 文件", file=sys.stderr)
 
-    findings = scan_files(valid_values, deprecated_map)
+    findings = scan_files(valid_values, deprecated_map, alias_map)
+    findings.extend(
+        {"file": str(VOCAB_PATH.name), "line": 0, "value": "-", "severity": "ERROR", "detail": e}
+        for e in selfcheck_errors
+    )
 
     if findings:
         errors = [f for f in findings if f["severity"] == "ERROR"]

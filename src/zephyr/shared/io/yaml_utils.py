@@ -43,6 +43,13 @@ from zephyr.shared.io.paths import REPO_ROOT
 # vocabulary YAML 默认目录（SSoT 真源目录）
 DEFAULT_VOCAB_DIR: Final[Path] = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "vocabularies"
 
+# 注册表 catalogs 目录（规则数据真源的另一落点）——裁定#335 结论⑥（W4b）新增：
+# 域→职责层映射属 register/catalog 而非 vocabulary，故不复用 DEFAULT_VOCAB_DIR。
+DEFAULT_REGISTRY_CATALOG_DIR: Final[Path] = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+
+# 域→responsibility_layer 映射真源文件名（消费方勿拼路径，传 None 即用本默认）
+RESPONSIBILITY_LAYER_MAP_FILE: Final[str] = "domain_responsibility_layer_mapping.yaml"
+
 
 def _resolve_vocab_path(vocab_file, vocab_dir):
     """解析 vocabulary YAML 路径：vocab_file 非绝对路径时拼接 vocab_dir/DEFAULT_VOCAB_DIR。"""
@@ -77,7 +84,13 @@ def _load_vocab_data(p, strict, missing_msg, non_dict_msg):
 
 
 def _collect_vocab_values(data, fallback_key):
-    """从 vocabulary YAML data 收集合法值集合（value 键，缺则回退 fallback_key）。"""
+    """从 vocabulary YAML data 收集合法值集合（value 键，缺则回退 fallback_key）。
+
+    裁定#335 前置铁条件（2026-09-18）：values 条目的 ``aliases`` 列表一并计入合法值
+    ——三段式过渡期别名=WARNING 可用值，全部共享消费者经本 SSoT 单点获得别名可见性，
+    防折叠后源值从 WARNING 坠 ERROR（词表自毁通道）。canonical 语义不变（list 端
+    _collect_vocab_entries 不收别名）。
+    """
     result: set[str] = set()
     for entry in data.get("values", []) or []:
         if not isinstance(entry, dict):
@@ -87,6 +100,9 @@ def _collect_vocab_values(data, fallback_key):
             val = entry.get(fallback_key)
         if val is not None:
             result.add(str(val))
+        for alias in entry.get("aliases", []) or []:
+            if alias is not None:
+                result.add(str(alias))
     return result
 
 
@@ -357,6 +373,112 @@ def load_vocabulary_deprecated_map(
         raise FileNotFoundError(f"vocabulary YAML 不存在: {p}")
     data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
     return _collect_deprecated_map(data, deprecated_key, migrated_to_key)
+
+
+def _resolve_layer_map_path(map_file: str | Path | None) -> Path:
+    """解析映射真源路径：``None``=catalogs 目录默认文件名；裸文件名按 catalogs 目录拼接。"""
+    p = DEFAULT_REGISTRY_CATALOG_DIR / RESPONSIBILITY_LAYER_MAP_FILE if map_file is None else Path(map_file)
+    if not p.is_absolute():
+        p = DEFAULT_REGISTRY_CATALOG_DIR / p
+    return p
+
+
+def _layer_map_allowed_values(data: dict) -> set[str]:
+    """受控词表合法值集合——取自真源自身的 ``responsibility_layer_values`` 键（不硬编码四值）。"""
+    allowed = data.get("responsibility_layer_values")
+    return {str(k) for k in allowed} if isinstance(allowed, dict) else set()
+
+
+def _layer_map_rows(data: dict, p: Path, strict: bool) -> list | None:
+    """取映射行列表；``entries`` 段非列表时 strict 抛错、非 strict 返回 None（调用方回空 dict）。"""
+    rows = data.get("entries")
+    if rows is None:
+        rows = []
+    if not isinstance(rows, list):
+        if strict:
+            raise ValueError(f"responsibility_layer 映射 entries 段不是列表: {p}")
+        return None
+    return rows
+
+
+def _layer_map_row_pair(row: object, p: Path, strict: bool) -> tuple[str, str] | None:
+    """单行取 ``(domain, layer)``；非 dict 行返回 None，缺字段行在 strict 下 fail-fast。"""
+    if not isinstance(row, dict):
+        return None
+    domain = str(row.get("domain") or "").strip()
+    layer = str(row.get("responsibility_layer") or "").strip()
+    if not domain or not layer:
+        if strict:
+            raise ValueError(f"responsibility_layer 映射行缺 domain/responsibility_layer: {p} 行={row!r}")
+        return None
+    return domain, layer
+
+
+def _collect_layer_map(rows: list, allowed_set: set[str], p: Path, strict: bool) -> dict[str, str]:
+    """逐行收集 ``{domain: responsibility_layer}``（越界值/重复 domain 按 strict 处置）。"""
+    result: dict[str, str] = {}
+    for row in rows:
+        pair = _layer_map_row_pair(row, p, strict)
+        if pair is None:
+            continue
+        domain, layer = pair
+        if allowed_set and layer not in allowed_set:
+            if strict:
+                raise ValueError(
+                    f"responsibility_layer 值 {layer!r} 越出真源自述受控词表 {sorted(allowed_set)}: {p}（域 {domain}）"
+                )
+            continue
+        if domain in result:
+            if strict:
+                raise ValueError(f"responsibility_layer 映射 domain 重复（unique_key=domain）: {domain} @ {p}")
+            continue
+        result[domain] = layer
+    return result
+
+
+def load_responsibility_layer_map(
+    map_file: str | Path | None = None,
+    *,
+    strict: bool = True,
+) -> dict[str, str]:
+    """加载域→``responsibility_layer`` 映射（裁定#335 结论⑥，SSoT 唯一真源）。
+
+    真源 = ``docs/01_policies_and_standards/_registry/catalogs/``
+    ``domain_responsibility_layer_mapping.yaml``（84 条 ``{domain, responsibility_layer,``
+    ``reason, alias_of?}``）。**生成器/写手只准经本函数推导职责层，禁从 ``layer_id``
+    /目录名直推**（争点 C1/C17：运行时栈≠职责层、目录≠域≠层）；别名行的层已按
+    #335 结论③在真源里随 canonical 落值，故本函数不做 alias_of 二次折叠。
+
+    受控词表自检：合法值取自真源自身的 ``responsibility_layer_values`` 键（不硬编码
+    四值，词表改名只改 YAML）；越界值在 strict 下 fail-fast（防一个拼写错误经
+    ``--sync-layer`` 复制到数千条目）。
+
+    Args:
+        map_file: 映射 YAML 路径；``None``=真源默认；裸文件名按 catalogs 目录解析
+        strict: True=fail-fast（默认，家族一致）；False=宽容（缺失/解析失败返回 ``{}``）
+
+    Returns:
+        ``{domain: responsibility_layer}``；strict=False 且不可用时返回空 dict
+
+    Raises:
+        FileNotFoundError: ``strict=True`` 且真源不存在
+        yaml.YAMLError: ``strict=True`` 且解析失败
+        ValueError: ``strict=True`` 且结构非法/层值越出受控词表/domain 重复
+    """
+    p = _resolve_layer_map_path(map_file)
+    data = _load_vocab_data(
+        p,
+        strict,
+        f"responsibility_layer 映射真源不存在: {p}\n"
+        "提示：裁定#335 结论⑥ 要求层字段只能从本映射推导；误拼会静默丢层。",
+        f"responsibility_layer 映射顶层非 dict 结构: {p}",
+    )
+    if data is None:
+        return {}
+    rows = _layer_map_rows(data, p, strict)
+    if rows is None:
+        return {}
+    return _collect_layer_map(rows, _layer_map_allowed_values(data), p, strict)
 
 
 def load_decision_tree(

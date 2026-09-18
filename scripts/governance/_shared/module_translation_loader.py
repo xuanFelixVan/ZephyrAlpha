@@ -5,7 +5,7 @@
 # [CONSUMERS] generate_domain_doc.py; 其他需模块级双语标签的生成器
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] YAML 是模块翻译真源;两级降级(YAML→空);调用方签名稳定零回归;中文在前英文在后
+# [INVARIANTS] YAML 是模块翻译真源;两级降级(YAML→空);调用方签名稳定零回归;中文在前英文在后;消费侧投影白名单=5 翻译字段+派生字段 responsibility_layer（裁定#335 结论⑥，层字段只透传绝不在此推导——真源是 domain_responsibility_layer_mapping.yaml，推导通道在写手/生成器）
 # [MODIFY-GUARD] 修改需通过任务卡
 # [STABILITY] evolving
 # [SAFETY] L
@@ -88,14 +88,39 @@ _PATH_CACHE: dict[str, dict[str, str]] | None = None
 _PATH_CACHE_MTIME: float | None = None
 
 
+# 消费侧投影白名单：翻译 5 字段 + 派生层字段 responsibility_layer（裁定#335 结论⑥
+# W4b）——旧白名单只列翻译 5 字段，会把写手落的层字段吞在投影层，消费侧永远读不到。
+_PROJECT_KEYS: tuple[str, ...] = ("name_zh", "name_en", "desc_zh", "desc_en", "plain_zh", "responsibility_layer")
+# 重复仲裁信息量口径：只算翻译 5 字段（不含派生层）——层字段是后补的机生字段，
+# 计入会让同 module_path 重复条目的胜出者发生漂移（10 个消费方的既有语义零回归）。
+_SCORE_KEYS: tuple[str, ...] = ("name_zh", "name_en", "desc_zh", "desc_en", "plain_zh")
+
+
+def _project_entry(entry: dict) -> dict[str, str]:
+    """把一条 YAML entry 投影为消费侧白名单 dict（既有契约 + 层字段透传）。"""
+    return {k: str(entry.get(k) or "") for k in _PROJECT_KEYS}
+
+
+def _info_score(projected: dict[str, str]) -> int:
+    """投影后翻译字段非空数——同 module_path 重复条目仲裁用（信息最全者胜出）。"""
+    return sum(1 for k in _SCORE_KEYS if (projected.get(k) or "").strip())
+
+
 def _load_from_yaml() -> dict[str, dict[str, str]]:
     """从 module_translation_registry.yaml 加载 module_path → 翻译 dict 映射。
 
     YAML 是模块翻译的主真源（SSoT）。失败时返回空 dict（调用方回退到 docstring 等）。
 
+    重复条目治理（裁定#335 结论7）：entries 列表历史上出现过同 module_path 多段
+    （早期 auto-extract 占位 + 人工 curated 批重复登记）。旧实现裸 dict 折叠
+    "后写覆盖前写"，把条目数差异吞成隐形账实差（声明 7090 vs 可见 7060）。
+    现改为：加载时检测重复组→按信息量（非空字段数）保留最优条目（平分时后登记
+    者优先，维持既有消费可见语义）→stderr 打印一条可观测警告（组数+账实计数+
+    样例路径），不静默。
+
     Returns:
-        ``{module_path: {name_zh, name_en, desc_zh, desc_en}}``；
-        文件缺失/解析失败/无 entries 时返回空 dict。
+        ``{module_path: {name_zh, name_en, desc_zh, desc_en, plain_zh,``
+        ``responsibility_layer}}``；文件缺失/解析失败/无 entries 时返回空 dict。
     """
     try:
         import yaml  # type: ignore[import-untyped]
@@ -104,21 +129,36 @@ def _load_from_yaml() -> dict[str, dict[str, str]]:
             return {}
         data = yaml.safe_load(_REGISTRY_YAML.read_text(encoding="utf-8")) or {}
         result: dict[str, dict[str, str]] = {}
+        best_score: dict[str, int] = {}
+        dup_extra: dict[str, int] = {}  # 重复 module_path → 额外出现次数
+        declared = 0
         for entry in data.get("entries", []) or []:
             if not isinstance(entry, dict):
                 continue
             path = entry.get("module_path")
             if not path:
                 continue
+            declared += 1
             # 规范化路径为正斜杠（Windows 路径兼容）
             norm_path = str(path).replace("\\", "/")
-            result[norm_path] = {
-                "name_zh": str(entry.get("name_zh") or ""),
-                "name_en": str(entry.get("name_en") or ""),
-                "desc_zh": str(entry.get("desc_zh") or ""),
-                "desc_en": str(entry.get("desc_en") or ""),
-                "plain_zh": str(entry.get("plain_zh") or ""),
-            }
+            projected = _project_entry(entry)
+            score = _info_score(projected)
+            if norm_path in result:
+                dup_extra[norm_path] = dup_extra.get(norm_path, 0) + 1
+                # 平分时后写覆盖（与旧折叠语义一致，curated 批通常位次靠后且更优）
+                if score < best_score[norm_path]:
+                    continue
+            result[norm_path] = projected
+            best_score[norm_path] = score
+        if dup_extra:
+            samples = ", ".join(list(dup_extra)[:3])
+            print(
+                f"[module_translation_loader] WARNING: entries 段检出 {len(dup_extra)} 组重复 "
+                f"module_path（声明 {declared} 条 → 去重后可见 {len(result)} 键，被后写/低信息条目"
+                f"占用 {sum(dup_extra.values())} 条），已按信息量仲裁保留；样例: {samples}；"
+                f"清源走 add_module_translation.py --dedupe",
+                file=sys.stderr,
+            )
         return result
     except Exception:  # noqa: BLE001 — YAML 不可用时静默降级
         return {}
@@ -131,7 +171,8 @@ def _ensure_loaded() -> dict[str, dict[str, str]]:
     （无硬编码 fallback——模块翻译无跨生成器共享类别，调用方自行回退）。
 
     Returns:
-        ``{module_path: {name_zh, name_en, desc_zh, desc_en}}``（可能为空 dict）
+        ``{module_path: {name_zh, name_en, desc_zh, desc_en, plain_zh,``
+        ``responsibility_layer}}``（可能为空 dict）
     """
     global _PATH_CACHE, _PATH_CACHE_MTIME
     try:
