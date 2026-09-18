@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint_qmt_file_bridge.md
 # [MODULE] zephyr.ex_core.adapters.qmt_file_bridge_integration
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_broker; zephyr.ex_core.local_order_queue; zephyr.ex_core.order_manager; zephyr.ex_core.adapters.qmt_file_bridge_quote
+# [DEPENDENCIES] zephyr.ex_core.adapters.qmt_file_bridge_broker; zephyr.ex_core.local_order_queue; zephyr.ex_core.order_manager; zephyr.ex_core.adapters.qmt_file_bridge_quote; zephyr.ex_core.execution_report_producer(断点E4生产端)
 # [CONSUMERS] zephyr.ex_core.qmt_trading_session; scripts.construction.test_qmt_file_bridge_e2e
 # [STARTUP] manual
 # [MATURITY] draft
-# [INVARIANTS] 双实例物理隔离(enable_real/enable_sim); 装配即注册; 连接即启动同步+队列
+# [INVARIANTS] 双实例物理隔离(enable_real/enable_sim); 装配即注册; 连接即启动同步+队列; execution_report 生产端默认接线(断点E4闭合, configure_execution_report 可关/可注入 writer)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -37,6 +37,7 @@ from zephyr.ex_core.adapters.qmt_file_bridge_broker import (
     check_broker_health,
 )
 from zephyr.ex_core.adapters.qmt_file_bridge_quote import QmtFileBridgeQuoteProvider
+from zephyr.ex_core.execution_report_producer import ExecutionReportProducer
 from zephyr.ex_core.local_order_queue import LocalOrderQueue
 from zephyr.ex_core.order_manager import OrderManager
 from zephyr.governance.adapters.risk_validation_bridge import RiskValidationPort
@@ -93,7 +94,34 @@ class QmtFileBridgeAssembly:
         self._brokers: dict[str, QmtFileBridgeBroker] = {}
         self._queues: dict[str, LocalOrderQueue] = {}
         self._quotes: dict[str, QmtFileBridgeQuoteProvider] = {}
+        self._producers: dict[str, ExecutionReportProducer] = {}
         self._assembled = False
+        # 断点 E4：execution_report 生产端接线默认**开**（表在/DDL 在/契约在/
+        # build_execution_report 在，唯缺生产调用方 → 台账面恒 0 行）。
+        # 开关不放进 __init__ 参数位（该签名已 7 参，再加撞 NO-LONG-PARAM-LIST），
+        # 走 configure_execution_report()；测试用 writer 注入即可零接触生产库。
+        self._enable_execution_report = True
+        self._execution_report_writer = None
+
+    def configure_execution_report(
+        self,
+        enabled: bool = True,
+        writer: object | None = None,
+    ) -> None:
+        """配置 execution_report 生产端（assemble 前调用生效）。
+
+        Args:
+            enabled: 是否在装配时接线生产端（默认开=断点 E4 闭合态）。
+            writer: TSV 写入函数注入位（测试用假 writer 零接触生产库）；
+                None = 生产路径 ``ch_writer.write_tsv_outcome``。
+        """
+        self._enable_execution_report = enabled
+        self._execution_report_writer = writer
+
+    @property
+    def execution_report_producers(self) -> dict[str, ExecutionReportProducer]:
+        """只读：各 broker 的生产端实例（未接线/未装配为空 dict）。"""
+        return dict(self._producers)
 
     @property
     def broker_ids(self) -> list[str]:
@@ -119,6 +147,19 @@ class QmtFileBridgeAssembly:
             broker.register_fill_callback(self._order_manager._on_fill)
             self._order_manager.register_broker(broker.broker_id, broker)
             self._brokers[broker.broker_id] = broker
+
+            # 断点 E4：execution_report 生产端接线（订单终态 → c1_market.execution_report）
+            if self._enable_execution_report:
+                producer = ExecutionReportProducer(
+                    venue=broker.broker_id,
+                    writer=self._execution_report_writer,
+                    board_lot=100,
+                )
+                # 成交面走 fill 回调累积（佣金/VWAP/时间窗），订单面走同步线程轮询
+                broker.register_fill_callback(producer.on_fill)
+                broker.attach_execution_report_producer(producer)
+                self._producers[broker.broker_id] = producer
+                _logger.info("execution_report 生产端接线 broker=%s", broker.broker_id)
 
             if self._enable_algo_queue:
                 queue = LocalOrderQueue(
@@ -205,4 +246,8 @@ class QmtFileBridgeAssembly:
             "ok": level == "ok",
             "level": level,
             "components": components,
+            # 断点 E4 可观测面：各 broker 生产端计数（emitted/write_failed/abandoned...）
+            "execution_report": {
+                bid: p.stats.as_dict() for bid, p in self._producers.items()
+            },
         }

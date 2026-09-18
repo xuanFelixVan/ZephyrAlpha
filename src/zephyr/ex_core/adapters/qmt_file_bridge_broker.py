@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.ex_core.order_manager
 # [STARTUP] manual
 # [MATURITY] draft
-# [INVARIANTS] 文件状态机幂等(#SENDING→#DONE); 3秒轮询柜台同步; 双实例物理隔离(env=real/sim); sim 进桥前风控前置校验 fail-closed(R-H5E-1: 注入 risk_validator 即生效; env=real 保持现状不触校验——实盘账户启用=Owner 门裁定#338⑤)
+# [INVARIANTS] 文件状态机幂等(#SENDING→#DONE); 3秒轮询柜台同步; 双实例物理隔离(env=real/sim); sim 进桥前风控前置校验 fail-closed(R-H5E-1: 注入 risk_validator 即生效; env=real 保持现状不触校验——实盘账户启用=Owner 门裁定#338⑤); execution_report 生产端可选接线(attach_execution_report_producer, 同步线程每轮观察终态; 未接线=零行为变更, 断点E4)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -417,9 +417,46 @@ class QmtFileBridgeBroker(BrokerInterface):
         # 柜台全量镜像（单一职责拆出，本类委托）
         self._mirror = CounterStateMirror(self._stock_dir)
 
+        # 断点 E4：execution_report 生产端（None=未接线，行为与历史一致）
+        self._report_producer: object | None = None
+
     @property
     def broker_id(self) -> str:
         return f"qmt_{self._env}"
+
+    def attach_execution_report_producer(self, producer: object) -> None:
+        """接线 execution_report 生产端（断点 E4 闭合）。
+
+        接上后柜台同步线程每轮把本地订单缓存交给 producer 观察，订单到达终态
+        （FILLED/CANCELLED/REJECTED）即向 ``c1_market.execution_report`` 落一行
+        聚合。producer 幂等（order_id 已发即跳过），重复观察不产生重复行。
+
+        Args:
+            producer: ``zephyr.ex_core.execution_report_producer.ExecutionReportProducer``
+                实例（结构性鸭子类型，不在导入期依赖以避免 ex_core↔data 环）。
+        """
+        self._report_producer = producer
+        _logger.info("execution_report 生产端已接线 env=%s producer=%s", self._env, type(producer).__name__)
+
+    def order_cache_snapshot(self) -> list[Order]:
+        """本地订单缓存快照（终态观察取数口，加锁防同步线程并发改字典）。"""
+        with self._lock:
+            return list(self._order_cache.values())
+
+    def execution_report_stats(self) -> dict:
+        """生产端计数快照（未接线返回空 dict）——健康检查/断点回归取证用。"""
+        if self._report_producer is None:
+            return {}
+        return self._report_producer.stats.as_dict()
+
+    def _observe_terminal_orders(self) -> None:
+        """把订单缓存交给生产端观察终态（旁路：异常不打断同步线程）。"""
+        if self._report_producer is None:
+            return
+        try:
+            self._report_producer.observe(self.order_cache_snapshot())
+        except Exception as e:  # noqa: BLE001 — 台账旁路不得打断柜台同步主链
+            _logger.error("execution_report 产出观察异常(env=%s): %r", self._env, e)
 
     def connect(self) -> bool:
         """校验桥接目录可读写并启动同步线程"""
@@ -765,6 +802,8 @@ class QmtFileBridgeBroker(BrokerInterface):
             try:
                 self._sync_local_channel()
                 self._mirror.sync_all(self._pairing_cache, self._dispatch_fill)
+                # 断点 E4：状态推进完毕后观察终态，成交/撤单/拒单落 execution_report
+                self._observe_terminal_orders()
             except Exception as e:  # 同步失败不杀线程，下轮重试
                 _logger.warning("柜台同步异常(env=%s): %r", self._env, e)
             self._sync_stop.wait(self._sync_interval)

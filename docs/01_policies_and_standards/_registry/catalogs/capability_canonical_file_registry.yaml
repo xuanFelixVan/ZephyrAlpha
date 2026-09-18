@@ -35550,5 +35550,45 @@ creation_tokens:
   token: standard-family-registry-registry-brk-063-construction-pack-20260918
   created_by: st-ff-registry-20260918
   capability: standard-family-registry
+- file: docs/_working/fullflow_campaign/lanes/registry_relay.md
+  token: standard-family-registry-registry-relay-20260918
+  created_by: st-ff-registry-20260918
+  capability: standard-family-registry
+- file: src/zephyr/ai_layer/__init__.py
+  token: ai-intake-l2---init---20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
+- file: src/zephyr/ai_layer/intake/__init__.py
+  token: ai-intake-l2---init---20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
+- file: src/zephyr/ai_layer/intake/card_store.py
+  token: ai-intake-l2-card-store-20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
+- file: src/zephyr/ai_layer/intake/dedup.py
+  token: ai-intake-l2-dedup-20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
+- file: src/zephyr/ai_layer/intake/events.py
+  token: ai-intake-l2-events-20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
+- file: src/zephyr/ai_layer/intake/gate.py
+  token: ai-intake-l2-gate-20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
+- file: src/zephyr/ai_layer/intake/kpi.py
+  token: ai-intake-l2-kpi-20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
+- file: scripts/ai_layer/apply_ai_intake_ddl.py
+  token: ai-intake-l2-apply-ai-intake-ddl-20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
+- file: scripts/ai_layer/gen_intake_ref_snapshots.py
+  token: ai-intake-l2-gen-intake-ref-snapshots-20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
 
 di_seam_exemptions: []
