@@ -10,9 +10,15 @@
 # target_layer 受控词表
 # ZephyrAlpha TaskCard.target_layer 字段唯一真源
 # 维护者：ZephyrAlpha-Owner
-# 版本：1.0.0
+# 版本：1.1.0
 # 创建日期：2026-07-04
 # 变更历史：
+#   v1.1.0 (2026-09-18): 裁定#335 战役收编——A组17值入 values（在用域差集归位，
+#            16/17 已在 depgraph DB domains 表=词表滞后实证）；B组8值入 canonical 的
+#            aliases（三段式过渡，本裁定零净删）；删过时散文计数（28域/11域→实时统计，
+#            §4 文档纪律）；D_CONTRACTS 反转独立（取证 07_fix_5_violations.sql 系从
+#            D_SHARED 拆出）。详见 docs/_working/2026-09-18_vocab_consolidation_campaign/
+#            w2_ruling/w2_self_ruling_335.md
 #   v1.0.0 (2026-07-04): 初版——统一 target_layer 值体系为下划线 D_XXX 格式，消除8处真源不一致。
 #                        合并 functional_domain_registry.yaml（治理/基础设施/AI 域）+
 #                        cross_layer_contracts.yaml（交易核心域）的域标识符。
@@ -50,11 +56,11 @@
 schema_version: "1.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-006
-version: "1.0.0"
+version: "1.1.0"
 title: "target_layer 受控词表"
 status: active
 vocabulary_name: target_layer
-total_values: 45
+total_values: 62
 depends_on:
   - target: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
     at: "_FOUNDATION_LAYERS 集合"
@@ -90,6 +96,7 @@ values:
     definition: "信号遗留域——旧版信号模块兼容层"
     is_foundation: false
     ai_keywords: ["信号遗留", "signal legacy"]
+    aliases: ["D_SIGNAL"]
   - value: D_SIMULATION
     definition: "模拟域——交易模拟/纸上交易"
     is_foundation: false
@@ -106,12 +113,12 @@ values:
     definition: "组合核心域——组合构建/仓位管理/策略生命周期"
     is_foundation: false
     ai_keywords: ["组合", "portfolio", "pf_core"]
-    aliases: ["D_PORTFOLIO_CORE"]
+    aliases: ["D_PORTFOLIO_CORE", "D_PORTFOLIO"]
   - value: D_EX_CORE
     definition: "执行核心域——订单执行/撮合/经纪商对接"
     is_foundation: false
     ai_keywords: ["执行", "execution", "ex_core"]
-    aliases: ["D_EXECUTION_CORE"]
+    aliases: ["D_EXECUTION_CORE", "D_EXECUTION"]
   - value: D_TRADING
     definition: "交易域——交易会话/交易编排"
     is_foundation: false
@@ -122,6 +129,7 @@ values:
     definition: "治理总域——Agent治理八件套跨模块集成"
     is_foundation: false
     ai_keywords: ["治理", "governance"]
+    aliases: ["D_GOV"]
   - value: D_GOV_ENFORCEMENT
     definition: "治理执行域——门禁引擎/规则强制/合规执行"
     is_foundation: true
@@ -180,6 +188,7 @@ values:
     definition: "基础设施运维域——容量保障/SLI/SLO/资源优化"
     is_foundation: true
     ai_keywords: ["基础设施运维", "infra ops", "基础设施"]
+    aliases: ["D_INFRA", "D_INFRASTRUCTURE"]
   - value: D_INTEGRATION_GATEWAY
     definition: "集成网关域——API网关/协议适配"
     is_foundation: false
@@ -222,6 +231,7 @@ values:
     definition: "智能域——上下文引擎/反馈循环"
     is_foundation: false
     ai_keywords: ["智能", "intelligence"]
+    aliases: ["D_RESEARCH"]
   - value: D_ML_TRAIN
     definition: "ML训练域——模型训练/推理引擎"
     is_foundation: false
@@ -277,6 +287,78 @@ values:
     is_foundation: false
     ai_keywords: ["共享", "shared"]
 
+  # === 战役#335 收编域（来源：module_translation_registry/functional_domain_registry
+  #     在用值差集实测 2026-09-18；is_foundation 全 false=CT-PIPE M5/M6 路由零变化）===
+  - value: D_FRONTEND
+    definition: "人机接口域——仪表盘/面板/前端骨架"
+    is_foundation: false
+    ai_keywords: ["前端", "仪表盘", "frontend", "dashboard"]
+  - value: D_POSITION
+    definition: "持仓域——持仓管理/对账"
+    is_foundation: false
+    ai_keywords: ["持仓", "position"]
+  - value: D_PF_ALLOC
+    definition: "组合配置域——资产配置/再平衡"
+    is_foundation: false
+    ai_keywords: ["组合配置", "再平衡", "allocation"]
+  - value: D_ORDER
+    definition: "订单域——订单对象/订单簿/订单流"
+    is_foundation: false
+    ai_keywords: ["订单", "order"]
+  - value: D_SELL_DECISION
+    definition: "卖出决策域——卖出决策链/退出逻辑"
+    is_foundation: false
+    ai_keywords: ["卖出决策", "sell decision", "退出"]
+  - value: D_PLAN
+    definition: "计划域——日计划/预案/盘前编排"
+    is_foundation: false
+    ai_keywords: ["计划", "预案", "plan"]
+    aliases: ["D_PLAN_ENGINE"]
+  - value: D_REGIME
+    definition: "市场状态域——regime 识别/状态机"
+    is_foundation: false
+    ai_keywords: ["市场状态", "regime"]
+  - value: D_ALT_DATA
+    definition: "另类数据域——公告/舆情/非结构化数据"
+    is_foundation: false
+    ai_keywords: ["另类数据", "alt data", "公告"]
+  - value: D_DATA_ENG
+    definition: "数据工程域——管道/清洗/存储工程"
+    is_foundation: false
+    ai_keywords: ["数据工程", "pipeline", "data eng"]
+  - value: D_DATA_SEC
+    definition: "数据安全域——数据分级/访问控制/脱敏"
+    is_foundation: false
+    ai_keywords: ["数据安全", "data security"]
+  - value: D_DATA_GOV
+    definition: "数据治理域——数据标准/质量规则/元数据治理（裁定#335 归治理域）"
+    is_foundation: false
+    ai_keywords: ["数据治理", "data governance", "元数据"]
+  - value: D_REPORTING
+    definition: "报表域——报表/披露/账本产出"
+    is_foundation: false
+    ai_keywords: ["报表", "披露", "reporting"]
+  - value: D_EXEC_SIM
+    definition: "执行仿真域——撮合模拟/滑点建模"
+    is_foundation: false
+    ai_keywords: ["执行仿真", "撮合模拟", "slippage"]
+  - value: D_DIGITAL_TWIN
+    definition: "数字孪生域——全链路孪生回放"
+    is_foundation: false
+    ai_keywords: ["数字孪生", "digital twin"]
+  - value: D_CROSS_ASSET
+    definition: "跨资产域——跨资产信号/资产联动"
+    is_foundation: false
+    ai_keywords: ["跨资产", "cross asset"]
+  - value: D_EX_SOR
+    definition: "交易所接口域——QMT 等券商/交易所接入层"
+    is_foundation: false
+    ai_keywords: ["交易所接口", "QMT", "SOR"]
+  - value: D_CONTRACTS
+    definition: "契约域——跨层契约/契约校验（独立值：系从 D_SHARED 拆出，反合并=推翻已修复裁定链，裁定#335）"
+    is_foundation: false
+    ai_keywords: ["契约", "contracts", "跨层契约"]
+
 # deprecated_values：废弃值集合（历史使用，禁止新增）
 deprecated_values:
   - value: D_DATA
@@ -319,8 +401,8 @@ deprecated_values:
 # ============================================================
 # 命名约定裁定依据（裁定#ARCH-target_layer_v1.0.0）
 # ============================================================
-# 1. 下划线优先：functional_domain_registry.yaml（28域）和 cross_layer_contracts.yaml（11域）
-#    均用下划线，是活跃生产真源
+# 1. 下划线优先：functional_domain_registry.yaml 与 cross_layer_contracts.yaml
+#    均用下划线，是活跃生产真源（域数量以两文件实时统计为准，RULE-REGISTRY 勿背数）
 # 2. 缩写版优先：cross_layer_contracts.yaml 用 D_PF_CORE/D_EX_CORE（缩写），
 #    以契约真源为准统一为缩写版（原 layer_boundary_check.py 用全称，该脚本已删除 2026-07-09）
 # 3. 中文废弃："基础设施"违反全项目英文命名约定，改为 D_INFRA_OPS
