@@ -15,7 +15,7 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 # 规则与审计一条龙施工总方案
 
 > **怎么用这份文件**（三条，读完再动手）：
-> 1. **裁定已封口**：第 1 节 D-1～D-17 是 Max 已做完的全部判断。施工队**不得自行判断**、不得"顺手优化"。
+> 1. **裁定已封口**：第 1 节 D-1～D-18 是 Max 已做完的全部判断。施工队**不得自行判断**、不得"顺手优化"。
 > 2. **遇到裁定未覆盖的分叉 → 停手回执**（见第 6 节回流条件），不要猜。
 > 3. **每个工作包（WP）自包含**：目标 / 改动点 / 命令 / 验收判据 / 红证要求 / 禁止事项。回执按第 5 节格式。
 >
@@ -57,6 +57,8 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 | **D-16（案卷 TTL 处置）** | 采纳施工队做法（双份镜像 + 逐件 sha256 核对），并追加**小件入库、大件留 `.runtime`**：`dossiers_summary.json` 与 `dossiers_index.json`（机读索引，小体积、是判决依据）promote 到 `docs/_working/` 作为 tracked 交付物；逐份案卷正文（14MB 级）留 `.runtime` 双镜像，**不入 git**（程序法第 7 节：案卷是派生物）。 | 24h TTL 会吃掉判决依据；但把 14MB 案卷入 git 违反派生产物纪律。分开处置两头都保住 | WP8、WP9 |
 | **D-17（同文件冲突拆分 + 库表断言纪律）** | ① 追认施工队对 WP7/WP12 同文件冲突的拆分：`reconciliation_registry.py` 的 **trigger 前缀段归 WP12、两轴派生段归 WP7**，`.runtime` 采集器归 WP8；每段带"混入他人 hunk 即改交 patch 并停手"条款。② 新增全局纪律第 9 条（多库同名表 + DDL↔活库漂移），因为本轮 Max 与施工队**各踩一次同一个坑**：Max 拿 `governance.db` 的 `gate_decisions` 列去判 `drift_events.db` 的写入端（误判"必失败"），施工队拿 DDL 源码判活库 `tasks.status`（两边都只说对一半）。 | 实测：`data/drift_audit/drift_events.db` 的 `gate_decisions` 列＝`id/module_id/gate/decision/detail/decided_at`，与其 INSERT 完全匹配；`governance.db` 活库 `tasks.status`＝`TEXT DEFAULT 'PENDING'` 无 CHECK，而 `sqlite_schema.py` DDL 有 CHECK | 全部 WP |
 
+| **D-18（对抗校验器假绿＝恒真）** | `python -m zephyr.security.adversarial_validation run` 的 `blocked_rate` 恒为 1.0、**零区分度**：必填参数缺失触发 `ValidationError` → 被宽 `except` 吞 → 按 fail-closed 计入 BLOCKED，于是任何输入都判"拦下"。裁定：① **WP13 的 A/B 不得再以它作回归护栏**，直到假绿修好；A/B 判定完全按 D-8 的行为测试（该法自带敏感性检验＝C 组阳性对照必须显著更差）。② 修它属改校验器自身 → 立 **WP17**，回流 Max。③ 程序法 0.3 与闸4、以及 `audit_prompts` 0.14 与 C-00 元卡已同步加入"红证必须双向 / 恒真＝第三种假绿"条款。 | 施工队最小复现 + Max 采信；同族假绿先例：`align_all` 退出码 2 被当通过、幽灵窗口永扫空、扫描口径错分母 | WP13、WP17 |
+
 ## 2. 工作包总表
 
 | WP | 轨道 | 内容 | 执行档 | 依赖 | 门位 |
@@ -77,6 +79,7 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 | WP14 | E 减肥 | T0 机械波首批（表头缺栏） | Flash | D-10 | 否 |
 | WP15 | F 收尾 | 6 件小事（见施工卡） | Flash | 各自 | 否 |
 | WP16 | A 身份台账 | 活库约束补齐（DDL↔活库漂移） | Max 设计 / Flash 出证据 | WP1 | **是**（DB 结构变更） |
+| WP17 | D 记忆文档 | 修对抗校验器假绿（恒真 BLOCKED / 零区分度） | **Max** | — | **是**（改校验器自身） |
 
 ## 3. 施工卡
 
@@ -143,6 +146,13 @@ decided_by: Max（Owner 概括授权"一律取治本"，2026-09-18 对话）
 - **禁止**：编造栏位值（假身份证比缺栏更坏）；为凑数把不确定栏位填成空字符串以外的占位符；顺手改代码逻辑。
 - **验收**：每批跑 `python scripts/ops/verify_header_completeness.py`，缺栏数**必须严格下降**；不降即返工。回执须给"本批改了哪些栏位 / 哪些栏位只报未改（附数量）"两个数。
 - **红证**：首批开工前先对该命令做一次阴性对照（造一个缺栏文件→确认报红→删掉→确认绿），贴命令与退出码。
+
+### WP17 · 修对抗校验器假绿（Max，D-18）
+- **症状**：`adversarial_validation run` 的 `blocked_rate` 恒 1.0；最小复现＝必填参数（`description`）未传 → `ValidationError` → 被宽 `except` 吞 → 按 fail-closed 计入 BLOCKED。
+- **治本**：把"入参/工具自身异常"与"攻击被防御拦下"分成两种不同结果——前者必须**报错退出或计入 error 桶**，绝不计入 `blocked`；后者才是 blocked。并给该 CLI 一个区分度自检：跑一个应被拦的场景 + 一个应放行的场景，两者结果必须不同。
+- **红证（双向）**：修前证明 `blocked_rate` 恒 1.0；修后同一组场景必须同时出现 blocked 与 not-blocked。
+- **禁止**：靠"补传一个参数绕过报错"了事——那是治标，换个入参缺失照样假绿。
+- **输入**：施工队台账里那三条可粘贴处方原文（须回传 Max）。
 
 ### WP16 · 活库约束补齐（DDL↔活库漂移）
 - **实测事实**：`governance.db` 活库 `tasks.status` = `TEXT DEFAULT 'PENDING'`（**无 NOT NULL、无 CHECK**），而 `src/zephyr/governance/persistence/sqlite_schema.py` 的 DDL 写的是 `NOT NULL DEFAULT 'PENDING' CHECK(status IN (...))`。成因＝`CREATE TABLE IF NOT EXISTS` 不给已存在表补约束。对照组：`.runtime/task_board.db` 的 `tasks.status` **有** CHECK。
