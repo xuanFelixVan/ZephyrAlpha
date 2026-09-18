@@ -68,3 +68,38 @@ completes_when: 总包对 req_land3_01 五 item 逐条裁定（A/B/C 三清单�
   algo_note_zh 换行重包被外部还原回 HEAD**（`git diff --numstat HEAD` 一度归零）。
 - 本腿 TDM 两次改动均以 CAS 落笔（base 哈希校验通过才写），未覆盖他人：
   TDM-E-L4-10（T1 批）、TDM-F-C3-03（T2 批），各 1 insert / 1 delete 纯单行。
+
+## ITEM-7（A 类·需 Owner 门位）危机闸异常码无处登记：`error_code_registry.yaml` 是 PROTECTED 件
+
+- 实测：`crisis_gate.CrisisGateError` 原声明 `error_code = "ZA-PA-CRISIS"` →
+  `GATE-ERRCODE-CONSISTENCY`（priority=131，观测面=git index，基线=HEAD，只判本次新增）
+  报 `[unregistered_code] ZA-PA-CRISIS` **硬阻断**。
+- 两难：①注册新码要写 `architecture_model/contracts/error_code_registry.yaml`，而该路径对本战役是
+  **PROTECTED-PATHS（无 CLI 逃生旗，重大修改须 Owner 审批）**——与 req_land2_01 同一堵墙；
+  ②该码本身也不合注册表自述格式 `ZA-XX-NNNN`（四位序号），照格式改号同样要登记。
+- 本腿处置（不越权、不硬闯、不占他道号）：**撤下 `error_code` 声明置 `None`** 并就地写明原因，
+  使批次可落；**不复用**任何已登记的 ZA-PA-00NN（复用=造重码，同一门禁硬拦）。
+- 请办：Owner 批准在 `error_code_registry.yaml` 为危机闸配一枚 `ZA-PA-00NN`
+  （类名 CrisisGateError / 模块 `zephyr.pf_alloc.crisis_gate` / 域 D_PORTFOLIO），
+  批后由后继车道把 `None` 改回该码并**与注册表同一 commit 原子**（#ARCH-ERRCODE-001 要求成对）。
+- 验真命令：`grep -n "ZA-PA-CRISIS" src/zephyr/pf_alloc/crisis_gate.py`（落地后应为空）。
+
+## ITEM-8（B 类·需执行）施工期战役暂存面被外部整片收割（冷库救回本腿九件）
+
+- 现象（本腿入队前一刻实测）：`src/zephyr/pf_alloc/crisis_gate.py`、
+  `src/zephyr/alt_data/cohort_daily_ledger.py`、`scripts/backtest/crisis_drill_monthly.py`、
+  `tests/signal_ashare/test_sector_{ecology_judge,strength_wiring}.py` **五件盘上不存在且 index 里也没有**；
+  `allocation_orchestrator.py`(+53/-3)、`regime_meta_allocator.py`(+12/-2)、`alt_data/__init__.py`(+1/0)
+  三件工作区内容同时退回 HEAD；`git diff --cached --numstat HEAD` 全仓行数从开工时 ~650 跌到 **26**。
+- 判：CONSTRUCTION_DISCIPLINE §8 明文病根"未提交的车道成品会被外部 reconciler / pre-merge
+  **整文件还原回 HEAD**"复发（新文件被还原=直接消失）；非 `git stash`（`git stash list` 空、
+  `stash_notice.json` 最新条属 09-17 他道）、非本腿动作。
+- 治本：**R-030 的 G 盘冷库救了这一批** —— 逐件从
+  `G:\zephyr_cold\30_corpus\fullflow_harvest\20260918-194729\{index,worktree}\` 取回原字节，
+  再重放本腿的门禁治本（MSG-EXPOSURE / NO-BARE-SQL / MUTABLE-CONST-WITHOUT-FINAL / sector TTL 头 / TDM 注记）。
+- **须总包立即办**：同窗口内**其他车道的未提交成品同样可能已被抹**，本腿只复原自己独占的九件、
+  未越权代查他道 ⇒ 建议对 `rest.txt` 全 260 件跑一次冷库差集普查
+  （比对 `MANIFEST.json` 与 `git diff --cached --name-only HEAD` 的集合差）。
+- 附：本腿另撞 `DEPGRAPH-PRE-REGISTRATION`（planned→production 需走
+  planned→generated→testing→stable→production 全链，中间态每次会触后台 REGENERATE，
+  首投直转被拒且状态被重生回 planned）⇒ 三节点 14830693/14830694/14799384 已按链走完至 production。

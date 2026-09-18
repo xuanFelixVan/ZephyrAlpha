@@ -12,8 +12,12 @@ completes_when: 第四腿按本件配方落完 T4 三分组并回写本件状态
 | T | 主题 | commit | 本腿自跑测试 |
 |---|---|---|---|
 | T1 | R-L3 资金安全幂等键三件套 + 4 红治本（测试隔离） | `9e16e884af`（队列 q-…-0001） | tests/ex_core 全目录 **1304 collected / 1303 passed + 1 xfailed / 0 failed**；隔离前后差 4 红 |
-| T2 | 危机闸三批（pf_alloc E1/E4/E5 + alt_data + sector + 月度演练件） | 队列 q-…-0004（经两次死信修正，见下） | pf_alloc 四件 **152 passed**；alt_data+sector **40 passed**；crisis_gate 复跑 **23 passed** |
-| T3 | 战役真源 docs 49 件 + 注册表 token 载体同批 | 本件同批 | 无码测（纯 docs）；机械校验=yaml 复解析 + frontmatter 逐件核对 |
+| T2 | 危机闸三批（pf_alloc E1/E4/E5 + alt_data + sector + 月度演练件） | **六次死信后方到**：q-0002 MSG-EXPOSURE / q-0003 NO-BARE-SQL / q-0004 CLAIM 过期 / q-0006 TEST-SOURCE-CONSISTENCY / q-0007 DEPGRAPH 状态滞后 / q-0008 MUTABLE-CONST-WITHOUT-FINAL / q-0009 GATE-ERRCODE-CONSISTENCY（详见 `adjudications/req_land3_01.md` ITEM-7/8） | pf_alloc 四件 **152 passed**；alt_data+sector **40 passed**；crisis_gate 复跑 **23 passed**；治本后合并面 **2851 passed** |
+| T3 | 战役真源 docs 批落地 + token 载体同批 | `63802383af`（q-…-0005，**实 45 件**，message 里写"52 件"是入队前旧清单数——已在册误差） | 无码测；逐件 frontmatter/token 机械核对 |
+
+⚠️ **施工期战役暂存面被外部整片收割**（本腿九件由 G 盘冷库救回，全过程与他道影响面见
+`adjudications/req_land3_01.md` ITEM-8）——第四腿开工第一件事：**先跑冷库差集普查**，
+确认自己要落的件还在盘上，再谈施工。
 
 ### T2 两次死信（R-017 处置：全是真问题，走治本，未走任何豁免旗）
 1. `q-…-0002` **MSG-EXPOSURE**：`crisis_gate.py` 三处 `raise CrisisGateError(f"…{path}…")` 把绝对路径
