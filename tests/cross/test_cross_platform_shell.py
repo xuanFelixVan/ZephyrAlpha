@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 
 # [MODULE] tests.test_cross_platform_shell
+# [DOMAIN] D_SHARED
 
 # [INVARIANTS] CrossPlatformShell.generate produces both .sh and .ps1 files
 

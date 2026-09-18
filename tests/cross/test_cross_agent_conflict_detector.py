@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_cross_agent_conflict_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] tests.test_cross_agent_conflict_detector
+# [DOMAIN] D_SHARED
 # [INVARIANTS] detect_conflicts returns list[ConflictReport]; resolve_conflicts returns same list; no git→empty
 # [MODIFY-GUARD] blueprint.md §4
 # [CONSUMERS] pytest

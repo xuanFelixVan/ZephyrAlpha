@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ct_script_gate | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-266 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.contracts.test_ct_script_gate_001
+# [DOMAIN] D_INFRA_OPS
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

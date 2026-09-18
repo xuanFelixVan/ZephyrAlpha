@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_context_window_pressure_manager | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §test
 # [MODULE] tests.test_context_window_pressure_manager
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [CONSUMERS] zephyr.feedback_loop.diagnosers.reliability.context_window_pressure_manager

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_config_complexity_budget | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §
 # [MODULE] tests.test_config_complexity_budget
+# [DOMAIN] D_INFRA_OPS
 # [INVARIANTS] Budget percentage must reflect total/max_items ratio
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

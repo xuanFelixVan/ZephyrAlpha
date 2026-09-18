@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_chaos_engine_ops | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_chaos_engine_ops
+# [DOMAIN] D_INFRA_RECOVERY
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_context_recycling | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-370 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_context_recycling
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] compress/restore roundtrip preserves content; is_valid requires data and ratio<1
 # [MODIFY-GUARD] Changes must sync with context_recycling.py
 # [CONSUMERS] CI pipeline

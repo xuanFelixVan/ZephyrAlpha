@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_context_waste_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md | §
 # [MODULE] tests.test_context_waste_detector
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] waste_ratio in [0,1]; analyze returns WasteReport
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

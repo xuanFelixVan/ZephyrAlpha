@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_data_source_reliability | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain-infra_ops/drift-detector/blueprint.md
 # [MODULE] tests.test_data_source_reliability
+# [DOMAIN] D_GOV_DRIFT
 # [INVARIANTS] Git-native漂移检测;自动对账;漂移预算
 # [MODIFY-GUARD] src/zephyr/behavioral-auditor/data_source_reliability.py
 # [CONSUMERS] CI pytest

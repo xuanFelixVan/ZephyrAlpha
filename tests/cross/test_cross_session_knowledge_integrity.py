@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_cross_session_knowledge_integrity | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_cross_session_knowledge_integrity
+# [DOMAIN] D_SHARED
 # [INVARIANTS] verify_continuity detects hash chain breaks
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

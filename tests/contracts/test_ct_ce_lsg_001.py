@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_ct_ce_lsg | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-254 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.contracts.test_ct_ce_lsg_001
+# [DOMAIN] D_INFRA_OPS
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

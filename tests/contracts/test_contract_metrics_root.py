@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_contract_metrics_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-015 | docs/03_modules/_domain_infrastructure_operations/system_telemetry/blueprint.md | §3
 # [MODULE] tests.test_contract_metrics
+# [DOMAIN] D_INFRA_OPS
 # [INVARIANTS] SlaRecord.passed derived from latency vs SLA; buffer capped at MAX; singleton collector
 # [MODIFY-GUARD] contract_metrics.py
 # [CONSUMERS] CI

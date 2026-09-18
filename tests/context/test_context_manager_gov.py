@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_context_manager_gov | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-TEST-369 | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] tests.test_context_manager_gov
+# [DOMAIN] D_GOVERNANCE
 # [INVARIANTS] TIER_TOKENS keys must match TokenTier; TRIM_DUPLICATE_THRESHOLD in (0,1)
 # [MODIFY-GUARD] Changes must sync with context_manager.py
 # [CONSUMERS] CI pipeline

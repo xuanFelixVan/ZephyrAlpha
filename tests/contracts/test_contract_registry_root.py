@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_contract_registry_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-039 | docs/03_modules/_cross_layer/agent_orchestrator/blueprint.md | §
 # [MODULE] tests.test_contract_registry
+# [DOMAIN] D_INFRA_OPS
 # [INVARIANTS] contract_id min_length=1; AIReadOnlyHint four-level enum; CONTRACTS dict keyed by contract_id
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest

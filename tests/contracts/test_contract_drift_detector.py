@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_contract_drift_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md | §
 # [MODULE] tests.test_contract_drift_detector
+# [DOMAIN] D_INFRA_OPS
 # [INVARIANTS] z-score>5.0判定为漂移;baseline_std==0时使用0.001防止除零;DriftAlert写入_drift_buffer
 # [MODIFY-GUARD] src/zephyr/behavioral-auditor/contract_drift_detector.py
 # [CONSUMERS] CI pytest

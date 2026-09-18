@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_cross_module_integration_root | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_cross_module_integration
+# [DOMAIN] D_SHARED
 # [INVARIANTS] dependencies is dict[str, str]
 # [MODIFY-GUARD] none
 # [CONSUMERS] none

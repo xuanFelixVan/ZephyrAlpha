@@ -1,6 +1,7 @@
 # [A_test] module_id: MOD-GOV_api_version_contract | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-FEEDBACK_LOOP | docs/03_modules/_cross_layer/feedback_loop/blueprint.md | §
 # [MODULE] tests.test_api_version_contract
+# [DOMAIN] D_INFRA_OPS
 # [INVARIANTS] sunset_date format YYYY-MM-DD; check_sunset returns bool
 # [MODIFY-GUARD] none
 # [CONSUMERS] pytest

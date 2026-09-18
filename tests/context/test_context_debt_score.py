@@ -2,6 +2,7 @@
 # [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md | §
 
 # [MODULE] tests.test_context_debt_score
+# [DOMAIN] D_GOVERNANCE
 
 # [INVARIANTS] none
 
