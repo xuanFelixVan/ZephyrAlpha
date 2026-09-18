@@ -35895,4 +35895,8 @@ creation_tokens:
   token: gate-identity-root-fix-2026-09-18-gate-identity-root-fix-plan-20260918
   created_by: st-ruledisp-20260918
   capability: gate_identity_root_fix
+- file: docs/_working/2026-09-18-rule-audit-master-construction-plan.md
+  token: rule-audit-master-plan-2026-09-18-rule-audit-master-construction-plan-20260918
+  created_by: st-ruledisp-20260918
+  capability: rule_audit_master_plan
 di_seam_exemptions: []
