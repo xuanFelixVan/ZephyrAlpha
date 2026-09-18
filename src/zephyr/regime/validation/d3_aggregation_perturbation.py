@@ -5,7 +5,7 @@
 # [CONSUMERS] 人工审查; 11_regime_backtest_validation_plan Phase 3 D3
 # [STARTUP] imported
 # [MATURITY] design
-# [INVARIANTS] 纯分析函数: 聚合公式重放镜像 regime_detector._compute_risk_signal(含#1门控/min聚合/clamp[0.30,1.00]); 只扰动共振惩罚步长0.05与机会恢复上限0.25两参数; 效果代理指标=RiskSignal序列均值; 只读输入
+# [INVARIANTS] 纯分析函数: 聚合公式重放镜像 regime_detector._compute_risk_signal(含#1门控/min聚合/clamp[0.30,1.00]/缺数fail-closed落lower=R-055a); 只扰动共振惩罚步长0.05与机会恢复上限0.25两参数; 效果代理指标=RiskSignal序列均值; 只读输入
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -99,15 +99,21 @@ def aggregate_risk_signal(
       RiskBase = min(#1-#10/#12 系数)（#1 门控：#1≥1.0 时直接返回 1.0）
       共振惩罚 = max(floor, 1 − step × max(0, 异常参数数−1))
       机会恢复 = min(news_ghost + bad_news_flat, cap)
+      缺数（params 空 / #1 缺失或不可解析）→ 返回 **lower**：与生产的 R-055a
+      fail-closed 分支同构（改前镜像此处返 1.0，与生产口径分叉，由
+      tests/regime/validation/test_d3_aggregation_perturbation.py 的"逐点一致"件拦下）。
     """
     if not params:
-        return 1.0
-    primary = float(params.get(1, 1.0))
+        return lower
+    try:
+        primary = float(params[1])
+    except (KeyError, TypeError, ValueError):
+        return lower
     if primary >= 1.0:
         return 1.0
     coefs = [float(params[i]) for i in _RISK_PARAM_IDS if i in params and params[i] is not None]
     if not coefs:
-        return 1.0
+        return lower
     risk_base = min(coefs)
     anomaly_count = sum(1 for c in coefs if c < 1.0)
     resonance = max(resonance_floor, 1.0 - resonance_step * max(0, anomaly_count - 1))
@@ -127,7 +133,7 @@ def run_d3_perturbation(
 
     Args:
         risk_inputs_series: 逐日 risk_signal_inputs 序列（{"params"/"opportunity"}），
-            空 dict 项按生产降级逻辑得 RiskSignal=1.0。
+            空 dict 项按生产 R-055a fail-closed 降级逻辑得 RiskSignal=lower(0.30)。
         pct: 扰动幅度（默认 ±20%）。
         tolerance: 相对变化门槛（§4.4 D 类=0.30）。
 

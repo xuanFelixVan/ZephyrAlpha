@@ -17,11 +17,14 @@ from zephyr.regime.validation.d3_aggregation_perturbation import (
 class TestAggregateRiskSignal(unittest.TestCase):
     """聚合公式镜像（含 #1 门控 / min 聚合 / 共振 / 恢复 / clamp）。"""
 
-    def test_empty_params_degrades_to_one(self):
-        self.assertEqual(aggregate_risk_signal({}), 1.0)
+    def test_empty_params_fails_closed(self):
+        """R-055a 镜像同步：params 空 / 主腿缺数 = 没供数 ⇒ 落地板值，不再是"降级 1.0"。"""
+        self.assertEqual(aggregate_risk_signal({}), 0.30)
+        self.assertEqual(aggregate_risk_signal({2: 0.3}), 0.30)  # 主腿缺位
+        self.assertEqual(aggregate_risk_signal({1: None}), 0.30)  # CH NULL 常态
 
     def test_primary_gating(self):
-        """#1=1.0（无风险）→ 附加参数不参与，直接 1.0。"""
+        """#1=1.0（**有正证据**的无风险）→ 附加参数不参与，直接 1.0。"""
         self.assertEqual(aggregate_risk_signal({1: 1.0, 2: 0.3}), 1.0)
 
     def test_single_anomaly_no_resonance(self):

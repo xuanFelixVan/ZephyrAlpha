@@ -32,7 +32,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from zephyr.regime.core.regime_detector import RegimeDetector
+from zephyr.regime.core.regime_detector import RISK_SIGNAL_FLOOR, RegimeDetector
 from zephyr.regime.risk_signal_builder import (
     _ACTIVE_PARAMS,
     _RISK_PARAM_IDS,
@@ -264,12 +264,15 @@ class TestPrimaryGating:
         # min(0.3,0.3)=0.3, resonance=0.95, recovery=min(1.0,0.25)=0.25 → 0.3*0.95+0.25=0.535
         assert 0.30 <= risk <= 0.60, f"机会恢复后应∈[0.30,0.60]，实际 {risk}"
 
-    def test_empty_risk_inputs_returns_one(self):
-        """空 risk_inputs → 降级 1.0（保守不下调）。"""
+    def test_empty_risk_inputs_fails_closed(self):
+        """空 risk_inputs → **地板值**（R-055a：缺数≠没风险，原"降级 1.0（保守不下调）"是 fail-open）。
+
+        改前此件断言 1.0，实测导致"危机中断供 ⇒ Shrinkage 0.255→0.800 放量 3.14×"。
+        """
         detector = RegimeDetector(shrinkage_enabled=True)
-        assert detector._compute_risk_signal({}) == 1.0
-        assert detector._compute_risk_signal(None) == 1.0
-        assert detector._compute_risk_signal({"params": {}}) == 1.0
+        assert detector._compute_risk_signal({}) == RISK_SIGNAL_FLOOR
+        assert detector._compute_risk_signal(None) == RISK_SIGNAL_FLOOR
+        assert detector._compute_risk_signal({"params": {}}) == RISK_SIGNAL_FLOOR
 
 
 # ---------------------------------------------------------------------------

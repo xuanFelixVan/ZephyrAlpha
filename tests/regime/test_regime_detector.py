@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-REGIME-001 | docs/03_modules/_domain_regime/regime_detector/blueprint.md | §6
 # [MODULE] tests.regime.test_regime_detector
 # [DOMAIN] D_REGIME
-# [DEPENDENCIES] zephyr.regime.core.regime_detector; hmmlearn; numpy
+# [DEPENDENCIES] zephyr.regime.core.regime_detector; zephyr.pf_alloc.core.regime_meta_allocator(A16 档表对账，只读); hmmlearn; numpy
 # [CONSUMERS] pytest;CI_pipeline
 # [STABILITY] volatile
 # [SAFETY] L
@@ -18,6 +18,7 @@
   - HMM 4态：拟合/predict_proba 9维Σ=1/因果Viterbi末步/walk-forward季度重拟合/降级
   - 覆盖层：3特殊态(CRISIS/RECOVERY/BREAKOUT)触发/不触发/8转换评分
   - 12维合并：无覆盖层退化为纯HMM/覆盖层压缩HMM/归一化Σ=1
+  - A16 转 Owner：回测侧/实盘侧 Shrinkage 档表分叉的机检面（只读不改数值）
   - ConfidenceSignal：max(P) 4档映射/稀有态折扣/边界值/下界0.21
   - RiskSignal：13参数聚合/最严主导/共振惩罚/机会恢复上限+0.25/clamp/7月案例
   - Shrinkage：开/关切换/shrinkage_enabled=False恒=1.0/上下界
@@ -38,9 +39,12 @@ import pytest
 from zephyr.regime.core.regime_detector import (
     ANCHOR_SLOPE_COL,
     ANCHOR_VOL_COL,
+    CONFIDENCE_BANDS,
     HMM_STATES,
     OVERLAY_STATES,
+    RARITY_BANDS,
     REGIME_STATES,
+    RISK_SIGNAL_FLOOR,
     TRANSITION_CONFIG,
     TRANSITIONS,
     HMMFittingError,
@@ -51,7 +55,12 @@ from zephyr.regime.core.regime_detector import (
     TransitionTriggered,
     anchored_component_order,
     apply_label_anchored_order,
+    confidence_band_divergence,
+    detector_confidence_at,
 )
+
+# A16 对账面：实盘侧默认档表（模块常量，本车道只读不改）
+from zephyr.pf_alloc.core.regime_meta_allocator import CONFIDENCE_THRESHOLDS as ALLOCATOR_BANDS
 
 try:
     import hmmlearn  # noqa: F401
@@ -340,19 +349,23 @@ class TestOverlayGating:
         probs, _ = d.detect({}, s1_overlay, {"params": {1: 1.0}})
         assert abs(probs.overlay_probabilities["r10"] - 0.6) < 1e-9
 
-    def test_gated_blocks_when_risk_inputs_missing(self, s1_overlay):
-        """risk_signal_inputs 缺失 → 默认 #1=1.0 → overlay 被屏蔽（降级安全）。"""
-        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
-        probs, _ = d.detect({}, s1_overlay, {})
-        for s in OVERLAY_STATES:
-            assert probs.overlay_probabilities[s] == 0.0
+    def test_gated_preserves_overlay_when_risk_inputs_missing(self, s1_overlay):
+        """risk_signal_inputs 缺失 → **无正证据**说主腿报了平静 ⇒ overlay 危机概率保留（R-055a fail-closed）。
 
-    def test_gated_blocks_when_risk_inputs_none(self, s1_overlay):
-        """risk_signal_inputs=None → 默认 #1=1.0 → overlay 被屏蔽。"""
+        改前此件断言 overlay 被屏蔽（把"没数"读成"没风险"），是危机中断供放量 3.14×
+        的机制根因；平静期有正证据的屏蔽路径由 test_gated_blocks_overlay_when_primary_ge_1 守。
+        """
         d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
-        probs, _ = d.detect({}, s1_overlay, None)
-        for s in OVERLAY_STATES:
-            assert probs.overlay_probabilities[s] == 0.0
+        probs, shr = d.detect({}, s1_overlay, {})
+        assert abs(probs.overlay_probabilities["r10"] - 0.6) < 1e-9
+        assert shr.risk_signal == RISK_SIGNAL_FLOOR
+        assert "crisis_overlay_preserved_no_primary_evidence" in shr.degraded_legs
+
+    def test_gated_preserves_overlay_when_risk_inputs_none(self, s1_overlay):
+        """risk_signal_inputs=None → 同上（R-055a）。"""
+        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
+        probs, _shr = d.detect({}, s1_overlay, None)
+        assert abs(probs.overlay_probabilities["r10"] - 0.6) < 1e-9
 
     def test_gated_just_below_boundary(self, s1_overlay):
         """#1=0.99（略低于 1.0）→ overlay 正常生效（危机期）。"""
@@ -563,9 +576,9 @@ class TestRiskSignal:
         assert abs(r - 0.85) < 0.02
 
     def test_degraded_when_missing(self, detector: RegimeDetector):
-        """RiskSignal 输入缺失 → 1.0（blueprint §7.4 降级）。"""
-        assert detector._compute_risk_signal({}) == 1.0
-        assert detector._compute_risk_signal(None) == 1.0  # type: ignore[arg-type]
+        """RiskSignal 输入缺失 → **地板值**（R-055a fail-closed，取代原 §7.4 的"降级 1.0"）。"""
+        assert detector._compute_risk_signal({}) == RISK_SIGNAL_FLOOR
+        assert detector._compute_risk_signal(None) == RISK_SIGNAL_FLOOR  # type: ignore[arg-type]
 
 
 # ── 7. Shrinkage ────────────────────────────────────────────────────
@@ -886,4 +899,50 @@ class TestAnchoredComponentOrder:
         probs, _ = detector.detect({"X": synthetic_features[-30:]}, {}, {"params": {1: 1.0}})
         assert abs(sum(probs.probabilities.values()) - 1.0) < 1e-6
         assert set(probs.probabilities) == set(REGIME_STATES)
+# ── A16（转 Owner）· 两套 Shrinkage 档表"必须同源"的机械准备（不改任何数值）─────
+# 车道 st-ff-teeth-20260918。红队 P-1/F-8 实测：同一 max(P)=0.25，检测器档表给 0.80、
+# 分配器档表给 0.30 = 2.67 倍分叉，且回测走检测器档、实盘走分配器档 ⇒ 回测↔实盘不同构。
+# 统一到哪一档属风险偏好选择，**转 Owner 裁定 A16**，本件不选边、不改数值，只做机械面：
+#   ①检测器档表已提为可导入真源 CONFIDENCE_BANDS / RARITY_BANDS（同源改造落点）；
+#   ②confidence_band_divergence() 给出两侧档表 + 逐探针取值 + 最大差 = 数值指纹；
+#   ③下面各件钉死"当前分叉、分叉到什么程度"⇒ 任一侧改数不与他侧对账即红。
+
+#: 红队实测指纹（P-1 表）：max(P)=0.25 时 0.80 vs 0.30
+A16_PROBE_025_DETECTOR = 0.80
+A16_PROBE_025_ALLOCATOR = 0.30
+
+
+class TestA16SingleSourcePrepared:
+    def test_public_alias_is_the_same_object_not_a_copy(self) -> None:
+        """别名必须与私有表**同一对象**——复制会造出第二个可独立改写的"真源"。"""
+        from zephyr.regime.core import regime_detector as rd
+
+        assert CONFIDENCE_BANDS is rd._CONFIDENCE_BANDS  # noqa: SLF001
+        assert RARITY_BANDS is rd._RARITY_BANDS  # noqa: SLF001
+
+    def test_detector_bands_numerically_untouched(self) -> None:
+        """A16 未裁 ⇒ 检测器侧数值必须逐位不变（本车道声明：**未改数值**）。"""
+        assert [tuple(b) for b in CONFIDENCE_BANDS] == [(0.50, 1.0), (0.30, 0.9), (0.15, 0.8), (0.0, 0.7)]
+        assert [tuple(b) for b in RARITY_BANDS] == [(0.05, 1.0), (0.01, 0.85), (0.0, 0.7)]
+
+    def test_allocator_table_untouched(self) -> None:
+        """实盘侧默认档表同样逐位不变（本车道不碰 pf_alloc/**）。"""
+        assert [tuple(b) for b in ALLOCATOR_BANDS] == [(0.60, 0.30), (0.80, 0.60), (0.95, 0.85), (1.01, 1.00)]
+
+
+class TestA16DivergenceIsMachineDetectable:
+    """P-1 验收判据①：两侧档表的关系必须"机器可判"，不得停在散文。"""
+
+    def test_divergence_report_shape(self) -> None:
+        rep = confidence_band_divergence()
+        assert rep["owner_adjudication"] == "A16-pending"
+        assert rep["identical_tables"] is False, "两表若被静默改成相同，须由 Owner 裁定件显式改写本断言"
+        assert set(rep["probe_values"][0]) == {"max_p", "detector_conf", "allocator_conf", "gap"}
+
+    def test_measured_2_67x_fingerprint(self) -> None:
+        rep = confidence_band_divergence()
+        assert detector_confidence_at(0.25) == pytest.approx(A16_PROBE_025_DETECTOR)
+        row = next(r for r in rep["probe_values"] if abs(r["max_p"] - 0.25) < 1e-12)
+        assert float(row["allocator_conf"]) == pytest.approx(A16_PROBE_025_ALLOCATOR)
+        assert rep["max_abs_gap"] > 0.5, "分叉幅度低于指纹 ⇒ 有人单方面动了档表数值"
 

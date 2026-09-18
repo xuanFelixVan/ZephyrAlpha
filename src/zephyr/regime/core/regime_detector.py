@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-PA-007(RegimeMetaAllocator消费RegimeProbabilities+Shrinkage); BM-BT-03-E(回测验证消费7维概率)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] RegimeProbabilities.probabilities Σ=1.0; Shrinkage≤1.0(只减不增); shrinkage_enabled=False时Shrinkage=1.0; HMM 4态walk-forward季度重拟合; 不输出硬标签只输出7维灰度概率(4 HMM+3 overlay); HMM组件锚定（裁定#304：fit后按训练窗特征统计确定性重排到固定语义槽位，跨refit态身份可比); 缺数降级必须可观测(RB-STATS-02: RiskSignal 缺数腿由 missing_risk_legs 判定并写入 ShrinkageResult.degraded_legs + WARNING 出声, 与"确无风险"同值不同义; 该函数分支须与 _compute_risk_signal 的三条 return 1.0 严格同构, 由 tests/regime/test_rb_stats_regime_failopen.py 钉住)
+# [INVARIANTS] RegimeProbabilities.probabilities Σ=1.0; Shrinkage≤1.0(只减不增); shrinkage_enabled=False时Shrinkage=1.0; HMM 4态walk-forward季度重拟合; 不输出硬标签只输出7维灰度概率(4 HMM+3 overlay); HMM组件锚定（裁定#304：fit后按训练窗特征统计确定性重排到固定语义槽位，跨refit态身份可比); 缺数降级必须可观测且**数值侧 fail-closed**(RB-STATS-02 观测位 + R-055a 数值位: RiskSignal 缺数腿由 missing_risk_legs 判定，缺数时 RiskSignal 落地板 _RISK_SIGNAL_FLOOR 而非 1.0、覆盖层危机概率不得被主腿门清零，并写入 ShrinkageResult.degraded_legs + risk_signal_source + WARNING 出声; 该函数分支须与 _compute_risk_signal 的降级分支严格同构, 由 tests/regime/test_rb_stats_regime_failopen.py 钉住)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -66,14 +66,17 @@ regime_recal_protocol_2026_09_17.md R1；实证诊断=同目录 diagnosis_result
     非负）是市场结构性质，方向判别职责按裁定 #229/#230 同批精神归因子层，
     态层职责=风险分档。消费方（切换器类）禁按名义语义把 r4/r10 直译"看空"。
 
-降级策略（blueprint §7.4）：hmmlearn 不可用 / 拟合失败 → HMM 4 态均匀分布 P=1/4；
-RiskSignalInputs 缺失 → RiskSignal=1.0；OverlaySignals 缺失 → 退化为纯 HMM。
-⚠️ 降级的**可观测性**（RB-STATS-02，2026-09-18 红队 st-ff-rb-stats 车道）：上述降级
-与"确无风险/确无危机"输出逐位同形（实测断供时 r10 危机概率被清零、Shrinkage 从
-0.255 松到 0.80，即危机中反而多给 3.1 倍仓位），故 ShrinkageResult.degraded_legs
-非空即代表"这一轮的降级是没数造成的"，并同步 WARNING 出声。消费方**必须**把
-degraded_legs 非空的交易日从误报率/校准统计的分母中剔除或另行 fail-closed 处置，
-不得读作"无事发生"（R-K9 的可执行前提）。
+降级策略（blueprint §7.4，**R-055a 已把数值侧从 fail-open 改为 fail-closed**）：
+hmmlearn 不可用 / 拟合失败 → HMM 4 态均匀分布 P=1/4；OverlaySignals 缺失 → 退化为纯 HMM；
+**RiskSignalInputs 缺失 → RiskSignal 不再取 1.0（原 §7.4 口径，与"13 参数全正常"逐位同形，
+实测危中断供反而放量 3.14 倍），改取地板值 _RISK_SIGNAL_FLOOR(=0.30，与本件既有 clamp 下界
+同数)**，且主腿门不得因此清零覆盖层危机概率。选型对齐房内已有正例
+`pf_alloc/allocation_inputs.py::resolve_risk_signal`（无教材 ⇒ 总节流落最深档 + 带
+`risk_signal_source` 溯源标签，不新造机制）。
+⚠️ 降级的**可观测性**（RB-STATS-02，2026-09-18 红队 st-ff-rb-stats 车道）：ShrinkageResult.degraded_legs
+非空即代表"这一轮的降级是没数造成的"（实测改前断供时 r10 危机概率被清零、Shrinkage 从
+0.255 松到 0.80，即危机中反而多给 3.1 倍仓位），并同步 WARNING 出声。消费方**必须**把
+degraded_legs 非空的交易日从误报率/校准统计的分母中剔除（R-K9 的可执行前提）。
 
 依据: 10_regime_detector_spec v1.3.1（原12态spec）/ 11_regime_backtest_validation_plan v1.0.0（验证方案）/ 13_regime_phase3_engineering_plan §2.1（4态降维）/ docs/_working/regime_recal/regime_recal_protocol_2026_09_17.md（重校批预注册协议）
 SSoT: depgraph MOD-REGIME-001
@@ -87,7 +90,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 if TYPE_CHECKING:
     import numpy as np  # 注解专用；运行期 numpy 走方法内局部导入（hmmlearn 可选依赖惰性范式）
@@ -201,6 +204,68 @@ _RARITY_BANDS: tuple[tuple[float, float], ...] = (
     (0.01, 0.85),  # 中等态 1-5%
     (0.0, 0.7),  # 稀有态 <1%
 )
+
+# ── A16（转 Owner）"两套节流档表必须同源"的**机械准备**（本车道不改任何数值）──────
+# 真源声明：检测器档表 = 下面两个公开别名，回测侧与实盘侧**应当**都从它们读。
+# 实盘侧 pf_alloc/core/regime_meta_allocator.CONFIDENCE_THRESHOLDS 是另一套表（数值不同、
+# 查表方向相反），统一到哪一档属**风险偏好选择**（转 Owner 裁定 A16），本车道不选边、
+# 不改值，只做两件机械事：①把检测器档表提为可导入的公开真源（landA/Owner 之后分配器侧
+# 只需把自身表换成 import 本别名即完成同源）；②给出 divergence 审计件，使"任一侧偷偷
+# 改数而不与另一侧对账"变成机检红而不是散文。
+# ⚠️ 别名与私有名**共享同一个 tuple 对象**（不得用 tuple(...) 重建）——重建会造出第二个
+#    可独立改写的"真源"，正是 A16 的病。
+CONFIDENCE_BANDS = _CONFIDENCE_BANDS
+RARITY_BANDS = _RARITY_BANDS
+
+#: A16 对账探针（max(P) 取值集合，覆盖 4 态均匀 0.25 与两表的档位边界）
+_BAND_PROBE_MAX_P: Final[tuple[float, ...]] = (0.10, 0.25, 0.30, 0.50, 0.60, 0.80, 0.95, 1.0)
+
+
+def detector_confidence_at(max_p: float) -> float:
+    """检测器档表的纯函数求值（降序取下界：首个 max_p>=下界的档）。"""
+    for bound, coef in CONFIDENCE_BANDS:
+        if max_p >= bound:
+            return float(coef)
+    return float(CONFIDENCE_BANDS[-1][1])
+
+
+def confidence_band_divergence() -> dict[str, Any]:
+    """机械对账"回测侧档表(检测器) vs 实盘侧档表(分配器)"——A16 的检出面，只读不改值。
+
+    不做任何实例化（分配器侧同样以纯函数求值其自身表），故无跨模块构造依赖。
+    对账对象=分配器的**默认档表**（模块常量 CONFIDENCE_THRESHOLDS）；实例可用
+    `confidence_thresholds=` 覆盖它（D1 ±20% 敏感性扰动用途），那属运行时扰动不入本指纹。
+
+    Returns:
+        {"detector_bands", "allocator_bands", "identical_tables", "probe_values",
+         "max_abs_gap", "owner_adjudication": "A16-pending"}
+        identical_tables=False ⇒ 两侧不同构，**必须**由 Owner 裁定统一到哪一档；
+        本件被测试钉住 ⇒ 任何一侧改数而不与另一侧对账，测试即红。
+    """
+    from zephyr.pf_alloc.core.regime_meta_allocator import CONFIDENCE_THRESHOLDS as ALLOC_BANDS  # noqa: PLC0415
+
+    alloc_table: Any = ALLOC_BANDS
+
+    def _alloc_lookup(max_p: float) -> float:
+        # 分配器表语义：升序取上界（首个 max_p < 上界的档）
+        for upper, signal in alloc_table:
+            if max_p < upper:
+                return float(signal)
+        return float(alloc_table[-1][1])
+
+    rows = []
+    for p in _BAND_PROBE_MAX_P:
+        d, a = detector_confidence_at(p), _alloc_lookup(p)
+        rows.append({"max_p": p, "detector_conf": d, "allocator_conf": a, "gap": round(d - a, 6)})
+    return {
+        "detector_bands": [list(b) for b in CONFIDENCE_BANDS],
+        "allocator_bands": [list(b) for b in alloc_table],
+        "identical_tables": [tuple(b) for b in CONFIDENCE_BANDS] == [tuple(b) for b in alloc_table],
+        "probe_values": rows,
+        "max_abs_gap": round(max(abs(float(r["gap"])) for r in rows), 6),
+        "owner_adjudication": "A16-pending",
+    }
+
 # 状态风险因子（13_regime_phase3_engineering_plan §2.1.6.2 重设计，基于 4 态 Viterbi 统计特征）
 # ⚠️ DEPRECATED — C1 验证 2026-08-06 从 ConfidenceSignal 移除，不再参与 Shrinkage 计算。
 # 原因：无监督 HMM 标签在 walk-forward refit 间有 label-switching 问题（r1 本季=牛市，
@@ -343,18 +408,29 @@ TRANSITION_CONFIG: dict[str, dict[str, Any]] = {
 _STAGE_ORDER: tuple[str, ...] = ("strong_confirm", "confirm", "trigger", "fail")
 
 
-#: RiskSignal 缺数腿标签（RB-STATS-02）——与 _compute_risk_signal 的三条降级分支一一对应
+#: RiskSignal 缺数腿标签（RB-STATS-02）——与 _compute_risk_signal 的降级分支一一对应
 RISK_LEG_INPUTS_ABSENT = "risk_inputs_absent"
 RISK_LEG_PARAMS_ABSENT = "risk_params_absent"
 RISK_LEG_PRIMARY_ABSENT = "risk_primary_param_1_absent"
+
+#: RiskSignal 地板值（10_regime_detector_spec §5.3.3 聚合公式的 clamp 下界）。
+#: R-055a 起它同时是**缺数时的 fail-closed 取值**——缺数不再等于"没风险"。
+#: 单真源：_compute_risk_signal 的 clamp 下界与缺数分支共用本常量，禁再写字面量 0.30。
+RISK_SIGNAL_FLOOR: Final = 0.30
+
+#: risk_signal_source 溯源标签（对齐 allocation_inputs.resolve_risk_signal 的标签词汇）
+RISK_SOURCE_SUPPLIED: Final = "params_supplied"
+#: 与正例同名：无供数 ⇒ 数值落地板、概率不受"主腿说没风险"门控，总节流落最深可用档
+RISK_SOURCE_NEUTRAL_FAIL_CLOSED: Final = "neutral_fail_closed"
 
 
 def _primary_risk_coef(risk_inputs: Any) -> float:
     """读 RiskSignal 主腿 #1（realized_vol）系数；缺数/NULL/非数值一律返回 1.0。
 
-    1.0 = "主腿未触发风险"。三处读取点（detect 的 overlay 门控、_compute_risk_signal
-    的 #1 门控、missing_risk_legs 的判腿）共用本函数，消除"同一个 NULL 只有一处会崩"
-    的口径分叉（RB-STATS-02）。
+    1.0 = "主腿未触发风险"（**仅用于"主腿确实报了平静"的判据**，不得单独用来判
+    "没数"——那正是 R-055a 治的 fail-open：判缺数一律走 missing_risk_legs）。
+    三处读取点（detect 的 overlay 门控、_compute_risk_signal 的 #1 门控、missing_risk_legs
+    的判腿）共用本函数，消除"同一个 NULL 只有一处会崩"的口径分叉（RB-STATS-02）。
     """
     params = risk_inputs.get("params") if isinstance(risk_inputs, dict) else None
     raw = params.get(1) if isinstance(params, dict) else None
@@ -365,12 +441,14 @@ def _primary_risk_coef(risk_inputs: Any) -> float:
 
 
 def missing_risk_legs(risk_inputs: Any) -> tuple[str, ...]:
-    """判定 RiskSignal 是否"没供上数"（纯观测函数；不改任何数值路径）。
+    """判定 RiskSignal 是否"没供上数"（R-055a 起：它同时是数值侧 fail-closed 的**开关**）。
 
-    存在的理由：`_compute_risk_signal` 的三条缺数分支都返回 **1.0**，而"13 参数
+    存在的理由：`_compute_risk_signal` 的三条缺数分支历史上都返回 **1.0**，而"13 参数
     全部正常=1.0"也返回 1.0——两条语义相反的路径输出逐位相同（实测见
     tests/regime/test_rb_stats_regime_failopen.py）。R-K9 要求断供即 fail-closed，
-    但 fail-closed 的前提是"能机械判定断供"，本函数就是那个判定的载体。
+    而 fail-closed 的前提是"能机械判定断供"，本函数就是那个判定的载体；
+    R-055a 已把判定结果接到数值上：本函数非空 ⇒ RiskSignal 落 RISK_SIGNAL_FLOOR、
+    且覆盖层危机概率不得被主腿门清零。
 
     与 `_compute_risk_signal` 的分支严格同构（改那边须同步改这边，由测试钉住）。
     """
@@ -422,13 +500,18 @@ class ShrinkageResult:
     risk_signal: float  # 13 参数聚合
     shrinkage_enabled: bool  # 验证开关（C1 一票否决）
     timestamp: datetime
-    schema_version: str = "1.0"
+    schema_version: str = "1.1"
     #: 缺数腿标记（RB-STATS-02）：无数据与"真的没风险"在数值上不可分辨是 fail-open
-    #: 的温床——RiskSignal 缺数降级为 1.0（§7.4），与"全参数正常=1.0"逐位相同。
+    #: 的温床——RiskSignal 缺数历史上降级为 1.0（§7.4），与"全参数正常=1.0"逐位相同。
     #: 本字段把可观测性补齐：非空 ⇒ 本轮至少有一条腿没供上数，**任何**下游（哨兵、
     #: 误报率统计、回测归因）都须据此把该日剔出分母或另行处置，不得当作"无事发生"。
-    #: 纯观测位，不改变 value（历史 C1/B 系列验证数字零漂移）。
     degraded_legs: tuple[str, ...] = ()
+    #: RiskSignal 取值的**来源溯源**（R-055a，对齐房内正例
+    #: `pf_alloc/allocation_inputs.py::resolve_risk_signal` 的 `risk_signal_source`）：
+    #:   "params_supplied"      → 13 参数正常供数，risk 是实测聚合值
+    #:   "neutral_fail_closed"  → 无供数，risk 是 RISK_SIGNAL_FLOOR 地板值（不是"没风险"）
+    #: 有它才能把"降级"与"正常"在档案里区分开（红队判据③：降级必须可溯源）。
+    risk_signal_source: str = RISK_SOURCE_SUPPLIED
 
 
 @dataclass(frozen=True)
@@ -588,16 +671,24 @@ class RegimeDetector:
         hmm_probs = self._run_hmm(regime_features)
         # 子模块②：覆盖层 3 特殊态 + 8 转换评分（始终评估，记录 _last_transitions 供 B4 验证）
         overlay_probs = self._run_overlay(overlay_signals)
-        # RB-STATS-02：先记录"哪些腿没供上数"（纯观测，不改任何数值路径）
-        degraded: list[str] = list(missing_risk_legs(risk_signal_inputs))
+        # RB-STATS-02：先记录"哪些腿没供上数"（R-055a 起该判定同时驱动数值侧 fail-closed）
+        legs_absent = missing_risk_legs(risk_signal_inputs)
+        degraded: list[str] = list(legs_absent)
         # 方案A门控（#ARCH-REGIME-OVERLAY-001）：overlay 仅在危机期（#1<1.0）生效。
         # 非危机期屏蔽 overlay 概率注入（避免 T1/S1 假阳性触发系统性压仓致 Sharpe 退化
         # 0.02），但保留转换评估记录（_last_transitions）——S2(CRISIS→RECOVERY) 在危机
         # 结束时触发，恰好是 #1≥1.0 时点，若在入口清空 overlay_signals 会跳过 S2 转换
         # 评估，致 B4 验证 S2 recovery 0/3 漏触发（Phase 2 不闭环）。故门控改为在
         # _run_overlay 之后屏蔽概率注入，与 RiskSignal #1 门控（#1>=1.0 时=1.0）对齐。
-        if self.overlay_gated:
-            if _primary_risk_coef(risk_signal_inputs) >= 1.0:
+        # ★ R-055a（fail-closed 修正，方向=加严）：原实现把"主腿没供数"（_primary_risk_coef
+        # 缺数兜底返回 1.0）读成"主腿报了没风险"，于是把覆盖层算出的危机概率**清零**，
+        # 实测危机中断供 ⇒ r10 0.800→0.000、dominant r10→r1、Shrinkage 0.255→0.800
+        # （放量 3.14×）——与 R-K9「断供须 fail-closed」正相反。现门控要求**正证据**：
+        # 只有 legs_absent 为空（主腿真的报了 #1≥1.0）才允许屏蔽 overlay。
+        if self.overlay_gated and _primary_risk_coef(risk_signal_inputs) >= 1.0:
+            if legs_absent:
+                degraded.append("crisis_overlay_preserved_no_primary_evidence")
+            else:
                 # RB-STATS-02：屏蔽前若覆盖层已触发非零危机/复苏/突破概率，则本次清零
                 # **可能是断供所致而非确无危机**——留痕，禁下游当"无事发生"读。
                 if any(v > 0.0 for v in overlay_probs.values()):
@@ -608,14 +699,19 @@ class RegimeDetector:
         # 子模块③④⑤：Shrinkage 链
         confidence = self._compute_confidence_signal(probs)
         risk = self._compute_risk_signal(risk_signal_inputs)
-        shrinkage = self._compute_shrinkage(confidence, risk, tuple(degraded))
+        risk_source = RISK_SOURCE_NEUTRAL_FAIL_CLOSED if legs_absent else RISK_SOURCE_SUPPLIED
+        shrinkage = self._compute_shrinkage(confidence, risk, tuple(degraded), risk_source)
         if degraded:
             _logger.warning(
-                "regime 供数降级(RB-STATS-02): degraded_legs=%s risk_signal=%.4f "
-                "shrinkage=%.4f —— 本值与'确无风险'逐位同形，禁据此判'无事'",
+                "regime 供数降级(RB-STATS-02/R-055a): degraded_legs=%s risk_signal=%.4f "
+                "(source=%s；source=neutral_fail_closed 时 risk 是 fail-closed 地板值而非'无风险') "
+                "shrinkage=%.4f r10=%.4f dominant=%s",
                 degraded,
                 risk,
+                risk_source,
                 shrinkage.value,
+                probs.probabilities.get("r10", float("nan")),
+                probs.dominant_regime,
             )
         return probs, shrinkage
 
@@ -951,25 +1047,36 @@ class RegimeDetector:
         risk_inputs 结构：
             {"params": {1: 0.85, 2: 1.0, ..., 12: 0.6},  # #1-10/#12 系数
              "opportunity": {"news_ghost": 0.10, "bad_news_flat": 0.15}}  # #11/#13 抵消值
-        缺失时降级为 RiskSignal=1.0（§7.4）。
+        缺失时的降级语义（**R-055a 改，方向=加严**）：原 §7.4 口径"缺失→1.0（最宽松）"
+        与"13 参数全正常=1.0"逐位同形，实测危机中断供反而放量 3.14 倍，违反 R-K9；
+        现改为**缺失→RISK_SIGNAL_FLOOR(0.30，即本函数既有 clamp 下界)**，并由
+        ShrinkageResult.risk_signal_source 标注来源。对齐房内已有正例
+        allocation_inputs.resolve_risk_signal（"无教材⇒总节流落最深档+带溯源标签"），
+        未新造机制、未新增档位数值。
         """
         if not isinstance(risk_inputs, dict) or not risk_inputs:
-            return 1.0
+            # R-055a fail-closed：整包没供数 ≠ 没风险
+            return RISK_SIGNAL_FLOOR
         params: dict[int, float] = risk_inputs.get("params") or {}
         if not params:
-            return 1.0
+            # R-055a fail-closed：params 空壳（schema 错配/CH 整列缺）≠ 没风险
+            return RISK_SIGNAL_FLOOR
         # #1 门控：主风险信号未触发 → 附加参数不参与（避免假阳性致 Sharpe 退化）
         # RB-STATS-02：#1 存在但为 None/非数值（CH 缺列回 NULL 的常态形态）此前直接
         # float(None) 抛 TypeError 打断整条 regime 链——与 docstring 承诺的
-        # "缺失时降级为 1.0（§7.4）"不一致。读取统一走 _primary_risk_coef（三处共读
-        # 一个口径）；降级不再静默（degraded_legs + WARNING，见 detect）。
+        # "缺失时降级"一致但方式错误。读取统一走 _primary_risk_coef（三处共读
+        # 一个口径）；R-055a 起缺数不再落最宽松值 1.0，而是落地板值 + degraded_legs
+        # + risk_signal_source 溯源 + WARNING（见 detect）。
+        if missing_risk_legs(risk_inputs):
+            return RISK_SIGNAL_FLOOR
         if _primary_risk_coef(risk_inputs) >= 1.0:
             return 1.0
         # #1 已触发 → 附加参数可加深收缩（min(all) ≤ #1）
         risk_param_ids = [i for i in list(range(1, 11)) + [12]]
         coefs = [float(params[i]) for i in risk_param_ids if i in params and params[i] is not None]
         if not coefs:
-            return 1.0
+            # 理论上不可达（主腿有数即 #1∈coefs）；保留 fail-closed 兜底，禁回到"没数=1.0"
+            return RISK_SIGNAL_FLOOR
         risk_base = min(coefs)
         # 共振惩罚：异常参数数（系数<1.0）每多一个再扣 5%，下限 ×0.80
         anomaly_count = sum(1 for c in coefs if c < 1.0)
@@ -981,13 +1088,14 @@ class RegimeDetector:
             recovery = float(opp.get("news_ghost", 0.0)) + float(opp.get("bad_news_flat", 0.0))
         recovery = min(recovery, 0.25)
         risk = risk_base * resonance + recovery
-        return max(0.30, min(1.00, risk))
+        return max(RISK_SIGNAL_FLOOR, min(1.00, risk))
 
     def _compute_shrinkage(
         self,
         confidence: float,
         risk: float,
         degraded_legs: tuple[str, ...] = (),
+        risk_signal_source: str = RISK_SOURCE_SUPPLIED,
     ) -> ShrinkageResult:
         """子模块⑤：Shrinkage = ConfidenceSignal × RiskSignal（可开关）。
 
@@ -995,7 +1103,9 @@ class RegimeDetector:
         - shrinkage_enabled=False → value = 1.0（C1 验证基准）
         value ≤ 1.0（只减不增，INVARIANTS）。
 
-        degraded_legs（RB-STATS-02）：纯观测位，不参与 value 计算。
+        degraded_legs（RB-STATS-02）：观测位，不参与 value 计算（value 的收紧来自
+        risk 本身——R-055a 已把缺数的 risk 定为地板值）。
+        risk_signal_source（R-055a）：降级可溯源字段，取值见 ShrinkageResult 注释。
         """
         if not self.shrinkage_enabled:
             return ShrinkageResult(
@@ -1004,6 +1114,7 @@ class RegimeDetector:
                 risk_signal=risk,
                 shrinkage_enabled=False,
                 degraded_legs=tuple(degraded_legs),
+                risk_signal_source=risk_signal_source,
                 timestamp=datetime.now(),  # noqa: m46-time — 存量 naive 时间戳契约（消费方按本地时间解析），UTC 迁移登记专项
             )
         value = confidence * risk
@@ -1015,6 +1126,7 @@ class RegimeDetector:
             risk_signal=risk,
             shrinkage_enabled=True,
             degraded_legs=tuple(degraded_legs),
+            risk_signal_source=risk_signal_source,
             timestamp=datetime.now(),  # noqa: m46-time — 存量 naive 时间戳契约（消费方按本地时间解析），UTC 迁移登记专项
         )
 

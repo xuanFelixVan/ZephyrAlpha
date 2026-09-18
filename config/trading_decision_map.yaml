@@ -266,15 +266,20 @@ nodes:
   node_type: gate
   point: 盘前
   decision_question: 今天下不下单/给多少总仓位（消费 RegimeSnapshot 概率=谨慎度，六段预算带见 C1）
-  algo_note_zh: >-
-    不自己算宏观——消费 RegimeSnapshot 的 7 态概率分布当谨慎度系数：概率越分裂越谨慎。
-    再查六段情绪预算带（如吸筹 30-50%/点火 50-70%/扩张 60-80%/亢奋封顶 30% 只卖不买），月级定大档、日级水温微调，输出当日总仓位上限。
+  algo_note_zh: "不自己算宏观——消费 RegimeSnapshot 的 7 态概率分布当谨慎度系数：概率越分裂越谨慎；没供数时同样按最谨慎档处理（R-055a 数值侧 fail-closed：缺数落地板值 0.30 并带 risk_signal_source 溯源，禁把降级读作'确无风险'）。 再查六段情绪预算带（如吸筹 30-50%/点火 50-70%/扩张 60-80%/亢奋封顶 30% 只卖不买），月级定大档、日级水温微调，输出当日总仓位上限。
     已建成叠加波动率目标化仓位系数（凯利简版：滚动 σ 目标化）：
     src/zephyr/pf_alloc/core/vol_target_allocator.py（MOD-BT-082），
     蓝图=docs/_working/2026-09-13-tdm-upgrade-blueprint.md；Phase 2 完整凯利待车道 E 分布预测。
     （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变）
     （裁定#304 2026-09-17：HMM 组件跨季锚定落地——r4 槽=训练窗负斜率、r1-r3 槽=波动率升序，
     态名跨季可比；实证警示 r4/r10/r1 无稳定方向信息（反弹溢价），谨慎度按风险分档口径读，方向判别归因子层）
+    （R-055a 2026-09-18 数值侧 fail-closed，方向=加严：RiskSignal 缺供数不再取 1.0（原口径把'没数'读成
+    '没风险'=fail-open），改落地板值 0.30=本模块聚合 clamp 下界；主腿门改判正证据——只有 13 参数齐且 #1≥1.0
+    才屏蔽覆盖层危机概率，断供时 r10 危机概率保留不清零。实测同一危机场景断一条腿：改前 Shrinkage 0.255→0.800
+    （放量 3.137 倍、dominant 从 r10 翻成 r1），改后 0.255→0.255（只收紧不放松）；{} / None / params 空壳 /
+    缺 #1 四形态与'13 参数全正常'不再逐位相同，新增 risk_signal_source（params_supplied / neutral_fail_closed）
+    与 degraded_legs + WARNING 三件溯源。检测器档 0.80 与分配器档 0.30 统一到哪一档=A16 待 Owner 裁定，
+    本次未改任何已定档位数值）"
   factor_refs: []
   data_refs: [DS-150]
   module_ref: src/zephyr/regime/core/regime_detector.py
@@ -500,10 +505,14 @@ nodes:
     # （D90 终裁 2026-09-07）：六段冲突场景=听弱的（预算带按较弱信号降一档机械执行，废除人工接管）；量×轮动二维状态机（成交额 250 日滚动分位<25%=存量博弈：小盘题材加权/主线降权/持仓≤2-3 天；>60%=主线放行；轮动强度>80% 分位=电风扇市=无主线不推大板块）；二值权限门滞回=进段连续 2 日隶属度>60%、退出<40%
   decision_question: "双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner
     接管）；日级水温受月/周档位封顶"
-  algo_note_zh: "双轴相乘：宏观 RegimeSnapshot 概率（月级 7 态）×情绪六段分布（周级）。两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁。输出三件套：预算带（给
+  algo_note_zh: "双轴相乘：宏观 RegimeSnapshot 概率（月级 7 态）×情绪六段分布（周级）。两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁；缺供数时按最谨慎档处置（R-055a fail-closed，细则见下）。输出三件套：预算带（给
     C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。（2026-09-15 ALGO_FLOW 块出仓至
     docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变；
-    裁定#304 2026-09-17：HMM 组件跨季锚定落地（r4=负斜率槽，r1-r3=波动率升序），r4/r10/r1 方向语义退役， 概率轴消费口径=风险分档，方向判别归因子层）"
+    裁定#304 2026-09-17：HMM 组件跨季锚定落地（r4=负斜率槽，r1-r3=波动率升序），r4/r10/r1 方向语义退役， 概率轴消费口径=风险分档，方向判别归因子层；
+    裁定 R-055a 2026-09-18：本节点降级口径由 fail-open 改 fail-closed——RiskSignal 缺供数（整包缺 / params 空壳 /
+    主腿 #1 为 NULL）不再取 1.0，改落地板值 0.30，且主腿未报平静时不得把覆盖层危机概率清零。实测危机中断一条腿
+    Shrinkage 从放量 3.137 倍（0.255→0.800、dominant r10→r1）改为持平收紧（0.255）；四形态缺数与 13 参数全正常
+    （0.800）可区分，新增 risk_signal_source=neutral_fail_closed 溯源。档位数值未动，两套档表统一到哪一档待 A16 裁定）"
   factor_refs: []
   data_refs: [DS-098]
   module_ref: src/zephyr/regime/core/regime_detector.py
