@@ -28,7 +28,9 @@ reconciler_event_trigger_chain_mining.md RC-14 行。
     → test_classify_end_to_end_phantom_never_written
     → test_classify_end_to_end_unique_declared_injected
 
-去重工具（存量修复）：test_dedup_file_*（幂等/保真值）。
+去重工具（存量修复）：test_dedup_file_*（幂等/保真值）+ BRK-086 换行保真钉；
+★锚存活契约（R-A25 批次 1 事故）：TestDedupAnchorSurvival（永不得删掉任一 `# [KEY]`
+  头栏的最后一份；危险件整件跳过并分桶报因，合法重复件仍须正确去重——正反两向都钉）。
 
 测试隔离：tmp_path 构造独立 project_root（含 docs/03_modules 蓝图 frontmatter 真源）；
 depgraph 连接以 monkeypatch 打在 zephyr.governance.depgraph_schema 槽位（函数内
@@ -253,11 +255,13 @@ class TestDedupTool:
         return mod
 
     def test_dedup_file_drops_injected_block_keeps_original_ttl(self, tmp_path):
+        """合法去重件：注入块之外文件自带真 BLUEPRINT 锚 ⇒ 删注入块前两行，锚与 TTL 各存活 1 份。"""
         tool = self._load_tool()
         f = tmp_path / "dup.py"
         f.write_text(
             f"# [BLUEPRINT] {_PHANTOM_ID} | {tool.INJECTED_PROSE} | §\n"
             "# [TTL] permanent\n"
+            f"# [BLUEPRINT] {_DECLARED_ID} | {_DECLARED_BP} | §\n"
             "# [A_module] module_id=MOD-GOV_SCRIPTS\n"
             "# [TTL] permanent\n"
             "\n"
@@ -272,12 +276,17 @@ class TestDedupTool:
         assert content.count("# [TTL]") == 1
         assert tool.INJECTED_PROSE not in content
         assert _PHANTOM_ID not in content
+        assert content.count("# [BLUEPRINT]") == 1, "去重后挂靠锚必须仍为 1 份"
 
     def test_dedup_file_idempotent(self, tmp_path):
         tool = self._load_tool()
         f = tmp_path / "dup2.py"
         f.write_text(
-            f"# [BLUEPRINT] MOD-A | {tool.INJECTED_PROSE} | §\n# [TTL] permanent\n# [TTL] limited\nv = 1\n",
+            f"# [BLUEPRINT] MOD-A | {tool.INJECTED_PROSE} | §\n"
+            "# [TTL] permanent\n"
+            "# [BLUEPRINT] MOD-A | docs/03_modules/ma/blueprint.md | §\n"
+            "# [TTL] limited\n"
+            "v = 1\n",
             encoding="utf-8",
         )
 
@@ -311,6 +320,20 @@ class TestDedupTool:
         assert hit is False
         assert why == "line1-not-injected-block"
 
+    def test_classify_rejects_would_orphan_shape(self, tmp_path):
+        """命中注入块形态、但删掉的就是唯一 BLUEPRINT 锚 ⇒ classify 判"不可删"并报原因。"""
+        tool = self._load_tool()
+        f = tmp_path / "orphan.py"
+        f.write_text(
+            f"# [BLUEPRINT] MOD-ORPHAN | {tool.INJECTED_PROSE} | §\n# [TTL] permanent\n# [TTL] limited\nv = 1\n",
+            encoding="utf-8",
+        )
+
+        hit, why = tool.classify_file(f)
+
+        assert hit is False
+        assert why == "would-drop-last-anchor:BLUEPRINT"
+
     def test_parse_args_accepts_documented_dry_run_flag(self, monkeypatch):
         """红队批回归：docstring 与工单口径均写 `--dry-run`，但 argparse 未注册该旗标
         → 按文档调用直接 unrecognized arguments（exit 2）。注册后 --dry-run 显式生效
@@ -325,6 +348,144 @@ class TestDedupTool:
         monkeypatch.setattr(sys, "argv", ["dedup_ttl_headers.py", "--apply", "--dry-run"])
         args2 = tool._parse_args()
         assert args2.dry_run is True and args2.apply is True  # main 内 apply_mode= dry-run 胜
+
+
+class TestDedupAnchorSurvival:
+    """★锚存活契约（R-A25 批次 1 事故治本）：永不得删掉任何一种 `# [KEY]` 头栏的最后一份。
+
+    能红判据（改前必红、改后才绿）：把 `_plan_lines` 里 `_erased_anchor_keys` 那段断言删掉
+    ⇒ `test_dedup_file_refuses_to_erase_last_blueprint` 立刻失败（该件被真删，BLUEPRINT
+    由 1 变 0），CLI 两例同败；反之把工具改成"什么都不删"的假绿，
+    `test_dedup_file_still_drops_legit_duplicate` 与 CLI 分桶例同败。
+    """
+
+    # 缺陷件（HEAD 实测 156 件同款）：唯一 BLUEPRINT 就是注入块首行，另有第 2 份 TTL
+    ORPHAN_FILE = (
+        "# [BLUEPRINT] MOD-TTLFIX-ORPHAN | (auto-injected by S4 reconciler) | §\n"
+        "# [TTL] permanent\n"
+        "# [MODULE] ttlfix.orphan\n"
+        "# [TTL] limited\n"
+        "\n"
+        "ORPHAN_VALUE: int = 1\n"
+    )
+    # 正常件：注入块 + 文件自带真 BLUEPRINT 锚 ⇒ 该删（批次 1 已落地的 16 件形态）
+    LEGIT_FILE = (
+        "# [BLUEPRINT] MOD-TTLFIX-LEGIT | (auto-injected by S4 reconciler) | §\n"
+        "# [TTL] permanent\n"
+        '"""\n'
+        "legit case\n"
+        '"""\n'
+        "\n"
+        "# [BLUEPRINT] MOD-TTLFIX-LEGIT | docs/03_modules/legit/blueprint.md | §3\n"
+        "# [MODULE] ttlfix.legit\n"
+        "# [TTL] permanent\n"
+        "\n"
+        "LEGIT_VALUE: int = 2\n"
+    )
+
+    def test_dedup_file_refuses_to_erase_last_blueprint(self, tmp_path):
+        """红证主用例（改前必红）：1 份 BLUEPRINT + 2 份 TTL ⇒ 整件跳过，一字不改。"""
+        tool = TestDedupTool._load_tool()
+        f = tmp_path / "orphan.py"
+        f.write_text(self.ORPHAN_FILE, encoding="utf-8")
+
+        changed, why = tool.dedup_file(f)
+
+        assert changed is False
+        assert why.startswith("would-drop-last-anchor:")
+        assert "BLUEPRINT" in why
+        assert f.read_text(encoding="utf-8") == self.ORPHAN_FILE, "被跳过件必须零字节改动"
+        kept = tool._anchor_census(self.ORPHAN_FILE.splitlines())
+        assert kept["BLUEPRINT"] == 1, "挂靠锚不得归零（模块变孤儿=门禁失明）"
+        assert kept["TTL"] == 2
+
+    def test_dedup_file_still_drops_legit_duplicate(self, tmp_path):
+        """反向钉（防"改成什么都不做"的假绿）：合法重复注入块仍须被正确去重。"""
+        tool = TestDedupTool._load_tool()
+        f = tmp_path / "legit.py"
+        f.write_text(self.LEGIT_FILE, encoding="utf-8")
+
+        changed, why = tool.dedup_file(f)
+
+        assert changed is True, f"合法去重件被误跳过（工具退化）: {why}"
+        assert why == "dropped-injected-block"
+        text = f.read_text(encoding="utf-8")
+        assert text == "\n".join(self.LEGIT_FILE.splitlines()[2:]) + "\n"
+        census = tool._anchor_census(text.splitlines())
+        assert census["BLUEPRINT"] == 1 and census["TTL"] == 1
+        assert tool.dedup_file(f)[0] is False, "复跑必须零改动（幂等）"
+
+    def test_erased_anchor_keys_is_per_class_not_ttl_only(self):
+        """契约 1 泛化到任意 `# [KEY]` 类：被删行涉及的类只要在删后归零就拦。"""
+        tool = TestDedupTool._load_tool()
+        lines = self.ORPHAN_FILE.splitlines()
+
+        assert tool._erased_anchor_keys(lines, (0, 1)) == ["BLUEPRINT"]
+        assert tool._erased_anchor_keys(lines, (0, 1, 2)) == ["BLUEPRINT", "MODULE"]
+        assert tool._erased_anchor_keys(lines, (1, 3)) == ["TTL"]
+        assert tool._erased_anchor_keys(lines, ()) == []
+
+    def _make_repo(self, tmp_path: Path) -> Path:
+        """临时 git 小仓：一件危险件 + 一件正常件（CLI 端到端口径，不触真件）。"""
+        repo = tmp_path / "anchorrepo"
+        repo.mkdir(parents=True)
+        (repo / "orphan.py").write_text(self.ORPHAN_FILE, encoding="utf-8", newline="")
+        (repo / "legit.py").write_text(self.LEGIT_FILE, encoding="utf-8", newline="")
+        assert self._git(repo, "init", "-q").returncode == 0
+        for key, val in (("user.email", "anchor@example.invalid"), ("user.name", "anchor")):
+            self._git(repo, "config", key, val)
+        assert self._git(repo, "add", "--", "orphan.py", "legit.py").returncode == 0
+        assert self._git(repo, "commit", "-q", "--no-verify", "-m", "baseline").returncode == 0
+        return repo
+
+    @staticmethod
+    def _git(repo: Path, *args: str):
+        return _brk086_git(repo, *args)
+
+    def _run_cli(self, repo: Path, *flags: str):
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        return run_subprocess_hidden(
+            [sys.executable, str(_BRK086_TOOL), "--root", str(repo), *flags],
+            cwd=str(repo), capture_output=True, text=True, encoding="utf-8", errors="replace")
+
+    @staticmethod
+    def _numstat(repo: Path) -> dict[str, tuple[int, int]]:
+        """工作区 vs 基线：期望纯删除（+0 −N），出现任何新增行即改写污染。"""
+        out = TestDedupAnchorSurvival._git(repo, "diff", "--numstat")
+        result: dict[str, tuple[int, int]] = {}
+        for line in out.stdout.splitlines():
+            parts = line.split("\t")
+            if len(parts) == 3:
+                result[parts[2]] = (int(parts[0]), int(parts[1]))
+        return result
+
+    def test_dry_run_separates_skipped_from_dedup_targets(self, tmp_path):
+        """契约 3：dry-run 把"会被跳过的危险件（含原因）"与"真去重件"分桶计数。"""
+        import json
+
+        repo = self._make_repo(tmp_path)
+        run = self._run_cli(repo, "--dry-run", "--json", str(tmp_path / "out.json"))
+        assert run.returncode == 1, f"有待处理件必须 rc=1，实得 {run.returncode}\n{run.stderr[:400]}"
+        payload = json.loads((tmp_path / "out.json").read_text(encoding="utf-8"))
+        assert payload["summary"]["dedup_targets"] == 1
+        assert payload["summary"]["skipped_files"] == 1
+        assert payload["summary"]["skipped_by_reason"] == {"would-drop-last-anchor:BLUEPRINT": 1}
+        assert [t["file"] for t in payload["targets"]] == ["legit.py"]
+        assert [s["file"] for s in payload["skipped"]] == ["orphan.py"]
+        assert payload["skipped"][0]["at_risk_blueprint_id"] == "MOD-TTLFIX-ORPHAN"
+        assert "[would-skip] orphan.py" in run.stdout and "[would-dedup] legit.py" in run.stdout
+        assert self._numstat(repo) == {}, "dry-run 不得改任何字节"
+
+    def test_apply_skips_dangerous_file_and_dedups_safe_one(self, tmp_path):
+        """契约 1+3 端到端：--apply 只写安全件；危险件字节不动且被报明原因。"""
+        repo = self._make_repo(tmp_path)
+        run = self._run_cli(repo, "--apply")
+        assert run.returncode == 0, (
+            f"跳过≠失败，rc 必须 0，实得 {run.returncode}\n{run.stdout}\n{run.stderr[:400]}")
+        assert (repo / "orphan.py").read_text(encoding="utf-8") == self.ORPHAN_FILE, "危险件被改写（R-A25 复发）"
+        assert "skipped_last_anchor=1" in run.stdout
+        assert self._numstat(repo) == {"legit.py": (0, 2)}, "只有合法件该被删 2 行（纯删除，零新增）"
 
 
 _BRK086_TOOL = _PROJECT_ROOT / "scripts" / "governance" / "dedup_ttl_headers.py"
@@ -430,9 +591,12 @@ class TestDedupLineEndingFidelityBrk086:
 
         f = tmp_path / "mixed.py"
         original = f.with_suffix(".orig")
+        # 合法去重件形态：注入块之外文件自带真 BLUEPRINT 锚（否则锚存活契约整件跳过，
+        # 本例要钉的是"删这两行时字节保真"，不是"该不该删"）
         payload = (
             "# [BLUEPRINT] MOD-BRK086 | (auto-injected by S4 reconciler) | §\r\n"
             "# [TTL] permanent\r\n"
+            "# [BLUEPRINT] MOD-BRK086 | docs/03_modules/brk086/blueprint.md | §\n"
             "# [MODULE] mixed\r\n"
             "# [TTL] permanent\n"
             "A = 1\r\n"

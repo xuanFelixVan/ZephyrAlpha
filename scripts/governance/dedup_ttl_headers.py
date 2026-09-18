@@ -6,13 +6,13 @@
 # [CONSUMERS] RC-14 存量修复批（后续批：python scripts/governance/dedup_ttl_headers.py --apply）
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只删确定性注入块（line1=BLUEPRINT+auto-injected prose 且 line2=# [TTL] permanent 且其后仍有 # [TTL] 行）；注入块是唯一 TTL 时禁删（防造无 TTL 半成品）；幂等（删后复跑零改动）；原头部真值（含 [TTL] limited）原样保留；禁启发式改写非注入形态的重复头（--scan-loose 只列清单归人工批）；换行保真（BRK-086 治本）=读写一律按字节（read_bytes + splitlines(keepends) + write_bytes），禁文本模式整篇读写把 CRLF 折叠成 LF 造出差评级假差异
+# [INVARIANTS] 只删确定性注入块（line1=BLUEPRINT+auto-injected prose 且 line2=# [TTL] permanent 且其后仍有 # [TTL] 行）；注入块是唯一 TTL 时禁删（防造无 TTL 半成品）；★锚存活契约（批次 1 事故治本）=删前任一 `# [KEY]` 类若被删行涉及，删后该类全文仍须 ≥1 份，归零即整件跳过并计入 skipped 输出（fail-safe＝不删；`# [BLUEPRINT]` 是模块↔蓝图挂靠锚，删掉最后一份=造孤儿模块，ALGO-FLOW-LINK 一族门禁失明）；幂等（删后复跑零改动）；原头部真值（含 [TTL] limited）原样保留；禁启发式改写非注入形态的重复头（--scan-loose 只列清单归人工批）；换行保真（BRK-086 治本）=读写一律按字节（read_bytes + splitlines(keepends) + write_bytes），禁文本模式整篇读写把 CRLF 折叠成 LF 造出差评级假差异
 # [MODIFY-GUARD] none
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 单文件读写 OSError 降级计入 failed 并以退出码 2 汇报，不中断批量；git ls-files 失败回退 --files 显式清单（tmp_path 单测可用）
-# [TESTS] tests/governance/audit/test_module_id_header_injector_rc14.py::TestDedupTool
+# [ERROR_CONTRACT] 单文件读写 OSError 降级计入 failed 并以退出码 2 汇报，不中断批量；锚存活契约不满足=计入 skipped（不是 failed，退出码不变，改写零发生）；git ls-files 失败回退 --files 显式清单（tmp_path 单测可用）
+# [TESTS] tests/governance/audit/test_module_id_header_injector_rc14.py::TestDedupTool; ::TestDedupAnchorSurvival（锚存活契约正反双向）; ::TestDedupLineEndingFidelityBrk086（换行保真）
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # noqa: m11-perm-manual-legitimate  M11豁免: 本文件是 AI/Owner 按需调用的一次性治理 CLI（存量重复头去重 dry-run/apply，人工按需触发，无常驻进程无 cron 无事件订阅义务），属 noqa_exempt_registry.yaml m11 条目列示的"一次性治理脚本"合法场景
 # [TTL] permanent
@@ -31,6 +31,15 @@
   动作 = 删除前两行注入块，保留原头部（原 [TTL] 值原样保留 → 幂等）。
   文件唯一 TTL 行就是这个注入块时不动（删除会制造无 TTL 半成品，注入器语义禁止）。
 
+★锚存活契约（批次 1 事故治本，R-A25）：命中≠可删。删除前逐类清点 `# [KEY]` 头栏
+  （BLUEPRINT / TTL / 该文件里任何其它大写键），任一被删类在"删后视图"里归零 ⇒ 整件
+  跳过并列进 skipped（fail-safe＝不删）。病根实例：注入块的 BLUEPRINT 是该文件唯一
+  挂靠锚时（HEAD 实测 156 件），删前两行 = 把模块变成孤儿，ALGO-FLOW-LINK 一族门禁
+  从此看不见它——正是 #ARCH-324 治的"落地面锚定失明"的镜像病。这类件要的是"把注入
+  锚落成真锚"（改写），不是删除，故归人工/后续批。
+  份数口径=全文件（非仅头部块）：真 BLUEPRINT 锚常落在 docstring 之后
+  （实证 src/zephyr/feedback_loop/generator.py），只数头部块会把合法去重件误判成危险件。
+
 用法：
   python scripts/governance/dedup_ttl_headers.py --scan --json out.json   # 生成器口径清单
   python scripts/governance/dedup_ttl_headers.py --dry-run                # 默认，只报不动
@@ -38,7 +47,11 @@
   python scripts/governance/dedup_ttl_headers.py --apply --files list.txt # 只处理清单内文件
   python scripts/governance/dedup_ttl_headers.py --scan-loose             # >1 TTL 但非注入形态（人工批清单）
 
-退出码：0=无待处理；1=发现待处理（dry-run/scan）；2=apply 有失败。
+输出：dry-run/scan 的 JSON 摘要把"可安全去重件"（dedup_targets）与"因锚存活契约被
+  跳过件"（skipped_files + skipped_by_reason，逐件带 lost_anchors 与 at_risk_blueprint_id）分开计数。
+
+退出码：0=无待处理；1=发现待处理（dry-run/scan，含被跳过件——它们同样欠人工账）；
+        2=apply 有失败（跳过不算失败）。
 """
 
 from __future__ import annotations
@@ -58,6 +71,7 @@ ensure_utf8_stdout()
 import argparse
 import json
 import re
+from collections import Counter
 
 from _shared.constants import REPO_ROOT
 
@@ -73,6 +87,19 @@ _TTL_LINE_RE = re.compile(r"^\s*#\s*\[TTL\]", re.M)
 # `# [TTL] permanent` 重复行（S4 旧注入器把整块模板追加到头部块尾所致）。
 _BLUEPRINT_HEADER_RE = re.compile(r"^# \[BLUEPRINT\] ")
 _DUP_TTL_LINE_RE = re.compile(r"^# \[TTL\] permanent\s*$")
+# 锚存活契约用：一行头栏挂靠锚的"类名"（`# [BLUEPRINT] ...` → BLUEPRINT）。
+# 口径含缩进行与任意标识符键（[TTL]/[MODULE]/[A_module]…），宁多勿漏——判据只在
+# "被删行涉及的类"上生效，多认类只会多拦不会误删。
+_ANCHOR_KEY_RE = re.compile(r"^\s*#\s*\[([A-Za-z_][A-Za-z0-9_]*)\]")
+_LINE0_BLUEPRINT_ID_RE = re.compile(r"^# \[BLUEPRINT\] (?P<id>\S+)")
+# 跳过原因前缀（dry-run/JSON 输出与人工批据此分桶）
+BLOCKED_PREFIX = "would-drop-last-anchor:"
+
+
+def _blueprint_id_on_line0(lines: list[str]) -> str:
+    """危险件定位用：line0 上的 BLUEPRINT 锚 id（就是要保住/要落真的那个 id）。"""
+    m = _LINE0_BLUEPRINT_ID_RE.match(lines[0])
+    return m.group("id") if m else "?"
 
 
 def _iter_py_files(root: Path, only: set[str] | None = None) -> list[Path]:
@@ -152,32 +179,65 @@ def _classify_injected_block(lines: list[str]) -> tuple[bool, str]:
     return True, "duplicate-injected-block"
 
 
+def _anchor_census(lines: list[str], skip: frozenset[int] = frozenset()) -> Counter:
+    """按 `# [KEY]` 类清点全文挂靠锚份数；skip 下标的行不计（= "删后视图"）。"""
+    return Counter(
+        m.group(1) for i, ln in enumerate(lines) if i not in skip and (m := _ANCHOR_KEY_RE.match(ln))
+    )
+
+
+def _erased_anchor_keys(lines: list[str], drop: tuple[int, ...]) -> list[str]:
+    """锚存活契约：返回被删行涉及、且删后份数归零的锚类名（升序，空表=放行）。"""
+    after = _anchor_census(lines, frozenset(drop))
+    return sorted(k for k in _anchor_census(lines) if after.get(k, 0) == 0)
+
+
+def _plan_lines(lines: list[str]) -> tuple[tuple[int, ...] | None, str]:
+    """单一判据入口（dry-run/apply 共用，杜绝两条路径口径分叉）。
+
+    :return: (待删行下标或 None, 说明)
+        - 命中且锚存活 → (下标, 动作名 duplicate-injected-block / duplicate-header-ttl-line)
+        - 命中但会删掉某类锚的最后一份 → (None, "would-drop-last-anchor:<类名>")
+        - 不命中 → (None, 原不命中原因)
+    """
+    if len(lines) < 3:
+        return None, "too-short"
+    hit, why = _classify_injected_block(lines)
+    if hit:
+        drop: tuple[int, ...] = (0, 1)
+        action = "duplicate-injected-block"
+    else:
+        idx = _duplicate_ttl_index(lines) if _BLUEPRINT_HEADER_RE.match(lines[0]) else None
+        if idx is None:
+            return None, why
+        drop = (idx,)
+        action = "duplicate-header-ttl-line"
+    erased = _erased_anchor_keys(lines, drop)
+    if erased:
+        return None, "would-drop-last-anchor:" + ",".join(erased)
+    return drop, action
+
+
 def dedup_file(path: Path) -> tuple[bool, str]:
     """对单文件执行去重（幂等）：删重复注入块或头部块内重复 TTL 行，保原真值与原始换行字节。
 
+    锚存活契约不满足时不写盘，返回 (False, "would-drop-last-anchor:<类名>")。
+
     :return: (是否改动, 说明)
     """
-    hit, why = classify_file(path)
-    if not hit:
-        return False, why
     raw_lines = _read_raw_lines(path)
-    if why == "duplicate-header-ttl-line":
-        idx = _duplicate_ttl_index(_decoded_view(raw_lines))
-        if idx is None:
-            return False, "already-clean"
-        kept = raw_lines[:idx] + raw_lines[idx + 1 :]
-        action = "dropped-duplicate-ttl-line"
-    else:
-        kept = raw_lines[2:]
-        action = "dropped-injected-block"
+    drop, action = _plan_lines(_decoded_view(raw_lines))
+    if drop is None:
+        return False, action or "already-clean"
+    kept = [ln for i, ln in enumerate(raw_lines) if i not in drop]
     path.write_bytes(b"".join(kept))
-    return True, action
+    return True, "dropped-" + ("injected-block" if action == "duplicate-injected-block" else "duplicate-ttl-line")
 
 
 def classify_file(path: Path) -> tuple[bool, str]:
-    """判定单文件是否为可去重形态（形态 A 优先，未命中再判形态 B）。
+    """判定单文件是否为可安全去重形态（形态 A 优先，未命中再判形态 B，再过锚存活契约）。
 
-    :return: (是否命中, 说明)
+    :return: (是否命中且可删, 说明)
     """
     try:
         raw_lines = _read_raw_lines(path)
@@ -186,12 +246,8 @@ def classify_file(path: Path) -> tuple[bool, str]:
     lines = _decoded_view(raw_lines)
     if len(lines) < 3:
         return False, "too-short"
-    hit, why = _classify_injected_block(lines)
-    if hit:
-        return True, why
-    if _BLUEPRINT_HEADER_RE.match(lines[0]) and _duplicate_ttl_index(lines) is not None:
-        return True, "duplicate-header-ttl-line"
-    return False, why
+    drop, action = _plan_lines(lines)
+    return (drop is not None), action
 
 
 def loose_scan(root: Path, only: set[str] | None = None) -> list[dict]:
@@ -237,28 +293,41 @@ def _load_only_files(files_arg: str | None) -> set[str] | None:
     }
 
 
-def _collect_hits(root: Path, only: set[str] | None, limit: int) -> list[dict]:
-    """_collect_hits implementation."""
-    hits: list[dict] = []
+def _collect_hits(root: Path, only: set[str] | None, limit: int) -> tuple[list[dict], list[dict]]:
+    """一遍扫描出 (可安全去重件, 因锚存活契约被跳过件)，两桶分列（dry-run 与 apply 同口径）。
+
+    :return: (targets, blocked) —— targets 会被 --apply 改写；blocked 永不改写，只报原因。
+    """
+    targets: list[dict] = []
+    blocked: list[dict] = []
     for path in _iter_py_files(root, only):
-        hit, _why = classify_file(path)
-        if not hit:
+        try:
+            lines = _decoded_view(_read_raw_lines(path))
+        except OSError:
             continue
-        rel = path.relative_to(root).as_posix()
-        lines = _decoded_view(_read_raw_lines(path))
-        # 与 dedup_file 用同一判据选动作，避免 dry-run 清单与实际改写口径分叉
-        shape_a, _why = _classify_injected_block(lines)
-        matched = _INJECTED_LINE1_RE.match(lines[0]) if shape_a else None
-        hits.append(
+        drop, why = _plan_lines(lines)
+        if drop is None:
+            if why.startswith(BLOCKED_PREFIX):
+                blocked.append(
+                    {
+                        "file": path.relative_to(root).as_posix(),
+                        "reason": why,
+                        "lost_anchors": why[len(BLOCKED_PREFIX) :].split(","),
+                        "at_risk_blueprint_id": _blueprint_id_on_line0(lines),
+                    }
+                )
+            continue
+        matched = _INJECTED_LINE1_RE.match(lines[0]) if 0 in drop else None
+        targets.append(
             {
-                "file": rel,
+                "file": path.relative_to(root).as_posix(),
                 "injected_id": matched.group("id") if matched else "header-block-dup",
-                "action": "drop-first-2-lines" if shape_a else "drop-duplicate-ttl-line",
+                "action": "drop-first-2-lines" if drop == (0, 1) else "drop-duplicate-ttl-line",
             }
         )
-        if limit and len(hits) >= limit:
+        if limit and len(targets) >= limit:
             break
-    return hits
+    return targets, blocked
 
 
 def _apply_hits(root: Path, hits: list[dict]) -> int:
@@ -278,12 +347,17 @@ def _apply_hits(root: Path, hits: list[dict]) -> int:
     return failed
 
 
-def _print_dry_run_preview(hits: list[dict]) -> None:
-    """_print_dry_run_preview implementation."""
+def _print_dry_run_preview(hits: list[dict], blocked: list[dict]) -> None:
+    """dry-run 预览：真去重件与危险件（会被跳过）分列，一眼看出哪些件不能批。"""
     for h in hits[:30]:
-        print(f"  [dry-run] {h['file']} (injected {h['injected_id']})")
+        print(f"  [would-dedup] {h['file']} (injected {h['injected_id']})")
     if len(hits) > 30:
-        print(f"  ... 共 {len(hits)} 个（--json 落盘看全量）")
+        print(f"  ... 可去重共 {len(hits)} 个（--json 落盘看全量）")
+    for b in blocked[:30]:
+        print(f"  [would-skip] {b['file']} 锚将归零 {'/'.join(b['lost_anchors'])}"
+              f"（at_risk_blueprint_id={b['at_risk_blueprint_id']}）")
+    if len(blocked) > 30:
+        print(f"  ... 被跳过共 {len(blocked)} 个（--json 落盘看全量）")
 
 
 def main() -> int:
@@ -296,12 +370,16 @@ def main() -> int:
     # --dry-run 显式声明时强制只读（压过 --apply，双旗标歧义取保守侧）
     apply_mode = bool(args.apply) and not args.dry_run
 
-    hits = _collect_hits(root, only, args.limit)
-    loose = loose_scan(root, only) if args.scan_loose else []
+    hits, blocked = _collect_hits(root, only, args.limit)
+    loose = [r for r in loose_scan(root, only) if not r["why_not_auto"].startswith(BLOCKED_PREFIX)] if args.scan_loose else []
 
     summary = {
         "root": str(root),
-        "duplicate_injected_block_files": len(hits),
+        # 命中重复头形态的件总数（旧键名保留=本会话前口径"待处理数"，含被跳过件）
+        "duplicate_injected_block_files": len(hits) + len(blocked),
+        "dedup_targets": len(hits),
+        "skipped_files": len(blocked),
+        "skipped_by_reason": dict(Counter(b["reason"] for b in blocked)),
         "loose_duplicate_files": len(loose),
         "mode": "apply" if apply_mode else "dry-run",
     }
@@ -309,22 +387,28 @@ def main() -> int:
 
     if args.json:
         Path(args.json).write_text(
-            json.dumps({"summary": summary, "targets": hits, "loose": loose}, ensure_ascii=False, indent=1),
+            json.dumps(
+                {"summary": summary, "targets": hits, "skipped": blocked, "loose": loose},
+                ensure_ascii=False,
+                indent=1,
+            ),
             encoding="utf-8",
         )
 
     if args.scan:
-        return 1 if hits else 0
+        return 1 if (hits or blocked) else 0
 
     if not hits:
+        if blocked:
+            print(f"[none-to-apply] 全部 {len(blocked)} 件因锚存活契约被跳过（须人工批：先把注入锚落成真锚）")
         return 0
 
     if not apply_mode:
-        _print_dry_run_preview(hits)
+        _print_dry_run_preview(hits, blocked)
         return 1
 
     failed = _apply_hits(root, hits)
-    print(f"[done] applied={len(hits) - failed} failed={failed}")
+    print(f"[done] applied={len(hits) - failed} failed={failed} skipped_last_anchor={len(blocked)}")
     return 2 if failed else 0
 
 
