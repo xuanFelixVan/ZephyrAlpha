@@ -2023,3 +2023,15 @@ z-rb-stats 实测我口径错：**台账 R-026 原文是「八型」，而我在
 - **Q-1 仍需收**：index 里成批"回退快照"复测未清且更宽（新增 `akshare_alt_provider.py` 186 删/0 增、
   `tests/zephyr/data/test_silent_latch_before_delivery.py` 265 删/0 增，`locks`=0）⇒ **收口批必须逐件判归口**，
   否则任何一次全量 add 会把它们变成"合法提交"。
+- **R-073（收口后追加，02:0x）**：落地两批后**实弹抓到 index 侧热册净删**（列 B23）：
+  `capability_canonical_file_registry.yaml` 的 staged 态是 `+0 -4`，删的是**此刻仍活跃**的
+  `st-bizmine-20260919` 给自己 `bizmine_general_order.md` 登记的 token 条目，而该会话仍持有该册 claim。
+  ⇒ 裁定 **R-073a**：本总包**不代修、不提交该册**（§3.4 他人在途面），改判 `lanes/pit2_prescriptions.md`
+  **本批不入库**（补令牌必须写该册），保持 staged 防蒸发；已具名入 `2d7d5dd0a7` 的三件不受影响。
+  ⇒ 裁定 **R-073b**：这条与 R-069/R-072 的写入侧蒸发是**同一族、不同盲区**（一个在写、一个已在 index 等着），
+  `HOT-FILE-BASE-FRESHNESS` 现在只比"盘上 vs HEAD"，**没有"index vs HEAD 净删"这一面** ⇒ 补面列 B23 治本项，
+  与 B22 配成"写侧只增不减 + 提交侧净删即拦"。
+  ⇒ 核实：两批提交的**归属面**均为纯具名（`9cf2c637e9` 5 件 / `2d7d5dd0a7` 3 件，`git log -1 --name-only` 实测无搭车）；
+  本会话 claim 归零（`.ailocks/registry.json` 余 2 条全归 bizmine）；项目根临时件清零
+  （`mutate.py`/`probe_ab.py`/`prerun1.log`/`prerun2.log` 移 `.runtime/tmp/st-ff-last-20260918/`，
+  `sitecustomize.py` 经查为在册生产件未动）。

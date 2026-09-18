@@ -210,6 +210,24 @@ completes_when: 全流通战役收官且本清单每项都被执行或明确移�
 
 ---
 
+### B23 ★ 收口时实弹抓到的"index 侧热册净删"——注册表 staged 态会整条吃掉活跃会话的 token
+- **实测**（02:0x，`git diff --cached --numstat --ignore-cr-at-eol -- docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml`）：
+  staged 态 = **`0 增 4 删`**，删的正是 `st-bizmine-20260919` 为 `docs/_working/bizmine_night/bizmine_general_order.md` 登记的
+  4 行 token 条目，而该会话**此刻仍持有该册与那份 md 的活跃 claim**（`.ailocks/registry.json` 两条 lock 均归它）。
+- **为什么危险**：这是一份**陈旧整文件快照**被放进 index 的后果——**任何**此后提交该册的动作，
+  哪怕本意只加一行 token，都会以"合法提交"的面貌完成一次**跨会话静默删条目**。
+  与 R-063/Q-7（写入侧 `batch_creation_tokens.py` 吃条目）同族，但**盲区不同**：那条拦在写侧，这条已经在 index 里等着。
+  `HOT-FILE-BASE-FRESHNESS` 只比"盘上 vs HEAD"，**不比"index vs HEAD 净删"** ⇒ 面是开的。
+- **本总包的处置（已做）**：`lanes/pit2_prescriptions.md` 因缺 creation_token、补令牌须写该册 ⇒ **放弃本批入库**，
+  该件保持 staged 防蒸发；三条已有令牌的案卷单独入库（`2d7d5dd0a7`）。
+- **收口班动作**：① 等 bizmine 释放该册；② 提交该册前必跑上面那条 numstat，**出现任何 `-` 行即判陈旧快照**，
+  按手册 §4 的 **B 类**处置 = `git restore --staged -- <册>`（**禁** `git checkout HEAD -- <册>`，那会连磁盘改动一起抹）；
+  ③ 再具名提交 `pit2_prescriptions.md` + 其 token。
+- **治本方向（与 B22 配对）**：给 `HOT-FILE-BASE-FRESHNESS`（或新门）补一条
+  "**注册表/目录册 staged 相对 HEAD 净删条目 ⇒ 拦，要求逐件判归口**"——B22 是写侧"只增不减"，这条是提交侧同一判据。
+
+---
+
 ## 附：本清单的产生方式
 1. 各车道回报的 §"未达成 / 处方 / 指派"段 + 台账 `COORDINATION_LEDGER.md` R-039~R-057 的落点。
 2. `dead_inventory.py`（**只读可重跑**）扫出的 12 件 GONE + 44 件 on-disk-unlanded；
