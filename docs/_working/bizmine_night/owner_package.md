@@ -41,7 +41,7 @@ note: 下文出处路径均相对 docs/_working/bizmine_night/；「红蓝」=re
 | ALGO 算法 | 全网 16 组检索：**否决全粒度全组合矩阵、改有界矩阵 ≤36 格/波**；top3 伪码级设计段就绪 | algo_mining/{algo_mining_digest.md,matrix_necessity_verdict.md} |
 | 红蓝对抗 | 12 车道四向攻击+蓝队复核：**10 PASS/2 ISSUE-已修，零头条被攻倒**；计数勘误 13/17、12/17 | redblue_report.md §0/§8 |
 
-（销账批 W2.6 未落地：BT-P1-032 勘测销账、B0 15 条 exec_quality 写回、B1 三传感器写回，预计 08:40 前后落地，判定以该批文件为准。）
+（**销账批 W2.6 已落地**（本包初稿落盘后 1 分钟内）：①backtest_backlog 写回 19 条——BT-P1-032 勘测销账（#304 四环关闭）+B1 三传感器（001 valid/006 valid/005 pending）+B0 15 条 exec_quality valid+BT-P0-003 pending（commit 0cd61d2b2f）；②known_data_gaps.yaml 批量登记 8 条目数据缺口（commit 421b9dc2e7，销账会话=st-bizmine-co-20260919）——§7 数据债的注册表正门归宿已落。）
 
 ### 1.2 三个最大发现
 
@@ -178,7 +178,7 @@ A股 ETF 15min 级做T 建议终结（#304 维持关闭，四环证据独立同�
 
 ## 7. 数据债清单
 
-> 销账批（BT-P1-032 勘测销账+B0 15 条 exec_quality 写回+B1 三传感器结果写回）**未落地**——预计 08:40 前后落地，判定以该批文件为准。以下为各车道报告登记的原始出处。
+> 销账批 W2.6 已落地（st-bizmine-co-20260919，commit 0cd61d2b2f=backtest_backlog 写回 19 条；421b9dc2e7=known_data_gaps.yaml 登记 8 条目：consensus PIT 坏/kline_etf_daily 过浅/TI 429 万重复/tick 覆盖缺口/清算流空表/weather 31 日/研报 hot_value 全空等）——**数据债的注册表正门归宿=src/zephyr/data/config/known_data_gaps.yaml（销账批②），下表为车道报告原始出处索引**。
 
 | # | 债项 | 影响 | 出处 |
 |---|---|---|---|
