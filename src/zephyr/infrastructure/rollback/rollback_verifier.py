@@ -82,6 +82,14 @@ class HealRefusedError(RuntimeError):
     """
 
 
+class PycacheGuardError(RuntimeError):
+    """clean_pycache 三重护栏命中信号（WP1 改 2）：拒删并报错，绝不退化为"照删"。
+
+    fail-safe 方向只有一个：故障只许退化为**不删**（旧实现是 `except Exception` +
+    `logger.warning` 后继续返回计数，等于把"删了一半/删错了"也咽下去）。
+    """
+
+
 def _derive_task_status_vocabulary() -> frozenset[str]:
     """tasks.status 合法值集 ← 单一真源 `_DDL_TASKS` 的 CHECK(status IN (...))。
 
@@ -113,6 +121,36 @@ def _json_is_parseable(text: str) -> bool:
     except ValueError:  # json.JSONDecodeError 是 ValueError 子类
         return False
     return True
+
+
+# 护栏②：可验证仓根的标记（任一存在即认为是仓根，与 .gitignore/AGENTS 现行口径一致）
+_REPO_ROOT_MARKERS = (".git", "AGENTS.md")
+
+
+def _require_verifiable_repo_root(project_root: Path) -> Path:
+    """三重护栏之②：`_project_root` 自身必须可验证为仓根，否则整轮拒删（WP1 改 2）。
+
+    旧实现拿 `_project_root.glob("**/__pycache__")` 的命中集直接 `shutil.rmtree`，靶子完全由
+    root 决定、无深度上限无白名单——root 解析错即在错误根下递归删目录。本仓已有同类事故实物：
+    `src/data/drift_audit/drift_events.db` 就是 project_root 误解析到 `src/` 的产物（同方案改 3）。
+    """
+    resolved = Path(project_root).resolve()
+    if not any((resolved / marker).exists() for marker in _REPO_ROOT_MARKERS):
+        raise PycacheGuardError(
+            f"拒删 __pycache__：project_root={resolved} 缺 {list(_REPO_ROOT_MARKERS)} 任一标记"
+            " ⇒ 不可验证为仓根（fail-safe：宁可不删）"
+        )
+    return resolved
+
+
+def _escaped_pycache_targets(root: Path, candidates: list[Path]) -> list[Path]:
+    """三重护栏之①：resolve() 后仍须落在 root 之内（拦 symlink/junction/软链外逃）。"""
+    escaped: list[Path] = []
+    for cache_dir in candidates:
+        resolved = cache_dir.resolve()
+        if not resolved.is_relative_to(root):
+            escaped.append(cache_dir)
+    return escaped
 
 
 def _gate_row_fixes(gate: sqlite3.Row) -> list[tuple[str, tuple[object, ...], str]]:
@@ -266,13 +304,38 @@ class RollbackVerifier:
         )
 
     def clean_pycache(self) -> int:
+        """删除 `_project_root` 下所有 `__pycache__`（WP1 改 2：三重护栏 + fail-safe 只退化为不删）。
+
+        三重护栏（命中任一 ⇒ 抛 PycacheGuardError 且**本轮零删除**，不退化为"照删"）：
+        ① 每个靶子 `Path.resolve()` 后必须仍在 resolve() 后的 `_project_root` 之内
+           （`is_relative_to`；拦 symlink/junction 外逃）；
+        ② `_project_root` 自身必须可验证为仓根（存在 `.git` 或 `AGENTS.md`）；
+        ③ 护栏校验全部前置成"先验完再删"——命中时一个目录都不删（旧实现边 glob 边 rmtree，
+           第 2 个靶子越界时第 1 个已经被删掉了）。
+        删除期的真失败（PermissionError 等）同样抛出 PycacheGuardError，不再
+        `except Exception` + `logger.warning` 后返回计数（那是"看起来在工作"的假绿）。
+
+        抛出不炸穿调用方：本方法生产调用方实测为 0（`git grep clean_pycache` 只命中本定义与
+        tests/rollback 两文件；`scripts/rollback.py` 只调 `g0_verify`，`rollback_boot_integration`
+        只构造 verifier 不调方法），故取 fail-closed 抛出而非返回可见对象。
+        """
+        root = _require_verifiable_repo_root(self._project_root)
+        candidates = sorted(self._project_root.glob("**/__pycache__"), key=lambda p: str(p))
+        escaped = _escaped_pycache_targets(root, candidates)
+        if escaped:
+            raise PycacheGuardError(
+                f"拒删 __pycache__：{len(escaped)} 个靶子 resolve() 后落在 project_root={root} 之外 "
+                f"⇒ {str(escaped[0])} 等（fail-safe：一个都不删）"
+            )
         removed = 0
-        for cache_dir in self._project_root.glob("**/__pycache__"):
+        for cache_dir in candidates:
             try:
                 shutil.rmtree(cache_dir)
-                removed += 1
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                logger.warning("suppressed error in rollback_verifier", exc_info=True)
+            except OSError as e:
+                raise PycacheGuardError(
+                    f"删除 {cache_dir} 失败（已成功删除 {removed} 个后中止，不再吞异常继续计数）: {e}"
+                ) from e
+            removed += 1
         return removed
 
     def heal_db_consistency(

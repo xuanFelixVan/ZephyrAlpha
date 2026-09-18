@@ -25,6 +25,7 @@ import pytest
 
 from zephyr.infrastructure.rollback.rollback_verifier import (
     HealRefusedError,
+    PycacheGuardError,
     RollbackVerifier,
 )
 
@@ -151,16 +152,29 @@ class TestG0Verify:
 
 
 class TestCleanPycache:
-    """clean_pycache() — 删除所有 __pycache__ bytecode 缓存"""
+    """clean_pycache() — 删除所有 __pycache__ bytecode 缓存（WP1 改 2 起带三重护栏）"""
 
     def test_clean_pycache_removes_dirs(self):
         with _temp_dir() as root:
+            (root / "AGENTS.md").write_text("# 护栏②：可验证仓根标记\n", encoding="utf-8")
             pycache = root / "__pycache__"
             pycache.mkdir()
             (pycache / "test.cpython-311.pyc").write_text("", encoding="utf-8")
             verifier = RollbackVerifier(project_root=root)
             removed = verifier.clean_pycache()
             assert removed >= 1
+
+    def test_clean_pycache_refuses_unverifiable_root(self):
+        """护栏②命中：临时目录树不是仓根 ⇒ 拒删并报错（改前会把树里的 pycache 全删）。"""
+        with _temp_dir() as root:
+            victim = root / "somebody_elses_home" / "__pycache__"
+            victim.mkdir(parents=True)
+            (victim / "x.cpython-311.pyc").write_bytes(b"\x00")
+            verifier = RollbackVerifier(project_root=victim.parent.parent)
+            with pytest.raises(PycacheGuardError, match="不可验证为仓根"):
+                verifier.clean_pycache()
+            assert victim.exists()
+            assert list((victim / "x.cpython-311.pyc").parent.iterdir())
 
 
 class TestHealDBConsistency:

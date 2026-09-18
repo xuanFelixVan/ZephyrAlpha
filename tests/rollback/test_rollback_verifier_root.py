@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 
+import shutil
 import sqlite3
 from pathlib import Path
 
@@ -22,7 +23,9 @@ import pytest
 from zephyr.infrastructure.rollback.rollback_verifier import (
     G0Report,
     HealRefusedError,
+    PycacheGuardError,
     RollbackVerifier,
+    _escaped_pycache_targets,
 )
 
 
@@ -99,17 +102,89 @@ class TestG0Verify:
 
 
 class TestCleanPycache:
-    def test_removes_pycache_dirs(self, verifier, tmp_project):
-        cache = tmp_project / "src" / "__pycache__"
+    """clean_pycache() — WP1 改 2 三重护栏（fail-safe 方向：故障只许退化为**不删**）"""
+
+    @staticmethod
+    def _make_cache(root: Path, rel: str) -> Path:
+        cache = root / rel
         cache.mkdir(parents=True)
         (cache / "mod.cpython-311.pyc").write_bytes(b"\x00")
+        return cache
+
+    def test_removes_pycache_dirs(self, verifier, tmp_project):
+        (tmp_project / "AGENTS.md").write_text("# 护栏②：可验证仓根标记\n", encoding="utf-8")
+        cache = self._make_cache(tmp_project, "src/__pycache__")
         removed = verifier.clean_pycache()
         assert removed == 1
         assert not cache.exists()
 
-    def test_no_pycache_returns_zero(self, verifier):
+    def test_no_pycache_returns_zero(self, verifier, tmp_project):
+        (tmp_project / ".git").mkdir()  # 护栏②：仓根标记（.git 或 AGENTS.md 任一即可）
         removed = verifier.clean_pycache()
         assert removed == 0
+
+    def test_refuses_and_raises_when_root_is_not_verifiable(self, tmp_project):
+        """红证（处方指定的用例）：_project_root 指向临时目录树。
+
+        改前：同一操作把整棵临时树里的 __pycache__ 全删掉（root 解析错=在别人家递归删目录）。
+        改后：护栏②命中 ⇒ 拒删 + 抛 PycacheGuardError，且一个目录都不动。
+        """
+        root = tmp_project / "misresolved"
+        root.mkdir()
+        kept = [
+            self._make_cache(root, "src/__pycache__"),
+            self._make_cache(root, "deep/nested/__pycache__"),
+        ]
+        before = sorted(str(p.relative_to(root)) for p in root.rglob("*"))
+        assert before, "临时树必须非空，否则本红证无意义"
+
+        verifier = RollbackVerifier(project_root=root)
+        with pytest.raises(PycacheGuardError, match="不可验证为仓根"):
+            verifier.clean_pycache()
+
+        after = sorted(str(p.relative_to(root)) for p in root.rglob("*"))
+        assert after == before
+        assert all(cache.exists() for cache in kept)
+
+    def test_guard_rejects_targets_resolving_outside_root(self, tmp_project, monkeypatch):
+        """护栏①：resolve() 后落在 root 之外的靶子必须被点名并整轮拒删。
+
+        端到端 symlink 版在 Windows 需要 SeCreateSymbolicLink 权限，故改为 monkeypatch glob
+        产出树外靶子（symlink/junction 外逃在 glob 输出口上的等价形态），
+        避免用例因平台权限 SKIP 而失去判据。
+        """
+        root = (tmp_project / "repo").resolve()
+        root.mkdir()
+        (root / "AGENTS.md").write_text("# repo root marker\n", encoding="utf-8")
+        inside = self._make_cache(root, "pkg/__pycache__")
+        outside = self._make_cache(tmp_project / "elsewhere", "__pycache__")
+
+        # 谓词级
+        assert _escaped_pycache_targets(root, [inside, outside]) == [outside]
+
+        # 通路级：glob 交出树外靶子 ⇒ 抛错，且**树内树外一个都没删**（护栏③先验后删）
+        monkeypatch.setattr(Path, "glob", lambda _self, _pattern: [inside, outside])
+        verifier = RollbackVerifier(project_root=root)
+        with pytest.raises(PycacheGuardError, match="之外"):
+            verifier.clean_pycache()
+        assert inside.exists()
+        assert outside.exists()
+
+    def test_rmtree_failure_is_reported_not_swallowed(self, tmp_project, monkeypatch):
+        """正负对照：护栏/删除失败不得被外层 except Exception + logger.warning 咽掉。"""
+        root = tmp_project / "repo2"
+        root.mkdir()
+        (root / "AGENTS.md").write_text("# repo root marker\n", encoding="utf-8")
+        cache = self._make_cache(root, "pkg/__pycache__")
+
+        def _boom(_path, *args, **kwargs):  # 模拟他进程持有句柄导致的 PermissionError
+            raise PermissionError("probe: another process holds the handle")
+
+        monkeypatch.setattr(shutil, "rmtree", _boom)
+        verifier = RollbackVerifier(project_root=root)
+        with pytest.raises(PycacheGuardError, match="失败"):
+            verifier.clean_pycache()
+        assert cache.exists()  # 失败方向=不删
 
 
 def _read_gate_row(db_path: Path, gate_run_id: str) -> tuple[int, str]:
