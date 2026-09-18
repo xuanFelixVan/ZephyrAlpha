@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-KNW-009 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.knowledge.test_layered_memory_orchestrator
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/knowledge/layered_memory_orchestrator.py
 """MOD-KNW-009 单元测试：layered_memory_orchestrator 五层记忆编排器。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-KNW-003 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.knowledge.test_financial_knowledge_graph
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/knowledge/financial_knowledge_graph.py
 """MOD-KNW-003 单元测试：financial_knowledge_graph 金融知识图谱。
 

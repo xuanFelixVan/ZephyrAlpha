@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-KNW-008 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.knowledge.test_rag_pipeline
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/knowledge/rag_pipeline.py
 """MOD-KNW-008 单元测试：rag_pipeline RAG 问答管道。
 

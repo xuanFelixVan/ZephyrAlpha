@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-KNW-005 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.knowledge.test_factor_knowledge_base
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/knowledge/factor_knowledge_base.py
 """MOD-KNW-005 单元测试：factor_knowledge_base 因子知识库。
 

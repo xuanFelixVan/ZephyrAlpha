@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-KNW-013 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.knowledge.test_paper_tracker
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/knowledge/paper_tracker.py
 """MOD-KNW-013 单元测试：paper_tracker 论文追踪器。
 
