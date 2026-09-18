@@ -55298,6 +55298,14 @@ entries:
   desc_en: ""
   plain_zh: "用假门禁做耳朵，验证预检会把提交信息原样递给净删门禁：带 allow-mass-deletion 标记或普通信息时门禁都能看到，防止预检再次失明。"
   responsibility_layer: governance
+- module_path: scripts/data/source_health_patrol.py
+  domain_id: D_DATA
+  name_zh: "数据源健康度周期巡检器"
+  name_en: "source health patrol"
+  desc_zh: "对 config/source_cards 全卡跑 verify 只读对账，报告落 data/source_health_patrol，FAIL 走 Alerter 告警"
+  desc_en: ""
+  plain_zh: "每天早上给所有数据源做体检的工具：挨个检查每张源卡片的表里有没有数据、数据新不新鲜、定时任务在不在跑，把体检报告按日期存档，发现哪个源坏了就写告警条给运维看。数据库整个连不上时不慌不炸，统一标记降级。"
+  responsibility_layer: business
 
 battle_map_steps:
 - step_id: BM-BUY-05
@@ -60733,6 +60741,12 @@ algo_submodules:
   name_zh: ③ 笼子边界计算与夹边校验
   name_en: check_price_cage
   plain_zh: 买入上限max(base×1.02, base+0.1)向下取整tick，卖出下限min(base×0.98, base-0.1)向上取整tick，超限夹到边界不废单
+- module_path: src/zephyr/regime/__init__.py
+  module_id: MOD-REGIME-001
+  node_id: A1
+  name_zh: ① 包公共面再导出
+  name_en: __init__ re-export
+  plain_zh: 再导出 RegimeCycleAnalyzer, VolatilityRegimeAlerter, VolatilitySqueezeBreakout, In…
 - module_path: src/zephyr/ex_sor/core/market_context_provider.py
   module_id: MOD-XS-006
   node_id: A1
@@ -61531,24 +61545,12 @@ algo_submodules:
   name_zh: ④ 读取与导出
   name_en: read_file/list_all/export_json
   plain_zh: 读单个文件全文、列各文件大小、导出全部内容为字典
-- module_path: src/zephyr/backtest/io/backtest_result_sink.py
+- module_path: src/zephyr/backtest/io/__init__.py
   module_id: MOD-BT-001
   node_id: A1
-  name_zh: ① 入参校验
-  name_en: sink_backtest_result（校验段）
-  plain_zh: result 为空或关键字段缺失就抛错，不让脏数据落地
-- module_path: src/zephyr/backtest/io/backtest_result_sink.py
-  module_id: MOD-BT-001
-  node_id: A2
-  name_zh: ② 时序点转换
-  name_en: sink_backtest_result（时序段）
-  plain_zh: 把四条时序的字典列表转成 frozen dataclass 元组
-- module_path: src/zephyr/backtest/io/backtest_result_sink.py
-  module_id: MOD-BT-001
-  node_id: A3
-  name_zh: ③ 汇总字段映射组装
-  name_en: sink_backtest_result（组装段）
-  plain_zh: 把回测结果 15 字段一对一搬进可视化模型
+  name_zh: ① 包级聚合再导出
+  name_en: zephyr.backtest.io.__init__
+  plain_zh: Auto-generated contracts package — io
 - module_path: src/zephyr/clone_guard/__init__.py
   module_id: MOD-CLONE_GUARD
   node_id: A1
@@ -62443,42 +62445,18 @@ algo_submodules:
   name_zh: ④ 结果聚合摘要
   name_en: get_summary+_build_summary
   plain_zh: 按策略聚出最优最差参数和平均Sharpe收益
-- module_path: src/zephyr/backtest/services/anomaly_diagnoser.py
+- module_path: src/zephyr/backtest/services/__init__.py
   module_id: __unmanaged__src/zephyr/backtest/services/__init__.py
   node_id: A1
-  name_zh: ① 性能异常检测
-  name_en: diagnose(性能段)
-  plain_zh: 高Sharpe高胜率疑过拟合，深回撤直接ERROR，负收益WARN
-- module_path: src/zephyr/backtest/services/anomaly_diagnoser.py
-  module_id: __unmanaged__src/zephyr/backtest/services/__init__.py
-  node_id: A2
-  name_zh: ② 统计异常检测
-  name_en: diagnose(统计段)+_calc_backtest_days
-  plain_zh: 交易次数太少或回测周期太短则统计上不显著
-- module_path: src/zephyr/backtest/services/anomaly_diagnoser.py
-  module_id: __unmanaged__src/zephyr/backtest/services/__init__.py
-  node_id: A3
-  name_zh: ③ 一致性异常检测
-  name_en: diagnose(一致性段)
-  plain_zh: 高收益却低Sharpe的矛盾组合告警，缺基准给提示
-- module_path: src/zephyr/backtest/services/anomaly_diagnoser.py
-  module_id: __unmanaged__src/zephyr/backtest/services/__init__.py
-  node_id: A4
-  name_zh: ④ 诊断报告聚合
-  name_en: diagnose(聚合段)
-  plain_zh: 汇总全部异常，无ERROR级则诊断通过
-- module_path: src/zephyr/compliance/audit_trail/bridges/__init__.py
+  name_zh: ① 包命名空间声明
+  name_en: zephyr.backtest.services __init__
+  plain_zh: 仅声明 backtest.services 包命名空间，空 __all__ 不re-export子模块，无计算逻辑
+- module_path: src/zephyr/compliance/audit_trail/__init__.py
   module_id: __unmanaged__src/zephyr/compliance/audit_trail/__init__.py
   node_id: A1
-  name_zh: ① 审计桥接符号包级再导出聚合
-  name_en: __init__（模块级 import + __all__）
-  plain_zh: 把7个桥接实现里的9个类汇成 audit_trail.bridges 统一入口
-- module_path: src/zephyr/compliance/audit_trail/bridges/__init__.py
-  module_id: __unmanaged__src/zephyr/compliance/audit_trail/__init__.py
-  node_id: A2
-  name_zh: ② 子模块 PEP 562 惰性加载
-  name_en: __getattr__
-  plain_zh: 访问子模块名时才 import 对应 gov_audit.bridges.* 模块并缓存
+  name_zh: ① 包级聚合再导出
+  name_en: zephyr.compliance.audit_trail.__init__
+  plain_zh: 'Re-export wrapper: audit-trail has migrated to zephyr.gov_au'
 - module_path: src/zephyr/data/news_collector.py
   module_id: __unmanaged__src/zephyr/data/news_collector.py
   node_id: A1
@@ -65212,19 +65190,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: ① Agent上手上下文生成
+  name_zh: 维护手册
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: ② 任务卡模板提供
+  name_zh: 维护手册
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: ③ 目录地图提供
+  name_zh: 维护手册
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py
@@ -65917,12 +65895,12 @@ algo_submodules:
   name_zh: ① 空包初始化
   name_en: __init__ (empty package)
   plain_zh: 仅声明空 __all__，不导入任何子模块、不注册任何扩展
-- module_path: src/zephyr/ex_core/services/live_portfolio.py
+- module_path: src/zephyr/ex_core/services/__init__.py
   module_id: __unmanaged__src/zephyr/ex_core/services/__init__.py
   node_id: A1
-  name_zh: ① LivePortfolioService
-  name_en: LivePortfolioService
-  plain_zh: 实盘组合服务（持仓/可用/净值视图，数据走 RiskSnapshot 真源注入）。
+  name_zh: ① 空包命名空间占位
+  name_en: __init__（模块级 __all__）
+  plain_zh: 声明 ex_core.services 包存在，不导出任何符号
 - module_path: src/zephyr/factor/api/__init__.py
   module_id: __unmanaged__src/zephyr/factor/api/__init__.py
   node_id: A1

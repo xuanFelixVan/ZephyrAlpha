@@ -349,6 +349,15 @@ SQL_SELECT_TABLE_COLUMNS = (
     "SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'public' AND table_name = %s"
 )
 SQL_COUNT_TBL_LIKE_CNT_ESCAPE = "SELECT COUNT(*) AS cnt FROM {tbl} WHERE {col} LIKE %s ESCAPE '\\'"
+# 兜底子串 REPLACE 必须避开引用 domains 的 FK 列：复合值（如 D_DATA_ENG）被部分替换后
+# 会产生 domains 中不存在的引用值，提交时必炸 FK 违例（W7 R8 注入实证 2026-09-18）。
+# 这些列的精确迁移由 step2-17 专职处理（等值或受控 LIKE）。
+SQL_DOMAINS_FK_COLUMNS = (
+    "SELECT conrelid::regclass::text AS table_name, a.attname AS column_name "
+    "FROM pg_constraint c JOIN pg_attribute a "
+    "ON a.attrelid = c.conrelid AND a.attnum = ANY(c.conkey) "
+    "WHERE c.contype = 'f' AND c.confrelid = 'domains'::regclass"
+)
 SQL_UPDATE_TBL_REPLACE_LIKE_ESCAPE = "UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s ESCAPE '\\'"
 SQL_COUNT_TBL_LIKE_CNT = "SELECT COUNT(*) AS cnt FROM {tbl} WHERE {col} LIKE %s"
 SQL_DELETE_TBL_COL_EQ_OR_EMPTY = "DELETE FROM {tbl} WHERE {col}=%s OR {col}=''"
@@ -2831,6 +2840,10 @@ def _scan_replace_all_text_columns(
     """
     _exclude = exclude_columns or set()
     total = 0
+    fk_cols = {
+        (r["table_name"], r["column_name"])
+        for r in c.execute(SQL_DOMAINS_FK_COLUMNS).fetchall()
+    }
     # P2 PG 迁移：sqlite_master → information_schema.tables（PG 不支持 sqlite_master）
     cur = c.execute(SQL_SELECT_ALL_TABLES)
     all_tables = [r["name"] for r in cur.fetchall() if r["name"] not in _RENAME_SCAN_EXCLUDE_TABLES]
@@ -2848,6 +2861,7 @@ def _scan_replace_all_text_columns(
             if r["data_type"]
             and r["data_type"].upper() in ("TEXT", "CHARACTER VARYING")
             and r["column_name"] not in _exclude
+            and (tbl, r["column_name"]) not in fk_cols
         ]
         for col in text_cols:
             # 转义LIKE通配符（_ 和 %），避免 D_COMPLIANCE 匹配 D-COMPLIANCE（_是LIKE通配符）
