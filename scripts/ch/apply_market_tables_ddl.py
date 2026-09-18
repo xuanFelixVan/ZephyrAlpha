@@ -441,6 +441,21 @@ from schemas.categories.market.market_ndrc_fuel_price import NDRC_FUEL_PRICE_DDL
 from schemas.categories.market.market_futures_warehouse_receipt import FUTURES_WAREHOUSE_RECEIPT_DDL
 from schemas.categories.market.market_road_freight_index import ROAD_FREIGHT_INDEX_DDL
 from schemas.categories.market.market_agri_wholesale_index import AGRI_WHOLESALE_INDEX_DDL
+# D5 跨资产·Hyperliquid 四表（2026-09-18 夜班，st-datapack-20260918，altdata_line D5 波2）：
+# 全市场行情快照/资金费率/清算流/持仓 OI 快照，DDL 真源 schemas/categories/crypto/（hl_ 前缀与既有 crypto 影子线隔离）
+from schemas.categories.crypto.hl_perp_snapshot_daily import HL_PERP_SNAPSHOT_DAILY_DDL
+from schemas.categories.crypto.hl_oi_snapshot_daily import HL_OI_SNAPSHOT_DAILY_DDL
+from schemas.categories.crypto.hl_funding_history import HL_FUNDING_HISTORY_DDL
+from schemas.categories.crypto.hl_liquidation_raw import HL_LIQUIDATION_RAW_DDL
+# D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班，st-datapack-20260918，altdata_line D5 波2）：
+# 期限点长表（trade_date × 曲线 × 期限点），DDL 真源 schemas/categories/market/
+from schemas.categories.market.market_china_bond_yield import MARKET_CHINA_BOND_YIELD_DDL
+# D6 行情补充五族新建四表（2026-09-18 夜班，st-datapack-20260918，altdata_line D6）：
+# 大盘资金流/ETF份额快照/中金所前20会员排名/可转债条款快照，DDL 真源 schemas/categories/market/
+from schemas.categories.market.market_fund_flow_daily import MARKET_FUND_FLOW_DAILY_DDL
+from schemas.categories.market.market_etf_share_snapshot import MARKET_ETF_SHARE_SNAPSHOT_DDL
+from schemas.categories.market.market_cffex_member_ranking import MARKET_CFFEX_MEMBER_RANKING_DDL
+from schemas.categories.market.market_convertible_bond_clause import MARKET_CONVERTIBLE_BOND_CLAUSE_DDL
 
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
@@ -540,6 +555,18 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.futures_warehouse_receipt", FUTURES_WAREHOUSE_RECEIPT_DDL),
     ("c1_market.road_freight_index", ROAD_FREIGHT_INDEX_DDL),
     ("c1_market.agri_wholesale_index", AGRI_WHOLESALE_INDEX_DDL),
+    # D5 跨资产·Hyperliquid 四表（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）
+    ("c1_market.hl_perp_snapshot_daily", HL_PERP_SNAPSHOT_DAILY_DDL),
+    ("c1_market.hl_oi_snapshot_daily", HL_OI_SNAPSHOT_DAILY_DDL),
+    ("c1_market.hl_funding_history", HL_FUNDING_HISTORY_DDL),
+    ("c1_market.hl_liquidation_raw", HL_LIQUIDATION_RAW_DDL),
+    # D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）
+    ("c1_market.market_china_bond_yield", MARKET_CHINA_BOND_YIELD_DDL),
+    # D6 行情补充五族新建四表（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）
+    ("c1_market.market_fund_flow_daily", MARKET_FUND_FLOW_DAILY_DDL),
+    ("c1_market.market_etf_share_snapshot", MARKET_ETF_SHARE_SNAPSHOT_DDL),
+    ("c1_market.market_cffex_member_ranking", MARKET_CFFEX_MEMBER_RANKING_DDL),
+    ("c1_market.market_convertible_bond_clause", MARKET_CONVERTIBLE_BOND_CLAUSE_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -1123,6 +1150,13 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "futures_warehouse_receipt": "ReplacingMergeTree",
     "road_freight_index": "ReplacingMergeTree",
     "agri_wholesale_index": "ReplacingMergeTree",
+    # D5 跨资产·Hyperliquid 四表（2026-09-18 夜班 st-datapack-20260918）：快照/长表同键替换幂等
+    "hl_perp_snapshot_daily": "ReplacingMergeTree",
+    "hl_oi_snapshot_daily": "ReplacingMergeTree",
+    "hl_funding_history": "ReplacingMergeTree",
+    "hl_liquidation_raw": "ReplacingMergeTree",
+    # D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班 st-datapack-20260918）：期限点长表同键替换幂等
+    "market_china_bond_yield": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

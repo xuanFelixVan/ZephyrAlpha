@@ -2953,6 +2953,73 @@
   data_source: [crypto_binance]
   blueprint: null
 
+# --- D5 跨资产·Hyperliquid 四表（2026-09-18 夜班 st-datapack-20260918，altdata_line 09 清单 D5 波2）---
+# 官方免费公开 API（api.hyperliquid.xyz，匿名无 key）；hl_ 前缀与既有 crypto 影子线（币安现货）隔离
+
+- category_id: hl_perp_snapshot_daily
+  name: "Hyperliquid 全市场永续行情快照（日更自积，起点 2026-09-18 历史不可回补）"
+  engine: clickhouse
+  database: c1_market
+  table: hl_perp_snapshot_daily
+  schema_file: schemas/categories/crypto/hl_perp_snapshot_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "快照维度官方无历史回补通道（自积起点 2026-09-18 写入表注释）；dayNtlVlm=采集时点滚动 24h 口径非自然日；宇宙=当期全量永续含 isDelisted 行"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [hyperliquid]
+  blueprint: null
+
+- category_id: hl_oi_snapshot_daily
+  name: "Hyperliquid 全市场持仓/OI 分布快照（日更自积，起点 2026-09-18 历史不可回补）"
+  engine: clickhouse
+  database: c1_market
+  table: hl_oi_snapshot_daily
+  schema_file: schemas/categories/crypto/hl_oi_snapshot_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "快照维度无历史回补（自积起点 2026-09-18）；oi_ntl_usd=open_interest×mark_px 采集时点自算（口径披露 schema docstring）"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [hyperliquid]
+  blueprint: null
+
+- category_id: hl_funding_history
+  name: "Hyperliquid 资金费率逐小时历史（长表；可回溯，实测 BTC 起 2023-05-12）"
+  engine: clickhouse
+  database: c1_market
+  table: hl_funding_history
+  schema_file: schemas/categories/crypto/hl_funding_history.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "funding_rate=小时口径未年化（Hyperliquid 原生）；首跑逐币 from-inception 深回溯，日常 lookback 3d 幂等重放；PIT 如实各币起于各自上市首笔"
+  calc_mode: preload
+  frequency: 小时
+  data_source: [hyperliquid]
+  blueprint: null
+
+- category_id: hl_liquidation_raw
+  name: "Hyperliquid 清算流原始捕获（trades 流清算账本地址标记；本班=逐日有界采样）"
+  engine: clickhouse
+  database: c1_market
+  table: hl_liquidation_raw
+  schema_file: schemas/categories/crypto/hl_liquidation_raw.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "官方无 REST 清算端点/无公开清算 WS 频道（2026-09-18 实测 422/订阅拒绝留痕）；唯一公开捕获面=trades 流 0xfff…f 清算账本地址；capture_mode=ws_trades_bounded 逐日采样口径，非全量清算流，消费侧不得当全量用；7x24 守护进程挂账下一班"
+  calc_mode: preload
+  frequency: 事件
+  data_source: [hyperliquid]
+  blueprint: null
+
 # --- c1_backtest 锚定态（2026-09-14，N-06 解冻批补登：唯一 c1_backtest 任务表） ---
 
 - category_id: backtest_regime_state_anchored
@@ -3037,6 +3104,24 @@
   hard_constraint: null
   calc_mode: preload
   frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+# --- D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）---
+
+- category_id: market_china_bond_yield
+  name: "中债收益率曲线期限点长表（国债/商业银行普通债AAA/中短期票据AAA ×8 期限点，无风险利率锚+信用利差参照）"
+  engine: clickhouse
+  database: c1_market
+  table: market_china_bond_yield
+  schema_file: schemas/categories/market/market_china_bond_yield.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare bond_china_yield（中国货币网中债估值口径）；源端滚动窗口约1年（2026-09-18 逐月探针实测 2025-10-09 起，更早月份返回空），深历史走 chinabond 官网归档挂账 DS-CAND；ytm=%，曲线末端无值期限=NULL 如实"
+  calc_mode: preload
+  frequency: 日频
   data_source: [akshare]
   blueprint: null
 
@@ -3223,6 +3308,74 @@
   sla_level: L2
   enabled: true
   hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+# --- D6 行情补充五族新建四表（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）---
+# 查重边界：个股资金流=既有 money_flow / 板块=既有 sector_fund_flow / 大宗=既有
+# block_trade(+detail) / 转债行情=既有 kline_cb——本批只补缺口层
+
+- category_id: market_fund_flow_daily
+  name: "大盘资金流日频宽表(沪深收盘/涨跌幅×主力/超大单/大单/中单/小单净流入净额与占比,东财大盘口径,源滚动窗口约120交易日)"
+  engine: clickhouse
+  database: c1_market
+  table: market_fund_flow_daily
+  schema_file: schemas/categories/market/market_fund_flow_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare stock_market_fund_flow（东财 datacenter 大盘资金流）；源端固定返回最近约120个交易日，更早历史不可回补，日更不断供即无缺口（同 market_china_bond_yield 滚动窗口先例）"
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_etf_share_snapshot
+  name: "ETF份额日快照(最新份额/IOPV/折溢价/成交/主力净流入,全市场~1600只,相邻日差分=净申赎,东财ETF列表口径)"
+  engine: clickhouse
+  database: c1_market
+  table: market_etf_share_snapshot
+  schema_file: schemas/categories/market/market_etf_share_snapshot.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare fund_etf_spot_em（东财 ETF 实时列表）；快照积累制，首日起才有差分基线；fund_etf_scale_sse 源退化（实测仅 2025-01-15 单日）弃用；申赎清单 PCF 篮子免费接口缺失挂账 DS-CAND"
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_cffex_member_ranking
+  name: "中金所前20会员持仓排名长表(成交量/持买单量/持卖单量前20会员×合约,中金所官网口径,含合计行)"
+  engine: clickhouse
+  database: c1_market
+  table: market_cffex_member_ranking
+  schema_file: schemas/categories/market/market_cffex_member_ranking.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare get_cffex_rank_table（中金所官网成交持仓排名）；单日期全合约实测~169s（源站慢），日更1个交易日；接口按日期可任意回查，深历史按需分批补（不烧源）；粒度=会员×合约×榜位，与既有 futures_position 汇总口径互补"
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_convertible_bond_clause
+  name: "可转债条款日快照(强赎触发价/触发比/天计数/强赎状态/最后交易日/到期日/转股价,快照积累制,集思录口径)"
+  engine: clickhouse
+  database: c1_market
+  table: market_convertible_bond_clause
+  schema_file: schemas/categories/market/market_convertible_bond_clause.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare bond_cb_redeem_jsl（集思录强赎汇总）；快照积累制（snapshot_date 为状态观察锚）；回售条款触发计数源端未含，挂账 DS-CAND（bond_zh_cov_info 逐券条款解析可评估）"
   calc_mode: preload
   frequency: daily
   data_source: [akshare]

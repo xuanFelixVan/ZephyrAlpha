@@ -868,6 +868,65 @@ tasks:
     description: "C-L1 大盘总闸影子判定（shadow_tier 五档，读表直判只记账；shadow_version=v0.1 逻辑变更须升版本）"
     backfill_days: 1
 
+  # ============== D5 跨资产·Hyperliquid 四类（2026-09-18 夜班 st-datapack-20260918，altdata_line 09 清单 D5 波2）==============
+  # 官方免费公开 API（api.hyperliquid.xyz，匿名无 key）；hl_ 前缀与既有 crypto 影子线隔离。
+  # 快照两表自积起点 2026-09-18（官方无历史回补通道，晚一天少一天）；funding 首跑已逐币深回溯（BTC 起 2023-05-12）。
+
+- task_id: hl_perp_snapshot_daily_refresh
+  table: c1_market.hl_perp_snapshot_daily
+  source: hyperliquid
+  schedule: daily_crypto
+  incremental: true
+  date_col: snapshot_date
+  dependencies: []
+  capability: hl_perp_snapshot_daily
+  symbols:         # null=Provider 自取全市场永续宇宙（metaAndAssetCtxs，含 isDelisted 行）
+  fallback_sources: []   # 官方唯一源，无副源（清算/费率/持仓同源）
+  extra:
+    description: "Hyperliquid 全市场行情快照（日更自积起点 2026-09-18，历史不可回补；metaAndAssetCtxs 单请求全市场）"
+
+- task_id: hl_oi_snapshot_daily_refresh
+  table: c1_market.hl_oi_snapshot_daily
+  source: hyperliquid
+  schedule: daily_crypto
+  incremental: true
+  date_col: snapshot_date
+  dependencies: []
+  capability: hl_oi_snapshot_daily
+  symbols:         # null=Provider 自取全市场永续宇宙
+  fallback_sources: []
+  extra:
+    description: "Hyperliquid 全市场持仓/OI 分布快照（日更自积起点 2026-09-18；oi_ntl_usd=采集时点 mark 自算口径披露在 schema）"
+
+- task_id: hl_funding_history_incremental
+  table: c1_market.hl_funding_history
+  source: hyperliquid
+  schedule: daily_crypto
+  incremental: true
+  date_col: funding_time
+  dependencies: []
+  capability: hl_funding_history
+  symbols:         # null=Provider 自取全市场永续宇宙逐币拉取
+  fallback_sources: []
+  extra:
+    description: "Hyperliquid 资金费率逐小时增量（lookback 3d 幂等重放；首跑深回溯用 extra.backfill_from_start=true 临时覆写，实测 BTC 起 2023-05-12）"
+    lookback_days: 3
+
+- task_id: hl_liquidation_capture
+  table: c1_market.hl_liquidation_raw
+  source: hyperliquid
+  schedule: daily_crypto
+  incremental: true
+  date_col: trade_time
+  dependencies: []
+  capability: hl_liquidation_capture
+  symbols:         # null=Provider 自取全市场永续 universe 订阅 trades 流
+  fallback_sources: []
+  extra:
+    description: "Hyperliquid 清算流有界捕获（官方无 REST 清算端点/无公开清算 WS 频道，实测留痕；trades 流清算账本地址 0xfff…f 标记；本班=逐日 30min 采样口径 capture_mode=ws_trades_bounded，7x24 守护进程挂账下一班）"
+    capture_minutes: 30
+    capture_mode: ws_trades_bounded
+
 - task_id: kline_sector_incremental
   table: c1_market.kline_sector
   source: tqcenter       # 2026-09-11 mootdx 通道退化换道（Owner 裁定"完美替换即切"）：mootdx 对 K 线请求回 0 行（三次实证+16:30 同通道日任务零产出），tqcenter 881 系列探针通过（881 行业族 880 表没有，kline_sector 不冗余不可退役）；尺度换算 volume÷100/amount×1e4 保 mootdx 历史特征零漂移
@@ -2040,6 +2099,21 @@ tasks:
     description: "宏观高频日度（AKShare macro_china_daily_energy 六大电历史段+commodity_price_index/energy_index/construction_index 生意社三指数日更）"
 
   fallback_sources: []    # 显式置空：生意社（东财页）为唯一日频口径
+
+  # --- D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）---
+- task_id: china_bond_yield_refresh
+  table: c1_market.market_china_bond_yield
+  source: akshare
+  schedule: daily_capital
+  incremental: false        # 全窗口幂等重放（源滚动窗口≈1年，每次查 [end-400d,end]，ReplacingMergeTree 同键去重；实测窗口自 2025-10-09）
+  date_col: trade_date
+  dependencies: []
+  capability: china_bond_yield
+  symbols:
+  extra:
+    description: "中债收益率曲线期限点长表（AKShare bond_china_yield=中国货币网中债估值：国债/商业银行普通债AAA/中短期票据AAA ×8 期限点；深历史 chinabond 官网归档挂账 DS-CAND）"
+
+  fallback_sources: []    # 显式置空：中国货币网中债估值为唯一结构化源
 
   # --- J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1）---
   # 月度成分快照差分 → inclusion/exclusion 事件（000300/000905/000906/000852/000985）。
@@ -3462,3 +3536,63 @@ tasks:
     description: "F13 农产品批发价格200指数（AKShare macro_china_agricultural_product+macro_china_vegetable_basket，农业农村部口径 2005-09 起；分品种 pfsc.agri.cn API 源坏待恢复）"
 
   fallback_sources: []    # 显式置空：农业农村部 200 指数唯一结构化免费口径（分品种 API 源坏 rejected 留痕）
+
+  # --- D6 行情补充五族（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）---
+  # 查重边界：个股资金流=既有 money_flow_incremental / 大宗=既有 block_trade(+detail)_incremental /
+  # 转债行情=既有 kline_cb_incremental——本批只补缺口层（大盘资金流/ETF份额/中金所会员/转债条款）
+
+- task_id: market_fund_flow_refresh
+  table: c1_market.market_fund_flow_daily
+  source: akshare
+  schedule: daily_capital
+  incremental: false        # 全窗口重放（源端固定返回最近 ~120 交易日，ReplacingMergeTree 同键去重；窗口外历史不可回补）
+  date_col: trade_date
+  dependencies: []
+  capability: market_fund_flow
+  symbols:
+  extra:
+    description: "大盘资金流日频宽表（AKShare stock_market_fund_flow，东财 datacenter 大盘口径：沪深收盘/涨跌幅×主力/超大单/大单/中单/小单净流入）"
+
+  fallback_sources: []    # 显式置空：东财大盘资金流唯一结构化免费口径
+
+- task_id: etf_share_snapshot_refresh
+  table: c1_market.market_etf_share_snapshot
+  source: akshare
+  schedule: daily_capital
+  incremental: false        # 全市场单次快照（~1600 只），快照积累制：相邻日差分=净申赎
+  date_col: trade_date
+  dependencies: []
+  capability: etf_share_snapshot
+  symbols:
+  extra:
+    description: "ETF 份额日快照（AKShare fund_etf_spot_em，全市场 ETF 最新份额/IOPV/折溢价/成交/主力净流入；快照积累制首日起才有差分基线）"
+
+  fallback_sources: []    # 显式置空：fund_etf_scale_sse 源退化（实测仅 2025-01-15 单日）弃用
+
+- task_id: cffex_member_ranking_refresh
+  table: c1_market.market_cffex_member_ranking
+  source: akshare
+  schedule: daily_capital
+  incremental: true         # 重放窗口 4 历日（覆盖 Fri→Sun 周末跨度；单日期全合约 ~169s 源站慢，时长上界 ~9min）
+  date_col: trade_date
+  dependencies: []
+  capability: cffex_member_ranking
+  symbols:
+  extra:
+    description: "中金所前20会员持仓排名（AKShare get_cffex_rank_table，成交量/持买单量/持卖单量前20会员×合约，rank=0 合计行如实保留；深历史按需分批回填不烧源）"
+
+  fallback_sources: []    # 显式置空：中金所官网成交持仓排名唯一官方口径
+
+- task_id: convertible_bond_clause_refresh
+  table: c1_market.market_convertible_bond_clause
+  source: akshare
+  schedule: daily_capital
+  incremental: false        # 全市场单次快照（~315 券），快照积累制：条款状态演变随日积累可回看
+  date_col: snapshot_date
+  dependencies: []
+  capability: convertible_bond_clause
+  symbols:
+  extra:
+    description: "可转债条款日快照（AKShare bond_cb_redeem_jsl，集思录强赎汇总：触发价/触发比/天计数/强赎状态/最后交易日/到期日；回售条款计数源端未含挂账 DS-CAND）"
+
+  fallback_sources: []    # 显式置空：集思录强赎汇总唯一聚合口径（bond_zh_cov_info 逐券解析另行评估）

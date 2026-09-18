@@ -193,6 +193,17 @@ _TBL_MACRO_CREDIT_MONEY = get_registry().table("macro_credit_money")
 _TBL_MACRO_ACTIVITY_GAUGE = get_registry().table("macro_activity_gauge")
 _TBL_MACRO_TRADE_GAUGE = get_registry().table("macro_trade_gauge")
 _TBL_MACRO_DAILY_GAUGE = get_registry().table("macro_daily_gauge")
+# D5 跨资产 H4（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）：中债收益率曲线长表
+_TBL_CHINA_BOND_YIELD = get_registry().table("market_china_bond_yield")
+# D6 行情补充五族新建四表（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）：
+# 大盘资金流/ETF份额快照/中金所前20会员排名/可转债条款快照
+_TBL_MARKET_FUND_FLOW_DAILY = get_registry().table("market_fund_flow_daily")
+_TBL_ETF_SHARE_SNAPSHOT = get_registry().table("market_etf_share_snapshot")
+_TBL_CFFEX_MEMBER_RANKING = get_registry().table("market_cffex_member_ranking")
+_TBL_CB_CLAUSE = get_registry().table("market_convertible_bond_clause")
+# 中金所排名任务单次重放窗口（历日）：单日期全合约实测 ~169s（源站慢），
+# 窗口 4 历日覆盖 Fri→Sun 周末跨度，任务时长上界 ~3×169s≈9min；深历史回填走独立脚本分批。
+_CFFEX_RANK_REPLAY_DAYS = 4
 _TBL_STOCK_INDICATOR = get_registry().table("market_stock_indicator")
 _TBL_STOCK_LIST = get_registry().table("market_stock_list")
 _TBL_ST_STOCK_LIST = get_registry().table("market_st_stock_list")
@@ -323,6 +334,14 @@ _AKSHARE_CAPABILITIES = frozenset(
         "macro_activity_gauge",
         "macro_trade_gauge",
         "macro_daily_gauge",
+        # D5 跨资产 H4（2026-09-18 夜班 st-datapack-20260918，altdata_line D5）：中债收益率曲线
+        "china_bond_yield",
+        # D6 行情补充五族（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）：
+        #   大盘资金流/ETF份额快照/中金所前20会员排名/可转债条款快照
+        "market_fund_flow",
+        "etf_share_snapshot",
+        "cffex_member_ranking",
+        "convertible_bond_clause",
         "stock_news_em",
         "news_cctv",
         "news_economic_baidu",
@@ -803,6 +822,14 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("macro_activity_gauge", supports_symbols_null=True),
             CapabilityContract("macro_trade_gauge", supports_symbols_null=True),
             CapabilityContract("macro_daily_gauge", supports_symbols_null=True),
+            # D5 跨资产 H4（2026-09-18 夜班 st-datapack-20260918，altdata_line D5）：中债收益率曲线
+            CapabilityContract("china_bond_yield", supports_symbols_null=True),
+            # D6 行情补充五族（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）：
+            # 大盘资金流/ETF份额快照/中金所前20会员排名/可转债条款快照（全量接口，无 symbols 概念）
+            CapabilityContract("market_fund_flow", supports_symbols_null=True),
+            CapabilityContract("etf_share_snapshot", supports_symbols_null=True),
+            CapabilityContract("cffex_member_ranking", supports_symbols_null=True),
+            CapabilityContract("convertible_bond_clause", supports_symbols_null=True),
             CapabilityContract("audit_opinion", supports_symbols_null=True),
             CapabilityContract("equity_pledge_summary", supports_symbols_null=True),
             # 新闻数据
@@ -2741,6 +2768,372 @@ class AkshareIngestProvider(IngestProviderBase):
         yield FetchResult(
             table=table, columns=columns, rows=rows, last_key=last_key,
             elapsed_sec=time.monotonic() - t0, error=error,
+        )
+
+    # ---- 6f. D5 跨资产 H4：中债收益率曲线（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）----
+
+    def _fetch_china_bond_yield(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """中债收益率曲线期限点长表（国债/商行普通债AAA/中短期票据AAA ×8 期限点），写入 c1_market.market_china_bond_yield。
+
+        源=akshare bond_china_yield（中国货币网 chinamoney 中债估值口径，免费无 key）。
+        源端滚动窗口≈1 年（2026-09-18 逐日探针实测：start 距今 365d 可得 744 行、383d 起整窗
+        返回空——边界在 365~383d 之间）——故采用 360 天窗口幂等重放 + 空窗 300 天降档重试，
+        源窗口外自然为空，ReplacingMergeTree 同键去重；日更不断供即无缺口；
+        深历史走 chinabond 官网归档（DS-CAND 挂账）。
+        PIT 双轴: trade_date=估值日; ingest_ts=采集。ytm 单位=%。
+        """
+        import akshare as ak
+
+        from schemas.categories.market.market_china_bond_yield import TENOR_MAP
+
+        table = _TBL_CHINA_BOND_YIELD
+        columns = ["trade_date", "curve_name", "tenor", "tenor_years", "ytm", "data_source", "quality_flag"]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+
+        df = None
+        for window_days in (360, 300):  # 主窗 360d（贴源滚动年窗留裕度）；空窗降档 300d 重试一次
+            start = payload.end - datetime.timedelta(days=window_days)
+            try:
+                df = self._call_with_policy(
+                    ak.bond_china_yield, policy,
+                    start_date=start.strftime("%Y%m%d"),
+                    end_date=payload.end.strftime("%Y%m%d"),
+                )
+            except Exception as e:  # noqa: BLE001 — 单源失败 FAIL-VISIBLE 走集成器重试/告警
+                yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                                  elapsed_sec=time.monotonic() - t0, error=f"bond_china_yield 失败: {str(e)[:120]}")
+                return
+            if df is not None and len(df) > 0:
+                break
+        if df is None or len(df) == 0:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error="bond_china_yield 零行（源异常或窗口越界），拒绝写库（FAIL-VISIBLE）")
+            return
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            day = self._norm_date_str(row.get("日期"))
+            curve = str(row.get("曲线名称") or "").strip()
+            if not day or not curve:
+                continue
+            for src_col, (tenor, tenor_years) in TENOR_MAP.items():
+                ytm = safe_float_strict(row.get(src_col))  # NaN/空→None（曲线末端无值期限如实 NULL）
+                rows.append((
+                    day, curve, tenor, tenor_years,
+                    (f"{ytm:.6f}" if ytm is not None else None),
+                    "akshare_chinamoney", 1,
+                ))
+        if not rows:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0, error="解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）")
+            return
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- D6 行情补充五族（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）----
+
+    @staticmethod
+    def _norm_date_strict(v) -> str | None:
+        """日期列 TSV 安全清洗：非补零源（如集思录 '2028-12-3'）补零 + 非法/空→None。
+
+        背景（2026-09-18 实证）：bond_cb_redeem_jsl 的到期日含 '2028-12-3' 非补零形态，
+        直传 CH Date 列 Code:38 Cannot parse date，TCP/HTTP 双通道全拒→整批落盘回灌死循环；
+        Nullable(Date) 空串在 TSV 侧同样非法（须 NULL 占位符），故一律非法/空归 None。
+        """
+        s = AkshareIngestProvider._norm_date_str(v)
+        if not s:
+            return None
+        parts = s.split("-")
+        try:
+            if len(parts) == 3:
+                s = f"{int(parts[0]):04d}-{int(parts[1]):02d}-{int(parts[2]):02d}"
+            datetime.date.fromisoformat(s)
+            return s
+        except ValueError:
+            return None
+
+    def _fetch_market_fund_flow(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """大盘资金流日频宽表（沪深两市四档单净流入），写入 c1_market.market_fund_flow_daily。
+
+        源=akshare stock_market_fund_flow（东财 datacenter 大盘资金流向，免费无 key）。
+        源端固定返回最近约 120 个交易日（2026-09-18 实测 120 行）——每次全窗口重放，
+        ReplacingMergeTree 同键去重=幂等；窗口外历史不可回补（滚动窗口先例）。
+        单位：净额=元（源端 float 原始口径）；占比=%。
+        PIT 双轴: trade_date=交易日; ingest_ts=采集。
+        """
+        import akshare as ak
+
+        table = _TBL_MARKET_FUND_FLOW_DAILY
+        columns = [
+            "trade_date", "sh_close", "sh_pct_chg", "sz_close", "sz_pct_chg",
+            "main_net", "main_net_pct", "super_net", "super_net_pct",
+            "big_net", "big_net_pct", "mid_net", "mid_net_pct",
+            "small_net", "small_net_pct", "data_source", "quality_flag",
+        ]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+        try:
+            df = self._call_with_policy(ak.stock_market_fund_flow, policy)
+        except Exception as e:  # noqa: BLE001 — 单源失败 FAIL-VISIBLE 走集成器重试/告警
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error=f"stock_market_fund_flow 失败: {str(e)[:120]}")
+            return
+        if df is None or len(df) == 0:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error="stock_market_fund_flow 零行（源异常），拒绝写库（FAIL-VISIBLE）")
+            return
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            day = self._norm_date_strict(row.get("日期"))
+            if not day:
+                continue
+            vals = [safe_float_strict(row.get(c)) for c in (
+                "上证-收盘价", "上证-涨跌幅", "深证-收盘价", "深证-涨跌幅",
+                "主力净流入-净额", "主力净流入-净占比",
+                "超大单净流入-净额", "超大单净流入-净占比",
+                "大单净流入-净额", "大单净流入-净占比",
+                "中单净流入-净额", "中单净流入-净占比",
+                "小单净流入-净额", "小单净流入-净占比",
+            )]
+            num = [f"{v:.4f}" if v is not None else None for v in vals]
+            rows.append(tuple([day, *num, "akshare_em", 1]))
+        if not rows:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error="market_fund_flow 解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）")
+            return
+        self._log.info(f"market_fund_flow: {len(rows)} 行（东财大盘，全窗口重放）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    def _fetch_etf_share_snapshot(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """ETF 份额日快照（全市场 ~1600 只），写入 c1_market.market_etf_share_snapshot。
+
+        源=akshare fund_etf_spot_em（东财 ETF 实时列表，免费无 key，单次全量调用）。
+        快照积累制：trade_date=源「数据日期」列（当日），相邻日差分=净申赎。
+        任务挂盘后 daily_capital 槽，快照为当日收盘口径（盘中不跑）。
+        PIT 双轴: trade_date=数据日期; ingest_ts=采集。
+        """
+        import akshare as ak
+
+        table = _TBL_ETF_SHARE_SNAPSHOT
+        columns = [
+            "trade_date", "symbol", "name", "spot_price", "iopv", "premium_disc_pct",
+            "volume", "amount", "turnover_pct", "main_net", "main_net_pct",
+            "shares", "circ_mv", "total_mv", "data_source", "quality_flag",
+        ]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+        try:
+            df = self._call_with_policy(ak.fund_etf_spot_em, policy)
+        except Exception as e:  # noqa: BLE001 — 单源失败 FAIL-VISIBLE 走集成器重试/告警
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error=f"fund_etf_spot_em 失败: {str(e)[:120]}")
+            return
+        if df is None or len(df) == 0:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error="fund_etf_spot_em 零行（源异常），拒绝写库（FAIL-VISIBLE）")
+            return
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            code = str(row.get("代码") or "").strip()
+            day = self._norm_date_strict(row.get("数据日期"))
+            if not code or not day:
+                continue
+            name = str(row.get("名称") or "").strip()
+            vals = [safe_float_strict(row.get(c)) for c in (
+                "最新价", "IOPV实时估值", "基金折价率", "成交量", "成交额", "换手率",
+                "主力净流入-净额", "主力净流入-净占比", "最新份额", "流通市值", "总市值",
+            )]
+            num = [f"{v:.4f}" if v is not None else None for v in vals]
+            rows.append(tuple([day, code, name, *num, "akshare_em", 1]))
+        if not rows:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error="etf_share_snapshot 解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）")
+            return
+        self._log.info(f"etf_share_snapshot: {len(rows)} 行（东财 ETF 快照积累）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    @staticmethod
+    def _cffex_parse_contract_day(df, symbol_default: str) -> list[tuple]:
+        """解析单合约排名 DataFrame → 行列表（rank 1-20 前名+0 合计行如实）。
+
+        提取自 _fetch_cffex_member_ranking（NO-HIGH-COMPLEXITY 治本：主函数=窗口编排，
+        本函数=单合约解析，复杂度各自 <15）。
+        """
+        rows: list[tuple] = []
+        variety = str(df.iloc[0].get("variety") or symbol_default)[:4]
+        for _, row in df.iterrows():
+            rank_raw = safe_float_strict(row.get("rank"))
+            if rank_raw is None:
+                continue
+            rank = int(rank_raw)
+            vals = [safe_float_strict(row.get(c)) for c in (
+                "vol", "vol_chg", "long_open_interest", "long_open_interest_chg",
+                "short_open_interest", "short_open_interest_chg",
+            )]
+            num = [f"{v:.2f}" if v is not None else None for v in vals]
+            rows.append((
+                str(symbol_default).strip(), variety, rank,
+                str(row.get("vol_party_name") or "").strip(),
+                num[0], num[1],
+                str(row.get("long_party_name") or "").strip(),
+                num[2], num[3],
+                str(row.get("short_party_name") or "").strip(),
+                num[4], num[5],
+                "akshare_cffex", 1,
+            ))
+        return rows
+
+    def _fetch_cffex_member_ranking(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """中金所前 20 会员持仓排名长表，写入 c1_market.market_cffex_member_ranking。
+
+        源=akshare get_cffex_rank_table(date=YYYYMMDD)（中金所官网成交持仓排名）。
+        逐日期全合约调用，实测单日期 ~169s（源站慢）——重放窗口收紧为
+        _CFFEX_RANK_REPLAY_DAYS（4 历日，覆盖 Fri→Sun 周末跨度），单次任务时长
+        上界 ~3×169s≈9min；深历史回填走独立脚本分批（不占任务线程）。
+        rank 1-20=前 20 名；rank=0=合计行（源端如实保留）。
+        PIT 双轴: trade_date=排名日; ingest_ts=采集。单位：手。
+        """
+        import akshare as ak
+
+        table = _TBL_CFFEX_MEMBER_RANKING
+        columns = [
+            "trade_date", "symbol", "variety", "rank",
+            "vol_party", "vol", "vol_chg",
+            "long_party", "long_oi", "long_oi_chg",
+            "short_party", "short_oi", "short_oi_chg", "data_source", "quality_flag",
+        ]
+        last_key = payload.end.isoformat()
+        t0 = time.monotonic()
+        # 重放窗口：[max(start, end-4d), end] 内的周一至周五（接口周末日期返回空/慢）
+        window_start = max(payload.start, payload.end - datetime.timedelta(days=_CFFEX_RANK_REPLAY_DAYS))
+        days: list[datetime.date] = []
+        cur = window_start
+        while cur <= payload.end:
+            if cur.weekday() < 5:
+                days.append(cur)
+            cur += datetime.timedelta(days=1)
+        if not days:
+            days = [payload.end]
+
+        rows: list[tuple] = []
+        fetched_days = 0
+        for day in days:
+            try:
+                tables = self._call_with_policy(
+                    ak.get_cffex_rank_table, policy, date=day.strftime("%Y%m%d"),
+                )
+            except Exception as e:  # noqa: BLE001 — 单日失败跳过（次日重放窗口自愈），全失败由零行 FAIL-VISIBLE 兜底
+                self._log.warning(f"cffex_member_ranking {day} 获取失败: {str(e)[:120]}")
+                continue
+            if not tables:
+                continue
+            fetched_days += 1
+            day_iso = day.isoformat()
+            for sym, df in tables.items():
+                if df is None or len(df) == 0:
+                    continue
+                for row in self._cffex_parse_contract_day(df, str(sym)):
+                    rows.append((day_iso, *row[1:]))
+        if not rows:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error=f"cffex_member_ranking 零行（days={len(days)} 全失败或源异常），拒绝写库（FAIL-VISIBLE）")
+            return
+        self._log.info(f"cffex_member_ranking: {fetched_days}/{len(days)} 日 {len(rows)} 行（中金所前20会员）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    def _fetch_convertible_bond_clause(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """可转债条款日快照（强赎/触发/到期），写入 c1_market.market_convertible_bond_clause。
+
+        源=akshare bond_cb_redeem_jsl（集思录强赎汇总页，免费无 key，~315 券单次全量）。
+        快照积累制：snapshot_date=观察日（当日），条款状态演变轨迹随日积月累可回看。
+        回售条款触发计数源端未含（挂账 DS-CAND）。
+        PIT 双轴: snapshot_date=观察日; ingest_ts=采集。规模=亿元。
+        """
+        import akshare as ak
+
+        table = _TBL_CB_CLAUSE
+        columns = [
+            "snapshot_date", "bond_code", "bond_name", "stock_code", "stock_name",
+            "bond_price", "scale", "remain_scale",
+            "conv_start_date", "last_trade_date", "maturity_date", "conv_price",
+            "redeem_trigger_ratio", "redeem_trigger_price", "stock_price", "redeem_price",
+            "redeem_count_desc", "redeem_clause", "redeem_status", "data_source", "quality_flag",
+        ]
+        snapshot_day = payload.end.isoformat()
+        last_key = snapshot_day
+        t0 = time.monotonic()
+        try:
+            df = self._call_with_policy(ak.bond_cb_redeem_jsl, policy)
+        except Exception as e:  # noqa: BLE001 — 单源失败 FAIL-VISIBLE 走集成器重试/告警
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error=f"bond_cb_redeem_jsl 失败: {str(e)[:120]}")
+            return
+        if df is None or len(df) == 0:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error="bond_cb_redeem_jsl 零行（源异常），拒绝写库（FAIL-VISIBLE）")
+            return
+
+        def _clean_text(v) -> str:
+            # 源端条款/状态文本含 HTML 标记（如 <span style=...>），剥离标签+压缩空白
+            import re as _re
+
+            txt = _re.sub(r"<[^>]+>", " ", str(v or ""))
+            return _re.sub(r"\s+", " ", txt).strip()
+
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            code = str(row.get("代码") or "").strip()
+            if not code:
+                continue
+            name = str(row.get("名称") or "").strip()
+            stock_code = str(row.get("正股代码") or "").strip()
+            stock_name = str(row.get("正股名称") or "").strip()
+            vals = [safe_float_strict(row.get(c)) for c in (
+                "现价", "规模", "剩余规模", "转股价", "强赎触发比", "强赎触发价",
+                "正股价", "强赎价",
+            )]
+            num = [f"{v:.4f}" if v is not None else None for v in vals]
+            dates = [self._norm_date_strict(row.get(c)) for c in ("转股起始日", "最后交易日", "到期日")]
+            rows.append((
+                snapshot_day, code, name, stock_code, stock_name,
+                num[0], num[1], num[2],
+                dates[0], dates[1], dates[2], num[3],
+                num[4], num[5], num[6], num[7],
+                _clean_text(row.get("强赎天计数")),
+                _clean_text(row.get("强赎条款")),
+                _clean_text(row.get("强赎状态")),
+                "akshare_jsl", 1,
+            ))
+        if not rows:
+            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
+                              elapsed_sec=time.monotonic() - t0,
+                              error="convertible_bond_clause 解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）")
+            return
+        self._log.info(f"convertible_bond_clause: {len(rows)} 行（集思录条款快照 {snapshot_day}）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows, last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
         )
 
     # ---- 7. 审计意见（audit_opinion） ----

@@ -393,3 +393,93 @@ candidates:
     target_table: "c1_market.macro_activity_gauge(扩列)"
     status: rejected
     notes: "akshare 上游 demjson 解码坏，升级 akshare 或源端修复后复评；外储可由 fx_reserves_yearly(金十,亦退役)侧翼补"
+  - cand_id: DS-CAND-024
+    name: "CFTC 持仓报告（COT 周频回填）"
+    vendor: "akshare cftc 族（cftc_usa/cftc_usa_ch/…，源=CFTC 官网 reports）"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "本班未施工（D5 时间预算让位于 H1 Hyperliquid 自积类——COT 周频历史可回补，无不可逆损耗，挂账无损）"
+    coverage: "期货/期权持仓报告：商业/非商业/管理基金多头空头套利（黄金/原油/股指/债等品族）"
+    frequency: weekly
+    history_depth: "2006- 或更长（CFTC 官网全史可下）"
+    anti_crawl_risk: none
+    tos_risk: "公开（美国政府数据公共域）"
+    score: {availability: 3, signal: 3, fit: 2, maintenance: 2}
+    target_table: "c1_market.cftc_positioning"
+    status: candidate
+    notes: "D5 挂账（altdata_line 09 §1 H7）；施工时抽检 akshare 1.18.75 cftc 族接口可用性，回填建议自 2006 起全史幂等"
+  - cand_id: DS-CAND-025
+    name: "SPDR 黄金 ETF 持仓（GLD 日频吨位）"
+    vendor: "akshare macro_cons gold / SPDR 官网 csv（akshare 接口名待施工时实测）"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "本班未施工（同 H7 理由：日频历史可回补，挂账无损）；akshare 具体接口存活待实测"
+    coverage: "GLD 金库吨位/日变动（全球黄金 ETF 持仓风向标）"
+    frequency: daily
+    history_depth: "2004-11（GLD 上市起）"
+    anti_crawl_risk: low
+    tos_risk: "公开"
+    score: {availability: 2, signal: 2, fit: 2, maintenance: 2}
+    target_table: "c1_market.gold_etf_holdings"
+    status: candidate
+    notes: "D5 挂账（altdata_line 09 §1 H8）；与贵金属影子线交叉验证价值"
+  - cand_id: DS-CAND-026
+    name: "13F 机构持仓季报（SEC EDGAR）"
+    vendor: "SEC EDGAR full-text/13F API（免 key，UA 报备制）"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "大活（XML/CSV 解析+机构映射+45 天申报窗节奏），本班未施工挂账；历史可回补（EDGAR 归档永久），挂账无损"
+    coverage: "13F 机构季度持仓（巴菲特/桥水/大摩等长仓组合跟踪）"
+    frequency: quarterly
+    history_depth: "2013- 结构化（老格式解析成本高）"
+    anti_crawl_risk: low
+    tos_risk: "公开（SEC 公共域，限频 10req/s 报备 UA）"
+    score: {availability: 3, signal: 3, fit: 2, maintenance: 1}
+    target_table: "c1_market.holdings_13f_quarterly"
+    status: candidate
+    notes: "D5 挂账（altdata_line 09 §1 13F）；建议独立班次施工（EDGAR 批量下载+归一化解析非一晚体量）"
+  - cand_id: DS-CAND-027
+    name: "ETF 申赎清单（PCF 篮子明细）/ 申购赎回开闭状态"
+    vendor: "交易所官网 PCF 清单（SSE/SZSE 基金专区）/ 东财 fund_etf_fund_info_em（申购状态/赎回状态列）"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "fund_etf_fund_info_em 需逐基金循环（~1600 次调用，QPS 不礼貌需分批方案）；PCF 篮子免费结构化接口缺失（交易所文件下载制式解析）"
+    coverage: "ETF 申赎清单成分股/现金替代/费率 + 每日申购赎回开闭状态"
+    frequency: daily
+    history_depth: "当日制（无深历史）"
+    anti_crawl_risk: light
+    tos_risk: "公开"
+    score: {availability: 2, signal: 2, fit: 2, maintenance: 1}
+    target_table: "c1_market.etf_pcf_detail"
+    status: candidate
+    notes: "D6 挂账（2026-09-18 夜班 st-datapack-20260918，A11 ETF 申赎族）；份额层已由 c1_market.market_etf_share_snapshot 落地（fund_etf_spot_em 快照差分=净申赎），本条=篮子明细与开闭状态层"
+  - cand_id: DS-CAND-028
+    name: "可转债回售条款触发计数"
+    vendor: "akshare bond_zh_cov_info（巨潮逐券条款原文解析）/ 集思录（未含回售）"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "回售触发计数无聚合免费接口；bond_zh_cov_info 逐券循环（~800 券）需分批+条款文本解析"
+    coverage: "回售触发价/触发天计数/回售状态（募集资金用途改变/股价跌破 70% 等触发）"
+    frequency: daily
+    history_depth: "存续期口径"
+    anti_crawl_risk: light
+    tos_risk: "公开"
+    score: {availability: 2, signal: 2, fit: 2, maintenance: 1}
+    target_table: "c1_market.market_convertible_bond_clause（回售列扩展）"
+    status: candidate
+    notes: "D6 挂账（2026-09-18 夜班 st-datapack-20260918，A10 可转债族）；强赎层已由 c1_market.market_convertible_bond_clause 落地（bond_cb_redeem_jsl），本条=回售触发层扩展"
+  - cand_id: DS-CAND-029
+    name: "上交所 ETF 规模/份额历史（fund_etf_scale_sse）"
+    vendor: "akshare fund_etf_scale_sse（东财数据中心上交所 ETF 规模）"
+    acquire_mode: api_free
+    cost: free
+    register_barrier: "接口退化：2026-09-18 实测仅返回单一历史日期（2025-01-15，593 行），无日频序列"
+    coverage: "上交所 ETF 基金份额日序列（历史口径）"
+    frequency: daily
+    history_depth: "退化后不可用"
+    anti_crawl_risk: none
+    tos_risk: "公开"
+    score: {availability: 0, signal: 1, fit: 1, maintenance: 0}
+    target_table: ""
+    status: rejected
+    notes: "D6 实测 rejected 留痕（2026-09-18 夜班 st-datapack-20260918，A11 申赎族源调查）；份额日序列改由 c1_market.market_etf_share_snapshot（fund_etf_spot_em 快照积累）承担"

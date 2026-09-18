@@ -125,3 +125,109 @@ tables:
     date_col: trade_date
     max_lag_days: 5
     past_only: true
+
+  # --- D5 跨资产·Hyperliquid 四表（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）---
+  # 行情快照：7×24 市场每日都有新快照日，2 天档（含周末不漏）；快照维度历史不可回补，断供即永久缺口
+  - table: c1_market.hl_perp_snapshot_daily
+    date_col: snapshot_date
+    max_lag_days: 2
+    past_only: true
+    allow_empty: true
+
+  # --- 持仓/OI 快照：同行情快照口径 ---
+  - table: c1_market.hl_oi_snapshot_daily
+    date_col: snapshot_date
+    max_lag_days: 2
+    past_only: true
+    allow_empty: true
+
+  # --- 资金费率：小时事件表，源端逐小时必有增量，3 天档（币圈无节假日） ---
+  - table: c1_market.hl_funding_history
+    date_col: funding_time
+    max_lag_days: 3
+    past_only: true
+    allow_empty: true
+
+  # --- 清算流：采样口径按采集心跳判（capture_mode=ws_trades_bounded 逐日 30min 窗口，
+  # 个别窗口零清算属市场正常态，按 trade_date 判会把"没爆仓"误报为断供；
+  # 管线存活的正确度量=ingest_ts 新鲜度，J5 央行议息心跳口径先例） ---
+  - table: c1_market.hl_liquidation_raw
+    date_col: ingest_ts
+    max_lag_days: 2
+    past_only: false
+    allow_empty: true
+
+  # --- D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）---
+  # 中债估值日频（节假日顺延），5 天档；源滚动窗口≈1年，断供即窗口外历史永久失位
+  - table: c1_market.market_china_bond_yield
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+    allow_empty: true
+
+  # --- D6 行情补充·新建四表（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）---
+  # 大盘资金流：东财大盘口径日频（源滚动窗口~120交易日），日频 5 天档；断供即窗口外历史永久失位
+  - table: c1_market.market_fund_flow_daily
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+    allow_empty: true
+
+  # ETF 份额快照：日频 5 天档；快照积累制断供即差分基线断档
+  - table: c1_market.market_etf_share_snapshot
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+    allow_empty: true
+
+  # 中金所前20会员排名：交易日日更 5 天档；接口按日期可回查，断供可补但任务失效须告警
+  - table: c1_market.market_cffex_member_ranking
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+    allow_empty: true
+
+  # 可转债条款快照：快照积累制 5 天档；断供即条款状态演变轨迹断档
+  - table: c1_market.market_convertible_bond_clause
+    date_col: snapshot_date
+    max_lag_days: 5
+    past_only: true
+    allow_empty: true
+
+  # --- D6 行情补充·既有表验活补哨兵（2026-09-18 夜班 st-datapack-20260918）---
+  # 以下表已存在且有活跃任务（本次查重核实 max(date) 新鲜），此前不在哨兵覆盖，补齐：
+  # 个股资金流（tushare 主源/akshare fallback，交易日日更）
+  - table: c1_market.money_flow
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+
+  # 板块资金流（THS 快照，交易日盘中累计；由采集管线日更）
+  - table: c1_market.sector_fund_flow
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+    allow_empty: true
+
+  # 大宗交易（每日明细+每日统计双任务，交易日日更）
+  - table: c1_market.block_trade
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+
+  - table: c1_market.block_trade_detail
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+
+  # 可转债日K线（新浪 bond_zh_hs_cov_daily，交易日日更）
+  - table: c1_market.kline_cb
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
+
+  # 可转债隐波（派生表 T-1 口径，5 天档）
+  - table: c1_market.convertible_bond_iv
+    date_col: trade_date
+    max_lag_days: 5
+    past_only: true
