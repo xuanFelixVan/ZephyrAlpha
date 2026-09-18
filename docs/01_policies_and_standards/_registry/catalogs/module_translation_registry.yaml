@@ -55378,6 +55378,54 @@ entries:
   desc_en: ""
   plain_zh: "给六个分析师预期因子打分出证：按预注册的降权口径（只用2019到2021这36个月的数据），算每个因子选股准不准，写成证据文件存档，不打分不晋级"
   responsibility_layer: business
+- module_path: schemas/categories/crypto/hl_perp_snapshot_daily.py
+  domain_id: D_DATA
+  name_zh: "Hyperliquid永续行情快照DDL"
+  name_en: "HL perp snapshot DDL"
+  desc_zh: "c1_market.hl_perp_snapshot_daily 表 DDL 唯一真源：全市场永续行情快照（日更自积起点 2026-09-18，历史不可回补）"
+  desc_en: ""
+  plain_zh: "这张表每天给 Hyperliquid 全部永续合约拍一张快照，记下每个币的价格和成交量。这种快照错过了就补不回来，所以从 2026 年 9 月 18 日开始天天攒，攒得越久越值钱。"
+  responsibility_layer: business
+- module_path: schemas/categories/crypto/hl_oi_snapshot_daily.py
+  domain_id: D_DATA
+  name_zh: "Hyperliquid持仓OI快照DDL"
+  name_en: "HL OI snapshot DDL"
+  desc_zh: "c1_market.hl_oi_snapshot_daily 表 DDL 唯一真源：全市场未平仓量/资金费/溢价分布快照（日更自积）"
+  desc_en: ""
+  plain_zh: "这张表每天记录 Hyperliquid 上每个合约有多少人押注没平仓、资金费率是正是负。看它就知道市场资金押注哪边、哪里最拥挤。"
+  responsibility_layer: business
+- module_path: schemas/categories/crypto/hl_funding_history.py
+  domain_id: D_DATA
+  name_zh: "Hyperliquid资金费率历史DDL"
+  name_en: "HL funding history DDL"
+  desc_zh: "c1_market.hl_funding_history 表 DDL 唯一真源：逐币逐小时资金费率长表（可回溯，BTC 实测起 2023-05-12）"
+  desc_en: ""
+  plain_zh: "这张表一小时记一次永续合约的资金费率。费率太高说明多头太挤、太低说明空头太挤，是多空情绪的温度计，历史可以往回补。"
+  responsibility_layer: business
+- module_path: schemas/categories/crypto/hl_liquidation_raw.py
+  domain_id: D_DATA
+  name_zh: "Hyperliquid清算流原始DDL"
+  name_en: "HL liquidation raw DDL"
+  desc_zh: "c1_market.hl_liquidation_raw 表 DDL 唯一真源：trades 流清算账本地址标记的爆仓成交流水（逐日有界采样口径）"
+  desc_en: ""
+  plain_zh: "这张表记录 Hyperliquid 上被强制平仓的成交，也就是爆仓流水。现在每天采样半小时先记着，以后装上全天候监听才能记全。"
+  responsibility_layer: business
+- module_path: schemas/categories/market/market_china_bond_yield.py
+  domain_id: D_DATA
+  name_zh: "中债收益率曲线DDL"
+  name_en: "ChinaBond yield curve DDL"
+  desc_zh: "c1_market.market_china_bond_yield 表 DDL 唯一真源：国债/商业银行普通债AAA/中短期票据AAA 三曲线×8 期限点长表"
+  desc_en: ""
+  plain_zh: "这张表每天记中国债券市场的利率：国家借钱的利息和企业借钱的利息，按借的时间长短分成八档。国债利息是所有资产定价的地基。"
+  responsibility_layer: business
+- module_path: src/zephyr/data/implementations/hyperliquid_provider.py
+  domain_id: D_DATA
+  name_zh: "Hyperliquid 跨资产采集 provider"
+  name_en: "Hyperliquid provider"
+  desc_zh: "Hyperliquid 官方 API 采集器：永续行情快照/持仓OI/资金费率历史/清算流采样四能力，接入 c1_market.hl_* 四表（altdata_line D5 波2）"
+  desc_en: ""
+  plain_zh: "这个采集器连 Hyperliquid 币圈交易所的官方接口，每天记下所有永续合约的价格、持仓量、资金费率和爆仓流水，存进四张表供跨资产研究用。"
+  responsibility_layer: business
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -114,6 +114,7 @@ Usage::
 from __future__ import annotations
 
 import logging
+import re
 import subprocess
 import threading
 from dataclasses import dataclass, field
@@ -262,11 +263,14 @@ SQL_INSERT_DRIFT_AUDIT_FINDING = (
 )
 
 # S4: module_id_recommend SQL（§5.160.2 NO-BARE-SQL gate 合规）
+# RC-14 治本（裁定#338③ 工单，2026-09-18）：旧 SQL_FIND_MODULE_BY_DIR 带 LIMIT 1，
+# 目录下多模块共存时抓首行即"猜"——实测把 MOD-ALT-001 安到治理测试、把零声明幻影
+# MOD-D5_ARCH_TOOLS 安到 d5 同步器测试。改为取全量 DISTINCT，交
+# _module_id_infer_from_dir 做「蓝图 frontmatter 已声明且唯一」收敛，不唯一即跳过。
 
-SQL_FIND_MODULE_BY_DIR = (
+SQL_FIND_MODULES_BY_DIR = (
     "SELECT DISTINCT blueprint_id FROM nodes "
-    "WHERE path LIKE %s AND blueprint_id IS NOT NULL AND blueprint_id != '' "
-    "LIMIT 1"
+    "WHERE path LIKE %s AND blueprint_id IS NOT NULL AND blueprint_id != ''"
 )
 
 # S5: reconcile_execution_log SQL（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2 治本）
@@ -3351,16 +3355,110 @@ def make_drift_fix_reconciler(gateway: object) -> ReconcilerSpec:
     )
 
 
-def _module_id_infer_from_dir(file_rel: str) -> str | None:
-    """从同目录 depgraph 节点推断 module_id（S4 防蔓延）。
+# RC-14 治本（裁定#338③ 工单，2026-09-18）：头注入器四缺陷修复。
+# 缺陷③：注入块各槽只允许真源解析值——[BLUEPRINT] 中槽真源=该 module_id 在
+#   docs/03_modules 蓝图 frontmatter 的声明文件路径；解析不出落 unknown 并计数告警。
+# 缺陷④：module_id 反查禁猜——目录下 blueprint_id 须收敛到唯一「已声明」id，
+#   否则跳过注入（零声明幻影 id 与目录错配 id 从此不再被写进文件头）。
 
-    新建 .py 文件无 [BLUEPRINT] 头部时，查 depgraph 同目录下已有文件的
+INJECT_UNKNOWN_SLOT = "unknown"
 
-    blueprint_id，推断该文件应属的 module_id。
+# 头部行锚定判重（缺陷①②）：任何位置已存在 # [BLUEPRINT] 或 # [TTL] 行即跳过注入，
+# 不再只看 content[:500] 的 [BLUEPRINT]（旧口径漏判 500 字符外的头部/纯 TTL 头，
+# 造成已声明 [TTL] limited 的文件被二次前置 permanent——HEAD 实测 466 带标记文件 196 重复）。
+_EXISTING_HEADER_LINE_RE = re.compile(r"^\s*#\s*\[(?:BLUEPRINT|TTL)\]", re.M)
+
+# 注入器跳过/降级计数（可观测，测试断言用；进程内聚合，随 _reset 归零）
+_INJECT_STATS: dict[str, int] = {
+    "skip_existing_header": 0,
+    "skip_no_declared_module": 0,
+    "unknown_blueprint_slot": 0,
+}
+
+
+def _reset_inject_stats() -> None:
+
+    """清零注入器统计（测试隔离用）。"""
+
+    for k in _INJECT_STATS:
+
+        _INJECT_STATS[k] = 0
+
+
+def _get_inject_stats() -> dict[str, int]:
+
+    """返回注入器统计快照（skip/unknown 计数，告警与测试断言用）。"""
+
+    return dict(_INJECT_STATS)
+
+
+def _load_declared_blueprint_index(project_root: Path) -> dict[str, str]:
+
+    """扫描 docs/03_modules 蓝图 frontmatter，构建 {module_id: 蓝图md相对路径} 真源索引。
+
+    与 check_blueprint_code_alignment.py 的 TARGET_ID_RE 同口径（module_id|blueprint_id
+
+    首个命中为准，frontmatter 居首）。此索引是注入器唯一的 module_id「已声明」判据：
+
+    depgraph 里存在但此处零声明的 id（实测幻影 MOD-D5_ARCH_TOOLS）一律不采信。
+
+    """
+
+    import re as _re
+
+    id_re = _re.compile(r"^(?:module_id|blueprint_id):\s*[\"']?([^\"'\n]+)", _re.M)
+
+    index: dict[str, str] = {}
+
+    base = Path(project_root) / "docs" / "03_modules"
+
+    if not base.is_dir():
+
+        return index
+
+    for md in base.rglob("*.md"):
+
+        try:
+
+            text = md.read_text(encoding="utf-8", errors="replace")
+
+        except OSError:
+
+            continue
+
+        m = id_re.search(text)
+
+        if m:
+
+            mid = m.group(1).strip()
+
+            if mid and mid not in index:
+
+                index[mid] = md.relative_to(project_root).as_posix()
+
+    return index
+
+
+def _module_id_infer_from_dir(file_rel: str, declared_index: dict[str, str] | None = None) -> str | None:
+    """从同目录 depgraph 节点推断 module_id（S4 防蔓延；RC-14 后禁猜版）。
+
+    新建 .py 文件无 [BLUEPRINT] 头部时，查 depgraph 同目录下全部 DISTINCT
+
+    blueprint_id，收敛到唯一「declared_index 已声明」的 id 才返回：
+
+    - 零命中 / 多命中 / 命中 id 未在蓝图 frontmatter 声明（幻影）→ 返回 None（跳过注入）
+
+    - declared_index=None（调用方未提供真源索引）→ 直接返回 None（无法核验即不猜）
 
     """
 
     from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+    if declared_index is None:
+
+        _INJECT_STATS["skip_no_declared_module"] += 1
+
+        return None
 
     file_rel = file_rel.replace("\\", "/")
 
@@ -3370,35 +3468,56 @@ def _module_id_infer_from_dir(file_rel: str) -> str | None:
         conn = get_depgraph_pg_connection(autocommit=True)
 
         with conn.cursor() as cur:
-            cur.execute(SQL_FIND_MODULE_BY_DIR, (dir_prefix,))
+            cur.execute(SQL_FIND_MODULES_BY_DIR, (dir_prefix,))
 
-            row = cur.fetchone()
+            rows = cur.fetchall()
 
         conn.close()
-
-        if row:
-            return row[0]
 
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("module_id_recommend: dir lookup failed for %s: %s", file_rel, e)
 
+        _INJECT_STATS["skip_no_declared_module"] += 1
+
+        return None
+
+    declared_hits = {r[0] for r in rows if r and r[0] and r[0] in declared_index}
+
+    if len(declared_hits) == 1:
+
+        return next(iter(declared_hits))
+
+    _INJECT_STATS["skip_no_declared_module"] += 1
+
+    logger.warning(
+        "module_id_recommend: skip inject for %s (declared_hits=%s, raw=%s)",
+        file_rel,
+        sorted(declared_hits),
+        sorted({r[0] for r in rows if r and r[0]}),
+    )
+
     return None
 
 
-def _module_id_inject_header(project_root: Path, file_rel: str, module_id: str) -> bool:
-    """在 .py 文件头部注入 [BLUEPRINT] + [TTL] 完整头部。
+def _module_id_inject_header(
+    project_root: Path,
+    file_rel: str,
+    module_id: str,
+    blueprint_target: str | None = None,
+) -> bool:
+    """在 .py 文件头部注入 [BLUEPRINT] + [TTL] 完整头部（RC-14 治本版）。
 
-    治本（2026-07-17，遗留项修复）：注入模板补全 [TTL] permanent 字段。
+    缺陷①②修复：写前对全文做行锚定判重（_EXISTING_HEADER_LINE_RE）——已存在任何
 
-    原模板仅含 [BLUEPRINT] 导致 auto-commit 被 TTL-METADATA gate 阻断（hard block：
+    # [BLUEPRINT] / # [TTL] 行即跳过注入，杜绝重复 TTL 头（旧口径只看 content[:500]
 
-    文件有头部但缺 required ttl 字段）。
+    的 [BLUEPRINT]，导致已有 [TTL] limited 的文件被前置 permanent 重复头）。
 
-    自动兜底机制完整性原则：注入器必须遵守后续校验器的所有规则，禁止注入半成品。
+    缺陷③修复：[BLUEPRINT] 中槽只写真源值——blueprint_target=该 id 在
 
-    默认 permanent：S4 处理的 src/scripts/ 下文件按 ttl_vocabulary.yaml decision_tree
+    docs/03_modules 的蓝图声明文件路径；解析不出落 unknown 并计数告警，禁填散文。
 
-    Q3 判定属永久区路径；task_bound 文件应由 AI 创建时显式声明，不应依赖兜底注入。
+    module_id 由调用方保证已过 declared_index 收敛（缺陷④，禁猜）。
 
     """
 
@@ -3411,12 +3530,28 @@ def _module_id_inject_header(project_root: Path, file_rel: str, module_id: str) 
             content = f.read()
 
     except OSError:
+
         return False
 
-    if "[BLUEPRINT]" in content[:500]:
+    if _EXISTING_HEADER_LINE_RE.search(content):
+
+        _INJECT_STATS["skip_existing_header"] += 1
+
         return False
 
-    header = f"# [BLUEPRINT] {module_id} | (auto-injected by S4 reconciler) | §\n# [TTL] permanent\n"
+    if blueprint_target:
+
+        slot_value = blueprint_target
+
+    else:
+
+        slot_value = INJECT_UNKNOWN_SLOT
+
+        _INJECT_STATS["unknown_blueprint_slot"] += 1
+
+        logger.warning("module_id_inject: %s 注入 %s，蓝图路径解析不出落 unknown", file_rel, module_id)
+
+    header = f"# [BLUEPRINT] {module_id} | {slot_value} | §\n# [TTL] permanent\n"
 
     with open(abs_path, "w", encoding="utf-8") as f:
         f.write(header + content)
@@ -3428,12 +3563,18 @@ def _classify_headerless_files(
     committed_files: list[str],
     project_root: Path,
 ) -> tuple[list[tuple[str, str]], list[str]]:
-    """遍历 committed .py 文件，分类：无 [BLUEPRINT] 头部且可推断→injected，不可推断→skipped。"""
+    """遍历 committed .py 文件，分类：无 [BLUEPRINT] 头部且可推断→injected，不可推断→skipped。
+
+    RC-14 治本：module_id 反查经 declared_index 收敛（禁猜），注入中槽写真源蓝图路径。
+
+    """
 
     import os
     import re
 
     bp_re = re.compile(r"\[BLUEPRINT\]\s+(\S+)")
+
+    declared_index = _load_declared_blueprint_index(project_root)
 
     injected: list[tuple[str, str]] = []
 
@@ -3460,9 +3601,9 @@ def _classify_headerless_files(
         if bp_re.search(head):
             continue
 
-        matched = _module_id_infer_from_dir(rel)
+        matched = _module_id_infer_from_dir(rel, declared_index)
 
-        if matched and _module_id_inject_header(project_root, rel, matched):
+        if matched and _module_id_inject_header(project_root, rel, matched, declared_index.get(matched)):
             injected.append((rel, matched))
 
         else:
