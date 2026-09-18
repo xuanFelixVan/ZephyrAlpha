@@ -68,6 +68,15 @@ def find_index_files() -> list[Path]:
     return [fp for fp in iter_files(docs_dir, extensions=SCAN_EXTENSIONS_MD) if fp.name == "index.md"]
 
 
+def _strip_anchor(link: str) -> str:
+    """剥离链接尾部的 #锚点 与 ?查询，只留文件路径部分。
+
+    Markdown 链接 [文本](路径.md#章节) 指向的文件是「路径.md」，# 之后只是文内定位符；
+    不剥离就会把 'x.md#sec' 当文件名去和磁盘清单比对，永远对不上 → 假悬空。
+    """
+    return link.split("#", 1)[0].split("?", 1)[0].strip()
+
+
 def extract_index_entries(filepath: Path) -> set[str]:
     """find index files."""
     try:
@@ -80,9 +89,12 @@ def extract_index_entries(filepath: Path) -> set[str]:
         link = match.group(2)
         if link.startswith("http") or link.startswith("#") or link.startswith("mailto"):
             continue
-        entries.add(link)
+        target = _strip_anchor(link)
+        if not target:
+            continue
+        entries.add(target)
     for match in re.finditer("`([^`]+\\.(md|yaml|yml))`", content):
-        entries.add(match.group(1))
+        entries.add(_strip_anchor(match.group(1)))
     return entries
     "extract index entries."
 
