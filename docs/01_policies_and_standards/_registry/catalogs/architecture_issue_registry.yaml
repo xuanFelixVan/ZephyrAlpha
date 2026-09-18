@@ -22109,3 +22109,37 @@ entries:
   status: resolved
   created: '2026-09-18'
   last_updated: '2026-09-18'
+- issue_id: ARCH-VOCABCONSOL-DOMAIN-BACKFILL-001
+  title: 裁定#335 W4c 全仓 [DOMAIN] 补标涉 architecture_model/ 受保护路径 11 件的审批标记授权
+  severity: P3
+  adjudication: >-
+    补标为机械元数据标注：每文件治理锚定块纯插一行 domain_id/[DOMAIN]
+    （+1 行，其余字节 sha256 核验零改动），非契约语义变更；architecture_model/
+    保护本意=重大修改须审批，本条为裁定#335 授权范围的形式化登记，
+    commit message 经 [ARCH-APPROVAL:ARCH-VOCABCONSOL-DOMAIN-BACKFILL-001]
+    逃生通道放行（先例格式=d8419af8e6）。
+  fix_phase: 裁定性记录（无代码施工）
+  status: decided
+  related_adjudication: '#335'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'
+
+- issue_id: "#ARCH-337"
+  title: >-
+    热文件吞并改实证——module_translation_registry.yaml 于 2026-09-18 07:44-07:55（本地）
+    被无 CAS 审计痕迹的过期内存底稿整写覆盖（写回内容=22:27 代际旧文本 sha 前缀 05a41116），
+    抹掉 st-vocabconsol 战役 --sync-layer 4956 行 responsibility_layer 与 2 条翻译条目；
+    同窗口 capability_canonical_file_registry.yaml 13 条 creation_token 同样被吞。
+    取证签名：safe_write.jsonl 链在 23:44:40Z(after=1379f35a) 与 23:55:13Z(base=before=05a41116
+    旧代际) 之间断裂，断裂区间不存在任何 TR 的 safe_write 审计行=覆盖者绕过 safe_write_text。
+  severity: P1高
+  adjudication: >-
+    待追：07:44-07:55 窗口内以 Edit/Write 或裸 write_text 整写注册表的会话/生成器；
+    防线修复候选：注册表级 .ailocks 强制 + gate 拦截对 watched 热文件的非 CAS 写。
+    战役侧缓解已做：幂等工具重放（--sync-layer/条目 upsert/token 补登）恢复为超集，
+    先落袋短窗口暴露；教训入 memory（热文件在途未落地=可被整写吞，落地窗口最小化）。
+  fix_phase: 待专项（战役侧缓解已落地）
+  status: open
+  related_adjudication: '#335'
+  created: '2026-09-18'
+  last_updated: '2026-09-18'

@@ -32699,6 +32699,22 @@ creation_tokens:
   token: altdata-line-macro-trade-gauge-20260918
   created_by: st-datapack-20260918
   capability: altdata_line
+- file: schemas/categories/market/market_agri_wholesale_index.py
+  token: altdata-line-market-agri-wholesale-index-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/market/market_futures_warehouse_receipt.py
+  token: altdata-line-market-futures-warehouse-receipt-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/market/market_ndrc_fuel_price.py
+  token: altdata-line-market-ndrc-fuel-price-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
+- file: schemas/categories/market/market_road_freight_index.py
+  token: altdata-line-market-road-freight-index-20260918
+  created_by: st-datapack-20260918
+  capability: altdata_line
 - file: docs/_working/residual_construction/pending_items_plan.md
   token: residual-construction-plan-pending-items-plan-20260917
   created_by: st-residual-20260917
@@ -35116,5 +35132,13 @@ creation_tokens:
   token: vocab-consolidation-campaign-backfill-module-domain-20260918
   created_by: st-vocabconsol-20260918
   capability: vocab_consolidation_campaign
+- file: scripts/data/source_health_patrol.py
+  token: source-patrol-source-health-patrol-20260918
+  created_by: st-mineline-w304
+  capability: source_patrol
+- file: docs/_working/automation/campaign/onboarding_checklist.md
+  token: source-patrol-onboarding-checklist-20260918
+  created_by: st-mineline-w304
+  capability: source_patrol
 
 di_seam_exemptions: []

@@ -364,7 +364,7 @@ exemptions:
     # reason 与代码行内注释逐字一致（reason fallback 漂移免疫关键——旧值夹带漂移日志致 fallback 失效）
   reason: '业务子集：跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验'
 - file: src/zephyr/governance/persistence/battlemap_schema.py
-  line: 187
+  line: 127   # 行号 187→127 漂移跟进（algo-flow 出仓批 5c3221ab89 删除上方段落）
   category: business_subset
   reason: 'design_maturity 3态受控词表（design/production/deprecated，含 deprecated 治理裁定态，#ARCH-OE-007~009），与
     depgraph/decisiongraph 对齐，业务子集非词表（行号 187→188 漂移跟进，2026-08-26 B-007 批）'
@@ -444,7 +444,7 @@ exemptions:
     校验字典结构，gate-vocab豁免合理（2026-09-11 满贯批）
 - category: business_subset
   file: scripts/research/verify_g07_sentiment_stratified_correlation.py
-  line: 64   # 行号自 63 漂移（TableRegistry import 行插入）
+  line: 63   # 行号回摆 64→63 漂移跟进（2026-09-18 W6 轮1）
   reason: STRATEGIES 策略键名元组=业务数据 schema 值（daban/multifactor/event_driven 为
     交易决策地图既定策略键），非 knowledge_taxonomy 词表校验对象——gate-vocab 豁免合理
     （2026-09-13 夜班收编批 G07 验证脚本入库时补登记）
