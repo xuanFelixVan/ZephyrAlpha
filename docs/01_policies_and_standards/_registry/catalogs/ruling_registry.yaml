@@ -4385,3 +4385,18 @@ entries:
     - '裁定#305'
     - '裁定#315'
   superseded_by: ''
+- ruling_id: '裁定#338'
+  title: '通宵产线战役收口裁定批：①GT-4 派生件回库 ②GT-6 增量红+baseline ③RC-14 头注入器修法放行 ④DS-271/EXP 复评三口径 ⑤R-H5E-1 实盘前置校验门位'
+  date: '2026-09-18'
+  category: '治理裁定'
+  status: 'active'
+  summary: 'Owner 通宵总令"自己裁定一遍"授权批（st-mineline-20260918 总统筹，第一性原理逐项裁定）。①GT-4 blueprint_registry.yaml 判缺位=账实面盲区而非有意退役（盘上不存在且无退役裁定在册；derived_file_deletion_gate 观测面只看 staged 删除=解跟踪即绕过）——裁定回库：以 docs/_working/automation/campaign/blueprints/ 现存蓝图集为内容真源重建注册表（生成器产出禁手维护），derived_file_deletion_gate 观测面从 staged 删除升级为存在性+新鲜度双检；check_blueprint_code_alignment.py:426-435 无条件 return 空列表恢复维度（其数据源即本注册表）。②GT-6 348 条 HIGH 落点债裁 baseline 存量豁免+增量红（先清债再入链会让 348 债阻塞门禁价值兑现，两线并行互不阻塞）：落 348 现状 baseline（生成器产出带日期范围），check-targets 默认开但仅 baseline 外增量红，清债按目录分片走维护班节奏、每片清偿后收窄 baseline；整维默认关登记为反模式。③RC-14 头注入器（reconciliation_registry.py:3388 四缺陷：content 前 500 字符判重/重复 TTL 头 106/200 抽样/MODULE 槽散文不可账实/module_id 目录猜配）修法放行：按 mining 件四条修法执行（夹具钉单头、槽位仅真源值+散文落 unknown、反查失败跳过禁猜、全仓多头归零）——原 13 会话 HELD-OVERLAP 阻断复核：.aidrafts 草稿属主会话心跳全灭=死会话草稿非在途工作，§3.4 不适用，准予修复。④DS-271（DS-275 consensus_daily_repaired）EXP 复评三口径预注册：IS 窗=A 案（2019-2021 共 36 月窗缩先行出证+显著标注窗缩，2022+ 修复证据补齐后全窗复跑）；mid 不入聚合（守 high-only 铁律，mid/low 留档作诊断与反向核验）；切换规则=switch_gate=Owner 不变，机器侧双轨并跑（DS-229 消费方零改动）累计不少于 4 周对数后提请 Owner 验收切换。本条解阻 WO-⑤-12 EXP 族出证。⑤R-H5E-1 pre-trade 实盘下单流前置校验：机侧校验链（risk_validation_bridge 消费端）接线 paper/sim 路径准予施工（校验属减风险增量不构成资金操作）；实盘账户启用维持 Owner 门（kill_switch+flag 出厂态不动）；接线验收=sim 单全链断言须含 pre-trade 校验触发证据。'
+  affected_files:
+    - docs/_working/full-auto-chain/S11_assembled_backtest/nodes/gate_self_deception_mining.md
+    - docs/_working/full-auto-chain/S11_assembled_backtest/nodes/reconciler_event_trigger_chain_mining.md
+    - docs/_working/reports/2026-09-16-consensus-repaired-build.md
+    - src/zephyr/governance/adapters/risk_validation_bridge.py
+  related_arch: []
+  related_rulings:
+    - '裁定#337'
+  superseded_by: ''
