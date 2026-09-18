@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.infra.idempotency
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.foundation.errors
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.io.sqlite_factory; zephyr.shared.utils.time_utils
+# [CONSUMERS] zephyr.shared.api.api_client; zephyr.ex_core.order_manager; zephyr.ex_core.adapters.miniqmt_broker
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -57,6 +57,7 @@ from typing import Any
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
 from zephyr.shared.io.sqlite_factory import get_db_connection
+from zephyr.shared.utils.time_utils import now_utc
 
 __all__ = [
     "IdempotencyError",
@@ -66,9 +67,23 @@ __all__ = [
     "SQLiteIdempotencyStore",
     "_build_idempotency_key",
     "build_idempotency_key",
+    "build_order_idempotency_key",
 ]
 
 logger = logging.getLogger(__name__)
+
+
+def _wall_now() -> float:
+    """持久化时间戳专用墙钟（UTC epoch 秒）。
+
+    资金安全件铁律：跨进程持久化的时间戳 MUST 用墙钟，不得用 ``time.monotonic()``——
+    monotonic 的原点是"本次开机/本进程基准"，跨进程与跨重启不可比。旧实现把 monotonic
+    写进 SQLite，导致重启后 TTL 判定失真（上一轮开机写入的 completed_at 可能远小于本轮
+    monotonic，被 ``_cleanup_expired`` 误删），去重记录蒸发即等于放行二次发单。
+
+    经 ``zephyr.shared.utils.time_utils.now_utc`` 取值（RULE-SCHEMA-TZ：禁 datetime.now()/time.time()）。
+    """
+    return now_utc().timestamp()
 
 # ------------------------------------------------------------------
 # SQL 集中化（§5.160.2 NO-BARE-SQL 治本）
@@ -220,6 +235,35 @@ def build_idempotency_key(prefix: str, *parts: str) -> str:
     return _build_idempotency_key(prefix, *parts)
 
 
+def build_order_idempotency_key(
+    strategy_id: str,
+    symbol: str,
+    trade_date: str,
+    signal_batch_id: str,
+    side: str,
+) -> str:
+    """构建**订单**幂等键——由业务语义确定性派生（R-L3 裁定，尽调 C1 治本）。
+
+    键构成 = ``sha256(f"{strategy_id}|{symbol}|{trade_date}|{signal_batch_id}|{side}")`` 全摘要。
+
+    为什么必须确定性：旧实现用 ``uuid.uuid4()`` 随机生成 ⇒ "同一信号重放"必然得到新键 ⇒
+    去重表形同虚设 ⇒ 崩溃重启后同一笔信号会被再次发出（真实资金二次成交）。
+    确定性键让"同一业务语义"在任何进程、任何时刻都映射到同一把键，去重才有意义。
+
+    Args:
+        strategy_id: 策略标识（如 STR-XXX-NNN）
+        symbol: 标的代码
+        trade_date: 交易日（ISO 日期串，如 2026-09-18）
+        signal_batch_id: 信号批次号（同批次内同标的同方向视为同一笔意图）
+        side: 买卖方向（buy/sell）
+
+    Returns:
+        64 位十六进制 sha256 全摘要（不截断，避免 64bit 前缀在高频场景的碰撞争议）。
+    """
+    raw = f"{strategy_id}|{symbol}|{trade_date}|{signal_batch_id}|{side}"
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
 class SQLiteIdempotencyStore:
     """SQLite 持久化幂等性存储——跨进程/重启保持幂等记录。
 
@@ -230,21 +274,36 @@ class SQLiteIdempotencyStore:
 
     def __init__(
         self,
-        db_path: str | Path,
-        default_ttl_seconds: int = 86400,
+        db_path: str | Path | None = None,
+        default_ttl_seconds: float = 86400,
+        conn: Any | None = None,
     ) -> None:
-        self._db_path = str(db_path)
-        self._default_ttl = default_ttl_seconds
+        """初始化持久化幂等存储。
+
+        Args:
+            db_path: SQLite 文件路径（与 conn 二选一）。
+            default_ttl_seconds: 记录存活秒数；**<=0 表示永不过期**（资金安全件默认取值——
+                去重记录一旦因 TTL 蒸发，等价于放行二次发单）。
+            conn: 可选注入连接。生产侧应传
+                ``DatabaseService().get_governance_conn(read_only=False)``（宪法 §9.1：
+                数据库访问一律走 DatabaseService），避免各处自开连接。
+        """
+        if conn is None and db_path is None:
+            raise ValueError("SQLiteIdempotencyStore 需要 db_path 或 conn 之一")
+        self._db_path = str(db_path) if db_path is not None else ""
+        self._default_ttl = float(default_ttl_seconds)
         # AI-15 审计治本（2026-08-17）：委托唯一真源 sqlite_factory.get_db_connection，
         # 消除裸 sqlite3.connect（无 PRAGMA 基线）——WAL 对跨进程共享场景必需；
         # autocommit 模式下显式 commit() 为无害 no-op，Row 工厂支持元组解包，语义不变。
-        self._conn = get_db_connection(self._db_path)
+        self._conn = conn if conn is not None else get_db_connection(self._db_path)
+        self._owns_conn = conn is None  # 注入连接由 DatabaseService 管生命周期，close() 不得关它
         self._conn.execute(_SQL_CREATE_TABLE)
         self._conn.commit()
 
     def _cleanup_expired(self) -> None:
-        now = time.monotonic()
-        cutoff = now - self._default_ttl
+        if self._default_ttl <= 0:
+            return  # ttl<=0 = 永不过期：不删任何去重记录
+        cutoff = _wall_now() - self._default_ttl
         self._conn.execute(_SQL_DELETE_EXPIRED, (cutoff,))
         self._conn.commit()
 
@@ -266,8 +325,8 @@ class SQLiteIdempotencyStore:
         if row is None:
             return None
         record = self._row_to_record(row)
-        if record.status is IdempotencyStatus.COMPLETED:
-            elapsed = time.monotonic() - record.completed_at
+        if self._default_ttl > 0 and record.status is IdempotencyStatus.COMPLETED:
+            elapsed = _wall_now() - record.completed_at
             if elapsed > self._default_ttl:
                 self._conn.execute(_SQL_DELETE_BY_KEY, (key,))
                 self._conn.commit()
@@ -284,7 +343,7 @@ class SQLiteIdempotencyStore:
                     details={"key": key, "status": existing.status.value},
                 )
             return existing
-        record = IdempotencyRecord(key=key, status=IdempotencyStatus.PROCESSING)
+        record = IdempotencyRecord(key=key, status=IdempotencyStatus.PROCESSING, created_at=_wall_now())
         self._conn.execute(
             _SQL_INSERT,
             (key, record.status.value, record.created_at),
@@ -299,7 +358,7 @@ class SQLiteIdempotencyStore:
                 f"idempotency key '{key}' not found—call start() first",
                 details={"key": key},
             )
-        completed_at = time.monotonic()
+        completed_at = _wall_now()
         self._conn.execute(
             _SQL_UPDATE_COMPLETE,
             (IdempotencyStatus.COMPLETED.value, json.dumps(result), completed_at, key),
@@ -317,7 +376,7 @@ class SQLiteIdempotencyStore:
                 f"idempotency key '{key}' not found—call start() first",
                 details={"key": key},
             )
-        completed_at = time.monotonic()
+        completed_at = _wall_now()
         self._conn.execute(
             _SQL_UPDATE_FAIL,
             (IdempotencyStatus.FAILED.value, completed_at, key),
@@ -334,4 +393,6 @@ class SQLiteIdempotencyStore:
         return cur.fetchone()[0]
 
     def close(self) -> None:
-        self._conn.close()
+        """关闭自持连接；注入连接（DatabaseService 托管）不关，仅解引用。"""
+        if self._owns_conn:
+            self._conn.close()

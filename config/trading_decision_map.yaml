@@ -2381,7 +2381,7 @@ nodes:
 
   # ── D31 L4 补缺：订单生命周期状态机/部分成交处理/订单级预检/执行容灾对账（OMS 标准件）──
 - node_id: TDM-E-L4-10
-  note_confirmed: 2026-09-15
+  note_confirmed: 2026-09-18
   name_zh: 订单生命周期状态机
   market: cn_a
   flow: entry_flow
@@ -2633,7 +2633,8 @@ nodes:
   algo_note_zh: >-
     分级三档定盯盘频率：WATCH（浮亏>3% 或临近止损）秒级盯；MONITOR（浮盈浮亏 3% 内）5 分钟盯；HOLD（深度浮盈安全区）事件驱动（涨停/公告才看）。
     分级依据=盈亏态+ATR 距止损距离。
-    （2026-09-18 深度审查修正：价格已跌破止损线的持仓直接判 WATCH（旧码 abs 对称化曾误判 MONITOR）（rpt_e05）；note_confirmed: 2026-09-18）
+    （2026-09-18 深度审查修正：价格已跌破止损线的持仓直接判 WATCH（旧码 abs 对称化曾误判 MONITOR）（rpt_e05）；note_confirmed:
+    2026-09-18）
   parent_node: TDM-P-P1
   factor_refs: []
   data_refs: [DS-150]
@@ -3283,7 +3284,8 @@ nodes:
     五路止损并行：Chandelier（ATR 悬停：亏损区 3×ATR/盈利区 2×ATR 收紧）、固定 -7% 生死线、支撑破位（关键位下方 1%）、时间止损（盈利仓
     5 日不涨/亏损仓 3 日）、分时破位（盘中跌破分时均线 30 分钟）。
     止损只升不降（棘轮）。
-    （2026-09-18 深度审查修正：ATR 缺失降级锚由入场价改为锚点同构 max(最高收盘,入场价)，消除盈利期止损悬崖（rpt_e03）；note_confirmed: 2026-09-18）
+    （2026-09-18 深度审查修正：ATR 缺失降级锚由入场价改为锚点同构 max(最高收盘,入场价)，消除盈利期止损悬崖（rpt_e03）；note_confirmed:
+    2026-09-18）
   parent_node: TDM-X-S1
   factor_refs: []
   risk_limit_refs: [RLM-DRAWDOWN-001]

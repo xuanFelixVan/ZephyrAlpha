@@ -56,6 +56,7 @@ import threading
 from collections.abc import Callable
 from datetime import UTC, datetime
 from decimal import Decimal
+from pathlib import Path
 from typing import Any, Final, Optional
 
 from zephyr.backtest.core.matching_logic import (
@@ -67,6 +68,12 @@ from zephyr.backtest.core.matching_logic import (
 )
 from zephyr.ex_core.board_lot import AShareBoard, classify_board, get_board_lot_rule
 from zephyr.ex_core.price_cage import CageStatus, check_price_cage
+from zephyr.shared.infra.idempotency import (
+    IdempotencyError,
+    IdempotencyStatus,
+    SQLiteIdempotencyStore,
+)
+from zephyr.shared.io.paths import DB_PATH
 from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.trading_contracts.broker_interface import (
     BrokerInterface,
@@ -82,6 +89,16 @@ from zephyr.trading.trading_contracts.execution.order import (
 from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
 
 _logger = logging.getLogger(__name__)
+
+# R-L3（尽调 C1）：幂等去重账本落库位置。与 governance.db 同目录（data/databases/），
+# 由 SQLiteIdempotencyStore 建表 idempotency_records；ttl=0 → 永不过期（去重记录一旦
+# 因 TTL 蒸发即等价于放行二次发单）。
+_ORDER_IDEMPOTENCY_DB_NAME: Final[str] = "order_idempotency.db"
+
+
+def _default_order_idempotency_db() -> Path:
+    """默认幂等账本路径（SSoT：zephyr.shared.io.paths.DB_PATH 同目录）。"""
+    return DB_PATH.parent / _ORDER_IDEMPOTENCY_DB_NAME
 
 # xttrader 错误码映射
 XTTRADER_ERROR_CODES: Final[dict[int, str]] = {
@@ -241,7 +258,11 @@ class MiniQmtBroker(BrokerInterface):
         self._lock = threading.Lock()
 
         # 幂等去重：idempotency_key -> broker_order_id
+        # R-L3（尽调 C1）：内存映射降级为**快路径缓存**，权威去重状态落库（idempotency_store）。
+        # 旧实现只有这个 dict ⇒ 进程崩溃重启即清零 ⇒ 同信号重放必然二次发单。
         self._idempotency_map: dict[str, str] = {}
+        self._idempotency_store: SQLiteIdempotencyStore | None = None
+        self._idempotency_db_path: Path | None = None
 
         # 订单状态缓存：broker_order_id -> Order
         self._order_cache: dict[str, Order] = {}
@@ -257,6 +278,81 @@ class MiniQmtBroker(BrokerInterface):
         self._heartbeat_stop = threading.Event()
         self._heartbeat_interval = 10.0  # 秒
         self._heartbeat_timeout = 30.0  # 秒，超此无 Tick 视为假死
+
+    @property
+    def idempotency_db_path(self) -> Path | None:
+        """只读：幂等账本落库路径（None = 用默认 data/databases/order_idempotency.db）。"""
+        return self._idempotency_db_path
+
+    @idempotency_db_path.setter
+    def idempotency_db_path(self, value: str | Path | None) -> None:
+        """写入：幂等账本落库路径。改路径即失效已建账本，下次访问惰性重建。"""
+        self._idempotency_db_path = Path(value) if value is not None else None
+        self._idempotency_store = None
+
+    @property
+    def idempotency_store(self) -> SQLiteIdempotencyStore:
+        """持久化幂等账本（惰性构建，ttl=0 永不过期）。
+
+        R-L3（尽调 C1）：去重状态 MUST 落库而非仅落内存——进程重启后可读回，
+        否则"下单→崩溃→重启→同信号重放"必然二次发单。
+        """
+        if self._idempotency_store is None:
+            db_path = self._idempotency_db_path or _default_order_idempotency_db()
+            self._idempotency_store = SQLiteIdempotencyStore(db_path=db_path, default_ttl_seconds=0)
+        return self._idempotency_store
+
+    @idempotency_store.setter
+    def idempotency_store(self, value: SQLiteIdempotencyStore | None) -> None:
+        """写入：注入幂等账本（测试/多账户隔离场景用 tmp 账本替代默认落库位置）。"""
+        self._idempotency_store = value
+
+    def _dedup_lookup_locked(self, key: str, store: SQLiteIdempotencyStore) -> str | None:
+        """查幂等账本（调用方须持 self._lock）。
+
+        Returns:
+            已存在的 broker_order_id（应直接返回、不再发单）；None = 允许发单。
+
+        Raises:
+            MiniQmtBrokerError: 账本存在 PROCESSING 记录（上一次进程可能在发单途中崩溃，
+                成交与否未知）——Fail-Closed 拒绝重发，需人工对账后清键。
+        """
+        cached = self._idempotency_map.get(key)
+        if cached is not None:
+            return cached
+        record = store.get(key)
+        if record is None or record.status is IdempotencyStatus.FAILED:
+            return None  # 无记录 / 上次明确失败（未发单）→ 允许（重）发
+        if record.status is IdempotencyStatus.COMPLETED and record.result:
+            broker_order_id = str(record.result)
+            self._idempotency_map[key] = broker_order_id
+            return broker_order_id
+        raise MiniQmtBrokerError(
+            f"幂等账本存在未完成记录 key={key} status={record.status.value}："
+            "上一次进程可能在发单途中崩溃，成交状态未知，Fail-Closed 拒绝重发；"
+            "请先与券商对账确认后再人工清理该键",
+            error_code=-3,
+        )
+
+    def _dedup_claim_locked(self, key: str, store: SQLiteIdempotencyStore) -> None:
+        """发单前落库占位（PROCESSING）。崩溃后该记录留存 ⇒ 重放被 Fail-Closed 拦下。"""
+        try:
+            store.start(key)
+        except IdempotencyError as e:
+            raise MiniQmtBrokerError(
+                f"幂等账本占位失败（key={key} 已在处理中），Fail-Closed 拒绝并发重发",
+                error_code=-3,
+            ) from e
+
+    def _dedup_settle_locked(self, key: str, store: SQLiteIdempotencyStore, broker_order_id: str | None) -> None:
+        """发单结束后落账：成功记 broker_order_id，失败标 FAILED（允许后续重试）。"""
+        try:
+            if broker_order_id is None:
+                store.fail(key)
+            else:
+                store.complete(key, broker_order_id)
+        except IdempotencyError:  # pragma: no cover — 账本异常不得掩盖下单主链结果
+            _logger.error("幂等账本落账失败: key=%s", key, exc_info=True)
 
     @property
     def lock(self):
@@ -374,9 +470,10 @@ class MiniQmtBroker(BrokerInterface):
             raise MiniQmtBrokerError("订单必须包含 idempotency_key（INV-007）")
 
         with self._lock:
-            # 1. 幂等去重
-            if order.idempotency_key in self._idempotency_map:
-                existing_id = self._idempotency_map[order.idempotency_key]
+            store = self.idempotency_store
+            # 1. 幂等去重（内存快路径 + 落库账本双查；R-L3 尽调 C1 治本）
+            existing_id = self._dedup_lookup_locked(order.idempotency_key, store)
+            if existing_id is not None:
                 _logger.warning(
                     "幂等拦截: idempotency_key=%s 已存在 broker_order_id=%s",
                     order.idempotency_key,
@@ -406,6 +503,11 @@ class MiniQmtBroker(BrokerInterface):
             if not self._connected:
                 raise MiniQmtBrokerError("未连接，请先调用 connect()", error_code=-1)
 
+            # 4.5 发单前落库占位（PROCESSING）：若进程在此刻崩溃，账本留下未完成记录，
+            #     重启后同键重放被 Fail-Closed 拦下（宁漏发一笔待人工对账，绝不冒二次成交）。
+            #     放在全部校验之后，避免校验类拒单污染账本。
+            self._dedup_claim_locked(order.idempotency_key, store)
+
             try:
                 # 构造 xttrader 订单（新版 xtquant 250807.1.2 位置参数）
                 # order_type 是买卖方向（23=买/24=卖），price_type 区分限价/市价
@@ -426,12 +528,15 @@ class MiniQmtBroker(BrokerInterface):
                     )
                 )
             except MiniQmtBrokerError:
+                self._dedup_settle_locked(order.idempotency_key, store, None)
                 raise
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._dedup_settle_locked(order.idempotency_key, store, None)
                 raise MiniQmtBrokerError(f"xttrader 下单异常: {e}", error_code=-1) from e
 
             # 5. 返回值映射：新版 order_stock 返回 order_id（正整数=成功，-1=失败）
             if result is None or (isinstance(result, int) and result < 0):
+                self._dedup_settle_locked(order.idempotency_key, store, None)
                 raise MiniQmtBrokerError(
                     f"下单失败: xttrader 返回 order_id={result}",
                     error_code=-1,
@@ -443,6 +548,8 @@ class MiniQmtBroker(BrokerInterface):
             order.broker_order_id = broker_order_id
             order.updated_at = now_utc()
             self._idempotency_map[order.idempotency_key] = broker_order_id
+            # R-L3：权威去重状态落库（内存映射只是快路径缓存，重启即失）
+            self._dedup_settle_locked(order.idempotency_key, store, broker_order_id)
             self._order_cache[broker_order_id] = order
 
             _logger.info(

@@ -39,6 +39,24 @@ from zephyr.trading.trading_contracts.execution.order import (
 )
 
 
+@pytest.fixture(autouse=True)
+def _isolated_idempotency_ledger(tmp_path, monkeypatch):
+    """测试隔离（宪法 §9.6）：幂等去重账本一律落 tmp_path，禁写生产 data/databases/。
+
+    R-L3 给 broker 加了跨进程持久化去重后，默认账本路径 = 生产件
+    ``DB_PATH.parent / order_idempotency.db``。测试若共用它，会命中**上一条 run**
+    留下的 COMPLETED 记录 → ``submit_order`` 走幂等短路直接返回旧 broker_order_id、
+    ``order_stock`` 根本不被调用（于是 assert_called_once / 笼子价夹边 / query_order
+    三条断言全成假红），且测试在写真实资金安全台账。
+    """
+    ledger = tmp_path / "order_idempotency_test.db"
+    monkeypatch.setattr(
+        "zephyr.ex_core.adapters.miniqmt_broker._default_order_idempotency_db",
+        lambda: ledger,
+    )
+    return ledger
+
+
 def make_order(
     side=OrderSide.BUY,
     qty=100,

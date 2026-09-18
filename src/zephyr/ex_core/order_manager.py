@@ -73,6 +73,8 @@ from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, Or
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order
 from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.infra.idempotency import build_order_idempotency_key
+from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 
 if TYPE_CHECKING:
@@ -167,6 +169,11 @@ class OrderManager:
         self._declaration_guard = declaration_guard
         # C-002 第三道闸：盘中操纵冻结闸（43 号 §7.3/§10，AI-WAVE3C-001 A8 批；None=未注入跳过）
         self._manipulation_monitor = manipulation_monitor
+        # R-L3（尽调 C1）：幂等键业务语义上下文。键 = sha256(strategy|symbol|trade_date|batch|side)，
+        # 批次号由信号侧在发单前显式开启；未开启时退化为"当日同标的同方向同一笔意图"，
+        # 仍是确定性的（绝不回退 uuid4 随机键）。
+        self._signal_batch_id: str = ""
+        self._signal_trade_date: str | None = None
         self._fill_lock = threading.Lock()
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
@@ -226,6 +233,25 @@ class OrderManager:
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 _logger.error("Order event callback error: %s", e, exc_info=True)
 
+    def begin_signal_batch(self, signal_batch_id: str, trade_date: str | None = None) -> None:
+        """开启一个信号批次上下文（幂等键的业务语义输入之一）。
+
+        R-L3（尽调 C1）治本：幂等键 MUST 由业务语义确定性派生，不得随机。信号侧在
+        产出一批信号后、发单前调用本方法登记批次号；同一批次重放（进程崩溃重启后
+        重新消费同一份信号）会得到**同一把键**，从而被券商适配器的持久化去重账本拦下。
+
+        Args:
+            signal_batch_id: 信号批次号（同一批次的重放必须复用同一号）。
+            trade_date: 交易日（ISO 串）；None = 取当前 UTC 日期。
+        """
+        self._signal_batch_id = str(signal_batch_id)
+        self._signal_trade_date = trade_date or now_utc().date().isoformat()
+        _logger.info("Signal batch context opened: batch=%s trade_date=%s", self._signal_batch_id, self._signal_trade_date)
+
+    def _resolve_trade_date(self) -> str:
+        """解析幂等键用交易日：优先信号批次上下文，其次当前 UTC 日期。"""
+        return self._signal_trade_date or now_utc().date().isoformat()
+
     def create_order(
         self,
         symbol: str,
@@ -237,6 +263,16 @@ class OrderManager:
         broker_id: str = "simulation",
     ) -> Order:
         order_id = str(uuid.uuid4())
+        # R-L3（尽调 C1）：幂等键 = sha256(strategy|symbol|trade_date|signal_batch|side)，确定性生成。
+        # 旧实现 idempotency_key=str(uuid.uuid4()) 让"同一信号重放"必然拿到新键 ⇒ 去重形同虚设
+        # ⇒ 崩溃重启后同一笔信号二次发单（真实资金二次成交）。本地 order_id 仍保持唯一。
+        idempotency_key = build_order_idempotency_key(
+            strategy_id=strategy_id,
+            symbol=symbol,
+            trade_date=self._resolve_trade_date(),
+            signal_batch_id=self._signal_batch_id,
+            side=side.value,
+        )
         order = Order(
             order_id=order_id,
             symbol=symbol,
@@ -248,7 +284,7 @@ class OrderManager:
             status=OrderStatus.PENDING,
             created_at=datetime.now(UTC),
             broker_order_id=None,
-            idempotency_key=str(uuid.uuid4()),
+            idempotency_key=idempotency_key,
         )
         self._orders[order_id] = order
         self._pending_orders.append(order)
