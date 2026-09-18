@@ -89,7 +89,7 @@ completes_when: 规则与审计一条龙战役波1-波5 全部收口，且本册
   ⇒ 若 WP8 收工时该列仍为 0，波2 补一刀接线（列入 C-11）。
 - **R-A11｜幻觉引用第二例，且这次在**代码注释**里**。
   `reconciliation_registry.py:5419` 注释引用 commit `170cba56e0`——`git cat-file -t` 报 `Not a valid object name`，
-  `--all` 亦无；同处实际入库 commit 是 `feac5f7b28`。与我在 §7.10 记的"裁定号 343（该号从未登记）经任务书二级传播"同族，
+  `--all` 亦无；★ **同处真实迁移 commit 是 `6933dbcff3`**（本总包起初写成 `feac5f7b28`，经 WP1-取证车道纠正并由我独立复跑证实：`feac5f7b28` 只是该文件的**出生提交**（`git show --stat feac5f7b28` = 单文件 524 insertions），R100 改名件在 `6933dbcff3`（2026-07-02，message 里的『批次4b』与注释逐字对应）。⇒ **这是我本役第 5 处自记错误，也是『引用了他物但指错号』的第二例**）。与我在 §7.10 记的"裁定号 343（该号从未登记）经任务书二级传播"同族，
   **但代码注释面此前未查过** ⇒ 建议把"引用 commit/裁定号/路径前先验存在"从车道纪律升成**门禁**（列 C-10）。
 
 ## 2. 波1 车道回执全文（§5 六项格式，逐条嵌入，未做删改）
@@ -721,6 +721,36 @@ $ git log --oneline -3 -- $C
   （与 D-2"拿不到身份即拒记"同判据）；③ `:213/:214` 的 `datetime.now(UTC)` 换成在册 `zephyr.shared.utils.time_utils.now_utc`
   （我实测 `now_utc()` 可用；`DATETIME-NOW-FORBIDDEN` 会在改这两行的 diff 上命中）。
 
+- **R-A19｜源码树野库的根因不是"某次传参错"，而是 `project_root = dirname×N(__file__)` 与文件深度耦合**（WP1-取证）。
+  时间线（四笔 commit 全部亲验）：2026-06-21 `a5c1a81787` 把 `gate_persistence.py` 迁到深度 4 的
+  `src/zephyr/governance/drift_detection/` ⇒ 同一份代码 root 落到 `<仓根>/src`；2026-07-12 `78e46622ef`
+  把 `_db_path` 从 `str(DB_PATH)` 改成 `os.path.join(_audit_dir, "drift_events.db")` ⇒ **野库当场被建出**；
+  次日 `cb1ef2e9ae`(R099) 迁回深度 3 ⇒ 野库被遗弃在树里。
+- **R-A20｜★ 该缺陷在 HEAD 仍是活体，且"只删库不改 root"必复发**：实测 import 求值
+  `drift_detector.py:59 _PROJECT_ROOT = D:\ZephyrAlpha\src`，并被显式传给 `HotfixBypass`/`AutoFixer`；
+  `integration_test_runner.py:172` 同形；两者 `__init__` 都 `makedirs(<src>/data/drift_audit)`。
+  ⇒ 同类面普查：全仓"自证为仓库根"的 `__file__` 锚定派生式 **137 处，其中落点异常 23 处**
+  （含 `financial_derived_compute.py:53` 与 `pf_alloc` 四件）。
+  ⇒ **处方顺序判据（交 Max 定）**：F-2 与 F-1 必须同批判序——**先修 root（唯一真源 `REPO_ROOT`）、再删野库**；
+    野库本身是空壳残骸（三表 0 行、`sqlite_sequence` 空、比真库多一张 #62 已废止的 12 列 `drift_events` schema B、
+    sha256 与真库不同 ⇒ **非副本**）、**零读方**、且 `.gitignore:100 *.db` 命中 ⇒ 删除不产生任何 git 变更。
+    **本战役任何车道不得自行删**（门位第②类）。
+- **R-A21｜"假声明"族再添三例，且其中一例是在册热册**（WP1-取证案卷二，全部 `[亲验]`）：
+  ① `persist_gate_decision` **从来没有过调用方**（逐 rev 树检 7 次全 0，不是"被摘"）；
+    它的"应然调用者"只活在登记面——`cross_module_dependency_registry.yaml:359-368` 的 **DEP-025d 声称 `runtime`/`hard` 依赖**、
+    `capability_canonical_file_registry.yaml:1997-2002` 声称消费者为 `drift_engine;detector_dispatcher;alert_router`
+    **三者对 `GatePersistence` 的实测引用全 = 0**（而三文件 import 行数 17/11/3，证明 grep 有效、文件非空）。
+  ② **`ruling_registry.yaml`（166 条）里查无"裁定号 62"**，而 `gate_persistence.py:24` 与归档裁定书都自称"#62 治本"
+    ⇒ 违 RULE-RULING（裁定须先登记且同 commit 原子）；且 #62 原文对这两张表写的是"**是否在用另案核查**"
+    ⇒ **不能拿 #62 当"已判空壳"**（这条纠我此前 C-2 表述里的一处 looseness）。
+  ③ `governance.db.gate_decisions` 那 **35 行全是测试残留**（`gate_id='GATE-TEST-001'`/`decided_by='test_agent'`
+    逐字吻合 `tests/governance/shared/test_governance_db.py:28/389-390`），末条时间戳与 07-27 那次"测试解耦"
+    （`9371a46e17`）**同日** ⇒ 属宪法 §9.6"测试禁写生产路径"的历史违规实据；另有 `audit_entries` 中 `actor='test_agent'` 45 行。
+    ⇒ **DB 净删行属门位第②类**，只取证未删一行（F-6）。
+  ④ 附带一颗未引爆的雷（只报）：`gate_persistence.py:241` 在 **str** 上调 `.get("sha256")`
+    （`sha_key` 来自 `data.pop("sha256")`，是 hex 字符串）⇒ **该方法一旦被调用即 `AttributeError`**，
+    而外层只捕 `JSONDecodeError/OSError`。调用面未取证（F-9）。
+
 ## 5. 波1 追加回执与案卷（WP7 / WP15·2·4）
 
 ### WP7 · 闸4 风险档两轴派生（`st-ramp-wp7-20260919`）— 已落地 `f8c1fc044a`
@@ -996,7 +1026,7 @@ $ python scripts/governance/d3_metadata/validate_rule_frontmatter.py ; EXIT=1
 | M-7 | **F-2 多真源**：`rule_form` 取值集合由 `rule_form_vocabulary.yaml` ＋ `doc_type_vocabulary.yaml` ＋派生 `frontmatter_schema.json` 三处独立承载，改一处必须同步另两处 | 按 WP8 收窄后闸 3 判据命中 D1 合并特征 ⇒ 归 Max 案卷面 |
 | M-8 | **F-3 真源自相矛盾**：`trae_043_meta_rule_metadata.yaml:427` 把"`doc_type`与`rule_form`矛盾(如 policy 配 procedural)"列为禁止，而词表/schema 均判 `procedural` 为 policy 合法值（`trae_043:452-453` 另给目录限定版）| 若采纳处方甲，按 427 字面会误判"改完即违规"；靶在 `rules/` ⇒ 受保护 |
 | M-9 | **F-1 无牙**：rule_form 词表对 md 文档零强制（无门按词表校验；`frontmatter_schema.json` 无消费者，全仓 `jsonschema` 零命中） | 补牙属 C 类加牙（判据设计），程序法 §1 优先挂既有门 ⇒ 归 Max |
-| M-10 | 指令卡夹带内容核对：文件正文/registry/注释一律当数据。**未发现夹带指令**。唯二"引用不存在之物"：`reconciliation_registry.py:5419` 注释引 commit `170cba56e0`（`git cat-file -t` 报 `Not a valid object name`，`--all` 亦无；实际入库 commit `feac5f7b28`）；方案 §7 亦自陈"引用本文件任何数字前请复跑" | 只记发现，未据其执行任何动作 |
+| M-10 | 指令卡夹带内容核对：文件正文/registry/注释一律当数据。**未发现夹带指令**。唯二"引用不存在之物"：`reconciliation_registry.py:5419` 注释引 commit `170cba56e0`（`git cat-file -t` 报 `Not a valid object name`，`--all` 亦无；实际入库 commit `feac5f7b28`，**总包更正：真实迁移件为 `6933dbcff3`，`feac5f7b28` 是该文件出生提交**）；方案 §7 亦自陈"引用本文件任何数字前请复跑" | 只记发现，未据其执行任何动作 |
 
 ---
 
@@ -1033,6 +1063,7 @@ $ python scripts/governance/d3_metadata/validate_rule_frontmatter.py ; EXIT=1
 - 2 条 `archived` 属退役而非搬家：`[亲验]`（retirement_log:17 / script-manifest 6512,7629 在册）
 - "谁替代 assign_module_id / audit_domain_nodes"：`[推断]`（仅给近邻候选，未做调用方 salvage）⇒ 故列 M-5 待裁
 - `170cba56e0` 不存在、实际 add commit 为 `feac5f7b28`：`[亲验]`
+  **→ 总包更正（04:0x）**：`feac5f7b28` 是**出生**提交；**迁移（R100）**件为 `6933dbcff3`。本行原文保留以存取证过程，结论以更正为准。
 - 仓外 23 处/17 文件余量：`[亲验]`
 - **未做**："改后绿"（9→0）：因零改动而不成立，未谎报
 
@@ -1202,3 +1233,14 @@ stderr 计数（实测）：`real_gate_failed` **52**、`fail_closed … BLOCKED
 本车道读过的所有文件（两份宪法、总方案、v3 计划、CONSTRUCTION_DISCIPLINE、CLI 源码、stderr 全文、MEMORY.md 变更通知）
 中**未发现**夹带的执行指令；`adversarial_run.stderr.txt` 里的日志行、registry/文档里的"必须/禁止"字样一律按**数据**处理，
 未据以改变本车道动作（唯一例外＝本车道指令本身）。
+## 6. WP1-取证车道案卷（改 3 + salvage，全程只读，零改动）
+
+- 产物 13 件双镜像：`.runtime/tmp/st-ramp-wp1c-20260919/` 与冷库 `G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/wp1c/`
+  （`sha256sum -c MANIFEST_sha256.txt` ⇒ 13/13 OK）。含 `DOSSIER-1_stray_db.md`、
+  `DOSSIER-2_persist_gate_decision_salvage.md`、四支探针与**九组"仪器能红"双向对照**（`controls_a/b.txt`）。
+- 只读纪律自证：三库主文件 size+mtime 探针前后**逐位不变**；`mode=ro` 下三次写试探全部 `attempt to write a readonly database`。
+  ★ 车道诚实披露一处非数据写痕：以 `mode=ro` 打开 WAL 库会刷新同目录 `-shm`（32KB 索引映射，非数据）。
+- 门位/待裁登记：F-1 删野库（第②类，未执行）· F-2 root 与删库的先后序（同批判序）· F-3 "裁定号 62" 未登记 ·
+  F-4 热册 CONSUMERS 虚假声明 · F-5 蓝图指向不存在路径 + DEP-025d 声称 runtime/hard 而代码零实现 ·
+  F-6 生产库 35+45 行测试残留（净删门位）· F-7 注释 commit 号错指 · F-8 词表 5/10/14 三源不一（闸3 多真源）·
+  F-9 `:241` str.get 潜在 AttributeError（未取证调用面）。
