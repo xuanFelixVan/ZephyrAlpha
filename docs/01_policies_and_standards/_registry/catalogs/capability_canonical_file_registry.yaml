@@ -32852,6 +32852,10 @@ creation_tokens:
   token: rule-replay-rule-replay-20260917
   created_by: st-ailayer-20260917
   capability: rule_replay
+- file: src/zephyr/governance/standards_governance/__init__.py
+  token: rule-replay---init---20260918
+  created_by: st-ailayer-20260917
+  capability: rule_replay
 - file: docs/_working/automation/campaign/mining/coordination_st_mineline_20260918.md
   token: campaign-coordination-coordination-st-mineline-20260918-20260917
   created_by: st-mineline-20260918
@@ -35008,5 +35012,77 @@ creation_tokens:
   token: "tdchain-final-report-20260918"
   created_by: "st-tdchain-20260917"
   capability: "tdchain_mining_workbook"
+- file: scripts/automation/source_card_drafter.py
+  token: source-drafter-source-card-drafter-20260918
+  created_by: st-mineline-w105
+  capability: source_drafter
+- file: tests/automation/test_source_card_drafter.py
+  token: source-drafter-test-source-card-drafter-20260918
+  created_by: st-mineline-w105
+  capability: source_drafter
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w7_redblue/w7_adversarial_plan.md
+  token: vocab-consolidation-campaign-w7-adversarial-plan-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w7_redblue/w7_execution_log.md
+  token: vocab-consolidation-campaign-w7-execution-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w7_redblue/w7_fixes.md
+  token: vocab-consolidation-campaign-w7-fixes-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/00_skeleton.md
+  token: vocab-consolidation-campaign-00-skeleton-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/00_workorder_施工包.md
+  token: vocab-consolidation-campaign-00-workorder--20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/no_domain_list.csv
+  token: vocab-consolidation-campaign-no-domain-list-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1a_consumers.md
+  token: vocab-consolidation-campaign-w1a-consumers-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1b_generators.md
+  token: vocab-consolidation-campaign-w1b-generators-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1c_gates.md
+  token: vocab-consolidation-campaign-w1c-gates-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1d_layers.md
+  token: vocab-consolidation-campaign-w1d-layers-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w2_ruling/w2_self_ruling_335.md
+  token: vocab-consolidation-campaign-w2-self-ruling-335-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w3_vocab_construction/w3_execution_log.md
+  token: vocab-consolidation-campaign-w3-execution-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w4_construction/w4_execution_log.md
+  token: vocab-consolidation-campaign-w4-execution-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w5_exemption/w5_survey.md
+  token: vocab-consolidation-campaign-w5-survey-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w6_loop_check/w6_round1_log.md
+  token: vocab-consolidation-campaign-w6-round1-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: scripts/governance/d3_metadata/backfill_module_domain.py
+  token: vocab-consolidation-campaign-backfill-module-domain-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
 
 di_seam_exemptions: []
