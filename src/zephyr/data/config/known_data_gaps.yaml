@@ -856,4 +856,30 @@ gaps:
     primary_alternative: "批准前消费方读 2026-06-30 前数据须自带『小时<=7 → +8h』逐行归一（kimi-audit T lane 已按此处置 510300/510500 极值分析，结论不受累）；api_server 数据总览仅计数不受累。工单=docs/_working/flash_biz/biz5_etf15min_tz_defect.md"
     created: "2026-09-18"
 
-last_updated: "2026-09-17"
+  # === 2026-09-18: B5 分红预案管线死亡（✅行活跃管线核查 D8 发现，st-datapack-20260918）===
+  - id: "dividend_plan_miniqmt_retired"
+    table: "c3_fundamental.dividend"
+    gap_type: "empty_table"   # 按断供口径登记：2026-08 起零新增（backfill_checker 消费口径）
+    start_date: "2026-08-01"
+    end_date: "2026-09-18"
+    date_column: "announce_date"
+    status: "no_source"
+    root_cause: "dividend_incremental 任务 schedule=disabled + source=miniqmt（9/18 miniqmt 清退同款病，与 A4 股东户数断供同根因——源退役后任务空挂）。实查（2026-09-18）：2026 年月度行数 1-7 月=70/32/1133/5255/3940/628/43，8-9 月=0/0（半年报分红披露季 8-9 月本应密集，非季节性低谷）；同族 ex_dividend_event（daily_event 槽）活（max(trade_date)=2026-09-16）证非行情侧问题。"
+    resolution_plan: "切源=akshare 分红预案接口（stock_fhps_detail_em 等，与 D2 股东户数切源同配方：miniqmt→akshare），挂 daily_event 槽+哨兵档；B4 股权激励/增减持同源依赖一并排查。"
+    primary_alternative: "历史 12.4 万行预案数据在库无损；停更窗内（2026-08-01 起）预案可按公告日回补。"
+    created: "2026-09-18"
+
+  # === 2026-09-18: F3 水文源端停更（✅行活跃管线核查 D8 发现，st-datapack-20260918）===
+  - id: "reservoir_level_source_stale"
+    table: "c1_market.alt_sz_reservoir_level"
+    gap_type: "date_range"
+    start_date: "2026-08-01"
+    end_date: "2026-09-18"
+    date_column: "tdate"
+    status: "monitoring"
+    root_cause: "采集任务活（max(ingest_ts)=2026-09-17 仍逐日跑）但源端数据停于 2026-07-31（lag=49d，7579 万行存量无损）——疑似省水文平台停更/接口换版。属『任务活着但拉不到新数据』型半死管线，哨兵此前未覆盖本表（按 ingest_ts 判活会漏检）。"
+    resolution_plan: "人工核源（省水文站点页是否改版/换域名）；若换版走 data_source_onboarding_sop 换源重挂；若确认平台退役按 F4 先例『平台停更留痕』降级留史。"
+    primary_alternative: "相关表 alt_sz_reservoir_rain_day/month 与 station 同源待一并核查。"
+    created: "2026-09-18"
+
+last_updated: "2026-09-18"

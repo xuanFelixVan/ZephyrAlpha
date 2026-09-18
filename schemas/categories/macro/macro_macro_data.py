@@ -28,6 +28,18 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 #   frequency: String
 #   data_source: LowCardinality(String)
 #   ingest_ts: DateTime64(3, 'UTC')
+
+frequency 枚举口径（D8 质检收口 2026-09-18 st-datapack-20260918 统一，锁英文小写）：
+    daily / monthly / quarterly / annual / weekly / event
+历史脏值映射（存量已 ALTER UPDATE 迁移，写入方 akshare_provider 同步改源）：
+    "日频" -> daily（Shibor/回购/中美国债收益率 46 指标）
+    "月度" -> monthly（CPI/PMI/货币供应 26 指标）
+    "月频" -> monthly（LPR/社融/央行资产负债表 18 指标）
+    "季度" -> quarterly（GDP/GDP_同比 2 指标）
+    "事件" -> event（美联储利率 1 指标）
+英文侧本就合规：daily/monthly/quarterly/annual/weekly（FRED/EIA/世行 writer）。
+新表（macro_* 六 gauge 等）不设 frequency 列——单频宽表频率隐含于表级，
+不逐行打标（分类学纪律：只是标签变了不拆，也不冗余存列）。
 """
 
 from __future__ import annotations
