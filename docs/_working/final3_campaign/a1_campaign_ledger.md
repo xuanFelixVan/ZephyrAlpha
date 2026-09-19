@@ -76,3 +76,15 @@ title: final3 战役台账——排班/并发档位/提交清单/C 类趋势线�
 - W1-D1：fail_open_register 派生册 DRIFT 早于本批（含他会话 WIP），留例行重生成。
 - X-7：4 只缺席股（源侧无数据）+2025Q4/Q3 覆盖率为 bdpan 时代旧债+调度器进程重启依赖动作。
 - 环境预存告警：RECONCILER-HEALTH SECRET-REGISTRY-DRIFT（REDIS 三键）、DEPGRAPH-FRESHNESS。
+
+---
+
+## 9. W9 收官终态（2026-09-19 深夜，本战役会话收口）
+
+**六波施工+收官循环**：27+ 笔 [final3] commit 全在 dev 祖先（git log --grep 验）；产物 15 件全在盘；红蓝一轮 13 攻 2 倒（两处归档误埋活件已勘误，W8-1 口径=A12+B3）；X-1 两轮清账后 dead=130（124+6 REVIEW，0 内容丢失）；分支终态 --no-merged=仅剩 2 条裁定尾巴（Owner 终裁件）；working C 类=127+5=132（较基线 131 净 +1=pattern_line 由 A 转 C）。
+
+**S1-S7 验收**：S1 规则审计=A0/B/B2/C/D/E/A1/G 八批落地，F 批判案+三件红证验收归 Max【待 M】；S2 bizmine=T1-T5+BM3 三件+BM4/5 全落，骨架封矿 a4 待续挖（已收编）；S3 工程债=X-0..X-7 全落（复权链 X-2 预注册卡备好待 Max 复验后施工）；S4 全景图=W4-1/3/4/5/6/7 前半全落（W4-7 后半 4 条接线待 Max 复验差距表）；S5 内收=W5-0 基线+W5-1 四簇先导落（W5-2 Owner 签字后、W5-3 宪法改动【M】未动）；S6 前端=8890 一体化上线（W6-3 自启待 Owner）；S7 working=台账+硬门禁循环已运转（W8-1 归档批待 Owner 签字，C 类消化完成 deep_review 对账等 6 件，其余按四桶移交）。
+
+**本轮新增待 Max 复验清单**：#343 删除包执行（65 件/87.88MB manifest 在 .runtime/tmp/x343_deletion_manifest.txt）；X-2 复权链预注册卡（x2_adjfactor_prereg.md，病灶实锤=daily_kline 表名错+独立 adj_factor 表 86.45% 非 1 可用）；W4-7 差距表（4 条接线=UP-2/3/4/5 模块已建待接线）；W1-G WP17 验收（补 description 参数裁量披露）；W1-F 判案（v2 案卷 1404 份）。
+**本轮新增待 Owner 清单**：签字册 w8_3_owner_signature_book.md（128 项/10 主题，已含勘误节）；W9-6③ 两分支终裁；W4-6 自启两案；#342 B① 复裁。
+**移交后续班**：RA-H2 T0 机械波（另开便宜模型会话，前置=B 批已落地✓）；W5-1 其余 18 域分包；W4-7 后半接线+X-2 施工（均 Max 复验后）；dead 6 条 REVIEW 属主处理；W8-4 归档循环滚动至 C 类清零。
