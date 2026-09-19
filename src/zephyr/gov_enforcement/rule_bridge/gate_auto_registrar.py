@@ -5,12 +5,12 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] fail-open——YAML 解析失败/import 失败/getattr 失败时 logger.warning 不阻断 commit（registry 故障是环境异常，禁止阻断所有 commit）；enabled=false 跳过；register 幂等（同 gate_id 覆盖，与显式注册共存不冲突）；YAML 真源 in_process_gate_registry.yaml
+# [INVARIANTS] fail-closed（裁定#351，2026-09-19）——任一 enabled gate 装载失败（YAML 损坏/import 失败/getattr 失败/register 失败）→ 抛 GateAutoRegistrationError 阻断提交并逐台报 gate_id+错误；装载数≠名册数（条数↔total_gates、去重 gate_id 集合↔实际注册集合）→ 硬告警（logger.error+抛错阻断）；名册文件缺失=0 门装载 warn 留痕（测试 harness/嵌入式合法用法，防蒸发归 REGISTRY-MASS-DELETION gate）；enabled=false 跳过；register 幂等（同 gate_id 覆盖，与显式注册共存不冲突）；YAML 真源 in_process_gate_registry.yaml
 # [MODIFY-GUARD] gate_id="GATE-AUTO-REGISTRAR"（无独立 gate，本模块是注册器非门禁）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] auto_register_gates 永不抛异常——YAML/import/getattr 异常降级为 fail-open（logger.warning + 返回失败列表）
+# [ERROR_CONTRACT] auto_register_gates/load_gate_entries 门册损坏或任一门装载失败时抛 GateAutoRegistrationError（fail-closed 阻断提交链路——坏门静默免检比提交冻结危害更大；可用性代价已被裁定#351 接受，逃生=emergency_commit）
 # [TESTS] tests/governance/rule_bridge/test_gate_auto_registrar.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -37,9 +37,16 @@ YAML 列表追加比 Python 函数插入更易合并：
 
 设计权衡
 --------
-1. **fail-open**：YAML/import/getattr 异常不阻断 commit。registry 故障是环境异常，
-   fail-closed 会让所有 commit 卡死，违反"治理工具不能成为单点故障"原则。
-   对标 import_integrity_gate.py fail-open 设计。
+1. **fail-closed（裁定#351，2026-09-19）**：任一 enabled gate 装载失败 → 抛
+   GateAutoRegistrationError 阻断 GitCommitGateway.__init__（即阻断提交），逐台报
+   gate_id+错误。旧 fail-open（logger.warning 不阻断）的病根：装载数≠名册数无报警，
+   坏门静默免检——门禁装载器自身的故障不得以"放行全部 commit"收场。可用性代价
+   （一台坏门=全员冻结）由裁定#351 明示接受；逃生=emergency_commit。
+   分层：名册文件**缺失**=该环境未声明任何门（0 门装载+warn 留痕；生产仓根/工作树
+   恒有名册，测试 harness 合法用法；防蒸发责任在 REGISTRY-MASS-DELETION gate）；
+   名册**存在**但损坏/为空/任一门装载失败/对账不一致 → 一律 fail-closed。
+   装载数对账：条数↔头部 total_gates 声明 + enabled 去重 gate_id 集合↔实际注册集合，
+   不一致 → 硬告警（logger.error）+抛错（并入 fail_open_register 台账族治理）。
 2. **register 幂等共存**：CommitGateRegistry.register 幂等（同 gate_id 覆盖），
    auto_registrar 与 git_commit_gateway.py 显式注册可过渡期共存，不冲突。
    Phase 4 逐步删除显式注册。
@@ -52,9 +59,8 @@ Usage::
     from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import auto_register_gates
 
     # 在 GitCommitGateway.__init__ 中调用（替代 75 个显式 register）
-    failed = auto_register_gates(self._gate_registry, self.project_root)
-    if failed:
-        logger.warning(f"gate_auto_registrar failed for {len(failed)} gates: {failed}")
+    # 装载失败/对账不一致 → GateAutoRegistrationError（fail-closed，阻断提交）
+    auto_register_gates(self._gate_registry, self.project_root)
 
 # [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_bridge/gate_auto_registrar.yaml
 """
@@ -64,7 +70,7 @@ from __future__ import annotations
 import importlib
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 import yaml
 
@@ -75,10 +81,46 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["auto_register_gates", "load_gate_entries", "REGISTRY_REL_PATH"]
+__all__: Final = ["GateAutoRegistrationError", "auto_register_gates", "load_gate_entries", "REGISTRY_REL_PATH"]
 
 # in_process_gate_registry.yaml 相对项目根的路径
 REGISTRY_REL_PATH = "docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml"
+
+
+class GateAutoRegistrationError(RuntimeError):
+    """门册损坏/门装载失败/装载数对账不一致——fail-closed 阻断提交（裁定#351）。
+
+    信息承载约定：message 必含逐台 gate_id+错误详情，供提交链路直接透出定位。
+    """
+
+
+def _read_roster(project_root: Path) -> dict[str, Any] | None:
+    """读取并结构校验门册 YAML。名册缺失返回 None；名册存在但损坏抛 GateAutoRegistrationError。
+
+    分层契约（裁定#351）：文件缺失=该环境未声明任何门（测试 harness/嵌入式合法用法，
+    防蒸发责任在 REGISTRY-MASS-DELETION gate）；文件存在但解析失败/根非 dict/gates 非
+    list/含非 dict 条目=名册损坏，无法证明门禁装载完整，一律 fail-closed。
+    """
+    registry_path = project_root / REGISTRY_REL_PATH
+    if not registry_path.exists():
+        return None
+    try:
+        data = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
+    except Exception as e:  # noqa: BLE001 — fail-closed 收集后转抛（裁定#351）
+        raise GateAutoRegistrationError(f"gate roster unreadable ({REGISTRY_REL_PATH}): {type(e).__name__}: {e}") from e
+    if not isinstance(data, dict):
+        raise GateAutoRegistrationError(f"gate roster root is not dict ({REGISTRY_REL_PATH}): {type(data).__name__}")
+    gates = data.get("gates", []) or []
+    if not isinstance(gates, list):
+        raise GateAutoRegistrationError(
+            f"gate roster 'gates' is not list ({REGISTRY_REL_PATH}): {type(gates).__name__}"
+        )
+    bad_indexes = [i for i, g in enumerate(gates) if not isinstance(g, dict)]
+    if bad_indexes:
+        raise GateAutoRegistrationError(
+            f"gate roster has non-dict entries at indexes {bad_indexes[:10]} ({REGISTRY_REL_PATH})"
+        )
+    return data
 
 
 def load_gate_entries(project_root: Path) -> list[dict[str, Any]]:
@@ -89,42 +131,53 @@ def load_gate_entries(project_root: Path) -> list[dict[str, Any]]:
 
     Returns:
         gate 条目列表（每条含 gate_id / module_path / factory_function / enabled）。
-        YAML 解析失败时返回空列表（fail-open）。
+        名册文件缺失返回空列表（0 门声明，warn 留痕）。
+
+    Raises:
+        GateAutoRegistrationError: 名册存在但损坏（fail-closed，裁定#351）。
     """
-    registry_path = project_root / REGISTRY_REL_PATH
-    try:
-        data = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
-    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-        logger.warning(f"gate_auto_registrar: YAML parse failed ({type(e).__name__}: {e}), returning empty list")
+    roster = _read_roster(project_root)
+    if roster is None:
+        logger.warning(
+            "gate_auto_registrar: gate roster not found (%s) — 0 gates declared "
+            "(missing-roster tolerance; anti-evaporation owned by REGISTRY-MASS-DELETION gate)",
+            REGISTRY_REL_PATH,
+        )
         return []
-    if not isinstance(data, dict):
-        logger.warning(f"gate_auto_registrar: YAML root is not dict ({type(data).__name__}), returning empty list")
-        return []
-    gates = data.get("gates", []) or []
-    if not isinstance(gates, list):
-        logger.warning(f"gate_auto_registrar: gates is not list ({type(gates).__name__}), returning empty list")
-        return []
-    return [g for g in gates if isinstance(g, dict)]
+    return roster.get("gates", [])
 
 
 def auto_register_gates(
     registry: CommitGateRegistry,
     project_root: Path,
 ) -> list[tuple[str, str]]:
-    """从 YAML 动态 import + register 所有 enabled 的 in-process gate。
+    """从 YAML 动态 import + register 所有 enabled 的 in-process gate（fail-closed）。
 
     Args:
-        registry: CommitGateRegistry 实例（须有 register 方法）。
+        registry: CommitGateRegistry 实例（须有 register / list_gate_ids 方法）。
         project_root: 项目根路径（用于定位 YAML）。
 
     Returns:
-        失败列表：[(gate_id, error_message), ...]。成功时为空列表。
-        失败不抛异常（fail-open），调用方可 logger.warning。
+        成功时空列表（兼容旧签名；失败不再以返回值表达）。
+
+    Raises:
+        GateAutoRegistrationError: 任一 enabled gate 装载失败（逐台报 gate_id+错误），
+            或装载数对账不一致（条数↔total_gates、enabled 去重集合↔实际注册集合）。
+            fail-closed（裁定#351）：调用方（GitCommitGateway.__init__）异常外溢即阻断提交。
     """
-    entries = load_gate_entries(project_root)
-    if not entries:
-        logger.warning("gate_auto_registrar: no gate entries loaded from YAML, skipping auto-register")
+    roster = _read_roster(project_root)
+    if roster is None:
+        logger.warning(
+            "gate_auto_registrar: gate roster not found (%s) — 0 gates declared, skipping auto-register "
+            "(missing-roster tolerance; anti-evaporation owned by REGISTRY-MASS-DELETION gate)",
+            REGISTRY_REL_PATH,
+        )
         return []
+    entries = roster.get("gates", [])
+    if not entries:
+        raise GateAutoRegistrationError(
+            f"gate roster present but empty (0 entries) — refusing fail-open load ({REGISTRY_REL_PATH})"
+        )
 
     failures: list[tuple[str, str]] = []
     registered_count = 0
@@ -151,7 +204,7 @@ def auto_register_gates(
         # 动态 import
         try:
             module = importlib.import_module(module_path)
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        except Exception as e:  # noqa: BLE001 — 逐台收集后统一 fail-closed（裁定#351）
             failures.append((gate_id, f"import failed: {type(e).__name__}: {e}"))
             continue
 
@@ -167,19 +220,46 @@ def auto_register_gates(
             spec = factory()
             registry.register(spec)
             registered_count += 1
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        except Exception as e:  # noqa: BLE001 — 逐台收集后统一 fail-closed（裁定#351）
             failures.append((gate_id, f"register failed: {type(e).__name__}: {e}"))
             continue
 
     if failures:
-        logger.warning(
-            f"gate_auto_registrar: registered {registered_count}/{len(entries)} gates, "
-            f"{len(failures)} failures: {[f[0] for f in failures[:5]]}"
+        detail = "; ".join(f"{gid}: {err}" for gid, err in failures)
+        logger.error(f"gate_auto_registrar FAIL-CLOSED: {len(failures)}/{len(entries)} gates failed: {detail}")
+        raise GateAutoRegistrationError(
+            f"gate auto-registration fail-closed (裁定#351): {len(failures)}/{len(entries)} gate(s) failed to load: {detail}"
         )
-    else:
-        logger.info(f"gate_auto_registrar: registered {registered_count}/{len(entries)} gates successfully")
 
-    return failures
+    # ── 装载数对账（硬告警，裁定#351：并入 fail_open_register 台账族）──
+    mismatch_parts: list[str] = []
+
+    declared_total = roster.get("total_gates")
+    if isinstance(declared_total, int) and declared_total != len(entries):
+        mismatch_parts.append(f"roster entries {len(entries)} != declared total_gates {declared_total}")
+
+    expected_ids = [e.get("gate_id", "") for e in entries if e.get("enabled", True)]
+    expected_set = set(expected_ids)
+    if len(expected_set) != len(expected_ids):
+        dupes = sorted({gid for gid in expected_ids if expected_ids.count(gid) > 1})
+        mismatch_parts.append(f"duplicate enabled gate_id(s) in roster: {dupes[:10]}")
+    registered_ids = set(registry.list_gate_ids())
+    missing_ids = expected_set - registered_ids
+    if missing_ids:
+        mismatch_parts.append(
+            f"{len(missing_ids)} enabled gate(s) declared but not registered: {sorted(missing_ids)[:10]}"
+        )
+
+    if mismatch_parts:
+        detail = "; ".join(mismatch_parts)
+        logger.error(f"gate_auto_registrar 装载对账硬告警（装载数≠名册数）: {detail}")
+        raise GateAutoRegistrationError(f"gate roster reconciliation failed (装载数≠名册数): {detail}")
+
+    logger.info(
+        f"gate_auto_registrar: registered {registered_count}/{len(entries)} gates successfully "
+        f"(roster reconciled: {len(expected_set)} unique enabled gate_id, declared total_gates={declared_total})"
+    )
+    return []
 
 
 if __name__ == "__main__":

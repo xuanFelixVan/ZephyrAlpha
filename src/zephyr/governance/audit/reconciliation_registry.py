@@ -269,8 +269,7 @@ SQL_INSERT_DRIFT_AUDIT_FINDING = (
 # _module_id_infer_from_dir 做「蓝图 frontmatter 已声明且唯一」收敛，不唯一即跳过。
 
 SQL_FIND_MODULES_BY_DIR = (
-    "SELECT DISTINCT blueprint_id FROM nodes "
-    "WHERE path LIKE %s AND blueprint_id IS NOT NULL AND blueprint_id != ''"
+    "SELECT DISTINCT blueprint_id FROM nodes WHERE path LIKE %s AND blueprint_id IS NOT NULL AND blueprint_id != ''"
 )
 
 # S5: reconcile_execution_log SQL（#ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 2 治本）
@@ -525,12 +524,14 @@ def derive_two_axis_risk_for_rules(project_root: object, rel_paths: list[str]) -
             raw = (Path(project_root) / rp).read_text(encoding="utf-8")
             data = yaml.safe_load(raw)
         except (OSError, yaml.YAMLError) as e:
-            out.append({
-                "file": rp,
-                "error": f"load-failed: {type(e).__name__}",
-                "degradation_judgeable": False,
-                "gate_position_judgeable": False,
-            })
+            out.append(
+                {
+                    "file": rp,
+                    "error": f"load-failed: {type(e).__name__}",
+                    "degradation_judgeable": False,
+                    "gate_position_judgeable": False,
+                }
+            )
             continue
         out.append({"file": rp, **derive_rule_risk(data)})
     return out
@@ -845,7 +846,7 @@ class ReconciliationRegistry:
 
                 finally:
                     if _hb_thread is not None and _hb_stop is not None:
-                        _hb_stop.set()   # 先停心跳线程再退出（gate 结束）
+                        _hb_stop.set()  # 先停心跳线程再退出（gate 结束）
                         _hb_thread.join(timeout=2.0)
                     if _rc_token is not None and _reset_rc_ctx is not None:
                         try:
@@ -3453,23 +3454,19 @@ _INJECT_STATS: dict[str, int] = {
 
 
 def _reset_inject_stats() -> None:
-
     """清零注入器统计（测试隔离用）。"""
 
     for k in _INJECT_STATS:
-
         _INJECT_STATS[k] = 0
 
 
 def _get_inject_stats() -> dict[str, int]:
-
     """返回注入器统计快照（skip/unknown 计数，告警与测试断言用）。"""
 
     return dict(_INJECT_STATS)
 
 
 def _load_declared_blueprint_index(project_root: Path) -> dict[str, str]:
-
     """扫描 docs/03_modules 蓝图 frontmatter，构建 {module_id: 蓝图md相对路径} 真源索引。
 
     与 check_blueprint_code_alignment.py 的 TARGET_ID_RE 同口径（module_id|blueprint_id
@@ -3489,27 +3486,21 @@ def _load_declared_blueprint_index(project_root: Path) -> dict[str, str]:
     base = Path(project_root) / "docs" / "03_modules"
 
     if not base.is_dir():
-
         return index
 
     for md in base.rglob("*.md"):
-
         try:
-
             text = md.read_text(encoding="utf-8", errors="replace")
 
         except OSError:
-
             continue
 
         m = id_re.search(text)
 
         if m:
-
             mid = m.group(1).strip()
 
             if mid and mid not in index:
-
                 index[mid] = md.relative_to(project_root).as_posix()
 
     return index
@@ -3531,7 +3522,6 @@ def _module_id_infer_from_dir(file_rel: str, declared_index: dict[str, str] | No
     from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
     if declared_index is None:
-
         _INJECT_STATS["skip_no_declared_module"] += 1
 
         return None
@@ -3560,7 +3550,6 @@ def _module_id_infer_from_dir(file_rel: str, declared_index: dict[str, str] | No
     declared_hits = {r[0] for r in rows if r and r[0] and r[0] in declared_index}
 
     if len(declared_hits) == 1:
-
         return next(iter(declared_hits))
 
     _INJECT_STATS["skip_no_declared_module"] += 1
@@ -3606,21 +3595,17 @@ def _module_id_inject_header(
             content = f.read()
 
     except OSError:
-
         return False
 
     if _EXISTING_HEADER_LINE_RE.search(content):
-
         _INJECT_STATS["skip_existing_header"] += 1
 
         return False
 
     if blueprint_target:
-
         slot_value = blueprint_target
 
     else:
-
         slot_value = INJECT_UNKNOWN_SLOT
 
         _INJECT_STATS["unknown_blueprint_slot"] += 1
@@ -7501,7 +7486,7 @@ def _load_test_residue_config() -> dict | None:
     try:
         import yaml  # noqa: PLC0415 — lazy import 保持模块顶层依赖最小
 
-        with open(_TRAE_071_YAML_PATH, "r", encoding="utf-8") as fh:
+        with open(_TRAE_071_YAML_PATH, encoding="utf-8") as fh:
             doc = yaml.safe_load(fh)
     except (OSError, ImportError, ValueError) as exc:
         logger.warning(
@@ -7702,13 +7687,10 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
         capped = False
 
         for dirpath, dirnames, filenames in os.walk(runtime_dir):
-
             dirnames[:] = [d for d in dirnames if d not in _PRUNE_DIR_NAMES and not d.startswith("_wt_")]
 
             for filename in filenames:
-
                 if deleted >= _MAX_DELETES_PER_RUN:
-
                     capped = True
 
                     break
@@ -7740,7 +7722,6 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
                     errors += 1
 
             if capped:
-
                 break
 
         # 治本 #ARCH-XDIST-WORKER-CRASH-001 + #ARCH-TEST-RESIDUE-CLEANUP-001:
@@ -8896,7 +8877,7 @@ def make_gate_registry_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
 # trae_060-reviewed: 该存在+可合并入已有框架（复用 ReconciliationRegistry post-commit warn-only 漂移检测，
 
-# 对标 make_undefined_name_baseline_reconciler）。病根：auto_register_gates fail-open 仅 logger.warning，
+# 对标 make_undefined_name_baseline_reconciler）。病根（历史）：auto_register_gates 曾 fail-open 仅 logger.warning（裁定#351 后已改 fail-closed 抛错），
 
 # 无 reconciler 则漂移不入 reconcile_execution_log。与 make_gate_registry_sync_reconciler 职责分离。
 
@@ -8908,7 +8889,7 @@ def make_in_process_gate_registry_drift_reconciler(gateway: object) -> Reconcile
 
     #ARCH-GATE-REGISTRY-AUTO-001 Phase 6——YAML 真源与运行时注册表对账。
 
-    auto_register_gates fail-open（import 失败仅 logger.warning），无 reconciler 则漂移
+    auto_register_gates 现为 fail-closed 抛错契约（裁定#351，2026-09-19；曾 fail-open 仅 logger.warning），无 reconciler 则漂移
 
     不入 reconcile_execution_log，违反"所有reconciler失败结果必须持久化记录"铁律。
 
@@ -8960,25 +8941,35 @@ def make_in_process_gate_registry_drift_reconciler(gateway: object) -> Reconcile
 
         from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
         from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import (
+            GateAutoRegistrationError,
             auto_register_gates,
             load_gate_entries,
         )
 
-        entries = load_gate_entries(project_root)
+        fresh_registry = CommitGateRegistry()
+
+        try:
+            entries = load_gate_entries(project_root)
+            failures = auto_register_gates(fresh_registry, project_root)
+        except GateAutoRegistrationError as e:
+            # 裁定#351（2026-09-19）：auto_register_gates 已改 fail-closed 抛错契约；
+            # 本 reconciler 保留 warn-only 持久化契约——异常降维为 warn 结果落
+            # reconcile_execution_log（正常路径该异常已被 GitCommitGateway.__init__
+            # 前置阻断，此处只是 post-commit 兜底留痕）。
+            return ReconcileResult(
+                action="warn",
+                detail=f"in_process_gate_registry: fail-closed load blocked: {str(e)[:300]}",
+            )
 
         if not entries:
             return ReconcileResult(
                 action="warn",
-                detail="in_process_gate_registry.yaml: no entries loaded (YAML parse failed or empty)",
+                detail="in_process_gate_registry.yaml: no entries loaded (empty roster)",
             )
 
         yaml_gate_ids = {e.get("gate_id", "") for e in entries if e.get("gate_id")}
 
         yaml_disabled = {e.get("gate_id", "") for e in entries if not e.get("enabled", True) and e.get("gate_id")}
-
-        fresh_registry = CommitGateRegistry()
-
-        failures = auto_register_gates(fresh_registry, project_root)
 
         registered_ids = set(fresh_registry.list_gate_ids())
 
