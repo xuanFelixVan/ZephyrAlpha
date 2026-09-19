@@ -1093,4 +1093,40 @@ gaps:
     primary_alternative: "无（E 盘归档为唯一已知批量历史分钟源）"
     evidence: "docs/_working/bizmine_night/bizmine_campaign_ledger.md 06:0x 行（E 盘数据资产盘点）"
     created: "2026-09-19"
+
+  # === X-7: top10_shareholders 增量管线静默饿死（断供 2026-05-16→2026-09-19，终极令钦定 P0）===
+  # 双层根因：① symbols=null 契约下 _get_all_a_symbols 返回裸 6 位代码（无市场后缀），
+  # _ts_code_to_em 原样透传 → 东财接口 KeyError('sdgd')（实测裸代码必现/前缀代码正常），
+  # 被逐股票 broad except + debug 级日志吞掉 → 每晚数千次调用 0 行 SUCCESS
+  # ——「任务存在≠管线活着」实锤；② _build_top10_shareholder_row 把 str(增减) 写入
+  # hold_change Nullable(Float64) → CH INSERT Code 27 → 整批降级 local_fallback（补齐首跑
+  # 复现实证），即使①修复表侧也永无直写。last_key 因 0 行不推游标永久卡死
+  #（#ARCH-CURSOR-DRIFT 语义）。
+  - id: "top10_shareholders_incremental_starved"
+    table: "c3_fundamental.top10_shareholders"
+    gap_type: "source_stale"
+    start_date: "2026-05-16"
+    end_date: "2026-09-19"
+    date_column: "announce_date"
+    detection_threshold: 1
+    status: "resolved"  # 2026-09-19 X-7 治本修复+断供段补齐（st-final3-20260919）
+    root_cause: "akshare 通道双层缺陷（见上注释①②）；表 144.5 万行=bdpan 历史包（2026-05-15 止），
+      akshare 通道仅装机验证写入 4378 行（2025-09/2025-12/2026-03 散点）后归零；
+      表内 announce_date 语义=报告期季度末(qe) 非真实公告日，增量窗口内无季度末时段结构性 0 行。"
+    resolution_plan: "akshare 主线（裁定#339 财务/广域族，参照 60f4e46bbb 股东户数先例）：
+      _bare_code_to_em 裸代码前缀推导（与表 exchange MATERIALIZED multiIf 严格同口径，
+      含 92/93/94 北交所新号段→BJ）+ hold_change safe_float_strict 数值化（非数值→None，
+      对齐既有行惯例）+ 披露截止期 skip-if-exists（截止后已入库 (股票,报告期) 终局跳过，
+      消除每晚 5555 股全量重扫）+ 失败可见性（连续失败 warning 替换 debug 静默）。"
+    resolution_actual: "2026-09-19 补齐（断点续传四段实跑：run1 复现 Code 27 整批隔离 2021 行/3 批 →
+      修复后 run2 写 9018 行中断 → run3/4 续传收口）：report_period 20260630 全市场 0 覆盖→5551 股 / 55591 行落库（run2 断点 9018 行 + run3/4 续传；rpm=60 限流下如实分段）；20260331 尾巴 5514→5519 股（55378 行 FINAL）。
+      run1 隔离件（.runtime/tmp/x7_quarantine/ 3 TSV，hold_change 含'不变'等非数值的
+      Code 27 批内连坐）经 (symbol,report_period) 对账全部被修复后重拉覆盖，无数据丢失，
+      隔离=正确坏数据拦截，未回灌。北交所股股东财 gdfx 接口不覆盖（KeyError 实测）如实缺席。
+      dup 校验：FINAL count==uniqExact(主键) 全表相等、20260630 报告期 raw==FINAL → 零重复。
+      20251231(73.6%)/20250930(68.6%) 覆盖率为 bdpan 时代既有缺口（非本断供段），留待后续工单。
+      幂等复跑：修复后管线原窗口重跑一轮（终局期全覆盖跳过），rows_written=0、表行数 1500427→1500427（新增 0）
+      依赖动作：调度器进程（python -m zephyr.data.scheduler）需重启加载修复后 provider。"
+    verification_20260919: "实测 total=1500427 FINAL=1500427 uniq(主键)=1500427；20260630 raw=55591 FINAL=55591；akshare 通道 announce 月分布 202509=2092 / 202512=2178 / 202603=152 / 202606=55591"
+    created: "2026-09-19"
 last_updated: "2026-09-19"

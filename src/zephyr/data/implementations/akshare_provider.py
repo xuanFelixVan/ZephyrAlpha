@@ -616,6 +616,9 @@ def _build_valuation_col_map(df, norm_date_fn, start_str, end_str):
 
 
 def _build_top10_shareholder_row(row, sym, qe, ratio_col, type_col):
+    # X-7 治本第二层（2026-09-19）：hold_change 列为 Nullable(Float64)，旧逻辑写
+    # str(增减)（'不变'/'新增'/数值字符串）→ CH INSERT Code 27 解析失败 → 整批降级
+    # local_fallback，表侧永无直写。与既有 akshare 行惯例一致（非数值→None，数值→float）。
     return (
         sym,
         qe,
@@ -624,7 +627,7 @@ def _build_top10_shareholder_row(row, sym, qe, ratio_col, type_col):
         safe_float(row.get("持股数")),
         safe_float(row.get(ratio_col)),
         safe_float(row.get("变动比率")),
-        str(row.get("增减", "") or ""),
+        safe_float_strict(row.get("增减")),
         str(row.get(type_col, "") or ""),
         "akshare",
         1,
@@ -640,6 +643,14 @@ SQL_STOCK_CODE_FROM_LIST = (
     "WHERE list_status = '上市' "
     "AND (delist_date IS NULL OR delist_date = toDate('1900-01-01') OR delist_date > today()) "
     "ORDER BY ts_code FORMAT TabSeparated"
+)
+# X-7 断供治本（2026-09-19）：某报告期已入库股票集合——披露截止后数据终局，
+# 供 _fetch_top10_shareholders skip-if-exists 判定，消除每晚全市场无效重扫。
+# qe/table 由内部注册表与 date 对象拼接（无外部输入），SQL_ 前缀豁免 NO-BARE-SQL gate。
+SQL_TOP10_REPORTED_SYMBOLS = (
+    "SELECT DISTINCT splitByChar('.', symbol)[1] AS code "
+    "FROM {table} "
+    "WHERE report_period = toDate('{qe}') FORMAT TabSeparated"
 )
 # 2026-08-25 BJDAILY：kline_daily_bj universe 的 CH 兜底（akshare 清单接口失败时）
 _SQL_BJ_LIVE_SYMBOLS = (
@@ -6223,6 +6234,56 @@ class AkshareIngestProvider(IngestProviderBase):
             return parts[1].upper() + parts[0]
         return ts_code
 
+    @staticmethod
+    def _bare_code_to_em(code6: str) -> str:
+        """裸 6 位代码 → 东财前缀格式。
+
+        X-7 断供治本（2026-09-19）：symbols=null 契约（裁定 #ARCH-CH-018）下
+        _get_all_a_symbols 返回无后缀代码，旧逻辑 _ts_code_to_em 原样透传裸代码，
+        东财接口抛 KeyError('sdgd') 且被逐股票 broad except 吞掉 →
+        每晚数千次调用 0 行 SUCCESS（表断供 2026-05-16 起两个月）。
+        前缀推导与 top10_shareholders 表 exchange MATERIALIZED 列同口径
+        （multiIf 分支顺序一致）：110/113/204/900-903→SH，123/128→SZ，
+        43/83/87/92/93/94→BJ，4/8→BJ，5/6/9→SH，0/1/2/3→SZ；未匹配回退 BJ
+        （EM 接口对未知代码抛 KeyError → 调用侧跳过，不产生错数据）。
+        """
+        p3, p2, p1 = code6[:3], code6[:2], code6[:1]
+        if p3 in ("110", "113", "204", "900", "901", "902", "903"):
+            return "SH" + code6
+        if p3 in ("123", "128"):
+            return "SZ" + code6
+        if p2 in ("43", "83", "87", "92", "93", "94"):
+            return "BJ" + code6
+        if p1 in ("4", "8"):
+            return "BJ" + code6
+        if p1 in ("5", "6", "9"):
+            return "SH" + code6
+        if p1 in ("0", "1", "2", "3"):
+            return "SZ" + code6
+        return "BJ" + code6
+
+    @staticmethod
+    def _shareholder_disclosure_deadline(qe: datetime.date) -> datetime.date:
+        """定期报告披露截止日（证监会时限）：一季报 4-30 / 半年报 8-31 /
+        三季报 10-31 / 年报次年 4-30。截止后 (股票,报告期) 数据视作终局。"""
+        if qe.month == 3:
+            return datetime.date(qe.year, 4, 30)
+        if qe.month == 6:
+            return datetime.date(qe.year, 8, 31)
+        if qe.month == 9:
+            return datetime.date(qe.year, 10, 31)
+        return datetime.date(qe.year + 1, 4, 30)
+
+    @staticmethod
+    def _load_reported_symbols(table: str, qe: datetime.date) -> set[str]:
+        """加载某报告期已有数据的 6 位股票集合（skip-if-exists 判定用）。"""
+        from zephyr.data import ch_reader
+
+        out = ch_reader.query(
+            SQL_TOP10_REPORTED_SYMBOLS.format(table=table, qe=qe.isoformat())
+        )
+        return {line.strip() for line in out.split("\n") if line.strip()}
+
     def _fetch_futures_position(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取期货持仓排名数据（前20名经纪商汇总），写入 c1_market.futures_position。
 
@@ -6428,10 +6489,31 @@ class AkshareIngestProvider(IngestProviderBase):
         start_ts = time.monotonic()
         last_key = payload.end.isoformat() if payload.end else ""
 
+        # X-7 治本（2026-09-19）：披露截止已过且数据已入库的 (股票,报告期) 终局跳过；
+        # 窗口未截止的报告期恒为 None=必须逐股票拉取。消除每晚 5555 股全量重扫。
+        today = datetime.date.today()
+        covered: dict[datetime.date, set[str] | None] = {}
+        for qe in quarter_ends:
+            if self._shareholder_disclosure_deadline(qe) < today:
+                covered[qe] = self._load_reported_symbols(table, qe)
+            else:
+                covered[qe] = None
+        skipped_final = 0
+        consecutive_fail = 0
+
         for ts_code in symbols:
             sym = ts_code.split(".")[0].zfill(6) if "." in ts_code else ts_code.zfill(6)
-            em_code = self._ts_code_to_em(ts_code)
+            # 裸代码（symbols=null 契约）走前缀推导；带点 ts_code 走原转换
+            em_code = (
+                self._ts_code_to_em(ts_code)
+                if "." in ts_code
+                else self._bare_code_to_em(ts_code.zfill(6))
+            )
             for qe in quarter_ends:
+                done = covered.get(qe)
+                if done is not None and sym in done:
+                    skipped_final += 1
+                    continue
                 date_str = qe.strftime("%Y%m%d")
                 try:
                     df = self._call_with_policy(
@@ -6441,8 +6523,15 @@ class AkshareIngestProvider(IngestProviderBase):
                         date=date_str,
                     )
                 except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                    self._log.debug(f"stock_gdfx_top_10_em({em_code},{date_str}) 失败: {e}")
+                    consecutive_fail += 1
+                    if consecutive_fail % 200 == 1:
+                        # 失败可见性（X-7）：原 debug 级静默吞掉 KeyError 致断供两月无人知
+                        self._log.warning(
+                            f"stock_gdfx_top_10_em 连续失败 {consecutive_fail} 次"
+                            f"（最近: {em_code},{date_str}）: {e}"
+                        )
                     continue
+                consecutive_fail = 0
                 if df is None or len(df) == 0:
                     continue
                 for _, row in df.iterrows():
