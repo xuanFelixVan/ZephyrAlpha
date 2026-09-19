@@ -36375,6 +36375,26 @@ creation_tokens:
   token: bizmine-alpha-mining-vwap-prereg-card-20260919
   created_by: st-final3-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/algo_top3_results.csv
+  token: bizmine-alpha-mining-algo-top3-results-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/algo_top3_summary.md
+  token: bizmine-alpha-mining-algo-top3-summary-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/momentum_exam_report.md
+  token: bizmine-alpha-mining-momentum-exam-report-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/ofi_exam_report.md
+  token: bizmine-alpha-mining-ofi-exam-report-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/vwap_exam_report.md
+  token: bizmine-alpha-mining-vwap-exam-report-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
