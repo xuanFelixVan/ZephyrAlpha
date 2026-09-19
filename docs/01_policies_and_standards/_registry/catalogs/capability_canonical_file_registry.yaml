@@ -36363,6 +36363,18 @@ creation_tokens:
   token: bizmine-alpha-mining-next-session-directive-20260919
   created_by: st-bizmine-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/momentum_prereg_card.md
+  token: bizmine-alpha-mining-momentum-prereg-card-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/ofi_prereg_card.md
+  token: bizmine-alpha-mining-ofi-prereg-card-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/vwap_prereg_card.md
+  token: bizmine-alpha-mining-vwap-prereg-card-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
@@ -39657,6 +39669,10 @@ creation_tokens:
   capability: final3_campaign
 - file: docs/_working/final3_campaign/w4_1_conduction_triage.md
   token: final3-campaign-w4-1-conduction-triage-20260919
+  created_by: st-final3-20260919
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/w5_0_inventory.md
+  token: final3-campaign-w5-0-inventory-20260919
   created_by: st-final3-20260919
   capability: final3_campaign
 - file: docs/_working/rule_audit_campaign/a2_handoff/A2_M5_prescriptions.md
