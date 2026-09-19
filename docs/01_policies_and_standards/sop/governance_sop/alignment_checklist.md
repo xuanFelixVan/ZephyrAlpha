@@ -234,3 +234,14 @@ python scripts/governance/d5_architecture/validators/validate_strategy_productio
 | 2026-09-05 | 1.3.0 | **"全图全库对齐"简称裁定（#ARCH-ALIGN-NAMING-001）+ 第七图 trading_decision_map 入表 + §4.1 业务库门禁转正式** | ①计数无关命名（五图→六图→七图三次改名腐化史）；②§3 新增图 7 行（R1-R12 校验+DECISION-MAP gate 138+check_decision_map 校验器）+验证命令块更新；③§4.1 六库对齐工具"门禁（待建）"→BUSINESS-REGISTRY gate(139) 转正式（G1 落地，基线 735 条目 100% 实证）——配合 #ARCH-DECISION-MAP-GATE-001/#ARCH-BUSINESS-REG-GATE-001/#ARCH-BATTLE-MAP-HARD-001 三裁定 |
 | 2026-09-11 | 1.4.0 | **八图满贯（全图全库对齐施工批）**：①§3 新增图 8 产业链全景图行（chain_id 轴+INDUSTRY-CHAIN-MAP gate 141+graph_quality_check 引擎判定）；②§4.1 BUSINESS-REGISTRY gate 6→19 文件/21 段满贯扩容（基线 1463 条目 100% 实证，逻辑真源=registry_alignment.py 三方同源）；③§4.4 rule_catalog 行工具落地四边 checker 真源链接；④新增 §4.6 字典/Schema 类（两本字段字典 FK/结构四边）；⑤§6/§7 时机矩阵与处置表补三行；⑥depgraph 存在性 SQL 治本（nodes.module_id 列不存在→blueprint_id，原子检查自上线恒 fail-open）；⑦406 条域级占位锚正名（MOD-FACTOR→MOD-L02-001 等 7 组）+FCT-SENT-028 inputs FK 修复+字典补 3 字段 | 四方对齐机制升级为全图全库对齐的 Owner 指令；实施细节见收尾报告 |
 | 2026-09-15 | 1.6.0 | **十图升级（GOMAP 转正，#ARCH-312）**：①§3 新增图 10 治理运行地图行（module_id/import spec 双轴：机生层与生成器 scan() 重建比对+人工层 mounts/disconnected 路径实存+层位合法+disconnected 必带 note；工具=align_all 第九节，免独立校验器/免 gate，触发率实证后再议）；②计数命名合规清理（#ARCH-ALIGN-NAMING-001）：frontmatter 标题/§3 标题去"九图满贯"改"全图全库对齐"，引言/§3 数量改"现 10 张"动态口径，硬阻断条件行去计数命名；③统一验证命令块更新（align_all 加第九节图 10） | Owner 2026-09-15 放行 GOMAP 转正为全景图体系图 10（battle_map 定位措辞同步升级，语义与机制零变更）；实施细节见收尾报告 |
+| 2026-09-19 | —（§11 节增；frontmatter 版本/日期行按“只增节不改行”约束未动，下次全量修订时一并升版） | 新增 §11 全景图唯一性裁定（Owner 2026-09-19） | W4-5 TDM 唯一地图裁定落地（final3 战役）；裁定号补登归 00_master_directive §X-0 裁定登记批 |
+
+## 11. 全景图唯一性裁定（Owner 2026-09-19）
+
+> 裁定来源：Owner 2026-09-19 终裁（final3 战役 `00_master_directive.md` §W4-5）；裁定号待该指令 §X-0 裁定登记批补登，本节为对齐真源侧落地。本节只增不改——§3 既有行（含图 3 decisiongraph 行）维持原文，状态以本节为准。
+
+| # | 裁定内容 | 落地含义 |
+|---|---|---|
+| 1 | **TDM=交易决策流程唯一地图**：`config/trading_decision_map.yaml` 是交易决策流程类全景图的唯一真源，**禁建第二张流程类全景图**（流程类新图提案一律违裁；与 D38“新图必挂总线”/§4.6 原则 6 的准入面叠加执行） | 新图准入双重口径：非流程类新图仍走 §3 登记+depgraph 挂轴；流程类=本条直接禁止 |
+| 2 | **decisiongraph 半下岗**：图 3（decisiongraph，PG decision_* 3 表）保留 schema 与对齐通道（§3 行、三图对齐检测不变），不扩容；decision_* 表组**列入季度退役审计观察名单**（跟踪载体=本节，首观察窗 2026-Q4，按宪法 §4.2 季度退役审计以触发率/消费方实测判定，禁凭记忆判定）；退役处置=Owner 门位 | 半下岗≠删除：未经裁定禁清理 decision_* 表组或跳过其对齐通道 |
+| 3 | **“10 层决策架构+PDF 模型族”防幻觉锚点**：遗产对话**未立项**，仅部分吸收——禁任何会话声称“十层架构已建/在建”。承接件=W4-7 差距表（`docs/_working/final3_campaign/w4_7_tdm_absorption_gap.md`，commit b7aeaa39f2）：15 决策点三态对照完成，4 条接线（差距表“形态不符”四行 UP-2/UP-3/UP-4/UP-5 升级件已建成待接线）**待 Max 复验后施工** | 幻觉红线：超出 w4_7 差距表记载的“已建成”外推一律无效；接线施工前必过 Max 复验门 |
