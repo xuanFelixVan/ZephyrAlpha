@@ -165,7 +165,7 @@ A 类无文件增删时一行 `N/A`。
 8.1 **AGENTS.md 同步** [全类]：本域功能/规则/门禁是否在 `AGENTS.md` 有对应说明；它是否仍是"唯一必读宪法"且守住 **≤300 行硬上限**（新增必须等长替换；现值以 `wc -l AGENTS.md` 实测）。AGENTS.md 属共享热点文件：改需求记「共享收口清单」交总控，不直接改。
 8.2 **索引与文档同步** [全类]：变更是否同步到 capability registry / `architecture_issue_registry` / 文档索引 / 跨层契约（一次反查多源，不逐个检索）。
    **蓝图同步判定**（本项必做子项）：满足任一即"涉及蓝图"——改动落在某模块 `blueprint.md` 范围内 / 改动后该模块应有蓝图 / 改动影响蓝图间引用（迁移、重命名、契约变更、依赖变化）/ 需新建蓝图或退役流转。涉及则核：① 物理 `blueprint.md` 与代码现状一致（接口/退出码/依赖/契约落图）；② 蓝图声明的依赖是否同步到 `cross_module_dependency_registry.yaml` 等下游派生登记表（该表喂 `generate_project_depgraph.py`）；③ frontmatter 状态字段流转合规（`status` / `construction_progress` / `version` / `last_updated`）。
-   ⚠ **`blueprint_registry.yaml` 在本仓不存在**（`docs/03_modules/index.md` 留有一处指向它的悬空链接）。蓝图索引真源=`docs/03_modules/` 实际结构 + 生成器产出；凡见把该文件当真源的条目，一律按锚点漂移记问题清单转总控。
+   ⚠ **`blueprint_registry.yaml` 在本仓不存在**。蓝图索引真源=`docs/03_modules/` 实际结构 + 生成器产出；凡见把该文件当真源的条目，一律按锚点漂移记问题清单转总控。
    不涉及→一行 `N/A`。注意：核查不止 `blueprint.md` 本身，必须覆盖其声明依赖在下游派生表的同步状态。
 8.3 **词表硬编码检测** [仅当改动涉及词表/枚举/合法值集合]：代码是否硬编码词表合法值（应动态加载 YAML）；DDL 里的 CHECK 枚举属 DDL-as-Code 例外，不强制动态加载。
 8.4 **能力/架构/hash 登记同步** [仅B/C/E类]：新建功能性脚本是否登记 capability registry（含 aliases + creation_tokens）；代码中 `#ARCH-NNN` 引用是否在 `architecture_issue_registry.yaml` 有条目；完整性校验是否登记新增/变更脚本的 golden hash。**新建 `.py/.yaml/.md` 等 7 格式须登记 `creation_token`**（`CREATE-GUARD` 硬拦，`tests/` 豁免；`src/zephyr/governance/` 根目录禁止新增 `.py`，由 CREATE-GUARD `_check_governance_root` 强制（搜索键：ARCH-031）。

@@ -88,7 +88,7 @@ depends_on:
 
 | 注册表文件 | 说明 | 格式 |
 |-----------|------|:---:|
-| `blueprint_registry.yaml` | 蓝图注册表（全项目模块清单·SSoT） | YAML |
+| `blueprint_registry.yaml` | 蓝图注册表（纯派生件，派生退库 `03df6215e8`，不入 git，由 `sync_registry_from_blueprints.py` 运行时重生） | YAML |
 | [template_registry.yaml](template_registry.yaml) | 模板注册表 | YAML |
 | [path_ownership_map.yaml](path_ownership_map.yaml) | 路径归属映射 | YAML |
 | `system_pathway_registry.yaml` | [已删除 2026-09-14 裁定#231] 系统路径注册表（空壳退役；功能早已被 path_ownership_map.yaml 覆盖） | YAML |

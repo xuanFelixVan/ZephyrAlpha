@@ -110,8 +110,8 @@ numeric_facts:
 
   - id: blueprint_count
     fact: "60"
-    description: "蓝图数量（blueprint_registry.yaml total_blueprints: 60）"
-    ssot_source: "docs/03_modules/blueprint_registry.yaml total_blueprints"
+    description: "蓝图数量（各 blueprint.md frontmatter 经生成器汇总，运行时派生册 total_blueprints: 60）"
+    ssot_source: "各 blueprint.md frontmatter → sync_registry_from_blueprints.py 运行时重生（blueprint_registry.yaml 纯派生件，不入 git）"
     must_appear_in:
       - ".trae/rules/project_rules.md"
     must_not_appear_as:
@@ -323,7 +323,7 @@ path_facts:
   - id: blueprint_registry_underscore
     fact: "blueprint_registry.yaml"
     description: "蓝图注册表文件名（下划线，非连字符）"
-    ssot_source: "docs/03_modules/blueprint_registry.yaml"
+    ssot_source: "各 blueprint.md frontmatter → sync_registry_from_blueprints.py 运行时重生（blueprint_registry.yaml 纯派生件，不入 git）"
     must_appear_in:
       - ".trae/rules/project_rules.md"
     must_not_appear_as:
@@ -545,7 +545,7 @@ path_facts:
   - id: blueprint_registry_in_registry
     fact: "blueprint_registry.yaml"
     description: "蓝图注册表文件名（在 registry_of_registries.yaml 中，下划线非连字符）"
-    ssot_source: "docs/03_modules/blueprint_registry.yaml"
+    ssot_source: "各 blueprint.md frontmatter → sync_registry_from_blueprints.py 运行时重生（blueprint_registry.yaml 纯派生件，不入 git）"
     must_appear_in:
       - "docs/registry_of_registries.yaml"
     must_not_appear_as:
@@ -578,7 +578,7 @@ path_facts:
   - id: blueprint_entry_count_in_registry
     fact: "entry_count: 60"
     description: "蓝图注册表条目数（registry_of_registries.yaml REG-BLUEPRINT-001）"
-    ssot_source: "docs/03_modules/blueprint_registry.yaml total_blueprints: 60"
+    ssot_source: "各 blueprint.md frontmatter → sync_registry_from_blueprints.py 运行时重生（blueprint_registry.yaml 纯派生件，不入 git；total_blueprints: 60）"
     must_appear_in:
       - "docs/registry_of_registries.yaml"
     must_not_appear_as:
