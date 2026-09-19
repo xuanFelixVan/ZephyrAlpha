@@ -56,7 +56,7 @@ title: W9-6 分支清零批清单与终裁材料（①尸体分支/②工棚收�
 | session/st-tdmbe-20260909 | 57bec4f652 2026-09-16 | .aidrafts/st-tdmbe-20260909 (0) | merged，棚净 |
 | session/st-tickdrain-20260916 | 45f0f440e6 2026-09-17 | .aidrafts/st-tickdrain-20260916 (0) | merged，棚净 |
 
-### 1.3 批C（②收尾删分支 + CF1 丢弃棚）——待批C
+### 1.3 批C（②收尾删分支 + CF1 丢弃棚）——已执行 2026-09-19
 
 | 分支名 | 最后 commit | 删除依据 |
 |---|---|---|
@@ -104,7 +104,7 @@ title: W9-6 分支清零批清单与终裁材料（①尸体分支/②工棚收�
    实测 `is_pid_alive(7240)=False` → 无进程可 terminate。
 2. SessionRegistry.unregister：registry 无 `st-auditdoc-v4-20260918` 条目 → 跳过（会话已死早已出册）。
 3. 工棚：`git worktree list` 无此棚（此前已移除）→ 无棚可收。
-4. 分支 `ai/st-auditdoc-v4-20260918/task-auditdoc-v4`：批C 执行 -D（未严格 merged，见 §3.3 留档）。
+4. 分支 `ai/st-auditdoc-v4-20260918/task-auditdoc-v4`：批C 已 -D（was 13eaa45abf；产出已实测在 dev，见 §3.3 留档）。
 5. staging 遗留：`.runtime/sessions/st-auditdoc-v4-20260918/staging/` 有 6+ 件交付件
    （PHASE1_HANDOVER.md、referee_roster*、rules_dangling_resolution.json、rules_enforcement_census.json），
    TTL（24h）已过。**本批不动**，promote/弃置归 Owner。
@@ -114,8 +114,8 @@ title: W9-6 分支清零批清单与终裁材料（①尸体分支/②工棚收�
 1. 核 PID：heartbeat.jsonl 末条 `2026-09-18T15:00:17+00:00 pid=22540 status=exited (idle timeout 1810s)`
    → 进程已自退，无可 terminate。
 2. SessionRegistry.unregister：registry 无条目 → 跳过。
-3. 工棚 `.worktrees/st-ruledisp-20260918`：status 计数=0（净）→ 批C `git worktree remove`。
-4. 分支 `ai/st-ruledisp-20260918/task-rule-disposition-sop`：批C -D。
+3. 工棚 `.worktrees/st-ruledisp-20260918`：status 计数=0（净）→ 批C `git worktree remove` 成功。
+4. 分支 `ai/st-ruledisp-20260918/task-rule-disposition-sop`：批C 已 -D（was 18043e6020）。
 5. staging 遗留：`.runtime/sessions/st-ruledisp-20260918/staging/dossiers/` 有规则处置卷宗若干
    （branch_strategy_policy 逐条 dossiers 等），TTL 已过。**本批不动**，归 Owner。
 
@@ -131,19 +131,86 @@ title: W9-6 分支清零批清单与终裁材料（①尸体分支/②工棚收�
 
 ## 4. ③裁定尾巴终裁材料（只出材料不执行，归 Owner 签字册）
 
-（终批落盘）
+### 4.1 ai/st-sowner002-20260916/s-owner-002-regime-switcher（tip 5338f109bf，--no-merged，棚 .worktrees/st-sowner002-20260916 在用）
 
-## 5. ④远端分支清单（只登记，禁 push 禁删远端）
+**内容摘要**（4 commits，diff vs merge-base = 21 文件 +2404/-102）：
+S-OWNER-002 Owner 域切换器全链。4376f35627 E4 冻结文档预注册（验收线/窗口/映射/成本/红蓝全写死）
+→ fa5c8febaf 切换器框架验证出证 **verdict=FAIL（H 不成立）**+裁定#304 原子登记 → 89dd33dd8a（=任务书
+"cp3 件"）切换器模块实现+双代理包+E4 考试器+24 用例测试（红蓝四场景全绿）→ 5338f109bf 收尾交接包
+（cherry-pick 合并指引+生成器派生件，自述"分支待合并"）。核心件：
+`src/zephyr/.../strategy_factory/owner_regime_switcher/{engine 187 行, exam 205, packages 74, switcher 227}` +
+`tests/strategy_factory/test_s_owner_002_{engine,redblue,switcher}.py` 共 484 行。
 
-（终批落盘）
+**并入案**：利=完整测试覆盖（24 用例红蓝全绿）的工厂件入主区、交接包自带 cherry-pick 指引（落地成本低）、
+生成器派生件随包齐活；弊=E4 框架验证 verdict=FAIL（H 不成立）——验证未过的策略件并入有"假资产"风险；
+在册裁定#309 关联款载明"首版接入包=空集（pending-owner-adoption）"，采纳门位未开。
+**废弃案**：利=不引入 FAIL 验证件、账面内收；弊=2404 行含测试实现 GC 后不可恢复，Owner 若后续采纳需重做。
+**建议**：维持现行"留分支"裁定不变，待 Owner 对交接包（5338f109bf）签字：采纳→按其自带 cherry-pick 指引
+并入；不采纳→`git diff dev...` 打补丁归档 docs/_working/ 后删支。**本批未执行任何动作。**
 
-## 6. ⑤终态预演
+### 4.2 ai/st-tv2terrain-20260917/BT-P1-032（tip b7d8bafdde，--no-merged，棚 .worktrees/st-tv2terrain-20260917 在用）
 
-（终批落盘）
+**内容摘要**（单 commit）：做T v2 数据地形**只读勘测报告** `docs/_working/factory/t_v2/2026-09-17-data-terrain-survey.md`
+（192 行：标的×级别覆盖矩阵/聚合链结论/缺口三态清单/涨跌家数断供定位）+ capability_canonical_file_registry.yaml
++4 行登记。背景：做T v2 战役已被**裁定#331**（原#304 撞号改号，2026-09-17，"立项依据无证+累计 N 口径数学
+不可过+毛边际实证为负"）砍，复活路径=单假设窄考试先行；本报告=战役封存（T#304）前最后产出。
+
+**并入案**：利=192 行勘测是"单假设窄考试"复活路径的直接输入，知识价值独立于战役存亡；纯文档单 commit，
+cherry-pick 成本极低；弊=registry yaml +4 行 hunk 与主区现势易冲突（该表为高频登记通道写入面），不宜整
+commit 并入。**废弃案**：利=战役已砍不留尾巴；弊=勘测知识仅 reflog 可达，复活需重勘（成本=一次只读普查）。
+**建议**：Owner 签字后**单摘报告文件**copy 落 docs/_working/factory/t_v2/，registry 行不走 cherry-pick、
+按现行登记通道补录；随后删支。**本批未执行任何动作。**
+
+## 5. ④远端分支清单（只登记，禁 push 禁删远端——本批零远端操作）
+
+| 远端 ref | 备注 |
+|---|---|
+| origin/HEAD -> origin/dev | 指针 |
+| origin/dev | 远端主分支 |
+| origin/master | 远端 master（与本地 master 同为镜像语义，处置随 §2.1 归 Owner） |
+| origin/backup/pre-rebase-msgfix-8ce48cf0 | 历史备份分支（rebase 前快照） |
+
+> 漂移项：branch_strategy_policy.md §1.1 自述"纯本地仓库（无 remote）"与实况（origin 存在且 4 ref）不符，
+> 属 Policy 漂移，留 Owner 认领修订。任务书"远端 4 条"按含 HEAD 指针口径吻合。
+
+## 6. ⑤终态预演（2026-09-19 批C 后实测）
+
+**git branch --no-merged dev**（应只剩 2 条裁定尾巴——实测吻合）：
+
+```
++ ai/st-sowner002-20260916/s-owner-002-regime-switcher
++ ai/st-tv2terrain-20260917/BT-P1-032
+```
+
+**git worktree list**（主仓 + 队列 worktree + 本会话棚 + 13 内容阻断棚 + 2 裁定尾巴棚 = 18 项）：
+
+```
+D:/ZephyrAlpha                                      fed3c9561a [dev]
+D:/ZephyrAlpha/.aidrafts/st-chinfra-20260914        6c26071385 [session/st-chinfra-20260914]
+D:/ZephyrAlpha/.aidrafts/st-final3-20260919         0d5d223749 [session/st-final3-20260919]
+D:/ZephyrAlpha/.aidrafts/st-orchbp-20260916         a441495a0f [session/st-orchbp-20260916]
+D:/ZephyrAlpha/.aidrafts/st-regcal-20260917         a2ab567992 [session/st-regcal-20260917]
+D:/ZephyrAlpha/.runtime/commit_queue/worktree       fed3c9561a [serializer/commit-queue] locked
+D:/ZephyrAlpha/.worktrees/AI-NIGHT-A2-001           6f450c9676 [ai/AI-NIGHT-A2-001/task-night-a2]
+D:/ZephyrAlpha/.worktrees/AI-NIGHT-A7-001           6f450c9676 [ai/AI-NIGHT-A7-001/task-night-a7]
+D:/ZephyrAlpha/.worktrees/st-altdatamap-20260918    513d3ba0a6 [ai/st-altdatamap-20260918/task-altdataline]
+D:/ZephyrAlpha/.worktrees/st-dabanapp-20260916      92f042a8f2 [ai/st-dabanapp-20260916/daban-lue-four-engine]
+D:/ZephyrAlpha/.worktrees/st-datapack-20260918      410c4c5c5b [ai/st-datapack-20260918/datapack-d4]
+D:/ZephyrAlpha/.worktrees/st-ledgerp1-20260916      e9023f173d [ai/st-ledgerp1-20260916/task-judgment-ledger-p1]
+D:/ZephyrAlpha/.worktrees/st-ledgerp2a-20260916     dd274dbe59 [ai/st-ledgerp2a-20260916/task-judgment-ledger-p2a]
+D:/ZephyrAlpha/.worktrees/st-ledgerp2b-20260916     a4cb77060a [ai/st-ledgerp2b-20260916/scenario-engine]
+D:/ZephyrAlpha/.worktrees/st-orchp3-20260916        51437bb1b9 [ai/st-orchp3-20260916/daily-orchestrator]
+D:/ZephyrAlpha/.worktrees/st-sowner001-20260916     733f79cb9d [ai/st-sowner001-20260916/s-owner-001-300etf-band-t]
+D:/ZephyrAlpha/.worktrees/st-sowner002-20260916     5338f109bf [ai/st-sowner002-20260916/s-owner-002-regime-switcher]
+D:/ZephyrAlpha/.worktrees/st-tv2terrain-20260917    b7d8bafdde [ai/st-tv2terrain-20260917/BT-P1-032]
+```
+
+**收尾账**：分支 46 条非 dev merged 基线 → 已删 32（3 直删+26 清棚+3 批C）→ 剩 14 条 merged
+（13 内容阻断+master 留+serializer 留+本会话留，见 §2）+ 2 条未并入裁定尾巴（§4）。
 
 ## 7. 执行批次索引
 
 - 批A commit：fed3c9561a —— 3 直删 + 本清单建档 + creation_token（git log -1 --name-only 已核归属=仅本会话 2 件）
-- 批B commit：本提交 —— 26 清棚删支（26 工棚 remove 全 OK，26 分支 -d 全成功）
-- 批C commit：<待填> —— ②收尾 + CF1 丢弃棚
-- 批D commit：<待填> —— ③材料 + ④远端清单 + ⑤终态预演
+- 批B commit：q-20260919-st-final3-20260919-0069 —— 26 清棚删支（26 工棚 remove 全 OK，26 分支 -d 全成功；入队一度被 REGISTRY-MASS-DELETION 假红硬拦，根因=共享暂存区本文件 stale 条目幻影净删，他方会话刷新索引后同命令复跑入队）
+- 批C commit：本提交 —— ②收尾三连（auditdoc/ruledisp）+ CF1 丢弃棚（备份 .runtime/tmp/cf1/backup/ 保留）
+- 批D commit：本提交（与批C 同批收口）—— ③材料 + ④远端清单 + ⑤终态预演
