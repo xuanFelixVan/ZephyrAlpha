@@ -1078,3 +1078,43 @@ ttl: task_bound
 - 抽样复核：6 条 purge 项快照 vs HEAD 内容相似度 0.98-1.00（快照为旧版、HEAD 为演进版，非丢失）
 - 分类器与执行器：`.runtime/tmp/x1_triage.py`、`.runtime/tmp/x1_purge.py`（进程内一次性工具，不入库）
 - postscript（同日 17:20 增补）：本清单分诊截止 17:05；其后新死亡 q-20260919-st-final3-20260919-0013（DOC-REF-BROKEN 门禁拦截，17:13:42 死亡，属主=同会话在途批处理，非本清账动作产物）不入本账，留 dead/ 待属主处置，下一轮分诊吸收。处置后即时健康应以本 postscript 时点 dead=125 为准（124=本账 REVIEW 集合 + 1 新增）。
+
+## 六、二次清账（W9 轮，同日增补）
+
+- 轮次定位：首轮分诊截止（17:05）之后，st-final3 战役施工波次持续产出死信；本轮只管 **2026-09-19T14:00 后创建**的窗内新增——首轮 postscript 点名的 -0013 亦在窗内，本轮一并收账
+- 对象：窗内 dead 共 **54 条**（session 全部=st-final3-20260919，时段跨 17 时..次日 02 时），处置前 dead 总数 178
+- 方法：照首轮三分法——逐文件 blob sha256 对比 HEAD（快照=入队时刻工作区）；不一致者判 HEAD 最后触达 commit 是否晚于入队时刻（晚=被超越，新版胜出）；另反查 done 全量索引（1064 条）中的重试兄弟项作佐证
+- 处置统计：**purge 48 / requeue 0 / REVIEW 6**
+- 归档：48 件死信 JSON 原件移入 `.runtime/commit_queue/dead_archive_20260919_x1b/`；逐项定性清单 `.runtime/commit_queue/dead_triage_20260919_x1b.jsonl`（48 行，对齐首轮 dead_triage_20260919_x1 前例格式）；blobs/ 内容寻址库未动，可全程回溯
+- 官方命令面复核：commit_queue.py 仍无 purge/clean 死信子命令（cleanup 明示 dead/ 永不清理），沿用归档+定性清单（非裸删）
+
+### 6.1 指令点名项核销
+
+| qid | 处置 | 核验依据 |
+|---|---|---|
+| q-20260920-st-final3-20260919-0097 | purge(superseded_or_landed) | W4-3 车道首跑死信；唯一文件 capability_canonical_file_registry.yaml 已由 **ee0c6ea57b**（[W5-1] creation_token 热件单独批，2026-09-20T01:59:16）承载，commit 触达晚于入队时刻，HEAD 新版胜出——与指令判据一致 |
+
+### 6.2 REVIEW 清单（6 条，勿 requeue——属主会话在飞；任何快照落后于 HEAD 的 requeue 都禁，W4-3 回执明令重放覆写风险）
+
+| qid | 死因类 | REVIEW 依据 |
+|---|---|---|
+| q-20260919-st-final3-20260919-0025 | landing 异常（NameError: run_subprocess_hidden 未定义） | reconciler 自动批 3 文件：rule_catalog_registry.yaml 快照内容未落地（HEAD 最后触达 02:32 早于入队 17:48，快照≠HEAD 且无后续 done 兄弟承接）——真未落地，留属主处置 |
+| q-20260919-st-final3-20260919-0028 | prestage 拒绝（路径被 .gitignore 再生产物区拦截，禁入 git） | W1-E #356 生成批<3/3>：22 文件中 13 个 index.md 位于 gitignore 再生产物区（磁盘即活版本、策略性永久不可落），其余 9 个已被后续 commit 超越——重放必再撞同墙，是否改道由属主定 |
+| q-20260919-st-final3-20260919-0031 | 同上（0028 修正重试） | 同上：15 文件中 6 个 gitignore 区未落，9 个已被超越 |
+| q-20260919-st-final3-20260919-0061 | CREATE-GUARD 阻断（无 creation_token，禁造第二真源） | W2-BM1 收编批：a1_campaign_ledger.md 不在 HEAD 且无历史、无后续 done 兄弟——真未落地，留属主补 token 重做 |
+| q-20260919-st-final3-20260919-0062 | 同上（0061 重试） | 同上 |
+| q-20260919-st-final3-20260919-0064 | GATE-PRECOMMIT-RUN 阻断 | 同上（0061 二次重试） |
+
+### 6.3 purge 代表例（48 条画像）
+
+- **重试链连环死亡**（"死亡→修正→requeue→done"迭代模式的典型尸堆，最终版均由后续 done 项落地）：W7 股权穿透三脚本批 8 连（-0073/-0074/-0076/-0078/-0080/-0083/-0085/-0088）；W4-4 排班总视图批 9 连（-0075/-0077/-0079/-0081/-0082/-0084/-0086/-0087/-0089）；W1-D2 门禁三件施工 11 连（-0038..-0048）；W1-D1 fix#351 gate_auto_registrar 5 连（-0029/-0030/-0032/-0033/-0036）；W1-G 裁定#359 双连（-0055/-0056）
+- **大批量生成批被超越**：-0013（216 文件）/ -0015（782 文件）W1-E #356 生成批<1/3>，全部文件被后续 commit 超越（HEAD 新版胜出）
+- **整项字节一致**：-0053（W5-0 全项目资产总盘点台账，landed_exact）
+- **战役收官批**：-0103（W2-BM4+BM5 factor_mining_sop 转正+E 盘冷归档工单，8 文件全被超越）；-0091/-0092/-0093（W7 六表施工件+DEPGRAPH-WRITE-PATH 白名单扩展）
+- 文件级画像：48 项共 1351 文件=142 与 HEAD 字节一致 + 1209 被后续 commit 超越，**0 文件内容丢失**
+
+### 6.4 终态与复核口径
+
+- 处置后队列官方计数（commit_queue.py status）：pending=0 / processing=0 / done=1064 / **dead=130**（178-48=130，与归档数吻合）；dead 结构=首轮 REVIEW 124 + 本轮 REVIEW 6，账实一致
+- 本轮侦察/分诊/执行器：`.runtime/tmp/x1b_recon.py`、`.runtime/tmp/x1b_triage.py`、`.runtime/tmp/x1b_purge.py`（进程内一次性工具，不入库）
+- 时区口径：created_at 与 HEAD 触达时刻均为 +08:00 ISO 串，字典序比较等价时序比较
