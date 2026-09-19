@@ -55658,6 +55658,46 @@ entries:
   desc_en: "ruling #354 full-tree periodic audit orchestrator for nine staged-only detectors"
   plain_zh: "每天凌晨把九个只看暂存区的门禁用全树模式跑一遍，把历史欠账翻出来出报告"
   responsibility_layer: governance
+- module_path: scripts/ops/schedule_overview.py
+  domain_id: D_DATA
+  name_zh: "排班三表统一总览"
+  name_en: "schedule three-table overview"
+  desc_zh: "resource_profile_registry+tasks.yaml+schedule.yaml 三表读侧统一入口：周历视图/资源档位/一致性检查三段总览"
+  desc_en: ""
+  plain_zh: "一条命令把排班相关的三张表看个明白：哪些时段槽位在什么时间跑、挂了哪些任务、每个槽位吃多少内存算力、三张表之间有没有对不上的地方。只看不改，发现不一致就报出来等责任人处理。"
+  responsibility_layer: business
+- module_path: src/zephyr/governance/audit/schedule_consistency_reconciler.py
+  domain_id: D_GOV_AUDIT
+  name_zh: "排班三表一致性核对reconciler"
+  name_en: "schedule consistency reconciler"
+  desc_zh: "三表交叉核对核心+post-commit事件触发ReconcilerSpec工厂（只warn/skip/fix-in-place禁commit）"
+  desc_en: ""
+  plain_zh: "排班三张表（任务表、槽位表、资源画像表）之间靠引用连在一起，谁引用了不存在的槽位、哪个资源档位指向了不存在的任务、哪个时段挤爆了内存，这个对账器在每次提交后自动查一遍，查出问题只报警报告、绝不擅自改数据，报告放在 .runtime 里随时能查。"
+  responsibility_layer: governance
+- module_path: scripts/entity_graph/apply_entity_graph_ddl.py
+  domain_id: D_DATA
+  name_zh: "实体图六表建表脚本"
+  name_en: "entity_graph DDL applier"
+  desc_zh: "PG 图库 entity_graph 六表与股权穿透函数的 DDL-as-Code 部署脚本"
+  desc_en: ""
+  plain_zh: "在图谱数据库里把实体图的六张表和股权穿透查询函数一次性建出来,建表语句以这个脚本为唯一真源,重复跑不会出错也不会重复建"
+  responsibility_layer: business
+- module_path: scripts/entity_graph/entity_graph_ingest.py
+  domain_id: D_DATA
+  name_zh: "实体图A层灌入脚本"
+  name_en: "entity_graph A-layer ingest"
+  desc_zh: "top10_shareholders 十大股东批量灌入 node_entity/edge_holding,三级身份判定+PIT 版本化"
+  desc_en: ""
+  plain_zh: "把上市公司每期的十大股东名单搬进股权图谱,自动分清股东是公司还是个人,同一家公司多期数据按时间留版本不互相覆盖,重复跑不会灌重"
+  responsibility_layer: business
+- module_path: scripts/entity_graph/equity_penetration.py
+  domain_id: D_DATA
+  name_zh: "股权穿透查询与比对脚本"
+  name_en: "equity penetration engine"
+  desc_zh: "N 度向上穿透链查询、ig_equity_edge 并入与重叠互补比对"
+  desc_en: ""
+  plain_zh: "给定一家公司,顺着股权图谱一层层往上把它的股东、股东的股东都挖出来,还负责把老图库里的股权关系合并进新图谱并算出两边谁多谁少"
+  responsibility_layer: business
 
 battle_map_steps:
 - step_id: BM-BUY-05

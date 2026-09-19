@@ -119,7 +119,7 @@ import subprocess
 import threading
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Callable, Final
+from typing import TYPE_CHECKING, Any, Callable, Final
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 from zephyr.shared.utils.time_utils import now_utc
@@ -641,6 +641,48 @@ class ReconcilerSpec:
 _VALID_FILE_OPS = frozenset({"none", "read", "write", "delete", "move"})
 
 
+#: 外部 reconciler 规格模块清单（W4-4 运行时注册路径，2026-09-19）。
+#: 背景：gateway 静态注册段（_register_default_reconcilers）在途禁碰时，新增 reconciler
+#: 改走 registry 构造期发现——模块须暴露 ``make_external_reconciler_spec(host) -> ReconcilerSpec``。
+#: 语义与静态注册完全同款（同 registry/同 file_ops 强校验/同 priority 排序），仅注册时机不同。
+_EXTERNAL_SPEC_MODULES: Final[tuple[str, ...]] = (
+    "zephyr.governance.audit.schedule_consistency_reconciler",  # W4-4 排班三表一致性（GATE-SCHEDULE-CONSISTENCY，只 warn/skip/fix-in-place）
+)
+
+_external_spec_factories: list[Callable[[Any], ReconcilerSpec]] = []
+
+_external_specs_loaded = False
+
+if TYPE_CHECKING:
+    # 真实依赖静态声明（ORPHAN-MODULE 可见）：外部规格模块运行时经
+    # _EXTERNAL_SPEC_MODULES 字符串惰性 importlib 装载（顶层 import 构成
+    # 循环导入——该模块反向 import 本模块的 ReconcileResult/ReconcilerSpec），
+    # 故运行时零导入、类型检查面声明依赖边。
+    import zephyr.governance.audit.schedule_consistency_reconciler  # noqa: F401
+
+
+def _load_external_spec_factories() -> list[Callable[[Any], ReconcilerSpec]]:
+    """惰性装载外部规格 factory（每进程一次；失败模块 warn 跳过，fail-open）。"""
+    global _external_specs_loaded
+    if _external_specs_loaded:
+        return _external_spec_factories
+    import importlib
+
+    for mod_name in _EXTERNAL_SPEC_MODULES:
+        try:
+            mod = importlib.import_module(mod_name)
+        except Exception:  # noqa: BLE001 — 单模块装载失败不拖垮 registry
+            logger.warning("external reconciler 模块装载失败: %s", mod_name, exc_info=True)
+            continue
+        factory = getattr(mod, "make_external_reconciler_spec", None)
+        if callable(factory):
+            _external_spec_factories.append(factory)
+        else:
+            logger.warning("external reconciler 模块缺 make_external_reconciler_spec: %s", mod_name)
+    _external_specs_loaded = True
+    return _external_spec_factories
+
+
 class ReconciliationRegistry:
     """声明式 post-commit 漂移对账注册表（P2-T1）。
 
@@ -661,6 +703,24 @@ class ReconciliationRegistry:
     def __init__(self) -> None:
 
         self._specs: list[ReconcilerSpec] = []
+
+    def merge_external_specs(self) -> None:
+        """合并外部规格模块（W4-4 运行时注册路径，2026-09-19）。
+
+        背景：gateway 静态注册段（_register_default_reconcilers）在途禁碰时，新增
+        reconciler 改走本入口——**首次对账前**由 reconcile_for 惰性调用，构造期不注册
+        （保持"新 registry 为空"不变量，test_file_ops_enforcement 等契约依赖）。
+        每实例一次；单 factory 失败 warn 跳过（fail-open），语义与静态注册同款
+        （同 register 强校验/同 priority 排序）。
+        """
+        if getattr(self, "_external_merged", False):
+            return
+        self._external_merged = True
+        for _factory in _load_external_spec_factories():
+            try:
+                self.register(_factory(self))
+            except Exception:  # noqa: BLE001 — 外部规格合并失败不阻断对账
+                logger.warning("external reconciler spec 合并失败: %s", _factory, exc_info=True)
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -778,6 +838,9 @@ class ReconciliationRegistry:
             _reset_rc_ctx = None
 
         results: list[ReconcileResult] = []
+
+        # W4-4 外部规格惰性合并（gateway 禁碰时的运行时注册路径——见 merge_external_specs）
+        self.merge_external_specs()
 
         for spec in self._specs:
             try:

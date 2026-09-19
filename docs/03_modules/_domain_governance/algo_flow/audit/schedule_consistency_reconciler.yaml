@@ -1,0 +1,79 @@
+# ALGO_FLOW 外部真源——schedule_consistency_reconciler（_domain_governance 域，真源 src/zephyr/governance/audit/schedule_consistency_reconciler.py）
+# W4-4 排班三表一致性（2026-09-19）：docstring external 锚的逐字节配套机器块；
+# 算法公共面变化时同步更新本块（parse_algo_flow 管线同源）。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.governance.audit.schedule_consistency_reconciler
+source_of_truth: src/zephyr/governance/audit/schedule_consistency_reconciler.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 排班三表（物理不合并=Owner 裁定）
+    #   fields: config/resource_profile_registry.yaml + src/zephyr/data/config/tasks.yaml + src/zephyr/data/config/schedule.yaml
+    #   code: load_three_tables（单表失败降级 errors，不抛）
+    # - id: I2
+    #   name: 闸 findings（时段冲突单真源）
+    #   fields: resource_schedule_gate.run_all_checks 输出
+    #   code: _gate_passthrough_findings
+    # - id: I3
+    #   name: committed_files 提交文件清单
+    #   fields: post-commit 事件载体
+    #   code: _trigger（_TRIGGER_RELPATHS 命中制）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 任务面核对
+    #   name_en: _check_task_slot_refs/_check_task_deps
+    #   intro: 任务引用槽位存在性（disabled=停放 info）+ DAG 依赖存在性
+    #   desc: schedule∉slots→sched_x_unknown_slot(warn)；dep∉task_ids→sched_x_missing_dep(warn)
+    #   inputs: I1
+    #   outputs: findings[]
+    # - id: A2
+    #   name_zh: ② 槽位↔实体双向核对
+    #   name_en: _check_slot_entity_join
+    #   intro: 槽位缺 data_slot_* 实体 / 实体指向不存在槽位 / 零任务槽位(info)
+    #   desc: join 键=槽位名（data_slot_ 前缀确定性映射）
+    #   inputs: I1
+    #   outputs: findings[]
+    # - id: A3
+    #   name_zh: ③ 资源面核对
+    #   name_en: _check_pools_and_truth
+    #   intro: 幽灵池（不在 pool_vocabulary.lanes，daily_crypto 事故同类）+ 真源指针失效
+    #   desc: pool∉lanes→sched_x_ghost_pool(warn)；truth_source 不实存→sched_x_missing_truth_source(warn)
+    #   inputs: I1
+    #   outputs: findings[]
+    # - id: A4
+    #   name_zh: ④ 闸 findings 直通
+    #   name_en: _gate_passthrough_findings
+    #   intro: 时段冲突/内存天花板/E0/漂移——闸同源零复制；装载失败 fail-open
+    #   desc: run_all_checks(reg, ts, horizon) 逐条转 findings（detail 加"闸直通"前缀）
+    #   inputs: I1 I2
+    #   outputs: findings[]
+    # - id: A5
+    #   name_zh: ⑤ 汇总+报告落盘（fix-inplace 唯一写面）
+    #   name_en: check_tables/write_report/_reconcile
+    #   intro: block/warn/info 计数→ok 判定→.runtime/schedule_consistency/last_result.json（safe_write_text CAS）
+    #   desc: action=warn(有 warn/block)/clean，禁 auto_committed/commit（Owner：报不一致不自动改）
+    #   inputs: A1 A2 A3 A4
+    #   outputs: ReconcileResult + 报告文件
+    #   invariant: 只 warn/skip/fix-in-place；reconcile 永不抛异常（框架降级 warn）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 三表一致性报告
+    #   name_en: report/ReconcileResult
+    #   intro: CLI（scripts/ops/schedule_overview.py）与 reconciler 同源消费；governance.db reconcile_execution_log 留痕
+    #   downstream: scripts.ops.schedule_overview；GitCommitGateway（merge_external_specs 运行时注册）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I1 --> A3
+    # I1 --> A4
+    # I2 --> A4
+    # A1 --> A5
+    # A2 --> A5
+    # A3 --> A5
+    # A4 --> A5
+    # A5 --> O1
+    # I3 --> A5

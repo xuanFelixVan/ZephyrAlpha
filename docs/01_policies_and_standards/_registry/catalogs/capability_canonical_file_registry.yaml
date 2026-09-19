@@ -39799,6 +39799,10 @@ creation_tokens:
   token: schedule-overview-schedule-consistency-reconciler-20260919
   created_by: st-final3-20260919
   capability: schedule_overview
+- file: docs/03_modules/_domain_governance/algo_flow/audit/schedule_consistency_reconciler.yaml
+  token: schedule-overview-schedule-consistency-reconciler-20260919
+  created_by: st-final3-20260919
+  capability: schedule_overview
 - file: scripts/entity_graph/apply_entity_graph_ddl.py
   token: equity-penetration-apply-entity-graph-ddl-20260919
   created_by: st-final3-20260919
