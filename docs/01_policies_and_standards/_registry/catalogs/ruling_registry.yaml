@@ -15,7 +15,7 @@ tier: tier_1_governance
 status: active
 version: "1.1.1"
 created: '2026-07-18'
-last_updated: '2026-08-18'
+last_updated: '2026-09-20'
 # 裁定#20-A/#20-B/#20-D 建立（2026-07-18 治本）
 
 # ============================================================
@@ -4825,6 +4825,23 @@ entries:
   affected_files:
   - docs/_working/final3_campaign/00_master_directive.md
   - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#371'
+  title: 'final3 收尾全权执行令授权（Max 总包 15 分包清零）'
+  date: '2026-09-20'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    Owner 2026-09-20 晨正式委托：w8_3_owner_signature_book.md 128 项中除主题二（szopen 留 Owner）外
+    127 项授权 st-maxexec-20260920 全权裁定+复查核验后直接执行；final3 战役全部待 Max 复验件
+    （#343 删除包/X-2 复权链/W4-7 差距表/W1-G/W1-F）由其验收并施工；移交件（RA-H2/W5-1 余 18 域/
+    W8-2 C 类/W8-4 循环）全部承接。除 szopen 外全程不得再向 Owner 请示，遇分叉按自裁框架
+    （第一性原理+内收判据）登记后直接执行；确实无法裁定→登记+跳过留 Owner。
+  affected_files:
+  - docs/_working/final3_campaign/w8_3_owner_signature_book.md
+  - docs/_working/final3_campaign/a1_campaign_ledger.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
