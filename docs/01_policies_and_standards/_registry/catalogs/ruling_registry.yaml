@@ -4672,3 +4672,159 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: ''
+- ruling_id: '裁定#361'
+  title: 'B-15 组队评审折中：先按桶切换窄测存活再进 E8 sleeve'
+  date: '2026-09-19'
+  category: '策略组合'
+  status: 'active'
+  summary: >-
+    bizmine owner_package §8-1 代裁（Owner 2026-09-19 对话内授权）
+        三档观察档（稳健 1.815/均衡 1.838/进攻 1.470）不全员上 E8 赛马也不就地封存：按桶切换假设走预注册卡+2025-09..2026-09 前向窗窄测，存活才进 E8 paper sleeve 赛马；E4 收口前禁出厂部署
+        弹药账口径采信闭式外推账（约 4 条 @H2 OOS Sharpe 1.4）作下阶段 KPI
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#362'
+  title: '塔形顶做空封存：建模重判排复权链修复后同批'
+  date: '2026-09-19'
+  category: '策略审查'
+  status: 'active'
+  summary: >-
+    bizmine owner_package §8-2 代裁
+        统计 PASS（2.37）但融券费率 8-10%/年+券源未建模，且复权链修复后幅度将缩（红蓝高敏感第一位）
+        先封存不做交易解读；单独立卡建模融券成本的重判排复权链修复（X-2）后同批——先修尺子再量
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#363'
+  title: 'CRY funding carry 按真实费率重判一次后封卡'
+  date: '2026-09-19'
+  category: '策略审查'
+  status: 'active'
+  summary: >-
+    bizmine owner_package §8-3 代裁
+        HL 费率作废条款已触发（公开档 perp 4.5bp/spot 7bp vs 占位 2bp）
+        按真实费率重判一次（预期约 3.0% 更红）后封卡；RED 结论不变、证据变硬，重判成本极低
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#364'
+  title: '图形引擎 11 工单归图形库线+5 条补扫归数据线 JOB-108'
+  date: '2026-09-19'
+  category: '战线归属'
+  status: 'active'
+  summary: >-
+    bizmine owner_package §8-4 代裁
+        PATD 11 条引擎工单（T1/T2/T4/T6 高优）归图形库线；5 条补扫历史回填归数据线 pattern_event_backfill.py 正门（JOB-108 幂等已验证）
+        工单明细=pattern_definition_audit_report.md §6
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#365'
+  title: 'factor_mining_sop v0.1 转正：仅新立 exam_policy 一本（净零）'
+  date: '2026-09-19'
+  category: 'SOP 治理'
+  status: 'active'
+  summary: >-
+    bizmine owner_package §8-5 代裁
+        SOP v0.1 转正升 sop/：G4 并 factor_mining_sop、G3+G5+G6+G8 合并为一本 exam_policy（净零原则下唯一新立候选）；其余缺口归宿按 strategy_sop_gap_report §3
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#366'
+  title: 'tick 有界矩阵第一波批准（三条件）'
+  date: '2026-09-19'
+  category: '策略审查'
+  status: 'active'
+  summary: >-
+    bizmine owner_package §8-6 代裁
+        ALGO 规格 v1 批准开第一波，三条件：top3 格先行/功效门自查/矩阵只产候选卡不出 PASS
+        规格=≤36 格/波、5 粒度轴×4 数据轴、BH q=0.10、功效门 120 日/桶、跨轮累计 N 账、滚动前向
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#367'
+  title: 'E 盘冷归档挂回立工单排期'
+  date: '2026-09-19'
+  category: '数据建设'
+  status: 'active'
+  summary: >-
+    bizmine owner_package §8-7 代裁
+        E:/zephyr_cold_archive（1min 2000-2021 255 月/ETF 1min 2005-2018）挂回归数据线正门工单排期；有界矩阵与分钟级信号的最大单点历史深度杠杆，挂回后可救 kline_etf_daily 过浅
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#368'
+  title: 'B1 传感器方向语义冻结正向读法'
+  date: '2026-09-19'
+  category: '策略审查'
+  status: 'active'
+  summary: >-
+    bizmine owner_package §8-8 代裁
+        S1/S0-1 valid 结论全依赖正向读法，冻结反向解读；翻反向须新证据+预注册卡
+        E 敏感档来源确认与 L1 成本口径命名归维护班批处理
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#369'
+  title: 'N-6 CloneGuard 拦截 merge 治本+flash_speedup §2.1 解锁'
+  date: '2026-09-19'
+  category: '工程债'
+  status: 'active'
+  summary: >-
+    终级令 W3 代裁（Owner 授权）
+        N-6 拦截按 merge 治本（先例 30dc814645 merge 清偿 q-0035）：被拦成品件走 merge 收编；治本后 X-5 落地 flash_speedup §2.1
+        X-2 复权链施工前置的预注册方案先【M】后施工
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+
+- ruling_id: '裁定#370'
+  title: '#ARCH-337 观察期条款+AI 层 §3.5 31 项归属'
+  date: '2026-09-19'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    终级令 W3 代裁（Owner 授权）
+        #ARCH-337 保持 open，30 天无复发（至 2026-10-19）才 resolved；AI 层愿景 §3.5 的 31 项归 AI 层自己 triage 三档，本战役只登记不代判
+  affected_files:
+  - docs/_working/final3_campaign/00_master_directive.md
+  - docs/_working/bizmine_night/owner_package.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
