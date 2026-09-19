@@ -143,7 +143,22 @@ class DefenseRunner:
         defense_name = scenario.expected_defense.gate_id
         gate_id = GATE_MAP.get(defense_name, defense_name)
 
-        blocked, source = self.evaluate_gate(scenario, gate_id)
+        blocked, source, tool_error = self.evaluate_gate(scenario, gate_id)
+
+        if tool_error:
+            # 裁定#359 WP17：工具/入参自身异常 → error 桶，绝不计入 BLOCKED。
+            # passed=False 仅表示"防御未能证实成立"，error 字段供上层分桶（TEST_ERROR）。
+            detail = f"TOOL_ERROR {gate_id} [{source}]: {tool_error}"
+            result = DefenseResult(passed=False, gate_id=gate_id, detail=detail, error=tool_error)
+            self._results.append(result)
+            logger.error(
+                "defense_tool_error scenario_id=%s gate_id=%s source=%s error=%s",
+                scenario.scenario_id,
+                gate_id,
+                source,
+                tool_error,
+            )
+            return result
 
         detail = (
             f"BLOCKED by {gate_id} [{source}]: {defense_name}"
@@ -164,32 +179,36 @@ class DefenseRunner:
             self._output_findings_as_jsonl([(scenario, result)])
         return result
 
-    def evaluate_gate(self, scenario: AttackScenario, gate_id: str) -> tuple[bool, str]:
+    def evaluate_gate(self, scenario: AttackScenario, gate_id: str) -> tuple[bool, str, str]:
+        """三态评估（裁定#359 WP17）：返回 (blocked, source, tool_error)。
+
+        - tool_error 非空：防御评估未能真实执行（Gate 引擎缺失/评估抛异常/入参构造失败）
+          → 上层必须计入 error 桶，blocked 恒为 False，绝不计入 BLOCKED（恒真假绿根治）。
+        - tool_error 为空：评估真实完成，blocked 为真实判定（含 no_vector 确定性放行分支）。
+        """
         if not gate_id or not scenario.injection.vector:
-            return False, "no_vector"
+            return False, "no_vector", ""
 
-        real_result = self.try_real_gate(scenario, gate_id)
-        if real_result is not None:
-            return real_result, "gate_engine"
+        outcome, err = self.try_real_gate_detailed(scenario, gate_id)
+        if err:
+            # 引擎缺失与评估异常统一走 tool_error 桶（原 fail_closed→BLOCKED
+            # 语义即裁定#359 D-18 恒真假绿根源，废除）。
+            return False, "tool_error", err
 
-        # W3-T2 fail-closed：真实 Gate 不可用/异常时 BLOCKED，不再走 simulate_gate
-        # 的 md5 哈希模拟（"哈希彩票"伪防御——攻击是否阻断由 scenario_id 的 md5
-        # 决定，与实际防御无关，违反零信任原则）。保留 simulate_gate 仅供显式调用
-        # （单测/warn-only dry-run），禁止生产路径回退到该方法。
-        logger.warning(
-            "fail_closed gate_id=%s scenario_id=%s — real gate unavailable, BLOCKED",
-            gate_id,
-            scenario.scenario_id,
-        )
-        return True, "fail_closed"
+        return outcome, "gate_engine", ""
 
-    def _evaluate_gate(self, scenario: AttackScenario, gate_id: str) -> tuple[bool, str]:
+    def _evaluate_gate(self, scenario: AttackScenario, gate_id: str) -> tuple[bool, str, str]:
         """Backward-compatible wrapper. Use evaluate_gate instead (R5: reverse hierarchy)."""
         return self.evaluate_gate(scenario, gate_id)
 
     def try_real_gate(self, scenario: AttackScenario, gate_id: str) -> bool | None:
+        """Backward-compatible wrapper: returns detailed outcome only（None=引擎缺失或异常）。"""
+        return self.try_real_gate_detailed(scenario, gate_id)[0]
+
+    def try_real_gate_detailed(self, scenario: AttackScenario, gate_id: str) -> tuple[bool | None, str]:
+        """返回 (outcome, tool_error)：outcome=None 且 tool_error 非空 = 工具异常（error 桶）。"""
         if self.gate_engine is None:
-            return None
+            return None, "GateEngine not configured"
         try:
             from datetime import UTC, datetime
 
@@ -202,6 +221,12 @@ class DefenseRunner:
                 namespace=TaskNamespace.OPS,
                 seq=1,
                 title=scenario.scenario_id,
+                # 裁定#359 WP17 探针实证：description 为 Task 必填字段，缺构造必抛
+                # ValidationError（原被宽 except 吞后 fail_closed 计入 BLOCKED=恒真根源之一）。
+                # 此处补全为短描述（<100 字，规避 GOV-TASK-001 §2 长描述结构词告警）——
+                # 非"补参绕过"：分桶+自检仍是治本主体，本修复仅使真实 gate 评估得以发生
+                # （否则 52 场景全数 error 桶，工具零可用）。
+                description=f"Adversarial probe {scenario.scenario_id}",
                 status=TaskStatus.IN_PROGRESS,
                 priority=Priority.P2,
                 phase=0,
@@ -215,15 +240,17 @@ class DefenseRunner:
             )
             result = self.gate_engine.evaluate(task, gate_id)
             logger.debug("real_gate gate_id=%s passed=%s violations=%d", gate_id, result.passed, len(result.violations))
-            return result.passed
+            return result.passed, ""
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            # 裁定#359 WP17：异常必须显式传递进 error 桶，禁止静默变 None 后被
+            # fail-closed 计入 BLOCKED（恒真假绿根源）。
             logger.warning(
-                "real_gate_failed gate_id=%s error=%s — real gate unavailable, fail_closed will BLOCK",
+                "real_gate_failed gate_id=%s error=%s — routed to error bucket (NOT blocked)",
                 gate_id,
                 exc,
                 exc_info=True,
             )
-            return None
+            return None, f"{type(exc).__name__}: {exc}"
 
     def _try_real_gate(self, scenario: AttackScenario, gate_id: str) -> bool | None:
         """Backward-compatible wrapper. Use try_real_gate instead (R5: reverse hierarchy)."""

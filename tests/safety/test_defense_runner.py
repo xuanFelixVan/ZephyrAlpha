@@ -248,37 +248,61 @@ class TestEvaluateGate:
     def test_no_vector_returns_false(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(vector="")
-        blocked, source = runner.evaluate_gate(scenario, "G1")
+        blocked, source, err = runner.evaluate_gate(scenario, "G1")
         assert blocked is False
         assert source == "no_vector"
+        assert err == ""
 
-    def test_fail_closed_source_when_no_gate_engine(self):
+    def test_no_gate_engine_routed_to_error_bucket(self):
+        # 裁定#359 WP17：引擎不可用=工具自身故障 → error 桶，绝不计入 BLOCKED
+        # （原 fail_closed→BLOCKED 即 D-18 恒真假绿根源，已废除）。
+        # 注意：DefenseRunner(gate_engine=None) 会自动装配真实引擎，须显式清空。
         runner = DefenseRunner(gate_engine=None)
+        runner._gate_engine = None
         scenario = make_scenario(tier=AttackTier.TIER_1, vector="test")
-        blocked, source = runner.evaluate_gate(scenario, "G1")
-        assert blocked is True
-        assert source == "fail_closed"
+        blocked, source, err = runner.evaluate_gate(scenario, "G1")
+        assert blocked is False
+        assert source == "tool_error"
+        assert "GateEngine not configured" in err
 
-    def test_tier_1_blocked_via_fail_closed(self):
-        runner = DefenseRunner(gate_engine=None)
+    def test_tier_1_blocked_via_real_gate(self):
+        mock_engine = MagicMock()
+        mock_engine.evaluate.return_value = MagicMock(passed=True, violations=[])
+        runner = DefenseRunner(gate_engine=mock_engine)
         scenario = make_scenario(tier=AttackTier.TIER_1, vector="test")
-        blocked, source = runner.evaluate_gate(scenario, "G1")
+        blocked, source, err = runner.evaluate_gate(scenario, "G1")
         assert blocked is True
-        assert source == "fail_closed"
+        assert source == "gate_engine"
+        assert err == ""
 
-    def test_tier_7_blocked_via_fail_closed(self):
-        runner = DefenseRunner(gate_engine=None)
+    def test_tier_7_blocked_via_real_gate(self):
+        mock_engine = MagicMock()
+        mock_engine.evaluate.return_value = MagicMock(passed=True, violations=[])
+        runner = DefenseRunner(gate_engine=mock_engine)
         scenario = make_scenario(tier=AttackTier.TIER_7, vector="test")
-        blocked, source = runner.evaluate_gate(scenario, "G1")
+        blocked, source, err = runner.evaluate_gate(scenario, "G1")
         assert blocked is True
-        assert source == "fail_closed"
+        assert source == "gate_engine"
+        assert err == ""
+
+    def test_gate_exception_routed_to_error_bucket(self):
+        # 裁定#359 WP17：评估抛异常 → error 桶（blocked 恒 False），绝不计入 BLOCKED
+        mock_engine = MagicMock()
+        mock_engine.evaluate.side_effect = RuntimeError("gate error")
+        runner = DefenseRunner(gate_engine=mock_engine)
+        scenario = make_scenario(tier=AttackTier.TIER_1, vector="test")
+        blocked, source, err = runner.evaluate_gate(scenario, "G1")
+        assert blocked is False
+        assert source == "tool_error"
+        assert "gate error" in err
 
     def test_empty_gate_id_returns_false(self):
         runner = DefenseRunner(gate_engine=None)
         scenario = make_scenario(vector="test")
-        blocked, source = runner.evaluate_gate(scenario, "")
+        blocked, source, err = runner.evaluate_gate(scenario, "")
         assert blocked is False
         assert source == "no_vector"
+        assert err == ""
 
 
 # ===========================================================================
@@ -287,6 +311,7 @@ class TestEvaluateGate:
 class TestTryRealGate:
     def test_returns_none_when_no_gate_engine(self):
         runner = DefenseRunner(gate_engine=None)
+        runner._gate_engine = None  # 显式清空自动装配的真实引擎
         scenario = make_scenario()
         result = runner.try_real_gate(scenario, "G1")
         assert result is None
@@ -313,32 +338,69 @@ class TestTryRealGate:
         result = runner.try_real_gate(scenario, "G1")
         assert result is None
 
+    def test_detailed_returns_error_message_on_exception(self):
+        # 裁定#359 WP17：异常必须显式携带错误信息进 error 桶
+        mock_engine = MagicMock()
+        mock_engine.evaluate.side_effect = RuntimeError("gate error")
+        runner = DefenseRunner(gate_engine=mock_engine)
+        scenario = make_scenario()
+        outcome, err = runner.try_real_gate_detailed(scenario, "G1")
+        assert outcome is None
+        assert "gate error" in err
+
+    def test_detailed_returns_empty_error_on_success(self):
+        mock_engine = MagicMock()
+        mock_engine.evaluate.return_value = MagicMock(passed=True, violations=[])
+        runner = DefenseRunner(gate_engine=mock_engine)
+        scenario = make_scenario()
+        outcome, err = runner.try_real_gate_detailed(scenario, "G1")
+        assert outcome is True
+        assert err == ""
+
 
 # ===========================================================================
 # DefenseRunner — run_defense
 # ===========================================================================
 class TestRunDefense:
+    @staticmethod
+    def _mock_engine(passed: bool = True) -> MagicMock:
+        engine = MagicMock()
+        engine.evaluate.return_value = MagicMock(passed=passed, violations=[])
+        return engine
+
     def test_returns_defense_result(self):
-        runner = DefenseRunner(gate_engine=None)
+        runner = DefenseRunner(gate_engine=self._mock_engine())
         scenario = make_scenario(tier=AttackTier.TIER_1)
         result = runner.run_defense(scenario)
         assert isinstance(result, DefenseResult)
 
     def test_blocked_result_for_tier_1(self):
-        runner = DefenseRunner(gate_engine=None)
+        runner = DefenseRunner(gate_engine=self._mock_engine(passed=True))
         scenario = make_scenario(tier=AttackTier.TIER_1, gate_id="prompt_injection_filter")
         result = runner.run_defense(scenario)
         assert result.passed is True
         assert result.gate_id == "G1"
         assert "BLOCKED" in result.detail
+        assert result.error == ""
 
     def test_blocked_result_for_tier_7(self):
-        runner = DefenseRunner(gate_engine=None)
+        runner = DefenseRunner(gate_engine=self._mock_engine(passed=True))
         scenario = make_scenario(tier=AttackTier.TIER_7, gate_id="prompt_injection_filter")
         result = runner.run_defense(scenario)
         assert result.passed is True
         assert result.gate_id == "G1"
         assert "BLOCKED" in result.detail
+        assert result.error == ""
+
+    def test_tool_error_routed_to_error_bucket_not_blocked(self):
+        # 裁定#359 WP17：工具/入参异常 → TOOL_ERROR（error 桶），绝不判 BLOCKED
+        runner = DefenseRunner(gate_engine=None)
+        runner._gate_engine = None  # 显式清空自动装配的真实引擎
+        scenario = make_scenario(tier=AttackTier.TIER_1, gate_id="prompt_injection_filter")
+        result = runner.run_defense(scenario)
+        assert result.passed is False
+        assert result.error != ""
+        assert "TOOL_ERROR" in result.detail
 
     def test_result_appended_to_results(self):
         runner = DefenseRunner(gate_engine=None)
@@ -382,9 +444,11 @@ class TestRunDefense:
 
     def test_detail_contains_source(self):
         runner = DefenseRunner(gate_engine=None)
+        runner._gate_engine = None  # 显式清空自动装配的真实引擎
         scenario = make_scenario(tier=AttackTier.TIER_1)
         result = runner.run_defense(scenario)
-        assert "fail_closed" in result.detail
+        # 裁定#359 WP17：引擎缺失 → error 桶（TOOL_ERROR），不再是 fail_closed
+        assert "TOOL_ERROR" in result.detail
 
 
 # ===========================================================================
@@ -473,6 +537,13 @@ class TestRunAdversarialSession:
             make_scenario(scenario_id="S2", tier=AttackTier.TIER_1),
         ]
         self.validator.load_and_filter = MagicMock(return_value=self.scenarios)
+        # 裁定#359 WP17：防御评估 mock 为确定性结果——会话流测试不应依赖真实
+        # GateEngine 的环境行为（那正是原恒真假绿暴露的测试缺陷）
+        self.validator.defense.run_defense = MagicMock(
+            return_value=DefenseResult(
+                passed=True, gate_id="G1", detail="BLOCKED by G1 [mock]: prompt_injection_filter"
+            )
+        )
         self.validator.steady.verify_before_attack = MagicMock()
         from zephyr.security.adversarial_validation.models import SteadyStateSummary
 
@@ -579,26 +650,44 @@ class TestLoadAndFilter:
 # RedBlueValidator — process_scenario
 # ===========================================================================
 class TestProcessScenario:
-    def test_blocked_scenario(self):
+    @staticmethod
+    def _validator_with_defense(passed: bool, error: str = "") -> RedBlueValidator:
         validator = RedBlueValidator()
+        if error:
+            detail = f"TOOL_ERROR G1 [mock]: {error}"
+        else:
+            detail = (
+                "BLOCKED by G1 [mock]: prompt_injection_filter"
+                if passed
+                else "BYPASSED G1 [mock]: prompt_injection_filter failed to block test_vector"
+            )
+        validator.defense.run_defense = MagicMock(
+            return_value=DefenseResult(passed=passed, gate_id="G1", detail=detail, error=error)
+        )
+        return validator
+
+    def test_blocked_scenario(self):
+        # 裁定#359 WP17：防御判定确定性 mock，会话单元测试不依赖真实 GateEngine
+        validator = self._validator_with_defense(passed=True)
         scenario = make_scenario(tier=AttackTier.TIER_1)
         result = validator.process_scenario(scenario)
         assert isinstance(result, ScenarioResult)
         assert result.result == ResultClass.BLOCKED
 
     def test_bypassed_scenario(self):
-        validator = RedBlueValidator()
+        validator = self._validator_with_defense(passed=False)
         scenario = make_scenario(tier=AttackTier.TIER_7)
-        # fail-closed 后 TIER_7 不再自然 bypass；mock defense 返回 passed=False
-        # 以隔离测试 process_scenario 的 BYPASSED 映射分支（保留覆盖率）
-        validator.defense = MagicMock()
-        validator.defense.run_defense.return_value = DefenseResult(
-            passed=False,
-            gate_id="G1",
-            detail="BYPASSED G1 [mock]: prompt_injection_filter failed to block test_vector",
-        )
         result = validator.process_scenario(scenario)
         assert result.result == ResultClass.BYPASSED
+
+    def test_tool_error_routed_to_test_error_bucket(self):
+        # 裁定#359 WP17 ①：工具/入参异常 → TEST_ERROR 桶，绝不计入 BLOCKED/BYPASSED
+        validator = self._validator_with_defense(passed=False, error="ValidationError: description Field required")
+        scenario = make_scenario(tier=AttackTier.TIER_1)
+        result = validator.process_scenario(scenario)
+        assert result.result == ResultClass.TEST_ERROR
+        assert result.bypass_entry is None
+        assert "TOOL_ERROR" in result.detail or "description" in result.detail
 
     def test_result_has_scenario_id(self):
         validator = RedBlueValidator()
@@ -613,27 +702,19 @@ class TestProcessScenario:
         assert result.name == "proc test"
 
     def test_result_has_gate_id(self):
-        validator = RedBlueValidator()
+        validator = self._validator_with_defense(passed=True)
         scenario = make_scenario(gate_id="prompt_injection_filter")
         result = validator.process_scenario(scenario)
         assert result.gate_id == "G1"
 
     def test_bypassed_has_bypass_entry(self):
-        validator = RedBlueValidator()
+        validator = self._validator_with_defense(passed=False)
         scenario = make_scenario(tier=AttackTier.TIER_7)
-        # fail-closed 后 TIER_7 不再自然 bypass；mock defense 返回 passed=False
-        # 以隔离测试 process_scenario 的 BYPASSED 映射分支（保留覆盖率）
-        validator.defense = MagicMock()
-        validator.defense.run_defense.return_value = DefenseResult(
-            passed=False,
-            gate_id="G1",
-            detail="BYPASSED G1 [mock]: prompt_injection_filter failed to block test_vector",
-        )
         result = validator.process_scenario(scenario)
         assert result.bypass_entry is not None
 
     def test_blocked_has_no_bypass_entry(self):
-        validator = RedBlueValidator()
+        validator = self._validator_with_defense(passed=True)
         scenario = make_scenario(tier=AttackTier.TIER_1)
         result = validator.process_scenario(scenario)
         assert result.bypass_entry is None
@@ -692,6 +773,58 @@ class TestBuildReport:
 
 
 # ===========================================================================
+# 裁定#359 WP17 — error 桶计数 + 区分度自检
+# ===========================================================================
+class TestErrorCount:
+    def test_error_count_zero_when_no_scenarios(self):
+        report = RedBlueReport(session_id="RB-TEST")
+        assert report.error_count() == 0
+
+    def test_error_counts_only_test_error_results(self):
+        report = RedBlueReport(session_id="RB-TEST", total=3, blocked=1, bypassed=1)
+        report.scenarios = [
+            ScenarioResult(scenario_id="S1", name="t1", tier=AttackTier.TIER_1, result=ResultClass.BLOCKED),
+            ScenarioResult(scenario_id="S2", name="t2", tier=AttackTier.TIER_1, result=ResultClass.BYPASSED),
+            ScenarioResult(scenario_id="S3", name="t3", tier=AttackTier.TIER_1, result=ResultClass.TEST_ERROR),
+        ]
+        assert report.error_count() == 1
+
+    def test_defense_result_has_error_field_default_empty(self):
+        result = DefenseResult(passed=True, gate_id="G1", detail="blocked")
+        assert result.error == ""
+
+
+class TestDiscriminationSelfCheck:
+    """裁定#359 WP17 ②：区分度自检——应拦/应放行/应报错三腿必须互异。"""
+
+    def test_self_check_exists(self):
+        validator_mod_ = validator_mod
+        assert hasattr(validator_mod_, "run_discrimination_self_check")
+        assert hasattr(validator_mod_, "_CanaryGateEngine")
+
+    def test_self_check_passes_on_healthy_plumbing(self):
+        result = validator_mod.run_discrimination_self_check()
+        assert result["passed"] is True, result["detail"]
+        assert result["checks"]["block_leg_blocked"] is True
+        assert result["checks"]["pass_leg_not_blocked"] is True
+        assert result["checks"]["error_leg_in_error_bucket"] is True
+
+    def test_self_check_returns_checks_dict(self):
+        result = validator_mod.run_discrimination_self_check()
+        assert set(result["checks"].keys()) == {
+            "block_leg_blocked",
+            "pass_leg_not_blocked",
+            "error_leg_in_error_bucket",
+        }
+
+    def test_validator_has_self_check_method(self):
+        validator = RedBlueValidator()
+        assert callable(validator.discrimination_self_check)
+        result = validator.discrimination_self_check()
+        assert result["passed"] is True
+
+
+# ===========================================================================
 # CLI — main 入口
 # ===========================================================================
 class TestCLIMain:
@@ -718,13 +851,23 @@ class TestCLIRun:
         assert hasattr(cli_mod, "run")
         assert callable(cli_mod.run)
 
+    @staticmethod
+    def _mock_validator(mock_validator_cls, report: RedBlueReport) -> MagicMock:
+        mock_validator = MagicMock()
+        mock_validator.run_adversarial_session.return_value = report
+        mock_validator.discrimination_self_check.return_value = {
+            "passed": True,
+            "detail": "all OK",
+            "checks": {},
+        }
+        mock_validator_cls.return_value = mock_validator
+        return mock_validator
+
     @patch("zephyr.security.adversarial_validation.cli.RedBlueValidator")
     def test_run_calls_validator(self, mock_validator_cls):
-        mock_validator = MagicMock()
-        mock_report = RedBlueReport(session_id="RB-TEST", total=5, blocked=3, bypassed=2)
-        mock_report.blocked_rate = 0.6
-        mock_validator.run_adversarial_session.return_value = mock_report
-        mock_validator_cls.return_value = mock_validator
+        mock_validator = self._mock_validator(
+            mock_validator_cls, RedBlueReport(session_id="RB-TEST", total=5, blocked=3, bypassed=2)
+        )
 
         args = MagicMock()
         args.name = "test"
@@ -735,36 +878,68 @@ class TestCLIRun:
 
     @patch("zephyr.security.adversarial_validation.cli.RedBlueValidator")
     def test_run_with_tier(self, mock_validator_cls):
-        mock_validator = MagicMock()
-        mock_report = RedBlueReport(session_id="RB-TEST")
-        mock_validator.run_adversarial_session.return_value = mock_report
-        mock_validator_cls.return_value = mock_validator
+        self._mock_validator(mock_validator_cls, RedBlueReport(session_id="RB-TEST"))
 
         args = MagicMock()
         args.name = "test"
         args.tier = "L1"
         args.blast_radius = None
         cli_mod.run(args)
-        call_kwargs = mock_validator.run_adversarial_session.call_args
+        call_kwargs = mock_validator_cls.return_value.run_adversarial_session.call_args
         assert call_kwargs.kwargs.get("tier") is not None or len(call_kwargs.args) >= 2
 
     @patch("zephyr.security.adversarial_validation.cli.RedBlueValidator")
     def test_run_with_blast_radius(self, mock_validator_cls):
-        mock_validator = MagicMock()
-        mock_report = RedBlueReport(session_id="RB-TEST")
-        mock_validator.run_adversarial_session.return_value = mock_report
-        mock_validator_cls.return_value = mock_validator
+        self._mock_validator(mock_validator_cls, RedBlueReport(session_id="RB-TEST"))
 
         args = MagicMock()
         args.name = "test"
         args.tier = None
         args.blast_radius = "MODULE"
         cli_mod.run(args)
-        call_kwargs = mock_validator.run_adversarial_session.call_args
+        call_kwargs = mock_validator_cls.return_value.run_adversarial_session.call_args
         assert (
             call_kwargs.kwargs.get("blast_radius") == BlastRadiusLevel.MODULE
             or BlastRadiusLevel.MODULE in call_kwargs.args
         )
+
+    @patch("zephyr.security.adversarial_validation.cli.RedBlueValidator")
+    def test_run_exits_nonzero_on_tool_errors(self, mock_validator_cls):
+        # 裁定#359 WP17 ①：error 桶非空 → 报错退出，禁止绿色退出
+        report = RedBlueReport(session_id="RB-TEST", total=2, blocked=0, bypassed=0)
+        report.scenarios = [
+            ScenarioResult(scenario_id="S1", name="t1", tier=AttackTier.TIER_1, result=ResultClass.TEST_ERROR),
+            ScenarioResult(scenario_id="S2", name="t2", tier=AttackTier.TIER_1, result=ResultClass.TEST_ERROR),
+        ]
+        self._mock_validator(mock_validator_cls, report)
+
+        args = MagicMock()
+        args.name = "test"
+        args.tier = None
+        args.blast_radius = None
+        with pytest.raises(SystemExit) as exc_info:
+            cli_mod.run(args)
+        assert exc_info.value.code == 1
+
+    @patch("zephyr.security.adversarial_validation.cli.RedBlueValidator")
+    def test_run_exits_nonzero_when_self_check_fails(self, mock_validator_cls):
+        # 裁定#359 WP17 ②：区分度自检不过 = 工具故障信号 → 报错退出
+        mock_validator = self._mock_validator(
+            mock_validator_cls, RedBlueReport(session_id="RB-TEST", total=1, blocked=1)
+        )
+        mock_validator.discrimination_self_check.return_value = {
+            "passed": False,
+            "detail": "discrimination=FAIL",
+            "checks": {},
+        }
+
+        args = MagicMock()
+        args.name = "test"
+        args.tier = None
+        args.blast_radius = None
+        with pytest.raises(SystemExit) as exc_info:
+            cli_mod.run(args)
+        assert exc_info.value.code == 1
 
 
 # ===========================================================================

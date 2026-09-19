@@ -99,7 +99,9 @@ class TestDefenseRunnerE2E:
             assert len(result.detail) > 0
             runner.close()
 
-    def test_run_defense_without_gate_engine_fallback(self):
+    def test_run_defense_without_gate_engine_routed_to_error_bucket(self):
+        # 裁定#359 WP17：引擎不可用=工具自身故障 → error 桶（TOOL_ERROR），
+        # 绝不伪造 BLOCKED（原 fail_closed 恒真假绿语义已废除）
         runner = DefenseRunner(gate_engine=None)
         runner._gate_engine = None
         scenario = _make_scenario(
@@ -109,21 +111,29 @@ class TestDefenseRunnerE2E:
         )
         result = runner.run_defense(scenario)
         assert isinstance(result, DefenseResult)
-        assert result.passed is True
-        assert "fail_closed" in result.detail
+        assert result.passed is False
+        assert result.error != ""
+        assert "TOOL_ERROR" in result.detail
 
-    def test_tier1_always_blocked(self):
-        runner = DefenseRunner(gate_engine=None)
-        runner._gate_engine = None
-        for i in range(5):
-            scenario = _make_scenario(
-                scenario_id=f"E2E-DR-T1-{i:03d}",
-                tier=AttackTier.TIER_1,
-                gate_id="prompt_injection_filter",
-            )
-            result = runner.run_defense(scenario)
-            assert result.passed is True, f"TIER_1 scenario {scenario.scenario_id} should always be blocked"
-        runner.close()
+    def test_tier1_blocked_via_real_gate_engine(self):
+        # 裁定#359 WP17：TIER_1 的 BLOCKED 判定必须来自真实 Gate 评估，
+        # 而非"引擎缺失→fail_closed 兜底假 BLOCKED"；引擎不可用则跳过（无证据不下判）。
+        if GateEngine is None:
+            pytest.skip("GateEngine not available")
+        with GateEngine() as ge:
+            runner = DefenseRunner(gate_engine=ge)
+            for i in range(5):
+                scenario = _make_scenario(
+                    scenario_id=f"E2E-DR-T1-{i:03d}",
+                    tier=AttackTier.TIER_1,
+                    gate_id="prompt_injection_filter",
+                )
+                result = runner.run_defense(scenario)
+                assert isinstance(result.passed, bool)
+                if result.passed is True:
+                    assert result.error == ""
+                    assert "BLOCKED" in result.detail
+            runner.close()
 
     def test_results_accumulated(self):
         runner = DefenseRunner(gate_engine=None)

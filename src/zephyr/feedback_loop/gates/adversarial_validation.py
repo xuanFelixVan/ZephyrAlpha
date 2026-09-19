@@ -53,11 +53,25 @@ class AdversarialResult:
 
 
 def _evaluate_red_blue_scenario(scenario, claim, DefenseRunner, ConstitutionGuard, BypassRecorder):
+    """单场景评估（裁定#359 WP17 分桶语义）。
+
+    返回 (defense_result, v_list, entry, tool_error)：
+      - tool_error 非空 = 工具/入参自身异常，defense_result=None，
+        绝不计入 blocked/bypass（原实现静默吞异常→场景被跳过→假绿，已废除）；
+      - tool_error 为空 = 评估真实完成，defense_result.passed=True 表示攻击被拦下。
+    """
     runner = DefenseRunner()
+    defense_result = None
+    tool_error = ""
     try:
-        result = runner.evaluate(scenario)
-    except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-        result = None
+        defense_result = runner.run_defense(scenario)
+        if getattr(defense_result, "error", ""):
+            # DefenseRunner 已分桶的工具异常（TOOL_ERROR）→ 上抛为 error 桶
+            tool_error = defense_result.error
+            defense_result = None
+    except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+        tool_error = f"{type(exc).__name__}: {exc}"
+        logger.warning("red_blue_scenario_tool_error scenario_id=%s error=%s", scenario.scenario_id, tool_error)
 
     guard = ConstitutionGuard()
     try:
@@ -77,7 +91,7 @@ def _evaluate_red_blue_scenario(scenario, claim, DefenseRunner, ConstitutionGuar
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
         entry = None
 
-    return result, v_list, entry
+    return defense_result, v_list, entry, tool_error
 
 
 @dataclass
@@ -125,7 +139,6 @@ class AdversarialValidation:
                 BypassRecorder,
                 ConstitutionGuard,
                 DefenseRunner,
-                ResultClass,
                 ScenarioLoader,
             )
         except ImportError as exc:
@@ -157,23 +170,26 @@ class AdversarialValidation:
         bypass_count = 0
         passed = True
         violations: list[str] = []
+        tool_errors: list[str] = []
         core_result: dict[str, Any] | None = None
 
         for i in range(min(attempts, len(scenarios))):
             scenario = scenarios[i]
 
-            result, v_list, entry = _evaluate_red_blue_scenario(
+            result, v_list, entry, tool_error = _evaluate_red_blue_scenario(
                 scenario, claim, DefenseRunner, ConstitutionGuard, BypassRecorder
             )
 
-            if result is not None:
-                if result.result_class is ResultClass.ATTACKER_WIN:
+            if tool_error:
+                # 裁定#359 WP17 ①：工具/入参异常 → error 桶，绝不计入 bypass/blocked，
+                # 也不再静默跳过（原实现异常吞掉后场景消失=假绿）。
+                tool_errors.append(tool_error)
+            elif result is not None:
+                if not result.passed:
+                    # 攻击未被拦下（防御失守）→ bypass
                     bypass_count += 1
                     passed = False
-                elif result.result_class is ResultClass.DEFENDER_WIN:
-                    pass
-                else:
-                    bypass_count += 1
+                # result.passed=True = 攻击被防御拦下 → defender win，不计数
 
             if v_list:
                 violations.extend(v_list)
@@ -185,12 +201,19 @@ class AdversarialValidation:
                 passed = False
                 break
 
+        tested = min(attempts, len(scenarios))
         core_result = {
             "total_scenarios": len(scenarios),
-            "tested": min(attempts, len(scenarios)),
+            "tested": tested,
             "bypass_count": bypass_count,
             "violation_count": len(violations),
+            "error_count": len(tool_errors),
         }
+
+        # 裁定#359 WP17 ①：全部场景工具故障=零真实评估 → 禁止满分假绿，
+        # 报 error 而非通过（与 run_adversarial_check 通用异常路径语义一致）。
+        if tool_errors and len(tool_errors) >= tested:
+            passed = False
 
         return AdversarialResult(
             claim=claim,
@@ -198,4 +221,5 @@ class AdversarialValidation:
             bypass_count=bypass_count,
             constitution_violations=list(set(violations)),
             core_result=core_result,
+            error="; ".join(tool_errors[:3]),
         )

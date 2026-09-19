@@ -26,11 +26,13 @@ from __future__ import annotations
 import logging
 import uuid
 from datetime import UTC, datetime
+from types import SimpleNamespace
+from typing import Any
 
 from zephyr.security.adversarial_validation.blast_radius import AbortThresholdError, BlastRadius
 from zephyr.security.adversarial_validation.bypass_recorder import BypassRecorder
 from zephyr.security.adversarial_validation.cleanup import Cleanup, CleanupVerificationError
-from zephyr.security.adversarial_validation.defense_runner import DefenseRunner
+from zephyr.security.adversarial_validation.defense_runner import DefenseRunner, GateEvaluationError
 from zephyr.security.adversarial_validation.models import (
     AttackScenario,
     AttackTier,
@@ -45,16 +47,13 @@ from zephyr.security.adversarial_validation.steady_state import SteadyState, Ste
 
 logger = logging.getLogger(__name__)
 
-__all__: list[str] = ["RedBlueValidator", "SessionError"]
+__all__: list[str] = ["RedBlueValidator", "SessionError", "run_discrimination_self_check"]
 
 
-class SessionError(RuntimeError):
+class SessionError(GateEvaluationError):
+    """会话级错误——继承复用 error_code __init__（裁定#359 WP17 消 extract 级克隆）。"""
+
     error_code = "ZA-SC-0001"
-
-    def __init__(self, *args, error_code: str | None = None, **kwargs):
-        super().__init__(*args, **kwargs)
-        if error_code is not None:
-            self.error_code = error_code
 
 
 class RedBlueValidator:
@@ -173,7 +172,13 @@ class RedBlueValidator:
         report.steady_state_summary = steady_summary
         report.cleanup_verified = cleanup_ok
 
-        logger.info("session_complete session_id=%s blocked=%d bypassed=%d", session_id, blocked, bypassed)
+        logger.info(
+            "session_complete session_id=%s blocked=%d bypassed=%d errors=%d",
+            session_id,
+            blocked,
+            bypassed,
+            report.error_count(),
+        )
 
         # F30 RedBlueValidator 验证完成时发布 validation_result 事件 (F30->F15)
         try:
@@ -185,7 +190,10 @@ class RedBlueValidator:
                     "timestamp": datetime.now(UTC).isoformat(),
                     "source_function": "RedBlueValidator.run_adversarial_session",
                     "severity": "info" if bypassed == 0 else "high",
-                    "detail": f"session_id={session_id} blocked={blocked} bypassed={bypassed} total={len(scene_results)}",
+                    "detail": (
+                        f"session_id={session_id} blocked={blocked} bypassed={bypassed} "
+                        f"errors={report.error_count()} total={len(scene_results)}"
+                    ),
                 },
             )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -203,6 +211,18 @@ class RedBlueValidator:
     def process_scenario(self, scenario: AttackScenario) -> ScenarioResult:
         defense_result = self.defense.run_defense(scenario)
         now = datetime.now(UTC)
+
+        if defense_result.error:
+            # 裁定#359 WP17：工具/入参自身异常 → TEST_ERROR 桶。
+            # 绝不计入 BLOCKED（恒真假绿根治），也不得伪造成 BYPASSED（不写 bypass 台账）。
+            return ScenarioResult(
+                scenario_id=scenario.scenario_id,
+                name=scenario.name,
+                tier=scenario.tier,
+                result=ResultClass.TEST_ERROR,
+                gate_id=defense_result.gate_id,
+                detail=defense_result.detail,
+            )
 
         if defense_result.passed:
             return ScenarioResult(
@@ -269,3 +289,75 @@ class RedBlueValidator:
     ) -> RedBlueReport:
         """Backward-compatible wrapper. Use build_report instead (R5: reverse hierarchy)."""
         return self.build_report(session_id, results, blocked, bypassed, start)
+
+    def discrimination_self_check(self) -> dict[str, Any]:
+        """裁定#359 WP17 ② 区分度自检（RedBlueValidator 方法包装）。"""
+        return run_discrimination_self_check()
+
+
+class _CanaryGateEngine:
+    """区分度自检专用 canary 双身（裁定#359 WP17）——非生产组件，禁止接入真实会话。
+
+    mode="ok"：恒答 passed=True（模拟"防御成立"）；mode="raise"：恒抛异常（模拟工具故障）。
+    """
+
+    def __init__(self, mode: str) -> None:
+        self._mode = mode
+
+    def evaluate(self, task: object, gate_id: str) -> SimpleNamespace:
+        if self._mode == "raise":
+            raise RuntimeError("wp17 self-check canary: intentional tool fault")
+        return SimpleNamespace(passed=True, violations=[])
+
+
+def run_discrimination_self_check() -> dict[str, Any]:
+    """裁定#359 WP17 ②：区分度自检——应拦/应放行/应报错三腿结果必须互异。
+
+    三腿均走 DefenseRunner.run_defense 公共链路（与生产同路径）：
+      - 应拦腿（canary 引擎判防御成立）        → 必须 BLOCKED（passed=True 且无 error）
+      - 应放行腿（无攻击向量=no_vector 确定性分支）→ 必须非 BLOCKED（passed=False 且无 error）
+      - 应报错腿（canary 引擎抛异常）          → 必须进 error 桶（error 非空且非 BLOCKED）
+    应拦与应放行结果相同（区分度丧失）或任一腿落桶错误 = 工具故障信号：
+    调用方必须报 error，禁止按满分通过（恒真假绿复发的自检哨兵）。
+    """
+    from zephyr.security.adversarial_validation.defense_runner import DefenseRunner
+    from zephyr.security.adversarial_validation.models import (
+        AttackScenario,
+        AttackTier,
+        DefenseSpec,
+        InjectionSpec,
+        Severity,
+    )
+
+    def _probe(scenario_id: str, vector: str) -> AttackScenario:
+        return AttackScenario(
+            scenario_id=scenario_id,
+            name=f"wp17 self-check {scenario_id}",
+            tier=AttackTier.TIER_1,
+            severity=Severity.INFO,
+            injection=InjectionSpec(vector=vector),
+            expected_defense=DefenseSpec(gate_id="prompt_injection_filter", expected="blocked"),
+        )
+
+    leg_block = DefenseRunner(gate_engine=_CanaryGateEngine("ok")).run_defense(
+        _probe("WP17-CHK-BLOCK", "canary_attack_vector")
+    )
+    leg_pass = DefenseRunner(gate_engine=_CanaryGateEngine("ok")).run_defense(_probe("WP17-CHK-PASS", ""))
+    leg_error = DefenseRunner(gate_engine=_CanaryGateEngine("raise")).run_defense(
+        _probe("WP17-CHK-ERROR", "canary_attack_vector")
+    )
+
+    checks = {
+        "block_leg_blocked": leg_block.passed is True and not leg_block.error,
+        "pass_leg_not_blocked": leg_pass.passed is False and not leg_pass.error,
+        "error_leg_in_error_bucket": bool(leg_error.error) and leg_error.passed is False,
+    }
+    discrimination = leg_block.passed is not leg_pass.passed
+    passed = all(checks.values()) and discrimination
+    detail = (
+        "; ".join(f"{k}={'OK' if v else 'FAIL'}" for k, v in checks.items())
+        + f"; discrimination={'OK' if discrimination else 'FAIL'}"
+    )
+    if not passed:
+        logger.error("discrimination_self_check FAILED — %s（工具故障信号，禁止按满分通过）", detail)
+    return {"passed": passed, "detail": detail, "checks": checks}

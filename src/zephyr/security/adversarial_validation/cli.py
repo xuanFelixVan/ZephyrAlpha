@@ -48,6 +48,9 @@ def run(args: argparse.Namespace) -> None:
         tier=tier,
         blast_radius=radius,
     )
+    errors = report.error_count()
+    # 裁定#359 WP17 ②：区分度自检——应拦/应放行结果必须可区分；不过=工具故障信号。
+    self_check = validator.discrimination_self_check()
     print(
         json.dumps(
             {
@@ -55,12 +58,17 @@ def run(args: argparse.Namespace) -> None:
                 "total": report.total,
                 "blocked": report.blocked,
                 "bypassed": report.bypassed,
+                "errors": errors,
                 "blocked_rate": report.blocked_rate,
+                "self_check": "PASS" if self_check["passed"] else f"FAIL({self_check['detail']})",
                 "duration_ms": report.duration_ms,
             },
             indent=2,
         )
     )
+    # 裁定#359 WP17 ①：工具/入参异常必须报错退出，禁止按满分绿色退出。
+    if errors > 0 or not self_check["passed"]:
+        sys.exit(1)
 
 
 def list_scenarios(args: argparse.Namespace) -> None:
@@ -81,7 +89,9 @@ def report_fn(args: argparse.Namespace) -> None:
         tier=AttackTier.TIER_1 if not args.tier else AttackTier.from_label(args.tier),
     )
     print(f"Session: {report.session_id}")
-    print(f"Total: {report.total}  Blocked: {report.blocked}  Bypassed: {report.bypassed}")
+    print(
+        f"Total: {report.total}  Blocked: {report.blocked}  Bypassed: {report.bypassed}  Errors: {report.error_count()}"
+    )
     print(f"Blocked Rate: {report.blocked_rate:.1%}")
     print(f"Duration: {report.duration_ms:.0f}ms")
     print(f"Cleanup: {'OK' if report.cleanup_verified else 'FAILED'}")

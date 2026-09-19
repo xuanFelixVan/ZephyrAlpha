@@ -207,6 +207,13 @@ class RedBlueReport(BaseModel):
         self.blocked_rate = round(self.blocked / self.total, 4)
         return self.blocked_rate
 
+    def error_count(self) -> int:
+        """裁定#359 WP17：工具/入参异常桶计数（TEST_ERROR 场景数）。
+
+        只增方法不改字段——RedBlueReport 字段契约（blueprint §4.6）不受影响。
+        """
+        return sum(1 for s in self.scenarios if s.result is ResultClass.TEST_ERROR)
+
 
 class ConvergenceResult(BaseModel):
     status: str = "CONTINUE"
@@ -221,6 +228,9 @@ class DefenseResult(BaseModel):
     passed: bool
     gate_id: str
     detail: str
+    # 裁定#359 WP17: 工具/入参自身异常桶——非空表示防御评估未能真实执行，
+    # 该结果绝不计入 BLOCKED（恒真假绿根治）。空串=评估真实完成。
+    error: str = ""
 
 
 class GameDayResult(BaseModel):
