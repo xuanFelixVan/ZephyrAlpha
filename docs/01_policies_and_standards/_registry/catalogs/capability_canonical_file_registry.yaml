@@ -39751,6 +39751,10 @@ creation_tokens:
   token: final3-campaign-w4-7-tdm-absorption-gap-20260919
   created_by: st-final3-20260919
   capability: final3_campaign
+- file: docs/_working/final3_campaign/w1h_identity_status.md
+  token: final3-campaign-w1h-identity-status-20260919
+  created_by: st-final3-20260919
+  capability: final3_campaign
 - file: docs/_working/rule_audit_campaign/a2_handoff/A2_M5_prescriptions.md
   token: rule-audit-construction-a2-m5-prescriptions-20260919
   created_by: st-final3-20260919
