@@ -153,7 +153,7 @@ title: W8-0 working 全量审查台账（st-final3-20260919 重扫版，基线=M
 | construction_backlog.md | C | st-fullchain 结案头：未结案（仍有待办）（无日期前缀|8KB） | W8-2 四桶派发 |
 | datavein/ | C | 审查 C 类目录 | W8-2② |
 | dead_queue/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
-| deep_review_full/ | D | W8-2④ 对账销项（台账 160 疑陈旧，git 235/235） | 保留（在飞/真源） |
+| deep_review_full/ | D | W8-2④ 已对账（0d5d223749）：235/235 坐实审完，'160'系速记错误，真因=CSV 状态列回写滞后 | 台账件已终局；目录留活指针至 #ARCH-338..356 处置完后 W8-4 归档 |
 | disk_reorg_plan_2026_09_19.md | C | 无结案头（无日期前缀|9KB） | W8-2 四桶派发 |
 | dsr-recalc/ | C | 审查 C 类目录 | W8-2②（F-06 DSR 已收口，疑可对账销项） |
 | factory/ | D | 策略工厂（在飞：E4 收口入口 data/strategy_intake 关联） | 保留（在飞/真源） |
@@ -173,14 +173,14 @@ title: W8-0 working 全量审查台账（st-final3-20260919 重扫版，基线=M
 | OKXSans-Medium.woff2 | C | 无结案头（无日期前缀|29KB） | W8-2 四桶派发 |
 | OKXSans-Regular.woff2 | C | 无结案头（无日期前缀|29KB） | W8-2 四桶派发 |
 | p21_contract_header_slimming_proposal.md | C | st-fullchain 结案头：设计/计划类且无落地证据，保守保留（无日期前缀|6KB） | W8-2 四桶派发 |
-| pattern_line/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| pattern_line/ | C | 红蓝 R1 软 ISSUE：canonical registry 5 条+3 蓝图真源+production 头注，8 处活引用零联动登记 | 活引用登记联动后复审 A（W8-2②） |
 | pattern_session_governance_report_2026_09_14.md | C-3 | 阴性审查保留至季度末（无日期前缀|11KB） | 2026-09-30 后 W8-1 归档（例外条款） |
 | pipeline-research/ | D | intake 自动管线产物区（活） | 保留（在飞/真源） |
 | redblue/ | C | 审查 C 类目录 | W8-2②（红蓝报告族） |
 | regime_recal/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
 | reports/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
 | residual_construction/ | C | 审查 C 类目录 | W8-2②（W1/W2 残余施工已由本战役承接） |
-| resource_schedule/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| resource_schedule/ | D | 红蓝 R1 攻倒（5ee0177e6d）：活生成器 generate_resource_morning_report 今日仍写该区+resource_profile_registry 33 处指针+2 计划任务 | 保留（活输出区；待输出区外移后复审 A） |
 | reviews/ | P | 常驻手册（终态保留） | 保留（常驻） |
 | rule_audit_campaign/ | D | W1 真源区（判决书/交接令/a2_handoff） | 保留（在飞/真源） |
 | sharpe2_prep/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
