@@ -138,7 +138,7 @@ def _try_read_title(md_path: Path) -> str | None:
         content = md_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return None
-    fm, _body = parse_frontmatter(content)
+    fm = parse_frontmatter(content)
     if isinstance(fm, dict):
         return fm.get("title")
     for line in content.split("\n"):
@@ -160,7 +160,7 @@ def _read_blueprint_info(parent: Path) -> tuple[str, str]:
         content = bp_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return "", ""
-    fm, _body = parse_frontmatter(content)
+    fm = parse_frontmatter(content)
     if not isinstance(fm, dict):
         return "", ""
     module_id = str(fm.get("module_id", ""))
@@ -179,7 +179,7 @@ def _infer_blueprint_id(parent: Path) -> str:
         if bp_path.exists():
             try:
                 content = bp_path.read_text(encoding="utf-8")
-                fm, _body = parse_frontmatter(content)
+                fm = parse_frontmatter(content)
                 if isinstance(fm, dict):
                     mid = str(fm.get("module_id", ""))
                     if mid:
