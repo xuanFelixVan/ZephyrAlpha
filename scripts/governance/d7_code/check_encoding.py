@@ -29,6 +29,12 @@
 - CRLF = WARNING 级（不阻断提交，靠 .gitattributes + git add --renormalize 在仓库层解决）
 
 exit codes: 0=pass, 1=findings(FAIL级), 2=error
+
+裁定#352（2026-09-19 W1-B fail-closed 收紧）：tracked 面 .py/.md/.yaml 源文件
+不可 UTF-8 解码 = FAIL（报文件路径+解码错误）。原实现该情形裸吞（fail-open），
+判决书#352 亲验全仓 tracked 面 .py/.md/.yaml 不可解码存量=0，收紧无存量代价。
+非 tracked 文件与二进制文件（含 NUL 字节）维持现行为（不翻）；
+既有 mojibake 检测行为不翻。
 """
 
 from __future__ import annotations
@@ -58,7 +64,7 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.walk import iter_staged_files
+from _shared.walk import iter_staged_files, tracked_files_set
 
 ensure_utf8_stdout()
 
@@ -223,6 +229,33 @@ def _detect_mojibake(content: str) -> bool:
     return _detect_mojibake_bytes(content.encode("utf-8"))
 
 
+# ── tracked 面判定（裁定#352，共享真源 tracked_files_set）────────────────────
+_TRACKED_CACHE: set[str] | None = None
+_TRACKED_RESOLVED = False
+_TRACKED_SOURCE_SUFFIXES = frozenset({".py", ".md", ".yaml"})
+
+
+def _is_tracked_source_file(p: Path) -> bool:
+    """判定是否 tracked 面 .py/.md/.yaml 源文件（裁定#352 FAIL 范围）。
+
+    git 不可用时返回 False（降级维持现行为——tracked 状态判定不了就不收紧，
+    与 scan_all 的 git 降级口径一致，禁止误伤）。
+    """
+    global _TRACKED_CACHE, _TRACKED_RESOLVED
+    if p.suffix.lower() not in _TRACKED_SOURCE_SUFFIXES:
+        return False
+    try:
+        rel = str(p.resolve().relative_to(REPO_ROOT)).replace("\\", "/")
+    except (ValueError, OSError):
+        return False
+    if not _TRACKED_RESOLVED:
+        _TRACKED_CACHE = tracked_files_set()
+        _TRACKED_RESOLVED = True
+    if _TRACKED_CACHE is None:
+        return False
+    return rel in _TRACKED_CACHE
+
+
 def check_file_encoding(filepath: str) -> tuple[list[str], list[str]]:
     """Check compliance and report findings and warnings separately.
 
@@ -280,8 +313,15 @@ def check_file_encoding(filepath: str) -> tuple[list[str], list[str]]:
             findings.append(
                 f"INJ-007 FAIL: file '{filepath}' contains GBK-as-UTF-8 mojibake — double-encoded garbled text detected"
             )
-    except UnicodeDecodeError:
-        pass
+    except UnicodeDecodeError as decode_err:
+        # 裁定#352（2026-09-19 W1-B）：tracked 面 .py/.md/.yaml 不可 UTF-8 解码 = FAIL
+        # （原裸吞 fail-open；判决书#352 亲验 tracked 面存量=0，收紧无存量代价）。
+        # NUL 字节 = 二进制文件，维持现行为（不翻）；非 tracked 文件维持现行为。
+        if b"\x00" not in raw and _is_tracked_source_file(p):
+            findings.append(
+                f"INJ-007 FAIL: file '{filepath}' is not valid UTF-8 "
+                f"(tracked source file, must re-encode as UTF-8) — {decode_err}"
+            )
     # .ps1 files must be ASCII-only: PowerShell 5.1 decodes non-BOM .ps1 as ANSI
     # codepage (GBK on Chinese Windows), causing multi-byte UTF-8 to misparse.
     # The Edit tool strips BOM, so .ps1 cannot reliably keep BOM — ASCII-only is
@@ -364,13 +404,27 @@ def main() -> None:
             if "__pycache__" in str(f) or ".git" in str(f):
                 continue
             try:
-                content = f.read_text(encoding="utf-8")
-                if _detect_mojibake(content):
-                    rel = f.relative_to(REPO_ROOT)
-                    all_findings.append(f"INJ-007 MOJIBAKE: {rel}")
-                    mojibake_count += 1
-            except (UnicodeDecodeError, OSError):
+                raw = f.read_bytes()
+            except OSError:
                 pass
+            else:
+                # 裁定#352（2026-09-19 W1-B）：--scan 同样对 tracked 面 .py/.md/.yaml
+                # 不可 UTF-8 解码出 FAIL（原 except (UnicodeDecodeError, OSError) 裸吞
+                # fail-open）；NUL 字节=二进制、非 tracked 文件，均维持现行为。
+                try:
+                    content = raw.decode("utf-8")
+                except UnicodeDecodeError as decode_err:
+                    if b"\x00" not in raw and _is_tracked_source_file(f):
+                        rel = f.relative_to(REPO_ROOT)
+                        all_findings.append(
+                            f"INJ-007 FAIL: {rel} is not valid UTF-8 "
+                            f"(tracked source file, must re-encode as UTF-8) — {decode_err}"
+                        )
+                else:
+                    if _detect_mojibake(content):
+                        rel = f.relative_to(REPO_ROOT)
+                        all_findings.append(f"INJ-007 MOJIBAKE: {rel}")
+                        mojibake_count += 1
         if mojibake_count > 0:
             print(f"\nTotal mojibake files: {mojibake_count}")
 

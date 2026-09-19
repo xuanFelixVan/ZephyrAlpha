@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import fnmatch
 import os
+import subprocess
 from pathlib import Path
 
 from _shared.constants import EXCLUDE_DIRS, REPO_ROOT
@@ -134,3 +135,53 @@ def zero_scan_error(
 # iter_staged_files 实现已移至 _shared/staged_files.py（轻量模块，无 psycopg2 传递依赖）
 # 本模块通过上方 `from _shared.staged_files import iter_staged_files` re-export
 # 治本（2026-08-03）：消除 check_any_abuse.py 23 行内联 git diff 重复代码
+
+
+# ─── tracked 面口径（裁定#345a/#352 W1-B，单一真源，禁止各检测器复制）─────────────
+# 病根：.gitignore 白名单模型下大量"扫得到但提交不了"的文件结构性不可入库，
+# 检测器默认全盘口径产生的红数是假债。--tracked-only 口径把扫描面过滤为
+# git 跟踪文件交集（tracked ⊆ 全盘），红数即真实可提交面债务。
+
+_TRACKED_FILES_CACHE: set[str] | None = None
+
+
+def tracked_files_set(*, use_cache: bool = True) -> set[str] | None:
+    """返回 git 跟踪文件集合（相对路径、POSIX 斜杠）；git 不可用时返回 None。
+
+    裁定#345a（检测器 --tracked-only 旗标）与裁定#352（tracked 面编码 FAIL）
+    的共享实现。调用方契约：返回 None（git 失败）时必须跳过 tracked 过滤、
+    保持既有全盘行为（与 check_directory_contract.scan_all 的 git 降级口径
+    一致）——禁止把 None 当空集合处理（会把全部文件滤没＝假绿）。
+
+    Args:
+        use_cache: 进程内缓存（默认开）；单进程只跑一种仓上下文，测试需要
+            强制刷新时传 False。
+
+    Returns:
+        跟踪文件相对路径集合（如 ``docs/foo.md``）；git 调用失败返回 None。
+    """
+    global _TRACKED_FILES_CACHE
+    if use_cache and _TRACKED_FILES_CACHE is not None:
+        return _TRACKED_FILES_CACHE
+    # CREATE_NO_WINDOW 防止 Windows 控制台窗口闪现（trae_067 铁律2）；
+    # getattr 跨平台：Windows 有 CREATE_NO_WINDOW 属性，非 Windows 返回 0
+    creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+    try:
+        result = subprocess.run(  # noqa: bare-subprocess  _shared 轻量口径与 staged_files 同约束：禁 import process_pool（避免 zephyr 重依赖链破坏 commit-time gate 零重依赖），CREATE_NO_WINDOW 已强制
+            ["git", "ls-files", "-z"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            creationflags=creationflags,
+        )
+    except (FileNotFoundError, subprocess.SubprocessError, OSError):
+        return None
+    if result.returncode != 0:
+        return None
+    tracked = {
+        line.replace("\\", "/")
+        for line in result.stdout.decode("utf-8", errors="replace").split("\0")
+        if line
+    }
+    if use_cache:
+        _TRACKED_FILES_CACHE = tracked
+    return tracked

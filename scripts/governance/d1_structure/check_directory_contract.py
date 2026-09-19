@@ -45,6 +45,8 @@ Modes:
   --staged              check git-staged files only (pre-commit use)
   --all-files           force full scan (ignore file args)
   --warn-only           print findings, never block (exit 0)
+  --tracked-only        scan face filtered to git ls-files tracked intersection
+                        (裁定#345a opt-in，默认关闭=全盘口径零变化；git 不可用降级全盘)
   (default)             scan all in-scope files, block on errors (exit 1)
   file args             incremental check (pre-commit pass_filenames=true)
 
@@ -80,7 +82,7 @@ if _GOV_DIR not in sys.path:
 import yaml  # noqa: E402
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.frontmatter import parse_frontmatter_from_file  # noqa: E402
-from _shared.walk import iter_files  # noqa: E402
+from _shared.walk import iter_files, tracked_files_set  # noqa: E402
 
 # ── 真源路径 ──
 _CONTRACT_PATH = (
@@ -657,6 +659,12 @@ def main() -> int:
     mode.add_argument("--warn-only", action="store_true", help="只警告不阻断（exit 0）")
     parser.add_argument("--staged", action="store_true", help="只校验 git staged 文件（pre-commit use）")
     parser.add_argument("--all-files", action="store_true", help="强制全量扫描（忽略传入的文件参数）")
+    # 裁定#345a（2026-09-19 W1-B）：opt-in 口径旗标，默认关闭=现行为零变化
+    parser.add_argument(
+        "--tracked-only",
+        action="store_true",
+        help="扫描面过滤为 git ls-files 跟踪文件交集（tracked ⊆ 全盘；git 不可用时降级全盘并告警）",
+    )
     parser.add_argument("files", nargs="*", help="增量校验文件列表（相对路径）")
     args = parser.parse_args()
 
@@ -681,6 +689,22 @@ def main() -> int:
         files = scan_all(contract)
     else:
         files = [str(Path(f).as_posix()) for f in args.files]
+
+    if args.tracked_only and not args.staged:
+        # 裁定#345a（2026-09-19 W1-B）：扫描面过滤为 git 跟踪文件交集（tracked ⊆ 全盘）。
+        # --staged 分支不过滤：staged ⊆ index ⊆ tracked，天然已是 tracked 口径。
+        tracked = tracked_files_set()
+        if tracked is None:
+            # 调用方契约（tracked_files_set）：git 失败禁止当空集合滤没全部文件（假绿），
+            # 降级全盘口径并出声
+            print("[GATE-DIRECTORY-CONTRACT] WARN: git 不可用，--tracked-only 降级为全盘口径", file=sys.stderr)
+        else:
+            before = len(files)
+            files = [f for f in files if f.replace("\\", "/") in tracked]
+            print(
+                f"[GATE-DIRECTORY-CONTRACT] --tracked-only: 扫描面 {before} → {len(files)} 文件（git 跟踪面）",
+                file=sys.stderr,
+            )
 
     if not files:
         print("[GATE-DIRECTORY-CONTRACT] PASS: 无待校验文件", file=sys.stderr)

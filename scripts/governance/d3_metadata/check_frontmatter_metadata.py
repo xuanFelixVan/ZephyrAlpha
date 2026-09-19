@@ -51,6 +51,10 @@ Usage::
     # strict doc_type（hard block on missing/invalid doc_type）
     python scripts/governance/d3_metadata/check_frontmatter_metadata.py --strict-doctype
     # 或 env: ZEPHYR_DOCTYPE_STRICT=1
+
+    # tracked 口径（裁定#345a，opt-in，默认关闭=全盘口径不变）：
+    # 扫描面过滤为 git ls-files 跟踪文件交集（tracked ⊆ 全盘）
+    python scripts/governance/d3_metadata/check_frontmatter_metadata.py --tracked-only
 """
 
 from __future__ import annotations
@@ -83,6 +87,7 @@ from _shared.frontmatter import (  # noqa: E402
     parse_json_meta,
     parse_py_header,
 )
+from _shared.walk import tracked_files_set  # noqa: E402  裁定#345a：--tracked-only 口径共享真源
 from _shared.yaml_utils import (  # 词表加载 SSoT（D-D-05：禁止复制 _load_xxx）  # noqa: E402
     load_vocabulary_deprecated_map,
     load_vocabulary_values,
@@ -310,6 +315,8 @@ def main() -> int:
     raw_args = sys.argv[1:]
     all_files = "--all-files" in raw_args
     strict_doctype = "--strict-doctype" in raw_args or os.environ.get("ZEPHYR_DOCTYPE_STRICT", "0") == "1"
+    # 裁定#345a（2026-09-19 W1-B）：opt-in 口径旗标，默认关闭=现行为零变化
+    tracked_only = "--tracked-only" in raw_args
 
     # 加载所有字段的词表缓存（一次性加载，_check_file 复用）
     vocab_cache: dict[str, set[str]] = {}
@@ -357,6 +364,30 @@ def main() -> int:
                     and not any(p in exempt_parts for p in fp.relative_to(REPO_ROOT).parts)
                 ):
                     files.append(fp)
+
+    if tracked_only:
+        # 裁定#345a（2026-09-19 W1-B）：扫描面过滤为 git ls-files 跟踪文件交集
+        # （tracked ⊆ 全盘）——.gitignore 白名单模型下"扫得到但提交不了"的文件
+        # 是结构性假债，tracked 口径红数才真实可提交面债务。
+        tracked = tracked_files_set()
+        if tracked is None:
+            # 调用方契约（tracked_files_set）：git 失败禁止当空集合滤没全部文件（假绿），
+            # 降级全盘口径并出声
+            print("WARN: git 不可用，--tracked-only 降级为全盘口径", file=sys.stderr)
+        else:
+            before = len(files)
+
+            def _rel_posix(p: Path) -> str:
+                try:
+                    return str(p.relative_to(REPO_ROOT)).replace("\\", "/")
+                except ValueError:
+                    return str(p).replace("\\", "/")
+
+            files = [p for p in files if _rel_posix(p) in tracked]
+            print(
+                f"--tracked-only: 扫描面 {before} → {len(files)} 文件（git 跟踪面）",
+                file=sys.stderr,
+            )
 
     if not files:
         print("OK: no files to check")
