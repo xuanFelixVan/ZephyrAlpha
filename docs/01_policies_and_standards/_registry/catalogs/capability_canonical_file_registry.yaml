@@ -5016,6 +5016,10 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "docs/_working/rule_audit_campaign/2026-09-19-construction-handover-prompt.md"
+  token: "construction-handover-prompt-20260919"
+  created_by: "st-maxday-20260919"
+  capability: "rule_disposition"
 - file: "docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md"
   token: "max-dayshift-rulings-20260919"
   created_by: "st-maxday-20260919"
