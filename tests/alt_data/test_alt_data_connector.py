@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ALT-007 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.alt_data.test_alt_data_connector
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/alt_data/alt_data_connector.py
 """MOD-ALT-007 单元测试：alt_data_connector 另类数据统一接入器。
 

@@ -3,6 +3,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATA-COHORT-LEDGER-BUILDER | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.alt_data.test_cohort_daily_ledger
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/alt_data/cohort_daily_ledger.py
 # [SCOPE] zephyr.alt_data.cohort_daily_ledger（WO-5 投资者行为日账本一期结算层）
 # [INVARIANTS] 测试隔离：fake reader 注入，零 CH 连接、零生产路径写入；行结构仅内存断言

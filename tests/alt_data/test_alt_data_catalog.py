@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ALT-008 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.alt_data.test_alt_data_catalog
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/alt_data/alt_data_catalog.py
 """MOD-ALT-008 单元测试：alt_data_catalog 另类数据目录。
 

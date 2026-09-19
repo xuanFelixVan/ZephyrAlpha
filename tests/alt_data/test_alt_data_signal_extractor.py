@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ALT-013 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.alt_data.test_alt_data_signal_extractor
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/alt_data/alt_data_signal_extractor.py
 """MOD-ALT-013 单元测试：alt_data_signal_extractor 另类数据信号提取网关。
 

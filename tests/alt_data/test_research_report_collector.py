@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ALT-009 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.alt_data.test_research_report_collector
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/alt_data/research_report_collector.py
 """MOD-ALT-009 单元测试：research_report_collector 研报采集器。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INT-LLM-SELFEVAL | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.intelligence.test_llm_self_evaluation
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/intelligence/llm_self_evaluation.py
 """MOD-INT-LLM-SELFEVAL 单元测试：llm_self_evaluation LLM 自评估与交叉验证。
 

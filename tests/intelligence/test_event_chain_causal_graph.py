@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INT-EVENT-CHAIN | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.intelligence.test_event_chain_causal_graph
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/intelligence/event_chain_causal_graph.py
 """MOD-INT-EVENT-CHAIN 单元测试：event_chain_causal_graph 事件链推理因果图。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INT-FACT-LEDGER | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.intelligence.test_universal_fact_ledger
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/intelligence/universal_fact_ledger.py
 """MOD-INT-FACT-LEDGER 单元测试：universal_fact_ledger 通用事实账本与双重锚定。
 

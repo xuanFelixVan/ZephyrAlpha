@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INT-RESEARCH-AGENT | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.intelligence.test_llm_research_agent
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/intelligence/llm_research_agent.py
 """MOD-INT-RESEARCH-AGENT 单元测试：llm_research_agent LLM 研究助手。
 

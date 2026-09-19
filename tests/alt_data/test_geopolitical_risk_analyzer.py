@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-ALT-014 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.alt_data.test_geopolitical_risk_analyzer
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/alt_data/geopolitical_risk_analyzer.py
 """MOD-ALT-014 单元测试：geopolitical_risk_analyzer 地缘政治风险分析器。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INT-HUMAN-TRUST | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.intelligence.test_human_trust_model
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/intelligence/human_trust_model.py
 """MOD-INT-HUMAN-TRUST 单元测试：human_trust_model 人机信任模型。
 
