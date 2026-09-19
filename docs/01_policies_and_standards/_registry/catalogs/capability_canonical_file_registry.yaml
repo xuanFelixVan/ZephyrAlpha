@@ -36419,6 +36419,22 @@ creation_tokens:
   token: bizmine-alpha-mining-w2t3-e4-exam-closure-report-20260919
   created_by: st-final3-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_chain_mining/a0_master_plan.md
+  token: bizmine-alpha-mining-a0-master-plan-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_chain_mining/a1_campaign_ledger.md
+  token: bizmine-alpha-mining-a1-campaign-ledger-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_chain_mining/skeleton/b0_stage_skeleton.md
+  token: bizmine-alpha-mining-b0-stage-skeleton-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_chain_mining/skeleton/b1_source_diff_matrix.md
+  token: bizmine-alpha-mining-b1-source-diff-matrix-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
