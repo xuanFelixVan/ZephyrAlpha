@@ -25,7 +25,7 @@ title: W9-6 分支清零批清单与终裁材料（①尸体分支/②工棚收�
 | probe_icase | 9d853bc4af 2026-09-16 | merged into dev，git branch -d 成功 |
 | session/st-consrep-20260916 | f4e31d822c 2026-09-16 | merged into dev，git branch -d 成功 |
 
-### 1.2 批B 清棚后删（死会话工棚 status=0，先 `git worktree remove` 再 `git branch -d`）——待批B
+### 1.2 批B 清棚后删（死会话工棚 status=0，先 `git worktree remove` 再 `git branch -d`）——已执行 2026-09-19（26 棚全 OK、26 支全删）
 
 | 分支名 | 最后 commit | 工棚（status 计数） | 删除依据 |
 |---|---|---|---|
@@ -143,7 +143,7 @@ title: W9-6 分支清零批清单与终裁材料（①尸体分支/②工棚收�
 
 ## 7. 执行批次索引
 
-- 批A commit：<待填> —— 3 直删 + 本清单建档 + creation_token
-- 批B commit：<待填> —— 26 清棚删支
+- 批A commit：fed3c9561a —— 3 直删 + 本清单建档 + creation_token（git log -1 --name-only 已核归属=仅本会话 2 件）
+- 批B commit：本提交 —— 26 清棚删支（26 工棚 remove 全 OK，26 分支 -d 全成功）
 - 批C commit：<待填> —— ②收尾 + CF1 丢弃棚
 - 批D commit：<待填> —— ③材料 + ④远端清单 + ⑤终态预演
