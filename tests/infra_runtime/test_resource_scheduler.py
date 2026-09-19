@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-074 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infra_runtime.test_resource_scheduler
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infra_runtime/resource_scheduler.py
 """MOD-INF-074 单元测试：resource_scheduler 资源调度器。
 

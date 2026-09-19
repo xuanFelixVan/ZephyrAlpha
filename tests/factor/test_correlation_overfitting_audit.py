@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_correlation_overfitting_audit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.factor.test_correlation_overfitting_audit
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/factor/analysis/correlation_overfitting_audit.py
 # [TTL] task_bound
 """23 号 memo §3.3 过拟合检测引擎测试（PDR/PSI/DFR + audit 三态）。

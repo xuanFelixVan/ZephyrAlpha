@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-RK-044 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.risk.test_risk_policy_persister
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/risk/risk_policy_persister.py
 """MOD-RK-044 单元测试：risk_policy_persister 风控策略持久化器。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FACTORY-002 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.autonomy.test_module_mapper
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/autonomy_core/module_factory/module_mapper.py
 """MOD-FACTORY-002 单元测试：module_mapper 知识→模块映射引擎（13号文 §3.3）。
 

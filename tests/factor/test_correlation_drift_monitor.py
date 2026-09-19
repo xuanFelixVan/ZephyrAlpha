@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_correlation_drift_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.factor.test_correlation_drift_monitor
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/factor/analysis/correlation_drift_monitor.py
 # [TTL] task_bound
 """23 号 memo §5.4 相关性漂移监控测试（CUSUM/PSI）。

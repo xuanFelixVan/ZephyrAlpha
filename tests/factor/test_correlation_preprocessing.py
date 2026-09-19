@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_correlation_preprocessing | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.factor.test_correlation_preprocessing
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/factor/analysis/correlation_preprocessing.py
 # [TTL] task_bound
 """23 号 memo §3.1① 数据预处理 pipeline 测试。

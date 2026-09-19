@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-080 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infra_runtime.test_latency_budget_allocator
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infra_runtime/latency_budget_allocator.py
 """MOD-INF-080 单元测试：latency_budget_allocator 延迟预算分配器。
 

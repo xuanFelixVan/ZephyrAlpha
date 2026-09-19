@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-076 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infra_runtime.test_ha_sla_framework
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infra_runtime/ha_sla_framework.py
 """MOD-INF-076 单元测试：ha_sla_framework 高性能高可用保障框架。
 

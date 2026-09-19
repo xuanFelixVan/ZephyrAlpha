@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_survival_line_monitor | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.risk.core.test_survival_line_monitor
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/risk/core/survival_line_monitor.py
 # [TTL] task_bound
 """90 号 Phase2 项（#16 系统级成功指标）：生存线监控已知答案 toy 断言。

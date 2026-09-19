@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-RK-042 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.risk.test_hedge_execution_skill
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/risk/hedge_execution_skill.py
 """MOD-RK-042 单元测试：hedge_execution_skill 对冲执行技能。
 

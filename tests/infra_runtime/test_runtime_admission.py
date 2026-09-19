@@ -1,5 +1,8 @@
 # [BLUEPRINT] docs/_working/resource_schedule/resource_schedule_v2_construction_plan.md | §2.2 L-3 / §4 P2-c
 # [MODULE] tests.infra_runtime.test_runtime_admission
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/infra_runtime/runtime_admission.py
 # [A_test] module_id: MOD-INF-RT-ADM | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-078 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infra_runtime.test_ml_pipeline_process
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infra_runtime/ml_pipeline_process.py
 """MOD-INF-078 单元测试：ml_pipeline_process P5 ML 管线进程编排。
 

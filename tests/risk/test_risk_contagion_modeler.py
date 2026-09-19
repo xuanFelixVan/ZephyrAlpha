@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-RK-046 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.risk.test_risk_contagion_modeler
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/risk/risk_contagion_modeler.py
 """MOD-RK-046 单元测试：risk_contagion_modeler 风险传播建模器。
 

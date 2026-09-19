@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FACTORY-001 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.autonomy.test_knowledge_classifier
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/autonomy_core/module_factory/knowledge_classifier.py
 """MOD-FACTORY-001 单元测试：knowledge_classifier 知识分类器（13号文 §3.2）。
 

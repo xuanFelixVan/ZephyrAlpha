@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-077 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infra_runtime.test_database_layer
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infra_runtime/database_layer.py
 """MOD-INF-077 单元测试：database_layer 数据库统一抽象层。
 

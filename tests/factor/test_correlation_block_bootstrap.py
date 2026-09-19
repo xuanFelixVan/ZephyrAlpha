@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_correlation_block_bootstrap | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.factor.test_correlation_block_bootstrap
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/factor/analysis/correlation_block_bootstrap.py
 # [TTL] task_bound
 """23 号 memo §3.2 multivariate stationary block-bootstrap 引擎测试。

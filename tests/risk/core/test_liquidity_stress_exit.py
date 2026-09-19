@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_liquidity_stress_exit | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.risk.core.test_liquidity_stress_exit
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/risk/core/liquidity_monitor.py（90 号 Phase2 扩展段）
 # [TTL] task_bound
 """90 号 Phase2 项（#8 流动性）：liquidity_monitor 扩展已知答案 toy 断言。

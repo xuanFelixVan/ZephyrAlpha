@@ -3,6 +3,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FAC-002 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.factor.test_signature_feature_extractor
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/factor/signature_feature_extractor.py
 """MOD-FAC-002 单元测试：signature_feature_extractor 签名方法特征提取器。
 

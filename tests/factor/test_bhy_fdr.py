@@ -1,5 +1,8 @@
 # [A_test] module_id: MOD-GOV_test_bhy_fdr | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.factor.test_bhy_fdr
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/factor/analysis/bhy_fdr.py
 # [TTL] task_bound
 """90 号 Phase2 项（#2 因子IC）：BHY FDR 校正已知答案 toy 断言。

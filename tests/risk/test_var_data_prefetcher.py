@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-RK-043 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.risk.test_var_data_prefetcher
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/risk/var_data_prefetcher.py
 """MOD-RK-043 单元测试：var_data_prefetcher VaR 数据预取器。
 
