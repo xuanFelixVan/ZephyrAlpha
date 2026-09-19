@@ -602,6 +602,8 @@ def _resolve_ref(ref_path: str, source_file: Path) -> Path | None:
         ref_path = ref_path[7:].lstrip("/")
         if len(ref_path) > 1 and ref_path[1] == ":":
             return Path(ref_path)
+        # 裁定#357：file:/// 无盘符形态按仓库根绝对路径解析
+        return REPO_ROOT / ref_path
     if ref_path.startswith("docs/"):
         return REPO_ROOT / ref_path
     if ref_path.startswith("/"):
@@ -617,7 +619,8 @@ def check_dim10_broken_path_refs() -> None:
     2. 提取 Markdown 链接
     3. 解析路径并验证目标文件存在
     4. 排除 URL（http/https）、锚点链接、图片链接
-    5. 排除 file:/// 链接（VS Code 风格，已由 DIM-9 覆盖废弃检测）
+    5. file:/// 绝对链接纳入校验（裁定#357：先剥除 #锚点/?查询——语义沿用 #7877077，
+       剥后为空则跳过；再经 _resolve_ref 解析为绝对路径做存在性判定）
     """
     scan_files = iter_files(GOV_DOCS_DIR, {".md"}, EXCLUDE_DIRS)
 
@@ -639,7 +642,8 @@ def check_dim10_broken_path_refs() -> None:
             link_target = m.group(2).split("#")[0].split("?")[0]
             if not link_target:
                 continue
-            if link_target.startswith(("http://", "https://", "mailto:", "#", "file:///")):
+            # 裁定#357：file:/// 不再跳过——剥锚后纳入存在性校验（解析见 _resolve_ref）
+            if link_target.startswith(("http://", "https://", "mailto:", "#")):
                 continue
             if link_target.startswith("/"):
                 continue

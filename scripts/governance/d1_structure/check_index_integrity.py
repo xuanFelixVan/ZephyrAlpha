@@ -58,6 +58,25 @@ from _shared.walk import iter_files
 ensure_utf8_stdout()
 import argparse
 
+# 裁定#357 处方②：索引盘存扩展收录 .py/.json——指脚本/数据文件的链接不再是结构性盲区
+_SIBLING_EXTENSIONS: frozenset[str] = SCAN_EXTENSIONS_MD_YAML | {".py", ".json"}
+
+# 裁定#357 处方③：frontmatter 与版本史正文不是索引清单内容
+_FRONTMATTER_RE = re.compile(r"\A---[ \t]*\n.*?\n---[ \t]*\n?", re.DOTALL)
+_VERSION_SECTION_RE = re.compile(
+    r"^##[ \t]*(?:版本历史|版本记录|变更记录|变更历史|修订历史|更新记录|Change\s*Log|Changelog)[^\n]*\n.*?(?=^##[ \t]|\Z)",
+    re.IGNORECASE | re.DOTALL | re.MULTILINE,
+)
+
+
+def _strip_non_index_content(content: str) -> str:
+    """裁掉 frontmatter 与版本史正文（裁定#357 处方③）。
+
+    frontmatter 元数据提及的旧文件名、版本史段落里的历史链接都是「关于文档的记录」，
+    不是「文档宣告的清单」；计入判定即产生永久假悬空。
+    """
+    return _VERSION_SECTION_RE.sub("", _FRONTMATTER_RE.sub("", content))
+
 
 def find_index_files() -> list[Path]:
     """find index files"""
@@ -84,6 +103,7 @@ def extract_index_entries(filepath: Path) -> set[str]:
     except (OSError, UnicodeDecodeError):
         "提取数据."
         return set()
+    content = _strip_non_index_content(content)
     entries = set()
     for match in re.finditer("\\[([^\\]]*)\\]\\(([^)]+)\\)", content):
         link = match.group(2)
@@ -100,15 +120,14 @@ def extract_index_entries(filepath: Path) -> set[str]:
 
 
 def get_sibling_files(index_path: Path) -> set[str]:
-    """get sibling files"""
+    """索引目录磁盘清单（相对 posix 路径；含 .py/.json — 裁定#357 处方②）"""
     parent = index_path.parent
     siblings = set()
-    "获取数据."
-    for fp in iter_files(parent, extensions=SCAN_EXTENSIONS_MD_YAML):
+    for fp in iter_files(parent, extensions=_SIBLING_EXTENSIONS):
         if fp.name == "index.md":
             continue
         try:
-            siblings.add(fp.name)
+            siblings.add(fp.relative_to(parent).as_posix())
         except (ValueError, OSError):
             pass
     return siblings
@@ -118,31 +137,38 @@ def get_sibling_files(index_path: Path) -> set[str]:
 def check_index_integrity() -> list[dict]:
     """check index integrity"""
     findings = []
-    "检查并返回违规列表."
     index_files = find_index_files()
     for index_path in index_files:
         entries = extract_index_entries(index_path)
         siblings = get_sibling_files(index_path)
-        entry_basenames = set()
-        for e in entries:
-            basename = Path(e).name
-            if basename == "index.md":
+        parent = index_path.parent
+        rel = str(index_path.relative_to(REPO_ROOT)).replace("\\", "/")
+        # 裁定#357 处方①：条目按「相对本文件路径」解析存在性，弃递归 basename 匹配
+        # （basename 匹配会误报跨目录正确链接、漏报被 _archive/ 同名件遮蔽的真断链）
+        missing_from_disk: list[str] = []
+        covered_local: set[str] = set()
+        for e in sorted(entries):
+            if Path(e).name == "index.md":
                 continue
-            entry_basenames.add(basename)
-        missing_from_disk = entry_basenames - siblings
+            resolved = parent / e
+            if resolved.exists():
+                try:
+                    covered_local.add(resolved.resolve().relative_to(parent.resolve()).as_posix())
+                except ValueError:
+                    pass  # 指向索引目录之外的合法跨目录链接（如 ../B/x.py）
+            else:
+                missing_from_disk.append(e)
         for name in missing_from_disk:
-            rel = str(index_path.relative_to(REPO_ROOT)).replace("\\", "/")
             findings.append(
                 {
                     "index_file": rel,
                     "type": "INDEX_ENTRY_MISSING",
-                    "detail": f"index.md 列出 '{name}' 但磁盘不存在",
+                    "detail": f"index.md 列出 '{name}' 但相对本文件解析不存在",
                     "severity": "MEDIUM",
                 }
             )
-        missing_from_index = siblings - entry_basenames
+        missing_from_index = siblings - covered_local
         for name in sorted(missing_from_index)[:20]:
-            rel = str(index_path.relative_to(REPO_ROOT)).replace("\\", "/")
             findings.append(
                 {
                     "index_file": rel,

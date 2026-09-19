@@ -169,3 +169,15 @@ acknowledged:
   verdict: intentional
   stable_key: "src/zephyr/governance/audit/reconciliation_registry.py:_ensure_ack_column||src/zephyr/governance/audit/reconciliation_registry.py:_ensure_error_pattern_id_column"
   note: ALTER TABLE 加列样板双实例（ack/error_pattern_id 各自表结构），两侧均 HEAD 既有，queue serializer 快照暴露，非本批引入（st-mineline-rc14b RC-14）
+- id: scripts/governance/d5_architecture/validators/validate_cross_references.py:_err:b3b698c0||scripts/governance/d5_architecture/validators/validate_cross_references.py:_warn:d35007c3
+  verdict: intentional
+  source_hash: b3b698c0
+  existing_hash: d35007c3
+  stable_key: scripts/governance/d5_architecture/validators/validate_cross_references.py:_err||scripts/governance/d5_architecture/validators/validate_cross_references.py:_warn
+  note: 同文件错误/警告双桶收集器同构（_errors/_warnings 各自桶，v2.0.0 HEAD 既有），W1-B2 触碰该文件暴露既有克隆，非本批引入（st-final3-20260919 裁定#357）
+- id: scripts/governance/d5_architecture/validators/validate_cross_references.py:_build_invariant_registry:68190fe9||scripts/governance/d5_architecture/validators/validate_cross_references.py:_build_event_registry:0a07d174
+  verdict: intentional
+  source_hash: 68190fe9
+  existing_hash: 0a07d174
+  stable_key: scripts/governance/d5_architecture/validators/validate_cross_references.py:_build_event_registry||scripts/governance/d5_architecture/validators/validate_cross_references.py:_build_invariant_registry
+  note: 同文件 YAML id 集加载器样板同构（invariants.yaml/domain_events.yaml 各自源文件，HEAD 既有），W1-B2 触碰该文件暴露既有克隆，非本批引入（st-final3-20260919 裁定#357）
