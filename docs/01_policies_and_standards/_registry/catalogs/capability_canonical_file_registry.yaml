@@ -36423,7 +36423,7 @@ creation_tokens:
   token: bizmine-alpha-mining-a0-master-plan-20260919
   created_by: st-final3-20260919
   capability: bizmine_alpha_mining
-- file: docs/_working/bizmine_chain_mining/a1_campaign_ledger.md
+- file: docs/_working/bizmine_chain_mining/a1_bizmine2_ledger.md
   token: bizmine-alpha-mining-a1-campaign-ledger-20260919
   created_by: st-final3-20260919
   capability: bizmine_alpha_mining
