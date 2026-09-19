@@ -794,6 +794,8 @@ $ git log --oneline -3 -- $C
 | **C-70** | 全流通验收仪的 ②/① 两向**测量法**会把“尺子的跑法”记成模块的罪：②以脚本路径直跑 `src/**` 模块 ⇒ stdlib `calendar` 被包内 `calendar.py` 遮蔽、顶层 `schemas` 依赖 cwd，两条都是伪红（`-m` 方式实测正常）；①对 88.6 亿行的 `c1_market.tick_data` 做 `count() … FINAL` 实测撞 25s CH 超时 | 甲：②同时记“脚本形态 + `-m` 形态”两栏，只有两者都失败才判红；①改两级探测（存在性 `LIMIT 1` + 分区裁剪新鲜度），并把“测量失败”显式记成**未测**而非红 | 乙：只改 harness 的运行方式为 `-m`，不动判定语义 | ★ 不裁的后果：Owner 把“红=16”读成 16 个待办，一整班花在伪红上；本总包按 D-13（值无唯一现场来源⇒只出案卷）**未自改验收仪**
 | **C-71** | WP7 导出的两轴派生公共函数（`derive_rule_risk` / `derive_two_axis_risk_for_rules`）**无任何测试**（`grep -rl derive_rule_risk tests` 零命中），且 WP7 侧接线后 86 分母只在车道回执里自证一次 | 补两条测试：①在册风险档全量分母恒等于 `len(gates)`（防再失明）②未知值必须为 0 的断言 | 交 WP8 案卷侧同批补（D-7 的另一半接线本来就未完） | 本夜班**未自补**（改 `reconciliation_registry` 面绑 WP8/ WP4 在飞车道，避免同文件对撞）；这是"治本落地但无守护测试"的又一实例，与 C-44 测试归宿问题同源 |
 
+| **C-72** | B13 车道的 `ch_reader` FINAL 探测改造是**核心读路径上的 fail-closed 行为变更**（`count`/`query_table` 在引擎不可判定时由"返回 0/空串"改成抛 `FinalProbeUnavailable`），但**零测试、零调用侧接线**（新符号除定义处全仓零命中，头栏指向的测试文件不存在） | 由 Max 判：补测试后落地 / 改回保留旧契约（inject_final 系不抛，仅 count 抛）/ 全部只留台账 | 直接套 `b13_ch_reader_final_probe.patch` | ★ 影响面≈全仓 ~200 个读取点的异常语义，CH 抖动时会把"空结果"变成"异常上抛"。本总包**未落地也未改设计**，成品以可套用处方保全（§16.2） |
+
 ## 4. 事实修正表（后续车道任务书必带对应行）
 
 | 方案原文 | 现场实测（2026-09-19，本战役复跑） | 影响 |
@@ -3350,3 +3352,49 @@ Max 判归（69 条待裁）、以及一处测量法本身的问题（全流通�
 ③ 判 WP17 三件（⑤⑥之外的第二个"永远红"的尺子）→
 ④ Owner 门位一次性过堂：C-34/C-35 顺序、C-42 清盘、C-67② 拆棚、C-61 宪法镜像、C-23..C-33 遗留；
 ⑤ 再回到 B 类规则审判（WP8→WP9 判案→WP10 执行）与落真锚（C-48..C-55 口径先定）。
+
+## 16. 车道阵亡抢救与两轮循环检查（08:0x 总包亲手）
+
+### 16.1 ★ 五条车道静默阵亡（无 completed 也无 failed 通知），成品停在盘上
+08:00 时点 `.runtime/session_registry.json` 只剩 3 个活会话（本总包 + 两个 AI-NIGHT 系），
+而 03:37 之后 WP8 / WP2 / WP14 / B13 / B16 五条车道再无任何文件写入——**通知系统一条都没给**。
+⇒ 判车道存活只能三查：注册表 `last_heartbeat` 年龄 + `.runtime/tmp/<车道>/` 最新 mtime + `git log --grep GW:<sid>`；
+**等通知会白等数小时**（本夜班 B13/B16 的成品在共享工作区裸奔了 4 小时 20 分钟）。
+
+### 16.2 三辆车的抢救分派（按"能不能独立复验"三分）
+| 车道 | 盘上状态 | 判定 | 处置 |
+|---|---|---|---|
+| **B13**（`ch_reader` FINAL 探测） | `src/zephyr/data/ch_reader.py` +130 −22，含新异常 `FinalProbeUnavailable` + 重试 + 降级台账 + 头栏契约改写 | ★ **行为改动但零测试零接线**：`grep -rn FinalProbeUnavailable src tests scripts` 除定义处**零命中**；头栏 `[TESTS]` 指向的 `tests/zephyr/data/test_ch_reader.py` **文件不存在** | **禁落地**。已 `git diff > .runtime/tmp/ff-recon/b13_ch_reader_final_probe.patch`（221 行）→ `git cat-file blob` 逐字节还原 → `git apply --check` 通过 → sha256 `7a6c2303…` 双镜像（热区 + 冷库 `b13_prescription/`）。列 **C-72** |
+| **B16**（六向尺三态） | `scripts/automation/flowthrough_verifier.py` +7 −3，**只有头栏/ERROR_CONTRACT 文本**在声称"行数十态三态（≥0/-1/-2）"，代码里没实现 -2 | **假头栏风险**：留着一份"注释声称已实现"的契约就是给后人埋雷 | 同样回退成处方 `b16_three_state_header.patch`（35 行，`git apply --check` 通过）。★ 并案提示：**B16 的 `-2 不可测` 与 C-70 的甲方案是同一件事**，Max 一次裁即可 |
+| **WP14**（T0 表头缺栏减肥） | 4 批已落地（`c28e0606b0`/`dc6c3e12ba`/`09a166da53`/`ef70b6b139`），回执未交 | 可独立复验 ⇒ 总包逐件复算：**74 个文件**，每条 `[STABILITY]/[SAFETY]/[AI_AUTONOMY]` 值与该文件自身 `# [A_test]` 声明比对 ⇒ **mismatch=0**（D-13"值可现场读取"成立，无编造）；**第二把尺独立佐证**：`verify_header_completeness.py` 现值 **4241** 缺栏件，与车道自记基线 4315 之差 **恰好 = 74** | 采信落地成立；后续批次未续（列 §16.4 接力位）。★ 但"缺栏 4241 件"这个总盘子**比 WP14 已做的 74 件大两个数量级**，T0 机械波要按域排班继续，不是一晚的事 |
+
+### 16.3 另外两辆
+- **WP8**（案卷判据收窄 + 重跑 1404 份）：停在 v1 保全阶段——三份 sha256 清单各 **1,435 行**且 cold/backup
+  **逐字节相同**；我在冷库根跑 `sha256sum -c --quiet` ⇒ **零失败**（1,435 项全过）。v2（判据收窄重跑）未开。
+- **WP2**（提交门禁触发台账）：`.runtime/tmp/` 下**无该车道目录**、`git log` 无其 GW 标记 ⇒ 一行未出，
+  WP3 因此仍被链式阻塞（D-2 门位件，本就该 Max 先审）。
+
+### 16.4 两轮循环检查（本轮真实范围，不外推）
+- 广度轮 `tests/io + tests/shared + tests/governance`：**在跑：进度 53%（截至 08:0x），已出现 XPASS 字符 852 个｜当前 FAILED/ERROR 计数=0**
+- 深度轮（本夜班全部改动面）`tests/io + tests/shared + tests/zephyr/data + tests/infrastructure +
+  tests/backtest/test_n_trial_ledger.py + tests/governance/d3_metadata + tests/scripts`：**在跑：进度 51%（截至 08:0x），已出现 XPASS 字符 3 个｜当前 FAILED/ERROR 计数=0**
+- ⚠ 口径声明：两轮是**并行跑**的（两个 pytest 进程），若出现失败须串行复跑归因后才能采信
+  （共享工作区下测试会写同一批 `.runtime` 台账，并发互扰是本仓已知形态）；
+  且"广度轮"未覆盖 `tests/trading`（2,444 测试，多会话并发风暴下必挂死，历来按文件清单分块跑）。
+
+### 16.5 产物保全总账（冷库）
+`G:/zephyr_cold/30_corpus/rule_audit_v1_20260919/`＝**79MB / 26 个车道目录**，含 1,404 份 v1 案卷 +
+逐件 sha256 清单（`sha256sum -c` 零失败）。`.runtime/tmp` 有 24h TTL ⇒ 冷库是唯一长命载体，
+本台账只引路径与 sha256，不复制正文（D-16 口径）。
+
+### 16.6 本台账自己的引用面审计（自审，不是查别人）
+把全文件里的 10 位十六进制串全抓出来对 git 核：**61 个引用 → 59 个可解析对象 → 52 个是 HEAD 祖先**。
+差的 9 个逐个查：4 个是 **blob 摘要**（抓取用的是"连续 10 位十六进制"这种宽网，
+会把 sha256 / blob sha 的前缀误抓成 commit —— 计数脚本自己也须红证：它把 4 个非 commit 判成了 commit），
+2 个是**已知的坏引用**（`170cba56e0`＝R-A11 立案的幻觉 commit 本体、`6e76b295e4`＝sha256 前缀），
+3 个是 `ai/st-ruledisp-20260918/task-rule-disposition-sop` 分支上**未合入 dev** 的 docs 提交
+（`5aa9568aae`/`c5bba14a7c`/`68b8619e37`）。
+⇒ 顺带排掉一个真风险：**总方案文件本身 dev 版与那条分支版逐字节相同**（`git diff HEAD <branch> -- <方案>` 为空），
+且 D-18/WP17 已在 dev（`0315d5555d` 是 HEAD 祖先）⇒ **本夜班依据的方案不是旧版**。
+⇒ 但那 3 个未合入提交意味着 `st-ruledisp` 班还有内容停在车道分支上（祖先口径未合入），
+   归 **C-67①** 的"未合入按祖先还是按内容"同一把尺一起裁。
