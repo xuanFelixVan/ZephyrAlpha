@@ -157,7 +157,7 @@ capabilities:
   - load_blueprint_path
   - blueprint_path
   - blueprint disk path
-  description: 蓝图磁盘路径查询的唯一入口。从 blueprint_registry.yaml（SSoT 派生）按 module_id 查询， 不硬编码路径。真源链：blueprint.md
+  description: 蓝图磁盘路径查询的唯一入口。从 blueprint_registry.yaml（运行时派生件，不入 git）按 module_id 查询， 不硬编码路径。真源链：blueprint.md
     frontmatter → sync_registry_from_blueprints.py → blueprint_registry.yaml → load_blueprint_path(module_id)。
     消除连字符/下划线漂移根因。
 - capability_id: frontmatter_metadata_validation
@@ -36367,4 +36367,8 @@ creation_tokens:
   token: governance-gate-prerun-gate-prerun-20260918
   created_by: st-ffb19-20260919
   capability: governance_gate_prerun
+- file: scripts/governance/d4_paths/broken_links_exempt.yaml
+  token: broken-links-exempt-broken-links-exempt-20260919
+  created_by: st-final3-20260919
+  capability: broken_links_exempt
 di_seam_exemptions: []
