@@ -57,6 +57,7 @@ from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from time import sleep
 from typing import Final, Protocol, runtime_checkable
 
 logger = logging.getLogger(__name__)
@@ -137,6 +138,71 @@ class AtomicWriteError(OSError):
             self.error_code = error_code
 
 
+# ── #343 治本（2026-09-19）：写入端瞬时锁短退避 ──────────────────────────────
+# 病根：Windows AV/索引器对正本/临时件持瞬时共享锁，os.replace 立即抛
+# PermissionError(WinError 32/33/5)，失败路径的 tmp unlink 清理同样被锁
+# ⇒ .tmp 残留堆积（86MB 事故，写入端竞态副产品）。
+# 治本位=replace/unlink 两个 syscall 加韧性退避；CAS 语义（stale 检测/
+# 回读校验）不动。重试耗尽才留 tmp + warning（清扫器按 atomic_tmp_glob 回收）。
+_TRANSIENT_LOCK_WINERRORS: Final = frozenset({5, 32, 33})
+ATOMIC_REPLACE_RETRY_DELAYS: Final = (0.2, 0.5, 1.0, 2.0, 5.0)
+ATOMIC_TMP_CLEANUP_RETRY_DELAYS: Final = (0.2, 0.5, 1.0)
+
+
+def _is_transient_lock_error(exc: BaseException) -> bool:
+    """瞬时共享锁判定（仅 Windows PermissionError；POSIX rename 无此竞态）。"""
+    if os.name != "nt" or not isinstance(exc, PermissionError):
+        return False
+    winerror = getattr(exc, "winerror", None)
+    return winerror is None or winerror in _TRANSIENT_LOCK_WINERRORS
+
+
+def _os_replace_with_retry(src: Path, dst: Path) -> None:
+    """os.replace + 瞬时锁短退避重试（#343 治本）。
+
+    重试耗尽仍被锁则原样上抛（调用方按既有语义包装 AtomicWriteError）。
+    """
+    for attempt in range(len(ATOMIC_REPLACE_RETRY_DELAYS) + 1):
+        try:
+            os.replace(str(src), str(dst))
+            return
+        except PermissionError as exc:
+            if not _is_transient_lock_error(exc) or attempt == len(ATOMIC_REPLACE_RETRY_DELAYS):
+                raise
+            delay = ATOMIC_REPLACE_RETRY_DELAYS[attempt]
+            logger.warning(
+                "atomic_write: replace 遭瞬时锁(winerror=%s)，%.1fs 后重试(%d/%d)",
+                getattr(exc, "winerror", "?"),
+                delay,
+                attempt + 1,
+                len(ATOMIC_REPLACE_RETRY_DELAYS),
+            )
+            sleep(delay)  # noqa: m10-time-trigger  #343治本:syscall级有限退避(共5次≤8.7s),非调度轮询
+
+
+def _cleanup_tmp_with_retry(tmp_path: Path) -> None:
+    """失败路径的 tmp 清理：同样短退避重试（#343：清理被锁=残留源头）。
+
+    重试耗尽仍失败则留 tmp + warning，不抛——避免清理异常掩盖真正的
+    AtomicWriteError（修前行为：清理 OSError 直接顶替原异常）。
+    """
+    for attempt in range(len(ATOMIC_TMP_CLEANUP_RETRY_DELAYS) + 1):
+        try:
+            tmp_path.unlink(missing_ok=True)
+            return
+        except PermissionError as exc:
+            if not _is_transient_lock_error(exc) or attempt == len(ATOMIC_TMP_CLEANUP_RETRY_DELAYS):
+                break
+            sleep(ATOMIC_TMP_CLEANUP_RETRY_DELAYS[attempt])  # noqa: m10-time-trigger  #343:tmp清理有限3次退避,非调度轮询
+        except OSError:
+            break
+    if tmp_path.exists():
+        logger.warning(
+            "atomic_write: tmp 清理在退避重试后仍失败，残留 %s（清扫器按 atomic_tmp_glob 回收）",
+            tmp_path,
+        )
+
+
 def atomic_write(
     filepath: Path | str,
     content: str,
@@ -188,10 +254,9 @@ def atomic_write(
             f.flush()
             os.fsync(f.fileno())
 
-        os.replace(str(tmp_path), str(target))
+        _os_replace_with_retry(tmp_path, target)
     except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
-        if tmp_path.exists():
-            tmp_path.unlink(missing_ok=True)
+        _cleanup_tmp_with_retry(tmp_path)
         raise AtomicWriteError("atomic_write failed") from None
 
     return target
