@@ -207,3 +207,53 @@ algorithms:
     inputs: [当日做T买卖流水]
     outputs: [闭环状态, 成本变化]
     status: production
+
+  # ── 第三批 5 条（final3 战役 W4-7 后半 P5 接线批，st-maxexec-20260920，裁定#371：
+  #    UP-2..UP-5 四件=2026-09-13 TDM 升级蓝图已建成模块挂 TDM 消费端；
+  #    DAL-8STATE-FCST=两雏形补挂之一。阈值冻结（禁挪门柱）：UP-2 P(跌)≥0.65/尾比≥0.60；
+  #    UP-5 CVaR(5%) 阈 -3% 日损。验证方法按 validation_method_registry derivation_rules 推导：
+  #    X 流→exit_counterfactual / F 流→portfolio_attribution / L2→agg_discrimination）──
+  - dal_id: DAL-FWD-STOP
+    name_zh: 前瞻概率止损评审
+    mechanism_zh: 滚动预测 P(跌)≥0.65（阈值冻结禁挪门柱）→ 输出止损评审建议（正常→评审→执行三态，
+      评审是建议非强制平仓，修订权仍在 X 流，与 E-L0-04"只出概率不出点位"同构）；复合版
+      composite_stop_score 用 q05/q50/q95 三分布位点插值 P(跌)+左尾厚比（≥0.60）双触发
+    code_ref: src/zephyr/pf_alloc/core/forward_stop_loss.py
+    inputs: [日收益率序列, 车道 E 分位数预测 q05/q50/q95]
+    outputs: [stop_review 止损评审建议, p_decline, tail_ratio]
+    status: trial
+  - dal_id: DAL-RISK-BUDGET
+    name_zh: 前瞻风险预算分配
+    mechanism_zh: 各 sleeve 预测 VaR(5%)/CVaR 驱动带内再分配（C1 预算带仍为上限），三模式
+      inverse_var（反 VaR 加权）/risk_parity（等风险贡献近似）/sharpe_weight（预测 Sharpe
+      softmax），权重和=1.0；与 C3-01 历史 Component VaR 双口径并存、注明口径差异
+    code_ref: src/zephyr/pf_alloc/core/risk_budget_allocator.py
+    inputs: [各 sleeve 预测 VaR, 预测 E(R)]
+    outputs: [前瞻风险预算权重表]
+    status: trial
+  - dal_id: DAL-SECTOR-DIST
+    name_zh: 板块分布比较选优
+    mechanism_zh: 六板块指数（000001/000016/000300/000905/000852/399006）独立分位数回归
+      （PIT：特征 ≤T-1 预测 T+1，q05/q50/q95），按预测收益-风险比（中位数/区间宽度）排序
+      输出板块优先序列表；作 L2-01 强度分的排序叠加通道，不改树枝结构
+    code_ref: src/zephyr/pf_alloc/core/sector_distribution_comparator.py
+    inputs: [六指数日 K 收盘序列]
+    outputs: [板块优先序列表（收益-风险比排序）]
+    status: trial
+  - dal_id: DAL-TAIL-HEDGE
+    name_zh: 尾部对冲信号
+    mechanism_zh: 组合预测 CVaR(5%) 破风控阈值（默认 -3% 日损，阈值冻结禁挪门柱）→ 生成
+      对冲建议 hedge_advice；信号仅供决策参考非执行指令（模块自身约定），喂 R1-03 白名单
+      通道；R1-03 的 D107 尾部弹药回测验证前维持休眠 fallback；期权对冲执行另案（数据窗口短）
+    code_ref: src/zephyr/pf_alloc/core/tail_hedge_signal.py
+    inputs: [组合日收益率序列]
+    outputs: [hedge_signal 对冲建议, cvar_excess 超限幅度]
+    status: trial
+  - dal_id: DAL-8STATE-FCST
+    name_zh: 明日八态概率预测
+    mechanism_zh: 明日情绪八态概率纯函数预测（八态概率 Σ=1，零 IO）；盘后作先验落库
+      （L0-03 生产侧）、盘中供滚动组合器打底（L0-04 消费侧）
+    code_ref: src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py
+    inputs: [当日情绪特征]
+    outputs: [明日八态概率分布]
+    status: production

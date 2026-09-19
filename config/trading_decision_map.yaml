@@ -157,10 +157,12 @@ nodes:
   algo_note_zh: >-
     规则模板生成非 LLM 拍脑袋（纯函数可单测）：候选池×持仓×立场×仓位系数→逐票计划；
     firm 单票 8% 硬顶恒生效，A 股整手折算，不足一手跳过+notes 留痕。产出=作战室"今日交易计划"卡。
+    情景概率输入=scenario_probability_model（DAL-SCEN-PROB，MOD-PLAN-017）：技术面因子×相似日统计
+    出九格（涨/跌/震荡×幅度档）情景概率，计划生成据此定当日立场档（2026-09-20 final3 P5 接线）。
   parent_node: TDM-E-L0
   factor_refs: []
   data_refs: []
-  algo_refs: []
+  algo_refs: [DAL-SCEN-PROB]
   module_ref: src/zephyr/plan_engine/daily_trade_plan.py
   module_id: MOD-PLAN-011
   strategy_mounts: []
@@ -209,7 +211,7 @@ nodes:
   parent_node: TDM-E-L0
   factor_refs: []
   data_refs: []
-  algo_refs: []
+  algo_refs: [DAL-8STATE-FCST]
   module_ref: src/zephyr/plan_engine/tomorrow_boundary_planner.py
   module_id: MOD-PLAN-001
   strategy_mounts: []
@@ -245,7 +247,7 @@ nodes:
   parent_node: TDM-E-L0
   factor_refs: []
   data_refs: [DS-150, DS-082, DS-107]
-  algo_refs: []
+  algo_refs: [DAL-8STATE-FCST]
   module_ref: src/zephyr/plan_engine/intraday_tomorrow_forecast.py
   module_id: MOD-PLAN-025
   strategy_mounts: []
@@ -550,7 +552,7 @@ nodes:
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L2-01
   name_zh: 板块强度综合
-  note_confirmed: 2026-09-13
+  note_confirmed: 2026-09-20  # UP-4 板块分布比较接线（algo_note_zh 同步增补）
   market: cn_a
   flow: entry_flow
   layer: L2
@@ -560,6 +562,9 @@ nodes:
   algo_note_zh: 四路子分（结构强度/动量活跃/多周期动量/资金流，各 0-100）等权 0.25 合成，加市场级调节 ±10 后 clamp 
     [0,100]，总分前 15% 进候选池；实现锚=sector_strength_aggregator（MOD-SIG-142，纯函数零 
     IO，等权先验待 IC 重校）。
+    （2026-09-20 UP-4 接线，final3 P5）：板块分布比较建议通道——六指数（000001/000016/000300/
+    000905/000852/399006）独立分位数回归（PIT，q05/q50/q95），按预测收益-风险比排序出板块优先
+    序列表（DAL-SECTOR-DIST，MOD-PA-023），作本节点强度分的排序叠加通道，不改树枝结构。
   parent_node: TDM-E-L2
   factor_refs: []
   data_refs: [DS-059, DS-170]
@@ -567,7 +572,7 @@ nodes:
   module_id: MOD-SIG-142
 
   red_reason: structural
-  algo_refs: []
+  algo_refs: [DAL-SECTOR-DIST]
   doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_sector_rotation_spec.md#§3.2-板块强度综合"
   activation: postmarket
   invalidation:
@@ -3116,7 +3121,7 @@ nodes:
 
   # ── 风控横切（非第四条流，任何环节可触发）────────────────────────────────
 - node_id: TDM-X-R1
-  note_confirmed: 2026-09-16  # grp5p1s5 出仓复核：机器块搬 yaml，算法口径逐字未变
+  note_confirmed: 2026-09-20  # UP-5 尾部对冲信号接线（algo_note_zh 同步增补）
   name_zh: 应急保命
   market: cn_a
   flow: exit_flow
@@ -3128,6 +3133,10 @@ nodes:
     应急保命横切（kill switch 常驻任何档位不可移除）：组合级回撤 25% 或单日 -6% 触发→无条件全清仓+冻结所有开仓通道，只能 Owner 手动解除。
     AI 熔断只降档不升档。
     这是系统的'拔电源'。
+    （2026-09-20 UP-5 接线，final3 P5）：尾部对冲信号建议通道——组合预测 CVaR(5%) 破风控阈值
+    （默认 -3% 日损，阈值冻结禁挪门柱）→ 生成对冲建议（DAL-TAIL-HEDGE，MOD-PA-024）；信号仅供
+    决策参考非执行指令，喂 R1-03 白名单通道（D107 尾部弹药回测验证前维持休眠 fallback；期权
+    对冲执行另案，数据窗口短）。
   factor_refs: []
   risk_limit_refs: [RLM-KILLSW-003, RLM-KILLSW-005, RLM-KILL-SWITCH-004, 
       RLM-KILL-SWITCH-005]
@@ -3135,6 +3144,7 @@ nodes:
   data_refs: []
   module_ref: src/zephyr/security/access_control/kill_switch.py
   module_id: MOD-INF-018
+  algo_refs: [DAL-TAIL-HEDGE]
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual
@@ -3281,7 +3291,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S1-02
-  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
+  note_confirmed: 2026-09-20  # UP-2 前瞻概率止损接线（algo_note_zh 同步增补）
   name_zh: 止损族判定
   market: cn_a
   flow: exit_flow
@@ -3295,13 +3305,17 @@ nodes:
     止损只升不降（棘轮）。
     （2026-09-18 深度审查修正：ATR 缺失降级锚由入场价改为锚点同构 max(最高收盘,入场价)，消除盈利期止损悬崖（rpt_e03）；note_confirmed:
     2026-09-18）
+    （2026-09-20 UP-2 接线，final3 P5）：前瞻概率止损建议通道——滚动预测 P(跌)≥0.65（阈值冻结
+    禁挪门柱）触发止损评审建议（DAL-FWD-STOP，MOD-PA-020：正常→评审→执行三态，评审是建议
+    非强制平仓，修订权仍在本节点五路止损）；composite_stop_score 版用 q05/q50/q95 三分布位点
+    插值 P(跌)+左尾厚比（≥0.60）作程度灰度。
   parent_node: TDM-X-S1
   factor_refs: []
   risk_limit_refs: [RLM-DRAWDOWN-001]
   data_refs: []
   module_ref: src/zephyr/sell_decision/core/stop_loss_strategy.py
   module_id: MOD-SELL-005
-  algo_refs: [IND-VOL-001]
+  algo_refs: [IND-VOL-001, DAL-FWD-STOP]
   doc_ref: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md#§3.3"
   activation: continuous
   invalidation:
@@ -3676,7 +3690,7 @@ nodes:
   # ── 组合资金流 portfolio_flow（cn_a，v1.1 新增：整装仿真系统核心骨架）────
   # 地图终极定位（Owner 2026-09-05 拍板）：整装仿真策略组合的蓝图——本流=资金切分→组合聚合→归因反馈闭环
 - node_id: TDM-F-C1
-  note_confirmed: 2026-09-18  # WO-2a 危机 floor 扩参（algo_note_zh 已同步修订）
+  note_confirmed: 2026-09-20  # UP-3 前瞻风险预算接线（algo_note_zh 同步增补）
   name_zh: 预算切分
   market: cn_a
   flow: portfolio_flow
@@ -3692,7 +3706,7 @@ nodes:
   decision_question: "总仓位怎么切给各 sleeve（Millennium pod 单体版）；带内实际仓位=状态分布加权插值（灰度非查表）；过渡带降仓×0.5-0.7+尾部预备金
     10-15% 恒定预留"
   algo_note_zh: "预算切分（Millennium pod 模式）：总仓位预算（L1 预算带）按 sleeve 权重切分（PP-001 配置：打板 20%/多因子
-    20%/事件 15%…），各 sleeve 账本独立、风险独立核算、互不挪用。sleeve 间资金流动只通过月度调权（C3-03）。"
+    20%/事件 15%…），各 sleeve 账本独立、风险独立核算、互不挪用。sleeve 间资金流动只通过月度调权（C3-03）。 前瞻风险预算建议通道（2026-09-20 UP-3 接线，final3 P5）：各 sleeve 预测 VaR(5%)/CVaR 作带内再分配（DAL-RISK-BUDGET，MOD-PA-022：inverse_var/risk_parity/sharpe_weight 三模式，权重和=1.0），预算带仍为上限、与 C3-01 历史 Component VaR 双口径并存。"
     # D88（F 流第二轮审计，69 号 §2.32）：预备金管理三件——①存放分层（当日可用逆回购 GC001 一层/
     #   T+1 短债一层，14:00 后利率高 38%）；②书面动用条件≥2 条触发才可动用（组合回撤到线/单 sleeve
     #   冻结/显著折价窗口），动用记交易日志；③回补规则（条件解除后 N 日内回补 10-15% 带内；sleeve 冻结
@@ -3702,6 +3716,7 @@ nodes:
   data_refs: []
   module_ref: src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py
   module_id: MOD-PA-003
+  algo_refs: [DAL-RISK-BUDGET]
   strategy_mounts: []
   materiality: normal
   decay_scan_frequency: semiannual

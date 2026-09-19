@@ -36487,6 +36487,10 @@ creation_tokens:
   token: rule-audit-campaign-w1-f-judgment-book-20260919
   created_by: st-maxexec-20260920
   capability: rule_audit_campaign
+- file: docs/_working/rule_audit_campaign/p2_max_acceptance_record.md
+  token: rule-audit-campaign-p2-max-acceptance-record-20260919
+  created_by: st-maxexec-20260920
+  capability: rule_audit_campaign
 - file: scripts/governance/meta/gate_prerun.py
   token: governance-gate-prerun-gate-prerun-20260918
   created_by: st-ffb19-20260919
@@ -39829,6 +39833,10 @@ creation_tokens:
   capability: final3_campaign
 - file: docs/_working/final3_campaign/p3_x343_deletion_exec_record.md
   token: final3-campaign-p3-x343-deletion-exec-record-20260919
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p5_w47_wiring_record.md
+  token: final3-campaign-p5-w47-wiring-record-20260919
   created_by: st-maxexec-20260920
   capability: final3_campaign
 - file: docs/_working/rule_audit_campaign/a2_handoff/A2_M5_prescriptions.md
