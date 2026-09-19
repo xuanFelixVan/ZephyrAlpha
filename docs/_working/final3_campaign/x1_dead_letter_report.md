@@ -1077,4 +1077,4 @@ ttl: task_bound
 - 处置后队列健康：pending=0，dead=124（1036-912），与 REVIEW 清单数一致
 - 抽样复核：6 条 purge 项快照 vs HEAD 内容相似度 0.98-1.00（快照为旧版、HEAD 为演进版，非丢失）
 - 分类器与执行器：`.runtime/tmp/x1_triage.py`、`.runtime/tmp/x1_purge.py`（进程内一次性工具，不入库）
-
+- postscript（同日 17:20 增补）：本清单分诊截止 17:05；其后新死亡 q-20260919-st-final3-20260919-0013（DOC-REF-BROKEN 门禁拦截，17:13:42 死亡，属主=同会话在途批处理，非本清账动作产物）不入本账，留 dead/ 待属主处置，下一轮分诊吸收。处置后即时健康应以本 postscript 时点 dead=125 为准（124=本账 REVIEW 集合 + 1 新增）。
