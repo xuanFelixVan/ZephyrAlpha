@@ -87,6 +87,38 @@ def _classify_layer_decision(name, result, fail_open_layers):
         return ("pass", False, None)
 
 
+# #353② 治本：fail-open 层集合外部化。出厂默认（零翻转）= {l6_observability,
+# l7_validation}；运行时读 config/llm_security_gateway.yaml 的 fail_open_layers
+# 列表覆盖。配置缺失/字段缺失/类型异常/设施异常一律回退出厂默认（fail-open 语义
+# 保持不变——只有 Owner 显式改配置才翻转）。Owner 手柄语义：从列表删层=该层收紧
+# 为 fail-closed；置空 []=全层 fail-closed（翻转属 Owner 窗口，宪章 §5）。
+_DEFAULT_FAIL_OPEN_LAYERS = frozenset({"l6_observability", "l7_validation"})
+_LSG_GATEWAY_CONFIG_RELPATH = "config/llm_security_gateway.yaml"
+
+
+def _load_fail_open_layers() -> frozenset:
+    """读 fail-open 层集合（配置加载惯例对齐 flags.py：REPO_ROOT+yaml.safe_load+异常回退）。
+
+    返回值只可能是合法 frozenset[str]——任何异常路径都回落 _DEFAULT_FAIL_OPEN_LAYERS，
+    绝不抛出（LSG 构造路径禁因配置设施故障而炸）。
+    """
+    try:
+        from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415 延迟 import：避免模块级耦合（对齐 flags.py）
+
+        path = REPO_ROOT / _LSG_GATEWAY_CONFIG_RELPATH
+        if not path.exists():
+            return _DEFAULT_FAIL_OPEN_LAYERS
+        import yaml  # noqa: PLC0415
+
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        layers = data.get("fail_open_layers")
+        if not isinstance(layers, list):
+            return _DEFAULT_FAIL_OPEN_LAYERS
+        return frozenset(str(item).strip() for item in layers if str(item).strip())
+    except Exception:  # noqa: BLE001 — 配置设施异常回退出厂默认（零翻转兜底）
+        return _DEFAULT_FAIL_OPEN_LAYERS
+
+
 def _maybe_grant_runtime_allowance(final_decision, mode, request_id):
     # 运行时 Gate 放行令牌：仅对“预调用”扫描（输入/全量/Agent 动作）且 ALLOW 时颁发。
     # scan_output（OUTPUT_ONLY）不颁发——输出扫描发生在 LLM 调用之后，不应放行后续裸调。
@@ -108,7 +140,8 @@ class LSGSecurityGateway:
     """LLM Security Gateway — L0-L8 九层纵深防御统一编排入口.
 
     原则：fail-closed —— 任一层 DENY -> 整体 DENY，LSG 不可用 -> 拒绝所有流量.
-    L6/L7 为 pass-through 层（fail-open 降级例外）.
+    L6/L7 为 pass-through 层（fail-open 降级例外；#353② 后该集合可经
+    config/llm_security_gateway.yaml 的 fail_open_layers 由 Owner 收紧，出厂默认不变）.
 
     执行语义：严格顺序链式执行 L0->L1->...->L8，任一非 fail-open 层 DENY/BLOCK
     立即中断后续层的评估。这是纵深防御的核心安全语义，不可并行化。
@@ -120,6 +153,8 @@ class LSGSecurityGateway:
             # 拒绝该请求
     """
 
+    # 出厂默认（类属性兜底：配置设施整体异常时实例属性不覆盖即此值）；#353② 后
+    # 实例化时经 _load_fail_open_layers() 读 config 覆盖（零翻转，见该函数 docstring）。
     FAIL_OPEN_LAYERS = {"l6_observability", "l7_validation"}
 
     def __init__(
@@ -132,6 +167,9 @@ class LSGSecurityGateway:
         hmac_key: bytes | None = None,
         layer_timeout_seconds: float = 10.0,
     ):
+        # #353②：fail-open 层集合外部化——实例属性覆盖类属性默认（self.FAIL_OPEN_LAYERS
+        # 全部消费点经实例查找，语义不变；加载失败回落出厂默认，构造路径零抛出）。
+        self.FAIL_OPEN_LAYERS = _load_fail_open_layers()
         self._layers: dict[str, LLMSecurityProtocol] = {}
         self._layer_timeout_seconds = layer_timeout_seconds
         self._init_layers(

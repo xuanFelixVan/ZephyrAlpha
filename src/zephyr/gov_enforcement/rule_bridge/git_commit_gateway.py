@@ -44,7 +44,7 @@ import time
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -789,6 +789,64 @@ def _decode_gateway_output(raw: bytes) -> str:
         except UnicodeDecodeError:
             continue
     return raw.decode("utf-16", errors="replace")
+
+
+_GIT_C_ESCAPES: Final[dict[str, str]] = {
+    "\\": "\\",
+    '"': '"',
+    "a": "\a",
+    "b": "\b",
+    "f": "\f",
+    "n": "\n",
+    "r": "\r",
+    "t": "\t",
+    "v": "\v",
+}
+
+
+def _unquote_git_path(raw: str) -> str:
+    """解析 git 输出的带引号 C 转义路径（#353③ 治本）。
+
+    git 对含非 ASCII/控制字符/``"``/``\\`` 的路径输出 C 引号形式（quote.c）：
+    core.quotepath 默认 on 时非 ASCII 字节逐字节八进制转义（如 ``\\346\\265\\213``
+    = "测" 的 UTF-8 三字节）；core.quotepath=false 时为 UTF-8 原文加引号（特殊
+    字符仍转义）。无引号输入原样返回。八进制转义按字节收集后整体 UTF-8 解码，
+    解码失败 errors="replace"（清扫路径永不抛异常）。未知转义保真回放（含反斜
+    杠），不猜。
+    """
+    if len(raw) < 2 or not raw.startswith('"') or not raw.endswith('"'):
+        return raw
+    inner = raw[1:-1]
+    out = bytearray()
+    i = 0
+    n = len(inner)
+    try:
+        while i < n:
+            ch = inner[i]
+            if ch == "\\" and i + 1 < n:
+                nxt = inner[i + 1]
+                if nxt in "01234567":
+                    j = i + 1
+                    val = 0
+                    while j < n and j - i < 4 and inner[j] in "01234567":
+                        val = val * 8 + int(inner[j], 8)
+                        j += 1
+                    out.append(val & 0xFF)
+                    i = j
+                    continue
+                mapped = _GIT_C_ESCAPES.get(nxt)
+                if mapped is not None:
+                    out += mapped.encode("utf-8")
+                    i += 2
+                    continue
+                out += inner[i : i + 2].encode("utf-8")
+                i += 2
+                continue
+            out += ch.encode("utf-8")
+            i += 1
+        return bytes(out).decode("utf-8", errors="replace")
+    except Exception:  # noqa: BLE001 — 解析失败回退原文（不劣于修复前）
+        return raw
 
 
 class GitCommitGateway:
@@ -3581,9 +3639,14 @@ class GitCommitGateway:
             return []
         phantoms: list[str] = []
         for line in st.stdout.splitlines():
-            # AD = index:staged-add + worktree:deleted（幻影签名；带引号的路径跳过=fail-open）
-            if len(line) >= 4 and line[0] == "A" and line[1] == "D" and not line.startswith("A\""):
-                rel = line[3:].strip().replace("\\", "/")
+            # AD = index:staged-add + worktree:deleted（幻影签名）。
+            # #353③ 治本：porcelain 对非 ASCII/特殊字符路径输出带引号 C 转义形式
+            # （quotepath 默认 on 时八进制转义；=false 时 UTF-8 原文加引号）。旧实现
+            # `not line.startswith('A"')` 恒假（porcelain pos1 恒为 worktree 态字符），
+            # 带引号路径把「引号+转义原文」直接当 pathspec 传 git reset → 不匹配 →
+            # 中文路径幻影逃逸清扫。统一经 _unquote_git_path 解析。
+            if len(line) >= 4 and line[0] == "A" and line[1] == "D":
+                rel = _unquote_git_path(line[3:]).strip().replace("\\", "/")
                 if rel and os.path.normcase(rel) not in exclude_rel:
                     phantoms.append(rel)
         if not phantoms:

@@ -1,0 +1,25 @@
+# --- 治理锚定 ---
+# blueprint: MOD-LLM_SECURITY | docs/03_modules/_cross_layer/large_language_model_security/blueprint.md | §
+# module_id: MOD-LLM_SECURITY
+# stability: evolving
+# safety_level: L
+# ai_autonomy: human_gated
+# ttl: permanent
+# [DOMAIN] D_SECURITY
+# --- 治理锚定结束 ---
+# ZephyrAlpha — LLM Security Gateway (LSG) 运行时配置
+# 裁定 #353② 治本：fail-open 层集合外部化（Owner 手柄）。
+# 出厂默认零翻转 = [l6_observability, l7_validation]；任何加载异常代码侧回落同值。
+# 手柄语义（翻转属 Owner 窗口，宪章 §5 human_gate）：
+#   - 从列表删除某层 = 该层收紧为 fail-closed（DENY/BLOCK/超时/异常即拒）；
+#   - 置空 [] = 全层 fail-closed（LSG 严格 fail-closed 模式）。
+# 创建登记：capability_canonical_file_registry.yaml creation_tokens
+#   token=lsg-gateway-config-20260919 created_by=st-final3-20260919
+
+module_id: MOD-LLM_SECURITY
+config_version: "1.0.0"
+
+# fail-open 降级例外层（缺层/超时/异常时放行不阻断链）。
+fail_open_layers:
+  - l6_observability
+  - l7_validation
