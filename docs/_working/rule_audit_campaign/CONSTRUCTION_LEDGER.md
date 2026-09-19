@@ -3387,6 +3387,29 @@ Max 判归（69 条待裁）、以及一处测量法本身的问题（全流通�
 逐件 sha256 清单（`sha256sum -c` 零失败）。`.runtime/tmp` 有 24h TTL ⇒ 冷库是唯一长命载体，
 本台账只引路径与 sha256，不复制正文（D-16 口径）。
 
+
+### 16.7 深度轮循环检查结果与红的逐件归因（08:2x 实测）
+`pytest tests/io tests/shared tests/zephyr/data tests/infrastructure tests/backtest/test_n_trial_ledger.py
+tests/governance/d3_metadata tests/scripts`
+⇒ **7 failed / 5448 passed / 44 skipped / 30 xfailed / 3 xpassed，用时 24m27s**
+（日志 `.runtime/tmp/logs/deep_r1.log`；广度轮 `tests/io+shared+governance` 同刻在跑到 57%，未收口）。
+
+**七件红全部逐件归因，无一件由本夜班引入**：
+
+| 红件 | 归因 | 依据 |
+|---|---|---|
+| `test_index_constituent_scd2.py` ×4（闭包行/同日重跑/空快照/闭包查询失败保留新行） | 他班存量 | C-36 车道（`st-sentpoll`）在自己的目录级失败清单里**独立列出同样 4 件**，且与本批三件无导入交集 |
+| `test_prevention_bells_20260914.py::test_warn_if_table_missing_alerts_once` | 他班存量 | 同上（同名清单项） |
+| `test_silent_latch_before_delivery.py::test_patched_files_keep_line_endings[data/source_health_check.py]` | 行尾面存量（与 R-A45 同族，非本夜引入） | 同上；本夜改的是写侧 newline，该测试靶件 `data/source_health_check.py` 未在本夜任何批次里 |
+| `test_generate_resource_morning_report / profile_registry::test_parse_schedule_slots_21_slots_cron_verbatim` | ★ **由共享工作区在途脏件引起**：`config/resource_profile_registry.yaml` 盘上比 HEAD **多 109 行、少 22 行**（1872 行 vs HEAD 1785，mtime 05:40），即"比 HEAD 更前进的未提交扩张" | 方向判据：`Δ(盘−HEAD)` 为**正**＝他人正在写的成果（按 §3.4 不碰、不回退、不 add）；`eolguard` 车道 07:17 独立报过同一条红并归因于此 |
+
+⇒ 三条纪律这次都起了作用：**"红先归因再处置"**、**"Δ 要分方向"**（正=在途前进，别当回退炸弹清）、
+**"并行跑的两轮不能互为证据"**（广度轮仍在跑，收口与否单列）。
+⇒ 另记一条对排班有用的量化：`tests/` 树下"三栏可机械填充（有 `# [A_test]` 值且就缺这三栏）"的候选
+只剩 **233 件**（本夜已吃 15 件 ⇒ 6553e7da4b），而 `verify_header_completeness` 总盘是 **4226 件**
+⇒ **余下 4,211 件缺的是需要语义判断的栏目（缺 MODULE/BLUEPRINT 或根本没有 A_test 锚），T0 机械波吃不掉**；
+本夜另 5 件因"无 `# [MODULE]` 锚"被跳过，遵 WP14 前车道的"只报不改"判断，未自行从路径推点分名。
+
 ### 16.6 本台账自己的引用面审计（自审，不是查别人）
 把全文件里的 10 位十六进制串全抓出来对 git 核：**61 个引用 → 59 个可解析对象 → 52 个是 HEAD 祖先**。
 差的 9 个逐个查：4 个是 **blob 摘要**（抓取用的是"连续 10 位十六进制"这种宽网，
