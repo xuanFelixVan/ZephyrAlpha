@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/registry_governance.py
 title: "注册表治理"
 doc_type: blueprint
 status: Draft
-version: "0.2.10"
+version: "0.2.11"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: internal
@@ -58,7 +58,7 @@ ssot_claims:
     scope: global
 responsibility_domain: 
 build_status: generated
-design_maturity: production
+design_maturity: design
 ---
 
 <!--
@@ -247,8 +247,8 @@ END_REQUIRED_SECTIONS
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-037` 的 26 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-037` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-037` 的 39 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-037` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -259,7 +259,7 @@ END_REQUIRED_SECTIONS
 | module_id | MOD-INF-037 | MOD-INF-037 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 26 文件 | 20 文件（§0.1） | ❌ |
+| file_count | 39 文件 | 20 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1104,10 +1104,17 @@ class OverlapResult:
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status∈generated/testing/stable）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 1.1 测试文件
+### 1.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/governance/standards_governance/rule_replay.py` | ✅ 已实现 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/governance/test_rule_replay.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_registry_governance_infrastructure.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_registry_governance_root.py` | ✅ 已实现 | |
 
