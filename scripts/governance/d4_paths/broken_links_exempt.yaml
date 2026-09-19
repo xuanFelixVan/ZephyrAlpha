@@ -1,0 +1,33 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-005 | docs/03_modules/_cross_layer/governance-automation/blueprint.md | §
+# module_id: MOD-INF-005
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# [DOMAIN] D_GOV_SCRIPTS
+# --- 治理锚定结束 ---
+# 断链检测器豁免面登记（归档/历史面）
+# 依据：裁定#360(a)（2026-09-19，真源=docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+#       §四；登记册=ruling_registry.yaml '裁定#360'）：归档/审计轨迹面「改归=改历史，禁修正文」，
+#       其断链不修原文，登记豁免。落点=D4 路径检测器 exempt 配置（非 rules/）。
+# 消费方：scripts/governance/d5_architecture/validators/validate_cross_references.py
+#         DIM-10 断裂路径引用检测（file:/// 绝对链纳入校验后 legacy v1 报 4 条已知断链，
+#         属历史文本禁修正面 → 豁免）。
+# 匹配语义（_is_xref_exempt_face，按仓库相对 POSIX 路径）：
+#   1. 无 "/" 且无通配符        → 按 basename 精确匹配（任意目录下同名文件）
+#   2. 含 "/" 无通配符          → 仓库相对路径前缀匹配（路径等于该前缀或在其子目录下）
+#   3. "**/name/**" 形态        → 部件级匹配：路径任一层级部件等于 name（归档区任意深度）
+#   4. 含 "*" 或 "?"            → fnmatch 通配匹配仓库相对路径
+# 红证基线（2026-09-19 W1-C1 实测）：豁免前 validate_cross_references --warn-only 对
+#   agent_constitution_legacy_v1.md 报 4 条 file:/// 断链 warning；豁免后归零；
+#   非豁免面（如 sop/governance_sop/alignment_checklist.md）断链仍照报。
+
+exempt_faces:
+  # legacy v1 宪法归档（docs/01_policies_and_standards/sop/governance_sop/，历史文本禁修正）
+  - agent_constitution_legacy_v1.md
+  # 历史战报（审计轨迹面，data/reports/ 下两份 DM 报告目录）
+  - data/reports/dm018/
+  - data/reports/dm020/
+  # 全部归档目录（任意深度，如 docs/.../_archive/、scripts/governance/_archive/）
+  - "**/_archive/**"

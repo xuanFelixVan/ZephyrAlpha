@@ -59,6 +59,7 @@ warn_only: false
 """
 
 import argparse
+import fnmatch
 import re
 import sys
 from pathlib import Path
@@ -589,6 +590,52 @@ _ANCHOR_PATTERN = re.compile(
     r"\[([^\]]*)\]\(([^)]+)\)",
 )
 
+# 裁定#360(a)（2026-09-19）：归档/历史面免断链豁免——改归=改历史禁修正文，
+# 豁免面登记在 D4 路径检测器 exempt 配置（非 rules/）：
+# scripts/governance/d4_paths/broken_links_exempt.yaml（匹配语义见该文件头注释）。
+_XREF_EXEMPT_YAML = (
+    REPO_ROOT / "scripts" / "governance" / "d4_paths" / "broken_links_exempt.yaml"
+)
+
+
+def _load_xref_exempt_faces() -> list[str]:
+    """加载断链豁免面；配置缺失/损坏时 fail-open 返回空表（全部照报，不扩大豁免）。"""
+    try:
+        data = load_yaml(_XREF_EXEMPT_YAML)
+    except Exception:  # noqa: BLE001 — 配置不可达时按无豁免处理，绝不静默扩大豁免面
+        _warn(f"DIM-10 豁免配置加载失败（按无豁免处理）: {_XREF_EXEMPT_YAML.name}")
+        return []
+    if not isinstance(data, dict):
+        return []
+    faces = data.get("exempt_faces") or []
+    return [str(x).strip() for x in faces if str(x).strip()]
+
+
+def _is_xref_exempt_face(repo_rel_posix: str, faces: list[str]) -> bool:
+    """判定仓库相对路径是否命中豁免面（语义见 broken_links_exempt.yaml 头注释）。"""
+    parts = repo_rel_posix.split("/")
+    for face in faces:
+        if face.startswith("**/"):
+            # "**/name/**"：部件级匹配（归档区任意深度）
+            dir_name = face.removeprefix("**/").removesuffix("/**").strip("/")
+            if dir_name and dir_name in parts:
+                return True
+            continue
+        if "*" in face or "?" in face:
+            if fnmatch.fnmatch(repo_rel_posix, face):
+                return True
+            continue
+        if "/" not in face:
+            # basename 精确匹配
+            if parts[-1] == face:
+                return True
+            continue
+        # 仓库相对路径前缀匹配
+        prefix = face.rstrip("/")
+        if repo_rel_posix == prefix or repo_rel_posix.startswith(prefix + "/"):
+            return True
+    return False
+
 
 def _resolve_ref(ref_path: str, source_file: Path) -> Path | None:
     """将引用路径解析为绝对路径
@@ -624,9 +671,13 @@ def check_dim10_broken_path_refs() -> None:
     """
     scan_files = iter_files(GOV_DOCS_DIR, {".md"}, EXCLUDE_DIRS)
 
+    exempt_faces = _load_xref_exempt_faces()
     seen: set[tuple[str, str]] = set()
 
     for f in scan_files:
+        # 裁定#360(a)：归档/历史面豁免（改归=改历史禁修正文）
+        if _is_xref_exempt_face(f.relative_to(REPO_ROOT).as_posix(), exempt_faces):
+            continue
         try:
             content = f.read_text(encoding="utf-8")
         except Exception:  # noqa: BLE001 — 单个 Markdown 读取失败（权限/非UTF-8编码/IO）时跳过该文件继续 DIM-10 断裂路径检测，尽力而为语义
