@@ -4420,3 +4420,255 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: ''
+- ruling_id: '裁定#340'
+  title: 'D-10 更新：T0 机械波可用卡 6→18/19 张'
+  date: '2026-09-19'
+  category: '门禁'
+  status: 'active'
+  summary: >-
+    夜班把可证红卡从 6 张扩到 18/19（真源=docs/_working/2026-09-19-overnight-scope-lock-report.md 二节表）。T0 机械波可用卡以该表为准，解除原 6 台限制；开波前置=口径批（裁定#345/#350/#352）先落，否则弱模型在假信号上空转。判决书=docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#341'
+  title: '55 台 pre-commit 门禁零执行权→E 上交'
+  date: '2026-09-19'
+  category: 'Owner 门位'
+  status: 'active'
+  summary: >-
+    亲验：gate_registry 169=pre-commit55+commit-gate113+manual1；in_process 113 与 commit-gate 全等、与 pre-commit 交集 0；git_commit_gateway.py:3115/3117 与 commit_queue_landing.py:38 均 --no-verify；全仓无 pre-commit run 调用点。上交 Owner：建议方案二=网关落地前 staged 面跑 pre-commit run（吞吐成本限改动面），备选方案三=并入裁定#354 周期审计波（55 台夜间全树审计零提交延迟）；两案均应给 gate_registry 加 enforcement_channel 字段防再生。不裁后果：守规会话永久免检 55 台，受保护路径第二层（check_protected_paths --staged）在网关通道不执行。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#342'
+  title: '3 条门禁 entry 补 --ci→E 上交（flag 出厂翻转门位）'
+  date: '2026-09-19'
+  category: 'Owner 门位'
+  status: 'active'
+  summary: >-
+    亲验：GATE-SRC-NO-DATA/GATE-VMS-SSOT/GATE-BP-PLACE 三 entry 均无 --ci；check_src_no_data 尾部 if args.ci 才 EXIT_FINDINGS 否则 EXIT_PASS＝带违规仍放行。上交 Owner 批准三条各补 --ci（一行注册表数据×3）；随批两处 B 修：前缀真源扩 src/zephyr/data/（现只拦 src/data/ 逃逸宣称范围）、契约缺失 FORBIDDEN_PREFIXES 空集静默全放改 fail-closed。不批后果：三台继续只打印不拦。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#343'
+  title: '删除打包上交+『唯一真岛』翻案挂起'
+  date: '2026-09-19'
+  category: 'Owner 门位'
+  status: 'active'
+  summary: >-
+    一：.tmp 现值 148 件/约86MB（含 catalogs 下隐藏点文件 .capability_*_registry.yaml_*.tmp CAS 残留）+0 字节壳 tests/signal_ashare/test_sector_strength_aggregator.py→上交 Owner 批准删除，批后 Flash 先 dry-run 出精确清单（排除 .worktrees 他人工棚）再执行。二：cohort_daily_ledger.py『真岛』定性推翻：WORK-ORDER-5 三笔 commit 在案（1603be4cd4 立项/fac109d7a2 数据线对账/0a276ca249 接口镜像）＝在册立项待接线，F 挂起挂 WORK-ORDER-5 接线里程碑，T-10 撤案禁止删除，废弃须先走正式退役裁定。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#344'
+  title: 'N-16 白名单 skip_dirs_docs 加 algo_flow→B（D-14 后落地）'
+  date: '2026-09-19'
+  category: 'Git 治理'
+  status: 'active'
+  summary: >-
+    亲验：skip_dirs_docs 真源在 rules/trae_028_doc_structure_naming.yaml:1165 n16_config（动态加载、YAML 即生效）。真源在 rules/→受 D-14 冻结约束，落地排 WP9 判案后与裁定#346 批同批。语义=扫描面修正非豁免实质违规（algo_flow 镜像卡 doc_type=architecture_view 不在 trae_047 B_yaml 适用面，与#349 互为支撑）。预期 C-04 涉事 636→约27。夜班标 Owner 档不采：白名单扩一项不属宪法五节四类门位且证据 100% 机械（606 件全在名为 algo_flow 的目录）。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#345'
+  title: '口径双裁定：--tracked-only 四卡+TEMP_FILE_PATTERNS 补 4 类'
+  date: '2026-09-19'
+  category: '门禁'
+  status: 'active'
+  summary: >-
+    (a) C-02/C-07/C-08/C-09a 执行器加 opt-in --tracked-only 旗标不翻默认；T0 卡与审计工作流 v4 引用统一带口径。依据：.gitignore:262 根通配白名单模型→扫得到提交不了面结构性恒红（C-02 18/C-08 9 全在 ignore 区，跟踪面债务 0）。(b) TEMP_FILE_PATTERNS 补 tmp 后缀/_probe_ 前缀/commit_msg 前缀/pytest_ 前缀四类，红数以 tracked 口径计，不采全盘面 810+/3014 为验收基线。净零申报：检测器参数面无新门禁。红证：补模式后对已知 .tmp 样本红、撤样绿。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#346'
+  title: 'rules/ 面三批处置框架（29 重指/5 归档/7 真删）'
+  date: '2026-09-19'
+  category: '规则治理'
+  status: 'active'
+  summary: >-
+    29 条重指（16 份 42+/42-，a2_handoff 成品 git apply --check 复验 PASS）→B，落地=WP9 判案后（D-14 不重开），ISSUE_ID 新立本战役议题禁借无关 ID。5 条 _archive 当现役→F 挂起，WP8 v2 出 salvage 证据后 WP9 逐条判（ide_health 族有 2026-08-28 清除记录预判 D3）。7 条真删无后继（f57016319e 等退库 commit 亲验在案）→预判 D3 同流程。流程缺陷上报 Owner：工具退库/归档无 grep rules/ 引用面义务→条文悬空数月无人知；治本=退役 SOP 补一步（并入既有步骤非新规则）。闸0/1 口径更正：M1=41 条/19 份、M2 悬空配对仅 1 条（TRAE-079 见#347）。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#347'
+  title: 'TRAE-079 悬空 gate→B 身份修正（推翻 D4 预判）'
+  date: '2026-09-19'
+  category: '规则治理'
+  status: 'active'
+  summary: >-
+    亲验：COMMIT-CRITICAL-SECTION-LOCK 两册零命中、全仓仅条文自身——『从未存在』仅在册名层面成立；但 git_commit_gateway.py:2360-2366 _GlobalCommitLock 临界区机制实存（含 _audit_commit_lock_fallback 审计兜底，日志自标 TRAE-079）→机制层面 D4 不适用。处方（闸0 先建映射不改规则）：优先把现存锁机制按实名登记进 gate_registry（source: commit-gate）；若 schema 不适配锁型机制则改 trae_079 executors 指向实存机制名保留 code_embedded。流程缺陷上报保留：册外身份游离数月无人发现＝登记环节不校验强制体存在性又一实证。锁 fail-open 姿态争议归#353。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#348'
+  title: '规则面风险档维持 D-7 两轴派生，TRAE 归域问题消解'
+  date: '2026-09-19'
+  category: '规则治理'
+  status: 'active'
+  summary: >-
+    亲验：risk_tier_registry 真键 domain_tiers=18 域、无 TRAE、无 entries 键（按 entries 取得 0 属实）。裁定：不给 86 份补 domain、不加 TRAE 域条目——案卷生成器直接读 safety_level+ai_autonomy 两轴派生（D-7）；案卷口径 bug（entries→domain_tiers）随 v2 采集器修正；3 条 None-domain 不阻断。验收红证：v2 重跑后退化方向可判分母从 0 变 >0。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#349'
+  title: 'ALGO_FLOW 分型豁免：2993 件无补栏义务+227 件豁免随链传播'
+  date: '2026-09-19'
+  category: '规则治理'
+  status: 'active'
+  summary: >-
+    亲验：trae_047:44/:140 B_yaml 适用面=gate/registry/contract(yaml)/config/data；抽卡 _domain_alt_data/algo_flow/_extensions__init__.yaml 为 doc_type:architecture_view 且自带 source_of_truth——卡不在规则自陈适用面内。(a) 2993 件 5 栏无补栏义务→卡判据按 rule 分型适用面过滤（C-01/C-04 套栏外溢修正），不造 join 生成器（为非义务造工具=负资产），T-3 撤案。(b) 227 件上游为 gov_eng_002_exempt 豁免的 __init__.py→豁免随链传播继承义务失效，改卡判据不改 227 个文件，T-4 撤案。两判合计消解 C-01 77.6% 假红主体；不修 trae_047 豁免面。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#350'
+  title: '闸2 词表判据收窄（M5 处方照准）'
+  date: '2026-09-19'
+  category: '规则治理'
+  status: 'active'
+  summary: >-
+    判据改法：只在 conditions[].check|pass|fail、actions[].step(type=mandatory|forbidden)、invariants[].description 位匹配情态词；同句含禁止/不得/MUST NOT/名词后缀（产出/输出/记录）豁免——消解 13 处误报（名词位/防御条款自引用/术语定义位，夜班实测 34 命中真规范位 21）。工具侧（词表判据）不属 rules/ 可立即施工；21 处真规范位逐条二值化处方（A2_M5_prescriptions.md）属 rules/ 面与#346 批同落（WP9 后）。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#351'
+  title: '门禁装载器 fail-open→fail-closed 加牙'
+  date: '2026-09-19'
+  category: '门禁'
+  status: 'active'
+  summary: >-
+    亲验：gate_auto_registrar.py docstring 自述失败不抛异常（fail-open），import/factory/register 失败仅 failures+logger.warning，装载数不报名册数无报警。处方：改 fail-closed（任一门装载失败→提交阻断报 gate_id+错误）+装载数不等于名册数硬告警并入 fail_open_register 台账族；对照组=commit_gate_registry.check_all 单门异常即 fail-closed。授权依据=Owner 2026-09-18 一律取治本概括授权+D-2/D-18 同族先例；部署前置=113 台全量 import 健康预检；红证双向：断一门 import 必拦/健康放行；逃生=emergency_commit（宪法 9.8）。可用性代价已在判决书声明否决路径。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#352'
+  title: 'check_encoding 不可解码即 FAIL 加牙（存量实测 0）'
+  date: '2026-09-19'
+  category: '门禁'
+  status: 'active'
+  summary: >-
+    亲验：check_encoding.py 五处 except UnicodeDecodeError 吞掉；全仓 tracked 面 .py/.md/.yaml 不可 UTF-8 解码存量=0（本班全量扫描）→夜班『收紧会点亮存量红属门位』前提不成立，无剩余 Owner 权衡。处方：tracked 面源文件不可解码即 FAIL（口径与#345a 一致），不翻既有 mojibake 检查行为。红证双向：造 GBK 样本红/撤样绿。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#353'
+  title: '网关兜底三拆：SSoT 兜底+全局锁上交；LSG 配置化+引号解析 B 修'
+  date: '2026-09-19'
+  category: 'Owner 门位'
+  status: 'active'
+  summary: >-
+    亲验：gateway.py:1717-1748 capability_lookup 不可用 return(True)；:2362 _GlobalCommitLock 不可用 fail-open 继续（trae_079 bypass_allowed:true+落审计明文承载）；:3584 幻影签名带引号路径跳过（中文路径 git 必加引号→逃逸）；LSG gateway.py:123 FAIL_OPEN_LAYERS=l6/l7 硬编码无配置。一：SSoT 兜底+全局锁 fail-open→E 上交：门禁自身 high 档应然 fail-closed 与 trae_079 条文明文冲突＝闸3 多承载冲突须 Owner 定夺（建议 fail-closed+emergency 通道；不裁后果=坏场景静默放行，锁失效正是回退炸弹机理一环）；Owner 裁后同批改 trae_079（WP9 后 rules 批）。二：LSG FAIL_OPEN_LAYERS 抽配置默认值维持现状（零翻转）给 Owner 可关手柄。三：解析 git 带引号形式（含转义还原）中文路径幻影不再逃逸，红证=造中文路径 AD 幻影修前漏/修后红。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#354'
+  title: '观测面 9 台加 full-tree 审计模式（提交面维持 own-scope）'
+  date: '2026-09-19'
+  category: '门禁'
+  status: 'active'
+  summary: >-
+    亲验（抽查 check_src_no_data）：get_staged_files() 无 staged 即 PASS＝staged-only 属实；但提交面 own-scope 是宪法 3.1 立法设计（防连坐）不是缺陷——失明仅在『无周期全树审计面』意义上成立。处方：9 台加 --full-tree 审计模式+周期任务（并入既有审计任务族；审计扫描非 reconciler 不违 9.3 事件触发律）。该基建即#341 方案三载体：Owner 若选三则 55 台 pre-commit 门禁同车夜间运行。净零申报：检测器参数面无新册条目。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#355'
+  title: 'generate_missing_index_md worktree 恒绿→B 修（最高优先机械件）'
+  date: '2026-09-19'
+  category: '尺子'
+  status: 'active'
+  summary: >-
+    亲验：:294 any(p.startswith('.') for p in dirpath.parts)——parts 是绝对路径分段，.worktrees/ 下检出时每个目录 parts 都含 .worktrees 段→全 skip→『扫描 0 个目录』假绿；提交队列 serializer 正跑此通道＝假验收源头。处方：判隐藏目录改用相对扫描根 parts（dirpath.relative_to(root_dir).parts）。红证：worktree 内跑修前 0/修后>0（夜班已给主区 1002 vs 工棚 0 双向，施工复跑）。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#356'
+  title: '缺 index.md 口径定案：永久区真欠账 233，生成器施工'
+  date: '2026-09-19'
+  category: '架构治理'
+  status: 'active'
+  summary: >-
+    本班复算（tracked 且内容件大于等于 2 且无 index.md）：总数 346；docs/_working 临时区 110 豁免（TTL 区无索引义务）；永久区 236 减 _archive 3＝真欠账 233（03_modules 215+01 11+02 7）。裁定：一：三口径并存合法但引用必带口径（宪法 4.3）；二：施工对象=233 由 generate_missing_index_md.py 批量产（9.5 禁手工维护），先修#355，按域分批一批一提交；三：index.md 属派生导航件不占 4.1 规范预算；工具口径 1002 不作施工依据。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#357'
+  title: 'check_index_integrity 判据重造+validate_cross_references 绝对针纳入'
+  date: '2026-09-19'
+  category: '尺子'
+  status: 'active'
+  summary: >-
+    夜验铁证：A7 改 35 行真内容门计数 517→517 纹丝不动＝不能当验收证据；get_sibling_files 只收 md/yaml→指 .py/.json 链接永远红；递归 basename 命中→跨目录正确链接全误报、_archive 同名真断链漏报。处方：一：链接解析改相对本文件路径；二：sibling 集扩 .py/.json；三：frontmatter/版本史正文排除出索引清单判定。同族 validate_cross_references.py:642 对 file:/// 直接 continue 一并修（绝对针纳入校验，锚点剥除沿用 7877077bf7 语义）。红证双向：跨目录正确链接不再红/真断链仍红/同改动必须引起计数变化否则重造失败。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#358'
+  title: 'blueprint_registry SSoT 行维持 D-11 既裁按 WP11 处方执行'
+  date: '2026-09-19'
+  category: '架构治理'
+  status: 'active'
+  summary: >-
+    无新决策：D-11 已裁故意退库禁恢复。WP11 五点处方全套执行：docs/03_modules/index.md:91 改『派生件+生成器』表述去链接；_registry/catalogs/index.md:49 删外部登记表行；architecture_model/layers/schema.yaml 等四处 SSoT 表述改 frontmatter→生成器链；不动历史 changelog 行；收尾删 audit_prompts 过期括号。capability_canonical_file_registry.yaml 热件走 CAS 单独批。验收=git grep blueprint_registry 剩余命中全为派生件/生成器语义。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#359'
+  title: 'WP17 对抗校验器恒真修复维持立项排本班后第一优先'
+  date: '2026-09-19'
+  category: '测试有效性'
+  status: 'active'
+  summary: >-
+    D-18 已立法（恒真＝第三种假绿）不重开；blocked_rate 恒 1.0 零区分度，必填参数缺失 ValidationError 被宽 except 吞后按 fail-closed 计入 BLOCKED。修法照主方案 WP17：入参/工具异常与攻击拦下分桶（前者 error 桶绝不计入 blocked）+区分度自检（应拦场景与应放行场景结果必须不同）；禁止补传参数绕过。Max 亲自处方+验收，Flash 施工。红证双向：修前恒 1.0；修后同组场景同时出现 blocked 与 not-blocked。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
+- ruling_id: '裁定#360'
+  title: '归档面免断链豁免+施工 SOP 提交入口写法定案'
+  date: '2026-09-19'
+  category: 'Git 治理'
+  status: 'active'
+  summary: >-
+    亲验：construction_workflow_policy.md L29 scripts/git_commit_gateway.py 与 L610 python scripts/git_commit_gateway.py 该 CLI 路径全史从未存在；legacy v1 宪法与 data/reports/dm018/dm020 属归档/审计轨迹面。一：agent_constitution_legacy_v1.md、data/reports/dm018/dm020、_archive 全目录登记进断链检测器豁免面（改归=改历史禁修正文），落点=D4 路径检测器 exempt 配置非 rules/。二：SOP L29/L610 统一改 python scripts/git_commit.py（CLI 正门，宪法 2.1/7 钦定）；模块引用保持 src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（L32 已正确）。SOP 属可写路径 Flash 施工。
+  affected_files:
+  - docs/_working/rule_audit_campaign/2026-09-19-max-dayshift-rulings.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: ''
