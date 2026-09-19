@@ -1,0 +1,412 @@
+run_stamp_utc: '2026-09-19T09:23:06Z'
+git_head: 8b056db4963d7a149676f773782d8bcb390c9572
+session: st-final3-20260919
+generator: .runtime/tmp/generate_dossiers_v2.py + dossier_v2_core.py（运行时临时件，不入库）
+判据版本: 'WP8-v2 = D-6 收窄（主方案 §3 WP8 原文照抄）+ #348 两轴 + #349 分型适用面 + #350 词表三处规范位'
+判据原文_照抄:
+  D6_闸1_悬空强制: 条文明确声称由某强制体守护（出现 paired_gate_id、"由 X 门禁强制"、executors 非空）且该强制体四类皆不属（仓内实存文件/模块、登记过的外部工具、登记过的人工流程、MCP
+    服务名）。方法论条款（SOP/policy 里给人读的流程）不声称强制体的，不计入悬空。
+  D6_闸3_多真源: 同一个取值集合（豁免名单 / 阈值 / 枚举合法值 / 路径清单 / 编号段）在 ≥2 处独立承载且改一处必须同步另一处。同一个名字被规则、代码、文档分别提到属正常引用关系，不计入。判据落地：只对"清单型/数值型"内容做承载面计数，标识符字面命中不算。
+  R348_两轴: 不给 86 份补 domain、不加 TRAE 域条目——按 D-7，案卷生成器直接读 safety_level+ai_autonomy 两轴派生风险档；案卷口径 bug（entries→domain_tiers）随
+    v2 采集器修正。
+  R349_分型: (a) 卡判据按 rule 分型适用面过滤（C-01/C-04 套栏外溢修正）；(b) 豁免随链传播，继承义务对豁免上游失效。trae_047:44/:140 B_yaml 适用面=gate,
+    registry, contract(yaml), config, data；doc_type=architecture_view 不套 B_yaml 栏。
+  R350_词表位: 只在 conditions[].check|pass|fail、actions[].step(type=mandatory|forbidden)、invariants[].description
+    位匹配情态词；同句含"禁止/不得/MUST NOT/名词后缀（产出/输出/记录）"豁免。
+案卷总数: 1404
+案卷总数_by_kind:
+  yaml_section: 1022
+  yaml_no_sections: 3
+  md_clause: 379
+闸0_身份对不上数: 804
+闸0_成因A_有名键但对不上: 455
+闸0_成因B_无身份键: 669
+闸1_悬空强制数_v2: 142
+闸1_声称强制体条数: 958
+闸1_无声称方法论条数_不计悬空: 446
+闸2_不可二值判定数_v2: 9
+闸3_多真源数_v2: 5
+闸3_三处齐备数_v2: 1
+闸4_无红证数: 475
+闸4_实测红证数: 51
+扫描面不符数: 15
+退化方向不符数: 138
+退化方向可判分母_v2: 1025
+两轴未登记数: 379
+分型豁免_349_数: 0
+v1_基线_对照:
+  来源: D:\ZephyrAlpha\.runtime\sessions\st-ruledisp-20260918\staging\dossiers_summary.json
+  案卷总数: 1404
+  闸1_悬空强制数: 962
+  闸2_不可二值判定数: 32
+  闸3_多真源数: 948
+  退化方向可判分母: 0
+  案卷总数_by_kind:
+    yaml_section: 1022
+    yaml_no_sections: 3
+    md_clause: 379
+  note: v1 两数（962/948）经 D-6 判为作废数，此处仅作收窄前后对照，不得用于判案
+验收_判定:
+  闸1_低于_v1_962: true
+  闸3_低于_v1_948: true
+  退化方向可判分母大于0: true
+红证_1_TRAE079_悬空在新判据仍命中:
+  声称: paired_gate_id=COMMIT-CRITICAL-SECTION-LOCK（两册零命中）
+  命中案卷数: 1
+  案卷样例:
+  - docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml#commit_critical_section_serialization
+  悬空强制体:
+  - COMMIT-CRITICAL-SECTION-LOCK
+  - git_commit_gateway_critical_section_guard
+  - session_worktree_escape_hatch_demotion
+  结论: 新判据（先判声称→再判四类）下仍全部命中
+红证_2_正常引用不再误报:
+  样本案卷: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#atomic_write
+  v1_判定: 闸3 多真源=真（标识符反查命中规则/代码/文档）
+  v2_判定: 闸3 ≤1 取值承载面 → 不计
+  v1_案卷闸3原文摘录: "- 反查标识: ['CREATE-GUARD', 'RULE-FIVE', 'RULE-FOUR', 'RULE-FOURTEEN', 'RULE-ONE', 'RULE-THREE',\
+    \ 'RULE-ZERO', 'TRAE-001', '创建入口', '删除审判', '原子写入', '文件锁', '根目录清爽', '零残留']\n  - rules_yaml: 38 处 →\
+    \ ['RULE-FIVE@docs/01_policies_and_standards/rules/trae_066_rule_seventeen_runcommand_purity.yaml:111',\
+    \ 'RULE-FOUR@docs/01_policies_and_standards/rules/trae_015_arch_path_registration.yaml:153', 'RULE-FOUR@docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml:27',\
+    \ 'RULE-FOUR@docs/01_policies_and_standards/rules/trae_056_module_creation_workflow.yaml:369']\n \
+    \ - code_src: 33 处 → ['RULE-FIVE@src/zephyr/security/adversarial_validation/cleanup.py:8', 'RULE-FOUR@src/zephyr/security/adversarial_validation/_constitution_registry.yaml:162',\
+    \ 'RULE-ONE@src/zephyr/factor/offline_store.py:276', 'RU"
+  v2_案卷闸3原文摘录: '- 判据: 同一个取值集合（豁免名单 / 阈值 / 枚举合法值 / 路径清单 / 编号段）在 ≥2 处独立承载且改一处必须同步另一处。同一个名字被规则、代码、文档分别提到属正常引用关系，不计入。判据落地：只对"清单型/数值型"内容做承载面计数，标识符字面命中不算。
+
+    - 本节取值集合: |V|=6（入索引 6，超高频通用词已剔）
+
+    - 独立承载面: [] → ≤1（含正常引用关系，不计）'
+收窄差异样例_20:
+- dossier_id: docs/01_policies_and_standards/rules/trae_021_behavior_other_prohibition.yaml#abs_25
+  kind: yaml_section
+  v1:
+    g1_fail: true
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: true
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 悬空声称在新判据下仍命中（TRAE-079 红证样本，未收窄掉真悬空）
+- dossier_id: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#atomic_write
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=6,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#change_history
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=18,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#create_and_register
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=10,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#db_write_protocol
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=15,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#delete_confirmation
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=10,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#file_lock_protocol
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=9,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#root_directory_cleanliness
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=51,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#ttl_design
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=9,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml#zero_residue
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=10,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_002_anti_orphan_search_first.yaml#anti_orphan
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=7,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_002_anti_orphan_search_first.yaml#change_history
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=5,独立承载面=['规则YAML'])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/rules/trae_002_anti_orphan_search_first.yaml#search_first
+  kind: yaml_section
+  v1:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸3 收窄：v1=标识符字面命中≥2承载面；v2=取值集合承载面判定(V=11,独立承载面=[])→正常引用不计
+- dossier_id: docs/01_policies_and_standards/policies/branch_strategy_policy.md#1.2 本策略的解决@L61
+  kind: md_clause
+  v1:
+    g1_fail: true
+    g2_fail: false
+    g3_multi: false
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸1 收窄：条文无强制体声称（方法论条款）→ D-6 规定不计入悬空
+- dossier_id: docs/01_policies_and_standards/policies/branch_strategy_policy.md#2.2 镜像分支：master@L80
+  kind: md_clause
+  v1:
+    g1_fail: true
+    g2_fail: false
+    g3_multi: false
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸1 收窄：条文无强制体声称（方法论条款）→ D-6 规定不计入悬空
+- dossier_id: docs/01_policies_and_standards/policies/branch_strategy_policy.md#3.2 非法分支名@L102
+  kind: md_clause
+  v1:
+    g1_fail: true
+    g2_fail: false
+    g3_multi: false
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸1 收窄：条文无强制体声称（方法论条款）→ D-6 规定不计入悬空
+- dossier_id: docs/01_policies_and_standards/policies/branch_strategy_policy.md#3.2 非法分支名@L103
+  kind: md_clause
+  v1:
+    g1_fail: true
+    g2_fail: false
+    g3_multi: false
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸1 收窄：条文无强制体声称（方法论条款）→ D-6 规定不计入悬空
+- dossier_id: docs/01_policies_and_standards/policies/branch_strategy_policy.md#3.2 非法分支名@L104
+  kind: md_clause
+  v1:
+    g1_fail: true
+    g2_fail: false
+    g3_multi: false
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸1 收窄：条文无强制体声称（方法论条款）→ D-6 规定不计入悬空
+- dossier_id: docs/01_policies_and_standards/policies/branch_strategy_policy.md#3.2 非法分支名@L105
+  kind: md_clause
+  v1:
+    g1_fail: true
+    g2_fail: false
+    g3_multi: false
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸1 收窄：条文无强制体声称（方法论条款）→ D-6 规定不计入悬空
+- dossier_id: docs/01_policies_and_standards/rules/trae_009_anti_hallucination_safety.yaml#gov_eng_009_context_freshness
+  kind: yaml_section
+  v1:
+    g1_fail: true
+    g2_fail: true
+    g3_multi: true
+  v2:
+    g1_fail: false
+    g2_fail: false
+    g3_multi: false
+  收窄原因: 闸2 收窄：#350 词表三处规范位判定，非规范位/豁免句不再计入
+结构盲区告警_v2: 两轴派生已生效：退化方向可判分母 1025/1404（v1=0）。两轴未登记 379 份 = md 条款语料（policies/sop/templates frontmatter 无
+  safety_level/ai_autonomy 字段，属语料特性非采集器口径 bug）；rules YAML 86/86 两轴齐备。md 条款的退化方向不可判属预期，不影响 yaml 侧红证。
+349_分型过滤实施记录:
+  语料内 doc_type=architecture_view 命中数: 0
+  语料内 _extensions 链命中数: 0
+  note: 过滤器已激活但本轮 0 命中属预期：2993 张卡与 227 张继承卡位于 docs/03_modules，不在案卷语料（v1/v2 语料=rules/*.yaml + policies/sop/templates
+    md）。C-01/C-04 的套栏外溢在 WP7 门禁侧修正，非本采集器。
+definitions_v2:
+  闸1_悬空强制_v2: 条文明确声称（paired_gate_id 非空 ∨ executors 非空 ∨ 正文「由X门禁强制」命中）且至少一个被声称强制体四类皆不属（在册门禁/实存文件·模块/外部工具/人工流程/MCP
+    服务名之外）。无声称 → 不计（D-6 方法论条款豁免）。
+  闸2_不可二值判定_v2: '#350 词表位：conditions[].check|pass|fail、actions[].step(mandatory|forbidden)、invariants[].description
+    同句命中程序法闸2词表，且同句不含 禁止/不得/MUST NOT/产出/输出/记录。md 条款整行视为规范位（同构映射）。'
+  闸3_多真源_v2: 取值集合承载面计数：本节清单型/数值型值（CJK 短语/路径/数字/引号串；标识符字面不算）经全仓反向索引（14467 文件单遍）找承载文件；|V|=1 时仅稀疏值(≤8 文件)计，|V|≥2
+    时命中 ≥max(2,⌈0.6|V|⌉) 且含强值(CJK/路径)或命中≥3 计；承载面分 三类（规则YAML其他文件/代码 src∪scripts/文档 docs），≥2 类=多真源。
+  退化方向可判分母_v2: safety_level ∈ {H,M,L} 的案卷数（#348 两轴直读 frontmatter）
+  扫描面不符: 同 v1：条文自述范围与注册表+pre-commit 实际范围矛盾（任一侧未声明即不计）
+  分型豁免_349: doc_type=architecture_view 或 _extensions 豁免链 → 不套 B_yaml 栏，各闸不计违规
+denominators_measured:
+  rule_yaml_files: 86
+  yaml_sections: 1022
+  md_files: 44
+  md_clauses: 379
+  gate_book_distinct: 169
+  gate_registry_rows: 169
+  db_gate_runs_rows: 6499
+  db_gates_distinct: 1008
+  value_index_files_scanned: 14590
+  value_index_distinct_values: 482547
+  db_access: zephyr.infrastructure.database_service.get_db_service().get_governance_conn(read_only=True)（禁裸
+    duckdb 合规）
+identity_cross_checks:
+  yaml_books_vs_db_gates_intersection: 0
+  yaml_books_vs_gate_runs_intersection: 0
+  yaml_books_vs_reconcile_intersection: 3
+db_windows_measured:
+  gate_runs:
+  - '2026-07-03T11:40:34.461725+00:00'
+  - '2026-09-18T23:08:35.424354+00:00'
+  gates:
+  - '2026-06-21T16:41:39.636393+00:00'
+  - '2026-06-29T18:20:27.908171+00:00'
+  reconcile:
+  - '2026-08-11 20:15:03.256222+00:00'
+  - '2026-09-19 09:22:38.138474+00:00'
+  rule_enforcement:
+  - '2026-06-13T00:01:01.642306'
+  - '2026-07-27T14:35:47.593160'
+time_buckets:
+  第1档(最早):
+  - '2026-04-11'
+  - '2026-05-10'
+  第2档:
+  - '2026-05-11'
+  - '2026-06-09'
+  第3档:
+  - '2026-06-10'
+  - '2026-07-09'
+  第4档(最新):
+  - '2026-07-10'
+  - '2026-09-18'
+red_controls_actually_run_v1存档:
+  GATE-NAMING:
+    injection: python scripts/governance/d3_metadata/check_naming_convention.py .runtime/sessions/st-ruledisp-20260918/staging/_tools/redlab
+      (planted Bad_Name_Sample.py)
+    exit_red: 1
+    stdout_red: '[N-01]+[N-08] 总计 2 个阻断性命名违规'
+    withdraw: same command after deleting sample
+    exit_green: 0
+  GATE-ENCODING:
+    injection: python scripts/governance/d7_code/check_encoding.py --dir <redlab> (planted UTF-8 BOM file)
+    exit_red: 1
+    stdout_red: 'INJ-007 FAIL: ... has UTF-8 BOM'
+    withdraw: python scripts/governance/d7_code/check_encoding.py --dir <redlab> after deleting sample
+    exit_green: 0
+forensics_covered:
+  tokens_with_history_forensics:
+  - COMMIT-CRITICAL-SECTION-LOCK
+  - audit_log_jsonl
+  - capability_lookup_bypass_policy.load_bypass_policy
+  - capability_lookup_health_reconciler_scene_classify
+  - capability_lookup_required_gate_whitelist_check
+  - commit_gate_bare_subprocess
+  - commit_gate_lint
+  - commit_gate_precommit_offline
+  - emergency_commit_consistency_check
+  - gate_frontmatter_incremental
+  - gate_naming_incremental
+  - git_commit_gateway_critical_section_guard
+  - rule_discovery_mcp
+  - safe_write_text_cas
+  - scripts/governance/d5_architecture/validators/lifecycle/validate_phase_transition.py
+  - scripts/governance/score_architecture.py
+  - session_worktree_commit_check
+  - session_worktree_commit_marker
+  - session_worktree_escape_hatch_demotion
+  - session_worktree_merge_check
+  - session_worktree_merge_force_safety_guard
+  - session_worktree_merge_verify
+  - session_worktree_start_check
+  - session_worktree_start_fail_closed
+  - session_worktree_startup_health_check
+  - session_worktree_sweep_check
+  - static_scan_block
+  - static_scan_warn_only
+  - task_card_description_audit
+  - trae_ide_hardcoded_safety_check
+  count: 30
+  file: _tools/forensics.json（复制自 st-ruledisp-20260918，防 TTL）
+limitations:
+- md 条款语料 frontmatter 无 safety_level/ai_autonomy → 该语料退化方向不可判（语料特性）
+- '#349 过滤本轮 0 命中（卡件不在案卷语料），过滤器机制已内建'
+- '闸2 md 侧将条款整行视为规范位属同构映射，非 #350 原文三处位'
+- 闸1「由X强制」正则只捕 ASCII 开头强制体名
