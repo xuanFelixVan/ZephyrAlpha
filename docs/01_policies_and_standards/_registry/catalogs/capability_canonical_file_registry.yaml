@@ -39739,6 +39739,18 @@ creation_tokens:
   token: final3-campaign-w9-6-branch-cleanup-20260919
   created_by: st-final3-20260919
   capability: final3_campaign
+- file: docs/_working/final3_campaign/x2_adjfactor_prereg.md
+  token: final3-campaign-x2-adjfactor-prereg-20260919
+  created_by: st-final3-20260919
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/w8_3_owner_signature_book.md
+  token: final3-campaign-w8-3-owner-signature-book-20260919
+  created_by: st-final3-20260919
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/w4_7_tdm_absorption_gap.md
+  token: final3-campaign-w4-7-tdm-absorption-gap-20260919
+  created_by: st-final3-20260919
+  capability: final3_campaign
 - file: docs/_working/rule_audit_campaign/a2_handoff/A2_M5_prescriptions.md
   token: rule-audit-construction-a2-m5-prescriptions-20260919
   created_by: st-final3-20260919
