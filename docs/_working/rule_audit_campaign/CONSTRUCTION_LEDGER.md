@@ -3451,3 +3451,35 @@ tests/governance/d3_metadata tests/scripts`
   处置：先按三态核实具名 `git add` 抹平（24/24），再重算清单（57→33 恰等于本轮实际写入数），
   并把"盘 != HEAD"写成入选前置条件。⇒ 这是 C-16/C-47 的又一后果形态：**它已经不只在污染提交，
   而是开始污染"我自己写的测量脚本"**。
+
+### 16.9 广度轮结果与"干净 HEAD 二分"归因法（08:5x 收口）
+
+广度轮 `pytest tests/io tests/shared tests/governance`
+⇒ **15 failed / 12712 passed / 76 skipped / 195 xfailed / 1841 xpassed，用时 2h09m25s**
+（日志 `.runtime/tmp/logs/loop_r1.log`）。
+
+**★ 15 件红不能直接当 15 个缺陷**——我把 15 个 node id 原样搬到**干净 HEAD 的 scratch worktree**
+（`git worktree add --detach .runtime/tmp/scratch_wt HEAD` + `PYTHONPATH=src`）复跑，二分结果：
+
+| 类别 | 件数 | 含义 |
+|---|---|---|
+| 在干净 HEAD 上**通过/跳过** | **10** | 红是**共享工作区在途脏内容**造成的（53 件 dirty code 里别人的半成品被这些测试扫到）⇒ 不是缺陷，是他人 WIP 的回声；其中 3 件 `test_battle_map_research_incubation` 在干净区直接 skip（靶件不在 HEAD） |
+| 在干净 HEAD 上仍红 | **5** | 真·HEAD 级存量红，逐件归属如下 |
+
+| HEAD 级红 | 实测原因 | 引入件（归属） | 处方（**本总包未代修**，§3.4） |
+|---|---|---|---|
+| `test_error_code_consistency::test_all_code_definitions_registered` | `ZA-INF-RT-ADM` 在 `src/zephyr/infra_runtime/runtime_admission.py` 用了但**从未登记** `error_code_registry.yaml` | **`429b68783b`（09-17 07:36，P2-c 运行时准入三件合一）**，已红两天 | 由 P2-c 车道补登记（净增，非门位）；own-diff 型门禁只扫改动文件，所以它不 jam 别人，只 jam 该车道后续提交 |
+| `test_alert_threshold_consistency::test_entry_total_and_categories` | **`assert 42 == 38`**——阈值册实有 42 条，测试里硬编码 38 | **`4fc94b60b6`（09-18 23:08，冷库救回第 4 批把 6 件注册表捞进版本保护）** | ★ 两案：①改测试期望值（治标）②**把这个手工常数改成从册派生**（宪法 §9.5"静态清单禁手工维护"）⇒ 建议②，且与 C-27/R-A46"在册≠正确"同族 |
+| `test_security_scripts::TestExitCodeConstants::test_exit_code_gate_passes` | 6 处裸 exit code 分布在 2 个脚本 | 未逐件追（属 security-scripts 治理面） | 走既有 `exit_code` 常量真源；不代修 |
+| `test_security_scripts::TestExitCodeConstants::test_naming_gate_passes` | 1 个脚本命名不合规范 | 同上 | 同上 |
+| `test_check_vocab_domain_convergence::test_real_three_source_convergence_is_empty` | **词表滞后域**：`D_ARCHIVE_SCRIPTS`、`D_ARCH_GUARD` 等在三源差集里非空 | 词表收编战役（09-18）之后又有新域进代码未进词表 | 归词表班；与 C-68"词表有册无执法"同族 ⇒ 先定"谁负责把新域同步进词表"再修数 |
+
+**⇒ 这条"干净 HEAD 二分"判据值得入册成法**（本役第二次用到，第一次是 WP15b 的 scratch worktree 预跑真门禁）：
+多会话共享工作区里，`pytest` 的红**必须先分"HEAD 级"与"工作区回声"两类**，否则会把他班 WIP 判成本班缺陷；
+做法＝`git worktree add --detach <scratch> HEAD` → 在 scratch 里 `PYTHONPATH=src pytest <同一批 node id>` →
+两边结果做差集。收尾 `git worktree remove` + `git worktree prune`（本总包已做）。
+
+**★ 顺带一个退役信号**：广度轮 **1841 xpassed vs 195 xfailed**——`xfail(strict=False)` 标记大面积过期
+（`#ARCH-092 存量批量改写损伤`那一批的标记尤其密集，进度行里 XPASS 连成片）。
+这正是宪法 §4.2 退役审计的正对象：**一份"已知失败清单"里 90% 的项已经不失败，它就从安全网变成了遮蔽物**。
+处置需 Max 定口径（转正常/转 strict=True/删除），本夜班**一个 xfail 都没动**。
