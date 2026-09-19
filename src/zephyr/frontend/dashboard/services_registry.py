@@ -33,7 +33,7 @@ _LOG = _TMP / "services_control_log.jsonl"
 SERVICE_CATALOG: list[dict[str, Any]] = [
     # ── 服务域（本仓库可自由开关）──
     {"id": "api_server", "group": "services", "tier": "self", "name": "面板 API 服务",
-     "desc": "本页的宿主：桌面面板所有数据的总后厨（端口 8890）——不能停（停了页面就死），可一键重启（改完代码生效用）",
+     "desc": "本页的宿主：面板页面+所有数据的总后厨（端口 8890 一体服务页面+数据，2026-09-19 W6 起）——不能停（停了页面就死），可一键重启（改完代码生效用）",
      "detect": {"type": "self"}},
     {"id": "panel", "group": "services", "tier": "free", "name": "Panel 治理大屏",
      "desc": "旧版治理大屏（10-Tab 治理+交易+回测，端口 5006）——和新桌面面板并存，用不用随你",
@@ -41,7 +41,7 @@ SERVICE_CATALOG: list[dict[str, Any]] = [
      "start": ["python", "-m", "panel", "serve", "src/zephyr/frontend/dashboard/app_panel.py", "--port", "5006"],
      "stop": {"how": "port", "port": 5006}},
     {"id": "docs_serve", "group": "services", "tier": "free", "name": "本地文档服务",
-     "desc": "架构图里「可缩放 HTML 版」链接的通道（端口 8765）——打开面板自动拉起，这里可手动启停；全量重生成用 python scripts/serve_docs.py --regen-only",
+     "desc": "文档本职：架构图里「可缩放 HTML 版」等文档页的通道（端口 8765）——面板页面已改由 8890 一体服务（2026-09-19 W6），此处只管文档；打开面板自动拉起，这里可手动启停；全量重生成用 python scripts/serve_docs.py --regen-only",
      "detect": {"type": "port", "port": 8765},
      "start": ["python", "scripts/serve_docs.py", "--no-regen"],
      "stop": {"how": "port", "port": 8765}},

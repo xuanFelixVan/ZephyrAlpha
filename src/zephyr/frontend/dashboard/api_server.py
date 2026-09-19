@@ -15,9 +15,11 @@
 # [TESTS] 手动冒烟：/api/health + /api/kline?symbol=600519
 # [A_module] module_id=MOD-L08-001 | layer=service | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Dashboard 数据 API 服务（只读）——前端四件套数据通道（P2 基建 + stockq 打样）。
+"""Dashboard 数据 API 服务（只读）——8890 单端口一体服务页面+数据（W6-1，2026-09-19）。
 
-职责：把 ClickHouse 行情数据以 JSON 暴露给仪表盘前端。read-only，零写副作用。
+职责：把 ClickHouse 行情数据以 JSON 暴露给仪表盘前端；并经 StaticFiles mount（/api
+路由注册之后）直出 dashboard 静态页面（web/ 目录，html=True）——桌面壳入口即 8890，
+serve_docs(8765) 回归文档本职。read-only，零写副作用。
 端点：
   GET /api/health                     健康检查
   GET /api/kline?symbol=600519&period=1d&limit=300   K 线（period: 1m/5m/15m/30m/60m/1d/1w/1M）
@@ -4433,6 +4435,20 @@ def _ops_feed_loop() -> None:
 # 生产 uvicorn 无 pytest 模块，线程照常启动。
 if "pytest" not in sys.modules:
     threading.Thread(target=_ops_feed_loop, daemon=True, name="ops-alert-feed").start()
+
+
+# ── 静态页面一体化（W6-1，终极令 2026-09-19，Owner 已批：服务 2→1 故障面减半）────
+# 8890 单端口一体服务页面+数据。mount("/") 必须在全部 /api 路由注册之后（Starlette
+# 按注册序匹配：/api 先命中，其余路径落静态兜底）；html=True 使 / 与 /pages/xxx.html
+# 直出。api.js 的 BASE 仍为绝对地址 http://127.0.0.1:8890（同源，行为不变）；
+# serve_docs(8765) 回归文档本职，桌面壳入口切 8890（W6-2，tools/desktop/main.js）。
+from fastapi.staticfiles import StaticFiles  # noqa: E402
+
+_WEB_ROOT = Path(__file__).resolve().parent / "web"
+if _WEB_ROOT.is_dir():
+    app.mount("/", StaticFiles(directory=_WEB_ROOT, html=True), name="static-web")
+else:  # 仓库 web 目录缺失（异常场景）：纯 API 降级运行，页面通道消失须在日志可见
+    logger.warning("static web dir missing: %s — 8890 降级为纯 API（页面不服务）", _WEB_ROOT)
 
 
 def main() -> None:

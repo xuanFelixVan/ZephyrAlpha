@@ -2,7 +2,8 @@
  * 背景：浏览器访问 8891 反复出现"改了看不到"（用户侧缓存/环境黑盒，2026-09-01 三轮排查未定位）——
  *       Owner 裁定前端桌面化（Electron），自带 Chromium 环境 100% 可控。
  * 模式：
- *   生产（默认）：静态文件经 app:// 自定义协议直读磁盘（无 HTTP 缓存语义）+ 自动拉起/复用 8890 API
+ *   生产（默认）：入口 http://127.0.0.1:8890/（api_server StaticFiles 页面+数据一体，W6-2
+ *                 2026-09-19）+ 自动拉起/复用 8890 API；load 失败回退 app:// 直读磁盘（断线·演示态）
  *   开发（--dev）：窗口指向 http://127.0.0.1:8891（热更新工作流不变），不拉起 API
  * 路径约定：本目录=tools/desktop/（根目录白名单内；src/zephyr 为 Python 包根禁 .json），
  *           web 根=<仓库根>/src/zephyr/frontend/dashboard/web/，仓库根=上两级
@@ -281,8 +282,17 @@ function createWindow() {
     win.loadURL('http://127.0.0.1:8891/index.html');
     win.webContents.session.clearCache().catch(() => {});
   } else {
-    // 生产模式：app:// 直读磁盘，无缓存语义
-    win.loadURL('app://index.html');
+    // 生产模式（W6-2，2026-09-19）：入口切 8890 单端口——api_server StaticFiles
+    // 一体服务页面+数据（Owner 批准服务 2→1 故障面减半）；ensureApi 已先行保证
+    // 8890 就绪。load 失败（API 挂死/被抢占）回退 app:// 直读磁盘——页面仍以
+    // 断线·演示态渲染（保留既有产品行为：僵尸修复流「跳过，断线态打开」的前提）。
+    win.loadURL('http://127.0.0.1:8890/').catch(() => {});
+    win.webContents.on('did-fail-load', (_e, code, _desc, _url, isMainFrame) => {
+      if (!isMainFrame || code === -3 /* ERR_ABORTED=主动导航打断，非真失败 */) return;
+      if (win && !win.isDestroyed() && !win.webContents.getURL().startsWith('app://')) {
+        win.loadURL('app://index.html').catch(() => {});
+      }
+    });
   }
   win.on('closed', () => { win = null; });
 }
