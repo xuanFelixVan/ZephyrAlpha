@@ -36447,6 +36447,10 @@ creation_tokens:
   token: bizmine-alpha-mining-e-drive-cold-archive-task-20260919
   created_by: st-final3-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/crypto_probe/funding_carry_rejudge.md
+  token: bizmine-alpha-mining-funding-carry-rejudge-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
