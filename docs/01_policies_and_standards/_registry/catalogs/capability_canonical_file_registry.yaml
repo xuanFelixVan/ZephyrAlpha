@@ -36451,6 +36451,26 @@ creation_tokens:
   token: bizmine-alpha-mining-funding-carry-rejudge-20260919
   created_by: st-final3-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/bounded_matrix_n_ledger.csv
+  token: bizmine-alpha-mining-bounded-matrix-n-ledger-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/bounded_matrix_wave1_report.md
+  token: bizmine-alpha-mining-bounded-matrix-wave1-report-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/algo_mining/candidate_card_open_momentum_market.md
+  token: bizmine-alpha-mining-candidate-card-open-momentum-market-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/regime_axis/prereg_card_b15_bucket_switch.md
+  token: bizmine-alpha-mining-prereg-card-b15-bucket-switch-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/regime_axis/b15_bucket_switch_narrow_test_report.md
+  token: bizmine-alpha-mining-b15-bucket-switch-narrow-test-report-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
