@@ -36395,6 +36395,30 @@ creation_tokens:
   token: bizmine-alpha-mining-vwap-exam-report-20260919
   created_by: st-final3-20260919
   capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/factor_sop_screen/f_top20_narrow_exam_report.md
+  token: bizmine-alpha-mining-f-top20-narrow-exam-report-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/factor_sop_screen/f_top20_narrow_exam_results.csv
+  token: bizmine-alpha-mining-f-top20-narrow-exam-results-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/factor_sop_screen/prereg_card_f_top20_exam.md
+  token: bizmine-alpha-mining-prereg-card-f-top20-exam-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/mid_valley/g1_narrow_exam_report.md
+  token: bizmine-alpha-mining-g1-narrow-exam-report-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/mid_valley/g1_narrow_exam_results.csv
+  token: bizmine-alpha-mining-g1-narrow-exam-results-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/w2t3_e4_exam_closure_report.md
+  token: bizmine-alpha-mining-w2t3-e4-exam-closure-report-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
