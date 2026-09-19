@@ -36475,6 +36475,18 @@ creation_tokens:
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
   capability: rule_audit_campaign
+- file: docs/_working/rule_audit_campaign/a2_handoff/index.md
+  token: rule-audit-campaign-index-20260919
+  created_by: st-maxexec-20260920
+  capability: rule_audit_campaign
+- file: docs/_working/rule_audit_campaign/index.md
+  token: rule-audit-campaign-index-20260919
+  created_by: st-maxexec-20260920
+  capability: rule_audit_campaign
+- file: docs/_working/rule_audit_campaign/w1_f_judgment_book.md
+  token: rule-audit-campaign-w1-f-judgment-book-20260919
+  created_by: st-maxexec-20260920
+  capability: rule_audit_campaign
 - file: scripts/governance/meta/gate_prerun.py
   token: governance-gate-prerun-gate-prerun-20260918
   created_by: st-ffb19-20260919

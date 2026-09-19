@@ -4845,3 +4845,19 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: ''
+- ruling_id: '裁定#372'
+  title: 'W1-F 判案：v2 案卷闸5 判决册（142 悬空+5 多真源+M1 三分终判+#353① 代裁）'
+  date: '2026-09-20'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    Max 依 #371 授权亲判：闸1 悬空 142 条九簇判决（57 confirm-action=A 映射修正/35+31 退役脚本
+    =D3+A 重指继任/4 归档豁免/其余别名实名重指）；闸3 多真源 5 条 D1 收敛（1 条挂 P9 宪法联动）；
+    M1 三分（29 重指执行+5 归档 D3+7 真删 rules 面落地）；#353① 代裁=fail-closed+emergency 通道
+    （条文侧本批落，代码侧挂 P11）。判决册=w1_f_judgment_book.md；rules/ 统一批据此解除 D-14 冻结。
+  affected_files:
+  - docs/_working/rule_audit_campaign/w1_f_judgment_book.md
+  - docs/01_policies_and_standards/rules/
+  related_arch: []
+  related_rulings: ['裁定#346', '裁定#347', '裁定#350', '裁定#353']
+  superseded_by: ''
