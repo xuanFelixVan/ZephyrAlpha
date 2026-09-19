@@ -39791,4 +39791,24 @@ creation_tokens:
   token: rule-audit-construction-register-gate-fulltree-audit-task-20260919
   created_by: st-final3-20260919
   capability: rule_audit_construction
+- file: scripts/ops/schedule_overview.py
+  token: schedule-overview-schedule-overview-20260919
+  created_by: st-final3-20260919
+  capability: schedule_overview
+- file: src/zephyr/governance/audit/schedule_consistency_reconciler.py
+  token: schedule-overview-schedule-consistency-reconciler-20260919
+  created_by: st-final3-20260919
+  capability: schedule_overview
+- file: scripts/entity_graph/apply_entity_graph_ddl.py
+  token: equity-penetration-apply-entity-graph-ddl-20260919
+  created_by: st-final3-20260919
+  capability: equity_penetration
+- file: scripts/entity_graph/entity_graph_ingest.py
+  token: equity-penetration-entity-graph-ingest-20260919
+  created_by: st-final3-20260919
+  capability: equity_penetration
+- file: scripts/entity_graph/equity_penetration.py
+  token: equity-penetration-equity-penetration-20260919
+  created_by: st-final3-20260919
+  capability: equity_penetration
 di_seam_exemptions: []
