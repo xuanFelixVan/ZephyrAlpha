@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATENG-005 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_eng.test_gpu_resource_manager
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_eng/gpu_resource_manager.py
 """MOD-DATENG-005 单元测试：gpu_resource_manager GPU资源管理器。
 

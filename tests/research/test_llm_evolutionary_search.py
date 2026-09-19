@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FAC-006 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.research.test_llm_evolutionary_search
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/research/llm_evolutionary_search.py
 """MOD-FAC-006 单元测试：llm_evolutionary_search LLM 进化式策略搜索。
 

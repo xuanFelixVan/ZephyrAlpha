@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FAC-003 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.research.test_gp_strategy_discovery
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/research/gp_strategy_discovery.py
 """MOD-FAC-003 单元测试：gp_strategy_discovery 遗传规划策略发现器。
 

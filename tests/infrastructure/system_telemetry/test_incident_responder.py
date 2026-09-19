@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-OPS-002 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infrastructure.system_telemetry.test_incident_responder
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infrastructure/system_telemetry/incident_responder.py
 """MOD-OPS-002 单元测试：incident_responder 事件响应器。
 

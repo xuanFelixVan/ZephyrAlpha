@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATA_GOV-014 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_governance.test_asset_auto_discovery
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_governance/asset_auto_discovery.py
 """MOD-DATA_GOV-014 单元测试：asset_auto_discovery 数据资产自动发现器。
 

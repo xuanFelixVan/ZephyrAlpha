@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATA_GOV-011 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_governance.test_openlineage_exporter
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_governance/openlineage_exporter.py
 """MOD-DATA_GOV-011 单元测试：openlineage_exporter OpenLineage 事件导出器。
 

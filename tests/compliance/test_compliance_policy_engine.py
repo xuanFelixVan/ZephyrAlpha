@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-CMP-015 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.compliance.test_compliance_policy_engine
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/compliance/compliance_policy_engine.py
 """MOD-CMP-015 单元测试：compliance_policy_engine 合规策略即代码引擎。
 

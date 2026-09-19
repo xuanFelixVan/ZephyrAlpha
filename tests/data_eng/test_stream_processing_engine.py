@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATENG-004 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_eng.test_stream_processing_engine
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_eng/stream_processing_engine.py
 """MOD-DATENG-004 单元测试：stream_processing_engine 单机流处理引擎。
 

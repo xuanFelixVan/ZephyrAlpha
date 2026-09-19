@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATA_GOV-012 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_governance.test_column_lineage_tracker
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_governance/column_lineage_tracker.py
 """MOD-DATA_GOV-012 单元测试：column_lineage_tracker 列级血缘追踪器。
 

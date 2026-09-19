@@ -3,6 +3,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FAC-001 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.research.test_auto_feature_discoverer
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/research/auto_feature_discoverer.py
 """MOD-FAC-001 单元测试：auto_feature_discoverer AI 自动特征发现器。
 

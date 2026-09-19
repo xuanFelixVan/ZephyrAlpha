@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATA_GOV-013 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_governance.test_ml_lineage_tracker
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_governance/ml_lineage_tracker.py
 """MOD-DATA_GOV-013 单元测试：ml_lineage_tracker AI-ML 管线血缘追踪器。
 

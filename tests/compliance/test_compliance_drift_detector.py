@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-CMP-016 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.compliance.test_compliance_drift_detector
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/compliance/compliance_drift_detector.py
 """MOD-CMP-016 单元测试：compliance_drift_detector 合规漂移检测器。
 

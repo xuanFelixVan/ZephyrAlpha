@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-082 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infrastructure.test_observability_triad
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infrastructure/system_telemetry/observability_triad.py
 """MOD-INF-082 单元测试：observability_triad 可观测性三支柱整合门面。
 

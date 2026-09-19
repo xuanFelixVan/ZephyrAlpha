@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-072 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.infrastructure.test_strategy_canary_release
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/infrastructure/strategy_canary_release.py
 """MOD-INF-072 单元测试：strategy_canary_release 策略灰度发布。
 

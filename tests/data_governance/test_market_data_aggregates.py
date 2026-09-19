@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATA_GOV-009 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_governance.test_market_data_aggregates
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_governance/market_data_aggregates.py
 """MOD-DATA_GOV-009 单元测试：market_data_aggregates 行情聚合根与生命周期。
 

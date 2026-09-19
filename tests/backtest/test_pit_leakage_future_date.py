@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-GOV_test_pit_leakage_future_date | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [MODULE] tests.backtest.test_pit_leakage_future_date
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TESTS] src/zephyr/backtest/core/pit_manager.py（90 号 Phase2 泄漏测试自动化）
 # [TTL] task_bound
 """90 号 Phase2 项（#14 PIT 一致性）：deliberate future-date 泄漏测试自动化。

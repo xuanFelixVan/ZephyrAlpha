@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATENG-002 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_eng.test_cold_data_archive_manager
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_eng/cold_data_archive_manager.py
 """MOD-DATENG-002 单元测试：cold_data_archive_manager 冷数据归档管理器。
 

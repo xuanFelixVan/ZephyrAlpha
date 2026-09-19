@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FAC-005 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.research.test_factor_model_co_evaluator
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/research/factor_model_co_evaluator.py
 """MOD-FAC-005 单元测试：factor_model_co_evaluator 因子模型联合评估器。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-089 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infrastructure.test_cascade_failure_simulator
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infrastructure/rollback/cascade_failure_simulator.py
 """MOD-INF-089 单元测试：cascade_failure_simulator 级联失效仿真器。
 

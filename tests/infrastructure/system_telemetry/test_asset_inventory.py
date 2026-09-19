@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-OPS-003 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infrastructure.system_telemetry.test_asset_inventory
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infrastructure/system_telemetry/asset_inventory.py
 """MOD-OPS-003 单元测试：asset_inventory 资产盘点器。
 

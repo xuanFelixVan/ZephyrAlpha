@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-091 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infrastructure.test_config_center
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infrastructure/config/config_center.py
 """MOD-INF-091 单元测试：config_center 统一配置中心。
 

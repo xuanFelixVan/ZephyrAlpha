@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-OPS-001 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infrastructure.system_telemetry.test_ops_incident_aggregate
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infrastructure/system_telemetry/ops_incident_aggregate.py
 """MOD-OPS-001 单元测试：ops_incident_aggregate 运维事件聚合根。
 

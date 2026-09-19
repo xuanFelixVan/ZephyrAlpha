@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-RES-001 | layer=test | stability=volatile | safety=L | ai_autonomy=human_gated
 # [MODULE] tests.research.test_sell_news_event_study
+# [STABILITY] volatile
+# [SAFETY] L
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/research/sell_news_event_study.py
 """MOD-RES-001 单元测试：sell_news_event_study 高位利好落地事件研究。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-CMP-017 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.compliance.test_regulatory_change_tracker
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/compliance/regulatory_change_tracker.py
 """MOD-CMP-017 单元测试：regulatory_change_tracker 监管变更追踪器。
 

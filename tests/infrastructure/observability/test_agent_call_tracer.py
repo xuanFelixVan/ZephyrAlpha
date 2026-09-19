@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-INF-083 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.infrastructure.test_agent_call_tracer
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/infrastructure/system_telemetry/agent_call_tracer.py
 """MOD-INF-083 单元测试：agent_call_tracer AI Agent 调用链追踪器。
 

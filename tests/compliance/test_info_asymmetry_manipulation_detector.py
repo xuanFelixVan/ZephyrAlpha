@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-CMP-014 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.compliance.test_info_asymmetry_manipulation_detector
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/compliance/info_asymmetry_manipulation_detector.py
 """MOD-CMP-014 单元测试：info_asymmetry_manipulation_detector 信息不对称期与操纵检测器。
 

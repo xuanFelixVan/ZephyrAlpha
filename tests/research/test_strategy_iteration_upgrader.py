@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FAC-007 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.research.test_strategy_iteration_upgrader
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/research/strategy_iteration_upgrader.py
 """MOD-FAC-007 单元测试：strategy_iteration_upgrader 策略迭代升级器。
 

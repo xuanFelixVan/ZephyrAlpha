@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-FAC-004 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.research.test_factor_vote_mining
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/research/factor_vote_mining.py
 """MOD-FAC-004 单元测试：factor_vote_mining FactorMAD 多智能体投票因子挖掘。
 

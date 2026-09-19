@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATENG-006 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_eng.test_data_lake_manager
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_eng/data_lake_manager.py
 """MOD-DATENG-006 单元测试：data_lake_manager 数据湖分层管理器。
 

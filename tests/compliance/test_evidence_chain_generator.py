@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-CMP-013 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.compliance.test_evidence_chain_generator
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/compliance/evidence_chain_generator.py
 """MOD-CMP-013 单元测试：evidence_chain_generator 合规证据链生成器。
 

@@ -2,6 +2,9 @@
 # [TTL] permanent
 # [A_test] module_id: MOD-DATENG-003 | layer=test | stability=volatile | safety=M | ai_autonomy=human_gated
 # [MODULE] tests.data_eng.test_quality_sla_breach_predictor
+# [STABILITY] volatile
+# [SAFETY] M
+# [AI_AUTONOMY] human_gated
 # [TESTS] src/zephyr/data_eng/quality_sla_breach_predictor.py
 """MOD-DATENG-003 单元测试：quality_sla_breach_predictor 质量SLA违约预测器。
 
