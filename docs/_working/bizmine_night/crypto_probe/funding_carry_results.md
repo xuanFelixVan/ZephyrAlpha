@@ -6,7 +6,7 @@ title: T0-PRERG-02 考试执行报告——高 funding 币对 delta 中性 carry
 owner: ZephyrAlpha-Owner
 language: zh
 created: 2026-09-19
-status: 完成（frozen 卡+小时级勘误按参数零改动执行；结果 RED 全量入册；费率前置未闭环）
+status: 完成（frozen 卡+小时级勘误按参数零改动执行；结果 RED 全量入册；费率前置已于 2026-09-19 按裁定#363 以真实费率重判一次闭环并封卡——见同目录 funding_carry_rejudge.md，本件 §1-§8 为占位费率口径首考原判，不作追溯修改）
 lane: crypto_probe
 family_id: T0-PRERG
 n_eff: 1
@@ -78,3 +78,7 @@ parent_context: t0_prereg_funding_carry.md（卡=唯一裁判，含 §6 勘误�
 ## 8. 结论
 
 按冻结判据，T0-PRERG-02 判 **RED**：OOS 净年化 carry +4.09% < 5% 门（差 0.91pp），且该判定在费率修正方向上只会更差。但机制本身未被证伪：命中率高（88.7%）、按动用名义 carry +12%/年、负贡献币极少——**瓶颈=严信号下的动用率与费率占位失真**，不是 funding 收租方向错。若 Owner 裁定按真实费率重开卡，最直接的杠杆是：放宽开仓线提高动用率（需新卡走新 N_eff，本卡不改参数）、maker 挂单腿（HL maker 1.5bp）、以及现/永双行情入仓后把关③做成真检验。
+
+---
+
+**尾注（2026-09-19 追记，裁定#363 执行件）**：§7.1 登记"费率作废条款触发待 Owner 裁定"已由裁定#363 处置完毕——按真实费率（HL perp 4.5bp/spot 7bp）重判一次：OOS 净年化 **+3.03%**（RED 变硬，与 §4 敏感性预告 ≈3.0% 一致），随后**封卡**。重判全量数字=同目录 `funding_carry_rejudge.md`；卡侧修订=`t0_regime/t0_prereg_funding_carry.md` §7 修订附录（带日期）。本件正文（§1-§8）为占位费率首考原判，按"禁静默改"纪律不作追溯修改，仅以此尾注挂钩。
