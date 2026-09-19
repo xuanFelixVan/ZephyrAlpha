@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-16T14:22:32Z'
+generated_at: '2026-09-19T09:44:13Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -19,6 +19,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-WORKTREE-REQUIRED
   name: 'GATE-WORKTREE-REQUIRED: 主工作区 commit 渐进式软门禁（#ARCH-GIT-SELF-HARM-GUARD L3.1）'
   entry: python scripts/governance/d11_compliance/validate_worktree_required.py
@@ -29,6 +30,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-ALGO-FLOW
   name: 'GATE-ALGO-FLOW: src/zephyr 模块必须含 ALGO_FLOW docstring 标记（§4.16）'
   entry: python scripts/governance/d5_architecture/checkers/check_algo_flow.py
@@ -39,6 +41,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-PYTEST-CONFIG-DRIFT
   name: 'GATE-PYTEST-CONFIG-DRIFT: pyproject 与 py.ini [pytest] 段双配置语义对齐（2026-09-15
     外审遗留②）'
@@ -51,6 +54,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-ARCH
   name: 'GATE-ARCH: 架构门禁（合并 01/02/03/06/07，全量架构检查）'
   entry: python scripts/governance/d5_architecture/checkers/check_architecture_gates.py
@@ -60,6 +64,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-NAMING
   name: 'GATE-NAMING: 命名增量守门（--check-new，只拦 staged 新增重名 #ARCH-PRECOMMIT-INCREMENTAL）'
   entry: python scripts/governance/d3_metadata/check_naming_convention.py --check-new
@@ -70,6 +75,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-NAMING-AUDIT
   name: 'GATE-NAMING-AUDIT: 全仓命名审计+SSOT一致性（不阻断 #ARCH-PRECOMMIT-INCREMENTAL）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_naming_convention.py,--warn-only,--scan
@@ -81,6 +87,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-DOC-NODE-ID
   name: 'GATE-DOC-NODE-ID: 文档物理ID硬编码检测（文档引用铁律）'
   entry: python scripts/governance/d3_metadata/check_doc_node_id_hardcode.py --ci
@@ -90,6 +97,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-ID-UNIQ
   name: 'GATE-ID-UNIQ: pre-commit hook id 唯一性'
   entry: python scripts/governance/d5_architecture/checkers/check_precommit_id_uniqueness.py
@@ -100,6 +108,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-INTEGRITY
   name: 'GATE-INTEGRITY: 规则文件完整性 golden hash 校验（C 层兜底）'
   entry: python scripts/governance/meta/validate_rules_integrity.py
@@ -109,6 +118,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-12
   name: 'GATE-12: 蓝图真源准入门禁（Wave 0 V-12）'
   entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
@@ -118,6 +128,7 @@ gates:
   category: blueprint_truth_source
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-14
   name: 'GATE-14: AI 自治权限注册表自校验（Wave 0 V-11）'
   entry: python scripts/governance/d5_architecture/validators/validate_authority_registry.py
@@ -127,6 +138,7 @@ gates:
   category: ai_autonomy
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-13
   name: 'GATE-13: 蓝图重叠检测门禁（Wave 1 V-14）'
   entry: python scripts/governance/d11_compliance/validate_blueprint_overlap.py
@@ -136,6 +148,7 @@ gates:
   category: blueprint_overlap
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-TRIPLE-ALIGN
   name: 'GATE-TRIPLE-ALIGN: 蓝图↔代码↔依赖图三方对齐门禁'
   entry: python src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py
@@ -145,6 +158,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-FRONTMATTER
   name: 'GATE-FRONTMATTER: 文档前置元数据增量守门（ttl+doc_type，#ARCH-PRECOMMIT-INCREMENTAL）'
   entry: python scripts/governance/d3_metadata/check_frontmatter_metadata.py --ci
@@ -155,6 +169,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-FRONTMATTER-AUDIT
   name: 'GATE-FRONTMATTER-AUDIT: 全仓 frontmatter 审计（规则FM+SSoT+断链，不阻断 #ARCH-PRECOMMIT-INCREMENTAL）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/validate_rule_frontmatter.py
@@ -166,6 +181,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-VOCAB
   name: 'GATE-VOCAB: 词表门禁合并（GATE-VOCAB-HARDCODE + GATE-GENERATE）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d3_metadata/check_vocab_hardcode.py,--ci
@@ -177,6 +193,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-16
   name: 'GATE-16: 架构合规校验（architecture-contract machine_check 引擎）'
   entry: python scripts/governance/d3_metadata/validate_architecture.py
@@ -187,6 +204,7 @@ gates:
   category: architecture_compliance
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-17
   name: 'GATE-17: 孤儿.py文件检测（§9 根目录零.py）'
   entry: python scripts/governance/d1_structure/detect_orphan_py.py
@@ -197,6 +215,7 @@ gates:
   category: orphan_detection
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-NESTED-FLAT-PREFIX
   name: 'GATE-NESTED-FLAT-PREFIX: 目录平铺容量+前缀簇合规（GOV-DOC-018 ARCH-043 Risk 2-B）'
   entry: python scripts/governance/d5_architecture/validators/validate_nested_flat_dirs.py
@@ -207,6 +226,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-SRC-NO-DATA
   name: 'GATE-SRC-NO-DATA: src/ 下禁止 data/ 子目录（数据真源唯一 data/）'
   entry: python scripts/governance/d5_architecture/checkers/check_src_no_data.py
@@ -216,6 +236,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-DIRECTORY-CONTRACT
   name: 'GATE-DIRECTORY-CONTRACT: 目录契约校验（DCR-001~008，真源 directory_contract.yaml）'
   entry: python scripts/governance/d1_structure/check_directory_contract.py
@@ -229,6 +250,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-VMS-SSOT
   name: 'GATE-VMS-SSOT: VMS 单一真源门禁（governance/vector_memory 防复发 + snapshot 方法重建 防复发）'
   entry: python scripts/governance/d5_architecture/checkers/check_vms_ssot.py
@@ -241,6 +263,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-SCHEMA-TRUTH
   name: 'GATE-SCHEMA-TRUTH: DDL-as-Code 真源 vs ClickHouse 漂移阻断（#ARCH-CH-025）'
   entry: python scripts/ch/verify_schema_truth.py
@@ -251,6 +274,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-SYMBOL-CONVENTION
   name: 'GATE-SYMBOL-CONVENTION: Symbol 约定 lint（TRAE-082 #ARCH-DATA-SYMBOL-002）'
   entry: python scripts/ch/lint_symbol_convention.py
@@ -261,6 +285,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-ZR
   name: 'GATE-ZR: 零残留强制门禁（IRN-011）'
   entry: python -B -c "from zephyr.gov_enforcement.rule_enforcement.invariants.zero_residue_check
@@ -272,6 +297,7 @@ gates:
   category: zero_residue
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-SSOT-CODE
   name: 'GATE-SSOT-CODE: 代码 SSoT 合并门禁（GATE-SSOT/SINGLESOURCE/NO-PURE-SHIM 三合一）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/check_ssot_gate.py
@@ -283,6 +309,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-TEST
   name: 'GATE-TEST: 测试门禁合并（GATE-18 收集 + GATE-19 结构）'
   entry: python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:asyncio,--import-mode=importlib,-m,"not
@@ -294,6 +321,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-TEST-SYMBOL
   name: 'GATE-TEST-SYMBOL: 孤儿测试符号检测（CAND-GATEMECH-007）'
   entry: python scripts/governance/check_test_symbol_validity.py --ci
@@ -303,6 +331,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-ERRCODE
   name: 'GATE-ERRCODE: error_code 注册表↔代码双向对账（#ARCH-ERRCODE-001）'
   entry: python -m pytest tests/governance/test_error_code_consistency.py -q --tb=line
@@ -313,6 +342,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-REG-BL
   name: 'GATE-REG-BL: 注册基线合并门禁（GATE-REG-BL + GATE-IDX）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/audit_registration.py,--incremental,--baseline-aware
@@ -324,6 +354,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-BP-PLACE
   name: 'GATE-BP-PLACE: 蓝图物理位置与归属链门禁（PS-STD-005 强制执行）'
   entry: python scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_placement.py
@@ -335,6 +366,7 @@ gates:
   category: blueprint_placement
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-SCRIPT-Q
   name: 'GATE-SCRIPT-Q: 脚本质量合并门禁（GATE-SQ + GATE-DD07）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d11_compliance/validate_script_quality.py,--scripts-dir,scripts/governance,--warn-only
@@ -346,6 +378,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-ADM
   name: 'GATE-ADM: Manifest 准入控制器（K8s Admission落地）'
   entry: python scripts/governance/d11_compliance/validate_manifest_admission.py
@@ -355,6 +388,7 @@ gates:
   category: manifest_admission
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-21
   name: 'GATE-21: 静态清单漂移阻断（§6.2）'
   entry: python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
@@ -365,6 +399,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-20
   name: 'GATE-20: 裸调 LLM API 检测（RULE-LSG-001 + COND-30）'
   entry: python scripts/governance/d7_code/detect_direct_llm_calls.py
@@ -376,6 +411,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-22
   name: 'GATE-22: AI加载路径完整性（加载路径铁律）'
   entry: python scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
@@ -385,6 +421,7 @@ gates:
   category: load_path_integrity
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-SILENT-DEGRADATION
   name: 'GATE-SILENT-DEGRADATION: 静默降级检测（COND-45 — 降级路径必须有日志）'
   entry: python scripts/governance/d7_code/detect_silent_degradation.py
@@ -395,6 +432,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-RETURN-CONTRACT
   name: 'GATE-RETURN-CONTRACT: TypedDict 返回契约 ok 键审计（P2-5/P3-1）'
   entry: python scripts/governance/audit_return_contract_usage.py
@@ -405,6 +443,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-WORKTREE-OPS-TELEMETRY
   name: 'GATE-WORKTREE-OPS-TELEMETRY: 主工作区擦除操作遥测审计（P2-6/P3-1）'
   entry: python scripts/governance/audit_worktree_ops_telemetry.py
@@ -415,6 +454,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-MCP
   name: 'GATE-MCP: Tool Contract 一致性（R3）'
   entry: python scripts/governance/d3_metadata/validate_tool_contracts_consistency.py
@@ -424,6 +464,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-C2
   name: 'GATE-C2: 契约+Schema 合并门禁（GATE-C2 + CONTRACT-PHYSICAL-PATH + SCHEMA-HEALTH）'
   entry: python scripts/governance/run_gate_chain.py scripts/governance/d5_architecture/checkers/check_contract_code_drift.py,--ci
@@ -437,6 +478,7 @@ gates:
   category: contract_drift
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-CODEGEN-IDEMPOTENT
   name: 'GATE-CODEGEN-IDEMPOTENT: 契约生成器幂等性（C 路径防回潮）'
   entry: python scripts/governance/d5_architecture/checkers/check_contracts_codegen_idempotent.py
@@ -448,6 +490,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-CANONICAL-YAML-DRIFT
   name: 'GATE-CANONICAL-YAML-DRIFT: canonical YAML SSoT 防漂移（Phase B 5 项断言）'
   entry: python scripts/governance/d5_architecture/checkers/check_canonical_yaml_drift.py
@@ -459,6 +502,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-NODE-LABEL-QUALITY
   name: 'GATE-NODE-LABEL-QUALITY: 域文档节点标签简介质量审计（五类坏简介防复发）'
   entry: python scripts/governance/d5_architecture/checkers/check_node_label_quality.py
@@ -469,6 +513,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-ENCODING
   name: 'GATE-ENCODING: 编码安全+mojibake+BOM检测'
   entry: python scripts/governance/d7_code/check_encoding.py
@@ -479,6 +524,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-COMMIT-GW
   name: 'GATE-COMMIT-GW: 裸 commit 检测（OPS-2026062513）'
   entry: python scripts/governance/d11_compliance/validate_commit_gateway.py
@@ -489,6 +535,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-DRIFT
   name: 'GATE-DRIFT: 漂移检测 LIGHT scan（MOD-INF-023）'
   entry: python -m zephyr.behavioral_auditor scan --level LIGHT
@@ -498,6 +545,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-NO-TESTS-UNIT
   name: 'GATE-NO-TESTS-UNIT: 禁止 tests/unit/ 旧路径重引入（ARCH-029 防漂移）'
   entry: python scripts/governance/d7_code/check_no_tests_unit.py
@@ -507,6 +555,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-DEDUP
   name: 'GATE-DEDUP: 代码重复检测（code_dedup 引擎 verify）'
   entry: python scripts/pre_commit/verify_dedup.py
@@ -517,6 +566,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-DEBT-BRIDGE
   name: 'GATE-DEBT-BRIDGE: 架构债务防御（5.96 维度防复发）'
   entry: python scripts/governance/d7_code/scan_debt.py --ci --staged
@@ -527,6 +577,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-ANY-ABUSE
   name: 'GATE-ANY-ABUSE: 类型注解 Any 滥用（5.145 维度防复发，Phase 3 commit 阻断）'
   entry: python scripts/governance/d7_code/check_any_abuse.py --ci --staged
@@ -538,6 +589,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-ALGO-QUALITY
   name: 'GATE-ALGO-QUALITY: 算法糊弄检测（代码AST+blueprint 双层，6类pattern）'
   entry: python scripts/governance/d5_architecture/checkers/check_algo_quality.py
@@ -548,6 +600,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-GEN-NO-REALTIME-TIME
   name: GATE-GEN-NO-REALTIME-TIME
   entry: python scripts/governance/d11_compliance/check_generator_no_realtime_time.py
@@ -558,6 +611,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: GATE-NO-COMMIT-DERIVED
   name: GATE-NO-COMMIT-DERIVED
   entry: python scripts/governance/d11_compliance/check_no_commit_derived.py
@@ -568,6 +622,7 @@ gates:
   category: unknown
   status: active
   source: pre-commit
+  enforcement_channel: pre-commit
 - gate_id: ALGO-FLOW-LINK
   name: 'ALGO-FLOW-LINK: ALGO_FLOW external 锚链接校验门禁（ALGO-FLOW-LINK）（CommitGate, priority=108）'
   entry: in-process (GitCommitGateway)
@@ -578,6 +633,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: ALGO-NOTE-SYNC
   name: 'ALGO-NOTE-SYNC: 算法锚与大白话同步绑定门禁（ALGO-NOTE-SYNC，Owner 2026-09-09 任务三）（CommitGate,
     priority=62）'
@@ -589,6 +645,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: ARCH-REFERENCE
   name: 'ARCH-REFERENCE: ARCH-REFERENCE（CommitGate, priority=75）'
   entry: in-process (GitCommitGateway)
@@ -599,6 +656,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: ASYNCIO-RUN-IN-CONTEXT
   name: 'ASYNCIO-RUN-IN-CONTEXT: ASYNCIO-RUN-IN-CONTEXT（CommitGate, priority=122）'
   entry: in-process (GitCommitGateway)
@@ -609,6 +667,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: NO-BARE-GETENV
   name: 'NO-BARE-GETENV: NO-BARE-GETENV（CommitGate, priority=81）'
   entry: in-process (GitCommitGateway)
@@ -619,6 +678,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: NO-BARE-SQL
   name: 'NO-BARE-SQL: NO-BARE-SQL（CommitGate, priority=94）'
   entry: in-process (GitCommitGateway)
@@ -629,6 +689,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: BARE-SUBPROCESS
   name: 'BARE-SUBPROCESS: BARE-SUBPROCESS（CommitGate, priority=132）'
   entry: in-process (GitCommitGateway)
@@ -639,6 +700,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: GATE-BATTLE-MAP-ALIGNMENT
   name: 'GATE-BATTLE-MAP-ALIGNMENT: 作战地图对齐硬化门禁（GATE-BATTLE-MAP-ALIGNMENT，priority=833）（CommitGate,
     priority=833）'
@@ -650,6 +712,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: BLUEPRINT-AMODULE-CONSISTENCY
   name: 'BLUEPRINT-AMODULE-CONSISTENCY: BLUEPRINT-AMODULE-CONSISTENCY（CommitGate,
     priority=79）'
@@ -661,6 +724,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: BLUEPRINT-AMODULE-CROSS-CHECK
   name: 'BLUEPRINT-AMODULE-CROSS-CHECK: BLUEPRINT-AMODULE-CROSS-CHECK（CommitGate,
     priority=119）'
@@ -672,6 +736,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: BLUEPRINT-FORMAT
   name: 'BLUEPRINT-FORMAT: BLUEPRINT-FORMAT（CommitGate, priority=77）'
   entry: in-process (GitCommitGateway)
@@ -682,6 +747,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: BLUEPRINT-NODE-ID-HARDCODE
   name: 'BLUEPRINT-NODE-ID-HARDCODE: BLUEPRINT-NODE-ID-HARDCODE（CommitGate, priority=57）'
   entry: in-process (GitCommitGateway)
@@ -692,6 +758,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: BUSINESS-REGISTRY
   name: 'BUSINESS-REGISTRY: 业务资产库入库门禁（BUSINESS-REGISTRY，priority=139）（CommitGate,
     priority=139）'
@@ -703,6 +770,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: CAP-CONSISTENCY
   name: 'CAP-CONSISTENCY: CAP-CONSISTENCY（CommitGate, priority=101）'
   entry: in-process (GitCommitGateway)
@@ -713,6 +781,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: CAPABILITY-LOOKUP-REQUIRED
   name: 'CAPABILITY-LOOKUP-REQUIRED: CAPABILITY-LOOKUP-REQUIRED（CommitGate, priority=31）'
   entry: in-process (GitCommitGateway)
@@ -723,6 +792,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: CAPABILITY-OVERLAP
   name: 'CAPABILITY-OVERLAP: CAPABILITY-OVERLAP（CommitGate, priority=200）'
   entry: in-process (GitCommitGateway)
@@ -733,6 +803,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: CH-BATCH-SIZE
   name: 'CH-BATCH-SIZE: CH-BATCH-SIZE（CommitGate, priority=36）'
   entry: in-process (GitCommitGateway)
@@ -743,6 +814,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: CH-FINAL-GATE
   name: 'CH-FINAL-GATE: CH-FINAL-GATE（CommitGate, priority=37）'
   entry: in-process (GitCommitGateway)
@@ -753,6 +825,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: CH-VERSION-COL
   name: 'CH-VERSION-COL: CH-VERSION-COL（CommitGate, priority=38）'
   entry: in-process (GitCommitGateway)
@@ -763,6 +836,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: CLAIM-REQUIRED
   name: 'CLAIM-REQUIRED: CLAIM-REQUIRED（CommitGate, priority=40）'
   entry: in-process (GitCommitGateway)
@@ -773,6 +847,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: COMMIT-SCOPE
   name: 'COMMIT-SCOPE: COMMIT-SCOPE（CommitGate, priority=50）'
   entry: in-process (GitCommitGateway)
@@ -783,6 +858,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: CONSUMERS-ACCURACY
   name: 'CONSUMERS-ACCURACY: CONSUMERS-ACCURACY（CommitGate, priority=116）'
   entry: in-process (GitCommitGateway)
@@ -793,6 +869,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: CREATE-GUARD
   name: 'CREATE-GUARD: CREATE-GUARD（CommitGate, priority=60）'
   entry: in-process (GitCommitGateway)
@@ -803,6 +880,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: DANGLING-REFERENCE
   name: 'DANGLING-REFERENCE: DANGLING-REFERENCE（CommitGate, priority=70）'
   entry: in-process (GitCommitGateway)
@@ -813,6 +891,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: DATA-TASK-COMPLETENESS
   name: 'DATA-TASK-COMPLETENESS: DATA-TASK-COMPLETENESS（CommitGate, priority=41）'
   entry: in-process (GitCommitGateway)
@@ -823,6 +902,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: DATETIME-NOW-FORBIDDEN
   name: 'DATETIME-NOW-FORBIDDEN: DATETIME-NOW-FORBIDDEN（CommitGate, priority=34）'
   entry: in-process (GitCommitGateway)
@@ -833,6 +913,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: DECISION-MAP
   name: 'DECISION-MAP: 第七图（交易决策地图）对齐阻断门禁（DECISION-MAP，priority=138）（CommitGate, priority=138）'
   entry: in-process (GitCommitGateway)
@@ -843,6 +924,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: DEPGRAPH-FRESHNESS
   name: 'DEPGRAPH-FRESHNESS: DEPGRAPH-FRESHNESS（CommitGate, priority=67）'
   entry: in-process (GitCommitGateway)
@@ -853,6 +935,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: DEPGRAPH-PRE-REGISTRATION
   name: 'DEPGRAPH-PRE-REGISTRATION: DEPGRAPH-PRE-REGISTRATION（CommitGate, priority=58）'
   entry: in-process (GitCommitGateway)
@@ -863,6 +946,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: DEPGRAPH-WRITE-PATH
   name: 'DEPGRAPH-WRITE-PATH: DEPGRAPH-WRITE-PATH（CommitGate, priority=100）'
   entry: in-process (GitCommitGateway)
@@ -873,6 +957,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: DERIVATION-ANNOTATION
   name: 'DERIVATION-ANNOTATION: DERIVATION-ANNOTATION（CommitGate, priority=65）'
   entry: in-process (GitCommitGateway)
@@ -883,6 +968,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: DERIVED-FILE-DELETION-PROTECTION
   name: 'DERIVED-FILE-DELETION-PROTECTION: DERIVED-FILE-DELETION-PROTECTION（CommitGate,
     priority=46）'
@@ -894,6 +980,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: DIRECTORY-CONTRACT
   name: 'DIRECTORY-CONTRACT: DIRECTORY-CONTRACT（CommitGate, priority=30）'
   entry: in-process (GitCommitGateway)
@@ -904,6 +991,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: DOC-REF-BROKEN
   name: 'DOC-REF-BROKEN: DOC-REF-BROKEN（CommitGate, priority=91）'
   entry: in-process (GitCommitGateway)
@@ -914,6 +1002,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: GATE-DOMAIN-FK
   name: 'GATE-DOMAIN-FK: GATE-DOMAIN-FK（CommitGate, priority=78）'
   entry: in-process (GitCommitGateway)
@@ -924,6 +1013,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
   name: 'NO-DOMAIN-NAME-ZH-DIRECT-ACCESS: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS（CommitGate,
     priority=72）'
@@ -935,6 +1025,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: EMPTY-HANDLER
   name: 'EMPTY-HANDLER: EMPTY-HANDLER（CommitGate, priority=84）'
   entry: in-process (GitCommitGateway)
@@ -945,6 +1036,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: ENCODING-SAFETY
   name: 'ENCODING-SAFETY: ENCODING-SAFETY（CommitGate, priority=42）'
   entry: in-process (GitCommitGateway)
@@ -955,6 +1047,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: GATE-ERRCODE-CONSISTENCY
   name: 'GATE-ERRCODE-CONSISTENCY: error_code 注册表↔代码真源对账门禁 in-process 版（GATE-ERRCODE-CONSISTENCY）（CommitGate,
     priority=131）'
@@ -966,6 +1059,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: EXEMPT-ZONE-FM
   name: 'EXEMPT-ZONE-FM: EXEMPT-ZONE-FM（CommitGate, priority=87）'
   entry: in-process (GitCommitGateway)
@@ -976,6 +1070,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: FILE-COPY
   name: 'FILE-COPY: FILE-COPY（CommitGate, priority=85）'
   entry: in-process (GitCommitGateway)
@@ -986,6 +1081,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: FILE-PLACEMENT-TTL
   name: 'FILE-PLACEMENT-TTL: FILE-PLACEMENT-TTL（CommitGate, priority=33）'
   entry: in-process (GitCommitGateway)
@@ -996,6 +1092,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: FOLDER-CAPACITY-HARD-LIMIT
   name: 'FOLDER-CAPACITY-HARD-LIMIT: FOLDER-CAPACITY-HARD-LIMIT（CommitGate, priority=112）'
   entry: in-process (GitCommitGateway)
@@ -1006,6 +1103,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: FOREIGN-CHANGE-DETECTION
   name: 'FOREIGN-CHANGE-DETECTION: FOREIGN-CHANGE-DETECTION（CommitGate, priority=45）'
   entry: in-process (GitCommitGateway)
@@ -1016,6 +1114,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: FORGED-GW-MARKER
   name: 'FORGED-GW-MARKER: Forged GW Marker 前置检测门禁（FORGED-GW-MARKER，#ARCH-PREVENTABILITY-LAYER-001
     Phase 2）（CommitGate, priority=29）'
@@ -1028,6 +1127,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: FRONTEND-MAP
   name: 'FRONTEND-MAP: 前端全景图对齐阻断门禁（FRONTEND-MAP，六图对齐最后一环）（CommitGate, priority=137）'
   entry: in-process (GitCommitGateway)
@@ -1038,6 +1138,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: FRONTEND-TRUTH-SOURCE
   name: 'FRONTEND-TRUTH-SOURCE: FRONTEND-TRUTH-SOURCE（CommitGate, priority=136）'
   entry: in-process (GitCommitGateway)
@@ -1048,6 +1149,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: FUNCTION-DUP
   name: 'FUNCTION-DUP: FUNCTION-DUP（CommitGate, priority=90）'
   entry: in-process (GitCommitGateway)
@@ -1058,6 +1160,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: GIT-CALL-BUDGET
   name: 'GIT-CALL-BUDGET: GIT-CALL-BUDGET（CommitGate, priority=105）'
   entry: in-process (GitCommitGateway)
@@ -1068,6 +1171,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: NO-GOD-CLASS
   name: 'NO-GOD-CLASS: NO-GOD-CLASS（CommitGate, priority=93）'
   entry: in-process (GitCommitGateway)
@@ -1078,6 +1182,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: NO-HARDCODED-URL
   name: 'NO-HARDCODED-URL: NO-HARDCODED-URL（CommitGate, priority=98）'
   entry: in-process (GitCommitGateway)
@@ -1088,6 +1193,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: HELD-OVERLAP
   name: 'HELD-OVERLAP: HELD-OVERLAP（CommitGate, priority=50）'
   entry: in-process (GitCommitGateway)
@@ -1098,6 +1204,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: NO-HIGH-COMPLEXITY
   name: 'NO-HIGH-COMPLEXITY: NO-HIGH-COMPLEXITY（CommitGate, priority=92）'
   entry: in-process (GitCommitGateway)
@@ -1108,6 +1215,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: HOT-FILE-BASE-FRESHNESS
   name: 'HOT-FILE-BASE-FRESHNESS: HOT-FILE-BASE-FRESHNESS（CommitGate, priority=47）'
   entry: in-process (GitCommitGateway)
@@ -1118,6 +1226,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: ID-UNIQUENESS
   name: 'ID-UNIQUENESS: ID-UNIQUENESS（CommitGate, priority=86）'
   entry: in-process (GitCommitGateway)
@@ -1128,6 +1237,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: NO-UPWARD-IMPORT
   name: 'NO-UPWARD-IMPORT: NO-UPWARD-IMPORT（CommitGate, priority=97）'
   entry: in-process (GitCommitGateway)
@@ -1138,6 +1248,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: IMPORT-INTEGRITY
   name: 'IMPORT-INTEGRITY: IMPORT-INTEGRITY（CommitGate, priority=107）'
   entry: in-process (GitCommitGateway)
@@ -1148,6 +1259,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: INDUSTRY-CHAIN-MAP
   name: 'INDUSTRY-CHAIN-MAP: 产业链全景图 git 侧工件门禁（INDUSTRY-CHAIN-MAP，priority=141）（CommitGate,
     priority=141）'
@@ -1159,6 +1271,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: ISSUE-RESOLVED-INTEGRITY
   name: 'ISSUE-RESOLVED-INTEGRITY: ISSUE-RESOLVED-INTEGRITY（CommitGate, priority=130）'
   entry: in-process (GitCommitGateway)
@@ -1169,6 +1282,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: NO-LONG-PARAM-LIST
   name: 'NO-LONG-PARAM-LIST: NO-LONG-PARAM-LIST（CommitGate, priority=95）'
   entry: in-process (GitCommitGateway)
@@ -1179,6 +1293,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: MANUAL-ONLY-PERMANENT
   name: 'MANUAL-ONLY-PERMANENT: MANUAL-ONLY-PERMANENT（CommitGate, priority=82）'
   entry: in-process (GitCommitGateway)
@@ -1189,6 +1304,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: MCP-VERSION-FIELD
   name: 'MCP-VERSION-FIELD: MCP-VERSION-FIELD（CommitGate, priority=126）'
   entry: in-process (GitCommitGateway)
@@ -1199,6 +1315,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: MODULE-ID-CONSISTENCY
   name: 'MODULE-ID-CONSISTENCY: MODULE-ID-CONSISTENCY（CommitGate, priority=88）'
   entry: in-process (GitCommitGateway)
@@ -1209,6 +1326,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: MSG-EXPOSURE
   name: 'MSG-EXPOSURE: MSG-EXPOSURE（CommitGate, priority=83）'
   entry: in-process (GitCommitGateway)
@@ -1219,6 +1337,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: MSG-STYLE
   name: 'MSG-STYLE: MSG-STYLE（CommitGate, priority=96）'
   entry: in-process (GitCommitGateway)
@@ -1229,6 +1348,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: MUTABLE-CONST-WITHOUT-FINAL
   name: 'MUTABLE-CONST-WITHOUT-FINAL: MUTABLE-CONST-WITHOUT-FINAL（CommitGate, priority=123）'
   entry: in-process (GitCommitGateway)
@@ -1239,6 +1359,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: NEW-FILE-DEPGRAPH-ENFORCEMENT
   name: 'NEW-FILE-DEPGRAPH-ENFORCEMENT: NEW-FILE-DEPGRAPH-ENFORCEMENT（CommitGate,
     priority=58）'
@@ -1250,6 +1371,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: NO-IMPORT-SIDE-EFFECT
   name: 'NO-IMPORT-SIDE-EFFECT: NO-IMPORT-SIDE-EFFECT（CommitGate, priority=103）'
   entry: in-process (GitCommitGateway)
@@ -1260,6 +1382,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: NOQA-VALIDATION
   name: 'NOQA-VALIDATION: NOQA-VALIDATION（CommitGate, priority=71）'
   entry: in-process (GitCommitGateway)
@@ -1270,6 +1393,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: OPEN-WITHOUT-WITH
   name: 'OPEN-WITHOUT-WITH: OPEN-WITHOUT-WITH（CommitGate, priority=124）'
   entry: in-process (GitCommitGateway)
@@ -1280,6 +1404,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: ORPHAN-MODULE
   name: 'ORPHAN-MODULE: ORPHAN-MODULE（CommitGate, priority=89）'
   entry: in-process (GitCommitGateway)
@@ -1290,6 +1415,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: GATE-PANORAMA-ALIGNMENT
   name: 'GATE-PANORAMA-ALIGNMENT: GATE-PANORAMA-ALIGNMENT（CommitGate, priority=830）'
   entry: in-process (GitCommitGateway)
@@ -1300,6 +1426,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: PERM-TRIGGER
   name: 'PERM-TRIGGER: PERM-TRIGGER（CommitGate, priority=82）'
   entry: in-process (GitCommitGateway)
@@ -1310,6 +1437,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: GATE-PRECOMMIT-OFFLINE
   name: 'GATE-PRECOMMIT-OFFLINE: GATE-PRECOMMIT-OFFLINE（CommitGate, priority=111）'
   entry: in-process (GitCommitGateway)
@@ -1320,6 +1448,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: PROTECTED-PATHS
   name: 'PROTECTED-PATHS: PROTECTED-PATHS（CommitGate, priority=28）'
   entry: in-process (GitCommitGateway)
@@ -1330,6 +1459,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: PURE-ASSERTION
   name: 'PURE-ASSERTION: PURE-ASSERTION（CommitGate, priority=69）'
   entry: in-process (GitCommitGateway)
@@ -1340,6 +1470,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: PURE-SHIM
   name: 'PURE-SHIM: PURE-SHIM（CommitGate, priority=68）'
   entry: in-process (GitCommitGateway)
@@ -1350,6 +1481,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: R5-DIGIT-SUFFIX
   name: 'R5-DIGIT-SUFFIX: R5-DIGIT-SUFFIX（CommitGate, priority=35）'
   entry: in-process (GitCommitGateway)
@@ -1360,6 +1492,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: RECONCILER-FILE-OPS
   name: 'RECONCILER-FILE-OPS: RECONCILER-FILE-OPS（CommitGate, priority=117）'
   entry: in-process (GitCommitGateway)
@@ -1370,6 +1503,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: RECONCILER-HEALTH
   name: 'RECONCILER-HEALTH: RECONCILER-HEALTH（CommitGate, priority=64）'
   entry: in-process (GitCommitGateway)
@@ -1380,6 +1514,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: REGISTRY-CODE-ANCHOR
   name: 'REGISTRY-CODE-ANCHOR: REGISTRY-CODE-ANCHOR（CommitGate, priority=129）'
   entry: in-process (GitCommitGateway)
@@ -1390,6 +1525,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: REGISTRY-MASS-DELETION
   name: 'REGISTRY-MASS-DELETION: REGISTRY-MASS-DELETION（CommitGate, priority=140）'
   entry: in-process (GitCommitGateway)
@@ -1400,6 +1536,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: REGISTRY-YAML-PARSE
   name: 'REGISTRY-YAML-PARSE: 注册表结构硬化门禁（防尾追悬挂/防重复根键）（CommitGate, priority=54）'
   entry: in-process (GitCommitGateway)
@@ -1410,6 +1547,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: RELATIVE-PATH-LITERAL
   name: 'RELATIVE-PATH-LITERAL: RELATIVE-PATH-LITERAL（CommitGate, priority=115）'
   entry: in-process (GitCommitGateway)
@@ -1420,6 +1558,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: RENAME-DEPGRAPH-SYNC
   name: 'RENAME-DEPGRAPH-SYNC: RENAME-DEPGRAPH-SYNC（CommitGate, priority=39）'
   entry: in-process (GitCommitGateway)
@@ -1430,6 +1569,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: RESOURCE-SCHEDULE
   name: 'RESOURCE-SCHEDULE: 排班冲突检测 commit gate（MOD-RESCHED-GATE，B2 闸）。（CommitGate,
     priority=144）'
@@ -1441,6 +1581,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: RULE-EXECUTION-PAIRING
   name: 'RULE-EXECUTION-PAIRING: RULE-EXECUTION-PAIRING（CommitGate, priority=61）'
   entry: in-process (GitCommitGateway)
@@ -1451,6 +1592,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: RULE-FOUR-WAY-ALIGN
   name: 'RULE-FOUR-WAY-ALIGN: RULE-FOUR-WAY-ALIGN（CommitGate, priority=76）'
   entry: in-process (GitCommitGateway)
@@ -1461,6 +1603,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: RULING-COMMIT-VERIFIED
   name: 'RULING-COMMIT-VERIFIED: RULING-COMMIT-VERIFIED（CommitGate, priority=109）'
   entry: in-process (GitCommitGateway)
@@ -1471,6 +1614,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: RULING-REFERENCE
   name: 'RULING-REFERENCE: RULING-REFERENCE（CommitGate, priority=74）'
   entry: in-process (GitCommitGateway)
@@ -1481,6 +1625,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: SCHEMA-FILE-EXISTS
   name: 'SCHEMA-FILE-EXISTS: SCHEMA-FILE-EXISTS（CommitGate, priority=121）'
   entry: in-process (GitCommitGateway)
@@ -1491,6 +1636,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: SCRIPTS-IMPORT-INTEGRITY
   name: 'SCRIPTS-IMPORT-INTEGRITY: SCRIPTS-IMPORT-INTEGRITY（CommitGate, priority=104）'
   entry: in-process (GitCommitGateway)
@@ -1501,6 +1647,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: NO-SECRET-HARDCODE
   name: 'NO-SECRET-HARDCODE: NO-SECRET-HARDCODE（CommitGate, priority=128）'
   entry: in-process (GitCommitGateway)
@@ -1511,6 +1658,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: SECRET-REGISTRY-CONSISTENCY
   name: 'SECRET-REGISTRY-CONSISTENCY: SECRET-REGISTRY-CONSISTENCY（CommitGate, priority=127）'
   entry: in-process (GitCommitGateway)
@@ -1521,6 +1669,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: SESSION-REQUIRED
   name: 'SESSION-REQUIRED: SESSION-REQUIRED（CommitGate, priority=31）'
   entry: in-process (GitCommitGateway)
@@ -1531,6 +1680,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: SNAPSHOT-DRIFT
   name: 'SNAPSHOT-DRIFT: SNAPSHOT-DRIFT（CommitGate, priority=40）'
   entry: in-process (GitCommitGateway)
@@ -1541,6 +1691,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: SPLIT-COORDINATION
   name: 'SPLIT-COORDINATION: 拆分×编辑双重存在协议门禁（SPLIT-COORDINATION，priority=143）（CommitGate,
     priority=143）'
@@ -1552,6 +1703,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: SSOT-REDEFINITION
   name: 'SSOT-REDEFINITION: SSOT-REDEFINITION（CommitGate, priority=65）'
   entry: in-process (GitCommitGateway)
@@ -1562,6 +1714,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: STASH-ACCUMULATION
   name: 'STASH-ACCUMULATION: STASH-ACCUMULATION（CommitGate, priority=118）'
   entry: in-process (GitCommitGateway)
@@ -1572,6 +1725,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: FACTORY-MAP
   name: 'FACTORY-MAP: 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=142）（CommitGate, priority=142）'
   entry: in-process (GitCommitGateway)
@@ -1582,6 +1736,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: SYNTAX-VALIDATION
   name: 'SYNTAX-VALIDATION: SYNTAX-VALIDATION（CommitGate, priority=49）'
   entry: in-process (GitCommitGateway)
@@ -1592,6 +1747,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: TABLE-NAME-REGISTRY
   name: 'TABLE-NAME-REGISTRY: TABLE-NAME-REGISTRY（CommitGate, priority=120）'
   entry: in-process (GitCommitGateway)
@@ -1602,6 +1758,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: TEST-RESIDUE-SSOT
   name: 'TEST-RESIDUE-SSOT: TEST-RESIDUE-SSOT（CommitGate, priority=56）'
   entry: in-process (GitCommitGateway)
@@ -1612,6 +1769,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: TEST-SOURCE-CONSISTENCY
   name: 'TEST-SOURCE-CONSISTENCY: TEST-SOURCE-CONSISTENCY（CommitGate, priority=102）'
   entry: in-process (GitCommitGateway)
@@ -1622,6 +1780,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: META-TESTS-COVERAGE
   name: 'META-TESTS-COVERAGE: META-TESTS-COVERAGE（CommitGate, priority=99）'
   entry: in-process (GitCommitGateway)
@@ -1632,6 +1791,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: TRANSLATION-COVERAGE
   name: 'TRANSLATION-COVERAGE: TRANSLATION-COVERAGE（CommitGate, priority=59）'
   entry: in-process (GitCommitGateway)
@@ -1642,6 +1802,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: TTL-METADATA
   name: 'TTL-METADATA: TTL-METADATA（CommitGate, priority=32）'
   entry: in-process (GitCommitGateway)
@@ -1652,6 +1813,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: UNDEFINED-NAME
   name: 'UNDEFINED-NAME: UNDEFINED-NAME（CommitGate, priority=106）'
   entry: in-process (GitCommitGateway)
@@ -1662,6 +1824,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: UNSAFE-DICT-SPREAD
   name: 'UNSAFE-DICT-SPREAD: UNSAFE-DICT-SPREAD（CommitGate, priority=66）'
   entry: in-process (GitCommitGateway)
@@ -1672,6 +1835,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: VOCAB-CHAIN
   name: 'VOCAB-CHAIN: VOCAB-CHAIN（CommitGate, priority=80）'
   entry: in-process (GitCommitGateway)
@@ -1682,6 +1846,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: VOCAB-HARDCODE
   name: 'VOCAB-HARDCODE: VOCAB-HARDCODE（CommitGate, priority=80）'
   entry: in-process (GitCommitGateway)
@@ -1692,6 +1857,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: WORKTREE-REQUIRED
   name: 'WORKTREE-REQUIRED: WORKTREE-REQUIRED（CommitGate, priority=44）'
   entry: in-process (GitCommitGateway)
@@ -1702,6 +1868,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
 - gate_id: ZEPHYR-ENV-DIRECT-ACCESS
   name: 'ZEPHYR-ENV-DIRECT-ACCESS: ZEPHYR-ENV-DIRECT-ACCESS（CommitGate, priority=125）'
   entry: in-process (GitCommitGateway)
@@ -1712,6 +1879,7 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
 - gate_id: GATE-SCHEMA-HEALTH
   name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）'
   entry: N/A (merged into GATE-C2, see redirect_to)
@@ -1726,3 +1894,4 @@ gates:
   status: deprecated
   redirect_to: GATE-C2
   source: manual
+  enforcement_channel: manual

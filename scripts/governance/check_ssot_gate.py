@@ -52,6 +52,8 @@ Exit codes:
 
 from __future__ import annotations
 
+# noqa: m11-perm-manual-legitimate  M11豁免: CI/pre-commit 按需调用的静态 SSoT 检查器，非常驻服务（--full-tree 审计模式同为编排器拉起的事件触发形态）
+
 __manifest__ = """
 args: []
 description: 'GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）。'
@@ -63,6 +65,7 @@ warn_only: false
 """
 
 
+import argparse
 import subprocess
 import sys
 from pathlib import Path
@@ -81,28 +84,52 @@ from zephyr.shared.io.paths import REPO_ROOT as _REPO_ROOT  # noqa: E402
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    # 获取 staged 新增的 .py 文件（diff-filter=A 只看新增）
-    result = subprocess.run(
-        ["git", "diff", "--cached", "--name-only", "--diff-filter=A"],
-        capture_output=True,
-        text=True,
-        cwd=str(_REPO_ROOT),
+    parser = argparse.ArgumentParser(description="GATE-SSOT: SSoT 创建门禁（pre-commit hook 双保险）")
+    parser.add_argument(
+        "--full-tree",
+        action="store_true",
+        help="审计模式：扫描全 tracked 树 src/zephyr/*.py 而非 staged 新增面（裁定#354 周期审计，默认行为零变化）",
     )
-    if result.returncode != 0:
-        print(f"GATE-SSOT: git diff 失败: {result.stderr}", file=sys.stderr)
-        return EXIT_ERROR
-    new_files = [
-        f.strip()
-        for f in result.stdout.strip().split("\n")
-        if f.strip().startswith("src/zephyr/") and f.strip().endswith(".py")
-    ]
+    # parse_known_args：直接调用方（单测 gate_module.main()）的 sys.argv 含 pytest 残参，忽略未知参数
+    args, _ = parser.parse_known_args()
 
-    if not new_files:
-        return 0  # 无新增 .py 文件，放行
+    if args.full_tree:
+        # 裁定#354 审计模式：全 tracked src/zephyr/*.py（存量对 staged-only 面永久不可见）
+        ls = subprocess.run(  # noqa: bare-subprocess  pre-commit 门禁脚本读 tracked 树,process_pool 在此场景不适用
+            ["git", "ls-files", "--", "src/zephyr"],
+            capture_output=True,
+            text=True,
+            cwd=str(_REPO_ROOT),
+        )
+        if ls.returncode != 0:
+            print(f"GATE-SSOT: git ls-files 失败: {ls.stderr}", file=sys.stderr)
+            return EXIT_ERROR
+        new_files = [f.strip() for f in ls.stdout.splitlines() if f.strip().endswith(".py")]
+        if not new_files:
+            return 0
+    else:
+        # 获取 staged 新增的 .py 文件（diff-filter=A 只看新增）
+        result = subprocess.run(  # noqa: bare-subprocess  静态检查器读 git 状态,process_pool 在此场景不适用
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=A"],
+            capture_output=True,
+            text=True,
+            cwd=str(_REPO_ROOT),
+        )
+        if result.returncode != 0:
+            print(f"GATE-SSOT: git diff 失败: {result.stderr}", file=sys.stderr)
+            return EXIT_ERROR
+        new_files = [
+            f.strip()
+            for f in result.stdout.strip().split("\n")
+            if f.strip().startswith("src/zephyr/") and f.strip().endswith(".py")
+        ]
+
+        if not new_files:
+            return 0  # 无新增 .py 文件，放行
 
     try:
         lookup = CapabilityLookup()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量 fail-open：lookup 不可用不阻断提交（网关内嵌门禁主防线）
         # fail-open：capability_lookup 不可用时不阻断
         # GitCommitGateway 内嵌门禁是主防线
         print(f"GATE-SSOT: capability_lookup 不可用，跳过: {e}", file=sys.stderr)

@@ -1,6 +1,14 @@
 # CloneGuard acknowledged 白名单（intentional=保留两副本；变更后重新浮现再评估）
 # 消费方：CloneGuardOrchestrator._suppress_acknowledged（引擎无关对账层，stable_key 无序对）
 acknowledged:
+- id: cg-w1d2-flag-reader-20260919
+  verdict: intentional
+  stable_key: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:_commit_queue_serializer_enabled||src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:_precommit_run_enabled"
+  note: flag 读取唯一点惯用样板（镜像既有 _commit_queue_serializer_enabled/_preflight_flag_enabled 对）：try-import flags→is_enabled(default)→except 日志回退；合并为参数化泛型不减少语义行；裁定#341 通道配套（st-final3-20260919 W1-D2）
+- id: cg-w1d2-highsens-path-20260919
+  verdict: intentional
+  stable_key: "scripts/governance/d6_security/check_protected_paths.py:check_high_sensitivity||scripts/governance/d6_security/check_protected_paths.py:check_path"
+  note: check_protected_paths 存量同构对，本批未触碰其实现，仅因文件随批修改而暴露（st-final3-20260919 W1-D2）
 - id: cg-factor-default-config-20260915
   verdict: intentional
   stable_key: "src/zephyr/factor/core/dag_manager/executor.py:_default_config||src/zephyr/factor/core/dist_feature_eng/engine.py:_default_config"

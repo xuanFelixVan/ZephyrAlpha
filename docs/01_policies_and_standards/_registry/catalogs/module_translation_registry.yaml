@@ -55650,6 +55650,14 @@ entries:
   desc_en: ""
   plain_zh: "提交入队之前先在本地把一百多道进程内门禁真跑一遍，只读不提交，提前把会被拦的死信清成零"
   responsibility_layer: governance
+- module_path: scripts/governance/run_fulltree_gate_audit.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "门禁全树审计编排器"
+  name_en: "gate full-tree audit orchestrator"
+  desc_zh: "裁定#354 九台 staged-only 门禁的 --full-tree 周期审计编排器，报告落 tmp/"
+  desc_en: "ruling #354 full-tree periodic audit orchestrator for nine staged-only detectors"
+  plain_zh: "每天凌晨把九个只看暂存区的门禁用全树模式跑一遍，把历史欠账翻出来出报告"
+  responsibility_layer: governance
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -180,7 +180,7 @@ def get_staged_files() -> list[str]:
     fail-open：git 不在 PATH 或调用失败时返回空列表（不阻断提交）。
     """
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: bare-subprocess  静态检查器读 git 状态,process_pool 在此场景不适用
             ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
             capture_output=True,
             text=True,
@@ -576,7 +576,7 @@ def scan_all(contract: dict) -> list[str]:
 
     # 尝试用 git ls-files 获取待扫描文件（治本：尊重 .gitignore）
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # noqa: bare-subprocess  静态检查器读 git 状态,process_pool 在此场景不适用
             ["git", "ls-files", "--cached", "--others", "--exclude-standard", "--full-name"],
             capture_output=True,
             text=True,
@@ -665,32 +665,38 @@ def main() -> int:
         action="store_true",
         help="扫描面过滤为 git ls-files 跟踪文件交集（tracked ⊆ 全盘；git 不可用时降级全盘并告警）",
     )
+    # 裁定#354（2026-09-19 W1-D2）：--full-tree 审计模式=全盘扫描∩tracked 树（staged 面行为零变化）
+    parser.add_argument(
+        "--full-tree",
+        action="store_true",
+        help="审计模式：全量扫描∩git tracked 树暴露存量违规（裁定#354 周期审计；默认 staged 面行为零变化）",
+    )
     parser.add_argument("files", nargs="*", help="增量校验文件列表（相对路径）")
     args = parser.parse_args()
 
     # 加载契约
     try:
         contract = load_contract()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量 fail-closed：加载失败转 EXIT_ERROR，任何异常都拦
         print(f"[GATE-DIRECTORY-CONTRACT] ERROR: 无法加载 directory_contract.yaml: {e}", file=sys.stderr)
         return EXIT_ERROR
 
     # 加载 doc_type 词表（DCR-001/002 真源）
     try:
         vocab = load_doc_type_vocabulary()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量 fail-closed：加载失败转 EXIT_ERROR，任何异常都拦
         print(f"[GATE-DIRECTORY-CONTRACT] ERROR: 无法加载 doc_type_vocabulary.yaml: {e}", file=sys.stderr)
         return EXIT_ERROR
 
     # 确定扫描文件列表
     if args.staged:
         files = get_staged_files()
-    elif args.all_files or (not args.files and not args.staged):
+    elif args.all_files or args.full_tree or (not args.files and not args.staged):
         files = scan_all(contract)
     else:
         files = [str(Path(f).as_posix()) for f in args.files]
 
-    if args.tracked_only and not args.staged:
+    if (args.tracked_only or args.full_tree) and not args.staged:
         # 裁定#345a（2026-09-19 W1-B）：扫描面过滤为 git 跟踪文件交集（tracked ⊆ 全盘）。
         # --staged 分支不过滤：staged ⊆ index ⊆ tracked，天然已是 tracked 口径。
         tracked = tracked_files_set()
@@ -713,7 +719,7 @@ def main() -> int:
     # 执行校验
     try:
         findings = scan_files(files, contract, vocab)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量 fail-closed：校验异常转 EXIT_ERROR，任何异常都拦
         print(f"[GATE-DIRECTORY-CONTRACT] ERROR: 校验异常: {e}", file=sys.stderr)
         return EXIT_ERROR
 

@@ -30,6 +30,8 @@ exit codes: 0=pass, 1=findings(发现 tests/unit/ 引用), 2=error
 
 from __future__ import annotations
 
+# noqa: m11-perm-manual-legitimate  M11豁免: pre-commit/周期审计按需调用的静态检查器，非常驻服务（裁定#354 --full-tree 审计由计划任务事件拉起）
+
 __manifest__ = """
 args: []
 description: >
@@ -85,7 +87,7 @@ _EXEMPT_PATH_PATTERNS = [
 def _get_staged_files_for_path_scan() -> list[str]:
     """获取 staged 文件列表（新增/修改/重命名后）。"""
     try:
-        r = subprocess.run(
+        r = subprocess.run(  # noqa: bare-subprocess  静态检查器读 git 状态,process_pool 在此场景不适用
             ["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
             capture_output=True,
             text=True,
@@ -97,6 +99,29 @@ def _get_staged_files_for_path_scan() -> list[str]:
         return []
     if r.returncode != 0:
         print(f"[ERR] git diff rc={r.returncode}: {r.stderr}", file=sys.stderr)
+        return []
+    return [f for f in r.stdout.strip().split("\n") if f]
+
+
+def _get_tracked_files_for_path_scan() -> list[str]:
+    """获取全 tracked 树文件列表（--full-tree 审计模式，裁定#354）。
+
+    审计语义：历史存量对 staged-only 检测面永久不可见（#354 亲验），
+    本模式扫描 git ls-files 全跟踪树暴露存量违规。默认 staged 面行为零变化。
+    """
+    try:
+        r = subprocess.run(  # noqa: bare-subprocess  审计模式读 tracked 树,process_pool 在此场景不适用
+            ["git", "ls-files"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        print(f"[ERR] git ls-files 失败: {type(e).__name__}: {e}", file=sys.stderr)
+        return []
+    if r.returncode != 0:
+        print(f"[ERR] git ls-files rc={r.returncode}: {r.stderr}", file=sys.stderr)
         return []
     return [f for f in r.stdout.strip().split("\n") if f]
 
@@ -117,7 +142,17 @@ def _is_scannable(rel: str) -> bool:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    files = _get_staged_files_for_path_scan()
+    import argparse
+
+    parser = argparse.ArgumentParser(description="GATE-NO-TESTS-UNIT: 禁止 tests/unit/ 旧路径重引入")
+    parser.add_argument(
+        "--full-tree",
+        action="store_true",
+        help="审计模式：扫描全 tracked 树而非 staged 面（裁定#354 周期审计，默认 staged 面行为零变化）",
+    )
+    args = parser.parse_args()
+
+    files = _get_tracked_files_for_path_scan() if args.full_tree else _get_staged_files_for_path_scan()
     if not files:
         return EXIT_PASS
 

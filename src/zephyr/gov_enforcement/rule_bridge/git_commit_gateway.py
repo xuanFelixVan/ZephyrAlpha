@@ -20,6 +20,45 @@
 阶段3 根除 stash 循环：每 AI session 分配独立 git worktree（.aidrafts/{session_id}/），
 session 在自己的 worktree 内编辑/commit，互不干扰（无需 stash）。GitCommitGateway
 串行化所有 commit：全局跨进程串行锁 + worktree 检测 + CommitGateRegistry 门禁。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: commit 请求
+#   fields: session_id / files 清单 / message / 逃生 flags（allow_overlap/allow_non_worktree/
+#     allow_multi_domain/allow_tracked_drift/merge_finalize）/ lock_wait_timeout
+#   code: commit()
+# - id: I2
+#   name: 仓库态
+#   fields: MERGE_HEAD 有无 / worktree 归属 / 全局锁文件（.ailocks/git_commit_global.lock，TTL=1800s）
+#   code: _is_merge_in_progress / _get_worktree_manager / _GlobalCommitLock
+# 层: 处理
+# - id: P1
+#   name: 锁外前置
+#   fields: merge 盲检测 / worktree 警告与 _WORKTREE_SKIP_GATES / pg_probe 刷新 / critical_warn 与 block 横幅
+#   code: commit() 前置段
+# - id: P2
+#   name: 全局锁临界区（gate → stage → commit 不可分割，TRAE-079 铁律1）
+#   fields: ita/幻影 AD 清扫 → _check_gates_with_drift_watch 门禁链 → 归因阻断审计
+#   code: commit() 锁内段
+# - id: P3
+#   name: 暂存
+#   fields: gitignored-tracked 分离（rm --cached / add -f）+ normal_files add/rm（--pathspec-from-file 防超长）
+#   code: _commit_locked / _stage_gitignored_tracked / _add_and_remove_normal_files
+# - id: P4
+#   name: 落地前校验（裁定#341 方案②）
+#   fields: staged --quiet 非空检查 → GATE-PRECOMMIT-RUN（GIT_INDEX_FILE 临时索引 own-scope
+#     pre-commit run；SKIP=gate-commit-gw,gate-worktree-required；own 归因阻断 / 存量债 warn+审计）
+#   code: _resolve_commit_result step5/5.5 / _run_precommit_channel
+# - id: P5
+#   name: 提交
+#   fields: git commit --no-verify -F <msg>（rename fallback 无 pathspec）+ [GW:<sid>] 标记
+#   code: _commit_with_file_message
+# 层: 输出
+# - id: O1
+#   name: 提交结果与后置观测
+#   fields: CommitResult(hash/status) / 孤魂祖先链检测 / slow 采样 / post-commit reconcile 异步编排
+#   code: _resolve_commit_result 后段 / _run_post_commit_reconcile
 """
 
 from __future__ import annotations
@@ -36,6 +75,7 @@ __all__ = [
 import json
 import logging
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -51,6 +91,9 @@ if TYPE_CHECKING:
 
     from zephyr.security.access_control.session_concurrency import SessionRegistry
 
+from zephyr.gov_audit.secret_registry_drift import (  # C-4 secret_registry 周期核对（裁定#287 2026-09-16）
+    make_secret_registry_drift_reconciler,
+)
 from zephyr.gov_enforcement.rule_bridge.batched_auto_committer import BatchedAutoCommitter  # ARCH-GIT-CALL-BUDGET P2.3
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import CommitGateRegistry
 from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import (
@@ -58,9 +101,6 @@ from zephyr.gov_enforcement.rule_bridge.gate_auto_registrar import (
 )
 from zephyr.governance.audit.blueprint_status_transition_reconciler import (
     make_blueprint_status_transition_reconciler,  # 12维度审计自动化 P1-d BLUEPRINT状态转跃reconciler
-)
-from zephyr.gov_audit.secret_registry_drift import (  # C-4 secret_registry 周期核对（裁定#287 2026-09-16）
-    make_secret_registry_drift_reconciler,
 )
 from zephyr.governance.audit.commit_gateway_abuse_monitor_reconciler import (  # ARCH-TOOL-HEALTH-V1 Phase 5b
     make_commit_gateway_abuse_monitor_reconciler,
@@ -167,11 +207,7 @@ def _ensure_scripts_package_importable(project_root: str) -> None:
     # 候选真包目录实际存在且与缓存 __path__ 失配时生效，原生产语义（win32 命名空间
     # 毒缓存）不变。
     pkg = sys.modules.get("scripts")
-    if (
-        pkg is not None
-        and os.path.isdir(scripts_dir)
-        and scripts_dir not in (getattr(pkg, "__path__", None) or ())
-    ):
+    if pkg is not None and os.path.isdir(scripts_dir) and scripts_dir not in (getattr(pkg, "__path__", None) or ()):
         for name in [n for n in list(sys.modules) if n == "scripts" or n.startswith("scripts.")]:
             del sys.modules[name]
 
@@ -271,6 +307,7 @@ def lookup_derived_write_owners(project_root: str | Path, files: list[str]) -> d
         return {}
     return out
 
+
 # Stage 4 公共化：模块级公共别名（primary 仍为私有定义，公共别名为同对象引用）。
 GATEWAY_ENV = _GATEWAY_ENV
 GLOBAL_LOCK_FILE = _GLOBAL_LOCK_FILE
@@ -314,6 +351,33 @@ def _preflight_flag_enabled() -> bool:
 
         return preflight_enabled()
     except Exception:  # noqa: BLE001 — 设施异常 fail-closed OFF
+        return False
+
+
+# 裁定#341 方案②（2026-09-19 Owner 批）：落地前 staged 面 pre-commit run 常量
+_PRECOMMIT_RUN_FLAG = "gate_precommit_run_enabled"
+_PRECOMMIT_RUN_TIMEOUT_S = 900
+# 网关通道 SKIP 的 pre-commit hook id（二者与网关通道存在结构性冲突，理由见 _run_precommit_channel docstring）
+_PRECOMMIT_CHANNEL_SKIP_HOOKS = "gate-commit-gw,gate-worktree-required"
+_PRECOMMIT_EXIT_CODE_RE = re.compile(r"- exit code: (\d+)")
+
+
+def _precommit_run_enabled() -> bool:
+    """裁定#341 方案② flag 读取唯一点（出厂 ON=Owner 已批方案②）。
+
+    flag 设施异常 → OFF（回 #341 前现状：pre-commit 门禁在网关通道零执行，
+    绝不因 flag 层故障暗中改变提交行为）。Owner 紧急停用=flags.yaml flag OFF。
+    """
+    try:
+        from zephyr.shared.foundation.flags import (  # noqa: PLC0415 延迟 import：读 flag 非热路径
+            ensure_global_flags_loaded,
+            global_flag_registry,
+        )
+
+        ensure_global_flags_loaded()
+        return global_flag_registry.is_enabled(_PRECOMMIT_RUN_FLAG, default=True)
+    except Exception:  # noqa: BLE001 — 设施异常回退现状 OFF
+        logger.warning("_precommit_run_enabled: flag 读取异常，回退 OFF（#341 前现状）", exc_info=True)
         return False
 
 
@@ -412,7 +476,7 @@ class _GlobalCommitLock:
         self._poll_interval = poll_interval
         self._acquired = False
 
-    def __enter__(self) -> "_GlobalCommitLock":
+    def __enter__(self) -> _GlobalCommitLock:
         deadline = time.monotonic() + self._timeout
         while True:
             try:
@@ -487,7 +551,9 @@ class _GlobalCommitLock:
                 # DeleteBlockedError(RuntimeError)，except OSError 接不住导致
                 # 提交成功却以异常收场（exit=1+残锁）。降级=残锁留给下次获取
                 # 的僵尸 PID 检测/TTL 兜底，提交结果原样返回。
-                logger.warning("_GlobalCommitLock: 锁自清失败（残锁由僵尸检测/TTL 兜底）: %s", self._lock_file, exc_info=True)
+                logger.warning(
+                    "_GlobalCommitLock: 锁自清失败（残锁由僵尸检测/TTL 兜底）: %s", self._lock_file, exc_info=True
+                )
             self._acquired = False
         return False
 
@@ -865,7 +931,7 @@ class GitCommitGateway:
     def __init__(
         self,
         project_root: str | Path | None = None,
-        registry: "SessionRegistry | None" = None,
+        registry: SessionRegistry | None = None,
     ) -> None:
         self.project_root = Path(project_root or Path.cwd()).resolve()
         # 治本(2026-07-20): .git 检查仅在 registry is None 时执行——
@@ -934,7 +1000,7 @@ class GitCommitGateway:
                     "GitCommitGateway: async launch failed, fallback to sync: %s", launch_result.get("error", "")
                 )
                 self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=None)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 存量兜底：async 失败降级 sync，任何异常都不可中断 commit 主链
             logger.warning("GitCommitGateway: async reconcile launch failed, fallback to sync: %s", e, exc_info=True)
             self._run_post_commit_reconcile_sync(existing, session_id, commit_message, result=None)
 
@@ -1300,7 +1366,7 @@ class GitCommitGateway:
             # P2：读取文件 [DOMAIN] 头部（与 commit_scope_gate / domain_fk_gate 同模式）
             domain = "UNKNOWN"
             try:
-                with open(abs_file, "r", encoding="utf-8", errors="replace") as fh:
+                with open(abs_file, encoding="utf-8", errors="replace") as fh:
                     for _ in range(20):
                         line = fh.readline()
                         if not line:
@@ -1564,7 +1630,9 @@ class GitCommitGateway:
             _backup_dir = str(self.project_root / "scripts" / "backup")
             if _backup_dir not in _sys.path:
                 _sys.path.insert(0, _backup_dir)
-            from backup_reconciler import make_backup_reconciler  # noqa: import-integrity  运行时 sys.path 注入后惰性 import（ImportError 已兜底 warn）
+            from backup_reconciler import (
+                make_backup_reconciler,  # noqa: import-integrity  运行时 sys.path 注入后惰性 import（ImportError 已兜底 warn）
+            )
 
             self._reconciliation_registry.register(make_backup_reconciler(self.project_root))
         except ImportError as e:
@@ -1579,7 +1647,9 @@ class GitCommitGateway:
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from readme_version_sync_reconciler import make_readme_version_sync_reconciler  # noqa: import-integrity  运行时 sys.path 注入后惰性 import（ImportError 已兜底 warn）
+            from readme_version_sync_reconciler import (
+                make_readme_version_sync_reconciler,  # noqa: import-integrity  运行时 sys.path 注入后惰性 import（ImportError 已兜底 warn）
+            )
 
             self._reconciliation_registry.register(make_readme_version_sync_reconciler(self.project_root))
         except ImportError as e:
@@ -1594,7 +1664,9 @@ class GitCommitGateway:
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from requirements_version_sync_reconciler import make_requirements_version_sync_reconciler  # noqa: import-integrity  运行时 sys.path 注入后惰性 import（ImportError 已兜底 warn）
+            from requirements_version_sync_reconciler import (
+                make_requirements_version_sync_reconciler,  # noqa: import-integrity  运行时 sys.path 注入后惰性 import（ImportError 已兜底 warn）
+            )
 
             self._reconciliation_registry.register(make_requirements_version_sync_reconciler(self.project_root))
         except ImportError as e:
@@ -1609,7 +1681,9 @@ class GitCommitGateway:
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from metric_count_drift_reconciler import make_metric_count_drift_reconciler  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+            from metric_count_drift_reconciler import (
+                make_metric_count_drift_reconciler,  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+            )
 
             self._reconciliation_registry.register(make_metric_count_drift_reconciler(self.project_root))
         except ImportError as e:
@@ -1624,7 +1698,9 @@ class GitCommitGateway:
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from algo_flow_translation_reconciler import make_algo_flow_translation_reconciler  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+            from algo_flow_translation_reconciler import (
+                make_algo_flow_translation_reconciler,  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+            )
 
             self._reconciliation_registry.register(make_algo_flow_translation_reconciler(self.project_root))
         except ImportError as e:
@@ -1639,7 +1715,9 @@ class GitCommitGateway:
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from agents_cheatsheet_drift_reconciler import make_agents_cheatsheet_drift_reconciler  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+            from agents_cheatsheet_drift_reconciler import (
+                make_agents_cheatsheet_drift_reconciler,  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+            )
 
             self._reconciliation_registry.register(make_agents_cheatsheet_drift_reconciler(self.project_root))
         except ImportError as e:
@@ -1656,7 +1734,9 @@ class GitCommitGateway:
             _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
             if _doc_sync_dir not in _sys.path:
                 _sys.path.insert(0, _doc_sync_dir)
-            from algo_flow_reverse_orphan_reconciler import make_algo_flow_reverse_orphan_reconciler  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+            from algo_flow_reverse_orphan_reconciler import (
+                make_algo_flow_reverse_orphan_reconciler,  # noqa: import-integrity  d8_doc_sync reconciler 插件 sys.path 动态注册（ImportError 守卫降级 warning）
+            )
 
             self._reconciliation_registry.register(make_algo_flow_reverse_orphan_reconciler(self))
         except ImportError as e:
@@ -1714,14 +1794,16 @@ class GitCommitGateway:
         if gate_id is None:
             m = re.search(r"门禁 ([A-Z\-]+) 阻断", blocked.message or "")
             gate_id = m.group(1) if m else "UNKNOWN"
-        self._append_commit_anomaly_jsonl({
-            "session_id": session_id,
-            "event": "commit_blocked",
-            "gate_id": gate_id,
-            "files_count": len(existing),
-            "gate_chain_ms": round(elapsed_ms),
-            "detail": (blocked.message or "")[:200],
-        })
+        self._append_commit_anomaly_jsonl(
+            {
+                "session_id": session_id,
+                "event": "commit_blocked",
+                "gate_id": gate_id,
+                "files_count": len(existing),
+                "gate_chain_ms": round(elapsed_ms),
+                "detail": (blocked.message or "")[:200],
+            }
+        )
 
     def _audit_commit_slow_event(self, session_id: str, existing: list[str], total_ms: float) -> None:
         """堵点溯源审计②慢提交事件（D5 补强，Owner 2026-09-13 裁定"超阈堵点才记"）。
@@ -1730,14 +1812,16 @@ class GitCommitGateway:
         一行 commit_slow——慢而未阻的堵点画像（锁排队/门禁链膨胀），与 commit_blocked
         互补构成完整堵点观测。正常流量零记录（阈值化防爆炸）。
         """
-        self._append_commit_anomaly_jsonl({
-            "session_id": session_id,
-            "event": "commit_slow",
-            "gate_id": "-",
-            "files_count": len(existing),
-            "total_ms": round(total_ms),
-            "threshold_s": _SLOW_COMMIT_THRESHOLD_S,
-        })
+        self._append_commit_anomaly_jsonl(
+            {
+                "session_id": session_id,
+                "event": "commit_slow",
+                "gate_id": "-",
+                "files_count": len(existing),
+                "total_ms": round(total_ms),
+                "threshold_s": _SLOW_COMMIT_THRESHOLD_S,
+            }
+        )
 
     def _check_gate_results(self, gate_results: list) -> CommitResult | None:
         """检查门禁结果，返回 CommitResult 表示阻断、None 表示全部通过。"""
@@ -1881,7 +1965,7 @@ class GitCommitGateway:
         self,
         existing: list[str],
         session_id: str,
-        batcher: "object",
+        batcher: object,
     ) -> None:
         """F1 治本（衍生提交并入原子化，2026-09-18）：flush 前把 rules_integrity_db 折入批提交。
 
@@ -1954,9 +2038,7 @@ class GitCommitGateway:
         _abs_db = str(self.project_root / _db_rel)
         _msg = "chore(integrity): fold rules_integrity_db into reconciler batch (F1 衍生提交并入原子化)"
         # R-04②（lane G1）：派生写入先落归属台账（committed=False——真正提交在 flush）
-        record_derived_write(
-            self.project_root, session_id, [_abs_db], source="rules_integrity_fold", committed=False
-        )
+        record_derived_write(self.project_root, session_id, [_abs_db], source="rules_integrity_fold", committed=False)
         try:
             batcher.buffer(session_id, [_abs_db], _msg)  # type: ignore[attr-defined]
             logger.info(
@@ -2136,7 +2218,7 @@ class GitCommitGateway:
         existing: list[str],
         session_id: str,
         commit_message: str = "",
-        heartbeat: "Callable[[str], None] | None" = None,
+        heartbeat: Callable[[str], None] | None = None,
     ) -> list[ReconcileResult]:
         """worker-only 入口：同步执行 reconciler 链路并返回 results。
 
@@ -2194,6 +2276,7 @@ class GitCommitGateway:
         session_id: str,
         files: list[str],
         message: str,
+        *,
         allow_promote: bool = False,
         allow_overlap: bool = False,
         allow_derived_deletion: bool = False,
@@ -2457,13 +2540,15 @@ class GitCommitGateway:
             _sha = str(getattr(result, "commit_hash", "") or "")
             try:
                 if _sha and int(_sha[-1], 16) >= 14:
-                    self._append_commit_anomaly_jsonl({
-                        "session_id": session_id,
-                        "event": "commit_ok_sample",
-                        "gate_id": "-",
-                        "files_count": len(existing),
-                        "total_ms": round(_total_ms),
-                    })
+                    self._append_commit_anomaly_jsonl(
+                        {
+                            "session_id": session_id,
+                            "event": "commit_ok_sample",
+                            "gate_id": "-",
+                            "files_count": len(existing),
+                            "total_ms": round(_total_ms),
+                        }
+                    )
             except Exception:  # noqa: BLE001 — 采样永不阻断
                 pass
         self._snapshot_worktree_status(session_id, result)
@@ -2527,7 +2612,7 @@ class GitCommitGateway:
                 for line in chk.stdout.splitlines():
                     if line.strip():
                         ignored_rels.add(line.strip().lower())
-        return [f for f, rel in zip(files, rels) if rel.lower() in ignored_rels]
+        return [f for f, rel in zip(files, rels, strict=False) if rel.lower() in ignored_rels]
 
     def _run_pathspec_git_cmd(
         self,
@@ -2568,7 +2653,7 @@ class GitCommitGateway:
             (existing if os.path.isfile(f) else deleted).append(f)
         if deleted:
             del_rels = [os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in deleted]
-            del_tracked = [f for f, rel in zip(deleted, del_rels) if self.is_git_tracked(rel)]
+            del_tracked = [f for f, rel in zip(deleted, del_rels, strict=False) if self.is_git_tracked(rel)]
             err = self._run_pathspec_git_cmd(
                 del_tracked,
                 ["git", "rm", "--cached", "--ignore-unmatch"],
@@ -2579,7 +2664,9 @@ class GitCommitGateway:
         if existing:
             ex_rels = [os.path.relpath(f, str(self.project_root)).replace("\\", "/") for f in existing]
             ex_tracked = [
-                f for f, rel in zip(existing, ex_rels) if self.is_git_tracked(rel) and not self._is_staged_delete(rel)
+                f
+                for f, rel in zip(existing, ex_rels, strict=False)
+                if self.is_git_tracked(rel) and not self._is_staged_delete(rel)
             ]
             err = self._run_pathspec_git_cmd(
                 ex_tracked,
@@ -2740,7 +2827,7 @@ class GitCommitGateway:
         existing,
         session_id,
         skip_gates=frozenset(),
-        preflight_results: "dict[str, tuple[bool, str]] | None" = None,
+        preflight_results: dict[str, tuple[bool, str]] | None = None,
         **kwargs,
     ):
         """gate 链执行 + tracked 区漂移监视（T4-2）：运行前后指纹比对。
@@ -2856,7 +2943,9 @@ class GitCommitGateway:
                     result = add_fail
                 else:
                     # 4-6. 检查 staged 变更并 commit
-                    result = self._resolve_commit_result(files, normal_files, full_message, pathspec_file, gw_marker)
+                    result = self._resolve_commit_result(
+                        session_id, files, normal_files, full_message, pathspec_file, gw_marker
+                    )
         finally:
             self._commit_locked_finalize(result, files, session_id, full_message, pathspec_file)
         return result
@@ -2915,15 +3004,353 @@ class GitCommitGateway:
                     )
         return add_ok, failure
 
+    @staticmethod
+    def _precommit_rel_lists(files: list[str], project_root: str) -> tuple[list[str], list[str]]:
+        """拆分本提交文件为 (现存 rel POSIX 路径, 已删除 rel POSIX 路径)。"""
+        rel_existing: list[str] = []
+        rel_deleted: list[str] = []
+        for f in files:
+            rel = os.path.relpath(f, project_root).replace("\\", "/")
+            if os.path.isfile(f):
+                rel_existing.append(rel)
+            else:
+                rel_deleted.append(rel)
+        return rel_existing, rel_deleted
+
+    @staticmethod
+    def _precommit_git(env: dict, project_root: str, args: list[str], timeout_s: float = 300):
+        """临时索引作用域内的 git 调用（GIT_INDEX_FILE 由 env 携带）。"""
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        return run_subprocess_hidden(
+            ["git", *args],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=project_root,
+            env=env,
+            timeout=timeout_s,
+        )
+
+    def _precommit_build_temp_index(self, env: dict, rel_existing: list[str], rel_deleted: list[str]) -> str | None:
+        """临时索引构建：read-tree HEAD + 仅 add 本提交文件 + 移除删除目标（分批防超长）。
+
+        Returns:
+            None = 成功；str = 基础设施故障描述。
+        """
+        root = str(self.project_root)
+        for i in range(0, len(rel_existing), 200):
+            batch = rel_existing[i : i + 200]
+            r = self._precommit_git(env, root, ["add", "-f", "--", *batch])
+            if r.returncode != 0:
+                return f"temp-index add failed: {r.stderr.strip()[:300]}"
+        for i in range(0, len(rel_deleted), 200):
+            batch = rel_deleted[i : i + 200]
+            r = self._precommit_git(env, root, ["rm", "--cached", "--ignore-unmatch", "--quiet", "--", *batch])
+            if r.returncode != 0:
+                return f"temp-index rm failed: {r.stderr.strip()[:300]}"
+        return None
+
+    def _precommit_execute(self, env: dict, chunks: list[list[str]]) -> tuple[str, int, bool, str]:
+        """分批运行 pre-commit（含变异侦测重跑消解）。
+
+        Returns:
+            (output, rc, mutation, infra_error)。
+        """
+        cmd: list[str] = [sys.executable, "-m", "pre_commit", "run", "--files"]
+        output = ""
+        rc = 0
+        mutation = False
+        infra_error = ""
+        # 变异侦测重跑消解：共享工作区存在并发写入者（其他 session/派生件生成器），
+        # pre-commit 的 before/after diff 比对可能把并发写入误判为 "hook 修改了文件"。
+        # 判变异→重跑 1 次：确定性 fixer（真变异）两次均复现仍拦；并发假阳重跑即消。
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415 通道执行依赖
+
+        attempts = 2
+        for attempt in range(1, attempts + 1):
+            outs: list[str] = []
+            rcs: list[int] = []
+            try:
+                for chunk in chunks:
+                    proc = run_subprocess_hidden(
+                        [*cmd, *chunk],
+                        capture_output=True,
+                        text=True,
+                        encoding="utf-8",
+                        errors="replace",
+                        cwd=str(self.project_root),
+                        env=env,
+                        timeout=_PRECOMMIT_RUN_TIMEOUT_S,
+                    )
+                    rcs.append(proc.returncode)
+                    outs.append((proc.stdout or "") + "\n" + (proc.stderr or ""))
+            except subprocess.TimeoutExpired:
+                return (
+                    output,
+                    max(rcs) if rcs else -1,
+                    mutation,
+                    (f"pre-commit run timeout after {_PRECOMMIT_RUN_TIMEOUT_S}s"),
+                )
+            except FileNotFoundError as e:
+                return output, max(rcs) if rcs else -1, mutation, f"pre-commit unavailable: {e}"
+            output = "\n".join(outs)
+            rc = max(rcs) if rcs else 0
+            mutation = "files were modified by this hook" in output
+            if mutation and attempt < attempts:
+                logger.warning(
+                    "GitCommitGateway: pre-commit 通道第 %d 次运行报 hook 变异，"
+                    "重跑消解并发写入假阳（确定性 fixer 将在下次仍报）",
+                    attempt,
+                )
+                continue
+            break
+        return output, rc, mutation, infra_error
+
+    @staticmethod
+    def _precommit_failed_segments(output: str) -> list[dict]:
+        """解析 per-hook 失败段：段=「- hook id: X」行起至下一 hook id 行前（含其上方 header 行）。"""
+        lines = output.splitlines()
+        segs: list[dict] = []
+        hook_idx = [i for i, ln in enumerate(lines) if ln.strip().startswith("- hook id: ")]
+        for k, idx in enumerate(hook_idx):
+            header = idx - 1
+            while header >= 0 and lines[header].strip() and not lines[header].strip().startswith("- "):
+                header -= 1
+            header += 1
+            end = hook_idx[k + 1] - 1 if k + 1 < len(hook_idx) else len(lines)
+            text = "\n".join(lines[header : max(end, idx + 1)])
+            m = _PRECOMMIT_EXIT_CODE_RE.search(text)
+            segs.append(
+                {
+                    "hook_id": lines[idx].strip().split(":", 1)[1].strip(),
+                    "failed": bool(m and int(m.group(1)) != 0),
+                    "text": text,
+                }
+            )
+        return segs
+
+    def _run_precommit_channel(self, session_id: str, files: list[str]) -> str | None:
+        """裁定#341 方案②（2026-09-19 Owner 批）：落地前对 staged 面跑 `pre-commit run`。
+
+        背景：网关 git commit 恒 --no-verify（_commit_with_file_message），55 台
+        pre-commit 门禁在网关通道零执行（#341 亲验"守规会话永久免检"）。本方法在
+        staged 校验段（_resolve_commit_result step5）之后、`git commit --no-verify`
+        （step6）之前补执 pre-commit run，吞吐成本限改动面=只对本提交文件跑。
+
+        own-scope 机制（宪法 §3.1 防连坐）：多 session 共享主区 index，直跑 pre-commit
+        会把外来 staged 内容吸收进本提交判定（基线实测：GATE-COMMIT-GW 被他会话在途件
+        误触发）。故经 GIT_INDEX_FILE 临时索引运行：read-tree HEAD + 仅 add 本提交目标
+        文件——索引扫描型 hook（pass_filenames:false，含 #354 九台 staged-only 检测器）
+        只见本提交面；pass_filenames 型 hook 由 --files <own> 限定。删除目标不进
+        --files（无内容可检），仅在临时索引中移除。
+
+        失败归因（§3.1 own-scope：外来/存量违规不阻断无辜提交人）：
+        - 失败 hook 输出引用本提交文件 → 阻断（返回门禁阻断 message）
+        - 失败 hook 与本提交文件无关（存量全局债，基线实测例：GATE-17 孤儿扫描命中
+          vendor/ 与 _working WIP、GATE-INTEGRITY 金hash 记录滞后）→ warn + 审计落盘，
+          不阻断
+        - pre-commit 报 "files were modified by this hook" → 重跑 1 次消解并发写入假阳
+          后仍变异 → 阻断（staged 内容已被改写，带修改落盘=提交内容与校验内容不一致，
+          fail-closed）
+        - pre-commit 自身不可用/超时（基础设施故障，非违规证据）→ warn + 审计 + 放行
+          （可用性优先；flag OFF 是 Owner 停用手柄）
+
+        SKIP 清单（_PRECOMMIT_CHANNEL_SKIP_HOOKS）：
+        - gate-commit-gw: 判定前提="hook 运行=裸 git commit"——本调用就在网关内，
+          恒真冲突；其防护意图（反裸提交）由网关通道结构性满足
+        - gate-worktree-required: 主工作区 warn+计数≥5 升级阻断——与网关内进程
+          WORKTREE-REQUIRED gate（--allow-non-worktree 已裁决逃生）双重计数冲突
+
+        merge 跳过：merge 携带分支侧已验提交（B4 分支侧审批转置属提交面语义）。
+
+        Returns:
+            None = 放行；str = 阻断原因（门禁 GATE-PRECOMMIT-RUN 阻断前缀）。
+        """
+        if not _precommit_run_enabled():
+            return None
+        if self._is_merge_in_progress():
+            return None
+        root = str(self.project_root)
+        rel_existing, rel_deleted = self._precommit_rel_lists(files, root)
+        if not rel_existing and not rel_deleted:
+            return None
+
+        git_dir_res = self.run_git(["git", "rev-parse", "--git-dir"])
+        if git_dir_res.returncode != 0:
+            return None
+        git_dir = git_dir_res.stdout.strip() or ".git"
+        git_dir_abs = git_dir if os.path.isabs(git_dir) else os.path.join(root, git_dir)
+        fd, tmp_index = tempfile.mkstemp(prefix="tmpidx_precommit_", dir=git_dir_abs)
+        os.close(fd)
+        env = {
+            **os.environ,
+            "GIT_INDEX_FILE": tmp_index,
+            "ZEPHYR_COMMIT_GATEWAY": "1",
+            "PRE_COMMIT_COLOR": "never",
+            "SKIP": _PRECOMMIT_CHANNEL_SKIP_HOOKS,
+        }
+
+        output, rc, mutation, infra_error, skipped = self._precommit_run_scoped(
+            env, root, rel_existing, rel_deleted, tmp_index
+        )
+        if skipped:
+            return None  # 空 repo（无 HEAD）：临时索引无从建立，放行走既有门禁链
+
+        if infra_error:
+            # 基础设施故障（非违规证据）→ warn + 审计 + 放行（可用性优先，见 docstring）
+            logger.warning("GitCommitGateway: pre-commit 通道基础设施故障，放行并落审计: %s", infra_error)
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_infra_error",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                    "detail": infra_error[:500],
+                }
+            )
+            return None
+
+        if rc == 0:
+            return None
+        return self._precommit_decide_failure(session_id, files, output, mutation, rel_existing, rel_deleted)
+
+    def _precommit_run_scoped(
+        self,
+        env: dict,
+        root: str,
+        rel_existing: list[str],
+        rel_deleted: list[str],
+        tmp_index: str,
+    ) -> tuple[str, int, bool, str, bool]:
+        """临时索引全生命周期：HEAD 校验 → read-tree → 构建 → 执行（跑完即清理临时索引）。
+
+        Returns:
+            (output, rc, mutation, infra_error, skipped)；skipped=True=无 HEAD 放行场景。
+        """
+        infra_error = ""
+        output = ""
+        rc = 0
+        mutation = False
+        skipped = False
+        try:
+            head = self._precommit_git(env, root, ["rev-parse", "--verify", "HEAD"], timeout_s=60)
+            if head.returncode != 0:
+                skipped = True
+                return output, rc, mutation, infra_error, skipped
+            rt = self._precommit_git(env, root, ["read-tree", "HEAD"])
+            if rt.returncode != 0:
+                infra_error = f"read-tree failed: {rt.stderr.strip()[:300]}"
+            if not infra_error:
+                infra_error = self._precommit_build_temp_index(env, rel_existing, rel_deleted)
+            if not infra_error:
+                chunks = [rel_existing[i : i + 200] for i in range(0, len(rel_existing), 200)] or [[]]
+                output, rc, mutation, infra_error = self._precommit_execute(env, chunks)
+        finally:
+            try:
+                os.remove(tmp_index)
+            except OSError:
+                pass
+        return output, rc, mutation, infra_error, skipped
+
+    @staticmethod
+    def _precommit_classify(
+        output: str, rel_existing: list[str], rel_deleted: list[str]
+    ) -> tuple[list[dict], list[dict]]:
+        """失败段解析 + own-scope 归因：返回 (own_failed, foreign_failed)。"""
+
+        def _own_hit(seg_text: str) -> bool:
+            norm = seg_text.replace("\\", "/").lower()
+            return any(rel.lower() in norm for rel in (rel_existing + rel_deleted))
+
+        failed = [s for s in GitCommitGateway._precommit_failed_segments(output) if s["failed"]]
+        # 归因只看证据行：剥离修复提示样板（Fix:/->/python 命令行）——样板上可能含批内
+        # 生成器路径（如 GATE-21 的 Fix 指引），会造成 own 误归因（实测假阳）
+        _HINT_PREFIXES = ("fix:", "->", "python ", "pass [")  # pass 状态行同样非违规证据
+
+        def _evidence(seg_text: str) -> str:
+            return "\n".join(ln for ln in seg_text.splitlines() if not ln.strip().lower().startswith(_HINT_PREFIXES))
+
+        own_failed = [s for s in failed if _own_hit(_evidence(s["text"]))]
+        foreign_failed = [s for s in failed if not _own_hit(_evidence(s["text"]))]
+        return own_failed, foreign_failed
+
+    def _precommit_decide_failure(
+        self,
+        session_id: str,
+        files: list[str],
+        output: str,
+        mutation: bool,
+        rel_existing: list[str],
+        rel_deleted: list[str],
+    ) -> str | None:
+        """失败裁决（§3.1 own-scope 归因）：own 违规阻断 / 非 own 存量债 warn+审计 / 变异阻断。"""
+
+        own_failed, foreign_failed = self._precommit_classify(output, rel_existing, rel_deleted)
+
+        if mutation:
+            detail = output[-4000:]
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_blocked",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                    "reason": "files_modified_by_hook_persistent",
+                }
+            )
+            return (
+                "门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 重跑后仍检测到 hook 修改了文件"
+                "（裁定#341 方案②；确定性变异=带修改落盘与校验内容不一致，fail-closed；"
+                "如系派生件漂移请先重跑对应生成器并随批提交）\n"
+                f"{detail}"
+            )
+
+        if own_failed:
+            detail = "\n".join(s["text"].rstrip() for s in own_failed)[:4000]
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_blocked",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                    "hooks": [s["hook_id"] for s in own_failed],
+                }
+            )
+            return (
+                "门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）"
+                f"发现本提交文件的违规（裁定#341 方案②，hook={[s['hook_id'] for s in own_failed]})\n"
+                f"{detail}"
+            )
+
+        if foreign_failed:
+            # 存量/外来全局债：warn + 审计，不阻断无辜提交人（宪法 §3.1）
+            logger.warning(
+                "GitCommitGateway: pre-commit 通道发现与本提交无关的存量红（warn-only 放行）: %s",
+                [s["hook_id"] for s in foreign_failed],
+            )
+            self._append_commit_anomaly_jsonl(
+                {
+                    "session_id": session_id,
+                    "event": "precommit_channel_global_debt_warned",
+                    "gate_id": "GATE-PRECOMMIT-RUN",
+                    "files_count": len(files),
+                    "hooks": [s["hook_id"] for s in foreign_failed],
+                }
+            )
+        return None
+
     def _resolve_commit_result(
         self,
+        session_id: str,
         files: list[str],
         normal_files: list[str],
         full_message: str,
         pathspec_file: str,
         gw_marker: str,
     ) -> CommitResult:
-        """步骤4-6：判断 no-pathspec -> 检查 staged 变更 -> commit（rename 检测内置）。"""
+        """步骤4-6：判断 no-pathspec -> 检查 staged 变更 -> pre-commit 通道 -> commit（rename 检测内置）。"""
         # 4. 判断是否需要无 pathspec commit（gitignored / staged rename）
         has_gitignored = self._should_use_no_pathspec(files, normal_files)
         # 5. 检查 staged 变更
@@ -2934,6 +3361,13 @@ class GitCommitGateway:
                 status=CommitStatus.NOTHING_TO_COMMIT,
                 message="no staged changes in files_in_scope",
             )
+        # 5.5 裁定#341 方案②（2026-09-19 Owner 批）：落地前 staged 面 pre-commit run
+        # （own-scope 临时索引，见 _run_precommit_channel；返回非 None = 阻断）
+        precommit_block = self._run_precommit_channel(session_id, files)
+        if precommit_block is not None:
+            blocked = CommitResult(status=CommitStatus.COMMIT_FAILED, message=precommit_block)
+            self._audit_commit_block_event(session_id, blocked, files, 0.0)
+            return blocked
         # 6. commit（rename 检测内置到 _commit_with_file_message）
         pathspec_for_commit = None if has_gitignored else pathspec_file
         commit_hash, commit_err = self._commit_with_file_message(full_message, pathspec_for_commit, files)
@@ -2953,13 +3387,15 @@ class GitCommitGateway:
                     "（并发 ref 竞态覆盖嫌疑，内容保留在对象库可 cherry-pick 恢复）",
                     commit_hash[:12],
                 )
-                self._append_commit_anomaly_jsonl({
-                    "session_id": session_id,
-                    "event": "orphan_commit_detected",
-                    "commit_hash": commit_hash,
-                    "files_count": len(files),
-                    "recovery": f"git cherry-pick {commit_hash}",
-                })
+                self._append_commit_anomaly_jsonl(
+                    {
+                        "session_id": session_id,
+                        "event": "orphan_commit_detected",
+                        "commit_hash": commit_hash,
+                        "files_count": len(files),
+                        "recovery": f"git cherry-pick {commit_hash}",
+                    }
+                )
         except Exception:  # noqa: BLE001 — 孤魂检测自身异常不阻断 OK 路径
             logger.debug("孤魂检测异常（不阻断）", exc_info=True)
         os.environ[_GATEWAY_ENV] = "1"
@@ -3230,7 +3666,7 @@ class GitCommitGateway:
         self,
         pathspec_file: str,
         session_id: str,
-    ) -> "CommitResult | None":
+    ) -> CommitResult | None:
         """git add 带 index.lock 暂时性竞争重试（#ARCH-RECONCILER-INDEXLOCK-RETRY）。
 
         根因：外部裸 git commit（绕过 GitCommitGateway）可能持有 .git/index.lock，
@@ -3653,9 +4089,7 @@ class GitCommitGateway:
             return []
         result = self.run_git(["git", "reset", "-q", "--"] + phantoms)
         if result.returncode != 0:
-            logger.warning(
-                "GitCommitGateway: 幻影 AD 清扫失败（不阻断）: %s", result.stderr.strip()
-            )
+            logger.warning("GitCommitGateway: 幻影 AD 清扫失败（不阻断）: %s", result.stderr.strip())
             return []
         logger.warning(
             "GitCommitGateway: 清扫幻影 AD 暂存 %d 条（被拦提交预暂存残留，P3-2 治本）: %s",
@@ -3769,7 +4203,12 @@ class GitCommitGateway:
             stdout=stdout,
             stderr=stderr,
         )
-        if getattr(self, "_git_read_cache", None) is not None and len(cmd) >= 2 and cmd[0] == "git" and cmd[1] in _GIT_READ_SUBCMDS:
+        if (
+            getattr(self, "_git_read_cache", None) is not None
+            and len(cmd) >= 2
+            and cmd[0] == "git"
+            and cmd[1] in _GIT_READ_SUBCMDS
+        ):
             self._git_read_cache[(tuple(cmd), cwd)] = _result
         return _result
 

@@ -155,7 +155,7 @@ def get_staged_files() -> list[str]:
     用于 --staged 模式（pre-commit hook Layer 2）。
     """
     try:
-        r = subprocess.run(
+        r = subprocess.run(  # noqa: bare-subprocess  静态检查器读 git 状态,process_pool 在此场景不适用
             ["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
             capture_output=True,
             text=True,
@@ -182,7 +182,7 @@ def _git_read(args: list[str], cwd: str | None = None) -> subprocess.CompletedPr
     cwd=None 时继承进程 cwd（pre-commit hook 由 git 在 worktree 根启动，天然正确）；
     Layer 1 in-process gate 调用须显式传 gateway.project_root（worktree 感知）。
     """
-    return subprocess.run(
+    return subprocess.run(  # noqa: bare-subprocess  静态检查器读 git 状态,process_pool 在此场景不适用
         ["git"] + args,
         capture_output=True,
         text=True,
@@ -314,6 +314,42 @@ def check_staged() -> list[str]:
     return findings
 
 
+def get_tracked_files() -> list[str]:
+    """获取全 tracked 树文件列表（--full-tree 审计模式，裁定#354）。
+
+    审计语义：历史存量对 staged-only 检测面永久不可见（#354 亲验），
+    本模式扫描 git ls-files 全跟踪树暴露存量违规。默认 staged 面行为零变化。
+    """
+    try:
+        result = subprocess.run(  # noqa: bare-subprocess  审计模式读 tracked 树,process_pool 在此场景不适用
+            ["git", "ls-files"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+    except FileNotFoundError:
+        return []
+    if result.returncode != 0:
+        return []
+    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+def check_tracked_tree() -> list[str]:
+    """检查全 tracked 树命中受保护路径的文件（--full-tree 审计模式，裁定#354）。
+
+    语义注记（#354 W1-D2 施工裁定）：保护模式是"写守卫"（写入须审批）而非
+    "存在违规"——tracked 树中受保护目录下的文件是历史已审批写入的合法产物。
+    因此本模式输出为【盘点清单】（inventory），由 main() 以 exit 0 呈报，
+    不作为违规红；真正的违规判定（写入时点审批核验）仍在 --staged 提交面。
+    与 check_staged 的区别：纯审计读面——不走 env 逃生（ZEPHYR_PROTECTED_PATHS_BYPASS
+    只豁免提交面写入检查）、不走 merge 审批转置（那是提交时点语义）。
+    """
+    findings: list[str] = []
+    for rel in get_tracked_files():
+        findings.extend(check_path(rel))
+    return findings
+
+
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="Protected paths write check (IRN-010)")
@@ -323,6 +359,11 @@ def main() -> None:
         "--staged",
         action="store_true",
         help="Check git staged files for protected path violations (pre-commit hook mode)",
+    )
+    parser.add_argument(
+        "--full-tree",
+        action="store_true",
+        help="Audit mode: check entire tracked tree for protected path violations (ruling #354 periodic audit; staged mode unchanged)",
     )
     parser.add_argument("--warn-only", action="store_true", help="Only warn, do not fail")
     args = parser.parse_args()
@@ -338,9 +379,24 @@ def main() -> None:
     if args.staged:
         all_findings.extend(check_staged())
 
-    if not any([args.path, args.session_log, args.staged]):
-        print("Usage: check_protected_paths.py --path <target_path> | --session-log <log_path> | --staged")
+    if args.full_tree:
+        all_findings.extend(check_tracked_tree())
+
+    if not any([args.path, args.session_log, args.staged, args.full_tree]):
+        print(
+            "Usage: check_protected_paths.py --path <target_path> | --session-log <log_path> | --staged | --full-tree"
+        )
         sys.exit(EXIT_ERROR)
+
+    # --full-tree 盘点语义：命中=受保护目录 tracked 存量清单（合法历史写入产物），
+    # 以 [AUDIT-INVENTORY] 呈报并 exit PASS（违规判定在 --staged 写入面，见 check_tracked_tree 注记）
+    if args.full_tree and not args.staged and not args.path and not args.session_log:
+        print(
+            f"[AUDIT-INVENTORY] PROTECTED-PATHS full-tree: {len(all_findings)} tracked file(s) under protected patterns"
+        )
+        for finding in all_findings:
+            print(f"  [AUDIT-INVENTORY] {finding}")
+        sys.exit(EXIT_PASS)
 
     for finding in all_findings:
         print(finding)

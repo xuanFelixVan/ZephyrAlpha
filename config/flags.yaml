@@ -93,6 +93,11 @@ flags:
     description: "P2⑦ 锁外预跑+锁内指纹采信（方案 §2.3 方案A）：commit() 拿锁前预跑白名单内容 gate 记指纹 F={write-tree,HEAD,flags mtime}，拿锁后 F′==F 才采信（锁内只跑信号型+其余 gate），F′≠F/预跑异常/预跑即失败→全量重跑（现行路径永不拆除）；drift-watch 硬阻断语义只归锁内段；【2026-09-12 Owner 批准转正（原定 7 天灰度提前结项：实弹提交指纹采信正常+红蓝#2 验证 F′≠F 回退路径+reconciler 永久对账兜底）；回滚通道永久有效=flag OFF（预跑代码保留）】"
     implementation_status: "production"
 
+  gate_precommit_run:
+    enabled: true
+    description: "裁定#341 方案②（2026-09-19 Owner 批，W1-D2 st-final3-20260919 施工）：GitCommitGateway 落地前（staged 校验段后、git commit --no-verify 前）对 staged 面 run pre-commit——55 台 pre-commit 门禁在网关通道补获执行权。own-scope 机制=GIT_INDEX_FILE 临时索引（HEAD 树+仅本提交文件，防他会话 staged 连坐，宪法 §3.1）；失败归因=hook 输出引用本提交文件才阻断，存量全局债降级 warn+审计（.runtime/audit/commit_block_events.jsonl event=precommit_channel_*）；SKIP=gate-commit-gw（通道内恒真冲突）+gate-worktree-required（与网关内进程 gate 双重计数冲突）。回滚通道=flag OFF（回 #341 前现状）"
+    implementation_status: "production"
+
   commit_queue_interactive:
     enabled: true
     description: "P2⑨ 交互式提交入队（方案 §2.4-4b）：scripts/git_commit.py --enqueue 快照入队即返回 qid（AI 会话轮询 status 而非占锁重试）；LOCK_TIMEOUT 自动改道入队（P2⑨b，#ARCH-310 P0-1，st-govreform-20260912 施工）。【2026-09-12 Owner 批准启用（AI 原生治理评审 P0-1：'现在可以全部开工'），前置六项处置：①4a 死信清零已完成（952 项闭环）②会话协议改造已落（--enqueue 快照路径+status 轮询）③CloneGuard 索引=登记已知限制（serializer worktree 内 echo_guard 恒降级 warn-only+acknowledged 豁免吸收，不阻断）④压测 P95 与⑤docs 域两周灰度压缩为实弹观察（2026-09-12 并发事故为真实负载场景，回滚通道随时可用）⑥assert_single_writer_dev_history 断言实存（commit_queue_landing/gateway）继续作为日检防线】；回滚=flag OFF（存量 drain 完毕后关闭）"

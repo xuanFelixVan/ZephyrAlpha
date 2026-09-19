@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-18T18:30:46Z
+# 自动生成于 2026-09-19T12:40:29Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-18T18:30:46Z'
+generated_at: '2026-09-19T12:40:29Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 445
-with_manifest: 411
+total_scripts: 447
+with_manifest: 413
 missing_manifest: 34
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 57
+  governance: 58
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -27,7 +27,7 @@ categories:
   governance:data_quality: 2
   governance:generators: 15
   governance:git_hooks: 1
-  governance:meta: 47
+  governance:meta: 48
   governance:migrate_sqlite_to_pg: 2
   governance:migrations: 1
   governance:observability: 1
@@ -4561,6 +4561,23 @@ scripts:
   tags:
   - Critical
   - Quick
+- name: meta/gate_prerun.py
+  owner: governance:meta
+  dimensions:
+  - D11
+  priority: P1
+  timeout_seconds: 900
+  args:
+  - --session
+  - --files
+  - --message-file
+  warn_only: false
+  description: '入队/提交前本地预跑全部进程内 GateSpec（只读、不 commit），按 gateway 锁内真调用形 逐门判定，把内容死信在入队前清到
+    0。
+
+    '
+  tags:
+  - Security
 - name: meta/governance_watchdog.py
   owner: governance:meta
   dimensions:
@@ -5289,6 +5306,20 @@ scripts:
     '
   tags:
   - Quick
+- name: run_fulltree_gate_audit.py
+  owner: governance
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 1800
+  args:
+  - flag: --quiet
+    type: bool
+    description: 只输出摘要行与退出码
+  warn_only: true
+  description: 裁定#354 九台 staged-only 门禁全树周期审计编排器（ZephyrAlpha_GateFullTreeAudit 载体）
+  tags:
+  - Critical
 - name: run_gate_chain.py
   owner: governance
   dimensions:

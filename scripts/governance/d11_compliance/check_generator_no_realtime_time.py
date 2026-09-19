@@ -151,6 +151,27 @@ def get_staged_generator_files() -> list[Path]:
     ]
 
 
+def get_tracked_generator_files() -> list[Path]:
+    """获取全 tracked 树的生成器文件列表（--full-tree 审计模式，裁定#354）。
+
+    审计语义：历史存量对 staged-only 检测面永久不可见（#354 亲验），
+    本模式扫描 git ls-files 全跟踪树暴露存量违规。默认 staged 面行为零变化。
+    """
+    r = subprocess.run(  # noqa: bare-subprocess  同上，审计模式读 tracked 树
+        ["git", "ls-files", "--", GEN_GLOB],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    if r.returncode != 0:
+        return []
+    return [
+        REPO_ROOT / f.strip()
+        for f in r.stdout.splitlines()
+        if f.strip().endswith(".py") and (REPO_ROOT / f.strip()).exists()
+    ]
+
+
 def check_file(path: Path) -> list[str]:
     """检查单个文件，返回违规行列表（格式：rel_path:line: content）。"""
     rel = path.relative_to(REPO_ROOT).as_posix()
@@ -187,7 +208,17 @@ def check_file(path: Path) -> list[str]:
 
 def main() -> int:
     """门禁入口：扫描 staged 生成器文件，发现违规 → exit 1。"""
-    files = get_staged_generator_files()
+    import argparse
+
+    parser = argparse.ArgumentParser(description="GATE-GEN-NO-REALTIME-TIME: 生成器禁用实时时钟")
+    parser.add_argument(
+        "--full-tree",
+        action="store_true",
+        help="审计模式：扫描全 tracked 树而非 staged 面（裁定#354 周期审计，默认 staged 面行为零变化）",
+    )
+    args = parser.parse_args()
+
+    files = get_tracked_generator_files() if args.full_tree else get_staged_generator_files()
     if not files:
         # 无 staged 生成器文件，跳过
         return 0

@@ -43,7 +43,9 @@ import yaml
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from _shared.constants import EXIT_FINDINGS, REPO_ROOT
 from _shared.encoding import ensure_utf8_stdout
-from _shared.file_utils import atomic_write_if_changed  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT；P0② 幂等写（AI-20 2026-09-05）
+from _shared.file_utils import (
+    atomic_write_if_changed,  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT；P0② 幂等写（AI-20 2026-09-05）
+)
 from _shared.yaml_utils import load_yaml
 
 __manifest__ = """
@@ -230,6 +232,12 @@ def generate(entry_count: int | None = None) -> dict:
         if mg["gate_id"] not in auto_ids:
             mg["source"] = "manual"
             gates.append(mg)
+    # 裁定#341（2026-09-19 W1-D2）：enforcement_channel 执行通道字段——照 source 现值
+    # 机械标注（pre-commit 55 台 / commit-gate 113 台 / manual 1 台），防"守规会话永久
+    # 免检"类通道归属误判再生（#341 亲验：in_process 113 与 commit-gate 全等、与
+    # pre-commit 交集 0）。
+    for g in gates:
+        g["enforcement_channel"] = g["source"]
     if entry_count is not None:
         for g in gates:
             g["entry_count"] = entry_count

@@ -140,6 +140,26 @@ def get_staged_files():
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
 
 
+def get_tracked_files():
+    """获取全 tracked 树文件列表（--full-tree 审计模式，裁定#354）。
+
+    审计语义：历史存量对 staged-only 检测面永久不可见（#354 亲验），
+    本模式扫描 git ls-files 全跟踪树暴露存量违规。默认 staged 面行为零变化。
+    """
+    try:
+        result = subprocess.run(  # noqa: bare-subprocess  同上，审计模式读 tracked 树
+            ["git", "ls-files"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+    except FileNotFoundError:
+        return []
+    if result.returncode != 0:
+        return []
+    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
 def check_vms_ssot(files):
     """检测1：是否有 governance/vector_memory 路径的 staged 文件（大小写不敏感）"""
     violations = []
@@ -197,9 +217,14 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--ci", action="store_true", help="硬阻断模式（违规 exit 1）")
     mode.add_argument("--warn-only", action="store_true", help="只警告不阻断")
+    parser.add_argument(
+        "--full-tree",
+        action="store_true",
+        help="审计模式：扫描全 tracked 树而非 staged 面（裁定#354 周期审计，默认 staged 面行为零变化）",
+    )
     args = parser.parse_args()
 
-    files = get_staged_files()
+    files = get_tracked_files() if args.full_tree else get_staged_files()
     if not files:
         return EXIT_PASS
     violations_ssot = check_vms_ssot(files)

@@ -65,13 +65,17 @@ def _load_forbidden_prefixes() -> tuple[str, ...]:
     真源：directory_contract.yaml global_forbidden[].forbidden_prefix
     治本（2026-06-29）：消除硬编码 FORBIDDEN_PREFIX，前缀变更只需改契约一处。
 
-    fail-closed 例外：契约文件不存在时返回空 tuple（不阻断）——避免 contract 缺失
-    导致 pre-commit 全局失效；GitCommitGateway 内部有独立的等效校验作为第二道防线。
+    fail-closed（裁定#342 B② 翻转，2026-09-19）：契约文件缺失时抛 RuntimeError
+    （exit 非零报错）——原"返回空 tuple 静默全放"的 fail-open 例外已被 Owner
+    裁定废弃：契约缺失=检测面整体失效，必须报错而非放行。
     """
     try:
         contract = _yaml.safe_load(_CONTRACT_PATH.read_text(encoding="utf-8")) or {}
-    except FileNotFoundError:
-        return ()
+    except FileNotFoundError as e:
+        raise RuntimeError(
+            f"[GATE-SRC-NO-DATA] fail-closed（裁定#342 B②）: 契约文件缺失 "
+            f"{_CONTRACT_PATH} —— 禁止空集静默全放，请恢复 directory_contract.yaml 后重试"
+        ) from e
     rules = contract.get("global_forbidden", []) or []
     return tuple(r.get("forbidden_prefix") for r in rules if isinstance(r, dict) and r.get("forbidden_prefix"))
 
@@ -81,8 +85,25 @@ FORBIDDEN_PREFIXES: tuple[str, ...] = _load_forbidden_prefixes()
 
 def get_staged_files():
     """获取 staged 文件列表（相对路径，仅新增/修改/重命名）"""
-    result = subprocess.run(
+    result = subprocess.run(  # noqa: bare-subprocess  静态检查器读 git 状态,process_pool 在此场景不适用
         ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR"],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    if result.returncode != 0:
+        return []
+    return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+def get_tracked_files():
+    """获取全 tracked 树文件列表（--full-tree 审计模式，裁定#354）。
+
+    审计语义：历史存量对 staged-only 检测面永久不可见（#354 亲验），
+    本模式扫描 git ls-files 全跟踪树暴露存量违规。默认 staged 面行为零变化。
+    """
+    result = subprocess.run(  # noqa: bare-subprocess  审计模式读 tracked 树,process_pool 在此场景不适用
+        ["git", "ls-files"],
         capture_output=True,
         text=True,
         encoding="utf-8",
@@ -116,9 +137,14 @@ def main():
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--ci", action="store_true", help="硬阻断模式（违规 exit 1）")
     mode.add_argument("--warn-only", action="store_true", help="只警告不阻断")
+    parser.add_argument(
+        "--full-tree",
+        action="store_true",
+        help="审计模式：扫描全 tracked 树而非 staged 面（裁定#354 周期审计，默认 staged 面行为零变化）",
+    )
     args = parser.parse_args()
 
-    files = get_staged_files()
+    files = get_tracked_files() if args.full_tree else get_staged_files()
     if not files:
         return EXIT_PASS
     violations = check_src_no_data(files)

@@ -17,6 +17,7 @@ type = forbidden
 source_modules =
     zephyr.shared
 forbidden_modules =
+    zephyr.ai_layer
     zephyr.alt_data
     zephyr.autonomy_core
     zephyr.backtest
@@ -68,6 +69,7 @@ forbidden_modules =
     zephyr.signal_fundamental
     zephyr.signal_quality
     zephyr.simulation
+    zephyr.strategy_factory
     zephyr.strategy_pipeline
     zephyr.trading
 # ignore_imports（AI-01 S1-3 治本，2026-08-01）：以下 4 处为已记录的跨层技术债，
