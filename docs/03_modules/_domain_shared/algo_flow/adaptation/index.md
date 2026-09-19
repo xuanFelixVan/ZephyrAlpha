@@ -1,0 +1,28 @@
+---
+doc_type: index
+status: active
+title: "adaptation — 目录索引"
+module_id: ""
+blueprint_id: ""
+version: "1.0.0"
+created: "2026-09-19"
+updated: "2026-09-19"
+ttl: "permanent"
+---
+
+# adaptation
+
+> 本文件由 `generate_missing_index_md.py` 自动生成
+> 生成日期：2026-09-19
+
+## 目录内容
+
+| 文件/目录 | 类型 | 说明 |
+|-----------|------|------|
+| [adaptation__init__.yaml](adaptation__init__.yaml) | YAML | |
+| [execution_tuner.yaml](execution_tuner.yaml) | YAML | |
+| [prompt_version_manager.yaml](prompt_version_manager.yaml) | YAML | |
+
+## 导航
+
+- [上级目录](../index.md)
