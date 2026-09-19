@@ -2457,6 +2457,13 @@ entries:
       角色。接手会话 st-igbe-20260911 实证：该脚本 staged 违规触发 DEPGRAPH-WRITE-PATH
       硬阻断且无 noqa 通道，卡死全项目提交（gate 连坐），归属会话已死无法自愈——按扩展
       三步规则纳入白名单，SQL 已集中化为 _SQL_* 常量（§5.160.2）。）
+    - 2026-09-20 补登：scripts/entity_graph/ 三件（apply_entity_graph_ddl.py /
+      entity_graph_ingest.py / equity_penetration.py，W7 股权穿透底座施工，st-final3-20260919）。
+      entity_graph 六表（node_entity/node_person/node_company/edge_holding/edge_role/edge_link）
+      + equity_penetration() 穿透函数的 DDL 部署器、A 层 top10_shareholders 灌入器、
+      ig_equity_edge 并入比对器——同 ig_* 域先例（quality_fix_p2.py 2026-09-11 补登同类），
+      建表对标 add_acquisition_fields.py（CREATE 需 superuser），数据写入对标 apply_depgraph.py
+      （受控数据写入器）。按扩展三步规则纳入白名单，SQL 已集中化为 SQL_* 常量（§5.160.2）。
   adjudication: |
     6 项裁定：
     (a) 新增 04_create_roles.sql 创建 depgraph_reader/depgraph_writer 角色

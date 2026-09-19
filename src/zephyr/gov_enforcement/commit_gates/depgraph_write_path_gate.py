@@ -22,7 +22,7 @@ depgraph_write_path_gate.py — depgraph 写入路径白名单门禁（DEPGRAPH-
 检测 staged .py 文件 added 行中的 read_only=False / superuser=True / allow_edge_delete=True。
 这些参数授予 depgraph 写入权限，仅白名单脚本可用。
 
-白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，2026-07-17 扩展，2026-08-01 再扩展，2026-08-05 再扩展，2026-09-11 再扩展）:
+白名单（裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，2026-07-17 扩展，2026-08-01 再扩展，2026-08-05 再扩展，2026-09-11 再扩展，2026-09-20 再扩展）:
   - scripts/governance/apply_depgraph.py        — depgraph 修改唯一合法 CLI
   - scripts/governance/generate_project_depgraph.py — 全量重建
   - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py — YAML→DB 同步
@@ -31,6 +31,9 @@ depgraph_write_path_gate.py — depgraph 写入路径白名单门禁（DEPGRAPH-
   - scripts/governance/apply_battle_map.py      — battle_map_* 表写入器（2026-08-01 新增，用 depgraph_writer 角色）
   - scripts/governance/migrations/add_acquisition_fields.py — nodes_metadata schema 迁移（2026-08-05 新增，superuser DDL）
   - scripts/industry_graph/quality_fix_p2.py    — ig_* 图谱质量修复写入器（2026-09-11 新增，PIT 关闭/废弃闭环/链名修正）
+  - scripts/entity_graph/apply_entity_graph_ddl.py — entity_graph 六表 DDL 部署器（2026-09-20 新增，superuser DDL）
+  - scripts/entity_graph/entity_graph_ingest.py — node_entity/edge_holding A 层灌入器（2026-09-20 新增）
+  - scripts/entity_graph/equity_penetration.py  — ig_equity_edge 并入器+穿透比对（2026-09-20 新增）
   - scripts/governance/_shared/constants.py      — 连接 wrapper（传递参数）
   - src/zephyr/governance/depgraph_schema.py     — 连接函数定义（参数声明）
 
@@ -83,6 +86,7 @@ _WRITE_PARAM_RE = re.compile(r"(read_only\s*=\s*False|superuser\s*=\s*True|allow
 # 治本（2026-08-05）：新增 add_acquisition_fields.py（nodes_metadata schema 迁移，superuser DDL）
 # 治本（2026-09-11）：新增 quality_fix_p2.py（ig_* 图谱质量修复写入器，PIT 关闭/废弃闭环/链名修正）
 # 治本（2026-09-18）：新增 build_node_bindings.py（ig_node_binding 绑定表写入器，T6/REPAIR-WO-001，st-igchain-20260918）
+# 治本（2026-09-20）：新增 entity_graph 三件（实体图六表 DDL 部署器+A 层灌入器+ig 并入比对器，st-final3-20260919）
 _WHITELIST: frozenset[str] = frozenset(
     {
         "scripts/governance/apply_depgraph.py",
@@ -102,6 +106,13 @@ _WHITELIST: frozenset[str] = frozenset(
         #                            见裁定申请 req_ailayerB_03；修好后回切同一入口）
         "scripts/ai_layer/apply_ai_intake_ddl.py",
         "src/zephyr/ai_layer/intake/card_store.py",
+        # 治本（2026-09-20）：实体图六表施工件（W7 股权穿透底座，st-final3-20260919）
+        #   apply_entity_graph_ddl.py = entity_graph 六表+穿透函数 DDL 部署器（CREATE 需 superuser）
+        #   entity_graph_ingest.py    = node_entity/edge_holding A 层批量灌入器（写六表数据）
+        #   equity_penetration.py     = ig_equity_edge 并入器+穿透比对查询
+        "scripts/entity_graph/apply_entity_graph_ddl.py",
+        "scripts/entity_graph/entity_graph_ingest.py",
+        "scripts/entity_graph/equity_penetration.py",
     }
 )
 
@@ -163,6 +174,9 @@ def make_depgraph_write_path_gate() -> GateSpec:
                 "    - scripts/governance/migrations/add_acquisition_fields.py (nodes_metadata schema 迁移)\n"
                 "    - src/zephyr/governance/depgraph_schema.py\n"
                 "    - scripts/industry_graph/quality_fix_p2.py (ig_* 图谱质量修复写入器)\n"
+                "    - scripts/entity_graph/apply_entity_graph_ddl.py (entity_graph 六表 DDL 部署器)\n"
+                "    - scripts/entity_graph/entity_graph_ingest.py (A 层 node/edge 灌入器)\n"
+                "    - scripts/entity_graph/equity_penetration.py (ig 并入器+穿透比对)\n"
                 "  白名单扩展规则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree\n"
                 "  等）的脚本必须加入白名单，扩展三步——(a) 脚本传 read_only=False\n"
                 "  (b) 更新本白名单+错误信息 (c) 更新 architecture_issue_registry.yaml 裁定文档\n"
