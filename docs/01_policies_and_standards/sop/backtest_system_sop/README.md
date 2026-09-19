@@ -70,6 +70,7 @@ L4 全图整装级   —— 四流并发 × 六段状态矩阵 × PP-001 配比�
 | [sop_b_node_loop.md](sop_b_node_loop.md) | 单个回测对象的七步循环 + 三护栏 + 自检清单 | AI 自驱 |
 | [sop_c_strategy_library_intake.md](sop_c_strategy_library_intake.md) | 外部策略源码（聚宽 600 条等）→ 策略库 → 挂图 → 配比 | AI 自驱 |
 | [sop_d_run_archive_naming.md](sop_d_run_archive_naming.md) | 回测档案图书馆规范：run 目录位置/编号/结构/自动落盘/巡检/复现演练 | AI 自驱，落盘走 run_archive API |
+| [exam_policy.md](exam_policy.md) | 考试政策：E4 正考准入判据·执行口径·成本双口径·复权降级·负结果台账（裁定#365 新立） | AI 自驱，Owner 看出口 |
 
 **施工讨论记录**：`docs/_working/2026-09-11-backtest-system-sop-discussion.md`（三问三答原貌 + 定稿决策 D1-D4 + 七步打通顺序）。
 

@@ -1,28 +1,23 @@
 ---
-ttl: task_bound
+ttl: permanent
+doc_type: policy
 rule_form: procedural
 verifiability: manual
-title: 因子挖掘 SOP v0.1（工作稿）——假设→IC筛→预注册→沙箱→E4正考→组队 全流程缝合册
+title: 因子挖掘 SOP——矿脉→假设→IC筛→预注册→沙箱→E4正考→组队→入库 八段缝合册（regime 条件化强制）
 owner: ZephyrAlpha-Owner
 language: zh
-created: 2026-09-19
-status: superseded（已转正 2026-09-19 裁定#365；本稿只读存档，禁再修订）
-session: st-bizmine-f-20260919
-source_maps:
-  - docs/01_policies_and_standards/sop/mining_sop/mining_sop_policy.md（v1.4，真源不复制）
-  - docs/01_policies_and_standards/sop/backtest_system_sop/sop_b_node_loop.md（七步循环，真源不复制）
-  - docs/01_policies_and_standards/sop/backtest_system_sop/sop_c_strategy_library_intake.md（入库漏斗，真源不复制）
-  - docs/_working/kimi_audit/lane_reports/p3_prereg/（预注册卡先例：P3-B-NARROWING 封闭族+考窗冻结）
-  - docs/_working/bizmine_night/bizmine_general_order.md §2（诚实条款：复权/成本/多重检验）
+status: active
+version: "1.0.0"
+date: 2026-09-19
+topic: mining_sop
 ---
 
-> **已转正（2026-09-19，裁定#365）**→ 真源迁移至 [`docs/01_policies_and_standards/sop/mining_sop/factor_mining_sop_policy.md`](../../../01_policies_and_standards/sop/mining_sop/factor_mining_sop_policy.md)（§2 regime 条款随迁升 permanent，=缺口 G4 销项）；G3+G5+G6+G8 缺口另立 [`exam_policy.md`](../../../01_policies_and_standards/sop/backtest_system_sop/exam_policy.md)。本稿自此 superseded 只读存档（战役档案），禁再修订。
-
-# 因子挖掘 SOP v0.1（工作稿）
+# 因子挖掘 SOP——八段一段闸（真源）
 
 > **一句话**：本册把"矿脉选择 → 假设登记 → IC 大海选（宽测筛）→ 预注册卡 → 沙箱三关 → E4 正考 → 组队备料 → 入库/归档"八段缝成一条因子生产线；每段给输入/输出产物与真源指针，不复制真源。**新增核心条款=regime 条件化**（§2）：每因子 MUST 报"什么状态下有效"，不看行情状态的考试结论一律降级为"无条件证据档"。
-> **为什么是工作稿**：现有 SOP 覆盖了通用挖矿方法论（mining_sop_policy v1.4）、单节点回测七步循环（sop_b_node_loop）、外部策略入库（sop_c），但三本之间没有一本"因子专属的缝合册"——假设从哪来、筛完怎么升考试、考完怎么组队，动作分散在战役令与车道先例里。本册 v0.1 把 2026-09 两次实战（P3 一致预期族预注册、bizmine 通宵战 F 车道大海选）的先例固化成流程，供 Owner 裁定是否转正。
-> **语义冲突时**：mining_sop / sop_b / sop_c 真源优先，本册只补缝隙；与诚实条款（复权暂定/成本双口径/多重检验）冲突时以战役令 §2 与本册 §3 就严者为准。
+> **定位**：[mining_sop_policy.md](mining_sop_policy.md)（通用挖矿方法论）在**因子域**的专用实例，与 [skeleton_mining_policy.md](skeleton_mining_policy.md)（骨架域）、[trading_decision_map_pathfinding_policy.md](trading_decision_map_pathfinding_policy.md)（地图域）并列；语义冲突时按域归真源。
+> **诞生**：2026-09-19 裁定#365 转正（v0.1 工作稿升 permanent；前身=`docs/_working/bizmine_night/factor_sop_screen/factor_mining_sop_v0_1.md`，固化 2026-09 两次实战先例：P3 一致预期族预注册、bizmine 通宵战 F 车道大海选）。
+> **亲缘**：[sop_b_node_loop.md](../backtest_system_sop/sop_b_node_loop.md)（七步循环，真源不复制）｜[sop_c_strategy_library_intake.md](../backtest_system_sop/sop_c_strategy_library_intake.md)（入库漏斗，真源不复制）｜[exam_policy.md](../backtest_system_sop/exam_policy.md)（**考试段判据真源**：准入/口径/成本双口径/复权降级/负结果台账——本册 S5 只管位次，判据一律按 exam_policy 执行）｜诚实条款冲突时以战役令 §2 与本册 §3 就严者为准。
 
 ## 0. 流程总览（八段一段闸）
 
@@ -71,9 +66,9 @@ S0 矿脉选择 ─→ S1 假设登记 ─→ S2 IC 大海选（宽测筛）─�
 
 ### S5 E4 正考（窄测/考试，输入：沙箱过关单）
 
-- 动作：按 sop_b ⑥执行——完整成本五项（费率读实际账户配置禁硬编码）+ WFA/OOS 门控 + 按对象类型映射验证层（factor→V1）+ OverfittingDetector 三阶段 + Deflated Sharpe（喂全部留痕试验次数）。执行器：`scripts/backtest/f06_e4_wfa_exam.py`（只可运行不可改）。
+- **准入与判据真源=[exam_policy.md](../backtest_system_sop/exam_policy.md)**（何时允许点火一次考试/考窗成本通过线口径/复权暂定降级/负结果台账），本段只固定位次：按 sop_b ⑥执行——完整成本五项（费率读实际账户配置禁硬编码）+ WFA/OOS 门控 + 按对象类型映射验证层（factor→V1）+ OverfittingDetector 三阶段 + Deflated Sharpe（喂全部留痕试验次数）。执行器：`scripts/backtest/f06_e4_wfa_exam.py`（只可运行不可改）。
 - **regime 条件化为必报项**（§2）：正考报告除总体指标外 MUST 附分状态桶指标；无状态分解的正考报告按"无条件证据档"降级收录。
-- 输出：《节点回测报告》（六段分档+成本口径+迭代留痕附录），三出口=达标/不达标有假设回S0-S3/判死归档。
+- 输出：《节点回测报告》（六段分档+成本口径+迭代留痕附录），三出口=达标/不达标有假设回S0-S3/判死归档（出口语义与负结果台账落点按 exam_policy §5-§6）。
 
 ### S6 组队备料（Owner 门 B-15，输入：E4 达名单）
 
@@ -82,10 +77,10 @@ S0 矿脉选择 ─→ S1 假设登记 ─→ S2 IC 大海选（宽测筛）─�
 
 ### S7 入库/归档（输入：E4 报告 / 判死单）
 
-- 入库正路：策略走 sop_c C5-C6（差异化三轴+STR-* 注册+挂图+配比）；因子回写 factor_registry 的 ic/ir/decay 字段（只读真源回写走既定 gate）；判死的带"≥3 个已排除候选与排除理由"归档（sop_b ⑦）。
+- 入库正路：策略走 sop_c C5-C6（差异化三轴+STR-* 注册+挂图+配比）；因子回写 factor_registry 的 ic/ir/decay 字段（只读真源回写走既定 gate）；判死的带"≥3 个已排除候选与排除理由"归档（sop_b ⑦），并落 exam_policy §5 负结果台账。
 - 输出：注册表变更（走 GitCommitGateway）+ 台账行。
 
-## 2. regime 条件化条款（本册新增核心，全段强制）
+## 2. regime 条件化条款（本册新增核心，全段强制；=缺口 G4 销项载体，裁定#365）
 
 > 背景教训：79 严选只活 1 条的疑似病根=考试不看行情状态；Owner 主纲=灰度大盘状态→选因子选策略（bizmine_general_order §0）。
 
@@ -100,12 +95,12 @@ S0 矿脉选择 ─→ S1 假设登记 ─→ S2 IC 大海选（宽测筛）─�
 ## 3. 多重检验纪律（贯穿八段）
 
 1. 桶边界/规则/阈值/考窗一律 IS 期钉死（预注册在先，事后禁挪）。
-2. 全部结果入册：正/负/零结果同权留痕（另类挖矿 0/5 前科=没有正式台账的血泪）；"没找到"必须写清排除了什么。
+2. 全部结果入册：正/负/零结果同权留痕（另类挖矿 0/5 前科=没有正式台账的血泪；台账制度真源=exam_policy §5）；"没找到"必须写清排除了什么。
 3. 筛≠考：海选 top-N 只是待考池；考试结论只出自 S5 且必须 Deflated Sharpe 校正（喂全部试验次数）。
 4. 封闭族：每批考试 N_eff 封闭（P3 先例：20 条混考=N_eff=20 功效双杀，拆批各定）；中途加条目=重开预注册。
 5. 警示线参考：海选阶段 |t|>3.29（0.1% 双侧）仅作"值得升考试"弱证据；这从不是"有效"的证据。
 
-## 4. 预注册卡模板（v0.1，字段引 p3_prereg 先例）
+## 4. 预注册卡模板（v1.0，字段引 p3_prereg 先例）
 
 ```yaml
 ttl: task_bound
@@ -126,21 +121,21 @@ regime_axis: <主轴+PIT 口径+桶规则（边界 IS 钉死）+最小桶样本>
 multiplicity:
   total_tests: <因子×前瞻×桶 总组数>
   dsr_note: <N_eff 与所需 SR 关系一句话>
-cost_spec: <成本口径（引擎现行五项 / Owner-001 档），双口径并存声明>
+cost_spec: <成本口径（引擎现行五项 / Owner-001 档），双口径并存声明（语义真源=exam_policy §4）>
 exits: [达标→S6 备料 / 不达标回S0-S3 / 判死归档]
 ```
 
 ## 5. 产物与台账
 
 - 每段产物落盘位置：正式候选件 `docs/_working/<campaign>/<lane>/`（.md 带 ttl frontmatter）；临时脚本/中间缓存一律 `.runtime/tmp/<campaign>/<lane>/`；禁生产路径写测试输出。
-- 台账：每完成一段追加战役台账一行（台账锁忙则在车道报告登记代追加）。
+- 台账：每完成一段追加战役台账一行（台账锁忙则在车道报告登记代追加）；考试类批次的负结果/试验次数台账按 exam_policy §5 落。
 - 提交：一律 GitCommitGateway / git_commit.py 正门，改前 claim，毕后 release。
 
-## 6. 转正路径（登记待裁定）
+## 6. 转正记录与净零申报（裁定#365，2026-09-19）
 
-- 本册 v0.1 为**工作稿**，效力范围仅限本次战役车道；**升 `sop/` 目录转正须 Owner 过目**。
-- 待裁定项（移交 Owner）：①本册是否转正或并入 sop_b 扩篇；②§2 regime 条款是否升 permanent（建议归宿=backtest_system_sop 或独立 regime_exam_policy）；③S2 海选协议模板是否固化为本册附录。
-- 裁定后处置：转正→迁移+真源指针改挂+本工作稿标 superseded；不转→保留 _working 作战役档案。
+- **转正**：v0.1 工作稿（`docs/_working/bizmine_night/factor_sop_screen/factor_mining_sop_v0_1.md`，已标 superseded 存档）升 permanent 本册；§2 regime 条款随迁升 permanent（=strategy_sop_gap_report **G4 销项**；S4 第三关=**G10**、S6-S7 组装段=**G2** 的载体同批落地）。
+- **净零申报**：同批新立 [exam_policy.md](../backtest_system_sop/exam_policy.md) 一本（净零原则下唯一新立候选），对价=**G3+G5+G6+G8 四条缺口登记销项**（strategy_sop_gap_report.md 相应条目已标 resolved）；其余缺口归宿按该报告 §3（G1 并 mining_sop 实例、G7 走 apply_* 架构批、G9 并 sop_c，另批施工）。
+- 分工边界：本册=因子生产线编排（挖→筛→考→组队）；exam_policy=考试判据语义（准入/口径/降级/台账）。两册互挂不复制，语义冲突时考试判据以 exam_policy 为准、流程位次以本册为准。
 
 ## 7. 实战回填记录
 
@@ -149,3 +144,4 @@ exits: [达标→S6 备料 / 不达标回S0-S3 / 判死归档]
 | 2026-09-17 | P3-B-NARROWING（封闭族 N_eff=6+数据面复核推翻 prereview 声称+proxy 降级披露） | S3/S4/§3.4 |
 | 2026-09-19 | bizmine F 车道 IC 大海选（预注册协议在先+全量入册+top-20 待考池+F4_BDI T-1 分桶） | S2/§2/§3 |
 | 2026-09-19 | bizmine R 车道（灰度状态轴主权+条件化诚实条款） | §2.6 |
+| 2026-09-19 | 裁定#365 转正（v0.1→permanent；exam_policy 拆分立册） | 全册定稿 |

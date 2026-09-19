@@ -1083,7 +1083,7 @@ gaps:
     end_date: "2021-08-31"
     date_column: "trade_date"
     detection_threshold: 1
-    status: "open"  # 归档实体在 E:/zephyr_cold_archive 待数据线正门工单挂回；今晚只登记不接入
+    status: "open"  # 归档实体在 E:/zephyr_cold_archive 待数据线正门工单挂回；今晚只登记不接入；工单已立（2026-09-19，裁定#367）→ docs/_working/bizmine_night/e_drive_cold_archive_task.md
     root_cause: "E:/zephyr_cold_archive=分钟线冷归档（1min 2000-06..2021-08 共 255 月、
       ETF 1min 2005-02..2018-12、5/15/30/60min、technical_indicator、news_data；无 tick）——
       库内对应历史深度缺失（库内分钟约 4.7 年起；tick 唯二=tick_data 2025-01 起 21 个月
