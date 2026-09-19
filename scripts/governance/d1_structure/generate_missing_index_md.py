@@ -288,10 +288,12 @@ def scan_and_generate(
     for dirpath in all_dirs:
         if not dirpath.is_dir():
             continue
-        parts = set(dirpath.parts)
-        if parts & EXCLUDE_NAMES:
+        # 裁定#355: dirpath 是绝对路径，parts 含 .worktrees 等扫描根之外的祖先段——
+        # 在 worktree 检出下会全量误 skip 致"扫描 0 个目录"假绿。判定一律用相对扫描根的 parts。
+        rel_parts = set(dirpath.relative_to(root_dir).parts)
+        if rel_parts & EXCLUDE_NAMES:
             continue
-        if any(p.startswith(".") for p in dirpath.parts):
+        if any(p.startswith(".") for p in rel_parts):
             continue
         checked += 1
         idx_path = dirpath / "index.md"
