@@ -36435,6 +36435,18 @@ creation_tokens:
   token: bizmine-alpha-mining-b1-source-diff-matrix-20260919
   created_by: st-final3-20260919
   capability: bizmine_alpha_mining
+- file: docs/01_policies_and_standards/sop/mining_sop/factor_mining_sop_policy.md
+  token: bizmine-alpha-mining-factor-mining-sop-policy-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md
+  token: bizmine-alpha-mining-exam-policy-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
+- file: docs/_working/bizmine_night/e_drive_cold_archive_task.md
+  token: bizmine-alpha-mining-e-drive-cold-archive-task-20260919
+  created_by: st-final3-20260919
+  capability: bizmine_alpha_mining
 - file: docs/_working/rule_audit_campaign/CONSTRUCTION_LEDGER.md
   token: rule-audit-campaign-construction-ledger-20260918
   created_by: st-fullflow-20260918
@@ -39753,6 +39765,18 @@ creation_tokens:
   capability: final3_campaign
 - file: docs/_working/final3_campaign/w1h_identity_status.md
   token: final3-campaign-w1h-identity-status-20260919
+  created_by: st-final3-20260919
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/w4_3_gate_gaps.md
+  token: final3-campaign-w4-3-gate-gaps-20260919
+  created_by: st-final3-20260919
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/w4_6_autostart_prep.md
+  token: final3-campaign-w4-6-autostart-prep-20260919
+  created_by: st-final3-20260919
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/w5_1_cluster_audit.md
+  token: final3-campaign-w5-1-cluster-audit-20260919
   created_by: st-final3-20260919
   capability: final3_campaign
 - file: docs/_working/rule_audit_campaign/a2_handoff/A2_M5_prescriptions.md
