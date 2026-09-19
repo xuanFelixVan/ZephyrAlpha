@@ -39895,4 +39895,32 @@ creation_tokens:
   token: equity-penetration-equity-penetration-20260919
   created_by: st-final3-20260919
   capability: equity_penetration
+- file: docs/_working/factory/index.md
+  token: factory-strategy-cards-index-20260919
+  created_by: st-maxexec-20260920
+  capability: factory_strategy_cards
+- file: docs/_working/factory/strategy_cards/e4_freeze_s_owner_001_300etf_band_t.md
+  token: factory-strategy-cards-e4-freeze-s-owner-001-300etf-band-t-20260919
+  created_by: st-maxexec-20260920
+  capability: factory_strategy_cards
+- file: docs/_working/factory/strategy_cards/e4_handoff_s_owner_001_merge.md
+  token: factory-strategy-cards-e4-handoff-s-owner-001-merge-20260919
+  created_by: st-maxexec-20260920
+  capability: factory_strategy_cards
+- file: docs/_working/factory/strategy_cards/e4_report_s_owner_001_300etf_band_t.md
+  token: factory-strategy-cards-e4-report-s-owner-001-300etf-band-t-20260919
+  created_by: st-maxexec-20260920
+  capability: factory_strategy_cards
+- file: docs/_working/factory/strategy_cards/index.md
+  token: factory-strategy-cards-index-20260919
+  created_by: st-maxexec-20260920
+  capability: factory_strategy_cards
+- file: docs/_working/factory/t_v2/2026-09-17-data-terrain-survey.md
+  token: factory-strategy-cards-2026-09-17-data-terrain-survey-20260919
+  created_by: st-maxexec-20260920
+  capability: factory_strategy_cards
+- file: docs/_working/factory/t_v2/index.md
+  token: factory-strategy-cards-index-20260919
+  created_by: st-maxexec-20260920
+  capability: factory_strategy_cards
 di_seam_exemptions: []
