@@ -39523,4 +39523,12 @@ creation_tokens:
   token: rule-audit-construction-dossiers-v2-summary-20260919
   created_by: st-final3-20260919
   capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/dossiers_v2_index.yaml
+  token: rule-audit-construction-dossiers-v2-index-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/dossiers_v2_summary.yaml
+  token: rule-audit-construction-dossiers-v2-summary-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
 di_seam_exemptions: []
