@@ -55,7 +55,7 @@ completes_when: 全部卡执行完毕并归档后转 archived
 
 | 步骤 | 做什么 | 涉及文件全路径 | 验收判据 | 路由 |
 |---|---|---|---|---|
-| 0（形式件，先落） | 形式收口三件之二：把本卡第 2 节复审结论落盘为复审报告、把本卡步骤 1-8 整理为施工方案落盘（方案交 Max 裁定 A5 后才动施工；07 收工报告=步骤 7）——补齐"形式收口三件全历史零记录"这个本卡自己诊断出的缺口 | docs/_working/residual_resume/00_review.md、docs/_working/residual_resume/01_plan.md（新建） | 两件在 HEAD；方案含环节拆分/依赖/波次/"线内先挖后干、线间并行流水"/并发 2-3 | Flash |
+| 0（形式件，先落） | 形式收口三件之二：把本卡第 2 节复审结论落盘为复审报告、把本卡步骤 1-8 整理为施工方案落盘（方案交 Max 裁定 A5 后才动施工；07 收工报告=步骤 7）——补齐"形式收口三件全历史零记录"这个本卡自己诊断出的缺口。新建 .md 走 scaffold.py 正门（RULE-TWO 唯一创建入口，scripts/scaffold.py）+CREATE-GUARD token ceremony 同批 | docs/_working/residual_resume/00_review.md、docs/_working/residual_resume/01_plan.md（新建） | 两件在 HEAD；方案含环节拆分/依赖/波次/"线内先挖后干、线间并行流水"/并发 2-3 | Flash |
 | 1 | A5 裁定：死会话（residG）冷库接线遗产是否可代落 | src/zephyr/strategy_pipeline/pipeline_events.py（成品在 G:/zephyr_cold/30_corpus/fullflow_harvest/20260918-194729/worktree/） | Max 出裁定号；按 BT-P1-031 后新版重排两段接线——L1=crisis_block_check 短路、不落 marker、判读异常 fail-closed；attribution_daily=SIM_DAILY_KINDS FIFO 末位+--day 业务日 resolve_pf_alloc_trade_date | Max 裁定，Flash 施工 |
 | 2 | apply 三常量注册恢复 | scripts/ch/apply_market_tables_ddl.py；真源 schemas/categories/ 下 crisis_gate_log.py、sim_attribution_daily.py、cohort_daily_ledger.py | grep 三常量命中；apply 干跑通过 | Flash |
 | 3 | tasks.yaml 加 cohort_ledger_daily 任务 | src/zephyr/data/config/tasks.yaml | schedule=daily_capital 尾部+deps=[money_flow_incremental,margin_trading_incremental,dragon_tiger_incremental,block_trade_incremental]（四个 dep 名照抄，写错任务永远排不上）；admin 建 cohort_daily_ledger 表（CH EXISTS=1）；insert 主路径每日实跑验证一次 | Flash+Owner（建表） |
