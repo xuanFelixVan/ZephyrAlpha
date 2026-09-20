@@ -28,13 +28,14 @@ completes_when: 本线终验红蓝通过
 **W2 测试真账（A17，32 条）**：3 个未登记库（domain_responsibility_layer_mapping/fail_open_register/standard_family_registry）按内收四判据裁"登记 or 退役"→decision_map R24 复发修复→governance 9 文件真账逐条处置（全路径 R3 §2）。
 **W3 包①企架施工文档归置**（Owner 强迫症项，先挖后干）：
 - 逐件三裁：a) 内容描述**活设计决策**且无蓝图承载→精华晋升进 docs/03_modules 对应蓝图（走 GATE-12/BLUEPRINT 门禁+module_id 锚定）；b) **历史施工记录**→git mv 归档（design_memos→archive/2026-09/design_memos/，implementation_plans 同）；c) 设计已废弃→salvage 要点后删
+- **特判警示（活真源勿归档）**：design_memos/16_technical_indicator_catalog.md（v1.10.0，tilib 指标库 138 条终态目录）是 tilib 线活真源——归置时必须特判为"晋升正式资产"（建议挪 data/ 或 03_modules 蓝图区+引用面改齐），严禁顺手归档（归档误埋活件红蓝前科在案）
 - 全目录清零判定后两目录本身处置（留空壳 or 删除+目录契约同步）；引用面 grep 改齐同 commit；归置台账落本战役目录
 - 前置铁律：此前有"必须保留"裁定在案——本任务=Owner 2026-09-20 口头翻案（"要么蓝图要么归档"），开工先登记翻案裁定号再动
 **W4 历史悬账验活核销**：staged 167/189 件逐条判归属（git log --all --find-renames 验内容是否已落地）→已落地核销/真未落地评估入册；判定台账 42 行 pending 逐行判；backlog 140 条 B0 抽验活死；allow_empty 12 表逐表收口（BRK-046）
 **W5 final3 尾巴+排期出单**：
 - R8 P9 池两小件：.pre-commit-config+gate_registry 的 GATE-21 已知限制文案对（mutation 连环坑——配方：拆批+同 shell env+直连）；Layer2 无 message 通道治本（gateway precommit 通道 SKIP 保护路径 hook 当 message 带 [ARCH-APPROVAL]——小代码改造+测试）
 - R9 死信-0040 ALGO-FLOW 锚残留（decisiongraph_adapter.yaml 已删有锚）——清锚或登记豁免
-- R10 capability 册旧路径 token 残留清理（归档迁移产生的 stale 路径，无害顺手清）
+- R10 capability 册旧路径 token 残留清理（归档迁移产生的 stale 路径，无害顺手清）+reversal.py 行1 stale 注释修正（tilib 尾巴⑥）
 - R11 W7 股权穿透：读 altdata_line 设计+原料清单，切施工派工单（只出单不施工，交 Owner 决定何时点火）
 
 ## §4 硬边界

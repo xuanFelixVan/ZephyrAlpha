@@ -41590,4 +41590,44 @@ creation_tokens:
   token: unified-campaign-e1-erratum-v0-1-20260920
   created_by: st-maxexec-20260920
   capability: unified_campaign
+- file: docs/_working/unified_campaign/input_packages_1to4.md
+  token: unified-campaign-input-packages-1to4-20260920
+  created_by: st-maxexec-20260920
+  capability: unified_campaign
+- file: "docs/_working/unified_campaign/00_master_plan_v1_0.md"
+  token: "unified-plan-00_master_plan-20260920"
+  created_by: "st-unified-plan-20260920"
+  capability: "unified_campaign_v1"
+- file: "docs/_working/unified_campaign/p2_backlog_master_ledger_v1_0.md"
+  token: "unified-plan-p2_backlog_master_ledger-20260920"
+  created_by: "st-unified-plan-20260920"
+  capability: "unified_campaign_v1"
+- file: "docs/_working/unified_campaign/p2_workorders_v1_0.md"
+  token: "unified-plan-p2_workorders-20260920"
+  created_by: "st-unified-plan-20260920"
+  capability: "unified_campaign_v1"
+- file: "docs/_working/unified_campaign/p3_db_repair_master_plan_v1_0.md"
+  token: "unified-plan-p3_db_repair_master_plan-20260920"
+  created_by: "st-unified-plan-20260920"
+  capability: "unified_campaign_v1"
+- file: "docs/_working/unified_campaign/w_line_a_data_integrity_v1_0.md"
+  token: "unified-plan-w_line_a_data_integrity-20260920"
+  created_by: "st-unified-plan-20260920"
+  capability: "unified_campaign_v1"
+- file: "docs/_working/unified_campaign/w_line_b_disk_ch_v1_0.md"
+  token: "unified-plan-w_line_b_disk_ch-20260920"
+  created_by: "st-unified-plan-20260920"
+  capability: "unified_campaign_v1"
+- file: "docs/_working/unified_campaign/w_line_c_code_doc_gov_v1_0.md"
+  token: "unified-plan-w_line_c_code_doc_gov-20260920"
+  created_by: "st-unified-plan-20260920"
+  capability: "unified_campaign_v1"
+- file: "docs/_working/unified_campaign/o_owner_signature_sheet_v1_0.md"
+  token: "unified-plan-o_owner_signature_sheet-20260920"
+  created_by: "st-unified-plan-20260920"
+  capability: "unified_campaign_v1"
+- file: "docs/_working/unified_campaign/t_timing_window_board.md"
+  token: "unified-plan-t_timing_window_board-20260920"
+  created_by: "st-unified-plan-20260920"
+  capability: "unified_campaign_v1"
 di_seam_exemptions: []

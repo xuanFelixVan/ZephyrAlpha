@@ -32,6 +32,11 @@ session_worktree_start("st-data-fix-20260921", allow_concurrent=True, allow_work
 - R4 老股复权偏差 0.2-0.4%：复核并按"深史链长>15 事件预算放宽至 5e-3"落进红证脚本注释（quantization 论证），或改中段窗口对齐
 **W2（断供止血）**：R5 index_quote 9-16 停（采集链换桥重建）；R6 news_sentiment 9-14 停（静默失败排查+接心跳日志）；R7 auction 9-17 停（桥 socket 自愈重试，WinError 10038 实锤）；R8 crypto_kline 9-19 断排查；R9 stock_indicator 9-18 半日重跑补齐
 **W3（哨兵+登记）**：R10 哨兵补 4 行盲表+新增交易日历逐日 diff 检查器（治"内部洞"原理性失明，事件触发禁 cron）；R11 known_data_gaps 8 条改册（etf 时区已执行改 completed 等）；R12 A3 tick 09-17 永久缺口登记留痕（禁再试补——QMT 退役+bdpan 停更双实证）
+**W4（tilib 班延续波——包③独家清单，写域扩至 src/zephyr/factor/technical_indicators/**）**：
+- R13 stock_daily_basic 每日增量挂 tasks.yaml（采集器 scripts/data/backfill_stock_daily_basic.py --source tushare；tasks.yaml 属门位件——改动随裁定登记+签字单⑨补批）
+- R14 批10 筹码族指标 CYQ/SCR/CYC 三件套（原料已就绪；配方=tilib 交接包 §3+design_memos/16_technical_indicator_catalog.md 批10 节；注册表 138→141）
+- R15 tilib 210 新列回填质量验收补验（02:30 夜跑验收若未做或无留痕则补：探针思路=.runtime/tmp/tilib-probe/audit_all_cols.py）
+- R16 东财拒连持续风险：tushare 绕行已在纪律，此处落"备胎优先级表"进 known_data_gaps 注记
 
 ## §4 硬边界
 - 只动写域：src/zephyr/data/**+config 数据侧+known_data_gaps/sentinel；**禁碰** CH 重 IO（OPTIMIZE/TRUNCATE/DROP/大回填全归乙线）、akshare_provider 以外的 provider、他会话在途件

@@ -4961,3 +4961,45 @@ entries:
   related_arch: []
   related_rulings: ['裁定#371']
   superseded_by: ''
+- ruling_id: '裁定#378'
+  title: 'unified_campaign v0.1 勘误采纳与 v1.0 重制令生效（包②③分立/五项补齐/三档停机时序制/冲突矩阵强制）'
+  date: '2026-09-20'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    采纳 e1_erratum_v0_1.md 全部结论：v0.1 五件降级为草案成立，v1.0 重制本（st-unified-plan-20260920）
+    取代并生效。四条刚性：①包②（遗留总台账+派工单集，含 D 路历史悬账）与包③（数据库健康修复总方案，
+    dataqa 四报告为病历逐条复现→根因→处方→验收）分立产出，禁再合并；②五项丢失全补齐（批10 筹码族
+    CYQ/SCR/CYC、stock_daily_basic 每日增量挂 tasks.yaml、修复总方案与总台账两独立交付物、tilib
+    小项三件=210 列夜跑验收核销/reversal.py stale 注释/CH 实况自查入读序）；③停机时序三档制（闪断=
+    CH 重启分钟级任意低峰插入/独占窗=02:00-05:00 重 IO 互斥/全局冻结=W6 vhdx 停 VM 甲丙全停 Owner
+    在场）+干预窗提前声明制（乙线 CH 干预前在 unified_campaign/t_timing_window_board.md 声明时间窗，
+    甲线>30 分钟批次禁横跨声明窗）+乙 W1 释放 35.4G 前置于甲任何大规模回填（D 盘 28G=全战役硬闸）；
+    ④多线并行设计必过停机冲突矩阵（每线×每 CH 干预点逐格判定），过不了的改串行——宁慢勿撞。
+  affected_files:
+  - docs/_working/unified_campaign/e1_erratum_v0_1.md
+  - docs/_working/unified_campaign/00_master_plan_v1_0.md
+  related_arch: []
+  related_rulings: ['裁定#377']
+  superseded_by: ''
+- ruling_id: '裁定#379'
+  title: '四路遗留排程裁定（波次网络/估值 P0 选型推荐/A17 归属/Owner 门位清单/模型路由）'
+  date: '2026-09-20'
+  category: '数据'
+  status: 'active'
+  summary: >-
+    依包②排程令 §5 五问代裁（裁定#378 生效框架内）：①A1 先于 A2（派生列 100% NULL=消费禁用级且
+    与 A2 同根多写者病，联动修）——A1 选型推荐=version 列单写者（爆炸半径最小+对齐
+    ReplacingMergeTree 语义），A2 推荐=行情腿同步修（价格腿自 kline_daily 回填）+交易日 gate+0 行
+    成功告警；两案并入 Owner 签字单③批 a 即施工，未批前先做无门位部分（消费禁用声明+红证复现）。
+    ②波次网络=00_master_plan_v1_0 §6（P0 数据正确性→断供止血→哨兵补盲→卫生清理→测试真账→疑似
+    bug 分波；CH 独占窗互斥+三档时序制约束）。③A17 测试真账 32 条归丙 W2 独立 Flash 批（final3
+    已收官无 W8 承接方）。④Owner 门位十项=签字单 v1.0 ①-⑩（尸体表/1970/估值选型/vhdx/INV-RET-002/
+    offsite/db_dumps/批次排期/tasks.yaml 挂接/tick 合成）。⑤执行模型=Flash 分包按派工单集 WO-1..16
+    领单（Max 总包开会出单），破坏性操作包（WO-6 尸体表 drop/WO-10 vhdx）标 Owner 在场。
+  affected_files:
+  - docs/_working/unified_campaign/p2_backlog_master_ledger_v1_0.md
+  - docs/_working/unified_campaign/p2_workorders_v1_0.md
+  related_arch: []
+  related_rulings: ['裁定#378']
+  superseded_by: ''
