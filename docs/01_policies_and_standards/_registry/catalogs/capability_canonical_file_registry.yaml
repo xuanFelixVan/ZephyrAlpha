@@ -41946,4 +41946,39 @@ creation_tokens:
   created_by: st-data-fix-20260921
   capability: data_fix_campaign
   merge_evaluation: "同真源可派生：GATE-ALGO-FLOW 补锚配套机器块（qmt_bridge_provider 竞价派生算法公共面出仓），非新真源，随真源文件 TTL 处置"
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w8_landing/landing_log.md
+  token: vocab-campaign-w8-landing-log-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: vocab_consolidation_campaign
+  merge_evaluation: "tc_05卡步骤3 W8封账收口日志：基线三连复跑+四格翻牌证据锚+10域死结解除实测"
+- file: docs/_working/flash_speedup/F5_registry_debt/LEDGER.md
+  token: flash-speedup-f5-registry-debt-ledger-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: flash_speedup
+  merge_evaluation: "tc_04卡步骤3 三项移交补登：原「全部登记」声明证伪，三项逐条实态+可机判判据+ARCH-331定义不可考附节"
+- file: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r1_closeout.md
+  token: tc06-r1-closeout-card-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "TC-06 R1结案回写卡：ETF时区修复已执行终态三处登记面收口（甲线域项只登记路由WO-3）"
+- file: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
+  token: tc06-r2-e1c09-options-card-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "TC-06 R2裁定卡：E1C-09存疑件三选项呈报（挂起/完整通道/放弃），禁改放行状态"
+- file: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r3_traderecord_card.md
+  token: tc06-r3-traderecord-card-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "TC-06 R3裁定卡：TradeRecord扩展立项基线修正版（F03判据灭失重建源在案）"
+- file: docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
+  token: tc06-r4-t0-pairs-card-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "TC-06 R4裁定卡：做T配对变形重启（#304改号#331勘误+#386禁复试图救张力披露）"
+- file: docs/_working/recovered_task_cards/d_class_ruling_package.md
+  token: d-class-ruling-package-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "D类8项裁定打包清单+ARCH-331补充材料+TC-02对表材料，一次交Max/Owner裁完"
 di_seam_exemptions: []
