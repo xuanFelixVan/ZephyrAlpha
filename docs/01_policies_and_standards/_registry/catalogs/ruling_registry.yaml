@@ -5003,3 +5003,35 @@ entries:
   related_arch: []
   related_rulings: ['裁定#378']
   superseded_by: ''
+- ruling_id: '裁定#380'
+  title: 'Owner 签字单批文（unified_campaign v1.0 十项终态）+MiniQMT 模拟盘 09-17 找回实证令'
+  date: '2026-09-20'
+  category: '数据'
+  status: 'active'
+  summary: >-
+    Owner 2026-09-20 深夜逐项批文（对话原文真源=Owner 消息，本裁定为正式载体）：①a=废表 export 双副本
+    →行数核对→DROP，并**新增废表手动盘点机制**（今后新出现的备份表/污染表必须人工盘点确认才可删，
+    建登记册+发现即报警待盘点，禁自动删）；②b=1970 假日期 43.6 万行**治本**——本次任务内找到写入端
+    来源+修正存量数据+写入端禁再写 1970（原"PIT 关存+补真值排 backlog"方案作废，执行归甲线）；
+    ③a=估值 P0 按推荐案修（version 列单写者+价格腿回填+交易日 gate+0 行告警），**修完必须红蓝极限
+    对抗测试**（Owner 原话：写出来不一定能实现可能有 bug，须测试——注入双写竞争/周六写入/mock 0 行
+    验证关卡真拦）；④改=vhdx 压缩**不自动执行不停机**——"季度压缩"作为条目挂入排班表+到点通知
+    Owner（通知形式暂定，暂不做弹窗），实际停机压缩等 Owner 点名安排；⑤a 强化=冷储自动化影子→
+    半自动→全自动**当天一次性全流程试跑跑通**（原三步走渐进节奏作废）；⑥撤销=异地备份 Owner 自办
+    （拔盘存放其他电脑），执行线不建异地机制；⑦待 Owner 确认=db_dumps 快照滚动天数（先按 14 天
+    实现为可配置默认），Owner 数据保全公理重申=热层滚动删除前必须先进备份库+冷库（现行 archiver
+    三步导出→核对→才删即此公理，维持）；⑧a=总排班确认；⑨a=两挂接批（换手率每日采集+日历查缺
+    检查器入任务表）；⑩b=**MiniQMT 模拟盘找回 09-17 tick**——Owner 发现实盘下架但模拟盘未下架并
+    已挂起模拟盘客户端；本班探针实证：模拟盘 XtMiniQmt.exe（E:\国金QMT交易端模拟，账号 8886156677，
+    环境=安全 L 级）xtdata 可下载 09-17 tick，000001.SZ 单票 4847 行与 09-16（4832）/09-18（4840）
+    同量级全天覆盖——"永久缺口"原判（基于实盘退役+bdpan 停更）作废，09-17 全市场 tick+五档回补
+    列甲线最高优先（QMT 历史深度约 1 个月=窗口约至 10-17，须尽快），并评估模拟盘作为持续数据源+
+    桥复役（qmt_environments.yaml sim 环境即目标）。执行路由：⑩②③+红蓝归甲线；①盘点机制+⑤+
+    ④排班化+⑥撤销归乙线；⑦⑧⑨维持。v1.0 落盘件与本裁定冲突处以本裁定为准。
+  affected_files:
+  - docs/_working/unified_campaign/o_owner_signature_sheet_v1_0.md
+  - docs/_working/unified_campaign/p2_workorders_v1_0.md
+  - docs/_working/unified_campaign/p3_db_repair_master_plan_v1_0.md
+  related_arch: ['#ARCH-QMT-ENV-DISAMBIG-001']
+  related_rulings: ['裁定#378', '裁定#379']
+  superseded_by: ''
