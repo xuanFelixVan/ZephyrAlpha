@@ -41715,4 +41715,70 @@ creation_tokens:
   created_by: "st-data-fix-20260921"
   capability: "data_correctness_campaign"
   merge_evaluation: "同真源可派生：WO-1 P0 估值双修专项交付报告（A1/A2 修前修后对照+红蓝对抗三项），任务边界内独立事件报告，无既有条目可合并，随 data_fix_campaign TTL 处置"
+- file: "docs/_working/n5_closure/n5_disposition_ledger.md"
+- file: docs/_working/code_doc_gov_campaign/p1_bugs/w12_bug_verdicts.md
+  token: code-doc-gov-campaign-w12-bug-verdicts-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "同真源派生并入本册台账（w12_bug_verdicts），任务bound 随战役 TTL"
+- file: docs/_working/code_doc_gov_campaign/p3_placement/w14_placement_ledger.md
+  token: code-doc-gov-campaign-w14-placement-ledger-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "同真源派生并入本册台账（w14_placement_ledger），任务bound 随战役 TTL"
+- file: docs/_working/code_doc_gov_campaign/p4_ledgers/w15_hanging_accounts_verdict.md
+  token: code-doc-gov-campaign-w15-hanging-accounts-verdict-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "同真源派生并入本册台账（w15_hanging_accounts_verdict），任务bound 随战役 TTL"
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/README.md
+  token: code-doc-gov-campaign-design-memos-readme-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "两目录清零留壳 README（裁定#384），指向归置台账与 archive 去向，长期壳件"
+- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/README.md
+  token: code-doc-gov-campaign-impl-plans-readme-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "两目录清零留壳 README（裁定#384），指向归置台账与 archive 去向，长期壳件"
+- file: "scripts/ch/rolling_archive_reconciler.py"
+  token: "diskch-rolling-archive-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "rolling_archive_automation"
+  merge_evaluation: "同真源可派生：滚动归档 reconciler 为母方案 §5 唯一执行件（archiver 唯一通道复用），零既有条目可合并"
+- file: "scripts/ch/waste_table_scanner.py"
+  token: "diskch-waste-scanner-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "waste_table_patrol"
+  merge_evaluation: "同真源可派生：废表扫描器为裁定#380① 手动盘点机制唯一执行件，零既有条目可合并"
+- file: "docs/_working/disk_reorg_campaign/waste_table_inventory.json"
+  token: "diskch-waste-inventory-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "waste_table_patrol"
+  merge_evaluation: "17 张废表盘点机读底档（呈报清单的数据真源），零既有条目可合并"
+- file: "docs/_working/disk_reorg_campaign/waste_table_registry.yaml"
+  token: "diskch-waste-registry-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "waste_table_patrol"
+  merge_evaluation: "废表登记册（裁定#380① 新机制载体），零既有条目可合并"
+- file: "docs/_working/disk_reorg_campaign/waste_table_report_list.md"
+  token: "diskch-waste-report-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "waste_table_patrol"
+  merge_evaluation: "废表呈报清单（Owner 逐表批制呈报件），零既有条目可合并"
+- file: "docs/_working/disk_reorg_campaign/a1_ledger.md"
+  token: "diskch-a1-ledger-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "disk_reorg_campaign"
+  merge_evaluation: "本线断点续班台账（a0 §9 指定载体），零既有条目可合并"
+- file: "docs/_working/disk_reorg_campaign/a5_delivery_report.md"
+  token: "diskch-a5-report-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "disk_reorg_campaign"
+  merge_evaluation: "本线终局交付报告（a0 §9 指定载体），零既有条目可合并"
+- file: "docs/_working/disk_reorg_campaign/vhdx_quarterly_notice_design.md"
+  token: "diskch-vhdx-notice-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "disk_reorg_campaign"
+  merge_evaluation: "vhdx 季度压缩通知机制设计稿（裁定#380④ 排班化交付件），零既有条目可合并"
 di_seam_exemptions: []

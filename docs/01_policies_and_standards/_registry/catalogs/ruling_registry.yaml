@@ -4252,7 +4252,8 @@ entries:
     - '裁定#318'
     - '裁定#320'
   superseded_by: ''
-- ruling_id: '裁定#293'
+- ruling_id: '裁定#386'
+  renumber_note: 原#293 与回测收益带真源化治本撞号（登记时序后者先入 dev），2026-09-20 按先占原则改号 #386；引用面以本注记为准
   title: 'S-OWNER-001「震荡期 300ETF 波段+底仓T」E4 考试 OOS 结果定性=不及格（做T 净贡献线未达），卡归档留案底、OOS single-pass 已消费、禁复试图救'
   date: '2026-09-17'
   category: '策略工厂'
@@ -5071,4 +5072,76 @@ entries:
   - docs/_working/unified_campaign/o_owner_signature_sheet_v1_0.md
   related_arch: []
   related_rulings: ['裁定#380', '裁定#381']
+  superseded_by: ''
+- ruling_id: '裁定#383'
+  title: 'storage_tiering.py 纸面模块退役判决（乙线开工首件内收裁定）'
+  date: '2026-09-20'
+  category: '架构'
+  status: 'active'
+  summary: >-
+    乙线（st-disk-ch-20260921）开工首件内收裁定，依统一施工方案 v1.0 §7 指派。事实：src/zephyr
+    /data/storage_tiering.py 头部声明 CONSUMERS=zephyr.data.scheduler，但 scheduler.py 全文零
+    引用；全仓唯一真 import=zephyr/data/__init__.py:32 包级 re-export，其余（factor/offline_store
+    .py:41、factor/ufl_deterministic_layer.py 注释、frontend/dashboard/api_server.py:1863 注释）
+    均为注释级语义引用（2026-09-20 grep 实测）。裁定：按内收四判据"零触发零消费→退役"判退役——
+    其冷热分层迁移决策逻辑与 scripts/ch/archiver.py 三阶段（export→verify→drop）同域重复，违反
+    唯一通道原则（契约 §2A 原则 3）；滚动归档 reconciler（冷储自动化）复用 archiver.py 现成函数，
+    不接线本模块。执行：①本 commit 同步在模块 docstring 加退役注记（禁新增调用方）；②物理摘除
+    （删文件+tests/zephyr/data/test_storage_tiering.py+包级 re-export+module_translation 登记+
+    blueprint/ALGO_FLOW yaml 挂接清理+generate_project_depgraph --force 重建）归 src/zephyr/data
+    域（甲线写域）后续批次执行，本裁定只判不摘；③摘除批次落地前 tests 内该模块单测维持绿态不动。
+  affected_files:
+  - src/zephyr/data/storage_tiering.py
+  - docs/_working/cold_backup_automation/01_mining_findings.md
+  related_arch: ['MOD-L00-004']
+  related_rulings: ['裁定#375', '裁定#378']
+  superseded_by: ''
+- ruling_id: '裁定#384'
+  title: '企架施工文档归置翻案（design_memos/implementation_plans 逐件三裁：要么蓝图晋升要么归档）'
+  date: '2026-09-20'
+  category: '架构'
+  status: 'active'
+  summary: >-
+    翻案裁定（丙线代码文档治理 W3/WO-14 包①，会话 st-code-doc-20260921）。翻案对象：此前对
+    docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/ 与
+    docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/ 两目录『文档必须
+    保留原位』的判定（具体裁定号在册不可考，Owner 原文自述『以前已经判定过一次，必须保留』，
+    战役工作单 w_line_c_code_doc_gov.md §3 W3 前置铁律在案引用）。翻案依据：Owner 2026-09-20
+    v1.0 统一施工指令链 + docs/_working/unified_campaign/input_packages_1to4.md 包① Owner
+    原文——两目录为施工文档区，混入 02_enterprise_architecture 全景图区不规范（『要么归到蓝图，
+    要么完全归档』『终极强迫症』）。执行：两目录逐件三裁归置——a) 活设计决策→精华晋升
+    docs/03_modules 蓝图（GATE-12+module_id 锚定，晋升成本超价值允许降档 b 并留痕）；
+    b) 历史施工记录→git mv 归档 docs/_working/archive/2026-09/design_memos/ 与
+    implementation_plans/（git 历史保留，可逆）；c) 已废弃→salvage 要点后删。引用面 rg 改齐
+    同批；两目录清零后留壳（各留 README 指向台账+archive）。特判（只登记不动）：
+    design_memos/16_technical_indicator_catalog.md（v1.10.0，tilib 指标库 138 条终态活真源）
+    待数据线批 10（CYQ/SCR/CYC 筹码族）完工后再裁；technical_indicator_registry.yaml 零动作。
+    归档依据裁定#234 三段式（只移动不删除、git 历史天然保留）。
+  affected_files:
+  - docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos
+  - docs/02_enterprise_architecture/09_ai_architecture/implementation_plans
+  - docs/_working/unified_campaign/input_packages_1to4.md
+  related_arch: []
+  related_rulings: ['裁定#234', '裁定#224']
+  superseded_by: ''
+- ruling_id: '裁定#385'
+  title: 'N-5 共享区纠缠处置——三分法+验证闸恢复/废弃总裁定（Owner 授权 st-tdchain-20260917）'
+  date: '2026-09-18'
+  category: 'Git 治理'
+  status: 'active'
+  summary: >-
+    死会话遗留脏区总裁定：①staged 137 件三分法=69 机械件（删除假象 1+陈旧噪声 68，worktree==HEAD
+    实证）restore 清除；②活内容逐件验证闸裁定——E1 危机闸 TDD 补全接线（23/23+回归 2680 绿）、
+    E4 cohort（13 绿）、E5 演练（16 绿）、sector 测试（27 绿）、flash 90/91+sim-memos=恢复落地
+    （后续班会话消化，终验全 IN-HEAD）；③stash@0（基点 aa43e3b530，309 文件）=废弃——
+    blob 级三方比对 309/309 被 HEAD 或磁盘吸收、零独有内容，归档 patch 后 drop；④cp3 切换器四件
+    =留分支 89dd33dd8a（#310 档案件，六道落地闸实录+修复清单移交维护班）；⑤blueprint 未完成门禁
+    件不落移交；⑥aggregator 测试后续班已处置（磁盘+HEAD 双无）。台账=docs/_working/n5_closure/
+    n5_disposition_ledger.md。判据：git index=缓存非真源，真源=磁盘活内容+HEAD；验证闸实测
+    为恢复/废弃唯一依据。
+  affected_files:
+    - docs/_working/archive/2026-09/n5_closure/n5_disposition_ledger.md（landA 车道建并归档，本裁定为 Owner 授权总裁定记录+stash blob 级实证补充）
+  related_arch: []
+  related_rulings:
+    - '裁定#340'
   superseded_by: ''
