@@ -79,7 +79,10 @@ language: zh
 | `DS-FRED` | FRED/世界银行 宏观数据 | open_source | active |
 | `DS-EIA` | EIA 能源数据 | open_source | active |
 | `DS-QWEATHER` | 和风天气 | open_source | active |
-| **合计 / Total providers** | | | **20** |
+| `DS-EASTMONEY_DATACENTER` | 东方财富数据中心 | open_source | active |
+| `DS-IRM` | 深交所互动易 | open_source | active |
+| `DS-HYPERLIQUID` | Hyperliquid 全市场永续 | open_source | active |
+| **合计 / Total providers** | | | **23** |
 <!-- AUTO-END:task_counts -->
 
 ## 7. CLI 子命令
