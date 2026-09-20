@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.41"
+version: "2.2.42"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.41 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.42 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -143,7 +143,7 @@ build_status: generated
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 231 个 file 节点 | design | `extract_depgraph.py --modules MOD-L04-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L04-001` 的 242 个 file 节点 | design | `extract_depgraph.py --modules MOD-L04-001` |
 | 数据流图 (dataflow) | 1 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 76 个决策节点 / 2 个决策层 | design | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -155,7 +155,7 @@ build_status: generated
 | module_id | MOD-L04-001 | MOD-L04-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 231 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 242 文件 | 14 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -932,6 +932,10 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/cross_validation_log.py` | ✅ 已实现 | |
 | `schemas/categories/crypto/__init__.py` | ⚠️ 骨架 | |
 | `schemas/categories/crypto/crypto_kline_daily.py` | ✅ 已实现 | |
+| `schemas/categories/crypto/hl_funding_history.py` | ✅ 已实现 | |
+| `schemas/categories/crypto/hl_liquidation_raw.py` | ✅ 已实现 | |
+| `schemas/categories/crypto/hl_oi_snapshot_daily.py` | ✅ 已实现 | |
+| `schemas/categories/crypto/hl_perp_snapshot_daily.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/__init__.py` | ⚠️ 骨架 | |
 | `schemas/categories/fundamental/consensus_daily.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/consensus_daily_repaired.py` | ✅ 已实现 | |
@@ -949,6 +953,10 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/fundamental/fundamental_rights_issue.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/fundamental_share_change.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/fundamental_share_unlock.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental/ir_activity_extraction.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental/ir_activity_record.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental/irm_interactive_extraction.py` | ✅ 已实现 | |
+| `schemas/categories/fundamental/irm_interactive_qa.py` | ✅ 已实现 | |
 | `schemas/categories/fundamental/pdf_forecast_extracted.py` | ✅ 已实现 | |
 | `schemas/categories/intraday/__init__.py` | ⚠️ 骨架 | |
 | `schemas/categories/intraday/market_auction.py` | ✅ 已实现 | |
@@ -1041,6 +1049,8 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market/market_calendar_event.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_cb_iv.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_cffex_member_ranking.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_cftc_positioning.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_china_bond_yield.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_concept_board.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_concept_board_constituent.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_concept_sector.py` | ✅ 已实现 | |
@@ -1062,6 +1072,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market/market_futures_position.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_futures_term.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_futures_warehouse_receipt.py` | ✅ 已实现 | |
+| `schemas/categories/market/market_gold_etf_holdings.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_hk_connect_flow.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_hk_kline.py` | ✅ 已实现 | |
 | `schemas/categories/market/market_hk_stock_list.py` | ✅ 已实现 | |
@@ -1114,7 +1125,6 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/meta/meta_stock_profile_ths.py` | ✅ 已实现 | |
 | `schemas/categories/meta_stock_basic.py` | ✅ 已实现 | |
 | `schemas/categories/meta_stock_profile_ths.py` | ✅ 已实现 | |
-| `scripts/ch/apply_irm_extraction_ddl.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/implementations/ch_tick_replay.py` | ✅ 已实现 | |
 | `src/zephyr/data/implementations/consensus_daily_compute.py` | ✅ 已实现 | |
 | `src/zephyr/data/implementations/consensus_daily_repaired_compute.py` | ✅ 已实现 | |

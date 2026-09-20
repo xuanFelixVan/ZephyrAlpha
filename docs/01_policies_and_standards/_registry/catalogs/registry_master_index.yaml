@@ -1,11 +1,11 @@
-# 自动生成于 2026-09-17T18:47:18Z
+# 自动生成于 2026-09-20T09:01:17Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-09-17T18:47:18Z'
+generated_at: '2026-09-20T09:01:17Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 55
+total_registries: 58
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 775
+  entry_count: 798
   status: active
 - registry_id: REG-BTB-001
   name: Backtest Object Backlog
@@ -151,6 +151,14 @@ registries:
   maintenance: manual
   entry_count: 5
   status: active
+- registry_id: REG-DOMAIN-RESP-LAYER-001
+  name: 域→职责层映射真源（responsibility_layer）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/domain_responsibility_layer_mapping.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 84
+  status: active
 - registry_id: REG-EVT-001
   name: Event Calendar Registry
   category: governance_rule
@@ -191,6 +199,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: active
+- registry_id: CFG-fail_open_register
+  name: fail_open_register
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: REG-FEATURE-ADJ-001
   name: Feature Adjudication Registry
   category: governance_rule
@@ -221,7 +237,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 83
+  entry_count: 94
   status: active
 - registry_id: PS-REG-014
   name: GATE 门禁登记表
@@ -229,7 +245,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 169
+  entry_count: 170
   status: active
 - registry_id: CFG-governance-convergence-map
   name: governance_convergence_map
@@ -285,7 +301,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 7073
+  entry_count: 7140
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -373,7 +389,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 256
+  entry_count: 274
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表
@@ -381,7 +397,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 144
+  entry_count: 196
   status: active
 - registry_id: REG-SEAT-001
   name: Seat Registry
@@ -391,6 +407,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: active
+- registry_id: REG-STD-FAMILY-001
+  name: 标准↔治理族派生注册表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/standard_family_registry.yaml
+  format: yaml
+  maintenance: auto
+  entry_count: 4
+  status: unknown
 - registry_id: REG-STR-001
   name: 策略登记表
   category: governance_rule

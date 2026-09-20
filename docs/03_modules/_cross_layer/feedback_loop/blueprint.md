@@ -143,8 +143,8 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-FEEDBACK_LOOP` 的 638 个 file 节点 | production | `extract_depgraph.py --modules MOD-FEEDBACK_LOOP` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-FEEDBACK_LOOP` 的 637 个 file 节点 | production | `extract_depgraph.py --modules MOD-FEEDBACK_LOOP` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -155,7 +155,7 @@ responsibility_domain:
 | module_id | MOD-FEEDBACK_LOOP | MOD-FEEDBACK_LOOP | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 638 文件 | 26 文件（§0.1） | ❌ |
+| file_count | 637 文件 | 26 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 

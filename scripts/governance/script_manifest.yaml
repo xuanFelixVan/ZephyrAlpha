@@ -1,12 +1,12 @@
-# 自动生成于 2026-09-19T12:40:29Z
+# 自动生成于 2026-09-20T04:56:40Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-19T12:40:29Z'
+generated_at: '2026-09-20T04:56:40Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 447
-with_manifest: 413
+total_scripts: 441
+with_manifest: 407
 missing_manifest: 34
 categories:
   governance:_sync: 4
@@ -21,7 +21,7 @@ categories:
   governance:d4_paths: 4
   governance:d5_architecture: 123
   governance:d6_security: 15
-  governance:d7_code: 43
+  governance:d7_code: 37
   governance:d8_doc_sync: 15
   governance:d9_knowledge: 2
   governance:data_quality: 2
@@ -3478,78 +3478,6 @@ scripts:
   description: 静默降级检测（COND-45 — 降级路径必须有日志）
   tags:
   - Critical
-- name: d7_code/fix_n06_scope.py
-  owner: governance:d7_code
-  dimensions:
-  - D7
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: N-06 module_id scope 前缀检测修复脚本。
-  tags:
-  - Critical
-  - Disruptive
-- name: d7_code/fix_n12_ke_naming.py
-  owner: governance:d7_code
-  dimensions:
-  - D7
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: N-12 KE 条目命名格式批量修复脚本。
-  tags:
-  - Critical
-  - Disruptive
-- name: d7_code/fix_n13_snake_case.py
-  owner: governance:d7_code
-  dimensions:
-  - D7
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: N-13 YAML/JSON/MD 文件名 snake_case 批量修复脚本。
-  tags:
-  - Critical
-  - Disruptive
-- name: d7_code/fix_n14_init_all.py
-  owner: governance:d7_code
-  dimensions:
-  - D7
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: N-14 __init__.py 缺少 __all__ 批量修复脚本。
-  tags:
-  - Critical
-  - Disruptive
-- name: d7_code/fix_n15_blueprint_path.py
-  owner: governance:d7_code
-  dimensions:
-  - D7
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: N-15 BLUEPRINT 头部路径不存在批量修复脚本。
-  tags:
-  - Critical
-  - Disruptive
-- name: d7_code/fix_naming_manual.py
-  owner: governance:d7_code
-  dimensions:
-  - D7
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: fix_naming_manual — 手动修复少量命名违规(N-11/N-10/N-03/N-09/N-16)。
-  tags:
-  - Critical
-  - Disruptive
 - name: d7_code/fix_orphan_exports.py
   owner: governance:d7_code
   dimensions:

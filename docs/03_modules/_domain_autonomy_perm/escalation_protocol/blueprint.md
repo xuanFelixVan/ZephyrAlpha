@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance/escalation
 title: Escalation Protocol 蓝图
 doc_type: blueprint
 status: Active
-version: "2.1.14"
+version: "2.1.15"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -70,7 +70,7 @@ depends_on:
   - {target: MOD-INF-024, at: "$TODO", why: "TODO -- auto-converted"}
   - {target: MOD-INF-025, at: "$TODO", why: "TODO -- auto-converted"}
 responsibility_domain: 
-design_maturity: design
+design_maturity: production
 build_status: production
 ---
 
@@ -280,8 +280,8 @@ Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-022` 的 190 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-022` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-022` 的 191 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-022` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -292,7 +292,7 @@ Escalation Protocol 是 ZephyrAlpha 安全升级与委托治理核心协议。�
 | module_id | MOD-INF-022 | MOD-INF-022 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | production | ✅ |
-| file_count | 190 文件 | 112 文件（§0.1） | ❌ |
+| file_count | 191 文件 | 112 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1616,6 +1616,7 @@ STEP 3: 拆分后验证
 | `tests/governance/orchestrator/test_engine_sandbox.py` | ✅ 已实现 | |
 | `tests/governance/orchestrator/test_mvep_orchestrator.py` | ✅ 已实现 | |
 | `tests/governance/orchestrator/test_objective_tracker.py` | ✅ 已实现 | |
+| `tests/governance/resilience/test_emergency_track_guardian.py` | ✅ 已实现 | |
 | `tests/governance/resilience/test_silence_detector.py` | ✅ 已实现 | |
 | `tests/governance/security/test_github_api_guard.py` | ✅ 已实现 | |
 | `tests/governance/security/test_hooks_integrity_guard.py` | ✅ 已实现 | |

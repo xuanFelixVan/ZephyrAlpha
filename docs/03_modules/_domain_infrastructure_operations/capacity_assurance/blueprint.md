@@ -5,7 +5,7 @@ title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Tok
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: 3.1.9
+version: 3.1.10
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: capacity
@@ -189,8 +189,8 @@ design_maturity: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-001` 的 35 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-001` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-001` 的 36 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-001` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -201,7 +201,7 @@ design_maturity: production
 | module_id | MOD-INF-001 | MOD-INF-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 35 文件 | 28 文件（§0.1） | ❌ |
+| file_count | 36 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1674,6 +1674,7 @@ STEP 3: 拆分后验证
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/autonomy/test_system_watermark_gate.py` | ✅ 已实现 | |
 | `tests/capacity/test_batch1_infra.py` | ✅ 已实现 | |
 | `tests/capacity/test_batch2_governance.py` | ✅ 已实现 | |
 | `tests/capacity/test_batch3_integration.py` | ✅ 已实现 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.23"
+version: "2.2.24"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -56,8 +56,8 @@ references:
     section: "§16.7"
     why: "matching_engine Tick级5档撮合规格, MiniQMT Broker 实盘撮合逻辑需保持一致"
 responsibility_domain: 
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: generated
 ---
 
 > module_id: MOD-L06-001 | version: 2.2.0 | status: Active | layer: l06
@@ -187,8 +187,8 @@ build_status: planned
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L06-001` 的 65 个 file 节点 | design | `extract_depgraph.py --modules MOD-L06-001` |
-| 数据流图 (dataflow) | 3 个 Dataset / 3 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L06-001` 的 67 个 file 节点 | production | `extract_depgraph.py --modules MOD-L06-001` |
+| 数据流图 (dataflow) | 3 个 Dataset / 2 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -198,8 +198,8 @@ build_status: planned
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-L06-001 | MOD-L06-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | planned | generated | ❌ |
-| file_count | 65 文件 | 7 文件（§0.1） | ❌ |
+| build_status | generated | generated | ✅ |
+| file_count | 67 文件 | 7 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1239,6 +1239,7 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | `tests/ex_core/adapters/test_qmt_file_bridge_quote.py` | ✅ 已实现 | |
 | `tests/ex_core/test_daban_load_producer.py` | ✅ 已实现 | |
 | `tests/ex_core/test_execution_report.py` | ✅ 已实现 | |
+| `tests/ex_core/test_execution_report_producer.py` | ✅ 已实现 | |
 | `tests/ex_core/test_live_portfolio.py` | ✅ 已实现 | |
 | `tests/ex_core/test_live_strategy_adapter.py` | ✅ 已实现 | |
 | `tests/ex_core/test_local_order_queue.py` | ✅ 已实现 | |

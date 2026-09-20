@@ -4,7 +4,7 @@ submodule_path: src/zephyr/governance
 title: 脚本系统蓝图 — 第三条生产线的自动化审计与门禁
 doc_type: blueprint
 status: Active
-version: 5.5.33
+version: 5.5.34
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: governance
@@ -48,7 +48,7 @@ codification_at: "2026-05-13"
 references: []
 responsibility_domain: 
 build_status: generated
-design_maturity: design
+design_maturity: production
 ---
 
 > actual_disk_path: src/zephyr/infrastructure/script_system/ + scripts/governance/ + scripts/governance/meta/ + scripts/governance/generators/ (12 .py files)
@@ -114,8 +114,8 @@ design_maturity: design
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 500 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-005` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-005` 的 507 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-005` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -126,7 +126,7 @@ design_maturity: design
 | module_id | MOD-INF-005 | MOD-INF-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 500 文件 | 13 文件（§0.1） | ❌ |
+| file_count | 507 文件 | 13 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1458,6 +1458,7 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/blueprint/test_no_stale_agents_numbered_refs_in_scripts.py` | ✅ 已实现 | |
 | `tests/blueprint/test_normalize_blueprint_autogen_anchors.py` | ✅ 已实现 | |
 | `tests/blueprint/test_sync_blueprint_code_index_template.py` | ✅ 已实现 | |
 | `tests/dr/test_backup_lock_stale.py` | ✅ 已实现 | |
@@ -1499,6 +1500,8 @@ scripts/governance/quickstart.md → §22 Zero-Memory 冷启动卡片
 | `tests/governance/test_architecture_health_dashboard_metrics_p2.py` | ✅ 已实现 | |
 | `tests/governance/test_chart_pattern_registry_integrity.py` | ✅ 已实现 | |
 | `tests/governance/test_check_blueprint_code_alignment.py` | ✅ 已实现 | |
+| `tests/governance/test_gate_prerun.py` | ✅ 已实现 | |
+| `tests/governance/test_git_hooks_marker_forgery.py` | ✅ 已实现 | |
 | `tests/governance/test_scaffold_module_registration.py` | ✅ 已实现 | |
 | `tests/governance/test_scaffold_token_registration.py` | ✅ 已实现 | |
 | `tests/governance/test_sync_registry_from_blueprints.py` | ✅ 已实现 | |

@@ -3,7 +3,7 @@ module_id: MOD-EX-049
 title: "执行域聚合根管理器蓝图 — Order/Position生命周期协调层"
 doc_type: blueprint
 status: Active
-version: "0.1.12"
+version: "0.1.13"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -123,8 +123,8 @@ class ExecutionAggregateManager:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-EX-049` 的 11 个 file 节点 | production | `extract_depgraph.py --modules MOD-EX-049` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-EX-049` 的 12 个 file 节点 | production | `extract_depgraph.py --modules MOD-EX-049` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -135,7 +135,7 @@ class ExecutionAggregateManager:
 | module_id | MOD-EX-049 | MOD-EX-049 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | production | N/A | — |
-| file_count | 11 文件 | N/A | — |
+| file_count | 12 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -161,6 +161,7 @@ class ExecutionAggregateManager:
 | `tests/ex_core/test_daban_pit_safety.py` | ✅ 已实现 | |
 | `tests/ex_core/test_daban_signal_decision.py` | ✅ 已实现 | |
 | `tests/ex_core/test_operational_risk_stats.py` | ✅ 已实现 | |
+| `tests/ex_core/test_order_idempotency_persistence.py` | ✅ 已实现 | |
 | `tests/ex_core/test_position_tracker.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南

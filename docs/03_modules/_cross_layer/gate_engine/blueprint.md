@@ -5,7 +5,7 @@ title: "Gate Engine 蓝图 — G0-G7任务门禁 + G1-G5 KMS决策门 + 门禁�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.8.42"
+version: "0.8.43"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -297,8 +297,8 @@ build_status: stable
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 338 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-GATE_ENGINE` 的 339 个 file 节点 | production | `extract_depgraph.py --modules MOD-GATE_ENGINE` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
 
@@ -309,7 +309,7 @@ build_status: stable
 | module_id | MOD-GATE_ENGINE | MOD-GATE_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 338 文件 | 28 文件（§0.1） | ❌ |
+| file_count | 339 文件 | 28 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1553,6 +1553,7 @@ STEP 3: 拆分后验证
 | `tests/governance/commit_gates/test_capability_lookup_audit_log.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_capability_lookup_bypass_policy.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_capability_lookup_required_gate.py` | ✅ 已实现 | |
+| `tests/governance/commit_gates/test_ch_final_gate_no_final_reads.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_check_yaml_anchor_consistency.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_commit_scope_gate.py` | ✅ 已实现 | |
 | `tests/governance/commit_gates/test_consumers_accuracy_gate.py` | ✅ 已实现 | |

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.21"
+version: "4.0.22"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -1124,7 +1124,6 @@ class FactorMeta(BaseModel):
 | `src/zephyr/factor/core/factor_dag/dag.py` | ✅ 已实现 | |
 | `src/zephyr/factor/expectations.py` | ✅ 已实现 | |
 | `src/zephyr/factor/fundamentals.py` | ✅ 已实现 | |
-| `src/zephyr/factor/technical_indicators/cycle.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
