@@ -54,7 +54,7 @@ AI 层"自我进化引擎"设计真源已 100% 完成（11 本 DESIGN 挖干+红
 |---|---|---|---|---|
 | 1 | 重做复审：把 L2 既成事实（84007a1d6a，7.5/9 项+4 缺测试件）、__init__.py 悬置、events.py 幽灵条目、第 3.5 节标题计数差一全部纳入复审报告；追认 L2 施工授权来源疑问列 Max 裁定清单 | D:\ZephyrAlpha\docs\_working\ai_layer_vision\P1_construction_review.md（新建） | 含分级问题清单（P0 阻塞/P1 应修/P2 记录）+Max 裁定清单 | Flash |
 | 2 | __init__.py 两解裁定：Owner 裁定豁免 vs 改 PEP420 布局，裁定后随批落地（404 字节成品已在盘） | src/zephyr/governance/standards_governance/__init__.py | 文件入 HEAD、working tree 零驻留 | Max 预审，Owner 门位（涉 ARCH-031 语义） |
-| 3 | 编制重构版 P1 方案：L2 批改"收尾批"（补 4 测试件+施工项 8 登记补全），其余 10 本 DESIGN 按依赖序照编；六要素（分批/车道/路由/资源/红线/回滚）全齐 | D:\ZephyrAlpha\docs\_working\ai_layer_vision\P1_construction_plan.md（新建） | 六要素全齐+第 3.5 节九项治理立案预审归纳挂钩 | Flash 起草，取舍点列 Max 清单 |
+| 3 | 编制重构版 P1 方案：L2 批改"收尾批"（补 4 测试件+施工项 8 登记补全），其余 10 本 DESIGN 按依赖序照编；六要素（分批/车道/路由/资源/红线/回滚）全齐——红线要素必须逐条写明：禁碰 docs/03_modules、TDM、AGENTS.md、他车道在飞区；五条永不触碰（实盘凭证/付费动作/宪法权限语义/审计链/验收判据自改）。两份交付 .md 落地前走 CREATE-GUARD token ceremony+网关落 HEAD+工作树零驻留（原文交付③） | D:\ZephyrAlpha\docs\_working\ai_layer_vision\P1_construction_plan.md（新建） | 六要素全齐（红线含三禁碰+五永不触碰）+第 3.5 节九项治理立案预审归纳挂钩；两交付物在 HEAD 且工作树零驻留 | Flash 起草，取舍点列 Max 清单 |
 | 4 | 注册表卫生小批：清 events.py 幽灵条目、刷 README 标题计数 | docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml、docs/_working/ai_layer_vision/README.md | 路径账实一致 | Flash |
 | 5 | 催批：方案落盘交 Owner 批，批前不动一行施工代码 | 会话回复 | Owner 批文在案 | Owner 门位 |
 
@@ -71,6 +71,9 @@ AI 层"自我进化引擎"设计真源已 100% 完成（11 本 DESIGN 挖干+红
 3. L2 既成事实未经本线复审，禁把它当"已验收"——4 缺测试件意味着项 2/3/4/7 验收未闭环。
 4. 勿照原文任务书直接开跑：L2 段已过时。
 5. governance/ 根禁新增 .py（ARCH-031）——一律进 standards_governance/ 子包。
+6. 注册表防过期假净删四步压一条命令（checkout HEAD→重插行→claims→入袋）；加行被 held 用 --allow-overlap（叠加型非互斥）。
+7. 提交队列死信处置：读 .runtime/commit_queue/dead/<qid>.json 的 dead_reason→修文件→requeue；serializer Apply 静默失败（四现先例）=入袋后轮询无进展即改直连重试。
+8. docs/_working 新文件 frontmatter 禁带 doc_type（EXEMPT-ZONE-FM 硬拦）；新 .md 必带 ttl 字段（TTL-METADATA）。
 
 ## 7. 执行冷启动提示
 

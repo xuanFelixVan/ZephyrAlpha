@@ -63,6 +63,7 @@ Git 提速战役（flash_speedup）为提升提交吞吐做了 F1-F9 九个车�
 | 6 | 3 个死会话工棚按 #385 判据逐面签后拆除 | .aidrafts/st-residual-20260917 等 | git worktree list 仅剩活跃+pool+serializer | Owner 门位（删除面） |
 | 7 | 91 文件状态刷新：P-3 改"已由 #333 签署"、N-5/N-6 回填裁定号 | docs/_working/flash_speedup/91_fresh_triage_and_rulings.md | 文内状态与 ruling_registry 无矛盾 | Flash |
 | 8 | T10 结案登记：备份目录去向补台账（找回或宣告灭失），关闭该 11 件挂账 | docs/_working/flash_speedup/00_master_ledger.md | 挂账表该项有终态 | Flash |
+| 9 | 交付三清单回执给 Owner、勿自签全绿：①裁定项清单（N-1/N-2/N-4-91 竞态/P-2/P-4 仍待 Max/Owner）；②执行项清单（2.1 节+24h 窗+死信各附命令与输出）；③复核项清单（自验命令）。自写盘点脚本先证明能红；表述遵裁定 #325——只说"该套件本轮检出 N 件通过且已被证明能红（附变异证据）"，禁说"全绿" | 会话回复 | 三清单齐全、能红证据在案 | Flash |
 
 ## 5. 与其他任务卡的关系
 

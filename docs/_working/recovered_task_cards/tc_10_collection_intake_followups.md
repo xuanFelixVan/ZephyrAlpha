@@ -52,9 +52,9 @@ Owner 交付一包小红书/视频收藏，st-collintake 拆成 25 条四路挖�
 
 | 步骤 | 做什么 | 涉及文件全路径 | 验收判据 | 路由与触发条件 |
 |---|---|---|---|---|
-| 1（**唯一可立即做、带时限**） | 批 10 扩项挂接修订：把 cost_15/85 两列+CHIP_CONC_90/70 两指标写进 WO-4 范围，口径按当日实测基线重算 | D:\ZephyrAlpha\docs\_working\unified_campaign\p2_workorders_v1_0.md:39、p2_backlog_master_ledger_v1_0.md:56 | WO-4 范围含扩项；两台账一致 | Flash 可立即做（热文件走 claim+队列）；**触发=立即，赶在 WO-4 开工前（1-2 天窗）** |
+| 1（**唯一可立即做、带时限**） | 批 10 扩项挂接修订：把 cost_15/85 两列+CHIP_CONC_90/70 两指标+**峰突破/发散信号规则卡**（原文后续 3 的第三个交付物，勿再漏）写进 WO-4 范围，口径按当日实测基线重算 | D:\ZephyrAlpha\docs\_working\unified_campaign\p2_workorders_v1_0.md:39、p2_backlog_master_ledger_v1_0.md:56 | WO-4 范围含两列两指标+信号规则卡；两台账一致 | Flash 可立即做（热文件走 claim+队列）；**触发=立即，赶在 WO-4 开工前（1-2 天窗）** |
 | 2 | P1 期权 PCR 数据批：akshare option_daily_stats_sse/szse 到新表 c1_market.option_daily_stats（三口径 PCR 列，DateTime64(3)+显式时区）到日频增量任务到 option_sentiment 改读表扩三口径到历史回补到假设卡过 E4；施工前走 construction_workflow_policy 15 步 | src/zephyr/data/config/tasks.yaml、src/zephyr/signal_ashare/sentiment/option_sentiment.py、新表、docs/_working/collection_intake/factors/factor_spec_options_pcr.md（施工依据） | tasks.yaml 有 option_daily_stats 任务；pcr_basis 扩三口径；E4 出证 | **触发=Owner 点单 P1** |
-| 3 | 批 10 本体施工（主权在 unified 甲线 W4） | technical_indicator_registry.yaml + 批 10 采集器 | 注册表可 grep 到 chips_cost_15/cost_85/CHIP_CONC_90/70 | **触发=WO-4 排到或 Owner 单独点单**；前置=读裁定 #257④+批 10 配方（.aidrafts/st-tilib-clear-20260920/.../2026-09-15-tilib-handoff.md） |
+| 3 | 批 10 本体施工（主权在 unified 甲线 W4）：两列+两指标+峰突破/发散信号规则卡 | technical_indicator_registry.yaml + 批 10 采集器 + 信号规则卡 | 注册表可 grep 到 chips_cost_15/cost_85/CHIP_CONC_90/70；信号规则卡在册 | **触发=WO-4 排到或 Owner 单独点单**；前置=读裁定 #257④+批 10 配方（.aidrafts/st-tilib-clear-20260920/.../2026-09-15-tilib-handoff.md） |
 | 4 | P2 三小活：trade_when 白名单+E4 拥挤度维度+组合层立项（以 eng_quantcombine 第 8 节为输入） | config/factor_mining_whitelist.yaml、src/zephyr/backtest/regime_validation/、立项文档 | 白名单+引擎算子表双向交集通过；E4 出证含拥挤度 | **触发=Owner 点单**；③另需解除 pf_alloc 挂触发裁定 |
 | 5 | Owner 换钥匙后核对（AI 待命）：只报键名/格式，绝不打印值 | .env（只 stat）、config/secret_registry.yaml | .env mtime 晚于 09-20；registry 有轮换登记 | **触发=Owner 主动叫核对**；当前状态=催办 Owner（已超 3 天未轮换） |
 | 6 | 月度巡检自动化：du .zcode 体积+repoSnapshot 键巡检，可搭现有 IOCheck-Monthly 车辆 | scripts/ 新巡检脚本（.ps1 纯 ASCII）+计划任务 | schtasks 出现巡检任务 | **触发=Owner 点头挂自动化** |

@@ -55,13 +55,14 @@ completes_when: 全部卡执行完毕并归档后转 archived
 
 | 步骤 | 做什么 | 涉及文件全路径 | 验收判据 | 路由 |
 |---|---|---|---|---|
-| 1 | A5 裁定：死会话（residG）冷库接线遗产是否可代落 | src/zephyr/strategy_pipeline/pipeline_events.py（成品在 G:/zephyr_cold/30_corpus/fullflow_harvest/20260918-194729/worktree/） | Max 出裁定号；按 BT-P1-031 后新版重排接线（L1 短路不落 marker、异常 fail-closed） | Max 裁定，Flash 施工 |
+| 1 | A5 裁定：死会话（residG）冷库接线遗产是否可代落 | src/zephyr/strategy_pipeline/pipeline_events.py（成品在 G:/zephyr_cold/30_corpus/fullflow_harvest/20260918-194729/worktree/） | Max 出裁定号；按 BT-P1-031 后新版重排两段接线——L1=crisis_block_check 短路、不落 marker、判读异常 fail-closed；attribution_daily=SIM_DAILY_KINDS FIFO 末位+--day 业务日 resolve_pf_alloc_trade_date | Max 裁定，Flash 施工 |
 | 2 | apply 三常量注册恢复 | scripts/ch/apply_market_tables_ddl.py；真源 schemas/categories/ 下 crisis_gate_log.py、sim_attribution_daily.py、cohort_daily_ledger.py | grep 三常量命中；apply 干跑通过 | Flash |
 | 3 | tasks.yaml 加 cohort_ledger_daily 任务 | src/zephyr/data/config/tasks.yaml | schedule=daily_capital 尾部+deps 四增量任务；admin 建 cohort_daily_ledger 表（CH EXISTS=1） | Flash+Owner（建表） |
 | 4 | B20 一行日期修复单独落（**勿动 +31/-7**，R-072a 不落仍有效） | src/zephyr/pf_alloc/crisis_gate.py（备份 .runtime/tmp/ff-recon/backup_last/） | log_crisis_gate_row 用 date 对象入 Date 列；变异测试打红 | Flash |
 | 5 | 6 个 staged D 落地 | docs/_working/residual_construction/ 旧路径 | git status 该路径清零 | Flash（正门 git_commit.py） |
 | 6 | B21 严格 HEAD 两轮复跑+六环节端到端补课 | 测试体系 | 连续两轮 0 问题且口径=HEAD | Flash |
-| 7 | 收尾形式件：总簿回写（归档盒版本）+收工报告（或明文废案原格式）+O-1/O1/O2/凭据四项登记裁定号 | docs/_working/archive/2026-09/residual_construction/00_master_ledger.md；ruling_registry.yaml | 台账节点翻转带 hash；registry 出裁定号 | Flash+Max/Owner 门位 |
+| 7 | 收尾形式件：总簿回写（归档盒版本）+收工报告按原文六要素（环节×状态×hash/红蓝轮次证据/端到端实录含失败/遗留=0 声明或逐条案由/待裁定清单/清理确认）+Q2 清理两小件（清全仓 *.tmp.* 残留与 .runtime/tmp 一次性件；claims 全 release --release-only）+五项登记裁定号（O-1 老蔡日期映射/O1 warning 阈值/O2 对冲合约/E7 推送凭据/**真实期货通道解锁**——纸面≥3 次演练+Owner 实盘门位） | docs/_working/archive/2026-09/residual_construction/00_master_ledger.md；ruling_registry.yaml | 台账节点翻转带 hash；registry 出五裁定号；*.tmp.* 清零；claims 清零 | Flash+Max/Owner 门位 |
+| 8 | 长尾矿脉 M-1~M-11"登记不动工"落册防失传（原文整块，首次入卡）：M-1 机构 de-risking 参数引文/M-2 期货分钟线/M-3 盘中实时危机感知（挂 WO-5 三期）/M-4 期权腿/M-5 情景参数校准/M-6 散户偏差修正学术法/M-7 ETF 份额源/M-8 产业资本数据/M-9 chip 筹码落表/M-10 seat_type 词表扩展（数据线 A7）/M-11 Brinson 多层归因升级——11 条各带一句状态落一份登记台账，只登记不开工 | docs/_working/residual_resume/（新建登记件；若该目录仍不存在则落归档盒 docs/_working/archive/2026-09/residual_construction/） | 11 条全数在册、各带状态一行 | Flash（登记件） |
 
 ## 5. 与其他任务卡的关系
 

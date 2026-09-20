@@ -54,7 +54,7 @@ completes_when: 全部卡执行完毕并归档后转 archived
 | 1 | 基线三连复跑（分钟级，禁跑 2h 全量）：conv 校验器 check_vocab_domain_convergence --with-db、validate_target_layer、process_reaper --status | 三条命令输出 | 与 w6_round1_log.md:32-34 轮 2 真源对照如实记录（预期 conv 挂 10 域） | Flash |
 | 2 | 10 域 stable 红定性（本案活着的核心）：证据=.runtime/tmp/dataqa/pytest_flaky/ 下 r1/r2 两轮日志 + #335 + functional_domain_registry，两选一呈报：登记 known-transitional 豁免/ADVISORY 化（需裁定）或 DB 旧域净删（Owner 门位） | ruling_registry、functional_domain_registry | Max 裁定号登记；Owner 门位签署（若走净删） | Max 裁定，Owner 门位 |
 | 3 | W8 收口批：w6_round1_log.md 末尾追加"轮 3/4/5 阵亡取证+终轮证据替代说明"小节（引 dataqa R3 替代证据）；新建 w8_landing/ 收口日志；00_skeleton.md 第 2 节翻 W4/W6/W7/W8（注意 W4 行停在 🔨 而记忆称已完成，一并修正）；frontmatter 落"已封账 archived"；批次志加 B3 行 | docs/_working/2026-09-18_vocab_consolidation_campaign/ 全目录 | git log -1 --name-only 归属只含本批；porcelain 回归 0；提交必经 git_commit.py --enqueue | Flash |
-| 4 | 记忆文件更新终局态 + 唯一一次中文终报（含 10 域定性结论如实呈报） | C:\Users\fanzi\.qoder-cn\projects\D--ZephyrAlpha\memory\vocab-consolidation-campaign-20260918.md | mtime 更新；终局态含定性结论 | Flash |
+| 4 | 记忆文件更新终局态 + 唯一一次中文终报（按原文登记项逐项如实呈报，共 10 件：①10 域定性结论；②N-5 共享区纠缠现状——已由裁定 #385 收口、原 stash aa43e3b530 已 blob 级比对后废弃，现行 stash@{0} 属 WO-13续 他班资产；③#ARCH-337 热文件蒸发；④战役文档两次遭外来删除与恢复处方；⑤POST-RENAME-CHECK D-RESEARCH LIKE 假阳；⑥DB 脚本域 ADVISORY10；⑦needs_review 约 73；⑧unresolved 约 43；⑨D_COMPLIANCE 幽灵行；⑩known_data_gaps.yaml 外来脏——每项给"当前状态一行"而非照抄旧数） | C:\Users\fanzi\.qoder-cn\projects\D--ZephyrAlpha\memory\vocab-consolidation-campaign-20260918.md + 终报 | mtime 更新；终局态含 10 项披露各带现状态 | Flash |
 | 5 | （仅当 Max 仍要正式终轮）单轮定向扫描而非两轮——dataqa R3 已充当第二轮证据 | tests/governance 相关子域 | 0 FAILED 或全部定性 | Flash |
 
 ## 5. 与其他任务卡的关系

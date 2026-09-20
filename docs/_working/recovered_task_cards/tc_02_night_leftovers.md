@@ -60,6 +60,7 @@ A 组 5 个文件跨三个班次存活（仍 staged、HEAD 无、无人 claim）
 | 4 | 已入库引用处置：w1_f_judgment_book.md 末尾**追加**处置行（历史行不改写惯例）；夜班报告与 w9_triage 判"保留"无需动 | docs/_working/rule_audit_campaign/w1_f_judgment_book.md 第 64 行后 | git log -1 --name-only 归属正确 | Flash |
 | 5 | B 组残留 a2_genpatch_archived_20260920.py：无门禁无引用，随 .runtime TTL 自然消亡，默认不动（如需保留历史复现能力则登记坐标一行） | .runtime/tmp/a2_genpatch_archived_20260920.py | 无需动作 | Flash（默认不动） |
 | 6 | C 组工棚：移交 TC-09 任务一（同一对象，勿重复动手） | .worktrees/st-auditdoc-v4-20260918 | TC-09 回执 | TC-09 班组 |
+| 7 | 交付回执按原文三清单格式：①裁定面（A 组判甲向变形、3 条悬空 token 收法、C 组让渡 TC-09）；②执行面（命令原文+退出码+git log -1 --name-only）；③复查面（复核命令+期望输出）。每条结论标[亲验]/[转报]/[推断]；自写盘点脚本先证明能红（防假绿） | 会话回复 | 三清单齐全、证据等级逐条在案 | Flash |
 
 ## 5. 与其他任务卡的关系
 

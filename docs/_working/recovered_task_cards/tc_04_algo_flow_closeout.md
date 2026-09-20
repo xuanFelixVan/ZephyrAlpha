@@ -58,11 +58,12 @@ landing-anchor-algo-flow-closeout 战役（09-18）完成 ALGO_FLOW 出仓与锚
 | 步骤 | 做什么 | 涉及文件全路径 | 验收判据 | 路由 |
 |---|---|---|---|---|
 | 1 | W4 自指豁免施工续作：从 stash@{0} 单独摘取 externalize/report 两件改动（git stash show -p 摘单文件补丁重放，**绝禁整包 pop**），按在册谓词 A/B 判据重验后走队列正门 | scripts/governance/d5_architecture/generators/externalize_algo_flow.py、report_algo_flow_author_debt.py（真路径以 git ls-files 为准）；判据=docs/_working/archive/2026-09/2026-09-18-landing-anchor-algo-flow-closeout/W4_selfref_exemption.md | 谓词命中/不误伤真克隆各一双向钉；禁路径白名单（裁定 #273）；过再生成窗 | Flash 施工（判据已在册可机判） |
-| 2 | W2 三项去留再裁定案卷：呈"三项代码未做 + #377-G03 已裁母题 close + B 案不排期"三角事实，请 Max 定：随母题关闭销项 / 另立 backlog 卡 / 授权施工 | 真源 src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py、scripts/commit_queue.py、src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py（注意已迁移）、commit_queue_landing.py | Max 裁定号登记；若裁施工：收敛后主区 index 同步或等效消 MM 证据 / enqueue done 查询一钉 / 错配复现或判 moot | Max 裁定（Flash 禁自裁） |
+| 2 | W2 三项去留再裁定案卷：呈"三项代码未做 + #377-G03 已裁母题 close + B 案不排期"三角事实，请 Max 定：随母题关闭销项 / 另立 backlog 卡 / 授权施工 | 真源 src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py、scripts/commit_queue.py、src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py（注意已迁移）、commit_queue_landing.py | Max 裁定号登记；若裁施工：收敛后主区 index 同步或等效消 MM 证据 / enqueue done 查询一钉 / 错配复现或判 moot；三项施工均**不新增第二真源** | Max 裁定（Flash 禁自裁） |
 | 3 | R2 补登记：三项移交 LEDGER 补登或裁定作废 | docs/_working/flash_speedup/ 下新车道件 | LEDGER 落盘+三件可机判判据，或作废裁定号 | Flash 登记 / Max 裁作废 |
 | 4 | D5 回写三件：#ARCH-337 处置推进（仍 open）、台账号 ARCH-331 补登记（注意：该编号在册缺失、注册表全文零命中——本步就是把它首次登记进册，登记完成前不存在合法的井号引用形态）、#ARCH-324 按 G-03 回写 close（附 lock mtime 证据） | docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml | 三条 issue_id 的 status 与裁定一致；safe_write_text CAS | Flash 施工（G-03 已有授权回写） |
-| 5 | D3 残余施工：E-04 蓝图×2 晋升 git mv（#377 已裁 a 批准）+ L-6/C-12 注册表车道（P4 低优先） | docs/03_modules/ 待建蓝图、resource_schedule 注册表 | 蓝图入 03_modules（N-15 豁免留痕）；灌数/CONSUMERS 修正过闸 | Flash（有 #377 授权）/ P4 排班 |
+| 5 | D3 残余施工：E-04 蓝图×2 晋升 git mv（#377 已裁 a 批准）+ 一次性任务删除销项核对（调查实证三处已并入 96 条批次，核对无残端即销）+ L-6/C-12 注册表车道（P4 低优先） | docs/03_modules/ 待建蓝图、resource_schedule 注册表 | 蓝图入 03_modules（N-15 豁免留痕）；一次性任务三处无残端；灌数/CONSUMERS 修正过闸 | Flash（有 #377 授权）/ P4 排班 |
 | 6 | D6 物理件：页面文件扩容重启、DR 隔离演练——纯 Owner 基础设施门位，AI 只催办不执行 | 宿主机环境 | 重启后 pagefile 生效证据；演练报告落盘 | Owner 门位 |
+| 7 | W3_retirement.md 登记面一致性待裁项（原文显式挂起、首次入卡）：归档正文停在"待 Owner 退役"字样而实质已终局（裁定 #336 + e4df828ddc + #ARCH-326 resolved + b6 终局段）——请 Max/Owner 定：维持"不回改归档正文"惯例、需要时另立在册说明 | docs/_working/archive/2026-09/2026-09-18-landing-anchor-algo-flow-closeout/W3_retirement.md | 裁定号登记或明示放弃；不回改归档正文 | Max/Owner 裁定 |
 
 已死子项（勿再做）：R1 复审全套（本次调查即复核结论）、D1、D2 三口径决策、D4。
 
