@@ -4861,3 +4861,59 @@ entries:
   related_arch: []
   related_rulings: ['裁定#346', '裁定#347', '裁定#350', '裁定#353']
   superseded_by: ''
+- ruling_id: '裁定#373'
+  title: '主题七两分支终裁：sowner002/tv2terrain 并入残余后删'
+  date: '2026-09-20'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    依 #371 授权代 Owner 终裁（签字册主题七）。内容级差集亲验（blob 级逐文件比对）：
+    两分支主体已被 dev 吸收迭代（SAME 3 件/DIFF 均为 dev 更新版），唯一缺件=sowner002
+    出证报告 120 行（fa5c8febaf）+tv2terrain 勘测报告 192 行（b7d8bafdde）。裁 a 案：
+    拷贝两报告入 dev（拒绝整支 cherry-pick——registry 冲突无增益）后删两分支+两 worktree。
+  affected_files:
+  - docs/_working/factory/strategy_cards/e4_report_s_owner_002_regime_switcher.md
+  - docs/_working/factory/t_v2/2026-09-17-data-terrain-survey.md
+  related_arch: []
+  related_rulings: ['裁定#371']
+  superseded_by: ''
+- ruling_id: '裁定#374'
+  title: 'P6 结构性签字件批八项裁定（主题三/四/五/六/十+master FF+13 棚）'
+  date: '2026-09-20'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    依 #371 授权代 Owner 批：①主题三归档批=A12+B3 git mv 至 archive/2026-09/（勘误版：
+    resource_schedule/pattern_line 移出），C-3 五份留 09-30，clean_exam 移交保留项知悉；
+    ②主题四 ig bak 92 表=保留每族最近 1 份+当日活表，其余先结构导出备查再 DROP（可逆通道，
+    RULE-DATA-OPS 三步验证）；③主题五自启=方案 B（壳托管：开机自启 Electron 壳，
+    api/docs 生命周期由壳内 ensureApi/ensureDocs 托管+reaper keep 白名单兜底；
+    serve_docs 补 keep 行）——依据=任务数净零增+复用已验证路径+故障面最小；
+    ④主题六 #342 B①=a 案精确扩面：directory_contract 新增"运行态数据目录"条目
+    （拦 src/zephyr/data/ 下 runtime/db/log 类非代码产物），MOD-L00-001 代码面不冻；
+    B 修②随批；⑤主题十 10-1=补生成 index（生成器统一口径）10-2=登记已知限制+例行重生成兜底；
+    ⑥master 分支 FF 到 dev（DEBT-BRANCH-001 兑现）；⑦13 条内容阻断工棚逐棚三裁
+    （内容已在 dev→拆；有价值未落地→摘并；过时→abort+diff 留档）；
+    ⑧本批 PROTECTED-PATHS Layer2 无 message 通道的双重计数盲区按文档化紧急 env 通道放行
+    （Layer 1 标记已过，审计留痕，治本修复挂 P9 评估）。
+  affected_files:
+  - docs/_working/final3_campaign/w8_3_owner_signature_book.md
+  - docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml
+  related_arch: ['ARCH-FINAL3-RULES-BATCH-001']
+  related_rulings: ['裁定#371', '裁定#342']
+  superseded_by: ''
+- ruling_id: '裁定#375'
+  title: '全资产净零+内收判据铁律入宪法（W5-3 机制固化①）'
+  date: '2026-09-20'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    P9 宪法 §4 等长替换（6 行=6 行，全文 140 行不变）：规范净零→全资产净零（规则/gate/脚本/
+    配置册新增须声明替代或合并旧条目）；内收判据铁律四条入宪（同真源可派生→必并/零触发
+    零消费→退役/同域重复簇→收敛唯一/跨域不同对象→不并）；季度合并审计与退役审计同窗。
+    依据=W5-1 四簇审计判据实证+Owner #371 授权。
+  affected_files:
+  - AGENTS.md
+  related_arch: []
+  related_rulings: ['裁定#371']
+  superseded_by: ''
