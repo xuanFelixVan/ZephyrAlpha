@@ -819,3 +819,127 @@ class TestRegistryTornReadRetry:
         assert record["event"] == "registry_parse_fail"
         assert str(bad_registry) in record["path"]
         assert record["reason"]  # 非空 reason（截前 200 字）
+
+
+# ===========================================================================
+# 裁定#375 内收判据门禁化（2026-09-20，P9③）：新建资产 token 条目缺
+# merge_evaluation 字段 → warn+审计（首期 warn-only 不阻断——硬阻断会把存量
+# token 全打红，留过渡窗由季度审计评估升级）。
+# 检测面=own-scope（本提交文件面，非 tests/）。用 .yaml 资产验证（同走
+# _filter_new_py_and_yaml → _filter_to_commit_files 管线，.py 同路径）。
+# ===========================================================================
+
+
+class TestMergeEvaluationWarn:
+    """裁定#375：merge_evaluation 缺失两态 + own-scope 过滤验证。"""
+
+    _AUDIT_REL = Path(".runtime") / "gate_audit" / "create_guard_merge_evaluation.jsonl"
+
+    @staticmethod
+    def _write_registry(tmp_path: Path, yaml_rel: str, merge_evaluation: str | None) -> None:
+        """写临时 registry（token 条目带/不带 merge_evaluation 字段）。"""
+        me_line = f'    merge_evaluation: "{merge_evaluation}"\n' if merge_evaluation is not None else ""
+        registry_file = tmp_path / "registry.yaml"
+        registry_file.write_text(
+            f"creation_tokens:\n"
+            f'  - file: "{yaml_rel}"\n'
+            f'    token: "auto-me-test-20260920"\n'
+            f'    created_by: "test"\n'
+            f'    capability: "test"\n'
+            f"{me_line}",
+            encoding="utf-8",
+        )
+
+    def test_without_merge_evaluation_warns_but_passes(self, tmp_path: Path, monkeypatch, caplog) -> None:
+        """红证①：无 merge_evaluation 字段 → passed=True + warn（#375）+ 审计 jsonl 落盘。"""
+        import json as _json
+        import logging as _logging
+
+        _init_git_repo(tmp_path)
+        yaml_rel = "docs/02_other/me_test_missing_20260920.yaml"
+        f = _stage_file(tmp_path, yaml_rel, "key: value\n")
+        self._write_registry(tmp_path, yaml_rel, merge_evaluation=None)
+        monkeypatch.setattr(
+            "zephyr.governance.capability_lookup.REGISTRY_YAML",
+            tmp_path / "registry.yaml",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        with caplog.at_level(_logging.WARNING, logger="zephyr.gov_enforcement.commit_gates.create_guard"):
+            passed, detail = gate.check(gw, [str(f)], session_id="st-test-me-20260920")
+        assert passed is True, f"缺 merge_evaluation 应 warn 不阻断（首期 warn-only）: {detail}"
+        assert "merge_evaluation" in caplog.text, "warn 应出现在输出（logger.warning）"
+        assert "#375" in caplog.text
+        # 审计落 tmp_path（gateway.project_root = tmp git repo，不写生产 .runtime/）
+        audit_path = tmp_path / self._AUDIT_REL
+        assert audit_path.is_file(), f"审计文件应落 tmp_path: {audit_path}"
+        record = _json.loads(audit_path.read_text(encoding="utf-8").strip().splitlines()[-1])
+        assert record["event"] == "merge_evaluation_missing"
+        assert record["session_id"] == "st-test-me-20260920"
+        assert yaml_rel in record["missing_files"]
+        assert record["missing_count"] == 1
+
+    def test_with_merge_evaluation_zero_warn(self, tmp_path: Path, monkeypatch, caplog) -> None:
+        """红证②：有 merge_evaluation 字段 → passed=True 零 warn 零审计。"""
+        import logging as _logging
+
+        _init_git_repo(tmp_path)
+        yaml_rel = "docs/02_other/me_test_present_20260920.yaml"
+        f = _stage_file(tmp_path, yaml_rel, "key: value\n")
+        self._write_registry(
+            tmp_path,
+            yaml_rel,
+            merge_evaluation="grep+计划任务+注册表三查零同域消费方，新对象",
+        )
+        monkeypatch.setattr(
+            "zephyr.governance.capability_lookup.REGISTRY_YAML",
+            tmp_path / "registry.yaml",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        with caplog.at_level(_logging.WARNING, logger="zephyr.gov_enforcement.commit_gates.create_guard"):
+            passed, detail = gate.check(gw, [str(f)], session_id="st-test-me-20260920")
+        assert passed is True, f"有 merge_evaluation 应零 warn 放行: {detail}"
+        assert "#375" not in caplog.text, f"不应出现 #375 warn: {caplog.text}"
+        assert not (tmp_path / self._AUDIT_REL).exists(), "不应写审计 jsonl"
+
+    def test_own_scope_foreign_new_yaml_not_warned(self, tmp_path: Path, monkeypatch, caplog) -> None:
+        """own-scope 过滤验证：staged 新建件缺字段但不在本提交 files 面 → 不查不 warn。"""
+        import logging as _logging
+
+        _init_git_repo(tmp_path)
+        # b.yaml：他会话 staged 的新建件（token 无 merge_evaluation），但不在本次 commit 范围
+        _stage_file(tmp_path, "docs/02_other/me_test_foreign_20260920.yaml", "key: value\n")
+        # a.txt：本次要 commit 的文件（非资产格式）
+        f_a = _stage_file(tmp_path, "a.txt", "hello\n")
+        self._write_registry(tmp_path, "docs/02_other/me_test_foreign_20260920.yaml", merge_evaluation=None)
+        monkeypatch.setattr(
+            "zephyr.governance.capability_lookup.REGISTRY_YAML",
+            tmp_path / "registry.yaml",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        with caplog.at_level(_logging.WARNING, logger="zephyr.gov_enforcement.commit_gates.create_guard"):
+            passed, detail = gate.check(gw, [str(f_a)], session_id="st-test-me-20260920")
+        assert passed is True, f"外来 staged 新建件不应误判: {detail}"
+        assert "#375" not in caplog.text, f"own-scope 外新建件不应触发 warn: {caplog.text}"
+        assert not (tmp_path / self._AUDIT_REL).exists(), "不应写审计 jsonl"
+
+    def test_blank_merge_evaluation_still_warns(self, tmp_path: Path, monkeypatch, caplog) -> None:
+        """空串字段视同缺失（值为空白 → warn）。"""
+        import logging as _logging
+
+        _init_git_repo(tmp_path)
+        yaml_rel = "docs/02_other/me_test_blank_20260920.yaml"
+        f = _stage_file(tmp_path, yaml_rel, "key: value\n")
+        self._write_registry(tmp_path, yaml_rel, merge_evaluation="   ")
+        monkeypatch.setattr(
+            "zephyr.governance.capability_lookup.REGISTRY_YAML",
+            tmp_path / "registry.yaml",
+        )
+        gw = GitCommitGateway(project_root=tmp_path)
+        gate = make_create_guard()
+        with caplog.at_level(_logging.WARNING, logger="zephyr.gov_enforcement.commit_gates.create_guard"):
+            passed, detail = gate.check(gw, [str(f)], session_id="st-test-me-20260920")
+        assert passed is True
+        assert "#375" in caplog.text, "空白值应视同缺失触发 warn"

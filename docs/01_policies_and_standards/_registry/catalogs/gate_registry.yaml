@@ -873,7 +873,9 @@ gates:
 - gate_id: CREATE-GUARD
   name: 'CREATE-GUARD: CREATE-GUARD（CommitGate, priority=60）'
   entry: in-process (GitCommitGateway)
-  description: CREATE-GUARD
+  description: CREATE-GUARD（裁定#375 内收判据门禁化：新建 .py/.yaml 资产（非 tests/，own-scope=本提交
+    文件面）token 条目缺 merge_evaluation 字段→warn+审计（.runtime/gate_audit/create_guard_merge_evaluation.jsonl）
+    不阻断——首期 warn-only 留过渡窗，季度审计评估升级；登记通道=batch_creation_tokens.py --merge-evaluation）
   files_trigger: ''
   always_run: false
   category: commit_gate

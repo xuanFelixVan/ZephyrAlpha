@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
-create_guard.py — 新建 .py / 非 rules/ .yaml 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30 治本）
+create_guard.py — 新建 .py / 非 rules/ .yaml 文件 creation_token 阻断门禁（CREATE-GUARD，2026-06-30 治本；裁定#375：新建资产 token 缺 merge_evaluation 字段 warn+审计不阻断，首期 warn-only）
 
 检测 staged 新增 .py 文件与非 rules/ .yaml 文件是否在 capability_canonical_file_registry.yaml 的
 creation_tokens 字段登记。无 token 的 .py / .yaml 文件 -> 硬阻断，提示"无 creation_token，
@@ -30,6 +30,26 @@ creation_tokens 字段登记。无 token 的 .py / .yaml 文件 -> 硬阻断，�
 治本：扩展现有 create_guard 检测范围到非 rules/ .yaml（不新增门禁，规避自指
 递归——同 reconciler 审查标记检测先例）。新增 .yaml 文件无 creation_token
 -> 硬阻断，复用 .py 的 token 索引（同一 registered_files 集合）。
+
+裁定#375 内收判据门禁化（2026-09-20，立项判据从 SOP 义务升级为机器门禁）
+----------------------------------------------------------------------
+宪法 §4 "全资产净零" 内收判据铁律（同真源可派生→必并｜零触发零消费→退役｜
+同域重复簇→收敛唯一｜跨域不同对象→不并）+ audit_prompts v5 §3.6 已把
+"立项时必须做合并评估"定为审计义务——但义务只在事后审计兜底，立项时无机器强制。
+
+治本：token 登记面（capability_canonical_file_registry.yaml creation_tokens
+条目）加可选字段 ``merge_evaluation:``（值=四判据结论一句话）。真源=token
+条目本身（不建新册——全资产净零）。本 gate 检测：新建 .py/.yaml 资产
+（非 tests/，own-scope=本提交文件面）的 token 条目缺该字段 -> warn+审计
+（.runtime/gate_audit/create_guard_merge_evaluation.jsonl），**不阻断**。
+
+设计权衡（首期 warn-only）：
+1. **不硬阻断**：存量 token 条目全部无此字段，硬阻断=全量打红（把存量债判给
+   无辜提交人，违反 own-scope 问责原则）。留过渡窗，登记为待季度审计升级评估。
+2. **登记通道**：``batch_creation_tokens.py --merge-evaluation <一句话>`` 登记
+   时携带；存量条目事后手工补字段即消除 warn。
+3. **扩展现有 gate 而非新 gate**：复用已加载的 registry 与 own-scope 过滤面
+   （净零申报：无新册无新规则文件，行为变更登记进 gate_registry.yaml）。
 
 元问题3治本扩展（2026-06-30，AD-GOV-001 收敛约束技术强制）
 ------------------------------------------------------------
@@ -153,6 +173,13 @@ _REGISTRY_PARSE_RETRIES = 3
 _REGISTRY_RETRY_INTERVAL_S = 0.3
 # 解析失败审计路径（相对 project_root；.runtime/audit/ 是既有审计 jsonl 约定区）
 _PARSE_FAIL_AUDIT_REL = (".runtime", "audit", "create_guard_parse_fail.jsonl")
+
+# === 裁定#375 内收判据门禁化（2026-09-20） ===
+# merge_evaluation = token 条目上的合并评估声明字段（四判据结论一句话）；
+# 缺失审计路径（相对 project_root；.runtime/gate_audit/ 是 gate 家族审计约定区，
+# 对标 _diff_helpers._audit_foreign_staged）
+_MERGE_EVAL_FIELD = "merge_evaluation"
+_MERGE_EVAL_AUDIT_REL = (".runtime", "gate_audit", "create_guard_merge_evaluation.jsonl")
 
 
 def _read_registry_text(registry_path) -> str:
@@ -551,9 +578,7 @@ def _load_capability_registry(gateway) -> tuple[dict | None, str]:
             if _attempt < _REGISTRY_PARSE_RETRIES - 1:
                 time.sleep(_REGISTRY_RETRY_INTERVAL_S)  # noqa: m10-time-trigger — 注册表撕裂读失败重试的指数退避等待，错误恢复路径非周期轮询
     if not parsed:
-        _audit_registry_parse_fail(
-            gateway.project_root, _registry_yaml, f"{type(last_err).__name__}: {last_err}"
-        )
+        _audit_registry_parse_fail(gateway.project_root, _registry_yaml, f"{type(last_err).__name__}: {last_err}")
         return None, (
             f"CREATE-GUARD fail-closed: capability registry 解析失败"
             f"（{_REGISTRY_PARSE_RETRIES} 次重试后仍失败，{type(last_err).__name__}: {last_err}）。"
@@ -585,6 +610,84 @@ def _collect_registered_files(data: dict) -> set[str]:
     return registered_files
 
 
+def _collect_token_entries(data: dict) -> dict[str, dict]:
+    """构建 creation_tokens 条目索引 file→entry（#375 merge_evaluation 检查用）。"""
+    entries: dict[str, dict] = {}
+    for entry in data.get("creation_tokens", []) or []:
+        if not isinstance(entry, dict):
+            continue
+        token_file = entry.get("file", "")
+        if isinstance(token_file, str) and token_file:
+            entries[token_file.replace("\\", "/")] = entry
+    return entries
+
+
+def _audit_merge_evaluation_missing(gateway, session_id: str | None, missing_files: list[str]) -> None:
+    """merge_evaluation 缺失审计（jsonl append 到 .runtime/gate_audit/；fail-open）。
+
+    - 时间戳用 now_utc（RULE-SCHEMA-TZ：禁 datetime.now()/time.time()）。
+    - 落 gateway.project_root（tmp git repo 测试场景不触碰生产 .runtime/）。
+    """
+    try:
+        audit_path = gateway.project_root.joinpath(*_MERGE_EVAL_AUDIT_REL)
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+        record = {
+            "timestamp": now_utc().isoformat(),
+            "gate": "CREATE-GUARD",
+            "event": "merge_evaluation_missing",
+            "session_id": session_id or "?",
+            "missing_count": len(missing_files),
+            "missing_files": missing_files[:50],
+        }
+        with audit_path.open("a", encoding="utf-8") as _f:
+            _f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except Exception as _e:  # noqa: BLE001 — 审计写失败 fail-open（warn-only 契约）
+        logger.warning("CREATE-GUARD: merge_evaluation 审计写入失败: %s", _e, exc_info=True)
+
+
+def _warn_merge_evaluation(
+    gateway,
+    session_id: str | None,
+    data: dict,
+    new_py_files: list[str],
+    new_yaml_files: list[str],
+) -> None:
+    """裁定#375：新建资产 token 条目缺 merge_evaluation → warn+审计（首期不阻断）。
+
+    - 检测面=own-scope（调用方已按本提交文件面过滤的 new_py/new_yaml，非 tests/）；
+      无 token 条目的文件由 _check_creation_token 硬阻断管，此处不重复报。
+    - 首期 warn-only：存量 token 无此字段，硬阻断=全量误伤；季度审计评估升级。
+    """
+    new_asset_files = [*new_py_files, *new_yaml_files]
+    if not new_asset_files:
+        return
+    entries = _collect_token_entries(data)
+    missing: list[str] = []
+    for f in new_asset_files:
+        entry = entries.get(f)
+        if entry is None:
+            continue  # 无 token 条目由 _check_creation_token 硬阻断管，不重复报
+        val = entry.get(_MERGE_EVAL_FIELD)
+        if not (isinstance(val, str) and val.strip()):
+            missing.append(f)
+    if not missing:
+        return
+    shown = ", ".join(missing[:5]) + ("..." if len(missing) > 5 else "")
+    logger.warning(
+        "CREATE-GUARD warn(裁定#375 内收判据): %d 个新建资产 token 条目缺 %s 字段: %s. "
+        "四判据(同真源可派生->必并|零触发零消费->退役|同域重复簇->收敛唯一|跨域不同对象->不并)"
+        "要求立项时做合并评估并留一句话结论. 修复: 在 capability_canonical_file_registry.yaml "
+        '对应 creation_tokens 条目补 %s: "<结论一句话>"'
+        "(或 batch_creation_tokens.py --merge-evaluation 登记时携带). "
+        "首期 warn-only, 季度审计评估升级.",
+        len(missing),
+        _MERGE_EVAL_FIELD,
+        shown,
+        _MERGE_EVAL_FIELD,
+    )
+    _audit_merge_evaluation_missing(gateway, session_id, missing)
+
+
 def _no_token_detail(unregistered: list[str], file_kind: str) -> str:
     """creation_token 缺失阻断消息（.py/.yaml/其他格式共用模板）。"""
     return (
@@ -601,15 +704,20 @@ def _check_creation_token(
     new_py_files: list[str],
     new_yaml_files: list[str],
     new_other_files: list[str] | None = None,
+    registry_data: dict | None = None,
 ) -> tuple[bool, str]:
     """检测新增 .py/.yaml 文件是否登记了 creation_token（trae_060 §2 唯一真源）。
 
     fail-closed：YAML 不可达时阻断（防删 registry 绕过 token 检查）。
     P-2 修复：registry 路径随 gateway.project_root 解析（支持 worktree 路径）。
+    #375：registry_data 传入时跳过加载（调用方单次加载共用——40k 行 YAML
+    重试解析昂贵，token 硬阻断与 merge_evaluation warn 不双载）。
     """
-    data, detail = _load_capability_registry(gateway)
-    if data is None:
-        return False, detail
+    if registry_data is None:
+        registry_data, detail = _load_capability_registry(gateway)
+        if registry_data is None:
+            return False, detail
+    data = registry_data
     registered_files = _collect_registered_files(data)
 
     # 检测新增 .py 文件是否登记了 creation_token
@@ -732,12 +840,25 @@ def _run_file_registration_checks(
     new_py_files: list[str],
     new_yaml_files: list[str],
     new_other_files: list[str],
+    session_id: str | None = None,
 ) -> tuple[bool, str]:
-    """文件登记类检测链：creation_token → 字段头部 → basename 碰撞。"""
+    """文件登记类检测链：creation_token → #375 merge_evaluation warn → 字段头部 → basename 碰撞。
+
+    registry 单次加载供 token 硬阻断与 #375 warn 共用（40k 行 YAML 重试解析昂贵，
+    不双载；撕读重试计数语义不变——仍是一次 _load_capability_registry 调用）。
+    """
+    data, detail = _load_capability_registry(gateway)
+    if data is None:
+        return False, detail
+
     # creation_token 检测（trae_060 §2 唯一真源）——阶段 2：覆盖全 7 格式
-    passed, detail = _check_creation_token(gateway, new_py_files, new_yaml_files, new_other_files)
+    passed, detail = _check_creation_token(gateway, new_py_files, new_yaml_files, new_other_files, registry_data=data)
     if not passed:
         return False, detail
+
+    # 裁定#375 内收判据门禁化：新建资产 token 缺 merge_evaluation → warn+审计
+    # （首期不阻断——own-scope 已由调用方过滤到本提交文件面）
+    _warn_merge_evaluation(gateway, session_id, data, new_py_files, new_yaml_files)
 
     # ARCH-031：字段头部完整性检测
     passed, detail = _check_field_header(gateway, new_py_files)
@@ -802,7 +923,9 @@ def make_create_guard() -> GateSpec:
         if not passed:
             return False, detail
 
-        # 文件登记类检测链（creation_token / 字段头部 / basename 碰撞）
-        return _run_file_registration_checks(gateway, new_py_files, new_yaml_files, new_other_files)
+        # 文件登记类检测链（creation_token / #375 merge_evaluation warn / 字段头部 / basename 碰撞）
+        return _run_file_registration_checks(
+            gateway, new_py_files, new_yaml_files, new_other_files, kwargs.get("session_id")
+        )
 
     return GateSpec(gate_id="CREATE-GUARD", check=_check, priority=60)

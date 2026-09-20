@@ -100,7 +100,8 @@ def test_anchor_missing_fail_closed(lab, capsys):
 
 def test_cli_dry_run_zero_write(lab, monkeypatch, capsys):
     monkeypatch.setattr(
-        sys, "argv",
+        sys,
+        "argv",
         ["bct", "--prefix", "docs/_working/lab", "--created-by", "sess-A", "--capability", "lab_cap", "--dry-run"],
     )
     rc = bct.main()
@@ -112,7 +113,8 @@ def test_cli_dry_run_zero_write(lab, monkeypatch, capsys):
 
 def test_cli_real_run(lab, monkeypatch, capsys):
     monkeypatch.setattr(
-        sys, "argv",
+        sys,
+        "argv",
         ["bct", "--prefix", "docs/_working/lab", "--created-by", "sess-A", "--capability", "lab_cap"],
     )
     rc = bct.main()
@@ -306,9 +308,7 @@ def test_head_matched_base_still_lands(lab, monkeypatch):
     bct.insert_block(block, "anchor_cap")  # 不得抛
     data = yaml.safe_load(reg.read_text(encoding="utf-8"))
     assert len(data["creation_tokens"]) == 3, "正常路径条目数应只增"
-    assert [e["token"] for e in data["creation_tokens"] if e["capability"] == "lab_cap"] == [
-        "lab-cap-seg-001-20260919"
-    ]
+    assert [e["token"] for e in data["creation_tokens"] if e["capability"] == "lab_cap"] == ["lab-cap-seg-001-20260919"]
 
 
 def test_head_unreadable_skips_pre_gate_without_fabricating(lab, monkeypatch):
@@ -375,3 +375,76 @@ def test_rollback_restores_when_disk_untouched(lab):
     assert reg.read_bytes() == pre
     assert bct._rollback(pre, expect_sha=content_sha256(reg.read_text(encoding="utf-8"))) is True
     assert reg.read_bytes() == pre
+
+
+# ---------------------------------------------------------------------------
+# 裁定#375 内收判据门禁化（2026-09-20 P9③）：--merge-evaluation 登记通道。
+# CREATE-GUARD 对缺 merge_evaluation 的新建资产 warn+审计，本工具是补填正门。
+# ---------------------------------------------------------------------------
+
+
+def test_build_block_with_merge_evaluation(lab):
+    """--merge-evaluation 非空 → 每条 token 落 merge_evaluation 字段（YAML 合法）。"""
+    reg, files = lab
+    me = "grep+计划任务+注册表三查零同域消费方，新对象"
+    block = bct.build_block(files, "sess-A", "lab_cap", "20260920", merge_evaluation=me)
+    bct.insert_block(block, "anchor_cap")
+    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
+    toks = [e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]
+    assert len(toks) == 3
+    assert all(e.get("merge_evaluation") == me for e in toks), "三条均应携带 merge_evaluation"
+
+
+def test_build_block_without_merge_evaluation_omits_field(lab):
+    """缺省 → 条目无该字段（向后兼容：不破坏既有无参调用路径）。"""
+    reg, files = lab
+    block = bct.build_block(files, "sess-A", "lab_cap", "20260920")
+    assert "merge_evaluation" not in block
+    bct.insert_block(block, "anchor_cap")
+    data = yaml.safe_load(reg.read_text(encoding="utf-8"))
+    toks = [e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]
+    assert len(toks) == 3
+    assert all("merge_evaluation" not in e for e in toks)
+
+
+def test_yaml_quote_escapes_and_flattens():
+    """特殊字符转义+换行压平（保持单行 YAML 双引号标量）。"""
+    q = bct._yaml_quote('含"引号"与\\反斜杠\n换行\t制表')
+    assert "\n" not in q and "\t" not in q, "多行/制表必须压平"
+    assert '\\"' in q and "\\\\" in q, "双引号与反斜杠必须转义"
+
+
+def test_cli_merge_evaluation_hint_and_landing(lab, monkeypatch, capsys):
+    """CLI 红证双向：缺省提示补填（不阻断）；--merge-evaluation 携带则字段落条目。"""
+    # ① 缺省：dry-run 输出补填提示（rc=0 不阻断）
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["bct", "--prefix", "docs/_working/lab", "--created-by", "sess-A", "--capability", "lab_cap", "--dry-run"],
+    )
+    assert bct.main() == 0
+    out1 = capsys.readouterr().out
+    assert "提示" in out1 and "--merge-evaluation" in out1, "缺省应提示补填"
+    assert "lab_cap" not in lab[0].read_text(encoding="utf-8"), "dry-run 零写入"
+    # ② 携带：真实落盘，三条均含 merge_evaluation
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "bct",
+            "--prefix",
+            "docs/_working/lab",
+            "--created-by",
+            "sess-A",
+            "--capability",
+            "lab_cap",
+            "--merge-evaluation",
+            "grep+计划任务+注册表三查零同域消费方，新对象",
+        ],
+    )
+    assert bct.main() == 0
+    assert "已插入 3 条" in capsys.readouterr().out
+    data = yaml.safe_load(lab[0].read_text(encoding="utf-8"))
+    toks = [e for e in data["creation_tokens"] if e["capability"] == "lab_cap"]
+    assert len(toks) == 3
+    assert all(e["merge_evaluation"] == "grep+计划任务+注册表三查零同域消费方，新对象" for e in toks)

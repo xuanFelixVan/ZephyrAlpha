@@ -9,7 +9,9 @@
 #   token 格式 {capability}-{stem}-{YYYYMMDD} 全局唯一；--dry-run 零写入；
 #   写后 yaml.safe_load+语义落位+条目数守恒三自检，失败即回滚写前字节（2026-09-15 治理上报件1 收口；
 #   条目数守恒=本文件 2026-09-19 B22 治本新增，判据见 _mass_deletion_issues）；
-#   基底相对 HEAD 净删条目 ⇒ 写前即拒（fail-safe 方向=故障退化为不写，绝不"照写+只 warning"）
+#   基底相对 HEAD 净删条目 ⇒ 写前即拒（fail-safe 方向=故障退化为不写，绝不"照写+只 warning"）；
+#   --merge-evaluation 可选（裁定#375 合并评估结论一句话，写入每条 token 的 merge_evaluation
+#   字段；缺省不阻断仅提示补填——CREATE-GUARD 对缺字段新建件 warn+审计）
 # [MODIFY-GUARD] 插入锚点=creation_tokens 段内 capability 锚行（找不到时 fail-closed 拒写）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -30,10 +32,15 @@
 
     # 登记某目录下全部未登记文件（untracked + 已 tracked 但 registry 无条目）
     python scripts/governance/d3_metadata/batch_creation_tokens.py \\
-        --prefix docs/_working/xt_lab --created-by my-session --capability xtreme_lab
+        --prefix docs/_working/xt_lab --created-by my-session --capability xtreme_lab \\
+        --merge-evaluation "grep+计划任务+注册表三查零同域消费方，新对象"
 
     # 预览（零写入）
     python scripts/governance/d3_metadata/batch_creation_tokens.py ... --dry-run
+
+--merge-evaluation（裁定#375，2026-09-20）：立项合并评估结论一句话，写入每条
+token 的 ``merge_evaluation`` 字段（真源=token 条目本身，不建新册）。缺省不阻断，
+仅提示补填——CREATE-GUARD 对缺该字段的新建资产 warn+审计（首期 warn-only）。
 
 写侧"只增不减"自检（2026-09-19 全流通战役 B22 治本）
 ------------------------------------------------------
@@ -48,6 +55,7 @@
 回滚自身走 CAS：若回滚窗口内又有会话推进过磁盘，则**放弃回滚**（绝不整片覆写他人新写），
 在报错里说明"未回滚、需人工分诊"。fail-safe 方向＝**故障退化为不写**，不是"照写 + 只 warning"。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -98,8 +106,20 @@ def load_registered() -> set[str]:
     return {str(e.get("file", "")) for e in (data.get("creation_tokens") or [])}
 
 
-def build_block(files: list[str], created_by: str, capability: str, today: str) -> str:
-    """build_block implementation."""
+def _yaml_quote(text: str) -> str:
+    """合并评估一句话转 YAML 双引号标量（压平换行+转义反斜杠/双引号，保持单行）。"""
+    flat = " ".join(text.split())
+    return '"' + flat.replace("\\", "\\\\").replace('"', '\\"') + '"'
+
+
+def build_block(
+    files: list[str], created_by: str, capability: str, today: str, merge_evaluation: str | None = None
+) -> str:
+    """build_block implementation.
+
+    merge_evaluation（裁定#375）：非空时每条 token 追加 ``merge_evaluation: "<一句话>"``
+    行——立项合并评估声明的登记载体（真源=token 条目本身，不建新册）。
+    """
     lines: list[str] = []
     cap_norm = capability.strip().lower().replace("_", "-")
     for f in files:
@@ -109,7 +129,10 @@ def build_block(files: list[str], created_by: str, capability: str, today: str) 
         if not _TOKEN_RE.match(token):
             print(f"FAIL: token 非法格式: {token}", file=sys.stderr)
             sys.exit(1)
-        lines.append(f"- file: {f}\n  token: {token}\n  created_by: {created_by}\n  capability: {capability}")
+        entry = f"- file: {f}\n  token: {token}\n  created_by: {created_by}\n  capability: {capability}"
+        if merge_evaluation:
+            entry += f"\n  merge_evaluation: {_yaml_quote(merge_evaluation)}"
+        lines.append(entry)
     return "\n".join(lines) + "\n"
 
 
@@ -193,8 +216,7 @@ def _rollback(pre_bytes: bytes, expect_sha: str = "") -> bool:
 
     pre_text = pre_bytes.decode("utf-8")
     if expect_sha and content_sha256(_REGISTRY.read_text(encoding="utf-8")) != expect_sha:
-        print("FAIL: 回滚被拒（写后窗口内磁盘又被推进，整片覆写会造成第二次蒸发）——未回滚，需人工分诊",
-              file=sys.stderr)
+        print("FAIL: 回滚被拒（写后窗口内磁盘又被推进，整片覆写会造成第二次蒸发）——未回滚，需人工分诊", file=sys.stderr)
         return False
     atomic_write(_REGISTRY, pre_text, newline="")
     return True
@@ -341,7 +363,16 @@ def main() -> int:
     ap.add_argument("--prefix", required=True, help="目录/路径前缀（相对仓库根，如 docs/_working/xt_lab）")
     ap.add_argument("--created-by", required=True, help="登记会话名（如 my-session）")
     ap.add_argument("--capability", required=True, help="能力名（token 前缀，如 xtreme_lab）")
-    ap.add_argument("--anchor-capability", default=None, help="插入锚点（creation_tokens 段内既有 capability 名；缺省=capability 同名或段内最后一条）")
+    ap.add_argument(
+        "--anchor-capability",
+        default=None,
+        help="插入锚点（creation_tokens 段内既有 capability 名；缺省=capability 同名或段内最后一条）",
+    )
+    ap.add_argument(
+        "--merge-evaluation",
+        default=None,
+        help="合并评估结论一句话（裁定#375 四判据，写入每条 token 的 merge_evaluation 字段；缺省仅提示补填）",
+    )
     ap.add_argument("--dry-run", action="store_true", help="只列计划，零写入")
     args = ap.parse_args()
 
@@ -354,8 +385,16 @@ def main() -> int:
         print("无待登记文件（全部已登记或前缀为空）")
         return 0
 
+    if not args.merge_evaluation:
+        print(
+            "提示：未提供 --merge-evaluation——裁定#375 内收判据（同真源可派生→必并｜零触发零消费→"
+            "退役｜同域重复簇→收敛唯一｜跨域不同对象→不并）要求立项时做合并评估；CREATE-GUARD 对缺 "
+            'merge_evaluation 的新建件将 warn+审计。补填：--merge-evaluation "<结论一句话>"'
+            "或事后在 registry 条目补字段。"
+        )
+
     today = datetime.now(timezone.utc).strftime("%Y%m%d")
-    block = build_block(files, args.created_by, args.capability, today)
+    block = build_block(files, args.created_by, args.capability, today, merge_evaluation=args.merge_evaluation)
     print(f"计划登记 {len(files)} 条（capability={args.capability}, created_by={args.created_by}）:")
     for f in files[:10]:
         print(f"  {f}")
