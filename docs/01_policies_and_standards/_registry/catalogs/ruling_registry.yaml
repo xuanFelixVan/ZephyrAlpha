@@ -4917,3 +4917,26 @@ entries:
   related_arch: []
   related_rulings: ['裁定#371']
   superseded_by: ''
+- ruling_id: '裁定#376'
+  title: '主题八 #ARCH-338..356 十九项方向裁定+主题九墓碑四项（依 #371 代 Owner）'
+  date: '2026-09-20'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    Max 逐项裁定（签字册建议+第一性原理复核，差异项=352 改裁 b）：338/339/343=接线向
+    （执行=backlog 立卡排期，非本战役施工）；340=五级旗+持久化（backlog）；341=ack 源定
+    QMT 桥成交回报+武装判据=连续 5 交易日 ack 非空后武装（可测）；342=随 #317 接线+side
+    字段；344=hold-prev（缺供数沿用上一快照+显化告警，禁均匀分布假稳定）；345=旁路拆除；
+    346=LdP 语义统一默认值（embargo 缺省≠0，按事件窗默认）；347=T02 收紧+T05 指纹+T06
+    认证半径收窄；348=接电前族内对账；349=接线前逐件矫治；350=缓存失效治理+熔断落盘；
+    351=退役映射表落地；352=改裁 b 值班轮询机制（Owner 09-15 已裁撤推送通道，重建与既裁
+    矛盾；现 failures json+治理大屏轮询已具雏形，补值班视图即成）；353/354/355=接线前
+    必修三连；356=按 mining_sop 逐项立卡。墓碑四项：9-1 十二链统一翻 deprecated（零数据
+    变更）/9-2 补 merged_into 四指针/9-3 大型墓碑先核验/9-4 五链判重并入（涉净删已 #371
+    授权）。执行归属：机械件（9-1/9-2/344 条文）本战役施工；重施工件入 backlog 带裁定号
+    排期（回执=本裁定+注册表 adjudication 更新）。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
+  related_arch: ['#ARCH-338', '#ARCH-339', '#ARCH-340', '#ARCH-341', '#ARCH-342', '#ARCH-343', '#ARCH-344', '#ARCH-345', '#ARCH-346', '#ARCH-347', '#ARCH-348', '#ARCH-349', '#ARCH-350', '#ARCH-351', '#ARCH-352', '#ARCH-353', '#ARCH-354', '#ARCH-355', '#ARCH-356']
+  related_rulings: ['裁定#371']
+  superseded_by: ''
