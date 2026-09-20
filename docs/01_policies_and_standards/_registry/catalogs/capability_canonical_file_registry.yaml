@@ -5016,6 +5016,18 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "docs/_working/tilib_clearance/tilib_clear_a1_ledger.md"
+  token: "tilib-clear-ledger-r2-20260920"
+  created_by: "st-tilib-clear-20260920"
+  capability: "tilib_clearance_campaign"
+- file: "docs/_working/tilib_clearance/tilib_clear_a2_wave1_card.md"
+  token: "tilib-clear-wave1card-r2-20260920"
+  created_by: "st-tilib-clear-20260920"
+  capability: "tilib_clearance_campaign"
+- file: "docs/_working/tilib_clearance/tilib_clear_a3_mining_report.md"
+  token: "tilib-clear-mining-r2-20260920"
+  created_by: "st-tilib-clear-20260920"
+  capability: "tilib_clearance_campaign"
 - file: "docs/_working/tilib_clearance/a1_campaign_ledger.md"
   token: "tilib-clear-ledger-20260920"
   created_by: "st-tilib-clear-20260920"
@@ -39863,6 +39875,16 @@ creation_tokens:
   token: final3-campaign-p10-t0-mechanical-wave-report-20260920
   created_by: st-maxexec-20260920
   capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_autostart_record.md
+  token: final3-campaign-p6-autostart-record-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: scripts/register_desktop_shell_startup.ps1
+  token: final3-campaign-register-desktop-shell-startup-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "自启注册脚本与 register_process_reaper_task.ps1 同形不同对象（用户 Startup 快捷方式 vs 计划任务），不并"
+  merge_evaluation: "P6 战役执行记录件，与同目录既有 p* 记录同族不同主题，不并"
   merge_evaluation: "final3 战役 P10 T0 机械波计数报告；同真源=a1_campaign_ledger 台账互补（计数面 vs 台账面），跨域不同对象不并"
 - file: docs/_working/rule_audit_campaign/a2_handoff/A2_M5_prescriptions.md
   token: rule-audit-construction-a2-m5-prescriptions-20260919
