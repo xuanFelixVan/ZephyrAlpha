@@ -41827,4 +41827,24 @@ creation_tokens:
   created_by: st-code-doc-20260921
   capability: code_doc_gov_campaign
   merge_evaluation: "同真源派生：WO-12 C12 批次 gate-algo-flow-marker 补锚的外部机器块，真源=position_recipe_compiler.py 模块头 INVARIANTS，随批 TTL"
+- file: docs/_working/code_doc_gov_campaign/p2_tests/w13_true_account_closure.md
+  token: code-doc-gov-campaign-w13-true-account-closure-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "同真源派生并入本册台账（w13_true_account_closure），任务bound 随战役 TTL"
+- file: docs/_working/data_fix_campaign/p0_0917_tick_recovery_report.md
+  token: datafix-p0-0917-tick-recovery-report-20260921
+  created_by: st-data-fix-20260921
+  capability: data_fix_campaign
+  merge_evaluation: "同真源可派生：WO-0 P0 09-17 tick 全市场找回交付报告（红证转绿实测+覆盖率结构+五档界定），任务边界内独立事件报告，无既有条目可合并，随 data_fix_campaign TTL 处置"
+- file: docs/_working/data_fix_campaign/p0_sim_as_source_assessment.md
+  token: datafix-p0-sim-as-source-assessment-20260921
+  created_by: st-data-fix-20260921
+  capability: data_fix_campaign
+  merge_evaluation: "同真源可派生：WO-0 模拟盘作长期数据源评估（能力族可下性实测+历史深度+复役选项），交 Owner 裁定的独立评估件，随 data_fix_campaign TTL 处置"
+- file: docs/_working/data_fix_campaign/p2_supply_resumption_report.md
+  token: datafix-p2-supply-resumption-report-20260921
+  created_by: st-data-fix-20260921
+  capability: data_fix_campaign
+  merge_evaluation: "同真源可派生：WO-2 断供止血六链交付报告（六链修前红证/修后绿证双向实测+停因根因+夜跑恢复计划），任务边界内独立事件报告，无既有条目可合并，随 data_fix_campaign TTL 处置"
 di_seam_exemptions: []
