@@ -5016,6 +5016,22 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "docs/_working/ultimate_library/00_master_plan_v0_1.md"
+  token: "ulib-master-plan-v0-1-20260921"
+  created_by: "st-ulib-20260921"
+  capability: "ultimate_library"
+- file: "docs/_working/ultimate_library/01_external_research.md"
+  token: "ulib-external-research-20260921"
+  created_by: "st-ulib-20260921"
+  capability: "ultimate_library"
+- file: "docs/_working/ultimate_library/02_skeleton_mining_ledger_v0_1.md"
+  token: "ulib-skeleton-mining-ledger-v0-1-20260921"
+  created_by: "st-ulib-20260921"
+  capability: "ultimate_library"
+- file: "docs/_working/rule_audit_campaign/2026-09-21-tails-handover-prompt.md"
+  token: "tails-handover-prompt-20260921"
+  created_by: "st-maxday-20260919"
+  capability: "rule_disposition"
 - file: "schemas/categories/market/market_stock_daily_basic.py"
   token: "tilib-clear-dailybasic-schema-20260920"
   created_by: "st-tilib-clear-20260920"
@@ -41786,4 +41802,29 @@ creation_tokens:
   created_by: "st-disk-ch-20260921"
   capability: "disk_reorg_campaign"
   merge_evaluation: "vhdx 季度压缩通知机制设计稿（裁定#380④ 排班化交付件），零既有条目可合并"
+- file: "docs/_working/disk_reorg_campaign/vhdx_precheck_20260920.md"
+  token: "diskch-vhdx-precheck-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "disk_reorg_campaign"
+  merge_evaluation: "vhdx 季度压缩首张预检单（裁定#380④提醒条目产物），零既有条目可合并"
+- file: "docs/_working/disk_reorg_campaign/rolling_archive_plan_shadow.jsonl"
+  token: "diskch-shadow-plan-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "rolling_archive_automation"
+  merge_evaluation: "滚动归档 shadow 档计划单（裁定#380⑤试跑产物，append-only），零既有条目可合并"
+- file: "docs/_working/disk_reorg_campaign/waste_table_export_manifest.json"
+  token: "diskch-waste-export-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "waste_table_patrol"
+- file: scripts/governance/d5_architecture/generators/generate_data_asset_coverage.py
+  token: a14-asset-coverage-generate-data-asset-coverage-20260920
+  created_by: st-code-doc-20260921
+  capability: a14-asset-coverage
+  merge_evaluation: "不并：跨域不同对象——CH 表级资产登记无既有生成器承载（check_registry_consistency 只对账计数不产条目），新建即唯一实现"
+  merge_evaluation: "13 张废表双副本导出 manifest（数据第一公理保险凭证），零既有条目可合并"
+- file: docs/03_modules/_domain_position/algo_flow/position_recipe_compiler.yaml
+  token: code-doc-gov-campaign-position-recipe-compiler-algo-flow-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "同真源派生：WO-12 C12 批次 gate-algo-flow-marker 补锚的外部机器块，真源=position_recipe_compiler.py 模块头 INVARIANTS，随批 TTL"
 di_seam_exemptions: []
