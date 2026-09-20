@@ -41846,5 +41846,65 @@ creation_tokens:
   token: datafix-p2-supply-resumption-report-20260921
   created_by: st-data-fix-20260921
   capability: data_fix_campaign
+- file: docs/_working/recovered_task_cards/README.md
+  token: recovered-task-cards-readme-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_01_memo_recon_review.md
+  token: recovered-task-cards-tc-01-memo-recon-review-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_02_night_leftovers.md
+  token: recovered-task-cards-tc-02-night-leftovers-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_03_git_speedup.md
+  token: recovered-task-cards-tc-03-git-speedup-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_04_algo_flow_closeout.md
+  token: recovered-task-cards-tc-04-algo-flow-closeout-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_05_vocab_w6_w8.md
+  token: recovered-task-cards-tc-05-vocab-w6-w8-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_06_flash_biz_four_rulings.md
+  token: recovered-task-cards-tc-06-flash-biz-four-rulings-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_07_ai_layer_p1_plan.md
+  token: recovered-task-cards-tc-07-ai-layer-p1-plan-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_08_residual_closeout.md
+  token: recovered-task-cards-tc-08-residual-closeout-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_09_rule_audit_tails.md
+  token: recovered-task-cards-tc-09-rule-audit-tails-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_10_collection_intake_followups.md
+  token: recovered-task-cards-tc-10-collection-intake-followups-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
+- file: docs/_working/recovered_task_cards/tc_11_ab_league_rl.md
+  token: recovered-task-cards-tc-11-ab-league-rl-20260920
+  created_by: st-taskcards-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
   merge_evaluation: "同真源可派生：WO-2 断供止血六链交付报告（六链修前红证/修后绿证双向实测+停因根因+夜跑恢复计划），任务边界内独立事件报告，无既有条目可合并，随 data_fix_campaign TTL 处置"
 di_seam_exemptions: []
