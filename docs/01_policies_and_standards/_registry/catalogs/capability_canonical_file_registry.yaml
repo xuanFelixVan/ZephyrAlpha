@@ -41709,6 +41709,11 @@ creation_tokens:
   token: collection-intake-tool-hyperliquid-data-20260920
   created_by: st-collintake-20260920
   capability: collection_intake
+- file: docs/_working/collection_intake/engineering/eng_quantcombine_idea_mining.md
+  token: collection-intake-eng-quantcombine-idea-mining-20260920
+  created_by: st-collintake-20260920
+  capability: collection_intake
+  merge_evaluation: "同真源可派生：R2新增QuantCombine思想挖矿件与ZCode查证结论版，归docs/_working任务边界内，无既有条目可合并，任务完结随working清理机制TTL处置"
   merge_evaluation: "同真源可派生：本目录为Owner收藏情报拆解判定台账，归docs/_working任务边界内，无既有条目可合并，任务完结随working清理机制TTL处置"
 - file: "docs/_working/data_fix_campaign/p1_valuation_repair_report.md"
   token: "datafix-p1-valuation-repair-20260920"
