@@ -23,10 +23,10 @@ items:
   name: capabilities.yaml
   node_type: config
   status: active
-- file: config/capacity_params.yaml
-  name: capacity_params.yaml
+- file: docs/_working/final3_campaign/p8_salvage/capacity_params_retired.yaml
+  name: capacity_params_retired.yaml
   node_type: config
-  status: active
+  status: retired
 - file: config/context_rules.yaml
   name: context_rules.yaml
   node_type: config

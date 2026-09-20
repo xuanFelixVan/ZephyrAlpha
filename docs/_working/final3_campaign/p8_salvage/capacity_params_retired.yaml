@@ -1,17 +1,39 @@
+# ============================================================================
+# [RETIRED 2026-09-20] final3 P8 / W5-2 O-1 — 本文件已退役（存档副本，零运行时效力）
+# ============================================================================
+# 退役依据: docs/_working/final3_campaign/w5_1_cluster_audit.md 簇1 三档结论 + 裁定#371
+#   （Owner 2026-09-20 委托 st-maxexec-20260920 全权；原"v2 挂起裁定-③"门位由 #371 解除）。
+# 退役证据（零运行时消费实测，W5-1 A 级 + P8 复核）：
+#   - 全仓 grep 零加载器：无任何 .py 读取 config/capacity_params.yaml（"启动时加载"为死文字）；
+#   - 独有键（max_script_workers/shard_count/global_max_concurrent/lsg_concurrent_max 等）代码零命中；
+#   - 仅存引用为结构性/登记性：config_validator.py 必填键表（本批已移除）、
+#     rule_registry_collection.yaml 清单行（本批已改 retired）、module_translation_registry 行（本批已更新）。
+# 联动点处置（4 处核对结果）：
+#   1. src/zephyr/infrastructure/config_validator.py:78 必填键表 → 移除 capacity_params.yaml 条目（本批）；
+#   2. generate_battle_map_diagram.py:1734 → 复核为同名键误报（读 D-FACTOR 因子池
+#      pool_management.capacity.design_capacity，与本文件无关），零改动；
+#   3. capability_canonical_file_registry.yaml → 复核无提及行（W5-1 审计误标，实际提及在
+#      rule_registry_collection.yaml，本批已按退役语义更新）；
+#   4. module_translation_registry.yaml 提及行 → 本批已按退役语义更新。
+# 残余声明性引用（不阻断、留 P11 消化）：6 份蓝图 md 的设计引用行（pipeline/semantic_auditor/
+#   model_capability_exam/governance_automation/asset_inventory/path_ownership_map 自动重生成后自清）。
+# 资源压力阈值真源 = config/resource_optimization.yaml pressure_thresholds（多活消费方，
+# 对齐 AutoRuntime Core 蓝图 §3.3 四级降级链）。本文件 thresholds 段指针注记见下方段内说明。
+# ============================================================================
 # --- 治理锚定 ---
 # blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: M
 # ai_autonomy: ai_modifiable
-# ttl: permanent
+# ttl: task_bound
 # [DOMAIN] D_INFRA_RUNTIME
 # --- 治理锚定结束 ---
 # ============================================================================
-# ZephyrAlpha 容量参数统一配置（SSoT — Single Source of Truth）
+# ZephyrAlpha 容量参数统一配置（已退役存档副本）
 # ============================================================================
-# 此文件是所有并发/容量/规模参数的唯一真源。
-# 所有模块蓝图引用此文件，代码启动时从此文件加载。
+# 【历史文本，不再有效力】此文件曾是所有并发/容量/规模参数的唯一真源。
+# 【历史文本，不再有效力】所有模块蓝图引用此文件，代码启动时从此文件加载。
 # 变更此文件后执行: python scripts/governance/d1_structure/validate_config_integrity.py
 # ============================================================================
 # version: 1.0.0
@@ -24,7 +46,7 @@
 # ============================================================================
 
 module_id: MOD-INF-002
-ttl: permanent
+ttl: task_bound
 design_capacity:
   max_modules: 1500
   max_scripts: 10000
@@ -96,15 +118,20 @@ budget:
   session_pool_gpu_vram_gb: 16       # AI Session 分区池 GPU VRAM 上限
 
 thresholds:
-  memory_warn_pct: 70                # 资源优化引擎警告线
-  memory_crit_pct: 85                # 资源优化引擎临界线
-  cpu_warn_pct: 75
-  cpu_crit_pct: 90
-  disk_warn_pct: 80
-  disk_crit_pct: 90
-  gpu_vram_warn_pct: 75
-  gpu_vram_crit_pct: 90
-  backpressure_queue_depth: 100      # 触发背压的队列深度
+  # [RETIRED 指针注记 2026-09-20] 本段数值已无运行时效力，仅存档。
+  # 资源压力阈值真源 = config/resource_optimization.yaml pressure_thresholds
+  #   （memory: 70/80/90 warn/crit/emerg；cpu: 75/85/95；对齐 AutoRuntime Core 蓝图 §3.3 四级降级链）。
+  # 数值冲突以真源为准：memory critical 真源=80（本档旧值 85 作废）；cpu critical 真源=85（旧值 90 作废）。
+  # 裁定边界（v1 方案 §2.1 裁定-③"五套压力口径不收编"）已由裁定#371 授权解除，本指针即收敛动作。
+  memory_warn_pct: 70                # [历史值] 真源 pressure_thresholds.memory_warning_percent=70 一致
+  memory_crit_pct: 85                # [历史值作废] 真源 memory_critical_percent=80
+  cpu_warn_pct: 75                   # [历史值] 真源 cpu_warning_percent=75 一致
+  cpu_crit_pct: 90                   # [历史值作废] 真源 cpu_critical_percent=85
+  disk_warn_pct: 80                  # [历史值] 真源无对应键（磁盘口径归 reaper 绝对值口径，v2 议题范围）
+  disk_crit_pct: 90                  # [历史值] 同上
+  gpu_vram_warn_pct: 75              # [历史值] 真源无对应键
+  gpu_vram_crit_pct: 90              # [历史值] 真源无对应键
+  backpressure_queue_depth: 100      # [历史值] 真源无对应键（真源 process_critical_count=100 为进程数口径）
 
 lsg:
   lsg_concurrent_max: 100            # LSG 自身最多同时处理 100 个扫描

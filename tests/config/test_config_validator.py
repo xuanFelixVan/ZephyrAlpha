@@ -82,7 +82,9 @@ class TestConfigValidator:
         assert result.checked_fields > 0
 
     def test_validate_missing_required_fields(self, tmp_path):
-        cfg = tmp_path / "capacity_params.yaml"
+        # 2026-09-20 W5-2 O-1：capacity_params.yaml 已退役，合成样例改用仍在校验表的
+        # budget_policy.yaml（必填 module_id）验证同一路径。
+        cfg = tmp_path / "budget_policy.yaml"
         cfg.write_text(yaml.dump({"version": "1.0"}), encoding="utf-8")
         validator = ConfigValidator()
         result = validator.validate(str(cfg))

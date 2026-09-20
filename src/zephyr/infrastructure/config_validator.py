@@ -74,8 +74,9 @@ class ConfigValidator:
     """
 
     # 5.155.7 修复：原引用thresholds.yaml/pipelines.yaml/modules.yaml/gates.yaml均不存在，更新为实际存在的配置文件
+    # 2026-09-20 W5-2 O-1：capacity_params.yaml 已退役（w5_1_cluster_audit 簇1；零运行时消费实测），
+    # 必填键表移除该条目；资源压力阈值真源=config/resource_optimization.yaml pressure_thresholds。
     _REQUIRED_CONFIG_FIELDS: dict[str, list[str]] = {
-        "capacity_params.yaml": ["module_id", "design_capacity"],
         "budget_policy.yaml": ["module_id"],
         "flags.yaml": ["module_id"],
         "capabilities.yaml": ["module_id"],
