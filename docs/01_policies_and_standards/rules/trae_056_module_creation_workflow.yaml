@@ -648,7 +648,7 @@ sections:
       action: 运行校验
       rule_ref: MRS-003
       commands:
-      - "python scripts/governance/check_registry_consistency.py"
+      - "python scripts/governance/d3_metadata/check_registry_consistency.py"
       - "python scripts/governance/check_frontmatter_metadata.py"
       - "python scripts/governance/check_architecture_gates.py"
       - "python scripts/governance/validate_directory_registry.py"
@@ -683,7 +683,7 @@ sections:
       fail: exit 1 (有孤儿) → 必须修复
     - order: 4
       action: 关键模块导入测试
-      command: "python scripts/governance/verify_key_imports.py"
+      command: "python scripts/governance/d11_compliance/verify_key_imports.py"
       pass: 导入成功
       fail: 导入失败 → 修复import
     - order: 5
@@ -803,9 +803,9 @@ references:
   - scripts/governance/extract_depgraph.py
   - scripts/governance/generate_project_path_tree.py
   - scripts/governance/d3_metadata/check_naming_convention.py
-  - scripts/governance/check_registry_consistency.py
+  - scripts/governance/d3_metadata/check_registry_consistency.py
   - scripts/governance/d11_compliance/audit_registration.py
-  - scripts/governance/verify_key_imports.py
+  - scripts/governance/d11_compliance/verify_key_imports.py
   - scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
   modules: []
   blueprints: []

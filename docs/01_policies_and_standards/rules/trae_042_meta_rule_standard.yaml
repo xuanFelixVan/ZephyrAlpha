@@ -251,7 +251,7 @@ sections:
       fail: AI自行判断紧急并绕过审批
     actions:
     - type: mandatory
-      step: AI立即停止当前操作→Session Log记录问题和建议修复方案→等待Owner确认后执行修复
+      step: AI立即停止当前操作→Session Log MUST 含 proposed_fix= 非空（缺字段 FAIL，session log schema 校验承载）→等待Owner确认后执行修复
     prohibitions:
     - AI自行判断紧急并绕过审批流程
   std_009_rule_file_quality:

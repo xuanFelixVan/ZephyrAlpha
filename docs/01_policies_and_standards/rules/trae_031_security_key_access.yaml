@@ -587,7 +587,7 @@ sections:
         requirement: 高度敏感凭证要求≤90天轮换
         alignment: 生产API密钥90天轮换对齐
       - standard: NIST SP 800-63B
-        requirement: 多数场景建议≤180天定期复审
+        requirement: 高敏密钥 rotate_days<=180（硬阻断，脚本可比对）；低敏 <=365（warn 级）
         alignment: 数据库凭证180天轮换对齐
       - standard: 公有云IAM常见实践
         requirement: 生产API密钥90天轮换

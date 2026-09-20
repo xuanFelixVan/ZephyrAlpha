@@ -409,7 +409,7 @@ sections:
       expected_exit: 0
       on_fail: 修复SSoT冲突
     - step: 12维评分
-      command: python scripts/governance/score_architecture.py --quarterly
+      command: python scripts/governance/run_all.py  # 裁定#372：score_architecture.py 已退役（f57016319e），现行量化通道=run_all.py 按 script-manifest 全量
       expected_exit: 0
       on_fail: 修复低分维度
     - step: 架构门禁检查
@@ -417,7 +417,7 @@ sections:
       expected_exit: 0
       on_fail: 修复门禁违规
     - step: 环境就绪检查
-      command: python scripts/governance/env_check.py --install
+      command: python scripts/governance/meta/env_check.py --install
       expected_exit: 0
       on_fail: 安装缺失依赖
     - step: 索引自动校验/修复
@@ -456,7 +456,7 @@ sections:
       expected_result: P0+P1全过+综合分≥6.0
       on_failure: 进入闭环处置
     - order: 6
-      action: 每季度——FULL+评分审计，覆盖D1-D12全量脚本（以script-manifest.yaml为准）+score_architecture.py，等级L2-L3，Owner执行
+      action: 每季度——FULL+评分审计，覆盖D1-D12全量脚本（以script-manifest.yaml为准；score_architecture.py 已退役 f57016319e），等级L2-L3，Owner执行
       pre_condition: 每季度定时
       expected_result: 全量通过+综合分达标
       on_failure: 进入闭环处置
@@ -514,7 +514,7 @@ sections:
       expected_result: 复核结论已形成
       on_failure: P0违规必须修复
     - order: 4
-      action: 生成审计报告——填写审计报告模板→FULL类型额外运行score_architecture.py --quarterly --dashboard→归档报告到docs/_working/audit/reports/
+      action: 生成审计报告——填写审计报告模板→FULL类型额外运行run_all.py（manifest 全量）→归档报告到docs/_working/audit/reports/
       pre_condition: 复核结论已形成
       expected_result: 审计报告已归档
       on_failure: 报告不完整则补全
@@ -533,7 +533,7 @@ sections:
       if_true: run_all.py --dimensions D3 D5 D6 D7 --warn-only → P0=0则PASS记录结果结束 / P0>0则FAIL进入步骤5闭环
       if_false: 继续判断
     - condition: 审计类型为FULL
-      if_true: env_check.py → run_all.py全量脚本（以script-manifest.yaml为准） → L2通过则score_architecture.py生成报告结束 / L2未通过则进入步骤5闭环修复后重跑
+      if_true: env_check.py → run_all.py全量脚本（以script-manifest.yaml为准） → L2通过则按 script-manifest 量化通道生成报告结束（score_architecture.py 已退役） / L2未通过则进入步骤5闭环修复后重跑
       if_false: 继续判断
     - condition: 审计类型为TARGETED
       if_true: run_all.py --dimensions <指定> --warn-only → 目标维度P0=0则PASS记录结果结束 / 目标维度P0>0则FAIL进入步骤5闭环
@@ -632,7 +632,7 @@ sections:
       rationale: 对标OpenSSF确保开源最佳实践
       applies_to: 合规审计框架设计
     - id: ALIGN-NASA
-      statement: NASA Kaiaulu方法论对标——Git挖掘合规证据→run_all.py（脚本数以script-manifest.yaml为准）+git diff准入；量化合规指标→12维评分+score_architecture.py；可视化项目合规→--dashboard输出+报告模板；最小化审计工作量→4类审计类型+7级频率调度
+      statement: NASA Kaiaulu方法论对标——Git挖掘合规证据→run_all.py（脚本数以script-manifest.yaml为准）+git diff准入；量化合规指标→12维评分+script-manifest 量化通道（原 score_architecture.py 已退役）；可视化项目合规→--dashboard输出+报告模板；最小化审计工作量→4类审计类型+7级频率调度
       rationale: 对标Kaiaulu确保审计方法论科学性
       applies_to: 审计方法论设计
   gov_cmp_003_cross_validation:
@@ -869,8 +869,8 @@ references:
   rule_ids: []
   scripts:
   - scripts/governance/run_all.py
-  - scripts/governance/env_check.py
-  - scripts/governance/score_architecture.py
+  - scripts/governance/meta/env_check.py
+  - scripts/governance/score_architecture.py  # 已退役（f57016319e）——引用仅存史料，勿执行
   - scripts/governance/status.py
   modules: []
   blueprints: []
@@ -879,7 +879,7 @@ enforcement:
   type: code
   executors:
   - scripts/governance/run_all.py
-  - scripts/governance/score_architecture.py
+  - scripts/governance/score_architecture.py  # 已退役（f57016319e）——引用仅存史料，勿执行
   bypass_allowed: false
 metadata:
   change_policy: stable
@@ -901,7 +901,7 @@ metadata:
     date: '2026-06-21'
     by: session-20260621-fix4
     changes:
-    - P1修复——enforcement.executors从文件名(run_all.py/score_architecture.py)改为完整路径(scripts/governance/run_all.py/scripts/governance/score_architecture.py)，符合RQ-04规范；gov_cmp_003_change_sync中硬编码数字改为动态查询描述(以extract_depgraph.py --summary动态查询为准)，消除数字漂移风险
+    - P1修复——enforcement.executors从文件名(run_all.py/score_architecture.py)改为完整路径(scripts/governance/run_all.py（score_architecture.py 已退役 f57016319e）)，符合RQ-04规范；gov_cmp_003_change_sync中硬编码数字改为动态查询描述(以extract_depgraph.py --summary动态查询为准)，消除数字漂移风险
   - version: 1.4.0
     date: '2026-06-21'
     by: session-20260621-fix4

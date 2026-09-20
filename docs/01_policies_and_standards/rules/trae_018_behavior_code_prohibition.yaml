@@ -43,7 +43,7 @@ sections:
       fail: 行为边界级别混乱导致执行不一致
     actions:
     - type: mandatory
-      step: 三级分类——ABS绝对禁止(任何情况下均不可违反，违反则即时阻断+事件记录，仅Owner可修改需KB决策记录) / COND条件禁止(特定条件下不可违反，条件由领域规则定义，违反则条件触发时阻断+事件记录，领域规则负责人可修改) / REC推荐做法(建议遵守但不强制，违反则记录但不阻断，任何规则负责人可修改)
+      step: 三级分类——ABS绝对禁止(任何情况下均不可违反，违反则即时阻断+事件记录，仅Owner可修改需KB决策记录) / COND条件禁止(特定条件下不可违反，条件由领域规则定义，违反则条件触发时阻断+事件记录，领域规则负责人可修改) / REC推荐做法(blocking=false——违反仅记 audit 不阻断，机器可读字段承载（blocking 布尔字段），任何规则负责人可修改)
     prohibitions: []
   classification_principles:
     title: 行为边界分类原则

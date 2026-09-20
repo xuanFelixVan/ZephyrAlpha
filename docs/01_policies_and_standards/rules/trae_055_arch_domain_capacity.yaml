@@ -353,7 +353,7 @@ references:
   - scripts/governance/extract_depgraph.py
   - scripts/governance/apply_depgraph.py
   - scripts/governance/generate_project_depgraph.py
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   modules: []
   blueprints: []
 enforcement:

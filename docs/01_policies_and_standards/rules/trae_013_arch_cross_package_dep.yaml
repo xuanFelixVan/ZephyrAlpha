@@ -57,7 +57,7 @@ sections:
       fail: 产生新循环依赖(跨层循环 OR 同层循环)
     actions:
     - type: mandatory
-      step: 移动模块/拆包/改标签前MUST执行依赖图推演(STEP 1)；推演发现新循环→BLOCKED，必须先解决循环再执行；验证命令python scripts/governance/diagnose_depgraph.py确认无循环
+      step: 移动模块/拆包/改标签前MUST执行依赖图推演(STEP 1)；推演发现新循环→BLOCKED，必须先解决循环再执行；验证命令python scripts/governance/d5_architecture/diagnose_depgraph.py确认无循环
     - type: clarification
       step: 同层间允许单向依赖(如F2→F4门禁校验预算)，但禁止同层循环依赖(如F2→F4→F2禁止)。同层协作对标K8s/Conductor同层组件协作模式
     prohibitions:
@@ -160,7 +160,7 @@ sections:
 references:
   rule_ids: []
   scripts:
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   - scripts/governance/generate_project_depgraph.py
   modules: []
   blueprints: []
@@ -168,7 +168,7 @@ enforcement:
   paired_gate_id: "GATE-ARCH"  # Phase 3.5 规则-执行配对
   type: code
   executors:
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   bypass_allowed: false
 metadata:
   change_policy: stable

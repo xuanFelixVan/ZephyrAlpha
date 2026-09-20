@@ -140,7 +140,7 @@ references:
   - src/zephyr/governance/capability_lookup.py
   - src/zephyr/integration/mcp/rule_discovery_server.py
   - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
-  - src/zephyr/gov_enforcement/git_commit_gateway.py
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
   - scripts/git_commit.py
   - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py
   - scripts/governance/generators/generate_rule_ai_perception_index.py
@@ -162,8 +162,8 @@ enforcement:
   type: code
   executors:
   - capability_lookup_required_gate
-  - session_worktree_startup_health_check
-  - audit_log_jsonl
+  - zephyr.gov_enforcement.rule_bridge.session_worktree::session_worktree_start  # 裁定#372 实名重指（startup 健康检查内建，原 session_worktree_startup_health_check）
+  - .runtime/lookup_audit/  # 裁定#372：查询审计落盘承载（原 audit_log_jsonl 概念名；write_lookup_audit_log 亲验）
   bypass_allowed: true
   bypass_markers:
   - commit_message: '[no-lookup:<reason>]'

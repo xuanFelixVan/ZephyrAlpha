@@ -88,7 +88,7 @@ references:
   scripts:
   - scripts/governance/generate_project_depgraph.py
   - scripts/governance/generate_project_path_tree.py
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   modules: []
   blueprints: []
 enforcement:

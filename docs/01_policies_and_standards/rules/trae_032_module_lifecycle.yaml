@@ -62,7 +62,7 @@ sections:
     - type: mandatory
       step: 准入记录写入module-id-registry.json admission_records数组
     - type: mandatory
-      step: 功能域重叠四步判定：关键词扫描→responsibility_domain匹配→covers[]交叉→输出否决建议
+      step: 功能域重叠四步判定：关键词扫描→responsibility_domain匹配→covers[]交叉→输出 veto_candidates[]（生成器绑定字段）
     prohibitions:
     - 禁止module_id重复
     - 禁止引用不存在的依赖

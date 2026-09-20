@@ -1895,3 +1895,16 @@ gates:
   redirect_to: GATE-C2
   source: manual
   enforcement_channel: manual
+- gate_id: COMMIT-CRITICAL-SECTION-LOCK
+  name: 'COMMIT-CRITICAL-SECTION-LOCK: commit 临界区全局文件锁（裁定#347 实名登记）'
+  entry: 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_GlobalCommitLock（in-process 机制，非独立钩子）'
+  description: >-
+    裁定#347/#372：机制实存于 git_commit_gateway.py:2360-2366（_GlobalCommitLock 临界区+
+    _audit_commit_lock_fallback 审计兜底，日志自标 TRAE-079）。原以册外名游离，
+    按实名登记补册。fail-closed 语义见 trae_079（bypass_allowed: false，逃生仅 emergency_commit）。
+  files_trigger: ''
+  always_run: false
+  category: serialization
+  status: active
+  source: commit-gateway
+  enforcement_channel: in-process

@@ -188,7 +188,7 @@ references:
   - src/zephyr/security/access_control/session_concurrency.py
   - src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py
   - scripts/governance/git_hooks/post_commit_guard.sh
-  - tests/governance/rule_bridge/test_git_commit_gateway.py
+  - tests/git/test_git_commit_gateway.py
   modules:
   - MOD-GOV-SESSION_WORKTREE
   - MOD-GOV-GIT_COMMIT_GATEWAY
@@ -207,16 +207,16 @@ references:
   - docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   - docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
 enforcement:
-  paired_gate_id: COMMIT-CRITICAL-SECTION-LOCK  # Phase 1 落地：commit 临界区文件锁 gate（warn-only 起步→P2 硬阻断）
+  paired_gate_id: COMMIT-CRITICAL-SECTION-LOCK  # 裁定#347/#372：实名映射=src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_GlobalCommitLock（临界区文件锁+审计兜底）
   type: code_embedded_plus_doc
   executors:
-  - git_commit_gateway_critical_section_guard  # Phase 1: commit 方法外层文件锁临界区
-  - session_worktree_escape_hatch_demotion  # Phase 1: worktree 失败不触发逃生链降级
+  - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_GlobalCommitLock  # 裁定#347：机制实存 gateway:2360-2366，册名对不上→改指实名
+  - zephyr.gov_enforcement.rule_bridge.session_worktree  # 裁定#372：worktree 逃生链防降级由 session_worktree 模块整体承载
   - rule_discovery_mcp
   - ai_pre_action_check
-  bypass_allowed: true  # 文件锁不可用时 fail-open 降级（last-resort），但落审计
+  bypass_allowed: false  # 裁定#353①（#372 代裁）：锁获取失败=fail-closed 拒提交；逃生仅 emergency_commit 显式通道（自成审计），last-resort fail-open 废止
   bypass_markers:
-  - commit_lock_unavailable=True  # 仅 .runtime/ 不可写时降级，落审计到 commit_lock_fallback.jsonl
+  - commit_lock_unavailable=True  # 历史标记保留：仅 emergency_commit 通道合法使用并落审计到 commit_lock_fallback.jsonl
 metadata:
   change_policy: evolving
   impact_level: H

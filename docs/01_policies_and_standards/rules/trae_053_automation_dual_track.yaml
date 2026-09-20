@@ -67,9 +67,9 @@ references:
   rule_ids:
   - TRAE-060
   scripts:
-  - scripts/ide_health_service.py
+  # ide_health_service.py 已退役（6fe7e96dfc 2026-08-28 僵尸清除裁定）——裁定#372
   modules:
-  - src/zephyr/trading/ide_health_daemon.py
+  # ide_health_daemon.py 同批退役（6fe7e96dfc）——裁定#372
   - src/zephyr/trading/boot_hooks.py
   blueprints: []
 enforcement:

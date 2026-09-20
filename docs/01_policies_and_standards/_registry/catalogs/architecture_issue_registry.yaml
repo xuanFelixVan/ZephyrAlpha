@@ -22384,3 +22384,16 @@ entries:
   related_adjudication: '#309'
   created: '2026-09-18'
   last_updated: '2026-09-18'
+- issue_id: '#ARCH-FINAL3-RULES-BATCH-001'
+  title: 'final3 W1-F rules 统一批（裁定#372 判决执行）'
+  status: open
+  severity: P2
+  category: governance
+  created: '2026-09-20'
+  last_updated: '2026-09-20'
+  owner: Max(st-maxexec-20260920)
+  description: >-
+    W1-F 判案（裁定#372）落地载体议题：#344 skip_dirs_docs+algo_flow、#346 29 重指、
+    #347+#353① trae_079 实名+fail-closed 条文侧、#350 M5 17 条二值化、闸1 九簇悬空消解、
+    闸3 D1 两处。D-14 冻结经判案解除（判案先行已落 8f8bf8ccee）。随批关闭。
+  related_rulings: ['裁定#372']

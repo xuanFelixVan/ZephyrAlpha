@@ -25,7 +25,7 @@ related_modules:
   - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/generate_project_depgraph.py
   - scripts/governance/generate_project_path_tree.py
-  - scripts/governance/d5_architecture/diagnose_depgraph.py
+  - scripts/governance/diagnose_depgraph.py
   - scripts/git_commit_gateway.py
   - scripts/session_worktree.py
   - scripts/lock_files.py
@@ -347,7 +347,7 @@ python scripts/governance/d5_architecture/generators/align_all.py
    - 有且唯一 → `services/api.js` 加 fetch 助手，页面只消费
    - 有重复 → **先治后端**：裁定唯一真源、废弃其余，再接（禁止前端"挑一个好用的接着用"）
    - 没有 → **先建后端**：立项加端点（真源走 registry 登记），端点验收后前端才接线；此前最多画占位骨架，**禁止造数据顶上**
-4. **拆件判定**（后端盘点先行供输入——拆件第一判据=数据源边界，没有数据源清单就没法判）：按 TRAE-086 §split_judgment 四判据逐区块过（数据源边界/单一功能/经典五信号/反向不拆）：
+4. **拆件判定**（后端盘点先行供输入——拆件第一判据=数据源边界，没有数据源清单就没法判）：按 TRAE-086 §split_judgment 四判据逐区块过（判据真源=TRAE-086 §split_judgment 单源，此处括注仅导航索引勿独立引用——裁定#372 闸3 D1）：
    - **有得拆** → 转入 [frontend_component_split_sop.md](frontend_component_split_policy.md) 8 步拆件闭环施工（其 Step 3 API 接口=本步"没有→先建后端"分支的落地），拆完回本 SOP Step 4 续行
    - **没得拆** → 直接进 Step 4 施工编码
 5. **接线验收**：页面真源徽章亮 + 端点实测返回；演示回退（若有）必须标"断线·演示"（演示诚实纪律，15s 自动重试至真源）
@@ -552,7 +552,7 @@ python scripts/governance/generate_project_path_tree.py --write
 python scripts/governance/d5_architecture/generators/align_all.py
 
 # 6. 依赖图诊断
-python scripts/governance/d5_architecture/diagnose_depgraph.py
+python scripts/governance/diagnose_depgraph.py
 ```
 
 **通过判据**：depgraph design_maturity=production / 五图对齐通过 / path_tree 无旧引用 / diagnose exit 0
@@ -1032,7 +1032,7 @@ A/D/E 类不涉及代码时一行 N/A。
 | **extract_depgraph.py** | `scripts/governance/` | depgraph 只读查询（--summary/--paths） | Step 0 冷启动 |
 | **generate_project_depgraph.py** | `scripts/governance/` | 重生成 depgraph（⚠️架构升级期禁用 --force） | Step 8 |
 | **generate_project_path_tree.py** | `scripts/governance/` | 重生成 path_tree | Step 8 |
-| **diagnose_depgraph.py** | `scripts/governance/d5_architecture/` | depgraph 诊断 | Step 8 |
+| **diagnose_depgraph.py** | `scripts/governance/` | depgraph 诊断 | Step 8 |
 | **git_commit_gateway.py** | `scripts/` | 网关提交入口 | Step 10 |
 | **session_worktree.py** | `scripts/` | worktree 管理（create/start/commit/merge/abort/sweep） | Step 10/Step 12 |
 | **lock_files.py** | `scripts/` | 文件锁管理（cleanup/status/release） | Step 0/Step 11 |

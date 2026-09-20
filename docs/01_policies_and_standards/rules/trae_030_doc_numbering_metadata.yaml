@@ -436,7 +436,7 @@ sections:
       expected_exit: depends_on与实际引用一致
       on_fail: 引用不一致→补充或移除
     - step: 同步规则注册表
-      command: python scripts/governance/sync_rule_registry.py
+      command: python scripts/governance/d8_doc_sync/sync_rule_registry.py
       expected_exit: exit 0
       on_fail: 注册表不同步→修复后重新运行
     - step: 标记规格化成熟度
@@ -629,7 +629,7 @@ sections:
       details: P1修复;脚本名错误修正(generate_project_ownership_map.py→generate_path_ownership_map.py,后者为真实存在的脚本);kebab-case文件名引用修正为snake_case(project-path-tree.yaml→project_path_tree.yaml/path-ownership-map.yaml→path_ownership_map.yaml)
 references:
   rule_ids: [TRAE-010, TRAE-011, TRAE-012, TRAE-028, TRAE-048]
-  scripts: [scripts/governance/generate_project_path_tree.py, scripts/governance/generators/generate_path_ownership_map.py, scripts/governance/sync_rule_registry.py]
+  scripts: [scripts/governance/generate_project_path_tree.py, scripts/governance/generators/generate_path_ownership_map.py, scripts/governance/d8_doc_sync/sync_rule_registry.py]
   modules: []
   blueprints: []
 enforcement:

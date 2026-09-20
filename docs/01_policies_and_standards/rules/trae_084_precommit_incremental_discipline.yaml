@@ -153,9 +153,9 @@ enforcement:
   executors:
   - human_review
   - ai_pre_action_check
-  - static_scan_block
-  - gate_naming_incremental  # GATE-NAMING 增量守门
-  - gate_frontmatter_incremental  # GATE-FRONTMATTER 增量守门
+  - .pre-commit-config.yaml  # 裁定#372：同 trae_073——钩子链承载（block 模式）
+  - GATE-NAMING  # 裁定#372 别名实名化（原 gate_naming_incremental）
+  - GATE-FRONTMATTER  # 裁定#372 别名实名化（原 gate_frontmatter_incremental）
   bypass_allowed: false
 metadata:
   change_policy: evolving

@@ -452,6 +452,9 @@ sections:
   gov_arch_010_cycle_analysis:
     title: 剩余21循环根因分析
     section_type: root_cause_analysis
+    # 裁定#372（闸3 D1）：循环计数权威真源=depgraph 引擎现算值（apply_depgraph/extract_depgraph 输出）；
+    # 本节为历史分析快照（2026-07 时点 21 循环），数值不作物时真源，仅存分析推理链。
+
     original_rules:
     - GOV-ARCH-010
     methodology: 按类别分层分析——文档级循环2个+跨层网格19个，识别核心致密三角并制定分步解网方案

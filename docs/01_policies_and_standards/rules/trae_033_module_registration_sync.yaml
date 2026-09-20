@@ -250,7 +250,7 @@ sections:
 references:
   rule_ids: []
   scripts:
-  - scripts/governance/check_registry_consistency.py
+  - scripts/governance/d3_metadata/check_registry_consistency.py
   - scripts/governance/d3_metadata/check_frontmatter_metadata.py
   - scripts/governance/d5_architecture/checkers/check_architecture_gates.py
   - scripts/governance/d5_architecture/validators/validate_directory_structure.py
@@ -262,7 +262,7 @@ enforcement:
   paired_gate_id: "MODULE-ID-CONSISTENCY"  # Phase 3.5 规则-执行配对
   type: code
   executors:
-  - scripts/governance/check_registry_consistency.py
+  - scripts/governance/d3_metadata/check_registry_consistency.py
   bypass_allowed: false
 metadata:
   change_policy: stable

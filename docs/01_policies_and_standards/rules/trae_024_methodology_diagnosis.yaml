@@ -223,9 +223,9 @@ sections:
     - type: mandatory
       step: 3.专业对标——专业机构/Vibe Coding社区怎么做的？我们的选择在行业中有没有先例支撑？
     - type: mandatory
-      step: 4.最终建议(带推理)——"A在埋雷维度无风险/容量维度有余量/对标维度有IETF/OWASP先例支撑，因此推荐A"
+      step: 4.最终建议 MUST 产出 recommendation= 与 evidence_refs>=1 两字段（脚本查字段非空），推理示例"A在埋雷维度无风险/容量有余量/对标有先例→推荐A"
     - type: verification
-      step: 每次建议被Owner采纳后，未来3个session内是否因为该建议的"埋雷"而被迫返工？如果是→四问执行不彻底
+      step: 每次建议被Owner采纳后，未来3个session内是否因为该建议的"埋雷"而被迫返工？判据=后续 3 个 session 内出现 rework_of=<本决策id> 记录 → 记 MTH-007 不合格（可查判据，机器可比对）
     prohibitions:
     - 这个看着顺眼就选它(跳过四问)
     - 我觉得没问题(跳过对标)
@@ -413,7 +413,7 @@ sections:
     prohibitions:
     - 以"规则说不允许"作为停止思考的借口
     - 跳过步骤1(判断最优方案)直接进入步骤2(检查规则约束)
-    - 在3b中只说"不能"不给覆盖建议
+    - 在3b中 forbid 输出 MUST 同段含 override_path=（缺该字段即 FAIL）
   clean_project:
     title: 项目清爽原则
     section_type: rule

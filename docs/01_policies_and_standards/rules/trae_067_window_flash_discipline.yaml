@@ -142,8 +142,8 @@ enforcement:
   executors:
   - human_review
   - ai_pre_action_check
-  - static_scan_warn_only
-  - commit_gate_bare_subprocess  # P8 落地（2026-07-20）：BARE-SUBPROCESS gate warn-only，P2 升级 block
+  - .pre-commit-config.yaml  # 裁定#372：static_scan_warn_only=扫描模式描述非实体，承载=pre-commit 钩子链（warn 模式）
+  - BARE-SUBPROCESS  # 裁定#372 别名实名化：注册表 canonical ID（原写 commit_gate_bare_subprocess）
   bypass_allowed: false
 metadata:
   change_policy: evolving

@@ -683,7 +683,7 @@ sections:
       fail: 跳过响应流程
     actions:
     - type: mandatory
-      step: V1阻断→阻止当前操作+AI记录违规到SessionLog+修复问题后重新提交；V2警告→允许继续操作+AI记录警告到SessionLog+同类型警告3次升格V1；V3审查发现→记录到审查报告+分类(立即修复/下次修复/记入Backlog)+Owner裁定优先修复顺序；V4抽样发现→产出审计报告+向Owner提出系统性改进建议
+      step: V1阻断→阻止当前操作+AI记录违规到SessionLog+修复问题后重新提交；V2警告→允许继续操作+AI记录警告到SessionLog+同类型警告3次升格V1；V3审查发现→记录到审查报告+分类(立即修复/下次修复/记入Backlog)+Owner裁定优先修复顺序；V4抽样发现→产出审计报告（MUST 含 ruling_request_id 字段可查）+向Owner提出系统性改进建议
   ps_std_012_v1_triggers:
     title: V1自动化阻断触发条件详表
     section_type: rule

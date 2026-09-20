@@ -76,7 +76,7 @@ sections:
     conditions:
     - type: constraint
       check: 命名空间碰撞
-      pass: 顶层包名无碰撞，建议≤200顶层包
+      pass: 顶层包名无碰撞（硬阻断，scaffold 查重 exit1）；≤200 顶层包=warn 计入 architecture_health_dashboard M 指标
       fail: 有命名碰撞
     - type: constraint
       check: 最大命名深度
@@ -349,7 +349,7 @@ sections:
     - description: 碰撞检测结果
       details: '顶层包名重复: 通过scaffold.py查重门控(无碰撞) | __init__.py __all__大小: 无硬编码限制(Python list) | 模块名冲突: 通过scaffold.py查重检测 | 功能域重叠: 由functional-domain-registry.yaml门控'
     - description: 1500模块时投影
-      details: '扁平命名池: 建议<=200顶层包，其余嵌套 | 生成新模块时MUST通过scaffold.py查重'
+      details: '扁平命名池: <=200顶层包=warn（D1 真源=代码常量，本行为派生指针，裁定#372） | 生成新模块时MUST通过scaffold.py查重'
   gov_eng_003_depgraph_performance:
     title: 依赖图性能基准
     section_type: examples

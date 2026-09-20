@@ -126,7 +126,7 @@ references:
   rule_ids:
   - TRAE-017
   scripts:
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   - scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
   - scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
   - scripts/governance/d1_structure/validate_config_integrity.py
@@ -137,7 +137,7 @@ enforcement:
   paired_gate_id: "GATE-DRIFT"  # Phase 3.5 规则-执行配对
   type: code
   executors:
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   - scripts/governance/d5_architecture/checkers/check_contract_code_drift.py
   - scripts/governance/d5_architecture/validators/validate_load_path_integrity.py
   - scripts/governance/d1_structure/validate_config_integrity.py

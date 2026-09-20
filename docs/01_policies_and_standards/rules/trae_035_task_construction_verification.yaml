@@ -152,7 +152,7 @@ sections:
     - type: mandatory
       step: 重新生成路径树——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
     - type: mandatory
-      step: 运行诊断——python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
+      step: 运行诊断——python D:/ZephyrAlpha/scripts/governance/d5_architecture/diagnose_depgraph.py
     - type: mandatory
       step: 全景图和路径树中无旧层名/旧路径引用→对齐通过
     - type: mandatory
@@ -171,7 +171,7 @@ sections:
     - type: mandatory
       step: G6依赖全景图生成——python D:/ZephyrAlpha/scripts/governance/generate_project_depgraph.py --output-db depgraph --force（⚠️架构升级期间禁止运行——会覆盖depgraph全景图；正常期方可运行。--output-yaml不支持，使用--output-db写入PostgreSQL）
     - type: mandatory
-      step: G6依赖图诊断——python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
+      step: G6依赖图诊断——python D:/ZephyrAlpha/scripts/governance/d5_architecture/diagnose_depgraph.py
     - type: mandatory
       step: 路径树刷新——python D:/ZephyrAlpha/scripts/governance/generate_project_path_tree.py --write
     prohibitions: []
@@ -284,7 +284,7 @@ sections:
       expected_exit: 0
       on_fail: 结构未同步
     - step: G6依赖图诊断
-      command: python D:/ZephyrAlpha/scripts/governance/diagnose_depgraph.py
+      command: python D:/ZephyrAlpha/scripts/governance/d5_architecture/diagnose_depgraph.py
       expected_exit: 0
       on_fail: 有错误需修复
     - step: 路径树刷新
@@ -335,10 +335,10 @@ references:
   - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/generate_project_depgraph.py
   - scripts/governance/generate_project_path_tree.py
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   modules:
   - src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py
-  - src/zephyr/governance/task_repo.py
+  - src/zephyr/governance/persistence/task_repo.py
   blueprints:
   - 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 enforcement:

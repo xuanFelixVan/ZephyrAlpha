@@ -76,7 +76,7 @@ references:
   - TRAE-016
   scripts:
   - scripts/governance/generate_project_depgraph.py
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   - scripts/governance/generate_project_path_tree.py
   - scripts/governance/d11_compliance/audit_registration.py
   modules: []
@@ -86,7 +86,7 @@ enforcement:
   type: code
   executors:
   - scripts/governance/generate_project_depgraph.py
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   - scripts/governance/generate_project_path_tree.py
   - scripts/governance/d11_compliance/audit_registration.py
   bypass_allowed: false

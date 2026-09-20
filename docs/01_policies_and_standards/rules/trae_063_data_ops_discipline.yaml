@@ -135,7 +135,7 @@ enforcement:
   executors:
   - human_review
   - ai_pre_action_check
-  - task_card_description_audit
+  - docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md  # 裁定#372：任务卡描述审计步承载（原 task_card_description_audit 概念名）
   bypass_allowed: false
 metadata:
   change_policy: frozen

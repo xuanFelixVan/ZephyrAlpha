@@ -452,11 +452,11 @@ sections:
     conditions:
     - type: pre_condition
       check: AI建议止损/调仓/加仓等交易操作
-      pass: 建议附带置信区间和回测数据，最终执行需Owner确认
+      pass: 输出 MUST 含 confidence= 与 backtest_ref= 两字段（缺一即 FAIL，机器可判），最终执行需Owner确认
       fail: AI直接执行交易决策，后果不可逆
     actions:
     - type: mandatory
-      step: AI可产出分析结果和建议，但最终执行需Owner确认（confirm-action gate），且建议必须附带置信区间和回测数据
+      step: AI可产出分析结果和建议，但最终执行需Owner确认（confirm-action gate），且输出判据同 :455（confidence=/backtest_ref= 字段存在性，D1 单真源此处指针）
     prohibitions:
     - AI 将自身分析结果作为唯一不可逆交易决策依据
   abs_52:
@@ -513,7 +513,7 @@ sections:
     - type: mandatory
       step: 'PS-STD-003 §1.3 术语——条件禁止：在特定条件下不可违反。条件由领域规则定义'
     - type: mandatory
-      step: 'PS-STD-003 §1.3 术语——推荐做法：建议遵守但不强制。违反不触发阻断，但应记录原因'
+      step: 'PS-STD-003 §1.3 术语——推荐做法：severity=advisory（blocking: false）。违反不触发阻断，MUST 记录原因到 audit（人判条款：谁判=当班 AI，证据=audit 记录）'
     - type: mandatory
       step: 'PS-STD-003 §1.3 术语——阻断：操作被自动或手动阻止，必须停止当前行为'
     - type: mandatory
@@ -1017,7 +1017,7 @@ sections:
     - type: mandatory
       step: Tier 1 消费者变更必须同步更新（ai-onboarding-guide/rule-lifecycle/rule-classification/file-operation-safety 等）
     - type: recommended
-      step: Tier 2 消费者变更建议同步更新（pre-commit hooks/CI 流水线）
+      step: Tier 2 消费者变更 MUST 同 commit 更新 .pre-commit-config/CI 两处（缺失由既有对齐门 GATE-REG-BL 阻断）
     - type: mandatory
       step: 'PS-STD-003 §8 Tier 1 消费者清单——ai-onboarding-guide.md 引用 ABS-11~13'
     - type: mandatory
@@ -1248,6 +1248,9 @@ references:
 enforcement:
   paired_gate_id: null  # Phase 3.5 规则-执行配对
   type: hook
+  # 裁定#372 身份映射：条款族内 57 处 "confirm-action gate" 系交互语义名非实体检查器；
+  # 语义真承载=risk_tier_registry.yaml human_gate（Owner 确认人工流程，D6 四类之三）+宪法 §5 人机门位。
+  # 条款正文不改（语义已实存承载），本注记即映射真源。
   executors:
   - scripts/governance/d1_structure/validate_immutable_core.py
   - scripts/governance/d5_architecture/pre_delete_safety_check.py

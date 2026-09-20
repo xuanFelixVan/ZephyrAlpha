@@ -80,7 +80,7 @@ sections:
       change: '建卡路径规则变更：四指标→八指标机械门(新增depgraph操作/消费者影响>50/跨域操作/多步骤>3)；RULE-ZERO-TASK从"蓝图拆解唯一路径"改为"TaskRepository.create()唯一入口+双触发(用户主动OR阈值)"；建卡来源扩展(蓝图/Bug/债务/扫描/重构)'
     - version: '1.1.0'
       date: '2026-06-19'
-      change: 'RQ审查修复: references.modules路径修正(src/zephyr/data/persistence→src/zephyr/governance/task_repo.py); provenance哈希同步; 修复内部矛盾(prohibitions阈值>3/>5→>1/>3与conditions对齐); 新增change_history(RQ-14)'
+      change: 'RQ审查修复: references.modules路径修正(src/zephyr/data/persistence→src/zephyr/governance/persistence/task_repo.py); provenance哈希同步; 修复内部矛盾(prohibitions阈值>3/>5→>1/>3与conditions对齐); 新增change_history(RQ-14)'
     - version: '1.0.0'
       date: '2026-06-13'
       change: '从project_rules.md(RULE-SIX/RULE-THIRTEEN)+onboarding_detail.md(§四)提取初始版本'
@@ -88,7 +88,7 @@ references:
   rule_ids: []
   scripts: []
   modules:
-  - src/zephyr/governance/task_repo.py
+  - src/zephyr/governance/persistence/task_repo.py
   blueprints:
   - GOV-TASK-001
 enforcement:

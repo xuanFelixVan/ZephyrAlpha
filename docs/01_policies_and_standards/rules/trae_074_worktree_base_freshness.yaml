@@ -187,10 +187,10 @@ enforcement:
   paired_gate_id: null  # 本规则是文档型 + 代码内嵌检测（_ensure_worktree_base_fresh），无独立 commit gate——检测逻辑在 session_worktree_start/commit/merge 内调用
   type: code_embedded_plus_doc
   executors:
-  - session_worktree_start_check
-  - session_worktree_commit_check
-  - session_worktree_merge_check
-  - emergency_commit_consistency_check
+  - zephyr.gov_enforcement.rule_bridge.session_worktree::session_worktree_start  # 裁定#372 实名重指（原 start_check 概念名；health_check 内建亲验）
+  - zephyr.gov_enforcement.rule_bridge.session_worktree::session_worktree_commit  # 裁定#372（原 commit_check）
+  - zephyr.gov_enforcement.rule_bridge.session_worktree::session_worktree_merge  # 裁定#372（原 merge_check）
+  - scripts/git_commit.py  # 裁定#372：emergency 通道一致性由 git_commit.py CLI 前置校验承载（原 emergency_commit_consistency_check 概念名）
   - rule_discovery_mcp
   - ai_pre_action_check
   bypass_allowed: true  # force=True 仍可用（绕过可绕过类），但不可绕过 base freshness check（#ARCH-FORCE-MERGE-SAFETY-001 治本，2026-07-22）

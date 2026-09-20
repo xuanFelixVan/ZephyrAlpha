@@ -836,7 +836,7 @@ sections:
     - condition: 下游卡必须等上游卡完成
       if_true: dependency_type=hard（上游产出是下游输入）
       if_false: ''
-    - condition: 下游建议等上游完成
+    - condition: 下游卡 status MUST=blocked 直到上游 status=done（task_repo 状态机判定）
       if_true: dependency_type=soft（上游让下游更好但不阻塞）
       if_false: ''
     - condition: 两个卡完全独立
@@ -1206,7 +1206,7 @@ sections:
       - consumer: src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py
         dependency: 残留物分类规则、退出码定义
         sync_requirement: 分类规则变更必须同commit更新
-      - consumer: src/zephyr/governance/task_repo.py
+      - consumer: src/zephyr/governance/persistence/task_repo.py
         dependency: COMPLETED/VERIFIED状态转换条件
         sync_requirement: 转换条件变更必须同commit更新
       - consumer: scripts/governance/check_handoff_protocol.py
@@ -1344,10 +1344,10 @@ references:
   - scripts/governance/d11_compliance/audit_registration.py
   - scripts/governance/generate_project_depgraph.py
   - scripts/governance/generate_project_path_tree.py
-  - scripts/governance/diagnose_depgraph.py
+  - scripts/governance/d5_architecture/diagnose_depgraph.py
   modules:
   - src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py
-  - src/zephyr/governance/task_repo.py
+  - src/zephyr/governance/persistence/task_repo.py
   blueprints:
   - 03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
 enforcement:

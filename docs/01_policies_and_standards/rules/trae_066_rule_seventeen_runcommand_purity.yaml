@@ -135,7 +135,7 @@ enforcement:
   executors:
   - human_review
   - ai_pre_action_check
-  - trae_ide_hardcoded_safety_check
+  - docs/01_policies_and_standards/rules/trae_066_rule_seventeen_runcommand_purity.yaml  # 裁定#372：本规则自身即 IDE 硬编码安全检查的条文承载（原 trae_ide_hardcoded_safety_check 概念名）
   bypass_allowed: false
 metadata:
   change_policy: frozen
