@@ -5016,6 +5016,10 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "docs/_working/ultimate_library/08_field_dictionary_v0_1.md"
+  token: "ulib-field-dictionary-v0-1-20260921"
+  created_by: "st-ulib-20260921"
+  capability: "ultimate_library"
 - file: "docs/_working/ultimate_library/06_librarian_system_blueprint_v0_1.md"
   token: "ulib-librarian-blueprint-v0-1-20260921"
   created_by: "st-ulib-20260921"
