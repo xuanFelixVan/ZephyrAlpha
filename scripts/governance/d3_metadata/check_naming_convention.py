@@ -967,6 +967,7 @@ _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset(
 _N16_DOCS_SKIP_DIRS_FALLBACK: set[str] = {
     "_DO_NOT_USE_old_tree",
     "algo_flow",  # 裁定#344：镜像卡目录扫描面修正（与 trae_028 skip_dirs_docs 同步，fallback 补齐）
+    "archive",  # 裁定#374① 配套：docs/_working/archive/ 历史归档区（与 _archive 同语义，历史命名不追溯）
     "_archive",
     "_backups",
     "session_logs",
@@ -1299,6 +1300,11 @@ def check_new_files_naming(
     for rel in new_rel_files:
         basename = os.path.basename(rel)
         if basename in exempt:
+            continue
+
+        # 裁定#374① 配套：_working/archive 历史归档区新文件不参与 N-16（归档件历史
+        # 命名不追溯，与 skip_dirs 的 archive/_archive 同语义——git mv 入档触发是搬运非新建）
+        if "/_working/archive/" in rel.replace("\\", "/"):
             continue
 
         # normcase 归一比较：防止 on-disk vs git index 大小写不一致导致修改文件

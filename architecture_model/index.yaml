@@ -5,7 +5,6 @@
 # safety_level: L
 # ai_autonomy: ai_modifiable
 # ttl: permanent
-# [DOMAIN] D_GOVERNANCE
 # --- 治理锚定结束 ---
 # v3.0.3: 治本版（b_track 从 layers/b_*.yaml 物理蓝图文件派生，消除手工模板第二真源）
 # 双树合并为单树（2026-06-30 治本）：architecture_model/ 是唯一架构模型存储位置。
@@ -65,7 +64,7 @@ partitions:
   description: P0/P1跨域数据契约、OCP扩展点、外部系统契约、AI治理接口签名
 - id: events
   path: events/domain_events.yaml
-  description: 27条领域事件（8域）、事件链、频率等级与运行时声明
+  description: 28条领域事件（8域）、事件链、频率等级与运行时声明
 - id: ddd-model
   path: domain/ddd_model.yaml
   description: DDD战术模式：8 Aggregate Root + 6 Entity + 12 Value Object + 边界铁律
@@ -194,7 +193,7 @@ domains:
   name: 数据治理
   layer_id: L1_foundation
 - id: D_DATA_SCRIPTS
-  name: 数据治理脚本
+  name: 元数据治理脚本
   layer_id: L2_domain
 - id: D_DATA_SEC
   name: 数据安全与契约
@@ -264,7 +263,7 @@ domains:
   layer_id: L2_domain
 - id: D_INFRASTRUCTURE
   name: 跨层契约基础设施
-  layer_id: L0_infrastructure
+  layer_id:
 - id: D_INFRA_A2A
   name: A2A通信
   layer_id: L0_infrastructure
@@ -377,7 +376,7 @@ global_stats:
     74域唯一物理分类体系，4值（L0_infrastructure/L1_foundation/L2_domain/L3_application）是域的layer_id属性枚举。
     b_track 13横切基础设施模块（从 layers/b_*.yaml 物理文件派生）。
     结构化数据从depgraph + 物理蓝图文件派生，禁止硬编码会变化的数字。
-  last_updated: '2026-09-13'
+  last_updated: '2026-09-20'
 
 query_hints:
 - question: 系统有哪些域？
