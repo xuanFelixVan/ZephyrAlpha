@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
-completes_when: 战役 st-vocabconsol-20260918 W8 封账提交后转 archived
+campaign_status: 已封账 archived（2026-09-21 封账批 st-taskcards-exec-20260921；ttl 词表无 archived 值故保持 task_bound，物理归档移交后续归置批）
+completes_when: 战役 st-vocabconsol-20260918 W8 封账提交后转 archived（封账标记已落 campaign_status）
 ---
 # 战役骨架——target_layer 词表收编 + 三层归属精确账（全链路环节挖矿图）
 
@@ -17,6 +18,7 @@ completes_when: 战役 st-vocabconsol-20260918 W8 封账提交后转 archived
 | B0 | 2026-09-18 | 初版骨架：八环节+挖矿中类全集（静态盘点） | +8 中类 |
 | B1 | 2026-09-18 | W1 四路挖矿回写：新增 W4e 写手治本/D_CONTRACTS 反转/responsibility_layer 定名 | +1 中类，0 新环节 |
 | B2 | 2026-09-18 | W3 落地+W4e/W4d 落地+W5 普查：环节 0 新增（三扫收敛再证），差集脚本抓到 3 散文误捕→字段位口径自裁定 | +0 中类 |
+| B3 | 2026-09-21 | W8 封账批（tc_05 卡步骤 3）：基线三连复跑全绿+10 域死结解除实测（单测 6 passed）+W4/W6/W7/W8 四格翻牌+frontmatter archived | 环节 0 新增；四格翻 ✅ |
 
 ## §1 大类（MECE，族级防漏）
 
@@ -33,11 +35,11 @@ completes_when: 战役 st-vocabconsol-20260918 W8 封账提交后转 archived
 | W1 | 环节挖矿（四路） | `w1_mining/` | ✅ | 实查=w1a/b/c/d 四文档落盘+no_domain_list.csv 2115 行 |
 | W2 | 封矿判定 + 裁定#335 登记 | `w2_ruling/` | ✅ | 实查=ruling_registry.yaml 末条 裁定#335（safe_write_text CAS，after_sha=4d74298caf）；封矿判据见 §4 |
 | W3 | 词表收编 + validate_target_layer 治本 + 差集常驻脚本 | `w3_vocab_construction/` | ✅ | 实查=w3_execution_log.md 验收表（validate exit 0/差集 exit 0/6 用例绿/scaffold token 已登） |
-| W4 | responsibility_layer 映射 YAML + 生成器 + 2115 无 domain 补标 + loader/写手治本 | `w4_layer_field/` | 🔨 | W4d/W4e 已落（子代理：写手 CAS+--dedupe 30 组清零+loader 可观测去重，88 用例绿）；W4a/b/c 待词表落地后开 |
+| W4 | responsibility_layer 映射 YAML + 生成器 + 2115 无 domain 补标 + loader/写手治本 | `w4_layer_field/` | ✅ | W4a mapping yaml 84 域→4 层+W4-B组 merge-domain 两笔+W4d/W4e 88 用例绿+W4b 放量 4988 写入幂等收敛（w4_construction/w4_execution_log.md）；原 🔨 系回写遗漏，封账批 2026-09-21 翻 ✅ |
 | W5 | 全仓 L1/L2/L3 同族假红普查 | `w5_exemption/` | ✅ | 实查=w5_survey.md：141 面分类 0 真违规；收紧差分 23→10 命中/新增红 0；noqa 标记判定=不需要（3 条硬否决）；W3 采纳其改良正则 D[-_] 保住废弃 WARNING |
-| W6 | 循环检查两轮：全量相关测试+基线命令 diff 问题=0 | `w6_loop_check/` | ⬜ | 判据=连续两轮问题=0 |
-| W7 | 红蓝极限对抗（ARCH-310 范式 A-B 双基准）+修复 | `w7_redblue/` | ⬜ | 场景集=词表漂移再生/折叠自毁/吞条目复发/豁免滥用/路由变更 |
-| W8 | GitCommitGateway 落地 + .runtime 清理 + 收尾序列 | `w8_landing/` | ⬜ | 分段提交（每环节挖干即提），终局 release+核实 |
+| W6 | 循环检查两轮：全量相关测试+基线命令 diff 问题=0 | `w6_loop_check/` | ✅ | 轮2 全绿+09-21 复跑三连 RC=0/RC=0/存活+收敛单测 6 passed（w8_landing/landing_log.md 第 1 节；轮3 补记见 w6_round1_log） |
+| W7 | 红蓝极限对抗（ARCH-310 范式 A-B 双基准）+修复 | `w7_redblue/` | ✅ | w7_redblue/w7_execution_log.md 场景表+w7_fixes.md 修复批在档（封账批 2026-09-21 翻 ✅） |
+| W8 | GitCommitGateway 落地 + .runtime 清理 + 收尾序列 | `w8_landing/` | ✅ | w8_landing/landing_log.md+封账批（st-taskcards-exec-20260921，2026-09-21）；vocabconsol_* 六临时目录已被定向清除（tc_05 卡实测） |
 
 **回写义务**：挖矿中发现骨架外新条目，先回写本表再施工（骨架 §2 操作律）。
 

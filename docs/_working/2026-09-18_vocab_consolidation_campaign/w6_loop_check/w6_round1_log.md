@@ -53,3 +53,17 @@ old/new 差分 ALL IDENTICAL)→0039(死 CREATE-GUARD 类名冲突 WritePolicy�
   单独复跑 exit 0 全绿。
 
 修复批：validate_script_naming.py + validate_exit_codes.py + test_phase1_gate_check.py + 本日志。
+
+## 轮3 补记（2026-09-21 04:5x，st-taskcards-exec-20260921：轮3/4/5 阵亡取证+终轮证据替代）
+
+- 轮2 后战线静止：本目录 6 笔 commit 全在 09-18（末笔 13383a70c0），轮3/4/5 从未开跑——
+  性质=无人接棒的封账，非阵亡的终轮。
+- 终轮证据替代：交接令要求的 2×2h 全量盲跑由 dataqa R3（d2d2e0eb6a，09-20，tests/governance
+  90 子域逐域留日志）替代；本班 09-21 基线三连复跑：conv --with-db RC=0（known=89/FDR=79/
+  TR=66/在用=82）、validate_target_layer RC=0（合法 72+废弃 9+别名 10）、reaper 存活
+  （killed=1 为本班冷启动死锁清理非词表域）。
+- 重大变化：轮2 的 ADVISORY 10 域已被收编进词表（known 79→89），dataqa R3 实锤的
+  test_check_vocab_domain_convergence stable_fail 死结解除——本班定向复跑该单测
+  6 passed（4.54s）。W6 判据「连续两轮问题=0」按轮2+本轮达成。
+- 收编者追认交 D 类打包批第 4 项（docs/_working/recovered_task_cards/d_class_ruling_package.md）；
+  封账细节见 w8_landing/landing_log.md。
