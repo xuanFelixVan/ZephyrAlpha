@@ -54,6 +54,8 @@ ttl: task_bound
 - **E 盘冷归档挂回（裁定⑦，数据线正门工单）**→挂回后=26 年分钟深度：波段/分钟因子有界矩阵+`kline_etf_daily` 重建（现 1675 只仅 ~57 行/只）。
 - **复权链修复当日**：按 RB 优先序全量复核——塔形顶空头→塔形底/双底→R 幅度→S8→ETFT0 rv20→F/MID 池（这是全部"暂定"结论的解除条件）。
 - 96 条缺检测器图形（图表48/structure31/trendline8/chanlun6/SR2/candle1+DL套件8，清册=`pattern_backfill/pattern_backfill_inventory.csv`）→引擎施工批（归属 Max 定）。
+- **因子库 88 条无列映射候选**（prereview 值得考 126 中 F 车道仅 38 条可映射到 TI 宽表；余 ~88 条登记在 `factor_sop_screen/screen_report.md` 映射/skip 清单）——需先为每条写因子计算代码再入考；排期时与 regcal/factor_registry 属主（整改队 T6 诚实降级件）协调，禁单方面动 factor_registry.yaml。
+- 红蓝下游 5 件修订（algo_mining_digest/etf_lane_report/indicators_sweep_a 卡/pattern_backfill csv/survivor_regime_report）若 owner 未收口，由本班代收口（勘误节已存在，核对后 commit）。
 
 ## 7. 纪律（硬约束）
 - 改前 `python scripts/lock_files.py acquire <file> <sid>`；新 .py/.md/.yaml/.json 先 `python scripts/governance/d3_metadata/batch_creation_tokens.py --prefix <路径> --created-by <sid> --capability bizmine_alpha_mining`（token 载体 `capability_canonical_file_registry.yaml` 随批同落；持锁冲突等 5 分钟勿硬闯）；.md 带 ttl frontmatter、文件名字母开头纯 snake_case。
