@@ -3373,16 +3373,16 @@ capabilities:
     记录 RTO/RPO。P3-24 SLA 目标从 config/sla_targets.yaml 加载（SSoT）。 解决发现性：新 AI 搜 "SLA/RTO/RPO/恢复时间"
     可定位真源。
 - capability_id: health_aggregator
-  canonical_override: src/zephyr/infrastructure/health_monitor/health_aggregator.py
+  canonical_override: src/zephyr/infrastructure/system_telemetry/health_aggregator.py
   aliases:
   - HealthAggregator
   - check_all
   - poll_all
-  description: 健康聚合器——多探针并行检查并聚合为系统健康视图（永久系统四要素：自动监控）。 canonical = src/zephyr/infrastructure/health_monitor/health_aggregator.py
+  description: 健康聚合器——多探针并行检查并聚合为系统健康视图（永久系统四要素：自动监控）。 canonical = src/zephyr/infrastructure/system_telemetry/health_aggregator.py
     （MOD-INF_health_monitor_aggregator，P1-5 裁定：check_all 并行检查）。 P1-10 已接入 EventBus：critical
     event 触发即时健康快照采集。 duplicates_manual：system_telemetry/health_aggregator.py（MOD-INF_health_aggregator）
     为三态探针快照（功能差异：pull-once 快照 vs check_all 并行），标 class-name-alias 豁免。 解决发现性：新 AI 搜
-    "health/健康聚合/探针" 可定位真源。
+    "health/健康聚合/探针" 可定位真源（2026-09-21 WO-16 R10：原 canonical health_monitor check_all 并行版随 1ddcd089cf 死模块批退役，canonical_override 改指幸存 system_telemetry 三态快照版）。
 - capability_id: kill_switch
   canonical_override: src/zephyr/security/access_control/kill_switch.py
   aliases:
@@ -5910,7 +5910,7 @@ creation_tokens:
   token: auto-trading-decision-map-20260904-bp
   created_by: solo-20260904-decision-map
   capability: trading_decision_map
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md
+- file: docs/_working/archive/2026-09/design_memos/69_trading_decision_map.md
   token: auto-trading-decision-map-20260904-memo
   created_by: solo-20260904-decision-map
   capability: trading_decision_map
@@ -6306,7 +6306,7 @@ creation_tokens:
   token: auto-backtest-vs-sim-reconciliation-plan-20260821
   created_by: AI-P0BATCH-001
   capability: backtest_vs_sim_reconciliation
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/pre_expiry_full_backlog_roadmap.md
+- file: docs/_working/archive/2026-09/design_memos/pre_expiry_full_backlog_roadmap.md
   token: auto-pre-expiry-backlog-roadmap-20260821
   created_by: AI-NIGHT-001
   capability: pre_expiry_backlog_roadmap
@@ -6334,15 +6334,15 @@ creation_tokens:
   token: auto-drift-events-ssot-adjudication-20260821
   created_by: AI-NIGHT-001
   capability: drift_events_ssot_adjudication
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/00_index.md
+- file: docs/_working/archive/2026-09/implementation_plans/00_index.md
   token: auto-ai-arch-index-fill-20260817
   created_by: AI-FILL-00
   capability: ai_architecture_index
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/01_external_benchmark_analysis.md
+- file: docs/_working/archive/2026-09/implementation_plans/01_external_benchmark_analysis.md
   token: auto-external-benchmark-analysis-fill-20260817
   created_by: AI-FILL-01
   capability: external_benchmark_analysis_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/02_design_asset_inventory.md
+- file: docs/_working/archive/2026-09/implementation_plans/02_design_asset_inventory.md
   token: auto-design-asset-inventory-fill-20260817
   created_by: AI-FILL-02
   capability: design_asset_inventory_plan
@@ -6350,7 +6350,7 @@ creation_tokens:
   token: auto-domain-boundary-definition-fill-20260817
   created_by: AI-FILL-03
   capability: domain_boundary_definition_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/04_autoruntime_core_build.md
+- file: docs/_working/archive/2026-09/implementation_plans/04_autoruntime_core_build.md
   token: auto-autoruntime-core-build-fill-20260817
   created_by: AI-FILL-04
   capability: autoruntime_core_build_plan
@@ -6358,35 +6358,35 @@ creation_tokens:
   token: auto-intelligence-governance-consolidation-fill-20260817
   created_by: AI-FILL-05
   capability: intelligence_governance_consolidation_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/06_model_profiling_pipeline.md
+- file: docs/_working/archive/2026-09/implementation_plans/06_model_profiling_pipeline.md
   token: auto-model-profiling-pipeline-fill-20260817
   created_by: AI-FILL-06
   capability: model_profiling_pipeline_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/07_context_engine_build.md
+- file: docs/_working/archive/2026-09/implementation_plans/07_context_engine_build.md
   token: auto-context-engine-build-fill-20260817
   created_by: AI-FILL-07
   capability: context_engine_build_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/08_multi_ai_concurrency_governance.md
+- file: docs/_working/archive/2026-09/implementation_plans/08_multi_ai_concurrency_governance.md
   token: auto-multi-ai-concurrency-governance-fill-20260817
   created_by: AI-FILL-08
   capability: multi_ai_concurrency_governance_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/11_evidence_skill_router.md
+- file: docs/_working/archive/2026-09/implementation_plans/11_evidence_skill_router.md
   token: auto-evidence-skill-router-fill-20260817
   created_by: AI-FILL-11
   capability: evidence_skill_router_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/12_reflexion_multi_agent.md
+- file: docs/_working/archive/2026-09/implementation_plans/12_reflexion_multi_agent.md
   token: auto-reflexion-multi-agent-fill-20260817
   created_by: AI-FILL-12
   capability: reflexion_multi_agent_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/15_autonomy_boundary_risk.md
+- file: docs/_working/archive/2026-09/implementation_plans/15_autonomy_boundary_risk.md
   token: auto-autonomy-boundary-risk-fill-20260817
   created_by: AI-FILL-15
   capability: autonomy_boundary_risk_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/16_ai_security_ops.md
+- file: docs/_working/archive/2026-09/implementation_plans/16_ai_security_ops.md
   token: auto-ai-security-ops-fill-20260817
   created_by: AI-FILL-16
   capability: ai_security_ops_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/17_phase_roadmap.md
+- file: docs/_working/archive/2026-09/implementation_plans/17_phase_roadmap.md
   token: auto-phase-roadmap-fill-20260817
   created_by: AI-FILL-17
   capability: phase_roadmap_plan
@@ -6394,19 +6394,19 @@ creation_tokens:
   token: auto-ai-fill-instructions-20260817
   created_by: sess-ai-arch-fill-sop-20260817
   capability: ai_arch_fill_sop
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/09_llm_security_integration.md
+- file: docs/_working/archive/2026-09/implementation_plans/09_llm_security_integration.md
   token: auto-llm-security-integration-fill-20260817
   created_by: AI-FILL-09
   capability: llm_security_integration_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/10_llm_infrastructure.md
+- file: docs/_working/archive/2026-09/implementation_plans/10_llm_infrastructure.md
   token: auto-llm-infrastructure-fill-20260817
   created_by: AI-FILL-10
   capability: llm_infrastructure_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/14_execution_layer.md
+- file: docs/_working/archive/2026-09/implementation_plans/14_execution_layer.md
   token: auto-execution-layer-fill-20260817
   created_by: AI-FILL-14
   capability: execution_layer_plan
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/13_module_factory.md
+- file: docs/_working/archive/2026-09/implementation_plans/13_module_factory.md
   token: auto-module-factory-fill-20260817
   created_by: AI-FILL-13
   capability: module_factory_plan
@@ -6454,7 +6454,7 @@ creation_tokens:
   token: auto-risk-layer-orchestrator-20260816
   created_by: session-AI-RWIRE-001
   capability: risk_layer_orchestrator
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/43_compliance_discipline.md
+- file: docs/_working/archive/2026-09/design_memos/43_compliance_discipline.md
   token: auto-43-compliance-discipline-20260812
   created_by: session-bm-fill
   capability: compliance_discipline_memo
@@ -8747,11 +8747,11 @@ creation_tokens:
   token: auto-buy-plan003-blueprint-20260813
   created_by: session-AI-SOP-001
   capability: closing_session_decision
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md
+- file: docs/_working/archive/2026-09/design_memos/construction_progress_tracker.md
   token: auto-coord-tracker-restore-20260814
   created_by: session-AI-SOP-001
   capability: construction_coordination
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/handoff_construction_coordinator.md
+- file: docs/_working/archive/2026-09/design_memos/handoff_construction_coordinator.md
   token: auto-coord-handoff-restore-20260814
   created_by: session-AI-SOP-001
   capability: construction_coordination
@@ -8952,7 +8952,7 @@ creation_tokens:
   token: fopen001-verify-schema-health-pg-unreachable-test-20260817
   created_by: AI-FOPEN-001
   capability: pg_availability_probe
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/68_code_algorithm_review_pipeline.md
+- file: docs/_working/archive/2026-09/design_memos/68_code_algorithm_review_pipeline.md
   token: auto-68-code-algorithm-review-pipeline-20260817
   created_by: COORD-68-001
   capability: code_algorithm_review_pipeline
@@ -11598,7 +11598,7 @@ creation_tokens:
   token: auto-scaffold-position_adjudication_center-20260825
   created_by: scaffold.py
   capability: position_adjudication_center
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/93_qmt_file_bridge_playbook.md
+- file: docs/_working/archive/2026-09/design_memos/93_qmt_file_bridge_playbook.md
   token: auto-qmt-file-bridge-playbook-20260825
   created_by: AI-QMTBRIDGE-001
   capability: qmt_file_bridge
@@ -11830,7 +11830,7 @@ creation_tokens:
   token: manual-test-daban-execution-20260828
   created_by: AI-WAVE2A-001（tests/ 豁免自愿补登随 SELL-001 先例）
   capability: daban_execution
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/45_warroom_playbook.md
+- file: docs/_working/archive/2026-09/design_memos/45_warroom_playbook.md
   token: auto-warroom-playbook-20260828
   created_by: AI-CLOSURE-AUDIT-001（补登：文档 2026-08-22 已存在于工作区但未入 git，随全量审查批首次提交）
   capability: warroom_playbook
@@ -12709,7 +12709,7 @@ creation_tokens:
   token: auto-scaffold-pattern_win_rate_provider-20260914
   created_by: scaffold.py
   capability: pattern_win_rate_provider
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/96_tdm_v13_validation_metadata.md
+- file: docs/_working/archive/2026-09/design_memos/96_tdm_v13_validation_metadata.md
   token: tdm-v13-validation-metadata-memo-20260914
   created_by: st-zcode-c4-20260912
   capability: c4_batch_translation
@@ -25931,10 +25931,6 @@ creation_tokens:
   capability: algo_flow_externalize
 - file: docs/03_modules/_domain_backtest/algo_flow/decision_gate.yaml
   token: algo-flow-externalize-decision-gate-2026-09-16
-  created_by: st-btfix-p17-20260916
-  capability: algo_flow_externalize
-- file: docs/03_modules/_domain_backtest/algo_flow/decisiongraph_adapter.yaml
-  token: algo-flow-externalize-decisiongraph-adapter-2026-09-16
   created_by: st-btfix-p17-20260916
   capability: algo_flow_externalize
 - file: docs/03_modules/_domain_backtest/algo_flow/e2_stationary_bootstrap.yaml
@@ -39731,7 +39727,7 @@ creation_tokens:
   token: index-navigation-02-enterprise-architecture-07-trading-decision-architecture-battle-map-20260919
   created_by: st-final3-20260919
   capability: index_navigation
-- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/index.md
+- file: docs/_working/archive/2026-09/design_memos/index.md
   token: index-navigation-02-enterprise-architecture-07-trading-decision-architecture-design-memos-20260919
   created_by: st-final3-20260919
   capability: index_navigation
@@ -39747,7 +39743,7 @@ creation_tokens:
   token: index-navigation-02-enterprise-architecture-09-ai-architecture-derived-graphs-20260919
   created_by: st-final3-20260919
   capability: index_navigation
-- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/index.md
+- file: docs/_working/archive/2026-09/implementation_plans/index.md
   token: index-navigation-02-enterprise-architecture-09-ai-architecture-implementation-plans-20260919
   created_by: st-final3-20260919
   capability: index_navigation
@@ -41630,4 +41626,18 @@ creation_tokens:
   token: "unified-plan-t_timing_window_board-20260920"
   created_by: "st-unified-plan-20260920"
   capability: "unified_campaign_v1"
+- file: docs/_working/code_doc_gov_campaign/p5_final3/w16_final3_tail_report.md
+  token: code-doc-gov-campaign-w16-final3-tail-report-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "同真源派生并入本册台账（w16_final3_tail_report），任务bound 随战役 TTL"
+- file: docs/_working/code_doc_gov_campaign/p5_final3/wo_equity_penetration_v1.md
+  token: code-doc-gov-campaign-wo-equity-penetration-v1-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "同真源派生并入本册台账（w16_final3_tail_report），任务bound 随战役 TTL"
+- file: "docs/_working/data_fix_campaign/p5_scd2_fix_report.md"
+  token: "data-fix-p5-scd2-report-20260921"
+  created_by: "st-data-fix-20260921"
+  capability: "data_fix_campaign"
 di_seam_exemptions: []
