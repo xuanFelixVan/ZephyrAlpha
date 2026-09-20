@@ -5035,3 +5035,40 @@ entries:
   related_arch: ['#ARCH-QMT-ENV-DISAMBIG-001']
   related_rulings: ['裁定#378', '裁定#379']
   superseded_by: ''
+- ruling_id: '裁定#381'
+  title: 'Owner 签字单十项全批终态确认（⑦=db_dumps 快照 14 天滚动定案；④=vhdx 压缩唯一点名项）'
+  date: '2026-09-20'
+  category: '数据'
+  status: 'active'
+  summary: >-
+    Owner 2026-09-20 深夜二轮批文："终版签字表（10 项）全部同意"——#380 九项终态维持，⑦ 落定=db_dumps
+    快照按 14 天滚动（可配置参数，删除最旧快照前必须确认数据本体在库+冷库两份在，兑现 Owner 数据
+    公理）。同时确认通知/批准边界语义：**全场唯一需 Owner 点名才执行的动作=vhdx 压缩（排班表条目
+    仅提醒+到点通知，通知形式暂定，不实现弹窗，绝不自动停机）**；日志滚动/废表删除（双副本+行数
+    核对保险，无需 Owner 在场）/冷储搬运（复制+对账+源留观 30 天）/快照滚动均已在批文范围内按排班
+    自动推进，逐步留证入交付报告。执行班据此边界执行，禁扩大点名范围也禁越过点名自行动停机级操作。
+  affected_files:
+  - docs/_working/unified_campaign/o_owner_signature_sheet_v1_0.md
+  related_arch: []
+  related_rulings: ['裁定#378', '裁定#379', '裁定#380']
+  superseded_by: ''
+- ruling_id: '裁定#382'
+  title: '废表判定改 Owner 逐表批制（修正#381 边界）+1970clean 四表转治本参照原料'
+  date: '2026-09-20'
+  category: '数据'
+  status: 'active'
+  summary: >-
+    Owner 质询"废表是否绝对机械可判"后的如实定案：**不存在能 100% 机械证明某表未来无用的判定逻辑**。
+    机械可证的只有三样：出身档案（表名+日期对到具体历史事件且该修复已验证完成）/零引用（全仓 grep
+    无代码配置注册表引用）/内容关系（bak 表与活表旧行可比对）；"永远不再需要"是判断不是事实。Owner
+    1970 反例当场成立：4 张 *_bak_1970clean_20260914 是 09-14 清理备份，而裁定#380② 刚下令 1970
+    治本——治本可能需参照它们，"看似废表实为缺数据活表"实例证明。据此废表删除机制升级为 **Owner
+    逐表批制**（修正 #381"按排班自动推进"表述中废表一项）：①扫描器自动建盘点卡（出身+修复验证+
+    零引用+内容比对+行数）；②双副本导出+行数核对先行；③盘点卡呈报 Owner 逐表批"删"，批一张删
+    一张，未批保留；④今后新废表只登记+报警永不自动删。本批 17 张全部走此流程；4 张 *_bak_1970clean
+    _20260914 标记治本参照原料，治本完成前不进入呈报清单。
+  affected_files:
+  - docs/_working/unified_campaign/o_owner_signature_sheet_v1_0.md
+  related_arch: []
+  related_rulings: ['裁定#380', '裁定#381']
+  superseded_by: ''
