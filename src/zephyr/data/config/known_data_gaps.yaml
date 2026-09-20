@@ -1216,4 +1216,21 @@ gaps:
     created: "2026-09-20"
     last_updated: "2026-09-20"
 
-last_updated: "2026-09-20"
+  # === 2026-09-21: 09-17 tick_data/tick_depth_5 全缺（miniQMT 实盘 09-18 清退真空）→ 模拟盘找回（st-data-fix-20260921 分包0）===
+  - id: "tick_data_2026_0917_gap"
+    table: "c1_market.tick_data"
+    gap_type: "date_range"
+    start_date: "2026-09-17"
+    end_date: "2026-09-17"
+    date_column: "trade_date"
+    detection_threshold: 5000000  # 日行数 < 500 万 = 缺口（邻日 09-16=2391 万）
+    status: "completed"          # 2026-09-21 模拟盘全市场回补完成
+    root_cause: "miniQMT 实盘端 2026-09-18 券商清退（穿透式监管，93 号备忘），采集桥随终端退役；09-17 为清退前最后缺口交易日，tick_data/tick_depth_5 当日 0 行"
+    resolution_plan: "模拟盘客户端（E:/国金QMT交易端模拟，sim env，config/qmt_environments.yaml）xtdata 下载回补：复用 scripts/data/p0_tick_backfill.py 配方（done 断点+ReplacingMergeTree 同键幂等+分片 insert≤5000）；宇宙从 tick_data 09-16 DISTINCT(symbol,market_type) 反推 QMT 码单 8073 只（模拟盘 get_stock_list_in_sector 板块残缺，板块法不可用）；五档按 backfill_tick_depth5 配方同步回补"
+    resolution_actual: "2026-09-21 落地（st-data-fix-20260921）：tick_data 09-17 = 0 → 28,327,322 行 / 7,799 标的（超邻日 09-16 的 23,908,666 行）；stock 2038 万/etf 394 万/index 274 万/stock_bj 56 万/cb 53 万/lof 17 万；futures 域外未处理。五档 dry-run 5/5 类别可下，全市场回补同批执行。长尾 180 只源缺 0 行（退市/停牌/模拟环境未收录，如实保留缺口）"
+    verification_20260921: "countIf(trade_date='2026-09-17')=28,327,322 ≥2000 万门槛 [亲验]；跨源抽验 000001.SZ tick 15:00 末价 11.61 = kline_daily 收盘 11.61 逐位相等，600519 差 0.03%（收盘竞价口径）[亲验]；同键重复 20,427 组为 resume 重灌未合并版本（同值幂等）"
+    channel_note: "模拟盘 tick 服务器保留≈1 个月（09-01 可下/08-18 已失效实测），30 天内缺口均可按本配方回补；分钟/日线族深度数年不受清退影响。评估详见 docs/_working/data_fix_campaign/p0_sim_as_source_assessment.md"
+    created: "2026-09-21"
+    last_updated: "2026-09-21"
+
+last_updated: "2026-09-21"
