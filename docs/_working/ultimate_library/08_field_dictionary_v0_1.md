@@ -25,7 +25,7 @@ session: "st-ulib-20260921"
 | 5 | fingerprint_sha256 | hex | 内容规范形哈希（LF 规范形，CAS 同源） |
 | 6 | fingerprint_aux | 结构 | size+mtime+HEAD+条目数 |
 | 7 | built_at / generation | 时戳+整数 | 采集时戳+扫描代次（无指纹的记录=不可引用） |
-| 8 | status | 枚举 | active/stale/orphan/archived/**ghost(馆有盘无)**/**blind(盘有馆无)** |
+| 8 | status | 枚举 | active/stale/orphan/archived/**deceased(注销，见 §3.1 死亡证明)**/**ghost(馆有盘无)**/**blind(盘有馆无)** |
 | 9 | owner_domain | 外键 | functional_domain 83 域（Backstage owner 必填纪律） |
 | 10 | retention_class | 枚举 | permanent/long/task_bound/temp（ISO 15489 保管期限表） |
 | 11 | disposition_authority | 可空引用 | 处置预授权：Owner 批件号或规则 ID（注销权的前提） |
@@ -55,7 +55,29 @@ session: "st-ulib-20260921"
 
 ## §3 事件流水字段（events 表，六流程各记一行，不可变追加）
 
-`event_id / asset_id / action(register|read|update|move|delete|audit) / actor(session_id) / gate_passed / ts / detail`——lookup_audit 与 safe_write 审计的收编目标，追责与回滚的依据。
+`event_id / asset_id / action(register|read|update|move|delete|audit) / actor(session_id) / gate_passed / ts / detail`——lookup_audit 与 safe_write 审计的收编目标，追责与回滚的依据。`action=delete` 的 detail=死亡证明引用（§3.1）。
+
+### §3.1 死亡证明（注销登记制，Owner 2026-09-21 令）
+
+**原则：注销不是消失，是换一种在编状态。** 总账条目永不删除，死者留 tombstone（本仓先例：裁定撞号 tombstone 解法、死信 q-0040"留档作废"）；会计不擦账只冲账、crates.io yank 不删包——同一法系。死亡证明=不可变记录，字段：
+
+| # | 字段 | 说明 |
+|---|---|---|
+| 1 | death_cert_id | `DC-YYYYMMDD-NNNN` 流水号 |
+| 2 | asset_id | 死者身份证号（永不复用） |
+| 3 | final_fingerprint | 死前最后指纹——证明"它原来是什么"，防删错无法举证 |
+| 4 | disposition_action | destroyed / archived_to(X) / absorbed_into(asset_id) / ttl_expired |
+| 5 | cause_of_death | 枚举：重复/退役/清缴未收编/TTL 到期/误建… |
+| 6 | authority | 处置预授权批件号（=核心字段 11 的兑现；**无授权不得签发死亡证明**） |
+| 7 | evidence_path | 盘点卡/呈批件/三证链接（机械判定门铁律） |
+| 8 | executed_by/at | 执行会话+时戳 |
+| 9 | resurrection | 可否复活+条件（封矿≠死亡，SOP 同款） |
+
+保管级=**permanent**（审计链最不能丢的一类）；死亡证明本身不注销——元层级由登记流水兜底。
+
+### §3.2 盲册本身是资产
+
+每轮盲册报告=一个 asset_id（retention_class=long），入馆归档——清缴的账本本身也在编。
 
 ## §4 馆页呈现字段（生成器产出的三视图各显示什么）
 
@@ -89,7 +111,7 @@ session: "st-ulib-20260921"
 三件套闭合循环：
 
 1. **无籍不生**（出生闸）：CREATE-GUARD 在出生点拦截，漏网率趋零；
-2. **盲册清缴**（盘点权）：blind 名册=机械扫描自动产出（路径/名字/大小/首见时间全列出），专项三处置——**收编**（补登记）/ **归档**（移入专区）/ **注销**（预授权后销毁）；总攻后首轮全量盲册=存量清缴的开工清单；
+2. **盲册清缴**（盘点权）：blind 名册=机械扫描自动产出（路径/名字/大小/首见时间全列出），专项三处置——**收编**（补登记）/ **归档**（移入专区）/ **注销**（签发死亡证明 §3.1，无授权不删）；总攻后首轮全量盲册=存量清缴的开工清单，且盲册报告本身入馆（§3.2）；
 3. **编外有编**（临时专区）：临时文件/临时文档/归档/临时代码在图书馆有**专属临时区**，持二级身份证（`retention_class=temp`+TTL），到期自动处置——**编外不是无身份，是另一种身份**。
 
 **判定：能永久解决"文件无编制/混乱"问题**——出生闸（漏网趋零）+盲册（兜底现形）+专区（编外有编）闭合了循环，且全程机械可证（符合机械判定门铁律）。两条诚实边界：①存量须一次性专项清缴（现 11.5 万未跟踪文件）；②临时区必须 TTL 自动清，否则编区变垃圾山。
