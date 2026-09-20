@@ -5145,3 +5145,52 @@ entries:
   related_rulings:
     - '裁定#340'
   superseded_by: ''
+- ruling_id: '裁定#387'
+  title: '契约 v1.3.0 修订落地：滚动归档五重安全阀自动化（INV-RET-002 修订+INV-RET-006 新增）'
+  date: '2026-09-21'
+  category: '数据'
+  status: 'active'
+  summary: >-
+    乙线（st-disk-ch-20260921）依 Owner 批文⑤（裁定#380⑤：冷储自动化影子→半自动→全自动当天
+    一次性全流程试跑跑通）与签字单⑤（契约修订三步走，裁定#381 十项全批）落地的正式载体，与契约
+    data_retention_contract.yaml v1.2.0→v1.3.0 同 commit 原子。内容：①INV-RET-002 修订——进
+    Cold 层默认手动触发；启用滚动归档后，同时满足五重安全阀（备份新鲜/export/verify/第二副本/
+    批限量）的过线完整月分区允许备份成功事件触发自动归档，kill 旗一键回退手动，INV-RET-001
+    永不删除铁律不变，仍走 archiver.py 三阶段唯一通道；②新增 INV-RET-006+§5B rolling_archive
+    参数块——滞回 1 月/批限量 3 分区 30G/熔断 3 连败/kill 旗/排除表 technical_indicator（甲线
+    互斥回落前不自动搬，同裁定#382 逐表批制方向）/14 表保留线机读化；③执行件=scripts/ch/
+    rolling_archive_reconciler.py（影子档只读、半自动档 --confirm 确认流、全自动档五阀实弹
+    2026-09-21 凌晨三档同日全部试跑通过+红蓝三注入[备份失败拒动/对账不符三败熔断/kill 旗回退]
+    全绿，首链实弹=kline_etf_15min 200502/200503/200504 三分区双副本归档）；④触发挂
+    backup.ps1 STAGE 4b 备份成功事件链（零新增 schtasks，宪法禁 cron 红线合规）。同时记录：
+    backup_state.json 曾停更于 09-16 failed 而 09-20 21:04 报告实为 ok（状态写路径病灶立案，
+    归分包5 修复验证）。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
+  - scripts/ch/rolling_archive_reconciler.py
+  - scripts/backup/backup.ps1
+  related_arch: ['PS-CTR-003', 'MOD-INF-043']
+  related_rulings: ['裁定#380', '裁定#381', '裁定#382', '裁定#383']
+  superseded_by: ''
+- ruling_id: '裁定#388'
+  title: '排班表/排期表二分口径定案（Owner 批）+「排程」词退役——排班=业务每日决策流程，排期=项目资源时刻表'
+  date: '2026-09-21'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    Owner 2026-09-21 批准二分口径并澄清历史混用：**排班表**=业务侧每日交易决策流程（先大盘状态→板块→
+    个股→做T 的顺序+各状态选何策略因子），现有载体=TDM 交易决策地图（config/trading_decision_map.yaml
+    状态矩阵+PP-001）+plan_engine 作战室引擎族（daily_warroom_pipeline/daily_plan/盘中追踪/判定台账等），
+    现状=模块层建成（daily_plan MOD-PLAN-030 事件驱动接 daily_kline 唤醒）但日循环实测未日转（09-20
+    dataqa R2 §3 W6：judgment 台账四表 0/2/3/4 行近乎全空）——「对象已建成」与「链路日日在转」两说并存，
+    后者为验收口径。**排期表**=治理侧项目资源时刻（何模块何时刻占何资源+互斥窗），现有载体=tasks.yaml+
+    DataScheduler+43 个 Windows 计划任务（ResourceSampler 族/DailyBackup/WeeklyRest/夜跑等）+本战役时序
+    声明板+三档停机协议，现状=基本建成在跑。历史件归位：W4-4「排班三表一入口」资源总视图（1aa88be859，
+    Owner 裁物理表不合并）按本口径归**排期表族**（名字带排班但性质是资源视图，术语册注记防再混）。
+    **排程**退役为动词性用词（战役级一次性任务排序活动，产出台账+派工单事毕即废，如本统一战役
+    「四路遗留排程总包」），禁再作常驻表名。术语册同 commit 新增三条（裁定#388 载体）。
+  affected_files:
+  - docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml
+  related_arch: []
+  related_rulings: ['裁定#378', '裁定#381']
+  superseded_by: ''

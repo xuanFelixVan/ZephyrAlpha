@@ -1012,3 +1012,15 @@ entries:
     en: zheng-T / fan-T (ambiguous, forbidden)
     zh: 正T/反T（禁用）
     description: A股社区土话——两词定义在社区内互相矛盾（雪球系「正T=先卖后买」vs 东财系「正T=先买后卖」），本系统禁用此对措辞，统一用 buy-first/sell-first（D41，2026-09-07）
+  - category: governance_term
+    en: trading daily routine (business schedule)
+    zh: 排班表
+    description: 裁定#388（2026-09-21）——业务侧每日交易决策流程：先大盘状态→板块→个股→做T 的顺序+各状态选何策略/因子。载体=TDM 状态矩阵+PP-001+plan_engine 作战室引擎族；验收口径=judgment 台账日日有行（模块建成≠链路日转）
+  - category: governance_term
+    en: project resource timetable (governance schedule)
+    zh: 排期表
+    description: 裁定#388（2026-09-21）——治理侧项目资源时刻表：何模块何时刻占何资源+互斥窗。载体=tasks.yaml+DataScheduler+43 个 Windows 计划任务+时序声明板/三档停机协议；W4-4「排班三表一入口」资源总视图（1aa88be859）名字带排班但性质属本族
+  - category: governance_term
+    en: one-off work sequencing (verbal use only, no standing table)
+    zh: 排程（动词性用法，禁作表名）
+    description: 裁定#388（2026-09-21）——战役级一次性任务排序活动（如「四路遗留排程总包」），产出总台账+派工单，事毕即废；项目无常驻「排程表」，常驻者唯排班（业务）与排期（资源）两族
