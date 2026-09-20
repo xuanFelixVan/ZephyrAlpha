@@ -41566,4 +41566,24 @@ creation_tokens:
   token: working-root-scattered-index-20260920
   created_by: st-maxexec-20260920
   capability: working_root_scattered
+- file: docs/_working/unified_campaign/00_master_plan.md
+  token: unified-campaign-00-master-plan-20260920
+  created_by: st-maxexec-20260920
+  capability: unified_campaign
+- file: docs/_working/unified_campaign/o_owner_signature_sheet.md
+  token: unified-campaign-o-owner-signature-sheet-20260920
+  created_by: st-maxexec-20260920
+  capability: unified_campaign
+- file: docs/_working/unified_campaign/w_line_a_data_integrity.md
+  token: unified-campaign-w-line-a-data-integrity-20260920
+  created_by: st-maxexec-20260920
+  capability: unified_campaign
+- file: docs/_working/unified_campaign/w_line_b_disk_ch.md
+  token: unified-campaign-w-line-b-disk-ch-20260920
+  created_by: st-maxexec-20260920
+  capability: unified_campaign
+- file: docs/_working/unified_campaign/w_line_c_code_doc_gov.md
+  token: unified-campaign-w-line-c-code-doc-gov-20260920
+  created_by: st-maxexec-20260920
+  capability: unified_campaign
 di_seam_exemptions: []
