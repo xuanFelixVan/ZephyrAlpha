@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-09-18T18:31:11Z'
+generated_at: '2026-09-20T04:27:17Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 261
+total_files: 274
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -82,6 +82,21 @@ files:
   version: 1.8.0
   rule_form: standard
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/policies/index.md
+  module_id: ''
+  title: policies — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
@@ -1869,6 +1884,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/sop/index.md
+  module_id: ''
+  title: sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/sop/backtest_system_sop/README.md
   module_id: ''
   title: 回测体系 SOP 总纲——分级回测金字塔 × AI 自驱循环 × 策略库入库漏斗
@@ -1877,6 +1907,36 @@ files:
   version: 1.0.0
   rule_form: procedural
   scope: 07_trading_decision_architecture
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md
+  module_id: ''
+  title: 考试政策 exam_policy——E4 正考准入·执行口径·成本双口径·复权降级·负结果台账
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: 07_trading_decision_architecture
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/backtest_system_sop/index.md
+  module_id: ''
+  title: backtest_system_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
@@ -1989,6 +2049,36 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/sop/construction_sop/index.md
+  module_id: ''
+  title: construction_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/data_audit_sop/index.md
+  module_id: ''
+  title: data_audit_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/sop/data_audit_sop/industry_chain_data_audit_policy.md
   module_id: ''
   title: 产业链供应链全景图数据审计与更新SOP——夜班自主执行版
@@ -2026,6 +2116,21 @@ files:
   status: active
   version: 1.1.0
   rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/data_ops_sop/index.md
+  module_id: ''
+  title: data_ops_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
   scope: ''
   stability: ''
   layer: ''
@@ -2072,6 +2177,51 @@ files:
   version: 1.6.0
   rule_form: checklist
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/index.md
+  module_id: ''
+  title: governance_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/mining_sop/factor_mining_sop_policy.md
+  module_id: ''
+  title: 因子挖掘 SOP——矿脉→假设→IC筛→预注册→沙箱→E4正考→组队→入库 八段缝合册（regime 条件化强制）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/mining_sop/index.md
+  module_id: ''
+  title: mining_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
@@ -2131,6 +2281,21 @@ files:
   status: active
   version: 1.0.0
   rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/ops_sop/index.md
+  module_id: ''
+  title: ops_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
   scope: ''
   stability: ''
   layer: ''
@@ -2199,6 +2364,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/sop/review_sop/index.md
+  module_id: ''
+  title: review_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/sop/review_sop/rule_disposition_policy.md
   module_id: ''
   title: 规则处置程序法——六道闸判定 × 六类归宿（每条规则/每台裁判的唯一判决流程）
@@ -2207,6 +2387,21 @@ files:
   version: 1.0.0
   rule_form: procedural
   scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/trading_decision_map_sop/index.md
+  module_id: ''
+  title: trading_decision_map_sop — 目录索引
+  doc_type: index
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
   stability: ''
   layer: ''
   superseded_by: ''
@@ -3359,7 +3554,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.2
+  version: 1.3.0
   rule_form: ''
   scope: ''
   stability: ''
