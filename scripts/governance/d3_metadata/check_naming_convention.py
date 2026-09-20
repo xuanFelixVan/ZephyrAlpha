@@ -966,6 +966,7 @@ _N16_DOCS_EXEMPT_NAMES_EXTRA_FALLBACK: frozenset[str] = frozenset(
 )
 _N16_DOCS_SKIP_DIRS_FALLBACK: set[str] = {
     "_DO_NOT_USE_old_tree",
+    "algo_flow",  # 裁定#344：镜像卡目录扫描面修正（与 trae_028 skip_dirs_docs 同步，fallback 补齐）
     "_archive",
     "_backups",
     "session_logs",

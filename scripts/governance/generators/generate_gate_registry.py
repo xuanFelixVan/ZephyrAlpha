@@ -161,6 +161,21 @@ def extract_commit_gates() -> list[dict]:
 # 新增已合并门禁时在此追加条目即可，无需改 generate() 逻辑。
 MANUAL_GATES: list[dict] = [
     {
+        # 裁定#347/#372：临界区锁机制实名登记（in-process 机制非钩子，生成器三源合并会漏——
+        # 不入此清单则全量重跑会删该条，P9c3 附带发现②治本 2026-09-20）
+        "gate_id": "COMMIT-CRITICAL-SECTION-LOCK",
+        "name": "COMMIT-CRITICAL-SECTION-LOCK: commit 临界区全局文件锁（裁定#347 实名登记）",
+        "entry": "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_GlobalCommitLock（in-process 机制，非独立钩子）",
+        "description": "裁定#347/#372：机制实存于 git_commit_gateway.py:2360-2366（_GlobalCommitLock 临界区+审计兜底）。"
+        "fail-closed 语义见 trae_079（逃生仅 emergency_commit）。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "serialization",
+        "status": "active",
+        "source": "commit-gateway",
+        "enforcement_channel": "in-process",
+    },
+    {
         "gate_id": "GATE-SCHEMA-HEALTH",
         "name": "GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）",
         "entry": "N/A (merged into GATE-C2, see redirect_to)",
