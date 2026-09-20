@@ -14,13 +14,13 @@ completes_when: 全部卡执行完毕并归档后转 archived
 
 # TC-04 ALGO_FLOW 收口遗留
 
-> **进度提示（09-21 04:3x 更新）**：①git stash list 现已为空——本卡步骤 1 依赖的"WO-13续 salvage W4 WIP 在 stash@{0}"已被消费，W4 续作改为先与执行班对账（其 staging=\.runtime\sessions\st-taskcards-exec-20260921\），确认 W4 是否已施工，勿盲目重做；②scripts/governance/d5_architecture/generators/report_algo_flow_author_debt.py 当前是他会话 staged 在途件——动生成器双件前先重测 git status；③开工重测动态锚：死信约 126、#ARCH-337 锚约 22139 行。
+> **进度提示（09-21 04:3x 更新）**：①git stash list 现已为空——本卡步骤 1 依赖的"WO-13续 salvage W4 WIP 在 stash@{0}"已被消费，W4 续作改为先与执行班对账（其 staging=.runtime/sessions/st-taskcards-exec-20260921/），确认 W4 是否已施工，勿盲目重做；②scripts/governance/d5_architecture/generators/report_algo_flow_author_debt.py 当前是他会话 staged 在途件——动生成器双件前先重测 git status；③开工重测动态锚：死信约 126、#ARCH-337 锚约 22139 行。
 
 ## 0. 一句话结论
 
 R1 防回退复审的使命已经完结（8/8 提交全为 HEAD 祖先零回退，归档 8 件齐全），D1/D2/D4 三个"待裁项"已被 #385/#338④/#333 三条裁定整体吸收而死亡。真正活着的是四件：**C2 W4 自指豁免施工**（WIP 119 行躺在 stash@{0}，作者会话已死）、**C1 W2 三项治本**（代码里客观未做，但母题 #ARCH-324 已被 #377-G03 裁 close，继续做需再裁定）、**R2 三项移交登记不实**（至今无人补登）、**D5 架构议题册回写**（337 仍 open、331 至今未登记、324 的 close 未回写）。
 
-## 1. 背景与来龙去绪
+## 1. 背景与来龙去脉
 
 landing-anchor-algo-flow-closeout 战役（09-18）完成 ALGO_FLOW 出仓与锚定后留下交接令：R1=前任成果防回退复审；C1=W2 提交链三项治本施工；C2=W4 自指 fixture 判据式豁免施工；D1-D6=六项待裁定题。原文特别声明归档文档已不在原路径、8/8 已入库。
 
@@ -85,6 +85,7 @@ landing-anchor-algo-flow-closeout 战役（09-18）完成 ALGO_FLOW 出仓与锚
 3. #ARCH-324 回写若被别的班先行执行，步骤 2 案卷前提要同步更新。
 4. R1 的 orphans=0/64 绿两条维持 09-18 数值未独立复测（调查纪律禁跑），执行时如需可复跑 reconciler --json。
 5. 主区脏条目 ~780：写操作限 own-diff，提交后 git log -1 --name-only 核归属。
+6. 不 kill 常驻守护（裁定 #281③）：步骤 2 的 W2 真源含 commit_belt_daemon.py（常驻守护）——测试与施工全程禁重启或杀守护进程；不动他人 stash；门禁只许加严（裁定 #321）。
 
 ## 7. 执行冷启动提示
 
