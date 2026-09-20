@@ -257,12 +257,35 @@ def _run_special_schedule(
         # 每次触发实查标记文件，开关即时生效无需重启调度器
         _flag = Path(__file__).resolve().parents[3] / "data" / "runtime" / "nightly_sentiment.disabled"
         if _flag.exists():
+            # fetch_perf 心跳（2026-09-21 st-data-fix 治本 S11 盲区发现"无任何面暴露此开关
+            # 状态"）：总闸停用态也落一条被动记录，防静默空转再次漏观 5 天
+            scheduler._record_fetch_perf(
+                {},
+                "nightly_sentiment_batch",
+                "internal",
+                "nightly_sentiment",
+                "DISABLED_BY_FLAG",
+                0.0,
+                0,
+                "service flag nightly_sentiment.disabled present",
+            )
             return {"nightly_sentiment": False}
+        _t0 = time.monotonic()  # elapsed 差值计时（单调钟，性能埋点）
         try:
             from zephyr.intelligence.nightly_sentiment_window import run_nightly_sentiment_batch
 
             result = run_nightly_sentiment_batch()
         except Exception as exc:  # noqa: BLE001 — 接线故障降级告警
+            scheduler._record_fetch_perf(
+                {},
+                "nightly_sentiment_batch",
+                "internal",
+                "nightly_sentiment",
+                "FAILED",
+                time.monotonic() - _t0,
+                0,
+                str(exc),
+            )
             try:
                 scheduler._alerter.notify(
                     "nightly_sentiment",
@@ -273,6 +296,17 @@ def _run_special_schedule(
             except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
                 pass
             return {"nightly_sentiment": False}
+        _rows = len(result.get("computed", [])) + len(result.get("degraded", []))
+        scheduler._record_fetch_perf(
+            {},
+            "nightly_sentiment_batch",
+            "internal",
+            "nightly_sentiment",
+            "SUCCESS" if result.get("ok") else "FAILED",
+            time.monotonic() - _t0,
+            _rows,
+            None if result.get("ok") else f"failed={result.get('failed')}",
+        )
         if not result.get("ok", False):
             try:
                 scheduler._alerter.notify(
@@ -793,14 +827,14 @@ class IntegratorScheduler:
                         # CH 真断供时哨兵自身静默失明，比没有哨兵更危险。
                         # 现改为"投递成功才置闩"，失败保留未告警态、下一轮探活重试。
                         self._ch_probe_alerted_dead = self._deliver_alert_with_latch(
-                                task_id="ch_health_probe",
-                                error=(
-                                    f"CH 健康探活连续 {self._ch_probe_fail_count} 次失败"
-                                    f"（间隔 {self._ch_health_interval}s，约 "
-                                    f"{self._ch_probe_fail_count * self._ch_health_interval}s），"
-                                    f"服务不可达。灾时若在实盘运行期将导致数据中断，"
-                                    f"请立即检查 CH 服务状态（systemctl status clickhouse-server）。"
-                                ),
+                            task_id="ch_health_probe",
+                            error=(
+                                f"CH 健康探活连续 {self._ch_probe_fail_count} 次失败"
+                                f"（间隔 {self._ch_health_interval}s，约 "
+                                f"{self._ch_probe_fail_count * self._ch_health_interval}s），"
+                                f"服务不可达。灾时若在实盘运行期将导致数据中断，"
+                                f"请立即检查 CH 服务状态（systemctl status clickhouse-server）。"
+                            ),
                             level="CRITICAL",
                             source="clickhouse",
                         )
@@ -1146,12 +1180,8 @@ class IntegratorScheduler:
                 write_loaded_state_snapshot,
             )
 
-            snapshot = build_loaded_state_snapshot(
-                self._config_dir, self._schedules, self._tasks, pid=os.getpid()
-            )
-            path = write_loaded_state_snapshot(
-                snapshot, Path(state_path) if state_path else _DEFAULT_LOADED_STATE
-            )
+            snapshot = build_loaded_state_snapshot(self._config_dir, self._schedules, self._tasks, pid=os.getpid())
+            path = write_loaded_state_snapshot(snapshot, Path(state_path) if state_path else _DEFAULT_LOADED_STATE)
             log.info(
                 "已导出配置指纹快照: %s（%d 档时段 / %d 任务）",
                 path,
@@ -1462,11 +1492,9 @@ class IntegratorScheduler:
         if len(points) < 2:
             return {"ok": True, "skipped": f"样本不足 samples={len(points)}"}
         today_d, today_n = points[-1]
-        base_pts = sorted(c for _, c in points[-1 - baseline_days:-1])
+        base_pts = sorted(c for _, c in points[-1 - baseline_days : -1])
         m = len(base_pts)
-        median = (
-            base_pts[m // 2] if m % 2 else (base_pts[m // 2 - 1] + base_pts[m // 2]) / 2
-        )
+        median = base_pts[m // 2] if m % 2 else (base_pts[m // 2 - 1] + base_pts[m // 2]) / 2
         if not median:
             return {"ok": True, "skipped": "baseline=0"}
         deviation = (today_n - median) / median

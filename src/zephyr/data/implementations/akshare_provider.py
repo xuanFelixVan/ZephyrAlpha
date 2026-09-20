@@ -127,6 +127,7 @@ _TBL_CONCEPT_BOARD_CONSTITUENT = get_registry().table("market_concept_board_cons
 # #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
 _TBL_CONCEPT_SECTOR = get_registry().table("market_concept_sector")
 _TBL_REALTIME_SNAPSHOT = get_registry().table("market_realtime_snapshot")
+_TBL_INDEX_QUOTE = get_registry().table("market_index_quote")
 _TBL_SECTOR_META = get_registry().table("market_sector_meta")
 _TBL_CONVERTIBLE_BOND_LIST = get_registry().table("market_cb_list")
 _TBL_DAILY_VALUATION = get_registry().table("market_daily_valuation")
@@ -402,6 +403,7 @@ _AKSHARE_CAPABILITIES = frozenset(
         # #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
         "concept_sector",  # 替代 iFind i问财概念板块（akshare stock_board_concept_name_ths）
         "realtime_snapshot",  # 替代 iFind THS_RealtimeQuotes（akshare stock_zh_a_spot_em，注意反爬）
+        "index_quote",  # 裁定#339 接管批（2026-09-21 st-data-fix）：指数实时快照（东财主+sina备）
         "sector_meta",  # 替代 iFind 881板块汇总（akshare 从成分股聚合计算）
         "stock_hot_rank",  # #ARCH-REALTIME-ACCUM: 东财人气/关注排行（每日快照积累）
         "option_kline",  # #ARCH-OPTION-AKSHARE-FALLBACK: 新浪源期权日K线（QMT无期权权限时fallback）
@@ -1037,6 +1039,9 @@ class AkshareIngestProvider(IngestProviderBase):
             # #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
             CapabilityContract("concept_sector", supports_symbols_null=True),
             CapabilityContract("realtime_snapshot", supports_symbols_null=True),
+            # 裁定#339 接管批（2026-09-21 st-data-fix）：miniQMT 09-18 退役后指数实时快照
+            # 由 akshare 承接（东财主接口，拒连自动切 sina 备胎）
+            CapabilityContract("index_quote", supports_symbols_null=True),
             CapabilityContract("sector_meta", supports_symbols_null=True),
             # #ARCH-REALTIME-ACCUM: 东财人气/关注排行（每日快照积累）
             CapabilityContract("stock_hot_rank", supports_symbols_null=True),
@@ -5673,6 +5678,151 @@ class AkshareIngestProvider(IngestProviderBase):
             last_key=now_str,
             elapsed_sec=seconds_since(t0),
         )
+
+    # ---- 指数实时快照（index_quote，裁定#339 接管批 2026-09-21 st-data-fix） ----
+
+    @staticmethod
+    def _index_spot_rows_em(df, trade_date: str, ts_str: str, source_tag: str) -> list[tuple]:
+        """东财 spot DataFrame → index_quote 行（代码→symbol，增量小工具降复杂度）。"""
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            code = str(row.get("代码") or "").strip()
+            symbol = AkshareIngestProvider._em_index_code_to_symbol(code) if code else None
+            if symbol is None:
+                continue
+            rows.append(
+                (
+                    trade_date,
+                    ts_str,
+                    symbol,
+                    safe_float(row.get("最新价")),
+                    int(safe_float(row.get("成交量")) or 0),
+                    safe_float(row.get("成交额")),
+                    source_tag,
+                )
+            )
+        return rows
+
+    @staticmethod
+    def _index_spot_rows_sina(df, trade_date: str, ts_str: str, source_tag: str) -> list[tuple]:
+        """新浪 spot DataFrame → index_quote 行（sh/sz/bj 前缀→symbol，csi 系跳过）。"""
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            raw = str(row.get("代码") or "").strip().lower()  # "sh000001"
+            # 前缀映射：sh/sz/bj + 6位代码 → symbol；其余前缀（csi 等）跳过
+            if len(raw) != 8 or raw[:2] not in ("sh", "sz", "bj"):
+                continue
+            rows.append(
+                (
+                    trade_date,
+                    ts_str,
+                    f"{raw[2:]}.{raw[:2].upper()}",
+                    safe_float(row.get("最新价")),
+                    int(safe_float(row.get("成交量")) or 0),
+                    safe_float(row.get("成交额")),
+                    source_tag,
+                )
+            )
+        return rows
+
+    def _fetch_index_spot_df(self, policy: SourcePolicy) -> tuple[object, str, str]:
+        """双接口取数。返回 (df, source_tag, last_error)。
+
+        顺序自裁（2026-09-21 st-data-fix，偏离裁定#339 日线族"东财主"次序并留痕）：
+        快照族覆盖优先——sina spot=562 只全宇宙（sh/sz/bj 前缀可映射），东财
+        "沪深重要指数"仅 ~43 只大盘（实测 03:51 成功时仅 43 行）；且东财自 09-18
+        起间歇拒连（RemoteDisconnected，policy 重试 5 次烧 ~60s/轮，5 分钟级
+        快照档不可承受）。故 sina 主、东财仅兜底（东财日线族裁定不受影响）。
+        """
+        import akshare as ak
+
+        last_error = ""
+        try:
+            df = self._call_with_policy(ak.stock_zh_index_spot_sina, policy)
+            if df is not None and len(df) > 0:
+                return df, "akshare_sina", ""
+            last_error = "sina empty"
+        except Exception as e:  # noqa: BLE001 — 主线失败切兜底
+            last_error = str(e)
+        df = self._call_with_policy(ak.stock_zh_index_spot_em, policy, symbol="沪深重要指数")
+        return df, "akshare", last_error
+
+    def _fetch_index_quote(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """获取指数实时行情快照，写入 c1_market.index_quote。
+
+        裁定#339 接管批：miniQMT 09-18 退役（ZephyrAlpha_IndexMinuteEOD 同日退役），
+        index_quote_snapshot 任务由 akshare 承接。接口选型：
+          1. 东财 stock_zh_index_spot_em（裁定主线；09-18 实测断连 5/5，本日复测仍拒连，
+             RemoteDisconnected——保留为首选，拒连时秒级失败自动切换）
+          2. 新浪 stock_zh_index_spot_sina（裁定备胎；实测 562 行全宇宙可用，
+             代码带 sh/sz 前缀 → 映射 .SH/.SZ 后缀）
+
+        表 schema: (trade_date, timestamp, symbol, price, volume, amount, data_source)
+        quality_flag/exchange/symbol_canonical 由 CH DEFAULT 填充。
+        timestamp 取抓取时刻本地墙钟（与 miniqmt 存量口径一致，显式时区转换）。
+        """
+        table = payload.table or _TBL_INDEX_QUOTE
+        columns = [
+            "trade_date",
+            "timestamp",
+            "symbol",
+            "price",
+            "volume",
+            "amount",
+            "data_source",
+        ]
+        trade_date = payload.end.isoformat()
+        t0 = time.monotonic()
+        try:
+            df, source_tag, last_error = self._fetch_index_spot_df(policy)
+        except Exception as e:  # noqa: BLE001 — 双接口皆败按错误返回（错误契约：不抛）
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"index_quote 东财+新浪均失败: em={last_error[:120]} sina={str(e)[:120]}",
+            )
+            return
+        if df is None or len(df) == 0:
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"index_quote 双接口均 0 行: em={last_error[:120]}",
+            )
+            return
+
+        # timestamp：显式 UTC→本地时区转换（禁裸 datetime.now()，RULE-SCHEMA-TZ）
+        ts_str = now_utc().astimezone().strftime("%Y-%m-%d %H:%M:%S")
+        build = self._index_spot_rows_em if source_tag == "akshare" else self._index_spot_rows_sina
+        rows = build(df, trade_date, ts_str, source_tag)
+
+        self._log.info(f"index_quote: {len(rows)} 行（{source_tag}）")
+        yield FetchResult(
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=payload.end.isoformat(),
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    @staticmethod
+    def _em_index_code_to_symbol(code: str) -> str | None:
+        """东财指数代码 → 带交易所后缀 symbol（000xxx→.SH / 399xxx→.SZ / 899xxx→.BJ）。"""
+        c = "".join(ch for ch in code if ch.isdigit())
+        if len(c) != 6:
+            return None
+        if c.startswith("000"):
+            return f"{c}.SH"
+        if c.startswith("399"):
+            return f"{c}.SZ"
+        if c.startswith("899"):
+            return f"{c}.BJ"
+        return f"{c}.CSI"
 
     # ---- 26d. 行业板块汇总（sector_meta, #ARCH-IFIND-FAILOVER 方案B） ----
 

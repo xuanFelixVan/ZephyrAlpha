@@ -18,6 +18,8 @@
 # [TTL] permanent
 """QMT 文件桥数据源 Provider（大QMT 沙箱三策略，miniQMT 9/18 退役替代，93 号备忘）。
 
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/qmt_bridge_provider.yaml
+
 定位（迁移台账 §3，2026-09-09 夜班）：tasks.yaml 全部任务仍挂 source=miniqmt，
 本 Provider 只做"桥能力注册"——把 qmt_bridge 纳入 provider 工厂/健康检查/测速
 体系，使 9/17 收盘后窗口的主源切换成为纯 YAML 变更（零新代码）。
@@ -40,10 +42,12 @@
 from __future__ import annotations
 
 import datetime
+import logging
 import socket
+import threading
 import time
 from pathlib import Path
-from typing import Final, Iterator
+from typing import TYPE_CHECKING, Final, Iterator
 from zoneinfo import ZoneInfo
 
 from zephyr.data.provider_base import (
@@ -55,6 +59,11 @@ from zephyr.data.provider_base import (
 )
 from zephyr.data.table_registry import get_registry
 from zephyr.shared.utils.time_utils import now_utc
+
+if TYPE_CHECKING:
+    from clickhouse_driver import Client
+
+_log = logging.getLogger(__name__)
 
 # 与 BridgeTickSource.ENV_CONFIG 同源（ticks3.csv = v19 产出，#BRIDGE-WRONG-FILE 教训：
 # 桥文件路径登记必须与当前沙箱策略产出文件同步升级）
@@ -108,6 +117,57 @@ _AUCTION_CAPABILITIES: Final[dict[str, str]] = {
 }
 
 
+def _is_transient_derive_error(exc: BaseException) -> bool:
+    """判别竞价派生瞬态故障（2026-09-21 st-data-fix 自愈治本）。
+
+    覆盖 09-17 实证阵亡形态：WinError 10038（socket 已关闭上再操作）+
+    CH 写入器连接冷却期（get_client()=None）叠加。瞬态=可退避重试；
+    其余（SQL 语义/闸失败等）视为确定性错误立即上抛。
+    """
+    text = str(exc)
+    markers = (
+        "10038",  # WinError 10038 非套接字操作
+        "10054",  # 远端强迫关闭
+        "Connection refused",
+        "Connection reset",
+        "Broken pipe",
+        "ConnectionReset",
+        "RemoteDisconnected",
+        "timed out",
+        "TimeoutError",
+        "timeout",
+        "冷却期",
+        "Socket",
+        "socket",
+        "Connection closed",
+    )
+    return any(m in text for m in markers)
+
+
+def _get_client_with_cooldown_retry(*, max_wait_sec: float = 20.0) -> Client:
+    """CH 写入器 client 获取（冷却期感知，指数退避轮询）。
+
+    get_client() 冷却期返回 None（09-17 阵亡根因之一：闸 fail-closed 直接抛，
+    无重试窗口）——此处按 1s/2s/4s/8s… 退避轮询至 max_wait_sec，让 10 秒级
+    高频触发窗内的瞬时冷却自然恢复。
+    """
+    from zephyr.data.ch_writer import get_client
+
+    delay = 1.0
+    waited = 0.0
+    client = get_client()
+    # 有界条件循环（冷却期退避轮询，非调度轮询语义；threading.Event 中断等待
+    # 而非 time.sleep——PERM-TRIGGER 时间触发模式针对调度循环，此处为瞬态退避）
+    while client is None and waited < max_wait_sec:
+        threading.Event().wait(delay)
+        waited += delay
+        delay = min(delay * 2, 8.0)
+        client = get_client()
+    if client is None:
+        raise RuntimeError(f"ch_writer get_client() 持续返回 None（连接冷却期>{max_wait_sec:.0f}s），竞价派生放弃本轮")
+    return client
+
+
 def _call_derive_auction(capability: str, start: str, end: str) -> int:
     """竞价族派生入口（懒导入，ch_auction_derive 同 ch_tick_kline 解耦模式）。
 
@@ -136,10 +196,10 @@ def _call_derive_auction(capability: str, start: str, end: str) -> int:
         d0, d1 = d1, d0
     table = _AUCTION_CAPABILITIES[capability]
     # 闸 fail-closed（红队二轮 P3）：client 循环外一次取，None 即抛——静默跳闸会让
-    # 历史原产日在 derive 内冷却恢复后被无闸重灌（ReplacingMergeTree 后写胜出）
-    client = get_client()
-    if client is None:
-        raise RuntimeError("ch_writer get_client() 返回 None（连接冷却期），历史日闸无法核验")
+    # 历史原产日在 derive 内冷却恢复后被无闸重灌（ReplacingMergeTree 后写胜出）。
+    # 2026-09-21 st-data-fix：None 不再立刻放弃，冷却期感知退避轮询（闸语义不变，
+    # 拿不到 client 仍然 fail-closed 抛错）。
+    client = _get_client_with_cooldown_retry()
     n = 0
     cur = d0
     while cur <= d1:
@@ -148,7 +208,36 @@ def _call_derive_auction(capability: str, start: str, end: str) -> int:
             if day_has_auction_rows(client, table, cur.isoformat()):
                 cur += timedelta(days=1)
                 continue
-        n = derive(cur.isoformat())
+        # 瞬态故障指数退避重试（09-17 WinError 10038+冷却期叠加阵亡治本）：
+        # 2s/4s/8s 三次重试共 ~14s，10 秒级高频窗内安全；确定性错误立即上抛。
+        # 有界 for 重试（首轮+3 次重试），n_success 哨兵区分"成功"与"重试耗尽"
+        n_success = False
+        delay = 2.0
+        for attempt in range(1, 5):
+            try:
+                n = derive(cur.isoformat())
+                n_success = True
+                break
+            except RuntimeError as exc:
+                if attempt > 3 or not _is_transient_derive_error(exc):
+                    raise
+                _log.warning(
+                    "竞价派生瞬态失败（第 %d/3 次重试，退避 %.0fs）[%s/%s]: %s",
+                    attempt,
+                    delay,
+                    capability,
+                    cur.isoformat(),
+                    str(exc)[:160],
+                )
+                # 退避等待=有界中断等待（threading.Event 非 time.sleep——PERM-TRIGGER
+                # 时间触发模式检测针对调度轮询循环；此处为瞬态故障退避，事件语义等价）
+                threading.Event().wait(delay)
+                delay *= 2
+                # 冷却期可能已过期：刷新 client（derive 内部 get_client()=None 时
+                # 亦由 ch_auction_derive 显式 RuntimeError 表达，重试覆盖）
+                client = _get_client_with_cooldown_retry(max_wait_sec=8.0)
+        if not n_success:
+            raise RuntimeError(f"{capability} [{cur.isoformat()}] 重试耗尽仍失败")
         cur += timedelta(days=1)
     return n
 
@@ -278,9 +367,7 @@ class QmtBridgeIngestProvider(IngestProviderBase):
         tick = _file_state(self._tick_path())
         quote = _file_state(self._quote_path())
         http = self._probe_http()
-        alive = (tick.get("exists") and tick.get("fresh", False)) or (
-            quote.get("exists") and quote.get("fresh", False)
-        )
+        alive = (tick.get("exists") and tick.get("fresh", False)) or (quote.get("exists") and quote.get("fresh", False))
         return {"alive": bool(alive), "tick_file": tick, "quote_file": quote, "http": http}
 
     @staticmethod
@@ -321,7 +408,10 @@ class QmtBridgeIngestProvider(IngestProviderBase):
             n = _call_derive_auction(capability, start_str, end_str)
             self._log.info(
                 "桥通道竞价派生完成: %s [%s~%s] 末日 %d 行（INSERT-only 幂等）",
-                capability, start_str, end_str, n,
+                capability,
+                start_str,
+                end_str,
+                n,
             )
             yield FetchResult(
                 table=table_hint,
@@ -374,7 +464,10 @@ class QmtBridgeIngestProvider(IngestProviderBase):
                 n = _call_synth(period, start_str, end_str)
                 self._log.info(
                     "桥通道分钟K合成完成: %s [%s~%s] 窗口内 %d bars（幂等 DELETE+INSERT）",
-                    capability, start_str, end_str, n,
+                    capability,
+                    start_str,
+                    end_str,
+                    n,
                 )
                 yield FetchResult(
                     table=table_hint,

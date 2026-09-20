@@ -999,7 +999,7 @@ tasks:
     capability: tick_data
 - task_id: index_quote_snapshot
   table: c1_market.index_quote
-  source: miniqmt
+  source: akshare         # 裁定#339 接管批（2026-09-21 st-data-fix）：miniQMT 09-18 退役；快照族覆盖优先自裁=sina 主（562 全宇宙）+东财兜底（东财拒连 5/5 实测，日线族"东财主"裁定不受影响）
   schedule: intraday_realtime
   incremental: true
   date_col: trade_date
@@ -1007,7 +1007,7 @@ tasks:
   capability: index_quote
   symbols:
   extra:
-    description: "指数3秒实时行情快照"
+    description: "指数实时行情快照（原 miniqmt 3秒级，akshare 承接为轮询级快照）"
 
   # EDB宏观数据任务已退役（2026-08-14 #ARCH-DATA-IFIND-RETIRE-001）：iFind 试用账号配额耗尽且数据源整体退役，
   # edb_data 表从未产出（0 行）。宏观数据由 macro_data 任务（akshare/FRED/EIA）覆盖。

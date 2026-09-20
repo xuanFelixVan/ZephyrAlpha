@@ -1,0 +1,56 @@
+# ALGO_FLOW 外部真源——qmt_bridge_provider（_domain_data 域，真源 src/zephyr/data/implementations/qmt_bridge_provider.py）
+# 2026-09-21 st-data-fix-20260921 竞价自愈批补锚：契约头减负（P2-1），extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.implementations.qmt_bridge_provider
+source_of_truth: src/zephyr/data/implementations/qmt_bridge_provider.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: capability 参数
+    #   fields: auction_data（快照终态）/ auction_book（逐拍五档）
+    #   code: _AUCTION_CAPABILITIES[capability] 查表路由目标表
+    # - id: I2
+    #   name: start/end 参数
+    #   fields: YYYY-MM-DD 日期区间（含端点），倒置时防御性交换
+    #   code: _call_derive_auction(capability, start, end)
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 竞价窗派生（CH 内 INSERT SELECT）
+    #   name_en: derive_auction_from_tick_depth_5
+    #   intro: 逐日过 day_has_auction_rows 防覆盖闸（end 当日除外，幂等终态语义）后
+    #     调 ch_auction_derive 派生——tick_depth_5 窗口 [09:15,09:26) 内 argMax 终态
+    #     （snapshot）或逐拍直插+昨收/涨跌停规则推导（book），INSERT-only 零 DELETE
+    #   formula: argMax(price,timestamp) GROUP BY symbol,trade_date（snapshot）；pre_close=
+    #     昨收 round 2dp，涨跌停=主板10%/创科20%/北交所30%（book）
+    # - id: F2
+    #   name_zh: 瞬态自愈（09-17 阵亡治本，2026-09-21 st-data-fix）
+    #   name_en: transient_backoff_retry
+    #   intro: _get_client_with_cooldown_retry 有界退避轮询（1/2/4/8s，冷却期感知，
+    #     闸 fail-closed 语义不变）+ _is_transient_derive_error 瞬态判别（WinError
+    #     10038/10054/reset/timeout/冷却期）命中则 threading.Event 退避 2s/4s/8s
+    #     三次重试并刷新 client；确定性错误立即上抛
+    #   formula: while client is None and waited<max_wait_sec（有界条件循环）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 逐日派生循环
+    #   name_en: per_day_derive_loop
+    #   intro: [d0,d1] 逐日：闸检→派生→游标推进；返回末日表内行数
+    #   inputs: I1, I2, F1, F2
+    #   outputs: O1
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 派生后行数
+    #   name_en: int
+    #   intro: 末日目标表行数（rows_fetched 语义，>0 才推进 last_key 游标）
+    #   downstream: scheduler BufferedWriter/FetchResult
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # F1 --> A1
+    # F2 --> A1
+    # A1 --> O1
