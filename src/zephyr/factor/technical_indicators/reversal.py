@@ -16,7 +16,7 @@
 # [TTL] permanent
 """
 
-反转类技术指标（5 个，v1.0.0 全部施工完成）。
+反转类技术指标（4 个，v1.0.0 全部施工完成；原第 5 件 CandlestickPattern 已按裁定#233 退役）。
 
 指标清单：RSIDivergence/MACDDivergence/BOLLBreakout/VolumePriceDivergence
 
@@ -37,6 +37,7 @@
 
 from __future__ import annotations
 
+import itertools
 import logging
 
 import numpy as np
@@ -69,9 +70,9 @@ def _local_extrema(values: np.ndarray, order: int, kind: str) -> list[int]:
             continue
         center = window[order]
         neighbors = np.delete(window, order)
-        if kind == "max" and (center > neighbors).all():
-            extrema.append(i)
-        elif kind == "min" and (center < neighbors).all():
+        is_peak = kind == "max" and (center > neighbors).all()
+        is_valley = kind == "min" and (center < neighbors).all()
+        if is_peak or is_valley:
             extrema.append(i)
     return extrema
 
@@ -98,7 +99,7 @@ def _divergence_signal(
     n = len(p)
     for kind, sign in (("max", 1.0), ("min", -1.0)):
         extrema = _local_extrema(p, order, kind)
-        for prev, curr in zip(extrema, extrema[1:]):
+        for prev, curr in itertools.pairwise(extrema):
             if curr - prev > lookback:
                 continue
             i_prev, i_curr = ind[prev], ind[curr]
