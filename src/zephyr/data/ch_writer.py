@@ -46,6 +46,7 @@ ClickHouse 写入器（MOD-L00-004 §3.2 数据流第6步 + §7.3 幂等性）�
 
 from __future__ import annotations
 
+import datetime
 import http.client
 import logging
 import os
@@ -54,7 +55,7 @@ import time
 import urllib.parse
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 if TYPE_CHECKING:
     from zephyr.data.provider_base import FetchResult
@@ -388,9 +389,7 @@ def http_insert(
         # 限频留痕——2026-09-16 断供 3h 此路径零日志，事后无法归因
         _http_host_empty_logged += 1
         if _http_host_empty_logged == 1 or _http_host_empty_logged % 500 == 0:
-            log.warning(
-                "HTTP host 不可用，insert 降级本地落盘（累计 %d 次）", _http_host_empty_logged
-            )
+            log.warning("HTTP host 不可用，insert 降级本地落盘（累计 %d 次）", _http_host_empty_logged)
         return False
     path = f"/?query={urllib.parse.quote(sql)}"
     try:
@@ -514,6 +513,68 @@ def ensure_database(name: str, timeout: int = _DEFAULT_TIMEOUT) -> bool:
             e,
         )
         return False
+
+
+# 1970 哨兵拦截（2026-09-21 ②b 治本，st-data-fix-20260921）：写前统一净化日期哨兵。
+# 病根溯源（R1 体检 §4 + P6 来源清单）：provider 空日期（_norm_date_str 返 ""）或
+# 硬编码 '1970-01-01'/date(1970,1,1)，经 TSV 写入非 Nullable Date 列时，
+# 空字段/NULL 被 CH input_format_null_as_default 补成默认值 1970-01-01
+# （18 表 43.6 万行假日期的写入端成因）。此处统一转 None（\N 落真 NULL，
+# 配合 Phase2 的 Nullable(Date) DDL）；PIT 轴豁免——index_list 等墓碑
+# valid_to=1970 关死是登记在案的设计语义，不得改写。
+_1970_SENTINEL_STRINGS: Final = ("", "1970-01-01", "1970-01-01 00:00:00", "1970-01-01 00:00")
+_1970_DATE_SUFFIXES: Final = ("_date", "_period")
+_1970_DATE_EXACT_NAMES: Final = {"dividend_year"}
+_1970_PIT_EXEMPT_COLUMNS: Final = {"valid_from", "valid_to"}
+
+
+def _is_1970_date_like_column(name: str) -> bool:
+    n = str(name).lower()
+    return n not in _1970_PIT_EXEMPT_COLUMNS and (n.endswith(_1970_DATE_SUFFIXES) or n in _1970_DATE_EXACT_NAMES)
+
+
+def _is_1970_sentinel(v) -> bool:
+    if isinstance(v, str):
+        return v.strip() in _1970_SENTINEL_STRINGS
+    if isinstance(v, datetime.datetime):
+        return v.date() == datetime.date(1970, 1, 1) and (v.hour, v.minute, v.second) == (0, 0, 0)
+    if isinstance(v, datetime.date):
+        return v == datetime.date(1970, 1, 1)
+    return False
+
+
+def scrub_1970_date_sentinels(columns, rows, table: str = ""):
+    """写前 1970/epoch 日期哨兵拦截：日期类列的 ''/'1970-01-01'/date(1970,1,1) → None。
+
+    防再犯守卫（写入端治本②b）：拦截点在 write_result/BufferedWriter.add 两个
+    TSV 构造入口，PIT 轴（valid_from/valid_to）豁免。
+
+    Returns:
+        (rows, fixed_count)：净化后的行列表与拦截数（fixed=0 时不产生日志）。
+    """
+    if not rows or not columns:
+        return rows, 0
+    idxs = [i for i, c in enumerate(columns) if _is_1970_date_like_column(c)]
+    if not idxs:
+        return rows, 0
+    fixed = 0
+    out = []
+    for row in rows:
+        replaced = None
+        for i in idxs:
+            if i < len(row) and _is_1970_sentinel(row[i]):
+                if replaced is None:
+                    replaced = list(row)
+                replaced[i] = None
+                fixed += 1
+        out.append(tuple(replaced) if replaced is not None else row)
+    if fixed:
+        log.warning(
+            "scrub_1970_date_sentinels(%s): 拦截 %d 个 1970/空串日期哨兵 → NULL（②b 治本守卫）",
+            table or "?",
+            fixed,
+        )
+    return out, fixed
 
 
 def tsv_escape(v) -> str:
@@ -923,6 +984,10 @@ def write_result(
                 )
         except Exception as e:  # noqa: BLE001 — 质量门禁失败不得阻断写入
             log.warning("write_result(%s): quality_gate 跳过（%s）", result.table, e)
+
+    # ②b 1970 治本守卫：日期哨兵写前拦截（2026-09-21，详见 scrub_1970_date_sentinels）
+    if eff_cols:
+        rows, _n1970 = scrub_1970_date_sentinels(eff_cols, rows, result.table)
 
     # 构造 TSV 字节
     tsv_lines = []

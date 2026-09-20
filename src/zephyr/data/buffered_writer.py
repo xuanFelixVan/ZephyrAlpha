@@ -107,16 +107,21 @@ class BufferedWriter:
         if not result.rows:
             return True
 
+        # ②b 1970 治本守卫：日期哨兵写前拦截（2026-09-21，ch_writer.scrub_1970_date_sentinels）
+        scrubbed_rows, _n1970 = ch_writer.scrub_1970_date_sentinels(
+            list(result.columns or []), result.rows, self._table
+        )
+
         # 首次 add：确定列子句和列过滤索引
         if self._cols_clause is None:
             self._init_columns(result)
 
         # 按列过滤索引添加行
         if self._keep_indices and len(self._keep_indices) < len(result.columns):
-            for row in result.rows:
+            for row in scrubbed_rows:
                 self._buffer.append(tuple(row[i] for i in self._keep_indices))
         else:
-            self._buffer.extend(result.rows)
+            self._buffer.extend(scrubbed_rows)
 
         self._total_added += len(result.rows)
         if self._first_buffer_ts is None:

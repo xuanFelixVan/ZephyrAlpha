@@ -3692,6 +3692,7 @@ class AkshareIngestProvider(IngestProviderBase):
         columns = [
             "symbol",
             "end_date",
+            "announce_date",
             "pledge_count",
             "pledge_ratio",
             "total_shares",
@@ -3729,6 +3730,7 @@ class AkshareIngestProvider(IngestProviderBase):
                     (
                         sym,
                         end_date,
+                        None,  # announce_date 接口未提供（②b：显式 None，禁列缺省落 1970 DEFAULT）
                         safe_float(row.get("质押笔数")),
                         safe_float(row.get("质押比例")),
                         None,  # total_shares 接口未提供
@@ -3895,13 +3897,16 @@ class AkshareIngestProvider(IngestProviderBase):
         import akshare as ak
 
         table = _TBL_RESTRICTED_SHARES
+        # 2026-09-21 列名治本（st-data-fix-20260921 ②b）：原列 release_date/release_shares
+        # 等不在表内（表=symbol/announce_date/unlock_date/float_shares/float_ratio...），
+        # 写入被列过滤削成 symbol 单列，其余列落 DEFAULT → unlock_date/announce_date
+        # 全部 1970-01-01（data_source='' 10,927 行实证）。对齐真实表结构。
         columns = [
             "symbol",
-            "release_date",
-            "release_shares",
-            "release_ratio",
-            "pre_float_shares",
-            "post_float_shares",
+            "announce_date",
+            "unlock_date",
+            "float_shares",
+            "float_ratio",
         ]
         symbols = payload.symbols
         if not symbols:
@@ -3938,14 +3943,17 @@ class AkshareIngestProvider(IngestProviderBase):
 
     @staticmethod
     def _parse_restricted_row(code: str, row) -> tuple:
-        """解析单行限售解禁数据。"""
+        """解析单行限售解禁数据（2026-09-21 对齐真实表结构，②b 治本）。
+
+        东财解禁队列接口只有解禁时间，无独立公告日 → announce_date 置 None
+        （列 Nullable 后落真 NULL，禁止 1970 哨兵）。
+        """
         return (
             code,
-            AkshareIngestProvider._norm_date_str(row.get("解禁时间")),
+            None,  # announce_date：接口无公告日，不写 1970 哨兵
+            AkshareIngestProvider._norm_date_str(row.get("解禁时间")) or None,
             safe_float(row.get("解禁数量")),
             safe_float(row.get("解禁股本占比")),
-            safe_float(row.get("解禁前流通股本")),
-            safe_float(row.get("解禁后流通股本")),
         )
 
     # ---- 12. 新闻数据通用辅助 ----
@@ -7480,14 +7488,14 @@ class AkshareIngestProvider(IngestProviderBase):
     def _parse_convertible_bond_row(r) -> tuple:
         """解析单行可转债数据。
 
-        schema 非Nullable Date/Float64 列（DDL-as-Code 真源），空值沿用项目哨兵约定：
-        空日期=1970-01-01（同 etf_list/news 口径），空数值=0.0。
+        schema 非Nullable Date/Float64 列（DDL-as-Code 真源）：空日期 2026-09-21 ②b 治本
+        起置 None（原 1970-01-01 哨兵已废弃，配 Phase2 Nullable(Date) DDL），空数值=0.0。
 
         列名对齐 akshare bond_zh_cov 2026-09 实测结构（2026-09-03 修复：
         旧列名"上市日期/票面利率/发行期限"等已不存在，曾致全行 NaN →
         Code 38 整批写入失败；现映射：申购日期→start_date、上市时间→list_date、
         转股价→latest_convert_price、发行规模→issue_amount、信用评级→issue/latest_credit；
-        摘牌/转股区间/票面利率等新结构已不含 → 哨兵占位，待更全数据源替换）。
+        摘牌/转股区间/票面利率等新结构已不含 → NULL 占位，待更全数据源替换）。
         """
         credit = str(r.get("信用评级", "") or "")
         return (
@@ -7502,18 +7510,18 @@ class AkshareIngestProvider(IngestProviderBase):
             0.0,  # issue_price 新结构无发行价格
             safe_float(r.get("发行规模")) or 0.0,
             0.0,  # bond_balance 新结构无债券余额
-            AkshareIngestProvider._norm_date_str(r.get("申购日期")) or "1970-01-01",
-            "1970-01-01",  # end_date 新结构无截止日期
+            AkshareIngestProvider._norm_date_str(r.get("申购日期")) or None,
+            None,  # end_date 新结构无截止日期（2026-09-21 ②b：原 1970 哨兵改 NULL）
             "",  # rate_type 新结构无利率类型
             0.0,  # coupon_rate 新结构无票面利率
             0.0,  # comp_rate 新结构无补偿利率
             0,  # pay_count 新结构无付息频率
-            AkshareIngestProvider._norm_date_str(r.get("上市时间")) or "1970-01-01",
-            "1970-01-01",  # delist_date 未摘牌/新结构无
+            AkshareIngestProvider._norm_date_str(r.get("上市时间")) or None,
+            None,  # delist_date 未摘牌/新结构无（②b：原 1970 哨兵改 NULL）
             "",  # list_place 新结构无上市地点
-            "1970-01-01",  # convert_start 新结构无转股起始日
-            "1970-01-01",  # convert_end 新结构无转股截止日
-            "1970-01-01",  # stop_convert 新结构无停止转股日
+            None,  # convert_start 新结构无转股起始日（②b）
+            None,  # convert_end 新结构无转股截止日（②b）
+            None,  # stop_convert 新结构无停止转股日（②b）
             0.0,  # initial_convert_price 新结构无
             safe_float(r.get("转股价")) or 0.0,
             "",  # rate_desc 新结构无利率说明
@@ -7570,8 +7578,9 @@ class AkshareIngestProvider(IngestProviderBase):
     def _parse_etf_list_row(r) -> tuple:
         """解析单行ETF列表数据。
 
-        2026-08-14 修复：sina 源多数基金无成立/上市日期（空串），CH 表 setup_date/list_date
-        为非空 Date 列，空串触发 Code 38 写入失败整批落盘。空日期改用 1970-01-01 哨兵。
+        2026-08-14 修复：sina 源多数基金无成立/上市日期（空串），非空 Date 列
+        空串触发 Code 38 写入失败整批落盘。当时改用 1970-01-01 哨兵（历史方案）。
+        2026-09-21 ②b 治本：哨兵改 None（配 Phase2 Nullable(Date) DDL 落真 NULL）。
         """
         return (
             str(r.get("代码", "") or ""),
@@ -7580,8 +7589,8 @@ class AkshareIngestProvider(IngestProviderBase):
             str(r.get("全称", "") or ""),
             str(r.get("跟踪指数代码", "") or ""),
             str(r.get("跟踪指数名称", "") or ""),
-            AkshareIngestProvider._norm_date_str(r.get("成立日期")) or "1970-01-01",
-            AkshareIngestProvider._norm_date_str(r.get("上市日期")) or "1970-01-01",
+            AkshareIngestProvider._norm_date_str(r.get("成立日期")) or None,
+            AkshareIngestProvider._norm_date_str(r.get("上市日期")) or None,
             str(r.get("上市状态", "") or ""),
             str(r.get("交易市场", "") or ""),
             str(r.get("管理人", "") or ""),
@@ -7917,9 +7926,9 @@ class AkshareIngestProvider(IngestProviderBase):
                             market,
                             "交易所",
                             "指数",
-                            datetime.date(1970, 1, 1),
+                            None,  # base_date 交易所清单无基日（②b：原 1970 哨兵改 NULL）
                             0.0,
-                            datetime.date(1970, 1, 1),
+                            None,  # list_date 同上（②b）
                             "",
                             0.0,
                         )
@@ -10370,8 +10379,8 @@ class AkshareIngestProvider(IngestProviderBase):
         源：ak.stock_financial_analysis_indicator(symbol, start_year)。
         东财 stock_financial_analysis_indicator_em 在 akshare 1.18.75 实测接口
         损坏（TypeError: NoneType subscriptable），故用新浪源。
-        announce_date 新浪不提供 → 按 business_data_categories.yaml 约定写
-        '1970-01-01'（公告日期缺失哨兵）。
+        announce_date 新浪不提供 → 2026-09-21 ②b 治本起置 None
+        （原按 business_data_categories.yaml 约定写 '1970-01-01'，已废弃）。
         start_year 取 payload.start 年份 -1（跨年缓冲：年报公告在次年）。
         仅保留 report_period <= payload.end 的行；新浪无对应字段的列写 None。
         """
@@ -10458,7 +10467,7 @@ class AkshareIngestProvider(IngestProviderBase):
                 batch_rows.append(
                     (
                         code,
-                        "1970-01-01",  # announce_date 缺失哨兵（YAML 约定口径）
+                        None,  # announce_date 新浪源无公告日（②b 治本：原 1970 哨兵改 NULL，2026-09-21）
                         report,
                         num(row.get("加权每股收益(元)")),  # eps_basic
                         num(row.get("摊薄每股收益(元)")),  # eps_diluted

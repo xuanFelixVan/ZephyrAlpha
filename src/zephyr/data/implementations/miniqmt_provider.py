@@ -691,9 +691,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
         seen: set[str] = set()
         merged: list[str] = []
         for sec in sectors:
-            for code in self._call_with_policy(
-                xtdata.get_stock_list_in_sector, policy, sec
-            ):
+            for code in self._call_with_policy(xtdata.get_stock_list_in_sector, policy, sec):
                 if code and code not in seen:
                     seen.add(code)
                     merged.append(code)
@@ -2684,8 +2682,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
             )
         if unsolved:
             logging.getLogger(__name__).warning(
-                "option_iv_surface %s: %d/%d 日 IV 反解失败已丢弃（不落库=不伪装成 0；"
-                "SVX-1-P0 禁静默零值）",
+                "option_iv_surface %s: %d/%d 日 IV 反解失败已丢弃（不落库=不伪装成 0；SVX-1-P0 禁静默零值）",
                 ctx.symbol,
                 unsolved,
                 len(common_dates),
@@ -3632,7 +3629,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
                     "A股",
                     "CNY",
                     "退市",
-                    list_date or "1970-01-01",
+                    list_date or None,  # ②b 治本：无源 list_date 改 NULL（原 1970 哨兵，2026-09-21）
                     delist_date,
                     "",
                     "",
@@ -5016,9 +5013,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
             st_codes, st_ok = load_current_st_codes(as_of=payload.end)
             if not st_ok:
-                self._log.warning(
-                    "auction_book ST 集加载失败，本批按非 ST 幅度近似（trade_date=%s）", trade_date
-                )
+                self._log.warning("auction_book ST 集加载失败，本批按非 ST 幅度近似（trade_date=%s）", trade_date)
             batch_size = 200
             rows = []
             for i in range(0, len(symbols), batch_size):

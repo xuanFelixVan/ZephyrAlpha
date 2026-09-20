@@ -595,12 +595,23 @@ class TushareProvider(IngestProviderBase):
         自动填充。全量重刷幂等（ReplacingMergeTree 后写胜出）。
         """
         table = _TBL_INDEX_LIST
-        columns = ["ts_code", "name", "market", "publisher", "category",
-                   "base_date", "base_point", "list_date", "symbol_num", "market_id", "valid_to"]
+        columns = [
+            "ts_code",
+            "name",
+            "market",
+            "publisher",
+            "category",
+            "base_date",
+            "base_point",
+            "list_date",
+            "symbol_num",
+            "market_id",
+            "valid_to",
+        ]
         today_str = datetime.date.today().isoformat()
         t0 = now_utc()
 
-        def _ts_date(v: Any) -> datetime.date | None:
+        def _ts_date(v: object) -> datetime.date | None:
             """tushare 日期 'YYYYMMDD'/'YYYY-MM-DD'/空 → date（空返回 None）。"""
             s = str(v or "").strip()
             if not s or s.lower() in ("nan", "none", "nat"):
@@ -628,19 +639,21 @@ class TushareProvider(IngestProviderBase):
             for _, r in df.iterrows():
                 base_d = _ts_date(r.get("base_date"))
                 list_d = _ts_date(r.get("list_date"))
-                rows.append((
-                    str(r.get("ts_code", "") or ""),
-                    str(r.get("name", "") or ""),
-                    str(r.get("market", "") or ""),
-                    str(r.get("publisher", "") or ""),
-                    str(r.get("category", "") or ""),
-                    base_d or datetime.date(1970, 1, 1),   # base_date 非空 Date 列，缺源哨兵（审计已排除 1970）
-                    0.0,                                    # base_point（tushare 不提供，列非空填 0）
-                    list_d or datetime.date(1970, 1, 1),    # list_date 同上（正常全覆盖，tushare 有真值）
-                    "",                                     # symbol_num（tushare 不提供）
-                    0.0,                                    # market_id（tushare 不提供）
-                    _ts_date(r.get("delist_date")),         # valid_to：退市=闭区间终止日，在市=None
-                ))
+                rows.append(
+                    (
+                        str(r.get("ts_code", "") or ""),
+                        str(r.get("name", "") or ""),
+                        str(r.get("market", "") or ""),
+                        str(r.get("publisher", "") or ""),
+                        str(r.get("category", "") or ""),
+                        base_d or None,  # base_date ②b 治本：缺源改 NULL（原 1970 哨兵，2026-09-21）
+                        0.0,  # base_point（tushare 不提供，列非空填 0）
+                        list_d or None,  # list_date ②b 治本：缺源改 NULL（tushare 正常全覆盖）
+                        "",  # symbol_num（tushare 不提供）
+                        0.0,  # market_id（tushare 不提供）
+                        _ts_date(r.get("delist_date")),  # valid_to：退市=闭区间终止日，在市=None
+                    )
+                )
 
         self._log.info(f"index_list: {len(rows)} 只指数（tushare index_basic 全市场含退市）")
         yield FetchResult(
@@ -667,13 +680,27 @@ class TushareProvider(IngestProviderBase):
         旧 sina 行该两列实证亦为空，零回归）。
         """
         table = _TBL_ETF_LIST
-        columns = ["etf_code", "etf_name", "etf_abbr", "full_name", "index_code",
-                   "index_name", "setup_date", "list_date", "list_status", "exchange",
-                   "manager", "custodian", "mgmt_fee", "etf_type", "valid_to"]
+        columns = [
+            "etf_code",
+            "etf_name",
+            "etf_abbr",
+            "full_name",
+            "index_code",
+            "index_name",
+            "setup_date",
+            "list_date",
+            "list_status",
+            "exchange",
+            "manager",
+            "custodian",
+            "mgmt_fee",
+            "etf_type",
+            "valid_to",
+        ]
         today_str = datetime.date.today().isoformat()
         t0 = now_utc()
 
-        def _ts_date(v: Any) -> datetime.date | None:
+        def _ts_date(v: object) -> datetime.date | None:
             """tushare 日期 'YYYYMMDD'/'YYYY-MM-DD'/空 → date（空返回 None）。"""
             s = str(v or "").strip()
             if not s or s.lower() in ("nan", "none", "nat"):
@@ -689,8 +716,9 @@ class TushareProvider(IngestProviderBase):
                 code, suffix = ts_code.split(".")
             except ValueError:
                 return False
-            return (suffix == "SH" and code[:2] in ("51", "52", "53", "55", "56", "58")) or \
-                (suffix == "SZ" and code[:2] == "15")
+            return (suffix == "SH" and code[:2] in ("51", "52", "53", "55", "56", "58")) or (
+                suffix == "SZ" and code[:2] == "15"
+            )
 
         try:
             df = self._call_with_policy(self._pro.fund_basic, policy, market="E")
@@ -713,23 +741,25 @@ class TushareProvider(IngestProviderBase):
                     continue
                 code, suffix = ts_code.split(".", 1)
                 status = str(r.get("status", "") or "")
-                rows.append((
-                    suffix.lower() + code,                  # etf_code：保持 sh560650 库内既有格式
-                    str(r.get("name", "") or ""),
-                    "",                                     # etf_abbr（tushare 无简称列）
-                    "",                                     # full_name（tushare 无全称列）
-                    "",                                     # index_code（tushare 无跟踪指数代码）
-                    "",                                     # index_name（同上）
-                    _ts_date(r.get("found_date")) or datetime.date(1970, 1, 1),  # setup_date 非空 Date 列哨兵
-                    _ts_date(r.get("list_date")) or datetime.date(1970, 1, 1),   # 未上市新基走哨兵（审计已排除 1970）
-                    "上市" if status == "L" else ("退市" if status == "D" else status),
-                    suffix,                                 # exchange：SH/SZ
-                    str(r.get("management", "") or ""),     # 管理人
-                    str(r.get("custodian", "") or ""),      # 托管人
-                    float(r.get("m_fee") or 0.0),           # 管理费%
-                    str(r.get("fund_type", "") or ""),      # 股票型/债券型/混合型/货币型/其他
-                    _ts_date(r.get("delist_date")),         # valid_to：退市=闭区间终止日，在市=None
-                ))
+                rows.append(
+                    (
+                        suffix.lower() + code,  # etf_code：保持 sh560650 库内既有格式
+                        str(r.get("name", "") or ""),
+                        "",  # etf_abbr（tushare 无简称列）
+                        "",  # full_name（tushare 无全称列）
+                        "",  # index_code（tushare 无跟踪指数代码）
+                        "",  # index_name（同上）
+                        _ts_date(r.get("found_date")) or None,  # setup_date ②b 治本：缺源改 NULL（原 1970 哨兵）
+                        _ts_date(r.get("list_date")) or None,  # list_date ②b 治本：未上市新基改 NULL
+                        "上市" if status == "L" else ("退市" if status == "D" else status),
+                        suffix,  # exchange：SH/SZ
+                        str(r.get("management", "") or ""),  # 管理人
+                        str(r.get("custodian", "") or ""),  # 托管人
+                        float(r.get("m_fee") or 0.0),  # 管理费%
+                        str(r.get("fund_type", "") or ""),  # 股票型/债券型/混合型/货币型/其他
+                        _ts_date(r.get("delist_date")),  # valid_to：退市=闭区间终止日，在市=None
+                    )
+                )
 
         self._log.info(f"etf_list: {len(rows)} 只 ETF（tushare fund_basic 场内桶代码段过滤，含退市）")
         yield FetchResult(
