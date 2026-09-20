@@ -4940,3 +4940,24 @@ entries:
   related_arch: ['#ARCH-338', '#ARCH-339', '#ARCH-340', '#ARCH-341', '#ARCH-342', '#ARCH-343', '#ARCH-344', '#ARCH-345', '#ARCH-346', '#ARCH-347', '#ARCH-348', '#ARCH-349', '#ARCH-350', '#ARCH-351', '#ARCH-352', '#ARCH-353', '#ARCH-354', '#ARCH-355', '#ARCH-356']
   related_rulings: ['裁定#371']
   superseded_by: ''
+- ruling_id: '裁定#377'
+  title: 'kimi_audit S3 96 条+低置信 14 条批量裁定（三判定册承载，P7 收口）'
+  date: '2026-09-20'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    依 #371 代 Owner，三代理逐条复查证据后判（禁照单全收——4+3 条签字册建议被在案裁定/
+    事实驳回实证）：A/C 族 34 条（9f9441f975，a12/b8/改裁2/追认12）+B/D 族 33 条
+    （c5154321bd，a23/b5/改裁5）+EFGH 族 29 条+低置信 14（cf41e79488，a17/改裁5/追认7/
+    低置信升格8 维持6）。要点：花钱类 12 条全不花向（64 号 §16.1 人决追认）；C-02 冷存批
+    执行未落地转 P11；C-06 降级义务裁而未施（frontmatter 仍 production）转 P11；
+    C-16 四遗留计划任务 Disable 转 P11；A-08 做T砍=追认 #331（勘误：原称 #304 系撞号
+    前旧口径）；standards.yaml 错引 #335→#337 已随批修正（faac3c73）。执行回执=三判定册
+    在册+本条；施工债 10 项列判定册 §5 指针归 P11 消化。
+  affected_files:
+  - docs/_working/kimi_audit/adjudications/p7a_ac_family_rulings.md
+  - docs/_working/kimi_audit/adjudications/p7b_bd_family_rulings.md
+  - docs/_working/kimi_audit/adjudications/p7c_efgh_family_rulings.md
+  related_arch: []
+  related_rulings: ['裁定#371']
+  superseded_by: ''
