@@ -1,20 +1,22 @@
 # [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
-"""趋势类技术指标测试（10 个）。
+"""趋势类技术指标测试（34 个）。
 
 测试内容：
-- 10 个趋势指标全部注册到 Registry
+- 34 个趋势指标全部注册到 Registry（另有复合类 Ichimoku 归 composite，不在本文件契约内）
 - 每个指标 meta.category == "trend"
 - 每个指标 meta.output_columns == 期望列（catalog §2.1 契约）
-- 已实现指标（ma/ema/macd）：数值正确性 + 边界测试
-- 骨架指标（wma/dema/adx/dmi/cci/sar/trix）：compute() 抛 NotImplementedError
-
-数值正确性验证方式：手工计算期望值 + 通达信公式对齐（EMA adjust=False、MACD HIST=2×(DIF-DEA)）。
+- 全部指标已施工（IMPLEMENTED == EXPECTED，SKELETON 为空，骨架契约保留防回归）
+- 数值正确性验证方式：talib 黄金对照（生产零 TA-Lib 依赖）+ 手工微样本显式计算 + 独立公式复算
+  （EMA adjust=False、MACD HIST=2×(DIF-DEA)、TEMA 3 根手算、VIDYA 纯 python 复算、四价格变换逐行手算、
+  INERTIA 纯 python 复算 RVI+种子 EMA+OLS 端点链、QSTICK 纯 python 滚动均值复算）
 
 设计文档：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md §2.1
 """
 
 from __future__ import annotations
+
+import math
 
 import numpy as np
 import pandas as pd
@@ -22,6 +24,9 @@ import pytest
 
 from zephyr.factor.technical_indicators import trend  # noqa: F401 — 注册副作用
 from zephyr.factor.technical_indicators.indicator_base import TechnicalIndicatorRegistry
+
+# talib 仅作黄金参照（生产代码禁 TA-Lib 依赖）；缺失时整模块跳过
+talib = pytest.importorskip("talib")
 
 # 便捷别名——避免每个测试都写 TechnicalIndicatorRegistry.get()
 MA = TechnicalIndicatorRegistry.get("ma")
@@ -45,6 +50,19 @@ BBI = TechnicalIndicatorRegistry.get("bbi")
 ALLIGATOR = TechnicalIndicatorRegistry.get("alligator")
 GMMA = TechnicalIndicatorRegistry.get("gmma")
 GANN_HILO = TechnicalIndicatorRegistry.get("gann_hilo")
+MAMA = TechnicalIndicatorRegistry.get("mama")
+FRAMA = TechnicalIndicatorRegistry.get("frama")
+JMA = TechnicalIndicatorRegistry.get("jma")
+TEMA = TechnicalIndicatorRegistry.get("tema")
+TRIMA = TechnicalIndicatorRegistry.get("trima")
+T3 = TechnicalIndicatorRegistry.get("t3")
+VIDYA = TechnicalIndicatorRegistry.get("vidya")
+AVGPRICE = TechnicalIndicatorRegistry.get("avgprice")
+MEDPRICE = TechnicalIndicatorRegistry.get("medprice")
+TYPPRICE = TechnicalIndicatorRegistry.get("typprice")
+WCPRICE = TechnicalIndicatorRegistry.get("wcprice")
+INERTIA = TechnicalIndicatorRegistry.get("inertia")
+QSTICK = TechnicalIndicatorRegistry.get("qstick")
 
 # 期望契约（catalog §2.1）：indicator_id → (name, output_columns)
 EXPECTED = {
@@ -67,19 +85,82 @@ EXPECTED = {
     "mcginley": ("McGinley动态均线", ["md_14"]),
     "bbi": ("多空指数", ["bbi"]),
     "alligator": ("鳄鱼线", ["alligator_jaw", "alligator_teeth", "alligator_lips"]),
-    "gmma": ("顾比复合均线", ["gmma_s3", "gmma_s5", "gmma_s8", "gmma_s10", "gmma_s12", "gmma_s15",
-        "gmma_l30", "gmma_l35", "gmma_l40", "gmma_l45", "gmma_l50", "gmma_l60"]),
+    "gmma": (
+        "顾比复合均线",
+        [
+            "gmma_s3",
+            "gmma_s5",
+            "gmma_s8",
+            "gmma_s10",
+            "gmma_s12",
+            "gmma_s15",
+            "gmma_l30",
+            "gmma_l35",
+            "gmma_l40",
+            "gmma_l45",
+            "gmma_l50",
+            "gmma_l60",
+        ],
+    ),
     "gann_hilo": ("Gann HiLo Activator", ["gann_hilo", "gann_hilo_dir"]),
+    "mama": ("MESA自适应均线", ["mama", "fama"]),
+    "frama": ("分形自适应均线", ["frama_16"]),
+    "jma": ("Jurik自适应均线", ["jma_7"]),
+    "tema": ("三重指数移动平均", ["tema_10"]),
+    "trima": ("三角移动平均", ["trima_10"]),
+    "t3": ("Tillson T3均线", ["t3_10"]),
+    "vidya": ("可变指数动态均线", ["vidya_14"]),
+    "avgprice": ("平均价格", ["avgprice"]),
+    "medprice": ("中位价格", ["medprice"]),
+    "typprice": ("典型价格", ["typprice"]),
+    "wcprice": ("加权收盘价", ["wcprice"]),
+    "inertia": ("惯性指标", ["inertia_20_14"]),
+    "qstick": ("QStick指标", ["qstick_10"]),
 }
 
 # 已施工算法的指标（version >= 1.0.0）
-IMPLEMENTED = {"ma", "ema", "wma", "dema", "macd", "adx", "dmi", "cci", "sar", "trix", "dkx", "hma", "zlema", "kama", "vortex", "supertrend", "mcginley", "bbi", "alligator", "gmma", "gann_hilo"}
+IMPLEMENTED = {
+    "ma",
+    "ema",
+    "wma",
+    "dema",
+    "macd",
+    "adx",
+    "dmi",
+    "cci",
+    "sar",
+    "trix",
+    "dkx",
+    "hma",
+    "zlema",
+    "kama",
+    "vortex",
+    "supertrend",
+    "mcginley",
+    "bbi",
+    "alligator",
+    "gmma",
+    "gann_hilo",
+    "mama",
+    "frama",
+    "jma",
+    "tema",
+    "trima",
+    "t3",
+    "vidya",
+    "avgprice",
+    "medprice",
+    "typprice",
+    "wcprice",
+    "inertia",
+    "qstick",
+}
 # 仍为骨架的指标（compute 抛 NotImplementedError）
 SKELETON = set(EXPECTED) - IMPLEMENTED
 
 
 # ===========================================================================
-# 注册与元数据契约测试（全部 10 个）
+# 注册与元数据契约测试（全部 32 个）
 # ===========================================================================
 
 
@@ -90,7 +171,7 @@ class TestTrendRegistered:
             assert iid in metas, f"趋势指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 21
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 34
 
 
 class TestTrendMetaContract:
@@ -123,7 +204,7 @@ class TestTrendMetaContract:
 
 
 # ===========================================================================
-# 骨架指标测试（7 个仍抛 NotImplementedError）
+# 骨架指标测试（当前 SKELETON 为空：34 个全部已施工；契约保留防回归）
 # ===========================================================================
 
 
@@ -667,17 +748,22 @@ class TestDkxNumeric:
         n = 25
         rng = np.random.default_rng(7)
         close = pd.Series(100 + rng.standard_normal(n).cumsum())
-        df = pd.DataFrame({
-            "open": close + 0.1, "high": close + 0.3,
-            "low": close - 0.3, "close": close, "volume": 1000.0,
-        })
+        df = pd.DataFrame(
+            {
+                "open": close + 0.1,
+                "high": close + 0.3,
+                "low": close - 0.3,
+                "close": close,
+                "volume": 1000.0,
+            }
+        )
         result = DKX().compute(df)
         mid = (3 * close + df["low"] + df["open"] + df["high"]) / 6
         # 窗口按时间升序（旧→新），权重 1..20（新值权重 20，对齐通达信）
         weights = list(range(1, 21))
         expected = []
         for t in range(n):
-            window = mid.iloc[max(0, t - 19):t + 1]
+            window = mid.iloc[max(0, t - 19) : t + 1]
             if len(window) < 20:
                 expected.append(np.nan)
             else:
@@ -770,7 +856,7 @@ class TestSupertrendNumeric:
         df["close"] = rising
         result = SUPERTREND().compute(df)
         pair = result.dropna()
-        assert (pair["supertrend_10"] < pair["supertrend_dir"] * 0 + rising[-len(pair):]).all()
+        assert (pair["supertrend_10"] < pair["supertrend_dir"] * 0 + rising[-len(pair) :]).all()
 
 
 class TestMcGinleyNumeric:
@@ -844,3 +930,679 @@ class TestBatch8TrendNumeric:
         valid = result["gann_hilo_dir"].dropna()
         assert valid.isin([1.0, -1.0]).all()
         assert (valid == 1.0).all()
+
+
+# ===========================================================================
+# 2026-09-20 自适应均线批：MAMA/FRAMA/JMA 数值正确性
+# ===========================================================================
+
+
+def _make_golden_ohlc(n: int = 200) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """200 根几何随机游走合成 OHLC（rng(42)），保证 H≥max(O,C)、L≤min(O,C)。"""
+    rng = np.random.default_rng(42)
+    close = 100.0 * np.exp(rng.standard_normal(n).cumsum() * 0.01)
+    open_ = close * (1.0 + rng.standard_normal(n) * 0.001)
+    spread = np.abs(rng.standard_normal(n)) * 0.005 + 0.001
+    high = np.maximum(open_, close) * (1.0 + spread)
+    low = np.minimum(open_, close) * (1.0 - spread)
+    assert (high >= np.maximum(open_, close)).all()
+    assert (low <= np.minimum(open_, close)).all()
+    return high, low, close
+
+
+class TestMamaNumeric:
+    """MAMA/MESA 自适应均线——talib 黄金对照 + 预热/参数/边界。"""
+
+    def test_golden_vs_talib(self):
+        """黄金对照：第 100 根起与 talib.MAMA 一致（rtol=atol=1e-6；实测逐位一致 0 偏差）。
+
+        talib 0.7.1 为单 real 输入口径，价格 (H+L)/2 由测试侧显式合成。
+        """
+        high, low, _ = _make_golden_ohlc(200)
+        df = pd.DataFrame({"high": high, "low": low})
+        result = MAMA().compute(df)
+        t_mama, t_fama = talib.MAMA((high + low) / 2.0, fastlimit=0.5, slowlimit=0.05)
+        np.testing.assert_allclose(result["mama"].to_numpy()[100:], t_mama[100:], rtol=1e-6, atol=1e-6)
+        np.testing.assert_allclose(result["fama"].to_numpy()[100:], t_fama[100:], rtol=1e-6, atol=1e-6)
+
+    def test_warmup_nan_then_valid(self):
+        """前 12 根为尾随 WMA 预热种子 NaN，第 12 根起递推有值（实测首有效=12）。"""
+        high, low, _ = _make_golden_ohlc(60)
+        df = pd.DataFrame({"high": high, "low": low})
+        result = MAMA().compute(df)
+        for col in ("mama", "fama"):
+            assert result[col].iloc[:12].isna().all()
+            assert result[col].iloc[12:].notna().all()
+
+    def test_fama_lags_mama_uptrend(self):
+        """上升趋势：FAMA（半速）滞后于 MAMA，MAMA 单调追踪。"""
+        rising = np.linspace(100, 200, 120)
+        df = pd.DataFrame({"high": rising + 0.5, "low": rising - 0.5})
+        result = MAMA().compute(df)
+        pair = result.dropna()
+        assert (pair["fama"] <= pair["mama"]).all()
+        assert (pair["mama"].diff().dropna() > 0).all()
+
+    def test_fast_limit_override(self):
+        """kwargs 覆盖 fast_limit：更快上限 → 均线更贴近价格。"""
+        high, low, _ = _make_golden_ohlc(80)
+        df = pd.DataFrame({"high": high, "low": low})
+        base = MAMA().compute(df)["mama"].to_numpy()
+        fast = MAMA().compute(df, fast_limit=0.9)["mama"].to_numpy()
+        assert not np.allclose(base[32:], fast[32:])
+        price = ((df["high"] + df["low"]) / 2.0).to_numpy()
+        assert np.abs(fast[32:] - price[32:]).mean() < np.abs(base[32:] - price[32:]).mean()
+
+    def test_empty_and_missing_column(self):
+        result = MAMA().compute(pd.DataFrame(columns=["high", "low"]))
+        assert result.empty
+        assert list(result.columns) == ["mama", "fama"]
+        with pytest.raises(ValueError, match="缺少列"):
+            MAMA().compute(pd.DataFrame({"close": [10.0] * 30}))
+
+
+class TestFramaNumeric:
+    """FRAMA 分形自适应均线——手工微样本 + 趋势/正弦/边界。"""
+
+    def test_constant_price_identity(self):
+        """常数价格：HL 全零保护 → alpha=1 → 首窗后输出恒等于该价格。"""
+        df = pd.DataFrame({"high": [100.0] * 40, "low": [100.0] * 40})
+        result = FRAMA().compute(df)
+        assert result["frama_16"].iloc[:15].isna().all()
+        assert (result["frama_16"].iloc[15:] == 100.0).all()
+
+    def test_hand_computed_first_window(self):
+        """手工微样本（17 根锯齿）：HL1=HL2=HL3=5 → D=log2(2×10/5)=2 → alpha=exp(−4.6)。
+
+        手算链条：两半各自 max(H)−min(L)=102−97=5，整窗同 5；
+        D=log2(2(5+5)/5)=log2(4)=2，alpha=exp(−4.6(2−1))=exp(−4.6)≈0.010051835744633584。
+        首有效=第 15 根（N−1）种子=当根中价 98.5；第 16 根=α×100.5+(1−α)×98.5=98.5+2α。
+        """
+        high = np.array([102.0, 100.0] * 8 + [102.0])
+        low = high - 3.0
+        df = pd.DataFrame({"high": high, "low": low})
+        result = FRAMA().compute(df)
+        alpha0 = np.exp(-4.6)
+        assert result["frama_16"].iloc[:15].isna().all()
+        assert result["frama_16"].iloc[15] == pytest.approx(98.5)
+        assert result["frama_16"].iloc[16] == pytest.approx(98.5 + 2.0 * alpha0, rel=1e-12)
+
+    def test_uptrend_lags_but_tracks(self):
+        """强趋势（步长<1，保证 alpha 未钳位上界）：frama 滞后于 close 但同向，终值误差 < 5%。"""
+        close = np.linspace(100.0, 130.0, 60)
+        df = pd.DataFrame({"high": close + 0.5, "low": close - 0.5})
+        result = FRAMA().compute(df)
+        fr = result["frama_16"].to_numpy()
+        valid = fr[16:]  # 跳过种子根
+        assert (valid < close[16:]).all()
+        assert (np.diff(valid) > 0).all()
+        assert abs(fr[-1] - close[-1]) < 0.05 * close[-1]
+
+    def test_sine_smooth_no_nan_holes(self):
+        """正弦序列：首窗后无 NaN 穿洞，输出被历史价格包络约束且总变差低于原始价格（平滑）。"""
+        t = np.arange(100)
+        close = 100.0 + 10.0 * np.sin(t / 5.0)
+        df = pd.DataFrame({"high": close + 0.5, "low": close - 0.5})
+        result = FRAMA().compute(df)
+        fr = result["frama_16"]
+        assert fr.iloc[:15].isna().all()
+        assert fr.iloc[15:].notna().all()  # 平滑无 NaN 穿洞
+        p_min, p_max = close.min() - 0.5, close.max() + 0.5
+        assert ((fr.iloc[15:] >= p_min - 1e-9) & (fr.iloc[15:] <= p_max + 1e-9)).all()
+        assert np.abs(np.diff(fr.iloc[15:])).sum() <= np.abs(np.diff(close)).sum()
+
+    def test_period_override(self):
+        """kwargs 覆盖 period：列名与预热期随窗口走（20 → 前 19 根 NaN）。"""
+        close = np.linspace(100.0, 160.0, 60)
+        df = pd.DataFrame({"high": close + 0.5, "low": close - 0.5})
+        result = FRAMA().compute(df, period=20)
+        assert list(result.columns) == ["frama_20"]
+        assert result["frama_20"].iloc[:19].isna().all()
+        assert result["frama_20"].iloc[19:].notna().all()
+
+    def test_empty_and_missing_column(self):
+        result = FRAMA().compute(pd.DataFrame(columns=["high", "low"]))
+        assert result.empty
+        assert list(result.columns) == ["frama_16"]
+        with pytest.raises(ValueError, match="缺少列"):
+            FRAMA().compute(pd.DataFrame({"close": [10.0] * 30}))
+
+
+class TestJmaNumeric:
+    """JMA Jurik 自适应均线——pandas-ta 公式复算 + 常数/阶跃/参数/边界。"""
+
+    def test_constant_identity(self):
+        """常数序列：预热后输出恒等于该常数（种子=首值）。"""
+        df = pd.DataFrame({"close": [100.0] * 40})
+        result = JMA().compute(df)
+        assert result["jma_7"].iloc[:6].isna().all()
+        assert (result["jma_7"].iloc[6:] == 100.0).all()
+
+    def test_step_single_peak_bounded_overshoot(self):
+        """阶跃逼近：单峰形态（先单调上行后单调回落收敛平台），过冲 ≤ 20% 步长。
+
+        实测 phase=50/power=2 过冲=13.95% 步长（Jurik 低滞后设计固有特性，
+        pandas-ta 移植口径如实呈现，故按规格"容差放宽"为 20% 步长定量界）。
+        """
+        close = np.array([100.0] * 60 + [110.0] * 60)
+        df = pd.DataFrame({"close": close})
+        seg = JMA().compute(df)["jma_7"].to_numpy()[60:]  # 跳变根起
+        diffs = np.diff(seg)
+        peak_pos = int(np.argmax(seg))
+        assert 0 < peak_pos < len(seg) - 1
+        assert (diffs[:peak_pos] > 0).all()  # 上行段单调
+        assert (diffs[peak_pos:] <= 0).all()  # 回落段单调
+        assert seg.min() >= 100.0 - 1e-9  # 无向下击穿原平台
+        assert seg.max() <= 110.0 + 0.20 * 10.0  # 过冲定量界
+        assert abs(seg[-1] - 110.0) < 1e-6  # 收敛到新平台
+
+    def test_phase_and_period_override(self):
+        """参数覆盖生效：不同 phase 结果不同；period 变更改变列名与预热位。"""
+        rng = np.random.default_rng(7)
+        close = 100.0 + rng.standard_normal(80).cumsum()
+        df = pd.DataFrame({"close": close})
+        p0 = JMA().compute(df, phase=0.0)["jma_7"].to_numpy()
+        p100 = JMA().compute(df, phase=100.0)["jma_7"].to_numpy()
+        assert not np.allclose(p0[6:], p100[6:])
+        long = JMA().compute(df, period=14)
+        assert list(long.columns) == ["jma_14"]
+        assert long["jma_14"].iloc[:13].isna().all()
+        assert long["jma_14"].iloc[13:].notna().all()
+
+    def test_formula_recompute_3bar(self):
+        """3 根微样本按 pandas-ta overlap/jma.py 公式逐行复算核对（移植忠实度锚点）。
+
+        复算代码为本测试内独立书写的公式直译（period=3/phase=50），与实现解耦比对。
+        """
+        df = pd.DataFrame({"close": [10.0, 11.0, 12.0]})
+        got = JMA().compute(df, period=3, phase=50.0)["jma_3"].to_numpy()
+        # --- 公式复算（pandas-ta jma.py 直译） ---
+        length, phase = 3, 50.0
+        sum_length = 10
+        half_len = 0.5 * (length - 1)
+        pr = 1.5 + phase * 0.01
+        length1 = max((np.log(np.sqrt(half_len)) / np.log(2.0)) + 2.0, 0.0)
+        pow1 = max(length1 - 2.0, 0.5)
+        length2 = length1 * np.sqrt(half_len)
+        bet = length2 / (length2 + 1.0)
+        beta = 0.45 * (length - 1) / (0.45 * (length - 1) + 2.0)
+        c = np.array([10.0, 11.0, 12.0])
+        m = len(c)
+        volty = np.zeros(m)
+        v_sum = np.zeros(m)
+        jma = np.zeros(m)
+        det0 = det1 = ma2 = 0.0
+        ma1 = u_band = l_band = jma[0] = c[0]
+        for i in range(1, m):
+            price = c[i]
+            del1 = price - u_band
+            del2 = price - l_band
+            volty[i] = max(abs(del1), abs(del2)) if abs(del1) != abs(del2) else 0.0
+            v_sum[i] = v_sum[i - 1] + (volty[i] - volty[max(i - sum_length, 0)]) / sum_length
+            avg_volty = np.mean(v_sum[max(i - 65, 0) : i + 1])
+            d_volty = 0.0 if avg_volty == 0 else volty[i] / avg_volty
+            r_volty = max(1.0, min(np.power(length1, 1.0 / pow1), d_volty))
+            pow2 = np.power(r_volty, pow1)
+            kv = np.power(bet, np.sqrt(pow2))
+            u_band = price if del1 > 0 else price - kv * del1
+            l_band = price if del2 < 0 else price - kv * del2
+            alpha = np.power(beta, pow2)
+            ma1 = (1.0 - alpha) * price + alpha * ma1
+            det0 = (price - ma1) * (1.0 - beta) + beta * det0
+            ma2 = ma1 + pr * det0
+            det1 = (ma2 - jma[i - 1]) * (1.0 - alpha) * (1.0 - alpha) + alpha * alpha * det1
+            jma[i] = jma[i - 1] + det1
+        jma[: length - 1] = np.nan
+        np.testing.assert_allclose(got, jma, rtol=0, atol=1e-12)
+
+    def test_empty_and_missing_column(self):
+        result = JMA().compute(pd.DataFrame(columns=["close"]))
+        assert result.empty
+        assert list(result.columns) == ["jma_7"]
+        with pytest.raises(ValueError, match="缺少列"):
+            JMA().compute(pd.DataFrame({"open": [10.0] * 30}))
+
+
+# ===========================================================================
+# 2026-09-20 简单指标清欠批1-L3：TEMA/TRIMA/T3/VIDYA/四价格变换 数值正确性
+# ===========================================================================
+
+
+def _make_golden_df_11(n: int = 200) -> pd.DataFrame:
+    """200 根几何随机游走合成 OHLC（rng(11)，清欠批1-L3 黄金样本），H≥max(O,C)、L≤min(O,C)。"""
+    rng = np.random.default_rng(11)
+    close = 100.0 * np.exp(rng.standard_normal(n).cumsum() * 0.01)
+    open_ = close * (1.0 + rng.standard_normal(n) * 0.001)
+    spread = np.abs(rng.standard_normal(n)) * 0.005 + 0.001
+    high = np.maximum(open_, close) * (1.0 + spread)
+    low = np.minimum(open_, close) * (1.0 - spread)
+    assert (high >= np.maximum(open_, close)).all()
+    assert (low <= np.minimum(open_, close)).all()
+    return pd.DataFrame({"open": open_, "high": high, "low": low, "close": close})
+
+
+class TestTemaNumeric:
+    """TEMA 三重指数移动平均——talib 黄金对照 + 手工微样本 + 边界。"""
+
+    def test_golden_vs_talib(self):
+        """黄金对照：第 100 根起与 talib.TEMA 一致（rtol=atol=1e-6）。
+
+        TA-Lib EMA 族用 SMA 种子（非首值种子），预热差异随 (1−α)^t 指数衰减
+        （unstable period 语义，实测第 100 根差 ~3e-7、第 150 根 ~3e-11），
+        第 100 根起对拍（MAMA 同款豁免口径）；本实现种子=首值，全序列无 NaN。
+        """
+        df = _make_golden_df_11()
+        result = TEMA().compute(df)
+        got = result["tema_10"].to_numpy()
+        t_tema = talib.TEMA(df["close"].to_numpy(), timeperiod=10)
+        assert not np.isnan(got).any()
+        np.testing.assert_allclose(got[100:], t_tema[100:], rtol=1e-6, atol=1e-6)
+
+    def test_hand_computed_3bar(self):
+        """手工微样本（非纯对拍）：close=[10,11,12]，α=2/11，_ema 种子=首值手推三步。
+
+        e1=[10, 10+α, 10+α+α(12−e1[1])]；e2/e3 同式级联；tema=3e1−3e2+e3，期望值独立手算写死。
+        """
+        df = pd.DataFrame({"close": [10.0, 11.0, 12.0]})
+        got = TEMA().compute(df, period=10)["tema_10"].to_numpy()
+        np.testing.assert_allclose(got, [10.0, 10.452291510142754, 11.203333105662178], rtol=1e-12)
+
+    def test_constant_series_identity(self):
+        """常数序列：EMA 链恒为常数 → TEMA 恒等于该常数（系数和=1）。"""
+        df = pd.DataFrame({"close": [10.0] * 30})
+        got = TEMA().compute(df)["tema_10"].to_numpy()
+        np.testing.assert_allclose(got, 10.0, rtol=1e-12)
+
+    def test_period_override(self):
+        """kwargs 覆盖 period：列名 tema_20 随窗口走，仍无预热 NaN。"""
+        df = _make_golden_df_11(60)
+        result = TEMA().compute(df, period=20)
+        assert list(result.columns) == ["tema_20"]
+        assert result["tema_20"].notna().all()
+
+    def test_empty_and_missing_column(self):
+        result = TEMA().compute(pd.DataFrame(columns=["close"]))
+        assert result.empty
+        assert list(result.columns) == ["tema_10"]
+        with pytest.raises(ValueError, match="缺少列"):
+            TEMA().compute(pd.DataFrame({"open": [10.0] * 30}))
+
+
+class TestTrimaNumeric:
+    """TRIMA 三角移动平均——talib 黄金对照 + 手工双窗 SMA + 边界。"""
+
+    def test_golden_vs_talib(self):
+        """黄金对照：TA-Lib TRIMA(10) 偶窗 lookback=9 与本实现首有效一致
+        （实测 talib 首有效 idx=9），从首个双方有效位起全序列对拍 rtol=atol=1e-12。
+        """
+        df = _make_golden_df_11()
+        result = TRIMA().compute(df)
+        got = result["trima_10"].to_numpy()
+        t_trima = talib.TRIMA(df["close"].to_numpy(), timeperiod=10)
+        assert np.isnan(got[:9]).all()
+        np.testing.assert_allclose(got[9:], t_trima[9:], rtol=1e-12, atol=1e-12)
+
+    def test_warmup_nan_then_valid(self):
+        """预热：前 9 根 NaN（SMA5+SMA6 级联 4+5），index 9 起有效。"""
+        df = _make_golden_df_11()
+        got = TRIMA().compute(df)["trima_10"]
+        assert got.iloc[:9].isna().all()
+        assert got.iloc[9:].notna().all()
+
+    def test_hand_two_stage_sma(self):
+        """手工微样本：close=1..12，trima=SMA6(SMA5)。
+
+        s5[4..10]=[3,4,5,6,7,8,9]；trima[9]=mean(3..8)=5.5；trima[10]=mean(4..9)=6.5。
+        """
+        df = pd.DataFrame({"close": [float(x) for x in range(1, 13)]})
+        got = TRIMA().compute(df, period=10)["trima_10"].to_numpy()
+        assert got[9] == pytest.approx(5.5, rel=1e-12)
+        assert got[10] == pytest.approx(6.5, rel=1e-12)
+
+    def test_constant_series(self):
+        """常数序列：预热后输出恒等于该常数。"""
+        df = pd.DataFrame({"close": [10.0] * 30})
+        got = TRIMA().compute(df)["trima_10"].to_numpy()
+        assert np.isnan(got[:9]).all()
+        np.testing.assert_allclose(got[9:], 10.0, rtol=1e-12)
+
+    def test_period_override(self):
+        """kwargs 覆盖 period=6（偶窗 3×4）：列名 trima_6，首有效=index 5。"""
+        df = pd.DataFrame({"close": [float(x) for x in range(1, 21)]})
+        result = TRIMA().compute(df, period=6)
+        assert list(result.columns) == ["trima_6"]
+        assert result["trima_6"].iloc[:5].isna().all()
+        assert result["trima_6"].iloc[5:].notna().all()
+
+    def test_empty_and_missing_column(self):
+        result = TRIMA().compute(pd.DataFrame(columns=["close"]))
+        assert result.empty
+        assert list(result.columns) == ["trima_10"]
+        with pytest.raises(ValueError, match="缺少列"):
+            TRIMA().compute(pd.DataFrame({"open": [10.0] * 30}))
+
+
+class TestT3Numeric:
+    """T3 Tillson 均线——talib 黄金对照 + 常数恒等 + 参数覆盖。"""
+
+    def test_golden_vs_talib(self):
+        """黄金对照：第 100 根起与 talib.T3(timeperiod=10, vfactor=0.7) 一致（rtol=atol=1e-6）。
+
+        TA-Lib EMA 族 SMA 种子预热差异指数衰减（实测第 100 根差 ~1.6e-6，有效容差
+        =atol+rtol×|值|≈1e-4），第 100 根起对拍（MAMA 同款豁免口径）。
+        """
+        df = _make_golden_df_11()
+        result = T3().compute(df)
+        got = result["t3_10"].to_numpy()
+        t_t3 = talib.T3(df["close"].to_numpy(), timeperiod=10, vfactor=0.7)
+        assert not np.isnan(got).any()
+        np.testing.assert_allclose(got[100:], t_t3[100:], rtol=1e-6, atol=1e-6)
+
+    def test_constant_series_identity(self):
+        """常数序列：c1+c2+c3+c4 恒等于 1 → T3 恒等于该常数。"""
+        df = pd.DataFrame({"close": [10.0] * 40})
+        got = T3().compute(df)["t3_10"].to_numpy()
+        np.testing.assert_allclose(got, 10.0, rtol=1e-12)
+
+    def test_no_warmup_nan(self):
+        """六重 adjust=False EMA 链无预热 NaN。"""
+        df = _make_golden_df_11()
+        got = T3().compute(df)["t3_10"]
+        assert got.notna().all()
+
+    def test_vfactor_and_period_override(self):
+        """kwargs 覆盖：vfactor 变→结果变；period=20→列名 t3_20。"""
+        df = _make_golden_df_11(80)
+        base = T3().compute(df)["t3_10"].to_numpy()
+        alt = T3().compute(df, vfactor=0.3)["t3_10"].to_numpy()
+        assert not np.allclose(base[20:], alt[20:])
+        long = T3().compute(df, period=20)
+        assert list(long.columns) == ["t3_20"]
+        assert long["t3_20"].notna().all()
+
+    def test_empty_and_missing_column(self):
+        result = T3().compute(pd.DataFrame(columns=["close"]))
+        assert result.empty
+        assert list(result.columns) == ["t3_10"]
+        with pytest.raises(ValueError, match="缺少列"):
+            T3().compute(pd.DataFrame({"open": [10.0] * 30}))
+
+
+class TestVidyaNumeric:
+    """VIDYA 可变指数动态均线——独立复算 + 手工微样本 + 边界。
+
+    talib 0.7.1 无 VIDYA 函数（dir(talib) 与 abstract.Function 均无），
+    黄金锚点改为测试内纯 python 独立复算（与实现解耦的双实现对拍）。
+    """
+
+    def test_independent_recompute(self):
+        """独立复算锚点：纯 python 逐 bar 复算 CMO+递推，全序列对拍（rtol=atol=1e-10）。"""
+        close = _make_golden_df_11()["close"].to_numpy()
+        result = VIDYA().compute(pd.DataFrame({"close": close}))
+        got = result["vidya_14"].to_numpy()
+        n, cm = 14, 9
+        expected = np.full(len(close), np.nan)
+        prev = None
+        for t in range(cm, len(close)):  # diff 首位 NaN → CMO 首有效=第 cm+1 根（index 9）
+            d = [close[i] - close[i - 1] for i in range(t - cm + 1, t + 1)]
+            su = sum(x for x in d if x > 0)
+            sd = sum(-x for x in d if x < 0)
+            a = abs((su - sd) / (su + sd) * 100.0) / 100.0 * 2.0 / (n + 1)
+            if prev is None:
+                prev = close[t]  # 种子=CMO 首有效当根 close（种子当根即输出）
+            else:
+                prev = a * close[t] + (1.0 - a) * prev
+            expected[t] = prev
+        assert np.isnan(got[:9]).all()
+        mask = ~np.isnan(expected)
+        np.testing.assert_allclose(got[mask], expected[mask], rtol=1e-10, atol=1e-10)
+
+    def test_hand_micro_sample(self):
+        """手工微样本（涨跌混合，CMO∈(0,100)）：12 根已知收盘价，期望值独立手算写死。"""
+        closes = [10.0, 10.5, 10.2, 10.8, 11.0, 10.6, 10.9, 11.2, 10.8, 11.1, 11.4, 11.2]
+        df = pd.DataFrame({"close": closes})
+        got = VIDYA().compute(df)["vidya_14"].to_numpy()
+        assert np.isnan(got[:9]).all()
+        assert got[9] == pytest.approx(11.1)  # 种子=CMO 首有效当根 close
+        assert got[10] == pytest.approx(11.111612903225806, rel=1e-12)
+        assert got[11] == pytest.approx(11.115541218637993, rel=1e-12)
+
+    def test_cmo_full_streak_spot(self):
+        """单边上行 9 窗 → CMO=+100 → alpha=2/15 恒定：out[10]=10+2/15，out[11] 递推写死。"""
+        df = pd.DataFrame({"close": [float(x) for x in range(1, 13)]})
+        got = VIDYA().compute(df)["vidya_14"].to_numpy()
+        assert got[9] == pytest.approx(10.0)
+        assert got[10] == pytest.approx(10.0 + 2.0 / 15.0, rel=1e-12)
+        assert got[11] == pytest.approx(10.382222222222223, rel=1e-12)
+
+    def test_warmup_nan_then_valid(self):
+        """预热：前 9 根 NaN（diff 首位 NaN + CMO 9 窗），index 9 起有效。"""
+        df = _make_golden_df_11()
+        got = VIDYA().compute(df)["vidya_14"]
+        assert got.iloc[:9].isna().all()
+        assert got.iloc[9:].notna().all()
+
+    def test_kwargs_override(self):
+        """kwargs 覆盖 period=20：列名 vidya_20，首有效仍由 cmo_period=9 决定（index 9）。"""
+        df = _make_golden_df_11(60)
+        result = VIDYA().compute(df, period=20)
+        assert list(result.columns) == ["vidya_20"]
+        assert result["vidya_20"].iloc[:9].isna().all()
+        assert result["vidya_20"].iloc[9:].notna().all()
+
+    def test_empty_and_missing_column(self):
+        result = VIDYA().compute(pd.DataFrame(columns=["close"]))
+        assert result.empty
+        assert list(result.columns) == ["vidya_14"]
+        with pytest.raises(ValueError, match="缺少列"):
+            VIDYA().compute(pd.DataFrame({"open": [10.0] * 30}))
+
+
+class TestPriceTransformNumeric:
+    """四价格变换 AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE——talib 黄金对照 + 手工一行 + 边界。"""
+
+    @pytest.mark.parametrize(
+        "iid,cols,fn",
+        [
+            # talib 0.7.1 签名：AVGPRICE(O,H,L,C) 4 参；MEDPRICE(H,L) 2 参；TYPPRICE/WCLPRICE(H,L,C) 3 参
+            ("avgprice", ["open", "high", "low", "close"], talib.AVGPRICE),
+            ("medprice", ["high", "low"], talib.MEDPRICE),
+            ("typprice", ["high", "low", "close"], talib.TYPPRICE),
+            ("wcprice", ["high", "low", "close"], talib.WCLPRICE),
+        ],
+    )
+    def test_golden_vs_talib(self, iid, cols, fn):
+        """黄金对照：全序列与 talib 一致（rtol=atol=1e-12，线性变换应逐位一致）。"""
+        df = _make_golden_df_11()
+        got = TechnicalIndicatorRegistry.get(iid)().compute(df)[iid].to_numpy()
+        expected = fn(*[df[c].to_numpy() for c in cols])
+        np.testing.assert_allclose(got, expected, rtol=1e-12, atol=1e-12)
+
+    def test_hand_one_row(self):
+        """手工一行：O=10/H=12/L=9/C=11 → avg=10.5、med=10.5、typ=32/3、wc=43/4。"""
+        df = pd.DataFrame({"open": [10.0], "high": [12.0], "low": [9.0], "close": [11.0]})
+        assert AVGPRICE().compute(df)["avgprice"].iloc[0] == pytest.approx(10.5)
+        assert MEDPRICE().compute(df)["medprice"].iloc[0] == pytest.approx(10.5)
+        assert TYPPRICE().compute(df)["typprice"].iloc[0] == pytest.approx(32.0 / 3.0)
+        assert WCPRICE().compute(df)["wcprice"].iloc[0] == pytest.approx(43.0 / 4.0)
+
+    def test_no_nan_and_index_aligned(self):
+        """价格变换首行即有效：全序列无 NaN 且 index 对齐。"""
+        df = _make_golden_df_11()
+        for cls, col in ((AVGPRICE, "avgprice"), (MEDPRICE, "medprice"), (TYPPRICE, "typprice"), (WCPRICE, "wcprice")):
+            result = cls().compute(df)
+            assert result[col].notna().all()
+            assert result.index.equals(df.index)
+
+    def test_avgprice_missing_open_raises(self):
+        """AVGPRICE 缺 open → ValueError（ERROR_CONTRACT：缺列即抛）。"""
+        with pytest.raises(ValueError, match="缺少列"):
+            AVGPRICE().compute(pd.DataFrame({"high": [10.0] * 5, "low": [9.0] * 5, "close": [10.5] * 5}))
+
+    @pytest.mark.parametrize("iid", ["avgprice", "medprice", "typprice", "wcprice"])
+    def test_empty_dataframe(self, iid):
+        """空 DataFrame → 空输出（columns=meta.output_columns）。"""
+        cols = {
+            "avgprice": ["open", "high", "low", "close"],
+            "medprice": ["high", "low"],
+            "typprice": ["high", "low", "close"],
+            "wcprice": ["high", "low", "close"],
+        }[iid]
+        result = TechnicalIndicatorRegistry.get(iid)().compute(pd.DataFrame(columns=cols))
+        assert result.empty
+        assert list(result.columns) == [iid]
+
+
+# ===========================================================================
+# 2026-09-20 简单指标清欠班波2-A：INERTIA/QSTICK 数值正确性
+# ===========================================================================
+
+
+class TestInertiaNumeric:
+    """INERTIA 惯性指标——纯 python 独立复算（RVI+种子 EMA+OLS 端点全链）+ 单边/退化微样本 + 边界。
+
+    talib 0.7.1 无 INERTIA（TA-Lib 无对应函数），黄金锚点=测试内独立复算（移植源
+    pandas_ta_classic/momentum/inertia.py 基础模式，src 取 HL2 按车道规格）。
+    """
+
+    @staticmethod
+    def _recompute(hl2: np.ndarray, length: int, rvi_length: int, scalar: float) -> np.ndarray:
+        m = len(hl2)
+        # 1) 滚动总体标准差 ddof=0
+        std = [float(np.std(hl2[t - rvi_length + 1 : t + 1])) if t >= rvi_length - 1 else np.nan for t in range(m)]
+        # 2) 方向示性（diff 首位 NaN 记 0，与源 unsigned_differences 一致）
+        pos = [0.0] * m
+        neg = [0.0] * m
+        for t in range(1, m):
+            d = hl2[t] - hl2[t - 1]
+            if d > 0:
+                pos[t] = 1.0
+            elif d < 0:
+                neg[t] = 1.0
+
+        # 3) pandas-ta SMA 种子 EMA：首个有效位起取 length 窗 SMA 为种子，随后 α=2/(N+1) 递推
+        def seeded_ema(x: list) -> list:
+            out = [np.nan] * m
+            fv = next(i for i, v in enumerate(x) if not np.isnan(v))
+            seed_pos = fv + rvi_length - 1
+            if seed_pos >= m:
+                return out
+            alpha = 2.0 / (rvi_length + 1)
+            prev = sum(x[fv : seed_pos + 1]) / rvi_length
+            for i in range(seed_pos, m):
+                if i > seed_pos:
+                    prev = alpha * x[i] + (1 - alpha) * prev
+                out[i] = prev
+            return out
+
+        pos_avg = seeded_ema([pos[t] * std[t] for t in range(m)])
+        neg_avg = seeded_ema([neg[t] * std[t] for t in range(m)])
+        rvi = [
+            scalar * pos_avg[t] / (pos_avg[t] + neg_avg[t]) if pos_avg[t] == pos_avg[t] else np.nan for t in range(m)
+        ]
+        # 4) 滚动 OLS 端点拟合值（x=[0..length−1]）
+        x = list(range(length))
+        sx, sx2 = float(sum(x)), float(sum(v * v for v in x))
+        divisor = length * sx2 - sx * sx
+        out = [np.nan] * m
+        for t in range(2 * rvi_length - 2 + length - 1, m):
+            w = rvi[t - length + 1 : t + 1]
+            sy, sxy = math.fsum(w), math.fsum(x[i] * w[i] for i in range(length))
+            slope = (length * sxy - sx * sy) / divisor
+            intercept = (sy * sx2 - sx * sxy) / divisor
+            out[t] = slope * (length - 1) + intercept
+        return np.array(out)
+
+    def test_independent_recompute(self):
+        """独立复算锚点：纯 python 全链复算，第 45 根起全序列对拍（rtol=atol=1e-10）。"""
+        df = _make_golden_df_11()
+        hl2 = ((df["high"] + df["low"]) / 2.0).to_numpy()
+        got = INERTIA().compute(df)["inertia_20_14"].to_numpy()
+        expected = self._recompute(hl2, length=20, rvi_length=14, scalar=100.0)
+        assert np.isnan(got[:45]).all()
+        np.testing.assert_allclose(got[45:], expected[45:], rtol=1e-10, atol=1e-10)
+
+    def test_uptrend_100_downtrend_0(self):
+        """单调上行：Δ>0 恒真 → RVI≡100 → INERTIA≡100（>50 正惯性）；下行对称 ≡0。"""
+        mid = np.linspace(100.0, 140.0, 80)
+        up = INERTIA().compute(pd.DataFrame({"high": mid + 0.5, "low": mid - 0.5}))
+        assert up["inertia_20_14"].iloc[:45].isna().all()
+        np.testing.assert_allclose(up["inertia_20_14"].iloc[45:], 100.0, rtol=1e-9, atol=1e-9)
+        dn = INERTIA().compute(pd.DataFrame({"high": mid[::-1] + 0.5, "low": mid[::-1] - 0.5}))
+        np.testing.assert_allclose(dn["inertia_20_14"].iloc[45:], 0.0, rtol=1e-9, atol=1e-9)
+
+    def test_constant_price_all_nan(self):
+        """常数价格：STD=0 → RVI 0/0=NaN → 全 NaN（移植源忠实退化行为）。"""
+        const = pd.DataFrame({"high": np.full(80, 100.0), "low": np.full(80, 100.0)})
+        result = INERTIA().compute(const)
+        assert result["inertia_20_14"].isna().all()
+
+    def test_kwargs_override(self):
+        """kwargs 覆盖：rvi_length=21 → 列名 inertia_20_21 且首有效右移（std 预热 20 + 种子位 40
+        → linreg 首有效=40+19=59）；mamode='sma' 与默认 'ema' 数值可分。"""
+        df = _make_golden_df_11(120)
+        alt = INERTIA().compute(df, rvi_length=21)
+        assert list(alt.columns) == ["inertia_20_21"]
+        got = alt["inertia_20_21"].to_numpy()
+        assert np.isnan(got[:59]).all()
+        assert not np.isnan(got[59:]).any()
+        base = INERTIA().compute(df)["inertia_20_14"].to_numpy()
+        sma = INERTIA().compute(df, mamode="sma")["inertia_20_14"].to_numpy()
+        assert not np.allclose(base[59:], sma[59:])
+
+    def test_empty_and_missing_column(self):
+        result = INERTIA().compute(pd.DataFrame(columns=["high", "low"]))
+        assert result.empty
+        assert list(result.columns) == ["inertia_20_14"]
+        with pytest.raises(ValueError, match="缺少列"):
+            INERTIA().compute(pd.DataFrame({"close": [10.0] * 60}))
+
+
+class TestQstickNumeric:
+    """QSTICK Q 棒指标——纯 python 滚动均值复算 + 手工微样本 + 十字星/预热/边界。"""
+
+    def test_independent_recompute(self):
+        """独立复算锚点：纯 python 逐窗均值，与实现 pandas rolling 解耦（rtol=atol=1e-12）。"""
+        df = _make_golden_df_11()
+        diff = (df["close"] - df["open"]).to_numpy()
+        n = 10
+        expected = [float(np.mean(diff[t - n + 1 : t + 1])) if t >= n - 1 else np.nan for t in range(len(diff))]
+        got = QSTICK().compute(df)["qstick_10"].to_numpy()
+        np.testing.assert_allclose(got, expected, rtol=1e-12, atol=1e-12)
+
+    def test_hand_micro_sample(self):
+        """手工微样本（n=2）：C−O=[2,−1,1] → qstick[1]=0.5、qstick[2]=0（手算写死）。"""
+        df = pd.DataFrame({"open": [10.0, 11.0, 12.0], "close": [12.0, 10.0, 13.0]})
+        got = QSTICK().compute(df, length=2)["qstick_2"].to_numpy()
+        assert np.isnan(got[0])
+        assert got[1] == pytest.approx(0.5)
+        assert got[2] == pytest.approx(0.0)
+
+    def test_warmup_and_doji_zero(self):
+        """预热前 9 根 NaN；十字星（C=O 恒定）按数学定义输出 0（非源 0.001 epsilon 修补）。"""
+        df = pd.DataFrame({"open": [10.0] * 30, "close": [10.0] * 30})
+        got = QSTICK().compute(df)["qstick_10"]
+        assert got.iloc[:9].isna().all()
+        assert np.allclose(got.iloc[9:], 0.0)
+
+    def test_bull_bear_sign(self):
+        """持续阳线（C>O）→ 正值；持续阴线（C<O）→ 负值。"""
+        up = QSTICK().compute(pd.DataFrame({"open": np.full(20, 100.0), "close": np.linspace(101, 120, 20)}))
+        down = QSTICK().compute(pd.DataFrame({"open": np.full(20, 100.0), "close": np.linspace(99, 80, 20)}))
+        assert (up["qstick_10"].dropna() > 0).all()
+        assert (down["qstick_10"].dropna() < 0).all()
+
+    def test_kwargs_override(self):
+        """kwargs 覆盖 length=5：列名 qstick_5，首有效=index 4。"""
+        df = _make_golden_df_11(40)
+        result = QSTICK().compute(df, length=5)
+        assert list(result.columns) == ["qstick_5"]
+        assert result["qstick_5"].iloc[:4].isna().all()
+        assert result["qstick_5"].iloc[4:].notna().all()
+
+    def test_empty_and_missing_column(self):
+        result = QSTICK().compute(pd.DataFrame(columns=["open", "close"]))
+        assert result.empty
+        assert list(result.columns) == ["qstick_10"]
+        with pytest.raises(ValueError, match="缺少列"):
+            QSTICK().compute(pd.DataFrame({"close": [10.0] * 30}))

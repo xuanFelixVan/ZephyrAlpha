@@ -1,11 +1,11 @@
-# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
+# [BLUEPRINT] MOD-L02-029 | docs/03_modules/_domain_factor/blueprint.md
 # [MODULE] zephyr.factor.technical_indicators.cycle
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.technical_indicators.indicator_base; numpy(pip); pandas(pip)
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 循环族指标 5 个/7 输出列，纯自实现 numpy；compute→DataFrame 多列输出；共享 _ht_core 单遍递推
+# [INVARIANTS] 循环族指标 6 个/8 输出列，纯自实现 numpy；compute→DataFrame 多列输出；HT 五指标共享 _ht_core 单遍递推；EBSW 逐行移植 pandas-ta-classic
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,9 @@
 # [TTL] permanent
 """
 
-循环族技术指标（5 个指标/7 输出列，2026-09-14 批 3 新建）。
+循环族技术指标（6 个指标/8 输出列；HT 五件套 2026-09-14 批 3 新建，EBSW 2026-09-20 清欠班波2-A +1）。
 
-指标清单：HT_DCPERIOD/HT_DCPHASE/HT_PHASOR/HT_SINE/HT_TRENDMODE
+指标清单：HT_DCPERIOD/HT_DCPHASE/HT_PHASOR/HT_SINE/HT_TRENDMODE/EBSW
 
 对齐 TA-Lib Hilbert Transform 循环组理论源（Ehlers, Rocket Science for Traders），
 实现采用 **相位累积（Phase Accumulation）** 口径：
@@ -53,9 +53,18 @@ def _ht_core(real: np.ndarray) -> dict[str, np.ndarray]:
     返回 dict：dcperiod/dcphase/ip/qp/sine/leadsine/trendmode（预热期 NaN）。
     """
     n = len(real)
-    out = {k: np.full(n, np.nan) for k in (
-        "dcperiod", "dcphase", "ip", "qp", "sine", "leadsine", "trendmode",
-    )}
+    out = {
+        k: np.full(n, np.nan)
+        for k in (
+            "dcperiod",
+            "dcphase",
+            "ip",
+            "qp",
+            "sine",
+            "leadsine",
+            "trendmode",
+        )
+    }
     if n < _WARMUP:
         return out
 
@@ -137,7 +146,7 @@ class _HTBase(TechnicalIndicatorBase):
         if data.empty:
             return pd.DataFrame(columns=self.meta.output_columns)
         core = _ht_core(data["close"].to_numpy(dtype=float))
-        cols = dict(zip(self._keys, self.meta.output_columns))
+        cols = dict(zip(self._keys, self.meta.output_columns, strict=False))
         return pd.DataFrame(
             {col: pd.Series(core[key], index=data.index) for key, col in cols.items()},
             index=data.index,
@@ -232,3 +241,90 @@ class HT_TRENDMODE(_HTBase):
         version="1.0.0",
         description="1=趋势态（正弦交叉少）/0=循环态（交叉频繁），穿越计数口径；TA-Lib HT_TRENDMODE 同源",
     )
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-20 简单指标清欠班波2-A：EBSW（Ehlers Even Better Sine Wave）
+# 逐行移植：https://github.com/xgboosted/pandas-ta-classic/blob/main/pandas_ta_classic/cycles/ebsw.py
+# ---------------------------------------------------------------------------
+
+
+def _ebsw_core(close: np.ndarray, length: int, bars: int) -> np.ndarray:
+    """EBSW 带通滤波核，逐行移植 pandas_ta_classic/cycles/ebsw.py::_ebsw_nb。
+
+    HighPass（alpha1，通达信式 360/length 写法原样保留——源码 sin/cos 即按弧度取值）
+    + SuperSmoother（a1/b1/c1..c3 三极递推）→ 3 根平均 Wave 对均方根 Pwr 归一化，
+    输出由 Cauchy–Schwarz 界钳位在 [-1,1]。种子：第 length−1 根置 0.0。
+    """
+    m = close.size
+    result = np.full(m, np.nan)
+    if length - 1 < m:
+        result[length - 1] = 0.0
+
+    # HighPass 与 SuperSmoother 系数逐 bar 恒定
+    alpha1 = (1 - np.sin(360 / length)) / np.cos(360 / length)
+    a1 = np.exp(-np.sqrt(2) * np.pi / bars)
+    b1 = 2 * a1 * np.cos(np.sqrt(2) * 180 / bars)
+    c2 = b1
+    c3 = -a1 * a1
+    c1 = 1 - c2 - c3
+
+    last_close = 0.0
+    last_hp = 0.0
+    fh0 = 0.0  # FilterHist[0]（更旧）
+    fh1 = 0.0  # FilterHist[1]（更新）
+
+    for i in range(length, m):
+        hp = 0.5 * (1 + alpha1) * (close[i] - last_close) + alpha1 * last_hp
+        filt = c1 * (hp + last_hp) / 2 + c2 * fh1 + c3 * fh0
+
+        # Wave 幅度与功率的 3 根平均
+        wave = (filt + fh1 + fh0) / 3
+        pwr = (filt * filt + fh1 * fh1 + fh0 * fh0) / 3
+
+        # 平均 Wave 对平均功率均方根归一化
+        wave = wave / np.sqrt(pwr) if pwr > 0 else 0.0
+
+        # 状态滚动更新
+        fh0 = fh1
+        fh1 = filt
+        last_hp = hp
+        last_close = close[i]
+        result[i] = wave
+
+    return result
+
+
+@TechnicalIndicatorRegistry.register
+class EBSW(TechnicalIndicatorBase):
+    """更优正弦波（Even Better Sine Wave，Ehlers）。
+
+    公式权威源（逐行移植）：
+    https://github.com/xgboosted/pandas-ta-classic/blob/main/pandas_ta_classic/cycles/ebsw.py
+    （Ehlers 'Cycle Analytics for Traders' 2014 / prorealcode.com 同源）
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="ebsw",
+        name="更优正弦波",
+        category="cycle",
+        output_columns=["ebsw_40"],
+        input_columns=["close"],
+        params={"length": 40, "bars": 10},
+        version="1.0.0",
+        description=(
+            "Ehlers 带通滤波去噪：HighPass+SuperSmoother 三极递推，3 根平均 Wave 对均方根 Pwr "
+            "归一化（输出钳位 [-1,1]）；length=最大周期（源码 gt=38 约定），bars=低通滤波周期；"
+            "第 length−1 根种子 0.0，其后逐根输出（列名列 ebsw_{length}，源命名 EBSW_{length}_{bars} 省略 bars 位）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        length = int(params["length"])
+        bars = int(params["bars"])
+        core = _ebsw_core(data["close"].to_numpy(dtype=float), length, bars)
+        return pd.DataFrame({f"ebsw_{length}": pd.Series(core, index=data.index)}, index=data.index)

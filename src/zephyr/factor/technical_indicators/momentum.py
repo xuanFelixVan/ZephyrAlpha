@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 动量类指标 31 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 动量类指标 43 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,9 @@
 # [TTL] permanent
 """
 
-动量类技术指标（31 个；2026-09-14 A股标配批+3、批2a +1、批2b +8、批6 +9）。
+动量类技术指标（43 个；2026-09-14 A股标配批+3、批2a +1、批2b +8、批6 +9；2026-09-20 批7 清欠 +6：RMI/PFE/FOSC/CTI/VHF/ER）。
 
-指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO/TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/STOCH/AROON/AROONOSC/BOP/PPO/APO/DX/BRAR/CR
+指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI/BIAS/PSY/LWR/DPO/TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/STOCH/AROON/AROONOSC/BOP/PPO/APO/DX/BRAR/CR/RMI/PFE/FOSC/CTI/VHF/ER
 
 算法对齐通达信：
   - KDJ K/D 用通达信 SMA(X,N,1)=ewm(alpha=1/N, adjust=False)（非标准 EMA alpha=2/(N+1)）
@@ -41,6 +41,9 @@ from zephyr.factor.technical_indicators.indicator_base import (
     TechnicalIndicatorBase,
     TechnicalIndicatorMeta,
     TechnicalIndicatorRegistry,
+)
+from zephyr.factor.technical_indicators.statistics import (
+    _rolling_linefit,  # noqa: PLC0415 — FOSC/CTI 复用滚动线性回归闭式解
 )
 from zephyr.factor.technical_indicators.trend import _di  # noqa: PLC0415 — DX 复用 DMI 的 ±DI
 
@@ -589,7 +592,7 @@ class KST(TechnicalIndicatorBase):
         params = self.get_params(**kwargs)
         rocs, smas, weights, sig = params["roc"], params["sma"], params["weights"], params["signal"]
         kst = pd.Series(0.0, index=data.index)
-        for rc, sm, w in zip(rocs, smas, weights):
+        for rc, sm, w in zip(rocs, smas, weights, strict=False):
             kst = kst + w * (data["close"].pct_change(rc) * 100).rolling(window=sm).mean()
         kst_signal = kst.rolling(window=sig).mean()
         return pd.DataFrame({"kst": kst, "kst_signal": kst_signal}, index=data.index)
@@ -632,9 +635,7 @@ class CONNORSRSI(TechnicalIndicatorBase):
         streak_s = pd.Series(streak, index=data.index)
         rsi_streak = _rsi(streak_s, streak_n)
         ret = close.pct_change()
-        pct_rank = ret.rolling(window=rank_n).apply(
-            lambda x: (x < x[-1]).sum() / (len(x) - 1) * 100, raw=True
-        )
+        pct_rank = ret.rolling(window=rank_n).apply(lambda x: (x < x[-1]).sum() / (len(x) - 1) * 100, raw=True)
         crsi = (rsi_1 + rsi_streak + pct_rank) / 3
         return pd.DataFrame({"crsi": crsi}, index=data.index)
 
@@ -662,12 +663,9 @@ class QQE(TechnicalIndicatorBase):
         n, smooth_n, atr_n, factor = params["period"], params["smooth"], params["atr_period"], params["factor"]
         rsi = _rsi(data["close"], n)
         rsi_ma = rsi.ewm(span=smooth_n, adjust=False).mean()
-        dar = (
-            (rsi_ma - rsi_ma.shift(1)).abs().ewm(span=atr_n, adjust=False).mean().ewm(
-                span=atr_n, adjust=False
-            ).mean()
-            * factor
-        )
+        dar = (rsi_ma - rsi_ma.shift(1)).abs().ewm(span=atr_n, adjust=False).mean().ewm(
+            span=atr_n, adjust=False
+        ).mean() * factor
         rm = rsi_ma.to_numpy()
         dv = dar.to_numpy()
         m = len(rm)
@@ -717,9 +715,7 @@ class STC(TechnicalIndicatorBase):
             return pd.DataFrame(columns=self.meta.output_columns)
         params = self.get_params(**kwargs)
         fast_n, slow_n, cyc, sm = params["fast"], params["slow"], params["cycle"], params["smooth"]
-        macd = data["close"].ewm(span=fast_n, adjust=False).mean() - data["close"].ewm(
-            span=slow_n, adjust=False
-        ).mean()
+        macd = data["close"].ewm(span=fast_n, adjust=False).mean() - data["close"].ewm(span=slow_n, adjust=False).mean()
         macd_min = macd.rolling(window=cyc).min()
         macd_max = macd.rolling(window=cyc).max()
         k1 = 100 * (macd - macd_min) / (macd_max - macd_min)
@@ -931,9 +927,7 @@ class APO(TechnicalIndicatorBase):
             return pd.DataFrame(columns=self.meta.output_columns)
         params = self.get_params(**kwargs)
         fast_n, slow_n = params["fast"], params["slow"]
-        apo = data["close"].ewm(span=fast_n, adjust=False).mean() - data["close"].ewm(
-            span=slow_n, adjust=False
-        ).mean()
+        apo = data["close"].ewm(span=fast_n, adjust=False).mean() - data["close"].ewm(span=slow_n, adjust=False).mean()
         return pd.DataFrame({"apo": apo}, index=data.index)
 
 
@@ -1090,8 +1084,7 @@ class FRACTALS(TechnicalIndicatorBase):
             if l[i] < min(seg_l[:half].min(), seg_l[half + 1 :].min()):
                 fl[i] = l[i]
         return pd.DataFrame(
-            {"fractal_high": pd.Series(fh, index=data.index),
-             "fractal_low": pd.Series(fl, index=data.index)},
+            {"fractal_high": pd.Series(fh, index=data.index), "fractal_low": pd.Series(fl, index=data.index)},
             index=data.index,
         )
 
@@ -1120,9 +1113,7 @@ class ELDER(TechnicalIndicatorBase):
         ema_n = data["close"].ewm(span=n, adjust=False).mean()
         bull = data["high"] - ema_n
         bear = data["low"] - ema_n
-        return pd.DataFrame(
-            {f"bull_power_{n}": bull, f"bear_power_{n}": bear}, index=data.index
-        )
+        return pd.DataFrame({f"bull_power_{n}": bull, f"bear_power_{n}": bear}, index=data.index)
 
 
 @TechnicalIndicatorRegistry.register
@@ -1226,3 +1217,208 @@ class WAVETREND(TechnicalIndicatorBase):
         wt1 = ci.ewm(span=avg_n, adjust=False).mean()
         wt2 = wt1.rolling(window=sig_n).mean()
         return pd.DataFrame({"wt1": wt1, "wt2": wt2}, index=data.index)
+
+
+# ===========================================================================
+# 2026-09-20 批 7 清欠：RMI/PFE/FOSC/CTI/VHF/ER
+# ===========================================================================
+
+
+@TechnicalIndicatorRegistry.register
+class RMI(TechnicalIndicatorBase):
+    """相对动量指数（Relative Momentum Index，RSI 动量窗变体，Altman TASC 1993-01）。
+
+    移植源 pandas-ta momentum/rmi.py（镜像 404，按权威定义实现）：
+    https://raw.githubusercontent.com/xgboosted/pandas-ta-classic/main/pandas_ta_classic/momentum/rmi.py
+    公式参考: https://www.luxalgo.com/blog/relative-momentum-index/
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="rmi",
+        name="相对动量指数",
+        category="momentum",
+        output_columns=["rmi_14"],
+        input_columns=["close"],
+        params={"period": 14, "mom_length": 5},
+        version="1.0.0",
+        description="mom=C−C[mom_length]；RMI=100×SMA(up)/(SMA(up)+SMA(dn))，up=max(mom,0)，dn=max(−mom,0)，RSI 动量窗变体",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, mom_n = params["period"], params["mom_length"]
+        mom = data["close"].diff(mom_n)
+        up = mom.clip(lower=0)
+        dn = (-mom).clip(lower=0)
+        avg_up = _sma(up, n)
+        avg_dn = _sma(dn, n)
+        rmi = 100 * avg_up / (avg_up + avg_dn)
+        return pd.DataFrame({f"rmi_{n}": rmi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class PFE(TechnicalIndicatorBase):
+    """极化分形效率（Polarized Fractal Efficiency，Hannula TASC 1994-06）。
+
+    移植源 pandas-ta momentum/pfe.py（镜像 404，按 MetaStock 权威定义实现）：
+    https://raw.githubusercontent.com/xgboosted/pandas-ta-classic/main/pandas_ta_classic/momentum/pfe.py
+    公式参考: https://www.incrediblecharts.com/indicators/polarized_fractal_efficiency.php
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="pfe",
+        name="极化分形效率",
+        category="momentum",
+        output_columns=["pfe_10"],
+        input_columns=["close"],
+        params={"period": 10, "smooth": 5},
+        version="1.0.0",
+        description="raw=100×sign(C−C_N)×sqrt(N²+net²)/sqrt(N²+ΣΔC²)，EMA_N 平滑；正=上升分形效率高，值可越 ±100",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n, sm = params["period"], params["smooth"]
+        close = data["close"]
+        net = close.diff(n)
+        raw = 100 * np.sign(net) * np.sqrt(n**2 + net**2) / np.sqrt(n**2 + (close.diff() ** 2).rolling(window=n).sum())
+        pfe = raw.ewm(span=sm, adjust=False).mean()
+        return pd.DataFrame({f"pfe_{n}": pfe}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class FOSC(TechnicalIndicatorBase):
+    """预测震荡（Forecast Oscillator，Chande，线性回归一步外推 TSF）。
+
+    移植源: https://raw.githubusercontent.com/xgboosted/pandas-ta-classic/main/pandas_ta_classic/momentum/fosc.py
+    TSF 复用 statistics._rolling_linefit（跨模块 import 本包内合法，reversal 先例）。
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="fosc",
+        name="预测震荡",
+        category="momentum",
+        output_columns=["fosc_14"],
+        input_columns=["close"],
+        params={"period": 14},
+        version="1.0.0",
+        description="TSF=a+b×N（滚动线性回归一步外推）；FOSC=100×(C−TSF)/C，正=价在预测线上方看多",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        close = data["close"]
+        slope, intercept = _rolling_linefit(close, n)
+        tsf = intercept + slope * n
+        fosc = 100 * (close - tsf) / close
+        return pd.DataFrame({f"fosc_{n}": fosc}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class CTI(TechnicalIndicatorBase):
+    """相关趋势指标（Correlation Trend Indicator，Ehlers 2020）。
+
+    移植源: https://raw.githubusercontent.com/xgboosted/pandas-ta-classic/main/pandas_ta_classic/momentum/cti.py
+    close 对 0..N-1 线性序列的滚动 Pearson r（闭式解，复用 _rolling_linefit with_sum_xy）。
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="cti",
+        name="相关趋势指标",
+        category="momentum",
+        output_columns=["cti_12"],
+        input_columns=["close"],
+        params={"period": 12},
+        version="1.0.0",
+        description="r=(NΣxy−ΣxΣy)/sqrt((NΣx²−(Σx)²)(NΣy²−(Σy)²))，x=0..N-1；值域 [-1,1]，±1=完全直线趋势",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        close = data["close"]
+        _, _, sum_xy = _rolling_linefit(close, n, with_sum_xy=True)
+        sum_y = close.rolling(window=n).sum()
+        sum_y2 = (close**2).rolling(window=n).sum()
+        sum_x = n * (n - 1) / 2
+        sum_x2 = n * (n - 1) * (2 * n - 1) / 6
+        num = n * sum_xy - sum_x * sum_y
+        den = np.sqrt((n * sum_x2 - sum_x**2) * (n * sum_y2 - sum_y**2).clip(lower=0))
+        cti = num / den
+        return pd.DataFrame({f"cti_{n}": cti}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class VHF(TechnicalIndicatorBase):
+    """纵横过滤（Vertical Horizontal Filter，Adam White，趋势/盘整识别）。
+
+    移植源: https://raw.githubusercontent.com/xgboosted/pandas-ta-classic/main/pandas_ta_classic/trend/vhf.py
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="vhf",
+        name="纵横过滤",
+        category="momentum",
+        output_columns=["vhf_28"],
+        input_columns=["close"],
+        params={"period": 28},
+        version="1.0.0",
+        description="VHF=(maxC(N)−minC(N))/Σ|ΔC|，比值高=趋势市、低=盘整市（Adam White 1991）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        close = data["close"]
+        hcp = close.rolling(window=n).max()
+        lcp = close.rolling(window=n).min()
+        diff = close.diff().abs()
+        vhf = (hcp - lcp) / diff.rolling(window=n).sum()
+        return pd.DataFrame({f"vhf_{n}": vhf}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class ER(TechnicalIndicatorBase):
+    """效率比率（Efficiency Ratio，Kaufman，KAMA 核心原料独立立条）。
+
+    移植源: https://raw.githubusercontent.com/xgboosted/pandas-ta-classic/main/pandas_ta_classic/momentum/er.py
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="er",
+        name="效率比率",
+        category="momentum",
+        output_columns=["er_10"],
+        input_columns=["close"],
+        params={"period": 10},
+        version="1.0.0",
+        description="ER=|C−C_N|/Σ|ΔC|，净位移/路径长度，值域 [0,1]；高=低噪声趋势，低=高噪声盘整",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        close = data["close"]
+        abs_diff = close.diff(n).abs()
+        abs_vol = close.diff(1).abs()
+        er = abs_diff / abs_vol.rolling(window=n).sum()
+        return pd.DataFrame({f"er_{n}": er}, index=data.index)

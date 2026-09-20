@@ -43,7 +43,7 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 数据来源：
     data_source = 'internal'（纯本地 pandas/numpy 计算，非外部数据源下载）
     输入：c1_market.kline_{period} 的 OHLCV 数据（120min 由 kline_60min 两根聚合）
-    输出：162 个技术指标列（Nullable(Float64)），覆盖 8 类 101 个指标（2026-09-15 批8：M-L4 经典族 10 指标——Alligator/GMMA/GannHiLo/AC/Fractals/Elder/Coppock/Squeeze/WaveTrend/ForceIndex）
+    输出：194 个技术指标列（Nullable(Float64)），覆盖 8 类 132 个在产指标（2026-09-20 批9-1/9-2 tilib 清欠班：波1 +15 指标/16 列——M-L1 自适应均线族 TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA + M-L2 价格变换族 AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE + M-L3 统计回归族 LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR；波2 +16 指标/16 列——M-L5 社区热门族 CHOP/CVI/ULCER/EBSW/INERTIA/QSTICK/RMI/PFE/FOSC/CTI/VHF/ER/WAD/VO/MARKETFI/ZSCORE）
 
 列设计说明：
     所有指标列均为 Nullable(Float64)——预热期无值时为 NULL（不前向填充，避免前视偏差）
@@ -114,6 +114,20 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     gmma_l60   Nullable(Float64)  COMMENT '顾比长期EMA60',
     gann_hilo     Nullable(Float64)  COMMENT 'Gann HiLo(中价SMA10)',
     gann_hilo_dir Nullable(Float64)  COMMENT 'Gann HiLo方向(1多-1空)',
+    tema_10      Nullable(Float64)  COMMENT '10日三重指数均线(3e1-3e2+e3)',
+    trima_10     Nullable(Float64)  COMMENT '10日三角均线(SMA5×SMA6级联)',
+    t3_10        Nullable(Float64)  COMMENT '10日T3均线(v=0.7)',
+    vidya_14     Nullable(Float64)  COMMENT '14日可变指数动态均线(CMO9)',
+    frama_16     Nullable(Float64)  COMMENT '16日分形自适应均线',
+    mama         Nullable(Float64)  COMMENT 'MESA自适应均线(0.5/0.05)',
+    fama         Nullable(Float64)  COMMENT 'MESA慢速自适应均线(半alpha)',
+    jma_7        Nullable(Float64)  COMMENT '7日Jurik自适应均线',
+    avgprice     Nullable(Float64)  COMMENT '四价均价(O+H+L+C)/4',
+    medprice     Nullable(Float64)  COMMENT '中价(H+L)/2',
+    typprice     Nullable(Float64)  COMMENT '典型价格(H+L+C)/3',
+    wcprice      Nullable(Float64)  COMMENT '加权收盘(H+L+2C)/4',
+    inertia_20_14 Nullable(Float64)  COMMENT 'Ehlers惯性指标(RVI基,20/14)',
+    qstick_10    Nullable(Float64)  COMMENT '10日Qstick(C-O的SMA)',
 
     kdj_k        Nullable(Float64)  COMMENT 'KDJ K线',
     kdj_d        Nullable(Float64)  COMMENT 'KDJ D线',
@@ -175,6 +189,12 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     squeeze_mom  Nullable(Float64)  COMMENT '挤压动量(线性回归动量)',
     wt1          Nullable(Float64)  COMMENT 'WaveTrend主线',
     wt2          Nullable(Float64)  COMMENT 'WaveTrend信号线(SMA4)',
+    rmi_14       Nullable(Float64)  COMMENT '14日相对动量指数(动量窗5)',
+    pfe_10       Nullable(Float64)  COMMENT '10日极化分形效率',
+    fosc_14      Nullable(Float64)  COMMENT '14窗预测震荡',
+    cti_12       Nullable(Float64)  COMMENT '12日相关趋势指标',
+    vhf_28       Nullable(Float64)  COMMENT '28日纵横过滤',
+    er_10        Nullable(Float64)  COMMENT '10日效率比率',
     ht_dcperiod  Nullable(Float64)  COMMENT '希尔伯特主导周期(6-50)',
     ht_dcphase   Nullable(Float64)  COMMENT '主导周期相位(度)',
     ht_ip        Nullable(Float64)  COMMENT '同相分量in_phase',
@@ -182,16 +202,25 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     ht_sine      Nullable(Float64)  COMMENT '主正弦波',
     ht_leadsine  Nullable(Float64)  COMMENT '超前45度正弦波',
     ht_trendmode Nullable(Float64)  COMMENT '趋势/循环模式(1趋势,0循环)',
+    ebsw_40      Nullable(Float64)  COMMENT '40日Even Better Sine Wave',
     parkinson_20      Nullable(Float64)  COMMENT 'Parkinson波动率(高低极差)',
     garman_klass_20   Nullable(Float64)  COMMENT 'Garman-Klass波动率(OHLC)',
     rogers_satchell_20 Nullable(Float64)  COMMENT 'Rogers-Satchell波动率(漂移无关)',
     yang_zhang_20     Nullable(Float64)  COMMENT 'Yang-Zhang波动率(隔夜跳空+漂移)',
+    chop_14      Nullable(Float64)  COMMENT '14日盘整指数(0-100)',
+    cvi          Nullable(Float64)  COMMENT 'Chaikin波动率(3/10)',
+    ulcer_14     Nullable(Float64)  COMMENT '14日溃疡指数',
 
     correl_30      Nullable(Float64)  COMMENT '30日close×volume滚动相关系数',
     beta_30        Nullable(Float64)  COMMENT '30日close对volume滚动beta系数',
     linearreg_14   Nullable(Float64)  COMMENT '14日线性回归线(当前拟合值)',
     tsf_14         Nullable(Float64)  COMMENT '14日时间序列预测(一步外推)',
     var_20         Nullable(Float64)  COMMENT '20日滚动总体方差(ddof=0)',
+    linearreg_angle_14 Nullable(Float64)  COMMENT '14窗线性回归角度(度)',
+    slope_14     Nullable(Float64)  COMMENT '14窗线性回归斜率',
+    intercept_14 Nullable(Float64)  COMMENT '14窗线性回归截距',
+    stderr_14    Nullable(Float64)  COMMENT '14窗回归残差标准差(除数N-2)',
+    zscore_20    Nullable(Float64)  COMMENT '20日滚动Z分数',
 
     atr_14       Nullable(Float64)  COMMENT '14日真实波幅',
     natr_14      Nullable(Float64)  COMMENT '14日归一化真实波幅(TR/Close×100)',
@@ -224,6 +253,9 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     kvo_signal   Nullable(Float64)  COMMENT 'KVO信号线(EMA13)',
     nvi          Nullable(Float64)  COMMENT '负成交量指标',
     pvi          Nullable(Float64)  COMMENT '正成交量指标',
+    wad          Nullable(Float64)  COMMENT '威廉累积/派发线',
+    vo           Nullable(Float64)  COMMENT '成交量震荡器(5/20)',
+    marketfi     Nullable(Float64)  COMMENT '市场促进指数((H-L)/V)',
     fi_13        Nullable(Float64)  COMMENT '强力指数EMA13(Elder)',
 
     candle_pattern    Nullable(Float64)  COMMENT '[已停产2026-09-14 裁定#233→图形域 market_pattern_event] K线形态编码(0=无,1=锤子,2=吞没,3=启明星,4=黄昏星,5=十字星...)',
@@ -265,6 +297,9 @@ INSERT_COLUMNS = (
     "alligator_jaw, alligator_teeth, alligator_lips, "
     "gmma_s3, gmma_s5, gmma_s8, gmma_s10, gmma_s12, gmma_s15, "
     "gmma_l30, gmma_l35, gmma_l40, gmma_l45, gmma_l50, gmma_l60, gann_hilo, gann_hilo_dir, "
+    "tema_10, trima_10, t3_10, vidya_14, frama_16, mama, fama, jma_7, "
+    "avgprice, medprice, typprice, wcprice, "
+    "inertia_20_14, qstick_10, "
     "tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b, chikou_span, "
     # 动量类
     "kdj_k, kdj_d, kdj_j, rsi_6, rsi_12, rsi_24, wr_14, roc_12, mtm_12, mtmma_12, "
@@ -275,16 +310,19 @@ INSERT_COLUMNS = (
     "stoch_fastk, stoch_fastd, stoch_slowk, stoch_slowd, aroon_up, aroon_down, aroonosc, "
     "bop, ppo, apo, dx_14, ar_26, br_26, cr_26, "
     "ac, fractal_high, fractal_low, bull_power_13, bear_power_13, coppock, squeeze_on, squeeze_mom, wt1, wt2, "
-    "ht_dcperiod, ht_dcphase, ht_ip, ht_qp, ht_sine, ht_leadsine, ht_trendmode, "
-    "parkinson_20, garman_klass_20, rogers_satchell_20, yang_zhang_20, "
+    "rmi_14, pfe_10, fosc_14, cti_12, vhf_28, er_10, "
+    "ht_dcperiod, ht_dcphase, ht_ip, ht_qp, ht_sine, ht_leadsine, ht_trendmode, ebsw_40, "
+    "parkinson_20, garman_klass_20, rogers_satchell_20, yang_zhang_20, chop_14, cvi, ulcer_14, "
     # 统计族
     "correl_30, beta_30, linearreg_14, tsf_14, var_20, "
+    "linearreg_angle_14, slope_14, intercept_14, stderr_14, zscore_20, "
     # 波动类
     "atr_14, natr_14, trange, massi_25, boll_upper, boll_middle, boll_lower, "
     "kc_upper, kc_middle, kc_lower, dc_upper, dc_lower, "
     "stddev_20, boll_bw, boll_pctb, histvol_20, "
     # 成交量类
     "obv, mfi_14, vwap, vr_26, ad, pvt, wvad_24, vwma_20, adosc, eom_14, kvo, kvo_signal, nvi, pvi, fi_13, "
+    "wad, vo, marketfi, "
     # 反转类
     "rsi_divergence, macd_divergence, boll_breakout, vol_price_div, "
     # 元数据

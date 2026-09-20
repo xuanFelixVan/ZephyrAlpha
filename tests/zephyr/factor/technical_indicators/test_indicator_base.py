@@ -41,10 +41,10 @@ from zephyr.factor.technical_indicators.indicator_base import (
     autodiscover_technical_indicators,
 )
 
-# 8 类指标数量契约（catalog §2：趋势18/动量31/波动15/成交量13/反转5/统计4/复合1/循环5）
-_EXPECTED_TOTAL = 101  # 裁定#233：IND-REV-001/candle_pattern 退役（-1）
-# 全部输出列数契约（catalog §2.6：趋势29+动量50+波动20+成交量14+反转5+统计5+复合5+循环7 = 135）
-_EXPECTED_COLUMN_TOTAL = 162  # 裁定#233：candle_pattern 列退役（-1）
+# 8 类指标数量契约（catalog §2：趋势34/动量43/波动18/成交量17/反转4/统计9/复合1/循环6）
+_EXPECTED_TOTAL = 132  # 2026-09-20 批9-1/9-2 tilib 清欠班：波1 +15、波2 +16（M-L5，PSL/MSW 同义剔除）
+# 全部输出列数契约（2026-09-20 批9 后：194 = 162 + 16(波1) + 16(波2)）
+_EXPECTED_COLUMN_TOTAL = 194
 
 
 # ============== TechnicalIndicatorMeta ==============
@@ -124,14 +124,14 @@ class TestRegistryMechanics:
         assert len(metas) == _EXPECTED_TOTAL
 
     def test_list_by_category_counts(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == 21
-        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == 37
-        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == 15
-        assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == 14
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == 34
+        assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == 43
+        assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == 18
+        assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == 17
         assert len(TechnicalIndicatorRegistry.list_by_category("reversal")) == 4  # 裁定#233
-        assert len(TechnicalIndicatorRegistry.list_by_category("statistics")) == 4
+        assert len(TechnicalIndicatorRegistry.list_by_category("statistics")) == 9
         assert len(TechnicalIndicatorRegistry.list_by_category("composite")) == 1
-        assert len(TechnicalIndicatorRegistry.list_by_category("cycle")) == 5
+        assert len(TechnicalIndicatorRegistry.list_by_category("cycle")) == 6
 
     def test_list_by_category_empty(self):
         assert TechnicalIndicatorRegistry.list_by_category("nonexistent") == []
@@ -283,5 +283,5 @@ class TestDDLColumnCrossCheck:
         """DDL 活跃指标列总数 == 134（裁定#233 后）；candle_pattern 物理保留钉死。"""
         ddl_cols = _parse_ddl_indicator_columns()
         assert "candle_pattern" in ddl_cols  # 已停产列物理保留（季度观察后 ALTER DROP）
-        ddl_cols.discard("candle_pattern")   # 活跃列计数排除停产列
+        ddl_cols.discard("candle_pattern")  # 活跃列计数排除停产列
         assert len(ddl_cols) == _EXPECTED_COLUMN_TOTAL

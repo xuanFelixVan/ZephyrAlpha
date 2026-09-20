@@ -70,7 +70,7 @@ scope: 07_trading_decision_architecture
 
 why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全周期回算后，策略可按栈取数（趋势层定方向、交易层定信号、入场层定点位），避免单周期信号的噪声交易。
 
-## 6. 指标清单（92 指标 / 135 输出列，已施工）
+## 6. 指标清单（132 在产指标 / 194 输出列，已施工；注册 133 条含退役 1）
 
 > 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 762 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
 > **48 指标 vs "MVP 只需 15-20 个"的裁定**：全部已施工且 470 测试已绿，**裁剪已完成的指标 = 删已绿代码 + 删表列，纯负收益**；指标是数据不是策略，多算一列的边际成本≈0（单表 Nullable 列），而策略侧"只用其中一部分"的选择自由始终在消费方。故维持全集（2026-09-14 扩至 92：标配+统计族+批 2a/2b+批 3+批 6 挖矿立卡全清偿）。
@@ -97,6 +97,19 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | supertrend | supertrend_10/supertrend_dir | 10/3.0 | (H+L)/2±3×ATR final 带单向收紧，收盘穿越翻转（批2a） |
 | mcginley | md_14 | 14/0.6 | MD=prev+(C−prev)/(k×N×(C/prev)⁴)，追踪速度自适应（批2b） |
 | bbi | bbi | 3/6/12/24 | (MA3+MA6+MA12+MA24)/4 四周期合成（批6，通达信/同花顺标配） |
+| tema | tema_10 | 10 | 3e1−3e2+e3 三重 EMA 消滞后（批9-1，talib 第100根起 rtol=1e-6 对照） |
+| trima | trima_10 | 10 | SMA(SMA(C,5),6) 三角均线，TA-Lib 偶窗口径逐位一致（批9-1） |
+| t3 | t3_10 | 10/0.7 | Tillson 六重 EMA 链 c1..c4 系数合成（批9-1） |
+| mama | mama/fama | 0.5/0.05 | Ehlers homodyne 瞬时周期自适应，与 TA-Lib 逐位一致（批9-1） |
+| vidya | vidya_14 | 14/9 | \|CMO9\|/100×2/(N+1) 加权递推（批9-1） |
+| frama | frama_16 | 16 | 分形维数 D=ln(2(HL1+HL2)/HL3)/ln2 自适应 alpha（批9-1，Ehlers 2005） |
+| jma | jma_7 | 7/50/2 | Jurik 开源移植（pandas-ta 经典口径）（批9-1） |
+| avgprice | avgprice | 无 | (O+H+L+C)/4 价格变换（批9-1，talib 逐位一致） |
+| medprice | medprice | 无 | (H+L)/2（批9-1） |
+| typprice | typprice | 无 | (H+L+C)/3（批9-1） |
+| wcprice | wcprice | 无 | (H+L+2C)/4 加权收盘，TA-Lib WCLPRICE 同义（批9-1） |
+| inertia | inertia_20_14 | 20/14 | RVI 基 EMA 平滑惯性（批9-2，Ehlers，输入 HL2） |
+| qstick | qstick_10 | 10 | SMA(C−O)（批9-2） |
 
 ### 6.2 动量类 momentum.py（31 指标 / 50 列）
 
@@ -133,6 +146,12 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | dx | dx_14 | 14 | 100×\|+DI−−DI\|/(+DI+−DI)，ADX 原料（批6 立卡2） |
 | brar | ar_26/br_26 | 26 | AR=Σ(H−O)/Σ(O−L)；BR=Σmax(0,H−Cp)/Σmax(0,Cp−L)（批6 立卡3，通达信） |
 | cr | cr_26 | 26 | Σmax(0,H−MIDp)/Σmax(0,MIDp−L)×100（批6 立卡3，通达信） |
+| rmi | rmi_14 | 14/5 | RSI 动量窗变体，Wilder 平滑（批9-2，TASC 1993） |
+| pfe | pfe_10 | 10/5 | 极化分形效率 EMA 平滑（批9-2，TASC 1994） |
+| fosc | fosc_14 | 14 | (C/TSF−1)×100 预测震荡（批9-2，复用 _rolling_linefit） |
+| cti | cti_12 | 12 | close 对序数列滚动 Pearson r（批9-2，Ehlers） |
+| vhf | vhf_28 | 28 | (maxC−minC)/Σ\|ΔC\|（批9-2，Bressert） |
+| er | er_10 | 10 | \|C−C_N\|/Σ\|ΔC\| 效率比率，KAMA 内核独立立条（批9-2） |
 
 ### 6.3 波动类 volatility.py（15 指标 / 20 列）
 
@@ -153,6 +172,9 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | garman_klass | garman_klass_20 | 20 | OHLC 全用，效率≈7.4× close-to-close（批6，GK 1980） |
 | rogers_satchell | rogers_satchell_20 | 20 | 漂移无关估计（批6，RS 1991） |
 | yang_zhang | yang_zhang_20 | 20 | σ_o²+kσ_c²+(1−k)σ_rs²，处理隔夜跳空+漂移——A 股高开低开适配（批6，YZ 2000） |
+| chop | chop_14 | 14 | 100×log10(ΣTR/(maxH−minL))/log10(N) 盘整指数（批9-2） |
+| cvi | cvi | 3/10 | Chaikin 波动率 EMA3(H−L) 十日变动率（批9-2） |
+| ulcer | ulcer_14 | 14 | 回撤深度均方根（批9-2，Martin） |
 
 ### 6.4 量能类 volume.py（14 指标 / 15 列）
 
@@ -171,6 +193,9 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | kvo | kvo/kvo_signal | 34/55/13 | Klinger VF 双 EMA 震荡（批2b） |
 | nvi | nvi | 无 | 缩量日累乘收益，聪明钱视角（批2b） |
 | pvi | pvi | 无 | 放量日累乘收益（批2b） |
+| wad | wad | 无 | 威廉累积/派发线 cumsum(TAD)（批9-2，Tulip 口径） |
+| vo | vo | 5/20 | 成交量快慢 MA 震荡（批9-2） |
+| marketfi | marketfi | 无 | (H−L)/V 市场促进指数（批9-2，Bill Williams） |
 
 ### 6.5 反转类 reversal.py（5 指标 / 5 列）
 
@@ -192,6 +217,11 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | beta | beta_30 | period=30 | beta=Cov(x,y)/Var(y)，x=close y=volume |
 | linearreg | linearreg_14/tsf_14 | period=14 | 滚动拟合 y=a+bx：LINEARREG=a+b(N−1)；TSF=a+bN（一步外推）；矩法向量化（Σxy 恒等式拆解），不用 rolling.apply |
 | rollvar | var_20 | period=20 | 滚动总体方差 ddof=0（与 BOLL 中轨 std 口径一致） |
+| linearreg_angle | linearreg_angle_14 | period=14 | θ=degrees(atan(slope))，x=0..N−1 滚动 OLS（批9-1，talib 对照 1e-12 级） |
+| slope | slope_14 | period=14 | 矩法闭式 b=(NΣxy−ΣxΣy)/(NΣx²−(Σx)²)（批9-1） |
+| intercept | intercept_14 | period=14 | a=(Σy−bΣx)/N（批9-1） |
+| stderr | stderr_14 | period=14 | sqrt(SSR/(N−2))，除数经独立 OLS 对照实测钉死（批9-1） |
+| zscore | zscore_20 | period=20 | 滚动 Z 分数，ddof=0 与 BOLL 口径一致（批9-2） |
 
 ### 6.7 复合类 trend.py 内 Ichimoku（1 指标 / 5 列，2026-09-14 批 3 补实现）
 
@@ -212,6 +242,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 | ht_phasor | ht_ip/ht_qp | 无 | 同相=延迟 3 根平滑价；正交=4-tap Hilbert 滤波 |
 | ht_sine | ht_sine/ht_leadsine | 无 | sin(累积相位) 与 sin(+45°)；交叉标记周期转折 |
 | ht_trendmode | ht_trendmode | 无 | 主导周期窗口内正弦交叉计数：少=趋势 1/多=循环 0 |
+| ebsw | ebsw_40 | 40/10 | Ehlers 带通正弦波 [-100,100]（批9-2，pandas-ta-classic 移植） |
 
 ### 6.9 与 factor_registry 的正交边界
 
@@ -231,6 +262,8 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-09-20 | 1.8.0 | 批9-2 tilib 清欠班波2：M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER 波动+3、EBSW 循环+1、INERTIA/QSTICK 趋势+2、RMI/PFE/FOSC/CTI/VHF/ER 动量+6、WAD/VO/MARKETFI 量能+3、ZSCORE 统计+1）；全表 116→132 在产/178→194 列；同批治愈 cycle.py 行1 stale 蓝图号 001→029（注册表 5 条 cycle 条目同步）；PSL=PSY、MSW=ht_sine 同义不重复立条 | 分包A 通宵总令波2（M-L5 清欠 18→16 实作） |
+| 2026-09-20 | 1.7.0 | 批9-1 tilib 清欠班波1：+TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA（趋势 21→32）+AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE 价格变换 +LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR（统计 4→8）；全表 101→116 在产指标/162→178 列；黄金对照=本地 talib（MAMA/FAMA 逐位 0.0 偏差，回归四件 1e-12 级）；M-L3"LINEARREG_BAR"与既有 linearreg 同义不重复立条（清欠班裁①） | 分包A 通宵总令波1（M-L1/M-L2/M-L3 清欠 16→15 实作，缺口波3 学术挖矿补） |
 | 2026-08-10 | 0.1.0 | 初稿骨架 | 技术指标目录文档。**注意**：本文件曾因未 git commit 丢失，后从代码引用和 architecture_issue_registry 描述重建骨架 |
 | 2026-08-12 | 1.0.0 | 骨架→active：§6 回填 40 指标/58 列全表（5 大类公式/参数/输出列）；修正 55→58 口径；§6 增"40 指标不裁剪"裁定；补 §6.6 与 factor_registry 正交边界；新增 §7 开放问题（调度未闭环/REG-IND-001 待施工/00_index 同步） | 回填已施工代码 why；口径以测试契约为准；缺口入开放问题不擅自施工 |
 | 2026-08-15 | 1.0.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08） | 清单/公式/裁定无冗余，通读+自审零发现，不为压而压 |

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 趋势类文件指标 19 个（18 趋势类 + 1 复合类 Ichimoku），纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 趋势类文件指标 35 个（34 趋势类 + 1 复合类 Ichimoku），纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,13 @@
 # [TTL] permanent
 """
 
-趋势类技术指标（17 个；2026-09-14 A股标配批+1、批2a +5、批2b +1、批3 +1 Ichimoku[复合类]、批6 +1 BBI）。
+趋势类技术指标（35 个；2026-09-14 A股标配批+1、批2a +5、批2b +1、批3 +1 Ichimoku[复合类]、批6 +1 BBI、
+鳄鱼/顾比/GannHiLo 批 +3、2026-09-20 自适应均线批 +3、2026-09-20 简单指标清欠批1-L3 +8、
+2026-09-20 简单指标清欠班波2-A +2 INERTIA/QSTICK）。
 
-指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/MCGINLEY/BBI/ICHIMOKU(复合类)
+指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/MCGINLEY/
+BBI/ALLIGATOR/GMMA/GANN_HILO/MAMA+FAMA/FRAMA/JMA/TEMA/TRIMA/T3/VIDYA/AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE/
+INERTIA/QSTICK/ICHIMOKU(复合类)
 
 算法对齐通达信：
   - EMA 系列（EMA/DEMA/MACD/TRIX）统一 adjust=False，种子=首值，无预热 NaN
@@ -28,6 +32,8 @@
   - MACD HIST = 2×(DIF-DEA)，对齐通达信 MACD 柱
   - DKX 多空线：MID 线性加权 20..1/210，对齐通达信
   - HMA/ZLEMA 为低滞后均线（WMA 差值再造 / 误差修正 EMA）；KAMA/VORTEX/SUPERTREND 逐 bar 或滚动矩实现（TA-Lib/pandas-ta 口径） DKX 函数
+  - TEMA/T3 复用 _ema 链式（adjust=False 种子=首值，无预热 NaN）；TRIMA 偶窗 SMA(N/2)×SMA(N/2+1) 对齐 TA-Lib；
+    VIDYA alpha=|CMO|/100×2/(N+1)（CMO 对齐 momentum.py CMO 类）；AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE 为 OHLC 线性变换
 
 设计文档：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md §2.1
 
@@ -642,9 +648,7 @@ class SUPERTREND(TechnicalIndicatorBase):
             prev_close = c[i]
             direction[i] = trend
             st[i] = final_lb if trend == 1.0 else final_ub
-        return pd.DataFrame(
-            {f"supertrend_{n}": st, "supertrend_dir": direction}, index=data.index
-        )
+        return pd.DataFrame({f"supertrend_{n}": st, "supertrend_dir": direction}, index=data.index)
 
 
 @TechnicalIndicatorRegistry.register
@@ -798,8 +802,18 @@ class GMMA(TechnicalIndicatorBase):
         name="顾比复合均线",
         category="trend",
         output_columns=[
-            "gmma_s3", "gmma_s5", "gmma_s8", "gmma_s10", "gmma_s12", "gmma_s15",
-            "gmma_l30", "gmma_l35", "gmma_l40", "gmma_l45", "gmma_l50", "gmma_l60",
+            "gmma_s3",
+            "gmma_s5",
+            "gmma_s8",
+            "gmma_s10",
+            "gmma_s12",
+            "gmma_s15",
+            "gmma_l30",
+            "gmma_l35",
+            "gmma_l40",
+            "gmma_l45",
+            "gmma_l50",
+            "gmma_l60",
         ],
         input_columns=["close"],
         params={"short": [3, 5, 8, 10, 12, 15], "long": [30, 35, 40, 45, 50, 60]},
@@ -855,3 +869,749 @@ class GANN_HILO(TechnicalIndicatorBase):
                 trend = -1.0
             dir_col.iloc[i] = trend
         return pd.DataFrame({"gann_hilo": hilo, "gann_hilo_dir": dir_col}, index=data.index)
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-20 自适应均线批：MAMA / FRAMA / JMA（递推类，逐 bar 移植，KAMA/SAR 同族实现）
+# ---------------------------------------------------------------------------
+
+_MAMA_HILB_A = 0.0962
+_MAMA_HILB_B = 0.5769
+
+
+def _hilbert_stage(
+    buf: list, idx: int, prev: float, prev_input: float, src: float, adj: float
+) -> tuple[float, float, float]:
+    """Hilbert 四抽头差分单级（TA-Lib ta_MAMA.c 同式，_MAMA_HILB_A=0.0962 / _MAMA_HILB_B=0.5769）。
+
+    v = ((a·src − buf[idx]) + a·src − b·旧prev_input) + b·旧prev_input，再乘 adj；
+    buf[idx] / prev / prev_input 就地更新，返回 (本级输出, 新 prev, 新 prev_input)。
+    """
+    h = _MAMA_HILB_A * src
+    v = 0.0 - buf[idx]
+    buf[idx] = h
+    v += h
+    v -= prev
+    prev = _MAMA_HILB_B * prev_input
+    v += prev
+    prev_input = src
+    v *= adj
+    return v, prev, prev_input
+
+
+def _mama_wma_seed(price: np.ndarray) -> tuple[int, float, float, float, int]:
+    """尾随 WMA 预热种子（C 源 3 根展开 + 9 根滚动，today 走到 12）。
+
+    返回 (today, wma_sub, wma_sum, trailing, trailing_idx) 供主递推循环续用。
+    """
+    today = 0
+    t = price[today]
+    today += 1
+    wma_sub = t
+    wma_sum = t
+    t = price[today]
+    today += 1
+    wma_sub += t
+    wma_sum += t * 2.0
+    t = price[today]
+    today += 1
+    wma_sub += t
+    wma_sum += t * 3.0
+    trailing = 0.0
+    trailing_idx = 0
+    for _ in range(9):
+        t = price[today]
+        today += 1
+        wma_sub += t
+        wma_sub -= trailing
+        wma_sum += t * 4.0
+        trailing = price[trailing_idx]
+        trailing_idx += 1
+        wma_sum -= wma_sub
+    return today, wma_sub, wma_sum, trailing, trailing_idx
+
+
+def _mama_period_update(
+    i2: float,
+    q2: float,
+    prev_i2: float,
+    prev_q2: float,
+    re_acc: float,
+    im_acc: float,
+    period: float,
+) -> tuple[float, float, float]:
+    """homodyne 同相正交积分解瞬时周期（atan 分母零保护）。
+
+    周期钳位 [0.67p,1.5p]∩[6,50] 后按 0.2/0.8 平滑；返回 (re_acc, im_acc, period)。
+    """
+    re_acc = 0.8 * re_acc + 0.2 * (i2 * prev_i2 + q2 * prev_q2)
+    im_acc = 0.8 * im_acc + 0.2 * (i2 * prev_q2 - q2 * prev_i2)
+    rad2deg = 180.0 / (4.0 * np.arctan(1.0))
+    period_prev = period
+    if im_acc != 0.0 and re_acc != 0.0:
+        period = 360.0 / (np.arctan(im_acc / re_acc) * rad2deg)
+    cap = 1.5 * period_prev
+    if period > cap:
+        period = cap
+    cap = 0.67 * period_prev
+    if period < cap:
+        period = cap
+    if period < 6.0:
+        period = 6.0
+    elif period > 50.0:
+        period = 50.0
+    period = 0.2 * period + 0.8 * period_prev
+    return re_acc, im_acc, period
+
+
+def _mama_recursion(price: np.ndarray, fast_limit: float, slow_limit: float) -> tuple[np.ndarray, np.ndarray]:
+    """Ehlers homodyne 递推主体，逐 bar 移植 TA-Lib ta_MAMA.c（BSD 风格许可）。
+
+    公式权威源：https://github.com/ta-lib/ta-lib/blob/main/src/ta_func/ta_MAMA.c
+    结构对应：
+      - 前 12 根为尾随 WMA 预热种子（3 根展开 + 9 根滚动，C 源 TradeStation 兼容窗）；
+      - detrender/Q1/jI/jQ 四组 3 槽圈缓冲按奇偶 bar 分相推进（hilbertIdx 仅偶数 bar 前进）；
+      - I1 链延迟 3 bar；atan 求瞬时相位（分母零保护置 0），DeltaPhase 钳位 [1,180]；
+      - alpha=fast_limit/DeltaPhase 钳位 [slow_limit, fast_limit]；
+      - 瞬时周期：Re/Im 同相正交积分解算，钳位 [0.67p,1.5p]∩[6,50] 再 0.2/0.8 平滑。
+    输出自第 12 根起（预热后首根递推位）；TA-Lib 全量 lookback=32 属 unstable period
+    语义（前段差异豁免），第 32 根起与 talib.MAMA 逐位一致。
+    """
+    n = len(price)
+    mama_arr = np.full(n, np.nan)
+    fama_arr = np.full(n, np.nan)
+    if n <= 12:
+        return mama_arr, fama_arr
+    rad2deg = 180.0 / (4.0 * np.arctan(1.0))
+    # --- 尾随 WMA 种子（C 源 3 根展开 + 9 根 do-while，today 走到 12） ---
+    _, wma_sub, wma_sum, trailing, trailing_idx = _mama_wma_seed(price)
+    # --- Hilbert 圈缓冲（各奇偶 3 槽）与递推状态（零种子，对齐 C 源） ---
+    det_e = [0.0, 0.0, 0.0]
+    det_o = [0.0, 0.0, 0.0]
+    q1_e = [0.0, 0.0, 0.0]
+    q1_o = [0.0, 0.0, 0.0]
+    ji_e = [0.0, 0.0, 0.0]
+    ji_o = [0.0, 0.0, 0.0]
+    jq_e = [0.0, 0.0, 0.0]
+    jq_o = [0.0, 0.0, 0.0]
+    pd_e = pd_o = 0.0  # prev detrender（偶/奇）
+    pdi_e = pdi_o = 0.0  # prev detrender input
+    pq_e = pq_o = 0.0  # prev Q1
+    pqi_e = pqi_o = 0.0  # prev Q1 input
+    pj_e = pj_o = 0.0  # prev jI
+    pji_e = pji_o = 0.0  # prev jI input
+    pjg_e = pjg_o = 0.0  # prev jQ
+    pjgi_e = pjgi_o = 0.0  # prev jQ input
+    hilbert_idx = 0
+    period = 0.0
+    prev_q2 = prev_i2 = 0.0
+    re_acc = im_acc = 0.0
+    mama = fama = 0.0
+    i1_e2 = i1_e3 = i1_o2 = i1_o3 = 0.0  # I1 链延迟 3 bar（偶/奇各 2 级）
+    prev_phase = 0.0
+    for i in range(12, n):
+        today_value = price[i]
+        adj = 0.075 * period + 0.54
+        wma_sub += today_value
+        wma_sub -= trailing
+        wma_sum += today_value * 4.0
+        trailing = price[trailing_idx]
+        trailing_idx += 1
+        smoothed = wma_sum * 0.1
+        wma_sum -= wma_sub
+        if i % 2 == 0:
+            detrender, pd_e, pdi_e = _hilbert_stage(det_e, hilbert_idx, pd_e, pdi_e, smoothed, adj)
+            q1, pq_e, pqi_e = _hilbert_stage(q1_e, hilbert_idx, pq_e, pqi_e, detrender, adj)
+            ji, pj_e, pji_e = _hilbert_stage(ji_e, hilbert_idx, pj_e, pji_e, i1_e3, adj)
+            jq, pjg_e, pjgi_e = _hilbert_stage(jq_e, hilbert_idx, pjg_e, pjgi_e, q1, adj)
+            hilbert_idx = 0 if hilbert_idx == 2 else hilbert_idx + 1
+            q2 = 0.2 * (q1 + ji) + 0.8 * prev_q2
+            i2 = 0.2 * (i1_e3 - jq) + 0.8 * prev_i2
+            i1_o3 = i1_o2
+            i1_o2 = detrender
+            i1_phase = i1_e3
+        else:
+            detrender, pd_o, pdi_o = _hilbert_stage(det_o, hilbert_idx, pd_o, pdi_o, smoothed, adj)
+            q1, pq_o, pqi_o = _hilbert_stage(q1_o, hilbert_idx, pq_o, pqi_o, detrender, adj)
+            ji, pj_o, pji_o = _hilbert_stage(ji_o, hilbert_idx, pj_o, pji_o, i1_o3, adj)
+            jq, pjg_o, pjgi_o = _hilbert_stage(jq_o, hilbert_idx, pjg_o, pjgi_o, q1, adj)
+            q2 = 0.2 * (q1 + ji) + 0.8 * prev_q2
+            i2 = 0.2 * (i1_o3 - jq) + 0.8 * prev_i2
+            i1_e3 = i1_e2
+            i1_e2 = detrender
+            i1_phase = i1_o3
+        # 相位差 → alpha（DeltaPhase 钳位下界 1°，上界由 atan 值域天然兜底）
+        phase = np.arctan(q1 / i1_phase) * rad2deg if i1_phase != 0.0 else 0.0
+        delta_phase = prev_phase - phase
+        prev_phase = phase
+        if delta_phase < 1.0:
+            delta_phase = 1.0
+        if delta_phase > 1.0:
+            alpha = fast_limit / delta_phase
+            if alpha < slow_limit:
+                alpha = slow_limit
+        else:
+            alpha = fast_limit
+        # MAMA/FAMA 双速递推（FAMA 取半速 alpha）
+        mama = (1.0 - alpha) * mama + alpha * today_value
+        alpha *= 0.5
+        fama = (1.0 - alpha) * fama + alpha * mama
+        mama_arr[i] = mama
+        fama_arr[i] = fama
+        # homodyne 同相正交积分解瞬时周期（atan 分母零保护，抽出独立函数）
+        re_acc, im_acc, period = _mama_period_update(i2, q2, prev_i2, prev_q2, re_acc, im_acc, period)
+        prev_q2 = q2
+        prev_i2 = i2
+    return mama_arr, fama_arr
+
+
+@TechnicalIndicatorRegistry.register
+class MAMA(TechnicalIndicatorBase):
+    """MESA 自适应均线（Ehlers MESA Adaptive Moving Average，homodyne 口径对齐 TA-Lib MAMA）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="mama",
+        name="MESA自适应均线",
+        category="trend",
+        output_columns=["mama", "fama"],
+        input_columns=["high", "low"],
+        params={"fast_limit": 0.5, "slow_limit": 0.05},
+        version="1.0.0",
+        description=(
+            "Price=(H+L)/2 经 Hilbert 变换解瞬时周期：alpha=fast_limit/DeltaPhase 钳位"
+            " [slow_limit,fast_limit]；MAMA=αP+(1−α)MAMA'，FAMA 半速慢线（TA-Lib MAMA 口径）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        mama_arr, fama_arr = _mama_recursion(
+            ((data["high"] + data["low"]) / 2.0).to_numpy(dtype=float),
+            float(params["fast_limit"]),
+            float(params["slow_limit"]),
+        )
+        return pd.DataFrame({"mama": mama_arr, "fama": fama_arr}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class FRAMA(TechnicalIndicatorBase):
+    """分形自适应均线（Ehlers Fractal Adaptive Moving Average，TASC 2005）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="frama",
+        name="分形自适应均线",
+        category="trend",
+        output_columns=["frama_16"],
+        input_columns=["high", "low"],
+        params={"period": 16},
+        version="1.0.0",
+        description=(
+            "窗口对半分求分维 D=log2(2(HL1+HL2)/HL3)（两半/整窗各自 max(H)−min(L)）："
+            "alpha=exp(−4.6(D−1)) 钳位 [0.01,1]；FRAMA=α×(H+L)/2+(1−α)×FRAMA'，窗口自动取偶"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n_win = int(params["period"])
+        if n_win % 2 == 1:
+            n_win += 1  # Ehlers 分形窗要求偶数（对半分）
+        high, low = data["high"], data["low"]
+        half = n_win // 2
+        price = (high + low) / 2.0
+        hl1 = high.rolling(window=half).max().shift(half) - low.rolling(window=half).min().shift(half)
+        hl2 = high.rolling(window=half).max() - low.rolling(window=half).min()
+        hl3 = high.rolling(window=n_win).max() - low.rolling(window=n_win).min()
+        # 分维 D = log2((HL1+HL2)/half ÷ HL3/N) = log2(2(HL1+HL2)/HL3)，理论值域 [1,2]
+        sum_halves = hl1 + hl2
+        with np.errstate(divide="ignore", invalid="ignore"):
+            dim = np.log(2.0 * sum_halves / hl3) / np.log(2.0)
+            alpha = np.exp(-4.6 * (dim - 1.0))
+        # HL 全零/非正（常数窗）→ 负对数无定义 → alpha 取钳位上界 1
+        valid = (sum_halves > 0) & (hl3 > 0)
+        alpha = alpha.where(valid, 1.0).clip(lower=0.01, upper=1.0)
+        # 先 rolling 窗口算 alpha 序列，再单遍递推：首有效=第 N−1 根，种子=当根中价
+        alphas = alpha.to_numpy(dtype=float)
+        prices = price.to_numpy(dtype=float)
+        m = len(prices)
+        out = np.full(m, np.nan)
+        prev = np.nan
+        for i in range(n_win - 1, m):
+            a = alphas[i]
+            if np.isnan(prev):
+                prev = prices[i]
+            else:
+                prev = a * prices[i] + (1.0 - a) * prev
+            out[i] = prev
+        return pd.DataFrame({f"frama_{n_win}": pd.Series(out, index=data.index)}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class JMA(TechnicalIndicatorBase):
+    """Jurik 自适应均线（Jurik Moving Average，pandas-ta 开源移植口径）。
+
+    公式权威源（逐行移植）：
+    https://github.com/twopirllc/pandas-ta/blob/main/pandas_ta/overlap/jma.py
+    （原仓已下架，存续镜像 pandas_ta_classic/overlap/jma.py 同源同式）
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="jma",
+        name="Jurik自适应均线",
+        category="trend",
+        output_columns=["jma_7"],
+        input_columns=["close"],
+        params={"period": 7, "phase": 50, "power": 2},
+        version="1.0.0",
+        description=(
+            "Jurik 波动率自适应三段滤波：自适应 EMA 预平滑+Kalman 修正+Jurik 终滤波"
+            "（beta/phaseRatio/alpha/det0/det1 递推链）；power 为 API 保留位，"
+            "pandas-ta 口径中压缩链指数由 period 内生决定；前 period−1 根 NaN"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        length = int(params["period"])
+        phase = float(params["phase"])
+        c = data["close"].to_numpy(dtype=float)
+        m = len(c)
+        # --- 静态系数（pandas-ta jma.py 逐行对应） ---
+        sum_length = 10
+        half_len = 0.5 * (length - 1)
+        pr = 0.5 if phase < -100 else (2.5 if phase > 100 else 1.5 + phase * 0.01)
+        length1 = max((np.log(np.sqrt(half_len)) / np.log(2.0)) + 2.0, 0.0)
+        pow1 = max(length1 - 2.0, 0.5)
+        length2 = length1 * np.sqrt(half_len)
+        bet = length2 / (length2 + 1.0)
+        beta = 0.45 * (length - 1) / (0.45 * (length - 1) + 2.0)
+        min_r_volty = np.power(length1, 1.0 / pow1)
+        # --- 逐 bar 递推（波动率带 + 三段滤波压缩链） ---
+        volty = np.zeros(m)
+        v_sum = np.zeros(m)
+        jma = np.zeros(m)
+        det0 = det1 = ma2 = 0.0
+        ma1 = u_band = l_band = jma[0] = c[0]
+        for i in range(1, m):
+            price = c[i]
+            del1 = price - u_band
+            del2 = price - l_band
+            volty[i] = max(abs(del1), abs(del2)) if abs(del1) != abs(del2) else 0.0
+            v_sum[i] = v_sum[i - 1] + (volty[i] - volty[max(i - sum_length, 0)]) / sum_length
+            avg_volty = np.mean(v_sum[max(i - 65, 0) : i + 1])
+            d_volty = 0.0 if avg_volty == 0 else volty[i] / avg_volty
+            r_volty = max(1.0, min(min_r_volty, d_volty))
+            pow2 = np.power(r_volty, pow1)
+            kv = np.power(bet, np.sqrt(pow2))
+            u_band = price if del1 > 0 else price - kv * del1
+            l_band = price if del2 < 0 else price - kv * del2
+            alpha = np.power(beta, pow2)
+            # 第一段：自适应 EMA 预平滑
+            ma1 = (1.0 - alpha) * price + alpha * ma1
+            # 第二段：Kalman 修正
+            det0 = (price - ma1) * (1.0 - beta) + beta * det0
+            ma2 = ma1 + pr * det0
+            # 第三段：Jurik 终滤波
+            det1 = (ma2 - jma[i - 1]) * (1.0 - alpha) * (1.0 - alpha) + alpha * alpha * det1
+            jma[i] = jma[i - 1] + det1
+        jma[: length - 1] = np.nan  # pandas-ta 口径：预热位掩 NaN（种子=首值）
+        return pd.DataFrame({f"jma_{length}": pd.Series(jma, index=data.index)}, index=data.index)
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-20 简单指标清欠批1-L3：TEMA/TRIMA/T3/VIDYA + 四价格变换
+# （TEMA/T3 复用 _ema 链式，KAMA/FRAMA 同族递推约定：种子当根即首有效）
+# ---------------------------------------------------------------------------
+
+
+@TechnicalIndicatorRegistry.register
+class TEMA(TechnicalIndicatorBase):
+    """三重指数移动平均（Triple Exponential Moving Average）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="tema",
+        name="三重指数移动平均",
+        category="trend",
+        output_columns=["tema_10"],
+        input_columns=["close"],
+        params={"period": 10},
+        version="1.0.0",
+        description=(
+            "TEMA=3×EMA1−3×EMA2+EMA3，EMA1/2/3 为 _ema(close,N) 三重链式，"
+            "全链 adjust=False 种子=首值，无预热 NaN（warmup 语义记 1）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        close = data["close"]
+        e1 = _ema(close, n)
+        e2 = _ema(e1, n)
+        e3 = _ema(e2, n)
+        return pd.DataFrame({f"tema_{n}": 3 * e1 - 3 * e2 + e3}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class TRIMA(TechnicalIndicatorBase):
+    """三角移动平均（Triangular Moving Average，TA-Lib 偶窗/奇窗双口径）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="trima",
+        name="三角移动平均",
+        category="trend",
+        output_columns=["trima_10"],
+        input_columns=["close"],
+        params={"period": 10},
+        version="1.0.0",
+        description=(
+            "偶 N：SMA(SMA(C,N/2),N/2+1) 双窗级联；奇 N：两窗均 (N+1)/2，对齐 TA-Lib TRIMA；首有效=第 N 根（index N−1）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        if n % 2 == 0:
+            w1, w2 = n // 2, n // 2 + 1
+        else:
+            w1 = w2 = (n + 1) // 2
+        trima = data["close"].rolling(window=w1).mean().rolling(window=w2).mean()
+        return pd.DataFrame({f"trima_{n}": trima}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class T3(TechnicalIndicatorBase):
+    """Tillson T3 均线（六重 EMA 链，v 因子 0.7）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="t3",
+        name="Tillson T3均线",
+        category="trend",
+        output_columns=["t3_10"],
+        input_columns=["close"],
+        params={"period": 10, "vfactor": 0.7},
+        version="1.0.0",
+        description=(
+            "e1..e6=_ema(close,N) 六重链；c1=−a³ c2=3a²+3a³ c3=−6a²−3a−3a³ c4=1+3a+a³+3a²；"
+            "T3=c1·e6+c2·e5+c3·e4+c4·e3（系数和恒为 1），adjust=False 无预热 NaN"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        a = params["vfactor"]
+        close = data["close"]
+        e1 = _ema(close, n)
+        e2 = _ema(e1, n)
+        e3 = _ema(e2, n)
+        e4 = _ema(e3, n)
+        e5 = _ema(e4, n)
+        e6 = _ema(e5, n)
+        c1 = -(a**3)
+        c2 = 3 * a**2 + 3 * a**3
+        c3 = -6 * a**2 - 3 * a - 3 * a**3
+        c4 = 1 + 3 * a + a**3 + 3 * a**2
+        t3 = c1 * e6 + c2 * e5 + c3 * e4 + c4 * e3
+        return pd.DataFrame({f"t3_{n}": t3}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class VIDYA(TechnicalIndicatorBase):
+    """可变指数动态均线（Chande Variable Index Dynamic Average）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="vidya",
+        name="可变指数动态均线",
+        category="trend",
+        output_columns=["vidya_14"],
+        input_columns=["close"],
+        params={"period": 14, "cmo_period": 9},
+        version="1.0.0",
+        description=(
+            "alpha=|CMO(C,cmo_period)|/100×2/(N+1)（CMO 滚动涨跌和，对齐 momentum.py CMO 类）；"
+            "VIDYA=α·C+(1−α)·VIDYA'，种子=CMO 首有效当根 close（种子当根即首有效，KAMA/FRAMA 同族约定）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = params["period"]
+        cmo_n = params["cmo_period"]
+        close = data["close"]
+        # CMO 对齐 momentum.py CMO 类：滚动 9 窗涨跌和（diff 首位 NaN → 首有效=cmo_period）
+        delta = close.diff()
+        su = delta.clip(lower=0).rolling(window=cmo_n).sum()
+        sd = (-delta).clip(lower=0).rolling(window=cmo_n).sum()
+        cmo = (su - sd) / (su + sd) * 100
+        alpha = cmo.abs() / 100.0 * (2.0 / (n + 1))
+        # 逐 bar 递推：种子=首个 alpha 有效当根 close（种子当根即输出，与 KAMA/FRAMA 一致）
+        a_vals = alpha.to_numpy()
+        c_vals = close.to_numpy(dtype=float)
+        m = len(c_vals)
+        out = np.full(m, np.nan)
+        prev = np.nan
+        for i in range(m):
+            if np.isnan(a_vals[i]):
+                continue
+            if np.isnan(prev):
+                prev = c_vals[i]
+            else:
+                prev = a_vals[i] * c_vals[i] + (1.0 - a_vals[i]) * prev
+            out[i] = prev
+        return pd.DataFrame({f"vidya_{n}": pd.Series(out, index=data.index)}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class AVGPRICE(TechnicalIndicatorBase):
+    """平均价格（Average Price，OHLC4）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="avgprice",
+        name="平均价格",
+        category="trend",
+        output_columns=["avgprice"],
+        input_columns=["open", "high", "low", "close"],
+        params={},
+        version="1.0.0",
+        description="AVGPRICE=(O+H+L+C)/4，逐 bar 线性变换，首行即有效",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        avgprice = (data["open"] + data["high"] + data["low"] + data["close"]) / 4
+        return pd.DataFrame({"avgprice": avgprice}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class MEDPRICE(TechnicalIndicatorBase):
+    """中位价格（Median Price，HL2）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="medprice",
+        name="中位价格",
+        category="trend",
+        output_columns=["medprice"],
+        input_columns=["high", "low"],
+        params={},
+        version="1.0.0",
+        description="MEDPRICE=(H+L)/2，逐 bar 线性变换，首行即有效",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        medprice = (data["high"] + data["low"]) / 2
+        return pd.DataFrame({"medprice": medprice}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class TYPPRICE(TechnicalIndicatorBase):
+    """典型价格（Typical Price，HLC3）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="typprice",
+        name="典型价格",
+        category="trend",
+        output_columns=["typprice"],
+        input_columns=["high", "low", "close"],
+        params={},
+        version="1.0.0",
+        description="TYPPRICE=(H+L+C)/3，逐 bar 线性变换，首行即有效",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        typprice = (data["high"] + data["low"] + data["close"]) / 3
+        return pd.DataFrame({"typprice": typprice}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class WCPRICE(TechnicalIndicatorBase):
+    """加权收盘价（Weighted Close Price，TA-Lib 名 WCLPRICE 的别名关系）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="wcprice",
+        name="加权收盘价",
+        category="trend",
+        output_columns=["wcprice"],
+        input_columns=["high", "low", "close"],
+        params={},
+        version="1.0.0",
+        description="WCPRICE=(H+L+2×C)/4（收盘双倍权重）；本库 id=wcprice，TA-Lib 函数名 WCLPRICE（别名关系）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        wcprice = (data["high"] + data["low"] + 2 * data["close"]) / 4
+        return pd.DataFrame({"wcprice": wcprice}, index=data.index)
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-20 简单指标清欠班波2-A：INERTIA/QSTICK
+# INERTIA 逐行移植：https://github.com/xgboosted/pandas-ta-classic/blob/main/pandas_ta_classic/momentum/inertia.py
+# （依赖链 volatility/rvi.py + overlap/linreg.py + overlap/ema.py 基础口径随迁）
+# QSTICK 移植源：https://github.com/xgboosted/pandas-ta-classic/blob/main/pandas_ta_classic/trend/qstick.py
+# ---------------------------------------------------------------------------
+
+
+def _seeded_ema(series: pd.Series, length: int) -> pd.Series:
+    """pandas-ta 口径 EMA（pandas_ta_classic/overlap/ema.py，sma=True 默认）。
+
+    首段 length 个有效值取 SMA 作种子（对应位置前置值置 NaN），再 ewm(span, adjust=False)
+    递推——区别于本库 _ema（首值种子）：种子前整段为预热 NaN。
+    """
+    first_valid = series.first_valid_index()
+    if first_valid is None:
+        return series
+    fv_pos = series.index.get_loc(first_valid)
+    seeded = series.copy()
+    if fv_pos + length <= len(seeded):
+        sma_nth = seeded.iloc[fv_pos : fv_pos + length].mean()
+        seeded.iloc[: fv_pos + length - 1] = np.nan
+        seeded.iloc[fv_pos + length - 1] = sma_nth
+    else:
+        seeded.iloc[:] = np.nan  # 有效值不足一个窗口：EMA 全程无定义（源码同口径）
+    return seeded.ewm(span=length, adjust=False).mean()
+
+
+def _rvi_basic(source: pd.Series, length: int, scalar: float, mamode: str) -> pd.Series:
+    """相对波动指数 RVI 基础模式（pandas_ta_classic/volatility/rvi.py 口径）。
+
+    UP=STD×1{Δsrc>0}，DOWN=STD×1{Δsrc≤0}（diff 首位 NaN 记 0，与源 unsigned_differences
+    一致）；STD 为 ddof=0 滚动总体标准差；UP/DOWN 经 mamode 平滑后
+    RVI=scalar×UP_avg/(UP_avg+DOWN_avg)。src 恒定 → STD=0 → 0/0=NaN（源码忠实行为）。
+    """
+    std = source.rolling(window=length).std(ddof=0)
+    diff = source.diff().fillna(0.0)
+    pos = (diff > 0).astype(float)
+    neg = (diff < 0).astype(float)
+    if mamode == "ema":
+        pos_avg = _seeded_ema(pos * std, length)
+        neg_avg = _seeded_ema(neg * std, length)
+    else:  # "sma"
+        pos_avg = (pos * std).rolling(window=length).mean()
+        neg_avg = (neg * std).rolling(window=length).mean()
+    return scalar * pos_avg / (pos_avg + neg_avg)
+
+
+def _linreg_endpoint(series: pd.Series, length: int) -> pd.Series:
+    """滚动最小二乘回归端点拟合值（pandas_ta_classic/overlap/linreg.py 默认输出）。
+
+    对窗口 x=[0..length−1], y=窗口值做 OLS，取 x=length−1 处拟合值
+    = slope×(length−1)+intercept（端点值对 x 平移不变）。
+    """
+    x = np.arange(length, dtype=float)
+    x_sum = x.sum()
+    x2_sum = np.square(x).sum()
+    divisor = length * x2_sum - x_sum**2
+
+    def endpoint(window: np.ndarray) -> float:
+        y_sum = window.sum()
+        xy_sum = float(np.dot(window, x))
+        slope = (length * xy_sum - x_sum * y_sum) / divisor
+        intercept = (y_sum * x2_sum - x_sum * xy_sum) / divisor
+        return slope * (length - 1) + intercept
+
+    return series.rolling(window=length).apply(endpoint, raw=True)
+
+
+@TechnicalIndicatorRegistry.register
+class INERTIA(TechnicalIndicatorBase):
+    """惯性指标（Inertia，Donald Dorsey 1995，RVI 经最小二乘均线平滑）。
+
+    公式权威源（逐行移植）：
+    https://github.com/xgboosted/pandas-ta-classic/blob/main/pandas_ta_classic/momentum/inertia.py
+    （Dorsey, "The Relative Vigor Index / Inertia"，1995-09）
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="inertia",
+        name="惯性指标",
+        category="trend",
+        output_columns=["inertia_20_14"],
+        input_columns=["high", "low"],
+        params={"length": 20, "rvi_length": 14, "scalar": 100, "mamode": "ema"},
+        version="1.0.0",
+        description=(
+            "INERTIA=LINREG(RVI(src,rvi_length),length)（滚动 OLS 端点拟合）；RVI=scalar×"
+            "EMA(pos·STD)/(EMA(pos·STD)+EMA(neg·STD))，EMA 用 pandas-ta SMA 种子口径（种子前 NaN）；"
+            "src=(H+L)/2——移植源基础模式用 close，按车道规格 inputs=[high,low] 取 HL2（MAMA 同款约定）；"
+            ">50 正惯性/<50 负惯性；列名 inertia_{length}_{rvi_length}（源命名 INERTIA_{length}_{rvi_length} 小写化）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        length = int(params["length"])
+        rvi_length = int(params["rvi_length"])
+        scalar = float(params["scalar"])
+        mamode = str(params["mamode"])
+        if mamode not in ("ema", "sma"):
+            raise ValueError(f"INERTIA 基础移植仅支持 mamode='ema'/'sma'，收到: {mamode}")
+        src = (data["high"] + data["low"]) / 2
+        rvi = _rvi_basic(src, rvi_length, scalar, mamode)
+        inertia = _linreg_endpoint(rvi, length)
+        return pd.DataFrame({f"inertia_{length}_{rvi_length}": inertia}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class QSTICK(TechnicalIndicatorBase):
+    """Q 棒指标（QStick，Tushar Chande，SMA(C−O,N)）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="qstick",
+        name="QStick指标",
+        category="trend",
+        output_columns=["qstick_10"],
+        input_columns=["open", "close"],
+        params={"length": 10},
+        version="1.0.0",
+        description=(
+            "QS=SMA(C−O,N)（Chande QStick，源默认 ma='sma'，本移植固定 sma 口径）；"
+            ">0 阳线动能占优/<0 阴线动能占优；十字星 C=O 按数学定义记 0"
+            "（未移植源 non_zero_range 的 0.001 epsilon 修补——加密盘零极差数据专用）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = int(params["length"])
+        diff = data["close"] - data["open"]
+        qstick = diff.rolling(window=n).mean()
+        return pd.DataFrame({f"qstick_{n}": qstick}, index=data.index)

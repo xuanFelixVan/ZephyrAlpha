@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 成交量类指标 13 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 成交量类指标 17 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,15 +16,20 @@
 # [TTL] permanent
 """
 
-成交量类技术指标（7 个，v1.0.0 全部施工完成）。
+成交量类技术指标（17 个，v1.0.0 全部施工完成）。
 
-指标清单：OBV/MFI/VWAP/VR/AD/PVT/WVAD/VWMA/ADOSC/EOM/KVO/NVI/PVI（批2b +6）
+指标清单：OBV/MFI/VWAP/VR/AD/PVT/WVAD/VWMA/ADOSC/EOM/KVO/NVI/PVI/FORCE_INDEX
+（批2b +6，其后 FORCE_INDEX 强力指数 +1）；WAD/VO/MARKETFI（批2-C 清欠班 +3）
 
 算法对齐通达信：
   - OBV/AD/PVT 为累积量（cumsum），首值为 0
   - VR 通达信公式：VR=100×(2×up_vol+flat_vol)/(2×down_vol+flat_vol)，平盘量计入两侧
   - MFI 类似 RSI 但加入成交量加权
   - WVAD 用 (C-O)/(H-L)×V 滚动求和，H=L 时该项为 0
+  - WAD 累积 sign 口径（Tulip）：C>Cp 累积 C−L_prev，C<Cp 累积 C−H_prev，其余计 0；
+    首行无 prev 可取 TAD=0（与 OBV/PVT 累积族一致，无预热 NaN）
+  - VO 百分比口径（Tulip）：(MA(V,fast)−MA(V,slow))/MA(V,slow)×100，首有效=第 slow 根
+  - MARKETFI（B. Williams）=(H−L)/V，V=0 → NaN，无预热 NaN
 
 设计文档：16_technical_indicator_catalog.md §2.4
 
@@ -297,9 +302,7 @@ class ADOSC(TechnicalIndicatorBase):
         h, l, c, v = data["high"], data["low"], data["close"], data["volume"]
         clv = ((c - l) - (c - h)).where(h != l, 0.0)
         ad_line = (clv * v).cumsum()
-        adosc = ad_line.ewm(span=fast_n, adjust=False).mean() - ad_line.ewm(
-            span=slow_n, adjust=False
-        ).mean()
+        adosc = ad_line.ewm(span=fast_n, adjust=False).mean() - ad_line.ewm(span=slow_n, adjust=False).mean()
         return pd.DataFrame({"adosc": adosc}, index=data.index)
 
 
@@ -452,3 +455,92 @@ class FORCE_INDEX(TechnicalIndicatorBase):
         raw = data["close"].diff() * data["volume"]
         fi = raw.ewm(span=n, adjust=False).mean()
         return pd.DataFrame({f"fi_{n}": fi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class WAD(TechnicalIndicatorBase):
+    """威廉累积/派发线（Williams Accumulation/Distribution）。
+
+    累积 sign 口径（Tulip 权威）：C>Cp 时 TAD=C−L_prev，C<Cp 时 TAD=C−H_prev，
+    其余（含持平）TAD=0；WAD=cumsum(TAD)。
+    首行口径：无 prev 行可取，TAD=0（WAD 从 0 起步，与 OBV/PVT 累积族一致，
+    全序列无预热 NaN）。
+    """
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="wad",
+        name="威廉累积/派发线",
+        category="volume",
+        output_columns=["wad"],
+        input_columns=["high", "low", "close"],
+        params={},
+        version="1.0.0",
+        description="C>Cp 累积 C−L_prev，C<Cp 累积 C−H_prev，其余计 0；WAD=cumsum(TAD)，首行 TAD=0（Tulip 口径）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        h, l, c = data["high"], data["low"], data["close"]
+        diff = c.diff()
+        # 首行 diff=NaN → 两分支比较均 False → TAD=0（首行口径）
+        tad = np.where(
+            diff > 0,
+            c - l.shift(1),
+            np.where(diff < 0, c - h.shift(1), 0.0),
+        )
+        wad = pd.Series(tad, index=data.index).cumsum()
+        return pd.DataFrame({"wad": wad}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class VO(TechnicalIndicatorBase):
+    """成交量震荡器（Volume Oscillator，5/20）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="vo",
+        name="成交量震荡器",
+        category="volume",
+        output_columns=["vo"],
+        input_columns=["volume"],
+        params={"fast": 5, "slow": 20},
+        version="1.0.0",
+        description="vo=(MA(V,fast)−MA(V,slow))/MA(V,slow)×100，百分比口径（Tulip）；首有效=第 slow 根，列名固定 vo",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        fast_n, slow_n = params["fast"], params["slow"]
+        vol = data["volume"]
+        ma_fast = vol.rolling(window=fast_n).mean()
+        ma_slow = vol.rolling(window=slow_n).mean()
+        vo = (ma_fast - ma_slow) / ma_slow * 100
+        return pd.DataFrame({"vo": vo}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class MARKETFI(TechnicalIndicatorBase):
+    """市场促进指数（Market Facilitation Index，B. Williams）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="marketfi",
+        name="市场促进指数",
+        category="volume",
+        output_columns=["marketfi"],
+        input_columns=["high", "low", "volume"],
+        params={},
+        version="1.0.0",
+        description="marketfi=(H−L)/V，单位成交量推动的价格幅度；V=0 → NaN 保护（B. Williams）",
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        h, l, v = data["high"], data["low"], data["volume"]
+        marketfi = ((h - l) / v).where(v != 0)
+        return pd.DataFrame({"marketfi": marketfi}, index=data.index)

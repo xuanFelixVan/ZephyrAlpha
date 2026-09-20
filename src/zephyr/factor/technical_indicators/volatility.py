@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 波动类指标 15 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出；复用 trend._ema
+# [INVARIANTS] 波动类指标 18 个，纯自实现 pandas/numpy；compute→DataFrame 多列输出；复用 trend._ema
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,9 +16,10 @@
 # [TTL] permanent
 """
 
-波动类技术指标（8 个，v1.0.0 全部施工完成）。
+波动类技术指标（18 个，v1.0.0 全部施工完成）。
 
-指标清单：ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol/NATR/TRANGE/MASSI（批2a+2b）/PARKINSON/GARMAN_KLASS/ROGERS_SATCHELL/YANG_ZHANG（批6 学术 RV 族）
+指标清单：ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol/NATR/TRANGE/MASSI（批2a+2b）/PARKINSON/GARMAN_KLASS/ROGERS_SATCHELL/YANG_ZHANG（批6 学术 RV 族）/
+CHOP/CVI/ULCER（2026-09-20 清欠班波2-A +3）
 
 算法对齐通达信：
   - ATR 通达信用 MA（简单移动平均，非 Wilder's RMA）
@@ -477,3 +478,103 @@ class YANG_ZHANG(TechnicalIndicatorBase):
         k = 0.34 / (1.34 + (n + 1) / (n - 1))
         est = sigma_o2 + k * sigma_c2 + (1 - k) * sigma_rs2
         return pd.DataFrame({f"yang_zhang_{n}": np.sqrt(est.clip(lower=0)) * 100}, index=data.index)
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-20 简单指标清欠班波2-A：CHOP/CVI/ULCER
+# （CHOP 复用 _true_range；CVI 就地 ewm(span, adjust=False)——trend.py 本车道只读）
+# ---------------------------------------------------------------------------
+
+
+@TechnicalIndicatorRegistry.register
+class CHOP(TechnicalIndicatorBase):
+    """盘整指数（Choppiness Index，14，E.W. Dreiss）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="chop",
+        name="盘整指数",
+        category="volatility",
+        output_columns=["chop_14"],
+        input_columns=["high", "low", "close"],
+        params={"period": 14},
+        version="1.0.0",
+        description=(
+            "CHOP=100×log10(ΣTR(N)/(HH(N)−LL(N)))/log10(N)，TR=真实波幅（复用 _true_range）；"
+            ">61.8 盘整市/<38.3 趋势市；恒定区间（HH=LL）0/0 保护为 NaN"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = int(params["period"])
+        tr_sum = _true_range(data["high"], data["low"], data["close"]).rolling(window=n).sum()
+        hh = data["high"].rolling(window=n).max()
+        ll = data["low"].rolling(window=n).min()
+        range_ = (hh - ll).where(hh - ll > 0)  # 分母 ≤0（恒定区间）→ NaN，禁 inf
+        chop = 100 * np.log10(tr_sum / range_) / np.log10(n)
+        return pd.DataFrame({f"chop_{n}": chop}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class CVI(TechnicalIndicatorBase):
+    """Chaikin 波动率（Chaikin Volatility，EMA3/ROC10）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="cvi",
+        name="Chaikin波动率",
+        category="volatility",
+        output_columns=["cvi"],
+        input_columns=["high", "low"],
+        params={"ema_period": 3, "roc_period": 10},
+        version="1.0.0",
+        description=(
+            "CVI=100×(EMA(H−L,3)/EMA(H−L,3).shift(10)−1)；EMA adjust=False（本库口径，"
+            "首值种子无预热 NaN，首有效=第 roc_period 根）；度量高低价区间膨胀速率变化"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        ema_n, roc_n = int(params["ema_period"]), int(params["roc_period"])
+        rng = data["high"] - data["low"]
+        ema_rng = rng.ewm(span=ema_n, adjust=False).mean()
+        cvi = 100 * (ema_rng / ema_rng.shift(roc_n) - 1)
+        return pd.DataFrame({"cvi": cvi}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class ULCER(TechnicalIndicatorBase):
+    """溃疡指数（Ulcer Index，Martin 1987，14）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="ulcer",
+        name="溃疡指数",
+        category="volatility",
+        output_columns=["ulcer_14"],
+        input_columns=["close"],
+        params={"period": 14},
+        version="1.0.0",
+        description=(
+            "ULCER=100×√(mean((C/max(C,N)−1)²))，等价 √(mean(((C/max−1)×100)²))——单一滚动窗口含当根，"
+            "窗口内各收盘对窗口峰值回撤的 RMS（Martin 溃疡指数，只罚下行波动）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = int(params["period"])
+        ulcer = (
+            data["close"]
+            .rolling(window=n)
+            .apply(lambda w: 100.0 * np.sqrt(np.mean(np.square(w / w.max() - 1.0))), raw=True)
+        )
+        return pd.DataFrame({f"ulcer_{n}": ulcer}, index=data.index)
