@@ -41941,4 +41941,9 @@ creation_tokens:
   created_by: st-taskcards-exec-20260921
   capability: recovered_task_cards
   merge_evaluation: "TC-11步骤0护资产：第五棒交接簿(09-21 00:45 staged未提交)落袋防丢，保护性接管非第五棒开工"
+- file: docs/03_modules/_domain_data/algo_flow/qmt_bridge_provider.yaml
+  token: datafix-algo-flow-qmt-bridge-provider-20260921
+  created_by: st-data-fix-20260921
+  capability: data_fix_campaign
+  merge_evaluation: "同真源可派生：GATE-ALGO-FLOW 补锚配套机器块（qmt_bridge_provider 竞价派生算法公共面出仓），非新真源，随真源文件 TTL 处置"
 di_seam_exemptions: []
