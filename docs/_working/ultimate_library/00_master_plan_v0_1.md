@@ -28,19 +28,21 @@ status: "draft"
 3. **净零收编**（宪法 §4）：不建平行注册表、不新造对齐算法。每个新件必须声明收编对象（§4 收编地图）；骨架盘点证实原料约八成现成，缺的是"统一 schema+分层导航+指纹+唯一入口"。
 4. **AI-first 读取契约**：分层渐进披露 L0 总目→L1 分馆→L2 域→L3 条目卡（复用 capability_cards 已验证的 L0-L3 范式）；每页头部必带 条目数/指纹/构建时戳/真源锚点；检索必经 library_lookup 留审计（与 capability_lookup 同构）。
 
-## §2 馆藏结构 v0（六馆 + 临时区）
+## §2 馆藏结构 v1（七馆两区，Owner 2026-09-21 扩容令："制度、规则、git 路上一切设备全部入馆"）
 
-纵轴=内容域（复用 functional_domain_registry 83 域），横轴=实物类型标签（module/registry/table/pipeline/report/backup/card/...），交叉引用由生成器产出。单入口=INDEX 树。
+纵轴=内容域（复用 functional_domain_registry 83 域），横轴=实物类型标签，交叉由生成器产出。单入口=INDEX 树。**类目总清=[05_master_inventory_v1.md](05_master_inventory_v1.md)（清单的清单：十维度 51 类有清单件+9 缺口全落总攻）。**
 
-| 馆 | 收什么 | 既有真源（骨架盘点实证） | 既有生成器/机制 |
+| 馆 | 收什么 | 既有真源（盘点实证） | 既有生成器/机制 |
 |---|---|---|---|
-| 代码馆 | 源码/模块/蓝图/脚本 | depgraph PG 9148 节点（REG-DEPGRAPH-001）、module_id 74、script-manifest 991、蓝图体系 | generate_project_depgraph.py |
-| 数据馆 | CH 表/数据源/通道/字段/质量 | data_asset_registry（对标 OpenLineage）、data_sources_registry、field_dictionary 257、哨兵 yaml | supply_sentinel.py；（缺）CH 元数据采集器 |
-| 文档馆 | docs 全树/全景图十图/sop 九族 | rule_catalog 256、directory_registry 88、十图口径 | d1 index 族、d8_doc_sync 六 reconciler |
-| 规则馆 | 86 规则/170 gate/裁定/gate 家族 | rule_catalog、gate_registry、ruling_registry、CAPCAN 378 | generate_rule_catalog / generate_gate_registry |
-| 管线馆 | 调度任务/决策图/血缘/接电态 | tasks.yaml、TDM 138/194、strategy_production_map、generator_registry | reconcile_generators.py、generate_skeleton_health.py |
-| 备份馆 | D/E/F/G/网盘/计划任务外溢 | asset_inventory（E 盘冷归档）、infrastructure_registry 9 组件、backup_config | backup.ps1 六阶段；（缺）全盘盘点+checksum manifest+restore 演练 |
-| 临时区 | 不入馆藏只入台账 | .runtime/、docs/_working/、根目录工作区（.aidrafts/.worktrees/st-* 残留） | — |
+| 制度馆 | 宪法/规则 86/裁定 384/议题 761/标准/政策/SOP 九族/门位/冻结契约 38/错误码 788/词汇三层 | rule_catalog、ruling_registry、architecture_issue_registry、risk_tier、freeze_manifest、error_code、术语三层+field_dictionary 257 | generate_rule_catalog |
+| 闸门馆 | 门禁全家族（55 pre-commit+113 in-process+91 gate_engine+fail_open 1,635+noqa+allowlist）+**git 提交链全部设备**（网关/队列/serializer/锁 claim/会话心跳/worktree/stash 隔离/POST-COMMIT-GUARD/hooks/应急通道）+安全设备（LSG/kill_switch/secrets/红蓝 24+44） | in_process_gate_registry（SSoT）+GateSpec、gate_registry 聚合、git_commit.py/commit_queue/lock_files/session_worktree 源码与配置、REG-RB-001/002 | generate_gate_registry（reconciler 830 重生成） |
+| 代码馆 | 源码/模块/脚本/蓝图/schema/迁移/测试 | depgraph PG 12,107 节点、script-manifest 991、module_id 74、blueprint 体系 | generate_project_depgraph.py |
+| 数据馆 | CH 表/数据源/通道/字段+因子/策略/指标/形态/模型登记 | data_asset_registry、data_sources_registry、field_dictionary、哨兵、factor 175/strategy 161/indicator 138/pattern 254 | supply_sentinel.py；（缺）CH 采集器 |
+| 管线馆 | 决策图/血缘/调度/排班/计划任务/守护/服务/MCP/模型路由 | TDM 138/194、decisiongraph 213、dataflow 1,757、tasks.yaml、resource_profile 74、MCP 契约 12/64 | reconcile_generators.py、generate_skeleton_health.py |
+| 文档馆 | docs 手写文档/全景图十图/报告/任务卡/验收证据/能力卡 33 | rule_catalog、directory_registry 88、十图口径、capability_cards | d1 index 族、d8_doc_sync |
+| 基建与备份馆 | 基础设施 9 组件/盘 D-E-F-G/冷储/网盘/数据库实例/备份链/恢复演练 | asset_inventory、infrastructure_registry、backup_config、backup.ps1 | backup.ps1；（缺）全盘盘点+checksum+restore 演练 |
+| 运行时区（半开） | 活性台账入馆（6 lifecycle json/资源采样/审计流），堆积型只计指标 | data/runtime/、resource_samples、governance.db | — |
+| 临时区（排除） | .runtime 堆积/tmp/docs/_working/根目录杂项 | 只入总账作 blind 域名点，不建馆页 | — |
 
 ## §3 入口三形态（一体三视图，同一生成器产出）
 

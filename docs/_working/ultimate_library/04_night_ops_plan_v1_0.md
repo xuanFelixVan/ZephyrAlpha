@@ -21,7 +21,7 @@ session: "st-ulib-20260921"
 |---|---|---|---|
 | W0 干预窗 | 0-0.5h | token 前置批一次办齐（全部新文件）；新 .py 域 depgraph 设计节点登记；写域分配公示（§2） | Owner 批图 |
 | W1 主轴 | 0.5-3h | A 蓝图评审冻结+schema 定签（Max）→ B1/B2 总账 DDL+五采集器 → C1 总闸+C2 总口并行 | **A 签认是 W2 硬门** |
-| W2 六馆并发 | 3-9h | D1..D6 每馆一对话（跑采集器→生成 L1/L2→双向自检→供 INDEX 子树）+E 对齐收编 | W1 全绿 |
+| W2 七馆并发 | 3-9h | D1..D7 每馆一对话（跑采集器→生成 L1/L2→双向自检→供 INDEX 子树）+E 对齐收编 | W1 全绿 |
 | W3 验收转正 | 9-12h | F 红蓝两轮（独立对话只读攻击）→G 端到端演示+转正呈批→H 机动补位 | W2 全绿 |
 
 ## §2 分包表（写域零重叠；分包只 stage 不 commit，总包统一 --enqueue 入袋）
@@ -36,9 +36,10 @@ session: "st-ulib-20260921"
 | D1 代码馆 | docs/library/code/ | depgraph 12,107 节点+script-manifest 991 目录页 | 双向自检零误报 |
 | D2 数据馆 | docs/library/data/ | CH 246 表+数据源/通道+哨兵目录页 | 同上 |
 | D3 文档馆 | docs/library/doc/ | docs 全树+十图+sop 九族目录页 | 同上 |
-| D4 规则馆 | docs/library/rule/ | 86 规则+gate 五表（§关系定案）+裁定目录页 | 同上 |
+| D4 制度馆 | docs/library/rule/ | 86 规则+裁定 384+议题 761+标准/门位/契约 38/错误码 788/词汇三层目录页 | 同上 |
 | D5 管线馆 | docs/library/pipeline/ | tasks/TDM 138/血缘 1,757 jobs/计划任务 45 台账页 | 同上 |
 | D6 备份馆 | docs/library/backup/ | 盘点（asset_inventory+infrastructure+bdpan）+3 手工任务/Startup .lnk 点名页 | 同上 |
+| D7 闸门链馆 | docs/library/gate/ | 门禁全家族（55+113+91+fail_open 1,635+noqa+allowlist）+git 提交链 15 设备台账+LSG/kill_switch 清单页（Owner 点名扩容，05 类目表 B/C 节） | 同上 |
 | E 对齐 | generator_registry.yaml 登记（W0 前置批） | 统一对账窗+指纹回写总账 | regen 两跑幂等 |
 | F 红蓝 | 只读+报告 | 两轮缺陷单 | 第二轮 0 |
 | G 交付 | 转正材料+端到端脚本 | 验收报告呈 Owner | 蓝图 §8 全绿 |
