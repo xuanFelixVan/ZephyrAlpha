@@ -5016,6 +5016,10 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "docs/_working/tilib_clearance/tilib_clear_a5_delivery_report.md"
+  token: "tilib-clear-a5-report-20260920"
+  created_by: "st-tilib-clear-20260920"
+  capability: "tilib_clearance_campaign"
 - file: "docs/_working/tilib_clearance/tilib_clear_a1_ledger.md"
   token: "tilib-clear-ledger-r2-20260920"
   created_by: "st-tilib-clear-20260920"

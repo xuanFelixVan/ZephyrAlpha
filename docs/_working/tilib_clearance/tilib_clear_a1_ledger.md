@@ -32,7 +32,10 @@ title: 技术指标库清欠班台账（分包A·34指标三件套清零）
 | 波2-A | CHOP/CVI/ULCER（vol）+EBSW（cycle）+INERTIA/QSTICK（trend） | 并入 q-0003 | +60 用例（三测试文件） | done（独立复算+手工微样本 [亲验]） |
 | 波2-B | RMI/PFE/FOSC/CTI/VHF/ER（momentum） | 并入 q-0003 | +36 用例 | done（FOSC/CTI/ER/VHF 镜像逐行；RMI/PFE 权威定义移植） |
 | 波2-C | WAD/VO/MARKETFI（volume）+ZSCORE（statistics） | 并入 q-0003 | +36 用例 | done |
-| 波2-总包 | 注册表 133 条+schema 194 列+契约 132/194+cycle 头 029 治愈+CREATE-GUARD token×3+memo v1.8.0 | （q-0003 落地后回填） | 目录全量 1038 passed/5 skipped ×2 轮 | done |
+| 波2-总包 | 注册表 133 条+schema 194 列+契约 132/194+cycle 头 029 治愈+CREATE-GUARD token×3+memo v1.8.0 | q-0006+q-0007 拆件落地 | 目录全量 1038 passed/5 skipped ×2 轮 | done |
+| 波3 | SUPERSMOOTHER/HIGHPASS/PTREND（trend.py，TASC 2024-09 学术族）+3 列 | 020728598c | +17 用例；目录 1070 passed ×2 轮 | done（双实现互证 1e-12+手算微样本 [亲验]） |
+| 波3-总包 | 注册表 136 条+schema 198 列+契约 135/198+memo v1.9.0+a3 挖矿报告 | 020728598c | 四方探针 198×4 全等 | done |
+| 收官 | D-15 三态核实 17 文件全一致（index 旧弹 git reset 消弹+capability 册 HEAD 超集收敛）；红蓝对抗 ALL PASS（PIT 零未来行+新种子 talib 复验 12 项+递推恒等 5 项+弱断言零命中）；波4 未启动（理由见 a5 §5） | （a5 随本行落地） | 136 条=终极目标达成 | done |
 
 ## 裁定与偏差记录
 
