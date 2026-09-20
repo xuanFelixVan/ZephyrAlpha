@@ -20,7 +20,7 @@ from decimal import Decimal
 
 import pytest
 
-from zephyr.backtest.core.matching_logic import OrderBookSnapshot
+from zephyr.backtest.core.matching_logic import MatchingConfig, OrderBookSnapshot
 from zephyr.ex_sor.core.rl_exec_boundary import RlExecBoundary
 from zephyr.ex_sor.core.rl_exec_contract import RlExecContract
 from zephyr.ex_sor.core.rl_exec_env import RlExecAction, RlExecEnv, RlExecState
@@ -91,7 +91,17 @@ def make_contract(**overrides) -> RlExecContract:
 
 
 def make_env(contract: RlExecContract | None = None, seed: int = 42) -> RlExecEnv:
-    return RlExecEnv(contract=contract or make_contract(), book_provider=make_book, seed=seed)
+    # WO-12/C9-C11：生产默认滑点已由 legacy 1bp 一口价切换为标定真源解析
+    # （无流动性信息时取 SLIPPAGE_BPS_UNIVERSAL=3.79bp 全市场名义加权，#23 H2；
+    # MatchingConfig.slippage_bps 文档明示 3/4 档"一律严于旧 1bp"）。本文件的被测对象
+    # 是边界/撮合/IS 记账骨架而非滑点标定值，故用官方固定口径覆写位钉住 1bp 平口价，
+    # 与各断言注释 ask1×1.0001 保持一致，且不受 SLIPPAGE_TIERING_ENABLED A/B 开关影响。
+    return RlExecEnv(
+        contract=contract or make_contract(),
+        book_provider=make_book,
+        matching_config=MatchingConfig(slippage_bps=Decimal("1")),
+        seed=seed,
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════════════

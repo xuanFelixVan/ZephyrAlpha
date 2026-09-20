@@ -25,6 +25,8 @@ D_POSITION — 仓位配方编译器（F-06 组合层穷尽网格 · 编译器�
   1. Schema 一次定型，执行分期——维度存在性由终局设计空间决定;
   2. 退化维度由编译器折叠，不被人裁剪——active_if 不活跃 → 折叠为 baseline;
   3. 失活维对试验数 N 的贡献 = 1（不是 |values|），N 只数真正发生过的尝试。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_position/algo_flow/position_recipe_compiler.yaml
 """
 
 from __future__ import annotations
@@ -34,6 +36,7 @@ import json
 import math
 from dataclasses import dataclass, field
 from pathlib import Path
+from statistics import NormalDist
 from typing import Final
 
 import yaml
@@ -67,6 +70,11 @@ class InvalidGridSchemaError(ZephyrBaseError):
 #   signal_side — 影响信号/因子生成（贵，跨配方可共享前缀，进 prefix_key）
 #   weight_invariant — 只影响组合权重调配（廉价重放，不进 prefix_key）
 COST_TIERS = ("signal_side", "weight_invariant")
+
+# E[max(Z_N)] 闭式常量（WO-12/C12 与官方件 deflated_sharpe_calculator 同源对齐；
+# 数值真源=该件 EULER_MASCHERONI，此处副本仅为免拉模拟依赖的预览路径服务）
+_EULER_MASCHERONI: Final[float] = 0.5772156649015329
+_STD_NORMAL = NormalDist()
 
 
 @dataclass(frozen=True)
@@ -152,9 +160,7 @@ class GridCompiler:
     def from_yaml(cls, path: str | Path) -> GridCompiler:
         data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
         if not isinstance(data, dict) or "dimensions" not in data:
-            raise InvalidGridSchemaError(
-                "schema YAML 顶层须为 {dimensions: [...]}", details={"path": str(path)}
-            )
+            raise InvalidGridSchemaError("schema YAML 顶层须为 {dimensions: [...]}", details={"path": str(path)})
         return cls.from_dimensions(data["dimensions"])
 
     # ── 校验（fail-closed） ───────────────────────────────────
@@ -163,18 +169,12 @@ class GridCompiler:
         seen: set[str] = set()
         for d in dimensions:
             if d.id in seen:
-                raise InvalidGridSchemaError(
-                    "维度 id 重复", details={"dimension": d.id}
-                )
+                raise InvalidGridSchemaError("维度 id 重复", details={"dimension": d.id})
             seen.add(d.id)
             if not d.values:
-                raise InvalidGridSchemaError(
-                    "维度 values 为空", details={"dimension": d.id}
-                )
+                raise InvalidGridSchemaError("维度 values 为空", details={"dimension": d.id})
             if len(set(d.values)) != len(d.values):
-                raise InvalidGridSchemaError(
-                    "维度 values 有重复取值", details={"dimension": d.id}
-                )
+                raise InvalidGridSchemaError("维度 values 有重复取值", details={"dimension": d.id})
             if d.baseline not in d.values:
                 raise InvalidGridSchemaError(
                     "维度 baseline 不在 values 内",
@@ -200,9 +200,7 @@ class GridCompiler:
 
         def visit(node: str) -> None:
             if state.get(node) == 1:
-                raise InvalidGridSchemaError(
-                    "depends_on 成环", details={"dimension": node}
-                )
+                raise InvalidGridSchemaError("depends_on 成环", details={"dimension": node})
             if state.get(node) == 2:
                 return
             state[node] = 1
@@ -219,11 +217,7 @@ class GridCompiler:
         rank = 0
         frontier = {d.id}
         while frontier:
-            frontier = {
-                dep
-                for fid in frontier
-                for dep in by_id[fid].depends_on
-            }
+            frontier = {dep for fid in frontier for dep in by_id[fid].depends_on}
             rank += len(frontier)
         return rank
 
@@ -234,9 +228,9 @@ class GridCompiler:
         live = [d for d in self._dimensions if active_map[d.id]]
         folded = {d.id: d.baseline for d in self._dimensions if not active_map[d.id]}
         recipes = self._expand(live, folded)
-        digest = hashlib.sha1(
-            _canonical({d.id: list(d.values) for d in self._dimensions}).encode("utf-8")
-        ).hexdigest()[:12]
+        digest = hashlib.sha1(_canonical({d.id: list(d.values) for d in self._dimensions}).encode("utf-8")).hexdigest()[
+            :12
+        ]
         return GridExpansion(
             recipes=tuple(recipes),
             n_raw=len(recipes),
@@ -268,9 +262,7 @@ class GridCompiler:
                 ) from exc
         return out
 
-    def _expand(
-        self, live: list[DimensionSpec], folded: dict[str, str]
-    ) -> list[PositionRecipe]:
+    def _expand(self, live: list[DimensionSpec], folded: dict[str, str]) -> list[PositionRecipe]:
         signal_dims = [d.id for d in live if d.cost_tier == "signal_side"]
         combos: list[dict[str, str]] = [{}]
         for d in live:
@@ -298,16 +290,21 @@ class GridCompiler:
         return n
 
     def estimate_max_z(self, n: int) -> float:
-        """E[max(Z_N)]（Euler-Maclaurin）——与官方件同一公式，供 N 记账预览。
+        """E[max(Z_N)]（Bailey & López de Prado 2014 闭式）——供 N 记账预览。
 
-        唯真源仍是 zephyr.simulation.deflated_sharpe_calculator；此处仅供
-        网格预算阶段不拉模拟依赖时快速预览。
+        唯真源仍是 zephyr.simulation.deflated_sharpe_calculator.expected_max_sharpe_z
+        （全仓唯一真源，含公式推导与精度注记）；此处仅供网格预算阶段不拉模拟依赖时
+        快速预览。WO-12/C12：旧实现用已废弃的 Euler–Maclaurin 渐近式（N=2 给 0.8469，
+        官方件已切论文闭式给 0.5198），与本函数"与官方件同一公式"的自我声明矛盾，
+        现按官方闭式逐位对齐（同一 stdlib NormalDist.inv_cdf，运算次序一致）。
         """
         if n <= 1:
             return 0.0
-        ln_n = math.log(n)
-        sqrt_2ln = math.sqrt(2.0 * ln_n)
-        return sqrt_2ln - (math.log(math.pi) + math.log(ln_n)) / (2.0 * sqrt_2ln)
+        nf = float(n)
+        gamma = _EULER_MASCHERONI
+        return (1.0 - gamma) * _STD_NORMAL.inv_cdf(1.0 - 1.0 / nf) + gamma * _STD_NORMAL.inv_cdf(
+            1.0 - 1.0 / (nf * math.e)
+        )
 
 
 __all__: Final = [

@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import timezone, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any
@@ -57,9 +57,7 @@ def _seed_streak(monkeypatch, tmp_path: Path, source: str, streak: int) -> Path:
 class TestSourceHealthAlertLatch:
     """F1：告警未落盘时**不得**把"已告警"写进持久化状态。"""
 
-    def test_un_delivered_alert_does_not_latch_in_persisted_state(
-        self, monkeypatch, tmp_path, caplog
-    ):
+    def test_un_delivered_alert_does_not_latch_in_persisted_state(self, monkeypatch, tmp_path, caplog):
         blocked = _blocked_failures_root(tmp_path)
         monkeypatch.setattr("zephyr.data.alerter._DEFAULT_FAILURES_DIR", blocked)
         streaks = _seed_streak(monkeypatch, tmp_path, "blocked_src", streak=shc._STREAK_ALERT_DAYS)
@@ -74,9 +72,7 @@ class TestSourceHealthAlertLatch:
         assert any("未落盘" in r.getMessage() for r in caplog.records), "未送达必须留可见痕"
 
     def test_delivered_alert_does_latch(self, monkeypatch, tmp_path):
-        monkeypatch.setattr(
-            "zephyr.data.alerter._DEFAULT_FAILURES_DIR", tmp_path / "failures_ok"
-        )
+        monkeypatch.setattr("zephyr.data.alerter._DEFAULT_FAILURES_DIR", tmp_path / "failures_ok")
         streaks = _seed_streak(monkeypatch, tmp_path, "live_src", streak=shc._STREAK_ALERT_DAYS)
 
         shc._update_failure_streaks([{"source": "live_src", "status": "error", "error": "boom"}])
@@ -85,9 +81,7 @@ class TestSourceHealthAlertLatch:
         assert persisted["live_src"]["alerted"] is True
 
     def test_next_run_retries_after_failed_delivery(self, monkeypatch, tmp_path):
-        monkeypatch.setattr(
-            "zephyr.data.alerter._DEFAULT_FAILURES_DIR", _blocked_failures_root(tmp_path)
-        )
+        monkeypatch.setattr("zephyr.data.alerter._DEFAULT_FAILURES_DIR", _blocked_failures_root(tmp_path))
         streaks = _seed_streak(monkeypatch, tmp_path, "retry_src", streak=shc._STREAK_ALERT_DAYS)
         payload = [{"source": "retry_src", "status": "error", "error": "boom"}]
 
@@ -95,9 +89,7 @@ class TestSourceHealthAlertLatch:
         shc._update_failure_streaks(payload)  # 两轮都未送达 → 必须仍在重试
         assert json.loads(streaks.read_text(encoding="utf-8"))["retry_src"]["alerted"] is False
 
-        monkeypatch.setattr(
-            "zephyr.data.alerter._DEFAULT_FAILURES_DIR", tmp_path / "failures_recovered"
-        )
+        monkeypatch.setattr("zephyr.data.alerter._DEFAULT_FAILURES_DIR", tmp_path / "failures_recovered")
         shc._update_failure_streaks(payload)
         assert json.loads(streaks.read_text(encoding="utf-8"))["retry_src"]["alerted"] is True
 
@@ -191,9 +183,7 @@ class TestPressureEventLatch:
         monkeypatch.setattr(eb.bus, "emit", boom)
         engine = self._engine()
         _ExternalNotifier.emit_pressure_event(engine, self._snap(PressureLevel.CRITICAL))
-        assert engine.last_pressure_level is PressureLevel.NORMAL, (
-            "外发失败却推进档位 → 同一压力档余生不再外发"
-        )
+        assert engine.last_pressure_level is PressureLevel.NORMAL, "外发失败却推进档位 → 同一压力档余生不再外发"
 
     def test_latch_advances_and_dedups_on_success(self, monkeypatch):
         emitted: list[tuple] = []
@@ -240,9 +230,7 @@ class TestDebugReleaseVisibility:
             monitor.register_shared_monitoring_probes()
         msgs = [r.getMessage() for r in caplog.records if "注册失败" in r.getMessage()]
         assert msgs, "探针注册失败在 WARNING 档位不可见 = 健康视图静默偏乐观"
-        assert all("LookupError" in m for m in msgs), (
-            "须带真实异常类型名（本例 LookupError），禁预设失败类别"
-        )
+        assert all("LookupError" in m for m in msgs), "须带真实异常类型名（本例 LookupError），禁预设失败类别"
 
     def test_alert_channel_failure_is_error_visible(self, caplog):
         def boom(_msg: str, **_kw: Any) -> None:
@@ -259,7 +247,13 @@ class TestDebugReleaseVisibility:
 
 @pytest.mark.parametrize("rel", ["data/source_health_check.py"])
 def test_patched_files_keep_line_endings(rel: str):
-    """R-008 换行地雷自检：收口不得整篇改行尾。"""
+    """R-008 换行地雷自检：收口不得整篇改行尾。
+
+    WO-12/C6 判定：.gitattributes 对 *.py 强制 `text eol=lf`，仓库规范行尾
+    就是 LF（index=i/lf，规范检出=w/lf）。原断言"全文件纯 CRLF"是旧工作区
+    autocrlf 残留的过时口径，与 .gitattributes 直接矛盾，任何规范检出必挂。
+    反改雷语义保留：回归=有人把 CRLF 写回来，故断言纯 LF。
+    """
     p = Path(__file__).resolve().parents[3] / "src" / "zephyr" / rel
     raw = p.read_bytes()
-    assert raw.count(b"\n") == raw.count(b"\r\n"), f"{rel} 行尾被整篇改写"
+    assert raw.count(b"\r\n") == 0, f"{rel} 违反 .gitattributes eol=lf（出现 CRLF）"

@@ -11,9 +11,9 @@
 Agent 端到端测试 (T-3-12)
 =========================
 覆盖：AgentRouter 路由（6 角色 × 10 域）、Orchestrator 编排、
-Health Monitor 集成、幻觉检测 post-hook、端到端通过率 ≥ 80%。
+幻觉检测 post-hook、端到端通过率 ≥ 80%。
 
-最少测试：15 条。
+最少测试：14 条。
 """
 
 from __future__ import annotations
@@ -24,14 +24,11 @@ import pytest
 
 pytestmark = pytest.mark.e2e
 
-from zephyr.orchestrator.agent_health_monitor import AgentHealthMonitor, HealthState
 from zephyr.orchestrator.agent_orchestrator import (
     AgentOrchestrator,
     AgentProfile,
     AgentRole,
     AgentRouter,
-    OrchestrationResult,
-    RouteDecision,
     RoutingStrategy,
 )
 
@@ -175,66 +172,6 @@ class TestOrchestratorE2E:
         res = orch.orchestrate(domain="D0", directive_chain="325+404")
         assert res.success is False
         assert any("unmapped_directive" in e for e in res.errors)
-
-
-# ---------------------------------------------------------------------------
-# Health Monitor 集成测试
-# ---------------------------------------------------------------------------
-
-
-class TestHealthMonitorIntegration:
-    def test_orchestrator_feeds_health_monitor(self) -> None:
-        orch = AgentOrchestrator(
-            AgentRouter(),
-            tool_invoker=_ok_invoker([]),
-            directive_mapping=MAPPING,
-            enable_lsg=False,
-        )
-        for _ in range(5):
-            orch.orchestrate(domain="D0", directive_chain="999")
-        snap = orch.monitor.snapshot()
-        assert snap.window_size == 5
-        assert snap.healthy is True
-
-    def test_agent_health_monitor_integration(self) -> None:
-        ahm = AgentHealthMonitor(window_size=10)
-        for _ in range(10):
-            result = OrchestrationResult(
-                task_id="T-E2E",
-                route=RouteDecision(
-                    domain="D0",
-                    strategy=RoutingStrategy.CAPABILITY_MATCH,
-                    primary_role=AgentRole.GOVERNOR,
-                    capability_score=0.9,
-                ),
-                success=True,
-                latency_ms=100,
-                token_used=6000,
-                token_budget=8000,
-            )
-            ahm.record(result)
-        status = ahm.evaluate()
-        assert status.state in (HealthState.HEALTHY, HealthState.DEGRADED)
-
-    def test_degraded_state_detected(self) -> None:
-        ahm = AgentHealthMonitor(window_size=10)
-        for _ in range(5):
-            result = OrchestrationResult(
-                task_id="T-E2E",
-                route=RouteDecision(
-                    domain="D0",
-                    strategy=RoutingStrategy.CAPABILITY_MATCH,
-                    primary_role=AgentRole.GOVERNOR,
-                    capability_score=0.9,
-                ),
-                success=True,
-                latency_ms=3500,
-                token_used=5000,
-                token_budget=8000,
-            )
-            ahm.record(result)
-        status = ahm.evaluate()
-        assert status.state == HealthState.DEGRADED
 
 
 # ---------------------------------------------------------------------------

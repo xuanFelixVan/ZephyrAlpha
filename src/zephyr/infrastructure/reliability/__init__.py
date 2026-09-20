@@ -17,6 +17,11 @@ core.reliability — auto-generated package init.
 # [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/reliability/reliability__init__.yaml
 """
 
-from . import circuit_breaker, context_guard
+# WO-12/C7：circuit_breaker.py 已于 1ddcd089cf 作为死模块删除（ARCH-032 迁 governance 后
+# 无存续引用），但本 __init__ 残留幽灵引用致整包不可导入（ImportError: partially
+# initialized）。清残留引用，非结构变更。
+from typing import Final
 
-__all__ = ["circuit_breaker", "context_guard"]
+from . import context_guard
+
+__all__: Final = ["context_guard"]

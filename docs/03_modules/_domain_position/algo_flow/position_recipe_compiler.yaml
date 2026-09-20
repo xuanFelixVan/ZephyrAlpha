@@ -1,0 +1,75 @@
+# ALGO_FLOW 外部真源——position_recipe_compiler（_domain_position 域，真源 src/zephyr/position/core/position_recipe_compiler.py）
+# 2026-09-21 WO-12 C12 批次补锚（gate-algo-flow-marker）：按模块头 INVARIANTS 校准；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.position.core.position_recipe_compiler
+source_of_truth: src/zephyr/position/core/position_recipe_compiler.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 维度 schema（DimensionSpec 元组）
+    #   fields: id + values + baseline + depends_on + active_if（schema 一次定型，执行分期）
+    #   code: DimensionSpec L79 / from_dimensions L142 / from_yaml L158
+    # - id: I2
+    #   name: 求值上下文 context
+    #   fields: dict（active_if 受控命名空间的变量来源，无内建）
+    #   code: compile(context) L223
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① schema 校验
+    #   name_en: _validate
+    #   intro: baseline 必须∈values，否则 InvalidGridSchemaError（ZA-POS-0045）
+    #   inputs: I1
+    #   outputs: 合法 schema
+    #   invariant: baseline∈values（fail-closed）
+    #   code: _validate L166
+    # - id: A2
+    #   name_zh: ② depends_on 无环检测+拓扑分层
+    #   name_en: _check_cycles / _topo_rank
+    #   intro: 依赖成环即 ZA-POS-0045；无环则按依赖深度分层供展开序
+    #   inputs: I1
+    #   outputs: 分层维度
+    #   invariant: depends_on 无环
+    #   code: _check_cycles L195 / _topo_rank L213
+    # - id: A3
+    #   name_zh: ③ active_if 受控命名空间求值
+    #   name_en: _evaluate_active
+    #   intro: 每维 active_if 在无内建受控命名空间求值，异常 fail-closed 视为失活
+    #   inputs: I1 + I2
+    #   outputs: 每维活跃布尔
+    #   invariant: 求值异常 fail-closed；编译器内部零时钟取用
+    #   code: _evaluate_active L241
+    # - id: A4
+    #   name_zh: ④ 笛卡尔展开+失活维折叠
+    #   name_en: compile
+    #   intro: 活跃维全组合；失活维折叠为 baseline 且对试验数 N 贡献=1（只数真实发生的尝试）
+    #   inputs: A2 + A3
+    #   outputs: PositionRecipe 候选全集 + N 记账
+    #   invariant: 同 schema+context 编译结果确定性；失活维对 N 贡献=1
+    #   code: compile L223
+    # - id: A5
+    #   name_zh: ⑤ 出生证签发
+    #   name_en: _canonical / PositionRecipe
+    #   intro: recipe_id=sha1(规范 JSON 取值)[:12] 内容寻址；全维取值+折叠记录+prefix_key 入证
+    #   inputs: A4
+    #   outputs: 带出生证的配方流
+    #   invariant: 内容寻址可复算
+    #   code: _canonical L117 / PositionRecipe L96
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GridExpansion 编译产物
+    #   name_en: GridExpansion
+    #   intro: 候选全集+N 记账+折叠清单（出生证汇总）
+    #   downstream: F-06 批次A 执行器（planned）/ E2 预审候选面
+    #   code: GridExpansion L106
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # I2 --> A3
+    # A3 --> A4
+    # A4 --> A5
+    # A5 --> O1

@@ -315,7 +315,7 @@ class TestConcurrentRun:
                 runner = GovernanceAutoRunner()
                 result = runner.run()
                 return result.cleanup_done
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — C14 诊断收集：子进程 worker 任意异常类型均需入 errors 供报告
                 errors.append(e)
                 return False
 
@@ -336,7 +336,7 @@ class TestConcurrentRun:
         def query_events() -> list[str]:
             try:
                 return GovernanceAutoRunner.get_all_event_types()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — C14 诊断收集：子进程 worker 任意异常类型均需入 errors 供报告
                 errors.append(e)
                 return []
 
@@ -401,8 +401,17 @@ class TestEventDrivenEdgeCases:
 class TestIdempotency:
     """红队：多次执行。蓝队：结果一致。"""
 
+    @pytest.mark.timeout(600)
     def test_run_idempotent_3_times(self) -> None:
-        """连续 run() 3 次结果一致。"""
+        """连续 run() 3 次结果一致。
+
+        WO-12/C14 诊断：本测试无死锁——每轮 runner.run() 顺序执行 58 个治理 gate，
+        其中 vms_migration≈17s / path_tree_freshness≈14s / encoding_safety≈11s 为
+        真实仓扫描+PG 往返成本（子进程均带 30~60s 超时且 TimeoutExpired 已捕获，
+        失败以 TIMEOUT/RED 可见化），实测 3 轮 = 61/74/86s（审计日志逐轮增长故递增），
+        总计 ≈221s，超出 pyproject 全局 pytest-timeout 120s 预算而被误杀。
+        修法=按测试真实成本放宽本级超时（600s），不削弱任何断言、不动 gate 体系。
+        """
         from zephyr.governance.ops_governance.auto_runner import GovernanceAutoRunner
 
         results = []
@@ -445,7 +454,7 @@ class TestBoundaryValues:
         def concurrent_verify() -> bool:
             try:
                 return runner.execute_gate("gate_test")
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — C14 诊断收集：子进程 worker 任意异常类型均需入 errors 供报告
                 errors.append(e)
                 return False
 
