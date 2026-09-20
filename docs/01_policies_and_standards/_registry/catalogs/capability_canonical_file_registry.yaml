@@ -41586,4 +41586,8 @@ creation_tokens:
   token: unified-campaign-w-line-c-code-doc-gov-20260920
   created_by: st-maxexec-20260920
   capability: unified_campaign
+- file: docs/_working/unified_campaign/e1_erratum_v0_1.md
+  token: unified-campaign-e1-erratum-v0-1-20260920
+  created_by: st-maxexec-20260920
+  capability: unified_campaign
 di_seam_exemptions: []
