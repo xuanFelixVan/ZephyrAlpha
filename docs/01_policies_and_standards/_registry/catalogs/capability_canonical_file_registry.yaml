@@ -39883,6 +39883,621 @@ creation_tokens:
   token: final3-campaign-register-desktop-shell-startup-20260920
   created_by: st-maxexec-20260920
   capability: final3_campaign
+- file: docs/_working/archive/2026-09/2026-09-18-HANDOFF-PROMPT.md
+  token: final3-campaign-2026-09-18-handoff-prompt-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/alg01/2026-09-16-alg01-ab-redo.md
+  token: final3-campaign-2026-09-16-alg01-ab-redo-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/alg01/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/audit/architecture-reviews/2026-09-04-trading-decision-map-v0.md
+  token: final3-campaign-2026-09-04-trading-decision-map-v0-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/audit/architecture-reviews/2026-09-15-f06-recipe-compiler.md
+  token: final3-campaign-2026-09-15-f06-recipe-compiler-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/audit/architecture-reviews/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/audit/findings/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/audit/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/00_master_ledger.md
+  token: final3-campaign-00-master-ledger-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/2026-09-18-campaign-final-report.md
+  token: final3-campaign-2026-09-18-campaign-final-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/README.md
+  token: final3-campaign-readme-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env1_cleanliness/00_env_mining.md
+  token: final3-campaign-00-env-mining-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env1_cleanliness/execution_plan.md
+  token: final3-campaign-execution-plan-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env1_cleanliness/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env1_cleanliness/verdict_files.csv
+  token: final3-campaign-verdict-files-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env1_cleanliness/verdict_tables.csv
+  token: final3-campaign-verdict-tables-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env2_makeup_exams/00_env_mining.md
+  token: final3-campaign-00-env-mining-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env2_makeup_exams/2026-09-18-makeup-results-report.md
+  token: final3-campaign-2026-09-18-makeup-results-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env2_makeup_exams/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env2_makeup_exams/makeup_reexam_results.csv
+  token: final3-campaign-makeup-reexam-results-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env2_makeup_exams/rerun_plan.csv
+  token: final3-campaign-rerun-plan-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env3_e2e_bridge/00_env_mining.md
+  token: final3-campaign-00-env-mining-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env3_e2e_bridge/chain_envs.csv
+  token: final3-campaign-chain-envs-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env3_e2e_bridge/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env3_e2e_bridge/seg1_execution_log.md
+  token: final3-campaign-seg1-execution-log-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env3_e2e_bridge/seg2_execution_log.md
+  token: final3-campaign-seg2-execution-log-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/env3_e2e_bridge/smoke_test_design.md
+  token: final3-campaign-smoke-test-design-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/clean_exam_e2e/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/dead_queue/2026-09-15-dead-queue-auto-clean-mining-log.md
+  token: final3-campaign-2026-09-15-dead-queue-auto-clean-mining-log-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/dead_queue/2026-09-15-dead-queue-auto-clean-verdict.html
+  token: final3-campaign-2026-09-15-dead-queue-auto-clean-verdict-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/dead_queue/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/dead_queue/retirement_audit.yaml
+  token: final3-campaign-retirement-audit-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/flash_biz/biz1_b0_fifteen_closeout.md
+  token: final3-campaign-biz1-b0-fifteen-closeout-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/flash_biz/biz2_t0_pairs_disclosure.md
+  token: final3-campaign-biz2-t0-pairs-disclosure-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/flash_biz/biz3_e7_fillability.md
+  token: final3-campaign-biz3-e7-fillability-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/flash_biz/biz4_e1c09_e4_exam.md
+  token: final3-campaign-biz4-e1c09-e4-exam-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/flash_biz/biz5_etf15min_tz_defect.md
+  token: final3-campaign-biz5-etf15min-tz-defect-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/flash_biz/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/greatwall_integration/2026-09-16-eight-greatwall-e2e-integration.md
+  token: final3-campaign-2026-09-16-eight-greatwall-e2e-integration-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/greatwall_integration/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/handoff/2026-09-15-f06-dsr-handoff.md
+  token: final3-campaign-2026-09-15-f06-dsr-handoff-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/handoff/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/n5_closure/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/n5_closure/n5_disposition_ledger.md
+  token: final3-campaign-n5-disposition-ledger-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/regime_recal/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/regime_recal/regime_recal_protocol_2026_09_17.md
+  token: final3-campaign-regime-recal-protocol-2026-09-17-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/regime_recal/regime_recal_results_2026_09_17.md
+  token: final3-campaign-regime-recal-results-2026-09-17-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-08-29-a50-source-evaluation.md
+  token: final3-campaign-2026-08-29-a50-source-evaluation-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-08-29-gp1-eval50-review.md
+  token: final3-campaign-2026-08-29-gp1-eval50-review-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-08-30-aiarch-residual-closure.md
+  token: final3-campaign-2026-08-30-aiarch-residual-closure-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-08-30-s2-closure-report.md
+  token: final3-campaign-2026-08-30-s2-closure-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-08-31-algoflow-completion-report.md
+  token: final3-campaign-2026-08-31-algoflow-completion-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-09-02-freeze-window-completion-report.md
+  token: final3-campaign-2026-09-02-freeze-window-completion-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-09-15-handoff-working-docs-cleanup.md
+  token: final3-campaign-2026-09-15-handoff-working-docs-cleanup-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-09-15-working-docs-closure-ledger.md
+  token: final3-campaign-2026-09-15-working-docs-closure-ledger-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-09-16-batch-b-subspace-report.md
+  token: final3-campaign-2026-09-16-batch-b-subspace-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-09-16-c4-audit-batch2.md
+  token: final3-campaign-2026-09-16-c4-audit-batch2-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-09-16-c4-audit-batch3.md
+  token: final3-campaign-2026-09-16-c4-audit-batch3-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-09-16-consensus-repaired-build.md
+  token: final3-campaign-2026-09-16-consensus-repaired-build-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-09-16-consensus-repaired-handoff.md
+  token: final3-campaign-2026-09-16-consensus-repaired-handoff-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/2026-09-17-c4-audit-batch4.md
+  token: final3-campaign-2026-09-17-c4-audit-batch4-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/algo_flow_author_debt.md
+  token: final3-campaign-algo-flow-author-debt-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/btfix_followup_p1p2_report.md
+  token: final3-campaign-btfix-followup-p1p2-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/commit_pipeline_delivery_2026_09_16.md
+  token: final3-campaign-commit-pipeline-delivery-2026-09-16-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/commit_pipeline_upgrade_2026_09_16.md
+  token: final3-campaign-commit-pipeline-upgrade-2026-09-16-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/limit_up_down_weekend_ghost_cleanup.md
+  token: final3-campaign-limit-up-down-weekend-ghost-cleanup-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_batch3_regime_report.md
+  token: final3-campaign-p21-algo-flow-batch3-regime-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_batch4_excore_report.md
+  token: final3-campaign-p21-algo-flow-batch4-excore-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_batch5_mltrain_report.md
+  token: final3-campaign-p21-algo-flow-batch5-mltrain-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_batch6_risk_report.md
+  token: final3-campaign-p21-algo-flow-batch6-risk-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_batch7_factor_report.md
+  token: final3-campaign-p21-algo-flow-batch7-factor-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_batch8_trading_report.md
+  token: final3-campaign-p21-algo-flow-batch8-trading-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_batch9_concurrent_wave_report.md
+  token: final3-campaign-p21-algo-flow-batch9-concurrent-wave-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_link_findings.md
+  token: final3-campaign-p21-algo-flow-link-findings-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_orchestrator_wave_report.md
+  token: final3-campaign-p21-algo-flow-orchestrator-wave-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/p21_algo_flow_phase3_batch12_report.md
+  token: final3-campaign-p21-algo-flow-phase3-batch12-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/reports/sim_bridge_checklist.md
+  token: final3-campaign-sim-bridge-checklist-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/2026-09-17-sharpe2-prep-final-report.md
+  token: final3-campaign-2026-09-17-sharpe2-prep-final-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/2026-09-17-e4-h2-reexam-report.md
+  token: final3-campaign-2026-09-17-e4-h2-reexam-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/_merged_results.csv
+  token: final3-campaign--merged-results-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/capacity_profile.csv
+  token: final3-campaign-capacity-profile-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/correlation_matrix.csv
+  token: final3-campaign-correlation-matrix-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/dsr_top20.csv
+  token: final3-campaign-dsr-top20-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/gap_accounts.yaml
+  token: final3-campaign-gap-accounts-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/old_vs_new_ranking.csv
+  token: final3-campaign-old-vs-new-ranking-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/pool_manifest.csv
+  token: final3-campaign-pool-manifest-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/reexam_results.csv
+  token: final3-campaign-reexam-results-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/a_reexam/teaming_schemes.csv
+  token: final3-campaign-teaming-schemes-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/b_match_mine/2026-09-17-altdata-inventory-mining.md
+  token: final3-campaign-2026-09-17-altdata-inventory-mining-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/b_match_mine/2026-09-17-e1c-sandbox-mining.md
+  token: final3-campaign-2026-09-17-e1c-sandbox-mining-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/b_match_mine/2026-09-17-factor-matching-prereview.md
+  token: final3-campaign-2026-09-17-factor-matching-prereview-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/b_match_mine/altdata_inventory.csv
+  token: final3-campaign-altdata-inventory-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/b_match_mine/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/b_match_mine/prereview.csv
+  token: final3-campaign-prereview-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/c_audit/2026-09-17-cleanliness-audit.md
+  token: final3-campaign-2026-09-17-cleanliness-audit-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/c_audit/2026-09-17-e4-anti-self-deception-audit.md
+  token: final3-campaign-2026-09-17-e4-anti-self-deception-audit-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/c_audit/2026-09-17-tonight-sampling-audit.md
+  token: final3-campaign-2026-09-17-tonight-sampling-audit-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/c_audit/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/d_ledger/2026-09-17-backtest-backlog-executability.md
+  token: final3-campaign-2026-09-17-backtest-backlog-executability-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/d_ledger/2026-09-17-node-verdict-triage.md
+  token: final3-campaign-2026-09-17-node-verdict-triage-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/d_ledger/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/d_ledger/node_triage.csv
+  token: final3-campaign-node-triage-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sharpe2_prep/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sop_review_nodes/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sop_review_nodes/metamorphic_mutation_pilot_report.md
+  token: final3-campaign-metamorphic-mutation-pilot-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/sop_review_nodes/subnode_mining_round1.md
+  token: final3-campaign-subnode-mining-round1-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/wyf3/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/wyf3/ruling_271_272_wyf3_dsr_mirror.md
+  token: final3-campaign-ruling-271-272-wyf3-dsr-mirror-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol.md
+  token: final3-campaign-wyf3-preregistered-protocol-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/wyf3/wyf3_preregistered_protocol_v2.md
+  token: final3-campaign-wyf3-preregistered-protocol-v2-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/wyf3/wyf3_recalibration_report.md
+  token: final3-campaign-wyf3-recalibration-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/wyf3/wyf3_v2_rerun_report.md
+  token: final3-campaign-wyf3-v2-rerun-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/xt_lab3/bulk/g1.md
+  token: final3-campaign-g1-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/xt_lab3/bulk/g2.md
+  token: final3-campaign-g2-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/xt_lab3/bulk/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/xt_lab3/f_forge.md
+  token: final3-campaign-f-forge-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/xt_lab3/f_scope.md
+  token: final3-campaign-f-scope-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/xt_lab3/f_stage.md
+  token: final3-campaign-f-stage-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/xt_lab3/f_unreg.md
+  token: final3-campaign-f-unreg-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
+- file: docs/_working/archive/2026-09/xt_lab3/index.md
+  token: final3-campaign-index-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
   merge_evaluation: "自启注册脚本与 register_process_reaper_task.ps1 同形不同对象（用户 Startup 快捷方式 vs 计划任务），不并"
   merge_evaluation: "P6 战役执行记录件，与同目录既有 p* 记录同族不同主题，不并"
   merge_evaluation: "final3 战役 P10 T0 机械波计数报告；同真源=a1_campaign_ledger 台账互补（计数面 vs 台账面），跨域不同对象不并"
