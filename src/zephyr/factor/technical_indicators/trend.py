@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.internal_compute_provider（包级 autodiscover 动态接线：internal_compute_provider L545/L1113 延迟导入本包+注册表消费）; sleeve alpha 择时
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 趋势类文件指标 35 个（34 趋势类 + 1 复合类 Ichimoku），纯自实现 pandas/numpy；compute→DataFrame 多列输出
+# [INVARIANTS] 趋势类文件指标 38 个（37 趋势类 + 1 复合类 Ichimoku），纯自实现 pandas/numpy；compute→DataFrame 多列输出
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -16,13 +16,14 @@
 # [TTL] permanent
 """
 
-趋势类技术指标（35 个；2026-09-14 A股标配批+1、批2a +5、批2b +1、批3 +1 Ichimoku[复合类]、批6 +1 BBI、
+趋势类技术指标（38 个；2026-09-14 A股标配批+1、批2a +5、批2b +1、批3 +1 Ichimoku[复合类]、批6 +1 BBI、
 鳄鱼/顾比/GannHiLo 批 +3、2026-09-20 自适应均线批 +3、2026-09-20 简单指标清欠批1-L3 +8、
-2026-09-20 简单指标清欠班波2-A +2 INERTIA/QSTICK）。
+2026-09-20 简单指标清欠班波2-A +2 INERTIA/QSTICK、2026-09-20 Ehlers 滤波器族班波3-B +3
+SUPERSMOOTHER/HIGHPASS/PTREND）。
 
 指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX/DKX/HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/MCGINLEY/
 BBI/ALLIGATOR/GMMA/GANN_HILO/MAMA+FAMA/FRAMA/JMA/TEMA/TRIMA/T3/VIDYA/AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE/
-INERTIA/QSTICK/ICHIMOKU(复合类)
+INERTIA/QSTICK/SUPERSMOOTHER/HIGHPASS/PTREND/ICHIMOKU(复合类)
 
 算法对齐通达信：
   - EMA 系列（EMA/DEMA/MACD/TRIX）统一 adjust=False，种子=首值，无预热 NaN
@@ -34,6 +35,8 @@ INERTIA/QSTICK/ICHIMOKU(复合类)
   - HMA/ZLEMA 为低滞后均线（WMA 差值再造 / 误差修正 EMA）；KAMA/VORTEX/SUPERTREND 逐 bar 或滚动矩实现（TA-Lib/pandas-ta 口径） DKX 函数
   - TEMA/T3 复用 _ema 链式（adjust=False 种子=首值，无预热 NaN）；TRIMA 偶窗 SMA(N/2)×SMA(N/2+1) 对齐 TA-Lib；
     VIDYA alpha=|CMO|/100×2/(N+1)（CMO 对齐 momentum.py CMO 类）；AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE 为 OHLC 线性变换
+  - Ehlers 滤波器族（班波3-B）：SUPERSMOOTHER 二极低通（首两根种子，无预热 NaN）；HIGHPASS 三阶高通
+    （首两根零种子非 NaN，financial-hacker C 转译）；PTREND=HighPass3(250)−HighPass3(40) 谱带差分 + TROC 确认项
 
 设计文档：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md §2.1
 
@@ -1615,3 +1618,145 @@ class QSTICK(TechnicalIndicatorBase):
         diff = data["close"] - data["open"]
         qstick = diff.rolling(window=n).mean()
         return pd.DataFrame({f"qstick_{n}": qstick}, index=data.index)
+
+
+# ---------------------------------------------------------------------------
+# 2026-09-20 Ehlers 滤波器族班波3-B：SUPERSMOOTHER/HIGHPASS/PTREND
+# 公式权威源：Ehlers "Rocket Science for Traders"（SuperSmoother 二极低通）+
+# TASC 2024-09 "Precision Trend Analysis"（HighPass3/PTrend，financial-hacker
+# C 转译逐行核对）。递推类逐 bar 移植（KAMA/SAR/MAMA 同族实现）。
+# ---------------------------------------------------------------------------
+
+
+def _supersmoother_coeffs(n: int) -> tuple[float, float, float]:
+    """Ehlers SuperSmoother 二极低通滤波系数 (c1, c2, c3)。
+
+    a1 = exp(-1.414π/N)；c2 = 2a1·cos(1.414π/N)；c3 = -a1²；c1 = 1 - c2 - c3
+    （三系数和恒为 1，常数输入恒等该常数）。注意 HighPass3 系数（cos(f/2)、
+    c1=(1+c2-c3)/4）与本式不同，见 _highpass3——两套系数各自独立成块，禁混用。
+    """
+    a1 = np.exp(-1.414 * np.pi / n)
+    c2 = 2.0 * a1 * np.cos(1.414 * np.pi / n)
+    c3 = -(a1 * a1)
+    c1 = 1.0 - c2 - c3
+    return c1, c2, c3
+
+
+def _highpass3(series: pd.Series, n: int) -> pd.Series:
+    """Ehlers HighPass3 三阶高通滤波（TASC 2024-09 Precision Trend 原生组件）。
+
+    financial-hacker C 转译逐行核对：f = 1.414π/N；a1 = exp(-f)；
+    c2 = 2a1·cos(f/2)；c3 = -a1²；c1 = (1 + c2 - c3)/4；
+    hp[0] = hp[1] = 0（C 源零种子，非 NaN）；t>=2:
+    hp[t] = c1·(p[t] - 2p[t-1] + p[t-2]) + c2·hp[t-1] + c3·hp[t-2]。
+    HIGHPASS/PTREND 三处调用共用本助手；warmup 语义记 3（首两根零种子非缺数据）。
+    """
+    f = 1.414 * np.pi / n
+    a1 = np.exp(-f)
+    c2 = 2.0 * a1 * np.cos(f / 2.0)
+    c3 = -(a1 * a1)
+    c1 = (1.0 + c2 - c3) / 4.0
+    p = series.to_numpy(dtype=float)
+    hp = np.zeros(len(p))
+    for t in range(2, len(p)):
+        hp[t] = c1 * (p[t] - 2.0 * p[t - 1] + p[t - 2]) + c2 * hp[t - 1] + c3 * hp[t - 2]
+    return pd.Series(hp, index=series.index)
+
+
+@TechnicalIndicatorRegistry.register
+class SUPERSMOOTHER(TechnicalIndicatorBase):
+    """超级平滑器（Ehlers SuperSmoother，二极低通滤波）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="supersmoother",
+        name="超级平滑器",
+        category="trend",
+        output_columns=["supersmoother_10"],
+        input_columns=["close"],
+        params={"period": 10},
+        version="1.0.0",
+        description=(
+            "Ehlers SuperSmoother：ss[t]=c1·(p[t]+p[t-1])/2 + c2·ss[t-1] + c3·ss[t-2]"
+            "（a1=exp(-1.414π/N) 生成 c1/c2/c3，系数和恒为 1）；首两根种子 ss[0]=p[0]、"
+            "ss[1]=(p[0]+p[1])/2，无预热 NaN（warmup 语义记 1），逐 bar 递推（KAMA/SAR 同族）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = int(params["period"])
+        c1, c2, c3 = _supersmoother_coeffs(n)
+        p = data["close"].to_numpy(dtype=float)
+        ss = np.empty(len(p))
+        ss[0] = p[0]
+        if len(p) > 1:
+            ss[1] = (p[0] + p[1]) / 2.0
+        for t in range(2, len(p)):
+            ss[t] = c1 * (p[t] + p[t - 1]) / 2.0 + c2 * ss[t - 1] + c3 * ss[t - 2]
+        return pd.DataFrame({f"supersmoother_{n}": pd.Series(ss, index=data.index)}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class HIGHPASS(TechnicalIndicatorBase):
+    """三阶高通滤波（Ehlers HighPass3，TASC 2024-09 Precision Trend 原生组件）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="highpass",
+        name="三阶高通滤波",
+        category="trend",
+        output_columns=["highpass_40"],
+        input_columns=["close"],
+        params={"period": 40},
+        version="1.0.0",
+        description=(
+            "Ehlers HighPass3：hp[t]=c1·(p[t]-2p[t-1]+p[t-2]) + c2·hp[t-1] + c3·hp[t-2]"
+            "（f=1.414π/N，c2=2a1·cos(f/2)，c1=(1+c2-c3)/4，financial-hacker C 转译）；"
+            "首两根记 0 值非 NaN（与 C 源一致，warmup 语义记 3）；滤除 N 周期以下的趋势分量"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n = int(params["period"])
+        hp = _highpass3(data["close"], n)
+        return pd.DataFrame({f"highpass_{n}": hp}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class PTREND(TechnicalIndicatorBase):
+    """精调趋势（Ehlers Precision Trend，TASC 2024-09，谱带差分趋势线）。"""
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="ptrend",
+        name="精调趋势",
+        category="trend",
+        output_columns=["ptrend_250_40", "ptrend_roc"],
+        input_columns=["close"],
+        params={"period_long": 250, "period_short": 40},
+        version="1.0.0",
+        description=(
+            "PTrend=HighPass3(C,250)−HighPass3(C,40)（40..250 带通带谱带差分趋势线）；"
+            "TROC=(period_short/2π)×ΔPTrend 确认项（首位无前值记 NaN）；"
+            "列名固定 ptrend_250_40/ptrend_roc（双参语义，kwargs 覆盖周期时列名不变，mama/fama 固定列先例）"
+        ),
+    )
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
+            return pd.DataFrame(columns=self.meta.output_columns)
+        params = self.get_params(**kwargs)
+        n_long = int(params["period_long"])
+        n_short = int(params["period_short"])
+        close = data["close"]
+        hp_long = _highpass3(close, n_long)
+        hp_short = _highpass3(close, n_short)
+        ptrend = hp_long - hp_short
+        troc = (n_short / (2.0 * np.pi)) * ptrend.diff()
+        return pd.DataFrame({"ptrend_250_40": ptrend, "ptrend_roc": troc}, index=data.index)

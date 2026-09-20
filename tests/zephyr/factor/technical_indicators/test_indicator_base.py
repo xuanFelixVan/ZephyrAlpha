@@ -41,10 +41,10 @@ from zephyr.factor.technical_indicators.indicator_base import (
     autodiscover_technical_indicators,
 )
 
-# 8 类指标数量契约（catalog §2：趋势34/动量43/波动18/成交量17/反转4/统计9/复合1/循环6）
-_EXPECTED_TOTAL = 132  # 2026-09-20 批9-1/9-2 tilib 清欠班：波1 +15、波2 +16（M-L5，PSL/MSW 同义剔除）
-# 全部输出列数契约（2026-09-20 批9 后：194 = 162 + 16(波1) + 16(波2)）
-_EXPECTED_COLUMN_TOTAL = 194
+# 8 类指标数量契约（catalog §2：趋势37/动量43/波动18/成交量17/反转4/统计9/复合1/循环6）
+_EXPECTED_TOTAL = 135  # 2026-09-20 批9-1/9-2/9-3 tilib 清欠班：波1 +15、波2 +16、波3 +3（学术滤波器族）
+# 全部输出列数契约（2026-09-20 批9 后：198 = 162 + 16(波1) + 16(波2) + 4(波3)）
+_EXPECTED_COLUMN_TOTAL = 198
 
 
 # ============== TechnicalIndicatorMeta ==============
@@ -124,7 +124,7 @@ class TestRegistryMechanics:
         assert len(metas) == _EXPECTED_TOTAL
 
     def test_list_by_category_counts(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == 34
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == 37
         assert len(TechnicalIndicatorRegistry.list_by_category("momentum")) == 43
         assert len(TechnicalIndicatorRegistry.list_by_category("volatility")) == 18
         assert len(TechnicalIndicatorRegistry.list_by_category("volume")) == 17

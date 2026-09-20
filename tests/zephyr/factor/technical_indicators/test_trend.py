@@ -1,15 +1,16 @@
 # [BLUEPRINT] MOD-L02-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
-"""趋势类技术指标测试（34 个）。
+"""趋势类技术指标测试（37 个）。
 
 测试内容：
-- 34 个趋势指标全部注册到 Registry（另有复合类 Ichimoku 归 composite，不在本文件契约内）
+- 37 个趋势指标全部注册到 Registry（另有复合类 Ichimoku 归 composite，不在本文件契约内）
 - 每个指标 meta.category == "trend"
 - 每个指标 meta.output_columns == 期望列（catalog §2.1 契约）
 - 全部指标已施工（IMPLEMENTED == EXPECTED，SKELETON 为空，骨架契约保留防回归）
 - 数值正确性验证方式：talib 黄金对照（生产零 TA-Lib 依赖）+ 手工微样本显式计算 + 独立公式复算
   （EMA adjust=False、MACD HIST=2×(DIF-DEA)、TEMA 3 根手算、VIDYA 纯 python 复算、四价格变换逐行手算、
-  INERTIA 纯 python 复算 RVI+种子 EMA+OLS 端点链、QSTICK 纯 python 滚动均值复算）
+  INERTIA 纯 python 复算 RVI+种子 EMA+OLS 端点链、QSTICK 纯 python 滚动均值复算、
+  Ehlers 滤波器族 SUPERSMOOTHER/HIGHPASS/PTREND 纯 numpy 双实现互证+手算微样本）
 
 设计文档：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md §2.1
 """
@@ -63,6 +64,9 @@ TYPPRICE = TechnicalIndicatorRegistry.get("typprice")
 WCPRICE = TechnicalIndicatorRegistry.get("wcprice")
 INERTIA = TechnicalIndicatorRegistry.get("inertia")
 QSTICK = TechnicalIndicatorRegistry.get("qstick")
+SUPERSMOOTHER = TechnicalIndicatorRegistry.get("supersmoother")
+HIGHPASS = TechnicalIndicatorRegistry.get("highpass")
+PTREND = TechnicalIndicatorRegistry.get("ptrend")
 
 # 期望契约（catalog §2.1）：indicator_id → (name, output_columns)
 EXPECTED = {
@@ -116,6 +120,9 @@ EXPECTED = {
     "wcprice": ("加权收盘价", ["wcprice"]),
     "inertia": ("惯性指标", ["inertia_20_14"]),
     "qstick": ("QStick指标", ["qstick_10"]),
+    "supersmoother": ("超级平滑器", ["supersmoother_10"]),
+    "highpass": ("三阶高通滤波", ["highpass_40"]),
+    "ptrend": ("精调趋势", ["ptrend_250_40", "ptrend_roc"]),
 }
 
 # 已施工算法的指标（version >= 1.0.0）
@@ -154,13 +161,16 @@ IMPLEMENTED = {
     "wcprice",
     "inertia",
     "qstick",
+    "supersmoother",
+    "highpass",
+    "ptrend",
 }
 # 仍为骨架的指标（compute 抛 NotImplementedError）
 SKELETON = set(EXPECTED) - IMPLEMENTED
 
 
 # ===========================================================================
-# 注册与元数据契约测试（全部 32 个）
+# 注册与元数据契约测试（全部 37 个）
 # ===========================================================================
 
 
@@ -171,7 +181,7 @@ class TestTrendRegistered:
             assert iid in metas, f"趋势指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 34
+        assert len(TechnicalIndicatorRegistry.list_by_category("trend")) == len(EXPECTED) == 37
 
 
 class TestTrendMetaContract:
@@ -204,7 +214,7 @@ class TestTrendMetaContract:
 
 
 # ===========================================================================
-# 骨架指标测试（当前 SKELETON 为空：34 个全部已施工；契约保留防回归）
+# 骨架指标测试（当前 SKELETON 为空：37 个全部已施工；契约保留防回归）
 # ===========================================================================
 
 
@@ -1606,3 +1616,226 @@ class TestQstickNumeric:
         assert list(result.columns) == ["qstick_10"]
         with pytest.raises(ValueError, match="缺少列"):
             QSTICK().compute(pd.DataFrame({"close": [10.0] * 30}))
+
+
+# ===========================================================================
+# 2026-09-20 Ehlers 滤波器族班波3-B：SUPERSMOOTHER/HIGHPASS/PTREND 数值正确性
+# talib 0.7.1 无此三件（SuperSmoother/HighPass3/PTrend 均非 TA-Lib 函数），
+# 黄金锚点=测试内 numpy 纯循环独立复算（双实现互证）+ 手工微样本写死。
+# ===========================================================================
+
+
+class TestSupersmootherNumeric:
+    """SUPERSMOOTHER 超级平滑器——numpy 双实现互证 + 手工微样本 + 性质/边界。"""
+
+    def test_independent_recompute(self):
+        """独立复算锚点：纯 numpy 逐 bar 递推复算，全序列对拍（rtol=atol=1e-12）。"""
+        close = _make_golden_df_11()["close"].to_numpy()
+        got = SUPERSMOOTHER().compute(pd.DataFrame({"close": close}))["supersmoother_10"].to_numpy()
+        # --- 独立复算（规格公式直译，与实现解耦） ---
+        n = 10
+        a1 = np.exp(-1.414 * np.pi / n)
+        c2 = 2.0 * a1 * np.cos(1.414 * np.pi / n)
+        c3 = -(a1 * a1)
+        c1 = 1.0 - c2 - c3
+        expected = np.empty(len(close))
+        expected[0] = close[0]
+        expected[1] = (close[0] + close[1]) / 2.0
+        for t in range(2, len(close)):
+            expected[t] = c1 * (close[t] + close[t - 1]) / 2.0 + c2 * expected[t - 1] + c3 * expected[t - 2]
+        assert not np.isnan(got).any()
+        np.testing.assert_allclose(got, expected, rtol=1e-12, atol=1e-12)
+
+    def test_hand_micro_sample(self):
+        """手工微样本（3 根）：close=[10,12,11]，period=10，独立手算写死。
+
+        f=1.414π/10 → a1=exp(-f)=0.6413235435874742；c2=2a1·cos(f)=1.158160584385297；
+        c3=-a1²=-0.41129588755959495；c1=1-c2-c3=0.25313530317429805。
+        ss[0]=10；ss[1]=(10+12)/2=11；
+        ss[2]=c1×(12+11)/2 + c2×11 + c3×10 = 11.537863539146745（写死）。
+        """
+        df = pd.DataFrame({"close": [10.0, 12.0, 11.0]})
+        got = SUPERSMOOTHER().compute(df)["supersmoother_10"].to_numpy()
+        assert got[0] == pytest.approx(10.0)
+        assert got[1] == pytest.approx(11.0)
+        assert got[2] == pytest.approx(11.537863539146745, rel=1e-12)
+
+    def test_constant_series_identity(self):
+        """常数序列：c1+c2+c3=1 → 输出恒等于该常数（全序列无 NaN）。"""
+        df = pd.DataFrame({"close": [10.0] * 30})
+        got = SUPERSMOOTHER().compute(df)["supersmoother_10"].to_numpy()
+        np.testing.assert_allclose(got, 10.0, rtol=1e-12)
+
+    def test_sine_attenuation_and_lag(self):
+        """正弦输入（16 bar 主波，period=10）：低通衰减（幅度比 <1，落入 0.5-1.2 宽松带）且相位滞后。
+
+        实测幅度比≈0.925、波峰滞后 2 bar（<半周期 8 bar）。
+        """
+        t = np.arange(200)
+        close = 100.0 + 10.0 * np.sin(2.0 * np.pi * t / 16.0)
+        got = SUPERSMOOTHER().compute(pd.DataFrame({"close": close}))["supersmoother_10"].to_numpy()
+        tail = slice(140, 196)  # 稳态段 4 个完整波
+        ratio = ((got[tail].max() - got[tail].min()) / 2.0) / ((close[tail].max() - close[tail].min()) / 2.0)
+        assert 0.5 < ratio < 1.2
+        assert ratio < 1.0  # 低通衰减
+        peak_in = 140 + int(np.argmax(close[tail]))
+        lag = int(np.argmax(got[peak_in : peak_in + 16]))
+        assert 0 < lag < 8  # 滞后且不足半周期
+
+    def test_period_override(self):
+        """kwargs 覆盖 period=20：列名 supersmoother_20，仍无 NaN 且与默认可分。"""
+        df = _make_golden_df_11(80)
+        base = SUPERSMOOTHER().compute(df)["supersmoother_10"].to_numpy()
+        result = SUPERSMOOTHER().compute(df, period=20)
+        assert list(result.columns) == ["supersmoother_20"]
+        alt = result["supersmoother_20"].to_numpy()
+        assert not np.isnan(alt).any()
+        assert not np.allclose(base, alt)
+
+    def test_empty_and_missing_column(self):
+        result = SUPERSMOOTHER().compute(pd.DataFrame(columns=["close"]))
+        assert result.empty
+        assert list(result.columns) == ["supersmoother_10"]
+        with pytest.raises(ValueError, match="缺少列"):
+            SUPERSMOOTHER().compute(pd.DataFrame({"open": [10.0] * 30}))
+
+
+class TestHighpassNumeric:
+    """HIGHPASS 三阶高通滤波——numpy 双实现互证 + 手工微样本 + 性质/边界。"""
+
+    def test_independent_recompute(self):
+        """独立复算锚点：纯 numpy 逐 bar 递推复算，全序列对拍（rtol=atol=1e-12）。"""
+        close = _make_golden_df_11()["close"].to_numpy()
+        got = HIGHPASS().compute(pd.DataFrame({"close": close}))["highpass_40"].to_numpy()
+        # --- 独立复算（规格公式直译，与实现解耦） ---
+        n = 40
+        f = 1.414 * np.pi / n
+        a1 = np.exp(-f)
+        c2 = 2.0 * a1 * np.cos(f / 2.0)
+        c3 = -(a1 * a1)
+        c1 = (1.0 + c2 - c3) / 4.0
+        expected = np.zeros(len(close))
+        for t in range(2, len(close)):
+            expected[t] = (
+                c1 * (close[t] - 2.0 * close[t - 1] + close[t - 2]) + c2 * expected[t - 1] + c3 * expected[t - 2]
+            )
+        assert not np.isnan(got).any()
+        np.testing.assert_allclose(got, expected, rtol=1e-12, atol=1e-12)
+
+    def test_hand_micro_sample(self):
+        """手工微样本（3 根）：close=[100,102,99]，period=40，独立手算写死。
+
+        f=1.414π/40 → a1=0.894889259912188；c2=2a1·cos(f/2)=1.7870199988257192；
+        c3=-a1²=-0.8008267875061836；c1=(1+c2-c3)/4=0.8969616965829756。
+        hp[0]=hp[1]=0（零种子）；hp[2]=c1×(99-2×102+100)+c2×0+c3×0 = -4.484808482914878（写死）。
+        """
+        df = pd.DataFrame({"close": [100.0, 102.0, 99.0]})
+        got = HIGHPASS().compute(df)["highpass_40"].to_numpy()
+        assert got[0] == pytest.approx(0.0, abs=1e-15)
+        assert got[1] == pytest.approx(0.0, abs=1e-15)
+        assert got[2] == pytest.approx(-4.484808482914878, rel=1e-12)
+
+    def test_constant_series_zero(self):
+        """常数序列：二阶差分恒 0 → 高通全程为 0（零种子不被激活）。"""
+        df = pd.DataFrame({"close": [10.0] * 60})
+        got = HIGHPASS().compute(df)["highpass_40"].to_numpy()
+        np.testing.assert_allclose(got, 0.0, atol=1e-12)
+
+    def test_zero_seeds_not_nan(self):
+        """首两根记 0 值非 NaN（C 源零种子；warmup 记 3 语义=前两根无意义而非缺数据）。"""
+        close = _make_golden_df_11()["close"].to_numpy()
+        got = HIGHPASS().compute(pd.DataFrame({"close": close}))["highpass_40"].to_numpy()
+        assert got[0] == 0.0
+        assert got[1] == 0.0
+        assert not np.isnan(got).any()
+
+    def test_period_override(self):
+        """kwargs 覆盖 period=20：列名 highpass_20，零种子仍在首两根。"""
+        df = _make_golden_df_11()
+        result = HIGHPASS().compute(df, period=20)
+        assert list(result.columns) == ["highpass_20"]
+        got = result["highpass_20"].to_numpy()
+        assert got[0] == 0.0
+        assert got[1] == 0.0
+
+    def test_empty_and_missing_column(self):
+        result = HIGHPASS().compute(pd.DataFrame(columns=["close"]))
+        assert result.empty
+        assert list(result.columns) == ["highpass_40"]
+        with pytest.raises(ValueError, match="缺少列"):
+            HIGHPASS().compute(pd.DataFrame({"open": [10.0] * 30}))
+
+
+class TestPtrendNumeric:
+    """PTREND 精调趋势——numpy 双实现互证 + 手工微样本 + 性质/边界。"""
+
+    def test_independent_recompute(self):
+        """独立复算锚点：双 HighPass3 + 谱带差分 + TROC 全链纯 numpy 复算（rtol=atol=1e-12）。"""
+        close = _make_golden_df_11(300)["close"].to_numpy()
+        result = PTREND().compute(pd.DataFrame({"close": close}))
+        got_pt = result["ptrend_250_40"].to_numpy()
+        got_roc = result["ptrend_roc"].to_numpy()
+
+        # --- 独立复算（规格公式直译，与实现解耦） ---
+        def highpass3(p, n):
+            f = 1.414 * np.pi / n
+            a1 = np.exp(-f)
+            c2 = 2.0 * a1 * np.cos(f / 2.0)
+            c3 = -(a1 * a1)
+            c1 = (1.0 + c2 - c3) / 4.0
+            hp = np.zeros(len(p))
+            for t in range(2, len(p)):
+                hp[t] = c1 * (p[t] - 2.0 * p[t - 1] + p[t - 2]) + c2 * hp[t - 1] + c3 * hp[t - 2]
+            return hp
+
+        pt = highpass3(close, 250) - highpass3(close, 40)
+        troc = np.full(len(close), np.nan)
+        troc[1:] = (40.0 / 6.283185307179586) * np.diff(pt)
+        np.testing.assert_allclose(got_pt, pt, rtol=1e-12, atol=1e-12)
+        assert np.isnan(got_roc[0])
+        np.testing.assert_allclose(got_roc[1:], troc[1:], rtol=1e-12, atol=1e-12)
+
+    def test_hand_micro_sample(self):
+        """手工微样本（4 根，默认 250/40）：close=[100,102,99,103]，独立手算写死。
+
+        独立手算两滤波器（零种子）：hp_long[2]=c1_250×(99-204+100)=-4.912231231641025、
+        hp_long[3]=-2.7739302553851806；hp_short[2]=-4.484808482914878、hp_short[3]=-1.735710573791291；
+        ptrend[2]=hl[2]-hs[2]=-0.42742274872614683（写死）；
+        ptrend[3]=hl[3]-hs[3]=-1.0382196815938896（写死）；
+        troc[3]=(40/2π)×(ptrend[3]-ptrend[2])=-3.8884540436507926（写死）。
+        """
+        df = pd.DataFrame({"close": [100.0, 102.0, 99.0, 103.0]})
+        result = PTREND().compute(df)
+        got_pt = result["ptrend_250_40"].to_numpy()
+        got_roc = result["ptrend_roc"].to_numpy()
+        assert got_pt[0] == pytest.approx(0.0, abs=1e-15)
+        assert got_pt[1] == pytest.approx(0.0, abs=1e-15)
+        assert got_pt[2] == pytest.approx(-0.42742274872614683, rel=1e-12)
+        assert got_pt[3] == pytest.approx(-1.0382196815938896, rel=1e-12)
+        assert np.isnan(got_roc[0])
+        assert got_roc[3] == pytest.approx(-3.8884540436507926, rel=1e-12)
+
+    def test_constant_series_zero(self):
+        """常数序列：二阶差分恒 0 → ptrend 全 0、troc 全 0（首位 NaN）。"""
+        df = pd.DataFrame({"close": [10.0] * 120})
+        result = PTREND().compute(df)
+        np.testing.assert_allclose(result["ptrend_250_40"].to_numpy(), 0.0, atol=1e-12)
+        roc = result["ptrend_roc"].to_numpy()
+        assert np.isnan(roc[0])
+        np.testing.assert_allclose(roc[1:], 0.0, atol=1e-12)
+
+    def test_kwargs_override_columns_fixed(self):
+        """kwargs 覆盖 period_long/period_short：列名仍固定 ptrend_250_40/ptrend_roc（双参语义，mama/fama 先例），数值可分。"""
+        df = _make_golden_df_11(300)
+        base = PTREND().compute(df)["ptrend_250_40"].to_numpy()
+        result = PTREND().compute(df, period_long=200, period_short=30)
+        assert list(result.columns) == ["ptrend_250_40", "ptrend_roc"]
+        alt = result["ptrend_250_40"].to_numpy()
+        assert not np.allclose(base[60:], alt[60:])
+
+    def test_empty_and_missing_column(self):
+        result = PTREND().compute(pd.DataFrame(columns=["close"]))
+        assert result.empty
+        assert list(result.columns) == ["ptrend_250_40", "ptrend_roc"]
+        with pytest.raises(ValueError, match="缺少列"):
+            PTREND().compute(pd.DataFrame({"open": [10.0] * 30}))
