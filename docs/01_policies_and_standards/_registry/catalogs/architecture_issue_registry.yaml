@@ -6235,7 +6235,7 @@ entries:
   adjudication: |-
     2026-07-21 立项裁定。裁定#19-B 的 _ensure_worktree_base_fresh 仅在 commit 阶段检测，
     start/merge 阶段无防护。实际观察到薛定谔的回退（git reflog: reset: moving to HEAD）：
-    并发 session 的 merge 触发 git reset --hard HEAD，回退了主工作区所有未提交修改。
+    并发 session 的 merge 触发 git reset（--hard 档）HEAD，回退了主工作区所有未提交修改。
 
     病根（第一性原理）：
     1. start 阶段无 base 新鲜度检测——worktree base 过期时仍创建 session，埋下隐患
@@ -11485,9 +11485,9 @@ entries:
   created: '2026-08-04'
   last_updated: '2026-08-04'
 
-# --- #ARCH-GIT-CLEAN-GUARD-FIX: git clean -fd 误删防护+alias 失效修复（2026-08-11 灾难事件）---
+# --- #ARCH-GIT-CLEAN-GUARD-FIX: git clean（-fd 档）误删防护+alias 失效修复（2026-08-11 灾难事件）---
 - issue_id: '#ARCH-GIT-CLEAN-GUARD-FIX'
-  title: git clean -fd 物理删除 untracked 文件 + git alias 无法覆盖内置命令（2026-08-11 灾难事件治本）
+  title: git clean（-fd 档）物理删除 untracked 文件 + git alias 无法覆盖内置命令（2026-08-11 灾难事件治本）
   severity: P0紧急
   category: governance
   adjudication: |-
@@ -11501,9 +11501,9 @@ entries:
   related_rules: '#ARCH-GIT-SELF-HARM-GUARD'
   last_updated: '2026-08-12'
 
-# --- #ARCH-GIT-SELF-HARM-GUARD: git reset --hard 工作区自伤防护（L1+L2+L3.1，2026-08-04）---
+# --- #ARCH-GIT-SELF-HARM-GUARD: git reset（--hard 档）工作区自伤防护（L1+L2+L3.1，2026-08-04）---
 - issue_id: '#ARCH-GIT-SELF-HARM-GUARD'
-  title: git reset --hard / checkout -- / restore 覆盖未提交 AI 编辑（自伤防护）
+  title: git reset（--hard 档）/ checkout -- / restore 覆盖未提交 AI 编辑（自伤防护）
   severity: P1高
   category: governance
   adjudication: |-
@@ -12733,7 +12733,7 @@ entries:
     - 'src/zephyr/regime/validation/phase2/b4_transition_accuracy.py（HistoricalEvent 新增 design_match 字段，validate 不计分母）'
     - 'src/zephyr/regime/validation/phase2/historical_events.yaml（S2 三事件 design_match=false + 排除理由注释；2026-08-17 自 docs/02 文档区迁入代码同包，#ARCH-117）'
     - 'scripts/tests/dump_s2_scores.py（S2 维度评分诊断脚本）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md（诊断与治本详档）'
+    - 'docs/_working/archive/2026-09/design_memos/14_regime_s2_diagnosis.md（诊断与治本详档）'
   fix_phase: design_match=false 排除 + P0 bug 修复已落地（commit 93a25890，B4 PASS(3/3) Phase 2 闭环）；
     治本待 P1-E9 算法重设计（13_regime_phase3_engineering_plan §3.5）——capitulation 过程化(rolling max)+多维度、
     valuation 基本面化(PE/破净率历史分位)、spring 复用 wyckoff_engine；完成后 S2 design_match 回 true 重跑验证。
@@ -13153,7 +13153,7 @@ entries:
     - 'src/zephyr/regime/validation/phase2/phase2_runner.py（walk-forward 集成校准器）'
     - 'src/zephyr/regime/core/regime_detector.py（predict_log_proba + temperature tempering）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md（§2.2 两阶段校准器详设）'
+    - 'docs/_working/archive/2026-09/design_memos/13_regime_phase3_engineering_plan.md（§2.2 两阶段校准器详设）'
   fix_phase: 'P0-E2 已落地（commit 13a5e1d512）——校准器仅对 HMM 基态生效，PIT 防泄漏，四级降级。'
   status: decided
   created: '2026-08-07'
@@ -13208,7 +13208,7 @@ entries:
     - 'tests/ex_core/test_trading_session.py（测试辅助禁用熔断）'
     - 'tests/ex_sor/test_transaction_cost_optimizer.py（佣金期望值更新）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md'
+    - 'docs/_working/archive/2026-09/design_memos/40_execution_broker.md'
   fix_phase: '代码已施工（commit 015826ae），71 测试通过。待补：先卖后买+熔断专项集成测试。'
   status: decided
   created: '2026-08-08'
@@ -13730,8 +13730,8 @@ entries:
 
     用户2026-08-10确认"继续执行这两步登记"（00_index §7.3占用表+本ARCH条目）。
   impact:
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/63_data_utilization_audit.md（新建，审查底稿+施工计划 v0.1.0）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md（编辑，§0文档表+1行 63号条目）'
+    - 'docs/_working/archive/2026-09/design_memos/63_data_utilization_audit.md（新建，审查底稿+施工计划 v0.1.0）'
+    - 'docs/_working/archive/2026-09/design_memos/00_index_trading_decision.md（编辑，§0文档表+1行 63号条目）'
     - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（编辑，+本ARCH条目）'
     - 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml（待建，P1-B 首批66张表登记清单，本审查作为输入）'
     - 'schemas/categories/（引用，101张表DDL真源）'
@@ -13775,9 +13775,9 @@ entries:
   impact:
     - 'src/zephyr/ex_core/adapters/miniqmt_broker.py（MiniQmtBroker 依赖 xtquant API）'
     - 'src/zephyr/governance/data_governance/miniqmt_provider.py（MiniQmtQuoteProvider 行情依赖）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md（G22 执行层通道选型）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md（L24 miniQMT 通道引用）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md（L23 miniQMT 通道引用）'
+    - 'docs/_working/archive/2026-09/design_memos/40_execution_broker.md（G22 执行层通道选型）'
+    - 'docs/_working/archive/2026-09/design_memos/10_regime_detector_spec.md（L24 miniQMT 通道引用）'
+    - 'docs/_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md（L23 miniQMT 通道引用）'
   fix_phase: '待规划（Phase 2 迁移评估）：当前存量可用，40号 BrokerAdapter 基类已提供迁移接口抽象；重评条件触发时启动迁移'
   status: decided
   related_rules: ''
@@ -13905,7 +13905,7 @@ entries:
     与 PreToolUse hook 关系：Trae IDE 不支持 hooks，PATH-shim 是唯一可靠层。
   impact:
     - 'scripts/install_git_safety_wrapper.ps1（扩展 wrapper 函数新增 commit --no-verify 阻断）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md（§7.1 阻断规则表补充 commit --no-verify 行 + §8 验证清单补测试用例）'
+    - 'docs/_working/archive/2026-09/design_memos/65_git_safety_governance.md（§7.1 阻断规则表补充 commit --no-verify 行 + §8 验证清单补测试用例）'
   fix_phase: '待施工（与 65 号 §7.1 同步扩展，约 0.5 天）'
   status: proposed
   related_rules: 'ARCH-GIT-CLEAN-GUARD-FIX; #ARCH-GIT-SELF-HARM-GUARD'
@@ -13959,7 +13959,7 @@ entries:
     落地：AGENTS.md RULE-REVERT 永久规则；pre-commit 新增 GATE-PUSH-BEFORE-RISKY 检测（dangerous command 前无 push 则阻断，可选）。
   impact:
     - 'AGENTS.md（新增 RULE-REVERT 节）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md（§7 新增施工项 9）'
+    - 'docs/_working/archive/2026-09/design_memos/65_git_safety_governance.md（§7 新增施工项 9）'
   fix_phase: '待施工（约 0.5 天）'
   status: proposed
   related_rules: 'ARCH-GIT-CLEAN-GUARD-FIX'
@@ -14085,7 +14085,7 @@ entries:
     - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（激活+扩展）'
     - 'scripts/lock_files.py（激活 registry.json + TTL 60min 自动过期）'
     - 'scripts/task_board.py（新建，SQLite-based claim/complete/block 状态机）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md（§12 新增三件套方案）'
+    - 'docs/_working/archive/2026-09/design_memos/65_git_safety_governance.md（§12 新增三件套方案）'
   fix_phase: '待施工（约 1 周，另一 AI 正施工）'
   status: proposed
   related_rules: '#ARCH-WORKTREE-001（stale worktree 堆积治本）; ARCH-GIT-CLEAN-GUARD-FIX'
@@ -14104,7 +14104,7 @@ entries:
     裁定：①在 miniQMT 客户端配置经纪商侧硬止损（总回撤 10%/日内 3%）；②探索 xtquant 提供的 broker-side stop 接口；③若无 broker-side 接口，引入外部 watchdog 进程（独立监控 + 强制平仓 API）。
   impact:
     - 'src/zephyr/ex_core/broker_hard_stop.py（新建）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md（§Kill Switch 扩展经纪商侧）'
+    - 'docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md（§Kill Switch 扩展经纪商侧）'
   fix_phase: '待施工（约 3-5 天）'
   status: proposed
   related_rules: '#ARCH-EXEC-001; 35 号 §Kill Switch'
@@ -14121,8 +14121,8 @@ entries:
     裁定：扩展 35 号回撤 Protocol 与 37 号流动性危机，新增第 7 触发——5 分钟内 3+ 系统错误（拒单/行情断流/连接断开）→ halt 新单 30 分钟 + 自动告警。
   impact:
     - 'src/zephyr/risk/circuit_breaker_7trigger.py（新建或扩展）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md（§7-Trigger 扩展）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/37_liquidity_crisis_protocol.md（联动）'
+    - 'docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md（§7-Trigger 扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/37_liquidity_crisis_protocol.md（联动）'
   fix_phase: '待施工（约 2 天）'
   status: proposed
   related_rules: '35 号 §Kill Switch; 37 号 §流动性危机'
@@ -14140,7 +14140,7 @@ entries:
   impact:
     - 'src/zephyr/risk/pre_trade_check.py（新建 14-Check 实现）'
     - 'src/zephyr/ex_core/order_manager.py（下单前调用 pre_trade_check）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md（§14-Check 扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/40_execution_broker.md（§14-Check 扩展）'
   fix_phase: '待施工（约 3 天）'
   status: proposed
   related_rules: '#ARCH-EXEC-001; 35 号 §风控; 40 号 §执行'
@@ -14158,7 +14158,7 @@ entries:
   impact:
     - 'src/zephyr/risk/single_trade_risk.py（新建）'
     - 'src/zephyr/ex_core/order_manager.py（下单前调用 single_trade_risk）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md（§L1 单笔扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md（§L1 单笔扩展）'
   fix_phase: '待施工（约 1 天）'
   status: proposed
   related_rules: '#ARCH-RISK-003'
@@ -14175,7 +14175,7 @@ entries:
     裁定：扩展 35 号回撤 Protocol，在 8%/15%/20%/25% 四级阈值之间插入 Amber 减仓带——回撤 4-6% 时仓位减半 + 仅 A 级行情 + 日≤2-3 笔；阈值校准基于策略历史最大连亏。
   impact:
     - 'src/zephyr/risk/drawdown_protocol.py（扩展 Amber 中间态）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md（§3-Tier 扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md（§3-Tier 扩展）'
   fix_phase: '待施工（约 3 天）'
   status: proposed
   related_rules: '35 号 §四级回撤'
@@ -14197,7 +14197,7 @@ entries:
     - 'src/zephyr/backtest/core/engine_base.py（重构为 Kernel 模式）'
     - 'src/zephyr/ex_core/execution_engine.py（重构为 Kernel client）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/52_backtest_framework_docking.md（§同一内核扩展）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md（§同一内核扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/53_simulation_live_path.md（§同一内核扩展）'
   fix_phase: '待施工（约 2-4 周，大重构）'
   status: proposed
   related_rules: '#ARCH-QUANT-002; #ARCH-QUANT-003; #ARCH-QUANT-004'
@@ -14215,7 +14215,7 @@ entries:
   impact:
     - 'src/zephyr/shared/state_store.py（新建 Redis 状态外部化层）'
     - 'src/zephyr/pf_core/kernel.py（启动恢复流程）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md（§Crash-only 扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/53_simulation_live_path.md（§Crash-only 扩展）'
   fix_phase: '已施工（2026-08-16 AI-RRESIL-001 文件后端 + 2026-08-17 AI-REDIS-001 Redis 后端）：state_store.py（JsonStateStore 原子写三分语义读+AppendOnlyDedupSet crash 残行容忍）+ state_store_redis.py（RedisStateStore/RedisDedupSet 同接口，#ARCH-118 拆分）+ 双工厂配置注入；KillSwitch 状态/fill_id 去重集首批迁入；Redis 不可用构造即 PING fail-fast；键无 TTL；65×2+消费方 28 测试全绿'
   status: resolved
   related_rules: '#ARCH-QUANT-001; #ARCH-118'
@@ -14236,7 +14236,7 @@ entries:
   impact:
     - 'src/zephyr/governance/lifecycle_governance/rollback_state_machine.py（新建，与 paper_live_transition 同包；53 号 §3.8 伪代码落地）'
     - 'src/zephyr/governance/lifecycle_governance/paper_live_transition.py（晋级前置条件接入降级姿态=NORMAL 校验）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md（§3.8 施工锚点）'
+    - 'docs/_working/archive/2026-09/design_memos/53_simulation_live_path.md（§3.8 施工锚点）'
   fix_phase: '已完成（2026-08-17 AI-DGR-001 施工落地，提交标记 [GW:AI-DGR-001]：rollback_state_machine.py 五态 FSM 按 53 号 §3.8 伪代码逐行落地 + paper_live_transition.py 晋级前置 NORMAL 校验耦合点 + 57 项新测试两轮全绿）'
   status: resolved
   related_rules: '#ARCH-QUANT-001; #ARCH-QUANT-002'
@@ -14256,7 +14256,7 @@ entries:
     - 'src/zephyr/pf_core/{strategy_book,firm_risk_aggregator,kernel}.py（新建）'
     - 'src/zephyr/pf_alloc/{regime_meta_allocator,budget_change_handler}.py（新建）'
     - 'src/zephyr/ex_sor/{twap,vwap,is}.py（新建）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/32_firm_risk_aggregator.md（落地）'
+    - 'docs/_working/archive/2026-09/design_memos/32_firm_risk_aggregator.md（落地）'
   fix_phase: '待施工（约 2-3 周）'
   status: proposed
   related_rules: '#ARCH-QUANT-001'
@@ -14273,7 +14273,7 @@ entries:
     裁定：扩展 36 号 VaR/ES，将 ES_95 作为仓位决策的硬约束（ES>1.3×基准→再减仓 20%），不只监控告警。
   impact:
     - 'src/zephyr/risk/var_es_monitoring.py（ES 进决策层）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/36_var_es_monitoring.md（§ES 决策层扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/36_var_es_monitoring.md（§ES 决策层扩展）'
   fix_phase: '待施工（约 3 天）'
   status: proposed
   related_rules: '36 号 §VaR/ES'
@@ -14325,7 +14325,7 @@ entries:
     裁定：新建 src/zephyr/observability/strategy_decay_detector.py，实现 30 天 rolling Sharpe + 20% 退化阈值告警 + 自动建议退役。
   impact:
     - 'src/zephyr/observability/strategy_decay_detector.py（新建）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md（§衰减检测扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/55_monitoring_review.md（§衰减检测扩展）'
   fix_phase: '待施工（约 3 天）'
   status: proposed
   related_rules: '#ARCH-REG-002; 55 号 §监控'
@@ -14360,7 +14360,7 @@ entries:
   impact:
     - 'src/zephyr/pf_core/strategy_book.py（扩展 sub-book 隔离）'
     - 'src/zephyr/reporting/attribution.py（新建归因模块）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/54_reconciliation_attribution.md（§归因扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/54_reconciliation_attribution.md（§归因扩展）'
   fix_phase: '待施工（约 1 周）'
   status: proposed
   related_rules: '30 号 §Model A; 54 号 §归因'
@@ -14400,8 +14400,8 @@ entries:
     裁定：①扩展 28 号情绪周期与 6 阶段对齐；②新建 src/zephyr/factor/ashare/sentiment_4indicator.py 实现 4 盘面指标自动检测；③仓位铁律接入 31 号 position_sizing。
   impact:
     - 'src/zephyr/factor/ashare/sentiment_4indicator.py（新建）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md（§6 阶段扩展）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/31_position_sizing.md（§仓位铁律扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/28_sentiment_cycle_trading.md（§6 阶段扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/31_position_sizing.md（§仓位铁律扩展）'
   fix_phase: '待施工（约 1 周）'
   status: proposed
   related_rules: '28 号 §情绪周期; 31 号 §仓位'
@@ -14422,7 +14422,7 @@ entries:
   impact:
     - 'src/zephyr/ex_core/cancel_rate_guard.py（v1.1.0 日申报笔数硬计数器）'
     - 'src/zephyr/ex_core/order_manager.py（C-002 读数检查接线）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/43_compliance_discipline.md（§8 闭环+§10 装配记录）'
+    - 'docs/_working/archive/2026-09/design_memos/43_compliance_discipline.md（§8 闭环+§10 装配记录）'
   fix_phase: '已施工（2026-08-15 AI-ASM-001，tracker #78）：方案 A 唯一缺口日申报笔数硬计数器落码，红队实证 9999 放行/1 万阻断；撤单率/存档两项维持 40 号与 43 号既有裁定不重复建设'
   status: decided
   related_rules: '#ARCH-RISK-002; 40 号 §执行; 43_compliance_discipline §8'
@@ -14460,7 +14460,7 @@ entries:
   impact:
     - 'src/zephyr/gov_audit/audit_trail.py（扩展对齐 IETF AAT 核心）'
     - 'src/zephyr/gov_audit/event_store.py（扩展 hash chaining）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md（§AAT 扩展）'
+    - 'docs/_working/archive/2026-09/design_memos/55_monitoring_review.md（§AAT 扩展）'
   fix_phase: '待施工（约 1 周）'
   status: proposed
   related_rules: ''
@@ -14496,7 +14496,7 @@ entries:
     - 'src/zephyr/ex_core/order_manager.py（10 项 gap 逐项落地）'
     - 'src/zephyr/ex_core/miqmt_broker.py（10 项 gap 逐项落地）'
     - 'tests/zephyr/ex_core/test_10_p0_gaps.py（新建 10 项单测）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md（§10 项 gap 落地）'
+    - 'docs/_working/archive/2026-09/design_memos/40_execution_broker.md（§10 项 gap 落地）'
   fix_phase: '待施工（约 5-10 天）'
   status: proposed
   related_rules: '#ARCH-RISK-001; #ARCH-RISK-002; #ARCH-RISK-003; #ARCH-COMPLIANCE-001'
@@ -15970,7 +15970,7 @@ entries:
     （用户裁定——SOP 属永久规则，与施工图纸临时区生命周期分离；doc_type 转 policy/procedural）。
   impact:
     - 'docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md（2026-08-13 迁入，active v1.4.0）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md（§0 目录 02 行标记已迁出）'
+    - 'docs/_working/archive/2026-09/design_memos/00_index_trading_decision.md（§0 目录 02 行标记已迁出）'
     - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（creation_token 路径同步）'
   fix_phase: '已落盘（待实践验证）'
   status: decided
@@ -16014,7 +16014,7 @@ entries:
     - 'docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml（4 条 plain_zh）'
     depgraph：'MOD-SELL-019 planned 节点登记；设计态边 004→005 / 005→000 / 000→MOD-POS-003（design）；planned→stable+production 流转待 merge 回 dev 后执行（merge 前流转会被主工作区磁盘锚定的 regenerate 清除运营态节点，2026-08-13 实证）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md'
+    - 'docs/_working/archive/2026-09/design_memos/42_sell_flow.md'
   fix_phase: '代码已施工（worktree AI-SELL-001），65 测试通过。待 merge 回 dev 后 planned→production 流转。'
   status: decided
   related_rules: '42_sell_flow; construction_workflow_sop; trae_080'
@@ -16299,7 +16299,7 @@ entries:
     - 'tests/governance/commit_gates/test_capability_lookup_required_gate.py（mock 锚点同步）'
     - '.gitignore（.worktrees/ 显式登记）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md §11.3.1'
+    - 'docs/_working/archive/2026-09/design_memos/65_git_safety_governance.md §11.3.1'
   fix_phase: 'P0-2/P2-8/9/10 已落盘（7 新单测 2 轮全绿 + capability_lookup 4 套件 108 passed 无回归）。后续观察项：MCP server 等长驻进程的 sys.modules 锚定缓存不可热切换（R8），重启生效。'
   status: decided
   confirmed_by_user: '2026-08-14 用户裁定《四项遗留项治本施工方案》并指令立即执行'
@@ -16612,12 +16612,12 @@ entries:
     - 'src/zephyr/governance/audit/reconciliation_registry.py（GATE-ROOT-TEMP-SWEEP worktree 护栏）'
     - 'scripts/task_board.py（重建，66 号 memo §2.4 第九号设施 schema）+ tests/governance/test_task_board.py（17 用例）'
     - 'scripts/governance/apply_depgraph.py（S5 _cascade_anchor_hint 三流程接入）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md（v2.2.0 精简 + v2.3.0 定稿转 active）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md（v1.1.0 精简）'
+    - 'docs/_working/archive/2026-09/design_memos/65_git_safety_governance.md（v2.2.0 精简 + v2.3.0 定稿转 active）'
+    - 'docs/_working/archive/2026-09/design_memos/66_commit_queue_serialization.md（v1.1.0 精简）'
     - 'docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md（§七→§六 漂移修正）'
     关联文档：
     - 'docs/_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md（裁定书真源）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md §六（38-40/43/25/49-52 号项）'
+    - 'docs/_working/archive/2026-09/design_memos/construction_progress_tracker.md §六（38-40/43/25/49-52 号项）'
   fix_phase: 'S1-S6 + task_board 全部完工（14 commits，worktree AI-GIT-001 保留待 merge）。验收：S1 红队 42/42 拦截；S4 无 PYTHONPATH 4/4；S3 端到端日志+快照实证；S5 双形态锚点 hint 实证；task_board 17/17。'
   status: decided
   confirmed_by_user: '2026-08-14 用户裁定治理插队批 P0（git/并发协作基础设施专项治理施工）'
@@ -17595,7 +17595,7 @@ entries:
     - 'docs/03_modules/_domain_intelligence/news_sentiment_analyzer/blueprint.md（新建）'
     关联文档：
     - 'docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml（CAND-AISA-001 状态留痕）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/26_event_driven_strategy_detail.md（舆情复用裁定）'
+    - 'docs/_working/archive/2026-09/design_memos/26_event_driven_strategy_detail.md（舆情复用裁定）'
   fix_phase: 'MVP 已施工（2026-08-18 AI-AISA-001 worktree）：模块+29 测试两轮全绿+ruff 全过；五登记链完成（creation_token 3 条+capability 1 条+plain_zh 1 条+depgraph design 节点+blueprint）；planned→production 流转待 merge 回 dev 后自动执行。GLM 复审修复批（2026-08-18 同会话换模型复审）：P0-1 LLM 扩展口字段错配 score→polarity（中性新闻伪正修复）/P0-2 ST 子串误伤→大小写敏感词边界正则/P0-3 中文反转语境（终止重大资产重组）→距离窗口正则先扣除/P1-2 死代码清理（_logger/raw_text）/P1-3 SCD 多版本 merge 去重/P1-4 S4 注入器错锚 MOD-INF-050 修正+TTL 重复行；测试 29→37 全绿两轮；blueprint v0.1.1'
   status: in_progress
   related_rules: 'CAND-AISA-001; #ARCH-NLP-PIPELINE-001; 26_event_driven_strategy_detail §舆情'
@@ -21658,7 +21658,7 @@ entries:
 - issue_id: "#ARCH-311"
   title: 2026-09-14 docs/_working 多波删除事故——归因终版=WorkBuddy safe-delete 回收站通道（clean-fd 定罪推翻，07:02 回收站 $I 实证）
   severity: P1高
-  adjudication: 2026-09-14 Owner 裁定"登记议题交修复批"。st-mktfix-20260914 会话实证：docs/_working 当日 07:04/07:25/08:2x 三波文件消失（108 个已跟踪文件+多会话未跟踪文档；他会话当日 commit 亦有"落盘合并竞态被吞/文件恢复"记录）。根因定位=队列死信原文「landing 异常（git clean -fd rc=1，failed to remove data/databases/governance.db-journal Invalid argument）」——该路径仅在主仓库存在，证明 serializer landing 的 git clean -fd 作用于主工作区；每轮 drain 清掉主区未跟踪文件，与三波损失时刻吻合。影响=所有会话未跟踪 WIP（docs 草稿/工具脚本/断点文件）随时被无声销毁。
+  adjudication: 2026-09-14 Owner 裁定"登记议题交修复批"。st-mktfix-20260914 会话实证：docs/_working 当日 07:04/07:25/08:2x 三波文件消失（108 个已跟踪文件+多会话未跟踪文档；他会话当日 commit 亦有"落盘合并竞态被吞/文件恢复"记录）。根因定位=队列死信原文「landing 异常（git clean（-fd 档）rc=1，failed to remove data/databases/governance.db-journal Invalid argument）」——该路径仅在主仓库存在，证明 serializer landing 的 git clean（-fd 档）作用于主工作区；每轮 drain 清掉主区未跟踪文件，与三波损失时刻吻合。影响=所有会话未跟踪 WIP（docs 草稿/工具脚本/断点文件）随时被无声销毁。
   fix_phase: 待修复批施工。证据=.runtime 临时输出已清，死信原文誊录于缺口报告 v2 §文件事故；候选方案=clean 作用域收窄到 landing 快照目录/protected-untracked 排除清单/改 stash 隔离通道；短期避险纪律=工作区产物每轮 git add（本轮实证有效）
   status: decided
   related_adjudication: ""
@@ -21727,7 +21727,7 @@ entries:
     提交队列 serializer worktree 单写者不变量无强制——lease TTL 不续约 + 双写者起手 reset/clean 互抹未提交新件
   severity: P1高
   adjudication: >-
-    实测三批整批报 ALGO-FLOW-LINK「12 处 yaml 不可读（已删除?）」+「no changes added to commit」；监视器 2s 采样证明快照 apply+prestage 本身正常（02:27 那次 24/24 在场且 staged 全程未掉，下一帧归零），对照实验=同批内容原封 requeue、只让常驻 commit_belt_daemon 消费 → 24/24 干净落地，决定性排除「门禁误判/快照写坏」两假设。结构病根：commit_queue_landing._sync_worktree() 起手 git reset --hard refs/heads/dev + git clean -fd，SerializerLease 用 O_EXCL+TTL=300s 且 acquired_at 只写一次不续约，而单批 gate 链实测 3-7 分钟与 TTL 同量级，超时后任何进程可合法接管成为第二写者。建议处置：lease 心跳续约（消费循环每 60s touch acquired_at）+ 接管前强制读 processing/ 判活 + 「新件 apply→commit」做成同进程不可打断临界区。本会话规避=自家脚本 bt_land_queue._wait 删自举 drain，仅在守护 PID 判死时才自己排空；未动他人进程。
+    实测三批整批报 ALGO-FLOW-LINK「12 处 yaml 不可读（已删除?）」+「no changes added to commit」；监视器 2s 采样证明快照 apply+prestage 本身正常（02:27 那次 24/24 在场且 staged 全程未掉，下一帧归零），对照实验=同批内容原封 requeue、只让常驻 commit_belt_daemon 消费 → 24/24 干净落地，决定性排除「门禁误判/快照写坏」两假设。结构病根：commit_queue_landing._sync_worktree() 起手 git reset（--hard 档）refs/heads/dev + git clean（-fd 档），SerializerLease 用 O_EXCL+TTL=300s 且 acquired_at 只写一次不续约，而单批 gate 链实测 3-7 分钟与 TTL 同量级，超时后任何进程可合法接管成为第二写者。建议处置：lease 心跳续约（消费循环每 60s touch acquired_at）+ 接管前强制读 processing/ 判活 + 「新件 apply→commit」做成同进程不可打断临界区。本会话规避=自家脚本 bt_land_queue._wait 删自举 drain，仅在守护 PID 判死时才自己排空；未动他人进程。
   fix_phase: >-
     登记待治本（消费侧已自规避，落地器本体未改）
   status: 'open'
@@ -21858,7 +21858,7 @@ entries:
     另补头注清偿：`stop` 模式要么实现要么从 [CONSUMERS]/[ERROR_CONTRACT] 删除（头注=契约，
     虚写=下一次事故的误导源）。在此之前本类的临时防线=红蓝实弹以队列路由为准（非直连），
     且效力证据只认 HEAD 字节核实。
-    证据追加（2026-09-17 晨，P2-1 尾池批 A 死信 0076 实测——危害等级从"顺序竞态"升到"伪造门禁结论"）：enqueue 默认自举 drain 与本守护（PID 28648）并发时，第二写者 _sync_worktree 的 git clean -fd 会删掉**尚未入库的新文件**（本批 5 个 algo_flow 镜像全在盘、blob 全在库），于是 ALGO-FLOW-LINK 报「5 处 yaml 不可读（已删除?）」并阻断——即双写者把"在"判成"已删除"，把好件打成死信并烧掉整批 claim。本 lane 临时防线=enqueue/requeue 一律 --no-bootstrap（只由本守护单写）；A 案重启窗的紧迫性据此上调。
+    证据追加（2026-09-17 晨，P2-1 尾池批 A 死信 0076 实测——危害等级从"顺序竞态"升到"伪造门禁结论"）：enqueue 默认自举 drain 与本守护（PID 28648）并发时，第二写者 _sync_worktree 的 git clean（-fd 档）会删掉**尚未入库的新文件**（本批 5 个 algo_flow 镜像全在盘、blob 全在库），于是 ALGO-FLOW-LINK 报「5 处 yaml 不可读（已删除?）」并阻断——即双写者把"在"判成"已删除"，把好件打成死信并烧掉整批 claim。本 lane 临时防线=enqueue/requeue 一律 --no-bootstrap（只由本守护单写）；A 案重启窗的紧迫性据此上调。
     追加实证②（同日，落地面第二形态=**内容被并发回滚**）：q-…-0079（本 lane 报告+注册表 2 件）
     死信 dead_reason=「git commit failed: … no changes added to commit」，且同报 15 个**他会话未暂存
     改动**躺在序列化器 worktree 里（framework_composer / engine_base / screen_source 等，正是 #ARCH-325
@@ -21896,7 +21896,12 @@ entries:
     对齐 HEAD（index blob 与 HEAD^ 逐字节相同=零独有内容，刷新不丢任何工作），并核过提交归属
     （ba17062144：3 文件/175 插入，零吸收）。治本候选（提交链车道）：落地成功后对涉及路径
     同步主树 index（git add 等价语义）+ qid done 短路幂等 + claim 判定统一 repo 相对路径空间。
-  status: open
+    【收口回写 2026-09-21，st-taskcards-exec-20260921】裁定 #377-G03 已裁按 A 案实态 close
+    （belt_daemon.lock mtime=2026-09-20 12:50:43 亲验=旧码常驻进程已重拉，本项「旧码盲区」前提消失；
+    证据原文 docs/_working/kimi_audit/adjudications/p7c_efgh_family_rulings.md G-03 行。lock 为 TTL
+    滚动件，本批回写时不在盘属常态，以判定册记载为准。）残余两件不随 close 消失：头注 stop 模式
+    清偿+B 案结构方案留下一版不排期。
+  status: resolved
   created: '2026-09-17'
   last_updated: '2026-09-18'
 - issue_id: "#ARCH-325"
@@ -22145,6 +22150,9 @@ entries:
     防线修复候选：注册表级 .ailocks 强制 + gate 拦截对 watched 热文件的非 CAS 写。
     战役侧缓解已做：幂等工具重放（--sync-layer/条目 upsert/token 补登）恢复为超集，
     先落袋短窗口暴露；教训入 memory（热文件在途未落地=可被整写吞，落地窗口最小化）。
+    【处置推进复查 2026-09-21，st-taskcards-exec-20260921】战役侧幂等重放超集恢复仍为最新态；
+    两项候选（07:44-07:55 整写者追查/注册表级 .ailocks 强制+gate 拦 watched 热文件非 CAS 写）
+    仍无主未排期，维持 open；处置权归基建专项，材料随 tc_04 卡 D5 交 Max。
   fix_phase: 待专项（战役侧缓解已落地）
   status: open
   related_adjudication: '#335'
