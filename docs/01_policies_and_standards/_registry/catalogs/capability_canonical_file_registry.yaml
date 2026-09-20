@@ -40501,6 +40501,66 @@ creation_tokens:
   token: final3-campaign-index-20260920
   created_by: st-maxexec-20260920
   capability: final3_campaign
+- file: docs/_working/final3_campaign/p4_x2_rb_review_report.md
+  token: final3-campaign-p4-x2-rb-review-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0829.md
+  token: final3-campaign-intake-20260917-0829-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0829.yaml
+  token: final3-campaign-intake-20260917-0829-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0836.md
+  token: final3-campaign-intake-20260917-0836-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0836.yaml
+  token: final3-campaign-intake-20260917-0836-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0840.md
+  token: final3-campaign-intake-20260917-0840-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0840.yaml
+  token: final3-campaign-intake-20260917-0840-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0841.md
+  token: final3-campaign-intake-20260917-0841-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0841.yaml
+  token: final3-campaign-intake-20260917-0841-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0850.md
+  token: final3-campaign-intake-20260917-0850-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0850.yaml
+  token: final3-campaign-intake-20260917-0850-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0852.md
+  token: final3-campaign-intake-20260917-0852-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0852.yaml
+  token: final3-campaign-intake-20260917-0852-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0855.md
+  token: final3-campaign-intake-20260917-0855-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p6_shed_salvage/ledgerp2a_pipeline_research_reports/intake-20260917-0855.yaml
+  token: final3-campaign-intake-20260917-0855-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
   merge_evaluation: "归档批次移入件（裁定#374 主题三 A12+B3 git mv 目的地），原位文件已携 token，移入后新路径按 CREATE-GUARD 要求补登记，不并"
   merge_evaluation: "自启注册脚本与 register_process_reaper_task.ps1 同形不同对象（用户 Startup 快捷方式 vs 计划任务），不并"
   merge_evaluation: "P6 战役执行记录件，与同目录既有 p* 记录同族不同主题，不并"
