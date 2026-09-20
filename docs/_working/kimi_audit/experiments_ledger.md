@@ -59,3 +59,11 @@ created: 2026-09-17
 | biz1 | F01 L4 批落库 | 2026-09-18 01:54 | `run_validation(batch='L4')` 非 dry | — | c1_backtest.node_verdict run_id=VAL-20260918-015408 + runs/ 档案 finalize | 预期 [('valid',15)]；落库前快照 41 pending+2 valid | 秒级 | **done** | 15 行全 valid（slip 2.56bp/triggers 1467）；B0 15 条全部收尾（终态表=biz1 作业簿） |
 | biz3 | E7 涨跌停闸 | 2026-09-18 02:15 | `pytest tests/backtest/test_c4_limit_gate.py` | — | _c4_engine 闸+测试 7 件 | 两真实反例(601162@0925/000016@0410)不被拦=红 | 秒级 | **done** | 7/7 绿+既有守护 58 绿 1 xfail；闸默认开、gate_limits=False 反例通道；详见 biz3 作业簿 |
 | biz5 | ETF 分钟族时区劈叉 | 2026-09-18 02:20 | `python scripts/ch/repair_etf_minute_tz_split.py`（dry-run） | — | 修复件+known_data_gaps 条目+工单 biz5 | dry-run 前置核验任一不过=拒绝 | 分钟级 | **staged（--execute 等 Owner 门位）** | 缺陷扩面=T lane 15min 一表→全 ETF 分钟族五表 4.12 亿行（93-95%）；边界零违例/trade_date 零错日/修复零碰撞；三步验证全过，破坏性操作按指令停下登记 |
+
+## 修正案（2026-09-21，st-taskcards-exec-20260921）
+
+- biz5 行（ETF 分钟族时区劈叉）状态停「staged（--execute 等 Owner 门位）」已过时：执行终态=
+  60ed3aa49c（09-18 07:22，4.12 亿行转正+五表 *_tz_bak_20260918 备份在库），本班重跑
+  git merge-base --is-ancestor 60ed3aa49c HEAD 验证 PASS。历史行不改写，以本修正案为准。
+  三处登记面收口明细见 docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r1_closeout.md
+  （known_data_gaps 改册归甲线 WO-3 的 A15 批顺路执行，按今夜避让令不代改）。
