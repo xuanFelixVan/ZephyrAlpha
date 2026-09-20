@@ -1,16 +1,17 @@
 ---
-title: "终极图书馆 · 总目类目表 v1（清单的清单）"
+title: "终极图书馆 · 总目类目表 v2（清单的清单）"
 ttl: task_bound
-completes_when: 十维度全量盘点完成且每维度"有清单件或立缺口"二选一；随总攻验收转正
+completes_when: 十三维度全量盘点完成且每维度"有清单件或立缺口"二选一；随总攻验收转正
 date: "2026-09-21"
 owner: "ZephyrAlpha-Owner"
 session: "st-ulib-20260921"
 ---
 
-# 总目类目表 v1 —— 清单的清单（图书馆地图的地图）
+# 总目类目表 v2 —— 清单的清单（图书馆地图的地图）
 
 > **Owner 令（2026-09-21）**：图书馆包含的不只是管线和资产——门禁、git 提交通路上的一切设备、制度、规则，**整个项目所有方方面面**都要有清单。本件=全项目清单维度的总清，挖干判据=每一维度"有清单件"或"立缺口"二选一，无第三态。
-> 状态标记：✅=已有清单件/真源（可直收）；⬜=缺清单（今夜总攻立）；🔁=已有但存在已立档漂移。
+> **v2 终审（2026-09-21 第三轮）**：两路外部对标（专业机构：EDMC/BCBS239/SR11-7/ITIL/DORA/SRE/CISA；量化社区与学术：Qlib/BRAIN/QuantConnect/AlphaAgent/Langfuse/MCP Registry）+本地挑刺，新增 K/L/O 三维度八缺口，补 D6/E6 两处漏列。判定=**传统量化维度已超主流平台水平；缺口集中于 LLM 原生资产与机构级风险合规，全部显形有落点**。
+> 状态标记：✅=已有清单件/真源（可直收）；⬜=缺清单（落点见 §2）；🔁=已有但存在已立档漂移。
 
 ## A 制度类（→制度馆）
 
@@ -66,6 +67,7 @@ session: "st-ulib-20260921"
 | D3 | 蓝图 | PG blueprint_links 101+蓝图体系（w14 口径 542） | ✅ |
 | D4 | 模块 ID/修复器/模式库 | module_id_registry 74/fixer_map 11/pattern_index 15 | ✅ |
 | D5 | schema/迁移 | schemas/categories 树+migrations | ✅ |
+| D6 | 前端产品资产 | frontend_map.yaml **359 功能点**+features/manifest 69+52 html+check_frontend_map（R0-R3 校验 fail=0 warn=10） | ✅（v1 漏列已补） |
 
 ## E 数据与量化资产（→数据馆）
 
@@ -76,6 +78,7 @@ session: "st-ulib-20260921"
 | E3 | 风控/组合/模型/实验 | risk_limit 117/portfolio_model 8/model 8/experiment/backtest_backlog 135 | ✅ |
 | E4 | 交易基础数据 | universe 6/benchmark 9/cost/seats 15/event 12/macro 15/cycle 12/compliance 6/execution_algo 6 | ✅ |
 | E5 | 字段字典 | field_dictionary 257（PIT/复权口径） | ✅ |
+| E6 | 产业链图谱 | PG ig_* **13 表**（ig_node 5,560/ig_edge 1,726/ig_fact 264,072）+.runtime/industry_graph 106 文件 | ✅（v1 漏列已补） |
 
 ## F 管线与决策（→管线馆）
 
@@ -129,20 +132,58 @@ session: "st-ulib-20260921"
 | J4 | 告警 | alert_threshold_registry 36+workspace_alerts+alert_webhook_trail | ✅ |
 | J5 | 堆积型 | commit_queue 3.7G/52k 文件、tmp 5.5 万文件、gate_cache 7.5k | ✅ 只计指标不建清单 |
 
-## §2 缺口汇总（⬜ 共 9 处，全部落今夜总攻）
+## K LLM 原生资产（→管线馆；量化社区对标判定的**最大结构性缺口**）
+
+> 100% AI 运维的项目里最高频变更物=prompt/agent 定义/评估集/轨迹，四类目前**无版本、无回滚、无变更归因**。
+
+| # | 类目 | 现状 | 状态 |
+|---|---|---|---|
+| K1 | Prompt 库与版本部署 | LSG l6 observability 部分+gate prompts 散在（d12 有冲突检测）；无 Langfuse 式不可变版本+production/staging 标签 | ⬜ 登记骨架今夜 D5 建；版本管理 W+1 |
+| K2 | Agent 卡（A2A AgentCard 式能力/技能/鉴权声明） | daemon_registry+agent_orchestrator 能力卡是雏形，无标准卡 | ⬜ 骨架 D5 |
+| K3 | 评估集（eval set）独立登记 | 红蓝对抗 24 场景+补考放行档散在，非独立资产 | ⬜ 骨架 D4 |
+| K4 | 轨迹数据集（trajectory 语料资产化） | vector_memory execution_traces collection 后端在，未资产化为可复用语料 | ⬜ W+1 |
+| K5 | 研究配置资产（Qlib 式 handler/工作流 YAML） | tasks.yaml/配置在册，研究配置层未单独登记 | ⬜ 血肉矿 |
+
+## L 风险与合规（→制度馆；专业机构对标缺口）
+
+| # | 类目 | 现状 | 状态 |
+|---|---|---|---|
+| L1 | 模型验证生命周期（SR 11-7：validation 状态机/复验到期/限制使用） | model_registry 8+validation_method 5+回测预注册 135 在，缺生命周期流转登记 | ⬜ 骨架 D4 |
+| L2 | alpha/策略生命周期状态机（BRAIN 式 unsubmitted→OS→生产/衰减） | strategy_registry 161 有状态字段，缺持续流转登记制 | ⬜ 骨架 D4 |
+| L3 | 事故与复盘台账（SRE 无责复盘+action item 闭环） | **267 个散档**提及事故/复盘，零登记册 | ⬜ 骨架 D4+收编散档 W+1 |
+| L4 | SBOM/许可证/供应商登记 | vendor/ 138 无 license 清册；PolyFormNC 边界散记；数据供应商在 data_sources_registry ✅ | ⬜ 骨架 D7 |
+| L5 | 凭证清册与轮换状态 | .env 实存（09-20 暴露事故 100 键，**轮换待办未办**）；secrets.py 三道 gate 管"用"不管"账" | ⬜ 骨架 D7（只登键名与轮换状态，绝不登值） |
+| L6 | 风险报告频率/分发（BCBS239 P11-14） | 晨审/日刊机制在（资源晨报 generate_resource_morning_report） | ✅ 部分 |
+
+## O 度量与绩效（→运行时区）
+
+| # | 类目 | 现状 | 状态 |
+|---|---|---|---|
+| O1 | 交付绩效（DORA 四指标） | 队列堵点统计机制在（commit_block_events），四指标无人管理 | ⬜ W+1 |
+| O2 | 数据质量维度度量 | quality_sentinel 变异巡检在，无维度化评分（CDMC） | ⬜ W+1 |
+| O3 | 容量账本 | watermark（RAM/commit 盘）+CH 426GB/27,856 parts 可采；盘容量实测缺 | ⬜ D6 包 |
+
+## §2 缺口汇总 v2（⬜ 共 17 处：今夜骨架 9+W+1 建设 5+血肉矿 3）
 
 | 缺口 | 落点 |
 |---|---|
 | B16 提交链设备总台账 | 今夜 D7 闸门链馆 |
 | C1/C2 LSG/KillSwitch 清单页 | D7 顺带 |
-| E1 CH 采集器 | B2 包 |
-| G5 计划任务台账页（含 OneShot/手工/Startup） | D5 包 |
+| L4 SBOM/许可证清册 | 今夜 D7 |
+| L5 凭证清册（键名+轮换状态，不登值） | 今夜 D7 |
+| E1 CH 采集器 | 今夜 B2 包 |
+| G5 计划任务台账页 | 今夜 D5 包 |
+| K1/K2/K3 Prompt/Agent 卡/eval set 登记骨架 | 今夜 D5/D4 包 |
+| L1/L2/L3 模型验证/策略生命周期/事故复盘登记骨架 | 今夜 D4 包 |
+| O3 容量实测 | 今夜 D6 包 |
 | I2 F→G 镜像+restore 演练 | 已呈 Owner 批（备份馆授权项） |
-| I3 盘实核对 | D6 包 |
-| I4 实例级台账 | D2/D6 包 |
+| I3 盘实核对 | 今夜 D6 包 |
+| I4 实例级台账 | 今夜 D2/D6 包 |
+| K1 prompt 版本管理/K4 轨迹集/O1 DORA/O2 质量度量 | W+1 建设批 |
 | H4 acceptance 清单 | 血肉矿 |
 | I5 白名单外补录 | 血肉矿 |
+| K5 研究配置层 | 血肉矿 |
 
-## §3 挖干判定（本件自身）
+## §3 挖干判定 v2（本件自身，第三轮终审后）
 
-十维度 A-J 全量过堂：**有清单件 51 类，立缺口 9 类（全部有落点），无"未知类目"残留**。此后新增类目=增枝，须过停止判据三问并在本件补行留痕。
+**十三维度 A-M-O 全量过堂（原有 10+终审新增 3）：有清单件 59 类，立缺口 17 类且 100% 有落点（今夜 9/W+1 5/血肉矿 3），无"未知类目"残留。** 外部对标双结论已入档：①我们超前列表=回测预注册制/裁定登记制/AI 门禁体系/LLM 安全网关（业界无对应物）；②缺口集中区=LLM 原生资产+机构级风险合规。此后新增类目=增枝，须过停止判据三问并在本件补行留痕。

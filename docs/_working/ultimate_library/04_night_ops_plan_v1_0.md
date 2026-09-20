@@ -36,14 +36,16 @@ session: "st-ulib-20260921"
 | D1 代码馆 | docs/library/code/ | depgraph 12,107 节点+script-manifest 991 目录页 | 双向自检零误报 |
 | D2 数据馆 | docs/library/data/ | CH 246 表+数据源/通道+哨兵目录页 | 同上 |
 | D3 文档馆 | docs/library/doc/ | docs 全树+十图+sop 九族目录页 | 同上 |
-| D4 制度馆 | docs/library/rule/ | 86 规则+裁定 384+议题 761+标准/门位/契约 38/错误码 788/词汇三层目录页 | 同上 |
-| D5 管线馆 | docs/library/pipeline/ | tasks/TDM 138/血缘 1,757 jobs/计划任务 45 台账页 | 同上 |
+| D4 制度馆 | docs/library/rule/ | 86 规则+裁定 384+议题 761+标准/门位/契约 38/错误码 788/词汇三层目录页+登记骨架（模型验证生命周期/策略生命周期/事故复盘台账/eval set 清单，05 v2 §L） | 同上 |
+| D5 管线馆 | docs/library/pipeline/ | tasks/TDM 138/血缘 1,757 jobs/计划任务 45 台账页+LLM 原生资产登记骨架（prompt 清单/agent 卡，05 v2 §K） | 同上 |
 | D6 备份馆 | docs/library/backup/ | 盘点（asset_inventory+infrastructure+bdpan）+3 手工任务/Startup .lnk 点名页 | 同上 |
-| D7 闸门链馆 | docs/library/gate/ | 门禁全家族（55+113+91+fail_open 1,635+noqa+allowlist）+git 提交链 15 设备台账+LSG/kill_switch 清单页（Owner 点名扩容，05 类目表 B/C 节） | 同上 |
+| D7 闸门链馆 | docs/library/gate/ | 门禁全家族（55+113+91+fail_open 1,635+noqa+allowlist）+git 提交链 15 设备台账+LSG/kill_switch 清单页+SBOM/许可证清册+凭证清册（键名+轮换状态，绝不登值，05 v2 §L4/L5） | 同上 |
 | E 对齐 | generator_registry.yaml 登记（W0 前置批） | 统一对账窗+指纹回写总账 | regen 两跑幂等 |
 | F 红蓝 | 只读+报告 | 两轮缺陷单 | 第二轮 0 |
 | G 交付 | 转正材料+端到端脚本 | 验收报告呈 Owner | 蓝图 §8 全绿 |
 | H 机动 | —（补位任一空写域） | — | — |
+
+> 05 总目类目表 **v2 终审**（双路外部对标+本地挑刺）新增缺口已全部并入上表 D4/D5/D7 交付物；prompt 版本管理/轨迹数据集/DORA 四指标/数据质量度量四件**实体建设=W+1 批**（今夜只立登记骨架）。
 
 ## §3 风险预案（每条都有本仓实证）
 
