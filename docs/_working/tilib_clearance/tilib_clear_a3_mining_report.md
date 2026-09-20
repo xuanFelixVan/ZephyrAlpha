@@ -32,9 +32,9 @@ title: 波3 M-L6 学术自适应指标挖矿报告（2024-2026 论文新指标�
 - why：同上，三阶高通是 2024-09 论文双滤波的另一半；TradeStation/TradingView 平台标准指标
 - 产出：highpass_40 一列
 
-### 登记后续（不立卡不施工，防重复挖登记）
-- **Griffiths Predictor + Instantaneous Frequency（TASC 2025-01）**：Griffiths 格型自适应预测，公式在 mesasoftware PDF；施工前置=PDF 公式提取（下一班可做）
-- **Continuation Index（TASC 2025-09）/ Auto Tune Filter（TASC 2026-05）**：发表过新，公式镜像未到位；挂观察
+### 登记后续 → 已清偿（2026-09-20 Owner 追加令）
+- ~~Griffiths Predictor（TASC 2025-01）/ Continuation Index（TASC 2025-09）~~ → **波5 已施工**（IND-CYC-007/008；公式源=mesasoftware.com 官网 PDF 原文，当时 30 分钟时盒未走官网直连是误判）
+- Auto Tune Filter（TASC 2026-05）：仍未挖（公式在 mesasoftware The AutoTune Filter.pdf，下一班可按同配方直取）
 
 ## 3. 防噪音四闸结论
 

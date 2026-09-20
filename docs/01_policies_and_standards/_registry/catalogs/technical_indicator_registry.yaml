@@ -20,8 +20,8 @@ name: Technical Indicator Registry
 name_zh: 技术指标注册表
 description: >-
   技术指标唯一真源（SSoT）。登记全部纯 OHLCV 计算指标（编号/公式/参数/输入输出列/预热期/状态/代码位置），
-  8 大类 135 在产指标 198 输出列（注册 136 条含退役 1；对齐 16 号 §6.1-6.8 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；批6：RV 波动率族 4+BBI+STOCH 本体+动量清偿（AROON/AROONOSC/BOP/PPO/APO/DX）+BRAR/CR 能量族共 14 指标（挖矿立卡 1/2/3+批5 增补全清偿）；批8：M-L4 经典族 10 指标（ALLIGATOR/GMMA/GANN_HILO/AC/FRACTALS/ELDER/COPPOCK/SQUEEZE/WAVETREND/FORCE_INDEX，数据先行放量批）；批9-1：tilib 清欠班波1 +15 指标/16 列（M-L1 自适应均线族 7：TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA + M-L2 价格变换族 4：AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE + M-L3 统计回归族 4：LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR，talib 黄金对照逐位/1e-6 级一致）；批9-2：波2 M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER/EBSW/INERTIA/QSTICK/RMI/PFE/FOSC/CTI/VHF/ER/WAD/VO/MARKETFI/ZSCORE；PSL=PSY、MSW=ht_sine 同义不重复立条）；批9-3：波3 M-L6 学术滤波器族 +3 指标/4 列（SUPERSMOOTHER/HIGHPASS/PTREND，TASC 2024-09 Precision Trend 挖矿；Griffiths/Continuation Index 立卡登记）
-  数值正确性由 1070 测试用例 + Registry↔DDL 双向交叉校验锁定）。
+  8 大类 137 在产指标 201 输出列（注册 138 条含退役 1；对齐 16 号 §6.1-6.8 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；批6：RV 波动率族 4+BBI+STOCH 本体+动量清偿（AROON/AROONOSC/BOP/PPO/APO/DX）+BRAR/CR 能量族共 14 指标（挖矿立卡 1/2/3+批5 增补全清偿）；批8：M-L4 经典族 10 指标（ALLIGATOR/GMMA/GANN_HILO/AC/FRACTALS/ELDER/COPPOCK/SQUEEZE/WAVETREND/FORCE_INDEX，数据先行放量批）；批9-1：tilib 清欠班波1 +15 指标/16 列（M-L1 自适应均线族 7：TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA + M-L2 价格变换族 4：AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE + M-L3 统计回归族 4：LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR，talib 黄金对照逐位/1e-6 级一致）；批9-2：波2 M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER/EBSW/INERTIA/QSTICK/RMI/PFE/FOSC/CTI/VHF/ER/WAD/VO/MARKETFI/ZSCORE；PSL=PSY、MSW=ht_sine 同义不重复立条）；批9-3：波3 M-L6 学术滤波器族 +3 指标/4 列（SUPERSMOOTHER/HIGHPASS/PTREND，TASC 2024-09 Precision Trend 挖矿）；批9-4：波5 学术卡清偿 +2 指标/3 列（CONTINUATION/GPRED，mesasoftware 官网 PDF 公式源，M-L6 登记卡全清偿）
+  数值正确性由 1079 测试用例 + Registry↔DDL 双向交叉校验锁定）。
   全指标覆盖 9 周期（1min/5min/15min/30min/60min/120min/日/周/月，120min 由 60min 两根聚合），
   存储单表 c1_market.technical_indicator 按 (period, toYYYYMM(trade_date)) 分区。
   与 factor_registry 正交：技术指标=OHLCV 确定性变换（计算工具，无 alpha 断言），因子=alpha 来源。
@@ -31,13 +31,13 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.4.0
+version: 1.5.0
 created: '2026-08-13'
 last_updated: '2026-09-20'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - indicator_id
-entry_count: 136
+entry_count: 138
 
 entry_schema:
   indicator_id: str              # IND-{CLASS}-{NNN}，如 IND-TREND-001
@@ -4029,6 +4029,74 @@ indicators:
   inputs: [close]
   outputs: [ebsw_40]
   warmup_period: 40
+  computation_mode: vectorized
+  module_id: MOD-L02-029
+  doc_ref: 16_technical_indicator_catalog.md §6.8
+  code_path: src/zephyr/factor/technical_indicators/cycle.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["循环", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 波5 批9-4：M-L6 学术卡清偿（2 指标/3 列，2026-09-20 tilib 清欠班）══════════════
+# 公式权威源=mesasoftware.com 官网论文 PDF 原文（Continuation Index.pdf TASC 2025-09 / Linear Predictive Filters.pdf TASC 2025-01），EasyLanguage 逐行移植
+- indicator_id: IND-CYC-007
+  name: Continuation Index
+  name_zh: 延续指数
+  aliases: ["CONTINUATION", "CI Ehlers"]
+  indicator_class: cycle
+  formula: CI=(e^{2R}−1)/(e^{2R}+1)，R=2(US−LG)/mean(|US−LG|,N)；US=UltimateSmoother(C,N/2)，LG=Laguerre(C,γ=0.8,order=8,N)（TASC 2025-09，两态 ±1 趋势状态机）
+  params: {gamma: 0.8, order: 8, length: 40}
+  inputs: [close]
+  outputs: [continuation_40]
+  warmup_period: 40
+  computation_mode: vectorized
+  module_id: MOD-L02-029
+  doc_ref: 16_technical_indicator_catalog.md §6.8
+  code_path: src/zephyr/factor/technical_indicators/cycle.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["循环", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-CYC-008
+  name: Griffiths Linear Predictor
+  name_zh: Griffiths线性预测器
+  aliases: ["GPRED", "Griffiths Predictor"]
+  indicator_class: cycle
+  formula: LMS 自适应系数（Mu=1/N）于带限信号（HighPass3(40)+SuperSmoother(18)，峰值 0.991 衰减归一）上外推 bars_fwd=2 步（TASC 2025-01；Griffiths, IEEE Trans ASSP-23）
+  params: {lower_bound: 18, upper_bound: 40, length: 18, bars_fwd: 2}
+  inputs: [close]
+  outputs: [gp_sig, gp_pred]
+  warmup_period: 19
   computation_mode: vectorized
   module_id: MOD-L02-029
   doc_ref: 16_technical_indicator_catalog.md §6.8

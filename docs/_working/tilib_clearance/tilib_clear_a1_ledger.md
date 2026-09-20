@@ -35,7 +35,9 @@ title: 技术指标库清欠班台账（分包A·34指标三件套清零）
 | 波2-总包 | 注册表 133 条+schema 194 列+契约 132/194+cycle 头 029 治愈+CREATE-GUARD token×3+memo v1.8.0 | q-0006+q-0007 拆件落地 | 目录全量 1038 passed/5 skipped ×2 轮 | done |
 | 波3 | SUPERSMOOTHER/HIGHPASS/PTREND（trend.py，TASC 2024-09 学术族）+3 列 | 020728598c | +17 用例；目录 1070 passed ×2 轮 | done（双实现互证 1e-12+手算微样本 [亲验]） |
 | 波3-总包 | 注册表 136 条+schema 198 列+契约 135/198+memo v1.9.0+a3 挖矿报告 | 020728598c | 四方探针 198×4 全等 | done |
-| 收官 | D-15 三态核实 17 文件全一致（index 旧弹 git reset 消弹+capability 册 HEAD 超集收敛）；红蓝对抗 ALL PASS（PIT 零未来行+新种子 talib 复验 12 项+递推恒等 5 项+弱断言零命中）；波4 未启动（理由见 a5 §5） | （a5 随本行落地） | 136 条=终极目标达成 | done |
+| 收官 | D-15 三态核实 17 文件全一致（index 旧弹 git reset 消弹+capability 册 HEAD 超集收敛）；红蓝对抗 ALL PASS；波4 未启动（理由见 a5 §5） | 3424a718e7 | 136 条=终极目标达成 | done |
+| 波5 | CONTINUATION/GPRED（cycle.py，mesasoftware 官网 PDF 公式源，Owner 追加令） | （本批落地后回填） | +9 用例；目录 1079 passed ×2 轮 | done（GPRED 正弦领先 corr=0.9462[亲验]；Variance 判零相对容差自裁已记录） |
+| 波6 | stock_daily_basic 数据批（Owner 追加令开工） | 进行中 | - | in_flight |
 
 ## 裁定与偏差记录
 

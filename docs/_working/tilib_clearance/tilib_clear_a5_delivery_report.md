@@ -57,6 +57,10 @@ title: 技术指标库清欠班交付报告（分包A·34指标三件套清零�
 
 R5-DIGIT-SUFFIX（目录 _20260920）→CREATE-GUARD（新 .md 缺 token）→EXEMPT-ZONE-FM（生成 index.md 带 doc_type）→GATE-NAMING N-16（基名撞 final3_campaign）→#341 新钩子 ruff/ruff-format。五连治愈配方全部留痕台账裁⑤/⑥/⑧/⑨；CREATE-GUARD token 共 6 条（r1×3+r2×3）已登记 capability 册顶级 creation_tokens 节。
 
+## 6a. 追加令补记（2026-09-20 傍晚）
+
+Owner 追加令后：波5 学术卡全清偿（CONTINUATION/GPRED，官网 PDF 公式源，注册表 136→138/测试 1079）；波4 stock_daily_basic 改为立即开工（Owner 明令，详见 a1 台账波6）。本报告 §4/§5 的登记后续/波4 未启动状态已被追加令取代。
+
 ## 7. 运维终态
 
 - CH 宽表：36 新列全就位（探针 landed 36/36），夜跑 02:30 tilib_indicator_backfill_nightly 将自动回填新列历史；宽表当日零 INSERT 遵守（ALTER=元数据操作，批6/批8 配方）

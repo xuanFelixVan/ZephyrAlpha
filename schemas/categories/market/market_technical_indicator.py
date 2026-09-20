@@ -207,6 +207,9 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     ht_leadsine  Nullable(Float64)  COMMENT '超前45度正弦波',
     ht_trendmode Nullable(Float64)  COMMENT '趋势/循环模式(1趋势,0循环)',
     ebsw_40      Nullable(Float64)  COMMENT '40日Even Better Sine Wave',
+    continuation_40 Nullable(Float64)  COMMENT '40日延续指数(Laguerre+逆费雪,±1)',
+    gp_sig       Nullable(Float64)  COMMENT 'Griffiths带限归一信号',
+    gp_pred      Nullable(Float64)  COMMENT 'Griffiths线性预测(2步前推)',
     parkinson_20      Nullable(Float64)  COMMENT 'Parkinson波动率(高低极差)',
     garman_klass_20   Nullable(Float64)  COMMENT 'Garman-Klass波动率(OHLC)',
     rogers_satchell_20 Nullable(Float64)  COMMENT 'Rogers-Satchell波动率(漂移无关)',
@@ -315,7 +318,7 @@ INSERT_COLUMNS = (
     "bop, ppo, apo, dx_14, ar_26, br_26, cr_26, "
     "ac, fractal_high, fractal_low, bull_power_13, bear_power_13, coppock, squeeze_on, squeeze_mom, wt1, wt2, "
     "rmi_14, pfe_10, fosc_14, cti_12, vhf_28, er_10, "
-    "ht_dcperiod, ht_dcphase, ht_ip, ht_qp, ht_sine, ht_leadsine, ht_trendmode, ebsw_40, "
+    "ht_dcperiod, ht_dcphase, ht_ip, ht_qp, ht_sine, ht_leadsine, ht_trendmode, ebsw_40, continuation_40, gp_sig, gp_pred, "
     "parkinson_20, garman_klass_20, rogers_satchell_20, yang_zhang_20, chop_14, cvi, ulcer_14, "
     # 统计族
     "correl_30, beta_30, linearreg_14, tsf_14, var_20, "

@@ -70,7 +70,7 @@ scope: 07_trading_decision_architecture
 
 why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全周期回算后，策略可按栈取数（趋势层定方向、交易层定信号、入场层定点位），避免单周期信号的噪声交易。
 
-## 6. 指标清单（135 在产指标 / 198 输出列，已施工；注册 136 条含退役 1）
+## 6. 指标清单（137 在产指标 / 201 输出列，已施工；注册 138 条含退役 1）
 
 > 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 762 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
 > **48 指标 vs "MVP 只需 15-20 个"的裁定**：全部已施工且 470 测试已绿，**裁剪已完成的指标 = 删已绿代码 + 删表列，纯负收益**；指标是数据不是策略，多算一列的边际成本≈0（单表 Nullable 列），而策略侧"只用其中一部分"的选择自由始终在消费方。故维持全集（2026-09-14 扩至 92：标配+统计族+批 2a/2b+批 3+批 6 挖矿立卡全清偿）。
@@ -246,6 +246,8 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 | ht_sine | ht_sine/ht_leadsine | 无 | sin(累积相位) 与 sin(+45°)；交叉标记周期转折 |
 | ht_trendmode | ht_trendmode | 无 | 主导周期窗口内正弦交叉计数：少=趋势 1/多=循环 0 |
 | ebsw | ebsw_40 | 40/10 | Ehlers 带通正弦波 [-100,100]（批9-2，pandas-ta-classic 移植） |
+| continuation | continuation_40 | 40(γ0.8/o8) | 延续指数两态 ±1：Laguerre+UltimateSmoother 差值归一逆费雪（批9-4，TASC 2025-09 官网 PDF） |
+| gpred | gp_sig/gp_pred | 18/40/2 | Griffiths LMS 自适应线性预测器，2 步外推（批9-4，TASC 2025-01 官网 PDF；正弦领先性 corr 0.95） |
 
 ### 6.9 与 factor_registry 的正交边界
 
@@ -265,6 +267,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-09-20 | 1.10.0 | 批9-4 tilib 清欠班波5：M-L6 登记卡全清偿 +CONTINUATION/GPRED（循环 6→8）；全表 135→137 在产/198→200 列；公式源=mesasoftware.com 官网论文 PDF（Continuation Index TASC 2025-09 / Linear Predictive Filters TASC 2025-01），EasyLanguage 逐行移植；GPRED 正弦领先性实测 corr 0.9462 | Owner 追加令立卡未施工的你能施工吗→开工 |
 | 2026-09-20 | 1.9.0 | 批9-3 tilib 清欠班波3：M-L6 学术滤波器族 +SUPERSMOOTHER/HIGHPASS/PTREND（趋势 34→37）；全表 132→135 在产/194→198 列；挖矿报告=docs/_working/tilib_clearance/tilib_clear_a3_mining_report.md（TASC 2024-09 Precision Trend 正主施工；Griffiths 预测器/Continuation Index 立卡登记未施工，公式源未镜像） | 分包A 通宵总令波3（M-L6 复挖，批4 R5 受阻项清偿） |
 | 2026-09-20 | 1.8.0 | 批9-2 tilib 清欠班波2：M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER 波动+3、EBSW 循环+1、INERTIA/QSTICK 趋势+2、RMI/PFE/FOSC/CTI/VHF/ER 动量+6、WAD/VO/MARKETFI 量能+3、ZSCORE 统计+1）；全表 116→132 在产/178→194 列；同批治愈 cycle.py 行1 stale 蓝图号 001→029（注册表 5 条 cycle 条目同步）；PSL=PSY、MSW=ht_sine 同义不重复立条 | 分包A 通宵总令波2（M-L5 清欠 18→16 实作） |
 | 2026-09-20 | 1.7.0 | 批9-1 tilib 清欠班波1：+TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA（趋势 21→32）+AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE 价格变换 +LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR（统计 4→8）；全表 101→116 在产指标/162→178 列；黄金对照=本地 talib（MAMA/FAMA 逐位 0.0 偏差，回归四件 1e-12 级）；M-L3"LINEARREG_BAR"与既有 linearreg 同义不重复立条（清欠班裁①） | 分包A 通宵总令波1（M-L1/M-L2/M-L3 清欠 16→15 实作，缺口波3 学术挖矿补） |
