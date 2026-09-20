@@ -10,6 +10,7 @@ Usage:
 """
 
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_naming_manual.py | §
+# [ARCHIVED 2026-09-20] final3 P8/O-3（OPS-2026062109 任务卡闭环）：手工重命名辅助工具，所属命名战役时代结束（TTL 本就 task_bound），归档。
 # [MODULE] scripts.governance.d7_code.fix_naming_manual
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]

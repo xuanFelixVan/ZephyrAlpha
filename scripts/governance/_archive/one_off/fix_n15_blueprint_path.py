@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_n15_blueprint_path.py | §
+# [ARCHIVED 2026-09-20] final3 P8/O-3（OPS-2026062104 工单闭环）：6 月批量路径修正已落地；现存 23 处 stale 蓝图路径为 feedback_loop 重构（2026-07-13）后新漂移，归档；残余登记 P11 消化。
 # [MODULE] scripts.governance.d7_code.fix_n15_blueprint_path
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
@@ -194,7 +195,7 @@ def fix_file(file_path: Path) -> int:
     """修复单个文件中的 BLUEPRINT 头部路径，返回修复数量。"""
     try:
         content = file_path.read_text(encoding="utf-8", errors="replace")
-    except Exception:
+    except Exception:  # noqa: BLE001 — 归档存照（原代码原样，2026-09-20 W5-2 O-3）
         return EXIT_PASS
     original = content
     fix_count = 0
@@ -229,7 +230,7 @@ def fix_file(file_path: Path) -> int:
         try:
             file_path.write_text(content, encoding="utf-8")
             return fix_count
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 归档存照（原代码原样，2026-09-20 W5-2 O-3）
             print(f"  ERROR 写入失败 {file_path}: {e}")
             return EXIT_PASS
     return EXIT_PASS

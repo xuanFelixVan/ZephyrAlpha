@@ -1147,27 +1147,27 @@ items:
   name: detect_silent_degradation.py
   node_type: script
   status: active
-- file: scripts/governance/d7_code/fix_n06_scope.py
+- file: scripts/governance/_archive/one_off/fix_n06_scope.py
   name: fix_n06_scope.py
   node_type: script
   status: active
-- file: scripts/governance/d7_code/fix_n12_ke_naming.py
+- file: scripts/governance/_archive/one_off/fix_n12_ke_naming.py
   name: fix_n12_ke_naming.py
   node_type: script
   status: active
-- file: scripts/governance/d7_code/fix_n13_snake_case.py
+- file: scripts/governance/_archive/one_off/fix_n13_snake_case.py
   name: fix_n13_snake_case.py
   node_type: script
   status: active
-- file: scripts/governance/d7_code/fix_n14_init_all.py
+- file: scripts/governance/_archive/one_off/fix_n14_init_all.py
   name: fix_n14_init_all.py
   node_type: script
   status: active
-- file: scripts/governance/d7_code/fix_n15_blueprint_path.py
+- file: scripts/governance/_archive/one_off/fix_n15_blueprint_path.py
   name: fix_n15_blueprint_path.py
   node_type: script
   status: active
-- file: scripts/governance/d7_code/fix_naming_manual.py
+- file: scripts/governance/_archive/one_off/fix_naming_manual.py
   name: fix_naming_manual.py
   node_type: script
   status: active

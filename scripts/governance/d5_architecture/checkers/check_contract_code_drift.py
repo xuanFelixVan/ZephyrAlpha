@@ -16,7 +16,7 @@
 # [TTL] permanent
 """check_contract_code_drift.py —— 契约-代码双写漂移阻断（盲点 C2 修复）
 
-对标：AGENTS.md §6.5 契约-代码同步铁律
+对标：GATE-C2 契约-代码同步铁律（gate_registry.yaml）
       盲点 C2：AI 改 YAML 忘 codegen → 契约与代码漂移 → 硬阻断
 
 检测逻辑：

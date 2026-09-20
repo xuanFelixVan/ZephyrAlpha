@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_n06_scope.py | §
+# [ARCHIVED 2026-09-20] final3 P8/O-3（OPS-2026062106 工单闭环）：6 月正则修复交付后已被 R2 治本修订（2026-07-05）与架构树合并（2026-06-30）超越，一次性使命终结，归档。
 # [MODULE] scripts.governance.d7_code.fix_n06_scope
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]

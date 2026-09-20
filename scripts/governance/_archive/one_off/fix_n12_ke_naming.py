@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_n12_ke_naming.py | §
+# [ARCHIVED 2026-09-20] final3 P8/O-3（OPS-2026062103 工单闭环）：残余 ke 命名违规实测=0（find_ke_files 只读复核），工单完成，归档。
 # [MODULE] scripts.governance.d7_code.fix_n12_ke_naming
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
@@ -164,7 +165,7 @@ def update_references_in_file(file_path: Path, rename_map: dict[str, str]) -> in
     """更新单个文件中的引用，返回替换次数。"""
     try:
         content = file_path.read_text(encoding="utf-8", errors="replace")
-    except Exception:
+    except Exception:  # noqa: BLE001 — 归档存照（原代码原样，2026-09-20 W5-2 O-3）
         return EXIT_PASS
     original = content
     total_replacements = 0
@@ -179,7 +180,7 @@ def update_references_in_file(file_path: Path, rename_map: dict[str, str]) -> in
         try:
             file_path.write_text(content, encoding="utf-8")
             return total_replacements
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 归档存照（原代码原样，2026-09-20 W5-2 O-3）
             print(f"  ERROR 写入失败 {file_path}: {e}")
             return EXIT_PASS
     return EXIT_PASS

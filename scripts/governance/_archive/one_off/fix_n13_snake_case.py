@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_n13_snake_case.py | §
+# [ARCHIVED 2026-09-20] final3 P8/O-3（OPS-2026062108 工单闭环）：6 月批量重命名已落地；现存 kebab 文件为后续新增/策略豁免模式（skill-registry/clone_guard rules 等），归档；残余归常驻命名门禁管辖。
 # [MODULE] scripts.governance.d7_code.fix_n13_snake_case
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
@@ -173,7 +174,7 @@ def update_references_in_file(file_path: Path) -> int:
     """更新单个文件中的引用，返回替换次数。"""
     try:
         content = file_path.read_text(encoding="utf-8", errors="replace")
-    except Exception:
+    except Exception:  # noqa: BLE001 — 归档存照（原代码原样，2026-09-20 W5-2 O-3）
         return EXIT_PASS
     original = content
     total_replacements = 0
@@ -188,7 +189,7 @@ def update_references_in_file(file_path: Path) -> int:
         try:
             file_path.write_text(content, encoding="utf-8")
             return total_replacements
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 归档存照（原代码原样，2026-09-20 W5-2 O-3）
             print(f"  ERROR 写入失败 {file_path}: {e}")
             return EXIT_PASS
     return EXIT_PASS

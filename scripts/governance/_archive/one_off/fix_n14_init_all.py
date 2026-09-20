@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d7_code/fix_n14_init_all.py | §
+# [ARCHIVED 2026-09-20] final3 P8/O-3（OPS-2026062105 工单闭环）：6 月批量 __all__ 注入已落地；src+scripts 现存 9 件缺失为 campaign 后新增目录（vms/_tasks=2026-07-02 等），归档；残余登记 P11 消化。
 # [MODULE] scripts.governance.d7_code.fix_n14_init_all
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES]
@@ -124,7 +125,7 @@ def add_all_to_file(init_path: Path, all_names: list[str]) -> bool:
     """在 __init__.py 文件末尾追加 __all__ 定义。"""
     try:
         content = init_path.read_text(encoding="utf-8", errors="replace")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 归档存照（原代码原样，2026-09-20 W5-2 O-3）
         print(f"  [FAIL] 读取失败: {init_path} - {e}")
         return False
 
@@ -145,7 +146,7 @@ def add_all_to_file(init_path: Path, all_names: list[str]) -> bool:
         with open(tmp_path, "w", encoding="utf-8") as f:
             f.write(new_content)
         os.replace(tmp_path, init_path)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 归档存照（原代码原样，2026-09-20 W5-2 O-3）
         try:
             os.remove(tmp_path)  # ops-guard-exempt: 原子写临时文件清理（写完即删非数据删除）
         except OSError:
