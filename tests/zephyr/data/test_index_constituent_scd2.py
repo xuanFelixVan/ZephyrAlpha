@@ -23,7 +23,11 @@
 修复口径（同构 #209④ stock_list 闭旧先例）：新快照写入前查 CH 该指数 open 版本
 （valid_to IS NULL 且 trade_date < 新快照生效日），逐行产出同键闭合行
 （valid_to=新快照生效日，对齐 pit_query "valid_to > qt=有效" 语义）；
-新行不携 valid_to（NULL=开新）。同日盘前/盘后重跑互不闭合；闭旧失败不阻断开新。
+开新行 valid_to=None（NULL=开新）。2026-08-30 起闭旧批/开新批统一 7 列
+（BufferedWriter 列子句由首个 FetchResult 固定，混宽批次合并 flush 触发 CH
+TSV 解析 Code 27，见 akshare_provider._fetch_index_constituent docstring），
+开新语义改以 valid_to 值断言（None=开新，非列存在性）。
+同日盘前/盘后重跑互不闭合；闭旧失败不阻断开新。
 全部 mock akshare 与 ch_reader，不触网不触库。
 """
 
@@ -118,7 +122,7 @@ class _ConstituentStore:
     def apply(self, result) -> None:
         cols = list(result.columns)
         for row in result.rows:
-            rec = dict(zip(cols, row))
+            rec = dict(zip(cols, row, strict=True))
             key = (rec["index_code"], rec["trade_date"], rec["symbol"])
             rec.setdefault("valid_to", None)
             self.rows[key] = rec
@@ -164,8 +168,10 @@ class TestClosureRows:
             ("2026-08-14", "000300.SH", "600000.SH", "1.2340", "", "akshare_csindex", "2026-08-17"),
         ]
         assert new_batch.error is None
-        assert new_batch.columns == _BASE_COLUMNS  # 新行不携 valid_to（NULL=开新）
+        # 统一 7 列契约（2026-08-30）：开新批列同闭旧批；开新语义=valid_to None
+        assert new_batch.columns == [*_BASE_COLUMNS, "valid_to"]
         assert all(row[0] == "2026-08-17" for row in new_batch.rows)
+        assert all(row[-1] is None for row in new_batch.rows)  # NULL=开新
         # 闭旧查询口径：仅 open 且早于新快照生效日（同日/未来版本不闭合）
         assert any("valid_to IS NULL" in s and "trade_date < toDate('2026-08-17')" in s for s in captured_sql)
 
@@ -204,7 +210,8 @@ class TestClosureRows:
             store.apply(r)
         # 同日重跑
         results = _call_fetch(p, _payload(D(2026, 8, 17), D(2026, 8, 17)))
-        assert all("valid_to" not in r.columns for r in results)  # 无闭旧批
+        # 无闭旧批：统一 7 列契约下闭旧与否看 valid_to 值（闭旧=生效日，开新=None）
+        assert all(row[-1] is None for r in results for row in r.rows)
         for r in results:
             store.apply(r)
         assert len(store.open_versions("000300.SH", "000001.SZ")) == 1
@@ -228,7 +235,7 @@ class TestClosureGuards:
         results = _call_fetch(p, _payload(D(2026, 8, 17), D(2026, 8, 17)))
         assert len(results) == 5
         assert all(not r.error and r.rows == [] for r in results)
-        assert all("valid_to" not in r.columns for r in results)
+        # 空快照零行=零闭旧行（统一 7 列契约下列存在性与闭旧无关，语义由 rows==[]+called==[] 覆盖）
         assert called == []  # 空快照连 open 查询都不应发起
 
     def test_closure_query_failure_keeps_new_rows(self, monkeypatch):
@@ -243,5 +250,5 @@ class TestClosureGuards:
         results = _call_fetch(p, _payload(D(2026, 8, 17), D(2026, 8, 17)))
         assert len(results) == 5
         assert all(not r.error for r in results)
-        assert all("valid_to" not in r.columns for r in results)
+        assert all(row[-1] is None for r in results for row in r.rows)  # 仅开新行，无闭旧行
         assert results[0].rows[0][:2] == ("2026-08-17", "000300.SH")
