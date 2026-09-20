@@ -1,7 +1,7 @@
 ---
 title: "终极图书馆 · 骨架挖矿台账 v0.2"
 ttl: task_bound
-completes_when: Owner 批封顶声明；此后增枝须过停止判据并留理由
+completes_when: 封顶已声明（Owner 批 2026-09-21，见 §9）；本件转路由表+计分板，随骨架施工令推进
 date: "2026-09-21"
 owner: "ZephyrAlpha-Owner"
 session: "st-ulib-20260921"
@@ -106,3 +106,11 @@ status: "active"
 - 入口/工具支柱增补=vector_memory 8 collections（馆藏语义检索后端现成）+blueprint_search（19 蓝图路由）。
 - 文档馆验收证据候选=acceptance/（F-CHAINMAP 截图 9 件）。
 - 血肉矿补录清单（asset index 白名单外）：tools 937/vendor 138/acceptance 9/根 logs 480。
+
+## §9 封顶声明（Owner 批 2026-09-21）
+
+1. **骨架矿自本声明起封矿**。馆藏骨架=六馆×四支柱（§1 矩阵）+批3 增补（§8），结构冻结；此后增长=叶→实现（血肉矿），不再增枝。
+2. 增枝逃生：确需新支柱/新馆须过停止判据三问（生产者变/验证口径变/非标签变更）并在本件留批次记录，演化重开条件四条（新真源类型出现/新馆立项/MCP server 族扩容/PG 资产总线新表族）触发时自动重开批次。
+3. 血肉矿开工前置=骨架搭建施工令（资产 schema 定稿→INDEX 树 v0→指纹器→library_lookup v0，走 construction_workflow_policy）。
+4. 本件自封顶起转**路由表+计分板**角色（SOP §1 骨架三律）：血肉矿会话从本台账领条目，覆盖度汇报直接引用本台账计数。
+5. 批3 移交即办小件（§6.4）随骨架施工令同批处理，不单独开班。
