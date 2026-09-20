@@ -79,4 +79,4 @@ A 组 5 个文件跨三个班次存活（仍 staged、HEAD 无、无人 claim）
 
 ## 7. 执行冷启动提示
 
-按 AGENTS.md 第 0 节冷启动；提交必经 scripts/git_commit.py 或 commit_queue.py --enqueue；改前 claim 毕后 release；提交后 git log -1 --name-only 核归属。
+按 AGENTS.md 第 0 节冷启动；提交必经 scripts/git_commit.py 或 commit_queue.py --enqueue；改前 claim 毕后 release，claim/release/queue 一律在主仓 cwd，lock_files.py acquire TTL=30min、跨批复用必死信；提交后 git log -1 --name-only 核归属。

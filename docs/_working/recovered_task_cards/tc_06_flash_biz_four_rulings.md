@@ -14,6 +14,8 @@ completes_when: 全部卡执行完毕并归档后转 archived
 
 # TC-06 Flash 业务四项裁定题
 
+> **进度提示（09-21 04:13 更新）**：已有接班会话产出四张裁定卡于 docs/_working/recovered_task_cards/tc06_ruling_cards/（r1 结案/r2 三选项/r3 立项/r4 变形重启，均 staged 待其落袋）——接手本卡先读这四件，勿重复产卡；剩余动作=Owner 对四卡点单+连库复测待办（步骤 5）。
+
 ## 0. 一句话结论
 
 原调查取证班（产四张裁定卡交 Owner）**零产物**——.runtime/tmp/exp/review4r/ 不存在、git 零提交、docs 零归档。而且四题的客体现状在任务书写后已大幅变化：R1 的 ETF 五表时区修复**已于 09-18 由 st-tdchain 车道执行完毕**（4.12 亿行转正、备份在库），只是 known_data_gaps/实验台账/原工单三处登记都没回写；R4 的判据脚本与基线快照随 .runtime/tmp/exp/ 整棵消失，且做T 复活的引用口径已从裁定 #304 改号为 #331，另有新裁定 #386 判"300ETF 波段策略禁复试图救"。本卡的活=半天文书：R1 结案回写 + R2/R3/R4 三张裁定卡按新基线产出。
@@ -51,7 +53,7 @@ completes_when: 全部卡执行完毕并归档后转 archived
 | 步骤 | 做什么 | 涉及文件全路径 | 验收判据 | 路由 |
 |---|---|---|---|---|
 | 1 | R1 结案卡+登记回写：known_data_gaps 该条目 status 改 resolved+补执行证据（60ed3aa49c）；experiments_ledger.md 回写 | src/zephyr/data/config/known_data_gaps.yaml、docs/_working/kimi_audit/experiments_ledger.md | 三处登记与执行终态一致；备份五表物理删除留 Owner 门位 | Flash 施工+Owner 确认 |
-| 2 | R2 卡照产：选项 A=挂起等新数据/补样本重考；B=立项 E2/E3 走完整通道；C=放弃候选——各选项依据+建议+理由，引用预注册卡原文 | data/backtest_artifacts/runs/E4-E1C09-P3-E1C-09/、docs/_working/kimi_audit/lane_reports/p3_prereg/P3-E1C-09.md | 四值复核通过；禁改任何放行状态 | Owner 裁定 |
+| 2 | R2 卡照产：选项 A=挂起等新数据/补样本重考；B=立项 E2/E3 走完整通道；C=放弃候选——各选项依据+建议+理由，引用预注册卡原文 | data/backtest_artifacts/runs/E4-E1C09-P3-E1C-09/、docs/_working/kimi_audit/lane_reports/p3_prereg/P3-E1C-09.md | 四值复核通过并与 P3 登记侧对照（oos sharpe 2.027/IS 1.469/DSR 0.732，全容差内）；禁改任何放行状态 | Owner 裁定 |
 | 3 | R3 卡修正基线后产：注明 F03 原件已失、判据从 P6.md+gaps resolution_plan 重建；工作量=引擎产侧真实 order_type 枚举+algo_id 落地 | docs/_working/kimi_audit/lane_reports/P6.md、known_data_gaps resolution_plan 节 | 卡中基线与当前 HEAD 一致 | Owner 裁定（建议 A=挂 X 流验证批） |
 | 4 | R4 卡变形重启：重建 cost_trio 判据（落 docs/scripts 禁 tmp）；#304 引用全部改 #331+勘误注记；披露与 #386"禁复试图救"的张力；kline_5min 8,195 行另开工单选项有效 | 新卡落 docs/_working/（禁 .runtime/tmp）；引用 docs/_working/archive/2026-09/flash_biz/biz2_t0_pairs_disclosure.md | 样本大于等于 30 复测需重建脚本后连库（列待办） | Owner 裁定 |
 | 5 | 需连库复测项（写入卡待办，不阻塞）：五表 remaining_utc=0 抽验、kline_5min 零星行是否仍 8,195/扩大、*_tz_bak_20260918 五表在库核验 | CH（经 DatabaseService 只读） | 复测结果回填卡片 | Flash（连库时） |
