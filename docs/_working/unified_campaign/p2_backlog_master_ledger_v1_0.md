@@ -53,7 +53,7 @@ issue: UNIFIED-CAMPAIGN-001-P2-LEDGER
 |---|---|---|---|---|---|---|
 | C1 | tilib 三件套主体（34 指标+注册表 138+测试 1079+批9 数据批） | tilib_clear_a5（3424a718e7..509db008fb） | **核销**（本日 git log 复核五 commit 全在 HEAD） | — | — | — |
 | C2 | stock_daily_basic 每日增量挂 tasks.yaml（`scripts/data/backfill_stock_daily_basic.py --source tushare`） | 交接包 §3 批9 配方（**新路径** archive/2026-09/c_class_scattered/2026-09-15-tilib-handoff.md） | **活** | 甲·W4·WO-4 | 0.5 天 | **Owner**（tasks.yaml=签字⑨） |
-| C3 | 批10 筹码族三件套 CYQ/SCR/CYC（chips_winner/chips_avg_cost/chips_cost_5/chips_cost_95+SCR 集中度+CYC 成本均线；注册表 138→141） | 交接包 §3 批10（新路径同上）+design_memos/16 号 memo | **活**（原料 stock_daily_basic 705 万行已就绪） | 甲·W4·WO-4 | 1-2 天 | — |
+| C3 | 批10 筹码族三件套 CYQ/SCR/CYC（chips_winner/chips_avg_cost/chips_cost_5/chips_cost_95+SCR 集中度+CYC 成本均线；注册表 138→141）；【扩项 2026-09-21 tc_10 挂接】+chips_cost_15/chips_cost_85 两列+CHIP_CONC_90/CHIP_CONC_70 两指标（70%/90% 集中度），计数目标=基线日实测+5（09-21 夜实测 138→145） | 交接包 §3 批10（新路径同上）+design_memos/16 号 memo+docs/_working/collection_intake/factors/factor_spec_chip_concentration.md（扩项真源，Owner 今夜范围令第1波回写） | **活**（原料 stock_daily_basic 705 万行已就绪） | 甲·W4·WO-4 | 1-2 天 | — |
 | C4 | reversal.py 行1 [BLUEPRINT] 计数散文 stale+旧路径 token 残留（无害小尾巴） | tilib_clear_a5 §5 登记债① | **活** | 丙·W5·WO-16 R10（顺手批） | 0.5 小时 | — |
 | C5 | 210 列夜跑验收核销——**2026-09-20 实测升级**：02:30 夜跑 04:03 因 CH Code 241（内存总闸 7.05GiB）阵亡，BufferedWriter 缓冲 132,834 行丢失（fallback 目录空壳实证），最新学术列 gp_pred/gp_sig/continuation_40/highpass_40/supersmoother_10 近月 0% 回填 | .runtime/tmp/tilib-probe/backfill_night.log 尾部+本班 CH 探针 | **活（活体断供）** | 甲·W2·WO-2（断供止血族）→ 验收核销归甲·W4 R15 | 0.5-1 天（重跑+回灌+验收） | — |
 | C6 | D 盘水位治理（28G→29G 实测；4T 冷搬/退役决策） | 交接包遗留①+包④ §2 | **活** | 乙线全线（W1/W5/W6 各波分担） | 见乙指令 | Owner（签字④⑥⑧） |

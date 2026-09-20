@@ -36,10 +36,10 @@ issue: UNIFIED-CAMPAIGN-001-P2-WORKORDERS
 
 ## WO-4（甲·W4）tilib 延续批（勘误丢失项①②归位）
 - **前置**：乙 W1 落地后（D 空间协议）；TI OPTIMIZE 若排队中先让（同表互斥）。
-- **目标**：C3 批10 筹码族三件套 CYQ/SCR/CYC（chips_winner/chips_avg_cost/chips_cost_5/chips_cost_95 迭代衰减算法+SCR 集中度+CYC 成本均线通达信口径；注册表 138→141）；C2 stock_daily_basic 每日增量挂 tasks.yaml；C5 尾款=210 列验收核销（探针思路 .runtime/tmp/tilib-probe/audit_all_cols.py，全部新列分批验收留痕）。
+- **目标**：C3 批10 筹码族三件套 CYQ/SCR/CYC（chips_winner/chips_avg_cost/chips_cost_5/chips_cost_95 迭代衰减算法+SCR 集中度+CYC 成本均线通达信口径；注册表 138→141；【扩项 2026-09-21 tc_10 挂接批·Owner 今夜范围令第1波】+chips_cost_15/chips_cost_85 两列+CHIP_CONC_90/CHIP_CONC_70 两指标（70%/90% 筹码集中度；真源 docs/_working/collection_intake/factors/factor_spec_chip_concentration.md，intake 侧「并入批10」承诺此前未回写本工单，本段即回写）；注册表计数目标改为基线日实测+5（2026-09-21 夜实测 138 条=HEAD 零漂移，即 138→145；开工日以 grep -cE "^- indicator_id:" 重测为准，tc_10 卡调查时点曾记 140 以实测为准））；C2 stock_daily_basic 每日增量挂 tasks.yaml；C5 尾款=210 列验收核销（探针思路 .runtime/tmp/tilib-probe/audit_all_cols.py，全部新列分批验收留痕）。
 - **真源**：`docs/_working/archive/2026-09/c_class_scattered/2026-09-15-tilib-handoff.md` §3 批10（新路径！）+`design_memos/16_technical_indicator_catalog.md`（活真源，勿归档）+tilib a5 交付报告。
 - **文件白名单**：src/zephyr/factor/technical_indicators/**、tests/zephyr/factor/**、technical_indicator_registry.yaml、16 号 memo、tasks.yaml（仅签字⑨批后）。
-- **红证双向**：新指标单测+注册表计数 138→141；CYQ 抽样复算（如 000852 获利盘比例手工复算对齐）；验收=新列回填非零率>95%（近月）。
+- **红证双向**：新指标单测+注册表计数 基线+5（@09-21 实测 138→145，含扩项 CHIP_CONC_90/70）；CYQ 抽样复算（如 000852 获利盘比例手工复算对齐）；验收=新列回填非零率>95%（近月）。
 - **时间盒**：1.5-2 天｜**避让**：CH 写入走 ch_writer；东财拒连→tushare；夜跑窗查声明板。
 - **验收**：注册表 v1.5.0→v1.6.0+测试全绿+210 列验收台账闭环。
 
