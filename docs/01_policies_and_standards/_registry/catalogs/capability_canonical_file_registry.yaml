@@ -41931,4 +41931,14 @@ creation_tokens:
   capability: recovered_task_cards
   merge_evaluation: "11条遗留任务回收清点：11调查代理+2复验代理产出任务卡目录README+11卡，替代散落交接令的人工盘点"
   merge_evaluation: "同真源可派生：WO-2 断供止血六链交付报告（六链修前红证/修后绿证双向实测+停因根因+夜跑恢复计划），任务边界内独立事件报告，无既有条目可合并，随 data_fix_campaign TTL 处置"
+- file: docs/_working/flash_speedup/t1_worktree_base_conflict_patch_backup.md
+  token: flash-speedup-t1-patch-backup-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "TC-03步骤0护资产：T10备份目录灭失后把在盘唯一副本(+8/+26)重建为.md载体补丁备份，替代已消失的.runtime/tmp补丁备份"
+- file: docs/_working/automation/campaign/HANDOFF_20260921_ab_league.md
+  token: autolnk-handoff-ab-league-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "TC-11步骤0护资产：第五棒交接簿(09-21 00:45 staged未提交)落袋防丢，保护性接管非第五棒开工"
 di_seam_exemptions: []
