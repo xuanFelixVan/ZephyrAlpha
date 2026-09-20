@@ -58,11 +58,18 @@ from zephyr.data.provider_base import (
     IngestProviderBase,
     IngestProviderMeta,
 )
+from zephyr.data.table_registry import get_registry
 
 log = logging.getLogger(__name__)
 
 # 指数估值计算默认标的（S2 消费方）
 _DEFAULT_SYMBOLS: Final = ["000300", "000905", "399006"]
+
+# 目标表（TableRegistry 真源，#ARCH-CH-024——禁硬编码表名字符串）
+_TBL_IVD: Final = get_registry().table("market_index_valuation_daily")
+
+# 表内该 symbol 首个交易日（全史读窗起点探测，§5.160.2 SQL 集中化）
+_SQL_HIST_MIN: Final = "SELECT min(trade_date) FROM {table} FINAL WHERE symbol = '{symbol}'"  # noqa: bare-sql  本行即集中化常量本体（表名经 TableRegistry 注入），非散落 SQL
 
 # CAPE 窗口：1250 交易日 ≈ 5 年
 _CAPE_WINDOW: Final = 1250
@@ -193,35 +200,54 @@ class IndexValuationComputeProvider(IngestProviderBase):
           - index_valuation_daily: PE_TTM（已落库原始序列）
           - kline_index: close（CAPE 分子）
           - macro_data: CPI（indicator_name='CPI' 或 '中国CPI月率报告'）和 10Y 国债
+
+        WO-1 估值双修（2026-09-20 st-data-fix-20260921）读窗治本：CAPE(rolling
+        1250/min 750) 与全历史扩展窗分位都是**全史函数**，而调度器
+        _compute_start_date 对非增量任务返回月初——按 payload.start 读会把
+        分位算在 ~2.5 周窗口上（rank 样本 ≪ 窗口，结果纯噪声）。故本方法恒从
+        表内该 symbol 首个交易日读全史（幂等全量回写，同 kline_index_calc_refresh
+        口径），start 参数仅作表无数据时的兜底下界。
         """
         from zephyr.data import ch_reader
 
-        # 1. 读 index_valuation_daily 已有 PE_TTM 序列
+        # 1. 读 index_valuation_daily 已有 PE_TTM 序列（恒全史——分位/CAPE 是全史函数）
+        (hist_min,) = ch_reader.query(_SQL_HIST_MIN.format(table=_TBL_IVD, symbol=symbol)).strip().split("\t")[:1] or [
+            ""
+        ]
+        read_start = start
+        if hist_min and hist_min not in ("\\N", "1970-01-01", ""):
+            try:
+                hist_date = datetime.date.fromisoformat(hist_min)
+                if hist_date < read_start:
+                    read_start = hist_date
+            except ValueError:
+                pass
+
         sql_pe = (
             f"SELECT trade_date, pe_ttm, dividend_yield "
             f"FROM c1_market.index_valuation_daily FINAL "
             f"WHERE symbol = '{symbol}' "
-            f"AND trade_date >= '{start.isoformat()}' AND trade_date <= '{end.isoformat()}' "
+            f"AND trade_date >= '{read_start.isoformat()}' AND trade_date <= '{end.isoformat()}' "
             f"ORDER BY trade_date"
         )
         tsv_pe = ch_reader.query(sql_pe)
         pe_df = self._parse_tsv(tsv_pe, ["trade_date", "pe_ttm", "dividend_yield"])
         if pe_df.empty:
-            self._log.warning("index_valuation_daily 无数据 symbol=%s [%s~%s]", symbol, start, end)
+            self._log.warning("index_valuation_daily 无数据 symbol=%s [%s~%s]", symbol, read_start, end)
             return []
 
-        # 2. 读 kline_index close（CAPE 分子）
+        # 2. 读 kline_index close（CAPE 分子；同口径全史读）
         sql_close = (
             f"SELECT trade_date, close "
             f"FROM c1_market.kline_index FINAL "
             f"WHERE symbol = '{symbol}' "
-            f"AND trade_date >= '{start.isoformat()}' AND trade_date <= '{end.isoformat()}' "
+            f"AND trade_date >= '{read_start.isoformat()}' AND trade_date <= '{end.isoformat()}' "
             f"ORDER BY trade_date"
         )
         tsv_close = ch_reader.query(sql_close)
         close_df = self._parse_tsv(tsv_close, ["trade_date", "close"])
         if close_df.empty:
-            self._log.warning("kline_index 无数据 symbol=%s [%s~%s]", symbol, start, end)
+            self._log.warning("kline_index 无数据 symbol=%s [%s~%s]", symbol, read_start, end)
             return []
 
         # 合并 PE + close（inner join，仅保留双源都有数据的交易日）
@@ -232,11 +258,12 @@ class IndexValuationComputeProvider(IngestProviderBase):
         df["close"] = pd.to_numeric(df["close"], errors="coerce")
         df["dividend_yield"] = pd.to_numeric(df["dividend_yield"], errors="coerce")
 
-        # 3. 读 CPI（月度，通胀调整）
-        cpi_series = self._load_cpi_series(start, end)
+        # 3. 读 CPI（月度，通胀调整）——read_start 全史口径（与 PE 读窗一致，月度 ffill）
+        cpi_series = self._load_cpi_series(read_start, end)
 
-        # 4. 读 10Y 国债收益率（ERP）
-        bond_series = self._load_bond_10y_series(start, end)
+        # 4. 读 10Y 国债收益率（ERP）——read_start 全史口径（reindex+ffill 只前向不回填，
+        #    短窗读会让全史 ERP 全 NaN）
+        bond_series = self._load_bond_10y_series(read_start, end)
 
         # 5. 计算真 CAPE
         cape_5y = self._compute_cape_5y(df, cpi_series)

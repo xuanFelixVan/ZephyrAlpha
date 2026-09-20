@@ -370,18 +370,41 @@ tables:
   # 但 close/amount/turnover 非零命中 0 行（pe_ttm 非零 87111/87377=99.7%）→
   # 派生只算估值比、行情三列恒 0 = 错数进闭环。本腿点亮后**必红**，红是对的方向：
   # 修复属派生车道（处方 lanes/sentinel_daily_valuation_prescription.md），禁为过检降级断言。
+  # 2026-09-20 修复落地（st-data-fix-20260921，行情腿自 kline_daily 回填+交易日 gate）：
+  # 修后实测 FINAL 188,922 行 close>0=99.91%（169 行=退市/停牌长尾无 K 线源，合法缺席），
+  # min_ratio 0.95 维持不降——腿由红转绿即管线修复凭证。
+  # 2026-09-20 深夜更正 cols [close,amount,turnover]→[close,amount]：回填后发现
+  # turnover 在**数据源 kline_daily 本身**近窗非零率 344/38,893=0.9%（全史 15%，
+  # miniqmt/EM 日K 不带换手率）——回填如实拷贝源零，非管线写 0。turnover 可信派生
+  # 需流通股本 PIT 表（栈内暂无，缺口已登记 known_data_gaps daily_valuation 条目
+  # resolution_plan 遗留项）。保留 turnover 在腿里=结构性永久红=告警疲劳必被拔线
+  # （BRK-046 同型），故拆出；close/amount 足以锚定"行情腿非零"判据本意。
   - table: c1_market.daily_valuation
     date_col: trade_date
     max_lag_days: 5
     past_only: true
     column_fill_ratio:
-      cols: [close, amount, turnover]
+      cols: [close, amount]
       min_ratio: 0.95
       window_days: 10
       treat_zero_as_missing: true
+    # 0 行成功告警腿（WO-1 2026-09-20 补）：治"akshare 返回空但任务报成功"——
+    # 7 日窗行数地板 2000（正常单交易日 ~5,550 行，0 行成功/整周停更均击穿地板）。
+    # 窗口含周末属日历口径，7 自然日≈5 交易日，地板取 0.4 个交易日量级=只捕近全停。
+    min_rows_in_window:
+      window_days: 7
+      min_rows: 2000
+    leg_name: "行情腿非零率+0行地板"
 
   # --- ⑤哨兵在岗=0 的其余表补阈值行（片段原值，实测锚已逐表复核）---
   # 指数估值日频：计算列实测 8125/8125 行全 NULL（含 08-01 起 72 行）→ 非空率腿立即真红
+  # 2026-09-20 修复落地（st-data-fix-20260921）+ 窗口修档 0→30：window_days=0 全表口径
+  # 会把两类**结构性缺席**永久计入——①cape_5y rolling(1250,min750) 数学 warmup 区
+  # （2010~2014-11 每符号 1173 行，非管线病）；②erp 早期 10Y 国债源稀疏
+  # （2010~2012-09 共 848 行，源端史缺非停更）。永久红腿=告警疲劳=必被后人拔线
+  # （BRK-046 同型），故改 30 日近窗：compute 日频腿（index_valuation_daily_compute_daily）
+  # 停跑/断供数日内 cape_5y/pe_pct/erp 近窗非空率即击穿 0.9，管线存活牙口保留。
+  # 修后实测（2026-09-20）：30 日窗三列非空率 100%，腿绿。
   - table: c1_market.index_valuation_daily
     date_col: trade_date
     max_lag_days: 7
@@ -389,8 +412,9 @@ tables:
     column_fill_ratio:
       cols: [cape_5y, pe_pct, erp]
       min_ratio: 0.9
-      window_days: 0
+      window_days: 30
       treat_zero_as_missing: false
+    leg_name: "计算列近窗非空率"
 
   # 北向持股快照：季度末快照（实测 max=2026-06-30，Q3 要等 09-30）→ 跨季档 120 天
   - table: c1_market.northbound_hold_snapshot

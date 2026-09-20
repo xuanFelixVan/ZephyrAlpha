@@ -752,8 +752,7 @@ _INDEX_VALUATION_PRESERVED_COLS: Final[tuple[str, ...]] = (
     "buffett_ratio",
 )
 _INDEX_VALUATION_PRESERVE_PRED: Final[str] = (
-    "cape_5y IS NOT NULL OR cape_5y_pct IS NOT NULL OR pe_pct IS NOT NULL "
-    "OR erp IS NOT NULL OR pb_mrq IS NOT NULL"
+    "cape_5y IS NOT NULL OR cape_5y_pct IS NOT NULL OR pe_pct IS NOT NULL OR erp IS NOT NULL OR pb_mrq IS NOT NULL"
 )
 _DAILY_VALUATION_PRESERVED_COLS: Final[tuple[str, ...]] = (
     "open",
@@ -767,8 +766,7 @@ _DAILY_VALUATION_PRESERVED_COLS: Final[tuple[str, ...]] = (
     "pct_change",
 )
 _DAILY_VALUATION_PRESERVE_PRED: Final[str] = (
-    "toFloat64(`close`) != 0 OR toFloat64(`amount`) != 0 OR volume != 0 "
-    "OR toFloat64(`turnover`) != 0"
+    "toFloat64(`close`) != 0 OR toFloat64(`amount`) != 0 OR volume != 0 OR toFloat64(`turnover`) != 0"
 )
 _PRESERVE_QUERY_TIMEOUT_SEC: Final[int] = 120
 # 探值 SQL 里内联标的名单的上限（超过则改走"整窗口一次读、不按 symbol 过滤"）
@@ -777,6 +775,40 @@ _PRESERVE_MAX_SYMBOLS: Final[int] = 200
 _VALUATION_RESUME_SKIP_DONE: Final[bool] = True
 # 触发续跑预查的最小窗口天数（≥此天数视为重采语义，而非日常增量）
 _VALUATION_RESUME_MIN_WINDOW_DAYS: Final[int] = 15
+
+# --- WO-1 估值双修（2026-09-20 st-data-fix-20260921，裁定#380 推荐案②）---
+# 交易日 gate + 行情腿真源。病-2 实证：百度估值能力不产行情九列 → 非 Nullable
+# Decimal 落 0（271,266 行 close>0 命中 0 行），且 writer 无交易日 gate → 15 个
+# 非交易日 82,344 污染行（周六 43,510 + 周日 38,834，trade_calendar 判定）。
+# 治本：①行情九列自 kline_daily 读回（任务 DAG 前置 kline_daily_incremental，
+# 增量日当日日 K 先落库）；②写入前按 trade_calendar(is_open=1) 拦截非交易日行。
+# 09-18 处方 lanes/sentinel_daily_valuation_prescription.md "禁写 0" 意图由
+# "交易日必有价、非交易日必无行"满足，免 16 列 Nullable DDL 手术。
+_TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
+_TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
+_SQL_TRADE_DAY_SET = (
+    "SELECT DISTINCT cal_date FROM {table} FINAL WHERE is_open = 1 AND cal_date >= '{start}' AND cal_date <= '{end}'"
+)
+# preclose 不在 kline_daily（change=今收-昨收），读回侧以 close-change Decimal 精确
+# 推导（2026-09-20 抽 000001 五日实测 change/(close-change)*100 与 pct_change 吻合）
+_SQL_KLINE_PRICE_LEG = (
+    "SELECT trade_date, symbol, open, high, low, close, change, "
+    "volume, amount, turnover, pct_change FROM {table} FINAL "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}'"
+)
+# 行情九列名（_fetch_daily_valuation 的 columns 契约，含推导列 preclose）
+_KLINE_PRICE_LEG_COLS: Final[tuple[str, ...]] = (
+    "open",
+    "high",
+    "low",
+    "close",
+    "preclose",
+    "volume",
+    "amount",
+    "turnover",
+    "pct_change",
+)
+_KLINE_PRICE_LEG_QUERY_TIMEOUT_SEC: Final[int] = 120
 
 
 @dataclass(frozen=True)
@@ -818,11 +850,7 @@ def _parse_preserved_tsv(tsv: str, value_cols: tuple[str, ...]) -> dict:
         fields = line.split("\t")
         if len(fields) != 2 + len(value_cols):
             continue
-        vals = {
-            col: raw
-            for col, raw in zip(value_cols, fields[2:])
-            if raw not in ("", "\\N", "NULL")
-        }
+        vals = {col: raw for col, raw in zip(value_cols, fields[2:], strict=False) if raw not in ("", "\\N", "NULL")}
         if vals:
             parsed[(fields[0], fields[1])] = vals
     return parsed
@@ -1717,13 +1745,9 @@ class AkshareIngestProvider(IngestProviderBase):
         if resume_wide_window or not payload.incremental:
             done_symbols = self._load_valuation_complete_symbols(table, start_str, end_str)
             if done_symbols:
-                kept = [
-                    s for s in symbols
-                    if str(s).split(".")[0].zfill(6) not in done_symbols
-                ]
+                kept = [s for s in symbols if str(s).split(".")[0].zfill(6) not in done_symbols]
                 self._log.info(
-                    f"daily_valuation 续跑: {len(symbols)} → {len(kept)} 只待补"
-                    f"（已完成 {len(done_symbols)} 只跳过）"
+                    f"daily_valuation 续跑: {len(symbols)} → {len(kept)} 只待补（已完成 {len(done_symbols)} 只跳过）"
                 )
                 symbols = kept
                 if not symbols:
@@ -1738,9 +1762,11 @@ class AkshareIngestProvider(IngestProviderBase):
                     return
         # BRK-034 同款止血：行情腿（open..pct_change）本能力不产出（置 None→非 Nullable
         # 列落成 0），重灌前携带库中既有真值，防把别的写者的行情腿抹成 0。
-        preserved_price = self._load_preserved_valuation_values(
-            _DAILY_VALUATION_PRESERVE_SPEC, [], start_str, end_str
-        )
+        preserved_price = self._load_preserved_valuation_values(_DAILY_VALUATION_PRESERVE_SPEC, [], start_str, end_str)
+        # WO-1 估值双修（2026-09-20）：交易日 gate + 行情腿真源 kline_daily
+        # （病-2 治本：九列 0 值与非交易日污染行不再产生，见常量块注）
+        trade_days = self._load_trade_day_set(start_str, end_str)
+        price_leg = self._load_kline_price_leg(start_str, end_str)
 
         # 指标映射: (AKShare indicator, 目标列名)
         indicators = [
@@ -1790,6 +1816,9 @@ class AkshareIngestProvider(IngestProviderBase):
                     self._log.info(f"daily_valuation 完成进度: {done}/{total}")
                 if len(batch_rows) >= 500:
                     pending = batch_rows[:]
+                    # WO-1 估值双修：先交易日 gate 后价格腿回填，再派生值携带
+                    self._apply_trade_day_gate(pending, columns, trade_days, table)
+                    self._apply_kline_price_leg(pending, columns, price_leg)
                     self._apply_preserved_map(pending, columns, preserved_price)
                     yield FetchResult(
                         table=table,
@@ -1800,6 +1829,8 @@ class AkshareIngestProvider(IngestProviderBase):
                     )
                     batch_rows.clear()
 
+        self._apply_trade_day_gate(batch_rows, columns, trade_days, table)
+        self._apply_kline_price_leg(batch_rows, columns, price_leg)
         self._apply_preserved_map(batch_rows, columns, preserved_price)
         yield FetchResult(
             table=table,
@@ -2446,9 +2477,7 @@ class AkshareIngestProvider(IngestProviderBase):
             while page <= total_pages:
                 params = dict(self._GDHS_BASE_PARAMS)
                 params["pageNumber"] = str(page)
-                params["filter"] = (
-                    f"(HOLD_NOTICE_DATE>='{start_str}')(HOLD_NOTICE_DATE<='{end_str}')"
-                )
+                params["filter"] = f"(HOLD_NOTICE_DATE>='{start_str}')(HOLD_NOTICE_DATE<='{end_str}')"
                 resp = requests.get(self._GDHS_DATACENTER_URL, params=params, timeout=15)
                 resp.raise_for_status()
                 data_json = resp.json()
@@ -2640,8 +2669,18 @@ class AkshareIngestProvider(IngestProviderBase):
         import akshare as ak
 
         table = _TBL_MACRO_PRICE_GAUGE
-        columns = ["report_date", "cpi_index", "cpi_yoy", "cpi_mom", "cpi_cum",
-                   "ppi_index", "ppi_yoy", "ppi_cum", "data_source", "quality_flag"]
+        columns = [
+            "report_date",
+            "cpi_index",
+            "cpi_yoy",
+            "cpi_mom",
+            "cpi_cum",
+            "ppi_index",
+            "ppi_yoy",
+            "ppi_cum",
+            "data_source",
+            "quality_flag",
+        ]
         last_key = payload.end.isoformat()
         t0 = time.monotonic()
 
@@ -2670,8 +2709,12 @@ class AkshareIngestProvider(IngestProviderBase):
         error = "; ".join(errors) if errors else None
         rows = _macro_emit_rows(merged, ("akshare", 1))
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
-            elapsed_sec=time.monotonic() - t0, error=error,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+            error=error,
         )
 
     def _fetch_macro_pmi_gauge(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
@@ -2683,8 +2726,17 @@ class AkshareIngestProvider(IngestProviderBase):
         import akshare as ak
 
         table = _TBL_MACRO_PMI_GAUGE
-        columns = ["report_date", "pmi_mfg", "pmi_mfg_yoy", "pmi_nonmfg", "pmi_nonmfg_yoy",
-                   "caixin_mfg", "caixin_services", "data_source", "quality_flag"]
+        columns = [
+            "report_date",
+            "pmi_mfg",
+            "pmi_mfg_yoy",
+            "pmi_nonmfg",
+            "pmi_nonmfg_yoy",
+            "caixin_mfg",
+            "caixin_services",
+            "data_source",
+            "quality_flag",
+        ]
         last_key = payload.end.isoformat()
         t0 = time.monotonic()
 
@@ -2692,8 +2744,11 @@ class AkshareIngestProvider(IngestProviderBase):
         merged: dict[str, list] = {}
         errors: list[str] = []
         jobs = (
-            ("macro_china_pmi", "月份",
-             {"制造业-指数": 0, "制造业-同比增长": 1, "非制造业-指数": 2, "非制造业-同比增长": 3}),
+            (
+                "macro_china_pmi",
+                "月份",
+                {"制造业-指数": 0, "制造业-同比增长": 1, "非制造业-指数": 2, "非制造业-同比增长": 3},
+            ),
             ("macro_china_cx_pmi_yearly", "日期", {"今值": 4}),
             ("macro_china_cx_services_pmi_yearly", "日期", {"今值": 5}),
         )
@@ -2707,7 +2762,11 @@ class AkshareIngestProvider(IngestProviderBase):
                 continue
             for _, row in df.iterrows():
                 # 东财 wide 用统计月；金十用公布日换算统计月（次月公布口径）
-                eom = _macro_month_key(row.get(key_col)) if key_col == "月份" else _macro_publish_to_stat_eom(row.get(key_col))
+                eom = (
+                    _macro_month_key(row.get(key_col))
+                    if key_col == "月份"
+                    else _macro_publish_to_stat_eom(row.get(key_col))
+                )
                 if not eom:
                     continue
                 slot = _macro_slot(merged, eom, 6)
@@ -2717,8 +2776,12 @@ class AkshareIngestProvider(IngestProviderBase):
         error = "; ".join(errors) if errors else None
         rows = _macro_emit_rows(merged, ("akshare", 1))
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
-            elapsed_sec=time.monotonic() - t0, error=error,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+            error=error,
         )
 
     def _fetch_macro_credit_money(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
@@ -2730,8 +2793,21 @@ class AkshareIngestProvider(IngestProviderBase):
         import akshare as ak
 
         table = _TBL_MACRO_CREDIT_MONEY
-        columns = ["report_date", "sf_increment", "sf_rmb_loans", "new_rmb_loans", "new_rmb_loans_cum",
-                   "m0", "m0_yoy", "m1", "m1_yoy", "m2", "m2_yoy", "data_source", "quality_flag"]
+        columns = [
+            "report_date",
+            "sf_increment",
+            "sf_rmb_loans",
+            "new_rmb_loans",
+            "new_rmb_loans_cum",
+            "m0",
+            "m0_yoy",
+            "m1",
+            "m1_yoy",
+            "m2",
+            "m2_yoy",
+            "data_source",
+            "quality_flag",
+        ]
         last_key = payload.end.isoformat()
         t0 = time.monotonic()
 
@@ -2740,14 +2816,20 @@ class AkshareIngestProvider(IngestProviderBase):
         merged: dict[str, list] = {}
         errors: list[str] = []
         jobs = (
-            ("macro_china_shrzgm", "月份",
-             {"社会融资规模增量": 0, "其中-人民币贷款": 1}),
-            ("macro_china_new_financial_credit", "月份",
-             {"当月": 2, "累计": 3}),
-            ("macro_china_supply_of_money", "统计时间",
-             {"流通中现金(M0)": 4, "流通中现金(M0)同比增长": 5,
-              "货币(狭义货币M1)": 6, "货币(狭义货币M1)同比增长": 7,
-              "货币和准货币（广义货币M2）": 8, "货币和准货币（广义货币M2）同比增长": 9}),
+            ("macro_china_shrzgm", "月份", {"社会融资规模增量": 0, "其中-人民币贷款": 1}),
+            ("macro_china_new_financial_credit", "月份", {"当月": 2, "累计": 3}),
+            (
+                "macro_china_supply_of_money",
+                "统计时间",
+                {
+                    "流通中现金(M0)": 4,
+                    "流通中现金(M0)同比增长": 5,
+                    "货币(狭义货币M1)": 6,
+                    "货币(狭义货币M1)同比增长": 7,
+                    "货币和准货币（广义货币M2）": 8,
+                    "货币和准货币（广义货币M2）同比增长": 9,
+                },
+            ),
         )
         for fn_name, key_col, col_map in jobs:
             try:
@@ -2768,8 +2850,12 @@ class AkshareIngestProvider(IngestProviderBase):
         error = "; ".join(errors) if errors else None
         rows = _macro_emit_rows(merged, ("akshare", 1))
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
-            elapsed_sec=time.monotonic() - t0, error=error,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+            error=error,
         )
 
     def _fill_macro_unemployment(self, policy: SourcePolicy, merged: dict, errors: list[str]) -> None:
@@ -2805,9 +2891,20 @@ class AkshareIngestProvider(IngestProviderBase):
         import akshare as ak
 
         table = _TBL_MACRO_ACTIVITY_GAUGE
-        columns = ["report_date", "industrial_va_yoy", "industrial_va_cum_yoy", "retail_sales",
-                   "retail_sales_yoy", "retail_sales_cum", "retail_cum_yoy", "fai_ytd", "fai_yoy",
-                   "urban_unemployment", "data_source", "quality_flag"]
+        columns = [
+            "report_date",
+            "industrial_va_yoy",
+            "industrial_va_cum_yoy",
+            "retail_sales",
+            "retail_sales_yoy",
+            "retail_sales_cum",
+            "retail_cum_yoy",
+            "fai_ytd",
+            "fai_yoy",
+            "urban_unemployment",
+            "data_source",
+            "quality_flag",
+        ]
         last_key = payload.end.isoformat()
         t0 = time.monotonic()
 
@@ -2817,8 +2914,7 @@ class AkshareIngestProvider(IngestProviderBase):
         errors: list[str] = []
         wide_jobs = (
             ("macro_china_gyzjz", {"同比增长": 0, "累计增长": 1}),
-            ("macro_china_consumer_goods_retail",
-             {"当月": 2, "同比增长": 3, "累计": 4, "累计-同比增长": 5}),
+            ("macro_china_consumer_goods_retail", {"当月": 2, "同比增长": 3, "累计": 4, "累计-同比增长": 5}),
             ("macro_china_gdzctz", {"自年初累计": 6, "同比增长": 7}),
         )
         for fn_name, col_map in wide_jobs:
@@ -2841,8 +2937,12 @@ class AkshareIngestProvider(IngestProviderBase):
         error = "; ".join(errors) if errors else None
         rows = _macro_emit_rows(merged, ("akshare", 1))
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
-            elapsed_sec=time.monotonic() - t0, error=error,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+            error=error,
         )
 
     def _fetch_macro_trade_gauge(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
@@ -2854,9 +2954,21 @@ class AkshareIngestProvider(IngestProviderBase):
         import akshare as ak
 
         table = _TBL_MACRO_TRADE_GAUGE
-        columns = ["report_date", "export_usd100m", "export_yoy", "export_mom", "import_usd100m",
-                   "import_yoy", "import_mom", "export_cum_usd100m", "export_cum_yoy",
-                   "import_cum_usd100m", "import_cum_yoy", "data_source", "quality_flag"]
+        columns = [
+            "report_date",
+            "export_usd100m",
+            "export_yoy",
+            "export_mom",
+            "import_usd100m",
+            "import_yoy",
+            "import_mom",
+            "export_cum_usd100m",
+            "export_cum_yoy",
+            "import_cum_usd100m",
+            "import_cum_yoy",
+            "data_source",
+            "quality_flag",
+        ]
         last_key = payload.end.isoformat()
         t0 = time.monotonic()
 
@@ -2872,25 +2984,31 @@ class AkshareIngestProvider(IngestProviderBase):
                 eom = _macro_month_key(row.get("月份"))
                 if not eom:
                     continue
-                rows.append((
-                    eom,
-                    _macro_wan_usd(row.get("当月出口额-金额")),
-                    safe_float_strict(row.get("当月出口额-同比增长")),
-                    safe_float_strict(row.get("当月出口额-环比增长")),
-                    _macro_wan_usd(row.get("当月进口额-金额")),
-                    safe_float_strict(row.get("当月进口额-同比增长")),
-                    safe_float_strict(row.get("当月进口额-环比增长")),
-                    _macro_wan_usd(row.get("累计出口额-金额")),
-                    safe_float_strict(row.get("累计出口额-同比增长")),
-                    _macro_wan_usd(row.get("累计进口额-金额")),
-                    safe_float_strict(row.get("累计进口额-同比增长")),
-                    "akshare",
-                    1,
-                ))
+                rows.append(
+                    (
+                        eom,
+                        _macro_wan_usd(row.get("当月出口额-金额")),
+                        safe_float_strict(row.get("当月出口额-同比增长")),
+                        safe_float_strict(row.get("当月出口额-环比增长")),
+                        _macro_wan_usd(row.get("当月进口额-金额")),
+                        safe_float_strict(row.get("当月进口额-同比增长")),
+                        safe_float_strict(row.get("当月进口额-环比增长")),
+                        _macro_wan_usd(row.get("累计出口额-金额")),
+                        safe_float_strict(row.get("累计出口额-同比增长")),
+                        _macro_wan_usd(row.get("累计进口额-金额")),
+                        safe_float_strict(row.get("累计进口额-同比增长")),
+                        "akshare",
+                        1,
+                    )
+                )
 
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
-            elapsed_sec=time.monotonic() - t0, error=error,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+            error=error,
         )
 
     def _fetch_macro_daily_gauge(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
@@ -2902,9 +3020,17 @@ class AkshareIngestProvider(IngestProviderBase):
         import akshare as ak
 
         table = _TBL_MACRO_DAILY_GAUGE
-        columns = ["trade_date", "coal_inventory", "daily_consumption", "coal_available_days",
-                   "commodity_price_index", "energy_price_index", "construction_price_index",
-                   "data_source", "quality_flag"]
+        columns = [
+            "trade_date",
+            "coal_inventory",
+            "daily_consumption",
+            "coal_available_days",
+            "commodity_price_index",
+            "energy_price_index",
+            "construction_price_index",
+            "data_source",
+            "quality_flag",
+        ]
         last_key = payload.end.isoformat()
         t0 = time.monotonic()
 
@@ -2937,8 +3063,12 @@ class AkshareIngestProvider(IngestProviderBase):
         error = "; ".join(errors) if errors else None
         rows = _macro_emit_rows(merged, ("akshare", 1))
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
-            elapsed_sec=time.monotonic() - t0, error=error,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+            error=error,
         )
 
     # ---- 6f. D5 跨资产 H4：中债收益率曲线（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）----
@@ -2967,20 +3097,32 @@ class AkshareIngestProvider(IngestProviderBase):
             start = payload.end - datetime.timedelta(days=window_days)
             try:
                 df = self._call_with_policy(
-                    ak.bond_china_yield, policy,
+                    ak.bond_china_yield,
+                    policy,
                     start_date=start.strftime("%Y%m%d"),
                     end_date=payload.end.strftime("%Y%m%d"),
                 )
             except Exception as e:  # noqa: BLE001 — 单源失败 FAIL-VISIBLE 走集成器重试/告警
-                yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                                  elapsed_sec=time.monotonic() - t0, error=f"bond_china_yield 失败: {str(e)[:120]}")
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key="",
+                    elapsed_sec=time.monotonic() - t0,
+                    error=f"bond_china_yield 失败: {str(e)[:120]}",
+                )
                 return
             if df is not None and len(df) > 0:
                 break
         if df is None or len(df) == 0:
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error="bond_china_yield 零行（源异常或窗口越界），拒绝写库（FAIL-VISIBLE）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="bond_china_yield 零行（源异常或窗口越界），拒绝写库（FAIL-VISIBLE）",
+            )
             return
         rows: list[tuple] = []
         for _, row in df.iterrows():
@@ -2990,17 +3132,32 @@ class AkshareIngestProvider(IngestProviderBase):
                 continue
             for src_col, (tenor, tenor_years) in TENOR_MAP.items():
                 ytm = safe_float_strict(row.get(src_col))  # NaN/空→None（曲线末端无值期限如实 NULL）
-                rows.append((
-                    day, curve, tenor, tenor_years,
-                    (f"{ytm:.6f}" if ytm is not None else None),
-                    "akshare_chinamoney", 1,
-                ))
+                rows.append(
+                    (
+                        day,
+                        curve,
+                        tenor,
+                        tenor_years,
+                        (f"{ytm:.6f}" if ytm is not None else None),
+                        "akshare_chinamoney",
+                        1,
+                    )
+                )
         if not rows:
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0, error="解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）",
+            )
             return
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
             elapsed_sec=time.monotonic() - t0,
         )
 
@@ -3039,48 +3196,90 @@ class AkshareIngestProvider(IngestProviderBase):
 
         table = _TBL_MARKET_FUND_FLOW_DAILY
         columns = [
-            "trade_date", "sh_close", "sh_pct_chg", "sz_close", "sz_pct_chg",
-            "main_net", "main_net_pct", "super_net", "super_net_pct",
-            "big_net", "big_net_pct", "mid_net", "mid_net_pct",
-            "small_net", "small_net_pct", "data_source", "quality_flag",
+            "trade_date",
+            "sh_close",
+            "sh_pct_chg",
+            "sz_close",
+            "sz_pct_chg",
+            "main_net",
+            "main_net_pct",
+            "super_net",
+            "super_net_pct",
+            "big_net",
+            "big_net_pct",
+            "mid_net",
+            "mid_net_pct",
+            "small_net",
+            "small_net_pct",
+            "data_source",
+            "quality_flag",
         ]
         last_key = payload.end.isoformat()
         t0 = time.monotonic()
         try:
             df = self._call_with_policy(ak.stock_market_fund_flow, policy)
         except Exception as e:  # noqa: BLE001 — 单源失败 FAIL-VISIBLE 走集成器重试/告警
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error=f"stock_market_fund_flow 失败: {str(e)[:120]}")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"stock_market_fund_flow 失败: {str(e)[:120]}",
+            )
             return
         if df is None or len(df) == 0:
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error="stock_market_fund_flow 零行（源异常），拒绝写库（FAIL-VISIBLE）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="stock_market_fund_flow 零行（源异常），拒绝写库（FAIL-VISIBLE）",
+            )
             return
         rows: list[tuple] = []
         for _, row in df.iterrows():
             day = self._norm_date_strict(row.get("日期"))
             if not day:
                 continue
-            vals = [safe_float_strict(row.get(c)) for c in (
-                "上证-收盘价", "上证-涨跌幅", "深证-收盘价", "深证-涨跌幅",
-                "主力净流入-净额", "主力净流入-净占比",
-                "超大单净流入-净额", "超大单净流入-净占比",
-                "大单净流入-净额", "大单净流入-净占比",
-                "中单净流入-净额", "中单净流入-净占比",
-                "小单净流入-净额", "小单净流入-净占比",
-            )]
+            vals = [
+                safe_float_strict(row.get(c))
+                for c in (
+                    "上证-收盘价",
+                    "上证-涨跌幅",
+                    "深证-收盘价",
+                    "深证-涨跌幅",
+                    "主力净流入-净额",
+                    "主力净流入-净占比",
+                    "超大单净流入-净额",
+                    "超大单净流入-净占比",
+                    "大单净流入-净额",
+                    "大单净流入-净占比",
+                    "中单净流入-净额",
+                    "中单净流入-净占比",
+                    "小单净流入-净额",
+                    "小单净流入-净占比",
+                )
+            ]
             num = [f"{v:.4f}" if v is not None else None for v in vals]
             rows.append(tuple([day, *num, "akshare_em", 1]))
         if not rows:
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error="market_fund_flow 解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="market_fund_flow 解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）",
+            )
             return
         self._log.info(f"market_fund_flow: {len(rows)} 行（东财大盘，全窗口重放）")
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
             elapsed_sec=time.monotonic() - t0,
         )
 
@@ -3096,23 +3295,46 @@ class AkshareIngestProvider(IngestProviderBase):
 
         table = _TBL_ETF_SHARE_SNAPSHOT
         columns = [
-            "trade_date", "symbol", "name", "spot_price", "iopv", "premium_disc_pct",
-            "volume", "amount", "turnover_pct", "main_net", "main_net_pct",
-            "shares", "circ_mv", "total_mv", "data_source", "quality_flag",
+            "trade_date",
+            "symbol",
+            "name",
+            "spot_price",
+            "iopv",
+            "premium_disc_pct",
+            "volume",
+            "amount",
+            "turnover_pct",
+            "main_net",
+            "main_net_pct",
+            "shares",
+            "circ_mv",
+            "total_mv",
+            "data_source",
+            "quality_flag",
         ]
         last_key = payload.end.isoformat()
         t0 = time.monotonic()
         try:
             df = self._call_with_policy(ak.fund_etf_spot_em, policy)
         except Exception as e:  # noqa: BLE001 — 单源失败 FAIL-VISIBLE 走集成器重试/告警
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error=f"fund_etf_spot_em 失败: {str(e)[:120]}")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"fund_etf_spot_em 失败: {str(e)[:120]}",
+            )
             return
         if df is None or len(df) == 0:
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error="fund_etf_spot_em 零行（源异常），拒绝写库（FAIL-VISIBLE）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="fund_etf_spot_em 零行（源异常），拒绝写库（FAIL-VISIBLE）",
+            )
             return
         rows: list[tuple] = []
         for _, row in df.iterrows():
@@ -3121,20 +3343,40 @@ class AkshareIngestProvider(IngestProviderBase):
             if not code or not day:
                 continue
             name = str(row.get("名称") or "").strip()
-            vals = [safe_float_strict(row.get(c)) for c in (
-                "最新价", "IOPV实时估值", "基金折价率", "成交量", "成交额", "换手率",
-                "主力净流入-净额", "主力净流入-净占比", "最新份额", "流通市值", "总市值",
-            )]
+            vals = [
+                safe_float_strict(row.get(c))
+                for c in (
+                    "最新价",
+                    "IOPV实时估值",
+                    "基金折价率",
+                    "成交量",
+                    "成交额",
+                    "换手率",
+                    "主力净流入-净额",
+                    "主力净流入-净占比",
+                    "最新份额",
+                    "流通市值",
+                    "总市值",
+                )
+            ]
             num = [f"{v:.4f}" if v is not None else None for v in vals]
             rows.append(tuple([day, code, name, *num, "akshare_em", 1]))
         if not rows:
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error="etf_share_snapshot 解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="etf_share_snapshot 解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）",
+            )
             return
         self._log.info(f"etf_share_snapshot: {len(rows)} 行（东财 ETF 快照积累）")
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
             elapsed_sec=time.monotonic() - t0,
         )
 
@@ -3152,21 +3394,36 @@ class AkshareIngestProvider(IngestProviderBase):
             if rank_raw is None:
                 continue
             rank = int(rank_raw)
-            vals = [safe_float_strict(row.get(c)) for c in (
-                "vol", "vol_chg", "long_open_interest", "long_open_interest_chg",
-                "short_open_interest", "short_open_interest_chg",
-            )]
+            vals = [
+                safe_float_strict(row.get(c))
+                for c in (
+                    "vol",
+                    "vol_chg",
+                    "long_open_interest",
+                    "long_open_interest_chg",
+                    "short_open_interest",
+                    "short_open_interest_chg",
+                )
+            ]
             num = [f"{v:.2f}" if v is not None else None for v in vals]
-            rows.append((
-                str(symbol_default).strip(), variety, rank,
-                str(row.get("vol_party_name") or "").strip(),
-                num[0], num[1],
-                str(row.get("long_party_name") or "").strip(),
-                num[2], num[3],
-                str(row.get("short_party_name") or "").strip(),
-                num[4], num[5],
-                "akshare_cffex", 1,
-            ))
+            rows.append(
+                (
+                    str(symbol_default).strip(),
+                    variety,
+                    rank,
+                    str(row.get("vol_party_name") or "").strip(),
+                    num[0],
+                    num[1],
+                    str(row.get("long_party_name") or "").strip(),
+                    num[2],
+                    num[3],
+                    str(row.get("short_party_name") or "").strip(),
+                    num[4],
+                    num[5],
+                    "akshare_cffex",
+                    1,
+                )
+            )
         return rows
 
     def _fetch_cffex_member_ranking(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
@@ -3183,10 +3440,21 @@ class AkshareIngestProvider(IngestProviderBase):
 
         table = _TBL_CFFEX_MEMBER_RANKING
         columns = [
-            "trade_date", "symbol", "variety", "rank",
-            "vol_party", "vol", "vol_chg",
-            "long_party", "long_oi", "long_oi_chg",
-            "short_party", "short_oi", "short_oi_chg", "data_source", "quality_flag",
+            "trade_date",
+            "symbol",
+            "variety",
+            "rank",
+            "vol_party",
+            "vol",
+            "vol_chg",
+            "long_party",
+            "long_oi",
+            "long_oi_chg",
+            "short_party",
+            "short_oi",
+            "short_oi_chg",
+            "data_source",
+            "quality_flag",
         ]
         last_key = payload.end.isoformat()
         t0 = time.monotonic()
@@ -3206,7 +3474,9 @@ class AkshareIngestProvider(IngestProviderBase):
         for day in days:
             try:
                 tables = self._call_with_policy(
-                    ak.get_cffex_rank_table, policy, date=day.strftime("%Y%m%d"),
+                    ak.get_cffex_rank_table,
+                    policy,
+                    date=day.strftime("%Y%m%d"),
                 )
             except Exception as e:  # noqa: BLE001 — 单日失败跳过（次日重放窗口自愈），全失败由零行 FAIL-VISIBLE 兜底
                 self._log.warning(f"cffex_member_ranking {day} 获取失败: {str(e)[:120]}")
@@ -3221,13 +3491,21 @@ class AkshareIngestProvider(IngestProviderBase):
                 for row in self._cffex_parse_contract_day(df, str(sym)):
                     rows.append((day_iso, *row[1:]))
         if not rows:
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error=f"cffex_member_ranking 零行（days={len(days)} 全失败或源异常），拒绝写库（FAIL-VISIBLE）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"cffex_member_ranking 零行（days={len(days)} 全失败或源异常），拒绝写库（FAIL-VISIBLE）",
+            )
             return
         self._log.info(f"cffex_member_ranking: {fetched_days}/{len(days)} 日 {len(rows)} 行（中金所前20会员）")
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
             elapsed_sec=time.monotonic() - t0,
         )
 
@@ -3243,11 +3521,27 @@ class AkshareIngestProvider(IngestProviderBase):
 
         table = _TBL_CB_CLAUSE
         columns = [
-            "snapshot_date", "bond_code", "bond_name", "stock_code", "stock_name",
-            "bond_price", "scale", "remain_scale",
-            "conv_start_date", "last_trade_date", "maturity_date", "conv_price",
-            "redeem_trigger_ratio", "redeem_trigger_price", "stock_price", "redeem_price",
-            "redeem_count_desc", "redeem_clause", "redeem_status", "data_source", "quality_flag",
+            "snapshot_date",
+            "bond_code",
+            "bond_name",
+            "stock_code",
+            "stock_name",
+            "bond_price",
+            "scale",
+            "remain_scale",
+            "conv_start_date",
+            "last_trade_date",
+            "maturity_date",
+            "conv_price",
+            "redeem_trigger_ratio",
+            "redeem_trigger_price",
+            "stock_price",
+            "redeem_price",
+            "redeem_count_desc",
+            "redeem_clause",
+            "redeem_status",
+            "data_source",
+            "quality_flag",
         ]
         snapshot_day = payload.end.isoformat()
         last_key = snapshot_day
@@ -3255,14 +3549,24 @@ class AkshareIngestProvider(IngestProviderBase):
         try:
             df = self._call_with_policy(ak.bond_cb_redeem_jsl, policy)
         except Exception as e:  # noqa: BLE001 — 单源失败 FAIL-VISIBLE 走集成器重试/告警
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error=f"bond_cb_redeem_jsl 失败: {str(e)[:120]}")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"bond_cb_redeem_jsl 失败: {str(e)[:120]}",
+            )
             return
         if df is None or len(df) == 0:
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error="bond_cb_redeem_jsl 零行（源异常），拒绝写库（FAIL-VISIBLE）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="bond_cb_redeem_jsl 零行（源异常），拒绝写库（FAIL-VISIBLE）",
+            )
             return
 
         def _clean_text(v) -> str:
@@ -3280,30 +3584,62 @@ class AkshareIngestProvider(IngestProviderBase):
             name = str(row.get("名称") or "").strip()
             stock_code = str(row.get("正股代码") or "").strip()
             stock_name = str(row.get("正股名称") or "").strip()
-            vals = [safe_float_strict(row.get(c)) for c in (
-                "现价", "规模", "剩余规模", "转股价", "强赎触发比", "强赎触发价",
-                "正股价", "强赎价",
-            )]
+            vals = [
+                safe_float_strict(row.get(c))
+                for c in (
+                    "现价",
+                    "规模",
+                    "剩余规模",
+                    "转股价",
+                    "强赎触发比",
+                    "强赎触发价",
+                    "正股价",
+                    "强赎价",
+                )
+            ]
             num = [f"{v:.4f}" if v is not None else None for v in vals]
             dates = [self._norm_date_strict(row.get(c)) for c in ("转股起始日", "最后交易日", "到期日")]
-            rows.append((
-                snapshot_day, code, name, stock_code, stock_name,
-                num[0], num[1], num[2],
-                dates[0], dates[1], dates[2], num[3],
-                num[4], num[5], num[6], num[7],
-                _clean_text(row.get("强赎天计数")),
-                _clean_text(row.get("强赎条款")),
-                _clean_text(row.get("强赎状态")),
-                "akshare_jsl", 1,
-            ))
+            rows.append(
+                (
+                    snapshot_day,
+                    code,
+                    name,
+                    stock_code,
+                    stock_name,
+                    num[0],
+                    num[1],
+                    num[2],
+                    dates[0],
+                    dates[1],
+                    dates[2],
+                    num[3],
+                    num[4],
+                    num[5],
+                    num[6],
+                    num[7],
+                    _clean_text(row.get("强赎天计数")),
+                    _clean_text(row.get("强赎条款")),
+                    _clean_text(row.get("强赎状态")),
+                    "akshare_jsl",
+                    1,
+                )
+            )
         if not rows:
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.monotonic() - t0,
-                              error="convertible_bond_clause 解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=[],
+                last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="convertible_bond_clause 解析零行（列名漂移?），拒绝写库（FAIL-VISIBLE）",
+            )
             return
         self._log.info(f"convertible_bond_clause: {len(rows)} 行（集思录条款快照 {snapshot_day}）")
         yield FetchResult(
-            table=table, columns=columns, rows=rows, last_key=last_key,
+            table=table,
+            columns=columns,
+            rows=rows,
+            last_key=last_key,
             elapsed_sec=time.monotonic() - t0,
         )
 
@@ -4153,7 +4489,7 @@ class AkshareIngestProvider(IngestProviderBase):
         m = _RE_RESEARCH_INFOCODE.search(link)
         if m:
             return m.group(1)
-        return "md5_" + hashlib.md5(f"{code}|{title}|{pub_date}".encode("utf-8")).hexdigest()
+        return "md5_" + hashlib.md5(f"{code}|{title}|{pub_date}".encode()).hexdigest()
 
     @staticmethod
     def _parse_research_report_detail_row(code: str, row) -> tuple | None:
@@ -4181,11 +4517,19 @@ class AkshareIngestProvider(IngestProviderBase):
             str(row.get("行业") or "").strip(),
             str(row.get("研究员") or "").strip(),
             pub_date,
-            fy[0], eps.get(fy[0]), pe.get(fy[0]),
-            fy[1], eps.get(fy[1]), pe.get(fy[1]),
-            fy[2], eps.get(fy[2]), pe.get(fy[2]),
+            fy[0],
+            eps.get(fy[0]),
+            pe.get(fy[0]),
+            fy[1],
+            eps.get(fy[1]),
+            pe.get(fy[1]),
+            fy[2],
+            eps.get(fy[2]),
+            pe.get(fy[2]),
             link,
-            0, "", "akshare_research_report_em",
+            0,
+            "",
+            "akshare_research_report_em",
         )
 
     def _load_existing_report_ids(self, table: str) -> set[str]:
@@ -4201,9 +4545,7 @@ class AkshareIngestProvider(IngestProviderBase):
         return existing
 
     @staticmethod
-    def _research_detail_row_kept(
-        parsed: tuple | None, win_start: str, win_end: str, existing_ids: set[str]
-    ) -> bool:
+    def _research_detail_row_kept(parsed: tuple | None, win_start: str, win_end: str, existing_ids: set[str]) -> bool:
         """行级三重过滤：解析有效 + publish_date ∈ [win_start, win_end] + report_id 未在库。"""
         if parsed is None:
             return False
@@ -4394,9 +4736,7 @@ class AkshareIngestProvider(IngestProviderBase):
             )
         return rows
 
-    def _load_trade_days_for_window(
-        self, start: datetime.date, end: datetime.date
-    ) -> set[str] | None:
+    def _load_trade_days_for_window(self, start: datetime.date, end: datetime.date) -> set[str] | None:
         """窗口内 A 股交易日集合（is_open=1）；CH 不可达返回 None（调用方降级周末守卫）。
 
         LUE-2 周末幽灵行守卫的日历查询位（裁定#257⑤）：返回 None 时调用方仍按
@@ -4406,9 +4746,7 @@ class AkshareIngestProvider(IngestProviderBase):
             from zephyr.data import ch_reader as _chr
 
             tsv = _chr.query(
-                _SQL_TRADE_DAYS_WINDOW.format(
-                    table=_TBL_TRADE_CALENDAR, start=start.isoformat(), end=end.isoformat()
-                )
+                _SQL_TRADE_DAYS_WINDOW.format(table=_TBL_TRADE_CALENDAR, start=start.isoformat(), end=end.isoformat())
             )
             days = {ln.strip() for ln in (tsv or "").splitlines() if ln.strip()}
             return days or None
@@ -5544,11 +5882,7 @@ class AkshareIngestProvider(IngestProviderBase):
                 return set()
             from zephyr.data import ch_reader
 
-            tsv = ch_reader.query(
-                _SQL_INDICATOR_COMPLETE_KEYS.format(
-                    table=table, start=start_str, end=end_str
-                )
-            )
+            tsv = ch_reader.query(_SQL_INDICATOR_COMPLETE_KEYS.format(table=table, start=start_str, end=end_str))
             keys: set[tuple[str, str]] = set()
             for line in tsv.splitlines():
                 line = line.strip()
@@ -5561,6 +5895,14 @@ class AkshareIngestProvider(IngestProviderBase):
         except Exception as e:  # noqa: BLE001 — 去重失败降级不阻断采集
             self._log.warning(f"stock_indicator 完成键预查失败（降级为直接重插）: {e}")
             return set()
+
+    #: st-data-fix-20260921 链1 治本：fetch 段 socket 默认超时（秒）。
+    #: 根因=ak.stock_value_em 底层 requests 未设 timeout，半死连接 recv 无界阻塞，
+    #: worker 挂死→as_completed 停摆→整 run STALE 回收（09-15/09-18 两度断供实测：
+    #: 分别停在 2200/5565 与 1300/5565 后零日志）。socket 超时是 per-recv 停滞界限，
+    #: 不限制仍在流动的慢传输；到点抛 TimeoutError 交 policy retry_on 重试。
+    #: 作用域仅本 fetch 执行期（finally 恢复原值），进程级其余调用不受影响。
+    _INDICATOR_SOCKET_TIMEOUT_SEC = 30
 
     def _fetch_stock_indicator(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取指标数据(PE/PB/PS/PCF/市值)，写入 c1_market.stock_indicator。
@@ -5610,49 +5952,58 @@ class AkshareIngestProvider(IngestProviderBase):
 
         _MAX_WORKERS = 4  # 保守并发，与 _fetch_daily_valuation 一致
 
-        with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as ex:
-            future_to_code = {}
-            for idx, sym in enumerate(symbols):
-                code = str(sym).split(".")[0].zfill(6)
-                fut = ex.submit(
-                    self._collect_indicator_rows,
-                    ak,
-                    policy,
-                    code,
-                    start_str,
-                    end_str,
-                )
-                future_to_code[fut] = code
-                if (idx + 1) % 100 == 0:
-                    self._log.info(f"stock_indicator 提交进度: {idx + 1}/{len(symbols)}")
+        # st-data-fix-20260921 链1 治本：本 fetch 执行期设 socket 默认超时护栏，
+        # 把无 timeout 的 requests 半死连接挂死转成 TimeoutError（finally 恢复原值）。
+        import socket as _socket
 
-            done = 0
-            total = len(future_to_code)
-            skipped = 0
-            for fut in as_completed(future_to_code):
-                code = future_to_code[fut]
-                try:
-                    rows = fut.result()
-                except Exception as e:  # noqa: BLE001 — 5.135治标
-                    self._log.warning(f"stock_indicator {code} 并行任务异常: {e}")
-                    rows = []
-                if complete_keys:
-                    fresh = [r for r in rows if (r[0], r[1]) not in complete_keys]
-                    skipped += len(rows) - len(fresh)
-                    rows = fresh
-                batch_rows.extend(rows)
-                done += 1
-                if done % 100 == 0:
-                    self._log.info(f"stock_indicator 完成进度: {done}/{total}")
-                if len(batch_rows) >= 500:
-                    yield FetchResult(
-                        table=table,
-                        columns=columns,
-                        rows=batch_rows[:],
-                        last_key=last_key,
-                        elapsed_sec=time.monotonic() - t0,
+        _prev_timeout = _socket.getdefaulttimeout()
+        _socket.setdefaulttimeout(self._INDICATOR_SOCKET_TIMEOUT_SEC)
+        try:
+            with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as ex:
+                future_to_code = {}
+                for idx, sym in enumerate(symbols):
+                    code = str(sym).split(".")[0].zfill(6)
+                    fut = ex.submit(
+                        self._collect_indicator_rows,
+                        ak,
+                        policy,
+                        code,
+                        start_str,
+                        end_str,
                     )
-                    batch_rows.clear()
+                    future_to_code[fut] = code
+                    if (idx + 1) % 100 == 0:
+                        self._log.info(f"stock_indicator 提交进度: {idx + 1}/{len(symbols)}")
+
+                done = 0
+                total = len(future_to_code)
+                skipped = 0
+                for fut in as_completed(future_to_code):
+                    code = future_to_code[fut]
+                    try:
+                        rows = fut.result()
+                    except Exception as e:  # noqa: BLE001 — 5.135治标
+                        self._log.warning(f"stock_indicator {code} 并行任务异常: {e}")
+                        rows = []
+                    if complete_keys:
+                        fresh = [r for r in rows if (r[0], r[1]) not in complete_keys]
+                        skipped += len(rows) - len(fresh)
+                        rows = fresh
+                    batch_rows.extend(rows)
+                    done += 1
+                    if done % 100 == 0:
+                        self._log.info(f"stock_indicator 完成进度: {done}/{total}")
+                    if len(batch_rows) >= 500:
+                        yield FetchResult(
+                            table=table,
+                            columns=columns,
+                            rows=batch_rows[:],
+                            last_key=last_key,
+                            elapsed_sec=time.monotonic() - t0,
+                        )
+                        batch_rows.clear()
+        finally:
+            _socket.setdefaulttimeout(_prev_timeout)
 
         if skipped:
             self._log.info(
@@ -6279,9 +6630,7 @@ class AkshareIngestProvider(IngestProviderBase):
         """加载某报告期已有数据的 6 位股票集合（skip-if-exists 判定用）。"""
         from zephyr.data import ch_reader
 
-        out = ch_reader.query(
-            SQL_TOP10_REPORTED_SYMBOLS.format(table=table, qe=qe.isoformat())
-        )
+        out = ch_reader.query(SQL_TOP10_REPORTED_SYMBOLS.format(table=table, qe=qe.isoformat()))
         return {line.strip() for line in out.split("\n") if line.strip()}
 
     def _fetch_futures_position(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
@@ -6504,11 +6853,7 @@ class AkshareIngestProvider(IngestProviderBase):
         for ts_code in symbols:
             sym = ts_code.split(".")[0].zfill(6) if "." in ts_code else ts_code.zfill(6)
             # 裸代码（symbols=null 契约）走前缀推导；带点 ts_code 走原转换
-            em_code = (
-                self._ts_code_to_em(ts_code)
-                if "." in ts_code
-                else self._bare_code_to_em(ts_code.zfill(6))
-            )
+            em_code = self._ts_code_to_em(ts_code) if "." in ts_code else self._bare_code_to_em(ts_code.zfill(6))
             for qe in quarter_ends:
                 done = covered.get(qe)
                 if done is not None and sym in done:
@@ -6527,8 +6872,7 @@ class AkshareIngestProvider(IngestProviderBase):
                     if consecutive_fail % 200 == 1:
                         # 失败可见性（X-7）：原 debug 级静默吞掉 KeyError 致断供两月无人知
                         self._log.warning(
-                            f"stock_gdfx_top_10_em 连续失败 {consecutive_fail} 次"
-                            f"（最近: {em_code},{date_str}）: {e}"
+                            f"stock_gdfx_top_10_em 连续失败 {consecutive_fail} 次（最近: {em_code},{date_str}）: {e}"
                         )
                     continue
                 consecutive_fail = 0
@@ -7003,30 +7347,30 @@ class AkshareIngestProvider(IngestProviderBase):
             str(r.get("转股代码", "") or ""),
             str(r.get("正股代码", "") or "").zfill(6),
             str(r.get("正股简称", "") or ""),
-            0.0,   # issue_term 新结构无发行期限
-            0.0,   # par_value 新结构无面值
-            0.0,   # issue_price 新结构无发行价格
+            0.0,  # issue_term 新结构无发行期限
+            0.0,  # par_value 新结构无面值
+            0.0,  # issue_price 新结构无发行价格
             safe_float(r.get("发行规模")) or 0.0,
-            0.0,   # bond_balance 新结构无债券余额
+            0.0,  # bond_balance 新结构无债券余额
             AkshareIngestProvider._norm_date_str(r.get("申购日期")) or "1970-01-01",
             "1970-01-01",  # end_date 新结构无截止日期
-            "",    # rate_type 新结构无利率类型
-            0.0,   # coupon_rate 新结构无票面利率
-            0.0,   # comp_rate 新结构无补偿利率
-            0,     # pay_count 新结构无付息频率
+            "",  # rate_type 新结构无利率类型
+            0.0,  # coupon_rate 新结构无票面利率
+            0.0,  # comp_rate 新结构无补偿利率
+            0,  # pay_count 新结构无付息频率
             AkshareIngestProvider._norm_date_str(r.get("上市时间")) or "1970-01-01",
             "1970-01-01",  # delist_date 未摘牌/新结构无
-            "",    # list_place 新结构无上市地点
+            "",  # list_place 新结构无上市地点
             "1970-01-01",  # convert_start 新结构无转股起始日
             "1970-01-01",  # convert_end 新结构无转股截止日
             "1970-01-01",  # stop_convert 新结构无停止转股日
-            0.0,   # initial_convert_price 新结构无
+            0.0,  # initial_convert_price 新结构无
             safe_float(r.get("转股价")) or 0.0,
-            "",    # rate_desc 新结构无利率说明
-            0.0,   # redeem_price 新结构无赎回价格
+            "",  # rate_desc 新结构无利率说明
+            0.0,  # redeem_price 新结构无赎回价格
             credit,
             credit,
-            "",    # latest_agency 新结构无评级机构
+            "",  # latest_agency 新结构无评级机构
         )
 
     # ---- 27. ETF列表（etf_list） ----
@@ -7684,7 +8028,9 @@ class AkshareIngestProvider(IngestProviderBase):
             return None
         return f"{digits[:4]}-{digits[4:6]}-{digits[6:8]}"
 
-    def _fetch_market_commodity_futures_main(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+    def _fetch_market_commodity_futures_main(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
         """商品期货主力连续日行情（多品种循环），写入 c1_market.commodity_futures_main。
 
         akshare futures_main_sina(symbol="XX0") 单次返回该品种全历史日线，中文列
@@ -10274,6 +10620,125 @@ class AkshareIngestProvider(IngestProviderBase):
             patched += 1
         self._log.info(f"写前派生值携带: {patched}/{len(rows)} 行")
 
+    # ---- WO-1 估值双修：交易日 gate + kline_daily 行情腿（2026-09-20）----
+
+    def _load_trade_day_set(self, start_str: str, end_str: str) -> set:
+        """读窗口内交易日集合（trade_calendar is_open=1，只读经 ch_reader）。
+
+        读失败/空返回空 set=调用方 fail-closed 整批拦截（"无法核实为交易日的行不写"，
+        周六污染 82,344 行正是缺此 gate 的产物）；0 行告警腿会为整批拦截独立鸣哨。
+        """
+        from zephyr.data import ch_reader
+
+        try:
+            tsv = ch_reader.query(
+                _SQL_TRADE_DAY_SET.format(table=_TBL_TRADE_CALENDAR, start=start_str, end=end_str),
+                timeout=_KLINE_PRICE_LEG_QUERY_TIMEOUT_SEC,
+            )
+        except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"trade_calendar 交易日读失败（fail-closed 拦截全部待写行）: {exc}")
+            return set()
+        days = {line.strip() for line in tsv.splitlines() if line.strip()}
+        if not days:
+            self._log.warning(f"trade_calendar 窗口 [{start_str}~{end_str}] 读空（fail-closed 拦截全部待写行）")
+        return days
+
+    def _apply_trade_day_gate(self, rows: list, columns: list, trade_days: set, table: str) -> None:
+        """就地过滤非交易日行（键=trade_date 前 10 位，与行内日期字符串口径一致）。
+
+        trade_days 为空=整批拦截（fail-closed，诚实失败：宁 0 行告警不写污染行）。
+        """
+        if not rows:
+            return
+        if not trade_days:
+            self._log.warning(f"{table} 交易日 gate fail-closed：整批拦截 {len(rows)} 行（日历不可用）")
+            rows.clear()
+            return
+        date_i = {c: i for i, c in enumerate(columns)}.get("trade_date")
+        if date_i is None:
+            return
+        kept = [r for r in rows if str(r[date_i])[:10] in trade_days]
+        dropped = len(rows) - len(kept)
+        if dropped:
+            self._log.warning(f"{table} 交易日 gate 拦截非交易日行 {dropped}/{len(rows)}（trade_calendar is_open=1）")
+        rows[:] = kept
+
+    def _load_kline_price_leg(self, start_str: str, end_str: str) -> dict:
+        """读回 kline_daily 同窗 (symbol, trade_date) 行情九列真值。
+
+        返回 {(symbol, date_str): {col: str_value}}（preclose=close-change Decimal
+        精确推导）。读失败返回空 dict=降级不填（0 保留，哨兵 fill_ratio 腿独立鸣哨）。
+        """
+        from zephyr.data import ch_reader
+
+        try:
+            tsv = ch_reader.query(
+                _SQL_KLINE_PRICE_LEG.format(table=_TBL_KLINE_DAILY, start=start_str, end=end_str),
+                timeout=_KLINE_PRICE_LEG_QUERY_TIMEOUT_SEC,
+            )
+        except Exception as exc:  # noqa: BLE001 — 读失败降级不填，不阻断采集
+            self._log.warning(f"kline_daily 行情腿读失败（降级不填）: {exc}")
+            return {}
+        out: dict = {}
+        for line in tsv.splitlines():
+            if not line.strip():
+                continue
+            vals = line.rstrip("\r").split("\t")
+            if len(vals) < 11:
+                continue
+            (d, sym, o, h, low, c, chg, vol, amt, tr, pct) = vals[:11]
+            try:
+                preclose = str(Decimal(str(c)) - Decimal(str(chg)))
+            except Exception:  # noqa: BLE001 — 单行坏值跳过
+                continue
+            out[(sym, d)] = {
+                "open": o,
+                "high": h,
+                "low": low,
+                "close": c,
+                "preclose": preclose,
+                "volume": vol,
+                "amount": amt,
+                "turnover": tr,
+                "pct_change": pct,
+            }
+        return out
+
+    def _apply_kline_price_leg(self, rows: list, columns: list, price_map: dict) -> None:
+        """就地回填行情九列（仅覆盖值为 0 的槽位——百度估值腿写 0 的位置）。
+
+        非 0 槽位不动（self 值优先，与 _preserve_existing_computed 同仲裁方向）。
+        """
+        if not rows or not price_map:
+            return
+        col_positions = {c: i for i, c in enumerate(columns)}
+        sym_i, date_i = col_positions.get("symbol"), col_positions.get("trade_date")
+        if sym_i is None or date_i is None:
+            return
+        target = {c: col_positions[c] for c in _KLINE_PRICE_LEG_COLS if c in col_positions}
+        patched_cells = 0
+        patched_rows = 0
+        for idx, row in enumerate(rows):
+            mutable = list(row)
+            hit = price_map.get((str(mutable[sym_i]), str(mutable[date_i])[:10]))
+            if not hit:
+                continue
+            row_patched = 0
+            for col, pos in target.items():
+                cur = mutable[pos]
+                if cur is None or str(cur) in ("", "0", "0.0", "0.00", "0.000000"):
+                    mutable[pos] = hit.get(col)
+                    patched_cells += 1
+                    row_patched += 1
+            if row_patched:
+                rows[idx] = tuple(mutable)
+                patched_rows += 1
+        if rows:
+            self._log.info(
+                f"kline_daily 行情腿回填: {patched_rows}/{len(rows)} 行补 {patched_cells} 格"
+                f"（窗口价格源命中 {len(price_map)} 键）"
+            )
+
     def _preserve_existing_computed(
         self,
         spec: _ValuationPreserveSpec,
@@ -10294,9 +10759,7 @@ class AkshareIngestProvider(IngestProviderBase):
         self._apply_preserved_map(rows, columns, preserved)
         return rows
 
-    def _load_valuation_complete_symbols(
-        self, table: str, start_str: str, end_str: str
-    ) -> set:
+    def _load_valuation_complete_symbols(self, table: str, start_str: str, end_str: str) -> set:
         """断点续跑预查：窗口内已落到"最新可得事实日"且 pe 真有值的标的集。
 
         全量重采被杀/超时后重跑只补未完成标的（daily_valuation_full_refresh 实测
@@ -10308,9 +10771,7 @@ class AkshareIngestProvider(IngestProviderBase):
 
         try:
             tsv = ch_reader.query(
-                _SQL_VALUATION_COMPLETE_SYMBOLS.format(
-                    table=table, start=start_str, end=end_str
-                ),
+                _SQL_VALUATION_COMPLETE_SYMBOLS.format(table=table, start=start_str, end=end_str),
                 timeout=_PRESERVE_QUERY_TIMEOUT_SEC,
             )
         except Exception as exc:  # noqa: BLE001 — 预查失败降级为全量重拉，不阻断采集
@@ -10360,6 +10821,9 @@ class AkshareIngestProvider(IngestProviderBase):
         if not symbols:
             # symbols=null → 默认核心指数（S2 消费方：沪深300/中证500/创业板指）
             symbols = list(_INDEX_VALUATION_DEFAULT_SYMBOLS)
+
+        # WO-1 估值双修（2026-09-20）：交易日 gate 预载（全量回填窗口=2010 起一次读）
+        trade_days = self._load_trade_day_set(start_str, end_str)
 
         # 聚合模式（2026-09-03 修复）：原逐符号 yield error 结果会把任务整体标失败
         # （scheduler 任一 FetchResult.error 即判失败走 fallback，部分成功也不落库），
@@ -10412,6 +10876,9 @@ class AkshareIngestProvider(IngestProviderBase):
                         "akshare_csindex",
                     )
                 )
+        # WO-1 估值双修（2026-09-20）：交易日 gate（同 daily_valuation；中证官网
+        # 周末发布值/历史节假日行按 trade_calendar is_open=1 拦截，82,344 行污染同源）
+        self._apply_trade_day_gate(all_rows, columns, trade_days, table)
         if failed_syms and not all_rows:
             yield FetchResult(
                 table=table,

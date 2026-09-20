@@ -976,7 +976,7 @@ gaps:
       510300 仅 58 行（均值约 57 行/只）——逐 symbol 历史深度普遍缺失，表被判弃用。
       真源替代=c1_market.kline_etf_1min 聚合日线（1680 只、2019-01-02..2026-09-18 共 1873 交易日，
       ≥500 日深度 968 只；对账价格全合、金额偏差 ≤0.29%，E 车道 2026-09-19 实证）。"
-    resolution_plan: "深度回补归数据线正门工单（候选通道=E:/zephyr_cold_archive ETF 分钟归档挂回，
+    resolution_plan: "深度回补归数据线正门工单（候选通道=F:/zephyr_cold/50_archive/by_project/zephyralpha ETF 分钟归档挂回，
       见 cold_archive_minute_kline_e_drive 条目；QMT 历史下载已随 miniQMT 2026-09-18 退役关闭）。
       回补前消费方一律走 kline_etf_1min 聚合口径。"
     primary_alternative: "c1_market.kline_etf_1min 聚合日线（argMin/argMax/max/min/sum+全行 DISTINCT）"
@@ -1017,7 +1017,7 @@ gaps:
       TICKM 车道'勘误之勘误'更正'ETF tick 仅 07-10 起'的旧口径）；06-01→07-09 空窗。
       五档 tick_depth_5 真实 bulk 覆盖仅 4-9 日。"
     resolution_plan: "2022-2024 个股 tick 评估 bdpan 分笔月度归档回补（同 2026-06 缺口回补配方，
-      归档源深度待核实）；ETF tick 空窗与深度缺口随 E:/zephyr_cold_archive 挂回工单一并评估；
+      归档源深度待核实）；ETF tick 空窗与深度缺口随 F:/zephyr_cold/50_archive/by_project/zephyralpha 挂回工单一并评估；
       消费方注意两 variant 时间戳/单位口径差（tick_matrix_protocol.md 已固化修复配方）。"
     primary_alternative: "1min/5min K 线族全史完整，K 线级回测不受影响；tick 级仅 2025+ 深样本可用"
     evidence: "docs/_working/bizmine_night/tick_t0/（tick_inventory.md+tick_t0_results.md）+ docs/_working/bizmine_night/tick_matrix/tick_matrix_report.md（勘误之勘误）"
@@ -1075,7 +1075,7 @@ gaps:
     evidence: "docs/_working/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
     created: "2026-09-19"
 
-  # === ⑦ E:/zephyr_cold_archive 分钟线冷归档待挂回（总包 E 盘盘点 06:0x）===
+  # === ⑦ F:/zephyr_cold/50_archive/by_project/zephyralpha 分钟线冷归档待挂回（原 E 盘，2026-09-20 迁 F；总包 E 盘盘点 06:0x）===
   - id: "cold_archive_minute_kline_e_drive"
     table: "c1_market.kline_1min（挂回目标，同族 5/15/30/60min+kline_etf_*min+technical_indicator/news_data）"
     gap_type: "date_range"
@@ -1083,8 +1083,8 @@ gaps:
     end_date: "2021-08-31"
     date_column: "trade_date"
     detection_threshold: 1
-    status: "open"  # 归档实体在 E:/zephyr_cold_archive 待数据线正门工单挂回；今晚只登记不接入；工单已立（2026-09-19，裁定#367）→ docs/_working/bizmine_night/e_drive_cold_archive_task.md
-    root_cause: "E:/zephyr_cold_archive=分钟线冷归档（1min 2000-06..2021-08 共 255 月、
+    status: "open"  # 归档实体在 F:/zephyr_cold/50_archive/by_project/zephyralpha（原 E 盘 2026-09-20 迁 F）待数据线正门工单挂回；今晚只登记不接入；工单已立（2026-09-19，裁定#367）→ docs/_working/bizmine_night/e_drive_cold_archive_task.md
+    root_cause: "F:/zephyr_cold/50_archive/by_project/zephyralpha=分钟线冷归档（1min 2000-06..2021-08 共 255 月、
       ETF 1min 2005-02..2018-12、5/15/30/60min、technical_indicator、news_data；无 tick）——
       库内对应历史深度缺失（库内分钟约 4.7 年起；tick 唯二=tick_data 2025-01 起 21 个月
       +tick_depth_5 07-24 起）。挂回可救 kline_etf_daily 过浅+分钟级 26 年深度。"
@@ -1129,4 +1129,91 @@ gaps:
       依赖动作：调度器进程（python -m zephyr.data.scheduler）需重启加载修复后 provider。"
     verification_20260919: "实测 total=1500427 FINAL=1500427 uniq(主键)=1500427；20260630 raw=55591 FINAL=55591；akshare 通道 announce 月分布 202509=2092 / 202512=2178 / 202603=152 / 202606=55591"
     created: "2026-09-19"
-last_updated: "2026-09-19"
+
+  # === 2026-09-20: 估值双表数据正确性事故（总包甲·数据正确性线 WO-1·P0，st-data-fix-20260921）===
+  # ★ 消费禁用声明（2026-09-20 深夜已解除——两条 status 均 resolved，验收数字见
+  #   docs/_working/data_fix_campaign/p1_valuation_repair_report.md 及下列条目内
+  #   verification_20260920 段。禁用期间为 2026-09-20 22:00~23:59 施工窗口）。
+
+  # --- 病-1：index_valuation_daily 派生列被无 version 合并仲裁抹零 ---
+  - id: "index_valuation_daily_derived_cols_wiped_20260913"
+    table: "c1_market.index_valuation_daily"
+    gap_type: "upstream_data_corruption"
+    start_date: "2010-01-01"
+    end_date: "2026-09-20"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "resolved"  # 2026-09-20 WO-1 修复验收通过（st-data-fix-20260921），消费禁用解除
+    consumer_hold: "（已解除 2026-09-20）cape_5y/cape_5y_pct/pe_pct/erp/erp_pct 修复验收通过"
+    root_cause: "表引擎 ReplacingMergeTree 无 version 列 + 双写者（akshare 采原始列置派生列
+      None / internal_compute 回写计算列），2026-09-13 全史重采 8111 行把派生列抹为 NULL
+      并在合并仲裁中胜出（后到 None 版本无仲裁约束）。09-18 止血（写前携带既有派生值）后
+      重复组已被 merge 折叠（2026-09-20 实测非 FINAL/FINAL 重复组均 0），但被折叠保留的是
+      无派生列版本——cape_5y/cape_5y_pct/pe_pct/erp/erp_pct/pb_mrq NULL 8125/8125=100%
+      （data_source 全 akshare_csindex，internal_compute 从未成功落一行）。"
+    resolution_plan: "A1 三步：①表重建为 ReplacingMergeTree(ingest_ts)（version 列仲裁，
+      后写胜出，对齐 adj_factor 等表既有惯例；DDL-as-Code 同步）；②compute 管道改恒全史
+      读算全量幂等回写（修 _compute_start_date 非增量任务返回月初致 expanding 分位在
+      2.5 周窗口上计算的结构缺陷）；③tasks.yaml 增日频 compute 必跑腿（工作日增量落库
+      当日重算，不再等周末）。"
+    resolution_actual: "2026-09-20 全部落地并验收（报告 docs/_working/data_fix_campaign/
+      p1_valuation_repair_report.md）：①表重建+原子换名（旧表整体冷备
+      index_valuation_daily_quar_20260920，8125 行；非交易日 7 行先导出
+      F:/db_dumps/zephyr_quarantine/20260920_valuation_repair/ 后剔除）；②compute 全史读
+      算修复（含 CPI/10Y 国债读窗同步修正）；③index_valuation_daily_compute_daily 日频腿
+      上线（CLI 实跑成功，8118 行秒级）。红蓝对抗三项全过（version 仲裁/反向竞争红证/
+      携带版收口/撤样净零）。"
+    verification_20260920: "实测 FINAL=8118（=8125−7 非交易日行）；重复组非 FINAL 8092（merge
+      前版本共存，正常语义）FINAL 0；cape_5y NULL 2346（全部=rolling(1250,min750) 数学
+      warmup 区 2010~2014-11-06 每符号 1173 行）——2015 后病理 NULL=0；pe_pct NULL=0；
+      erp NULL 848（10Y 国债源端 2010~2012-09 稀疏，2012-09-04 起 100% 覆盖）；
+      哨兵近窗腿（cape_5y/pe_pct/erp 30 日窗非空率≥0.9）实测绿。遗留①cape_5y 绝对值
+      量纲=CPI 在场分支的既有算法行为（≈100×名义 CAPE，逐点通胀调整相消），全库零消费方
+      读绝对值（唯一消费轴 cape_5y_pct 秩不变），算法债留 Owner 裁定④域；遗留②
+      pb_mrq/pb_pct/broken_net_ratio/buffett_ratio 二期预留列恒 NULL（原状）。"
+    created: "2026-09-20"
+    last_updated: "2026-09-20"
+
+  # --- 病-2：daily_valuation 行情九列全表恒 0 + 非交易日污染行 ---
+  - id: "daily_valuation_price_leg_zeroed_202608"
+    table: "c1_market.daily_valuation"
+    gap_type: "upstream_data_corruption"
+    start_date: "2026-08-01"
+    end_date: "2026-09-20"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "resolved"  # 2026-09-20 WO-1 修复验收通过（st-data-fix-20260921），消费禁用解除
+    consumer_hold: "（已解除 2026-09-20）open/high/low/close/preclose/volume/amount/pct_change
+      八列修复验收通过；turnover 见 verification 源端缺口说明"
+    root_cause: "akshare 百度估值能力（stock_zh_valuation_baidu）只产估值比四列，行情九列置
+      None → 非 Nullable Decimal 列落 0（全表 271,266 行 close>0 命中 0 行，data_source
+      100% local_valuation，09-19 仍在活体增长）。且 writer 无交易日 gate：15 个非交易日
+      （8 周六 43,510 行 + 7 周日 38,834 行，trade_calendar 判定）共 82,344 污染行——
+      09-18 哨兵 D 型腿已点亮（close/amount/turnover 非零率 0%），本条目承接修复。"
+    resolution_plan: "A2 四步：①writer 行情腿改自 kline_daily 取价（裸代码读回映射，
+      preclose=close-change 精确推导，kline_daily 已是任务 DAG 前置依赖）；②交易日 gate
+      （trade_calendar is_open=1 判定，非交易日行禁写，daily_valuation 与
+      index_valuation_daily 双 writer 同批）；③存量 82,344 非交易日行冷存（F:/db_dumps
+      parquet）后 ALTER DELETE；④交易日存量 188,753 行价格腿 INSERT SELECT JOIN 回填。
+      09-18 处方 lanes/sentinel_daily_valuation_prescription.md '禁写 0' 意图由①②满足
+      （交易日必有价、非交易日必无行），免 16 列 Nullable DDL 手术。"
+    resolution_actual: "2026-09-20 全部落地并验收：①akshare_provider 增
+      _load_kline_price_leg/_apply_kline_price_leg/_load_trade_day_set/_apply_trade_day_gate
+      （双 writer 同批接线，gate fail-closed）；②82,344 非交易日行冷存
+      F:/db_dumps/zephyr_quarantine/20260920_valuation_repair/daily_valuation_nontrade_rows.parquet
+      后 ALTER DELETE（mutations_sync 落地，残留 0）；③回填 INSERT SELECT 裸 JOIN
+      kline_daily（188,922 键全量重写，preclose=close-change 与 pct_change 逐日核验吻合）。
+      红蓝对抗：周六注入 gate 真拦（2/3 拦截+fail-closed 整批拦截实测）、0 行写入哨兵地板腿
+      真响（breached=True+Alerter 落 failures/ 留痕）。"
+    verification_20260920: "实测 FINAL=188,922，close>0=188,753（99.91%≥99% 达标）；非交易日
+      行=0；键唯一 188,922；哨兵两腿（[close,amount] 近 10 日非零率≥0.95 + 7 日行数地板
+      ≥2000）实测绿。未回填 169 行（0.09%）=退市/停牌长尾（000016 等 kline_daily 无该
+      (symbol,date) 行，合法缺席）。遗留①turnover 列非零仅 5,695 行（3%）：**数据源
+      kline_daily 本身**近窗非零率 0.9%（全史 15%，miniqmt/EM 日K 不带换手率）——回填如实
+      拷贝源零，非管线病；可信 turnover 需流通股本 PIT 表（栈内暂无），建 kline 侧
+      turnover 供数工单（哨兵腿 cols 已相应拆分并留痕 data_supply_sentinel.yaml 同批注释）；
+      遗留②is_st 沿用百度腿原值 0（原状，ST 判定属另一能力域）。"
+    created: "2026-09-20"
+    last_updated: "2026-09-20"
+
+last_updated: "2026-09-20"

@@ -3702,3 +3702,24 @@ tasks:
     description: "指数估值计算列重算回写（CAPE/pe_pct/erp；治 BRK-034 的'akshare 成功即永不重算'；与 index_valuation_daily 哨兵 column_fill_ratio 腿同批，NULL 率不达标即报）"
 
   fallback_sources: []    # internal 计算源天然无副源（同族 kline_index_calc_refresh 口径）
+
+# WO-1 估值双修日频必跑腿（2026-09-20 st-data-fix-20260921，裁定#380 推荐案③）：
+# 周末腿 compute_after_ingest 只在 weekend_calibration 跑——工作日 akshare 增量
+# 落库的原始行（派生列 None）要裸奔到周末才被重算，期间 FINAL 视角派生列 NULL
+# （与 ④"akshare 成功即永不重算"同型缺陷的日频变体）。本腿与日增量串 DAG 当日重算；
+# version 列（ReplacingMergeTree(ingest_ts)，2026-09-20 重建）仲裁下 compute 后写
+# 恒胜出=单写者语义闭合。全资产净零说明：无既有条目可承载"日频重算"职能（改既有
+# 腿 schedule 会拆掉周末回填链的依赖锚），+1 条目即消工作日 NULL 空窗病。
+- task_id: index_valuation_daily_compute_daily
+  table: c1_market.index_valuation_daily
+  source: internal
+  schedule: daily_kline
+  incremental: false    # 恒全史读算全量幂等回写（compute 读窗已修为表内全史，_compute_start_date 月初窗口不再影响正确性）
+  date_col: trade_date
+  dependencies: ["index_valuation_daily_incremental"]    # DAG: 日增量原始列落库当日必重算
+  capability: index_valuation_daily
+  symbols:              # null=默认核心指数 000300/000905/399006（provider 内置）
+  extra:
+    description: "指数估值计算列日频重算（8118 行秒级；治工作日增量落库后派生列 NULL 空窗；哨兵 fill_ratio 腿盯 cape_5y/pe_pct/erp 近窗非空率）"
+
+  fallback_sources: []    # internal 计算源天然无副源

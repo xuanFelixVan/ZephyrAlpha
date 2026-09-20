@@ -31,9 +31,15 @@ TRAE-082 派生列清偿记录（2026-09-12，Owner 指令"登记在案后续债
     审计列（audit 1.7 #ARCH-CH-025）+ ReplacingMergeTree + 月分区。
 
 引擎选型说明：
-    日频指数估值快照写入表（daily_kline 族增量），ReplacingMergeTree 按
-    (symbol, trade_date) 去重——同日重跑/补跑同键静默替换，无写前 DELETE 开销
-    （同 daily_valuation/money_flow 等日频表选型口径）。
+    日频指数估值快照写入表（daily_kline 族增量），ReplacingMergeTree(ingest_ts) 按
+    (symbol, trade_date) 去重、ingest_ts 为 version 列——同日重跑/补跑同键后写胜出，
+    无写前 DELETE 开销（同 daily_valuation/money_flow 等日频表选型口径）。
+    version 列补记（2026-09-20，WO-1 估值双修 st-data-fix-20260921）：原无 version
+    构型下双写者（akshare 原始列 / internal_compute 派生列回写）整行竞争时后到版本
+    无仲裁约束地胜出，2026-09-13 全史重采把派生列抹为 NULL 100%（8125/8125 实证，
+    known_data_gaps index_valuation_daily_derived_cols_wiped_20260913）。加 version
+    后合并/FINAL 恒取 max(ingest_ts) 版=最后写者（compute 回写）确定胜出，
+    对齐 adj_factor 等表 ReplacingMergeTree(ingest_ts) 既有惯例。
 
 口径备注：
     - pe_ttm 为中证官网滚动市盈率（市盈率2，TTM 口径）；pb_mrq 一期暂缺（乐咕
@@ -57,8 +63,8 @@ CREATE TABLE IF NOT EXISTS c1_market.index_valuation_daily
 (
     trade_date       Date                     COMMENT '交易日期',
     symbol           String                   COMMENT '指数代码(000300/000905/399006)',
-    exchange          LowCardinality(String) MATERIALIZED LowCardinality(String) MATERIALIZED multiIf(substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('000', '880', '930', '931', '932'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('399'), 'SZ', '') COMMENT '交易所码(TRAE-082 MATERIALIZED派生,2026-09-12 债清偿)',
-    symbol_canonical  String MATERIALIZED String MATERIALIZED if(position(symbol,'.')>0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,2026-09-12 债清偿)',
+    exchange          LowCardinality(String) MATERIALIZED multiIf(substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('000', '880', '930', '931', '932'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('399'), 'SZ', '') COMMENT '交易所码(TRAE-082 MATERIALIZED派生,2026-09-12 债清偿)',
+    symbol_canonical  String MATERIALIZED if(position(symbol,'.')>0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,2026-09-12 债清偿)',
     pe_ttm           Decimal(18, 4)           COMMENT '市盈率TTM(中证官网滚动市盈率)',
     pb_mrq           Nullable(Decimal(18, 4)) COMMENT '市净率MRQ(一期暂缺,二期升级)',
     dividend_yield   Nullable(Decimal(18, 4)) COMMENT '股息率(中证官网股息率1,%)',
@@ -73,7 +79,7 @@ CREATE TABLE IF NOT EXISTS c1_market.index_valuation_daily
     data_source      LowCardinality(String)   DEFAULT 'akshare_csindex' COMMENT '数据来源',
     ingest_ts        DateTime64(3, 'UTC')     DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)'
 )
-ENGINE = ReplacingMergeTree
+ENGINE = ReplacingMergeTree(ingest_ts)
 PARTITION BY toYYYYMM(trade_date)
 ORDER BY (symbol, trade_date)
 SETTINGS index_granularity = 8192
@@ -84,7 +90,7 @@ TABLE_NAME: Final = "index_valuation_daily"
 DATABASE: Final = "c1_market"
 CATEGORY_ID: Final = "market_index_valuation_daily"
 CALC_MODE: Final = "preload"
-ENGINE: Final = "ReplacingMergeTree"
+ENGINE: Final = "ReplacingMergeTree(ingest_ts)"
 PARTITION_KEY: Final = "toYYYYMM(trade_date)"
 ORDER_BY: Final = "(symbol, trade_date)"
 
