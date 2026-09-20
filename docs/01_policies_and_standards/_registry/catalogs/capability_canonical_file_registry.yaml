@@ -5016,6 +5016,14 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "docs/_working/ultimate_library/03_endgame_blueprint_v1_0.md"
+  token: "ulib-endgame-blueprint-v1-0-20260921"
+  created_by: "st-ulib-20260921"
+  capability: "ultimate_library"
+- file: "docs/_working/ultimate_library/04_night_ops_plan_v1_0.md"
+  token: "ulib-night-ops-plan-v1-0-20260921"
+  created_by: "st-ulib-20260921"
+  capability: "ultimate_library"
 - file: "docs/_working/ultimate_library/00_master_plan_v0_1.md"
   token: "ulib-master-plan-v0-1-20260921"
   created_by: "st-ulib-20260921"
@@ -41816,7 +41824,7 @@ creation_tokens:
   token: "diskch-waste-export-20260920"
   created_by: "st-disk-ch-20260921"
   capability: "waste_table_patrol"
-- file: scripts/governance/d5_architecture/generators/generate_data_asset_coverage.py
+- file: scripts/governance/d3_metadata/generate_data_asset_coverage.py
   token: a14-asset-coverage-generate-data-asset-coverage-20260920
   created_by: st-code-doc-20260921
   capability: a14-asset-coverage
