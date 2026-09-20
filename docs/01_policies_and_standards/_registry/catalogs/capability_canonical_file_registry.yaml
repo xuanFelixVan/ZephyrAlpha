@@ -2892,13 +2892,13 @@ capabilities:
   - backtest_decisiongraph_adapter
   - backtest_result_to_decision_node
   - register_backtest_result_in_decisiongraph
-  canonical_override: src/zephyr/backtest/io/decisiongraph_adapter.py
-  description: 'BacktestResult → decisiongraph 适配器（TRAE-061 Phase 5，2026-07-06）。 canonical
-    = src/zephyr/backtest/io/decisiongraph_adapter.py。 将 BacktestResult（CTR-P1-016，15字段冻结契约）映射为
-    decisiongraph decision_nodes 表 INSERT 参数，建立回测→决策流图关联。 映射规则: layer_id=L5(学习层),
-    node_type=signal, path=backtest/{strategy_id}/{idempotency_key}, evidence_hash=SHA-256(idempotency_key)。
-    解决发现性: 新AI搜 "回测决策流图/BacktestResult decisiongraph" 可定位真源。 解决防重建: check_file_canonical()
-    反查阻止在别处新建回测→decisiongraph 适配器。'
+  canonical_override: docs/_working/final3_campaign/p8_salvage/decisiongraph_adapter_retired.md
+  description: 'BacktestResult → decisiongraph 适配器（TRAE-061 Phase 5，2026-07-06；2026-09-20 W5-2 O-2 退役，
+    裁定#371 授权，w5_1_cluster_audit 簇2）。 canonical = 存档件 p8_salvage/decisiongraph_adapter_retired.md
+    （目录契约禁 docs/_working/ 落 .py，故 markdown 代码块逐字节保真存档；原 src/zephyr/backtest/io/decisiongraph_adapter.py
+    已删：声明消费方零 import + PG decision_nodes 零写入实测）。
+    解决发现性: 新AI搜 "回测决策流图/BacktestResult decisiongraph" 定位到退役存档。 解决防重建: check_file_canonical()
+    反查阻止重建回测→decisiongraph 适配器（已裁定退役，需求复活须新裁定）。'
 - capability_id: breaking_change_concurrency_blocker
   aliases:
   - breaking_change
@@ -5016,6 +5016,18 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "docs/_working/tilib_clearance/a1_campaign_ledger.md"
+  token: "tilib-clear-ledger-20260920"
+  created_by: "st-tilib-clear-20260920"
+  capability: "tilib_clearance_campaign"
+- file: "docs/_working/tilib_clearance/a2_wave1_card.md"
+  token: "tilib-clear-wave1card-20260920"
+  created_by: "st-tilib-clear-20260920"
+  capability: "tilib_clearance_campaign"
+- file: "docs/_working/tilib_clearance/index.md"
+  token: "tilib-clear-index-20260920"
+  created_by: "st-tilib-clear-20260920"
+  capability: "tilib_clearance_campaign"
 - file: "config/llm_security_gateway.yaml"
   token: "lsg-gateway-config-20260919"
   created_by: "st-final3-20260919"
@@ -39839,6 +39851,19 @@ creation_tokens:
   token: final3-campaign-p5-w47-wiring-record-20260919
   created_by: st-maxexec-20260920
   capability: final3_campaign
+- file: docs/_working/final3_campaign/p12_queue_terminal_record.md
+  token: final3-campaign-p12-queue-terminal-record-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p14_owner_szopen_onepager.md
+  token: final3-campaign-p14-owner-szopen-onepager-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+- file: docs/_working/final3_campaign/p10_t0_mechanical_wave_report.md
+  token: final3-campaign-p10-t0-mechanical-wave-report-20260920
+  created_by: st-maxexec-20260920
+  capability: final3_campaign
+  merge_evaluation: "final3 战役 P10 T0 机械波计数报告；同真源=a1_campaign_ledger 台账互补（计数面 vs 台账面），跨域不同对象不并"
 - file: docs/_working/rule_audit_campaign/a2_handoff/A2_M5_prescriptions.md
   token: rule-audit-construction-a2-m5-prescriptions-20260919
   created_by: st-final3-20260919
@@ -39931,4 +39956,65 @@ creation_tokens:
   token: factory-strategy-cards-index-20260919
   created_by: st-maxexec-20260920
   capability: factory_strategy_cards
+- file: docs/_working/final3_campaign/p6_ig_bak_cleanup_record.md
+  token: p6-structural-exec-p6-ig-bak-cleanup-record-20260919
+  created_by: st-maxexec-20260920
+  capability: p6_structural_exec
+- file: docs/_working/kimi_audit/adjudications/index.md
+  token: kimi-adjudications-index-20260919
+  created_by: st-maxexec-20260920
+  capability: kimi_adjudications
+- file: docs/_working/kimi_audit/adjudications/p7b_bd_family_rulings.md
+  token: kimi-adjudications-p7b-bd-family-rulings-20260920
+  created_by: st-maxexec-20260920
+  capability: kimi_adjudications
+- file: docs/_working/kimi_audit/adjudications/p7c_efgh_family_rulings.md
+  token: kimi-adjudications-p7c-efgh-family-rulings-20260920
+  created_by: st-maxexec-20260920
+  capability: kimi_adjudications
+  merge_evaluation: "并入既有 kimi_adjudications capability 段（同族裁定书第17份），无新增能力面"
+- file: docs/_working/final3_campaign/p8_salvage/capacity_params_retired.yaml
+  token: p8-salvage-retire-capacity-params-retired-20260920
+  created_by: st-maxexec-20260920
+  capability: p8_salvage_retire
+- file: docs/_working/final3_campaign/p8_salvage/decisiongraph_adapter_retired.py
+  token: p8-salvage-retire-decisiongraph-adapter-retired-20260920
+  created_by: st-maxexec-20260920
+  capability: p8_salvage_retire
+- file: docs/_working/final3_campaign/p8_salvage/decisiongraph_adapter_retired.py.txt
+  token: p8-salvage-retire-decisiongraph-adapter-retiredpy-20260920
+  created_by: st-maxexec-20260920
+  capability: p8_salvage_retire
+- file: docs/_working/final3_campaign/p8_salvage/decisiongraph_adapter_retired.md
+  token: p8-salvage-retire-decisiongraph-adapter-retired-20260920
+  created_by: st-maxexec-20260920
+  capability: p8_salvage_retire
+- file: docs/_working/final3_campaign/p8_w5_remaining_18_domains.md
+  token: p8-w5-domains-p8-w5-remaining-18-domains-20260920
+  created_by: st-maxexec-20260920
+  capability: p8_w5_domains
+- file: "docs/_working/dataqa_audit_20260920/a1_progress.md"
+  token: "dataqa-audit-progress-ledger-20260920"
+  created_by: "st-dataqa-20260920"
+  capability: "dataqa_audit"
+- file: "docs/_working/dataqa_audit_20260920/ch_health_report.md"
+  token: "dataqa-audit-ch-health-20260920"
+  created_by: "st-dataqa-20260920"
+  capability: "dataqa_audit"
+- file: "docs/_working/dataqa_audit_20260920/gaps_registry_review.md"
+  token: "dataqa-audit-gaps-review-20260920"
+  created_by: "st-dataqa-20260920"
+  capability: "dataqa_audit"
+- file: "docs/_working/dataqa_audit_20260920/test_health_report.md"
+  token: "dataqa-audit-test-health-20260920"
+  created_by: "st-dataqa-20260920"
+  capability: "dataqa_audit"
+- file: "docs/_working/dataqa_audit_20260920/cross_findings.md"
+  token: "dataqa-audit-cross-findings-20260920"
+  created_by: "st-dataqa-20260920"
+  capability: "dataqa_audit"
+- file: "docs/_working/dataqa_audit_20260920/index.md"
+  token: "dataqa-audit-dir-index-20260920"
+  created_by: "st-dataqa-20260920"
+  capability: "dataqa_audit"
 di_seam_exemptions: []
