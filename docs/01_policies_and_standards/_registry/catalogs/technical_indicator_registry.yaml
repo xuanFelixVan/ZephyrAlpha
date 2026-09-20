@@ -20,8 +20,8 @@ name: Technical Indicator Registry
 name_zh: 技术指标注册表
 description: >-
   技术指标唯一真源（SSoT）。登记全部纯 OHLCV 计算指标（编号/公式/参数/输入输出列/预热期/状态/代码位置），
-  8 大类 101 指标 162 输出列（对齐 16 号 §6.1-6.6 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；批6：RV 波动率族 4+BBI+STOCH 本体+动量清偿（AROON/AROONOSC/BOP/PPO/APO/DX）+BRAR/CR 能量族共 14 指标（挖矿立卡 1/2/3+批5 增补全清偿）；；批8：M-L4 经典族 10 指标（ALLIGATOR/GMMA/GANN_HILO/AC/FRACTALS/ELDER/COPPOCK/SQUEEZE/WAVETREND/FORCE_INDEX，数据先行放量批）
-  数值正确性由 243 测试用例 + Registry↔DDL 双向交叉校验锁定）。
+  8 大类 132 在产指标 194 输出列（注册 133 条含退役 1；对齐 16 号 §6.1-6.8 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；批6：RV 波动率族 4+BBI+STOCH 本体+动量清偿（AROON/AROONOSC/BOP/PPO/APO/DX）+BRAR/CR 能量族共 14 指标（挖矿立卡 1/2/3+批5 增补全清偿）；批8：M-L4 经典族 10 指标（ALLIGATOR/GMMA/GANN_HILO/AC/FRACTALS/ELDER/COPPOCK/SQUEEZE/WAVETREND/FORCE_INDEX，数据先行放量批）；批9-1：tilib 清欠班波1 +15 指标/16 列（M-L1 自适应均线族 7：TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA + M-L2 价格变换族 4：AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE + M-L3 统计回归族 4：LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR，talib 黄金对照逐位/1e-6 级一致）；批9-2：波2 M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER/EBSW/INERTIA/QSTICK/RMI/PFE/FOSC/CTI/VHF/ER/WAD/VO/MARKETFI/ZSCORE；PSL=PSY、MSW=ht_sine 同义不重复立条）
+  数值正确性由 1038 测试用例 + Registry↔DDL 双向交叉校验锁定）。
   全指标覆盖 9 周期（1min/5min/15min/30min/60min/120min/日/周/月，120min 由 60min 两根聚合），
   存储单表 c1_market.technical_indicator 按 (period, toYYYYMM(trade_date)) 分区。
   与 factor_registry 正交：技术指标=OHLCV 确定性变换（计算工具，无 alpha 断言），因子=alpha 来源。
@@ -31,13 +31,13 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.2
+version: 1.3.0
 created: '2026-08-13'
-last_updated: '2026-08-15'
+last_updated: '2026-09-20'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - indicator_id
-entry_count: 102
+entry_count: 133
 
 entry_schema:
   indicator_id: str              # IND-{CLASS}-{NNN}，如 IND-TREND-001
@@ -3094,7 +3094,7 @@ indicators:
   outputs: [correl_30]
   warmup_period: 30
   computation_mode: vectorized
-  module_id: MOD-L02-001
+  module_id: MOD-L02-028
   doc_ref: 16_technical_indicator_catalog.md §6.6
   code_path: src/zephyr/factor/technical_indicators/statistics.py
   used_by_factors: []
@@ -3127,7 +3127,7 @@ indicators:
   outputs: [beta_30]
   warmup_period: 30
   computation_mode: vectorized
-  module_id: MOD-L02-001
+  module_id: MOD-L02-028
   doc_ref: 16_technical_indicator_catalog.md §6.6
   code_path: src/zephyr/factor/technical_indicators/statistics.py
   used_by_factors: []
@@ -3160,7 +3160,7 @@ indicators:
   outputs: [linearreg_14, tsf_14]
   warmup_period: 14
   computation_mode: vectorized
-  module_id: MOD-L02-001
+  module_id: MOD-L02-028
   doc_ref: 16_technical_indicator_catalog.md §6.6
   code_path: src/zephyr/factor/technical_indicators/statistics.py
   used_by_factors: []
@@ -3193,7 +3193,7 @@ indicators:
   outputs: [var_20]
   warmup_period: 20
   computation_mode: vectorized
-  module_id: MOD-L02-001
+  module_id: MOD-L02-028
   doc_ref: 16_technical_indicator_catalog.md §6.6
   code_path: src/zephyr/factor/technical_indicators/statistics.py
   used_by_factors: []
@@ -3227,7 +3227,7 @@ indicators:
   outputs: [ht_dcperiod]
   warmup_period: 63
   computation_mode: vectorized
-  module_id: MOD-L02-001
+  module_id: MOD-L02-029
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
@@ -3260,7 +3260,7 @@ indicators:
   outputs: [ht_dcphase]
   warmup_period: 63
   computation_mode: vectorized
-  module_id: MOD-L02-001
+  module_id: MOD-L02-029
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
@@ -3293,7 +3293,7 @@ indicators:
   outputs: [ht_ip, ht_qp]
   warmup_period: 63
   computation_mode: vectorized
-  module_id: MOD-L02-001
+  module_id: MOD-L02-029
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
@@ -3326,7 +3326,7 @@ indicators:
   outputs: [ht_sine, ht_leadsine]
   warmup_period: 63
   computation_mode: vectorized
-  module_id: MOD-L02-001
+  module_id: MOD-L02-029
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
@@ -3359,7 +3359,7 @@ indicators:
   outputs: [ht_trendmode]
   warmup_period: 63
   computation_mode: vectorized
-  module_id: MOD-L02-001
+  module_id: MOD-L02-029
   doc_ref: 16_technical_indicator_catalog.md §6.8
   code_path: src/zephyr/factor/technical_indicators/cycle.py
   used_by_factors: []
@@ -3413,6 +3413,1036 @@ indicators:
   tags: ["基准", "指标"]
   # 2026-08-17 审计修正（AI-AUDIT08）：trend.py 实际无一目均衡表实现（code_symbol=null 设计态），
   # algorithm_status 由机械推导的 quantized 更正为 pending_backtest，与 status=candidate 对齐。
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 趋势类扩充批9-1：M-L1 自适应均线族（7 指标/8 列，2026-09-20 tilib 清欠班）══════════════
+# 黄金对照：MAMA/FAMA 与 TA-Lib 逐位一致（偏差 0.0）；TEMA/T3 预热段种子差异按既有 MAMA 豁免口径第 100 根起 rtol=1e-6 对照
+- indicator_id: IND-TREND-022
+  name: Triple Exponential Moving Average
+  name_zh: 三重指数移动平均
+  aliases: ["TEMA", "Triple EMA"]
+  indicator_class: trend
+  formula: e1=EMA(C,N)；e2=EMA(e1,N)；e3=EMA(e2,N)；TEMA=3e1−3e2+e3（EMA adjust=False 种子=首值）
+  params: {period: 10}
+  inputs: [close]
+  outputs: [tema_10]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-023
+  name: Triangular Moving Average
+  name_zh: 三角移动平均
+  aliases: ["TRIMA"]
+  indicator_class: trend
+  formula: 偶窗 N=10：SMA(SMA(C,N/2),N/2+1)=SMA(SMA(C,5),6)；奇窗：双 (N+1)/2 级联（TA-Lib 口径，实测 lookback=9 一致）
+  params: {period: 10}
+  inputs: [close]
+  outputs: [trima_10]
+  warmup_period: 10
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-024
+  name: Tillson T3
+  name_zh: T3均线
+  aliases: ["T3", "Tillson Moving Average"]
+  indicator_class: trend
+  formula: e1..e6=六重 EMA(C,N) 链；c1=−a³,c2=3a²+3a³,c3=−6a²−3a−3a³,c4=1+3a+a³+3a²；T3=c1e6+c2e5+c3e4+c4e3（Tillson，a=vfactor=0.7）
+  params: {period: 10, vfactor: 0.7}
+  inputs: [close]
+  outputs: [t3_10]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-025
+  name: MESA Adaptive Moving Average
+  name_zh: MESA自适应均线
+  aliases: ["MAMA", "FAMA", "Ehlers MAMA"]
+  indicator_class: trend
+  formula: Ehlers homodyne：Smooth=(4P+3P1+2P2+P3)/10，Hilbert 四抽头解瞬时周期（钳位 6-50），alpha=FastLimit/DeltaPhase 钳位[slow,fast]；MAMA=α·P+(1−α)·MAMA_prev；FAMA 用 α/2 同式递推
+  params: {fast_limit: 0.5, slow_limit: 0.05}
+  inputs: [high, low]
+  outputs: [mama, fama]
+  warmup_period: 13
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-026
+  name: Variable Index Dynamic Average
+  name_zh: 可变指数动态均线
+  aliases: ["VIDYA", "Chande VIDYA"]
+  indicator_class: trend
+  formula: alpha=|CMO(C,cmo_period)|/100×2/(N+1)；VIDYA=alpha·C+(1−alpha)·VIDYA_prev（Chande；种子=首个 CMO 有效当根收盘）
+  params: {period: 14, cmo_period: 9}
+  inputs: [close]
+  outputs: [vidya_14]
+  warmup_period: 10
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-027
+  name: Fractal Adaptive Moving Average
+  name_zh: 分形自适应均线
+  aliases: ["FRAMA", "Ehlers FRAMA"]
+  indicator_class: trend
+  formula: 窗口对半 HL1/HL2（各半 max(H)−min(L)），整窗 HL3；D=log2(2(HL1+HL2)/HL3)；alpha=exp(−4.6(D−1)) 钳位[0.01,1]；FRAMA=α·(H+L)/2+(1−α)·FRAMA_prev（Ehlers TASC 2005）
+  params: {period: 16}
+  inputs: [high, low]
+  outputs: [frama_16]
+  warmup_period: 16
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-028
+  name: Jurik Moving Average
+  name_zh: Jurik自适应均线
+  aliases: ["JMA", "Jurik JMA"]
+  indicator_class: trend
+  formula: Jurik 开源移植（pandas-ta 经典口径）：beta=0.45(N−1)/(0.45+2(N−1))，alpha=beta^phaseRatio 递推平滑+波动压缩链（phase=50, power=2 默认）
+  params: {period: 7, phase: 50, power: 2}
+  inputs: [close]
+  outputs: [jma_7]
+  warmup_period: 7
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "均线", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 趋势类扩充批9-1：M-L2 价格变换族（4 指标/4 列，2026-09-20 tilib 清欠班）══════════════
+- indicator_id: IND-TREND-029
+  name: Average Price
+  name_zh: 四价均价
+  aliases: ["AVGPRICE", "ohlc4"]
+  indicator_class: trend
+  formula: AVGPRICE=(O+H+L+C)/4（TA-Lib Price Transform 组）
+  params: {}
+  inputs: [open, high, low, close]
+  outputs: [avgprice]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["基准", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-030
+  name: Median Price
+  name_zh: 中价
+  aliases: ["MEDPRICE", "hl2"]
+  indicator_class: trend
+  formula: MEDPRICE=(H+L)/2（TA-Lib Price Transform 组）
+  params: {}
+  inputs: [high, low]
+  outputs: [medprice]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["基准", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-031
+  name: Typical Price
+  name_zh: 典型价格
+  aliases: ["TYPPRICE", "hlc3"]
+  indicator_class: trend
+  formula: TYPPRICE=(H+L+C)/3（TA-Lib Price Transform 组）
+  params: {}
+  inputs: [high, low, close]
+  outputs: [typprice]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["基准", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-032
+  name: Weighted Close Price
+  name_zh: 加权收盘价
+  aliases: ["WCPRICE", "WCLPRICE"]
+  indicator_class: trend
+  formula: WCPRICE=(H+L+2×C)/4（收盘双倍权重；TA-Lib WCLPRICE 同义）
+  params: {}
+  inputs: [high, low, close]
+  outputs: [wcprice]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["基准", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 统计族扩充批9-1：M-L3 回归族（4 指标/4 列，2026-09-20 tilib 清欠班）══════════════
+# 立条裁定：M-L3 清单"LINEARREG_BAR"与既有 IND-STAT-003 LINEARREG 本体同义不重复立条；STDERR 除数 N−2 经 talib 对照实测钉死
+- indicator_id: IND-STAT-005
+  name: Linear Regression Angle
+  name_zh: 线性回归角度
+  aliases: ["LINEARREG_ANGLE"]
+  indicator_class: statistics
+  formula: θ=degrees(atan(slope))，slope 为 x=0..N−1 滚动一元 OLS 斜率（TA-Lib 口径）
+  params: {period: 14}
+  inputs: [close]
+  outputs: [linearreg_angle_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-028
+  doc_ref: 16_technical_indicator_catalog.md §6.6
+  code_path: src/zephyr/factor/technical_indicators/statistics.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["统计", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-STAT-006
+  name: Linear Regression Slope
+  name_zh: 线性回归斜率
+  aliases: ["SLOPE", "LINEARREG_SLOPE"]
+  indicator_class: statistics
+  formula: b=(NΣxy−ΣxΣy)/(NΣx²−(Σx)²)，滚动窗 x=0..N−1（矩法向量化，复用 _rolling_linefit）
+  params: {period: 14}
+  inputs: [close]
+  outputs: [slope_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-028
+  doc_ref: 16_technical_indicator_catalog.md §6.6
+  code_path: src/zephyr/factor/technical_indicators/statistics.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["统计", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-STAT-007
+  name: Linear Regression Intercept
+  name_zh: 线性回归截距
+  aliases: ["INTERCEPT", "LINEARREG_INTERCEPT"]
+  indicator_class: statistics
+  formula: a=(Σy−b·Σx)/N，b 为滚动 OLS 斜率（矩法向量化）
+  params: {period: 14}
+  inputs: [close]
+  outputs: [intercept_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-028
+  doc_ref: 16_technical_indicator_catalog.md §6.6
+  code_path: src/zephyr/factor/technical_indicators/statistics.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["统计", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-STAT-008
+  name: Linear Regression Standard Error
+  name_zh: 线性回归残差标准差
+  aliases: ["STDERR", "Standard Error"]
+  indicator_class: statistics
+  formula: sqrt(SSR/(N−2))，SSR=Σy²−a·Σy−b·Σxy 闭式向量化；除数 N−2 经独立 OLS 对照实测钉死（/N 不吻合）
+  params: {period: 14}
+  inputs: [close]
+  outputs: [stderr_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-028
+  doc_ref: 16_technical_indicator_catalog.md §6.6
+  code_path: src/zephyr/factor/technical_indicators/statistics.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["统计", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+# ══════════════ 波2 批9-2：M-L5 社区热门族（16 指标/16 列，2026-09-20 tilib 清欠班）══════════════
+# 立条裁定：清单中 PSL 与既有 IND-MOM PSY 同义（心理线同式）、MSW 与既有 IND-CYC ht_sine/ht_leadsine 同义（Ehlers 正弦波），按裁①先例不重复立条
+- indicator_id: IND-VOL-016
+  name: Choppiness Index
+  name_zh: 盘整指数
+  aliases: ["CHOP"]
+  indicator_class: volatility
+  formula: 100×log10(ΣTR(N)/(maxH(N)−minL(N)))/log10(N)，值域 [0,100]（惯例 >61.8 盘整、<38.2 趋势）
+  params: {period: 14}
+  inputs: [high, low, close]
+  outputs: [chop_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["波动", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOL-017
+  name: Chaikin Volatility
+  name_zh: Chaikin波动率
+  aliases: ["CVI"]
+  indicator_class: volatility
+  formula: 100×(EMA(H−L,ema_period)/EMA(H−L,ema_period)[roc_period 日前]−1)，EMA adjust=False
+  params: {ema_period: 3, roc_period: 10}
+  inputs: [high, low]
+  outputs: [cvi]
+  warmup_period: 11
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["波动", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOL-018
+  name: Ulcer Index
+  name_zh: 溃疡指数
+  aliases: ["ULCER", "UI"]
+  indicator_class: volatility
+  formula: 100×√(mean((C/max(C,N)−1)²))（滚动窗口回撤深度均方根，Martin 口径）
+  params: {period: 14}
+  inputs: [close]
+  outputs: [ulcer_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["波动", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-CYC-006
+  name: Even Better Sine Wave
+  name_zh: 更优正弦波
+  aliases: ["EBSW"]
+  indicator_class: cycle
+  formula: Ehlers 带通滤波（length=40, bars=10），输出 [-100,100] 钳位（pandas-ta-classic cycles/ebsw.py 逐行移植）
+  params: {length: 40, bars: 10}
+  inputs: [close]
+  outputs: [ebsw_40]
+  warmup_period: 40
+  computation_mode: vectorized
+  module_id: MOD-L02-029
+  doc_ref: 16_technical_indicator_catalog.md §6.8
+  code_path: src/zephyr/factor/technical_indicators/cycle.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["循环", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-033
+  name: Inertia
+  name_zh: 惯性指标
+  aliases: ["INERTIA", "Ehlers Inertia"]
+  indicator_class: trend
+  formula: RVI 基（rvi_length=14，输入 HL2）的 EMA(length=20) 平滑（pandas-ta-classic momentum/inertia.py 逐行移植）
+  params: {length: 20, rvi_length: 14}
+  inputs: [high, low]
+  outputs: [inertia_20_14]
+  warmup_period: 46
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-TREND-034
+  name: Qstick
+  name_zh: Qstick指标
+  aliases: ["QSTICK"]
+  indicator_class: trend
+  formula: SMA(C−O,N)（pandas-ta-classic trend/qstick.py；默认 N=10；C=O 记 0）
+  params: {length: 10}
+  inputs: [open, close]
+  outputs: [qstick_10]
+  warmup_period: 10
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["趋势", "动量", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-038
+  name: Relative Momentum Index
+  name_zh: 相对动量指数
+  aliases: ["RMI"]
+  indicator_class: momentum
+  formula: RSI 变体：动量窗 mom=C−C[mom_length]，Wilder α=1/N 平滑后按 RSI 同式（TASC 1993 Altman）
+  params: {period: 14, mom_length: 5}
+  inputs: [close]
+  outputs: [rmi_14]
+  warmup_period: 6
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-039
+  name: Polarized Fractal Efficiency
+  name_zh: 极化分形效率
+  aliases: ["PFE"]
+  indicator_class: momentum
+  formula: 100×sign(net)×√(N²+net²)/√(N²+ΣΔC²)，EMA(smooth) 平滑（TASC 1994 Hannula/MetaStock 口径）
+  params: {period: 10, smooth: 5}
+  inputs: [close]
+  outputs: [pfe_10]
+  warmup_period: 11
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-040
+  name: Forecast Oscillator
+  name_zh: 预测震荡
+  aliases: ["FOSC"]
+  indicator_class: momentum
+  formula: (C/TSF−1)×100，TSF=a+bN 为滚动 OLS 一步外推（复用 _rolling_linefit）
+  params: {period: 14}
+  inputs: [close]
+  outputs: [fosc_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-041
+  name: Correlation Trend Indicator
+  name_zh: 相关趋势指标
+  aliases: ["CTI"]
+  indicator_class: momentum
+  formula: 滚动 Pearson r(close, 0..N−1 线性序列)（Ehlers 口径，值域 [-1,1]）
+  params: {period: 12}
+  inputs: [close]
+  outputs: [cti_12]
+  warmup_period: 12
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-042
+  name: Vertical Horizontal Filter
+  name_zh: 纵横过滤
+  aliases: ["VHF"]
+  indicator_class: momentum
+  formula: (max(C,N)−min(C,N))/Σ|ΔC|（Bressert；高值=趋势、低值=盘整）
+  params: {period: 28}
+  inputs: [close]
+  outputs: [vhf_28]
+  warmup_period: 29
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "趋势", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-MOM-043
+  name: Efficiency Ratio
+  name_zh: 效率比率
+  aliases: ["ER", "Kaufman ER"]
+  indicator_class: momentum
+  formula: "|C−C_N|/Σ|ΔC|（Kaufman；KAMA 内核独立立条，值域 [0,1]）"
+  params: {period: 10}
+  inputs: [close]
+  outputs: [er_10]
+  warmup_period: 11
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["动量", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOLUME-015
+  name: Williams Accumulation/Distribution
+  name_zh: 威廉累积/派发线
+  aliases: ["WAD"]
+  indicator_class: volume
+  formula: TAD=C>Cp 时 C−Lp；C<Cp 时 C−Hp；否则 0；WAD=cumsum(TAD)（首行 TAD=0，Tulip 累积口径）
+  params: {}
+  inputs: [high, low, close]
+  outputs: [wad]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["成交", "资金", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOLUME-016
+  name: Volume Oscillator
+  name_zh: 成交量震荡器
+  aliases: ["VO"]
+  indicator_class: volume
+  formula: (MA(V,fast)−MA(V,slow))/MA(V,slow)×100（百分比口径）
+  params: {fast: 5, slow: 20}
+  inputs: [volume]
+  outputs: [vo]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["成交", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-VOLUME-017
+  name: Market Facilitation Index
+  name_zh: 市场促进指数
+  aliases: ["MARKETFI", "BW MFI"]
+  indicator_class: volume
+  formula: (H−L)/V（V=0→NaN 保护；Bill Williams）
+  params: {}
+  inputs: [high, low, volume]
+  outputs: [marketfi]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["成交", "波动", "指标"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
+- indicator_id: IND-STAT-009
+  name: Rolling Z-Score
+  name_zh: 滚动Z分数
+  aliases: ["ZSCORE"]
+  indicator_class: statistics
+  formula: (C−rolling_mean)/rolling_std(ddof=0)（与 BOLL 中轨 std 口径一致）
+  params: {period: 20}
+  inputs: [close]
+  outputs: [zscore_20]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-028
+  doc_ref: 16_technical_indicator_catalog.md §6.6
+  code_path: src/zephyr/factor/technical_indicators/statistics.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-20'
+  updated_at: '2026-09-20'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: []
+  tags: ["统计", "指标"]
   algorithm_status: "quantized"
   evidence: ""
   code_symbol: null
