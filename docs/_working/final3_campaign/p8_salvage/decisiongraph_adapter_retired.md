@@ -1,3 +1,49 @@
+---
+ttl: task_bound
+completes_when: P14 终局报告落盘
+title: decisiongraph_adapter.py 退役存档（W5-2 O-2）
+session: st-maxexec-20260920
+date: 2026-09-20
+---
+
+# decisiongraph_adapter.py 退役存档 — final3 P8 / W5-2 O-2
+
+> 原路径 `src/zephyr/backtest/io/decisiongraph_adapter.py`（191 行）已于 2026-09-20 删除。
+> 本件为逐字节保真存档（目录契约禁 docs/_working/ 落 .py，故以 markdown 代码块存档）。
+
+## 退役依据与证据
+
+- 依据：`docs/_working/final3_campaign/w5_1_cluster_audit.md` 簇2 三档结论 + 裁定#371。
+- 证据（W5-1 B 级零 import + P8 复核升级 A 级）：
+  - 全仓 grep：公共函数 `register_backtest_result_in_decisiongraph` /
+    `backtest_result_to_decision_node` 在 src/scripts 零调用点（仅自身+自测试）；
+  - 头部声明消费方"回测管线（vectorized_engine / event_driven_engine）"实测未接线；
+  - PG decision_nodes 直查（只读探针 `.runtime/tmp/p8_o2_adapter_probe.py`，2026-09-20）：
+    `path LIKE 'backtest/%'` = 0 行；`module_id='MOD-BT-001'` = 0 行；L5/signal = 0 行
+    ——适配器从未写入任何节点（手工入口亦无痕迹）；
+  - .runtime 运行痕迹复核：仅治理扫描器产物（depgraph 缓存/claim 快照/审计 jsonl）记录
+    文件路径，非运行消费。
+
+## 同批联动处置
+
+- 删 `tests/backtest/test_backtest_decisiongraph_adapter.py`（测试同批删）；
+- 删 `docs/03_modules/_domain_backtest/algo_flow/decisiongraph_adapter.yaml`（algo_flow_link_gate
+  设计语义：yaml 与 [ALGO_FLOW] external 锚同批消失，不留坏锚）；index.md 行同步移除；
+- `panorama_alignment_gate.py` 触发清单幽灵路径 `catalogs/decision_layers_registry.yaml` 删除
+  （git 全历史从未存在=拼写幽灵，唯一引用点，删除断无行为影响）；
+- 注册表联动：module_translation_registry / test_suite_registry（retired）/
+  capability_canonical_file_registry（canonical_override 指向本存档件，防重建语义保留）；
+- `decisiongraph_schema.py` [TESTS] 头更新（移除已删测试引用）；
+- decisiongraph 主体零改动（门禁+对齐+派生三路现役消费，保留）。
+
+## 防重建提示
+
+本能力（BacktestResult→decision_nodes 映射）已裁定退役，勿重建；若回测→决策图关联需求复活，
+须新裁定登记。
+
+## 原文件逐字节保真存档
+
+```python
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md | §decisiongraph-adapter
 # [MODULE] zephyr.backtest.io.decisiongraph_adapter
 # [DOMAIN] D_BACKTEST
@@ -188,3 +234,4 @@ __all__ = [
     "backtest_result_to_decision_node",
     "register_backtest_result_in_decisiongraph",
 ]
+```

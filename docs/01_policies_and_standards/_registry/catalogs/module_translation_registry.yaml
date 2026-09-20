@@ -2002,13 +2002,13 @@ entries:
   desc_en: ''
   plain_zh: 回测结果汇 · 回测结果数据落地模块（v1.3.0 新增，#ARCH-047）
   responsibility_layer: business
-- module_path: src/zephyr/backtest/io/decisiongraph_adapter.py
+- module_path: docs/_working/final3_campaign/p8_salvage/decisiongraph_adapter_retired.md
   domain_id: D_BACKTEST
-  name_zh: decisiongraph适配器
-  name_en: decisiongraph_adapter
-  desc_zh: 将 BacktestResult（CTR-P1-016，15 字段冻结契约）映射为 decisiongraph
+  name_zh: decisiongraph适配器（已退役存档）
+  name_en: decisiongraph_adapter (Retired)
+  desc_zh: 将 BacktestResult（CTR-P1-016，15 字段冻结契约）映射为 decisiongraph（已退役存档）
   desc_en: ''
-  plain_zh: 将 BacktestResult（CTR-P1-016，15 字段冻结契约）映射为 decisiongraph
+  plain_zh: 把回测结果登记进决策流图的适配器。声明消费方从未接线、数据库零写入痕迹，2026-09-20 退役存档，勿重建。
   responsibility_layer: business
 - module_path: src/zephyr/backtest/io/result_repository.py
   domain_id: D_BACKTEST
@@ -14446,7 +14446,7 @@ entries:
   desc_en: ''
   plain_zh: 漂移检测的看板监控：持续盯着看板的运行状态，一有异常就告警，让漂移检测的问题能及时被发现。
   responsibility_layer: governance
-- module_path: scripts/governance/d7_code/fix_n13_snake_case.py
+- module_path: scripts/governance/_archive/one_off/fix_n13_snake_case.py
   domain_id: D_GOV_SCRIPTS
   name_zh: N-13 YAML/JSON/MD 文件名 snake_case 批量修复脚本
   name_en: Fix N13 Snake Case
@@ -25536,7 +25536,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：规则影子运行器的行为要符合预期，有偏差尽早抓住。
-- module_path: scripts/governance/d7_code/fix_n14_init_all.py
+- module_path: scripts/governance/_archive/one_off/fix_n14_init_all.py
   domain_id: D_GOV_SCRIPTS
   name_zh: N-14 __init__.py 缺少 __all__ 批量修复脚本
   name_en: Fix N14 Init All
@@ -37165,7 +37165,7 @@ entries:
   desc_en: ''
   plain_zh: 测试：确保msg style 门禁不出岔子，让问题在上线前现形。
   responsibility_layer: governance
-- module_path: scripts/governance/d7_code/fix_naming_manual.py
+- module_path: scripts/governance/_archive/one_off/fix_naming_manual.py
   domain_id: D_GOV_SCRIPTS
   name_zh: 手动修复少量命名违规
   name_en: Fix Naming Manual
@@ -37562,7 +37562,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：数据库的行为要符合预期，有偏差尽早抓住。
-- module_path: scripts/governance/d7_code/fix_n06_scope.py
+- module_path: scripts/governance/_archive/one_off/fix_n06_scope.py
   domain_id: D_GOV_SCRIPTS
   name_zh: N-06 module_id scope 前缀检测修复脚本
   name_en: Fix N06 Scope
@@ -38120,13 +38120,13 @@ entries:
   desc_en: ''
   plain_zh: 测试：供应链链安全的行为要符合预期，有偏差尽早抓住。
   responsibility_layer: governance
-- module_path: config/capacity_params.yaml
+- module_path: docs/_working/final3_campaign/p8_salvage/capacity_params_retired.yaml
   domain_id: ''
-  name_zh: 容量Params
-  name_en: Capacity Params
+  name_zh: 容量Params（已退役存档）
+  name_en: Capacity Params (Retired)
   desc_zh: ''
   desc_en: ''
-  plain_zh: 配置：容量参数的设置项，全系统统一从这里读取。
+  plain_zh: 配置：容量参数的设置项。2026-09-20 已退役（设计容量数值无代码读取），存档备查；资源压力阈值看 resource_optimization.yaml。
 - module_path: tests/governance/scripts_governance/test_validate_ssot_unit.py
   domain_id: D_GOV_SCRIPTS
   name_zh: P0：frontmatter 解析
@@ -39029,7 +39029,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 基础设施·草稿包的入口：import 这个包时会先跑这里，把包里的子模块聚成统一的对外出口。
-- module_path: scripts/governance/d7_code/fix_n15_blueprint_path.py
+- module_path: scripts/governance/_archive/one_off/fix_n15_blueprint_path.py
   domain_id: D_GOV_SCRIPTS
   name_zh: N-15 BLUEPRINT 头部路径不存在批量修复脚本
   name_en: Fix N15 Blueprint Path
@@ -43714,7 +43714,7 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 测试：验证fl 安全门禁 l66 l67的正确性，出问题尽早发现。
-- module_path: scripts/governance/d7_code/fix_n12_ke_naming.py
+- module_path: scripts/governance/_archive/one_off/fix_n12_ke_naming.py
   domain_id: D_GOV_SCRIPTS
   name_zh: N-12 KE 条目命名格式批量修复脚本
   name_en: Fix N12 Ke Naming
@@ -65582,19 +65582,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: ① Agent上手上下文生成
+  name_zh: 维护手册
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: ② 任务卡模板提供
+  name_zh: 维护手册
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: ③ 目录地图提供
+  name_zh: 维护手册
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py

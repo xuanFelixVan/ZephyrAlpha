@@ -35,7 +35,6 @@ ttl: "permanent"
 | [data_quality_checker.yaml](data_quality_checker.yaml) | YAML | |
 | [decay_monitor.yaml](decay_monitor.yaml) | YAML | |
 | [decision_gate.yaml](decision_gate.yaml) | YAML | |
-| [decisiongraph_adapter.yaml](decisiongraph_adapter.yaml) | YAML | |
 | [e2_stationary_bootstrap.yaml](e2_stationary_bootstrap.yaml) | YAML | |
 | [e3_param_sensitivity.yaml](e3_param_sensitivity.yaml) | YAML | |
 | [e4_cost_sensitivity.yaml](e4_cost_sensitivity.yaml) | YAML | |

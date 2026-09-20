@@ -72,7 +72,10 @@ _TRIGGER_PATTERNS = (
     "scripts/governance/apply_decisiongraph.py",
     "scripts/governance/generate_project_depgraph.py",
     "docs/01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml",
-    "docs/01_policies_and_standards/_registry/catalogs/decision_layers_registry.yaml",
+    # 2026-09-20 W5-2 O-2（w5_1_cluster_audit 簇2 漂移线索）：原此位引用
+    # catalogs/decision_layers_registry.yaml ——git 全历史从未存在（拼写幽灵，
+    # 唯一引用点即本清单），删除断无行为影响；决策图登记册实存邻位为
+    # decision_algo_registry.yaml（决策算法登记表，非同一对象，不代挂）。
     "scripts/governance/d5_architecture/generators/align_panoramas.py",
     "docs/03_modules/",
 )

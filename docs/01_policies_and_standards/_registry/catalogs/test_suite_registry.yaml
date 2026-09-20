@@ -5823,10 +5823,10 @@ items:
   name: test_apply_decisiongraph.py
   node_type: test
   status: active
-- file: tests/test_backtest_decisiongraph_adapter.py
+- file: tests/backtest/test_backtest_decisiongraph_adapter.py
   name: test_backtest_decisiongraph_adapter.py
   node_type: test
-  status: active
+  status: retired  # 2026-09-20 W5-2 O-2: 随 decisiongraph_adapter 退役同批删除（原登记路径少 /backtest/ 段一并修正）
 - file: tests/test_decision_graph_reader.py
   name: test_decision_graph_reader.py
   node_type: test
