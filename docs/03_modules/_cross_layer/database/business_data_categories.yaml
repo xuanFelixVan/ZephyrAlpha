@@ -3511,3 +3511,20 @@
   frequency: 日内累积
   data_source: [internal]
   blueprint: null
+
+# --- 股票日频估值基础（波6 批9：换手率/股本/市值，筹码族前置数据）---
+- category_id: market_stock_daily_basic
+  name: "股票日频估值基础（换手率/流通股本/市值，AKShare 东财历史接口，批9）"
+  engine: clickhouse
+  database: c1_market
+  table: stock_daily_basic
+  schema_file: schemas/categories/market/market_stock_daily_basic.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null

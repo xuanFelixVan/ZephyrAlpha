@@ -36,8 +36,10 @@ title: 技术指标库清欠班台账（分包A·34指标三件套清零）
 | 波3 | SUPERSMOOTHER/HIGHPASS/PTREND（trend.py，TASC 2024-09 学术族）+3 列 | 020728598c | +17 用例；目录 1070 passed ×2 轮 | done（双实现互证 1e-12+手算微样本 [亲验]） |
 | 波3-总包 | 注册表 136 条+schema 198 列+契约 135/198+memo v1.9.0+a3 挖矿报告 | 020728598c | 四方探针 198×4 全等 | done |
 | 收官 | D-15 三态核实 17 文件全一致（index 旧弹 git reset 消弹+capability 册 HEAD 超集收敛）；红蓝对抗 ALL PASS；波4 未启动（理由见 a5 §5） | 3424a718e7 | 136 条=终极目标达成 | done |
-| 波5 | CONTINUATION/GPRED（cycle.py，mesasoftware 官网 PDF 公式源，Owner 追加令） | （本批落地后回填） | +9 用例；目录 1079 passed ×2 轮 | done（GPRED 正弦领先 corr=0.9462[亲验]；Variance 判零相对容差自裁已记录） |
-| 波6 | stock_daily_basic 数据批（Owner 追加令开工） | 进行中 | - | in_flight |
+| 波5 | CONTINUATION/GPRED（cycle.py，mesasoftware 官网 PDF 公式源，Owner 追加令） | 7fbec92e89 | +9 用例；目录 1079 passed ×2 轮 | done（GPRED 正弦领先 corr=0.9462[亲验]；Variance 判零相对容差自裁已记录） |
+| 波6-建表 | schema 真源 market_stock_daily_basic.py+translation+CREATE-GUARD token+品类册+CH 建表（8 列 ReplacingMergeTree） | 见波6提交 | system.columns 探针 8/8 | done（CH 26.6.1 ORDER BY 多键须元组形式新坑已记） |
+| 波6-回填 | tushare daily_basic 按日全市场 1386 交易日（东财断连切备胎源） | 留盘脚本 scripts/data/backfill_stock_daily_basic.py | 7,057,391 行/零失败日/5777 标的/四列 100% | done |
+| 波6-验收 | 000852 换手率 2021 起 100% 覆盖（对齐 kline_daily 1386 天） | 同上 | coverage=100.0%[亲验]；表 237MiB | done ✅ 总令验收判据达成 |
 
 ## 裁定与偏差记录
 
