@@ -50,6 +50,7 @@ except ImportError:
 
 from zephyr.backtest.core.pit_manager import PITConfig, PITManager
 from zephyr.data import ch_reader
+from zephyr.data.table_registry import get_registry
 
 _logger = logging.getLogger(__name__)
 
@@ -84,9 +85,9 @@ class BacktestDataHandler:
             # bar是当前日期的所有symbol的OHLCV
             ...
 
-        # ClickHouse模式
+        # ClickHouse模式（X-2 修复后；symbol=库内裸6位代码格式，非 000001.SZ 后缀形态）
         handler = BacktestDataHandler.from_clickhouse(
-            symbols=["000001.SZ", "600000.SH"],
+            symbols=["000001", "600000"],
             start_date="2024-01-01",
             end_date="2024-12-31",
         )
@@ -274,6 +275,34 @@ class BacktestDataHandler:
         """所有日期列表(排序后)"""
         return list(self._dates)
 
+    @staticmethod
+    def compute_qfq_close(df: pd.DataFrame, close_col: str = "close") -> pd.Series:
+        """用 adj_factor 点乘子计算前复权 close（X-2 复权链修复配套 helper）。
+
+        语义（预注册卡 §2.3：不改 OHLC 原值，复权价由消费方显式计算）：
+        - adj_factor = 当日除权乘子（事件日=1/dr，无事件日=1；dr=昨收/除权参考价）
+        - 前复权 = 把当前窗口内**未来**事件的乘子折算到历史价上：
+          qfq(t) = close(t) * Π_{事件日 s>t} mult(s)
+          实现为 cum_total / cumprod_to_t（等价）。
+
+        Args:
+            df: 含 date/symbol/{close_col}/adj_factor 列的 DataFrame
+                （from_clickhouse 输出或同构）；须先按 symbol 分组调用或全表单 symbol
+            close_col: 原始收盘价列名
+
+        Returns:
+            前复权 close（与输入等长，索引对齐）；df 缺 adj_factor 列时抛 DataHandlerError
+        """
+        if "adj_factor" not in df.columns:
+            raise DataHandlerError("compute_qfq_close 需要 adj_factor 列（from_clickhouse X-2 修复后输出）")
+        parts = []
+        for _, g in df.sort_values("date").groupby("symbol", sort=False):
+            g = g.copy()
+            g["_cum"] = g["adj_factor"].astype(float).cumprod()
+            g["_qfq"] = g[close_col].astype(float) * g["_cum"].iloc[-1] / g["_cum"]
+            parts.append(g[["_qfq"]].rename(columns={"_qfq": "qfq_close"}))
+        return pd.concat(parts).reindex(df.index)
+
     @property
     def symbols(self) -> list[str]:
         """所有symbol列表"""
@@ -332,7 +361,7 @@ class BacktestDataHandler:
         start_date: str,
         end_date: str,
         database_service: object | None = None,
-        table: str = "daily_kline",
+        table: str | None = None,
         fundamental_tables: list[str] | None = None,
     ) -> BacktestDataHandler:
         """从ClickHouse加载OHLCV数据（通过 DatabaseService）
@@ -340,15 +369,21 @@ class BacktestDataHandler:
         v1.1.0 实现：通过 DatabaseService 访问 ClickHouse(c1_market)，
         禁止裸 clickhouse_driver.connect。
         v1.3.0 新增：fundamental_tables 参数，加载 PIT 财务数据（#ARCH-CH-021 P0-5）。
+        v1.4.0 X-2 复权链修复（final3 卡 docs/_working/final3_campaign/x2_adjfactor_prereg.md）：
+        默认表名走 table_registry 真源（旧默认 "daily_kline" 是调度批次名误用，
+        表不存在必抛错；真实列名为 trade_date 非 date——双重病灶一并修复）；
+        SELECT 增补 adj_factor 列（当日除权乘子，无事件日=1），消费方用乘子
+        前向连乘得前复权价（见 compute_qfq_close helper）。OHLC 原值语义不变。
 
         Args:
             symbols: symbol列表
             start_date: 开始日期(YYYY-MM-DD)
             end_date: 结束日期(YYYY-MM-DD)
             database_service: DatabaseService实例(可选,默认自动创建)
-            table: ClickHouse表名(默认daily_kline)
+            table: ClickHouse全限定表名(可选,默认走 table_registry
+                "market_kline_daily" 真源解析——禁止硬编码表名字面量)
             fundamental_tables: PIT财务表列表(可选,如["income_statement","balance_sheet"])。
-                加载全版本(含修正公告),get_bar时按announce_date<=date过滤取最新(AS OF JOIN)。
+                加载全版本(含修正公告),get_bar时按announce_date<=date过滤取最新(AS OF)。
 
         Returns:
             BacktestDataHandler实例
@@ -356,6 +391,9 @@ class BacktestDataHandler:
         Raises:
             DataHandlerError: ClickHouse未接入或查询失败
         """
+        if table is None:
+            # X-2: 默认表名唯一真源=table_registry（fail-closed，键未注册即 KeyError）
+            table = get_registry().table("market_kline_daily")
         if database_service is None:
             if DatabaseService is None:
                 raise DataHandlerError(
@@ -376,12 +414,30 @@ class BacktestDataHandler:
 
         # ClickHouse 查询：支持多 symbol
         symbols_str = ", ".join([f"'{s}'" for s in symbols])
+        # X-2 复权链修复（卡 §2 D0）：
+        # - 列名用真实 trade_date（AS date 保持输出契约不变）
+        # - adj_factor=当日除权乘子，主真源=c3_fundamental.ex_dividend_event（方案D，
+        #   QMT 官方全史 dr，与 stk_limit 现行真源一致）；无事件日=1
+        # - Decimal 坑（#198 配方）：dr 为 Nullable(Decimal(18,10))，Decimal 域 1/dr
+        #   会 scale 越界 overflow，必须 toFloat64 转 float 域除法
+        # - JOIN 用 USING 无别名形态：ch_reader.inject_final 在表名后注入 FINAL，
+        #   "FROM t FINAL alias" 非法，USING 形态合法（#198 真实 CH 实测）
+        # - WHERE 不得引用聚合别名 dr（CH 26.6 分析器坑），过滤移入聚合内部
+        #   （同 akshare_provider._SQL_KLINE_BARS 方案D 范式）
+        ex_div_table = get_registry().table("ex_dividend_event")
         query = (
-            f"SELECT date, symbol, open, high, low, close, volume, amount "
+            f"SELECT trade_date AS date, symbol, open, high, low, close, volume, amount, "
+            f"if(e.dr IS NULL OR e.dr <= 0, 1, 1 / toFloat64(e.dr)) AS adj_factor "
             f"FROM {table} "
+            f"LEFT JOIN ("
+            f"SELECT symbol, trade_date, any(if(dr IS NULL OR dr <= 0, NULL, dr)) AS dr "
+            f"FROM {ex_div_table} "
+            f"WHERE trade_date >= %(start)s AND trade_date <= %(end)s "
+            f"GROUP BY symbol, trade_date"
+            f") e USING (symbol, trade_date) "
             f"WHERE symbol IN ({symbols_str}) "
-            f"AND date >= %(start)s AND date <= %(end)s "
-            f"ORDER BY date, symbol"
+            f"AND trade_date >= %(start)s AND trade_date <= %(end)s "
+            f"ORDER BY trade_date, symbol"
         )
         params = {"start": start_date, "end": end_date}
 
@@ -398,7 +454,17 @@ class BacktestDataHandler:
 
         df = pd.DataFrame(
             rows,
-            columns=["date", "symbol", "open", "high", "low", "close", "volume", "amount"],
+            columns=[
+                "date",
+                "symbol",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "amount",
+                "adj_factor",
+            ],
         )
         df["date"] = pd.to_datetime(df["date"])
 
@@ -557,7 +623,7 @@ class MultiSourceDataHandler:
         tick_provider: object | None = None,
         batch_data: pd.DataFrame | None = None,
         database_service: object | None = None,
-        table: str = "daily_kline",
+        table: str | None = None,
     ):
         """初始化多源数据处理器
 
@@ -569,7 +635,8 @@ class MultiSourceDataHandler:
             tick_provider: MiniQmtQuoteProvider 实例（mode="tick"/"auto" 时必填）
             batch_data: 批量数据 DataFrame（可选，优先于 ClickHouse）
             database_service: DatabaseService 实例（mode="batch"/"auto" 时可选）
-            table: ClickHouse 表名（默认 daily_kline）
+            table: ClickHouse 全限定表名（可选，None 时透传给 from_clickhouse
+                走 table_registry "market_kline_daily" 真源解析，X-2 修复）
 
         Raises:
             DataHandlerError: 参数无效或数据源不可用
