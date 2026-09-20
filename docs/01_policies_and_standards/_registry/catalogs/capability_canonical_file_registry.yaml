@@ -39972,6 +39972,10 @@ creation_tokens:
   token: kimi-adjudications-p7c-efgh-family-rulings-20260920
   created_by: st-maxexec-20260920
   capability: kimi_adjudications
+- file: docs/_working/kimi_audit/adjudications/p7a_ac_family_rulings.md
+  token: kimi-adjudications-p7a-ac-family-rulings-20260920
+  created_by: st-maxexec-20260920
+  capability: kimi_adjudications
   merge_evaluation: "并入既有 kimi_adjudications capability 段（同族裁定书第17份），无新增能力面"
 - file: docs/_working/final3_campaign/p8_salvage/capacity_params_retired.yaml
   token: p8-salvage-retire-capacity-params-retired-20260920
