@@ -52,9 +52,9 @@ AI 层"自我进化引擎"设计真源已 100% 完成（11 本 DESIGN 挖干+红
 
 | 步骤 | 做什么 | 涉及文件全路径 | 验收判据 | 路由 |
 |---|---|---|---|---|
-| 1 | 重做复审：把 L2 既成事实（84007a1d6a，7.5/9 项+4 缺测试件）、__init__.py 悬置、events.py 幽灵条目、第 3.5 节标题计数差一全部纳入复审报告；追认 L2 施工授权来源疑问列 Max 裁定清单 | D:\ZephyrAlpha\docs\_working\ai_layer_vision\P1_construction_review.md（新建） | 含分级问题清单（P0 阻塞/P1 应修/P2 记录）+Max 裁定清单 | Flash |
+| 1 | 重做复审：把 L2 既成事实（84007a1d6a，7.5/9 项+4 缺测试件）、__init__.py 悬置、events.py 幽灵条目、第 3.5 节标题计数差一全部纳入复审报告；并逐本核对 11 本 DESIGN：项数/验收标准/依赖序自洽+接口契约（事件名/字段/状态机）与他稿一致+与 HEAD rule_replay 无漂移；追认 L2 施工授权来源疑问列 Max 裁定清单。复审输入六源：①记忆 ai-layer-vision-doc-20260917.md（会话自动加载）②docs/_working/ai_layer_vision/README.md 第 3.5 节+第 4 节施工顺序（依赖序现成真源）③主文档 ai_layer_vision_and_roadmap_v1.md（定调十三条）④11 本 DESIGN（L1 9 项/L2 9 项/L3 8 项/L4 8 项/L5 10 项/L6 8 项/L7 9 项/OBJ_M 8 项/OBJ_T 9 项/OBJ_S 8 项/OBJ_R）⑤成品先例 rule_replay.py+tests ⑥前任聊天 C:\Users\fanzi\.zcode\cli\rollout\model-io-sess_7af889a4-d90b-4da3-bc36-be98a4fbb19c.jsonl（只按需 grep 禁整读；09-21 实测 rollout 目录仅剩 3 文件，此件可能已不在盘——以①③④为基准） | D:\ZephyrAlpha\docs\_working\ai_layer_vision\P1_construction_review.md（新建） | 含分级问题清单（P0 阻塞/P1 应修/P2 记录）+Max 裁定清单；11 本 DESIGN 逐本核对记录在案 | Flash |
 | 2 | __init__.py 两解裁定：Owner 裁定豁免 vs 改 PEP420 布局，裁定后随批落地（404 字节成品已在盘） | src/zephyr/governance/standards_governance/__init__.py | 文件入 HEAD、working tree 零驻留 | Max 预审，Owner 门位（涉 ARCH-031 语义） |
-| 3 | 编制重构版 P1 方案：L2 批改"收尾批"（补 4 测试件+施工项 8 登记补全），其余 10 本 DESIGN 按依赖序照编；六要素（分批/车道/路由/资源/红线/回滚）全齐——红线要素必须逐条写明：禁碰 docs/03_modules、TDM、AGENTS.md、他车道在飞区；五条永不触碰（实盘凭证/付费动作/宪法权限语义/审计链/验收判据自改）。两份交付 .md 落地前走 CREATE-GUARD token ceremony+网关落 HEAD+工作树零驻留（原文交付③） | D:\ZephyrAlpha\docs\_working\ai_layer_vision\P1_construction_plan.md（新建） | 六要素全齐（红线含三禁碰+五永不触碰）+第 3.5 节九项治理立案预审归纳挂钩；两交付物在 HEAD 且工作树零驻留 | Flash 起草，取舍点列 Max 清单 |
+| 3 | 编制重构版 P1 方案：L2 批改"收尾批"（补 4 测试件+施工项 8 登记补全），其余 10 本 DESIGN 按依赖序照编；每批五字段=施工项/涉及文件/依赖/验收标准（引 DESIGN 原文）/预估规模；六要素（分批/车道/路由/资源/红线/回滚）全齐——红线要素必须逐条写明：禁碰 docs/03_modules、TDM、AGENTS.md、他车道在飞区；五条永不触碰（实盘凭证/付费动作/宪法权限语义/审计链/验收判据自改）。两份交付 .md 落地前走 CREATE-GUARD token ceremony+网关落 HEAD+工作树零驻留（原文交付③） | D:\ZephyrAlpha\docs\_working\ai_layer_vision\P1_construction_plan.md（新建） | 六要素全齐（红线含三禁碰+五永不触碰）+每批五字段齐+第 3.5 节九项治理立案预审归纳挂钩；两交付物在 HEAD 且工作树零驻留 | Flash 起草，取舍点列 Max 清单 |
 | 4 | 注册表卫生小批：清 events.py 幽灵条目、刷 README 标题计数 | docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml、docs/_working/ai_layer_vision/README.md | 路径账实一致 | Flash |
 | 5 | 催批：方案落盘交 Owner 批，批前不动一行施工代码 | 会话回复 | Owner 批文在案 | Owner 门位 |
 
@@ -74,7 +74,8 @@ AI 层"自我进化引擎"设计真源已 100% 完成（11 本 DESIGN 挖干+红
 6. 注册表防过期假净删四步压一条命令（checkout HEAD→重插行→claims→入袋）；加行被 held 用 --allow-overlap（叠加型非互斥）。
 7. 提交队列死信处置：读 .runtime/commit_queue/dead/<qid>.json 的 dead_reason→修文件→requeue；serializer Apply 静默失败（四现先例）=入袋后轮询无进展即改直连重试。
 8. docs/_working 新文件 frontmatter 禁带 doc_type（EXEMPT-ZONE-FM 硬拦）；新 .md 必带 ttl 字段（TTL-METADATA）。
+9. message 文件用完别急着删（删了重跑会静默失败）；测试禁写生产路径（tmp_path fixture），报告落 .runtime/tmp/；复审+方案编制期间不停不问（复杂裁定按路由交 Max），自裁留痕（每项裁定写明依据）。
 
 ## 7. 执行冷启动提示
 
-按 AGENTS.md 第 0 节冷启动；新 .py 三件套（depgraph+token+翻译）；15 字段文件头；时间戳用 shared.utils.time_utils.now_utc 禁 datetime.now。
+按 AGENTS.md 第 0 节冷启动；新 .py 三件套（depgraph+token+翻译）；15 字段文件头。代码红线六条（进执行阶段生效）：时间戳用 shared.utils.time_utils.now_utc 禁 datetime.now；子进程=shared.infra.process_pool.run_subprocess_hidden 禁裸 subprocess；常量加 Final；复杂度≤15；参数≤7（dataclass 打包）；CLI 加 # noqa: m11-perm-manual-legitimate（M11 豁免：理由≥10 字符）。批间并行参考子代理并发 2-3。

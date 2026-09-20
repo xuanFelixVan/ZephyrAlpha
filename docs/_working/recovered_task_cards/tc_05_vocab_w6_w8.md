@@ -14,6 +14,8 @@ completes_when: 全部卡执行完毕并归档后转 archived
 
 # TC-05 词表收编战役收尾
 
+> **进度提示（09-21 04:2x 更新）**：执行班（st-taskcards-exec-20260921）正在实时执行本卡——实测 w6_round1_log.md 已增至 69 行（新增"轮 3/4/5 阵亡取证+终轮证据替代"小节，宣称 10 域死结解除、单测 6 passed）、w8_landing/landing_log.md 已落盘、00_skeleton.md W4/W6/W7/W8 已全翻、战役记忆文件 mtime 04:21。接手本卡改为**核对模式**：重测上述实物、核对封账与 10 域定性是否与裁定口径一致、终报是否已按步骤 4 的 10 项清单呈报——勿双封账/双终报。
+
 ## 0. 一句话结论
 
 原会话 9 批战役 commit 全部落地（至 13383a70c0），但死在最后一公里：W8 收口批（纯 paperwork）在交接令写下前就没做，之后近 3 天无人接棒。原文要求的"从零重跑 A、B 两轮各 2h"已被更强的替代证据面覆盖（dataqa R3 于 09-20 全树跑齐 tests/governance 90 子域、65,311 passed），**盲跑不必再做**；真正的活=一次分钟级基线三连复跑 + 10 个词表滞后域的 stable 红定性（需 Max 裁定+Owner 门位）+ W8 封账 paperwork + 记忆文件终局态。清理项（vocabconsol_* 六目录）已被定向清除，claim 已清。
@@ -53,9 +55,9 @@ completes_when: 全部卡执行完毕并归档后转 archived
 |---|---|---|---|---|
 | 1 | 基线三连复跑（分钟级，禁跑 2h 全量）：conv 校验器 check_vocab_domain_convergence --with-db、validate_target_layer、process_reaper --status | 三条命令输出 | 与 w6_round1_log.md:32-34 轮 2 真源对照如实记录（预期 conv 挂 10 域） | Flash |
 | 2 | 10 域 stable 红定性（本案活着的核心）：证据=.runtime/tmp/dataqa/pytest_flaky/ 下 r1/r2 两轮日志 + #335 + functional_domain_registry，两选一呈报：登记 known-transitional 豁免/ADVISORY 化（需裁定）或 DB 旧域净删（Owner 门位） | ruling_registry、functional_domain_registry | Max 裁定号登记；Owner 门位签署（若走净删） | Max 裁定，Owner 门位 |
-| 3 | W8 收口批：w6_round1_log.md 末尾追加"轮 3/4/5 阵亡取证+终轮证据替代说明"小节（引 dataqa R3 替代证据）；新建 w8_landing/ 收口日志；00_skeleton.md 第 2 节翻 W4/W6/W7/W8（注意 W4 行停在 🔨 而记忆称已完成，一并修正）；frontmatter 落"已封账 archived"；批次志加 B3 行 | docs/_working/2026-09-18_vocab_consolidation_campaign/ 全目录 | git log -1 --name-only 归属只含本批；porcelain 回归 0；提交必经 git_commit.py --enqueue | Flash |
-| 4 | 记忆文件更新终局态 + 唯一一次中文终报（按原文登记项逐项如实呈报，共 10 件：①10 域定性结论；②N-5 共享区纠缠现状——已由裁定 #385 收口、原 stash aa43e3b530 已 blob 级比对后废弃，现行 stash@{0} 属 WO-13续 他班资产；③#ARCH-337 热文件蒸发；④战役文档两次遭外来删除与恢复处方；⑤POST-RENAME-CHECK D-RESEARCH LIKE 假阳；⑥DB 脚本域 ADVISORY10；⑦needs_review 约 73；⑧unresolved 约 43；⑨D_COMPLIANCE 幽灵行；⑩known_data_gaps.yaml 外来脏——每项给"当前状态一行"而非照抄旧数） | C:\Users\fanzi\.qoder-cn\projects\D--ZephyrAlpha\memory\vocab-consolidation-campaign-20260918.md + 终报 | mtime 更新；终局态含 10 项披露各带现状态 | Flash |
-| 5 | （仅当 Max 仍要正式终轮）单轮定向扫描而非两轮——dataqa R3 已充当第二轮证据 | tests/governance 相关子域 | 0 FAILED 或全部定性 | Flash |
+| 3 | W8 收口批：w6_round1_log.md 末尾追加"轮 3/4/5 阵亡取证+终轮证据替代说明"小节（引 dataqa R3 替代证据，含 09-20 23:17 删除恢复与 bcybep05f 阵亡无红证两事实锚）；新建 w8_landing/ 收口日志；00_skeleton.md 第 2 节翻 W4/W6/W7/W8（注意 W4 行停在 🔨 而记忆称已完成，一并修正）；frontmatter 落"已封账 archived"；批次志加 B3 行。提交机械细节：message 文件（如 .runtime/tmp/msg_w8_final.md）必须先存在于工作区（requeue 不吸收新文件、message 文件用完别急着删否则重跑静默失败）；--enqueue --allow-non-worktree；dead 读 dead_reason 修后 requeue 勿用旧快照 | docs/_working/2026-09-18_vocab_consolidation_campaign/ 全目录 | git log -1 --name-only 归属只含本批；porcelain 回归 0；提交经队列正门真落地 | Flash |
+| 4 | 记忆文件更新终局态 + 唯一一次中文终报（按原文登记项逐项如实呈报，共 10 件：①10 域定性结论；②N-5 共享区纠缠现状——已由裁定 #385 收口、原 stash aa43e3b530 已 blob 级比对后废弃，现行 stash@{0} 属 WO-13续 他班资产；③#ARCH-337 热文件蒸发；④战役文档两次遭外来删除与恢复处方；⑤POST-RENAME-CHECK D-RESEARCH LIKE 假阳；⑥DB 脚本域 ADVISORY10；⑦needs_review 约 73；⑧unresolved 约 43；⑨D_COMPLIANCE 幽灵行；⑩known_data_gaps.yaml 外来脏——每项给"当前状态一行"而非照抄旧数）+ 列出战役 10 笔 commit（9 笔在册+W8 封账批） | C:\Users\fanzi\.qoder-cn\projects\D--ZephyrAlpha\memory\vocab-consolidation-campaign-20260918.md + 终报 | mtime 更新；终局态含 10 项披露各带现状态+10 笔 hash | Flash |
+| 5 | （仅当 Max 仍要正式终轮）单轮定向扫描而非两轮——dataqa R3 已充当第二轮证据。判读规则随扫描走：tests/governance/audit、orchestrator、observability 反复中途 Timeout=锁/FD 竞争非真红（轮 3/轮 4 先例 2008 passed、2074 passed+1 skipped），凡 Timeout 目录逐个独立重跑证明绿方可计清；真红分流——非本战役滞后红按先例治本（能力件真身路径断言/#ARCH-114 路径 C 豁免登记），本战役引入的对称直接修 | tests/governance 相关子域 | 0 FAILED 或全部定性；清理边界=外来 msg_*/tdchain_*/vocabM_* 属他会话勿动 | Flash |
 
 ## 5. 与其他任务卡的关系
 
@@ -69,6 +71,7 @@ completes_when: 全部卡执行完毕并归档后转 archived
 2. 战役目录历史两次遭外来删除：落批前再 porcelain 复核；热文件写必经 safe_write_text。
 3. dataqa R3 数字是 09-20 时点，09-21 凌晨 HEAD 又前进数笔：基线对照勿机械等值，以"在册现象可解释"为准。
 4. 封账前骨架被当作活任务：做完步骤 3 才算真正闭案，勿只做步骤 1/2 就收工。
+5. index.lock 存在=有活 git 进程：带时限重试，勿删锁。
 
 ## 7. 执行冷启动提示
 

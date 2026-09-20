@@ -1,7 +1,7 @@
 ---
 card_id: TC-08
 title: 残余挂账战役收尾（pipeline_events 接线 / cohort 表 / E6 对冲腿 / E7 告警 / Q1Q2）
-verdict: 变形（置信度高：核心建造件已被 fullflow 战役落地进 HEAD——E6/E7/cohort builder 都在；但"已收工归档"声称被证伪：形式收口三件零记录、总簿仍 campaign_running、接线批只在 G 盘冷库、6 个 staged 删除挂着、四个待裁项无裁定号）
+verdict: 变形（置信度高：核心建造件已被 fullflow 战役落地进 HEAD——E6/E7/cohort builder 都在；但"已收工归档"声称被证伪：形式收口三件零记录、总簿仍 campaign_running、接线批只在 G 盘冷库、6 个 staged 删除挂着、五个待裁项无裁定号）
 category: E类-施工批（pf_alloc 车道）+ D类裁定项
 priority: P1
 size: 中
@@ -55,13 +55,14 @@ completes_when: 全部卡执行完毕并归档后转 archived
 
 | 步骤 | 做什么 | 涉及文件全路径 | 验收判据 | 路由 |
 |---|---|---|---|---|
+| 0（形式件，先落） | 形式收口三件之二：把本卡第 2 节复审结论落盘为复审报告、把本卡步骤 1-8 整理为施工方案落盘（方案交 Max 裁定 A5 后才动施工；07 收工报告=步骤 7）——补齐"形式收口三件全历史零记录"这个本卡自己诊断出的缺口 | docs/_working/residual_resume/00_review.md、docs/_working/residual_resume/01_plan.md（新建） | 两件在 HEAD；方案含环节拆分/依赖/波次/"线内先挖后干、线间并行流水"/并发 2-3 | Flash |
 | 1 | A5 裁定：死会话（residG）冷库接线遗产是否可代落 | src/zephyr/strategy_pipeline/pipeline_events.py（成品在 G:/zephyr_cold/30_corpus/fullflow_harvest/20260918-194729/worktree/） | Max 出裁定号；按 BT-P1-031 后新版重排两段接线——L1=crisis_block_check 短路、不落 marker、判读异常 fail-closed；attribution_daily=SIM_DAILY_KINDS FIFO 末位+--day 业务日 resolve_pf_alloc_trade_date | Max 裁定，Flash 施工 |
 | 2 | apply 三常量注册恢复 | scripts/ch/apply_market_tables_ddl.py；真源 schemas/categories/ 下 crisis_gate_log.py、sim_attribution_daily.py、cohort_daily_ledger.py | grep 三常量命中；apply 干跑通过 | Flash |
-| 3 | tasks.yaml 加 cohort_ledger_daily 任务 | src/zephyr/data/config/tasks.yaml | schedule=daily_capital 尾部+deps 四增量任务；admin 建 cohort_daily_ledger 表（CH EXISTS=1） | Flash+Owner（建表） |
+| 3 | tasks.yaml 加 cohort_ledger_daily 任务 | src/zephyr/data/config/tasks.yaml | schedule=daily_capital 尾部+deps=[money_flow_incremental,margin_trading_incremental,dragon_tiger_incremental,block_trade_incremental]（四个 dep 名照抄，写错任务永远排不上）；admin 建 cohort_daily_ledger 表（CH EXISTS=1）；insert 主路径每日实跑验证一次 | Flash+Owner（建表） |
 | 4 | B20 一行日期修复单独落（**勿动 +31/-7**，R-072a 不落仍有效） | src/zephyr/pf_alloc/crisis_gate.py（备份 .runtime/tmp/ff-recon/backup_last/） | log_crisis_gate_row 用 date 对象入 Date 列；变异测试打红 | Flash |
 | 5 | 6 个 staged D 落地 | docs/_working/residual_construction/ 旧路径 | git status 该路径清零 | Flash（正门 git_commit.py） |
-| 6 | B21 严格 HEAD 两轮复跑+六环节端到端补课 | 测试体系 | 连续两轮 0 问题且口径=HEAD | Flash |
-| 7 | 收尾形式件：总簿回写（归档盒版本）+收工报告按原文六要素（环节×状态×hash/红蓝轮次证据/端到端实录含失败/遗留=0 声明或逐条案由/待裁定清单/清理确认）+Q2 清理两小件（清全仓 *.tmp.* 残留与 .runtime/tmp 一次性件；claims 全 release --release-only）+五项登记裁定号（O-1 老蔡日期映射/O1 warning 阈值/O2 对冲合约/E7 推送凭据/**真实期货通道解锁**——纸面≥3 次演练+Owner 实盘门位） | docs/_working/archive/2026-09/residual_construction/00_master_ledger.md；ruling_registry.yaml | 台账节点翻转带 hash；registry 出五裁定号；*.tmp.* 清零；claims 清零 | Flash+Max/Owner 门位 |
+| 6 | B21 严格 HEAD 两轮复跑+六环节端到端补课（E1 注入 crisis 快照三级联动/E2 回放对平 recon_diff=0/E3 计划任务实跑/E4 两对账日复算/E5 演练复跑/E6-E7 各自打穿）；红队一轮三重点=crisis 误报代价/regime 误报率/对冲腿贴水磨损，测出即修 | 测试体系 | 连续两轮 0 问题且口径=HEAD；六环节各有实测记录 | Flash |
+| 7 | 收尾形式件：总簿回写（归档盒版本）+收工报告按原文六要素（环节×状态×hash/红蓝轮次证据/端到端实录含失败/遗留=0 声明或逐条案由/待裁定清单/清理确认）+Q2 清理两小件（清全仓 *.tmp.* 残留与 .runtime/tmp 一次性件；claims 全 release --release-only）+五项登记裁定号（O-1 老蔡日期映射——证据=9/15 +299.5 亿与 9/16 −30.1 亿方向吻合、博文疑标错日，见归档盒 e4_cohort_reconciliation.md；O1 warning 阈值——建议 θ=0.5，config/crisis_gate.yaml 已有缺省；O2 对冲合约——建议 IM 起步月度考基差；E7 推送凭据——Server酱/钉钉 key，Owner 四类事/**真实期货通道解锁**——纸面≥3 次演练+Owner 实盘门位；登记材料随裁定卡呈，勿只报名目） | docs/_working/archive/2026-09/residual_construction/00_master_ledger.md；ruling_registry.yaml | 台账节点翻转带 hash；registry 出五裁定号；*.tmp.* 清零；claims 清零 | Flash+Max/Owner 门位 |
 | 8 | 长尾矿脉 M-1~M-11"登记不动工"落册防失传（原文整块，首次入卡）：M-1 机构 de-risking 参数引文/M-2 期货分钟线/M-3 盘中实时危机感知（挂 WO-5 三期）/M-4 期权腿/M-5 情景参数校准/M-6 散户偏差修正学术法/M-7 ETF 份额源/M-8 产业资本数据/M-9 chip 筹码落表/M-10 seat_type 词表扩展（数据线 A7）/M-11 Brinson 多层归因升级——11 条各带一句状态落一份登记台账，只登记不开工 | docs/_working/residual_resume/（新建登记件；若该目录仍不存在则落归档盒 docs/_working/archive/2026-09/residual_construction/） | 11 条全数在册、各带状态一行 | Flash（登记件） |
 
 ## 5. 与其他任务卡的关系
@@ -78,7 +79,8 @@ completes_when: 全部卡执行完毕并归档后转 archived
 3. 当前测试绿含"缺陷证据面消失"假象：勿以绿判收工。
 4. 三共享文件（pipeline_events/tasks.yaml/apply_ddl）是多会话热区：动前必 acquire。
 5. 全程禁连生产库写操作；建表走 admin 通道+Owner 门位。
+6. 收尾特有口径：待拍板先自裁一轮（第一性原理→机构实践→社区惯例→开源先例），裁不了才上报；多会话并发写同一目录禁 rm；配额墙=换模型接力续做勿重做；交付报告宁实勿华，做不到写"未达成+原因"。
 
 ## 7. 执行冷启动提示
 
-按 AGENTS.md 第 0 节冷启动；CH 表操作走 DatabaseService/admin；测试禁写生产路径（tmp_path fixture）；队列死信读 dead_reason 修复后 requeue。
+按 AGENTS.md 第 0 节冷启动；CH 表操作走 DatabaseService/admin；测试禁写生产路径（tmp_path fixture）；队列死信读 dead_reason 修复后 requeue。状态真源六件=归档区 00_master_ledger/pending_items_plan/wo2_blackswan_workbook/wo5_cohort_ledger_workbook/wo1_attribution_workbook/e4_cohort_reconciliation（+index）；会话注册=session_worktree_start(session_id=<sid>, allow_concurrent=True, allow_workspace_drift=True)+心跳守护+验 SessionRegistry.get_session 返回 FOUND（pid0 逻辑会话 90s 心跳过期是已知坑）。R1 四套基线测试路径与预期计数=tests/pf_alloc/test_crisis_gate.py 23、tests/backtest/test_sim_attribution_report.py 9、tests/backtest/test_crisis_drill_monthly.py 16、tests/alt_data/test_cohort_daily_ledger.py 13。

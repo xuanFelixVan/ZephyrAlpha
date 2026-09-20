@@ -54,9 +54,9 @@ st-autolnk 自动化战役前四棒交付：六线设备（上架流水线/ECB �
 
 | 步骤 | 做什么 | 涉及文件全路径 | 验收判据 | 路由 |
 |---|---|---|---|---|
-| 0（先行，半小时级） | 恢复+护住交接面：读 HANDOFF 全文+ReadSessionContext；把交接簿与台账回写（第五棒接班记录）经 GitCommitGateway 落袋防丢 | docs/_working/automation/campaign/HANDOFF_20260921_ab_league.md、CAMPAIGN_LEDGER.md | 两文件在 HEAD 有 commit hash | Flash |
+| 0（先行，半小时级） | 恢复+护住交接面：读 HANDOFF 全文+ReadSessionContext；把交接簿与台账回写（第五棒接班记录）经 GitCommitGateway 落袋防丢。状态恢复另三源：docs/_working/automation/20260917_fullauto_skeleton_v1.md 第 4/5 节（件 1 作业簿格式参照）；记忆键 automation-campaign-night-20260917 与 night-shift-autolnk-landed-20260917（自动加载）；原始记录 C:\Users\fanzi\.zcode\cli\rollout\model-io-sess_526a209c-3f12-4535-95c6-25cc197ab05e.jsonl（一般不用） | docs/_working/automation/campaign/HANDOFF_20260921_ab_league.md、CAMPAIGN_LEDGER.md | 两文件在 HEAD 有 commit hash | Flash |
 | 1（件 1 主体） | A/B 联赛：先写 mining/11_联赛/工段作业簿.md（十节封矿），再施工 config/league_registry.yaml + scripts/backtest/league_registry.py + league_archive.py（参赛档案：git hash+因子清单+数据截止日指纹+整装产物指针，百分百复原口径）+ league_restore.py + league_monthly_snapshot.py（sim_pocket_daily 按组对比月快照，只留档不判定）+ 全套测试；判定器复用 scripts/backtest/promotion_combo_gate.py（实物已在）挂 6 个月终审单 | 上述新文件+tests/backtest/test_league_*.py | 全套测试绿+GitCommitGateway 落地 | Flash（全新文件无热文件冲突） |
-| 2（件 2） | 卖出测试：QmtFileBroker(env=sim) 卖 510300 中 100 股；**限价必须按盘前实时价刷新（参考区 5.0+，勿用交接簿 4.66）**；证据 yaml 落 evidence/；夜间提交+晨间复核成交腿（第三棒先例 runbook 在 docs/_working/automation/campaign/qmt_e2e_runbook.md） | docs/_working/full-auto-chain/evidence/qmt-bridge-sell-20260921-c4.yaml | 证据 yaml 落盘+成交腿复核 | Flash（模拟户授权 Owner 已批）；成交腿异常升 Owner |
+| 2（件 2） | 卖出测试：QmtFileBridgeBroker(env="sim")（真类名，src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py——勿写成 QmtFileBroker，该类不存在）卖 510300 中 100 股；**限价必须按盘前实时价刷新（参考区 5.0+，勿用交接簿 4.66）**；证据 yaml 落 evidence/；夜间提交+晨间复核成交腿（第三棒先例 runbook 在 docs/_working/automation/campaign/qmt_e2e_runbook.md） | docs/_working/full-auto-chain/evidence/qmt-bridge-sell-20260921-c4.yaml | 证据 yaml 落盘+成交腿复核 | Flash（模拟户授权 Owner 已批）；成交腿异常升 Owner |
 | 3（件 3） | RL 训练器：src/zephyr/ex_sor/ 下（建议 services/ 或独立 trainer 子包）搭 TD3 起步+历史 replay 预热+checkpoint；产物只进模拟盘对拍。**开工前按交接簿 H-04 新口径登记裁定或更新 rl_exec_env.py 留痕**（该文件自称真训练属 B-007 Owner 闸门，与新口径冲突） | src/zephyr/ex_sor/（新 trainer 子包）、core/rl_exec_env.py 留痕 | 训练器成型+checkpoint 可恢复；模型只进模拟盘 | 施工 Flash；真训练触发 H-04=Owner 门位 |
 | 4（件 4） | 零动作：晨报带一句连绿天数 | — | 晨报在案 | Flash |
 | 5（收尾） | 循环检查两轮零问题+红蓝+Gateway 落地+清理临时文件+晨报；顺带复跑 test_generate_resource_profile_registry.py 的两处计数断言（25!=24、22!=21）——原会话已追认两轮 72/72 绿，仅复现才修，勿盲修 | tests/ 相应文件 | 两轮零问题记录+晨报落盘 | Flash |
@@ -74,6 +74,9 @@ st-autolnk 自动化战役前四棒交付：六线设备（上架流水线/ECB �
 3. 交接簿未落袋是最高丢失风险：开工第一动作先落袋。
 4. 件 1 全新文件无冲突，但避开 docs/03_modules/**、TDM、AGENTS.md 三禁写区；新 .py 遵守 REPO_ROOT+now_utc()+CREATE-GUARD 登记。
 5. 源指令重复登记两次：只认领一次。
+6. 更多硬拦（原文红线残余，条件触发才炸但炸了就返工）：TRAE-079 限 overlap 24h5 次（热文件用 lock_files acquire）；CREATE-GUARD 引用的 token catalog 必须同批入袋；新 .py 的 [BLUEPRINT] MOD-ID 禁括号；m11 豁免=noqa+理由≥10 字；ch_reader.query 返回 TSV 字符串。
+7. 遇问题自裁（架构师框架），无法裁定登记+跳过——不停不问继续下一件，不要事事升 Owner。
+8. 改后即 git add（共享区回滚链吃未 add 文件）；staged 外来内容连坐时一律 --enqueue 队列。mining/ 简写歧义说明：实树=docs/_working/automation/campaign/mining/（00-10 十工段在册）。
 
 ## 7. 执行冷启动提示
 
