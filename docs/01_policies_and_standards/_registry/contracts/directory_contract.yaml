@@ -265,6 +265,21 @@ directory_extensions:
       - subdir: "frontend/dashboard/web/assets/media/"
         extensions: [".webp", ".mp4", ".webm"]
 
+  # #342 B1 a 案（裁定#374 主题六）：运行态数据目录防回流条目——src/zephyr/data/ 是合法
+  # Python 模块域（MOD-L00-001 数据集成器，139 .py+6 .yaml 在册），不属于 global_forbidden
+  # 的 "src/data/" 前缀面；本条目只拦 runtime/db/log 类非代码产物回流，代码面不动。
+  # 原停手原因（字面扩 forbidden_prefix 会冻结合法模块，见 a1_campaign_ledger W1-D2）由此化解：
+  # 不扩前缀，只按扩展名收紧。
+  - path: "src/zephyr/data/"
+    allowed: [".py", ".yaml"]
+    forbidden: [".db", ".log", ".duckdb", ".sqlite", ".parquet", ".csv", ".json", ".jsonl", ".md", ".html"]
+    zone: neutral
+    allowed_doc_types: []
+    overrides_parent: true
+    purpose: runtime_data_guard
+    purpose_allowed_extensions: [".py", ".yaml"]
+    note: "运行态数据目录条目（#342 B1 a 案，裁定#374）：src/zephyr/data/ 为数据集成器模块域，仅放代码；数据库/日志/缓存/数据文件类运行态产物唯一合法位置=data/ 与 .runtime/。子目录同样受辖（longest-prefix 前先命中本条 overrides_parent）"
+
   - path: "scripts/"
     allowed: [".py", ".sh", ".ps1", ".vbs", ".yaml", ".json", ".md"]
     forbidden: [".bak", ".baseline"]
@@ -374,7 +389,8 @@ directory_extensions:
     allowed: [".md", ".html"]
     forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline"]
     zone: permanent
-    allowed_doc_types: [architecture_view]
+    # 2026-09-20 裁定#374 主题十 10-1：+index（generate_missing_index_md.py 目录索引件，对齐 02 区父条目既含 index）
+    allowed_doc_types: [architecture_view, index]
     purpose: generated_panorama
     purpose_allowed_extensions: [".md", ".html"]
     overrides_parent: true

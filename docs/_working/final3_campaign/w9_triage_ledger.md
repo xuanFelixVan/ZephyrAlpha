@@ -128,7 +128,7 @@ title: W8-0 working 全量审查台账（st-final3-20260919 重扫版，基线=M
 | 2026-09-15-szopen-pipeline-handoff.md | C | st-fullchain 结案头：未结案（仍有待办）（09-15~19|12KB） | W8-2 四桶派发 |
 | 2026-09-15-tilib-handoff.md | C | 无结案头（09-15~19|7KB） | W8-2 四桶派发 |
 | 2026-09-18-gate-identity-root-fix-plan.md | D | W1 辅读（身份键地基） | 保留（W1 真源，F 批后随战役归档） |
-| 2026-09-18-HANDOFF-PROMPT.md | B | 交接件（09-15~19|11KB） | W8-2① 消费复核后归档 |
+| 2026-09-18-HANDOFF-PROMPT.md | B | 交接件（09-15~19|11KB） | 已归档 B→archive/2026-09/（2026-09-20 #374） |
 | 2026-09-18-institutional-architecture-review.md | C | 无结案头（09-15~19|21KB） | W8-2 四桶派发 |
 | 2026-09-18-issue-inventory-full.md | C | 无结案头（09-15~19|11KB） | W8-2 四桶派发 |
 | 2026-09-18-landing-anchor-algo-flow-closeout/ | C | 审查 C 类目录 | W8-2②（ALGO 锚定收口件） |
@@ -138,37 +138,37 @@ title: W8-0 working 全量审查台账（st-final3-20260919 重扫版，基线=M
 | 2026-09-19-overnight-scope-lock-report.md | D | W1 证据真源③ | 保留（W1 真源，F 批后随战役归档） |
 | 540x540.mp4 | C | 无结案头（无日期前缀|530KB） | W8-2 四桶派发 |
 | ai_layer_vision/ | D | AI 层愿景 v2.0（active 主文档在册） | 保留（在飞/真源） |
-| alg01/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| alg01/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | alt_data_consumption_plan.md | C | st-fullchain 结案头：未结案（仍有待办）（无日期前缀|23KB） | W8-2 四桶派发 |
 | altdata_line/ | D | W7 股权穿透设计真源（02_entity_graph_equity_person.md） | 保留（在飞/真源） |
 | altdata_night/ | C | 审查 C 类目录 | W8-2②（altdata 通宵战已收口 2026-09-18） |
 | auction_bridge_switch_mining_2026_09_17.md | C | 无结案头（无日期前缀|8KB） | W8-2 四桶派发 |
-| audit/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| audit/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | audit_integrity/ | C | 审查 C 类目录 | W8-2② |
 | automation/ | D | 自动化战役（在飞） | 保留（在飞/真源） |
 | bizmine_chain_mining/ | D | W2 骨架挖矿（st-bizmine2 已死，产物待收尾） | 保留（在飞/真源） |
 | bizmine_night/ | D | bizmine2 接手（W2）+通宵战真源 | 保留（在飞/真源） |
 | board_synthesis/ | C | 审查 C 类目录 | W8-2② |
-| clean_exam_e2e/ | A | 审查 A14（短名 clean_exam） | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| clean_exam_e2e/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14（短名 clean_exam） | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | construction_backlog.md | C | st-fullchain 结案头：未结案（仍有待办）（无日期前缀|8KB） | W8-2 四桶派发 |
 | datavein/ | C | 审查 C 类目录 | W8-2② |
-| dead_queue/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| dead_queue/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | deep_review_full/ | D | W8-2④ 已对账（0d5d223749）：235/235 坐实审完，'160'系速记错误，真因=CSV 状态列回写滞后 | 台账件已终局；目录留活指针至 #ARCH-338..356 处置完后 W8-4 归档 |
 | disk_reorg_plan_2026_09_19.md | C | 无结案头（无日期前缀|9KB） | W8-2 四桶派发 |
 | dsr-recalc/ | C | 审查 C 类目录 | W8-2②（F-06 DSR 已收口，疑可对账销项） |
 | factory/ | D | 策略工厂（在飞：E4 收口入口 data/strategy_intake 关联） | 保留（在飞/真源） |
 | final3_campaign/ | D | 本战役（S7 硬门禁载体） | 保留（在飞/真源） |
-| flash_biz/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| flash_biz/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | flash_speedup/ | D | W3/X-3 §2.1 核验对象 | 保留（在飞/真源） |
 | forensics/ | C | 审查 C 类目录 | W8-2② |
 | full-auto-chain/ | D | 全链自动化（在飞） | 保留（在飞/真源） |
 | fullflow_campaign/ | D | fullflow（在飞，22 待裁与 rule_audit 承接） | 保留（在飞/真源） |
-| greatwall_integration/ | A | 审查 A14（短名 greatwall） | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| greatwall_integration/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14（短名 greatwall） | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | guides/ | P | 常驻手册（终态保留） | 保留（常驻） |
-| handoff/ | B | 审查 B2（已消费） | W8-1 归档批（Owner 签字） |
+| handoff/ | B | 审查 B2（已消费） | 已归档 B→archive/2026-09/（2026-09-20 #374） |
 | industry_chain_alpha/ | C | 审查 C 类目录 | W8-2② |
 | kimi_audit/ | D | W8-3 签字册来源（S3 96 条） | 保留（在飞/真源） |
-| n5_closure/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| n5_closure/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | OKXSans-Bold.woff2 | C | 无结案头（无日期前缀|29KB） | W8-2 四桶派发 |
 | OKXSans-Medium.woff2 | C | 无结案头（无日期前缀|29KB） | W8-2 四桶派发 |
 | OKXSans-Regular.woff2 | C | 无结案头（无日期前缀|29KB） | W8-2 四桶派发 |
@@ -177,19 +177,19 @@ title: W8-0 working 全量审查台账（st-final3-20260919 重扫版，基线=M
 | pattern_session_governance_report_2026_09_14.md | C-3 | 阴性审查保留至季度末（无日期前缀|11KB） | 2026-09-30 后 W8-1 归档（例外条款） |
 | pipeline-research/ | D | intake 自动管线产物区（活） | 保留（在飞/真源） |
 | redblue/ | C | 审查 C 类目录 | W8-2②（红蓝报告族） |
-| regime_recal/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
-| reports/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| regime_recal/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
+| reports/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | residual_construction/ | C | 审查 C 类目录 | W8-2②（W1/W2 残余施工已由本战役承接） |
 | resource_schedule/ | D | 红蓝 R1 攻倒（5ee0177e6d）：活生成器 generate_resource_morning_report 今日仍写该区+resource_profile_registry 33 处指针+2 计划任务 | 保留（活输出区；待输出区外移后复审 A） |
 | reviews/ | P | 常驻手册（终态保留） | 保留（常驻） |
 | rule_audit_campaign/ | D | W1 真源区（判决书/交接令/a2_handoff） | 保留（在飞/真源） |
-| sharpe2_prep/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| sharpe2_prep/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | sharplink.jpg | C | 无结案头（无日期前缀|3553KB） | W8-2 四桶派发 |
-| sop_review_nodes/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
+| sop_review_nodes/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
 | tdchain_mine/ | C | 审查 C 类目录 | W8-2②（tdchain 战役收口件） |
 | trading_vision/ | D | 交易愿景（在飞） | 保留（在飞/真源） |
-| wyf3/ | A | 审查 A14 | W8-1 归档批→archive/2026-09/（Owner 签字） |
-| xt_lab3/ | B | 审查 B2（实验残留） | W8-1 归档批（Owner 签字） |
+| wyf3/ | 已归档 | 2026-09-20 git mv archive/2026-09/（#374①，commit 7f1b68f3）——原审查 A14 | 已归档 A→archive/2026-09/（2026-09-20 #374） |
+| xt_lab3/ | B | 审查 B2（实验残留） | 已归档 B→archive/2026-09/（2026-09-20 #374） |
 | 低学历勇闯量化/ | E | 资料仓 | 保留（资料仓，终态存留） |
 | 同花顺截图/ | E | 资料仓 | 保留（资料仓，终态存留） |
 | 同花顺资料/ | E | 资料仓 | 保留（资料仓，终态存留） |
