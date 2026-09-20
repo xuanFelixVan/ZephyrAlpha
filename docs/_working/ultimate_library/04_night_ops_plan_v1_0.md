@@ -29,7 +29,7 @@ session: "st-ulib-20260921"
 | 包 | 写域（独占） | 交付物 | 验收门 |
 |---|---|---|---|
 | A 终稿 | ultimate_library/00、03 | 蓝图批注定稿+schema 冻结签 | 总包签认（Max 评审） |
-| B1 总账底座 | src/zephyr/library/（新域：DDL+fs/PG 采集器） | assets/fingerprints/events 三表+2 采集器 | 采集器只读+幂等（两跑零 diff）；新模块登记大白话简介 |
+| B1 总账底座 | src/zephyr/library/（新域：DDL+fs/PG 采集器） | assets/fingerprints/events 三表+2 采集器+馆员函数 `librarian.act()` | 采集器只读+幂等（两跑零 diff）；**账本写权限收口：app 角色仅 EXECUTE 馆员函数、直写表权限收回**（绕不过的账本闸，08 §3.3）；新模块登记大白话简介 |
 | B2 采集器 | 同域 CH/schtasks/MCP 采集器 | 3 采集器 | 同上 |
 | C1 总闸 | gov_enforcement/library_gate + gate 注册表 | LIBRARY-COVERAGE（首周 warn-only） | 注入 ghost/blind 样本全数捕获 |
 | C2 总口 | integration/mcp/library_lookup_server + INDEX 生成器 | MCP 工具+docs/library/ INDEX 树 v1 | 冷启动 5 跳达任意馆页 |
