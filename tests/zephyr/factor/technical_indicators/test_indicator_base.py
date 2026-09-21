@@ -24,8 +24,9 @@ import re
 import pandas as pd
 import pytest
 
-# 导入 6 类指标模块触发注册（__init__ 不自动 autodiscover，需显式 import）
+# 导入 8 类指标模块触发注册（__init__ 不自动 autodiscover，需显式 import）
 from zephyr.factor.technical_indicators import (  # noqa: F401 — 注册副作用
+    chips,
     cycle,
     momentum,
     reversal,
@@ -41,12 +42,10 @@ from zephyr.factor.technical_indicators.indicator_base import (
     autodiscover_technical_indicators,
 )
 
-# 8 类指标数量契约（catalog §2：趋势37/动量43/波动18/成交量17/反转4/统计9/复合1/循环8）
-_EXPECTED_TOTAL = (
-    137  # 2026-09-20 批9 tilib 清欠班：波1 +15、波2 +16、波3 +3、波5 +2（Griffiths/CI，公式源 mesasoftware 官网 PDF）
-)
-# 全部输出列数契约（2026-09-20 批9 后：201 = 162 + 16(波1) + 16(波2) + 4(波3) + 3(波5)）
-_EXPECTED_COLUMN_TOTAL = 201
+# 9 类指标数量契约（catalog §2：趋势37/动量43/波动18/成交量17/反转4/统计9/复合1/循环8/筹码3）
+_EXPECTED_TOTAL = 140  # 2026-09-21 批10 筹码族：+CYQ/SCR/CYC 3 指标（137 + 3；批9 清欠班后基数 137）
+# 全部输出列数契约（2026-09-21 批10 后：210 = 201 + 9（chips_winner/avg_cost/cost_5/cost_95/scr/cyc_5/cyc_13/cyc_34/cyc_inf））
+_EXPECTED_COLUMN_TOTAL = 210
 
 
 # ============== TechnicalIndicatorMeta ==============
@@ -134,6 +133,7 @@ class TestRegistryMechanics:
         assert len(TechnicalIndicatorRegistry.list_by_category("statistics")) == 9
         assert len(TechnicalIndicatorRegistry.list_by_category("composite")) == 1
         assert len(TechnicalIndicatorRegistry.list_by_category("cycle")) == 8
+        assert len(TechnicalIndicatorRegistry.list_by_category("chips")) == 3  # 批10 筹码族
 
     def test_list_by_category_empty(self):
         assert TechnicalIndicatorRegistry.list_by_category("nonexistent") == []

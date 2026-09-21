@@ -41,6 +41,7 @@ from __future__ import annotations
 import csv
 import datetime
 import io
+import itertools
 import logging
 import time
 from pathlib import Path
@@ -151,8 +152,9 @@ _SQL_READ_HK_TRADING_DAYS = (
 # 表名经 TableRegistry 真源派生（#ARCH-CH-024：禁硬编码表名字符串）
 _TBL_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
 _SQL_READ_INDEX_CONSTITUENT_SNAPSHOTS = (
-    "SELECT index_code, trade_date, symbol, weight FROM " + _TBL_INDEX_CONSTITUENT +
-    " ORDER BY index_code, trade_date, symbol"
+    "SELECT index_code, trade_date, symbol, weight FROM "
+    + _TBL_INDEX_CONSTITUENT
+    + " ORDER BY index_code, trade_date, symbol"
 )
 
 _SQL_READ_KLINE = "SELECT {select_cols} FROM {table} WHERE {where_clause} ORDER BY {order_by}"
@@ -290,20 +292,34 @@ def _derive_adjustment_rows(
     """相邻快照差分生成调整事件行（生效日=中证规则日/快照后首个交易日推定）。"""
     rows: list[tuple] = []
     for index_code, by_date in snapshots.items():
-        for (d_prev, prev_set), (d_next, next_set) in zip(by_date, by_date[1:]):
+        for (d_prev, prev_set), (d_next, next_set) in itertools.pairwise(by_date):
             effective = _infer_adjustment_effective_date(d_prev, d_next, next_trading_day)
             if effective is None:
                 continue
             added = sorted(set(next_set) - set(prev_set))
             removed = sorted(set(prev_set) - set(next_set))
             for sym in added:
-                rows.append((d_next.isoformat(), effective.isoformat(), index_code, sym, "inclusion", next_set[sym], "snapshot_diff"))
+                rows.append(
+                    (
+                        d_next.isoformat(),
+                        effective.isoformat(),
+                        index_code,
+                        sym,
+                        "inclusion",
+                        next_set[sym],
+                        "snapshot_diff",
+                    )
+                )
             for sym in removed:
-                rows.append((d_next.isoformat(), effective.isoformat(), index_code, sym, "exclusion", None, "snapshot_diff"))
+                rows.append(
+                    (d_next.isoformat(), effective.isoformat(), index_code, sym, "exclusion", None, "snapshot_diff")
+                )
     return rows
 
 
-def _infer_adjustment_effective_date(d_prev: datetime.date, d_next: datetime.date, next_trading_day) -> datetime.date | None:
+def _infer_adjustment_effective_date(
+    d_prev: datetime.date, d_next: datetime.date, next_trading_day
+) -> datetime.date | None:
     """生效日推定：6/12 月（中证定期调整窗口）=第 2 个周五次一交易日（收盘后实施，
     次一交易日生效）；其余月份=上一快照后首个交易日（不规则变动近似下界）。"""
     if d_next.month in (6, 12):
@@ -664,9 +680,7 @@ class InternalComputeProvider(IngestProviderBase):
             run_compute_repaired,
         )
 
-        yield from run_compute_repaired(
-            symbols=payload.symbols, start=payload.start, end=payload.end
-        )
+        yield from run_compute_repaired(symbols=payload.symbols, start=payload.start, end=payload.end)
 
     def _fetch_financial_derived(self, payload: FetchPayload) -> Iterator[FetchResult]:
         """财报派生层路由分支（financial_derived capability 的命名约定实现，F1-M1/DS-230）。
@@ -842,14 +856,10 @@ class InternalComputeProvider(IngestProviderBase):
         if not days:
             return
         if ch_writer.get_client() is None:
-            raise RuntimeError(
-                "CH 不可达，daban_engine_load 批产 fail-closed（禁伪空批/禁规则外落库）"
-            )
+            raise RuntimeError("CH 不可达，daban_engine_load 批产 fail-closed（禁伪空批/禁规则外落库）")
         market_context = fetch_market_context(days)
         for day in days:
-            yield run_daily_batch(
-                day, market_context=market_context, cap_source=fetch_float_cap_map
-            )
+            yield run_daily_batch(day, market_context=market_context, cap_source=fetch_float_cap_map)
 
     def _fetch_trading_lifecycle_weekly(self, payload: FetchPayload) -> Iterator[FetchResult]:
         """三域生命周期周扫路由分支（trading_lifecycle_weekly 命名约定，协议 v2.0）。
@@ -858,8 +868,8 @@ class InternalComputeProvider(IngestProviderBase):
         因子 decay_state 回写 / 策略衰减台账 / 指标消费活性台账。
         分析型任务无 CH 落表，FetchResult 仅记账。周末校准档事件触发。
         """
-        from zephyr.governance.indicator_usage_audit import run_indicator_usage_audit
         from zephyr.factor.analysis.factor_lifecycle_runner import run_factor_lifecycle
+        from zephyr.governance.indicator_usage_audit import run_indicator_usage_audit
         from zephyr.signal_ashare.strategy_signal.strategy_decay_certifier import (
             run_strategy_decay_certify,
         )
@@ -881,10 +891,12 @@ class InternalComputeProvider(IngestProviderBase):
         merged["errors"] = errors
         end = payload.end.isoformat() if payload.end else ""
         yield FetchResult(
-            table="lifecycle_weekly", columns=[], rows=[], last_key=end,
-            elapsed_sec=0.0, rows_fetched=sum(
-                (m or {}).get("total", 0) for m in merged.values() if isinstance(m, dict)
-            ),
+            table="lifecycle_weekly",
+            columns=[],
+            rows=[],
+            last_key=end,
+            elapsed_sec=0.0,
+            rows_fetched=sum((m or {}).get("total", 0) for m in merged.values() if isinstance(m, dict)),
             error="; ".join(errors) if errors else None,
         )
 
@@ -1074,6 +1086,12 @@ class InternalComputeProvider(IngestProviderBase):
                 if kline_data.empty:
                     self._log.warning("[period=%s] 批次 %d/%d 无 K线数据", period, batch_idx + 1, total_batches)
                     continue
+
+                # 批10 契约扩张（16 号 memo §6.10）：筹码族指标输入首次引入换手率。
+                # 仅 daily 周期并入 stock_daily_basic.turnover_rate；缺数/异常软降级
+                # （chips 指标对缺列返回空 DataFrame→表列 NULL，不炸整批）。
+                if period == "daily":
+                    kline_data = self._merge_turnover_rate(kline_data, batch_payload)
 
                 # 计算指标
                 all_rows: list[tuple] = []
@@ -1276,16 +1294,17 @@ class InternalComputeProvider(IngestProviderBase):
             return
 
         snapshots = _parse_index_constituent_snapshots(tsv)
-        trading_days_sorted = sorted(set(
-            self._read_trading_days(datetime.date(1990, 1, 1), today + datetime.timedelta(days=370))
-        ))
+        trading_days_sorted = sorted(
+            set(self._read_trading_days(datetime.date(1990, 1, 1), today + datetime.timedelta(days=370)))
+        )
         next_trading_day = _make_next_trading_day_lookup(bisect, trading_days_sorted)
 
         rows = _derive_adjustment_rows(snapshots, next_trading_day)
         rows.sort(key=lambda r: (r[1], r[2], r[3], r[4]))
         self._log.info(
             "index_adjustment 派生完成：%d 指数 / %d 事件（快照差分 %s~%s）",
-            len(snapshots), len(rows),
+            len(snapshots),
+            len(rows),
             min((d for ev in snapshots.values() for d, _ in ev), default=today),
             today,
         )
@@ -1615,6 +1634,38 @@ class InternalComputeProvider(IngestProviderBase):
         result = agg_df[["trade_date", "trade_time", "symbol", "open", "high", "low", "close", "volume", "amount"]]
         return result
 
+    def _merge_turnover_rate(self, kline_data, payload):
+        """批10 筹码族地基：为 daily K线并入 stock_daily_basic.turnover_rate（换手率 %）。
+
+        - LEFT JOIN on (symbol, trade_date)：基础表缺行 → turnover_rate NaN（chips 指标当日不衰减）
+        - 查询失败/空结果 → 原样返回（不含该列），chips 指标软降级为空输出（表列 NULL），不炸整批
+        """
+        from io import StringIO
+
+        from zephyr.data import ch_reader
+
+        try:
+            symbols_str = ",".join(f"'{s}'" for s in payload.symbols)
+            sql = (
+                "SELECT trade_date, symbol, turnover_rate "
+                f"FROM {get_registry().table('market_stock_daily_basic')} "
+                f"WHERE symbol IN ({symbols_str}) "
+                f"AND trade_date >= '{payload.start.isoformat()}' AND trade_date <= '{payload.end.isoformat()}'"
+            )
+            tsv = ch_reader.query(sql)
+            if not tsv or not tsv.strip():
+                self._log.info("[period=daily] stock_daily_basic 无换手率数据，chips 指标降级为 NULL")
+                return kline_data
+            basic = pd.read_csv(StringIO(tsv), sep="\t", header=None, dtype=str)
+            basic.columns = ["trade_date", "symbol", "turnover_rate"]
+            basic["trade_date"] = pd.to_datetime(basic["trade_date"]).dt.date
+            basic["turnover_rate"] = pd.to_numeric(basic["turnover_rate"], errors="coerce")
+            merged = kline_data.merge(basic, on=["trade_date", "symbol"], how="left")
+            return merged
+        except Exception as e:  # noqa: BLE001
+            self._log.warning("[period=daily] 并入换手率失败（chips 指标降级为 NULL）: %s", e)
+            return kline_data
+
     def _filter_symbol(self, kline_data, symbol, period):
         """从 K线 DataFrame 中过滤出指定标的的数据，设置 bar timestamp 为 index。
 
@@ -1631,8 +1682,9 @@ class InternalComputeProvider(IngestProviderBase):
             symbol_data = symbol_data.set_index("trade_date")
             symbol_data.index = pd.to_datetime(symbol_data.index)
 
-        # 确保列名为 OHLCV（去掉 symbol/trade_date 等非指标列）
-        ohlcv_cols = ["open", "high", "low", "close", "volume", "amount"]
+        # 确保列名为 OHLCV（去掉 symbol/trade_date 等非指标列）；
+        # turnover_rate 为批10 筹码族软输入（daily 并入后放行，chips 指标软降级兼容缺列）
+        ohlcv_cols = ["open", "high", "low", "close", "volume", "amount", "turnover_rate"]
         available = [c for c in ohlcv_cols if c in symbol_data.columns]
         return symbol_data[available]
 

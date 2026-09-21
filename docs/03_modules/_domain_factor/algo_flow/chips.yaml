@@ -1,0 +1,80 @@
+# ALGO_FLOW 外部真源——chips（_domain_factor 域，真源 src/zephyr/factor/technical_indicators/chips.py）
+# 批10 筹码族（2026-09-21，WO-4）：docstring 内联块副本，extractor 经 external 锚加载走同一 parse_algo_flow 管线；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.factor.technical_indicators.chips
+source_of_truth: src/zephyr/factor/technical_indicators/chips.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 行情+换手率数据 DataFrame
+    #   fields: high/low/close/volume（+amount、turnover_rate 按指标取用；换手率由 provider 仅 daily 周期自 stock_daily_basic 并入）
+    #   code: compute(data: pd.DataFrame)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 硬列校验+换手率软取+空表短路
+    #   name_en: chips validate & soft turnover
+    #   intro: 校验 OHLCV/amount 硬列（缺列抛 ValueError），换手率为软输入（缺列/全 NaN 返回 None），空表返回空 DataFrame
+    #   desc: _ChipsValidateMixin.validate 排除 turnover_rate → _soft_turnover 判定 → data.empty 短路
+    #   inputs: I1
+    #   outputs: 校验通过的 data 与换手率序列（或 None）
+    #   invariant: 缺换手率必须软降级禁抛——provider 逐指标异常会跳过整标的
+    # - id: A2
+    #   name_zh: ② CYQ 迭代衰减筹码分布（400 bins，PIT 只用过去+当日）
+    #   name_en: iterative turnover-decay chip distribution
+    #   intro: 每日旧筹码按换手率衰减、当日成交量按高低价区间均匀换新，模拟筹码换手
+    #   formula: dist×=(1−clip(tr,0,100)/100)（NaN 不衰减）→ 新增量均匀铺 [low,high]（一字板全落最近格点）→ 网格越界按旧 CDF 质量守恒重铺
+    #   code: chips.py _ChipGrid.decay/_add_day_volume/_expand_grid_if_needed
+    #   inputs: I1
+    #   outputs: 逐日价格网格上的筹码质量分布
+    #   invariant: 全程只用过去+当日数据（无前视）；tr>100% 截断 100%；网格只扩张不收缩
+    # 层: 指标
+    # - id: CYQ
+    #   name_zh: 筹码分布 CYQ
+    #   name_en: Chip Distribution
+    #   intro: 获利盘比例、平均成本与成本 5%/95% 分位，刻画持仓成本结构
+    #   formula: winner=Σ(成本≤close)/Σmass；avg=Σ(price×mass)/Σmass；cost_5/95=CDF 首越 5%/95% 网格价
+    #   code: chips.py _ChipGrid.day_metrics
+    #   inputs: A2
+    #   outputs: chips_winner/chips_avg_cost/chips_cost_5/chips_cost_95
+    #   is_break: true
+    # - id: SCR
+    #   name_zh: 筹码集中度 SCR
+    #   name_en: Chip Concentration
+    #   intro: 成本分位极差占比，衡量筹码集中程度，越小越集中
+    #   formula: SCR=100×(cost_95−cost_5)/(cost_95+cost_5)，与 CYQ 分位同源
+    #   code: chips.py SCR.compute
+    #   inputs: A2
+    #   outputs: scr
+    #   is_break: true
+    # - id: CYC
+    #   name_zh: 成本均线 CYC
+    #   name_en: Cost Moving Average
+    #   intro: 成交额加权的历史持仓成本均线，含无穷成本均线（换手率 DMA 递推）
+    #   formula: cyc_N=Σ(amount,N)/(Σ(volume,N)×100)（存量 volume=手，通达信原式）；cyc_inf=DMA(close,tr/100) 种子首日有效收盘
+    #   code: chips.py CYC.compute
+    #   inputs: I1
+    #   outputs: cyc_5/cyc_13/cyc_34/cyc_inf
+    #   is_break: true
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 筹码族指标 DataFrame（3指标9列）
+    #   name_en: chips indicators DataFrame
+    #   intro: CYQ/SCR/CYC 多列输出，index 与输入对齐；缺换手率时 CYQ/SCR 空输出、CYC 仅 cyc_inf 置 NaN
+    #   invariant: 输出列严格等于各 meta.output_columns；预热/无筹码输出 NaN 不前填
+    #   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator，仅 daily 周期有值）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I1 -.->|断点| CYC
+    # A1 --> A2
+    # A1 -.->|断点| CYC
+    # A2 -.->|断点| CYQ
+    # A2 -.->|断点| SCR
+    # CYQ --> O1
+    # SCR --> O1
+    # CYC --> O1

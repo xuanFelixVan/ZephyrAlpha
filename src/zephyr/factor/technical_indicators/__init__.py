@@ -53,6 +53,11 @@ from zephyr.factor.technical_indicators import (  # noqa: I001  包内子模块�
     volatility,
     volume,
 )
+from zephyr.factor.technical_indicators.chips import (  # 批10 筹码族（模块直导，ORPHAN-MODULE 静态引用可见）
+    CYC,
+    CYQ,
+    SCR,
+)
 from zephyr.factor.technical_indicators.indicator_base import (
     TechnicalIndicatorBase,
     TechnicalIndicatorMeta,
@@ -65,6 +70,7 @@ __all__: Final[list[str]] = [
     "TechnicalIndicatorMeta",
     "TechnicalIndicatorRegistry",
     "autodiscover_technical_indicators",
+    "chips",
     "momentum",
     "reversal",
     "statistics",

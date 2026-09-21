@@ -43,7 +43,9 @@ ClickHouse 实际表结构必须与本文件 DDL 一致；结构变更通过 app
 数据来源：
     data_source = 'internal'（纯本地 pandas/numpy 计算，非外部数据源下载）
     输入：c1_market.kline_{period} 的 OHLCV 数据（120min 由 kline_60min 两根聚合）
-    输出：198 个技术指标列（Nullable(Float64)），覆盖 8 类 135 个在产指标（2026-09-20 批9 tilib 清欠班：波1 +15 指标/16 列 M-L1 自适应均线族+M-L2 价格变换族+M-L3 统计回归族；波2 +16 指标/16 列 M-L5 社区热门族；波3 +3 指标/4 列 M-L6 学术滤波器族 SUPERSMOOTHER/HIGHPASS/PTREND）
+    输出：210 个技术指标列（Nullable(Float64)），覆盖 9 类 140 个在产指标（2026-09-21 批10 筹码族：
+    +CYQ 筹码分布/SCR 筹码集中度/CYC 成本均线 3 指标 9 列，指标输入首次引入换手率 stock_daily_basic，
+    仅 daily 周期计算；批9 tilib 清欠班波1-波5 在此之前共 +36 指标/39 列）
 
 列设计说明：
     所有指标列均为 Nullable(Float64)——预热期无值时为 NULL（不前向填充，避免前视偏差）
@@ -263,6 +265,16 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     wad          Nullable(Float64)  COMMENT '威廉累积/派发线',
     vo           Nullable(Float64)  COMMENT '成交量震荡器(5/20)',
     marketfi     Nullable(Float64)  COMMENT '市场促进指数((H-L)/V)',
+
+    chips_winner   Nullable(Float64)  COMMENT 'CYQ获利盘比例(成本<=收盘的筹码占比[0,1],换手率衰减模型)',
+    chips_avg_cost Nullable(Float64)  COMMENT 'CYQ平均成本(筹码分布质量加权均价)',
+    chips_cost_5   Nullable(Float64)  COMMENT 'CYQ成本5%分位价',
+    chips_cost_95  Nullable(Float64)  COMMENT 'CYQ成本95%分位价',
+    scr            Nullable(Float64)  COMMENT '筹码集中度(100×(cost95-cost5)/(cost95+cost5),越小越集中)',
+    cyc_5          Nullable(Float64)  COMMENT '5日成本均线(Σamount/Σvolume)',
+    cyc_13         Nullable(Float64)  COMMENT '13日成本均线(Σamount/Σvolume)',
+    cyc_34         Nullable(Float64)  COMMENT '34日成本均线(Σamount/Σvolume)',
+    cyc_inf        Nullable(Float64)  COMMENT '无穷成本均线(DMA(close,换手率/100))',
     fi_13        Nullable(Float64)  COMMENT '强力指数EMA13(Elder)',
 
     candle_pattern    Nullable(Float64)  COMMENT '[已停产2026-09-14 裁定#233→图形域 market_pattern_event] K线形态编码(0=无,1=锤子,2=吞没,3=启明星,4=黄昏星,5=十字星...)',
@@ -330,6 +342,8 @@ INSERT_COLUMNS = (
     # 成交量类
     "obv, mfi_14, vwap, vr_26, ad, pvt, wvad_24, vwma_20, adosc, eom_14, kvo, kvo_signal, nvi, pvi, fi_13, "
     "wad, vo, marketfi, "
+    # 筹码族（批10：输入含换手率，仅 daily 周期有值，其余周期 NULL）
+    "chips_winner, chips_avg_cost, chips_cost_5, chips_cost_95, scr, cyc_5, cyc_13, cyc_34, cyc_inf, "
     # 反转类
     "rsi_divergence, macd_divergence, boll_breakout, vol_price_div, "
     # 元数据

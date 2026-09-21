@@ -5,8 +5,8 @@ title: 技术指标目录
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.1"
-date: 2026-08-15
+version: "1.11.0"
+date: 2026-09-21
 topic: technical_indicator_catalog
 scope: 07_trading_decision_architecture
 ---
@@ -39,6 +39,7 @@ scope: 07_trading_decision_architecture
 ## 2. 技术指标计算规范
 
 - 传统技术指标全部基于 OHLCV K 线计算，覆盖 1min~月线 **9 个周期**（1min/5min/15min/30min/60min/120min/日/周/月）；120min 由 60min K 线两根聚合生成（09:30-11:30 / 13:00-15:00，奇数根不丢弃）。
+- **契约扩张（批10，2026-09-21）**：筹码族（§6.10）指标输入**首次引入换手率** turnover_rate（`c1_market.stock_daily_basic`，批9 数据批地基）——internal_compute_provider 仅 **daily** 周期并入该列；非 daily 周期/基础表缺数时筹码指标**软降级**为空输出（表列 NULL，禁抛异常——provider 逐指标异常会跳过整标的全部指标）。
 - **why 自实现不引 TA-Lib**：①TA-Lib 的 C 依赖在 Windows 单机是部署负担（2026 年仍是其最大采用门槛，pandas-ta 系以"免 TA-Lib"为卖点即佐证）；②算法需对齐通达信口径（A 股用户看盘的共识基准，如 SMA(X,N,1)=ewm(alpha=1/N)、EMA adjust=False、BOLL std ddof=0、VR 平盘计两侧），外部库口径对不齐；③纯 pandas/numpy 可向量化批量算全市场。
 - 反转类信号列约定 Float64：0=无 / 1=正（看涨/顶背离）/ −1=负。
 - 预热期输出 NULL 不前向填充——避免前视偏差（PIT 铁律在指标层的落实）。
@@ -70,7 +71,7 @@ scope: 07_trading_decision_architecture
 
 why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全周期回算后，策略可按栈取数（趋势层定方向、交易层定信号、入场层定点位），避免单周期信号的噪声交易。
 
-## 6. 指标清单（137 在产指标 / 201 输出列，已施工；注册 138 条含退役 1）
+## 6. 指标清单（140 在产指标 / 210 输出列，已施工；注册 141 条含退役 1）
 
 > 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 762 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
 > **48 指标 vs "MVP 只需 15-20 个"的裁定**：全部已施工且 470 测试已绿，**裁剪已完成的指标 = 删已绿代码 + 删表列，纯负收益**；指标是数据不是策略，多算一列的边际成本≈0（单表 Nullable 列），而策略侧"只用其中一部分"的选择自由始终在消费方。故维持全集（2026-09-14 扩至 92：标配+统计族+批 2a/2b+批 3+批 6 挖矿立卡全清偿）。
@@ -253,6 +254,19 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 
 技术指标（technical_indicator_registry / 本目录）与因子（factor_registry）正交：**技术指标=OHLCV 的确定性变换，无 alpha 断言；因子=对未来收益有假设的截面/时序信号，需过 ABS001 门禁**。技术指标可作为因子输入（如 boll_pctb 进动量因子），但指标本身不进 factor_registry、不做 IC 评估。why 分开：指标是"数据"（一次回算全市场复用），因子是"假设"（需治理流水线生老病死）——混在一起会让因子注册表被无假设列稀释。
 
+### 6.10 筹码族 chips.py（3 指标 / 9 列，2026-09-21 批10 新建，MOD-L02-031）
+
+> **契约扩张**：指标输入首次引入换手率（§2 批10 扩张条）。
+> **量纲实证留痕**：kline_daily 存量 volume="手"——000852 2026-09-01 成交 124016 手×100=1.24 亿股，对自由流通股本=1.31%，与 stock_daily_basic.turnover_rate=1.3051% 交叉吻合；表 DDL 注释"成交量(股)"与存量数据不符（既有漂移，随批留痕不代改）。CYC 按通达信原式 ÷100。
+
+| indicator_id | 输出列 | 默认参数 | 公式要点 |
+|---|---|---|---|
+| cyq | chips_winner/chips_avg_cost/chips_cost_5/chips_cost_95 | bins=400 | 迭代衰减筹码分布（标准全市场通用模型，PIT 只用过去+当日）：每日分布×(1−tr%) 后新增当日成交量均匀铺入 [low,high]（一字板全落该价位，tr>100% 截断，NaN 不衰减）；winner=成本≤收盘质量占比；分位=CDF 首越 5%/95% 网格价；网格越界按旧 CDF 质量守恒重铺（400 bins） |
+| scr | scr | bins=400 | 100×(chips_cost_95−chips_cost_5)/(chips_cost_95+chips_cost_5)，与 CYQ 成本分位同源；[0,100] 越小越集中 |
+| cyc | cyc_5/cyc_13/cyc_34/cyc_inf | periods=[5,13,34] | cyc_N=Σ(amount,N)/(Σ(volume,N)×100)（通达信 CYC1/2/3 原式，量纲实证后÷100）；cyc_inf（无穷成本均线）=DMA(close,换手率/100) 逐日递推 c[i]=c[i−1]+(C[i]−c[i−1])×tr[i]/100，种子=首日有效收盘；缺换手率→cyc_inf=NULL，cyc_N 照算（仅依赖 OHLCV+amount） |
+
+验收（2026-09-21，WO-4）：①CYQ 独立实现复算 000852 近 20 交易日逐日对表——winner 0 偏差、avg ≤1.8e-15、分位 0 偏差（对表=.runtime/tmp/st-data-fix-20260921/cyq_recalc_000852.tsv）；②单票试跑 000852+000001 近 33 交易日 chips 9 列全有数、cyc 预热 NaN 计数精确（29/21/0）；③窗口化试跑 winner 与全历史值不同属预期（路径依赖指标冷启动），正式数值以全历史回填为准。全市场回填被时序板乙 W1 前置挡（恢复命令=p4 报告）。
+
 ## 7. 开放问题
 
 1. **调度未闭环（P0）** → **已闭环（2026-08-31 终审批实证核销）**：tasks.yaml 已挂 technical_indicator_incremental（L1877）/ technical_indicator_full_refresh（L1892）两条目，scheduler.py L1227 `source=="internal"` 分支已落地（64 号 Q18 施工批，2026-08-28）。Provider→调度→回算链路全通。
@@ -267,6 +281,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-09-21 | 1.11.0 | 批10 筹码族施工（总包甲 WO-4）：+CYQ/SCR/CYC 3 指标/9 列（新建 chips.py MOD-L02-031，第 9 类 chips）；全表 137→140 在产/201→210 列（注册 138→141 条）；契约扩张=指标输入首次引入换手率 stock_daily_basic（仅 daily，软降级 NULL）；kline_daily volume 手/股量纲实证留痕（CYC ÷100）；CYQ 独立实现复算 000852 近 20 日逐日 0 偏差对表 PASS；单票试跑两票 33 日全列有数；全市场回填待时序板乙 W1 解禁 | 分包4 tilib 延续批·批10 令（§3 配方 CYQ/SCR/CYC 施工） |
 | 2026-09-20 | 1.10.0 | 批9-4 tilib 清欠班波5：M-L6 登记卡全清偿 +CONTINUATION/GPRED（循环 6→8）；全表 135→137 在产/198→200 列；公式源=mesasoftware.com 官网论文 PDF（Continuation Index TASC 2025-09 / Linear Predictive Filters TASC 2025-01），EasyLanguage 逐行移植；GPRED 正弦领先性实测 corr 0.9462 | Owner 追加令立卡未施工的你能施工吗→开工 |
 | 2026-09-20 | 1.9.0 | 批9-3 tilib 清欠班波3：M-L6 学术滤波器族 +SUPERSMOOTHER/HIGHPASS/PTREND（趋势 34→37）；全表 132→135 在产/194→198 列；挖矿报告=docs/_working/archive/2026-09/tilib_clearance/tilib_clear_a3_mining_report.md（TASC 2024-09 Precision Trend 正主施工；Griffiths 预测器/Continuation Index 立卡登记未施工，公式源未镜像） | 分包A 通宵总令波3（M-L6 复挖，批4 R5 受阻项清偿） |
 | 2026-09-20 | 1.8.0 | 批9-2 tilib 清欠班波2：M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER 波动+3、EBSW 循环+1、INERTIA/QSTICK 趋势+2、RMI/PFE/FOSC/CTI/VHF/ER 动量+6、WAD/VO/MARKETFI 量能+3、ZSCORE 统计+1）；全表 116→132 在产/178→194 列；同批治愈 cycle.py 行1 stale 蓝图号 001→029（注册表 5 条 cycle 条目同步）；PSL=PSY、MSW=ht_sine 同义不重复立条 | 分包A 通宵总令波2（M-L5 清欠 18→16 实作） |

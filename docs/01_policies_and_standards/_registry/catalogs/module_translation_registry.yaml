@@ -55859,6 +55859,13 @@ entries:
   plain_zh: "这个模块负责计算股票的筹码类指标：看看现在持股的人里有多少是赚钱的（获利盘）、大家的平均成本是多少、筹码集中还是分散，以及按成交量加权算出的成本均线。它需要换手率数据来模拟每天新旧筹码的交换，换手率高就说明老筹码被换掉得多。计算只看过去的数据，不会偷看未来，没有换手率数据时自动不出数而不会报错。"
   responsibility_layer: business
 
+- module_path: scripts/audit_technical_indicator_columns.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "技术指标全列审计台账"
+  name_en: "Technical Indicator Column Audit"
+  desc_zh: "technical_indicator 表 210 列非空审计台账工具：summary 单次聚合扫描出全列台账，sample 轻查询抽验"
+  desc_en: ""
+  plain_zh: "批10 筹码族上表后，technical_indicator 大表新增 chips_winner、scr、cyc_inf 这类列，全市场回填跑没跑全靠这张台账说话。它有两种用法：sample 模式白天就能用，挑 000852、000001 几只股票打印最近几天筹码列的数值，确认链路是通的；summary 模式把两百一十列从早数到晚数出每列有多少空值，空列就是回填漏洞。因为 summary 要整表扫描一百多 GiB，白天跑会把 ClickHouse 内存顶爆，必须等收盘后低峰再跑，还要避开凌晨两点半的夜跑批次。"
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow
@@ -66987,3 +66994,5 @@ algo_submodules:
   name_zh: ① 包命名空间初始化 空导出
   name_en: __all__空列表
   plain_zh: 包级init不聚合再导出任何符号，消费者须显式导入具体子模块
+
+  responsibility_layer: governance

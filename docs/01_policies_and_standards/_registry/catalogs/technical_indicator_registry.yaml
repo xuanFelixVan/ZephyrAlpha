@@ -19,25 +19,25 @@ registry_id: REG-IND-001
 name: Technical Indicator Registry
 name_zh: 技术指标注册表
 description: >-
-  技术指标唯一真源（SSoT）。登记全部纯 OHLCV 计算指标（编号/公式/参数/输入输出列/预热期/状态/代码位置），
-  8 大类 137 在产指标 201 输出列（注册 138 条含退役 1；对齐 16 号 §6.1-6.8 + 代码 src/zephyr/factor/technical_indicators/ 7 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；批6：RV 波动率族 4+BBI+STOCH 本体+动量清偿（AROON/AROONOSC/BOP/PPO/APO/DX）+BRAR/CR 能量族共 14 指标（挖矿立卡 1/2/3+批5 增补全清偿）；批8：M-L4 经典族 10 指标（ALLIGATOR/GMMA/GANN_HILO/AC/FRACTALS/ELDER/COPPOCK/SQUEEZE/WAVETREND/FORCE_INDEX，数据先行放量批）；批9-1：tilib 清欠班波1 +15 指标/16 列（M-L1 自适应均线族 7：TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA + M-L2 价格变换族 4：AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE + M-L3 统计回归族 4：LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR，talib 黄金对照逐位/1e-6 级一致）；批9-2：波2 M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER/EBSW/INERTIA/QSTICK/RMI/PFE/FOSC/CTI/VHF/ER/WAD/VO/MARKETFI/ZSCORE；PSL=PSY、MSW=ht_sine 同义不重复立条）；批9-3：波3 M-L6 学术滤波器族 +3 指标/4 列（SUPERSMOOTHER/HIGHPASS/PTREND，TASC 2024-09 Precision Trend 挖矿）；批9-4：波5 学术卡清偿 +2 指标/3 列（CONTINUATION/GPRED，mesasoftware 官网 PDF 公式源，M-L6 登记卡全清偿）
-  数值正确性由 1079 测试用例 + Registry↔DDL 双向交叉校验锁定）。
-  全指标覆盖 9 周期（1min/5min/15min/30min/60min/120min/日/周/月，120min 由 60min 两根聚合），
+  技术指标唯一真源（SSoT）。登记全部技术指标（OHLCV 为主，批10 起筹码族引入换手率输入；编号/公式/参数/输入输出列/预热期/状态/代码位置），
+  9 大类 140 在产指标 210 输出列（注册 141 条含退役 1；对齐 16 号 §6.1-6.10 + 代码 src/zephyr/factor/technical_indicators/ 8 个 .py，2026-09-14 A股标配批+3/趋势+1/统计族+4：BIAS/PSY/LWR/DKX/CORREL/BETA/LINEARREG+TSF/ROLLVAR；批2a+8：HMA/ZLEMA/KAMA/VORTEX/SUPERTREND/DPO/NATR/TRANGE；批2b+16：TSI/SMI/FISHER/KST/CONNORSRSI/QQE/STC/RVGI/MCGINLEY/MASSI/VWMA/ADOSC/EOM/KVO/NVI/PVI；批3：Ichimoku 补实现（IND-COMP-001 candidate→active）+ 循环族 HT 系 5 指标（MOD-L02-029 cycle.py）；批6：RV 波动率族 4+BBI+STOCH 本体+动量清偿（AROON/AROONOSC/BOP/PPO/APO/DX）+BRAR/CR 能量族共 14 指标（挖矿立卡 1/2/3+批5 增补全清偿）；批8：M-L4 经典族 10 指标（ALLIGATOR/GMMA/GANN_HILO/AC/FRACTALS/ELDER/COPPOCK/SQUEEZE/WAVETREND/FORCE_INDEX，数据先行放量批）；批9-1：tilib 清欠班波1 +15 指标/16 列（M-L1 自适应均线族 7：TEMA/TRIMA/T3/MAMA+FAMA/VIDYA/FRAMA/JMA + M-L2 价格变换族 4：AVGPRICE/MEDPRICE/TYPPRICE/WCPRICE + M-L3 统计回归族 4：LINEARREG_ANGLE/SLOPE/INTERCEPT/STDERR，talib 黄金对照逐位/1e-6 级一致）；批9-2：波2 M-L5 社区热门族 +16 指标/16 列（CHOP/CVI/ULCER/EBSW/INERTIA/QSTICK/RMI/PFE/FOSC/CTI/VHF/ER/WAD/VO/MARKETFI/ZSCORE；PSL=PSY、MSW=ht_sine 同义不重复立条）；批9-3：波3 M-L6 学术滤波器族 +3 指标/4 列（SUPERSMOOTHER/HIGHPASS/PTREND，TASC 2024-09 Precision Trend 挖矿）；批9-4：波5 学术卡清偿 +2 指标/3 列（CONTINUATION/GPRED，mesasoftware 官网 PDF 公式源，M-L6 登记卡全清偿）；批10：筹码族 +3 指标/9 列（CYQ 迭代衰减筹码分布/SCR 筹码集中度/CYC 成本均线通达信口径，MOD-L02-031 chips.py，指标输入首次引入换手率 stock_daily_basic 仅 daily 周期，其余周期软降级 NULL，CYQ 独立实现复算 000852 近 20 日逐日 0 偏差对表）
+  数值正确性由 1109 测试用例 + Registry↔DDL 双向交叉校验锁定）。
+  全指标覆盖 9 周期（1min/5min/15min/30min/60min/120min/日/周/月，120min 由 60min 两根聚合；筹码族例外仅 daily——换手率输入为日频），
   存储单表 c1_market.technical_indicator 按 (period, toYYYYMM(trade_date)) 分区。
-  与 factor_registry 正交：技术指标=OHLCV 确定性变换（计算工具，无 alpha 断言），因子=alpha 来源。
+  与 factor_registry 正交：技术指标=行情确定性变换（计算工具，无 alpha 断言），因子=alpha 来源。
   2026-08-13 全新施工（62 号 §4.5 CONSTRUCT_REGISTRY 8 步）：原 ALGOMAP 种子版（REG-TECHNICAL-INDICATOR-001，
   21 条 IND-ALGOMAP 派生种子）历史使命完成，name_zh/description 翻译职能已被本表 40 条正式条目吸收，
   algo_flow_translation_sync.py 同步加保护不再覆写本表。对标 QuantConnect Indicators / backtrader.indicators。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.5.0
+version: 1.6.0
 created: '2026-08-13'
-last_updated: '2026-09-20'
+last_updated: '2026-09-21'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - indicator_id
-entry_count: 138
+entry_count: 141
 
 entry_schema:
   indicator_id: str              # IND-{CLASS}-{NNN}，如 IND-TREND-001
@@ -4615,4 +4615,112 @@ indicators:
   algorithm_status: "quantized"
   evidence: ""
   code_symbol: null
+  code_fingerprint: null
+- indicator_id: IND-CHIPS-001
+  name: Chip Distribution CYQ
+  name_zh: 筹码分布
+  aliases: ["CYQ", "获利盘", "筹码成本分布"]
+  indicator_class: chips
+  formula: >-
+    迭代衰减筹码分布（400 bins 价格网格，PIT 只用过去+当日）：每日分布×(1−clip(换手率%,0,100)/100) 后，
+    新增当日成交量均匀铺入 [low,high]（一字板全部质量落最近网格点）；网格越界按旧分布 CDF 线性插值质量守恒重铺。
+    chips_winner=Σ(成本≤close)/Σmass；chips_avg_cost=Σ(price×mass)/Σmass；
+    chips_cost_5/95=CDF 首次越过 5%/95% 的网格价。换手率 NaN（停牌/缺数）当日不衰减；换手率>100% 截断 100%。
+    验收=Python 独立实现复算 000852 近 20 交易日逐日对表 winner 0 偏差/avg≤1.8e-15/分位 0 偏差
+    （.runtime/tmp/st-data-fix-20260921/cyq_recalc_000852.tsv，2026-09-21）
+  params: {bins: 400}
+  inputs: [high, low, close, volume, turnover_rate]
+  outputs: [chips_winner, chips_avg_cost, chips_cost_5, chips_cost_95]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-031
+  doc_ref: 16_technical_indicator_catalog.md §6.10
+  code_path: src/zephyr/factor/technical_indicators/chips.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-21'
+  updated_at: '2026-09-21'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: ["stock"]
+  tags: ["筹码", "指标", "换手率"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: "src/zephyr/factor/technical_indicators/chips.py::CYQ"
+  code_fingerprint: null
+- indicator_id: IND-CHIPS-002
+  name: Chip Concentration SCR
+  name_zh: 筹码集中度
+  aliases: ["SCR", "筹码集中度"]
+  indicator_class: chips
+  formula: >-
+    SCR=100×(chips_cost_95−chips_cost_5)/(chips_cost_95+chips_cost_5)，与 CYQ 成本分位同源同口径；
+    [0,100]，越小越集中。分布内核与 CYQ 相同（迭代衰减+400 bins）
+  params: {bins: 400}
+  inputs: [high, low, close, volume, turnover_rate]
+  outputs: [scr]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-031
+  doc_ref: 16_technical_indicator_catalog.md §6.10
+  code_path: src/zephyr/factor/technical_indicators/chips.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-21'
+  updated_at: '2026-09-21'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: ["stock"]
+  tags: ["筹码", "指标", "换手率"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: "src/zephyr/factor/technical_indicators/chips.py::SCR"
+  code_fingerprint: null
+- indicator_id: IND-CHIPS-003
+  name: Cost Moving Average CYC
+  name_zh: 成本均线
+  aliases: ["CYC", "成本均线", "CYC1/CYC2/CYC3/CYC∞"]
+  indicator_class: chips
+  formula: >-
+    cyc_N=Σ(amount,N)/(Σ(volume,N)×100)，N∈{5,13,34}——kline_daily 存量 volume 口径实证为手
+    （000852 2026-09-01：124016 手×100=1.24 亿股，对自由流通股本=1.31% 与 turnover_rate=1.3051% 交叉吻合），
+    按通达信原式÷100 得元/股；cyc_inf=DMA(close,换手率/100) 逐日递推 c[i]=c[i−1]+(C[i]−c[i−1])×tr[i]/100，
+    种子=首日有效收盘，tr NaN 当日不修正；缺 turnover_rate（非 daily 周期）→ cyc_inf=NULL，cyc_N 照算
+  params: {periods: [5, 13, 34]}
+  inputs: [close, volume, amount, turnover_rate]
+  outputs: [cyc_5, cyc_13, cyc_34, cyc_inf]
+  warmup_period: 34
+  computation_mode: vectorized
+  module_id: MOD-L02-031
+  doc_ref: 16_technical_indicator_catalog.md §6.10
+  code_path: src/zephyr/factor/technical_indicators/chips.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-21'
+  updated_at: '2026-09-21'
+  owner: MOD-GOVERNANCE
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "state"
+  applies_to: ["stock"]
+  tags: ["筹码", "指标", "换手率"]
+  algorithm_status: "quantized"
+  evidence: ""
+  code_symbol: "src/zephyr/factor/technical_indicators/chips.py::CYC"
   code_fingerprint: null
