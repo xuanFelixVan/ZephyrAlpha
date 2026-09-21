@@ -85,3 +85,11 @@ completes_when: "全部批次落地+循环检查两轮零问题+红蓝对抗零�
 ## §六 端态验收（S7 硬门禁：working 任务书清零归档循环）
 
 _working 根最终形态 = 15 围栏 + 5 留场蓝图/方案 + archive/（冻结层）+ index.md（重生成）+ 4 件 rule_audit 活文档 + 本目录。归档 12 目录 + 11 散件 + 3 字体删除，全部有死亡证明行。
+
+
+## §七 结算（2026-09-21 17:4x 封账）
+
+- 落地批次：q-0001(gate 名册治本)/0002(final3 证据保护)/0003 系(归档重建为 A2→A3→A4c1-6)/0004(散件批B)/R0(空册先行)/0090(FINAL5 主线)/0091(CH1e)/0092(CH5c)/0093(B3b 裁定议题册)/0094-0102 系(红蓝修复 RBFIX7 终版=20b568dcbd/RBFIX7=ed596bd7c6 后续) 全部经队列正门落地；死信 63 件全部有验尸记录与替代闭环批次，无一悬空。
+- 验收：循环检查连续两轮 12/12 全过（A 队列清零/B 端态/C 归档映射/D 活文档零残留/E SOP 链/F 立案/G woff2/H YAML 完整/I 台账自洽/J token/K 生产面还原/L 结算）；红蓝对抗双红队 15 发现→14 修复落地+1 挂账（见 §五/§四）。
+- 端态：working 根 = 15 围栏 + 留场（ai_layer_vision/trading_vision/cold_backup_automation/resource_schedule 生产面/pipeline-research 生产面/fullflow 待裁载体）+ working_cleanup_campaign + archive 冻结层 + index + rule_audit 活文档 4 件。零未注册新文件、零未映射迁移、零活文档断链（围栏区自愈 3 处挂账除外）。
+- 本目录（working_cleanup_campaign）自本节起任务完成，随下批归档 archive/2026-09/working_cleanup_campaign/——台账即遗嘱，归档即封印。
