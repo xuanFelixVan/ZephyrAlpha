@@ -55866,6 +55866,38 @@ entries:
   desc_zh: "technical_indicator 表 210 列非空审计台账工具：summary 单次聚合扫描出全列台账，sample 轻查询抽验"
   desc_en: ""
   plain_zh: "批10 筹码族上表后，technical_indicator 大表新增 chips_winner、scr、cyc_inf 这类列，全市场回填跑没跑全靠这张台账说话。它有两种用法：sample 模式白天就能用，挑 000852、000001 几只股票打印最近几天筹码列的数值，确认链路是通的；summary 模式把两百一十列从早数到晚数出每列有多少空值，空列就是回填漏洞。因为 summary 要整表扫描一百多 GiB，白天跑会把 ClickHouse 内存顶爆，必须等收盘后低峰再跑，还要避开凌晨两点半的夜跑批次。"
+- module_path: scripts/backtest/league_registry.py
+  domain_id: D_BACKTEST
+  name_zh: "联赛注册表"
+  name_en: "league_registry"
+  desc_zh: "A/B联赛加载登记API与6个月终审挂单"
+  desc_en: ""
+  plain_zh: "管理哪些策略组参加联赛的名单本子，并给每个组排好半年后的期末考时间"
+  responsibility_layer: business
+- module_path: scripts/backtest/league_restore.py
+  domain_id: D_BACKTEST
+  name_zh: "联赛复原器"
+  name_en: "league_restore"
+  desc_zh: "三指纹比对输出可复原性判定不自动checkout"
+  desc_en: ""
+  plain_zh: "拿现在的代码和数据跟存档对一对，告诉你能不能原样复现当年的考试"
+  responsibility_layer: business
+- module_path: scripts/backtest/league_monthly_snapshot.py
+  domain_id: D_BACKTEST
+  name_zh: "联赛月度快照"
+  name_en: "league_monthly_snapshot"
+  desc_zh: "sim_pocket_daily按组月度对比只留档不判胜负"
+  desc_en: ""
+  plain_zh: "每月给各组拍一张成绩单照片存着，只记录不打分"
+  responsibility_layer: business
+- module_path: scripts/backtest/league_archive.py
+  domain_id: D_BACKTEST
+  name_zh: "联赛档案打包器"
+  name_en: "league_archive"
+  desc_zh: "参赛档案manifest三指纹打包（git hash+因子清单+数据截止日）"
+  desc_en: ""
+  plain_zh: "把一组策略考试时的代码版本/题目/数据日期拍成快照存档，以后能照着核对"
+  responsibility_layer: business
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow
