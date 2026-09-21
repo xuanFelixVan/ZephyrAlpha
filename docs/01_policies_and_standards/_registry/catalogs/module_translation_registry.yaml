@@ -55898,6 +55898,14 @@ entries:
   desc_en: ""
   plain_zh: "图书馆的户口本表格定义：每件资产身份证有哪些栏位，全项目统一"
   responsibility_layer: governance
+- module_path: tests/data/test_internal_compute_provider_cohort_daily.py
+  domain_id: D_TEST
+  name_zh: "cohort日账本调度路由测试"
+  name_en: "cohort daily ledger scheduler routing tests"
+  desc_zh: "验证 internal_compute_provider 对 cohort_daily_ledger 能力的路由分派、逐交易日驱动、列序对齐与 fail-visible 错误面，全 fake IO 零 DB。"
+  desc_en: ""
+  plain_zh: "给投资者行为画像日账本的调度接线上的三道保险：请求不会被串台送进技术指标分支；真的按交易日一个一个算且算出的行和数据库列一一对齐；计算出错时老实报错不装作没事。"
+  responsibility_layer: governance
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow

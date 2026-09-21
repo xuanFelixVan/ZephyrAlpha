@@ -3757,3 +3757,23 @@ tasks:
     description: "指数估值计算列日频重算（8118 行秒级；治工作日增量落库后派生列 NULL 空窗；哨兵 fill_ratio 腿盯 cape_5y/pe_pct/erp 近窗非空率）"
 
   fallback_sources: []    # internal 计算源天然无副源
+
+# TC-08 步骤3/WORK-ORDER-5 cohort 投资者行为画像日账本接线（2026-09-22 st-residual-20260922）：
+# 表 schema+builder+13 测试已在 HEAD（2fd61ca135/FF-07），本批补日循环三件套
+# （品类注册表条目+internal provider 路由+本任务）。四 dep 名照抄四资金面增量
+# task_id（写错任务永远排不上）；表建表=Owner 门位（apply 三常量随批恢复注册），
+# 表未建期间 insert 失败 fail-visible 不静默。全资产净零：无既有条目可承载
+# cohort 日结算职能（builder main 仅 --sample 纯计算零写库），+1 条目。
+- task_id: cohort_ledger_daily
+  table: c1_backtest.cohort_daily_ledger
+  source: internal
+  schedule: daily_capital
+  incremental: true
+  date_col: trade_date
+  dependencies: ["money_flow_incremental", "margin_trading_incremental", "dragon_tiger_incremental", "block_trade_incremental"]
+  capability: cohort_daily_ledger
+  symbols:
+  extra:
+    description: "五人群投资者行为日账本结算（融资融券/大宗/龙虎榜/资金流四增量当日落库后跑 builder 纯计算+insert 主路径；真源 schemas/categories/cohort_daily_ledger.py + zephyr.alt_data.cohort_daily_ledger）"
+
+  fallback_sources: []    # internal 计算源天然无副源

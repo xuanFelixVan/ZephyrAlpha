@@ -126,6 +126,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
 _TBL_LIMIT_UP_POOL = get_registry().table("market_limit_up_pool")
 _TBL_DABAN_BOARD_EVENT = get_registry().table("market_daban_board_event")
 _TBL_DABAN_ENGINE_LOAD = get_registry().table("market_daban_engine_load")
+_TBL_COHORT_DAILY_LEDGER = get_registry().table("cohort_daily_ledger")
 _TBL_CONSENSUS_DAILY_REPAIRED = get_registry().table("fund_consensus_daily_repaired")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀的常量定义行）
@@ -517,6 +518,10 @@ class InternalComputeProvider(IngestProviderBase):
             # J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918）：月度快照差分，
             # 全市场事件（无 symbols 概念），全量重算幂等
             CapabilityContract("index_adjustment_derive", supports_symbols_null=True),
+            # 投资者行为画像五人群日账本（TC-08 步骤3/WORK-ORDER-5 接线 2026-09-22）：
+            # builder 纯计算（zephyr.alt_data.cohort_daily_ledger），路由分支逐交易日驱动，
+            # dict 行按 schemas INSERT_COLUMNS 序转元组交框架 insert 主路径，symbols=null 全表
+            CapabilityContract("cohort_daily_ledger", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -580,6 +585,9 @@ class InternalComputeProvider(IngestProviderBase):
             return
         if capability == "index_adjustment_derive":
             yield from self._fetch_index_adjustment_derive(payload)
+            return
+        if capability == "cohort_daily_ledger":
+            yield from self._fetch_cohort_daily(payload)
             return
 
         # 按 table 路由：calendar_event 走日历事件派生，hk_trade_calendar 走 XHKG 日历，
@@ -1254,6 +1262,38 @@ class InternalComputeProvider(IngestProviderBase):
             )
 
     # ---- J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1） ----
+
+    def _fetch_cohort_daily(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """投资者行为画像五人群日账本结算（TC-08 步骤3/WORK-ORDER-5 接线）。
+
+        逐交易日（_trade_days_guarded 周末守卫）调 build_cohort_daily（纯计算，
+        PIT 只读 <=当日收盘数据），dict 行按 schemas INSERT_COLUMNS 序转元组交
+        框架 insert 主路径落 c1_backtest.cohort_daily_ledger。单人群失败已在
+        builder 内降级 missing 行；整日构建异常 fail-visible 写 FetchResult.error，
+        不伪造空成功。
+        """
+        start_time = time.monotonic()
+        from schemas.categories.cohort_daily_ledger import INSERT_COLUMNS
+        from zephyr.alt_data.cohort_daily_ledger import build_cohort_daily
+
+        columns = [c.strip() for c in INSERT_COLUMNS.strip("()").split(",")]
+        rows: list[tuple] = []
+        err = ""
+        try:
+            for day in self._trade_days_guarded(payload.start, payload.end):
+                for rec in build_cohort_daily(day.isoformat()):
+                    rows.append(tuple(rec[c] for c in columns))
+        except Exception as e:  # noqa: BLE001 — fail-visible：错误面交调度器记账，禁吞成空成功
+            err = f"cohort_daily_ledger 构建失败: {type(e).__name__}: {e}"
+            self._log.warning("%s", err)
+        yield FetchResult(
+            table=_TBL_COHORT_DAILY_LEDGER,
+            columns=columns,
+            rows=rows,
+            last_key=payload.end.isoformat(),
+            elapsed_sec=time.monotonic() - start_time,
+            error=err or None,
+        )
 
     def _fetch_index_adjustment_derive(self, payload: FetchPayload) -> Iterator[FetchResult]:
         """指数成分股调整事件派生（快照差分），写入 c1_market.index_adjustment。

@@ -3528,3 +3528,13 @@
   frequency: 日频
   data_source: [akshare]
   blueprint: null
+
+# --- TC-08 步骤3（2026-09-22 st-residual-20260922，WORK-ORDER-5 cohort 日账本接线）---
+
+- category_id: cohort_daily_ledger
+  name: "投资者行为画像五人群日账本（散户/杠杆/热钱/配置机构长表行=人群×指标，中频代理指标+state 四态+proxy_source 溯源+bias_note 偏差注记；WORK-ORDER-5 一期结算层）"
+  engine: clickhouse
+  database: c1_backtest
+  table: cohort_daily_ledger
+  schema_file: schemas/categories/cohort_daily_ledger.py
+  data_type: 成品
