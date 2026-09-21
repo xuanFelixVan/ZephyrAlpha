@@ -11,7 +11,7 @@ tier: tier_1_governance
 status: active
 version: 1.6.2
 created: '2026-06-26'
-last_updated: '2026-09-15'
+last_updated: '2026-09-21'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -21898,7 +21898,7 @@ entries:
     同步主树 index（git add 等价语义）+ qid done 短路幂等 + claim 判定统一 repo 相对路径空间。
     【收口回写 2026-09-21，st-taskcards-exec-20260921】裁定 #377-G03 已裁按 A 案实态 close
     （belt_daemon.lock mtime=2026-09-20 12:50:43 亲验=旧码常驻进程已重拉，本项「旧码盲区」前提消失；
-    证据原文 docs/_working/kimi_audit/adjudications/p7c_efgh_family_rulings.md G-03 行。lock 为 TTL
+    证据原文 docs/_working/archive/2026-09/kimi_audit/adjudications/p7c_efgh_family_rulings.md G-03 行。lock 为 TTL
     滚动件，本批回写时不在盘属常态，以判定册记载为准。）残余两件不随 close 消失：头注 stop 模式
     清偿+B 案结构方案留下一版不排期。
   status: resolved
@@ -22168,7 +22168,7 @@ entries:
   severity: P1高
   adjudication: >-
     裁定选项：①接线（Saga 补偿链+SOR 红线强制+科创板 lot
-    规则）②显式退役删码。锚点：docs/_working/deep_review_full/p0_money_path/rpt_x02/x03/x04/x06/x07.md；E03/E05
+    规则）②显式退役删码。锚点：docs/_working/archive/2026-09/deep_review_full/p0_money_path/rpt_x02/x03/x04/x06/x07.md；E03/E05
     同域已先矫两处
   fix_phase: 待裁定（接线/退役/语义三选一，见 deep_review 晨报）
   status: open
@@ -22424,3 +22424,31 @@ entries:
     #347+#353① trae_079 实名+fail-closed 条文侧、#350 M5 17 条二值化、闸1 九簇悬空消解、
     闸3 D1 两处。D-14 冻结经判案解除（判案先行已落 8f8bf8ccee）。随批关闭。
   related_rulings: ['裁定#372']
+- issue_id: '#ARCH-309'
+  title: 'fullflow MAX_ADJUDICATE_LIST 21 项 A 类待裁转 Max/Owner 打包批（A00 已由裁定#391 追认销项）'
+  status: open
+  severity: P1
+  category: governance
+  created: '2026-09-21'
+  last_updated: '2026-09-21'
+  owner: 'Max(D类打包批)/Owner'
+  description: >-
+    全流通战役 delivery/MAX_ADJUDICATE_LIST.md（dossier 完整保留于 docs/_working/fullflow_campaign/，
+    该文件夹因本清单待裁暂缓归档——W8 第二圈裁定③）。A00（4.12 亿行时区修复越闸定性）已由裁定#391
+    追认销项；其余 21 项 A 类（A1 批一行解锁主链等）维持 open，逐条"案卷路径→争点→不点会怎样→验真命令"
+    见 dossier 原文，按打包批文机制消费（先例：S3 96 条按族打包≈14 次批文）。清单 completes_when=
+    每项被裁定或判不办并留痕；全部销项后 fullflow_campaign 走 W8-4 循环归档。
+  related_rulings: ['裁定#391']
+- issue_id: '#ARCH-310'
+  title: 'W8 第一圈 C-3 阴性审查 5 份保留至 2026-09-30 到期复核'
+  status: open
+  severity: P3
+  category: governance
+  created: '2026-09-21'
+  last_updated: '2026-09-21'
+  owner: 'st-workclean-20260921 移交下一清理圈'
+  description: >-
+    final3 W8-0 台账（archive/2026-09/final3_campaign/w9_triage_ledger.md）C-3 态定义："阴性审查保留至
+    2026-09-30"。5 份阴性审查件于到期日（09-30）复核：仍阴性→转 A 归档/删除需逐项批；转阳→立卡。位置见
+    w9_triage_ledger 对应行。本议题即到期复核的挂账载体（台账销行后由本议题续命）。
+  related_rulings: []
