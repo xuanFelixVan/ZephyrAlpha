@@ -40752,6 +40752,34 @@ creation_tokens:
   token: rule-audit-construction-a2-m5-prescriptions-20260919
   created_by: st-final3-20260919
   capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/a2_handoff/rules_m1_repoint_archive.md
+  token: rule-audit-construction-genpatch-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/a2_handoff/rules_m1_repoint_archive.md
+  token: rule-audit-construction-rules-m1-repoint-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/a2_handoff/rules_m1_repoint_archive.md
+  token: rule-audit-construction-rules-repoint-rows-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/dossiers_v2_index.yaml
+  token: rule-audit-construction-dossiers-v2-index-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/dossiers_v2_summary.yaml
+  token: rule-audit-construction-dossiers-v2-summary-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: scripts/governance/run_fulltree_gate_audit.py
+  token: rule-audit-construction-run-fulltree-gate-audit-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: scripts/register_gate_fulltree_audit_task.ps1
+  token: rule-audit-construction-register-gate-fulltree-audit-task-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
 - file: docs/_working/rule_audit_campaign/a2_handoff/genpatch.py
   token: rule-audit-construction-genpatch-20260919
   created_by: st-final3-20260919
@@ -40770,22 +40798,6 @@ creation_tokens:
   capability: rule_audit_construction
 - file: docs/_working/rule_audit_campaign/dossiers_v2_summary.json
   token: rule-audit-construction-dossiers-v2-summary-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/dossiers_v2_index.yaml
-  token: rule-audit-construction-dossiers-v2-index-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/dossiers_v2_summary.yaml
-  token: rule-audit-construction-dossiers-v2-summary-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: scripts/governance/run_fulltree_gate_audit.py
-  token: rule-audit-construction-run-fulltree-gate-audit-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: scripts/register_gate_fulltree_audit_task.ps1
-  token: rule-audit-construction-register-gate-fulltree-audit-task-20260919
   created_by: st-final3-20260919
   capability: rule_audit_construction
 - file: scripts/ops/schedule_overview.py
@@ -43000,4 +43012,123 @@ creation_tokens:
   created_by: st-workclean-20260921
   capability: working_cleanup_ledger
   merge_evaluation: "同真源派生并入本册台账（总包丙端到端交付报告），任务bound 随战役 TTL"
+- file: docs/_working/flash_speedup/dead_letter_triage_20260921.md
+  token: flash-speedup-dead-letter-triage-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: flash_speedup
+- file: docs/_working/ai_layer_vision/P1_construction_plan.md
+  token: ai-layer-p1-closeout-p1-construction-plan-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: ai_layer_p1_closeout
+- file: docs/_working/ai_layer_vision/P1_construction_review.md
+  token: ai-layer-p1-closeout-p1-construction-review-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: ai_layer_p1_closeout
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260918-2139.yaml
+  token: arch-yaml-0-intake-20260918-2139-20260921
+  created_by: st-workclean-20260921
+  capability: arch_yaml_0
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260918-2207.yaml
+  token: arch-yaml-1-intake-20260918-2207-20260921
+  created_by: st-workclean-20260921
+  capability: arch_yaml_1
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260918-2233.yaml
+  token: arch-yaml-2-intake-20260918-2233-20260921
+  created_by: st-workclean-20260921
+  capability: arch_yaml_2
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260919-0011.yaml
+  token: arch-yaml-3-intake-20260919-0011-20260921
+  created_by: st-workclean-20260921
+  capability: arch_yaml_3
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260919-0036.yaml
+  token: arch-yaml-4-intake-20260919-0036-20260921
+  created_by: st-workclean-20260921
+  capability: arch_yaml_4
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260919-0110.yaml
+  token: arch-yaml-5-intake-20260919-0110-20260921
+  created_by: st-workclean-20260921
+  capability: arch_yaml_5
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260919-0124.yaml
+  token: arch-yaml-6-intake-20260919-0124-20260921
+  created_by: st-workclean-20260921
+  capability: arch_yaml_6
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260920-0408.yaml
+  token: arch-yaml-7-intake-20260920-0408-20260921
+  created_by: st-workclean-20260921
+  capability: arch_yaml_7
+  merge_evaluation: "tc_03卡步骤5 死信分诊台账：268件流量态按因归类+分诊规则+本班4死4活闭环实录，与final3 X-1合流接管增量"
+- file: docs/_working/recovered_task_cards/d8_worktree_removal_order.md
+  token: d8-worktree-removal-order-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: recovered_task_cards
+- file: docs/_working/recovered_task_cards/tc10_owner_report.md
+  token: tc10-owner-report-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: recovered_task_cards
+  merge_evaluation: "TC-10步骤0 报到清单：六项触发状态+四件Owner手办置顶呈报"
+- file: docs/_working/archive/2026-09/residual_construction/m1_m11_vein_register.md
+  token: m1-m11-vein-register-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: residual_construction
+  merge_evaluation: "tc_08卡步骤8 M-1~M-11长尾矿脉登记册：11条各带状态一行，只登记不开工防失传"
+- file: config/league_registry.yaml
+  token: league-registry-yaml-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: automation_campaign
+  merge_evaluation: "TC-11件1 A/B联赛注册表（裁定#392 automation车道）：A=champion/B=challenger初始席位+判定窗2027-03-21"
+- file: scripts/backtest/league_registry.py
+  token: league-registry-py-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: automation_campaign
+  merge_evaluation: "TC-11件1 联赛加载/登记API+6个月终审挂单（promotion_combo_gate本体零修改）"
+- file: scripts/backtest/league_archive.py
+  token: league-archive-py-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: automation_campaign
+  merge_evaluation: "TC-11件1 参赛档案打包器：manifest三指纹（git hash+因子清单+数据截止日）百分百复原口径"
+- file: scripts/backtest/league_restore.py
+  token: league-restore-py-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: automation_campaign
+  merge_evaluation: "TC-11件1 复原器三态判定（faithful/restorable/unverifiable）不自动checkout"
+- file: scripts/backtest/league_monthly_snapshot.py
+  token: league-monthly-snapshot-py-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: automation_campaign
+  merge_evaluation: "TC-11件1 月度快照：sim_pocket_daily按组对比只留档不判胜负"
+- file: docs/_working/automation/campaign/mining/11_联赛/工段作业簿.md
+  token: league-mining-workbook-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: automation_campaign
+  merge_evaluation: "TC-11件1 联赛工段作业簿（mining树十一工段，N-13系列命名一致性）"
+- file: docs/_working/rule_audit_campaign/ab_test/b_simplified_constitution.md
+  token: constitution-ab-b-simplified-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: rule_audit_campaign
+  merge_evaluation: "裁定#392（D-9） 宪法A/B班B组简化版87行（判据式自评41/41锚点，等收内收候选非切换）"
+- file: docs/_working/rule_audit_campaign/ab_test/c_positive_control.md
+  token: constitution-ab-c-control-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: rule_audit_campaign
+  merge_evaluation: "裁定#392（D-9） C组阳性对照（A去冷启动节，缺锚5处全P1=冷启动节操作链唯一真源实证）"
+- file: docs/_working/rule_audit_campaign/ab_test/scenarios_10.md
+  token: constitution-ab-scenarios-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: rule_audit_campaign
+  merge_evaluation: "裁定#392（D-9） 十实战场景题集+44锚点判据表（先于评分固定）"
+- file: docs/_working/rule_audit_campaign/ab_test/w6_ab_test_report.md
+  token: constitution-ab-report-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: rule_audit_campaign
+  merge_evaluation: "裁定#392（D-9） A/B班终报告：A=100% B=100% C=50%硬线成立，按卡不切换宪法判据式自评如实标注"
+- file: docs/_working/ai_layer_vision/P1_construction_review.md
+  token: ai-layer-p1-review-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: ai_layer_vision
+  merge_evaluation: "裁定#392（D-12） 追认后复审报告：L2既成事实8.5/9+分级问题清单+Max裁定清单"
+- file: docs/_working/ai_layer_vision/P1_construction_plan.md
+  token: ai-layer-p1-plan-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: ai_layer_vision
+  merge_evaluation: "裁定#392（D-12） P1方案收尾批版：批次0已交付+批次1-5依赖序+六要素"
 di_seam_exemptions: []
