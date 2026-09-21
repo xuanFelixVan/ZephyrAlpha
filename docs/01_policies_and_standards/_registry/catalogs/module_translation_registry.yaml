@@ -55819,12 +55819,36 @@ entries:
   plain_zh: "把交易日历和数据库表里实际有的日期做逐日对账，哪张日频表中间缺了哪一天、哪个周末多写了数据，一眼列出来。专治过去只看最新日期导致中间破洞发现不了的盲区，比如 tick 表 9 月 17 日整体缺货、股票清单 9 月 16 日整日没跑这种最新日期看起来正常的假健康。它每天早上跟在数据断供哨兵后面跑一次，由调度器任务槽触发，自己不搞后台常驻进程，也只读数据库不写任何数据。"
   responsibility_layer: business
 - module_path: src/zephyr/gov_enforcement/commit_gates/library_coverage_gate.py
-  domain_id: D_GOV_CODE_QUALITY
-  name_zh: "图书馆覆盖度门禁"
-  name_en: ""
+  domain_id: D_GOVERNANCE
+  name_zh: "馆藏覆盖观察闸"
+  name_en: "library_coverage_gate.py"
   desc_zh: ""
   desc_en: ""
-  plain_zh: "检查每本馆藏书是否都被编目上架，防止图书馆资产漏登记"
+  plain_zh: "提交时看一眼新文件有没有办身份证（索书号），没办的记警告；先观察一周再升级硬拦"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/__init__.py
+  domain_id: D_GOVERNANCE
+  name_zh: "图书馆域入口"
+  name_en: "__init__.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "终极图书馆总账域的包入口：对外只暴露馆员和动作校验，别的都是内部件"
+  responsibility_layer: governance
+- module_path: scripts/governance/generators/generate_library_index.py
+  domain_id: D_GOVERNANCE
+  name_zh: "七馆页生成器"
+  name_en: "generate_library_index.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从总账数据库生成七馆目录页和总目页，页面自带身份证，纯生成不手改"
+  responsibility_layer: governance
+- module_path: scripts/governance/generators/check_library_coverage.py
+  domain_id: D_GOVERNANCE
+  name_zh: "双向对账器"
+  name_en: "check_library_coverage.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘一遍磁盘对一遍总账：盘有馆无=编外(blind)，馆有盘无=幽灵(ghost)，双向差集清零才算账平"
   responsibility_layer: governance
 
 battle_map_steps:

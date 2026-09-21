@@ -1,0 +1,37 @@
+# ALGO_FLOW 外部真源——calendar_coverage_checker（_domain_data 域，真源 src/zephyr/data/calendar_coverage_checker.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.calendar_coverage_checker
+source_of_truth: src/zephyr/data/calendar_coverage_checker.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 观察名单
+    #   fields: table/date_col/cadence/since
+    #   code: WatchSpec 元组（任务槽触发时=DEFAULT_WATCH，7 表经 TableRegistry 真源引用）
+    # - id: I2
+    #   name: 交易日历
+    #   fields: trading_days_in_range(start, end)
+    #   code: get_market_calendar('ashare')；不可用降级 weekday 口径并标 degraded（宁报不漏）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 逐表期望日×实有日期双向差集
+    #   name_en: per-table bidirectional set diff
+    #   intro: 期望日=cadence 日历∩[start,end]∩>=since（since 双向不期望）；实有=SELECT
+    #     DISTINCT date_col；差集=missing_days（内部洞）/extra_days（非交易日落行污染）
+    #   inputs: I1, I2
+    #   outputs: O1
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 覆盖报告
+    #   name_en: coverage report
+    #   intro: per-table missing/extra/error 明细 + ok/breached 聚合；破防表经 Alerter WARN
+    #   downstream: scheduler calendar_coverage_check 槽返回值/治理报告
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1
+    # [/ALGO_FLOW]

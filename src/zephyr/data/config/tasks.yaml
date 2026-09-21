@@ -157,6 +157,7 @@ tasks:
     capability: kline_hk_daily
 - task_id: macro_data_incremental
   table: c1_market.macro_data
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare
   schedule: event_driven
   incremental: true
@@ -245,6 +246,7 @@ tasks:
   fallback_sources: []
 - task_id: us_index_incremental
   table: c1_market.us_index
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: tickflow
   schedule: daily_capital    # 美股指数每交易日有新数据，原weekend_calibration导致平时滞后1周；盘后18:00补昨日数据
   incremental: true
@@ -711,6 +713,7 @@ tasks:
     description: "[2026-09-09 方案D 停用] 旧分红增量——字段名(divid_per_share等)在 QMT get_divid_factors 返回中不存在(真名 interest/stockBonus/...)且与东财20列表 schema 不匹配，写入持续失败、表 7/13 后断供；由 ex_dividend_event_incremental 治本替代，c3_fundamental.dividend 东财研究口径 7/14 起缺口登记 follow-up"
 - task_id: ex_dividend_event_incremental
   table: c3_fundamental.ex_dividend_event
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: miniqmt
   schedule: daily_event
   incremental: true
@@ -723,6 +726,7 @@ tasks:
 
 - task_id: rights_issue_incremental
   table: c3_fundamental.rights_issue
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare
   schedule: daily_event
   incremental: true
@@ -1122,6 +1126,7 @@ tasks:
     capability: kline_daily
 - task_id: macro_data_full_refresh
   table: c1_market.macro_data
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare
   schedule: weekend_calibration
   incremental: false
@@ -1137,6 +1142,7 @@ tasks:
   # EIA API v2：免费需注册 key，石油库存/价格/天然气库存
 - task_id: eia_petroleum_incremental
   table: c1_market.macro_data
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: eia
   schedule: daily_capital
   incremental: true
@@ -1151,6 +1157,7 @@ tasks:
   fallback_sources: []
 - task_id: eia_full_refresh
   table: c1_market.macro_data
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: eia
   schedule: weekend_calibration
   incremental: false
@@ -1177,6 +1184,7 @@ tasks:
   fallback_sources: []
 - task_id: us_index_full_refresh
   table: c1_market.us_index
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: tickflow
   schedule: weekend_calibration
   incremental: false
@@ -1904,6 +1912,7 @@ tasks:
     capability: etf_nav
 - task_id: repurchase_refresh
   table: c3_fundamental.repurchase
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare
   schedule: daily_event
   incremental: false    # 全量刷新（stock_repurchase_em 返回当前所有活跃回购）
@@ -1999,6 +2008,7 @@ tasks:
   # 日更幂等覆盖：预约场次行（rate_value=NULL）在决议公布后由下次拉取补值=自愈语义。
 - task_id: rate_decision_calendar_refresh
   table: c1_market.rate_decision_calendar
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare
   schedule: daily_capital
   incremental: false        # 全量拉取（~2500 行/11 央行低频序列，ReplacingMergeTree 同键替换）
@@ -2052,6 +2062,7 @@ tasks:
   # 日度表挂 daily_capital。哨兵阈值=data_supply_sentinel.yaml。
 - task_id: macro_price_gauge_refresh
   table: c1_market.macro_price_gauge
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare
   schedule: daily_event
   incremental: false        # 全量拉取（CPI 2008- / PPI 2006-，~470 行，ReplacingMergeTree 同键替换）
@@ -2080,6 +2091,7 @@ tasks:
 
 - task_id: macro_credit_money_refresh
   table: c1_market.macro_credit_money
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare
   schedule: daily_event
   incremental: false        # 全量拉取（货币 1978- / 信贷 2008- / 社融 2015-，~590 行）
@@ -2094,6 +2106,7 @@ tasks:
 
 - task_id: macro_activity_gauge_refresh
   table: c1_market.macro_activity_gauge
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare
   schedule: daily_event
   incremental: false        # 全量拉取（工增 2008- / 社零 2008- / 固投 2012- / 失业率 2018-，~600 行）
@@ -2582,6 +2595,7 @@ tasks:
 
 - task_id: repurchase_full_refresh
   table: c3_fundamental.repurchase
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare
   schedule: weekend_calibration
   incremental: false
@@ -2680,6 +2694,7 @@ tasks:
 
 - task_id: alt_shipping_index_incremental
   table: c1_market.alt_shipping_index
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare_alt
   schedule: daily_event
   incremental: true
@@ -2692,6 +2707,7 @@ tasks:
 
 - task_id: alt_shipping_index_full_refresh
   table: c1_market.alt_shipping_index
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare_alt
   schedule: weekend_calibration
   incremental: false
@@ -2752,6 +2768,7 @@ tasks:
 
 - task_id: alt_regime_signal_refresh
   table: c1_market.alt_regime_signal
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: alt_regime_signal
   schedule: daily_event
   incremental: false
@@ -2797,6 +2814,7 @@ tasks:
 
 - task_id: alt_sz_weather_warning_incremental
   table: c1_market.alt_sz_weather_warning
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: akshare_alt
   schedule: daily_event
   incremental: true
@@ -3054,6 +3072,7 @@ tasks:
 # 海外站点，国内访问可能需 VPN（scheduler 探测 VPN 状态，关闭时跳过）
 - task_id: macro_worldbank_full_refresh
   table: c1_market.macro_data
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: fred
   schedule: weekend_calibration    # 年度数据，周末全量刷新即可
   incremental: false
@@ -3069,6 +3088,7 @@ tasks:
 
 - task_id: macro_fred_incremental
   table: c1_market.macro_data
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: fred
   schedule: event_driven    # FRED 日度/月度数据，事件驱动增量
   incremental: true
@@ -3085,6 +3105,7 @@ tasks:
 
 - task_id: macro_fred_full_refresh
   table: c1_market.macro_data
+  buffer_max_seconds: 60    # WO-3 2026-09-21：小表 parts 爆炸治理（ch_health §3.3），30s→60s 攒批窗
   source: fred
   schedule: weekend_calibration    # 周末全量回补5年历史
   incremental: false

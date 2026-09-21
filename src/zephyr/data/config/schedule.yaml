@@ -190,6 +190,19 @@ schedules:
     max_instances: 1
     description: "另类宏观日频层——ECB 汇率（alt_fx_ecb/frankfurter.app）盘后拉取"
 
+  # L13.5 日终对账档期：15:40 周一至周五（收盘 15:00 + 柜台/经纪商日终批处理窗之后，
+  # 且早于 L4 daily_kline 16:30，使对账结论当日可用于盘后链路）。全流通战役 R-015 排班：
+  # 唯一入口=src/zephyr/trading/recon_runner.py:392 run_daily_reconciliation（日终核对批，
+  # 非自愈 reconciler 环路——宪法 §9.3"reconciler 必须事件触发"约束的是自愈环，本槽位是
+  # 定时事实核对，与 L11 integrity_check 同性质）；盘中持仓对账走 position 事件入口（R-015）。
+  # 注：execution_report 的事件扇出（PositionReconciler.handle_execution_report）属 z-land 实现面，
+  # 本车道只排班+哨兵，不碰其实现。
+  eod_reconciliation:
+    cron: "40 15 * * 0-4"
+    executor: default
+    max_instances: 1
+    description: "日终对账层——recon_runner.run_daily_reconciliation 三账核对（柜台/内部/持仓），产出 execution_report 侧留痕并触发告警"
+
   # L13 数据断供哨兵层：每日 06:50（表侧 max(date) 停更检测，MOD-L00-004-SS）
   # 与 L10.7 catchup_guard(05:30 调度侧对账) 分工：本层=表内数据新鲜度（SOP §10.2 停更阈值）。
   # 诞生背景=股东户数断供两月无人知（事件日期表被 L11 日频口径强制跳过的盲区）。
@@ -207,3 +220,12 @@ schedules:
     cron: "50 6 * * *"
     executor: default
     description: "数据断供哨兵——业务新鲜度/维度切片/行数地板/关键列填充率停更检测（配置=config/data_supply_sentinel.yaml）+ 托管 quality_sentinel 三类变异巡检（配置=config/quality_sentinel_tables.yaml，7 天节奏闸），告警经 Alerter"
+
+
+  # L13.5 交易日历逐日 diff 检查器：每日 07:10（哨兵 06:50 之后）。交易日历×表内日期集合
+  # 逐日差集（补 max-date 原理性失明：tick 09-17 内部洞/stock_basic 09-16 缺日型盲区，
+  # MOD-L00-004-CCC）。随本槽事件触发，无自建常驻进程（宪法 §9.3）。
+  calendar_coverage_check:
+    cron: "10 7 * * *"
+    executor: default
+    description: "交易日历逐日覆盖检查——日频族表逐交易日 diff 缺日/多余日清单（zephyr.data.calendar_coverage_checker，告警经 Alerter）"

@@ -439,11 +439,21 @@ tables:
       min_rows: 100000        # 实测 tdx 真值源近月日均 ~25 万行（09-01 起 2,274,652 行/月）
     leg_name: "tdx 真值源"
 
-  # 集合竞价快照：交易日日频（实测 max=2026-09-16）
+  # 集合竞价快照：桥通道日频（ch_auction_derive 自 tick_depth_5 竞价窗派生，INSERT-only 幂等）。
+  # 2026-09-21 WO-3 升级原行（max_lag 5 日历日）：①lag_basis 改 trading_days/2（FF-12 判定链
+  # 同档：红牌=连续 3 个交易日零产出，周末/节假日不假红）；②补 0 行成功告警腿 min_rows 1300
+  # （≈0.4 个交易日，实测桥流 09-17=3,230 行/日 vs miniqmt 时代 5,218-5,220——宇宙收窄后地板
+  # 只捕近全停，禁按 5,200 旧宇宙定档）。09-18=0 行属清退过渡日缺口（known_data_gaps
+  # auction_20260918_transition_gap），本腿自 09-21 桥正常日起算新鲜度。
   - table: c1_market.auction_snapshot
     date_col: trade_date
-    max_lag_days: 5
+    max_lag_days: 2
+    lag_basis: trading_days
     past_only: true
+    min_rows_in_window:
+      window_days: 7
+      min_rows: 1300
+    leg_name: "桥流竞价日行"
 
   # 宏观主表（edb_data 退役后的第一真源）：实测 max(report_date)=2026-09-18 当天
   - table: c1_market.macro_data
@@ -553,6 +563,52 @@ tables:
     past_only: false
     row_filter: "synthetic = 0"
     leg_name: "真生产行"
+
+
+  # --- 指数行情/新闻情绪/tick 日行（2026-09-21 WO-3 哨兵补盲，分包2 移交单②"按新现状配"）---
+  # 指数行情快照：09-20 重建后新常态=盘后 EOD 日快照（index_quote_snapshot akshare 源，
+  # 实测 09-17/09-18 各 609 行/562 只、09-21 盘中 1,167 行/569 只；重建前分钟史行
+  # 09-14=7,859 属旧采集形态不再期待）。trading_days/2=连续 3 个交易日无快照即红；
+  # floor 300≈半日行量=只捕近全停（写入成功但仅个位数标的的降级形态）。
+  - table: c1_market.index_quote
+    date_col: trade_date
+    max_lag_days: 2
+    lag_basis: trading_days
+    past_only: true
+    min_rows_in_window:
+      window_days: 7
+      min_rows: 300
+    leg_name: "指数EOD快照"
+
+  # 新闻情绪窗：夜间任务 daily 08:20（schedule.yaml nightly_sentiment 槽，09-10 接线）
+  # 每日 1 行 market 粒度、周末照跑（实测 09-19/09-20 周末各 1 行）——故用日历日口径
+  # 而非 trading_days。max_lag 3=停更第 3 天红；floor 3/7 日窗=容忍单日缺跑
+  # （09-12 接线初期单缺一日先例），连续 5 天缺跑必红。
+  - table: c1_market.news_sentiment_window
+    date_col: window_date
+    max_lag_days: 3
+    past_only: true
+    min_rows_in_window:
+      window_days: 7
+      min_rows: 3
+    leg_name: "market日行"
+
+  # tick 三秒快照主表：miniQMT 09-18 清退后**无在跑供给通道**（qmt_bridge 对 tick_data
+  # capability=no-op，实测 provider L446-449；桥流实时只落 tick_depth_5）——本腿点亮后
+  # 若维持现状将于 2026-09-24（第 4 个交易日）起红=真阳性，处置二选一：接模拟盘 T+1
+  # 回补任务（p0_sim_as_source_assessment.md 已实证通道，Owner 裁定挂账中）或 Owner 裁
+  # 定 accepted 后挂 gap_id。阈值依据：交易日 2,000-3,400 万行（09-16=2,390.9 万/
+  # 09-17=2,832.7 万 [分包0 亲验]），floor 800 万≈0.4 个交易日=只捕近全停与半截写入
+  # （09-16 型 2,000 行假成功）；freshness 3 交易日=容忍 T+1 回补节奏。
+  - table: c1_market.tick_data
+    date_col: trade_date
+    max_lag_days: 3
+    lag_basis: trading_days
+    past_only: true
+    min_rows_in_window:
+      window_days: 7
+      min_rows: 8000000
+    leg_name: "tick日行地板"
 
   # --- c1_market.edb_data：故意不设阈值行（iFind 2026-08-14 退役，实测 0 行、
   #     max(report_date) 返 1970-01-01）。设一行就是逼后人去填一张永久无源的表；

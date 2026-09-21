@@ -274,7 +274,7 @@ gaps:
     end_date: null  # 持续中——双写并存未合并
     date_column: "trade_date"
     detection_threshold: 1
-    status: "monitoring"  # 消费端已有兜底（FINAL + drop_duplicates keep=last），转监控
+    status: "resolved"  # 2026-09-21 WO-1 重建治本收口（09-20 复核曾据恶化实测建议退回 open，随夜落地的 version 列重建使该判定被超越）
     root_cause: "同一 (trade_date, symbol) 存在双行：原始 akshare_csindex 行（仅 pe_ttm，cape 全空）
       与 CAPE 回填批行并存（000300 cape_5y_pct NULL 5138/8009 行即原始行），表引擎 FINAL 未消除；
       另 schema 注释列示的 399006（创业板指）实际 0 行，仅 000300/000905 有数据。
@@ -284,8 +284,13 @@ gaps:
       399006 若需启用先跑历史回填；消费端兜底逻辑保留。"
     primary_alternative: "消费端 FINAL+drop_duplicates 兜底（已在位，实证有效）"
     verification_20260918: "st-ff-datagap 2026-09-18 复跑更正：普查同键双行并存已不成立（pre-FINAL 8125 = FINAL 8125，按 (symbol,trade_date) 分组 count>1 命中 0 组，全字段 GROUP BY ALL HAVING count()>1 命中 0，判重按全字段口径非聚合数）。病灶恶化为计算列整表归零：cape_5y/cape_5y_pct/pe_pct/pb_pct/erp/erp_pct/pb_mrq NULL 8125/8125=100%（000300 4062 行 + 000905 4063 行，2010-01-01~2026-09-17 全史）。结构根因=表无 version 列 + 双写者（akshare 采原始列 / internal_compute 回写计算列），2026-09-13 全史重采 8111 行把计算列抹为 NULL（后到 None 版本在合并仲裁胜出）。止血已落地：akshare_provider 写前携带既有非默认派生值（裁定 #288 同款配方，变异证据=注释掉携带则测试红 assert None==31.05）。清创不需 DELETE（全体缺派生列，非坏行混好行）；补数=backfill 后必跟 internal_compute 重算（任务片段 lanes/datagap_tasks_yaml_fragment.yaml 第 4 条）。全文 lanes/datagap_corrupt_rows.md §1-2"
+    verification_20260921: "WO-1 重建治本收口（st-data-fix-20260921 [亲验]）：表已重建为
+      ReplacingMergeTree(ingest_ts) version 列仲裁（见 index_valuation_daily_derived_cols_wiped_20260920
+      条目），本条『无 version 列双写者』结构根因随之消亡。实测 FINAL=8,120 行（09-20 验收
+      8,118 + 09-20/21 两日 compute 腿新增），按 (symbol,trade_date) 重复组=0，cape_5y 近 30 日窗
+      非空率腿绿——双写并存/132 组双行不再复现。"
     created: "2026-08-30"
-    last_updated: "2026-08-30"
+    last_updated: "2026-09-21"
 
   # === 2026-08-15: tushare hk_hold 2026Q2 响应 ts_code 撞码（联调实证，AI-NORTH-001）===
   - id: "tushare_hk_hold_2026q2_code_collision"
@@ -503,8 +508,13 @@ gaps:
       （差量≈当日新上市几只，对 universe 构造影响可忽略）。防复发依赖下载监管 fail_cnt
       告警（已在线），不另行立项。"
     primary_alternative: "相邻日快照（08-16/08-18 等差集≈当日新上市股）"
+    verification_20260921: "家族新发一次（复核 §3 W1，st-data-fix-20260921 [亲验] by-day）：
+      2026-09-16（周二交易日）快照整日 0 行（09-15=5,562、09-17/18=5,565 正常）——与已登记
+      4 缺日同因（akshare 交易所清单接口当日失败，双调度点无重试兜底）。快照型不可回补口径
+      维持，缺日清单扩为 08-17/08-24/08-26/09-07/09-16 共 5 交易日；逐日监控由交易日历
+      diff 检查器承接。"
     created: "2026-09-11"
-    last_updated: "2026-09-11"
+    last_updated: "2026-09-21"
 
   # === 2026-09-11: kline_sector_880 历史断档 312 日（数据总览二批 B2，最大缺口）===
   - id: "kline_sector_880_history_structural"
@@ -632,7 +642,7 @@ gaps:
     detection_threshold: 5500  # 日均 < 5500 行 = 缺口（区间正常 5550-5562）
     expected_daily_avg: 5558   # 09-07/09-08 基准
     actual_daily_avg: 2438     # (4875+0)/2（09-09 部分写入 4875、09-10 整日 0）
-    status: "reopened"  # 2026-09-15 11:40 st-circmv-synthcw-20260915 复测推翻 closed 判定：行数确实恢复（FINAL 视角 09-04~09-14 每日 5556-5562），但数值列系统性全 0——FINAL 视角样本 000001/000002 等 close='0'/amount='0'/turnover='0'（data_source='local_valuation'），countIf(toFloat64(turnover)>0)=0/5562、countIf(toFloat64(amount)>0)=0/5562。full_refresh 的复验只查了行数未查数值=假性闭环。金融字段消费近期此表一律禁用；流通市值权重公式 amount/turnover 因此不可行，circ_mv 回填已改道股本反推法（见 stock_indicator_circ_mv_outage）
+    status: "mitigated"  # 2026-09-21 WO-1 后降档（原 reopened，理由见 verification_20260921）# 2026-09-15 11:40 st-circmv-synthcw-20260915 复测推翻 closed 判定：行数确实恢复（FINAL 视角 09-04~09-14 每日 5556-5562），但数值列系统性全 0——FINAL 视角样本 000001/000002 等 close='0'/amount='0'/turnover='0'（data_source='local_valuation'），countIf(toFloat64(turnover)>0)=0/5562、countIf(toFloat64(amount)>0)=0/5562。full_refresh 的复验只查了行数未查数值=假性闭环。金融字段消费近期此表一律禁用；流通市值权重公式 amount/turnover 因此不可行，circ_mv 回填已改道股本反推法（见 stock_indicator_circ_mv_outage）
     remediation_log: "2026-09-15 st-bsefix-20260915：①治理侧 0 行告警已落库 fa7caabeca（交易日 gate+WARN 进告警流）；②全月窗重刷发射（.runtime/tmp/valuation_full_refresh_20260915.log）；③09-14 缺口为本条 end_date 扩展原因（原登记只到 09-10）"
     root_cause: "①09-09：daily_valuation_full_refresh（akshare）耗时 39564s(11h) 仅写 44687 行（约 8 日量），刷到 09-09 时只落 4875/5558 即结束=部分写入；②09-10：全天 fetch_perf 仅两条 source=mock rows=0 的 daily_valuation_incremental，无任何 akshare 实跑=整日 0 行；③09-12 15:39 akshare 增量(rows=5562, 36023s)补的是 09-11 而非 09-10，09-13/09-14/09-15 无补写记录（09-14 06:44 又一条 mock rows=0）。非源退化——09-11 已恢复 5562 且高于断点前。"
     impact: "一切消费 daily_valuation 的场景（流通市值/PE-PB 权重、估值因子、板块指数合成权重）。09-09 另缺 687 只（前缀 0=85/3=2/6=498/9=102，散落非连续块=抓取中断随机丢包，非分页截断）。"
@@ -640,8 +650,15 @@ gaps:
     primary_alternative: "对拍/回测窗口可暂时用 09-08 与 09-11 权重插值，或按 symbol 复用最近有效日市值（需在消费侧显式标记口径）。"
     evidence: ".runtime/fetch_perf/fetch_perf_20260909.jsonl / _20260910.jsonl / _20260912.jsonl / _20260913.jsonl / _20260914.jsonl"
     verification_20260918: "st-ff-datagap 2026-09-18 复跑：行数已恢复但主病灶未愈——daily_valuation FINAL 259238 行，close!=0 / amount!=0 / turnover!=0 命中 0 行（0.00%，全表跨 2026-08-01~09-17）；且 09-16/09-17 各仅 2000 行=又一次部分写入。幂等/断点续跑已落地（_load_valuation_complete_symbols 跳过已到窗口最新事实日且 pe>0 的标的，11h 批跑被杀后重跑只补未完成标的）+ 行情腿写前携带。列语义缺陷另立新条 daily_valuation_price_legs_zero_mislabeled（非 Nullable 列把无值写成 0 + ps_ttm 实为市盈率(静) + data_source 恒 local_valuation）"
+    verification_20260921: "WO-1 修复后分档收口（st-data-fix-20260921 [亲验] by-day）：原缺口窗
+      09-09~09-14 全修复（逐日 5,548-5,562 行、close>0 99.8%+，09-10 从 0 行恢复 5,561）。
+      残余=增量链『部分写入』病未根治：09-16=2,165 / 09-17=4,676 / 09-18=4,676 行（符号覆盖缺
+      15-61%），该形态对 max-date 与 7 日窗行数地板（2,000）均不可见，逐日监控由交易日历逐日
+      diff 检查器（本批新模块 zephyr.data.calendar_coverage_checker）承接；全符号覆盖修复=重跑
+      full_refresh 历史窗（实测约 11h/次），归后续工单排期。09-19/20 周末 0 行=交易日 gate 生效
+      [亲验]。"
     created: "2026-09-15"
-    last_updated: "2026-09-15"
+    last_updated: "2026-09-21"
   # === 2026-09-15: stock_basic 基准宇宙无北交所（st-bsefix 会话回补批附带发现）===
   - id: "stock_basic_no_bse_universe"
     table: "c1_market.stock_basic"
@@ -858,11 +875,19 @@ gaps:
   - id: "etf_minute_tz_split_pre_202607"
     table: "c1_market.kline_etf_{1min,5min,15min,30min,60min}"
     gap_type: "field_missing"   # 值层纪元混存（非缺行）：backfill_checker 不消费此类型
-    status: "monitoring"   # 修复件已就绪待 Owner 门位批准（RULE-DATA-OPS 破坏性操作=Owner gate）
+    status: "completed"  # 2026-09-21 改册：修复已执行（bak 表在盘实证）；『登记待批』与实际已执行的
+    # 授权链差异由 09-20 复核发现，本批如实记录差异、不追溯归因
     root_cause: "2026-06-30 及以前写入侧按 UTC 墙钟落 trade_time（日内小时∈[1,7]），列类型却为 Asia/Shanghai；2026-07-01 起写入侧改北京墙钟（∈[9,15]）。全族五表 ~4.12 亿行受累（1min 303.4M/5min 68.2M/15min 23.2M/30min 11.4M/60min 5.7M，占各表 93-95%）；两纪元日期边界零违例（≤06-30 全 UTC、≥07-01 全北京）；trade_date 列本身已是北京日零错日；+8h 平移落点与北京段零碰撞（2026-09-18 五表逐一实证，st-flashbiz-20260918）。个股分钟族（kline_1min/15min/30min/60min）零受累；kline_5min 有 8,195 行 2026-09-08 单日小时<=7 零星行=另一独立瞬断（写入侧当晨异常），不在本工单范围。"
     resolution_plan: "修复件已就绪：scripts/ch/repair_etf_minute_tz_split.py（默认 dry-run 五表前置核验全过；--execute 走影子表重建+RENAME 换名，trade_time 在 ORDER BY 键禁 ALTER UPDATE；旧表保留 *_tz_bak_20260918 可逆=反向换名即退）。**等 Owner 批准 --execute**（RULE-DATA-OPS 破坏性操作三步验证已过：必要性=T lane 及后续任何分钟级消费需正确日内时序；真实性=上列五表实证；可逆性=换名回退+行数量和对账）。"
     primary_alternative: "批准前消费方读 2026-06-30 前数据须自带『小时<=7 → +8h』逐行归一（kimi-audit T lane 已按此处置 510300/510500 极值分析，结论不受累）；api_server 数据总览仅计数不受累。工单=docs/_working/flash_biz/biz5_etf15min_tz_defect.md"
+    verification_20260921: "修复执行实证+回滚窗口（st-data-fix-20260921 [亲验] system.parts
+      active 实测）：五张换名回滚表全在——kline_etf_1min_tz_bak_20260918=325,198,058 /
+      5min=71,775,532 / 15min=24,302,647 / 30min=11,932,683 / 60min=5,955,526，合计
+      439,164,446 行 / 7.53 GiB（bytes_on_disk；09-20 复核口径 440,481,332 行/8.11 GB 系其
+      测量基准，回滚窗口以本行 parts 亲验为准）。live 表旧纪元行（hour∈[1,7] 且 ≤06-30）=0
+      （09-20 复核实测承继）。回滚=五表反向换名即退，bak 保留至 Owner 净删门位裁定。"
     created: "2026-09-18"
+    last_updated: "2026-09-21"
 
   # === 2026-09-18: B5 分红预案管线死亡（✅行活跃管线核查 D8 发现，st-datapack-20260918）===
   - id: "dividend_plan_miniqmt_retired"
@@ -889,7 +914,11 @@ gaps:
     resolution_plan: "人工核源（省水文站点页是否改版/换域名）；若换版走 data_source_onboarding_sop 换源重挂；若确认平台退役按 F4 先例『平台停更留痕』降级留史。"
     primary_alternative: "相关表 alt_sz_reservoir_rain_day/month 与 station 同源待一并核查。"
     verification_20260918: "st-ff-datagap 2026-09-18 复跑确认半死管线仍成立：FINAL 75,159,520 行，max(tdate)=2026-07-31（业务日）而 max(ingest_ts)=2026-09-18 11:02 UTC（采集日）→ 业务滞后 49 天、采集滞后 0 天。近三次灌入 09-14 8,400,000 行 / 09-15 66,660,000 行 / 09-18 99,520 行，拉回的最大业务日仍是 07-31 → 源端确无 8 月后数据（非解析失败，解析失败不会落 99,520 行）。该表在 data_supply_sentinel.yaml 中根本没有阈值行（实跑 check_tables: checked 35 / breached 0），业务日期新鲜度片段见 lanes/datagap_sentinel_yaml_fragment.yaml 第①腿。同族 rain_day / rain_month / station 待一并核查"
+    verification_20260921: "半死管线持续一致（st-data-fix-20260921 [亲验] FINAL）：max(tdate)=
+      2026-07-31（业务滞后 52 天）、max(ingest_ts)=2026-09-18 11:02 UTC——与 09-18 复跑结论
+      无变化，monitoring 维持；人工核源仍未发生（数据线待办排期）。"
     created: "2026-09-18"
+    last_updated: "2026-09-21"
 
   # === 2026-09-18 红蓝夜验收补登（st-redblue-night-20260918 R5①：修复「声称已登记但实际缺失」）===
   # ①provider docstring（akshare_alt_provider _fetch_futures_warehouse_receipt）声称"近端缺口登记
@@ -933,13 +962,20 @@ gaps:
     end_date: ""   # 持续中——写侧口径缺陷，非日期窗口
     date_column: "trade_date"
     detection_threshold: 0  # 结构性：非零率判据哨兵尚不支持
-    status: "open"
+    status: "resolved"  # 2026-09-21 WO-1 A2 收口（0 值主病灶亡；data_source/ps_ttm 元数据残余见 verification_20260921）
     root_cause: "该表是行情腿+估值腿复合表，唯一在跑的写者是 akshare 百度估值链路（fallback 里的 miniqmt/local_valuation 均无实体：全仓 grep local_valuation 仅命中本 provider 文件与 DDL DEFAULT）。其 _fetch_valuation_one_symbol 对 9 个行情腿列（open/high/low/close/preclose/volume/amount/turnover/pct_change）传 None，而 DDL 这些列是非 Nullable Decimal/UInt64 → 落库成 0，即无值以合法数值形态进闭环。另两处失真：ps_ttm 列写入的是 akshare 指标市盈率(静)（该函数指标映射处自述 AKShare 无 PS，用静态PE替代）；data_source 因 DDL DEFAULT 恒为 local_valuation，而真实写者是 akshare 链路（出处标注失真）。"
     impact: "实测 FINAL 259238 行中 close!=0 / amount!=0 / turnover!=0 命中 0 行（0.00%）。消费侧已知规避（api_server.py:206 注明价格列全 0 不可用、:265 turnover 全 0 暂无真源→None），故不阻断他人；但任何新消费方直读即中招——流通市值权重 amount/turnover 已被此坑过一次（见 stock_indicator_circ_mv_outage 条目）。0 是错数不是缺数，比空表危险（R-014 同判据）。"
     resolution_plan: "本车道已落地 provider 侧止血（行情腿写前携带 + 宽窗重采幂等/断点续跑）；口径裁定三选一交总包/Owner（A1 9 列改 Nullable，推荐；A2 行情腿由 kline_daily 同步；A3 摘除 9 列=净删列 Owner 门位）——见 adjudications/req_datagap_01.md 议题 A。"
     primary_alternative: "行情/换手一律取 kline_daily 与 stock_indicator（circ_mv 已按股本反推法回填）"
     evidence: "lanes/datagap_corrupt_rows.md §0/§4（含复跑 SQL 与输出）"
+    verification_20260921: "WO-1 A2 方案落地收口（st-data-fix-20260921 [亲验]）：行情腿改自
+      kline_daily 回填+交易日 gate 后 FINAL=189,087 行 close>0=99.91%。三项残余如实登记：
+      ①data_source 仍恒 local_valuation（真实写者 akshare，标注失真）；②ps_ttm 仍为静态 PE
+      （语义失真）；③turnover 近窗非零 0.9% 系 kline_daily 源端无换手率（源缺口非管线病）。
+      三者均属元数据/源端口径，0 值错数进闭环主病灶已亡，哨兵 [close,amount] 非零率腿实测绿；
+      元数据修复建议另立小工单（data_source 写实+ps_ttm 注释勘误），不再由本条承载。"
     created: "2026-09-18"
+    last_updated: "2026-09-21"
 
   # === 2026-09-19 批：bizmine 通宵夜战七项数据缺口批量登记（st-bizmine-co-20260919，各证据=docs/_working/bizmine_night/ 实测报告）===
 
@@ -959,9 +995,15 @@ gaps:
       但 2022-01 起 0 行断供，仅 2019-01..2021-12 可考。"
     resolution_plan: "值类消费一律改走 consensus_daily_repaired 净段；repaired 2022+ 断供段
       待换源/重灌回补（归数据线工单）；plain 表值类列禁用登记在案，计数类列不受本判定约束。"
-    primary_alternative: "c3_fundamental.consensus_daily_repaired（净段 343,838 行/1549 只/2018-06..2021-12）"
+    primary_alternative: "c3_fundamental.consensus_daily_repaired（净段 FINAL 1,563,996 行 [亲验 09-21]：2017-2021 五年+2026 近窗；2022-2025 仍断）"
     evidence: "docs/_working/bizmine_night/factor_sop_screen/altdata_probe_report.md 发现 1-2"
+    verification_20260921: "部分回填口径更新（st-data-fix-20260921 [亲验] FINAL）：repaired 表
+      合计 1,563,996 行——2017=300,566 / 2018=349,219 / 2019=311,934 / 2020=260,490 /
+      2021=250,420 / 2026=91,367（max trade_date=2026-09-15）；2022-2025 仍 0 行=断供段未回。
+      09-20 复核『2026=182,734』系 raw 双版本未合并视角（恰为 FINAL 91,367 的 2 倍），现已
+      合并收敛，本行 FINAL 口径为准。status 维持 open（2022-2025 待回补，归数据线工单）。"
     created: "2026-09-19"
+    last_updated: "2026-09-21"
 
   # === ② kline_etf_daily 过浅（E 车道实测弃用表）===
   - id: "kline_etf_daily_shallow_depth"
@@ -999,7 +1041,12 @@ gaps:
       ALTER DELETE 聚合数判重）；治理前消费方一律 argMax(ingest_ts)/drop_duplicates(keep=last) 口径。"
     primary_alternative: "消费侧 ingest_ts 去重（IND-A/B/C 三切片已实证该口径下结论稳定）"
     evidence: "docs/_working/bizmine_night/indicators_sweep_b/screen_report.md 诚实条款 §1（429 万重复/总 1756 万行）"
+    verification_20260921: "monitoring 维持（st-data-fix-20260921）：dwm 分片重跑 09-21 凌晨在飞
+      （CH 轻查询窗口避让，本批未重扫重复计数）——回填期重复行将进一步累积属预期，消费方
+      argMax(ingest_ts) 口径在回填完成前加倍必须；回填完成后按 resolution_plan 评估治本重灌
+      排期。"
     created: "2026-09-19"
+    last_updated: "2026-09-21"
 
   # === ④ tick 覆盖缺口：ETF tick 稀疏+2022-2024 个股 tick 不在库（TICK/TICKM 车道实测）===
   - id: "tick_coverage_etf_sparse_and_2022_2024_missing"
@@ -1066,14 +1113,20 @@ gaps:
     end_date: ""
     date_column: "publish_date"
     detection_threshold: 0  # 结构性：两列全空串，非行数缺口
-    status: "open"  # 源端未供该两列数据；热度绝对值/评级调向两预期信号无法构造
+    status: "open"  # 2026-09-21 口径收窄：hot_value 列已随 schema 变更移除（见 verification_20260921），残余缺口=rating_change 空列
     root_cause: "hot_value 与 rating_change 两列全空（146,669 行全空串，2026-09-19 ALT-B 车道
       实测）——热度绝对值与评级调向两个预期信号无法构造；研报全文 20GB 级未搬运（仅元数据级在库）。"
     resolution_plan: "数据线核查 akshare 研报详情接口是否供该两字段（不供则换源或标记列退役
       走净删门位）；全文搬运属独立数据工程项（20GB 级，挂账不阻塞）。"
     primary_alternative: "hot_rank（每日 top100 rank 值，29 天）可作热度代理；评级调向暂无替代"
     evidence: "docs/_working/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
+    verification_20260921: "schema 口径更新（st-data-fix-20260921 [亲验] system.columns）：
+      hot_value 列已不存在（09-19 测得全空串 146,669 行的载体随 schema 变更移除，本条对该列的
+      登记随之了结，热度代理按 primary_alternative 走 hot_rank）；rating_change 列仍在且维持
+      空列，缺口承续。schema 变更的执行者与批准链本批未追溯（『登记口径过时』的发现出处=
+      gaps_registry_review.md §2.1）。"
     created: "2026-09-19"
+    last_updated: "2026-09-21"
 
   # === ⑦ F:/zephyr_cold/50_archive/by_project/zephyralpha 分钟线冷归档待挂回（原 E 盘，2026-09-20 迁 F；总包 E 盘盘点 06:0x）===
   - id: "cold_archive_minute_kline_e_drive"
@@ -1230,6 +1283,89 @@ gaps:
     resolution_actual: "2026-09-21 落地（st-data-fix-20260921）：tick_data 09-17 = 0 → 28,327,322 行 / 7,799 标的（超邻日 09-16 的 23,908,666 行）；stock 2038 万/etf 394 万/index 274 万/stock_bj 56 万/cb 53 万/lof 17 万；futures 域外未处理。五档 dry-run 5/5 类别可下，全市场回补同批执行。长尾 180 只源缺 0 行（退市/停牌/模拟环境未收录，如实保留缺口）"
     verification_20260921: "countIf(trade_date='2026-09-17')=28,327,322 ≥2000 万门槛 [亲验]；跨源抽验 000001.SZ tick 15:00 末价 11.61 = kline_daily 收盘 11.61 逐位相等，600519 差 0.03%（收盘竞价口径）[亲验]；同键重复 20,427 组为 resume 重灌未合并版本（同值幂等）"
     channel_note: "模拟盘 tick 服务器保留≈1 个月（09-01 可下/08-18 已失效实测），30 天内缺口均可按本配方回补；分钟/日线族深度数年不受清退影响。评估详见 docs/_working/data_fix_campaign/p0_sim_as_source_assessment.md"
+    created: "2026-09-21"
+    last_updated: "2026-09-21"
+
+  # === 2026-09-21: 09-18 清退过渡日竞价缺口（桥午后才通，竞价窗落真空；分包2 移交单①，仿 A3 先例）===
+  - id: "auction_20260918_transition_gap"
+    table: "c1_market.auction_snapshot"   # 同族观察 c1_market.tick_depth_5 竞价窗
+    gap_type: "date_range"
+    start_date: "2026-09-18"
+    end_date: "2026-09-18"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "no_source"  # 仿 A3 先例（auction_window_pre_202606_gap）：竞价过程数据任何渠道不存在
+    root_cause: "09-18 券商清退过渡日：miniqmt 实盘采集当日上午退役、qmt_bridge 午后才通——
+      竞价窗（09:15-09:25）恰落在两代采集链真空隙。实测 [亲验 09-21]：auction_snapshot
+      09-18=0 行（前最后一日 09-17=3,230）；tick_depth_5 09-18 竞价窗仅 18 行 [分包2 移交实测]——
+      桥通道竞价派生（ch_auction_derive，自 tick_depth_5 [09:15,09:26) 窗 INSERT-only 派生）对
+      18 行残样本无法产出有效全天快照。9:15-9:25 挂撤单过程序列任何渠道都不存在=该日竞价
+      过程数据永久缺失（同 auction_window_pre_202606_gap 结论）。"
+    resolution_plan: "竞价 09-18 不补（无源，永久缺口留痕）；FF-06 竞价信号消费方把 09-18 按
+      缺样本日处理（47 密集日样本池不受单日缺失影响，判据回填见 A3 条目）。"
+    primary_alternative: "无（过程数据无替代源）；相邻日 09-17=3,230 行与 09-21 起桥流日行可作时序邻接参考。"
+    created: "2026-09-21"
+
+  # === 2026-09-21: 清单族 list_date 哨兵 1970 存活行（复核 §3 W4/W5 未登记项收口；分包2 移交）===
+  # 注：1970 治本条目（补真值/PIT 关死方案）归分包6·1970 治本车道后改，本条只登记实测现状。
+  - id: "list_tables_surviving_1970_sentinel_rows"
+    table: "c1_market.etf_list"   # 同族 c1_market.index_list / c1_market.convertible_bond_list
+    gap_type: "upstream_data_corruption"
+    start_date: ""   # 首次系统性发现于 09-20 复核（W4/W5），实际写入时点未追溯
+    end_date: ""
+    date_column: "list_date"
+    detection_threshold: 1    # 存活行（valid_to IS NULL）list_date=1970 计数应=0
+    status: "open"  # 登记现状；治本（补真值优先、PIT 关死兜底，破坏性操作=Owner 门位）归 1970 治本条目
+    root_cause: "三表实测 [亲验 09-21 FINAL]：①etf_list 2,184 行中 84 行 list_date=1970 且
+      valid_to IS NULL——与 etf_list_list_date_sentinel resolution_actual 『FINAL 墓碑 0/
+      list_date 全真值』矛盾（疑似月度刷新带回或首跑漏段，待 1970 治本车道查）；②index_list
+      9,700 行中 list_date=1970 共 1,722 行（1,700=PIT 关死墓碑设计内），存活行 22 行带哨兵
+      日期=新指数进料未映射 list_date；③convertible_bond_list 1,051 行（raw+FINAL 一致），
+      list_date/valid_from=1970 共 3 行存活，另 end_date/delist_date/convert_start/
+      convert_end/stop_convert 五列全表 1,051 行=1970（未除牌/未停转的 epoch 占位=
+      『无值写成哨兵日期』家族的日期版）。09-20 复核对 cb_list 测得 2,102 行/1,054@1970 与
+      当前 1,051/3 不一致（两轮测量间他方去重/修复，未归因），以本条 09-21 亲验为准。"
+    impact: "以 list_date 做上市年限/存活期过滤的消费方会把 1970 当真实日期算出 56 年存续；
+      cb_list end_date/convert_* 五列 1970 全表占位使『已到期/已停转』过滤恒空。"
+    resolution_plan: "归 1970 治本条目（分包6 车道）：etf_list 查月度刷新带回路径+补真值；
+      index_list 新指数进料补 list_date 映射；三表按『补真值优先、PIT 关死兜底』处置（破坏性
+      操作走 Owner 门位）。防复发=写入器对无日期源禁落 1970 哨兵（改 NULL 或拒写）。"
+    primary_alternative: "消费侧临时口径：list_date>'1970-01-02' 过滤（审计侧已有 1970 排除先例）。"
+    created: "2026-09-21"
+
+
+  # === 2026-09-21: 1970 假日期治本三步收口（分包6 车道，②b 改令）===
+  - id: "fake_date_1970_root_cure_p6"
+    table: "c3_fundamental.restricted_shares|financial_indicator|disclosure_plan|dividend|equity_pledge_detail|audit_opinion|shareholder_count|rights_issue + c1_market.index_list|convertible_bond_list|etf_list|stock_list|rate_decision_calendar"
+    gap_type: "sentinel_zero_date"
+    start_date: "2026-09-21"   # 治本执行日（病灶自建库起累积）
+    end_date: null  # B 族键列残留待补真/键表重设计
+    date_column: "announce_date 族/unlock_date/list_date/base_date/setup_date/end_date/delist_date/convert_*/stop_convert/dividend_year/report_period/decision_date（19 列）"
+    detection_threshold: 1
+    status: "open"  # A 族已清零（398,740 格 NULL+10,927 空壳行可逆删除）；B 族 46,905 行键列残留开放
+    root_cause: "三层（写入端逐表溯源 [亲验]）：①硬编码 '1970-01-01'/date(1970,1,1) 哨兵
+      （financial_indicator 新浪无公告日/convertible_bond_list 新结构五列/etf_list sina 空日期/
+      index_list 交易所清单/miniqmt stock_list 闭合）；②_norm_date_str 空串经 TSV 写非
+      Nullable Date 列被 input_format_null_as_default 补 1970-01-01；③restricted_shares
+      writer 列名过期被列过滤削成 symbol 单列，其余列落 DEFAULT 1970（data_source='' 恰
+      10,927 行实证），equity_pledge 同理（列清单不含 announce_date）。"
+    impact: "43.6 万行假日期污染 PIT/年限/存活期过滤；index_list/etf_list 存活行带哨兵日期；
+      convertible 五列全表 epoch 占位使到期/停转过滤恒空。"
+    resolution_plan: "B 族（PARTITION/ORDER BY 键列，CH 禁 ALTER Nullable，Code 524 实证）
+      待补真后 UPDATE 或键表重设计：financial_indicator.announce 34,339+report_period 64
+      （换东财源立项）/dividend.announce 6,749+dividend_year 983（akshare 有公告日列可重拉）/
+      equity_pledge.announce 4,588（找真源）/audit_opinion.announce 150（bdpan 待专项）/
+      rights_issue.announce 31（源有配股公告日可重拉）/rate_decision 1（人工核）。
+      restricted_shares 解禁日后续按 symbol 重拉全队列整段替换（渠道已验证）。"
+    resolution_actual: "2026-09-21 分包6 治本落地 [亲验]：写入端=ch_writer.scrub_1970_date_sentinels
+      写前守卫（write_result+BufferedWriter.add 双入口，PIT 轴豁免）+三 provider 硬编码哨兵改
+      None+restricted_shares/equity_pledge writer 修复，51 测试过；存量=13 表 15 列 Nullable 化，
+      A 族 398,740 格 UPDATE→NULL（restricted_shares.announce 343,298 分 3 批）+空壳行
+      10,927 可逆删除（五业务列零载荷实证，全行快照先行导出）；修后两轮哨兵观察 STABLE
+      （A 族全 0，B 族稳定无新增）。修前/修后逐列数字与 bak 参照原料核对记录（零误清零价值）
+      见 docs/_working/data_fix_campaign/p6_1970_root_cure_report.md；可逆导出
+      E:/{c1_market,c3_fundamental}/p6_1970_export/。"
+    primary_alternative: "消费侧已有 1970 排除兜底（pit_query 锚列>1970-01-02 哨兵守卫、api_server 零值排除）。"
     created: "2026-09-21"
     last_updated: "2026-09-21"
 

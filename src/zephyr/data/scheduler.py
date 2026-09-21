@@ -249,6 +249,23 @@ def _run_special_schedule(
             )
             return {"data_supply_sentinel": False}
         return {"data_supply_sentinel": bool(result.get("ok", False))}
+    # L13.5 交易日历逐日覆盖检查器：交易日×表内日期逐日差集（2026-09-21 WO-3，
+    # MOD-L00-004-CCC）。补 max-date 原理性失明（tick 09-17 内部洞/stock_basic 09-16
+    # 缺日型盲区）；随本槽事件触发，无自建常驻进程（宪法 §9.3）。
+    if schedule_name == "calendar_coverage_check":
+        from zephyr.data.calendar_coverage_checker import run_coverage_checker
+
+        try:
+            result = run_coverage_checker(alerter=scheduler._alerter)
+        except Exception as exc:  # noqa: BLE001 — 检查器故障降级告警，不炸调度器
+            scheduler._alerter.notify(
+                "calendar_coverage_checker",
+                f"日历覆盖检查执行异常: {str(exc)[:200]}",
+                level="ERROR",
+                source="calendar_coverage_checker",
+            )
+            return {"calendar_coverage_check": False}
+        return {"calendar_coverage_check": bool(result.get("ok", False))}
     # 夜间情绪窗层：MOD-INT-NEWS-NIGHT 日频接线（2026-09-10，known_data_gaps
     # news_sentiment_window_no_scheduler_wiring 治本）。惰性导入 intelligence 域写入器；
     # 任何异常降级 alerter 告警，不炸调度器。
