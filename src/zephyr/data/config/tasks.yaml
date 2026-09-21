@@ -64,6 +64,19 @@ tasks:
   extra:
     description: "不复权日K线增量（miniQMT；baostock 作为 fallback）"
 
+- task_id: stock_daily_basic_incremental
+  table: c1_market.stock_daily_basic
+  source: tushare        # 批9 治本（2026-09-21 st-data-fix WO-4）：换手率/流通盘/市值族原仅靠留盘手工脚本（backfill_stock_daily_basic.py --source tushare）供数、无日常腿；provider capability 转正门（fx_ecb 旁路升格同款先例）
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []       # 独立原始供数腿：非交易日 pro.daily_basic 空=0 行 no-op，无需挂 K 线依赖
+  capability: stock_daily_basic
+  symbols:               # null=全市场快照（按 trade_date 自维护）
+  fallback_sources: []   # 人工兜底=留盘脚本 backfill_stock_daily_basic.py --resume-fail
+  extra:
+    description: "A股 daily_basic 日频增量（换手率/流通股/流通市值/总市值；chips 族换手率地基，缺数→chips 降级 NULL）"
+
 - task_id: daily_valuation_incremental
   table: c1_market.daily_valuation
   source: akshare          # #ARCH-IFIND-FAILOVER: ifind 已于 2026-08-14 退役，akshare 转正为正式主源

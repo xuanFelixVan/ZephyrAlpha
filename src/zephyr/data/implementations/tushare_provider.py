@@ -25,7 +25,8 @@ Tushare 数据源 Provider 实现（MOD-L00-004 §4.3）。
   lof_list（东财反爬替代源）/ money_flow（东财反爬替代源）/
   futures_term_structure（QMT 期货板块为空替代源）/ etf_nav（东财净值接口反爬替代源）/
   northbound_hold_snapshot（北向季度持仓快照，19 号 memo；逻辑在 northbound_hold_fetcher.py）/
-  kline_daily_bj（北交所日K线增量，2026-08-25 BJDAILY 生产上线）
+  kline_daily_bj（北交所日K线增量，2026-08-25 BJDAILY 生产上线）/
+  stock_daily_basic（A股 daily_basic 日频增量：换手率/流通盘/市值四列，2026-09-21 批9 治本转正门）
 
 关键设计：
 - connect() 读取 TUSHARE_TOKEN 环境变量，初始化 pro_api 客户端
@@ -41,7 +42,7 @@ import logging
 import re
 import threading
 import time
-from typing import Any, Iterator
+from typing import Iterator
 
 # 19 号 memo：北向季度持仓快照（绝对 import 供 ORPHAN-MODULE 门禁 git grep 发现引用）
 from zephyr.data.implementations.northbound_hold_fetcher import fetch_northbound_hold_snapshot
@@ -76,6 +77,8 @@ _TBL_ETF_NAV = get_registry().table("market_etf_nav")
 _TBL_ETF_LIST = get_registry().table("market_etf_list")
 # 2026-08-25 BJDAILY：北交所日K线增量主源（pro.daily 按 trade_date 全市场拉取过滤 .BJ）
 _TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
+
+_TBL_STOCK_DAILY_BASIC = get_registry().table("market_stock_daily_basic")
 # 2026-08-16 JOB-083：ST 历史状态名称变更推导回填（tushare namechange 全量历史 →
 # ST 区间 → 变化日快照合成，补齐 DS-085 首个实盘快照日前的历史段）
 _TBL_ST_STOCK_LIST = get_registry().table("market_st_stock_list")
@@ -118,6 +121,9 @@ class TushareProvider(IngestProviderBase):
             "st_namechange_backfill",
             # 2026-08-25 BJDAILY：北交所日K线增量（symbols=None=按 trade_date 全市场过滤 .BJ 自维护）
             CapabilityContract("kline_daily_bj", supports_symbols_null=True),
+            # 2026-09-21 批9 治本：A股 daily_basic 日频增量（换手率/流通盘/市值；
+            # chips 族地基，原仅靠留盘手工脚本供数无日常腿）。symbols=None=按 trade_date 全市场
+            CapabilityContract("stock_daily_basic", supports_symbols_null=True),
             # 19 号 memo：北向季度持仓快照（hk_hold），逻辑在独立文件 northbound_hold_fetcher.py
             CapabilityContract(
                 "northbound_hold_snapshot",
@@ -196,6 +202,8 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_money_flow(payload, policy)
         elif capability == "kline_daily_bj":
             yield from self._fetch_kline_daily_bj(payload, policy)
+        elif capability == "stock_daily_basic":
+            yield from self._fetch_stock_daily_basic(payload, policy)
         elif capability == "futures_term_structure":
             yield from self._fetch_futures_term_structure(payload, policy)
         elif capability == "etf_nav":
@@ -1041,6 +1049,113 @@ class TushareProvider(IngestProviderBase):
             records = df.to_dict("records") if df is not None else []
             rows = self._map_bj_kline_rows(records, turnover_map, symbols_filter)
             self._log.info(f"kline_daily_bj {dstr}: {len(rows)} 行（tushare 全市场过滤 .BJ）")
+            yield FetchResult(
+                table=table,
+                columns=columns,
+                rows=rows,
+                last_key=current.isoformat(),
+                elapsed_sec=seconds_since(t0),
+            )
+            current += datetime.timedelta(days=1)
+
+    _STOCK_DAILY_BASIC_COLUMNS = [
+        "trade_date",
+        "symbol",
+        "turnover_rate",
+        "float_share",
+        "circ_mv",
+        "total_mv",
+    ]
+
+    @staticmethod
+    def _map_stock_daily_basic_rows(
+        records: list[dict],
+        td: str,
+        symbols_filter: set[str] | None = None,
+    ) -> list[tuple]:
+        """tushare pro.daily_basic 记录 → stock_daily_basic 6 列行。
+
+        口径对齐批9 tushare 回填（scripts/data/backfill_stock_daily_basic.py 留盘先例，
+        INSERT_COLUMNS 6 列、data_source 走表 DEFAULT）：四列数值原值 round 4 位直落
+        （不做单位换算）；ingest_ts 由表 DEFAULT now() 兜底。
+        NaN/None → NULL（表列 Nullable）。
+        td=调用方传入的当日 ISO 日期（pro.daily_basic 按 trade_date 查询时不回列）。
+        """
+
+        def _num(v: float | str | None) -> float | None:
+            if v is None:
+                return None
+            try:
+                f = float(v)
+            except (TypeError, ValueError):
+                return None
+            return None if f != f else round(f, 4)  # NaN 防护（pandas 缺值=nan 非 None）
+
+        out: list[tuple] = []
+        for r in records:
+            ts_code = str(r.get("ts_code") or "")
+            code6 = ts_code.split(".")[0]
+            if not code6:
+                continue
+            if symbols_filter is not None and code6 not in symbols_filter:
+                continue
+            out.append(
+                (
+                    td,
+                    code6,
+                    _num(r.get("turnover_rate")),
+                    _num(r.get("float_share")),
+                    _num(r.get("circ_mv")),
+                    _num(r.get("total_mv")),
+                )
+            )
+        return out
+
+    def _fetch_stock_daily_basic(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
+        """A股 daily_basic 日频增量（pro.daily_basic 按 trade_date 全市场快照）。
+
+        批9 治本（2026-09-21 st-data-fix）：换手率/流通盘/市值族此前仅靠留盘手工
+        回填脚本供数、无日常增量腿 → 断供即静默（chips 族换手率地基，
+        internal_compute_provider daily 周期并入消费，缺数降级 NULL）。
+        本能力承接每交易日例行（fx_ecb"旁路升格正门"同款先例）：
+        - 逐日 pro.daily_basic(trade_date=...) 全市场（与 kline_daily_bj 同款逐日
+          游标纪律）；payload.symbols 显式传入时按裸 6 位代码过滤。
+        - 非交易日返回空 → 0 行批次照常 yield（游标推进语义与 kline_daily_bj 一致）。
+        """
+        table = payload.table or _TBL_STOCK_DAILY_BASIC
+        columns = self._STOCK_DAILY_BASIC_COLUMNS
+        start = payload.start or datetime.date.today()
+        end = payload.end or datetime.date.today()
+        symbols_filter: set[str] | None = None
+        if payload.symbols:
+            symbols_filter = {str(s).split(".")[0].zfill(6) for s in payload.symbols}
+
+        current = start
+        while current <= end:
+            t0 = now_utc()
+            dstr = current.strftime("%Y%m%d")
+            try:
+                df = self._call_with_policy(
+                    self._pro.daily_basic,
+                    policy,
+                    trade_date=dstr,
+                    fields="ts_code,turnover_rate,float_share,circ_mv,total_mv",
+                )
+            except Exception as e:  # noqa: BLE001 — 单日失败记 error（触发 fallback 源）
+                yield FetchResult(
+                    table=table,
+                    columns=columns,
+                    rows=[],
+                    last_key=current.isoformat(),
+                    elapsed_sec=seconds_since(t0),
+                    error=str(e),
+                )
+                current += datetime.timedelta(days=1)
+                continue
+
+            records = df.to_dict("records") if df is not None else []
+            rows = self._map_stock_daily_basic_rows(records, current.isoformat(), symbols_filter)
+            self._log.info(f"stock_daily_basic {dstr}: {len(rows)} 行（tushare 全市场）")
             yield FetchResult(
                 table=table,
                 columns=columns,

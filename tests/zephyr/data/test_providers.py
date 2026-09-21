@@ -2134,6 +2134,104 @@ class TestTushareKlineDailyBj:
         assert results[0].error is not None and "boom" in results[0].error
 
 
+class TestTushareStockDailyBasic:
+    """tushare stock_daily_basic capability（2026-09-21 批9 治本转正门）：行映射 + 路由 + meta 契约 + schema 对齐。
+
+    钉住口径：四列原值 round 4 直落（无单位换算，对齐批9 留盘回填）、
+    NaN/None→NULL、symbol=裸 6 位、td 由调用方传入（pro 按 trade_date 查询不回列）。
+    """
+
+    @staticmethod
+    def _basic_records() -> list[dict]:
+        nan = float("nan")
+        return [
+            {
+                "ts_code": "000001.SZ",
+                "turnover_rate": 0.8712,
+                "float_share": 194591.0,
+                "circ_mv": 2116934.8,
+                "total_mv": 2190900.0,
+            },
+            {  # NaN/None → NULL（表列 Nullable）
+                "ts_code": "000852.SH",
+                "turnover_rate": nan,
+                "float_share": None,
+                "circ_mv": 103.0,
+                "total_mv": 555.0,
+            },
+            {  # 空 ts_code——丢行
+                "ts_code": "",
+                "turnover_rate": 1.0,
+                "float_share": None,
+                "circ_mv": None,
+                "total_mv": None,
+            },
+        ]
+
+    def test_map_rows_null_and_filter(self):
+        rows = TushareProvider._map_stock_daily_basic_rows(self._basic_records(), "2026-09-21")
+        assert len(rows) == 2  # 空 ts_code 丢行
+        assert rows[0] == ("2026-09-21", "000001", 0.8712, 194591.0, 2116934.8, 2190900.0)
+        r1 = rows[1]
+        assert r1[0] == "2026-09-21" and r1[1] == "000852"
+        assert r1[2] is None and r1[3] is None  # NaN/None → NULL
+        rows2 = TushareProvider._map_stock_daily_basic_rows(self._basic_records(), "2026-09-21", {"000852"})
+        assert len(rows2) == 1 and rows2[0][1] == "000852"
+
+    def test_columns_align_stock_daily_basic_schema(self):
+        """产出列 == stock_daily_basic schema INSERT_COLUMNS（写层交集过滤零丢弃，对标 #219）。"""
+        from schemas.categories.market.market_stock_daily_basic import INSERT_COLUMNS
+
+        schema_cols = {c.strip() for c in INSERT_COLUMNS.strip("()").split(",")}
+        assert set(TushareProvider._STOCK_DAILY_BASIC_COLUMNS) == schema_cols
+
+    def test_meta_contract_symbols_null(self):
+        contract = TushareProvider.meta.get_capability_contract("stock_daily_basic")
+        assert contract is not None
+        assert contract.supports_symbols_null is True
+
+    def test_fetch_route_per_trade_date(self):
+        """路由 + 按 trade_date 全市场拉取 + last_key 推进。"""
+        p = TushareProvider()
+        p._connected = True
+        pro = MagicMock()
+        pro.daily_basic = MagicMock(return_value=pd.DataFrame(self._basic_records()[:1]))
+        p._pro = pro
+        payload = FetchPayload(
+            table="c1_market.stock_daily_basic",
+            symbols=None,
+            start=datetime.date(2026, 9, 21),
+            end=datetime.date(2026, 9, 21),
+            extra={"capability": "stock_daily_basic"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1 and not results[0].error
+        pro.daily_basic.assert_called_once_with(
+            trade_date="20260921", fields="ts_code,turnover_rate,float_share,circ_mv,total_mv"
+        )
+        rows = results[0].rows
+        assert len(rows) == 1 and rows[0][1] == "000001"
+        assert results[0].last_key == "2026-09-21"
+
+    def test_fetch_api_error_yields_error(self):
+        """pro.daily_basic 单日失败 → error 批次（触发 scheduler fallback 语义）。"""
+        p = TushareProvider()
+        p._connected = True
+        pro = MagicMock()
+        pro.daily_basic = MagicMock(side_effect=RuntimeError("boom"))
+        p._pro = pro
+        payload = FetchPayload(
+            table="c1_market.stock_daily_basic",
+            symbols=None,
+            start=datetime.date(2026, 9, 21),
+            end=datetime.date(2026, 9, 21),
+            extra={"capability": "stock_daily_basic"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error is not None and "boom" in results[0].error
+
+
 class TestAkshareKlineDailyBj:
     """akshare kline_daily_bj 备源：东财行映射（volume 手→股）+ universe 两级解析 + 契约。"""
 
