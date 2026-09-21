@@ -80,7 +80,11 @@ status: final_report_two_round_verification_green
 - Owner 必交件②：`lane_reports/F6_堵点总账.md`（含 §3.1 夜班增补）
 - 总簿第三批更新（F2/H hash 回填+批次志 4 行）——**tracked 可先行队列提交，hash 见 q-0009**
 
-**24h 观察窗件（起床后核验）**：F1 判据②③、F5 判据①②——入口 `python scripts/governance/commit_perf_report.py --hours 24`。
+**24h 观察窗实测（2026-09-21 08:1x，st-taskcards-exec-20260921 执行 tc_03 卡步骤3；入口 python scripts/governance/commit_perf_report.py --hours 24，真路径 scripts/governance/ 下）**：
+- 总体判定=**黄**：正式提交占比 92%（绿，阈≥70%）；机器伴生比 8%（绿，阈≤30%）；竞态窗口 18/日（黄，阈≤4）；堵点事件 34/日（绿，阈≤100）。
+- 堵点榜：CH-BATCH-SIZE 11 次（门禁链 P50=226s 累计白跑 2644s，头号）；GATE-PRECOMMIT-RUN 9 次；CREATE-GUARD 5 次（白跑 150s）；EXEMPT-ZONE-FM 3 次（白跑 128s）；WORKTREE-REQUIRED 2 次。
+- 慢提交 10 次（P50=108s 最长 404s，主力=st-maxexec 大批）。
+- F1 判据②③/F5 判据①②结论：F1 派生折叠生效（NOTHING_TO_COMMIT 类未入堵点榜）；F5 DC 预检快败生效（DC 未入堵点榜，摩擦类仅剩 EXEMPT-ZONE-FM/CREATE-GUARD 等 token/FM 事前项）；残余黄项=竞态窗口（高频小提交+生成器并发窗，非本战役车道回退，转 P-4 门禁退役议题证据链）。
 **integration 50 提交压测**：✅ 29/29 绿（--timeout=900，265s；默认 120s 超时=首测 50 提交真落盘超窗，非回归）。测试面全绿合计：preflight 9/9+skip-mapping 4/4+landing 46/46+queue 83/83+integration 29/29。
 
 ## 7. 两轮循环零问题核验（通宵 SOP §6/§9）
