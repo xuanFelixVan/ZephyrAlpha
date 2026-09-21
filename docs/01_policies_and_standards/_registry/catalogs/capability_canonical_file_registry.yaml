@@ -43434,4 +43434,8 @@ creation_tokens:
   capability: live_readiness
   merge_evaluation: "实盘准入四件套（检查表/SOP草案/异常手册/门禁设计），替代散落的准入判据碎片引用，Owner 点单后归档"
   merge_evaluation: "offsite 月度手册（a3 6.6 交付件，裁定#380⑥ Owner 自办制操作载体），零既有条目可合并"
+- file: docs/_working/daily_loop_campaign/02_state_vocabulary_unification.md
+  token: dloop-campaign-02-state-vocabulary-unification-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_campaign
 di_seam_exemptions: []
