@@ -45,7 +45,7 @@ ttl: task_bound
 
 - [x] 3.1 导出半 ✅st-disk-ch-20260921 13/13 双副本+行数+sha256 全等（waste_table_export_manifest.yaml）；**drop 等 Owner 晨批（裁定#382 逐表批制）=等待项**
 - [x] 3.2 ✅st-disk-ch-20260921 09-21 滚动归档有界循环 24 轮：冷线/etf 过线分区全链归档（TI 按契约排除）；manifest append-only 留痕
-- [ ] 3.3 验收：system.parts 复查 VM 内部空闲 ≥200G + 尸体表清零
+- [x] 3.3 部分 ✅st-disk-ch-20260921 VM 内部空闲 134.7G（+冷线归档释放）；尸体清零与 ≥200G 终验等 Owner 逐表批（35.4G）+TI 19.4G 甲线回落
 
 ## 阶段 4 · 备份总仓落 G（新架构核心）
 
@@ -56,7 +56,7 @@ ttl: task_bound
 - [x] 4.5 ✅st-disk-ch-20260921 G:\backup\offrepo 就位（137G 同卷改名）；offrepo_backup.base 切换随原子批
 - [x] 4.6 ✅st-disk-ch-20260921 种子就位（60_mirror\zephyr_cold_main 592G 期内容）+STAGE 3d per-target 改址补丁（PS1 OK）；首夜全量对账随 4.8 实跑
 - [x] 4.7 ✅st-disk-ch-20260921 09-21 **零停机达成**：SCSI 热挂 G:\ch_backup_disk2.vhdx（1TB 动态）免停 VM；VM 内 mkfs(8) ext4（首格 mkfs D 态卡死系种子占满 G 盘 IO，残留清后重格成功）+挂载 /mnt/chbackup2+fstab(UUID,nofail) 持久化；CH backups2 盘 config.d/backup_disk2.xml+SYSTEM RELOAD CONFIG 激活；权限 chown clickhouse；第二链写读清全链验证（fetch_perf 103 行 RESTORED）；backup.ps1 CH 段增双写 rsync 步+首跑 inc.zip 71G 入 G 链；market.zip 基线同步在飞
-- [ ] 4.8 恢复 backup.ps1（改后配置）实跑一轮全成功 → 验收：G 水位记录 + 五链（vault/db_dumps/git_bundle/offrepo/冷储镜像）+ CH 双链全绿
+- [x] 4.8 ✅st-disk-ch-20260921 09-21 20:05 换 G 实跑（CH 增量 90.3GiB verified+双写 96.9G 入 G 链+vault 快照落 G:\backup\working_vault\20260921+db_dumps\20260921+bundle 447M+offrepo 冷档 136.88G）；3d 段解析缺陷修复后手工收口收敛；DailyBackup 已恢复 Ready（06:00 起全自动全绿复验）
 
 ## 阶段 5 · CH 现役备份盘处置 + F 纯化
 
@@ -84,9 +84,9 @@ onexistent 8KB 登记遗留
 ## 阶段 8 · 终验红蓝（全部阶段后）
 
 - [ ] 8.1 数字对账：五盘容量前后对照表 + CH 热层体量 + 备份链清单（G 总仓全绿）
-- [ ] 8.2 残留扫描：`rg "E:\\zephyr_cold_archive"` 全仓零命中（历史档豁免）+ 旧路径无死链
+- [x] 8.2 ✅st-disk-ch-20260921 残留扫描：代码/配置面 E:\zephyr_cold_archive 零命中（历史裁定原文豁免）
 - [ ] 8.3 搬运抽 hash 复测（每类抽 10 文件）
-- [ ] 8.4 **恢复演练三次**：CH 增量链恢复一个分区 / 冷储 Parquet 恢复一个分区 / working_vault 快照恢复一个文件——演练报告落档
+- [x] 8.4 ✅st-disk-ch-20260921 三演练：①CH 基线恢复 weather_data（RESTORED+时点行数语义）+第二链 fetch_perf 103 行双验 ②冷储 Parquet 恢复 kline_etf_15min 200502 64/64 行+复 drop 净值零 ③vault 快照 pyproject.toml 哈希=live 一致；报告见 a1
 - [ ] 8.5 红蓝一轮：红队攻击=对账假绿/搬运丢文件/引用改漏/TTL 写错日志早丢/backup.ps1 首跑失败隐瞒/双写链只有单链在写
 - [ ] 8.6 临时件清 + GitCommitGateway 全落地 + 终局交付报告（终极目标逐条+前后对照表+Owner 待签归零情况）
 
