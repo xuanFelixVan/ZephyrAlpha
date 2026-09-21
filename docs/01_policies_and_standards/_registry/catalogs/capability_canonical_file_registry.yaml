@@ -5016,6 +5016,11 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "scripts/audit_technical_indicator_columns.py"
+  token: "tilib-audit-ti-cols-r2-20260921"
+  created_by: "st-data-fix-20260921"
+  capability: "data_fix_campaign"
+  merge_evaluation: "同前 token tilib-audit-ti-cols-20260921 同一对象改道重登：原路径 scripts/data/ 属 .gitignore 再生产物区（q-0060 prestage 拒绝），按死因建议①移 scripts/ 顶级后重登；旧 token 条目随 HEAD 留痕不删"
 - file: "src/zephyr/factor/technical_indicators/chips.py"
   token: "tilib-chips-indicators-20260921"
   created_by: "st-data-fix-20260921"
@@ -42966,5 +42971,33 @@ creation_tokens:
   token: lane-construction-discipline-policy-lane-construction-discipline-policy-20260921
   created_by: st-workclean-20260921
   capability: lane_construction_discipline_policy
+- file: docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md
+  token: construction-ledger-method-policy-construction-ledger-method-policy-20260921
+  created_by: st-workclean-20260921
+  capability: construction_ledger_method_policy
+- file: docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md
+  token: deep-adjudication-method-policy-deep-adjudication-method-policy-20260921
+  created_by: st-workclean-20260921
+  capability: deep_adjudication_method_policy
+- file: docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md
+  token: indicator-mining-sop-policy-indicator-mining-sop-policy-20260921
+  created_by: st-workclean-20260921
+  capability: indicator_mining_sop_policy
+- file: docs/_working/cold_backup_automation/cold_backup_closure_report.md
+  token: cold-backup-closure-report-cold-backup-closure-report-20260921
+  created_by: st-workclean-20260921
+  capability: cold_backup_closure_report
+- file: docs/_working/ai_layer_vision/ai_layer_closure_report.md
+  token: ai-layer-closure-report-ai-layer-closure-report-20260921
+  created_by: st-workclean-20260921
+  capability: ai_layer_closure_report
+- file: docs/_working/archive/2026-09/collection_intake/collection_closure_report.md
+  token: collection-intake-closure-arch-collection-closure-report-20260921
+  created_by: st-workclean-20260921
+  capability: collection_intake_closure_arch
+- file: docs/_working/working_cleanup_campaign/working_cleanup_ledger.md
+  token: working-cleanup-ledger-working-cleanup-ledger-20260921
+  created_by: st-workclean-20260921
+  capability: working_cleanup_ledger
   merge_evaluation: "同真源派生并入本册台账（总包丙端到端交付报告），任务bound 随战役 TTL"
 di_seam_exemptions: []
