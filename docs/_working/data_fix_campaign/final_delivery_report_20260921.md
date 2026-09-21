@@ -91,3 +91,17 @@ pytest：SCD2 5 passed｜scrub 6 passed｜chips 抽类 10 passed｜checker 11 pa
 - 会话心跳两次断线（注册 pid 病+daemon 失活）均当场复活；1302 限流假死 3 次均经现场核实避免重复派工。
 - CH 全程 DatabaseService；零 OPTIMIZE/TRUNCATE/DROP；唯一删除=分包1 周末冷存后清（批文授权）+分包6 空壳行实证删除（可逆留痕）。
 - 夜间 02:30 任务 disable 一次（防与 tick 重写入撞车，证据=09-20 04:03 Code 241 实证），本报告 §7.5 留恢复路径。
+
+## §10 收官终验时点记录（09-21 16:30-16:50）
+
+- **16:30 晚跑验证 ✓**：daily_kline 档 16:30:00 准点发射 26 任务；stock_indicator_incremental 主源 akshare healthy、start=09-20、逐标的稳定推进（16:44 完成进度 200/5565，预计 ~21:40 完成，0565 全量后 flush 落表）——09-18 悬挂病（无超时无进度静默）与本次形态明显不同，判定触发链修复实锤。落表数字由哨兵 58 腿持续看守。
+- 收官 R1+R2 两轮全量扫描 16/16 连续全 PASS；独立异眼验收=高可信零虚报。
+- 队列死信 0078-0083 均为分包4 迭代中间态（已被 7963211f1a 取代），无待 requeue 项。
+
+## §11 扩项批（Owner 09-21 追加令：WO-4 批10 扩项，当日两班接力收官）
+
+- **对账调停**：扩令文本"138+5=145"基线早于批10 落地——实测开工基线 141/v1.6.0，本波终态 **143 entries / v1.6.1**（+CHIP_CONC_90/70 两指标条目；chips_cost_15/85 为 CYQ 条目增列）。
+- **代码批 94f92230ec**（q-0088）：chips_cost_15/85 分位+conc_90/conc_70（通达信 `_compute_concentration` 公共内核，SCR 收敛复用）；DDL 4 列探针 4/4；memo v1.11.1；test_chips +9 用例（独立实现复算 q15/85 对齐 1e-9、conc 与分位自洽、conc90==SCR 全序列同值）；两票试跑 33/33 有数。真源文件实际在归档区 archive/2026-09/collection_intake/factors/（工单路径为归档前旧址）。
+- **回填+验收批 33c59f5804**（q-0091，续跑代理限额阵亡复活后接力）：全市场回填 **58/58 片 exit=0**（b10ext 新 state 目录；runner 两度被外部杀均幂等续跑）；**新 4 列近月非零率=99.91%（122,108/122,221，>95% 达标，总包轻口径复核逐位一致，5570 标的）**；诚实披露=任务书原裸 SQL 口径 49.38% 系回填双版本未合并+分钟级 period 拉低，非数据缺陷；**C5 尾款闭环：214 列全量台账零空列**（audit_ti_columns_20260921.tsv，total=7,111,345 与 FINAL 双方法交叉一致；原脚本 summary 模式在 6.9GiB 内存闸下 Code 241，改按月窗口法等价驱动，切片改造留维护班）。
+- **C2 收尾**：TushareProvider 新 capability stock_daily_basic + tasks.yaml 挂 stock_daily_basic_incremental（daily_kline 档，tasks=266），测试 5+68+39+31 全绿，签字⑨载体闭环。
+- 移交：他会话 stale staged blob 两件 restore 防吸收（对象库可寻回）；st-dloop 在途 ANY-abuse/pipeline_events NameError 按 §3.4 owner 责任制不代修。
