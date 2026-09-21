@@ -55962,6 +55962,38 @@ entries:
   desc_en: ""
   plain_zh: "给一个功能关键词，从依赖图展开它全部关联的代码文档数据表和管线，打印成一棵树"
   responsibility_layer: governance
+- module_path: src/zephyr/ex_sor/services/rl_trainer/__init__.py
+  domain_id: D_EX_SOR
+  name_zh: "RL训练器子包入口"
+  name_en: ""
+  desc_zh: "TD3执行训练器的包定义与公开面"
+  desc_en: ""
+  plain_zh: "给下单执行算法配的TD3训练器部件：TD3执行训练器的包定义与公开面。注意真训练要Owner点头，平时只攒经验不学习。"
+  responsibility_layer: business
+- module_path: src/zephyr/ex_sor/services/rl_trainer/td3_agent.py
+  domain_id: D_EX_SOR
+  name_zh: "TD3执行智能体"
+  name_en: ""
+  desc_zh: "双Q目标网延迟策略的TD3实现，输出连续动作解码为价格档位加数量比例"
+  desc_en: ""
+  plain_zh: "给下单执行算法配的TD3训练器部件：双Q目标网延迟策略的TD3实现，输出连续动作解码为价格档位加数量比例。注意真训练要Owner点头，平时只攒经验不学习。"
+  responsibility_layer: business
+- module_path: src/zephyr/ex_sor/services/rl_trainer/trainer.py
+  domain_id: D_EX_SOR
+  name_zh: "TD3训练循环"
+  name_en: ""
+  desc_zh: "把执行环境状态编码成观测向量驱动智能体，支持历史预热攒经验和checkpoint存取"
+  desc_en: ""
+  plain_zh: "给下单执行算法配的TD3训练器部件：把执行环境状态编码成观测向量驱动智能体，支持历史预热攒经验和checkpoint存取。注意真训练要Owner点头，平时只攒经验不学习。"
+  responsibility_layer: business
+- module_path: tests/ex_sor/test_td3_trainer.py
+  domain_id: D_TEST
+  name_zh: "TD3训练器施工验证测试"
+  name_en: ""
+  desc_zh: "验证 obs 编码/动作解码边界/预热零梯度/H-04 默认门/checkpoint 往返一致性，小网 CPU 秒级。"
+  desc_en: ""
+  plain_zh: "给TD3训练器上的七道验收题：观测向量形状对、动作不出界、只攒经验不学习、存档读回来行为一模一样。"
+  responsibility_layer: governance
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow

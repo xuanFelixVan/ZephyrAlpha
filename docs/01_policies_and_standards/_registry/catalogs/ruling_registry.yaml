@@ -5366,3 +5366,67 @@ entries:
   affected_files: [config/paper_hedge.yaml]
   related_rulings: ['裁定#392']
   superseded_by: ''
+- ruling_id: '裁定#398'
+  title: '收官批包：密钥轮换结案+批10解锁判据+废表13张推荐意见+TC-06四卡+丁线词表三批点+vhdx时机'
+  date: '2026-09-22'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    Owner 2026-09-22 授权（"剩下的所有裁定按自裁框架裁+大白话解释"；密钥三件Owner明示不换）。逐项：
+    **一 密钥轮换结案（不轮换）**——OKX：Owner 明示 API 只读+实证仓内（.env+secret_registry 全查）无
+    passphrase 第三要素=OKX V5 私有接口（查账/交易/提币）结构性不可调用，行情走免钥匙公共接口，
+    双层证据（Owner 后台设置+结构缺失）一致；iFind 已弃用无价值；百度网盘无敏感内容；tc_10 步骤5
+    由"催办"改"已核结案"；付费 LLM key/TUSHARE_TOKEN 维持建议级不轮换+触发器=发现异常计费/异常
+    调用即轮换（曝光事件档案保留）。**二 批10 全市场回填解锁判据修改**——原执行令"等乙线 W1 完成"
+    改为"W1 的 export 双副本+行数核对达标（13/13 已达）即放行"，理由：drop 仅释放 VM 内部空间、
+    现内部空闲 155G 远超批10 回填增量需求、vhdx 动态盘回收与回填无关；批10 全市场回填即刻可开。
+    **三 废表 13 张**——逐表批制（#382）维持不变，本裁定附 Max 推荐意见：建议删 7 张（①news_pre_tz2
+    12.88G/②news_corrupt 12.99G/⑧kline_1min_tzbak/⑨kline_5min_tzbak/⑩kline_daily_bak_256/
+    ⑫auction_book_limit_bak/⑬kline_daily_hfq_bak_dup，合计约 27.3G）；建议留观 6 张（③-⑦ etf
+    五张 tz_bak 留至 2026-10-18 月度复盘、⑪tick_data_tzbak 留至甲线 tick 批收口）——Owner 可
+    "全批推荐案"或逐张改判。**四 TC-06 四卡**——R1 ETF 时区修复结案回写：批准（60ed3aa49c 祖先
+    实证+三处登记面处置对），连库复测挂复查窗；R2 E1C-09：裁 A 挂起补样本（灾难折仅 63 天小样本
+    与 DSR N_eff=13 同根，零成本保期权；触发=样本显著增厚或下个预注册考试窗；禁直通模拟盘；B 完整
+    通道的 E2/E3 价值已被 E4 压力测试部分覆盖、C 放弃过早）；R3 TradeRecord 归因链：裁 A 挂下一
+    验证批顺路做（判据件落 docs 禁 tmp——判据灭失病根免疫）；R4 做T cost_trio：裁 B 只登记不重建
+    （#386 禁复口径下为已终止策略投半天重建判据=资源错配；biz2 归档披露即终态；kline_5min 8,195
+    零星行维持 known_data_gaps 登记随数据卫生批顺带）。**五 丁线词表三批点**——①词表本体立法+28
+    套映射登记表：批（零行为风险止血 C1/C2/C11 撞名，新模块出厂纪律挂验收清单）；②4 态收敛专项：
+    批立项（回测先行；硬前提保留=重校准+判别力对比+TDM 24 格重批走 Owner 资金门位）；③盘中五态
+    映射挂起等②：批（避免映射对象变更后白做）。**六 vhdx 压缩时机建议**——点名制（#381）不变；
+    建议时机=废表批删完成后一周内 Owner 找 30-60 分钟在场窗（批删后 VM 内空闲约 190G，压缩目标
+    450G 内收益最大化）。**七 图书馆宪法挂图**——方案批准（等长一行入口进宪法 §6 检索序，指向
+    zephyr.library.lookup），实际改动保留 Owner 一句确认（宪法域不代签）。执行路由：批10 回填=
+    甲线域 Flash 单；词表立法第一步=丁线域 Flash 单；R1 回写收尾+R3 判据件=下一验证批；其余为
+    登记面动作随批。
+  affected_files:
+  - docs/_working/disk_reorg_campaign/waste_table_report_list.md
+  - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r2_e1c09_options_card.md
+  - docs/_working/daily_loop_campaign/02_state_vocabulary_unification.md
+  related_arch: []
+  related_rulings: ['裁定#382', '裁定#386', '裁定#392']
+  superseded_by: ''
+- ruling_id: '裁定#399'
+  title: 'Owner 夜批三件：废表两态制全删（推翻#398留观推荐）+做T复活改裁（推翻#398-R4）+#398余项全确认'
+  date: '2026-09-22'
+  category: '数据'
+  status: 'active'
+  summary: >-
+    Owner 2026-09-22 夜批：**一 废表两态制**——Owner 定原则"备份表只有两个态：收口入真源或删除，
+    无留观第三态"（理由：13 张均有更全真源活表+F+G 机盘双副本已导出 20.28G+留观无成本优势）。
+    推翻 #398 的"留观 6 张"推荐：17 张（13 呈报+4 张 *_bak_1970clean，1970 治本甲线收官实证零
+    误清）全部执行"逐表验证三件（真源存在且行数≥bak/真源新鲜健康/零消费引用）→删除"；⑪tick_
+    data_tzbak 删前先清 p0_tick_backfill.py:349 与 wipe_tick3days.py 回滚通道引用（甲线 tick 批
+    已收官）。#382 逐表批制由本 Owner 全批覆盖。**二 做T 复活改裁**——Owner 明示"做T 非死刑，
+    算法待优化修改；按市场/情绪状态选择性做T（不同状态不同考试）方向此前已讨论定过"：#398-四-R4
+    由"只登记不重建"改为"重建 cost_trio 判据（落 docs 禁 tmp）+条件化做T 复活轴施工"；#304/#331
+    终止的是旧形态，复活轴=新预注册假设卡+考试制维持（状态选择门消费丁线词表，bizmine T0 绿区为
+    先例）。**三 vhdx** 维持点名制（Owner 确认方便时再压）。**四 #398 余项全批准确认**：密钥结案/
+    批10 解锁判据/TC-06 R1R2R3/词表三批点/图书馆宪法挂图（批准生效可落地）。**五 顺批**：甲线
+    p0 脚本 staged 件 .gitignore 豁免放行；夜跑 02:30 分片 runner tracked 化后恢复启用。
+  affected_files:
+  - docs/_working/disk_reorg_campaign/waste_table_report_list.md
+  - docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r4_t0_pairs_card.md
+  related_arch: []
+  related_rulings: ['裁定#382', '裁定#398']
+  superseded_by: ''

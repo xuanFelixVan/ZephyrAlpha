@@ -28779,6 +28779,11 @@ creation_tokens:
   token: algo-flow-externalize-red-blue-validator--init---20260916
   created_by: st-btfix-p17-20260916
   capability: algo_flow_externalize
+- file: docs/03_modules/_domain_pf_alloc/algo_flow/crisis_gate.yaml
+  token: algo-flow-externalize-crisis-gate-20260921
+  created_by: st-residual-20260922
+  capability: algo_flow_externalize
+  merge_evaluation: "crisis_gate ALGO_FLOW 外化件为 externalize_algo_flow 生成器产出，同真源唯一无并项"
 - file: scripts/data/backfill_auction_snapshot_history.py
   token: auction-backfill-backfill-auction-snapshot-history-20260916
   created_by: st-auction-bridge-20260917
@@ -33180,6 +33185,7 @@ creation_tokens:
   token: rule-replay---init---20260918
   created_by: st-ailayer-20260917
   capability: rule_replay
+  note: "裁定#392（D-7）PEP420 豁免：本路径按隐式命名空间包导入（无 tracked __init__.py），条目保留对齐 token 账（2026-09-22 st-residual-20260922 改注）"
 - file: docs/_working/automation/campaign/mining/coordination_st_mineline_20260918.md
   token: campaign-coordination-coordination-st-mineline-20260918-20260917
   created_by: st-mineline-20260918
@@ -43356,6 +43362,31 @@ creation_tokens:
   token: ultimate-library-check-library-coverage-20260921
   created_by: st-ulib-20260921
   capability: ultimate_library
+- file: src/zephyr/library/relations.py
+  token: ultimate-library-relations-20260921
+  created_by: st-gov-closeout-20260922
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/relations.yaml
+  token: ultimate-library-relations-20260921
+  created_by: st-gov-closeout-20260922
+  capability: ultimate_library
+- file: docs/_working/ultimate_library/10_blockage_handoff.md
+  token: ultimate-library-10-blockage-handoff-20260921
+  created_by: st-gov-closeout-20260922
+  capability: ultimate_library
+  merge_evaluation: "战役交接书/停机点/覆盖账（task_bound 工件，任务完结归档），非第二真源；四判据：过程件不并、任务完结即退役（TTL 30d）、同域唯一、跨域不适用"
+- file: docs/_working/ultimate_library/11_handoff_next_session.md
+  token: ultimate-library-11-handoff-next-session-20260921
+  created_by: st-gov-closeout-20260922
+  capability: ultimate_library
+  merge_evaluation: "战役交接书/停机点/覆盖账（task_bound 工件，任务完结归档），非第二真源；四判据：过程件不并、任务完结即退役（TTL 30d）、同域唯一、跨域不适用"
+- file: docs/_working/ultimate_library/COVERAGE.md
+  token: ultimate-library-coverage-20260921
+  created_by: st-gov-closeout-20260922
+  capability: ultimate_library
+  merge_evaluation: "战役交接书/停机点/覆盖账（task_bound 工件，任务完结归档），非第二真源；四判据：过程件不并、任务完结即退役（TTL 30d）、同域唯一、跨域不适用"
+  merge_evaluation: "ALGO 外置流程卡（锚 relations.py），同真源派生不并、零触发不退役（Owner W+1 点名随件）、同域唯一、跨域不适用"
+  merge_evaluation: "关系树一键查询=lookup 只读伴生 API（同域同真源 depgraph），非第二真源；四判据：同真源派生不并（CLI 展示层）、零触发不退役（Owner W+1 点名）、同域唯一（lookup 之外唯一关系入口）、跨域不适用"
 - file: docs/03_modules/_domain_backtest/algo_flow/pipeline_events.yaml
   token: dloop-algo-flow-pipeline-events-20260921
   created_by: st-dloop-20260921
@@ -43442,5 +43473,127 @@ creation_tokens:
   token: dloop-campaign-03-self-ruling-vocab-ssot-20260921
   created_by: st-dloop-20260921
   capability: dloop_campaign
+- file: docs/_working/commit_chain_mining_20260922/00_skeleton_route_table.md
+  token: commit-chain-mining-00-skeleton-route-table-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/10_enqueue.md
+  token: commit-chain-mining-10-enqueue-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/11_serializer_lease.md
+  token: commit-chain-mining-11-serializer-lease-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/12_belt_daemon_trigger.md
+  token: commit-chain-mining-12-belt-daemon-trigger-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/14_landing_executor.md
+  token: commit-chain-mining-14-landing-executor-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/15_gate_chain.md
+  token: commit-chain-mining-15-gate-chain-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/16_deadletter_alerts.md
+  token: commit-chain-mining-16-deadletter-alerts-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/17_observability.md
+  token: commit-chain-mining-17-observability-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/18_direct_session_claim.md
+  token: commit-chain-mining-18-direct-session-claim-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/19_worktree_layer.md
+  token: commit-chain-mining-19-worktree-layer-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/20_external_benchmark.md
+  token: commit-chain-mining-20-external-benchmark-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/90_design_v1.md
+  token: commit-chain-mining-90-design-v1-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: docs/_working/commit_chain_mining_20260922/LEDGER.md
+  token: commit-chain-mining-ledger-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+- file: src/zephyr/ex_sor/services/rl_trainer/__init__.py
+  token: rl-trainer---init---20260921
+  created_by: st-residual-20260922
+  capability: rl_trainer
+  merge_evaluation: "TD3训练器为tc_11卡件3新建子包，无同职能既有件可并"
+- file: src/zephyr/ex_sor/services/rl_trainer/td3_agent.py
+  token: rl-trainer-td3-agent-20260921
+  created_by: st-residual-20260922
+  capability: rl_trainer
+  merge_evaluation: "TD3训练器为tc_11卡件3新建子包，无同职能既有件可并"
+- file: src/zephyr/ex_sor/services/rl_trainer/trainer.py
+  token: rl-trainer-trainer-20260921
+  created_by: st-residual-20260922
+  capability: rl_trainer
+  merge_evaluation: "TD3训练器为tc_11卡件3新建子包，无同职能既有件可并"
+  merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
   merge_evaluation: "丁线词表SSOT自裁书（第一性原理+四源对照），无同真源可派生项"
+- file: src/zephyr/shared/vocab/market_state.py
+  token: state-vocab-market-state-20260921
+  created_by: st-dloop-20260921
+  capability: state_vocab
+  merge_evaluation: "词表SSOT制度W1官方常量本体（四轴立法），零逻辑零IO"
+- file: src/zephyr/shared/vocab/__init__.py
+  token: state-vocab-init-20260921
+  created_by: st-dloop-20260921
+  capability: state_vocab
+- file: docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml
+  token: state-vocab-registry-20260921
+  created_by: st-dloop-20260921
+  capability: state_vocab_registry
+  merge_evaluation: "词表SSOT制度W2收编件（28套词表映射登记册）"
+- file: src/zephyr/gov_enforcement/commit_gates/state_vocab_registry_gate.py
+  token: state-vocab-gate-20260921
+  created_by: st-dloop-20260921
+  capability: state_vocab_gate
+  merge_evaluation: "词表SSOT制度W3执法门（观察期warn起步），替代人工维护词表映射"
+- file: src/zephyr/alt_data/cohort_daily_writer.py
+  token: cohort-daily-writer-20260921
+  created_by: st-dloop-20260921
+  capability: cohort_writer
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/final_report.md
+  token: vocab-final-report-final-report-20260921
+  created_by: st-residual-20260922
+  capability: vocab_final_report
+- file: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/README.md
+  token: design-memos-readme-20260921
+  created_by: st-residual-20260922
+  capability: design_memos_readme
+  merge_evaluation: "README替代index.md为WO-14裁定384新惯例载体，无并项"
+- file: "docs/_working/disk_reorg_campaign/waste_table_export_manifest_1970clean.yaml"
+  token: "diskfinal-1970clean-manifest-20260922"
+  created_by: "st-disk-final-20260922"
+  capability: "waste_table_patrol"
+- file: docs/_working/full-auto-chain/evidence/qmt-bridge-sell-20260922-c4.yaml
+  token: sell-evidence-qmt-bridge-sell-20260922-c4-20260921
+  created_by: st-residual-20260922
+  capability: sell_evidence
+  merge_evaluation: "卖腿证据yaml为tc_11卡件2唯一证据件，同目录按日期命名无并项"
+  merge_evaluation: "同真源可派生：原 waste_table_export_manifest.yaml 的 1970clean 四表补导出凭证（裁定#399 全批后数据第一公理补齐），登记于母 manifest 相邻位置"
 di_seam_exemptions: []
