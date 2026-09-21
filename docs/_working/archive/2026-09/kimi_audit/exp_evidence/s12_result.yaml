@@ -1,0 +1,43 @@
+full_sample:
+  combo_maxdd: -0.13014483717727
+  n: 389
+  rho_bar: 0.1649824149023974
+  window:
+  - '2024-01-02'
+  - '2025-08-29'
+reds: []
+verdict: PASS
+windows:
+  W1_microcap_crash_2024-02:
+    combo_maxdd: -0.09287022744800977
+    combo_return: -0.036248862105030866
+    days: 9
+    index_000300_return: 0.018453613239869604
+    member_returns:
+      CAND-4440d07f973f: -0.03774552277410659
+      CAND-e2e7f033d97c: -0.15383945366845275
+      CAND-e3da6fa71af1: 0.04177453160177258
+      FACT-4db4c41e: 0.006996642660108687
+    rho_crisis: 0.30051021707899456
+  W2_924_surge_reversal:
+    combo_maxdd: -0.056321130532766106
+    combo_return: 0.13265960317262082
+    days: 9
+    index_000300_return: 0.1596880584502567
+    member_returns:
+      CAND-4440d07f973f: 0.12930249723441145
+      CAND-e2e7f033d97c: 0.09810298944748985
+      CAND-e3da6fa71af1: 0.0
+      FACT-4db4c41e: 0.2996365782756243
+    rho_crisis: .nan
+  W3_tariff_panic_2025-04:
+    combo_maxdd: -0.04766627017099867
+    combo_return: -0.013023614243456216
+    days: 6
+    index_000300_return: -0.028740126893694207
+    member_returns:
+      CAND-4440d07f973f: -0.04310174780773812
+      CAND-e2e7f033d97c: 0.08951067248560651
+      CAND-e3da6fa71af1: 0.0
+      FACT-4db4c41e: -0.0965225627641143
+    rho_crisis: .nan
