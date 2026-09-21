@@ -43304,7 +43304,7 @@ creation_tokens:
   token: ultimate-library-librarian-20260921
   created_by: st-ulib-20260921
   capability: ultimate_library
-- file: docs/03_modules/_domain_library/algo_flow/__init__.yaml
+- file: docs/03_modules/_domain_library/algo_flow/library_init.yaml
   token: ultimate-library---init---20260921
   created_by: st-ulib-20260921
   capability: ultimate_library
