@@ -41836,6 +41836,10 @@ creation_tokens:
   token: "data-fix-p5-scd2-report-20260921"
   created_by: "st-data-fix-20260921"
   capability: "data_fix_campaign"
+- file: docs/_working/data_fix_campaign/final_delivery_report_20260921.md
+  token: "data-fix-final-delivery-20260921"
+  created_by: "st-data-fix-20260921"
+  capability: "data_fix_campaign"
 - file: docs/_working/archive/2026-09/collection_intake/README.md
   token: collection-intake-readme-20260920
   created_by: st-collintake-20260920
@@ -43219,6 +43223,38 @@ creation_tokens:
   token: dloop-hooks-tests-test-screen-source-20260921
   created_by: st-dloop-20260921
   capability: dloop_hooks_tests
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260918-2139.md
+  token: ch1-0-intake-20260918-2139-20260921
+  created_by: st-workclean-20260921
+  capability: ch1_0
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260918-2207.md
+  token: ch1-1-intake-20260918-2207-20260921
+  created_by: st-workclean-20260921
+  capability: ch1_1
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260918-2233.md
+  token: ch1-2-intake-20260918-2233-20260921
+  created_by: st-workclean-20260921
+  capability: ch1_2
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260919-0011.md
+  token: ch1-3-intake-20260919-0011-20260921
+  created_by: st-workclean-20260921
+  capability: ch1_3
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260919-0036.md
+  token: ch1-4-intake-20260919-0036-20260921
+  created_by: st-workclean-20260921
+  capability: ch1_4
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260919-0110.md
+  token: ch1-5-intake-20260919-0110-20260921
+  created_by: st-workclean-20260921
+  capability: ch1_5
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260919-0124.md
+  token: ch1-6-intake-20260919-0124-20260921
+  created_by: st-workclean-20260921
+  capability: ch1_6
+- file: docs/_working/archive/2026-09/pipeline-research/reports/intake-20260920-0408.md
+  token: ch1-7-intake-20260920-0408-20260921
+  created_by: st-workclean-20260921
+  capability: ch1_7
   merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
   merge_evaluation: "裁定#392（D-12） P1方案收尾批版：批次0已交付+批次1-5依赖序+六要素"
 di_seam_exemptions: []
