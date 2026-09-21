@@ -43408,5 +43408,30 @@ creation_tokens:
   token: "diskch-offsite-manual-20260921"
   created_by: "st-disk-ch-20260921"
   capability: "disk_reorg_campaign"
+- file: docs/_working/live_readiness/admission_gate_design.md
+  token: live-readiness-admission-gate-design-20260921
+  created_by: st-live-readiness-20260922
+  capability: live_readiness
+  merge_evaluation: "实盘准入四件套（检查表/SOP草案/异常手册/门禁设计），替代散落的准入判据碎片引用，Owner 点单后归档"
+- file: docs/_working/live_readiness/exception_handling_manual.md
+  token: live-readiness-exception-handling-manual-20260921
+  created_by: st-live-readiness-20260922
+  capability: live_readiness
+  merge_evaluation: "实盘准入四件套（检查表/SOP草案/异常手册/门禁设计），替代散落的准入判据碎片引用，Owner 点单后归档"
+- file: docs/_working/live_readiness/index.md
+  token: live-readiness-index-20260921
+  created_by: st-live-readiness-20260922
+  capability: live_readiness
+  merge_evaluation: "实盘准入四件套（检查表/SOP草案/异常手册/门禁设计），替代散落的准入判据碎片引用，Owner 点单后归档"
+- file: docs/_working/live_readiness/live_admission_checklist.md
+  token: live-readiness-live-admission-checklist-20260921
+  created_by: st-live-readiness-20260922
+  capability: live_readiness
+  merge_evaluation: "实盘准入四件套（检查表/SOP草案/异常手册/门禁设计），替代散落的准入判据碎片引用，Owner 点单后归档"
+- file: docs/_working/live_readiness/small_capital_live_sop_draft.md
+  token: live-readiness-small-capital-live-sop-draft-20260921
+  created_by: st-live-readiness-20260922
+  capability: live_readiness
+  merge_evaluation: "实盘准入四件套（检查表/SOP草案/异常手册/门禁设计），替代散落的准入判据碎片引用，Owner 点单后归档"
   merge_evaluation: "offsite 月度手册（a3 6.6 交付件，裁定#380⑥ Owner 自办制操作载体），零既有条目可合并"
 di_seam_exemptions: []
