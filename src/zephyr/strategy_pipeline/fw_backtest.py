@@ -72,7 +72,7 @@ regime 日序供给（S11 README §5 施工项 4）——精确挂法登记（�
   无排班；全窗 walk-forward 逐日重印，append-only 台账）。
   建议挂点 A（首选，零新机制）: pipeline_events.wire_data_scheduler 的 _on_task_completed
   钩子里加一行 `fw_backtest.ensure_regime_snapshot()`（有数据任务完成=自然唤醒点，事件触发
-  合规；staleness≤3 天零成本返回，超限只告警不阻塞——refresh=True 才印制）。
+  合规；staleness≤1 天零成本返回，超限只告警不阻塞——refresh=True 才印制）。
   建议挂点 B（备选）: DataScheduler tasks.yaml 增 kind=regime_snapshot_daily 事件
   （daily_kline 完成唤醒，重 kind 显式 drain 消费）。
   本班已交付: ensure_regime_snapshot()/regime_snapshot_freshness() 可直接调用；
@@ -81,6 +81,7 @@ regime 日序供给（S11 README §5 施工项 4）——精确挂法登记（�
 用法:
     python -m zephyr.strategy_pipeline.fw_backtest run --payload '{"trigger":"manual"}'
 真源: docs/_working/full-auto-chain/S11_assembled_backtest/README.md §5 施工项 3/4。
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/fw_backtest.yaml
 """
 
 from __future__ import annotations
@@ -96,7 +97,12 @@ import sys
 import time
 from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any, Final
+from typing import TYPE_CHECKING, Any, Final
+
+if TYPE_CHECKING:
+    import types
+
+    import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE_DIR = ROOT / "data" / "backtest_artifacts" / "fw-auto"
@@ -105,7 +111,10 @@ GENERATOR_SCRIPT = ROOT / "scripts" / "backtest" / "generate_framework_plan_from
 REGIME_WRITER_SCRIPT = ROOT / "scripts" / "backtest" / "print_regime_history.py"
 PLAN_ID = "fw-tdm-current"
 DEFAULT_TIMEOUT_S = 3600  # S11 §5 施工项 5 首值
-_REGIME_STALE_DAYS = 3
+# 与编排器 D1 消费方口径对齐（Owner 批 2026-09-21）；1=允许昨收算的最新快照，>1 交易日=陈旧触发重印。
+# 单位注记：regime_snapshot_freshness 的 stale_days 按 (date.today()-max(trade_date)).days 计——
+# 自然日，非交易日；自然日阈值=1 恒严于消费方"快照≥前交易日"判据（周末多一次重印，保守向无害）。
+_REGIME_STALE_DAYS = 1
 
 _EVENT_KIND = "fw_backtest_due"
 
@@ -129,15 +138,14 @@ def _assert_iso_date(value: str, name: str) -> str:
 
 # ---------- 幂等指纹 ----------
 
+
 def plan_fingerprint(plans_path: str | Path | None = None) -> dict[str, Any]:
     """fw-tdm-current 身份指纹：成员权重表 + TDM 源 sha12（变更即新指纹）。"""
     from zephyr.pf_core.strategy_engine.framework_composer import get_framework_plan
 
     plan = get_framework_plan(PLAN_ID, plans_path)
     weights = {w.strategy_id: round(w.weight, 9) for w in plan.weights}
-    raw = (Path(plans_path) if plans_path else ROOT / "config" / "framework_plans.yaml").read_text(
-        encoding="utf-8"
-    )
+    raw = (Path(plans_path) if plans_path else ROOT / "config" / "framework_plans.yaml").read_text(encoding="utf-8")
     import re
 
     m = re.search(r"source_sha256_12: ([0-9a-f]{12})", raw)
@@ -161,6 +169,7 @@ def _latest_evidence() -> dict[str, Any] | None:
 
 
 # ---------- 输入组装 ----------
+
 
 def default_window(today: date | None = None) -> tuple[str, str]:
     """滚动 12 个月窗口（S11 §5：start/end=近 12 个月滚动窗）。"""
@@ -227,9 +236,7 @@ def _hs300_symbols(start: str, end: str) -> tuple[list[str], dict[str, Any]]:
     return sorted(universe), disclosure
 
 
-def resolve_symbols(
-    start: str, end: str, base: list[str] | None = None
-) -> tuple[list[str], dict[str, Any]]:
+def resolve_symbols(start: str, end: str, base: list[str] | None = None) -> tuple[list[str], dict[str, Any]]:
     """自动标的池=基池（默认沪深300 快照）∪ STR 成员面板列并集（预取触发缓存）。
 
     返回 (symbols, info)；info.str_columns_by_sid 供证据包披露各 STR 成员标的宇宙。
@@ -250,15 +257,18 @@ def resolve_symbols(
         str_cols |= cols
         by_sid[sid] = len(cols)
     symbols_base, universe = (
-        (sorted({str(s) for s in base}), {
-            "schema": "universe_disclosure/v1",
-            "mode": "payload_override",
-            "universe_n": len(set(base or [])),
-            "snapshot_n": None,
-            "since_exit_n": None,
-            "note": "基池由 payload.symbols 给定——PIT 成份窗口未参与，幸存者偏差由调用方承担"
-            "（自动挂图路径不应给 base）",
-        })
+        (
+            sorted({str(s) for s in base}),
+            {
+                "schema": "universe_disclosure/v1",
+                "mode": "payload_override",
+                "universe_n": len(set(base or [])),
+                "snapshot_n": None,
+                "since_exit_n": None,
+                "note": "基池由 payload.symbols 给定——PIT 成份窗口未参与，幸存者偏差由调用方承担"
+                "（自动挂图路径不应给 base）",
+            },
+        )
         if base
         else _hs300_symbols(start, end)
     )
@@ -284,8 +294,13 @@ def load_regime_series(start: str, end: str) -> dict[str, Any]:
         out["freshness"] = regime_snapshot_freshness()
         if rows:
             series = {str(r[0])[:10]: str(r[1]) for r in rows}
-            out.update({"mode": "dynamic_disclosure", "series": series,
-                        "note": "fw-tdm-current 无 regime_overrides——日序仅供分段披露，权重=基准（查表语义）"})
+            out.update(
+                {
+                    "mode": "dynamic_disclosure",
+                    "series": series,
+                    "note": "fw-tdm-current 无 regime_overrides——日序仅供分段披露，权重=基准（查表语义）",
+                }
+            )
         else:
             out["note"] = "窗口内无 regime 快照行——静态模式降级"
     except Exception as exc:  # noqa: BLE001  ——regime 供给失败降静态，不阻断整装跑
@@ -295,7 +310,8 @@ def load_regime_series(start: str, end: str) -> dict[str, Any]:
 
 # ---------- 风险信号消费（车道 L：acceptance 真读 overfitting_flag/DSR/n_trials）----------
 
-def _load_artifact_nav(run_id: str | None) -> Any:
+
+def _load_artifact_nav(run_id: str | None) -> pd.Series | None:
     """读回测产物 equity_curve 重建净值序列（只读；缺文件/短序列/异常→None，禁崩主流程）。
 
     run_framework_backtest 落 `data/backtest_artifacts/<run_id>.json`，其 metrics 快照仅含
@@ -320,7 +336,7 @@ def _load_artifact_nav(run_id: str | None) -> Any:
         return None
 
 
-def _evaluate_risk_decision(result: dict, nav: Any = None) -> dict[str, Any]:
+def _evaluate_risk_decision(result: dict, nav: pd.Series | None = None) -> dict[str, Any]:
     """对整装回测结果施加回测→实盘共用风险判据（单一真源，fail-closed）。
 
     取值优先级：产物 metrics 若已带 dsr/n_trials 直接用（前向兼容引擎侧上收），否则用
@@ -352,8 +368,10 @@ def _evaluate_risk_decision(result: dict, nav: Any = None) -> dict[str, Any]:
                 if overfitting_flag is None:
                     overfitting_flag = full.get("is_overfitting")
             except Exception as exc:  # noqa: BLE001  ——DSR 复算失败=缺证据，交由 fail-closed 拒
-                _alert(f"整装回测风险裁决 DSR 复算失败（fail-closed 将拒）: {type(exc).__name__}: {exc}"[:200],
-                       level="WARN")
+                _alert(
+                    f"整装回测风险裁决 DSR 复算失败（fail-closed 将拒）: {type(exc).__name__}: {exc}"[:200],
+                    level="WARN",
+                )
 
     admission = evaluate_strategy_risk_admission(overfitting_flag, dsr)
     return {
@@ -389,7 +407,7 @@ _GATE_TARGET_SEGMENTS: Final[int] = 3
 _GATE_MIN_FOLDS: Final[int] = 2
 
 
-def _gate_fold_evidence(nav: Any) -> dict[str, Any] | None:
+def _gate_fold_evidence(nav: pd.Series | None) -> dict[str, Any] | None:
     """净值 → IS/WFA/OOS 三段证据（切分委托既有 WalkForwardAnalyzer，零手写切片算法）。
 
     Returns:
@@ -402,9 +420,7 @@ def _gate_fold_evidence(nav: Any) -> dict[str, Any] | None:
     if nav is None or len(nav) < _GATE_MIN_SEG_SAMPLES * _GATE_TARGET_SEGMENTS:
         return None
     seg = max(_GATE_MIN_SEG_SAMPLES, len(nav) // _GATE_TARGET_SEGMENTS)
-    analyzer = WalkForwardAnalyzer(
-        WalkForwardConfig(mode="expanding", train_window=seg, test_window=seg)
-    )
+    analyzer = WalkForwardAnalyzer(WalkForwardConfig(mode="expanding", train_window=seg, test_window=seg))
     folds = analyzer.split(list(nav.index))
     if len(folds) < _GATE_MIN_FOLDS:
         return None
@@ -413,8 +429,7 @@ def _gate_fold_evidence(nav: Any) -> dict[str, Any] | None:
     for k, (_train, test) in enumerate(folds):
         m = calculate_metrics(nav.loc[test], trades_count=0)
         fold_rows.append(
-            {"fold": k, "sharpe": float(m["sharpe_ratio"]), "max_drawdown": float(m["max_drawdown"]),
-             "days": len(test)}
+            {"fold": k, "sharpe": float(m["sharpe_ratio"]), "max_drawdown": float(m["max_drawdown"]), "days": len(test)}
         )
     is_m = calculate_metrics(nav.iloc[:seg], trades_count=0)
     oos_m = calculate_metrics(nav.iloc[seg:], trades_count=0)  # 各折起点后的全部后段（含末段残样）
@@ -434,7 +449,9 @@ def _gate_fold_evidence(nav: Any) -> dict[str, Any] | None:
     }
 
 
-def _evaluate_staged_gate(result: dict, *, nav: Any, locked_params: dict[str, Any], dsr: Any) -> dict[str, Any]:
+def _evaluate_staged_gate(
+    result: dict, *, nav: pd.Series | None, locked_params: dict[str, Any], dsr: float | None
+) -> dict[str, Any]:
     """把三段决策门控接进 S11 验收（判定器=DecisionGate，本函数只搬证据+摊开结论）。
 
     Args:
@@ -472,9 +489,7 @@ def _evaluate_staged_gate(result: dict, *, nav: Any, locked_params: dict[str, An
         is_sharpe=ev["is_sharpe"],
         params=dict(locked_params),
         param_sensitivity=None,  # S11 无敏感性扫描产物——门控自身记"跳过稳定性门控"，消费侧另落降级账
-        walk_forward_results=[
-            {"sharpe": f["sharpe"], "max_drawdown": f["max_drawdown"]} for f in ev["folds"]
-        ],
+        walk_forward_results=[{"sharpe": f["sharpe"], "max_drawdown": f["max_drawdown"]} for f in ev["folds"]],
         oos_sharpe=ev["oos_sharpe"],
         params_locked=True,  # 方案权重按 plan 指纹锁定，窗口内零再拟合（见 _evaluate_composition_integrity 同族披露）
         dsr=dsr,
@@ -539,14 +554,14 @@ def _evaluate_composition_integrity(result: dict) -> dict[str, Any]:
         "limit": DEAD_MEMBER_ALPHA_SHARE_LIMIT,
         "row_norm_material": bool(row_norm.get("material")),
         "dead_member_alpha_share_of_plan": float(
-            (disclosure.get("dead_member_alpha_base") or 0.0)
-            / float(disclosure.get("plan_weight_total") or 1.0)
+            (disclosure.get("dead_member_alpha_base") or 0.0) / float(disclosure.get("plan_weight_total") or 1.0)
         ),
         "reasons": reasons,
     }
 
 
 # ---------- 执行链证据（#24 H3/H4）----------
+
 
 def _evaluate_cash_closure(result: dict) -> dict[str, Any]:
     """现金账本闭合闸（H4-B，#24）——账本不闭合，指标再漂亮也不可采信。
@@ -560,11 +575,7 @@ def _evaluate_cash_closure(result: dict) -> dict[str, Any]:
     那条裁定不约束本闸，本闸也不得被拿去当外账判据。
     """
     metrics = result.get("metrics") or {}
-    recon = (
-        result.get("cash_ledger_reconciliation")
-        or metrics.get("cash_ledger_reconciliation")
-        or {}
-    )
+    recon = result.get("cash_ledger_reconciliation") or metrics.get("cash_ledger_reconciliation") or {}
     if not recon:
         return {
             "accepted": False,
@@ -614,9 +625,7 @@ def _turnover_disclosure(result: dict) -> dict[str, Any]:
     friction = cost.get("friction") or {}
     turnover = friction.get("turnover_one_side_annualized")
     measured = isinstance(turnover, (int, float)) and turnover == turnover  # NaN=未测
-    alerts = [
-        a for a in (cost.get("alerts") or []) if str(a.get("code", "")).startswith("TURNOVER")
-    ]
+    alerts = [a for a in (cost.get("alerts") or []) if str(a.get("code", "")).startswith("TURNOVER")]
     return {
         "schema": "turnover_disclosure/v1",
         "measured": bool(measured),
@@ -645,20 +654,25 @@ def _turnover_disclosure(result: dict) -> dict[str, Any]:
 #: 监视表：(guard_id, 匹配正则, 一句话"失效含义")——正则锚在引擎既有出声文案关键词上；
 #: 引擎若改文案，该项计数恒为 0（=未听见，不等于健康），故 note 里标明来源是出声归类。
 _GUARD_LOG_WATCH: Final[tuple[tuple[str, str, str], ...]] = (
-    ("pit_universe_filter", r"标的池过滤降级|上市注册表为空",
-     "PIT 上市/退市窗口腿不可用→当日不做幸存者/次新过滤（护栏当次失效）"),
-    ("pit_st_filter", r"PIT ST 判定失败|ST 兜底降级",
-     "ST 腿故障→该轮不剔 ST（护栏当次失效）"),
-    ("impact_cost_model", r"冲击成本旁路|冲击报价失败",
-     "Almgren-Chriss 冲击不可用→按无冲击成交（成本低估）"),
-    ("liquidity_participation_cap", r"成交量上限/冲击成本自动旁路",
-     "数据无 volume 列→P0-2 参与率上限整体旁路（容量约束当次不存在）"),
-    ("participation_rate_sanity", r"参与率越界",
-     "参与率∉[0,1]（疑 INV-UNIT-001 量纲违例）→该标的按无冲击成交"),
-    ("stk_limit_bounds", r"StkLimitProvider 预取失败|涨跌停表行不可用|切片真源调用失败",
-     "涨跌停价腿故障→退规则兜底/按不封板处理（可成交性约束当次失效）"),
-    ("fill_integrity", r"Fill skipped|fill 被拒绝",
-     "撮合拒单→实际成交偏离信号意图（回测非所求组合）"),
+    (
+        "pit_universe_filter",
+        r"标的池过滤降级|上市注册表为空",
+        "PIT 上市/退市窗口腿不可用→当日不做幸存者/次新过滤（护栏当次失效）",
+    ),
+    ("pit_st_filter", r"PIT ST 判定失败|ST 兜底降级", "ST 腿故障→该轮不剔 ST（护栏当次失效）"),
+    ("impact_cost_model", r"冲击成本旁路|冲击报价失败", "Almgren-Chriss 冲击不可用→按无冲击成交（成本低估）"),
+    (
+        "liquidity_participation_cap",
+        r"成交量上限/冲击成本自动旁路",
+        "数据无 volume 列→P0-2 参与率上限整体旁路（容量约束当次不存在）",
+    ),
+    ("participation_rate_sanity", r"参与率越界", "参与率∉[0,1]（疑 INV-UNIT-001 量纲违例）→该标的按无冲击成交"),
+    (
+        "stk_limit_bounds",
+        r"StkLimitProvider 预取失败|涨跌停表行不可用|切片真源调用失败",
+        "涨跌停价腿故障→退规则兜底/按不封板处理（可成交性约束当次失效）",
+    ),
+    ("fill_integrity", r"Fill skipped|fill 被拒绝", "撮合拒单→实际成交偏离信号意图（回测非所求组合）"),
 )
 
 
@@ -783,7 +797,10 @@ def _degraded_guard_report(
 
 #: 幂等闸要求旧证据具备的验收键——缺任一键=该闸当时未接线，据其短路会让被冻结的策略永不再判
 _IDEMPOTENT_REQUIRED_ACCEPTANCE: Final[tuple[str, ...]] = (
-    "ok", "risk_admitted", "cash_closure_admitted", "gate_passed",
+    "ok",
+    "risk_admitted",
+    "cash_closure_admitted",
+    "gate_passed",
 )
 
 
@@ -820,15 +837,10 @@ def _assemble_acceptance(
     """
     recon = result.get("panel_reconciliation") or {}
     base_ok = (
-        bool(result.get("ok"))
-        and bool(recon.get("within_tolerance"))
-        and int(result.get("equity_points") or 0) > 0
+        bool(result.get("ok")) and bool(recon.get("within_tolerance")) and int(result.get("equity_points") or 0) > 0
     )
     return {
-        "ok": bool(
-            base_ok and risk["accepted"] and gate["passed"]
-            and composition["accepted"] and cash["accepted"]
-        ),
+        "ok": bool(base_ok and risk["accepted"] and gate["passed"] and composition["accepted"] and cash["accepted"]),
         "run_ok": bool(result.get("ok")),
         "within_tolerance": bool(recon.get("within_tolerance")),
         "equity_points": int(result.get("equity_points") or 0),
@@ -846,8 +858,7 @@ def _assemble_acceptance(
         "cash_max_abs_residual": cash["max_abs_residual"],
         "skipped_alpha_share": composition["skipped_alpha_share"],
         "composition_over_limit": bool(
-            composition["skipped_alpha_share"] is not None
-            and composition["skipped_alpha_share"] > composition["limit"]
+            composition["skipped_alpha_share"] is not None and composition["skipped_alpha_share"] > composition["limit"]
         ),
         "overfitting_flag": risk["overfitting_flag"],
         "dsr": risk["dsr"],
@@ -880,8 +891,7 @@ def _build_run_block(
     metrics = result.get("metrics") or {}
     core_metrics = {
         k: metrics.get(k)
-        for k in ("total_return", "annual_return", "sharpe_ratio", "max_drawdown",
-                  "win_rate", "trades_count")
+        for k in ("total_return", "annual_return", "sharpe_ratio", "max_drawdown", "win_rate", "trades_count")
         if k in metrics
     }
     chain_evidence = {
@@ -1052,14 +1062,18 @@ def run_fw_backtest_due(event: dict) -> dict[str, Any]:
     return summary
 
 
-def _run_generator(timeout_payload: Any) -> dict[str, Any]:
+def _run_generator(timeout_payload: int | None) -> dict[str, Any]:
     """重跑方案表生成器（子进程；--check 语义内置在生成器幂等里）。"""
     timeout_s = int(timeout_payload or DEFAULT_TIMEOUT_S)
     t0 = time.time()
     proc = subprocess.run(
         [sys.executable, str(GENERATOR_SCRIPT)],
-        capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT),
-        encoding="utf-8", errors="replace",
+        capture_output=True,
+        text=True,
+        timeout=timeout_s,
+        cwd=str(ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     if proc.returncode != 0:
         raise RuntimeError(f"方案表生成器失败 rc={proc.returncode}: {(proc.stderr or '')[-300:]}")
@@ -1084,19 +1098,21 @@ def _write_evidence(summary: dict[str, Any]) -> Path:
         raise RuntimeError(f"证据包写入未确认: {path}")
     latest = dict(summary)
     latest["evidence_path"] = str(path)  # latest 与分档件同构（跳过闸读 plan/acceptance 两键）
-    safe_write_text(EVIDENCE_DIR / "latest.json",
-                    json.dumps(latest, ensure_ascii=False, indent=1, default=str), newline="\n")
+    safe_write_text(
+        EVIDENCE_DIR / "latest.json", json.dumps(latest, ensure_ascii=False, indent=1, default=str), newline="\n"
+    )
     return path
 
 
 # ---------- regime 日序供给（挂点登记见模块 docstring） ----------
+
 
 def regime_snapshot_freshness() -> dict[str, Any]:
     """regime_snapshot_history 新鲜度（max(trade_date)/行数/滞后天数）。"""
     from zephyr.data.ch_writer import get_client_strict
 
     row = get_client_strict().execute(
-        "SELECT max(trade_date), count() FROM c1_backtest.regime_snapshot_history"
+        "SELECT max(trade_date), count() FROM c1_backtest.regime_snapshot_history"  # noqa: bare-sql  新鲜度体检单值只读查询，无注入面（2026-09-21 丁线同批合规化）
     )[0]
     max_date = row[0]
     stale_days = (date.today() - max_date).days if max_date else -1
@@ -1113,22 +1129,39 @@ def ensure_regime_snapshot(
     refresh: bool = False,
     timeout_s: int = DEFAULT_TIMEOUT_S,
 ) -> dict[str, Any]:
-    """regime 日序供给件（最小实现）：staleness 检查→（默认）告警 /（refresh=True）子进程印制。
+    """regime 日序供给件（最小实现）：staleness 检查→（默认）告警 /（refresh=True）缺口窗子进程印制。
 
+    缺口窗=（max(trade_date) 次一自然日 ~ 今天）：补印只覆盖断供缺口，append-only 台账
+    零整表翻倍（实证 2026-09-16 全窗重印把 09-11 行翻倍）；max 取不到（空表）时不传
+    窗口参数维持全窗初始化。walk-forward 训练上下文由写侧 --load-start（2014 起，
+    绝对日期）独立供给，与 --start 解耦，缺口窗不缺训练数据。
     调度挂点=管线唤醒钩子（挂法登记见模块 docstring；本函数零副作用可安全挂）。
     """
     fresh = regime_snapshot_freshness()
     if fresh["stale_days"] <= max_staleness_days:
         return {"action": "fresh", **fresh}
-    msg = (f"regime_snapshot_history 滞后 {fresh['stale_days']} 天"
-           f"（max={fresh['max_trade_date']}）——整装动态模式日序供给告急")
+    msg = (
+        f"regime_snapshot_history 滞后 {fresh['stale_days']} 天"
+        f"（max={fresh['max_trade_date']}）——整装动态模式日序供给告急"
+    )
     if not refresh:
         _alert(msg, level="WARN")
         return {"action": "stale_alert_only", **fresh}
+    # 缺口窗参数：start=max(trade_date)+1 自然日（首补行与已有台账零重叠），end=今天；
+    # max 缺失或解析失败→不传参数=全窗（空表初始化现状）。
+    window_args: list[str] = []
+    if fresh["max_trade_date"]:
+        with contextlib.suppress(ValueError, TypeError):
+            gap_start = (date.fromisoformat(str(fresh["max_trade_date"])[:10]) + timedelta(days=1)).isoformat()
+            window_args = ["--start", gap_start, "--end", date.today().isoformat()]
     proc = subprocess.run(
-        [sys.executable, str(REGIME_WRITER_SCRIPT)],
-        capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT),
-        encoding="utf-8", errors="replace",
+        [sys.executable, str(REGIME_WRITER_SCRIPT), *window_args],
+        capture_output=True,
+        text=True,
+        timeout=timeout_s,
+        cwd=str(ROOT),
+        encoding="utf-8",
+        errors="replace",
     )
     if proc.returncode != 0:
         _alert(f"regime 印制失败 rc={proc.returncode}: {(proc.stderr or '')[-200:]}", level="ERROR")
@@ -1137,6 +1170,7 @@ def ensure_regime_snapshot(
 
 
 # ---------- emit 帮手（写侧钩子，auto_mount 调用） ----------
+
 
 def emit_fw_backtest_due(trigger: str, sids: list[str] | None = None, **extra: Any) -> dict[str, Any]:
     """journal record + 子进程立即消费（成功出队/失败留档）。任何异常不反噬调用方主流程由调用方兜。
@@ -1150,10 +1184,20 @@ def emit_fw_backtest_due(trigger: str, sids: list[str] | None = None, **extra: A
     timeout_s = int(payload.get("timeout_s") or DEFAULT_TIMEOUT_S)
     try:
         proc = subprocess.run(
-            [sys.executable, "-m", "zephyr.strategy_pipeline.fw_backtest",
-             "run", "--payload", json.dumps(payload, ensure_ascii=False)],
-            capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT),
-            encoding="utf-8", errors="replace",
+            [
+                sys.executable,
+                "-m",
+                "zephyr.strategy_pipeline.fw_backtest",
+                "run",
+                "--payload",
+                json.dumps(payload, ensure_ascii=False),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=timeout_s,
+            cwd=str(ROOT),
+            encoding="utf-8",
+            errors="replace",
         )
     except Exception as exc:  # noqa: BLE001  ——超时/启动失败=留档等重放
         _retain_event(pe, evt, f"{type(exc).__name__}: {exc}"[:200])
@@ -1166,7 +1210,7 @@ def emit_fw_backtest_due(trigger: str, sids: list[str] | None = None, **extra: A
     return {"event": evt["id"], "drained": True, "result_tail": result_tail[:500]}
 
 
-def _retain_event(pe: Any, evt: dict[str, Any], err: str) -> None:
+def _retain_event(pe: types.ModuleType, evt: dict[str, Any], err: str) -> None:
     """失败留档：attempts+1，≥MAX_ATTEMPTS 毒丸告警（与 drain 同款语义，不动 pipeline_events 文件）。"""
     try:
         evts = pe.pending()
@@ -1183,15 +1227,19 @@ def _retain_event(pe: Any, evt: dict[str, Any], err: str) -> None:
     _alert(f"fw_backtest_due 消费失败（事件留 journal 待重放）: {evt['id']} {err}", level="WARN")
 
 
-def _dequeue_event(pe: Any, evt: dict[str, Any]) -> None:
+def _dequeue_event(pe: types.ModuleType, evt: dict[str, Any]) -> None:
     """成功出队+回执（只动本事件，不碰 journal 其余事件）。"""
     try:
         pe._rewrite([e for e in pe.pending() if e["id"] != evt["id"]])
-        pe._save_receipt({
-            "processed": [{"id": evt["id"], "kind": evt["kind"], "result": "fw_backtest_done"}],
-            "failed": [], "skipped": [], "stop_reason": None,
-            "pending_left": len(pe.pending()),
-        })
+        pe._save_receipt(
+            {
+                "processed": [{"id": evt["id"], "kind": evt["kind"], "result": "fw_backtest_done"}],
+                "failed": [],
+                "skipped": [],
+                "stop_reason": None,
+                "pending_left": len(pe.pending()),
+            }
+        )
     except Exception:  # noqa: BLE001
         pass
 
@@ -1206,6 +1254,7 @@ def _alert(message: str, level: str = "WARN") -> None:
 
 
 # ---------- CLI（子进程消费入口） ----------
+
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="fw_backtest_due 触发件 CLI")

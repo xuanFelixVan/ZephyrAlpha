@@ -7,8 +7,8 @@ completes_when: Owner 逐项裁定后本清单归档（每项批了才动）
 
 # Owner 门位清单（丁线申请单）——只出单不代批
 
-## A. 日循环挂任务表批（缺口①收尾件）
-- **申请**：将日循环总扳手挂入 tasks.yaml/schedule.yaml（建议时点 16:45 盘后带，daily_kline 落地后；
+## A. 日循环挂任务表批（缺口①收尾件）——✅ 已批（Owner 2026-09-21）已施工
+- **原申请**：将日循环总扳手挂入 tasks.yaml/schedule.yaml（建议时点 16:45 盘后带，daily_kline 落地后；
   事件链已覆盖 9 棒，本扳手=补 warroom 棒+全链体检兜底）。MANUAL-ONLY-PERMANENT 门禁合规
   （不设 argparse，编程式入口，编排器同款先例），挂表形态建议=internal 任务行包装
   `run_daily_loop(None)`。
@@ -16,8 +16,8 @@ completes_when: Owner 逐项裁定后本清单归档（每项批了才动）
   事件链上。挂表=排期表动作，按裁定#388 口径归 Owner 门位。
 - **不批的后果**：warroom W0 样本（20日窗）无法积累，Brier 校准闭环永远空转。
 
-## B. regime 供需阈值错位治本批（对账 §4 头号病灶）
-- **申请**：`fw_backtest._REGIME_STALE_DAYS` 3→1（对齐编排器 D1 消费方口径）；
+## B. regime 供需阈值错位治本批（对账 §4 头号病灶）——✅ 已批（Owner 2026-09-21）已施工
+- **原申请**：`fw_backtest._REGIME_STALE_DAYS` 3→1（对齐编排器 D1 消费方口径）；
   或反向放宽 D1 至 3 日——二选一，必须闭合。涉及文件 `src/zephyr/strategy_pipeline/fw_backtest.py`
   （非丁线写域，故出申请单）。
 - **实证**：调度器日志 09-17/18 三条"刷新体检 action=fresh 滞后=2/3日"零印制 vs 编排器

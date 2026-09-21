@@ -42203,6 +42203,11 @@ creation_tokens:
   token: dloop-campaign-wiring-proposals-recon-runner-channel-20260921
   created_by: st-dloop-20260921
   capability: dloop_campaign
+- file: docs/_working/daily_loop_campaign/02_state_vocabulary_unification.md
+  token: dloop-campaign-02-state-vocabulary-unification-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_campaign
+  merge_evaluation: "丁线词表统一决策卡，四路挖矿综合，无同真源可派生项"
   merge_evaluation: "丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
 - file: src/zephyr/plan_engine/__init__.py
   token: dloop-master-switch---init---20260920
@@ -43299,6 +43304,58 @@ creation_tokens:
   token: ultimate-library-librarian-20260921
   created_by: st-ulib-20260921
   capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/__init__.yaml
+  token: ultimate-library---init---20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/ledger_schema.yaml
+  token: ultimate-library-ledger-schema-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/librarian.yaml
+  token: ultimate-library-librarian-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/lookup.yaml
+  token: ultimate-library-lookup-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/collectors/__init__.yaml
+  token: ultimate-library---init---20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/collectors/fs_collector.yaml
+  token: ultimate-library-fs-collector-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/collectors/pg_collector.yaml
+  token: ultimate-library-pg-collector-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/collectors/ch_collector.yaml
+  token: ultimate-library-ch-collector-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/collectors/schtasks_collector.yaml
+  token: ultimate-library-schtasks-collector-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/collectors/mcp_collector.yaml
+  token: ultimate-library-mcp-collector-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/l/library_coverage_gate.yaml
+  token: ultimate-library-library-coverage-gate-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/generators/generate_library_index.yaml
+  token: ultimate-library-generate-library-index-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/03_modules/_domain_library/algo_flow/generators/check_library_coverage.yaml
+  token: ultimate-library-check-library-coverage-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
 - file: docs/03_modules/_domain_backtest/algo_flow/pipeline_events.yaml
   token: dloop-algo-flow-pipeline-events-20260921
   created_by: st-dloop-20260921
@@ -43308,5 +43365,38 @@ creation_tokens:
   token: dloop-algo-flow-daily-loop-master-switch-20260921
   created_by: st-dloop-20260921
   capability: dloop_algo_flow
+- file: docs/03_modules/_domain_backtest/algo_flow/fw_backtest.yaml
+  token: dloop-algo-flow-fw-backtest-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_algo_flow
+  merge_evaluation: "fw_backtest ALGO_FLOW 外部真源 yaml（drafter 机生），无同真源可派生项"
   merge_evaluation: "丁线扩面两src模块ALGO_FLOW外部真源yaml（drafter机生），无同真源可派生项"
+- file: "docs/_working/integrated_backtest/IBT-CAMPAIGN-LEDGER.md"
+  token: "auto-ibt-20260922-001"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md"
+  token: "auto-ibt-20260922-002"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/IBT-DATA-MATRIX.md"
+  token: "auto-ibt-20260922-003"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/ibt_data_matrix.json"
+  token: "auto-ibt-20260922-004"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/IBT-RUN-REPORT.md"
+  token: "auto-ibt-20260922-005"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/IBT-REDBLUE-REPORT.md"
+  token: "auto-ibt-20260922-006"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/IBT-FINAL-DELIVERY.md"
+  token: "auto-ibt-20260922-007"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
 di_seam_exemptions: []

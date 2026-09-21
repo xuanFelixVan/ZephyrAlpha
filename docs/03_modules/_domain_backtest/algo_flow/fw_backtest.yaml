@@ -1,0 +1,82 @@
+# ALGO_FLOW 外部真源——fw_backtest（_domain_backtest 域，真源 src/zephyr/strategy_pipeline/fw_backtest.py）
+# 2026-09-21 GATE-ALGO-FLOW 补锚（drafter 生胚人工校准）：S11 整装回测 due 消费件
+# 输入/算法步骤/输出面；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.strategy_pipeline.fw_backtest
+source_of_truth: src/zephyr/strategy_pipeline/fw_backtest.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: fw_backtest_due 事件 payload
+    #   fields: trigger/sids/timeout_s（JSON，外部可填）
+    #   code: run_fw_backtest_due(event: dict)
+    # - id: I2
+    #   name: fw-tdm-current 方案表
+    #   fields: weights 成员权重 + TDM source_sha256_12（指纹身份）
+    #   code: config/framework_plans.yaml + get_framework_plan(PLAN_ID)
+    # - id: I3
+    #   name: 回测产物 equity_curve
+    #   fields: timestamp/equity 序列 + metrics.overfitting_flag
+    #   code: data/backtest_artifacts/<run_id>.json（_load_artifact_nav）
+    # - id: I4
+    #   name: regime 台账新鲜度
+    #   fields: max(trade_date)/count()/滞后自然日
+    #   code: c1_backtest.regime_snapshot_history（regime_snapshot_freshness）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 幂等闸+方案表生成
+    #   name_en: fingerprint_guard_and_plan_gen
+    #   intro: plan 指纹（成员权重+TDM sha12）与最近一次 ok 证据包相同→跳过；异则子进程重跑 generate_framework_plan_from_tdm。
+    #   inputs: I2
+    #   outputs: plan 权重表+指纹
+    # - id: A2
+    #   name_zh: ② 自动标的池组装
+    #   name_en: universe_assembly
+    #   intro: 沪深300 SCD-2 窗口内成份并集（PIT，含期末已调出/退市者，#24 反幸存者偏差）∪ STR 成员面板列并集。
+    #   inputs: I2
+    #   outputs: symbols 清单+universe_disclosure
+    # - id: A3
+    #   name_zh: ③ 整装回测执行
+    #   name_en: run_framework_backtest
+    #   intro: 近 12 个月滚动窗 walk-forward 整装回测（子进程），落 run_id+equity_curve+metrics。
+    #   inputs: A2
+    #   outputs: run_id/equity_curve/metrics
+    # - id: A4
+    #   name_zh: ④ 风险裁决与三段门控
+    #   name_en: risk_decision_and_staged_gate
+    #   intro: DSR 复算→evaluate_strategy_risk_admission（fail-closed）；实测净值时间切片 IS/WFA/OOS→DecisionGate；复合完整性/现金闭合/换手披露逐闸摊开。
+    #   inputs: I3
+    #   outputs: accepted/passed/can_deploy 结论
+    # - id: A5
+    #   name_zh: ⑤ 证据包落档+regime 缺口窗供给
+    #   name_en: evidence_and_regime_supply
+    #   intro: fw-auto-<ts>-<fp8>.json+latest.json（safe_write_text）；台账滞后>1 自然日子进程补印 max(trade_date)+1~今天缺口窗，append-only 零翻倍。
+    #   inputs: I4
+    #   outputs: O1 O2
+    # 层: 输出
+    # - id: O1
+    #   name_zh: S11 验收证据包
+    #   name_en: evidence_package
+    #   intro: plan/acceptance（risk/gate/composition/cash/degraded_guards）全键证据
+    #   downstream: 提交闸读 acceptance 键；fw_backtest_due 证据包自动引用表新鲜度
+    # - id: O2
+    #   name_zh: regime_snapshot_history 增量行
+    #   name_en: regime_snapshot_rows
+    #   intro: 缺口窗补印的逐日 dominant 台账行
+    #   downstream: daily_decision_orchestrator D1（快照滞后>1 交易日=no_trade fail-closed）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I2 --> A2
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # I3 --> A4
+    # I4 --> A5
+    # A4 --> A5
+    # A5 --> O1
+    # A5 --> O2

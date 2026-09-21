@@ -358,6 +358,79 @@ def _run_special_schedule(
                 pass
             return {"consensus_crosscheck": False}
         return {"consensus_crosscheck": bool(result.get("success", False))}
+    # 日循环总扳手自动圈（2026-09-21 Owner 批准解除原 MANUAL-ONLY 约束，st-dloop-20260921）：
+    # 每交易日 16:45 跑 run_daily_loop(None)（无参=自动解析最新业务日）。编排型调用走特殊槽
+    # （同 nightly_sentiment/consensus_crosscheck 先例），不入 tasks.yaml 表构建管线；
+    # 幂等=全量委托底层模块既有闸（prediction_log UNIQUE/台账查重/业务日记号），可安全重跑。
+    # data/runtime/daily_loop_master.disabled 存在=停用（服务总闸惯例，即时生效）。
+    if schedule_name == "dloop_post":
+        _flag = Path(__file__).resolve().parents[3] / "data" / "runtime" / "daily_loop_master.disabled"
+        if _flag.exists():
+            log.info("时段 %s 跳过：总闸 daily_loop_master.disabled 存在", schedule_name)
+            return {"dloop_post": False}
+        _t0 = time.monotonic()  # elapsed 差值计时（单调钟，性能埋点）
+        try:
+            from zephyr.plan_engine.daily_loop_master_switch import run_daily_loop
+
+            report = run_daily_loop(None)
+        except Exception as exc:  # noqa: BLE001 — 接线故障降级告警，永不抛反噬调度器
+            try:
+                scheduler._record_fetch_perf(
+                    {},
+                    "daily_loop_master_switch",
+                    "internal",
+                    "daily_loop_master",
+                    "FAILED",
+                    time.monotonic() - _t0,
+                    0,
+                    str(exc)[:300],
+                )
+                scheduler._alerter.notify(
+                    "dloop_post",
+                    f"日循环总扳手自动圈异常: {str(exc)[:200]}",
+                    level="ERROR",
+                    source="dloop_post",
+                )
+            except Exception:  # noqa: BLE001 — 心跳/告警通道自身故障不再上抛
+                pass
+            return {"dloop_post": False}
+        _summary = report.get("summary", {})
+        _blocked = bool(report.get("blocked"))
+        _stages_n = len(report.get("stages", {}))
+        _ok = not _blocked and _summary.get("error", 0) == 0
+        try:
+            scheduler._record_fetch_perf(
+                {},
+                "daily_loop_master_switch",
+                "internal",
+                "daily_loop_master",
+                "SUCCESS" if _ok else ("BLOCKED" if _blocked else "PARTIAL"),
+                time.monotonic() - _t0,
+                _stages_n,
+                None if _ok else f"blocked={report.get('blocked')} summary={_summary}",
+            )
+        except Exception:  # noqa: BLE001 — 心跳故障不阻断调度
+            pass
+        log.info(
+            "日循环自动圈完成: data_date=%s 阶段数=%s 汇总=%s blocked=%s",
+            report.get("data_date"),
+            _stages_n,
+            _summary,
+            _blocked,
+        )
+        if not _ok:
+            # 失败 ERROR 出声留痕（数据就绪门拦截/段错误均告警；幂等保证次日/手动重跑自愈）
+            try:
+                scheduler._alerter.notify(
+                    "dloop_post",
+                    f"日循环自动圈未全绿: data_date={report.get('data_date')} "
+                    f"blocked={report.get('blocked')} summary={_summary}",
+                    level="ERROR",
+                    source="dloop_post",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+                pass
+        return {"dloop_post": _ok}
     return None
 
 

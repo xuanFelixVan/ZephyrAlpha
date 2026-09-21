@@ -2,10 +2,10 @@
 # [MODULE] zephyr.plan_engine.daily_loop_master_switch
 # [DOMAIN] D_PLAN
 # [DEPENDENCIES] zephyr.plan_engine.daily_warroom_pipeline(run_daily_warroom_pipeline); zephyr.plan_engine.daily_plan(emit_for_trade_date); zephyr.plan_engine.next_day_forecaster(emit_for_trade_date); zephyr.plan_engine.intraday_l1_tracker(maybe_track_intraday_state); zephyr.plan_engine.scenario_classifier(maybe_classify_intraday_scenario); zephyr.plan_engine.close_verifier(verify_for_session); zephyr.plan_engine.judgment_settler(settle_all); zephyr.strategy_pipeline.daily_decision_orchestrator(run_daily_decision); zephyr.strategy_pipeline.pipeline_events(maybe_emit_pf_alloc_daily); zephyr.pf_alloc.allocation_inputs(load_pp001_plan); zephyr.data.ch_reader(只读新鲜度); scripts/backtest/print_regime_history.py(子进程逃生口)
-# [CONSUMERS] 人工/Owner 门位（MANUAL-ONLY）；日循环 E2E 验收（st-dloop-20260921）
+# [CONSUMERS] 人工/Owner 门位（手动逃生口）；zephyr.data.scheduler（dloop_post 特殊槽，交易日 16:45 自动圈）；日循环 E2E 验收（st-dloop-20260921）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] MANUAL-ONLY 不挂调度器（挂任务表=Owner 门位，出申请单禁自挂）；观察/记录模式零下单（拍板体=#305 安全态，执行单不产）；幂等=全量委托底层模块既有幂等闸（prediction_log UNIQUE/台账查重/bar_key/业务日记号），编排层零自建键；逐段 fail-open（单段失败留痕不炸全链，汇总报告 ok/skipped/error 计数）；唯二 fail-closed=数据就绪门（行情缺日不出预案）与输入校验；regime 新鲜度按消费方口径（编排器 D1：滞后>1 交易日=缺）而非供给方 _REGIME_STALE_DAYS=3——阈值错位是 2026-09-15~09-18 断供根因（对账总账 §4）；判定/结算分离纪律（判定器禁写结算列）由底层模块自守，本件不越权
+# [INVARIANTS] 调度挂接=已获 Owner 批（2026-09-21）挂 16:45 自动圈（排程配置 dloop_post 槽 + 调度器特殊槽处理，总闸 data/runtime/daily_loop_master.disabled）；手动逃生口并存；观察/记录模式零下单（拍板体=#305 安全态，执行单不产）；幂等=全量委托底层模块既有幂等闸（prediction_log UNIQUE/台账查重/bar_key/业务日记号），编排层零自建键；逐段 fail-open（单段失败留痕不炸全链，汇总报告 ok/skipped/error 计数）；唯二 fail-closed=数据就绪门（行情缺日不出预案）与输入校验；regime 新鲜度按消费方口径（编排器 D1：滞后>1 交易日=缺）；供给方阈值已经 Owner 批对齐为 1（2026-09-21 治本，原 3 与消费方错位是 2026-09-15~09-18 断供根因，见对账总账 §4）；判定/结算分离纪律（判定器禁写结算列）由底层模块自守，本件不越权
 # [MODIFY-GUARD] docs/_working/daily_loop_campaign/00_reuse_audit_ledger.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -28,8 +28,12 @@ daily_loop_master_switch — 日循环手动总扳手（缺口①，对账总账
     → 收盘验证(MOD-PLAN-032, 序契约先于结算) → 三表结算(MOD-PLAN-027)
     → 日度拍板(MOD-BT-214, #305 安全态, force=显式重拍逃生口)
 
-用法（手动，禁挂调度器；MANUAL-ONLY-PERMANENT 门禁合规=不设 argparse，编程式入口，先例
+用法（手动逃生口与 16:45 自动圈并存——原 MANUAL-ONLY 不挂调度器约束已经 Owner 批准
+于 2026-09-21 解除，挂排程配置 dloop_post 特殊槽，总闸
+data/runtime/daily_loop_master.disabled；门禁合规保持=不设 argparse，编程式入口，先例
 =daily_decision_orchestrator 手工补跑逃生口）：
+    python -c "from zephyr.plan_engine.daily_loop_master_switch import run_daily_loop as r; \
+print(r(None))"    # 无参=自动解析最新业务日（dloop_post 调度圈同款形态）
     python -c "from zephyr.plan_engine.daily_loop_master_switch import run_daily_loop as r; \
 print(r('2026-09-21'))"
     python -c "from zephyr.plan_engine.daily_loop_master_switch import run_daily_loop as r; \

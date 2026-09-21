@@ -229,3 +229,16 @@ schedules:
     cron: "10 7 * * *"
     executor: default
     description: "交易日历逐日覆盖检查——日频族表逐交易日 diff 缺日/多余日清单（zephyr.data.calendar_coverage_checker，告警经 Alerter）"
+
+  # L14 日循环总扳手自动圈：16:45 周一至周五（日K线层 16:30 落库窗口之后、补下载层
+  # 17:00 之前）。原 MANUAL-ONLY 约束经 Owner 批准解除（2026-09-21，st-dloop-20260921）：
+  # 编排型调用走特殊槽（同 nightly_sentiment/consensus_crosscheck 先例），不入 tasks.yaml
+  # 表构建管线。run_daily_loop(None) 无参=自动解析最新业务日；幂等=全量委托底层模块既有
+  # 闸（prediction_log UNIQUE/台账查重/业务日记号），可安全重跑；零下单（裁定#305 安全态）。
+  # 总闸=data/runtime/daily_loop_master.disabled（每次触发实查，即时生效）。
+  # 周末已由 cron 排除；法定假日空跑由底层幂等闸+数据就绪门（fail-closed）吸收。
+  dloop_post:
+    cron: "45 16 * * 0-4"
+    executor: default
+    max_instances: 1
+    description: "日循环总扳手自动圈——run_daily_loop(None) 全链排班编排（预案/盘中/收盘/结算/拍板，观察记录模式零下单），失败 ERROR 告警经 Alerter"
