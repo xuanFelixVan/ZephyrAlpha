@@ -6,7 +6,7 @@ doc_type: report
 ttl: task_bound
 title: 资源画像 p90 实测校准报告（申报 vs 实测偏差 flag）
 status: active
-generated_at: '2026-09-17T00:21:59+00:00'
+generated_at: '2026-09-18T22:17:03+00:00'
 generator: src/zephyr/infrastructure/system_telemetry/measure_calibration.py
 registry: D:\ZephyrAlpha\config\resource_profile_registry.yaml
 samples_dir: D:\ZephyrAlpha\.runtime\logs\resource_samples
@@ -19,13 +19,13 @@ tolerance_pct: 30.0
 duration_percentile: 90
 mem_margin_pct: 15.0
 totals:
-  entities: 81
+  entities: 85
   calibrated: 8
-  insufficient_samples: 72
+  insufficient_samples: 76
   flagged_entities: 7
-  flagged_fields: 9
-  低估: 1
-  高估: 8
+  flagged_fields: 11
+  低估: 2
+  高估: 9
 proposed_corrections:
 - &id001
   task_id: manual_kronos_adapter
@@ -86,9 +86,9 @@ proposed_corrections:
   task_id: sch_ollama_serve
   field: peak_mem_gb
   declared: 8.0
-  measured_p90: 0.3604
+  measured_p90: 0.3774
   caliber_zh: 样本 RSS max×(1+15.0%) margin
-  deviation_ratio: -0.9549
+  deviation_ratio: -0.9528
   direction: 高估
   direction_code: overdeclared
   unit: GB
@@ -106,25 +106,47 @@ proposed_corrections:
   verdict: 建议下调申报值（实测更短/更小，白占并发预算）
 - &id008
   task_id: sch_process_reaper
+  field: est_duration_min
+  declared: 6.0
+  measured_p90: 2.2
+  caliber_zh: 样本 elapsed P90
+  deviation_ratio: -0.6333
+  direction: 高估
+  direction_code: overdeclared
+  unit: min
+  verdict: 建议下调申报值（实测更短/更小，白占并发预算）
+- &id009
+  task_id: sch_process_reaper
   field: peak_mem_gb
   declared: 0.5
-  measured_p90: 0.1666
+  measured_p90: 0.2808
   caliber_zh: 样本 RSS max×(1+15.0%) margin
-  deviation_ratio: -0.6668
+  deviation_ratio: -0.4384
   direction: 高估
   direction_code: overdeclared
   unit: GB
   verdict: 建议下调申报值（实测更短/更小，白占并发预算）
-- &id009
+- &id010
   task_id: sch_worktree_drift_watchdog
   field: est_duration_min
   declared: 1.0
-  measured_p90: 473.9
+  measured_p90: 464.9
   caliber_zh: 样本 elapsed P90
-  deviation_ratio: 472.9
+  deviation_ratio: 463.9
   direction: 低估
   direction_code: underdeclared
   unit: min
+  verdict: 建议上调申报值（实测更长/更大，班次会压到下一班）
+- &id011
+  task_id: sch_worktree_drift_watchdog
+  field: peak_mem_gb
+  declared: 0.5
+  measured_p90: 3.4117
+  caliber_zh: 样本 RSS max×(1+15.0%) margin
+  deviation_ratio: 5.8234
+  direction: 低估
+  direction_code: underdeclared
+  unit: GB
   verdict: 建议上调申报值（实测更长/更大，班次会压到下一班）
 rows:
 - task_id: data_slot_auction_highfreq
@@ -205,6 +227,35 @@ rows:
   - field: peak_mem_gb
     unit: GB
     declared: 2.5
+    measured_p90: null
+    deviation_ratio: null
+    direction: null
+    direction_code: no_measurement
+    flagged: false
+    verdict_zh: 无实测样本，不判偏差（禁编造）
+  flags: []
+  proposed_corrections: []
+  note_zh: 样本流无该实体记录：只记状态不记数值（申报值未经实测检验，禁据本报告校正）
+- task_id: data_slot_daily_alt_fx
+  status: active
+  calibration_status: 样本不足
+  samples: 0
+  confidence: none
+  duration_percentile: 90
+  mem_margin_pct: 15.0
+  axes:
+  - field: est_duration_min
+    unit: min
+    declared: 30.0
+    measured_p90: null
+    deviation_ratio: null
+    direction: null
+    direction_code: no_measurement
+    flagged: false
+    verdict_zh: 无实测样本，不判偏差（禁编造）
+  - field: peak_mem_gb
+    unit: GB
+    declared: 2.0
     measured_p90: null
     deviation_ratio: null
     direction: null
@@ -350,6 +401,64 @@ rows:
   - field: peak_mem_gb
     unit: GB
     declared: 3.0
+    measured_p90: null
+    deviation_ratio: null
+    direction: null
+    direction_code: no_measurement
+    flagged: false
+    verdict_zh: 无实测样本，不判偏差（禁编造）
+  flags: []
+  proposed_corrections: []
+  note_zh: 样本流无该实体记录：只记状态不记数值（申报值未经实测检验，禁据本报告校正）
+- task_id: data_slot_data_supply_sentinel
+  status: active
+  calibration_status: 样本不足
+  samples: 0
+  confidence: none
+  duration_percentile: 90
+  mem_margin_pct: 15.0
+  axes:
+  - field: est_duration_min
+    unit: min
+    declared: 30.0
+    measured_p90: null
+    deviation_ratio: null
+    direction: null
+    direction_code: no_measurement
+    flagged: false
+    verdict_zh: 无实测样本，不判偏差（禁编造）
+  - field: peak_mem_gb
+    unit: GB
+    declared: 2.0
+    measured_p90: null
+    deviation_ratio: null
+    direction: null
+    direction_code: no_measurement
+    flagged: false
+    verdict_zh: 无实测样本，不判偏差（禁编造）
+  flags: []
+  proposed_corrections: []
+  note_zh: 样本流无该实体记录：只记状态不记数值（申报值未经实测检验，禁据本报告校正）
+- task_id: data_slot_eod_reconciliation
+  status: active
+  calibration_status: 样本不足
+  samples: 0
+  confidence: none
+  duration_percentile: 90
+  mem_margin_pct: 15.0
+  axes:
+  - field: est_duration_min
+    unit: min
+    declared: 30.0
+    measured_p90: null
+    deviation_ratio: null
+    direction: null
+    direction_code: no_measurement
+    flagged: false
+    verdict_zh: 无实测样本，不判偏差（禁编造）
+  - field: peak_mem_gb
+    unit: GB
+    declared: 2.0
     measured_p90: null
     deviation_ratio: null
     direction: null
@@ -1058,7 +1167,7 @@ rows:
 - task_id: manual_factory_grid_executor
   status: planned
   calibration_status: 已校准
-  samples: 179
+  samples: 188
   confidence: high
   duration_percentile: 90
   mem_margin_pct: 15.0
@@ -1846,6 +1955,35 @@ rows:
   flags: []
   proposed_corrections: []
   note_zh: 样本流无该实体记录：只记状态不记数值（申报值未经实测检验，禁据本报告校正）
+- task_id: sch_config_check
+  status: active
+  calibration_status: 样本不足
+  samples: 0
+  confidence: none
+  duration_percentile: 90
+  mem_margin_pct: 15.0
+  axes:
+  - field: est_duration_min
+    unit: min
+    declared: 10.0
+    measured_p90: null
+    deviation_ratio: null
+    direction: null
+    direction_code: no_measurement
+    flagged: false
+    verdict_zh: 无实测样本，不判偏差（禁编造）
+  - field: peak_mem_gb
+    unit: GB
+    declared: 0.5
+    measured_p90: null
+    deviation_ratio: null
+    direction: null
+    direction_code: no_measurement
+    flagged: false
+    verdict_zh: 无实测样本，不判偏差（禁编造）
+  flags: []
+  proposed_corrections: []
+  note_zh: 样本流无该实体记录：只记状态不记数值（申报值未经实测检验，禁据本报告校正）
 - task_id: sch_data_scheduler
   status: active
   calibration_status: 样本不足
@@ -2054,7 +2192,7 @@ rows:
 - task_id: sch_ollama_serve
   status: active
   calibration_status: 已校准
-  samples: 12
+  samples: 80
   confidence: high
   duration_percentile: 90
   mem_margin_pct: 15.0
@@ -2062,7 +2200,7 @@ rows:
   - field: est_duration_min
     unit: min
     declared: 0.0
-    measured_p90: 74.1
+    measured_p90: 69.8
     deviation_ratio: null
     direction: null
     direction_code: not_comparable
@@ -2071,8 +2209,8 @@ rows:
   - field: peak_mem_gb
     unit: GB
     declared: 8.0
-    measured_p90: 0.3604
-    deviation_ratio: -0.9549
+    measured_p90: 0.3774
+    deviation_ratio: -0.9528
     direction: 高估
     direction_code: overdeclared
     flagged: true
@@ -2174,7 +2312,7 @@ rows:
 - task_id: sch_process_reaper
   status: active
   calibration_status: 已校准
-  samples: 56
+  samples: 239
   confidence: high
   duration_percentile: 90
   mem_margin_pct: 15.0
@@ -2182,25 +2320,27 @@ rows:
   - field: est_duration_min
     unit: min
     declared: 6.0
-    measured_p90: 5.2
-    deviation_ratio: -0.1333
-    direction: null
-    direction_code: match
-    flagged: false
-    verdict_zh: 申报与实测偏差在 30.0% 容差内
+    measured_p90: 2.2
+    deviation_ratio: -0.6333
+    direction: 高估
+    direction_code: overdeclared
+    flagged: true
+    verdict_zh: 建议下调申报值（实测更短/更小，白占并发预算）
   - field: peak_mem_gb
     unit: GB
     declared: 0.5
-    measured_p90: 0.1666
-    deviation_ratio: -0.6668
+    measured_p90: 0.2808
+    deviation_ratio: -0.4384
     direction: 高估
     direction_code: overdeclared
     flagged: true
     verdict_zh: 建议下调申报值（实测更短/更小，白占并发预算）
   flags:
+  - est_duration_min
   - peak_mem_gb
   proposed_corrections:
   - *id008
+  - *id009
   note_zh: ''
 - task_id: sch_resource_morning_report
   status: active
@@ -2466,7 +2606,7 @@ rows:
 - task_id: sch_worktree_drift_watchdog
   status: active
   calibration_status: 已校准
-  samples: 54
+  samples: 333
   confidence: high
   duration_percentile: 90
   mem_margin_pct: 15.0
@@ -2474,8 +2614,8 @@ rows:
   - field: est_duration_min
     unit: min
     declared: 1.0
-    measured_p90: 473.9
-    deviation_ratio: 472.9
+    measured_p90: 464.9
+    deviation_ratio: 463.9
     direction: 低估
     direction_code: underdeclared
     flagged: true
@@ -2483,14 +2623,16 @@ rows:
   - field: peak_mem_gb
     unit: GB
     declared: 0.5
-    measured_p90: 0.4321
-    deviation_ratio: -0.1358
-    direction: null
-    direction_code: match
-    flagged: false
-    verdict_zh: 申报与实测偏差在 30.0% 容差内
+    measured_p90: 3.4117
+    deviation_ratio: 5.8234
+    direction: 低估
+    direction_code: underdeclared
+    flagged: true
+    verdict_zh: 建议上调申报值（实测更长/更大，班次会压到下一班）
   flags:
   - est_duration_min
+  - peak_mem_gb
   proposed_corrections:
-  - *id009
+  - *id010
+  - *id011
   note_zh: ''
