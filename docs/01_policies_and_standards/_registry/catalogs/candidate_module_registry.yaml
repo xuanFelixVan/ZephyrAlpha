@@ -7739,7 +7739,7 @@ entries:
   proposal: >-
     触发=Owner 排期+三修复落地+44 门逐门契约评审完成+FLE Act 自治主链临近上线（第三期）。
     灰度路径：L 系 17 门语义统一修正后作首批子集。裁定书
-    docs/_working/reviews/2026-08-21-fle-gates-activation-adjudication.md（维持挂起结论+实证矩阵）。
+    docs/_working/archive/2026-08/reviews/2026-08-21-fle-gates-activation-adjudication.md（维持挂起结论+实证矩阵）。
   status: candidate
   priority: P2
   source: '2026-08-21 残余四项专项批 任务4（#61 挂起项转正）'
@@ -19545,7 +19545,7 @@ entries:
   keywords: ["execution", "ccxt", "order", "adapter", "回执确认", "丢单重试"]
   upstream_deps:
     - {path: "src/zephyr/ex_core", note: "OMS 内核复用，适配器按 ports 接口实现"}
-    - {path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md", note: "执行对接范式与回执教训真源"}
+    - {path: "docs/_working/archive/2026-09/design_memos/40_execution_broker.md", note: "执行对接范式与回执教训真源"}
   downstream_consumers:
     - {path: "src/zephyr/trading", note: "trading conductor 经 EX-CORE 下单，通道无感"}
   contracts_to_produce: []
@@ -19738,7 +19738,7 @@ entries:
   keywords: ["leverage", "liquidation", "margin", "爆仓价", "维持保证金", "资金费率"]
   upstream_deps:
     - {path: "src/zephyr/position", note: "仓位裁决中心扩展点"}
-    - {path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md", note: "回撤 Protocol 升级对象"}
+    - {path: "docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md", note: "回撤 Protocol 升级对象"}
   downstream_consumers:
     - {path: "src/zephyr/risk", note: "风控否决链消费杠杆风险指标"}
   contracts_to_produce: []

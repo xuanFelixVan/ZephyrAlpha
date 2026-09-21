@@ -369,7 +369,7 @@ class BacktestDataHandler:
         v1.1.0 实现：通过 DatabaseService 访问 ClickHouse(c1_market)，
         禁止裸 clickhouse_driver.connect。
         v1.3.0 新增：fundamental_tables 参数，加载 PIT 财务数据（#ARCH-CH-021 P0-5）。
-        v1.4.0 X-2 复权链修复（final3 卡 docs/_working/final3_campaign/x2_adjfactor_prereg.md）：
+        v1.4.0 X-2 复权链修复（final3 卡 docs/_working/archive/2026-09/final3_campaign/x2_adjfactor_prereg.md）：
         默认表名走 table_registry 真源（旧默认 "daily_kline" 是调度批次名误用，
         表不存在必抛错；真实列名为 trade_date 非 date——双重病灶一并修复）；
         SELECT 增补 adj_factor 列（当日除权乘子，无事件日=1），消费方用乘子

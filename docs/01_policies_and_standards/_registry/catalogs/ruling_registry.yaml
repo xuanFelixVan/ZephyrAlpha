@@ -5261,7 +5261,7 @@ entries:
     追认必须以裁定号落册、禁止悬空。A00 dossier 三种保留如实入档。
   affected_files:
   - docs/_working/fullflow_campaign/delivery/MAX_ADJUDICATE_LIST.md
-  related_arch: ['#ARCH-309']
+  related_arch: ['#ARCH-357']
   related_rulings: ['裁定#333']
   superseded_by: ''
 - ruling_id: '裁定#392'

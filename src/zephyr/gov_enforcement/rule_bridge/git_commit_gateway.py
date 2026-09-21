@@ -221,7 +221,7 @@ _POLL_INTERVAL = 0.1
 # S3-C: claim 快照持久化目录（FOREIGN_CHANGE gate 崩溃恢复）
 _CLAIM_SNAPSHOTS_DIR = ".runtime/claim_snapshots"
 
-# R-04 治本②（lane G1，2026-09-18；真源 docs/_working/kimi_audit/S18_提交链路根因表.md R-04 行）：
+# R-04 治本②（lane G1，2026-09-18；真源 docs/_working/archive/2026-09/kimi_audit/S18_提交链路根因表.md R-04 行）：
 # 派生写入归属台账。病灶：reconciler/integrity 派生产物写入无归属——脱离触发会话后
 # 混入下一提交者的 staged 集（CLAIM-REQUIRED ×50/24h 两大来源之一）。台账把每笔派生
 # 写入钉回触发会话名下（producer 溯源），供门禁/审计区分「匿名外来变更」与「已归因

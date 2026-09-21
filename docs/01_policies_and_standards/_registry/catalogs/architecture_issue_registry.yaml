@@ -17138,7 +17138,7 @@ entries:
   title: 风控全链路零接线（双轮审查 Qwen P0-1）——35回撤/36 VaR-ES/37流动性+KillSwitch+对账器模块全写完测试全绿但生产链路零实例化，回撤25%不会熔断；P0 风控接线批落地（SHADOW 前硬约束）
   severity: P0高
   category: integration_gap
-  adjudication: '2026-08-16 双轮审查差异比对裁定书（docs/_working/reviews/2026-08-16-dual-review-adjudication.md §一/§六）：一审（Kimi K3）× 二审（Qwen3.8-Max 盲审）交集确认——风控三件套+KillSwitch+PositionReconciler 生产链路零接线（统筹 grep 复核：RiskOrchestrator src 零匹配；VaRCalculator()/TailRiskMonitor()/DrawdownController() 实例化仅存在于自身定义文件；execute_kill_switch_liquidation 唯一调用点在 tests）。定性=集成缺口非算法 bug（消防栓装了没接水管）。铁律：算法修复在接线前不产生实际保护，接线批最高优先。边界澄清：trading_session 已有合规层接线（ASM-001：C-004 四道闸+ReportGate+日申报计数），缺的是组合级风控层。施工边界（AI-RWIRE-001 × AI-RRESIL-001 并发分治）：KillSwitch 持久化/fill_id 去重/LIQUIDATING 锁由 RRESIL 在 DefaultRiskValidator/fill_handler 内部落地，接口不变；RWIRE 只做调用点接入。rebuild_from_broker 签名约定 rebuild_from_broker(holdings: dict, today_fills: list) -> None，merge 时对齐。'
+  adjudication: '2026-08-16 双轮审查差异比对裁定书（docs/_archive/2026-08-16-dual-review-adjudication.md §一/§六）：一审（Kimi K3）× 二审（Qwen3.8-Max 盲审）交集确认——风控三件套+KillSwitch+PositionReconciler 生产链路零接线（统筹 grep 复核：RiskOrchestrator src 零匹配；VaRCalculator()/TailRiskMonitor()/DrawdownController() 实例化仅存在于自身定义文件；execute_kill_switch_liquidation 唯一调用点在 tests）。定性=集成缺口非算法 bug（消防栓装了没接水管）。铁律：算法修复在接线前不产生实际保护，接线批最高优先。边界澄清：trading_session 已有合规层接线（ASM-001：C-004 四道闸+ReportGate+日申报计数），缺的是组合级风控层。施工边界（AI-RWIRE-001 × AI-RRESIL-001 并发分治）：KillSwitch 持久化/fill_id 去重/LIQUIDATING 锁由 RRESIL 在 DefaultRiskValidator/fill_handler 内部落地，接口不变；RWIRE 只做调用点接入。rebuild_from_broker 签名约定 rebuild_from_broker(holdings: dict, today_fills: list) -> None，merge 时对齐。'
   impact: "变更文件： - 'src/zephyr/ex_core/risk_layer_orchestrator.py（新建，MOD-L06-001 伞下 file 粒度节点 node_id=9689693，9 条 runtime 依赖边）' - 'src/zephyr/ex_core/trading_session.py（盘前/盘中循环注入风险评估+position_cap 缩放目标权重+对账冻结标的硬拦+启动恢复 Fail-Closed 闸门）' - 'src/zephyr/ex_core/order_execution_saga.py（超时分支修复：cancel 返回 False 强制查询订单终态，已成交补走 step5/6）' - 'tests/ex_core/test_risk_layer_orchestrator.py + tests/ex_core/test_saga_timeout_recovery.py（新建，红队实证）'"
   fix_phase: '接线批施工中（AI-RWIRE-001）；算法修复批（F1 ES插值/F2 NaN+Inf/F3 幽灵第三枚举/Qwen P1 群/F5 死代码）已 merge（AI-RFIX-001 f9e10bebdd）；流动性危机 LEVEL_3 接线（37 号）已闭环（2026-08-17 AI-LVL3-001：detector.check 嵌入 risk_layer_orchestrator.evaluate_intraday+build_escape_directive→_engage_kill_switch→execute_kill_switch_liquidation 消费链+§3.6 降级机接线，红队三向量 16 项实证全绿）'
   status: open
@@ -22436,10 +22436,10 @@ entries:
     #347+#353① trae_079 实名+fail-closed 条文侧、#350 M5 17 条二值化、闸1 九簇悬空消解、
     闸3 D1 两处。D-14 冻结经判案解除（判案先行已落 8f8bf8ccee）。随批关闭。
   related_rulings: ['裁定#372']
-- issue_id: '#ARCH-309'
+- issue_id: '#ARCH-357'
   title: 'fullflow MAX_ADJUDICATE_LIST 21 项 A 类待裁转 Max/Owner 打包批（A00 已由裁定#391 追认销项）'
   status: open
-  severity: P1
+  severity: P1高
   category: governance
   created: '2026-09-21'
   last_updated: '2026-09-21'
@@ -22451,10 +22451,10 @@ entries:
     见 dossier 原文，按打包批文机制消费（先例：S3 96 条按族打包≈14 次批文）。清单 completes_when=
     每项被裁定或判不办并留痕；全部销项后 fullflow_campaign 走 W8-4 循环归档。
   related_rulings: ['裁定#391']
-- issue_id: '#ARCH-310'
+- issue_id: '#ARCH-358'
   title: 'W8 第一圈 C-3 阴性审查 5 份保留至 2026-09-30 到期复核'
   status: open
-  severity: P3
+  severity: P3低
   category: governance
   created: '2026-09-21'
   last_updated: '2026-09-21'

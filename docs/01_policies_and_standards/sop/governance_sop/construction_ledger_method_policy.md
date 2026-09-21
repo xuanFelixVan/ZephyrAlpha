@@ -15,7 +15,7 @@ topic: governance_sop
 # 施工台账方法论——多车道战役的台账法（真源）
 
 > **一句话**：本册把多车道战役的施工侧台账法钉成六件事——**台账只记三件事（事实修正表/停手待裁/回执全文）、回执必满六项、"永不说全绿"、停手回流情形任一即停、车道存活只能三查、收口必过两轮循环检查**。它管"施工事实怎么记、证据怎么标、停手怎么停"，不管价值判断——战役方案、裁定书与 gate-identity 详案是裁定真源，台账不改它们一个字。
-> **定位**：[construction_workflow_policy.md](../construction_sop/construction_workflow_policy.md)（15 步施工闭环真源）在**多车道战役**形态下的台账附属法；车道级日纪律见各战役车道手册（rule_audit 役=`docs/_working/fullflow_campaign/CONSTRUCTION_DISCIPLINE.md`，task_bound）；挖矿域八段生产线的台账落点见 [factor_mining_sop_policy.md](../mining_sop/factor_mining_sop_policy.md) §5。语义冲突时施工流程以各域 SOP 为准、台账与证据表述以本册为准。
+> **定位**：[construction_workflow_policy.md](../construction_sop/construction_workflow_policy.md)（15 步施工闭环真源）在**多车道战役**形态下的台账附属法；车道级日纪律见各战役车道手册（fullflow 役原册已晋升=`../construction_sop/lane_construction_discipline_policy.md`）；挖矿域八段生产线的台账落点见 [factor_mining_sop_policy.md](../mining_sop/factor_mining_sop_policy.md) §5。语义冲突时施工流程以各域 SOP 为准、台账与证据表述以本册为准。
 
 ## 0. 晋升声明
 

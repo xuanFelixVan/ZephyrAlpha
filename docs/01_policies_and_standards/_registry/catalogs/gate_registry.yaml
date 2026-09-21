@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-19T09:44:13Z'
+generated_at: '2026-09-20T20:53:26Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 169
+total_gates: 171
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -393,7 +393,8 @@ gates:
   name: 'GATE-21: 静态清单漂移阻断（§6.2）'
   entry: python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py
   description: 运行所有生成器 --check 模式，自动生成版 vs 磁盘版不一致→硬阻断。对标 §6.3 静态清单自动生成铁律。files 扩展
-    commit_gates/*.py（ARCH-GATE-REGISTRY-SYNC-001 双保险：reconciler 失效时兜底检测）
+    commit_gates/*.py（ARCH-GATE-REGISTRY-SYNC-001 双保险：reconciler 失效时兜底检测）。已知限制（裁定#374
+    主题十 10-2 a 案登记）：--check 校验与并发重生成存在秒级竞态窗口——校验通过后、提交落地前清单被并发重生成可漏检；例行重生成批次兜底暴露，不阻断主线
   files_trigger: ^(scripts/governance/script_manifest\.yaml|docs/01_policies_and_standards/_registry/catalogs/.*\.yaml|\.pre-commit-config\.yaml|src/zephyr/gov_enforcement/commit_gates/.*\.py)$
   always_run: false
   category: unknown
@@ -873,9 +874,7 @@ gates:
 - gate_id: CREATE-GUARD
   name: 'CREATE-GUARD: CREATE-GUARD（CommitGate, priority=60）'
   entry: in-process (GitCommitGateway)
-  description: CREATE-GUARD（裁定#375 内收判据门禁化：新建 .py/.yaml 资产（非 tests/，own-scope=本提交
-    文件面）token 条目缺 merge_evaluation 字段→warn+审计（.runtime/gate_audit/create_guard_merge_evaluation.jsonl）
-    不阻断——首期 warn-only 留过渡窗，季度审计评估升级；登记通道=batch_creation_tokens.py --merge-evaluation）
+  description: CREATE-GUARD
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1284,6 +1283,17 @@ gates:
   status: active
   source: commit-gate
   own_scope: false
+  enforcement_channel: commit-gate
+- gate_id: LIBRARY-COVERAGE
+  name: 'LIBRARY-COVERAGE: 馆藏覆盖观察闸（LIBRARY-COVERAGE，warn-only）。（CommitGate, priority=145）'
+  entry: in-process (GitCommitGateway)
+  description: 馆藏覆盖观察闸（LIBRARY-COVERAGE，warn-only）。
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: NO-LONG-PARAM-LIST
   name: 'NO-LONG-PARAM-LIST: NO-LONG-PARAM-LIST（CommitGate, priority=95）'
@@ -1882,6 +1892,18 @@ gates:
   source: commit-gate
   own_scope: true
   enforcement_channel: commit-gate
+- gate_id: COMMIT-CRITICAL-SECTION-LOCK
+  name: 'COMMIT-CRITICAL-SECTION-LOCK: commit 临界区全局文件锁（裁定#347 实名登记）'
+  entry: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_GlobalCommitLock（in-process
+    机制，非独立钩子）
+  description: 裁定#347/#372：机制实存于 git_commit_gateway.py:2360-2366（_GlobalCommitLock
+    临界区+审计兜底）。fail-closed 语义见 trae_079（逃生仅 emergency_commit）。
+  files_trigger: ''
+  always_run: false
+  category: serialization
+  status: active
+  source: manual
+  enforcement_channel: manual
 - gate_id: GATE-SCHEMA-HEALTH
   name: 'GATE-SCHEMA-HEALTH: depgraph Schema 健康度门禁（已合并到 GATE-C2，ARCH-016/017/018）'
   entry: N/A (merged into GATE-C2, see redirect_to)
@@ -1897,16 +1919,3 @@ gates:
   redirect_to: GATE-C2
   source: manual
   enforcement_channel: manual
-- gate_id: COMMIT-CRITICAL-SECTION-LOCK
-  name: 'COMMIT-CRITICAL-SECTION-LOCK: commit 临界区全局文件锁（裁定#347 实名登记）'
-  entry: 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py::_GlobalCommitLock（in-process 机制，非独立钩子）'
-  description: >-
-    裁定#347/#372：机制实存于 git_commit_gateway.py:2360-2366（_GlobalCommitLock 临界区+
-    _audit_commit_lock_fallback 审计兜底，日志自标 TRAE-079）。原以册外名游离，
-    按实名登记补册。fail-closed 语义见 trae_079（bypass_allowed: false，逃生仅 emergency_commit）。
-  files_trigger: ''
-  always_run: false
-  category: serialization
-  status: active
-  source: commit-gateway
-  enforcement_channel: in-process

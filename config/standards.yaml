@@ -39,7 +39,7 @@ standards:
     version: 1
     status: draft
     frozen_at: null
-    source: "docs/_working/kimi_audit/S13_切换判据.md（2026-09-17 kimi-audit 班次六问裁定+反驳者记录）"
+    source: "docs/_working/archive/2026-09/kimi_audit/S13_切换判据.md（2026-09-17 kimi-audit 班次六问裁定+反驳者记录）"
     thresholds:
       regime_confirmation_days: 3        # 新态须连续 3 交易日同向确认（style_regime_model confirm_periods=3 先例）
       confidence_floor: 0.50             # max(P)<0.50=未决→保持闩锁态（regime_detector ConfidenceSignal 顶档阈值）
@@ -57,8 +57,8 @@ standards:
     version: 1
     status: frozen   # 2026-09-18 转正（裁定#337，st-tdchain-20260917；勘误 2026-09-20：原注误写 #335=词表收编非本件——P7-B 红证发现①）：E6 双尺重考达标——81 全量覆盖/55 翻转零不可解释（0%≤10% 预注册线，S12_实验规格.md §E6）
     frozen_at: "2026-09-18"
-    reexam_evidence: "docs/_working/kimi_audit/lane_reports/E.md §E6（f654982348）+ exp_evidence/e6_dual_ruler_result.yaml；#306 红队③族N_eff含历史被毙次数已回写本文件，①族注册表=治理层立案挂单，②B-03 顺序 #315 追认"
-    source: "docs/_working/kimi_audit/S5_定尺子.md（逐条裁定+反驳者记录+翻转清单）"
+    reexam_evidence: "docs/_working/archive/2026-09/kimi_audit/lane_reports/E.md §E6（f654982348）+ exp_evidence/e6_dual_ruler_result.yaml；#306 红队③族N_eff含历史被毙次数已回写本文件，①族注册表=治理层立案挂单，②B-03 顺序 #315 追认"
+    source: "docs/_working/archive/2026-09/kimi_audit/S5_定尺子.md（逐条裁定+反驳者记录+翻转清单）"
     thresholds:
       oos_sharpe_min: 1.5              # 不变
       max_drawdown_max: 0.15           # 口径注记：日频收盘序列（盘中极值更深，另立监控位）

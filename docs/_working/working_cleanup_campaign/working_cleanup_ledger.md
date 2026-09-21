@@ -48,9 +48,12 @@ completes_when: "全部批次落地+循环检查两轮零问题+红蓝对抗零�
 | docs/_working/2026-08-30-l3-snapshot-datasource-adjudication.md | docs/_working/archive/2026-09/2026-08-30-l3-snapshot-datasource-adjudication.md | **以本件（09-15 结案版）取代 archive/2026-08/ 同名旧版**（09-14 版作废） |
 | docs/_working/reviews/ | docs/_working/archive/2026-08/reviews/ | 单件裁定档案（FLE gates 裁定书），按战役月份归早不归晚（循环检查补登） |
 | docs/_working/daily_loop_campaign/ | （留场围栏） | 丁线挖矿死会话遗物，Owner 已派线（循环检查补登） |
+| docs/_working/collection_intake/ | docs/_working/archive/2026-09/collection_intake/ | 批E（README 状态块+结案报告随册） |
+| docs/_working/archive/2026-09/pipeline-research/ | **撤回归档（勘正二）**：promotion_advisory/intake 运行时写入面（红队 P1-1），比照 resource_schedule 判生产面留场；生产子目录拆分挂账 | |
+| 散件 10 件（clearance-review/ai-native×2/gate-perf/xtreme/ch-redblue/ruling234 html/pattern_session/disk_reorg_plan v1/l3 结案版） | archive/2026-09/ 及 c_class_scattered、redblue 子桶 | 批B+批E |
 | docs/_working/OKXSans-{Regular,Medium,Bold}.woff2 | （已删除） | sha256 与 src/zephyr/frontend/dashboard/web/assets/ 在役版逐一相同；恢复=git checkout 该三件 |
 
-围栏禁碰（本班零触碰，15）：ultimate_library / recovered_task_cards / unified_campaign / disk_reorg_campaign / code_doc_gov_campaign / data_fix_campaign / flash_speedup / 2026-09-18_vocab_consolidation_campaign / automation / rule_audit_campaign / bizmine_chain_mining / altdata_line / guides / full-auto-chain / **daily_loop_campaign（丁线挖矿，st-dloop 死会话遗物回收件，Owner 已派线，循环检查补登）**。
+围栏禁碰（本班零触碰，15；其中 altdata_line/guides 兼入留场清单=围栏即留场口径）：ultimate_library / recovered_task_cards / unified_campaign / disk_reorg_campaign / code_doc_gov_campaign / data_fix_campaign / flash_speedup / 2026-09-18_vocab_consolidation_campaign / automation / rule_audit_campaign / bizmine_chain_mining / altdata_line / guides / full-auto-chain / **daily_loop_campaign（丁线挖矿，st-dloop 死会话遗物回收件，Owner 已派线，循环检查补登）**。
 留场（未施工/服役中/生产面）：ai_layer_vision / trading_vision / cold_backup_automation / altdata_line / guides（迁政策区建议挂账）/ fullflow_campaign（待裁载体）/ **resource_schedule（D 在飞生产数据面，撤回归档勘正——改链批G 误扩 1155 处替换中 33 非文档文件已字节级回滚，教训=L2 证据面与生产行为面必须分级处置，改链只限散文锚点）**。
 根目录活文档留场 4 件：2026-09-18-gate-identity-root-fix-plan.md、2026-09-18-rule-audit-master-construction-plan.md、2026-09-19-overnight-handover-max-shift.md、2026-09-19-overnight-scope-lock-report.md（rule_audit 收尾班真源链，随其战役归档）。
 

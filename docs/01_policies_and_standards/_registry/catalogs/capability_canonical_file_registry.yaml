@@ -43255,6 +43255,42 @@ creation_tokens:
   token: ch1-7-intake-20260920-0408-20260921
   created_by: st-workclean-20260921
   capability: ch1_7
+- file: docs/_working/pipeline-research/2026-09-15-full-auto-handoff.md
+  token: prod-new-0-2026-09-15-full-auto-handoff-20260921
+  created_by: st-workclean-20260921
+  capability: prod_new_0
+- file: docs/_working/pipeline-research/2026-09-15-full-auto-pipeline-research.md
+  token: prod-new-1-2026-09-15-full-auto-pipeline-research-20260921
+  created_by: st-workclean-20260921
+  capability: prod_new_1
+- file: docs/_working/pipeline-research/index.md
+  token: prod-new-2-index-20260921
+  created_by: st-workclean-20260921
+  capability: prod_new_2
+- file: docs/_working/pipeline-research/owner-experience-runbook.md
+  token: prod-new-3-owner-experience-runbook-20260921
+  created_by: st-workclean-20260921
+  capability: prod_new_3
+- file: docs/_working/pipeline-research/pending-owner-rulings.md
+  token: prod-new-4-pending-owner-rulings-20260921
+  created_by: st-workclean-20260921
+  capability: prod_new_4
+- file: docs/_working/pipeline-research/replay-evidence.yaml
+  token: prod-new-5-replay-evidence-20260921
+  created_by: st-workclean-20260921
+  capability: prod_new_5
+- file: docs/_working/pipeline-research/reports/intake-20260921-1311.md
+  token: prod-new-6-intake-20260921-1311-20260921
+  created_by: st-workclean-20260921
+  capability: prod_new_6
+- file: docs/_working/pipeline-research/reports/intake-20260921-1311.yaml
+  token: prod-new-7-intake-20260921-1311-20260921
+  created_by: st-workclean-20260921
+  capability: prod_new_7
+- file: docs/_working/pipeline-research/sim-memos/sim-memo-202609.md
+  token: prod-new-8-sim-memo-202609-20260921
+  created_by: st-workclean-20260921
+  capability: prod_new_8
   merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
   merge_evaluation: "裁定#392（D-12） P1方案收尾批版：批次0已交付+批次1-5依赖序+六要素"
 di_seam_exemptions: []

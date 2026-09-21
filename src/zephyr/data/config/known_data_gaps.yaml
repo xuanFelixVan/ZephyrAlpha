@@ -977,7 +977,7 @@ gaps:
     created: "2026-09-18"
     last_updated: "2026-09-21"
 
-  # === 2026-09-19 批：bizmine 通宵夜战七项数据缺口批量登记（st-bizmine-co-20260919，各证据=docs/_working/bizmine_night/ 实测报告）===
+  # === 2026-09-19 批：bizmine 通宵夜战七项数据缺口批量登记（st-bizmine-co-20260919，各证据=docs/_working/archive/2026-09/bizmine_night/ 实测报告）===
 
   # === ① consensus_daily 值类列 PIT 已坏（平推快照；F 车道另类探针实测）===
   - id: "consensus_daily_value_cols_pit_broken"
@@ -996,7 +996,7 @@ gaps:
     resolution_plan: "值类消费一律改走 consensus_daily_repaired 净段；repaired 2022+ 断供段
       待换源/重灌回补（归数据线工单）；plain 表值类列禁用登记在案，计数类列不受本判定约束。"
     primary_alternative: "c3_fundamental.consensus_daily_repaired（净段 FINAL 1,563,996 行 [亲验 09-21]：2017-2021 五年+2026 近窗；2022-2025 仍断）"
-    evidence: "docs/_working/bizmine_night/factor_sop_screen/altdata_probe_report.md 发现 1-2"
+    evidence: "docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/altdata_probe_report.md 发现 1-2"
     verification_20260921: "部分回填口径更新（st-data-fix-20260921 [亲验] FINAL）：repaired 表
       合计 1,563,996 行——2017=300,566 / 2018=349,219 / 2019=311,934 / 2020=260,490 /
       2021=250,420 / 2026=91,367（max trade_date=2026-09-15）；2022-2025 仍 0 行=断供段未回。
@@ -1022,7 +1022,7 @@ gaps:
       见 cold_archive_minute_kline_e_drive 条目；QMT 历史下载已随 miniQMT 2026-09-18 退役关闭）。
       回补前消费方一律走 kline_etf_1min 聚合口径。"
     primary_alternative: "c1_market.kline_etf_1min 聚合日线（argMin/argMax/max/min/sum+全行 DISTINCT）"
-    evidence: "docs/_working/bizmine_night/etf_family/etf_lane_report.md 数据源节"
+    evidence: "docs/_working/archive/2026-09/bizmine_night/etf_family/etf_lane_report.md 数据源节"
     created: "2026-09-19"
 
   # === ③ technical_indicator 日频重复 (date,symbol) 行待 ingest_ts 去重（IND 三切片实测）===
@@ -1040,7 +1040,7 @@ gaps:
     resolution_plan: "治本=数据线正门工单重灌清理（备份后按 ingest_ts 最新版去重重写，禁裸
       ALTER DELETE 聚合数判重）；治理前消费方一律 argMax(ingest_ts)/drop_duplicates(keep=last) 口径。"
     primary_alternative: "消费侧 ingest_ts 去重（IND-A/B/C 三切片已实证该口径下结论稳定）"
-    evidence: "docs/_working/bizmine_night/indicators_sweep_b/screen_report.md 诚实条款 §1（429 万重复/总 1756 万行）"
+    evidence: "docs/_working/archive/2026-09/bizmine_night/indicators_sweep_b/screen_report.md 诚实条款 §1（429 万重复/总 1756 万行）"
     verification_20260921: "monitoring 维持（st-data-fix-20260921）：dwm 分片重跑 09-21 凌晨在飞
       （CH 轻查询窗口避让，本批未重扫重复计数）——回填期重复行将进一步累积属预期，消费方
       argMax(ingest_ts) 口径在回填完成前加倍必须；回填完成后按 resolution_plan 评估治本重灌
@@ -1067,7 +1067,7 @@ gaps:
       归档源深度待核实）；ETF tick 空窗与深度缺口随 F:/zephyr_cold/50_archive/by_project/zephyralpha 挂回工单一并评估；
       消费方注意两 variant 时间戳/单位口径差（tick_matrix_protocol.md 已固化修复配方）。"
     primary_alternative: "1min/5min K 线族全史完整，K 线级回测不受影响；tick 级仅 2025+ 深样本可用"
-    evidence: "docs/_working/bizmine_night/tick_t0/（tick_inventory.md+tick_t0_results.md）+ docs/_working/bizmine_night/tick_matrix/tick_matrix_report.md（勘误之勘误）"
+    evidence: "docs/_working/archive/2026-09/bizmine_night/tick_t0/（tick_inventory.md+tick_t0_results.md）+ docs/_working/archive/2026-09/bizmine_night/tick_matrix/tick_matrix_report.md（勘误之勘误）"
     created: "2026-09-19"
 
   # === ⑤ hl_liquidation_raw 空表（币圈清算链不可考；cry 车道实测）===
@@ -1085,7 +1085,7 @@ gaps:
     resolution_plan: "数据线核查 Hyperliquid 清算流 WebSocket 采集链（hyperliquid_provider
       → c1_market.hl_liquidation_raw）为何零业务行：任务未挂调度/连接失败/字段过滤过严三选一排查后修复。"
     primary_alternative: "无（清算流为交易所 WebSocket 独有推送，无 REST 历史回补接口等价物）"
-    evidence: "docs/_working/bizmine_night/crypto_probe/funding_carry_results.md §7+crypto_probe_summary.csv"
+    evidence: "docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_results.md §7+crypto_probe_summary.csv"
     created: "2026-09-19"
 
   # === ⑥a weather_data 深度过浅（31 记录日；ALT-B 车道实测）===
@@ -1102,7 +1102,7 @@ gaps:
     resolution_plan: "不施工（逐日积累型，QWeather 每日采集自然累积）；年季基准距平类信号
       需多年积累后重评（alt_regime_signals.py 数据成熟度注记同口径）。"
     primary_alternative: "无（气象历史深度无免费批量回补源）"
-    evidence: "docs/_working/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
+    evidence: "docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
     created: "2026-09-19"
 
   # === ⑥b research_report hot_value/rating_change 全空列（ALT-B 车道实测）===
@@ -1119,7 +1119,7 @@ gaps:
     resolution_plan: "数据线核查 akshare 研报详情接口是否供该两字段（不供则换源或标记列退役
       走净删门位）；全文搬运属独立数据工程项（20GB 级，挂账不阻塞）。"
     primary_alternative: "hot_rank（每日 top100 rank 值，29 天）可作热度代理；评级调向暂无替代"
-    evidence: "docs/_working/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
+    evidence: "docs/_working/archive/2026-09/bizmine_night/altdata_probes_b/altdata_b_report.md §缺口登记"
     verification_20260921: "schema 口径更新（st-data-fix-20260921 [亲验] system.columns）：
       hot_value 列已不存在（09-19 测得全空串 146,669 行的载体随 schema 变更移除，本条对该列的
       登记随之了结，热度代理按 primary_alternative 走 hot_rank）；rating_change 列仍在且维持
@@ -1136,7 +1136,7 @@ gaps:
     end_date: "2021-08-31"
     date_column: "trade_date"
     detection_threshold: 1
-    status: "open"  # 归档实体在 F:/zephyr_cold/50_archive/by_project/zephyralpha（原 E 盘 2026-09-20 迁 F）待数据线正门工单挂回；今晚只登记不接入；工单已立（2026-09-19，裁定#367）→ docs/_working/bizmine_night/e_drive_cold_archive_task.md
+    status: "open"  # 归档实体在 F:/zephyr_cold/50_archive/by_project/zephyralpha（原 E 盘 2026-09-20 迁 F）待数据线正门工单挂回；今晚只登记不接入；工单已立（2026-09-19，裁定#367）→ docs/_working/archive/2026-09/bizmine_night/e_drive_cold_archive_task.md
     root_cause: "F:/zephyr_cold/50_archive/by_project/zephyralpha=分钟线冷归档（1min 2000-06..2021-08 共 255 月、
       ETF 1min 2005-02..2018-12、5/15/30/60min、technical_indicator、news_data；无 tick）——
       库内对应历史深度缺失（库内分钟约 4.7 年起；tick 唯二=tick_data 2025-01 起 21 个月
@@ -1144,7 +1144,7 @@ gaps:
     resolution_plan: "数据线正门工单：归档挂回（provider/BufferedWriter 正道+幂等回补+复验，
       禁裸写）；miniQMT 2026-09-18 退役后该归档=唯一已知历史分钟源，优先级高。"
     primary_alternative: "无（E 盘归档为唯一已知批量历史分钟源）"
-    evidence: "docs/_working/bizmine_night/bizmine_campaign_ledger.md 06:0x 行（E 盘数据资产盘点）"
+    evidence: "docs/_working/archive/2026-09/bizmine_night/bizmine_campaign_ledger.md 06:0x 行（E 盘数据资产盘点）"
     created: "2026-09-19"
 
   # === X-7: top10_shareholders 增量管线静默饿死（断供 2026-05-16→2026-09-19，终极令钦定 P0）===
