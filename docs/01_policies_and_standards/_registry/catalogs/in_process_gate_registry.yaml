@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 113  # 2026-08-17 AI-AUDIT11 实测修正 93→97；2026-08-21 AI-RESIDUAL-001 +GATE-ERRCODE-CONSISTENCY；2026-08-23 +HOT-FILE-BASE-FRESHNESS；2026-09-04 +FRONTEND-TRUTH-SOURCE（136）+FRONTEND-MAP（137，六图对齐 commit 链闭环）；2026-09-05 +DECISION-MAP（138）+BUSINESS-REGISTRY（139）+GATE-BATTLE-MAP-ALIGNMENT（833，七图对齐+业务库入库+作战地图硬化）；2026-09-09 +REGISTRY-MASS-DELETION（105，登记表防蒸发门禁）；2026-09-09 105→106 +ALGO-NOTE-SYNC（47ab163cbf，头部声明漏同步由 st-legacy-clear-20260910 补记）；2026-09-10 test_load_real_yaml_entries 去硬编码治本=断言改为条数↔total_gates 双端一致；2026-09-13 106→109 补记 +INDUSTRY-CHAIN-MAP（141，2026-09-11 加入漏同步）+FACTORY-MAP（142，factory-gate-b2-20260913 加入漏同步）+SPLIT-COORDINATION（143，#ARCH-SPLIT-COORDINATION-001 加入漏同步）——三批加条目均漏头部同步，由堵点本覆盖面批全量回归抓出补记；2026-09-14 110 +REGISTRY-YAML-PARSE（54，capability 注册表结构硬化门禁——尾追悬挂四连事故治本，本批同步补记）；2026-09-14 111 +SYNTAX-VALIDATION（48，红蓝 v3 P0-1 批 2 治本：staged .py 语法错误硬阻断，填补全仓 AST gate 集体 fail-open 的责任真空；同批同步头部）；2026-09-16 112 +ALGO-FLOW-LINK（108，ALGO_FLOW external 锚链接校验——批9 收尾批 T3，Owner 批7 认可；2026-09-16 113 +RESOURCE-SCHEDULE（144，资源排班全景 B2：staged 注册表三检查 own-scope，st-resource-20260916 本批同步头部））
+total_gates: 115  # 2026-08-17 AI-AUDIT11 实测修正 93→97；2026-08-21 AI-RESIDUAL-001 +GATE-ERRCODE-CONSISTENCY；2026-08-23 +HOT-FILE-BASE-FRESHNESS；2026-09-04 +FRONTEND-TRUTH-SOURCE（136）+FRONTEND-MAP（137，六图对齐 commit 链闭环）；2026-09-05 +DECISION-MAP（138）+BUSINESS-REGISTRY（139）+GATE-BATTLE-MAP-ALIGNMENT（833，七图对齐+业务库入库+作战地图硬化）；2026-09-09 +REGISTRY-MASS-DELETION（105，登记表防蒸发门禁）；2026-09-09 105→106 +ALGO-NOTE-SYNC（47ab163cbf，头部声明漏同步由 st-legacy-clear-20260910 补记）；2026-09-10 test_load_real_yaml_entries 去硬编码治本=断言改为条数↔total_gates 双端一致；2026-09-13 106→109 补记 +INDUSTRY-CHAIN-MAP（141，2026-09-11 加入漏同步）+FACTORY-MAP（142，factory-gate-b2-20260913 加入漏同步）+SPLIT-COORDINATION（143，#ARCH-SPLIT-COORDINATION-001 加入漏同步）——三批加条目均漏头部同步，由堵点本覆盖面批全量回归抓出补记；2026-09-14 110 +REGISTRY-YAML-PARSE（54，capability 注册表结构硬化门禁——尾追悬挂四连事故治本，本批同步补记）；2026-09-14 111 +SYNTAX-VALIDATION（48，红蓝 v3 P0-1 批 2 治本：staged .py 语法错误硬阻断，填补全仓 AST gate 集体 fail-open 的责任真空；同批同步头部）；2026-09-16 112 +ALGO-FLOW-LINK（108，ALGO_FLOW external 锚链接校验——批9 收尾批 T3，Owner 批7 认可；2026-09-16 113 +RESOURCE-SCHEDULE（144，资源排班全景 B2：staged 注册表三检查 own-scope，st-resource-20260916 本批同步头部））；2026-09-21 114 +LIBRARY-COVERAGE（st-dloop-20260921 死会话遗物两段式登记死在半途：条目已加而计数未同步且缺 source/register_line 字段，fail-closed 阻塞全仓提交；由 st-workclean-20260921 清理班按本册漏同步补记惯例完成第二段，门文件+冒烟测试 7 passed 同批；本批归一：史录自字段值迁回注释并去重）；2026-09-22 115 +STATE-VOCAB-REGISTRY（135，词表 SSOT 制度 W3 执行门观察期 warn，st-dloop-20260921 同步头部）
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -690,6 +690,12 @@ gates:
   source: in_process
   register_line: 0  # priority=47；2026-08-23 陈旧快照覆写事故治本（claim_head 锚点 vs 当前 HEAD：热文件上游已推进则阻断，与 safe_write_text CAS 文件级防线互补）
   enabled: true
+- gate_id: STATE-VOCAB-REGISTRY
+  module_path: zephyr.gov_enforcement.commit_gates.state_vocab_registry_gate
+  factory_function: make_state_vocab_registry_gate
+  source: in_process
+  register_line: 0  # priority=135；2026-09-22 词表 SSOT 制度 W3 执行门（Owner 批，观察期 warn-only——staged .py 状态枚举类未登记 state_vocabulary_registry.yaml 则 WARN+审计放行；注册表缺失 fail-open；STATE_VOCAB_GATE_MODE 翻 "block" 升硬）
+  enabled: true
 - gate_id: FRONTEND-TRUTH-SOURCE
   module_path: zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate
   factory_function: make_frontend_truth_source_gate
@@ -761,4 +767,10 @@ gates:
   factory_function: make_resource_schedule_gate
   source: in_process
   register_line: 0  # priority=144；2026-09-16 资源排班全景 B2：staged 命中 config/resource_profile_registry.yaml 时跑三检查（互斥组重叠 sched_overlap_group/内存天花板 sched_mem_ceiling/E0 交易时段 sched_e0_block）+真源漂移 sched_truth_drift warn；own-scope（外来 staged 降级 warn 不阻断，宪法 §3）；E0 纯函数最小 import 级复用 compute_window_gate，异常/日历未知 fail-closed；测试 tests/governance/commit_gates/test_resource_schedule_gate.py
+  enabled: true
+- gate_id: LIBRARY-COVERAGE
+  module_path: zephyr.gov_enforcement.commit_gates.library_coverage_gate
+  factory_function: make_library_coverage_gate
+  source: in_process
+  register_line: 0  # priority=145；2026-09-21 图书馆覆盖度门禁（LIBRARY-COVERAGE）：死会话 st-dloop-20260921 遗物两段式登记死在半途，本批完成第二段（source/register_line/计数三件）；tests/library/test_library_smoke.py 7 passed；补记人 st-workclean-20260921
   enabled: true

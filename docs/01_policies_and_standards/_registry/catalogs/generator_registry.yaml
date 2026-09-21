@@ -338,3 +338,28 @@ generators:
     trigger_sources: []
     input_sources: []
     output_globs: []
+  # ════════════════════════════════════════════════════════════════════════
+  # 终极图书馆总账派生件（E 包登记，2026-09-21 总攻）：lib_assets → 七馆页+INDEX；
+  # 双向对账盲册。触发源=lib_assets 表（无 mtime，手工/总攻窗跑）；输出自带索书号。
+  # ════════════════════════════════════════════════════════════════════════
+  - name: library_index
+    module_path: scripts.governance.generators.generate_library_index
+    trigger_sources: []
+    input_sources:
+      - pg:lib_assets
+    output_globs:
+      - docs/library/INDEX.md
+      - docs/library/code.md
+      - docs/library/data.md
+      - docs/library/doc.md
+      - docs/library/rule.md
+      - docs/library/gate.md
+      - docs/library/pipeline.md
+      - docs/library/backup.md
+  - name: library_coverage
+    module_path: scripts.governance.generators.check_library_coverage
+    trigger_sources: []
+    input_sources:
+      - pg:lib_assets
+    output_globs:
+      - docs/library/COVERAGE.md

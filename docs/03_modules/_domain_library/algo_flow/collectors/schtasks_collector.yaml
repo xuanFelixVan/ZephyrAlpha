@@ -1,0 +1,24 @@
+# ALGO_FLOW 外部真源——schtasks_collector（真源 src/zephyr/library/collectors/schtasks_collector.py）
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.library.collectors.schtasks_collector
+source_of_truth: src/zephyr/library/collectors/schtasks_collector.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参（AST 事实）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: collect
+    #   name_en: collect
+    #   intro: 顶层公共函数（AST 事实）。
+    #   outputs: 见函数注解
+    # 层: 输出
+    # - id: O1
+    #   name_en: 见算法层 outputs
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A1
+    # A1 --> O1

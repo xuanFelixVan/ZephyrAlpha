@@ -1,0 +1,42 @@
+# ALGO_FLOW 外部真源——generate_library_index（真源 scripts/governance/generators/generate_library_index.py）
+doc_type: architecture_view
+ttl: permanent
+module: scripts.governance.generators.generate_library_index
+source_of_truth: scripts/governance/generators/generate_library_index.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参（AST 事实）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: _classify
+    #   name_en: _classify
+    #   intro: 顶层公共函数（AST 事实）。
+    #   outputs: 见函数注解
+
+    # - id: A2
+    #   name_zh: _write_page
+    #   name_en: _write_page
+    #   intro: 顶层公共函数（AST 事实）。
+    #   outputs: 见函数注解
+
+    # - id: A3
+    #   name_zh: generate
+    #   name_en: generate
+    #   intro: 顶层公共函数（AST 事实）。
+    #   outputs: 见函数注解
+
+    # - id: A4
+    #   name_zh: main
+    #   name_en: main
+    #   intro: 顶层公共函数（AST 事实）。
+    #   outputs: 见函数注解
+    # 层: 输出
+    # - id: O1
+    #   name_en: 见算法层 outputs
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A1
+    # A1 --> O1
