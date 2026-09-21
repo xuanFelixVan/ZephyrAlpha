@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 结案报告（2026-09-15 st-fullchain-20260914）
+     总结论：裁定 #234（docs/_working 生命周期三段式）审决报告——治理档案，长期保留
+     核验：全文无待办信号；有 .md 孪生件者以 .md 为真源。
+     -->
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>裁定#234 · docs/_working 生命周期三段式 · 2026-09-14</title>
+<style>
+  :root {
+    --bg: #0f0f0f; --ink: #f0f0f0; --ink-2: #b8b8b8; --ink-3: #7d7d7d;
+    --hairline: rgba(255,255,255,.10); --hairline-strong: rgba(255,255,255,.18);
+    --accent: #56a894; --accent-dim: rgba(86,168,148,.14);
+    --warn: #d9a441;
+    --mono: "Cascadia Mono", "Consolas", monospace;
+    --sans: "Source Han Sans SC", "Noto Sans SC", "Microsoft YaHei", sans-serif;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--ink); font-family:var(--sans); font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .canvas { max-width:1080px; margin:0 auto; padding:64px 40px 80px; }
+  .kicker { font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:var(--ink-3); text-transform:uppercase; }
+  h1 { font-size:33px; font-weight:600; letter-spacing:-.01em; line-height:1.18; margin:14px 0 10px; }
+  .meta-row { font-family:var(--mono); font-size:12px; color:var(--ink-2); display:flex; flex-wrap:wrap; gap:8px 28px; padding-bottom:24px; border-bottom:1px solid var(--hairline-strong); }
+  .meta-row b { color:var(--ink); font-weight:500; }
+  .lede { font-size:16.5px; color:var(--ink-2); max-width:74ch; margin:28px 0 8px; }
+  .lede strong { color:var(--ink); font-weight:550; }
+  section { margin-top:52px; }
+  .sec-head { display:flex; align-items:baseline; gap:14px; margin-bottom:20px; }
+  .sec-num { font-family:var(--mono); font-size:12px; color:var(--accent); }
+  h2 { font-size:19px; font-weight:600; letter-spacing:.01em; }
+  table { width:100%; border-collapse:collapse; }
+  th { font-size:12px; font-weight:500; color:var(--ink-3); text-align:left; letter-spacing:.06em; padding:8px 14px 10px 0; border-bottom:1px solid var(--hairline-strong); }
+  td { font-size:14px; padding:12px 14px 12px 0; border-bottom:1px solid var(--hairline); vertical-align:top; color:var(--ink-2); }
+  td:first-child { color:var(--ink); white-space:nowrap; }
+  .mono { font-family:var(--mono); font-size:12.5px; }
+  .steps { border-left:1px solid var(--hairline-strong); margin-left:6px; }
+  .step { position:relative; padding:0 0 24px 26px; }
+  .step:last-child { padding-bottom:4px; }
+  .step::before { content:""; position:absolute; left:-4.5px; top:6px; width:8px; height:8px; background:var(--bg); border:1px solid var(--hairline-strong); }
+  .step.done::before { background:var(--accent); border-color:var(--accent); }
+  .step.risk::before { border-color:var(--warn); }
+  .step .t { font-family:var(--mono); font-size:12px; color:var(--ink-3); letter-spacing:.04em; }
+  .step .h { font-size:15px; color:var(--ink); margin:3px 0 4px; font-weight:550; }
+  .step .d { font-size:13.5px; color:var(--ink-2); max-width:72ch; }
+  .cards { display:grid; grid-template-columns:1fr 1fr; gap:0; border-top:1px solid var(--hairline-strong); border-left:1px solid var(--hairline-strong); }
+  .card { border-right:1px solid var(--hairline-strong); border-bottom:1px solid var(--hairline-strong); padding:18px 20px 16px; }
+  .card .cn { font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.08em; margin-bottom:6px; }
+  .card .ch { font-size:15px; font-weight:550; margin-bottom:6px; }
+  .card .cd { font-size:13px; color:var(--ink-2); }
+  .rulings { counter-reset: r; }
+  .ruling { display:grid; grid-template-columns:44px 1fr; gap:16px; padding:16px 0 14px; border-bottom:1px solid var(--hairline); }
+  .ruling .no { font-family:var(--mono); font-size:20px; color:var(--accent); }
+  .ruling .rh { font-size:15px; font-weight:550; margin-bottom:4px; }
+  .ruling .rd { font-size:13.5px; color:var(--ink-2); max-width:76ch; }
+  .note { margin-top:20px; padding:14px 18px; border:1px solid var(--hairline); font-size:13.5px; color:var(--ink-2); max-width:80ch; }
+  .note b { color:var(--ink); font-weight:550; }
+  a { color:var(--accent); text-decoration:none; border-bottom:1px solid rgba(86,168,148,.35); }
+  .colophon { margin-top:64px; padding-top:20px; border-top:1px solid var(--hairline-strong); font-family:var(--mono); font-size:12px; color:var(--ink-3); line-height:2; }
+  .colophon b { color:var(--ink-2); font-weight:500; }
+  @media (max-width:860px) { .cards { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <div class="kicker">ZephyrAlpha · Governance Adjudication · Ruling 234</div>
+  <h1>docs/_working 生命周期三段式裁定</h1>
+  <div class="meta-row">
+    <span>裁定编号 <b>#234</b>（已登记 ruling_registry）</span>
+    <span>日期 <b>2026-09-14</b></span>
+    <span>性质 <b>Owner 授权自裁</b></span>
+    <span>提交 <b>f41669923f</b></span>
+  </div>
+
+  <p class="lede">
+    一次典型的治理钟摆事故：自动归档误杀真源（2026-08-14）后矫枉过正为「tracked 永不归档」，
+    数学上必然把 docs/_working 顶到 120 上限，反过来用全面提交阻断惩罚所有会话。
+    本裁定以两路外部调研（17 条经核实实践）为证据，确立<strong>「源头减量 → 30 天 TTL 软归档 → 容量断路器收窄」三段式</strong>，
+    被卡死的台账 §10.2-5 提交随裁定落地闭环（f41669923f）。
+  </p>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">01</span><h2>事故链（考古结论）</h2></div>
+    <div class="steps">
+      <div class="step">
+        <div class="t">2026-08-14 前</div>
+        <div class="h">GATE-WORKING-DOCS：自动归档 + auto-commit 删除</div>
+        <div class="d"> 幽灵引用误归档 → 归档器 auto-commit 删除通道把 tracker/裁定书一并清走（「清风类」损失），#ARCH-RECONCILER-AUTO-DELETE-GOV-001 定性：误判 × 自动执行 × 自动入库 = 不可逆放大链。</div>
+      </div>
+      <div class="step">
+        <div class="t">2026-08-14 · 641c343632</div>
+        <div class="h">补丁钟摆：doc_lifecycle 状态机规定「git tracked 文件永不观察/归档」</div>
+        <div class="d">防住了误杀，但也封死了唯一释量通道——docs/_working 只进不出，每日 AI 会话持续写入，120 上限只是时间问题。</div>
+      </div>
+      <div class="step risk">
+        <div class="t">2026-09-14 19:00–21:00</div>
+        <div class="h">顶格 120：FOLDER-CAPACITY-HARD-LIMIT 阻断一切 .py/.yaml/.md 提交</div>
+        <div class="d">xt4-red 台账 §10.2-5 补记（.git.backup 已删 + bundle 替代）被 GOV-DOC-018 协议拦截：「docs/_working tracked 文件数 120 顶格 + 他会话 staged 新文件 = 121 &gt; 120」。全天多次卡提交，归档释量靠人工偶发 housekeeping。</div>
+      </div>
+      <div class="step done">
+        <div class="t">2026-09-14 21:01–21:31</div>
+        <div class="h">解套（他会话自愈 + 本会话裁定并行）</div>
+        <div class="d">xt4-red 完成 15 文件历史文档归档批（随 3c90156077 入库，根层 120→98）并 own-scope 化两个 gate（B5-1/B5-4）；台账 §5 随 reconciler 批 2d5ddff169 落地；本会话裁定 #234 随 f41669923f 登记，治本语义入库。</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">02</span><h2>第一性原理：为什么是钟摆错了，而不是门禁错了</h2></div>
+    <div class="cards">
+      <div class="card">
+        <div class="cn">命题一 · 约束穿透</div>
+        <div class="ch">结构约束不该变成可用性约束</div>
+        <div class="cd">容量 gate 的职能是防「线性增长无封顶型目录」的结构卫生，120 这个数字本身无治理语义。顶格即全员阻断，把结构问题转嫁为每一次提交的可用性问题——约束穿透到无关提交人是最坏失败模式。B5 系列已治「外来 staged 连坐」，但「目录顶格全员阻断」是同一病根的第二张脸。</div>
+      </div>
+      <div class="card">
+        <div class="cn">命题二 · 本质定位</div>
+        <div class="ch">_working = 跨会话短期记忆，必须流动</div>
+        <div class="cd">git tracked 的意义 = 防删除潮丢失（#ARCH-311 实证），不是永久冻结。二者合成的正确形态是「低频写入、必须流动」的耐久化暂存；只进不出的沉淀池必然顶格。</div>
+      </div>
+      <div class="card">
+        <div class="cn">命题三 · 钟摆定律</div>
+        <div class="ch">矫枉过正 = 把 A 事故换成 B 事故</div>
+        <div class="cd">「误杀 → 全禁」是治理最常见钟摆。全禁把风险从「低频误删」平移到「确定性堵塞」，后者 24h 内就兑现了 300+ 次提交堵点。正确解不是二选一，是带豁免与可逆性的中间机制。</div>
+      </div>
+      <div class="card">
+        <div class="cn">命题四 · 100% AI 开发特化</div>
+        <div class="ch">AI 会话的写入速率是人肉仓库的百倍</div>
+        <div class="cd">每会话每任务都产交接文档，人肉开发的「随手归档」习惯不存在——AI 不做记忆整理，只做记忆追加。生命周期必须机制化（TTL + 豁免集），不能依赖任何会话的自觉。</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">03</span><h2>外部实践对照（17 条证据的核心样本）</h2></div>
+    <table>
+      <thead><tr><th style="width:26%">来源</th><th style="width:40%">机制</th><th>对本项目的映射</th></tr></thead>
+      <tbody>
+        <tr><td>actions/stale<span class="mono">（GitHub 官方）</span></td><td>TTL 两阶段：60 天标记 → 7 天处置，活动即重置，豁免标签保护在途件</td><td>预警先于阻断；豁免集先于 TTL 判断</td></tr>
+        <tr><td>OpenHands SDK <span class="mono">AGENTS.md</span></td><td>.pr/ 临时区「intentionally temporary」，PR 批准即自动清除</td><td>归档绑事件（会话收尾），不绑数量</td></tr>
+        <tr><td>Claude Code / Aider / OpenClaw</td><td>会话产物默认 git exclude / 留本地 / 工作区独立仓库</td><td>源头减量：过程产物不入 tracked</td></tr>
+        <tr><td>qlib + MLflow</td><td>实验记录走仓库外 tracking 系统；逻辑删除 + gc 两阶段可逆清理</td><td>软归档（可逆）→ 宽限 → 处置</td></tr>
+        <tr><td>NIH ELN 政策</td><td>Active → Inactive → 处置；按引用价值而非单纯年龄定保留</td><td>结论性报告长留，交接件短留</td></tr>
+        <tr><td>curl 黄金法则 / dev.to 文档宪法</td><td>「价值 &gt; 审查成本才收」；无真实决策不配入库</td><td>_working 收录门槛：只收跨会话件</td></tr>
+        <tr><td>Obsidian Simple Archiver</td><td>规则引擎：年龄 + 名称 regex → 镜像归档路径，定时评估 + 补跑</td><td>日期前缀命名天然支持自动判龄</td></tr>
+        <tr><td>Scala3 LLM_POLICY</td><td>源头披露制，元数据让下游判定自动化</td><td>不加新元数据负担，沿用现有 frontmatter</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <b>跨社区最大公约数</b>：三段式 = 源头只收耐久产物 → 到期软归档冷区 → 宽限后处置，且前两段必须可逆。
+      开源界未发现任何「数字文件数上限 + 顶格全面阻断」先例（Chromium/LLVM/AOSP 检索均空）——容量上限作为唯一硬闸门属于本项目原创的反模式。
+      完整 17 条及全部来源 URL 见归档证据两份（evidence 档案）。
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">04</span><h2>裁定五条（登记于 ruling_registry #234）</h2></div>
+    <div class="rulings">
+      <div class="ruling"><div class="no">①</div><div>
+        <div class="rh">TTL 软归档基线（修正 641c343632 极端）</div>
+        <div class="rd">task_bound 交接文档按未修改天数计龄，默认 30 天到期移入 docs/_working/archive/YYYY-MM/（区内镜像，沿既有惯例）。只移动不删除、git 历史天然保留、ops_guard 回收站兜底——彻底继承 auto-delete 治理裁定的防误杀设计。「tracked 永不归档」修正为「tracked 到期可归档」。</div>
+      </div></div>
+      <div class="ruling"><div class="no">②</div><div>
+        <div class="rh">豁免集（判断先于 TTL）</div>
+        <div class="rd">permanent frontmatter ∪ protected_subdirs 禁区（design_memos/、04_architecture_principles_decisions/）∪ 7 天内活跃 WIP——与 actions/stale exempt-labels 同构，统筹/裁定真源永不被自动触碰。</div>
+      </div></div>
+      <div class="ruling"><div class="no">③</div><div>
+        <div class="rh">容量语义重定义：告警线 + 断路器</div>
+        <div class="rd">120 保留为双角色：≥110 预警提示 housekeeping；硬阻断收窄为「顶格目录的新增类 staged 文件」——存量 modified/deleted 提交不再被顶格连坐（与 B5-1 own-scope 化互补）。施工细节按 fail-open 实现登记 #234.1。</div>
+      </div></div>
+      <div class="ruling"><div class="no">④</div><div>
+        <div class="rh">源头减量（长期）</div>
+        <div class="rd">过程性产物默认落 .runtime/sessions/&lt;sid&gt;/staging/（24h TTL 已有），docs/_working 只收需跨会话/跨天存活的交接件。日期前缀命名已保证年龄可自动判定，不新增元数据负担。</div>
+      </div></div>
+      <div class="ruling"><div class="no">⑤</div><div>
+        <div class="rh">执行序：裁定先行、施工分离</div>
+        <div class="rd">本轮登记语义；TTL 归档执行器（doc_lifecycle tracked-mode 扩展）= #234.1、gate 预警带/断路器收窄改造 = #234.2，登记为后续债由下一 housekeeping 会话承接。</div>
+      </div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><span class="sec-num">05</span><h2>执行实录与附带发现</h2></div>
+    <table>
+      <thead><tr><th style="width:30%">事项</th><th>结果</th></tr></thead>
+      <tbody>
+        <tr><td>裁定登记 + 证据归档</td><td>f41669923f 经提交队列落地（直连两次被他会话 staged 连坐拦：PERM-TRIGGER 未 own-scope 化实证），提交内容核实仅含注册表 + 2 份证据档案。</td></tr>
+        <tr><td>台账 §10.2-5（原被卡提交）</td><td>xt4-red 侧已随 reconciler 批 2d5ddff169 入库，.git.backup 已删 + git bundle（0.40 GB verify 通过）替代，挂账闭环。</td></tr>
+        <tr><td>容量水位</td><td>docs/_working 根层 tracked 120→98（他归档批释放 22）；catalogs 实测 75；裁定批自身零压力。</td></tr>
+        <tr><td>附带发现（B5 族新证据）</td><td>① PERM-TRIGGER gate 读全暂存区未 own-scope 化，他会话 .py 连坐拦截本会话提交；② xt4.5 ride-along 实验曾把共享索引重置到旧版本（我裁定条目 staged 54 行删除 + 档案假删），已精准 restore 3 路径对齐 HEAD，历史无损。两项均属既有 B5 治理线证据，不另行立项。</td></tr>
+        <tr><td>运行态</td><td>VM Running、CH 26.6.1.1193、F 盘 free 795 GB、明早 06:45 跨天快照观察任务在册。</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="colophon">
+    <b>裁定真源</b>　docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml #234（commit f41669923f）<br>
+    <b>证据档案</b>　docs\_working\archive\2026-09\2026-09-14-ruling234-evidence-oss-doc-lifecycle.md（开源/AI 生态 9 条）· …evidence-quant-vibecoding.md（量化/vibe 8 条）<br>
+    <b>后续债</b>　#234.1 TTL 归档执行器（doc_lifecycle tracked-mode 扩展）· #234.2 gate 预警带 110 + 断路器收窄<br>
+    <b>关联</b>　#ARCH-RECONCILER-AUTO-DELETE-GOV-001 · #ARCH-043（GOV-DOC-018）· #ARCH-311 · 裁定#232/#233
+  </div>
+
+</div>
+</body>
+</html>
