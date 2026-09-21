@@ -1,0 +1,350 @@
+generated_at: '2026-09-20T22:41:11.184029'
+tables:
+- db: c3_fundamental
+  table: news_data_pre_tz2_20260828
+  origin_event: 行情时区修复(P0-1)前旧态快照
+  origin_date: '2026-08-28'
+  repair_status: 修复已执行并验收(st-mktfix 波次收口)
+  advice: 呈报删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 7872827
+    rows_exact: 7872827
+    bytes_on_disk: 12875458650
+    active_parts: 213
+    date_range: 2026-07-14 19:43:28.000 .. 2026-08-28 05:31:30.000
+  zero_ref:
+    hit_count: 2
+    hits:
+    - D:/ZephyrAlpha/src/zephyr/frontend/dashboard/api_server.py
+    - D:/ZephyrAlpha/scripts/ch/rebuild_news_data_tz2.py
+  live_relation:
+    live_table: c3_fundamental.news_data
+    bak_rows: 7872827
+    live_rows: 8185499
+- db: c3_fundamental
+  table: news_data_corrupt_20260828
+  origin_event: 污染数据隔离快照(时区修复事件族)
+  origin_date: '2026-08-28'
+  repair_status: 污染源已修复，快照无消费
+  advice: 呈报删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 8040882
+    rows_exact: 8040882
+    bytes_on_disk: 12993905223
+    active_parts: 363
+    date_range: 2026-07-14 19:43:28.000 .. 2026-08-28 04:18:07.000
+  zero_ref:
+    hit_count: 2
+    hits:
+    - D:/ZephyrAlpha/src/zephyr/frontend/dashboard/api_server.py
+    - D:/ZephyrAlpha/scripts/ch/rebuild_news_data.py
+  live_relation:
+    live_table: c3_fundamental.news_data
+    bak_rows: 8040882
+    live_rows: 8185499
+- db: c1_market
+  table: kline_etf_1min_tz_bak_20260918
+  origin_event: ETF 分钟族时区修复回滚保险
+  origin_date: '2026-09-18'
+  repair_status: 修复已执行(见dataqa R2)
+  advice: 呈报留观至10-18后删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 325198058
+    rows_exact: 325198058
+    bytes_on_disk: 5394255053
+    active_parts: 130
+    date_range: 2019-01-02 .. 2026-09-16
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c1_market.kline_etf_1min
+    bak_rows: 325198058
+    live_rows: 326110294
+- db: c1_market
+  table: kline_etf_5min_tz_bak_20260918
+  origin_event: ETF 分钟族时区修复回滚保险
+  origin_date: '2026-09-18'
+  repair_status: 修复已执行(见dataqa R2)
+  advice: 呈报留观至10-18后删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 71775532
+    rows_exact: 71775532
+    bytes_on_disk: 1521165195
+    active_parts: 319
+    date_range: 2005-02-23 .. 2026-09-16
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c1_market.kline_etf_5min
+    bak_rows: 71775532
+    live_rows: 71966591
+- db: c1_market
+  table: kline_etf_15min_tz_bak_20260918
+  origin_event: ETF 分钟族时区修复回滚保险
+  origin_date: '2026-09-18'
+  repair_status: 修复已执行(见dataqa R2)
+  advice: 呈报留观至10-18后删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 24302647
+    rows_exact: 24302647
+    bytes_on_disk: 620130024
+    active_parts: 300
+    date_range: 2005-02-23 .. 2026-09-16
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c1_market.kline_etf_15min
+    bak_rows: 24302647
+    live_rows: 23920181
+- db: c1_market
+  table: kline_etf_30min_tz_bak_20260918
+  origin_event: ETF 分钟族时区修复回滚保险
+  origin_date: '2026-09-18'
+  repair_status: 修复已执行(见dataqa R2)
+  advice: 呈报留观至10-18后删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 11932683
+    rows_exact: 11932683
+    bytes_on_disk: 347400865
+    active_parts: 284
+    date_range: 2005-02-23 .. 2026-09-16
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c1_market.kline_etf_30min
+    bak_rows: 11932683
+    live_rows: 11964017
+- db: c1_market
+  table: kline_etf_60min_tz_bak_20260918
+  origin_event: ETF 分钟族时区修复回滚保险
+  origin_date: '2026-09-18'
+  repair_status: 修复已执行(见dataqa R2)
+  advice: 呈报留观至10-18后删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 5955526
+    rows_exact: 5955526
+    bytes_on_disk: 204517648
+    active_parts: 274
+    date_range: 2005-02-23 .. 2026-09-16
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c1_market.kline_etf_60min
+    bak_rows: 5955526
+    live_rows: 5971565
+- db: c1_market
+  table: kline_1min_tzbak_20260914
+  origin_event: 1min 时区修复旧备份
+  origin_date: '2026-09-14'
+  repair_status: 修复已完成且被后续 ETF 族修复覆盖
+  advice: 呈报删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 36194235
+    rows_exact: 36194235
+    bytes_on_disk: 945439747
+    active_parts: 2
+    date_range: 2026-06-01 .. 2026-07-15
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c1_market.kline_1min
+    bak_rows: 36194235
+    live_rows: 1476961249
+- db: c1_market
+  table: kline_5min_tzbak_20260914
+  origin_event: 5min 时区修复旧备份
+  origin_date: '2026-09-14'
+  repair_status: 修复已完成且被后续 ETF 族修复覆盖
+  advice: 呈报删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 4456056
+    rows_exact: 4456056
+    bytes_on_disk: 102828155
+    active_parts: 2
+    date_range: 2026-06-22 01:35:00.000 .. 2026-07-15 15:00:00.000
+  zero_ref:
+    hit_count: 1
+    hits:
+    - D:/ZephyrAlpha/scripts/data/repair_kline5min_tz_deprecated_update_key.py
+  live_relation:
+    live_table: c1_market.kline_5min
+    bak_rows: 4456056
+    live_rows: 293254383
+- db: c1_market
+  table: kline_daily_bak_256
+  origin_event: 日线备份(旧,256 批次修复事件)
+  origin_date: '2026-08-21'
+  repair_status: 后续日线链修复(T1复权链)已验证
+  advice: 呈报删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 9669695
+    rows_exact: 9669695
+    bytes_on_disk: 365262695
+    active_parts: 430
+    date_range: 1970-01-01 .. 2026-08-21
+  zero_ref:
+    hit_count: 1
+    hits:
+    - D:/ZephyrAlpha/src/zephyr/frontend/dashboard/api_server.py
+  live_relation:
+    live_table: c1_market.kline_daily
+    bak_rows: 9669695
+    live_rows: 10085765
+- db: c1_market
+  table: tick_data_tzbak_20260914
+  origin_event: tick 时区修复备份
+  origin_date: '2026-09-14'
+  repair_status: tick 链修复已验证
+  advice: 呈报删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 507700
+    rows_exact: 507700
+    bytes_on_disk: 12153708
+    active_parts: 1
+    date_range: 2026-09-09 .. 2026-09-10
+  zero_ref:
+    hit_count: 2
+    hits:
+    - D:/ZephyrAlpha/scripts/data/p0_tick_backfill.py
+    - D:/ZephyrAlpha/scripts/data/wipe_tick3days.py
+  live_relation:
+    live_table: c1_market.tick_data
+    bak_rows: 507700
+    live_rows: 8847875434
+- db: c1_market
+  table: auction_book_limit_bak_20260908
+  origin_event: 竞价簿限额修复备份
+  origin_date: '2026-09-08'
+  repair_status: 竞价桥修复已验证(A'方案落地)
+  advice: 呈报删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 1911474
+    rows_exact: 1911474
+    bytes_on_disk: 5944302
+    active_parts: 2
+    date_range: 2026-07-21 .. 2026-09-03
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c1_market.auction_book
+    bak_rows: 1911474
+    live_rows: 2669584
+- db: c1_market
+  table: kline_daily_hfq_bak_20260915dup
+  origin_event: 后复权修复 dup 备份
+  origin_date: '2026-09-15'
+  repair_status: 复权链 D0+RB 已落地(final3)
+  advice: 呈报删
+  is_1970clean_reference: false
+  snapshot:
+    rows_parts: 5207
+    rows_exact: 5207
+    bytes_on_disk: 384467
+    active_parts: 1
+    date_range: 2026-09-11 .. 2026-09-11
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c1_market.kline_daily_hfq
+    bak_rows: 5207
+    live_rows: 8405884
+- db: c3_fundamental
+  table: balance_sheet_bak_1970clean_20260914
+  origin_event: 1970 清理备份(治本参照)
+  origin_date: '2026-09-14'
+  repair_status: 1970 治本归甲线未启动
+  advice: 治本参照·保留
+  is_1970clean_reference: true
+  snapshot:
+    rows_parts: 2395
+    rows_exact: 2395
+    bytes_on_disk: 94818
+    active_parts: 1
+    date_range: 1970-01-01 .. 1970-01-01
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c3_fundamental.balance_sheet
+    bak_rows: 2395
+    live_rows: 339738
+- db: c3_fundamental
+  table: cashflow_statement_bak_1970clean_20260914
+  origin_event: 1970 清理备份(治本参照)
+  origin_date: '2026-09-14'
+  repair_status: 1970 治本归甲线未启动
+  advice: 治本参照·保留
+  is_1970clean_reference: true
+  snapshot:
+    rows_parts: 2402
+    rows_exact: 2402
+    bytes_on_disk: 32439
+    active_parts: 1
+    date_range: 1970-01-01 .. 1970-01-01
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c3_fundamental.cashflow_statement
+    bak_rows: 2402
+    live_rows: 310447
+- db: c3_fundamental
+  table: financial_indicator_bak_1970clean_20260914
+  origin_event: 1970 清理备份(治本参照)
+  origin_date: '2026-09-14'
+  repair_status: 1970 治本归甲线未启动
+  advice: 治本参照·保留
+  is_1970clean_reference: true
+  snapshot:
+    rows_parts: 2585
+    rows_exact: 2585
+    bytes_on_disk: 36850
+    active_parts: 1
+    date_range: 1970-01-01 .. 1970-01-01
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c3_fundamental.financial_indicator
+    bak_rows: 2585
+    live_rows: 387990
+- db: c3_fundamental
+  table: income_statement_bak_1970clean_20260914
+  origin_event: 1970 清理备份(治本参照)
+  origin_date: '2026-09-14'
+  repair_status: 1970 治本归甲线未启动
+  advice: 治本参照·保留
+  is_1970clean_reference: true
+  snapshot:
+    rows_parts: 2401
+    rows_exact: 2401
+    bytes_on_disk: 48976
+    active_parts: 1
+    date_range: 1970-01-01 .. 1970-01-01
+  zero_ref:
+    hit_count: 0
+    hits: []
+  live_relation:
+    live_table: c3_fundamental.income_statement
+    bak_rows: 2401
+    live_rows: 346176

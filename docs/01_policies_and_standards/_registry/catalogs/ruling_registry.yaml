@@ -3772,7 +3772,7 @@ entries:
     S2 战场+T lane 窄考试实证。三重独立理由各自成立：①立项依据无证——原引用裁定号 304 查无此号（本裁定取号 304 落位，治愈悬空引用，语义承接=本裁定即做T 战役的终局裁定）、293 张冠李戴（在册实为收益带收紧）
     、2.7bp/边无任何底层考试产物；②统计不可过——N 账本累计 4562 口径下 DSR>0.5 需年化 Sharpe≥2.68（T=471），战役自设 1.2 验收线与之互斥；③毛边际实证为负——T lane 预注册单假设窄考试（510300 15min 三重共振极值点+maker 限价+月≤8 次）
     ：共振组毛边际 +0.88bp/边 vs 对照组 +0.87bp 统计不可区分（Welch p=0.4997），扣成本净 -7.5bp，判 RED。复活路径=单假设窄考试先行（预注册卡制），现行全矩阵穷举战役形态废止。
-    复用件归库。证据：docs/_working/kimi_audit/adjudications/S2_做T_v2_战役裁定书.md + lane_reports/T.md + exp_evidence/t_exam_result.yaml。
+    复用件归库。证据：docs/_working/archive/2026-09/kimi_audit/adjudications/S2_做T_v2_战役裁定书.md + lane_reports/T.md + exp_evidence/t_exam_result.yaml。
   affected_files: []
   related_arch: []
   related_rulings:
@@ -4237,7 +4237,7 @@ entries:
   category: 'Git 治理'
   status: 'active'
   summary: >-
-    P2 Git 链真并发压测（8 完整档，docs/_working/kimi_audit/redblue_git/
+    P2 Git 链真并发压测（8 完整档，docs/_working/archive/2026-09/kimi_audit/redblue_git/
     p2_git_chain_stress_closeout.md）实证修订 #320 的模型前提：①真仓 24 笔/h 上限
     由门禁链主导（A2 实测 gate 链 P50 46.4s），非 serializer 常数——沙箱免门禁骨架
     实测 440~870 笔/h；②吞吐不随 worker 扩展反降（10w 870→20w 540/h，20w 饿死
@@ -4276,16 +4276,16 @@ entries:
     为死维（每日仅一次 10:30 决策点）与"计数值<0"落地为 countdown c∈[8,12] 均已在冻结文档
     预注册或在出证报告偏差清单中列示。
   evidence: >-
-    冻结文档 docs/_working/factory/strategy_cards/e4_freeze_s_owner_001_300etf_band_t.md
+    冻结文档 docs/_working/archive/2026-09/factory/strategy_cards/e4_freeze_s_owner_001_300etf_band_t.md
     （commit b4c3c6f26d，先于任何跑数）；出证报告
-    docs/_working/factory/strategy_cards/e4_report_s_owner_001_300etf_band_t.md；
+    docs/_working/archive/2026-09/factory/strategy_cards/e4_report_s_owner_001_300etf_band_t.md；
     考试产物 data/backtest_artifacts/runs/S-OWNER-001-e4/（summary.json+is_grid_full.csv
     432 组全量+oos_nav_curves.csv）；实现与测试
     src/zephyr/strategy_factory/owner_band_t/（8 件）+tests/strategy_factory/（30 用例两轮 0 失败，
     含未来函数反事实/PIT/做T 额度红蓝）；数据核查：kline_60min 为个股库无 000300 指数小时线、
     kline_etf_60min OOS 段 2,575 根覆盖充足（报告 §1）。
   affected_files:
-    - docs/_working/factory/strategy_cards/e4_report_s_owner_001_300etf_band_t.md
+    - docs/_working/archive/2026-09/factory/strategy_cards/e4_report_s_owner_001_300etf_band_t.md
     - data/backtest_artifacts/runs/S-OWNER-001-e4/summary.json
     - src/zephyr/strategy_factory/owner_band_t/exam.py
   related_arch: []
@@ -4378,8 +4378,8 @@ entries:
     修标流程+重考历史（#305 自留门），维持 draft。
   affected_files:
     - config/standards.yaml
-    - docs/_working/kimi_audit/exp_evidence/e6_dual_ruler_result.yaml
-    - docs/_working/kimi_audit/exp_evidence/p4_switch_reexam_result.yaml
+    - docs/_working/archive/2026-09/kimi_audit/exp_evidence/e6_dual_ruler_result.yaml
+    - docs/_working/archive/2026-09/kimi_audit/exp_evidence/p4_switch_reexam_result.yaml
   related_arch: []
   related_rulings:
     - '裁定#306'
@@ -4408,7 +4408,7 @@ entries:
   status: 'active'
   summary: >-
     miniQMT 9/18 退役，tasks.yaml 63 任务 source=miniqmt 的接管裁决（实测证据
-    docs/_working/kimi_audit/nightbuild/source_switch_verdict.md）：①tick/盘口/竞价/
+    docs/_working/archive/2026-09/kimi_audit/nightbuild/source_switch_verdict.md）：①tick/盘口/竞价/
     QMT 独有族（futures_position/margin_trading/期权族等）=QMT 桥主线（akshare 无能力，
     桥当日实证 116 万 tick/7936 标的落地）；②分钟族 1-60min=QMT 桥合成主线（方案 b）、
     akshare 副线——收盘即有零外网依赖 vs akshare 限流+浅深度；③日线族=akshare 主线
@@ -4683,8 +4683,8 @@ entries:
         三档观察档（稳健 1.815/均衡 1.838/进攻 1.470）不全员上 E8 赛马也不就地封存：按桶切换假设走预注册卡+2025-09..2026-09 前向窗窄测，存活才进 E8 paper sleeve 赛马；E4 收口前禁出厂部署
         弹药账口径采信闭式外推账（约 4 条 @H2 OOS Sharpe 1.4）作下阶段 KPI
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4699,8 +4699,8 @@ entries:
         统计 PASS（2.37）但融券费率 8-10%/年+券源未建模，且复权链修复后幅度将缩（红蓝高敏感第一位）
         先封存不做交易解读；单独立卡建模融券成本的重判排复权链修复（X-2）后同批——先修尺子再量
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4715,8 +4715,8 @@ entries:
         HL 费率作废条款已触发（公开档 perp 4.5bp/spot 7bp vs 占位 2bp）
         按真实费率重判一次（预期约 3.0% 更红）后封卡；RED 结论不变、证据变硬，重判成本极低
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4731,8 +4731,8 @@ entries:
         PATD 11 条引擎工单（T1/T2/T4/T6 高优）归图形库线；5 条补扫历史回填归数据线 pattern_event_backfill.py 正门（JOB-108 幂等已验证）
         工单明细=pattern_definition_audit_report.md §6
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4746,8 +4746,8 @@ entries:
     bizmine owner_package §8-5 代裁
         SOP v0.1 转正升 sop/：G4 并 factor_mining_sop、G3+G5+G6+G8 合并为一本 exam_policy（净零原则下唯一新立候选）；其余缺口归宿按 strategy_sop_gap_report §3
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4762,8 +4762,8 @@ entries:
         ALGO 规格 v1 批准开第一波，三条件：top3 格先行/功效门自查/矩阵只产候选卡不出 PASS
         规格=≤36 格/波、5 粒度轴×4 数据轴、BH q=0.10、功效门 120 日/桶、跨轮累计 N 账、滚动前向
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4777,8 +4777,8 @@ entries:
     bizmine owner_package §8-7 代裁
         E:/zephyr_cold_archive（1min 2000-2021 255 月/ETF 1min 2005-2018）挂回归数据线正门工单排期；有界矩阵与分钟级信号的最大单点历史深度杠杆，挂回后可救 kline_etf_daily 过浅
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4793,8 +4793,8 @@ entries:
         S1/S0-1 valid 结论全依赖正向读法，冻结反向解读；翻反向须新证据+预注册卡
         E 敏感档来源确认与 L1 成本口径命名归维护班批处理
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4809,8 +4809,8 @@ entries:
         N-6 拦截按 merge 治本（先例 30dc814645 merge 清偿 q-0035）：被拦成品件走 merge 收编；治本后 X-5 落地 flash_speedup §2.1
         X-2 复权链施工前置的预注册方案先【M】后施工
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4824,8 +4824,8 @@ entries:
     终级令 W3 代裁（Owner 授权）
         #ARCH-337 保持 open，30 天无复发（至 2026-10-19）才 resolved；AI 层愿景 §3.5 的 31 项归 AI 层自己 triage 三档，本战役只登记不代判
   affected_files:
-  - docs/_working/final3_campaign/00_master_directive.md
-  - docs/_working/bizmine_night/owner_package.md
+  - docs/_working/archive/2026-09/final3_campaign/00_master_directive.md
+  - docs/_working/archive/2026-09/bizmine_night/owner_package.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4841,8 +4841,8 @@ entries:
     W8-2 C 类/W8-4 循环）全部承接。除 szopen 外全程不得再向 Owner 请示，遇分叉按自裁框架
     （第一性原理+内收判据）登记后直接执行；确实无法裁定→登记+跳过留 Owner。
   affected_files:
-  - docs/_working/final3_campaign/w8_3_owner_signature_book.md
-  - docs/_working/final3_campaign/a1_campaign_ledger.md
+  - docs/_working/archive/2026-09/final3_campaign/w8_3_owner_signature_book.md
+  - docs/_working/archive/2026-09/final3_campaign/a1_campaign_ledger.md
   related_arch: []
   related_rulings: []
   superseded_by: ''
@@ -4873,8 +4873,8 @@ entries:
     出证报告 120 行（fa5c8febaf）+tv2terrain 勘测报告 192 行（b7d8bafdde）。裁 a 案：
     拷贝两报告入 dev（拒绝整支 cherry-pick——registry 冲突无增益）后删两分支+两 worktree。
   affected_files:
-  - docs/_working/factory/strategy_cards/e4_report_s_owner_002_regime_switcher.md
-  - docs/_working/factory/t_v2/2026-09-17-data-terrain-survey.md
+  - docs/_working/archive/2026-09/factory/strategy_cards/e4_report_s_owner_002_regime_switcher.md
+  - docs/_working/archive/2026-09/factory/t_v2/2026-09-17-data-terrain-survey.md
   related_arch: []
   related_rulings: ['裁定#371']
   superseded_by: ''
@@ -4898,7 +4898,7 @@ entries:
     ⑧本批 PROTECTED-PATHS Layer2 无 message 通道的双重计数盲区按文档化紧急 env 通道放行
     （Layer 1 标记已过，审计留痕，治本修复挂 P9 评估）。
   affected_files:
-  - docs/_working/final3_campaign/w8_3_owner_signature_book.md
+  - docs/_working/archive/2026-09/final3_campaign/w8_3_owner_signature_book.md
   - docs/01_policies_and_standards/_registry/contracts/directory_contract.yaml
   related_arch: ['ARCH-FINAL3-RULES-BATCH-001']
   related_rulings: ['裁定#371', '裁定#342']
@@ -4956,9 +4956,9 @@ entries:
     前旧口径）；standards.yaml 错引 #335→#337 已随批修正（faac3c73）。执行回执=三判定册
     在册+本条；施工债 10 项列判定册 §5 指针归 P11 消化。
   affected_files:
-  - docs/_working/kimi_audit/adjudications/p7a_ac_family_rulings.md
-  - docs/_working/kimi_audit/adjudications/p7b_bd_family_rulings.md
-  - docs/_working/kimi_audit/adjudications/p7c_efgh_family_rulings.md
+  - docs/_working/archive/2026-09/kimi_audit/adjudications/p7a_ac_family_rulings.md
+  - docs/_working/archive/2026-09/kimi_audit/adjudications/p7b_bd_family_rulings.md
+  - docs/_working/archive/2026-09/kimi_audit/adjudications/p7c_efgh_family_rulings.md
   related_arch: []
   related_rulings: ['裁定#371']
   superseded_by: ''
@@ -5193,4 +5193,118 @@ entries:
   - docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml
   related_arch: []
   related_rulings: ['裁定#378', '裁定#381']
+  superseded_by: ''
+- ruling_id: '裁定#389'
+  title: 'Owner 快签 T 策略预注册卡（VWAP 回归族/funding carry 两冻结卡批准开测+后续 T 新卡快签通道）'
+  date: '2026-09-21'
+  category: '策略'
+  status: 'active'
+  summary: >-
+    Owner 2026-09-21 即时批"T 策略预注册卡"（对话原文为凭）。册面核实：T 车道（st-bizmine-t0-20260919，
+    commit c20c946f T2 转换表）已升两张判据冻结的正式预注册卡——①VWAP 回归族卡（bizmine_night/algo_mining/
+    vwap_prereg_card.md）②funding carry 卡（含小时级勘误，crypto_probe/funding_carry_rejudge.md）。本裁定
+    批准：①两冻结卡**即刻进入历史回测窄测**（判据以卡面 frozen 为准，禁改；双成本口径 Q5 8.4bp+Owner-001
+    1.5bp；数据深度 tick 约 21 个月/分钟约 5 年/funding 小时级 466 万行；A股卡禁实盘/模拟盘下单——纯历史
+    回测）；②**快签通道**：后续 T 侧新卡（信号侧新假设/港股通簇真日内回转/币圈设计卡升格）凡按既定纪律
+    起草并冻结（IS 期钉死边界/含通过判据与成本模型/负结果承诺）即自动获准开测，无需逐卡请示；③结果如实
+    入册（含负结果），归 Max 复审班判读防 p-hacking——判读 PASS 后"进模拟盘策略槽"仍 Owner 终审门位，
+    本裁定不预授；④裁定#304 对做T 现形态的关闭维持不变——本批只开"新假设卡测试"通道，翻案须测试 PASS+
+    复审通过后另裁。丁线 loop_12 T 策略环挖矿不受影响（管道照挖，策略槽默认空置直至终审通过）。
+  affected_files:
+  - docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_prereg_card.md
+  - docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md
+  related_arch: []
+  related_rulings: ['裁定#304', '裁定#378']
+  superseded_by: ''
+- ruling_id: '裁定#390'
+  title: '勘误#389：T 两卡均已测毕入册（VWAP=RED/funding=RED 已封卡），"即刻开测"作废——Owner 记忆正确，方案班核实失职'
+  date: '2026-09-21'
+  category: '策略'
+  status: 'active'
+  summary: >-
+    Owner 质询"做T 注册卡早签了、早测了、矩阵也跑过"——核实：**Owner 完全正确，#389 ①款错误，即日勘误
+    作废**。册面实证（全部 [亲验] 在盘）：①VWAP 回归族卡（T0-PRERG-01）已按 frozen 参数零改动执行完毕，
+    verdict=RED 全量入册（algo_mining/vwap_exam_report.md+algo_top3_results.csv）；②funding carry 卡已测
+    （RED）并按裁定#363 以真实费率重判一次（RED 变硬）后**封卡 SEALED**（crypto_probe/
+    funding_carry_rejudge.md——条款=无论红绿不再重开）；③tick 72 格执行矩阵已预注册+已执行
+    （tick_matrix/tick_matrix_prereg_card.md+tick_matrix_report.md，0 亮点）；④tick_t0 卡+结果、⑤etft0
+    三宇宙勘测卡+结果均已入册。**处置**：#389①"两卡即刻开测"作废——funding 封卡效力维持，任何会话禁以
+    #389 为凭重跑两卡；#389②快签通道条款**维持有效**（T 新卡按纪律冻结即自动获准开测）；#389③④维持
+    （复审判读/#304 不变）。修正后 T 侧真实状态=**无未测卡**：证据链 #304 成本→信号 RED→条件化
+    TERMINATE→tick 矩阵 0 亮点→三宇宙绿区（borderline）→VWAP RED→funding RED 封卡；唯一前进路=信号侧
+    新假设起草新卡（走快签通道）→测→复审→Owner 终审；港股通簇真日内回转仍为未测空白候选。trevive 窄测
+    班指令（聊天版）作废，若已开班会话改任务为"汇总既有 T 测试结果一页纸呈复审判读，禁重跑"。
+  affected_files:
+  - docs/_working/archive/2026-09/bizmine_night/algo_mining/vwap_exam_report.md
+  - docs/_working/archive/2026-09/bizmine_night/crypto_probe/funding_carry_rejudge.md
+  related_arch: []
+  related_rulings: ['裁定#389', '裁定#363', '裁定#304']
+  superseded_by: ''
+- ruling_id: '裁定#391'
+  title: 'A00 追认裁定：4.12 亿行 ETF 时区修复（裁定#333⑤ 明示未授权后执行）——技术面追认+治理条款封口（W8 第二圈清理班代裁，Owner 总攻令授权）'
+  date: '2026-09-21'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    fullflow MAX_ADJUDICATE_LIST A00（唯一"既成事实定性"项）由 st-workclean-20260921 按 Owner 2026-09-21
+    总攻令（"遇到问题自己裁定，无法裁定才登记跳过"）代裁。**事实链**（dossier=docs/_working/fullflow_campaign/
+    delivery/MAX_ADJUDICATE_LIST.md §A00，随 fullflow 留场）：09-18 04:02~04:34 裁定#333⑤ 入册明示"4.12 亿行
+    --execute 修复未在本批授权内"；09-18 07:22 commit 60ed3aa49c 宣布执行完毕。**技术复核**（总包只读查库在案）：
+    live 与 tz_bak 五表 2026-02 全月行数完全相等 319,456=修复方向正确/零行数损失，备份 *_tz_bak_20260918
+    在库可逆。**裁定：追认**。理由：①修复已验真且可逆，回滚=再执行一次 4.12 亿行破坏性操作（正是 #333 所管之事）
+    且净价值为负——量化社区治理口径（CFA 回测模型风险框架）：先斩后奏必须落正式结论，无第三种悬空态；②归因=编排歧义
+    非抗命：执行方 instL 计划块将 --execute 列为 B2（tdchain_mine/e1_tdata_infra/workbook.md），存在"车道按计划块
+    理解为已放行"的客观空间，且 05:34~06:07 客观为非交易时段；③先例=#333 内对 S18 族的追认条款。**三条诚实保留
+    维持有效**：聊天/外部通道批文不在仓内可观测面；"低峰窗即授权"口头口径若存在则本件属批文未入册而非绕闸。
+    **治理条款（封口，零新增 gate 的条文澄清）**：自本裁定起，破坏性操作的最终授权校验以 ruling_registry 为唯一
+    真源；工单/计划块/任务书措辞一律不构成放行；裁定明示"未授权"后执行的一律追责到编排链（派单方与执行方共担），
+    追认必须以裁定号落册、禁止悬空。A00 dossier 三种保留如实入档。
+  affected_files:
+  - docs/_working/fullflow_campaign/delivery/MAX_ADJUDICATE_LIST.md
+  related_arch: ['#ARCH-309']
+  related_rulings: ['裁定#333']
+  superseded_by: ''
+- ruling_id: '裁定#392'
+  title: '任务卡 D 类 13 项打包裁定（Owner 授权代裁：D-1..D-8+D-9..D-13+ARCH-331 墓碑）'
+  date: '2026-09-21'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    Owner 2026-09-21 授权"全部你裁定了"（含两项原 Owner 门位项的委托裁定），材料=d_class_ruling_
+    package.md（8 项案卷）+README 第二节 D 类清单（13 项）+各卡节。逐项裁定：**D-1**（rule_audit
+    5 件 staged+同域新发 tails 交接令）=授权执行班 tc_02 卡认领统一落袋，.patch/.json 转载体
+    （方案 a：转 .md 附录后删原文件）+token 收编；**D-2**（X-5 CloneGuard merge 治本）=复核通过
+    授权施工（#369 路线+先例 30dc814645，补丁备份在盘，gov 车道落地原文 2.1 节+红证双向+观察窗）；
+    **D-3**（W2 三项治本去留）=随母题 #ARCH-324 销项登记 known-limitation（F5 LEDGER 为登记面），
+    复发判据=同因摩擦一周内≥3 次再立项；**ARCH-331**=幽灵号判定（全源不可考）——登记墓碑禁补造
+    定义，引用面改指本裁定；**D-4**（10 词表域）=追认收编+关闭 #335 过渡态口径（known 79→89/合法
+    62→72/单测 6 passed 实证），收编者回写登记面，涉净删未走门的以本裁定为追认门；**D-5**（A5 死会话
+    遗产+四预裁）=批代落（按 BT-P1-031 新版重排 crisis_block_check 短路 fail-closed+SIM_DAILY_KINDS
+    FIFO 末位两段接线，不搬旧成品；apply 三常量 CRISIS_GATE_LOG/SIM_ATTRIBUTION_DAILY/
+    COHORT_DAILY_LEDGER_DDL 同批补注册）；O-1/O1/O2/凭据/期货通道解锁五预裁按 tc_08 卡步骤 7
+    建议值与证据锚转正（O2 既定值=index_code:IM+beta×0.5+real_channel_locked:true 确认）；红队
+    加固 +31/-7 维持禁落（R-072a）只防蒸发；**D-6**（index.md vs README.md）=双认并存去重（index.md
+    =生成器真源、README.md=人工面，检查器改双认，同目录双存以 index.md 计数，存量 findings 按双认
+    重算）；**D-7**（standards_governance/__init__.py）=PEP420 豁免+注册表条目改注对齐账实（零新
+    文件，净零内收）；**D-8**（.worktrees 5 棚无 git 注册纯残骸）=批拆——前置打包归档 G 盘+manifest
+    哈希留证，删除命令呈 Owner 手动执行（OPS-GUARD 禁会话内删 .worktrees/** 红线维持）；**D-9**
+    （宪法 A/B 班）=方案确认按 tc_09 卡执行（B 组简化版+三组双盲+xtreme-redblue-v3 计分；硬线=C 组
+    必须显著差于 A 否则废卷；只出报告不改宪法正文，宪法切换另裁；l0.md 分叉清单先回执勿删）；
+    **D-10**（解除 pf_alloc 挂触发）=批准解除——组合层立项以 eng_quantcombine 第八节为输入立即
+    可开，pf_alloc 线按 TC-08 独立推进，两线解耦；**D-11**（W3_retirement 登记面）=维持"不回改归档
+    正文"惯例，本裁定即在册说明（实质终局=#336+e4df828ddc+#ARCH-326 resolved）；**D-12**（TC-07
+    L2 越批施工）=追认既成事实（L2 收集库 8/9 项已被全流通车道抢建），授权按"复审 L2 既成事实+
+    方案改收尾批"重写后施工，缺的 4 个验收测试件补齐；**D-13**（.aidrafts 3 个死会话工棚
+    st-residual-20260917/st-maxexec-20260920/st-tilib-clear-20260920，有 git 注册）=批拆——先逐棚
+    确认无未收割内容（stash+git status 扫描，有则 salvage 归档）→git worktree remove 正门拆除→
+    磁盘残骸打包 G 盘后清。执行路由：D-1..D-13 对应 tc_02/tc_03/tc_04/tc_05/tc_08/tc_09/tc_10/
+    tc_07 卡第 4 波六车道（gov/pf_alloc/生成器/automation/ai_layer/audit）照卡施工，开工前查
+    SessionRegistry 避让在飞甲乙丙线（撞锁等 5 分钟+claim），tasks.yaml 互斥件错峰。密钥轮换
+    （.env 曝光超 3 天）维持 Owner 动作项：必换=OKX(只读+IP 白名单+禁提币)/iFind/百度网盘 token，
+    建议换=付费 LLM key+TUSHARE_TOKEN，AI 只核对不代生成。
+  affected_files:
+  - docs/_working/recovered_task_cards/d_class_ruling_package.md
+  - docs/_working/recovered_task_cards/README.md
+  related_arch: ['#ARCH-324', '#ARCH-326']
+  related_rulings: ['裁定#335', '裁定#369', '裁定#377', '裁定#384', '裁定#391']
   superseded_by: ''

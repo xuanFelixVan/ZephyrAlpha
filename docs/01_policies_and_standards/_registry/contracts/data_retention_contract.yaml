@@ -17,7 +17,7 @@
 #   3. 定义多频共振策略的数据依赖关系
 #
 # 铁律（用户裁决，不可变更）：
-#   1. 所有数据永不删除——只保留或归档；归档到 Parquet 并验证行数一致后的分区允许 DROP PARTITION（数据已保留在 E 盘）
+#   1. 所有数据永不删除——只保留或归档；归档到 Parquet 并验证行数一致后的分区允许 DROP PARTITION（数据已保留在冷储主库 F 盘）
 #   2. 进 Cold 层必须手动触发——不自动迁移
 #   3. 所有表 Hot 层无 TTL 自动删除——ClickHouse 永久保留；手动归档 DROP PARTITION 不属于 TTL 自动删除
 #
@@ -40,11 +40,11 @@
 schema_version: "1.0.0"
 doc_type: gate
 module_id: PS-CTR-003
-version: "1.2.0"
+version: "1.3.0"
 title: "Data Retention & Backtest Layering Contract"
 status: active
 ttl: permanent
-contract_version: "1.2.0"
+contract_version: "1.3.0"
 
 # ============================================================
 # §1 不变原则（铁律）
@@ -57,13 +57,13 @@ invariants:
     scope: all_business_tables
 
   - id: INV-RET-002
-    rule: "进 Cold 层必须手动触发"
-    description: "ClickHouse → E盘 Parquet 归档由人工 CLI 触发，不自动迁移"
-    enforcement: "archiver.py 仅提供手动 CLI，不接入 scheduler 自动任务"
+    rule: "进 Cold 层默认手动触发；启用滚动归档后允许事件触发自动（五重安全阀）"
+    description: "ClickHouse → 冷储主库（现 F 盘）Parquet 归档默认由人工 CLI 触发。启用滚动归档 reconciler 后，同时满足五重安全阀（备份新鲜/export/verify/第二副本/批限量）的过线完整月分区允许备份成功事件触发自动归档；归档线=保留期+1 个月滞回；kill 旗一键回退手动模式。业务数据'永不删除'铁律（INV-RET-001）不变，自动迁移仍走 archiver.py 三阶段唯一通道（v1.3.0 修订依据=Owner 裁定#380⑤/#384）"
+    enforcement: "rolling_archive_reconciler.py 启动时加载 §rolling_archive 参数；五阀缺一即跳过本批；连续 3 分区失败熔断；shadow 模式只读禁 drop"
 
   - id: INV-RET-003
     rule: "所有表 Hot 层无 TTL"
-    description: "ClickHouse 所有业务表不设 TTL 表达式，无自动删除。允许手动 DROP PARTITION 归档（INV-RET-002 手动触发前提，归档后数据保留在 E 盘 Parquet）"
+    description: "ClickHouse 所有业务表不设 TTL 表达式，无自动删除。允许手动 DROP PARTITION 归档（INV-RET-002 手动触发前提，归档后数据保留在冷储主库 F 盘 Parquet）"
     enforcement: "DDL 校验器检查 CREATE TABLE 语句不含 TTL 子句（已存在TTL的表必须删除）"
 
   - id: INV-RET-004
@@ -77,6 +77,11 @@ invariants:
     enforcement: "layers 条目 cold_policy=不归档 + data_asset_registry 登记；新表登记时按 <1 GiB 阈值判定；体量增长突破阈值后按对应层年龄线重估"
     scope: small_research_datasets
     institutional_practice: "机构特殊境遇(special-situation)/事件驱动研究语料常驻在线可查层，不分层（2026-08-16 调研：事件数据 PIT API 化是全行业惯例）"
+
+  - id: INV-RET-006
+    rule: "滚动归档参数真源=本契约 §rolling_archive"
+    description: "滚动归档的触发、限量、滞回、熔断、排除表、kill 旗等参数属规则数据，真源=本契约 §rolling_archive，reconciler 启动时加载，禁止码内第二真源（v1.3.0 新增，裁定#384）"
+    enforcement: "scripts/ch/rolling_archive_reconciler.py load_contract_params() 缺块即拒绝启动"
 
 # ============================================================
 # §2 10层量化数据分层体系
@@ -393,17 +398,17 @@ dependencies:
 storage_matrix:
   - table_pattern: "c1_market.tick_data / index_quote / auction_snapshot"
     hot: "ClickHouse，无TTL，永久保留"
-    cold: "E盘Parquet，手动CLI触发（≥2年后）"
+    cold: "冷储主库F盘Parquet，手动CLI或五重安全阀事件触发（≥2年后，v1.3.0）"
     delete: "永不"
 
   - table_pattern: "c1_market.kline_*"
     hot: "ClickHouse，无TTL，永久保留"
-    cold: "E盘Parquet，手动CLI触发（≥5-10年后）"
+    cold: "冷储主库F盘Parquet，手动CLI或五重安全阀事件触发（≥5-10年后，v1.3.0）"
     delete: "永不"
 
   - table_pattern: "c3_fundamental.news_data"
     hot: "ClickHouse，无TTL，永久保留"
-    cold: "E盘Parquet，手动CLI触发（≥10年后；pre-2010首轮已归档）"
+    cold: "冷储主库F盘Parquet，手动CLI或五重安全阀事件触发（≥10年后；pre-2010首轮已归档）"
     delete: "永不"
 
   - table_pattern: "c3_fundamental.*（财务/事件/元数据等<1GiB）"
@@ -422,9 +427,48 @@ storage_matrix:
     delete: "永不"
 
 # ============================================================
+# §5B 滚动归档参数（INV-RET-006 真源；v1.3.0 新增，裁定#380⑤/#384）
+# ============================================================
+rolling_archive:
+  enabled: true
+  mode: full_auto          # shadow | semi | full_auto（当前=全自动；kill 旗可一键回退手动）
+  trigger: backup_success_event   # 备份成功事件链（禁 cron/Timer/sleep-loop）
+  hysteresis_months: 1     # 归档线=保留期+1 月滞回（防边界抖动）
+  batch_max_partitions: 3  # 单批 ≤3 分区
+  batch_max_bytes: 30000000000   # 单批 ≤30G
+  circuit_breaker_failures: 3    # 连续 3 分区失败熔断
+  kill_switch_flag: rolling_archive_disabled
+  mirror_root: "G:/zephyr_cold/60_mirror/zephyr_cold_archive"   # 第二副本落点（drop 前必须两份验证副本）
+  excluded_tables:         # 排除表（甲线互斥回落前 TI 不自动搬，裁定#382 逐表批制同向）
+    - technical_indicator
+  retention_lines_months:  # 各表热层保留线（月，含在 layers 人工口径内机读化）
+    tick_data: 25          # tick 2 年+1 月滞回
+    kline_1min: 61         # 分钟 5 年+1
+    kline_5min: 61
+    kline_15min: 61
+    kline_30min: 61
+    kline_60min: 61
+    kline_120min: 61
+    kline_etf_1min: 61
+    kline_etf_5min: 61
+    kline_etf_15min: 61
+    kline_etf_30min: 61
+    kline_etf_60min: 61
+    kline_lof_1min: 61
+    news_data: 121         # 新闻 10 年+1
+
+# ============================================================
 # §6 变更历史
 # ============================================================
 changelog:
+  - version: "1.3.0"
+    date: "2026-09-20"
+    author: "st-disk-ch-20260921 (乙线, Owner 裁定#380⑤+#384 授权)"
+    changes:
+      - "修订 INV-RET-002：默认手动触发→五重安全阀+备份成功事件触发自动（kill 旗可回退）；E 盘口径改冷储主库（现 F 盘）"
+      - "新增 INV-RET-006 + §5B rolling_archive 参数块：滞回 1 月/批限量 3 分区 30G/熔断 3 连败/排除表 TI（甲线互斥回落前）"
+      - "执行件=scripts/ch/rolling_archive_reconciler.py（archiver 三阶段唯一通道复用）；删除'消费/tasks.yaml retention 字段'空头支票声明随本版不再提及"
+      - "version: 1.2.0→1.3.0, contract_version: 1.2.0→1.3.0"
   - version: "1.2.0"
     date: "2026-08-16"
     author: "AI-ARCH-002"

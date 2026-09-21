@@ -805,7 +805,7 @@ logs:
   - log_id: LOG-OPS-001
     name_zh: CH 冷归档清单
     kind: audit_log
-    path: E:/zephyr_cold_archive/archive_manifest.jsonl（仓外绝对路径——冷归档盘）
+    path: F:/zephyr_cold/50_archive/by_project/zephyralpha/archive_manifest.jsonl（仓外绝对路径——冷储主库 F 盘）
     writers: [scripts/ch/archiver.py]
     consumers: [人工查询排障]
     schema_summary: 归档分片清单 JSONL

@@ -55850,6 +55850,14 @@ entries:
   desc_en: ""
   plain_zh: "盘一遍磁盘对一遍总账：盘有馆无=编外(blind)，馆有盘无=幽灵(ghost)，双向差集清零才算账平"
   responsibility_layer: governance
+- module_path: src/zephyr/factor/technical_indicators/chips.py
+  domain_id: D_FACTOR
+  name_zh: "筹码族技术指标"
+  name_en: "Chips Indicators"
+  desc_zh: "CYQ 筹码分布（迭代衰减模型）/SCR 筹码集中度/CYC 成本均线（通达信口径）三指标，指标输入首次引入换手率"
+  desc_en: ""
+  plain_zh: "这个模块负责计算股票的筹码类指标：看看现在持股的人里有多少是赚钱的（获利盘）、大家的平均成本是多少、筹码集中还是分散，以及按成交量加权算出的成本均线。它需要换手率数据来模拟每天新旧筹码的交换，换手率高就说明老筹码被换掉得多。计算只看过去的数据，不会偷看未来，没有换手率数据时自动不出数而不会报错。"
+  responsibility_layer: business
 
 battle_map_steps:
 - step_id: BM-BUY-05

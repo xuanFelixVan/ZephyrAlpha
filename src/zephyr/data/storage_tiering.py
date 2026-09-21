@@ -17,6 +17,13 @@
 """
 冷热分层 TTL 自动迁移 + 分区 + UFL 事实层 + 双副本校验 + 恢复演练（CAND-DAT-006 / B1-00584）。
 
+**已退役（裁定#383，2026-09-20）**：纸面模块——头部声明 CONSUMERS=zephyr.data.scheduler
+但 scheduler 零引用（全仓仅包级 re-export 与注释级语义引用，2026-09-20 实测）。滚动归档唯一
+通道=scripts/ch/archiver.py 三阶段（export→verify→drop，契约 §2A 原则 3 唯一通道原则），
+本模块迁移决策逻辑与之同域重复，按内收四判据"零触发零消费→退役"退役。物理摘除（删文件+
+测试+注册表挂接清理+depgraph 重建）归 src/zephyr/data 域后续批次执行；摘除前本模块禁新增
+任何调用方。
+
 min_build_spec 对齐（深挖裁定=做 P0，复用现有 CH/Redis/backup 不重建）：
   1. 冷热分层 TTL 自动迁移：热 Redis（tick/bar 热键）→ 温 ClickHouse → 冷 Parquet 归档
   2. 分区策略：日线按年（year=YYYY）、分钟按月（year=YYYY/month=MM）
@@ -110,9 +117,9 @@ class _HotBackend(Protocol):
 
     def keys(self) -> Iterable[str]: ...
 
-    def get(self, key: str) -> Any: ...
+    def get(self, key: str) -> bytes | None: ...
 
-    def delete(self, key: str) -> Any: ...
+    def delete(self, key: str) -> int: ...
 
 
 @dataclass(frozen=True)
@@ -267,11 +274,11 @@ class UFLFactLayer:
             raise UFLMutationError(f"UFL 事实不可改: {fact.key} 已存在异值（追加式事实层禁改校验）")
         self._facts[fact.key] = fact
 
-    def get(self, key: str) -> Any:
+    def get(self, key: str) -> object | None:
         fact = self._facts.get(key)
         return fact.value if fact is not None else None
 
-    def update(self, key: str, value: Any) -> None:
+    def update(self, key: str, value: object) -> None:
         raise UFLMutationError(f"UFL 追加式事实层禁止 update: {key}")
 
     def delete(self, key: str) -> None:

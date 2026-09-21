@@ -136,7 +136,7 @@ offrepo_assets:
     notes: "QMT 模拟文件桥，可由模拟终端重建；services_registry 监控项 qmt_bridge_sim"
 
   - id: OFFREPO-COLD-ARCHIVE
-    path: "E:\\zephyr_cold_archive"
+    path: "F:\\\\zephyr_cold\\\\50_archive\\\\by_project\\\\zephyralpha"   # 2026-09-20 迁 F（分包4）
     type: cold_archive
     regenerable: false
     criticality: critical

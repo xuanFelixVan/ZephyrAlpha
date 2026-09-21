@@ -587,11 +587,33 @@ if ($Mode -eq "ch") {
     }
     if ($rotated.Count -gt 0) { Write-OK ("Rotation: removed {0} old snapshot(s): {1}" -f $rotated.Count, ($rotated -join ',')) }
 
-    # DB dumps: D:\tmp_db_dumps -> F:\db_dumps (unchanged /MIR, overwrite by design)
+    # DB dumps: versioned dated snapshots (ruling #380-7/#381: 14-day rolling by default;
+    # rotation gated on CH backup ok -- oldest snapshot only removed when data body is in DB
+    # and doubly backed up. Legacy /MIR files at target root stay as frozen extra copy.)
     if (Test-Path $DumpDir) {
-        & robocopy $DumpDir $DumpsTarget "/MIR" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
+        $dumpsDay = (Get-Date).ToString("yyyyMMdd")
+        $dumpsDayTarget = Join-Path $DumpsTarget $dumpsDay
+        New-Item -ItemType Directory -Path $dumpsDayTarget -Force | Out-Null
+        & robocopy $DumpDir $dumpsDayTarget "/E" "/COPY:DAT" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
         $rcDumps = $LASTEXITCODE
-        if ($rcDumps -ge 8) { Write-Warn "robocopy dumps failed (exit $rcDumps)" } else { Write-OK "DB dumps robocopy done (exit $rcDumps)" }
+        if ($rcDumps -ge 8) { Write-Warn "robocopy dumps failed (exit $rcDumps)" } else { Write-OK ("DB dumps snapshot done: {0}" -f $dumpsDayTarget) }
+        $rotatedDumps = @()
+        $dumpsStateOk = $false
+        try {
+            $sJson = Get-Content $StateFile -Raw -Encoding UTF8 | ConvertFrom-Json
+            $dumpsStateOk = ([string]$sJson.last_ch_backup_status -eq "ok")
+        } catch { $dumpsStateOk = $false }
+        if ($dumpsStateOk) {
+            $dumpsRetention = 14
+            $cutoffDumps = (Get-Date).AddDays(-$dumpsRetention).ToString("yyyyMMdd")
+            foreach ($d in (Get-ChildItem -LiteralPath $DumpsTarget -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt $cutoffDumps } | Sort-Object Name)) {
+                Remove-Item -LiteralPath $d.FullName -Recurse -Force -ErrorAction SilentlyContinue
+                if (-not (Test-Path -LiteralPath $d.FullName)) { $rotatedDumps += $d.Name }
+            }
+            if ($rotatedDumps.Count -gt 0) { Write-OK ("DB dumps rotation: removed {0} old snapshot(s)" -f $rotatedDumps.Count) }
+        } else {
+            Write-Warn "DB dumps rotation skipped (CH backup not ok -- oldest snapshot kept as insurance)"
+        }
     }
     $vaultOk = ($rcCode -lt 8) -and ($linkFail -eq 0)
     $codeResult = @{
@@ -708,6 +730,55 @@ if ($Mode -eq "ch") {
     }
 }
 
+# ==================== STAGE 3d: G-drive fallback mirror (3-2-1 G-side, ruling #380-6/#381) ====================
+# Added 2026-09-20: mirror F backup artifacts to G:\zephyr_backup_mirror\<id>\ for the
+# 3-2-1 G-side fallback. Section config: backup_config.yaml g_mirror (same line-state-machine
+# parse as 3c, no powershell-yaml dep). G is USB HDD (70MB/s) - mirror only, never online path.
+# First full sync done 2026-09-20 overnight by st-disk-ch-20260921.
+$gMirrorResult = @{status="skipped"; reason="Mode=ch"}
+if ($Mode -eq "ch") {
+    Write-Stage "Mode=ch, skipping G-drive mirror (Stage 3d)"
+} else {
+    Write-Stage "Stage 3d: G-drive fallback mirror"
+    $gMirrorBase = "G:\zephyr_backup_mirror"
+    if ($yamlContent -match 'g_mirror:[\s\S]*?base:\s*"([^"]+)"') { $gMirrorBase = $matches[1] -replace '\\\\','\' }
+
+    $gMirrorTargets = @()
+    $curGId = $null; $inGMirror = $false
+    foreach ($line in (Get-Content $ConfigFile -Encoding UTF8)) {
+        if ($line -match '^[A-Za-z_][A-Za-z0-9_]*:') { $inGMirror = ($line -match '^g_mirror:'); continue }
+        if (-not $inGMirror) { continue }
+        if ($line -match '-\s+id:\s*(\S+)') { $curGId = $matches[1].Trim() }
+        elseif ($curGId -and $line -match 'source:\s*"([^"]+)"') {
+            $gMirrorTargets += [pscustomobject]@{ id = $curGId; source = ($matches[1] -replace '\\\\','\') }
+            $curGId = $null
+        }
+    }
+
+    $gMirrorStatus = @{}
+    foreach ($t in $gMirrorTargets) {
+        if (-not (Test-Path $t.source)) {
+            $gMirrorStatus[$t.id] = @{status="failed"; error="source missing: $($t.source)"}
+            Write-Err "G-mirror [$($t.id)]: source missing: $($t.source)"
+            continue
+        }
+        $gTgt = Join-Path $gMirrorBase $t.id
+        & robocopy $t.source $gTgt "/MIR" "/XJ" "/COPY:DAT" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
+        $rcG = $LASTEXITCODE
+        if ($rcG -ge 8) {
+            $gMirrorStatus[$t.id] = @{status="failed"; robocopy_exit=$rcG}
+            Write-Err "G-mirror [$($t.id)] robocopy failed (exit $rcG)"
+        } else {
+            $gMirrorStatus[$t.id] = @{status="ok"; robocopy_exit=$rcG}
+            Write-OK "G-mirror [$($t.id)]: ok"
+        }
+    }
+    $gMirrorResult = @{
+        status = $(if (($gMirrorStatus.Values | Where-Object status -eq "failed").Count -gt 0) {"failed"} elseif ($gMirrorTargets.Count -eq 0) {"skipped"} else {"ok"})
+        targets = $gMirrorStatus
+    }
+}
+
 # ==================== STAGE 4: Report ====================
 Write-Stage "Stage 4: Report"
 $duration = (Get-Date) - $backupStartTime
@@ -720,6 +791,7 @@ $report = @{
     code_backup = $codeResult
     git_bundle = $bundleResult
     offrepo_backup = $offrepoResult
+    g_mirror = $gMirrorResult
 }
 
 New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
@@ -727,7 +799,7 @@ $report | ConvertTo-Json -Depth 5 | Out-File $LogFile -Encoding utf8
 Write-OK "Report saved: $LogFile"
 
 # Update state file
-$state = if (Test-Path $StateFile) { Get-Content $StateFile -Raw | ConvertFrom-Json } else { [PSCustomObject]@{} }
+$state = if (Test-Path $StateFile) { Get-Content $StateFile -Raw -Encoding UTF8 | ConvertFrom-Json } else { [PSCustomObject]@{} }
 if (-not $state) { $state = [PSCustomObject]@{} }
 if ($Mode -ne "ch") {
     $state | Add-Member -NotePropertyName last_backup_time -NotePropertyValue (Get-Date).ToString("o") -Force
@@ -755,6 +827,27 @@ if ($dbStatus.clickhouse) {
 }
 $stateJson = ($state | ConvertTo-Json -Depth 3) -replace "`r`n", "`n"
 [System.IO.File]::WriteAllText($StateFile, $stateJson, (New-Object System.Text.UTF8Encoding($false)))
+
+# ==================== STAGE 4b: Rolling archive evaluation ====================
+# Backup-success event hook (contract v1.3.0 INV-RET-002 / ruling #380-#384).
+# Event-triggered only - NO new scheduled task (constitution red line; the daily
+# 06:00 task already exists as the Owner-approved fallback carrier). The
+# reconciler re-checks all five safety valves itself; failure degrades to warn.
+$rollingOk = ($Mode -ne "ch")
+$chOkRolling = ($dbStatus.clickhouse -and [string]$dbStatus.clickhouse.status -eq "ok")
+if ($rollingOk -and $chOkRolling) {
+    try {
+        $raScript = Join-Path $ProjectRoot "scripts\ch\rolling_archive_reconciler.py"
+        if (Test-Path $raScript) {
+            Write-Stage "Stage 4b: Rolling archive evaluation (backup-success hook)"
+            $raOut = & python $raScript --mode full_auto 2>&1
+            $raOut | Select-Object -Last 5 | ForEach-Object { Write-Host "[rolling-archive] $_" }
+            # vhdx quarterly compaction precheck (ruling #380-4: REMINDER ONLY, never auto-run)
+            $raPre = & python $raScript --precheck 2>&1
+            $raPre | Select-Object -Last 3 | ForEach-Object { Write-Host "[vhdx-precheck] $_" }
+        }
+    } catch { Write-Warn ("rolling archive evaluation failed: " + $_.Exception.Message) }
+}
 
 Write-Host ""
 Write-Host "==========================================" -ForegroundColor Green

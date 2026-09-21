@@ -25,3 +25,5 @@ issue: UNIFIED-CAMPAIGN-001-V1-TIMING
 - **00:00-05:00 计划任务带**：02:30 tilib_indicator_backfill_nightly（dwm 回填，修复 C-5 前在飞）+晨间数据任务族；乙闪断/独占窗插入时逐个查 `schtasks /query` 实况。
 - **06:00 backup.ps1 兜底窗**（post-commit 事件触发为主）；乙 W4 调换前显式暂停并登记本板。
 - **周休窗**：Owner 已裁周日 ≥09:00 才允许计划关机；夜班窗 23:00-09:00 打折使用。
+| 2026-09-20 22:34 | 2026-09-20 | 23:05-23:30 | 闪断 | 乙分包1 CH 重启（text_log level=information+系统日志 TTL 落地，WO-5） | 分钟级断连；甲无在途批（未注册）；丙不碰 CH；避开 02:30 夜跑带 | st-disk-ch-20260921 | done | 实际 23:05:33 执行 23:05:36 复活（秒级）；TTL 8 表全绿+level=information 生效；重启后暴露 hyperliquid NaN+中信期货 TSV 解析既有重试风暴（~31 err/min，归甲 WO-2 A4/A7，非本次变更引入） |
+| 2026-09-21 00:20 | 2026-09-21 | 00:30-05:30 | 独占窗（盘间） | 乙分包5 F→G 兜底镜像 710G（robocopy /MIR，盘间搬运无 CH 干预）+暂停 ZephyrAlpha-DailyBackup 至镜像完成 | F/G 盘重 IO；CH 零影响；甲线未注册；02:30 tilib 夜跑不涉 F/G | st-disk-ch-20260921 | done | 五目标全 ok（ch_vm 592G/offrepo 137G/zephyr_cold 137G/db_dumps/git_bundles）；计划任务已恢复 Ready；backup.ps1 实跑全链完成含 CH 增量 ok；ZephyrAlpha-DailyBackup Ready |

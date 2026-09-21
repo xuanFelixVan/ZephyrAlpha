@@ -46,6 +46,10 @@ working_vault:
 db_dumps:
   source: "D:\\tmp_db_dumps"
   target: "F:\\db_dumps"
+  retention_days: 14   # 版本化滚动（裁定#380⑦/#381：可配置默认 14 天；rotation 闸=CH 备份 ok）
+  versioned: true      # 2026-09-20 起 /MIR 覆盖式改日期化快照（backup.ps1 STAGE 3）
+  retention_days: 14   # 版本化滚动（裁定#380⑦/#381：可配置默认 14 天；rotation 闸=CH 备份 ok）
+  versioned: true      # 2026-09-20 起 /MIR 覆盖式改日期化快照（backup.ps1 STAGE 3）
 
 ch_backup:
   base_file: "market.zip"       # 全量基线（一次性创建，inc 膨胀时自动重建）
@@ -53,6 +57,23 @@ ch_backup:
   rebase_threshold: 0.5         # inc >= 50% × base 时自动重建基线
 
 dump_dir: "D:\\tmp_db_dumps"
+
+# ---- G 盘兜底镜像（2026-09-20 裁定#380⑥/#381 S4：3-2-1 的 G 侧兜底；backup.ps1 STAGE 3d /MIR 逐条）----
+# 首次全量由 st-disk-ch-20260921 通宵班完成（F→G 710G）；此后每日备份成功事件随跑增量。
+# G 盘=USB 机械盘（写 70MB/s），只放镜像不放在线链路；源 immutable/版本化，/MIR 风险可控。
+g_mirror:
+  base: "G:\\\\zephyr_backup_mirror"
+  targets:
+    - id: ch_vm_backup
+      source: "F:\\\\ch_vm_backup"
+    - id: offrepo_backup
+      source: "F:\\\\offrepo_backup"
+    - id: db_dumps
+      source: "F:\\\\db_dumps"
+    - id: git_bundles
+      source: "F:\\\\working_vault\\\\git_bundles"
+    - id: zephyr_cold
+      source: "F:\\\\zephyr_cold"
 
 trigger:
   min_interval_seconds: 28800  # 8小时间隔保护（post-commit 触发用）
@@ -86,7 +107,7 @@ offrepo_backup:
     - id: stash_archive
       source: "D:\\ZephyrAlpha-stash-archive"
     - id: cold_archive
-      source: "E:\\zephyr_cold_archive"
+      source: "F:\\\\zephyr_cold\\\\50_archive\\\\by_project\\\\zephyralpha"   # 2026-09-20 迁 F（分包4）
   # 2026-09-14 Owner 裁定：data_download（E:\数据下载）不备份，已从目标移除——
   # 源数据当日 52.66→118.38GB 持续膨胀，/MIR 镜像同量吃掉 F 盘空间（当日 +66GB，
   # 是 F 盘告急头号推手）；F:\offrepo_backup\data_download 旧副本已删（源在 E 盘可随时重镜像）

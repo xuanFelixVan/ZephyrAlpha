@@ -42943,5 +42943,9 @@ creation_tokens:
   token: code-doc-gov-campaign-final-report-20260921
   created_by: st-code-doc-20260921
   capability: code_doc_gov_campaign
+- file: docs/_working/archive/2026-08/reviews/2026-08-21-fle-gates-activation-adjudication.md
+  token: reviews-fle-adjudication-2026-08-21-fle-gates-activation-adjudication-20260921
+  created_by: st-workclean-20260921
+  capability: reviews_fle_adjudication
   merge_evaluation: "同真源派生并入本册台账（总包丙端到端交付报告），任务bound 随战役 TTL"
 di_seam_exemptions: []

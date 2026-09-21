@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import decimal
 import hashlib
 import http.client
 import json
@@ -66,7 +67,9 @@ log = logging.getLogger("archiver")
 
 # ============== 配置 ==============
 
-ARCHIVE_ROOT = pathlib.Path("E:/zephyr_cold_archive")
+ARCHIVE_ROOT = pathlib.Path(
+    "F:/zephyr_cold/50_archive/by_project/zephyralpha"
+)  # 2026-09-20 冷储主库落 F（分包4，对账 PASS 2211 文件/117.6G）
 MANIFEST_PATH = ARCHIVE_ROOT / "archive_manifest.jsonl"
 
 _CH_HOST = get_secret_or_default("CLICKHOUSE_HOST", "")
@@ -251,7 +254,7 @@ def export_partition(
         )
         return pq_path
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量宽捕：log+处置后继续
         log.error("  export 异常: %s", e)
         if pq_path.exists():
             pq_path.unlink()
@@ -277,6 +280,7 @@ def _normalize_val(v) -> str:
     （tz-aware 归一到 Asia/Shanghai 墙钟，对齐 CH DateTime64 打印格式）；
     浮点 round(6) 后 repr（吸收 Float32→Float64 精度扩展差异）。
     """
+    dt_str_re = re.compile(r"^(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\.(\d{3})$")
     if v is None:
         return ""
     if isinstance(v, (float, np.floating)):
@@ -287,6 +291,11 @@ def _normalize_val(v) -> str:
         return str(int(v))
     if isinstance(v, (int, np.integer)):
         return str(int(v))
+    if isinstance(v, decimal.Decimal):
+        # CH Decimal64 列在 Parquet/pandas 侧为 Decimal、CH JSON 侧为去尾零数字——
+        # 统一经 float 规范：整值收 int 串，非整值 repr(round6)（与 float 分支同口径）
+        f = float(v)
+        return str(int(f)) if f.is_integer() else repr(round(f, 6))
     if isinstance(v, pd.Timestamp):
         if v.tzinfo is not None:
             v = v.tz_convert("Asia/Shanghai").tz_localize(None)
@@ -299,7 +308,13 @@ def _normalize_val(v) -> str:
         return v.strftime("%Y-%m-%d %H:%M:%S")
     if isinstance(v, datetime.date):
         return v.isoformat()
-    return str(v)
+    s = str(v)
+    # CH 侧 DateTime64 JSON 串形对齐（2026-09-20 修）：'YYYY-MM-DD HH:MM:SS.000'
+    # 零毫秒后缀与 pandas Timestamp 无毫秒串形不等——零毫秒去后缀，非零保留 '.mmm'
+    m = dt_str_re.match(s)
+    if m:
+        return s[:-4] if m.group(2) == "000" else s
+    return s
 
 
 def _compare_sample_rows(ch_rows: list[dict], pq_path: pathlib.Path) -> bool:
@@ -315,6 +330,10 @@ def _compare_sample_rows(ch_rows: list[dict], pq_path: pathlib.Path) -> bool:
         return True
     pq_cols = pq.read_schema(str(pq_path)).names
     cols = [c for c in pq_cols if c in ch_rows[0]]
+    # ingest_ts（灌入元数据）不参与比对（2026-09-20 修）：同版本重复行 FINAL 折叠
+    # 在导出/抽样两次查询间可翻转出不同 ingest_ts，行情数据列逐列比对不受影响；
+    # 数据列（价格/量额/日期/代码等）仍 100% 严格多重集比对。
+    cols = [c for c in cols if c != "ingest_ts"]
     if not cols:
         log.error("  verify 失败: 抽样列与 Parquet 列无交集")
         return False
@@ -334,6 +353,33 @@ def _compare_sample_rows(ch_rows: list[dict], pq_path: pathlib.Path) -> bool:
     return True
 
 
+def _http_query_json(sql: str, timeout: int = 120) -> dict:
+    """直连 HTTP 执行 FORMAT JSON 查询返回 dict。
+
+    2026-09-20 修：原走 ch_reader.query（ch_writer TCP 通道），TCP 路径 FORMAT JSON
+    被驱动吞掉、返回手工拼的 TSV → json.loads 必炸（"Extra data"）；抽样比对自
+    该病灶起恒败。与 export_partition 同通道（直连 HTTP），响应即 JSON 原文。
+    """
+    import http.client as _hc
+    import urllib.parse as _up
+
+    conn = _hc.HTTPConnection(_CH_HOST, _CH_HTTP_PORT, timeout=timeout)
+    try:
+        conn.request(
+            "POST",
+            "/",
+            body=sql.encode("utf-8"),
+            headers={"X-ClickHouse-User": _CH_USER, "X-ClickHouse-Key": _CH_PASSWORD},
+        )
+        resp = conn.getresponse()
+        body = resp.read().decode("utf-8", errors="replace")
+        if resp.status != 200:
+            raise RuntimeError(f"CH HTTP {resp.status}: {body[:300]}")
+        return json.loads(body)
+    finally:
+        conn.close()
+
+
 def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: str | None = None) -> bool:
     """阶段2: 验证 Parquet 行数 = ClickHouse 行数 + 抽样 100 行字段值比对。"""
     try:
@@ -348,7 +394,7 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: 
     try:
         meta = pq.read_metadata(str(pq_path))
         pq_count = meta.num_rows
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量宽捕：log+处置后继续
         log.error("  verify 失败: 读取 Parquet 元数据异常: %s", e)
         return False
 
@@ -374,8 +420,8 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: 
     if ch_count > 0 and ch_count <= 10_000_000:
         try:
             sample_sql = ch_reader.inject_final(_SQL_SAMPLE_RANDOM.format(table=table, where=where))
-            ch_rows = json.loads(ch_reader.query(sample_sql)).get("data", [])
-        except Exception as e:
+            ch_rows = _http_query_json(sample_sql).get("data", [])
+        except Exception as e:  # noqa: BLE001 — 存量宽捕：log+处置后继续
             log.error("  verify 失败: 抽样查询异常: %s", e)
             return False
         if not _compare_sample_rows(ch_rows, pq_path):
@@ -399,7 +445,7 @@ def drop_partition(table: str, partition: str, dry_run: bool = False, period: st
         r = ch_reader.query(sql)
         log.info("  drop 完成")
         return True
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量宽捕：log+处置后继续
         log.error("  drop 失败: %s", e)
         return False
 
@@ -419,7 +465,7 @@ def _read_manifest() -> list[dict]:
     if not MANIFEST_PATH.exists():
         return []
     records = []
-    with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
+    with open(MANIFEST_PATH, encoding="utf-8") as f:
         for line in f:
             line = line.strip()
             if line:
@@ -729,11 +775,11 @@ def stats() -> None:
     try:
         import shutil
 
-        u = shutil.disk_usage("E:\\")
+        u = shutil.disk_usage("F:\\")
         print(
-            f"\nE 盘: 总计 {u.total / 1024**3:.1f} GB, 已用 {(u.total - u.free) / 1024**3:.1f} GB, 可用 {u.free / 1024**3:.1f} GB"
+            f"\n冷储主库(F): 总计 {u.total / 1024**3:.1f} GB, 已用 {(u.total - u.free) / 1024**3:.1f} GB, 可用 {u.free / 1024**3:.1f} GB"
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 — 存量宽捕：log+处置后继续
         pass
 
 
@@ -801,7 +847,7 @@ def restore_partition(table: str, partition: str, period: str | None = None) -> 
         log.info("恢复完成: %s partition=%s ✓", table, partition)
         return True
 
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 存量宽捕：log+处置后继续
         log.error("恢复失败: %s", e)
         return False
 
