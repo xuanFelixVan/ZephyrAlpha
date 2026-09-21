@@ -391,6 +391,18 @@ if ($Mode -eq "code") {
             base_bytes=if($baseStat.exists){[int64]$baseStat.bytes}else{0}
         }
         Write-OK ("ClickHouse dump ($chMode): ok ({0:N1} GiB, {1} files, {2} tables, verified={3})" -f ($fileBytes/1GB), $chNumFiles, $chTableCount, ($fileExists -and $sizeVerified -and $sizeMatch))
+
+        # ---- Dual-write second chain (a3 stage 4.7, 2026-09-21): sync backup zips to
+        # /mnt/chbackup2 (G-disk vhdx) so both chains carry the day's increment.
+        # rsync is incremental; market.zip only re-copied when rebuilt. Failure = warn
+        # (first chain remains source of truth; second chain self-heals next run).
+        try {
+            Write-Stage "ClickHouse dual-write sync (chbackup_local -> chbackup2)"
+            $dualSync = & python $ChSshHelper --cmd "sudo -n rsync -a /mnt/chbackup_local/market.zip /mnt/chbackup_local/inc.zip /mnt/chbackup2/ && ls -la /mnt/chbackup2/*.zip | tail -2" 2>&1
+            $dualLast = ($dualSync | Select-Object -Last 2) -join " | "
+            if ($LASTEXITCODE -eq 0 -and "$dualSync" -match "inc.zip") { Write-OK "Dual-write sync ok: $dualLast" }
+            else { Write-Warn "Dual-write sync inconclusive (exit=$LASTEXITCODE): $dualLast" }
+        } catch { Write-Warn ("Dual-write sync failed: " + $_.Exception.Message) }
     } catch {
         $dbStatus.clickhouse = @{status="failed"; error=$_.Exception.Message}
         Write-Warn "ClickHouse backup failed: $($_.Exception.Message)"
@@ -632,7 +644,10 @@ if ($Mode -eq "ch") {
 $bundleResult = @{status="skipped"; reason="Mode=ch"}
 if ($Mode -ne "ch") {
     Write-Stage "Stage 3b: Git bundle refresh"
-    $bundleDir = Join-Path $VaultBase "git_bundles"
+    # a3 stage 4.4: bundle home is config-driven (git_bundle.base); fallback = legacy <vault>\git_bundles
+    $bundleDir = $null
+    if ($yamlContent -match 'git_bundle:[\s\S]*?base:\s*"([^"]+)"') { $bundleDir = $matches[1] -replace '\\\\','\' }
+    if (-not $bundleDir) { $bundleDir = Join-Path $VaultBase "git_bundles" }
     New-Item -ItemType Directory -Path $bundleDir -Force | Out-Null
     $latestBundle = Get-ChildItem "$bundleDir\*.bundle" -File -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending | Select-Object -First 1
@@ -750,8 +765,13 @@ if ($Mode -eq "ch") {
         if (-not $inGMirror) { continue }
         if ($line -match '-\s+id:\s*(\S+)') { $curGId = $matches[1].Trim() }
         elseif ($curGId -and $line -match 'source:\s*"([^"]+)"') {
-            $gMirrorTargets += [pscustomobject]@{ id = $curGId; source = ($matches[1] -replace '\\\\','\') }
-            $curGId = $null
+            $gMirrorTargets += [pscustomobject]@{ id = $curGId; source = ($matches[1] -replace '\\\\','\'); target = $null }
+        }
+        elseif ($curGId -and $line -match 'target:\s*"([^"]+)"') {
+            # a3 4.6: explicit per-target destination (isolates from sibling mirror dirs)
+            if ($gMirrorTargets.Count -gt 0) {
+                $gMirrorTargets[-1] = $gMirrorTargets[-1] | Add-Member -NotePropertyName target -NotePropertyValue ($matches[1] -replace '\\\\','\') -Force -PassThru
+            }
         }
     }
 
@@ -762,7 +782,8 @@ if ($Mode -eq "ch") {
             Write-Err "G-mirror [$($t.id)]: source missing: $($t.source)"
             continue
         }
-        $gTgt = Join-Path $gMirrorBase $t.id
+        # a3 4.6: per-target explicit target: overrides base\id derivation
+        $gTgt = if ($t.PSObject.Properties['target'] -and $t.target) { [string]$t.target } else { Join-Path $gMirrorBase $t.id }
         & robocopy $t.source $gTgt "/MIR" "/XJ" "/COPY:DAT" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
         $rcG = $LASTEXITCODE
         if ($rcG -ge 8) {

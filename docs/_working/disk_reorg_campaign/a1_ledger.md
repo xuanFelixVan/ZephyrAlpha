@@ -100,3 +100,20 @@ issue: DISK-CH-CAMPAIGN-A1
 3. G 镜像完成后：对账脚本 verify_copy.py 改路径复用；恢复 ZephyrAlpha-DailyBackup；backup.ps1 实跑
 4. TI 自动归档解锁条件：甲线 C-5/批10 回填健康回落公告 → 从契约 §5B excluded_tables 移除
 5. vhdx 压缩：等 Owner 点名（预检单已备）
+
+## 追加令 v2 段（2026-09-21 白天班，a3 安全施工清单执行）
+
+| 时刻 | 动作 | 实测 | 状态 |
+|---|---|---|---|
+| 11:31 | 追加令冷启动（重注册+心跳+keeper）；a3 对账 17 项标记完成（证据指针入清单） | [亲验] | done |
+| 11:45 | 阶段4.2 working_vault 种子点火（F→G:\backup\working_vault，53G/115.6 万件） | G HDD 慢工，在飞 | in_progress |
+| 11:50 | 阶段4.1 G 骨架+同卷改名：昨夜镜像五目标→G:\backup\{db_dumps,git_bundles,offrepo,ch_vm_backup}+zephyr_cold→60_mirror\zephyr_cold_main | 同卷 mv 瞬时 | done |
+| 11:52 | 阶段4.7 CH 双写第二链**零停机**：SCSI 热挂 G:\ch_backup_disk2.vhdx(1TB 动态)；mkfs 首格 D 态卡死（种子占满 G IO）清残留后重格；挂载 /mnt/chbackup2+fstab UUID 持久化 | df 956G 可用 | done |
+| 12:10 | backups2 盘入 CH（config.d/backup_disk2.xml+RELOAD 激活+chown clickhouse）；第二链写读清全链验证 fetch_perf 103 行 RESTORED | [亲验] | done |
+| 12:20 | backup.ps1 CH 段加双写 rsync 步（warn 级降级）+首跑 inc.zip 71G 入 G 链；market.zip 266.6GB 基线同步完成（两侧同尺寸） | [亲验] | done |
+| 12:30-16:30 | 阶段3.2 有界归档 4 批 60+ 轮：~180 过线分区全链归档（etf 微分区+news 月分区；TI 契约排除）；零熔断零失败；candidates 926→712 | VM 空闲 134.7G | done(滚动) |
+| 13:36 | 阶段1.2 G 抽屉库迁 F：95,188 文件/137.6G/31 分钟零失败（60_mirror 排除）；对账共同字节全等；6 件并发新件（workclean）补同步；drawers.jsonl 迁移登记；DuckDB 抽查 kline_1min 24.4 亿行 | [亲验] | done |
+| 13:50 | 阶段6.6 offsite_monthly_manual.md 落档（六步月度流程） | [亲验] | done |
+| 14:30 | STAGE 3b bundle 目录配置化（git_bundle.base→G:\backup\git_bundles）+STAGE 3d per-target 地址支持 | PS1 OK | done |
+| — | 阶段4.8 待种子对账 PASS→配置三切（switch_configs_to_g.py 备妥）→backup.ps1 换 G 实跑 | | **等待种子** |
+| — | 阶段5 双写稳定 14 天（至 10-05）后 ch_backup_disk.vhdx 退役评估+ch_vm_backup B 瘦身+F 纯化 | | **等待项** |

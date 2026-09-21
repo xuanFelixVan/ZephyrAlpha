@@ -37,15 +37,18 @@ code_backup:
 # 版本化代码快照（v2.1）：base\<yyyyMMdd>\，retention 天轮转
 # 空间保险（v2.1.1）：盘剩余 < free_floor_gb 时从最老快照逐出（最少保留 min_keep_days 天），
 # 仍不足则 fail loud 中止代码快照——retention_days=14 是上限，实际保留随空间自适应收缩
+git_bundle:
+  base: "G:\\\\backup\\\\git_bundles"   # 2026-09-21 a3 阶段4.4：bundle 总仓随 G；空值回退旧 <vault>\git_bundles 派生
+
 working_vault:
-  base: "F:\\working_vault"
+  base: "G:\\backup\\working_vault"   # a3 阶段4.2 切 G（09-21 种子对账 PASS 1,156,584 文件全等；F 旧 vault 留观 7 天）
   retention_days: 14
   free_floor_gb: 60
   min_keep_days: 3
 
 db_dumps:
   source: "D:\\tmp_db_dumps"
-  target: "F:\\db_dumps"
+  target: "G:\\backup\\db_dumps"   # a3 阶段4.3 切 G
   retention_days: 14   # 版本化滚动（裁定#380⑦/#381：可配置默认 14 天；rotation 闸=CH 备份 ok）
   versioned: true      # 2026-09-20 起 /MIR 覆盖式改日期化快照（backup.ps1 STAGE 3）
   retention_days: 14   # 版本化滚动（裁定#380⑦/#381：可配置默认 14 天；rotation 闸=CH 备份 ok）
@@ -62,18 +65,15 @@ dump_dir: "D:\\tmp_db_dumps"
 # 首次全量由 st-disk-ch-20260921 通宵班完成（F→G 710G）；此后每日备份成功事件随跑增量。
 # G 盘=USB 机械盘（写 70MB/s），只放镜像不放在线链路；源 immutable/版本化，/MIR 风险可控。
 g_mirror:
-  base: "G:\\\\zephyr_backup_mirror"
+  base: "G:\\\\zephyr_cold"
+  # a3 阶段4.6 改址（2026-09-21）：总仓四类改直写 G 后，镜像仅剩冷库+ch_vm_backup（阶段5.2 前）
   targets:
-    - id: ch_vm_backup
-      source: "F:\\\\ch_vm_backup"
-    - id: offrepo_backup
-      source: "F:\\\\offrepo_backup"
-    - id: db_dumps
-      source: "F:\\\\db_dumps"
-    - id: git_bundles
-      source: "F:\\\\working_vault\\\\git_bundles"
     - id: zephyr_cold
       source: "F:\\\\zephyr_cold"
+      target: "G:\\\\zephyr_cold\\\\60_mirror\\\\zephyr_cold_main"
+    - id: ch_vm_backup
+      source: "F:\\\\ch_vm_backup"
+      target: "G:\\\\backup\\\\ch_vm_backup"
 
 trigger:
   min_interval_seconds: 28800  # 8小时间隔保护（post-commit 触发用）
@@ -98,7 +98,7 @@ trigger:
 # 登记真源: config/asset_inventory.yaml offrepo_assets 中 backup: mirror 的条目
 # 目标: F:\offrepo_backup\<id>\ ；/XJ 防 junction 回环；Mode=ch 时跳过
 offrepo_backup:
-  base: "F:\\offrepo_backup"
+  base: "G:\\backup\\offrepo"   # a3 阶段4.5 切 G（F 旧镜像区留观 7 天）
   targets:
     - id: trae_memory
       source: "C:\\Users\\fanzi\\.trae-cn\\memory"
