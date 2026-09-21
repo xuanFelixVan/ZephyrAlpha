@@ -1,0 +1,26 @@
+findings:
+- id: F-1
+  severity: P2
+  status: confirmed
+  title: watchdog quarantine_tamper 自激误报：快照文件路径按目录检测
+  evidence: sandbox/s3_watchdog/.runtime/audit/worktree_drift_watchdog.jsonl 第3行；worktree_drift_watchdog.py:441
+    _snapshot 返回文件路径 vs :1088 is_dir() 判目录
+  impact: 每次真漂移告警附带 1 条假 tamper 告警（自清除）——稀释真篡改告警信用，与 R-05/R-06 同族的自激噪声；不阻断、不扩散。
+- id: F-2
+  severity: P3
+  status: by-design-observed
+  title: 用户可在自身 message 手写 [GW:自己的sid:merge/:overlap] 伪装旗标留痕
+  evidence: forged_gw_marker_gate 对自身 token 放行（注释明示既有惯例）；网关不解析 message 内嵌旗标，权限零增益
+  impact: 仅审计可读性污染（自律伪造自身留痕），无越权；如需杜绝可让 gate 拒尾缀变体
+- id: F-3
+  severity: info
+  status: not-a-hole
+  title: registry.json 损坏后过期锁仍可经 owner.json stale 判定回收
+  evidence: 损坏+过期后 acquire src/x.py rc=0（acquire 侧 stale reclaim 生效）
+  impact: 无洞—— stale 判定读 owner.json 不依赖 registry.json，损坏不造成锁尸
+- id: F-4
+  severity: P3
+  status: by-design-observed
+  title: 派生写入台账 append-only 无鉴权，可被任意进程伪造归属行
+  evidence: sandbox s5_ledger 手写记录被 lookup 原样返回；消费方仅 git_commit_gateway.record/lookup
+  impact: 审计溯源可信度依赖文件系统权限；当前无门禁据此授权，污染不转化为越权
