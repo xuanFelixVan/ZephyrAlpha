@@ -50,3 +50,13 @@ frontmatter 封账标记 campaign_status=已封账 archived（ttl 词表仅 perm
 - 记忆文件终局态：tc_05 卡步骤 4 同夜执行（仓外件 C 盘 qoder 记忆目录）。
 - 本战役封账后，functional_domain_registry 两旧域 UPSERT 重建现象（#335 三段式过渡设计使然）
   仍按原口径观察，终局净删仍=Owner 门位，未因封账改变。
+
+## 5. 追认回写（2026-09-21，裁定#392（D-4）；增补施工令 v2 文书件）
+
+- **收编者定位**：10 域收编=丙线 WO-13 测试真账批（BRK-082 补登批，st-code-doc-20260921）——
+  target_layer_vocabulary.yaml v1.1.0→v1.2.0（+52/-3，10 值入 values，元数据取自 FDR
+  2026-09-18 补登条目，is_foundation 全 false），该会话 staged 后消失、改动长期未落地。
+- **追认门**：裁定#392（D-4） 追认收编+授权落地（机械核验=staged diff 恰为上述 10 值集合，
+  与 dataqa R3 stable_fail 名单逐一对应）；本班同批代落该 staged 件（v2 令文书件 D-4）。
+- **过渡态口径关闭**：#335 过渡态（known 79 口径+ADVISORY 10 域豁免面）随 v1.2.0 落地关闭；
+  conv 校验器基线更新为 known=89/FDR=79/TR=66/在用=82（本日志第 1 节实测）。

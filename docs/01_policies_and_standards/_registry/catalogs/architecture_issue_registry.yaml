@@ -22136,6 +22136,18 @@ entries:
   created: '2026-09-18'
   last_updated: '2026-09-18'
 
+- issue_id: "#ARCH-331"
+  title: >-
+    幽灵号墓碑（裁定#392）：登记债全源不可考——桌面任务原文/归档目录/本注册表全文/docs 全文
+    检索零定义，源内 #331 均系裁定号非台账号；按裁定#392 登记墓碑禁补造定义，历史引用面
+    改指裁定#392
+  severity: P4低
+  adjudication: >-
+    裁定#392（2026-09-21）判幽灵号：登记债定义不可考，禁凭空造册；本条目即登记面收口，
+    后续引用 #ARCH-331 一律以本墓碑+裁定#392 为准。
+  fix_phase: 无（墓碑，无治本面）
+  status: resolved
+  related_adjudication: '#392'
 - issue_id: "#ARCH-337"
   title: >-
     热文件吞并改实证——module_translation_registry.yaml 于 2026-09-18 07:44-07:55（本地）

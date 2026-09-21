@@ -68,3 +68,7 @@ python .runtime/tmp/recount_g1.py  # 重算悬空数（以 v2 判据重扫 rules
 ## 七、证据等级
 
 全部[亲验]（git log --follow/gate_registry 169 条实测/继任脚本头注/本会话 session_worktree_start 与 safe_write_text 实跑/机械验证底表），除：闸3#4 承载值细节[转报·dossiers index]；簇 8 中三名流程动作锚点[推断·落地 diff 时逐条亲验补锚]。
+
+- 处置行（2026-09-21，st-taskcards-exec-20260921，裁定#392（D-1））：上方验收命令引用的
+  rules_m1_repoint.patch 已按方案a 转载体 docs/_working/rule_audit_campaign/a2_handoff/rules_m1_repoint_archive.md
+  （内容保真），同批删除 .patch/.json 原文件；本行后旧路径改指载体。实质落地=48acb99c46。

@@ -5308,3 +5308,61 @@ entries:
   related_arch: ['#ARCH-324', '#ARCH-326']
   related_rulings: ['裁定#335', '裁定#369', '裁定#377', '裁定#384', '裁定#391']
   superseded_by: ''
+- ruling_id: '裁定#393'
+  title: 'O-1 老蔡日期映射转正（tc_08 卡步骤7，授权=裁定#392（D-5））'
+  date: '2026-09-21'
+  category: '数据口径'
+  status: 'active'
+  summary: >-
+    cohort 复算口径定案：老蔡博文日期疑标错日，以交易所流水方向为准——9/15 +299.5 亿与
+    9/16 −30.1 亿方向吻合（证据锚=归档盒 e4_cohort_reconciliation.md）；cohort_daily_ledger
+    复算按交易所日边界取数，博文日期仅作参考字段不作对齐键。
+  affected_files: [docs/_working/archive/2026-09/residual_construction/e4_cohort_reconciliation.md]
+  related_rulings: ['裁定#392']
+  superseded_by: ''
+- ruling_id: '裁定#394'
+  title: 'O1 危机 warning 阈值转正 θ=0.5（tc_08 卡步骤7，授权=裁定#392（D-5））'
+  date: '2026-09-21'
+  category: '风控参数'
+  status: 'active'
+  summary: >-
+    crisis warning 阈值 θ=0.5 转正（config/crisis_gate.yaml 已有缺省=该值，本裁定补登记面）；
+    后续调整走参数门位流程勿直接改缺省。
+  affected_files: [config/crisis_gate.yaml]
+  related_rulings: ['裁定#392']
+  superseded_by: ''
+- ruling_id: '裁定#395'
+  title: 'O2 对冲合约转正：IM 起步+beta×0.5+real_channel_locked（tc_08 卡步骤7，授权=裁定#392（D-5））'
+  date: '2026-09-21'
+  category: '风控参数'
+  status: 'active'
+  summary: >-
+    E6 纸面对冲腿合约参数转正：index_code=IM、beta×0.5、real_channel_locked=true（纸面通道
+    代码侧拒绝翻转实盘）；月度考基差校准；与 config/paper_hedge.yaml 注释级预裁一致，本裁定
+    补登记面。基差恶化超阈回 Owner 门位重议。
+  affected_files: [config/paper_hedge.yaml]
+  related_rulings: ['裁定#392']
+  superseded_by: ''
+- ruling_id: '裁定#396'
+  title: 'E7 推送凭据登记面转正（tc_08 卡步骤7，授权=裁定#392（D-5））'
+  date: '2026-09-21'
+  category: '治理'
+  status: 'active'
+  summary: >-
+    E7 告警推送（alert_webhook_dispatch）凭据=Server酱/钉钉 key，属 Owner 四类事：AI 只接
+    secrets.py 通道与键名核对，绝不生成/打印/代管凭据值；凭据缺位期间告警通道 fail-closed
+    落盘不外发（enabled: false 缺省维持）。
+  affected_files: [config/alert_webhook.yaml]
+  related_rulings: ['裁定#392']
+  superseded_by: ''
+- ruling_id: '裁定#397'
+  title: '期货通道解锁门位转正（tc_08 卡步骤7，授权=裁定#392（D-5））'
+  date: '2026-09-21'
+  category: '风控参数'
+  status: 'active'
+  summary: >-
+    期货（对冲腿实盘通道）解锁=两道门：①纸面≥3 次对冲演练通过（可机判留档）；②Owner 实盘
+    门位签署。两门不全 real_channel_locked 维持 true，代码侧拒绝翻转不受本裁定影响。
+  affected_files: [config/paper_hedge.yaml]
+  related_rulings: ['裁定#392']
+  superseded_by: ''

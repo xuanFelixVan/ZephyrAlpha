@@ -5016,6 +5016,11 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "docs/03_modules/_domain_factor/algo_flow/chips.yaml"
+  token: "tilib-chips-algoflow-20260921"
+  created_by: "st-data-fix-20260921"
+  capability: "technical_indicators"
+  merge_evaluation: "同真源可派生：批10 chips.py 的 ALGO_FLOW 外部真源 yaml（external 锚硬要求），与 chips.py 同一对象配套件，不并"
 - file: "scripts/audit_technical_indicator_columns.py"
   token: "tilib-audit-ti-cols-r2-20260921"
   created_by: "st-data-fix-20260921"
@@ -42165,6 +42170,36 @@ creation_tokens:
   token: dloop-campaign-routing-table-v1-draft-20260920
   created_by: st-dloop-20260921
   capability: dloop_campaign
+- file: docs/_working/daily_loop_campaign/01_unwired_inventory.md
+  token: dloop-campaign-01-unwired-inventory-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_campaign
+  merge_evaluation: "丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
+- file: docs/_working/daily_loop_campaign/e2e_manual_run_report.md
+  token: dloop-campaign-e2e-manual-run-report-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_campaign
+  merge_evaluation: "丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
+- file: docs/_working/daily_loop_campaign/handoff_max_review.md
+  token: dloop-campaign-handoff-max-review-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_campaign
+  merge_evaluation: "丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
+- file: docs/_working/daily_loop_campaign/wiring_proposals_L2_sector_gate.md
+  token: dloop-campaign-wiring-proposals-l2-sector-gate-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_campaign
+  merge_evaluation: "丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
+- file: docs/_working/daily_loop_campaign/wiring_proposals_cohort_and_t4.md
+  token: dloop-campaign-wiring-proposals-cohort-and-t4-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_campaign
+  merge_evaluation: "丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
+- file: docs/_working/daily_loop_campaign/wiring_proposals_recon_runner_channel.md
+  token: dloop-campaign-wiring-proposals-recon-runner-channel-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_campaign
+  merge_evaluation: "丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
 - file: src/zephyr/plan_engine/__init__.py
   token: dloop-master-switch---init---20260920
   created_by: st-dloop-20260921
@@ -43130,5 +43165,60 @@ creation_tokens:
   token: ai-layer-p1-plan-20260921
   created_by: st-taskcards-exec-20260921
   capability: ai_layer_vision
+- file: tests/strategy_pipeline/test_bh_fdr.py
+  token: dloop-hooks-tests-test-bh-fdr-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_decision_orchestrator.py
+  token: dloop-hooks-tests-test-decision-orchestrator-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_fw_backtest.py
+  token: dloop-hooks-tests-test-fw-backtest-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_intake.py
+  token: dloop-hooks-tests-test-intake-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_lifecycle_fsm.py
+  token: dloop-hooks-tests-test-lifecycle-fsm-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_pipeline_events.py
+  token: dloop-hooks-tests-test-pipeline-events-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_pipeline_events_dloop_hooks.py
+  token: dloop-hooks-tests-test-pipeline-events-dloop-hooks-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_promotion_advisory.py
+  token: dloop-hooks-tests-test-promotion-advisory-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_redblue.py
+  token: dloop-hooks-tests-test-redblue-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_registry_writer.py
+  token: dloop-hooks-tests-test-registry-writer-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
+- file: tests/strategy_pipeline/test_screen_source.py
+  token: dloop-hooks-tests-test-screen-source-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_hooks_tests
+  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
   merge_evaluation: "裁定#392（D-12） P1方案收尾批版：批次0已交付+批次1-5依赖序+六要素"
 di_seam_exemptions: []

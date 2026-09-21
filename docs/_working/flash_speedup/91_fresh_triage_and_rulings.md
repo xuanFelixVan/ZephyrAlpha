@@ -28,6 +28,9 @@ status: triage_recorded_no_code_change_on_fresh
 
 ## 1. 关键新发现 N-5：多会话纠缠未提交半成品（本轮查到的最大堵塞）
 
+> **已闭合（2026-09-21 刷新）**：N-5 由裁定 #385 终审（三分法+旧 stash 309/309 blob 级比对零独有内容归档废弃）；纠缠面后续由 WO-15/w15 判语接管（tc_02 卡）。
+
+
 **现场实测（只读，未动）**：
 
 | 面 | 数量 | 内容 | 严重度 |
@@ -55,6 +58,9 @@ src 消费方 staged 改），叠加一个 **deep_review_full 评审战役的 18
   `git diff --cached` 留档到 `.runtime/tmp/`（免疫 clean -fd），保留 24h 可回溯。
 
 ### 1.1 N-6：热文件潜伏克隆债（Max 落地 §2.1 时撞出，2026-09-18）
+
+> **已闭合（2026-09-21 刷新）**：N-6 由裁定 #369 判 merge 治本（先例 30dc814645）；X-5 施工=裁定#392（D-2） 授权，表驱动收编落地（tc_03 卡步骤1-2，q-20260921-st-taskcards-exec-20260921-0017）。
+
 
 - **现象**：`session_worktree.py` 内 `_session_active_lockfile` / `_heartbeat_pid_file` /
   `_commit_persisted_marker_path`（均路径 getter 一行）与 `_get_manager` / `_get_registry`（均
@@ -107,7 +113,7 @@ src 消费方 staged 改），叠加一个 **deep_review_full 评审战役的 18
 |---|---|---|---|
 | P-1 | F2 serializer k=4 通道数 | Owner 签 S18-R3 | 前置件全绿（lease 续租/双通道压测/热文件闸/exit-burst），**「k=4 就绪待签」** |
 | P-2 | F5 DC 白名单净增 `.json` | Owner 门位 | AI 建议**不净增**（治本在指引非放宽 allowed），待裁 |
-| P-3 | S18-R1~R4 四张裁定书 | Owner 签 | 均 status=待 Owner 签，未自签 |
+| P-3 | S18-R1~R4 四张裁定书 | Owner 签 | **已闭合（2026-09-21 刷新）**：#333 签署 S18-R1/R2/R3/R4 生效+#334 修订前提+#320 修订 R3 前提，P0 复核四条通过（tc_04 卡 D4 行 A 级取证） |
 | P-4 | 门禁退役 + 进程级 YAML 解析缓存 | Owner §4.2 | CREATE-GUARD P50 40-41s TOP 阻断候选；提案不自签 |
 | P-5 | =N-1 | Owner | 见 §2.10 |
 | P-6 | =N-2 | Owner | 见 §2.11（§1 提供放大实证） |
