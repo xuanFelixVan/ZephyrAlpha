@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/validate_load_path_integrity.py | §
+# noqa: m11-perm-manual-legitimate  M11豁免: 治理 CLI 校验器，run_all.py 批量调度链成员非永久系统（WO-13 批次登记 2026-09-21）
 # [MODULE] scripts.governance.d5_architecture.validators.validate_load_path_integrity
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.__init__
@@ -40,7 +41,7 @@ args:
 - --fix
 - --warn-only
 - --jsonl
-description: "parse AGENTS.md §8.2 task menu (SKIP until §8.2 authored), verify referenced files exist. Anchored to AI加载路径不可漂移铁律"
+description: "parse legacy task menu (历史任务路由章节已退役, gate idle), verify referenced files exist. Anchored to AI加载路径不可漂移铁律"
 dimensions:
 - D5
 priority: P0
@@ -49,10 +50,10 @@ warn_only: false
 """
 
 """
-Parses AGENTS.md §8.2 task menu (when authored), extracts all file
+Parses legacy task menu (历史任务路由章节已退役), extracts all file
 path references, and verifies each one exists on disk.
 
-Authority: AI加载路径不可漂移铁律 (planned anchoring in AGENTS.md §6
+Authority: AI加载路径不可漂移铁律 (RULE-ENV 同源纪律
 关键路径). §8.2 task menu is intended as the single entry point
 for AI to find rule files; path references there must never drift
 from actual file locations.
@@ -132,7 +133,7 @@ def main() -> int:
     import argparse
     import json
 
-    parser = argparse.ArgumentParser(description="GATE-22: AGENTS.md §8.2 path drift check")
+    parser = argparse.ArgumentParser(description="GATE-22: legacy task-menu path drift check (历史章节已退役)")
     parser.add_argument("--check", action="store_true", help="显式检查（历史兼容，默认同理）")
     parser.add_argument("--fix", action="store_true", help="无自动修复，仅保留接口")
     parser.add_argument("--warn-only", action="store_true", help="告警模式")

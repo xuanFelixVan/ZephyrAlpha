@@ -40,7 +40,12 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Final
 
+_GOV_DIR = next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists())
+if str(_GOV_DIR) not in sys.path:
+    sys.path.insert(0, str(_GOV_DIR))
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "src"))
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  SSOT
 from zephyr.shared.utils.time_utils import now_utc  # noqa: E402  RULE-SCHEMA-TZ: 生成器禁 datetime.now()
@@ -49,12 +54,7 @@ __all__: Final = ["main", "scan_fail_open_sites", "render_register"]
 
 SCAN_ROOTS: Final[tuple[str, ...]] = ("src/zephyr", "scripts")
 OUT_PATH: Final[Path] = (
-    REPO_ROOT
-    / "docs"
-    / "01_policies_and_standards"
-    / "_registry"
-    / "catalogs"
-    / "fail_open_register.yaml"
+    REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "fail_open_register.yaml"
 )
 GENERATED_BY: Final[str] = "scripts/governance/d7_code/generate_fail_open_register.py"
 
@@ -116,9 +116,7 @@ MONEY_SYMBOL_RE: Final[re.Pattern[str]] = re.compile(
     re.IGNORECASE,
 )
 FO_RE: Final[re.Pattern[str]] = re.compile(r"fail[_\-]?open", re.IGNORECASE)
-HARD_PERMIT_RE: Final[re.Pattern[str]] = re.compile(
-    r"(fail_open\s*[:=]\s*(True|\"?true\"?)\b|FAIL_OPEN)"
-)
+HARD_PERMIT_RE: Final[re.Pattern[str]] = re.compile(r"(fail_open\s*[:=]\s*(True|\"?true\"?)\b|FAIL_OPEN)")
 TRACE_RE: Final[re.Pattern[str]] = re.compile(
     r"(logger|logging|\blog\.|audit|metric|counter\.|alert|notify|warn|"
     r"exception\(|emit|breach|incident|dlq|dead_letter|raise\b)",
@@ -127,12 +125,11 @@ TRACE_RE: Final[re.Pattern[str]] = re.compile(
 #: 生成器自身文件不计入登记册（它是扫描器，不是 fail-open 点）
 SELF_EXCLUDE: Final[str] = "scripts/governance/d7_code/generate_fail_open_register.py"
 
-_SKIP_DIR_RE: Final[re.Pattern[str]] = re.compile(
-    r"(__pycache__|\.aidrafts|\.worktrees|c4_pdf_cache)"
-)
+_SKIP_DIR_RE: Final[re.Pattern[str]] = re.compile(r"(__pycache__|\.aidrafts|\.worktrees|c4_pdf_cache)")
 
 
 def _iter_py() -> list[Path]:
+    """_iter_py implementation."""
     out: list[Path] = []
     for root in SCAN_ROOTS:
         base = REPO_ROOT / root
@@ -147,6 +144,7 @@ def _iter_py() -> list[Path]:
 
 
 def _rel(p: Path) -> str:
+    """_rel implementation."""
     return str(p.relative_to(REPO_ROOT)).replace("\\", "/")
 
 
@@ -219,17 +217,17 @@ def render_register(sites: list[dict[str, Any]]) -> str:
         "# 派生册：唯一产出者=scripts/governance/d7_code/generate_fail_open_register.py",
         "# 手工编辑禁止（宪法 §9.5）；重生成 = python scripts/governance/d7_code/generate_fail_open_register.py",
         "# BRK-047 收口：让「设计意图 fail-open」与「偷懒 fail-open」首次可机械区分。",
-        "schema_version: \"1.0.0\"",
+        'schema_version: "1.0.0"',
         "doc_type: register",
         "ttl: permanent",
         "status: active",
-        f"generated_at: \"{stamp}\"",
+        f'generated_at: "{stamp}"',
         f"generated_by: {GENERATED_BY}",
         f"scan_roots: {list(SCAN_ROOTS)!r}".replace("'", '"'),
-        "criteria_zh: \"五轴：file:line / 所在环节(FF-*) / 是否在钱路径 / 吞掉后有无痕迹(log|audit|metric|alert|raise) / 是否硬编码默认放行\"",
+        'criteria_zh: "五轴：file:line / 所在环节(FF-*) / 是否在钱路径 / 吞掉后有无痕迹(log|audit|metric|alert|raise) / 是否硬编码默认放行"',
         f"total_fail_open: {len(sites)}",
         f"total_files: {len(by_file)}",
-        f"content_sha256: \"{_digest(sites)}\"",
+        f'content_sha256: "{_digest(sites)}"',
         "bucket_counts:",
     ]
     for name in (
@@ -260,21 +258,21 @@ def render_register(sites: list[dict[str, Any]]) -> str:
         head.append(f"{name}:  # {note}（{len(rows)} 处）")
         head.append("  entries:")
         for s in rows:
-            head.append("    - file: \"%s\"" % s["file"])
+            head.append('    - file: "%s"' % s["file"])
             head.append("      line: %d" % s["line"])
             head.append("      stage: %s" % s["stage"])
             head.append("      on_money_path: %s" % str(s["money"]).lower())
             head.append("      has_trace: %s" % str(s["trace"]).lower())
-            head.append("      code: \"%s\"" % _scalar(s["code"]))
+            head.append('      code: "%s"' % _scalar(s["code"]))
     head.append("")
     head.append("designed_degradation_with_trace:  # 有痕降级（视为设计意图，本轮不动）")
     head.append(f"  count: {len(buckets.get('designed_degradation_with_trace', []))}")
-    head.append("  note_zh: \"逐条清单由 --full 模式按需再生成；此处不展开以免派生册失去可读性\"")
+    head.append('  note_zh: "逐条清单由 --full 模式按需再生成；此处不展开以免派生册失去可读性"')
     head.append("")
     head.append("per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核")
     head.append("  entries:")
     for f, n in sorted(by_file.items(), key=lambda kv: (-kv[1], kv[0])):
-        head.append(f"    - file: \"{f}\"")
+        head.append(f'    - file: "{f}"')
         head.append(f"      count: {n}")
     head.append("")
     return "\n".join(head)
@@ -286,6 +284,7 @@ def _scalar(s: str) -> str:
 
 
 def _digest(sites: list[dict[str, Any]]) -> str:
+    """_digest implementation."""
     payload = "\n".join(f"{s['file']}:{s['line']}:{_bucket(s)}" for s in sites)
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
@@ -306,19 +305,19 @@ def main(argv: list[str] | None = None) -> int:
     text = render_register(sites)
     if args.stdout:
         sys.stdout.write(text)
-        return 0
+        return EXIT_PASS
     if args.check:
         cur = OUT_PATH.read_text(encoding="utf-8") if OUT_PATH.exists() else ""
         want = re.search(r'content_sha256: "([0-9a-f]+)"', text)
         have = re.search(r'content_sha256: "([0-9a-f]+)"', cur)
         if not have or have.group(1) != (want.group(1) if want else ""):
             print(f"DRIFT: fail_open_register 派生册过期（盘上={have.group(1)[:12] if have else 'MISSING'}）")
-            return 1
+            return EXIT_FINDINGS
         print(f"OK total_fail_open={len(sites)}")
-        return 0
+        return EXIT_PASS
     OUT_PATH.write_text(text, encoding="utf-8", newline="\n")
     print(f"WROTE {OUT_PATH} total_fail_open={len(sites)} files={len({s['file'] for s in sites})}")
-    return 0
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

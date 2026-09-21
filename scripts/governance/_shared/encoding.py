@@ -17,7 +17,7 @@
 """
 encoding.py — UTF-8 编码安全工具
 
-对标 AGENTS.md §6.7（审计脚本编码铁律）
+对标编码铁律（审计脚本 UTF-8 stdout 强制声明，真源即本件）
      SCRIPT-QUALITY-001 D-A-01（UTF-8 stdout 强制重声明）
 
 所有审计脚本在文件开头调用 ensure_utf8_stdout()，
@@ -35,7 +35,7 @@ def ensure_utf8_stdout() -> None:
     Windows 终端默认编码是 GBK，遇到 emoji/中文直接崩溃。
     调用此函数后，所有 print() 输出均使用 UTF-8。
 
-    对标 AGENTS.md §6.7 标准写法：
+    对标编码铁律标准写法：
         if sys.stdout.encoding != 'utf-8':
             sys.stdout.reconfigure(encoding='utf-8')
     """

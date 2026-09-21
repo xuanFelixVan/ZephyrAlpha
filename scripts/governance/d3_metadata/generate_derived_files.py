@@ -20,7 +20,7 @@ v1.0.0 — 2026-05-03
 
 
 
-AGENTS.md §6.14 漂移免疫架构原则 Level 3：
+漂移免疫架构原则 Level 3（真源 trae_062_ssot_classification.yaml + GATE-VOCAB 词表收敛门）：
   从 vocabulary YAML（canonical SSoT）自动生成派生文件中的枚举列表，
   消除手动复制——物理上不可能漂移。
 
@@ -148,7 +148,7 @@ def _sync_field_registry(field_name: str, vocab_values: list[str], apply: bool) 
         with open(FIELD_REGISTRY_PATH, encoding="utf-8") as f:
             content = f.read()
         data = yaml.safe_load(content)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 生成器/预写门 fail-open 容错语义（既有），异常类型不可枚举
         return False
     if not isinstance(data, dict):
         return False
@@ -231,7 +231,7 @@ def _sync_arch_contract(field_name: str, vocab_values: list[str], apply: bool) -
         with open(ARCH_CONTRACT_PATH, encoding="utf-8") as f:
             content = f.read()
         data = yaml.safe_load(content)
-    except Exception:
+    except Exception:  # noqa: BLE001 — 生成器/预写门 fail-open 容错语义（既有），异常类型不可枚举
         return False
     if not isinstance(data, dict):
         return False
@@ -538,7 +538,7 @@ def _check_unregistered_enum_fields() -> bool:
                 if isinstance(item, dict) and "const" in item:
                     has_enum_values = True
                     break
-        elif "enum" in prop and prop["enum"]:
+        elif prop.get("enum"):
             has_enum_values = True
         if has_enum_values and name not in VOCAB_FIELD_MAP:
             unregistered.append(name)

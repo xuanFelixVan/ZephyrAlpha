@@ -18,7 +18,7 @@
 validate_no_utf8_bom.py — UTF-8 BOM 检测门禁
 
 扫描项目中所有 .yaml / .md / .py 文件，检测 UTF-8 BOM (\\ufeff) 的存在。
-对标 AGENTS.md §4 编码安全规则 + §6.19 门禁-登记表原子同步铁律（BOM 免疫）。
+对标编码安全规则（真源 scripts/governance/_shared/encoding.py）+ 门禁-登记表原子同步铁律（BOM 免疫）。
 
 病因背景: 2026-05-06 第二次审计发现 4 个 catalog YAML 含 BOM，
 导致 generate_registry_master_index.py 注释解析器在首行 break，5 个登记表被静默丢弃。
@@ -61,7 +61,7 @@ args:
 warn_only: false
 description: >
   扫描 .yaml/.md/.py 文件的 UTF-8 BOM，阻断 BOM 污染。
-  对标 AGENTS.md §4 编码安全 — open() 禁止省略 encoding='utf-8'。
+  对标编码安全规则 — open() 禁止省略 encoding='utf-8'。
   本门禁是 generate_registry_master_index.py BOM 免疫的编码层预防防线。
 """
 

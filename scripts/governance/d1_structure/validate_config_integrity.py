@@ -22,9 +22,9 @@ validate_config_integrity.py — 运行时配置完整性十一层纵深审计 +
 对标：ITIL SACM §4.5（Configuration Audit — 配置项定期对账）
      ISO 42001 §8（AI System Impact Assessment — AI系统配置变更评估）
      Kubernetes kubeconform（声明式配置Schema校验模式）
-     AGENTS.md §4（编码安全 — UTF-8 / 无BOM）
-     AGENTS.md §6.2（原子事务模式 — 配置与代码交叉引用一致性 + 测试标记注册链）
-     AGENTS.md §6.5（脚本自创入库强制约定）
+     编码安全 — UTF-8 / 无BOM（真源 scripts/governance/_shared/encoding.py）
+     原子事务模式（safe_write_text CAS）— 配置与代码交叉引用一致性 + 测试标记注册链
+     AGENTS.md CREATE-GUARD 入库登记铁律（脚本自创落位强制约定）
 
 检测内容：
 - L1 文件完整性：YAML数量、编码（无BOM）、语法有效性
@@ -34,10 +34,10 @@ validate_config_integrity.py — 运行时配置完整性十一层纵深审计 +
 - L5 治理文档对账：authority-registry.yaml 引用一致性 + directory-std config/ 目录定义
 - L6 安全态势：deny显式覆盖、宽泛allow检测、权限降级路径
 - L7 自动同步检测：manifest↔文件系统脚本登记对账、预埋文件就绪提醒
-    （⚠️ 仅检测报告，不自动修改CBAC权限——AGENTS.md §6.1 变更须Owner审批）
+    （⚠️ 仅检测报告，不自动修改CBAC权限——AGENTS.md 人机门位 + risk_tier_registry.yaml / ai_autonomy_authority_registry.yaml，变更须Owner审批）
 - L8 代码-配置对账：KNOWN_MODELS同步、registry路径漂移、状态机完整性、implementation_status标注
 - L9 注释与追踪审计：YAML注释计数准确性、git追踪状态、登记表entry_count一致性
-- L10 测试标记对账：@pytest.mark.* 装饰器 ↔ pyproject.toml markers 双向同步（AGENTS.md §6.2 测试标记注册链）
+- L10 测试标记对账：@pytest.mark.* 装饰器 ↔ pyproject.toml markers 双向同步（pyproject.toml markers 注册链）
 - L11 契约-实现对账：declarative-contract-tracker-registry.md ↔ config/ YAML implementation_status 自动交叉校验
 
 exit codes: 0=pass, 1=findings, 2=error
@@ -140,7 +140,7 @@ def l1_file_integrity() -> tuple[list[str], list[str], dict]:
         if raw[:3] == b"\xff\xfe" or raw[:3] == b"\xfe\xff":
             errors.append(f"[L1] {rel}: UTF-16 BOM 编码（应使用 UTF-8 without BOM）")
         elif raw[:3] == b"\xef\xbb\xbf":
-            warnings.append(f"[L1] {rel}: 含 UTF-8 BOM（建议去除，AGENTS.md §4）")
+            warnings.append(f"[L1] {rel}: 含 UTF-8 BOM（建议去除，编码安全规则）")
 
         crlf_count = raw.count(b"\r\n")
         lf_only_count = raw.count(b"\n") - crlf_count
@@ -866,7 +866,7 @@ PYTEST_BUILTIN_MARKERS = frozenset({"parametrize", "skip", "skipif", "xfail", "u
 
 
 def step10_pytest_markers_sync() -> tuple[list[str], list[str]]:
-    """L10: 测试标记对账 — @pytest.mark.* ↔ pyproject.toml markers 双向同步（AGENTS.md §6.2 测试标记注册链）"""
+    """L10: 测试标记对账 — @pytest.mark.* ↔ pyproject.toml markers 双向同步（pyproject.toml markers 注册链）"""
     errors = []
     warnings = []
 
@@ -878,7 +878,7 @@ def step10_pytest_markers_sync() -> tuple[list[str], list[str]]:
     try:
         with open(pyproject_path, "rb") as fh:
             toml_data = tomllib.load(fh)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 校验器 fail-open 容错语义（既有），异常类型不可枚举
         errors.append(f"[L10] pyproject.toml 解析失败: {exc}")
         return errors, warnings
 
@@ -939,7 +939,7 @@ def step11_contract_implementation_audit() -> tuple[list[str], list[str]]:
     try:
         with open(tracker_path, encoding="utf-8") as fh:
             tracker = yaml.safe_load(fh)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 — 校验器 fail-open 容错语义（既有），异常类型不可枚举
         errors.append(f"[L11] 契约跟踪登记表解析失败: {exc}")
         return errors, warnings
 

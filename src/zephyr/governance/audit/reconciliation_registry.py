@@ -2201,7 +2201,7 @@ def make_path_tree_reconciler(gateway: object) -> ReconcilerSpec:
         # P1 治本已落地（#ARCH-REGEN-NONIDEMPOTENT-001，commit 97c77a9c8a，2026-08-05）：
         # 6 生成器去 datetime.now + LIMIT 加 ORDER BY + write_text 加 newline=\n，
         # 生成器幂等性已恢复。P0 止血 skip 已移除，恢复正常 reconciler 逻辑。
-        # 派生产物离库（#ARCH-GOV-BUDGET-001 / I-GOV-1）见 AGENTS.md §11.1.4。
+        # 派生产物离库（#ARCH-GOV-BUDGET-001 / I-GOV-1）见旧宪法归档 §11.1.4（agent_constitution_legacy_v1.md）。
 
         # 治本（2026-06-27）：删除 depgraph.db git diff/add/commit 死代码。
 
@@ -5813,7 +5813,7 @@ def make_regenerate_reconciler(gateway: object) -> ReconcilerSpec:
         # P1 治本已落地（#ARCH-REGEN-NONIDEMPOTENT-001，commit 97c77a9c8a，2026-08-05）：
         # 6 生成器去 datetime.now + LIMIT 加 ORDER BY + write_text 加 newline=\n，
         # 生成器幂等性已恢复。P0 止血 skip 已移除，恢复正常 reconciler 逻辑。
-        # 派生产物离库（#ARCH-GOV-BUDGET-001 / I-GOV-1）见 AGENTS.md §11.1.4。
+        # 派生产物离库（#ARCH-GOV-BUDGET-001 / I-GOV-1）见旧宪法归档 §11.1.4（agent_constitution_legacy_v1.md）。
 
         # 0. drift-gate: 预检测域文档产物是否已有未提交变更（体系A reconcile_async 可能已跑过）
 

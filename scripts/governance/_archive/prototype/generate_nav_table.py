@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/generate_nav_table.py | §
+# noqa: m11-perm-manual-legitimate  M11豁免: 归档原型 CLI 工具，仅考古复跑用非永久系统（WO-13 批次登记 2026-09-21）
 # [MODULE] scripts.governance.generate_nav_table
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.__init__
@@ -19,7 +20,7 @@ generate_nav_table.py — 全流程导航表自动生成器 v1.0.0
 
 
 
-读取 config/nav_table_mapping.yaml（SSoT）→ 交叉验证 registries → 生成 AGENTS.md §5.2。
+读取 config/nav_table_mapping.yaml（SSoT）→ 交叉验证 registries → 生成导航表（历史导航表章节，已随 L0 宪法退役）。
 
 用法：
     python scripts/governance/generate_nav_table.py
@@ -48,7 +49,7 @@ __manifest__ = """
 args: []
 description: >
   全流程导航表自动生成器——从 config/nav_table_mapping.yaml + registries
-  自动生成 AGENTS.md §5.2 七阶段导航表。对标 §6.3 静态清单自动生成铁律。
+  自动生成七阶段导航表（历史导航表章节，已退役）。对标 §6.3 静态清单自动生成铁律。
 dimensions:
 - D1
 priority: P2
@@ -79,14 +80,19 @@ SECTION_START = "## 5.2 全流程导航表"
 SECTION_END = "## 6. AI 施工执行原则"
 
 
+def _collect_nonempty(data, section, field, out):
+    """从 data[section] 各条目收集非空 field 值到 set（通用收集器）。"""
+    for entry in data.get(section, []):
+        v = entry.get(field, "")
+        if v:
+            out.add(v)
+
+
 def load_registry_paths(registry_path) -> dict:
     """从 document-metadata-index-registry.yaml 提取所有已知文件路径。"""
     data = load_yaml(registry_path)
     paths = set()
-    for entry in data.get("documents", []):
-        p = entry.get("path", "")
-        if p:
-            paths.add(p)
+    _collect_nonempty(data, "documents", "path", paths)
     return paths
 
 
@@ -110,10 +116,7 @@ def load_script_names(script_manifest_path) -> dict:
     """从 script_manifest.yaml 提取所有已知脚本名。"""
     data = load_yaml(script_manifest_path)
     names = set()
-    for entry in data.get("scripts", []):
-        n = entry.get("name", "")
-        if n:
-            names.add(n)
+    _collect_nonempty(data, "scripts", "name", names)
     return names
 
 
@@ -288,7 +291,7 @@ def validate_mapping(mapping, registry_modules, known_scripts, project_root) -> 
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(description="生成 AGENTS.md §5.2 全流程导航表")
+    parser = argparse.ArgumentParser(description="生成全流程导航表（历史导航表章节，已退役）")
     parser.add_argument("--dry-run", action="store_true", help="只打印输出，不写入 AGENTS.md")
     parser.add_argument("--warn-only", action="store_true", help="warn mode: exit 0 even if findings")
     args = parser.parse_args()
@@ -335,7 +338,7 @@ def main() -> None:
             os.remove(tmp_path)
         except OSError:
             pass
-    print("✅ AGENTS.md §5.2 已生成")
+    print("✅ 全流程导航表已生成")
     if issues:
         print(f"⚠️ 出现 {len(issues)} 个交叉验证警告（见上方报告）")
 

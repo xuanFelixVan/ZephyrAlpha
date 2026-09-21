@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d1_structure/detect_orphan_py.py | §
+# noqa: m11-perm-manual-legitimate  M11豁免: 治理 CLI 校验器，run_all.py 批量调度链成员非永久系统（WO-13 批次登记 2026-09-21）
 # [MODULE] scripts.governance.d1_structure.detect_orphan_py
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d1_structure.__init__
@@ -18,7 +19,7 @@
 detect_orphan_py.py — 全库孤儿 .py 文件检测
 
 
-对标：AGENTS.md §6.5（脚本自创入库强制约定）：
+对标：AGENTS.md CREATE-GUARD 入库登记铁律（.py 合法落位强制约定）：
     .py 文件只允许放在 scripts/**、src/zephyr/**、tests/** 三个根域的任意子目录中。
     本脚本递归扫描全库，检测未放入合法位置的 .py 孤儿文件——
     这是 AI session 最常见的"留下的垃圾"。
@@ -41,7 +42,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 全库孤儿.py文件检测（AGENTS.md §6.5 — .py只允许在scripts/** / src/zephyr/**
+description: 全库孤儿.py文件检测（CREATE-GUARD 入库铁律 — .py只允许在scripts/** / src/zephyr/**
   / tests/** 任意子目录）
 dimensions:
 - D1
@@ -70,7 +71,7 @@ LEGAL_DIRS: tuple[str, ...] = ("scripts/", "src/zephyr/", "tests/", "schemas/")
 # repo root 合法 .py 白名单（Python/打包约定的根级文件，必须在 repo root 才能生效）：
 #   __init__.py / conftest.py / setup.py — 历史豁免
 #   sitecustomize.py — Python 解释器启动自动加载（GATE-20 运行时 Gate 引导入口，
-#       必须 repo root；详见 AGENTS.md §4.2.1 + runtime_interceptor.py）
+#       必须 repo root；详见旧宪法归档 §4.2.1（agent_constitution_legacy_v1.md）+ runtime_interceptor.py）
 EXCLUDE_NAMES: frozenset[str] = frozenset({"__init__.py", "conftest.py", "setup.py", "sitecustomize.py"})
 
 
@@ -120,7 +121,9 @@ def find_orphan_py_files() -> list[Path]:
 
 def main() -> None:
     """入口函数."""
-    parser = argparse.ArgumentParser(description="检测并修复项目根目录下的孤儿 .py 文件（对标 AGENTS.md §6.5）")
+    parser = argparse.ArgumentParser(
+        description="检测并修复项目根目录下的孤儿 .py 文件（对标 AGENTS.md CREATE-GUARD 入库铁律）"
+    )
     parser.add_argument(
         "--warn-only", action="store_true", default=False, help="仅警告不阻断（exit 0，即使发现孤儿文件）"
     )
@@ -136,7 +139,7 @@ def main() -> None:
     for f in orphans:
         print(f"  {f.relative_to(REPO_ROOT)}")
     print()
-    print("AGENTS.md §6.5 规定: .py 文件只允许放在以下根域的任意子目录中:")
+    print("CREATE-GUARD 入库铁律规定: .py 文件只允许放在以下根域的任意子目录中:")
     for d in LEGAL_DIRS:
         print(f"  - {REPO_ROOT / d}")
     print("请删除上述孤儿文件，或移动至合法目录。")

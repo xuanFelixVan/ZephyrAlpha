@@ -65,18 +65,30 @@ def _normalize_dep(module: str) -> str | None:
 
 
 def _iter_load_time_imports(tree: ast.Module):
-    """遍历模块加载时执行的 import（跳过函数体内的 lazy import）。
+    """遍历模块加载时执行的 import（跳过函数体内 lazy import 与 ``if TYPE_CHECKING:`` 块）。
 
     静态依赖分析只关心 load-time import：模块级、class body、if/try/with 块内的
     import 在模块加载时执行，可能形成 load-time 循环依赖；函数体内的 import 是
     runtime lazy import，不会造成 load-time 循环（Python import 系统允许）。
+    ``if TYPE_CHECKING:`` 块运行时恒假不执行（类型检查面专用），同理非 load-time——
+    计入会把"仅为静态可见性声明的依赖边"误判成加载时环（2026-09-21 WO-13：
+    governance.audit.reconciliation_registry ⇄ schedule_consistency_reconciler 实案，
+    registry 侧 TYPE_CHECKING 声明 + 运行时 importlib 惰性装载，运行时零环）。
     """
+
+    def _is_type_checking_test(test: ast.expr) -> bool:
+        """``if TYPE_CHECKING:`` / ``if typing.TYPE_CHECKING:`` 判定。"""
+        if isinstance(test, ast.Name):
+            return test.id == "TYPE_CHECKING"
+        return isinstance(test, ast.Attribute) and test.attr == "TYPE_CHECKING"
 
     def _walk(node: ast.AST):
         """_walk implementation."""
         for child in ast.iter_child_nodes(node):
             if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 continue  # 跳过函数体（lazy import）
+            if isinstance(child, ast.If) and _is_type_checking_test(child.test):
+                continue  # 跳过 TYPE_CHECKING 块（运行时不执行，非 load-time）
             if isinstance(child, (ast.Import, ast.ImportFrom)):
                 yield child
             yield from _walk(child)

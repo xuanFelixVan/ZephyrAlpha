@@ -21,7 +21,7 @@ shared/ API 索引 — AI session 冷启动时的"员工通讯录"
 本文件列出 src/zephyr/shared/ 下所有公开 API。
 AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT 实现。
 
-对标：AGENTS.md §8.2.1 _shared/ API 速查目录（scripts 侧）
+对标：quality_standard.md D-D-07 _shared/ API 速查目录（scripts 侧；本件即该目录 src 侧真源）
       Google Kythe 全局代码索引（让开发者/AI 发现已有代码）
       Anthropic CLAUDE.md 搜索优先原则
 
@@ -34,7 +34,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
   6. 需要金融契约？-> 查 contracts/money.py, contracts/instrument.py
   7. 需要其他？-> 先 grep 此目录再决定是否新建
 
-禁止行为（D-D-07 / AGENTS.md §8.2.1）：
+禁止行为（D-D-07）：
   ❌ 在业务代码中本地重定义以下任何符号
   ❌ 用 Path(__file__).parents[N] 计算 REPO_ROOT
   ❌ 用 datetime.now(timezone.utc).isoformat() 代替 now_iso()

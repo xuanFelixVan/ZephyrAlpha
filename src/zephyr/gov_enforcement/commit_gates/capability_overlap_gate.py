@@ -24,7 +24,7 @@ Phase A 升级（2026-08-06, #ARCH-FORCE-MERGE-DEDUP-001）：
 
 病根（缺口4：CapabilityLookup 被动反查 + AI 重复造轮子）
 ------------------------------------------------------
-AGENTS.md §7 已把"查 CapabilityLookup 确认能力是否已存在"列为 step 0，但仅靠文档约定——
+RULE-CAPABILITY-LOOKUP 已把"查 CapabilityLookup 确认能力是否已存在"列为 step 0，但仅靠文档约定——
 新 AI 若跳过 AGENTS.md 或未读 §7，可在 commit 时直接新建 .py 脚本导致重复造轮子。
 Phase A 前：token overlap 检查仅 warn-only（文件名启发式，不阻断）。
 Phase A 后：+ CloneGuard 语义检测（AST哈希+CodeSAGE嵌入），extract 级硬阻断。
@@ -195,7 +195,7 @@ def _check_py_overlap(new_py_files: list[str], cap_tokens: dict[str, set[str]]) 
                 warnings.append(
                     f"new .py '{py_file}' tokens {sorted(overlap)} "
                     f"overlap with capability '{cap_id}'——"
-                    f"扩展该 capability 的 canonical 文件，勿新建（见 AGENTS.md §7 step 0）"
+                    f"扩展该 capability 的 canonical 文件，勿新建（见 RULE-CAPABILITY-LOOKUP step 0）"
                 )
                 break  # 每文件只报第一个命中
     return warnings

@@ -193,7 +193,7 @@ class CapabilityDuplicate:
     设计裁定（B 方案，向内收 2.3 治本）：去掉软层 advisory（find() 语义召回）——
     软层 TP≈0（Python 标识符下划线是 word char，handoff_v2 不可分割，find() 匹配不到），
     且 advisory 不阻断=无人行动=死数据。commit 门禁只负责高置信阻断（basename 精确碰撞），
-    低置信检测不是门禁职责，由 AGENTS.md §9.0 手动查重 + reconciler 周期审计兜底。
+    低置信检测不是门禁职责，由手动查重 + reconciler 周期审计兜底（RULE-DATA-OPS 判重纪律）。
     """
 
     rel_path: str  # 新增文件相对路径（正斜杠）
@@ -1176,7 +1176,7 @@ class CapabilityLookup:
              -> check_file_canonical 返回 None -> 漏检（与 check_ssot_conflicts
              同边界，header 完整性由其他门禁负责）。
           2. "全新 basename + 全新 module_path 实现已有能力"不可约漏报，
-             由 check_ssot_conflicts（同 module_path）+ AGENTS.md §9.0 查重习惯
+             由 check_ssot_conflicts（同 module_path）+ RULE-DATA-OPS 查重习惯
              + reconciler 周期审计三层兜底。
         """
         if not new_py_files:

@@ -6,67 +6,109 @@ schema_version: "1.0.0"
 doc_type: register
 ttl: permanent
 status: active
-generated_at: "2026-09-18T11:21:15Z"
+generated_at: "2026-09-20T15:54:58Z"
 generated_by: scripts/governance/d7_code/generate_fail_open_register.py
 scan_roots: ["src/zephyr", "scripts"]
 criteria_zh: "五轴：file:line / 所在环节(FF-*) / 是否在钱路径 / 吞掉后有无痕迹(log|audit|metric|alert|raise) / 是否硬编码默认放行"
-total_fail_open: 1595
-total_files: 265
-content_sha256: "df5a3d04ca53f70cbe55db9403022e9e2ac81d95ca6375f625e47a3a08877392"
+total_fail_open: 1635
+total_files: 272
+content_sha256: "568dccdf2bdb4267ece97d7147a8f3975917299dffdada7adf109b66508dac26"
 bucket_counts:
-  hardcoded_default_permit: 5
-  money_path_no_trace: 176
-  designed_degradation_with_trace: 735
-  undeclared_needs_review: 679
+  hardcoded_default_permit: 12
+  money_path_no_trace: 179
+  designed_degradation_with_trace: 744
+  undeclared_needs_review: 700
 by_stage:
-  FF-14: 1027
-  GLOBAL: 222
+  FF-14: 1036
+  GLOBAL: 232
   FF-07: 107
   FF-01: 65
+  FF-15: 48
   FF-16: 41
   FF-06: 35
-  FF-15: 33
   FF-11: 25
   FF-02: 22
-  FF-04: 10
+  FF-04: 11
+  FF-05: 7
   FF-09: 4
-  FF-05: 2
   FF-10: 2
 
-hardcoded_default_permit:  # 逐处审定的入口档（默认放行写死在代码里，无配置可关）（5 处）
+hardcoded_default_permit:  # 逐处审定的入口档（默认放行写死在代码里，无配置可关）（12 处）
   entries:
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 123
+      line: 95
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "_DEFAULT_FAIL_OPEN_LAYERS = frozenset({\"l6_observability\", \"l7_validation\"})"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 102
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "返回值只可能是合法 frozenset[str]——任何异常路径都回落 _DEFAULT_FAIL_OPEN_LAYERS，"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 110
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "return _DEFAULT_FAIL_OPEN_LAYERS"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 116
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "return _DEFAULT_FAIL_OPEN_LAYERS"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 119
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "return _DEFAULT_FAIL_OPEN_LAYERS"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 158
       stage: FF-15
       on_money_path: false
       has_trace: false
       code: "FAIL_OPEN_LAYERS = {\"l6_observability\", \"l7_validation\"}"
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 307
+      line: 170
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "# #353②：fail-open 层集合外部化——实例属性覆盖类属性默认（self.FAIL_OPEN_LAYERS"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 172
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "self.FAIL_OPEN_LAYERS = _load_fail_open_layers()"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 345
       stage: FF-15
       on_money_path: false
       has_trace: false
       code: "if name in self.FAIL_OPEN_LAYERS:"
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 327
+      line: 365
       stage: FF-15
       on_money_path: false
       has_trace: false
       code: "kind, should_break, decision_to_set = _classify_layer_decision(name, result, self.FAIL_OPEN_LAYERS)"
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 343
+      line: 381
       stage: FF-15
       on_money_path: false
       has_trace: false
       code: "if name in self.FAIL_OPEN_LAYERS:"
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 364
+      line: 402
       stage: FF-15
       on_money_path: false
       has_trace: false
       code: "if name in self.FAIL_OPEN_LAYERS:"
 
-money_path_no_trace:  # 钱/决策路径上且吞掉后零痕迹 —— 最高优先复核档（176 处）
+money_path_no_trace:  # 钱/决策路径上且吞掉后零痕迹 —— 最高优先复核档（179 处）
   entries:
     - file: "scripts/governance/reconcile_generators.py"
       line: 192
@@ -183,13 +225,13 @@ money_path_no_trace:  # 钱/决策路径上且吞掉后零痕迹 —— 最高�
       has_trace: false
       code: "# [INVARIANTS] 纯函数+注入式数据读取（不直接连 CH）；幂等——同事件重复填充按 (event_date,event_type,symbol_scope) 去重；只登记填充时点已公告/规则可推导的事件（PIT 纪律）；单数据源读取失败跳过该源不阻断整体（fail-open）"
     - file: "src/zephyr/data/implementations/akshare_provider.py"
-      line: 8780
+      line: 8930
       stage: FF-01
       on_money_path: true
       has_trace: false
       code: "守卫依据见 _SQL_ADJ_FACTOR_MINIQMT_KEYS 注释。fail-open：查询失败返回"
     - file: "src/zephyr/data/implementations/akshare_provider.py"
-      line: 8817
+      line: 8967
       stage: FF-01
       on_money_path: true
       has_trace: false
@@ -531,79 +573,91 @@ money_path_no_trace:  # 钱/决策路径上且吞掉后零痕迹 —— 最高�
       has_trace: false
       code: "except Exception as e:  # noqa: BLE001 — launch 失败 fail-open（sync 兜底）"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 438
+      line: 437
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "# 治理——超阈值时删除 N 天前记录（fail-open，不阻断 commit/merge 主流程）。"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 1128
+      line: 469
+      stage: FF-14
+      on_money_path: true
+      has_trace: false
+      code: "#                    L→可 fail-open 但必须留痕。"
+    - file: "src/zephyr/governance/audit/reconciliation_registry.py"
+      line: 476
+      stage: FF-14
+      on_money_path: true
+      has_trace: false
+      code: "\"L\": \"fail-open-with-trace\","
+    - file: "src/zephyr/governance/audit/reconciliation_registry.py"
+      line: 1268
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "# 防止 reconcile_execution_log 无限增长（fail-open，不阻断主流程）。"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 1528
+      line: 1668
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "空列表表示无 block_next 或查询失败（fail-open，不阻断主流程）。"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 4657
+      line: 4781
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "# fail-open：契约读取失败时 reconciler 降级为 no-op（不阻断 commit）"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 5285
+      line: 5409
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "pass  # fail-open，不阻断主流程"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 7459
+      line: 7585
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "config 不可达 → 返回 False（reconciler fail-open 跳过，不误匹配非测试目录）。"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 7521
+      line: 7647
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "config 不可达 → 返回 False（reconciler fail-open 跳过，不删）。"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 8541
+      line: 8663
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "import contextlib  # noqa: E402 — nullcontext fallback for fail-open"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 9274
+      line: 9406
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "# fail-open：_shared.constants 不可导入或 scripts/governance/ 不存在"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 9407
+      line: 9539
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "# fail-open：scripts/governance/ 与 src/ 均不存在"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 10206
+      line: 10338
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "# 真源是 trae_077 YAML（fail-open 加载），共享模块模块初始化时加载。"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 10439
+      line: 10571
       stage: FF-14
       on_money_path: true
       has_trace: false
       code: "无需改代码。git 不可达时 fail-open 用 v1 硬编码白名单兜底。"
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      line: 10471
+      line: 10603
       stage: FF-14
       on_money_path: true
       has_trace: false
@@ -620,6 +674,12 @@ money_path_no_trace:  # 钱/决策路径上且吞掉后零痕迹 —— 最高�
       on_money_path: true
       has_trace: false
       code: "空列表表示无超期维度或查询失败（fail-open）。"
+    - file: "src/zephyr/governance/audit/schedule_consistency_reconciler.py"
+      line: 314
+      stage: FF-14
+      on_money_path: true
+      has_trace: false
+      code: "\"\"\"X4 时段冲突/漂移等——闸同源复用（真源=resource_schedule_gate）；失败 fail-open。\"\"\""
     - file: "src/zephyr/governance/audit/translation_coverage_reconciler.py"
       line: 175
       stage: FF-14
@@ -1125,14 +1185,32 @@ money_path_no_trace:  # 钱/决策路径上且吞掉后零痕迹 —— 最高�
       has_trace: false
       code: "None——引擎按\"无统计\"路径处理，行为退化为现状（fail-open 保持）。"
 
-undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是否设计意图（679 处）
+undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是否设计意图（700 处）
   entries:
     - file: "scripts/automation/flowthrough_verifier.py"
-      line: 605
+      line: 1252
       stage: GLOBAL
       on_money_path: false
       has_trace: false
-      code: "返回 -1 = 查询失败（与 0 行严格区分：ch_reader.count 失败静默返 0，属 fail-open，不用它）。"
+      code: "规范 §1 第⑤向 + R-023 收口现状：z-failopen 已把 allow_empty 收到 1 件（带"
+    - file: "scripts/automation/flowthrough_verifier.py"
+      line: 1341
+      stage: GLOBAL
+      on_money_path: false
+      has_trace: false
+      code: "投递前置闩（R-023 z-failopen 的 BRK-066/075 同族）。输出显式标"
+    - file: "scripts/backtest/f06_e4_wfa_exam.py"
+      line: 518
+      stage: GLOBAL
+      on_money_path: false
+      has_trace: false
+      code: "\"failopen_note\": \"overfitting_detector 对未评估维默认计'稳定'，故 is_overfitting=False 不等于过拟合已排除\","
+    - file: "scripts/backtest/f06_e4_wfa_exam.py"
+      line: 597
+      stage: GLOBAL
+      on_money_path: false
+      has_trace: false
+      code: "- ⚠️ {s['overfitting_coverage']['failopen_note']}"
     - file: "scripts/backtest/sim_paper_ledger.py"
       line: 256
       stage: GLOBAL
@@ -1296,7 +1374,13 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "# [INVARIANTS] 真源是文件头部 [MODULE] 字段；fail-open（capability_lookup 不可用时放行）"
     - file: "scripts/governance/check_ssot_gate.py"
-      line: 106
+      line: 132
+      stage: GLOBAL
+      on_money_path: false
+      has_trace: false
+      code: "except Exception as e:  # noqa: BLE001 — 存量 fail-open：lookup 不可用不阻断提交（网关内嵌门禁主防线）"
+    - file: "scripts/governance/check_ssot_gate.py"
+      line: 133
       stage: GLOBAL
       on_money_path: false
       has_trace: false
@@ -1356,7 +1440,7 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "except OSError:  # noqa: BLE001 — fail-open"
     - file: "scripts/governance/d1_structure/check_directory_contract.py"
-      line: 178
+      line: 180
       stage: GLOBAL
       on_money_path: false
       has_trace: false
@@ -1368,43 +1452,43 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "/测试场景下避免脏读。fail-open：失效失败不阻断（只是缓存陈旧，下次进程自然刷新）。"
     - file: "scripts/governance/d3_metadata/check_frontmatter_metadata.py"
-      line: 110
+      line: 115
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "# ── 区域分类（zone-aware fail-open 治本 #ARCH-TTL-FAILOPEN-001）──"
     - file: "scripts/governance/d3_metadata/check_frontmatter_metadata.py"
-      line: 116
+      line: 121
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "#   permanent/temporary zone 无 frontmatter → HARD BLOCK（治本 flat fail-open 漏洞）"
     - file: "scripts/governance/d3_metadata/check_frontmatter_metadata.py"
-      line: 131
+      line: 136
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "治本 #ARCH-TTL-FAILOPEN-001：zone-aware fail-open 需要目录区域信息。"
     - file: "scripts/governance/d3_metadata/check_frontmatter_metadata.py"
-      line: 136
+      line: 141
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "加载失败返回空 dict（fail-open——不阻断，退化为 neutral PASS）。"
     - file: "scripts/governance/d3_metadata/check_frontmatter_metadata.py"
-      line: 239
+      line: 244
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "# zone-aware fail-open（治本 #ARCH-TTL-FAILOPEN-001）"
     - file: "scripts/governance/d3_metadata/check_frontmatter_metadata.py"
-      line: 240
+      line: 245
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "# 替换原 flat fail-open（if not metadata: return issues）"
     - file: "scripts/governance/d3_metadata/check_frontmatter_metadata.py"
-      line: 273
+      line: 278
       stage: GLOBAL
       on_money_path: false
       has_trace: false
@@ -1434,49 +1518,49 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "# fail-open 回退值(与 trae_028.yaml v1.5.0 n16_config 保持一致;仅在YAML不可达时使用)"
     - file: "scripts/governance/d3_metadata/check_naming_convention.py"
-      line: 985
+      line: 987
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "fail-open: 文件缺失/解析失败/清单为空/类型不合规(非list或含非str元素) → 整体回退到硬编码值,防检测失效或污染。"
     - file: "scripts/governance/d3_metadata/check_naming_convention.py"
-      line: 1246
+      line: 1248
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "# fail-open：git 不可用时返回 [] 不阻断（与下方 ls-files 失败路径同策略）。"
     - file: "scripts/governance/d3_metadata/check_naming_convention.py"
-      line: 1260
+      line: 1262
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "return []  # fail-open：git 不可用时不阻断 commit"
     - file: "scripts/governance/d3_metadata/check_naming_convention.py"
-      line: 1284
+      line: 1286
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "return []  # fail-open：git 不可用时不阻断 commit"
     - file: "scripts/governance/d3_metadata/check_naming_convention.py"
-      line: 1383
+      line: 1390
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "tracked_set = None  # fail-open: git 不可用时不阻断"
     - file: "scripts/governance/d3_metadata/check_naming_convention.py"
-      line: 1386
+      line: 1393
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "\"\"\"文件是否为新增（未被 git 跟踪）。fail-open: git 不可用时返回 False（不阻断）。"
     - file: "scripts/governance/d3_metadata/check_naming_convention.py"
-      line: 1465
+      line: 1472
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "except Exception:  # noqa: BLE001 — git show 失败或临时文件问题 → fail-open（不阻断修改），单文件基线对比失败仅跳过该文件"
     - file: "scripts/governance/d3_metadata/check_naming_convention.py"
-      line: 1466
+      line: 1473
       stage: GLOBAL
       on_money_path: false
       has_trace: false
@@ -1595,6 +1679,24 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       on_money_path: false
       has_trace: false
       code: "fail-open：registry 加载失败或 marker 不存在时返回 None（不阻断检测器运行）。"
+    - file: "scripts/governance/d7_code/check_encoding.py"
+      line: 34
+      stage: GLOBAL
+      on_money_path: false
+      has_trace: false
+      code: "不可 UTF-8 解码 = FAIL（报文件路径+解码错误）。原实现该情形裸吞（fail-open），"
+    - file: "scripts/governance/d7_code/check_encoding.py"
+      line: 318
+      stage: GLOBAL
+      on_money_path: false
+      has_trace: false
+      code: "# （原裸吞 fail-open；判决书#352 亲验 tracked 面存量=0，收紧无存量代价）。"
+    - file: "scripts/governance/d7_code/check_encoding.py"
+      line: 413
+      stage: GLOBAL
+      on_money_path: false
+      has_trace: false
+      code: "# fail-open）；NUL 字节=二进制、非 tracked 文件，均维持现行为。"
     - file: "scripts/governance/d7_code/scan_consumers_accuracy.py"
       line: 9
       stage: GLOBAL
@@ -1722,7 +1824,7 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "# L1 fail-open（import 失败时降级放行），L2 兜底门禁（git_commit_gateway）补防线，"
     - file: "scripts/session_worktree.py"
-      line: 392
+      line: 394
       stage: GLOBAL
       on_money_path: false
       has_trace: false
@@ -1745,6 +1847,12 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       on_money_path: false
       has_trace: false
       code: "{}——撮合退回引擎内规则兜底（无 ST，fail-open 不炸回测）。"
+    - file: "src/zephyr/backtest/core/overfitting_detector.py"
+      line: 393
+      stage: FF-04
+      on_money_path: false
+      has_trace: false
+      code: "旧口径\"未提供的维度视为未检测(默认稳定, 不触发否决)\"是 fail-open：实测同一批"
     - file: "src/zephyr/backtest/implementations/vectorized_engine.py"
       line: 192
       stage: FF-04
@@ -1812,7 +1920,7 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "- **Fail-Silent 不 Fail-Open**：落盘 I/O 失败返回 None 并 stderr 留痕，"
     - file: "src/zephyr/frontend/dashboard/api_server.py"
-      line: 3604
+      line: 3606
       stage: FF-16
       on_money_path: false
       has_trace: false
@@ -2322,49 +2430,43 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "continue  # fail-open: 文件不可读"
     - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
-      line: 8
-      stage: FF-14
-      on_money_path: false
-      has_trace: false
-      code: "# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 crea"
-    - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
-      line: 270
+      line: 297
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "staged_res = head_res = None  # fail-open：git 故障时不阻断（避免误伤正常 commit）"
     - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
-      line: 281
+      line: 308
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "return True, \"\"  # 语法错误由其他 gate 检测，此处 fail-open"
     - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
-      line: 329
+      line: 356
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "fail-open：git diff 故障不阻断（新增检测已覆盖主要场景）。"
     - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
-      line: 346
+      line: 373
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "pass  # fail-open：rename 检测故障不阻断"
     - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
-      line: 453
+      line: 480
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "# fail-open: git diff 失败不阻断 rename 检测（下游 gate 仍检测新增文件）"
     - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
-      line: 471
+      line: 498
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "continue  # 语法错误由其他 gate 检测，此处 fail-open"
     - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
-      line: 670
+      line: 778
       stage: FF-14
       on_money_path: false
       has_trace: false
@@ -3258,7 +3360,7 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "\"ORPHAN-MODULE gate fail-open: git grep 错误(rc=%d)：%s\","
     - file: "src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py"
-      line: 107
+      line: 110
       stage: FF-14
       on_money_path: false
       has_trace: false
@@ -3432,31 +3534,49 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "（防\"大改小删\"漏网；YAML 解析失败 fail-open 交 encoding/syntax 类 gate）"
     - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
-      line: 132
+      line: 36
+      stage: FF-14
+      on_money_path: false
+      has_trace: false
+      code: "条目非 dict 或首字段非标量 → 该条不计入身份集（判不了不误报，fail-open 同向）。"
+    - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
+      line: 138
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "except Exception:  # noqa: BLE001 — 解析失败由调用方 fail-open"
     - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
-      line: 161
+      line: 162
+      stage: FF-14
+      on_money_path: false
+      has_trace: false
+      code: "与原 fail-open 语义同向：判不了就不误报，交 encoding/syntax 类 gate 管）。"
+    - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
+      line: 168
+      stage: FF-14
+      on_money_path: false
+      has_trace: false
+      code: "except Exception:  # noqa: BLE001 — 解析失败 fail-open（交 syntax 类 gate）"
+    - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
+      line: 205
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "fail-open：HEAD 缺失（新增文件）/YAML 解析失败/文件不可读 → 跳过。"
     - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
-      line: 206
+      line: 250
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "continue  # 新增文件无 HEAD 基线 → fail-open 跳过"
     - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
-      line: 208
+      line: 252
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "except Exception:  # noqa: BLE001 — fail-open"
     - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
-      line: 212
+      line: 256
       stage: FF-14
       on_money_path: false
       has_trace: false
@@ -4206,17 +4326,17 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "按自身 fail-open/fail-closed 策略负责**（helper 不吞异常、不判结果）。"
     - file: "src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py"
-      line: 40
+      line: 179
       stage: FF-14
       on_money_path: false
       has_trace: false
-      code: "1. **fail-open**：YAML/import/getattr 异常不阻断 commit。registry 故障是环境异常，"
+      code: "f\"gate roster present but empty (0 entries) — refusing fail-open load ({REGISTRY_REL_PATH})\""
     - file: "src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py"
-      line: 42
+      line: 234
       stage: FF-14
       on_money_path: false
       has_trace: false
-      code: "对标 import_integrity_gate.py fail-open 设计。"
+      code: "# ── 装载数对账（硬告警，裁定#351：并入 fail_open_register 台账族）──"
     - file: "src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py"
       line: 8
       stage: FF-14
@@ -4224,77 +4344,71 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "# [INVARIANTS] 白名单默认保守=纯 staged 内容扫描型 gate（无注册表/引擎/运行态输入）；只缓存 passed=True（降级态与失败一律不缓存——fail-open 不被缓存放大）；key=gate_id×own_scope×staged 树指纹×HEAD_sha×flags mtime（任"
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 599
+      line: 665
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "计量失败 fail-open 不阻断 commit。"
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 1717
+      line: 1859
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "- capability_lookup 不可用时 fail-open（L1 是主防线，L2 是兜底）"
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 1742
+      line: 1884
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "except Exception as e:  # noqa: BLE001 — fail-open"
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 1743
+      line: 1885
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "return (True, f\"SSoT 兜底门禁 fail-open: capability_lookup 不可用 (import failed: {e})\")"
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 1747
+      line: 1889
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "except Exception as e:  # noqa: BLE001 — fail-open"
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 1748
+      line: 1890
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "return (True, f\"SSoT 兜底门禁 fail-open: capability_lookup 不可用 (init failed: {e})\")"
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 1792
+      line: 1934
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "best-effort fail-open：快照失败永不阻断 commit。"
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 2362
+      line: 2503
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "\"TRAE-079: _GlobalCommitLock unavailable (fail-open fallback): %s — \""
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 2594
+      line: 2739
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "gate 的 fail-open 设计）。"
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 3396
+      line: 3890
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "\"TRAE-079: _GlobalCommitLock unavailable in _commit_auto (fail-open fallback): %s — \""
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 3580
+      line: 4074
       stage: FF-14
       on_money_path: false
       has_trace: false
       code: "except Exception:  # noqa: BLE001 — 状态读取失败不阻断（fail-open）"
-    - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      line: 3584
-      stage: FF-14
-      on_money_path: false
-      has_trace: false
-      code: "# AD = index:staged-add + worktree:deleted（幻影签名；带引号的路径跳过=fail-open）"
     - file: "src/zephyr/gov_enforcement/rule_bridge/session_worktree.py"
       line: 1722
       stage: FF-14
@@ -4812,19 +4926,19 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "fail-open：subprocess 失败返回空列表。"
     - file: "src/zephyr/integration/local_model/lsg_gate.py"
-      line: 114
+      line: 116
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "\"\"\"判决记录落 L6 审计（L6 为 fail-open 层：记录失败绝不阻断主流程）。"
     - file: "src/zephyr/integration/local_model/lsg_gate.py"
-      line: 142
+      line: 144
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "except Exception:  # noqa: BLE001 — L6 fail-open：审计降级不阻断"
     - file: "src/zephyr/integration/local_model/lsg_gate.py"
-      line: 143
+      line: 145
       stage: GLOBAL
       on_money_path: false
       has_trace: false
@@ -4991,6 +5105,30 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       on_money_path: false
       has_trace: false
       code: "reasons.append(f\"写表异常降级（fail-open）：{exc}\")"
+    - file: "src/zephyr/regime/core/regime_detector.py"
+      line: 69
+      stage: FF-05
+      on_money_path: false
+      has_trace: false
+      code: "降级策略（blueprint §7.4，**R-055a 已把数值侧从 fail-open 改为 fail-closed**）："
+    - file: "src/zephyr/regime/core/regime_detector.py"
+      line: 431
+      stage: FF-05
+      on_money_path: false
+      has_trace: false
+      code: "\"没数\"——那正是 R-055a 治的 fail-open：判缺数一律走 missing_risk_legs）。"
+    - file: "src/zephyr/regime/core/regime_detector.py"
+      line: 448
+      stage: FF-05
+      on_money_path: false
+      has_trace: false
+      code: "tests/regime/test_rb_stats_regime_failopen.py）。R-K9 要求断供即 fail-closed，"
+    - file: "src/zephyr/regime/core/regime_detector.py"
+      line: 504
+      stage: FF-05
+      on_money_path: false
+      has_trace: false
+      code: "#: 缺数腿标记（RB-STATS-02）：无数据与\"真的没风险\"在数值上不可分辨是 fail-open"
     - file: "src/zephyr/regime/institutional_regime_scorer.py"
       line: 23
       stage: FF-05
@@ -5088,31 +5226,79 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "if name not in fail_open_layers:"
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 111
+      line: 90
       stage: FF-15
       on_money_path: false
       has_trace: false
-      code: "L6/L7 为 pass-through 层（fail-open 降级例外）."
+      code: "# #353② 治本：fail-open 层集合外部化。出厂默认（零翻转）= {l6_observability,"
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 113
+      line: 91
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "# l7_validation}；运行时读 config/llm_security_gateway.yaml 的 fail_open_layers"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 92
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "# 列表覆盖。配置缺失/字段缺失/类型异常/设施异常一律回退出厂默认（fail-open 语义"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 99
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "def _load_fail_open_layers() -> frozenset:"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 100
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "\"\"\"读 fail-open 层集合（配置加载惯例对齐 flags.py：REPO_ROOT+yaml.safe_load+异常回退）。"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 114
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "layers = data.get(\"fail_open_layers\")"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 143
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "L6/L7 为 pass-through 层（fail-open 降级例外；#353② 后该集合可经"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 144
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "config/llm_security_gateway.yaml 的 fail_open_layers 由 Owner 收紧，出厂默认不变）."
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 146
       stage: FF-15
       on_money_path: false
       has_trace: false
       code: "执行语义：严格顺序链式执行 L0->L1->...->L8，任一非 fail-open 层 DENY/BLOCK"
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 286
+      line: 157
+      stage: FF-15
+      on_money_path: false
+      has_trace: false
+      code: "# 实例化时经 _load_fail_open_layers() 读 config 覆盖（零翻转，见该函数 docstring）。"
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      line: 324
       stage: FF-15
       on_money_path: false
       has_trace: false
       code: "任一非 fail-open 层 DENY/BLOCK -> 立即中断，不评估后续层."
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 346
+      line: 384
       stage: FF-15
       on_money_path: false
       has_trace: false
       code: "reason=f\"{name} timed out after {self._layer_timeout_seconds}s but is fail-open\","
     - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      line: 367
+      line: 405
       stage: FF-15
       on_money_path: false
       has_trace: false
@@ -5148,7 +5334,7 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "\"\"\"TDM 配置只读加载（失败=残缺态 fail-open，包集空=安全侧）。\"\"\""
     - file: "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py"
-      line: 581
+      line: 589
       stage: GLOBAL
       on_money_path: false
       has_trace: false
@@ -5184,13 +5370,13 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       has_trace: false
       code: "\"\"\"管线专用探针：fail-closed（探测失败=不清除；与旧版 fail-open 相反——全托管后安全优先）。\"\"\""
     - file: "src/zephyr/strategy_pipeline/pipeline_events.py"
-      line: 172
+      line: 152
       stage: GLOBAL
       on_money_path: false
       has_trace: false
       code: "\"\"\"（清除?, 原因）。探测失败=不清除（全自动管线的安全方向；与 intake 旧探针的 fail-open 相反，"
     - file: "src/zephyr/strategy_pipeline/pipeline_events.py"
-      line: 919
+      line: 887
       stage: GLOBAL
       on_money_path: false
       has_trace: false
@@ -5203,7 +5389,7 @@ undeclared_needs_review:  # 非钱路径且无痕迹 —— 待逐处声明是�
       code: "被晋升预授权卡住等于反向 fail-open，故此处**不**造任何布尔凭据。"
 
 designed_degradation_with_trace:  # 有痕降级（视为设计意图，本轮不动）
-  count: 735
+  count: 744
   note_zh: "逐条清单由 --full 模式按需再生成；此处不展开以免派生册失去可读性"
 
 per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
@@ -5213,9 +5399,11 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
     - file: "src/zephyr/frontend/dashboard/components/warroom.py"
       count: 35
     - file: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py"
-      count: 33
+      count: 32
+    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
+      count: 28
     - file: "src/zephyr/governance/audit/reconciliation_registry.py"
-      count: 21
+      count: 25
     - file: "src/zephyr/ex_core/daban_load_producer.py"
       count: 18
     - file: "src/zephyr/governance/audit/pg_probe.py"
@@ -5232,6 +5420,8 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
       count: 15
     - file: "src/zephyr/gov_enforcement/commit_gates/file_copy_gate.py"
       count: 15
+    - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
+      count: 15
     - file: "src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py"
       count: 15
     - file: "src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py"
@@ -5241,6 +5431,8 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
     - file: "scripts/governance/commit_queue_landing.py"
       count: 14
     - file: "src/zephyr/gov_enforcement/commit_gates/blueprint_node_id_hardcode_gate.py"
+      count: 14
+    - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
       count: 14
     - file: "src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py"
       count: 14
@@ -5264,19 +5456,13 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
       count: 13
     - file: "src/zephyr/gov_enforcement/commit_gates/vocab_hardcode_gate.py"
       count: 13
-    - file: "src/zephyr/security/llm_defense/llm_security/gateway.py"
-      count: 13
     - file: "scripts/governance/architecture_health_dashboard.py"
       count: 12
     - file: "scripts/governance/d3_metadata/check_naming_convention.py"
       count: 12
     - file: "src/zephyr/data_governance/core/runtime_lineage_collector.py"
       count: 12
-    - file: "src/zephyr/gov_enforcement/commit_gates/create_guard.py"
-      count: 12
     - file: "src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py"
-      count: 12
-    - file: "src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py"
       count: 12
     - file: "src/zephyr/gov_enforcement/commit_gates/snapshot_drift_gate.py"
       count: 12
@@ -5414,8 +5600,6 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
       count: 6
     - file: "src/zephyr/gov_enforcement/commit_gates/secret_hardcode_gate.py"
       count: 6
-    - file: "src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py"
-      count: 6
     - file: "src/zephyr/governance/audit/ai_error_pattern_library.py"
       count: 6
     - file: "src/zephyr/intelligence/news_symbol_linker.py"
@@ -5462,6 +5646,8 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
       count: 5
     - file: "src/zephyr/plan_engine/scenario_planner.py"
       count: 5
+    - file: "src/zephyr/regime/core/regime_detector.py"
+      count: 5
     - file: "src/zephyr/signal_ashare/sentiment/option_sentiment.py"
       count: 5
     - file: "scripts/governance/apply_depgraph.py"
@@ -5490,6 +5676,8 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
       count: 4
     - file: "src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py"
       count: 4
+    - file: "src/zephyr/gov_enforcement/rule_bridge/gate_auto_registrar.py"
+      count: 4
     - file: "src/zephyr/gov_enforcement/rule_bridge/write_audit_daemon.py"
       count: 4
     - file: "src/zephyr/governance/audit/remediation_progress_reconciler.py"
@@ -5502,13 +5690,19 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
       count: 4
     - file: "src/zephyr/strategy_pipeline/fw_backtest.py"
       count: 4
+    - file: "scripts/automation/flowthrough_verifier.py"
+      count: 3
     - file: "scripts/battle_map_coverage_audit.py"
+      count: 3
+    - file: "scripts/governance/check_ssot_gate.py"
       count: 3
     - file: "scripts/governance/classify_workspace_wip.py"
       count: 3
     - file: "scripts/governance/d11_compliance/validate_worktree_required.py"
       count: 3
     - file: "scripts/governance/d5_architecture/pre_write_gate.py"
+      count: 3
+    - file: "scripts/governance/d7_code/check_encoding.py"
       count: 3
     - file: "scripts/governance/generate_project_depgraph.py"
       count: 3
@@ -5544,10 +5738,14 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
       count: 3
     - file: "src/zephyr/governance/audit/doc_lifecycle.py"
       count: 3
+    - file: "src/zephyr/governance/audit/schedule_consistency_reconciler.py"
+      count: 3
     - file: "src/zephyr/integration/local_model/lsg_gate.py"
       count: 3
     - file: "src/zephyr/reporting/ai_review_summary.py"
       count: 3
+    - file: "scripts/backtest/f06_e4_wfa_exam.py"
+      count: 2
     - file: "scripts/backtest/sim_paper_ledger.py"
       count: 2
     - file: "scripts/backtest/translated/_c4_engine.py"
@@ -5555,8 +5753,6 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
     - file: "scripts/backtest/verify_run_archive.py"
       count: 2
     - file: "scripts/governance/apply_battle_map.py"
-      count: 2
-    - file: "scripts/governance/check_ssot_gate.py"
       count: 2
     - file: "scripts/governance/d5_architecture/checkers/check_contracts_codegen_idempotent.py"
       count: 2
@@ -5630,8 +5826,6 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
       count: 2
     - file: "src/zephyr/strategy_pipeline/promotion_advisory.py"
       count: 2
-    - file: "scripts/automation/flowthrough_verifier.py"
-      count: 1
     - file: "scripts/backtest/validate_p0_discrimination.py"
       count: 1
     - file: "scripts/git_commit.py"
@@ -5652,7 +5846,11 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
       count: 1
     - file: "scripts/governance/d5_architecture/checkers/check_rule_four_way_alignment.py"
       count: 1
+    - file: "scripts/governance/d5_architecture/checkers/check_src_no_data.py"
+      count: 1
     - file: "scripts/governance/d5_architecture/generators/generate_contracts.py"
+      count: 1
+    - file: "scripts/governance/d5_architecture/validators/validate_cross_references.py"
       count: 1
     - file: "scripts/governance/d7_code/check_any_abuse.py"
       count: 1
@@ -5665,6 +5863,8 @@ per_file_counts:  # 全量点名（file -> 处数），供跨车道认领复核
     - file: "scripts/scaffold.py"
       count: 1
     - file: "src/zephyr/__init__.py"
+      count: 1
+    - file: "src/zephyr/backtest/core/overfitting_detector.py"
       count: 1
     - file: "src/zephyr/compliance/compliance_log.py"
       count: 1

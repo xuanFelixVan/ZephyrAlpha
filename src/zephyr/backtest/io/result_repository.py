@@ -33,6 +33,7 @@
   - run_id 必须全局唯一(BacktestResult.idempotency_key 关联)
   - PIT 铁律: equity_curve/trade_log 数据零前瞻偏差
   - 检索接口对 D_FRONTEND 同步暴露, 大对象延迟由调用方处理
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/result_repository.yaml
 """
 
 from __future__ import annotations
@@ -70,7 +71,7 @@ class ArtifactQuarantinedError(Exception):
         self.quarantine_path = quarantine_path
 
 
-def _artifact_plausibility_violations(artifact: "BacktestRunArtifact") -> list[str]:
+def _artifact_plausibility_violations(artifact: BacktestRunArtifact) -> list[str]:
     """产物级合理性检查（P0-4）：净值曲线倍数 + 零成交空跑。
 
     与引擎层护栏（engine_base.enforce_result_plausibility）互补：引擎层在
@@ -95,9 +96,7 @@ def _artifact_plausibility_violations(artifact: "BacktestRunArtifact") -> list[s
                     "失真嫌疑；口径真源=engine_base.MAX_PLAUSIBLE_TOTAL_RETURN）"
                 )
             elif multiple < min_multiple:  # 无杠杆 long-only 不可能亏穿
-                violations.append(
-                    f"equity {first:.0f}->{last:.0f} = {multiple:.3f}x（<合理下限 {min_multiple:.2f}x）"
-                )
+                violations.append(f"equity {first:.0f}->{last:.0f} = {multiple:.3f}x（<合理下限 {min_multiple:.2f}x）")
     metrics = artifact.metrics or {}
     if metrics.get("trades_count") == 0:
         violations.append("metrics.trades_count=0 空跑")
@@ -176,12 +175,13 @@ def save_artifact(
         with open(quarantine_file, "w", encoding="utf-8") as f:
             json.dump(payload, f, ensure_ascii=False, indent=2)
         raise ArtifactQuarantinedError(
-            f"回测产物合理性护栏拦截 (run_id={artifact.run_id}): " + "; ".join(violations)
+            f"回测产物合理性护栏拦截 (run_id={artifact.run_id}): "
+            + "; ".join(violations)
             + f"——已隔离至 {quarantine_file}（确需落正库用 allow_implausible=True）",
             quarantine_path=str(quarantine_file),
         )
 
-    # 填充 created_at（如果未设置）——用 now_utc_str()（空格分隔，SSoT 存储契约，AGENTS.md §11.1.1 / time_utils.now_utc_str）
+    # 填充 created_at（如果未设置）——用 now_utc_str()（空格分隔，SSoT 存储契约，RULE-SCHEMA-TZ / time_utils.now_utc_str）
     if not artifact.created_at:
         artifact = replace(artifact, created_at=now_utc_str())
 
@@ -220,7 +220,7 @@ def get_artifact(
         raise ArtifactNotFoundError("run_id 未找到", details={"run_id": run_id, "file_path": str(file_path)})
 
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             d = json.load(f)
     except (json.JSONDecodeError, OSError) as e:
         raise ArtifactNotFoundError(f"run_id={run_id} 文件损坏: {e}") from e
@@ -257,7 +257,7 @@ def list_artifacts(
                 continue
         # 读取 created_at 用于排序
         try:
-            with open(f, "r", encoding="utf-8") as fh:
+            with open(f, encoding="utf-8") as fh:
                 d = json.load(fh)
             created_at = d.get("created_at", "")
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -296,7 +296,7 @@ def delete_artifact(
 
 
 def _cost_attribution_snapshot(
-    data: "BacktestSinkData",
+    data: BacktestSinkData,
     trade_log: list[dict[str, Any]],
 ) -> dict[str, Any]:
     """成交成本归因快照（台账 #23 H2 收口：把"一半亏损是佣金"写成产物里的显式事实）。

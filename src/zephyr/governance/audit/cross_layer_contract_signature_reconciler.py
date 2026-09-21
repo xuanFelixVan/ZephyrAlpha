@@ -145,7 +145,7 @@ _GATE_ID = "GATE-CROSS-LAYER-CONTRACT-SIGNATURE"
 _PRIORITY = 215
 
 
-# 跨层契约 YAML 真源路径（SSoT，AGENTS.md §11.0.2 规则数据真源）
+# 跨层契约 YAML 真源路径（SSoT，RULE-SSOT / trae_062_ssot_classification.yaml 规则数据真源）
 
 _CONTRACTS_YAML_REL = "architecture_model/contracts/cross_layer_contracts.yaml"
 
@@ -183,7 +183,7 @@ def _load_contract_physical_paths(yaml_abs: str) -> set[str]:
         return set()
 
     try:
-        with open(yaml_abs, "r", encoding="utf-8") as f:
+        with open(yaml_abs, encoding="utf-8") as f:
             data = yaml.safe_load(f)
 
         if not isinstance(data, dict):
@@ -378,7 +378,7 @@ def _persist_drift_finding(project_root: Path, file_path: str, detail: str) -> N
         logger.warning("cross_layer_contract_signature: persist finding failed: %s", e)
 
 
-def make_cross_layer_contract_signature_reconciler(gateway: "object") -> ReconcilerSpec:
+def make_cross_layer_contract_signature_reconciler(gateway: object) -> ReconcilerSpec:
     """构造 GATE-CROSS-LAYER-CONTRACT-SIGNATURE post-commit 契约签名漂移检测 reconciler。
 
 
@@ -492,7 +492,7 @@ def make_cross_layer_contract_signature_reconciler(gateway: "object") -> Reconci
         new_abs = str(project_root / rel_path)
 
         try:
-            with open(new_abs, "r", encoding="utf-8", errors="replace") as fh:
+            with open(new_abs, encoding="utf-8", errors="replace") as fh:
                 new_source = fh.read()
 
         except OSError as e:

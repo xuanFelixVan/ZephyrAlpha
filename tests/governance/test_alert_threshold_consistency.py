@@ -179,7 +179,9 @@ class TestDesignEntriesExist:
     def test_entry_total_and_categories(self):
         """总量与分类守卫：38 条 11 类（防误删条目无感流失；v1.4.0 +THD-ALERT-003/004）。"""
         e = _registry_entries()
-        assert len(e) == 38
+        # 42 条：38（v1.4.0 基线）+ THD-INTAKE-001..004（2026-09-18 冷库救回件落地第 4 批，
+        # 4fc94b60b6 纯插入，source_code=src/zephyr/ai_layer/intake/kpi.py 四条在案）
+        assert len(e) == 42
         cats = {entry["category"] for entry in e.values()}
         assert cats == {
             "drawdown",
@@ -193,6 +195,7 @@ class TestDesignEntriesExist:
             "oprisk",
             "drift",
             "retirement",
+            "ai_intake",
         }
 
 

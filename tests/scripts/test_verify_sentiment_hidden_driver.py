@@ -1,4 +1,4 @@
-# [BLUEPRINT] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md §3.7.4
+# [BLUEPRINT] MOD-SCRIPT-verify_sentiment_hidden_driver | docs/_working/archive/2026-09/design_memos/28_sentiment_cycle_trading.md | §3.7.4
 # [TTL] permanent
 """Hawkes+block-bootstrap 隐形驱动验证脚本测试（合成模式 + CSV 模式 + 退化输入）。"""
 

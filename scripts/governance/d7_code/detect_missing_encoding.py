@@ -20,7 +20,7 @@ detect_missing_encoding.py — open() 缺 encoding 检测
 
 
 对标：ABS-24（Python 写文件必须指定 encoding='utf-8'）
-     AGENTS.md §4 编码安全（唯一始终生效的硬规则）
+     编码安全（唯一始终生效的硬规则，真源 scripts/governance/_shared/encoding.py）
 
 检测内容：
 - AST 扫描 src/zephyr/ 和 scripts/governance/ 下 .py 文件

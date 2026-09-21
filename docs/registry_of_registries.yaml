@@ -249,6 +249,16 @@ tiers:
         status: active
         description: 模块间 19 条显式依赖关系
 
+      - registry_id: REG-STATE-VOCAB-001
+        name: 状态词表中央登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 29
+        counting_rule: vocabularies 数组条目数
+        status: active
+        description: 28 套封闭状态/情绪词表逐套登记（四轴：宏观 regime 10/情绪周期 12/预测预案 5/个股行为 1 合并条）——官方词表本体=zephyr.shared.vocab.market_state（SH-VOCAB-001），撞名冲突 C1/C2/C5/C6/C9/C11 注记（DLOOP-V2-STATE-VOCAB-UNIFICATION W2）
+
       - registry_id: REG-DIR-001
         name: 项目目录登记表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml
@@ -640,7 +650,7 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 287
+        entry_count: 297
         counting_rule: chart_patterns 数组条目数
         status: active
         description: 图形形态唯一真源（SSoT）——8 大类 254 条。v2.13.0（2026-08-14 十四轮全网 SOTA 调研驱动）：candlestick 77（TA-Lib 61 全集+A股特色7+Nison镊子2+塔形2+Crabel NR7+关键反转日/WRB/Oops+酒田三空）/chart_pattern 62（经典全集对账完成+缺口四型+Wolfe浪/Quasimodo/VCP/Ross/Lindsay/O'Neil高紧旗/Brooks H2L2+A股游资10+A股技术派2+DeMark TD2）/trendline 12（通道+Gann角度/九方图/摆动图+速度阻力线）/support_resistance 9（+Murrey/Camarilla）/fibonacci 17（工具6+谐波11）/chanlun 15/elliott_wave 8/structure 54（Wyckoff+SMC+MatrixProfile+VSA7+分时盘口9+订单流2+ORB/供需区/ICT PO3/冰山单/幌骗层叠+DL 套件13 锚点 YOLOv8/Swin-T/ViT-MAE/多模态LLM/Kronos/Mamba/扩散/Chart-RVR/多尺度VLM/AC-Seq2Net/ElliottAgents/wave-alpha/GAF-CNN）。#ARCH-BREG-001 P1-B
@@ -661,8 +671,8 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 264
-        counting_rule: 含 deprecated 全量（物理 yaml 条目数=datasets 数组，2026-09-06 实测）
+        entry_count: 342
+        counting_rule: 含 deprecated 全量（物理 yaml 条目数=datasets 数组，2026-09-21 实测；A14 生成器口径批 264→342）
         status: active
         description: 数据资产唯一真源（SSoT）——三实体模型（sources/datasets/jobs，对标 OpenLineage Source/Dataset/Job）。sources 15 个外部/内部数据源 + datasets 102 条 + jobs 82 条（DS-001~102/JOB-001~082 稳定编号；2026-08-14 v1.2.0 对标聚宽 JQData/quant666 补登 22 数据集+6 管道：市场约束/基本面/公司行动事件/资金面/中国宏观/申万行业）。S6 裁定改名扩展自 dataflow_graph_registry.yaml（registry_id/module_id 保留，稳定标识符不断）。#ARCH-BREG-001 P1-B
         owned_by: governance
@@ -857,21 +867,21 @@ known_issues:
 summary:
   generated_by: scripts/governance/d3_metadata/check_registry_consistency.py --refresh-summary
   total_tiers: 3
-  total_registries: 75
+  total_registries: 76
   by_tier:
     tier_0: 12
-    tier_1: 29
+    tier_1: 30
     tier_2: 34
   entries_carrying_tier_field:
     tier_1_governance: 7
   by_status:
-    active: 65
+    active: 66
     archived: 2
     deprecated: 1
     draft: 7
   by_medium:
     database: 2
-    ok: 73
+    ok: 74
   broken: 0
   broken_registry_ids: []
   legacy_manual_claims_replaced:

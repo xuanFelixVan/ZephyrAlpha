@@ -73,7 +73,7 @@ from pathlib import Path
 
 # ── 路径设置 ──
 # bootstrap：scripts/ 包外消费者一次性极简 sys.path，随后 from _shared.constants import REPO_ROOT
-# 真源约束：AGENTS.md §7 REPO_ROOT 真源归一（project_memory REPO_ROOT 硬约束）
+# 真源约束：REPO_ROOT 真源归一（src/zephyr/shared/io/paths.py SSOT）
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:

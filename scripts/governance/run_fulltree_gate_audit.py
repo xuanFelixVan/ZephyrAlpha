@@ -49,7 +49,7 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import REPO_ROOT  # noqa: E402
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, REPO_ROOT  # noqa: E402
 from _shared.encoding import ensure_utf8_stdout  # noqa: E402
 from _shared.thresholds import get as _get_threshold  # noqa: E402  阈值SSoT（AI-20 P0③）
 
@@ -194,10 +194,10 @@ def main() -> int:
 
     print(f"[GATE-FULLTREE-AUDIT] summary: findings={n_findings} tool_errors={n_errors} total={len(results)}")
     if n_errors:
-        return 2
+        return EXIT_ERROR
     if n_findings:
-        return 1
-    return 0
+        return EXIT_FINDINGS
+    return EXIT_PASS
 
 
 if __name__ == "__main__":

@@ -83,7 +83,7 @@ def make_claim_required_gate() -> GateSpec:
         if unclaimed:
             return False, (
                 f"session '{session_id}' 已注册但目标文件未 claim"
-                f"（AGENTS.md §8 L284）: {sorted(unclaimed)}. "
+                f"（claim 前移协议，宪法 RULE-WORKTREE「并发与提交」）: {sorted(unclaimed)}. "
                 f"commit 前 MUST 调 claim_files 声明工作范围。"
             )
         return True, ""

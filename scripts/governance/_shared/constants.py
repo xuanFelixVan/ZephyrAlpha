@@ -159,7 +159,7 @@ def get_depgraph_pg_connection(
 ) -> PgConnExecuteWrapper:
     """获取 depgraph (PostgreSQL) 连接（包装为兼容 sqlite3 接口）。
 
-    sanctioned wrapper：sqlite3 兼容语义（AGENTS.md §11.4 F4），
+    sanctioned wrapper：sqlite3 兼容语义（旧宪法归档 §11.4 F4，agent_constitution_legacy_v1.md），
     真源在 zephyr.governance.depgraph_schema.get_depgraph_pg_connection。
     禁止删除本 wrapper 或改为直连（29+ 调用点依赖 execute/fetchall 兼容语义）。
 
@@ -185,7 +185,7 @@ def get_depgraph_pg_connection(
     # F1 真源（depgraph_schema）返回 psycopg2 connection；F4 wrapper（本模块）包装为 PgConnExecuteWrapper。
     # 同名设计是为调用方透明替代，但 wrapper 内部必须调用真源，不能调用自己。
     # 治本（2026-06-28）：原直接 import 同名，L107 调用解析到局部 wrapper → RecursionError →
-    # path_tree sync failed warning。改用别名消除遮蔽。见 AGENTS.md §11.4。
+    # path_tree sync failed warning。改用别名消除遮蔽。见旧宪法归档 §11.4（agent_constitution_legacy_v1.md）。
     # 治本（2026-09-11）：import 从模块级移入函数体（PG 依赖惰性加载，见模块头注释）。
     from zephyr.governance.depgraph_schema import (  # noqa: PLC0415
         get_depgraph_pg_connection as _get_depgraph_pg_connection_from_depgraph_schema,

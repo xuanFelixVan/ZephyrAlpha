@@ -19,8 +19,8 @@ audit_directory_integrity.py — 01_policies_and_standards/ 目录结构完整�
 
 对标：ITIL 4 SACM §4.5（配置审计——CI登记完整性）
      ISO 11179 §5（元数据注册表——标识符唯一性）
-     AGENTS.md §5.1（零记忆重启标准——索引↔磁盘一致）
-     AGENTS.md §6.2（原子事务模式——重命名=删旧+登记新+索引更新，不可分步）
+     零记忆重启标准——索引↔磁盘一致（AGENTS.md RULE-PANORAMA 全景对齐纪律）
+     原子事务模式（safe_write_text CAS）——重命名=删旧+登记新+索引更新，不可分步
      PS-STD-012 §7.2（规则体系验证——字段扫描→内容读取→交叉验证→判定修复）
 
 五维检测：

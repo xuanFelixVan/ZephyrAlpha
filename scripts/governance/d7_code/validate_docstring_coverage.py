@@ -20,7 +20,7 @@ validate_docstring_coverage.py — Docstring 覆盖率校验
 
 
 对标：PEP 257 — all public modules/classes/functions should have docstrings
-     AGENTS.md §5.1 — 零记忆重启标准（AI 靠 docstring 理解代码意图）
+     零记忆重启标准 — AI 靠 docstring 理解代码意图
 
 检测 src/zephyr/ 下所有 .py 文件中：
 - 模块级 docstring 缺失

@@ -25,7 +25,7 @@ import os
 validate_session_log_index_integrity.py — session_logs 索引 ↔ 磁盘对账 + 自动汇总
 =====================================================================================
 依据：GOV-AI-007（session-log-schema.yaml v2.2.0）+ PS-REG-011
-对标：AGENTS.md §5.2 审计协议 + RULE-ZERO 锁协议
+对标：AGENTS.md 会话收尾序列审计协议 + RULE-ZERO 锁协议
 
 功能
 ----
@@ -108,32 +108,28 @@ def _parse_index() -> dict | None:
         return yaml.safe_load(fh)
 
 
-def _extract_blind_spots_from_session(file_path: Path) -> list[dict]:
-    """_extract_blind_spots_from_session implementation."""
+def _load_session_key(file_path: Path, key: str) -> list:
+    """读取 session yaml 并取指定键的 list（容错：文件缺失/格式异常一律空表）。"""
     try:
         with open(file_path, encoding="utf-8") as fh:
             data = yaml.safe_load(fh) or {}
-    except Exception:
+    except Exception:  # noqa: BLE001 — session 文件缺失/损坏需容错降级为空表（既有语义）
         return []
     if isinstance(data, dict):
-        spots = data.get("blind_spots_discovered", [])
-        if isinstance(spots, list):
-            return spots
+        vals = data.get(key, [])
+        if isinstance(vals, list):
+            return vals
     return []
+
+
+def _extract_blind_spots_from_session(file_path: Path) -> list[dict]:
+    """_extract_blind_spots_from_session implementation."""
+    return _load_session_key(file_path, "blind_spots_discovered")
 
 
 def _extract_modules_from_session(file_path: Path) -> list[str]:
     """_extract_modules_from_session implementation."""
-    try:
-        with open(file_path, encoding="utf-8") as fh:
-            data = yaml.safe_load(fh) or {}
-    except Exception:
-        return []
-    if isinstance(data, dict):
-        mods = data.get("modules_touched", [])
-        if isinstance(mods, list):
-            return mods
-    return []
+    return _load_session_key(file_path, "modules_touched")
 
 
 def generate_blind_spot_timeline(disk_sessions: dict[str, Path]) -> tuple[list[dict], int, int]:

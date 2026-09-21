@@ -9,18 +9,19 @@
 # [ERROR_CONTRACT] DB不可达->skip_test; 拓扑断裂->AssertionError; 指标缺失->AssertionError
 # [TESTS] tests/governance/test_battle_map_research_incubation.py
 # [TTL] permanent
-"""test_battle_map_research_incubation.py — 研究孵化阶段 33 环节逻辑全覆盖验证
+"""test_battle_map_research_incubation.py — 研究孵化阶段 34 环节逻辑全覆盖验证
 
-验证 battle_map_01_research_incubation.md 真源中研究孵化阶段 33 环节（11 根 + 22 子）的
+验证 battle_map_01_research_incubation.md 真源中研究孵化阶段 34 环节（11 根 + 23 子）的
 数据完整性、拓扑结构、6 件套指标、YAML 叙事、D-RESEARCH 覆盖率及生成器渲染防御性。
 
-环节结构（11 根环节 + 22 子环节 = 33）：
+环节结构（11 根环节 + 23 子环节 = 34）：
 
   BM-RES-01 研究数据与特征存储
     ├─ BM-RES-01-A 数据集版本化与血缘追踪    (D-RESEARCH-01)
     ├─ BM-RES-01-B 特征存储与PIT正确性       (D-RESEARCH-02)
     ├─ BM-RES-01-C 研究数据沙箱              (D-RESEARCH-12)
-    └─ BM-RES-01-D 研究资产版本化             (D-RESEARCH-18)
+    ├─ BM-RES-01-D 研究资产版本化             (D-RESEARCH-18)
+    └─ BM-RES-01-E 数据质量与健康监控         (裁定#261：2026-09-16 落图，L0 横切数据保障族，无 D-RESEARCH 映射)
   BM-RES-02 实验追踪与可复现性
     ├─ BM-RES-02-A 实验记录与对比             (D-RESEARCH-03)
     ├─ BM-RES-02-B 可复现性管理               (D-RESEARCH-05)
@@ -54,7 +55,7 @@
   BM-RES-01 → BM-RES-02 → BM-RES-03 → BM-RES-04 → BM-RES-05 → BM-RES-06 → BM-RES-07
 
 六类测试：
-  1. **拓扑验证（e2e，需 DB）**：33 环节存在、11 根 + 22 子、父子嵌套、sort_order、
+  1. **拓扑验证（e2e，需 DB）**：34 环节存在、11 根 + 23 子、父子嵌套、sort_order、
      6 条主链边、每环节有锚点（BM-INV-001）、锚点全指向候选池。
   2. **6 件套指标验证（e2e）**：每环节 indicators 含 6 件套全字段、data_flow 子结构完整、
      params 为 list[dict]（回归测试：防字符串 params 崩溃生成器）。
@@ -123,7 +124,8 @@ MAIN_CHAIN: list[str] = EXPECTED_ROOT_CHAIN[:7]
 
 # 父环节 → 子环节列表映射
 EXPECTED_CHILDREN: dict[str, list[str]] = {
-    "BM-RES-01": ["BM-RES-01-A", "BM-RES-01-B", "BM-RES-01-C", "BM-RES-01-D"],
+    # BM-RES-01-E：裁定#261（2026-09-16 T3 数据质量与健康子环节落图批）——11 锚语义归位后新环节
+    "BM-RES-01": ["BM-RES-01-A", "BM-RES-01-B", "BM-RES-01-C", "BM-RES-01-D", "BM-RES-01-E"],
     "BM-RES-02": ["BM-RES-02-A", "BM-RES-02-B", "BM-RES-02-C", "BM-RES-02-D"],
     "BM-RES-03": ["BM-RES-03-A", "BM-RES-03-B", "BM-RES-03-C"],
     "BM-RES-04": ["BM-RES-04-A"],
@@ -136,7 +138,7 @@ EXPECTED_CHILDREN: dict[str, list[str]] = {
     "BM-RES-11": ["BM-RES-11-A"],  # #ARCH-093
 }
 
-# 全部 33 环节 step_id（11 根 + 22 子）
+# 全部 34 环节 step_id（11 根 + 23 子）
 EXPECTED_ALL_STEPS: list[str] = list(EXPECTED_ROOT_CHAIN) + [
     child for children in EXPECTED_CHILDREN.values() for child in children
 ]
@@ -221,7 +223,7 @@ def _get_reader():
 
 @pytest.mark.e2e
 class TestResearchIncubationTopology:
-    """研究孵化拓扑验证——从 DB 读取 battle_map 三表，验证 25 环节结构。"""
+    """研究孵化拓扑验证——从 DB 读取 battle_map 三表，验证 34 环节结构。"""
 
     @pytest.fixture(scope="class")
     def res_steps(self):
@@ -258,22 +260,22 @@ class TestResearchIncubationTopology:
     # ── 环节数量 ──────────────────────────────────────────────────────
 
     def test_25_steps_exist(self, res_steps):
-        """33 个研究孵化环节全部存在（含 #ARCH-093 新增 8 个）。"""
+        """34 个研究孵化环节全部存在（含 #ARCH-093 新增 8 根 + 裁定#261 BM-RES-01-E）。"""
         for sid in EXPECTED_ALL_STEPS:
             assert sid in res_steps, f"缺少研究孵化环节 {sid}（DB 中未找到）"
 
-    def test_exactly_33_steps(self, res_steps):
-        """research_incubation 阶段恰好 33 环节（11 根 + 22 子，#ARCH-093 裁定后跟进）。"""
-        assert len(res_steps) == 33, (
-            f"research_incubation 阶段应有 33 环节，实际 {len(res_steps)}: {sorted(res_steps.keys())}"
+    def test_exactly_34_steps(self, res_steps):
+        """research_incubation 阶段恰好 34 环节（11 根 + 23 子；#ARCH-093 后跟进 + 裁定#261 BM-RES-01-E）。"""
+        assert len(res_steps) == 34, (
+            f"research_incubation 阶段应有 34 环节，实际 {len(res_steps)}: {sorted(res_steps.keys())}"
         )
 
-    def test_11_root_22_child(self, res_steps):
-        """11 个根环节（depth=0）+ 22 个子环节（depth=1）（#ARCH-093 裁定后跟进）。"""
+    def test_11_root_23_child(self, res_steps):
+        """11 个根环节（depth=0）+ 23 个子环节（depth=1）（#ARCH-093/裁定#261 后跟进）。"""
         roots = [s for s in res_steps.values() if s.get("depth") == 0]
         children = [s for s in res_steps.values() if s.get("depth") == 1]
         assert len(roots) == 11, f"根环节应有 11 个，实际 {len(roots)}"
-        assert len(children) == 22, f"子环节应有 22 个，实际 {len(children)}"
+        assert len(children) == 23, f"子环节应有 23 个，实际 {len(children)}"
 
     # ── 父子嵌套 ──────────────────────────────────────────────────────
 
@@ -297,7 +299,7 @@ class TestResearchIncubationTopology:
                 assert depth == 1, f"{child_id} depth 应为 1，实际 {depth}"
 
     def test_all_children_accounted_for(self, res_steps):
-        """22 个子环节全部在 EXPECTED_CHILDREN 映射中（无遗漏/无多余）。"""
+        """23 个子环节全部在 EXPECTED_CHILDREN 映射中（无遗漏/无多余）。"""
         actual_children = {sid for sid in res_steps if sid not in EXPECTED_ROOT_CHAIN}
         expected_children = {child for children in EXPECTED_CHILDREN.values() for child in children}
         missing = expected_children - actual_children

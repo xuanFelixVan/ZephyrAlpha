@@ -18,7 +18,7 @@
 """
 G4 Activate 门禁 — 人工激活（T-2-13-D）
 ========================================
-依据：g4-activate.yaml、AGENTS.md §5.2
+依据：g4-activate.yaml（真源）
 
 功能
 ----

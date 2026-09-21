@@ -10,7 +10,7 @@
 #   只读分类（externalize(dry_run=True) 全程零写入，本器唯一写盘=--out/--json）；
 #   台账绝不静默少报：欠账三类 + resolvable（dryrun/externalized/already）+ other（逐件带报因）
 #   = 池总数，恒等式在报告统计区自证；池来源=--file-list 传入即如实报传入的池，
-#   或 --scan-pool 现扫（AGENTS.md §9 第 5 条：清单必由生成器产出，手工清单必漂移）；
+#   或 --scan-pool 现扫（AGENTS.md 运维红线「静态清单禁手工维护」：清单必由生成器产出，手工清单必漂移）；
 #   时间源走 idempotent_timestamp（GATE-GEN-NO-REALTIME-TIME：生成器禁实时时钟）；
 #   域分组键=src/zephyr/<domain>/ 的 path 段 2（根层件 src/zephyr/<mod>.py 归 (root)）
 # [MODIFY-GUARD] 无
@@ -68,7 +68,10 @@ for _p in (_GOV_DIR, _GEN_DIR):
         sys.path.insert(0, _p)
 
 import externalize_algo_flow as ext  # noqa: E402  # noqa: import-integrity  import-integrity豁免: 生成器同目录件，运行时 sys.path 注入后静态分析不可解析
-from _common import idempotent_date, idempotent_timestamp  # noqa: E402  # noqa: import-integrity  import-integrity豁免: 生成器共享前缀件，经上一行 sys.path 注入动态加载
+from _common import (  # noqa: E402  # noqa: import-integrity  import-integrity豁免: 生成器共享前缀件，经上一行 sys.path 注入动态加载
+    idempotent_date,
+    idempotent_timestamp,
+)
 from _shared.code_algorithm_extractor import _has_inline_algo_flow  # noqa: E402
 
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402  # 仓库根真源（SSoT：zephyr.shared.io.paths）
@@ -259,7 +262,7 @@ def render_report(cls: dict, *, source: str) -> str:
         "# ALGO_FLOW 出仓作者欠账台账（P2-1 尾池）",
         "",
         "> 本文由 `scripts/governance/d5_architecture/generators/report_algo_flow_author_debt.py` 生成，勿手改"
-        "（AGENTS.md §9 第 5 条：静态清单必由生成器产出）。",
+        "（AGENTS.md 运维红线「静态清单禁手工维护」：静态清单必由生成器产出）。",
         "> 时间源：`idempotent_timestamp`（本脚本最近 git commit 时间，相同 commit→相同输出）。",
         f"> 池来源：{source}；判据：`externalize(dry_run=True)`（零写入）的 skipped 报因。",
         "> 欠账=补节点/补边即臆造算法语义，禁工具代做（伪造边会把错图渲染成「已验证」全景图）。",
@@ -298,9 +301,7 @@ def render_report(cls: dict, *, source: str) -> str:
         for e in resolvable:
             tally[e["status"]] = tally.get(e["status"], 0) + 1
         lines += [
-            "构成：" + "、".join(
-                f"{_RESOLVABLE_LABELS.get(s, s)}（{s}）={n}" for s, n in sorted(tally.items())
-            ),
+            "构成：" + "、".join(f"{_RESOLVABLE_LABELS.get(s, s)}（{s}）={n}" for s, n in sorted(tally.items())),
             "",
         ]
     lines += _grouped_lines(resolvable) if resolvable else ["（无）", ""]
@@ -322,9 +323,7 @@ def summary_line(counts: dict) -> str:
 
 def _parse(argv: list[str] | None = None) -> argparse.Namespace:
     """_parse implementation."""
-    parser = argparse.ArgumentParser(
-        description="ALGO_FLOW 出仓作者欠账台账生成器（P2-1 尾池，reporter 非 gate）"
-    )
+    parser = argparse.ArgumentParser(description="ALGO_FLOW 出仓作者欠账台账生成器（P2-1 尾池，reporter 非 gate）")
     parser.add_argument("--file-list", dest="file_list", help="池清单：每行一个仓库根相对 .py 路径")
     parser.add_argument(
         "--scan-pool",
@@ -370,14 +369,10 @@ def main(argv: list[str] | None = None) -> int:
             "generated_at": idempotent_timestamp(_THIS_FILE),
             "source": source,
             "counts": cls["counts"],
-            "debt_classes": {
-                k: {"name": n, "dispatch": d, "skip_reason": r} for k, n, d, r in DEBT_CLASSES
-            },
+            "debt_classes": {k: {"name": n, "dispatch": d, "skip_reason": r} for k, n, d, r in DEBT_CLASSES},
             "entries": cls["entries"],
         }
-        json_path.write_text(
-            json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n"
-        )
+        json_path.write_text(json.dumps(payload, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(summary_line(cls["counts"]))
     print(f"[OK] 台账 → {_rel_of(out_path, REPO_ROOT)}（池 {cls['counts']['pool']} 件）")
     return 0

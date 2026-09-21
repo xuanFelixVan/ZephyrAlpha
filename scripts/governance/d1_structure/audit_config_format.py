@@ -19,8 +19,8 @@ audit_config_format.py — config/ 目录格式/注释/边界快速扫描
 
 
 
-对标：AGENTS.md §4（编码安全 — UTF-8 / 无BOM / 行尾一致性）
-     AGENTS.md §6.2（原子事务模式 — 注释与实际内容一致性）
+对标：编码安全（UTF-8 / 无BOM / 行尾一致性，真源 scripts/governance/_shared/encoding.py）
+     原子事务模式（safe_write_text CAS，src/zephyr/shared/io/file_utils.py）— 注释与实际内容一致性
      ITIL SACM §4.5（Configuration Audit — 配置项格式合规性）
 
 检测内容：

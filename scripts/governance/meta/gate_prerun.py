@@ -98,9 +98,11 @@ from typing import Final
 
 _GOV_DIR = next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists())
 _REPO_ROOT = _GOV_DIR.parents[1]
-for _p in (str(_REPO_ROOT / "src"), str(_REPO_ROOT)):
+for _p in (str(_REPO_ROOT / "src"), str(_REPO_ROOT), str(_GOV_DIR)):
     if _p not in sys.path:
         sys.path.insert(0, _p)
+
+from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
 
 # 环境信号型门（非内容违规）：缺身份/非 worktree 直跑必然命中，落地侧由 serializer/旗标处置
 ENV_SIGNAL_GATES: Final[frozenset[str]] = frozenset(
@@ -213,8 +215,7 @@ def report(outcome: GatePrerunOutcome) -> None:
         f" | 注册 GateSpec 总数 = {outcome.total_specs}"
     )
     if outcome.unclaimed:
-        print("[prerun] ⚠ claim_files 未成功的文件（返回的是成功清单，差集才是失败者）: "
-              f"{outcome.unclaimed}")
+        print(f"[prerun] ⚠ claim_files 未成功的文件（返回的是成功清单，差集才是失败者）: {outcome.unclaimed}")
     for bucket, tag in ((outcome.hard_fail, "HARD"), (outcome.env_fail, "ENV"), (outcome.errors, "GATE-EXC")):
         for line in bucket:
             print(f"\n--- {tag} ---\n{line}")
@@ -256,8 +257,10 @@ def self_check() -> int:
     Returns:
         0=判别力完好；3=失去报红能力（此时它的 PASS 结论不可信）。
     """
+
     def _mk(gate_id: str, passed: bool, raises: bool) -> _SyntheticSpec:
         """_mk implementation."""
+
         def _check(_gw: object, _files: list[str], **_kw: object) -> tuple[bool, str]:
             """_check implementation."""
             if raises:
@@ -272,8 +275,10 @@ def self_check() -> int:
     green = run_specs(clean, None, cfg)
     red = run_specs(dirty, None, cfg)
     ok = green.exit_code == 0 and red.exit_code == 1 and len(red.hard_fail) == 1 and len(red.errors) == 1
-    print(f"[self-check] 干净腿 exit={green.exit_code}（期望 0）| 违规腿 exit={red.exit_code}"
-          f"（期望 1）hard={len(red.hard_fail)} errors={len(red.errors)}")
+    print(
+        f"[self-check] 干净腿 exit={green.exit_code}（期望 0）| 违规腿 exit={red.exit_code}"
+        f"（期望 1）hard={len(red.hard_fail)} errors={len(red.errors)}"
+    )
     print("[self-check] OK：预跑器具备报红能力" if ok else "[self-check] FAIL：预跑器不能红，禁止采信其 PASS 结论")
     return 0 if ok else 3
 
@@ -292,7 +297,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     ap.add_argument("--strict-env", action="store_true", help="环境信号也计失败")
     ap.add_argument("--no-claim", action="store_true", help="不做 claim 前移（会触发 CLAIM-REQUIRED 伪红）")
     ap.add_argument("--no-adopt", action="store_true", help="claim 时不带 adopt_prior_work")
-    ap.add_argument("--allow", action="append", default=[], help="置真的旗标：overlap/promote/derived-deletion/non-worktree/multi-domain/tracked-drift")
+    ap.add_argument(
+        "--allow",
+        action="append",
+        default=[],
+        help="置真的旗标：overlap/promote/derived-deletion/non-worktree/multi-domain/tracked-drift",
+    )
     ap.add_argument("--quiet", action="store_true", help="只打印汇总")
     ap.add_argument("--json", default="", help="把三分类结果写 JSON（机读）")
     ap.add_argument("--self-check", action="store_true", help="只自检报红能力，不跑真门")
@@ -371,7 +381,7 @@ def main(argv: list[str] | None = None) -> int:
     cfg = build_config(args)
     if isinstance(cfg, str):
         print(f"FAIL: {cfg}", file=sys.stderr)
-        return 2
+        return EXIT_ERROR
     if args.self_check:
         return self_check()
     try:
@@ -379,7 +389,7 @@ def main(argv: list[str] | None = None) -> int:
         specs = collect_specs(gateway)
     except Exception as exc:  # noqa: BLE001 — 环境不可达=用法错误，不是内容违规
         print(f"FAIL: gateway/门禁注册表不可达: {type(exc).__name__}: {exc}", file=sys.stderr)
-        return 2
+        return EXIT_ERROR
     print(f"[prerun] session={cfg.session_id} files={len(cfg.files)} 注册 GateSpec 总数 = {len(specs)}")
     # 坑②：claim 前移 MUST 在跑门之前——CLAIM-REQUIRED / FOREIGN-CHANGE 读的是 held_files 与基线快照
     unclaimed = claim_for_prerun(gateway, cfg)

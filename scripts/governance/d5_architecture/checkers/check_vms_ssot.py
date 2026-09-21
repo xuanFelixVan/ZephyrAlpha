@@ -8,7 +8,7 @@
 # [CONSUMERS] .pre-commit-config.yaml GATE-VMS-SSOT
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] DEAD_METHOD_NAMES, DEAD_METHOD_FILE_SCOPE changes require Owner approval; 真源 AGENTS.md §11.2 遗留项-3/4
+# [INVARIANTS] DEAD_METHOD_NAMES, DEAD_METHOD_FILE_SCOPE changes require Owner approval; 真源 旧宪法归档 §11.2 遗留项-3/4（agent_constitution_legacy_v1.md）
 # [MODIFY-GUARD] FORBIDDEN_PREFIX, DEAD_METHOD_NAMES, DEAD_METHOD_FILE_SCOPE, DEAD_METHOD_CHECK_PREFIX changes require Owner approval
 # [STABILITY] stable
 # [SAFETY] M
@@ -20,7 +20,7 @@
 #
 # GATE-VMS-SSOT: VMS 单一真源门禁（三重检测：governance/vector_memory 漂移副本 + snapshot 方法重建 + faiss dead code 重建）
 #
-# 真源：AGENTS.md §11.2 遗留项-3 VMS SSoT 声明 + 遗留项-4 snapshot 整体删除治本
+# 真源：旧宪法归档 §11.2 遗留项-3 VMS SSoT 声明 + 遗留项-4（agent_constitution_legacy_v1.md） snapshot 整体删除治本
 #       "integration/vector_memory/ 是 VMS 唯一真源，governance/vector_memory/ 已删除（2026-06-28）"
 #       "snapshot 备份功能整体删除——R4 被 ChromaDB SQLite ACID+WAL 覆盖，30GB 递归灾难根因"
 #       "faiss_collection_manager.write_with_provenance 死代码已删除（零调用方）"
@@ -35,7 +35,7 @@
 #      AST 检测 FunctionDef/AsyncFunctionDef 名字——无论方法体是否实现均阻断
 #      （防止"保留方法名但内部空桩"或"重建为伪装方法"绕过）。
 #   3) faiss_collection_manager.write_with_provenance 死代码已删除（零调用方，
-#      AGENTS.md §11.2 遗留项-3），FAISS 启用时按 CollectionManager 真源签名重新实现。
+#      旧宪法归档 §11.2 遗留项-3，agent_constitution_legacy_v1.md），FAISS 启用时按 CollectionManager 真源签名重新实现。
 #      本门禁防止 AI 在 FAISS 未启用时提前补全此死代码。
 #
 # 历史教训：
@@ -58,7 +58,7 @@
 与 GATE-SRC-NO-DATA 的区别：
     - GATE-SRC-NO-DATA 禁止 src/data/（数据真源唯一 data/），真源 trae_047
     - 本脚本禁止 governance/vector_memory/ 重建 + snapshot/faiss dead code 方法重建，
-      真源 AGENTS.md §11.2 遗留项-3/4
+      真源 旧宪法归档 §11.2 遗留项-3/4（agent_constitution_legacy_v1.md）
 
 Exit codes:
     0 = PASS（无违规或无 staged 文件）
@@ -83,7 +83,7 @@ import sys
 from pathlib import Path
 
 # bootstrap：scripts/ 包外消费者一次性极简 sys.path，随后 from _shared.constants import REPO_ROOT
-# 真源约束：AGENTS.md §7 REPO_ROOT 真源归一（project_memory L29 硬约束）
+# 真源约束：REPO_ROOT 真源归一（src/zephyr/shared/io/paths.py SSOT）
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
@@ -92,11 +92,11 @@ if _GOV_DIR not in sys.path:
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS, REPO_ROOT
 
 # 检测1：禁止路径前缀（小写，大小写不敏感比较——Windows 文件系统大小写不敏感）
-# 规则真源见 AGENTS.md §11.2 遗留项-3 VMS SSoT 声明，此处为校验执行逻辑非第二真源
+# 规则真源见 旧宪法归档 §11.2 遗留项-3 VMS SSoT 声明（agent_constitution_legacy_v1.md），此处为校验执行逻辑非第二真源
 FORBIDDEN_PREFIX = "src/zephyr/governance/vector_memory/"
 
 # 检测2：全局死代码方法名（全目录无真源同名方法，安全全局扫描）
-# 方法名 → 删除原因（用于违规提示），规则真源见 AGENTS.md §11.2 遗留项-4
+# 方法名 → 删除原因（用于违规提示），规则真源见 旧宪法归档 §11.2 遗留项-4（agent_constitution_legacy_v1.md）
 DEAD_METHOD_NAMES = {
     # 遗留项-4：snapshot 整体删除治本（30GB 递归自复制 + 零消费方 + R4 被 ChromaDB ACID+WAL 覆盖）
     "snapshot_backup": "snapshot 整体删除治本（遗留项-4，30GB 递归自复制）",
@@ -238,7 +238,7 @@ def main():
         print(
             f"  [检测1·漂移副本] governance/vector_memory/ 是已删除的漂移副本目录\n"
             f"    违规文件：{violations_ssot}\n"
-            f"    真源：AGENTS.md §11.2 遗留项-3 VMS SSoT 声明\n"
+            f"    真源：旧宪法归档 §11.2 遗留项-3 VMS SSoT 声明（agent_constitution_legacy_v1.md）\n"
             f"    原因：integration/vector_memory/ 是 VMS 唯一真源，"
             f"governance/vector_memory/ 已于 2026-06-28 删除\n"
             f"    历史教训：26 文件漂移副本与真源并存导致维度方向双向漂移"
@@ -253,7 +253,7 @@ def main():
                 f"  [检测2/3·dead method 重建] VMS 真源目录下检测到已删除的方法被重建\n"
                 f"    违规文件：{f}#{lineno} 方法名：{method_name}\n"
                 f"    删除原因：{reason}\n"
-                f"    真源：AGENTS.md §11.2 遗留项-3/4\n"
+                f"    真源：旧宪法归档 §11.2 遗留项-3/4（agent_constitution_legacy_v1.md）\n"
                 f"    修复：删除重建的方法。",
                 file=sys.stderr,
             )

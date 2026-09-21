@@ -19,7 +19,7 @@ validate_script_quality.py — 治理脚本质量合规检查
 
 
 对标：SCRIPT-QUALITY-001 §10 自检清单（38 项条款：22 MUST + 16 SHOULD）
-      AGENTS.md §6.5（脚本自创入库强制约定）
+      AGENTS.md CREATE-GUARD 入库登记铁律（脚本自创落位强制约定）
 
 检测内容（15 项可自动化的条款）：
 - D-A-01: UTF-8 输出强制声明（ensure_utf8_stdout 或 sys.stdout.reconfigure）

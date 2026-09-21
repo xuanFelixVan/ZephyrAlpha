@@ -55,7 +55,7 @@ canonical 扩展点也不覆盖 §X.Y——全项目无任何机制检测 AGENTS
 6. **正则提取章节号**：``^#{2,4}\s+(\d+(?:\.\d+)*)`` 匹配 ``## 4.``、
    ``### 4.1``、``#### 4.2.1`` 等格式，捕获组为 ``4`` / ``4.1`` / ``4.2.1``。
 7. **引用正则**：``AGENTS\.md\s*§(\d+(?:\.\d+)*)`` 匹配
-   ``AGENTS.md §6.9`` / ``AGENTS.md§6.9`` 等变体。
+   AGENTS.md 直连 ``§6.9`` 型编号（含无空格变体）。
 
 Usage::
 
@@ -91,7 +91,7 @@ __all__ = ["make_dangling_reference_gate"]
 # 捕获组为章节号字符串（如 "4" / "4.1" / "4.2.1"）
 _SECTION_HEADING_RE = re.compile(r"^#{2,4}\s+(\d+(?:\.\d+)*)", re.MULTILINE)
 
-# AGENTS.md §X.Y 引用检测正则：匹配 "AGENTS.md §6.9" / "AGENTS.md§6.9" 等变体
+# 失效编号引用检测正则：匹配 AGENTS.md 直连 § 数字（§6.9 型与无空格变体等）
 # 捕获组为被引用的章节号字符串
 _AGENTS_REF_RE = re.compile(r"AGENTS\.md\s*§(\d+(?:\.\d+)*)")
 

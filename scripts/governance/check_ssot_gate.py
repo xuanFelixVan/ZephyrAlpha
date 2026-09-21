@@ -106,7 +106,7 @@ def main() -> int:
             return EXIT_ERROR
         new_files = [f.strip() for f in ls.stdout.splitlines() if f.strip().endswith(".py")]
         if not new_files:
-            return 0
+            return EXIT_PASS
     else:
         # 获取 staged 新增的 .py 文件（diff-filter=A 只看新增）
         result = subprocess.run(  # noqa: bare-subprocess  静态检查器读 git 状态,process_pool 在此场景不适用

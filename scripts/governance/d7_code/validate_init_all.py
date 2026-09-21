@@ -20,7 +20,7 @@ validate_init_all.py — __init__.py __all__ 完整性校验
 
 
 对标：PEP 8 — __all__ should be defined for public API packages
-     AGENTS.md §6.4 — 显式优于隐式（AI 需要显式知道包的公开接口）
+     显式优于隐式（AI 需要显式知道包的公开接口）
 
 检测 src/zephyr/ 下所有 __init__.py 文件：
 - 如果 __init__.py 中有 import 语句，则必须有 __all__ 定义

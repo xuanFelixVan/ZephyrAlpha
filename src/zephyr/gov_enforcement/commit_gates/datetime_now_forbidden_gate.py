@@ -18,11 +18,11 @@ r"""
 datetime_now_forbidden_gate.py — 时间戳约定硬阻断门禁（DATETIME-NOW-FORBIDDEN）
 
 检测 staged 代码（.py）新增行中的时间戳误用，覆盖两类场景：
-  1. 生成器代码中 ``datetime.now()`` 任何形式（违反 AGENTS.md §11.1.1 生成器幂等约定）
+  1. 生成器代码中 ``datetime.now()`` 任何形式（违反 RULE-SCHEMA-TZ 生成器幂等约定）
   2. src/zephyr/ 全量代码中 ``time.time()`` 或 ``datetime.now()`` 无参数
      （违反 5.46 时区处理约定——应改用 ``now_utc()`` 或 ``datetime.now(UTC)``）
 
-病根（5.46 时间与时区处理 + AGENTS.md §11.1.1）
+病根（5.46 时间与时区处理 + RULE-SCHEMA-TZ）
 ------------------------------------------------
 - 生成器中使用 ``datetime.now()`` 导致非幂等 auto-commit，污染 git 历史
 - 运行时代码中 ``time.time()`` 用于 TTL 计算易引入时区漂移
@@ -69,9 +69,9 @@ import re
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _audit_foreign_staged,
     _build_own_scope,
-    _is_src_zephyr_file,
     _extract_docstring_lines,
     _is_exempt_line,
+    _is_src_zephyr_file,
     _norm_rel,
     _parse_diff_with_line_numbers,
     _read_staged_file,

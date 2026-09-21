@@ -30,7 +30,7 @@ __manifest__ = {
 }
 
 # 对标: SCRIPT-QUALITY-001 D-H-01 (冒烟测试: --warn-only 退出干净)
-#       AGENTS.md §6.5 (脚本入库后必须验证)
+#       AGENTS.md CREATE-GUARD 入库登记铁律 (脚本入库后必须验证)
 # 检测内容:
 # - 从 script_manifest.yaml 加载全部注册脚本
 # - 用 subprocess + --warn-only 逐个运行

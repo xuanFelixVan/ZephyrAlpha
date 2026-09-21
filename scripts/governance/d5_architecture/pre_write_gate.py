@@ -87,7 +87,7 @@ def _check_lock(file_path: str) -> tuple[bool, str]:
     try:
         with contextlib.redirect_stdout(buf):
             lock_files.cmd_check(file_path)
-    except Exception as e:  # noqa: BLE001 — lock 检查异常降级 WARN（fail-open，对标原 timeout 行为）
+    except Exception as e:  # noqa: BLE001 — 预写门 fail-open 降级语义（既有），异常类型不可枚举  # noqa: BLE001 — lock 检查异常降级 WARN（fail-open，对标原 timeout 行为）
         return True, f"LOCK_CHECK_WARN: in-process check failed ({e})"
     output = buf.getvalue().strip()
     if "FREE" in output:
@@ -118,11 +118,11 @@ def _check_session_overlap(file_path: str, session_id: str) -> tuple[bool, str]:
                 rel = file_path
             return False, (
                 f"HELD_BY_OTHER: {rel} 被 session '{holder.session_id}' 持有"
-                f"（claim 前移协议，AGENTS.md §8 L301）。"
+                f"（claim 前移协议，宪法 RULE-WORKTREE「并发与提交」）。"
                 f"协调方式：等对方 release / 用 --allow-overlap 逃生通道 / 切 StagingArea 模式 B。"
             )
         return True, "OK"
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 预写门 fail-open 降级语义（既有），异常类型不可枚举
         return True, f"OVERLAP_WARN: 检测异常 ({e})——降级通过（对标 held_overlap_gate fail-open）"
 
 
@@ -145,7 +145,10 @@ def _check_root_pollution(file_path: str) -> tuple[bool, str]:
 def _check_phase_health() -> tuple[bool, str]:
     """_check_phase_health implementation."""
     try:
-        from zephyr.gov_enforcement.rule_enforcement.phase_manager import GateResult, session_startup  # noqa: import-integrity  路径陈旧（phase_manager 已迁 ops_governance），ImportError 兜底降级在案，复活属行为变更登记专项
+        from zephyr.gov_enforcement.rule_enforcement.phase_manager import (  # noqa: import-integrity  路径陈旧（phase_manager 已迁 ops_governance），ImportError 兜底降级在案，复活属行为变更登记专项
+            GateResult,
+            session_startup,
+        )
 
         result = session_startup(quick=True)
         if result["ready"]:
@@ -153,7 +156,7 @@ def _check_phase_health() -> tuple[bool, str]:
         return False, f"PHASE_BLOCKED: {result['next_action']}"
     except ImportError as e:
         return True, f"PHASE_WARN: 无法加载 phase_manager ({e})——降级通过"
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 预写门 fail-open 降级语义（既有），异常类型不可枚举
         return True, f"PHASE_WARN: phase_manager 异常 ({e})——降级通过"
 
 
@@ -289,7 +292,7 @@ def _check_encoding_safety(file_path: str) -> tuple[bool, str]:
                                     False,
                                     f"MOJIBAKE_BLOCK: {file_path} contains GBK-as-UTF-8 mojibake (partial round-trip) — fix encoding before modifying (DM-378)",
                                 )
-                        except Exception:  # noqa: BLE001 — mojibake 局部 round-trip 启发式检测的防御性兜底：分段检测意外异常时跳过该段继续检测其余段，避免误拦截
+                        except Exception:  # noqa: BLE001 — 生成器/预写门 fail-open 容错语义（既有），异常类型不可枚举  # noqa: BLE001 — mojibake 局部 round-trip 启发式检测的防御性兜底：分段检测意外异常时跳过该段继续检测其余段，避免误拦截
                             pass
                 except UnicodeEncodeError:
                     pass

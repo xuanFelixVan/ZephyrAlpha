@@ -29,7 +29,7 @@ warn_only: false
 """
 
 # 对标: DOC-009#1 (depends_on 无环)
-#      AGENTS.md §6.2 (引用链不超过3层，环是极端违规)
+#      引用链不超过3层约定（环是极端违规）
 #
 # 检测内容:
 # - 构建所有 .md/.yaml 文件的 depends_on 有向图

@@ -19,7 +19,7 @@
 
 
 对标：PS-STD-001 §4.1.1 LRC-001~005（生命周期引用约束）
-     AGENTS.md §6.2（原子事务模式——引用链不超过3层）
+     引用链不超过3层（RULE-DEPGRAPH 依赖纪律）
 
 检测内容：
 - LRC-001：active 文件通过 depends_on 引用 draft 文件

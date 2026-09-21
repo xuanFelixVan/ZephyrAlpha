@@ -53,14 +53,14 @@ _REPO_ROOT = Path(__file__).resolve().parents[4]
 _TS_CACHE: dict[str, str] = {}
 
 
-def idempotent_timestamp(script_path: "Path | None" = None) -> str:
+def idempotent_timestamp(script_path: Path | None = None) -> str:
     """幂等时间源：返回脚本最近一次 git commit 时间（ISO 8601 秒精度 YYYY-MM-DDTHH:MM:SS）。
 
     相同 commit → 相同时间戳，避免 ``datetime.now`` 等实时时钟导致生成器输出非确定性。
 
     治本：#ARCH-REGEN-NONIDEMPOTENT-001
     正典先例：generate_decision_diagram._git_commit_timestamp()
-    真源铁律：AGENTS.md §11.1.1 "禁止在生成器中使用 datetime.now 或任何实时时间源"
+    真源铁律：RULE-SCHEMA-TZ（trae_065 时区批）"禁止在生成器中使用 datetime.now 或任何实时时间源"
 
     Args:
         script_path: 待查脚本路径；默认为调用方源文件。建议显式传 ``Path(__file__)``。
@@ -91,7 +91,7 @@ def idempotent_timestamp(script_path: "Path | None" = None) -> str:
     return ts
 
 
-def idempotent_date(script_path: "Path | None" = None) -> str:
+def idempotent_date(script_path: Path | None = None) -> str:
     """幂等日期源（YYYY-MM-DD）。
 
     治本：#ARCH-REGEN-NONIDEMPOTENT-001
@@ -106,7 +106,7 @@ def idempotent_date(script_path: "Path | None" = None) -> str:
 
 
 # 治本（2026-06-30）：数据库名真源——生成器产物引用此常量，禁止硬编码 `depgraph (PostgreSQL)`。
-# 真源链：dependency_path_panorama.md L23 + AGENTS.md §11.0 命名规范 → 本常量（生成器可用真源）。
+# 真源链：dependency_path_panorama.md L23 + 命名规范真源 trae_028_doc_structure_naming.yaml → 本常量（生成器可用真源）。
 # 生成器纯 stdlib 解耦（不 import zephyr.*），无法读 .md，故在此收口。
 DB_DISPLAY_NAME = "depgraph (PostgreSQL)"
 

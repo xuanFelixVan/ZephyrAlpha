@@ -1,4 +1,5 @@
 # [BLUEPRINT] MOD-INF-005 | scripts/governance/d5_architecture/validators/blueprint/validate_blueprint_code_sync.py | §
+# noqa: m11-perm-manual-legitimate  M11豁免: 治理 CLI 校验器，run_all.py 批量调度链成员非永久系统（WO-13 批次登记 2026-09-21）
 # [MODULE] scripts.governance.d5_architecture.validators.blueprint.validate_blueprint_code_sync
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance.d5_architecture.validators.blueprint.__init__
@@ -38,7 +39,7 @@ __manifest__ = """
 args:
   - --warn-only
   - --jsonl
-description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（AGENTS.md §6.1 — 蓝图§16路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
+description: GATE-BLUEPRINT-CODE — 蓝图-代码同步校验闸门（真源 TRAE-014 docs/01_policies_and_standards/rules/trae_014_arch_blueprint_alignment.yaml — 蓝图路径索引vs磁盘实际交叉比对，幽灵路径+遗漏登记+路径漂移）
 dimensions:
 - D5
 - D8
@@ -122,7 +123,7 @@ def validate_blueprint(bp_path: Path, warn_only: bool) -> list[str]:
     section = extract_path_index_section(content)
     if not section:
         errors.append(
-            f"[GATE-BLUEPRINT-CODE] {rel_bp}: 缺少「已实现代码路径索引」章节（AGENTS.md §6.1 要求蓝图 §16~§19 为路径索引）"
+            f"[GATE-BLUEPRINT-CODE] {rel_bp}: 缺少「已实现代码路径索引」章节（RULE-DEPGRAPH 要求蓝图含「已实现代码路径索引」章节）"
         )
         return errors
     claimed = extract_claimed_paths(section)
@@ -138,7 +139,7 @@ def main() -> int:
     import argparse
     import json
 
-    parser = argparse.ArgumentParser(description="蓝图 §16~§19 路径索引与实际文件系统对账（AGENTS.md §6.1）")
+    parser = argparse.ArgumentParser(description="蓝图路径索引与实际文件系统对账（TRAE-014）")
     parser.add_argument("--warn-only", action="store_true", help="告警模式，不阻断退出码")
     parser.add_argument("--jsonl", action="store_true", help="单行 JSON 摘要")
     args = parser.parse_args()
@@ -177,7 +178,7 @@ def main() -> int:
             code = 0
         else:
             print(
-                "\n[GATE-BLUEPRINT-CODE] 🔴 CI 失败 — 蓝图路径索引与磁盘实际不一致。请按 AGENTS.md §6.1 更新蓝图路径索引章节。"
+                "\n[GATE-BLUEPRINT-CODE] 🔴 CI 失败 — 蓝图路径索引与磁盘实际不一致。请按 RULE-DEPGRAPH / TRAE-014 更新蓝图路径索引章节。"
             )
             code = 1
     else:

@@ -178,10 +178,7 @@ class TestValidate:
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert ok is False
-        assert any(
-            i.code == "R2" and i.node_id == "TDM-GHOST" and "to_node 不存在" in i.detail
-            for i in issues
-        )
+        assert any(i.code == "R2" and i.node_id == "TDM-GHOST" and "to_node 不存在" in i.detail for i in issues)
 
     def test_r8_sequence_cycle_detected(self, tmp_path: Path) -> None:
         payload = _minimal_payload()
@@ -447,9 +444,7 @@ class TestXrefAxes:
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         _assert_no_unexpected_errors(issues)
-        assert not any(
-            i.code in {f"R{n}" for n in range(26, 37)} for i in issues
-        )
+        assert not any(i.code in {f"R{n}" for n in range(26, 37)} for i in issues)
 
 
 # ── A3 D32/D33 门禁包 R13-R19 ────────────────────────────────────────────────
@@ -498,9 +493,7 @@ class TestGovernanceGates:
 
     def test_r15_v15_node_requires_governance_fields(self, tmp_path: Path) -> None:
         payload = _minimal_payload()
-        payload["nodes"].append(
-            _make_min_node(node_id="TDM-T-2", name_zh="子环节", parent_node="TDM-T-1")
-        )
+        payload["nodes"].append(_make_min_node(node_id="TDM-T-2", name_zh="子环节", parent_node="TDM-T-1"))
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert ok is False
@@ -534,9 +527,7 @@ class TestGovernanceGates:
     def test_r16_parent_cycle(self, tmp_path: Path) -> None:
         payload = _minimal_payload()
         payload["nodes"][0]["parent_node"] = "TDM-T-2"
-        payload["nodes"].append(
-            _make_min_node(node_id="TDM-T-2", name_zh="父环节", parent_node="TDM-T-1")
-        )
+        payload["nodes"].append(_make_min_node(node_id="TDM-T-2", name_zh="父环节", parent_node="TDM-T-1"))
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
         assert ok is False
@@ -675,8 +666,18 @@ _GOVERNANCE_EXEMPT = frozenset(
         "derived_identifier_registry.yaml",
         "directory_registry.yaml",
         "domain_naming_rules.yaml",
+        # domain_responsibility_layer_mapping.yaml 已于 2026-09-21 登记豁免（WO-13 D38 三库收口，内收四判据裁①登记）——
+        # 治理类（裁定#335 结论⑥：域→responsibility_layer 四值唯一真源，管"模块翻译/归层"元数据
+        # 不入 TDM 决策索引）；消费实证=module_translation_loader + yaml_utils SSoT loader +
+        # add_module_translation 推导通道（grep src/scripts/tests 三方在案），非零消费故不退役
+        "domain_responsibility_layer_mapping.yaml",
         "experiment_registry.yaml",
         "external_contract_verification_registry.yaml",
+        # fail_open_register.yaml 已于 2026-09-21 登记豁免（WO-13 D38 三库收口，内收四判据裁①登记）——
+        # 治理类（BRK-047 fail-open 台账族，裁定#351 并入；派生册唯一产出者=
+        # scripts/governance/d7_code/generate_fail_open_register.py，管"代码卫生审计"不入 TDM
+        # 决策索引）；消费实证=gate_auto_registrar 装载数对账 + script_manifest 双册在案
+        "fail_open_register.yaml",
         "feature_adjudication_registry.yaml",
         "field_dictionary.yaml",
         # industry_graph_field_dictionary.yaml 已于 2026-09-11 登记豁免（满贯批 A5 同步）——
@@ -709,6 +710,11 @@ _GOVERNANCE_EXEMPT = frozenset(
         # registry_master_index_exemptions.yaml 已于 2026-09-16 登记豁免（裁定#263 R4 批）——
         # 索引豁免元登记（管主索引自身口径）：不入 TDM 决策索引
         "registry_master_index_exemptions.yaml",
+        # state_vocabulary_registry.yaml 已于 2026-09-22 登记豁免（词表 SSOT 制度 W2，Owner 批四步施工
+        # st-dloop-20260921）——治理类（市场状态/情绪阶段官方词表本体+28 套存量映射登记，四轴
+        # 本体立法）：消费面=state_vocab_registry_gate（观察期）+ 官方常量模块
+        # src/zephyr/shared/vocab/market_state.py（SH-VOCAB-001），非 TDM 决策索引
+        "state_vocabulary_registry.yaml",
         "registry_master_index.yaml",
         "registry_of_logs.yaml",
         "rule_ai_perception_index.yaml",
@@ -716,6 +722,12 @@ _GOVERNANCE_EXEMPT = frozenset(
         "rule_enforcement_registry.yaml",
         "rule_registry_collection.yaml",
         "ruling_registry.yaml",
+        # standard_family_registry.yaml 已于 2026-09-21 登记豁免（WO-13 D38 三库收口，内收四判据裁①登记）——
+        # 治理类（标准↔治理族派生注册表 REG-STD-FAMILY-001，唯一写者=
+        # scripts/governance/standards_governance/generate_standard_family_registry.py，
+        # 管"标准治理族归属"不入 TDM 决策索引）；消费实证=同名生成器专用测试
+        # tests/governance/standards_governance/test_generate_standard_family_registry.py 在案
+        "standard_family_registry.yaml",
         "scripts_registry.yaml",
         "task_card_meta_registry.yaml",
         # trial_ledger_registry.yaml 已于 2026-09-16 补登记豁免（僵尸处置批顺带修复先于本批的红：
@@ -725,7 +737,7 @@ _GOVERNANCE_EXEMPT = frozenset(
         "terminology_glossary.yaml",
         "test_suite_registry.yaml",
         "trust_boundary_surface_registry.yaml",
-        "validation_method_registry.yaml",   # P1-1（PB-01）验证方法学=治理类（管"怎么判对错"），验证 runner 消费，不入 TDM 决策索引
+        "validation_method_registry.yaml",  # P1-1（PB-01）验证方法学=治理类（管"怎么判对错"），验证 runner 消费，不入 TDM 决策索引
         "wiring_registry.yaml",
     }
 )
@@ -737,7 +749,7 @@ _AXIS_FILES = frozenset(
         "data_asset_registry.yaml",
         "execution_algo_registry.yaml",
         "technical_indicator_registry.yaml",
-        "decision_algo_registry.yaml",   # P1-3（PB-05）DAL 决策算法库：经 R13 algo_refs 值域挂载（非 _XREF_SPECS 新轴，节点不加字段）
+        "decision_algo_registry.yaml",  # P1-3（PB-05）DAL 决策算法库：经 R13 algo_refs 值域挂载（非 _XREF_SPECS 新轴，节点不加字段）
         *(spec[1] for spec in _XREF_SPECS),
     }
 )
@@ -826,9 +838,7 @@ class TestR41EmptyCellAttribution:
 
     def test_empty_cell_without_reason_fails(self, tmp_path: Path) -> None:
         """核心牙齿：R7 只遍历 mounted，空格子历史上不可能被任何规则发现。"""
-        payload = _cell_payload(
-            {"node_id": "TDM-T-1", "state": "强势", "mounted": [], "confidence": "proposed"}
-        )
+        payload = _cell_payload({"node_id": "TDM-T-1", "state": "强势", "mounted": [], "confidence": "proposed"})
         dm = load_decision_map(_write_map(tmp_path, payload))
         assert dm.state_matrix.cells[0].mounted_reason is None  # 键缺失≠空串
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)

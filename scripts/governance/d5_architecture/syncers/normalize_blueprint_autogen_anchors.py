@@ -20,7 +20,7 @@
 病根：L0 宪法 2026-09-12 替换 v1 后 AGENTS.md 的 §编号全部失效（§7 由「代码规范」
 变为「核心系统速查」），但 40 份既有蓝图 §0.1「代码文件清单」AUTOGEN 标记区内残留
 一行同款手写模板：
-    > **架构归属SSoT**：见 AGENTS.md §7「代码规范」（depgraph SSoT 真源唯一指针）
+    > **架构归属SSoT**：见 AGENTS.md RULE-DEPGRAPH（depgraph SSoT 真源唯一指针）
 该行被错误标注为 AUTOGEN（generator=extract_depgraph.py），但 extract_depgraph.py 实为
 depgraph 只读查询工具（仅产 JSON，永不写蓝图正文）——故此行为纯手写复制病毒感染体，
 "人工修复即被下次重建回填"的表象其实是"根本没有生成器会重建它"。§2 路径索引的同款
@@ -80,10 +80,7 @@ SSOT_STALE_LINE = re.compile(
 )
 
 # 归一后的稳定锚文案（与 sync_blueprint_code_index 模板同口径：规则名，非 §编号）
-SSOT_CANONICAL = (
-    "> **架构归属 SSoT**：见 AGENTS.md RULE-DEPGRAPH / RULE-SSOT"
-    "（depgraph SSoT 真源唯一指针）"
-)
+SSOT_CANONICAL = "> **架构归属 SSoT**：见 AGENTS.md RULE-DEPGRAPH / RULE-SSOT（depgraph SSoT 真源唯一指针）"
 
 
 def _iter_blueprints(root: Path) -> list[Path]:
@@ -189,8 +186,7 @@ def run(root: Path, mode: str) -> int:
     if stale_files:
         total_hits = sum(len(h) for _, h in stale_files)
         print(
-            f"[BP-AUTOGEN-ANCHOR] 🔴 AUTOGEN 区仍存失效 AGENTS.md §编号引用 "
-            f"{total_hits} 处 / {len(stale_files)} 文件"
+            f"[BP-AUTOGEN-ANCHOR] 🔴 AUTOGEN 区仍存失效 AGENTS.md §编号引用 {total_hits} 处 / {len(stale_files)} 文件"
         )
         for bp, hits in stale_files:
             for lineno, text in hits:

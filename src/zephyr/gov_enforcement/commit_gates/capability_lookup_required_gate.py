@@ -37,7 +37,7 @@ capability_lookup_required_gate.py — Capability Lookup 强制门禁（CAPABILI
 
 病根3（规则可发现性被动反查）治本
 ---------------------------------
-AGENTS.md §7 + rule_discovery_server.py（Phase 3.2b）建立了规则发现基础设施：
+RULE-CAPABILITY-LOOKUP + rule_discovery_server.py（Phase 3.2b）建立了规则发现基础设施：
 - rule_ai_perception_index.yaml（Phase 3.2a）—— 64 条规则的感知索引
 - rule_discovery MCP 工具 —— 按 operation/scope/domain 查询适用规则
 - capability_lookup —— 按别名/关键词反查 capability 真源

@@ -55994,6 +55994,14 @@ entries:
   desc_en: ""
   plain_zh: "给TD3训练器上的七道验收题：观测向量形状对、动作不出界、只攒经验不学习、存档读回来行为一模一样。"
   responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/state_vocab_registry_gate.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "状态词表登记执法门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这是词表门卫：谁在代码里新造了一组描述大盘状态或情绪的标签（比如又发明一套'冰点/高潮'），它就查一查这套标签有没有在官方登记册上户口。没有户口就先提醒（现在是观察期，只提醒不拦人），以后翻成硬拦。这样全系统说状态的话就都从一本词典出，不会再出现同一个词两个意思的事故。"
+  responsibility_layer: governance
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow

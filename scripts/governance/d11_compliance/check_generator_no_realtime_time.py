@@ -20,7 +20,7 @@
 门禁：生成器禁止使用实时时间源（datetime.now / time.time / datetime.today）。
 
 治本：#ARCH-REGEN-NONIDEMPOTENT-001
-真源：AGENTS.md §11.1.1 时间戳约定
+真源：RULE-SCHEMA-TZ 时间戳约定（trae_065 时区批）
 二元判定：staged scripts/governance/d5_architecture/generators/*.py 文件中
          出现 datetime.now() / time.time() / datetime.today() 且无
          # noqa: arch-regen-nonidempotent 豁免标注（需人工评估确认无风险）
@@ -231,7 +231,7 @@ def main() -> int:
         return 0
 
     print("GATE-GEN-NO-REALTIME-TIME: 生成器禁止使用实时时间源 (治本 #ARCH-REGEN-NONIDEMPOTENT-001)")
-    print("  真源：AGENTS.md §11.1.1。请改用 _common.idempotent_timestamp() / idempotent_date()")
+    print("  真源：RULE-SCHEMA-TZ。请改用 _common.idempotent_timestamp() / idempotent_date()")
     print("  豁免：行尾加 # noqa: arch-regen-nonidempotent 并附人工评估理由（≥10字符）")
     print()
     for v in all_violations:

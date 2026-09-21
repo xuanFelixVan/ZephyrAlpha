@@ -40,7 +40,7 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
       已注册能力的同名文件硬阻断
     * CREATE-GUARD：新建 .py 文件必须登记 creation_token，强制 AI 声明创建意图
     * 剩余缺口：新 AI 创建根目录文件、[MODULE] 标注为根目录路径、文件名与子目录文件相同
-      但未注册 capability 时，三层门禁均不触发——由 AGENTS.md §4.4 + 本 docstring 提示
+      但未注册 capability 时，三层门禁均不触发——由 RULE-CAPABILITY-LOOKUP + 本 docstring 提示
     * N-16 扩展到 src/ 不可行：src/zephyr/ 有 500 个同名 basename（含 499 个 __init__.py），
       豁免清单规模过大，维护成本高于收益
   - 历史清理：ARCH-031 步骤A+B-1 已删除 24 个根目录 STALE duplicates（2026-06-30）

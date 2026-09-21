@@ -7,7 +7,7 @@
 # [STARTUP] manual
 # [MATURITY] testing
 # [MODIFY-GUARD] none
-# [INVARIANTS] 静态清单红线配套（AGENTS.md §9 运维红线第 5 条"静态清单禁手工维护"）——两注册表任何改动过本件自检绿才可提交;
+# [INVARIANTS] 静态清单红线配套（AGENTS.md 运维红线「静态清单禁手工维护」）——两注册表任何改动过本件自检绿才可提交;
 #   校验面=schema/URL 格式/词干正则可编译/计数字段一致性，fail-closed 退出非零;
 #   只校验不修改：本件零写盘（只读注册表，报告走 stdout）
 # [STABILITY] evolving
@@ -27,6 +27,7 @@
 harvester 运行态另有降级语义：注册表缺失/损坏→内置默认+warn（班不炸）；本件是登记态
 门禁——缺文件/坏 schema 直接 FAIL，两者职责不同勿混。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -172,8 +173,7 @@ def validate(registry_dir: Path) -> list[str]:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="intel 源注册表+关键词词表校验器（班前自检/pre-commit）")
-    ap.add_argument("--registry-dir", type=str, default=None,
-                    help="注册表目录（默认 <repo>/config；测试用）")
+    ap.add_argument("--registry-dir", type=str, default=None, help="注册表目录（默认 <repo>/config；测试用）")
     args = ap.parse_args(argv)
     root = Path(args.registry_dir) if args.registry_dir else Path(__file__).resolve().parents[2] / "config"
     issues = validate(root)

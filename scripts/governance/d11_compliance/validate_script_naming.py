@@ -260,6 +260,14 @@ EXCEPTIONS = frozenset(
         "compare_pytest_configs.py",  # d7_code/
         "algo_flow_reverse_orphan_reconciler.py",  # d8_doc_sync/
         "standards_lib.py",  # standards/（import 库性质非 CLI 脚本）
+        # --- 测试真账清偿登记（2026-09-21 WO-13 测试真账批，延续 #ARCH-114 裁定路径 C 机制）---
+        # [存量活跃核心件——B19 进程内门禁预跑器（commit 85fe86c61a），被 git_commit_gateway
+        #  预跑链/script-manifest/capability_canonical_file_registry/module_translation_registry/
+        #  blueprint/tests 等跨域 12 处引用；四个建议前缀语义均不符其"门禁预跑编排"职能，
+        #  改名须跨域同步 manifest/registry/blueprint/depgraph 节点，与并发施工批
+        #  （同一批注册表在途修改）碰撞风险高于词汇纯度收益，按爷爷条款豁免；
+        #  门禁对未来新增脚本保持全量牙齿]
+        "gate_prerun.py",  # meta/
     }
 )
 

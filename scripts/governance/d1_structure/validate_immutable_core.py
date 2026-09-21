@@ -20,7 +20,7 @@ validate_immutable_core.py — immutable_core 文件修改检测
 
 
 对标：PS-STD-003 ABS-01（AI 不可改 immutable_core 层）
-     AGENTS.md §4（编码安全——唯一始终生效的硬规则）
+     编码安全——唯一始终生效的硬规则（真源 scripts/governance/_shared/encoding.py）
      metadata_registry.yaml（immutable_core 标记字段）
 
 检测内容：

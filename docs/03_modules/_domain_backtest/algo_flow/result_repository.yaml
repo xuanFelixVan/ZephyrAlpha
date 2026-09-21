@@ -1,0 +1,66 @@
+# ALGO_FLOW 外部真源——result_repository（_domain_backtest 域，真源 src/zephyr/backtest/io/result_repository.py）
+# 2026-09-21 WO-13 批次补锚（gate-algo-flow-marker）：按模块头 INVARIANTS 校准；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.io.result_repository
+source_of_truth: src/zephyr/backtest/io/result_repository.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: BacktestRunArtifact 回测产物
+    #   fields: run_id + 结果集 + 成本归因 + 合理性倍数（CTR-P1-017 契约）
+    #   code: save_artifact L131
+    # - id: I2
+    #   name: run_id 检索请求
+    #   fields: 全局唯一 run_id
+    #   code: get_artifact L195
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 合理性护栏校验
+    #   name_en: _artifact_plausibility_violations
+    #   intro: 倍数带只从 engine_base.plausible_equity_multiple_bounds 注入（本件零字面量）
+    #   inputs: I1
+    #   outputs: 违规清单
+    #   invariant: 零第二套字面量（H5-F 治本）
+    #   code: L73
+    # - id: A2
+    #   name_zh: ② PIT 铁律落地
+    #   name_en: save_artifact
+    #   intro: 零前瞻偏差校验后持久化为文件系统 JSON，run_id 全局唯一
+    #   inputs: I1
+    #   outputs: run_id
+    #   invariant: PIT 零前瞻；run_id 唯一
+    #   code: L131
+    # - id: A3
+    #   name_zh: ③ 归因不可算显式报错
+    #   name_en: save_artifact 归因段
+    #   intro: 归因不可算时写 status=error + ERROR 日志而非省略字段（沉默禁令）
+    #   inputs: A2
+    #   outputs: 完整产物
+    #   invariant: 沉默禁令
+    #   code: L131
+    # - id: A4
+    #   name_zh: ④ 透明检索
+    #   name_en: get_artifact 与 list_artifacts
+    #   intro: 封装存储细节，对 D_FRONTEND 组件透明
+    #   inputs: I2
+    #   outputs: BacktestRunArtifact
+    #   invariant: 检索接口对前端透明
+    #   code: L195
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 回测产物消费
+    #   name_en: BacktestRunArtifact
+    #   intro: 供 backtest_results 与 tick_replay 组件消费（CTR-P1-017 D_BACKTEST 到 D_FRONTEND）
+    #   downstream: zephyr.frontend.dashboard.components.backtest_results / tick_replay
+    #   code: CTR-P1-017
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # I2 --> A4
+    # A4 --> O1

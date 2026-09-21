@@ -7,7 +7,7 @@
 # [STARTUP] event_driven
 # [MATURITY] production
 # [INVARIANTS] 纯 stdlib 实现，不依赖 ruff/mypy
-# [MODIFY-GUARD] 修改阈值需同步更新 AGENTS.md §8 GATE-ANY-ABUSE 条目
+# [MODIFY-GUARD] 修改阈值需同步更新 gate_registry.yaml GATE-ANY-ABUSE 条目
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

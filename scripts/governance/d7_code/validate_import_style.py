@@ -20,7 +20,7 @@ validate_import_style.py — 导入风格一致性校验
 
 
 对标：PEP 8 — absolute imports recommended over relative imports
-     AGENTS.md §6.4 — AI-Construction-Friendliest: 显式优于隐式
+     AI-Construction-Friendliest: 显式优于隐式
 
 检测 src/zephyr/ 下所有 .py 文件中使用相对导入 (from . import) 的文件。
 项目主风格是绝对导入 (from zephyr.xxx import yyy)，

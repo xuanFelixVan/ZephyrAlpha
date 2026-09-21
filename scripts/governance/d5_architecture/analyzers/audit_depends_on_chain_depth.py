@@ -28,7 +28,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: depends_on 依赖链路深度审计（AGENTS.md §6.2 — 引用链不超过3层）
+description: depends_on 依赖链路深度审计（引用链不超过3层约定）
 dimensions:
 - D5
 priority: P1

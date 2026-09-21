@@ -22,7 +22,7 @@ pygrep 是 pre-commit 内置语言，需要 pre-commit 工具运行——破坏�
 
 本脚本用纯 stdlib 等价替代，检测 staged 文件中 tests/unit/ 旧路径引用。
 
-权威依据：AGENTS.md §7 tests/ 目录组织规范——tests/unit/ 已扁平化为 tests/
+权威依据：tests/ 目录组织规范（pyproject.toml testpaths）——tests/unit/ 已扁平化为 tests/
 真源声明：ARCH-029 漂移种子清理——6 轮 87 文件修复后，添加自动化 guard 防止重引入
 
 exit codes: 0=pass, 1=findings(发现 tests/unit/ 引用), 2=error
@@ -179,7 +179,7 @@ def main() -> int:
         for f in findings:
             print(f)
         print("")
-        print("修复：tests/unit/ 已扁平化为 tests/（AGENTS.md §7），")
+        print("修复：tests/unit/ 已扁平化为 tests/（tests/ 目录组织规范），")
         print("     将 tests/unit/xxx 改为 tests/xxx，然后 git add <file> 重新提交。")
         return EXIT_FINDINGS
 

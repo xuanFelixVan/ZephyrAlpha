@@ -19,7 +19,7 @@
 
 
 对标：PS-STD-003 ABS-19~20（不在非权威文件改权威字段 / 不重复定义 PS-STD-001 字段）
-     AGENTS.md §5.1（SSoT 原则——同一概念只在一个文件中定义）
+     SSoT 原则——同一概念只在一个文件中定义（RULE-SSOT）
 
 检测内容：
 - 解析 metadata_registry.yaml 中定义的权威字段列表

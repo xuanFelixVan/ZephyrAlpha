@@ -69,7 +69,7 @@ import yaml
 
 _MAX_WORKERS = 8
 
-# AGENTS.md §6.7: UTF-8 输出强制声明（防止 Windows GBK 编码 crash）
+# 编码铁律: UTF-8 输出强制声明（防止 Windows GBK 编码 crash；真源 _shared/encoding.py）
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))

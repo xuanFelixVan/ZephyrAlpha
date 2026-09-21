@@ -21,7 +21,7 @@
 对标：PS-STD-001 §3.1（depends_on 字段定义——structured {target, at, why}）
      META-GLS-001 #19（depends_on 术语定义——三级分层链深体系）
      GOV-DOC-009 DOC-009（depends_on 必须用结构化格式声明引用链）
-     AGENTS.md §6.4（结构化格式优于自然语言 prose——YAML 零歧义）
+     结构化格式优于自然语言 prose——YAML 零歧义（宪法 §4.3 文档纪律）
 
 检测内容：
 - 扫描 docs/ 下所有 .md 文件的 frontmatter depends_on 字段

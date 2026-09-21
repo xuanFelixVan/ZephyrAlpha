@@ -222,7 +222,7 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
     echo ""
     echo "[POST-COMMIT-GUARD] 检测到伪造 GW 标记（session_id=$session_id 未注册且 ZEPHYR_COMMIT_GATEWAY 未设置）"
     echo "[POST-COMMIT-GUARD] 自动执行 git reset --soft HEAD~1（保留修改在 staging area）"
-    echo "[POST-COMMIT-GUARD] 请通过 GitCommitGateway/session_worktree_commit 重新提交（见 AGENTS.md §8）"
+    echo "[POST-COMMIT-GUARD] 请通过 GitCommitGateway/session_worktree_commit 重新提交（见 AGENTS.md RULE-GIT-SAFE / 提交工具红线）"
     echo ""
 
     # 记录违规到审计日志
@@ -257,7 +257,7 @@ echo ""
 echo "[POST-COMMIT-GUARD] 检测到 non-GW commit（未通过 GitCommitGateway）"
 echo "[POST-COMMIT-GUARD] commit subject: $subject"
 echo "[POST-COMMIT-GUARD] 自动执行 git reset --soft HEAD~1（保留修改在 staging area）"
-echo "[POST-COMMIT-GUARD] 请通过 GitCommitGateway 重新提交（见 AGENTS.md §8）"
+echo "[POST-COMMIT-GUARD] 请通过 GitCommitGateway 重新提交（见 AGENTS.md RULE-GIT-SAFE / 提交工具红线）"
 echo ""
 
 # 记录违规到审计日志

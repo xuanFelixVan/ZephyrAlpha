@@ -27,6 +27,7 @@
 - 对拍②：schedule.yaml ↔ 注册表 逐字段一致，差异只允许落在 dow 字段（漂移哨兵）
 - 对拍③：改造前后对照，钉死"哪些时段变、哪些没变"，防口径再次分叉
 """
+
 from __future__ import annotations
 
 import datetime as dt
@@ -136,8 +137,7 @@ def legacy_load_schedule_crons() -> dict[str, str]:
 # ---------------------------------------------------------------------------
 def _raw_schedules() -> dict[str, str]:
     data = yaml.safe_load(SCHEDULE_YAML.read_text(encoding="utf-8")) or {}
-    return {str(k): str((v or {}).get("cron") or "").strip()
-            for k, v in (data.get("schedules") or {}).items()}
+    return {str(k): str((v or {}).get("cron") or "").strip() for k, v in (data.get("schedules") or {}).items()}
 
 
 def _registry_slot_exprs() -> dict[str, str]:
@@ -150,15 +150,15 @@ REG = _registry_slot_exprs()
 
 # 对拍基准（周五/周六/周日/周一 × 盘前/盘中/盘后/深夜；含月末与月初=月频边界）
 BASES = [
-    dt.datetime(2026, 9, 11, 7, 30),    # 周五盘前
-    dt.datetime(2026, 9, 11, 10, 3),    # 周五盘中
-    dt.datetime(2026, 9, 11, 21, 45),   # 周五盘后（nightly 档边界后）
-    dt.datetime(2026, 9, 12, 2, 30),    # 周六凌晨
-    dt.datetime(2026, 9, 13, 3, 0),     # 周日 03:00（weekend_calibration APScheduler=周日?）
-    dt.datetime(2026, 9, 14, 3, 0),     # 周一 03:00
-    dt.datetime(2026, 9, 30, 23, 59),   # 月末深夜（月频档边界）
-    dt.datetime(2026, 10, 1, 9, 0),     # 月初 09:00（monthly_static 触发瞬间）
-    dt.datetime(2026, 2, 1, 10, 0),     # 2 月短月（月频档 + 长间隔）
+    dt.datetime(2026, 9, 11, 7, 30),  # 周五盘前
+    dt.datetime(2026, 9, 11, 10, 3),  # 周五盘中
+    dt.datetime(2026, 9, 11, 21, 45),  # 周五盘后（nightly 档边界后）
+    dt.datetime(2026, 9, 12, 2, 30),  # 周六凌晨
+    dt.datetime(2026, 9, 13, 3, 0),  # 周日 03:00（weekend_calibration APScheduler=周日?）
+    dt.datetime(2026, 9, 14, 3, 0),  # 周一 03:00
+    dt.datetime(2026, 9, 30, 23, 59),  # 月末深夜（月频档边界）
+    dt.datetime(2026, 10, 1, 9, 0),  # 月初 09:00（monthly_static 触发瞬间）
+    dt.datetime(2026, 2, 1, 10, 0),  # 2 月短月（月频档 + 长间隔）
 ]
 
 
@@ -221,11 +221,16 @@ def dow_field_values(field: str) -> set[int]:
     return out
 
 
-def test_dow_bearing_slots_are_the_15_expected() -> None:
-    """受 dow 口径影响面基线（15/21）——真源扩缩容时提醒对拍覆盖面复核。"""
+def test_dow_bearing_slots_are_the_17_expected() -> None:
+    """受 dow 口径影响面基线（17/24）——真源扩缩容时提醒对拍覆盖面复核。
+
+    2026-09-21 追认（15/21→17/24）：+daily_alt_fx（4058b7b1e0）、
+    +data_supply_sentinel（85ef0962d0，无 dow 不计 bearing）、
+    +eod_reconciliation（R-015 日终对账，全流通战役排班批）。
+    """
     bearing = {k for k, v in RAW.items() if v.split()[-1] != "*"}
-    assert len(RAW) == 21, f"schedule.yaml 时段数漂移：{len(RAW)}"
-    assert len(bearing) == 15, sorted(bearing)
+    assert len(RAW) == 24, f"schedule.yaml 时段数漂移：{len(RAW)}"
+    assert len(bearing) == 17, sorted(bearing)
 
 
 def test_croniter_available() -> None:
@@ -295,8 +300,7 @@ def test_registry_dow_is_normalized_apscheduler_weekdays() -> None:
         aps, std = raw.split()[-1], REG[name].split()[-1]
         if aps == "*":
             continue
-        assert dow_field_values(std) == {(d + 1) % 7 for d in dow_field_values(aps)}, \
-            f"{name} {aps} → {std}"
+        assert dow_field_values(std) == {(d + 1) % 7 for d in dow_field_values(aps)}, f"{name} {aps} → {std}"
 
 
 @pytest.mark.parametrize("name", sorted(REG))
@@ -332,28 +336,29 @@ def test_weekday_bearing_slots_now_land_on_intended_weekdays() -> None:
         checked += 1
         # APScheduler dow（0=周一）与 datetime.weekday() 同序 → 真源集合即原意集合
         want_days = dow_field_values(raw.split()[-1])
-        new_days = {d for d in range(7) if _fires_within_day(
-            cron_first_hit, REG[name], monday + dt.timedelta(days=d))}
-        old_days = {d for d in range(7) if _fires_within_day(
-            legacy_scan, legacy_crons[name], monday + dt.timedelta(days=d))}
+        new_days = {d for d in range(7) if _fires_within_day(cron_first_hit, REG[name], monday + dt.timedelta(days=d))}
+        old_days = {
+            d for d in range(7) if _fires_within_day(legacy_scan, legacy_crons[name], monday + dt.timedelta(days=d))
+        }
         assert new_days == want_days, (
             f"{name} 真源 '{raw}' 应为周{'、'.join(_CN_WEEKDAY[d] for d in sorted(want_days))}，"
-            f"新实现实得周{'、'.join(_CN_WEEKDAY[d] for d in sorted(new_days))}")
+            f"新实现实得周{'、'.join(_CN_WEEKDAY[d] for d in sorted(new_days))}"
+        )
         assert old_days != want_days, (
-            f"{name} 旧实现触发日集与真源原意相同 → 本测试失效（真源口径变了？请复核 C-4 裁定）")
-    assert checked == 15, f"带 dow 时段数漂移：{checked}"
+            f"{name} 旧实现触发日集与真源原意相同 → 本测试失效（真源口径变了？请复核 C-4 裁定）"
+        )
+    assert checked == 17, f"带 dow 时段数漂移：{checked}"  # 2026-09-21 追认 15→17（+daily_alt_fx/+eod_reconciliation）
 
 
 def test_legacy_weekend_slots_reported_sunday_new_reports_monday() -> None:
     """具体事故形态：weekend_calibration（真源 '00 3 * * 0'，APScheduler 0=周一）。"""
     base = dt.datetime(2026, 9, 9, 12, 0)  # 周三
-    old = legacy_next_cron_run(RAW["weekend_calibration"], base)       # 直读真源，0 被当周日
+    old = legacy_next_cron_run(RAW["weekend_calibration"], base)  # 直读真源，0 被当周日
     new = api_server._next_cron_run(REG["weekend_calibration"], base)  # 注册表 1=周一
     assert old == "3 天后（09-13 03:00）", old  # 09-13=周日（面板比周历早一天）
     assert new == "4 天后（09-14 03:00）", new  # 09-14=周一 ✓ 与周历/闸一致
     sunday = dt.datetime(2026, 9, 13, 2, 0)
-    assert api_server._next_cron_run(REG["weekend_calibration"], base=sunday) == \
-        "1 天后（09-14 03:00）"
+    assert api_server._next_cron_run(REG["weekend_calibration"], base=sunday) == "1 天后（09-14 03:00）"
 
 
 def test_wildcard_dow_slots_output_unchanged_after_fix() -> None:
@@ -367,8 +372,9 @@ def test_wildcard_dow_slots_output_unchanged_after_fix() -> None:
             if beyond_legacy_scan_window(legacy_crons[name], base):
                 continue
             checked += 1
-            assert api_server._next_cron_run(REG[name], base=base) == \
-                legacy_next_cron_run(legacy_crons[name], base), f"{name} @{base}"
+            assert api_server._next_cron_run(REG[name], base=base) == legacy_next_cron_run(legacy_crons[name], base), (
+                f"{name} @{base}"
+            )
     assert checked >= 24, f"有效比对仅 {checked} 条，覆盖不足"
 
 
@@ -397,11 +403,13 @@ def test_loader_returns_registry_exprs_in_production() -> None:
 
 @pytest.mark.parametrize("break_how", ["missing", "corrupt", "no_entities", "foreign_source"])
 def test_loader_degrades_to_empty_table(break_how: str, tmp_path, monkeypatch) -> None:
-    entities = [{
-        "task_id": "data_slot_pre_market",
-        "schedule_truth_source": "src/zephyr/data/config/schedule.yaml",
-        "window_expr": "30 8 * * 1-5",
-    }]
+    entities = [
+        {
+            "task_id": "data_slot_pre_market",
+            "schedule_truth_source": "src/zephyr/data/config/schedule.yaml",
+            "window_expr": "30 8 * * 1-5",
+        }
+    ]
     if break_how == "missing":
         path = tmp_path / "resource_profile_registry.yaml"
     elif break_how == "corrupt":
@@ -413,11 +421,15 @@ def test_loader_degrades_to_empty_table(break_how: str, tmp_path, monkeypatch) -
     else:
         path = tmp_path / "resource_profile_registry.yaml"
         path.write_text(
-            yaml.safe_dump({"entities": [
-                {**entities[0], "schedule_truth_source": "src/other/thing.ps1"},
-                {"task_id": "manual_entry", "window_expr": "0 1 * * *"},
-                {"task_id": "data_slot_no_expr", "schedule_truth_source": "schedule.yaml"},
-            ]}),
+            yaml.safe_dump(
+                {
+                    "entities": [
+                        {**entities[0], "schedule_truth_source": "src/other/thing.ps1"},
+                        {"task_id": "manual_entry", "window_expr": "0 1 * * *"},
+                        {"task_id": "data_slot_no_expr", "schedule_truth_source": "schedule.yaml"},
+                    ]
+                }
+            ),
             encoding="utf-8",
         )
     monkeypatch.setattr(api_server, "_REPO", tmp_path)
@@ -429,8 +441,8 @@ def test_three_tier_readable_str_format_preserved_for_callers() -> None:
     import re
 
     cases = {
-        dt.datetime(2026, 9, 11, 8, 20): r"^\d+ 分钟后（\d{2}:\d{2}）$",          # <1h
-        dt.datetime(2026, 9, 11, 6, 0): r"^\d+ 小时后（\d{2}:\d{2}）$",           # 1~24h
+        dt.datetime(2026, 9, 11, 8, 20): r"^\d+ 分钟后（\d{2}:\d{2}）$",  # <1h
+        dt.datetime(2026, 9, 11, 6, 0): r"^\d+ 小时后（\d{2}:\d{2}）$",  # 1~24h
         dt.datetime(2026, 9, 12, 9, 0): r"^\d+ 天后（\d{2}-\d{2} \d{2}:\d{2}）$",  # ≥1d
     }
     for base, pattern in cases.items():
@@ -453,18 +465,17 @@ def test_six_field_expr_is_second_stripped_like_the_gate() -> None:
 def test_multi_segment_expr_takes_nearest_segment() -> None:
     """'|' 多段（注册表窗档形态）取最近一段，与闸的按段展开同源语义。"""
     base = dt.datetime(2026, 9, 11, 8, 0)
-    assert api_server._next_cron_run("0 21 * * 1-5|30 8 * * 1-5", base=base) == \
-        "30 分钟后（08:30）"
+    assert api_server._next_cron_run("0 21 * * 1-5|30 8 * * 1-5", base=base) == "30 分钟后（08:30）"
 
 
 def test_no_hardcoded_cron_or_weekday_table_left_in_endpoint() -> None:
     """C-4 清零断言：api_server 内不得再留自写 cron 字段匹配器/位表/工作日常量。"""
-    src = (_PROJECT_ROOT / "src" / "zephyr" / "frontend" / "dashboard" / "api_server.py").read_text(
-        encoding="utf-8")
-    body = src[src.index("def _load_schedule_crons"):src.index("def _load_tasks_meta")]
+    src = (_PROJECT_ROOT / "src" / "zephyr" / "frontend" / "dashboard" / "api_server.py").read_text(encoding="utf-8")
+    body = src[src.index("def _load_schedule_crons") : src.index("def _load_tasks_meta")]
     for token in ("def field_match", "8 * 24 * 60", "weekday() + 1", "for offset in range("):
         assert token not in body, f"旧 cron 件残留：{token}"
     assert "croniter" in body, "解析真源应为 croniter（与闸/周历同口径）"
     assert "resource_profile_registry.yaml" in body, "表达式真源须为注册表 window_expr"
-    assert 'path = _REPO / "src" / "zephyr" / "data" / "config" / "schedule.yaml"' not in body, \
+    assert 'path = _REPO / "src" / "zephyr" / "data" / "config" / "schedule.yaml"' not in body, (
         "端点不得再直读 schedule.yaml（绕过 dow 归一层=第 3 份口径）"
+    )
