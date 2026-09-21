@@ -32,12 +32,14 @@
 #   无边→拒出仓（validate_graph 对无边图报"无边定义"，出仓即造门禁必拦的镜像）；
 #   根层件 src/zephyr/<mod>.py 无子包=跨包位置 → 落 _domain_shared，镜像名加 root_ 前缀保 provenance；
 #   零节点块报因分家（五段式散文 vs 其余不可解析），只影响台账口径不影响处置；
+#   W4 自指 fixture 豁免=机械谓词 is_selfref_fixture_clone（克隆区间⊆单一 Constant str
+#   或解析器家族注释示例段即豁免，禁路径白名单/裁定#273），豁免态不计作者欠账（裁定#392）；
 # [MODIFY-GUARD] 无
 # [STABILITY] stable
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 单文件失败跳过并计入 failed 列表（不中断批次）；--dry-run 恒 exit 0
-# [TESTS] tests/governance/generators/test_externalize_algo_flow_remap.py, tests/governance/generators/test_externalize_algo_flow_mirror.py
+# [TESTS] tests/governance/generators/test_externalize_algo_flow_remap.py, tests/governance/generators/test_externalize_algo_flow_mirror.py, tests/governance/test_w4_selfref_exemption.py
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: AI 会话按需调用的批量出仓器（Owner 授权批次施工，非常驻服务）
 """externalize_algo_flow.py — ALGO_FLOW 内联块批量出仓器（P2-1 契约头减负实施器）。
@@ -85,12 +87,13 @@ if _GOV_DIR not in sys.path:
 from _shared.code_algorithm_extractor import (  # noqa: E402
     _ALGO_FLOW_END,
     _ALGO_FLOW_START,
+    REPO_ROOT,
     _has_inline_algo_flow,
     algo_flow_dead_block_spans,
     parse_algo_flow,
     unclosed_block_end,
-    REPO_ROOT,
 )
+
 from zephyr.shared.io.file_utils import safe_write_text  # noqa: E402
 
 _ANCHOR_RE = re.compile(r"^#\s*\[ALGO_FLOW\]\s+external:\s*(\S+)\s*$", re.MULTILINE)
@@ -110,6 +113,14 @@ _NO_NODES_SKIP_REASON = "block unparsable (no nodes)"
 # 零边拒出仓只作用于截断型块（本批新开的通道）：已闭合零边块沿用既有口径继续出仓
 # （盘上 3157 件有边 / 1 件无边先例，改判即把死块清偿路径上的件一起锁死）
 _NO_EDGE_SKIP_REASON = "graph has no edges (validate_graph would block)"
+
+# W4 自指 fixture 判据式豁免（施工授权=裁定#392；判据真源=docs/_working/archive/2026-09/
+# 2026-09-18-landing-anchor-algo-flow-closeout/W4_selfref_exemption.md）：ALGO_FLOW 解析器
+# 家族与其测试夹具内嵌的块样本"天然像"被它解析的目标，克隆报告（CloneGuard/欠账台账）
+# 对此误报。豁免走机械谓词 is_selfref_fixture_clone（命中即豁免，AST 判定），禁逐文件
+# 路径白名单（裁定#273：白名单=治理逃逸）。注意：本报因故意不入 _CONTENT_SKIP_REASONS
+# ——自指 fixture 是豁免态不是作者欠账，report_algo_flow_author_debt.py 据此不计欠账。
+_SELFREF_FIXTURE_SKIP_REASON = "self-referential fixture clone (W4 exemption)"
 
 # 内容级 skipped（块定位良好、按口径不出仓）：契约头转正后留在 docstring 即与其他内联件
 # 同状态，回滚反而把该件永久锁死在死块态——externalize() 据此决定不回滚
@@ -176,6 +187,7 @@ def _existing_yaml_for(rel_py: str, domain_dir: str) -> str:
                         break
         _EXISTING_YAML_CACHE[domain_dir] = cache
     return cache.get(rel_py, "")
+
 
 # 真源域映射：src/zephyr/<pkg> → docs/03_modules/<domain>/（与 blueprint.md actual_disk_path 对齐）
 _DOMAIN_DIRS: dict[str, str] = {
@@ -345,9 +357,7 @@ def _safe_bucket_path(bucket: str) -> str:
     if not bucket:
         return bucket
     ignored = _gitignored_dir_names()
-    return "/".join(
-        f"{seg}_doc" if seg.lower() in ignored else seg for seg in bucket.split("/")
-    )
+    return "/".join(f"{seg}_doc" if seg.lower() in ignored else seg for seg in bucket.split("/"))
 
 
 def _src_bucket(rel_py: str) -> tuple[str, str]:
@@ -582,6 +592,73 @@ def _is_content_skip_reason(reason: str) -> bool:
     return any(k in reason for k in _CONTENT_SKIP_REASONS)
 
 
+# ALGO_FLOW 解析器家族 API 符号——谓词B"解析器家族"的机械判据（宿主文件的 AST 引用/
+# 定义任一符号即解析器机械本体）。按内容判定，非路径白名单（裁定#273）。
+_PARSER_FAMILY_SYMBOLS = frozenset(
+    {
+        "parse_algo_flow",
+        "extract_algorithm_from_code",
+        "_has_inline_algo_flow",
+        "_ALGO_FLOW_START",
+        "_ALGO_FLOW_END",
+        "algo_flow_dead_block_spans",
+        "unclosed_block_end",
+    }
+)
+
+
+def _references_parser_family(tree: ast.AST) -> bool:
+    """宿主文件 AST 是否引用/定义 ALGO_FLOW 解析器家族 API（谓词B 前半）。"""
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and node.id in _PARSER_FAMILY_SYMBOLS:
+            return True
+        if isinstance(node, ast.Attribute) and node.attr in _PARSER_FAMILY_SYMBOLS:
+            return True
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            if any(
+                a.name.split(".")[0] in _PARSER_FAMILY_SYMBOLS or a.name in _PARSER_FAMILY_SYMBOLS for a in node.names
+            ):
+                return True
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name in _PARSER_FAMILY_SYMBOLS:
+            return True
+    return False
+
+
+def is_selfref_fixture_clone(src: str, start_line: int, end_line: int) -> bool:
+    """W4 自指 fixture 判据式豁免谓词（机械唯一入口；行号 1 基闭区间，与 CloneGuard
+    fragment 的 ``line_start``/``line_end`` 同基可直接对接）。
+
+    判据真源：docs/_working/archive/2026-09/2026-09-18-landing-anchor-algo-flow-closeout/
+    W4_selfref_exemption.md；施工授权=裁定#392；禁路径白名单=裁定#273。
+      谓词A（自指 fixture）：被报克隆区间整体位于单一 ``ast.Constant`` str 节点内
+        （docstring/字符串字面量=夹具样本正文，是数据不是实现——两份"克隆"零行为
+        等价风险，即豁免）；
+      谓词B（解析器自引用）：宿主文件自身引用/定义 ALGO_FLOW 解析器家族 API
+        （_references_parser_family），且命中区间全为注释/空行——解析器文件以注释
+        形态内嵌的测试性示例段（注释不进 AST，谓词A 覆盖不到的形态在此收口）。
+    fixture 自指对=克隆两侧均命中本谓词（W4："非真实两实现"）；任一侧是真实实现即
+    不豁免（宁误报勿漏报）。源码不可解析一律 False——豁免必须可证，证不出就不豁。
+    """
+    if start_line < 1 or end_line < start_line:
+        return False
+    try:
+        tree = ast.parse(src)
+    except (SyntaxError, ValueError, RecursionError):
+        return False
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Constant) and isinstance(node.value, str):
+            s = node.lineno
+            e = node.end_lineno or node.lineno
+            if s <= start_line and end_line <= e:
+                return True  # 谓词A：克隆区间 ⊆ 单一字符串字面量
+    if _references_parser_family(tree):
+        lines = src.splitlines()
+        hit = lines[start_line - 1 : end_line]
+        if hit and all((not ln.strip()) or ln.lstrip().startswith("#") for ln in hit):
+            return True  # 谓词B：解析器家族文件的注释形态示例段
+    return False
+
+
 def _extract_inline_block(docstring: str) -> tuple[str, int, int] | None:
     """返回 (闭合块原文含边段, 起行 idx, 止行 idx)（docstring 内 0 基）。
 
@@ -636,7 +713,11 @@ def _yaml_for(rel_py: str, domain_dir: str, stem: str, block: str) -> str:
         f"doc_type: architecture_view\nttl: permanent\nmodule: {rel_py.replace('/', '.')[:-3]}\n"
         f"source_of_truth: {rel_py}\n"
     )
-    body = "algo_flow: |\n" + "\n".join(("    " + ln) if ln.strip() else "" for ln in block.rstrip("\n").splitlines()) + "\n"
+    body = (
+        "algo_flow: |\n"
+        + "\n".join(("    " + ln) if ln.strip() else "" for ln in block.rstrip("\n").splitlines())
+        + "\n"
+    )
     return header + body
 
 
@@ -744,7 +825,7 @@ def _append_prose(yaml_path: Path, prose: str) -> tuple[bool, str]:
         new = (
             txt
             + f"\n# 以下 {_PROSE_KEY} = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：\n"
-            + f"# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；\n"
+            + "# 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；\n"
             + f"{_PROSE_KEY}: |\n"
             + chunk
         )
@@ -905,8 +986,7 @@ def externalize(py_path: Path, dry_run: bool) -> dict:
             except (SyntaxError, ValueError, RecursionError):
                 ok = False
             if ok:
-                return {"file": rel, "status": "promoted_inline", "reason": res["reason"],
-                        "header_promoted": True}
+                return {"file": rel, "status": "promoted_inline", "reason": res["reason"], "header_promoted": True}
             res["reason"] = f"转正终验不过，已回滚（{res['reason']}）"
         py_path.write_bytes(orig)
         return res
@@ -1009,9 +1089,7 @@ def _outbox_docstring_block(py_path: Path, dry_run: bool) -> dict:
         # 截断型块（源码区无收标记）：止界按 extractor 同一几何判据推定，再映射回
         # 源码绝对坐标——镜像补收标记（_extract_inline_block 已补），源码只留锚行。
         we = ws + unclosed_block_end(ds_lines[ws : doc_end + 1], 0)
-    while we + 1 <= doc_end and (
-        not ds_lines[we + 1].strip() or ds_lines[we + 1].lstrip().startswith("#")
-    ):
+    while we + 1 <= doc_end and (not ds_lines[we + 1].strip() or ds_lines[we + 1].lstrip().startswith("#")):
         we += 1
     if _ALGO_FLOW_START not in "\n".join(ds_lines[ws : we + 1]):
         # 窗口失准（标记折行等）——跳过该文件，宁漏勿错
@@ -1094,8 +1172,7 @@ def _outbox_docstring_block(py_path: Path, dry_run: bool) -> dict:
         return {
             "file": rel,
             "status": "failed",
-            "reason": "final extractor mismatch"
-            + (" (rerouted)" if picked_tail and picked_tail != rel else ""),
+            "reason": "final extractor mismatch" + (" (rerouted)" if picked_tail and picked_tail != rel else ""),
             "picked": picked,
             "nodes_after": final_ids,
         }
@@ -1106,9 +1183,7 @@ def _outbox_docstring_block(py_path: Path, dry_run: bool) -> dict:
     return out
 
 
-def _iter_targets(
-    domain: str | None, single_file: str | None, files_from: str | None = None
-) -> list[Path]:
+def _iter_targets(domain: str | None, single_file: str | None, files_from: str | None = None) -> list[Path]:
     if files_from:
         # 清单模式：整波跨包一次规划（逐 pkg 调用会把同域容量规划切成多批）
         out: list[Path] = []
@@ -1169,9 +1244,7 @@ def main(argv: list[str] | None = None) -> int:
     # 落点目录平铺件数实测（GOV-DOC-018 取证：批后仍须远低于 120 硬上限）
     dir_counts: dict[str, int] = {}
     if not args.dry_run:
-        touched_dirs = {
-            (REPO_ROOT / r["yaml"]).parent for r in results if r.get("yaml")
-        }
+        touched_dirs = {(REPO_ROOT / r["yaml"]).parent for r in results if r.get("yaml")}
         for d in sorted(touched_dirs):
             try:
                 dir_counts[str(d.relative_to(REPO_ROOT)).replace("\\", "/")] = sum(
