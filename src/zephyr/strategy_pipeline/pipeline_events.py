@@ -5,6 +5,7 @@
 #   scripts.backtest.sim_paper_ledger(import 复用 ensure_wallet，经 sys.path);
 #   scripts.backtest.{sim_platform_journal,sim_deviation_report,sim_governance}(子进程);
 #   zephyr.pf_alloc.allocation_orchestrator(子进程 -m，pf_alloc_daily 日分配执行体);
+#   zephyr.pf_alloc.crisis_gate(危机闸 L1 判定——只调 crisis_block_check 不改其文件，fail-closed);
 #   zephyr.strategy_pipeline.fw_backtest(import 复用 ensure_regime_snapshot——regime 日序供给，
 #     函数级惰性导入避开 fw_backtest 侧对本模块的相互引用);
 #   zephyr.infrastructure.database_service(reader 角色——日频产出者共用业务日解析，宪法 §9.1 禁裸连接)
@@ -17,6 +18,9 @@
 #   单条事件重试超 MAX_ATTEMPTS 判毒丸留档+告警，不再自动重试；drain 幂等（消费成功=出队，重放零副作用）；
 #   模拟盘件（S08/S09/S10 C1C2）：sim_wallet_due/sim_ledger_daily/sim_journal_daily/sim_deviation_monthly
 #   归轻 kind（幂等写/分钟级子进程，月频或日频；sim_deviation_monthly 归轻=无人值守自动消费的显式裁定）；
+#   attribution_daily（WO-1 归因日账，TC-08 段2/裁定#392 之 D5 批代落）=SIM_DAILY_KINDS FIFO 末位：
+#   deps=sim 账本当日行（FIFO 末位次序=账本/日刊先行），--day 业务日=resolve_pf_alloc_trade_date
+#   （禁墙钟猜日；payload 可显式带 trade_date 覆盖供人工重跑），无行=执行体抛错进 attempts；
 #   pf_alloc_daily（车道 D 分配链）归轻 kind：payload 必带 trade_date（禁墙钟猜业务日）、
 #   trade_date 级 marker 防同日双写（alloc 三表只增不改）、子进程超时 PF_ALLOC_TIMEOUT_S 有界、
 #   失败/超时抛错进 attempts 计数（MAX_ATTEMPTS=3 后毒丸留档）；
@@ -26,6 +30,10 @@
 #   业务日=行情最新入库日（resolve_pf_alloc_trade_date，禁墙钟猜日）、解析不出日=不发事件+告警、
 #   已成功分配过的业务日永不再自动重发（幂等键=trade_date → 用 _marker_seen 永久闸而非
 #   当日口径，否则行情停更/周末唤醒对同一 D 追加重复快照；人工重跑走 CLI/emit 不受此挡）；
+#   危机短路（TC-08 步骤1/裁定#392 之 D5 批代落，BT-P1-031 新版重排）：发射侧与执行侧双挂
+#   crisis_block_check——crisis（或判读异常 fail-closed 视为阻断）→ 跳过本轮 pf_alloc 相关
+#   步骤并 WARN 留痕，**不落 marker**（crisis_block_check 契约：解除后同日可重放，由本调用方
+#   保证——落了 marker 危机日的分配就永久蒸发，故两处阻断路径都只 skip 不记号）；
 #   regime_snapshot_history 的**唯一自动产出者=本模块 maybe_refresh_regime_snapshot**
 #   （S11 §5 施工项 4 挂点 A：此前该表唯一写方=manual CLI print_regime_history，两次手工
 #   印制之间表静默腐烂；2026-09-16 实测 1809 行/max=2026-09-11/滞后 5 天）——挂同一
@@ -55,7 +63,6 @@
 # [TTL] permanent
 # [CREATION-TOKEN] pipeline-events-mod-bt-190-20260915
 """C6 管线事件持久化与消费编排——"事件不丢+KillSwitch 恢复续跑"的本体（交接清单①⑬）。
-
 设计裁定（第一性原理）：C4 批测是独立脚本（MOD-BT-076），不是 DataScheduler 数据任务——
 "调度器 task_completed→run_intake"的真链路=三层：
   ①写侧钩子：c4_batch_screen 落账成功后 emit_c4_batch_completed()（同进程直消费）；
@@ -72,18 +79,23 @@
   pf_alloc_daily（车道 D：分配链日分配，子进程隔离+有界超时+trade_date 级幂等 marker；
     它是账本 ensure_wallet 钱包额度的上游——分配先落，账本同日开户才拿得到真实额度；
     产出者=本模块 maybe_emit_pf_alloc_daily，与 sim 日件同一 daily_kline SUCCESS 唤醒点、
-    且先于其入队。清单 #15 前该 kind 只有派发/执行体没有发射方=分配链恒 0 行的真断点）；
+    且先于其入队。清单 #15 前该 kind 只有派发/执行体没有发射方=分配链恒 0 行的真断点；
+    危机闸 crisis_block_check 在发射侧与执行侧双挂短路，crisis/判读异常 fail-closed
+    均跳过且不落 marker——解除后同日可重放，TC-08 段1/裁定#392 之 D5）；
+  attribution_daily（WO-1 收益归因日账，TC-08 段2/裁定#392 之 D5）：SIM_DAILY_KINDS FIFO 末位
+    （账本→日刊→归因），--day 业务日=resolve_pf_alloc_trade_date 禁墙钟猜日，产出口=
+    scripts/backtest/sim_attribution_report.py --day <D>（run_daily 交付签名的子进程同款）；
   fw_backtest_due / promotion_advisory_due（预埋派发，实现模块由 S12/S13 批次交付，缺失跳过）；
   regime_snapshot_history 日序台账（S11 §5 施工项 4 挂点 A，挖矿节点 F3 治本）：唯一自动产出者
     =本模块 maybe_refresh_regime_snapshot，与 pf_alloc 同一 daily_kline SUCCESS 唤醒点、且先于
     其调用（分配链的 regime 口径就读这张表，表旧=分配带旧教材）；内部走 fw_backtest.
     ensure_regime_snapshot(refresh=True)——滞后 ≤3 天零成本直通，超限才子进程全窗重印；
     一个业务日至多一印（append-only 台账，同日重印=纯行数膨胀零信息增益）。
-
 用法:
     python -m zephyr.strategy_pipeline.pipeline_events status          # 看积压
     python -m zephyr.strategy_pipeline.pipeline_events drain --all     # 全量消费（含重 kind）
     python -m zephyr.strategy_pipeline.pipeline_events emit c4_batch_due --payload '{}'
+# [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/pipeline_events.yaml
 """
 
 from __future__ import annotations
@@ -95,14 +107,13 @@ import time
 import uuid
 from pathlib import Path
 from typing import Any, Callable
+from zoneinfo import ZoneInfo
 
 log = logging.getLogger(__name__)
-
 ROOT = Path(__file__).resolve().parents[3]
 STATE_DIR = ROOT / ".runtime/strategy_pipeline"
 JOURNAL = STATE_DIR / "pending_events.jsonl"
 RECEIPT = STATE_DIR / "last_receipt.json"
-
 MAX_ATTEMPTS = 3
 # 轻 kind=调度器唤醒钩子可消费（有界耗时/只读或幂等写）；重 kind=批测级耗时，只经显式 drain
 # sim_deviation_monthly 裁定（C2/X2 自裁留痕）：偏离报告为分钟级子进程（月频），归轻 kind 走
@@ -110,12 +121,29 @@ MAX_ATTEMPTS = 3
 # pf_alloc_daily（车道 D 分配链，2026-09-16）同归轻 kind：handler=子进程隔离 + 有界超时
 # （PF_ALLOC_TIMEOUT_S，分配链是分钟级：逐策略读净值 + 三表追加写），且三表只增不改
 # （重跑=新 run_id 追加=同日双写）→ 幂等由 trade_date 级 date-marker 跳过闸承担（见 handler）。
-LIGHT_KINDS = frozenset({"c4_batch_completed", "mount_audit_monthly", "c2_screen_due",
-                         "sim_memo_monthly", "sim_wallet_due", "sim_ledger_daily",
-                         "sim_journal_daily", "sim_deviation_monthly", "pf_alloc_daily"})
+LIGHT_KINDS = frozenset(
+    {
+        "c4_batch_completed",
+        "mount_audit_monthly",
+        "c2_screen_due",
+        "sim_memo_monthly",
+        "sim_wallet_due",
+        "sim_ledger_daily",
+        "sim_journal_daily",
+        "sim_deviation_monthly",
+        "pf_alloc_daily",
+        "attribution_daily",
+    }
+)
 HEAVY_KINDS = frozenset({"c4_batch_due"})
 # 模拟盘日件（S09 C2）：顺序=journal 依赖账本日账先行（drain FIFO 天然串行）
-SIM_DAILY_KINDS = ("sim_ledger_daily", "sim_journal_daily")
+# attribution_daily 为 FIFO 末位（TC-08 段2/裁定#392 之 D5 批代落）：归因 deps=账本当日行，
+# 消费次序账本→日刊→归因由本元组次序唯一保证，追加只许在尾部
+SIM_DAILY_KINDS = ("sim_ledger_daily", "sim_journal_daily", "attribution_daily")
+# 归因日账执行体（WO-1 产出口交付时注明的接线预期：超时/幂等/marker 照抄 run_sim_ledger_daily
+# 子进程款——CH 撞窗重试加固留在子进程；--day 单参即产出口 run_daily 的 CLI 正门）
+ATTRIBUTION_DAILY_SCRIPT = "sim_attribution_report.py"
+ATTRIBUTION_DAILY_TIMEOUT_S = 900
 # 日件唤醒任务（task_completed task_id 子串匹配）：daily_kline 时段键/kline_daily_incremental
 # 主任务/kline_index_incremental（账本直读指数行情）。DAG 并行竞态由 journal 失败重试兜底
 # （行情未齐→账本 RuntimeError→留队，下个数据任务完成唤醒重试）。
@@ -139,12 +167,10 @@ REGIME_SNAPSHOT_OK_ACTIONS = frozenset({"fresh", "refreshed"})
 # 预埋派发（S12/S13 前置契约）：实现模块由后续批次交付，缺失=log-and-skip（不抛、出队留痕）
 OPTIONAL_DUE_KINDS = {
     "fw_backtest_due": ("zephyr.strategy_pipeline.fw_backtest", "run_fw_backtest_due"),
-    "promotion_advisory_due": ("zephyr.strategy_pipeline.promotion_advisory",
-                               "run_promotion_advisory_due"),
+    "promotion_advisory_due": ("zephyr.strategy_pipeline.promotion_advisory", "run_promotion_advisory_due"),
 }
-
-AUDIT_MARKER = STATE_DIR / "last_audit.json"     # mount_audit/sim_memo 最近执行时间戳
-MONTHLY_DAYS = 30                                 # 月度档评估线（对齐 decay_watch monthly 语义）
+AUDIT_MARKER = STATE_DIR / "last_audit.json"  # mount_audit/sim_memo 最近执行时间戳
+MONTHLY_DAYS = 30  # 月度档评估线（对齐 decay_watch monthly 语义）
 
 
 # ---------- KillSwitch 探针（管线专用：fail-closed） ----------
@@ -159,7 +185,7 @@ def kill_switch_clear() -> tuple[bool, str]:
         if val in ("", "normal"):
             return True, "normal"
         return False, f"kill_switch={val}"
-    except Exception as exc:  # noqa: BLE001——探针失败 fail-closed（见 docstring 裁定）
+    except Exception as exc:  # noqa: BLE001  探针失败 fail-closed（见 docstring 裁定）
         return False, f"kill_switch_probe_error:{type(exc).__name__}"
 
 
@@ -170,7 +196,7 @@ def alert(message: str, level: str = "WARN") -> None:
         from zephyr.data.alerter import Alerter
 
         Alerter().notify("strategy_pipeline", message, level=level, source="strategy_pipeline")
-    except Exception:  # noqa: BLE001——告警通道故障不反噬管线主流程
+    except Exception:  # noqa: BLE001  告警通道故障不反噬管线主流程
         log.debug("alerter 不可达", exc_info=True)
 
 
@@ -244,6 +270,10 @@ def _default_handler(evt: dict[str, Any]) -> dict[str, Any]:
         out = run_sim_journal_daily(evt["payload"])
         _touch_marker("sim_journal_daily")
         return out
+    if kind == "attribution_daily":  # WO-1 归因日账（TC-08 段2/裁定#392 之 D5）：消费成功才落 marker
+        out = run_attribution_daily(evt["payload"])
+        _touch_marker("attribution_daily")
+        return out
     if kind == "sim_deviation_monthly":
         out = run_sim_deviation_monthly(evt["payload"])
         _touch_marker("sim_deviation")
@@ -261,10 +291,8 @@ def _default_handler(evt: dict[str, Any]) -> dict[str, Any]:
     raise ValueError(f"未知事件 kind: {kind}")
 
 
-def drain(allow_heavy: bool = False, handler: Handler | None = None,
-          max_events: int = 20) -> dict[str, Any]:
+def drain(allow_heavy: bool = False, handler: Handler | None = None, max_events: int = 20) -> dict[str, Any]:
     """消费 journal：成功才出队/失败保留并计 attempts（一次 drain 只试一次，重试跨唤醒）/KillSwitch 停止全保留。
-
     allow_heavy=False（调度器唤醒默认）跳过重 kind 不计失败；=True（CLI/C4 进程）全量消费。
     毒丸（attempts≥MAX_ATTEMPTS）事件留档不再自动消费（CLI status 可见，人工处置后删行）。
     """
@@ -279,9 +307,9 @@ def drain(allow_heavy: bool = False, handler: Handler | None = None,
             stop_reason = why
             break
         evts = pending()
-        evt = next((e for e in evts
-                    if not e.get("poison") and not (e["kind"] in HEAVY_KINDS and not allow_heavy)),
-                   None)
+        evt = next(
+            (e for e in evts if not e.get("poison") and not (e["kind"] in HEAVY_KINDS and not allow_heavy)), None
+        )
         if evt is None:
             for e in evts:
                 if e.get("poison"):
@@ -291,7 +319,7 @@ def drain(allow_heavy: bool = False, handler: Handler | None = None,
             result = handler(evt)
             processed.append({"id": evt["id"], "kind": evt["kind"], "result": result})
             _rewrite([e for e in pending() if e["id"] != evt["id"]])  # 成功才出队
-        except Exception as exc:  # noqa: BLE001——失败保留+计 attempts，本轮到此为止（重试跨唤醒）
+        except Exception as exc:  # noqa: BLE001  失败保留+计 attempts，本轮到此为止（重试跨唤醒）
             err = f"{type(exc).__name__}: {exc}"[:200]
             evts_now = pending()
             for e in evts_now:
@@ -300,13 +328,17 @@ def drain(allow_heavy: bool = False, handler: Handler | None = None,
                     e["last_error"] = err
                     if e["attempts"] >= MAX_ATTEMPTS:
                         e["poison"] = True
-                        alert(f"管线事件毒丸留档: {evt['id']} kind={evt['kind']} err={err}",
-                              level="ERROR")
+                        alert(f"管线事件毒丸留档: {evt['id']} kind={evt['kind']} err={err}", level="ERROR")
             _rewrite(evts_now)
             failed.append({"id": evt["id"], "kind": evt["kind"], "error": err})
             break
-    receipt = {"processed": processed, "failed": failed, "skipped": skipped,
-               "stop_reason": stop_reason, "pending_left": len(pending())}
+    receipt = {
+        "processed": processed,
+        "failed": failed,
+        "skipped": skipped,
+        "stop_reason": stop_reason,
+        "pending_left": len(pending()),
+    }
     _save_receipt(receipt)
     return receipt
 
@@ -322,23 +354,26 @@ def run_mount_audit() -> dict[str, Any]:
         alert(f"挂图审计漂移 {len(out['drift'])} 条: {out['drift'][:3]}", level="ERROR")
     if out.get("fails"):
         alert(f"挂图审计 38 规则 fails={len(out['fails'])}: {out['fails'][:3]}", level="ERROR")
-    return {"audit": out.get("audit"), "mounted": out.get("mounted_count"),
-            "drift_n": len(out.get("drift", [])), "fails_n": len(out.get("fails", []))}
+    return {
+        "audit": out.get("audit"),
+        "mounted": out.get("mounted_count"),
+        "drift_n": len(out.get("drift", [])),
+        "fails_n": len(out.get("fails", [])),
+    }
 
 
 def run_c4_batch_due(payload: dict[str, Any]) -> dict[str, Any]:
     """自动批测（交接清单⑦）：发现未批测翻译件 → c4_batch_screen --auto-only --defer-emit（子进程隔离+超时）。
-
     --defer-emit 对齐兄弟班 C0 双窗编排契约：IS 落账不触发 intake，c4_batch_completed
     由 OOS 步骤在双窗行齐后统一发（bothwin 依赖完整双窗行）。
     """
-    import subprocess
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
-    cmd = [sys.executable, str(ROOT / "scripts/backtest/c4_batch_screen.py"),
-           "--auto-only", "--defer-emit"]
+    cmd = [sys.executable, str(ROOT / "scripts/backtest/c4_batch_screen.py"), "--auto-only", "--defer-emit"]
     timeout_s = int(payload.get("timeout_s", 3600))
-    proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT),
-                          encoding="utf-8", errors="replace")
+    proc = run_subprocess_hidden(
+        cmd, capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT), encoding="utf-8", errors="replace"
+    )
     ok = proc.returncode == 0
     if not ok:
         alert(f"自动批测失败 rc={proc.returncode}: {proc.stderr[-300:]}", level="ERROR")
@@ -347,12 +382,18 @@ def run_c4_batch_due(payload: dict[str, Any]) -> dict[str, Any]:
 
 def run_c2_screen(payload: dict[str, Any]) -> dict[str, Any]:
     """C2 粗筛自动执行（交接清单⑧：确定性启发式、秒级、子进程隔离）。"""
-    import subprocess
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
     timeout_s = int(payload.get("timeout_s", 900))
-    proc = subprocess.run([sys.executable, str(ROOT / "scripts/backtest/strategy_screen_c2.py")],
-                          capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT),
-                          encoding="utf-8", errors="replace")
+    proc = run_subprocess_hidden(
+        [sys.executable, str(ROOT / "scripts/backtest/strategy_screen_c2.py")],
+        capture_output=True,
+        text=True,
+        timeout=timeout_s,
+        cwd=str(ROOT),
+        encoding="utf-8",
+        errors="replace",
+    )
     if proc.returncode != 0:
         alert(f"C2 粗筛自动执行失败 rc={proc.returncode}: {proc.stderr[-200:]}", level="ERROR")
     return {"rc": proc.returncode, "tail": (proc.stdout or "")[-300:]}
@@ -382,20 +423,26 @@ def run_sim_wallet_due(payload: dict[str, Any]) -> dict[str, Any]:
 
 def _run_sim_script(script: str, args: list[str], timeout_s: int) -> tuple[int, str]:
     """模拟盘 CLI 子进程隔离（账本 CH 维护窗重试/日刊/偏离报告均在各自 main 内，进程级隔离）。"""
-    import subprocess
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
-    proc = subprocess.run([sys.executable, str(ROOT / "scripts/backtest" / script), *args],
-                          capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT),
-                          encoding="utf-8", errors="replace")
+    proc = run_subprocess_hidden(
+        [sys.executable, str(ROOT / "scripts/backtest" / script), *args],
+        capture_output=True,
+        text=True,
+        timeout=timeout_s,
+        cwd=str(ROOT),
+        encoding="utf-8",
+        errors="replace",
+    )
     return proc.returncode, (proc.stderr or "")[-300:]
 
 
 def run_sim_ledger_daily(payload: dict[str, Any]) -> dict[str, Any]:
     """账本日跑（S09 C2）：sim_daily --from-registry 全 sim 条目幂等日账（子进程=保留 CH 撞窗重试加固）。
     超时下限须覆盖账本内部有界重试（10×120s）+执行，默认 1800s。"""
-    rc, err = _run_sim_script("sim_paper_ledger.py",
-                              ["--mode", "sim_daily", "--from-registry"],
-                              int(payload.get("timeout_s", 1800)))
+    rc, err = _run_sim_script(
+        "sim_paper_ledger.py", ["--mode", "sim_daily", "--from-registry"], int(payload.get("timeout_s", 1800))
+    )
     if rc != 0:
         alert(f"模拟盘账本日跑失败 rc={rc}: {err}", level="ERROR")
     return {"rc": rc}
@@ -417,8 +464,7 @@ def run_sim_deviation_monthly(payload: dict[str, Any]) -> dict[str, Any]:
     today = _dt.date.today()
     prev = today.replace(day=1) - _dt.timedelta(days=1)
     month = payload.get("month") or f"{prev.year}-{prev.month:02d}"
-    rc, err = _run_sim_script("sim_deviation_report.py", ["--month", month],
-                              int(payload.get("timeout_s", 3600)))
+    rc, err = _run_sim_script("sim_deviation_report.py", ["--month", month], int(payload.get("timeout_s", 3600)))
     if rc != 0:
         alert(f"月度偏离报告失败 rc={rc}: {err}", level="ERROR")
         return {"rc": rc, "month": month}
@@ -426,6 +472,23 @@ def run_sim_deviation_monthly(payload: dict[str, Any]) -> dict[str, Any]:
     if gov_rc != 0:
         alert(f"模拟盘治理失败 rc={gov_rc}: {gov_err}", level="ERROR")
     return {"rc": rc, "month": month, "governance_rc": gov_rc}
+
+
+def run_attribution_daily(payload: dict[str, Any]) -> dict[str, Any]:
+    """归因日账（WO-1 四段答案，TC-08 段2/裁定#392 之 D5 批代落）：sim_attribution_daily 产出口日跑。
+    --day 业务日=resolve_pf_alloc_trade_date()（数据驱动禁墙钟猜日，与发射链同真源；
+    payload 显式带 trade_date/biz_date 时覆盖——人工重跑逃生口）；deps=sim 账本当日行
+    （SIM_DAILY_KINDS FIFO 末位次序保证账本先行），账本缺行=产出口 RuntimeError → 留队
+    跨唤醒重试（run_sim_ledger_daily 同款失败语义）。子进程隔离照抄 run_sim_ledger_daily
+    （产出口交付注明的接线预期：超时/幂等/marker 照抄该件；幂等=RMT 同键新 ingest_ts）。
+    """
+    day = str(payload.get("trade_date") or payload.get("biz_date") or "").strip() or resolve_pf_alloc_trade_date()
+    rc, err = _run_sim_script(
+        ATTRIBUTION_DAILY_SCRIPT, ["--day", day], int(payload.get("timeout_s", ATTRIBUTION_DAILY_TIMEOUT_S))
+    )
+    if rc != 0:
+        alert(f"模拟盘归因日账失败 rc={rc} day={day}: {err}", level="ERROR")
+    return {"rc": rc, "day": day}
 
 
 def _pf_alloc_brief(stdout: str) -> str:
@@ -440,29 +503,53 @@ def _pf_alloc_brief(stdout: str) -> str:
     wallet_txt = ",".join(f"{k}={v}" for k, v in wallets.items()) or "无（链停用/宇宙为空）"
     rg = s.get("regime") or {}
     regime_txt = f"{rg.get('dominant')}@{rg.get('source_date')}(滞后{rg.get('lag_days')}日)"
-    return (f"run={s.get('run_id')} 总盘={s.get('portfolio_total_capital')} "
-            f"Σbudget={s.get('sum_effective_budget')} shrinkage={s.get('global_shrinkage')} "
-            f"未分配现金={s.get('unallocated_cash')} 钱包[{wallet_txt}] "
-            f"落地={s.get('persisted')} 告警={len(s.get('warnings') or [])}条 regime={regime_txt}")
+    return (
+        f"run={s.get('run_id')} 总盘={s.get('portfolio_total_capital')} "
+        f"Σbudget={s.get('sum_effective_budget')} shrinkage={s.get('global_shrinkage')} "
+        f"未分配现金={s.get('unallocated_cash')} 钱包[{wallet_txt}] "
+        f"落地={s.get('persisted')} 告警={len(s.get('warnings') or [])}条 regime={regime_txt}"
+    )
+
+
+def _pf_alloc_crisis_gate_skip(day: str) -> str | None:
+    """pf_alloc 危机闸 L1 判定（段1 危机短路，TC-08 步骤1/裁定#392 之 D5 批代落）。
+    只调 ``zephyr.pf_alloc.crisis_gate.crisis_block_check``（红队加固面，禁改其文件——
+    该文件头 CONSUMERS 即本模块）。返回 None=放行；str=阻断原因（crisis 或判读异常）。
+    fail-closed：判读异常（CH 不可达/快照读不出/配置坏）一律视为阻断——分配链宁可停也不
+    在读不出危机态时开新仓。**不落 marker** 由本模块两条阻断路径共同保证：阻断只是"本轮
+    跳过"，记号一落危机日的分配就永久蒸发，与"解除后同日可重放"契约冲突（调用方保证条款）。
+    WARN 留痕在本件内统一发（发射/执行两侧共用同一播报口径）。
+    """
+    try:
+        from zephyr.pf_alloc.crisis_gate import crisis_block_check  # noqa: PLC0415
+
+        block = crisis_block_check(trade_date=day)
+    except Exception as exc:  # noqa: BLE001  判读异常 fail-closed（裁定#392 之 D5 明示视为阻断）
+        reason = f"crisis_gate 判读异常 fail-closed（视为阻断）: {type(exc).__name__}: {exc}"
+        alert(f"pf_alloc 危机闸阻断 trade_date={day}: {reason[:260]}", level="WARN")
+        return reason
+    if block.skip:
+        alert(
+            f"pf_alloc 危机闸阻断（跳过本轮 pf_alloc 步骤，不落 marker）trade_date={day}: {block.reason[:260]}",
+            level="WARN",
+        )
+        return block.reason
+    return None
 
 
 def run_pf_alloc_daily(payload: dict[str, Any]) -> dict[str, Any]:
     """pf_alloc 日分配（车道 D 实盘接线，MOD-PA-030 装配体的事件执行体）：一事件=一分配周期。
-
     触发面=事件（宪法 §9.3）：本件不建 cron/Timer/sleep 循环，节拍由调度器唤醒链上的
     pf_alloc_daily 事件给；执行体=subprocess 隔离 `python -m zephyr.pf_alloc.allocation_orchestrator
     --date <D>`（与 run_c2_screen/run_sim_ledger_daily 同款"重活不进主进程"，超时即硬边界）。
     该 CLI 与事件正门 handle_pf_alloc_daily_event 调的是同一个 run_daily_allocation。
-
     Args:
         payload: 必带 ``trade_date``（或 ``biz_date``）——缺失即抛错，**不按墙钟猜业务日**
           （分配链 handle_pf_alloc_daily_event 同口径，发射方负责给日）；
           可选 ``strategy_ids``（限定策略，透传 --strategy-id）/``timeout_s``（默认 PF_ALLOC_TIMEOUT_S）。
-
     幂等：alloc 三表 MergeTree 只增不改（重跑=新 run_id 追加），故以 trade_date 级 date-marker
       做当日跳过闸——同一业务日已成功落地则零副作用返回（不双写快照、不重复落库）。
     失败：超时 / rc≠0 → 告警 + 抛错，交 drain 的 attempts 计数（MAX_ATTEMPTS=3 后毒丸留档）。
-
     Returns:
         {"rc": 0, "trade_date": D, "alloc_brief": 一行摘要, "summary_tail": str}
         或 {"skipped": ..., "trade_date": D}
@@ -474,24 +561,33 @@ def run_pf_alloc_daily(payload: dict[str, Any]) -> dict[str, Any]:
         raise RuntimeError(
             "pf_alloc_daily 事件 payload 缺 trade_date——分配链禁按墙钟猜交易日"
             "（zephyr.pf_alloc.allocation_orchestrator.handle_pf_alloc_daily_event 同口径），"
-            "发射方须带业务日")
+            "发射方须带业务日"
+        )
     marker = f"{PF_ALLOC_KIND}:{day}"
     if _date_marker_done(marker):
         log.info("pf_alloc_daily %s 当日已落地，跳过（防同日双写分配快照）", day)
         return {"skipped": "already_persisted", "trade_date": day}
+    # 段1 危机短路·执行侧兜底（TC-08 步骤1/裁定#392 之 D5）：人工 emit/发射后再入危机的事件
+    # 同过闸——阻断=skipped 直接出队，子进程不执行、marker 不落（解除后同日可重放）；
+    # 判读异常 fail-closed 视为阻断（helper 内统一 WARN+语义）
+    block_reason = _pf_alloc_crisis_gate_skip(day)
+    if block_reason is not None:
+        return {"skipped": "crisis_block", "state_reason": block_reason[:200], "trade_date": day}
     cmd = [sys.executable, "-m", PF_ALLOC_MODULE, "--date", day]
     for sid in payload.get("strategy_ids") or []:
         cmd += ["--strategy-id", str(sid)]
     timeout_s = int(payload.get("timeout_s", PF_ALLOC_TIMEOUT_S))
     try:
-        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout_s,
-                              cwd=str(ROOT), encoding="utf-8", errors="replace")
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        proc = run_subprocess_hidden(
+            cmd, capture_output=True, text=True, timeout=timeout_s, cwd=str(ROOT), encoding="utf-8", errors="replace"
+        )
     except subprocess.TimeoutExpired as exc:
         alert(f"pf_alloc 日分配超时（>{timeout_s}s）trade_date={day}", level="ERROR")
         raise RuntimeError(f"pf_alloc_daily 超时 {timeout_s}s trade_date={day}") from exc
     if proc.returncode != 0:
-        err = (f"pf_alloc 日分配失败 rc={proc.returncode} trade_date={day}: "
-               f"{(proc.stderr or '')[-300:]}")
+        err = f"pf_alloc 日分配失败 rc={proc.returncode} trade_date={day}: {(proc.stderr or '')[-300:]}"
         alert(err, level="ERROR")
         raise RuntimeError(err)
     _touch_marker(marker)  # 成功才落号（失败不落→同唤醒点重试仍可执行）
@@ -499,13 +595,11 @@ def run_pf_alloc_daily(payload: dict[str, Any]) -> dict[str, Any]:
     # 出声：分配结果不能只停在子进程 stdout——一行摘要进告警面（Alerter→日志）+ drain 回执，
     # 落库投递事实（ch_committed/local_durable）在摘要里，"算了没落地"当场可见。
     alert(f"pf_alloc 日分配已落地 trade_date={day}: {brief}", level="INFO")
-    return {"rc": 0, "trade_date": day, "alloc_brief": brief,
-            "summary_tail": (proc.stdout or "")[-300:]}
+    return {"rc": 0, "trade_date": day, "alloc_brief": brief, "summary_tail": (proc.stdout or "")[-300:]}
 
 
 def run_optional_due(kind: str, evt: dict[str, Any]) -> dict[str, Any]:
     """预埋派发（S12/S13 前置契约）：模块/函数由后续批次交付，缺失=log-and-skip（不抛、出队留痕）。
-
     契约=模块路径+函数签名 def run_xxx_due(event: dict) -> dict（见 OPTIONAL_DUE_KINDS）。
     """
     module_path, func_name = OPTIONAL_DUE_KINDS[kind]
@@ -513,11 +607,9 @@ def run_optional_due(kind: str, evt: dict[str, Any]) -> dict[str, Any]:
         import importlib
 
         fn = getattr(importlib.import_module(module_path), func_name)
-    except Exception as exc:  # noqa: BLE001——实现未交付是预期态，跳过不是失败（不占 attempts）
-        log.info("可选事件执行体未交付，跳过: kind=%s module=%s (%s)", kind, module_path,
-                 type(exc).__name__)
-        return {"skipped": "module_not_ready", "module": module_path,
-               "event_id": evt.get("id")}
+    except Exception as exc:  # noqa: BLE001  实现未交付是预期态，跳过不是失败（不占 attempts）
+        log.info("可选事件执行体未交付，跳过: kind=%s module=%s (%s)", kind, module_path, type(exc).__name__)
+        return {"skipped": "module_not_ready", "module": module_path, "event_id": evt.get("id")}
     return fn(evt)
 
 
@@ -543,25 +635,30 @@ def _marker_due(name: str) -> bool:
 
         last_dt = _dt.datetime.strptime(last, "%Y-%m-%dT%H:%M:%S").replace(tzinfo=_dt.UTC)
         return (_dt.datetime.now(_dt.UTC) - last_dt).days >= MONTHLY_DAYS
-    except Exception:  # noqa: BLE001——标记损坏按到期处理（宁可多审一次）
+    except Exception:  # noqa: BLE001  标记损坏按到期处理（宁可多审一次）
         return True
 
 
 def maybe_emit_monthly() -> dict[str, Any]:
     """月度档到期评估（交接清单⑪⑭+S10 C2）：挂在事件唤醒点上评估，非自走时钟（禁 cron 语义的合规实现）。
-
     到期即入队（幂等：同月已入队/已处理则跳过——marker 30 天线为主闸，pending 同月去重为辅闸），
     消费由 drain 完成。毒丸事件不算"已入队"（否则毒丸永久堵死该月度档——sim_memo_monthly
     从未正常轮转的病根之一，C2/X2 修复）。
     """
     emitted = []
-    for name, kind in (("mount_audit", "mount_audit_monthly"), ("sim_memo", "sim_memo_monthly"),
-                       ("sim_deviation", "sim_deviation_monthly")):
+    for name, kind in (
+        ("mount_audit", "mount_audit_monthly"),
+        ("sim_memo", "sim_memo_monthly"),
+        ("sim_deviation", "sim_deviation_monthly"),
+    ):
         if not _marker_due(name):
             continue
-        if any(e["kind"] == kind and not e.get("poison")
-               and e["recorded_at"][:7] == time.strftime("%Y-%m")  # recorded_at=本地时
-               for e in pending()):
+        if any(
+            e["kind"] == kind
+            and not e.get("poison")
+            and e["recorded_at"][:7] == time.strftime("%Y-%m")  # recorded_at=本地时
+            for e in pending()
+        ):
             continue
         record(kind, {"due_marker": name})
         emitted.append(kind)
@@ -577,13 +674,12 @@ def _date_marker_done(name: str) -> bool:
             return False
         data = json.loads(AUDIT_MARKER.read_text(encoding="utf-8"))
         return str(data.get(name) or "")[:10] == time.strftime("%Y-%m-%d", time.gmtime())
-    except Exception:  # noqa: BLE001——标记损坏按未做处理（宁可重跑一次，日件本身幂等）
+    except Exception:  # noqa: BLE001  标记损坏按未做处理（宁可重跑一次，日件本身幂等）
         return False
 
 
 def _marker_seen(name: str) -> bool:
     """记号**曾**落过盘（不看 UTC 日期，永久闸）：幂等键本身是业务日时用它而非 _date_marker_done。
-
     分配链幂等键=trade_date（alloc 三表只增不改）。用 UTC 日口径会漏：行情停更/周末唤醒时
     业务日仍是旧的 D，而记号日期已翻篇 → 同一 D 再发一件 → 只增表里多一份重复快照。
     """
@@ -595,9 +691,8 @@ def _marker_seen(name: str) -> bool:
         return False
 
 
-def maybe_emit_sim_daily(task_id: Any = None, success: bool = True, **_kwargs) -> dict[str, Any]:
+def maybe_emit_sim_daily(task_id: object = None, success: bool = True, **_kwargs) -> dict[str, Any]:
     """模拟盘日件到期评估（S09 C2）：daily_kline 数据任务当日 SUCCESS=自然唤醒（非自走时钟）。
-
     幂等双闸：当日 date-marker 已成功（handler 消费成功后落）或同 kind 非 poison 事件在队
     则跳过；ledger 先于 journal 入队（FIFO 串行=日刊体检必见当日钱包行），账本失败时 drain
     中断、日刊事件留队跨唤醒重试，顺序不倒置。
@@ -607,8 +702,7 @@ def maybe_emit_sim_daily(task_id: Any = None, success: bool = True, **_kwargs) -
         return {"emitted": []}
     emitted = []
     for kind in SIM_DAILY_KINDS:
-        if _date_marker_done(kind) or any(e["kind"] == kind and not e.get("poison")
-                                          for e in pending()):
+        if _date_marker_done(kind) or any(e["kind"] == kind and not e.get("poison") for e in pending()):
             continue
         record(kind, {"due": "daily_kline", "task_id": str(task_id)})
         emitted.append(kind)
@@ -622,26 +716,25 @@ def maybe_emit_sim_daily(task_id: Any = None, success: bool = True, **_kwargs) -
 # 查询口径与 scripts/backtest/sim_platform_journal.py 健检 1 同源（同表同 symbol），此处只解析
 # 不猜：解析不出=不发事件（分配链正门 handle_pf_alloc_daily_event 对缺 trade_date 抛错，
 # 墙钟猜日会在非交易日/数据晚到日写出错误的分配快照，且 alloc 三表只增不改无法回收）。
-PF_ALLOC_BIZ_DATE_SQL = ("SELECT max(trade_date) FROM c1_market.kline_index "
-                         "WHERE symbol = '000300'")
+_PF_ALLOC_BIZ_DB = "c1_market"
+_PF_ALLOC_BIZ_SRC = "kline_index"  # 业务日真源（与 judgment_settler/pf_alloc 同源）
+PF_ALLOC_BIZ_DATE_SQL = "SELECT max(trade_date) FROM {db}.{src} FINAL WHERE symbol = '000300'"  # noqa: bare-sql  分配链业务日哨兵单值查询，db/src 拆常量（judgment_settler 同款）+FINAL 去重
 # CH 对空 Date 列的 min/max 返回 1970-01-01 哨兵（实证见 market_daban_engine_load.py 注记）
 _EMPTY_TABLE_SENTINEL = "1971-01-01"
 
 
 def resolve_pf_alloc_trade_date() -> str:
     """分配链业务日（数据驱动，非墙钟）：行情最新入库交易日 -> 'YYYY-MM-DD'。
-
     本模块日频产出者共用的业务日真源（名字里的 pf_alloc 是历史遗留）：regime 日序刷新
     （maybe_refresh_regime_snapshot）也走这一条只读模板 + DatabaseService reader 角色，
     不在别处再拼第二条 SQL。
-
     Raises:
         RuntimeError: CH 不可达 / 无行 / 空表哨兵 / 日期非法——宁可不发事件也不猜日。
     """
     from zephyr.infrastructure.database_service import get_db_service
 
     conn = get_db_service().get_clickhouse_conn(role="reader")
-    rows = list(conn.execute(PF_ALLOC_BIZ_DATE_SQL) or [])
+    rows = list(conn.execute(PF_ALLOC_BIZ_DATE_SQL.format(db=_PF_ALLOC_BIZ_DB, src=_PF_ALLOC_BIZ_SRC)) or [])
     raw = rows[0][0] if rows and rows[0] else None
     day = str(raw or "")[:10]
     if not day or day < _EMPTY_TABLE_SENTINEL:
@@ -649,10 +742,8 @@ def resolve_pf_alloc_trade_date() -> str:
     return day
 
 
-def maybe_emit_pf_alloc_daily(task_id: Any = None, success: bool = True,
-                              **_kwargs) -> dict[str, Any]:
+def maybe_emit_pf_alloc_daily(task_id: object = None, success: bool = True, **_kwargs) -> dict[str, Any]:
     """pf_alloc 日分配的唯一自动产出者：行情日件 SUCCESS=自然唤醒，一个唤醒=一个分配周期。
-
     宪法 §9.3 合规：本件不建 cron/Timer/sleep 循环，节拍由调度器 task_completed 唤醒给。
     入队顺序即落地顺序（journal FIFO）——本件在 maybe_emit_sim_daily **之前**被调用，
     故 pf_alloc_daily 先于 sim_ledger_daily 消费，账本同日 ensure_wallet 才读得到真实额度
@@ -660,6 +751,9 @@ def maybe_emit_pf_alloc_daily(task_id: Any = None, success: bool = True,
     幂等双闸：该业务日**曾**已成功（trade_date 级记号，永久）∨ 同业务日非 poison 事件在队
     → 零副作用跳过。用永久记号而非"当日"记号：幂等键是业务日，行情停更/周末唤醒时业务日
     还是旧的 D，按 UTC 日口径会再发一件 → 只增不改的 alloc 表里多出一份重复快照。
+    危机短路（段1，TC-08/裁定#392 之 D5）：入队前过 crisis_block_check，crisis/判读异常
+    fail-closed → 不入队（WARN 已在 helper 内留痕），不落任何 marker——下个唤醒点自然重评，
+    危机解除后同日即恢复发射（重放保证=调用方条款，本侧以"只跳过不记号"履行）。
     人工重跑不受本闸约束：`pipeline_events emit pf_alloc_daily --payload '{"trade_date":D}'`
     或直接 `python -m zephyr.pf_alloc.allocation_orchestrator --date D`（重跑=新 run_id 追加）。
     """
@@ -673,27 +767,29 @@ def maybe_emit_pf_alloc_daily(task_id: Any = None, success: bool = True,
         alert(msg[:300], level="WARN")
         return {"emitted": [], "error": msg[:200]}
     if _marker_seen(f"{PF_ALLOC_KIND}:{day}") or any(
-            e["kind"] == PF_ALLOC_KIND and not e.get("poison")
-            and str((e.get("payload") or {}).get("trade_date") or "") == day
-            for e in pending()):
+        e["kind"] == PF_ALLOC_KIND
+        and not e.get("poison")
+        and str((e.get("payload") or {}).get("trade_date") or "") == day
+        for e in pending()
+    ):
         return {"emitted": [], "skipped": "already_queued_or_done", "trade_date": day}
+    # 段1 危机短路·发射侧（TC-08 步骤1/裁定#392 之 D5）：阻断则跳过本轮 pf_alloc 入队——
+    # 不落 marker（下个唤醒点自然重评，解除后同日可重放）；fail-closed 异常亦视为阻断
+    if _pf_alloc_crisis_gate_skip(day) is not None:
+        return {"emitted": [], "skipped": "crisis_block", "trade_date": day}
     record(PF_ALLOC_KIND, {"trade_date": day, "due": "sim_daily_wake", "task_id": tid})
-    alert(f"pf_alloc 日分配已入队 trade_date={day}（先于账本消费=同日钱包拿真实额度）",
-          level="INFO")
+    alert(f"pf_alloc 日分配已入队 trade_date={day}（先于账本消费=同日钱包拿真实额度）", level="INFO")
     return {"emitted": [PF_ALLOC_KIND], "trade_date": day}
 
 
 # ---------- regime 日序供给产出者（挖矿 F3 治本：表有唯一消费端与 manual 写方，无自动写方）──
-def maybe_refresh_regime_snapshot(task_id: Any = None, success: bool = True,
-                                 **_kwargs) -> dict[str, Any]:
+def maybe_refresh_regime_snapshot(task_id: object = None, success: bool = True, **_kwargs) -> dict[str, Any]:
     """regime_snapshot_history 的唯一自动产出者：行情日件 SUCCESS=自然唤醒，一业务日至多一印。
-
     宪法 §9.3 合规（S11 §5 施工项 4「挂点 A」，零新机制）：本件不建 cron/Timer/sleep 循环，
     节拍由调度器 task_completed 唤醒给。此前该表唯一写方=manual CLI
     scripts/backtest/print_regime_history.py（START=2019-01-01 全窗重印，每次手工跑一批新
     run_id），两次手工印制之间无人补日 → 表静默腐烂（2026-09-16 实测 1809 行、
     max=2026-09-11、滞后 5 天且逐日变大），而 fw_backtest/auto_mount/pf_alloc 三方都读它。
-
     幂等闸=业务日级永久记号（_marker_seen，与 pf_alloc_daily 同款，不用 UTC 日口径）：
       键 regime_snapshot_daily:<D>，D=行情最新入库日（resolve_pf_alloc_trade_date，禁墙钟猜日；
       解析不出=不印 + ERROR 出声，且因日未定→记号不落，下个唤醒点自会重解析）。写方是全窗
@@ -705,10 +801,8 @@ def maybe_refresh_regime_snapshot(task_id: Any = None, success: bool = True,
       当日人工补跑走逃生口（见下）。
       真正的重印闸门在 ensure_regime_snapshot 内：滞后 ≤_REGIME_STALE_DAYS(3) 天零成本直通
       （只花一条只读新鲜度查询），只有超限才起子进程 → 常态下本钩子是廉价的看门狗。
-
     永不抛：快照刷新失败绝不得反噬唤醒钩子链（记 [REGIME-SNAPSHOT] ERROR + 返回值）。
     人工逃生口（不受本闸约束）：`python scripts/backtest/print_regime_history.py [--start/--end]`。
-
     Returns:
         {"action": "fresh|refreshed|refresh_failed|already_refreshed|skipped_wake_point|error",
          "trade_date": D（唤醒点不匹配时缺）, 成功态另带 "brief": 一行摘要}
@@ -726,39 +820,38 @@ def maybe_refresh_regime_snapshot(task_id: Any = None, success: bool = True,
         from zephyr.strategy_pipeline.fw_backtest import ensure_regime_snapshot  # noqa: PLC0415
 
         out = ensure_regime_snapshot(refresh=True)
-    except Exception as exc:  # noqa: BLE001——钩子永不反噬调度器，但失败必须出声（静默=链又变纸面）
-        msg = (f"{REGIME_SNAPSHOT_PREFIX} 刷新未完成（trade_date={day or '未知'}）："
-               f"{type(exc).__name__}: {exc}")
-        log.error(f"{REGIME_SNAPSHOT_PREFIX} 刷新异常（不影响唤醒链，人工补跑 "
-                  f"scripts/backtest/print_regime_history.py）trade_date={day or '未知'}",
-                  exc_info=True)
+    except Exception as exc:  # noqa: BLE001  钩子永不反噬调度器，但失败必须出声（静默=链又变纸面）
+        msg = f"{REGIME_SNAPSHOT_PREFIX} 刷新未完成（trade_date={day or '未知'}）：{type(exc).__name__}: {exc}"
+        log.error(
+            f"{REGIME_SNAPSHOT_PREFIX} 刷新异常（不影响唤醒链，人工补跑 "
+            f"scripts/backtest/print_regime_history.py）trade_date={day or '未知'}",
+            exc_info=True,
+        )
         alert(msg[:300], level="ERROR")
         return {"action": "error", "trade_date": day, "error": f"{type(exc).__name__}"[:200]}
     action = str(out.get("action") or "")
     # 出声：滞后天数/行数/动作一行进告警面（Alerter→日志）——"印了没印、还滞后几天"当场可见
-    brief = (f"action={action} max_trade_date={out.get('max_trade_date')} "
-             f"滞后={out.get('stale_days')}日 行数={out.get('rows')}")
+    brief = (
+        f"action={action} max_trade_date={out.get('max_trade_date')} "
+        f"滞后={out.get('stale_days')}日 行数={out.get('rows')}"
+    )
     level = "INFO" if action in REGIME_SNAPSHOT_OK_ACTIONS else "ERROR"
     alert(f"{REGIME_SNAPSHOT_PREFIX} 刷新体检 trade_date={day}: {brief}", level=level)
     return {"action": action, "trade_date": day, "brief": brief}
 
 
 # ---------- 判定台账结算产出者（judgment-ledger-standard §四：收盘入库=结算自然唤醒）──
-def maybe_settle_judgment_ledger(task_id: Any = None, success: bool = True,
-                                 **_kwargs) -> dict[str, Any]:
+def maybe_settle_judgment_ledger(task_id: object = None, success: bool = True, **_kwargs) -> dict[str, Any]:
     """judgment 台账三表的唯一自动结算者：行情日件 SUCCESS=自然唤醒，一业务日至多一扫。
-
     宪法 §9.3 合规（零新机制，maybe_refresh_regime_snapshot 同款骨架）：不建
     cron/Timer/sleep 循环，节拍由调度器 task_completed 唤醒给。结算扫描是**累积
     口径**（已结算行 evaluated_at 非空天然排除，mutation 侧再判一次防并发覆写），
     故错过当日不丢账——下个成功唤醒点连前账一起结。
-
     幂等闸=业务日级永久记号（_marker_seen，regime 同款）：键
     judgment_ledger_settle:<D>，D=行情最新入库日（resolve_pf_alloc_trade_date，
     禁墙钟猜日）。**记号先落再动手**（regime 先例同款裁定）：失败若不留号=
     每个行情唤醒点重扫三表（风暴）；失败已 ERROR 出声，行留未结算自愈，人工
     逃生口=`python -c "from zephyr.plan_engine.judgment_settler import settle_all"`。
-
     永不抛：结算失败绝不得反噬唤醒钩子链。
     """
     tid = str(task_id or "")
@@ -775,15 +868,102 @@ def maybe_settle_judgment_ledger(task_id: Any = None, success: bool = True,
 
         reports = settle_all(asof_day=day)  # 业务日单次解析，三表同锚
         brief = " | ".join(r.brief() for r in reports.values())
-    except Exception as exc:  # noqa: BLE001——钩子永不反噬调度器，失败必须出声
-        msg = (f"{JUDGMENT_SETTLE_PREFIX} 结算未完成（trade_date={day or '未知'}）："
-               f"{type(exc).__name__}: {exc}")
-        log.error(f"{JUDGMENT_SETTLE_PREFIX} 结算异常（不影响唤醒链，人工逃生口 "
-                  f"settle_all()）trade_date={day or '未知'}", exc_info=True)
+    except Exception as exc:  # noqa: BLE001  钩子永不反噬调度器，失败必须出声
+        msg = f"{JUDGMENT_SETTLE_PREFIX} 结算未完成（trade_date={day or '未知'}）：{type(exc).__name__}: {exc}"
+        log.error(
+            f"{JUDGMENT_SETTLE_PREFIX} 结算异常（不影响唤醒链，人工逃生口 settle_all()）trade_date={day or '未知'}",
+            exc_info=True,
+        )
         alert(msg[:300], level="ERROR")
         return {"action": "error", "trade_date": day, "error": type(exc).__name__[:200]}
     alert(f"{JUDGMENT_SETTLE_PREFIX} 结算体检 trade_date={day}: {brief}", level="INFO")
     return {"action": "settled", "trade_date": day, "brief": brief}
+
+
+# ---------- 丁线扩面钩子（2026-09-21 Owner 令：未进编排器件打通） ----------
+WARROOM_KIND = "warroom_pipeline"
+WARROOM_PREFIX = "[WARROOM-PIPELINE]"
+AUCTION_HIT_KIND = "auction_hit_daily"
+AUCTION_PREFIX = "[AUCTION-HIT]"
+_AUCTION_WAKE_TASKS = ("kline_etf_1min", "kline_etf_5min")
+_SH_TZ = ZoneInfo("Asia/Shanghai")
+
+
+def maybe_run_warroom_pipeline(task_id: object = None, success: bool = True, **_kwargs) -> dict[str, Any]:
+    """warroom scenario_plan 族日循环产出者（MOD-PLAN-018 上链——原唯一未挂事件链的棒）。
+    宪法 §9.3 合规（maybe_refresh_regime_snapshot 同款骨架）：不建 cron/sleep-loop，
+    节拍由调度器 task_completed 唤醒给；业务日=resolve_pf_alloc_trade_date（禁墙钟猜日）。
+    幂等闸=业务日级永久记号 warroom_pipeline:<D>（**记号先落再动手**，regime 同款裁定——
+    失败若不留号=每个行情唤醒点重起双段编排；行级幂等另有 prediction_log UNIQUE
+    (trade_date,module,prediction_type,input_hash) 保首条双保险）。人工逃生口=总扳手
+    warroom 段或直调 run_daily_warroom_pipeline（不受本闸约束）。
+    永不抛：编排失败绝不得反噬唤醒链（ERROR 出声+返回值）。
+    """
+    tid = str(task_id or "")
+    if not success or not any(k in tid for k in SIM_DAILY_WAKE_TASKS):
+        return {"action": "skipped_wake_point"}
+    day = ""
+    try:
+        day = resolve_pf_alloc_trade_date()
+        key = f"{WARROOM_KIND}:{day}"
+        if _marker_seen(key):
+            return {"action": "already_run", "trade_date": day}
+        _touch_marker(key)  # 先落号再动手（防失败重跑风暴，regime 同款裁定）
+        from zephyr.plan_engine.daily_warroom_pipeline import run_daily_warroom_pipeline
+
+        res = run_daily_warroom_pipeline(day, phase="both")
+        brief = (
+            f"premarket={getattr(res, 'premarket_status', None)} postmarket={getattr(res, 'postmarket_status', None)}"
+        )
+        alert(f"{WARROOM_PREFIX} 日循环编排 trade_date={day}: {brief}", level="INFO")
+        return {"action": "run", "trade_date": day, "brief": brief}
+    except Exception as exc:  # noqa: BLE001  钩子永不反噬调度器，失败必须出声
+        msg = f"{WARROOM_PREFIX} 编排未完成（trade_date={day or '未知'}）：{type(exc).__name__}"
+        log.error(
+            "%s 编排异常（人工逃生口=总扳手 warroom 段）trade_date=%s", WARROOM_PREFIX, day or "未知", exc_info=True
+        )
+        alert(msg[:300], level="ERROR")
+        return {"action": "error", "trade_date": day, "error": type(exc).__name__[:200]}
+
+
+def maybe_record_auction_hit(task_id: object = None, success: bool = True, **_kwargs) -> dict[str, Any]:
+    """竞价命中 10:00 判定日产出者（MOD-PLAN-015 上链）。
+    唤醒词=kline_etf_1min/kline_etf_5min 子串（60min bar 落点 10:30/11:30/14:00/15:00
+    无 10:00 棒，10:05 分钟批=天然唤醒且 09:30-10:00 走势窗已收口）；本地时区闸
+    10:00≤now<10:30（Asia/Shanghai，PIT 卫生）；业务日=resolve_pf_alloc_trade_date。
+    幂等双闸=业务日记号 auction_hit_daily:<D>（先落再动手）+ prediction_log 内容 hash
+    保首条（模块内建）。竞价三细节注入位=None（degraded 语义内建，留痕可过滤）。
+    永不抛：失败 ERROR 出声留痕，行级幂等自愈。
+    """
+    import datetime as _dt
+
+    tid = str(task_id or "")
+    if not success or not any(k in tid for k in _AUCTION_WAKE_TASKS):
+        return {"action": "skipped_wake_point"}
+    now_local = _dt.datetime.now(_SH_TZ).timetz().replace(tzinfo=None)
+    if not (_dt.time(10, 0) <= now_local < _dt.time(10, 30)):
+        return {"action": "skipped_outside_window", "now": str(now_local)}
+    day = ""
+    try:
+        day = resolve_pf_alloc_trade_date()
+        key = f"{AUCTION_HIT_KIND}:{day}"
+        if _marker_seen(key):
+            return {"action": "already_run", "trade_date": day}
+        _touch_marker(key)
+        from zephyr.plan_engine.auction_hit_recorder import record_auction_hit
+
+        out = record_auction_hit(day)
+        brief = (
+            f"hit={getattr(out, 'hit', None)} "
+            f"actual={getattr(out, 'actual_scenario', None)} "
+            f"status={getattr(out, 'status', None)}"
+        )
+        alert(f"{AUCTION_PREFIX} 盘中命中判定 trade_date={day}: {brief}", level="INFO")
+        return {"action": "run", "trade_date": day, "brief": brief}
+    except Exception as exc:  # noqa: BLE001  永不反噬唤醒链
+        log.error("%s 判定异常 trade_date=%s", AUCTION_PREFIX, day or "未知", exc_info=True)
+        alert(f"{AUCTION_PREFIX} 判定未完成（trade_date={day or '未知'}）{type(exc).__name__}"[:300], level="ERROR")
+        return {"action": "error", "trade_date": day, "error": type(exc).__name__[:200]}
 
 
 # ---------- 写侧钩子 ----------
@@ -792,7 +972,7 @@ def emit_c4_batch_completed(batch: str, run_id: str, inserted: int) -> dict[str,
     evt = record("c4_batch_completed", {"batch": batch, "run_id": run_id, "inserted": inserted})
     try:
         receipt = drain(allow_heavy=False)
-    except Exception as exc:  # noqa: BLE001——消费失败不反噬批测进程，事件留 journal
+    except Exception as exc:  # noqa: BLE001  消费失败不反噬批测进程，事件留 journal
         alert(f"c4_batch_completed 事件消费失败（已留 journal 待重放）: {evt['id']} {exc}", level="WARN")
         return {"event": evt["id"], "drained": False, "error": str(exc)[:200]}
     return {"event": evt["id"], "drained": True, "receipt": receipt}
@@ -800,22 +980,20 @@ def emit_c4_batch_completed(batch: str, run_id: str, inserted: int) -> dict[str,
 
 def emit_sim_wallet_due(strategies: list[dict[str, Any]]) -> dict[str, Any]:
     """sim 流转入册后的开户通知钩子（intake 调用，c4 同款 record+立即轻消费）。
-
     payload=新 sim 条目 [{"strategy_id", "code_path"}]；失败留 journal 重放（开户幂等）。
     """
     evt = record("sim_wallet_due", {"strategies": strategies})
     try:
         receipt = drain(allow_heavy=False)
-    except Exception as exc:  # noqa: BLE001——消费失败不反噬入库主流程，事件留 journal
+    except Exception as exc:  # noqa: BLE001  消费失败不反噬入库主流程，事件留 journal
         alert(f"sim_wallet_due 事件消费失败（已留 journal 待重放）: {evt['id']} {exc}", level="WARN")
         return {"event": evt["id"], "drained": False, "error": str(exc)[:200]}
     return {"event": evt["id"], "drained": True, "receipt": receipt}
 
 
 # ---------- 调度器侧注册（交接清单①："新事件处理器注册在调度器侧"） ----------
-def wire_data_scheduler(scheduler: Any) -> None:
+def wire_data_scheduler(scheduler) -> None:
     """DataScheduler.subscribe("task_completed", ...) 轻钩子：数据任务完成=自然唤醒点。
-
     职责边界：只做 ①轻 kind drain（intake 重放/审计）②翻译件积压扫描→记录 c4_batch_due+告警
     ③日频产出者唤醒（regime 日序供给 → 判定台账结算 → pf_alloc 分配链 → 模拟盘日件 → 月度档；
     顺序即下游读到新鲜数据的顺序：先刷新 regime_snapshot_history 再入队分配件，分配链读本表口径；
@@ -823,6 +1001,7 @@ def wire_data_scheduler(scheduler: Any) -> None:
     分配再先于账本入队是"钱包额度来自分配链"这一接通的唯一次序保证）。
     永不抛异常（数据任务完成回调故障不得反噬调度器）；重 kind 不在此消费（见模块裁定）。
     """
+
     def _on_task_completed(**_kwargs) -> None:
         try:
             scan_translated_backlog()
@@ -849,9 +1028,8 @@ def wire_data_scheduler(scheduler: Any) -> None:
                 from zephyr.plan_engine.close_verifier import maybe_verify_plan_close
 
                 maybe_verify_plan_close(**_kwargs)
-            except Exception:  # noqa: BLE001——导入级故障与模块内异常同待遇：出声不反噬
-                log.warning("[JUDGMENT-LEDGER] Phase 2b 产出件唤醒失败（不影响后续链）",
-                            exc_info=True)
+            except Exception:  # noqa: BLE001  导入级故障与模块内异常同待遇：出声不反噬
+                log.warning("[JUDGMENT-LEDGER] Phase 2b 产出件唤醒失败（不影响后续链）", exc_info=True)
             # 判定台账标准 §四（2026-09-16）：三表结算挂收盘入库事件链（累积扫描幂等，
             # 错过当日不丢账）——置于 regime 之后、分配链之前（纯判定侧负载，不占分配时序）
             maybe_settle_judgment_ledger(**_kwargs)
@@ -871,9 +1049,16 @@ def wire_data_scheduler(scheduler: Any) -> None:
                 )
 
                 maybe_emit_next_day_forecast(**_kwargs)
-            except Exception:  # noqa: BLE001——导入级故障与模块内异常同待遇：出声不反噬
-                log.warning("[JUDGMENT-LEDGER] Phase 2a 产出件唤醒失败（不影响后续链）",
-                            exc_info=True)
+            except Exception:  # noqa: BLE001  导入级故障与模块内异常同待遇：出声不反噬
+                log.warning("[JUDGMENT-LEDGER] Phase 2a 产出件唤醒失败（不影响后续链）", exc_info=True)
+            # 丁线扩面（2026-09-21 Owner 令）：warroom scenario_plan 族上链（原唯一未挂棒，
+            # W0 校准样本积累自动化）+竞价命中 10:00 判定上链（内部自带唤醒词/时窗/记号三重
+            # 过滤，非本唤醒点=零开销跳过）。置于判定产出件之后、分配链之前（纯判定侧负载）
+            try:
+                maybe_run_warroom_pipeline(**_kwargs)
+                maybe_record_auction_hit(**_kwargs)
+            except Exception:  # noqa: BLE001  出声不反噬
+                log.warning("[WARROOM/AUCTION] 扩面钩子唤醒失败（不影响后续链）", exc_info=True)
             # 车道 D #15：分配链日产出者——必须先于日件入队（journal FIFO=分配先落，
             # 同日账本 ensure_wallet 才读得到 alloc_budget_daily 的真实钱包额度）
             maybe_emit_pf_alloc_daily(**_kwargs)
@@ -892,9 +1077,9 @@ def wire_data_scheduler(scheduler: Any) -> None:
                 )
 
                 maybe_run_daily_decision(**_kwargs)
-            except Exception:  # noqa: BLE001——导入级故障与模块内异常同待遇：出声不反噬
+            except Exception:  # noqa: BLE001  导入级故障与模块内异常同待遇：出声不反噬
                 log.warning("[DAILY-DECISION] 编排器唤醒失败（不影响唤醒链）", exc_info=True)
-        except Exception:  # noqa: BLE001——钩子永不反噬调度器
+        except Exception:  # noqa: BLE001  钩子永不反噬调度器
             log.debug("pipeline 唤醒钩子异常", exc_info=True)
 
     scheduler.subscribe("task_completed", _on_task_completed)
@@ -902,7 +1087,6 @@ def wire_data_scheduler(scheduler: Any) -> None:
 
 def scan_translated_backlog() -> dict[str, Any]:
     """⑦ 上半场：发现未批测翻译件（translated/c4_*.py 中不在 IS 批台账的）→ 记录事件+告警。
-
     只发现不执行（重 kind 留显式 drain）；幂等：同集合已记录则不重复入队。
     """
     translated = ROOT / "scripts/backtest/translated"
@@ -910,14 +1094,14 @@ def scan_translated_backlog() -> dict[str, Any]:
     from zephyr.data.ch_writer import get_client_strict
 
     rows = get_client_strict().execute(
-        f"SELECT DISTINCT source_file FROM c1_backtest.strategy_screen "
-        f"WHERE screen_batch = 'C4-translated-20260912' AND verdict = 'translated_c4'")
+        "SELECT DISTINCT source_file FROM c1_backtest.strategy_screen "  # noqa: bare-sql  c4 翻译对账去重查询，既有字面量集中化待批（2026-09-21 丁线同批合规化）
+        "WHERE screen_batch = 'C4-translated-20260912' AND verdict = 'translated_c4'"
+    )
     known = {str(r[0]).rsplit("/", 1)[-1] for r in rows}
     backlog = sorted(files - known - {"__init__.py"})
     if not backlog:
         return {"backlog": []}
-    recorded = {tuple(e["payload"].get("files") or ()) for e in pending()
-                if e["kind"] == "c4_batch_due"}
+    recorded = {tuple(e["payload"].get("files") or ()) for e in pending() if e["kind"] == "c4_batch_due"}
     if tuple(backlog) in recorded:
         return {"backlog": backlog, "already_recorded": True}
     record("c4_batch_due", {"files": backlog, "n": len(backlog)})
@@ -927,7 +1111,6 @@ def scan_translated_backlog() -> dict[str, Any]:
 
 def scan_c1_c2_backlog() -> dict[str, Any]:
     """⑧⑨ 上游供料扫描（事件唤醒点评估，非自走时钟）：
-
     - C2 粗筛积压：raw_manifest.csv 比 screen_c2.csv 新（或后者缺失）→ c2_screen_due（轻，自动执行）；
     - C1 矿脉到期：lane_b_candidates.csv 存在且比最近一次登记新 → 仅告警提示有新海选材料
       （生成器为 LLM 会话入口，全自动生成=方案真源 §1 噪音过滤裁定，执行留当班会话）。
@@ -938,11 +1121,9 @@ def scan_c1_c2_backlog() -> dict[str, Any]:
     screen_c2 = intake_dir / "screen_c2.csv"
     lane_b = intake_dir / "lane_b_candidates.csv"
     out: dict[str, Any] = {}
-    if manifest.exists() and (not screen_c2.exists()
-                              or screen_c2.stat().st_mtime < manifest.stat().st_mtime):
+    if manifest.exists() and (not screen_c2.exists() or screen_c2.stat().st_mtime < manifest.stat().st_mtime):
         sig = int(manifest.stat().st_mtime)
-        if not any(e["kind"] == "c2_screen_due" and e["payload"].get("sig") == sig
-                   for e in pending()):
+        if not any(e["kind"] == "c2_screen_due" and e["payload"].get("sig") == sig for e in pending()):
             record("c2_screen_due", {"sig": sig, "manifest_mtime": sig})
             out["c2_due"] = True
     if lane_b.exists():
@@ -970,21 +1151,40 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover — CLI 薄�
     d = sub.add_parser("drain", help="消费事件")
     d.add_argument("--all", action="store_true", help="含重 kind（c4_batch_due 自动批测）")
     e = sub.add_parser("emit", help="手工入队事件")
-    e.add_argument("kind", choices=["c4_batch_completed", "c4_batch_due", "mount_audit_monthly",
-                                    "c2_screen_due", "sim_memo_monthly", "sim_wallet_due",
-                                    "sim_ledger_daily", "sim_journal_daily",
-                                    "sim_deviation_monthly", "fw_backtest_due",
-                                    "promotion_advisory_due", "pf_alloc_daily"])
+    e.add_argument(
+        "kind",
+        choices=[
+            "c4_batch_completed",
+            "c4_batch_due",
+            "mount_audit_monthly",
+            "c2_screen_due",
+            "sim_memo_monthly",
+            "sim_wallet_due",
+            "sim_ledger_daily",
+            "sim_journal_daily",
+            "sim_deviation_monthly",
+            "fw_backtest_due",
+            "promotion_advisory_due",
+            "pf_alloc_daily",
+            "attribution_daily",
+        ],
+    )
     e.add_argument("--payload", default="{}", help="JSON payload")
     args = ap.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     if args.cmd == "status":
         evts = pending()
-        print(json.dumps({"pending": len(evts),
-                          "events": [{"id": x["id"], "kind": x["kind"], "attempts": x["attempts"]}
-                                     for x in evts],
-                          "last_receipt": json.loads(RECEIPT.read_text(encoding="utf-8"))
-                          if RECEIPT.exists() else None}, ensure_ascii=False, indent=1))
+        print(
+            json.dumps(
+                {
+                    "pending": len(evts),
+                    "events": [{"id": x["id"], "kind": x["kind"], "attempts": x["attempts"]} for x in evts],
+                    "last_receipt": json.loads(RECEIPT.read_text(encoding="utf-8")) if RECEIPT.exists() else None,
+                },
+                ensure_ascii=False,
+                indent=1,
+            )
+        )
         return 0
     if args.cmd == "drain":
         print(json.dumps(drain(allow_heavy=args.all), ensure_ascii=False, indent=1, default=str))

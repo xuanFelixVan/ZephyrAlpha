@@ -55730,22 +55730,6 @@ entries:
   desc_en: ""
   plain_zh: "就是个对账+登记工具：把数据库里还没上资产户口的表自动登记进册，表的说明从它的建表真源文件里抄，不让手填。"
   responsibility_layer: governance
-- module_path: src/zephyr/library/schema.py
-  domain_id: D_GOVERNANCE
-  name_zh: "总账Schema"
-  name_en: "schema.py"
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "图书馆的户口本表格定义：每件资产身份证有哪些栏位，全项目统一"
-  responsibility_layer: governance
-- module_path: src/zephyr/library/registry.py
-  domain_id: D_GOVERNANCE
-  name_zh: "馆员登记簿"
-  name_en: "registry.py"
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "管理员的总账本：资产出生/修改/搬家/注销都必须记一笔，不记就不算数，删东西必须有批条"
-  responsibility_layer: governance
 - module_path: src/zephyr/library/lookup.py
   domain_id: D_GOVERNANCE
   name_zh: "图书馆查询台"

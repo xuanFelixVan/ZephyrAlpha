@@ -43299,6 +43299,14 @@ creation_tokens:
   token: ultimate-library-librarian-20260921
   created_by: st-ulib-20260921
   capability: ultimate_library
-  merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
-  merge_evaluation: "裁定#392（D-12） P1方案收尾批版：批次0已交付+批次1-5依赖序+六要素"
+- file: docs/03_modules/_domain_backtest/algo_flow/pipeline_events.yaml
+  token: dloop-algo-flow-pipeline-events-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_algo_flow
+  merge_evaluation: "丁线扩面两src模块ALGO_FLOW外部真源yaml（drafter机生），无同真源可派生项"
+- file: docs/03_modules/_domain_plan/algo_flow/daily_loop_master_switch.yaml
+  token: dloop-algo-flow-daily-loop-master-switch-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_algo_flow
+  merge_evaluation: "丁线扩面两src模块ALGO_FLOW外部真源yaml（drafter机生），无同真源可派生项"
 di_seam_exemptions: []

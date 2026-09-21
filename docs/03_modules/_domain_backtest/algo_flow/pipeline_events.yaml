@@ -1,0 +1,76 @@
+# ALGO_FLOW 外部真源——pipeline_events（_domain_backtest 域，真源 src/zephyr/strategy_pipeline/pipeline_events.py）
+# 丁线扩面批（2026-09-21）P2-1 契约头减负出仓：docstring 内联块逐字节副本，
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.strategy_pipeline.pipeline_events
+source_of_truth: src/zephyr/strategy_pipeline/pipeline_events.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: message 参数
+    #   fields: 待校准
+    #   code: message
+    # - id: I2
+    #   name: level 参数
+    #   fields: 待校准
+    #   code: level
+    # - id: I3
+    #   name: kind 参数
+    #   fields: 待校准
+    #   code: kind
+    # - id: I4
+    #   name: payload 参数
+    #   fields: 待校准
+    #   code: payload
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 待校准特征
+    #   name_en: feature_tbd
+    #   intro: 待校准（AI读代码确认）
+    #   formula: 待校准
+    #   code: 待校准
+    #   registry: factor_registry: 待查
+    #   is_break: true
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ①写侧钩子：c4_batch_screen 落账成功后 emit_c4_batc
+    #   name_en: tbd
+    #   intro: ①写侧钩子：c4_batch_screen 落账成功后 emit_c4_batch_completed()（同进程直消费
+    #   inputs: 待校准
+    #   outputs: 待校准
+    # - id: A2
+    #   name_zh: ②持久化：事件先追加 .runtime/strategy_pipeline/pe
+    #   name_en: tbd
+    #   intro: ②持久化：事件先追加 .runtime/strategy_pipeline/pending_events.jsonl，处
+    #   inputs: 待校准
+    #   outputs: 待校准
+    # - id: A3
+    #   name_zh: ③调度器唤醒：wire_data_scheduler() 在 DataSched
+    #   name_en: tbd
+    #   intro: ③调度器唤醒：wire_data_scheduler() 在 DataScheduler 侧注册 task_comple
+    #   inputs: 待校准
+    #   outputs: 待校准
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 待校准输出 None
+    #   name_en: None
+    #   intro: 待校准
+    #   downstream: 待校准
+    # - id: O2
+    #   name_zh: 待校准输出 bool
+    #   name_en: bool
+    #   intro: 待校准
+    #   downstream: 待校准
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 -.->|断点| F1
+    # I2 -.->|断点| F1
+    # I3 -.->|断点| F1
+    # I4 -.->|断点| F1
+    # F1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1
