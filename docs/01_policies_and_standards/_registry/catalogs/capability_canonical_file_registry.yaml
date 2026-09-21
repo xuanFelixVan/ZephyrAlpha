@@ -5016,6 +5016,21 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: "src/zephyr/factor/technical_indicators/chips.py"
+  token: "tilib-chips-indicators-20260921"
+  created_by: "st-data-fix-20260921"
+  capability: "technical_indicators"
+  merge_evaluation: "同真源可派生：批10 筹码族 CYQ/SCR/CYC 三指标为新算法对象（迭代衰减筹码分布/集中度/成本均线），与既有 137 指标零同域重复（capability_lookup 0 命中），指标输入契约扩张首例，不并"
+- file: "scripts/data/audit_technical_indicator_columns.py"
+  token: "tilib-audit-ti-cols-20260921"
+  created_by: "st-data-fix-20260921"
+  capability: "data_fix_campaign"
+  merge_evaluation: "同真源可派生：WO-4 210 列验收台账工具（summary 单次聚合扫描+sample 轻抽验），探针先例 .runtime/tmp/tilib-probe/audit_all_cols.py 已被 TTL 清空且无台账化能力，复刻+升级为仓内脚本，不并"
+- file: "docs/_working/data_fix_campaign/p4_tilib_batch10_report.md"
+  token: "datafix-p4-batch10-report-20260921"
+  created_by: "st-data-fix-20260921"
+  capability: "data_fix_campaign"
+  merge_evaluation: "同真源可派生：WO-4 批10 交付报告（红证双向+复算对表+回填恢复命令+验收台账说明），任务边界内独立事件报告，无既有条目可合并，随 data_fix_campaign TTL 处置"
 
 - file: "src/zephyr/data/calendar_coverage_checker.py"
   token: "datafix-calcover-20260921"
@@ -42947,5 +42962,9 @@ creation_tokens:
   token: reviews-fle-adjudication-2026-08-21-fle-gates-activation-adjudication-20260921
   created_by: st-workclean-20260921
   capability: reviews_fle_adjudication
+- file: docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md
+  token: lane-construction-discipline-policy-lane-construction-discipline-policy-20260921
+  created_by: st-workclean-20260921
+  capability: lane_construction_discipline_policy
   merge_evaluation: "同真源派生并入本册台账（总包丙端到端交付报告），任务bound 随战役 TTL"
 di_seam_exemptions: []
