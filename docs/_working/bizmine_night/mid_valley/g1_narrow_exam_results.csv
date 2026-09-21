@@ -1,4 +1,0 @@
-eid,name,factor_key,orient,sharpe_mid,sharpe_full,uplift,sharpe_gross_full,avg_holdings,degenerate_empty,ann_turnover_1side,cost_bp_day,mid_hold_days,days,t_stat,p_one_sided,elapsed_s,p_bh
-MIDVAL-017,二进三断板,f_mom017_limit_streak,-1,0.0,0.0,n/a,0.0,0.0,True,0.0,0.0,117,403,0.0,0.5,3.5,0.75
-MIDVAL-073,缺口ATR分级,f_te073_gap_atr,1,-1.061,-1.189,0.892,-0.518,153.0,False,0.25,4.35,117,403,-1.53,0.93675,4.0,0.93675
-MIDVAL-082,Wyckoff派发UTAD,f_te082_neg_upthrust,1,0.0,0.0,n/a,0.0,0.0,True,0.0,0.0,117,403,0.0,0.5,3.8,0.75
