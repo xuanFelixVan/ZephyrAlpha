@@ -43438,4 +43438,9 @@ creation_tokens:
   token: dloop-campaign-02-state-vocabulary-unification-20260921
   created_by: st-dloop-20260921
   capability: dloop_campaign
+- file: docs/_working/daily_loop_campaign/03_self_ruling_vocab_ssot.md
+  token: dloop-campaign-03-self-ruling-vocab-ssot-20260921
+  created_by: st-dloop-20260921
+  capability: dloop_campaign
+  merge_evaluation: "丁线词表SSOT自裁书（第一性原理+四源对照），无同真源可派生项"
 di_seam_exemptions: []
