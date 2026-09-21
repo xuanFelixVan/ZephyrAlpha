@@ -10,9 +10,14 @@
 # target_layer 受控词表
 # ZephyrAlpha TaskCard.target_layer 字段唯一真源
 # 维护者：ZephyrAlpha-Owner
-# 版本：1.1.0
+# 版本：1.2.0
 # 创建日期：2026-07-04
 # 变更历史：
+#   v1.2.0 (2026-09-21): WO-13 测试真账批收编——BRK-082 补登批 10 值入 values
+#            （D_ARCH_GUARD/D_ARCH_SCRIPTS/D_STRUCT_SCRIPTS/D_META_SCRIPTS/D_DATA_SCRIPTS/
+#            D_CODE_SCRIPTS/D_SEC_SCRIPTS/D_COMPLIANCE_SCRIPTS/D_ARCHIVE_SCRIPTS/D_TEST；
+#            test_check_vocab_domain_convergence 常驻验收实测在用差集=词表滞后实证；
+#            元数据取自 FDR 2026-09-18 补登条目，非手工拟定；is_foundation 全 false）
 #   v1.1.0 (2026-09-18): 裁定#335 战役收编——A组17值入 values（在用域差集归位，
 #            16/17 已在 depgraph DB domains 表=词表滞后实证）；B组8值入 canonical 的
 #            aliases（三段式过渡，本裁定零净删）；删过时散文计数（28域/11域→实时统计，
@@ -56,11 +61,11 @@
 schema_version: "1.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-006
-version: "1.1.0"
+version: "1.2.0"
 title: "target_layer 受控词表"
 status: active
 vocabulary_name: target_layer
-total_values: 62
+total_values: 72
 depends_on:
   - target: src/zephyr/infrastructure/pipeline/ct_pipe_routing.py
     at: "_FOUNDATION_LAYERS 集合"
@@ -358,6 +363,50 @@ values:
     definition: "契约域——跨层契约/契约校验（独立值：系从 D_SHARED 拆出，反合并=推翻已修复裁定链，裁定#335）"
     is_foundation: false
     ai_keywords: ["契约", "contracts", "跨层契约"]
+
+  # === 战役 WO-13 收编域（来源：functional_domain_registry 2026-09-18 全流通战役
+  #     BRK-082 补登批（depgraph domains 表在册域）+ test_check_vocab_domain_convergence
+  #     常驻验收实测在用差集 2026-09-21；is_foundation 全 false=CT-PIPE M5/M6 路由零变化）===
+  - value: D_ARCH_GUARD
+    definition: "架构守护脚本域——scripts/arch_guard/ 架构守护脚本"
+    is_foundation: false
+    ai_keywords: ["架构守护", "arch guard"]
+  - value: D_ARCH_SCRIPTS
+    definition: "架构治理脚本域——scripts/governance/d5_architecture/ 脚本"
+    is_foundation: false
+    ai_keywords: ["架构治理脚本", "arch scripts"]
+  - value: D_STRUCT_SCRIPTS
+    definition: "结构治理脚本域——scripts/governance/d1_structure/ 脚本"
+    is_foundation: false
+    ai_keywords: ["结构治理脚本", "structure scripts"]
+  - value: D_META_SCRIPTS
+    definition: "元治理脚本域——scripts/governance/meta/ 脚本"
+    is_foundation: false
+    ai_keywords: ["元治理脚本", "meta scripts"]
+  - value: D_DATA_SCRIPTS
+    definition: "元数据治理脚本域——scripts/governance/d3_metadata/ 脚本"
+    is_foundation: false
+    ai_keywords: ["元数据脚本", "data scripts"]
+  - value: D_CODE_SCRIPTS
+    definition: "代码质量脚本域——scripts/governance/d7_code/ 脚本"
+    is_foundation: false
+    ai_keywords: ["代码质量脚本", "code scripts"]
+  - value: D_SEC_SCRIPTS
+    definition: "安全治理脚本域——scripts/governance/d6_security/ 脚本"
+    is_foundation: false
+    ai_keywords: ["安全治理脚本", "security scripts"]
+  - value: D_COMPLIANCE_SCRIPTS
+    definition: "合规治理脚本域——scripts/governance/d11_compliance/ 脚本"
+    is_foundation: false
+    ai_keywords: ["合规脚本", "compliance scripts"]
+  - value: D_ARCHIVE_SCRIPTS
+    definition: "归档脚本域——_archive/ 冻结归档脚本"
+    is_foundation: false
+    ai_keywords: ["归档脚本", "archive scripts"]
+  - value: D_TEST
+    definition: "测试占位域——depgraph domains 表占位域（ssot_path 空，退役候选留观察）"
+    is_foundation: false
+    ai_keywords: ["测试占位", "test domain"]
 
 # deprecated_values：废弃值集合（历史使用，禁止新增）
 deprecated_values:
