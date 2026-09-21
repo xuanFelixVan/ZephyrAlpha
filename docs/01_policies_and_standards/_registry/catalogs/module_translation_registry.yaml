@@ -55898,6 +55898,22 @@ entries:
   desc_en: ""
   plain_zh: "把一组策略考试时的代码版本/题目/数据日期拍成快照存档，以后能照着核对"
   responsibility_layer: business
+- module_path: src/zephyr/library/librarian.py
+  domain_id: D_GOVERNANCE
+  name_zh: "馆员登记簿"
+  name_en: "librarian.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "管理员的总账本：资产出生/修改/搬家/注销都必须记一笔，不记就不算数，删东西必须有批条"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/ledger_schema.py
+  domain_id: D_GOVERNANCE
+  name_zh: "总账Schema"
+  name_en: "ledger_schema.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "图书馆的户口本表格定义：每件资产身份证有哪些栏位，全项目统一"
+  responsibility_layer: governance
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow
