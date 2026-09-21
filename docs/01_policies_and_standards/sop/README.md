@@ -17,9 +17,9 @@ language: zh
 
 | 文件夹 / 文件 | 一句话功能（归属） | 何时必读 |
 |---|---|---|
-| `governance_sop/` | **宪法与对齐族**：现行宪法 L0 真源（agent_constitution_l0）+ v1 全文归档 + 全图全库对齐清单（alignment_checklist） | 每次会话冷启动；新建图/库/注册表前；对齐口径争执时 |
-| `construction_sop/` | **施工族**：15 步施工闭环真源（construction_workflow_policy）+ 前端拆件 8 步闭环（frontend_component_split_policy）+ 文档七轮审查法（document_review_and_optimization_policy） | 写第一行业务代码/新模块施工前（宪法 RULE-CAPABILITY-LOOKUP 强制）；前端拆组件前；重要文档定稿前 |
-| `mining_sop/` | **挖矿研究方法论族**：通用研究方法论真源（mining_sop_policy：六向寻路+防噪音四闸+矿脉枯竭终止+时间盒限流）+ TDM 消费场景寻路政策（trading_decision_map_pathfinding）+ **骨架构建政策（skeleton_mining：域骨架挖掘/四层分层/三问停止判据/状态纪律/封矿判据——新域开工先挖骨架）** | 全网调研/找方案/建策略/写方案类任务开工前（.trae PRE-OP 行强制）；**新域开工/新建骨架类任务开工前** |
+| `governance_sop/` | **宪法与对齐族**：现行宪法 L0 真源（agent_constitution_l0）+ v1 全文归档 + 全图全库对齐清单（alignment_checklist）+ **施工台账方法论（construction_ledger_method_policy：台账三件事/回执六项/"永不说全绿"/停手回流六情形/车道存活三查——一切多车道战役的台账法）**+ **深度裁定方法论（deep_adjudication_method_policy：四档战场划分/三问边界/回测四步/全仓待裁穷举扫描+打包批文）** | 每次会话冷启动；新建图/库/注册表前；对齐口径争执时；多车道战役开台账前、车道回执/收口回执写作时；裁定/审计战役开工前 |
+| `construction_sop/` | **施工族**：15 步施工闭环真源（construction_workflow_policy）+ 前端拆件 8 步闭环（frontend_component_split_policy）+ 文档七轮审查法（document_review_and_optimization_policy）+ **车道施工纪律一页册（lane_construction_discipline_policy：提交正门与门禁预跑/新建三件套/热注册表并发写/代码红线/并发安全/EOL 三判据——多车道并发施工开工前必读）** | 写第一行业务代码/新模块施工前（宪法 RULE-CAPABILITY-LOOKUP 强制）；前端拆组件前；重要文档定稿前 |
+| `mining_sop/` | **挖矿研究方法论族**：通用研究方法论真源（mining_sop_policy：六向寻路+防噪音四闸+矿脉枯竭终止+时间盒限流）+ TDM 消费场景寻路政策（trading_decision_map_pathfinding）+ **骨架构建政策（skeleton_mining：域骨架挖掘/四层分层/三问停止判据/状态纪律/封矿判据——新域开工先挖骨架）**+ **因子挖矿 SOP（factor_mining_sop_policy：IC 大海选→预注册→E4 正考→组队）**+ **指标挖矿 SOP（indicator_mining_sop_policy：TASC 定向检索+公式可验证性唯一准入闸+时盒停手立卡+数值正确性证据链；与 factor_sop 分工互斥）** | 全网调研/找方案/建策略/写方案类任务开工前（.trae PRE-OP 行强制）；**新域开工/新建骨架类任务开工前** |
 | `backtest_system_sop/` | **回测体系族**：四卷——全图编排（sop_a）/节点循环（sop_b）/策略库入库（sop_c）/档案命名（sop_d）＋考试政策（exam_policy：E4 正考准入/口径/成本双口径/复权降级/负结果台账） | 回测施工、策略入库、run 档案落地、E4 正考开考前（src/scripts 多处代码锚定此族路径） |
 | `data_ops_sop/` | **数据操作族**：回灌/修复/判重/PIT/探针全流程方法论（data_ops_policy：三步验证+幂等回补+FINAL 逐位验证+勿物理删+探针手法+实战范例索引）＋**数据源全生命周期（data_source_onboarding_sop：全网挖矿→候选报批→建表→接入→调度→接通验收三查→消费端路由→退役）** | 数据回灌/坏数据修复/表结构变更/判重/缺口处置开工前；**新数据源接入开工前** |
 | `trading_decision_map_sop/` | **TDM 地图族**：逐层讨论六步法（trading_decision_map_layering_policy：四道前置检查防撞车）+消费场景规程（tdm_consumption_policy：S1-S9 九场合——什么场合必须打开地图、读什么、验证什么） | TDM 地图结构讨论、血肉填充、建蓝图锚/策略挂图/回测预检/改判据/引擎变更/退役/复盘/转级 前 |

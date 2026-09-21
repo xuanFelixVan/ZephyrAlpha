@@ -80,15 +80,21 @@ EXCLUDE_PATH_PARTS = (
     "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",
     # 统筹审计留痕文档（append-only 施工台账/交接书）——历史操作取证引用危险命令属证据非指令
-    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md",
-    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/handoff_construction_coordinator.md",
+    "docs/_working/archive/2026-09/design_memos/construction_progress_tracker.md",
+    "docs/_working/archive/2026-09/design_memos/handoff_construction_coordinator.md",
     # 同上理据（2026-08-18 AI-00 merge-17 实证）：00 索引备忘录汇总各备忘录历史事故取证引文
     # （如 2026-08-11 git clean -fd 灾难事件记录），属证据留痕非操作指令
-    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md",
+    "docs/_working/archive/2026-09/design_memos/00_index_trading_decision.md",
     # 同上理据（2026-08-18 AI-00 全量复审实证）：git 安全协议/审计规范真源文档枚举"禁止执行的危险命令"
     # （`git reset --hard`/`git clean -fd` 等），属策略定义非操作指令
     "docs/01_policies_and_standards/sop/construction_sop/construction_workflow_policy.md",
-    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/63_data_utilization_audit.md",
+    # 同上理据（2026-09-21 W8 第二圈）：车道施工纪律 SOP 全册=多车道并发施工纪律的"禁止哪些命令"策略定义文本（§8 并发安全枚举 git reset --hard/clean 为禁令），与 construction_workflow_policy 同族同类
+    "docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md",
+    # 同上理据（2026-09-21 W8 第二圈归档面全量甄别）：archive 证据/计划/裁定档中的命令引文属取证留痕
+    "docs/_working/archive/2026-09/design_memos/",
+    "docs/_working/archive/2026-09/implementation_plans/",
+    "docs/_working/archive/2026-09/kimi_audit/lane_reports/",
+    "docs/_working/archive/2026-09/design_memos/63_data_utilization_audit.md",
     "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md",
     # 循环审计 R1（2026-08-19 AI-00 基线治本）：以下豁免类经逐文件人工甄别，全部属
     # "定义/取证/载荷"而非可执行指令——
@@ -99,7 +105,7 @@ EXCLUDE_PATH_PARTS = (
     "docs/01_policies_and_standards/rules/",
     "docs/01_policies_and_standards/_registry/contracts/model_capability_contract.yaml",
     "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml",
-    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md",
+    "docs/_working/archive/2026-09/design_memos/65_git_safety_governance.md",
     "docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md",
     # ③ 安全防护系统自身的模式/别名定义与防护消息字面量（git_guard 家族 + worktree 三件的告警文案）
     "scripts/git_guard.py",
@@ -119,7 +125,7 @@ EXCLUDE_PATH_PARTS = (
     "docs/02_enterprise_architecture/02_domain_architecture_docs/",
     "docs/02_enterprise_architecture/08_algorithm_overview/system_foundation.md",
     "docs/01_policies_and_standards/sop/ops_sop/merge_conflict_resolution_policy.md",
-    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/34_regime_meta_allocator.md",
+    "docs/_working/archive/2026-09/design_memos/34_regime_meta_allocator.md",
     "docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/AI_fill_instructions.md",
     # ⑤ 分支策略政策真源（枚举禁止命令属策略定义）
     "docs/01_policies_and_standards/policies/branch_strategy_policy.md",
