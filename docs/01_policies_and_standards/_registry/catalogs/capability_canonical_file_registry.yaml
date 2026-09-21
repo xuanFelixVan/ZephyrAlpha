@@ -43291,6 +43291,14 @@ creation_tokens:
   token: prod-new-8-sim-memo-202609-20260921
   created_by: st-workclean-20260921
   capability: prod_new_8
+- file: src/zephyr/library/ledger_schema.py
+  token: ultimate-library-ledger-schema-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: src/zephyr/library/librarian.py
+  token: ultimate-library-librarian-20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
   merge_evaluation: "扩面事件链钩子单测（新增文件），无同真源可派生项"
   merge_evaluation: "裁定#392（D-12） P1方案收尾批版：批次0已交付+批次1-5依赖序+六要素"
 di_seam_exemptions: []
