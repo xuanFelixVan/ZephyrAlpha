@@ -42939,4 +42939,9 @@ creation_tokens:
   created_by: st-workclean-20260921
   capability: auto_index_173
   merge_evaluation: "vhdx 季度压缩 0921 预检单（STAGE 4b 钩子首次自动生成件，按日一档独立成件），零既有条目可合并"
+- file: docs/_working/code_doc_gov_campaign/FINAL_REPORT_st_code_doc_20260921.md
+  token: code-doc-gov-campaign-final-report-20260921
+  created_by: st-code-doc-20260921
+  capability: code_doc_gov_campaign
+  merge_evaluation: "同真源派生并入本册台账（总包丙端到端交付报告），任务bound 随战役 TTL"
 di_seam_exemptions: []
