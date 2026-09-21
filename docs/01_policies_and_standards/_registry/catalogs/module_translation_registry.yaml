@@ -2002,7 +2002,7 @@ entries:
   desc_en: ''
   plain_zh: 回测结果汇 · 回测结果数据落地模块（v1.3.0 新增，#ARCH-047）
   responsibility_layer: business
-- module_path: docs/_working/final3_campaign/p8_salvage/decisiongraph_adapter_retired.md
+- module_path: docs/_working/archive/2026-09/final3_campaign/p8_salvage/decisiongraph_adapter_retired.md
   domain_id: D_BACKTEST
   name_zh: decisiongraph适配器（已退役存档）
   name_en: decisiongraph_adapter (Retired)
@@ -38120,7 +38120,7 @@ entries:
   desc_en: ''
   plain_zh: 测试：供应链链安全的行为要符合预期，有偏差尽早抓住。
   responsibility_layer: governance
-- module_path: docs/_working/final3_campaign/p8_salvage/capacity_params_retired.yaml
+- module_path: docs/_working/archive/2026-09/final3_campaign/p8_salvage/capacity_params_retired.yaml
   domain_id: ''
   name_zh: 容量Params（已退役存档）
   name_en: Capacity Params (Retired)
@@ -55698,6 +55698,134 @@ entries:
   desc_en: ""
   plain_zh: "给定一家公司,顺着股权图谱一层层往上把它的股东、股东的股东都挖出来,还负责把老图库里的股权关系合并进新图谱并算出两边谁多谁少"
   responsibility_layer: business
+- module_path: schemas/categories/market/market_stock_daily_basic.py
+  domain_id: D_DATA
+  name_zh: "股票日频估值基础表"
+  name_en: "stock_daily_basic"
+  desc_zh: "stock_daily_basic 表 DDL 唯一真源（换手率/流通股本/流通市值/总市值，日频，ReplacingMergeTree 按月分区）"
+  desc_en: ""
+  plain_zh: "这张表存每只股票每天一条的估值基础数据：换手率、流通股本、流通市值、总市值。它是筹码族指标（获利盘比例、筹码集中度、成本均线）的原料——没有换手率这些指标算不出来。数据用 AKShare 东财历史接口按股票逐只采集。"
+  responsibility_layer: business
+- module_path: scripts/ch/rolling_archive_reconciler.py
+  domain_id: D_INFRASTRUCTURE
+  name_zh: "滚动归档事件触发器"
+  name_en: "rolling_archive_reconciler"
+  desc_zh: "备份成功事件后自动评估过线分区并按五重安全阀滚动归档的执行件"
+  desc_en: ""
+  plain_zh: "机器每天备份成功后看一眼有没有整月的旧行情存满年限了，有就先抄两份到冷库、逐行核对无误才删热库那份原件；任何一步不对就停手熔断，随时可用总开关改回纯手动"
+  responsibility_layer: infrastructure
+- module_path: scripts/ch/waste_table_scanner.py
+  domain_id: D_INFRASTRUCTURE
+  name_zh: "废表扫描登记器"
+  name_en: "waste_table_scanner"
+  desc_zh: "扫描CH备份表污染表名字族并登记报警的人工盘点机制执行件"
+  desc_en: ""
+  plain_zh: "定期扫一遍库里有没有名字像备份表或污染表的（bak、corrupt 之类），发现新面孔就登记造册并喊人来看；铁律是永远不自己动手删，删不删等逐条批示"
+  responsibility_layer: infrastructure
+- module_path: scripts/governance/d3_metadata/generate_data_asset_coverage.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "数据资产覆盖登记生成器"
+  name_en: "data asset coverage generator"
+  desc_zh: "CH live 表与 data_asset_registry 对账，未登记表按 DDL-as-Code 真源派生条目增量登记（A14 生成器口径）"
+  desc_en: ""
+  plain_zh: "就是个对账+登记工具：把数据库里还没上资产户口的表自动登记进册，表的说明从它的建表真源文件里抄，不让手填。"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/schema.py
+  domain_id: D_GOVERNANCE
+  name_zh: "总账Schema"
+  name_en: "schema.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "图书馆的户口本表格定义：每件资产身份证有哪些栏位，全项目统一"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/registry.py
+  domain_id: D_GOVERNANCE
+  name_zh: "馆员登记簿"
+  name_en: "registry.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "管理员的总账本：资产出生/修改/搬家/注销都必须记一笔，不记就不算数，删东西必须有批条"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/lookup.py
+  domain_id: D_GOVERNANCE
+  name_zh: "图书馆查询台"
+  name_en: "lookup.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "想找项目里的任何东西，输个关键词就告诉你它在哪、新不新鲜"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/collectors/__init__.py
+  domain_id: D_GOVERNANCE
+  name_zh: "采集器调度"
+  name_en: "__init__.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "采编员班长：指挥五个盘点员分头扫描全项目并登记入册"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/collectors/fs_collector.py
+  domain_id: D_GOVERNANCE
+  name_zh: "文件盘点员"
+  name_en: "fs_collector.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "挨个文件夹数文件算指纹，编外文件检测的底座"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/collectors/pg_collector.py
+  domain_id: D_GOVERNANCE
+  name_zh: "PG表盘点员"
+  name_en: "pg_collector.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把PostgreSQL所有表点一遍名"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/collectors/ch_collector.py
+  domain_id: D_GOVERNANCE
+  name_zh: "CH表盘点员"
+  name_en: "ch_collector.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把ClickHouse所有表点一遍名带行数"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/collectors/schtasks_collector.py
+  domain_id: D_GOVERNANCE
+  name_zh: "计划任务盘点员"
+  name_en: "schtasks_collector.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "查Windows任务计划把定时任务点遍名，编外任务现形器"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/collectors/mcp_collector.py
+  domain_id: D_GOVERNANCE
+  name_zh: "MCP盘点员"
+  name_en: "mcp_collector.py"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把AI工具server点遍名，契约注册对不上当场贴条"
+  responsibility_layer: governance
+- module_path: src/zephyr/plan_engine/daily_loop_master_switch.py
+  domain_id: D_PLAN
+  name_zh: "日循环手动总扳手"
+  name_en: "Daily Loop Master Switch"
+  desc_zh: "一个入口手动串起日循环全链：数据就绪门→regime新鲜度（消费方口径）→warroom预案→晨间预案→次日概率→pf_alloc→盘中L1→盘中归类→收盘验证→三表结算→日度拍板；全量委托既有模块幂等闸，编排层零自建键，观察记录零下单，MANUAL-ONLY 不挂调度器"
+  desc_en: ""
+  plain_zh: "这是排班表的点火钥匙：敲一条命令，它就把'看盘前预案、记盘中状态、收盘对账打分、最后拍板今天做不做'这一整天的事按顺序各叫一遍。它自己不会下单，也不会自己定时跑；哪一步昨天做过了它就跳过，哪一步坏了它记下来继续走下一步。"
+  responsibility_layer: business
+- module_path: src/zephyr/data/calendar_coverage_checker.py
+  domain_id: D_DATA
+  name_zh: "交易日历逐日覆盖检查器"
+  name_en: "Calendar Coverage Checker"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把交易日历和数据库表里实际有的日期做逐日对账，哪张日频表中间缺了哪一天、哪个周末多写了数据，一眼列出来。专治过去只看最新日期导致中间破洞发现不了的盲区，比如 tick 表 9 月 17 日整体缺货、股票清单 9 月 16 日整日没跑这种最新日期看起来正常的假健康。它每天早上跟在数据断供哨兵后面跑一次，由调度器任务槽触发，自己不搞后台常驻进程，也只读数据库不写任何数据。"
+  responsibility_layer: business
+- module_path: src/zephyr/gov_enforcement/commit_gates/library_coverage_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "图书馆覆盖度门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查每本馆藏书是否都被编目上架，防止图书馆资产漏登记"
+  responsibility_layer: governance
 
 battle_map_steps:
 - step_id: BM-BUY-05

@@ -23,7 +23,7 @@ items:
   name: capabilities.yaml
   node_type: config
   status: active
-- file: docs/_working/final3_campaign/p8_salvage/capacity_params_retired.yaml
+- file: docs/_working/archive/2026-09/final3_campaign/p8_salvage/capacity_params_retired.yaml
   name: capacity_params_retired.yaml
   node_type: config
   status: retired
