@@ -29,7 +29,7 @@ related_modules:
 > 本清单是 **全项目对齐** 的**资产清单层真源**，列出"要对齐哪些东西、每个东西的对齐规则、用什么工具、不一致怎么办"。
 > **性质**：清单层，只列对齐对象+规则+工具+处置，不编排流程。流程见 [construction_workflow_sop](../construction_sop/construction_workflow_policy.md)（施工 SOP，管"什么时候对齐、怎么对齐"）。
 > **适用范围**：**全项目所有模块/前端/文档/注册表**，不限于 07 域。新 AI 进项目必读。
-> **管理规范**：[01_design_memo_management_spec](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md)。
+> **管理规范**：[01_design_memo_management_spec](../../../_working/archive/2026-09/design_memos/01_design_memo_management_spec.md)。
 
 ## 1. 主题组信息
 
@@ -244,4 +244,4 @@ python scripts/governance/d5_architecture/validators/validate_strategy_productio
 |---|---|---|
 | 1 | **TDM=交易决策流程唯一地图**：`config/trading_decision_map.yaml` 是交易决策流程类全景图的唯一真源，**禁建第二张流程类全景图**（流程类新图提案一律违裁；与 D38“新图必挂总线”/§4.6 原则 6 的准入面叠加执行） | 新图准入双重口径：非流程类新图仍走 §3 登记+depgraph 挂轴；流程类=本条直接禁止 |
 | 2 | **decisiongraph 半下岗**：图 3（decisiongraph，PG decision_* 3 表）保留 schema 与对齐通道（§3 行、三图对齐检测不变），不扩容；decision_* 表组**列入季度退役审计观察名单**（跟踪载体=本节，首观察窗 2026-Q4，按宪法 §4.2 季度退役审计以触发率/消费方实测判定，禁凭记忆判定）；退役处置=Owner 门位 | 半下岗≠删除：未经裁定禁清理 decision_* 表组或跳过其对齐通道 |
-| 3 | **“10 层决策架构+PDF 模型族”防幻觉锚点**：遗产对话**未立项**，仅部分吸收——禁任何会话声称“十层架构已建/在建”。承接件=W4-7 差距表（`docs/_working/final3_campaign/w4_7_tdm_absorption_gap.md`，commit b7aeaa39f2）：15 决策点三态对照完成，4 条接线（差距表“形态不符”四行 UP-2/UP-3/UP-4/UP-5 升级件已建成待接线）**待 Max 复验后施工** | 幻觉红线：超出 w4_7 差距表记载的“已建成”外推一律无效；接线施工前必过 Max 复验门 |
+| 3 | **“10 层决策架构+PDF 模型族”防幻觉锚点**：遗产对话**未立项**，仅部分吸收——禁任何会话声称“十层架构已建/在建”。承接件=W4-7 差距表（`docs/_working/archive/2026-09/final3_campaign/w4_7_tdm_absorption_gap.md`，commit b7aeaa39f2）：15 决策点三态对照完成，4 条接线（差距表“形态不符”四行 UP-2/UP-3/UP-4/UP-5 升级件已建成待接线）**待 Max 复验后施工** | 幻觉红线：超出 w4_7 差距表记载的“已建成”外推一律无效；接线施工前必过 Max 复验门 |

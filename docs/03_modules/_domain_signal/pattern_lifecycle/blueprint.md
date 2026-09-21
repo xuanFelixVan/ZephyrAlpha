@@ -16,7 +16,7 @@ owner: ZephyrAlpha-Owner
 
 # MOD-SIG-149 pattern_lifecycle 蓝图
 
-> 设计真源：复活观察机制方案 v1.0（docs/_working/pattern_line/
+> 设计真源：复活观察机制方案 v1.0（docs/_working/archive/2026-09/pattern_line/
 > resurrection-watch-plan.md）。148 三态之上的生命周期覆盖层。
 
 ## 0. 文件清单

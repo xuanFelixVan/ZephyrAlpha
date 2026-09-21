@@ -81,7 +81,7 @@ summary: "BM-PLAN-02 盘前预案加载：次日 9:00 加载昨晚 TomorrowBound
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PLAN-002` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-PLAN-002` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -281,7 +281,7 @@ class ConstraintState:
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | MOD-PLAN-001 | 必须 | TomorrowBoundary 契约 | ≥0.1.0 | `docs/03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md` |
-| 41_buy_flow 设计备忘 | 必须 | §3.10.3 加载流程与 9 情景 | v1.7.0 | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md` |
+| 41_buy_flow 设计备忘 | 必须 | §3.10.3 加载流程与 9 情景 | v1.7.0 | `docs/_working/archive/2026-09/design_memos/41_buy_flow.md` |
 ### 9.2 依赖图对齐声明
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
@@ -396,7 +396,7 @@ class ConstraintState:
 ## 必备链接 <!-- temporal_type: permanent -->
 | # | 文件 | module_id | 完整路径（相对优先） | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 买入流 spec（设计真源） | — | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md` | §3.10.3 加载流程与 9 情景 |
+| 1 | 买入流 spec（设计真源） | — | `docs/_working/archive/2026-09/design_memos/41_buy_flow.md` | §3.10.3 加载流程与 9 情景 |
 | 2 | MOD-PLAN-001 蓝图 | MOD-PLAN-001 | `docs/03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md` | TomorrowBoundary 契约 |
 | 3 | 蓝图模板 | GOV-028 | `docs/01_policies_and_standards/templates/blueprint_construction_template.md` | v2.1.0 章节合规 |
 

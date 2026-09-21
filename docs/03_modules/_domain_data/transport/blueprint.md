@@ -36,7 +36,7 @@ responsibility_domain:
 
 ## 2. 设计真源
 
-docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/94_crypto_quant_expansion.md §7.2（v0.2.0，跨境网络双活与传输加工；候选登记=2026-08-26 外部材料审查批，Owner 裁定补登；骨架落盘=2026-08-28 AI-CAL-001）。
+docs/_working/archive/2026-09/design_memos/94_crypto_quant_expansion.md §7.2（v0.2.0，跨境网络双活与传输加工；候选登记=2026-08-26 外部材料审查批，Owner 裁定补登；骨架落盘=2026-08-28 AI-CAL-001）。
 
 ## 3. 注册说明
 
@@ -99,7 +99,7 @@ docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/94
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-DATA-072` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-DATA-072` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

@@ -22,7 +22,7 @@ granularity: file
 # MOD-VOTE_REVIEW_SHELL vote_review_shell 蓝图（投票评审壳）
 
 > **module_id**: MOD-VOTE_REVIEW_SHELL | **域**: D_AUTONOMY_CORE | **优先级**: P1
-> **设计真源**: 12号文 `docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/12_reflexion_multi_agent.md` §3.6（多Agent协作设计·可选模式设施）+ §4.3 P1-2（投票评审壳）/P1-4（多会话投票 SOP）
+> **设计真源**: 12号文 `docs/_working/archive/2026-09/implementation_plans/12_reflexion_multi_agent.md` §3.6（多Agent协作设计·可选模式设施）+ §4.3 P1-2（投票评审壳）/P1-4（多会话投票 SOP）
 > **裁定**: #ARCH-OE-011（CC-14 投票优先降级为可选模式；主路径=单 Agent + red_blue_validator）
 > 代码：`src/zephyr/intelligence/reflexion/vote_review_shell.py`
 

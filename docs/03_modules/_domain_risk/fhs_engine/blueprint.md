@@ -22,7 +22,7 @@ build_status: production
 # MOD-RK-26 FHS Engine — Filtered Historical Simulation 引擎 蓝图
 
 > **module_id**: MOD-RK-26 | **域**: D_RISK | **层**: L02 盘中实时监控
-> **优先级**: P2 | **成熟度**: evolving（MVP） | **设计真源**: [36_var_es_monitoring](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/36_var_es_monitoring.md) §3.16（FHS 施工规约）
+> **优先级**: P2 | **成熟度**: evolving（MVP） | **设计真源**: [36_var_es_monitoring](../../_working/archive/2026-09/design_memos/36_var_es_monitoring.md) §3.16（FHS 施工规约）
 > **来源**: CAND-AUTONOMYCORE-002 远期候选转正（2026-08-18 AI-FHS-001 施工）
 
 ## 1. 定位
@@ -143,7 +143,7 @@ memo ES method='lower'，多日 √T 缩放）——供 FHS vs HS 偏离度审�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-RK-26` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-RK-26` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

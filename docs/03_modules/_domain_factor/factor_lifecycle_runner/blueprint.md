@@ -16,7 +16,7 @@ owner: ZephyrAlpha-Owner
 
 # MOD-L02-LIFECYCLE factor_lifecycle_runner 蓝图
 
-> 设计真源：生命周期协议 v2.0 三域落地（docs/_working/pattern_line/
+> 设计真源：生命周期协议 v2.0 三域落地（docs/_working/archive/2026-09/pattern_line/
 > lifecycle-rollout-three-domains.md）。补齐 factor_decay_monitor_weekly 任务块的
 > runner 缺口（该块 disabled 原因自述施工后启用）。
 

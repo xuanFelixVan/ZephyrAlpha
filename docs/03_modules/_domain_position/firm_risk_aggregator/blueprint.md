@@ -23,12 +23,12 @@ responsibility_domain:
 
 > **module_id**: MOD-POS-021 | **域**: D_POSITION | **层**: L03 仓位管理
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
-> **SSoT**: depgraph MOD-POS-021 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2（FirmRiskAggregator）、§2.3（自然叠加）、§3.1（拒绝 MVO）
+> **SSoT**: depgraph MOD-POS-021 | **设计真源**: [30_multi_strategy_concurrency.md](../../../_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md) §2.2（FirmRiskAggregator）、§2.3（自然叠加）、§3.1（拒绝 MVO）
 > **上游契约**: [StrategyBook blueprint](../strategy_book/blueprint.md) MOD-POS-020 §2.3 TargetPortfolio (CTR-POS-020)
 
 ## 1. 定位
 
-Firm 层风险聚合器——A 模型（[30_multi_strategy_concurrency](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2）的组合汇总层。消费所有 StrategyBook 的 `TargetPortfolio`，**按标的求和（自然叠加）+ 组合级硬上限裁剪 + 冲突净额处理**，产出 `FirmTargetPortfolio` 交由 MOD-POS-001 精裁决。
+Firm 层风险聚合器——A 模型（[30_multi_strategy_concurrency](../../../_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md) §2.2）的组合汇总层。消费所有 StrategyBook 的 `TargetPortfolio`，**按标的求和（自然叠加）+ 组合级硬上限裁剪 + 冲突净额处理**，产出 `FirmTargetPortfolio` 交由 MOD-POS-001 精裁决。
 
 属 **A 类基础设施**（求和+裁剪+净额，逻辑明确无优化），O(N) 复杂度（N=策略数×标的数），**不做 MVO，不做协方差估计**。
 
@@ -309,7 +309,7 @@ if net_weight ≤ 0: 标记为清仓/减仓（target_weight=0 或负值转卖出
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-POS-021` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-021` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

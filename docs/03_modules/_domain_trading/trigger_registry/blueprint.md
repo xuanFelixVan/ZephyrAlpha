@@ -82,7 +82,7 @@ summary: "41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-TRIG-001` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-TRIG-001` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -324,7 +324,7 @@ class TriggeredEvent:
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | 60 号进程内事件总线 | 必须 | TriggeredEvent 派发通道（代码头声明 zephyr.shared.event_bus） | — | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/60_cross_cutting_cleanup.md` |
-| 41_buy_flow 设计备忘 | 必须 | §3.9 注册格式/仲裁规则/MVP 清单 | v1.7.0 | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md` |
+| 41_buy_flow 设计备忘 | 必须 | §3.9 注册格式/仲裁规则/MVP 清单 | v1.7.0 | `docs/_working/archive/2026-09/design_memos/41_buy_flow.md` |
 ### 9.2 依赖图对齐声明
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
@@ -444,7 +444,7 @@ class TriggeredEvent:
 ## 必备链接 <!-- temporal_type: permanent -->
 | # | 文件 | module_id | 完整路径（相对优先） | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 买入流 spec（设计真源） | — | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md` | §3.9 注册格式/仲裁/去重/15 条清单 |
+| 1 | 买入流 spec（设计真源） | — | `docs/_working/archive/2026-09/design_memos/41_buy_flow.md` | §3.9 注册格式/仲裁/去重/15 条清单 |
 | 2 | 蓝图模板 | GOV-028 | `docs/01_policies_and_standards/templates/blueprint_construction_template.md` | v2.1.0 章节合规 |
 
 ## 术语表 <!-- temporal_type: permanent -->

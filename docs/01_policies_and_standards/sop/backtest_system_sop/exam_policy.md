@@ -67,5 +67,5 @@ related_issues:
 
 ## 7. 诞生与净零记录
 
-- 裁定#365（2026-09-19）：本册=G3+G5+G6+G8 合并新立（净零原则下唯一新立候选）；对价=四条缺口在 `docs/_working/bizmine_night/factor_sop_screen/strategy_sop_gap_report.md` 登记销项（resolved）；同批 factor_mining_sop 转正（G4/G2/G10 载体）。
+- 裁定#365（2026-09-19）：本册=G3+G5+G6+G8 合并新立（净零原则下唯一新立候选）；对价=四条缺口在 `docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/strategy_sop_gap_report.md` 登记销项（resolved）；同批 factor_mining_sop 转正（G4/G2/G10 载体）。
 - 修订纪律：本册为判据真源，车道临时条款与之旅中冲突时**就严者为准**；修本册走裁定登记（RULE-RULING）。

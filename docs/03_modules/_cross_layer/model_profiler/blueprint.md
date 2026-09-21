@@ -107,7 +107,7 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 | `provider_data.py` | § — | — | 已实现 | | 本模块 |
 | `exam_trigger_scheduler.py` | §4 Phase 1（06号文 P1-1~P1-4） | 触发式考试调度器（MOD-INF-054）：新模型自动 Quick 考试 + TaskGate 连续 low_accuracy 超阈发复核建议（human_gated 只发不执行） | 已实现 | | 本模块 |
 
-> **MOD-INF-054 登记（2026-08-30）**：触发式考试调度器 `exam_trigger_scheduler.py` 及测试 `tests/model/test_exam_trigger_scheduler.py` 归属本蓝图（owner_blueprint=MOD-INF-054，path_ownership_map.yaml 两条目 declared_in 已补登 06 号文）；设计/施工真源为 [06_model_profiling_pipeline.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/06_model_profiling_pipeline.md) §4 Phase 1。生产端 dispatch 硬门为 opt-in（`runtime_assembly.assemble_agent_router(task_gate=None)` 默认关闭），开启留 Owner 裁定。
+> **MOD-INF-054 登记（2026-08-30）**：触发式考试调度器 `exam_trigger_scheduler.py` 及测试 `tests/model/test_exam_trigger_scheduler.py` 归属本蓝图（owner_blueprint=MOD-INF-054，path_ownership_map.yaml 两条目 declared_in 已补登 06 号文）；设计/施工真源为 [06_model_profiling_pipeline.md](file:///d:/ZephyrAlpha/docs/_working/archive/2026-09/implementation_plans/06_model_profiling_pipeline.md) §4 Phase 1。生产端 dispatch 硬门为 opt-in（`runtime_assembly.assemble_agent_router(task_gate=None)` 默认关闭），开启留 Owner 裁定。
 
 ### §0.2 对齐验证矩阵
 
@@ -141,7 +141,7 @@ ModelProfiler 是 ZephyrAlpha 的 LLM 模型画像器——对所有可用模型
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-INF-034` 的 35 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-034` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

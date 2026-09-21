@@ -56,7 +56,7 @@ build_status: generated
 # QMT File Bridge Broker 蓝图 — 大QMT文件桥执行器适配器
 
 > **真源声明**：本蓝图是 QMT File Bridge Broker 模块的唯一真源。
-> **上游衔接**：[93_qmt_file_bridge_playbook.md](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/93_qmt_file_bridge_playbook.md)（操作手册+实证证据）→ 本蓝图（架构设计+接口契约）→ 施工代码。
+> **上游衔接**：[93_qmt_file_bridge_playbook.md](file:///d:/ZephyrAlpha/docs/_working/archive/2026-09/design_memos/93_qmt_file_bridge_playbook.md)（操作手册+实证证据）→ 本蓝图（架构设计+接口契约）→ 施工代码。
 
 ## 1. 一句话定位
 

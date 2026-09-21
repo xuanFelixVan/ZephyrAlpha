@@ -16,7 +16,7 @@ topic: mining_sop
 
 > **一句话**：本册把"矿脉选择 → 假设登记 → IC 大海选（宽测筛）→ 预注册卡 → 沙箱三关 → E4 正考 → 组队备料 → 入库/归档"八段缝成一条因子生产线；每段给输入/输出产物与真源指针，不复制真源。**新增核心条款=regime 条件化**（§2）：每因子 MUST 报"什么状态下有效"，不看行情状态的考试结论一律降级为"无条件证据档"。
 > **定位**：[mining_sop_policy.md](mining_sop_policy.md)（通用挖矿方法论）在**因子域**的专用实例，与 [skeleton_mining_policy.md](skeleton_mining_policy.md)（骨架域）、[trading_decision_map_pathfinding_policy.md](trading_decision_map_pathfinding_policy.md)（地图域）并列；语义冲突时按域归真源。
-> **诞生**：2026-09-19 裁定#365 转正（v0.1 工作稿升 permanent；前身=`docs/_working/bizmine_night/factor_sop_screen/factor_mining_sop_v0_1.md`，固化 2026-09 两次实战先例：P3 一致预期族预注册、bizmine 通宵战 F 车道大海选）。
+> **诞生**：2026-09-19 裁定#365 转正（v0.1 工作稿升 permanent；前身=`docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/factor_mining_sop_v0_1.md`，固化 2026-09 两次实战先例：P3 一致预期族预注册、bizmine 通宵战 F 车道大海选）。
 > **亲缘**：[sop_b_node_loop.md](../backtest_system_sop/sop_b_node_loop.md)（七步循环，真源不复制）｜[sop_c_strategy_library_intake.md](../backtest_system_sop/sop_c_strategy_library_intake.md)（入库漏斗，真源不复制）｜[exam_policy.md](../backtest_system_sop/exam_policy.md)（**考试段判据真源**：准入/口径/成本双口径/复权降级/负结果台账——本册 S5 只管位次，判据一律按 exam_policy 执行）｜诚实条款冲突时以战役令 §2 与本册 §3 就严者为准。
 
 ## 0. 流程总览（八段一段闸）
@@ -48,7 +48,7 @@ S0 矿脉选择 ─→ S1 假设登记 ─→ S2 IC 大海选（宽测筛）─�
 ### S2 IC 大海选（宽测筛，输入：candidate 全集）
 
 - 动作：预注册筛选协议（候选集/数据口径/IS 窗/前瞻档/除权与样本过滤/IC 算法/regime 状态轴与桶/排名规则/多重检验警示线）→ 按协议跑横截面 Spearman 秩 IC → 全部结果入册。
-- 实战先例：`docs/_working/bizmine_night/factor_sop_screen/screen_report.md`（bizmine F 车道，IS 2019-2023，前瞻 5/10/20，F4_BDI 状态 T-1 分桶，top-20 待考池按预注册排名规则产出）。
+- 实战先例：`docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/screen_report.md`（bizmine F 车道，IS 2019-2023，前瞻 5/10/20，F4_BDI 状态 T-1 分桶，top-20 待考池按预注册排名规则产出）。
 - 输出：screen_results.csv（全候选×统计量+skip 清单）+ screen_report.md（协议回执+top-N 待考池+偏离登记）。
 - 边界：不判 PASS；负结果照登；协议外任何临时改动进「偏离登记」逐条列明。
 
@@ -133,7 +133,7 @@ exits: [达标→S6 备料 / 不达标回S0-S3 / 判死归档]
 
 ## 6. 转正记录与净零申报（裁定#365，2026-09-19）
 
-- **转正**：v0.1 工作稿（`docs/_working/bizmine_night/factor_sop_screen/factor_mining_sop_v0_1.md`，已标 superseded 存档）升 permanent 本册；§2 regime 条款随迁升 permanent（=strategy_sop_gap_report **G4 销项**；S4 第三关=**G10**、S6-S7 组装段=**G2** 的载体同批落地）。
+- **转正**：v0.1 工作稿（`docs/_working/archive/2026-09/bizmine_night/factor_sop_screen/factor_mining_sop_v0_1.md`，已标 superseded 存档）升 permanent 本册；§2 regime 条款随迁升 permanent（=strategy_sop_gap_report **G4 销项**；S4 第三关=**G10**、S6-S7 组装段=**G2** 的载体同批落地）。
 - **净零申报**：同批新立 [exam_policy.md](../backtest_system_sop/exam_policy.md) 一本（净零原则下唯一新立候选），对价=**G3+G5+G6+G8 四条缺口登记销项**（strategy_sop_gap_report.md 相应条目已标 resolved）；其余缺口归宿按该报告 §3（G1 并 mining_sop 实例、G7 走 apply_* 架构批、G9 并 sop_c，另批施工）。
 - 分工边界：本册=因子生产线编排（挖→筛→考→组队）；exam_policy=考试判据语义（准入/口径/降级/台账）。两册互挂不复制，语义冲突时考试判据以 exam_policy 为准、流程位次以本册为准。
 

@@ -22,7 +22,7 @@ granularity: file
 # MOD-FACTORY-001 knowledge_classifier 蓝图（知识分类器）
 
 > **module_id**: MOD-FACTORY-001 | **域**: D_AUTONOMY_CORE | **优先级**: P1
-> **设计真源**: 13号文 `docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/13_module_factory.md` §3.2（知识分类设计）+ §3.1（信息价值四维评分门禁）
+> **设计真源**: 13号文 `docs/_working/archive/2026-09/implementation_plans/13_module_factory.md` §3.2（知识分类设计）+ §3.1（信息价值四维评分门禁）
 > **裁定**: #ARCH-286（归域 D_AUTONOMY_CORE；编号 MOD-FACTORY-001）
 > 代码：`src/zephyr/autonomy_core/module_factory/knowledge_classifier.py`
 

@@ -22,7 +22,7 @@ granularity: file
 # MOD-FACTORY-002 module_mapper 蓝图（知识→模块映射引擎）
 
 > **module_id**: MOD-FACTORY-002 | **域**: D_AUTONOMY_CORE | **优先级**: P1
-> **设计真源**: 13号文 `docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/13_module_factory.md` §3.3（知识→模块映射设计，核心独创环节）+ §3.6（入库设计·输出侧）
+> **设计真源**: 13号文 `docs/_working/archive/2026-09/implementation_plans/13_module_factory.md` §3.3（知识→模块映射设计，核心独创环节）+ §3.6（入库设计·输出侧）
 > **裁定**: #ARCH-286（归域 D_AUTONOMY_CORE；编号 MOD-FACTORY-002）
 > 代码：`src/zephyr/autonomy_core/module_factory/module_mapper.py`
 

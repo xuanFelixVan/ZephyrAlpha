@@ -16,7 +16,7 @@ owner: ZephyrAlpha-Owner
 
 # MOD-SIG-148 pattern_evidence_certifier 蓝图
 
-> 设计真源：反过拟合自动认证方案 v1.0（docs/_working/pattern_line/
+> 设计真源：反过拟合自动认证方案 v1.0（docs/_working/archive/2026-09/pattern_line/
 > 2026-09-15-pattern-certification-plan.md，c0c478a2a6）。Owner 令"读表人全自动"。
 
 ## 0. 文件清单

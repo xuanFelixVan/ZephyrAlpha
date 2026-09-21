@@ -23,7 +23,7 @@ responsibility_domain:
 
 > **module_id**: MOD-REGIME-002 | **域**: D_REGIME | **层**: L2 业务域
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
-> **SSoT**: depgraph MOD-REGIME-002 | **spec 真源**: [10_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) v1.3.1（13参数§5.3 / S2十二维度§4.12 / 8转换§4）
+> **SSoT**: depgraph MOD-REGIME-002 | **spec 真源**: [10_regime_detector_spec.md](../../../_working/archive/2026-09/design_memos/10_regime_detector_spec.md) v1.3.1（13参数§5.3 / S2十二维度§4.12 / 8转换§4）
 > **验证真源**: [11_regime_backtest_validation_plan.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/11_regime_backtest_validation_plan.md) v1.0.0（C1一票否决§5 / 数据基础§7）
 > **消费方**: [RegimeDetector](../regime_detector/blueprint.md) MOD-REGIME-001（detect() 三参输入消费者）
 
@@ -862,7 +862,7 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-002` 的 34 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-002` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

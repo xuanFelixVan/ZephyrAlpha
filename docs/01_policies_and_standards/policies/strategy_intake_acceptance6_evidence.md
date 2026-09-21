@@ -49,7 +49,7 @@ title: C6 全自动入库管线验收⑥回放证据与写入路径授权书（�
 
 ## 机器判定链可复核物
 
-- 原始回执：`docs/_working/pipeline-research/replay-evidence.yaml`（逐条判定+ρ 矩阵+FDR 报告+耗时 348s）
+- 原始回执：`docs/_working/archive/2026-09/pipeline-research/replay-evidence.yaml`（逐条判定+ρ 矩阵+FDR 报告+耗时 348s）
 - 回放脚本：`.runtime/tmp/replay_acceptance6.py`（班末清理，逻辑已固化进 `tests/strategy_pipeline/`）
 
 ## 写入路径授权声明

@@ -23,7 +23,7 @@ build_status: production
 
 > **module_id**: MOD-TRADING-015 | **域**: D_TRADING | **层**: L03 交易运营
 > **优先级**: P1 | **成熟度**: design（worktree 外直接施工，验收后转 production）
-> **设计真源**: [69_trading_decision_map.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/69_trading_decision_map.md)（Owner D1-D6 裁定）
+> **设计真源**: [69_trading_decision_map.md](../../../_working/archive/2026-09/design_memos/69_trading_decision_map.md)（Owner D1-D6 裁定）
 
 ## 1. 定位
 
@@ -96,7 +96,7 @@ tests/trading/test_decision_map.py：正常加载/schema 错误/三类引用缺�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-TRADING-015` 的 4 个 file 节点 | production | `extract_depgraph.py --modules MOD-TRADING-015` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

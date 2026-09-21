@@ -82,7 +82,7 @@ summary: "BM-PLAN-03 尾盘决策：14:45-15:00 基于今日盘中推演与持�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PLAN-003` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-PLAN-003` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -281,7 +281,7 @@ class BoundedActionAdvice:
 |---------|---------|---------|---------|---------|
 | BM-PLAN-01-C（盘中推演） | 必须 | box_upper/box_lower（通过 intraday_inference 字典传参） | — | 推演模块蓝图（待建） |
 | BM-POS-01（持仓状态） | 必须 | weight（通过 position_state 字典传参） | — | 持仓模块蓝图（待建） |
-| 41_buy_flow 设计备忘 | 必须 | §3.10.4 阈值与分工消歧 | v1.7.0 | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md` |
+| 41_buy_flow 设计备忘 | 必须 | §3.10.4 阈值与分工消歧 | v1.7.0 | `docs/_working/archive/2026-09/design_memos/41_buy_flow.md` |
 ### 9.2 依赖图对齐声明
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
@@ -399,7 +399,7 @@ class BoundedActionAdvice:
 ## 必备链接 <!-- temporal_type: permanent -->
 | # | 文件 | module_id | 完整路径（相对优先） | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 买入流 spec（设计真源） | — | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md` | §3.10.4 阈值/窗口/分工消歧 |
+| 1 | 买入流 spec（设计真源） | — | `docs/_working/archive/2026-09/design_memos/41_buy_flow.md` | §3.10.4 阈值/窗口/分工消歧 |
 | 2 | 蓝图模板 | GOV-028 | `docs/01_policies_and_standards/templates/blueprint_construction_template.md` | v2.1.0 章节合规 |
 
 ## 术语表 <!-- temporal_type: permanent -->
@@ -442,7 +442,7 @@ class BoundedActionAdvice:
 | # | 已有模块/文件 | 完整路径（相对优先） | 功能重叠点 | 为什么不能复用 |
 |---|-------------|------------|----------|-------------|
 | 1 | MOD-PA-006 分批建仓引擎 | `src/zephyr/pf_alloc/batched_position_builder.py` | 建仓/加仓 | 该模块管建仓执行（how），本模块管尾盘调仓决策（whether/when），职责不重叠 |
-| 2 | 42_sell_flow 止损模块 | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md` | 减仓 | 该模块管风控止损（被动），本模块管预测驱动调仓（主动），触发源不同 |
+| 2 | 42_sell_flow 止损模块 | `docs/_working/archive/2026-09/design_memos/42_sell_flow.md` | 减仓 | 该模块管风控止损（被动），本模块管预测驱动调仓（主动），触发源不同 |
 
 ## 涉及的文件范围 <!-- temporal_type: permanent -->
 | # | 文件/目录 | 完整路径（相对优先） | 关系 | 变更类型 |

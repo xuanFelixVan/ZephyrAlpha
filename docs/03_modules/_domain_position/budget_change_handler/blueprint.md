@@ -23,13 +23,13 @@ responsibility_domain:
 
 > **module_id**: MOD-POS-022 | **域**: D_POSITION | **层**: L03 仓位管理
 > **优先级**: P0 | **成熟度**: production | **建设标记**: ✅ 已施工（2026-09-05 AI-AUDIT10-001 对齐实物，原"🟡 待施工"过期叙事修正）
-> **SSoT**: depgraph MOD-POS-022 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.4（权重变动操作流程·三级升级）
+> **SSoT**: depgraph MOD-POS-022 | **设计真源**: [30_multi_strategy_concurrency.md](../../../_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md) §2.4（权重变动操作流程·三级升级）
 > **上游触发**: [RegimeMetaAllocator blueprint](../../_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) MOD-PA-007 §2.2 BudgetChanged 事件 (E-PA-07)
 > **执行目标**: [StrategyBook blueprint](../strategy_book/blueprint.md) MOD-POS-020 §3.3 rebalance_to_budget 接口
 
 ## 1. 定位
 
-Budget 变动处理器——A 模型（[30_multi_strategy_concurrency](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.4）的执行层。当 RegimeMetaAllocator 产出新 `BudgetAllocation` 导致某策略 budget 变动时，本模块负责**把 budget 变动落地到 StrategyBook**——三级升级（Tier 1 封锁 → Tier 2 自主 → Tier 3 强裁），确保策略适配新 budget，策略不能说"我不卖"。
+Budget 变动处理器——A 模型（[30_multi_strategy_concurrency](../../../_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md) §2.4）的执行层。当 RegimeMetaAllocator 产出新 `BudgetAllocation` 导致某策略 budget 变动时，本模块负责**把 budget 变动落地到 StrategyBook**——三级升级（Tier 1 封锁 → Tier 2 自主 → Tier 3 强裁），确保策略适配新 budget，策略不能说"我不卖"。
 
 属 **A 类基础设施**（事件驱动 + 状态机 + 超时升级，逻辑明确），convergence_window / 超时阈值为 C 类可调参数。
 
@@ -379,7 +379,7 @@ if delta ≥ 0 (budget 上调):
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-POS-022` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-022` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

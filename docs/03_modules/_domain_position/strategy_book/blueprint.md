@@ -23,12 +23,12 @@ responsibility_domain:
 
 > **module_id**: MOD-POS-020 | **域**: D_POSITION | **层**: L03 仓位管理
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
-> **SSoT**: depgraph MOD-POS-020 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2（三个核心模块）、§2.4（权重变动流程）、§2.5（Drawdown Protocol）
-> **regime 依赖**: [10_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) §5（Shrinkage = ConfidenceSignal × RiskSignal，由 RegimeMetaAllocator 施加）
+> **SSoT**: depgraph MOD-POS-020 | **设计真源**: [30_multi_strategy_concurrency.md](../../../_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md) §2.2（三个核心模块）、§2.4（权重变动流程）、§2.5（Drawdown Protocol）
+> **regime 依赖**: [10_regime_detector_spec.md](../../../_working/archive/2026-09/design_memos/10_regime_detector_spec.md) §5（Shrinkage = ConfidenceSignal × RiskSignal，由 RegimeMetaAllocator 施加）
 
 ## 1. 定位
 
-独立策略账本——A 模型（[30_multi_strategy_concurrency](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.1）的核心实体。每个策略是一个自洽的 StrategyBook，自带选股 + 粗仓位 + 独立风控，输出 `target_portfolio`（标的 + 目标权重）。
+独立策略账本——A 模型（[30_multi_strategy_concurrency](../../../_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md) §2.1）的核心实体。每个策略是一个自洽的 StrategyBook，自带选股 + 粗仓位 + 独立风控，输出 `target_portfolio`（标的 + 目标权重）。
 
 属 **B 类核心业务模块**（多源融合 + 策略逻辑 + 风控自洽），策略 alpha 逻辑为 C 类可插拔策略实现。
 
@@ -291,7 +291,7 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-POS-020` 的 3 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-020` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

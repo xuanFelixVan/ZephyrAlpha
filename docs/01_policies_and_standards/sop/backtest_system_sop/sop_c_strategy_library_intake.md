@@ -67,7 +67,7 @@ related_issues:
 > **退役标注（2026-09-15，净零声明兑现）**：本节人工流程已由 `zephyr.strategy_pipeline.intake`
 > （MOD-BT-189）机械化接管——ρ>0.6 聚类（簇首=证据最强者）、三轴字段级+指标信号指纹差异化论证、
 > family_redundancy 结构化块。机器判定与人工批一致率 8/8（回放证据=
-> `docs/_working/pipeline-research/acceptance6-replay.md`）。本节散文降级为**人工兜底通道**
+> `docs/_working/archive/2026-09/pipeline-research/acceptance6-replay.md`）。本节散文降级为**人工兜底通道**
 > （管线停用时按本节手工执行），语义真源不变。
 
 - 按三个轴聚类：信号源 / 持仓周期 / 市场状态适配；

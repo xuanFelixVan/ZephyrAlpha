@@ -82,7 +82,7 @@ summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静�
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PLAN-001` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-PLAN-001` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -282,7 +282,7 @@ class TomorrowBoundary:
 | 依赖模块 | 依赖类型 | 依赖内容 | 版本要求 | 蓝图路径 |
 |---------|---------|---------|---------|---------|
 | zephyr.shared.utils.time_utils | 必须 | now_utc()（计算时间戳） | — | 跨层共享包 |
-| 41_buy_flow 设计备忘 | 必须 | §3.10.2 契约与参数默认值 | v1.7.0 | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md` |
+| 41_buy_flow 设计备忘 | 必须 | §3.10.2 契约与参数默认值 | v1.7.0 | `docs/_working/archive/2026-09/design_memos/41_buy_flow.md` |
 ### 9.2 依赖图对齐声明
 | # | 对齐项 | 对齐方式 | 对齐状态 | 验证命令 |
 |---|--------|---------|:-------:|---------|
@@ -397,7 +397,7 @@ class TomorrowBoundary:
 ## 必备链接 <!-- temporal_type: permanent -->
 | # | 文件 | module_id | 完整路径（相对优先） | 编写时用途 |
 |---|------|-----------|------------|----------|
-| 1 | 买入流 spec（设计真源） | — | `docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/41_buy_flow.md` | §3.10.1/§3.10.2 架构与契约 |
+| 1 | 买入流 spec（设计真源） | — | `docs/_working/archive/2026-09/design_memos/41_buy_flow.md` | §3.10.1/§3.10.2 架构与契约 |
 | 2 | 蓝图模板 | GOV-028 | `docs/01_policies_and_standards/templates/blueprint_construction_template.md` | v2.1.0 章节合规 |
 
 ## 术语表 <!-- temporal_type: permanent -->

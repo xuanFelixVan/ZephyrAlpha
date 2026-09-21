@@ -24,7 +24,7 @@ responsibility_domain:
 > **⚠️ 已退役（2026-09-06 Owner 裁定，B13 退役 salvage）**
 >
 > - **裁定依据**：模块 6 种填充策略中 3 种（bfill/linear/mean）违反 15 号文 L112 前视偏差禁令（PIT 铁律）；合法语义（ffill 默认/预热剔除）已由 FactorSignal 契约承载，零生产消费方。
-> - **15 号文指针**：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/15_data_feature_layer_spec.md L112（FactorSignal NaN 填充裁定）。
+> - **15 号文指针**：docs/_working/archive/2026-09/design_memos/15_data_feature_layer_spec.md L112（FactorSignal NaN 填充裁定）。
 > - **重评条件**：消费方要求差异化填充策略时重建（15 号文自带重评条件）。
 > - 实现与测试（src/zephyr/backtest/services/nan_processor.py、tests/backtest/test_nan_processor.py）已删除；本蓝图保留为设计真源。
 

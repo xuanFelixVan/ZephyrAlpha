@@ -23,7 +23,7 @@ build_status: production
 
 > **module_id**: MOD-PF-008 | **域**: D_PF_CORE | **层**: L02 组合构建核心
 > **优先级**: P1 | **成熟度**: design | **SSoT**: depgraph nodes（planned）
-> **设计真源**: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/61_lifecycle_multi_ai.md §3.3 纪律 1（mSPRT 施工伪代码）
+> **设计真源**: docs/_working/archive/2026-09/design_memos/61_lifecycle_multi_ai.md §3.3 纪律 1（mSPRT 施工伪代码）
 
 ## 1. 定位
 
@@ -121,7 +121,7 @@ anytime-valid：可任意频次查看无"偷看惩罚"（Type I ≤ α 在所有
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PF-008` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-PF-008` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

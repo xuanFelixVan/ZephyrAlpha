@@ -23,13 +23,13 @@ responsibility_domain:
 
 > **module_id**: MOD-PA-007 | **域**: D_PF_ALLOC | **层**: L02 组合分配
 > **优先级**: P0 | **成熟度**: production | **建设标记**: ✅ 已施工（Phase 1 已落码；2026-09-05 AI-AUDIT10-001 对齐实物，原"🟡 待施工"过期叙事修正）
-> **SSoT**: depgraph MOD-PA-007 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2（RegimeMetaAllocator + 分配公式 + 置信度映射 + 稀有态处理）
-> **Shrinkage 真源**: [10_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) §5（Shrinkage = ConfidenceSignal × RiskSignal，二维公式 + 13 参数阈值 + 聚合公式）
+> **SSoT**: depgraph MOD-PA-007 | **设计真源**: [30_multi_strategy_concurrency.md](../../../_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md) §2.2（RegimeMetaAllocator + 分配公式 + 置信度映射 + 稀有态处理）
+> **Shrinkage 真源**: [10_regime_detector_spec.md](../../../_working/archive/2026-09/design_memos/10_regime_detector_spec.md) §5（Shrinkage = ConfidenceSignal × RiskSignal，二维公式 + 13 参数阈值 + 聚合公式）
 > **开源实证**: [Morwane/multi-strategy-alpha-book](https://github.com/Morwane/multi-strategy-alpha-book) — regime 做 risk-throttle Sharpe +1.43 / MaxDD −10.3%，regime 做 alpha-timing Sharpe +0.87（降）
 
 ## 1. 定位
 
-Regime 元分配器——A 模型（[30_multi_strategy_concurrency](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2）的 meta 层。消费 regime 检测器的 12 维灰度概率分布 + 各策略 PerformanceScore，通过 **Shrinkage 风险节流**（只减不增）+ **PerformanceScore 后验分配**，产出各 StrategyBook 的资金预算占比。
+Regime 元分配器——A 模型（[30_multi_strategy_concurrency](../../../_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md) §2.2）的 meta 层。消费 regime 检测器的 12 维灰度概率分布 + 各策略 PerformanceScore，通过 **Shrinkage 风险节流**（只减不增）+ **PerformanceScore 后验分配**，产出各 StrategyBook 的资金预算占比。
 
 属 **B 类核心业务模块**（多源融合 + 风险节流 + 动态分配），Shrinkage 阈值/PerformanceScore 映射为 C 类可调参数。
 
@@ -390,7 +390,7 @@ memo 33 留痕在案）。
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PA-007` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-PA-007` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
