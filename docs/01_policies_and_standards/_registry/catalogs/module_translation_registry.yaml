@@ -55898,6 +55898,22 @@ entries:
   desc_en: ""
   plain_zh: "图书馆的户口本表格定义：每件资产身份证有哪些栏位，全项目统一"
   responsibility_layer: governance
+- module_path: scripts/backtest/sim_daily_runner.py
+  domain_id: D_BACKTEST
+  name_zh: "模拟盘日链接电执行体"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天把丁线日计划(只读)翻译成模拟盘姿态和台账行，把E4观察档翻译件重放出模拟单，并出判定日报"
+  responsibility_layer: business
+- module_path: schemas/categories/sim_daily_report.py
+  domain_id: D_BACKTEST
+  name_zh: "模拟盘判定台账表结构"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "模拟盘日报台账的表结构定义：先落判定行，第二天再补结算列，判定和结算分开"
+  responsibility_layer: business
 - module_path: tests/data/test_internal_compute_provider_cohort_daily.py
   domain_id: D_TEST
   name_zh: "cohort日账本调度路由测试"
@@ -55905,6 +55921,46 @@ entries:
   desc_zh: "验证 internal_compute_provider 对 cohort_daily_ledger 能力的路由分派、逐交易日驱动、列序对齐与 fail-visible 错误面，全 fake IO 零 DB。"
   desc_en: ""
   plain_zh: "给投资者行为画像日账本的调度接线上的三道保险：请求不会被串台送进技术指标分支；真的按交易日一个一个算且算出的行和数据库列一一对齐；计算出错时老实报错不装作没事。"
+  responsibility_layer: governance
+- module_path: src/zephyr/shared/vocab/market_state.py
+  domain_id: D_SHARED
+  name_zh: "官方状态词表"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "全系统描述大盘状态和情绪阶段的唯一官方词表：宏观HMM七态、情绪六段、盘中五态及其到六段的映射、锚定四档消歧常量、最坏状态九种写法的统一归一表。纯常量零逻辑零IO，新增状态值必须先登记 state_vocabulary_registry。"
+  responsibility_layer: infrastructure
+- module_path: src/zephyr/shared/vocab/__init__.py
+  domain_id: D_SHARED
+  name_zh: "官方状态词表包"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "官方状态词表包入口，转发 market_state 的全部官方常量导出。"
+  responsibility_layer: infrastructure
+- module_path: docs/_working/kimi_audit/lane_reports/cost_trio_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "做T配对成本判据（重建版）"
+  name_en: "cost_trio_exam (rebuilt)"
+  desc_zh: "做T配对成本三件套判据脚本：bt产物D后成交按symbol×day双边配对，出CST-T0-001成本口径下的毛/净价差四数与insufficient土规判定"
+  desc_en: ""
+  plain_zh: "这是做T考试的尺子。它把回测留下的每笔买卖按同一只票同一天配成一对，算出每对赚的价差够不够付手续费。配对满30对才允许下结论，不够就老实说样本不足，不许瞎下结论。原来这把尺子放在临时目录里丢了，现在按裁定搬进正式文档目录，以后不会再丢。"
+  responsibility_layer: business
+- module_path: src/zephyr/alt_data/cohort_daily_writer.py
+  domain_id: D_ALT_DATA
+  name_zh: "五人群日账本写入器"
+  name_en: "CohortDailyWriter"
+  desc_zh: "cohort_daily_ledger 表唯一 CH 写入口：build_cohort_daily 纯计算产行，列对齐过滤后经 ch_writer strict 通道落 c1_backtest.cohort_daily_ledger，ReplacingMergeTree 同键幂等，失败 fail-open 出声不抛"
+  desc_en: ""
+  plain_zh: "每天股市收盘后，把散户、融资盘、游资、机构四类资金当天在干什么，算成一张账并写进数据库。算账的部分是老模块，这个新模块只管把账本稳妥地存进去：写不进就大声报错但不停整个流水线，第二天重跑会自动覆盖当天的旧账不会重复记账。"
+  responsibility_layer: business
+- module_path: src/zephyr/library/relations.py
+  domain_id: D_GOVERNANCE
+  name_zh: "关系树一键查询"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给一个功能关键词，从依赖图展开它全部关联的代码文档数据表和管线，打印成一棵树"
   responsibility_layer: governance
 battle_map_steps:
 - step_id: BM-BUY-05
