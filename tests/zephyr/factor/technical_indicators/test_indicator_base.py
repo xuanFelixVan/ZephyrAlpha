@@ -43,9 +43,9 @@ from zephyr.factor.technical_indicators.indicator_base import (
 )
 
 # 9 类指标数量契约（catalog §2：趋势37/动量43/波动18/成交量17/反转4/统计9/复合1/循环8/筹码3）
-_EXPECTED_TOTAL = 140  # 2026-09-21 批10 筹码族：+CYQ/SCR/CYC 3 指标（137 + 3；批9 清欠班后基数 137）
-# 全部输出列数契约（2026-09-21 批10 后：210 = 201 + 9（chips_winner/avg_cost/cost_5/cost_95/scr/cyc_5/cyc_13/cyc_34/cyc_inf））
-_EXPECTED_COLUMN_TOTAL = 210
+_EXPECTED_TOTAL = 142  # 2026-09-21 批10+扩项：+CYQ/SCR/CYC 3 指标 + CHIP_CONC_90/70 2 指标（137+3+2）
+# 全部输出列数契约（2026-09-21 批10+扩项后：214 = 201 + 9（批10 主批） + 4（chips_cost_15/85+conc_90/70 扩项））
+_EXPECTED_COLUMN_TOTAL = 214
 
 
 # ============== TechnicalIndicatorMeta ==============
@@ -133,7 +133,7 @@ class TestRegistryMechanics:
         assert len(TechnicalIndicatorRegistry.list_by_category("statistics")) == 9
         assert len(TechnicalIndicatorRegistry.list_by_category("composite")) == 1
         assert len(TechnicalIndicatorRegistry.list_by_category("cycle")) == 8
-        assert len(TechnicalIndicatorRegistry.list_by_category("chips")) == 3  # 批10 筹码族
+        assert len(TechnicalIndicatorRegistry.list_by_category("chips")) == 5  # 批10 筹码族+扩项
 
     def test_list_by_category_empty(self):
         assert TechnicalIndicatorRegistry.list_by_category("nonexistent") == []

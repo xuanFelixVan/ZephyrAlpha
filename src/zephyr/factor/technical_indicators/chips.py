@@ -16,7 +16,7 @@
 # [TTL] permanent
 """筹码族技术指标（3 个，批10 施工 2026-09-21）。
 
-指标清单：CYQ（筹码分布 4 列）/ SCR（筹码集中度 1 列）/ CYC（成本均线 4 列）。
+指标清单：CYQ（筹码分布 6 列：获利盘/平均成本/成本分位 5/15/85/95）/ SCR（筹码集中度 1 列，=集中度(90) 通达信同义）/ CHIP_CONC_90、CHIP_CONC_70（通达信集中度族 1 列各，批10 扩项）/ CYC（成本均线 4 列）。
 
 批10 契约扩张（16 号 memo §2/§6.10）：技术指标输入首次引入换手率 turnover_rate——
 CYQ/SCR/CYC.inf 需要日频换手率（c1_market.stock_daily_basic，批9 数据批）。
@@ -57,6 +57,7 @@ CYC 成本均线（通达信口径）：
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import ClassVar
 
 import numpy as np
 import pandas as pd
@@ -160,15 +161,22 @@ class _ChipGrid:
         """换手率衰减一步：×(1−clip(tr,0,100)/100)；NaN（停牌/缺数）不衰减。"""
         self.dist = _decay_distribution(self.dist, turnover_pct)
 
-    def day_metrics(self, close_i: float) -> tuple[float, float, float, float] | None:
-        """单日输出四元组（winner, avg_cost, q05, q95）；无筹码（总量 0）返回 None → NaN。"""
+    def day_metrics(self, close_i: float) -> tuple[float, float, float, float, float, float] | None:
+        """单日输出六元组（winner, avg_cost, q05, q15, q85, q95）；无筹码（总量 0）返回 None → NaN。"""
         total = float(self.dist.sum())
         if not np.isfinite(total) or total <= 0.0:
             return None
         cum = np.cumsum(self.dist) / total
         winner = float(self.dist[self.centers <= close_i].sum()) / total if np.isfinite(close_i) else np.nan
         avg = float(np.dot(self.centers, self.dist)) / total
-        return winner, avg, _quantile_price(cum, self.centers, 0.05), _quantile_price(cum, self.centers, 0.95)
+        return (
+            winner,
+            avg,
+            _quantile_price(cum, self.centers, 0.05),
+            _quantile_price(cum, self.centers, 0.15),
+            _quantile_price(cum, self.centers, 0.85),
+            _quantile_price(cum, self.centers, 0.95),
+        )
 
 
 def compute_chip_metrics(
@@ -179,10 +187,11 @@ def compute_chip_metrics(
     turnover_rate_pct: pd.Series,
     n_bins: int = _N_BINS_DEFAULT,
 ) -> pd.DataFrame:
-    """CYQ 迭代衰减筹码分布逐日指标（engine 单一真源，CYQ/SCR 共用）。
+    """CYQ 迭代衰减筹码分布逐日指标（engine 单一真源，CYQ/SCR/CHIP_CONC 共用）。
 
     Returns:
-        DataFrame(index=close.index, columns=[chips_winner, chips_avg_cost, chips_cost_5, chips_cost_95])。
+        DataFrame(index=close.index, columns=[chips_winner, chips_avg_cost,
+        chips_cost_5, chips_cost_15, chips_cost_85, chips_cost_95])。
         无筹码可用（全历史成交量为 0/NaN）或高低价缺失的行输出 NaN。
     """
     n = len(close)
@@ -191,6 +200,8 @@ def compute_chip_metrics(
             "chips_winner": pd.Series(np.nan, index=close.index),
             "chips_avg_cost": pd.Series(np.nan, index=close.index),
             "chips_cost_5": pd.Series(np.nan, index=close.index),
+            "chips_cost_15": pd.Series(np.nan, index=close.index),
+            "chips_cost_85": pd.Series(np.nan, index=close.index),
             "chips_cost_95": pd.Series(np.nan, index=close.index),
         }
     )
@@ -211,6 +222,8 @@ def compute_chip_metrics(
     out_winner = np.full(n, np.nan)
     out_avg = np.full(n, np.nan)
     out_q05 = np.full(n, np.nan)
+    out_q15 = np.full(n, np.nan)
+    out_q85 = np.full(n, np.nan)
     out_q95 = np.full(n, np.nan)
 
     for i in range(n):
@@ -221,17 +234,31 @@ def compute_chip_metrics(
         metrics = state.day_metrics(c[i])
         if metrics is None:
             continue
-        out_winner[i], out_avg[i], out_q05[i], out_q95[i] = metrics
+        out_winner[i], out_avg[i], out_q05[i], out_q15[i], out_q85[i], out_q95[i] = metrics
 
     return pd.DataFrame(
         {
             "chips_winner": pd.Series(out_winner, index=close.index),
             "chips_avg_cost": pd.Series(out_avg, index=close.index),
             "chips_cost_5": pd.Series(out_q05, index=close.index),
+            "chips_cost_15": pd.Series(out_q15, index=close.index),
+            "chips_cost_85": pd.Series(out_q85, index=close.index),
             "chips_cost_95": pd.Series(out_q95, index=close.index),
         },
         index=close.index,
     )
+
+
+def _concentration_pct(cost_hi: float, cost_lo: float) -> float:
+    """通达信集中度公式：100×(cost_hi−cost_lo)/(cost_hi+cost_lo)；分母退化 → NaN。
+
+    集中度(N)=(cost_(50+N/2)−cost_(50−N/2))/(cost_(50+N/2)+cost_(50−N/2))×100：
+    N=90 → (cost_95, cost_5)；N=70 → (cost_85, cost_15)。
+    """
+    denom = cost_hi + cost_lo
+    if not (np.isfinite(denom) and abs(denom) > 1e-12):
+        return np.nan
+    return float(100.0 * (cost_hi - cost_lo) / denom)
 
 
 def _soft_turnover(data: pd.DataFrame) -> pd.Series | None:
@@ -262,17 +289,24 @@ class _ChipsValidateMixin(TechnicalIndicatorBase):
 
 @TechnicalIndicatorRegistry.register
 class CYQ(_ChipsValidateMixin):
-    """筹码分布（ChiP distribution CYQ 族：获利盘/平均成本/成本分位）。"""
+    """筹码分布（ChiP distribution CYQ 族：获利盘/平均成本/成本分位 5/15/85/95）。"""
 
     meta = TechnicalIndicatorMeta(
         indicator_id="cyq",
         name="筹码分布",
         category="chips",
-        output_columns=["chips_winner", "chips_avg_cost", "chips_cost_5", "chips_cost_95"],
+        output_columns=[
+            "chips_winner",
+            "chips_avg_cost",
+            "chips_cost_5",
+            "chips_cost_15",
+            "chips_cost_85",
+            "chips_cost_95",
+        ],
         input_columns=["high", "low", "close", "volume", "turnover_rate"],
         params={"bins": _N_BINS_DEFAULT},
-        version="1.0.0",
-        description="CYQ 迭代衰减筹码分布：获利盘比例/平均成本/5%与95%成本分位（换手率衰减模型）",
+        version="1.1.0",
+        description="CYQ 迭代衰减筹码分布：获利盘比例/平均成本/5%15%85%95%成本分位（换手率衰减模型，批10 扩项+15/+85）",
     )
 
     def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -296,7 +330,7 @@ class CYQ(_ChipsValidateMixin):
 
 @TechnicalIndicatorRegistry.register
 class SCR(_ChipsValidateMixin):
-    """筹码集中度（Chip concentration，与 CYQ 成本分位同源）。"""
+    """筹码集中度（Chip concentration，通达信集中度(90) 同义；与 CYQ 成本分位同源）。"""
 
     meta = TechnicalIndicatorMeta(
         indicator_id="scr",
@@ -305,35 +339,105 @@ class SCR(_ChipsValidateMixin):
         output_columns=["scr"],
         input_columns=["high", "low", "close", "volume", "turnover_rate"],
         params={"bins": _N_BINS_DEFAULT},
-        version="1.0.0",
-        description="SCR=100×(cost95−cost5)/(cost95+cost5)，[0,100] 越小越集中（与 chips_cost_5/95 同源）",
+        version="1.1.0",
+        description="SCR=100×(cost95−cost5)/(cost95+cost5)=集中度(90) 通达信同义，[0,100] 越小越集中（与 chips_cost_5/95 同源）",
     )
 
     def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
         self.validate(data)
         if data.empty:
             return pd.DataFrame(columns=self.meta.output_columns)
-        tr = _soft_turnover(data)
-        if tr is None:
+        params = self.get_params(**kwargs)
+        scr = _compute_concentration(data, params, 0.95, 0.05)
+        return pd.DataFrame({"scr": pd.Series(scr, index=data.index)}, index=data.index)
+
+
+def _compute_concentration(data: pd.DataFrame, params: dict, q_hi: float, q_lo: float) -> np.ndarray:
+    """集中度公共内核：算 CYQ 分布 → 取两分位价 → 通达信集中度公式（向量化 NaN 透传）。
+
+    q_hi/q_lo 为分布质量分位（如 0.95/0.05 对应集中度(90)，0.85/0.15 对应集中度(70)）。
+    """
+    tr = _soft_turnover(data)
+    if tr is None:
+        return np.full(len(data), np.nan)
+    metrics = compute_chip_metrics(
+        high=data["high"],
+        low=data["low"],
+        close=data["close"],
+        volume=data["volume"],
+        turnover_rate_pct=tr,
+        n_bins=int(params.get("bins", _N_BINS_DEFAULT)),
+    )
+    lo_price = metrics[f"chips_cost_{int(round(q_lo * 100))}"].to_numpy(dtype=float)
+    hi_price = metrics[f"chips_cost_{int(round(q_hi * 100))}"].to_numpy(dtype=float)
+    return np.vectorize(_concentration_pct, otypes=[float])(hi_price, lo_price)
+
+
+class _ChipConcBase(_ChipsValidateMixin):
+    """CHIP_CONC_90/70 公共基类：通达信集中度(N) 条目族。
+
+    集中度(N)=(cost_(50+N/2)−cost_(50−N/2))/(cost_(50+N/2)+cost_(50−N/2))×100。
+    CHIP_CONC_90 与 SCR 同公式（SCR=集中度(90) 通达信同义异名，双条目系扩项工单
+    明令+命名族一致性保留，memo §6.10 已记 overlap 说明）；CHIP_CONC_70 用新增
+    cost_85/cost_15 分位列。
+    """
+
+    _n: ClassVar[int]
+    _q_hi: ClassVar[float]
+    _q_lo: ClassVar[float]
+    _col: ClassVar[str]
+
+    meta: ClassVar[TechnicalIndicatorMeta]
+
+    def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
+        self.validate(data)
+        if data.empty:
             return pd.DataFrame(columns=self.meta.output_columns)
         params = self.get_params(**kwargs)
-        metrics = compute_chip_metrics(
-            high=data["high"],
-            low=data["low"],
-            close=data["close"],
-            volume=data["volume"],
-            turnover_rate_pct=tr,
-            n_bins=int(params.get("bins", _N_BINS_DEFAULT)),
-        )
-        q05 = metrics["chips_cost_5"].to_numpy(dtype=float)
-        q95 = metrics["chips_cost_95"].to_numpy(dtype=float)
-        denom = q95 + q05
-        scr = np.where(
-            np.isfinite(denom) & (np.abs(denom) > 1e-12),
-            100.0 * (q95 - q05) / np.where(np.abs(denom) > 1e-12, denom, 1.0),
-            np.nan,
-        )
-        return pd.DataFrame({"scr": pd.Series(scr, index=data.index)}, index=data.index)
+        conc = _compute_concentration(data, params, self._q_hi, self._q_lo)
+        return pd.DataFrame({self._col: pd.Series(conc, index=data.index)}, index=data.index)
+
+
+@TechnicalIndicatorRegistry.register
+class CHIP_CONC_90(_ChipConcBase):
+    """集中度(90)：cost_95/cost_5（与 SCR 同公式，通达信命名族口径）。"""
+
+    _n = 90
+    _q_hi = 0.95
+    _q_lo = 0.05
+    _col = "conc_90"
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="chip_conc_90",
+        name="筹码集中度90",
+        category="chips",
+        output_columns=["conc_90"],
+        input_columns=["high", "low", "close", "volume", "turnover_rate"],
+        params={"bins": _N_BINS_DEFAULT},
+        version="1.0.0",
+        description="集中度(90)=100×(cost_95−cost_5)/(cost_95+cost_5)（与 SCR 同公式，批10 扩项工单明令独立条目）",
+    )
+
+
+@TechnicalIndicatorRegistry.register
+class CHIP_CONC_70(_ChipConcBase):
+    """集中度(70)：cost_85/cost_15（批10 扩项新增分位对）。"""
+
+    _n = 70
+    _q_hi = 0.85
+    _q_lo = 0.15
+    _col = "conc_70"
+
+    meta = TechnicalIndicatorMeta(
+        indicator_id="chip_conc_70",
+        name="筹码集中度70",
+        category="chips",
+        output_columns=["conc_70"],
+        input_columns=["high", "low", "close", "volume", "turnover_rate"],
+        params={"bins": _N_BINS_DEFAULT},
+        version="1.0.0",
+        description="集中度(70)=100×(cost_85−cost_15)/(cost_85+cost_15)（使用批10 扩项新增 cost_85/15 分位列）",
+    )
 
 
 @TechnicalIndicatorRegistry.register

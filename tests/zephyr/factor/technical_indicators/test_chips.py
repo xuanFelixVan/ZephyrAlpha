@@ -21,13 +21,18 @@ import pandas as pd
 import pytest
 
 from zephyr.factor.technical_indicators import chips  # noqa: F401 — 注册副作用
-from zephyr.factor.technical_indicators.chips import CYC, CYQ, SCR
+from zephyr.factor.technical_indicators.chips import CHIP_CONC_70, CHIP_CONC_90, CYC, CYQ, SCR
 from zephyr.factor.technical_indicators.indicator_base import TechnicalIndicatorRegistry
 
 # 期望契约（catalog §6.10）：indicator_id → (name_zh, output_columns)
 EXPECTED = {
-    "cyq": ("筹码分布", ["chips_winner", "chips_avg_cost", "chips_cost_5", "chips_cost_95"]),
+    "cyq": (
+        "筹码分布",
+        ["chips_winner", "chips_avg_cost", "chips_cost_5", "chips_cost_15", "chips_cost_85", "chips_cost_95"],
+    ),
     "scr": ("筹码集中度", ["scr"]),
+    "chip_conc_90": ("筹码集中度90", ["conc_90"]),
+    "chip_conc_70": ("筹码集中度70", ["conc_70"]),
     "cyc": ("成本均线", ["cyc_5", "cyc_13", "cyc_34", "cyc_inf"]),
 }
 
@@ -40,6 +45,8 @@ def _two_day_df() -> pd.DataFrame:
       day2 总质量=190；winner=45+50 +50×0 /... = (90×1 + 100×0.5)/190 = 140/190 ≈ 0.7368
       avg=(90×11+100×12)/190 = 2190/190 ≈ 11.5263
       q05 = 10 + (0.05×190)/45 ≈ 10.2111；q95 = 12 + (0.95×190−140)/50 = 12.81
+      q15 = 10 + (0.15×190)/45 ≈ 10.6333；q85 = 12 + (0.85×190−140)/50 = 12.43
+      conc_90 = 100×(12.81−10.2111)/(12.81+10.2111) ≈ 11.30；conc_70 = 100×(12.43−10.6333)/(12.43+10.6333) ≈ 7.78
     """
     return pd.DataFrame(
         {
@@ -87,7 +94,7 @@ class TestChipsRegistered:
             assert iid in metas, f"筹码指标 '{iid}' 未注册"
 
     def test_count(self):
-        assert len(TechnicalIndicatorRegistry.list_by_category("chips")) == len(EXPECTED) == 3
+        assert len(TechnicalIndicatorRegistry.list_by_category("chips")) == len(EXPECTED) == 5
 
     @pytest.mark.parametrize("iid", list(EXPECTED))
     def test_meta_contract(self, iid):
@@ -96,7 +103,9 @@ class TestChipsRegistered:
         assert meta.name == name
         assert meta.category == "chips"
         assert meta.output_columns == cols
-        assert meta.version == "1.0.0"
+        # CYQ/SCR 批10 扩项升 1.1.0（+cost_15/85 增列）；其余 1.0.0
+        expected_version = "1.1.0" if iid in ("cyq", "scr") else "1.0.0"
+        assert meta.version == expected_version
 
     def test_inputs_declare_turnover(self):
         """批10 契约扩张：筹码族输入首次引入换手率（meta 声明钉死）。"""
@@ -288,10 +297,148 @@ class TestSCR:
         valid = s["scr"].dropna()
         assert ((valid >= 0) & (valid <= 100)).all()
 
-    def test_missing_turnover_empty(self):
+    def test_missing_turnover_nan_column(self):
+        """缺换手率 → scr 列全 NaN（批10 扩项统一为 NaN 列形态，与 cyc_inf 同型）。"""
         df = _make_chips_ohlcv(30).drop(columns=["turnover_rate"])
         s = SCR().compute(df)
-        assert len(s) == 0 and list(s.columns) == ["scr"]
+        assert len(s) == 30 and list(s.columns) == ["scr"] and s["scr"].isna().all()
+
+
+# ============== 批10 扩项：cost_15/85 分位 + CHIP_CONC_90/70 ==============
+
+
+class TestChipsExtBatch10:
+    """批10 扩项（2026-09-21 扩项令）：CYQ 增列 chips_cost_15/85 + 新指标 CHIP_CONC_90/70。"""
+
+    def test_cyq_cost_15_85_hand_math(self):
+        """两日场景手算：q15 ≈ 10 + (0.15×190)/45 = 10.6333；q85 = 12 + (0.85×190−140)/50 = 12.43。"""
+        r = CYQ().compute(_two_day_df())
+        assert abs(r["chips_cost_15"].iloc[1] - 10.6333) < 0.05
+        assert abs(r["chips_cost_85"].iloc[1] - 12.43) < 0.05
+        # 单日均匀 [10,12] close=11：q15=10+0.15×2、q85=10+0.85×2
+        assert abs(r["chips_cost_15"].iloc[0] - 10.3) < 0.05
+        assert abs(r["chips_cost_85"].iloc[0] - 11.7) < 0.05
+
+    def test_quantile_ordering(self):
+        """分位单调：q5 <= q15 <= q85 <= q95（非退化分布）。"""
+        df = _make_chips_ohlcv(60)
+        r = CYQ().compute(df)
+        q5 = r["chips_cost_5"].to_numpy()
+        q15 = r["chips_cost_15"].to_numpy()
+        q85 = r["chips_cost_85"].to_numpy()
+        q95 = r["chips_cost_95"].to_numpy()
+        valid = np.isfinite(q5) & np.isfinite(q95)
+        assert (q5[valid] <= q15[valid] + 1e-9).all()
+        assert (q15[valid] <= q85[valid] + 1e-9).all()
+        assert (q85[valid] <= q95[valid] + 1e-9).all()
+
+    def test_conc_90_matches_scr(self):
+        """CHIP_CONC_90 与 SCR 同公式（集中度(90) 通达信同义异名）——全序列数值一致。"""
+        df = _make_chips_ohlcv(60)
+        scr = SCR().compute(df)
+        c90 = CHIP_CONC_90().compute(df)
+        np.testing.assert_allclose(c90["conc_90"].to_numpy(), scr["scr"].to_numpy(), rtol=1e-12, atol=1e-12)
+
+    def test_conc_70_formula_self_consistent(self):
+        """conc_70 与 CYQ cost_85/15 分位同源自洽。"""
+        df = _make_chips_ohlcv(60)
+        m = CYQ().compute(df)
+        c70 = CHIP_CONC_70().compute(df)
+        q15 = m["chips_cost_15"].to_numpy()
+        q85 = m["chips_cost_85"].to_numpy()
+        expect = 100.0 * (q85 - q15) / (q85 + q15)
+        np.testing.assert_allclose(c70["conc_70"].to_numpy(), expect, rtol=1e-12, atol=1e-12)
+
+    def test_conc_hand_math_two_day(self):
+        """两日手算：conc_90(day2)≈11.2998、conc_70(day2)≈7.7926（连续均匀近似解析值）。"""
+        df = _two_day_df()
+        c90 = CHIP_CONC_90().compute(df)
+        c70 = CHIP_CONC_70().compute(df)
+        assert abs(c90["conc_90"].iloc[1] - 11.2998) < 0.05
+        assert abs(c70["conc_70"].iloc[1] - 7.7926) < 0.05
+
+    def test_conc_range(self):
+        df = _make_chips_ohlcv(60)
+        for cls in [CHIP_CONC_90, CHIP_CONC_70]:
+            r = cls().compute(df)
+            valid = r.iloc[:, 0].dropna()
+            assert ((valid >= 0) & (valid <= 100)).all()
+
+    @pytest.mark.parametrize("cls", [CHIP_CONC_90, CHIP_CONC_70], ids=["conc90", "conc70"])
+    def test_conc_missing_turnover_nan(self, cls):
+        """缺换手率 → 集中度列全 NaN（软降级，与 CYQ 空输出设计一致但不抛）。"""
+        df = _make_chips_ohlcv(30).drop(columns=["turnover_rate"])
+        r = cls().compute(df)
+        assert len(r) == 30 and r.iloc[:, 0].isna().all()
+
+    def test_recalc_alignment_ext(self):
+        """独立实现复算对齐（q15/q85 抽验）：与引擎 1e-9 级一致（000852 全历史尾部 20 日）。"""
+        pytest.importorskip("numpy")
+        from zephyr.factor.technical_indicators.chips import compute_chip_metrics as eng
+
+        rng = np.random.default_rng(99)
+        n = 120
+        close = 20 + rng.standard_normal(n).cumsum() * 0.2
+        df = pd.DataFrame(
+            {
+                "high": close + np.abs(rng.standard_normal(n)) * 0.5 + 0.05,
+                "low": close - np.abs(rng.standard_normal(n)) * 0.5 - 0.05,
+                "close": close,
+                "volume": rng.uniform(500, 1500, n),
+                "turnover_rate": rng.uniform(0.2, 8.0, n),
+            }
+        )
+        # 独立实现（min 标量步进版）：同 400 bins 口径另行编码
+        l = df["low"].to_numpy(float)
+        h = df["high"].to_numpy(float)
+        c = df["close"].to_numpy(float)
+        v = df["volume"].to_numpy(float)
+        tr = df["turnover_rate"].to_numpy(float)
+        nb = 400
+        lo0, hi0 = l[0], max(h[0], l[0] + 1e-12)
+        grid = np.linspace(lo0, hi0, nb)
+        glo, ghi = lo0, hi0
+        dist = np.zeros(nb)
+
+        def edges(centers):
+            step = centers[1] - centers[0]
+            return np.concatenate([centers - step / 2.0, [centers[-1] + step / 2.0]])
+
+        out15 = np.full(n, np.nan)
+        out85 = np.full(n, np.nan)
+        for i in range(n):
+            if np.isfinite(tr[i]):
+                dist *= 1.0 - min(max(tr[i], 0.0), 100.0) / 100.0
+            if np.isfinite(v[i]) and v[i] > 0:
+                if l[i] < glo or h[i] > ghi:
+                    nlo, nhi = min(glo, l[i]), max(ghi, h[i])
+                    ng = np.linspace(nlo, nhi, nb)
+                    oe, ne = edges(grid), edges(ng)
+                    cdf = np.concatenate([[0.0], np.cumsum(dist)])
+                    mass = np.interp(ne[1:], oe, cdf) - np.interp(ne[:-1], oe, cdf)
+                    mass = np.clip(mass, 0.0, None)
+                    if mass.sum() > 0:
+                        mass *= dist.sum() / mass.sum()
+                    dist, grid, glo, ghi = mass, ng, nlo, nhi
+                step = grid[1] - grid[0]
+                if h[i] - l[i] < 1e-12:
+                    dist[int(np.clip(round((l[i] - grid[0]) / step), 0, nb - 1))] += v[i]
+                else:
+                    a = max(int(np.ceil((l[i] - grid[0]) / step - 1e-9)), 0)
+                    b = min(int(np.floor((h[i] - grid[0]) / step + 1e-9)), nb - 1)
+                    if b >= a:
+                        dist[a : b + 1] += v[i] / (b - a + 1)
+            tot = dist.sum()
+            if tot <= 0:
+                continue
+            cum = np.cumsum(dist) / tot
+            out15[i] = grid[min(int(np.searchsorted(cum, 0.15)), nb - 1)]
+            out85[i] = grid[min(int(np.searchsorted(cum, 0.85)), nb - 1)]
+
+        eng_out = eng(df["high"], df["low"], df["close"], df["volume"], df["turnover_rate"], n_bins=nb)
+        tail = slice(-20, None)
+        np.testing.assert_allclose(eng_out["chips_cost_15"].to_numpy()[tail], out15[tail], atol=1e-9)
+        np.testing.assert_allclose(eng_out["chips_cost_85"].to_numpy()[tail], out85[tail], atol=1e-9)
 
 
 # ============== CYC ==============
@@ -369,7 +516,8 @@ class TestDegradation:
         """缺换手率列必须软降级（禁 ValueError——provider 逐标的异常会跳过整标的）。"""
         df = _make_chips_ohlcv(30).drop(columns=["turnover_rate"])
         assert len(CYQ().compute(df)) == 0
-        assert len(SCR().compute(df)) == 0
+        s = SCR().compute(df)
+        assert len(s) == 30 and s["scr"].isna().all()  # NaN 列形态（不抛）
         r = CYC().compute(df)  # CYC 部分降级
         assert "cyc_inf" in r.columns and r["cyc_inf"].isna().all()
 

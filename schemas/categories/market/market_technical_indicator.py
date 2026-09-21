@@ -269,8 +269,12 @@ CREATE TABLE IF NOT EXISTS c1_market.technical_indicator
     chips_winner   Nullable(Float64)  COMMENT 'CYQ获利盘比例(成本<=收盘的筹码占比[0,1],换手率衰减模型)',
     chips_avg_cost Nullable(Float64)  COMMENT 'CYQ平均成本(筹码分布质量加权均价)',
     chips_cost_5   Nullable(Float64)  COMMENT 'CYQ成本5%分位价',
+    chips_cost_15  Nullable(Float64)  COMMENT 'CYQ成本15%分位价(批10扩项,集中度70原料)',
+    chips_cost_85  Nullable(Float64)  COMMENT 'CYQ成本85%分位价(批10扩项,集中度70原料)',
     chips_cost_95  Nullable(Float64)  COMMENT 'CYQ成本95%分位价',
-    scr            Nullable(Float64)  COMMENT '筹码集中度(100×(cost95-cost5)/(cost95+cost5),越小越集中)',
+    scr            Nullable(Float64)  COMMENT '筹码集中度(100×(cost95-cost5)/(cost95+cost5)=集中度90,越小越集中)',
+    conc_90        Nullable(Float64)  COMMENT 'CHIP_CONC_90集中度90(100×(cost95-cost5)/(cost95+cost5),与SCR同公式,通达信命名族)',
+    conc_70        Nullable(Float64)  COMMENT 'CHIP_CONC_70集中度70(100×(cost85-cost15)/(cost85+cost15))',
     cyc_5          Nullable(Float64)  COMMENT '5日成本均线(Σamount/Σvolume)',
     cyc_13         Nullable(Float64)  COMMENT '13日成本均线(Σamount/Σvolume)',
     cyc_34         Nullable(Float64)  COMMENT '34日成本均线(Σamount/Σvolume)',
@@ -342,8 +346,9 @@ INSERT_COLUMNS = (
     # 成交量类
     "obv, mfi_14, vwap, vr_26, ad, pvt, wvad_24, vwma_20, adosc, eom_14, kvo, kvo_signal, nvi, pvi, fi_13, "
     "wad, vo, marketfi, "
-    # 筹码族（批10：输入含换手率，仅 daily 周期有值，其余周期 NULL）
-    "chips_winner, chips_avg_cost, chips_cost_5, chips_cost_95, scr, cyc_5, cyc_13, cyc_34, cyc_inf, "
+    # 筹码族（批10：输入含换手率，仅 daily 周期有值，其余周期 NULL；批10 扩项+cost_15/85+conc_90/70）
+    "chips_winner, chips_avg_cost, chips_cost_5, chips_cost_15, chips_cost_85, chips_cost_95, "
+    "scr, conc_90, conc_70, cyc_5, cyc_13, cyc_34, cyc_inf, "
     # 反转类
     "rsi_divergence, macd_divergence, boll_breakout, vol_price_div, "
     # 元数据
