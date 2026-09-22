@@ -3431,6 +3431,51 @@ tasks:
   extra:
     description: "打板四引擎应用层负载日批（T3⑧/挖矿 LUE-1：连板/开板次数/首触/封板分钟/封单额/流通市值/个股涨幅/板块与全市场封板家数/宽度/大盘涨幅；触发=盘后 daily_kline 事件批 → internal_compute_provider._fetch_daban_engine_load 逐交易日驱动 ex_core.daban_load_producer.run_daily_batch（口径真源在生产者，路由件零业务复制），落表由调度器写通道承担；derived_fields 逐字段 real|default 留痕，不可产字段省略交引擎中性默认）"
 
+# ============== 投资者行为画像 cohort 日账本（2026-09-22 st-emomine-20260922 闸合拢：admin 通道建表+本任务登记，兑现 st-dloop-20260921 接线声明；表/品类/写入器/路由分支均已就位，本条为最后缺口）==============
+
+- task_id: cohort_ledger_daily
+  table: c1_backtest.cohort_daily_ledger
+  source: internal  # 本地结算（读 money_flow/alt_stock_comment/margin_trading/dragon_tiger(_seat)/daban_board_event/block_trade/kline_daily，不从外部API拉取）
+  schedule: daily_kline    # 盘后批（PIT：trade_date=业务日，builder 只用 ≤当日收盘数据）
+  incremental: true    # 逐交易日驱动（ReplacingMergeTree (cohort_id, metric_id, trade_date) 同键重放幂等）
+  date_col: trade_date
+  dependencies: ["money_flow_incremental", "margin_trading_incremental", "dragon_tiger_incremental", "block_trade_incremental"]    # [DAG-DERIVED] 依 cohort_daily_ledger 模块头声明四原料；derive_task_dependencies.py 重扫可校正    # DAG: 原料四表盘后落库后才有结算原料
+  capability: cohort_daily_ledger
+  symbols:         # null=全市场聚合（人群×指标长表行）
+  fallback_sources: []    # internal 结算源天然无副源
+  extra:
+    description: "投资者行为画像五人群日账本结算（WORK-ORDER-5 一期：retail/leverage/hot_money/inst_config/industry 留位；触发=盘后 daily_kline 原料批 → internal_compute_provider._fetch_cohort_daily 逐交易日驱动 zephyr.alt_data.cohort_daily_writer.write_cohort_daily（写入器=唯一写入口，strict 通道 fail-visible；行由写入器直落表，FetchResult 零行防框架二次插行=防双写）；行=人群×指标+state 四态+proxy_source 溯源+bias_note 偏差注记）"
+
+# ============== 情绪指数日批（2026-09-22 st-emomine-20260922，骨架 v0.2/契约 v0.1：六成分等权，独立状态变量=场内温度计，禁 fear_greed 异轴顶替）==============
+
+- task_id: emotion_index_close_final
+  table: c1_market.emotion_index
+  source: internal  # 本地聚合（daban_board_event/kline_daily/kline_index/margin_trading/news_sentiment_window，零新采集）
+  schedule: daily_kline    # 盘后批（收盘定格真源态 15:10）
+  incremental: true    # 逐交易日驱动（ReplacingMergeTree (trade_date, stage) 同键重放幂等）
+  date_col: trade_date
+  dependencies: ["daban_board_event_derive", "kline_daily_incremental", "kline_index_incremental", "margin_trading_incremental"]    # [DAG-DERIVED] 表级血缘手工声明，derive_task_dependencies.py 重扫可校正    # DAG: 成分原料盘后落库后才有聚合原料
+  capability: emotion_index
+  symbols:         # null=全市场聚合
+  fallback_sources: []
+  extra:
+    stage: close_final
+    description: "情绪指数收盘定格态（六成分 C1涨停温度/C2晋级率/C3广度/C4量能/C5杠杆as-of/C6新闻，滚动250观测分位+可用成分等权，观测<120→insufficient权重重分配禁硬凑；触发=盘后原料批 → internal_compute_provider._fetch_emotion_index 逐交易日驱动 zephyr.alt_data.emotion_index_builder.build_emotion_index（纯计算零写库），行交调度器写通道）"
+
+- task_id: emotion_index_pre_open
+  table: c1_market.emotion_index
+  source: internal
+  schedule: pre_market    # 盘前批（T 日 09:15：C1-C4 复用 T-1 收盘态 + C5/C6 as-of T 重算）
+  incremental: true
+  date_col: trade_date
+  dependencies: []    # [DAG-DERIVED] as-of 语义自洽：滞后成分取最近可得日，不硬依赖前夜任务    # DAG: 盘前独立重算
+  capability: emotion_index
+  symbols:
+  fallback_sources: []
+  extra:
+    stage: pre_open
+    description: "情绪指数盘前态（同六成分；时戳纪律：T 日收盘态=T+1 盘前输入，C1-C4 沿用 close_final 值 asof 标注，C5 两融/C6 新闻 as-of T 重算；ts=T 日 09:15 Asia/Shanghai）"
+
 # ============== 商品期货主力连续+商品现货基差（2026-09-17 新增，照生猪数据接入模式复制，st-igalpha-20260917）==============
 
 - task_id: commodity_futures_main_refresh
@@ -3764,6 +3809,9 @@ tasks:
 # task_id（写错任务永远排不上）；表建表=Owner 门位（apply 三常量随批恢复注册），
 # 表未建期间 insert 失败 fail-visible 不静默。全资产净零：无既有条目可承载
 # cohort 日结算职能（builder main 仅 --sample 纯计算零写库），+1 条目。
+# 写入器收敛（2026-09-22 st-dloop-20260921，Owner 批 wiring_proposals §A）：路由分支
+# 委托 zephyr.alt_data.cohort_daily_writer（strict 通道+fail-open），不走框架插行双写；
+# extra.trading_day_only 补齐（同 anchored_state_build 口径，非交易日 skip 防 missing 行污染）。
 - task_id: cohort_ledger_daily
   table: c1_backtest.cohort_daily_ledger
   source: internal
@@ -3774,6 +3822,27 @@ tasks:
   capability: cohort_daily_ledger
   symbols:
   extra:
-    description: "五人群投资者行为日账本结算（融资融券/大宗/龙虎榜/资金流四增量当日落库后跑 builder 纯计算+insert 主路径；真源 schemas/categories/cohort_daily_ledger.py + zephyr.alt_data.cohort_daily_ledger）"
+    description: "五人群投资者行为日账本结算（融资融券/大宗/龙虎榜/资金流四增量当日落库后经 cohort_daily_writer strict 通道落 c1_backtest.cohort_daily_ledger，ReplacingMergeTree 同键幂等；真源 schemas/categories/cohort_daily_ledger.py + zephyr.alt_data.cohort_daily_ledger）"
+    trading_day_only: true    # 依赖当日四原料盘后数据（同 anchored_state_build；节假日 skip 防降级行污染）
 
   fallback_sources: []    # internal 计算源天然无副源
+
+# 期权官方每日统计（工单#3+#14 期权PCR数据批 2026-09-22 st-xhs-full-20260922）：
+# 交易所官方日统计新表（成交量/持仓量PCR 唯一真源面），规格=collection_intake/factors/factor_spec_options_pcr.md；
+# DDL 真源 schemas/categories/market/market_option_daily_stats.py（apply --verify 实测一致）。
+# 全资产净零注记：官方统计级新对象，与 option_kline（合约级K线）跨域不同对象不并。
+# 深度实测：SSE 自 2015-02-09，SZSE 约 2019-12 起；历史回补走 scripts/data/backfill_option_daily_stats.py。
+- task_id: option_daily_stats_daily
+  table: c1_market.option_daily_stats
+  source: akshare
+  schedule: daily_kline
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: option_daily_stats
+  symbols:
+  extra:
+    description: "期权官方每日统计增量（akshare option_daily_stats_sse/szse 官方接口：认认购成交量/未平仓合约数/总成交额+成交量PCR/持仓量PCR；成交额拆分官方不提供，三列预留恒0）"
+    trading_day_only: true
+
+  fallback_sources: []

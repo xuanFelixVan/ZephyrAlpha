@@ -30,6 +30,7 @@
 # 模块名条目。
 __all__ = [
     "cohort_daily_ledger",
+    "emotion_index_builder",
     "concept_factor_mapper",
     "filing_nlp_engine",
     "policy_theme_mapper",

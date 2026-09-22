@@ -29,12 +29,13 @@ from __future__ import annotations
 # NOTE(P1W11 2026-08-25): 同态归一 api_llm_pool / model_drift_detector。
 # NOTE(P1W09 2026-08-25): 同态归一 llm_market_interpreter。
 __all__: list[str] = [
-    "api_llm_pool",
-    "llm_market_interpreter",
-    "model_drift_detector",
-    "llm_fundamental_analysis",
+    "NewsLlmScorer",
     "agent_memory_architecture",
-    "llm_agent_router",
+    "api_llm_pool",
     "episodic_memory_store",
+    "llm_agent_router",
+    "llm_fundamental_analysis",
+    "llm_market_interpreter",
     "local_llm_pool",
+    "model_drift_detector",
 ]

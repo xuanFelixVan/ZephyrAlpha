@@ -119,6 +119,7 @@ _INTERNAL_COMPUTE_CAPABILITIES = frozenset(
         "kline_index_breadth",  # 指数涨跌家数内生聚合回填真表（车道 G 广度治本 2026-09-16）
         "breadth_freshness_sentinel",  # 广度断供哨兵→promotion 页（车道 G 施工项3 同日）
         "index_adjustment_derive",  # J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918，月度快照差分）
+        "cohort_daily_ledger",  # 五人群日账本结算→cohort_daily_writer strict 通道（Owner 批 2026-09-21 wiring_proposals §A；st-dloop-20260921 声明补齐，CAP-CONSISTENCY 先例防拦）
     }
 )
 
@@ -127,6 +128,7 @@ _TBL_LIMIT_UP_POOL = get_registry().table("market_limit_up_pool")
 _TBL_DABAN_BOARD_EVENT = get_registry().table("market_daban_board_event")
 _TBL_DABAN_ENGINE_LOAD = get_registry().table("market_daban_engine_load")
 _TBL_COHORT_DAILY_LEDGER = get_registry().table("cohort_daily_ledger")
+_TBL_EMOTION_INDEX = get_registry().table("market_emotion_index")
 _TBL_CONSENSUS_DAILY_REPAIRED = get_registry().table("fund_consensus_daily_repaired")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀的常量定义行）
@@ -522,6 +524,9 @@ class InternalComputeProvider(IngestProviderBase):
             # builder 纯计算（zephyr.alt_data.cohort_daily_ledger），路由分支逐交易日驱动，
             # dict 行按 schemas INSERT_COLUMNS 序转元组交框架 insert 主路径，symbols=null 全表
             CapabilityContract("cohort_daily_ledger", supports_symbols_null=True),
+            # 情绪指数日批（st-emomine-20260922，骨架 v0.2）：builder 纯计算，路由分支
+            # 逐交易日驱动，extra.stage 分档 close_final/pre_open，行交框架写通道
+            CapabilityContract("emotion_index", supports_symbols_null=True),
         ],
         known_issues=[],
     )
@@ -588,6 +593,9 @@ class InternalComputeProvider(IngestProviderBase):
             return
         if capability == "cohort_daily_ledger":
             yield from self._fetch_cohort_daily(payload)
+            return
+        if capability == "emotion_index":
+            yield from self._fetch_emotion_index(payload)
             return
 
         # 按 table 路由：calendar_event 走日历事件派生，hk_trade_calendar 走 XHKG 日历，
@@ -1264,35 +1272,88 @@ class InternalComputeProvider(IngestProviderBase):
     # ---- J4 指数调仓事件派生（2026-09-18 夜班 st-datapack-20260918，altdata_line D1 波1） ----
 
     def _fetch_cohort_daily(self, payload: FetchPayload) -> Iterator[FetchResult]:
-        """投资者行为画像五人群日账本结算（TC-08 步骤3/WORK-ORDER-5 接线）。
+        """投资者行为画像五人群日账本结算路由分支（cohort_daily_ledger capability 命名约定实现）。
 
-        逐交易日（_trade_days_guarded 周末守卫）调 build_cohort_daily（纯计算，
-        PIT 只读 <=当日收盘数据），dict 行按 schemas INSERT_COLUMNS 序转元组交
-        框架 insert 主路径落 c1_backtest.cohort_daily_ledger。单人群失败已在
-        builder 内降级 missing 行；整日构建异常 fail-visible 写 FetchResult.error，
-        不伪造空成功。
+        写入器收敛（Owner 批 2026-09-21 wiring_proposals §A + 2026-09-22 收敛裁定
+        st-dloop-20260921）：委托 zephyr.alt_data.cohort_daily_writer.write_cohort_daily——
+        ch_writer strict 通道落库（fail-visible）+ 写入器层 fail-open（不抛，出声记
+        committed=False）。本分支只做逐交易日驱动与记账 FetchResult：rows 恒空
+        （行已由写入器直落表，禁再交框架插行=双写），rows_fetched=实写行数供游标推进，
+        committed=False 转 error 记任务失败（不伪造空成功，daban 契约同款）。
         """
-        start_time = time.monotonic()
-        from schemas.categories.cohort_daily_ledger import INSERT_COLUMNS
-        from zephyr.alt_data.cohort_daily_ledger import build_cohort_daily
+        from zephyr.alt_data.cohort_daily_writer import write_cohort_daily
 
-        columns = [c.strip() for c in INSERT_COLUMNS.strip("()").split(",")]
-        rows: list[tuple] = []
-        err = ""
-        try:
-            for day in self._trade_days_guarded(payload.start, payload.end):
-                for rec in build_cohort_daily(day.isoformat()):
-                    rows.append(tuple(rec[c] for c in columns))
-        except Exception as e:  # noqa: BLE001 — fail-visible：错误面交调度器记账，禁吞成空成功
-            err = f"cohort_daily_ledger 构建失败: {type(e).__name__}: {e}"
-            self._log.warning("%s", err)
+        start_time = time.monotonic()
+        rows_total = 0
+        errors: list[str] = []
+        for day in self._trade_days_guarded(payload.start, payload.end):
+            summary = write_cohort_daily(day.isoformat())
+            if summary.get("committed"):
+                rows_total += int(summary.get("rows", 0))
+            else:
+                errors.append(f"{summary.get('day', day.isoformat())}: {summary.get('error')}")
         yield FetchResult(
             table=_TBL_COHORT_DAILY_LEDGER,
-            columns=columns,
-            rows=rows,
+            columns=[],  # 行已由写入器 strict 通道直落表；本结果仅记账，防框架二次插行
+            rows=[],
             last_key=payload.end.isoformat(),
             elapsed_sec=time.monotonic() - start_time,
-            error=err or None,
+            rows_fetched=rows_total,
+            error="; ".join(errors) if errors else None,
+        )
+
+    def _fetch_emotion_index(self, payload: FetchPayload) -> Iterator[FetchResult]:
+        """情绪指数日批路由分支（emotion_index capability，st-emomine-20260922 施工）。
+
+        委托 zephyr.alt_data.emotion_index_builder.build_emotion_index（纯计算，零写库）；
+        extra.stage 分档 close_final（盘后 daily_kline）/ pre_open（盘前 pre_market），
+        逐交易日驱动，行（trade_date/stage/ts/emotion_index/components JSON/version）交
+        框架写通道（单写通道，ReplacingMergeTree (trade_date, stage) 同键重放幂等）。
+        全成分不可产的日子跳过（builder 返回 None 禁拍假值）；单日异常记账不拖垮窗口。
+        """
+        import json as _json
+        import time as _time
+
+        from schemas.categories.market.market_emotion_index import INSERT_COLUMNS
+        from zephyr.alt_data.emotion_index_builder import (
+            STAGE_CLOSE_FINAL,
+            STAGE_PRE_OPEN,
+            build_emotion_index,
+        )
+
+        extra = payload.extra if isinstance(payload.extra, dict) else {}
+        stage = extra.get("stage", STAGE_CLOSE_FINAL)
+        if stage not in (STAGE_CLOSE_FINAL, STAGE_PRE_OPEN):
+            raise ValueError(f"emotion_index 未知 stage: {stage}")
+        cols = [c.strip() for c in INSERT_COLUMNS.strip("()").split(",") if c.strip()]
+        start_time = _time.monotonic()
+        rows: list[tuple] = []
+        errors: list[str] = []
+        for d in self._trade_days_guarded(payload.start, payload.end):
+            try:
+                row = build_emotion_index(d.isoformat(), stage=stage)
+            except Exception as e:  # noqa: BLE001 — 单日异常记账不拖垮窗口
+                errors.append(f"{d.isoformat()}: {type(e).__name__}: {e}")
+                continue
+            if row is None:
+                continue
+            rows.append(
+                (
+                    row["trade_date"],
+                    row["stage"],
+                    row["ts"],
+                    row["emotion_index"],
+                    _json.dumps(row["components"], ensure_ascii=False),
+                    row["version"],
+                )
+            )
+        yield FetchResult(
+            table=_TBL_EMOTION_INDEX,
+            columns=cols,
+            rows=rows,
+            last_key=payload.end.isoformat(),
+            elapsed_sec=_time.monotonic() - start_time,
+            error="; ".join(errors) if errors else None,
         )
 
     def _fetch_index_adjustment_derive(self, payload: FetchPayload) -> Iterator[FetchResult]:
