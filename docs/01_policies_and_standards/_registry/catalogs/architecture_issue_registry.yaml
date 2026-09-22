@@ -22464,3 +22464,19 @@ entries:
     2026-09-30"。5 份阴性审查件于到期日（09-30）复核：仍阴性→转 A 归档/删除需逐项批；转阳→立卡。位置见
     w9_triage_ledger 对应行。本议题即到期复核的挂账载体（台账销行后由本议题续命）。
   related_rulings: []
+- issue_id: '#ARCH-359'
+  title: '图书馆宪法挂图审批登记（AGENTS.md 上下文预算·细节检索序加图书馆入口一行）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-09-22'
+  last_updated: '2026-09-22'
+  owner: 'Owner（裁定#398七+#399四）'
+  description: >-
+    Owner 已批图书馆宪法挂图：裁定#398 七（方案批准：等长一行入口进宪法细节检索序条目，指向
+    docs/library/INDEX.md 与 python -m zephyr.library.lookup；"实际改动保留 Owner 一句确认"）
+    与裁定#399 四（Owner 夜批确认）。PROTECTED-PATHS gate 的 [ARCH-APPROVAL] 标记正则仅认
+    ARCH-* 议题号，本议题即该正门标记的登记载体：修宪 commit message 挂
+    [ARCH-APPROVAL:#ARCH-359]，审批真源=裁定#398 七与裁定#399 四，gate 逃生审计+本登记双留痕。
+    内容=检索序条目单行等长替换（+1/-1），宪法 300 行硬上限不变。
+  related_rulings: ['裁定#398', '裁定#399']

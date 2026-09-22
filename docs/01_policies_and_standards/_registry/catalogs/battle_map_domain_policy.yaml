@@ -17,9 +17,9 @@
 #   - buy_flow: D_SELL_DECISION(1) + D_FRONTEND(1)
 #   - stock_selection: D_PF_CORE(3) + D_PF_ALLOC(2)
 
-policy_version: "1.1.0"
+policy_version: "1.2.0"
 policy_status: active
-last_updated: "2026-08-06"
+last_updated: "2026-09-18"
 decision_basis: "battle_map_positioning.md §3.1 L0-L6 分层架构 + §3.6 作战阶段与架构层对应关系"
 
 # ===== 裁定原则（2026-08-04，Owner 拍板，作为未来域归属裁定的标准）=====
@@ -64,6 +64,7 @@ flow_stage_allowed_domains:
       - D_INFRA_RUNTIME       # 运行时（基础设施）
       - D_SHARED              # 共享服务
       - D_SIGQC               # 信号质量控制（因子/信号质量门禁，2026-08-03 补入）
+      - D_REGIME              # 体制识别（选股决策输入；本 policy §acknowledged_orphans MOD-REGIME-001/002/005 明文「实现后挂 stock_selection 环节」，2026-09-18 与骨架 §3.3 对齐补录）
     forbidden_rationale:
       D_PF_CORE: "组合核心属仓位管理域，选股阶段不应承载组合决策"
       D_PF_ALLOC: "组合分配属仓位管理域，选股阶段不应承载仓位分配"
@@ -219,6 +220,88 @@ flow_stage_allowed_domains:
       D_FRONTEND: "前端不属于作战决策"
       D_SELL_DECISION: "卖出决策属卖出阶段（止损触发走卖出，但风控策略本身不属卖出）"
 
+# ===== 横切/平台环节域兜底（V1.2.0，2026-09-18，治本 BRK-080）=====
+# 根因：flow_stage_allowed_domains 的 11 阶段并集只覆盖部分 depgraph 域，其余域在作战地图
+#   体系中无环节归属 → 域归属链断裂（全流通战役普查 BRK-080）。
+# 治本：把骨架 skeleton/00_stage_skeleton.md §3.3 的 FF-13..FF-16 兜底收编回写进本 policy
+#   并由 align_battle_map.py BM-INV-008 机械校验「每个 depgraph 域都有环节归属」。
+# 语义：kind=cross_cutting 段**不是** battle_map flow_stage（DB 无此取值），故不进 BM-INV-004；
+#   它只承担「域→环节归属」这一件事，铁律5（工具域不挂作战地图）不再等于「域无归属」。
+cross_cutting_stage_domain_coverage:
+  cross_cutting_mechanisms:
+    stage_id: FF-13
+    stage_name_zh: 「横切机制层」
+    kind: cross_cutting
+    authoritative_source: 「docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/battle_map_12_cross_cutting.md」
+    domains: []
+    note_zh: 「CC_01..CC_17 是跨域机制而非域对象，故本段不声明域；域覆盖校验按空集参与」
+
+  governance_operations_substrate:
+    stage_id: FF-14
+    stage_name_zh: 「治理运行底板」
+    kind: cross_cutting
+    authoritative_source: 「config/governance_operations_map.yaml」
+    domains:
+      - D_ARCHIVE_SCRIPTS
+      - D_ARCH_GUARD
+      - D_ARCH_SCRIPTS
+      - D_AUDITTEST
+      - D_CODE_SCRIPTS
+      - D_COMPLIANCE_SCRIPTS
+      - D_CONTRACTS
+      - D_DATA_SCRIPTS
+      - D_GOVERNANCE
+      - D_GOV_AUDIT
+      - D_GOV_CODE_QUALITY
+      - D_GOV_DOCS
+      - D_GOV_DRIFT
+      - D_GOV_ENFORCEMENT
+      - D_GOV_OPS_RESILIENCE
+      - D_GOV_REPAIR
+      - D_GOV_RULE
+      - D_GOV_SCRIPTS
+      - D_INFRASTRUCTURE
+      - D_INFRA_OPS
+      - D_INFRA_RECOVERY
+      - D_META_SCRIPTS
+      - D_SEC_SCRIPTS
+      - D_SIGLEGACY
+      - D_STRUCT_SCRIPTS
+      - D_TEST
+  ai_autonomy_runtime:
+    stage_id: FF-15
+    stage_name_zh: 「AI 自治运行时」
+    kind: cross_cutting
+    authoritative_source: 「docs/02_enterprise_architecture/09_ai_architecture/derived_graphs/」
+    domains:
+      - D_AUTONOMY_CORE
+      - D_AUTONOMY_PERM
+      - D_INFRA_A2A
+      - D_INTEGRATION_GATEWAY
+      - D_SECURITY_LLM
+  delivery_channel_shared_substrate:
+    stage_id: FF-16
+    stage_name_zh: 「交付通道与共享运行时底座」
+    kind: cross_cutting
+    authoritative_source: 「config/flags.yaml + architecture_model/frontend/frontend_map.yaml」
+    domains:
+      - D_FRONTEND
+      - D_INFRA_TELEMETRY
+  coverage_totals_note_zh: 「本段并集 ∪ flow_stage_allowed_domains 并集 MUST 覆盖 depgraph 全部域；计数由 BM-INV-008 现算，禁在本文件手写（宪法 §4.3）」
+
+# ===== 幻影域引用显式登记（V1.2.0，2026-09-18，治本 BRK-079）=====
+# 下列 domain_id 被本 policy 引用但 depgraph 域全集不含它们 → BM-INV-004 对其永远空转。
+# 它们均是 FDR 在册、depgraph 已无的 *_legacy 退役域；注册表净删属 Owner 门位，
+# 本车道不删条目，只做显式登记 + 让 BM-INV-008 把「新增幻影引用」判红。
+retired_domain_references:
+  validation_rule: 「BM-INV-008：被引用域 ∈ depgraph 全集 ∪ entries 声明集，否则判幻影域违规」
+  entries:
+  - domain_id: D_SIGNAL
+    referenced_in: [flow_stage_allowed_domains.stock_selection.allowed, domain_classification.business_domains]
+    reason_zh: 「FDR 在册（subdomain=signal_legacy）、depgraph 已无节点=退役未清；保留引用以维持历史可追溯」
+    owner_gate: 「FDR 4 个 *_legacy 域净删（D_EXECUTION/D_ORDER/D_PORTFOLIO/D_SIGNAL）= Owner 门位，只登记不执行」
+    review_frequency: quarterly
+
 # 校验规则元数据
 validation:
   check_id: "BM-INV-004"
@@ -282,6 +365,7 @@ domain_classification:
     - D_EXEC_SIM            # 执行仿真
     - D_DIGITAL_TWIN        # 数字孪生
     - D_REGIME              # 体制识别（2026-08-06 补入：选股决策输入，解决 MOD-REGIME-001 域漂移）
+    - D_PLAN                # 预案引擎（2026-09-18 补入，治本 BRK-081：本域已出现在 position_management.allowed，分类册却漏登 = 分类册与白名单册自相矛盾；BM-INV-008 域册自洽检查强制二者一致）
 
   tool_domains:
     # 基础设施/管道/支撑——铁律5不挂作战地图，BM-INV-007 天然排除
@@ -305,6 +389,24 @@ domain_classification:
     - D_INFRA_RECOVERY      # 基础设施恢复（54模块，灾备/恢复，基础设施）
     - D_INFRASTRUCTURE      # 通用基础设施（25模块，未归入具体子域的基础设施）
     - D_AUTONOMY_CORE       # AI自治核心（126模块，Agent主体基础设施，铁律5 Agent主体不挂）
+    - D_ARCHIVE_SCRIPTS  # Archived Scripts（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_ARCH_GUARD  # 架构守护脚本（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_ARCH_SCRIPTS  # 架构治理脚本（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_AUDITTEST  # 审计测试套件（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_AUTONOMY_PERM  # 自治保护（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_CODE_SCRIPTS  # 代码质量脚本（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_COMPLIANCE_SCRIPTS  # 合规治理脚本（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_CONTRACTS  # 共享契约（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_DATA_SCRIPTS  # 数据治理脚本（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_INFRA_OPS  # 基础设施运维（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_INFRA_TELEMETRY  # 可观测性（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_INTEGRATION_GATEWAY  # 集成网关（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_META_SCRIPTS  # 元治理脚本（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_SECURITY_LLM  # LLM防御（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_SEC_SCRIPTS  # 安全治理脚本（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_SIGLEGACY  # 信号遗留设计态（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_STRUCT_SCRIPTS  # 结构治理脚本（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
+    - D_TEST  # Test Domain（2026-09-18 BM-INV-008 治本 BRK-081 补入：脚本/治理/退役壳，不承载交易决策，铁律5 不挂作战地图）
 
   review_frequency: "quarterly"  # 域分类每季度复审（新域加入/旧域退役时更新）
 

@@ -12702,7 +12702,7 @@ strategies:
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-BT-041"
-    doc_ref: "docs/_working/pipeline-research/reports/intake-20260915-1136.yaml（created_sids）+ docs/_working/auto-mount-reports/auto-mount-report-20260915-1147.md"
+    doc_ref: "docs/_working/archive/2026-09/pipeline-research/reports/intake-20260915-1136.yaml（created_sids）+ docs/_working/auto-mount-reports/auto-mount-report-20260915-1147.md"
     code_path: "scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py"
     lifecycle_status: "candidate"
     status: "active"
@@ -12767,7 +12767,7 @@ strategies:
     family_redundancy:
       role: "member"
       absorbed:
-      ruling_ref: "docs/_working/pipeline-research/reports/intake-20260915-1136.md"
+      ruling_ref: "docs/_working/archive/2026-09/pipeline-research/reports/intake-20260915-1136.md"
     code_symbol: "scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py::build"
     code_fingerprint: null
   - strategy_id: "STR-MULTIFACTOR-097"
@@ -12787,7 +12787,7 @@ strategies:
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-L05-001"
-    doc_ref: "docs/_working/pipeline-research/reports/intake-20260915-1136.yaml（created_sids）"
+    doc_ref: "docs/_working/archive/2026-09/pipeline-research/reports/intake-20260915-1136.yaml（created_sids）"
     code_path: "scripts/backtest/translated/c4_fact_4db4c41e.py"
     lifecycle_status: "candidate"
     status: "active"
@@ -12852,7 +12852,7 @@ strategies:
     family_redundancy:
       role: "cluster_head"
       absorbed:
-      ruling_ref: "docs/_working/pipeline-research/reports/intake-20260915-1136.md"
+      ruling_ref: "docs/_working/archive/2026-09/pipeline-research/reports/intake-20260915-1136.md"
     code_symbol: "scripts/backtest/translated/c4_fact_4db4c41e.py::build"
     code_fingerprint: null
   - strategy_id: "STR-MULTIFACTOR-098"
@@ -12872,7 +12872,7 @@ strategies:
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-BT-189"
-    doc_ref: "docs/_working/pipeline-research/reports/intake-20260916-1316.md"
+    doc_ref: "docs/_working/archive/2026-09/pipeline-research/reports/intake-20260916-1316.md"
     code_path: "scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py"
     lifecycle_status: "candidate"
     status: "active"
@@ -12954,7 +12954,7 @@ strategies:
     universe_id: "UNI-RULE-001"
     cost_model_id: "CST-ASTOCK-001"
     module_id: "MOD-BT-189"
-    doc_ref: "docs/_working/pipeline-research/reports/intake-20260916-1316.md"
+    doc_ref: "docs/_working/archive/2026-09/pipeline-research/reports/intake-20260916-1316.md"
     code_path: "scripts/backtest/translated/c4_8664521af1a0_snake_cap.py"
     lifecycle_status: "candidate"
     status: "active"

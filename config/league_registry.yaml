@@ -1,0 +1,49 @@
+# A/B 联赛注册表（league registry v0）——TC-11 件1 施工批（st-taskcards-exec-20260921，2026-09-21）
+# 真源边界：本文件=联赛组席位/参赛档案路径/判定窗挂单的唯一登记真源；
+#   消费件=scripts/backtest/league_registry.py（加载/校验/挂单 API）、league_archive.py、
+#   league_restore.py、league_monthly_snapshot.py（均只读本文件，挂单经 league_registry.py 回写）。
+# 判定口径（裁定源=HANDOFF_20260921_ab_league.md 第 2 节件1 + tc_11 卡）：
+#   首组参赛日起 6 个月终审一次性；判定器复用 promotion_combo_gate（本体零修改），
+#   尺=STD-SIM-ACCESS-001（frozen），切换判据参照 STD-SWITCH-001（draft，#305 已登记
+#   draft_upgrade_eligible——终审时点以当日标准库状态为准，本文件不复制阈值防漂移）。
+# 月度快照只留档不判胜负（league_monthly_snapshot.py 产出 snapshot-YYYYMM.md）。
+schema_version: 0.1.0
+doc_type: config
+ttl: permanent
+title: A/B 联赛注册表（league registry v0）
+status: active
+updated_at: "2026-09-21T00:00:00+00:00"
+review_policy:
+  window_months: 6
+  judge: scripts/backtest/promotion_combo_gate.py
+  judge_std_id: STD-SIM-ACCESS-001
+  switch_std_id: STD-SWITCH-001
+  snapshot_dir: data/backtest_artifacts/league
+  archive_root: data/backtest_artifacts/league/archive
+groups:
+  - group_id: A
+    name_zh: A 组（champion 初始席位）
+    status: champion            # champion | challenger | retired
+    joined_date: "2026-09-21"
+    members: []                 # strategy_id 清单（组合入组时回填）
+    archive_path: ""            # 参赛档案目录（league_archive.py 产出后回填）
+    review_window:
+      start: "2026-09-21"
+      months: 6
+      due: "2027-03-21"
+      review_scheduled: false   # 6 个月终审挂单登记位（league_registry.py --schedule-review 回写）
+      scheduled_at: null
+      note: ""
+  - group_id: B
+    name_zh: B 组（challenger 初始席位）
+    status: challenger
+    joined_date: "2026-09-21"
+    members: []
+    archive_path: ""
+    review_window:
+      start: "2026-09-21"
+      months: 6
+      due: "2027-03-21"
+      review_scheduled: false
+      scheduled_at: null
+      note: ""
