@@ -122,7 +122,9 @@ _MAX_CAS_RETRIES = 6  # dev CAS 冲突重试上限（66 号 §8：重放产生�
 # 上限 3→6（2026-09-16 q-20260916-st-consrep-20260916-0013 死信实证）：8 会话并发期
 # 单轮落地 ~70s，3 次重试全被队列外写入者插队耗尽 → 无辜物品死信回退人工。CAS 重放
 # 幂等（同内容 commit），提高上限不产生分叉，只是把"人工 requeue"换成"自动重同步"。
-_GIT_TIMEOUT_SECONDS = _get_threshold("git_operations.commit_queue_git_timeout_seconds", 120)  # 治本(AI-20 P0③): 从SSoT读取；与 worktree_pool.run_git 同款
+_GIT_TIMEOUT_SECONDS = _get_threshold(
+    "git_operations.commit_queue_git_timeout_seconds", 120
+)  # 治本(AI-20 P0③): 从SSoT读取；与 worktree_pool.run_git 同款
 # 全局提交锁等待（2026-09-16 q-…-0009/0010/0011 死信实证）：gateway 缺省 60s 在并发
 # 提交期必然撞锁（另一会话正 commit），而锁争用是**瞬态**——排队等待即可落地，死信是
 # 假失败。落地侧把等待放宽到 300s（队列本就异步、无交互延迟预算），并把仍超时归为
@@ -217,8 +219,16 @@ class _RegistryEntryBlock:
     text: str  # 原文块（keepends，含行尾）
 
 
-def _split_registry_entries(text: str) -> tuple[dict[str | None, _RegistryFamily], str | None]:
+def _split_registry_entries(
+    text: str, identity_fn: object | None = None
+) -> tuple[dict[str | None, _RegistryFamily], str | None]:
     """YAML 文本 → {顶层 list 键: 族切分}（yaml.compose 节点行号法，原文块零重排）。
+
+    Args:
+        identity_fn: 可选 ``(family_key, entry_data) -> str | None``——夜班手术二a
+            （st-nightfix-20260923）族身份作用域化钩子；None=默认复合键
+            （_merge_entry_identity）。渲染自检必须与切分用同一 fn，否则身份集
+            比对必假漂移。
 
     Returns:
         (families, error)；解析失败/结构非 mapping+list 组合时 error 非 None。
@@ -254,9 +264,7 @@ def _split_registry_entries(text: str) -> tuple[dict[str | None, _RegistryFamily
             # PyYAML end_mark 指向节点结束后的位置——block 条目下恰是**下一条目的
             # start**（实测 end_mark.line == next.start_mark.line），故同族内用
             # 「下一 start-1」截尾最可靠；族末条目受族右边界约束。
-            hard_bound = (
-                min(item_nodes[i + 1].start_mark.line, end_bound) if i + 1 < len(item_nodes) else end_bound
-            )
+            hard_bound = min(item_nodes[i + 1].start_mark.line, end_bound) if i + 1 < len(item_nodes) else end_bound
             end = max(min(item_node.end_mark.line, hard_bound - 1, len(lines) - 1), start)
             block_text = "".join(lines[start : end + 1])
             try:
@@ -268,7 +276,7 @@ def _split_registry_entries(text: str) -> tuple[dict[str | None, _RegistryFamily
                 data = data[0]
             blocks.append(
                 _RegistryEntryBlock(
-                    identity=_merge_entry_identity(data),
+                    identity=(_merge_entry_identity(data) if identity_fn is None else identity_fn(list_key, data)),
                     data=data,
                     start=start,
                     end=end,
@@ -322,6 +330,43 @@ def _merge_entry_identity(data: object) -> str | None:
     if isinstance(token, (str, int, float)) and token is not None:
         return f"{base}|token={token}"
     return base
+
+
+# 夜班手术二a（st-nightfix-20260923，Lane 0b 授权）：module_translation_registry
+# 族身份作用域化。实测缺陷：该册 entries/algo_submodules 两族合法持同 module_path
+# 多条（HEAD 7196/968 条实测 194 个 module_path 多条形态），默认首标量单键一进
+# 合并即"同侧身份键重复"死信——翻译册落地结构性死锁，逼出直连绕行
+# （a0562e88f2 批A 同款死两次实证）。真键取条目内判别字段（dispatch ②a：
+# "module_path+条目内 term 级"；entries 族无 term 字段，实测判别=name 级）。
+_TRANSLATION_REGISTRY_SUFFIX = "module_translation_registry.yaml"
+
+
+def _translation_family_identity(family_key: str | None, data: object) -> str | None:
+    """翻译册族真键：entries=(module_path,name_zh,name_en)，algo_submodules=(module_path,node_id)。
+
+    module_path 缺失/非标量 → 退默认复合键（判不了不硬造）；非 dict → None（死信方向）。
+    """
+    if not isinstance(data, dict):
+        return None
+    base = _merge_entry_identity(data)
+    mp = data.get("module_path")
+    if not isinstance(mp, str) or not mp:
+        return base
+    if family_key == "algo_submodules":
+        node = data.get("node_id")
+        return f"{base}|mp={mp}|node={node}" if node else base
+    nz = data.get("name_zh")
+    ne = data.get("name_en")
+    if not (nz or ne):
+        return base
+    return f"{base}|mp={mp}|name={nz}|{ne}"
+
+
+def _family_identity_fn(rel_path: str):
+    """按文件路由族身份函数：翻译册→族真键；其余注册表→默认复合键（零漂移）。"""
+    if rel_path.replace("\\\\", "/").endswith(_TRANSLATION_REGISTRY_SUFFIX):
+        return _translation_family_identity
+    return None
 
 
 def _extract_entry_paths(data: object) -> list[str]:
@@ -474,10 +519,14 @@ def _plan_insert_splices(
         target = ours_families.get(t_fam_key)
         if target is None:
             return [], set(), f"{rel_path}: 条目 {key} 的目标族在 ours 缺失——结构漂移，死信回人工"
-        cached = family_append_pos.get(t_fam_key)
-        if cached is None:
-            cached = target.blocks[-1].end + 1 if target.blocks else target.head_line + 1
-        family_append_pos[t_fam_key] = cached + 1
+        # 夜班手术二a 拼接修（st-nightfix-20260923）：同族多条插入共享**同一**族尾
+        # 坐标——splices 按 start 降序应用，同位插入逆序落刀=正序成品，无需伪递增。
+        # 旧 ``cached+1`` 把第 2+ 条插到族尾之后的原文行上（末族场景即越过
+        # di_seam_exemptions 居末键）→ 渲染自检"结果不可解析"死信
+        # （q-20260923-st-wm1-mineC-20260923-0003 与 st-ibt-remedy-a 批A 双实证）。
+        if t_fam_key not in family_append_pos:
+            family_append_pos[t_fam_key] = target.blocks[-1].end + 1 if target.blocks else target.head_line + 1
+        cached = family_append_pos[t_fam_key]
         text = t_block.text if t_block.text.endswith("\n") else t_block.text + "\n"
         if key in base_idx:
             # base 有+ours 无+theirs 有 → 采纳，除 ours 侧合法退役
@@ -502,6 +551,7 @@ def _render_selfcheck(
     kept_keys: set[str],
     inserted_keys: set[str],
     rel_path: str,
+    identity_fn: object | None = None,
 ) -> str | None:
     """渲染自检（fail-closed 兜底）：结果必须可解析且身份集 == 预期（保留∪插入）。"""
     import yaml  # noqa: PLC0415
@@ -510,7 +560,7 @@ def _render_selfcheck(
         yaml.safe_load(merged)
     except Exception as exc:  # noqa: BLE001
         return f"{rel_path}: 合并渲染自检失败（结果不可解析）: {exc}"
-    got, err = _split_registry_entries(merged)
+    got, err = _split_registry_entries(merged, identity_fn)
     if err:
         return f"{rel_path}: 合并渲染自检失败（重切分异常）: {err}"
     got_keys: set[str] = set()
@@ -527,7 +577,11 @@ def _render_selfcheck(
 
 
 def _split_all_sides(
-    ours_text: str, theirs_text: str, base_text: str | None, rel_path: str
+    ours_text: str,
+    theirs_text: str,
+    base_text: str | None,
+    rel_path: str,
+    identity_fn: object | None = None,
 ) -> tuple[
     dict[str | None, _RegistryFamily] | None,
     dict[str | None, _RegistryFamily] | None,
@@ -535,15 +589,15 @@ def _split_all_sides(
     str | None,
 ]:
     """三侧文本各自条目族切分；任一侧解析失败 → (None, None, None, 错误串)。"""
-    ours_families, err = _split_registry_entries(ours_text)
+    ours_families, err = _split_registry_entries(ours_text, identity_fn)
     if err:
         return None, None, None, f"{rel_path}: ours 侧 {err}"
-    theirs_families, err = _split_registry_entries(theirs_text)
+    theirs_families, err = _split_registry_entries(theirs_text, identity_fn)
     if err:
         return None, None, None, f"{rel_path}: theirs(快照) 侧 {err}"
     base_families: dict[str | None, _RegistryFamily] = {}
     if base_text is not None:
-        base_families, err = _split_registry_entries(base_text)
+        base_families, err = _split_registry_entries(base_text, identity_fn)
         if err:
             return None, None, None, f"{rel_path}: base 侧 {err}"
     return ours_families, theirs_families, base_families, None
@@ -595,7 +649,9 @@ def three_way_merge_registry_yaml(
         (merged_text, "") 合并成功；(None, conflict_reason) 冲突/结构漂移/解析失败
         ——调用方落地死信回人工，绝不静默整文件覆盖。
     """
-    ours_families, theirs_families, base_families, err = _split_all_sides(ours_text, theirs_text, base_text, rel_path)
+    ours_families, theirs_families, base_families, err = _split_all_sides(
+        ours_text, theirs_text, base_text, rel_path, _family_identity_fn(rel_path)
+    )
     if err:
         return None, err
 
@@ -619,14 +675,20 @@ def three_way_merge_registry_yaml(
     if err:
         return None, err
 
-    # 应用 splice（start 降序；同位置的多个插入按登记顺序生效）
+    # 应用 splice（start 降序；同位多条插入按规划序号**降序**落刀——后规划的先插、
+    # 先规划的压在其上，成品保持 theirs 规划正序。stable reverse 平局保原序会反序，
+    # 夜班手术二a 测试 test_multi_insert_order_preserved 钉住）
     splices = kept_splices + ins_splices
     lines = ours_text.splitlines(keepends=True)
-    for start, end_excl, text in sorted(splices, key=lambda s: (s[0], s[1]), reverse=True):
+    for start, end_excl, text, _seq in sorted(
+        ((s, e, t, k) for k, (s, e, t) in enumerate(splices)),
+        key=lambda x: (x[0], x[1], x[3]),
+        reverse=True,
+    ):
         lines[start:end_excl] = [text] if text else []
     merged = "".join(lines)
 
-    err = _render_selfcheck(merged, kept_keys, inserted_keys, rel_path)
+    err = _render_selfcheck(merged, kept_keys, inserted_keys, rel_path, _family_identity_fn(rel_path))
     if err:
         return None, err
     return merged, ""
@@ -900,7 +962,7 @@ class WorktreeLanding:
         # noop 哨兵剥前缀：快照与该 HEAD 一致的幂等空转项按已落盘跳过（防重放循环），
         # is-ancestor 用 @ 后真实 sha 判定。
         if landed.startswith(_NOOP_LANDED_PREFIX):
-            landed = landed[len(_NOOP_LANDED_PREFIX):]
+            landed = landed[len(_NOOP_LANDED_PREFIX) :]
         if landed:
             r = self._git_repo("merge-base", "--is-ancestor", landed, f"refs/heads/{self.target_branch}", check=False)
             if r.returncode == 0:
@@ -1149,7 +1211,9 @@ class WorktreeLanding:
             # 措辞读成锁竞争，加固自落地起静默失效数小时（#ARCH-327）。
             logger.warning(
                 "[landing] 双锁统一：全局锁未取到（%s: %s），退化为裸 CAS",
-                type(exc).__name__, exc, exc_info=True,
+                type(exc).__name__,
+                exc,
+                exc_info=True,
             )
             _lock = None
         try:
@@ -1452,7 +1516,8 @@ class WorktreeLanding:
                         )
 
                         logger.warning(
-                            "[landing] qid=%s pathspec 丢 staging 自愈：重放 apply+prestage 后重试 commit", qid,
+                            "[landing] qid=%s pathspec 丢 staging 自愈：重放 apply+prestage 后重试 commit",
+                            qid,
                         )
                         commit_files = self._apply_snapshot(item, queue_root, old_dev)
                         self._prestage_snapshot(item, commit_files)
@@ -1532,9 +1597,7 @@ class WorktreeLanding:
                                 "（2026-09-15 q-0003 假落地事故防线）"
                             ),
                         )
-                    return cq.LandingResult(
-                        ok=True, landed_id=f"{_NOOP_LANDED_PREFIX}{old_dev}"
-                    )
+                    return cq.LandingResult(ok=True, landed_id=f"{_NOOP_LANDED_PREFIX}{old_dev}")
                 return cq.LandingResult(
                     ok=False,
                     # P0-3（#ARCH-310，2026-09-12）：400→2000——门禁阻断详情（多文件
@@ -1671,9 +1734,7 @@ def reroute_auto_commit_to_queue(gateway, session_id: str, files: list[str], mes
     # 保护文件（architecture_model/** 等）混入 reconciler 批次时，落盘必被 PROTECTED-PATHS
     # 门禁拦截且**整批陪葬**成死信——改为入队前剔除不碰，漂移留工作区归属主手动处理；
     # 门禁语义零改动（manual 直提路径照旧全量拦截），队列侧永不再产生此类死信。
-    payload, deletes, skipped_protected = split_auto_commit_snapshot(
-        existing, str(gateway.project_root)
-    )
+    payload, deletes, skipped_protected = split_auto_commit_snapshot(existing, str(gateway.project_root))
     if skipped_protected:
         logger.warning(
             "[reroute] 自动同步保护路径过滤: 跳过 %d 项不入队（漂移留工作区归属主处理）: %s",
@@ -1696,7 +1757,10 @@ def reroute_auto_commit_to_queue(gateway, session_id: str, files: list[str], mes
         options=cq.EnqueueOptions(
             base_head=base_head,
             deletes=deletes or None,
-            meta_extra={"rerouted_from": "_commit_auto", "lane": "machine"},  # 审计可追溯（改道来源标记；P1-D 车道让路交互提交）
+            meta_extra={
+                "rerouted_from": "_commit_auto",
+                "lane": "machine",
+            },  # 审计可追溯（改道来源标记；P1-D 车道让路交互提交）
         ),
     )
     bootstrap_drain_with_landing(repo_root=gateway.project_root)
