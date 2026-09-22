@@ -45490,10 +45490,65 @@ creation_tokens:
   token: obj-r-casebook-casebook-20260922
   created_by: st-ailayer-p1-20260923
   capability: obj-r-casebook
+- file: docs/_working/oddjobs_20260923/index.md
+  token: oddjobs-night-ledger-index-20260922
+  created_by: st-oddjobs-20260923
+  capability: oddjobs-night-ledger
+  merge_evaluation: "同真源不重复：本班唯一台账载体，无同域重复簇"
+- file: docs/_working/oddjobs_20260923/ledger.md
+  token: oddjobs-night-ledger-ledger-20260922
+  created_by: st-oddjobs-20260923
+  capability: oddjobs-night-ledger
+  merge_evaluation: "同真源不重复：本班唯一台账载体，无同域重复簇"
+- file: docs/_working/oddjobs_20260923/morning_report.md
+  token: oddjobs-night-ledger-morning-report-20260922
+  created_by: st-oddjobs-20260923
+  capability: oddjobs-night-ledger
+- file: docs/_working/oddjobs_night/index.md
+  token: oddjobs-night-ledger-index-20260922
+  created_by: st-oddjobs-20260923
+  capability: oddjobs-night-ledger
+  merge_evaluation: "同真源不重复：本班唯一台账载体；旧前缀3条token因R5门禁改名作废留痕"
+- file: docs/_working/oddjobs_night/ledger.md
+  token: oddjobs-night-ledger-ledger-20260922
+  created_by: st-oddjobs-20260923
+  capability: oddjobs-night-ledger
+  merge_evaluation: "同真源不重复：本班唯一台账载体；旧前缀3条token因R5门禁改名作废留痕"
+- file: docs/_working/oddjobs_night/morning_report.md
+  token: oddjobs-night-ledger-morning-report-20260922
+  created_by: st-oddjobs-20260923
+  capability: oddjobs-night-ledger
+- file: docs/_working/oddjobs_night/oddjobs_shift_ledger.md
+  token: oddjobs-night-ledger-oddjobs-shift-ledger-20260922
+  created_by: st-oddjobs-20260923
+  capability: oddjobs-night-ledger
+  merge_evaluation: "N-16改名后按新路径重登记，旧名2条作废留痕"
+- file: docs/_working/oddjobs_night/oddjobs_shift_morning_report.md
+  token: oddjobs-night-ledger-oddjobs-shift-morning-report-20260922
+  created_by: st-oddjobs-20260923
+  capability: oddjobs-night-ledger
+  merge_evaluation: "N-16改名后按新路径重登记，旧名2条作废留痕"
+  merge_evaluation: "同真源不重复：本班唯一台账载体；旧前缀3条token因R5门禁改名作废留痕"
+  merge_evaluation: "同真源不重复：本班唯一台账载体，无同域重复簇"
   merge_evaluation: "OBJ_R S5案例库起步件，DESIGN§⑤起步形态（攒5案后Owner裁升格），非新注册表"
   merge_evaluation: "OBJ_R S4体检统计器+提案生成器，DESIGN§④工程化，规则面零新增"
   merge_evaluation: "收编 09-18 st-commitchain 未提交遗留（E2E 撤单实测唯一 CLI，本班加 R-H5E-1 注入+TR 验收步），非净新增重复面"
   merge_evaluation: "同上：任务注册器与 wrapper 同批同 capability，零净新增调度面"
   merge_evaluation: "并入 sim_daily_runner MOD-BT-222 桥执行腿排班面，PaperSession 先例，无新增重复调度"
   merge_evaluation: "批F E7 搜索防线：三路搜索空间+算力预算封顶+DSR浮动预注册冻结件（改空间=作废重开，唯一空间真源）"
+- file: docs/03_modules/_domain_pf_alloc/algo_flow/allocation_config.yaml
+  token: pf-alloc-wiring-allocation_config-20260923
+  created_by: st-combine-20260923
+  capability: pf_alloc_wiring
+  merge_evaluation: "净零合规：P2-1 契约头减负出仓产物（docstring 内联机器块迁出，文件本体行数净减），非新增规则面"
+- file: docs/03_modules/_domain_pf_alloc/algo_flow/allocation_inputs.yaml
+  token: pf-alloc-wiring-allocation_inputs-20260923
+  created_by: st-combine-20260923
+  capability: pf_alloc_wiring
+  merge_evaluation: "净零合规：P2-1 契约头减负出仓产物（docstring 内联机器块迁出，文件本体行数净减），非新增规则面"
+- file: docs/03_modules/_domain_pf_alloc/algo_flow/allocation_orchestrator.yaml
+  token: pf-alloc-wiring-allocation_orchestrator-20260923
+  created_by: st-combine-20260923
+  capability: pf_alloc_wiring
+  merge_evaluation: "净零合规：P2-1 契约头减负出仓产物（docstring 内联机器块迁出，文件本体行数净减），非新增规则面"
 di_seam_exemptions: []
