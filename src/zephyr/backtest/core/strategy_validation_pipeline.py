@@ -33,6 +33,14 @@
     由调用方供给, 本模块不直接跑回测
 
 SSoT: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/52_backtest_framework_docking.md §7①
+
+方法论文献锚（工单#11 Factor Zoo 引用注记——E4 准入门的学术基础；四篇经 Crossref 逐字
+核实，真源=collection_intake/factors/factor_pool_comment_leads.md 附节）:
+  - Feng/Giglio/Xiu, "Taming the Factor Zoo: A Test of New Factors", JF 2020, 75(3)（常被误记为 JFE）
+  - Harvey/Liu/Zhu, "...and the Cross-Section of Expected Returns", RFS 2016, 29(1)（多重检验 t>3.0 阈值出处）
+  - Hou/Xue/Zhang, "Replicating Anomalies", RFS 2020（异象复制失败率证据）
+  - Jensen/Kelly/Pedersen, "Is There a Replication Crisis in Finance?", JF 2023（复制危机两面证据）
+E4 低放行常态的正当性出于此：新因子须过多重检验校正与样本外复制双重纪律，而非巧合显著性。
 # [ALGO_FLOW] external: docs/03_modules/_domain_backtest/algo_flow/strategy_validation_pipeline.yaml
 # A1 --> O1
 """
