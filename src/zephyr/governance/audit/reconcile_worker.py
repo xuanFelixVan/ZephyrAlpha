@@ -377,6 +377,36 @@ def _check_worker_admission(payload: dict) -> tuple[bool, str]:
     return True, "三证齐全"
 
 
+def _extend_commit_gates_fallback(project_root: Path) -> None:
+    """主仓 commit_gates 目录追加为包后备搜索路径（半落地态 worker boot 治愈）。
+
+    病根（2026-09-22 实证 3/117：STATE-VOCAB-REGISTRY/TAG-VOCAB/BLOOD-FLESH）：
+    注册表条目先行落 HEAD 而门 .py 仍在主仓在途（两段式登记死在半途）时，
+    队列 serializer worktree=HEAD 快照缺门文件，且子模块解析走已导入父包
+    ``__path__``（worktree 侧）——PYTHONPATH 后备无效，auto_register_gates
+    fail-closed（裁定#351）→ worker boot 全灭、post-commit 对账链断流。
+
+    治法：governance 模块真源锚定主仓（同 governance.db anchor_main_root
+    先例），把主仓 commit_gates 目录 append 进包 ``__path__`` 后备位——
+    landing 树已有版本优先，仅缺失模块回落主仓。主仓进程自身是 no-op；
+    扩展失败静默放行（失败面与改前一致，不新增语义）。
+    """
+    try:
+        from zephyr.shared.io.paths import anchor_main_root
+
+        root = Path(project_root).resolve()
+        main_root = anchor_main_root(root).resolve()
+        if main_root == root:
+            return  # 主仓进程：门文件以盘上真实状态在，无后备需求
+        import zephyr.gov_enforcement.commit_gates as _cg
+
+        fallback = str(main_root / "src" / "zephyr" / "gov_enforcement" / "commit_gates")
+        if Path(fallback).is_dir() and fallback not in _cg.__path__:
+            _cg.__path__.append(fallback)
+    except Exception:  # noqa: BLE001 — 后备扩展失败不阻断 boot（原失败面不变）
+        pass
+
+
 def _run_worker(payload: dict) -> int:
     """worker 主流程，返回 exit code（0=成功，1=失败）。"""
     from zephyr.governance.audit.reconcile_runner import (
@@ -463,6 +493,8 @@ def _run_worker(payload: dict) -> int:
     try:
         # 2. 构造 GitCommitGateway（注册全部 reconciler）
         try:
+            # 半落地态治愈：主仓 commit_gates 后备路径扩展（3/117 门文件在途实证）
+            _extend_commit_gates_fallback(Path(project_root))
             # 延迟 import 避免 reconcile_runner import 时拉起 gateway
             from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (
                 GitCommitGateway,

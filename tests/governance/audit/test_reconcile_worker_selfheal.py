@@ -173,7 +173,7 @@ class TestWriteBootSuccessClean:
         # _write_boot_success_clean 应捕获并不抛
         try:
             _write_boot_success_clean(str(tmp_path / "nonexistent"), "abc", "sess")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 被测契约即"任何异常都不外泄"，盲捕即测试意图
             pytest.fail(f"_write_boot_success_clean should fail-open, but raised: {e}")
 
     def test_idempotent_multiple_calls(self, tmp_repo_with_db):
@@ -362,3 +362,95 @@ class TestRunWorkerSelfHealIntegration:
         cleans = [r for r in records if r["action"] == "clean"]
         assert len(warns) == 1
         assert len(cleans) == 0
+
+
+# ---------------------------------------------------------------------------
+# 半落地态 worker boot 治愈（_extend_commit_gates_fallback，st-recfix-20260923）
+# 病根：注册表条目先行落 HEAD 而门 .py 仍在主仓在途 → 队列 serializer worktree
+# （HEAD 快照）boot 时 auto_register_gates fail-closed（2026-09-22 3/117 实证）。
+# ---------------------------------------------------------------------------
+
+
+class TestExtendCommitGatesFallback:
+    """_extend_commit_gates_fallback 四态：主仓 no-op/后备扩展/幂等/缺目录静默。"""
+
+    @pytest.fixture(autouse=True)
+    def _restore_pkg_path(self):
+        """扩展的是真实包 __path__——用后快照复原，防 tmp 目录残留污染同进程后续导入。"""
+        import zephyr.gov_enforcement.commit_gates as cg
+
+        snapshot = list(cg.__path__)
+        yield
+        cg.__path__[:] = snapshot
+
+    def test_main_root_is_noop(self, tmp_path):
+        """project_root 已是主仓根（anchor 原样返回）→ 不扩展 __path__。"""
+        import zephyr.gov_enforcement.commit_gates as cg
+        import zephyr.governance.audit.reconcile_worker as rw_mod
+
+        before = list(cg.__path__)
+        rw_mod._extend_commit_gates_fallback(tmp_path)
+        assert list(cg.__path__) == before
+
+    def test_non_main_root_extends_fallback(self, tmp_path, monkeypatch):
+        """非主仓根 + 主仓 commit_gates 目录存在 → 后备位追加且可 import 主仓独有模块。"""
+        import importlib
+
+        import zephyr.gov_enforcement.commit_gates as cg
+        import zephyr.governance.audit.reconcile_worker as rw_mod
+
+        fake_main = tmp_path / "fake_main"
+        cg_dir = fake_main / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
+        cg_dir.mkdir(parents=True)
+        # 主仓独有模块探针（worktree 侧不存在的名字）
+        (cg_dir / "zz_probe_fallback_gate.py").write_text(
+            "PROBE = 'fallback-ok'\n", encoding="utf-8"
+        )
+        landing_root = tmp_path / "landing_tree"
+        landing_root.mkdir()
+        monkeypatch.setattr(
+            "zephyr.shared.io.paths.anchor_main_root", lambda _root: fake_main
+        )
+
+        rw_mod._extend_commit_gates_fallback(landing_root)
+        assert str(cg_dir) in cg.__path__
+        # 后备位在尾——landing 树已有版本优先不越位
+        assert cg.__path__[-1] == str(cg_dir)
+        probe = importlib.import_module(
+            "zephyr.gov_enforcement.commit_gates.zz_probe_fallback_gate"
+        )
+        assert probe.PROBE == "fallback-ok"
+
+    def test_extend_is_idempotent(self, tmp_path, monkeypatch):
+        """重复调用不重复追加（幂等）。"""
+        import zephyr.gov_enforcement.commit_gates as cg
+        import zephyr.governance.audit.reconcile_worker as rw_mod
+
+        fake_main = tmp_path / "fake_main"
+        cg_dir = fake_main / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
+        cg_dir.mkdir(parents=True)
+        landing_root = tmp_path / "landing_tree"
+        landing_root.mkdir()
+        monkeypatch.setattr(
+            "zephyr.shared.io.paths.anchor_main_root", lambda _root: fake_main
+        )
+
+        rw_mod._extend_commit_gates_fallback(landing_root)
+        once = list(cg.__path__)
+        rw_mod._extend_commit_gates_fallback(landing_root)
+        assert list(cg.__path__) == once
+
+    def test_missing_fallback_dir_silent_noop(self, tmp_path, monkeypatch):
+        """主仓 commit_gates 目录不存在 → 静默不扩展不抛异常。"""
+        import zephyr.gov_enforcement.commit_gates as cg
+        import zephyr.governance.audit.reconcile_worker as rw_mod
+
+        fake_main = tmp_path / "fake_main"  # 不建 commit_gates 子目录
+        landing_root = tmp_path / "landing_tree"
+        landing_root.mkdir()
+        monkeypatch.setattr(
+            "zephyr.shared.io.paths.anchor_main_root", lambda _root: fake_main
+        )
+        before = list(cg.__path__)
+        rw_mod._extend_commit_gates_fallback(landing_root)  # 不应抛
+        assert list(cg.__path__) == before
