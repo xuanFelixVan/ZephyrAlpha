@@ -42208,8 +42208,7 @@ creation_tokens:
   token: dloop-campaign-02-state-vocabulary-unification-20260921
   created_by: st-dloop-20260921
   capability: dloop_campaign
-  merge_evaluation: "丁线词表统一决策卡，四路挖矿综合，无同真源可派生项"
-  merge_evaluation: "丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
+  merge_evaluation: "丁线词表统一决策卡，四路挖矿综合，无同真源可派生项；丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
 - file: src/zephyr/plan_engine/__init__.py
   token: dloop-master-switch---init---20260920
   created_by: st-dloop-20260921
@@ -43525,10 +43524,6 @@ creation_tokens:
   capability: live_readiness
   merge_evaluation: "实盘准入四件套（检查表/SOP草案/异常手册/门禁设计），替代散落的准入判据碎片引用，Owner 点单后归档"
   merge_evaluation: "offsite 月度手册（a3 6.6 交付件，裁定#380⑥ Owner 自办制操作载体），零既有条目可合并"
-- file: docs/_working/daily_loop_campaign/02_state_vocabulary_unification.md
-  token: dloop-campaign-02-state-vocabulary-unification-20260921
-  created_by: st-dloop-20260921
-  capability: dloop_campaign
 - file: docs/_working/daily_loop_campaign/03_self_ruling_vocab_ssot.md
   token: dloop-campaign-03-self-ruling-vocab-ssot-20260921
   created_by: st-dloop-20260921
@@ -44330,4 +44325,641 @@ creation_tokens:
   merge_evaluation: "meta_question基建新模块三件，替代物：无，设计真源infra_mining五份"
   merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
   merge_evaluation: "ALGO_FLOW 外锚 yaml（restore_drill.py 月度恢复演练外部真源视图），零旧条目替代"
+- file: "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml"
+  token: "auto-factor-registry-20260810"
+  created_by: "session-registry-construction"
+  capability: "business_registry"
+- file: "docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml"
+  token: "auto-risk-limit-registry-20260810"
+  created_by: "session-registry-construction"
+  capability: "business_registry"
+
+# --- 模块级翻译真源（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级翻译缺口）---
+- file: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml"
+  token: "auto-strategy-registry-20260810"
+  created_by: "session-registry-construction"
+  capability: "business_registry"
+- file: "docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md"
+  token: "lane-construction-discipline-lane-construction-discipline-20260920"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md"
+  token: "construction-ledger-method-construction-ledger-method-20260920"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md"
+  token: "deep-adjudication-method-deep-adjudication-method-20260920"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md"
+  token: "indicator-mining-sop-indicator-mining-sop-20260920"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/index.md
+  token: index-navigation-02-enterprise-architecture-09-ai-architecture-implementation-plans-20260919
+  created_by: st-final3-20260919
+  capability: index_navigation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/00_skeleton.md
+  token: vocab-consolidation-00-skeleton-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/00_workorder_施工包.md
+  token: vocab-consolidation-00-workorder--20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/no_domain_list.csv
+  token: vocab-consolidation-no-domain-list-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1a_consumers.md
+  token: vocab-consolidation-w1a-consumers-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1b_generators.md
+  token: vocab-consolidation-w1b-generators-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1c_gates.md
+  token: vocab-consolidation-w1c-gates-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1d_layers.md
+  token: vocab-consolidation-w1d-layers-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w2_ruling/w2_self_ruling_335.md
+  token: vocab-consolidation-w2-self-ruling-335-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w3_vocab_construction/w3_execution_log.md
+  token: vocab-consolidation-w3-execution-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w4_construction/w4_execution_log.md
+  token: vocab-consolidation-w4-execution-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w5_exemption/w5_survey.md
+  token: vocab-consolidation-w5-survey-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w6_loop_check/w6_round1_log.md
+  token: vocab-consolidation-w6-round1-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w7_redblue/w7_adversarial_plan.md
+  token: vocab-consolidation-w7-adversarial-plan-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/archive/2026-09/2026-08-30-l3-snapshot-datasource-adjudication.md
+  token: gateaudit-handover-2026-08-30-l3-snapshot-datasource-adjudication-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-09-clearance-review-notes.md
+  token: gateaudit-handover-2026-09-09-clearance-review-notes-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-12-ai-native-governance-review.md
+  token: gateaudit-handover-2026-09-12-ai-native-governance-review-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-12-gate-perf-r1-r4-ruling.md
+  token: gateaudit-handover-2026-09-12-gate-perf-r1-r4-ruling-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-14-ai-native-governance-ruling-notes.md
+  token: gateaudit-handover-2026-09-14-ai-native-governance-ruling-notes-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-14-ruling234-adjudication-report.html
+  token: gateaudit-handover-2026-09-14-ruling234-adjudication-report-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/c_class_scattered/2026-09-13-xtreme-redblue-report.md
+  token: gateaudit-handover-2026-09-13-xtreme-redblue-report-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/00_index_trading_decision.md
+  token: gateaudit-handover-00-index-trading-decision-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/01_design_memo_management_spec.md
+  token: gateaudit-handover-01-design-memo-management-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/10_regime_detector_spec.md
+  token: gateaudit-handover-10-regime-detector-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/13_regime_phase3_engineering_plan.md
+  token: gateaudit-handover-13-regime-phase3-engineering-plan-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/14_regime_s2_diagnosis.md
+  token: gateaudit-handover-14-regime-s2-diagnosis-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/15_data_feature_layer_spec.md
+  token: gateaudit-handover-15-data-feature-layer-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/2026-08-28-industry-graph-frontend.md
+  token: gateaudit-handover-2026-08-28-industry-graph-frontend-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/21_stock_selection_engine.md
+  token: gateaudit-handover-21-stock-selection-engine-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md
+  token: gateaudit-handover-22-sector-rotation-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/24_daban_strategy_detail.md
+  token: gateaudit-handover-24-daban-strategy-detail-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/25_multifactor_strategy_detail.md
+  token: gateaudit-handover-25-multifactor-strategy-detail-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/26_event_driven_strategy_detail.md
+  token: gateaudit-handover-26-event-driven-strategy-detail-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/27_second_batch_strategies.md
+  token: gateaudit-handover-27-second-batch-strategies-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/28_sentiment_cycle_trading.md
+  token: gateaudit-handover-28-sentiment-cycle-trading-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md
+  token: gateaudit-handover-30-multi-strategy-concurrency-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/31_position_sizing.md
+  token: gateaudit-handover-31-position-sizing-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/32_firm_risk_aggregator.md
+  token: gateaudit-handover-32-firm-risk-aggregator-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/33_budget_change_handler.md
+  token: gateaudit-handover-33-budget-change-handler-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/34_regime_meta_allocator.md
+  token: gateaudit-handover-34-regime-meta-allocator-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md
+  token: gateaudit-handover-35-drawdown-protocol-impl-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/36_var_es_monitoring.md
+  token: gateaudit-handover-36-var-es-monitoring-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/37_liquidity_crisis_protocol.md
+  token: gateaudit-handover-37-liquidity-crisis-protocol-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/40_execution_broker.md
+  token: gateaudit-handover-40-execution-broker-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/41_buy_flow.md
+  token: gateaudit-handover-41-buy-flow-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/42_sell_flow.md
+  token: gateaudit-handover-42-sell-flow-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/53_simulation_live_path.md
+  token: gateaudit-handover-53-simulation-live-path-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/54_reconciliation_attribution.md
+  token: gateaudit-handover-54-reconciliation-attribution-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/55_monitoring_review.md
+  token: gateaudit-handover-55-monitoring-review-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/61_lifecycle_multi_ai.md
+  token: gateaudit-handover-61-lifecycle-multi-ai-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/63_data_utilization_audit.md
+  token: gateaudit-handover-63-data-utilization-audit-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/64_data_source_download_spec.md
+  token: gateaudit-handover-64-data-source-download-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/65_git_safety_governance.md
+  token: gateaudit-handover-65-git-safety-governance-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/66_commit_queue_serialization.md
+  token: gateaudit-handover-66-commit-queue-serialization-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/67_news_data_dedup_design.md
+  token: gateaudit-handover-67-news-data-dedup-design-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/90_methodology_open_questions.md
+  token: gateaudit-handover-90-methodology-open-questions-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/91_density_prediction.md
+  token: gateaudit-handover-91-density-prediction-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/94_crypto_quant_expansion.md
+  token: gateaudit-handover-94-crypto-quant-expansion-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/95_crypto_system_blueprint.md
+  token: gateaudit-handover-95-crypto-system-blueprint-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/observability_contract_todo.md
+  token: gateaudit-handover-observability-contract-todo-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/disk_reorg_plan_2026_09_19.md
+  token: gateaudit-handover-disk-reorg-plan-2026-09-19-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/kimi_audit/nightbuild/e4/baseline_strategy_screen_translated_c4.csv
+  token: gateaudit-handover-baseline-strategy-screen-translated-c4-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/pattern_session_governance_report_2026_09_14.md
+  token: gateaudit-handover-pattern-session-governance-report-2026-09-14-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/redblue/2026-09-14-ch-redblue-adversarial-report.md
+  token: gateaudit-handover-2026-09-14-ch-redblue-adversarial-report-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/working_cleanup_campaign/index.md
+  token: gateaudit-handover-index-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/working_cleanup_campaign/w8r2_line_closeout.md
+  token: gateaudit-handover-w8r2-line-closeout-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/working_cleanup_campaign/working_cleanup_ledger.md
+  token: gateaudit-handover-working-cleanup-ledger-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/automation/campaign/blueprints/intel_harvester_blueprint.md
+  token: gateaudit-handover-intel-harvester-blueprint-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/automation/campaign/blueprints/risk_redline_blueprint.md
+  token: gateaudit-handover-risk-redline-blueprint-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/automation/campaign/blueprints/standards_lib_blueprint.md
+  token: gateaudit-handover-standards-lib-blueprint-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/cold_backup_automation/00_master_plan.md
+  token: gateaudit-handover-00-master-plan-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/cold_backup_automation/01_mining_findings.md
+  token: gateaudit-handover-01-mining-findings-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: "docs/_working/commit_chain_mining/commitchain_ledger.md"
+  token: "commit-chain-mining-ledger-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: docs/_working/disk_reorg_campaign/vhdx_precheck_20260922.md
+  token: gateaudit-handover-vhdx-precheck-20260922-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/fullflow_campaign/lanes/pit2_prescriptions.md
+  token: gateaudit-handover-pit2-prescriptions-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/gov_closeout/dead_letter_clearance_ledger_20260922.md
+  token: gateaudit-handover-dead-letter-clearance-ledger-20260922-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/gov_closeout/final_report_st_gov_closeout_20260922.md
+  token: gateaudit-handover-final-report-st-gov-closeout-20260922-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/IBT-RUN-LOGS.md
+  token: gateaudit-handover-ibt-run-logs-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/nav_IBT-A.csv
+  token: gateaudit-handover-nav-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/nav_IBT-B.csv
+  token: gateaudit-handover-nav-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/run_summary.yaml
+  token: gateaudit-handover-run-summary-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/trades_IBT-A.csv
+  token: gateaudit-handover-trades-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/trades_IBT-B.csv
+  token: gateaudit-handover-trades-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/nav_IBT-A.csv
+  token: gateaudit-handover-nav-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/nav_IBT-B.csv
+  token: gateaudit-handover-nav-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/redblue_round2.yaml
+  token: gateaudit-handover-redblue-round2-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/redblue_round3.yaml
+  token: gateaudit-handover-redblue-round3-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/run_summary.yaml
+  token: gateaudit-handover-run-summary-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/sensitivity.yaml
+  token: gateaudit-handover-sensitivity-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/trades_IBT-A.csv
+  token: gateaudit-handover-trades-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/trades_IBT-B.csv
+  token: gateaudit-handover-trades-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/nav_IBT-A.csv
+  token: gateaudit-handover-nav-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/nav_IBT-B.csv
+  token: gateaudit-handover-nav-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/redblue_round1.yaml
+  token: gateaudit-handover-redblue-round1-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/redblue_round4.yaml
+  token: gateaudit-handover-redblue-round4-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/run_summary.yaml
+  token: gateaudit-handover-run-summary-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/sensitivity.yaml
+  token: gateaudit-handover-sensitivity-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/trades_IBT-A.csv
+  token: gateaudit-handover-trades-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/trades_IBT-B.csv
+  token: gateaudit-handover-trades-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/nav_IBT-A.csv
+  token: gateaudit-handover-nav-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/nav_IBT-B.csv
+  token: gateaudit-handover-nav-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/run_summary.yaml
+  token: gateaudit-handover-run-summary-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/trades_IBT-A.csv
+  token: gateaudit-handover-trades-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/trades_IBT-B.csv
+  token: gateaudit-handover-trades-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/reports/intake-20260921-2337.md
+  token: gateaudit-handover-intake-20260921-2337-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/reports/intake-20260921-2337.yaml
+  token: gateaudit-handover-intake-20260921-2337-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/reports/intake-20260922-0403.md
+  token: gateaudit-handover-intake-20260922-0403-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/reports/intake-20260922-0403.yaml
+  token: gateaudit-handover-intake-20260922-0403-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/sim-memos/sim-memo-202609.md
+  token: kimi-audit-sim-memo-202609-20260916
+  created_by: qoder-verify-20260916
+  capability: kimi_audit
+- file: "docs/_working/pipeline-research/sim-memos/sim-memo-202609.md"
+  token: "n5-simmemo-md-20260918"
+  created_by: "st-tdchain-20260917"
+  capability: "sim_memo_evidence"
+- file: "docs/_working/residual_resume/00_review.md"
+  token: "residual-resume-00-review-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/residual_resume/01_plan.md"
+  token: "residual-resume-01-plan-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/sim_launch/00_campaign_ledger.md"
+  token: "sim-launch-00-campaign-ledger-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/sim_launch/crypto_fastlane_eval.md"
+  token: "sim-launch-crypto-fastlane-eval-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/sim_launch/delivery_report.md"
+  token: "sim-launch-delivery-report-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/sim_launch/first_daily_report_20260921.md"
+  token: "sim-launch-first-daily-report-20260921-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: docs/_working/trading_vision/2026-09-18-ruling-renumber-execution-note.md
+  token: gateaudit-handover-2026-09-18-ruling-renumber-execution-note-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+  merge_evaluation: "tc_08卡形式收口三件零记录缺口补齐件，无同真源可并项"
+  merge_evaluation: "同真源可派生：a0/a2/a4 为 disk_reorg 战役母令/集成简报/放行信号执行件，随战役文档全家福同批补登记（q-0006 欠账，st-disk-final 代落地）"
+- file: "schemas/categories/sim_daily_report.py"
+  token: "sim-launch-sim-daily-report-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: scripts/backtest/sim_attribution_report.py
+  token: sim-attribution-sim-attribution-report-20260917
+  created_by: st-sim-attrib-20260918
+  capability: sim_attribution
+- file: "scripts/backtest/sim_daily_runner.py"
+  token: "sim-launch-sim-daily-runner-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "scripts/ch/apply_sim_daily_report_ddl.py"
+  token: "sim-launch-apply-sim-daily-report-ddl-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: src/zephyr/backtest/core/cost_attribution.py
+  token: lane-m-cost-attribution-20260916
+  created_by: st-qoder-t1a-20260915
+  capability: cost_model_calibration
+- file: src/zephyr/backtest/core/cost_model_calibration.py
+  token: lane-m-cost-model-calibration-20260916
+  created_by: st-qoder-t1a-20260915
+  capability: cost_model_calibration
+- file: src/zephyr/governance/standards_governance/__init__.py
+  token: rule-replay---init---20260917
+  created_by: st-ailayer-20260917
+  capability: rule_replay
+- file: src/zephyr/intelligence/chain_impact_stream.py
 di_seam_exemptions: []
