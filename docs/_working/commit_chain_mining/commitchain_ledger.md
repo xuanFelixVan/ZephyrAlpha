@@ -56,3 +56,10 @@ ttl: task_bound
 - 施工：R1 预检扩容（3 直接准入+2 内联适配）/R2 批硬顶 40+逃生旗/R3 两段式通道/R4 租约事件唤醒+epoch 三子树/R5 status 三块/R6 爆发告警+env 补盲+health 两键 + D7 快赢捆绑全量落地。
 - 挂起（解锁条件在案）：k=4 通道池（Owner 签 S18-R3）/字典序 FIFO→created_at（动 66号不变量须 Owner）/blobs GC（Owner）/TRANSLATION-COVERAGE 预检化（待死信率复测）/收敛批量化与 reconciler 禁 auto-commit（契约面）/gate_cache_preflight 启用（Owner 手柄）/own_scope 五台补登记（机生通道）/P2-8 lane 身份派生。
 - 封矿：活体租约抢占（F9 红线）/全局 fail_fast（归因语义）/主区真 checkout 化/新检测器（净零）/enqueue 核心嵌门禁（零依赖不变量）。
+
+## B9 QMT 模拟桥 100 股端到端验证（2026-09-22 09:44 实弹）
+
+- sim 三证：终端 exe_path=E:\国金QMT交易端模拟\bin.x64（config 辨识规则命中）；账户断言① broker.env=sim account=8886156677；柜台 Account.csv 资金面 9,999,964.26（模拟资金）交易日 20260922。
+- 工具：scripts/construction/qmt_bridge_regression_smoke.py --qty 100（模拟盘 ONLY 硬闸：--env real 直接 exit 2）。
+- 结果：T3 PASS（柜台 sysid 回填 broker_order_id=820000fa-c320-455b-a680-29867b4815f7，HTTP 通道判据）+T5 PASS（撤单终态 CANCELLED）=**100 股模拟单 下单→柜台受理→撤单终态 全生命周期闭环**。T6a/T6b 为文件通道检测口径（本部署走 HTTP 通道，脚本头注已记录该语义），非失败。
+- 顺手修复：脚本镜像预热竞态（connect 后立读必空），补 ≤12s 轮询。
