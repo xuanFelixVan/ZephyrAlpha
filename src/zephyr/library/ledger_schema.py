@@ -155,6 +155,22 @@ _SQL_LOOKUP_FILTER_HOME_PREFIX: Final[str] = " AND home LIKE %s"
 _SQL_LOOKUP_TAIL: Final[str] = " ORDER BY asset_id LIMIT %s"
 
 
+def _has_call_number(content: str) -> bool:
+    """检查文件头部 30 行是否含索书号（asset_id 键或 # asset: 注释）。
+
+    Args:
+        content: 文件全文。
+
+    Returns:
+        True=有索书号。
+    """
+    for line in content.splitlines()[:30]:
+        stripped = line.strip()
+        if stripped.startswith("asset_id:") or stripped.startswith("# asset:"):
+            return True
+    return False
+
+
 def derive_asset_id(kind: str, home: str) -> str:
     """由 kind+home 派生稳定 asset_id（纯函数；永不复用纪律由登记层保证）。
 
