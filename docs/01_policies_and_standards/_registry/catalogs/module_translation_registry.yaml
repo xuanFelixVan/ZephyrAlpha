@@ -56026,6 +56026,22 @@ entries:
   desc_en: ""
   plain_zh: "把模拟盘日报台账的表结构部署到数据库，建好表并核对列都在"
   responsibility_layer: business
+- module_path: src/zephyr/gov_enforcement/commit_gates/tag_vocab_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "标签枚举门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查提交里的资产标签是不是词库里的标准词或登记过的别名，新造词会被提醒先去词库登记，防止同一个意思各处写法不一样。"
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/library_blood_flesh_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "血肉编目门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查新建的代码模块有没有中文标题和大白话说明，没有血肉的资产检索到了也读不懂，这道门保证新登记的资产从出生就带说明。"
+  responsibility_layer: governance
 
 battle_map_steps:
 - step_id: BM-BUY-05
