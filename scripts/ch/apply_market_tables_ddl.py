@@ -358,104 +358,124 @@ SETTINGS index_granularity = 8192
 # sector_fund_flow（D3/GAP-F-16 THS 板块资金流快照）/ daban_board_event（STR-DABAN-022 打板事件推导）
 # 2026-08-29 S2 估值路A + A22：index_valuation_daily（指数估值 PE_TTM/CAPE/分位/ERP）/
 # a50_futures_daily（富时A50期货日K，44号 §9.6 通道1）
-from schemas.categories.market.market_a50_futures_daily import A50_FUTURES_DAILY_DDL
-from schemas.categories.market.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
-# 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）：fail-closed 直接导入
-from schemas.categories.market.market_alt_shipping_index import ALT_SHIPPING_INDEX_DDL
-from schemas.categories.market.market_alt_regime_signal import ALT_REGIME_SIGNAL_DDL
-from schemas.categories.market.market_sentiment_panel import SENTIMENT_PANEL_DDL
-from schemas.categories.market.market_alt_stock_comment import ALT_STOCK_COMMENT_DDL
-# 气象事件层：台风路径（2026-09-14，深圳开放数据平台 appKey 通道）
-from schemas.categories.market.market_alt_typhoon_track import ALT_TYPHOON_TRACK_DDL
-# 深圳开放数据批量源 ×7（2026-09-14，st-altdata-20260914）：fail-closed 直接导入
-from schemas.categories.market.market_alt_sz_stat_monthly import MARKET_ALT_SZ_STAT_MONTHLY_DDL
-from schemas.categories.market.market_alt_sz_port_monthly import MARKET_ALT_SZ_PORT_MONTHLY_DDL
-from schemas.categories.market.market_alt_sz_house_daily import MARKET_ALT_SZ_HOUSE_DAILY_DDL
-from schemas.categories.market.market_alt_sz_weather_warning import MARKET_ALT_SZ_WEATHER_WARNING_DDL
-from schemas.categories.market.market_alt_sz_marine_forecast import MARKET_ALT_SZ_MARINE_FORECAST_DDL
-# 深圳能见度探测分钟级站点流（2026-09-14，任务 2：服务 1580458478）
-from schemas.categories.market.market_alt_sz_visibility import MARKET_ALT_SZ_VISIBILITY_DDL
-# 批 2 十一表（2026-09-14 深夜，新钥匙通道 0ecc2b46：环境/水库/楼市/口岸/统计扩展）
-from schemas.categories.market.market_alt_sz_air_quality_daily import MARKET_ALT_SZ_AIR_QUALITY_DAILY_DDL
-from schemas.categories.market.market_alt_sz_air_quality_region import MARKET_ALT_SZ_AIR_QUALITY_REGION_DDL
-from schemas.categories.market.market_alt_sz_reservoir_station import MARKET_ALT_SZ_RESERVOIR_STATION_DDL
-from schemas.categories.market.market_alt_sz_reservoir_rain_day import MARKET_ALT_SZ_RESERVOIR_RAIN_DAY_DDL
-from schemas.categories.market.market_alt_sz_reservoir_rain_month import MARKET_ALT_SZ_RESERVOIR_RAIN_MONTH_DDL
-from schemas.categories.market.market_alt_sz_house_area import MARKET_ALT_SZ_HOUSE_AREA_DDL
-from schemas.categories.market.market_alt_sz_house_listing import MARKET_ALT_SZ_HOUSE_LISTING_DDL
-from schemas.categories.market.market_alt_sz_house_presale import MARKET_ALT_SZ_HOUSE_PRESALE_DDL
-from schemas.categories.market.market_alt_sz_market_subject import MARKET_ALT_SZ_MARKET_SUBJECT_DDL
-from schemas.categories.market.market_alt_sz_stat_analysis import MARKET_ALT_SZ_STAT_ANALYSIS_DDL
-from schemas.categories.market.market_alt_sz_enterprise_year import MARKET_ALT_SZ_ENTERPRISE_YEAR_DDL
-from schemas.categories.market.market_alt_sz_reservoir_level import MARKET_ALT_SZ_RESERVOIR_LEVEL_DDL
-from schemas.categories.market.market_alt_sz_env_meteor import MARKET_ALT_SZ_ENV_METEOR_DDL
-from schemas.categories.market.market_alt_sz_climate_hist import MARKET_ALT_SZ_CLIMATE_HIST_DDL
-from schemas.categories.market.market_alt_sz_ground_obs import MARKET_ALT_SZ_GROUND_OBS_DDL
-from schemas.categories.market.market_typhoon_landfall_history import MARKET_TYPHOON_LANDFALL_HISTORY_DDL
-from schemas.categories.market.market_typhoon_names import MARKET_TYPHOON_NAMES_DDL
-from schemas.categories.market.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
-from schemas.categories.market.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
-from schemas.categories.market.market_daban_engine_load import MARKET_DABAN_ENGINE_LOAD_DDL
+from schemas.categories.cohort_daily_ledger import COHORT_DAILY_LEDGER_DDL
+
+# TC-08 残余挂账收尾三表（2026-09-21，裁定#392（D-5）批代落"apply 三常量补注册"）：
+# 危机闸判定留痕/WO-1 归因日账/WO-5 cohort 台账，DDL 真源 schemas/categories/ 根目录三件；
+# 三表落 c1_backtest 库（DDL 内全限定名自证，非本脚本缺省 _DATABASE=c1_market）
+from schemas.categories.crisis_gate_log import CRISIS_GATE_LOG_DDL
+from schemas.categories.crypto.hl_funding_history import HL_FUNDING_HISTORY_DDL
+from schemas.categories.crypto.hl_liquidation_raw import HL_LIQUIDATION_RAW_DDL
+from schemas.categories.crypto.hl_oi_snapshot_daily import HL_OI_SNAPSHOT_DAILY_DDL
+
+# D5 跨资产·Hyperliquid 四表（2026-09-18 夜班，st-datapack-20260918，altdata_line D5 波2）：
+# 全市场行情快照/资金费率/清算流/持仓 OI 快照，DDL 真源 schemas/categories/crypto/（hl_ 前缀与既有 crypto 影子线隔离）
+from schemas.categories.crypto.hl_perp_snapshot_daily import HL_PERP_SNAPSHOT_DAILY_DDL
 from schemas.categories.intraday.market_execution_report import MARKET_EXECUTION_REPORT_DDL
-from schemas.categories.market.market_index_valuation_daily import MARKET_INDEX_VALUATION_DAILY_DDL
-from schemas.categories.market.market_ipo_calendar import IPO_CALENDAR_DDL
-from schemas.categories.kline.market_kline_global import KLINE_GLOBAL_DDL
-from schemas.categories.market.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
-from schemas.categories.market.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
-from schemas.categories.market.market_reconciliation_differences import (
-    MARKET_RECONCILIATION_DIFFERENCES_DDL,
-)
-from schemas.categories.market.market_sector_fund_flow import MARKET_SECTOR_FUND_FLOW_DDL
-from schemas.categories.market.market_stk_limit import STK_LIMIT_DDL
-from schemas.categories.market.market_suspend import SUSPEND_DDL
-from schemas.categories.market.market_us_futures_intraday import US_FUTURES_INTRADAY_DDL
-from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
-from schemas.categories.meta.meta_stock_profile_ths import STOCK_PROFILE_THS_DDL
-from schemas.categories.meta.meta_stock_profile_ths import TABLE_NAME as _THS_PROFILE_TABLE
-# 商品期货主力连续+商品现货基差（2026-09-17，st-igalpha-20260917，照生猪模式复制）：fail-closed 直接导入
-from schemas.categories.market.market_commodity_futures_main import COMMODITY_FUTURES_MAIN_DDL
-from schemas.categories.market.market_commodity_spot_price import COMMODITY_SPOT_PRICE_DDL
+from schemas.categories.judgment.judgment_daily_plan import JUDGMENT_DAILY_PLAN_DDL
+
 # 判定台账首批四表（2026-09-16，judgment-ledger-standard §三，st-ledgerp1-20260916）：
 # 作战室三任务（盘中状态/次日概率/晨间预案+盘中验证）——DDL-as-Code 真源
 # schemas/categories/judgment/（MergeTree 只增不改；结算列组只许 judgment_settler 回填）
 from schemas.categories.judgment.judgment_intraday_market_state import JUDGMENT_INTRADAY_MARKET_STATE_DDL
 from schemas.categories.judgment.judgment_next_day_forecast import JUDGMENT_NEXT_DAY_FORECAST_DDL
-from schemas.categories.judgment.judgment_daily_plan import JUDGMENT_DAILY_PLAN_DDL
 from schemas.categories.judgment.judgment_plan_verification import JUDGMENT_PLAN_VERIFICATION_DDL
-# J5 央行议息日历（2026-09-18 夜班，st-datapack-20260918，altdata_line D1 波1）：
-# 11 央行×决议值结构化数据集，DDL 真源 schemas/categories/market/market_rate_decision_calendar.py
-from schemas.categories.market.market_rate_decision_calendar import RATE_DECISION_CALENDAR_DDL
+from schemas.categories.kline.market_kline_global import KLINE_GLOBAL_DDL
+from schemas.categories.macro.macro_activity_gauge import MACRO_ACTIVITY_GAUGE_DDL
+from schemas.categories.macro.macro_credit_money import MACRO_CREDIT_MONEY_DDL
+from schemas.categories.macro.macro_daily_gauge import MACRO_DAILY_GAUGE_DDL
+from schemas.categories.macro.macro_pmi_gauge import MACRO_PMI_GAUGE_DDL
+
 # D3 宏观高频第一梯队六表（2026-09-18 夜班，st-datapack-20260918，altdata_line D3）：
 # 价格/景气/信用货币/实体活动/外需五张月频宽表 + 宏观日频宽表，
 # DDL 真源 schemas/categories/macro/（月度源=东财 datacenter fresh 口径，金十系 2025-10 起源端退役）
 from schemas.categories.macro.macro_price_gauge import MACRO_PRICE_GAUGE_DDL
-from schemas.categories.macro.macro_pmi_gauge import MACRO_PMI_GAUGE_DDL
-from schemas.categories.macro.macro_credit_money import MACRO_CREDIT_MONEY_DDL
-from schemas.categories.macro.macro_activity_gauge import MACRO_ACTIVITY_GAUGE_DDL
 from schemas.categories.macro.macro_trade_gauge import MACRO_TRADE_GAUGE_DDL
-from schemas.categories.macro.macro_daily_gauge import MACRO_DAILY_GAUGE_DDL
+from schemas.categories.market.market_a50_futures_daily import A50_FUTURES_DAILY_DDL
+from schemas.categories.market.market_account_nav_daily import MARKET_ACCOUNT_NAV_DAILY_DDL
+from schemas.categories.market.market_agri_wholesale_index import AGRI_WHOLESALE_INDEX_DDL
+from schemas.categories.market.market_alt_regime_signal import ALT_REGIME_SIGNAL_DDL
+
+# 另类数据第 1 批免注册直连（2026-09-12，alt-data-handoff §8-1）：fail-closed 直接导入
+from schemas.categories.market.market_alt_shipping_index import ALT_SHIPPING_INDEX_DDL
+from schemas.categories.market.market_alt_stock_comment import ALT_STOCK_COMMENT_DDL
+
+# 批 2 十一表（2026-09-14 深夜，新钥匙通道 0ecc2b46：环境/水库/楼市/口岸/统计扩展）
+from schemas.categories.market.market_alt_sz_air_quality_daily import MARKET_ALT_SZ_AIR_QUALITY_DAILY_DDL
+from schemas.categories.market.market_alt_sz_air_quality_region import MARKET_ALT_SZ_AIR_QUALITY_REGION_DDL
+from schemas.categories.market.market_alt_sz_climate_hist import MARKET_ALT_SZ_CLIMATE_HIST_DDL
+from schemas.categories.market.market_alt_sz_enterprise_year import MARKET_ALT_SZ_ENTERPRISE_YEAR_DDL
+from schemas.categories.market.market_alt_sz_env_meteor import MARKET_ALT_SZ_ENV_METEOR_DDL
+from schemas.categories.market.market_alt_sz_ground_obs import MARKET_ALT_SZ_GROUND_OBS_DDL
+from schemas.categories.market.market_alt_sz_house_area import MARKET_ALT_SZ_HOUSE_AREA_DDL
+from schemas.categories.market.market_alt_sz_house_daily import MARKET_ALT_SZ_HOUSE_DAILY_DDL
+from schemas.categories.market.market_alt_sz_house_listing import MARKET_ALT_SZ_HOUSE_LISTING_DDL
+from schemas.categories.market.market_alt_sz_house_presale import MARKET_ALT_SZ_HOUSE_PRESALE_DDL
+from schemas.categories.market.market_alt_sz_marine_forecast import MARKET_ALT_SZ_MARINE_FORECAST_DDL
+from schemas.categories.market.market_alt_sz_market_subject import MARKET_ALT_SZ_MARKET_SUBJECT_DDL
+from schemas.categories.market.market_alt_sz_port_monthly import MARKET_ALT_SZ_PORT_MONTHLY_DDL
+from schemas.categories.market.market_alt_sz_reservoir_level import MARKET_ALT_SZ_RESERVOIR_LEVEL_DDL
+from schemas.categories.market.market_alt_sz_reservoir_rain_day import MARKET_ALT_SZ_RESERVOIR_RAIN_DAY_DDL
+from schemas.categories.market.market_alt_sz_reservoir_rain_month import MARKET_ALT_SZ_RESERVOIR_RAIN_MONTH_DDL
+from schemas.categories.market.market_alt_sz_reservoir_station import MARKET_ALT_SZ_RESERVOIR_STATION_DDL
+from schemas.categories.market.market_alt_sz_stat_analysis import MARKET_ALT_SZ_STAT_ANALYSIS_DDL
+
+# 深圳开放数据批量源 ×7（2026-09-14，st-altdata-20260914）：fail-closed 直接导入
+from schemas.categories.market.market_alt_sz_stat_monthly import MARKET_ALT_SZ_STAT_MONTHLY_DDL
+
+# 深圳能见度探测分钟级站点流（2026-09-14，任务 2：服务 1580458478）
+from schemas.categories.market.market_alt_sz_visibility import MARKET_ALT_SZ_VISIBILITY_DDL
+from schemas.categories.market.market_alt_sz_weather_warning import MARKET_ALT_SZ_WEATHER_WARNING_DDL
+
+# 气象事件层：台风路径（2026-09-14，深圳开放数据平台 appKey 通道）
+from schemas.categories.market.market_alt_typhoon_track import ALT_TYPHOON_TRACK_DDL
+from schemas.categories.market.market_breadth_snapshot import MARKET_BREADTH_SNAPSHOT_DDL
+from schemas.categories.market.market_cffex_member_ranking import MARKET_CFFEX_MEMBER_RANKING_DDL
+
+# D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班，st-datapack-20260918，altdata_line D5 波2）：
+# 期限点长表（trade_date × 曲线 × 期限点），DDL 真源 schemas/categories/market/
+from schemas.categories.market.market_china_bond_yield import MARKET_CHINA_BOND_YIELD_DDL
+
+# 商品期货主力连续+商品现货基差（2026-09-17，st-igalpha-20260917，照生猪模式复制）：fail-closed 直接导入
+from schemas.categories.market.market_commodity_futures_main import COMMODITY_FUTURES_MAIN_DDL
+from schemas.categories.market.market_commodity_spot_price import COMMODITY_SPOT_PRICE_DDL
+from schemas.categories.market.market_convertible_bond_clause import MARKET_CONVERTIBLE_BOND_CLAUSE_DDL
+from schemas.categories.market.market_daban_board_event import MARKET_DABAN_BOARD_EVENT_DDL
+from schemas.categories.market.market_daban_engine_load import MARKET_DABAN_ENGINE_LOAD_DDL
+from schemas.categories.market.market_etf_share_snapshot import MARKET_ETF_SHARE_SNAPSHOT_DDL
+
+# D6 行情补充五族新建四表（2026-09-18 夜班，st-datapack-20260918，altdata_line D6）：
+# 大盘资金流/ETF份额快照/中金所前20会员排名/可转债条款快照，DDL 真源 schemas/categories/market/
+from schemas.categories.market.market_fund_flow_daily import MARKET_FUND_FLOW_DAILY_DDL
+from schemas.categories.market.market_futures_warehouse_receipt import FUTURES_WAREHOUSE_RECEIPT_DDL
+from schemas.categories.market.market_index_valuation_daily import MARKET_INDEX_VALUATION_DAILY_DDL
+from schemas.categories.market.market_ipo_calendar import IPO_CALENDAR_DDL
+from schemas.categories.market.market_limit_up_pool import MARKET_LIMIT_UP_POOL_DDL
+
 # D4 物理另类·油价链三件+F13（2026-09-18 夜班，st-datapack-20260918，altdata_line D4 波2）：
 # E8 发改委成品油调价/交易所仓单/公路运价指数/农产品批发价格指数，
 # DDL 真源 schemas/categories/market/（两包交界面：产业链分包 06 传导链引擎消费）
 from schemas.categories.market.market_ndrc_fuel_price import NDRC_FUEL_PRICE_DDL
-from schemas.categories.market.market_futures_warehouse_receipt import FUTURES_WAREHOUSE_RECEIPT_DDL
+from schemas.categories.market.market_news_sentiment_window import NEWS_SENTIMENT_WINDOW_DDL
+
+# J5 央行议息日历（2026-09-18 夜班，st-datapack-20260918，altdata_line D1 波1）：
+# 11 央行×决议值结构化数据集，DDL 真源 schemas/categories/market/market_rate_decision_calendar.py
+from schemas.categories.market.market_rate_decision_calendar import RATE_DECISION_CALENDAR_DDL
+from schemas.categories.market.market_reconciliation_differences import (
+    MARKET_RECONCILIATION_DIFFERENCES_DDL,
+)
 from schemas.categories.market.market_road_freight_index import ROAD_FREIGHT_INDEX_DDL
-from schemas.categories.market.market_agri_wholesale_index import AGRI_WHOLESALE_INDEX_DDL
-# D5 跨资产·Hyperliquid 四表（2026-09-18 夜班，st-datapack-20260918，altdata_line D5 波2）：
-# 全市场行情快照/资金费率/清算流/持仓 OI 快照，DDL 真源 schemas/categories/crypto/（hl_ 前缀与既有 crypto 影子线隔离）
-from schemas.categories.crypto.hl_perp_snapshot_daily import HL_PERP_SNAPSHOT_DAILY_DDL
-from schemas.categories.crypto.hl_oi_snapshot_daily import HL_OI_SNAPSHOT_DAILY_DDL
-from schemas.categories.crypto.hl_funding_history import HL_FUNDING_HISTORY_DDL
-from schemas.categories.crypto.hl_liquidation_raw import HL_LIQUIDATION_RAW_DDL
-# D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班，st-datapack-20260918，altdata_line D5 波2）：
-# 期限点长表（trade_date × 曲线 × 期限点），DDL 真源 schemas/categories/market/
-from schemas.categories.market.market_china_bond_yield import MARKET_CHINA_BOND_YIELD_DDL
-# D6 行情补充五族新建四表（2026-09-18 夜班，st-datapack-20260918，altdata_line D6）：
-# 大盘资金流/ETF份额快照/中金所前20会员排名/可转债条款快照，DDL 真源 schemas/categories/market/
-from schemas.categories.market.market_fund_flow_daily import MARKET_FUND_FLOW_DAILY_DDL
-from schemas.categories.market.market_etf_share_snapshot import MARKET_ETF_SHARE_SNAPSHOT_DDL
-from schemas.categories.market.market_cffex_member_ranking import MARKET_CFFEX_MEMBER_RANKING_DDL
-from schemas.categories.market.market_convertible_bond_clause import MARKET_CONVERTIBLE_BOND_CLAUSE_DDL
+from schemas.categories.market.market_sector_fund_flow import MARKET_SECTOR_FUND_FLOW_DDL
+from schemas.categories.market.market_sentiment_panel import SENTIMENT_PANEL_DDL
+from schemas.categories.market.market_stk_limit import STK_LIMIT_DDL
+from schemas.categories.market.market_suspend import SUSPEND_DDL
+from schemas.categories.market.market_typhoon_landfall_history import MARKET_TYPHOON_LANDFALL_HISTORY_DDL
+from schemas.categories.market.market_typhoon_names import MARKET_TYPHOON_NAMES_DDL
+from schemas.categories.market.market_us_futures_intraday import US_FUTURES_INTRADAY_DDL
+from schemas.categories.meta.meta_stock_profile_ths import STOCK_PROFILE_THS_DDL
+from schemas.categories.meta.meta_stock_profile_ths import TABLE_NAME as _THS_PROFILE_TABLE
+from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
+from schemas.categories.sim_attribution_daily import SIM_ATTRIBUTION_DAILY_DDL
 
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
@@ -567,6 +587,14 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.market_etf_share_snapshot", MARKET_ETF_SHARE_SNAPSHOT_DDL),
     ("c1_market.market_cffex_member_ranking", MARKET_CFFEX_MEMBER_RANKING_DDL),
     ("c1_market.market_convertible_bond_clause", MARKET_CONVERTIBLE_BOND_CLAUSE_DDL),
+    # TC-08 残余挂账收尾三表（2026-09-21，裁定#392（D-5）批代落）：表落 c1_backtest 库（DDL
+    # 全限定名建表，apply() 的 ensure_database 仅保 c1_market——真跑前须 c1_backtest 库已存在，
+    # 该库由仿真盘链路既有建库通道负责）；三表不入 _EXPECTED_ENGINES/verify()——该矩阵与
+    # verify 的 system.tables 查询是 c1_market 作用域，c1_backtest 三表的引擎一致性由
+    # verify_schema_truth.py 对照 schema 真源负责（schema 文件头 ERROR_CONTRACT 契约）
+    ("c1_backtest.crisis_gate_log", CRISIS_GATE_LOG_DDL),
+    ("c1_backtest.sim_attribution_daily", SIM_ATTRIBUTION_DAILY_DDL),
+    ("c1_backtest.cohort_daily_ledger", COHORT_DAILY_LEDGER_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -684,8 +712,7 @@ _MIGRATIONS: list[tuple[str, str]] = [
     ),
     (
         "c1_market.technical_indicator",
-        "ALTER TABLE c1_market.technical_indicator "
-        "ADD COLUMN IF NOT EXISTS kst Nullable(Float64) COMMENT '确知量KST'",
+        "ALTER TABLE c1_market.technical_indicator ADD COLUMN IF NOT EXISTS kst Nullable(Float64) COMMENT '确知量KST'",
     ),
     (
         "c1_market.technical_indicator",
@@ -1208,7 +1235,10 @@ def apply() -> int:
         print(f"  {table} ...", end=" ", flush=True)
         r = subprocess.run(
             [sys.executable, "-c", probe_py, sql, table],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
             cwd=repo_root,
         )
         out_lines = (r.stdout or "").strip().splitlines()
