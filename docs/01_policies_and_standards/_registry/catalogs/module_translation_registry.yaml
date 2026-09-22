@@ -56010,22 +56010,6 @@ entries:
   desc_en: ""
   plain_zh: "这是个跑夜班用的总调度小工具：把全市场5000多只股票的指标计算拆成58个小批次一个个跑，每一批单独开进程防止内存爆掉，跑完一批记个条子，中断了重跑会自动跳过已完成批次。"
   responsibility_layer: business
-- module_path: scripts/backtest/sim_daily_runner.py
-  domain_id: D_BACKTEST
-  name_zh: "模拟盘日链接电执行体"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "每天把丁线日计划(只读)翻译成模拟盘姿态和台账行，把E4观察档翻译件重放出模拟单，并出判定日报"
-  responsibility_layer: business
-- module_path: schemas/categories/sim_daily_report.py
-  domain_id: D_BACKTEST
-  name_zh: "模拟盘判定台账表结构"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "模拟盘日报台账的表结构定义：先落判定行，第二天再补结算列，判定和结算分开"
-  responsibility_layer: business
 - module_path: scripts/ch/apply_sim_daily_report_ddl.py
   domain_id: D_DATA
   name_zh: "模拟盘判定台账建表件"
@@ -56130,6 +56114,46 @@ entries:
   desc_en: ""
   plain_zh: "这是一本'值得研究的问题'的总账本：想把一个研究问题正式立项，先到这里过五道安检（有数据能答、有考试能证伪、有明确谁消费、有更新节奏、不偷看未来），过闸后领一个PQ编号入册；之后问题的每次搬家（开工、开考、出答案、挂起、退役）都在账本留痕，谁认领了它、考了几次、结论是什么全可查。"
   responsibility_layer: governance
+- module_path: scripts/ch/backfill_rzrq_history.py
+  domain_id: D_DATA
+  name_zh: "两融明细深历史回填脚本"
+  name_en: "margin detail history backfill"
+  desc_zh: "tushare margin_detail 纯增量回填 margin_trading 至 2024-09，补 C5 杠杆成分分位窗"
+  desc_en: ""
+  plain_zh: "把交易所公布的两融数据往前补齐到两年前，让情绪指数里的'借钱炒股热度'这个成分有足够多的历史数据来算百分位，而不是只有两个月样本就算不准。"
+  responsibility_layer: business
+- module_path: scripts/backtest/ibt/ibt_runner.py
+  domain_id: D_BACKTEST
+  name_zh: "整装回测执行器"
+  name_en: "IBT Runner"
+  desc_zh: "按 IBT-PROTOCOL-V1 协议执行四窗（IS/OOS/HOLDOUT/POSTD）×双方案（IBT-A 静态等权/IBT-B regime 节流）组合回测+15 成员单跑+000300 基准+成本敏感性扫描，产物落 artifacts。"
+  desc_en: "Integrated backtest runner: four protocol windows x two variants (static equal-weight vs regime-throttled) plus member single runs, benchmark and cost sensitivity; artifacts under artifacts/."
+  plain_zh: "这是一台整装回测的跑步机：把 15 个通过考试的策略拼成一个组合，在四段时间窗口里分别跑一遍，看组合赚不赚钱、回撤多深、交易成本吃掉多少。它还能逐个单独考每个成员，并做成本压力测试。跑完把成绩单和每笔交易清单存档，供复现核对。"
+  responsibility_layer: business
+- module_path: scripts/backtest/ibt/ibt_attrib.py
+  domain_id: D_BACKTEST
+  name_zh: "整装回测离线归因器"
+  name_en: "IBT Attribution"
+  desc_zh: "读 artifacts 净值/成交 csv 与 run_summary/sensitivity yaml 离线计算四窗成本归因、年化换手、回撤与 Sharpe 底稿，落 ibt_attribution.yaml，零引擎重跑。"
+  desc_en: "Offline attribution: reads artifacts nav/trades csv and run_summary/sensitivity yaml to compute per-window cost attribution, annual turnover, drawdown and Sharpe into ibt_attribution.yaml; no engine rerun."
+  plain_zh: "这是成绩单算细账的计算器：不重跑回测，只读跑步机存下的净值和成交清单，算出每个窗口赚了多少、被手续费和滑点吃掉多少、一年换手多少次、最大回撤多深，汇总成一张成本归因底稿，供写报告直接引用。"
+  responsibility_layer: business
+- module_path: scripts/backtest/ibt/ibt_mining_matrix.py
+  domain_id: D_BACKTEST
+  name_zh: "整装回测数据完备性探针"
+  name_en: "IBT Data Matrix"
+  desc_zh: "表级覆盖矩阵（协议窗口族×核心 CH 表 FINAL 去重统计，ch_reader 统一读侧）×E4 存活池 17 条 c4 翻译件 build 冒烟，落 ibt_data_matrix.yaml。"
+  desc_en: "Data completeness matrix: table-level coverage probes (protocol windows x core CH tables via ch_reader) x smoke-build of 17 surviving c4 strategies; writes ibt_data_matrix.yaml."
+  plain_zh: "这是开跑前的体检仪：逐张核心数据表查一遍四个时间窗口里有没有数据、覆盖多少股票和天数，再把 17 个候选策略逐个空转一次确认能正常产出信号。任何一张表缺数据都会如实记录在体检报告里，避免带病开跑。"
+  responsibility_layer: business
+- module_path: scripts/backtest/ibt/ibt_redblue.py
+  domain_id: D_BACKTEST
+  name_zh: "回测红蓝对抗器"
+  name_en: "IBT RedBlue Adversary"
+  desc_zh: "IBT-PROTOCOL-V1 §9 四向对抗：前视注入物质性/T+1 fill 硬审计/regime PIT 键审计+退市股注入/成本敏感性单调性，连续两轮零新红判过。"
+  desc_en: "Four-direction red-blue adversary per IBT-PROTOCOL-V1 §9: lookahead injection, T+1 fill audit, regime PIT key audit, delisted-stock injection, cost monotonicity; two consecutive zero-red rounds to pass."
+  plain_zh: "这是回测引擎的找茬员：故意往成绩里注入作弊信号（偷看未来的数据），看引擎会不会上当；再检查每一笔成交是否都严格晚于信号发出（防止时间旅行）；还验证退市股票会被自动剔除、交易成本越高收益越低的常识成立。连续两轮找不到新茬，才承认引擎干净。"
+  responsibility_layer: business
 
 battle_map_steps:
 - step_id: BM-BUY-05
@@ -67259,5 +67283,3 @@ algo_submodules:
   name_zh: ① 包命名空间初始化 空导出
   name_en: __all__空列表
   plain_zh: 包级init不聚合再导出任何符号，消费者须显式导入具体子模块
-
-  responsibility_layer: governance
