@@ -650,7 +650,6 @@ nodes:
 
 - node_id: TDM-E-L2-01-3
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
 
   name_zh: 多周期动量加权
   market: cn_a
@@ -680,7 +679,6 @@ nodes:
 
 - node_id: TDM-E-L2-01-4
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
 
   name_zh: 板块资金流聚合
   market: cn_a
@@ -771,7 +769,6 @@ nodes:
 
 - node_id: TDM-E-L2-02-1
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
 
   name_zh: RRG 轮动序列
   market: cn_a
@@ -831,7 +828,6 @@ nodes:
   # ── 树枝03 调整周期进度（BM-SEL-09）────────────────────────
 - node_id: TDM-E-L2-03
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 调整周期进度
   market: cn_a
   flow: entry_flow
@@ -860,7 +856,6 @@ nodes:
 
 - node_id: TDM-E-L2-03-1
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 扩散指标进度追踪
     # C6 施工（gw-tdm-20260909）：adjustment_cycle_tracker 扩展扩散指标段
   market: cn_a
@@ -922,7 +917,6 @@ nodes:
 
 - node_id: TDM-E-L2-04-1
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
 
   name_zh: 轮动状态五分类
   market: cn_a
@@ -951,7 +945,6 @@ nodes:
 
 - node_id: TDM-E-L2-04-2
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
 
   name_zh: 虹吸态识别
   market: cn_a
@@ -1037,7 +1030,6 @@ nodes:
 
 - node_id: TDM-E-L2-05-2
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
 
   name_zh: 信号响应三件套
   market: cn_a
@@ -1096,7 +1088,6 @@ nodes:
 
 - node_id: TDM-E-L2-06-1
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
 
   name_zh: 三级放行门槛
   market: cn_a
@@ -1126,7 +1117,6 @@ nodes:
 
 - node_id: TDM-E-L2-06-2
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16
   name_zh: 龙头识别定位
   market: cn_a
   flow: entry_flow
@@ -1187,7 +1177,6 @@ nodes:
   # ── 树枝07 回踩质量分级（BM-BUY-04 消费）───────────────────
 - node_id: TDM-E-L2-07
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 回踩质量分级
   market: cn_a
   flow: entry_flow
@@ -1218,7 +1207,6 @@ nodes:
 
 - node_id: TDM-E-L2-07-1
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
 
   name_zh: 回踩ABC判定
   market: cn_a
@@ -1280,7 +1268,6 @@ nodes:
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L2-09
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 催化剂识别
   market: cn_a
   flow: entry_flow
@@ -1506,7 +1493,6 @@ nodes:
 
 - node_id: TDM-E-L3-03-1
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # db06 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 短线池5分制
   market: cn_a
   flow: entry_flow
@@ -1566,7 +1552,6 @@ nodes:
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-03-3
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # grp6p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 双策略合流体检
   market: cn_a
   flow: entry_flow
@@ -1715,7 +1700,6 @@ nodes:
 
 - node_id: TDM-E-L3-07-1
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16
   name_zh: 打板选股链
   market: cn_a
   flow: entry_flow
@@ -1780,7 +1764,6 @@ nodes:
 
 - node_id: TDM-E-L3-07-3
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # grp4p1s2 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 其余sleeve选股链
   market: cn_a
   flow: entry_flow
@@ -2667,7 +2650,6 @@ nodes:
 
 - node_id: TDM-P-P1-02
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 持仓分级与监控频率
   market: cn_a
   flow: position_flow
@@ -3323,7 +3305,6 @@ nodes:
 
 - node_id: TDM-X-S1-02
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-20  # UP-2 前瞻概率止损接线（algo_note_zh 同步增补）
   name_zh: 止损族判定
   market: cn_a
   flow: exit_flow
@@ -3364,7 +3345,6 @@ nodes:
 
 - node_id: TDM-X-S1-03
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 止盈族判定
   market: cn_a
   flow: exit_flow
@@ -3498,7 +3478,6 @@ nodes:
   # S2 树枝：路由→{涨跌停约束/时段路由/条件单/分批}→闭环退出效率；paper×4 实盘执行
 - node_id: TDM-X-S2-01
   note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
-  note_confirmed: 2026-09-16  # grp5p2s3 出仓复核：机器块搬 yaml，算法口径逐字未变
   name_zh: 执行方式路由
   market: cn_a
   flow: exit_flow
