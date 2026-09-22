@@ -43734,9 +43734,42 @@ creation_tokens:
   token: ultimate-library---init---20260921
   created_by: st-ulib-20260921
   capability: ultimate_library
+- file: docs/_working/ultimate_library/12_ulib3_directive.md
+  token: ultimate-library-12-ulib3-directive-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ulib3 战役指令锚点，收编会话内指令散件，无平行登记表"
 - file: docs/_working/sim_launch/01_ruling_plan_mapping_and_orphans.md
   token: sim-launch-01-ruling-plan-mapping-and-orphans-20260922
   created_by: st-sim-launch-20260922
   capability: sim_launch
   merge_evaluation: "决策卡与提案表分工：提案=待批草案，决策卡=已裁记录，无同真源可并"
+- file: "docs/_working/integrated_backtest/IBT-HANDOFF-TO-MAX.md"
+  token: "auto-ibt-20260922-008"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/ibt_attribution.yaml"
+  token: "auto-ibt-20260922-009"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/ibt_data_matrix.yaml"
+  token: "auto-ibt-20260922-010"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "scripts/backtest/ibt_first_run/ibt_runner.py"
+  token: "auto-ibt-20260922-011"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "scripts/backtest/ibt_first_run/ibt_redblue.py"
+  token: "auto-ibt-20260922-012"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "scripts/backtest/ibt_first_run/ibt_attrib.py"
+  token: "auto-ibt-20260922-013"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "scripts/backtest/ibt_first_run/ibt_mining_matrix.py"
+  token: "auto-ibt-20260922-014"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
 di_seam_exemptions: []
