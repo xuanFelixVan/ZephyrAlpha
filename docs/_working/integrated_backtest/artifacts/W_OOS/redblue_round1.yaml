@@ -4,7 +4,8 @@ findings:
 - direction: lookahead
   name: engine_lag0_raise
   ok: true
-  evidence: 'LookaheadExecutionError 如期 raise: execution_lag_days=0 < 1 属前视执行（当日信号按当日收盘价成交），默认硬禁止。改用 execution_lag_days>=1（T+1 '
+  evidence: 'LookaheadExecutionError 如期 raise: execution_lag_days=0 < 1 属前视执行（当日信号按当日收盘价成交），默认硬禁止。改用
+    execution_lag_days>=1（T+1 '
 - direction: lookahead
   name: shift_injection_material
   ok: true
@@ -24,8 +25,8 @@ findings:
 - direction: pit
   name: delisted_injection
   ok: true
-  evidence: '000418(退市2019-06-21) 权重注入 → 成交触及=False（应 False=被剔） | 引擎护栏raise: 回测合理性护栏拦截 (result_id=bt-3e7dc262): trades_count=0
-    空跑（信号/撮合/配置失真嫌疑；确需空跑对照请 allow_'
+  evidence: '000418(退市2019-06-21) 权重注入 → 成交触及=False（应 False=被剔） | 引擎护栏raise: 回测合理性护栏拦截
+    (result_id=bt-ac39f0ee): trades_count=0 空跑（信号/撮合/配置失真嫌疑；确需空跑对照请 allow_'
 - direction: cost
   name: slippage_monotonic
   ok: true
@@ -35,4 +36,4 @@ findings:
   ok: true
   evidence: 零成本 Sharpe=0.837 ≥ 全档
 new_red: 0
-wall_sec: 222.3
+wall_sec: 189.0

@@ -1,0 +1,54 @@
+---
+status: active
+title: "批A IBT 工具正门化验收证书（R-022 数值回归对照）"
+module_id: ""
+blueprint_id: ""
+version: "1.0.0"
+created: "2026-09-23"
+updated: "2026-09-23"
+ttl: "task_bound"
+session: "st-ibt-remedy-a-20260923"
+protocol: "IBT-PROTOCOL-V1 (frozen 2026-09-22T01:05)"
+acceptance_standard: "R-022 数值回归对照（max_remediation_plan §2-批A 预注册）"
+window_rerun: "W_OOS"
+tool_under_test: "scripts/backtest/ibt/ibt_runner.py（正式版，SQL_* 常量 + ch_reader 读侧）"
+baseline: "docs/_working/integrated_backtest/artifacts/W_OOS/ 归档件（st-integrated-bt-20260922 首跑产物）"
+verdict: "PASS"
+checks:
+  nav_IBT-A:
+    rows_compared: 410
+    bitwise_equal_including_dates: true
+    method: "pandas float64 位级 == 全量逐行（值+日期列）"
+  nav_IBT-B:
+    rows_compared: 410
+    bitwise_equal_including_dates: true
+    note: "含 regime 节流路径（ch_reader 读 regime_snapshot_history → 预注册映射 → ShrinkageBacktestEngine）"
+  trades_IBT-A:
+    columns_equal: true
+    value_equal: true
+  trades_IBT-B:
+    columns_equal: true
+    value_equal: true
+  run_summary_yaml:
+    archive_keys: 325
+    rerun_keys: 325
+    structural_diffs: 0
+    value_diffs: 2
+    value_diff_keys: ["variants.IBT-A.wall_sec", "variants.IBT-B.wall_sec"]
+    value_diff_nature: "墙钟计时元数据，预期非确定项，非数值回归对象"
+  key_metrics:
+    IBT-A_total_return: 0.11933905275281402
+    IBT-A_sharpe_ratio: 0.3363249315113055
+    IBT-A_trades_count: 13935
+    IBT-B_total_return: 0.06423441715855198
+    IBT-B_sharpe_ratio: 0.16314079342084595
+    IBT-B_trades_count: 13113
+redblue:
+  archived_baseline:
+    W_OOS_round1_new_red: 0
+    W_OOS_round4_new_red: 0
+    W_IS_round3_new_red: 0
+  fresh_round: "W_OOS round1 由正式版 ibt_redblue.py 复跑（2026-09-23 03:20）：8/8 PASS，new_red=0，exit 0，与归档 round4 构成连续两轮零"
+  fresh_round_finding: "红蓝过程抓出一发真红并已治本：atk_pit_regime 前置的 schemas 包导入依赖 c4 模块副作用挂 sys.path，独立流程即崩（ModuleNotFoundError）——修复=runner/matrix 模块头显式挂载仓根（allocation_inputs 同款先例），修复后重跑全绿；查询路径与验收复跑完全一致，验收结论不受影响"
+panel_cache: "复跑时面板缓存已被 TTL 清空，本次为从 CH 原始数据全量重建（kline_daily_hfq/load_history 路径不变），非缓存回放——验收含金量=全链路复现"
+commit_note: "提交底稿=归档原件（复跑产物仅行尾 CRLF/LF 差异与 wall_sec，git .gitattributes 归一后内容一致）"
