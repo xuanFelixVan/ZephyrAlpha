@@ -45299,6 +45299,201 @@ creation_tokens:
   token: regfix-lane0b-overnight-decisions-20260923-20260922
   created_by: st-regfix-lane0b-20260923
   capability: regfix_lane0b
+- file: src/zephyr/intelligence/model_intel/__init__.py
+  token: model-intel---init---20260922
+  created_by: st-ailayer-p1-20260923
+  capability: model_intel
+  merge_evaluation: "OBJ_M批次2 C2：模型情报扫描包3件新增，吸收M1散落源笔记（DESIGN§2.1 12源表成册），无重复建设"
+- file: src/zephyr/intelligence/model_intel/intel_card.py
+  token: model-intel-intel-card-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: model_intel
+  merge_evaluation: "OBJ_M批次2 C2：模型情报扫描包3件新增，吸收M1散落源笔记（DESIGN§2.1 12源表成册），无重复建设"
+- file: src/zephyr/intelligence/model_intel/scanner.py
+  token: model-intel-scanner-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: model_intel
+- file: config/model_intel_sources.yaml
+  token: model-intel-sources-model-intel-sources-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: model-intel-sources
+- file: config/model_scoring_policy.yaml
+  token: model-scoring-policy-model-scoring-policy-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: model-scoring-policy
+- file: config/dual_run_criteria.yaml
+  token: dual-run-criteria-dual-run-criteria-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: dual-run-criteria
+- file: scripts/ai_layer/apply_model_library_ddl.py
+  token: model-library-ddl-apply-model-library-ddl-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: model-library-ddl
+- file: src/zephyr/intelligence/model_profiling/dual_run.py
+  token: dual-run-dual-run-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: dual-run
+- file: src/zephyr/intelligence/budget_analyzer.py
+  token: budget-analyzer-budget-analyzer-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: budget-analyzer
+- file: src/zephyr/frontend/dashboard/web/pages/budget.html
+  token: budget-page-budget-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: budget-page
+- file: src/zephyr/frontend/dashboard/web/features/budget/budget.js
+  token: budget-page-budget-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: budget-page
+- file: scripts/register_model_intel_scan_task.ps1
+  token: model-intel-scan-task-register-model-intel-scan-task-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: model-intel-scan-task
+- file: scripts/register_model_exam_task.ps1
+  token: model-exam-task-register-model-exam-task-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: model-exam-task
+- file: scripts/register_budget_report_task.ps1
+  token: budget-report-task-register-budget-report-task-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: budget-report-task
+- file: docs/_working/ai_layer_vision/OBJ_M_models/C6_routing_diff_proposal.md
+  token: c6-routing-proposal-c6-routing-diff-proposal-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: c6-routing-proposal
+- file: docs/_working/tdm20_campaign/00_campaign_ledger.md
+  token: tdm20-expansion-00-campaign-ledger-20260922
+  created_by: st-tdm20-20260923
+  capability: tdm20_expansion
+  merge_evaluation: "TDM2.0扩容班战役文档：替代无（知识供给轴设计/对账/排班对照/索引交付面），与真源yaml同批互锚"
+- file: docs/_working/tdm20_campaign/01_node_expansion_list.md
+  token: tdm20-expansion-01-node-expansion-list-20260922
+  created_by: st-tdm20-20260923
+  capability: tdm20_expansion
+  merge_evaluation: "TDM2.0扩容班战役文档：替代无（知识供给轴设计/对账/排班对照/索引交付面），与真源yaml同批互锚"
+- file: docs/_working/tdm20_campaign/02_deliverables_index.md
+  token: tdm20-expansion-02-deliverables-index-20260922
+  created_by: st-tdm20-20260923
+  capability: tdm20_expansion
+  merge_evaluation: "TDM2.0扩容班战役文档：替代无（知识供给轴设计/对账/排班对照/索引交付面），与真源yaml同批互锚"
+- file: docs/_working/tdm20_campaign/03_pp001_slot_alignment.md
+  token: tdm20-expansion-03-pp001-slot-alignment-20260922
+  created_by: st-tdm20-20260923
+  capability: tdm20_expansion
+  merge_evaluation: "TDM2.0扩容班战役文档：替代无（知识供给轴设计/对账/排班对照/索引交付面），与真源yaml同批互锚"
+- file: docs/_working/tdm20_campaign/04_chain_recon_report.md
+  token: tdm20-expansion-04-chain-recon-report-20260922
+  created_by: st-tdm20-20260923
+  capability: tdm20_expansion
+  merge_evaluation: "TDM2.0扩容班战役文档：替代无（知识供给轴设计/对账/排班对照/索引交付面），与真源yaml同批互锚"
+- file: docs/_working/tdm20_campaign/index.md
+  token: tdm20-expansion-index-20260922
+  created_by: st-tdm20-20260923
+  capability: tdm20_expansion
+- file: scripts/governance/generate_chain_registry.py
+  token: chain-registry-generator-generate-chain-registry-20260922
+  created_by: st-tdm20-20260923
+  capability: chain_registry_generator
+- file: scripts/governance/reconcile_chain_refs.py
+  token: chain-refs-reconciler-reconcile-chain-refs-20260922
+  created_by: st-tdm20-20260923
+  capability: chain_refs_reconciler
+- file: docs/02_enterprise_architecture/10_trading_map/trading_map_08_e_l9_supply.md
+  token: trading-map-diagram-trading-map-08-e-l9-supply-20260922
+  created_by: st-tdm20-20260923
+  capability: trading_map_diagram
+- file: scripts/backfill_etf_hfq_for_pcr.py
+  token: etf-hfq-pcr-backfill-backfill-etf-hfq-for-pcr-20260922
+  created_by: st-oddjobs-20260923
+  capability: etf-hfq-pcr-backfill
+  merge_evaluation: "跨域不同对象不并：股票hfq增量任务(miniqmt)无ETF通配，option_daily_stats回补件喂官方PCR统计非标的价格，本件是ETF标的层缺口唯一在编回补器"
+  merge_evaluation: "图表册L9知识供给轴新册：生成器产物（FILE_PLAN新增行），与同批重渲染8册互锚"
+  merge_evaluation: "chain_refs双向对账探测器：替代无（W4只报不清探测器），与recon报告同批互锚"
+  merge_evaluation: "chain_registry.yaml唯一合法再生成入口：替代无（新轴值域机生通道），与decision_map.py chain_refs轴同批互锚"
+  merge_evaluation: "TDM2.0扩容班战役文档：替代无（知识供给轴设计/对账/排班对照/索引交付面），与真源yaml同批互锚"
+  merge_evaluation: "OBJ_M批次2 C6 diff提案件（Owner终批OBJ_M-#1前置，零落地），P1方案批次红线产物"
+  merge_evaluation: "OBJ_M批次2 C8排班真源，只读日报不动钱"
+  merge_evaluation: "OBJ_M批次2 C8排班真源，mine_vs_exam串行链末位"
+  merge_evaluation: "OBJ_M批次2 C8排班真源，任务卡注册器先例格式，ASCII纯"
+  merge_evaluation: "OBJ_M批次2 C7前端渲染件"
+  merge_evaluation: "OBJ_M批次2 C7前端件，复刻promotion建议卡先例，零支付控件"
+  merge_evaluation: "OBJ_M批次2 C7：预算分析器，消费既有cost_tracker口径，零新数据源"
+  merge_evaluation: "OBJ_M批次2 C5：双跑执行器，MCE包内新增件，判据冻结机制防考尺自改"
+  merge_evaluation: "OBJ_M批次2 C3：模型库三表DDL部署器，镜像apply_ai_intake_ddl先例模式，非新规则面"
+  merge_evaluation: "OBJ_M批次2 C5：双跑判据预注册冻结件，OBJ_M DESIGN§4.2工程化，非新增规则面"
+  merge_evaluation: "OBJ_M批次2 C4：M2打分口径常数预注册新真源，README§3净零批次表已声明（吸收挖矿SOP模型分派二维法成常数）"
+  merge_evaluation: "OBJ_M批次2 C1：M1源注册表新真源，README§3净零批次表已声明（吸收各班散落搜索源笔记+甄别轮清单）"
+  merge_evaluation: "OBJ_M批次2 C2：模型情报扫描包3件新增，吸收M1散落源笔记（DESIGN§2.1 12源表成册），无重复建设"
   merge_evaluation: "夜班监控流水账活文件（每30分钟append），Owner 晨读第一站，无同真源可派生项"
   merge_evaluation: "手术一ALGO_FLOW锚修齐：散装外部真源归位commit_gates/l/分片（约定布局），锚路径同批修齐；移动零内容变更，旧路径token行留档"
+- file: "src/zephyr/backtest/regime_validation/exam_cost_gate.py"
+  token: "ibt-cf-exam-cost-gate-20260923"
+  created_by: "st-ibt-remedy-cf-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批C 考尺成本门纯函数件（五档单调+全成本存活+E7换手≤8x；E4 考尺新增判定层非新真源；与 regime memo 的 e4_cost_sensitivity 跨域不同对象不并）"
+- file: "config/exam_scale_cost_gate.yaml"
+  token: "ibt-cf-exam-cost-gate-cfg-20260923"
+  created_by: "st-ibt-remedy-cf-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批C 考尺预注册参数冻结档（考尺配置 YAML 化载体，禁硬编码；调整=裁定通道）"
+- file: "scripts/backtest/exam_cost_reexam.py"
+  token: "ibt-cf-exam-cost-reexam-20260923"
+  created_by: "st-ibt-remedy-cf-20260923"
+  capability: "ibt_remediation"
+- file: docs/_working/xhs_full_construction/closure_record.md
+  token: xhs-campaign-docs-closure-record-20260922
+  created_by: st-oddjobs-20260923
+  capability: xhs-campaign-docs
+  merge_evaluation: "同真源不重复登记：已有token文件幂等no-op，仅新增件补登记"
+- file: docs/_working/xhs_full_construction/index.md
+  token: xhs-campaign-docs-index-20260922
+  created_by: st-oddjobs-20260923
+  capability: xhs-campaign-docs
+  merge_evaluation: "同真源不重复登记：已有token文件幂等no-op，仅新增件补登记"
+- file: docs/_working/xhs_full_construction/pcr_e4_evidence_20260923_510050.yaml
+  token: xhs-campaign-docs-pcr-e4-evidence-20260923-510050-20260922
+  created_by: st-oddjobs-20260923
+  capability: xhs-campaign-docs
+  merge_evaluation: "同真源不重复登记：已有token文件幂等no-op，仅新增件补登记"
+- file: docs/_working/xhs_full_construction/pcr_e4_evidence_20260923_510300.yaml
+  token: xhs-campaign-docs-pcr-e4-evidence-20260923-510300-20260922
+  created_by: st-oddjobs-20260923
+  capability: xhs-campaign-docs
+- file: docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml
+  token: chain-registry-chain-registry-20260922
+  created_by: st-tdm20-20260923
+  capability: chain_registry
+  merge_evaluation: "TDM chain_refs轴值域真源（机生873链）：替代无（新轴值域册），生成器=governance/generate_chain_registry.py 同批互锚"
+  merge_evaluation: "同真源不重复登记：已有token文件幂等no-op，仅新增件补登记"
+  merge_evaluation: "批C 照妖镜/批D 池重考编排件（池清单单一真源=ibt_mining_matrix.POOL 禁复制；4440 必拦判据内置）"
+- file: "config/search_space_prereg.yaml"
+  token: "ibt-cf-search-space-prereg-20260923"
+  created_by: "st-ibt-remedy-cf-20260923"
+  capability: "ibt_remediation"
+- file: scripts/run_sim_bridge_execute_daily.ps1
+  token: sim-bridge-execute-schedule-run-sim-bridge-execute-daily-20260922
+  created_by: st-sim-launch-20260923
+  capability: sim_bridge_execute_schedule
+- file: scripts/register_sim_bridge_execute_task.ps1
+  token: sim-bridge-execute-schedule-register-sim-bridge-execute-task-20260922
+  created_by: st-sim-launch-20260923
+  capability: sim_bridge_execute_schedule
+- file: scripts/construction/qmt_bridge_regression_smoke.py
+  token: qmt-bridge-regression-smoke-qmt-bridge-regression-smoke-20260922
+  created_by: st-sim-launch-20260923
+  capability: qmt_bridge_regression_smoke
+- file: src/zephyr/governance/standards_governance/standard_checkup.py
+  token: standard-checkup-standard-checkup-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: standard-checkup
+- file: docs/_working/ai_layer_vision/OBJ_R_rules_standards/casebook.md
+  token: obj-r-casebook-casebook-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: obj-r-casebook
+  merge_evaluation: "OBJ_R S5案例库起步件，DESIGN§⑤起步形态（攒5案后Owner裁升格），非新注册表"
+  merge_evaluation: "OBJ_R S4体检统计器+提案生成器，DESIGN§④工程化，规则面零新增"
+  merge_evaluation: "收编 09-18 st-commitchain 未提交遗留（E2E 撤单实测唯一 CLI，本班加 R-H5E-1 注入+TR 验收步），非净新增重复面"
+  merge_evaluation: "同上：任务注册器与 wrapper 同批同 capability，零净新增调度面"
+  merge_evaluation: "并入 sim_daily_runner MOD-BT-222 桥执行腿排班面，PaperSession 先例，无新增重复调度"
+  merge_evaluation: "批F E7 搜索防线：三路搜索空间+算力预算封顶+DSR浮动预注册冻结件（改空间=作废重开，唯一空间真源）"
 di_seam_exemptions: []
