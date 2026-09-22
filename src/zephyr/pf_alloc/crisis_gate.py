@@ -14,8 +14,6 @@
 #   口径双档（裁定 D1）：crisis = dominant==r10（硬拦截）；warning = p_r10≥θ（缩额+告警）；
 #   θ 真源=config/crisis_gate.yaml（O1 待 Owner 校准，缺省 0.5）；
 #   无快照=fail-closed 平坦分布→normal **不误触**（验收③）；
-#   教材列退化（data_degraded，含"有行而日期不可解析"）→ 至少 warning（缩额+告警，不冻结）：
-#   退化输入的 normal 是"读不出危机"而非"确认无危机"（红队 st-ff-rb-safe-20260918 攻面一①实测）；
 #   crisis_block_check skip=True 时**不落 marker**（解除后同日可重放，由调用方保证）；
 #   存量持仓不强平（强平语义归 ex_core 既有回撤阶梯，本闸只拦新增，workbook §2 动作矩阵）；
 #   留痕 c1_backtest.crisis_gate_log MergeTree 只增不改；留痕/告警失败不阻断安全主流程（log+False）；
@@ -199,10 +197,6 @@ class CrisisState:
     lag_days: int  # 快照滞后天数（无快照=-1）
     warning_theta: float = DEFAULT_WARNING_THETA  # 本次判定所用 θ（留痕可复算）
     fail_closed: bool = False  # True=无快照退化平坦口径（不误触）
-    # 红队加严（st-ff-rb-safe-20260918 攻面一①）：教材列退化标志——退化输入下的
-    # "normal" 是**读不出危机**而非"确认无危机"，必须外显并可被下游判别。
-    data_degraded: bool = False
-    degraded_reasons: tuple[str, ...] = ()
 
     @property
     def is_crisis(self) -> bool:
@@ -225,32 +219,22 @@ def classify_crisis_state(regime: RegimeInput, *, warning_theta: float) -> Crisi
       - crisis = dominant == r10（硬拦截）；
       - warning = p_r10 ≥ θ（缩额 + 告警）；
       - 无快照（has_snapshot=False，fail-closed 平坦分布）→ normal **不误触**（验收③）；
-      - 教材行在但列退化（data_degraded，含"有行而日期不可解析"）→ 至少 warning：
-        退化输入的 normal 是"读不出危机"不是"确认无危机"（红队 st-ff-rb-safe-20260918
-        攻面一①实测：p_r10 列 NaN/None/负值、日期列 NaN + p_r10=0.99 六种退化此前
-        全部静默落 normal 且留痕与真平静市不可区分）。
-        代价口径：退化只升 **warning**（floor 0.05 缩额 + 告警），不升 crisis（不冻结
-        新开仓）——用一个可逆的保守档换掉不可逆的漏报，不把危险反过来加重。
     crisis 优先于 warning（同为 r10 高概率时取更严档）。
     """
     p_r10 = float(regime.probabilities[_P_R10_INDEX])
-    degraded = bool(getattr(regime, "data_degraded", False))
-    deg_reasons = tuple(getattr(regime, "degraded_reasons", ()) or ())
     if not regime.has_snapshot:
         return CrisisState(
-            state=STATE_WARNING if degraded else STATE_NORMAL,
+            state=STATE_NORMAL,
             p_r10=p_r10,
             dominant=regime.dominant,
             source_date=None,
             lag_days=regime.lag_days,
             warning_theta=float(warning_theta),
             fail_closed=True,
-            data_degraded=degraded,
-            degraded_reasons=deg_reasons,
         )
     if regime.dominant == CRISIS_STATE:
         state = STATE_CRISIS
-    elif p_r10 >= warning_theta or degraded:
+    elif p_r10 >= warning_theta:
         state = STATE_WARNING
     else:
         state = STATE_NORMAL
@@ -262,8 +246,6 @@ def classify_crisis_state(regime: RegimeInput, *, warning_theta: float) -> Crisi
         lag_days=regime.lag_days,
         warning_theta=float(warning_theta),
         fail_closed=False,
-        data_degraded=degraded,
-        degraded_reasons=deg_reasons,
     )
 
 
@@ -339,14 +321,10 @@ def crisis_block_check(
             state=STATE_WARNING,
             reason=(
                 f"warning：p_r10={cs.p_r10:.3f}≥θ={cs.warning_theta:.2f}"
-                + ("（或教材退化）" if cs.data_degraded else "")
                 + "→ 照跑 + CRISIS_SHRINKAGE_FLOOR=0.05 激活 + 告警"
             ),
         )
-    if cs.data_degraded:
-        note = "教材退化（读不出危机，非确认无危机）: " + "; ".join(cs.degraded_reasons[:3])
-    else:
-        note = "无快照 fail-closed 平坦分布→不误触" if cs.fail_closed else "regime 常态"
+    note = "无快照 fail-closed 平坦分布→不误触" if cs.fail_closed else "regime 常态"
     return CrisisBlock(
         skip=False,
         state=STATE_NORMAL,
