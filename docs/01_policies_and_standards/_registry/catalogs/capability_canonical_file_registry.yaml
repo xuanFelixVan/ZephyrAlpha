@@ -43738,6 +43738,21 @@ creation_tokens:
   token: ultimate-library-12-ulib3-directive-20260922
   created_by: st-ulib3-20260922
   capability: ultimate_library
+- file: scripts/governance/generators/library_hygiene.py
+  token: ultimate-library-library-hygiene-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: src/zephyr/library/collectors/logs_collector.py
+  token: ultimate-library-logs-collector-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: src/zephyr/library/library_regen_reconciler.py
+  token: ultimate-library-library-regen-reconciler-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ulib3 T4 post-commit 事件触发刷新，收编手动 regen 散件，无平行登记表"
+  merge_evaluation: "ulib3 T10 日志抽屉族级入册，收编 registry_of_logs 连线，无平行登记表"
+  merge_evaluation: "ulib3 T9 月度卫生命令，收编散在 TTL 清点脚本职责，无平行登记表"
   merge_evaluation: "ulib3 战役指令锚点，收编会话内指令散件，无平行登记表"
 - file: docs/_working/sim_launch/01_ruling_plan_mapping_and_orphans.md
   token: sim-launch-01-ruling-plan-mapping-and-orphans-20260922
@@ -43898,6 +43913,16 @@ creation_tokens:
   token: xhs-full-construction-00-owner-directive-20260922
   created_by: st-xhs-full-20260922
   capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/05_alpha158_handler_paradigm.md
+  token: xhs-full-construction-05-alpha158-handler-paradigm-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档并入collection_intake台账域；05/21两件为工单#5/#21唯一交付物无重复真源"
+- file: docs/_working/xhs_full_construction/21_counterparty_risk_register.md
+  token: xhs-full-construction-21-counterparty-risk-register-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档并入collection_intake台账域；05/21两件为工单#5/#21唯一交付物无重复真源"
   merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档，并入collection_intake台账域，无重复真源"
 - file: "docs/_working/sector_line/external_methodology.md"
   token: "secmine-ext-methodology-20260922"
@@ -43978,5 +44003,10 @@ creation_tokens:
   token: emotion-line-redblue-round-record-20260922
   created_by: st-emomine-20260922
   capability: emotion_line
+- file: scripts/patrol/zcode_workspace_patrol.ps1
+  token: zcode-patrol-zcode-workspace-patrol-20260922
+  created_by: st-xhs-full-20260922
+  capability: zcode_patrol
+  merge_evaluation: "工单#24② ZCode上传面巡检唯一执行件；与IOCheck月车共载，无平行登记面"
   merge_evaluation: "情绪线挖矿班战役交付六件（全新对象，无同真源可派生/无退役对象/跨域不同对象不并）"
 di_seam_exemptions: []
