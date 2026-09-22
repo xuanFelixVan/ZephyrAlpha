@@ -106,3 +106,21 @@ doc_version: v1.1（含挖干补遗轮）
 6. **G9 能力反查漏报**：sentiment 族五件不在反查索引——请批索引重建（归治理班，本班不施工）。
 7. **G10/S8 内收判定**：emotion_index 与 sentiment_cycle 是"温度计与档位计并存（共用内核）"
    还是"必并"，请定调——本骨架稿 §8.3 已备初判框架待批。
+
+## §6 施工班终态（2026-09-22 深夜，全线开工令执行结果）
+
+| 项 | 终态 | 证据 |
+|----|------|------|
+| S1 daban 复通 | **完成**：integrator run 周窗重放 09-01→09-22，事件表 936→1454 行+负载表 574 行，逐日齐；监控=既有 catchup_guard（weekend_calibration 7 日无 SUCCESS→overdue 检测面已在），零新增件 | CH 探针逐日行数 |
+| S2 cohort 闸合拢 | **完成**：admin 通道建表（writer 无 c1_backtest 建表权被 ch_writer 吞错——探针抓出）+tasks.yaml 登记 cohort_ledger_daily+writer Date 列 str 假失败 bug 修复（22 测绿）+首跑 160 行四人群落库 | c1_backtest.cohort_daily_ledger |
+| S3 情绪指数主体 | **完成**：builder 模块（277 行纯计算）+schema DDL-as-code+admin 建表+provider 路由分支+双任务接线（close_final/pre_open）+品类/翻译/depgraph 登记+432 测绿+双 stage 首跑 33 行 | c1_market.emotion_index |
+| S8/G10 内收判定 | **完成**：裁定#400 入册（并存分层+内核单源化两硬约束；两枚举收敛移交治理班） | ruling_registry |
+| 考试 | **完成**：卡冻结 v1.0+实跑判档（卡A 主判 INSUFFICIENT 预期兑现+W_core 观察档反向 RankIC-0.209；卡B C3 KEEP、C4/C6 NO_SIGNAL、C1/C2/C5 INSUFFICIENT） | exam_report_v1.md |
+| S4 两融补史 | **登记+跳过**（Owner 框架）：tushare 无 margin 能力，需新建外部 API 通道（配额/限流风险），C5 INSUFFICIENT 已被契约吸收，留数据线另令 | 本节 |
+| S5 LLM 分支 | **完成（factory-off）**：news_llm_scorer 适配器（nlp_inference×OllamaChat，LSG 内置）+夜间批接线+3 测绿；旗标 data/runtime/nightly_sentiment_llm.enabled 出厂不存在=规则法零变更；**启闭=Owner 门位** | tests/intelligence |
+| S6 词表漂移 | **完成**：data_asset_registry evidence 注记实证；schema 注释修正留 Owner（human_only） | data_asset_registry |
+| S7 盘中 stage | **维持不做**（原判定：宽度快照极浅；auction 原料已实证通，v0.2 挂载位升级） | 骨架稿 §8 |
+| G9 反查索引漏报 | **移交治理班**（裁定#400 同案）：翻译条目在册（27 处）但 lookup 相关性面不打分——引擎级缺口 | 裁定#400 |
+
+**判据备注**：S4/G9 属"遇到堵塞无法跳过的登记项"与"引擎级治理缺口"，均按 Owner 授权框架
+登记处置路径，非本班可终局；S5 启闭属宪法 §5.2 flag 出厂翻转门位，交付物=开关本体。

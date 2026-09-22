@@ -4,8 +4,8 @@ title: 情绪指数预注册考试卡草案 v0——S8 领先性卡 + 成分有�
 created: 2026-09-22
 sid: st-emomine-20260922
 lane: emotion_line
-status: draft（先于实验落盘；施工开工时冻结为 frozen，冻结后禁改参数）
-doc_version: v0.1
+status: frozen（2026-09-22 施工班冻结，先于实验落盘；实跑结果见 exam_report_v1.md）
+doc_version: v1.0（frozen）
 protocol_note: 表述遵循裁定#325（全绿基线表述禁用令）——禁"全绿"，一律判档三态/四态；verdict 含 RED/INSUFFICIENT 如实通道
 ---
 
@@ -106,3 +106,12 @@ RED/INSUFFICIENT 档的完整清单。
 - 家底事实预登记（盘点册实证，防考后惊讶）：C1/C2 断供史 11 日、C5 两融 2 个月、C6 新闻窗
   183 个市场行、C3/C4 原料十年深史。**预期结局：卡A 主判窗大概率 INSUFFICIENT，备考窗与
   卡B 的 C3/C4 是本轮真正能出判档的部分**——如实考、如实记。
+
+## 冻结补注（2026-09-22 施工班）
+
+1. 卡B 的 t 检验口径补披露：frozen 原文未指明 NW/解析式——实跑用 H0 解析近似 t=IC·√n
+   （卡A 价差用真实 Newey-West(5)），两口径在报告如实标注，frozen 门槛值零改动。
+2. W_core 实际 50 有效日 < A2 预估"约130+"：C6 新闻 obs 满 120 需至 2026-07 中，
+   系估算误差非口径变更（MIN_OBS=120 frozen 未动）。
+3. 实跑结果与判档：exam_report_v1.md（卡A 主判 INSUFFICIENT+观察档反向；卡B C3 KEEP/
+   C4·C6 NO_SIGNAL/C1·C2·C5 INSUFFICIENT，冗余 warn=C1×C3 ρ=0.824）。
