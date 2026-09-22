@@ -8,6 +8,7 @@ price_basis: "柜台镜像 PositionStatics 最新价 4.608（09-21 收盘口径�
 holding_check: "当前拥股 1100/可用数量 1100（PositionStatics.csv 人工核），T+1 已过全额可卖"
 order_key: "tc11-sell-e8f25d35bb8b"
 submit: "SUBMITTED（下单→文件桥→柜台→状态回流 SUBMITTED 全链打穿）"
-fill_review: "成交腿晨间复核待办：查 Deal.csv/柜台 CSV 终态（预期开盘竞价成交≈开盘价≥4.40）；异常升 Owner"
+fill_review: "晨间复核（12:50 镜像）：bridge 全链打穿（#DONE+ack SENT），但柜台 Order.csv/Deal.csv 无 tc11-sell 记录、持仓仍 1100 未成交未撤单——委托在柜台侧去向不明（终端 session/柜台接收面待查），按卡路由升 Owner 核查；复核对账锚=订单编号 1098912417 系他会话 4.070 旧单已撤，与本单无关"
+review_at: "2026-09-22T12:50:00"
 risk_note: "sim 账户未注入 risk_validator（向后兼容放行语义，日志已留痕）；本单为 Owner 已批的模拟户测试授权面"
 finished_at: "2026-09-22T05:15:00"
