@@ -56002,6 +56002,31 @@ entries:
   desc_en: ""
   plain_zh: "这是词表门卫：谁在代码里新造了一组描述大盘状态或情绪的标签（比如又发明一套'冰点/高潮'），它就查一查这套标签有没有在官方登记册上户口。没有户口就先提醒（现在是观察期，只提醒不拦人），以后翻成硬拦。这样全系统说状态的话就都从一本词典出，不会再出现同一个词两个意思的事故。"
   responsibility_layer: governance
+- module_path: scripts/backtest/sim_daily_runner.py
+  domain_id: D_BACKTEST
+  name_zh: "模拟盘日链接电执行体"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天把丁线日计划(只读)翻译成模拟盘姿态和台账行，把E4观察档翻译件重放出模拟单，并出判定日报"
+  responsibility_layer: business
+- module_path: schemas/categories/sim_daily_report.py
+  domain_id: D_BACKTEST
+  name_zh: "模拟盘判定台账表结构"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "模拟盘日报台账的表结构定义：先落判定行，第二天再补结算列，判定和结算分开"
+  responsibility_layer: business
+- module_path: scripts/ch/apply_sim_daily_report_ddl.py
+  domain_id: D_DATA
+  name_zh: "模拟盘判定台账建表件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把模拟盘日报台账的表结构部署到数据库，建好表并核对列都在"
+  responsibility_layer: business
+
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow

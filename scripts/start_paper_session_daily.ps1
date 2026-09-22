@@ -66,8 +66,16 @@ if (-not $qmt) {
 }
 Write-PaperLog "QMT  (PID=$($qmt.Id -join ','))-- --service "
 
-# 3. : LiveStrategyAdapter (biz tmp/live_strategy_biz.heartbeat)
-& $PythonExe scripts\start_paper_session.py --service *>> $LogFile
+# 3. wire: LiveStrategyAdapter (biz tmp/live_strategy_biz.heartbeat)
+# R2 fix v2 2026-09-22 (st-sim-launch): PS 5.1 under *>> turns the FIRST native
+# stderr line into a TERMINATING NativeCommandError even with
+# $ErrorActionPreference="Continue" (live-proven 2026-09-22 12:35: script died at
+# the python call on xtquant's pkg_resources UserWarning; morning 09:25 run never
+# started python at all). Bulletproof: route the native call through cmd /c with
+# cmd-native redirection so PowerShell never sees the stderr stream.
+$ErrorActionPreference = "Continue"
+cmd /c "`"$PythonExe`" scripts\start_paper_session.py --service >> `"$LogFile`" 2>&1"
 $code = $LASTEXITCODE
-Write-PaperLog "start_paper_session --service exited: exit_code=$code (0=, 1=//, 2=)"
+$ErrorActionPreference = "Stop"
+Write-PaperLog "start_paper_session --service exited: exit_code=$code (0=ok, 1=conn/assembly/run, 2=args)"
 exit $code

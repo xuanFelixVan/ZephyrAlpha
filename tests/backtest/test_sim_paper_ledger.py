@@ -27,7 +27,8 @@ import pytest
 
 _REPO = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location(
-    "sim_paper_ledger", _REPO / "scripts" / "backtest" / "sim_paper_ledger.py")
+    "sim_paper_ledger", _REPO / "scripts" / "backtest" / "sim_paper_ledger.py"
+)
 mod = importlib.util.module_from_spec(spec)
 sys.modules["sim_paper_ledger"] = mod
 spec.loader.exec_module(mod)
@@ -53,14 +54,13 @@ def _crisis_state(day: str, *, state: str, p_r10: float, dominant: str):
     """造 CrisisState 判据（run() 文档明示 crisis_resolver 注入缝=测试用假件）。"""
     from zephyr.pf_alloc.crisis_gate import CrisisState
 
-    return CrisisState(state=state, p_r10=p_r10, dominant=dominant,
-                       source_date=date.fromisoformat(day), lag_days=0)
+    return CrisisState(state=state, p_r10=p_r10, dominant=dominant, source_date=date.fromisoformat(day), lag_days=0)
 
 
 _NORMAL = lambda d: _crisis_state(d, state="normal", p_r10=0.02, dominant="r1")  # noqa: E731
 _CRISIS = lambda d: _crisis_state(d, state="crisis", p_r10=0.60, dominant="r10")  # noqa: E731
-_PANIC_ENTRY_DAY = "2026-07-17"   # 窗口内唯一 panic 信号日（2026-09-19 实测）
-_FORCED_EXIT_DAY = "2026-08-13"   # 入场后满 HOLD_N 交易日强平日
+_PANIC_ENTRY_DAY = "2026-07-17"  # 窗口内唯一 panic 信号日（2026-09-19 实测）
+_FORCED_EXIT_DAY = "2026-08-13"  # 入场后满 HOLD_N 交易日强平日
 
 
 def test_replay_pipeline_consistent():
@@ -109,6 +109,7 @@ def test_replay_crisis_resolver_error_fails_closed():
 
     牙齿由变异证明：把该 except 腿改成 return False（fail-open）⇒ 本件红。
     """
+
     def _boom(day):
         raise RuntimeError("CH 不可读")
 
@@ -128,8 +129,9 @@ def test_replay_live_chain_never_swallows_tradesilently():
     """
     res = _replay()
     assert len(res["rows"]) >= 52
-    assert res["events"] or res["crisis_blocked_days"], \
+    assert res["events"] or res["crisis_blocked_days"], (
         "回放既无成交也无拦截留痕=静默空转（panic 信号或危机闸判据已失联）"
+    )
     noted = {r[0] for r in res["rows"] if r[12].startswith("crisis_gate:")}
     assert noted == set(res["crisis_blocked_days"]), "拦单日与留痕日不一致（审计缺口）"
     traded_days = {e[0] for e in res["events"]}
@@ -137,13 +139,20 @@ def test_replay_live_chain_never_swallows_tradesilently():
 
 
 def test_rebuild_matches_pocket():
-    """事件流重建的钱包日账与落库快照逐字段一致（容差 0.01 元）。"""
+    """事件流重建的钱包日账与落库快照逐字段一致（容差 0.01 元）。
+
+    对照基线 MUST 按 mode 过滤（2026-09-22 st-sim-launch 修复既有红）：基线表里
+    同策略并存 replay_demo 与 sim_daily 两平面行（09-14/09-21 sim_daily 实证），
+    不过滤=把另一平面的日期混入对照集，长度断言被无关平面增长炸红。
+    """
     rows = mod.rebuild(mod.STRATEGY_ID, "replay_demo", "2026-07-01", "2026-09-11")
     orig = mod._q(
         "SELECT trade_date, argMax(cash, ingest_ts), argMax(shares, ingest_ts),"
         " argMax(position_value, ingest_ts), argMax(equity, ingest_ts)"
         " FROM c1_backtest.sim_pocket_daily WHERE strategy_id = 'STR-VREV-025'"
-        " GROUP BY trade_date ORDER BY trade_date")
+        " AND mode = 'replay_demo'"
+        " GROUP BY trade_date ORDER BY trade_date"
+    )
     assert len(orig) >= 50 and len(rows) >= len(orig)
     # 按日期对齐比较（源指数回补使重建比落库快照多出新交易日时不误报；
     # 交集内逐字段等值=事件溯源重建等价性的核心验收线，不容差漂移）
@@ -155,8 +164,12 @@ def test_rebuild_matches_pocket():
         if landed is None:
             continue
         compared += 1
-        for a, b in [(rebuilt[3], landed[1]), (rebuilt[5], landed[2]),
-                     (rebuilt[6], landed[3]), (rebuilt[7], landed[4])]:
+        for a, b in [
+            (rebuilt[3], landed[1]),
+            (rebuilt[5], landed[2]),
+            (rebuilt[6], landed[3]),
+            (rebuilt[7], landed[4]),
+        ]:
             if abs(float(a) - float(b)) > 0.01:
                 mismatch += 1
     assert compared >= 50, "重建与落库快照交集日期不足（覆盖漂移）"
@@ -165,8 +178,7 @@ def test_rebuild_matches_pocket():
 
 def test_events_have_reason_snapshot():
     """每个事件必带触发判据快照（AI 复核需求的最低保障）。"""
-    ev = mod._q("SELECT signal_reason FROM c1_backtest.sim_trade_log FINAL "
-                "WHERE strategy_id = 'STR-VREV-025'")
+    ev = mod._q("SELECT signal_reason FROM c1_backtest.sim_trade_log FINAL WHERE strategy_id = 'STR-VREV-025'")
     assert ev and all(r[0] and len(str(r[0])) > 5 for r in ev)
 
 
@@ -182,13 +194,32 @@ class TestC1MultiStrategyWallet:
         calls = {"writes": []}
         monkeypatch.setattr(mod, "_q", lambda sql: [(0,)])
         monkeypatch.setattr(
-            mod, "run",
+            mod,
+            "run",
             lambda mode, start, end, run_id=None, strategy_id=None: {
-                "rows": [[start, strategy_id or mod.STRATEGY_ID, mod.INITIAL_CAPITAL,
-                          mod.INITIAL_CAPITAL, "", 0.0, 0.0, mod.INITIAL_CAPITAL, 0.0,
-                          "cash", mode, run_id, ""]],
-                "events": [], "final_equity": mod.INITIAL_CAPITAL, "days": 1,
-                "entry_px_last": 0.0})
+                "rows": [
+                    [
+                        start,
+                        strategy_id or mod.STRATEGY_ID,
+                        mod.INITIAL_CAPITAL,
+                        mod.INITIAL_CAPITAL,
+                        "",
+                        0.0,
+                        0.0,
+                        mod.INITIAL_CAPITAL,
+                        0.0,
+                        "cash",
+                        mode,
+                        run_id,
+                        "",
+                    ]
+                ],
+                "events": [],
+                "final_equity": mod.INITIAL_CAPITAL,
+                "days": 1,
+                "entry_px_last": 0.0,
+            },
+        )
 
         def fake_write(table, cols, tsv_bytes):
             calls["writes"].append(table)
@@ -217,9 +248,9 @@ class TestC1MultiStrategyWallet:
 
     def test_ensure_wallet_foreign_strategy_open_row(self, offline, monkeypatch):
         """非内置引擎策略=开户行（signal=open 初始资金现金仓，不伪造信号/收益）。"""
-        monkeypatch.setattr(mod, "run",
-                            lambda *a, **k: (_ for _ in ()).throw(
-                                AssertionError("非内置引擎策略不得走内置引擎")))
+        monkeypatch.setattr(
+            mod, "run", lambda *a, **k: (_ for _ in ()).throw(AssertionError("非内置引擎策略不得走内置引擎"))
+        )
         r = mod.ensure_wallet("STR-E-TIMING-001", day="2026-09-15", code_path="x/y.py")
         assert r["created"] is True
         # 开户行+开户事件=两张表都写
@@ -233,15 +264,18 @@ class TestC1MultiStrategyWallet:
         reg.write_text(
             "strategies:\n"
             "  - strategy_id: STR-SIM-A-001\n    lifecycle_status: sim\n    code_path: a.py\n"
-            "  - strategy_id: STR-SIM-B-002\n    lifecycle_status: sim\n    code_path: \"\"\n"
+            '  - strategy_id: STR-SIM-B-002\n    lifecycle_status: sim\n    code_path: ""\n'
             "  - strategy_id: STR-CAND-001\n    lifecycle_status: candidate\n"
             "  - strategy_id: STR-PAP-001\n    lifecycle_status: paper\n",
-            encoding="utf-8")
+            encoding="utf-8",
+        )
         monkeypatch.setattr(intake_mod, "REGISTRY", reg)
         seen = []
-        monkeypatch.setattr(mod, "ensure_wallet",
-                            lambda sid, day=None, mode="sim_daily", code_path="":
-                            seen.append((sid, day)) or {"created": True})
+        monkeypatch.setattr(
+            mod,
+            "ensure_wallet",
+            lambda sid, day=None, mode="sim_daily", code_path="": seen.append((sid, day)) or {"created": True},
+        )
         out = mod.open_wallets_from_registry(day="2026-09-15")
         assert [s for s, _ in seen] == ["STR-SIM-A-001", "STR-SIM-B-002"]
         assert all(d == "2026-09-15" for _, d in seen)
@@ -256,7 +290,8 @@ class TestC1MultiStrategyWallet:
             "strategies:\n"
             "  - strategy_id: STR-SIM-A-001\n    lifecycle_status: sim\n"
             "  - strategy_id: STR-SIM-B-002\n    lifecycle_status: sim\n",
-            encoding="utf-8")
+            encoding="utf-8",
+        )
         monkeypatch.setattr(intake_mod, "REGISTRY", reg)
 
         def ensure(sid, day=None, mode="sim_daily", code_path=""):
@@ -277,7 +312,8 @@ class TestC1MultiStrategyWallet:
             "strategies:\n"
             "  - strategy_id: STR-SIM-A-001\n    lifecycle_status: sim\n    code_path: a.py\n"
             "  - strategy_id: STR-CAND-001\n    lifecycle_status: candidate\n",
-            encoding="utf-8")
+            encoding="utf-8",
+        )
         monkeypatch.setattr(intake_mod, "REGISTRY", reg)
         entries = mod.registry_sim_entries()
         assert entries == [{"strategy_id": "STR-SIM-A-001", "code_path": "a.py"}]
@@ -291,18 +327,17 @@ class TestC1MultiStrategyWallet:
             return {"opened": ["STR-SIM-A-001"], "skipped": ["STR-VREV-025"], "errors": []}
 
         monkeypatch.setattr(mod, "open_wallets_from_registry", fake_open)
-        monkeypatch.setattr(sys, "argv",
-                            ["sim_paper_ledger.py", "--mode", "sim_daily", "--from-registry",
-                             "--start", "2026-09-15"])
+        monkeypatch.setattr(
+            sys, "argv", ["sim_paper_ledger.py", "--mode", "sim_daily", "--from-registry", "--start", "2026-09-15"]
+        )
         mod.main()
         assert called["day"] == "2026-09-15"
-        monkeypatch.setattr(sys, "argv",
-                            ["sim_paper_ledger.py", "--mode", "replay_demo", "--from-registry"])
+        monkeypatch.setattr(sys, "argv", ["sim_paper_ledger.py", "--mode", "replay_demo", "--from-registry"])
         with pytest.raises(SystemExit):
             mod.main()
         # 非 VREV 策略禁入 replay_demo/rebuild（无内联引擎）
-        monkeypatch.setattr(sys, "argv",
-                            ["sim_paper_ledger.py", "--mode", "replay_demo",
-                             "--strategy-id", "STR-E-TIMING-001"])
+        monkeypatch.setattr(
+            sys, "argv", ["sim_paper_ledger.py", "--mode", "replay_demo", "--strategy-id", "STR-E-TIMING-001"]
+        )
         with pytest.raises(SystemExit):
             mod.main()

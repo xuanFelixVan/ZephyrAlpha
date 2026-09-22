@@ -338,6 +338,41 @@ def _build_var_backtest_fn(
     return _grade
 
 
+def _run_sim_journal_step(trade_date: str) -> None:
+    """模拟盘平台日刊收盘档（④ 排程语义修复 2026-09-22 st-sim-launch）。
+
+    事件链早间档的日刊（daily_kline SUCCESS 唤醒）拿的是盘前快照，当日收盘后的
+    真实钱包/事件数由本步在 15:30 收盘结算链末尾幂等覆盖（ReplacingMergeTree
+    同键新版本）——日刊语义从"早间预览"补全为"收盘定稿"。子进程隔离（日刊内部
+    自带三健康检+告警），失败只大声留痕，永不改盘后对账/审计的退出码矩阵。
+    """
+    try:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+        proc = run_subprocess_hidden(
+            [
+                sys.executable,
+                str(Path(__file__).resolve().parent / "backtest" / "sim_platform_journal.py"),
+                "--date",
+                trade_date,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=600,
+            encoding="utf-8",
+            errors="replace",
+        )
+        if proc.returncode != 0:
+            _logger.error("模拟盘日刊收盘档失败 rc=%s: %s", proc.returncode, (proc.stderr or "")[-300:])
+            deps_note = "模拟盘日刊：收盘档失败（详见日志）"
+        else:
+            deps_note = "模拟盘日刊：收盘档已写（幂等覆盖早间档）"
+        print(f"[INFO] {deps_note}")
+    except Exception:  # noqa: BLE001 — 本步永不改既有退出码矩阵（异常大声留痕）
+        _logger.exception("模拟盘日刊收盘档异常（已吞没，不影响盘后对账/审计结论）")
+        print("[INFO] 模拟盘日刊：收盘档异常（详见日志）")
+
+
 def _run_var_backtest_step(deps: PipelineDeps, trade_date: str) -> None:
     """执行 VaR 定级装配并记结论标注（永不抛异常、永不改退出码）。
 
@@ -358,9 +393,7 @@ def _run_var_backtest_step(deps: PipelineDeps, trade_date: str) -> None:
         deps.notes.append("VaR 回测定级：异常（详见日志），本步未归档")
         return
     if report is None:
-        deps.notes.append(
-            "VaR 回测定级：两腿零配对未定级未归档（clean P&L 双轨真源未接线，57号文 GAP 族后续批）"
-        )
+        deps.notes.append("VaR 回测定级：两腿零配对未定级未归档（clean P&L 双轨真源未接线，57号文 GAP 族后续批）")
         return
     deps.notes.append(
         f"VaR 回测定级已归档: action={getattr(report, 'action', '?')} "
@@ -492,6 +525,7 @@ def main(argv: list[str] | None = None, *, deps: PipelineDeps | None = None) -> 
                 _logger.exception("broker.disconnect() 异常（已吞没）")
 
     _run_var_backtest_step(deps, trade_date)
+    _run_sim_journal_step(trade_date)
     _print_result(result, deps)
     code = _exit_code_of(result)
     print(f"[INFO] exit_code={code}（0=OK/SKIPPED, 3=DRIFT, 1=ERROR）")

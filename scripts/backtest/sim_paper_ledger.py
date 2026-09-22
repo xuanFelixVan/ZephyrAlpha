@@ -47,6 +47,10 @@ from pathlib import Path
 
 import pandas as pd
 
+_ROOT = Path(__file__).resolve().parents[2]
+if str(_ROOT) not in sys.path:
+    sys.path.insert(0, str(_ROOT))
+
 logger = logging.getLogger(__name__)
 
 STRATEGY_ID = "STR-VREV-025"
@@ -54,10 +58,23 @@ INITIAL_CAPITAL = 1_000_000.0
 DROP_PREV, DROP_TODAY, HOLD_N = -0.015, -0.014, 20
 SYMBOL = "000852"
 BUY_COST, SELL_COST = (2.5 + 5.0) / 10000.0, (2.5 + 10.0 + 5.0) / 10000.0
-_TABLE = "c1_backtest.sim_pocket_daily"
-_COLS = ("(trade_date, strategy_id, initial_capital, cash, position_symbol, shares, position_value,"
-         " equity, daily_pnl, signal, mode, run_id, note)")
+from schemas.categories.sim_pocket_daily import TABLE_NAME as _TABLE  # noqa: E402
+from schemas.categories.sim_trade_log import TABLE_NAME as _T_TRADELOG  # noqa: E402
 
+# SQL 集中化（NO-BARE-SQL）：语句常量模块级，占位符运行期 format
+SQL_REBUILD_EVENTS = (
+    f"SELECT trade_date, action, shares, cash_after, run_id FROM {_T_TRADELOG} FINAL "
+    "WHERE strategy_id = '{strategy_id}' AND mode = '{mode}' "
+    "ORDER BY trade_date, action"
+)
+SQL_WALLET_EXISTS = (
+    f"SELECT count() FROM {_TABLE} FINAL WHERE strategy_id = '{{strategy_id}}' AND trade_date = '{{day}}'"
+)
+
+_COLS = (
+    "(trade_date, strategy_id, initial_capital, cash, position_symbol, shares, position_value,"
+    " equity, daily_pnl, signal, mode, run_id, note)"
+)
 
 
 def _q(sql: str):
@@ -67,8 +84,9 @@ def _q(sql: str):
     return get_client_strict().execute(sql)
 
 
-def run(mode: str, start: str, end: str, run_id: str | None = None,
-        strategy_id: str | None = None, *, crisis_resolver=None) -> dict:
+def run(
+    mode: str, start: str, end: str, run_id: str | None = None, strategy_id: str | None = None, *, crisis_resolver=None
+) -> dict:
     """内置引擎策略日账（strategy_id 缺省=STR-VREV-025，既有行为不变）。
 
     仅内置引擎策略（STRATEGY_ID，参数内联）有真实信号口径；传其他 strategy_id 会套用
@@ -136,9 +154,21 @@ def run(mode: str, start: str, end: str, run_id: str | None = None,
             if hold_day >= HOLD_N:
                 cost = shares * px_now * SELL_COST
                 proceeds = shares * px_now * (1 - SELL_COST)
-                events.append([dt.strftime("%Y-%m-%d"), sid, SYMBOL, "exit",
-                               shares, px_now, cost, proceeds,
-                               f"持有满{HOLD_N - 1}交易日平仓(入场价{entry_px:.2f})", mode, run_id])
+                events.append(
+                    [
+                        dt.strftime("%Y-%m-%d"),
+                        sid,
+                        SYMBOL,
+                        "exit",
+                        shares,
+                        px_now,
+                        cost,
+                        proceeds,
+                        f"持有满{HOLD_N - 1}交易日平仓(入场价{entry_px:.2f})",
+                        mode,
+                        run_id,
+                    ]
+                )
                 cash, shares, hold_day = proceeds, 0.0, 0
                 signal = "exit"
         elif bool(panic.loc[dt]):
@@ -157,16 +187,42 @@ def run(mode: str, start: str, end: str, run_id: str | None = None,
                 cash = 0.0
                 hold_day = 1
                 signal = "entry"
-                events.append([dt.strftime("%Y-%m-%d"), sid, SYMBOL, "entry",
-                               shares, px_now, buy_cost, 0.0,
-                               f"恐慌触发:上证两日跌幅达阈值({DROP_PREV}/{DROP_TODAY})", mode, run_id])
+                events.append(
+                    [
+                        dt.strftime("%Y-%m-%d"),
+                        sid,
+                        SYMBOL,
+                        "entry",
+                        shares,
+                        px_now,
+                        buy_cost,
+                        0.0,
+                        f"恐慌触发:上证两日跌幅达阈值({DROP_PREV}/{DROP_TODAY})",
+                        mode,
+                        run_id,
+                    ]
+                )
         pos_val = shares * px_now
         equity = cash + pos_val
         daily_pnl = equity - prev_equity
         prev_equity = equity
-        out_rows.append([dt.strftime("%Y-%m-%d"), sid, INITIAL_CAPITAL, round(cash, 2),
-                         SYMBOL if shares > 0 else "", round(shares, 2), round(pos_val, 2),
-                         round(equity, 2), round(daily_pnl, 2), signal, mode, run_id, note])
+        out_rows.append(
+            [
+                dt.strftime("%Y-%m-%d"),
+                sid,
+                INITIAL_CAPITAL,
+                round(cash, 2),
+                SYMBOL if shares > 0 else "",
+                round(shares, 2),
+                round(pos_val, 2),
+                round(equity, 2),
+                round(daily_pnl, 2),
+                signal,
+                mode,
+                run_id,
+                note,
+            ]
+        )
     # 被拦日出声+留痕（裁定 D3/D4：失败不阻断账本主流程，函数内自兜底）
     for day_key in crisis_blocked_days:
         cs = crisis_cache.get(day_key)
@@ -174,14 +230,24 @@ def run(mode: str, start: str, end: str, run_id: str | None = None,
             continue  # resolver 异常日已记 warning，不伪造 CrisisState 出声
         from zephyr.pf_alloc.crisis_gate import alert_crisis_level, log_crisis_gate_row
 
-        alert_crisis_level("l3", trade_date=day_key, crisis_state=cs,
-                           detail="L3 entry→cash（恐慌反弹入场被危机闸拦截）")
-        log_crisis_gate_row(trade_date=day_key, crisis_state=cs,
-                            action_l1="not_wired", action_l2="not_applicable",
-                            action_l3="entry_to_cash")
-    return {"rows": out_rows, "events": events, "final_equity": round(prev_equity, 2),
-            "days": len(dates), "entry_px_last": entry_px,
-            "crisis_blocked_days": crisis_blocked_days}
+        alert_crisis_level(
+            "l3", trade_date=day_key, crisis_state=cs, detail="L3 entry→cash（恐慌反弹入场被危机闸拦截）"
+        )
+        log_crisis_gate_row(
+            trade_date=day_key,
+            crisis_state=cs,
+            action_l1="not_wired",
+            action_l2="not_applicable",
+            action_l3="entry_to_cash",
+        )
+    return {
+        "rows": out_rows,
+        "events": events,
+        "final_equity": round(prev_equity, 2),
+        "days": len(dates),
+        "entry_px_last": entry_px,
+        "crisis_blocked_days": crisis_blocked_days,
+    }
 
 
 def _default_crisis_resolver(day: str):
@@ -201,9 +267,7 @@ def pd_idx(sym: str, start: str, end: str):
 
 def rebuild(strategy_id: str, mode: str, start: str, end: str) -> list[list]:
     """从 sim_trade_log 事件流重建钱包日账（后备方案：账本损毁可全量重建）。"""
-    ev = _q(f"SELECT trade_date, action, shares, cash_after, run_id FROM c1_backtest.sim_trade_log FINAL "
-            f"WHERE strategy_id = '{strategy_id}' AND mode = '{mode}' "
-            f"ORDER BY trade_date, action")
+    ev = _q(SQL_REBUILD_EVENTS.format(strategy_id=strategy_id, mode=mode))
     ev_by_date = {str(r[0]): r for r in ev}
     px = pd_idx(SYMBOL, start, end)
     px_map = px["close"].to_dict()
@@ -225,9 +289,23 @@ def rebuild(strategy_id: str, mode: str, start: str, end: str) -> list[list]:
         equity = cash + pos_val
         daily_pnl = equity - prev_equity
         prev_equity = equity
-        rows.append([ds, strategy_id, INITIAL_CAPITAL, round(cash, 2),
-                     SYMBOL if shares > 0 else "", round(shares, 2), round(pos_val, 2),
-                     round(equity, 2), round(daily_pnl, 2), signal, mode, f"rebuild-{run_id}", ""])
+        rows.append(
+            [
+                ds,
+                strategy_id,
+                INITIAL_CAPITAL,
+                round(cash, 2),
+                SYMBOL if shares > 0 else "",
+                round(shares, 2),
+                round(pos_val, 2),
+                round(equity, 2),
+                round(daily_pnl, 2),
+                signal,
+                mode,
+                f"rebuild-{run_id}",
+                "",
+            ]
+        )
     return rows
 
 
@@ -241,8 +319,11 @@ def registry_sim_entries() -> list[dict]:
     from zephyr.strategy_pipeline import intake as _intake
 
     reg = _intake._load_registry()
-    return [{"strategy_id": s["strategy_id"], "code_path": s.get("code_path") or ""}
-            for s in reg.get("strategies", []) if s.get("lifecycle_status") == "sim"]
+    return [
+        {"strategy_id": s["strategy_id"], "code_path": s.get("code_path") or ""}
+        for s in reg.get("strategies", [])
+        if s.get("lifecycle_status") == "sim"
+    ]
 
 
 def allocation_wallet_capital(strategy_id: str, day: str) -> tuple[float | None, str]:
@@ -275,8 +356,11 @@ def allocation_wallet_capital(strategy_id: str, day: str) -> tuple[float | None,
         return None, f"{TABLE_NAME} 不可读（{type(exc).__name__}: {str(exc)[:120]}）"
     row = next((r for r in rows if str(r[0]) == strategy_id), None)
     if row is None:
-        return None, (f"分配链当日无本策略行（{day} 共 {len(rows)} 行）" if rows
-                      else f"分配链当日无快照行（{day}，链未跑或已回退 flat）")
+        return None, (
+            f"分配链当日无本策略行（{day} 共 {len(rows)} 行）"
+            if rows
+            else f"分配链当日无快照行（{day}，链未跑或已回退 flat）"
+        )
     try:
         capital = round(float(row[5]), 2)
     except (TypeError, ValueError) as exc:  # noqa: BLE001 — 非数值额度=不可信，回退
@@ -298,17 +382,29 @@ def _write_rows(rows: list[list], events: list[list]) -> None:
     if not ch_writer.write_tsv(_TABLE, _COLS, tsv.encode("utf-8")):
         raise RuntimeError("落库未确认——fail-closed")
     if events:
-        ev_cols = ("(trade_date, strategy_id, symbol, action, shares, price, cost_paid, cash_after,"
-                   " signal_reason, mode, run_id)")
+        ev_cols = (
+            "(trade_date, strategy_id, symbol, action, shares, price, cost_paid, cash_after,"
+            " signal_reason, mode, run_id)"
+        )
         ev_tsv = "\n".join("\t".join(cell(v) for v in r) for r in events) + "\n"
         if not ch_writer.write_tsv("c1_backtest.sim_trade_log", ev_cols, ev_tsv.encode("utf-8")):
             raise RuntimeError("事件流水落库未确认——fail-closed")
 
 
-def ensure_wallet(strategy_id: str, day: str | None = None, mode: str = "sim_daily",
-                  code_path: str = "") -> dict:
+def ensure_wallet(
+    strategy_id: str,
+    day: str | None = None,
+    mode: str = "sim_daily",
+    code_path: str = "",
+    allow_unregistered: bool = False,
+) -> dict:
     """幂等开钱包（C1 核心）：同策略+日已有钱包行则跳过（重复调用零副作用）。
 
+    - 注册表 SSOT 卫兵（R5 治本 2026-09-22 st-sim-launch）：mode=sim_daily 平面的
+      钱包准入真源=strategy_registry lifecycle==sim（+内置引擎策略）。非在册条目
+      拒绝开户返回 why=not_in_registry_sim（不写任何行）——止血注册表外幽灵钱包
+      每日自我续开户（STR-AUTO-001/STR-MULTIFACTOR-001 实证）。显式逃生=
+      allow_unregistered=True（手工运维通道，留痕调用方自担）。
     - 内置引擎策略（STRATEGY_ID）→ run() 当日全口径（与既有 sim_daily 行为等值，不迁移不破坏）；
     - 其余注册表 sim 条目 → 开户行（signal=open，note 记额度来源——
       策略日账/信号待翻译件 build() 重放接线，禁伪造信号与收益）；
@@ -320,10 +416,16 @@ def ensure_wallet(strategy_id: str, day: str | None = None, mode: str = "sim_dai
     code_path 仅作 payload 透传留痕。
     """
     day = day or date.today().strftime("%Y-%m-%d")
-    existing = _q(f"SELECT count() FROM {_TABLE} FINAL "
-                  f"WHERE strategy_id = '{strategy_id}' AND trade_date = '{day}'")
+    existing = _q(SQL_WALLET_EXISTS.format(strategy_id=strategy_id, day=day))
     if existing and int(existing[0][0]) > 0:
         return {"strategy_id": strategy_id, "day": day, "created": False, "why": "row_exists"}
+    if (
+        mode == "sim_daily"
+        and strategy_id != STRATEGY_ID
+        and not allow_unregistered
+        and strategy_id not in {e["strategy_id"] for e in registry_sim_entries()}
+    ):
+        return {"strategy_id": strategy_id, "day": day, "created": False, "why": "not_in_registry_sim"}
     run_id = f"sim-open-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
     if strategy_id == STRATEGY_ID:
         res = run(mode, day, day, run_id=run_id, strategy_id=strategy_id)
@@ -334,19 +436,38 @@ def ensure_wallet(strategy_id: str, day: str | None = None, mode: str = "sim_dai
         if alloc_cap is None:
             # 回退路径（fail-open）：额度=旧 flat 口径，**原因入 note 留痕**，不静默伪造
             capital = INITIAL_CAPITAL
-            note = (f"C1 自动开户（策略引擎未接线，日账待翻译件重放）"
-                    f"｜钱包额度回退 flat 旧口径：{source}")
+            note = f"C1 自动开户（策略引擎未接线，日账待翻译件重放）｜钱包额度回退 flat 旧口径：{source}"
         else:
             capital = alloc_cap
             note = f"C1 自动开户（钱包额度={source}）｜信号待翻译件重放，不伪造信号/收益"
-        rows = [[day, strategy_id, capital, round(capital, 2), "", 0.0, 0.0,
-                 round(capital, 2), 0.0, "open", mode, run_id, note]]
-        events = [[day, strategy_id, "", "open", 0.0, 0.0, 0.0, capital,
-                   f"C1 自动开户｜{source}", mode, run_id]]
+        rows = [
+            [
+                day,
+                strategy_id,
+                capital,
+                round(capital, 2),
+                "",
+                0.0,
+                0.0,
+                round(capital, 2),
+                0.0,
+                "open",
+                mode,
+                run_id,
+                note,
+            ]
+        ]
+        events = [[day, strategy_id, "", "open", 0.0, 0.0, 0.0, capital, f"C1 自动开户｜{source}", mode, run_id]]
     _write_rows(rows, events)
-    return {"strategy_id": strategy_id, "day": day, "created": True,
-            "rows": len(rows), "events": len(events),
-            "capital": capital, "capital_source": source}
+    return {
+        "strategy_id": strategy_id,
+        "day": day,
+        "created": True,
+        "rows": len(rows),
+        "events": len(events),
+        "capital": capital,
+        "capital_source": source,
+    }
 
 
 def open_wallets_from_registry(day: str | None = None) -> dict:
@@ -356,7 +477,7 @@ def open_wallets_from_registry(day: str | None = None) -> dict:
         try:
             r = ensure_wallet(e["strategy_id"], day=day, code_path=e.get("code_path") or "")
             (out["opened"] if r.get("created") else out["skipped"]).append(e["strategy_id"])
-        except Exception as exc:  # noqa: BLE001——收集全部失败，循环不断（逐策略隔离）
+        except Exception as exc:  # noqa: BLE001 —— 收集全部失败，循环不断（逐策略隔离）
             out["errors"].append({"strategy_id": e["strategy_id"], "error": str(exc)[:160]})
     if out["errors"]:
         raise RuntimeError(f"开户存在失败（fail-closed）: {out['errors']}")
@@ -369,29 +490,38 @@ def main() -> None:
     ap.add_argument("--mode", choices=["replay_demo", "sim_daily"], required=True)
     ap.add_argument("--start", default=None)
     ap.add_argument("--end", default=None)
-    ap.add_argument("--rebuild", action="store_true",
-                    help="从事件流重建钱包日账（后备方案，不产生新事件）")
-    ap.add_argument("--strategy-id", default=None,
-                    help="单策略幂等开钱包（ensure_wallet）；缺省=内置引擎策略既有行为")
-    ap.add_argument("--from-registry", action="store_true",
-                    help="扫注册表 lifecycle==sim 全部条目逐个幂等开钱包（仅 sim_daily；C1 验收入口）")
+    ap.add_argument("--rebuild", action="store_true", help="从事件流重建钱包日账（后备方案，不产生新事件）")
+    ap.add_argument("--strategy-id", default=None, help="单策略幂等开钱包（ensure_wallet）；缺省=内置引擎策略既有行为")
+    ap.add_argument(
+        "--from-registry",
+        action="store_true",
+        help="扫注册表 lifecycle==sim 全部条目逐个幂等开钱包（仅 sim_daily；C1 验收入口）",
+    )
+    ap.add_argument(
+        "--allow-unregistered",
+        action="store_true",
+        help="逃生口：--strategy-id 手工运维通道绕过注册表 SSOT 卫兵（留痕自担；默认拒绝在册外开户）",
+    )
     args = ap.parse_args()
     if args.from_registry and args.mode != "sim_daily":
         raise SystemExit("--from-registry 仅支持 --mode sim_daily（开户是模拟盘动作）")
-    if (args.strategy_id and args.strategy_id != STRATEGY_ID
-            and (args.mode == "replay_demo" or args.rebuild)):
-        raise SystemExit(f"replay_demo/rebuild 仅内置引擎策略 {STRATEGY_ID} 支持"
-                         f"（{args.strategy_id} 无内联引擎；多策略请用 --from-registry 开户）")
+    if args.strategy_id and args.strategy_id != STRATEGY_ID and (args.mode == "replay_demo" or args.rebuild):
+        raise SystemExit(
+            f"replay_demo/rebuild 仅内置引擎策略 {STRATEGY_ID} 支持"
+            f"（{args.strategy_id} 无内联引擎；多策略请用 --from-registry 开户）"
+        )
     if args.from_registry:
         day = args.start or date.today().strftime("%Y-%m-%d")
         out = open_wallets_from_registry(day=day)
-        print(json.dumps({"mode": "sim_daily", "from_registry": True, "day": day, **out},
-                         ensure_ascii=False))
+        print(json.dumps({"mode": "sim_daily", "from_registry": True, "day": day, **out}, ensure_ascii=False))
         return
     if args.strategy_id and args.mode == "sim_daily" and not args.rebuild:
-        out = ensure_wallet(args.strategy_id, day=args.start or date.today().strftime("%Y-%m-%d"))
-        print(json.dumps({"mode": "sim_daily", "strategy_id": args.strategy_id, **out},
-                         ensure_ascii=False))
+        out = ensure_wallet(
+            args.strategy_id,
+            day=args.start or date.today().strftime("%Y-%m-%d"),
+            allow_unregistered=args.allow_unregistered,
+        )
+        print(json.dumps({"mode": "sim_daily", "strategy_id": args.strategy_id, **out}, ensure_ascii=False))
         return
     if args.mode == "replay_demo":
         start, end = args.start or "2026-07-01", args.end or date.today().strftime("%Y-%m-%d")
@@ -406,14 +536,21 @@ def main() -> None:
         max_attempts, gap = 10, 120
         for attempt in range(1, max_attempts + 1):
             try:
-                res = run(args.mode, start, end,
-                          run_id=f"sim-{args.mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}")
+                res = run(
+                    args.mode,
+                    start,
+                    end,
+                    run_id=f"sim-{args.mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+                )
                 break
             except Exception as e:  # noqa: BLE001 — CH 不可达/断连类失败均重试
                 if attempt == max_attempts:
                     raise
-                print(f"[sim_daily] CH 不可达（{type(e).__name__}: {str(e)[:80]}），"
-                      f"{gap}s 后第 {attempt}/{max_attempts} 次重试", flush=True)
+                print(
+                    f"[sim_daily] CH 不可达（{type(e).__name__}: {str(e)[:80]}），"
+                    f"{gap}s 后第 {attempt}/{max_attempts} 次重试",
+                    flush=True,
+                )
                 threading.Event().wait(gap)  # 有界退避（非定时触发）
         else:
             return
@@ -432,7 +569,9 @@ def main() -> None:
         print(json.dumps({"rebuild": True, "rows": len(rows)}, ensure_ascii=False))
         return
     if args.mode != "sim_daily" or args.rebuild:
-        res = run(args.mode, start, end, run_id=f"sim-{args.mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}")
+        res = run(
+            args.mode, start, end, run_id=f"sim-{args.mode}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+        )
     from zephyr.data import ch_writer
 
     def cell(v):
@@ -443,14 +582,25 @@ def main() -> None:
     tsv = "\n".join("\t".join(cell(v) for v in r) for r in res["rows"]) + "\n"
     if not ch_writer.write_tsv(_TABLE, _COLS, tsv.encode("utf-8")):
         raise RuntimeError("落库未确认——fail-closed")
-    ev_cols = ("(trade_date, strategy_id, symbol, action, shares, price, cost_paid, cash_after,"
-               " signal_reason, mode, run_id)")
+    ev_cols = (
+        "(trade_date, strategy_id, symbol, action, shares, price, cost_paid, cash_after, signal_reason, mode, run_id)"
+    )
     if res["events"]:
         ev_tsv = "\n".join("\t".join(cell(v) for v in r) for r in res["events"]) + "\n"
         if not ch_writer.write_tsv("c1_backtest.sim_trade_log", ev_cols, ev_tsv.encode("utf-8")):
             raise RuntimeError("事件流水落库未确认——fail-closed")
-    print(json.dumps({"mode": args.mode, "days": res["days"], "final_equity": res["final_equity"],
-                      "rows": len(res["rows"]), "events": len(res["events"])}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                "mode": args.mode,
+                "days": res["days"],
+                "final_equity": res["final_equity"],
+                "rows": len(res["rows"]),
+                "events": len(res["events"]),
+            },
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":
