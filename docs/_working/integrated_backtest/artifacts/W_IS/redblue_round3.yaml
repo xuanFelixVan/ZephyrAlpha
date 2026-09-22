@@ -1,0 +1,38 @@
+round: 3
+window: W_IS
+findings:
+- direction: lookahead
+  name: engine_lag0_raise
+  ok: true
+  evidence: 'LookaheadExecutionError 如期 raise: execution_lag_days=0 < 1 属前视执行（当日信号按当日收盘价成交），默认硬禁止。改用 execution_lag_days>=1（T+1 '
+- direction: lookahead
+  name: shift_injection_material
+  ok: true
+  evidence: 注入后 Sharpe -0.286→-0.534 (Δ=-0.248)
+- direction: t1
+  name: fill_audit_no_same_day
+  ok: true
+  evidence: fills=35212 违例=0（每 fill 均存在严格更早信号日）
+- direction: t1
+  name: same_bar_disabled
+  ok: true
+  evidence: execution_lag_days=1 + allow_same_bar_execution=False（配置级）
+- direction: pit
+  name: regime_schedule_keys
+  ok: true
+  evidence: schedule keys=1156 全部=快照日+1（快照日<消费日），无来源键 0
+- direction: pit
+  name: delisted_injection
+  ok: true
+  evidence: '000418(退市2019-06-21) 权重注入 → 成交触及=False（应 False=被剔） | 引擎护栏raise: 回测合理性护栏拦截 (result_id=bt-319f310e): trades_count=0
+    空跑（信号/撮合/配置失真嫌疑；确需空跑对照请 allow_'
+- direction: cost
+  name: slippage_monotonic
+  ok: true
+  evidence: Sharpe@0/5/10/20/40bp = [-0.114, -0.317, -0.596, -1.161, -2.308]
+- direction: cost
+  name: zero_cost_dominates
+  ok: true
+  evidence: 零成本 Sharpe=0.248 ≥ 全档
+new_red: 0
+wall_sec: 1486.4

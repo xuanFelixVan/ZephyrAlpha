@@ -1,0 +1,1230 @@
+campaign: st-integrated-bt-20260922
+generated_at: '2026-09-22T00:52:42.989475'
+windows:
+  W_IS:
+  - '2019-04-01'
+  - '2023-12-31'
+  W_OOS:
+  - '2024-01-01'
+  - '2025-09-08'
+  W_HOLDOUT:
+  - '2025-09-09'
+  - '2026-09-08'
+  W_POSTD:
+  - '2026-09-09'
+  - '2026-09-18'
+part_a_tables:
+  kline_daily_hfq#W_IS:
+    ok: true
+    rows:
+    - - 4846992
+      - 4996
+      - '2019-04-01'
+      - '2023-12-29'
+      - 1156
+    sec: 3.1
+  kline_daily_hfq#W_OOS:
+    ok: true
+    rows:
+    - - 2070794
+      - 5129
+      - '2024-01-02'
+      - '2025-09-08'
+      - 409
+    sec: 0.5
+  kline_daily_hfq#W_HOLDOUT:
+    ok: true
+    rows:
+    - - 1251969
+      - 5216
+      - '2025-09-09'
+      - '2026-09-08'
+      - 242
+    sec: 0.7
+  kline_daily_hfq#W_POSTD:
+    ok: true
+    rows:
+    - - 46864
+      - 5217
+      - '2026-09-09'
+      - '2026-09-18'
+      - 8
+    sec: 0.2
+  kline_index[000001]#W_IS:
+    ok: true
+    rows:
+    - - 1156
+      - '2019-04-01'
+      - '2023-12-29'
+    sec: 0.4
+  kline_index[000001]#W_OOS:
+    ok: true
+    rows:
+    - - 409
+      - '2024-01-02'
+      - '2025-09-08'
+    sec: 0.2
+  kline_index[000001]#W_HOLDOUT:
+    ok: true
+    rows:
+    - - 242
+      - '2025-09-09'
+      - '2026-09-08'
+    sec: 0.1
+  kline_index[000001]#W_POSTD:
+    ok: true
+    rows:
+    - - 8
+      - '2026-09-09'
+      - '2026-09-18'
+    sec: 0.0
+  kline_index[000016]#W_IS:
+    ok: true
+    rows:
+    - - 1156
+      - '2019-04-01'
+      - '2023-12-29'
+    sec: 0.3
+  kline_index[000016]#W_OOS:
+    ok: true
+    rows:
+    - - 409
+      - '2024-01-02'
+      - '2025-09-08'
+    sec: 0.0
+  kline_index[000016]#W_HOLDOUT:
+    ok: true
+    rows:
+    - - 242
+      - '2025-09-09'
+      - '2026-09-08'
+    sec: 0.0
+  kline_index[000016]#W_POSTD:
+    ok: true
+    rows:
+    - - 8
+      - '2026-09-09'
+      - '2026-09-18'
+    sec: 0.1
+  kline_index[000300]#W_IS:
+    ok: true
+    rows:
+    - - 1156
+      - '2019-04-01'
+      - '2023-12-29'
+    sec: 0.1
+  kline_index[000300]#W_OOS:
+    ok: true
+    rows:
+    - - 409
+      - '2024-01-02'
+      - '2025-09-08'
+    sec: 0.1
+  kline_index[000300]#W_HOLDOUT:
+    ok: true
+    rows:
+    - - 242
+      - '2025-09-09'
+      - '2026-09-08'
+    sec: 0.0
+  kline_index[000300]#W_POSTD:
+    ok: true
+    rows:
+    - - 8
+      - '2026-09-09'
+      - '2026-09-18'
+    sec: 0.0
+  kline_index[000852]#W_IS:
+    ok: true
+    rows:
+    - - 1156
+      - '2019-04-01'
+      - '2023-12-29'
+    sec: 0.1
+  kline_index[000852]#W_OOS:
+    ok: true
+    rows:
+    - - 409
+      - '2024-01-02'
+      - '2025-09-08'
+    sec: 0.0
+  kline_index[000852]#W_HOLDOUT:
+    ok: true
+    rows:
+    - - 242
+      - '2025-09-09'
+      - '2026-09-08'
+    sec: 0.0
+  kline_index[000852]#W_POSTD:
+    ok: true
+    rows:
+    - - 8
+      - '2026-09-09'
+      - '2026-09-18'
+    sec: 0.0
+  stock_indicator#W_IS:
+    ok: true
+    rows:
+    - - 5117127
+      - 4198478
+      - 5076284
+      - 5117127
+      - '2019-04-01'
+      - '2023-12-29'
+    sec: 3.6
+  stk_limit#W_IS:
+    ok: true
+    rows:
+    - - 5182737
+      - '2019-04-01'
+      - '2023-12-29'
+    sec: 1.1
+  index_constituent[000300.SH]#W_IS:
+    ok: true
+    rows:
+    - - 482
+      - '2019-03-29'
+      - '2023-12-29'
+    sec: 1.9
+  regime_snapshot_history#W_IS:
+    ok: true
+    rows:
+    - - 2312
+      - 1156
+      - '2019-04-01'
+      - '2023-12-29'
+      - 2
+    sec: 0.7
+  financial_derived#W_IS:
+    ok: false
+    err: 'ServerException: Code: 47.
+
+      DB::Exception: Unknown expression or function identifier `trade_date` in scope SELECT count(), min(trade_date), max(trade_date)
+      FROM c3_fundamental.financial_derived WHERE (trade_date >= ''2019-04-01'') AND (trade_date <= ''2023-12-31''). Stack
+      trace:
+
+
+      0. DB::Exception::Exception(DB::Exception::MessageMasked&&, int, bool) @ 0x000000001930812a
+
+      1. DB::Exception::Exception(String&&, int, String, bool) @ 0x00000000122b4912
+
+      2. DB::Exception::Exception(PreformattedMessage&&, int) @ 0x00000000122b4186
+
+      3. DB::Exception::Exception<char const*, String&, String, String, String>(int, FormatStringHelperImpl<std::type_identity<char
+      const*>::type, std::type_identity<String&>::type, std::type_identity<String>::type, std::type_identity<String>::type,
+      std::type_identity<String>::type>, char const*&&, String&, String&&, String&&, String&&) @ 0x000000001d314301
+
+      4. DB::QueryAnalyzer::resolveExpressionNode(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool, bool) @ 0x000000001d2ed08e
+
+      5. DB::QueryAnalyzer::resolveExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool) @ 0x000000001d2e988b
+
+      6. DB::QueryAnalyzer::resolveFunction(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool) @ 0x000000001d5d695d
+
+      7. DB::QueryAnalyzer::resolveExpressionNode(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool, bool) @ 0x000000001d2ea8f6
+
+      8. DB::QueryAnalyzer::resolveExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool) @ 0x000000001d2e988b
+
+      9. DB::QueryAnalyzer::resolveProjectionExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&)
+      @ 0x000000001d3150b9
+
+      10. DB::QueryAnalyzer::resolveQuery(std::shared_ptr<DB::IQueryTreeNode> const&, DB::IdentifierResolveScope&) @ 0x000000001d2e08d3
+
+      11. DB::QueryAnalyzer::resolve(std::shared_ptr<DB::IQueryTreeNode>&, std::shared_ptr<DB::IQueryTreeNode> const&, std::shared_ptr<DB::Context
+      const>) @ 0x000000001d2dded7
+
+      12. DB::QueryAnalysisPass::run(std::shared_ptr<DB::IQueryTreeNode>&, std::shared_ptr<DB::Context const>) @ 0x000000001d2dd3b5
+
+      13. DB::QueryTreePassManager::run(std::shared_ptr<DB::IQueryTreeNode>&) @ 0x000000001d341c01
+
+      14. DB::buildQueryTreeAndRunPasses(boost::intrusive_ptr<DB::IAST> const&, DB::SelectQueryOptions const&, std::shared_ptr<DB::Context
+      const> const&, std::shared_ptr<DB::IStorage> const&) @ 0x000000001dfea1eb
+
+      15. DB::InterpreterSelectQueryAnalyzer::InterpreterSelectQueryAnalyzer(boost::intrusive_ptr<DB::IAST> const&, std::shared_ptr<DB::Context
+      const> const&, DB::SelectQueryOptions const&, std::vector<String, std::allocator<String>> const&, DB::ActionsDAG const*)
+      @ 0x000000001dfe7b13
+
+      16. std::unique_ptr<DB::IInterpreter, std::default_delete<DB::IInterpreter>> std::__function::__policy_func<std::unique_ptr<DB::IInterpreter,
+      std::default_delete<DB::IInterpreter>> (DB::InterpreterFactory::Arguments const&)>::__call_func[abi:fqe220101]<DB::registerInterpreterSelectQueryAnalyzer(DB::InterpreterFactory&)::$_0>(std::__function::__policy_storage
+      const*, DB::InterpreterFactory::Arguments const&) (.llvm.17419999605402089718) @ 0x000000001dff1ea9
+
+      17. DB::InterpreterFactory::get(boost::intrusive_ptr<DB::IAST>&, std::shared_ptr<DB::Context>, DB::SelectQueryOptions
+      const&) @ 0x000000001df8b45e
+
+      18. DB::executeQueryImpl(char const*, char const*, std::shared_ptr<DB::Context>, DB::QueryFlags, DB::QueryProcessingStage::Enum,
+      std::unique_ptr<DB::ReadBuffer, std::default_delete<DB::ReadBuffer>>&, boost::intrusive_ptr<DB::IAST>&, std::shared_ptr<DB::ImplicitTransactionControlExecutor>,
+      std::function<void ()>, DB::QueryResultDetails&) @ 0x000000001e47c18f
+
+      19. DB::executeQuery(std::basic_string_view<char, std::char_traits<char>>, std::shared_ptr<DB::Context>, DB::QueryFlags,
+      DB::QueryProcessingStage::Enum) @ 0x000000001e476ddd
+
+      20. DB::TCPHandler::runImpl() @ 0x000000001fcf8dc0
+
+      21. DB::TCPHandler::run() @ 0x000000001fd1f664
+
+      22. Poco::Net::TCPServerConnection::start() @ 0x000000002580e0c7
+
+      23. Poco::Net::TCPServerDispatcher::run() @ 0x000000002580e5c2
+
+      24. Poco::PooledThread::run() @ 0x00000000257d001c
+
+      25. Poco::ThreadImpl::runnableEntry(void*) @ 0x00000000257ce54f
+
+      26. ? @ 0x000000000009cb84
+
+      27. ? @ 0x0000000000129ecc
+
+      '
+    sec: 0.1
+  stock_indicator#W_OOS:
+    ok: true
+    rows:
+    - - 2194760
+      - 1647075
+      - 2182317
+      - 2194760
+      - '2024-01-02'
+      - '2025-09-08'
+    sec: 0.8
+  stk_limit#W_OOS:
+    ok: true
+    rows:
+    - - 2200230
+      - '2024-01-02'
+      - '2025-09-08'
+    sec: 0.3
+  index_constituent[000300.SH]#W_OOS:
+    ok: true
+    rows:
+    - - 336
+      - '2023-12-29'
+      - '2025-08-29'
+    sec: 0.5
+  regime_snapshot_history#W_OOS:
+    ok: true
+    rows:
+    - - 818
+      - 409
+      - '2024-01-02'
+      - '2025-09-08'
+      - 2
+    sec: 0.1
+  financial_derived#W_OOS:
+    ok: false
+    err: 'ServerException: Code: 47.
+
+      DB::Exception: Unknown expression or function identifier `trade_date` in scope SELECT count(), min(trade_date), max(trade_date)
+      FROM c3_fundamental.financial_derived WHERE (trade_date >= ''2024-01-01'') AND (trade_date <= ''2025-09-08''). Stack
+      trace:
+
+
+      0. DB::Exception::Exception(DB::Exception::MessageMasked&&, int, bool) @ 0x000000001930812a
+
+      1. DB::Exception::Exception(String&&, int, String, bool) @ 0x00000000122b4912
+
+      2. DB::Exception::Exception(PreformattedMessage&&, int) @ 0x00000000122b4186
+
+      3. DB::Exception::Exception<char const*, String&, String, String, String>(int, FormatStringHelperImpl<std::type_identity<char
+      const*>::type, std::type_identity<String&>::type, std::type_identity<String>::type, std::type_identity<String>::type,
+      std::type_identity<String>::type>, char const*&&, String&, String&&, String&&, String&&) @ 0x000000001d314301
+
+      4. DB::QueryAnalyzer::resolveExpressionNode(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool, bool) @ 0x000000001d2ed08e
+
+      5. DB::QueryAnalyzer::resolveExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool) @ 0x000000001d2e988b
+
+      6. DB::QueryAnalyzer::resolveFunction(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool) @ 0x000000001d5d695d
+
+      7. DB::QueryAnalyzer::resolveExpressionNode(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool, bool) @ 0x000000001d2ea8f6
+
+      8. DB::QueryAnalyzer::resolveExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool) @ 0x000000001d2e988b
+
+      9. DB::QueryAnalyzer::resolveProjectionExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&)
+      @ 0x000000001d3150b9
+
+      10. DB::QueryAnalyzer::resolveQuery(std::shared_ptr<DB::IQueryTreeNode> const&, DB::IdentifierResolveScope&) @ 0x000000001d2e08d3
+
+      11. DB::QueryAnalyzer::resolve(std::shared_ptr<DB::IQueryTreeNode>&, std::shared_ptr<DB::IQueryTreeNode> const&, std::shared_ptr<DB::Context
+      const>) @ 0x000000001d2dded7
+
+      12. DB::QueryAnalysisPass::run(std::shared_ptr<DB::IQueryTreeNode>&, std::shared_ptr<DB::Context const>) @ 0x000000001d2dd3b5
+
+      13. DB::QueryTreePassManager::run(std::shared_ptr<DB::IQueryTreeNode>&) @ 0x000000001d341c01
+
+      14. DB::buildQueryTreeAndRunPasses(boost::intrusive_ptr<DB::IAST> const&, DB::SelectQueryOptions const&, std::shared_ptr<DB::Context
+      const> const&, std::shared_ptr<DB::IStorage> const&) @ 0x000000001dfea1eb
+
+      15. DB::InterpreterSelectQueryAnalyzer::InterpreterSelectQueryAnalyzer(boost::intrusive_ptr<DB::IAST> const&, std::shared_ptr<DB::Context
+      const> const&, DB::SelectQueryOptions const&, std::vector<String, std::allocator<String>> const&, DB::ActionsDAG const*)
+      @ 0x000000001dfe7b13
+
+      16. std::unique_ptr<DB::IInterpreter, std::default_delete<DB::IInterpreter>> std::__function::__policy_func<std::unique_ptr<DB::IInterpreter,
+      std::default_delete<DB::IInterpreter>> (DB::InterpreterFactory::Arguments const&)>::__call_func[abi:fqe220101]<DB::registerInterpreterSelectQueryAnalyzer(DB::InterpreterFactory&)::$_0>(std::__function::__policy_storage
+      const*, DB::InterpreterFactory::Arguments const&) (.llvm.17419999605402089718) @ 0x000000001dff1ea9
+
+      17. DB::InterpreterFactory::get(boost::intrusive_ptr<DB::IAST>&, std::shared_ptr<DB::Context>, DB::SelectQueryOptions
+      const&) @ 0x000000001df8b45e
+
+      18. DB::executeQueryImpl(char const*, char const*, std::shared_ptr<DB::Context>, DB::QueryFlags, DB::QueryProcessingStage::Enum,
+      std::unique_ptr<DB::ReadBuffer, std::default_delete<DB::ReadBuffer>>&, boost::intrusive_ptr<DB::IAST>&, std::shared_ptr<DB::ImplicitTransactionControlExecutor>,
+      std::function<void ()>, DB::QueryResultDetails&) @ 0x000000001e47c18f
+
+      19. DB::executeQuery(std::basic_string_view<char, std::char_traits<char>>, std::shared_ptr<DB::Context>, DB::QueryFlags,
+      DB::QueryProcessingStage::Enum) @ 0x000000001e476ddd
+
+      20. DB::TCPHandler::runImpl() @ 0x000000001fcf8dc0
+
+      21. DB::TCPHandler::run() @ 0x000000001fd1f664
+
+      22. Poco::Net::TCPServerConnection::start() @ 0x000000002580e0c7
+
+      23. Poco::Net::TCPServerDispatcher::run() @ 0x000000002580e5c2
+
+      24. Poco::PooledThread::run() @ 0x00000000257d001c
+
+      25. Poco::ThreadImpl::runnableEntry(void*) @ 0x00000000257ce54f
+
+      26. ? @ 0x000000000009cb84
+
+      27. ? @ 0x0000000000129ecc
+
+      '
+    sec: 0.0
+  stock_indicator#W_HOLDOUT:
+    ok: true
+    rows:
+    - - 1326095
+      - 955868
+      - 1316014
+      - 1324709
+      - '2025-09-09'
+      - '2026-09-08'
+    sec: 0.8
+  stk_limit#W_HOLDOUT:
+    ok: true
+    rows:
+    - - 1328419
+      - '2025-09-09'
+      - '2026-09-08'
+    sec: 0.1
+  index_constituent[000300.SH]#W_HOLDOUT:
+    ok: true
+    rows:
+    - - 331
+      - '2025-08-29'
+      - '2026-09-08'
+    sec: 0.2
+  regime_snapshot_history#W_HOLDOUT:
+    ok: true
+    rows:
+    - - 483
+      - 242
+      - '2025-09-09'
+      - '2026-09-08'
+      - 2
+    sec: 0.1
+  financial_derived#W_HOLDOUT:
+    ok: false
+    err: 'ServerException: Code: 47.
+
+      DB::Exception: Unknown expression or function identifier `trade_date` in scope SELECT count(), min(trade_date), max(trade_date)
+      FROM c3_fundamental.financial_derived WHERE (trade_date >= ''2025-09-09'') AND (trade_date <= ''2026-09-08''). Stack
+      trace:
+
+
+      0. DB::Exception::Exception(DB::Exception::MessageMasked&&, int, bool) @ 0x000000001930812a
+
+      1. DB::Exception::Exception(String&&, int, String, bool) @ 0x00000000122b4912
+
+      2. DB::Exception::Exception(PreformattedMessage&&, int) @ 0x00000000122b4186
+
+      3. DB::Exception::Exception<char const*, String&, String, String, String>(int, FormatStringHelperImpl<std::type_identity<char
+      const*>::type, std::type_identity<String&>::type, std::type_identity<String>::type, std::type_identity<String>::type,
+      std::type_identity<String>::type>, char const*&&, String&, String&&, String&&, String&&) @ 0x000000001d314301
+
+      4. DB::QueryAnalyzer::resolveExpressionNode(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool, bool) @ 0x000000001d2ed08e
+
+      5. DB::QueryAnalyzer::resolveExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool) @ 0x000000001d2e988b
+
+      6. DB::QueryAnalyzer::resolveFunction(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool) @ 0x000000001d5d695d
+
+      7. DB::QueryAnalyzer::resolveExpressionNode(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool, bool) @ 0x000000001d2ea8f6
+
+      8. DB::QueryAnalyzer::resolveExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool) @ 0x000000001d2e988b
+
+      9. DB::QueryAnalyzer::resolveProjectionExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&)
+      @ 0x000000001d3150b9
+
+      10. DB::QueryAnalyzer::resolveQuery(std::shared_ptr<DB::IQueryTreeNode> const&, DB::IdentifierResolveScope&) @ 0x000000001d2e08d3
+
+      11. DB::QueryAnalyzer::resolve(std::shared_ptr<DB::IQueryTreeNode>&, std::shared_ptr<DB::IQueryTreeNode> const&, std::shared_ptr<DB::Context
+      const>) @ 0x000000001d2dded7
+
+      12. DB::QueryAnalysisPass::run(std::shared_ptr<DB::IQueryTreeNode>&, std::shared_ptr<DB::Context const>) @ 0x000000001d2dd3b5
+
+      13. DB::QueryTreePassManager::run(std::shared_ptr<DB::IQueryTreeNode>&) @ 0x000000001d341c01
+
+      14. DB::buildQueryTreeAndRunPasses(boost::intrusive_ptr<DB::IAST> const&, DB::SelectQueryOptions const&, std::shared_ptr<DB::Context
+      const> const&, std::shared_ptr<DB::IStorage> const&) @ 0x000000001dfea1eb
+
+      15. DB::InterpreterSelectQueryAnalyzer::InterpreterSelectQueryAnalyzer(boost::intrusive_ptr<DB::IAST> const&, std::shared_ptr<DB::Context
+      const> const&, DB::SelectQueryOptions const&, std::vector<String, std::allocator<String>> const&, DB::ActionsDAG const*)
+      @ 0x000000001dfe7b13
+
+      16. std::unique_ptr<DB::IInterpreter, std::default_delete<DB::IInterpreter>> std::__function::__policy_func<std::unique_ptr<DB::IInterpreter,
+      std::default_delete<DB::IInterpreter>> (DB::InterpreterFactory::Arguments const&)>::__call_func[abi:fqe220101]<DB::registerInterpreterSelectQueryAnalyzer(DB::InterpreterFactory&)::$_0>(std::__function::__policy_storage
+      const*, DB::InterpreterFactory::Arguments const&) (.llvm.17419999605402089718) @ 0x000000001dff1ea9
+
+      17. DB::InterpreterFactory::get(boost::intrusive_ptr<DB::IAST>&, std::shared_ptr<DB::Context>, DB::SelectQueryOptions
+      const&) @ 0x000000001df8b45e
+
+      18. DB::executeQueryImpl(char const*, char const*, std::shared_ptr<DB::Context>, DB::QueryFlags, DB::QueryProcessingStage::Enum,
+      std::unique_ptr<DB::ReadBuffer, std::default_delete<DB::ReadBuffer>>&, boost::intrusive_ptr<DB::IAST>&, std::shared_ptr<DB::ImplicitTransactionControlExecutor>,
+      std::function<void ()>, DB::QueryResultDetails&) @ 0x000000001e47c18f
+
+      19. DB::executeQuery(std::basic_string_view<char, std::char_traits<char>>, std::shared_ptr<DB::Context>, DB::QueryFlags,
+      DB::QueryProcessingStage::Enum) @ 0x000000001e476ddd
+
+      20. DB::TCPHandler::runImpl() @ 0x000000001fcf8dc0
+
+      21. DB::TCPHandler::run() @ 0x000000001fd1f664
+
+      22. Poco::Net::TCPServerConnection::start() @ 0x000000002580e0c7
+
+      23. Poco::Net::TCPServerDispatcher::run() @ 0x000000002580e5c2
+
+      24. Poco::PooledThread::run() @ 0x00000000257d001c
+
+      25. Poco::ThreadImpl::runnableEntry(void*) @ 0x00000000257ce54f
+
+      26. ? @ 0x000000000009cb84
+
+      27. ? @ 0x0000000000129ecc
+
+      '
+    sec: 0.0
+  stock_indicator#W_POSTD:
+    ok: true
+    rows:
+    - - 44501
+      - 31399
+      - 44069
+      - 44501
+      - '2026-09-09'
+      - '2026-09-18'
+    sec: 0.1
+  stk_limit#W_POSTD:
+    ok: true
+    rows:
+    - - 61084
+      - '2026-09-09'
+      - '2026-09-18'
+    sec: 0.0
+  index_constituent[000300.SH]#W_POSTD:
+    ok: true
+    rows:
+    - - 300
+      - '2026-09-09'
+      - '2026-09-17'
+    sec: 0.2
+  regime_snapshot_history#W_POSTD:
+    ok: true
+    rows:
+    - - 11
+      - 8
+      - '2026-09-09'
+      - '2026-09-18'
+      - 3
+    sec: 0.0
+  financial_derived#W_POSTD:
+    ok: false
+    err: 'ServerException: Code: 47.
+
+      DB::Exception: Unknown expression or function identifier `trade_date` in scope SELECT count(), min(trade_date), max(trade_date)
+      FROM c3_fundamental.financial_derived WHERE (trade_date >= ''2026-09-09'') AND (trade_date <= ''2026-09-18''). Stack
+      trace:
+
+
+      0. DB::Exception::Exception(DB::Exception::MessageMasked&&, int, bool) @ 0x000000001930812a
+
+      1. DB::Exception::Exception(String&&, int, String, bool) @ 0x00000000122b4912
+
+      2. DB::Exception::Exception(PreformattedMessage&&, int) @ 0x00000000122b4186
+
+      3. DB::Exception::Exception<char const*, String&, String, String, String>(int, FormatStringHelperImpl<std::type_identity<char
+      const*>::type, std::type_identity<String&>::type, std::type_identity<String>::type, std::type_identity<String>::type,
+      std::type_identity<String>::type>, char const*&&, String&, String&&, String&&, String&&) @ 0x000000001d314301
+
+      4. DB::QueryAnalyzer::resolveExpressionNode(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool, bool) @ 0x000000001d2ed08e
+
+      5. DB::QueryAnalyzer::resolveExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool) @ 0x000000001d2e988b
+
+      6. DB::QueryAnalyzer::resolveFunction(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool) @ 0x000000001d5d695d
+
+      7. DB::QueryAnalyzer::resolveExpressionNode(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool, bool) @ 0x000000001d2ea8f6
+
+      8. DB::QueryAnalyzer::resolveExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&, bool,
+      bool, bool) @ 0x000000001d2e988b
+
+      9. DB::QueryAnalyzer::resolveProjectionExpressionNodeList(std::shared_ptr<DB::IQueryTreeNode>&, DB::IdentifierResolveScope&)
+      @ 0x000000001d3150b9
+
+      10. DB::QueryAnalyzer::resolveQuery(std::shared_ptr<DB::IQueryTreeNode> const&, DB::IdentifierResolveScope&) @ 0x000000001d2e08d3
+
+      11. DB::QueryAnalyzer::resolve(std::shared_ptr<DB::IQueryTreeNode>&, std::shared_ptr<DB::IQueryTreeNode> const&, std::shared_ptr<DB::Context
+      const>) @ 0x000000001d2dded7
+
+      12. DB::QueryAnalysisPass::run(std::shared_ptr<DB::IQueryTreeNode>&, std::shared_ptr<DB::Context const>) @ 0x000000001d2dd3b5
+
+      13. DB::QueryTreePassManager::run(std::shared_ptr<DB::IQueryTreeNode>&) @ 0x000000001d341c01
+
+      14. DB::buildQueryTreeAndRunPasses(boost::intrusive_ptr<DB::IAST> const&, DB::SelectQueryOptions const&, std::shared_ptr<DB::Context
+      const> const&, std::shared_ptr<DB::IStorage> const&) @ 0x000000001dfea1eb
+
+      15. DB::InterpreterSelectQueryAnalyzer::InterpreterSelectQueryAnalyzer(boost::intrusive_ptr<DB::IAST> const&, std::shared_ptr<DB::Context
+      const> const&, DB::SelectQueryOptions const&, std::vector<String, std::allocator<String>> const&, DB::ActionsDAG const*)
+      @ 0x000000001dfe7b13
+
+      16. std::unique_ptr<DB::IInterpreter, std::default_delete<DB::IInterpreter>> std::__function::__policy_func<std::unique_ptr<DB::IInterpreter,
+      std::default_delete<DB::IInterpreter>> (DB::InterpreterFactory::Arguments const&)>::__call_func[abi:fqe220101]<DB::registerInterpreterSelectQueryAnalyzer(DB::InterpreterFactory&)::$_0>(std::__function::__policy_storage
+      const*, DB::InterpreterFactory::Arguments const&) (.llvm.17419999605402089718) @ 0x000000001dff1ea9
+
+      17. DB::InterpreterFactory::get(boost::intrusive_ptr<DB::IAST>&, std::shared_ptr<DB::Context>, DB::SelectQueryOptions
+      const&) @ 0x000000001df8b45e
+
+      18. DB::executeQueryImpl(char const*, char const*, std::shared_ptr<DB::Context>, DB::QueryFlags, DB::QueryProcessingStage::Enum,
+      std::unique_ptr<DB::ReadBuffer, std::default_delete<DB::ReadBuffer>>&, boost::intrusive_ptr<DB::IAST>&, std::shared_ptr<DB::ImplicitTransactionControlExecutor>,
+      std::function<void ()>, DB::QueryResultDetails&) @ 0x000000001e47c18f
+
+      19. DB::executeQuery(std::basic_string_view<char, std::char_traits<char>>, std::shared_ptr<DB::Context>, DB::QueryFlags,
+      DB::QueryProcessingStage::Enum) @ 0x000000001e476ddd
+
+      20. DB::TCPHandler::runImpl() @ 0x000000001fcf8dc0
+
+      21. DB::TCPHandler::run() @ 0x000000001fd1f664
+
+      22. Poco::Net::TCPServerConnection::start() @ 0x000000002580e0c7
+
+      23. Poco::Net::TCPServerDispatcher::run() @ 0x000000002580e5c2
+
+      24. Poco::PooledThread::run() @ 0x00000000257d001c
+
+      25. Poco::ThreadImpl::runnableEntry(void*) @ 0x00000000257ce54f
+
+      26. ? @ 0x000000000009cb84
+
+      27. ? @ 0x0000000000129ecc
+
+      '
+    sec: 0.0
+  regime_states_all:
+    ok: true
+    rows:
+    - - r1
+      - 1114
+    - - r3
+      - 1023
+    - - r2
+      - 592
+    - - r4
+      - 478
+    - - r10
+      - 403
+    - - r12
+      - 12
+    - - r11
+      - 2
+    sec: 0.1
+  regime_runs:
+    ok: true
+    rows:
+    - - VAL-P0-20260921-050922
+      - 3
+      - '2026-09-16'
+      - '2026-09-18'
+    - - VAL-P0-20260916-230726
+      - 1812
+      - '2019-04-01'
+      - '2026-09-15'
+    - - VAL-P0-20260912-154118
+      - 1809
+      - '2019-04-01'
+      - '2026-09-11'
+    sec: 0.0
+part_b_strategies:
+  FACT-4db4c41e:
+    file: c4_fact_4db4c41e.py
+    death_row: true
+    windows:
+      W_IS:
+        ok: false
+        err: 'RuntimeError: 考卷窗口内无有效特征行'
+        tb: "Traceback (most recent call last):\n  File \"D:\\ZephyrAlpha\\.runtime\\tmp\\ibt_mining_matrix.py\", line 138,\
+          \ in part_b_strategies\n    weights, closes = mod.build(s, e)\n                      ^^^^^^^^^^^^^^^\n  File \"\
+          D:\\ZephyrAlpha\\scripts\\backtest\\translated\\c4_fact_4db4c41e.py\", line 42, in build\n    return build_factor_weights(s,\
+          \ e, EXPR, top_n=TOP_N)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\ZephyrAlpha\\scripts\\\
+          backtest\\factor_strategy_template.py\", line 166, in build_factor_weights\n    raise RuntimeError(\"考卷窗口内无有效特征行\"\
+          )\nRuntimeError: 考卷窗口内无有效特征行\n"
+        sec: 1.1
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 40
+        nonzero_rows: 408
+        closes_cols: 40
+        sec: 2.8
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 40
+        nonzero_rows: 241
+        closes_cols: 40
+        sec: 1.1
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 40
+        nonzero_rows: 7
+        closes_cols: 40
+        sec: 0.6
+  FACT-4f749668:
+    file: c4_fact_4f749668.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: false
+        err: 'RuntimeError: 考卷窗口内无有效特征行'
+        tb: "Traceback (most recent call last):\n  File \"D:\\ZephyrAlpha\\.runtime\\tmp\\ibt_mining_matrix.py\", line 138,\
+          \ in part_b_strategies\n    weights, closes = mod.build(s, e)\n                      ^^^^^^^^^^^^^^^\n  File \"\
+          D:\\ZephyrAlpha\\scripts\\backtest\\translated\\c4_fact_4f749668.py\", line 42, in build\n    return build_factor_weights(s,\
+          \ e, EXPR, top_n=TOP_N)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\ZephyrAlpha\\scripts\\\
+          backtest\\factor_strategy_template.py\", line 166, in build_factor_weights\n    raise RuntimeError(\"考卷窗口内无有效特征行\"\
+          )\nRuntimeError: 考卷窗口内无有效特征行\n"
+        sec: 0.2
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 40
+        nonzero_rows: 408
+        closes_cols: 40
+        sec: 1.5
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 40
+        nonzero_rows: 241
+        closes_cols: 40
+        sec: 0.9
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 40
+        nonzero_rows: 7
+        closes_cols: 40
+        sec: 0.2
+  FACT-4228020a:
+    file: c4_fact_4228020a.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: false
+        err: 'RuntimeError: 考卷窗口内无有效特征行'
+        tb: "Traceback (most recent call last):\n  File \"D:\\ZephyrAlpha\\.runtime\\tmp\\ibt_mining_matrix.py\", line 138,\
+          \ in part_b_strategies\n    weights, closes = mod.build(s, e)\n                      ^^^^^^^^^^^^^^^\n  File \"\
+          D:\\ZephyrAlpha\\scripts\\backtest\\translated\\c4_fact_4228020a.py\", line 42, in build\n    return build_factor_weights(s,\
+          \ e, EXPR, top_n=TOP_N)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\ZephyrAlpha\\scripts\\\
+          backtest\\factor_strategy_template.py\", line 166, in build_factor_weights\n    raise RuntimeError(\"考卷窗口内无有效特征行\"\
+          )\nRuntimeError: 考卷窗口内无有效特征行\n"
+        sec: 0.0
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 40
+        nonzero_rows: 408
+        closes_cols: 40
+        sec: 1.2
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 40
+        nonzero_rows: 241
+        closes_cols: 40
+        sec: 0.9
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 40
+        nonzero_rows: 7
+        closes_cols: 40
+        sec: 0.3
+  FACT-e293e217:
+    file: c4_fact_e293e217.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: false
+        err: 'RuntimeError: 考卷窗口内无有效特征行'
+        tb: "Traceback (most recent call last):\n  File \"D:\\ZephyrAlpha\\.runtime\\tmp\\ibt_mining_matrix.py\", line 138,\
+          \ in part_b_strategies\n    weights, closes = mod.build(s, e)\n                      ^^^^^^^^^^^^^^^\n  File \"\
+          D:\\ZephyrAlpha\\scripts\\backtest\\translated\\c4_fact_e293e217.py\", line 42, in build\n    return build_factor_weights(s,\
+          \ e, EXPR, top_n=TOP_N)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\ZephyrAlpha\\scripts\\\
+          backtest\\factor_strategy_template.py\", line 166, in build_factor_weights\n    raise RuntimeError(\"考卷窗口内无有效特征行\"\
+          )\nRuntimeError: 考卷窗口内无有效特征行\n"
+        sec: 0.0
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 40
+        nonzero_rows: 408
+        closes_cols: 40
+        sec: 1.5
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 40
+        nonzero_rows: 241
+        closes_cols: 40
+        sec: 0.7
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 40
+        nonzero_rows: 7
+        closes_cols: 40
+        sec: 0.2
+  FACT-e831084c:
+    file: c4_fact_e831084c.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: false
+        err: 'RuntimeError: 考卷窗口内无有效特征行'
+        tb: "Traceback (most recent call last):\n  File \"D:\\ZephyrAlpha\\.runtime\\tmp\\ibt_mining_matrix.py\", line 138,\
+          \ in part_b_strategies\n    weights, closes = mod.build(s, e)\n                      ^^^^^^^^^^^^^^^\n  File \"\
+          D:\\ZephyrAlpha\\scripts\\backtest\\translated\\c4_fact_e831084c.py\", line 42, in build\n    return build_factor_weights(s,\
+          \ e, EXPR, top_n=TOP_N)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\ZephyrAlpha\\scripts\\\
+          backtest\\factor_strategy_template.py\", line 166, in build_factor_weights\n    raise RuntimeError(\"考卷窗口内无有效特征行\"\
+          )\nRuntimeError: 考卷窗口内无有效特征行\n"
+        sec: 0.0
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 40
+        nonzero_rows: 408
+        closes_cols: 40
+        sec: 1.1
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 40
+        nonzero_rows: 241
+        closes_cols: 40
+        sec: 0.8
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 40
+        nonzero_rows: 7
+        closes_cols: 40
+        sec: 0.3
+  FACT-4b200528:
+    file: c4_fact_4b200528.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: false
+        err: 'RuntimeError: 考卷窗口内无有效特征行'
+        tb: "Traceback (most recent call last):\n  File \"D:\\ZephyrAlpha\\.runtime\\tmp\\ibt_mining_matrix.py\", line 138,\
+          \ in part_b_strategies\n    weights, closes = mod.build(s, e)\n                      ^^^^^^^^^^^^^^^\n  File \"\
+          D:\\ZephyrAlpha\\scripts\\backtest\\translated\\c4_fact_4b200528.py\", line 42, in build\n    return build_factor_weights(s,\
+          \ e, EXPR, top_n=TOP_N)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"D:\\ZephyrAlpha\\scripts\\\
+          backtest\\factor_strategy_template.py\", line 166, in build_factor_weights\n    raise RuntimeError(\"考卷窗口内无有效特征行\"\
+          )\nRuntimeError: 考卷窗口内无有效特征行\n"
+        sec: 0.0
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 40
+        nonzero_rows: 408
+        closes_cols: 40
+        sec: 1.3
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 40
+        nonzero_rows: 241
+        closes_cols: 40
+        sec: 0.8
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 40
+        nonzero_rows: 7
+        closes_cols: 40
+        sec: 0.2
+  CAND-8d000bf3ccc3:
+    file: c4_8d000bf3ccc3_pb_poe.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 4996
+        nonzero_rows: 1126
+        closes_cols: 4996
+        sec: 56.4
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 5129
+        nonzero_rows: 379
+        closes_cols: 5129
+        sec: 20.7
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 5216
+        nonzero_rows: 210
+        closes_cols: 5216
+        sec: 13.0
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 5221
+        nonzero_rows: 0
+        closes_cols: 5221
+        sec: 5.4
+  CAND-c4ec6332c07f:
+    file: c4_c4ec6332c07f_trend_score.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 1
+        nonzero_rows: 586
+        closes_cols: 1
+        sec: 1.7
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 1
+        nonzero_rows: 227
+        closes_cols: 1
+        sec: 0.5
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 1
+        nonzero_rows: 93
+        closes_cols: 1
+        sec: 0.3
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 1
+        nonzero_rows: 2
+        closes_cols: 1
+        sec: 0.1
+  CAND-e3da6fa71af1:
+    file: c4_e3da6fa71af1_panic_rebound.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 1
+        nonzero_rows: 133
+        closes_cols: 1
+        sec: 0.6
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 1
+        nonzero_rows: 57
+        closes_cols: 1
+        sec: 0.1
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 1
+        nonzero_rows: 19
+        closes_cols: 1
+        sec: 0.0
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 1
+        nonzero_rows: 0
+        closes_cols: 1
+        sec: 0.0
+  CAND-4440d07f973f:
+    file: c4_4440d07f973f_ultrashort.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 3113
+        nonzero_rows: 404
+        closes_cols: 3113
+        sec: 12.9
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 3161
+        nonzero_rows: 135
+        closes_cols: 3161
+        sec: 5.1
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 3195
+        nonzero_rows: 84
+        closes_cols: 3195
+        sec: 3.4
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 3196
+        nonzero_rows: 5
+        closes_cols: 3196
+        sec: 1.2
+  CAND-eaddc3f9db4e:
+    file: c4_eaddc3f9db4e_rsrs_r2.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 1
+        nonzero_rows: 571
+        closes_cols: 1
+        sec: 1.2
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 1
+        nonzero_rows: 199
+        closes_cols: 1
+        sec: 0.7
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 1
+        nonzero_rows: 98
+        closes_cols: 1
+        sec: 0.6
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 1
+        nonzero_rows: 0
+        closes_cols: 1
+        sec: 0.6
+  CAND-d06cab686cef:
+    file: c4_d06cab686cef_rsrs_opt.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 1
+        nonzero_rows: 550
+        closes_cols: 1
+        sec: 0.4
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 1
+        nonzero_rows: 196
+        closes_cols: 1
+        sec: 0.2
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 1
+        nonzero_rows: 96
+        closes_cols: 1
+        sec: 0.1
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 1
+        nonzero_rows: 0
+        closes_cols: 1
+        sec: 0.1
+  CAND-29eb91dbaf60:
+    file: c4_29eb91dbaf60_crash_dodge.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 1
+        nonzero_rows: 730
+        closes_cols: 1
+        sec: 0.3
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 1
+        nonzero_rows: 197
+        closes_cols: 1
+        sec: 0.1
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 1
+        nonzero_rows: 168
+        closes_cols: 1
+        sec: 0.1
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 1
+        nonzero_rows: 0
+        closes_cols: 1
+        sec: 0.0
+  CAND-a4543012b464:
+    file: c4_a4543012b464_trend5.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 451
+        nonzero_rows: 998
+        closes_cols: 451
+        sec: 12.4
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 311
+        nonzero_rows: 264
+        closes_cols: 311
+        sec: 5.7
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 307
+        nonzero_rows: 219
+        closes_cols: 307
+        sec: 3.7
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 280
+        nonzero_rows: 3
+        closes_cols: 280
+        sec: 1.5
+  CAND-e2e7f033d97c:
+    file: c4_e2e7f033d97c_kd_cross.py
+    death_row: true
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 1
+        nonzero_rows: 555
+        closes_cols: 1
+        sec: 5.4
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 1
+        nonzero_rows: 195
+        closes_cols: 1
+        sec: 2.3
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 1
+        nonzero_rows: 106
+        closes_cols: 1
+        sec: 1.2
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 1
+        nonzero_rows: 0
+        closes_cols: 1
+        sec: 0.2
+  CAND-bd42540f86e4:
+    file: c4_bd42540f86e4_pe_pb.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 471
+        nonzero_rows: 1156
+        closes_cols: 471
+        sec: 21.4
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 334
+        nonzero_rows: 409
+        closes_cols: 334
+        sec: 9.4
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 330
+        nonzero_rows: 242
+        closes_cols: 330
+        sec: 5.2
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 300
+        nonzero_rows: 0
+        closes_cols: 300
+        sec: 0.6
+  CAND-6a6ec8869ddb:
+    file: c4_6a6ec8869ddb_momentum62.py
+    death_row: false
+    windows:
+      W_IS:
+        ok: true
+        rows: 1156
+        cols: 4996
+        nonzero_rows: 1122
+        closes_cols: 4996
+        sec: 26.6
+      W_OOS:
+        ok: true
+        rows: 409
+        cols: 5129
+        nonzero_rows: 409
+        closes_cols: 5129
+        sec: 11.1
+      W_HOLDOUT:
+        ok: true
+        rows: 242
+        cols: 5216
+        nonzero_rows: 242
+        closes_cols: 5216
+        sec: 7.5
+      W_POSTD:
+        ok: true
+        rows: 8
+        cols: 5221
+        nonzero_rows: 8
+        closes_cols: 5221
+        sec: 2.1
+wall_sec: 279.3
