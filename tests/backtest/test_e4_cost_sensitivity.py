@@ -11,6 +11,7 @@ from zephyr.backtest.regime_validation.e4_cost_sensitivity import (
     E4CostPoint,
     E4CostSensitivityError,
     analyze_cost_sensitivity,
+    assess_crowding,
 )
 
 
@@ -79,6 +80,56 @@ class TestAnalyzeCostSensitivity(unittest.TestCase):
     def test_nan_effect_raises(self):
         with self.assertRaises(E4CostSensitivityError):
             analyze_cost_sensitivity([E4CostPoint(0.0, float("nan")), E4CostPoint(50.0, 0.04)])
+
+
+class TestCrowdingDimension(unittest.TestCase):
+    """工单#8：E4 出证拥挤度维度（相关均值分档+报告接线）。"""
+
+    def test_levels_low_moderate_high(self):
+        low = assess_crowding([0.1, -0.2, 0.05])
+        self.assertEqual(low.level, "low")
+        self.assertFalse(low.crowded)
+        moderate = assess_crowding([0.4, 0.5])
+        self.assertEqual(moderate.level, "moderate")
+        high = assess_crowding([0.8, 0.9, 0.75])
+        self.assertEqual(high.level, "high")
+        self.assertTrue(high.crowded)
+        self.assertAlmostEqual(high.avg_pairwise_corr, (0.8 + 0.9 + 0.75) / 3)
+        self.assertEqual(high.n_pairs, 3)
+
+    def test_nonfinite_dropped_and_empty_raises(self):
+        a = assess_crowding([float("nan"), 0.5, float("inf")])
+        self.assertEqual(a.n_pairs, 1)
+        with self.assertRaises(E4CostSensitivityError):
+            assess_crowding([])
+        with self.assertRaises(E4CostSensitivityError):
+            assess_crowding([float("nan")])
+
+    def test_bad_threshold_raises(self):
+        with self.assertRaises(E4CostSensitivityError):
+            assess_crowding([0.5], high_threshold=0.0)
+        with self.assertRaises(E4CostSensitivityError):
+            assess_crowding([0.5], high_threshold=-0.7)
+
+    def test_report_without_crowding_defaults_none(self):
+        rep = analyze_cost_sensitivity(_design_grid([0.07, 0.06, 0.05, 0.04, 0.03]))
+        self.assertIsNone(rep.crowding)  # 向后兼容：旧调用面不受影响
+
+    def test_report_with_crowding_dimension(self):
+        rep = analyze_cost_sensitivity(
+            _design_grid([0.07, 0.06, 0.05, 0.04, 0.03]),
+            crowding_correlations=[0.85, 0.9],
+        )
+        self.assertIsNotNone(rep.crowding)
+        self.assertEqual(rep.crowding.level, "high")
+        self.assertTrue(rep.crowding.crowded)
+        self.assertIn("拥挤", rep.crowding.summary)
+
+    def test_report_crowding_invalid_input_raises(self):
+        with self.assertRaises(E4CostSensitivityError):
+            analyze_cost_sensitivity(
+                _design_grid([0.07] * 5), crowding_correlations=[]
+            )
 
 
 if __name__ == "__main__":

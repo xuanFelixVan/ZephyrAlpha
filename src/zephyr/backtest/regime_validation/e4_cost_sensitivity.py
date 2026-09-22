@@ -65,24 +65,94 @@ class E4CostReport:
     covers_design_range: bool  # 网格是否覆盖 [cost_min, cost_max]
     passed: bool  # = direction_consistent（§4.5 E4 方向一致即稳健）
     summary: str
+    crowding: E4CrowdingAssessment | None = None  # 拥挤度维度（工单#8；未提供相关对=None）
+
+
+_CROWDING_MODERATE = 0.3
+_CROWDING_HIGH = 0.7
+
+
+@dataclass(frozen=True)
+class E4CrowdingAssessment:
+    """拥挤度维度评估——不可变（工单#8：E4 出证新增维度）。
+
+    口径：候选因子效果序列的两两相关系数均值（调用方按既有产物预计算，
+    本模块不重跑回测，同 E4 纯分析不变量）。均值越高=候选间同涨同跌越重，
+    组合分散化收益越薄。
+    """
+
+    avg_pairwise_corr: float  # 两两相关均值
+    n_pairs: int  # 参与统计的相关对数
+    level: str  # low(<0.3) / moderate([0.3,0.7)) / high(≥0.7)
+    crowded: bool  # 均值 ≥ high 阈值
+    summary: str
+
+
+def assess_crowding(
+    correlations: list[float],
+    high_threshold: float = _CROWDING_HIGH,
+) -> E4CrowdingAssessment:
+    """拥挤度维度主入口：两两相关均值分档（low/moderate/high）。
+
+    Args:
+        correlations: 预计算的候选效果序列两两相关系数（≥1 对，非有限值剔除）。
+        high_threshold: 拥挤判定阈值（默认 0.7）。
+
+    Returns:
+        E4CrowdingAssessment。
+
+    Raises:
+        E4CostSensitivityError: 相关对剔除后为空 / 阈值非正。
+    """
+    if high_threshold <= 0:
+        raise E4CostSensitivityError(f"拥挤度阈值需为正数: {high_threshold}")
+    vals = [c for c in correlations if c == c and abs(c) != float("inf")]
+    if not vals:
+        raise E4CostSensitivityError("拥挤度相关对为空（需 ≥1 对有效相关系数）")
+    avg = sum(vals) / len(vals)
+    if avg >= high_threshold:
+        level = "high"
+    elif avg >= _CROWDING_MODERATE:
+        level = "moderate"
+    else:
+        level = "low"
+    crowded = avg >= high_threshold
+    summary = (
+        f"拥挤度: {len(vals)} 相关对均值 {avg:+.3f} → {level}"
+        f"（{'触发拥挤降权建议' if crowded else '未见拥挤'}）"
+    )
+    _logger.info("E4 拥挤度维度: %s", summary)
+    return E4CrowdingAssessment(
+        avg_pairwise_corr=avg,
+        n_pairs=len(vals),
+        level=level,
+        crowded=crowded,
+        summary=summary,
+    )
 
 
 def analyze_cost_sensitivity(
     points: list[E4CostPoint],
     cost_min: float = 0.0,
     cost_max: float = 50.0,
+    crowding_correlations: list[float] | None = None,
+    crowding_high_threshold: float = _CROWDING_HIGH,
 ) -> E4CostReport:
     """E4 主入口：0-50bps 成本网格下 Shrinkage 效果方向一致性判定。
 
     Args:
         points: 各成本点效果（≥2 点），effect>0 表示该成本下节流仍有正效果。
         cost_min / cost_max: 设计成本范围（§4.5 E4 = 0-50bps），仅做覆盖度检查。
+        crowding_correlations: 拥挤度维度输入=候选效果序列两两相关（工单#8；
+            None=不评估，报告 crowding 字段为 None）。
+        crowding_high_threshold: 拥挤判定阈值（默认 0.7）。
 
     Returns:
         E4CostReport；passed = 全部效果同号且非零（方向一致）。
 
     Raises:
-        E4CostSensitivityError: 点数<2 / 成本重复 / 值非有限 / cost_min≥cost_max。
+        E4CostSensitivityError: 点数<2 / 成本重复 / 值非有限 / cost_min≥cost_max /
+            拥挤度输入非法。
     """
     if cost_min >= cost_max:
         raise E4CostSensitivityError(f"cost_min 需 < cost_max: {cost_min} vs {cost_max}")
@@ -110,6 +180,11 @@ def analyze_cost_sensitivity(
         f"{'稳健' if consistent else '不稳健'}"
     )
     _logger.info("E4 完成: %s", summary)
+    crowding = (
+        assess_crowding(crowding_correlations, high_threshold=crowding_high_threshold)
+        if crowding_correlations is not None
+        else None
+    )
     return E4CostReport(
         points=ordered,
         direction=direction,
@@ -119,12 +194,15 @@ def analyze_cost_sensitivity(
         covers_design_range=covers,
         passed=consistent,
         summary=summary,
+        crowding=crowding,
     )
 
 
 __all__ = [
     "E4CostPoint",
     "E4CostReport",
+    "E4CrowdingAssessment",
     "E4CostSensitivityError",
     "analyze_cost_sensitivity",
+    "assess_crowding",
 ]

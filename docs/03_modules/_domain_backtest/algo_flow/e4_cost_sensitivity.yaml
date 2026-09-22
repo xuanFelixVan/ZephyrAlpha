@@ -1,6 +1,7 @@
 # ALGO_FLOW 外部真源——e4_cost_sensitivity（_domain_backtest 域，真源 src/zephyr/backtest/regime_validation/e4_cost_sensitivity.py）
 # 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
 # external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+# 2026-09-22 工单#8 拥挤度维度：新增 I4/I5 形参 + A2 assess_crowding + E4CrowdingAssessment。
 doc_type: architecture_view
 ttl: permanent
 module: src.zephyr.backtest.regime_validation.e4_cost_sensitivity
@@ -20,28 +21,54 @@ algo_flow: |
     #   name: cost_max 参数
     #   fields: 参数 cost_max，类型注解 float
     #   code: e4_cost_sensitivity.py 顶层公共函数形参（AST 提取）
+    # - id: I4
+    #   name: crowding_correlations 参数
+    #   fields: 参数 crowding_correlations，类型注解 list[float] | None（工单#8 拥挤度维度输入）
+    #   code: e4_cost_sensitivity.py 顶层公共函数形参（AST 提取）
+    # - id: I5
+    #   name: crowding_high_threshold 参数
+    #   fields: 参数 crowding_high_threshold，类型注解 float
+    #   code: e4_cost_sensitivity.py 顶层公共函数形参（AST 提取）
     # 层: 算法
     # - id: A1
     #   name_zh: ① analyze_cost_sensitivity
     #   name_en: analyze_cost_sensitivity
     #   intro: E4 主入口：0-50bps 成本网格下 Shrinkage 效果方向一致性判定。
-    #   desc: E4 主入口：0-50bps 成本网格下 Shrinkage 效果方向一致性判定。 Args: points: 各成本点效果（≥2 点），effect>0 表示该成本下节流仍有正…；源码 L111-L163
-    #   inputs: points cost_min cost_max
+    #   desc: E4 主入口：0-50bps 成本网格下 Shrinkage 效果方向一致性判定。 Args: points: 各成本点效果（≥2 点），effect>0 表示该成本下节流仍有正…；源码见 analyze_cost_sensitivity
+    #   inputs: points cost_min cost_max crowding_correlations crowding_high_threshold
     #   outputs: E4CostReport
-    #   （注：A1 之后另有 3 个公共定义未列入（含 3 个数据契约/异常/枚举声明类），见源码）
+    #   （注：A1 之后另有公共数据契约定义：E4CrowdingAssessment 工单#8 新增）
+    # - id: A2
+    #   name_zh: ② assess_crowding
+    #   name_en: assess_crowding
+    #   intro: 拥挤度维度主入口：两两相关均值分档（low/moderate/high）。
+    #   desc: 拥挤度维度：候选因子效果序列两两相关均值分档（工单#8，纯分析消费既有产物）。
+    #   inputs: crowding_correlations crowding_high_threshold
+    #   outputs: E4CrowdingAssessment
     # 层: 输出
     # - id: O1
     #   name_zh: E4CostReport
     #   name_en: E4CostReport
-    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）；crowding 字段=A2 结果或 None
     #   downstream: 人工审查; 11_regime_backtest_validation_plan Phase 4 E4
+    # - id: O2
+    #   name_zh: E4CrowdingAssessment
+    #   name_en: E4CrowdingAssessment
+    #   intro: 拥挤度评估契约（avg_pairwise_corr / n_pairs / level / crowded / summary）
+    #   downstream: E4CostReport.crowding 字段（工单#8）
     # [/ALGO_FLOW]
     #
     # 边:
     # I1 --> A1
     # I2 --> A1
     # I3 --> A1
+    # I4 --> A1
+    # I5 --> A1
     # A1 --> O1
+    # I4 --> A2
+    # I5 --> A2
+    # A2 --> O2
+    # O2 --> O1
 
 # 以下 algo_flow_prose = 契约头双真源清偿归并（P2-1 死块批 2026-09-16）：
 # 源码头块手写算法速记逐字副本，algo_flow 机器块未覆盖其口径故不删信息；
@@ -51,4 +78,7 @@ algo_flow_prose: |
     # I2: cost_range=[0,50]bps(§4.5 E4 设计网格 0/2/5/10/50bps)
     # A1: analyze_cost_sensitivity(符号一致性检验 + 效果区间统计 + 网格覆盖度检查)
     # O1: E4CostReport(direction / direction_consistent / passed + 覆盖度信息)
+    # I4: crowding_correlations(候选效果序列两两相关, 工单#8 拥挤度维度, None=不评估)
+    # A2: assess_crowding(相关均值分档 low/moderate/high, 阈值默认 0.7)
+    # O2: E4CrowdingAssessment(avg_pairwise_corr / n_pairs / level / crowded / summary) → 挂 E4CostReport.crowding
     # [/ALGO_FLOW]
