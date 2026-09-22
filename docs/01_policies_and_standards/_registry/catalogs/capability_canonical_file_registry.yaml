@@ -5016,6 +5016,26 @@ capabilities:
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
 creation_tokens:
+- file: docs/_working/integrated_backtest/max_remediation_plan.md
+  token: ibt-remediation-max-remediation-plan-20260922
+  created_by: st-unified-plan-20260920
+  capability: ibt_remediation
+  merge_evaluation: "IBT整改唯一总方案件，与五册互引不重复，跨域对象不并"
+- file: docs/_working/registry_migration/02_ledger_design.md
+  token: registry-migration-02-ledger-design-20260922
+  created_by: st-wm1-mineB-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道乙 PG 账本设计矿唯一交付物；与车道甲数据现状矿/丙红蓝用例矿同目录分工零重叠"
+- file: docs/_working/registry_migration/03_projection_design.md
+  token: wm1-registry-migration-03-projection-design-20260922
+  created_by: st-wm1-mineC-20260923
+  capability: wm1_registry_migration
+  merge_evaluation: "W-M1三车道挖矿丙道设计文档：YAML降级PG投影的设计真源，施工总图汇编输入；替代该文档域的手工维护语义"
+- file: docs/_working/registry_migration/01_inventory.md
+  token: registry-migration-inventory-01-inventory-20260922
+  created_by: st-wm1-mineA-20260923
+  capability: registry_migration_inventory
+  merge_evaluation: "W-M1车道甲盘点册唯一交付物：ROOR 77ID双向核对+74文件表实测+45孤儿册外全录；纯文档不承接既有条目职责，净零=+1文档0规则0gate"
 - file: "docs/03_modules/_domain_factor/algo_flow/chips.yaml"
   token: "tilib-chips-algoflow-20260921"
   created_by: "st-data-fix-20260921"
@@ -7420,10 +7440,6 @@ creation_tokens:
   capability: data_source_provider_abstraction
 - file: src/zephyr/data/task_queue.py
   token: auto-data-task-queue-20260706
-  created_by: session-sess-37904-20260706052842
-  capability: data_source_provider_abstraction
-- file: src/zephyr/data/alerter.py
-  token: auto-data-alerter-20260706
   created_by: session-sess-37904-20260706052842
   capability: data_source_provider_abstraction
 - file: src/zephyr/data/alerter.py
@@ -43997,6 +44013,11 @@ creation_tokens:
   token: xhs-full-construction-campaign-ledger-20260922
   created_by: st-xhs-full-20260922
   capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/xhs_campaign_ledger.md
+  token: xhs-full-construction-xhs-campaign-ledger-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "N-16 大小写撞名合规改名件（与 automation CAMPAIGN_LEDGER.md 区分），同件改名非新增，终报唯一载体"
   merge_evaluation: "总包令施工目录交付物 token（N-13 合规名）；随战役归档并入 collection_intake 域"
   merge_evaluation: "PCR假设卡E4出证与考试件唯一载体；标的深史前置解锁后原样重跑；随目录归档"
   merge_evaluation: "工单#9+#16 立项文档唯一交付物，批文前零接电施工；批文后归 pf_alloc 线真源"
@@ -44085,6 +44106,11 @@ creation_tokens:
   token: option-daily-stats-pcr-e4-exam-20260922
   created_by: st-xhs-full-20260922
   capability: option_daily_stats
+- file: scripts/backfill_option_daily_stats.py
+  token: option-daily-stats-backfill-option-daily-stats-20260922
+  created_by: st-xhs-full-20260922
+  capability: option_daily_stats
+  merge_evaluation: "工单#3+#14 期权官方日统计历史回补唯一执行件（N-13/gitignore双合规迁址 scripts/根）；与增量任务同源互补非重复"
   merge_evaluation: "工单#3+#14 PCR E4出证唯一考试件（只读重放）；标的深史前置解锁后原样重跑，与 backfill 件同能力族互补非重复"
   merge_evaluation: "工单#3+#14 期权官方日统计历史回补唯一执行件（一次性深回补+断点续跑）；与增量任务同源互补非重复"
   merge_evaluation: "工单#3+#14 期权PCR新表DDL真源；与option_kline/iv_surface跨域不同对象不并（行情级vs官方统计级），无重复真源"
@@ -44200,6 +44226,31 @@ creation_tokens:
   token: ultimate-library-restore-drill-algo-flow-20260922
   created_by: st-ulib3-20260922
   capability: ultimate_library
+- file: docs/_working/ultimate_library/ulib3b_demand_gap_ledger.md
+  token: ultimate-library-ulib3b-demand-gap-ledger-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "G15 增补令 11/14+任务D 台账产出件（task_bound），纯新增文档零旧条目替代"
+- file: docs/_working/ultimate_library/ulib3b_potential_consumers_proposal.md
+  token: ultimate-library-ulib3b-potential-consumers-proposal-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "G15 增补令 11/14+任务D 台账产出件（task_bound），纯新增文档零旧条目替代"
+- file: docs/_working/ultimate_library/ulib3b_supply_relationship_ledger.md
+  token: ultimate-library-ulib3b-supply-relationship-ledger-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "G15 增补令 11/14+任务D 台账产出件（task_bound），纯新增文档零旧条目替代"
+- file: docs/_working/ultimate_library/ulib3b_to_derive_candidates.md
+  token: ultimate-library-ulib3b-to-derive-candidates-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "G15 增补令 11/14+任务D 台账产出件（task_bound），纯新增文档零旧条目替代"
+- file: docs/_working/ultimate_library/ulib3b_w1_file_mgmt_practices.md
+  token: ultimate-library-ulib3b-w1-file-mgmt-practices-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "G15 增补令 11/14+任务D 台账产出件（task_bound），纯新增文档零旧条目替代"
 - file: docs/_working/chain_piling_campaign/00_piling_minutes.md
   token: chain-piling-campaign-00-piling-minutes-20260922
   created_by: st-chainpile-20260922
@@ -44350,6 +44401,11 @@ creation_tokens:
   created_by: "session-registry-construction"
   capability: "business_registry"
 
+- file: "scripts/ch/backfill_rzrq_history.py"
+  token: "rzrq-history-backfill-20260923"
+  created_by: "st-emomine-20260922"
+  capability: "rzrq_history_backfill"
+  merge_evaluation: "S4 两融深史回填运维脚本（一次性 task_bound 工具，与 margin_trading 表对象配套，不并）"
 # --- 模块级翻译真源（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级翻译缺口）---
 - file: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml"
   token: "auto-strategy-registry-20260810"
@@ -44978,4 +45034,77 @@ creation_tokens:
   created_by: st-ailayer-20260917
   capability: rule_replay
 - file: src/zephyr/intelligence/chain_impact_stream.py
+- file: src/zephyr/gov_enforcement/commit_gates/registry_family/registry_mass_deletion_gate.py
+  token: registry-family-gates-registry-mass-deletion-gate-20260922
+  created_by: st-regfix-laneA-20260922
+  capability: registry_family_gates
+- file: docs/_working/integrated_backtest/batch_b_pit_repair_comparison.yaml
+  token: ibt-batch-b-pit-repair-batch-b-pit-repair-comparison-20260922
+  created_by: st-ibt-remedy-b-20260923
+  capability: ibt_batch_b_pit_repair
+  merge_evaluation: "批B 预注册验收交付物（对照表冻结件），附 max_remediation_plan §2-批B 任务态 ttl=task_bound，批D 归档即退役，无第二真源"
+  merge_evaluation: "FOLDER-CAPACITY 121>120 共堵治理迁册（registry_family 子目录新建，registry 族 gate 专柜，非同域重复对象）"
+- file: "scripts/backtest/ibt/ibt_runner.py"
+  token: "ibt-remedy-a-runner-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 工具正门化：.runtime/tmp/ibt_tools_archive 抢救原稿重建为正式件（SQL 集中化/ch_reader/蓝图头 14 字段），与临时区原稿非平行真源（原稿 TTL 临期退役不入册）；复跑 W_OOS nav 逐位一致验收 PASS"
+- file: "scripts/backtest/ibt/ibt_redblue.py"
+  token: "ibt-remedy-a-redblue-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 工具正门化红蓝对抗器：同 runner 口径重建，同目录 import 正门化（原稿 .runtime/tmp importlib 毒点根除）；红蓝基线归档轮零"
+- file: "scripts/backtest/ibt/ibt_attrib.py"
+  token: "ibt-remedy-a-attrib-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 工具正门化离线归因器：读 artifacts yaml/csv 纯离线零 CH，产物 yaml 化（DCR 禁 .json）"
+- file: "scripts/backtest/ibt/ibt_mining_matrix.py"
+  token: "ibt-remedy-a-matrix-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 工具正门化数据完备性探针：probe SQL 集中 _SQL_* 常量+表名 table_registry/schema 真源，ch_reader 统一读侧"
+- file: "docs/_working/integrated_backtest/ibt_remedy_a_acceptance.yaml"
+  token: "ibt-remedy-a-acceptance-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 验收证书（R-022 数值回归对照 PASS 实录），一次性任务件 ttl=task_bound；与 IBT-RUN-REPORT 非同对象（首跑报告 vs 正门化验收）"
+- file: src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py
+  token: ultimate-library-tag-vocab-gate-20260923
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "0046-prime 目录拆分（FOLDER-CAPACITY 121>120 治本，DISPATCH 越界登记#112 落地）：三 ulib3 图书馆门移 commit_gates/library/ 子目录，token 先行批按家法落 HEAD"
+- file: src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py
+  token: ultimate-library-state-vocab-gate-20260923
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py
+  token: ultimate-library-blood-flesh-gate-20260923
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: "docs/_working/integrated_backtest/artifacts/index.md"
+  token: "ibt-remedy-a-artifacts-index-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 收编生成器 index 目录索引件（generate_missing_index_md 产物，静态清单生成器纪律非手工维护）"
+- file: "docs/_working/integrated_backtest/artifacts/W_HOLDOUT/index.md"
+  token: "ibt-remedy-a-artifacts-W_HOLDOUT-index-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 收编生成器 index 目录索引件（generate_missing_index_md 产物，静态清单生成器纪律非手工维护）"
+- file: "docs/_working/integrated_backtest/artifacts/W_IS/index.md"
+  token: "ibt-remedy-a-artifacts-W_IS-index-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 收编生成器 index 目录索引件（generate_missing_index_md 产物，静态清单生成器纪律非手工维护）"
+- file: "docs/_working/integrated_backtest/artifacts/W_OOS/index.md"
+  token: "ibt-remedy-a-artifacts-W_OOS-index-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 收编生成器 index 目录索引件（generate_missing_index_md 产物，静态清单生成器纪律非手工维护）"
+- file: "docs/_working/integrated_backtest/artifacts/W_POSTD/index.md"
+  token: "ibt-remedy-a-artifacts-W_POSTD-index-20260923"
+  created_by: "st-ibt-remedy-a-20260923"
+  capability: "ibt_remediation"
+  merge_evaluation: "批A 收编生成器 index 目录索引件（generate_missing_index_md 产物，静态清单生成器纪律非手工维护）"
 di_seam_exemptions: []
