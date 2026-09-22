@@ -89,3 +89,14 @@ topic: oddjobs_20260923
   （3 件窗口期被他落=逐一核实 CLEAN）。
 - daemon 换血实录：05:24 新 pythonw pid=45628 接租约（计划任务 PT1M 自启配方运转正常）。
 
+## 终稿补记（06:5x 收尾）
+
+- 落地 hash 终态：件2=cb7786e7｜件4②README=2ddffb68｜件3=f7d687ce6c（q-0007）｜件5=5b6ee808。
+- 件5 直连八轮门禁舞（R5 目录日期后缀→迁 oddjobs_night；N-16 ledger.md 重名→改 oddjobs_shift_ledger.md；
+  FOREIGN_CHANGE→adopt-prior-work+allow-overlap；CREATE-GUARD→token 补齐；翻译册被 st-ibt-remedy-cf
+  持 claim→拆件留下）——翻译册我的条目仍在暂存面（+8 行纯追加），随其 owner 批次或下轮吸收落地。
+- 目录改名披露：Owner 令面路径 docs/_working/oddjobs_20260923/ 撞 R5-DIGIT-SUFFIX 门（增量新目录
+  无逃生、豁免=已在 HEAD），改 docs/_working/oddjobs_night/（语义名），令面偏差在此留痕。
+- 备份件移交：两共享册的 pile 暂存版备份移 .runtime/tmp/oddjobs_night_backup/（24h TTL，
+  内含他会话在飞注册条目全量，维护班可查）。
+- 会话收尾：release 全 claim + 心跳 daemon idle 自退（30min）+ 清临时完成。
