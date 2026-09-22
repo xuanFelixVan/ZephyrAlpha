@@ -46,6 +46,10 @@ SHARD_SIZE = 100
 PY = sys.executable
 
 sys.path.insert(0, str(REPO))
+# src 前插：editable install 把 zephyr 钉在主区 src，worktree 运行必须显式抢优先级
+_REPO_SRC = REPO / "src"
+if str(_REPO_SRC) not in sys.path:
+    sys.path.insert(0, str(_REPO_SRC))
 
 
 def load_symbols(period: str, start: str) -> list[str]:

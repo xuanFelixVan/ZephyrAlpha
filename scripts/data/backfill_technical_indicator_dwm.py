@@ -52,6 +52,10 @@ from pathlib import Path
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
+# src 前插：editable install 把 zephyr 钉在主区 src，worktree 运行必须显式抢优先级
+_REPO_SRC = _REPO_ROOT / "src"
+if str(_REPO_SRC) not in sys.path:
+    sys.path.insert(0, str(_REPO_SRC))
 
 from zephyr.data.buffered_writer import BufferedWriter
 from zephyr.data.implementations.internal_compute_provider import InternalComputeProvider
