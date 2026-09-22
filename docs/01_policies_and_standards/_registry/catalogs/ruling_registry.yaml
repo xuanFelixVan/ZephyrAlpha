@@ -5489,3 +5489,76 @@ entries:
   - docs/_working/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md
   related_arch: []
   related_rulings: ['裁定#401']
+- ruling_id: 裁定#403
+  title: A-2 pipeline_events 两段接线 residG 死会话遗产代落核验（st-oddjobs-20260923 随批登记）
+  date: '2026-09-23'
+  category: 执行追认
+  status: decided
+  summary: |
+    Max 裁定随批登记（授权链=Owner 通宵总攻令 2026-09-23 st-oddjobs 件3，先例=裁定#392 D5 批代落）：
+    residG 死会话遗产（冷库 G:/zephyr_cold/30_corpus/fullflow_harvest/20260918-194729）准予代落，
+    四条件逐项核验结论如下——
+    ①冷库原件逐件哈希核验：A-2 相关 6 件（pipeline/orchestrator/crisis/attribution 族）
+    sha256 与 harvest MANIFEST.json 逐一相符（OK=6 / MISMATCH=0 / MISSING=0）。
+    ②按 BT-P1-031 新版重排：核验发现两段接线已于 2026-09-21 以新版形态先期代落 HEAD
+    （495f759903 TC-08/dloop-v2）：段1 crisis_block_check 短路=发射侧（maybe_emit_pf_alloc_daily）
+    与执行侧（run_pf_alloc_daily）双挂+判读异常 fail-closed+阻断零 marker（解除后同日重放契约）；
+    段2 attribution_daily=SIM_DAILY_KINDS FIFO 末位+账本缺行留队重试语义。本班零重复落地。
+    ③红证双向补齐：TestCrisisGateShortCircuit 4 用例（发射侧阻断/判读异常 fail-closed/
+    执行侧子进程零执行/解除后同日重放蓝向）4 passed，本文件回归 38 passed 两轮零。
+    ④--adopt-prior-work 留痕：两段已属 HEAD 无外来 claim 可 adopt，条件不适用（本条即留痕）。
+    残余差异呈报：冷库旧版含 crisis_drill_monthly 月度演练段（CRISIS_DRILL_KIND/MARKER/SCRIPT
+    +scripts/backtest/crisis_drill_monthly.py）HEAD 未落，非 A-2 两段范围，留演练线随批处置。
+  affected_files:
+  - src/zephyr/strategy_pipeline/pipeline_events.py
+  - tests/strategy_pipeline/test_pipeline_events.py
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: []
+  related_rulings: ['裁定#392', '裁定#402']
+  superseded_by: null
+
+- ruling_id: "裁定#404"
+  title: 批次排序代裁=IBT 整改批C→F 按方案时间线（st-ibt-remedy-cf-20260923 随批登记）
+  date: '2026-09-23'
+  category: 执行追认
+  status: decided
+  summary: |-
+    Max 三决策点代裁其一（授权链=Owner 通宵总攻令 2026-09-23，晨间追认制）：
+    IBT 整改批次排序按 max_remediation_plan §1/§3 时间线执行——修考卷(B)→成本焊进考尺(C)
+    →新鲜窗重考(D)→降换手+脱钩(E)→GPU 搜索放行(F)；铁律顺序不可换序（修卷→焊尺→重考→
+    才放搜索）。批B 已由 st-ibt-remedy-b 班收尾三件完成，本裁确认直接进批C。
+  related_files:
+  - docs/_working/integrated_backtest/max_remediation_plan.md
+  related_arch: []
+  related_rulings: ['裁定#325', '裁定#402']
+  superseded_by: null
+- ruling_id: "裁定#405"
+  title: 4440 判死代裁（IS -91%+超容量；留复活窄口先例#304）
+  date: '2026-09-23'
+  category: 执行追认
+  status: decided
+  summary: |-
+    Max 三决策点代裁其二（晨间追认制）：CAND-4440d07f973f_ultrashort 判死——
+    证据=IS -91% + 超容量标定（77 万互证）+ 超短频繁交易成本拖累结构性不可修；
+    判死留复活窄口（先例=裁定#304 做 T 复活窄考）：换因子族新假设预注册卡+预注册
+    考试（含批C 成本门+E7 换手门）全过方可复活，禁任何新裁定直接重开。
+    执行=批E 从池清单下架（death_row 标记已在案），批C 照妖镜判据=成本门必拦 4440。
+  related_files:
+  - docs/_working/integrated_backtest/max_remediation_plan.md
+  related_arch: []
+  related_rulings: ['裁定#304']
+  superseded_by: null
+- ruling_id: "裁定#406"
+  title: PP-001 生产配比代裁=GPU 首轮仍等权+已批演示预设
+  date: '2026-09-23'
+  category: 执行追认
+  status: decided
+  summary: |-
+    Max 三决策点代裁其三（晨间追认制）：PP-001 生产配比维持等权+已批演示预设进 GPU
+    首轮搜索；生产配比待批G E8 装配层（QuantCombine 三算法思想+SFFS/NSGA-II/Pareto，
+    禁抄代码 PolyForm NC）落地后专项批呈批。本裁不改变 PP-001 既有接线语义。
+  related_files:
+  - docs/_working/integrated_backtest/max_remediation_plan.md
+  related_arch: []
+  related_rulings: ['裁定#402']
+  superseded_by: null

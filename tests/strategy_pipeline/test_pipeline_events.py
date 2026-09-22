@@ -184,7 +184,10 @@ def _stub_executors(monkeypatch):
     """钩子内 drain 用真 _default_handler——所有可达执行体必须 stub（测试零生产 IO 铁律）。
 
     pf_alloc 两件套（清单 #15 起唤醒钩子会解析业务日并入队分配件）：业务日桩固定回一个
-    合法日、执行体桩只回 rc——真 CH/真子进程都不得进测试。
+    合法日、执行体桩只回 rc——真 CH/真子进程都不得进测试。危机闸（TC-08 段1/裁定#392-D5
+    接线后发射侧会真调 pf_alloc.crisis_gate.crisis_block_check）同款隔离：闸 helper 桩恒放行，
+    危机两态定向用例见 TestCrisisBlockWiring（闸真件回归归 tests/pf_alloc/ 既有族）。
+    归因日账（段2 接线后 SIM_DAILY_KINDS 末位会被 drain 真消费）：执行体桩只回 rc。
     regime 日序供给（挖矿 F3 起同一唤醒点先刷新 regime_snapshot_history）：整件打桩——
     真实现会查 CH 新鲜度并可能起分钟级全窗重印子进程（真件回归见
     tests/pf_alloc/test_pf_alloc_event_wiring.py ⑧ 族）。
@@ -193,8 +196,10 @@ def _stub_executors(monkeypatch):
     monkeypatch.setattr(pe, "run_sim_memo", lambda: {"memo": "stub"})
     monkeypatch.setattr(pe, "run_sim_ledger_daily", lambda p: {"rc": 0})
     monkeypatch.setattr(pe, "run_sim_journal_daily", lambda p: {"rc": 0})
+    monkeypatch.setattr(pe, "run_attribution_daily", lambda p: {"rc": 0, "day": "2026-09-15"})
     monkeypatch.setattr(pe, "run_sim_deviation_monthly", lambda p: {"rc": 0, "month": "2026-08"})
     monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-15")
+    monkeypatch.setattr(pe, "_pf_alloc_crisis_gate_skip", lambda day: None)  # 危机闸隔离=恒放行
     monkeypatch.setattr(pe, "maybe_refresh_regime_snapshot", lambda **kw: {"action": "fresh"})
     monkeypatch.setattr(pe, "run_pf_alloc_daily", lambda p: {"rc": 0, "trade_date": "2026-09-15"})
     monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
@@ -244,7 +249,14 @@ class TestSimDailyWiring:
     def test_daily_emits_on_kline_success_in_order(self, state, marker, monkeypatch):
         monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
         r = pe.maybe_emit_sim_daily(task_id="kline_daily_incremental", success=True)
-        assert r["emitted"] == ["sim_ledger_daily", "sim_journal_daily"]  # 账本先行
+        # 段2 接线（裁定#392-D5）+观察面日链（st-sim-launch-20260923）：
+        # 账本→日刊→归因→观察面（判定/重放/日报/结算，输入依赖前三件）
+        assert r["emitted"] == [
+            "sim_ledger_daily",
+            "sim_journal_daily",
+            "attribution_daily",
+            "sim_observe_daily",
+        ]
         r2 = pe.maybe_emit_sim_daily(task_id="kline_daily_incremental", success=True)
         assert r2["emitted"] == []  # 非 poison 在队=去重
 
@@ -252,7 +264,12 @@ class TestSimDailyWiring:
         """指数日K（账本直读行情）同为唤醒源；非 kline 任务不唤醒。"""
         monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
         r = pe.maybe_emit_sim_daily(task_id="kline_index_incremental", success=True)
-        assert r["emitted"] == ["sim_ledger_daily", "sim_journal_daily"]
+        assert r["emitted"] == [
+            "sim_ledger_daily",
+            "sim_journal_daily",
+            "attribution_daily",
+            "sim_observe_daily",
+        ]
 
     def test_daily_skips_non_kline_and_failed_tasks(self, state, marker):
         assert pe.maybe_emit_sim_daily(task_id="stock_list_daily", success=True)["emitted"] == []
@@ -263,7 +280,11 @@ class TestSimDailyWiring:
         monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
         pe._touch_marker("sim_ledger_daily")
         r = pe.maybe_emit_sim_daily(task_id="kline_daily_incremental", success=True)
-        assert r["emitted"] == ["sim_journal_daily"]  # 只有未落 marker 的 journal 件入队
+        assert r["emitted"] == [
+            "sim_journal_daily",
+            "attribution_daily",
+            "sim_observe_daily",
+        ]  # 只有未落 marker 的件入队
 
     def test_wire_hook_enqueues_daily_and_drains(self, state, marker, monkeypatch):
         """端到端（执行体全 stub）：唤醒→入队 FIFO→drain 串行消费→date-marker 落盘。"""
@@ -286,16 +307,28 @@ class TestSimDailyWiring:
             order.append("journal")
             return {"rc": 0}
 
+        def attribution_stub(p):
+            order.append("attribution")
+            return {"rc": 0, "day": "D"}
+
+        def observe_stub(p):
+            order.append("observe")
+            return {"rc": 0, "day": "D"}
+
         monkeypatch.setattr(pe, "run_sim_ledger_daily", ledger_stub)
         monkeypatch.setattr(pe, "run_sim_journal_daily", journal_stub)
+        monkeypatch.setattr(pe, "run_attribution_daily", attribution_stub)
+        monkeypatch.setattr(pe, "run_sim_observe_daily", observe_stub)
         s = FakeScheduler()
         pe.wire_data_scheduler(s)
         s.h(task_id="kline_daily_incremental", success=True)
-        assert order == ["ledger", "journal"]  # FIFO 串行=日刊必见当日账本
+        assert order == ["ledger", "journal", "attribution", "observe"]  # FIFO 串行=账本→日刊→归因→观察面
         data = json.loads(marker.read_text(encoding="utf-8"))
-        assert "sim_ledger_daily" in data and "sim_journal_daily" in data  # 消费成功才落 marker
+        assert ("sim_ledger_daily" in data and "sim_journal_daily" in data
+                and "attribution_daily" in data and "sim_observe_daily" in data)  # 消费成功才落 marker
         # 全部轻 kind 消费完毕（月度件 marker 未到期不再发/或被 stub handler 消费）
-        assert all(e["kind"] not in ("sim_ledger_daily", "sim_journal_daily")
+        assert all(e["kind"] not in ("sim_ledger_daily", "sim_journal_daily", "attribution_daily",
+                                     "sim_observe_daily")
                    for e in pe.pending())
 
 
@@ -317,10 +350,13 @@ class TestSimHandlers:
     def test_daily_handlers_touch_date_markers_on_success(self, state, marker, monkeypatch):
         monkeypatch.setattr(pe, "run_sim_ledger_daily", lambda p: {"rc": 0})
         monkeypatch.setattr(pe, "run_sim_journal_daily", lambda p: {"rc": 0})
+        monkeypatch.setattr(pe, "run_attribution_daily", lambda p: {"rc": 0, "day": "D"})
         pe._default_handler({"id": "X", "kind": "sim_ledger_daily", "payload": {}})
         pe._default_handler({"id": "Y", "kind": "sim_journal_daily", "payload": {}})
+        pe._default_handler({"id": "Z", "kind": "attribution_daily", "payload": {}})
         data = json.loads(marker.read_text(encoding="utf-8"))
-        assert "sim_ledger_daily" in data and "sim_journal_daily" in data
+        assert ("sim_ledger_daily" in data and "sim_journal_daily" in data
+                and "attribution_daily" in data)
 
     def test_optional_due_missing_module_skips(self, state, marker, monkeypatch):
         """契约预埋：实现模块缺失=log-and-skip（不抛、可出队，不占 attempts）。
@@ -368,3 +404,230 @@ class TestEmitSimWalletDue:
         out = pe.emit_sim_wallet_due([{"strategy_id": "S1"}])
         assert out["drained"] is False and pe.pending()
         assert alerts and "sim_wallet_due" in alerts[0]
+
+
+# ---------- TC-08 段1/段2 接线定向验收（裁定#392-D5 批代落，2026-09-21）----------
+class TestCrisisBlockWiring:
+    """pf_alloc 危机短路（段1）：阻断=跳过+WARN/放行=正常/判读异常 fail-closed/不落 marker。
+
+    闸注入=patch zephyr.pf_alloc.crisis_gate.crisis_block_check 源模块属性（生产侧函数级
+    惰性 import，patch 生效）；真 crisis_gate 文件零触碰（R-072a 加固面维持不落）。
+    """
+
+    @staticmethod
+    def _patch_gate(monkeypatch, *, skip=False, state="normal", reason="ok", exc=None):
+        import zephyr.pf_alloc.crisis_gate as cg
+
+        def fake_check(trade_date=None, **kw):
+            if exc is not None:
+                raise exc
+            return cg.CrisisBlock(skip=skip, state=state, reason=reason)
+
+        monkeypatch.setattr(cg, "crisis_block_check", fake_check)
+
+    def test_emit_blocked_skips_enqueue_and_no_marker(self, state, marker, monkeypatch):
+        alerts = []
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-15")
+        self._patch_gate(monkeypatch, skip=True, state="crisis", reason="crisis_block：dominant=r10")
+        r = pe.maybe_emit_pf_alloc_daily(task_id="kline_daily_incremental", success=True)
+        assert r["emitted"] == [] and r["skipped"] == "crisis_block"
+        assert pe.pending() == []           # 阻断=跳过本轮 pf_alloc 入队
+        assert not marker.exists()          # 不落 marker（解除后同日可重放=调用方条款）
+        assert any(lv == "WARN" and "危机闸" in m for lv, m in alerts)  # WARN 留痕
+
+    def test_emit_passes_on_normal(self, state, marker, monkeypatch):
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
+        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-15")
+        self._patch_gate(monkeypatch, skip=False, state="normal", reason="normal")
+        r = pe.maybe_emit_pf_alloc_daily(task_id="kline_daily_incremental", success=True)
+        assert r["emitted"] == ["pf_alloc_daily"] and r["trade_date"] == "2026-09-15"
+        assert any(e["kind"] == "pf_alloc_daily" for e in pe.pending())
+
+    def test_emit_fail_closed_on_check_error(self, state, marker, monkeypatch):
+        """判读异常 fail-closed：视为阻断（裁定#392-D5 明示），同样不入队不落 marker。"""
+        alerts = []
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-15")
+        self._patch_gate(monkeypatch, exc=RuntimeError("snapshot unreadable"))
+        r = pe.maybe_emit_pf_alloc_daily(task_id="kline_daily_incremental", success=True)
+        assert r["emitted"] == [] and r["skipped"] == "crisis_block"
+        assert pe.pending() == [] and not marker.exists()
+        assert any(lv == "WARN" and "fail-closed" in m for lv, m in alerts)
+
+    def test_run_handler_blocks_subprocess(self, state, marker, monkeypatch):
+        """执行侧兜底：人工 emit/已入队事件同过闸——阻断=子进程不执行+marker 不落。"""
+        import subprocess as _sp
+
+        called = []
+        monkeypatch.setattr(_sp, "run", lambda *a, **k: called.append(1))
+        self._patch_gate(monkeypatch, skip=True, state="crisis", reason="r")
+        out = pe.run_pf_alloc_daily({"trade_date": "2026-09-15"})
+        assert out["skipped"] == "crisis_block" and not called
+        assert not marker.exists()
+
+    def test_run_handler_fail_closed_no_subprocess(self, state, marker, monkeypatch):
+        import subprocess as _sp
+
+        called = []
+        monkeypatch.setattr(_sp, "run", lambda *a, **k: called.append(1))
+        self._patch_gate(monkeypatch, exc=RuntimeError("snapshot unreadable"))
+        out = pe.run_pf_alloc_daily({"trade_date": "2026-09-15"})
+        assert out["skipped"] == "crisis_block" and not called
+        assert not marker.exists()
+
+
+class TestAttributionDailyWiring:
+    """归因日账（段2）：SIM_DAILY_KINDS FIFO 末位/--day 业务日 resolve/payload 覆盖/失败告警。"""
+
+    def test_sim_daily_kinds_fifo_tail(self):
+        # 末位追加铁律：归因 deps=账本当日行，FIFO 消费次序账本→日刊→归因→观察面由元组次序保证
+        assert pe.SIM_DAILY_KINDS == (
+            "sim_ledger_daily",
+            "sim_journal_daily",
+            "attribution_daily",
+            "sim_observe_daily",
+        )
+        assert pe.SIM_DAILY_KINDS[-1] == "sim_observe_daily"
+        assert "attribution_daily" in pe.LIGHT_KINDS  # 轻 kind=调度器唤醒自动可消费
+        assert "sim_observe_daily" in pe.LIGHT_KINDS
+
+    def test_handler_resolves_biz_day(self, monkeypatch):
+        seen = {}
+        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-18")
+
+        def fake_script(script, args, timeout_s):
+            seen.update(script=script, args=args, timeout_s=timeout_s)
+            return 0, ""
+
+        monkeypatch.setattr(pe, "_run_sim_script", fake_script)
+        out = pe.run_attribution_daily({})
+        assert out == {"rc": 0, "day": "2026-09-18"}
+        assert seen["script"] == "sim_attribution_report.py"
+        assert seen["args"] == ["--day", "2026-09-18"]  # --day 业务日=resolve 真源，禁墙钟猜日
+
+    def test_handler_payload_day_overrides_resolve(self, monkeypatch):
+        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date",
+                            lambda: (_ for _ in ()).throw(AssertionError("payload 带日时禁 resolve")))
+
+        def fake_script(script, args, timeout_s):
+            return 0, ""
+
+        monkeypatch.setattr(pe, "_run_sim_script", fake_script)
+        assert pe.run_attribution_daily({"trade_date": "2026-09-01"}) == {"rc": 0, "day": "2026-09-01"}
+        assert pe.run_attribution_daily({"biz_date": "2026-09-02"}) == {"rc": 0, "day": "2026-09-02"}
+
+    def test_handler_nonzero_rc_alerts(self, monkeypatch):
+        alerts = []
+        monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append((level, msg)))
+        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-18")
+        monkeypatch.setattr(pe, "_run_sim_script", lambda s, a, t: (3, "boom"))
+        out = pe.run_attribution_daily({})
+        assert out == {"rc": 3, "day": "2026-09-18"}
+        assert any(lv == "ERROR" and "归因日账" in m for lv, m in alerts)
+
+    def test_default_handler_touches_marker(self, state, marker, monkeypatch):
+        monkeypatch.setattr(pe, "run_attribution_daily", lambda p: {"rc": 0, "day": "D"})
+        pe._default_handler({"id": "X", "kind": "attribution_daily", "payload": {}})
+        assert "attribution_daily" in json.loads(marker.read_text(encoding="utf-8"))
+
+    def test_resolve_pf_alloc_trade_date_edges(self, monkeypatch):
+        """业务日真源三态边界：正常日 / 空表哨兵 / 无行——宁可不发事件也不猜日。"""
+        import zephyr.infrastructure.database_service as dbs
+
+        class FakeConn:
+            def __init__(self, rows):
+                self._rows = rows
+
+            def execute(self, sql):
+                return self._rows
+
+        class FakeSvc:
+            def __init__(self, rows):
+                self._rows = rows
+
+            def get_clickhouse_conn(self, role="reader"):
+                assert role == "reader"
+                return FakeConn(self._rows)
+
+        monkeypatch.setattr(dbs, "get_db_service", lambda: FakeSvc([("2026-09-18",)]))
+        assert pe.resolve_pf_alloc_trade_date() == "2026-09-18"
+        monkeypatch.setattr(dbs, "get_db_service", lambda: FakeSvc([("1970-01-01",)]))
+        with pytest.raises(RuntimeError, match="无可用业务日"):
+            pe.resolve_pf_alloc_trade_date()
+        monkeypatch.setattr(dbs, "get_db_service", lambda: FakeSvc([]))
+        with pytest.raises(RuntimeError, match="无可用业务日"):
+            pe.resolve_pf_alloc_trade_date()
+
+
+class TestCrisisGateShortCircuit:
+    """段1 危机短路红证补齐（st-oddjobs-20260923 A-2 红证双向条件；两段本体=TC-08 段2/
+    裁定#392 D5 批代落，本类只补红蓝证据不碰实现）。
+
+    红向：crisis 态 / 判读异常 fail-closed → 发射侧零入队零 marker（重放契约）、
+    执行侧零子进程；蓝向回归：解除后同日恢复发射。
+    patch 面=crisis_gate.crisis_block_check 模块属性（本件惰性 import，patch 源头即生效）。
+    """
+
+    def _block_gate(self, monkeypatch, reason="红证：crisis 阻断"):
+        import zephyr.pf_alloc.crisis_gate as cg
+
+        monkeypatch.setattr(
+            cg, "crisis_block_check",
+            lambda *a, **k: cg.CrisisBlock(skip=True, state="crisis", reason=reason))
+        return cg
+
+    def test_emission_side_crisis_blocks_enqueue(self, state, monkeypatch):
+        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-23")
+        monkeypatch.setattr(pe, "AUDIT_MARKER", state / "last_audit.json")
+        monkeypatch.setattr(pe, "alert", lambda *a, **k: None)
+        self._block_gate(monkeypatch)
+        r = pe.maybe_emit_pf_alloc_daily(task_id="daily_kline", success=True)
+        assert r == {"emitted": [], "skipped": "crisis_block", "trade_date": "2026-09-23"}
+        assert pe.pending() == []  # 零入队
+        assert not pe._marker_seen("pf_alloc_daily:2026-09-23")  # 零 marker（解除后可重放）
+
+    def test_emission_side_gate_anomaly_fails_closed(self, state, monkeypatch):
+        import zephyr.pf_alloc.crisis_gate as cg
+
+        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-23")
+        monkeypatch.setattr(pe, "AUDIT_MARKER", state / "last_audit.json")
+        monkeypatch.setattr(pe, "alert", lambda *a, **k: None)
+
+        def boom(*a, **k):
+            raise RuntimeError("CH 不可达（红证：判读异常）")
+
+        monkeypatch.setattr(cg, "crisis_block_check", boom)
+        r = pe.maybe_emit_pf_alloc_daily(task_id="kline_daily", success=True)
+        assert r["emitted"] == [] and r["skipped"] == "crisis_block"  # fail-closed=视为阻断
+        assert pe.pending() == [] and not pe._marker_seen("pf_alloc_daily:2026-09-23")
+
+    def test_execution_side_crisis_blocks_subprocess(self, state, monkeypatch):
+        monkeypatch.setattr(pe, "AUDIT_MARKER", state / "last_audit.json")
+        monkeypatch.setattr(pe, "alert", lambda *a, **k: None)
+        self._block_gate(monkeypatch)
+        import zephyr.shared.infra.process_pool as pp
+
+        def _no_subprocess(*a, **k):
+            raise AssertionError("危机阻断后子进程不得执行")
+
+        monkeypatch.setattr(pp, "run_subprocess_hidden", _no_subprocess)
+        r = pe.run_pf_alloc_daily({"trade_date": "2026-09-23"})
+        assert r["skipped"] == "crisis_block"
+        assert not pe._marker_seen("pf_alloc_daily:2026-09-23")
+
+    def test_blue_gate_clear_same_day_reemits(self, state, monkeypatch):
+        import zephyr.pf_alloc.crisis_gate as cg
+
+        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date", lambda: "2026-09-23")
+        monkeypatch.setattr(pe, "AUDIT_MARKER", state / "last_audit.json")
+        monkeypatch.setattr(pe, "alert", lambda *a, **k: None)
+        self._block_gate(monkeypatch)
+        assert pe.maybe_emit_pf_alloc_daily(task_id="daily_kline", success=True)["skipped"] == "crisis_block"
+        # 危机解除（skip=False）→ 同日恢复发射（重放契约蓝向回归）
+        monkeypatch.setattr(
+            cg, "crisis_block_check",
+            lambda *a, **k: cg.CrisisBlock(skip=False, state="normal", reason="解除"))
+        r = pe.maybe_emit_pf_alloc_daily(task_id="daily_kline", success=True)
+        assert r == {"emitted": [pe.PF_ALLOC_KIND], "trade_date": "2026-09-23"}
+        assert len(pe.pending()) == 1 and pe.pending()[0]["payload"]["trade_date"] == "2026-09-23"

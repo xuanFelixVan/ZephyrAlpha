@@ -96,6 +96,7 @@ def find_orphan_py_files() -> list[Path]:
         # 里面是整仓 .py 的副本，判成孤儿是拿检测器扫自己的影子（2026-09-19 CF1 治本，
         # 修复前主区实测 339,043 条发现里 339,013 条出自这两棵子树，真孤儿 0）。
         ".aidrafts",
+        ".aidrafts_pool",
         ".worktrees",
     }  # agent_inbox=会话草稿投箱豁免区（2026-09-02 Owner 裁定：草稿 .py 在箱合法，晋升时才迁入合法目录）
     try:
