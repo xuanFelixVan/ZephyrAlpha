@@ -446,19 +446,19 @@ class TestChipsExtBatch10:
 
 class TestCYC:
     def test_rolling_cost_moving_average(self):
-        """cyc_N == Σ(amount,N)/(Σ(volume,N)×100)（存量 volume=手，通达信原式÷100）。"""
+        """cyc_N == Σ(amount,N)/Σ(volume,N)（volume 已统一为股，2026-09-22 量纲治本）。"""
         df = _make_chips_ohlcv(60)
         r = CYC().compute(df)
         for n in [5, 13, 34]:
-            manual = df["amount"].rolling(n).sum() / (df["volume"].rolling(n).sum() * 100.0)
+            manual = df["amount"].rolling(n).sum() / df["volume"].rolling(n).sum()
             np.testing.assert_allclose(r[f"cyc_{n}"].to_numpy(), manual.to_numpy(), rtol=1e-12)
             assert r[f"cyc_{n}"].iloc[: n - 1].isna().all()  # 预热期 NaN
 
     def test_cyc_cost_near_price_scale(self):
-        """量纲回归：cyc_5 应贴近价位量级（amount/(volume×100)），防手/股口径回归。"""
+        """量纲回归：cyc_5 应贴近价位量级（amount/volume，volume=股），防手/股口径回归。"""
         df = _make_chips_ohlcv(60)
         r = CYC().compute(df)
-        avg_price = df["amount"].iloc[10:].sum() / (df["volume"].iloc[10:].sum() * 100.0)
+        avg_price = df["amount"].iloc[10:].sum() / df["volume"].iloc[10:].sum()
         assert abs(r["cyc_5"].iloc[-1] / avg_price - 1.0) < 0.5
 
     def test_cyc_inf_dma_recursion(self):

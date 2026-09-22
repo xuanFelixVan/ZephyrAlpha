@@ -43563,6 +43563,10 @@ creation_tokens:
   capability: rl_trainer
   merge_evaluation: "TD3训练器为tc_11卡件3新建子包，无同职能既有件可并"
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
+- file: scripts/data/tilib_dwm_shard_runner.py
+  token: auto-scaffold-tilib_dwm_shard_runner-20260922
+  created_by: st-b10-final-20260922
+  capability: tilib_dwm_shard_runner
   merge_evaluation: "丁线词表SSOT自裁书（第一性原理+四源对照），无同真源可派生项"
 - file: src/zephyr/shared/vocab/market_state.py
   token: state-vocab-market-state-20260921
@@ -43624,5 +43628,13 @@ creation_tokens:
   token: "diskch-a4-go-signal-20260920"
   created_by: "st-disk-ch-20260921"
   capability: "disk_reorg_campaign"
+- file: scripts/data/backfill_technical_indicator_dwm.py
+  token: auto-scaffold-backfill_technical_indicator_dwm-20260922
+  created_by: st-b10-final-20260922
+  capability: backfill_technical_indicator_dwm
+- file: scripts/data/backfill_night.ps1
+  token: auto-scaffold-backfill_night-20260922
+  created_by: st-b10-final-20260922
+  capability: backfill_night
   merge_evaluation: "同真源可派生：a0/a2/a4 为 disk_reorg 战役母令/集成简报/放行信号执行件，随战役文档全家福同批补登记（q-0006 欠账，st-disk-final 代落地）"
 di_seam_exemptions: []

@@ -56002,6 +56002,14 @@ entries:
   desc_en: ""
   plain_zh: "这是词表门卫：谁在代码里新造了一组描述大盘状态或情绪的标签（比如又发明一套'冰点/高潮'），它就查一查这套标签有没有在官方登记册上户口。没有户口就先提醒（现在是观察期，只提醒不拦人），以后翻成硬拦。这样全系统说状态的话就都从一本词典出，不会再出现同一个词两个意思的事故。"
   responsibility_layer: governance
+- module_path: scripts/data/tilib_dwm_shard_runner.py
+  domain_id: D_DATA
+  name_zh: "tilib指标夜跑分片编排器"
+  name_en: "TILIB DWM shard runner"
+  desc_zh: "夜跑02:30指标回填的分片编排：单进程串行、每片独立子进程内存隔离、分片json断点续跑，治内存总闸Code241"
+  desc_en: ""
+  plain_zh: "这是个跑夜班用的总调度小工具：把全市场5000多只股票的指标计算拆成58个小批次一个个跑，每一批单独开进程防止内存爆掉，跑完一批记个条子，中断了重跑会自动跳过已完成批次。"
+  responsibility_layer: business
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow

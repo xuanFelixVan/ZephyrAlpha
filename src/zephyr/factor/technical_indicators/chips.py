@@ -40,10 +40,9 @@ SCR 筹码集中度：SCR = 100×(cost_95 − cost_5)/(cost_95 + cost_5)，[0,10
 （与 chips_cost_5/95 同源同口径，90/10 与 95/5 分位之争取 95/5——与自家输出列自洽）。
 
 CYC 成本均线（通达信口径）：
-  - cyc_N = Σ(amount, N) / (Σ(volume, N)×100)，N∈{5,13,34}——kline_daily 存量 volume
-    口径实证为"手"（000852 2026-09-01: 124016 手×100=1.24 亿股，对自由流通股本=1.31%，
-    与 stock_daily_basic.turnover_rate=1.3051% 交叉吻合；表 DDL 注释"成交量(股)"与存量
-    数据不符，已留痕 16 号 memo §6.10），故按通达信原式除以 100 得元/股。
+  - cyc_N = Σ(amount, N) / Σ(volume, N)，N∈{5,13,34}——kline_daily volume 已统一为"股"
+    （2026-09-22 量纲治本：miniqmt 写入端 手→股 ×100 + 存量 data_source='' 行 ×100 更正，
+    对齐 DDL 注释/tushare/baostock/BJ 路径既有口径；病根实证留痕 16 号 memo §6.10）。
   - cyc_inf（无穷成本均线）= DMA(close, 换手率/100)：
     c[i] = c[i-1] + (close[i] − c[i-1]) × clip(tr[i],0,100)/100，种子=首日收盘。
     tr NaN → 该日不修正（c[i]=c[i-1]）。缺 turnover_rate → 全 NaN。
@@ -452,7 +451,7 @@ class CYC(_ChipsValidateMixin):
         input_columns=["close", "volume", "amount", "turnover_rate"],
         params={"periods": [5, 13, 34]},
         version="1.0.0",
-        description="cyc_N=Σamount/(Σvolume×100)（存量volume=手，通达信原式÷100 得元/股）；cyc_inf=DMA(close,换手率/100)",
+        description="cyc_N=Σamount/Σvolume（kline_daily volume 已统一为股，2026-09-22 量纲治本）；cyc_inf=DMA(close,换手率/100)",
     )
 
     def compute(self, data: pd.DataFrame, **kwargs) -> pd.DataFrame:
@@ -468,7 +467,7 @@ class CYC(_ChipsValidateMixin):
         out: dict[str, pd.Series] = {}
         for n in periods:
             amt_sum = amount.rolling(window=int(n), min_periods=int(n)).sum()
-            vol_sum = volume.rolling(window=int(n), min_periods=int(n)).sum() * 100.0  # 存量 volume=手→股
+            vol_sum = volume.rolling(window=int(n), min_periods=int(n)).sum()  # volume 已统一为股（2026-09-22 量纲治本）
             cyc_n = amt_sum / vol_sum.replace(0.0, np.nan)  # 全停牌窗 → NaN
             out[f"cyc_{int(n)}"] = cyc_n
 

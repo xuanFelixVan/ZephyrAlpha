@@ -1000,6 +1000,11 @@ class MiniQmtIngestProvider(IngestProviderBase):
                 # volume 在 ClickHouse 中是 UInt64，需转 int
                 vol = MiniQmtIngestProvider.safe_float(volumes[i])
                 vol = int(vol) if vol is not None else None
+                if not is_hfq and vol is not None:
+                    # kline_daily DDL 口径=股：xtquant 日线 volume=手 → ×100
+                    # （2026-09-22 量纲治本，对齐 tushare ×100/baostock 原生股/BJ ×100；
+                    #   hfq 表存量=手口径刻意保留，勿混）
+                    vol = vol * 100
                 if is_hfq:
                     # kline_daily_hfq 表列为 OCLH 顺序
                     rows.append(

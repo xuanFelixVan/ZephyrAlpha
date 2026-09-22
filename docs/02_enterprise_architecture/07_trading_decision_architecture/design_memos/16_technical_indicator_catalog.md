@@ -5,8 +5,8 @@ title: 技术指标目录
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.11.1"
-date: 2026-09-21
+version: "1.12.0"
+date: 2026-09-22
 topic: technical_indicator_catalog
 scope: 07_trading_decision_architecture
 ---
@@ -257,7 +257,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 ### 6.10 筹码族 chips.py（5 指标 / 13 列，2026-09-21 批10 新建+同日扩项，MOD-L02-031）
 
 > **契约扩张**：指标输入首次引入换手率（§2 批10 扩张条）。
-> **量纲实证留痕**：kline_daily 存量 volume="手"——000852 2026-09-01 成交 124016 手×100=1.24 亿股，对自由流通股本=1.31%，与 stock_daily_basic.turnover_rate=1.3051% 交叉吻合；表 DDL 注释"成交量(股)"与存量数据不符（既有漂移，随批留痕不代改）。CYC 按通达信原式 ÷100。
+> **量纲治本（2026-09-22，st-b10-final-20260922，裁定#398/#399 语境）**：kline_daily volume 已统一为"股"——①写入端 miniqmt_provider 日K非复权分支 手→股 ×100（对齐 tushare ×100/baostock 原生股/BJ ×100/DDL 注释四重既有口径；hfq 表手口径刻意保留勿混）；②存量 8,417,710 行 data_source=''（miniqmt 族）×100 更正（快照 E:/c1_market/p2_volume_unit_export_20260922/，sha256=4a4ce49046b66ed7）；③CYC 公式去 ÷100（Σamount/Σvolume，对存量股口径自洽，重算后数值与治本前一致）；④指标全量 58 片重算（vfix）。修复前病根=混合量纲：2008-2018 Baostock 存"股"、2019+ miniQMT/模拟桥存"手"（amount/volume/close 比值中位数 0.01→1.0 断裂），同标的历史跨源跳变 ×100 污染 CYQ 质量分布与 CYC。批10 首跑时的"存量=手"结论系当时 miniQMT 族行主导的局部实证，本批全时段扫描后治本。
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -283,6 +283,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-09-22 | 1.12.0 | 分包2 volume 量纲治本：kline_daily volume 全表统一"股"（写侧 miniqmt ×100 + 存量 8.4M 行 mutation + CYC 去 ÷100 + 指标 58 片重算）；§6.10 量纲注记改写 | 批10 终局令分包2（手/股混合量纲病实证后治本） |
 | 2026-09-21 | 1.11.1 | 批10 扩项（Owner 扩项令）：CYQ 增列 chips_cost_15/85（同一分布分位）+CHIP_CONC_90/70 两指标（通达信集中度族，conc_90=集中度(90) 与 SCR 同公式双条目 overlap 已记、conc_70=集中度(70) 用新分位对）；全表 140→142 在产/210→214 列（注册 141→143）；版本 v1.6.1；峰突破/发散信号=消费端规则卡不进指标库（collection_intake 规格边界） | 分包4 WO-4 扩项令 |
 | 2026-09-21 | 1.11.0 | 批10 筹码族施工（总包甲 WO-4）：+CYQ/SCR/CYC 3 指标/9 列（新建 chips.py MOD-L02-031，第 9 类 chips）；全表 137→140 在产/201→210 列（注册 138→141 条）；契约扩张=指标输入首次引入换手率 stock_daily_basic（仅 daily，软降级 NULL）；kline_daily volume 手/股量纲实证留痕（CYC ÷100）；CYQ 独立实现复算 000852 近 20 日逐日 0 偏差对表 PASS；单票试跑两票 33 日全列有数；全市场回填待时序板乙 W1 解禁 | 分包4 tilib 延续批·批10 令（§3 配方 CYQ/SCR/CYC 施工） |
 | 2026-09-20 | 1.10.0 | 批9-4 tilib 清欠班波5：M-L6 登记卡全清偿 +CONTINUATION/GPRED（循环 6→8）；全表 135→137 在产/198→200 列；公式源=mesasoftware.com 官网论文 PDF（Continuation Index TASC 2025-09 / Linear Predictive Filters TASC 2025-01），EasyLanguage 逐行移植；GPRED 正弦领先性实测 corr 0.9462 | Owner 追加令立卡未施工的你能施工吗→开工 |

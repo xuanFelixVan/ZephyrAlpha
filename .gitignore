@@ -613,6 +613,13 @@ scripts/data/sz_open_data/*
 !scripts/data/fx_ecb_ingest.py
 # WO-③-04 源健康度周期巡检器收编（st-mineline-w304 2026-09-18，同上先例=收编入库增强追踪）
 !scripts/data/source_health_patrol.py
+# 09-17 tick 模拟盘找回批+tilib 夜跑 runner 收编（st-b10-final-20260922 2026-09-22，裁定#399）：
+# tracked 常驻运维件被 scripts/data/* 通配误伤致 commit_queue prestage 拒绝，先例=sz_open_data 收编模式
+!scripts/data/p0_tick_backfill.py
+!scripts/data/wipe_tick3days.py
+!scripts/data/backfill_technical_indicator_dwm.py
+!scripts/data/tilib_dwm_shard_runner.py
+!scripts/data/backfill_night.ps1
 
 # 2026-09-09 工作区卫生(#ARCH-308 分类处置): 运行时产物与数据源二进制留档不入库
 data/asset_index/offrepo_scan_report.json
