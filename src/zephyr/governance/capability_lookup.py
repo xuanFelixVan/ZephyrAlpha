@@ -277,6 +277,23 @@ class CapabilityEntry:
 # ---------------------------------------------------------------------------
 
 
+def _library_dedup_probe(query: str, limit: int = 5) -> dict | None:
+    """图书馆查重探针（ulib3 T6，治"编排器惨案"）：能力反查时同探图书馆在编资产。
+
+    尽力查询（fail-open）：PG/图书馆不可达返回 None，绝不影响 capability 反查主路径。
+    查重结果经 write_lookup_audit_log 进提交留痕（lookup_audit jsonl），AI 在反查
+    时即可看到"该关键词资产已建成"，防三个 AI 不知道已建成而重复施工。
+    """
+    try:
+        from zephyr.library.lookup import lookup_assets  # noqa: PLC0415 — 懒加载防循环依赖
+
+        rows = lookup_assets(query, limit=limit)
+        return {"hits": len(rows), "asset_ids": [r.get("asset_id", "") for r in rows]}
+    except Exception as exc:  # noqa: BLE001 — 探针失败静默（fail-open）
+        _logger.debug("capability_lookup: 图书馆查重探针失败（fail-open）: %s", exc)
+        return None
+
+
 def write_lookup_audit_log(
     session_id: str,
     query: dict,
@@ -284,6 +301,7 @@ def write_lookup_audit_log(
     capability_ids: list[str],
     *,
     tool: str = "capability_lookup.find",
+    library_dedup: dict | None = None,
 ) -> None:
     """写入 session 级 lookup audit log（best-effort，失败不抛异常）。
 
@@ -316,6 +334,9 @@ def write_lookup_audit_log(
             # 只检查 "tool" 字段是否存在，rule_ids 字段语义复用为 capability_ids
             "rule_ids": capability_ids,
         }
+        if library_dedup is not None:
+            # ulib3 T6：图书馆查重留痕（hits/asset_ids），None=探针不可达未采样
+            entry["library_dedup"] = library_dedup
         with open(log_path, "a", encoding="utf-8") as fh:
             fh.write(json.dumps(entry, ensure_ascii=False) + "\n")
     except OSError as exc:
@@ -909,7 +930,7 @@ class CapabilityLookup:
             haystack = " ".join(haystacks).lower()
             if q in haystack or self._token_match(ascii_tokens, cjk_str, haystack):
                 results.append(self._entry_to_dict(cap))
-        # 审计日志落盘（best-effort，fail-open）
+        # 审计日志落盘（best-effort，fail-open）；ulib3 T6：同探图书馆查重进留痕
         resolved_sid = _resolve_session_id(session_id)
         if resolved_sid:
             write_lookup_audit_log(
@@ -918,6 +939,7 @@ class CapabilityLookup:
                 result_count=len(results),
                 capability_ids=[r.get("capability_id", "") for r in results],
                 tool="capability_lookup.find",
+                library_dedup=_library_dedup_probe(query),
             )
         return results
 
