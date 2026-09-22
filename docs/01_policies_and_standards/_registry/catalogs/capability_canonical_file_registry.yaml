@@ -44278,6 +44278,16 @@ creation_tokens:
   token: chain-piling-campaign-registry-latest-20260922
   created_by: st-chainpile-20260922
   capability: chain_piling_campaign
+- file: docs/_working/chain_piling_campaign/snapshots/question_batch_w6.yaml
+  token: chain-piling-campaign-question-batch-w6-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+- file: docs/_working/chain_piling_campaign/a1_chainpile_ledger.md
+  token: chain-piling-campaign-a1-chainpile-ledger-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "台账改名件token（a1_ledger->a1_chainpile_ledger 过N-16基名唯一），替代物：替代同名未落地旧token条目（旧条目随重建清收）"
+  merge_evaluation: "W6挖干批次YAML（由.json转.yaml过DCR目录契约），替代物：替代同内容.json（未落地即改），净零"
 - file: src/zephyr/governance/meta_question/__init__.py
   token: meta-question-registry---init---20260922
   created_by: st-chainpile-20260922
@@ -44308,6 +44318,11 @@ creation_tokens:
   token: meta-question-registry-meta-question-registry-20260922
   created_by: st-chainpile-20260922
   capability: meta_question_registry
+- file: scripts/governance/check_meta_question_batch.py
+  token: meta-question-registry-check-meta-question-batch-20260922
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+  merge_evaluation: "批次只读校验器（自docs/_working迁scripts/governance过DCR），泛化路径参数，替代物：原check_w6_batch.py（未落地即迁）"
   merge_evaluation: "能力卡（原问题/立项/开新线命中），替代物：无"
   merge_evaluation: "trae_087新规则，替代物：三问判据净零引用不重复"
   merge_evaluation: "depgraph挂锚蓝图极简件，替代物：无"
