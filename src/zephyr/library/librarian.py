@@ -70,7 +70,8 @@ class PgConnection(Protocol):
         ...
 
     def close(self) -> None:
-        """关闭底层连接（连接级语义；游标级 close 见 PgCursor）。"""
+        """关闭连接。"""
+        ...
 
 
 import json
@@ -87,8 +88,6 @@ from zephyr.library.ledger_schema import (
 )
 
 __all__ = ["Librarian", "PgConnection"]  # noqa: n114-final  n114-final豁免: __all__是Python导出约定，非可变常量，无需Final标注（先例=asyncio_run_in_context_gate.py L77）
-
-_SQL_LASTVAL: Final[str] = "SELECT lastval()"
 
 
 class Librarian:
@@ -154,7 +153,7 @@ class Librarian:
         aux_json = json.dumps(fingerprint_aux or {}, ensure_ascii=False)
         with self._conn.cursor() as cur:
             cur.execute(_SQL_INSERT_EVENT, (asset_id, action, actor, True, detail_json))
-            cur.execute(_SQL_LASTVAL)
+            cur.execute("SELECT lastval()")
             event_id = int(cur.fetchone()[0])
             if action in ("register", "update", "move"):
                 cur.execute(

@@ -37,7 +37,7 @@ __all__ = ["run_coverage"]
 _OUT: Final[Path] = Path("docs/_working/ultimate_library/COVERAGE.md")
 
 _SQL_IDS = (
-    "SELECT asset_id, home, status FROM lib_assets"  # noqa: bare-sql  模块级 _SQL_IDS 常量内部行（锁内 AST 豁免，inline 预检无 AST 需行级标记）
+    "SELECT asset_id, home, status FROM lib_assets"
     " WHERE kind IN ('file','module','doc','registry')"
     " AND status NOT IN ('deceased','archived')"
 )
