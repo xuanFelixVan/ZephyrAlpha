@@ -121,7 +121,12 @@ def extract_commit_gates() -> list[dict]:
     gates: list[dict] = []
     if not COMMIT_GATES_DIR.is_dir():
         return gates
-    for py in sorted(COMMIT_GATES_DIR.glob("*.py")):
+    seen_gate_ids: set[str] = set()
+    # 递归扫描（st-gslim-20260923 P1 事故级漂移修复）：library/ 子目录三台
+    # （BLOOD-FLESH/TAG-VOCAB/STATE-VOCAB-REGISTRY）与 registry_family/ 迁移件
+    # 曾因 glob 非递归整批漏登统一册（117 vs 114 漂移，gate_audit_report_v1 §A1）。
+    # seen_gate_ids 防迁移过渡态双拷贝（旧路径未删+新路径已在）产生重复条目。
+    for py in sorted(COMMIT_GATES_DIR.rglob("*.py")):
         if py.name in ("__init__.py", "_diff_helpers.py"):
             continue
         text = py.read_text(encoding="utf-8", errors="replace")
@@ -129,6 +134,9 @@ def extract_commit_gates() -> list[dict]:
         if not m_id:
             continue  # 辅助模块（如 gate_repo.py）无 GateSpec，跳过
         gate_id = m_id.group(1)
+        if gate_id in seen_gate_ids:
+            continue
+        seen_gate_ids.add(gate_id)
         m_pri = _RE_PRIORITY.search(text)
         priority = int(m_pri.group(1)) if m_pri else 100
         m_doc = _RE_DOCSTRING_FIRST_LINE.search(text)

@@ -117,3 +117,24 @@ def test_extract_commit_gates_all_have_required_fields():
     for g in gates:
         missing = required - set(g.keys())
         assert not missing, f"gate {g.get('gate_id')} 缺字段: {missing}"
+
+
+def test_extract_commit_gates_recursive_scans_library_subdir():
+    """递归扫描应覆盖 library/ 子目录三台（st-gslim-20260923 P1 漂移修复回归）。
+
+    病根：glob 非递归漏扫 commit_gates/library/，BLOOD-FLESH/TAG-VOCAB/
+    STATE-VOCAB-REGISTRY 三台未入统一册（in_process 117 vs 统一 114 漂移，
+    gate_audit_report_v1 §A1 SSOT 事故隐患）。
+    """
+    gates = extract_commit_gates()
+    ids = {g["gate_id"] for g in gates}
+    for required in ("BLOOD-FLESH", "TAG-VOCAB", "STATE-VOCAB-REGISTRY"):
+        assert required in ids, f"library/ 子目录门禁 {required} 未入统一册（递归扫描失效）"
+
+
+def test_extract_commit_gates_no_duplicate_gate_id_across_subdirs():
+    """迁移过渡态（旧路径未删+新路径已在）不得产生重复 gate_id 条目。"""
+    gates = extract_commit_gates()
+    ids = [g["gate_id"] for g in gates]
+    duplicates = {i for i in ids if ids.count(i) > 1}
+    assert not duplicates, f"commit-gate 条目重复 gate_id: {duplicates}"

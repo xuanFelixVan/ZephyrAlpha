@@ -1919,3 +1919,36 @@ gates:
   redirect_to: GATE-C2
   source: manual
   enforcement_channel: manual
+- gate_id: BLOOD-FLESH
+  name: 'BLOOD-FLESH: BLOOD-FLESH（CommitGate, priority=59）'
+  entry: in-process (GitCommitGateway)
+  description: BLOOD-FLESH
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
+  enforcement_channel: commit-gate
+- gate_id: TAG-VOCAB
+  name: 'TAG-VOCAB: TAG-VOCAB（CommitGate, priority=134）'
+  entry: in-process (GitCommitGateway)
+  description: TAG-VOCAB
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
+  enforcement_channel: commit-gate
+- gate_id: STATE-VOCAB-REGISTRY
+  name: 'STATE-VOCAB-REGISTRY: STATE-VOCAB-REGISTRY（CommitGate, priority=135）'
+  entry: in-process (GitCommitGateway)
+  description: STATE-VOCAB-REGISTRY
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
+  enforcement_channel: commit-gate
