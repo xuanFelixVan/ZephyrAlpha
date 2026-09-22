@@ -77,3 +77,15 @@ issue: WASTE-TABLE-REPORT-20260920
 - 扫描器: `scripts/ch/waste_table_scanner.py`（名字族正则命中→登记册+报警"待人工盘点"，**永不自动删**）
 - 登记册: `waste_table_registry.yaml`（17 张全部在册：13 呈报 + 4 治本参照）
 - 首跑报警证据: 2026-09-20 23:54 十二张新登记报警输出（第二跑 5 张补登记，合计 17）
+
+## 批文执行记录（2026-09-22，裁定#399 落地）
+
+- Owner 全批=废表两态制 17 张全删（裁定#399）；本班 st-disk-final-20260922 独占窗 04:40-07:30 内 17/17 DROP 完成。
+- 删前保险：13 张原双副本 manifest（F+G Parquet，sha256 两侧全等）+4 张 1970clean 补导出
+  （waste_table_export_manifest_1970clean.yaml，行数核对+sha256 全等）——数据第一公理全满足。
+- 4 张 1970clean 附加验证=甲线治本收官报告（4ec4b1e13ed，零误清零可找回价值；3988001c3c 写入端治本）。
+- 删前引用清零：tick 回滚通道两处引用退役（p0_tick_backfill.py:401 ABORT 存档 + wipe_tick3days.py 档案化）；
+  api_server 标签字典 3 行清除（kline_daily_bak_256/news_data_corrupt/news_data_pre_tz2）。
+- 逐张证据（行数/字节/free_space 前后快照）：.runtime/tmp/diskfinal/drop_evidence.jsonl；
+  净回收 +32.0GiB（107.43→139.39GiB，CH 26 异步清理延迟数分钟属预期）。
+- 底档：waste_table_registry.yaml 全部 17 条 status=已删除（裁定#399）。

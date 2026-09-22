@@ -11,7 +11,8 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION); exit 7=claim-only部分文件被其他session持有(冲突跳过); exit 8=worktree隔离阻断(WORKTREE_VIOLATION); exit 9=跨域混合提交阻断(COMMIT_SCOPE_VIOLATION); exit 10=MERGE_HEAD晾置拒绝(MERGE_IN_PROGRESS，B2治本①)
-# [TESTS] tests/test_git_commit_gateway.py
+# [TESTS] tests/git/test_git_commit_gateway.py（2026-09-22 指针修正：原指向不存在的
+# tests/test_git_commit_gateway.py——环节1 挖矿发现的文档漂移）
 # [A_module] module_id=MOD-INF-005 | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """git_commit.py — GitCommitGateway CLI 封装（OPS-2026062512）
@@ -37,6 +38,13 @@ ZEPHYR_FAILED_CLAIM_TTL_S）兜底防锁尸（原 finally 无条件释放是 CLA
 对标: scripts/git_guard.py（git 命令透传封装），区别：
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
 - git_commit.py 强制走 GitCommitGateway（串行锁+stash 隔离+GW 标记）
+
+队列使用纪律（2026-09-22 磁盘清偿终局班落册，来源=通宵施工实测）：
+- 提交一律 ``--enqueue`` 入队即转活：入队成功即返回继续手头工作，
+  禁止同步轮询盯队列等落地（空转烧上下文且阻塞会话）；收尾统一核验
+  （``scripts/commit_queue.py status`` + ``git log -1 --name-only`` 三态核实）。
+- 直连提交（不带 --enqueue）单批 >10 文件或含热注册表（ROOR 在册册/宪法/tracker）
+  须拆批：大快照有吸收他会话半成品与 gate 连坐风险，小批多队是正门。
 
 exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突, 8=worktree隔离阻断, 9=跨域混合提交阻断
 """
@@ -78,7 +86,7 @@ def _resolve_repo_root() -> Path:
             creationflags=_cf,
         )
         return Path(r.stdout.strip())
-    except Exception:
+    except Exception:  # noqa: BLE001 — 存量兜底（20260922 落地通道整文件 ruff 预清）
         return Path(__file__).resolve().parents[1]
 
 
@@ -563,7 +571,7 @@ def _git_tracked_subset(wt: Path, rel_files: list[str]) -> list[str]:
             errors="replace",
             timeout=30,
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 — 存量兜底（20260922 落地通道整文件 ruff 预清）
         return []
     if r.returncode != 0:
         return []
@@ -698,7 +706,7 @@ def _settle_claims_after_commit(
     gw,
     session_id: str,
     claimed: list[str],
-    status: "CommitStatus",
+    status: CommitStatus,
     *,
     ttl_s: float,
     project_root: str,
@@ -711,9 +719,7 @@ def _settle_claims_after_commit(
     if status in (CommitStatus.OK, CommitStatus.NOTHING_TO_COMMIT):
         gw.release_files(session_id, claimed)
     else:
-        _retain_claims_after_failure(
-            session_id, claimed, reason=str(status), ttl_s=ttl_s, project_root=project_root
-        )
+        _retain_claims_after_failure(session_id, claimed, reason=str(status), ttl_s=ttl_s, project_root=project_root)
 
 
 def _commit_with_claim_lifecycle(
@@ -739,7 +745,11 @@ def _commit_with_claim_lifecycle(
 
 def _run_preflight(gw, args, files: list[str], *, mode: str, extra_skip: frozenset[str] = frozenset()) -> int | None:
     """P0-A 锁外预检：blocking 时打印一过式失败清单并返回 exit 8；否则 None 放行。"""
-    if getattr(args, "skip_preflight", False) or getattr(args, "merge_finalize", False) or getattr(args, "reconciler_verify", False):
+    if (
+        getattr(args, "skip_preflight", False)
+        or getattr(args, "merge_finalize", False)
+        or getattr(args, "reconciler_verify", False)
+    ):
         return None
     try:
         from zephyr.gov_enforcement.rule_bridge.commit_preflight import run_preflight  # noqa: PLC0415
@@ -813,10 +823,14 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
         if pf_exit is not None:
             return pf_exit
     _ensure_scripts_package_importable(str(_PROJECT_ROOT))
-    from scripts.commit_queue import EnqueueOptions, enqueue_item  # noqa: PLC0415
-    from scripts.commit_queue import _read_files_from_worktree  # noqa: PLC0415
+    from scripts.commit_queue import (  # noqa: PLC0415
+        EnqueueOptions,
+        _read_files_from_worktree,  # noqa: PLC0415
+        enqueue_item,
+    )
 
     wt = Path(args.project_root)
+
     # 路径归一（#ARCH-310 P0-1b 热修，2026-09-12 实弹 DENIED 教训）：CLI 上游
     # _check_staged_delete_fallback 会把清单转成绝对反斜杠路径，而
     # _read_files_from_worktree 只收正斜杠仓库相对路径——统一归一再进队列。
@@ -840,8 +854,7 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
     untracked_missing = sorted(set(missing) - set(deletes))
     if untracked_missing:
         print(
-            "ERROR: 文件不存在且未被 git 跟踪（不可入队也不可删除）: "
-            + ", ".join(untracked_missing),
+            "ERROR: 文件不存在且未被 git 跟踪（不可入队也不可删除）: " + ", ".join(untracked_missing),
             file=sys.stderr,
         )
         return 2
@@ -858,7 +871,15 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
         args.session,
         message,
         payload,
-        options=EnqueueOptions(deletes=deletes or None, meta_extra={"interactive": "true", "lane": "interactive"}),
+        options=EnqueueOptions(
+            deletes=deletes or None,
+            allow_oversize_batch=bool(getattr(args, "allow_oversize_batch", False)),
+            meta_extra={
+                "interactive": "true",
+                "lane": "interactive",
+                **({"oversize_batch": "true"} if getattr(args, "allow_oversize_batch", False) else {}),
+            },
+        ),
     )
     # 入队自举排空尝试（best-effort，66 号 §8；失败等下次自举，入袋即安全）
     try:
@@ -914,8 +935,8 @@ def main() -> int:
             "示例:\n"
             '  python scripts/git_commit.py --session sess-001 --files src/a.py,src/b.py --message "feat: add"\n'
             "\n"
-        "对标 git_guard.py: git_guard 透传 git 子命令；本脚本强制走 GitCommitGateway。\n"
-        "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突, 8=预检快败（P0-A 锁外一过式失败清单，--skip-preflight 可跳过）"
+            "对标 git_guard.py: git_guard 透传 git 子命令；本脚本强制走 GitCommitGateway。\n"
+            "exit codes: 0=成功, 1=失败/无变更, 2=锁超时/stash冲突, 3=永久区晋升阻断, 4=SSoT违规, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突, 8=预检快败（P0-A 锁外一过式失败清单，--skip-preflight 可跳过）"
         ),
     )
     parser.add_argument(
@@ -1080,6 +1101,16 @@ def main() -> int:
         help="快照入队即返回 qid（异步落盘，Serializer 单写者）；需 flag"
         " commit_queue_interactive=ON（出厂默认 OFF）。与 --reconciler-verify/"
         "--merge_finalize 互斥；不走 claim 前移协议（landing 时按队列项 session claim）。",
+    )
+    # R2 大批硬顶逃生旗（st-commitchain-20260922）：交互车道单批 >40 文件默认拒绝
+    # （数据实证 111 文件巨批磨 116 分钟死在终点 CREATE-GUARD）；确属原子大批
+    # （整目录归档迁移等）显式给出，meta.oversize_batch=true 留痕。
+    parser.add_argument(
+        "--allow-oversize-batch",
+        action="store_true",
+        default=False,
+        help="入队单批超过 40 文件上限时显式放行（meta 留痕）——确属原子大批才用，"
+        "否则请拆分为多个语义批次（失败早暴露不互相拖累）",
     )
     # P2⑨b（#ARCH-310 P0-1，2026-09-12 Owner 批准 AI 原生治理评审施工批）：
     # LOCK_TIMEOUT 自动改道入队——把"抢锁空转"结构性变成"排队"（评审裁定 R1：

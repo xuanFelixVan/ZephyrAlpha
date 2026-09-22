@@ -43537,6 +43537,11 @@ creation_tokens:
   token: commit-chain-mining-ledger-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_bridge/commit_belt_daemon.yaml
+  token: algo-flow-external-commit-belt-daemon-20260922
+  created_by: st-commitchain-20260922
+  capability: algo_flow_external
+  merge_evaluation: "存量 daemon 模块 ALGO_FLOW 锚补齐（R4 批顺手清偿），机器块外部真源对齐 watchdog 先例，无第二真源"
 - file: src/zephyr/ex_sor/services/rl_trainer/__init__.py
   token: rl-trainer---init---20260921
   created_by: st-residual-20260922
@@ -43596,4 +43601,23 @@ creation_tokens:
   capability: sell_evidence
   merge_evaluation: "卖腿证据yaml为tc_11卡件2唯一证据件，同目录按日期命名无并项"
   merge_evaluation: "同真源可派生：原 waste_table_export_manifest.yaml 的 1970clean 四表补导出凭证（裁定#399 全批后数据第一公理补齐），登记于母 manifest 相邻位置"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/state_vocab_registry_gate.yaml
+  token: state-vocab-gate-af-20260921
+  created_by: st-dloop-20260921
+  capability: state_vocab_gate
+- file: "docs/_working/disk_reorg_campaign/a0_master_order.md"
+  token: "diskch-a0-master-order-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "disk_reorg_campaign"
+  merge_evaluation: "同真源可派生：a0/a2/a4 为 disk_reorg 战役母令/集成简报/放行信号执行件，随战役文档全家福同批补登记（q-0006 欠账，st-disk-final 代落地）"
+- file: "docs/_working/disk_reorg_campaign/a2_max_integration_brief.md"
+  token: "diskch-a2-max-integration-brief-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "disk_reorg_campaign"
+  merge_evaluation: "同真源可派生：a0/a2/a4 为 disk_reorg 战役母令/集成简报/放行信号执行件，随战役文档全家福同批补登记（q-0006 欠账，st-disk-final 代落地）"
+- file: "docs/_working/disk_reorg_campaign/a4_go_signal.md"
+  token: "diskch-a4-go-signal-20260920"
+  created_by: "st-disk-ch-20260921"
+  capability: "disk_reorg_campaign"
+  merge_evaluation: "同真源可派生：a0/a2/a4 为 disk_reorg 战役母令/集成简报/放行信号执行件，随战役文档全家福同批补登记（q-0006 欠账，st-disk-final 代落地）"
 di_seam_exemptions: []

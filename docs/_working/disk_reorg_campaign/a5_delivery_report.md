@@ -167,3 +167,33 @@ issue: DISK-CH-CAMPAIGN-A5
   pc_cache 1 目录因系统锁跳过（8KB 级）。日志 24h 复测因班次时长物理所限列为等待项（探针已备）。
 
 —— 乙线总包 st-disk-ch-20260921 敬呈
+
+## 终局班交付（2026-09-22 04:00-07:3x，st-disk-final-20260922，裁定#399 落地班）
+
+> 执行令=磁盘清偿终局班通宵令；裁定依据 #380/#382/#398/#399。过程全账=a1_ledger.md 终局班段。
+
+### 终极目标逐条对账
+
+| 通宵令目标 | 终态 | 证据 |
+|---|---|---|
+| 废表 17 张两态制全部"验证→删除"终局 | **17/17 DROP 完成**（04:40-04:41 独占窗；逐张三件验证+行数快照+free_space 前后对照） | .runtime/tmp/diskfinal/drop_evidence.jsonl [亲验]；净回收 +32.0GiB（107.43→139.39GiB） |
+| 数据第一公理（删前两份验证副本） | 13 张原 manifest + 4 张 1970clean **补导出**（F+G Parquet sha256 两侧全等） | waste_table_export_manifest.yaml + waste_table_export_manifest_1970clean.yaml（token diskfinal-1970clean-manifest-20260922） |
+| 4 张 1970clean 附加验证 | 甲线治本收官报告零误清结论在案（4ec4b1e13ed：四表全 1970 空壳行零可找回价值；3988001c3c 写入端治本） | git show 4ec4b1e13ed §五 [转报] |
+| ⑪tick 删前清引用 | p0_tick_backfill.py:401 wipe 通道 ABORT+原逻辑注释存档（执行令 ：349 行号漂移至 :404 已勘误）；wipe_tick3days.py 档案化+勿复跑哨兵 | py_compile OK [亲验] |
+| 呈报表附注清理 | api_server 标签字典 3 行清除（kline_daily_bak_256/news_data_corrupt/news_data_pre_tz2） | py_compile OK [亲验] |
+| TI 大表瘦身 | OPTIMIZE FINAL 整表打法触发 CH 26 清理饥饿（free 87.7GiB）**有控熔断**→改**分区分批**（只并 multi-part 194 分区/68.3GiB，批间排空）：parts 1299→821（-37%）、行数 3.790→3.531 亿（-6.8%=ReplacingMergeTree 引擎去重收益，b10 回填重插旧版本收敛）、单行 SELECT 0.16s | ti_batch_evidence.jsonl+ti_accept_evidence.json [亲验] |
+| 队列治本文档落地 | CONSTRUCTION_LEDGER.md §18 两条铁律（入队即转活禁同步轮询/直连>10 文件或含热注册表须拆批）+git_commit.py docstring 同步 | [亲验] |
+| 日历窗等待项登记 | E 冷库删 ≥2026-10-20 / 研报 E 侧删 ≥2026-10-18 / vhdx 压缩等 Owner 点名——含触发日期+对账前置+执行命令，到日执行勿再问 | a1_ledger.md 分包4 节 |
+| 红蓝对抗 | 18/18 PASS（独立路径复核全库零 bak 残留/双副本 17 件物理在库/活表健康抽检/四底档完整性）+扫描器命中 0 张 | redblue_round1.py 输出 [亲验] |
+
+### 异常与移交项（如实披露）
+
+1. **backups2 CH 层报 0B**：OS 层挂载正常（df 618G free，inc.zip 96G+market.zip 266G 在盘，宿主 SCSI 0:4 挂接正常），CH system.disks 报 0=CH 配置未刷新；零数据损失。移交备份链 Owner：RELOAD DISKS 后复核双写链。
+2. **CH 26 异步清理行为两案**：DROP TABLE 空间延迟数分钟归还（虚惊）；持续 merge 下清理线程饥饿（整表 FINAL 触发）。处方已固化=大操作分批+批间排空+水位熔断（watchdog 模式可复用）。
+3. **a3 4.8 未动**（非本班分包）：working_vault 种子 9 天目录在 G，三切脚本备妥，backup.ps1 换 G 实跑待排。
+4. OPTIMIZE FINAL 曾 KILL 一次（有控熔断）：merge 中断无副作用，改分批后已达成验收。
+
+### 残余等待项（不阻塞收官）
+
+- 24h 日志膨胀复测（09-22 23:05，前班已排）；E 侧两笔删除（10-18/10-20）；vhdx 压缩（Owner 点名）；
+- a3 4.8/5.1/5.2 归备份链 Owner；TI parts 常态维护=背景合并自然消化插入 churn（30s 写入节奏）。

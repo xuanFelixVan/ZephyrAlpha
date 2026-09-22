@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-09-22T04:20:03.405222",
+  "f_root": "F:\\zephyr_cold\\50_archive\\by_project\\zephyralpha\\ch_waste_tables_1970clean_20260922",
+  "g_root": "G:\\zephyr_cold\\60_mirror\\zephyralpha_ch_waste_tables_1970clean_20260922",
+  "note": "1970clean 四表 #399 全删补保险；零误清结论=4ec4b1e13ed（4 表全 1970 空壳行零可找回价值）",
+  "tables": [
+    {
+      "table": "c3_fundamental.balance_sheet_bak_1970clean_20260914",
+      "status": "ok",
+      "ch_rows": 2395,
+      "parquet_rows": 2395,
+      "rows_match": true,
+      "bytes": 103861,
+      "g_bytes": 103861,
+      "sha256_f": "6cc4d528ffb6673e1eb0d39de01434a92ce9810950b09b2e77ba63ff2c1a2e71",
+      "sha256_g": "6cc4d528ffb6673e1eb0d39de01434a92ce9810950b09b2e77ba63ff2c1a2e71",
+      "seconds": 0.8
+    },
+    {
+      "table": "c3_fundamental.cashflow_statement_bak_1970clean_20260914",
+      "status": "ok",
+      "ch_rows": 2402,
+      "parquet_rows": 2402,
+      "rows_match": true,
+      "bytes": 24930,
+      "g_bytes": 24930,
+      "sha256_f": "572be19c72b5982020467c8e0f8bffea8bd0d3839e6d12a7f9758997f86d9afe",
+      "sha256_g": "572be19c72b5982020467c8e0f8bffea8bd0d3839e6d12a7f9758997f86d9afe",
+      "seconds": 1.2
+    },
+    {
+      "table": "c3_fundamental.financial_indicator_bak_1970clean_20260914",
+      "status": "ok",
+      "ch_rows": 2585,
+      "parquet_rows": 2585,
+      "rows_match": true,
+      "bytes": 29644,
+      "g_bytes": 29644,
+      "sha256_f": "9a0baf72b4aa40b72cc88b030d0871b31e255e97d0749c8385ea231227b9e528",
+      "sha256_g": "9a0baf72b4aa40b72cc88b030d0871b31e255e97d0749c8385ea231227b9e528",
+      "seconds": 1.2
+    },
+    {
+      "table": "c3_fundamental.income_statement_bak_1970clean_20260914",
+      "status": "ok",
+      "ch_rows": 2401,
+      "parquet_rows": 2401,
+      "rows_match": true,
+      "bytes": 48063,
+      "g_bytes": 48063,
+      "sha256_f": "222227b37d9914db3dd60f0bbcfeb4f44c31815eafef2eabd8ac8a804802683a",
+      "sha256_g": "222227b37d9914db3dd60f0bbcfeb4f44c31815eafef2eabd8ac8a804802683a",
+      "seconds": 1.7
+    }
+  ]
+}

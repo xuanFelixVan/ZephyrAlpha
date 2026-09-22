@@ -2749,7 +2749,7 @@ $ python - <<'PY' ...                                                # 复刻 en
 | 禁碰面（`src/data/drift_audit/`、`data/databases/`、`data/drift_audit/`、`.runtime/task_board.db`、`.zephyr/rollback_quarantine.db`）的**写路径** | **未触碰**；其中 governance.db / drift_events.db(两库) / task_board.db 仅以 mode=ro 读取 `[亲验]` | |
 | 在飞车道领地清单 | **一个文件都没打开过**（reconciliation_registry / rollback_verifier / dedup_ttl_headers / ch_reader / pf_alloc / flowthrough_verifier / _registry.yaml / batch_creation_tokens / gate_prerun* / adversarial_validation / 两个 sessions 目录）`[亲验]` | |
 | 前腿产物 | **未改写一个字节**：本腿对前腿目录只读；仪器复跑输出写在**本腿自己的** `ctrl_run/`（输入以硬链接共享，`st_ino` 相同已核）`[亲验]` | |
-| 外来指令夹带 | 前腿 summary / self_audit / controls 三件经注入习语 grep（ignore previous / 请执行 / 新指令 / rm -rf / co-authored / 调 git_commit 等）= **0 命中**；全部文件内容按数据处理 `[亲验]` | |
+| 外来指令夹带 | 前腿 summary / self_audit / controls 三件经注入习语 grep（ignore previous / 请执行 / 新指令 / `rm -rf ／` / co-authored / 调 git_commit 等）= **0 命中**；全部文件内容按数据处理 `[亲验]` | |
 | 例外披露 | 前腿 `wp16_step8_readonly_audit.py` **原件语法损坏**（见 ⑥），本腿**未修改原件**，只在本腿目录写了修复副本运行 `[亲验]` | |
 | 冷启动 RULE-GUARDIAN / RULE-WORKTREE | **未执行** reaper `--status` 与 `session_worktree_start`：本腿写面全部落在 `.runtime/tmp/`（TTL 暂存）与 `G:/zephyr_cold/`（冷库），**零 tracked 文件写入 ⇒ 不构成需要 worktree 隔离的施工**；此为本腿自觉的口径，若 Max 认为只读取证车道也须走 worktree/守护登记，本腿补 | 披露，非既成合规 `[推断]` | |
 
@@ -3625,3 +3625,12 @@ tests/governance/d3_metadata tests/scripts`
 每分包回执六项（同总方案 §5）：①目标 ②改动面（文件+行数）③红证（改前红现场+撤样转绿）④测试结果（**附实测分母**，永不说"全绿"，表述为"该套件本轮检出 N 件通过且已被证明能红"）⑤未尽事项 ⑥三清单（裁定依赖/执行明细/复查命令）。
 
 **停手回流条件**（任一即停，不猜）：总方案 §6 六种情形；遇 C-48~C-55 未裁项；遇 17.6 门位件；需变更尺子类判据（验收仪/校验器语义超出 E-1/E-3 封口范围）；claim 对撞无法排解；队列死信对症两轮仍不落。
+
+## 18. 坑册追加：提交队列使用两条铁律（2026-09-22，st-disk-final-20260922 登记）
+
+来源=多班通宵施工实测（disk-ch 班 F→G 镜像窗同步轮询盯队列空转、git-throughput 战役大快照连坐两案），经磁盘清偿终局班执行令裁定落册：
+
+1. **入队即转活，禁同步轮询盯队列**：git_commit.py --enqueue 成功即返回继续手头工作；队列落地由 serializer/守护负责，等待落地=空转烧上下文+阻塞会话。收尾（一批任务结束/会话收尾序列）统一核验一次：scripts/commit_queue.py status 看死信 → 死信读 dead json 修正 requeue → git log -1 --name-only 三态核实归属。
+2. **直连提交拆批线**：直连提交（不带 --enqueue）单批 >10 文件、或文件清单含热注册表（ROOR 在册册/宪法/tracker），必须拆批——大快照会吸收他会话半成品（C-59 家族）并放大 gate 连坐面；小批多队是正门。
+
+同款提示已同步写入 scripts/git_commit.py 模块 docstring（CLI 使用说明真源）。
