@@ -2654,7 +2654,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.4.0
+  version: 1.5.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -3554,7 +3554,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.5.0
+  version: 1.6.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -3809,7 +3809,7 @@ files:
   title: Data Retention & Backtest Layering Contract
   doc_type: gate
   status: active
-  version: 1.2.0
+  version: 1.3.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -4469,7 +4469,7 @@ files:
   title: target_layer 受控词表
   doc_type: vocabulary
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -4513,6 +4513,141 @@ files:
   module_id: PS-VOC-011
   title: verifiability 受控词表
   doc_type: vocabulary
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md
+  module_id: ''
+  title: 车道施工纪律 SOP——多车道并发施工全纪律一页册（冷启动/提交正门/新建三件套/热注册表/门禁红线/并发安全/EOL/判据交付）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md
+  module_id: ''
+  title: 施工台账方法论——车道存活三查·停手回流·回执六项·"永不说全绿"（多车道战役台账法）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md
+  module_id: ''
+  title: 深度裁定方法论——"只给最强模型"战场划分法 × 全仓待裁穷举扫描法（裁定/审计战役通用真源）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/library_sop/blood_flesh_cataloging_sop.md
+  module_id: ''
+  title: 血肉编目标准作业规程（SOP）——资产人读描述区必填与质量标准
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: library
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/library_sop/index.md
+  module_id: ''
+  title: library_sop — 目录索引
+  doc_type: ''
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md
+  module_id: ''
+  title: 指标挖矿 SOP——TASC 论文定向检索+公式可验证性唯一准入闸+时盒停手立卡（技术指标公式移植入库生产线）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: procedural
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml
+  module_id: MOD-GOV-CHAINREG
+  title: ''
+  doc_type: ''
+  status: active
+  version: '1.0'
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml
+  module_id: REG-TAGVOCAB-001
+  title: 图书馆标签标准词库（枚举+别名层）
+  doc_type: register
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml
+  module_id: REG-STATE-VOCAB-001
+  title: 状态词表中央登记表
+  doc_type: register
   status: active
   version: 1.0.0
   rule_form: ''
