@@ -221,9 +221,7 @@ class _PathspecStubGateway:
         allow_promote: bool = False,
         lock_wait_timeout: float | None = None,
     ) -> CommitResult:
-        self.events.append(
-            ("commit", {"session_id": session_id, "files": list(files), "message": message})
-        )
+        self.events.append(("commit", {"session_id": session_id, "files": list(files), "message": message}))
         # step3a 保真：盘上存在→git add；缺失→git rm --cached --ignore-unmatch（幂等）
         for f in files:
             target = Path(f) if Path(f).is_absolute() else self._wt / f
@@ -534,7 +532,9 @@ class TestCommitAutoFlagGating:
         opts = call["kwargs"].get("options")
         assert isinstance(opts, cq.EnqueueOptions), "可选参数束走 EnqueueOptions（A 段签名收口）"
         assert opts.base_head == _git_text(tmp_repo, "rev-parse", "refs/heads/dev"), "base_head 落袋"
-        assert opts.meta_extra == {"rerouted_from": "_commit_auto", "lane": "machine"}, "改道来源审计标记+P1-D 车道标记落袋"
+        assert opts.meta_extra == {"rerouted_from": "_commit_auto", "lane": "machine"}, (
+            "改道来源审计标记+P1-D 车道标记落袋"
+        )
         assert bootstrap_calls, "入队后触发自举排空尝试（66 号 §8；mock 不真实落盘）"
 
     def test_flag_on_enqueue_exception_falls_back_to_direct_commit(
@@ -796,9 +796,7 @@ class _NothingToCommitStub(_StubGateway):
 
     def commit(self, *args, **kwargs):  # noqa: ANN002, ANN003 — 桩签名放宽
         self.events.append(("commit", {"message": "", "files": []}))
-        return CommitResult(
-            status=CommitStatus.NOTHING_TO_COMMIT, message="nothing staged", commit_hash=None
-        )
+        return CommitResult(status=CommitStatus.NOTHING_TO_COMMIT, message="nothing staged", commit_hash=None)
 
 
 def test_nothing_to_commit_with_unapplied_blobs_goes_dead(
@@ -856,9 +854,7 @@ def test_already_landed_strips_noop_prefix_for_ancestor_check(
     否则重放项永远判未落盘 → 无限重入队。"""
     landing, _real = _make_landing(tmp_repo, queue_root)
     dev_sha = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
-    assert (
-        landing._already_landed({"landed_id": f"{cql._NOOP_LANDED_PREFIX}{dev_sha}"}) == dev_sha
-    )
+    assert landing._already_landed({"landed_id": f"{cql._NOOP_LANDED_PREFIX}{dev_sha}"}) == dev_sha
     # 真实不存在的前缀 sha 仍判未落盘
     assert landing._already_landed({"landed_id": f"{cql._NOOP_LANDED_PREFIX}{'0' * 40}"}) is None
 
@@ -870,6 +866,7 @@ class TestPathspecSelfHeal:
 
     def test_self_heal_retry_succeeds(self, tmp_repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         import hashlib  # 局部导入：blob sha 计算
+
         real_gateway = cql.WorktreeLanding(repo_root=tmp_repo, queue_root=tmp_path / "cq_real")
         # 构造：正常 landing 走到 gateway.commit 前，把 gateway.commit 替换为
         # 首次返回 pathspec 失败、重放后放行真 commit 的序列
@@ -919,13 +916,11 @@ class TestUntrackedNewFileLanding:
     保真桩钉住落地侧"新文件正常落地字节级一致"与"一旦被清的确切死信形态"。
     """
 
-    def test_untracked_new_file_lands_byte_identical_via_pathspec(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_untracked_new_file_lands_byte_identical_via_pathspec(self, tmp_repo: Path, queue_root: Path) -> None:
         """acceptance ①：入队含 untracked 新文件快照 → 落地成功 + blob 字节级一致 + 零自愈重试。"""
         landing, stub = _make_landing_pathspec(tmp_repo, queue_root)
         sid = "sess-newfile-ok"
-        content = "新文件 byte-identical 验收\n".encode("utf-8")
+        content = "新文件 byte-identical 验收\n".encode()
         item = cq.enqueue_item(
             sid, "feat: untracked 新文件落地", [("docs/brand_new.txt", content)], queue_root=queue_root
         )
@@ -973,9 +968,7 @@ class TestUntrackedNewFileLanding:
                     pass
 
         monkeypatch.setattr(landing, "_prestage_snapshot", prestage_then_wipe)
-        item = cq.enqueue_item(
-            sid, "feat: 必死新文件", [("docs/wiped.txt", content)], queue_root=queue_root
-        )
+        item = cq.enqueue_item(sid, "feat: 必死新文件", [("docs/wiped.txt", content)], queue_root=queue_root)
 
         stats = cq.drain_queue(queue_root, landing=landing)
         assert stats["dead"] == 1 and stats["done"] == 0, f"新文件被清后应死信: {stats}"
@@ -999,9 +992,7 @@ class _LockTimeoutStub(_StubGateway):
     """模拟他会话正持全局提交锁：commit 返回 LOCK_TIMEOUT 且不产生任何 commit。"""
 
     def commit(self, *args, **kwargs):  # noqa: ANN002, ANN003 — 桩签名放宽
-        self.events.append(
-            ("commit", {"lock_wait_timeout": kwargs.get("lock_wait_timeout"), "files": []})
-        )
+        self.events.append(("commit", {"lock_wait_timeout": kwargs.get("lock_wait_timeout"), "files": []}))
         return CommitResult(
             status=CommitStatus.LOCK_TIMEOUT,
             message="internal error: Cannot acquire global commit lock (timeout 300.0s)",
@@ -1105,10 +1096,13 @@ class TestTransientLockAndCasRetries:
         assert not cql._is_transient_git_error("快照路径校验拒绝: ../evil（Invalid argument）"), (
             "裸 Invalid argument 不得归瞬态——真 bug 也报它"
         )
-        assert cq.classify_dead_reason(
-            "landing 异常: RuntimeError: git reset --hard -> rc=128: error: unable to unlink old "
-            "'x.yaml': Invalid argument"
-        ) == "env", "q-…-0018 生产实录死因必须归 env（历史死信 requeue 判读口径）"
+        assert (
+            cq.classify_dead_reason(
+                "landing 异常: RuntimeError: git reset --hard -> rc=128: error: unable to unlink old "
+                "'x.yaml': Invalid argument"
+            )
+            == "env"
+        ), "q-…-0018 生产实录死因必须归 env（历史死信 requeue 判读口径）"
         assert set(cql._TRANSIENT_GIT_MARKERS) >= {"index.lock", "unable to unlink", "permission denied"}
 
 
@@ -1271,9 +1265,7 @@ class TestF2SameDomainDualChannelConcurrency:
     零死信、零丢失更新、dev 历史单写者（全 commit 带 [GW:sid:qid] 队列标记）。
     """
 
-    def test_dual_drainer_same_file_no_lost_update_single_writer(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_dual_drainer_same_file_no_lost_update_single_writer(self, tmp_repo: Path, queue_root: Path) -> None:
         landing, _stub = _make_landing_pathspec(tmp_repo, queue_root)
         base_sha = _git_text(tmp_repo, "rev-parse", "dev")  # 单写者断言基线（fixture init 笔豁免面）
         # 同域同文件双项（v1→v2，qid 定序）
@@ -1335,15 +1327,14 @@ class TestF2ExitBurst:
     dev 历史单写者。
     """
 
-    def test_mid_drain_burst_and_exit_race_zero_loss(
-        self, tmp_repo: Path, queue_root: Path
-    ) -> None:
+    def test_mid_drain_burst_and_exit_race_zero_loss(self, tmp_repo: Path, queue_root: Path) -> None:
         landing, _stub = _make_landing_pathspec(tmp_repo, queue_root)
         base_sha = _git_text(tmp_repo, "rev-parse", "dev")  # 单写者断言基线
         n_pre, n_burst = 6, 6
         for i in range(n_pre):
             cq.enqueue_item(
-                f"sess-burst-p{i}", f"feat: pre-{i}",
+                f"sess-burst-p{i}",
+                f"feat: pre-{i}",
                 [(f"docs/burst/p{i}.txt", f"pre-{i}\n".encode())],
                 queue_root=queue_root,
             )
@@ -1357,7 +1348,8 @@ class TestF2ExitBurst:
             # 主 drain 在途时突发注入（belt 逐项 re-glob pending，应同轮消化）
             for j in range(n_burst):
                 cq.enqueue_item(
-                    f"sess-burst-b{j}", f"feat: burst-{j}",
+                    f"sess-burst-b{j}",
+                    f"feat: burst-{j}",
                     [(f"docs/burst/b{j}.txt", f"burst-{j}\n".encode())],
                     queue_root=queue_root,
                 )
@@ -1405,3 +1397,376 @@ class TestF2ExitBurst:
 
         # 单写者不变量（burst+双自举竞态全程落地窗内 dev 历史只经队列通道）
         assert cql.assert_single_writer_dev_history(tmp_repo, since=base_sha) == []
+
+
+# ---------------------------------------------------------------------------
+# 14. 注册表族落地三向合并（W2 治本，2026-09-22 注册表事故——DISPATCH_v1 Lane A）
+# 病根：_apply_snapshot 整文件覆盖，陈旧快照 blob 一写抹掉已提交身份（fb5a7821d
+# 实证 -103 条）。治本后注册表族（docs/01_policies_and_standards/_registry/catalogs/
+# 且 .yaml）落地走条目级三向合并；非注册表维持整文件语义零变更。
+# ---------------------------------------------------------------------------
+
+_REG_REL = "docs/01_policies_and_standards/_registry/catalogs/test_w2_registry.yaml"
+
+
+def _reg_text(entries: list[tuple[str, str]], *, header: str = "title: t\nentries:\n") -> str:
+    """构造测试注册表 YAML 文本（条目 = (id, path)）。"""
+    lines = [header]
+    for eid, path in entries:
+        lines.append(f"  - id: {eid}\n    path: {path}\n")
+    return "".join(lines)
+
+
+class TestRegistryThreeWayMergePure:
+    """合并纯函数层：DISPATCH W2 四规则 + 三方同键细分 + fail-closed 死信。"""
+
+    BASE = _reg_text([("A", "a.md"), ("B", "b.md"), ("C", "c.md")])
+
+    def _ids(self, text: str) -> list[str]:
+        return [e["id"] for e in yaml.safe_load(text)["entries"]]
+
+    def test_both_sides_add_disjoint_entries_both_survive(self):
+        ours = self.BASE + "  - id: D\n    path: d.md\n"
+        theirs = self.BASE + "  - id: E\n    path: e.md\n"
+        merged, err = cql.three_way_merge_registry_yaml(self.BASE, ours, theirs, rel_path=_REG_REL)
+        assert err == "", err
+        assert set(self._ids(merged)) == {"A", "B", "C", "D", "E"}, "双侧新增零丢失"
+
+    def test_theirs_edit_ours_untouched_adopts_theirs(self):
+        theirs = self.BASE.replace("path: a.md", "path: a2.md")
+        merged, err = cql.three_way_merge_registry_yaml(self.BASE, self.BASE, theirs, rel_path=_REG_REL)
+        assert err == "", err
+        a = [e for e in yaml.safe_load(merged)["entries"] if e["id"] == "A"][0]
+        assert a["path"] == "a2.md", "ours 未动、theirs 改了 → 采纳 theirs"
+
+    def test_ours_edit_theirs_untouched_keeps_ours(self):
+        ours = self.BASE.replace("path: a.md", "path: a-ours.md")
+        merged, err = cql.three_way_merge_registry_yaml(self.BASE, ours, self.BASE, rel_path=_REG_REL)
+        assert err == "", err
+        a = [e for e in yaml.safe_load(merged)["entries"] if e["id"] == "A"][0]
+        assert a["path"] == "a-ours.md", "陈旧快照零改动 → ours 修改保留"
+
+    def test_three_way_same_key_edit_dead_letters_with_both_entries(self):
+        ours = self.BASE.replace("path: a.md", "path: ours3.md")
+        theirs = self.BASE.replace("path: a.md", "path: theirs3.md")
+        merged, err = cql.three_way_merge_registry_yaml(self.BASE, ours, theirs, rel_path=_REG_REL)
+        assert merged is None, "三方各自改同键 → 死信"
+        assert "id=A" in err and "ours (dev)" in err and "theirs (快照)" in err
+        assert "ours3.md" in err and "theirs3.md" in err, "dead_reason 带双方条目全文"
+
+    def test_snapshot_delete_does_not_suppress_incumbent(self):
+        """规则 c：base 有+ours 有+theirs 无 → 保留 ours（快照侧删除不镇压现役）。"""
+        ours = self.BASE + "  - id: D\n    path: d.md\n"
+        theirs = _reg_text([("A", "a.md"), ("C", "c.md")])  # theirs 快照缺 B
+        merged, err = cql.three_way_merge_registry_yaml(self.BASE, ours, theirs, rel_path=_REG_REL)
+        assert err == "", err
+        assert {"A", "B", "C", "D"} <= set(self._ids(merged)), "theirs 删 B 不生效（B 现役保留）"
+
+    def test_ours_delete_revived_unless_legitimately_retired(self):
+        """规则 b：base 有+ours 无+theirs 有 → 采纳恢复；合法退役（retired_check=True）除外。"""
+        ours = _reg_text([("A", "a.md"), ("C", "c.md")])  # ours 侧 B 消失
+        merged, err = cql.three_way_merge_registry_yaml(self.BASE, ours, self.BASE, rel_path=_REG_REL)
+        assert err == "", err
+        assert "B" in self._ids(merged), "ours 侧消失但非退役 → 快照救回"
+
+        merged2, err2 = cql.three_way_merge_registry_yaml(
+            self.BASE,
+            ours,
+            self.BASE,
+            rel_path=_REG_REL,
+            retired_check=lambda e: e.get("id") == "B",  # 条目引用路径盘上+HEAD 双不存在
+        )
+        assert err2 == "", err2
+        assert "B" not in self._ids(merged2), "合法退役被尊重，不复活"
+
+    def test_structure_drift_dead_letters(self):
+        theirs = self.BASE + "newfamily:\n  - id: Z\n"
+        merged, err = cql.three_way_merge_registry_yaml(self.BASE, self.BASE, theirs, rel_path=_REG_REL)
+        assert merged is None and "结构漂移" in err
+
+    def test_identical_snapshot_short_circuits(self):
+        merged, err = cql.three_way_merge_registry_yaml(self.BASE, self.BASE, self.BASE, rel_path=_REG_REL)
+        assert err == "" and merged == self.BASE
+
+    def test_multi_family_file_merges_each_family(self):
+        base = "meta:\n  v: 1\nentries:\n  - id: A\n    path: a.md\nothers:\n  - name: X\n"
+        theirs = base + "  - name: Y\n"
+        merged, err = cql.three_way_merge_registry_yaml(base, base, theirs, rel_path=_REG_REL)
+        assert err == "", err
+        assert yaml.safe_load(merged)["others"] == [{"name": "X"}, {"name": "Y"}]
+
+    def test_unidentifiable_entry_dead_letters_not_silently_merged(self):
+        base = "entries:\n  - id: A\n  - scalar_entry\n"
+        merged, err = cql.three_way_merge_registry_yaml(base, base, base + "  - id: Z\n", rel_path=_REG_REL)
+        assert merged is None, "身份判不了的条目 fail-closed 死信（不静默合并）"
+        assert "身份判不了" in err
+
+    def test_schema_metadata_scalar_family_passthrough(self):
+        """Lane B THD-ALERT-007 复形（q-0001 死信回归）：顶层 schema 元数据 list
+        （unique_key: [字段名]——纯标量族）不参与身份合并，passthrough 保留 ours 原样，
+        同文件正常条目族（thresholds）三向合并不受牵连。"""
+        base = "unique_key:\n  - threshold_id\nthresholds:\n  - threshold_id: old\n    value: 1\n"
+        ours = "unique_key:\n  - threshold_id\nthresholds:\n  - threshold_id: old\n    value: 2\n"
+        theirs = (
+            "unique_key:\n  - threshold_id\nthresholds:\n  - threshold_id: old\n    value: 1\n"
+            "  - threshold_id: fresh\n    value: 86400\n"
+        )
+        merged, err = cql.three_way_merge_registry_yaml(base, ours, theirs, rel_path=_REG_REL)
+        assert err == "", err
+        got = yaml.safe_load(merged)
+        assert got["unique_key"] == ["threshold_id"], "元数据族原样保留（不判身份不死信）"
+        ids = {e["threshold_id"]: e["value"] for e in got["thresholds"]}
+        assert ids == {"old": 2, "fresh": 86400}, "正常条目族合并不受牵连（ours 改动保留+theirs 新增插入）"
+
+
+class TestRegistryMergeCompoundIdentity:
+    """W2 热修（q-20260923-st-gateaudit-20260922-0078 实战）：复合身份键。
+
+    实战：HEAD 41 个文件合法持多条 creation_token（同 file 多 token——blueprint 双
+    capability/night-gw 新旧并存），gate 首标量字段单键（=file）判「同侧身份键重复」
+    误死信。修法：合并器键升级为 `首标量|token=值` 复合（首字段=file 时即 (file, token)，
+    与 batch_creation_tokens B22 立法身份同构）；无 token 字段的注册表自动退化单键。
+    """
+
+    @staticmethod
+    def _tok_reg(entries: list[tuple[str, str]], extra: str = "") -> str:
+        lines = ["unique_key:\n  - file\ncreation_tokens:\n"]
+        for f, t in entries:
+            lines.append(f"  - file: {f}\n    token: {t}\n")
+        return "".join(lines) + extra
+
+    def test_same_file_multi_token_coexists_no_deadletter(self):
+        """q-0078 实战复形：同 file 双 token 三侧并存 → 合并零死信（旧单键必死信）。"""
+        base = self._tok_reg([("src/a.py", "cap-a-20260901"), ("src/a.py", "cap-a-night-gw-20260902")])
+        ours = base
+        theirs = base + "  - file: src/a.py\n    token: cap-a-third-20260903\n"
+        merged, err = cql.three_way_merge_registry_yaml(
+            base, ours, theirs, rel_path="capability_canonical_file_registry.yaml"
+        )
+        assert err == "", f"同 file 多 token 合法形态不得死信: {err}"
+        toks = sorted(e["token"] for e in yaml.safe_load(merged)["creation_tokens"])
+        assert toks == ["cap-a-20260901", "cap-a-night-gw-20260902", "cap-a-third-20260903"]
+
+    def test_same_file_token_removal_revived_unless_retired(self):
+        """复合键粒度下的规则 b/c：同 file 删其中一条 token——非退役救回/退役尊重。"""
+        base = self._tok_reg([("src/a.py", "tok-1"), ("src/a.py", "tok-2")])
+        ours = self._tok_reg([("src/a.py", "tok-1")])  # ours 侧 tok-2 消失
+        theirs = base
+        merged, err = cql.three_way_merge_registry_yaml(base, ours, theirs, rel_path="x.yaml")
+        assert err == "", err
+        toks = [e["token"] for e in yaml.safe_load(merged)["creation_tokens"]]
+        assert toks == ["tok-1", "tok-2"], "非退役删除被快照救回（复合键粒度判定）"
+
+        merged2, err2 = cql.three_way_merge_registry_yaml(
+            base,
+            ours,
+            theirs,
+            rel_path="x.yaml",
+            retired_check=lambda e: e.get("token") == "tok-2",
+        )
+        assert err2 == "", err2
+        toks2 = [e["token"] for e in yaml.safe_load(merged2)["creation_tokens"]]
+        assert toks2 == ["tok-1"], "合法退役（复合键定位）被尊重"
+
+    def test_true_duplicate_compound_key_still_deadletters(self):
+        """同 file 同 token 两条（复合键下真重复）→ 死信保留（fail-closed 不放松）。"""
+        dup = self._tok_reg([("src/a.py", "tok-1"), ("src/a.py", "tok-1")])
+        merged, err = cql.three_way_merge_registry_yaml(
+            dup, dup, dup + "  - file: b.md\n    token: t2\n", rel_path="x.yaml"
+        )
+        assert merged is None and "身份不唯一" in err
+
+    def test_token_field_edit_is_same_key_content_conflict(self):
+        """复合键不含非 token 字段：改 created_by（非键字段）= 同键内容异语义照旧。"""
+        base = self._tok_reg([("src/a.py", "tok-1")])
+        ours = base.replace(
+            "  - file: src/a.py\n    token: tok-1\n", "  - file: src/a.py\n    token: tok-1\n    created_by: ours\n"
+        )
+        theirs = base.replace(
+            "  - file: src/a.py\n    token: tok-1\n", "  - file: src/a.py\n    token: tok-1\n    created_by: theirs\n"
+        )
+        merged, err = cql.three_way_merge_registry_yaml(base, ours, theirs, rel_path="x.yaml")
+        assert merged is None, "三方各改非键字段（键=复合身份不变）→ 同键内容冲突死信"
+        assert "同键条目内容冲突" in err
+
+    def test_no_token_field_registry_degrades_to_single_key(self):
+        """无 token 字段的注册表（ruling_id 单键形态）退化为 gate 单键零行为漂移。"""
+        base = "entries:\n  - ruling_id: '#1'\n    title: t\n"
+        ours = base + "  - ruling_id: '#2'\n    title: u\n"
+        theirs = base + "  - ruling_id: '#3'\n    title: v\n"
+        merged, err = cql.three_way_merge_registry_yaml(base, ours, theirs, rel_path="x.yaml")
+        assert err == "", err
+        ids = [e["ruling_id"] for e in yaml.safe_load(merged)["entries"]]
+        assert ids == ["#1", "#2", "#3"], "单键退化形态双向新增并存"
+
+
+class TestRegistryMergeLandingIntegration:
+    """集成层：三写者红蓝（DISPATCH 验证判据：A 入队陈旧快照→B 先落地→A 落地，零丢失）。
+
+    注意 tmp_repo fixture 的 HEAD 停在 main（dev 同点创建不检出）——「队列外写者
+    推进 dev」的直提统一走 _advance_dev_ref（update-ref dev 搬运 HEAD），否则提交
+    落 main、dev 纹丝不动，合并器 ours 侧读到 init 提交的「文件不存在」。
+    写盘统一 newline="\n" 钉 LF——Windows 默认会把 \n 翻成 \r\n，而入队快照
+    encode() 是纯 LF，两侧行尾漂移会污染字节级一致性判定。
+    """
+
+    def _init_registry(self, tmp_repo: Path, base_text: str) -> str:
+        reg_dir = tmp_repo / "docs/01_policies_and_standards/_registry/catalogs"
+        reg_dir.mkdir(parents=True, exist_ok=True)
+        (tmp_repo / _REG_REL).write_text(base_text, encoding="utf-8", newline="\n")
+        _git(tmp_repo, "add", ".")
+        _git(tmp_repo, "commit", "-qm", "init registry")
+        # fixture 的 HEAD 停在 main——commit 落 main，dev 仍指无 registry 的 init 提交；
+        # 先把 dev 搬到当前 HEAD 再取 base（否则 base_head 树里根本没有 registry 文件）
+        self._advance_dev_ref(tmp_repo)
+        return _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+
+    def _advance_dev_ref(self, tmp_repo: Path) -> str:
+        """模拟队列外写者：把刚落在 HEAD（main）的直提搬成 dev 的新值。"""
+        sha = _git_text(tmp_repo, "rev-parse", "HEAD")
+        _git(tmp_repo, "update-ref", "refs/heads/dev", sha)
+        return sha
+
+    def test_three_writer_scenario_zero_loss(self, tmp_repo: Path, queue_root: Path) -> None:
+        base_text = _reg_text([("A", "a.md"), ("B", "b.md"), ("C", "c.md")])
+        base_sha = self._init_registry(tmp_repo, base_text)
+
+        # 写者 A：基于 base 快照入队（A 改名 + E 新增）——此刻 dev 尚未推进
+        snapshot_a = base_text.replace("path: a.md", "path: a2.md") + "  - id: E\n    path: e.md\n"
+        cq.enqueue_item(
+            "sess-reg-a",
+            "feat: A 批（快照含 A 改名+E 新增）",
+            [(_REG_REL, snapshot_a.encode("utf-8"))],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(base_head=base_sha),
+        )
+
+        # 写者 B：队列外直接推进 dev（B 改名 + D 新增）——制造 base..dev 同路径漂移
+        drift_text = base_text.replace("path: b.md", "path: b2.md") + "  - id: D\n    path: d.md\n"
+        (tmp_repo / _REG_REL).write_text(drift_text, encoding="utf-8", newline="\n")
+        _git(tmp_repo, "add", _REG_REL)
+        _git(tmp_repo, "commit", "-qm", "B 批直提（B 改名+D 新增）")
+        self._advance_dev_ref(tmp_repo)
+
+        # A 的陈旧快照落地：W2 合并后 A'/B'/C/D/E 全存活——fb5a7821d 型整文件覆盖被治本
+        landing, stub = _make_landing(tmp_repo, queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1 and stats["dead"] == 0, f"drain 统计异常: {stats}"
+
+        landed = yaml.safe_load(_git_bytes(tmp_repo, "show", f"dev:{_REG_REL}").decode("utf-8"))
+        by_id = {e["id"]: e for e in landed["entries"]}
+        assert by_id["A"]["path"] == "a2.md", "A 的快照修改（theirs 改、ours 侧没动 A）被采纳"
+        assert by_id["B"]["path"] == "b2.md", "B 的 dev 修改不被陈旧快照镇压"
+        assert by_id["C"]["path"] == "c.md", "未涉条目原样"
+        assert by_id["D"]["path"] == "d.md", "dev 侧新增 D 不被快照抹掉（事故主症状）"
+        assert by_id["E"]["path"] == "e.md", "快照侧新增 E 落地"
+        assert len(by_id) == 5, "五条目零丢失"
+        assert len(stub.commit_calls()) == 1, "gateway 恰一次 commit"
+
+    def test_same_key_three_way_conflict_dead_letters_content_preserved(self, tmp_repo: Path, queue_root: Path) -> None:
+        base_text = _reg_text([("A", "a.md")])
+        base_sha = self._init_registry(tmp_repo, base_text)
+
+        snapshot = base_text.replace("path: a.md", "path: theirs.md")
+        cq.enqueue_item(
+            "sess-reg-c",
+            "feat: 同键三方冲突项",
+            [(_REG_REL, snapshot.encode("utf-8"))],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(base_head=base_sha),
+        )
+        (tmp_repo / _REG_REL).write_text(
+            base_text.replace("path: a.md", "path: ours.md"), encoding="utf-8", newline="\n"
+        )
+        _git(tmp_repo, "add", _REG_REL)
+        _git(tmp_repo, "commit", "-qm", "ours 改 A")
+        self._advance_dev_ref(tmp_repo)
+
+        landing, stub = _make_landing(tmp_repo, queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["dead"] == 1 and stats["done"] == 0, f"同键三方冲突必须死信: {stats}"
+        dead = json.loads(next((queue_root / "dead").glob("q-*.json")).read_text(encoding="utf-8"))
+        assert "id=A" in dead["dead_reason"] and "ours.md" in dead["dead_reason"]
+        assert "theirs.md" in dead["dead_reason"], "死信带双方条目全文"
+        # dev 侧内容原样保留（死信不产生任何写入）
+        assert _git_bytes(tmp_repo, "show", f"dev:{_REG_REL}").decode("utf-8") == base_text.replace(
+            "path: a.md", "path: ours.md"
+        )
+        assert stub.commit_calls() == [], "死信不得触达 gateway commit"
+
+    def test_non_registry_file_still_path_conflict_dead(self, tmp_repo: Path, queue_root: Path) -> None:
+        """非注册表文件零变更验证：base..dev 触及同路径照旧逐文件快进死信。"""
+        (tmp_repo / "docs").mkdir(exist_ok=True)
+        (tmp_repo / "docs/plain.txt").write_text("base\n", encoding="utf-8", newline="\n")
+        _git(tmp_repo, "add", ".")
+        _git(tmp_repo, "commit", "-qm", "plain base")
+        base = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+        cq.enqueue_item(
+            "sess-reg-n",
+            "feat: 普通文件冲突项",
+            [("docs/plain.txt", b"mine\n")],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(base_head=base),
+        )
+        (tmp_repo / "docs/plain.txt").write_text("theirs-dev\n", encoding="utf-8", newline="\n")
+        _git(tmp_repo, "add", "docs/plain.txt")
+        _git(tmp_repo, "commit", "-qm", "dev 侧推进 plain.txt")
+        self._advance_dev_ref(tmp_repo)
+        landing, _ = _make_landing(tmp_repo, queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["dead"] == 1, "非注册表路径冲突照旧死信（零变更）"
+        dead = json.loads(next((queue_root / "dead").glob("q-*.json")).read_text(encoding="utf-8"))
+        assert "冲突" in dead["dead_reason"]
+
+    def test_registry_path_drift_no_longer_path_conflicts(self, tmp_repo: Path, queue_root: Path) -> None:
+        """W2 配套：注册表族路径 base..dev 漂移不再触发 path 级死信（交合并器消化）。"""
+        base_text = _reg_text([("A", "a.md")])
+        base_sha = self._init_registry(tmp_repo, base_text)
+        cq.enqueue_item(
+            "sess-reg-d",
+            "feat: 注册表同路径漂移项",
+            [(_REG_REL, base_text.encode("utf-8"))],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(base_head=base_sha),
+        )
+        (tmp_repo / _REG_REL).write_text(base_text.replace("path: a.md", "path: b.md"), encoding="utf-8", newline="\n")
+        _git(tmp_repo, "add", _REG_REL)
+        _git(tmp_repo, "commit", "-qm", "dev 侧推进注册表")
+        self._advance_dev_ref(tmp_repo)
+        landing, _ = _make_landing(tmp_repo, queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1 and stats["dead"] == 0, f"注册表路径漂移交合并器: {stats}"
+        landed = yaml.safe_load(_git_bytes(tmp_repo, "show", f"dev:{_REG_REL}").decode("utf-8"))
+        assert landed["entries"][0]["path"] == "b.md", "dev 侧修改保留（快照=base 零改动不回滚）"
+
+    def test_ours_retirement_honored_via_real_path_check(self, tmp_repo: Path, queue_root: Path) -> None:
+        """retired_check 真实路径版：条目引用文件 dev 侧已真退役（盘上+HEAD 双无）→ 不复活。"""
+        base_text = _reg_text([("A", "a.md"), ("B", "retired_doc.md")])
+        base_sha = self._init_registry(tmp_repo, base_text)
+        (tmp_repo / "retired_doc.md").write_text("to be retired\n", encoding="utf-8", newline="\n")
+        _git(tmp_repo, "add", ".")
+        _git(tmp_repo, "commit", "-qm", "add doc")
+        base_sha2 = _git_text(tmp_repo, "rev-parse", "refs/heads/dev")
+        self._advance_dev_ref(tmp_repo)
+
+        # dev 侧：删掉 B 条目 + 删掉其引用文件（真退役）
+        ours_text = _reg_text([("A", "a.md")])
+        (tmp_repo / _REG_REL).write_text(ours_text, encoding="utf-8", newline="\n")
+        (tmp_repo / "retired_doc.md").unlink()
+        _git(tmp_repo, "add", "-A")
+        _git(tmp_repo, "commit", "-qm", "B 真退役（条目+文件双删）")
+        self._advance_dev_ref(tmp_repo)
+
+        # 快照（base_sha2 时点，仍含 B）落地 → B 引用文件已双不存在 → 尊重退役不复活
+        cq.enqueue_item(
+            "sess-reg-e",
+            "feat: 陈旧快照含已退役条目",
+            [(_REG_REL, base_text.encode("utf-8"))],
+            queue_root=queue_root,
+            options=cq.EnqueueOptions(base_head=base_sha2),
+        )
+        landing, _ = _make_landing(tmp_repo, queue_root)
+        stats = cq.drain_queue(queue_root, landing=landing)
+        assert stats["done"] == 1 and stats["dead"] == 0, f"drain 异常: {stats}"
+        landed = yaml.safe_load(_git_bytes(tmp_repo, "show", f"dev:{_REG_REL}").decode("utf-8"))
+        assert "B" not in [e["id"] for e in landed["entries"]], "真退役条目不被快照复活"

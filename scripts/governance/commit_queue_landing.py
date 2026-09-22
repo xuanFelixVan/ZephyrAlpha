@@ -344,11 +344,15 @@ _TRANSLATION_REGISTRY_SUFFIX = "module_translation_registry.yaml"
 def _translation_family_identity(family_key: str | None, data: object) -> str | None:
     """翻译册族真键：entries=(module_path,name_zh,name_en)，algo_submodules=(module_path,node_id)。
 
-    module_path 缺失/非标量 → 退默认复合键（判不了不硬造）；非 dict → None（死信方向）。
+    其余族（unique_key 元数据/battle_map_steps/battle_map_cross_cutting）→ 默认复合键
+    （不越权造键）；module_path 缺失/非标量 → 退默认复合键（判不了不硬造）；
+    非 dict → None（死信方向）。
     """
     if not isinstance(data, dict):
         return None
     base = _merge_entry_identity(data)
+    if family_key not in ("entries", "algo_submodules"):
+        return base
     mp = data.get("module_path")
     if not isinstance(mp, str) or not mp:
         return base
