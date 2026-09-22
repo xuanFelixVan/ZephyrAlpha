@@ -43719,5 +43719,15 @@ creation_tokens:
   token: "sim-launch-plan-order-mapping-proposal-20260922"
   created_by: "st-sim-launch-20260922"
   capability: "sim_launch"
+- file: docs/_working/disk_reorg_campaign/a6_remaining_work_order.md
+  token: disk-reorg-handover-a6-remaining-work-order-20260922
+  created_by: st-gateaudit-20260922
+  capability: disk_reorg_handover
+  merge_evaluation: "他会话中断批接手归位：磁盘重组战役遗留工作令，非第二真源"
+- file: docs/_working/disk_reorg_campaign/vhdx_precheck_20260922.md
+  token: disk-reorg-handover-vhdx-precheck-20260922-20260922
+  created_by: st-gateaudit-20260922
+  capability: disk_reorg_handover
+  merge_evaluation: "他会话中断批接手归位：磁盘重组战役遗留工作令，非第二真源"
   merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
 di_seam_exemptions: []
