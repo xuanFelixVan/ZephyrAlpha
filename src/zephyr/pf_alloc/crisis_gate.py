@@ -14,6 +14,8 @@
 #   口径双档（裁定 D1）：crisis = dominant==r10（硬拦截）；warning = p_r10≥θ（缩额+告警）；
 #   θ 真源=config/crisis_gate.yaml（O1 待 Owner 校准，缺省 0.5）；
 #   无快照=fail-closed 平坦分布→normal **不误触**（验收③）；
+#   教材列退化（data_degraded，含"有行而日期不可解析"）→ 至少 warning（缩额+告警，不冻结）：
+#   退化输入的 normal 是"读不出危机"而非"确认无危机"（红队 st-ff-rb-safe-20260918 攻面一①实测）；
 #   crisis_block_check skip=True 时**不落 marker**（解除后同日可重放，由调用方保证）；
 #   存量持仓不强平（强平语义归 ex_core 既有回撤阶梯，本闸只拦新增，workbook §2 动作矩阵）；
 #   留痕 c1_backtest.crisis_gate_log MergeTree 只增不改；留痕/告警失败不阻断安全主流程（log+False）；
@@ -38,17 +40,7 @@
 恐慌预兆（p_r10=0.5+）不算危机。本件提供双档状态机 normal/warning/crisis + 三级动作
 判定输入 + 留痕与告警出声，把"Owner 肉眼盯盘做危机决策"的人工环节自动化。
 
-[ALGO_FLOW]
-输入: 业务交易日 trade_date（None=今天）+ config/crisis_gate.yaml（θ/开关）
-前置检查: 日期字面量校验（复用 validate_date_literal）；θ∈(0,1]；未知配置键=硬错
-执行: ① load_regime_input(PIT 最近快照,禁未来函数) → ② classify_crisis_state 双档判定
-      → ③ crisis_block_check(L1 纯函数判定) / 各级按动作矩阵处置
-      → ④ log_crisis_gate_row 留痕 + alert_crisis_level 告警出声（失败不阻断）
-输出: CrisisState（状态+依据）/ CrisisBlock（skip+理由）/ 表行+failure 文件
-降级: 无快照→平坦分布→normal（fail-closed 不误触）；配置文件缺失→全缺省
-不变量: 同一 (快照, θ) 输入→同一 CrisisState（纯判定，无墙钟依赖）；
-        crisis ⊃ warning（crisis 恒携带 floor 激活语义）
-[/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_pf_alloc/algo_flow/crisis_gate.yaml
 """
 
 from __future__ import annotations
@@ -57,7 +49,7 @@ import logging
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
 from pathlib import Path
-from typing import Final, Any, Callable, Mapping
+from typing import Any, Callable, Final, Mapping, Protocol, Sequence
 
 try:
     from zephyr.shared.io.paths import REPO_ROOT as _REPO_ROOT
@@ -113,6 +105,18 @@ _P_R10_INDEX = REGIME_PROB_COLUMNS.index("p_r10")
 CONFIG_RELATIVE_PATH = "config/crisis_gate.yaml"
 
 Reader = Callable[[str], "Sequence[Mapping[str, Any]]"]  # type: ignore[valid-type]
+
+
+class _WriterPort(Protocol):
+    """留痕写通道最小端口（CH client 兼容；gate-any-abuse 裸 Any 治本）。"""
+
+    def execute(self, query: str, parameters: list) -> object: ...
+
+
+class _AlerterPort(Protocol):
+    """告警最小端口（zephyr.data.alerter.Alerter 兼容）。"""
+
+    def notify(self, *args: object, **kwargs: object) -> object: ...
 
 
 class CrisisGateError(ValueError):
@@ -195,6 +199,10 @@ class CrisisState:
     lag_days: int  # 快照滞后天数（无快照=-1）
     warning_theta: float = DEFAULT_WARNING_THETA  # 本次判定所用 θ（留痕可复算）
     fail_closed: bool = False  # True=无快照退化平坦口径（不误触）
+    # 红队加严（st-ff-rb-safe-20260918 攻面一①）：教材列退化标志——退化输入下的
+    # "normal" 是**读不出危机**而非"确认无危机"，必须外显并可被下游判别。
+    data_degraded: bool = False
+    degraded_reasons: tuple[str, ...] = ()
 
     @property
     def is_crisis(self) -> bool:
@@ -216,23 +224,33 @@ def classify_crisis_state(regime: RegimeInput, *, warning_theta: float) -> Crisi
     口径（裁定 D1）：
       - crisis = dominant == r10（硬拦截）；
       - warning = p_r10 ≥ θ（缩额 + 告警）；
-      - 无快照（has_snapshot=False，fail-closed 平坦分布）→ normal **不误触**（验收③）。
+      - 无快照（has_snapshot=False，fail-closed 平坦分布）→ normal **不误触**（验收③）；
+      - 教材行在但列退化（data_degraded，含"有行而日期不可解析"）→ 至少 warning：
+        退化输入的 normal 是"读不出危机"不是"确认无危机"（红队 st-ff-rb-safe-20260918
+        攻面一①实测：p_r10 列 NaN/None/负值、日期列 NaN + p_r10=0.99 六种退化此前
+        全部静默落 normal 且留痕与真平静市不可区分）。
+        代价口径：退化只升 **warning**（floor 0.05 缩额 + 告警），不升 crisis（不冻结
+        新开仓）——用一个可逆的保守档换掉不可逆的漏报，不把危险反过来加重。
     crisis 优先于 warning（同为 r10 高概率时取更严档）。
     """
     p_r10 = float(regime.probabilities[_P_R10_INDEX])
+    degraded = bool(getattr(regime, "data_degraded", False))
+    deg_reasons = tuple(getattr(regime, "degraded_reasons", ()) or ())
     if not regime.has_snapshot:
         return CrisisState(
-            state=STATE_NORMAL,
+            state=STATE_WARNING if degraded else STATE_NORMAL,
             p_r10=p_r10,
             dominant=regime.dominant,
             source_date=None,
             lag_days=regime.lag_days,
             warning_theta=float(warning_theta),
             fail_closed=True,
+            data_degraded=degraded,
+            degraded_reasons=deg_reasons,
         )
     if regime.dominant == CRISIS_STATE:
         state = STATE_CRISIS
-    elif p_r10 >= warning_theta:
+    elif p_r10 >= warning_theta or degraded:
         state = STATE_WARNING
     else:
         state = STATE_NORMAL
@@ -244,6 +262,8 @@ def classify_crisis_state(regime: RegimeInput, *, warning_theta: float) -> Crisi
         lag_days=regime.lag_days,
         warning_theta=float(warning_theta),
         fail_closed=False,
+        data_degraded=degraded,
+        degraded_reasons=deg_reasons,
     )
 
 
@@ -302,9 +322,7 @@ def crisis_block_check(
             state="disabled",
             reason="crisis_gate.enabled=false（显式旁路开关，回退原因须登记）",
         )
-    cs = state if state is not None else resolve_crisis_state(
-        trade_date, reader=reader, gate_config=cfg
-    )
+    cs = state if state is not None else resolve_crisis_state(trade_date, reader=reader, gate_config=cfg)
     if cs.state == STATE_CRISIS:
         return CrisisBlock(
             skip=True,
@@ -321,10 +339,14 @@ def crisis_block_check(
             state=STATE_WARNING,
             reason=(
                 f"warning：p_r10={cs.p_r10:.3f}≥θ={cs.warning_theta:.2f}"
-                "→ 照跑 + CRISIS_SHRINKAGE_FLOOR=0.05 激活 + 告警"
+                + ("（或教材退化）" if cs.data_degraded else "")
+                + "→ 照跑 + CRISIS_SHRINKAGE_FLOOR=0.05 激活 + 告警"
             ),
         )
-    note = "无快照 fail-closed 平坦分布→不误触" if cs.fail_closed else "regime 常态"
+    if cs.data_degraded:
+        note = "教材退化（读不出危机，非确认无危机）: " + "; ".join(cs.degraded_reasons[:3])
+    else:
+        note = "无快照 fail-closed 平坦分布→不误触" if cs.fail_closed else "regime 常态"
     return CrisisBlock(
         skip=False,
         state=STATE_NORMAL,
@@ -343,7 +365,7 @@ def log_crisis_gate_row(
     action_l2: str = "pass",
     action_l3: str = "pass",
     probe_ts: datetime | None = None,
-    writer: Any = None,
+    writer: _WriterPort | None = None,
 ) -> bool:
     """判定行落 c1_backtest.crisis_gate_log（裁定 D4）。
 
@@ -354,7 +376,9 @@ def log_crisis_gate_row(
     try:
         if not isinstance(trade_date, (str, date)):
             raise CrisisGateError(f"trade_date 类型非法: {type(trade_date).__name__}")
-        day = validate_date_literal(trade_date)
+        day = date.fromisoformat(
+            validate_date_literal(trade_date)
+        )  # B20 治本：Date 列槽位必须入 date 对象——str 字面量会被驱动取 value.year 抛 AttributeError 且被上方 except 吞成 warning，留痕静默蒸发（fullflow B20 驱动级实证：str 抛/date OK）
         from schemas.categories.crisis_gate_log import INSERT_COLUMNS, QUALIFIED_NAME
 
         ts = probe_ts or datetime.now(timezone.utc)
@@ -388,7 +412,7 @@ def alert_crisis_level(
     trade_date: str | date,
     crisis_state: CrisisState,
     detail: str = "",
-    alerter: Any = None,
+    alerter: _AlerterPort | None = None,
 ) -> bool:
     """三级各自出声（裁定 D3）：task_id=crisis_gate_<level>，写 data/failures/*.json。
 
@@ -438,15 +462,11 @@ class CrisisGate:
         return load_crisis_gate_config(yaml_path)
 
     @staticmethod
-    def resolve(
-        trade_date: str | date | None = None, **kwargs: Any
-    ) -> CrisisState:
+    def resolve(trade_date: str | date | None = None, **kwargs: Any) -> CrisisState:
         return resolve_crisis_state(trade_date, **kwargs)
 
     @staticmethod
-    def block_check(
-        trade_date: str | date | None = None, **kwargs: Any
-    ) -> CrisisBlock:
+    def block_check(trade_date: str | date | None = None, **kwargs: Any) -> CrisisBlock:
         return crisis_block_check(trade_date, **kwargs)
 
     @staticmethod

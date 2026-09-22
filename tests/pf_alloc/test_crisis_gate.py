@@ -42,6 +42,8 @@ import pytest
 
 from zephyr.pf_alloc.allocation_config import AllocationConfig
 from zephyr.pf_alloc.allocation_inputs import FLAT_PROBABILITIES, RegimeInput
+from zephyr.pf_alloc.core import regime_meta_allocator as rma
+from zephyr.pf_alloc.core.regime_meta_allocator import RegimeMetaAllocator
 from zephyr.pf_alloc.crisis_gate import (
     STATE_CRISIS,
     STATE_NORMAL,
@@ -54,8 +56,6 @@ from zephyr.pf_alloc.crisis_gate import (
     log_crisis_gate_row,
     resolve_crisis_state,
 )
-from zephyr.pf_alloc.core import regime_meta_allocator as rma
-from zephyr.pf_alloc.core.regime_meta_allocator import RegimeMetaAllocator
 
 TRADE_DATE = "2026-09-15"
 
@@ -119,15 +119,38 @@ class FakeReader:
 def snapshot_row(**over):
     """regime_snapshot_history 一行的列序（与 load_regime_input 的 cols 严格对齐）。"""
     cols = (
-        "run_id", "trade_date", "p_r1", "p_r2", "p_r3", "p_r4", "p_r10", "p_r11", "p_r12",
-        "dominant", "confidence", "confidence_signal", "risk_signal", "shrinkage", "probs_json",
+        "run_id",
+        "trade_date",
+        "p_r1",
+        "p_r2",
+        "p_r3",
+        "p_r4",
+        "p_r10",
+        "p_r11",
+        "p_r12",
+        "dominant",
+        "confidence",
+        "confidence_signal",
+        "risk_signal",
+        "shrinkage",
+        "probs_json",
     )
     defaults = {
-        "run_id": "reg-run-1", "trade_date": "2026-09-14",
-        "p_r1": 0.30, "p_r2": 0.05, "p_r3": 0.03, "p_r4": 0.02,
-        "p_r10": 0.55, "p_r11": 0.03, "p_r12": 0.02,
-        "dominant": "r1", "confidence": 0.55, "confidence_signal": 0.30,
-        "risk_signal": 0.8, "shrinkage": 0.24, "probs_json": "{}",
+        "run_id": "reg-run-1",
+        "trade_date": "2026-09-14",
+        "p_r1": 0.30,
+        "p_r2": 0.05,
+        "p_r3": 0.03,
+        "p_r4": 0.02,
+        "p_r10": 0.55,
+        "p_r11": 0.03,
+        "p_r12": 0.02,
+        "dominant": "r1",
+        "confidence": 0.55,
+        "confidence_signal": 0.30,
+        "risk_signal": 0.8,
+        "shrinkage": 0.24,
+        "probs_json": "{}",
     }
     defaults.update(over)
     return tuple(defaults[c] for c in cols)
@@ -206,9 +229,7 @@ def test_resolve_crisis_state_real_read_path_with_fake_reader():
     empty = resolve_crisis_state(TRADE_DATE, reader=FakeReader())
     assert empty.state == STATE_NORMAL and empty.fail_closed is True
     # warning 快照：p_r10=0.55≥0.5 但 dominant=r1
-    warn = resolve_crisis_state(
-        TRADE_DATE, reader=FakeReader(snapshot=snapshot_row(p_r10=0.55, dominant="r1"))
-    )
+    warn = resolve_crisis_state(TRADE_DATE, reader=FakeReader(snapshot=snapshot_row(p_r10=0.55, dominant="r1")))
     assert warn.state == STATE_WARNING
 
 
@@ -261,9 +282,7 @@ class TestWarningFloorActivation:
         monkeypatch.setattr(rma, "RISK_SIGNAL_MIN", 0.10)
         alloc = RegimeMetaAllocator()
         normal = alloc._compute_shrinkage([0.50, 0.50], {"risk_base": 0.10})
-        warning = alloc._compute_shrinkage(
-            [0.50, 0.50], {"risk_base": 0.10}, crisis_floor_active=True
-        )
+        warning = alloc._compute_shrinkage([0.50, 0.50], {"risk_base": 0.10}, crisis_floor_active=True)
         assert normal.final_shrinkage == pytest.approx(rma.SHRINKAGE_FLOOR)  # 0.09 兜底
         assert warning.final_shrinkage == pytest.approx(rma.CRISIS_SHRINKAGE_FLOOR)  # 0.05
         assert warning.is_crisis is False  # warning 档不改 is_crisis 归因
@@ -272,9 +291,7 @@ class TestWarningFloorActivation:
         """当前参数域 raw≥0.09：floor 激活是前瞻口径，输出不变（不夸大生效范围）。"""
         alloc = RegimeMetaAllocator()
         plain = alloc._compute_shrinkage([0.50, 0.50], {"risk_base": 0.2})
-        active = alloc._compute_shrinkage(
-            [0.50, 0.50], {"risk_base": 0.2}, crisis_floor_active=True
-        )
+        active = alloc._compute_shrinkage([0.50, 0.50], {"risk_base": 0.2}, crisis_floor_active=True)
         assert plain.final_shrinkage == pytest.approx(rma.SHRINKAGE_FLOOR)
         assert active.final_shrinkage == pytest.approx(rma.SHRINKAGE_FLOOR)
 
@@ -458,7 +475,9 @@ def _panic_frames():
 
 
 def _crisis_state(crisis=True):
-    cs = classify_crisis_state(_regime(dominant="r10" if crisis else "r1", p_r10=0.7 if crisis else 0.01), warning_theta=0.5)
+    cs = classify_crisis_state(
+        _regime(dominant="r10" if crisis else "r1", p_r10=0.7 if crisis else 0.01), warning_theta=0.5
+    )
     return cs
 
 
@@ -467,8 +486,13 @@ class TestL3LedgerEntryBlock:
         mod = _load_ledger_module()
         sh, px = _panic_frames()
         monkeypatch.setattr(mod, "pd_idx", lambda sym, start, end: sh if sym == "000001" else px)
-        res = mod.run("sim_daily", "2026-09-01", "2026-09-03",
-                      run_id="t-crisis", crisis_resolver=lambda day: _crisis_state(crisis=True))
+        res = mod.run(
+            "sim_daily",
+            "2026-09-01",
+            "2026-09-03",
+            run_id="t-crisis",
+            crisis_resolver=lambda day: _crisis_state(crisis=True),
+        )
         # panic 日被拦：signal='cash'，note 留痕，无 entry 事件，钱包全程满现金
         blocked_row = res["rows"][-1]
         assert blocked_row[9] == "cash"
@@ -481,8 +505,13 @@ class TestL3LedgerEntryBlock:
         mod = _load_ledger_module()
         sh, px = _panic_frames()
         monkeypatch.setattr(mod, "pd_idx", lambda sym, start, end: sh if sym == "000001" else px)
-        res = mod.run("sim_daily", "2026-09-01", "2026-09-03",
-                      run_id="t-normal", crisis_resolver=lambda day: _crisis_state(crisis=False))
+        res = mod.run(
+            "sim_daily",
+            "2026-09-01",
+            "2026-09-03",
+            run_id="t-normal",
+            crisis_resolver=lambda day: _crisis_state(crisis=False),
+        )
         assert any(e[3] == "entry" for e in res["events"])
         assert res["crisis_blocked_days"] == []
 
@@ -495,8 +524,7 @@ class TestL3LedgerEntryBlock:
         def boom(day):
             raise RuntimeError("CH down")
 
-        res = mod.run("sim_daily", "2026-09-01", "2026-09-03",
-                      run_id="t-boom", crisis_resolver=boom)
+        res = mod.run("sim_daily", "2026-09-01", "2026-09-03", run_id="t-boom", crisis_resolver=boom)
         assert res["rows"][-1][9] == "cash"
         assert "resolver_error" in res["rows"][-1][12]
         assert not any(e[3] == "entry" for e in res["events"])
@@ -520,8 +548,7 @@ class TestL3LedgerEntryBlock:
             return _crisis_state(crisis=(day == "2026-09-04"))
 
         monkeypatch.setattr(mod, "pd_idx", lambda sym, start, end: sh if sym == "000001" else px)
-        res = mod.run("sim_daily", "2026-09-01", "2026-09-04",
-                      run_id="t-hold", crisis_resolver=resolver_by_day)
+        res = mod.run("sim_daily", "2026-09-01", "2026-09-04", run_id="t-hold", crisis_resolver=resolver_by_day)
         signals = [r[9] for r in res["rows"]]
         assert signals[2] == "entry"  # crisis 前 entry 正常
         assert signals[3] == "holding"  # crisis 日持仓日照常持有（不强平不清仓）
@@ -536,26 +563,29 @@ def test_log_crisis_gate_row_column_order_and_insert():
     writer = RecordingWriter()
     cs = classify_crisis_state(_regime(dominant="r10"), warning_theta=0.5)
     ok = log_crisis_gate_row(
-        trade_date=TRADE_DATE, crisis_state=cs, action_l1="blocked",
-        action_l2="frozen_new", action_l3="entry_to_cash",
+        trade_date=TRADE_DATE,
+        crisis_state=cs,
+        action_l1="blocked",
+        action_l2="frozen_new",
+        action_l3="entry_to_cash",
         probe_ts=__import__("datetime").datetime(2026, 9, 15, 1, 0, tzinfo=__import__("datetime").timezone.utc),
         writer=writer,
     )
     assert ok is True
     sql, rows = writer.calls[0]
     assert "c1_backtest.crisis_gate_log" in sql
-    for col in ("probe_ts", "trade_date", "state", "p_r10", "dominant",
-                "action_l1", "action_l2", "action_l3"):
+    for col in ("probe_ts", "trade_date", "state", "p_r10", "dominant", "action_l1", "action_l2", "action_l3"):
         assert col in INSERT_COLUMNS and col in sql
     row = rows[0]
-    assert row[1] == TRADE_DATE and row[2] == STATE_CRISIS
+    assert (
+        row[1] == __import__("datetime").date.fromisoformat(TRADE_DATE) and row[2] == STATE_CRISIS
+    )  # B20：Date 列槽位契约=date 对象（str 断言即假绿通道，fullflow B20）
     assert (row[5], row[6], row[7]) == ("blocked", "frozen_new", "entry_to_cash")
 
 
 def test_log_crisis_gate_row_failure_never_raises():
     cs = classify_crisis_state(_regime(), warning_theta=0.5)
-    assert log_crisis_gate_row(trade_date=TRADE_DATE, crisis_state=cs,
-                               writer=RecordingWriter(fail=True)) is False
+    assert log_crisis_gate_row(trade_date=TRADE_DATE, crisis_state=cs, writer=RecordingWriter(fail=True)) is False
 
 
 def test_alert_reuses_alerter_levels():
@@ -570,3 +600,27 @@ def test_alert_reuses_alerter_levels():
     assert levels["crisis_gate_l1"] == "CRITICAL"  # crisis 落 failure 文件的触发面
     assert levels["crisis_gate_l2"] == "WARN"
     assert "crisis_gate_l3" not in levels  # normal 不出声
+
+
+def test_log_crisis_gate_row_date_column_serializable():
+    """B20 治本回归：trade_date 列槽位必须入 date 对象（真驱动序列化契约）。
+
+    fullflow B20 实证：str 字面量入 Date 列槽位→驱动取 value.year 抛 AttributeError
+    →被 log_crisis_gate_row 的 except 吞成 warning→留痕静默蒸发；假 writer 只查列序
+    查不到该缺陷，本用例直达行元组元素类型断言。
+    """
+    import datetime as _dt
+
+    writer = RecordingWriter()
+    cs = classify_crisis_state(_regime(), warning_theta=0.5)
+    ok = log_crisis_gate_row(
+        trade_date=TRADE_DATE,
+        crisis_state=cs,
+        probe_ts=_dt.datetime(2026, 9, 15, 1, 0, tzinfo=_dt.timezone.utc),
+        writer=writer,
+    )
+    assert ok is True
+    day = writer.calls[0][1][0][1]
+    assert isinstance(day, _dt.date) and not isinstance(day, _dt.datetime)
+    assert day.isoformat() == TRADE_DATE
+    assert day.year == 2026  # 驱动序列化面：Date 列取 value.year 必须可行（B20 病根行）

@@ -1,0 +1,56 @@
+# ALGO_FLOW 外部真源——crisis_gate（_domain_pf_alloc 域，真源 src/zephyr/pf_alloc/crisis_gate.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.pf_alloc.crisis_gate
+source_of_truth: src/zephyr/pf_alloc/crisis_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: trade_date 业务交易日
+    #   fields: 业务交易日（None=今天；validate_date_literal 校验 YYYY-MM-DD）
+    #   code: log_crisis_gate_row/alert_crisis_level 入参
+    # - id: I2
+    #   name: crisis_gate.yaml 配置
+    #   fields: enabled/warning_theta θ∈(0,1]；未知配置键=硬错（config/crisis_gate.yaml）
+    #   code: load_crisis_gate_config
+    # - id: I3
+    #   name: regime 快照
+    #   fields: PIT 最近快照（禁未来函数；无快照=fail-closed 平坦分布）
+    #   code: load_regime_input
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 双档危机状态机判定
+    #   name_en: classify_crisis_state
+    #   intro: crisis=dominant==r10 硬拦截；warning=p_r10≥θ 或教材列退化（退化输入的 normal 是读不出危机非确认无危机）；无快照平坦分布 normal 不误触
+    #   inputs: I2 I3
+    #   outputs: CrisisState
+    # - id: A2
+    #   name_zh: 三级动作判定
+    #   name_en: crisis_block_check
+    #   intro: L1 纯函数判定+动作矩阵处置——crisis=skip 冻结新开仓；warning=照跑+CRISIS_SHRINKAGE_FLOOR=0.05 激活+告警；skip=True 不落 marker
+    #   inputs: A1
+    #   outputs: CrisisBlock
+    # - id: A3
+    #   name_zh: 留痕与告警出声
+    #   name_en: log_crisis_gate_row_alert_crisis_level
+    #   intro: 判定行落 c1_backtest.crisis_gate_log（Date 列入 date 对象，B20）+告警分级出声；留痕/告警失败不阻断安全主流程
+    #   inputs: A1 A2
+    #   outputs: 表行+failure 文件
+    # 层: 输出
+    # - id: O1
+    #   name_zh: CrisisState+CrisisBlock
+    #   name_en: CrisisState_CrisisBlock
+    #   intro: 状态+依据/skip+理由，消费方=allocation_orchestrator 组合层
+    #   downstream: allocation_orchestrator
+    # 边:
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A1 --> A3
+    # I1 --> A3
+    # A1 --> O1
+    # [/ALGO_FLOW]
