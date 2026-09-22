@@ -5432,28 +5432,60 @@ entries:
   superseded_by: ''
 
 - ruling_id: '裁定#400'
-  title: '情绪资产内收判定（S8/G10）：emotion_index 与 sentiment_cycle 并存分层+内核单源化方向'
-  date: '2026-09-22'
-  category: '架构收敛'
-  status: 'active'
+  title: 定桩战役纪要存真与判读基线追认（TDM 2.0 定桩）
+  date: 2026-09-22
+  category: 架构
+  status: active
   summary: >-
-    st-emomine-20260922 自裁（Owner 全线开工令授权框架：第一性原理+全文档+机构实践）。判定对象=
-    新建 emotion_index（c1_market.emotion_index，六成分滚动250观测分位→0-1灰度，契约化
-    components/version，close_final/pre_open 双 stage，落库 SSOT）与存量
-    signal_ashare.sentiment.sentiment_cycle.compute_sentiment_temperature（七维固定阈值归一→[0,100]
-    纯函数，无落库无历史，喂五阶段分类器）。内收四判据逐过：①同真源可派生→部分同源（涨停族）但
-    对象不同——连续落库契约指数 vs 进程内分类输入函数，归"跨域不同对象→不并"；②全资产净零→
-    emotion_index 不新增规则/gate，成分口径登记于 business_data_categories.yaml；③零触发零消费→
-    不适用（调度任务+板块线/排班消费面已声明）；④同域重复簇→风险真实存在（三情绪枚举并存自曝于
-    sentiment_cycle 头注释），处置=并存分层+两条硬约束：(a)成分计算内核单源化——涨停族口径唯一
-    真源=daban_board_event/limit_up_down 派生面，emotion_index 与 F23_LIMITUP_EMOTION 共用，
-    禁第三套口径；(b)sentiment_cycle 五阶段分类器二期可切换消费 emotion_index 作为输入（须过
-    考试+Owner 批），此前不动 production 函数。market_sentiment_analyzer/youzi_relay_emotion_engine
-    两枚举收敛移交治理班另案（登记 G10 余项，非本线阻塞）。G9（capability_lookup 索引漏报
-    sentiment 族五件）同案登记移交治理班。
+    Owner×Max 2026-09-22 定桩讨论定案落盘存真（docs/_working/chain_piling_campaign/00_piling_minutes.md
+    =唯一输入真源，01_campaign_directive.md=指令存真）。执行班三项机械判读呈批追认：
+    ①62条v1清单组别→七层判读挂载表（M→L0/U→L1通用六问/十条线→L1专属/S→L3/D→L4/E→L5/G→L6）；
+    ②纪要§7"16字段"机械计数实为18项，以字段清单原文为准建表（台账S-1）；
+    ③L2暂无专属问源组，图谱质量问源留后续对话（W3遗留待裁项）。
+    本裁定使 st-chainpile-20260922 各波次以纪要为唯一输入真源（禁从记忆取材）。
   affected_files:
-  - src/zephyr/alt_data/emotion_index_builder.py
-  - docs/_working/emotion_line/emotion_index_skeleton_v0.md
+  - docs/_working/chain_piling_campaign/00_piling_minutes.md
+  - docs/_working/chain_piling_campaign/01_campaign_directive.md
+  - docs/_working/chain_piling_campaign/01_layer_charter.md
   related_arch: []
-  related_rulings: ['裁定#398']
-  superseded_by: ''
+  related_rulings: []
+
+- ruling_id: '裁定#401'
+  title: meta_question_registry schema 收口裁定（R1-R6）
+  date: 2026-09-22
+  category: 架构
+  status: active
+  summary: >-
+    W1 红蓝（43发现全处置）后基建 schema 收口：主表=18字段底稿+5运营字段
+    （priority_score/priority_updated_at/claimed_by/claimed_until/version乐观锁）+status枚举扩blinded（盲册态）；
+    考试记账进 meta_question_exam_result 独立表；审计=meta_question_audit+JSONL双轨（PG为真源，差异即告警）；
+    模板治理=独立模板注册表YAML+ROOR+provenance内嵌tpl@ver；其余16项提案R6缓议禁落DDL挂缓议台账。
+    入库审=两级定案：纯机械层自动registered+Max周抽检兜底；语义层/中风险查重Max前置复审fail-closed。
+    初始建库批量通道：总量≤400/单插入批≤100行/Max会签/staging TTL7天（常规限流豁免）。
+    收口明细=docs/_working/chain_piling_campaign/infra_mining/30_blindspot_audit.md C章（32提案：采纳6+改载体10+缓议16）。
+    schema 增枝按总册属 Owner 终批——本裁定为战役令授权的自我裁定，呈 Owner 追认。
+  affected_files:
+  - docs/_working/chain_piling_campaign/infra_mining/30_blindspot_audit.md
+  - docs/_working/chain_piling_campaign/infra_mining/10_intake_gate_design.md
+  - docs/_working/chain_piling_campaign/infra_mining/20_management_policy.md
+  - src/zephyr/governance/meta_question/registry.py
+  - scripts/governance/apply_meta_question_ddl.py
+  related_arch: []
+  related_rulings: ['裁定#400']
+
+- ruling_id: '裁定#402'
+  title: 定桩战役运行参数批（限流/认领/复审/复考时限）
+  date: 2026-09-22
+  category: 流程
+  status: active
+  summary: >-
+    W1 红蓝修正批定案参数：入库限流=单批12/会话日40/全库日120（初始建库通道豁免，见裁定#401）；
+    中相似转人工复审通道每会话日20条（防零成本灌水）；单会话同时在认领≤10问；认领租约24h惰性回收；
+    矛盾仲裁时限=复考≤5交易日、Max复审≤10工作日；优先级S=V×F（V,F∈[1,5]，无单一V阈值等价式，破平=V→frequency→registered_at→q_id）；
+    过期三态T_P=max(frequency周期,14天)。全部参数可由后续裁定修订。
+  affected_files:
+  - docs/_working/chain_piling_campaign/infra_mining/10_intake_gate_design.md
+  - docs/_working/chain_piling_campaign/infra_mining/12_unanswered_board_design.md
+  - docs/_working/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md
+  related_arch: []
+  related_rulings: ['裁定#401']
