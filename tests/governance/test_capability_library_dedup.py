@@ -43,6 +43,13 @@ def audit_dir(tmp_path, monkeypatch):
     return d
 
 
+@pytest.fixture(scope="class")
+def lookup() -> cl.CapabilityLookup:
+    """共享单实例（CapabilityLookup 构造需全量扫盘，单测内只建一次）。
+    find() 是只读查询，实例间无状态，共享安全。"""
+    return cl.CapabilityLookup()
+
+
 def _last_entry(d: Path, sid: str) -> dict:
     return json.loads((d / f"{sid}.jsonl").read_text(encoding="utf-8").strip().splitlines()[-1])
 
@@ -67,7 +74,7 @@ class TestLibraryDedup:
         entry = _last_entry(audit_dir, "s2")
         assert "library_dedup" not in entry  # 向后兼容
 
-    def test_find_passes_dedup_probe(self, audit_dir, monkeypatch):
+    def test_find_passes_dedup_probe(self, audit_dir, lookup, monkeypatch):
         captured = {}
 
         def _fake_probe(query, limit=5):
@@ -75,26 +82,23 @@ class TestLibraryDedup:
             return {"hits": 0, "asset_ids": []}
 
         monkeypatch.setattr(cl, "_library_dedup_probe", _fake_probe)
-        lk = cl.CapabilityLookup()
-        lk.find("session handoff probe-xyz", session_id="s3")
+        lookup.find("session handoff probe-xyz", session_id="s3")
         assert captured["q"] == "session handoff probe-xyz"
         entry = _last_entry(audit_dir, "s3")
         assert entry["library_dedup"] == {"hits": 0, "asset_ids": []}
 
-    def test_probe_failure_fail_open(self, audit_dir, monkeypatch):
+    def test_probe_failure_fail_open(self, audit_dir, lookup, monkeypatch):
         def _boom(query, limit=5):
             raise RuntimeError("pg down")
 
         monkeypatch.setattr(cl, "_library_dedup_probe", _boom)
-        lk = cl.CapabilityLookup()
-        results = lk.find("translation coverage gate", session_id="s4")
+        results = lookup.find("translation coverage gate", session_id="s4")
         assert isinstance(results, list)  # 反查主路径不受探针故障影响
         entry = _last_entry(audit_dir, "s4")
         assert "library_dedup" not in entry
 
-    def test_short_query_no_probe(self, audit_dir, monkeypatch):
+    def test_short_query_no_probe(self, audit_dir, lookup, monkeypatch):
         called = []
         monkeypatch.setattr(cl, "_library_dedup_probe", lambda q, limit=5: called.append(q))
-        lk = cl.CapabilityLookup()
-        assert lk.find("a", session_id="s5") == []  # 退化查询守卫
+        assert lookup.find("a", session_id="s5") == []  # 退化查询守卫
         assert called == []  # 探针未触发

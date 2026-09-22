@@ -933,13 +933,18 @@ class CapabilityLookup:
         # 审计日志落盘（best-effort，fail-open）；ulib3 T6：同探图书馆查重进留痕
         resolved_sid = _resolve_session_id(session_id)
         if resolved_sid:
+            try:
+                dedup: dict | None = _library_dedup_probe(query)
+            except Exception as exc:  # noqa: BLE001 — 双层 fail-open（探针自身兜底+调用面兜底）
+                _logger.debug("capability_lookup: 图书馆查重探针调用面兜底: %s", exc)
+                dedup = None
             write_lookup_audit_log(
                 session_id=resolved_sid,
                 query={"query": query},
                 result_count=len(results),
                 capability_ids=[r.get("capability_id", "") for r in results],
                 tool="capability_lookup.find",
-                library_dedup=_library_dedup_probe(query),
+                library_dedup=dedup,
             )
         return results
 
