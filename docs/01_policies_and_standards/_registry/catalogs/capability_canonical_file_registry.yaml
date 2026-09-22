@@ -44048,6 +44048,11 @@ creation_tokens:
   token: emotion-line-redblue-round-record-20260922
   created_by: st-emomine-20260922
   capability: emotion_line
+- file: docs/_working/emotion_line/exam_report_v1.md
+  token: emotion-line-exam-report-v1-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_line
+  merge_evaluation: "情绪线战役交付件（考试报告，同目录既有 capability 延续，不并）"
 - file: scripts/patrol/zcode_workspace_patrol.ps1
   token: zcode-patrol-zcode-workspace-patrol-20260922
   created_by: st-xhs-full-20260922
@@ -44131,5 +44136,13 @@ creation_tokens:
   token: ultimate-library-regen-reconciler-algo-flow-20260922
   created_by: st-ulib3-20260922
   capability: ultimate_library
-  merge_evaluation: "ALGO_FLOW 外锚 yaml 单文件锚批（library_regen_reconciler.py 外部真源视图），零旧条目替代"
+- file: schemas/categories/market/market_emotion_index.py
+  token: emotion-index-schema-market-emotion-index-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_index_schema
+- file: docs/03_modules/MOD-ALT-EMOTION-INDEX-BUILDER.md
+  token: emotion-index-blueprint-mod-alt-emotion-index-builder-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_index_blueprint
+  merge_evaluation: "模块蓝图指针件（MOD-ALT-EMOTION-INDEX-BUILDER），depgraph 蓝图查找约定要求，仅本文件"
 di_seam_exemptions: []
