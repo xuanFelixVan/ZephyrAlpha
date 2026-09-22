@@ -11897,6 +11897,43 @@ datasets:
   code_symbol: null
   code_fingerprint: null
 
+- dataset_id: DS-305
+  entity_name: c1_market.stock_daily_basic
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: clickhouse_table
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 每日基本面（stock_daily_basic，日频换手率/量/市值等指标；705 万行，2026-09
+    批9 回填）；板块拥挤度标尺原料（sector_line 盘点册 §12.1 换手聚合）
+  valid_since: null
+  module_id: MOD-L00-004
+  name: c1_market.stock_daily_basic
+  name_zh: 每日基本面
+  status: active
+  version: 1.0.0
+  created_at: '2026-09-23'
+  updated_at: '2026-09-23'
+  owner: MOD-L00-004
+  produced_by_source: null
+  survivorship_free: null
+  pit_available: null
+  earnings_lag_days:
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days:
+  drift_detector: none
+  entry_role: reference
+  applies_to: []
+  tags: []
+  algorithm_status: not_applicable
+  evidence: ''
+  code_symbol: null
+  code_fingerprint: null
+
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline

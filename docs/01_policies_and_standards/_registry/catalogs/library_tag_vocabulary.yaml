@@ -373,6 +373,7 @@ values:
   - 陆股通
   - 外资
   - northbound
+  - 北向持仓
   match_tokens:
   - northbound_hold_snapshot
 - value: 杠杆
@@ -412,6 +413,9 @@ values:
   aliases:
   - 十大股东
   - holdings
+  - 股东户数
+  match_tokens:
+  - shareholder_count
 - value: 限售解禁
   group: 资金筹码
   aliases:
@@ -887,3 +891,7 @@ values:
   group: 治理流程
   aliases:
   - hygiene
+- value: 每日基本面
+  group: 基本面宏观
+  match_tokens:
+  - stock_daily_basic

@@ -45,24 +45,31 @@ _VOCAB_REL: Final[str] = "docs/01_policies_and_standards/_registry/catalogs/libr
 def _load_lookup_axis() -> tuple[dict[str, str], dict[str, list[str]]]:
     """G15-① 别名轴装载（fail-open）：返回 (别名→标准词, 标准词→match_tokens)。
 
-    真源=library_tag_vocabulary.yaml（与 TAG-VOCAB 闸同源，yaml_utils.load_vocabulary_alias_map
-    双调用：aliases 层归一中文概念词，match_tokens 层桥到资产匹配 token如表名）。
+    真源=library_tag_vocabulary.yaml（与 TAG-VOCAB 闸同源）：aliases 层走
+    yaml_utils.load_vocabulary_alias_map；match_tokens 层直接读同一 SSOT 文件——
+    同一 token 可被多个标准词复用（如 stock_daily_basic 同喂拥挤度/每日基本面），
+    单键别名装载器会静默吞重键，故 match_tokens 走多值直读。
     词表缺失/结构漂移一律返回空映射（退化为原词直查=行为向前兼容）。
     """
+    from pathlib import Path as _Path  # noqa: PLC0415
+
+    import yaml  # noqa: PLC0415
+
     from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415 — 懒加载避免 import 期依赖
     from zephyr.shared.io.yaml_utils import load_vocabulary_alias_map  # noqa: PLC0415
 
     try:
-        _, alias_to_canonical = load_vocabulary_alias_map(REPO_ROOT / _VOCAB_REL, strict=False)
-        _, token_to_canonical = load_vocabulary_alias_map(
-            REPO_ROOT / _VOCAB_REL, alias_key="match_tokens", strict=False
-        )
+        vocab_path = _Path(REPO_ROOT) / _VOCAB_REL
+        _, alias_to_canonical = load_vocabulary_alias_map(vocab_path, strict=False)
+        canonical_to_tokens: dict[str, list[str]] = {}
+        for entry in (yaml.safe_load(vocab_path.read_text(encoding="utf-8")) or {}).get("values") or []:
+            word = entry.get("value") if isinstance(entry, dict) else None
+            tokens = entry.get("match_tokens") if isinstance(entry, dict) else None
+            if word and tokens:
+                canonical_to_tokens.setdefault(str(word), []).extend(str(t) for t in tokens)
+        return alias_to_canonical, canonical_to_tokens
     except Exception:  # noqa: BLE001 — fail-open：词轴故障不影响原词直查主路径
         return {}, {}
-    canonical_to_tokens: dict[str, list[str]] = {}
-    for token, word in token_to_canonical.items():
-        canonical_to_tokens.setdefault(word, []).append(token)
-    return alias_to_canonical, canonical_to_tokens
 
 
 def _expand_query(query: str) -> list[str]:
@@ -104,9 +111,8 @@ def lookup_assets(
     try:
         lib = Librarian(conn)
         terms = _expand_query(query)
-        merged: dict[str, dict[str, Any]] = {}
-        for term in terms:
-            for row in lib.lookup(
+        per_term = [
+            lib.lookup(
                 term,
                 limit=limit,
                 kind=kind,
@@ -114,10 +120,19 @@ def lookup_assets(
                 tags=tags,
                 status=status,
                 home_prefix=home_prefix,
-            ):
+            )
+            for term in terms
+        ]
+        # 逐深度轮转合并：同深度上原词（terms[0]）优先，展开词首命中不被原词长尾挤掉
+        merged: dict[str, dict[str, Any]] = {}
+        for depth in range(limit):
+            for rows in per_term:
+                if depth >= len(rows):
+                    continue
+                row = rows[depth]
                 merged.setdefault(row["asset_id"], row)
-            if len(merged) >= limit:
-                break
+                if len(merged) >= limit:
+                    return list(merged.values())[:limit]
         return list(merged.values())[:limit]
     finally:
         conn.close()
