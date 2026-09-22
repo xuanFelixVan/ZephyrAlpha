@@ -75,23 +75,28 @@ IBT-PROTOCOL-V1 跑完四窗+红蓝四向四轮（连续两轮 0），产出进�
 - 4440 弃用（判死=Owner 门位）或降资金
 - PP-001 配比表数值（此前 Owner 批的是演示权重，生产配比待定）
 
-## §5 提交状态与落地核验（接手第一件事）
+## §5 提交状态与落地核验（接手第一件事——最终态 2026-09-22 17:00）
 
-本战役终批=**q-20260922-st-integrated-bt-20260922-0006**（40 件快照袋，DCR/Gitignore
-双预验零违规），在共享 serializer 处理链中（多会话夜班积压，非卡死）。
+**已落 HEAD（dev）**：
+- 3050d67（接手批）= 五册+台账+本交接包+attribution/matrix yaml+redblue×4+LOGS（14 件核心知识资产）
+- 739655a（收口批）= 交接包/交付报告终版+capability 册 token（001-010）
+- `git log --all --oneline --grep IBT` / `git log -- docs/_working/integrated_backtest` 核验
 
-核验命令：
-```
-git log --all --oneline --grep "IBT"        # 有输出=已落地
-python scripts/commit_queue.py --queue-root .runtime/commit_queue status   # 看 q-0006 状态
-git log -1 --name-only | grep integrated     # 落地后核实归属未吸收他人
-```
-若 q-0006 死亡：读 .runtime/commit_queue/dead/q-*ibt*-*0006.json 的 dead_reason 修正后
-`python scripts/commit_queue.py --queue-root .runtime/commit_queue requeue <qid>`。
-历史上 q-0001 死 DCR（docs/_working 禁 .json）/q-0002 死 gitignore/q-0004 死漏网根
-json/q-0005 死复现脚本 .py——q-0006 已全部规避，若仍死于 DCR 请按 dead_reason 逐条对齐。
-**注意：主区工作区 docs/_working/integrated_backtest/ 为 untracked 态=与快照袋同内容，
-勿手工 git add 走直连（会绕过门禁且与队列重复）；一切以队列落地为准。**
+**未落尾部（22 件审计明细副本+2 处注册表行，盘上完好，属锦上添花非阻断）**：
+- `docs/_working/integrated_backtest/artifacts/` 下 run_summary.yaml×4+sensitivity.yaml×2+nav/trades csv×16
+  （**核心数字已全部在 HEAD 的 yaml 汇总与五册报告中**，csv 只是逐笔明细粒度）
+- capability 册 token 015-027（27 行，工作区已补，覆盖 artifacts 全部文件）
+- module_translation_registry 4 条（工具件大白话，工具件已退出交付面，此 4 条可删可留）
+
+**接手处置（三选一，推荐①）**：
+① Max 施工方案第一批新会话正常 claim 这批文件走正门提交（内容已过 DCR/token 预验；历史死因谱系
+   13 轮全录于台账 §3：DCR-json/gitignore/R5 后缀/漏 json/py 出库/CH-FINAL/DEPGRAPH/TRANSLATION/
+   CREATE-GUARD×2/复杂度/NO-BARE-SQL/TTL 值/基底冲突——新会话从干净 staged 走步可绕过历史坑）
+② 让维护班/gateaudit 接手批自然吸收（他们正在批量落地他会话遗产）
+③ 认定 csv 明细不入库（删盘面副本，只留 HEAD 的 yaml 汇总）——需 Owner 点头（净删）
+
+**勿做**：勿 requeue dead/ 里 q-0001~0027 旧死袋（配方过时，内容已被上述路径覆盖）；勿直连
+git add/commit（绕门禁+与队列竞态）。
 
 ## §6 必看文件路径（全相对 D:\ZephyrAlpha）
 
