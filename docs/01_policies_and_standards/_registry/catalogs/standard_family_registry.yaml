@@ -1,0 +1,79 @@
+# [A_registry] registry_id=REG-STD-FAMILY-001 | tier=tier_1_governance | maintenance=auto（scripts/governance/standards_governance/generate_standard_family_registry.py）
+# 本文件是**派生自动册**：唯一写者=上述生成器，手工编辑会在下次再生时被覆盖
+# （宪法 §9.5 静态清单禁手工维护 / §4.3 计数用字段不写死在散文）。
+registry_id: REG-STD-FAMILY-001
+name: 标准↔治理族派生注册表
+tier: tier_1_governance
+format: yaml
+maintenance: auto
+generated_by: scripts/governance/standards_governance/generate_standard_family_registry.py
+derived_from:
+- config/standards.yaml
+- docs/01_policies_and_standards/_registry/vocabularies/governance_family_vocabulary.yaml
+- docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+counting_rule: entries 条目数 = config/standards.yaml 中带 std_id 的条目数（生成器现算）
+total_standards: 4
+total_families: 4
+families_declared: 0
+family_unassigned: 4
+illegal_family_entries: []
+family_unassigned_std_ids:
+- STD-LIVE-REDLINE-001
+- STD-SIM-ACCESS-001
+- STD-SIM-ACCESS-002
+- STD-SWITCH-001
+legal_family_values_from_vocabulary:
+- A
+- B
+- C
+- D
+status_distribution:
+  draft: 2
+  frozen: 2
+entries:
+- std_id: STD-SIM-ACCESS-001
+  name_zh: 模拟盘准入组合门
+  version: 1
+  status: frozen
+  frozen_at: '2026-09-17'
+  family: null
+  family_source: undeclared
+  family_legal: false
+  cited_in_rulings: 0
+  reexam_or_rejected_evidence: 0
+  source_of_truth: config/standards.yaml
+- std_id: STD-LIVE-REDLINE-001
+  name_zh: 实盘红线分级（骨架 §9 v0 草案）
+  version: 1
+  status: draft
+  frozen_at: null
+  family: null
+  family_source: undeclared
+  family_legal: false
+  cited_in_rulings: 0
+  reexam_or_rejected_evidence: 0
+  source_of_truth: config/standards.yaml
+- std_id: STD-SWITCH-001
+  name_zh: 策略切换统计判据（整装承重墙，S13 六问裁定 v1 提案）
+  version: 1
+  status: draft
+  frozen_at: null
+  family: null
+  family_source: undeclared
+  family_legal: false
+  cited_in_rulings: 5
+  reexam_or_rejected_evidence: 1
+  source_of_truth: config/standards.yaml
+- std_id: STD-SIM-ACCESS-002
+  name_zh: 模拟盘准入组合门 v2（S5 定尺提案——修 STD-SIM-ACCESS-001 的 DSR 口径自相矛盾）
+  version: 1
+  status: frozen
+  frozen_at: '2026-09-18'
+  family: null
+  family_source: undeclared
+  family_legal: false
+  cited_in_rulings: 3
+  reexam_or_rejected_evidence: 1
+  source_of_truth: config/standards.yaml
+honest_gap_note: 'family_unassigned>0 表示 config/standards.yaml 尚无逐条族声明字段——本册不臆造归属，缺口以计数形式在册可见；补齐输入=在 standards.yaml
+  每条 STD-* 增 family: A|B|C|D（合法域来自 governance_family_vocabulary.yaml），再生成本册即归零。'

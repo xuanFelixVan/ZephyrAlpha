@@ -139,6 +139,21 @@ ORDER BY asset_id
 LIMIT %s
 """
 
+# 组合过滤子句（T5 两轴过滤器；全部模块级常量，NO-BARE-SQL——由 Librarian.lookup 按
+# 传入过滤器拼接在 _SQL_LOOKUP 的 WHERE 之后；limit 占位符由 _SQL_LOOKUP 自带时不可
+# 拼接，故过滤态改用 _SQL_LOOKUP_COMPOSED 基座）
+_SQL_LOOKUP_COMPOSED: Final[str] = """
+SELECT asset_id, kind, home, status, title, built_at
+FROM lib_assets
+WHERE (asset_id ILIKE %s OR home ILIKE %s OR title ILIKE %s)
+"""
+_SQL_LOOKUP_FILTER_KIND: Final[str] = " AND kind = %s"
+_SQL_LOOKUP_FILTER_OWNER: Final[str] = " AND owner_domain = %s"
+_SQL_LOOKUP_FILTER_STATUS: Final[str] = " AND status = %s"
+_SQL_LOOKUP_FILTER_TAG: Final[str] = " AND %s = ANY(tags)"
+_SQL_LOOKUP_FILTER_HOME_PREFIX: Final[str] = " AND home LIKE %s"
+_SQL_LOOKUP_TAIL: Final[str] = " ORDER BY asset_id LIMIT %s"
+
 
 def derive_asset_id(kind: str, home: str) -> str:
     """由 kind+home 派生稳定 asset_id（纯函数；永不复用纪律由登记层保证）。

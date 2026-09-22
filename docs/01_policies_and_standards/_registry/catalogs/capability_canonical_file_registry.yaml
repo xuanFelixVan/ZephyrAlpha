@@ -28783,6 +28783,21 @@ creation_tokens:
   token: algo-flow-externalize-crisis-gate-20260921
   created_by: st-residual-20260922
   capability: algo_flow_externalize
+- file: docs/03_modules/_domain_ex_sor/algo_flow/td3_agent.yaml
+  token: algo-flow-externalize-td3-agent-20260922
+  created_by: st-residual-20260922
+  capability: algo_flow_externalize
+  merge_evaluation: "rl_trainer两件ALGO_FLOW外化为externalize生成器产出，同真源唯一"
+- file: docs/03_modules/_domain_ex_sor/algo_flow/trainer.yaml
+  token: algo-flow-externalize-trainer-20260922
+  created_by: st-residual-20260922
+  capability: algo_flow_externalize
+- file: docs/03_modules/_domain_ex_sor/algo_flow/rl_trainer__init__.yaml
+  token: algo-flow-externalize-rl-trainer--init---20260922
+  created_by: st-residual-20260922
+  capability: algo_flow_externalize
+  merge_evaluation: "rl_trainer包入口ALGO_FLOW外化生成器产出，同真源唯一"
+  merge_evaluation: "rl_trainer两件ALGO_FLOW外化为externalize生成器产出，同真源唯一"
   merge_evaluation: "crisis_gate ALGO_FLOW 外化件为 externalize_algo_flow 生成器产出，同真源唯一无并项"
 - file: scripts/data/backfill_auction_snapshot_history.py
   token: auction-backfill-backfill-auction-snapshot-history-20260916
@@ -40791,26 +40806,6 @@ creation_tokens:
   token: rule-audit-construction-register-gate-fulltree-audit-task-20260919
   created_by: st-final3-20260919
   capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/a2_handoff/genpatch.py
-  token: rule-audit-construction-genpatch-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/a2_handoff/rules_m1_repoint.patch
-  token: rule-audit-construction-rules-m1-repoint-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/a2_handoff/rules_repoint_rows.json
-  token: rule-audit-construction-rules-repoint-rows-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/dossiers_v2_index.json
-  token: rule-audit-construction-dossiers-v2-index-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/dossiers_v2_summary.json
-  token: rule-audit-construction-dossiers-v2-summary-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
 - file: scripts/ops/schedule_overview.py
   token: schedule-overview-schedule-overview-20260919
   created_by: st-final3-20260919
@@ -42213,8 +42208,7 @@ creation_tokens:
   token: dloop-campaign-02-state-vocabulary-unification-20260921
   created_by: st-dloop-20260921
   capability: dloop_campaign
-  merge_evaluation: "丁线词表统一决策卡，四路挖矿综合，无同真源可派生项"
-  merge_evaluation: "丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
+  merge_evaluation: "丁线词表统一决策卡，四路挖矿综合，无同真源可派生项；丁线扩面交付物（未挂清单+C类设计稿），Owner扩面令2026-09-21，无同真源可派生项"
 - file: src/zephyr/plan_engine/__init__.py
   token: dloop-master-switch---init---20260920
   created_by: st-dloop-20260921
@@ -43115,6 +43109,46 @@ creation_tokens:
   token: tc10-owner-report-20260921
   created_by: st-taskcards-exec-20260921
   capability: recovered_task_cards
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/full_report_20260921.md
+  token: recovered-task-cards-full-report-20260921-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "TC-01 输入件从.tmp TTL区抢救promote，memo_recon战役证据链原件，无重复真源（tmp原件到期自清）"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/report.md
+  token: recovered-task-cards-report-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "TC-01 输入件从.tmp TTL区抢救promote，memo_recon战役证据链原件，无重复真源（tmp原件到期自清）"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/review.md
+  token: recovered-task-cards-review-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "TC-01 输入件从.tmp TTL区抢救promote，memo_recon战役证据链原件，无重复真源（tmp原件到期自清）"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/review_of_review_20260921.md
+  token: recovered-task-cards-review-of-review-20260921-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/memo_recon_full_report_20260921.md
+  token: recovered-task-cards-memo-recon-full-report-20260921-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "N-16 基名重名合规改名（memo_recon_ 前缀），TC-01 输入件同件改名非新增；旧名 token 留 HEAD 历史无害"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/memo_recon_report.md
+  token: recovered-task-cards-memo-recon-report-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "N-16 基名重名合规改名（memo_recon_ 前缀），TC-01 输入件同件改名非新增；旧名 token 留 HEAD 历史无害"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/memo_recon_review.md
+  token: recovered-task-cards-memo-recon-review-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "N-16 基名重名合规改名（memo_recon_ 前缀），TC-01 输入件同件改名非新增；旧名 token 留 HEAD 历史无害"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/memo_recon_review_of_review_20260921.md
+  token: recovered-task-cards-memo-recon-review-of-review-20260921-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "N-16 基名重名合规改名（memo_recon_ 前缀），TC-01 输入件同件改名非新增；旧名 token 留 HEAD 历史无害"
+  merge_evaluation: "TC-01 输入件从.tmp TTL区抢救promote，memo_recon战役证据链原件，无重复真源（tmp原件到期自清）"
   merge_evaluation: "TC-10步骤0 报到清单：六项触发状态+四件Owner手办置顶呈报"
 - file: docs/_working/archive/2026-09/residual_construction/m1_m11_vein_register.md
   token: m1-m11-vein-register-20260921
@@ -43400,6 +43434,31 @@ creation_tokens:
   token: dloop-algo-flow-fw-backtest-20260921
   created_by: st-dloop-20260921
   capability: dloop_algo_flow
+- file: docs/03_modules/_domain_alt_data/algo_flow/cohort_daily_ledger.yaml
+  token: dloop-algo-flow-cohort-daily-ledger-20260922
+  created_by: st-dloop-20260921
+  capability: dloop_algo_flow
+  merge_evaluation: "cohort两模块ALGO_FLOW外部真源yaml，无同真源可派生项"
+- file: docs/03_modules/_domain_alt_data/algo_flow/cohort_daily_writer.yaml
+  token: dloop-algo-flow-cohort-daily-writer-20260922
+  created_by: st-dloop-20260921
+  capability: dloop_algo_flow
+- file: docs/03_modules/_domain_shared/algo_flow/vocab__init__.py.yaml
+  token: dloop-algo-flow-vocab--init--py-20260922
+  created_by: st-dloop-20260921
+  capability: dloop_algo_flow
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/daily_gate_snapshot.yaml
+  token: dloop-algo-flow-daily-gate-snapshot-20260922
+  created_by: st-dloop-20260921
+  capability: dloop_algo_flow
+- file: docs/03_modules/_domain_shared/algo_flow/market_state.yaml
+  token: dloop-algo-flow-market-state-20260922
+  created_by: st-dloop-20260921
+  capability: dloop_algo_flow
+  merge_evaluation: "market_state ALGO_FLOW外部真源"
+  merge_evaluation: "daily_gate_snapshot ALGO_FLOW外部真源"
+  merge_evaluation: "vocab包ALGO_FLOW外部真源"
+  merge_evaluation: "cohort两模块ALGO_FLOW外部真源yaml，无同真源可派生项"
   merge_evaluation: "fw_backtest ALGO_FLOW 外部真源 yaml（drafter 机生），无同真源可派生项"
   merge_evaluation: "丁线扩面两src模块ALGO_FLOW外部真源yaml（drafter机生），无同真源可派生项"
 - file: "docs/_working/integrated_backtest/IBT-CAMPAIGN-LEDGER.md"
@@ -43465,10 +43524,6 @@ creation_tokens:
   capability: live_readiness
   merge_evaluation: "实盘准入四件套（检查表/SOP草案/异常手册/门禁设计），替代散落的准入判据碎片引用，Owner 点单后归档"
   merge_evaluation: "offsite 月度手册（a3 6.6 交付件，裁定#380⑥ Owner 自办制操作载体），零既有条目可合并"
-- file: docs/_working/daily_loop_campaign/02_state_vocabulary_unification.md
-  token: dloop-campaign-02-state-vocabulary-unification-20260921
-  created_by: st-dloop-20260921
-  capability: dloop_campaign
 - file: docs/_working/daily_loop_campaign/03_self_ruling_vocab_ssot.md
   token: dloop-campaign-03-self-ruling-vocab-ssot-20260921
   created_by: st-dloop-20260921
@@ -43640,5 +43695,1287 @@ creation_tokens:
   token: auto-scaffold-b10_final_delivery_report-20260922
   created_by: st-b10-final-20260922
   capability: b10_final_delivery_report
+- file: docs/_working/residual_resume/00_review.md
+  token: residual-resume-00-review-20260922
+  created_by: st-residual-20260922
+  capability: residual_resume
+  merge_evaluation: "tc_08卡形式收口三件零记录缺口补齐件，无同真源可并项"
+- file: docs/_working/residual_resume/01_plan.md
+  token: residual-resume-01-plan-20260922
+  created_by: st-residual-20260922
+  capability: residual_resume
+  merge_evaluation: "tc_08卡形式收口三件零记录缺口补齐件，无同真源可并项"
   merge_evaluation: "同真源可派生：a0/a2/a4 为 disk_reorg 战役母令/集成简报/放行信号执行件，随战役文档全家福同批补登记（q-0006 欠账，st-disk-final 代落地）"
+- file: "scripts/backtest/sim_daily_runner.py"
+  token: "sim-launch-sim-daily-runner-20260922"
+  created_by: "st-sim-launch-20260922"
+  capability: "sim_launch"
+  merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: "schemas/categories/sim_daily_report.py"
+  token: "sim-launch-sim-daily-report-20260922"
+  created_by: "st-sim-launch-20260922"
+  capability: "sim_launch"
+  merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: "scripts/ch/apply_sim_daily_report_ddl.py"
+  token: "sim-launch-apply-sim-daily-report-ddl-20260922"
+  created_by: "st-sim-launch-20260922"
+  capability: "sim_launch"
+  merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: "tests/backtest/test_sim_daily_runner.py"
+  token: "sim-launch-test-sim-daily-runner-20260922"
+  created_by: "st-sim-launch-20260922"
+  capability: "sim_launch"
+  merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: "docs/_working/sim_launch/00_campaign_ledger.md"
+  token: "sim-launch-campaign-ledger-20260922"
+  created_by: "st-sim-launch-20260922"
+  capability: "sim_launch"
+  merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: "docs/_working/sim_launch/delivery_report.md"
+  token: "sim-launch-delivery-report-20260922"
+  created_by: "st-sim-launch-20260922"
+  capability: "sim_launch"
+  merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: "docs/_working/sim_launch/first_daily_report_20260921.md"
+  token: "sim-launch-first-daily-report-20260921-20260922"
+  created_by: "st-sim-launch-20260922"
+  capability: "sim_launch"
+  merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: "docs/_working/sim_launch/crypto_fastlane_eval.md"
+  token: "sim-launch-crypto-fastlane-eval-20260922"
+  created_by: "st-sim-launch-20260922"
+  capability: "sim_launch"
+  merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: "docs/_working/sim_launch/plan_order_mapping_proposal.md"
+  token: "sim-launch-plan-order-mapping-proposal-20260922"
+  created_by: "st-sim-launch-20260922"
+  capability: "sim_launch"
+- file: docs/_working/disk_reorg_campaign/a6_remaining_work_order.md
+  token: disk-reorg-handover-a6-remaining-work-order-20260922
+  created_by: st-gateaudit-20260922
+  capability: disk_reorg_handover
+  merge_evaluation: "他会话中断批接手归位：磁盘重组战役遗留工作令，非第二真源"
+- file: docs/_working/disk_reorg_campaign/vhdx_precheck_20260922.md
+  token: disk-reorg-handover-vhdx-precheck-20260922-20260922
+  created_by: st-gateaudit-20260922
+  capability: disk_reorg_handover
+  merge_evaluation: "他会话中断批接手归位：磁盘重组战役遗留工作令，非第二真源"
+  merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: docs/03_modules/_domain_library/algo_flow/__init__.yaml
+  token: ultimate-library---init---20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/_working/ultimate_library/12_ulib3_directive.md
+  token: ultimate-library-12-ulib3-directive-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: scripts/governance/generators/library_hygiene.py
+  token: ultimate-library-library-hygiene-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: src/zephyr/library/collectors/logs_collector.py
+  token: ultimate-library-logs-collector-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: src/zephyr/library/library_regen_reconciler.py
+  token: ultimate-library-library-regen-reconciler-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: scripts/backup/restore_drill.py
+  token: ultimate-library-restore-drill-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ulib3 T2 恢复演练闭环，扩展现有 backup 体系职责，无平行登记表"
+  merge_evaluation: "ulib3 T4 post-commit 事件触发刷新，收编手动 regen 散件，无平行登记表"
+  merge_evaluation: "ulib3 T10 日志抽屉族级入册，收编 registry_of_logs 连线，无平行登记表"
+  merge_evaluation: "ulib3 T9 月度卫生命令，收编散在 TTL 清点脚本职责，无平行登记表"
+  merge_evaluation: "ulib3 战役指令锚点，收编会话内指令散件，无平行登记表"
+- file: docs/_working/sim_launch/01_ruling_plan_mapping_and_orphans.md
+  token: sim-launch-01-ruling-plan-mapping-and-orphans-20260922
+  created_by: st-sim-launch-20260922
+  capability: sim_launch
+  merge_evaluation: "决策卡与提案表分工：提案=待批草案，决策卡=已裁记录，无同真源可并"
+- file: "docs/_working/integrated_backtest/IBT-HANDOFF-TO-MAX.md"
+  token: "auto-ibt-20260922-008"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/ibt_attribution.yaml"
+  token: "auto-ibt-20260922-009"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/ibt_data_matrix.yaml"
+  token: "auto-ibt-20260922-010"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: src/zephyr/gov_enforcement/commit_gates/tag_vocab_gate.py
+  token: library-tag-vocab-tag-vocab-gate-20260922
+  created_by: st-ulib3-20260922
+  capability: library_tag_vocab
+- file: src/zephyr/gov_enforcement/commit_gates/library_blood_flesh_gate.py
+  token: library-tag-vocab-library-blood-flesh-gate-20260922
+  created_by: st-ulib3-20260922
+  capability: library_tag_vocab
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/t/tag_vocab_gate.yaml
+  token: library-tag-vocab-tag-vocab-gate-20260922
+  created_by: st-ulib3-20260922
+  capability: library_tag_vocab
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/l/library_blood_flesh_gate.yaml
+  token: library-tag-vocab-library-blood-flesh-gate-20260922
+  created_by: st-ulib3-20260922
+  capability: library_tag_vocab
+- file: docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml
+  token: library-tag-vocab-library-tag-vocabulary-20260922
+  created_by: st-ulib3-20260922
+  capability: library_tag_vocab
+- file: docs/01_policies_and_standards/sop/library_sop/blood_flesh_cataloging_sop.md
+  token: library-tag-vocab-blood-flesh-cataloging-sop-20260922
+  created_by: st-ulib3-20260922
+  capability: library_tag_vocab
+  merge_evaluation: "ulib3 T7/T8 词库收编+血肉闸前置件，扩展现有登记面无平行登记表"
+  merge_evaluation: "ulib3 T7/T8 词库收编+血肉闸前置件，扩展现有登记面无平行登记表"
+  merge_evaluation: "ulib3 T7/T8 词库收编+血肉闸前置件，扩展现有登记面无平行登记表"
+  merge_evaluation: "ulib3 T7/T8 词库收编+血肉闸前置件，扩展现有登记面无平行登记表"
+  merge_evaluation: "ulib3 T7/T8 词库收编+血肉闸前置件，扩展现有登记面无平行登记表"
+  merge_evaluation: "ulib3 T7/T8 词库收编+血肉闸前置件，扩展现有登记面无平行登记表"
+- file: "docs/_working/integrated_backtest/artifacts/IBT-RUN-LOGS.md"
+  token: "auto-ibt-20260922-015"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_HOLDOUT/nav_IBT-A.csv"
+  token: "auto-ibt-20260922-016"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_HOLDOUT/nav_IBT-B.csv"
+  token: "auto-ibt-20260922-017"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_HOLDOUT/run_summary.yaml"
+  token: "auto-ibt-20260922-018"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_HOLDOUT/trades_IBT-A.csv"
+  token: "auto-ibt-20260922-019"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_HOLDOUT/trades_IBT-B.csv"
+  token: "auto-ibt-20260922-020"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_IS/nav_IBT-A.csv"
+  token: "auto-ibt-20260922-021"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_IS/nav_IBT-B.csv"
+  token: "auto-ibt-20260922-022"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_IS/redblue_round2.yaml"
+  token: "auto-ibt-20260922-023"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_IS/redblue_round3.yaml"
+  token: "auto-ibt-20260922-024"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_IS/run_summary.yaml"
+  token: "auto-ibt-20260922-025"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_IS/sensitivity.yaml"
+  token: "auto-ibt-20260922-026"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_IS/trades_IBT-A.csv"
+  token: "auto-ibt-20260922-027"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_IS/trades_IBT-B.csv"
+  token: "auto-ibt-20260922-028"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_OOS/nav_IBT-A.csv"
+  token: "auto-ibt-20260922-029"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_OOS/nav_IBT-B.csv"
+  token: "auto-ibt-20260922-030"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_OOS/redblue_round1.yaml"
+  token: "auto-ibt-20260922-031"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_OOS/redblue_round4.yaml"
+  token: "auto-ibt-20260922-032"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_OOS/run_summary.yaml"
+  token: "auto-ibt-20260922-033"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_OOS/sensitivity.yaml"
+  token: "auto-ibt-20260922-034"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_OOS/trades_IBT-A.csv"
+  token: "auto-ibt-20260922-035"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_OOS/trades_IBT-B.csv"
+  token: "auto-ibt-20260922-036"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_POSTD/nav_IBT-A.csv"
+  token: "auto-ibt-20260922-037"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_POSTD/nav_IBT-B.csv"
+  token: "auto-ibt-20260922-038"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_POSTD/run_summary.yaml"
+  token: "auto-ibt-20260922-039"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_POSTD/trades_IBT-A.csv"
+  token: "auto-ibt-20260922-040"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/artifacts/W_POSTD/trades_IBT-B.csv"
+  token: "auto-ibt-20260922-041"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: docs/_working/xhs_full_construction/00_owner_directive.md
+  token: xhs-full-construction-00-owner-directive-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/05_alpha158_handler_paradigm.md
+  token: xhs-full-construction-05-alpha158-handler-paradigm-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档并入collection_intake台账域；05/21两件为工单#5/#21唯一交付物无重复真源"
+- file: docs/_working/xhs_full_construction/21_counterparty_risk_register.md
+  token: xhs-full-construction-21-counterparty-risk-register-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/07b_07c_comment_pool_cards.md
+  token: xhs-full-construction-07b-07c-comment-pool-cards-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "工单#1/#7B/#4 假设卡唯一交付物；队列凭证在 lane_c_candidates.csv 同批；收官随目录归档并入 collection_intake 域"
+- file: docs/_working/xhs_full_construction/10_huanfang_ten_hypothesis_cards.md
+  token: xhs-full-construction-10-huanfang-ten-hypothesis-cards-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
+  token: xhs-full-construction-comment-pool-alpha101-cards-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/alpha158_handler_paradigm.md
+  token: xhs-full-construction-alpha158-handler-paradigm-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "N-13 合规改名（数字前缀改字母开头）同件改名非新增；21 对手方清单 ttl 修正 task_bound；改名后旧名 token 留 HEAD 作历史无害"
+- file: docs/_working/xhs_full_construction/counterparty_risk_register.md
+  token: xhs-full-construction-counterparty-risk-register-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "N-13 合规改名（数字前缀改字母开头）同件改名非新增；21 对手方清单 ttl 修正 task_bound；改名后旧名 token 留 HEAD 作历史无害"
+- file: docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
+  token: xhs-full-construction-huanfang-ten-hypothesis-cards-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/proposal_pf_alloc_wiring.md
+  token: xhs-full-construction-proposal-pf-alloc-wiring-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/pcr_e4_evidence.md
+  token: xhs-full-construction-pcr-e4-evidence-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/campaign_ledger.md
+  token: xhs-full-construction-campaign-ledger-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "总包令施工目录交付物 token（N-13 合规名）；随战役归档并入 collection_intake 域"
+  merge_evaluation: "PCR假设卡E4出证与考试件唯一载体；标的深史前置解锁后原样重跑；随目录归档"
+  merge_evaluation: "工单#9+#16 立项文档唯一交付物，批文前零接电施工；批文后归 pf_alloc 线真源"
+  merge_evaluation: "N-13 合规改名（数字前缀改字母开头）同件改名非新增；21 对手方清单 ttl 修正 task_bound；改名后旧名 token 留 HEAD 作历史无害"
+  merge_evaluation: "07b_07c 文件名 N-13 合规改名（字母开头），同一交付物改名非新增，与旧名 token 合并评估=同件改名"
+  merge_evaluation: "工单#1/#7B/#4 假设卡唯一交付物；队列凭证在 lane_c_candidates.csv 同批；收官随目录归档并入 collection_intake 域"
+  merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档并入collection_intake台账域；05/21两件为工单#5/#21唯一交付物无重复真源"
+  merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档，并入collection_intake台账域，无重复真源"
+- file: "docs/_working/sector_line/sector_external_methodology.md"
+  token: "secmine-ext-methodology-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/sector_internal_inventory.md"
+  token: "secmine-internal-inventory-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/sector_layer_skeleton_v0.md"
+  token: "secmine-skeleton-v0-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/sector_prereg_exam_cards_v0.md"
+  token: "secmine-prereg-cards-v0-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/sector_gap_list_and_construction_proposal.md"
+  token: "secmine-gap-list-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/sector_redblue_round_record.md"
+  token: "secmine-redblue-record-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: docs/_working/emotion_line/emotion_index_skeleton_v0.md
+  token: emotion-line-emotion-index-skeleton-v0-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_line
+  merge_evaluation: "情绪线挖矿班战役交付六件（全新对象，无同真源可派生/无退役对象/跨域不同对象不并）"
+- file: docs/_working/emotion_line/external_methodology_review.md
+  token: emotion-line-external-methodology-review-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_line
+  merge_evaluation: "情绪线挖矿班战役交付六件（全新对象，无同真源可派生/无退役对象/跨域不同对象不并）"
+- file: docs/_working/emotion_line/gap_list_and_construction_proposal.md
+  token: emotion-line-gap-list-and-construction-proposal-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_line
+  merge_evaluation: "情绪线挖矿班战役交付六件（全新对象，无同真源可派生/无退役对象/跨域不同对象不并）"
+- file: docs/_working/emotion_line/internal_inventory.md
+  token: emotion-line-internal-inventory-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_line
+  merge_evaluation: "情绪线挖矿班战役交付六件（全新对象，无同真源可派生/无退役对象/跨域不同对象不并）"
+- file: docs/_working/emotion_line/prereg_exam_cards_v0.md
+  token: emotion-line-prereg-exam-cards-v0-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_line
+  merge_evaluation: "情绪线挖矿班战役交付六件（全新对象，无同真源可派生/无退役对象/跨域不同对象不并）"
+- file: docs/_working/emotion_line/redblue_round_record.md
+  token: emotion-line-redblue-round-record-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_line
+- file: docs/_working/emotion_line/exam_report_v1.md
+  token: emotion-line-exam-report-v1-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_line
+  merge_evaluation: "情绪线战役交付件（考试报告，同目录既有 capability 延续，不并）"
+- file: scripts/patrol/zcode_workspace_patrol.ps1
+  token: zcode-patrol-zcode-workspace-patrol-20260922
+  created_by: st-xhs-full-20260922
+  capability: zcode_patrol
+- file: schemas/categories/market/market_option_daily_stats.py
+  token: option-daily-stats-market-option-daily-stats-20260922
+  created_by: st-xhs-full-20260922
+  capability: option_daily_stats
+- file: scripts/data/backfill_option_daily_stats.py
+  token: option-daily-stats-backfill-option-daily-stats-20260922
+  created_by: st-xhs-full-20260922
+  capability: option_daily_stats
+- file: scripts/audit/pcr_e4_exam.py
+  token: option-daily-stats-pcr-e4-exam-20260922
+  created_by: st-xhs-full-20260922
+  capability: option_daily_stats
+  merge_evaluation: "工单#3+#14 PCR E4出证唯一考试件（只读重放）；标的深史前置解锁后原样重跑，与 backfill 件同能力族互补非重复"
+  merge_evaluation: "工单#3+#14 期权官方日统计历史回补唯一执行件（一次性深回补+断点续跑）；与增量任务同源互补非重复"
+  merge_evaluation: "工单#3+#14 期权PCR新表DDL真源；与option_kline/iv_surface跨域不同对象不并（行情级vs官方统计级），无重复真源"
+  merge_evaluation: "工单#24② ZCode上传面巡检唯一执行件；与IOCheck月车共载，无平行登记面"
+  merge_evaluation: "情绪线挖矿班战役交付六件（全新对象，无同真源可派生/无退役对象/跨域不同对象不并）"
+- file: "docs/_working/sector_line/sector_external_methodology.md"
+  token: "secmine-ext-methodology-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/sector_internal_inventory.md"
+  token: "secmine-internal-inventory-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/sector_prereg_exam_cards_v0.md"
+  token: "secmine-prereg-cards-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/sector_gap_list_and_construction_proposal.md"
+  token: "secmine-gap-list-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/sector_redblue_round_record.md"
+  token: "secmine-redblue-record-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/external_methodology.md"
+  token: "secmine-ext-methodology-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/internal_inventory.md"
+  token: "secmine-internal-inventory-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/prereg_exam_cards_v0.md"
+  token: "secmine-prereg-cards-v0-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/gap_list_and_construction_proposal.md"
+  token: "secmine-gap-list-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/redblue_round_record.md"
+  token: "secmine-redblue-record-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+- file: src/zephyr/alt_data/emotion_index_builder.py
+  token: auto-scaffold-emotion_index_builder-20260922
+  created_by: scaffold.py
+  capability: emotion_index_builder
+- file: src/zephyr/intelligence/news_llm_scorer.py
+  token: auto-scaffold-news_llm_scorer-20260922
+  created_by: scaffold.py
+  capability: news_llm_scorer
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: docs/03_modules/_domain_library/algo_flow/library_regen_reconciler.yaml
+  token: ultimate-library-regen-reconciler-algo-flow-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: schemas/categories/market/market_emotion_index.py
+  token: emotion-index-schema-market-emotion-index-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_index_schema
+- file: docs/03_modules/MOD-ALT-EMOTION-INDEX-BUILDER.md
+  token: emotion-index-blueprint-mod-alt-emotion-index-builder-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_index_blueprint
+  merge_evaluation: "模块蓝图指针件（MOD-ALT-EMOTION-INDEX-BUILDER），depgraph 蓝图查找约定要求，仅本文件"
+- file: docs/03_modules/_domain_library/algo_flow/collectors/logs_collector.yaml
+  token: ultimate-library-logs-collector-algo-flow-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ALGO_FLOW 外锚 yaml（logs_collector.py 日志抽屉采集器外部真源视图），零旧条目替代"
+- file: docs/library/regulations.md
+  token: ultimate-library-regulations-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "七馆藏书规程页（T11 馆页群最后一件），零旧条目替代"
+- file: docs/03_modules/_domain_library/algo_flow/generators/library_hygiene.yaml
+  token: ultimate-library-hygiene-algo-flow-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ALGO_FLOW 外锚 yaml（library_hygiene.py 月度卫生命令外部真源视图），零旧条目替代"
+- file: docs/_working/rule_audit_campaign/a2_handoff/genpatch.py
+  token: rule-audit-construction-genpatch-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/a2_handoff/rules_m1_repoint.patch
+  token: rule-audit-construction-rules-m1-repoint-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/a2_handoff/rules_repoint_rows.json
+  token: rule-audit-construction-rules-repoint-rows-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/dossiers_v2_index.json
+  token: rule-audit-construction-dossiers-v2-index-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/_working/rule_audit_campaign/dossiers_v2_summary.json
+  token: rule-audit-construction-dossiers-v2-summary-20260919
+  created_by: st-final3-20260919
+  capability: rule_audit_construction
+- file: docs/03_modules/_domain_infrastructure/algo_flow/restore_drill.yaml
+  token: ultimate-library-restore-drill-algo-flow-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+- file: docs/_working/chain_piling_campaign/00_piling_minutes.md
+  token: chain-piling-campaign-00-piling-minutes-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/01_campaign_directive.md
+  token: chain-piling-campaign-01-campaign-directive-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/01_layer_charter.md
+  token: chain-piling-campaign-01-layer-charter-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  token: chain-piling-campaign-02-source-line-registry-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/03_graph_registry.md
+  token: chain-piling-campaign-03-graph-registry-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/04_construction_map.md
+  token: chain-piling-campaign-04-construction-map-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/a1_ledger.md
+  token: chain-piling-campaign-a1-ledger-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/infra_mining/10_intake_gate_design.md
+  token: chain-piling-campaign-10-intake-gate-design-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/infra_mining/11_template_generator_design.md
+  token: chain-piling-campaign-11-template-generator-design-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/infra_mining/12_unanswered_board_design.md
+  token: chain-piling-campaign-12-unanswered-board-design-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md
+  token: chain-piling-campaign-13-exam-backfill-loop-design-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/infra_mining/20_management_policy.md
+  token: chain-piling-campaign-20-management-policy-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/infra_mining/30_blindspot_audit.md
+  token: chain-piling-campaign-30-blindspot-audit-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/infra_mining/90_rb_w1_red.md
+  token: chain-piling-campaign-90-rb-w1-red-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/infra_mining/91_rb_w1_blue.md
+  token: chain-piling-campaign-91-rb-w1-blue-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/scripts/check_w6_batch.py
+  token: chain-piling-campaign-check-w6-batch-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/snapshots/question_batch_w6.json
+  token: chain-piling-campaign-question-batch-w6-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+- file: docs/_working/chain_piling_campaign/snapshots/registry_latest.yaml
+  token: chain-piling-campaign-registry-latest-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+- file: docs/_working/chain_piling_campaign/snapshots/question_batch_w6.yaml
+  token: chain-piling-campaign-question-batch-w6-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+- file: docs/_working/chain_piling_campaign/a1_chainpile_ledger.md
+  token: chain-piling-campaign-a1-chainpile-ledger-20260922
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "台账改名件token（a1_ledger->a1_chainpile_ledger 过N-16基名唯一），替代物：替代同名未落地旧token条目（旧条目随重建清收）"
+  merge_evaluation: "W6挖干批次YAML（由.json转.yaml过DCR目录契约），替代物：替代同内容.json（未落地即改），净零"
+- file: src/zephyr/governance/meta_question/__init__.py
+  token: meta-question-registry---init---20260922
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+  merge_evaluation: "meta_question基建新模块三件，替代物：无，设计真源infra_mining五份"
+- file: src/zephyr/governance/meta_question/registry.py
+  token: meta-question-registry-registry-20260922
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+  merge_evaluation: "meta_question基建新模块三件，替代物：无，设计真源infra_mining五份"
+- file: src/zephyr/governance/meta_question/snapshot.py
+  token: meta-question-registry-snapshot-20260922
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+- file: scripts/governance/apply_meta_question_ddl.py
+  token: meta-question-registry-apply-meta-question-ddl-20260922
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+- file: docs/03_modules/CHAINPILE-METAQ/blueprint.md
+  token: meta-question-registry-blueprint-20260922
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+- file: docs/01_policies_and_standards/rules/trae_087_meta_question_registry.yaml
+  token: meta-question-registry-trae-087-meta-question-registry-20260922
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+- file: data/capability_cards/meta_question_registry.yaml
+  token: meta-question-registry-meta-question-registry-20260922
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+- file: scripts/governance/check_meta_question_batch.py
+  token: meta-question-registry-check-meta-question-batch-20260922
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+  merge_evaluation: "批次只读校验器（自docs/_working迁scripts/governance过DCR），泛化路径参数，替代物：原check_w6_batch.py（未落地即迁）"
+  merge_evaluation: "能力卡（原问题/立项/开新线命中），替代物：无"
+  merge_evaluation: "trae_087新规则，替代物：三问判据净零引用不重复"
+  merge_evaluation: "depgraph挂锚蓝图极简件，替代物：无"
+  merge_evaluation: "DDL部署器，替代物：无，照ai_intake先例"
+  merge_evaluation: "meta_question基建新模块三件，替代物：无，设计真源infra_mining五份"
+  merge_evaluation: "新增定桩战役文档族（纪要/台账/指令存真/W1挖矿包/红蓝/快照/W3-W7件/W6批次），替代物：无（原问题治理此前为零），净零声明见各文件头部"
+  merge_evaluation: "ALGO_FLOW 外锚 yaml（restore_drill.py 月度恢复演练外部真源视图），零旧条目替代"
+- file: "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml"
+  token: "auto-factor-registry-20260810"
+  created_by: "session-registry-construction"
+  capability: "business_registry"
+- file: "docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml"
+  token: "auto-risk-limit-registry-20260810"
+  created_by: "session-registry-construction"
+  capability: "business_registry"
+
+# --- 模块级翻译真源（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级翻译缺口）---
+- file: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml"
+  token: "auto-strategy-registry-20260810"
+  created_by: "session-registry-construction"
+  capability: "business_registry"
+- file: "docs/01_policies_and_standards/sop/construction_sop/lane_construction_discipline_policy.md"
+  token: "lane-construction-discipline-lane-construction-discipline-20260920"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/01_policies_and_standards/sop/governance_sop/construction_ledger_method_policy.md"
+  token: "construction-ledger-method-construction-ledger-method-20260920"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md"
+  token: "deep-adjudication-method-deep-adjudication-method-20260920"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md"
+  token: "indicator-mining-sop-indicator-mining-sop-20260920"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/index.md
+  token: index-navigation-02-enterprise-architecture-09-ai-architecture-implementation-plans-20260919
+  created_by: st-final3-20260919
+  capability: index_navigation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/00_skeleton.md
+  token: vocab-consolidation-00-skeleton-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/00_workorder_施工包.md
+  token: vocab-consolidation-00-workorder--20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/no_domain_list.csv
+  token: vocab-consolidation-no-domain-list-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1a_consumers.md
+  token: vocab-consolidation-w1a-consumers-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1b_generators.md
+  token: vocab-consolidation-w1b-generators-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1c_gates.md
+  token: vocab-consolidation-w1c-gates-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w1_mining/w1d_layers.md
+  token: vocab-consolidation-w1d-layers-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w2_ruling/w2_self_ruling_335.md
+  token: vocab-consolidation-w2-self-ruling-335-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w3_vocab_construction/w3_execution_log.md
+  token: vocab-consolidation-w3-execution-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w4_construction/w4_execution_log.md
+  token: vocab-consolidation-w4-execution-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w5_exemption/w5_survey.md
+  token: vocab-consolidation-w5-survey-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w6_loop_check/w6_round1_log.md
+  token: vocab-consolidation-w6-round1-log-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/w7_redblue/w7_adversarial_plan.md
+  token: vocab-consolidation-w7-adversarial-plan-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/archive/2026-09/2026-08-30-l3-snapshot-datasource-adjudication.md
+  token: gateaudit-handover-2026-08-30-l3-snapshot-datasource-adjudication-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-09-clearance-review-notes.md
+  token: gateaudit-handover-2026-09-09-clearance-review-notes-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-12-ai-native-governance-review.md
+  token: gateaudit-handover-2026-09-12-ai-native-governance-review-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-12-gate-perf-r1-r4-ruling.md
+  token: gateaudit-handover-2026-09-12-gate-perf-r1-r4-ruling-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-14-ai-native-governance-ruling-notes.md
+  token: gateaudit-handover-2026-09-14-ai-native-governance-ruling-notes-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/2026-09-14-ruling234-adjudication-report.html
+  token: gateaudit-handover-2026-09-14-ruling234-adjudication-report-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/c_class_scattered/2026-09-13-xtreme-redblue-report.md
+  token: gateaudit-handover-2026-09-13-xtreme-redblue-report-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/00_index_trading_decision.md
+  token: gateaudit-handover-00-index-trading-decision-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/01_design_memo_management_spec.md
+  token: gateaudit-handover-01-design-memo-management-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/10_regime_detector_spec.md
+  token: gateaudit-handover-10-regime-detector-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/13_regime_phase3_engineering_plan.md
+  token: gateaudit-handover-13-regime-phase3-engineering-plan-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/14_regime_s2_diagnosis.md
+  token: gateaudit-handover-14-regime-s2-diagnosis-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/15_data_feature_layer_spec.md
+  token: gateaudit-handover-15-data-feature-layer-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/2026-08-28-industry-graph-frontend.md
+  token: gateaudit-handover-2026-08-28-industry-graph-frontend-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/21_stock_selection_engine.md
+  token: gateaudit-handover-21-stock-selection-engine-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/22_sector_rotation_spec.md
+  token: gateaudit-handover-22-sector-rotation-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/24_daban_strategy_detail.md
+  token: gateaudit-handover-24-daban-strategy-detail-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/25_multifactor_strategy_detail.md
+  token: gateaudit-handover-25-multifactor-strategy-detail-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/26_event_driven_strategy_detail.md
+  token: gateaudit-handover-26-event-driven-strategy-detail-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/27_second_batch_strategies.md
+  token: gateaudit-handover-27-second-batch-strategies-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/28_sentiment_cycle_trading.md
+  token: gateaudit-handover-28-sentiment-cycle-trading-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/30_multi_strategy_concurrency.md
+  token: gateaudit-handover-30-multi-strategy-concurrency-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/31_position_sizing.md
+  token: gateaudit-handover-31-position-sizing-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/32_firm_risk_aggregator.md
+  token: gateaudit-handover-32-firm-risk-aggregator-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/33_budget_change_handler.md
+  token: gateaudit-handover-33-budget-change-handler-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/34_regime_meta_allocator.md
+  token: gateaudit-handover-34-regime-meta-allocator-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/35_drawdown_protocol_impl.md
+  token: gateaudit-handover-35-drawdown-protocol-impl-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/36_var_es_monitoring.md
+  token: gateaudit-handover-36-var-es-monitoring-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/37_liquidity_crisis_protocol.md
+  token: gateaudit-handover-37-liquidity-crisis-protocol-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/40_execution_broker.md
+  token: gateaudit-handover-40-execution-broker-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/41_buy_flow.md
+  token: gateaudit-handover-41-buy-flow-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/42_sell_flow.md
+  token: gateaudit-handover-42-sell-flow-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/53_simulation_live_path.md
+  token: gateaudit-handover-53-simulation-live-path-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/54_reconciliation_attribution.md
+  token: gateaudit-handover-54-reconciliation-attribution-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/55_monitoring_review.md
+  token: gateaudit-handover-55-monitoring-review-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/61_lifecycle_multi_ai.md
+  token: gateaudit-handover-61-lifecycle-multi-ai-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/63_data_utilization_audit.md
+  token: gateaudit-handover-63-data-utilization-audit-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/64_data_source_download_spec.md
+  token: gateaudit-handover-64-data-source-download-spec-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/65_git_safety_governance.md
+  token: gateaudit-handover-65-git-safety-governance-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/66_commit_queue_serialization.md
+  token: gateaudit-handover-66-commit-queue-serialization-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/67_news_data_dedup_design.md
+  token: gateaudit-handover-67-news-data-dedup-design-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/90_methodology_open_questions.md
+  token: gateaudit-handover-90-methodology-open-questions-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/91_density_prediction.md
+  token: gateaudit-handover-91-density-prediction-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/94_crypto_quant_expansion.md
+  token: gateaudit-handover-94-crypto-quant-expansion-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/95_crypto_system_blueprint.md
+  token: gateaudit-handover-95-crypto-system-blueprint-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/design_memos/observability_contract_todo.md
+  token: gateaudit-handover-observability-contract-todo-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/disk_reorg_plan_2026_09_19.md
+  token: gateaudit-handover-disk-reorg-plan-2026-09-19-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/kimi_audit/nightbuild/e4/baseline_strategy_screen_translated_c4.csv
+  token: gateaudit-handover-baseline-strategy-screen-translated-c4-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/pattern_session_governance_report_2026_09_14.md
+  token: gateaudit-handover-pattern-session-governance-report-2026-09-14-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/redblue/2026-09-14-ch-redblue-adversarial-report.md
+  token: gateaudit-handover-2026-09-14-ch-redblue-adversarial-report-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/working_cleanup_campaign/index.md
+  token: gateaudit-handover-index-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/working_cleanup_campaign/w8r2_line_closeout.md
+  token: gateaudit-handover-w8r2-line-closeout-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/archive/2026-09/working_cleanup_campaign/working_cleanup_ledger.md
+  token: gateaudit-handover-working-cleanup-ledger-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/automation/campaign/blueprints/intel_harvester_blueprint.md
+  token: gateaudit-handover-intel-harvester-blueprint-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/automation/campaign/blueprints/risk_redline_blueprint.md
+  token: gateaudit-handover-risk-redline-blueprint-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/automation/campaign/blueprints/standards_lib_blueprint.md
+  token: gateaudit-handover-standards-lib-blueprint-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/cold_backup_automation/00_master_plan.md
+  token: gateaudit-handover-00-master-plan-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/cold_backup_automation/01_mining_findings.md
+  token: gateaudit-handover-01-mining-findings-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: "docs/_working/commit_chain_mining/commitchain_ledger.md"
+  token: "commit-chain-mining-ledger-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: docs/_working/disk_reorg_campaign/vhdx_precheck_20260922.md
+  token: gateaudit-handover-vhdx-precheck-20260922-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/fullflow_campaign/lanes/pit2_prescriptions.md
+  token: gateaudit-handover-pit2-prescriptions-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/gov_closeout/dead_letter_clearance_ledger_20260922.md
+  token: gateaudit-handover-dead-letter-clearance-ledger-20260922-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/gov_closeout/final_report_st_gov_closeout_20260922.md
+  token: gateaudit-handover-final-report-st-gov-closeout-20260922-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/IBT-RUN-LOGS.md
+  token: gateaudit-handover-ibt-run-logs-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/nav_IBT-A.csv
+  token: gateaudit-handover-nav-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/nav_IBT-B.csv
+  token: gateaudit-handover-nav-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/run_summary.yaml
+  token: gateaudit-handover-run-summary-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/trades_IBT-A.csv
+  token: gateaudit-handover-trades-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_HOLDOUT/trades_IBT-B.csv
+  token: gateaudit-handover-trades-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/nav_IBT-A.csv
+  token: gateaudit-handover-nav-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/nav_IBT-B.csv
+  token: gateaudit-handover-nav-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/redblue_round2.yaml
+  token: gateaudit-handover-redblue-round2-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/redblue_round3.yaml
+  token: gateaudit-handover-redblue-round3-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/run_summary.yaml
+  token: gateaudit-handover-run-summary-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/sensitivity.yaml
+  token: gateaudit-handover-sensitivity-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/trades_IBT-A.csv
+  token: gateaudit-handover-trades-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_IS/trades_IBT-B.csv
+  token: gateaudit-handover-trades-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/nav_IBT-A.csv
+  token: gateaudit-handover-nav-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/nav_IBT-B.csv
+  token: gateaudit-handover-nav-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/redblue_round1.yaml
+  token: gateaudit-handover-redblue-round1-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/redblue_round4.yaml
+  token: gateaudit-handover-redblue-round4-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/run_summary.yaml
+  token: gateaudit-handover-run-summary-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/sensitivity.yaml
+  token: gateaudit-handover-sensitivity-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/trades_IBT-A.csv
+  token: gateaudit-handover-trades-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_OOS/trades_IBT-B.csv
+  token: gateaudit-handover-trades-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/nav_IBT-A.csv
+  token: gateaudit-handover-nav-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/nav_IBT-B.csv
+  token: gateaudit-handover-nav-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/run_summary.yaml
+  token: gateaudit-handover-run-summary-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/trades_IBT-A.csv
+  token: gateaudit-handover-trades-ibt-a-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/integrated_backtest/artifacts/W_POSTD/trades_IBT-B.csv
+  token: gateaudit-handover-trades-ibt-b-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/reports/intake-20260921-2337.md
+  token: gateaudit-handover-intake-20260921-2337-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/reports/intake-20260921-2337.yaml
+  token: gateaudit-handover-intake-20260921-2337-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/reports/intake-20260922-0403.md
+  token: gateaudit-handover-intake-20260922-0403-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/reports/intake-20260922-0403.yaml
+  token: gateaudit-handover-intake-20260922-0403-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+- file: docs/_working/pipeline-research/sim-memos/sim-memo-202609.md
+  token: kimi-audit-sim-memo-202609-20260916
+  created_by: qoder-verify-20260916
+  capability: kimi_audit
+- file: "docs/_working/pipeline-research/sim-memos/sim-memo-202609.md"
+  token: "n5-simmemo-md-20260918"
+  created_by: "st-tdchain-20260917"
+  capability: "sim_memo_evidence"
+- file: "docs/_working/residual_resume/00_review.md"
+  token: "residual-resume-00-review-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/residual_resume/01_plan.md"
+  token: "residual-resume-01-plan-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/sim_launch/00_campaign_ledger.md"
+  token: "sim-launch-00-campaign-ledger-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/sim_launch/crypto_fastlane_eval.md"
+  token: "sim-launch-crypto-fastlane-eval-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/sim_launch/delivery_report.md"
+  token: "sim-launch-delivery-report-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "docs/_working/sim_launch/first_daily_report_20260921.md"
+  token: "sim-launch-first-daily-report-20260921-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: docs/_working/trading_vision/2026-09-18-ruling-renumber-execution-note.md
+  token: gateaudit-handover-2026-09-18-ruling-renumber-execution-note-20260922
+  created_by: st-gateaudit-20260922
+  capability: gateaudit_handover
+  merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
+  merge_evaluation: "tc_08卡形式收口三件零记录缺口补齐件，无同真源可并项"
+  merge_evaluation: "同真源可派生：a0/a2/a4 为 disk_reorg 战役母令/集成简报/放行信号执行件，随战役文档全家福同批补登记（q-0006 欠账，st-disk-final 代落地）"
+- file: "schemas/categories/sim_daily_report.py"
+  token: "sim-launch-sim-daily-report-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: scripts/backtest/sim_attribution_report.py
+  token: sim-attribution-sim-attribution-report-20260917
+  created_by: st-sim-attrib-20260918
+  capability: sim_attribution
+- file: "scripts/backtest/sim_daily_runner.py"
+  token: "sim-launch-sim-daily-runner-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: "scripts/ch/apply_sim_daily_report_ddl.py"
+  token: "sim-launch-apply-sim-daily-report-ddl-20260921"
+  created_by: "st-gateaudit-20260922（W1v2 重建，源=shard2死信并集）"
+  capability: "w1-restore"
+  merge_evaluation: "注册表事故恢复：并发整文件覆盖冲掉，HEAD基底并集机械找回"
+- file: src/zephyr/backtest/core/cost_attribution.py
+  token: lane-m-cost-attribution-20260916
+  created_by: st-qoder-t1a-20260915
+  capability: cost_model_calibration
+- file: src/zephyr/backtest/core/cost_model_calibration.py
+  token: lane-m-cost-model-calibration-20260916
+  created_by: st-qoder-t1a-20260915
+  capability: cost_model_calibration
+- file: src/zephyr/governance/standards_governance/__init__.py
+  token: rule-replay---init---20260917
+  created_by: st-ailayer-20260917
+  capability: rule_replay
+- file: src/zephyr/intelligence/chain_impact_stream.py
 di_seam_exemptions: []

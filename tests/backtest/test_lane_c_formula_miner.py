@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-BT-155 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """FAC-E1C 公式挖掘机纯函数核单测——残差化/秩IC/fitness工厂/白名单交集/出生证，零网络。"""
+
 from __future__ import annotations
 
 import numpy as np
@@ -23,6 +24,7 @@ import pytest
 
 from scripts.backtest.lane_c_formula_miner import (
     BASELINE_TAG,
+    CUSTOM_OPS,
     build_function_set,
     build_hypothesis,
     gloss_for_expr,
@@ -38,8 +40,7 @@ from scripts.backtest.lane_c_formula_miner import (
 class TestWhitelist:
     def test_load_real_yaml_and_function_set_mixed(self):
         wl = load_whitelist()
-        fs = build_function_set(wl, date_codes=np.zeros(10, dtype=int),
-                                symbol_codes=np.tile([0, 1], 5))
+        fs = build_function_set(wl, date_codes=np.zeros(10, dtype=int), symbol_codes=np.tile([0, 1], 5))
         names = {getattr(f, "name", f) for f in fs}
         assert {"add", "sub", "mul", "div", "sqrt", "log"} <= names
         assert {"rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20"} <= names
@@ -52,8 +53,7 @@ class TestWhitelist:
             build_function_set(load_whitelist())
 
     def test_function_set_excludes_trig_and_inv(self):
-        fs = build_function_set(load_whitelist(), date_codes=np.zeros(10, dtype=int),
-                                symbol_codes=np.tile([0, 1], 5))
+        fs = build_function_set(load_whitelist(), date_codes=np.zeros(10, dtype=int), symbol_codes=np.tile([0, 1], 5))
         names = {getattr(f, "name", f) for f in fs}
         assert not ({"sin", "cos", "tan", "inv"} & names)
 
@@ -143,9 +143,12 @@ class TestPanelOperators:
 
     def _ops(self):
         # 分组码：8 交易日 × 2 标的（日期主序交替行）
-        return {f.name: f for f in make_panel_operators(
-            np.repeat(np.arange(8), 2), np.tile([0, 1], 8),
-            ["rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20"])}
+        return {
+            f.name: f
+            for f in make_panel_operators(
+                np.repeat(np.arange(8), 2), np.tile([0, 1], 8), ["rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20"]
+            )
+        }
 
     def _panel(self):
         # 8 个交易日 × 2 标的，日期主序：A=1..8，B=2,4,..,16 → 展平 [1,2,3,4,...]
@@ -176,6 +179,41 @@ class TestPanelOperators:
         assert np.isfinite(out).all()
         assert np.allclose(out[:7], 0.0)  # min_periods=8 → 前 7 日=0
         assert np.allclose(out[7], 1.0)  # 第 8 日起自相关=1
+
+
+class TestTradeWhen:
+    """工单 #10：WorldQuant trade_when 语义（退出优先/触发换仓/区间保持）。"""
+
+    def _tw(self):
+        dc = np.zeros(6, dtype=int)  # 单标的 6 日（symbol=0 单组）
+        return make_panel_operators(dc, dc, ["trade_when"])[0]
+
+    def test_trigger_hold_exit_semantics(self):
+        tw = self._tw()
+        t = np.array([1, 0, 0, 1, 0, 0], dtype=float)
+        a = np.array([10, 99, 99, 20, 99, 99], dtype=float)
+        e = np.array([0, 0, 1, 0, 0, 0], dtype=float)
+        out = tw(t, a, e)
+        assert np.allclose(out, [10, 10, 0, 20, 20, 20])
+        assert np.isfinite(out).all()
+
+    def test_exit_priority_over_same_day_trigger(self):
+        tw = self._tw()
+        out = tw(np.array([1.0, 1.0]), np.array([7.0, 9.0]), np.array([1.0, 0.0]))
+        assert np.allclose(out, [0.0, 9.0])  # 首日退出优先清零；次日触发开新仓
+
+    def test_no_event_head_neutral(self):
+        tw = self._tw()
+        out = tw(np.zeros(5), np.ones(5), np.zeros(5))
+        assert np.allclose(out, 0.0)  # 全程无触发=0（段首中性语义）
+
+    def test_whitelist_engine_bidirectional_intersection(self):
+        wl = load_whitelist()
+        approved = {op["op"] for grp in wl["approved"].values() for op in grp}
+        assert "trade_when" in approved  # 白名单命中
+        assert set(CUSTOM_OPS) <= approved  # 引擎自定义算子全集⊆白名单（反向 fail-closed）
+        fs = build_function_set(wl, date_codes=np.zeros(10, dtype=int), symbol_codes=np.zeros(10, dtype=int))
+        assert any(getattr(f, "__name__", "") == "trade_when" or getattr(f, "name", "") == "trade_when" for f in fs)
 
 
 class TestHypothesisAndId:

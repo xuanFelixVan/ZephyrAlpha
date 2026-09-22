@@ -39,9 +39,10 @@ gym 风格自约定接口（不依赖 gym 库）:
     step 内部固定流水线: RlExecBoundary.enforce → MatchingLogic 撮合。
     策略侧只产出 RlExecAction，无任何直挂撮合的通道。
 
-骨架边界（B-007 留痕）:
-    本模块只提供环境骨架，不含任何训练/学习逻辑；真训练（PPO/TD3 等）
-    属宪章 §4.2 B-007 人工审批闸门——未经 Owner 审批不得上线训练管线。
+骨架边界（B-007 留痕，2026-09-22 H-04 口径更新）:
+    本模块只提供环境骨架，不含任何训练/学习逻辑；训练器施工已按 H-04 新口径
+    解禁（HANDOFF_20260921_ab_league.md 62 行，实现=zephyr.ex_sor.services.rl_trainer）；
+    真训练管线触发与训练后模型上实盘仍属 Owner 闸门——未经 Owner 审批不得触发。
 
 复用:
     - MatchingLogic (zephyr.backtest.core.matching_logic): 回测=实盘一致性撮合

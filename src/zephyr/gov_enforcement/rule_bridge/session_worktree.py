@@ -465,7 +465,7 @@ def _make_wt_run_git(wt_path, gw, block_reason: str, env_var: str):
 def _log_worktree_delete(
     session_id: str,
     source: str,
-    path: "Path | str",
+    path: Path | str,
     root: Path,
     *,
     phase: str = "done",
@@ -491,7 +491,6 @@ def _log_worktree_delete(
 
     try:
         import traceback
-
         from datetime import datetime, timezone
 
         from zephyr.shared.io.paths import anchor_main_root
@@ -748,7 +747,7 @@ _QUARANTINE_REF_PREFIX = "refs/quarantine/"
 
 
 def _quarantine_branch_ref(
-    manager: "WorktreeManager",
+    manager: WorktreeManager,
     branch: str,
     session_id: str,
 ) -> str | None:
@@ -893,7 +892,7 @@ def _strip_auto_block_lines(text: str) -> list[str]:
     return out
 
 
-def _classify_retire_file_content(old_text: "str | None", new_text: "str | None") -> str:
+def _classify_retire_file_content(old_text: str | None, new_text: str | None) -> str:
     """单文件退役三分类（纯函数，Z2 分类器核心）。
 
     Args:
@@ -917,7 +916,7 @@ def _classify_retire_file_content(old_text: "str | None", new_text: "str | None"
 
 
 def _classify_retire_dirty_files(
-    manager: "WorktreeManager",
+    manager: WorktreeManager,
     wt_path: Path,
     porcelain_lines: list[str],
 ) -> list[dict]:
@@ -958,7 +957,7 @@ def _classify_retire_dirty_files(
 def _generate_retire_patch_evidence(
     root: Path,
     session_id: str,
-    manager: "WorktreeManager",
+    manager: WorktreeManager,
     source: str,
 ) -> dict:
     """Z1 强制存证：脏工作区退役前生成全量 diff patch + 三分类退役审计。
@@ -1076,7 +1075,7 @@ def _generate_retire_patch_evidence(
 
 
 def _sweep_quarantine_refs(
-    manager: "WorktreeManager",
+    manager: WorktreeManager,
     max_age_hours: int = _QUARANTINE_REF_RETENTION_HOURS,
 ) -> dict:
     """清理过期的 quarantine refs（ARCH-GIT-CALL-BUDGET P3.5 配套）。
@@ -1151,20 +1150,24 @@ def _sweep_quarantine_refs(
     return {"deleted": deleted, "skipped": skipped, "warnings": warnings}
 
 
+def _get_domain_instance(factory, project_root: str | Path | None = None):
+    """按工厂在主仓根构造实例（裁定#392（D-2） merge 治本：原 _get_manager/_get_registry
+    双胞胎 extract 级克隆收编为单源，零行为变更）。"""
+    root = Path(project_root) if project_root else REPO_ROOT
+
+    return factory(root)
+
+
 def _get_manager(project_root: str | Path | None = None) -> WorktreeManager:
     """获取 WorktreeManager 实例。"""
 
-    root = Path(project_root) if project_root else REPO_ROOT
-
-    return WorktreeManager(root)
+    return _get_domain_instance(WorktreeManager, project_root)
 
 
 def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
     """获取 SessionRegistry 实例（始终用主仓库根目录，非 worktree）。"""
 
-    root = Path(project_root) if project_root else REPO_ROOT
-
-    return SessionRegistry(root)
+    return _get_domain_instance(SessionRegistry, project_root)
 
 
 # ── 阶段2治本（未合并提交陷阱，2026-07-18）：sweep 取代判定 ──
@@ -1180,7 +1183,7 @@ def _get_registry(project_root: str | Path | None = None) -> SessionRegistry:
 # 主体匹配（HEAD 近 200 条历史中存在相同 subject，覆盖 cherry-pick 后 reword 场景）。
 
 
-def _get_head_subjects(manager: "WorktreeManager", count: int = 200) -> set[str]:
+def _get_head_subjects(manager: WorktreeManager, count: int = 200) -> set[str]:
     """获取 HEAD 近 N 条 commit subjects（message 匹配用，patch-id 的补充）。"""
 
     r = manager.run_git(["git", "log", "--format=%s", f"-{count}", "HEAD"])
@@ -1194,7 +1197,7 @@ def _get_head_subjects(manager: "WorktreeManager", count: int = 200) -> set[str]
 def _count_message_superseded(
     commit_hashes: list[str],
     head_subjects: set[str],
-    manager: "WorktreeManager",
+    manager: WorktreeManager,
 ) -> int:
     """统计 commit_hashes 中 message 主体在 head_subjects 中存在的数量。
 
@@ -1217,7 +1220,7 @@ def _count_message_superseded(
 
 def _branch_commits_superseded(
     branch: str,
-    manager: "WorktreeManager",
+    manager: WorktreeManager,
 ) -> tuple[bool, str]:
     """检测分支所有未合并提交是否已被取代（相同修改已通过其他路径合并到 HEAD）。
 
@@ -1278,10 +1281,17 @@ def _branch_commits_superseded(
 _ACTIVE_LOCK_TTL_SECONDS = 3600  # 1h,与 session TTL 一致（异常退出后 sweep 可清理）
 
 
+def _runtime_lock_path(root: Path, session_id: str, prefix: str, ext: str) -> Path:
+    """(.runtime/locks/) per-session 状态文件统一构造（裁定#392（D-2） merge 治本：原
+    _session_active_lockfile/_heartbeat_pid_file/_commit_persisted_marker_path 三胞胎
+    extract 级克隆收编为单源，零行为变更）。"""
+    return root / ".runtime" / "locks" / f"{prefix}_{session_id}.{ext}"
+
+
 def _session_active_lockfile(repo_root: Path, session_id: str) -> Path:
     """per-session active lockfile 路径（标识 session 正在执行 commit/merge 关键操作）。"""
 
-    return repo_root / ".runtime" / "locks" / f"session_active_{session_id}.lock"
+    return _runtime_lock_path(repo_root, session_id, "session_active", "lock")
 
 
 @contextlib.contextmanager
@@ -1345,7 +1355,7 @@ def _session_active_guard(repo_root: Path, session_id: str):
 def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
     """heartbeat daemon PID 文件路径（#ARCH-HEARTBEAT-001）。"""
 
-    return root / ".runtime" / "locks" / f"heartbeat_{session_id}.pid"
+    return _runtime_lock_path(root, session_id, "heartbeat", "pid")
 
 
 # 模块级 daemon 进程注册表（治本 #ARCH-HEARTBEAT-001-TEST-FAIL，2026-07-20）
@@ -1378,7 +1388,7 @@ def _heartbeat_pid_file(root: Path, session_id: str) -> Path:
 
 # 4. kill_all_heartbeat_daemons 供测试 fixture teardown 批量清理
 
-_DAEMON_PROCS: dict[str, "subprocess.Popen[bytes]"] = {}
+_DAEMON_PROCS: dict[str, "subprocess.Popen[bytes]"] = {}  # noqa: UP037 — 引号必须保留：剥引号后 subprocess.Popen 成裸 AST 属性引用触发 BARE-SUBPROCESS（q-0001 死因）
 
 
 def _reap_daemon_proc(session_id: str) -> None:
@@ -1419,7 +1429,7 @@ def _spawn_heartbeat_daemon(
     session_id: str,
     root: Path,
     interval: int = 30,
-    worktree_path: "Path | str | None" = None,
+    worktree_path: Path | str | None = None,
 ) -> int | None:
     """spawn detached heartbeat daemon 进程（#ARCH-HEARTBEAT-001, P0 治本）。
 
@@ -1707,7 +1717,7 @@ def kill_all_heartbeat_daemons(root: Path) -> None:
 def _commit_persisted_marker_path(root: Path, session_id: str) -> Path:
     """返回 commit 持久性标记文件路径。"""
 
-    return root / ".runtime" / "locks" / f"commit_persisted_{session_id}.json"
+    return _runtime_lock_path(root, session_id, "commit_persisted", "json")
 
 
 def _write_commit_persisted_marker(
@@ -2977,7 +2987,7 @@ def session_worktree_start(
                     _start_base_err.get("message", "unknown"),
                 )
 
-        except Exception as _start_bf_err:
+        except Exception as _start_bf_err:  # noqa: BLE001 — 启动期新鲜度自检故意吞异常仅告警，失败由 commit 期 fail-closed 兜底
             logger.warning("[start] base freshness check 异常（不阻断）: %s", _start_bf_err)
 
         # #ARCH-HEARTBEAT-001: spawn detached heartbeat daemon
@@ -4528,12 +4538,23 @@ def _wt_block_gate_id(result: dict) -> str:
         _gid = _first.get("gate_id") if isinstance(_first, dict) else None
         if _gid:
             return str(_gid)
-    if result.get("held_overlap"):
-        return "HELD-OVERLAP"
-    if result.get("directory_contract_violation"):
-        return "DIRECTORY-CONTRACT"
-    if result.get("cross_commit_dep_blocked"):
-        return "CROSS-COMMIT-DEP"
+    # 标志字段判定链（表驱动，裁定#369/#392-D2 merge 治本 2026-09-21：原 if-链结构被
+    # CloneGuard 判 extract 级克隆自 c8b9c1ca5a 判定链批——四对映射合并单表消除克隆结构，
+    # 零行为变更，判定顺序与原链一致）：
+    for _flag, _chain_gate_id in (
+        ("held_overlap", "HELD-OVERLAP"),
+        ("directory_contract_violation", "DIRECTORY-CONTRACT"),
+        ("cross_commit_dep_blocked", "CROSS-COMMIT-DEP"),
+        # 堵点本 §2.1 净新病灶残余治本（2026-09-18 st-flashspeed）：commit 路径 base
+        # 新鲜度/落地冲突失败返回 base_sync_failed=True 且无 gate_results（message 如
+        # 「worktree base 过期且 rebase 冲突」「worktree base 对齐阻断」既不匹配「门禁…
+        # 阻断」也无 _VIOLATION 后缀），此前恒落 UNKNOWN。归为伪门禁 WORKTREE-BASE-CONFLICT
+        # ——audit-only 零行为变更（阻断本身正确，仅补观测归因）。merge 路径已带
+        # gate_results=BASE-FRESHNESS-MERGE，直取分支先命中，不受此处影响。
+        ("base_sync_failed", "WORKTREE-BASE-CONFLICT"),
+    ):
+        if result.get(_flag):
+            return _chain_gate_id
     import re as _re
 
     m = _re.search(r"门禁 ([A-Z][A-Z\-]+) 阻断", str(result.get("message", "")))
@@ -4737,7 +4758,6 @@ def _wt_stage_changes(
             "commit_hash": "",
         }
 
-
     return None
 
 
@@ -4905,7 +4925,6 @@ def _session_worktree_commit_impl(
 
     except Exception as _drift_err:  # noqa: BLE001 — fail-open
         logger.warning("[commit] workspace drift warn failed: %s", _drift_err)
-
 
     # 暂存前置链（held-overlap→DCR→base 新鲜度→stash 恢复→sync→git add→diff 检查）
     # 抽出为 _wt_stage_changes（NO-HIGH-COMPLEXITY §5.158 治本：impl 复杂度 18→拆分）

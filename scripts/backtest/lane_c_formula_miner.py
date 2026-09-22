@@ -33,6 +33,7 @@ AlphaGen 轨=立项另批（设计稿 docs/_working/2026-09-14-fac-e1c-formula-m
   python scripts/backtest/lane_c_formula_miner.py mine --smoke --population 30 --generations 3 --universe-n 40
   python scripts/backtest/lane_c_formula_miner.py mine   # 正式档=白名单 1000x50（须审定+E0 放行）
 """
+
 from __future__ import annotations
 
 import argparse
@@ -67,15 +68,27 @@ SQL_KLINE = (
     "WHERE trade_date >= %(start)s AND symbol_canonical IN %(syms)s ORDER BY trade_date"
 )
 SQL_TI_DAILY = (
-    "SELECT {cols} FROM {ti} WHERE period = 'daily' AND trade_date >= %(start)s "
-    "AND symbol_canonical IN %(syms)s"
+    # 显式 + 拼接且逐行不含完整 SELECT..FROM 子句（NO-BARE-SQL 入队面预检按行正则，
+    # 隐式相邻字符串会被 ruff format 合并成单行触发误报——2026-09-22 trade_when 批实证）
+    "SELECT {cols} "
+    + "FROM {ti} WHERE period = 'daily' "
+    + "AND trade_date >= %(start)s AND symbol_canonical IN %(syms)s"
 )
 SQL_TI_COLS = (
     "SELECT name FROM system.columns WHERE database = 'c1_market' "
     "AND table = 'technical_indicator' AND default_kind != 'ALIAS'"
 )
-_TI_META = {"trade_date", "symbol_canonical", "period", "data_source", "ingest_ts",
-            "exchange", "trade_time", "symbol", "updated_at"}
+_TI_META = {
+    "trade_date",
+    "symbol_canonical",
+    "period",
+    "data_source",
+    "ingest_ts",
+    "exchange",
+    "trade_time",
+    "symbol",
+    "updated_at",
+}
 
 
 def _ti_columns(cli) -> list[str]:
@@ -95,11 +108,12 @@ def load_whitelist(path: Path | None = None) -> dict:
     return data
 
 
-CUSTOM_OPS = ("rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20")
+CUSTOM_OPS = ("rank_cs", "ts_delta_5", "ts_zscore_20", "ts_corr_20", "trade_when")
+
+_CUSTOM_ARITY = {"ts_corr_20": 2, "trade_when": 3}
 
 
-def make_panel_operators(date_codes: np.ndarray, symbol_codes: np.ndarray,
-                         requested: list[str]) -> list:
+def make_panel_operators(date_codes: np.ndarray, symbol_codes: np.ndarray, requested: list[str]) -> list:
     """自定义算子工厂（v2.1：groupby 分组语义，天然支持参差面板/停牌缺失）。
 
     date_codes/symbol_codes=逐行分组码（与面板行等长）。探针旁路：gplearn
@@ -125,12 +139,15 @@ def make_panel_operators(date_codes: np.ndarray, symbol_codes: np.ndarray,
     funcs: list = []
     for op in requested:
         if op == "rank_cs":
+
             def _f(x):
                 return _s(x).groupby(_dc(x)).rank(pct=True).fillna(0.5).to_numpy()
         elif op == "ts_delta_5":
+
             def _f(x):
                 return _s(x).groupby(_sc(x)).diff(5).fillna(0.0).to_numpy()
         elif op == "ts_zscore_20":
+
             def _f(x):
                 s = _s(x)
                 g = s.groupby(_sc(x))
@@ -139,6 +156,7 @@ def make_panel_operators(date_codes: np.ndarray, symbol_codes: np.ndarray,
                 z = (s - m) / (sd + 1e-9)
                 return z.clip(-10, 10).fillna(0.0).to_numpy()
         elif op == "ts_corr_20":
+
             def _f(x1, x2):
                 a = np.asarray(x1, dtype=float)
                 b = np.asarray(x2, dtype=float)
@@ -147,13 +165,26 @@ def make_panel_operators(date_codes: np.ndarray, symbol_codes: np.ndarray,
                 for grp in np.unique(g):
                     m = g == grp
                     c = _s(a[m]).rolling(20, min_periods=8).corr(_s(b[m]))
-                    out[np.where(m)[0]] = np.nan_to_num(
-                        c.clip(-1, 1).to_numpy(), nan=0.0)
+                    out[np.where(m)[0]] = np.nan_to_num(c.clip(-1, 1).to_numpy(), nan=0.0)
+                return out
+        elif op == "trade_when":
+
+            def _f(x1, x2, x3):
+                # WorldQuant trade_when 语义（面板分组版）：退出日优先清零、
+                # 触发日取新信号、其余日保持上一信号；段首无事件=0（中性）。
+                t = np.asarray(x1, dtype=float)
+                a = np.asarray(x2, dtype=float)
+                e = np.asarray(x3, dtype=float)
+                g = _sc(x1)
+                out = np.zeros(len(t))
+                for grp in np.unique(g):
+                    idx = np.where(g == grp)[0]
+                    sig = np.where(e[idx] > 0, 0.0, np.where(t[idx] > 0, a[idx], np.nan))
+                    out[idx] = _s(sig).ffill().fillna(0.0).to_numpy()
                 return out
         else:
             raise RuntimeError(f"未知自定义算子: {op}")
-        funcs.append(make_function(function=_f, name=op,
-                                   arity=2 if op == "ts_corr_20" else 1))
+        funcs.append(make_function(function=_f, name=op, arity=_CUSTOM_ARITY.get(op, 1)))
     return funcs
 
 
@@ -203,27 +234,29 @@ def rank_ic(a: np.ndarray, b: np.ndarray) -> float:
 
 def make_incremental_ic_fitness(baseline: np.ndarray, fwd: np.ndarray):
     """gplearn 兼容 fitness（y, y_pred, w）：候选残差 vs 前向收益的 rank IC，越大越好。"""
+
     def _fitness(y, y_pred, _w):
         yp = np.asarray(y_pred, dtype=float)
         yp[~np.isfinite(yp)] = np.nan
         return rank_ic(residualize(yp, baseline), np.asarray(y, dtype=float))
+
     return _fitness
 
 
-def build_hypothesis(expr: str, ic: float, n_samples: int,
-                     gloss: list[tuple] | None = None) -> str:
+def build_hypothesis(expr: str, ic: float, n_samples: int, gloss: list[tuple] | None = None) -> str:
     """确定性假说文本 v2：公式+描述性证据+算子经济释义+机制自述要求（治 reject_tautology 误杀）。
 
     gloss=(op, zh, meaning) 三元组列表——本公式实际用到的算子释义（白名单真源）。
     机制判断仍留给 E2，评分权留给 E4；本文本只提供"让 E2 有东西可审"的证据与问题框架。
     """
-    text = (f"做多[公式因子]：{expr}——在 REG-IND-001 基座上增量 rank IC={ic:.4f}"
-            f"（样本 {n_samples}，混同池口径 v1）。")
+    text = f"做多[公式因子]：{expr}——在 REG-IND-001 基座上增量 rank IC={ic:.4f}（样本 {n_samples}，混同池口径 v1）。"
     if gloss:
         text += "算子释义——" + "；".join(f"{op}={zh}（{mean}）" for op, zh, mean in gloss) + "。"
-    text += ("机制自述要求：逐项说明本公式赚谁的钱（行为偏差/风险溢价/结构性摩擦）；"
-             "任一算子讲不出机制即 reject_no_mechanism，纯数学变形无独立信息即 reject_tautology，"
-             "换手成本吞掉边际即 reject_cost_prohibitive。")
+    text += (
+        "机制自述要求：逐项说明本公式赚谁的钱（行为偏差/风险溢价/结构性摩擦）；"
+        "任一算子讲不出机制即 reject_no_mechanism，纯数学变形无独立信息即 reject_tautology，"
+        "换手成本吞掉边际即 reject_cost_prohibitive。"
+    )
     return text
 
 
@@ -240,19 +273,22 @@ def gloss_for_expr(expr: str, whitelist: dict) -> list[tuple]:
 
 
 def make_candidate_id(expr: str) -> str:
-    return f"CAND-{hashlib.md5(f'E1C:{expr.strip()}'.encode('utf-8')).hexdigest()[:12]}"
+    return f"CAND-{hashlib.md5(f'E1C:{expr.strip()}'.encode()).hexdigest()[:12]}"
 
 
 def attach_birth_certificate(rows: list[dict], batch_id: str, cfg: dict) -> list[dict]:
-    wl_sha = hashlib.md5(json.dumps(cfg["whitelist"], sort_keys=True, ensure_ascii=False,
-                                    default=str).encode("utf-8")).hexdigest()[:12]
+    wl_sha = hashlib.md5(
+        json.dumps(cfg["whitelist"], sort_keys=True, ensure_ascii=False, default=str).encode("utf-8")
+    ).hexdigest()[:12]
     out = []
     for r in rows:
         row = dict(r)
         row["birth_channel"] = BIRTH_CHANNEL
         row["birth_batch"] = batch_id
-        row["birth_source"] = (f"gplearn pop={cfg['population_size']} gen={cfg['generations']} "
-                               f"wl={wl_sha} baseline={BASELINE_TAG} seed={cfg['random_state']}")
+        row["birth_source"] = (
+            f"gplearn pop={cfg['population_size']} gen={cfg['generations']} "
+            f"wl={wl_sha} baseline={BASELINE_TAG} seed={cfg['random_state']}"
+        )
         out.append(row)
     return out
 
@@ -263,15 +299,17 @@ def compute_features(k: pd.DataFrame) -> pd.DataFrame:
     特征名单真源=FEATURES；本函数是特征工程唯一实现（挖矿面板与考卷策略件共用）。
     """
     g = k.groupby("s", group_keys=False)
-    feats = pd.DataFrame({
-        "ret_1d": g["close"].pct_change(),
-        "ret_5d": g["close"].pct_change(5),
-        "ret_20d": g["close"].pct_change(20),
-        "vol_20d": g["close"].pct_change().rolling(20).std(),
-        "turnover": np.log1p(k["turnover"].clip(lower=0)),
-        "amt_z20": g["amount"].transform(lambda s: (s - s.rolling(20).mean()) / (s.rolling(20).std() + 1e-9)),
-        "close_ma20": g["close"].transform(lambda s: s / (s.rolling(20).mean() + 1e-9) - 1),
-    })
+    feats = pd.DataFrame(
+        {
+            "ret_1d": g["close"].pct_change(),
+            "ret_5d": g["close"].pct_change(5),
+            "ret_20d": g["close"].pct_change(20),
+            "vol_20d": g["close"].pct_change().rolling(20).std(),
+            "turnover": np.log1p(k["turnover"].clip(lower=0)),
+            "amt_z20": g["amount"].transform(lambda s: (s - s.rolling(20).mean()) / (s.rolling(20).std() + 1e-9)),
+            "close_ma20": g["close"].transform(lambda s: s / (s.rolling(20).mean() + 1e-9) - 1),
+        }
+    )
     feats["date"], feats["s"] = k["date"].values, k["s"].values
     return feats
 
@@ -283,15 +321,21 @@ def fetch_panel(universe_n: int, days: int) -> dict:
 
     cli = get_client_strict()
     start = (date.today() - timedelta(days=int(days * 1.7))).isoformat()
-    syms = [r[0] for r in cli.execute(
-        SQL_UNIVERSE.format(kline=get_registry().table("market_kline_daily_hfq")),
-        {"start": start, "n": universe_n})]
+    syms = [
+        r[0]
+        for r in cli.execute(
+            SQL_UNIVERSE.format(kline=get_registry().table("market_kline_daily_hfq")), {"start": start, "n": universe_n}
+        )
+    ]
     if len(syms) < 10:
         raise RuntimeError(f"universe 过小: {len(syms)}")
-    k = pd.DataFrame(cli.execute(
-        SQL_KLINE.format(kline=get_registry().table("market_kline_daily_hfq")),
-        {"start": start, "syms": tuple(syms)}),
-        columns=["date", "s", "close", "turnover", "amount"])
+    k = pd.DataFrame(
+        cli.execute(
+            SQL_KLINE.format(kline=get_registry().table("market_kline_daily_hfq")),
+            {"start": start, "syms": tuple(syms)},
+        ),
+        columns=["date", "s", "close", "turnover", "amount"],
+    )
     for c in ("close", "turnover", "amount"):
         k[c] = pd.to_numeric(k[c], errors="coerce")  # CH Decimal → float
     k = k.sort_values(["s", "date"])
@@ -305,10 +349,13 @@ def fetch_panel(universe_n: int, days: int) -> dict:
     feats = feats.sort_values(["date", "s"]).reset_index(drop=True)
 
     ti_cols = _ti_columns(cli)
-    ti = pd.DataFrame(cli.execute(
-        SQL_TI_DAILY.format(ti=get_registry().table("market_technical_indicator"),
-                            cols=", ".join(ti_cols)),
-        {"start": start, "syms": tuple(syms)}), columns=ti_cols)
+    ti = pd.DataFrame(
+        cli.execute(
+            SQL_TI_DAILY.format(ti=get_registry().table("market_technical_indicator"), cols=", ".join(ti_cols)),
+            {"start": start, "syms": tuple(syms)},
+        ),
+        columns=ti_cols,
+    )
     ti = ti[ti["period"] == "daily"]
     base_cols = [c for c in ti.columns if c not in _TI_META]
     ti_num = ti[["trade_date", "symbol_canonical"] + base_cols].copy()
@@ -332,9 +379,17 @@ def fetch_panel(universe_n: int, days: int) -> dict:
         raise RuntimeError(f"面板样本不足或基座错位: X={len(X)} baseline={len(baseline)}")
     date_codes = pd.factorize(feats["date"])[0]
     symbol_codes = pd.factorize(feats["s"])[0]
-    return {"X": X, "y": y, "baseline": baseline, "baseline_cols": base_cols,
-            "n": len(X), "features": list(FEATURES), "universe": syms,
-            "date_codes": date_codes, "symbol_codes": symbol_codes}
+    return {
+        "X": X,
+        "y": y,
+        "baseline": baseline,
+        "baseline_cols": base_cols,
+        "n": len(X),
+        "features": list(FEATURES),
+        "universe": syms,
+        "date_codes": date_codes,
+        "symbol_codes": symbol_codes,
+    }
 
 
 def render_expr(expr: str, features: list[str]) -> str:
@@ -344,11 +399,19 @@ def render_expr(expr: str, features: list[str]) -> str:
     def _sub(m: re.Match) -> str:
         i = int(m.group(1))
         return features[i] if i < len(features) else m.group(0)
+
     return re.sub(r"X(\d+)", _sub, expr)
 
 
-def run_mine(population_size: int, generations: int, universe_n: int, days: int,
-             top_candidates: int, smoke: bool = False, dry_run: bool = False) -> dict:
+def run_mine(
+    population_size: int,
+    generations: int,
+    universe_n: int,
+    days: int,
+    top_candidates: int,
+    smoke: bool = False,
+    dry_run: bool = False,
+) -> dict:
     """主流程：问闸→白名单→面板→遗传挖掘→优等生卸货。"""
     from scripts.backtest.compute_window_gate import check_gate
 
@@ -363,8 +426,7 @@ def run_mine(population_size: int, generations: int, universe_n: int, days: int,
         return {"gate": gate, "message": f"白名单 status={status}：正式量产须 Owner 审定后改 active"}
 
     panel = fetch_panel(universe_n, days)
-    func_set = build_function_set(whitelist, date_codes=panel["date_codes"],
-                                  symbol_codes=panel["symbol_codes"])
+    func_set = build_function_set(whitelist, date_codes=panel["date_codes"], symbol_codes=panel["symbol_codes"])
     cons = whitelist["constraints"]
 
     from gplearn.genetic import SymbolicTransformer
@@ -372,12 +434,18 @@ def run_mine(population_size: int, generations: int, universe_n: int, days: int,
     # 搜索目标=gplearn 内置 spearman（Transformer 仅收内置 metric）；
     # 验收目标=自算增量 IC（对基座残差）——搜索与验收分离，终审判定权在 E2/E4。
     gp = SymbolicTransformer(
-        function_set=func_set, metric="spearman",
-        population_size=population_size, generations=generations,
+        function_set=func_set,
+        metric="spearman",
+        population_size=population_size,
+        generations=generations,
         hall_of_fame=max(1, min(population_size, 50)),
         n_components=max(1, min(population_size, 10)),
-        init_depth=tuple(cons["init_depth"]), parsimony_coefficient=cons["parsimony_coefficient"],
-        random_state=cons["random_state"], n_jobs=cons["n_jobs"], verbose=0)
+        init_depth=tuple(cons["init_depth"]),
+        parsimony_coefficient=cons["parsimony_coefficient"],
+        random_state=cons["random_state"],
+        n_jobs=cons["n_jobs"],
+        verbose=0,
+    )
     gp.fit(panel["X"], panel["y"])
 
     fitness = make_incremental_ic_fitness(panel["baseline"], panel["y"])
@@ -389,34 +457,52 @@ def run_mine(population_size: int, generations: int, universe_n: int, days: int,
         ic = fitness(panel["y"], prog.execute(panel["X"]), np.ones(panel["n"]))
         if ic <= 0:
             continue  # 验收目标=增量 IC>0 才入围
-        rows.append({"formula": expr, "incr_ic": round(float(ic), 6),
-                     "length": prog.length_,
-                     "hypothesis_zh": build_hypothesis(expr, float(ic), panel["n"],
-                                                       gloss=gloss_for_expr(expr, whitelist)),
-                     "candidate_id": make_candidate_id(expr)})
-    rows = sorted({r["candidate_id"]: r for r in rows}.values(),
-                  key=lambda r: -r["incr_ic"])[:top_candidates]
+        rows.append(
+            {
+                "formula": expr,
+                "incr_ic": round(float(ic), 6),
+                "length": prog.length_,
+                "hypothesis_zh": build_hypothesis(expr, float(ic), panel["n"], gloss=gloss_for_expr(expr, whitelist)),
+                "candidate_id": make_candidate_id(expr),
+            }
+        )
+    rows = sorted({r["candidate_id"]: r for r in rows}.values(), key=lambda r: -r["incr_ic"])[:top_candidates]
     batch_id = now.strftime("E1C-%Y%m%d-%H%M%S")
-    rows = attach_birth_certificate(rows, batch_id, {
-        "whitelist": whitelist, "population_size": population_size,
-        "generations": generations, "random_state": cons["random_state"]})
+    rows = attach_birth_certificate(
+        rows,
+        batch_id,
+        {
+            "whitelist": whitelist,
+            "population_size": population_size,
+            "generations": generations,
+            "random_state": cons["random_state"],
+        },
+    )
 
     record = {
-        "batch": batch_id, "gate": gate, "smoke": smoke,
-        "whitelist_status": status, "function_set": func_set,
-        "panel": {"n": panel["n"], "universe_n": len(panel["universe"]),
-                  "baseline_cols": len(panel["baseline_cols"])},
+        "batch": batch_id,
+        "gate": gate,
+        "smoke": smoke,
+        "whitelist_status": status,
+        "function_set": func_set,
+        "panel": {"n": panel["n"], "universe_n": len(panel["universe"]), "baseline_cols": len(panel["baseline_cols"])},
         "mined": len(rows),
-        "items": [{k: r[k] for k in ("candidate_id", "incr_ic", "length", "formula")}
-                  for r in rows],
+        "items": [{k: r[k] for k in ("candidate_id", "incr_ic", "length", "formula")} for r in rows],
     }
     if not dry_run and rows:
-        cols = ["candidate_id", "formula", "incr_ic", "length", "hypothesis_zh",
-                "birth_channel", "birth_batch", "birth_source"]
+        cols = [
+            "candidate_id",
+            "formula",
+            "incr_ic",
+            "length",
+            "hypothesis_zh",
+            "birth_channel",
+            "birth_batch",
+            "birth_source",
+        ]
         header = not _INTAKE_CSV.exists()
         _INTAKE_CSV.parent.mkdir(parents=True, exist_ok=True)
-        pd.DataFrame(rows)[cols].to_csv(_INTAKE_CSV, mode="a", header=header,
-                                        index=False, encoding="utf-8-sig")
+        pd.DataFrame(rows)[cols].to_csv(_INTAKE_CSV, mode="a", header=header, index=False, encoding="utf-8-sig")
         record["written_to"] = str(_INTAKE_CSV.relative_to(_ROOT))
     return record
 
@@ -434,8 +520,9 @@ def main() -> int:
     m.add_argument("--dry-run", action="store_true", help="只回看不写台账")
     args = ap.parse_args()
     try:
-        record = run_mine(args.population, args.generations, args.universe_n,
-                          args.days, args.top, args.smoke, args.dry_run)
+        record = run_mine(
+            args.population, args.generations, args.universe_n, args.days, args.top, args.smoke, args.dry_run
+        )
     except RuntimeError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1

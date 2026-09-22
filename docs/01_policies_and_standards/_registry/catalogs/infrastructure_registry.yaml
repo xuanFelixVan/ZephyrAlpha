@@ -210,6 +210,24 @@ infrastructure:
     provisioned_at: "2026-08-10"
     note: "2026-08-10 首次执行（tick/分钟线老分区，manifest 1865 条全 verified+dropped，见 18 号文档 §3.8.2）；kline_daily 日线按契约 L3 ≥10年且体积小不归档（量化社区日线永久保存实践）"
 
+  # --- 四盘分工与存储地图（2026-09-21/22 Owner 定案，磁盘重整战役 a3/a4/a5）---
+  - infra_id: "INFRA-STORE-003"
+    name: "four-drive-storage-map"
+    type: object_storage
+    description: "四盘分工与存储地图——AI 找数据先查本条目：D=NVMe 生产（项目仓 D:/ZephyrAlpha+CH 虚拟机 data.vhdx 热层，回测主力）；E=SATA SSD 软件+热数据工具（QMT/xtquant/iFinD）；F=USB-SSD 冷储专项（纯冷库，主库=F:/zephyr_cold：30_corpus 研报语料+50_archive/by_project/zephyralpha Parquet 冷档案）；G=USB-HDD 备份总仓（一套完整备份=G:/backup/{working_vault,db_dumps,git_bundles,offrepo}+CH 第二备份链 ch_backup_disk2.vhdx+F 冷储夜镜像）；offsite=Owner 月度手动第三块盘（3-2-1：3 副本 D+G+离场/2 介质/1 离场）。铁律：数据第一公理（删除前两份验证副本+行数 verify）；冷库三红线（immutable/禁双真源/回测数据家不在冷库，SOP=docs/_working/altdata_line/10_g_drive_cold_storage_sop.md）；删除观察期（源 7 天/冷储 30 天）；USB 盘禁热服务/热库/编译。"
+    runtime_plane: cold
+    host: "F:/zephyr_cold + G:/backup"
+    access_method: "找冷库→F:/zephyr_cold（DuckDB 直读 Parquet+研报原文）；找备份→G:/backup（restore.ps1/backup.ps1 六阶段）；CH 备份双链=F 盘 ch_backup_disk.vhdx（主链，VM 挂载留 F）+G 盘 ch_backup_disk2.vhdx（第二链，SCSI 热挂）；offsite 手册=docs/_working/disk_reorg_campaign/offsite_monthly_manual.md；保留规则=docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml；安全施工通则=docs/_working/disk_reorg_campaign/a3_safe_construction_checklist.md"
+    health_check: query
+    dependency_of:
+      - "MOD-INF-043"
+      - "MOD-DATA"
+      - "MOD-BACKTEST"
+    sla: "数据第一公理：任何删除前两份验证副本；冷储 immutable；备份版本化（working_vault 14 天/db_dumps 14 天/git bundle 留 2 份/CH 双链）"
+    status: connected
+    provisioned_at: "2026-09-21"
+    note: "2026-09-21/22 磁盘重整战役定案（Owner 六项签字）；蓝图=disaster_recovery_backup/blueprint.md v3.0 纪要；遗留=阶段5（2026-10-05 摘 F 旧链盘+ch_vm_backup B 瘦身+G 三份 ch_vm_backup 去重 1774.7G）+日历删除（10-18/10-20/10-21）"
+
   # --- 配置中心（RI-04 ConfigCenter）---
   - infra_id: "INFRA-CFG-001"
     name: "zephyr-config-center"

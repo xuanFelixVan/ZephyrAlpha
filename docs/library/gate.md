@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 闸门馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：295｜馆内总数：295
+- 条目数（本页列出）：299｜馆内总数：299
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -96,7 +96,9 @@ doc_type: "index"
 | FILE:src/zephyr/gov_enforcement/rule_enforcement/task/g7_orc_gate_engine.yaml | file | active | src/zephyr/gov_enforcement/rule_enforcement/task/g7_orc_gate_engine.yaml |
 | FILE:src/zephyr/gov_enforcement/rule_enforcement/zero_residue.yaml | file | active | src/zephyr/gov_enforcement/rule_enforcement/zero_residue.yaml |
 | FILE:tests/gov_enforcement/test_construction_governor_gate.py | file | active | tests/gov_enforcement/test_construction_governor_gate.py |
+| FILE:tests/gov_enforcement/test_library_blood_flesh_gate.py | file | active | tests/gov_enforcement/test_library_blood_flesh_gate.py |
 | FILE:tests/gov_enforcement/test_state_vocab_registry_gate.py | file | active | tests/gov_enforcement/test_state_vocab_registry_gate.py |
+| FILE:tests/gov_enforcement/test_tag_vocab_gate.py | file | active | tests/gov_enforcement/test_tag_vocab_gate.py |
 | MOD:src/zephyr/gov_enforcement/__init__.py | module | active | src/zephyr/gov_enforcement/__init__.py |
 | MOD:src/zephyr/gov_enforcement/behavioral_admission/__init__.py | module | active | src/zephyr/gov_enforcement/behavioral_admission/__init__.py |
 | MOD:src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py | module | active | src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py |
@@ -173,6 +175,7 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/issue_resolved_integrity_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/library_blood_flesh_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library_blood_flesh_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/library_coverage_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/library_coverage_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/long_param_list_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/manual_only_permanent_gate.py |
@@ -218,6 +221,7 @@ doc_type: "index"
 | MOD:src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/strategy_factory_map_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py |
+| MOD:src/zephyr/gov_enforcement/commit_gates/tag_vocab_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/tag_vocab_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py |
 | MOD:src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py | module | active | src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py |

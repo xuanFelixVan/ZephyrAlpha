@@ -1,0 +1,39 @@
+# [A_config] module_id=MOD-GOV-METAQ | layer=config | stability=new | safety=L | ai_autonomy=ai_modifiable
+module_id: MOD-GOV-METAQ
+ttl: permanent
+capability_id: meta_question_registry
+category: governance
+name: 原问题中央登记表
+description: >-
+  原问题（值得问的问题本身）的入库闸/查询/状态流转/认领/考试回填统一入口。
+  '原问题/立项/开新线'场景命中本卡：想立项一个新研究问题、查某问题是否已 registered、
+  把考试结论回填到问题账本，一律走本能力（PG schema meta_question 三表 + 写入 API）。
+  设计真源=docs/_working/chain_piling_campaign/infra_mining/（W1 挖矿包五份）。
+examples:
+  - "立项新问题：MetaQuestionRegistry.register(question, actor=<sid>)——五要素必填+查重+净零声明"
+  - "查未答问题队列：SELECT ... FROM meta_question WHERE status IN ('registered','mining','in_exam') ORDER BY priority_score DESC"
+  - "考试回填：record_exam_result(q_id, result, actor)——answered/reexam/suspended 三态联动+审计双轨"
+  - "开新线前查重：register 会做归一化标题查重，dup_high_similarity 拒绝并附 duplicate_of"
+input_schema:
+  type: object
+  required: [title, layer, data_sources, exam_plan, consumers, frequency, pit_proof, net_zero_note]
+  properties:
+    title: {type: string, description: 问题标题（查重键）}
+    layer: {type: string, enum: [L0, L1, L2, L3, L4, L5, L6]}
+    data_sources: {type: array, description: 数据源（能被数据回答）}
+    exam_plan: {type: object, description: 考试方案（含 criterion/threshold，能被考试证伪）}
+    consumers: {type: array, description: 消费方（明确到层/模块）}
+    frequency: {type: string, description: 更新频率（daily/weekly/monthly/quarterly/event/realtime/static）}
+    pit_proof: {type: string, description: PIT 安全证明}
+    net_zero_note: {type: string, description: 净零声明（替代/合并了什么，或为何属净新增）}
+output_schema:
+  type: object
+  properties:
+    q_id: {type: string, description: "PQ-NNNN（墓碑不复用）"}
+    status: {type: string, description: "draft/registered/mining/in_exam/answered/reexam/suspended/merged/retired/blinded"}
+priority: P1
+registered_at: "2026-09-22T00:00:00+00:00"
+requires_human: false
+runtime_plane: warm
+status: ACTIVE
+tags: [meta-question, piling, governance, question-registry, TDM2]

@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——library_hygiene（真源 scripts/governance/generators/library_hygiene.py）
+doc_type: architecture_view
+ttl: permanent
+module: scripts.governance.generators.library_hygiene
+source_of_truth: scripts/governance/generators/library_hygiene.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 卫生扫描参数
+    #   fields: 阈值常量模块级（docs/_working 30 天/.runtime/tmp 7 天/logs 30 天/data/cache 30 天）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 四类候选扫描
+    #   name_en: _scan_dir_candidates/_collect_logs_unregistered
+    #   intro: mtime 超龄扫描四目录；logs/ 须不命中 registry_of_logs 抽屉前缀（未在册=编外日志）；注册表不可读降级全量候选并记 warn。
+    #   outputs: 候选路径列表
+    # - id: A2
+    #   name_zh: 报告渲染
+    #   name_en: run_hygiene
+    #   intro: 只读盘点零删除（Owner 机械判定铁律：候选清单禁自动处置）；报告自带索书号落 HYGIENE.md。
+    #   outputs: {candidates_by_class, warn, report_path}
+    # 层: 输出
+    # - id: O1
+    #   name_zh: HYGIENE.md 月批候选清单
+    #   name_en: report
+    #   intro: file_ops 显式={read,write}；处置权=Owner 月批，本命令永不删改候选本体。
+    #   downstream: Owner 月度卫生批
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

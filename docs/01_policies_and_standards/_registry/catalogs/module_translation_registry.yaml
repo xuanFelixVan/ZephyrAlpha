@@ -56010,6 +56010,127 @@ entries:
   desc_en: ""
   plain_zh: "这是个跑夜班用的总调度小工具：把全市场5000多只股票的指标计算拆成58个小批次一个个跑，每一批单独开进程防止内存爆掉，跑完一批记个条子，中断了重跑会自动跳过已完成批次。"
   responsibility_layer: business
+- module_path: scripts/backtest/sim_daily_runner.py
+  domain_id: D_BACKTEST
+  name_zh: "模拟盘日链接电执行体"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天把丁线日计划(只读)翻译成模拟盘姿态和台账行，把E4观察档翻译件重放出模拟单，并出判定日报"
+  responsibility_layer: business
+- module_path: schemas/categories/sim_daily_report.py
+  domain_id: D_BACKTEST
+  name_zh: "模拟盘判定台账表结构"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "模拟盘日报台账的表结构定义：先落判定行，第二天再补结算列，判定和结算分开"
+  responsibility_layer: business
+- module_path: scripts/ch/apply_sim_daily_report_ddl.py
+  domain_id: D_DATA
+  name_zh: "模拟盘判定台账建表件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把模拟盘日报台账的表结构部署到数据库，建好表并核对列都在"
+  responsibility_layer: business
+- module_path: src/zephyr/gov_enforcement/commit_gates/tag_vocab_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "标签枚举门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查提交里的资产标签是不是词库里的标准词或登记过的别名，新造词会被提醒先去词库登记，防止同一个意思各处写法不一样。"
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/library_blood_flesh_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "血肉编目门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "检查新建的代码模块有没有中文标题和大白话说明，没有血肉的资产检索到了也读不懂，这道门保证新登记的资产从出生就带说明。"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/collectors/logs_collector.py
+  domain_id: D_GOVERNANCE
+  name_zh: "日志抽屉采集器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把日志总索引里的每个日志抽屉登记进图书馆总账，AI 查到抽屉就知道去哪个大盘目录找日志文件，日志本体不逐件登记防止总账爆仓。"
+  responsibility_layer: governance
+- module_path: src/zephyr/library/library_regen_reconciler.py
+  domain_id: D_GOVERNANCE
+  name_zh: "图书馆自动刷新器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每次提交后自动把新增改动的文件采集进图书馆总账并重新生成馆页和对账报告，不用再手动刷新，全程只加不删。"
+  responsibility_layer: governance
+- module_path: scripts/governance/generators/library_hygiene.py
+  domain_id: D_GOVERNANCE
+  name_zh: "图书馆卫生盘点器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一条命令扫出临时文档、临时文件、没人管的日志和缓存这四类待清理候选清单，只列出来给 Owner 每月人工批，绝不自动删除。"
+  responsibility_layer: governance
+- module_path: schemas/categories/market/market_option_daily_stats.py
+  domain_id: D_DATA
+  name_zh: "期权每日统计表DDL真源"
+  name_en: "option daily stats DDL source"
+  desc_zh: "c1_market.option_daily_stats 表结构唯一真源（交易所官方日统计：成交量/持仓量PCR与认认购量额持仓字段）"
+  desc_en: "DDL-as-code source of truth for c1_market.option_daily_stats"
+  plain_zh: "存交易所每天公布的期权大账本：多少认购认沽成交了、还有多少没平仓，算出恐慌比率用"
+  responsibility_layer: business
+- module_path: scripts/data/backfill_option_daily_stats.py
+  domain_id: D_DATA
+  name_zh: "期权官方日统计历史回补器"
+  name_en: "option daily stats backfill"
+  desc_zh: "c1_market.option_daily_stats 深度历史回补（SSE 2015-02-09起/SZSE可用起，dry-run默认+断点续跑+BufferedWriter正门）"
+  desc_en: "Deep history backfill for official option daily stats"
+  plain_zh: "把交易所过去十年每天公布的期权大账本一次性搬回自家仓库，断了能接着跑"
+  responsibility_layer: business
+- module_path: scripts/backup/restore_drill.py
+  domain_id: D_DATA
+  name_zh: "账本恢复演练器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每个月自动把备份出来的数据库副本恢复到一个临时库，核对总账三张表的行数和线上一致后删掉临时库，确保备份真的能还原而不是摆设。"
+  responsibility_layer: business
+- module_path: src/zephyr/alt_data/emotion_index_builder.py
+  domain_id: D_ALT_DATA
+  name_zh: "情绪指数日批构建器"
+  name_en: "emotion index daily builder"
+  desc_zh: "六成分（涨停温度/晋级率/广度/量能/杠杆/新闻）滚动250观测分位→可用成分等权合成0-1灰度情绪指数，close_final/pre_open双stage"
+  desc_en: ""
+  plain_zh: "每天收盘后把六个'市场温度计读数'（涨停家数、连板晋级率、涨跌家数占比、成交量能、两融变化、新闻情绪）各自换算成过去一年的热度百分位，再平均成一个0到1的'今天市场有多热'分数；早上开盘前也会出一份盘前版。"
+  responsibility_layer: business
+- module_path: scripts/audit/pcr_e4_exam.py
+  domain_id: D_DATA
+  name_zh: "期权PCR E4出证考试件"
+  name_en: "PCR E4 evidence exam"
+  desc_zh: "官方PCR择时假设的只读分段判读考试（IS/OOS+分位对基线，裁定#325口径）"
+  desc_en: "Read-only PCR timing hypothesis exam"
+  plain_zh: "拿期权恐慌比率当反向信号到底灵不灵，跑一段历史数据打个分"
+  responsibility_layer: business
+- module_path: src/zephyr/intelligence/news_llm_scorer.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "夜间新闻LLM打分器"
+  name_en: "news llm scorer"
+  desc_zh: "nlp_inference×OllamaChat 组装为 analyzer 级 LLM 打分器，文件旗 factory-off，LSG 经 OllamaChat 内置 lsg_gate"
+  desc_en: ""
+  plain_zh: "给新闻情绪打分装一个大模型开关：平时关着用关键词老办法；Owner 建一个标记文件才打开，打开后由本地大模型逐条读新闻给出更准的情绪分，出错自动退回老办法。"
+  responsibility_layer: ai
+- module_path: src/zephyr/governance/meta_question
+  domain_id: D_GOVERNANCE
+  name_zh: "原问题中央登记表"
+  name_en: "Meta Question Registry"
+  desc_zh: "原问题入库闸/状态流转/认领/考试回填统一写入API与PG三表"
+  desc_en: ""
+  plain_zh: "这是一本'值得研究的问题'的总账本：想把一个研究问题正式立项，先到这里过五道安检（有数据能答、有考试能证伪、有明确谁消费、有更新节奏、不偷看未来），过闸后领一个PQ编号入册；之后问题的每次搬家（开工、开考、出答案、挂起、退役）都在账本留痕，谁认领了它、考了几次、结论是什么全可查。"
+  responsibility_layer: governance
+
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow

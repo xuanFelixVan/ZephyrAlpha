@@ -77,7 +77,9 @@ class TestBlockEventAudit:
 
     def test_held_overlap_blocked_audited(self, mocked_impl, tmp_path):
         mocked_impl.result = {
-            "session_id": "s1", "status": "FAILED", "commit_hash": "",
+            "session_id": "s1",
+            "status": "FAILED",
+            "commit_hash": "",
             "message": "HELD_OVERLAP_VIOLATION: 文件被其他活跃 session 持有",
             "held_overlap": True,
         }
@@ -95,7 +97,9 @@ class TestBlockEventAudit:
     def test_gate_message_gate_id_extracted(self, mocked_impl, tmp_path):
         """message 含『门禁 XXX 阻断』→ 精确提取门禁号。"""
         mocked_impl.result = {
-            "session_id": "s1", "status": "FAILED", "commit_hash": "",
+            "session_id": "s1",
+            "status": "FAILED",
+            "commit_hash": "",
             "message": "门禁 FILE-PLACEMENT-TTL 阻断: 永久区新文件",
         }
         session_worktree_commit("s1", ["docs/x.md"], "m", project_root=tmp_path)
@@ -106,9 +110,11 @@ class TestBlockEventAudit:
         """WORKTREE-REQUIRED 归因（红蓝 v3 P1-2+P1-4 组合）：worktree 通道调用被其拦截
         属语义错误（skip 名单治本防复发）；万一真拦，落账归因经 gate_results 直取仍精确。"""
         mocked_impl.result = {
-            "session_id": "s1", "status": "FAILED", "commit_hash": "",
+            "session_id": "s1",
+            "status": "FAILED",
+            "commit_hash": "",
             "message": "pre-commit gate 阻断（worktree 路径对标 GitCommitGateway）"
-                       ": WORKTREE-REQUIRED: 非 worktree 提交被拦截",
+            ": WORKTREE-REQUIRED: 非 worktree 提交被拦截",
             "gate_results": [{"gate_id": "WORKTREE-REQUIRED", "detail": "非 worktree 提交被拦截"}],
         }
         session_worktree_commit("s1", ["a.py"], "m", project_root=tmp_path)
@@ -126,11 +132,30 @@ class TestBlockEventAudit:
             evs = _read_events(tmp_path)
             assert evs[-1]["gate_id"] == expected
 
+    def test_base_sync_failed_audited_as_worktree_base_conflict(self, mocked_impl, tmp_path):
+        """堵点本 §2.1 残余 UNKNOWN×26 治本：base 落地冲突阻断端到端落账归因精确（非 UNKNOWN）。"""
+        mocked_impl.result = {
+            "session_id": "s1",
+            "status": "FAILED",
+            "commit_hash": "",
+            "message": "worktree base 过期且 rebase 冲突（3 commits）. 手动处理: git rebase ...",
+            "base_sync_failed": True,
+        }
+        session_worktree_commit("s1", ["a.py"], "m", project_root=tmp_path)
+        evs = _read_events(tmp_path)
+        assert len(evs) == 1
+        assert evs[0]["event"] == "commit_blocked"
+        assert evs[0]["gate_id"] == "WORKTREE-BASE-CONFLICT", "base 冲突此前恒落 UNKNOWN"
+        assert evs[0]["source"] == "worktree_commit"
+
     def test_not_found_not_audited(self, mocked_impl, tmp_path):
         """worktree 不存在（not_found）=用法/环境前置错误，非门禁堵点 → 不记。"""
         mocked_impl.result = {
-            "session_id": "s1", "status": "FAILED", "commit_hash": "",
-            "message": "worktree 不存在", "not_found": True,
+            "session_id": "s1",
+            "status": "FAILED",
+            "commit_hash": "",
+            "message": "worktree 不存在",
+            "not_found": True,
         }
         session_worktree_commit("s1", ["a.py"], "m", project_root=tmp_path)
         assert _read_events(tmp_path) == []
@@ -146,9 +171,13 @@ class TestWrapperSemantics:
 
     def test_params_passthrough_and_result_identity(self, mocked_impl, tmp_path):
         result = session_worktree_commit(
-            "s1", ["a.py", "b.py"], "msg",
+            "s1",
+            ["a.py", "b.py"],
+            "msg",
             project_root=tmp_path,
-            allow_overlap=True, allow_promote=True, allow_migration=True,
+            allow_overlap=True,
+            allow_promote=True,
+            allow_migration=True,
             depends_on_sessions=["s2"],
         )
         assert result["status"] == "OK"
@@ -168,11 +197,13 @@ class TestWrapperSemantics:
     def test_audit_failure_never_breaks_commit(self, monkeypatch, tmp_path):
         """审计写入异常（如目录只读）→ 提交结果原样返回（fail-open 铁律）。"""
         monkeypatch.setattr(
-            sw, "_audit_wt_block_event",
+            sw,
+            "_audit_wt_block_event",
             lambda *a, **k: (_ for _ in ()).throw(OSError("disk full")),
         )
         monkeypatch.setattr(
-            sw, "_print_wt_bottleneck_banner",
+            sw,
+            "_print_wt_bottleneck_banner",
             lambda *a, **k: (_ for _ in ()).throw(OSError("boom")),
         )
 
@@ -191,11 +222,19 @@ class TestPreMergeGateAudit:
         """event 由 detail 推导（NO-LONG-PARAM-LIST 治本）：commit_slow 前缀→slow，
         否则 commit_blocked；source 字段区分来源域。"""
         sw._audit_wt_block_event(
-            tmp_path, "s1", "-", 3, 61_000.0,
+            tmp_path,
+            "s1",
+            "-",
+            3,
+            61_000.0,
             "commit_slow: worktree commit 61.2s > 60s",
         )
         sw._audit_wt_block_event(
-            tmp_path, "s1", "HELD-OVERLAP", 3, 1_200.0,
+            tmp_path,
+            "s1",
+            "HELD-OVERLAP",
+            3,
+            1_200.0,
             "HELD_OVERLAP_VIOLATION: 文件被其他活跃 session 持有",
             source="pre_merge_gate",
         )
@@ -209,16 +248,55 @@ class TestPreMergeGateAudit:
         assert sw._wt_block_gate_id({"message": "门禁 CREATE-GUARD 阻断: 无 token"}) == "CREATE-GUARD"
         assert sw._wt_block_gate_id({"message": "FOREIGN_CHANGE_VIOLATION: xxx"}) == "FOREIGN-CHANGE"
         assert sw._wt_block_gate_id({"message": "奇怪的错误"}) == "UNKNOWN"
+        # 堵点本 §2.1 残余病灶治本：commit 路径 base 落地冲突（无 gate_results）此前落 UNKNOWN
+        assert (
+            sw._wt_block_gate_id(
+                {
+                    "status": "FAILED",
+                    "base_sync_failed": True,
+                    "message": "worktree base 过期且 rebase 冲突（3 commits）",
+                }
+            )
+            == "WORKTREE-BASE-CONFLICT"
+        )
+        assert (
+            sw._wt_block_gate_id(
+                {
+                    "status": "FAILED",
+                    "base_sync_failed": True,
+                    "message": "worktree base 对齐阻断：worktree 有 5 个未提交改动",
+                }
+            )
+            == "WORKTREE-BASE-CONFLICT"
+        )
+        # merge 路径优先级：带 gate_results=BASE-FRESHNESS-MERGE 时直取先命中，不受新标志分支影响
+        assert (
+            sw._wt_block_gate_id(
+                {
+                    "base_sync_failed": True,
+                    "message": "worktree base 过期",
+                    "gate_results": [{"gate_id": "BASE-FRESHNESS-MERGE", "detail": "x"}],
+                }
+            )
+            == "BASE-FRESHNESS-MERGE"
+        )
 
     def test_gate_results_direct_attribution(self, mocked_impl, tmp_path):
         """gate_results 直取归因（红蓝 v3 P1-2 治本）：拼接 message 正则失配不再落 UNKNOWN。"""
         # 防御空值：条目缺 gate_id / 空 gate_results → 回退原判定链
-        assert sw._wt_block_gate_id({"gate_results": [{"gate_id": "", "detail": "x"}], "message": "门禁 SPLIT-COORDINATION 阻断: x"}) == "SPLIT-COORDINATION"
+        assert (
+            sw._wt_block_gate_id(
+                {"gate_results": [{"gate_id": "", "detail": "x"}], "message": "门禁 SPLIT-COORDINATION 阻断: x"}
+            )
+            == "SPLIT-COORDINATION"
+        )
         assert sw._wt_block_gate_id({"gate_results": [], "message": "奇怪的错误"}) == "UNKNOWN"
         mocked_impl.result = {
-            "session_id": "s1", "status": "GATE_VIOLATION", "commit_hash": "",
+            "session_id": "s1",
+            "status": "GATE_VIOLATION",
+            "commit_hash": "",
             "message": "pre-commit gate 阻断（worktree 路径对标 GitCommitGateway）"
-                       ": CREATE-GUARD: 无 creation_token（红蓝 v3 实证失配样本）",
+            ": CREATE-GUARD: 无 creation_token（红蓝 v3 实证失配样本）",
             "gate_violation": True,
             "gate_results": [{"gate_id": "CREATE-GUARD", "detail": "无 creation_token"}],
         }

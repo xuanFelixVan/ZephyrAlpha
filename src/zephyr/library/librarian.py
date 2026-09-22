@@ -70,8 +70,8 @@ class PgConnection(Protocol):
         ...
 
     def close(self) -> None:
-        """关闭连接。"""
-        ...
+        """关闭连接（由驱动语义决定）。"""
+        return None
 
 
 import json
@@ -82,6 +82,13 @@ from zephyr.library.ledger_schema import (
     _SQL_ENSURE_EVENTS,
     _SQL_INSERT_EVENT,
     _SQL_LOOKUP,
+    _SQL_LOOKUP_COMPOSED,
+    _SQL_LOOKUP_FILTER_HOME_PREFIX,
+    _SQL_LOOKUP_FILTER_KIND,
+    _SQL_LOOKUP_FILTER_OWNER,
+    _SQL_LOOKUP_FILTER_STATUS,
+    _SQL_LOOKUP_FILTER_TAG,
+    _SQL_LOOKUP_TAIL,
     _SQL_MARK_DECEASED,
     _SQL_UPSERT_ASSET,
     validate_action,
@@ -220,12 +227,27 @@ class Librarian:
         self._conn.commit()
         return count
 
-    def lookup(self, query: str, limit: int = 20) -> list[dict[str, Any]]:
-        """借阅：按 ID/home/标题模糊定位资产。
+    def lookup(
+        self,
+        query: str,
+        limit: int = 20,
+        *,
+        kind: str | None = None,
+        owner_domain: str | None = None,
+        tags: Sequence[str] | None = None,
+        status: str | None = None,
+        home_prefix: str | None = None,
+    ) -> list[dict[str, Any]]:
+        """借阅：按 ID/home/标题模糊定位资产，支持 kind/owner_domain/tags/status/home 前缀组合过滤（T5）。
 
         Args:
             query: 查询串。
             limit: 返回上限。
+            kind: 资产类型精确过滤（ASSET_KINDS 12 枚举之一）。
+            owner_domain: 拥有域精确过滤（functional_domain 83 域）。
+            tags: 标签过滤（多值 AND 语义——逐词入栈）。
+            status: 状态过滤（STATUSES 枚举之一）。
+            home_prefix: home 前缀过滤（如 ``TBL:ch:`` / ``data/backtest_artifacts/``）。
 
         Returns:
             资产行字典列表。
@@ -233,7 +255,33 @@ class Librarian:
         """
         escaped = query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
         pattern = f"%{escaped}%"
+        if not (kind or owner_domain or tags or status or home_prefix):
+            with self._conn.cursor() as cur:
+                cur.execute(_SQL_LOOKUP, (pattern, pattern, pattern, limit))
+                cols = [d[0] for d in cur.description]
+                return [dict(zip(cols, row, strict=True)) for row in cur.fetchall()]
+        # 过滤态：基座 + 过滤子句常量拼接（全部子句均为 ledger_schema 模块级常量，NO-BARE-SQL）
+        sql = _SQL_LOOKUP_COMPOSED
+        params: list[Any] = [pattern, pattern, pattern]
+        if kind:
+            sql += _SQL_LOOKUP_FILTER_KIND
+            params.append(kind)
+        if owner_domain:
+            sql += _SQL_LOOKUP_FILTER_OWNER
+            params.append(owner_domain)
+        for tag in tags or []:
+            sql += _SQL_LOOKUP_FILTER_TAG
+            params.append(tag)
+        if status:
+            sql += _SQL_LOOKUP_FILTER_STATUS
+            params.append(status)
+        if home_prefix:
+            sql += _SQL_LOOKUP_FILTER_HOME_PREFIX
+            escaped_prefix = home_prefix.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            params.append(f"{escaped_prefix}%")
+        sql += _SQL_LOOKUP_TAIL
+        params.append(limit)
         with self._conn.cursor() as cur:
-            cur.execute(_SQL_LOOKUP, (pattern, pattern, pattern, limit))
+            cur.execute(sql, tuple(params))
             cols = [d[0] for d in cur.description]
             return [dict(zip(cols, row, strict=True)) for row in cur.fetchall()]

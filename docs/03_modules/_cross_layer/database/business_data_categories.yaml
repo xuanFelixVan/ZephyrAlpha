@@ -1638,7 +1638,7 @@
   calc_mode: preload
   frequency: 日频
   data_source: [akshare]
-  blueprint: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/37_liquidity_crisis_protocol.md §3.2a"
+  blueprint: "docs/_working/archive/2026-09/design_memos/37_liquidity_crisis_protocol.md §3.2a"
 
 - category_id: market_stock_indicator
   name: "股票技术指标"
@@ -1690,6 +1690,57 @@
   blueprint: null
 
 # --- 期权数据 ---
+
+- category_id: market_pattern_certification
+  name: "形态认证表"
+  engine: clickhouse
+  database: c1_market
+  table: market_pattern_certification
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 事件频
+  data_source: [internal]
+  blueprint: null
+  note: "双真源补登（2026-09-22 st-xhs-full-20260922 静窗收口）：tasks.yaml pattern_evidence_certify 任务引用且 CH 表实存 67 行，机械补登记消除双真源漂移"
+
+- category_id: alt_fx_rate_ecb
+  name: "ECB外汇汇率"
+  engine: clickhouse
+  database: c1_market
+  table: alt_fx_rate_ecb
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [ecb]
+  blueprint: null
+  note: "双真源补登（2026-09-22 st-xhs-full-20260922 静窗收口）：tasks.yaml alt_fx_ecb_daily_incremental 任务引用且 CH 表实存 72 行，机械补登记消除双真源漂移"
+
+- category_id: market_option_daily_stats
+  name: "期权每日统计（官方PCR）"
+  engine: clickhouse
+  database: c1_market
+  table: option_daily_stats
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+  note: "工单#3+#14 期权PCR数据批（2026-09-22 st-xhs-full-20260922）：交易所官方日统计，DDL 真源 schemas/categories/market/market_option_daily_stats.py"
 
 - category_id: market_option_kline
   name: "期权日K线"
@@ -3528,6 +3579,1930 @@
   frequency: 日频
   data_source: [akshare]
   blueprint: null
+
+# --- 新闻情绪窗口品类补登记（2026-09-22 st-emomine-20260922：DS-107 既有表，夜间写入器长期走 fallback 降级，本登记消除双真源漂移警告）---
+
+- category_id: market_news_sentiment_window
+  name: "新闻情绪窗口聚合（夜间窗=前日18:00→当日08:00，scope=market/symbol；sentiment_index∈[-1,1]+正负中性计数+top_events_json；data_source=rule/llm/llm_fallback）"
+  engine: clickhouse
+  database: c1_market
+  table: news_sentiment_window
+  schema_file: schemas/categories/market/market_news_sentiment_window.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "情绪分数作事件信号维度非独立 alpha（26号 §2.7 裁定）；夜间窗 PIT 边界=发布时间 ≤ 窗止"
+  calc_mode: lazy
+
+# --- 情绪指数日批（2026-09-22 st-emomine-20260922，骨架 v0.2/契约 v0.1）---
+
+- category_id: market_emotion_index
+  name: "A股市场情绪指数（六成分滚动分位聚合0-1灰度：C1涨停温度/C2晋级率/C3广度/C4量能/C5杠杆/C6新闻；close_final/pre_open 双 stage；独立状态变量=场内温度计，非择时信号）"
+  engine: clickhouse
+  database: c1_market
+  table: emotion_index
+  schema_file: schemas/categories/market/market_emotion_index.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "契约 v0.1：components JSON 明细必带；成分集/权重变更必须升 version 禁原地改；禁 fear_greed 异轴顶替（t0 判例）；同 ts 禁循环依赖（板块热度不回灌）；观测<120 成分 status=insufficient 禁硬凑"
+  calc_mode: lazy
+
+# --- TC-08 步骤3（2026-09-22 st-residual-20260922，WORK-ORDER-5 cohort 日账本接线）---
+
+- category_id: cohort_daily_ledger
+  name: "投资者行为画像五人群日账本（散户/杠杆/热钱/配置机构长表行=人群×指标，中频代理指标+state 四态+proxy_source 溯源+bias_note 偏差注记；WORK-ORDER-5 一期结算层）"
+  engine: clickhouse
+  database: c1_backtest
+  table: cohort_daily_ledger
+  schema_file: schemas/categories/cohort_daily_ledger.py
+  data_type: 成品
+- category_id: market_option_daily_stats
+  name: "期权每日统计（官方PCR）"
+  engine: clickhouse
+  database: c1_market
+  table: option_daily_stats
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+  note: "工单#3+#14 期权PCR数据批（2026-09-22 st-xhs-full-20260922）：交易所官方日统计，DDL 真源 schemas/categories/market/market_option_daily_stats.py"
+
+- category_id: market_option_kline
+  name: "期权日K线"
+  engine: clickhouse
+  database: c1_market
+  table: option_kline
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_option_greeks
+  name: "期权Greeks（Delta/Gamma/Theta/Vega）"
+  engine: clickhouse
+  database: c1_market
+  table: option_greeks
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: market_option_iv
+  name: "期权IV曲面"
+  engine: clickhouse
+  database: c1_market
+  table: option_iv_surface
+  schema_file: schemas/categories/market/market_option_iv.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.5"
+
+# --- 元数据表 ---
+
+- category_id: market_stock_list
+  name: "A股股票列表（5884只=5523在市+361退市，SCD-2时点版本化，#ARCH-CH-021 P0-1）"
+  engine: clickhouse
+  database: c1_market
+  table: stock_list
+  schema_file: schemas/categories/market/market_stock_list.py
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 月频
+  data_source: [akshare]
+  blueprint: docs/03_modules/_cross_layer/database/blueprint.md
+
+- category_id: market_trade_calendar
+  name: "A股交易日历（SSE，1990-2026，含全部日历日，is_open区分交易日）"
+  engine: clickhouse
+  database: c1_market
+  table: trade_calendar
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 年频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: market_auction_snapshot
+  name: "集合竞价快照"
+  engine: clickhouse
+  database: c1_market
+  table: auction_snapshot
+  schema_file: schemas/categories/intraday/market_auction.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: "9:15-9:25"
+  data_source: [miniqmt]
+  blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.3"
+
+# --- 预留空表（功能未启用） ---
+
+- category_id: market_auction_book
+  name: "集合竞价簿（预留，未启用）"
+  engine: clickhouse
+  database: c1_market
+  table: auction_book
+  schema_file: schemas/categories/intraday/market_auction_book.py
+  data_type: 预留
+  lifecycle: permanent
+  sla_level: L3
+  enabled: false
+  hard_constraint: null
+  calc_mode: none
+  frequency: "9:15-9:25"
+  data_source: []
+  blueprint: null
+
+- category_id: market_edb_data
+  name: "经济数据库EDB（预留，未启用）"
+  engine: clickhouse
+  database: c1_market
+  table: edb_data
+  schema_file: null
+  data_type: 预留
+  lifecycle: permanent
+  sla_level: L3
+  enabled: false
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: []
+  blueprint: null
+
+# --- Level2逐笔行情（禁用：无L2数据源） ---
+# ⚠️ AI注意：此表当前 0 行，因无 L2 行情权限（券商资金门槛50万+）而禁用。
+# 与 tick_data（3秒Tick快照）是不同的数据——l2_tick 是每笔真实成交，tick_data 是3秒采样快照。
+# 恢复方式：获取 L2 权限后，将 enabled 改为 true + tasks.yaml l2_tick_snapshot 的 disabled 改为 false。
+# 裁定见 #ARCH-DATA-014。
+
+- category_id: market_l2_tick
+  name: "Level2逐笔行情（含买卖盘，禁用：无L2数据源）"
+  engine: clickhouse
+  database: c1_market
+  table: l2_tick
+  schema_file: schemas/categories/intraday/market_l2_tick.py
+  data_type: 行情
+  lifecycle: permanent  # #ARCH-CH-022 P1-6：预留表统一permanent（声明-实现对齐，无TTL即永久保留）
+  sla_level: L3
+  enabled: false  # #ARCH-DATA-014: 无L2行情权限，禁用。获取权限后改 true 即可恢复
+  hard_constraint: null
+  calc_mode: replay
+  frequency: 逐笔
+  data_source: ['miniqmt']
+  blueprint: MOD-L04-002
+
+- category_id: market_realtime_snapshot
+  name: "实时快照（预留，未启用）"
+  engine: clickhouse
+  database: c1_market
+  table: realtime_snapshot
+  schema_file: null
+  data_type: 预留
+  lifecycle: hot_1d
+  sla_level: L3
+  enabled: false
+  hard_constraint: null
+  calc_mode: none
+  frequency: 3秒
+  data_source: []
+  blueprint: null
+
+# ========== C3 fundamental（财务基本面，21张表）==========
+
+- category_id: fund_balance_sheet
+  name: "资产负债表"
+  engine: clickhouse
+  database: c3_fundamental
+  table: balance_sheet
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [miniqmt, akshare]
+  blueprint: null
+
+- category_id: fund_income_statement
+  name: "利润表"
+  engine: clickhouse
+  database: c3_fundamental
+  table: income_statement
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [miniqmt, akshare]
+  blueprint: null
+
+- category_id: fund_cashflow_statement
+  name: "现金流量表"
+  engine: clickhouse
+  database: c3_fundamental
+  table: cashflow_statement
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [miniqmt, akshare]
+  blueprint: null
+
+- category_id: fund_financial_indicator
+  name: "财务指标（announce_date=1970-01-01表示公告日期缺失）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: financial_indicator
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L1
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [miniqmt, akshare]
+  blueprint: null
+
+- category_id: fund_dividend
+  name: "分红送股（announce_date=1970-01-01表示公告日期缺失）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: dividend
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: ex_dividend_event
+  name: "除权除息事件要素表（QMT get_divid_factors 口径：每股派现/送/转/配股要素+dr综合除权因子；stk_limit 公式法除权修正唯一输入，2026-09-09 长城任务方案D立项；东财研究口径的 c3_fundamental.dividend 与 miniqmt _fetch_dividend 6列 schema 不匹配致 dividend_incremental 写入持续失败、表 2026-07-13 后断供——本表为治本替代，dividend 研究表缺口登记 follow-up）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: ex_dividend_event
+  schema_file: schemas/categories/market/market_ex_dividend_event.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: fund_news_data
+  name: "新闻数据（full_publish_time=1970表示发布时间缺失）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: news_data
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 实时
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: fund_restricted_shares
+  name: "限售股解禁（announce_date=1970表示公告日期缺失）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: restricted_shares
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: fund_audit_opinion
+  name: "审计意见"
+  engine: clickhouse
+  database: c3_fundamental
+  table: audit_opinion
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 年频
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: fund_disclosure_plan
+  name: "披露计划"
+  engine: clickhouse
+  database: c3_fundamental
+  table: disclosure_plan
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_earnings_forecast
+  name: "盈利预测"
+  engine: clickhouse
+  database: c3_fundamental
+  table: earnings_forecast
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: fund_analyst_forecast
+  name: "分析师预测"
+  engine: clickhouse
+  database: c3_fundamental
+  table: analyst_forecast
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: fund_research_report
+  name: "券商研报明细"
+  engine: clickhouse
+  database: c3_fundamental
+  table: research_report
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: fund_consensus_daily
+  name: "一致预期每日快照"
+  engine: clickhouse
+  database: c3_fundamental
+  table: consensus_daily
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+- category_id: fund_consensus_daily_repaired
+  name: "一致预期每日快照·历史修复双轨表（研报 PDF 发布时点预测）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: consensus_daily_repaired
+  schema_file: schemas/categories/fundamental/consensus_daily_repaired.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+  # 双轨隔离：与 fund_consensus_daily(DS-229) 并存，DS-229 历史行=今日预期回放（§9 档案）；
+  # 本品类 switch_gate=Owner，验收前 DS-229 消费方不得改指。空洞 2022-01-01~2026-07-21。
+
+- category_id: pdf_forecast_extracted
+  name: "研报 PDF 预测提取明细（EPS/评级逐研报行，发布时点，C4 提取批产物）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: pdf_forecast_extracted
+  schema_file: schemas/categories/fundamental/pdf_forecast_extracted.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+  # 消费方=DS-275 双轨重建（scripts/ch/build_consensus_daily_repaired.py）；
+  # 此前无品类条目、消费端以字面量承载（"登记后须改走真源"），2026-09-17 补登记。
+
+- category_id: fund_irm_interactive_qa
+  name: "深交所互动易问答对（C6 原文层：提问+公司回答，G盘快照可反查，D7 波3）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: irm_interactive_qa
+  schema_file: schemas/categories/fundamental/irm_interactive_qa.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [irm]
+  blueprint: null
+- category_id: fund_irm_interactive_extraction
+  name: "互动易问答 LLM 抽取（涉及产品/供应链/情绪极性/置信度；review_status=approved 唯一消费态，<0.7 入人工池）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: irm_interactive_extracted
+  schema_file: schemas/categories/fundamental/irm_interactive_extraction.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [irm]
+  blueprint: null
+- category_id: fund_ir_activity_record
+  name: "投资者关系活动记录表（C9 原文层：调研纪要 PDF 元数据，PDF 快照落 G 盘，D7 波3）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: ir_activity_record
+  schema_file: schemas/categories/fundamental/ir_activity_record.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [irm]
+  blueprint: null
+- category_id: fund_ir_activity_extraction
+  name: "调研纪要 LLM 抽取（接待机构/产品/供应链/情绪/置信度；review_status=approved 唯一消费态，<0.7 入人工池）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: ir_activity_extracted
+  schema_file: schemas/categories/fundamental/ir_activity_extraction.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [irm]
+  blueprint: null
+- category_id: fund_financial_derived
+  name: "财报派生层（单季/TTM/跨表对齐）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: financial_derived
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [internal]
+  blueprint: null
+
+- category_id: fund_express_report
+  name: "业绩快报"
+  engine: clickhouse
+  database: c3_fundamental
+  table: express_report
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_equity_pledge_detail
+  name: "股权质押明细"
+  engine: clickhouse
+  database: c3_fundamental
+  table: equity_pledge_detail
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_equity_pledge_summary
+  name: "股权质押汇总"
+  engine: clickhouse
+  database: c3_fundamental
+  table: equity_pledge_summary
+  schema_file: null
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_repurchase
+  name: "回购"
+  engine: clickhouse
+  database: c3_fundamental
+  table: repurchase
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_rights_issue
+  name: "配股"
+  engine: clickhouse
+  database: c3_fundamental
+  table: rights_issue
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_share_change
+  name: "股本变动"
+  engine: clickhouse
+  database: c3_fundamental
+  table: share_change
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_share_unlock
+  name: "股份解禁"
+  engine: clickhouse
+  database: c3_fundamental
+  table: share_unlock
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 事件驱动
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_shareholder_count
+  name: "股东人数"
+  engine: clickhouse
+  database: c3_fundamental
+  table: shareholder_count
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_top10_shareholders
+  name: "前十大股东"
+  engine: clickhouse
+  database: c3_fundamental
+  table: top10_shareholders
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_top10_circulating_shareholders
+  name: "前十大流通股东"
+  engine: clickhouse
+  database: c3_fundamental
+  table: top10_circulating_shareholders
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [exchange]
+  blueprint: null
+
+- category_id: fund_main_business
+  name: "主营业务构成"
+  engine: clickhouse
+  database: c3_fundamental
+  table: main_business
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 半年频
+  data_source: [miniqmt]
+  blueprint: null
+
+- category_id: fund_industry_class_suppl
+  name: "行业分类补充"
+  engine: clickhouse
+  database: c3_fundamental
+  table: industry_class_suppl
+  schema_file: null
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 低频
+  data_source: [tushare]
+  blueprint: null
+
+# --- P2-3 补登（#ARCH-CH-024）：cross_validation_log 建表于 Wave 2 但漏登品类注册表 ---
+- category_id: market_cross_validation_log
+  name: "多源交叉校验日志"
+  engine: clickhouse
+  database: c1_market
+  table: cross_validation_log
+  schema_file: schemas/categories/cross_validation_log.py
+  data_type: 衍生
+  lifecycle: hot_90d
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: none
+  frequency: 实时(校验时)
+  data_source: [miniqmt, tdx_backup]
+  blueprint: docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §6.5
+
+# --- 生猪价格数据（2026-07-29 新增，akshare 接入，补齐猪周期分析数据缺口）---
+
+- category_id: market_hog_spot_index
+  name: "生猪现货价格指数"
+  engine: clickhouse
+  database: c1_market
+  table: hog_spot_index
+  schema_file: schemas/categories/market/market_hog_spot_index.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 周频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_hog_futures_core
+  name: "生猪期货核心价"
+  engine: clickhouse
+  database: c1_market
+  table: hog_futures_core
+  schema_file: schemas/categories/market/market_hog_futures_core.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_hog_province_spot
+  name: "分省生猪现价"
+  engine: clickhouse
+  database: c1_market
+  table: hog_province_spot
+  schema_file: schemas/categories/market/market_hog_province_spot.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+# --- 另类数据第 1 批：免注册直连（2026-09-12，alt-data-handoff §8-1，source=akshare_alt） ---
+
+- category_id: market_alt_stock_comment
+  name: "千股千评全表日快照"
+  engine: clickhouse
+  database: c1_market
+  table: alt_stock_comment
+  schema_file: schemas/categories/market/market_alt_stock_comment.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_shipping_index
+  name: "航运运价指数长表"
+  engine: clickhouse
+  database: c1_market
+  table: alt_shipping_index
+  schema_file: schemas/categories/market/market_alt_shipping_index.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_typhoon_track
+  name: "台风路径结构化数据"
+  engine: clickhouse
+  database: c1_market
+  table: alt_typhoon_track
+  schema_file: schemas/categories/market/market_alt_typhoon_track.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+# --- C-1 消费端首批：市场级 regime 信号（2026-09-14，st-altdata-20260914） ---
+
+- category_id: market_sentiment_panel
+  name: "币圈宏观情绪面板"
+  engine: clickhouse
+  database: c1_market
+  table: sentiment_panel
+  schema_file: schemas/categories/market/market_sentiment_panel.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [crypto_sentiment_panel]
+  blueprint: null
+
+- category_id: market_alt_regime_signal
+  name: "市场级另类 regime 信号"
+  engine: clickhouse
+  database: c1_market
+  table: alt_regime_signal
+  schema_file: schemas/categories/market/market_alt_regime_signal.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [alt_regime_signal]
+  blueprint: null
+
+# --- 深圳开放数据平台批量源（2026-09-14，st-altdata-20260914） ---
+
+- category_id: market_alt_sz_stat_monthly
+  name: "深圳统计月报长表"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_stat_monthly
+  schema_file: schemas/categories/market/market_alt_sz_stat_monthly.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_sz_port_monthly
+  name: "深圳口岸月度流量长表"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_port_monthly
+  schema_file: schemas/categories/market/market_alt_sz_port_monthly.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_sz_house_daily
+  name: "深圳楼市日度成交表"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_house_daily
+  schema_file: schemas/categories/market/market_alt_sz_house_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_sz_weather_warning
+  name: "深圳灾害天气预警信号流"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_weather_warning
+  schema_file: schemas/categories/market/market_alt_sz_weather_warning.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_sz_marine_forecast
+  name: "深圳海洋气象预报"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_marine_forecast
+  schema_file: schemas/categories/market/market_alt_sz_marine_forecast.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_alt_sz_air_quality_daily
+  name: "深圳空气质量日报"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_air_quality_daily
+  schema_file: schemas/categories/market/market_alt_sz_air_quality_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_air_quality_region
+  name: "深圳分区域空气质量"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_air_quality_region
+  schema_file: schemas/categories/market/market_alt_sz_air_quality_region.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_reservoir_station
+  name: "深圳水库测站字典"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_reservoir_station
+  schema_file: schemas/categories/market/market_alt_sz_reservoir_station.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_reservoir_rain_day
+  name: "深圳水库站点日降雨量"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_reservoir_rain_day
+  schema_file: schemas/categories/market/market_alt_sz_reservoir_rain_day.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_reservoir_rain_month
+  name: "深圳水库站点月降雨量"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_reservoir_rain_month
+  schema_file: schemas/categories/market/market_alt_sz_reservoir_rain_month.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_house_area
+  name: "深圳一手房按面积成交"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_house_area
+  schema_file: schemas/categories/market/market_alt_sz_house_area.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_house_listing
+  name: "深圳二手房源信息"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_house_listing
+  schema_file: schemas/categories/market/market_alt_sz_house_listing.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_house_presale
+  name: "深圳商品房批准预售"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_house_presale
+  schema_file: schemas/categories/market/market_alt_sz_house_presale.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_market_subject
+  name: "深圳市场主体发展统计"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_market_subject
+  schema_file: schemas/categories/market/market_alt_sz_market_subject.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_stat_analysis
+  name: "深圳统计分析文章流"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_stat_analysis
+  schema_file: schemas/categories/market/market_alt_sz_stat_analysis.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_enterprise_year
+  name: "深圳企业登记发展年报"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_enterprise_year
+  schema_file: schemas/categories/market/market_alt_sz_enterprise_year.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_reservoir_level
+  name: "深圳水库水位分钟级序列"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_reservoir_level
+  schema_file: schemas/categories/market/market_alt_sz_reservoir_level.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_env_meteor
+  name: "深圳环境气象预报"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_env_meteor
+  schema_file: schemas/categories/market/market_alt_sz_env_meteor.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_climate_hist
+  name: "深圳基本站气候历史"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_climate_hist
+  schema_file: schemas/categories/market/market_alt_sz_climate_hist.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_ground_obs
+  name: "深圳地面观测实况"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_ground_obs
+  schema_file: schemas/categories/market/market_alt_sz_ground_obs.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+- category_id: market_alt_sz_visibility
+  name: "深圳能见度探测分钟级站点流"
+  engine: clickhouse
+  database: c1_market
+  table: alt_sz_visibility
+  schema_file: schemas/categories/market/market_alt_sz_visibility.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_typhoon_landfall_history
+  name: "台风历史登陆档案"
+  engine: clickhouse
+  database: c1_market
+  table: alt_typhoon_landfall_history
+  schema_file: schemas/categories/market/market_typhoon_landfall_history.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_typhoon_names
+  name: "台风名称对照字典"
+  engine: clickhouse
+  database: c1_market
+  table: alt_typhoon_names
+  schema_file: schemas/categories/market/market_typhoon_names.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare_alt]
+  blueprint: null
+
+
+# --- 时间敏感型数据（免费+只能获取最近，必须每日积累，#ARCH-REALTIME-ACCUM） ---
+
+- category_id: market_weather_data
+  name: "天气数据（和风天气，每日快照积累——免费版无历史API）"
+  engine: clickhouse
+  database: c1_market
+  table: weather_data
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "免费版无历史数据API，必须每日积累，错过无法回填"
+  calc_mode: none
+  frequency: 日频
+  data_source: [qweather]
+  blueprint: null
+
+- category_id: market_stock_hot_rank
+  name: "东财人气/关注排行（每日快照积累——实时排行无历史API）"
+  engine: clickhouse
+  database: c1_market
+  table: stock_hot_rank
+  schema_file: null
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "实时排行快照无历史API，必须每日积累"
+  calc_mode: none
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+# --- S2 估值路A 指数估值 + A22 A50 日频历史（2026-08-29） ---
+
+- category_id: market_index_valuation_daily
+  name: "指数估值日频（PE_TTM/股息率/真CAPE_5Y/全历史分位/ERP，S2 估值路A）"
+  engine: clickhouse
+  database: c1_market
+  table: index_valuation_daily
+  schema_file: schemas/categories/market/market_index_valuation_daily.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare, internal]
+  blueprint: null
+
+- category_id: market_a50_futures_daily
+  name: "富时中国A50期货日K（新交所 CHA50CFD 当月连续，盘前 gap_adj w3 通道校准）"
+  engine: clickhouse
+  database: c1_market
+  table: a50_futures_daily
+  schema_file: schemas/categories/market/market_a50_futures_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "新浪免费通道无 SLA；源早期年份 volume/position 可为 0"
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_kline_global
+  name: "外盘日K线（全球指数+商品：HSI恒生/N225日经225/KOSPI首尔综合/CL WTI原油/GC COMEX黄金；GAP-F-23 外盘12迷你卡缺口，designmemos 清单 #6）"
+  engine: clickhouse
+  database: c1_market
+  table: kline_global
+  schema_file: schemas/categories/kline/market_kline_global.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "新浪免费通道无 SLA；index_global_hist_sina 单次上限1000行（≈4年深度）；源早期年份 volume/position 可为 0；USDCNH 无源登记跳过（预留 symbol）"
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: crypto_kline_daily
+  name: "币圈现货日线（binance.vision 免费影子 MVP，Top-50 快照+ETHBTC；只记账不进 TDM 决策）"
+  engine: clickhouse
+  database: c1_market
+  table: crypto_kline_daily
+  schema_file: schemas/categories/crypto/crypto_kline_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "免费公开源无 SLA；宇宙=24h quote_volume Top-50 USDT 采集时点快照（历史不重算）；FAIL-VISIBLE 退出码 3 不造数"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [crypto_binance]
+  blueprint: null
+
+- category_id: crypto_shadow_gate
+  name: "币圈 C-L1 影子判定（shadow_tier 五档只记账不进决策；DS-227）"
+  engine: clickhouse
+  database: c1_market
+  table: crypto_shadow_gate
+  schema_file: schemas/categories/crypto/crypto_kline_daily.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "shadow_version 逻辑变更须升版本防 track record 混轨；判定依赖 crypto_kline_daily 当日入库"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [crypto_binance]
+  blueprint: null
+
+# --- D5 跨资产·Hyperliquid 四表（2026-09-18 夜班 st-datapack-20260918，altdata_line 09 清单 D5 波2）---
+# 官方免费公开 API（api.hyperliquid.xyz，匿名无 key）；hl_ 前缀与既有 crypto 影子线（币安现货）隔离
+
+- category_id: hl_perp_snapshot_daily
+  name: "Hyperliquid 全市场永续行情快照（日更自积，起点 2026-09-18 历史不可回补）"
+  engine: clickhouse
+  database: c1_market
+  table: hl_perp_snapshot_daily
+  schema_file: schemas/categories/crypto/hl_perp_snapshot_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "快照维度官方无历史回补通道（自积起点 2026-09-18 写入表注释）；dayNtlVlm=采集时点滚动 24h 口径非自然日；宇宙=当期全量永续含 isDelisted 行"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [hyperliquid]
+  blueprint: null
+
+- category_id: hl_oi_snapshot_daily
+  name: "Hyperliquid 全市场持仓/OI 分布快照（日更自积，起点 2026-09-18 历史不可回补）"
+  engine: clickhouse
+  database: c1_market
+  table: hl_oi_snapshot_daily
+  schema_file: schemas/categories/crypto/hl_oi_snapshot_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "快照维度无历史回补（自积起点 2026-09-18）；oi_ntl_usd=open_interest×mark_px 采集时点自算（口径披露 schema docstring）"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [hyperliquid]
+  blueprint: null
+
+- category_id: hl_funding_history
+  name: "Hyperliquid 资金费率逐小时历史（长表；可回溯，实测 BTC 起 2023-05-12）"
+  engine: clickhouse
+  database: c1_market
+  table: hl_funding_history
+  schema_file: schemas/categories/crypto/hl_funding_history.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "funding_rate=小时口径未年化（Hyperliquid 原生）；首跑逐币 from-inception 深回溯，日常 lookback 3d 幂等重放；PIT 如实各币起于各自上市首笔"
+  calc_mode: preload
+  frequency: 小时
+  data_source: [hyperliquid]
+  blueprint: null
+
+- category_id: hl_liquidation_raw
+  name: "Hyperliquid 清算流原始捕获（trades 流清算账本地址标记；本班=逐日有界采样）"
+  engine: clickhouse
+  database: c1_market
+  table: hl_liquidation_raw
+  schema_file: schemas/categories/crypto/hl_liquidation_raw.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L3
+  enabled: true
+  hard_constraint: "官方无 REST 清算端点/无公开清算 WS 频道（2026-09-18 实测 422/订阅拒绝留痕）；唯一公开捕获面=trades 流 0xfff…f 清算账本地址；capture_mode=ws_trades_bounded 逐日采样口径，非全量清算流，消费侧不得当全量用；7x24 守护进程挂账下一班"
+  calc_mode: preload
+  frequency: 事件
+  data_source: [hyperliquid]
+  blueprint: null
+
+# --- c1_backtest 锚定态（2026-09-14，N-06 解冻批补登：唯一 c1_backtest 任务表） ---
+
+- category_id: backtest_regime_state_anchored
+  name: "锚定风险四档历史"
+  engine: clickhouse
+  database: c1_backtest
+  table: regime_state_anchored
+  schema_file: schemas/categories/backtest/backtest_regime_state_anchored.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
+# --- 车道 E（2026-09-16，T3⑧ daban 四引擎应用层负载批产，挖矿 LUE-1 治本）---
+
+- category_id: market_daban_engine_load
+  name: "打板四引擎应用层负载日批（连板/开板次数/首触时刻/封板分钟/封单额/流通市值/个股涨幅/涨停价/一字/同板块与全市场封板家数/涨跌家数比/大盘涨幅；derived_fields 逐字段 real|default 留痕）"
+  engine: clickhouse
+  database: c1_market
+  table: daban_engine_load
+  schema_file: schemas/categories/market/market_daban_engine_load.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "PIT：trade_date=打板事件日（决策日 T 只读 ≤T-1 分区，封板/收盘当日盘后才知）；不可产字段省略交引擎 dataclass 中性默认，禁拍假值冒充真值（derived_fields 留痕可查）"
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [internal]
+  blueprint: "src/zephyr/ex_core/daban_load_producer.py（run_daily_batch/persist 负载口径真源，T3⑧ 挖矿 LUE-1 治本）"
+
+# --- 商品期货主力连续+商品现货基差（2026-09-17，st-igalpha-20260917，照生猪模式复制；本文件追加经 Owner 授权）---
+
+- category_id: market_commodity_futures_main
+  name: "商品期货主力连续日行情"
+  engine: clickhouse
+  database: c1_market
+  table: commodity_futures_main
+  schema_file: schemas/categories/market/market_commodity_futures_main.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_commodity_spot_price
+  name: "商品现货价格与基差(生意社)"
+  engine: clickhouse
+  database: c1_market
+  table: commodity_spot_price
+  schema_file: schemas/categories/market/market_commodity_spot_price.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+
+- category_id: market_rate_decision_calendar
+  name: "央行议息日历(11家央行利率决议值/预测值/前值,金十口径年化%)"
+  engine: clickhouse
+  database: c1_market
+  table: rate_decision_calendar
+  schema_file: schemas/categories/market/market_rate_decision_calendar.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+# --- D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班 st-datapack-20260918，altdata_line D5 波2）---
+
+- category_id: market_china_bond_yield
+  name: "中债收益率曲线期限点长表（国债/商业银行普通债AAA/中短期票据AAA ×8 期限点，无风险利率锚+信用利差参照）"
+  engine: clickhouse
+  database: c1_market
+  table: market_china_bond_yield
+  schema_file: schemas/categories/market/market_china_bond_yield.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare bond_china_yield（中国货币网中债估值口径）；源端滚动窗口约1年（2026-09-18 逐月探针实测 2025-10-09 起，更早月份返回空），深历史走 chinabond 官网归档挂账 DS-CAND；ytm=%，曲线末端无值期限=NULL 如实"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+# --- D4 物理另类·油价链三件+F13（2026-09-18 夜班 st-datapack-20260918，altdata_line D4 波2）---
+# 两包交界面：产业链分包 06 传导链引擎 N1a/N1b/N5 节点挂价绑定消费（P2 解锁件）
+
+- category_id: market_ndrc_fuel_price
+  name: "发改委成品油调价(汽柴油最高零售价元/吨+调价幅度,公告日/生效日双PIT轴,2000-06起)"
+  engine: clickhouse
+  database: c1_market
+  table: ndrc_fuel_price
+  schema_file: schemas/categories/market/market_ndrc_fuel_price.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_futures_warehouse_receipt
+  name: "交易所仓单日报(品种×交割仓库明细+小计,CZCE日更+SHFE归档回填;DCE/GFEX源坏未接入)"
+  engine: clickhouse
+  database: c1_market
+  table: futures_warehouse_receipt
+  schema_file: schemas/categories/market/market_futures_warehouse_receipt.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare_alt]
+  blueprint: null
+
+- category_id: market_road_freight_index
+  name: "中国公路物流运价周指数(中物联×林安,总指数+整车+零担轻货/重货,2015-09起;原文快照进G盘冷库)"
+  engine: clickhouse
+  database: c1_market
+  table: road_freight_index
+  schema_file: schemas/categories/market/market_road_freight_index.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: weekly
+  data_source: [chinawuliu_web]
+  blueprint: null
+
+- category_id: market_agri_wholesale_index
+  name: "农业农村部批发价格200指数(农产品200+菜篮子200,日度,2005-09起;分品种API源坏待恢复)"
+  engine: clickhouse
+  database: c1_market
+  table: agri_wholesale_index
+  schema_file: schemas/categories/market/market_agri_wholesale_index.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare_alt]
+  blueprint: null
+
+
+- category_id: research_report
+  name: "券商研报主表（标题+元数据+PDF链接，每晚20:30日更；全文不留DB=版权边界，全文走 c4_pdf_cache）"
+  engine: clickhouse
+  database: c3_fundamental
+  table: research_report
+  schema_file: schemas/categories/fundamental/fundamental_research_report.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+  # 消费方=MOD-BT-193 graph_enrich_staging 研报源适配器（线C 研报喂链）；
+  # 此前无品类条目、SQL 以字面量承载（同 pdf_forecast_extracted 2026-09-17 先例），
+  # 2026-09-18 st-igalpha2-20260918 补登记，TABLE-NAME-REGISTRY 治本。
+
+
+# --- D3 宏观高频第一梯队六表（2026-09-18 夜班 st-datapack-20260918，altdata_line 09 清单 D3）---
+# 月频宽表五张（report_date=统计期月末事实锚）+ 宏观日频宽表（trade_date）；
+# 源=东财 datacenter fresh 口径（金十系 2025-10 起源端退役实测留痕于 schema docstring）
+
+- category_id: macro_price_gauge
+  name: "价格总量gaug宽表(CPI当月指数/同比/环比/累计+PPI当月指数/同比/累计,东财datacenter口径,月频)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_price_gauge
+  schema_file: schemas/categories/macro/macro_price_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_pmi_gauge
+  name: "景气gaug宽表(官方制造业/非制造业PMI+财新制造业/服务业PMI,月频;财新列为金十历史段2012-2025.09)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_pmi_gauge
+  schema_file: schemas/categories/macro/macro_pmi_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_credit_money
+  name: "金融信用与货币供应宽表(社融增量/社融口径贷款/新增人民币贷款当月累计/M0M1M2存量+同比,月频,亿元)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_credit_money
+  schema_file: schemas/categories/macro/macro_credit_money.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_activity_gauge
+  name: "实体活动宽表(工业增加值同比/社零当月累计/固定资产投资累计/城镇调查失业率,月频)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_activity_gauge
+  schema_file: schemas/categories/macro/macro_activity_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_trade_gauge
+  name: "外需海关进出口宽表(当月/累计出口进口额亿美元+同比环比,源千美元换算亿美元,月频)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_trade_gauge
+  schema_file: schemas/categories/macro/macro_trade_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: monthly
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: macro_daily_gauge
+  name: "宏观高频日度宽表(六大电库存日耗可用天数历史段2016-2019+生意社商品/能源/建材指数日更)"
+  engine: clickhouse
+  database: c1_market
+  table: macro_daily_gauge
+  schema_file: schemas/categories/macro/macro_daily_gauge.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+# --- D6 行情补充五族新建四表（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）---
+# 查重边界：个股资金流=既有 money_flow / 板块=既有 sector_fund_flow / 大宗=既有
+# block_trade(+detail) / 转债行情=既有 kline_cb——本批只补缺口层
+
+- category_id: market_fund_flow_daily
+  name: "大盘资金流日频宽表(沪深收盘/涨跌幅×主力/超大单/大单/中单/小单净流入净额与占比,东财大盘口径,源滚动窗口约120交易日)"
+  engine: clickhouse
+  database: c1_market
+  table: market_fund_flow_daily
+  schema_file: schemas/categories/market/market_fund_flow_daily.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare stock_market_fund_flow（东财 datacenter 大盘资金流）；源端固定返回最近约120个交易日，更早历史不可回补，日更不断供即无缺口（同 market_china_bond_yield 滚动窗口先例）"
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_etf_share_snapshot
+  name: "ETF份额日快照(最新份额/IOPV/折溢价/成交/主力净流入,全市场~1600只,相邻日差分=净申赎,东财ETF列表口径)"
+  engine: clickhouse
+  database: c1_market
+  table: market_etf_share_snapshot
+  schema_file: schemas/categories/market/market_etf_share_snapshot.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare fund_etf_spot_em（东财 ETF 实时列表）；快照积累制，首日起才有差分基线；fund_etf_scale_sse 源退化（实测仅 2025-01-15 单日）弃用；申赎清单 PCF 篮子免费接口缺失挂账 DS-CAND"
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_cffex_member_ranking
+  name: "中金所前20会员持仓排名长表(成交量/持买单量/持卖单量前20会员×合约,中金所官网口径,含合计行)"
+  engine: clickhouse
+  database: c1_market
+  table: market_cffex_member_ranking
+  schema_file: schemas/categories/market/market_cffex_member_ranking.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare get_cffex_rank_table（中金所官网成交持仓排名）；单日期全合约实测~169s（源站慢），日更1个交易日；接口按日期可任意回查，深历史按需分批补（不烧源）；粒度=会员×合约×榜位，与既有 futures_position 汇总口径互补"
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_convertible_bond_clause
+  name: "可转债条款日快照(强赎触发价/触发比/天计数/强赎状态/最后交易日/到期日/转股价,快照积累制,集思录口径)"
+  engine: clickhouse
+  database: c1_market
+  table: market_convertible_bond_clause
+  schema_file: schemas/categories/market/market_convertible_bond_clause.py
+  data_type: 原料
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "源=akshare bond_cb_redeem_jsl（集思录强赎汇总）；快照积累制（snapshot_date 为状态观察锚）；回售条款触发计数源端未含，挂账 DS-CAND（bond_zh_cov_info 逐券条款解析可评估）"
+  calc_mode: preload
+  frequency: daily
+  data_source: [akshare]
+  blueprint: null
+
+# --- 判定台账四表（判定台账标准 v0.1 §三/§六 作战室三任务；2026-09-18 注册迁移 st-ff-judgment-20260918）---
+# 病根：四表 DDL-as-Code 真源 2026-09-16 已建（schemas/categories/judgment/），但品类条目缺失 →
+#   get_registry().table() 查不到 = 判定链没有表名 SSoT，消费方（plan_engine 六件）只能硬编码表名，
+#   且 TABLE-NAME-REGISTRY 门按"注册表名"匹配 added 行，对未注册表名结构性失明（改表即断链无人知）。
+# 本批为**纯元数据新增**：零线上表变更（四表实测 engine=MergeTree，已在 c1_market 生产，
+#   2026-09-18 行数 4/3/2/0）。SSoT 方向按裁定 #ARCH-CH-024：表名=声明态规则数据→真源 YAML。
+
+- category_id: judgment_intraday_market_state
+  name: "盘中大盘状态判定台账（作战室任务1：低迷/防御/震荡/进攻/亢奋五态概率+证据，60min bar 粒度）"
+  engine: clickhouse
+  database: c1_market
+  table: judgment_intraday_market_state
+  schema_file: schemas/categories/judgment/judgment_intraday_market_state.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "判定/结算分离铁律（判定台账标准 v0.1 §一）：判定列组判定时刻写死（PIT 锚 asof_ts+input_cutoff_ts）；结算列组 outcome_*/eval_*/evaluated_* 只许 zephyr.plan_engine.judgment_settler 回填，判定模块无写通道；MergeTree 只增不改，修订=新 judgment_id 追加（禁 UPDATE）；synthetic=1 为冒烟合成行"
+  calc_mode: preload
+  frequency: 60分钟
+  data_source: [internal]
+  blueprint: null
+
+- category_id: judgment_next_day_forecast
+  name: "次日概率判定台账（作战室任务2：up/flat/down 概率+分位数+期望波幅，T 日盘后发射）"
+  engine: clickhouse
+  database: c1_market
+  table: judgment_next_day_forecast
+  schema_file: schemas/categories/judgment/judgment_next_day_forecast.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "同上判定/结算分离铁律；outcome 由 T+1 收盘结算回填（realized_return/realized_label/brier_score/log_loss/calibration_bucket）；任何准确率统计 MUST 可由 judgment_id 联结 outcome 独立复算（标准 §一.4）"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
+- category_id: judgment_daily_plan
+  name: "晨间预案判定台账（作战室任务3上半：场景清单 scenario_id+可测量 trigger+action+path_prior）"
+  engine: clickhouse
+  database: c1_market
+  table: judgment_daily_plan
+  schema_file: schemas/categories/judgment/judgment_daily_plan.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "trigger 必须是可测量表达式（'如果走弱'不合格——标准 §三铁律）；实际兑现场景由 judgment_plan_verification 联结后由结算器回填，判定器禁写结算列组；幂等锚=inputs_ref 首键 plan_date"
+  calc_mode: preload
+  frequency: 日频
+  data_source: [internal]
+  blueprint: null
+
+- category_id: judgment_plan_verification
+  name: "预案盘中验证台账（作战室任务3下半：scenario_hits/actual_scenario_id/plan_followed/plan_quality_score）"
+  engine: clickhouse
+  database: c1_market
+  table: judgment_plan_verification
+  schema_file: schemas/categories/judgment/judgment_plan_verification.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "本表是结算侧事实表而非判定表：只增不改，双写方=盘中归类器（scenario_classifier，actual_scenario_id 恒空串）+收盘定格器（close_verifier，EOD 定格行冻结，晚到 bar 不得以空行覆盖）；发射器注册表 JUDGMENT_TABLES 不得含本表（守卫 tests/plan_engine/test_judgment_ledger.py）；无通用判定列骨架（键=verification_id+plan_judgment_id 联结 judgment_daily_plan）"
+  calc_mode: preload
+  frequency: 日内累积
+  data_source: [internal]
+  blueprint: null
+
+# --- 股票日频估值基础（波6 批9：换手率/股本/市值，筹码族前置数据）---
+- category_id: market_stock_daily_basic
+  name: "股票日频估值基础（换手率/流通股本/市值，AKShare 东财历史接口，批9）"
+  engine: clickhouse
+  database: c1_market
+  table: stock_daily_basic
+  schema_file: schemas/categories/market/market_stock_daily_basic.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: lazy
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+# --- 新闻情绪窗口品类补登记（2026-09-22 st-emomine-20260922：DS-107 既有表，夜间写入器长期走 fallback 降级，本登记消除双真源漂移警告）---
+
+- category_id: market_news_sentiment_window
+  name: "新闻情绪窗口聚合（夜间窗=前日18:00→当日08:00，scope=market/symbol；sentiment_index∈[-1,1]+正负中性计数+top_events_json；data_source=rule/llm/llm_fallback）"
+  engine: clickhouse
+  database: c1_market
+  table: news_sentiment_window
+  schema_file: schemas/categories/market/market_news_sentiment_window.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "情绪分数作事件信号维度非独立 alpha（26号 §2.7 裁定）；夜间窗 PIT 边界=发布时间 ≤ 窗止"
+  calc_mode: lazy
+
+# --- 情绪指数日批（2026-09-22 st-emomine-20260922，骨架 v0.2/契约 v0.1）---
+
+- category_id: market_emotion_index
+  name: "A股市场情绪指数（六成分滚动分位聚合0-1灰度：C1涨停温度/C2晋级率/C3广度/C4量能/C5杠杆/C6新闻；close_final/pre_open 双 stage；独立状态变量=场内温度计，非择时信号）"
+  engine: clickhouse
+  database: c1_market
+  table: emotion_index
+  schema_file: schemas/categories/market/market_emotion_index.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "契约 v0.1：components JSON 明细必带；成分集/权重变更必须升 version 禁原地改；禁 fear_greed 异轴顶替（t0 判例）；同 ts 禁循环依赖（板块热度不回灌）；观测<120 成分 status=insufficient 禁硬凑"
+  calc_mode: lazy
 
 # --- TC-08 步骤3（2026-09-22 st-residual-20260922，WORK-ORDER-5 cohort 日账本接线）---
 

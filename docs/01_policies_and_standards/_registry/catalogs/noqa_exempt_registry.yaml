@@ -435,7 +435,32 @@ markers:
     created: "2026-09-14"
     created_by: "红蓝 v3 P0-1 批 2 治本（任务书指定 m11 同构模式）"
 
+  - marker: "STATE-VOCAB-REGISTRY"
+    metric_id: null  # STATE-VOCAB-REGISTRY gate 行级豁免
+    description: "STATE-VOCAB-REGISTRY gate 行级豁免——启发式误报类的白名单豁免（词表 SSOT 制度 W3，Owner 批四步施工）"
+    applicable_conditions:
+      - "类名含 State/Phase/Regime/Emotion/Mode 且 ≥3 全大写字符串成员、但语义并非市场状态词表的误报类"
+      - "真状态词表类应登记进 state_vocabulary_registry.yaml（登记本身即白名单），豁免仅用于误报"
+    reason_required: true
+    reason_format: "STATE-VOCAB-REGISTRY豁免: <具体理由>"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-09-22"
+    created_by: "st-dloop-20260921（词表 SSOT 制度 W3 配套）"
+
 # 禁止标记清单（常见误用，noqa_validation_gate 硬阻断）
+  - marker: "ch-final"
+    metric_id: null  # CH-FINAL gate 行级豁免
+    description: "CH-FINAL gate 行级豁免——只留档不判定的 max/count 聚合查询，FINAL 与 ReplacingMergeTree 未合并行无歧义"
+    applicable_conditions:
+      - "聚合函数（max/count/sum）结果不存在 ReplacingMergeTree 未合并歧义的只读留档查询"
+      - "需要判定语义的明细查询必须走 ch_reader 自动注入 FINAL，不得使用本豁免"
+    reason_required: true
+    reason_format: "ch-final豁免: <具体理由（说明聚合无歧义性）>"
+    reason_min_length: 10
+    scope: "per-line"
+    created: "2026-09-22"
+    created_by: "st-gateaudit-20260922（league_archive 月度留档快照查询，他会话中断批接手）"
 forbidden_markers:
   - "noqa"        # 裸 noqa 无 marker code，禁止（必须指定 marker）
   - ""            # 空 marker code，禁止

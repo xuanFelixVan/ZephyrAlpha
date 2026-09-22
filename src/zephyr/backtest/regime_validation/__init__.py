@@ -62,7 +62,9 @@ from zephyr.backtest.regime_validation.e4_cost_sensitivity import (
     E4CostPoint,
     E4CostReport,
     E4CostSensitivityError,
+    E4CrowdingAssessment,
     analyze_cost_sensitivity,
+    assess_crowding,
 )
 from zephyr.backtest.regime_validation.shrinkage_provider import (
     ConstShrinkageProvider,

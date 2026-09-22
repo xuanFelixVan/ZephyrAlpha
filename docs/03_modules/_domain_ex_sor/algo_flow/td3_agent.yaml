@@ -1,0 +1,39 @@
+# ALGO_FLOW 外部真源——td3_agent（_domain_ex_sor 域，真源 src/zephyr/ex_sor/services/rl_trainer/td3_agent.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_sor.services.rl_trainer.td3_agent
+source_of_truth: src/zephyr/ex_sor/services/rl_trainer/td3_agent.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: obs 观测向量
+    #   fields: 定长 float32（obs_dim_for() 口径）
+    #   code: TD3Agent.select_action/update 入参
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 确定性动作选择
+    #   name_en: select_action
+    #   intro: actor 前向+tanh 输出 [-1,1]^2+可选高斯探索噪声后裁剪回域
+    #   inputs: I1
+    #   outputs: 动作向量
+    # - id: A2
+    #   name_zh: TD3 一步更新
+    #   name_en: update
+    #   intro: 双 Q 取 min 目标+目标平滑噪声+MSE critic 损失；每 policy_freq 步延迟更新 actor 并三目标网软更新
+    #   inputs: I1
+    #   outputs: critic_loss+actor_loss
+    # 层: 输出
+    # - id: O1
+    #   name_zh: checkpoint 字典
+    #   name_en: checkpoint_dict
+    #   intro: 双 actor/双 critic/目标网/优化器/步数全量序列化可恢复
+    #   downstream: trainer
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # A1 --> A2
+    # A2 --> O1
+    # [/ALGO_FLOW]

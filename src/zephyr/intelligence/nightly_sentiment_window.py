@@ -42,10 +42,17 @@ from __future__ import annotations
 import datetime
 import json
 import logging
+from collections.abc import Sequence
 from dataclasses import asdict, dataclass, field, replace
-from typing import Any, Callable, Final
+from typing import Any, Callable, Final, Protocol
 
 import pandas as pd
+
+
+class _CHClient(Protocol):
+    """CH 写客户端最小协议（clickhouse_driver.Client / fake 结构性满足）。"""
+
+    def execute(self, sql: str, data: Sequence[tuple] | None = None) -> None: ...
 
 from zephyr.data.news_collector import collect_news
 from zephyr.intelligence.news_sentiment_analyzer import NewsSentimentAnalyzer
@@ -158,7 +165,7 @@ def nightly_window(trade_date: datetime.date) -> tuple[datetime.datetime, dateti
     return start, end
 
 
-def _to_naive_wall(ts: Any) -> pd.Timestamp:
+def _to_naive_wall(ts: pd.Timestamp | str) -> pd.Timestamp:
     """统一转 Asia/Shanghai 墙面时间 naive Timestamp（CH 时区口径；NaT 透传）。"""
     t = pd.to_datetime(ts, errors="coerce")
     if pd.isna(t):
@@ -225,7 +232,12 @@ def compute_nightly_sentiment(
     win_start, win_end = nightly_window(d)
     reasons: list[str] = []
 
-    analyzer = analyzer or NewsSentimentAnalyzer()
+    if analyzer is None:
+        # S5 factory-off 接线（st-emomine-20260922）：旗标 data/runtime/nightly_sentiment_llm.enabled
+        # 不存在 → make_llm_scorer 返回 None → 规则法零变更；启用后 method='llm' 落库供对照。
+        from zephyr.intelligence.news_llm_scorer import make_llm_scorer
+
+        analyzer = NewsSentimentAnalyzer(llm_scorer=make_llm_scorer())
 
     # ── 读取（collect_news 日级 PIT 查询 → 窗口过滤；SCD 按 news_id 去重 keep first）──
     prev_iso = (d - datetime.timedelta(days=1)).isoformat()
@@ -413,7 +425,7 @@ def run_nightly_sentiment_batch(
     *,
     lookback: int = 7,
     top_n: int = DEFAULT_TOP_N,
-    client: Any = None,
+    client: _CHClient | None = None,
 ) -> dict[str, Any]:
     """日频调度入口（schedule nightly_sentiment）：当日窗口 + 近 lookback 日缺口补跑。
 
@@ -425,7 +437,11 @@ def run_nightly_sentiment_batch(
     """
     today = datetime.date.today()
     result: dict[str, Any] = {
-        "ok": False, "computed": [], "degraded": [], "failed": [], "skipped": 0,
+        "ok": False,
+        "computed": [],
+        "degraded": [],
+        "failed": [],
+        "skipped": 0,
     }
     try:
         if client is None:
@@ -433,8 +449,8 @@ def run_nightly_sentiment_batch(
 
             client = get_client()
         rows = client.execute(
-            _SQL_COVERED_WINDOW_DATES.format(
-                since=(today - datetime.timedelta(days=lookback)).isoformat()))
+            _SQL_COVERED_WINDOW_DATES.format(since=(today - datetime.timedelta(days=lookback)).isoformat())
+        )
         existing = {r[0] for r in rows}
     except Exception as exc:  # noqa: BLE001 — CH 不可达整体降级
         result["failed"].append(f"ch_read:{exc}")
@@ -455,7 +471,11 @@ def run_nightly_sentiment_batch(
     result["ok"] = not result["failed"]
     log.info(
         "nightly_sentiment batch: ok=%s computed=%s degraded=%s failed=%s",
-        result["ok"], result["computed"], result["degraded"], result["failed"])
+        result["ok"],
+        result["computed"],
+        result["degraded"],
+        result["failed"],
+    )
     return result
 
 

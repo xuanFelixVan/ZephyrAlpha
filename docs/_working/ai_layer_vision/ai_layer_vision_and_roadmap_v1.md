@@ -168,6 +168,12 @@ risk_tier（机械债全自动/逻辑债强制复核/high 九域 Owner）。
 **终局校验**：数 Owner 一周被叫次数，≤4 次（四类事各一次）=第三层建成；超出=缺口自动进
 挖矿选题（按终局全貌排优先级）。
 
+### 观察项（外部候选，不立即引入）
+
+| 观察项 | 来源 | 触发条件 | 评估口径 |
+|--------|------|----------|----------|
+| Agent Lightning（microsoft/agent-lightning，MIT，PyPI v1.0.1） | Owner 收藏包 #17（C P2），挖矿验证笔记=collection_intake/engineering/eng_agent_lightning.md | AI 层"自进化环"立项时，作为 RL 底座候选（与 verl 生态、自研轨迹回流三选一比选） | 零改动接入 RL 属实但 SWE-bench 41.8%→56.4% 绑定 Qwen3.5-9B+6K 样本，引用须带限定；任何接入经 LSG；训练数据含策略轨迹=敏感资产 |
+
 ## 附录 A：任务书 schema v0
 
 ```yaml
@@ -235,3 +241,4 @@ Chess 2003）/Google MLOps 成熟度/Champion-Challenger（FICO/DataRobot）/MAP
 | 2026-09-17 | 2.0.1 | 红蓝 R1 修复（红队A F1-F5+红队B 14 项发现全收敛，逐项处置映射见 README §3.5 与各稿修复记录） | 修复组 3（Owner 夜批授权框架内，红蓝 R2 复核） |
 | 2026-09-17 | 2.0.2 | 红蓝 R2 修复：2.0.1 行措辞改准（处置映射指向 README §3.5 与各稿修复记录）+附录 B funnel_stage 枚举补 e2_pending（六值→七值，对齐 L2 T2 CHECK） | 修复组（红队 R2 发现，授权框架内） |
 | 2026-09-17 | 2.0.3 | 红蓝 R6/R7 收敛：批准状态行定调计数十三/#8 六条根约束/附录 A WO-TO 前缀登记/L5·L6 修复时间线注/OBJ_S README 措辞时效/OBJ_M·OBJ_T 裁定锚补齐 | 修复组（红队 R6/R7 发现，授权框架内） |
+| 2026-09-22 | 2.0.4 | §六增观察项表：Agent Lightning 挂观察（Owner 收藏包 #17 施工令，触发条件=自进化环立项时三选一比选；挖矿验证笔记在 collection_intake/engineering/eng_agent_lightning.md） | st-xhs-full-20260922（Owner 2026-09-22 全量点单令） |

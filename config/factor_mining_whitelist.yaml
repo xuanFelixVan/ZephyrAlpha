@@ -33,6 +33,10 @@ approved:
     - {op: ts_delta_5, zh: 5日差分, meaning: 变化率/动量增量}
     - {op: ts_zscore_20, zh: 20日标准化, meaning: 均值回复结构（偏离自身常态的倍数）}
     - {op: ts_corr_20, zh: 20日滚动相关, meaning: 量价/双信号背离}
+  # —— v2.1 条件算子 2026-09-22 增补（Owner 小红书 25 条工单 #10 trade_when 速赢授权；
+  #     WorldQuant trade_when 语义：退出优先/触发换仓/区间保持，天然低换手结构）——
+  conditional:
+    - {op: trade_when, zh: 条件持有, meaning: 事件门控（触发日取新信号、退出日清零、区间保持上一信号——低换手结构）}
 
 forbidden:
   - {op: sin, reason: 周期函数对日频收益无经济含义，纯过拟合放大器}

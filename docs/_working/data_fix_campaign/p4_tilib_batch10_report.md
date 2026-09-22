@@ -91,3 +91,13 @@ python scripts/data/backfill_technical_indicator_dwm.py --periods daily --end 20
 - add_module_translation.py 已登记（7160/7161 条）；depgraph 生成器跑通 2×（chips.py 节点未见于 nodes 表——cycle.py 同样缺，模块节点登记口径与文件扫描分离=既有现象，留痕待治）；
 - ROOR（registry_of_registries.yaml）REG-IND-001 描述停于"41 条/58 列"=既有漂移，该文件由 st-code-doc-20260921 持有，按作用域纪律不代修；
 - 全部写入 CH 走 DatabaseService/ch_writer/ch_reader；无 OPTIMIZE/TRUNCATE/DROP；测试只写 tmp_path。
+
+## 7. 终局落地（提交号红证）
+
+| 提交 | 内容 |
+|---|---|
+| ffce5c0aa7 | token 批（两段式前半，capability 册，单文件零连坐） |
+| d4e89225bf | r2 token 批（audit 脚本移址 scripts/ 后按 CREATE-GUARD 补登） |
+| 7963211f1a | 正文批 13 文件（git log -1 --name-only 核实归属=白名单精确一致，零外来吸收） |
+
+正文批门禁攻坚留痕（0060→0084 共 11 轮死信修复）：scripts/data/ 属 .gitignore 再生产物区（移址 scripts/）；TABLE-NAME-REGISTRY（TableRegistry 化）；NO-LONG-PARAM-LIST/NO-HIGH-COMPLEXITY（_ChipGrid 状态对象重构，重构后 1109 测试+复算对表全绿数值逐位不变）；NO-BARE-SQL（SQL 常量集中化）；MSG-STYLE/EXEMPT-ZONE-FM/ORPHAN-MODULE（模块直导形态）/ALGO-FLOW-LINK（chips.yaml 建档+断点边形态）；NEW-FILE-DEPGRAPH-ENFORCEMENT（generate_project_depgraph.py --output-db depgraph --force 双节点入图）；REGISTRY-MASS-DELETION/RULING-REFERENCE（他会话在途翻译册卫生块暂存隔离至 .runtime/tmp/st-data-fix-20260921/module_translation_registry.sibling_wip.bak.yaml，由其会话随裁定#392（D-7） 登记自行带回，本批翻译册快照=HEAD+本批两条目纯增量）。GATE-21 生成件竞态（.importlinter/gate_registry/script_manifest 随他会话源变更翻转）以"不裹挟派生件"方式规避。

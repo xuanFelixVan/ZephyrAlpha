@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 制度馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：84｜馆内总数：84
+- 条目数（本页列出）：85｜馆内总数：85
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -62,6 +62,7 @@ doc_type: "index"
 | REG:docs/01_policies_and_standards/_registry/catalogs/industry_graph_field_dictionary.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/industry_graph_field_dictionary.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/io_sector_sws_map.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/io_sector_sws_map.yaml |
+| REG:docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/macro_indicator_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/macro_indicator_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/migration_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/migration_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/model_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/model_registry.yaml |

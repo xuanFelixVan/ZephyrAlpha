@@ -70,6 +70,8 @@ python scripts/lock_files.py cleanup && python -m zephyr.trading.process_reaper 
 
 > **进度速览（2026-09-21 深夜核，权威=a3 勾选+session st-disk-ch-20260921）**——已完成：阶段 0 全、阶段 1 全（95,188 件/137.6G 迁 F 对账 PASS、引用 7/8 齐 commit 6684ba5d83）、2.1-2.2（config+闪断窗重启）、3.1 导出半（13/13 双副本+sha256 全等）+3.2 滚动归档 24 轮、4.1/4.7（G 骨架+双链热挂零停机 inc 71G）、6.1-6.6（.runtime 清 35.15G/D=61G 达标/offsite 手册落档）、7.4 预检自动化。**待办**：2.3 复测、3.1 drop（等 Owner 逐表批 `waste_table_report_list.md`，裁定 #382 逐表批制）、3.3、4.2-4.6（working_vault 迁 G 等）、4.8、5.1-5.2、7.1-7.3/7.5（Owner 到场压缩）、8 全部（终验红蓝+演练）。
 > **增补阶段 4.9 镜像去重批（2026-09-22 WizTree 勘实，并入阶段 5 执行）**：G 盘 ch_vm_backup（8-22 旧整机拷贝 591.57G）存在**三份完全等值副本**——`G:\backup\ch_vm_backup`、`G:\zephyr_backup_mirror\ch_vm_backup`、`G:\zephyr_cold\ch_vm_backup`，合计 1774.7G 冗余（多夜镜像改址叠加；F 盘另有原件第 4 份）。处置：三方 hash 确认等值后删二留一或三份全删（F 原件在盘佐证），`G:\zephyr_cold\zephyr_cold` 嵌套 274.49G 对照 manifest 解析归位；预期 G 剩余 342G→2100G+（9.2% 红线解除）。F 盘 10-05 阶段 5 后回约 1300G。
+> **增补清理项（2026-09-22 补录）**：F 盘过渡旧件三笔——①`F:\working_vault` 旧副本 200.7G（留观至 **09-28**，G 总仓已对账 PASS）②`F:\offrepo_backup` 旧镜像 136.6G（G:\backup\offrepo 273.62G 已接管，核等后删）③`F:\db_dumps` 0.36G 旧件（G 版本化已接管）——并入阶段 5/去重批同批核等清理；**F 盘最终只保留：冷储主库 + CH 主链盘（ch_backup_disk.vhdx，活挂载设计内例外）+ 个人文件 + pdf 缓存**。
+> **阶段 9 知识固化（2026-09-22 本会话执行 3/4）**：①INFRA-STORE-003"四盘分工与存储地图"条目=已立（infrastructure_registry.yaml，YAML 解析验证绿）②MOD-INF-043 蓝图 2.0.5→3.0.0（v3.0 纪要：G 总仓/双链/冷储专项/滚动归档/vhdx 排班化）③宪法 §7 DatabaseService 行增存储分工指针（行数 140 不变=等长替换合规；**待 Max/Owner 复验**）④capability 关键词登记+ROOR 挂接+permanent 手册提炼+图书馆卡=**余留给执行会话**（capability 册 tilib 在飞竞写避让，token 同批走）。
 
 ```
 三队收口当晚即开
