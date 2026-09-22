@@ -16,7 +16,11 @@ completes_when: Owner 验收后随战役归档
 - **判据解锁复核** [亲验]：#398 已登记 ruling_registry（W1 export 双副本+行数核对 13/13 达标即放行）；时序板无本批 active 冲突窗。
 - **主回填复核**：批10 214 列全量台账（昨日 audit_ti_columns_20260921.tsv，total=7,111,345）chips 族非空率 99.97%；b10ext state 58/58 exit=0 幂等复核通过。
 - **量纲治本后全量重算**（分包2 联动，58 片三跑）：因 volume mutation 后存量指标须重算——首跑 5 片 BufferedWriter 瞬断、二跑补齐 58/58、终跑（清 state 全量）RESULTS_PENDING。
-- **验收（终跑后执行）**：CYQ 独立实现复算 RESULTS_PENDING；新 4 列近月非零率>95% 全市场复测 RESULTS_PENDING。
+- **验收（复职令后终验，全部 [亲验]）**：
+  - CYQ 独立实现复算 000852 近 20 交易日：**winner/avg/q5/q95 全零偏差 PASS 20/20**（09-18 winner=0.32113042 与批10 金标准逐位一致）；
+  - 新 4 列近月非零率全市场：chips_cost_15/85=99.91%、conc_90/70=99.86%（n=5,558）**全部 >95% PASS**；
+  - CYC 量纲对表：000852 09-22 cyc_5=6.8278531933777575 vs 手算 5 日 Σamount/Σvolume=6.828 **逐位一致**（全表 cyc/close 比值回落价位量纲 1.0-1.6，修前 0.01=100× 偏小实证已治愈）；
+  - chips 族近月非空率 99.9%（winner）/99.02%（cyc_5）。
 
 ## §2 分包2：volume 量纲病修复（本班主战役）
 
@@ -30,17 +34,17 @@ completes_when: Owner 验收后随战役归档
 3. **公式**：chips.py CYC 去 ÷100（Σamount/Σvolume，数值与治本前等价）；test_chips 41 例全绿。
 4. **重算**：58 片 daily 全量重算（见 §1）。
 
-**验收红证**：CYQ 独立实现复算 000852 近 20 交易日（clip 索引法独立编码，语义逐点镜像 400 bins/decay→扩张→铺量）：RESULTS_PENDING。CYC 量纲抽验 RESULTS_PENDING。
+**验收红证**：见 §1 终验四条（CYQ 20/20 全零偏差 + CYC 手算逐位对表 + 新4列>95% + 非空率）。
 
 ## §3 分包3：夜跑恢复（tracked 化+重启用）
 
 - **runner tracked 化** [代码批 275493de9b]：scripts/data/tilib_dwm_shard_runner.py（新 tracked 件：分片子进程内存隔离治 Code 241+data/runtime/dwm_shard_state 断点续跑+失败片隔离）；backfill_night.ps1（bat 不在 scripts/ 目录契约白名单，改 ps1 ASCII；每夜清 state=全量重算语义）；#399 豁免家族收编 backfill_technical_indicator_dwm.py 孤儿常驻件（add -f）+p0/wipe 两件豁免行。
-- **02:30 任务重启用**：RESULTS_PENDING（merge 进 dev 后执行，避免旧公式夜跑污染；schtasks change 改指 ps1）。
+- **02:30 任务重启用**：merge 进 dev 后 schtasks 改指 backfill_night.ps1 并启用（见 §9；启用后首跑=今晚 02:30，即 3 日健康观察 D1）。
 - **3 日健康观察**：本班只能完成启用；观察期移交接力（无 Code 241 判据，state json 全 exit=0 + tilib_nightly_run.log）。
 
 ## §4 分包4：甲域收尾
 
-1. **p0 脚本 staged 件落地**：q-0015/0016 队列项已换代消失（指针失效如实披露）；实况=p0_tick_backfill.py 09-20 批改动（+302 行）滞主区未提交，st-disk-final-20260922 移交甲线。已按 #399 豁免走网关：RESULTS_PENDING（.gitignore 豁免随本批 merge 进 dev 后 requeue q-20260922-st-b10-final-20260922-0002，prestage 不再拒绝）。
+1. **p0 脚本 staged 件落地**：q-0015/0016 队列项已换代消失（指针失效如实披露）；实况=p0_tick_backfill.py 09-20 批改动（+302 行）滞主区未提交，st-disk-final-20260922 移交甲线。已按 #399 豁免入队（死件 q-20260922-st-b10-final-20260922-0002 快照保全）；复职令广播后 requeue（.gitignore 豁免已随 275493de9b 落分支，merge 后 prestage 不再拒绝）。
 2. **daily_valuation 09-16~18 修复** [亲验]：a2 已批口径（kline JOIN 补缺键行情九列，preclose=close-change，pe 腿留 NULL 待源端自愈）；冷存 F:/db_dumps/zephyr_quarantine/20260922_b10_final/daily_valuation_repair/（18,195 行）；修后三日残缺键=0（09-16: 4,281→5,569；09-17/18 FINAL 5,570）。
 3. **A14 资产册**：丙线 W13 已把"补真源"做完（本班 --check 实测 29 张缺口全部 ddl_truth=Y）；本班收编其 staged 孤儿件 generate_data_asset_coverage.py 入库（15 字段头+noqa 补齐），--write +29 datasets 后 merge 时与丙线 dev 落地收敛，终验 total_missing=0 [亲验]。
 
@@ -71,3 +75,11 @@ completes_when: Owner 验收后随战役归档
 - 本会话提交哈希清单：275493de9b（代码批 11 文件）→ caf2c08597（注册表最小批 token +4）→ 8a14ebb3ce（内容批：runner/backfill sys.path src 前插修复+交付报告初稿）。
 - 待"注册表重建完成"广播后恢复：①merge 分支→dev ②主区 p0+gitignore 死件 q-20260922-...-0002 requeue ③02:30 夜跑 schtasks 改指 backfill_night.ps1 并启用 ④第 4 轮重算验收数字回填本报告 ⑤09-22 残片量纲扫已完成（5,551 行 ×100，残留 0）。
 - 本会话已停写全部 catalogs/*.yaml；CH 数据重算作业在飞（非 git 面）随其自然收尾。
+
+## §9 复职令终态（2026-09-23，st-regfix-lane0b 广播后复工）
+
+- **第 4 轮重算**：58/58 全 exit=0（37/43 两片瞬时失败重跑补齐）；本轮=worktree 代码保证轮（sys.path src 前插修复后，子进程 chips 解析实证 vfix=True）。
+- **kline 残片二扫**：16:56 旧代码链按 last_key=09-21 起点重写 09-21+09-22 两日（首扫谓词 >=09-22 漏 09-21 的 5,553 行）→ 复职令后二扫全表手行残留=0，000852 09-21 volume 14,038,500 ratio 0.992 ✓。kline_daily 现全表统一"股"口径。
+- **披露**：09-21/09-22 两日 TI 行的 cyc_N 5日窗与 CYQ 当日质量受上述污染行影响轻微偏差（round-4 计算窗内），今晚 02:30 夜跑（启用后首跑=观察 D1）全量修复。
+- **终验收**：CYQ 20/20 全零偏差；新4列 99.86-99.91%>95%；CYC 手算逐位对表（详见 §1）。
+- 尾批动作：merge→dev → schtasks 改指 ps1+启用 → 主区 p0 死件 requeue。
