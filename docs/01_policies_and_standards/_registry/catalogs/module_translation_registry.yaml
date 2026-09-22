@@ -56114,6 +56114,14 @@ entries:
   desc_en: ""
   plain_zh: "给新闻情绪打分装一个大模型开关：平时关着用关键词老办法；Owner 建一个标记文件才打开，打开后由本地大模型逐条读新闻给出更准的情绪分，出错自动退回老办法。"
   responsibility_layer: ai
+- module_path: src/zephyr/governance/meta_question
+  domain_id: D_GOVERNANCE
+  name_zh: "原问题中央登记表"
+  name_en: "Meta Question Registry"
+  desc_zh: "原问题入库闸/状态流转/认领/考试回填统一写入API与PG三表"
+  desc_en: ""
+  plain_zh: "这是一本'值得研究的问题'的总账本：想把一个研究问题正式立项，先到这里过五道安检（有数据能答、有考试能证伪、有明确谁消费、有更新节奏、不偷看未来），过闸后领一个PQ编号入册；之后问题的每次搬家（开工、开考、出答案、挂起、退役）都在账本留痕，谁认领了它、考了几次、结论是什么全可查。"
+  responsibility_layer: governance
 
 battle_map_steps:
 - step_id: BM-BUY-05
