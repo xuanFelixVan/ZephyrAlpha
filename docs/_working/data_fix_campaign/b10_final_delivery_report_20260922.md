@@ -83,3 +83,10 @@ completes_when: Owner 验收后随战役归档
 - **披露**：09-21/09-22 两日 TI 行的 cyc_N 5日窗与 CYQ 当日质量受上述污染行影响轻微偏差（round-4 计算窗内），今晚 02:30 夜跑（启用后首跑=观察 D1）全量修复。
 - **终验收**：CYQ 20/20 全零偏差；新4列 99.86-99.91%>95%；CYC 手算逐位对表（详见 §1）。
 - 尾批动作：merge→dev → schtasks 改指 ps1+启用 → 主区 p0 死件 requeue。
+
+## §10 复职收尾实录（2026-09-23 02:4x）
+
+- **merge→dev 落地**：549a4c6b54（快进含本班 5 commit）。主区 merge 三次尝试两次被 4 个重叠脏件阻断（.gitignore/双册/generator，均为他会话在途增量），按 Lane 0b 先例外科排雷（patch/字节级备份→清→merge→原样回加，保全件 .runtime/tmp/st-b10-final-20260922/preserve/）；第一次 merge 失败现场核验：无 stash ref/无 autostash、"would be overwritten" 保护有效、HEAD 未动、他会话脏件零损失。
+- **02:30 夜跑启用**：tilib_indicator_backfill_nightly State=Ready（action 改指 powershell -File backfill_night.ps1；触发=每日 02:30）。夜跑链验证点：runner/backfill 已 tracked+merge、主区 src=修复版代码（chips CYC 去 ÷100+sys.path 前插）、kline 全表"股"。**3 日健康观察 D1=09-24 02:30 首跑**（判据：data/runtime/dwm_shard_state/*.json 全 exit=0+tilib_nightly_run.log 无 Code 241）。夜探针件 .runtime/tmp/tilib-probe/night_probe.py 已被 tmp 清理消失=ps1 尾行无害失败（Continue 语义），维护班可顺手删除该行。
+- **p0 尾批**：requeue 成 q-20260923-st-b10-final-20260922-0003（.gitignore 豁免已进 dev HEAD，prestage 拒绝病因消除），序列器租约让位、自举时消化。
+- **kline 终态**：全表统一"股"（残留手行 0，二扫覆盖 16:56 链 last_key=09-21 起点重写窗）；TI 09-21/09-22 两日窗污染由首跑夜跑修复。
