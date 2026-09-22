@@ -65,3 +65,9 @@ completes_when: Owner 验收后随战役归档
 - 提交全走 GitCommitGateway（九道门闸：WORKTREE-REQUIRED/RULING-REFERENCE/CREATE-GUARD×3/MANUAL-ONLY/NO-BARE-SQL/BARE-SUBPROCESS/TABLE-NAME-SSOT/HOT-FILE-FRESHNESS/RUFF 各按其官方逃生通道过闸，旗/标记/noqa 均在 commit message 与文件头留痕）；ZEPHYR_PROTECTED_PATHS_BYPASS=1 仅用于 .gitignore（#399 批准+ARCH-APPROVAL 标记+hook 层不解析消息标记的实证），审计自动落。
 - 破坏性 CH 操作三步验证：mutation 快照先行+谓词精确+ingest_ts 守卫可逆（§2）；daily_valuation 修复冷存先行（§4.2）。
 - 本班与在飞会话避让：st-disk-final（CH 维护窗错峰+TI 瘦身撞写 5 片幂等重跑消化）、st-integrated-bt/st-commitchain/st-sim-launch/st-dloop/st-ulib2（无写域交叠；state_vocab gate 模块以未跟踪本地副本满足 import，零吸收）。
+
+## §8 静窗令收口记录（2026-09-22 21:3x，Owner 静窗令响应）
+
+- 本会话提交哈希清单：275493de9b（代码批 11 文件）→ caf2c08597（注册表最小批 token +4）→ 8a14ebb3ce（内容批：runner/backfill sys.path src 前插修复+交付报告初稿）。
+- 待"注册表重建完成"广播后恢复：①merge 分支→dev ②主区 p0+gitignore 死件 q-20260922-...-0002 requeue ③02:30 夜跑 schtasks 改指 backfill_night.ps1 并启用 ④第 4 轮重算验收数字回填本报告 ⑤09-22 残片量纲扫已完成（5,551 行 ×100，残留 0）。
+- 本会话已停写全部 catalogs/*.yaml；CH 数据重算作业在飞（非 git 面）随其自然收尾。
