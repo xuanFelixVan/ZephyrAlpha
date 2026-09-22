@@ -56188,6 +56188,14 @@ entries:
   desc_en: ""
   plain_zh: "图书馆标签必须用词表里已有的枚举值，乱造标签就拦，防标签体系发散"
   responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/registry_family/registry_mass_deletion_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "登记表防蒸发门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "登记表类文件净删行数或条目变少就拦，防批量删除把注册表搞残；带合法标记也要机器验证被删文件真没了才放行"
+  responsibility_layer: governance
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow
