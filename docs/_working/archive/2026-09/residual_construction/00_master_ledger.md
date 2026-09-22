@@ -4,7 +4,7 @@ title: 残余挂账施工战役总簿——环节全景（封矿）/波次派发
 owner: ZephyrAlpha-Owner
 session: st-residual-20260917
 date: 2026-09-18
-status: campaign_running
+status: archived
 ---
 
 # 残余挂账施工战役 · 总簿
@@ -61,3 +61,27 @@ status: campaign_running
 | E7 | ⬜ | | | |
 | Q1 | ⬜ | | | |
 | Q2 | ⬜ | | | |
+
+
+---
+
+## 5. 状态回写（2026-09-22，st-residual-20260922 残余施工令 A2⑥；frontmatter status 已翻 campaign_running→archived）
+
+> 本节=收尾形式件回写（tc_08 卡步骤 7）。逐节点带落地 commit hash；「变形」=执行主体由
+> fullflow 战役 residG 分包/后续战役承接，与本总簿原派工形态存在载体差异（tc_08 卡 §2 证伪链）。
+
+| 节点 | 终态 | 落地/证据锚 |
+|---|---|---|
+| E1 危机态三级接线 | ◐ 部分通电：crisis_gate 判定件+B20 日期修复在 HEAD；L1 短路接线两段仍缺（成品在 G 盘冷库，等 A5 死会话遗产裁定后按 BT-P1-031 新版重排） | B20 批（hash 见晨报）|
+| E2 收益归因 | ◐ 判定件在 HEAD（sim_attribution_report+62 天回放 recon_diff=0.0 实证）；attribution_daily FIFO 接线同 E1 待排 | 572b9a5550 族（R1 四 commit）|
+| E3 配置生效核对器 | ✅ | 32431d66 |
+| E4 cohort 人群账本 | ◐→大半落地：schema+builder+13 测试在 HEAD（2fd61ca135）；日循环接线三件套（品类注册表+internal provider 路由+cohort_ledger_daily 任务）已落（55033fd509）；**CH 建表=Owner 门位待办**（apply 三常量已恢复注册） | 2fd61ca135+55033fd509 |
+| E5 月度演练 | ✅ crisis_drill_monthly 16 测试在 HEAD | R1 四 commit |
+| E6 纸面对冲腿 | ✅（变形：比例参数进 config/paper_hedge.yaml 非 crisis_gate.yaml，实质等价） | 2a80340b51 |
+| E7 告警外推 | ✅ 机器侧全量建成（webhook+fail-closed）；推送凭据=Owner 四类事（裁定#392（D-5）转正） | 0808dd8757 |
+| Q1 循环检查+红蓝 | ◐ 变形执行：fullflow R-072 两轮跑工作区字节；严格 HEAD 复跑（B21）仍未做，需净窗排程 | COORDINATION_LEDGER 6.20 |
+| Q2 收尾 | ✅ 本节即收尾件：总簿回写+frontmatter 翻牌 archived；*.tmp.* 清理与 claims release 随残余令晨报批 | 本批 |
+
+**登记裁定终局**：O-1 老蔡日期映射/O1 θ=0.5/O2 对冲合约 IM+beta×0.5+E7 凭据 Owner 四类事/期货通道解锁双门——五项已随裁定#392（D-5）打包转正入册（ruling_registry HEAD 5267 行区），本总簿"待裁定"面清空。
+
+**遗留开口（如实，不声明零遗留）**：①E1/E2 接线两段（等 Max A5 裁定）；②E4 建表（Owner 门位）；③B21 严格 HEAD 两轮复跑（净窗）。开口三项均有归属与触发条件，非悬空。

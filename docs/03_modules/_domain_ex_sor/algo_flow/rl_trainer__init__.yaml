@@ -1,0 +1,23 @@
+# ALGO_FLOW 外部真源——__init__（_domain_ex_sor 域，真源 src/zephyr/ex_sor/services/rl_trainer/__init__.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_sor.services.rl_trainer.__init__
+source_of_truth: src/zephyr/ex_sor/services/rl_trainer/__init__.py
+algo_flow: |
+        # [ALGO_FLOW]
+        # 层: 输入
+        # - id: I1
+        #   name: 子模块导入面
+        #   fields: td3_agent+trainer 公开类与函数（静态 import 防孤儿模块）
+        #   code: from zephyr.ex_sor.services.rl_trainer import
+        # 层: 输出
+        # - id: O1
+        #   name_zh: 包公开面
+        #   name_en: __all__
+        #   intro: TD3Agent/TrainerConfig/ReplayBuffer 等 10 个符号静态导出（消费者单一入口）
+        #   downstream: scripts;tests
+        # 边:
+        # I1 --> O1
+        # [/ALGO_FLOW]

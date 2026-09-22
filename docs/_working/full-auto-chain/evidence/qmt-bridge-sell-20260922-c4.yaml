@@ -1,0 +1,13 @@
+# TC-11 件2 模拟盘卖出测试证据（QmtFileBridgeBroker env=sim，st-residual-20260922 2026-09-22 05:1x）
+protocol: "QMT 大QMT 文件桥卖腿实测（tc_11 卡件2，第五棒）"
+account: "8886156677 (sim)"
+symbol: "510300.SH 沪深300ETF华泰柏瑞"
+quantity: 100
+side: "SELL LIMIT 4.40"
+price_basis: "柜台镜像 PositionStatics 最新价 4.608（09-21 收盘口径）下方 4.5%；跌停 4.147 远在其下——开盘集合竞价全带宽合法且必成交；交接簿参考价 5.04 已过期未采信（tc_11 卡坑②预警命中：价格基准随行情漂移）"
+holding_check: "当前拥股 1100/可用数量 1100（PositionStatics.csv 人工核），T+1 已过全额可卖"
+order_key: "tc11-sell-e8f25d35bb8b"
+submit: "SUBMITTED（下单→文件桥→柜台→状态回流 SUBMITTED 全链打穿）"
+fill_review: "成交腿晨间复核待办：查 Deal.csv/柜台 CSV 终态（预期开盘竞价成交≈开盘价≥4.40）；异常升 Owner"
+risk_note: "sim 账户未注入 risk_validator（向后兼容放行语义，日志已留痕）；本单为 Owner 已批的模拟户测试授权面"
+finished_at: "2026-09-22T05:15:00"

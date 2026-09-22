@@ -1,0 +1,50 @@
+# ALGO_FLOW 外部真源——trainer（_domain_ex_sor 域，真源 src/zephyr/ex_sor/services/rl_trainer/trainer.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.ex_sor.services.rl_trainer.trainer
+source_of_truth: src/zephyr/ex_sor/services/rl_trainer/trainer.py
+algo_flow: |
+        # [ALGO_FLOW]
+        # 层: 输入
+        # - id: I1
+        #   name: RlExecEnv 回合
+        #   fields: RlExecState reset/step 契约+合成盘口 provider
+        #   code: run_episode/warmup_from_history 入参
+        # - id: I2
+        #   name: TrainerConfig
+        #   fields: episodes/warmup_episodes/noise_sigma/batch_size/real_training（H-04 Owner 门）
+        #   code: dataclass 配置束
+        # 层: 算法
+        # - id: A1
+        #   name_zh: 观测编码
+        #   name_en: state_to_obs
+        #   intro: 盘口价差比+量占比+母单进度 → 定长 float32（确定性纯函数）
+        #   inputs: I1
+        #   outputs: 观测向量
+        # - id: A2
+        #   name_zh: 动作解码
+        #   name_en: decode_action
+        #   intro: [-1,1]^2 → 价格档位索引+数量比例（恒在契约域内）
+        #   inputs: I1
+        #   outputs: RlExecAction
+        # - id: A3
+        #   name_zh: 回合循环与 replay 攒取
+        #   name_en: run_episode_warmup_from_history
+        #   intro: 逐 actor/均匀随机动作转场入环形 buffer；learn=True 才回放更新（H-04：库层默认 False 仅预热）
+        #   inputs: A1 A2
+        #   outputs: buffer 样本+回合奖励
+        # 层: 输出
+        # - id: O1
+        #   name_zh: 训练产物
+        #   name_en: checkpoint
+        #   intro: checkpoint 落盘（meta 记录口径），产物只进模拟盘对拍
+        #   downstream: rl_trainer.td3_agent
+        # 边:
+        # I1 --> A1
+        # I1 --> A2
+        # A1 --> A3
+        # A2 --> A3
+        # A3 --> O1
+        # [/ALGO_FLOW]
