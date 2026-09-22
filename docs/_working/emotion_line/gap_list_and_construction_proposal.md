@@ -5,7 +5,7 @@ created: 2026-09-22
 sid: st-emomine-20260922
 lane: emotion_line
 status: draft（建议单，未经 Owner 批示不开工）
-doc_version: v1.0
+doc_version: v1.1（含挖干补遗轮）
 ---
 
 # 缺口清单+施工建议单
@@ -82,3 +82,27 @@ doc_version: v1.0
 
 本班新增 6 个文档（本目录）+0 代码+0 注册表+0 规则；探针脚本在 .runtime/tmp（会话垃圾，
 不入库）。无替代/合并对象（全新战役文件夹）；未新增任何 gate/规则/计划任务。
+
+## §5 挖干补遗轮新增（2026-09-22 深夜）
+
+### 新增缺口
+
+| # | 缺口 | 证据 | 级别 |
+|---|------|------|------|
+| G9 | **能力反查索引漏报**：capability_lookup 查 "sentiment 情绪" 未命中 sentiment_cycle/market_sentiment_analyzer/youzi_relay_emotion_engine/F23 任一件——若非 Owner 质询触发补挖，emotion_index 差点在不知存量温度函数的情况下重复施工 | 本班实测命中面 vs 代码普查 | **P0**（治理面，影响所有后续反查） |
+| G10 | **三情绪模块同域簇待内收判定**：sentiment_cycle（含 compute_sentiment_temperature）/market_sentiment_analyzer/youzi_relay_emotion_engine 三枚举并存+emotion_index 拟新建——按"同真源可派生→必并"铁律，施工前必须判定 | sentiment_cycle 头注释自曝三枚举并存 | **P0**（阻塞 S3 开工） |
+| G11 | daban 断供期替代源半解：limit_up_down（→09-22 通）可替代涨停家数，但连板/炸板/晋级率无替代 | 盘点册 §8.4 | 并入 G1 |
+| G12 | 竞价情绪成分原料实证通（auction_snapshot 26.6 万行/auction_book 303 万行→09-22），骨架 auction stage 可从预留升 v0.2 挂载 | 盘点册 §8.1 | 并入 S3 v0.2 |
+| G13 | 研报评级情绪成分候选：research_report 146,769 行（rating/rating_change 在），机构情绪代理未入 v0 | 盘点册 §8.1 #20 | P3 候选 |
+
+### 新增施工建议
+
+- **S8（P0，前置 S3）情绪资产内收判定会**：Owner/Max 主持，议题=三枚举收敛+emotion_index 与
+  sentiment_cycle 合并边界+成分内核共用。产出=判定结论一条（可裁可并可分层）。规模 0.5 人日
+  （纯判定，无施工）。
+
+### 交 Owner 判定项追加
+
+6. **G9 能力反查漏报**：sentiment 族五件不在反查索引——请批索引重建（归治理班，本班不施工）。
+7. **G10/S8 内收判定**：emotion_index 与 sentiment_cycle 是"温度计与档位计并存（共用内核）"
+   还是"必并"，请定调——本骨架稿 §8.3 已备初判框架待批。

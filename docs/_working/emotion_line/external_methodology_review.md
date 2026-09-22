@@ -5,7 +5,7 @@ date: 2026-09-22
 sid: st-emomine-20260922
 lane: emotion_line
 status: active
-doc_version: v1.0
+doc_version: v1.1（含挖干补遗轮）
 source_note: 正文由本班外部挖矿子代理起草（staging 稿），本班主会话抽验 5 条链接后收编；引用编号对应文末参考链接总表，[搜索确认]=未经页面直读、经搜索结果多源交叉确认
 ---
 
@@ -208,3 +208,27 @@ regime 分组收益；⑤ 指数自身是价格的确定性函数（成交额分
 | 5 | [14] QuantsPlaybook | WebSearch 多源 | **属实**：仓库在案、券商研报复现定位一致 |
 
 5/5 通过，未发现虚构来源。剩余 [搜索确认] 条目（12/13）保留原标注不升级。
+
+## §7 挖干补遗轮增补（2026-09-22 深夜）
+
+第一轮漏挖的学术线补干（Owner"挖干了吗"质询触发）：
+
+**15. Huang, Jiang, Tu & Zhou (2015), "Investor Sentiment Aligned: A Powerful Predictor of
+Stock Returns", RFS 28(3): 791-837**——**PLS（偏最小二乘）合成法**的标杆：用六个常见情绪
+指标对宏观变量做 PLS 提取"对齐情绪"，样本外预测力显著优于 Baker-Wurgler 主成分法（被引
+~1400）。对本线的意义：这是继等权/rank 分位/IC 加权/PCA 之后的第五种合成方案，且是学界
+公认的 OOS 最强基线——骨架 v0 等权起步后，v0.2+ 的 IC 加权备选之外应补评 PLS（成分对
+目标收益的监督式降维，正好契合"情绪领先性"目标）。链接（本班检索验证，题名/作者/期刊/
+卷期页码多源一致）：
+- OUP 官方页: https://academic.oup.com/rfs/article/28/3/791/1576380
+- 后续周频扩展: Xu et al. (2018), Finance Research Letters:
+  https://ideas.repec.org/a/eee/finlet/v27y2018icp135-139.html
+
+**16. A 股情绪周期五阶段社区口径**（冰点/反核/主升/疯狂/退潮，游资圈 55188/雪球/东财对照）
+——**仓内已有锚**：`signal_ashare.sentiment.sentiment_cycle` 头注释已引三处社区来源并完成
+命名统一（28 号 memo）。外部文册与仓内模块互证：情绪周期阶段化（分类视角）与情绪指数
+（连续视角）是行业双轨实践，支撑骨架稿 §8.3 的"温度计与档位计"并存假设——但并存必须以
+"共用成分内核"为前提（见缺口单 G10/S8）。
+
+另注：熵权法/机器学习 stacking（LightGBM 二层合成）在外部实践中存在但公开验证薄弱，
+对本线 6 成分小样本面收益存疑，不推荐列入备选，登记备查即可。

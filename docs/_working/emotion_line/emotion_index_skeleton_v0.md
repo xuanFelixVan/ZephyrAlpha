@@ -5,7 +5,7 @@ created: 2026-09-22
 sid: st-emomine-20260922
 lane: emotion_line
 status: draft（交下轮施工讨论，未开工）
-doc_version: v0.1
+doc_version: v0.2（auction 修正+存量模块关系）
 ---
 
 # emotion_index 骨架设计稿 v0（最小聚合版）
@@ -121,3 +121,37 @@ schema-as-code 流程为准，本稿只定形态。）
 3. 不施工 PCR（小红书班第 3 件在建）与 cohort 画像（cohort 班写域）——只留挂载位。
 4. 不动板块线写域；板块热度不回灌（防同 ts 循环依赖）。
 5. 本稿=讨论稿，施工须另走 construction_workflow_policy 十五步闭环+depgraph 登记。
+
+## §8 补遗：与存量情绪模块的关系（挖干补遗轮新增，施工前置判定项）
+
+> 本节为 Owner"挖干了吗"质询后补干所得，**修正 §4 auction stage 的错判**并登记查重风险。
+
+### 8.1 错判修正
+
+§4 auction stage 原标"竞价快照成分（原料未聚合）"——**错**。实证：`c1_market.auction_snapshot`
+（266,361 行→09-22，10 秒级）与 `c1_market.auction_book`（3,029,801 行→09-22，3 秒高频层）
+原料**通**。修订：auction 从"预留"升为"**v0.2 可挂载（原料齐备）**"；v0 范围不变
+（close_final/pre_open 先行，避免首批施工面过大）。
+
+### 8.2 存量情绪资产地图（同域簇）
+
+| 存量件 | 形态 | 与本线关系 |
+|--------|------|-----------|
+| `signal_ashare.sentiment.sentiment_cycle`（8 标准函数，production） | 五阶段分类器（冰点/反核/主升/疯狂/退潮）+ **compute_sentiment_temperature** + regime 映射 + 策略部署矩阵 | **查重最高风险**：温度函数与 emotion_index 概念直接同名 |
+| `market_sentiment_analyzer.SentimentPhase` | 4+1 硬标签枚举 | 同域第三枚举，待内收判定 |
+| `youzi_relay_emotion_engine.EmotionPhase` | 游资接力情绪枚举 | 同域第三枚举，待内收判定 |
+| F23_LIMITUP_EMOTION（alt_regime_signals，阈值 v1 provisional） | 涨停家数/连板高度/晋级率→**阶段**（分类） | 输入与 C1/C2 同源；"档位计 vs 温度计"关系须显式判定 |
+| F15/F25（alt_regime_signals） | 恐贪极值/转债溢价分位（连续） | F25 与 C 系成分思路同源（转债溢价未入 v0 六成分，留 v0.2 评估） |
+
+### 8.3 内收判定框架（施工班开工前必做，交 Owner/Max）
+
+差异化定位初判（待批）：emotion_index=**连续 0-1 灰度分位+契约化 components 明细+多源聚合+
+四 stage 时点**，消费方是排班/仓位节流；sentiment_cycle=**离散五阶段+策略纪律/部署映射**，
+消费方是策略条件化。两者可并存但须：①共用同一成分计算内核（禁两套涨停家数/晋级率口径）；
+②temperature 与 phase 建立显式映射（同一输入一次计算，双向派生）；③三枚举收敛时间表。
+若 Owner 判"必并"，则本骨架稿降级为 sentiment_cycle 的数据底座扩展。
+
+### 8.4 替代源备注
+
+daban 断供期 C1 的涨停家数子项（0.4 权重）可由 c1_market.limit_up_down（→09-22 通）替代；
+连板高度/炸板率/晋级率无替代（limit_type 无连板链），仍待 daban 周窗复通。

@@ -5,7 +5,7 @@ created: 2026-09-22
 sid: st-emomine-20260922
 lane: emotion_line
 status: active
-doc_version: v1.0
+doc_version: v1.1（含挖干补遗轮）
 ---
 
 # 内部盘点册——情绪指数候选成分 × 仓内现状四态判定
@@ -164,3 +164,44 @@ daban 链断供（成分 1/2）与 cohort 缺件；其余皆为"能聚合但要�
 - 全部行数/日期/列清单=本会话亲验探针（可复现脚本+JSON 快照在案）；
 - 代码定性=模块头/DDL 真源直读；调度定性=tasks.yaml HEAD 版直读；
 - 未做任何写操作（探针只读；写域=本战役文件夹）。
+
+## §8 挖干补遗轮（2026-09-22 深夜，Owner"挖干了吗"质询触发）
+
+第一轮自评留了 5 条支脉未干，当场补干。**本轮推翻原稿两处结论、新增六项判定**：
+
+### 8.1 新增四态判定
+
+| # | 项 | 真源/代码 | 实证 | 四态 |
+|---|----|----------|------|------|
+| 17 | 涨停跌停家数（平行真源） | c1_market.limit_up_down | 4,795 行，**→09-22 通**（每日 48-169 行，limit_type 区分）**[亲验]** | **通** |
+| 18 | 竞价快照 | c1_market.auction_snapshot（task auction_data_snapshot，10 秒级 9:15-9:25） | 266,361 行 →09-22 **[亲验]** | **通** |
+| 19 | 竞价逐笔委托 | c1_market.auction_book（3 秒高频层） | 3,029,801 行 →09-22 **[亲验]** | **通** |
+| 20 | 券商研报（评级情绪原料） | c3_fundamental.research_report | 146,769 行 →09-18（rating/rating_change 列在）**[亲验]** | **半通**（工作日夜批） |
+| 21 | 情绪周期五阶段定位器 | `zephyr.signal_ashare.sentiment.sentiment_cycle`（production，8 标准函数） | 代码态：FREEZING/STARTING/FERMENTING/CONSENSUS/EBING（冰点/反核/主升/疯狂/退潮）+ **compute_sentiment_temperature** + map_sentiment_to_regime + 策略部署矩阵 **[代码]** | **通**（代码/函数态，非表） |
+| 22 | 情绪消费信号面 | alt_regime_signals：F15_FNG_INDEX（恐贪极值）、F25_CB_PREMIUM（转债溢价分位）、F23_LIMITUP_EMOTION（涨停家数/连板/晋级率→阶段，阈值 v1 provisional 待 OOS） | 代码态，regime_data_loader 已消费 F4/F8/F10-F12/F14/F15/F23/F25 **[代码]** | **通** |
+
+### 8.2 本轮推翻原稿的结论
+
+1. **骨架稿 §4 auction stage"原料未聚合"系错判**——auction_snapshot/auction_book 两表实证
+   通到 09-22（30 万/303 万行）。竞价情绪成分原料齐备，v0.2 可挂载。
+2. **盘点册第一轮漏盘 research_report**（评级上调/下调流=机构情绪成分候选，14.7 万行）。
+
+### 8.3 重大新发现：存量情绪资产同域簇（施工前必做内收判定）
+
+- **三个情绪周期枚举模块并存**（sentiment_cycle 头注释自曝）：
+  `signal_ashare.sentiment.sentiment_cycle.SentimentPhase`（五阶段）/ 
+  `market_sentiment_analyzer.SentimentPhase`（4+1 硬标签）/ 
+  `youzi_relay_emotion_engine.EmotionPhase`——中文值一致（冰点/反核/主升/疯狂/退潮），
+  各自为政。**emotion_index 与 sentiment_cycle.compute_sentiment_temperature 概念直接同名**，
+  同域重复簇风险实锤——施工前须按内收判据（同真源可派生→必并）判定合并/复用边界。
+- **F23_LIMITUP_EMOTION 已经做了"涨停家数/连板高度/晋级率→阶段"**——与骨架稿 C1/C2 输入
+  同源。emotion_index 的差异化定位=连续 0-1 灰度+契约化 components 明细+多源聚合；与 F23
+  （分类阶段）是"温度计 vs 档位计"关系，但必须显式判定而非并存了再说。
+- **能力反查漏报实锤**：RULE-CAPABILITY-LOOKUP 查 "sentiment 情绪" 仅命中 MOD-INT-AISA，
+  未命中 sentiment_cycle/market_sentiment_analyzer/youzi_relay_emotion_engine/F23——
+  索引覆盖面缺口，登记为缺口 G9。
+
+### 8.4 缓解路径更新
+
+daban 断供期（09-15 起）：涨停家数可用 **limit_up_down**（通，每日家数齐）替代，
+C1 的 0.4 权重子项可先活；连板高度/炸板率/晋级率仍必须等 daban 复通（limit_type 无连板链）。
