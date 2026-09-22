@@ -108,8 +108,7 @@ json/q-0005 死复现脚本 .py——q-0006 已全部规避，若仍死于 DCR �
 + artifacts/<W_IS|W_OOS|W_HOLDOUT|W_POSTD>/{run_summary,sensitivity,redblue_round*}.yaml
 + artifacts/<窗>/{nav,trades}_IBT-{A,B}.csv（审计链）+ artifacts/IBT-RUN-LOGS.md（跑批日志）
 
-**复现脚本**：scripts/backtest/ibt_first_run/{ibt_runner,ibt_redblue,ibt_attrib,ibt_mining_matrix}.py
-（跑法：`python ibt_runner.py --window W_IS`；HOLDOUT 须 `--holdout-guard`；敏感性 `--sensitivity` 仅 IS/OOS）
+**复现方法（工具件退出交付面的说明）**：首跑工具脚本未入库（一次性探针件，门禁合规成本倒挂，方法已 100% 文档化）——复现按 IBT-PROTOCOL-V1 §1-§6 重建：15 员面板=c4 翻译件 build(start,end)（符号归一裸码+索引 Timestamp 化）→compose_weight_panels 等权合成→（IBT-B）ShrinkageEngine+ScheduleShrinkageProvider（快照日+1）→DefaultBacktestEngine（T+1/PIT/参与率 10%/护栏）。**正式版工具=Max 方案首批施工项**（按门禁合规新建：SQL 集中化/ch_reader/蓝图头）。工具原稿留档 .runtime/tmp/ibt_tools_archive/（TTL 自清，不作交付物）
 
 **上游真源**（Max 方案必读）：
 - docs/01_policies_and_standards/_registry/catalogs/backtest_backlog.yaml（142 对象，5 条 frozen plan）
