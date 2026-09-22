@@ -43537,6 +43537,11 @@ creation_tokens:
   token: commit-chain-mining-ledger-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
+- file: docs/_working/commit_chain_mining/commitchain_ledger.md
+  token: commitchain-ledger-renamed-20260922
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+  merge_evaluation: "同一条目改名（gate-naming 基名撞车整改：LEDGER.md 与 flash_speedup/F5_registry_debt/LEDGER.md 撞名），旧 token 条目随之退役，非第二真源"
 - file: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_bridge/commit_belt_daemon.yaml
   token: algo-flow-external-commit-belt-daemon-20260922
   created_by: st-commitchain-20260922
