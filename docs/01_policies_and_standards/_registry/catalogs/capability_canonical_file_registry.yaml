@@ -44170,4 +44170,21 @@ creation_tokens:
   merge_evaluation: "归档迁移副本非第二真源：源侧删除按 blob 同一性配对随批，内容为他会话已施工成果的归位"
   merge_evaluation: "tc_08卡形式收口三件零记录缺口补齐件，无同真源可并项"
   merge_evaluation: "同真源可派生：a0/a2/a4 为 disk_reorg 战役母令/集成简报/放行信号执行件，随战役文档全家福同批补登记（q-0006 欠账，st-disk-final 代落地）"
+- file: "docs/_working/integrated_backtest/IBT-HANDOFF-TO-MAX.md"
+  token: "auto-ibt-20260922-008"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/ibt_attribution.yaml"
+  token: "auto-ibt-20260922-009"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: "docs/_working/integrated_backtest/ibt_data_matrix.yaml"
+  token: "auto-ibt-20260922-010"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: docs/_working/disk_reorg_campaign/a6_remaining_work_order.md
+  token: disk-reorg-handover-a6-remaining-work-order-20260922
+  created_by: st-gateaudit-20260922
+  capability: disk_reorg_handover
+  merge_evaluation: "他会话中断批接手归位：磁盘重组战役遗留工作令，非第二真源"
 di_seam_exemptions: []
