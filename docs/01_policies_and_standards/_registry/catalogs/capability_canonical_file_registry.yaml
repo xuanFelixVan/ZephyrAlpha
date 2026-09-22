@@ -44145,4 +44145,24 @@ creation_tokens:
   created_by: st-emomine-20260922
   capability: emotion_index_blueprint
   merge_evaluation: "模块蓝图指针件（MOD-ALT-EMOTION-INDEX-BUILDER），depgraph 蓝图查找约定要求，仅本文件"
+- file: docs/03_modules/_domain_library/algo_flow/collectors/logs_collector.yaml
+  token: ultimate-library-logs-collector-algo-flow-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ALGO_FLOW 外锚 yaml（logs_collector.py 日志抽屉采集器外部真源视图），零旧条目替代"
+- file: docs/library/regulations.md
+  token: ultimate-library-regulations-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "七馆藏书规程页（T11 馆页群最后一件），零旧条目替代"
+- file: docs/03_modules/_domain_library/algo_flow/generators/library_hygiene.yaml
+  token: ultimate-library-hygiene-algo-flow-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ALGO_FLOW 外锚 yaml（library_hygiene.py 月度卫生命令外部真源视图），零旧条目替代"
+- file: docs/03_modules/_domain_infrastructure/algo_flow/restore_drill.yaml
+  token: ultimate-library-restore-drill-algo-flow-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ALGO_FLOW 外锚 yaml（restore_drill.py 月度恢复演练外部真源视图），零旧条目替代"
 di_seam_exemptions: []
