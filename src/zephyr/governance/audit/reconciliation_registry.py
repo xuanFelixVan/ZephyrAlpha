@@ -647,6 +647,7 @@ _VALID_FILE_OPS = frozenset({"none", "read", "write", "delete", "move"})
 #: 语义与静态注册完全同款（同 registry/同 file_ops 强校验/同 priority 排序），仅注册时机不同。
 _EXTERNAL_SPEC_MODULES: Final[tuple[str, ...]] = (
     "zephyr.governance.audit.schedule_consistency_reconciler",  # W4-4 排班三表一致性（GATE-SCHEDULE-CONSISTENCY，只 warn/skip/fix-in-place）
+    "zephyr.library.library_regen_reconciler",  # ulib3 T4 图书馆 post-commit 自动刷新（LIBRARY-REGEN，只 clean/warn/skip，零 git 文件操作）
 )
 
 _external_spec_factories: list[Callable[[Any], ReconcilerSpec]] = []
@@ -659,6 +660,7 @@ if TYPE_CHECKING:
     # 循环导入——该模块反向 import 本模块的 ReconcileResult/ReconcilerSpec），
     # 故运行时零导入、类型检查面声明依赖边。
     import zephyr.governance.audit.schedule_consistency_reconciler  # noqa: F401
+    import zephyr.library.library_regen_reconciler  # noqa: F401
 
 
 def _load_external_spec_factories() -> list[Callable[[Any], ReconcilerSpec]]:

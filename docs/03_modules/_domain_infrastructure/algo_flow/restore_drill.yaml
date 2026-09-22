@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——restore_drill（真源 scripts/backup/restore_drill.py）
+doc_type: architecture_view
+ttl: permanent
+module: scripts.backup.restore_drill
+source_of_truth: scripts/backup/restore_drill.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 最新备份转储
+    #   fields: G:/backup/db_dumps/**/depgraph.dump（--dump 可指认路径覆盖）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 恢复到演练库
+    #   name_en: run_drill/restore
+    #   intro: pg_restore 到临时库 depgraph_drill（绝不触碰生产 depgraph 库）；凭据走 config/.env.postgres（RULE-SECRETS 管道）。
+    #   outputs: 演练库
+    # - id: A2
+    #   name_zh: 三表行数对账
+    #   name_en: verify
+    #   intro: lib_assets/lib_events/nodes 三表 live vs drill 只读核行数；失败写 failed 报告退出 1（fail-visible）。
+    #   outputs: 对账结果
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 演练报告 JSON+临时库清理
+    #   name_en: report/cleanup
+    #   intro: 报告落 logs/restore_drill_YYYYMMDD.json；finally DROP IF EXISTS 演练库；drill 结果不入账，人工阅。
+    #   downstream: logs/ 演练台账（日志抽屉族）
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

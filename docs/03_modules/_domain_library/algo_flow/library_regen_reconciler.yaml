@@ -1,0 +1,40 @@
+# ALGO_FLOW 外部真源——library_regen_reconciler（真源 src/zephyr/library/library_regen_reconciler.py）
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.library.library_regen_reconciler
+source_of_truth: src/zephyr/library/library_regen_reconciler.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: committed_files/session_id
+    #   fields: post-commit 事件参数
+    #   code: committed_files
+    # 层: 算法
+    # - id: A1
+    #   name_zh: trigger——馆藏输入面前缀判定（src/scripts/data/catalogs）
+    #   name_en: _trigger
+    #   intro: 纯文档/生成视图变更不触发，防 regen 风暴。
+    #   outputs: bool
+    # - id: A2
+    #   name_zh: 采集入账（collect_all+ingest_all，upsert 即指纹刷新）
+    #   name_en: ingest
+    #   intro: fail-soft，异常降级 warn 不抛。
+    #   outputs: 入账数
+    # - id: A3
+    #   name_zh: 馆页重生成+coverage 对账（生成器 CLI，超时 300s）
+    #   name_en: regen+coverage
+    #   intro: 生成视图零 commit 零删除。
+    #   outputs: 各阶段 rc/摘要
+    # 层: 输出
+    # - id: O1
+    #   name_zh: ReconcileResult（clean/warn/skip）
+    #   name_en: result
+    #   intro: file_ops 显式={read,write}；LIBRARY-REGEN 挂 reconciliation_registry 外部规格。
+    #   downstream: GitCommitGateway post-commit 对账链
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1
