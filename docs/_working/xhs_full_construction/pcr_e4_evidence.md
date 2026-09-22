@@ -26,3 +26,22 @@ topic: xhs_full_construction_20260922
 
 - 本件=工单 #3+#14 假设卡+E4 记录唯一载体；与 collection_intake 规格卡（判定依据）分立。
 - tasks.yaml option_daily_stats_daily 增量任务+回补件（scripts/data/backfill_option_daily_stats.py）已另行落批；CP-B4（PCR 跨市场映射）已并单本工单不重复立卡。
+
+## E4 重考记录（2026-09-23，st-oddjobs-20260923 前置批点单#6 执行）
+
+- **前置已消解**：标的层深史回补完成——tushare fund_daily×fund_adj 真后复权落
+  c1_market.kline_daily_hfq：510050.SH=2850 行（2015-01-05..2026-09-22）、
+  510300.SH=1674 行（2019-11-01..2026-09-22），全部 CH_COMMITTED（HTTP 正门）。
+  回补件晋升常驻：scripts/backfill_etf_hfq_for_pcr.py（dry-run 默认+--execute，
+  depgraph file 节点+翻译册+creation token 三注册齐）。
+- **重考判档（考试件原样重跑，--out 证据 yaml 同目录两份）**：
+  - 510050：样本=2760，窗口=2015-05-13..2026-09-15，H1 判档=**PASS 档**（两轮复跑一致）。
+    IS 高分位对基线 +0.0634% / 低分位 -0.3608%；OOS 高 +0.3237% / 低 -0.1853%（反向方向 OOS 保持）。
+  - 510300：样本=1573，窗口=2020-03-25..2026-09-15，H1 判档=**PASS 档**。
+    IS 高 +0.4846% / 低 -0.4841%；OOS 高 +0.2923% / 低 **+0.1766%（注意：OOS 低分位未反向，两分位同正，
+    高低差 +0.1157% 达标判 PASS——如实披露该衰减，引用时禁只报判档不报此行）。
+  - H2（持仓量 PCR）维持样本不足不并列判档（如实，未变）。
+- **升级声明**：INSUFFICIENT（2026-09-22 首考）→ PASS 档（2026-09-23 重考）=原料缺位消解后的如实升级，
+  非参数/口径改动（考卷 frozen，裁定#325 口径零改动）。
+- 数据源留痕：东财 stock_zh_a_hist/ETF 接口当晚整段拒连（已知反爬态）→ 按 #339 切 tushare 备胎
+  （fund_daily+fund_adj），新浪 fund_etf_hist_sina 实测可用未采用（无复权因子）。
