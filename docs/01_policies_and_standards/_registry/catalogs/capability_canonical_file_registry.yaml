@@ -40806,26 +40806,6 @@ creation_tokens:
   token: rule-audit-construction-register-gate-fulltree-audit-task-20260919
   created_by: st-final3-20260919
   capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/a2_handoff/genpatch.py
-  token: rule-audit-construction-genpatch-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/a2_handoff/rules_m1_repoint.patch
-  token: rule-audit-construction-rules-m1-repoint-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/a2_handoff/rules_repoint_rows.json
-  token: rule-audit-construction-rules-repoint-rows-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/dossiers_v2_index.json
-  token: rule-audit-construction-dossiers-v2-index-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
-- file: docs/_working/rule_audit_campaign/dossiers_v2_summary.json
-  token: rule-audit-construction-dossiers-v2-summary-20260919
-  created_by: st-final3-20260919
-  capability: rule_audit_construction
 - file: scripts/ops/schedule_overview.py
   token: schedule-overview-schedule-overview-20260919
   created_by: st-final3-20260919
@@ -43130,6 +43110,26 @@ creation_tokens:
   token: tc10-owner-report-20260921
   created_by: st-taskcards-exec-20260921
   capability: recovered_task_cards
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/full_report_20260921.md
+  token: recovered-task-cards-full-report-20260921-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "TC-01 输入件从.tmp TTL区抢救promote，memo_recon战役证据链原件，无重复真源（tmp原件到期自清）"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/report.md
+  token: recovered-task-cards-report-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "TC-01 输入件从.tmp TTL区抢救promote，memo_recon战役证据链原件，无重复真源（tmp原件到期自清）"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/review.md
+  token: recovered-task-cards-review-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "TC-01 输入件从.tmp TTL区抢救promote，memo_recon战役证据链原件，无重复真源（tmp原件到期自清）"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/review_of_review_20260921.md
+  token: recovered-task-cards-review-of-review-20260921-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "TC-01 输入件从.tmp TTL区抢救promote，memo_recon战役证据链原件，无重复真源（tmp原件到期自清）"
   merge_evaluation: "TC-10步骤0 报到清单：六项触发状态+四件Owner手办置顶呈报"
 - file: docs/_working/archive/2026-09/residual_construction/m1_m11_vein_register.md
   token: m1-m11-vein-register-20260921
