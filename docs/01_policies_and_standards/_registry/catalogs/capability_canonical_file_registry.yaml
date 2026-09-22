@@ -43750,6 +43750,11 @@ creation_tokens:
   token: ultimate-library-library-regen-reconciler-20260922
   created_by: st-ulib3-20260922
   capability: ultimate_library
+- file: scripts/backup/restore_drill.py
+  token: ultimate-library-restore-drill-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ulib3 T2 恢复演练闭环，扩展现有 backup 体系职责，无平行登记表"
   merge_evaluation: "ulib3 T4 post-commit 事件触发刷新，收编手动 regen 散件，无平行登记表"
   merge_evaluation: "ulib3 T10 日志抽屉族级入册，收编 registry_of_logs 连线，无平行登记表"
   merge_evaluation: "ulib3 T9 月度卫生命令，收编散在 TTL 清点脚本职责，无平行登记表"
@@ -43924,12 +43929,12 @@ creation_tokens:
   capability: xhs_full_construction
   merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档并入collection_intake台账域；05/21两件为工单#5/#21唯一交付物无重复真源"
   merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档，并入collection_intake台账域，无重复真源"
-- file: "docs/_working/sector_line/external_methodology.md"
+- file: "docs/_working/sector_line/sector_external_methodology.md"
   token: "secmine-ext-methodology-20260922"
   created_by: st-secmine-20260922
   capability: sector_line_mining
   merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
-- file: "docs/_working/sector_line/internal_inventory.md"
+- file: "docs/_working/sector_line/sector_internal_inventory.md"
   token: "secmine-internal-inventory-20260922"
   created_by: st-secmine-20260922
   capability: sector_line_mining
@@ -43939,17 +43944,17 @@ creation_tokens:
   created_by: st-secmine-20260922
   capability: sector_line_mining
   merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
-- file: "docs/_working/sector_line/prereg_exam_cards_v0.md"
+- file: "docs/_working/sector_line/sector_prereg_exam_cards_v0.md"
   token: "secmine-prereg-cards-v0-20260922"
   created_by: st-secmine-20260922
   capability: sector_line_mining
   merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
-- file: "docs/_working/sector_line/gap_list_and_construction_proposal.md"
+- file: "docs/_working/sector_line/sector_gap_list_and_construction_proposal.md"
   token: "secmine-gap-list-20260922"
   created_by: st-secmine-20260922
   capability: sector_line_mining
   merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
-- file: "docs/_working/sector_line/redblue_round_record.md"
+- file: "docs/_working/sector_line/sector_redblue_round_record.md"
   token: "secmine-redblue-record-20260922"
   created_by: st-secmine-20260922
   capability: sector_line_mining
@@ -44007,6 +44012,66 @@ creation_tokens:
   token: zcode-patrol-zcode-workspace-patrol-20260922
   created_by: st-xhs-full-20260922
   capability: zcode_patrol
+- file: schemas/categories/market/market_option_daily_stats.py
+  token: option-daily-stats-market-option-daily-stats-20260922
+  created_by: st-xhs-full-20260922
+  capability: option_daily_stats
+- file: scripts/data/backfill_option_daily_stats.py
+  token: option-daily-stats-backfill-option-daily-stats-20260922
+  created_by: st-xhs-full-20260922
+  capability: option_daily_stats
+  merge_evaluation: "工单#3+#14 期权官方日统计历史回补唯一执行件（一次性深回补+断点续跑）；与增量任务同源互补非重复"
+  merge_evaluation: "工单#3+#14 期权PCR新表DDL真源；与option_kline/iv_surface跨域不同对象不并（行情级vs官方统计级），无重复真源"
   merge_evaluation: "工单#24② ZCode上传面巡检唯一执行件；与IOCheck月车共载，无平行登记面"
   merge_evaluation: "情绪线挖矿班战役交付六件（全新对象，无同真源可派生/无退役对象/跨域不同对象不并）"
+- file: "docs/_working/sector_line/sector_external_methodology.md"
+  token: "secmine-ext-methodology-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/sector_internal_inventory.md"
+  token: "secmine-internal-inventory-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/sector_prereg_exam_cards_v0.md"
+  token: "secmine-prereg-cards-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/sector_gap_list_and_construction_proposal.md"
+  token: "secmine-gap-list-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/sector_redblue_round_record.md"
+  token: "secmine-redblue-record-v2-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "N-16 基名重名门禁改名后新路径 token，取代同会话旧路径同名条目（旧路径 5 条留 HEAD 待图书馆班/维护班账实清理）；六件内容零变化纯改名"
+- file: "docs/_working/sector_line/external_methodology.md"
+  token: "secmine-ext-methodology-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/internal_inventory.md"
+  token: "secmine-internal-inventory-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/prereg_exam_cards_v0.md"
+  token: "secmine-prereg-cards-v0-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/gap_list_and_construction_proposal.md"
+  token: "secmine-gap-list-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: "docs/_working/sector_line/redblue_round_record.md"
+  token: "secmine-redblue-record-20260922"
+  created_by: st-secmine-20260922
+  capability: sector_line_mining
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
 di_seam_exemptions: []
