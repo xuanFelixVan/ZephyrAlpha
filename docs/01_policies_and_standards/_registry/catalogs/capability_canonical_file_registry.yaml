@@ -43505,10 +43505,6 @@ creation_tokens:
   capability: live_readiness
   merge_evaluation: "实盘准入四件套（检查表/SOP草案/异常手册/门禁设计），替代散落的准入判据碎片引用，Owner 点单后归档"
   merge_evaluation: "offsite 月度手册（a3 6.6 交付件，裁定#380⑥ Owner 自办制操作载体），零既有条目可合并"
-- file: docs/_working/daily_loop_campaign/02_state_vocabulary_unification.md
-  token: dloop-campaign-02-state-vocabulary-unification-20260921
-  created_by: st-dloop-20260921
-  capability: dloop_campaign
 - file: docs/_working/daily_loop_campaign/03_self_ruling_vocab_ssot.md
   token: dloop-campaign-03-self-ruling-vocab-ssot-20260921
   created_by: st-dloop-20260921
@@ -44074,4 +44070,100 @@ creation_tokens:
   created_by: st-secmine-20260922
   capability: sector_line_mining
   merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/memo_recon_full_report_20260921.md
+  token: recovered-task-cards-memo-recon-full-report-20260921-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "N-16 基名重名合规改名（memo_recon_ 前缀），TC-01 输入件同件改名非新增；旧名 token 留 HEAD 历史无害"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/memo_recon_report.md
+  token: recovered-task-cards-memo-recon-report-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "N-16 基名重名合规改名（memo_recon_ 前缀），TC-01 输入件同件改名非新增；旧名 token 留 HEAD 历史无害"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/memo_recon_review.md
+  token: recovered-task-cards-memo-recon-review-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "N-16 基名重名合规改名（memo_recon_ 前缀），TC-01 输入件同件改名非新增；旧名 token 留 HEAD 历史无害"
+- file: docs/_working/recovered_task_cards/tc01_memo_recon_inputs/memo_recon_review_of_review_20260921.md
+  token: recovered-task-cards-memo-recon-review-of-review-20260921-20260922
+  created_by: st-xhs-full-20260922
+  capability: recovered_task_cards
+  merge_evaluation: "N-16 基名重名合规改名（memo_recon_ 前缀），TC-01 输入件同件改名非新增；旧名 token 留 HEAD 历史无害"
+  merge_evaluation: "TC-01 输入件从.tmp TTL区抢救promote，memo_recon战役证据链原件，无重复真源（tmp原件到期自清）"
+  merge_evaluation: "TC-10步骤0 报到清单：六项触发状态+四件Owner手办置顶呈报"
+- file: docs/_working/xhs_full_construction/07b_07c_comment_pool_cards.md
+  token: xhs-full-construction-07b-07c-comment-pool-cards-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "工单#1/#7B/#4 假设卡唯一交付物；队列凭证在 lane_c_candidates.csv 同批；收官随目录归档并入 collection_intake 域"
+- file: docs/_working/xhs_full_construction/10_huanfang_ten_hypothesis_cards.md
+  token: xhs-full-construction-10-huanfang-ten-hypothesis-cards-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/comment_pool_alpha101_cards.md
+  token: xhs-full-construction-comment-pool-alpha101-cards-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/alpha158_handler_paradigm.md
+  token: xhs-full-construction-alpha158-handler-paradigm-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "N-13 合规改名（数字前缀改字母开头）同件改名非新增；21 对手方清单 ttl 修正 task_bound；改名后旧名 token 留 HEAD 作历史无害"
+- file: docs/_working/xhs_full_construction/counterparty_risk_register.md
+  token: xhs-full-construction-counterparty-risk-register-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "N-13 合规改名（数字前缀改字母开头）同件改名非新增；21 对手方清单 ttl 修正 task_bound；改名后旧名 token 留 HEAD 作历史无害"
+- file: docs/_working/xhs_full_construction/huanfang_ten_hypothesis_cards.md
+  token: xhs-full-construction-huanfang-ten-hypothesis-cards-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/proposal_pf_alloc_wiring.md
+  token: xhs-full-construction-proposal-pf-alloc-wiring-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/pcr_e4_evidence.md
+  token: xhs-full-construction-pcr-e4-evidence-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "PCR假设卡E4出证与考试件唯一载体；标的深史前置解锁后原样重跑；随目录归档"
+  merge_evaluation: "工单#9+#16 立项文档唯一交付物，批文前零接电施工；批文后归 pf_alloc 线真源"
+  merge_evaluation: "N-13 合规改名（数字前缀改字母开头）同件改名非新增；21 对手方清单 ttl 修正 task_bound；改名后旧名 token 留 HEAD 作历史无害"
+  merge_evaluation: "07b_07c 文件名 N-13 合规改名（字母开头），同一交付物改名非新增，与旧名 token 合并评估=同件改名"
+  merge_evaluation: "工单#1/#7B/#4 假设卡唯一交付物；队列凭证在 lane_c_candidates.csv 同批；收官随目录归档并入 collection_intake 域"
+  merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档并入collection_intake台账域；05/21两件为工单#5/#21唯一交付物无重复真源"
+  merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档，并入collection_intake台账域，无重复真源"
+- file: docs/_working/emotion_line/exam_report_v1.md
+  token: emotion-line-exam-report-v1-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_line
+  merge_evaluation: "情绪线战役交付件（考试报告新增，同目录既有 capability 延续，不并）"
+- file: scripts/audit/pcr_e4_exam.py
+  token: option-daily-stats-pcr-e4-exam-20260922
+  created_by: st-xhs-full-20260922
+  capability: option_daily_stats
+  merge_evaluation: "工单#3+#14 PCR E4出证唯一考试件（只读重放）；标的深史前置解锁后原样重跑，与 backfill 件同能力族互补非重复"
+  merge_evaluation: "工单#3+#14 期权官方日统计历史回补唯一执行件（一次性深回补+断点续跑）；与增量任务同源互补非重复"
+  merge_evaluation: "工单#3+#14 期权PCR新表DDL真源；与option_kline/iv_surface跨域不同对象不并（行情级vs官方统计级），无重复真源"
+  merge_evaluation: "工单#24② ZCode上传面巡检唯一执行件；与IOCheck月车共载，无平行登记面"
+  merge_evaluation: "情绪线挖矿班战役交付六件（全新对象，无同真源可派生/无退役对象/跨域不同对象不并）"
+- file: src/zephyr/alt_data/emotion_index_builder.py
+  token: auto-scaffold-emotion_index_builder-20260922
+  created_by: scaffold.py
+  capability: emotion_index_builder
+- file: src/zephyr/intelligence/news_llm_scorer.py
+  token: auto-scaffold-news_llm_scorer-20260922
+  created_by: scaffold.py
+  capability: news_llm_scorer
+  merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: schemas/categories/market/market_emotion_index.py
+  token: emotion-index-schema-market-emotion-index-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_index_schema
+- file: docs/03_modules/MOD-ALT-EMOTION-INDEX-BUILDER.md
+  token: emotion-index-blueprint-mod-alt-emotion-index-builder-20260922
+  created_by: st-emomine-20260922
+  capability: emotion_index_blueprint
+  merge_evaluation: "模块蓝图指针件（MOD-ALT-EMOTION-INDEX-BUILDER），depgraph 蓝图查找约定要求，不并"
 di_seam_exemptions: []

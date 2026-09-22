@@ -10166,7 +10166,7 @@ datasets:
   applies_to: ["market"]
   tags: ["另类数据", "数据", "情绪", "币圈"]
   algorithm_status: "not_applicable"
-  evidence: "DDL schemas/categories/market/market_sentiment_panel.py；实弹 2 行（09-12/09-13）；provider=sentiment_panel_provider（CAND-CRYPTO-010 收尾，scheduler 路由本批补齐）"
+  evidence: "DDL schemas/categories/market/market_sentiment_panel.py；实弹 2 行（09-12/09-13）；provider=sentiment_panel_provider（CAND-CRYPTO-010 收尾，scheduler 路由本批补齐）；2026-09-22 st-emomine-20260922 探针复核：全表 25 行（fear_greed_index 21+cb_conversion_premium_median 4）；词表漂移注记——实库第五 metric cb_conversion_premium_median（akshare F25 cb_premium_median_daily 任务，风险偏好温度计）超出 DDL 注释四值词表，schema 文件 human_only 留 Owner 修注释，本登记先录实证（S6，缺口单 G4）"
   code_symbol:
   code_fingerprint:
 
