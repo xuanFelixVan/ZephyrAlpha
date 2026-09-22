@@ -44127,4 +44127,9 @@ creation_tokens:
   created_by: scaffold.py
   capability: news_llm_scorer
   merge_evaluation: "板块线挖矿班只挖不建交付件（task_bound），纯新增文档无旧条目替代；六件互为引用册非同真源重复"
+- file: docs/03_modules/_domain_library/algo_flow/library_regen_reconciler.yaml
+  token: ultimate-library-regen-reconciler-algo-flow-20260922
+  created_by: st-ulib3-20260922
+  capability: ultimate_library
+  merge_evaluation: "ALGO_FLOW 外锚 yaml 单文件锚批（library_regen_reconciler.py 外部真源视图），零旧条目替代"
 di_seam_exemptions: []
