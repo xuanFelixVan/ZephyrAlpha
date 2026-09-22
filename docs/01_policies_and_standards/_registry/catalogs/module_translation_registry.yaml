@@ -56156,6 +56156,38 @@ entries:
   desc_en: ''
   plain_zh: 把入库、清洗、否决、出分等待办事项逐条追加进本地 JSONL 账本，靠事件唤醒消费并用毒丸计数拦住反复失败的消息
   responsibility_layer: governance
+- module_path: scripts/backfill_etf_hfq_for_pcr.py
+  domain_id: D_DATA
+  name_zh: "ETF标的层hfq深史回补"
+  name_en: "ETF underlying hfq history backfill"
+  desc_zh: "tushare fund_daily×fund_adj 算真后复权，补 510050/510300 期权史覆盖窗入 c1_market.kline_daily_hfq"
+  desc_en: ""
+  plain_zh: "把两只ETF（50ETF、300ETF）的历史日线价格（后复权口径）从tushare搬进数据库，让期权PCR考试能算出标的未来收益——之前这两只ETF在这张表里一行都没有，考试只能判'缺原料'"
+  responsibility_layer: business
+- module_path: src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "血肉登记门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "新增代码必须写清楚这个资产是干什么的、血肉登记（名称和一句大白话）缺了就拦，防新资产裸奔进仓库"
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "状态词表登记门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "代码里出现状态枚举类必须先登记到状态词表册，没登记就提醒，防各写各的状态名"
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "标签枚举门"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "图书馆标签必须用词表里已有的枚举值，乱造标签就拦，防标签体系发散"
+  responsibility_layer: governance
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow
