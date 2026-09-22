@@ -43730,4 +43730,13 @@ creation_tokens:
   capability: disk_reorg_handover
   merge_evaluation: "他会话中断批接手归位：磁盘重组战役遗留工作令，非第二真源"
   merge_evaluation: "净零：替代蓝图批1-4明示缺口（翻译件重放/判定台账/日报），非重复建设"
+- file: docs/03_modules/_domain_library/algo_flow/__init__.yaml
+  token: ultimate-library---init---20260921
+  created_by: st-ulib-20260921
+  capability: ultimate_library
+- file: docs/_working/sim_launch/01_ruling_plan_mapping_and_orphans.md
+  token: sim-launch-01-ruling-plan-mapping-and-orphans-20260922
+  created_by: st-sim-launch-20260922
+  capability: sim_launch
+  merge_evaluation: "决策卡与提案表分工：提案=待批草案，决策卡=已裁记录，无同真源可并"
 di_seam_exemptions: []

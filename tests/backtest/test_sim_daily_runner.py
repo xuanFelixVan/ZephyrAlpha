@@ -47,7 +47,10 @@ def test_posture_for_action_defense_is_flat():
 
 
 def test_posture_for_action_unmapped_is_unexecutable():
-    for action in ("trend_follow_no_chase", "range_fade_extremes", "unknown_x"):
+    # 2026-09-22 委托裁定后：进攻=long_proxy（30% 额度+不追高 1.5%），震荡仍无订单语义
+    posture, _ = runner.posture_for_action("trend_follow_no_chase")
+    assert posture == "long_proxy"
+    for action in ("range_fade_extremes", "unknown_x"):
         posture, reason = runner.posture_for_action(action)
         assert posture == "unexecutable"
         assert "action_not_order_mapped" in reason
@@ -110,7 +113,7 @@ def test_plan_bridge_attack_state_is_unexecutable(monkeypatch):
         runner, "fetch_realized_state", lambda day: {"judgment_id": "01ST", "asof_ts": "x", "state_label": "进攻"}
     )
     out = runner.plan_bridge("2026-09-21")
-    assert out["posture"] == "unexecutable"
+    assert out["posture"] == "long_proxy"
 
 
 def test_plan_bridge_no_plan_no_write(monkeypatch):
@@ -283,3 +286,34 @@ def test_expected_fresh_date_non_trading_day_and_history():
     past = datetime(2026, 9, 22, 2, 0, tzinfo=timezone(timedelta(hours=8)))
     assert journal.expected_fresh_date("2026-09-20", morning) == "2026-09-20"
     assert journal.expected_fresh_date("2026-09-15", past) == "2026-09-15"
+
+
+# ---------- plan_execute 决策纯函数（② 裁定施工件） ----------
+
+
+def test_plan_decision_matrix():
+    """② 裁定施工件语义矩阵：进攻 30% 建仓+1.5% 不追高+亢奋减半+防御空仓。"""
+    d = runner._plan_decision
+    # 进攻：空仓且不追高通过 → entry；≥1.5% → wait；已持仓 → hold（不因追高卖出）
+    assert d("long_proxy", False, 0.010, True) == "entry"
+    assert d("long_proxy", False, 0.020, True) == "wait"
+    assert d("long_proxy", True, 0.020, True) == "hold"
+    # 阈值数据缺失=观望（fail-visible 不赌）；价格缺失=none（不下单）
+    assert d("long_proxy", False, None, True) == "wait"
+    assert d("long_proxy", False, 0.010, False) == "none"
+    # 防御：持仓→exit；已空仓→none
+    assert d("flat", True, 0.0, True) == "exit"
+    assert d("flat", False, 0.0, True) == "none"
+    # 亢奋减半：持仓→trim_half；空仓→none
+    assert d("trim_half", True, 0.0, True) == "trim_half"
+    assert d("trim_half", False, 0.0, True) == "none"
+    # 未映射姿态：一律 none（不伪造）
+    assert d("pending_owner_mapping", False, 0.010, True) == "none"
+    assert d("pending_unclassified", True, 0.010, True) == "none"
+
+
+def test_no_chase_threshold_is_one_point_five_pct():
+    assert runner.NO_CHASE_MAX_RET_1D == 0.015
+    assert runner.PLAN_ENTRY_FRACTION == 0.30
+    assert runner.PLAN_POCKET_ID == "SIM-PLAN-001"
+    assert runner.PLAN_SYMBOL == "510300"

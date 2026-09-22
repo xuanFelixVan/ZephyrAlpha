@@ -129,10 +129,37 @@ SQL_UNSETTLED = (
 )
 SQL_HEARTBEAT = f"SELECT count() FROM {_T_POCKET} FINAL WHERE trade_date = '{{d}}'"
 
-# 计划动作→模拟盘姿态（唯一可机械执行映射；扩面须 Owner 批订单语义）
-PLAN_ACTION_POSTURE = {"stand_aside_defense": "flat"}
+# 计划动作→模拟盘姿态映射（Owner 2026-09-22 委托裁定，决策卡=
+#   docs/_working/sim_launch/01_ruling_plan_mapping_and_orphans.md §表一）：
+#   防御=空仓（唯一无歧义姿态）；进攻=trend_follow_no_chase 按 30% 额度建仓 510300 代理、
+#   不追高（日涨幅≥1.5%≈1σ 不建仓，顺延观望）；震荡无订单语义维持不执行（原样）。
+PLAN_ACTION_POSTURE = {
+    "stand_aside_defense": "flat",
+    "trend_follow_no_chase": "long_proxy",
+}
+NO_CHASE_MAX_RET_1D = 0.015  # 不追高阈值：000300 当日涨幅 <1.5% 才建仓（≈1σ，提案参数可修）
+PLAN_ENTRY_FRACTION = 0.30  # 进军建仓动用钱包额度比例（提案参数可修）
+PLAN_POCKET_ID = "SIM-PLAN-001"  # plan 桥专用钱包（sim_observe 平面，非注册表策略）
+PLAN_SYMBOL = "510300"  # 交易代理=300ETF（丁线 plan payload proxy_notes P2a 既定口径）
+# 计划树外五态的类推映射（裁决 §表一第 4 行：低迷=空仓、亢奋=减半减险；其余不动）
+STATE_EXTRA_POSTURE = {"低迷": "flat", "亢奋": "trim_half"}
 # 盘中五态→计划场景键（部分映射：低迷/亢奋不在计划三场景树内，如实记 no_matching_scenario）
 STATE_TO_SCENARIO = {"防御": "S2_defense", "进攻": "S1_attack", "震荡": "S3_oscillation"}
+
+SQL_PLAN_INDEX_2D = (
+    "SELECT trade_date, argMax(open, ingest_ts), argMax(close, ingest_ts)"
+    " FROM {kline_index} WHERE symbol = '000300' AND trade_date IN ('{day}', '{prev}')"
+    " GROUP BY trade_date ORDER BY trade_date"
+)
+SQL_PLAN_ETF_CLOSE = (
+    "SELECT argMax(close, ingest_ts) FROM {kline_etf} WHERE symbol LIKE '510300%' AND trade_date = '{day}'"
+)
+SQL_PLAN_POSITION = (
+    "SELECT argMax(cash, ingest_ts), argMax(shares, ingest_ts), argMax(equity, ingest_ts), count()"
+    f" FROM {_T_POCKET} FINAL"
+    " WHERE strategy_id = '{cid}'"
+    f" AND mode = '{_OBSERVE_MODE}'"
+)
 
 
 def _q(sql: str):
@@ -231,10 +258,16 @@ def plan_bridge(day: str) -> dict:
     else:
         realized_scenario = STATE_TO_SCENARIO.get(state["state_label"], "")
         if not realized_scenario:
-            posture, reason = (
-                "pending_owner_mapping",
-                (f"五态 {state['state_label']} 不在计划三场景树(no_matching_scenario)"),
-            )
+            # 计划树外五态：类推映射（裁决 §表一第 4 行批准）——低迷=空仓、亢奋=减半减险
+            extra = STATE_EXTRA_POSTURE.get(state["state_label"])
+            if extra:
+                posture, reason = extra, (f"五态 {state['state_label']} 类推映射（决策卡 §表一第 4 行已批）")
+                realized_action = f"extrapolated:{extra}"
+            else:
+                posture, reason = (
+                    "pending_owner_mapping",
+                    (f"五态 {state['state_label']} 不在计划三场景树(no_matching_scenario)"),
+                )
         else:
             realized_action = plan_action_by_sid.get(realized_scenario, "")
             posture, reason = posture_for_action(realized_action)
@@ -482,6 +515,203 @@ def e4_replay(day: str, limit: int) -> dict:
     return out
 
 
+def _plan_decision(posture: str, holding: bool, ret_1d: float | None, has_px: bool) -> str:
+    """姿态→订单动作（纯函数）：entry/hold/trim_half/exit/wait/none。
+
+    long_proxy 不追高：当日涨幅缺失或 ≥NO_CHASE_MAX_RET_1D → wait（顺延观望，不追）。
+    任何输入不完整（价格缺失）→ none（fail-visible 不下单）。
+    """
+    if posture in ("flat", "trim_half") and not holding:
+        return "none"
+    if posture == "flat":
+        return "exit"
+    if posture == "trim_half":
+        return "trim_half"
+    if posture == "long_proxy":
+        if not has_px:
+            return "none"
+        if holding:
+            return "hold"
+        if ret_1d is None or ret_1d >= NO_CHASE_MAX_RET_1D:
+            return "wait"
+        return "entry"
+    return "none"
+
+
+def _plan_position(cid: str) -> tuple[float, float, float, bool]:
+    """plan 钱包 (cash, shares, equity, 是否已有行)。"""
+    rows = _q(SQL_PLAN_POSITION.format(cid=cid))
+    if not rows or int(rows[0][3]) == 0:
+        return 0.0, 0.0, _OBSERVE_NOTIONAL, False
+    return (float(rows[0][0] or 0.0), float(rows[0][1] or 0.0), float(rows[0][2] or 0.0), True)
+
+
+def plan_execute(day: str) -> dict:
+    """平面4：日计划姿态→SIM-PLAN-001 钱包模拟单（裁决 §表一执行体）。
+
+    数据：000300（不追高阈值）+510300 收盘价（成交价，kline_etf_daily）。
+    方案C 收盘价成交、账本同款成本模型；任何数据缺失→不下单并如实留痕。
+    """
+    from zephyr.data.table_registry import get_registry  # noqa: PLC0415
+
+    # 当日 plan_bridge 行（无行=先跑 plan-bridge）
+    row = _row_by_id(day, "plan_bridge", "index:000300.SH")
+    if row is None:
+        br = plan_bridge(day)
+        if not br.get("written"):
+            return {"day": day, "executed": False, "why": br.get("why", "no_plan_row")}
+        row = _row_by_id(day, "plan_bridge", "index:000300.SH")
+        if row is None:
+            return {"day": day, "executed": False, "why": "plan_row_missing"}
+    payload = json.loads(row[6])
+    posture = str(payload.get("posture", ""))
+
+    cash, shares, prev_equity, exists = _plan_position(PLAN_POCKET_ID)
+    if not exists:
+        cash, prev_equity = _OBSERVE_NOTIONAL, _OBSERVE_NOTIONAL
+    holding = shares > 0
+
+    # 不追高阈值输入：000300 当日/昨收
+    prev = (date.fromisoformat(day) - timedelta(days=14)).isoformat()
+    k_idx = get_registry().table("market_index_kline")
+    k_etf = get_registry().table("market_kline_etf_daily")
+    rows2 = _q(SQL_PLAN_INDEX_2D.format(kline_index=k_idx, day=day, prev=prev))
+    ret_1d = None
+    if len(rows2) == 2:
+        prev_close = float(rows2[0][2])
+        today_close = float(rows2[1][2])
+        if prev_close > 0:
+            ret_1d = today_close / prev_close - 1.0
+    # 成交价：510300 收盘
+    rows3 = _q(SQL_PLAN_ETF_CLOSE.format(kline_etf=k_etf, day=day))
+    px = float(rows3[0][0]) if rows3 and rows3[0][0] is not None else None
+    has_px = px is not None and math.isfinite(px)
+
+    action = _plan_decision(posture, holding, ret_1d, has_px)
+    events: list[list] = []
+    run_id = f"plan-exec-{_now_utc().strftime('%Y%m%d%H%M%S')}"
+    cash2, shares2 = cash, shares
+    if action == "entry":
+        spend = cash * PLAN_ENTRY_FRACTION
+        buy_cost = spend * BUY_COST
+        shares2 = spend / px * (1 - BUY_COST)
+        cash2 = cash - spend
+        events.append(
+            [
+                day,
+                PLAN_POCKET_ID,
+                PLAN_SYMBOL,
+                "entry",
+                shares2,
+                px,
+                buy_cost,
+                cash2,
+                f"plan 进军建仓 30% 额度（不追高 ret={ret_1d:.4f}）",
+                _OBSERVE_MODE,
+                run_id,
+            ]
+        )
+    elif action == "exit":
+        proceeds = shares * px * (1 - SELL_COST)
+        events.append(
+            [
+                day,
+                PLAN_POCKET_ID,
+                PLAN_SYMBOL,
+                "exit",
+                shares,
+                px,
+                shares * px * SELL_COST,
+                proceeds,
+                "plan 防御/低迷空仓",
+                _OBSERVE_MODE,
+                run_id,
+            ]
+        )
+        cash2, shares2 = proceeds, 0.0
+    elif action == "trim_half":
+        half = shares / 2.0
+        proceeds = half * px * (1 - SELL_COST)
+        events.append(
+            [
+                day,
+                PLAN_POCKET_ID,
+                PLAN_SYMBOL,
+                "exit",
+                half,
+                px,
+                half * px * SELL_COST,
+                proceeds,
+                "plan 亢奋减半减险",
+                _OBSERVE_MODE,
+                run_id,
+            ]
+        )
+        cash2, shares2 = cash + proceeds, shares - half
+    signal = {"entry": "entry", "exit": "exit", "trim_half": "exit", "hold": "holding"}.get(action, "cash")
+    pos_val = shares2 * px if has_px else 0.0
+    equity = cash2 + pos_val
+    note = f"plan 桥执行（姿态={posture}，510300 代理方案C 收盘价，名义本金 100 万 flat）"
+    pocket = [
+        day,
+        PLAN_POCKET_ID,
+        _OBSERVE_NOTIONAL,
+        round(cash2, 2),
+        PLAN_SYMBOL if shares2 > 0 else "",
+        round(shares2, 2),
+        round(pos_val, 2),
+        round(equity, 2),
+        round(equity - prev_equity, 2),
+        signal,
+        _OBSERVE_MODE,
+        run_id,
+        note,
+    ]
+    _write_observe(pocket, events)
+    subject = PLAN_POCKET_ID
+    row_out = [
+        date.fromisoformat(day),
+        "plan_execute",
+        subject,
+        make_judgment_id(day, "plan_execute", subject),
+        _now_utc().strftime("%Y-%m-%d %H:%M:%S"),
+        _cutoff_ts(day),
+        json.dumps(
+            {
+                "posture": posture,
+                "action": action,
+                "ret_1d": ret_1d,
+                "px": px,
+                "events": len(events),
+                "equity": round(equity, 2),
+            },
+            ensure_ascii=False,
+        ),
+        1.0,
+        f"plan_bridge:{make_judgment_id(day, 'plan_bridge', 'index:000300.SH')}",
+        run_id,
+        0,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        "",
+    ]
+    write_report_row(row_out)
+    return {
+        "day": day,
+        "executed": True,
+        "posture": posture,
+        "action": action,
+        "ret_1d": ret_1d,
+        "px": px,
+        "events": len(events),
+        "equity": round(equity, 2),
+    }
+
+
 def report(day: str) -> dict:
     """平面3：平台汇总行（三平面钱包计数+新鲜度+在册外钱包哨兵）。"""
     from zephyr.data.trading_calendar import is_trading_day
@@ -606,6 +836,25 @@ def settle(day: str) -> dict:
                 "replay_consistent",
                 score,
             )
+        elif source == "plan_execute":
+            target = json.loads(old[6]).get("action")
+            cash, shares, _prev, _exists = _plan_position(subject)
+            actual = {
+                "entry": "hold",
+                "hold": "hold",
+                "trim_half": "holding",
+                "exit": "cash",
+                "wait": "cash",
+                "none": "cash",
+            }.get(str(target), "cash")
+            consistent = (shares > 0) == (actual in ("hold", "holding"))
+            out_row = _settle_row(
+                old,
+                None,
+                {"action": target, "shares_now": round(shares, 2)},
+                "replay_consistent",
+                1.0 if consistent else 0.0,
+            )
         else:  # platform
             pockets = _q(SQL_HEARTBEAT.format(d=d))
             hb = 1 if int(pockets[0][0]) > 0 else 0
@@ -619,7 +868,7 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     ap = argparse.ArgumentParser(description="模拟盘日链接电执行体（plan桥/E4重放/日报/结算）")
     sub = ap.add_subparsers(dest="cmd", required=True)
-    for name in ("plan-bridge", "e4-replay", "report", "settle"):
+    for name in ("plan-bridge", "plan-execute", "e4-replay", "report", "settle"):
         p = sub.add_parser(name)
         p.add_argument("--day", default=date.today().strftime("%Y-%m-%d"))
         if name == "e4-replay":
@@ -630,6 +879,8 @@ def main() -> None:
         out = plan_bridge(day)
     elif args.cmd == "e4-replay":
         out = e4_replay(day, args.limit)
+    elif args.cmd == "plan-execute":
+        out = plan_execute(day)
     elif args.cmd == "report":
         out = report(day)
     else:
