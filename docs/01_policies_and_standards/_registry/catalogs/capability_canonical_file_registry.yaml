@@ -43982,6 +43982,11 @@ creation_tokens:
   token: xhs-full-construction-pcr-e4-evidence-20260922
   created_by: st-xhs-full-20260922
   capability: xhs_full_construction
+- file: docs/_working/xhs_full_construction/campaign_ledger.md
+  token: xhs-full-construction-campaign-ledger-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "总包令施工目录交付物 token（N-13 合规名）；随战役归档并入 collection_intake 域"
   merge_evaluation: "PCR假设卡E4出证与考试件唯一载体；标的深史前置解锁后原样重跑；随目录归档"
   merge_evaluation: "工单#9+#16 立项文档唯一交付物，批文前零接电施工；批文后归 pf_alloc 线真源"
   merge_evaluation: "N-13 合规改名（数字前缀改字母开头）同件改名非新增；21 对手方清单 ttl 修正 task_bound；改名后旧名 token 留 HEAD 作历史无害"
