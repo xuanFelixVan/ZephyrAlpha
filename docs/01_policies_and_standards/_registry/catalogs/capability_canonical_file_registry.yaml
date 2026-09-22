@@ -43473,67 +43473,67 @@ creation_tokens:
   token: dloop-campaign-03-self-ruling-vocab-ssot-20260921
   created_by: st-dloop-20260921
   capability: dloop_campaign
-- file: docs/_working/commit_chain_mining_20260922/00_skeleton_route_table.md
+- file: docs/_working/commit_chain_mining/00_skeleton_route_table.md
   token: commit-chain-mining-00-skeleton-route-table-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/10_enqueue.md
+- file: docs/_working/commit_chain_mining/10_enqueue.md
   token: commit-chain-mining-10-enqueue-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/11_serializer_lease.md
+- file: docs/_working/commit_chain_mining/11_serializer_lease.md
   token: commit-chain-mining-11-serializer-lease-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/12_belt_daemon_trigger.md
+- file: docs/_working/commit_chain_mining/12_belt_daemon_trigger.md
   token: commit-chain-mining-12-belt-daemon-trigger-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/14_landing_executor.md
+- file: docs/_working/commit_chain_mining/14_landing_executor.md
   token: commit-chain-mining-14-landing-executor-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/15_gate_chain.md
+- file: docs/_working/commit_chain_mining/15_gate_chain.md
   token: commit-chain-mining-15-gate-chain-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/16_deadletter_alerts.md
+- file: docs/_working/commit_chain_mining/16_deadletter_alerts.md
   token: commit-chain-mining-16-deadletter-alerts-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/17_observability.md
+- file: docs/_working/commit_chain_mining/17_observability.md
   token: commit-chain-mining-17-observability-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/18_direct_session_claim.md
+- file: docs/_working/commit_chain_mining/18_direct_session_claim.md
   token: commit-chain-mining-18-direct-session-claim-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/19_worktree_layer.md
+- file: docs/_working/commit_chain_mining/19_worktree_layer.md
   token: commit-chain-mining-19-worktree-layer-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/20_external_benchmark.md
+- file: docs/_working/commit_chain_mining/20_external_benchmark.md
   token: commit-chain-mining-20-external-benchmark-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/90_design_v1.md
+- file: docs/_working/commit_chain_mining/90_design_v1.md
   token: commit-chain-mining-90-design-v1-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
   merge_evaluation: "挖矿文档组：唯一真源仍是代码+66号文+本组骨架路由表，无同真源可派生项/零删除/同域收敛单目录/跨域不并"
-- file: docs/_working/commit_chain_mining_20260922/LEDGER.md
+- file: docs/_working/commit_chain_mining/LEDGER.md
   token: commit-chain-mining-ledger-20260921
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
