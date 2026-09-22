@@ -1,0 +1,889 @@
+module_id: REG-TAGVOCAB-001
+ttl: permanent
+title: 图书馆标签标准词库（枚举+别名层）
+doc_type: register
+registry_id: REG-TAGVOCAB-001
+name: Library Tag Vocabulary
+name_zh: 图书馆标签标准词库
+description: 资产登记 tags 字段的标准词枚举真源（ulib3 战役 T7，指令真源 docs/_working/ultimate_library/12_ulib3_directive.md §1.7）。结构=标准词（canonical）+ 别名层（aliases，每别名挂唯一标准词，别名孤儿=违规）。起步收编三源：①15 份 catalog 内联 "v2.0 标签词表"（58 词，同域重复簇必并，各
+  catalog 改引用）②全 catalog 在用 tags 实测 564 值中语义归并③五个采集器硬编码 tags（ch/fs/pg/asset_bus/schtasks/mcp/外溢资产）。 纪律：新词只准馆员/裁定增补（st-ulib3-20260922 Owner 批），施工 AI 只能选不能造； 非枚举 tags 由 TAG-VOCAB 闸拦（观察期 warn 起步）。对标 Getty
+  AAT/CSNL 词表结构 （canonical+variant 同一法系）。净零声明：替代 15 份内联标签簇（同域重复簇→收敛唯一， 宪法 §4 w5_1），不立平行登记表——tags 消费方继续读各登记表，本表只管"词准不准"。
+owner: MOD-LIB-001
+tier: tier_1_governance
+status: active
+version: 1.0.0
+created: '2026-09-22'
+last_updated: '2026-09-22'
+counting_rule: groups[].words[] canonical 条目数（TAG-VOCAB 闸加载时机械计数，禁手写散文计数）
+vocabulary: 181 词（TAG-VOCAB 闸加载时机械计数，禁手写散文计数）
+values:
+- value: k线
+  group: 行情K线
+  aliases:
+  - K线
+  - candlestick
+  - 蜡烛图
+- value: 行情
+  group: 行情K线
+  aliases:
+  - quotes
+  - 行情数据
+- value: 分时
+  group: 行情K线
+  aliases:
+  - intraday
+  - 分时数据
+- value: 盘口
+  group: 行情K线
+  aliases:
+  - orderbook
+  - 委托盘
+- value: 成交
+  group: 行情K线
+  aliases:
+  - 成交量
+  - 成交额
+  - turnover
+- value: 量价
+  group: 行情K线
+  aliases:
+  - 量价关系
+  - price_volume
+- value: 换手
+  group: 行情K线
+  aliases:
+  - 换手率
+  - turnover
+- value: 放量
+  group: 行情K线
+  aliases:
+  - 量能放大
+  - volume_surge
+- value: 缩量
+  group: 行情K线
+  aliases:
+  - 量能萎缩
+  - volume_shrink
+- value: 竞价
+  group: 行情K线
+  aliases:
+  - 集合竞价
+  - call_auction
+  match_tokens:
+  - auction_snapshot
+  - auction_book
+- value: 早盘
+  group: 行情K线
+  aliases:
+  - 开盘
+  - morning_session
+- value: 尾盘
+  group: 行情K线
+  aliases:
+  - 收盘
+  - late_session
+- value: 隔夜
+  group: 行情K线
+  aliases:
+  - 过夜
+  - overnight
+- value: 缺口
+  group: 行情K线
+  aliases:
+  - gap
+- value: 波动
+  group: 行情K线
+  aliases:
+  - 波动率
+  - volatility
+- value: 流动性
+  group: 行情K线
+  aliases:
+  - liquidity
+- value: 高频
+  group: 行情K线
+  aliases:
+  - HFT
+- value: 涨跌停
+  group: 行情K线
+  aliases:
+  - 涨停
+  - 跌停
+  - price_limit
+  match_tokens:
+  - limit_up_pool
+  - limit_up_down
+  - stk_limit
+- value: 大单
+  group: 行情K线
+  aliases:
+  - 主力单
+  - large_order
+- value: Level2
+  group: 行情K线
+  aliases:
+  - l2
+  - level-2
+  - 十档
+- value: tick
+  group: 行情K线
+  aliases:
+  - 分笔
+  - tick数据
+- value: 趋势
+  group: 趋势形态
+  aliases:
+  - trend
+- value: 反转
+  group: 趋势形态
+  aliases:
+  - 翻转
+  - reversal
+- value: 突破
+  group: 趋势形态
+  aliases:
+  - 破位
+  - 跌破
+  - breakout
+- value: 支撑
+  group: 趋势形态
+  aliases:
+  - support
+- value: 压力
+  group: 趋势形态
+  aliases:
+  - 阻力
+  - resistance
+- value: 震荡
+  group: 趋势形态
+  aliases:
+  - 横盘
+  - 盘整
+  - range
+- value: 背离
+  group: 趋势形态
+  aliases:
+  - divergence
+  - 顶背离
+  - 底背离
+- value: 形态
+  group: 趋势形态
+  aliases:
+  - pattern
+  - 图表形态
+- value: 吸筹
+  group: 趋势形态
+  aliases:
+  - accumulation
+  - 建仓
+- value: 出货
+  group: 趋势形态
+  aliases:
+  - 派发
+  - distribution
+- value: 均值回归
+  group: 趋势形态
+  aliases:
+  - 超买超卖
+  - mean reversion
+  - 回归
+- value: 动量
+  group: 趋势形态
+  aliases:
+  - momentum
+- value: 均线
+  group: 趋势形态
+  aliases:
+  - MA
+  - 移动平均
+- value: 斐波那契
+  group: 趋势形态
+  aliases:
+  - 黄金分割
+  - fibonacci
+- value: 谐波
+  group: 趋势形态
+  aliases:
+  - harmonic
+- value: 威科夫
+  group: 趋势形态
+  aliases:
+  - wyckoff
+- value: 缠论
+  group: 趋势形态
+  aliases:
+  - chan理论
+  - chan_theory
+- value: 市场结构
+  group: 趋势形态
+  aliases:
+  - structure
+  - 结构
+- value: 持续
+  group: 趋势形态
+  aliases:
+  - continuation
+  - 中继
+- value: 布林
+  group: 趋势形态
+  aliases:
+  - bollinger
+  - 布林带
+  - 通道
+- value: 因子
+  group: 因子策略
+  aliases:
+  - factor
+- value: 信号
+  group: 因子策略
+  aliases:
+  - signal
+- value: 指标
+  group: 因子策略
+  aliases:
+  - indicator
+  - 技术指标
+- value: 机器学习
+  group: 因子策略
+  aliases:
+  - machine learning
+  - ML
+  - 深度学习
+- value: 量化
+  group: 因子策略
+  aliases:
+  - quant
+- value: 套利
+  group: 因子策略
+  aliases:
+  - arbitrage
+- value: 选股
+  group: 因子策略
+  aliases:
+  - stock selection
+- value: 股票池
+  group: 因子策略
+  aliases:
+  - universe
+  - 候选池
+- value: IC
+  group: 因子策略
+  aliases:
+  - 信息系数
+  - information coefficient
+- value: 拥挤度
+  group: 因子策略
+  aliases:
+  - crowding
+  match_tokens:
+  - stock_daily_basic
+- value: 微观结构
+  group: 因子策略
+  aliases:
+  - market microstructure
+- value: 特征工程
+  group: 因子策略
+  aliases:
+  - feature
+  - 特征
+- value: 订单
+  group: 交易执行
+  aliases:
+  - order
+  - 委托单
+- value: 执行
+  group: 交易执行
+  aliases:
+  - execution
+- value: 打板
+  group: 交易执行
+  aliases:
+  - 排板
+  - 涨停板战法
+  - limit_up_chasing
+- value: 成本
+  group: 交易执行
+  aliases:
+  - 交易成本
+  - 手续费
+  - 佣金
+  - cost
+- value: 滑点
+  group: 交易执行
+  aliases:
+  - slippage
+- value: 冲击
+  group: 交易执行
+  aliases:
+  - 冲击成本
+  - market impact
+- value: 拆单
+  group: 交易执行
+  aliases:
+  - order splitting
+- value: 止盈
+  group: 交易执行
+  aliases:
+  - take profit
+- value: 算法交易
+  group: 交易执行
+  aliases:
+  - algo
+  - algorithmic
+- value: 资金
+  group: 资金筹码
+  aliases:
+  - 资金流
+  - 资金流向
+  - moneyflow
+  match_tokens:
+  - money_flow
+  - sector_fund_flow
+- value: 筹码
+  group: 资金筹码
+  aliases:
+  - chips
+  match_tokens:
+  - shareholder_count
+  - top10_shareholders
+- value: 主力
+  group: 资金筹码
+  aliases:
+  - 大资金
+  - main_force
+- value: 散户
+  group: 资金筹码
+  aliases:
+  - retail
+- value: 龙虎榜
+  group: 资金筹码
+  aliases:
+  - LHB
+  match_tokens:
+  - dragon_tiger
+  - dragon_tiger_seat
+- value: 席位
+  group: 资金筹码
+  aliases:
+  - seat
+- value: 北向
+  group: 资金筹码
+  aliases:
+  - 北向资金
+  - 陆股通
+  - 外资
+  - northbound
+  match_tokens:
+  - northbound_hold_snapshot
+- value: 杠杆
+  group: 资金筹码
+  aliases:
+  - 两融
+  - 融资融券
+  - leverage
+  match_tokens:
+  - margin_trading
+- value: 集中度
+  group: 资金筹码
+  aliases:
+  - 筹码集中度
+  - concentration
+  match_tokens:
+  - shareholder_count
+  - top10_shareholders
+- value: 分红
+  group: 资金筹码
+  aliases:
+  - 股息
+  - dividend
+- value: 大宗
+  group: 资金筹码
+  aliases:
+  - 大宗交易
+  match_tokens:
+  - block_trade
+  - block_trade_detail
+- value: 龙头
+  group: 资金筹码
+  aliases:
+  - leader
+- value: 股东
+  group: 资金筹码
+  aliases:
+  - 十大股东
+  - holdings
+- value: 限售解禁
+  group: 资金筹码
+  aliases:
+  - 解禁
+  - lockup_expiry
+- value: 风控
+  group: 风险风控
+  aliases:
+  - 风险管理
+  - risk
+- value: 回撤
+  group: 风险风控
+  aliases:
+  - drawdown
+  - 最大回撤
+- value: 止损
+  group: 风险风控
+  aliases:
+  - stop loss
+- value: 仓位
+  group: 风险风控
+  aliases:
+  - position
+  - 头寸
+- value: 敞口
+  group: 风险风控
+  aliases:
+  - exposure
+- value: 相关性
+  group: 风险风控
+  aliases:
+  - correlation
+- value: 尾部
+  group: 风险风控
+  aliases:
+  - 尾部风险
+  - tail risk
+- value: 极端
+  group: 风险风控
+  aliases:
+  - 极端行情
+  - 黑天鹅
+  - extreme
+- value: 压力测试
+  group: 风险风控
+  aliases:
+  - stress test
+- value: VaR
+  group: 风险风控
+  aliases:
+  - 风险价值
+- value: 限额
+  group: 风险风控
+  aliases:
+  - limit
+  - 风险限额
+- value: 估值
+  group: 基本面宏观
+  aliases:
+  - valuation
+  match_tokens:
+  - daily_valuation
+- value: 财报
+  group: 基本面宏观
+  aliases:
+  - 业绩
+  - earnings
+- value: 宏观
+  group: 基本面宏观
+  aliases:
+  - macro
+- value: 利率
+  group: 基本面宏观
+  aliases:
+  - interest rate
+- value: 通胀
+  group: 基本面宏观
+  aliases:
+  - inflation
+  - CPI
+- value: 汇率
+  group: 基本面宏观
+  aliases:
+  - exchange rate
+- value: 行业
+  group: 基本面宏观
+  aliases:
+  - sector
+  - 板块
+- value: 期货
+  group: 基本面宏观
+  aliases:
+  - futures
+- value: 周期
+  group: 基本面宏观
+  aliases:
+  - 经济周期
+  - 周期股
+  - 朱格拉
+  - cycle
+- value: 指数
+  group: 基本面宏观
+  aliases:
+  - index
+- value: 货币
+  group: 基本面宏观
+  aliases:
+  - money
+- value: 信用
+  group: 基本面宏观
+  aliases:
+  - credit
+- value: 营收
+  group: 基本面宏观
+  aliases:
+  - revenue
+- value: 利润
+  group: 基本面宏观
+  aliases:
+  - profit
+  - 净利润
+- value: 现金流
+  group: 基本面宏观
+  aliases:
+  - cash flow
+- value: 轮动
+  group: 基本面宏观
+  aliases:
+  - rotation
+  - 行业轮动
+- value: 季节性
+  group: 基本面宏观
+  aliases:
+  - seasonality
+- value: 情绪
+  group: 情绪事件
+  aliases:
+  - 市场情绪
+  - sentiment
+  match_tokens:
+  - news_sentiment_window
+  - emotion_index
+- value: 事件
+  group: 情绪事件
+  aliases:
+  - event
+- value: 舆情
+  group: 情绪事件
+  aliases:
+  - 新闻
+  - news
+  - 消息面
+- value: 新股
+  group: 情绪事件
+  aliases:
+  - IPO
+- value: 政策
+  group: 情绪事件
+  aliases:
+  - policy
+- value: 国际
+  group: 情绪事件
+  aliases:
+  - 海外
+  - global
+- value: 组合
+  group: 组合绩效
+  aliases:
+  - portfolio
+- value: 绩效
+  group: 组合绩效
+  aliases:
+  - performance
+- value: 基准
+  group: 组合绩效
+  aliases:
+  - benchmark
+- value: 归因
+  group: 组合绩效
+  aliases:
+  - attribution
+- value: 夏普
+  group: 组合绩效
+  aliases:
+  - sharpe
+- value: 胜率
+  group: 组合绩效
+  aliases:
+  - win rate
+- value: 超额
+  group: 组合绩效
+  aliases:
+  - 超额收益
+  - alpha
+- value: 净值
+  group: 组合绩效
+  aliases:
+  - nav
+- value: 年化
+  group: 组合绩效
+  aliases:
+  - annualized
+- value: 择时
+  group: 组合绩效
+  aliases:
+  - timing
+- value: 数据
+  group: 数据资产
+  aliases:
+  - data
+- value: 质量
+  group: 数据资产
+  aliases:
+  - 数据质量
+  - data quality
+- value: 另类数据
+  group: 数据资产
+  aliases:
+  - alt data
+  - alternative data
+- value: 复权
+  group: 数据资产
+  aliases:
+  - 前复权
+  - 后复权
+  - adjust
+- value: PIT
+  group: 数据资产
+  aliases:
+  - point_in_time
+  - 时点
+- value: 快照
+  group: 数据资产
+  aliases:
+  - snapshot
+  match_tokens:
+  - sector_snapshot
+- value: 增量
+  group: 数据资产
+  aliases:
+  - incremental
+- value: 全量
+  group: 数据资产
+  aliases:
+  - full
+- value: 元数据
+  group: 数据资产
+  aliases:
+  - metadata
+- value: 数字货币
+  group: 数据资产
+  aliases:
+  - crypto
+  - 加密货币
+- value: 气象
+  group: 数据资产
+  aliases:
+  - 天气
+  - weather
+- value: 指纹
+  group: 数据资产
+  aliases:
+  - fingerprint
+- value: 时序
+  group: 数据资产
+  aliases:
+  - 时序数据
+  - time series
+- value: 截面
+  group: 数据资产
+  aliases:
+  - 截面数据
+  - cross section
+- value: 标注
+  group: 数据资产
+  aliases:
+  - label
+  - 标注数据
+- value: ch
+  group: 基础设施
+  aliases:
+  - clickhouse
+- value: pg
+  group: 基础设施
+  aliases:
+  - postgres
+  - postgresql
+- value: fs
+  group: 基础设施
+  aliases:
+  - 文件系统
+  - file system
+- value: schtasks
+  group: 基础设施
+  aliases:
+  - 计划任务
+  - scheduled task
+- value: mcp
+  group: 基础设施
+  aliases:
+  - MCP
+- value: startup
+  group: 基础设施
+  aliases:
+  - 启动项
+  - 自启动
+- value: asset_bus
+  group: 基础设施
+  aliases:
+  - 资产总线
+- value: 外溢资产
+  group: 基础设施
+  aliases: []
+  aliases:
+  - spillover_asset
+- value: 备份
+  group: 基础设施
+  aliases:
+  - backup
+- value: 冷库
+  group: 基础设施
+  aliases:
+  - cold storage
+  - 冷数据
+- value: 镜像
+  group: 基础设施
+  aliases:
+  - mirror
+- value: 恢复演练
+  group: 基础设施
+  aliases:
+  - 恢复
+  - drill
+- value: 监控
+  group: 基础设施
+  aliases:
+  - monitoring
+- value: 告警
+  group: 基础设施
+  aliases:
+  - alert
+- value: 探针
+  group: 基础设施
+  aliases:
+  - probe
+- value: 心跳
+  group: 基础设施
+  aliases:
+  - heartbeat
+- value: 队列
+  group: 基础设施
+  aliases:
+  - queue
+  - 提交队列
+- value: 调度
+  group: 基础设施
+  aliases:
+  - scheduler
+- value: worktree
+  group: 基础设施
+  aliases:
+  - 工作树
+- value: 进程
+  group: 基础设施
+  aliases:
+  - process
+- value: 规则
+  group: 治理流程
+  aliases:
+  - rule
+- value: 门禁
+  group: 治理流程
+  aliases:
+  - gate
+- value: 注册表
+  group: 治理流程
+  aliases:
+  - registry
+- value: 词表
+  group: 治理流程
+  aliases:
+  - vocabulary
+- value: 审计
+  group: 治理流程
+  aliases:
+  - audit
+- value: 对账
+  group: 治理流程
+  aliases:
+  - reconciliation
+- value: 治理
+  group: 治理流程
+  aliases:
+  - governance
+- value: 回测
+  group: 治理流程
+  aliases:
+  - backtest
+- value: 模拟盘
+  group: 治理流程
+  aliases:
+  - sim
+  - paper
+  - paper trading
+- value: 日志
+  group: 治理流程
+  aliases:
+  - log
+- value: 报告
+  group: 治理流程
+  aliases:
+  - report
+- value: 文档
+  group: 治理流程
+  aliases:
+  - doc
+  - documentation
+- value: 战役
+  group: 治理流程
+  aliases:
+  - campaign
+- value: 技能
+  group: 治理流程
+  aliases:
+  - skill
+- value: 能力
+  group: 治理流程
+  aliases:
+  - capability
+- value: 工作流
+  group: 治理流程
+  aliases:
+  - workflow
+- value: 流水线
+  group: 治理流程
+  aliases:
+  - pipeline
+- value: 裁定
+  group: 治理流程
+  aliases:
+  - ruling
+- value: 豁免
+  group: 治理流程
+  aliases:
+  - exemption
+- value: 交接
+  group: 治理流程
+  aliases:
+  - handoff
+- value: 验收
+  group: 治理流程
+  aliases:
+  - acceptance
+- value: 红蓝
+  group: 治理流程
+  aliases:
+  - 红蓝对抗
+  - red-blue
+- value: 冒烟
+  group: 治理流程
+  aliases:
+  - 冒烟测试
+  - smoke
+- value: 蓝图
+  group: 治理流程
+  aliases:
+  - blueprint
+- value: 台账
+  group: 治理流程
+  aliases:
+  - ledger
+- value: 卫生
+  group: 治理流程
+  aliases:
+  - hygiene
