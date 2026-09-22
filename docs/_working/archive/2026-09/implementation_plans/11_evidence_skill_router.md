@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: 自我进化核心组件施工图
 owner: ZephyrAlpha-Owner
 language: zh

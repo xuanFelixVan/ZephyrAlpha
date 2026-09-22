@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: AI 架构外部对标分析
 owner: ZephyrAlpha-Owner
 language: zh

@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: 分阶段实现路线
 owner: ZephyrAlpha-Owner
 language: zh

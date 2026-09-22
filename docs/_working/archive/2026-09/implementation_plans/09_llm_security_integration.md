@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: LLM 安全栈集成施工图
 owner: ZephyrAlpha-Owner
 language: zh

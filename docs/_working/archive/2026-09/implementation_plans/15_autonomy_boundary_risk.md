@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: AI 自治边界与风险施工图
 owner: ZephyrAlpha-Owner
 language: zh

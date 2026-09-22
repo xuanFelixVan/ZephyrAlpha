@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: AI 设计资产盘点
 owner: ZephyrAlpha-Owner
 language: zh

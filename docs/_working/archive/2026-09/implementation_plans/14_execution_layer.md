@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: AI 执行层施工图
 owner: ZephyrAlpha-Owner
 language: zh

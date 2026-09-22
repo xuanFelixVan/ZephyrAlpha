@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: 多 AI 并发治理施工图
 owner: ZephyrAlpha-Owner
 language: zh
@@ -56,7 +55,7 @@ scope: 09_ai_architecture
 **当前施工状态（2026-08-17 实测）**：三层防护中**两层半已落地**——
 - ✅ **git 安全防护层**（65 号，v2.4.0）：wrapper 已激活、git_guard plumbing 扩展已落地、ops_guard 删除原语拦截已 production、审计/规则层齐备（详见 §2.4）。
 - ✅ **会话隔离层**（65 号 §11 三件套 + 66 号第二层）：worktree 五命令、文件锁 TTL 八命令、task_board 全部 production；worktree 隔离强化（会话活性登记+心跳守护+四证清理 SOP）已落地。
-- ❌ **提交队列层**（66 号第一层）：MVP 已施工并生产启用——scripts/commit_queue.py（MOD-GOV-046）+commit_queue_landing.py（MOD-GOV-047）在位，flag 已翻开（2026-08-22），.runtime/commit_queue/ 运行中（2026-08-28 实证回填）。当前提交期靠 `_GlobalCommitLock` 全局串行锁（git_commit_gateway.py 内，TTL=1800s）+ AGENTS.md §10.0 过渡期纪律（改完立即 `git_guard.py add`）维持。
+- ❌ **提交队列层**（66 号第一层）：MVP 已施工并生产启用——scripts/commit_queue.py（MOD-GOV-046）+commit_queue_landing.py（MOD-GOV-047）在位，flag 已翻开（2026-08-22），.runtime/commit_queue/ 运行中（2026-08-28 实证回填）。当前提交期靠 `_GlobalCommitLock` 全局串行锁（git_commit_gateway.py 内，TTL=1800s）+ docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md §10.0 过渡期纪律（改完立即 `git_guard.py add`）维持。
 
 本文档读者应能从 §2.4 一张表看清：这个主题在项目里有哪些设施、各自状态、缺口在哪。
 ### 2.2 核心问题
@@ -105,7 +104,7 @@ scope: 09_ai_architecture
 | 危险命令拦截 | `scripts/git_guard.py` | `DANGEROUS_SUBCOMMANDS` = 7 porcelain（reset/checkout/stash/revert/restore/mv/clean）warn+审计；`PLUMBING_BLOCKED_SUBCOMMANDS` = 4 plumbing（read-tree/update-index/write-tree/hash-object）前置硬阻断+审计，`ZEPHYR_SERIALIZER_MODE=1` 白名单放行 Serializer | production（66 号裁定 7 已落地，16/16 测试全绿；事故 6 根因已治） |
 | 删除原语拦截 | `scripts/ops_guard.py` | 全原语删除拦截层（wipe 治本 S1）：PowerShell/CMD/Python/git clean 四类删除原语，保护区 fail-closed，删除强制先落审计 | production（3e2bb5ed70，42 红队向量 100% 拦截） |
 | shell wrapper | `scripts/git_safety_wrapper.ps1` + `install_git_safety_wrapper.ps1` + `ensure_ai_wrapper_injection.ps1` | PowerShell 函数覆盖 git 危险命令+plumbing 命令+删除类命令，`.git` 写入阻断，Session ID 注入，审计 JSONL；`$PROFILE` 单一 dot-source 真源已激活 | production（611227d5/21f447c1，45/45 测试全绿；**边界：仅覆盖人工交互终端，AI RunCommand 通道不加载 $PROFILE**，见 §6 Q5） |
-| 规则层 | `.trae/rules/project_rules.md` RULE-GIT-SAFE 节（实测 line 361）+ `AGENTS.md` §10.0/§10.0.1 | Trae AI 规则入口：危险命令禁令、「改完立即入队」铁律（队列 MVP 前过渡期 = 改完立即 `git_guard.py add`）、plumbing 命令禁止（commit-tree/update-ref 由 REFERENCE-TRANSACTION-GUARD 专管除外） | production（66 号 v1.0.0 已落地） |
+| 规则层 | `.trae/rules/project_rules.md` RULE-GIT-SAFE 节（实测 line 361）+ `docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md` §10.0/§10.0.1 | Trae AI 规则入口：危险命令禁令、「改完立即入队」铁律（队列 MVP 前过渡期 = 改完立即 `git_guard.py add`）、plumbing 命令禁止（commit-tree/update-ref 由 REFERENCE-TRANSACTION-GUARD 专管除外） | production（66 号 v1.0.0 已落地） |
 
 **D. 会话隔离（三件套之 worktree + 活性强化）**
 
@@ -271,7 +270,7 @@ scope: 09_ai_architecture
 
 **验证设施**：新建 `tests/governance/test_commit_queue.py`（pytest 3 会话 fixture 并发 50 项；不复用 `test_concurrent_safety.ps1`，仅借鉴其 Start-Job 并发模式——66 号 §11 #1）。全量断言清单以 66 号 §10 MVP 行 + §11 七项测试为真源。
 
-**过渡期纪律（MVP 落地前维持不变）**：改完立即 `python scripts/git_guard.py add <file>`（AGENTS.md §10.0）；本文档自身的提交即走 GitCommitGateway 通道。
+**过渡期纪律（MVP 落地前维持不变）**：改完立即 `python scripts/git_guard.py add <file>`（docs/01_policies_and_standards/sop/governance_sop/agent_constitution_legacy_v1.md §10.0）；本文档自身的提交即走 GitCommitGateway 通道。
 
 ### 4.3 Phase 1：队列联动与隔离层升硬（P1）
 

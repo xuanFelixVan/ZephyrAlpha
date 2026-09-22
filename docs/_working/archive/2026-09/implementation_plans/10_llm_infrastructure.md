@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: LLM 基础设施施工图
 owner: ZephyrAlpha-Owner
 language: zh

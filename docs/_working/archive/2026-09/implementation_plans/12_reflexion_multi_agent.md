@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: 自反Agent与多Agent协作施工图
 owner: ZephyrAlpha-Owner
 language: zh

@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: AI 安全与自治运维施工图
 owner: ZephyrAlpha-Owner
 language: zh

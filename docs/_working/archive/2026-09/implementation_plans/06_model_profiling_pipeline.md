@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: 模型画像→考试→护照流水线施工图
 owner: ZephyrAlpha-Owner
 language: zh

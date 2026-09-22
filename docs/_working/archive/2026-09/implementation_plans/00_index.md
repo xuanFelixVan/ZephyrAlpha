@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: index
+ttl: task_bound
 title: AI 架构设计——结构总案
 owner: ZephyrAlpha-Owner
 language: zh

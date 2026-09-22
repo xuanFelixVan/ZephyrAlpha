@@ -1,6 +1,5 @@
 ---
-ttl: permanent
-doc_type: architecture_view
+ttl: task_bound
 title: 模块工厂施工图
 owner: ZephyrAlpha-Owner
 language: zh
