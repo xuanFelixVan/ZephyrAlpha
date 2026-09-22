@@ -875,8 +875,9 @@ gaps:
   - id: "etf_minute_tz_split_pre_202607"
     table: "c1_market.kline_etf_{1min,5min,15min,30min,60min}"
     gap_type: "field_missing"   # 值层纪元混存（非缺行）：backfill_checker 不消费此类型
-    status: "completed"  # 2026-09-21 改册：修复已执行（bak 表在盘实证）；『登记待批』与实际已执行的
-    # 授权链差异由 09-20 复核发现，本批如实记录差异、不追溯归因
+    status: "resolved"  # 2026-09-23 结案定版（裁定#404 R1 Owner 全批）：修复 60ed3aa49c 已执行+回滚窗在库实证
+    # 2026-09-21 改册 completed；本日升 resolved=结案回写终态（连库复测挂数据线巡检复查窗，备份表净删维持 Owner 挂单）
+    # 授权链差异由 09-20 复核发现，如实记录差异、不追溯归因
     root_cause: "2026-06-30 及以前写入侧按 UTC 墙钟落 trade_time（日内小时∈[1,7]），列类型却为 Asia/Shanghai；2026-07-01 起写入侧改北京墙钟（∈[9,15]）。全族五表 ~4.12 亿行受累（1min 303.4M/5min 68.2M/15min 23.2M/30min 11.4M/60min 5.7M，占各表 93-95%）；两纪元日期边界零违例（≤06-30 全 UTC、≥07-01 全北京）；trade_date 列本身已是北京日零错日；+8h 平移落点与北京段零碰撞（2026-09-18 五表逐一实证，st-flashbiz-20260918）。个股分钟族（kline_1min/15min/30min/60min）零受累；kline_5min 有 8,195 行 2026-09-08 单日小时<=7 零星行=另一独立瞬断（写入侧当晨异常），不在本工单范围。"
     resolution_plan: "修复件已就绪：scripts/ch/repair_etf_minute_tz_split.py（默认 dry-run 五表前置核验全过；--execute 走影子表重建+RENAME 换名，trade_time 在 ORDER BY 键禁 ALTER UPDATE；旧表保留 *_tz_bak_20260918 可逆=反向换名即退）。**等 Owner 批准 --execute**（RULE-DATA-OPS 破坏性操作三步验证已过：必要性=T lane 及后续任何分钟级消费需正确日内时序；真实性=上列五表实证；可逆性=换名回退+行数量和对账）。"
     primary_alternative: "批准前消费方读 2026-06-30 前数据须自带『小时<=7 → +8h』逐行归一（kimi-audit T lane 已按此处置 510300/510500 极值分析，结论不受累）；api_server 数据总览仅计数不受累。工单=docs/_working/flash_biz/biz5_etf15min_tz_defect.md"

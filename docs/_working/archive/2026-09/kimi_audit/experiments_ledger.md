@@ -67,3 +67,11 @@ created: 2026-09-17
   git merge-base --is-ancestor 60ed3aa49c HEAD 验证 PASS。历史行不改写，以本修正案为准。
   三处登记面收口明细见 docs/_working/recovered_task_cards/tc06_ruling_cards/tc06_r1_closeout.md
   （known_data_gaps 改册归甲线 WO-3 的 A15 批顺路执行，按今夜避让令不代改）。
+
+
+## 修正案 #2（2026-09-23，st-oddjobs-20260923，裁定#404 R1 Owner 全批）
+
+- biz5 行（ETF 分钟族时区劈叉）终态升格：completed→**resolved**（known_data_gaps 同日定版）。
+  依据=裁定#404 R1（TC-06 卡 Max 代裁 Owner 全批：结案回写批准，60ed3aa49c 祖先实证+三处登记面
+  处置对齐）；连库复测挂数据线巡检复查窗（tc06_r1_closeout.md §3 待办不变）；备份五表
+  *_tz_bak_20260918 净删维持 Owner 挂单。历史行与修正案 #1 不改写。

@@ -5489,6 +5489,7 @@ entries:
   - docs/_working/chain_piling_campaign/infra_mining/13_exam_backfill_loop_design.md
   related_arch: []
   related_rulings: ['裁定#401']
+
 - ruling_id: 裁定#403
   title: A-2 pipeline_events 两段接线 residG 死会话遗产代落核验（st-oddjobs-20260923 随批登记）
   date: '2026-09-23'
@@ -5561,4 +5562,28 @@ entries:
   - docs/_working/integrated_backtest/max_remediation_plan.md
   related_arch: []
   related_rulings: ['裁定#402']
+  superseded_by: null
+
+- ruling_id: 裁定#404
+  title: TC-06 四卡代裁定版（Max 代裁 Owner 全批，随批登记）
+  date: '2026-09-23'
+  category: 执行追认
+  status: decided
+  summary: |
+    Owner 增补令（2026-09-23，st-oddjobs-20260923 件7）全批 Max 代裁四卡，承接裁定#398 四 TC-06：
+    R1 ETF 时区修复结案回写=known_data_gaps etf_minute_tz_split_pre_202607 status→resolved
+    + experiments_ledger 补行（60ed3aa49c 祖先实证+三处登记面处置对齐；连库复测挂复查窗，
+    备份五表净删维持 Owner 挂单）。
+    R2 E1C-09 判挂起并入 IBT 批D 新鲜窗重考（批D 出新名单时该件同窗重考；灾难折 63 天小样本
+    与 DSR N_eff=13 同根，零成本保期权，禁直通模拟盘）。
+    R3 TradeRecord 归因字段扩展立项成立，施工位=IBT 批G（需求登记 BRK-045，判据件落 docs 禁 tmp）。
+    R4 做T 变形重启=维持封卡（#363 封卡条款不破，复活唯一口=预注册新假设，#399）。
+    本条=登记动作载体；三面回写编辑同批落地（known_data_gaps/experiments_ledger/max_remediation_plan）。
+  affected_files:
+  - src/zephyr/data/config/known_data_gaps.yaml
+  - docs/_working/archive/2026-09/kimi_audit/experiments_ledger.md
+  - docs/_working/integrated_backtest/max_remediation_plan.md
+  - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  related_arch: []
+  related_rulings: ['裁定#398', '裁定#403']
   superseded_by: null
