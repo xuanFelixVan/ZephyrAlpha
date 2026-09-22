@@ -43636,5 +43636,9 @@ creation_tokens:
   token: auto-scaffold-backfill_night-20260922
   created_by: st-b10-final-20260922
   capability: backfill_night
+- file: docs/_working/data_fix_campaign/b10_final_delivery_report_20260922.md
+  token: auto-scaffold-b10_final_delivery_report-20260922
+  created_by: st-b10-final-20260922
+  capability: b10_final_delivery_report
   merge_evaluation: "同真源可派生：a0/a2/a4 为 disk_reorg 战役母令/集成简报/放行信号执行件，随战役文档全家福同批补登记（q-0006 欠账，st-disk-final 代落地）"
 di_seam_exemptions: []
