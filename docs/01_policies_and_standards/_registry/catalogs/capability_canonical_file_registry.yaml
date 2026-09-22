@@ -5015,6 +5015,19 @@ capabilities:
     schemas/categories/fundamental/consensus_daily_repaired.py；台账 =
     docs/_working/reports/2026-09-16-consensus-repaired-build.md；设计 =
     docs/01_policies_and_standards/policies/expectation_consumption_design_policy.md §M1/§9。
+- capability_id: ai_intake_l2
+  aliases:
+  - L2收集库
+  - 收集段
+  - 原材料库
+  - 知识卡入库
+  - ai_intake
+  canonical_override: src/zephyr/ai_layer/intake/gate.py
+  description: AI 层 L2 收集段（收集库/生熟分离原材料库）——候选知识卡的入库闸/查重/卡库状态机/事件账本/淘汰率 KPI。canonical
+    = src/zephyr/ai_layer/intake/（gate.py 入库四闸+dedup.py simhash 五比对面+card_store.py L0→L1→L2→E2→intake
+    状态机+intake_events.py JSONL 事件+kpi.py 周度 KPI）；DDL=scripts/ai_layer/apply_ai_intake_ddl.py；真源
+    DESIGN=docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md。canonical_override 显式钉定（裸词 intake
+    派生面过宽，auto 派生误绑 strategy_pipeline/intake.py，2026-09-23 st-ailayer-p1 改钉）。
 creation_tokens:
 - file: docs/_working/integrated_backtest/max_remediation_plan.md
   token: ibt-remediation-max-remediation-plan-20260922
@@ -35867,10 +35880,7 @@ creation_tokens:
   token: ai-intake-l2-dedup-20260918
   created_by: st-ff-aibase-20260918
   capability: ai_intake_l2
-- file: src/zephyr/ai_layer/intake/events.py
-  token: ai-intake-l2-events-20260918
-  created_by: st-ff-aibase-20260918
-  capability: ai_intake_l2
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 - file: src/zephyr/ai_layer/intake/gate.py
   token: ai-intake-l2-gate-20260918
   created_by: st-ff-aibase-20260918
@@ -45107,4 +45117,188 @@ creation_tokens:
   created_by: "st-ibt-remedy-a-20260923"
   capability: "ibt_remediation"
   merge_evaluation: "批A 收编生成器 index 目录索引件（generate_missing_index_md 产物，静态清单生成器纪律非手工维护）"
+- file: src/zephyr/ai_layer/intake/events.py
+  token: ai-intake-l2-events-20260918
+  created_by: st-ff-aibase-20260918
+  capability: ai_intake_l2
+- file: data/capability_cards/a2a_agent_agent_test_bridge.yaml
+  token: ai-intake-l2-a2a-agent-agent-test-bridge-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/a2a_agent_agent_verify_bridge.yaml
+  token: ai-intake-l2-a2a-agent-agent-verify-bridge-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/a2a_protocol.yaml
+  token: ai-intake-l2-a2a-protocol-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/agent_orchestrator.yaml
+  token: ai-intake-l2-agent-orchestrator-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/ai_intake_l2.yaml
+  token: ai-intake-l2-ai-intake-l2-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/daemon_registry.yaml
+  token: ai-intake-l2-daemon-registry-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/embedding_router.yaml
+  token: ai-intake-l2-embedding-router-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/local_model_scheduler.yaml
+  token: ai-intake-l2-local-model-scheduler-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/ollama_chat.yaml
+  token: ai-intake-l2-ollama-chat-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/pipeline_orchestrator.yaml
+  token: ai-intake-l2-pipeline-orchestrator-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/reranker.yaml
+  token: ai-intake-l2-reranker-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_a2a_001.yaml
+  token: ai-intake-l2-skill-dom-a2a-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_afx_001.yaml
+  token: ai-intake-l2-skill-dom-afx-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_agt_001.yaml
+  token: ai-intake-l2-skill-dom-agt-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_beh_001.yaml
+  token: ai-intake-l2-skill-dom-beh-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_bgt_001.yaml
+  token: ai-intake-l2-skill-dom-bgt-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_blu_001.yaml
+  token: ai-intake-l2-skill-dom-blu-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_ctx_001.yaml
+  token: ai-intake-l2-skill-dom-ctx-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_dbs_001.yaml
+  token: ai-intake-l2-skill-dom-dbs-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_ded_001.yaml
+  token: ai-intake-l2-skill-dom-ded-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_drf_001.yaml
+  token: ai-intake-l2-skill-dom-drf-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_fbl_001.yaml
+  token: ai-intake-l2-skill-dom-fbl-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_gat_001.yaml
+  token: ai-intake-l2-skill-dom-gat-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_knw_001.yaml
+  token: ai-intake-l2-skill-dom-knw-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_lsg_001.yaml
+  token: ai-intake-l2-skill-dom-lsg-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_mcp_001.yaml
+  token: ai-intake-l2-skill-dom-mcp-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_rbk_001.yaml
+  token: ai-intake-l2-skill-dom-rbk-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_tel_001.yaml
+  token: ai-intake-l2-skill-dom-tel-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_tsk_001.yaml
+  token: ai-intake-l2-skill-dom-tsk-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_dom_vms_001.yaml
+  token: ai-intake-l2-skill-dom-vms-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_rol_arc_001.yaml
+  token: ai-intake-l2-skill-rol-arc-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_rol_gov_001.yaml
+  token: ai-intake-l2-skill-rol-gov-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/skill_rol_imp_001.yaml
+  token: ai-intake-l2-skill-rol-imp-001-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: data/capability_cards/task_repository.yaml
+  token: ai-intake-l2-task-repository-20260922
+  created_by: st-ailayer-p1-20260923
+  capability: ai_intake_l2
+  merge_evaluation: "P1复审P1-b销账补登：intake族渐进披露卡1张，替代无（新能力面非重复建设），与canonical册capabilities索引条目同批互锚"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/l/state_vocab_registry_gate.yaml
+  token: algo-flow-shard-move-state-vocab-registry-gate-20260922
+  created_by: st-nightfix-20260923
+  capability: algo_flow_shard_move
+- file: docs/_working/registry_incident_20260922/overnight_decisions_20260923.md
+  token: regfix-lane0b-overnight-decisions-20260923-20260922
+  created_by: st-regfix-lane0b-20260923
+  capability: regfix_lane0b
+  merge_evaluation: "夜班监控流水账活文件（每30分钟append），Owner 晨读第一站，无同真源可派生项"
+  merge_evaluation: "手术一ALGO_FLOW锚修齐：散装外部真源归位commit_gates/l/分片（约定布局），锚路径同批修齐；移动零内容变更，旧路径token行留档"
 di_seam_exemptions: []

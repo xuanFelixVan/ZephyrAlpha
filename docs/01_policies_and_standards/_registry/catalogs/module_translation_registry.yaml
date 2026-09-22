@@ -55578,14 +55578,7 @@ entries:
   desc_en: ""
   plain_zh: "用 SimHash 指纹与汉明距离判断新卡片是不是旧内容的换皮版，逐面登记比过还是没比，命中即拒绝重复入库"
   responsibility_layer: governance
-- module_path: src/zephyr/ai_layer/intake/events.py
-  domain_id: D_GOVERNANCE
-  name_zh: "L2 收集段事件账本"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把入库、清洗、否决、出分等待办事项逐条追加进本地 JSONL 账本，靠事件唤醒消费并用毒丸计数拦住反复失败的消息"
-  responsibility_layer: governance
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py，真条目在本册保留；c07568e5f1 声称摘除实为纯插入未删，本批账实对齐补办；残余令A3+P1复审裁定清单#4 授权）
 - module_path: src/zephyr/ai_layer/intake/gate.py
   domain_id: D_GOVERNANCE
   name_zh: "L2 入库准入闸"
@@ -56155,6 +56148,14 @@ entries:
   plain_zh: "这是回测引擎的找茬员：故意往成绩里注入作弊信号（偷看未来的数据），看引擎会不会上当；再检查每一笔成交是否都严格晚于信号发出（防止时间旅行）；还验证退市股票会被自动剔除、交易成本越高收益越低的常识成立。连续两轮找不到新茬，才承认引擎干净。"
   responsibility_layer: business
 
+- module_path: src/zephyr/ai_layer/intake/events.py
+  domain_id: D_GOVERNANCE
+  name_zh: L2 收集段事件账本
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 把入库、清洗、否决、出分等待办事项逐条追加进本地 JSONL 账本，靠事件唤醒消费并用毒丸计数拦住反复失败的消息
+  responsibility_layer: governance
 battle_map_steps:
 - step_id: BM-BUY-05
   flow_stage: buy_flow

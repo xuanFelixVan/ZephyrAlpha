@@ -1,0 +1,40 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_intake
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 渐进披露：L0=本卡一句话；L1=src/zephyr/ai_layer/intake/ 各模块 docstring；
+# L2=docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md；L3=P1_construction_review.md 复审记录。
+module_id: MOD-INF-037
+capability_id: ai_intake_l2
+category: ai_layer_intake
+description: AI 层 L2 收集段——候选知识卡入库闸（进货费两问+四道预检+配额）、simhash 五比对面查重、卡库状态机（L0→L1→L2→E2→intake，elite 每格保优 3 条）、JSONL 事件账本（毒丸拦截）、淘汰率周度 KPI；生熟分离=只服务 ai_intake.* 生食库，禁被产线代码 import
+examples:
+- scripts/ai_layer/apply_ai_intake_ddl.py --verify（生产部署核验）
+- tests/ai_layer/intake/（66 用例，写面全落 test_schema）
+input_schema:
+  properties:
+    card:
+      type: object
+  type: object
+name: AI Intake L2 Collection Library
+output_schema:
+  properties:
+    admission:
+      type: object
+    events:
+      type: object
+  type: object
+priority: P1
+registered_at: '2026-09-23T05:30:00+00:00'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- ai_layer
+- intake
+- L2
+- collection_library
