@@ -12,10 +12,10 @@ from dataclasses import dataclass
 import pytest
 
 from zephyr.gov_enforcement.rule_bridge.commit_preflight import (
+    _ESCAPE_HINTS,
     PREFLIGHT_GATES,
     CommitPreflightResult,
     PreflightFinding,
-    _ESCAPE_HINTS,
     run_preflight,
 )
 
@@ -74,14 +74,17 @@ def test_whitelist_filter_and_skip(tmp_path):
 def test_infra_exception_degrades_not_blocks(tmp_path):
     """gate 抛异常=设施故障降级（degraded 记录，不进 findings 不阻断）。"""
     specs = [
-        _FakeSpec("CREATE-GUARD", raise_exc=True),  # 不在白名单，不会被调用
+        _FakeSpec("CREATE-GUARD", raise_exc=True),  # specs 白名单不含；D1 起内联适配层独立运行
         _FakeSpec("REGISTRY-MASS-DELETION", raise_exc=True),
         _FakeSpec("TTL-METADATA", passed=True),
     ]
     gw = _FakeGateway(tmp_path)
     result = run_preflight(gw, ["a.yaml"], "s1", specs=specs)
     assert not result.blocking
-    assert result.degraded == ["REGISTRY-MASS-DELETION"]
+    # D1（st-commitchain-20260922）：内联适配层（CREATE-GUARD 等）也会因 _FakeGateway
+    # 缺 run_git 进 degraded——断言改包含语义（关键是被测 gate 降级且不阻断）。
+    assert "REGISTRY-MASS-DELETION" in result.degraded
+    assert "CREATE-GUARD" in result.degraded
     assert "degraded" in result.render_report("s1")
 
 
@@ -135,10 +138,10 @@ def test_directory_contract_preflight_whitelisted_with_guidance(tmp_path):
     assert "DIRECTORY-CONTRACT" in PREFLIGHT_GATES
     hint = _ESCAPE_HINTS["DIRECTORY-CONTRACT"]
     # 建议合规目录三类指引齐全
-    assert "scripts/" in hint and "src/" in hint        # .py 去向
-    assert ".yaml" in hint or ".csv" in hint            # .json 转格式去向
-    assert "directory_contract.yaml" in hint            # 兜底查真源
-    assert "Owner" in hint                              # docs/_working/ .json 净增=Owner 门位（不自签）
+    assert "scripts/" in hint and "src/" in hint  # .py 去向
+    assert ".yaml" in hint or ".csv" in hint  # .json 转格式去向
+    assert "directory_contract.yaml" in hint  # 兜底查真源
+    assert "Owner" in hint  # docs/_working/ .json 净增=Owner 门位（不自签）
 
     specs = [_FakeSpec("DIRECTORY-CONTRACT", passed=False, detail="FAIL: DCR-005 扩展名 .py ∉ docs/_working/ allowed")]
     gw = _FakeGateway(tmp_path)

@@ -1,0 +1,51 @@
+# ALGO_FLOW 外部真源——commit_belt_daemon（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py）
+# st-commitchain-20260922 R4 批补锚（存量缺口顺手清偿）：docstring 单行 external 锚，机器块本件。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.rule_bridge.commit_belt_daemon
+source_of_truth: src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 队列根事件流
+    #   fields: pending/ dead/ 队列根文件事件（watchdog RDCW，recursive=False）
+    #   code: run_daemon(observer.schedule × 3)
+    # - id: I2
+    #   name: 纪元真源
+    #   fields: src/zephyr/gov_enforcement + scripts/governance + scripts/commit_queue.py 三合成 sha
+    #   code: _gate_code_epoch
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 事件驱动自举排空
+    #   name_en: event_drained_bootstrap
+    #   intro: poke.wait(30s 零动作窗)→_drain_once 借道 bootstrap（lease 让位语义）。
+    #   desc: 事件合并防抖后同步排空一轮；LeaseUnavailable 记 skipped 日志等下一事件；连续 bootstrap_error ≥3 升级 CRITICAL。
+    #   inputs: pending dead 队列根事件
+    #   outputs: drain stats
+    # - id: A2
+    #   name_zh: ② 死信堵点记账与积压告警
+    #   name_en: ledger_and_backlog_alert
+    #   intro: 新死信逐条记 bottleneck_ledger；≥20 条未清或最老>24h 触发 R-06 档位告警。
+    #   desc: 档位签名（count/age/count+age）翻转立即出声，同档 1800s 冷却；状态落 bottleneck_backlog_alert_state.json。
+    #   inputs: dead/ 目录 堵点本
+    #   outputs: 堵点本 jsonl 告警行
+    # - id: A3
+    #   name_zh: ③ 纪元变更安全点换血
+    #   name_en: epoch_reexec
+    #   intro: drain 返回=lease 已释放=安全点；三合成纪元变更即释放单例锁后 os.execv 原地换血。
+    #   desc: prev None=启动种子不动作；lease 被持等下一安全点；ZEPHYR_BELT_DAEMON_NO_REEXEC=1 运维停用；pytest 上界模式关闭。
+    #   inputs: 三子树纪元 lease 活体态
+    #   outputs: execv 进程映像替换
+    # 层: 输出
+    # - id: O1
+    #   name: 排空与自检产物
+    #   fields: drain stats；堵点本追加行；冷却状态；单例锁
+    #   code: run_daemon 返回码 0=正常 stop；2=启动失败
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1
+    # [/ALGO_FLOW]

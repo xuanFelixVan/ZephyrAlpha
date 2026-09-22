@@ -169,6 +169,13 @@ _LEASE_FILE = "serializer.lease"  # 独立文件锁，不共用网关 _GlobalCom
 _LEASE_TTL_SECONDS = 300  # 66 号 §8：Serializer 排空一批通常 <30s，5 分钟足够
 _LEASE_TIMEOUT_SECONDS = 5.0  # 66 号 §8：自举模式不等待——拿不到就放弃
 _LEASE_POLL_INTERVAL = 0.1  # 与 _GlobalCommitLock._POLL_INTERVAL 同款
+# R2 大批硬顶（st-commitchain-20260922，数据驱动）：done 项文件数 p50=3、p90=110
+# （0921 workclean 111 文件巨批实测磨 116 分钟死在终点 CREATE-GUARD）——交互车道
+# 单批超限拒绝+拆批指引，失败早暴露不互相拖累；machine 车道与显式逃生旗豁免。
+_MAX_BATCH_FILES = 40
+# D7 单项墙钟挂账阈值：单项 landing 超此秒数写堵点本（kind=slow_item）——大注册表批
+# 从无声变有账（环节2 E4；遥测口径：单项均值 79s/P90 189s，300s=显著越界）。
+_SLOW_ITEM_LEDGER_SECONDS = 300
 
 _MAX_BLOB_BYTES = 10 * 1024 * 1024  # 66 号 §6.1 大小约束（§12 Q3 已闭环：单 blob 上限 10MB，超限拒绝走人工）
 _TARGET_BRANCH = "dev"  # 66 号 §9.5：v0.1 仅 dev 主干单目标（不支持跨分支队列）
@@ -223,6 +230,7 @@ def channel_key_for_files(files: list[str]) -> str:
         return domains.pop()
     return MIXED_CHANNEL_KEY
 
+
 # 死信积压告警（2026-09-11 死信率告警最小落地，st-perf-plan-20260910）：
 # 阈值唯一真源=alert_threshold_registry.yaml（REG-ATH-001）THD-ALERT-003（积压项数）
 # /THD-ALERT-004（告警冷却窗口）；告警通道=task_board 专 task 死信标签（66 号 §6.4 同款）。
@@ -232,9 +240,14 @@ _HEALTH_ALERT_STATE_FILE = "health_alert_state.json"  # 冷却状态（队列根
 # 死因三分类标记（与 .runtime/tmp/commit_queue_dead_triage_20260910.md 口径一致）：
 # env=环境性失败（物品无辜，可 requeue）；item=门禁/冲突物品性失败（gate 语义正常）。
 _DEAD_REASON_ENV_MARKERS = (
-    "pytest_50136", "pytest_19944", "rev-parse --show-toplevel",
-    "index.lock", "Unable to create", "Author identity unknown",
-    "LandingEnvironmentError", "瞬态锁争用",
+    "pytest_50136",
+    "pytest_19944",
+    "rev-parse --show-toplevel",
+    "index.lock",
+    "Unable to create",
+    "Author identity unknown",
+    "LandingEnvironmentError",
+    "瞬态锁争用",
     # LOCK_TIMEOUT 归 env（2026-09-16 q-…-0009/0010/0011 实证）：内容合法，仅因他会话
     # 正持全局提交锁而死信——瞬态争用，requeue 即愈。classify_dead_reason 先查 env 标记，
     # 故 "网关落盘失败（LOCK_TIMEOUT）" 这类混合串也会正确归 env（落地侧现已转
@@ -245,13 +258,31 @@ _DEAD_REASON_ENV_MARKERS = (
     # 13 文件合法批次被误判物品失败）。落地侧特征串真源=
     # commit_queue_landing._TRANSIENT_GIT_MARKERS（现已转 LandingEnvironmentError），
     # 此处只兜历史/直连路径；刻意不收裸 "Invalid argument"（太宽，真 bug 也报它）。
-    "unable to unlink", "Permission denied", "being used by another process",
-    "The process cannot access the file", "瞬态环境失败",
+    "unable to unlink",
+    "Permission denied",
+    "being used by another process",
+    "The process cannot access the file",
+    "瞬态环境失败",
+    # env 盲区补盲（st-commitchain-20260922，0921/0922 死信 18 项落 other 实证）：
+    # Windows 中文形态 PermissionError 与 WinError 码不在原标记表，物品无辜却被
+    # 归 other 无人 requeue——逐串补齐（0921 WinError5×9 + WinError206 文件名过长×2）。
+    "拒绝访问",
+    "WinError 5",
+    "WinError 206",
+    "文件名或扩展名太长",
 )
 _DEAD_REASON_ITEM_MARKERS = (
-    "PROTECTED-PATHS", "CAS 竞态", "CAS 冲突", "快进判定失败", "SESSION-REQUIRED",
-    "CLAIM_REQUIRED", "COMMIT_SCOPE", "cascade_stale", "基底重校验",
-    "TRACKED-DRIFT-READONLY", "网关落盘失败",
+    "PROTECTED-PATHS",
+    "CAS 竞态",
+    "CAS 冲突",
+    "快进判定失败",
+    "SESSION-REQUIRED",
+    "CLAIM_REQUIRED",
+    "COMMIT_SCOPE",
+    "cascade_stale",
+    "基底重校验",
+    "TRACKED-DRIFT-READONLY",
+    "网关落盘失败",
 )
 
 # session_id 字符白名单：session_id 进入 qid 与 seq 文件名，必须防路径注入
@@ -277,7 +308,15 @@ class LeaseUnavailable(RuntimeError):
 
 
 class RequeueError(RuntimeError):
-    """死信取回重入队失败（qid 不在 dead/、qid 非法、工作区文件缺失等——CLI 映射 exit 1）。"""
+    """死信取回重入队失败（qid 不在 dead/、qid 非法、工作区文件缺失等——CLI 映射 exit 1）。
+
+    details : 结构化敏感面（MSG-EXPOSURE §5.99.20 口径：路径/凭证等进 details，
+        消息文本只留人类可读摘要——5.99.20 治本落地的异常契约补全）。
+    """
+
+    def __init__(self, msg: str, details: dict | None = None) -> None:
+        super().__init__(msg)
+        self.details = details or {}
 
 
 class LandingEnvironmentError(RuntimeError):
@@ -484,7 +523,7 @@ def _read_seq(queue_root: Path, session_id: str) -> int:
 
 
 def _write_seq(queue_root: Path, session_id: str, seq: int) -> None:
-    _atomic_write(queue_root / f"{session_id}.seq", f"{seq}\n".encode("utf-8"))
+    _atomic_write(queue_root / f"{session_id}.seq", f"{seq}\n".encode())
 
 
 def _make_qid(session_id: str, seq: int) -> str:
@@ -582,12 +621,16 @@ class EnqueueOptions:
     deletes : 删除路径列表（B 段新增，66 号 §6.1 action=delete 语义细化）：已跟踪但
         盘上缺失的文件经此通道入袋，落盘时从 dev 树删除；与 files 共享同键 compaction。
     meta_extra : 附加 meta 键值（并入队列项 meta）。
+    allow_oversize_batch : 超大批逃生旗（R2，meta 留痕）：确属原子大批（如整目录
+        归档迁移）时由调用方显式给出——旗是必需品不是装饰（q-0007「gate+自家测试
+        同批合法」先例）。
     """
 
     base_head: str | None = None
     depends_on: list[str] | None = None
     deletes: list[str] | None = None
     meta_extra: dict | None = None
+    allow_oversize_batch: bool = False
 
 
 def enqueue_item(
@@ -623,6 +666,17 @@ def enqueue_item(
     msg = _validate_message(message)
     if not files and not deletes:
         raise QueueReject("空文件清单拒绝入队")
+    # R2 大批硬顶（st-commitchain-20260922）：交互车道单批 >_MAX_BATCH_FILES 拒绝。
+    # 数据实证：0921 workclean 0091=111 文件磨 116 分钟死在终点 CREATE-GUARD；
+    # done 项文件数 p50=3。machine 车道（reconciler 派生自动批）与显式逃生旗豁免。
+    total_entries = len(files) + len(deletes or [])
+    lane = (meta_extra or {}).get("lane")
+    if total_entries > _MAX_BATCH_FILES and not opts.allow_oversize_batch and lane != "machine":
+        raise QueueReject(
+            f"单批 {total_entries} 文件超上限 {_MAX_BATCH_FILES}（R2 大批硬顶）："
+            f"请拆分为多个语义批次入队（失败早暴露不互相拖累）；"
+            f"确属原子大批用 --allow-oversize-batch / EnqueueOptions(allow_oversize_batch=True)（meta 留痕）"
+        )
 
     # 1) 轻检 + blob 落袋（先于队列项创建——blob 入袋即内容不丢）
     blob_entries: list[dict] = []
@@ -735,7 +789,7 @@ class SerializerLease:
         self._poll_interval = poll_interval
         self._acquired = False
 
-    def __enter__(self) -> "SerializerLease":
+    def __enter__(self) -> SerializerLease:
         deadline = time.monotonic() + self._timeout
         # do-while 等价结构（expired 后置判定）——保证 timeout=0 也至少尝试一次获取，
         # 与 66 号 §8"拿不到就放弃"语义一致；不用 while True（PERM-TRIGGER 口径：
@@ -848,9 +902,9 @@ class SerializerLease:
             self._acquired = False
             return False
         _now = time.time()
-        payload = json.dumps(
-            {"pid": os.getpid(), "acquired_at": _now, "renewed_at": _now}, ensure_ascii=False
-        ).encode("utf-8")
+        payload = json.dumps({"pid": os.getpid(), "acquired_at": _now, "renewed_at": _now}, ensure_ascii=False).encode(
+            "utf-8"
+        )
         tmp = self._lease_file.with_name(f"{self._lease_file.name}.renew-{os.getpid()}")
         try:
             with open(tmp, "wb") as fh:
@@ -1129,7 +1183,12 @@ def drain_queue(
             # 已物化未提交的 untracked 新文件（tracked 文件 reset 后仍在，故只有新文件
             # 死信=pathspec did not match 取证签名）。每处理一项刷新租约，令"活着且在
             # 干活"的持有者永不被 TTL 误抢（配合 __enter__ 的存活感知 TTL 分支双保险）。
-            lease.renew()
+            if not lease.renew():
+                # D7（st-commitchain-20260922，环节2 E3）：renew 返回 False=租约丢失/
+                # 易主（仅 corrupt 清理分支可达的理论双写窗）——立即终止本轮，当前项
+                # 留 processing 等孤儿回收；绝不带着失效租约继续碰共享 worktree。
+                logger.critical("[drain] 租约续期失败（易主/丢失），本轮立即终止：当前项留 processing 等孤儿回收")
+                break
             pending_dir = root / "pending"
             heads = sorted(pending_dir.glob("q-*.json"))  # qid 字典序 == 车道内 FIFO 序
             if not heads:
@@ -1163,6 +1222,7 @@ def drain_queue(
                     pass
                 break
             qid = item.get("qid", head.stem)
+            _item_t0 = time.monotonic()  # D7 单项墙钟挂账（环节2 E4）
             result: LandingResult | None = None
             if (item.get("meta") or {}).get("stale"):
                 # P1 级联（66 号 §6.4）：stale 项重校验基底——仍适用清标放行走正常
@@ -1197,7 +1257,7 @@ def drain_queue(
                         exc,
                     )
                     break
-                except Exception as exc:  # 单项失败 → 死信不卡队（66 号 §4 裁定 4）
+                except Exception as exc:  # noqa: BLE001 — 单项失败 → 死信不卡队（66 号 §4 裁定 4）
                     result = LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
             if result.ok:
                 item["landed_at"] = _now_iso()
@@ -1220,6 +1280,9 @@ def drain_queue(
                 stats["dead"] += 1
                 logger.warning("[drain] qid=%s 进死信: %s", qid, result.reason)
                 _notify_task_board_dead_letter(item)  # 66 号 §6.4 task_board 死信标签联动（P1 已落地）
+            _item_dur = time.monotonic() - _item_t0
+            if _item_dur > _SLOW_ITEM_LEDGER_SECONDS:
+                _ledger_slow_item(root, qid, item.get("session_id"), round(_item_dur, 1))
             stats["processed_qids"].append(qid)
             processed += 1
         if done_ttl_days is not None:
@@ -1231,6 +1294,10 @@ def drain_queue(
         emit_dead_backlog_alert(root)
     except Exception as exc:  # noqa: BLE001 — 告警是旁路可观测性，双重保险吞异常
         logger.warning("[health] 死信积压告警异常（忽略）: %s", exc)
+    try:
+        check_dead_burst(root)  # D6 死信爆发升级告警（Owner 0922：285 死/日应当天拉铃）
+    except Exception as exc:  # noqa: BLE001 — 同上，旁路可观测性
+        logger.warning("[health] 死信爆发告警异常（忽略）: %s", exc)
     return stats
 
 
@@ -1325,6 +1392,7 @@ def requeue_dead_item(
     session_id: str | None = None,
     message: str | None = None,
     base_head: str | None = None,
+    from_bag: bool = False,
 ) -> dict:
     """死信取回重入队（66 号 §6.4 死信闭环 + 08 号文 §4.3 P1）。
 
@@ -1359,6 +1427,16 @@ def requeue_dead_item(
     wt = Path(worktree_root) if worktree_root else Path.cwd()
     payload: list[tuple[str, bytes]] = []
     deletes: list[str] = []
+    # D7 透明化（st-commitchain-20260922，环节9 E1 勘误保守落地）：
+    # 默认仍=当前工作区内容（修-重试工作流依赖此语义：改完 requeue 带新内容），
+    # 但 MUST 显式告知「快照≠死信原快照」；--from_bag 则从 dead/ 项 blob 袋直读
+    # 原始内容（sha256 自校验，工作区漂移免疫）。
+    if from_bag:
+        logger.info("[requeue] from_bag=原袋重建（内容寻址 sha256 自校验，工作区漂移免疫）")
+    else:
+        logger.info(
+            "[requeue] 快照来源=当前工作区 %s（非死信原快照；改-重试工作流预期行为，需原内容加 --from-bag）", wt
+        )
     for f in old_item.get("files") or []:
         path = f.get("path")
         if not path:
@@ -1366,11 +1444,29 @@ def requeue_dead_item(
         if f.get("action") == "delete":
             deletes.append(path)
             continue
+        if from_bag and f.get("blob_ref"):
+            try:
+                content = (root / f["blob_ref"]).read_bytes()
+            except OSError as exc:
+                raise RequeueError(
+                    "原袋 blob 读取失败（路径见 details）",
+                    details={"path": path, "cause": str(exc)},
+                ) from exc
+            sha = hashlib.sha256(content).hexdigest()
+            if sha != f.get("blob_sha256"):
+                raise RequeueError(
+                    "原袋 blob 校验失败：内容寻址 sha256 不符（详见 details）",
+                    details={"path": path},
+                )
+            payload.append((path, content))
+            continue
         try:
             payload.append((path, (wt / path).read_bytes()))
         except OSError as exc:
+            # MSG-EXPOSURE §5.99.20 口径：消息只留摘要，路径走 details 结构化字段
             raise RequeueError(
-                f"工作区文件缺失/不可读，无法重建快照: {path}（{exc}）——若该文件应删除请人工处理"
+                "工作区文件缺失/不可读，无法重建快照（路径见 details）——若该文件应删除请人工处理",
+                details={"path": path, "cause": str(exc), "hint": "from_bag=True 可取死信原快照"},
             ) from exc
     if not payload and not deletes:
         raise RequeueError(f"死信项无文件条目可取回: {qid}")
@@ -1384,6 +1480,9 @@ def requeue_dead_item(
         options=EnqueueOptions(
             base_head=base_head,
             deletes=deletes or None,
+            # requeue 豁免大批硬顶（R2）：死信重试是既定决策的延续，尺寸判定在原入队时
+            # 已做出——若此处拒绝，超大死信将永远无法重入队（死锁）。
+            allow_oversize_batch=True,
             meta_extra={"requeued_from": qid, **({"task_id": task_id} if task_id else {})},
         ),
     )
@@ -1453,6 +1552,109 @@ def cleanup_done(
 # ---------------------------------------------------------------------------
 
 
+def _ledger_slow_item(root: Path, qid: str, session_id: str | None, seconds: float) -> None:
+    """单项墙钟超阈挂账（D7 环节2 E4：大注册表批磨时从无声变有账；daemon 堵点本同文件）。
+
+    写 root.parent/audit/bottleneck_ledger.jsonl（kind=slow_item）；旁路可观测性
+    fail-open：写失败仅记日志绝不阻断排空。
+    """
+    try:
+        ledger = root.parent / "audit" / "bottleneck_ledger.jsonl"
+        ledger.parent.mkdir(parents=True, exist_ok=True)
+        line = json.dumps(
+            {"ts": time.time(), "kind": "slow_item", "qid": qid, "session_id": session_id, "seconds": seconds},
+            ensure_ascii=False,
+        )
+        with open(ledger, "a", encoding="utf-8") as fh:
+            fh.write(line + "\n")
+        logger.warning("[drain] 单项墙钟超阈挂账: qid=%s seconds=%.1fs", qid, seconds)
+    except OSError as exc:  # noqa: BLE001 — 旁路可观测性写失败不阻断排空
+        logger.warning("[drain] 堵点本写入失败（忽略）: %s", exc)
+
+
+def _lease_snapshot(root: Path) -> dict:
+    """serializer.lease 只读快照（R5：等待方可见「谁在持有、磨了多久」）。
+
+    0921 实测痛点：租约被持时 queue_status 不读租约，processing=0 显「队列健康」，
+    等待会话被迫 cat 租约+Get-CimInstance 反推——本快照把这段考古变成一眼可见。
+    """
+    lease_path = root / _LEASE_FILE
+    if not lease_path.exists():
+        return {"present": False}
+    try:
+        data = json.loads(lease_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"present": False, "corrupt": True}
+    if not isinstance(data, dict):  # P2-1（红队 0922）：合法 JSON 非字典（list/int）不崩 status
+        return {"present": False, "corrupt": True}
+    pid = data.get("pid")
+    now = time.time()
+    acquired_at = data.get("acquired_at") if isinstance(data.get("acquired_at"), (int, float)) else 0.0
+    renewed_at = data.get("renewed_at") if isinstance(data.get("renewed_at"), (int, float)) else acquired_at
+    alive = False
+    if pid is not None:
+        try:
+            alive = is_pid_alive(int(pid))
+        except (TypeError, ValueError):
+            alive = False
+    return {
+        "present": True,
+        "holder_pid": pid,
+        "alive": alive,
+        "acquired_age_s": round(now - acquired_at, 1) if acquired_at else None,
+        "renewed_age_s": round(now - renewed_at, 1) if renewed_at else None,
+        "over_ttl": bool(acquired_at and now - acquired_at > _LEASE_TTL_SECONDS),
+        # 语义注记：alive=True=活体持有（F9 绝不可抢，正在磨）；alive=False=僵尸残留
+        # （下个竞争者进 __enter__ 即回收）。renewed_age_s 巨大而 alive=True=大项在途
+        # （renew 逐项刷新，项内必然陈旧——设计使然非异常）。
+        "state": "drain-active" if alive else "stale",
+    }
+
+
+def _head_snapshot(root: Path) -> dict | None:
+    """队首 pending 项快照（R5：位置感——队首是谁、多少文件、已等多久）。"""
+    try:
+        heads = sorted((root / "pending").glob("q-*.json"))
+    except OSError:
+        return None
+    if not heads:
+        return None
+    try:
+        item = json.loads(heads[0].read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"qid": heads[0].stem, "_corrupt": True}
+    created = item.get("created_at")
+    waiting_s = None
+    if created:
+        try:
+            waiting_s = round(time.time() - datetime.fromisoformat(created).timestamp(), 1)
+        except (ValueError, TypeError):
+            waiting_s = None
+    return {
+        "qid": item.get("qid", heads[0].stem),
+        "session_id": item.get("session_id"),
+        "files": len(item.get("files") or []),
+        "created_at": created,
+        "waiting_s": waiting_s,
+    }
+
+
+def _daemon_snapshot(root: Path) -> dict:
+    """belt daemon 在线探测（环节3 E6：守护失联可观测——补位消费者死=排空纯靠内联自举）。"""
+    lock_path = root / "belt_daemon.lock"
+    if not lock_path.exists():
+        return {
+            "online": False,
+            "note": "belt daemon 离线（手动启动形态、无计划任务重拉）：排空依赖 enqueue/status/requeue 内联自举",
+        }
+    try:
+        data = json.loads(lock_path.read_text(encoding="utf-8"))
+        online = isinstance(data, dict) and is_pid_alive(int(data.get("pid")))
+    except (OSError, ValueError, TypeError, AttributeError):
+        online = False
+    return {"online": online}
+
+
 def queue_status(queue_root: str | os.PathLike | None = None, *, session_id: str | None = None) -> dict:
     """队列状态总览；--session 过滤该会话各 qid 的 pending/processing/done/dead 状态。"""
     root = resolve_queue_root(queue_root)
@@ -1463,7 +1665,7 @@ def queue_status(queue_root: str | os.PathLike | None = None, *, session_id: str
         state_dir = root / state
         entries = sorted(state_dir.glob("q-*.json"))
         counts[state] = 0
-        for entry in entries:
+        for entry_idx, entry in enumerate(entries):
             try:
                 item = json.loads(entry.read_text(encoding="utf-8"))
             except (OSError, ValueError):
@@ -1481,12 +1683,18 @@ def queue_status(queue_root: str | os.PathLike | None = None, *, session_id: str
                 record["dead_reason"] = item.get("dead_reason")
             if state == "done":
                 record["landed_id"] = item.get("landed_id")
+            if state == "pending":
+                # R5 位置感：前面还有几项（FIFO 序=qid 字典序，与 drain :1134 同口径）
+                record["position_ahead"] = entry_idx
             items.append(record)
     return {
         "queue_root": str(root),
         "counts": counts,
         "total": sum(counts.values()),
         "items": items,
+        "lease": _lease_snapshot(root),
+        "head": _head_snapshot(root),
+        "daemon": _daemon_snapshot(root),
     }
 
 
@@ -1517,6 +1725,7 @@ def queue_health(queue_root: str | os.PathLike | None = None) -> dict:
     root = resolve_queue_root(queue_root)
     counts: dict[str, int] = {s: 0 for s in _STATES}
     dead_categories: dict[str, int] = {}
+    dead_per_session: dict[str, int] = {}  # D6：单会话死亡计数（连败链可观测，环节6 E7）
     oldest_pending_created: str | None = None
     oldest_processing_created: str | None = None
     for state in _STATES:
@@ -1534,15 +1743,18 @@ def queue_health(queue_root: str | os.PathLike | None = None) -> dict:
             if state == "dead":
                 cat = classify_dead_reason(item.get("dead_reason", ""))
                 dead_categories[cat] = dead_categories.get(cat, 0) + 1
+                sid = item.get("session_id") or "?"
+                dead_per_session[sid] = dead_per_session.get(sid, 0) + 1
             elif state == "pending" and (oldest_pending_created is None or created < oldest_pending_created):
                 oldest_pending_created = created
-            elif state == "processing" and (
-                oldest_processing_created is None or created < oldest_processing_created
-            ):
+            elif state == "processing" and (oldest_processing_created is None or created < oldest_processing_created):
                 oldest_processing_created = created
     now = datetime.now().astimezone()
     ages: dict[str, float] = {}
-    for key, created in (("oldest_pending_hours", oldest_pending_created), ("oldest_processing_hours", oldest_processing_created)):
+    for key, created in (
+        ("oldest_pending_hours", oldest_pending_created),
+        ("oldest_processing_hours", oldest_processing_created),
+    ):
         if created:
             try:
                 ages[key] = round((now - datetime.fromisoformat(created)).total_seconds() / 3600, 2)
@@ -1553,6 +1765,9 @@ def queue_health(queue_root: str | os.PathLike | None = None) -> dict:
         "counts": counts,
         "dead_total": counts["dead"],
         "dead_categories": dead_categories,
+        # D6 死信爆发两维度聚合（与 check_dead_burst 同口径；Owner 0922 诉求可观测半边）
+        "max_session_death_chain": max(dead_per_session.values()) if dead_per_session else 0,
+        "per_session_top": sorted(dead_per_session.items(), key=lambda kv: -kv[1])[:3],
         **ages,
         "blobs": len(list((root / "blobs").glob("*"))),
         "generated_at": _now_iso(),
@@ -1655,7 +1870,18 @@ def emit_dead_backlog_alert(
         result["action"] = "board_unreachable"
         return result
     try:
-        _atomic_write(state_file, json.dumps({"last_alert_at": ref.isoformat(), "dead_total": dead_total}, ensure_ascii=False).encode("utf-8"))
+        # P2-6（红队 0922）：合并写——整文件覆盖会踩掉 check_dead_burst 的日期键
+        _atomic_write(
+            state_file,
+            json.dumps(
+                {
+                    **(last if isinstance(last, dict) else {}),
+                    "last_alert_at": ref.isoformat(),
+                    "dead_total": dead_total,
+                },
+                ensure_ascii=False,
+            ).encode("utf-8"),
+        )
     except OSError as exc:
         logger.warning("[health] 告警冷却状态写入失败（下次可能重复告警）: %s", exc)
     logger.warning("[health] 死信积压告警触发: %s", reason)
@@ -1663,7 +1889,164 @@ def emit_dead_backlog_alert(
     return result
 
 
+def _dead_burst_aggregate(root: Path, today: str) -> tuple[int, dict[str, int]]:
+    """当日死信聚合：返回 (当日新增总数, 各会话当日死亡计数)——只读 dead/。"""
+    day_total = 0
+    per_session: dict[str, int] = {}
+    for entry in sorted((root / "dead").glob("q-*.json")):
+        try:
+            item = json.loads(entry.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        if not (item.get("dead_at") or "").startswith(today):
+            continue
+        day_total += 1
+        sid = item.get("session_id") or "?"
+        per_session[sid] = per_session.get(sid, 0) + 1
+    return day_total, per_session
 
+
+def _dead_burst_load_thresholds(registry_path=None) -> dict | None:
+    """THD-ALERT-005/006 fail-closed 统读；非法/不可读返回 None（fail-open 跳过）。"""
+    try:
+        from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
+
+        th = load_alert_thresholds(
+            {"THD-ALERT-005": "daily_dead_burst", "THD-ALERT-006": "session_dead_chain"},
+            registry_path=registry_path,
+            cast="int",
+        )
+    except Exception as exc:  # noqa: BLE001 — 阈值不可读=链路降级（fail-open）
+        logger.warning("[health] 死信爆发阈值加载失败，跳过（REG-ATH-001 不可达）: %s", exc)
+        return None
+    if th["daily_dead_burst"] <= 0 or th["session_dead_chain"] <= 0:
+        # P2-7（红队 0922）：value 0 = 配置手误地雷（0 死信也会 fire）——按配置错误跳过
+        logger.warning("[health] 死信爆发阈值非法（<=0），跳过（REG-ATH-001 条目需修正）")
+        return None
+    return th
+
+
+def _dead_burst_write_ledger(
+    root: Path, today: str, day_total: int, top_session: str, top_count: int, types: list[str]
+) -> None:
+    """堵点本 alert 行（daemon 离线时本路径是唯一记账人；写失败仅记日志）。"""
+    ledger = root.parent / "audit" / "bottleneck_ledger.jsonl"
+    ledger.parent.mkdir(parents=True, exist_ok=True)
+    with open(ledger, "a", encoding="utf-8") as fh:
+        fh.write(
+            json.dumps(
+                {
+                    "ts": time.time(),
+                    "kind": "alert",
+                    "type": "dead_burst",
+                    "date": today,
+                    "day_total": day_total,
+                    "top_session": top_session,
+                    "top_count": top_count,
+                    "types": types,
+                },
+                ensure_ascii=False,
+            )
+            + chr(10)
+        )
+
+
+def _dead_burst_tag_task_board(root: Path, today: str, reason: str) -> None:
+    """task_board T-QUEUE-DEADLETTER 打标（幂等自建；板不可达仅记日志不阻断）。"""
+    from scripts import task_board as tb
+
+    conn = tb._connect(tb._resolve_board_db())
+    try:
+        if tb._get_task(conn, _DEADLETTER_WATCH_TASK_ID) is None:
+            tb.ensure_task(
+                conn,
+                _DEADLETTER_WATCH_TASK_ID,
+                title="提交队列死信积压告警（自动维护勿关闭）",
+                description="commit_queue 死信爆发/积压统一挂载点（66 号 §6.4 通道）。处置入口：python scripts/commit_queue.py health",
+                actor="commit_queue",
+            )
+        rc = tb.tag_dead_letter(
+            conn,
+            _DEADLETTER_WATCH_TASK_ID,
+            qid=f"burst-{today}",
+            reason=reason,
+            owner="commit_queue",
+            actor="commit_queue",
+        )
+        if rc != 0:
+            logger.warning("[health] 死信爆发打标跳过: rc=%s", rc)
+    finally:
+        conn.close()
+
+
+def _dead_burst_pending_types(state_file: Path, today: str, triggered: list[str]) -> tuple[dict, list[str]]:
+    """日期键每日一声：读冷却状态，返回 (state, 今日尚未触发过的类型)。"""
+    try:
+        state = json.loads(state_file.read_text(encoding="utf-8")) if state_file.exists() else {}
+    except (OSError, ValueError):
+        state = {}
+    burst_state = state.get("dead_burst") or {}
+    done_types = set(burst_state.get("types") or []) if burst_state.get("date") == today else set()
+    return state, [t for t in triggered if t not in done_types]
+
+
+def check_dead_burst(
+    queue_root: str | os.PathLike | None = None,
+    *,
+    registry_path=None,
+    now: datetime | None = None,
+) -> dict:
+    """死信爆发升级告警（D6=Owner 2026-09-22 显式诉求：285 死/日应当天拉铃而非事后考古）。
+
+    两维度（阈值真源=REG-ATH-001，fail-closed 统读）：THD-ALERT-005 单日死信增量 ≥50；
+    THD-ALERT-006 单会话当日死亡 ≥10（requeue 连败链的当日代理口径）。
+    防轰炸=日期键每日一声（每类型每天最多一次，跨天自动失效）；通道=堵点本 alert 行
+    + task_board 打标。drain 收尾事件触发（lease 外）；fail-open 不阻断排空。
+    """
+    root = resolve_queue_root(queue_root)
+    ref = now or datetime.now().astimezone()
+    today = ref.date().isoformat()
+    day_total, per_session = _dead_burst_aggregate(root, today)
+    th = _dead_burst_load_thresholds(registry_path)
+    if th is None:
+        return {"fired": False, "action": "threshold_unavailable", "day_total": day_total}
+    top_session, top_count = max(per_session.items(), key=lambda kv: kv[1]) if per_session else ("", 0)
+    triggered: list[str] = []
+    if day_total >= th["daily_dead_burst"]:
+        triggered.append("daily_burst")
+    if top_count >= th["session_dead_chain"]:
+        triggered.append("session_chain")
+    if not triggered:
+        return {"fired": False, "action": "below_threshold", "day_total": day_total, "top_session": top_session}
+    state_file = root / _HEALTH_ALERT_STATE_FILE
+    state, pending_types = _dead_burst_pending_types(state_file, today, triggered)
+    if not pending_types:
+        return {"fired": False, "action": "already_alerted_today", "day_total": day_total}
+    reason = (
+        f"dead_burst date={today} types={pending_types}: day_total={day_total}"
+        f" (>= {th['daily_dead_burst']}) top_session={top_session}({top_count}"
+        f" >= {th['session_dead_chain']})"
+    )
+    try:
+        _dead_burst_write_ledger(root, today, day_total, top_session, top_count, pending_types)
+    except OSError as exc:  # noqa: BLE001
+        logger.warning("[health] 死信爆发堵点本写入失败（忽略）: %s", exc)
+    try:
+        _dead_burst_tag_task_board(root, today, reason)
+    except Exception as exc:  # noqa: BLE001 — 板不可达不阻断排空
+        logger.warning("[health] 死信爆发 task_board 联动失败（忽略）: %s", exc)
+    try:
+        _atomic_write(
+            state_file,
+            json.dumps(
+                {**state, "dead_burst": {"date": today, "types": sorted(set(triggered))}},
+                ensure_ascii=False,
+            ).encode("utf-8"),
+        )
+    except OSError as exc:
+        logger.warning("[health] 死信爆发冷却状态写入失败（明日可能重复告警）: %s", exc)
+    logger.warning("[health] 死信爆发升级告警触发: %s", reason)
+    return {"fired": True, "action": "alerted", "types": pending_types, "day_total": day_total, "reason": reason}
 
 
 # ---------------------------------------------------------------------------
@@ -1782,7 +2165,9 @@ def _cmd_drain(args: argparse.Namespace) -> int:
 
     landing = WorktreeLanding(repo_root=_REPO_ROOT, queue_root=args.queue_root)
     try:
-        result = drain_queue(args.queue_root, landing=landing, max_items=args.max_items, done_ttl_days=args.done_ttl_days)
+        result = drain_queue(
+            args.queue_root, landing=landing, max_items=args.max_items, done_ttl_days=args.done_ttl_days
+        )
     except LeaseUnavailable as exc:
         # 显式 drain 拿不到 lease = 另一 Serializer 在排空——正常路径非错误（66 号 §8）
         print(f"SKIPPED: {exc}")
@@ -1813,6 +2198,7 @@ def _cmd_requeue(args: argparse.Namespace) -> int:
             session_id=args.session,
             message=message,
             base_head=args.base_head,
+            from_bag=args.from_bag,
         )
     except RequeueError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -1821,7 +2207,8 @@ def _cmd_requeue(args: argparse.Namespace) -> int:
         # 新项入队轻检拒绝——fail-closed 报错非静默（与 enqueue 同口径）
         print(f"DENIED: {exc}", file=sys.stderr)
         return 2
-    print(f"REQUEUED: {result['old_qid']} -> {result['new_qid']}（基于当前工作区重建快照，新 qid 排 FIFO 队尾）")
+    src = "死信原快照" if args.from_bag else "当前工作区"
+    print(f"REQUEUED: {result['old_qid']} -> {result['new_qid']}（快照来源={src}，新 qid 排 FIFO 队尾）")
     if not args.no_bootstrap:
         drain_result = try_bootstrap_drain(args.queue_root)  # 重入队自举排空（66 号 §8）
         if not drain_result.get("skipped"):
@@ -1874,7 +2261,11 @@ def main(argv: list[str] | None = None) -> int:
     p_enq = sub.add_parser("enqueue", help="快照入队即返回（入袋即完成）")
     p_enq.add_argument("--session", required=True, help="生产者会话 ID（[A-Za-z0-9._-] ≤64）")
     p_enq.add_argument("--files", required=False, help="仓内相对路径逗号分隔（正斜杠）")
-    p_enq.add_argument("--files-file", default=None, help="文件清单文件（UTF-8，一行一路径；文件名含逗号时用，与 --files 二选一同时给出则合并）")
+    p_enq.add_argument(
+        "--files-file",
+        default=None,
+        help="文件清单文件（UTF-8，一行一路径；文件名含逗号时用，与 --files 二选一同时给出则合并）",
+    )
     p_enq.add_argument("--message", default=None, help="commit message（内联）")
     p_enq.add_argument("--message-file", default=None, help="commit message 文件（UTF-8，中文推荐）")
     p_enq.add_argument("--worktree-root", default=None, help="工作区根（默认 cwd）")
@@ -1905,6 +2296,11 @@ def main(argv: list[str] | None = None) -> int:
     p_rq = sub.add_parser("requeue", help="死信取回重入队（66 号 §6.4：基于当前工作区重建快照，新 qid 排 FIFO 队尾）")
     p_rq.add_argument("qid", help="dead/ 中的死信项 qid")
     p_rq.add_argument("--worktree-root", default=None, help="工作区根（默认 cwd）——快照重建内容来源")
+    p_rq.add_argument(
+        "--from-bag",
+        action="store_true",
+        help="从死信原快照（blob 袋 sha256 自校验）取回而非当前工作区——工作区漂移免疫",
+    )
     p_rq.add_argument("--session", default=None, help="新项会话 ID（默认沿用原死信项 session_id）")
     p_rq.add_argument("--message", default=None, help="commit message（默认沿用原死信项 message）")
     p_rq.add_argument("--message-file", default=None, help="commit message 文件（UTF-8，中文推荐）")

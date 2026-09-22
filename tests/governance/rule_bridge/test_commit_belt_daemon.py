@@ -31,9 +31,7 @@ class TestSingleton:
     def test_zombie_lock_reclaimed(self, tmp_path):
         qroot = tmp_path / "commit_queue"
         qroot.mkdir(parents=True)
-        (qroot / cbd._DAEMON_LOCK).write_text(
-            json.dumps({"pid": 999999999, "ts": 0.0}), encoding="utf-8"
-        )
+        (qroot / cbd._DAEMON_LOCK).write_text(json.dumps({"pid": 999999999, "ts": 0.0}), encoding="utf-8")
         assert cbd._acquire_singleton(qroot) is True  # 僵尸锁回收
         cbd._release_singleton(qroot)
 
@@ -74,11 +72,16 @@ class TestBacklogAlert:
         cst = timezone(timedelta(hours=8))
         with path.open("w", encoding="utf-8") as fh:
             for i in range(items):
-                ts = (datetime.now(cst) - timedelta(hours=old_first_hours)).isoformat() if (i == 0 and old_first_hours) else datetime.now(cst).isoformat()
+                ts = (
+                    (datetime.now(cst) - timedelta(hours=old_first_hours)).isoformat()
+                    if (i == 0 and old_first_hours)
+                    else datetime.now(cst).isoformat()
+                )
                 fh.write(_json.dumps({"ts": ts, "kind": "dead_letter", "qid": f"q-{i}"}) + "\n")
 
     def test_threshold_alert_written(self, tmp_path, monkeypatch):
         import json as _json
+
         monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "bottleneck_ledger.jsonl")
         self._write_ledger(tmp_path / "bottleneck_ledger.jsonl", 20, old_first_hours=25)
         cbd._check_ledger_backlog()
@@ -95,6 +98,7 @@ class TestBacklogAlert:
 
     def test_old_entry_triggers_age_alert(self, tmp_path, monkeypatch):
         import json as _json
+
         monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "bottleneck_ledger.jsonl")
         self._write_ledger(tmp_path / "bottleneck_ledger.jsonl", 3, old_first_hours=25)  # 少量但首条 25h 老
         cbd._check_ledger_backlog()
@@ -107,6 +111,7 @@ class TestEnvAbortEscalation:
 
     def test_escalation_and_reset(self, tmp_path, monkeypatch):
         import json as _json
+
         monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "bottleneck_ledger.jsonl")
         st = {}
         cbd._escalate_env_aborts(st)
@@ -121,6 +126,7 @@ class TestEnvAbortEscalation:
 
 
 # ── 裁定#281①：纪元自检三态（未变不重启/变了安全点 execv/lease 被持不重启）──
+
 
 def _epoch_mod():
     return cbd
@@ -143,6 +149,8 @@ def test_epoch_unchanged_no_reexec(tmp_path, monkeypatch):
     monkeypatch.setattr(mod, "_gov_enforcement_epoch", lambda root: "sha-same")
     # 判据子树单独 stub：tmp_path 落在真仓内，不 stub 会取到真 sha 造出假"纪元变更"
     monkeypatch.setattr(mod, "_subtree_epoch", lambda root, sub: None)
+    # D4（st-commitchain-20260922）第三子树：commit_queue 文件 blob 同理必须 stub
+    monkeypatch.setattr(mod, "_commit_queue_epoch", lambda root: None)
     monkeypatch.setattr(mod, "_serializer_lease_held", lambda qroot: False)
     state: dict = {"epoch": "sha-same"}
     assert mod._check_and_reexec(tmp_path, tmp_path, state) is False
@@ -156,6 +164,7 @@ def test_epoch_changed_reexecs_at_safe_point(tmp_path, monkeypatch):
     _fake_execv(monkeypatch, calls)
     monkeypatch.setattr(mod, "_gov_enforcement_epoch", lambda root: "sha-new")
     monkeypatch.setattr(mod, "_subtree_epoch", lambda root, sub: None)
+    monkeypatch.setattr(mod, "_commit_queue_epoch", lambda root: None)
     monkeypatch.setattr(mod, "_serializer_lease_held", lambda qroot: False)
     # 预置活体单例锁（真实位置=<root>/.runtime/commit_queue/）→ execv 前必须被释放
     # （execv 不跑 finally，不释放=新进程被锁挡死 exit 2）
@@ -220,13 +229,18 @@ class TestBacklogAlertCooldown:
         alerts = []
         if keep_alerts and path.exists():
             alerts = [
-                x for x in path.read_text(encoding="utf-8").splitlines()
+                x
+                for x in path.read_text(encoding="utf-8").splitlines()
                 if x.strip() and _json.loads(x).get("kind") == "alert"
             ]
         cst = timezone(timedelta(hours=8))
         with path.open("w", encoding="utf-8") as fh:
             for i in range(items):
-                ts = (datetime.now(cst) - timedelta(hours=old_first_hours)).isoformat() if (i == 0 and old_first_hours) else datetime.now(cst).isoformat()
+                ts = (
+                    (datetime.now(cst) - timedelta(hours=old_first_hours)).isoformat()
+                    if (i == 0 and old_first_hours)
+                    else datetime.now(cst).isoformat()
+                )
                 fh.write(_json.dumps({"ts": ts, "kind": "dead_letter", "qid": f"q-{i}"}) + "\n")
             for a in alerts:
                 fh.write(a + "\n")
@@ -238,7 +252,8 @@ class TestBacklogAlertCooldown:
         if not path.exists():
             return []
         return [
-            _json.loads(x) for x in path.read_text(encoding="utf-8").splitlines()
+            _json.loads(x)
+            for x in path.read_text(encoding="utf-8").splitlines()
             if x.strip() and _json.loads(x).get("kind") == "alert"
         ]
 

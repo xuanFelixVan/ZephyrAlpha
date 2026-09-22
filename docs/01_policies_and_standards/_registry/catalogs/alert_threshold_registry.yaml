@@ -1,7 +1,7 @@
 # [A_config] module_id=REG-ATH-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # ============================================================================
 # 告警阈值注册表（Alert Threshold Registry）
-# 真源决策：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md §3.3
+# 真源决策：docs/_working/archive/2026-09/design_memos/55_monitoring_review.md §3.3
 #   「告警阈值统编为注册表，阈值不集中即不可审计」——个人系统唯一的"风控评审"就是复盘时看阈值清单，散落等于不可评审。
 # 收录范围：监控/告警/复盘链路全部阈值（回撤/健康/偏离/PLV/告警机制/日终审计/风险报告/操作风险/漂移/退役判据/GPU）。
 # 消费方式：全部消费模块从本注册表读阈值（fail-closed，缺文件/缺条目直接报错，禁止码内第二真源）；
@@ -471,6 +471,47 @@ thresholds:
     tags: [提交队列, 死信, 告警, 冷却]
     evidence: "2026-09-11 死信率告警最小落地：6h 冷却与 drain 自举触发频率（每 enqueue 一次）匹配，告警量上限≈4 条/天"
     last_verified: '2026-09-11'
+
+  # ── D6 死信爆发升级告警（st-commitchain-20260922，Owner 2026-09-22 显式诉求：
+  #    「09-21 285 死/日应当在当天中午被拉铃，而不是事后考古」——机制没聋是没人听，
+  #    补单日增量与单会话连败两个维度；冷却=日期键每日一声，在 check_dead_burst 内实现）──
+  - threshold_id: "THD-ALERT-005"
+    module_id: MOD-GOV-046
+    name: "Commit Queue Daily Dead Letter Burst"
+    name_zh: "提交队列单日死信增量阈值"
+    category: alert
+    metric_zh: "当日 dead/ 新增项数（dead_at 当日口径）"
+    value: 50
+    param_origin: 经验拍定（0921 实证 285 死/76% 失败率）
+    unit: count
+    comparator: gte
+    severity_action: "drain 收尾 check_dead_burst 超阈 → 堵点本 alert 行 + task_board T-QUEUE-DEADLETTER 打标（日期键每日一声）；处置入口 commit_queue.py health"
+    source_code: "scripts/commit_queue.py::check_dead_burst"
+    consumer: "scripts/commit_queue.py (MOD-GOV-046)"
+    status: active
+    doc_ref: "Owner 2026-09-22 通宵总包令 R6 + docs/_working/commit_chain_mining_20260922/16_deadletter_alerts.md"
+    tags: [提交队列, 死信, 爆发, 告警]
+    evidence: "0921 语料：dead 285/done 90，01:52-20:33 四次积压铃无一到达 Owner——当日增量口径为'当天必有一声'而设"
+    last_verified: '2026-09-22'
+
+  - threshold_id: "THD-ALERT-006"
+    module_id: MOD-GOV-046
+    name: "Commit Queue Session Dead Chain"
+    name_zh: "提交队列单会话连败阈值"
+    category: alert
+    metric_zh: "单会话当日死信项数（requeue 连败链当日代理口径）"
+    value: 10
+    param_origin: 经验拍定（0921 实证 code-doc 20 连败/dloop 15 连败）
+    unit: count
+    comparator: gte
+    severity_action: "同 THD-ALERT-005 通道（types=session_chain 日期键区分）"
+    source_code: "scripts/commit_queue.py::check_dead_burst"
+    consumer: "scripts/commit_queue.py (MOD-GOV-046)"
+    status: active
+    doc_ref: "Owner 2026-09-22 通宵总包令 R6 + docs/_working/commit_chain_mining_20260922/16_deadletter_alerts.md"
+    tags: [提交队列, 死信, 连败, 告警]
+    evidence: "0921 st-dloop 0001→0015 十三连败 92 分钟撞 13 个不同门禁——单会话连败=死修循环在烧租约的强信号"
+    last_verified: '2026-09-22'
 
   # ============================================================
   # AUDIT（日终审计五件套参数，55 号 §3.1C）— 3 条

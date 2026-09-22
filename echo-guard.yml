@@ -189,3 +189,23 @@ acknowledged:
   existing_hash: 0a07d174
   stable_key: scripts/governance/d5_architecture/validators/validate_cross_references.py:_build_event_registry||scripts/governance/d5_architecture/validators/validate_cross_references.py:_build_invariant_registry
   note: 同文件 YAML id 集加载器样板同构（invariants.yaml/domain_events.yaml 各自源文件，HEAD 既有），W1-B2 触碰该文件暴露既有克隆，非本批引入（st-final3-20260919 裁定#357）
+- id: cg-w8r2-detector-scan-20260921
+  verdict: intentional
+  stable_key: "scripts/governance/d6_security/detect_git_dangerous.py:scan_file||scripts/governance/d6_security/detect_shell_dangerous.py:scan_file"
+  note: 姊妹检测器同构样板（git/shell 两检测器各自独立可运行，合并会引入跨检测器耦合；W8 第二圈触碰 detector 触发既有配对非新增克隆，st-workclean-20260921 登记）
+- id: cg-w8r2-detector-scanfiles-20260921
+  verdict: intentional
+  stable_key: "scripts/governance/d6_security/detect_git_dangerous.py:scan_files||scripts/governance/d6_security/detect_shell_dangerous.py:scan_files"
+  note: 同上 scan_files 对（st-workclean-20260921）
+- id: cg-w8r2-detector-main-20260921
+  verdict: intentional
+  stable_key: "scripts/governance/d6_security/detect_git_dangerous.py:main||scripts/governance/d6_security/detect_shell_dangerous.py:main"
+  note: 同上 main 对（CLI 入口同构样板，st-workclean-20260921 补登记）
+- id: cg-govcascade-init-20260922
+  verdict: intentional
+  stable_key: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:__init__||src/zephyr/intelligence/model_routing/cascade_orchestrator.py:__init__"
+  note: 通用类初始化骨架同构（网关与级联编排器各自的依赖注入构造器，非同一职责），出仓批触碰网关侧暴露既有克隆，非本批引入（st-commitchain-20260922）
+- id: cg-govfileio-init-20260922
+  verdict: intentional
+  stable_key: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:__init__||src/zephyr/shared/io/file_utils.py:__init__"
+  note: 通用类初始化骨架同构（网关与共享 IO 工具类构造器，职责无交集），出仓批触碰网关侧暴露既有克隆，非本批引入（st-commitchain-20260922）

@@ -6,7 +6,7 @@
 # [STARTUP] manual/daemon（watchdog 事件触发，无常驻轮询——M10 合规）
 # [MATURITY] production
 # [INVARIANTS] 提交传送带常驻消费端（Owner 2026-09-16 口述设计）：AI 会话快照入袋即返回继续施工，本守护 watchdog 事件驱动（pending/ 目录 file-created）自动自举排空——不占 AI 会话一秒等待；单例锁 .runtime/commit_queue/belt_daemon.lock（PID+TTL 600s+僵尸检测）；lease 被持=正常让位（自举失败不阻断，等下一事件）；pytest 内不 spawn 真守护（对标 write_audit_daemon 先例）；新死信自动登记堵点本 .runtime/audit/bottleneck_ledger.jsonl（专人专事协议：施工 AI 不修基建债，高模型维护班清账）
-# [MODIFY-GUARD] 观察目录集=commit_queue 五状态目录；drain 永远经 bootstrap_drain_with_landing（lease 单写者语义不变）
+# [MODIFY-GUARD] 观察目录集=commit_queue 五状态目录 + 队列根（serializer.lease/belt_daemon.lock 事件，R4 租约释放唤醒 st-commitchain-20260922——etcd「过期删除=delete 事件」语义的单机等效实现）；drain 永远经 bootstrap_drain_with_landing（lease 单写者语义不变）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -14,6 +14,7 @@
 # [TESTS] tests/governance/rule_bridge/test_commit_belt_daemon.py
 # [A_module] module_id=MOD-GOV_GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+
 # noqa: m10-time-trigger  M10豁免: watchdog 事件回调驱动（ReadDirectoryChangesW），非 Timer/sleep 轮询；_debounce 的 0.5s等待是事件合并窗非周期触发
 """
 commit_belt_daemon.py — 提交传送带常驻消费端（Owner 2026-09-16 口述设计落地）
@@ -37,7 +38,10 @@ commit_belt_daemon.py — 提交传送带常驻消费端（Owner 2026-09-16 口�
 与既有自举的关系：完全兼容——入队方 bootstrap（66 号 §8）保留为即时
 触发器，本守护是补位消费者（夜间低活跃窗/长批次落地期间无人入队时消化
 残余）。两者都走同一 Serializer lease，单写者不变量零变化。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_bridge/commit_belt_daemon.yaml
 """
+
 from __future__ import annotations
 
 import json
@@ -102,7 +106,12 @@ def _drain_once(project_root: Path) -> dict:
     from scripts.governance.commit_queue_landing import bootstrap_drain_with_landing  # noqa: PLC0415
 
     try:
-        return bootstrap_drain_with_landing(repo_root=project_root)
+        result = bootstrap_drain_with_landing(repo_root=project_root)
+        if isinstance(result, dict) and result.get("skipped"):
+            logger.info(
+                "[drain_once] skipped: %s（lease 被持=正常让位，租约释放事件将再触发）", result.get("reason", "?")
+            )
+        return result
     except Exception:  # noqa: BLE001 — 自举失败等下一事件
         logger.warning("belt_daemon drain 异常（等下一事件）", exc_info=True)
         return {"skipped": True, "reason": "drain_error"}
@@ -125,14 +134,20 @@ def _ledger_dead_letters(project_root: Path, seen: set[str]) -> int:
                 continue
             _LEDGER.parent.mkdir(parents=True, exist_ok=True)
             with _LEDGER.open("a", encoding="utf-8") as fh:
-                fh.write(json.dumps({
-                    "ts": now_utc().isoformat(),
-                    "kind": "dead_letter",
-                    "qid": item.get("qid"),
-                    "session_id": item.get("session_id"),
-                    "reason": (item.get("dead_reason") or "")[:200],
-                    "protocol": "专人专事：由高模型维护班清账（施工 AI 勿修）",
-                }, ensure_ascii=False) + "\n")
+                fh.write(
+                    json.dumps(
+                        {
+                            "ts": now_utc().isoformat(),
+                            "kind": "dead_letter",
+                            "qid": item.get("qid"),
+                            "session_id": item.get("session_id"),
+                            "reason": (item.get("dead_reason") or "")[:200],
+                            "protocol": "专人专事：由高模型维护班清账（施工 AI 勿修）",
+                        },
+                        ensure_ascii=False,
+                    )
+                    + "\n"
+                )
             n += 1
     except OSError:
         pass
@@ -185,18 +200,25 @@ def _check_ledger_backlog() -> None:
         from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
 
         with _LEDGER.open("a", encoding="utf-8") as fh:
-            fh.write(_json.dumps({
-                "ts": now_utc().isoformat(),
-                "kind": "alert",
-                "alert": "bottleneck_backlog_threshold",
-                "pending_items": n,
-                "oldest_age_s": round(age_s),
-                "backlog_level": level,
-                "protocol": "维护班开班信号：积压超阈（≥20 条或最老>24h）——由高模型维护班清账",
-            }, ensure_ascii=False) + chr(10))
+            fh.write(
+                _json.dumps(
+                    {
+                        "ts": now_utc().isoformat(),
+                        "kind": "alert",
+                        "alert": "bottleneck_backlog_threshold",
+                        "pending_items": n,
+                        "oldest_age_s": round(age_s),
+                        "backlog_level": level,
+                        "protocol": "维护班开班信号：积压超阈（≥20 条或最老>24h）——由高模型维护班清账",
+                    },
+                    ensure_ascii=False,
+                )
+                + chr(10)
+            )
         logger.error(
             "belt_daemon: 堵点本积压超阈 items=%d oldest_age_h=%.1f——维护班开班信号已写入",
-            n, age_s / 3600,
+            n,
+            age_s / 3600,
         )
         _save_backlog_alert_state(level, now)
     except OSError:
@@ -237,7 +259,9 @@ def _save_backlog_alert_state(level: str, last_alert_ts: float) -> None:
         p = _backlog_alert_state_path()
         p.parent.mkdir(parents=True, exist_ok=True)
         tmp = p.with_name(f"{p.stem}.{os.getpid()}.tmp")
-        tmp.write_text(json.dumps({"level": level, "last_alert_ts": last_alert_ts}, ensure_ascii=False), encoding="utf-8")
+        tmp.write_text(
+            json.dumps({"level": level, "last_alert_ts": last_alert_ts}, ensure_ascii=False), encoding="utf-8"
+        )
         os.replace(tmp, p)
     except OSError:
         pass
@@ -253,14 +277,21 @@ def _escalate_env_aborts(counter: dict) -> None:
     try:
         _LEDGER.parent.mkdir(parents=True, exist_ok=True)
         import json as _json
+
         with _LEDGER.open("a", encoding="utf-8") as fh:
-            fh.write(_json.dumps({
-                "ts": now_utc().isoformat(),
-                "kind": "alert",
-                "alert": "serializer_env_abort_loop",
-                "consecutive": counter["env_aborts"],
-                "protocol": "债1：Serializer 落地环境连续异常（worktree 自举循环嫌疑）——维护班介入",
-            }, ensure_ascii=False) + chr(10))
+            fh.write(
+                _json.dumps(
+                    {
+                        "ts": now_utc().isoformat(),
+                        "kind": "alert",
+                        "alert": "serializer_env_abort_loop",
+                        "consecutive": counter["env_aborts"],
+                        "protocol": "债1：Serializer 落地环境连续异常（worktree 自举循环嫌疑）——维护班介入",
+                    },
+                    ensure_ascii=False,
+                )
+                + chr(10)
+            )
         logger.error("belt_daemon: Serializer 连续环境失败 %d 次——堵点本 CRITICAL 已登记", counter["env_aborts"])
     except OSError:
         pass
@@ -309,6 +340,30 @@ def _gov_enforcement_epoch(project_root: Path) -> str | None:
     return _subtree_epoch(project_root, _PRIMARY_SUBTREE)
 
 
+def _commit_queue_epoch(project_root: Path) -> str | None:
+    """commit_queue 判据纪元（R4 配套，st-commitchain-20260922 环节3 E3）。
+
+    scripts/commit_queue.py 是 SerializerLease/drain_queue/FIFO 判据真源，但两棵
+    子树（gov_enforcement/scripts.governance）都不含 scripts/ 根——改它不触发换血，
+    守护按旧判据常驻（与 #ARCH-323 实证同构的盲区）。单文件 blob sha 对任何变更敏感。
+    """
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+    try:
+        r = run_subprocess_hidden(
+            ["git", "rev-parse", "HEAD:scripts/commit_queue.py"],
+            capture_output=True,
+            text=True,
+            cwd=str(project_root),
+            timeout=10,
+        )
+        if r is not None and r.returncode == 0 and r.stdout.strip():
+            return r.stdout.strip()
+    except Exception:  # noqa: BLE001 — 环境故障按"纪元未知"处理
+        pass
+    return None
+
+
 def _gate_code_epoch(project_root: Path) -> str | None:
     """门禁代码 + **判据真源**两个子树的合成纪元（2026-09-17 扩）。
 
@@ -323,6 +378,7 @@ def _gate_code_epoch(project_root: Path) -> str | None:
         for e in (
             _gov_enforcement_epoch(project_root),
             _subtree_epoch(project_root, _CRITERIA_SUBTREE),
+            _commit_queue_epoch(project_root),
         )
         if e
     ]
@@ -417,6 +473,10 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
         handler = _Poke()
         observer.schedule(handler, str(qroot / "pending"), recursive=False)
         observer.schedule(handler, str(qroot / "dead"), recursive=False)
+        # R4 租约释放唤醒（st-commitchain-20260922）：serializer.lease 在队列根，
+        # 其 deleted 事件（正常释放/僵尸回收）即刻 poke——封堵「5s 放弃的自举后无
+        # 新事件则停摆到下一次入队」的漏唤醒窄缝（etcd delete-event 语义单机等效）。
+        observer.schedule(handler, str(qroot), recursive=False)
         observer.start()
         logger.info("belt_daemon 启动：观察 %s（pending/dead 事件驱动）", qroot)
         events = 0
@@ -453,7 +513,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if _drain_once(root).get("skipped") is False else 0
     if "--status" in argv:
         lock = _queue_root(root) / _DAEMON_LOCK
-        print(json.dumps({"lock_exists": lock.exists(), "raw": lock.read_text(encoding="utf-8") if lock.exists() else None}))
+        print(
+            json.dumps(
+                {"lock_exists": lock.exists(), "raw": lock.read_text(encoding="utf-8") if lock.exists() else None}
+            )
+        )
         return 0
     return run_daemon(root)
 

@@ -357,6 +357,46 @@ def _preflight_flag_enabled() -> bool:
 # 裁定#341 方案②（2026-09-19 Owner 批）：落地前 staged 面 pre-commit run 常量
 _PRECOMMIT_RUN_FLAG = "gate_precommit_run_enabled"
 _PRECOMMIT_RUN_TIMEOUT_S = 900
+# D3 两段式（st-commitchain-20260922）：Phase-A=全通道减慢尾（SKIP 反选，单次调用），
+# 首败短路；Phase-B=全通道照旧（保 own/foreign 归因）。慢尾清单=环节5 成本分档 T2/T3
+# 档（全仓自扫描/pytest 收集/生成器全簇/CH 对账等分钟级台）；SKIP 不存在的 id 无害，
+# 新增 hook 默认进 Phase-A（快段偏置，正确性无损只多付一次重复执行）。
+_PRECOMMIT_SLOW_TAIL_HOOKS: tuple[str, ...] = (
+    "gate-triple-align",
+    "gate-schema-truth",
+    "gate-zr-zero-residue",
+    "gate-ssot-code",
+    "gate-test",
+    "gate-test-symbol-validity",
+    "gate-errcode-consistency",
+    "gate-21-manifest-drift",
+    "gate-vocab",
+    "gate-16-architecture-compliance",
+    "gate-12-blueprint-provenance",
+    "gate-13-blueprint-overlap",
+    "gate-14-authority-registry",
+    "gate-mcp-contract-consistency",
+    "gate-c2",
+    "gate-codegen-idempotent",
+    "gate-adm-manifest-admission",
+    "gate-script-q",
+    "gate-nested-flat-prefix",
+    "gate-rules-integrity",
+    "ruff-format",
+)
+
+
+def _precommit_fast_subset_enabled() -> bool:
+    """快败子集开关（默认 ON；env ZEPHYR_PRECOMMIT_FAST_SUBSET=0 一键停用——运维手柄）。
+
+    pytest 环境自动 OFF：50-commit 真落地集成套件的时长预算保护（真落地每 commit
+    多付一次 Phase-A 调用会把套件时长乘上数倍）——Phase-A 逻辑由单测覆盖。
+    """
+    if os.environ.get("ZEPHYR_PRECOMMIT_FAST_SUBSET", "1").strip() == "0":
+        return False
+    return "PYTEST_CURRENT_TEST" not in os.environ
+
+
 # 网关通道 SKIP 的 pre-commit hook id（二者与网关通道存在结构性冲突，理由见 _run_precommit_channel docstring）
 _PRECOMMIT_CHANNEL_SKIP_HOOKS = "gate-commit-gw,gate-worktree-required"
 _PRECOMMIT_EXIT_CODE_RE = re.compile(r"- exit code: (\d+)")
@@ -3246,6 +3286,20 @@ class GitCommitGateway:
                 infra_error = self._precommit_build_temp_index(env, rel_existing, rel_deleted)
             if not infra_error:
                 chunks = [rel_existing[i : i + 200] for i in range(0, len(rel_existing), 200)] or [[]]
+                # ── D3 Phase-A 快败子集（st-commitchain-20260922，Owner R3 两段式）──
+                # 确定性 8 hooks 先行：首败即短路全通道——注定违规批次 ~30s 内死，
+                # 而非 55 hooks 全跑（实测 2-10 分钟）后才死；子集输出仍走既有
+                # own/foreign 归因器（_precommit_decide_failure），语义零变化。
+                # 全局 fail_fast 禁用原因：会以 foreign 失败掩蔽 own 失败→误放行。
+                fa_output, fa_rc, fa_infra = "", 0, ""
+                if _precommit_fast_subset_enabled():  # P1-1（红队 0922）：开关必须门住调用本身
+                    fa_output, fa_rc, fa_infra = self._precommit_fast_subset(env, chunks)
+                if not fa_infra and fa_rc != 0:
+                    logger.info(
+                        "GitCommitGateway: precommit fast-subset 命中违规，短路全通道（rc=%d）",
+                        fa_rc,
+                    )
+                    return fa_output, fa_rc, False, infra_error, skipped
                 output, rc, mutation, infra_error = self._precommit_execute(env, chunks)
         finally:
             try:
@@ -3253,6 +3307,46 @@ class GitCommitGateway:
             except OSError:
                 pass
         return output, rc, mutation, infra_error, skipped
+
+    def _precommit_fast_subset(self, env: dict, chunks: list[list[str]]) -> tuple[str, int, str]:
+        """D3 Phase-A：全通道减慢尾（SKIP 反选）单次调用——首败短路全通道。
+
+        单次调用而非逐 hook：逐 hook 会把真落地集成套件时长乘 N 倍（实测 50-commit
+        套件挂死教训）；SKIP 反选一条跑完快段全部 hooks，失败输出照旧交
+        _precommit_decide_failure 归因（语义零变化）。
+
+        Returns:
+            (output, rc, infra_error)。infra_error 非空=子集不可用，调用方降级全通道。
+        """
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+        fa_env = {
+            **env,
+            "SKIP": env.get("SKIP", "") + "," + ",".join(_PRECOMMIT_SLOW_TAIL_HOOKS),
+        }
+        outs: list[str] = []
+        rcs: list[int] = []
+        try:
+            for chunk in chunks:
+                proc = run_subprocess_hidden(
+                    [sys.executable, "-m", "pre_commit", "run", "--files", *chunk],
+                    capture_output=True,
+                    text=True,
+                    encoding="utf-8",
+                    errors="replace",
+                    cwd=str(self.project_root),
+                    env=fa_env,
+                    timeout=300,
+                )
+                rcs.append(proc.returncode)
+                outs.append((proc.stdout or "") + "\n" + (proc.stderr or ""))
+                if proc.returncode != 0:
+                    break  # 首败短路（D3 语义：注定违规批次早死）
+        except subprocess.TimeoutExpired:
+            return "", 0, "fast-subset timeout"
+        except FileNotFoundError as e:
+            return "", 0, f"pre-commit unavailable: {e}"
+        return "\n".join(outs), max(rcs) if rcs else 0, ""
 
     @staticmethod
     def _precommit_classify(

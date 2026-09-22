@@ -81,10 +81,12 @@ commit_preflight.py — 提交通道预检前移（方案 v2.1 P0-A，st-commits
 #   fields: findings: list[PreflightFinding]; blocking: bool; degraded: list[str]; elapsed_ms: float
 #   code: return CommitPreflightResult(...)
 """
+
 from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -131,7 +133,171 @@ PREFLIGHT_GATES: frozenset[str] = frozenset(
         # >500 文件退 --all-files 全量扫描=与锁内权威链同行为（非新增假阳性面），且属罕见大批次。
         # 语义不动：锁内 DIRECTORY-CONTRACT(30) 仍 fail-closed 权威执行，预检只前移快败。
         "DIRECTORY-CONTRACT",
+        # ── D1 预检扩容（st-commitchain-20260922，Owner R1；0921 死信杀手榜前三家族）──
+        # 输入面审计（PASS）：RULING-REFERENCE(74)/ARCH-REFERENCE(75) 经 _reference_helpers.
+        # collect_new_refs_by_file 读 files 磁盘内容 ∪ HEAD registry（git show）——零暂存依赖。
+        # 死信实证：taskcards 0032（引用了裁定#392 的 D 后缀悬空号——后缀未登记即悬空）+ code-doc 20 连败主因，秒级可挡在队外。
+        "RULING-REFERENCE",
+        "ARCH-REFERENCE",
+        # 输入面审计（PASS）：EXEMPT-ZONE-FM(87) _check 直接遍历 files 参数逐文件读磁盘
+        # frontmatter（os.path.isfile + rel 路径）——零暂存依赖。死信实证：0921×11+0922 当日。
+        "EXEMPT-ZONE-FM",
+        # CREATE-GUARD / NO-BARE-SQL 为 staged-diff 依赖型（diff --cached --diff-filter=A /
+        # _get_added_lines），不直接准入——经下方 _INLINE_PREFLIGHT_CHECKS 内联适配层
+        # （磁盘 vs HEAD 等价判定）进预检；TRANSLATION-COVERAGE 适配面大，挂起待复测。
     }
+)
+
+# 内联适配层注册表（st-commitchain-20260922）：(gate_id, check(gateway, files, **kw))。
+# 设计铁律：检测核心=复用 gate 模块既有函数/正则（不造第二检测器，全资产净零 §4.1）；
+# 适配只做「输入面等价替换」（磁盘 vs HEAD 的增行/新文件判定 ≈ 落地时 staged diff，
+# 因入队语义下磁盘内容=快照内容，git_commit.py:797-799 已论证）；预检只快败不豁免，
+# 锁内权威链照跑（本模块 INVARIANTS）。
+_INLINE_PREFLIGHT_CHECKS: list[tuple] = []
+
+
+def _head_tracked_relset(gateway: GitCommitGateway) -> set[str]:
+    """HEAD 已跟踪相对路径集（单次 ls-tree，新文件判定的唯一 git 面——非共享暂存区）。"""
+    out = gateway.run_git(["git", "ls-tree", "-r", "HEAD", "--name-only"])
+    if getattr(out, "returncode", 1) != 0:
+        raise RuntimeError((getattr(out, "stderr", "") or "ls-tree failed")[:200])
+    return {ln.strip() for ln in (out.stdout or "").splitlines() if ln.strip()}
+
+
+def _rel_of(gateway: GitCommitGateway, f: str) -> str:
+    """入队/直连两面统一的仓内相对 posix 路径（绝对反斜杠 CLI 清单 → 仓相对）。
+
+    P2-3/P2-4（红队 0922）：normpath 消 `..` 段；越仓路径返回空串（调用方跳过——
+    git 本就拒收仓外路径，预检不读仓外文件）。
+    """
+    root = Path(str(gateway.project_root))
+    p = Path(os.path.normpath(f))
+    try:
+        rel = p.relative_to(root)
+    except ValueError:
+        try:
+            rel = Path(f).relative_to(root)
+        except ValueError:
+            return ""
+    if any(part == ".." for part in rel.parts):
+        return ""
+    return rel.as_posix()
+
+
+def _head_line_set(gateway: GitCommitGateway, rel: str) -> list[str]:
+    """HEAD 版本行集（新文件=空集）；git 异常按空集处理（预检 fail-open，锁内兜底）。"""
+    try:
+        out = gateway.run_git(["git", "show", f"HEAD:{rel}"])
+        if getattr(out, "returncode", 1) != 0:
+            return []
+        return (
+            (out.stdout or b"").decode("utf-8", errors="replace").splitlines()
+            if isinstance(out.stdout, (bytes, bytearray))
+            else str(out.stdout or "").splitlines()
+        )
+    except Exception:  # noqa: BLE001 — 预检快败优化不因单文件 HEAD 读取失败而炸
+        return []
+
+
+def _check_inline_create_guard(gateway: GitCommitGateway, files: list[str], **kwargs: object) -> tuple[bool, str]:
+    """CREATE-GUARD 入队面等价判定（D1，0921 死信 32 次+0091 磨 116 分钟的病灶前移）。
+
+    新文件判定=files ∖ HEAD ls-tree（*.py / 非 rules *.y*ml / .md/.sh/.ps1/.mmd/.json，
+    tests/ 豁免同锁内口径）；检测核心**原样复用** create_guard._check_creation_token +
+    _check_field_header（不造第二检测器）。磁盘内容=快照内容（入队语义），与落地侧
+    staged-diff 判定等价。
+    """
+    from zephyr.gov_enforcement.commit_gates.create_guard import (  # noqa: PLC0415
+        _check_creation_token,
+        _check_field_header,
+    )
+    from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt  # noqa: PLC0415
+
+    tracked = {os.path.normcase(t) for t in _head_tracked_relset(gateway)}
+    root = Path(str(gateway.project_root))
+    new_py: list[str] = []
+    new_yaml: list[str] = []
+    new_other: list[str] = []
+    for f in files:
+        rel = _rel_of(gateway, f)
+        if not rel:
+            continue
+        # P2-2（红队 0922）：Windows 盘大小写不敏感——normcase 后比对防假红
+        if os.path.normcase(rel) in tracked or is_test_exempt(rel):
+            continue
+        if not (root / rel).is_file():
+            continue  # delete/缺失路径与 token 无关（deletes 通道另行处理）
+        # 契约注记：_check_creation_token/_check_field_header 的路径口径=仓相对 posix
+        # （锁内侧来源 git diff --name-only 即 rel）——绝对路径会永远对不上注册表索引。
+        if rel.endswith(".py"):
+            new_py.append(rel)
+        elif rel.endswith(".yaml") and not rel.startswith(
+            "docs/01_policies_and_standards/rules/"
+        ):  # P2-5：对齐锁内口径（.yaml only）
+            new_yaml.append(rel)
+        elif rel.endswith((".md", ".sh", ".ps1", ".mmd", ".json")):
+            new_other.append(rel)
+    if not (new_py or new_yaml or new_other):
+        return True, ""
+    passed, detail = _check_creation_token(gateway, new_py, new_yaml, new_other)
+    if not passed:
+        return False, detail
+    return _check_field_header(gateway, new_py)
+
+
+def _check_inline_no_bare_sql(gateway: GitCommitGateway, files: list[str], **kwargs: object) -> tuple[bool, str]:
+    """NO-BARE-SQL 入队面等价判定（D1，0921 死信 15 次）。
+
+    增行=磁盘 vs HEAD 的 difflib opcode（精确 added 行）；SQL 识别正则**原样复用**
+    bare_sql_gate._SQL_PATTERN；豁免口径（tests/、_archive、scripts/ch/）与锁内一致。
+    """
+    import difflib  # noqa: PLC0415
+
+    from zephyr.gov_enforcement.commit_gates.bare_sql_gate import _SQL_PATTERN  # noqa: PLC0415
+    from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt  # noqa: PLC0415
+
+    root = Path(str(gateway.project_root))
+    violations: list[str] = []
+    for f in files:
+        rel = _rel_of(gateway, f)
+        if not rel:
+            continue
+        norm = rel.replace("\\", "/")
+        if not norm.endswith(".py") or is_test_exempt(norm):
+            continue
+        if "_archive" in norm or norm.startswith("scripts/ch/"):
+            continue
+        # 注意：tracked 文件不跳过——改动的 tracked 文件其"新增行"同样要检
+        # （锁内 _get_added_lines 对 modify 同样提取增行；此处 difflib 等价）。
+        p = root / rel
+        if not p.is_file():
+            continue
+        disk_lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
+        head_lines = _head_line_set(gateway, rel)
+        if len(disk_lines) > 20000:
+            continue  # P1-2（红队 0922：10 万行实测 63s）超长文件跳过快段，锁内权威链兜底
+        sm = difflib.SequenceMatcher(a=head_lines, b=disk_lines)  # 默认 autojunk 启发式防二次方退化
+        added: list[str] = []
+        for tag, _i1, _i2, j1, j2 in sm.get_opcodes():
+            if tag in ("insert", "replace"):
+                added.extend(disk_lines[j1:j2])
+        for line in added:
+            if _SQL_PATTERN.search(line):
+                violations.append(f"{norm}: {line.strip()[:120]}")
+                break  # 每文件报首条（锁内权威链给全量，预检只定快败）
+    if violations:
+        return False, (
+            "NO-BARE-SQL 预检（入队面等价判定）：新增行含裸 SQL 字面量（§5.160.2 SQL 集中化）\n  "
+            + "\n  ".join(violations[:5])
+        )
+    return True, ""
+
+
+_INLINE_PREFLIGHT_CHECKS.extend(
+    [
+        ("CREATE-GUARD", _check_inline_create_guard),
+        ("NO-BARE-SQL", _check_inline_no_bare_sql),
+    ]
 )
 
 #: 违规→逃生旗提示映射（与 git_commit.py argparse 一一对应；无旗=真违规须修）。
@@ -163,6 +329,18 @@ _ESCAPE_HINTS: dict[str, str] = {
         "③其余→查 directory_contract.yaml 该路径 directory_extensions.allowed 改用合规扩展名。"
         "注：docs/_working/ allowed 净增 .json=Owner 门位（见 F5 裁定书提案，勿自签）"
     ),
+    # ── D1 新增逃生旗提示（st-commitchain-20260922）──
+    "RULING-REFERENCE": (
+        "ruling_registry.yaml 补登对应 裁定#NNN 条目（同 commit 原子，RULE-RULING）"
+        "或修正/移除引用；带字母后缀（#392-D）同样必须登记"
+    ),
+    "ARCH-REFERENCE": "architecture_issue_registry.yaml 补登 #ARCH-NNN 条目或修正引用（登记册禁凭空造册）",
+    "EXEMPT-ZONE-FM": "豁免区文件（docs/_working 等）frontmatter 只带 ttl 禁 doc_type——按 gate 消息修正头",
+    "CREATE-GUARD": (
+        "新建资产先登记 token：python scripts/governance/d3_metadata/batch_creation_tokens.py "
+        "--prefix <目录> --created-by <本会话> --capability <能力名>（.py 另需 14 字段头；token 批与内容同批或先行落地）"
+    ),
+    "NO-BARE-SQL": "SQL 提取到模块级常量或 TableRegistry/专用集中化文件；存量伪新增加行尾 # noqa: bare-sql <reason≥10字>",
 }
 
 _AUDIT_PATH = Path(".runtime/audit/preflight_events.jsonl")
@@ -213,7 +391,7 @@ class CommitPreflightResult:
         return "\n".join(lines)
 
 
-def _write_audit(gateway: Any, record: dict) -> None:
+def _write_audit(gateway: GitCommitGateway, record: dict) -> None:
     """审计落 .runtime/audit/preflight_events.jsonl（失败静默，不阻断主链路）。"""
     try:
         from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
@@ -228,12 +406,12 @@ def _write_audit(gateway: Any, record: dict) -> None:
 
 
 def run_preflight(
-    gateway: "GitCommitGateway",
+    gateway: GitCommitGateway,
     files: list[str],
     session_id: str,
     skip_gate_ids: frozenset[str] | set[str] = frozenset(),
     *,
-    specs: "list[GateSpec] | None" = None,
+    specs: list[GateSpec] | None = None,
     audit_event: str = "direct",
     commit_message: str = "",
 ) -> CommitPreflightResult:
@@ -264,7 +442,9 @@ def run_preflight(
         for spec in targets:
             try:
                 result = spec.check(gateway, list(files), session_id=session_id, commit_message=commit_message)
-                passed, detail = (result[0], result[1] if len(result) > 1 else "") if isinstance(result, tuple) else (True, "")
+                passed, detail = (
+                    (result[0], result[1] if len(result) > 1 else "") if isinstance(result, tuple) else (True, "")
+                )
                 if not passed:
                     findings.append(
                         PreflightFinding(
@@ -276,9 +456,26 @@ def run_preflight(
             except Exception:  # noqa: BLE001 — 设施异常降级不阻断（锁内权威链兜底）
                 degraded.append(spec.gate_id)
                 logger.warning("preflight gate %s degraded（不阻断，锁内兜底）", spec.gate_id, exc_info=True)
+        # D1 内联适配层（staged-diff 依赖型 T0 门禁的入队面等价判定；失败语义与 specs 同款）
+        for gate_id, fn in _INLINE_PREFLIGHT_CHECKS:
+            if gate_id in skip_gate_ids:
+                continue
+            try:
+                passed, detail = fn(gateway, list(files), session_id=session_id, commit_message=commit_message)
+                if not passed:
+                    findings.append(
+                        PreflightFinding(
+                            gate_id=gate_id, detail=str(detail), escape_hint=_ESCAPE_HINTS.get(gate_id, "")
+                        )
+                    )
+            except Exception:  # noqa: BLE001 — 设施异常降级不阻断（锁内权威链兜底）
+                degraded.append(gate_id)
+                logger.warning("preflight inline gate %s degraded（不阻断，锁内兜底）", gate_id, exc_info=True)
     except Exception:  # noqa: BLE001 — 预检整体异常=放行走锁内现行路径
         logger.warning("preflight 自身异常，降级放行（锁内权威链兜底）", exc_info=True)
-        return CommitPreflightResult(findings=[], degraded=["__preflight__"], elapsed_ms=round((time.monotonic() - t0) * 1000, 1))
+        return CommitPreflightResult(
+            findings=[], degraded=["__preflight__"], elapsed_ms=round((time.monotonic() - t0) * 1000, 1)
+        )
     elapsed_ms = round((time.monotonic() - t0) * 1000, 1)
     _write_audit(
         gateway,
