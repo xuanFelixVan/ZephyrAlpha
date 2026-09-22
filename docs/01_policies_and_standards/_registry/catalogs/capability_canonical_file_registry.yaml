@@ -43894,4 +43894,9 @@ creation_tokens:
   token: "auto-ibt-20260922-041"
   created_by: "st-integrated-bt-20260922"
   capability: "integrated_backtest_first_run"
+- file: docs/_working/xhs_full_construction/00_owner_directive.md
+  token: xhs-full-construction-00-owner-directive-20260922
+  created_by: st-xhs-full-20260922
+  capability: xhs_full_construction
+  merge_evaluation: "Owner总包令施工目录；战役收官随目录整体归档，并入collection_intake台账域，无重复真源"
 di_seam_exemptions: []
