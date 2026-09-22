@@ -691,19 +691,19 @@ gates:
   register_line: 0  # priority=47；2026-08-23 陈旧快照覆写事故治本（claim_head 锚点 vs 当前 HEAD：热文件上游已推进则阻断，与 safe_write_text CAS 文件级防线互补）
   enabled: true
 - gate_id: STATE-VOCAB-REGISTRY
-  module_path: zephyr.gov_enforcement.commit_gates.state_vocab_registry_gate
+  module_path: zephyr.gov_enforcement.commit_gates.library.state_vocab_registry_gate
   factory_function: make_state_vocab_registry_gate
   source: in_process
   register_line: 0  # priority=135；2026-09-22 词表 SSOT 制度 W3 执行门（Owner 批，观察期 warn-only——staged .py 状态枚举类未登记 state_vocabulary_registry.yaml 则 WARN+审计放行；注册表缺失 fail-open；STATE_VOCAB_GATE_MODE 翻 "block" 升硬）
   enabled: true
 - gate_id: TAG-VOCAB
-  module_path: zephyr.gov_enforcement.commit_gates.tag_vocab_gate
+  module_path: zephyr.gov_enforcement.commit_gates.library.tag_vocab_gate
   factory_function: make_tag_vocab_gate
   source: in_process
   register_line: 0  # priority=134；2026-09-22 图书馆标签枚举门（ulib3 T7，st-ulib3-20260922，观察期 warn-only——staged catalogs yaml 的 tags 非枚举词/别名冲突则 WARN+审计放行；词库缺失 fail-open；TAG_VOCAB_GATE_MODE 翻 "block" 升硬）
   enabled: true
 - gate_id: BLOOD-FLESH
-  module_path: zephyr.gov_enforcement.commit_gates.library_blood_flesh_gate
+  module_path: zephyr.gov_enforcement.commit_gates.library.library_blood_flesh_gate
   factory_function: make_library_blood_flesh_gate
   source: in_process
   register_line: 0  # priority=133；2026-09-22 新资产登记必填血肉门（ulib3 T8，st-ulib3-20260922，观察期 warn-only——staged 新增 .py 翻译条目缺 name_zh/翻译册新增条目缺 name_zh+plain_zh 则 WARN+审计放行；loader 不可达 fail-open；BLOOD_FLESH_GATE_MODE 翻 "block" 升硬）
@@ -751,10 +751,10 @@ gates:
   register_line: 0  # priority=142；2026-09-13 策略生产全景图（图 9）结构门禁：触发式（图 YAML/校验器真源变更），v0.2 schema 结构十项校验（单一真源=validate_strategy_production_map.validate_structure 动态复用，禁复制）；仓储存在性（含 CH 连通性）不入 gate——归 align_all 第八节（CH fail-open）与 CLI 校验器；YAML 损坏 fail-closed；测试 tests/governance/commit_gates/test_strategy_factory_map_gate.py
   enabled: true
 - gate_id: REGISTRY-MASS-DELETION
-  module_path: zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate
+  module_path: zephyr.gov_enforcement.commit_gates.registry_family.registry_mass_deletion_gate
   factory_function: make_registry_mass_deletion_gate
   source: in_process
-  register_line: 0  # priority=140；2026-09-09 登记表 mass-deletion 门禁（2026-09-09 夜 4703 行蒸发治本第二道保险：净删行/条目数减少阻断，message 标记 [allow-mass-deletion:reason>=10字] 白名单放行+审计；配套 scripts/governance/registry_batch_edit.py 纯插入工具为第一道保险；测试 tests/governance/commit_gates/test_registry_batch_edit_and_mass_deletion_gate.py）
+  register_line: 0  # priority=140；2026-09-09 登记表 mass-deletion 门禁（2026-09-09 夜 4703 行蒸发治本第二道保险：净删行/条目数减少阻断，message 标记 [allow-mass-deletion:reason>=10字] 白名单放行+审计；配套 scripts/governance/registry_batch_edit.py 纯插入工具为第一道保险；测试 tests/governance/commit_gates/test_registry_batch_edit_and_mass_deletion_gate.py）；2026-09-23 模块迁 commit_gates/registry_family/ 子目录（FOLDER-CAPACITY 121>120 共堵治理，laneA）
   enabled: true
 - gate_id: REGISTRY-YAML-PARSE
   module_path: zephyr.gov_enforcement.commit_gates.registry_yaml_parse_gate
