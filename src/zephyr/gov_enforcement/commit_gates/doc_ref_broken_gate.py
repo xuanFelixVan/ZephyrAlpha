@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .md 文件中 markdown 链接的相对路径指向不存在文件时阻断 commit；只检测新增文件（diff-filter=A）；in-process 正则 + os.path.exists 检测；URL/锚点/file:/// 链接正确解析（绝对路径不当相对路径误判，#ARCH-DOC-REF-FILE-URL）；草稿/归档区跳过目录豁免（对齐 N-16 skip_dirs_docs SSoT，#ARCH-DOC-REF-BROKEN-SKIP）；文件读取失败 fail-open（logger.warning）；观测面=git 仓库态（裁定#279 同盲区家族清偿 2026-09-17）：内容读 staged blob、链接目标存在性走 index（磁盘只作降级补充+告警）——序列化器落地 worktree 未 checkout 的同批目标文件不再误报断链；基线差分豁免=只测新增 .md，违规必然属本次
+# [INVARIANTS] 硬阻断——staged 新增 .md 文件中 markdown 链接的相对路径指向不存在文件时阻断 commit；只检测新增文件（diff-filter=A）；in-process 正则 + os.path.exists 检测；URL/锚点/file:/// 链接正确解析（绝对路径不当相对路径误判，#ARCH-DOC-REF-FILE-URL）；草稿/归档区跳过目录豁免（对齐 N-16 skip_dirs_docs SSoT，#ARCH-DOC-REF-BROKEN-SKIP）；文件读取失败 fail-open（logger.warning）；观测面=git 仓库态（裁定#279 同盲区家族清偿 2026-09-17）：内容读 staged blob、链接目标存在性走 index（磁盘只作降级补充+告警）——序列化器落地 worktree 未 checkout 的同批目标文件不再误报断链；基线差分豁免=只测新增 .md，违规必然属本次；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="DOC-REF-BROKEN"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -68,6 +68,7 @@ import yaml
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _read_staged_file,
     _repo_state_has_file,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -326,6 +327,10 @@ def make_doc_ref_broken_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged 新增 .md 文件（None 表示 fail-open 检测器失效）
         new_md_files = _get_staged_new_md_files(gateway)
+        if not new_md_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        new_md_files = _split_own_foreign(gateway, new_md_files, files, kwargs.get("session_id"), gate_name="DOC-REF-BROKEN")[0]
         if not new_md_files:
             return True, ""
 

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件含词表硬编码时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不检测修改文件（避免基线 13 个存量违规划死工作流，存量违规由第2期批量修复）；检测真源=check_vocab_hardcode.py（subprocess 调用 --files --ci），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_vocab_hardcode.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断——脚本故障是环境异常非违规）；exit 1（检出违规）时硬阻断；worktree 适配——通过 git rev-parse --show-toplevel 获取 worktree root 作为 subprocess cwd
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件含词表硬编码时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不检测修改文件（避免基线 13 个存量违规划死工作流，存量违规由第2期批量修复）；检测真源=check_vocab_hardcode.py（subprocess 调用 --files --ci），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_vocab_hardcode.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断——脚本故障是环境异常非违规）；exit 1（检出违规）时硬阻断；worktree 适配——通过 git rev-parse --show-toplevel 获取 worktree root 作为 subprocess cwd；own 化 2026-09-23(st-gslim P2)：只送检本 session 新增文件，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="VOCAB-HARDCODE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -59,6 +59,7 @@ import logging
 import os
 import subprocess
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
@@ -187,6 +188,12 @@ def make_vocab_hardcode_gate() -> GateSpec:
         # 1. 获取 staged 新增 .py 文件
         new_py_files = _get_staged_new_py_files(gateway)
         if new_py_files is None or not new_py_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只送检本 session 新增文件，外来 warn+审计不阻断
+        new_py_files = _split_own_foreign(
+            gateway, new_py_files, files, kwargs.get("session_id"), gate_name="VOCAB-HARDCODE"
+        )[0]
+        if not new_py_files:
             return True, ""
 
         # 2. 获取 worktree root（worktree 模式下 cwd 是 worktree，文件在 worktree 文件系统）

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件含纯 re-export shim（star import + 无实质代码）时阻断 commit（passed=False）；检测所有 staged .py（新增+修改），因修改文件也可能被退化为 shim；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；__init__.py 豁免由 check_pure_shim.is_pure_reexport_shim() 内部处理（包聚合豁免）；检测真源=check_pure_shim.py（subprocess 调用 --ci），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_pure_shim.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断——脚本故障是环境异常非违规）；exit 1（检出违规）时硬阻断
+# [INVARIANTS] 硬阻断——staged .py 文件含纯 re-export shim（star import + 无实质代码）时阻断 commit（passed=False）；检测所有 staged .py（新增+修改），因修改文件也可能被退化为 shim；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；__init__.py 豁免由 check_pure_shim.is_pure_reexport_shim() 内部处理（包聚合豁免）；检测真源=check_pure_shim.py（subprocess 调用 --ci），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_pure_shim.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断——脚本故障是环境异常非违规）；exit 1（检出违规）时硬阻断；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="PURE-SHIM"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -60,6 +60,7 @@ import os
 import subprocess
 import sys
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
@@ -210,6 +211,10 @@ def make_pure_shim_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取所有 staged .py 文件（新增+修改）
         staged_py = _get_staged_py_files(gateway)
+        if not staged_py:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        staged_py = _split_own_foreign(gateway, staged_py, files, kwargs.get("session_id"), gate_name="PURE-SHIM")[0]
         if not staged_py:
             return True, ""
 

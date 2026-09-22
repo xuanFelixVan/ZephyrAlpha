@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——检测 staged mcp.json 文件顶层缺 version 字段时阻断（5.35 API 版本管理防复发）；非 .py 检测面（JSON 存在性检查）；json.loads 失败 fail-open（由其他 gate 管 JSON 完整性）；git diff 不可达 fail-open；检出违规则 fail-closed 阻断（passed=False）；无 noqa（存在性检查无行级豁免语义）
+# [INVARIANTS] 硬阻断——检测 staged mcp.json 文件顶层缺 version 字段时阻断（5.35 API 版本管理防复发）；非 .py 检测面（JSON 存在性检查）；json.loads 失败 fail-open（由其他 gate 管 JSON 完整性）；git diff 不可达 fail-open；检出违规则 fail-closed 阻断（passed=False）；无 noqa（存在性检查无行级豁免语义）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="MCP-VERSION-FIELD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -59,7 +59,7 @@ from __future__ import annotations
 import json
 import logging
 
-from zephyr.gov_enforcement.commit_gates._diff_helpers import _read_staged_file
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _read_staged_file, _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -163,6 +163,11 @@ def make_mcp_version_field_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged added/modified 文件（全部类型，非 .py 过滤）
         staged = _get_staged_files(gateway)
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        staged = _split_own_foreign(gateway, staged, files, kwargs.get("session_id"), gate_name="MCP-VERSION-FIELD")[0]
+        if not staged:
+            return True, ""
+
         if staged is None:
             return True, ""  # fail-open
 

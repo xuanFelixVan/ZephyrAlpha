@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件重命名（diff-filter=R）的新路径在 depgraph nodes 表无对应 file_path 记录时阻断 commit；只检测 .py 文件重命名（depgraph 主要追踪 .py 模块）；DB 不可达时 fail-open（logger.warning，不阻断业务）；只读查询（read_only=True）；检测 deprecated 节点豁免（build_status='deprecated' 的旧路径不计为"已同步"）
+# [INVARIANTS] 硬阻断——staged .py 文件重命名（diff-filter=R）的新路径在 depgraph nodes 表无对应 file_path 记录时阻断 commit；只检测 .py 文件重命名（depgraph 主要追踪 .py 模块）；DB 不可达时 fail-open（logger.warning，不阻断业务）；只读查询（read_only=True）；检测 deprecated 节点豁免（build_status='deprecated' 的旧路径不计为"已同步"）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="RENAME-DEPGRAPH-SYNC"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -69,6 +69,7 @@ from __future__ import annotations
 
 import logging
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _build_own_scope, _norm_rel, _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -181,6 +182,12 @@ def make_rename_depgraph_sync_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged 重命名 .py 文件（None 表示 fail-open 检测器失效）
         renames = _get_staged_renamed_py_files(gateway)
+        if not renames:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只查本 session 重命名（新旧路径任一归属即算自家），外来 warn+审计不阻断
+        own_renames = _split_own_foreign(gateway, [n for _, n in renames], files, kwargs.get("session_id"), gate_name="RENAME-DEPGRAPH-SYNC")[0]
+        own_new = set(own_renames)
+        renames = [(o, n) for o, n in renames if n in own_new]
         if not renames:
             return True, ""
 

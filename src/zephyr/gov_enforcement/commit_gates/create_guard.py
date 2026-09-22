@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -149,6 +149,7 @@ import time
 
 import yaml
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.governance.rule_patterns import RULE_NAME_RE
 from zephyr.shared.utils.time_utils import now_utc
@@ -893,10 +894,17 @@ def make_create_guard() -> GateSpec:
         if staged_new is None:
             return False, detail
 
-        # ARCH-037：rules/ .yaml 命名格式硬阻断
+        # ARCH-037：rules/ .yaml 命名格式硬阻断（须在 own 拆分前：rename 检测面在
+        # git R 清单，且内部已按 commit_files_rel 过滤=own 语义，不依赖 staged_new）
         passed, detail = _check_rule_yaml_naming(gateway, staged_new, commit_files_rel)
         if not passed:
             return False, detail
+
+        # own 化（st-gslim-20260923 P2）：登记链只对本 session 新增文件，外来 warn+审计不阻断
+        # （§3.1 他会话在途违规不代修；骑乘本体由 FOREIGN-CHANGE-DETECTION 全暂存台负责。
+        # 不设早退：下游 ARCH-031 governance 根 R-rename 检测直读 git 清单，空 staged_new
+        # 时也必须执行（rename 绕过 --diff-filter=A 的反绕过面）；空清单由其后既有守卫放行）
+        staged_new = _split_own_foreign(gateway, staged_new, files, kwargs.get("session_id"), gate_name="CREATE-GUARD")[0]
 
         # 过滤 .py / .yaml + 豁免 tests/（真源：commit_gate_registry.is_test_exempt）
         new_py_files, new_yaml_files = _filter_new_py_and_yaml(staged_new)

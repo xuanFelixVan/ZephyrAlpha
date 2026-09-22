@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件与已有同名文件 AST 归一化相似度>70%时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不检测修改文件（避免基线 159 对存量重复卡死工作流，存量违规由第2期批量修复）；检测真源=check_code_duplication.py（subprocess 调用 --files --ast --threshold 0.7），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_code_duplication.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断）；exit 1（检出违规）时硬阻断；路径解析对标 gateway.project_root（主仓库根，非 worktree root）——因 check_code_duplication.py 扫描主仓库已有文件做比对，新文件在主仓库工作树存在（AI 用 Write/Edit 写项目根，session_worktree_commit 复制到 worktree），主仓库路径使 script 的 new_resolved 排除集正确排除新文件自身
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件与已有同名文件 AST 归一化相似度>70%时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不检测修改文件（避免基线 159 对存量重复卡死工作流，存量违规由第2期批量修复）；检测真源=check_code_duplication.py（subprocess 调用 --files --ast --threshold 0.7），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_code_duplication.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断）；exit 1（检出违规）时硬阻断；路径解析对标 gateway.project_root（主仓库根，非 worktree root）——因 check_code_duplication.py 扫描主仓库已有文件做比对，新文件在主仓库工作树存在（AI 用 Write/Edit 写项目根，session_worktree_commit 复制到 worktree），主仓库路径使 script 的 new_resolved 排除集正确排除新文件自身；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="FILE-COPY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -62,6 +62,7 @@ import logging
 import os
 import subprocess
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
@@ -183,6 +184,10 @@ def make_file_copy_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged 新增 .py 文件（fail-open 时返回 []）
         new_py_files = _get_staged_new_py_files(gateway)
+        if not new_py_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        new_py_files = _split_own_foreign(gateway, new_py_files, files, kwargs.get("session_id"), gate_name="FILE-COPY")[0]
         if not new_py_files:
             return True, ""
 

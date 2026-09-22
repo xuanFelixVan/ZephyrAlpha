@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py added 行含 DOMAIN_NAME_ZH 字典直接访问(.get(/[/pop/items/keys/values)时阻断 commit(passed=False)；定义文件 domain_name_mapping.py 豁免(SSoT 定义位置)；tests/ 豁免；import/注释/docstring 行豁免；git diff 不可达 fail-open(logger.warning)；检出违规则 fail-closed(passed=False)
+# [INVARIANTS] 硬阻断——staged .py added 行含 DOMAIN_NAME_ZH 字典直接访问(.get(/[/pop/items/keys/values)时阻断 commit(passed=False)；定义文件 domain_name_mapping.py 豁免(SSoT 定义位置)；tests/ 豁免；import/注释/docstring 行豁免；git diff 不可达 fail-open(logger.warning)；检出违规则 fail-closed(passed=False)；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="NO-DOMAIN-NAME-ZH-DIRECT-ACCESS"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -76,6 +76,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _is_exempt_line,
     _parse_diff_with_line_numbers,
     _read_staged_file,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -165,6 +166,10 @@ def make_domain_name_zh_direct_access_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         py_files = _collect_staged_py_files(gateway)
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="NO-DOMAIN-NAME-ZH")[0]
+        if not py_files:
+            return True, ""
         if not py_files:
             return True, ""
 

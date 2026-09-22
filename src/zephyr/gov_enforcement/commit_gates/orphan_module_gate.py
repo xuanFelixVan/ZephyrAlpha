@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 src/ 路径 .py 模块在代码库中无任何 import 引用时阻断 commit（死代码，违反"新AI可发现性"原则）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测 src/ 路径新增文件（diff-filter=A + startswith src/，与 git grep 搜索范围 src/**/*.py 一致——治本 ARCH-TTL-DOC-001）；入口文件豁免（__main__/__init__/main/conftest/scripts/ 含 __main__ 块）；subprocess git grep 检测引用；超时/异常 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged 新增 src/ 路径 .py 模块在代码库中无任何 import 引用时阻断 commit（死代码，违反"新AI可发现性"原则）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测 src/ 路径新增文件（diff-filter=A + startswith src/，与 git grep 搜索范围 src/**/*.py 一致——治本 ARCH-TTL-DOC-001）；入口文件豁免（__main__/__init__/main/conftest/scripts/ 含 __main__ 块）；subprocess git grep 检测引用；超时/异常 fail-open（logger.warning）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="ORPHAN-MODULE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -68,6 +68,7 @@ import logging
 import os
 import subprocess
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -304,6 +305,10 @@ def make_orphan_module_gate() -> GateSpec:
         if collected is None:
             return True, ""
         abs_files, wt_root = collected
+        if not abs_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只查本 session 新增文件，外来 warn+审计不阻断
+        abs_files = _split_own_foreign(gateway, abs_files, files, kwargs.get("session_id"), gate_name="ORPHAN-MODULE")[0]
         if not abs_files:
             return True, ""
         violations = _detect_orphans(gateway, abs_files, wt_root)

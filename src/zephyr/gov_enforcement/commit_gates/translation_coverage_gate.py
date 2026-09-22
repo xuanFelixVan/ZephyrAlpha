@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 检测 staged 新增 .py 文件（src/zephyr/ + scripts/ 下，tests/ 豁免）在 module_translation_registry.yaml 有非空且非通用模板的 plain_zh 大白话简介；翻译真源不可达时 fail-open（环境异常非违规，对标 NEW-FILE-DEPGRAPH-ENFORCEMENT）；_OBSERVATION_PERIOD=False 硬阻断模式（2026-08-02 观察期结束，drift 已清零转 fail-closed）；只读查询（loader 只读 YAML）；bootstrap 豁免——只检测本次 commit 新增文件，现有全量条目不受影响
+# [INVARIANTS] 检测 staged 新增 .py 文件（src/zephyr/ + scripts/ 下，tests/ 豁免）在 module_translation_registry.yaml 有非空且非通用模板的 plain_zh 大白话简介；翻译真源不可达时 fail-open（环境异常非违规，对标 NEW-FILE-DEPGRAPH-ENFORCEMENT）；_OBSERVATION_PERIOD=False 硬阻断模式（2026-08-02 观察期结束，drift 已清零转 fail-closed）；只读查询（loader 只读 YAML）；bootstrap 豁免——只检测本次 commit 新增文件，现有全量条目不受影响；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="TRANSLATION-COVERAGE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -77,6 +77,7 @@ import os
 import re
 import sys
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -270,6 +271,10 @@ def make_translation_coverage_gate() -> GateSpec:
 
         # 2. 获取 staged 新增 .py 文件（None=fail-open 检测器失效）
         new_py_files = _get_staged_new_py_files(gateway)
+        if not new_py_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        new_py_files = _split_own_foreign(gateway, new_py_files, files, kwargs.get("session_id"), gate_name="TRANSLATION-COVERAGE")[0]
         if not new_py_files:
             return True, ""
 

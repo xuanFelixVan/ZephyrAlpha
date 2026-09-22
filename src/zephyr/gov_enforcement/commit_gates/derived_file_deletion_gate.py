@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 删除受保护派生文件时阻断 commit；allow_derived_deletion=True 时放行（逃生通道）；git diff 不可达 fail-open（不阻断 commit，治标不卡死工作流）；受保护清单为 frozenset，扩展经本模块 _PROTECTED_DERIVED_FILES 追加（P1.5 将迁移至 YAML 真源）
+# [INVARIANTS] 硬阻断——staged 删除受保护派生文件时阻断 commit；allow_derived_deletion=True 时放行（逃生通道）；git diff 不可达 fail-open（不阻断 commit，治标不卡死工作流）；受保护清单为 frozenset，扩展经本模块 _PROTECTED_DERIVED_FILES 追加（P1.5 将迁移至 YAML 真源）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="DERIVED-FILE-DELETION-PROTECTION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -76,6 +76,7 @@ from __future__ import annotations
 import logging
 import os
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _build_own_scope, _norm_rel, _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -148,6 +149,9 @@ def make_derived_file_deletion_gate() -> GateSpec:
             return True, ""
 
         deleted = _collect_staged_deletions(gateway)
+        if deleted:
+            # own 化（st-gslim-20260923 P2）：只管本 session 删除，外来 warn+审计不阻断
+            deleted = set(_split_own_foreign(gateway, sorted(deleted), files, kwargs.get("session_id"), gate_name="DERIVED-FILE-DELETION")[0])
         if deleted is None:
             # fail-open：git diff 不可达，不阻断 commit（治标不卡死工作流）
             return True, ""

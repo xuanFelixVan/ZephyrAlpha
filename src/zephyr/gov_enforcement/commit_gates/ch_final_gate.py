@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——① staged 新增/修改 .py 直接调用 ch_writer.query() 时阻断（应改用 ch_reader.query() 自动注入 FINAL）；②staged .py 内字符串常量硬编码 `FROM <db>.<tbl>` 且该表引擎为 ReplacingMergeTree 而文本内无 FINAL、容器内无 ch_reader/inject_final 载体时阻断（覆盖 DatabaseService.get_clickhouse_conn().execute() 直连面，own-diff 作用域）; ch_reader.py/ch_writer.py 豁免; tests/ 豁免; 新增文件全文件 AST 检测; 修改文件检测 staged diff 新增行文本模式; AST/git 异常 fail-open; 引擎解析失败（CH 不可达）记 WARNING 出声、不静默放行
+# [INVARIANTS] 硬阻断——① staged 新增/修改 .py 直接调用 ch_writer.query() 时阻断（应改用 ch_reader.query() 自动注入 FINAL）；②staged .py 内字符串常量硬编码 `FROM <db>.<tbl>` 且该表引擎为 ReplacingMergeTree 而文本内无 FINAL、容器内无 ch_reader/inject_final 载体时阻断（覆盖 DatabaseService.get_clickhouse_conn().execute() 直连面，own-diff 作用域）; ch_reader.py/ch_writer.py 豁免; tests/ 豁免; 新增文件全文件 AST 检测; 修改文件检测 staged diff 新增行文本模式; AST/git 异常 fail-open; 引擎解析失败（CH 不可达）记 WARNING 出声、不静默放行；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="CH-FINAL-GATE"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -51,9 +51,12 @@ import os
 import re
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
+    _build_own_scope,
     _extract_noqa_lines,
     _get_added_lines,
     _make_noqa_pattern,
+    _norm_rel,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -445,8 +448,15 @@ def make_ch_final_gate() -> GateSpec:
         py_files = _get_staged_py_files(gateway)
         if not py_files:
             return True, ""
+        # own 化（st-gslim-20260923 P2）：只检本 session staged，外来 warn+审计不阻断
+        py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="CH-FINAL-GATE")[0]
+        if not py_files:
+            return True, ""
         wt_root = _get_wt_root(gateway)
         added_set = _get_added_set(gateway)
+        own_scope = _build_own_scope(gateway, files, kwargs.get("session_id"))
+        if own_scope is not None:
+            added_set = {f for f in added_set if _norm_rel(gateway, f) in own_scope}
         violations = _scan_violations(gateway, py_files, added_set, wt_root)
         if not violations:
             return True, ""

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (via gate_auto_registrar YAML 驱动自动注册)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged blueprint.md 中出现 node_id=数字/edge_id=数字 硬编码时阻断 commit；检测 staged 新增+修改的 blueprint.md（--diff-filter=AM）；subprocess 调用 check_doc_node_id_hardcode.py --ci --files（检测逻辑 SSoT 在 check_doc_node_id_hardcode.py，本 gate 是 thin wrapper 不重复检测逻辑）；脚本缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断——脚本故障是环境异常非违规）；exit 1（检出违规）时硬阻断
+# [INVARIANTS] 硬阻断——staged blueprint.md 中出现 node_id=数字/edge_id=数字 硬编码时阻断 commit；检测 staged 新增+修改的 blueprint.md（--diff-filter=AM）；subprocess 调用 check_doc_node_id_hardcode.py --ci --files（检测逻辑 SSoT 在 check_doc_node_id_hardcode.py，本 gate 是 thin wrapper 不重复检测逻辑）；脚本缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断——脚本故障是环境异常非违规）；exit 1（检出违规）时硬阻断；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="BLUEPRINT-NODE-ID-HARDCODE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -72,6 +72,7 @@ import sys
 from typing import Final
 
 # 共享 _get_worktree_root（避免 FUNCTION-DUP 重复——与 doc_ref_broken_gate.py 共用）
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.commit_gates.doc_ref_broken_gate import _get_worktree_root
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
@@ -225,6 +226,10 @@ def make_blueprint_node_id_hardcode_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged blueprint.md 文件（None 表示 fail-open 检测器失效）
         staged_bp_files = _get_staged_blueprint_files(gateway)
+        if not staged_bp_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        staged_bp_files = _split_own_foreign(gateway, staged_bp_files, files, kwargs.get("session_id"), gate_name="BLUEPRINT-NODE-ID-HARDCODE")[0]
         if not staged_bp_files:
             return True, ""
 

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 业务注册表代码锚点门禁; staged注册表或代码删除/改名时触发; fail-open(脚本异常); fail-closed(违规阻断)
+# [INVARIANTS] 业务注册表代码锚点门禁; staged注册表或代码删除/改名时触发; fail-open(脚本异常); fail-closed(违规阻断); own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="REGISTRY-CODE-ANCHOR"; #ARCH-BREG-002 门禁A
 # [STABILITY] evolving
 # [SAFETY] L
@@ -52,6 +52,7 @@ import re
 import subprocess
 from pathlib import Path
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _build_own_scope, _norm_rel, _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
@@ -181,6 +182,9 @@ def make_registry_code_anchor_gate() -> GateSpec:
 
         staged_regs = _staged_registry_files(files, project_root)
         deleted_py = _deleted_or_renamed_py(gateway)
+        # own 化（st-gslim-20260923 P2）：删除/改名反查只对本 session，外来 warn+审计不阻断
+        if deleted_py:
+            deleted_py = _split_own_foreign(gateway, deleted_py, files, kwargs.get("session_id"), gate_name="REGISTRY-CODE-ANCHOR")[0]
 
         if not staged_regs and not deleted_py:
             return True, ""

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py/.yaml/.yml/.json/.toml 文件 added 行含硬编码密钥/Token/凭证（sk-/AKIA/ghp_/KEY="value" 等）时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；.env.example 豁免；密钥扫描脚本自身豁免（含模式字面量）；docstring/注释/import 行豁免（.py via _diff_helpers）；git diff 不可达 fail-open（logger.warning）；检出违规则 fail-closed（passed=False）
+# [INVARIANTS] 硬阻断——staged .py/.yaml/.yml/.json/.toml 文件 added 行含硬编码密钥/Token/凭证（sk-/AKIA/ghp_/KEY="value" 等）时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；.env.example 豁免；密钥扫描脚本自身豁免（含模式字面量）；docstring/注释/import 行豁免（.py via _diff_helpers）；git diff 不可达 fail-open（logger.warning）；检出违规则 fail-closed（passed=False）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="NO-SECRET-HARDCODE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -75,6 +75,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _is_exempt_line,
     _parse_diff_with_line_numbers,
     _read_staged_file,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -226,6 +227,10 @@ def make_secret_hardcode_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         staged_files = _collect_staged_files(gateway)
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        staged_files = _split_own_foreign(gateway, staged_files, files, kwargs.get("session_id"), gate_name="NO-SECRET-HARDCODE")[0]
+        if not staged_files:
+            return True, ""
         if not staged_files:
             return True, ""
 

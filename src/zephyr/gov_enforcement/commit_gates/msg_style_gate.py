@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息含 Unicode 箭头 ->（U+2192）或以中文句号 。（U+3002）结尾时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `noqa: MSG-STYLE` 注释的单行豁免
+# [INVARIANTS] 硬阻断——staged 新增/修改 .py 文件的 raise 语句异常消息含 Unicode 箭头 ->（U+2192）或以中文句号 。（U+3002）结尾时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；行尾含 `noqa: MSG-STYLE` 注释的单行豁免；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="MSG-STYLE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -62,6 +62,7 @@ import ast
 import logging
 import os
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -302,6 +303,10 @@ def make_msg_style_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         py_files = _get_staged_py_files(gateway)
+        if not py_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="MSG-STYLE")[0]
         if not py_files:
             return True, ""
 

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增+修改 .py 文件含裸 os.getenv/os.environ.get/os.environ["KEY"] 读取密钥类变量时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；新增文件（diff-filter=A）全文件 AST 扫描；修改文件（diff-filter=M）只检测 git diff 新增行中的违规（diff-aware，不触碰存量基线）；检测模式真源=SECRET_INDICATOR_PATTERNS（zephyr.shared.security.secrets SSoT），不硬编码；只检测字符串字面量参数（变量参数不检测，因 secrets.py SSoT 自身用 os.environ.get(key) 变量参数）；AST/subprocess/git diff 异常 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged 新增+修改 .py 文件含裸 os.getenv/os.environ.get/os.environ["KEY"] 读取密钥类变量时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；新增文件（diff-filter=A）全文件 AST 扫描；修改文件（diff-filter=M）只检测 git diff 新增行中的违规（diff-aware，不触碰存量基线）；检测模式真源=SECRET_INDICATOR_PATTERNS（zephyr.shared.security.secrets SSoT），不硬编码；只检测字符串字面量参数（变量参数不检测，因 secrets.py SSoT 自身用 os.environ.get(key) 变量参数）；AST/subprocess/git diff 异常 fail-open（logger.warning）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="NO-BARE-GETENV"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -67,6 +67,7 @@ import logging
 import os
 import re
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.shared.security.secrets import SECRET_INDICATOR_PATTERNS
 
@@ -332,6 +333,12 @@ def make_bare_getenv_gate() -> GateSpec:
         if result is None:
             return True, ""
         added_files, modified_files = result
+        if not added_files and not modified_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只检本 session staged，外来 warn+审计不阻断
+        session_id = kwargs.get("session_id")
+        added_files = _split_own_foreign(gateway, added_files, files, session_id, gate_name="NO-BARE-GETENV")[0]
+        modified_files = _split_own_foreign(gateway, modified_files, files, session_id, gate_name="NO-BARE-GETENV")[0]
         if not added_files and not modified_files:
             return True, ""
 

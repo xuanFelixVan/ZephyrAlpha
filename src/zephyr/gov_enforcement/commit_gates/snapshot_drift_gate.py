@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 修改 data/runtime_violation_snapshot/latest.json 时校验结构完整性 + generated_at 新鲜度（≤24h）+ commit_sha 与 HEAD 一致；任一校验失败则阻断 commit；JSON 解析失败 fail-closed（阻断）；HEAD SHA 获取失败 fail-open（不阻断）；本 gate 自身文件修改豁免
+# [INVARIANTS] 硬阻断——staged 修改 data/runtime_violation_snapshot/latest.json 时校验结构完整性 + generated_at 新鲜度（≤24h）+ commit_sha 与 HEAD 一致；任一校验失败则阻断 commit；JSON 解析失败 fail-closed（阻断）；HEAD SHA 获取失败 fail-open（不阻断）；本 gate 自身文件修改豁免；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="SNAPSHOT-DRIFT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -56,6 +56,7 @@ import logging
 import os
 from datetime import datetime, timedelta, timezone
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -190,6 +191,10 @@ def make_snapshot_drift_gate() -> GateSpec:
         # 1. 检查快照文件是否 staged
         in_staged, wt_root = _is_snapshot_in_staged(gateway)
         if not in_staged:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：快照文件非本 session staged 时不管（外来 warn+审计）
+        own_snap = _split_own_foreign(gateway, [_SNAPSHOT_REL_PATH], files, kwargs.get("session_id"), gate_name="SNAPSHOT-DRIFT")[0]
+        if not own_snap:
             return True, ""
 
         # 2. 读取快照文件内容

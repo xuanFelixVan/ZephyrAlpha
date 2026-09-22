@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件中重新定义已 SSoT 化的符号(class/赋值)则阻断;SSoT 符号清单从 capability_canonical_file_registry.yaml aliases 自动派生(非新真源);canonical 文件本身定义豁免;tests/ 豁免;import/注释行豁免;registry 缺失/解析失败 fail-closed(阻断,除非 registry 本身在 staged 中正在修复);git diff 不可达 fail-open(logger.warning 告警检测器失效)
+# [INVARIANTS] 硬阻断——staged .py 文件中重新定义已 SSoT 化的符号(class/赋值)则阻断;SSoT 符号清单从 capability_canonical_file_registry.yaml aliases 自动派生(非新真源);canonical 文件本身定义豁免;tests/ 豁免;import/注释行豁免;registry 缺失/解析失败 fail-closed(阻断,除非 registry 本身在 staged 中正在修复);git diff 不可达 fail-open(logger.warning 告警检测器失效);own 化 2026-09-23(st-gslim P2):扫描范围=全暂存∩本 session,外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="SSOT-REDEFINITION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -48,6 +48,7 @@ from __future__ import annotations
 import logging
 import re
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -229,11 +230,14 @@ def make_ssot_redefinition_gate() -> GateSpec:
         staged = _get_staged_files(gateway)
         if staged is None:
             return True, ""
-        py_files = [f for f in staged if f.endswith(".py") and not is_test_exempt(f)]
+        # own 化（st-gslim-20260923 P2，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描范围=
+        # 全暂存区∩本 session 范围；外来 staged 不扫描不阻断（warn+审计在共享原语内）。
+        own_staged = _split_own_foreign(gateway, staged, files, kwargs.get("session_id"), gate_name="SSOT-REDEFINITION")[0]
+        py_files = [f for f in own_staged if f.endswith(".py") and not is_test_exempt(f)]
         if not py_files:
             return True, ""
 
-        data, early_exit = _load_registry_yaml(gateway, staged)
+        data, early_exit = _load_registry_yaml(gateway, own_staged)
         if early_exit is not None:
             return early_exit
         symbol_to_canonical = _build_symbol_map(data)

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件中含事件订阅 handler 函数但函数体仅含 logger/pass/return/docstring（无实际逻辑）时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件中含事件订阅 handler 函数但函数体仅含 logger/pass/return/docstring（无实际逻辑）时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="EMPTY-HANDLER"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -63,6 +63,7 @@ import ast
 import logging
 import os
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -256,6 +257,11 @@ def make_empty_handler_gate() -> GateSpec:
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         # 1. 获取 staged 新增 .py 文件
         new_py_files = _get_staged_new_py_files(gateway)
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        new_py_files = _split_own_foreign(gateway, new_py_files, files, kwargs.get("session_id"), gate_name="EMPTY-HANDLER")[0]
+        if not new_py_files:
+            return True, ""
+
         if new_py_files is None:
             return True, ""
         if not new_py_files:

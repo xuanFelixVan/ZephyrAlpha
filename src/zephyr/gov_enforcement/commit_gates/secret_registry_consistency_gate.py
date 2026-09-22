@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .env.example 或 config/secret_registry.yaml 变更时，校验两者 KEY 一致性；不一致阻断 commit（passed=False）；AST/git 异常 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged .env.example 或 config/secret_registry.yaml 变更时，校验两者 KEY 一致性；不一致阻断 commit（passed=False）；AST/git 异常 fail-open（logger.warning）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="SECRET-REGISTRY-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -57,6 +57,7 @@ import re
 from pathlib import Path
 from typing import Final
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 logger = logging.getLogger(__name__)
@@ -128,6 +129,9 @@ def make_secret_registry_consistency_gate() -> GateSpec:
             )
             return True, ""
 
+        # own 化（st-gslim-20260923 P2）：触发面收敛为本 session staged，外来 warn+审计不阻断
+        own_files = _split_own_foreign(gateway, sorted(staged_files), files, kwargs.get("session_id"), gate_name="SECRET-REGISTRY-CONSISTENCY")[0]
+        staged_files = set(own_files)
         # 只在 .env.example 或 secret_registry.yaml 变更时触发
         if _ENV_EXAMPLE not in staged_files and _REGISTRY not in staged_files:
             return True, ""

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (via gate_auto_registrar YAML 驱动自动注册)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件中存在硬编码测试残留目录前缀集合（≥2 个 trae_071 §test_residue_reclaim.covered_patterns.dir_prefixes 精确匹配）时阻断 commit；检测 staged 新增+修改的 .py（--diff-filter=AM）；前缀真源 = trae_071 YAML（通过 reconciliation_registry._load_test_residue_config lazy import 加载，禁止本 gate 硬编码前缀）；config 不可达/import 失败/AST 解析失败时 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）
+# [INVARIANTS] 硬阻断——staged .py 文件中存在硬编码测试残留目录前缀集合（≥2 个 trae_071 §test_residue_reclaim.covered_patterns.dir_prefixes 精确匹配）时阻断 commit；检测 staged 新增+修改的 .py（--diff-filter=AM）；前缀真源 = trae_071 YAML（通过 reconciliation_registry._load_test_residue_config lazy import 加载，禁止本 gate 硬编码前缀）；config 不可达/import 失败/AST 解析失败时 fail-open（passed=True，logger.warning）；检出违规则 fail-closed 阻断（passed=False）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="TEST-RESIDUE-SSOT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -76,6 +76,7 @@ import os
 from typing import Final
 
 # 共享 _get_worktree_root（避免 FUNCTION-DUP 重复——与 doc_ref_broken_gate.py 共用）
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.commit_gates.doc_ref_broken_gate import _get_worktree_root
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
@@ -228,6 +229,10 @@ def make_test_residue_ssot_gate() -> GateSpec:
 
         # 2. 获取 staged .py 文件（None/空 → 放行）
         staged_py = _get_staged_py_files(gateway)
+        if not staged_py:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        staged_py = _split_own_foreign(gateway, staged_py, files, kwargs.get("session_id"), gate_name="TEST-RESIDUE-SSOT")[0]
         if not staged_py:
             return True, ""
 

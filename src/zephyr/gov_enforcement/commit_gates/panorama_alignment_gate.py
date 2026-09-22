@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 五图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）+ 持久化 critical_warn 到 reconcile_execution_log（Ruling:100PCT-AI-GOVERNANCE P1-5）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
+# [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 五图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）+ 持久化 critical_warn 到 reconcile_execution_log（Ruling:100PCT-AI-GOVERNANCE P1-5）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="GATE-PANORAMA-ALIGNMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；domain_mismatches 阻断阈值=0（任何不一致即阻断）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -51,6 +51,7 @@ import os
 import sys
 import traceback
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 # Ruling:100PCT-AI-GOVERNANCE P1-5 (2026-07-19): gate fail-open 持久化治本
@@ -140,6 +141,10 @@ def make_panorama_alignment_gate() -> GateSpec:
                 )
                 return True, ""
             staged_files = diff_result.stdout.strip().splitlines()
+            # own 化（st-gslim-20260923 P2）：只对齐本 session staged，外来 warn+审计不阻断
+            staged_files = _split_own_foreign(gateway, staged_files, files, kwargs.get("session_id"), gate_name="GATE-PANORAMA-ALIGNMENT")[0]
+            if not staged_files:
+                return True, ""
         except (NotADirectoryError, FileNotFoundError) as e:
             # #ARCH-PANORAMA-TOCTOU-001（2026-07-22）：P0-3 isdir 检查与 _run_git 之间的
             # TOCTOU 竞态——worktree 在 isdir 通过后被 worktree_lifecycle_reconciler sweep。

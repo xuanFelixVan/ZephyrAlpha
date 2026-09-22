@@ -72,6 +72,7 @@ __all__ = [
     "_extract_noqa_lines",
     "_module_to_file_candidates",
     "_matches_any_prefix",
+    "_split_own_foreign",
 ]
 
 # 行级豁免：注释 / import
@@ -543,6 +544,53 @@ def _audit_foreign_staged(
 
 
 _SRC_ZEPHYR_PREFIX = "src/zephyr/"
+
+
+def _split_own_foreign(
+    gateway,
+    staged: list[str],
+    files: list[str] | None,
+    session_id: str | None,
+    *,
+    gate_name: str,
+) -> tuple[list[str], list[str]]:
+    """own 化标准拆分原语：staged 清单 → (本 session 文件, 外来文件)，外来自动审计。
+
+    #ARCH-GATE-OWN-SCOPE-001 推广面（st-gslim-20260923 P2，C3 名单 31 台机械 own 化，
+    gate_audit_report_v1 §C3/Owner 全批 E9）：全暂存内容扫描台扫「全暂存区 ∩ 本 session
+    范围」，外来 staged 不扫描、不产生违规、不阻断（降级 warn+审计）——多会话连坐的
+    结构性消除。31 台若各自内联本拆分即触发 FUNCTION-DUP/CAPABILITY-OVERLAP 自身门禁
+    （同目录同构克隆），故收敛为共享原语（与本文件 own-scope 推广面定位一致）。
+
+    - own_scope=None（files 与 session 归属信息均空，历史直调场景）→ 返回 (staged, [])：
+      退化为旧行为扫全量，保守面不改宽（与 _build_own_scope 契约一致）。
+    - 审计与 warn 在本函数内完成（对标 IMPORT-INTEGRITY 范本），调用方只需扫描 own 侧。
+    - 永不抛异常（ERROR_CONTRACT）；输入参数不被修改，返回新列表。
+    """
+    try:
+        staged = list(staged or [])  # None（fail-open 信号）归一为空清单——split 恒安全
+        own_scope = _build_own_scope(gateway, files, session_id)
+        if own_scope is None:
+            return staged, []
+        own: list[str] = []
+        foreign: list[str] = []
+        for f in staged:
+            if _norm_rel(gateway, f) in own_scope:
+                own.append(f)
+            else:
+                foreign.append(f)
+    except Exception:  # noqa: BLE001 — 拆分失败退化为旧行为扫全量（保守面不改宽）
+        logger_ss.debug("own-scope split failed (fallback to full scan)", exc_info=True)
+        return list(staged or []), []
+    if foreign:
+        _audit_foreign_staged(gateway, session_id, foreign, gate_name=gate_name)
+        logger_ss.warning(
+            "%s: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+            gate_name,
+            len(foreign),
+            ", ".join(foreign[:5]) + ("..." if len(foreign) > 5 else ""),
+        )
+    return own, foreign
 
 
 def _is_src_zephyr_file(py_file: str) -> bool:

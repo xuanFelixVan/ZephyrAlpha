@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged shared 层 .py 文件含向上依赖 import（from zephyr.* 但非 zephyr.shared.*）时阻断 commit（passed=False）；否定检查替代枚举列表（治本 ARCH-TTL-DOC-001，新增域无需更新 gate）；tests/ 豁免；TYPE_CHECKING 块内 import 豁免（类型检查专用无运行时导入）；AST/git 异常 fail-open（logger.warning）
+# [INVARIANTS] 硬阻断——staged shared 层 .py 文件含向上依赖 import（from zephyr.* 但非 zephyr.shared.*）时阻断 commit（passed=False）；否定检查替代枚举列表（治本 ARCH-TTL-DOC-001，新增域无需更新 gate）；tests/ 豁免；TYPE_CHECKING 块内 import 豁免（类型检查专用无运行时导入）；AST/git 异常 fail-open（logger.warning）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="NO-UPWARD-IMPORT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -71,6 +71,7 @@ import ast
 import logging
 import os
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -212,6 +213,9 @@ def make_import_direction_gate() -> GateSpec:
                 exc_info=True,
             )
             return True, ""
+
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        staged = _split_own_foreign(gateway, staged, files, kwargs.get("session_id"), gate_name="NO-UPWARD-IMPORT")[0]
 
         # 2. 过滤到 shared 层 .py 文件 + tests/ 豁免
         shared_files = [f for f in staged if f.endswith(".py") and _SHARED_PATH_PART in f and not is_test_exempt(f)]

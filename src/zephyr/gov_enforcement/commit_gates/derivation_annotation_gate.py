@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py/.yaml 文件含 # [DERIVES_FROM] <path> 声明但 <path> 源文件不存在时阻断 commit；tests/ 豁免；git diff 不可达 fail-open；文件读取失败 fail-open；检出违规则 fail-closed（passed=False）
+# [INVARIANTS] 硬阻断——staged 新增 .py/.yaml 文件含 # [DERIVES_FROM] <path> 声明但 <path> 源文件不存在时阻断 commit；tests/ 豁免；git diff 不可达 fail-open；文件读取失败 fail-open；检出违规则 fail-closed（passed=False）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="DERIVATION-ANNOTATION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -66,6 +66,7 @@ import logging
 import os
 import re
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
     is_test_exempt,
@@ -167,6 +168,10 @@ def make_derivation_annotation_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         new_files = _collect_staged_new_files(gateway)
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        new_files = _split_own_foreign(gateway, new_files, files, kwargs.get("session_id"), gate_name="DERIVATION-ANNOTATION")[0]
+        if not new_files:
+            return True, ""
         if not new_files:
             return True, ""
 

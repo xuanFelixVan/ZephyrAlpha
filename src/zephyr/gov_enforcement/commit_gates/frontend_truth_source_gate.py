@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] warn-only 起步（Owner 2026-09-04 裁定：TRAE-086 §truth_source_wiring 配套门禁）——staged web/**/*.js 命中"内联数据数组/零后端接线"启发式时返回 passed=True + 明细 warn + 审计落盘，不阻断 commit；_HARD_BLOCK=True 一行升级为硬阻断；git diff 不可达 fail-open（logger.warning）；检出异常由 registry 统一 fail-closed
+# [INVARIANTS] warn-only 起步（Owner 2026-09-04 裁定：TRAE-086 §truth_source_wiring 配套门禁）——staged web/**/*.js 命中"内联数据数组/零后端接线"启发式时返回 passed=True + 明细 warn + 审计落盘，不阻断 commit；_HARD_BLOCK=True 一行升级为硬阻断；git diff 不可达 fail-open（logger.warning）；检出异常由 registry 统一 fail-closed；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="FRONTEND-TRUTH-SOURCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -71,6 +71,7 @@ from typing import Final
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _parse_diff_with_line_numbers,
     _read_staged_file,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
@@ -226,6 +227,10 @@ def make_frontend_truth_source_gate() -> GateSpec:
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         js_files = _collect_eligible_js_files(gateway)
+        if not js_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        js_files = _split_own_foreign(gateway, js_files, files, kwargs.get("session_id"), gate_name="FRONTEND-TRUTH-SOURCE")[0]
         if not js_files:
             return True, ""
 

@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件在 src/zephyr/ 或 scripts/ 下（排除 tests/）且 depgraph nodes 表完全无记录（generated/planned/stable 任一状态）时阻断 commit；只检测 .py 文件（depgraph 主要追踪 .py 模块）；DB 不可达时 fail-open（环境异常非违规，对标 rename_depgraph_sync_gate 设计）；只读查询（read_only=True）；bootstrap 豁免——gate 只检测本次 commit 新增的文件，现有 3811 个 generated 节点不受影响（gate 触发时 commit 已含新文件，depgraph 自然无历史记录）；tests/ 豁免（测试不是模块依赖链节点，真源：commit_gate_registry.is_test_exempt）
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件在 src/zephyr/ 或 scripts/ 下（排除 tests/）且 depgraph nodes 表完全无记录（generated/planned/stable 任一状态）时阻断 commit；只检测 .py 文件（depgraph 主要追踪 .py 模块）；DB 不可达时 fail-open（环境异常非违规，对标 rename_depgraph_sync_gate 设计）；只读查询（read_only=True）；bootstrap 豁免——gate 只检测本次 commit 新增的文件，现有 3811 个 generated 节点不受影响（gate 触发时 commit 已含新文件，depgraph 自然无历史记录）；tests/ 豁免（测试不是模块依赖链节点，真源：commit_gate_registry.is_test_exempt）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
 # [MODIFY-GUARD] gate_id="NEW-FILE-DEPGRAPH-ENFORCEMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -94,6 +94,7 @@ from __future__ import annotations
 import logging
 import os
 
+from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
@@ -227,6 +228,10 @@ def make_new_file_depgraph_gate() -> GateSpec:
 
         # 2. 获取 staged 新增 .py 文件（None 表示 fail-open 检测器失效）
         new_py_files = _get_staged_new_py_files(gateway)
+        if not new_py_files:
+            return True, ""
+        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+        new_py_files = _split_own_foreign(gateway, new_py_files, files, kwargs.get("session_id"), gate_name="NEW-FILE-DEPGRAPH")[0]
         if not new_py_files:
             return True, ""
 
