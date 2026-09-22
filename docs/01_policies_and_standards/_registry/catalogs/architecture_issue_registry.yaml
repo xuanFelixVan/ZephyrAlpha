@@ -22480,3 +22480,30 @@ entries:
     [ARCH-APPROVAL:#ARCH-359]，审批真源=裁定#398 七与裁定#399 四，gate 逃生审计+本登记双留痕。
     内容=检索序条目单行等长替换（+1/-1），宪法 300 行硬上限不变。
   related_rulings: ['裁定#398', '裁定#399']
+
+# --- #ARCH-C4CACHE-001: c4 论文 PDF 运行时缓存 gitignore 止血 ---
+- issue_id: '#ARCH-C4CACHE-001'
+  title: 'data/c4_pdf_cache 运行时 PDF 缓存 gitignore 止血——6 万件可再生缓存不入库（PROTECTED-PATHS 正门标记载体）'
+  status: resolved
+  severity: P2中
+  category: architecture_metadata
+  created: '2026-09-23'
+  last_updated: '2026-09-23'
+  owner: 'Owner（通宵总攻令 2026-09-23 st-oddjobs-20260923 件2 授权）'
+  description: >-
+    问题背景：data/c4_pdf_cache/ 累积 60,245 件论文 PDF 运行时缓存（56.59GB，2026-09-15/16
+    c4 施工班下载产物），以 untracked 状态暴露于 git status 噪音面与清扫风险区。
+    授权链：Owner 通宵总攻令（2026-09-23，st-oddjobs-20260923 件2）明示"gitignore 止血，
+    PROTECTED-PATHS 需审则登记不硬闯"。本议题即该登记动作的载体（先例=#ARCH-359 同模式）：
+    .gitignore 尾部追加 data/c4_pdf_cache/ 规则一行的 commit message 挂
+    [ARCH-APPROVAL:#ARCH-C4CACHE-001]，gate 逃生审计+本登记双留痕。
+    三步验证留痕（同批假 governance.db 删除）：三个 0 字节文件（data/governance.db、
+    data/governance/governance.db、.runtime/tmp/governance.db）无 SQLite 头（header=b''）
+    判假，真库=data/databases/governance.db（197MB，header='SQLite format 3'）未动；
+    活代码引用扫描=0（仅 _archive 历史脚本提及）；0 信息量可逆。
+  impact:
+  - .gitignore（尾部 +3 行）
+  - data/governance.db（删除，0 字节假库）
+  - data/governance/governance.db（删除，0 字节假库）
+  - .runtime/tmp/governance.db（删除，0 字节假库）
+  related_rulings: []

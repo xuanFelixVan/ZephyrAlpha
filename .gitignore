@@ -632,3 +632,7 @@ docs/03_modules/_domain_frontend/acceptance/screenshots/
 data/crypto/_smoke_test/
 data/crypto/_smoke_test_50alt/
 data/crypto/shadow/
+
+# c4 论文 PDF 运行时缓存止血（st-oddjobs-20260923 2026-09-23，60,245 件/56.59GB 实证；
+# 审批登记=#ARCH-C4CACHE-001 architecture_issue_registry 同批）。可再生缓存，不入库。
+data/c4_pdf_cache/
