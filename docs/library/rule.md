@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 制度馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：83｜馆内总数：83
+- 条目数（本页列出）：84｜馆内总数：84
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -84,6 +84,7 @@ doc_type: "index"
 | REG:docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/standard_family_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/standard_family_registry.yaml |
+| REG:docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/state_vocabulary_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml |

@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 文档馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：5355｜馆内总数：5355
+- 条目数（本页列出）：5376｜馆内总数：5376
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |

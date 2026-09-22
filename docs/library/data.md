@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 数据馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：338｜馆内总数：338
+- 条目数（本页列出）：339｜馆内总数：339
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -22,6 +22,7 @@ doc_type: "index"
 | TBL:ch:c1_backtest.regime_snapshot_history | table | active | ch:c1_backtest.regime_snapshot_history |
 | TBL:ch:c1_backtest.regime_state_anchored | table | active | ch:c1_backtest.regime_state_anchored |
 | TBL:ch:c1_backtest.sim_attribution_daily | table | active | ch:c1_backtest.sim_attribution_daily |
+| TBL:ch:c1_backtest.sim_daily_report | table | active | ch:c1_backtest.sim_daily_report |
 | TBL:ch:c1_backtest.sim_platform_journal | table | active | ch:c1_backtest.sim_platform_journal |
 | TBL:ch:c1_backtest.sim_pocket_daily | table | active | ch:c1_backtest.sim_pocket_daily |
 | TBL:ch:c1_backtest.sim_trade_log | table | active | ch:c1_backtest.sim_trade_log |
@@ -310,4 +311,3 @@ doc_type: "index"
 | TBL:pg:ig_document | table | active | pg:ig_document |
 | TBL:pg:ig_document_bak_20260914 | table | active | pg:ig_document_bak_20260914 |
 | TBL:pg:ig_edge | table | active | pg:ig_edge |
-| TBL:pg:ig_edge_bak_20260914 | table | active | pg:ig_edge_bak_20260914 |
