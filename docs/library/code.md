@@ -6,11 +6,56 @@ doc_type: "index"
 
 # 代码馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：28299｜馆内总数：28299
+- 条目数（本页列出）：28454｜馆内总数：28454
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
 |---|---|---|---|
+| FILE:.runtime/audit/algo_flow_translation_sync_runs.jsonl | file | active | .runtime/audit/algo_flow_translation_sync_runs.jsonl |
+| FILE:.runtime/audit/archive_log.jsonl | file | active | .runtime/audit/archive_log.jsonl |
+| FILE:.runtime/audit/feature_flags.jsonl | file | active | .runtime/audit/feature_flags.jsonl |
+| FILE:.runtime/audit/hook_tracked_drift.jsonl | file | active | .runtime/audit/hook_tracked_drift.jsonl |
+| FILE:.runtime/audit/safe_write.jsonl | file | active | .runtime/audit/safe_write.jsonl |
+| FILE:.runtime/audit/skill_factory_cas.jsonl | file | active | .runtime/audit/skill_factory_cas.jsonl |
+| FILE:.runtime/audit/worktree_drift_watchdog.jsonl + .runtime/audit/watchdog.jsonl | file | active | .runtime/audit/worktree_drift_watchdog.jsonl + .runtime/audit/watchdog.jsonl |
+| FILE:.runtime/fetch_perf/fetch_perf_YYYYMMDD.jsonl | file | active | .runtime/fetch_perf/fetch_perf_YYYYMMDD.jsonl |
+| FILE:.runtime/gate_audit/allow_overlap_usage.jsonl | file | active | .runtime/gate_audit/allow_overlap_usage.jsonl |
+| FILE:.runtime/gate_audit/commit_lock_fallback.jsonl | file | active | .runtime/gate_audit/commit_lock_fallback.jsonl |
+| FILE:.runtime/gate_audit/design_node_delete.jsonl + .runtime/gate_audit/depgraph_anchor_cascade.jsonl | file | active | .runtime/gate_audit/design_node_delete.jsonl + .runtime/gate_audit/depgraph_anchor_cascade.jsonl |
+| FILE:.runtime/gate_audit/force_merge_usage.jsonl | file | active | .runtime/gate_audit/force_merge_usage.jsonl |
+| FILE:.runtime/gate_audit/gateway_index_hygiene.jsonl | file | active | .runtime/gate_audit/gateway_index_hygiene.jsonl |
+| FILE:.runtime/gate_audit/git_guard_self_harm.jsonl | file | active | .runtime/gate_audit/git_guard_self_harm.jsonl |
+| FILE:.runtime/gate_audit/ops_guard_delete.jsonl | file | active | .runtime/gate_audit/ops_guard_delete.jsonl |
+| FILE:.runtime/gate_audit/post_claim_modifications.jsonl | file | active | .runtime/gate_audit/post_claim_modifications.jsonl |
+| FILE:.runtime/gate_audit/protected_paths_bypass.jsonl | file | active | .runtime/gate_audit/protected_paths_bypass.jsonl |
+| FILE:.runtime/gate_audit/safe_rmtree.jsonl | file | active | .runtime/gate_audit/safe_rmtree.jsonl |
+| FILE:.runtime/gate_audit/worktree_abort.jsonl | file | active | .runtime/gate_audit/worktree_abort.jsonl |
+| FILE:.runtime/gate_audit/worktree_skip.jsonl | file | active | .runtime/gate_audit/worktree_skip.jsonl |
+| FILE:.runtime/gate_audit/worktree_status_snapshots.jsonl | file | active | .runtime/gate_audit/worktree_status_snapshots.jsonl |
+| FILE:.runtime/git_performance_log.jsonl | file | active | .runtime/git_performance_log.jsonl |
+| FILE:.runtime/lookup_audit/<session_id>.jsonl | file | active | .runtime/lookup_audit/<session_id>.jsonl |
+| FILE:.runtime/lookup_audit/bypass_audit.jsonl | file | active | .runtime/lookup_audit/bypass_audit.jsonl |
+| FILE:.runtime/quarantine/branch_refs.log | file | active | .runtime/quarantine/branch_refs.log |
+| FILE:.runtime/sessions/<session_id>/heartbeat.jsonl | file | active | .runtime/sessions/<session_id>/heartbeat.jsonl |
+| FILE:.runtime/workspace_drift_warn.jsonl | file | active | .runtime/workspace_drift_warn.jsonl |
+| FILE:.runtime/worktree_ops_log.jsonl | file | active | .runtime/worktree_ops_log.jsonl |
+| FILE:.zephyr/audit/rollback_discard_audit.jsonl | file | active | .zephyr/audit/rollback_discard_audit.jsonl |
+| FILE:.zephyr/audit/rollback_nexus_audit.jsonl | file | active | .zephyr/audit/rollback_nexus_audit.jsonl |
+| FILE:.zephyr/audit/rollback_operations_audit.jsonl | file | active | .zephyr/audit/rollback_operations_audit.jsonl |
+| FILE:.zephyr/drill_logs/ + .zephyr/ROLLBACK_MELTDOWN.json（告警单文件） | file | active | .zephyr/drill_logs/ + .zephyr/ROLLBACK_MELTDOWN.json（告警单文件） |
+| FILE:.zephyr/intent_archive/manifest.jsonl | file | active | .zephyr/intent_archive/manifest.jsonl |
+| FILE:.zephyr/kill_switches.jsonl | file | active | .zephyr/kill_switches.jsonl |
+| FILE:.zephyr/knowngoodstate_ledger.jsonl | file | active | .zephyr/knowngoodstate_ledger.jsonl |
+| FILE:.zephyr/rollback_budget_log.jsonl | file | active | .zephyr/rollback_budget_log.jsonl |
+| FILE:.zephyr/rollback_lock_queue.jsonl | file | active | .zephyr/rollback_lock_queue.jsonl |
+| FILE:.zephyr/rollback_loop_log.jsonl | file | active | .zephyr/rollback_loop_log.jsonl |
+| FILE:.zephyr/rollback_wal.jsonl | file | active | .zephyr/rollback_wal.jsonl |
+| FILE:.zephyr/topology_change_log.jsonl | file | active | .zephyr/topology_change_log.jsonl |
+| FILE:F:/zephyr_cold/50_archive/by_project/zephyralpha/archive_manifest.jsonl（仓外绝对路径——冷储主库 F 盘） | file | active | F:/zephyr_cold/50_archive/by_project/zephyralpha/archive_manifest.jsonl（仓外绝对路径——冷储主库 F 盘） |
+| FILE:_journals/skill_events.jsonl（cwd 相对） | file | active | _journals/skill_events.jsonl（cwd 相对） |
+| FILE:_journals/skill_feedback.jsonl（cwd 相对） | file | active | _journals/skill_feedback.jsonl（cwd 相对） |
+| FILE:_journals/skill_telemetry.jsonl（cwd 相对——消费方需同 cwd 锚定，留痕待治理） | file | active | _journals/skill_telemetry.jsonl（cwd 相对——消费方需同 cwd 锚定，留痕待治理） |
+| FILE:_journals/skill_transitions.jsonl（cwd 相对） | file | active | _journals/skill_transitions.jsonl（cwd 相对） |
 | FILE:architecture_model/architecture_lock.yaml | file | active | architecture_model/architecture_lock.yaml |
 | FILE:architecture_model/contracts/consumer_registry.yaml | file | active | architecture_model/contracts/consumer_registry.yaml |
 | FILE:architecture_model/contracts/cross_layer_contracts.yaml | file | active | architecture_model/contracts/cross_layer_contracts.yaml |
@@ -266,48 +311,3 @@ doc_type: "index"
 | FILE:data/architecture_health/dashboard_20260908T091049473686Z.json | file | active | data/architecture_health/dashboard_20260908T091049473686Z.json |
 | FILE:data/architecture_health/dashboard_20260908T120010388566Z.json | file | active | data/architecture_health/dashboard_20260908T120010388566Z.json |
 | FILE:data/architecture_health/dashboard_20260908T123950336838Z.json | file | active | data/architecture_health/dashboard_20260908T123950336838Z.json |
-| FILE:data/architecture_health/dashboard_20260908T124147249133Z.json | file | active | data/architecture_health/dashboard_20260908T124147249133Z.json |
-| FILE:data/architecture_health/dashboard_20260908T133605448124Z.json | file | active | data/architecture_health/dashboard_20260908T133605448124Z.json |
-| FILE:data/architecture_health/dashboard_20260908T135827275997Z.json | file | active | data/architecture_health/dashboard_20260908T135827275997Z.json |
-| FILE:data/architecture_health/dashboard_20260908T135959780780Z.json | file | active | data/architecture_health/dashboard_20260908T135959780780Z.json |
-| FILE:data/architecture_health/dashboard_20260908T143423606676Z.json | file | active | data/architecture_health/dashboard_20260908T143423606676Z.json |
-| FILE:data/architecture_health/dashboard_20260908T145623944294Z.json | file | active | data/architecture_health/dashboard_20260908T145623944294Z.json |
-| FILE:data/architecture_health/dashboard_20260908T153829334517Z.json | file | active | data/architecture_health/dashboard_20260908T153829334517Z.json |
-| FILE:data/architecture_health/dashboard_20260908T164811167739Z.json | file | active | data/architecture_health/dashboard_20260908T164811167739Z.json |
-| FILE:data/architecture_health/dashboard_20260908T164938949303Z.json | file | active | data/architecture_health/dashboard_20260908T164938949303Z.json |
-| FILE:data/architecture_health/dashboard_20260908T174958709703Z.json | file | active | data/architecture_health/dashboard_20260908T174958709703Z.json |
-| FILE:data/architecture_health/dashboard_20260908T181639132120Z.json | file | active | data/architecture_health/dashboard_20260908T181639132120Z.json |
-| FILE:data/architecture_health/dashboard_20260908T183758936603Z.json | file | active | data/architecture_health/dashboard_20260908T183758936603Z.json |
-| FILE:data/architecture_health/dashboard_20260908T202006641006Z.json | file | active | data/architecture_health/dashboard_20260908T202006641006Z.json |
-| FILE:data/architecture_health/dashboard_20260908T202322632672Z.json | file | active | data/architecture_health/dashboard_20260908T202322632672Z.json |
-| FILE:data/architecture_health/dashboard_20260908T203715256423Z.json | file | active | data/architecture_health/dashboard_20260908T203715256423Z.json |
-| FILE:data/architecture_health/dashboard_20260908T204835599179Z.json | file | active | data/architecture_health/dashboard_20260908T204835599179Z.json |
-| FILE:data/architecture_health/dashboard_20260908T211112902685Z.json | file | active | data/architecture_health/dashboard_20260908T211112902685Z.json |
-| FILE:data/architecture_health/dashboard_20260909T052419396276Z.json | file | active | data/architecture_health/dashboard_20260909T052419396276Z.json |
-| FILE:data/architecture_health/dashboard_20260909T052615578947Z.json | file | active | data/architecture_health/dashboard_20260909T052615578947Z.json |
-| FILE:data/architecture_health/dashboard_20260909T065354895402Z.json | file | active | data/architecture_health/dashboard_20260909T065354895402Z.json |
-| FILE:data/architecture_health/dashboard_20260909T080004819929Z.json | file | active | data/architecture_health/dashboard_20260909T080004819929Z.json |
-| FILE:data/architecture_health/dashboard_20260909T081510771590Z.json | file | active | data/architecture_health/dashboard_20260909T081510771590Z.json |
-| FILE:data/architecture_health/dashboard_20260909T083703486088Z.json | file | active | data/architecture_health/dashboard_20260909T083703486088Z.json |
-| FILE:data/architecture_health/dashboard_20260909T083717600263Z.json | file | active | data/architecture_health/dashboard_20260909T083717600263Z.json |
-| FILE:data/architecture_health/dashboard_20260909T094448250631Z.json | file | active | data/architecture_health/dashboard_20260909T094448250631Z.json |
-| FILE:data/architecture_health/dashboard_20260909T133946794500Z.json | file | active | data/architecture_health/dashboard_20260909T133946794500Z.json |
-| FILE:data/architecture_health/dashboard_20260909T135421489339Z.json | file | active | data/architecture_health/dashboard_20260909T135421489339Z.json |
-| FILE:data/architecture_health/dashboard_20260909T135932394059Z.json | file | active | data/architecture_health/dashboard_20260909T135932394059Z.json |
-| FILE:data/architecture_health/dashboard_20260909T141139209305Z.json | file | active | data/architecture_health/dashboard_20260909T141139209305Z.json |
-| FILE:data/architecture_health/dashboard_20260909T143638687767Z.json | file | active | data/architecture_health/dashboard_20260909T143638687767Z.json |
-| FILE:data/architecture_health/dashboard_20260909T144426931572Z.json | file | active | data/architecture_health/dashboard_20260909T144426931572Z.json |
-| FILE:data/architecture_health/dashboard_20260909T145344537500Z.json | file | active | data/architecture_health/dashboard_20260909T145344537500Z.json |
-| FILE:data/architecture_health/dashboard_20260909T154207182582Z.json | file | active | data/architecture_health/dashboard_20260909T154207182582Z.json |
-| FILE:data/architecture_health/dashboard_20260909T161125584244Z.json | file | active | data/architecture_health/dashboard_20260909T161125584244Z.json |
-| FILE:data/architecture_health/dashboard_20260909T172529744711Z.json | file | active | data/architecture_health/dashboard_20260909T172529744711Z.json |
-| FILE:data/architecture_health/dashboard_20260909T172901269952Z.json | file | active | data/architecture_health/dashboard_20260909T172901269952Z.json |
-| FILE:data/architecture_health/dashboard_20260909T174359628128Z.json | file | active | data/architecture_health/dashboard_20260909T174359628128Z.json |
-| FILE:data/architecture_health/dashboard_20260909T180142580253Z.json | file | active | data/architecture_health/dashboard_20260909T180142580253Z.json |
-| FILE:data/architecture_health/dashboard_20260909T181726441228Z.json | file | active | data/architecture_health/dashboard_20260909T181726441228Z.json |
-| FILE:data/architecture_health/dashboard_20260909T182849758699Z.json | file | active | data/architecture_health/dashboard_20260909T182849758699Z.json |
-| FILE:data/architecture_health/dashboard_20260909T184009709176Z.json | file | active | data/architecture_health/dashboard_20260909T184009709176Z.json |
-| FILE:data/architecture_health/dashboard_20260909T185900461606Z.json | file | active | data/architecture_health/dashboard_20260909T185900461606Z.json |
-| FILE:data/architecture_health/dashboard_20260909T222954110734Z.json | file | active | data/architecture_health/dashboard_20260909T222954110734Z.json |
-| FILE:data/architecture_health/dashboard_20260910T000443191936Z.json | file | active | data/architecture_health/dashboard_20260910T000443191936Z.json |
-| FILE:data/architecture_health/dashboard_20260910T000703717912Z.json | file | active | data/architecture_health/dashboard_20260910T000703717912Z.json |

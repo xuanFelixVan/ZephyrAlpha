@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 文档馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：5376｜馆内总数：5376
+- 条目数（本页列出）：5387｜馆内总数：5387
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -185,6 +185,7 @@ doc_type: "index"
 | DOC:docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/deep_adjudication_method_policy.md |
 | DOC:docs/01_policies_and_standards/sop/governance_sop/index.md | doc | active | docs/01_policies_and_standards/sop/governance_sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/index.md | doc | active | docs/01_policies_and_standards/sop/index.md |
+| DOC:docs/01_policies_and_standards/sop/library_sop/blood_flesh_cataloging_sop.md | doc | active | docs/01_policies_and_standards/sop/library_sop/blood_flesh_cataloging_sop.md |
 | DOC:docs/01_policies_and_standards/sop/mining_sop/factor_mining_sop_policy.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/factor_mining_sop_policy.md |
 | DOC:docs/01_policies_and_standards/sop/mining_sop/index.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/index.md |
 | DOC:docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md | doc | active | docs/01_policies_and_standards/sop/mining_sop/indicator_mining_sop_policy.md |
@@ -310,4 +311,3 @@ doc_type: "index"
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/10_d_data.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/10_d_data.html |
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/11_d_data_eng.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/11_d_data_eng.html |
 | DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/12_d_data_gov.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/12_d_data_gov.html |
-| DOC:docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/13_d_data_sec.html | doc | active | docs/02_enterprise_architecture/02_domain_architecture_docs/_zoomable_html/13_d_data_sec.html |

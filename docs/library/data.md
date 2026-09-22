@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 数据馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：339｜馆内总数：339
+- 条目数（本页列出）：322｜馆内总数：322
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -60,7 +60,6 @@ doc_type: "index"
 | TBL:ch:c1_market.alt_typhoon_names | table | active | ch:c1_market.alt_typhoon_names |
 | TBL:ch:c1_market.alt_typhoon_track | table | active | ch:c1_market.alt_typhoon_track |
 | TBL:ch:c1_market.auction_book | table | active | ch:c1_market.auction_book |
-| TBL:ch:c1_market.auction_book_limit_bak_20260908 | table | active | ch:c1_market.auction_book_limit_bak_20260908 |
 | TBL:ch:c1_market.auction_snapshot | table | active | ch:c1_market.auction_snapshot |
 | TBL:ch:c1_market.block_trade | table | active | ch:c1_market.block_trade |
 | TBL:ch:c1_market.block_trade_detail | table | active | ch:c1_market.block_trade_detail |
@@ -122,26 +121,17 @@ doc_type: "index"
 | TBL:ch:c1_market.judgment_plan_verification | table | active | ch:c1_market.judgment_plan_verification |
 | TBL:ch:c1_market.kline_15min | table | active | ch:c1_market.kline_15min |
 | TBL:ch:c1_market.kline_1min | table | active | ch:c1_market.kline_1min |
-| TBL:ch:c1_market.kline_1min_tzbak_20260914 | table | active | ch:c1_market.kline_1min_tzbak_20260914 |
 | TBL:ch:c1_market.kline_30min | table | active | ch:c1_market.kline_30min |
 | TBL:ch:c1_market.kline_5min | table | active | ch:c1_market.kline_5min |
-| TBL:ch:c1_market.kline_5min_tzbak_20260914 | table | active | ch:c1_market.kline_5min_tzbak_20260914 |
 | TBL:ch:c1_market.kline_60min | table | active | ch:c1_market.kline_60min |
 | TBL:ch:c1_market.kline_cb | table | active | ch:c1_market.kline_cb |
 | TBL:ch:c1_market.kline_daily | table | active | ch:c1_market.kline_daily |
-| TBL:ch:c1_market.kline_daily_bak_256 | table | active | ch:c1_market.kline_daily_bak_256 |
 | TBL:ch:c1_market.kline_daily_hfq | table | active | ch:c1_market.kline_daily_hfq |
-| TBL:ch:c1_market.kline_daily_hfq_bak_20260915dup | table | active | ch:c1_market.kline_daily_hfq_bak_20260915dup |
 | TBL:ch:c1_market.kline_etf_15min | table | active | ch:c1_market.kline_etf_15min |
-| TBL:ch:c1_market.kline_etf_15min_tz_bak_20260918 | table | active | ch:c1_market.kline_etf_15min_tz_bak_20260918 |
 | TBL:ch:c1_market.kline_etf_1min | table | active | ch:c1_market.kline_etf_1min |
-| TBL:ch:c1_market.kline_etf_1min_tz_bak_20260918 | table | active | ch:c1_market.kline_etf_1min_tz_bak_20260918 |
 | TBL:ch:c1_market.kline_etf_30min | table | active | ch:c1_market.kline_etf_30min |
-| TBL:ch:c1_market.kline_etf_30min_tz_bak_20260918 | table | active | ch:c1_market.kline_etf_30min_tz_bak_20260918 |
 | TBL:ch:c1_market.kline_etf_5min | table | active | ch:c1_market.kline_etf_5min |
-| TBL:ch:c1_market.kline_etf_5min_tz_bak_20260918 | table | active | ch:c1_market.kline_etf_5min_tz_bak_20260918 |
 | TBL:ch:c1_market.kline_etf_60min | table | active | ch:c1_market.kline_etf_60min |
-| TBL:ch:c1_market.kline_etf_60min_tz_bak_20260918 | table | active | ch:c1_market.kline_etf_60min_tz_bak_20260918 |
 | TBL:ch:c1_market.kline_etf_daily | table | active | ch:c1_market.kline_etf_daily |
 | TBL:ch:c1_market.kline_futures | table | active | ch:c1_market.kline_futures |
 | TBL:ch:c1_market.kline_global | table | active | ch:c1_market.kline_global |
@@ -216,7 +206,6 @@ doc_type: "index"
 | TBL:ch:c1_market.suspend | table | active | ch:c1_market.suspend |
 | TBL:ch:c1_market.technical_indicator | table | active | ch:c1_market.technical_indicator |
 | TBL:ch:c1_market.tick_data | table | active | ch:c1_market.tick_data |
-| TBL:ch:c1_market.tick_data_tzbak_20260914 | table | active | ch:c1_market.tick_data_tzbak_20260914 |
 | TBL:ch:c1_market.tick_depth_5 | table | active | ch:c1_market.tick_depth_5 |
 | TBL:ch:c1_market.trade_calendar | table | active | ch:c1_market.trade_calendar |
 | TBL:ch:c1_market.us_futures_intraday | table | active | ch:c1_market.us_futures_intraday |
@@ -225,9 +214,7 @@ doc_type: "index"
 | TBL:ch:c3_fundamental.analyst_forecast | table | active | ch:c3_fundamental.analyst_forecast |
 | TBL:ch:c3_fundamental.audit_opinion | table | active | ch:c3_fundamental.audit_opinion |
 | TBL:ch:c3_fundamental.balance_sheet | table | active | ch:c3_fundamental.balance_sheet |
-| TBL:ch:c3_fundamental.balance_sheet_bak_1970clean_20260914 | table | active | ch:c3_fundamental.balance_sheet_bak_1970clean_20260914 |
 | TBL:ch:c3_fundamental.cashflow_statement | table | active | ch:c3_fundamental.cashflow_statement |
-| TBL:ch:c3_fundamental.cashflow_statement_bak_1970clean_20260914 | table | active | ch:c3_fundamental.cashflow_statement_bak_1970clean_20260914 |
 | TBL:ch:c3_fundamental.consensus_daily | table | active | ch:c3_fundamental.consensus_daily |
 | TBL:ch:c3_fundamental.consensus_daily_repaired | table | active | ch:c3_fundamental.consensus_daily_repaired |
 | TBL:ch:c3_fundamental.disclosure_plan | table | active | ch:c3_fundamental.disclosure_plan |
@@ -239,9 +226,7 @@ doc_type: "index"
 | TBL:ch:c3_fundamental.express_report | table | active | ch:c3_fundamental.express_report |
 | TBL:ch:c3_fundamental.financial_derived | table | active | ch:c3_fundamental.financial_derived |
 | TBL:ch:c3_fundamental.financial_indicator | table | active | ch:c3_fundamental.financial_indicator |
-| TBL:ch:c3_fundamental.financial_indicator_bak_1970clean_20260914 | table | active | ch:c3_fundamental.financial_indicator_bak_1970clean_20260914 |
 | TBL:ch:c3_fundamental.income_statement | table | active | ch:c3_fundamental.income_statement |
-| TBL:ch:c3_fundamental.income_statement_bak_1970clean_20260914 | table | active | ch:c3_fundamental.income_statement_bak_1970clean_20260914 |
 | TBL:ch:c3_fundamental.industry_class_suppl | table | active | ch:c3_fundamental.industry_class_suppl |
 | TBL:ch:c3_fundamental.ir_activity_extracted | table | active | ch:c3_fundamental.ir_activity_extracted |
 | TBL:ch:c3_fundamental.ir_activity_record | table | active | ch:c3_fundamental.ir_activity_record |
@@ -249,8 +234,6 @@ doc_type: "index"
 | TBL:ch:c3_fundamental.irm_interactive_qa | table | active | ch:c3_fundamental.irm_interactive_qa |
 | TBL:ch:c3_fundamental.main_business | table | active | ch:c3_fundamental.main_business |
 | TBL:ch:c3_fundamental.news_data | table | active | ch:c3_fundamental.news_data |
-| TBL:ch:c3_fundamental.news_data_corrupt_20260828 | table | active | ch:c3_fundamental.news_data_corrupt_20260828 |
-| TBL:ch:c3_fundamental.news_data_pre_tz2_20260828 | table | active | ch:c3_fundamental.news_data_pre_tz2_20260828 |
 | TBL:ch:c3_fundamental.pdf_forecast_extracted | table | active | ch:c3_fundamental.pdf_forecast_extracted |
 | TBL:ch:c3_fundamental.repurchase | table | active | ch:c3_fundamental.repurchase |
 | TBL:ch:c3_fundamental.research_report | table | active | ch:c3_fundamental.research_report |
@@ -311,3 +294,20 @@ doc_type: "index"
 | TBL:pg:ig_document | table | active | pg:ig_document |
 | TBL:pg:ig_document_bak_20260914 | table | active | pg:ig_document_bak_20260914 |
 | TBL:pg:ig_edge | table | active | pg:ig_edge |
+| TBL:pg:ig_edge_bak_20260914 | table | active | pg:ig_edge_bak_20260914 |
+| TBL:pg:ig_entity_code_map | table | active | pg:ig_entity_code_map |
+| TBL:pg:ig_equity_edge | table | active | pg:ig_equity_edge |
+| TBL:pg:ig_equity_edge_bak_20260914 | table | active | pg:ig_equity_edge_bak_20260914 |
+| TBL:pg:ig_fact | table | active | pg:ig_fact |
+| TBL:pg:ig_fact_bak_20260914 | table | active | pg:ig_fact_bak_20260914 |
+| TBL:pg:ig_io_edge | table | active | pg:ig_io_edge |
+| TBL:pg:ig_node | table | active | pg:ig_node |
+| TBL:pg:ig_node_bak_20260914 | table | active | pg:ig_node_bak_20260914 |
+| TBL:pg:ig_node_binding | table | active | pg:ig_node_binding |
+| TBL:pg:ig_node_company | table | active | pg:ig_node_company |
+| TBL:pg:ig_node_company_bak_20260914 | table | active | pg:ig_node_company_bak_20260914 |
+| TBL:pg:ig_product_revenue | table | active | pg:ig_product_revenue |
+| TBL:pg:ig_product_revenue_bak_20260918 | table | active | pg:ig_product_revenue_bak_20260918 |
+| TBL:pg:ig_sector_bridge | table | active | pg:ig_sector_bridge |
+| TBL:pg:ig_unlisted_entity | table | active | pg:ig_unlisted_entity |
+| TBL:pg:ig_unlisted_entity_bak_20260914 | table | active | pg:ig_unlisted_entity_bak_20260914 |
