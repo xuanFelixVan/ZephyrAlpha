@@ -5,7 +5,7 @@
 # [CONSUMERS] CLI python -m zephyr.gov_enforcement.rule_bridge.commit_belt_daemon [--once|--status|stop]
 # [STARTUP] manual/daemon（watchdog 事件触发，无常驻轮询——M10 合规）
 # [MATURITY] production
-# [INVARIANTS] 提交传送带常驻消费端（Owner 2026-09-16 口述设计）：AI 会话快照入袋即返回继续施工，本守护 watchdog 事件驱动（pending/ 目录 file-created）自动自举排空——不占 AI 会话一秒等待；单例锁 .runtime/commit_queue/belt_daemon.lock（PID+TTL 600s+僵尸检测）；lease 被持=正常让位（自举失败不阻断，等下一事件）；pytest 内不 spawn 真守护（对标 write_audit_daemon 先例）；新死信自动登记堵点本 .runtime/audit/bottleneck_ledger.jsonl（专人专事协议：施工 AI 不修基建债，高模型维护班清账）
+# [INVARIANTS] 提交传送带常驻消费端（Owner 2026-09-16 口述设计）：AI 会话快照入袋即返回继续施工，本守护 watchdog 事件驱动（pending/ 目录 file-created）自动自举排空——不占 AI 会话一秒等待；单例锁 .runtime/commit_queue/belt_daemon.lock（PID+TTL 600s+僵尸检测）；lease 被持=正常让位（自举失败不阻断，等下一事件）；pytest 内不 spawn 真守护（对标 write_audit_daemon 先例）；新死信自动登记堵点本 .runtime/audit/bottleneck_ledger.jsonl（专人专事协议：施工 AI 不修基建债，高模型维护班清账）；W5（st-regfix-laneB-20260922）：heartbeat 文件（队列根 belt_daemon.heartbeat，30s 心跳窗刷新=活性标记非业务轮询）+启动时离线缺口检查（>THD-ALERT-007 阈值→堵点本告警）+堵点本记账 API 三 kind（registry_drift/landing_staleness/phantom_staging，记账行不入积压计数）
 # [MODIFY-GUARD] 观察目录集=commit_queue 五状态目录 + 队列根（serializer.lease/belt_daemon.lock 事件，R4 租约释放唤醒 st-commitchain-20260922——etcd「过期删除=delete 事件」语义的单机等效实现）；drain 永远经 bootstrap_drain_with_landing（lease 单写者语义不变）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -68,6 +68,13 @@ _LEDGER_ALERT_COOLDOWN_S = 1800.0
 # 自举连续环境失败升级阈值（债1 serializer 自举循环的可见化）：连续 3 次
 # drain 环境异常 → 堵点本 CRITICAL 行（不静默循环）。
 _ENV_ABORT_ESCALATE = 3
+# W5（st-regfix-laneB-20260922）：heartbeat 活性标记文件（队列根，30s 心跳窗刷新）。
+# 用途=离线缺口检测：守护死亡后心跳停摆，下一次启动（计划任务 10 分钟兜底触发）
+# 读心跳年龄即可量化离线时长——本次事故观测盲的补课（09-18 起死 4 天无人发现）。
+_HEARTBEAT_FILE = "belt_daemon.heartbeat"
+# 快照陈旧告警线（landing_staleness）：pending 项龄超过即写堵点本记账行。
+# 值出处=施工令 W5③ 原文「快照 base 龄>30min 告警行」（经验拍定，同模块常量口径）。
+_STALE_BASE_S = 1800.0
 
 
 def _queue_root(project_root: Path) -> Path:
@@ -154,8 +161,239 @@ def _ledger_dead_letters(project_root: Path, seen: set[str]) -> int:
     return n
 
 
+# ── W5 堵点本记账 API（st-regfix-laneB-20260922）─────────────────────────────
+# 三类新 kind 的记账通道（施工令 W5③）：落地器侧/清扫侧只管调用，本模块只管
+# 记账（专人专事协议同死信——记账行是流水不是积压，不入 _check_ledger_backlog
+# 计数）。fail-open：记账失败仅 logger.warning，绝不阻断调用方主流程。
+
+
+def _ledger_record(record: dict) -> None:
+    """堵点本统一追加器（JSONL，fail-open）。"""
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+    try:
+        payload = {"ts": now_utc().isoformat(), **record}
+        _LEDGER.parent.mkdir(parents=True, exist_ok=True)
+        with _LEDGER.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps(payload, ensure_ascii=False) + "\n")
+    except OSError:
+        logger.warning("belt_daemon: 堵点本记账失败（kind=%s）", record.get("kind"), exc_info=True)
+
+
+def record_registry_drift(
+    path: str,
+    *,
+    added: int,
+    removed: int,
+    session_id: str | None = None,
+    qid: str | None = None,
+    detail: str | None = None,
+) -> None:
+    """注册表落地身份增减量记账（kind=registry_drift）。
+
+    落地器侧（Lane A W2 三向合并）每次注册表族文件落地后调用一次：added/removed=
+    条目级身份增减量（同款身份定义）。净负值在此留痕，观测面（堵点本）从此不再
+    对注册表漂移全盲——09-22 事故六层根因之「观测死亡」的记账侧补课。
+    """
+    _ledger_record(
+        {
+            "kind": "registry_drift",
+            "path": path,
+            "added": added,
+            "removed": removed,
+            "session_id": session_id,
+            "qid": qid,
+            "detail": detail,
+        }
+    )
+
+
+def record_landing_staleness(
+    qid: str,
+    *,
+    age_s: float,
+    session_id: str | None = None,
+    base_head: str | None = None,
+) -> None:
+    """快照陈旧记账行（kind=landing_staleness）：pending 龄 >_STALE_BASE_S 时写。
+
+    FIFO 陈旧放大是 09-22 事故根因之一（13.5h 陈旧快照落地抹 103 条）——快照
+    base 在入队时新鲜，pending 里每多等一分钟就更陈旧一分；本行让"陈旧在途"
+    从落地前就可见，而不是落地后考古。
+    """
+    _ledger_record(
+        {
+            "kind": "landing_staleness",
+            "qid": qid,
+            "session_id": session_id,
+            "age_s": round(age_s),
+            "threshold_s": round(_STALE_BASE_S),
+            "base_head": base_head,
+            "protocol": "陈旧快照警示：落地前请核对 base 与现 HEAD 漂移（落地器三向合并兜底）",
+        }
+    )
+
+
+def record_phantom_staging(
+    *,
+    scanned: int,
+    phantom: int,
+    session_id: str | None = None,
+    detail: str | None = None,
+) -> None:
+    """幽灵暂存清扫统计记账（kind=phantom_staging）——W7 清扫常驻化的记账通道。
+
+    W7（幽灵清扫常驻化）施工后由清扫侧调用：scanned=本轮扫描 staged 项数，
+    phantom=判定幽灵（无 claim/死会话残留）项数。通道今日先建好，清扫侧明早接入。
+    """
+    _ledger_record(
+        {
+            "kind": "phantom_staging",
+            "scanned": scanned,
+            "phantom": phantom,
+            "session_id": session_id,
+            "detail": detail,
+        }
+    )
+
+
+def _touch_heartbeat(qroot: Path) -> None:
+    """刷新心跳文件（活性标记；写失败仅记日志，fail-open）。"""
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+    try:
+        qroot.mkdir(parents=True, exist_ok=True)
+        (qroot / _HEARTBEAT_FILE).write_text(
+            json.dumps({"pid": os.getpid(), "wall_ts": now_utc().timestamp()}), encoding="utf-8"
+        )
+    except OSError:
+        logger.warning("belt_daemon: 心跳文件刷新失败", exc_info=True)
+
+
+def _load_offline_threshold() -> float | None:
+    """THD-ALERT-007 fail-closed 统读（结构照抄 commit_queue 死信爆发 005/006 先例）；
+    不可读/非法返回 None（告警链 fail-open 跳过，不阻断守护启动）。"""
+    try:
+        from zephyr.shared.alerts.threshold_loader import load_alert_thresholds  # noqa: PLC0415
+
+        th = load_alert_thresholds({"THD-ALERT-007": "daemon_offline_max"}, cast="int")
+    except Exception as exc:  # noqa: BLE001 — 阈值不可读=告警链降级
+        logger.warning("belt_daemon: 离线阈值加载失败，跳过离线告警（REG-ATH-001 不可达）: %s", exc)
+        return None
+    if th["daemon_offline_max"] <= 0:
+        logger.warning("belt_daemon: 离线阈值非法（<=0），跳过离线告警（REG-ATH-001 条目需修正）")
+        return None
+    return float(th["daemon_offline_max"])
+
+
+def _check_daemon_offline_gap(qroot: Path) -> float | None:
+    """启动时离线缺口检查：心跳年龄 >THD-ALERT-007 → 堵点本告警行。
+
+    返回离线秒数（无历史心跳/阈值不可读返回 None）。守护自己死后无人记账，
+    唯一记账人=下一次启动（计划任务 10 分钟兜底触发的本函数）——对标
+    commit_queue._dead_burst_write_ledger 的「daemon 离线时本路径是唯一记账人」。
+    """
+    threshold = _load_offline_threshold()
+    if threshold is None:
+        return None
+    hb = qroot / _HEARTBEAT_FILE
+    try:
+        data = json.loads(hb.read_text(encoding="utf-8"))
+        wall_ts = float(data.get("wall_ts", 0.0))
+    except Exception:  # noqa: BLE001 — 无心跳/损坏=无证据，不告警
+        return None
+    if wall_ts <= 0:
+        return None
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+    offline_s = now_utc().timestamp() - wall_ts
+    if offline_s <= threshold:
+        return None
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+    try:
+        _LEDGER.parent.mkdir(parents=True, exist_ok=True)
+        with _LEDGER.open("a", encoding="utf-8") as fh:
+            fh.write(
+                json.dumps(
+                    {
+                        "ts": now_utc().isoformat(),
+                        "kind": "alert",
+                        "alert": "belt_daemon_offline_gap",
+                        "offline_s": round(offline_s),
+                        "offline_hours": round(offline_s / 3600.0, 1),
+                        "threshold_s": round(threshold),
+                        "last_heartbeat": wall_ts,
+                        "protocol": "观测复活（09-22 事故 W5）：守护离线超阈——检查计划任务与单例锁，处置入口 python -m zephyr.gov_enforcement.rule_bridge.commit_belt_daemon --status",
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
+    except OSError:
+        logger.warning("belt_daemon: 离线告警落盘失败", exc_info=True)
+    logger.error(
+        "belt_daemon: 检测到离线缺口 %.1f 小时（阈值 %.0f 小时）——堵点本告警已写",
+        offline_s / 3600.0,
+        threshold / 3600.0,
+    )
+    return offline_s
+
+
+def _scan_stale_pending(root: Path, alerted: set[str]) -> int:
+    """pending 陈旧快照扫描：项龄 >_STALE_BASE_S 记账（进程内每 qid 一次）。
+
+    项龄口径=快照 created_at（入队时刻；缺失退化文件 mtime）——base 在入队时
+    新鲜，在途时长即陈旧度。返回本轮新记账行数。
+    """
+    from datetime import datetime  # noqa: PLC0415
+
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+    pending_dir = _queue_root(root) / "pending"
+    n = 0
+    try:
+        for f in sorted(pending_dir.glob("q-*.json")):
+            if f.name in alerted:
+                continue
+            try:
+                item = json.loads(f.read_text(encoding="utf-8"))
+            except Exception:  # noqa: BLE001
+                continue
+            created = item.get("created_at")
+            age_s: float | None = None
+            if isinstance(created, str) and created:
+                try:
+                    age_s = now_utc().timestamp() - datetime.fromisoformat(created).timestamp()
+                except ValueError:
+                    age_s = None
+            if age_s is None:
+                try:
+                    age_s = now_utc().timestamp() - f.stat().st_mtime
+                except OSError:
+                    continue
+            if age_s <= _STALE_BASE_S:
+                continue
+            alerted.add(f.name)
+            record_landing_staleness(
+                item.get("qid") or f.stem,
+                age_s=age_s,
+                session_id=item.get("session_id"),
+                base_head=(item.get("base_head") or "")[:12] or None,
+            )
+            n += 1
+    except OSError:
+        pass
+    return n
+
+
 def _check_ledger_backlog() -> None:
-    """堵点本积压自检（阈值告警）：≥_LEDGER_ALERT_THRESHOLD 条或最老 >24h → 告警行。"""
+    """堵点本积压自检（阈值告警）：≥_LEDGER_ALERT_THRESHOLD 条或最老 >24h → 告警行。
+
+    W5 口径收窄（st-regfix-laneB-20260922）：积压计数只数 kind=dead_letter——
+    死信才是"待清账积压"；registry_drift/landing_staleness/phantom_staging 是
+    记账流水（只增不减），若计入则记账越勤积压越假（≥20 条告警必然误发）。
+    """
     from datetime import datetime
 
     if not _LEDGER.exists():
@@ -173,8 +411,8 @@ def _check_ledger_backlog() -> None:
                 rec = _json.loads(line)
             except Exception:  # noqa: BLE001
                 continue
-            if rec.get("kind") == "alert":
-                continue  # 告警行不计积压
+            if rec.get("kind") != "dead_letter":
+                continue  # 告警行/记账流水不计积压（W5 收窄，见 docstring）
             n += 1
             ts = rec.get("ts")
             if ts:
@@ -452,6 +690,10 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
     _loop_state: dict = {"env_aborts": 0, "epoch": None}
     _ledger_dead_letters(root, seen_dead)  # 启动即登记存量死信（首次全量）
     _check_ledger_backlog()  # 启动即自检积压
+    _check_daemon_offline_gap(qroot)  # W5：启动即查离线缺口（上次心跳年龄，观测复活）
+    _touch_heartbeat(qroot)  # W5：上线即打首个心跳
+    stale_alerted: set[str] = set()
+    _scan_stale_pending(root, stale_alerted)  # W5：启动即扫存量陈旧快照
     try:
         try:
             from watchdog.events import FileSystemEventHandler  # noqa: PLC0415
@@ -483,6 +725,7 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
         try:
             while max_events is None or events < max_events:
                 if not poke.wait(timeout=30.0):
+                    _touch_heartbeat(qroot)  # W5：空闲窗心跳续期（活性标记，非业务轮询——无事件零业务动作）
                     continue  # 30s 心跳窗（非轮询——无事件零动作）
                 poke.clear()
                 poke.clear()  # 双清防抖（无 sleep——PERM-TRIGGER 合规，事件风暴由单 Event 位自然合并）
@@ -493,6 +736,8 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
                     _loop_state["env_aborts"] = 0  # 成功即复位
                 _ledger_dead_letters(root, seen_dead)
                 _check_ledger_backlog()
+                _touch_heartbeat(qroot)  # W5：事件处理完即续心跳
+                _scan_stale_pending(root, stale_alerted)
                 events += 1
                 # 裁定#281①：drain 已返回=lease 已释放=安全点；纪元变更即原地 re-exec
                 # （pytest 上界模式 max_events 非 None=enabled=False，测试零副作用）
@@ -513,9 +758,24 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if _drain_once(root).get("skipped") is False else 0
     if "--status" in argv:
         lock = _queue_root(root) / _DAEMON_LOCK
+        hb = _queue_root(root) / _HEARTBEAT_FILE
+        hb_age: int | None = None
+        if hb.exists():
+            try:
+                from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+                hb_age = round(
+                    now_utc().timestamp() - float(json.loads(hb.read_text(encoding="utf-8")).get("wall_ts", 0.0))
+                )
+            except Exception:  # noqa: BLE001 — 心跳文件损坏按未知处理
+                hb_age = None
         print(
             json.dumps(
-                {"lock_exists": lock.exists(), "raw": lock.read_text(encoding="utf-8") if lock.exists() else None}
+                {
+                    "lock_exists": lock.exists(),
+                    "raw": lock.read_text(encoding="utf-8") if lock.exists() else None,
+                    "heartbeat_age_s": hb_age,  # W5：活性可视化（None=无历史心跳）
+                }
             )
         )
         return 0

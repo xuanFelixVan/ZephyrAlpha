@@ -319,3 +319,170 @@ class TestBacklogAlertCooldown:
         self._write_ledger(ledger, 21, keep_alerts=True)
         cbd._check_ledger_backlog()
         assert len(self._alerts(ledger)) == 2
+
+
+class TestBookkeepingKindsNotBacklog:
+    """W5（st-regfix-laneB-20260922）：三类记账 kind 只留痕不积压。
+
+    registry_drift/landing_staleness/phantom_staging 是流水（只增不减），若计入
+    积压计数则记账越勤告警越假——积压 n 收窄为只数 dead_letter。
+    """
+
+    def _append(self, ledger, record):
+        with ledger.open("a", encoding="utf-8") as fh:
+            fh.write(json.dumps({"ts": "2026-09-22T21:00:00+08:00", **record}, ensure_ascii=False) + "\n")
+
+    def test_bookkeeping_rows_do_not_count_as_backlog(self, tmp_path, monkeypatch):
+        ledger = tmp_path / "bottleneck_ledger.jsonl"
+        monkeypatch.setattr(cbd, "_LEDGER", ledger)
+        # 25 条记账流水（>20 阈）+ 0 条死信 → 不得触发积压告警
+        for i in range(10):
+            self._append(ledger, {"kind": "registry_drift", "path": f"a{i}.yaml", "added": 1, "removed": 0})
+            self._append(ledger, {"kind": "landing_staleness", "qid": f"q-{i}", "age_s": 3600, "threshold_s": 1800})
+            self._append(ledger, {"kind": "phantom_staging", "scanned": 5, "phantom": 1})
+        cbd._check_ledger_backlog()
+        assert "bottleneck_backlog_threshold" not in ledger.read_text(encoding="utf-8")
+
+    def test_dead_letters_still_count_after_narrowing(self, tmp_path, monkeypatch):
+        ledger = tmp_path / "bottleneck_ledger.jsonl"
+        monkeypatch.setattr(cbd, "_LEDGER", ledger)
+        self._append(ledger, {"kind": "registry_drift", "path": "a.yaml", "added": 1, "removed": 0})
+        for i in range(20):
+            self._append(ledger, {"kind": "dead_letter", "qid": f"q-{i}"})
+        cbd._check_ledger_backlog()
+        alerts = [json.loads(x) for x in ledger.read_text(encoding="utf-8").splitlines() if '"alert"' in x]
+        assert any(a.get("alert") == "bottleneck_backlog_threshold" for a in alerts)
+
+
+class TestLedgerRecordKinds:
+    """W5 记账 API 三 kind：字段契约 + fail-open。"""
+
+    def test_record_registry_drift(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "led.jsonl")
+        cbd.record_registry_drift(
+            "docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml",
+            added=3,
+            removed=1,
+            session_id="st-regfix-laneA-20260922",
+            qid="q-20260922-laneA-0001",
+        )
+        rec = json.loads((tmp_path / "led.jsonl").read_text(encoding="utf-8").splitlines()[0])
+        assert rec["kind"] == "registry_drift" and rec["added"] == 3 and rec["removed"] == 1
+        assert rec["session_id"] == "st-regfix-laneA-20260922" and "ts" in rec
+
+    def test_record_landing_staleness(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "led.jsonl")
+        cbd.record_landing_staleness("q-20260922-x-0007", age_s=5400.4, session_id="s1", base_head="abc123def456")
+        rec = json.loads((tmp_path / "led.jsonl").read_text(encoding="utf-8").splitlines()[0])
+        assert rec["kind"] == "landing_staleness" and rec["qid"] == "q-20260922-x-0007"
+        assert rec["age_s"] == 5400 and rec["threshold_s"] == round(cbd._STALE_BASE_S)
+
+    def test_record_phantom_staging(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "led.jsonl")
+        cbd.record_phantom_staging(scanned=12, phantom=2, session_id="s2")
+        rec = json.loads((tmp_path / "led.jsonl").read_text(encoding="utf-8").splitlines()[0])
+        assert rec["kind"] == "phantom_staging" and rec["scanned"] == 12 and rec["phantom"] == 2
+
+
+class TestHeartbeatAndOfflineGap:
+    """W5：心跳文件 + THD-ALERT-007 离线缺口告警（结构照抄 005/006 消费先例）。"""
+
+    def test_touch_heartbeat_writes_wall_ts(self, tmp_path):
+        qroot = tmp_path / "commit_queue"
+        cbd._touch_heartbeat(qroot)
+        data = json.loads((qroot / cbd._HEARTBEAT_FILE).read_text(encoding="utf-8"))
+        assert data["pid"] > 0 and abs(data["wall_ts"] - __import__("time").time()) < 60
+
+    def test_stale_heartbeat_writes_offline_alert(self, tmp_path, monkeypatch):
+        import time as _time
+
+        monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "led.jsonl")
+        monkeypatch.setattr(cbd, "_load_offline_threshold", lambda: 86400.0)
+        qroot = tmp_path / "commit_queue"
+        qroot.mkdir(parents=True)
+        (qroot / cbd._HEARTBEAT_FILE).write_text(
+            json.dumps({"pid": 1, "wall_ts": _time.time() - 25 * 3600}), encoding="utf-8"
+        )
+        offline_s = cbd._check_daemon_offline_gap(qroot)
+        assert offline_s is not None and offline_s > 86400
+        rec = json.loads((tmp_path / "led.jsonl").read_text(encoding="utf-8").splitlines()[0])
+        assert rec["kind"] == "alert" and rec["alert"] == "belt_daemon_offline_gap"
+        assert rec["offline_hours"] > 24
+
+    def test_fresh_or_missing_heartbeat_no_alert(self, tmp_path, monkeypatch):
+        import time as _time
+
+        monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "led.jsonl")
+        monkeypatch.setattr(cbd, "_load_offline_threshold", lambda: 86400.0)
+        qroot = tmp_path / "commit_queue"
+        qroot.mkdir(parents=True)
+        # 无历史心跳：无证据不告警
+        assert cbd._check_daemon_offline_gap(qroot) is None
+        assert not (tmp_path / "led.jsonl").exists()
+        # 新鲜心跳：离线 0
+        (qroot / cbd._HEARTBEAT_FILE).write_text(json.dumps({"pid": 1, "wall_ts": _time.time() - 60}), encoding="utf-8")
+        assert cbd._check_daemon_offline_gap(qroot) is None
+
+    def test_threshold_unavailable_skips(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "led.jsonl")
+        monkeypatch.setattr(cbd, "_load_offline_threshold", lambda: None)
+        qroot = tmp_path / "commit_queue"
+        qroot.mkdir(parents=True)
+        (qroot / cbd._HEARTBEAT_FILE).write_text(json.dumps({"pid": 1, "wall_ts": 0.0}), encoding="utf-8")
+        assert cbd._check_daemon_offline_gap(qroot) is None
+        assert not (tmp_path / "led.jsonl").exists()
+
+    def test_load_offline_threshold_reads_registry(self, tmp_path, monkeypatch):
+        """fail-closed 统读接线：从 REG-ATH-001 读 THD-ALERT-007。"""
+        reg = tmp_path / "alert_threshold_registry.yaml"
+        reg.write_text(
+            "thresholds:\n  - threshold_id: THD-ALERT-007\n    value: 86400\n",
+            encoding="utf-8",
+        )
+        import zephyr.shared.alerts.threshold_loader as tl
+
+        monkeypatch.setattr(tl, "ALERT_THRESHOLD_REGISTRY_PATH", reg)
+        assert cbd._load_offline_threshold() == 86400.0
+
+
+class TestStalePendingScan:
+    """W5：pending 陈旧快照扫描（>30min 记账，进程内每 qid 一次）。"""
+
+    @staticmethod
+    def _seed(qroot, qid, created_iso, session="sA"):
+        (qroot / "pending").mkdir(parents=True, exist_ok=True)
+        (qroot / "pending" / f"{qid}.json").write_text(
+            json.dumps({"qid": qid, "session_id": session, "created_at": created_iso, "base_head": "abc123def4567890"}),
+            encoding="utf-8",
+        )
+
+    def test_stale_pending_flagged_once(self, tmp_path, monkeypatch):
+        from datetime import datetime, timedelta, timezone
+
+        monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "led.jsonl")
+        qroot = cbd._queue_root(tmp_path)
+        old = (datetime.now(timezone.utc) - timedelta(hours=2)).isoformat()
+        fresh = datetime.now(timezone.utc).isoformat()
+        self._seed(qroot, "q-20260922-a-0001", old)
+        self._seed(qroot, "q-20260922-a-0002", fresh)
+        alerted: set[str] = set()
+        n = cbd._scan_stale_pending(tmp_path, alerted)
+        assert n == 1
+        rec = json.loads((tmp_path / "led.jsonl").read_text(encoding="utf-8").splitlines()[0])
+        assert rec["kind"] == "landing_staleness" and rec["qid"] == "q-20260922-a-0001"
+        assert rec["age_s"] > cbd._STALE_BASE_S
+        # 幂等：同进程二扫不重复记账
+        assert cbd._scan_stale_pending(tmp_path, alerted) == 0
+
+    def test_missing_created_at_falls_back_to_mtime(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(cbd, "_LEDGER", tmp_path / "led.jsonl")
+        qroot = cbd._queue_root(tmp_path)
+        p = qroot / "pending" / "q-20260922-b-0001.json"
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps({"qid": "q-20260922-b-0001"}), encoding="utf-8")
+        import os as _os
+
+        old = __import__("time").time() - 7200
+        _os.utime(p, (old, old))
+        alerted: set[str] = set()
+        assert cbd._scan_stale_pending(tmp_path, alerted) == 1

@@ -33,6 +33,8 @@ detect_shell_dangerous.py — 危险 Shell 命令检测
 exit codes: 0=pass, 1=findings, 2=error
 """
 
+# noqa: m11-perm-manual-legitimate  本工具是人工巡检 CLI 扫描器（[STARTUP] manual 既有语义），非常驻系统，__main__+argv 即其合法形态
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -46,6 +48,7 @@ warn_only: false
 """
 
 
+import importlib
 import re
 import sys
 from pathlib import Path
@@ -108,6 +111,41 @@ EXCLUDE_PATH_PARTS = ("docs/03_modules/_cross_layer/large_language_model_securit
     "scripts/construction/demo_e2e_pipeline.py",
 )
 
+# W9 豁免清单热加载（st-regfix-laneB-20260922）：EXCLUDE_PATH_PARTS 的失效键=
+# 本模块文件 (mtime_ns, size)。本脚本既被 CLI 一次性进程执行（每次全新，无陈旧
+# 面），也会经 checker_supervisor 持久工作池 runpy 逐请求重跑（顶层每次重执，
+# 同样无陈旧面）；热加载真正防御的是"被 import 进常驻进程"的形态（工作池
+# sys.modules 复用/未来 in-process 消费方）——那种进程里 import 期冻结的旧清单
+# 会假拦截新登记的豁免路径（09-22 ch-final 实证同族病：注册表落地后旧缓存
+# 三轮假拦截）。stat 便宜，命中才省；变更才 reload。
+_EXCLUDE_PARTS_SIG: tuple[int, int] | None = None
+
+
+def _get_exclude_path_parts() -> tuple[str, ...]:
+    """返回生效豁免路径清单（mtime+size 失效，import 态变更即 reload）。
+
+    fail-open：stat 不可达时返回当前清单（宁可多扫不漏扫，红线语义不变）。
+    `__main__` 形态（CLI/runpy）禁 reload——reload(__main__) 会重入 main()。
+    """
+    global _EXCLUDE_PARTS_SIG
+    try:
+        st = Path(__file__).stat()
+        sig = (st.st_mtime_ns, st.st_size)
+    except OSError:
+        return EXCLUDE_PATH_PARTS
+    if _EXCLUDE_PARTS_SIG is None:
+        _EXCLUDE_PARTS_SIG = sig
+        return EXCLUDE_PATH_PARTS
+    if sig == _EXCLUDE_PARTS_SIG:
+        return EXCLUDE_PATH_PARTS
+    mod = sys.modules.get(__name__)
+    if __name__ == "__main__" or mod is None or getattr(mod, "__file__", None) != __file__:
+        _EXCLUDE_PARTS_SIG = sig
+        return EXCLUDE_PATH_PARTS
+    fresh = importlib.reload(mod)
+    _EXCLUDE_PARTS_SIG = sig
+    return fresh.EXCLUDE_PATH_PARTS
+
 
 def scan_file(filepath: Path) -> list[dict]:
     """扫描单个文件并返回发现列表"""
@@ -144,7 +182,7 @@ def scan_files(file_names: list[str]) -> tuple[list[dict], int, int]:
         normalized = str(filepath).replace("\\", "/")
         if filepath.suffix.lower() not in SCAN_EXTENSIONS_CODE or filepath.name in EXCLUDE_FILES:
             continue
-        if any(part in normalized for part in EXCLUDE_PATH_PARTS):
+        if any(part in normalized for part in _get_exclude_path_parts()):
             continue
         try:
             filepath.relative_to(REPO_ROOT)
@@ -172,7 +210,7 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
             continue
         if str(rel).startswith("_DO_NOT_USE") or str(rel).startswith(".trae"):
             continue
-        if any(part in str(rel).replace("\\", "/") for part in EXCLUDE_PATH_PARTS):
+        if any(part in str(rel).replace("\\", "/") for part in _get_exclude_path_parts()):
             continue
         files_scanned += 1
         findings = scan_file(filepath)
