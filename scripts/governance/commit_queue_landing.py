@@ -102,11 +102,11 @@ import subprocess
 import sys
 import tempfile
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
-from scripts.governance._shared.thresholds import get as _get_threshold  # 治本(AI-20 P0③ 2026-09-05): 阈值SSoT
-
 import scripts.commit_queue as cq
+from scripts.governance._shared.thresholds import get as _get_threshold  # 治本(AI-20 P0③ 2026-09-05): 阈值SSoT
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +166,470 @@ def _is_transient_git_error(exc: BaseException | str) -> bool:
     """git 失败是否属瞬态环境类（锁争用/句柄占用）——是则项退回 pending，绝不死信。"""
     text = str(exc).lower()
     return any(marker in text for marker in _TRANSIENT_GIT_MARKERS)
+
+
+# ---------------------------------------------------------------------------
+# 注册表族落地三向合并（W2 治本，2026-09-22 注册表事故）
+# ---------------------------------------------------------------------------
+# 病根：_apply_snapshot 对快照文件 write_bytes() 整文件覆盖——sim-launch 15:17 的
+# fb5a7821d 用 01:35 基底快照落地，一个 blob 写回抹掉 103 条已提交身份。逐文件快进
+# 冲突判定（_conflict_reason）只在 base_head 有效且 diff 触及同路径时兜底，无 base_head
+# 的旧格式项/跨 list 族代数抵消全部漏网。
+# 治本：注册表族文件（_REGISTRY_CATALOGS_PREFIX 且 .yaml）落地时改**条目级三向合并**
+# ——base=快照基底（item.base_head，缺省 old_dev 父提交）、ours=当前 dev、theirs=快照
+# 内容；条目身份复用 registry_mass_deletion_gate.entry_identity_key（每条首个标量字段），
+# 落地侧与门禁侧同一份身份定义。合并规则（DISPATCH_v1 Lane A 卡片 W2）：
+#   base 有+ours 无+theirs 有 → 采纳（ours 侧合法退役除外——条目引用路径盘上与 HEAD
+#                               双不存在）；base 有+ours 有+theirs 无 → 保留 ours（快照
+#                               侧删除不镇压现役）；base 无+theirs 有 → 插入；同键内容
+#                               异（三方各自改）→ 死信带双方条目全文。
+# 非注册表文件维持整文件语义零变更；合并在落地器内做，enqueue 侧快照格式零改动
+# （向后兼容，旧队列项直接受益）。
+
+_REGISTRY_CATALOGS_PREFIX = "docs/01_policies_and_standards/_registry/catalogs/"
+# 合并死信详情里单侧条目 dump 的截断上限（防 reason 超 2000 字符截断丢双侧原文）
+_MERGE_CONFLICT_DUMP_CHARS = 800
+
+
+def is_registry_mergeable(rel: str) -> bool:
+    """仓内相对路径是否命中注册表族（W2 三向合并作用域；与 gate 的
+    REGISTRY-MASS-DELETION 触发目录同源语义，按前缀族判定不逐文件枚举）。"""
+    norm = rel.replace("\\", "/")
+    return norm.startswith(_REGISTRY_CATALOGS_PREFIX) and norm.endswith(".yaml")
+
+
+@dataclass
+class _RegistryFamily:
+    """一个顶层 list 族的切分结果（头行号 + 条目块）。"""
+
+    head_line: int  # 族键行（0-based；顶层 list 文件为 0）
+    blocks: list[_RegistryEntryBlock]
+
+
+@dataclass
+class _RegistryEntryBlock:
+    """单条目在原文中的行区间与语义对象。"""
+
+    identity: str | None  # gate 同款身份键（None=判不了，合并器 fail-closed 死信）
+    data: object  # 条目 yaml 语义对象（dict）
+    start: int  # 起始行（0-based，含）
+    end: int  # 结束行（0-based，含）
+    text: str  # 原文块（keepends，含行尾）
+
+
+def _split_registry_entries(text: str) -> tuple[dict[str | None, _RegistryFamily], str | None]:
+    """YAML 文本 → {顶层 list 键: 族切分}（yaml.compose 节点行号法，原文块零重排）。
+
+    Returns:
+        (families, error)；解析失败/结构非 mapping+list 组合时 error 非 None。
+    """
+    import yaml  # noqa: PLC0415 — landing 模块保持 stdlib 顶层 import（与 gate lazy 风格一致）
+
+    try:
+        node = yaml.compose(text)
+    except Exception as exc:  # noqa: BLE001 — 解析失败由调用方死信
+        return {}, f"yaml.compose 解析失败: {exc}"
+    if node is None:
+        return {}, None  # 空文件 = 无族无条目
+    lines = text.splitlines(keepends=True)
+    families: dict[str | None, _RegistryFamily] = {}
+    seq_nodes: list[tuple[str | None, object, int, int]] = []
+    node_cls = type(node).__name__  # 鸭子判定用类型名（不顶层 import yaml.SequenceNode）
+    if node_cls == "SequenceNode":
+        seq_nodes.append((None, node, 0, len(lines)))
+    elif node_cls == "MappingNode":
+        pairs = node.value
+        for i, (key_node, value_node) in enumerate(pairs):
+            if type(value_node).__name__ == "SequenceNode":
+                # 族右边界 = 下一兄弟键行（族末条目 end_mark 会指到该键，须截尾——
+                # smoke8 实测：末条目块吞进 `others:` 行致 safe_load 失败）；末族=文件尾
+                next_bound = pairs[i + 1][0].start_mark.line if i + 1 < len(pairs) else len(lines)
+                seq_nodes.append((str(key_node.value), value_node, key_node.start_mark.line, next_bound))
+    # ScalarNode / 空文档 → 无族（无条目可合并，调用方走 ours/theirs 一致性短路或 noop）
+    for list_key, seq, head_line, end_bound in seq_nodes:
+        blocks: list[_RegistryEntryBlock] = []
+        item_nodes = list(seq.value)
+        for i, item_node in enumerate(item_nodes):
+            start = item_node.start_mark.line
+            # PyYAML end_mark 指向节点结束后的位置——block 条目下恰是**下一条目的
+            # start**（实测 end_mark.line == next.start_mark.line），故同族内用
+            # 「下一 start-1」截尾最可靠；族末条目受族右边界约束。
+            hard_bound = (
+                min(item_nodes[i + 1].start_mark.line, end_bound) if i + 1 < len(item_nodes) else end_bound
+            )
+            end = max(min(item_node.end_mark.line, hard_bound - 1, len(lines) - 1), start)
+            block_text = "".join(lines[start : end + 1])
+            try:
+                data = yaml.safe_load(block_text)
+            except Exception as exc:  # noqa: BLE001
+                return {}, f"条目块解析失败（{list_key} 第 {start + 1} 行）: {exc}"
+            if isinstance(data, list) and len(data) == 1:
+                # 块文本以 `- ` 开头（带原缩进），单独解析产出单元素 list——解包回条目本体
+                data = data[0]
+            blocks.append(
+                _RegistryEntryBlock(
+                    identity=_merge_entry_identity(data),
+                    data=data,
+                    start=start,
+                    end=end,
+                    text=block_text,
+                )
+            )
+        families[list_key] = _RegistryFamily(head_line=head_line, blocks=blocks)
+    return families, None
+
+
+def _is_seq_node(node: object) -> bool:
+    """（保留兼容名）yaml 序列节点判定——已由 _split_registry_entries 内联类型名分支取代。"""
+    return type(node).__name__ == "SequenceNode" and isinstance(getattr(node, "value", None), list)
+
+
+def _entry_identity(data: object) -> str | None:
+    """条目身份（gate 同款真源委托；import 失败等异常 → None → 合并器死信方向）。
+
+    import 走 flat 路径（HEAD 既存真源）；registry_family/ 重组位落地前
+    IMPORT-INTEGRITY 只认 HEAD 可解析面（0060 死因），重组后由 Lane A 批统一切换。
+    """
+    try:
+        from zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate import (  # noqa: PLC0415
+            entry_identity_key,
+        )
+
+        return entry_identity_key(data)
+    except Exception:  # noqa: BLE001 — 判不了按 None（fail-closed 死信，不静默合并）
+        return None
+
+
+def _merge_entry_identity(data: object) -> str | None:
+    """合并器复合身份键（W2 热修，q-20260923-st-gateaudit-20260922-0078 实战）：
+    gate 单键 + token 并入。
+
+    实战缺陷：gate 首标量字段单键（creation_tokens 族=file）在「同文件合法持多条
+    token」（blueprint 双 capability/night-gw 新旧并存，HEAD 41 文件此形态）下同侧
+    键重复 → 误死信。修法（热修令）：键升级为 ``首标量|token=值`` 复合——首字段=file
+    时即 (file, token)，与 batch_creation_tokens._entry_keys_of_text 的 B22 立法
+    身份同构；无 token 字段的注册表（ruling_id 单键）自动退化为 gate 单键，通用性
+    零破坏。复合键下同键重复=同 file 同 token 两条（真非法）→ 死信判据保留。
+
+    刻意不改 gate 的 entry_identity_key（其身份集语义与既有测试断言绑死单键格式；
+    本函数为合并器本地扩展——复合键是单键的细化不是分叉：单键判「存在」者复合键
+    必判「存在」，合并器消失检测更严方向安全）。
+    """
+    base = _entry_identity(data)
+    if base is None or not isinstance(data, dict):
+        return base
+    token = data.get("token")
+    if isinstance(token, (str, int, float)) and token is not None:
+        return f"{base}|token={token}"
+    return base
+
+
+def _extract_entry_paths(data: object) -> list[str]:
+    """条目内路径候选：递归收集「含 ``/``」或「带文件后缀」的字符串值（URL/绝对路径排除）。
+
+    合法退役判据（W2/W3 同款）的原料——登记表惯例路径字段名不一
+    （path/module_path/file/target…），按值形态机械提取不靠字段名白名单。
+    后缀规则兜住单文件名（如 ``retired_doc.md``——无斜杠但显然是文件）。
+    """
+    out: list[str] = []
+
+    def _walk(node: object) -> None:
+        """_walk implementation."""
+        if isinstance(node, str):
+            norm = node.replace("\\", "/").strip()
+            if norm.startswith(("/", "http://", "https://")):
+                return
+            if "/" in norm or Path(norm).suffix:
+                out.append(norm)
+        elif isinstance(node, dict):
+            for v in node.values():
+                _walk(v)
+        elif isinstance(node, (list, tuple)):
+            for v in node:
+                _walk(v)
+
+    _walk(data)
+    return out
+
+
+def _scalar_family_keys(fam_map: dict[str | None, _RegistryFamily]) -> set[str | None]:
+    """纯标量族集合（全部条目均非 dict——schema 元数据 list 特征，如 unique_key: [id]）。
+
+    gate 的身份语义对非 dict 条目本就跳过（fail-open 不计入身份集）；合并器同构：
+    这类族不参与条目合并，passthrough 保留 ours 原样（Lane B THD-ALERT-007
+    q-0001 死信实证：顶层 unique_key 元数据 list 被误判条目族致增量件死信）。
+    """
+    out: set[str | None] = set()
+    for k, fam in fam_map.items():
+        if fam.blocks and all(b.identity is None and not isinstance(b.data, dict) for b in fam.blocks):
+            out.add(k)
+    return out
+
+
+def _split_passthrough_and_drift(
+    ours_families: dict[str | None, _RegistryFamily],
+    theirs_families: dict[str | None, _RegistryFamily],
+    base_families: dict[str | None, _RegistryFamily],
+    rel_path: str,
+) -> tuple[set[str | None], str | None]:
+    """纯标量族 passthrough 判定 + 结构漂移 fail-closed 检查。
+
+    ours/theirs 双方该族均全标量 → 剔出合并空间（保留 ours 原样）；base 有该族且含
+    结构化条目而 ours/theirs 标量化 → 结构漂移死信（防静默丢 base 条目）；base 无该
+    文件（新增落地前置态）→ 不约束。theirs/base 出现 ours 没有的顶层 list 族 → 结构级
+    重写非条目级编辑，死信回人工。
+    """
+    ours_scalar = _scalar_family_keys(ours_families)
+    theirs_scalar = _scalar_family_keys(theirs_families)
+    base_scalar = _scalar_family_keys(base_families)
+    passthrough: set[str | None] = set()
+    for k in ours_scalar & theirs_scalar:
+        if base_families and k in base_families and k not in base_scalar:
+            return set(), f"{rel_path}: 族 {k} 在 base 侧有结构化条目而 ours/theirs 为纯标量——结构漂移，死信回人工"
+        passthrough.add(k)
+    for side, fam in (("theirs(快照)", theirs_families), ("base", base_families)):
+        drift = [k for k in fam if k not in ours_families]
+        if drift:
+            return set(), f"{rel_path}: {side} 存在 ours 缺失的顶层 list 族 {drift}——结构漂移，死信回人工"
+    return passthrough, None
+
+
+def _index_family_blocks(
+    fam_map: dict[str | None, _RegistryFamily],
+) -> tuple[dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]], str | None]:
+    """族内条目按身份键建索引；身份判不了/同侧键重复 → 死信方向错误串。"""
+    idx: dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]] = {}
+    for fam_key, family in fam_map.items():
+        for block in family.blocks:
+            if block.identity is None:
+                return {}, "存在身份判不了的条目（非 dict/首字段非标量）——合并语义不可证，死信回人工"
+            if block.identity in idx:
+                return {}, f"同侧身份键重复: {block.identity}——身份不唯一，死信回人工"
+            idx[block.identity] = (fam_key, family, block)
+    return idx, None
+
+
+def _yaml_dump_short(data: object, limit: int) -> str:
+    """条目数据 YAML 渲染（冲突报告用，截断到 limit 字符）。"""
+    import yaml  # noqa: PLC0415
+
+    return yaml.safe_dump(data, allow_unicode=True, default_flow_style=False, sort_keys=False)[:limit]
+
+
+def _merge_conflict_msg(
+    rel_path: str, key: str, ours_block: _RegistryEntryBlock, theirs_block: _RegistryEntryBlock, cause: str
+) -> str:
+    """同键条目内容冲突报告（双侧渲染截断）。"""
+    return (
+        f"{rel_path}: 同键条目内容冲突: {key}（{cause}）\n"
+        f"--- ours (dev) ---\n{_yaml_dump_short(ours_block.data, _MERGE_CONFLICT_DUMP_CHARS)}\n"
+        f"--- theirs (快照) ---\n{_yaml_dump_short(theirs_block.data, _MERGE_CONFLICT_DUMP_CHARS)}"
+    )
+
+
+def _plan_kept_splices(
+    ours_idx: dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]],
+    theirs_idx: dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]],
+    base_idx: dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]],
+    rel_path: str,
+) -> tuple[list[tuple[int, int, str]], set[str], str | None]:
+    """ours 侧既有条目遍历：kept 收集 + theirs 改 ours 没动的采纳 splice + 同键内容异冲突。"""
+    splices: list[tuple[int, int, str]] = []
+    kept: set[str] = set()
+    for key, (_fk, family, block) in ours_idx.items():
+        kept.add(key)
+        if key not in theirs_idx:
+            continue  # base 有+ours 有+theirs 无 → 保留 ours（快照侧删除不镇压现役）；ours 独有新增同理
+        _, _, t_block = theirs_idx[key]
+        base_block = base_idx[key][2] if key in base_idx else None
+        if t_block.data == block.data:
+            continue  # 双方一致，保留 ours 原文块（零字节漂移）
+        if base_block is not None and base_block.data == t_block.data:
+            continue  # theirs 没动（==base）、ours 改了 → 保留 ours
+        if base_block is not None and base_block.data == block.data:
+            # theirs 改了、ours 没动（==base）→ 采纳 theirs
+            splices.append((block.start, block.end + 1, t_block.text))
+            continue
+        # 剩余=三方都在且 ours/theirs 相对 base 各自修改，或双侧新增内容异 → 同键内容异死信
+        cause = "三方各自修改" if base_block is not None else "双侧各自新增且内容异"
+        return [], set(), _merge_conflict_msg(rel_path, key, block, t_block, cause)
+    return splices, kept, None
+
+
+def _plan_insert_splices(
+    theirs_idx: dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]],
+    ours_idx: dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]],
+    base_idx: dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]],
+    ours_families: dict[str | None, _RegistryFamily],
+    rel_path: str,
+    retired_check: object | None,
+) -> tuple[list[tuple[int, int, str]], set[str], str | None]:
+    """theirs 独有条目遍历：族尾追加 splice（base 有+ours 无=采纳恢复，尊重 ours 合法退役）。"""
+    splices: list[tuple[int, int, str]] = []
+    inserted: set[str] = set()
+    family_append_pos: dict[str | None, int] = {}
+    for key, (t_fam_key, _, t_block) in theirs_idx.items():
+        if key in ours_idx:
+            continue
+        target = ours_families.get(t_fam_key)
+        if target is None:
+            return [], set(), f"{rel_path}: 条目 {key} 的目标族在 ours 缺失——结构漂移，死信回人工"
+        cached = family_append_pos.get(t_fam_key)
+        if cached is None:
+            cached = target.blocks[-1].end + 1 if target.blocks else target.head_line + 1
+        family_append_pos[t_fam_key] = cached + 1
+        text = t_block.text if t_block.text.endswith("\n") else t_block.text + "\n"
+        if key in base_idx:
+            # base 有+ours 无+theirs 有 → 采纳，除 ours 侧合法退役
+            # （判据=条目引用路径盘上与 HEAD 双不存在；判定异常=不可证 → 采纳恢复）
+            if retired_check is not None:
+                try:
+                    if retired_check(t_block.data):
+                        continue  # 合法退役，尊重 ours 的删除
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning("[landing] retired_check 异常（按不可证退役处理，采纳恢复条目）: %s", exc)
+            inserted.add(key)
+            splices.append((cached, cached, text))
+        else:
+            # base 无+theirs 有（ours 无）→ 插入
+            inserted.add(key)
+            splices.append((cached, cached, text))
+    return splices, inserted, None
+
+
+def _render_selfcheck(
+    merged: str,
+    kept_keys: set[str],
+    inserted_keys: set[str],
+    rel_path: str,
+) -> str | None:
+    """渲染自检（fail-closed 兜底）：结果必须可解析且身份集 == 预期（保留∪插入）。"""
+    import yaml  # noqa: PLC0415
+
+    try:
+        yaml.safe_load(merged)
+    except Exception as exc:  # noqa: BLE001
+        return f"{rel_path}: 合并渲染自检失败（结果不可解析）: {exc}"
+    got, err = _split_registry_entries(merged)
+    if err:
+        return f"{rel_path}: 合并渲染自检失败（重切分异常）: {err}"
+    got_keys: set[str] = set()
+    for fam in got.values():
+        for block in fam.blocks:
+            if block.identity is not None:
+                got_keys.add(block.identity)
+    if got_keys != (kept_keys | inserted_keys):
+        return (
+            f"{rel_path}: 合并渲染自检失败（身份集漂移）预期 {len(kept_keys | inserted_keys)} 条 "
+            f"实际 {len(got_keys)} 条——死信回人工"
+        )
+    return None
+
+
+def _split_all_sides(
+    ours_text: str, theirs_text: str, base_text: str | None, rel_path: str
+) -> tuple[
+    dict[str | None, _RegistryFamily] | None,
+    dict[str | None, _RegistryFamily] | None,
+    dict[str | None, _RegistryFamily] | None,
+    str | None,
+]:
+    """三侧文本各自条目族切分；任一侧解析失败 → (None, None, None, 错误串)。"""
+    ours_families, err = _split_registry_entries(ours_text)
+    if err:
+        return None, None, None, f"{rel_path}: ours 侧 {err}"
+    theirs_families, err = _split_registry_entries(theirs_text)
+    if err:
+        return None, None, None, f"{rel_path}: theirs(快照) 侧 {err}"
+    base_families: dict[str | None, _RegistryFamily] = {}
+    if base_text is not None:
+        base_families, err = _split_registry_entries(base_text)
+        if err:
+            return None, None, None, f"{rel_path}: base 侧 {err}"
+    return ours_families, theirs_families, base_families, None
+
+
+def _index_all_sides(
+    ours_families: dict[str | None, _RegistryFamily],
+    theirs_families: dict[str | None, _RegistryFamily],
+    base_families: dict[str | None, _RegistryFamily],
+    rel_path: str,
+) -> tuple[
+    dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]] | None,
+    dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]] | None,
+    dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]] | None,
+    str | None,
+]:
+    """三侧条目索引构建；任一侧身份判不了/键重复 → 错误串。"""
+    ours_idx, err = _index_family_blocks(ours_families)
+    if err:
+        return None, None, None, f"{rel_path}: ours {err}"
+    theirs_idx, err = _index_family_blocks(theirs_families)
+    if err:
+        return None, None, None, f"{rel_path}: theirs(快照) {err}"
+    base_idx, err = _index_family_blocks(base_families)
+    if err:
+        return None, None, None, f"{rel_path}: base {err}"
+    return ours_idx, theirs_idx, base_idx, None
+
+
+def three_way_merge_registry_yaml(
+    base_text: str | None,
+    ours_text: str,
+    theirs_text: str,
+    *,
+    rel_path: str,
+    retired_check: object | None = None,
+) -> tuple[str | None, str]:
+    """注册表族文件条目级三向合并（W2 治本核心，纯函数零 IO）。
+
+    Args:
+        base_text: 快照基底版本（item.base_head 或 old_dev 父提交；None=该文件 base 侧不存在）。
+        ours_text: 当前 dev 版本。
+        theirs_text: 快照内容（入队时的整文件快照）。
+        rel_path: 仓内相对路径（死信详情/自检报告用）。
+        retired_check: callable(entry_dict) -> bool——ours 侧合法退役判定
+            （条目引用路径盘上与 HEAD 双不存在）；None=一律不认退役（纯文本层测试用）。
+
+    Returns:
+        (merged_text, "") 合并成功；(None, conflict_reason) 冲突/结构漂移/解析失败
+        ——调用方落地死信回人工，绝不静默整文件覆盖。
+    """
+    ours_families, theirs_families, base_families, err = _split_all_sides(ours_text, theirs_text, base_text, rel_path)
+    if err:
+        return None, err
+
+    passthrough, err = _split_passthrough_and_drift(ours_families, theirs_families, base_families, rel_path)
+    if err:
+        return None, err
+    for fam_map in (ours_families, theirs_families, base_families):
+        for k in passthrough:
+            fam_map.pop(k, None)
+
+    ours_idx, theirs_idx, base_idx, err = _index_all_sides(ours_families, theirs_families, base_families, rel_path)
+    if err:
+        return None, err
+
+    kept_splices, kept_keys, err = _plan_kept_splices(ours_idx, theirs_idx, base_idx, rel_path)
+    if err:
+        return None, err
+    ins_splices, inserted_keys, err = _plan_insert_splices(
+        theirs_idx, ours_idx, base_idx, ours_families, rel_path, retired_check
+    )
+    if err:
+        return None, err
+
+    # 应用 splice（start 降序；同位置的多个插入按登记顺序生效）
+    splices = kept_splices + ins_splices
+    lines = ours_text.splitlines(keepends=True)
+    for start, end_excl, text in sorted(splices, key=lambda s: (s[0], s[1]), reverse=True):
+        lines[start:end_excl] = [text] if text else []
+    merged = "".join(lines)
+
+    err = _render_selfcheck(merged, kept_keys, inserted_keys, rel_path)
+    if err:
+        return None, err
+    return merged, ""
 
 
 class CasConflict(RuntimeError):
@@ -462,13 +926,20 @@ class WorktreeLanding:
         return {line.strip() for line in r.stdout.splitlines() if line.strip()}
 
     def _conflict_reason(self, item: dict, current_dev: str) -> str | None:
-        """base_head 基底冲突判定；无 base_head（A 段兼容项）→ None（快进应用）。"""
+        """base_head 基底冲突判定；无 base_head（A 段兼容项）→ None（快进应用）。
+
+        W2（2026-09-22 注册表事故治本）：注册表族文件（is_registry_mergeable）不做
+        path 级死信——同路径漂移交由落地侧条目级三向合并消化（同键内容异才死信）；
+        此处若照旧死信，合并器永远无执行机会。非注册表路径维持逐文件快进判定零变更。
+        """
         base = item.get("base_head")
         if not base or base == current_dev:
             return None
         if self._git_repo("cat-file", "-e", base, check=False).returncode != 0:
             return f"冲突判定失败：base_head 无效（{base}）——死信回退人工（66 号 §6.4）"
-        overlap = self._changed_paths_between(base, current_dev) & self._item_paths(item)
+        paths = self._item_paths(item)
+        mergeable = {p for p in paths if is_registry_mergeable(p)}
+        overlap = self._changed_paths_between(base, current_dev) & (paths - mergeable)
         if overlap:
             return (
                 f"冲突：入队基底 {base[:12]} 之后 dev 已推进且触及同路径 {sorted(overlap)}"
@@ -478,8 +949,72 @@ class WorktreeLanding:
 
     # ------------------------------------------------------------------
     # 快照应用（blob → 真实文件；delete action 删文件）
+    # 注册表族文件走条目级三向合并（W2），非注册表维持整文件覆盖零变更
     # ------------------------------------------------------------------
-    def _apply_snapshot(self, item: dict, queue_root: Path) -> list[str]:
+    def _read_blob_text_opt(self, sha: str, rel: str) -> str | None:
+        """读取 <sha>:<rel> 文本；对象/路径不存在返回 None（三向合并缺侧语义）。
+
+        刻意走 _git_repo（临时文件输出）而非 _read_blob_bytes 的
+        run_subprocess_hidden——后者在部分环境对 stdout 做 CRLF 变换（实测
+        tmp 仓 cat-file 返回 'hi\\r\\n'），字节漂移会污染合并器输入。
+        """
+        r = self._git_repo("cat-file", "blob", f"{sha}:{rel}", check=False)
+        if r.returncode != 0:
+            return None
+        return r.stdout  # _run_git 的 stdout 已按 utf-8 解码（str）
+
+    def _registry_entry_retired(self, entry: object) -> bool:
+        """ours 侧合法退役判定（W2 规则 b 例外项）：条目引用路径盘上与 HEAD 双不存在。
+
+        判据真源=DISPATCH_v1 Lane A 卡片 W2「该条目文件路径盘上与 HEAD 双不存在」；
+        条目无路径候选 / 任一路径存活 → 非合法退役（采纳恢复，宁可多救不可漏救——
+        被救回的多余条目由属主会话按正规删除通道二次移除，方向安全）。
+        """
+        paths = _extract_entry_paths(entry)
+        if not paths:
+            return False
+        head = self._dev_head()
+        for p in paths:
+            if (self.repo_root / p).exists():
+                return False
+            r = self._git_repo("cat-file", "-e", f"{head}:{p}", check=False)
+            if r.returncode == 0:
+                return False
+        return True
+
+    def _merge_registry_file(self, item: dict, rel: str, theirs_bytes: bytes, old_dev: str) -> bytes | None:
+        """注册表族单文件三向合并（W2）；冲突/结构漂移抛 RuntimeError → 死信回人工。
+
+        Returns:
+            合并后的字节；None = 合并结果与 dev 现状逐字节一致（快照条目内容已被
+            dev 全包含，无新内容可落）——调用方按 noop 跳过该文件（否则空提交
+            NOTHING_TO_COMMIT 会撞假落地防线死循环）。
+        """
+        theirs_text = theirs_bytes.decode("utf-8", errors="replace")
+        ours_text = self._read_blob_text_opt(old_dev, rel)
+        if ours_text is None:
+            return theirs_bytes  # dev 侧无此文件（新增落地）→ 无合并语义
+        if ours_text == theirs_text:
+            return None  # 快照与 dev 一致 → 零合并零提交（幂等 noop）
+        base_sha = item.get("base_head") or ""
+        if not base_sha or self._git_repo("cat-file", "-e", base_sha, check=False).returncode != 0:
+            parent = self._git_repo("rev-parse", "--verify", f"{old_dev}^", check=False)
+            base_sha = parent.stdout.strip() if parent.returncode == 0 else ""
+        base_text = self._read_blob_text_opt(base_sha, rel) if base_sha else None
+        merged, conflict = three_way_merge_registry_yaml(
+            base_text,
+            ours_text,
+            theirs_text,
+            rel_path=rel,
+            retired_check=self._registry_entry_retired,
+        )
+        if conflict:
+            raise RuntimeError(f"[landing] 注册表三向合并失败（死信回退人工）: {conflict}")
+        if merged == ours_text:
+            return None  # 合并未给 dev 带来任何变化（快照侧新增全被退役判定吸收等）
+        return merged.encode("utf-8")
+
+    def _apply_snapshot(self, item: dict, queue_root: Path, old_dev: str) -> list[str]:
         """把队列项快照落成 worktree 真实文件，返回 worktree 内绝对路径列表（commit pathspec 用）。"""
         wt_files: list[str] = []
         for entry in item.get("files") or []:
@@ -507,6 +1042,13 @@ class WorktreeLanding:
                 content = blob_path.read_bytes()
             except OSError as exc:
                 raise RuntimeError(f"blob 读取失败: {rel}（{blob_ref}，{exc}）") from exc
+            if is_registry_mergeable(rel):
+                # W2 治本（2026-09-22 注册表事故）：注册表族不做整文件覆盖——
+                # fb5a7821d 陈旧快照 blob 一写抹掉 103 条已提交身份的病灶在此封死。
+                content = self._merge_registry_file(item, rel, content, old_dev)
+                if content is None:
+                    continue  # 合并结果与 dev 一致 → noop，不写盘不进提交清单
+
             abs_path.parent.mkdir(parents=True, exist_ok=True)
             abs_path.write_bytes(content)
             wt_files.append(str(abs_path))
@@ -855,7 +1397,7 @@ class WorktreeLanding:
             wt_files = [str(self.worktree_path / p) for p in sorted(self._item_paths(item))]
             claimed = gateway.claim_files(session_id, wt_files) if wt_files else []
             try:
-                commit_files = self._apply_snapshot(item, queue_root)
+                commit_files = self._apply_snapshot(item, queue_root, old_dev)
                 # 快照预暂存（ALGO-NOTE-SYNC 等暂存依赖型 gate 前置）：gate 设计前提
                 # =「必须在暂存集冻结后运行」（diff=git diff --cached），而 gateway.commit
                 # 的 gate 链跑在自身 add 之前——快照只写工作区不进 index 时 gate 读到
@@ -863,7 +1405,10 @@ class WorktreeLanding:
                 # 预暂存后 gate 读到完整 staged diff；gateway.commit 内 add 幂等无副作用。
                 self._prestage_snapshot(item, commit_files)
                 if not commit_files:
-                    return cq.LandingResult(ok=False, reason="空快照项（无文件可落）")
+                    # 全部文件为合并 noop（W2：合并结果与 dev 一致）——幂等空转，
+                    # 记 noop landed_id 防重放（与 NOTHING_TO_COMMIT 同款哨兵）
+                    logger.info("[landing] qid=%s 快照合并后零变化（noop）", qid)
+                    return cq.LandingResult(ok=True, landed_id=f"{_NOOP_LANDED_PREFIX}{old_dev}")
                 full_message = f"{item.get('message', '')}\n\n{marker}"
                 # FORGED-GW-MARKER env 逃生（确为网关内部调用，与 run_git 同款 env）；
                 # allow_non_worktree 见模块 docstring「门禁诚实记录」（不修改不放宽任何门禁判定）
@@ -909,7 +1454,7 @@ class WorktreeLanding:
                         logger.warning(
                             "[landing] qid=%s pathspec 丢 staging 自愈：重放 apply+prestage 后重试 commit", qid,
                         )
-                        commit_files = self._apply_snapshot(item, queue_root)
+                        commit_files = self._apply_snapshot(item, queue_root, old_dev)
                         self._prestage_snapshot(item, commit_files)
                         _diag = self._git_wt("status", "--porcelain", "--", *self._item_paths(item))
                         result = gateway.commit(
