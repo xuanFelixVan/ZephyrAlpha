@@ -56764,31 +56764,72 @@ entries:
   desc_en: ""
   plain_zh: "每年从人工叫停记录、擦边高频模式、零触发条目三个口子找红线的漏列和该退役项，打成提案包走Owner流水线，自己不改红线"
   responsibility_layer: governance
+- module_path: src/zephyr/intelligence/model_intel/intel_card.py
+  domain_id: D_GOVERNANCE
+  name_zh: "情报卡与四闸校验"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把某模型降价了出新模型了这类消息做成统一格式的情报卡，每张卡必须写清来源、至少两个独立出处互相印证、还要回答这条消息想让我信什么来防注入；再给每张卡算一个指纹，长得很像的旧闻直接拦下。"
+  responsibility_layer: governance
+- module_path: src/zephyr/intelligence/model_intel/scanner.py
+  domain_id: D_GOVERNANCE
+  name_zh: "模型情报扫描器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按注册表里的12个情报源去抓数据：拉OpenRouter全部模型的目录、跟昨天的价格快照对比找出涨价降价和新上架、按每日配额防灌水，最后把合格情报卡写成JSONL文件；没有内置定时器，由外部周历窗口按需触发。"
+  responsibility_layer: governance
+- module_path: scripts/ai_layer/apply_model_library_ddl.py
+  domain_id: D_GOVERNANCE
+  name_zh: "模型库三表DDL部署器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把AI层模型库的三张PostgreSQL表（模型档案评分主表、牌价时序表、活动史表）一键建到depgraph同实例的ai_layer_model schema里，全程幂等可重跑，带白名单防误删和verify核对，是模型档案入库前的建表工具。"
+  responsibility_layer: governance
+- module_path: src/zephyr/intelligence/model_profiling/dual_run.py
+  domain_id: D_GOVERNANCE
+  name_zh: "同任务双跑执行器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "同一批真实任务让冠军模型和挑战模型各跑一遍：判据先冻结（改判据必须换新实验号，冻结哈希随证据包留痕），按任务类型和象限分五层可复现抽样，双跑逐件记账，手写统计检验，按胜/更便宜换/保持/未决四态机器判定，可判件不足10件诚实记未决。"
+  responsibility_layer: governance
+- module_path: src/zephyr/intelligence/budget_analyzer.py
+  domain_id: D_GOVERNANCE
+  name_zh: "预算分析器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天统计AI花了多少钱，按最近7天和30天两种平均推算未来一个月大概烧多少；逼近预算线就分提示、警告、建议降档、熔断四档报警，并算出该补多少额度（缺口乘1.2保险）、迁去免费时段能省多少——只出主意不动钱，补钱永远由Owner亲手操作。"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/standards_governance/standard_checkup.py
+  domain_id: D_GOVERNANCE
+  name_zh: "标准体检器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每月给全部门禁尺子做体检的统计员：读提交审计流水算每个gate的触发率，连续两窗低于1%报建议退役、超50%报太吵建议调松，误拦先用豁免次数当替身指标，然后把证据写成标准建议书草案——只起草不拍板，拍板归Owner。"
+  responsibility_layer: governance
+- module_path: src/zephyr/intelligence/canonical_hash.py
+  domain_id: D_GOVERNANCE
+  name_zh: "规范化哈希底座"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把任意数据按固定规则排好序压成一行再算指纹：同样的数据永远得到同样的指纹，判据冻结和防篡改校验都靠它，是两处重复实现的合并件。"
+  responsibility_layer: governance
+- module_path: scripts/ai_layer/apply_ai_layer_scheduling_ddl.py
+  domain_id: D_GOVERNANCE
+  name_zh: "排产段建表器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "在数据库里建排产段的工单表和审计日志表：脚本可以重复跑多少遍结果都一样，带防误删白名单和状态机取值范围检查，审计日志只许追加不许改删，是排产工单上岗前的建表工具。"
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
-- step_id: BM-BUY-14
-  flow_stage: buy_flow
-  name_zh: 编号退役占位
-  name_en: Retired ID Placeholder
-  plain_zh: 编号退役占位：历史断档编号，禁止复用，无业务叙事。
-  mechanism_zh: '历史批次编号断档保留占位，防止新环节复用旧编号造成锚点漂移。
-
-    '
-  indicators_zh: '无（占位）。
-
-    '
-- step_id: BM-SIM-08
-  flow_stage: simulation_validation
-  name_zh: Paper Matching 涨跌停排队引擎
-  name_en: Paper Matching Limit Queue Engine
-  plain_zh: 模拟盘撮合时按涨跌停口的排队位置估算成交概率，而不是简单的能交易/不能交易二元判定。
-  mechanism_zh: '实时tick→涨跌停判定→队列位置估算→成交概率P(fill)≈min(1,对手量/(排队量+单量))→模拟成交/拒单→SHADOW阶段偏差归因；悲观偏差注入（滑点×1.5-2）。降级：排队逻辑未就绪时沿用回测侧二元涨跌停判定（乐观偏差）。
-
-    '
-  indicators_zh: '①触发：CC_06 Paper 模式启用 / 53号文档 §3.2 步骤②；②消费：BM-BT-01-C 撮合引擎(回测侧)+实时
-    tick 行情；③参数：涨停bid排队/跌停ask排队/P(fill)/市价触板转限价/悲观偏差×1.5-2。
-
-    '
 - step_id: BM-BUY-04
   flow_stage: buy_flow
   name_zh: 分批建仓
