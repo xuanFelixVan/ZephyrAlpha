@@ -1,0 +1,171 @@
+---
+schema: ibt_batch_b_pit_repair_comparison/v1
+title: 批B 修考卷——#326 池污染 15 件 修前/修后/复核对照表（冻结件）
+session: st-ibt-remedy-b-20260923
+created: '2026-09-23'
+ttl: task_bound
+completes_when: 批D 新鲜窗重考落名单后随批归档
+source_of_truth: docs/_working/integrated_backtest/max_remediation_plan.md §2-批B
+preregistration_note: 本表按 §2-批B 预注册验收（红证双向/对照表冻结入库/掉出件名单留痕）生成；预注册卡未改，只增复核轮与 findings。
+rulings: ['裁定#325', '裁定#326']
+repair_commits: [edd503efb5e, c0f8763511]
+columns:
+  baseline_sharpe: 修前=污染时代冻结 IS 批成绩（C4-translated-20260912/0915，快照 nightbuild/e4/baseline_*.csv）
+  repair_sharpe: 修后=SCD-2 retrofit 首轮全量重考（batch=C4-SCD2-REPAIR-20260918，2026-09-18）
+  verify_sharpe: 复核=本班 fresh 重考（batch=C4-SCD2-VERIFY-20260923，2026-09-23，run=SCR-C4-20260923-025548）
+  metric: is_sharpe（C4 冻结 IS 窗 2020-01-01..2023-12-31，冻结土规成本，引擎 T+1+涨跌停闸）
+verdict_basis: 裁定#325 禁“全绿”表述——只列逐件数字与检出行，不下“全部通过”断言；数字即判读。
+items:
+  - stem: c4_091fee38cd01_alpha022
+    strategy_id: CAND-091fee38cd01
+    baseline_sharpe: -0.395
+    repair_sharpe: -1.23
+    verify_sharpe: -1.23
+    verify_equals_repair: true
+    status: stable_negative
+  - stem: c4_6cb29d4d9ba8_mom_rev_300
+    strategy_id: CAND-6cb29d4d9ba8
+    baseline_sharpe: -0.273
+    repair_sharpe: -0.058
+    verify_sharpe: -0.058
+    verify_equals_repair: true
+    status: stable_negative
+  - stem: c4_93aa8f5a2bdd_multi_period
+    strategy_id: CAND-93aa8f5a2bdd
+    baseline_sharpe: -0.391
+    repair_sharpe: null
+    verify_sharpe: null
+    verify_equals_repair: false
+    status: blocked_data_gap
+    note: 修后轮即未落行（同因）；复核轮 RuntimeError：index_constituent 000010.SH 窗口成分缺失（fail-closed 正确炸响，见 findings B-F2）
+  - stem: c4_99873fd0bc17_macd_single
+    strategy_id: CAND-99873fd0bc17
+    baseline_sharpe: -2.236
+    repair_sharpe: -3.927
+    verify_sharpe: -3.927
+    verify_equals_repair: true
+    status: stable_negative
+  - stem: c4_9c0136ec8f42_kucoffee_trend
+    strategy_id: CAND-9c0136ec8f42
+    baseline_sharpe: -0.105
+    repair_sharpe: 0.176
+    verify_sharpe: 0.176
+    verify_equals_repair: true
+    status: flipped_negative_to_positive
+  - stem: c4_9ce75aa27ce5_bluechip_ma
+    strategy_id: CAND-9ce75aa27ce5
+    baseline_sharpe: 0.091
+    repair_sharpe: -0.186
+    verify_sharpe: -0.186
+    verify_equals_repair: true
+    status: dropped_positive_to_negative
+  - stem: c4_a4543012b464_trend5
+    strategy_id: CAND-a4543012b464
+    baseline_sharpe: -0.308
+    repair_sharpe: -0.303
+    verify_sharpe: -0.303
+    verify_equals_repair: true
+    status: stable_negative
+  - stem: c4_bd42540f86e4_pe_pb
+    strategy_id: CAND-bd42540f86e4
+    baseline_sharpe: -0.186
+    repair_sharpe: -0.07
+    verify_sharpe: -0.07
+    verify_equals_repair: true
+    status: stable_negative
+  - stem: c4_c72318f2da1c_bias_ql
+    strategy_id: CAND-c72318f2da1c
+    baseline_sharpe: 0.16
+    repair_sharpe: -0.094
+    verify_sharpe: -0.094
+    verify_equals_repair: true
+    status: dropped_positive_to_negative
+  - stem: c4_fdbc279fba99_rps_oinl
+    strategy_id: CAND-fdbc279fba99
+    baseline_sharpe: 0.0
+    repair_sharpe: 0.0
+    verify_sharpe: 0.0
+    verify_equals_repair: true
+    status: zero_trade_flat
+    note: 全窗零持仓（sharpe 恒 0，DSR 无定义）；三列同 0=修前即为死件，非修复所致
+  - stem: c4_valuation_pe_pb_double
+    strategy_id: VAL-PEPB-DOUBLE-020
+    baseline_sharpe: -0.298
+    repair_sharpe: -0.353
+    verify_sharpe: -0.353
+    verify_equals_repair: true
+    status: stable_negative
+  - stem: c4_valuation_div_high
+    strategy_id: VAL-DIV-HIGH-020
+    baseline_sharpe: -0.34
+    repair_sharpe: -0.856
+    verify_sharpe: -0.856
+    verify_equals_repair: true
+    status: stable_negative
+  - stem: c4_valuation_pb_low
+    strategy_id: VAL-PB-LOW-020
+    baseline_sharpe: -0.679
+    repair_sharpe: -0.644
+    verify_sharpe: -0.644
+    verify_equals_repair: true
+    status: stable_negative
+  - stem: c4_valuation_pe_low
+    strategy_id: VAL-PE-LOW-020
+    baseline_sharpe: -0.159
+    repair_sharpe: -0.009
+    verify_sharpe: -0.009
+    verify_equals_repair: true
+    status: stable_negative
+  - stem: c4_valuation_pe_zz500
+    strategy_id: VAL-PE-ZZ500-020
+    baseline_sharpe: -0.356
+    repair_sharpe: -0.377
+    verify_sharpe: -0.377
+    verify_equals_repair: true
+    status: stable_negative
+two_round_zero:
+  definition: 修后轮（09-18）与复核轮（09-23）同码重跑逐位一致（批H① 同批产出纪律下的两轮零）
+  result: 13/13 可跑件 is_sharpe 全部逐位一致（3 位小数，零漂移）；1 件 blocked_data_gap 两轮同因
+dropped_out:
+  from_positive_pool:
+    - {stem: c4_9ce75aa27ce5_bluechip_ma, delta: '0.091→-0.186'}
+    - {stem: c4_c72318f2da1c_bias_ql, delta: '0.16→-0.094'}
+  structurally_unrunnable:
+    - {stem: c4_93aa8f5a2bdd_multi_period, reason: 000010.SH 上证180 成分断供，PIT fail-closed 炸响}
+  flipped_in:
+    - {stem: c4_9c0136ec8f42_kucoffee_trend, delta: '-0.105→0.176'}
+  note: 掉出是修复生效的证据（水分挤出），不是回退；本 15 件正池净变化 2→1（掉 2 进 1）。
+red_evidence:
+  injection_tests: tests/backtest/test_c4_pit_red_injection.py
+  bidirectional:
+    red_side: 注入快照口径→双世界 ≤X 宇宙必分歧；注入同 bar stamping→探针不变式翻红；引擎 SQL 注回快照=fail-closed 炸响
+    blue_side: 修复口径（SCD-2 窗口并集 / ≤T-1 平移）同一不变式绿
+  standing_suites: 'PIT 闸 4 件 + B1 双探针 + CGO 守卫 + 本注入件 = 11 passed（2026-09-23 实跑）'
+findings:
+  - id: B-F1
+    severity: P1
+    domain: 跨域（治理×批C）
+    title: N 账本 sync 被 registry_mass_edit_guard 拒写=考试管线尾步对所有人阻断
+    detail: trial_ledger_registry.yaml 全文 70 行，守卫阈值 0.5%=0.35 行→计数器任何 1 行 replace（difflib 计 1 删）即触发；09-22 W4 守卫上线后首轮考试（本复核轮）实证。strategy_screen 行落库不受影响（崩溃点在落库与 run 档案之后）；账本计数停驻 269 vs 台账实际行数 1317。
+    fix_path: 归批C（N_trial 记账接线）×治理（守卫对小容量册校准，建议 max(0.5%, K 行) 下限或计数器外移出 catalogs 族）；禁用 allow_mass_edit=True 绕闸（09-22 事故同款信任型逃生）。
+  - id: B-F2
+    severity: P1
+    domain: 数据线
+    title: multi_period 宇宙断供（index_constituent 000010.SH 零行）
+    detail: 上证180 成分 SCD-2 数据从未入库；PIT 引擎 fail-closed 炸响=正确行为。翻译件头“缺失时降级声明”与引擎 fail-closed 语义冲突，静默降级已不可能。其 20260912 旧分 -0.391 为污染时代产物，随旧行处置。
+    fix_path: 数据线回补 000010.SH 成分（SCD-2），或 Owner 裁定该翻译件改靶/退役；二者皆出批B 写域（C4 翻译件+测试）。
+  - id: B-F3
+    severity: P2
+    domain: 策略工厂线
+    title: 真实受影响面大于 15 件钉扎册（引擎级修复已全覆盖）
+    detail: 估值引擎消费方实为 27 件（钉扎册列 4 件为 S14 时点数）；宇宙修复落 _c4_engine/_valuation_engine 引擎层，全部消费方自动继承=无需逐件改。同 bar 7 件（6 模板+1 gftd）已修（edd503ef）。
+  - id: B-F4
+    severity: P2
+    domain: 策略工厂线
+    title: 污染时代旧行仍在账（处置归既定下游义务）
+    detail: C4-translated-20260912/0915 批旧行未逐行标 suspect（suspect 记录=flip_comparison.csv 台账只增不改口径）；C6 bothwin 及格集底座重建+IBT 15 员面板刷新=批D 前置（裁定#326 既定“重考前 C6 及格集底座冻结引用污染件”）。
+downstream_obligations:
+  - 批C：N 账本接线（B-F1 修通前所有考试轮尾步 sync 均炸，行落库不受影响）
+  - 批D：新鲜窗重考前置=本批考卷干净+B 成本考尺（C6 底座刷新见 B-F4）
+  - 数据线：000010.SH 成分回补或改靶裁定（B-F2）
+  - 策略工厂线：正池件 kucoffee_trend 翻正入场、bluechip_ma/bias_ql 掉出——组队/及格集引用方按本表处置
