@@ -973,7 +973,15 @@ class GitCommitGateway:
         self,
         project_root: str | Path | None = None,
         registry: SessionRegistry | None = None,
+        roster_root: str | Path | None = None,
     ) -> None:
+        """roster_root：in_process 门禁名册读取根（缺省=project_root）。
+
+        env 名册/import 同源治本（st-k4-20260923 施工令⑥，q-0006/q-0007 双死信实证）：
+        落地器场景 project_root=worktree，而 importlib 经进程 sys.path 解析到主区盘
+        ——名册（worktree 态）与 import（主区态）分裂时，主区缺模块即必炸
+        ModuleNotFoundError，与队列项内容无关。调用方传 roster_root=主仓根即与
+        import 同源（都从主区盘）；不传=现状零变化。"""
         self.project_root = Path(project_root or Path.cwd()).resolve()
         # 治本(2026-07-20): .git 检查仅在 registry is None 时执行——
         # 传入 registry（测试模式）时跳过 fail-fast 检查，允许在非 git 仓库路径下实例化。
@@ -996,7 +1004,8 @@ class GitCommitGateway:
         # pre-commit 门禁注册表（架构债务 #AD-001 治本：5 个 in-process gate 替代 12 个硬编码 _check_*）
         self._gate_registry = CommitGateRegistry()
         # Phase 4 迁移（#ARCH-GATE-REGISTRY-AUTO-001）：82 个显式 register 替换为 auto_register_gates 调用
-        auto_register_gates(self._gate_registry, self.project_root)
+        # 名册读取根=roster_root（同源治本见 __init__ docstring）；不传=project_root 现状零变化
+        auto_register_gates(self._gate_registry, Path(roster_root) if roster_root else self.project_root)
         self.in_commit_flow = False  # commit 守卫（红攻1治本）
         self._worktree_mgr = None  # 延迟初始化（避免未启用 worktree 时的开销）
         # ARCH-054: claim 时捕获文件基线快照（git diff HEAD -- <file>），

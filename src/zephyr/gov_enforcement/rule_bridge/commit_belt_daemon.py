@@ -5,7 +5,7 @@
 # [CONSUMERS] CLI python -m zephyr.gov_enforcement.rule_bridge.commit_belt_daemon [--once|--status|stop]
 # [STARTUP] manual/daemon（watchdog 事件触发，无常驻轮询——M10 合规）
 # [MATURITY] production
-# [INVARIANTS] 提交传送带常驻消费端（Owner 2026-09-16 口述设计）：AI 会话快照入袋即返回继续施工，本守护 watchdog 事件驱动（pending/ 目录 file-created）自动自举排空——不占 AI 会话一秒等待；单例锁 .runtime/commit_queue/belt_daemon.lock（PID+TTL 600s+僵尸检测）；lease 被持=正常让位（自举失败不阻断，等下一事件）；pytest 内不 spawn 真守护（对标 write_audit_daemon 先例）；新死信自动登记堵点本 .runtime/audit/bottleneck_ledger.jsonl（专人专事协议：施工 AI 不修基建债，高模型维护班清账）；W5（st-regfix-laneB-20260922）：heartbeat 文件（队列根 belt_daemon.heartbeat，30s 心跳窗刷新=活性标记非业务轮询）+启动时离线缺口检查（>THD-ALERT-007 阈值→堵点本告警）+堵点本记账 API 三 kind（registry_drift/landing_staleness/phantom_staging，记账行不入积压计数）
+# [INVARIANTS] 提交传送带常驻消费端（Owner 2026-09-16 口述设计）：AI 会话快照入袋即返回继续施工，本守护 watchdog 事件驱动（pending/ 目录 file-created）自动自举排空——不占 AI 会话一秒等待；单例锁 .runtime/commit_queue/belt_daemon.lock（PID+TTL 600s+僵尸检测）；lease 被持=正常让位（自举失败不阻断，等下一事件）；pytest 内不 spawn 真守护（对标 write_audit_daemon 先例）；新死信自动登记堵点本 .runtime/audit/bottleneck_ledger.jsonl（专人专事协议：施工 AI 不修基建债，高模型维护班清账）；W5（st-regfix-laneB-20260922）：heartbeat 文件（队列根 belt_daemon.heartbeat，30s 心跳窗刷新=活性标记非业务轮询）+启动时离线缺口检查（>THD-ALERT-007 阈值→堵点本告警）+堵点本记账 API 三 kind（registry_drift/landing_staleness/phantom_staging，记账行不入积压计数）；st-k4-20260923：心跳线程化（独立线程 30s 续写，长 drain/池化单波不再心跳假死——夜班四轮实证定性）+排空经 bootstrap_drain_with_landing 自动获得 k=4 池化（thresholds commit_queue_landing_pool_workers，k=1 降级）
 # [MODIFY-GUARD] 观察目录集=commit_queue 五状态目录 + 队列根（serializer.lease/belt_daemon.lock 事件，R4 租约释放唤醒 st-commitchain-20260922——etcd「过期删除=delete 事件」语义的单机等效实现）；drain 永远经 bootstrap_drain_with_landing（lease 单写者语义不变）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -48,6 +48,7 @@ import json
 import logging
 import os
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -268,6 +269,14 @@ def _touch_heartbeat(qroot: Path) -> None:
         )
     except OSError:
         logger.warning("belt_daemon: 心跳文件刷新失败", exc_info=True)
+
+
+def _heartbeat_loop(qroot: Path, stop: threading.Event) -> None:
+    """独立心跳线程（st-k4-20260923：夜班四轮实证长 drain 期间心跳写入器沉默
+    ——_touch_heartbeat 只在事件循环间隙跑，池化后单波 drain 更长，陈旧告警面
+    全靠它兜底）。30s 窗独立续写，drain 长短不再影响活性可见性。"""
+    while not stop.wait(30.0):
+        _touch_heartbeat(qroot)
 
 
 def _load_offline_threshold() -> float | None:
@@ -694,6 +703,13 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
     _touch_heartbeat(qroot)  # W5：上线即打首个心跳
     stale_alerted: set[str] = set()
     _scan_stale_pending(root, stale_alerted)  # W5：启动即扫存量陈旧快照
+    # 心跳线程化（st-k4-20260923）：独立线程 30s 续写，长 drain（池化单波更长）
+    # 不再出现"心跳陈旧但 daemon 在磨"的观测假死（夜班 2026-09-23 四轮实证定性）。
+    import threading  # noqa: PLC0415
+
+    _hb_stop = threading.Event()
+    _hb = threading.Thread(target=_heartbeat_loop, args=(qroot, _hb_stop), daemon=True, name="belt-daemon-heartbeat")
+    _hb.start()
     try:
         try:
             from watchdog.events import FileSystemEventHandler  # noqa: PLC0415
@@ -748,6 +764,8 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
             observer.join(timeout=5)
         return 0
     finally:
+        _hb_stop.set()
+        _hb.join(timeout=5.0)
         _release_singleton(qroot)
 
 
@@ -769,12 +787,20 @@ def main(argv: list[str] | None = None) -> int:
                 )
             except Exception:  # noqa: BLE001 — 心跳文件损坏按未知处理
                 hb_age = None
+        pool_workers = None
+        try:
+            from scripts.governance.commit_queue_landing import resolve_pool_workers  # noqa: PLC0415
+
+            pool_workers = resolve_pool_workers()
+        except Exception:  # noqa: BLE001 — 配置面不可读不阻断 status
+            pass
         print(
             json.dumps(
                 {
                     "lock_exists": lock.exists(),
                     "raw": lock.read_text(encoding="utf-8") if lock.exists() else None,
                     "heartbeat_age_s": hb_age,  # W5：活性可视化（None=无历史心跳）
+                    "pool_workers": pool_workers,  # k=4 池工数（1=单传送带降级态）
                 }
             )
         )

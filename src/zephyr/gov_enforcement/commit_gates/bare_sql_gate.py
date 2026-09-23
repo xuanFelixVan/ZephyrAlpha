@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py added 行含裸SQL字面量(SELECT/INSERT INTO/UPDATE SET/DELETE FROM)时阻断commit(passed=False); tests/豁免; docstring/注释/import/SQL_*常量定义行豁免（R96 用 ast 精确识别多行常量定义范围，替代旧正则近似只豁免定义行）; noqa: bare-sql 行级豁免（存量伪新增/不可机械集中化，标记登记 noqa_exempt_registry.yaml）; git diff不可达fail-open; 检出违规则fail-closed
+# [INVARIANTS] 硬阻断——staged .py added 行含裸SQL字面量(SELECT/INSERT INTO/UPDATE SET/DELETE FROM)时阻断commit(passed=False); tests/豁免; docstring/注释/import/SQL_*常量定义行豁免（R96 用 ast 精确识别多行常量定义范围，替代旧正则近似只豁免定义行）; noqa: bare-sql 行级豁免（存量伪新增/不可机械集中化，标记登记 noqa_exempt_registry.yaml）; git diff不可达fail-open; 检出违规则fail-closed；行级判定唯一真源=find_bare_sql_violations（st-k4-20260923 追加令⑧：锁内 _check 与预检快检 commit_preflight 同调，豁免口径单点，消灭"预检拦、锁内过"两套判法——st-ailayer 批次2 逼 --skip-preflight 绕行实证）
 # [MODIFY-GUARD] gate_id="NO-BARE-SQL"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
@@ -54,6 +54,7 @@ from __future__ import annotations
 
 import logging
 import re
+from typing import Final, Iterable
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _audit_foreign_staged,
@@ -64,15 +65,15 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_added_lines,
     _get_staged_py_files,
     _is_exempt_line,
-    _norm_rel,
     _make_noqa_pattern,
+    _norm_rel,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["make_bare_sql_gate"]
+__all__: Final = ["make_bare_sql_gate", "find_bare_sql_violations"]
 
 # 匹配字符串字面量中的 SQL DML 语句
 # 覆盖 SELECT...FROM / INSERT [OR <conflict>] INTO / UPDATE...SET / DELETE FROM
@@ -95,6 +96,39 @@ _SQL_PATTERN = re.compile(r"""['"`].*?(?:SELECT\b.*?\bFROM\b|INSERT(?:\s+OR\s+\w
 # format 重排伪"新增"（gate 只检 added 行）、且 f-string 插值使 SQL_* 常量集中化
 # 不可机械施行的场景；集中化专项治理路径不变（§5.160.2 另列）。
 _NOQA_PATTERN = _make_noqa_pattern("bare-sql")
+
+
+def find_bare_sql_violations(
+    file_content: str | None,
+    added_lines: Iterable[tuple[int, str]],
+) -> list[tuple[int, str]]:
+    """NO-BARE-SQL 行级判定唯一真源（st-k4-20260923 Owner 追加令⑧）。
+
+    锁内权威 _check 与预检快检（commit_preflight._check_inline_no_bare_sql）同调本
+    判定器——豁免口径（docstring/注释/import/SQL_* 常量/noqa 行级）单点维护，
+    消灭"预检拦、锁内过"两套判法（st-ailayer 批次2 逼 --skip-preflight 绕行实证）。
+
+    Args:
+        file_content: 新版全文件内容（豁免集合的 ast 提取基座；空/None=全豁免集为空）。
+        added_lines: ``(line_no, content)`` 序列——新增行及其在**新版文件**中的 1-based 行号。
+
+    Returns:
+        违规 ``(line_no, content)`` 列表（顺序=入参顺序）。
+    """
+    docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
+    sql_const_lines = _extract_sql_constant_lines(file_content) if file_content else set()
+    noqa_lines = _extract_noqa_lines(file_content, _NOQA_PATTERN) if file_content else set()
+    violations: list[tuple[int, str]] = []
+    for line_no, content in added_lines:
+        if line_no in docstring_lines or _is_exempt_line(content):
+            continue
+        if line_no in sql_const_lines:
+            continue
+        if line_no in noqa_lines:
+            continue  # 行级豁免（存量 format 伪新增/不可机械集中化，标记+理由已登记校验）
+        if _SQL_PATTERN.search(content):
+            violations.append((line_no, content))
+    return violations
 
 
 def make_bare_sql_gate() -> GateSpec:
@@ -139,18 +173,10 @@ def make_bare_sql_gate() -> GateSpec:
             if normalized.startswith("scripts/ch/"):
                 continue
             file_content = _read_staged_file(gateway, py_file)
-            docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
-            sql_const_lines = _extract_sql_constant_lines(file_content) if file_content else set()
-            noqa_lines = _extract_noqa_lines(file_content, _NOQA_PATTERN) if file_content else set()
-            for line_no, content in _get_added_lines(gateway, py_file, "NO-BARE-SQL"):
-                if line_no in docstring_lines or _is_exempt_line(content):
-                    continue
-                if line_no in sql_const_lines:
-                    continue
-                if line_no in noqa_lines:
-                    continue  # 行级豁免（存量 format 伪新增/不可机械集中化，标记+理由已登记校验）
-                if _SQL_PATTERN.search(content):
-                    violations.append(f"  {py_file}:{line_no}: {content.strip()}")
+            for line_no, content in find_bare_sql_violations(
+                file_content, _get_added_lines(gateway, py_file, "NO-BARE-SQL")
+            ):
+                violations.append(f"  {py_file}:{line_no}: {content.strip()}")
         if violations:
             detail = (
                 "NO-BARE-SQL：检测到裸 SQL 字面量，\n"

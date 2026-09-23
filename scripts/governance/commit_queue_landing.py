@@ -5,7 +5,7 @@
 # [CONSUMERS] 全部 AI session（drain_queue(landing=...) 真落盘注入点）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway._commit_auto（flag ON 时 reroute 目标，延迟 import）
 # [STARTUP] imported
 # [MATURITY] testing
-# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / Windows 句柄占用致 reset --hard unlink 失败 / 全局提交锁 LOCK_TIMEOUT；特征串真源=_TRANSIENT_GIT_MARKERS）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）；worktree 环境备置（ensure_worktree 两出口经 scripts.session_worktree._provision_worktree_env 从主仓取 PG+CH 配置——门禁/reconciler 在 worktree 内与主区等价，不再 fail-open；备置失败仅 warning 不阻断落盘）
+# [INVARIANTS] 永不改主工作区脏文件（66 号 §9.7 受控放松 2026-08-23：只写专用 worktree + 对象库 + dev ref CAS；landing 后主工作区受限收敛——仅当文件与旧 HEAD 逐字节一致才快进写入新内容，脏/缺失/删除冲突一律跳过留痕，零 WIP 丢失风险）；单写者（仅 Serializer lease 持有者经 drain 调用）；幂等不双落（done/landed_id + is-ancestor + 标记 grep 三重判定）；门禁一套不裁（GitCommitGateway 全门禁链零适配，worktree 形态 100 门禁天然生效）；CAS 冲突/基底冲突→死信不卡队；**瞬态环境失败（git index.lock 争用 / Windows 句柄占用致 reset --hard unlink 失败 / 全局提交锁 LOCK_TIMEOUT；特征串真源=_TRANSIENT_GIT_MARKERS）→ 抛 LandingEnvironmentError 让项退回 pending，绝不死信**；主工作区收敛 fail-open（landing 已成功，收敛异常仅留痕不改变结果）；worktree 环境备置（ensure_worktree 两出口经 scripts.session_worktree._provision_worktree_env 从主仓取 PG+CH 配置——门禁/reconciler 在 worktree 内与主区等价，不再 fail-open；备置失败仅 warning 不阻断落盘）；**k=4 通道池（st-k4-20260923）：投机并行验证+串行落地——drain_queue_pool 池级单 lease+单心跳线程，k 工各配独立 worktree/分支/gateway（_GlobalCommitLock 按 project_root 键控→门禁段真并行），路径锁同路径项门禁段前串行化（防跨 session claim 冲突+整文件互踩），dev ref CAS 唯一串行落地点，冲突→_pool_cas_replay 落地段重放不重跑门禁（注册表同册=条目级三向合并重放吸收零丢失；无重叠=commit-tree re-parent；非注册表同路径=死信零覆盖）；k=1（thresholds commit_queue_landing_pool_workers）=legacy 逐字节降级**；env 名册/import 同源（gateway roster_root=主仓根，三选一之③，q-0006/q-0007 死信治本）
 # [MODIFY-GUARD] 66 号备忘 §6.3 MVP 形态 + §8 幂等算法 + §9 边界；08 号文 §4.2 步骤 3/5；[GW:{sid}:{qid}] 标记格式（POST-COMMIT-GUARD / REFERENCE-TRANSACTION-GUARD 消费方）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -101,6 +101,7 @@ import re
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -295,8 +296,8 @@ def _is_seq_node(node: object) -> bool:
 def _entry_identity(data: object) -> str | None:
     """条目身份（gate 同款真源委托；import 失败等异常 → None → 合并器死信方向）。
 
-    import 走 flat 路径（HEAD 既存真源）；registry_family/ 重组位落地前
-    IMPORT-INTEGRITY 只认 HEAD 可解析面（0060 死因），重组后由 Lane A 批统一切换。
+    池化批（st-k4）反方案：registry_family/ 迁移延后另案，import 维持根路径原位
+    （Lane A 批预设动作；旧 flat 路径模块同批退役，FOLDER-CAPACITY 121>120 解堵）。
     """
     try:
         from zephyr.gov_enforcement.commit_gates.registry_mass_deletion_gate import (  # noqa: PLC0415
@@ -790,6 +791,9 @@ class WorktreeLanding:
     max_cas_retries : dev CAS 冲突重试上限（默认 _MAX_CAS_RETRIES=6；耗尽=死信回退人工）。
     lock_wait_seconds : 透传 gateway.commit(lock_wait_timeout=...) 的全局锁等待秒数
         （默认 _LANDING_LOCK_WAIT_SECONDS=300；测试可注入小值免等）。
+    pool_mode : k=4 通道池工模式（st-k4-20260923 施工令③）。True 时 CAS 冲突走
+        「落地段重放不重跑门禁」（_replay_commit_without_gates）；False=现行
+        整段重试（重同步+重跑门禁）零行为变化。
     """
 
     def __init__(
@@ -804,6 +808,7 @@ class WorktreeLanding:
         gateway=None,
         max_cas_retries: int = _MAX_CAS_RETRIES,
         lock_wait_seconds: float = _LANDING_LOCK_WAIT_SECONDS,
+        pool_mode: bool = False,
     ) -> None:
         """__init__ implementation."""
         self.repo_root = Path(repo_root).resolve()
@@ -817,6 +822,7 @@ class WorktreeLanding:
         self._gateway = gateway
         self._max_cas_retries = max_cas_retries
         self._lock_wait_seconds = lock_wait_seconds
+        self._pool_mode = pool_mode
 
     # ------------------------------------------------------------------
     # git 便捷封装
@@ -1402,17 +1408,29 @@ class WorktreeLanding:
                 # registry MUST 锚主仓根（生产者会话注册处；session_worktree.py:6011 同款
                 # 模式——worktree  rooting 的 gateway + 主仓 rooting 的 registry）
                 self._registry = SessionRegistry(self.repo_root)
-            self._gateway = GitCommitGateway(project_root=self.worktree_path, registry=self._registry)
+            # roster_root=主仓根（st-k4-20260923 施工令⑥ env 名册/import 同源治本）：
+            # 名册（原读 worktree=provision 时点 HEAD 态）与 importlib（进程 sys.path
+            # →主区盘）分裂时，主区缺 gate 模块即必炸 ModuleNotFoundError（q-0006/q-0007
+            # 双死信实证，机理归档=registry_incident_20260922/overnight_decisions_20260923.md
+            # 三选一之③「名册读主区盘与 import 同源」）。都从主区盘后，名册+代码同盘
+            # 同态，原子批窗口内外自洽。
+            self._gateway = GitCommitGateway(
+                project_root=self.worktree_path, registry=self._registry, roster_root=self.repo_root
+            )
         return self._gateway
 
     # ------------------------------------------------------------------
     # 落盘主入口（drain_queue landing 协议：fn(item, queue_root) -> LandingResult）
     # ------------------------------------------------------------------
     def __call__(self, item: dict, queue_root: Path) -> cq.LandingResult:
-        """__call__ implementation."""
+        """__call__ implementation.
+
+        pool_mode 的路径锁在本函数**调用方**（_pool_process_item）获取/释放——本函数
+        名与函数体必须保持 HEAD 存量形态（COMPLEXITY-GUARD 存量豁免按函数名绑定，
+        拆名即丢豁免，q-20260923-st-k4-20260923-0002 死信实证）。
+        """
         qid = item.get("qid", "?")
         session_id = item.get("session_id", "")
-        queue_root = Path(queue_root)
 
         # 1) 幂等短路（崩溃重放不双落，66 号 §8）
         landed = self._already_landed(item)
@@ -1613,23 +1631,29 @@ class WorktreeLanding:
             try:
                 self._advance_dev(old_dev, result.commit_hash)
             except CasConflict:
-                new_dev = self._dev_head()
-                overlap = self._changed_paths_between(old_dev, new_dev) & self._item_paths(item)
-                if overlap:
-                    return cq.LandingResult(
-                        ok=False,
-                        reason=(
-                            f"冲突：dev CAS 竞态——{old_dev[:12]}..{new_dev[:12]} 间同路径 "
-                            f"{sorted(overlap)} 被队列外写入者推进（66 号 §6.4，死信回退人工）"
-                        ),
+                if not self._pool_mode:
+                    new_dev = self._dev_head()
+                    overlap = self._changed_paths_between(old_dev, new_dev) & self._item_paths(item)
+                    if overlap:
+                        return cq.LandingResult(
+                            ok=False,
+                            reason=(
+                                f"冲突：dev CAS 竞态——{old_dev[:12]}..{new_dev[:12]} 间同路径 "
+                                f"{sorted(overlap)} 被队列外写入者推进（66 号 §6.4，死信回退人工）"
+                            ),
+                        )
+                    logger.warning(
+                        "[landing] qid=%s CAS 竞态（无同路径冲突），重同步重试 %d/%d",
+                        qid,
+                        attempt,
+                        self._max_cas_retries,
                     )
-                logger.warning(
-                    "[landing] qid=%s CAS 竞态（无同路径冲突），重同步重试 %d/%d",
-                    qid,
-                    attempt,
-                    self._max_cas_retries,
-                )
-                continue
+                    continue
+                # ── 池化串行落地点（st-k4-20260923 施工令③）──────────────────
+                # 冲突=重放一次落地段，不重跑门禁：门禁已在 result.commit_hash 的
+                # 内容上全链通过，重放只做注册表重合并+树重建+commit-tree（见
+                # _pool_cas_replay/_replay_commit_without_gates）。
+                return self._pool_cas_replay(item, queue_root, old_dev, result.commit_hash, qid)
             logger.info("[landing] qid=%s 落盘完成 commit=%s", qid, result.commit_hash[:12])
             # 5) 主工作区受限收敛（干净文件快进/脏跳过留痕；fail-open 不改变落盘结果）
             try:
@@ -1655,6 +1679,480 @@ class WorktreeLanding:
             reason=f"dev CAS 冲突重试耗尽（{self._max_cas_retries} 次）——死信回退人工",
         )
 
+    # ------------------------------------------------------------------
+    # 池化串行落地点（st-k4-20260923 施工令③：冲突=重放落地段，不重跑门禁）
+    # ------------------------------------------------------------------
+    def _pool_cas_replay(
+        self,
+        item: dict,
+        queue_root: Path,
+        base_dev: str,
+        commit_sha: str,
+        qid: str,
+    ) -> cq.LandingResult:
+        """CAS 推进 + 冲突重放循环（pool_mode 专用；替换 legacy 的整段重试）。
+
+        - CAS 成功 → 主工作区收敛 + 主仓基线注册（与 legacy 步骤 5/6 同款）→ ok。
+        - CAS 冲突 → 拆分重叠路径：非注册表同路径=死信回人工（零覆盖铁律，66 号
+          §6.4）；注册表同册（或无重叠）→ _replay_commit_without_gates 重放落地段
+          （同册不同条目由条目级三向合并吸收=零丢失），循环重试至成功/耗尽。
+        - 重放后快照被 dev 全包含 → noop 哨兵（同 NOTHING_TO_COMMIT 口径）。
+        """
+        for attempt in range(1, self._max_cas_retries + 1):
+            try:
+                self._advance_dev(base_dev, commit_sha)
+            except CasConflict:
+                new_dev = self._dev_head()
+                overlap = self._changed_paths_between(base_dev, new_dev) & self._item_paths(item)
+                nonmergeable = overlap - {p for p in overlap if is_registry_mergeable(p)}
+                if nonmergeable:
+                    return cq.LandingResult(
+                        ok=False,
+                        reason=(
+                            f"冲突：dev CAS 竞态（池化）——{base_dev[:12]}..{new_dev[:12]} 间同路径 "
+                            f"{sorted(nonmergeable)} 被并发落地工推进（66 号 §6.4，死信回退人工）"
+                        ),
+                    )
+                try:
+                    replay = self._replay_commit_without_gates(item, queue_root, commit_sha, base_dev, new_dev)
+                except RuntimeError as exc:
+                    return cq.LandingResult(ok=False, reason=f"冲突重放失败（死信回退人工）: {exc}")
+                if replay is None:
+                    logger.info("[landing] qid=%s 池化重放后零内容（noop@%s）", qid, new_dev[:12])
+                    return cq.LandingResult(ok=True, landed_id=f"{_NOOP_LANDED_PREFIX}{new_dev}")
+                base_dev, commit_sha = new_dev, replay
+                logger.warning(
+                    "[landing] qid=%s 池化 CAS 竞态，落地段重放（不重跑门禁）%d/%d commit=%s",
+                    qid,
+                    attempt,
+                    self._max_cas_retries,
+                    replay[:12],
+                )
+                continue
+            logger.info("[landing] qid=%s 池化落盘完成 commit=%s", qid, commit_sha[:12])
+            try:
+                self._converge_main_workspace(item, base_dev, commit_sha)
+            except Exception as exc:  # noqa: BLE001 — 收敛 fail-open（landing 已成功）
+                logger.warning("[landing] qid=%s 主工作区收敛异常（non-blocking）: %s", qid, exc)
+            try:
+                reg_note = self._refresh_integrity_baseline_main_repo(item)
+                if reg_note:
+                    logger.warning("[landing] qid=%s 主仓基线注册失败（non-blocking）: %s", qid, reg_note)
+            except Exception as exc:  # noqa: BLE001 — 注册 fail-open
+                logger.warning("[landing] qid=%s 主仓基线注册异常（non-blocking）: %s", qid, exc)
+            return cq.LandingResult(ok=True, landed_id=commit_sha)
+        return cq.LandingResult(
+            ok=False,
+            reason=f"dev CAS 冲突重试耗尽（{self._max_cas_retries} 次，池化重放）——死信回退人工",
+        )
+
+    def _replay_commit_without_gates(
+        self,
+        item: dict,
+        queue_root: Path,
+        prev_commit: str,
+        base_dev: str,
+        new_dev: str,
+    ) -> str | None:
+        """重放落地段（不重跑门禁）——门禁已在 prev_commit 内容上全链通过。
+
+        ①他会话未触及本项注册表路径 → 树零变化，直接 re-parent prev_commit
+          （commit-tree，同 message 逐字节保真——幂等 grep 与单写者断言依赖标记）；
+        ②触及同册 → _apply_snapshot 对新 dev 重三向合并（他会话条目进合并基线，
+          合并冲突/结构漂移抛 RuntimeError → 死信，绝不静默覆盖）+ read-tree 新 dev
+          + prestage + write-tree 重建树 + commit-tree；
+        ③重放后零内容（快照被 dev 全包含）→ None（调用方 noop 收口）。
+        非注册表路径与新 dev 无交集由调用方判定（_pool_cas_replay 的 nonmergeable
+        分流），blob 原样有效。plumbing（read-tree/write-tree/commit-tree）经
+        ZEPHYR_SERIALIZER_MODE=1 白名单放行（scripts/git_guard.py PLUMBING 白名单），
+        不触发 hook/门禁——门禁语义已由内容判据保全。
+        """
+        mergeable_paths = {p for p in self._item_paths(item) if is_registry_mergeable(p)}
+        need_remerge = bool(mergeable_paths & self._changed_paths_between(base_dev, new_dev))
+        if not need_remerge:
+            r = self._git_repo("rev-parse", f"{prev_commit}^{{tree}}")
+            tree = r.stdout.strip()
+            return self._commit_tree_same_message(prev_commit, new_dev, tree)
+        commit_files = self._apply_snapshot(item, queue_root, new_dev)
+        if not commit_files:
+            return None  # 重合并后全被 dev 吸收 → noop
+        self._git_wt("read-tree", f"refs/heads/{self.target_branch}")  # 纯 index 置换，不触工作区
+        self._prestage_snapshot(item, commit_files)
+        tree = self._git_wt("write-tree").stdout.strip()
+        return self._commit_tree_same_message(prev_commit, new_dev, tree)
+
+    def _commit_tree_same_message(self, prev_commit: str, parent: str, tree: str) -> str:
+        """commit-tree 造重放 commit（message 取原 commit %B 原文，-F 文件透传保真）。"""
+        r = self._git_repo("log", "-1", "--format=%B", prev_commit)
+        fd, msg_path = tempfile.mkstemp(prefix="zcq_replay_msg_", suffix=".txt")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8", newline="") as fh:
+                fh.write(r.stdout)
+            r2 = self._git_repo("commit-tree", tree, "-p", parent, "-F", msg_path)
+        finally:
+            try:
+                os.unlink(msg_path)
+            except OSError:
+                pass
+        return r2.stdout.strip()
+
+
+# ---------------------------------------------------------------------------
+# k=4 通道池（st-k4-20260923 施工令：投机并行验证+串行落地）
+# ---------------------------------------------------------------------------
+
+# 池工 worktree 目录（<queue_root>/worktrees/w{i}）与分支（每工一支，互不干扰）。
+# 刻意不落 .aidrafts_pool/：该池 lease 语义是「move 到 .aidrafts/{sid}+分支改名」，
+# 面向长生命周期 session；且 .aidrafts/ 直接子目录会被 _sweep_stale_worktrees 按
+# session 语义清扫（worktree_pool.py docstring 显式警告）。落地工棚是常驻专用位
+# （<queue_root> 同 .runtime gitignored 共命运），复用 WorktreeLanding 既有
+# ensure/_sync/provision 生命周期即「既有池机制」的落地形态——池激活零 worktree
+# add 成本（首次创建后跨激活复用，优于 prefetch-per-activation）。
+_POOL_WORKTREES_DIR = "worktrees"
+_POOL_WORKER_HEARTBEAT_INTERVAL_S = 60.0  # 池级单心跳间隔（TTL 300s 的 1/5 富余）
+# 同册不同条目 CAS 竞态重放时，注册表条目级三向合并吃掉同册冲突（施工令红蓝①
+# 「4 路并发落地同册不同条目→全部成功零丢失」的落地机制）；非注册表同路径仍死信
+# （66 号 §6.4 语义冲突回人工，零覆盖铁律不变）。
+
+
+def resolve_pool_workers() -> int:
+    """k 值读取（施工令⑦配置面）：thresholds SSoT `commit_queue_landing_pool_workers`。
+
+    默认 4；显式配 1 = 降级开关（逐字节回退单传送带现行为）。非法/缺失回退默认。
+    """
+    try:
+        k = int(_get_threshold("git_operations.commit_queue_landing_pool_workers", 4))
+    except Exception:  # noqa: BLE001 — 配置面故障回退默认（可用性优先）
+        return 4
+    return k if k >= 1 else 1
+
+
+def worker_worktree_path(queue_root: Path, worker_id: int) -> Path:
+    """第 i 工的专用 worktree 路径（<queue_root>/worktrees/w{i}）。"""
+    return (queue_root / _POOL_WORKTREES_DIR / f"w{worker_id}").resolve()
+
+
+def worker_serializer_branch(worker_id: int) -> str:
+    """第 i 工的专用分支（每工一支——并发 reset/commit 互不踩）。"""
+    return f"serializer/commit-queue-w{worker_id}"
+
+
+def make_worker_landing(
+    repo_root: str | os.PathLike,
+    queue_root: str | os.PathLike,
+    worker_id: int,
+    **kwargs: object,
+) -> WorktreeLanding:
+    """构造第 i 工落地执行体（独立 worktree+独立分支+pool_mode）。"""
+    return WorktreeLanding(
+        repo_root,
+        queue_root=queue_root,
+        worktree_path=worker_worktree_path(Path(queue_root), worker_id),
+        serializer_branch=worker_serializer_branch(worker_id),
+        pool_mode=True,
+        **kwargs,  # type: ignore[arg-type] — 透传测试注入位（gateway/registry/lock_wait_seconds 等）
+    )
+
+
+# 同路径项池内串行化（路径级互斥）：池化后两个不同会话的队列项若同文件并行进
+# 门禁段，会撞 claim 互斥（跨 session claim 冲突→CLAIM-REQUIRED 死信）与整文件
+# 快照互踩——单传送带时代靠串行天然免疫的病灶。治法=工在进门禁段前按全局序取
+# 本项全部路径锁（同路径项串行化，后工重同步到新 dev=基底冲突/合并判定照常生效）；
+# 锁持者死亡（BaseException）经 finally 必释放。池级 lease 保证单进程排空，
+# 进程内 threading.Lock 即完备。
+_PATH_LOCK_GUARD = threading.Lock()
+_PATH_LOCKS: dict[str, threading.Lock] = {}
+_PATH_LOCK_TIMEOUT_S = 600.0  # 同路径在途工最长持锁预算（超时=环境失败退回 pending，绝不死信）
+
+
+def _item_path_locks(paths: set[str]) -> list[threading.Lock]:
+    """按全局序获取本项全部路径互斥锁（全局序防死锁）。超时抛 LandingEnvironmentError。"""
+    deadline = time.monotonic() + _PATH_LOCK_TIMEOUT_S
+    acquired: list[threading.Lock] = []
+    try:
+        for p in sorted(paths):
+            with _PATH_LOCK_GUARD:
+                lock = _PATH_LOCKS.setdefault(os.path.normcase(p), threading.Lock())
+            remaining = max(0.1, deadline - time.monotonic())
+            if not lock.acquire(timeout=remaining):
+                raise cq.LandingEnvironmentError(f"路径锁等待超时（同路径项在途持锁）: {p}")
+            acquired.append(lock)
+        return acquired
+    except BaseException:
+        for lk in acquired:
+            try:
+                lk.release()
+            except Exception:  # noqa: BLE001 — 释放兜底
+                pass
+        raise
+
+
+def _release_path_locks(locks: list[threading.Lock]) -> None:
+    """释放本项路径锁（逐把兜底，绝不因单把失败泄漏其余）。"""
+    for lk in locks:
+        try:
+            lk.release()
+        except Exception:  # noqa: BLE001
+            pass
+
+
+def _pool_heartbeat_loop(lease: cq.SerializerLease, stop: threading.Event) -> None:
+    """池级单心跳（施工令④）：四工共享一个「池活体」心跳线程，杜绝四倍心跳病。
+
+    逐项 renew 会随工数放大（4 工 × 每项一次=四倍心跳病）；独立线程按固定间隔
+    续租，活体持有者 acquired_at 恒新鲜，TTL 永不对在工池触发。
+    """
+    while not stop.wait(_POOL_WORKER_HEARTBEAT_INTERVAL_S):
+        try:
+            lease.renew()
+        except Exception:  # noqa: BLE001 — 续租失败不致命（活体感知分支兜底防抢），下轮再试
+            logger.warning("[pool] 池级心跳续租失败（下轮重试）", exc_info=True)
+
+
+def _pool_claim_item(root: Path) -> Path | None:
+    """按队列 FIFO+车道优先认领一项（原子 rename pending→processing = 互斥点）。
+
+    复用 _pick_head 车道语义（interactive 先落/machine 让路/30min 防饿死）；
+    FileNotFoundError=被其他工抢先 → 重扫下一队首（原子 rename 即互斥锁，
+    无需额外锁）；PermissionError=enqueue 写入窗瞬态 → 重扫。有界重扫防活锁。
+    返回 processing 路径；队空/持续占用 → None（工收工）。
+    """
+    for _ in range(8):
+        heads = sorted((root / "pending").glob("q-*.json"))
+        if not heads:
+            return None
+        head, _lane = cq._pick_head(heads)
+        if head is None:
+            return None
+        processing_path = root / "processing" / head.name
+        try:
+            os.rename(head, processing_path)
+            return processing_path
+        except FileNotFoundError:
+            continue  # 他工已抢——重扫
+        except PermissionError:
+            continue  # enqueue 写入窗——重扫（同 drain_queue 竞态口径，不冤枉慢写入者）
+    return None
+
+
+def drain_queue_pool(
+    queue_root: str | os.PathLike | None = None,
+    *,
+    repo_root: str | os.PathLike | None = None,
+    workers: int | None = None,
+    max_items: int | None = None,
+    lease_timeout: float = cq._LEASE_TIMEOUT_SECONDS,
+) -> dict:
+    """k 工并发排空（st-k4-20260923：投机并行验证+串行落地）。
+
+    - 池级 lease：整池一把 SerializerLease（与单传送带同文件同语义，互斥旧路径），
+      独立心跳线程续租（单心跳，非四倍）。
+    - 每波起 k 个工线程：各自 FIFO 认领互斥项（原子 rename）→ 独立 worktree 走
+      完整门禁链（昂贵段并行——每工独立 GitCommitGateway，其 _GlobalCommitLock 按
+      project_root=本工 worktree 键控，工间零锁竞争）→ dev ref CAS 串行落地点。
+    - CAS 冲突：注册表族同册竞态由条目级三向合并重放吸收（零丢失）；非注册表
+      同路径死信回人工（零覆盖，66 号 §6.4）；无路径冲突 → commit-tree 重放落地段
+      不重跑门禁（施工令③）。
+    - k<=1：逐字节降级回 cq.drain_queue 现行为（施工令⑦降级开关）。
+    - 工线程死亡（BaseException）：其项留 processing，下一波 _recover_orphans
+      回收重入队=工棚级复活；其余工与本波不受影响。
+    """
+    root = cq.resolve_queue_root(queue_root)
+    repo = Path(repo_root) if repo_root else cq._REPO_ROOT
+    k = max(1, int(workers) if workers is not None else resolve_pool_workers())
+    if k <= 1:
+        # 降级开关：与现行为逐字节一致（不进任何池化代码路径）
+        landing = WorktreeLanding(repo_root=repo, queue_root=root)
+        return cq.drain_queue(root, landing=landing, max_items=max_items)
+
+    cq._ensure_dirs(root)
+    stats = {
+        "skipped": False,
+        "pool_workers": k,
+        "recovered": 0,
+        "done": 0,
+        "dead": 0,
+        "processed_qids": [],
+        "stale_cleared": 0,
+        "cascade_marked": 0,
+        "done_cleaned": 0,
+    }
+    with cq.SerializerLease(root, timeout=lease_timeout) as lease:
+        stats["recovered"] = len(cq._recover_orphans(root))
+        stop_heartbeat = threading.Event()
+        hb = threading.Thread(
+            target=_pool_heartbeat_loop,
+            args=(lease, stop_heartbeat),
+            daemon=True,
+            name="commit-queue-pool-heartbeat",
+        )
+        hb.start()
+        try:
+            budget = max_items
+            while budget is None or budget > 0:
+                wave_done = _run_pool_wave(root, repo, k, budget, stats)
+                if wave_done == 0:
+                    break
+                if budget is not None:
+                    budget -= wave_done
+            stats["done_cleaned"] = len(cq.cleanup_done(root, ttl_days=cq._DONE_TTL_DAYS_DEFAULT)["removed"])
+        finally:
+            stop_heartbeat.set()
+            hb.join(timeout=5.0)
+    try:
+        cq.emit_dead_backlog_alert(root)
+    except Exception as exc:  # noqa: BLE001 — 旁路可观测性（与 drain_queue 收尾同口径）
+        logger.warning("[pool] 死信积压告警异常（忽略）: %s", exc)
+    try:
+        cq.check_dead_burst(root)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("[pool] 死信爆发告警异常（忽略）: %s", exc)
+    return stats
+
+
+def _run_pool_wave(root: Path, repo: Path, k: int, budget: int | None, stats: dict) -> int:
+    """一波 k 工并发（工收工即退出，全队收工即波终）。返回本波处理项数。
+
+    波首孤儿回收=工棚级复活（上波死亡工遗留的 processing 项重入 pending）；
+    环境失败（LandingEnvironmentError）置共享 env_aborted → 终止本波与外层排空
+    （项退回 pending 绝不死信，与 drain_queue 同语义）。
+    """
+    stats_lock = threading.Lock()
+    shared: dict = {"processed": 0, "env_aborted": False, "budget_left": budget}
+    cq._recover_orphans(root)  # 波首回收（上一波死亡工的遗孤）
+
+    def _worker(worker_id: int) -> None:
+        landing = make_worker_landing(repo, root, worker_id)
+
+        def _reserve_slot() -> bool:
+            """预扣一个处理名额：环境健康且预算有余才继续（领取失败由调用方归还）。"""
+            with stats_lock:
+                if shared["env_aborted"]:
+                    return False
+                if shared["budget_left"] is not None and shared["budget_left"] <= 0:
+                    return False
+                shared["budget_left"] = shared["budget_left"] - 1 if shared["budget_left"] is not None else None
+                return True
+
+        while _reserve_slot():
+            processing_path = _pool_claim_item(root)
+            if processing_path is None:
+                with stats_lock:
+                    if shared["budget_left"] is not None:
+                        shared["budget_left"] += 1  # 未消费预扣预算归还
+                return
+            _pool_process_item(landing, root, processing_path, stats, stats_lock, shared)
+
+    threads = [
+        threading.Thread(target=_worker, args=(i,), daemon=True, name=f"commit-queue-pool-w{i}") for i in range(k)
+    ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    return shared["processed"]
+
+
+def _pool_process_item(
+    landing: WorktreeLanding,
+    root: Path,
+    processing_path: Path,
+    stats: dict,
+    stats_lock: threading.Lock,
+    shared: dict,
+) -> None:
+    """单工单项：stale 重校验 → landing → done/dead 落账（drain_queue 单项语义的
+    线程安全移植；落账/级联/记账各段在 stats_lock 内串行化防交叉写）。
+    """
+    item = cq._read_item(processing_path)
+    if item is None:
+        # 读取持续失败：放回 pending 下波再试（不冤枉慢写入者，不见死信）
+        try:
+            os.rename(processing_path, root / "pending" / processing_path.name)
+        except OSError:
+            pass
+        with stats_lock:
+            if shared["budget_left"] is not None:
+                shared["budget_left"] += 1
+        return
+    qid = item.get("qid", processing_path.stem)
+    _item_t0 = time.monotonic()
+    result: cq.LandingResult | None = None
+    if (item.get("meta") or {}).get("stale"):
+        still_ok, mismatched = cq._revalidate_stale_base(item, _pool_head_reader(landing))
+        if still_ok:
+            meta = item["meta"]
+            meta.pop("stale", None)
+            meta["stale_cleared_at"] = cq._now_iso()
+            with stats_lock:
+                stats["stale_cleared"] += 1
+        else:
+            result = cq.LandingResult(
+                ok=False,
+                reason=(f"cascade_stale: 基底重校验不适用 {mismatched}（stale_by={item['meta'].get('stale_by')}）"),
+            )
+    if result is None:
+        # 路径锁在调用方取/放（不改 __call__ 函数名——复杂度存量豁免按名绑定）：
+        # 同路径项门禁段前串行化，锁覆盖幂等短路+应用+门禁+CAS 全程；持锁工死亡
+        # （BaseException）经 finally 必释放。
+        path_locks: list[threading.Lock] = []
+        try:
+            path_locks = _item_path_locks(landing._item_paths(item))
+            result = landing(item, root)
+        except cq.LandingEnvironmentError as exc:
+            # 环境失败≠物品失败：当前项退回 pending、置共享终止旗（其余工收工不新增
+            # 失败面）、本波结束——与 drain_queue「终止整轮」同语义。
+            try:
+                cq._retry_transient(lambda: os.rename(processing_path, root / "pending" / processing_path.name))
+            except OSError:
+                logger.error("[pool] qid=%s 环境失败退回 pending 失败，留 processing 等波首回收", qid)
+            with stats_lock:
+                shared["env_aborted"] = True
+                if shared["budget_left"] is not None:
+                    shared["budget_left"] += 1
+            logger.error("[pool] landing 环境失败，终止本波（项退回 pending，不死信）: %s", exc)
+            return
+        except Exception as exc:  # noqa: BLE001 — 单项失败→死信不卡队
+            result = cq.LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
+        finally:
+            _release_path_locks(path_locks)
+
+    with stats_lock:
+        if result.ok:
+            item["landed_at"] = cq._now_iso()
+            item["landed_id"] = result.landed_id
+            cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+            os.replace(processing_path, root / "done" / processing_path.name)
+            stats["done"] += 1
+            marked = cq._mark_cascade_stale(root, item)
+            if marked:
+                stats["cascade_marked"] += len(marked)
+                logger.info("[pool] qid=%s 落盘，级联标记 stale: %s", qid, marked)
+        else:
+            item["dead_at"] = cq._now_iso()
+            item["dead_reason"] = result.reason
+            cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+            os.replace(processing_path, root / "dead" / processing_path.name)
+            stats["dead"] += 1
+            logger.warning("[pool] qid=%s 进死信: %s", qid, result.reason)
+            cq._notify_task_board_dead_letter(item)
+        stats["processed_qids"].append(qid)
+        shared["processed"] += 1
+    _item_dur = time.monotonic() - _item_t0
+    if _item_dur > cq._SLOW_ITEM_LEDGER_SECONDS:
+        cq._ledger_slow_item(root, qid, item.get("session_id"), round(_item_dur, 1))
+
+
+def _pool_head_reader(landing: WorktreeLanding):
+    """stale 重校验 head_reader 注入（drain_queue 的 P1 依赖级联协议对齐）：
+    读当前 dev 该路径 blob sha；路径缺失返回 None。"""
+
+    def _read(rel: str) -> str | None:
+        r = landing._git_repo("rev-parse", f"refs/heads/{landing.target_branch}:{rel}", check=False)
+        return r.stdout.strip() if r.returncode == 0 else None
+
+    return _read
+
 
 # ---------------------------------------------------------------------------
 # _commit_auto 改道（66 号 §7 一处改动；flag 门控，默认 OFF——启用=Owner 窗口批准）
@@ -1666,13 +2164,39 @@ def bootstrap_drain_with_landing(*, queue_root=None, repo_root=None) -> dict:
 
     best-effort：任何失败仅 log 不抛出——队列项已入袋即安全，排空失败等下次自举。
     测试 monkeypatch 本函数以隔离真实落盘。
+    k>1（thresholds `commit_queue_landing_pool_workers`，默认 4）→ 池化排空
+    （st-k4-20260923）；k=1 → 单传送带现行为逐字节不变。
     """
     try:
         root = cq.resolve_queue_root(queue_root)
-        landing = WorktreeLanding(
-            repo_root=Path(repo_root) if repo_root else cq._REPO_ROOT,
-            queue_root=root,
-        )
+        repo: Path | None
+        if repo_root:
+            repo = Path(repo_root)
+        else:
+            # 与 try_bootstrap_drain 同款锚定口径：默认布局 <repo>/.runtime/commit_queue
+            # 才可判归属仓；自定义队列根（测试隔离 tmp 等）保持 legacy 桩语义。
+            repo = root.parents[1] if root.parent.name == ".runtime" else None
+        if (
+            repo is not None
+            and (repo / "scripts" / "governance" / "commit_queue_landing.py").is_file()
+            and resolve_pool_workers() > 1
+        ):
+            try:
+                return drain_queue_pool(queue_root=root, repo_root=repo, workers=resolve_pool_workers())
+            except cq.LeaseUnavailable as exc:
+                logger.info("[reroute] %s —— 池/Serializer 在跑，放弃等下次自举", exc)
+                return {
+                    "skipped": True,
+                    "reason": "lease_unavailable",
+                    "done": 0,
+                    "dead": 0,
+                    "recovered": 0,
+                    "processed_qids": [],
+                    "stale_cleared": 0,
+                    "cascade_marked": 0,
+                    "done_cleaned": 0,
+                }
+        landing = WorktreeLanding(repo_root=repo if repo is not None else cq._REPO_ROOT, queue_root=root)
         return cq.try_bootstrap_drain(root, landing=landing)
     except Exception as exc:  # noqa: BLE001 — 自举失败绝不阻断改道返回（入袋即安全）
         logger.warning("[reroute] 自举排空失败（队列项安全在袋，等下次自举）: %s", exc)

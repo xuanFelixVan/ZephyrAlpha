@@ -276,3 +276,6 @@ git_operations:
   gate_chain_snapshot_timeout_seconds: 15
   # commit_queue_landing.py 队列落盘 git 操作超时（原 _GIT_TIMEOUT_SECONDS=120，与 worktree_pool.run_git 同款）
   commit_queue_git_timeout_seconds: 120
+  # commit_queue_landing.py k=4 通道池工数（st-k4-20260923 施工令⑦配置面）：默认 4；
+  # 1=降级开关（逐字节回退单传送带现行为，不进任何池化代码路径）
+  commit_queue_landing_pool_workers: 4

@@ -246,14 +246,16 @@ def _check_inline_create_guard(gateway: GitCommitGateway, files: list[str], **kw
 
 
 def _check_inline_no_bare_sql(gateway: GitCommitGateway, files: list[str], **kwargs: object) -> tuple[bool, str]:
-    """NO-BARE-SQL 入队面等价判定（D1，0921 死信 15 次）。
+    """NO-BARE-SQL 入队面等价判定（D1，0921 死信 15 次；追加令⑧两判对齐 st-k4-20260923）。
 
-    增行=磁盘 vs HEAD 的 difflib opcode（精确 added 行）；SQL 识别正则**原样复用**
-    bare_sql_gate._SQL_PATTERN；豁免口径（tests/、_archive、scripts/ch/）与锁内一致。
+    增行=磁盘 vs HEAD 的 difflib opcode（精确 added 行+1-based 行号）；行级判定
+    **同调锁内唯一真源** bare_sql_gate.find_bare_sql_violations（docstring/注释/
+    import/SQL_* 常量/noqa 豁免单点维护）——消灭"预检拦、锁内过"两套判法
+    （st-ailayer 批次2 逼 --skip-preflight 绕行实证）。
     """
     import difflib  # noqa: PLC0415
 
-    from zephyr.gov_enforcement.commit_gates.bare_sql_gate import _SQL_PATTERN  # noqa: PLC0415
+    from zephyr.gov_enforcement.commit_gates.bare_sql_gate import find_bare_sql_violations  # noqa: PLC0415
     from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt  # noqa: PLC0415
 
     root = Path(str(gateway.project_root))
@@ -272,19 +274,20 @@ def _check_inline_no_bare_sql(gateway: GitCommitGateway, files: list[str], **kwa
         p = root / rel
         if not p.is_file():
             continue
-        disk_lines = p.read_text(encoding="utf-8", errors="replace").splitlines()
+        disk_text = p.read_text(encoding="utf-8", errors="replace")
+        disk_lines = disk_text.splitlines()
         head_lines = _head_line_set(gateway, rel)
         if len(disk_lines) > 20000:
             continue  # P1-2（红队 0922：10 万行实测 63s）超长文件跳过快段，锁内权威链兜底
         sm = difflib.SequenceMatcher(a=head_lines, b=disk_lines)  # 默认 autojunk 启发式防二次方退化
-        added: list[str] = []
+        added: list[tuple[int, str]] = []
         for tag, _i1, _i2, j1, j2 in sm.get_opcodes():
             if tag in ("insert", "replace"):
-                added.extend(disk_lines[j1:j2])
-        for line in added:
-            if _SQL_PATTERN.search(line):
-                violations.append(f"{norm}: {line.strip()[:120]}")
-                break  # 每文件报首条（锁内权威链给全量，预检只定快败）
+                # j 侧=磁盘（新版）——行号转 1-based，与共享判定器的豁免集合同坐标系
+                added.extend((n, disk_lines[n - 1]) for n in range(j1 + 1, j2 + 1))
+        for _line_no, content in find_bare_sql_violations(disk_text, added):
+            violations.append(f"{norm}: {content.strip()[:120]}")
+            break  # 每文件报首条（锁内权威链给全量，预检只定快败）
     if violations:
         return False, (
             "NO-BARE-SQL 预检（入队面等价判定）：新增行含裸 SQL 字面量（§5.160.2 SQL 集中化）\n  "
