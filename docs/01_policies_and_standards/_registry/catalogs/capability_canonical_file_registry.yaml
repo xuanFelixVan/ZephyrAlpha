@@ -46512,4 +46512,24 @@ creation_tokens:
   capability: sweep_tail_probes
   merge_evaluation: 清扫班唯一交付件（台账/取证探针存档），与既有战役台账不同对象不并
   note: 本班（st-sweep-tail-20260923）交付件，登记为 token 先行批（队列落地读 HEAD 册，同批无效）
+- file: docs/_working/e2e_integration/w0_ruling_404_collision_fix.md
+  token: e2e-20260924-w0-ruling-404-collision-fix-20260923
+  created_by: st-e2e-20260924
+  capability: e2e_20260924
+  merge_evaluation: "内收判据：三件均为本班一次性班次案卷（撞号取证/回补 dry-run/预检），零同真源可派生、零同域重复簇，不替代任何既有条目"
+- file: docs/_working/e2e_integration/w2_sector_minute_resample_dryrun.md
+  token: e2e-20260924-w2-sector-minute-resample-dryrun-20260923
+  created_by: st-e2e-20260924
+  capability: e2e_20260924
+  merge_evaluation: "内收判据：三件均为本班一次性班次案卷（撞号取证/回补 dry-run/预检），零同真源可派生、零同域重复簇，不替代任何既有条目"
+- file: docs/_working/e2e_integration/w3_w5_precheck_20260923.md
+  token: e2e-20260924-w3-w5-precheck-20260923-20260923
+  created_by: st-e2e-20260924
+  capability: e2e_20260924
+  merge_evaluation: "内收判据：三件均为本班一次性班次案卷（撞号取证/回补 dry-run/预检），零同真源可派生、零同域重复簇，不替代任何既有条目"
+- file: docs/03_modules/_domain_backtest/algo_flow/exam_cost_gate.yaml
+  token: exam-cost-gate-exam-cost-gate-20260923
+  created_by: st-e2e-20260924
+  capability: exam_cost_gate
+  merge_evaluation: "内收判据：本 yaml 是 exam_cost_gate.py 的 ALGO_FLOW 外置真源（gate-algo-flow-marker P2-1 口径），替代原拟内联 docstring 的机器块，零新规则面"
 di_seam_exemptions: []
