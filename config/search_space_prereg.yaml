@@ -1,0 +1,80 @@
+# E7 搜索防线·搜索空间预注册（批F，Owner 通宵令 2026-09-23；冻结版 v2 2026-09-24 st-gpu-final）
+# 冻结语义：GPU 正式开跑前本文件为唯一搜索空间真源；改空间=作废重开预注册（禁跑中改）。
+# 授权链: max_remediation_plan.md §2-F；裁定#407（批次排序，原#404 迁号留痕见裁定#408）/裁定#306（N_eff 预注册族口径）
+# SSOT 判定（st-gpu-final-20260924 总包裁定，w3_w5_precheck §2.2 缺口闭合）：
+#   网格轴机器真源=config/position_recipe_grid_schema.yaml（GridCompiler 消费，I_cost_tier
+#   active_if=False 恒折叠=成本档禁作搜索轴，与"冻结口径"无冲突）；本册=冻结/预算/防线真源，
+#   由 factory_grid_executor._apply_prereg_budget 消费（钳制+fail-closed，2026-09-24 接线）。
+schema_version: 2.0.0
+doc_type: search_space_preregistration
+title: GPU 搜索三路·预注册搜索空间+算力预算封顶+E7 防线
+created: '2026-09-23'
+frozen_at: null          # Owner 批文时刻回填（ISO8601）；null=未冻结，执行器禁按"已冻结"放行 T1/T2
+frozen_by: null          # Owner 批文裁定号回填
+owner_signoff: pending   # pending → 裁定号（⑤门位：production 流转归 Owner）
+session: st-ibt-remedy-cf-20260923
+objective:
+  # 批C 起目标函数=成本后 Sharpe（冻结土规净收益口径）；毛 Sharpe 仅观察项
+  primary: cost_adjusted_sharpe
+  observed: [gross_sharpe, annual_turnover_x]
+  cost_caliber: _c4_engine 冻结土规（佣金2.5bp双边+印花10bp卖+滑点5bp）+ 档位扫描
+  pass_criteria:
+    # 判据数值（w3_w5_precheck §2.2 缺口：此前全仓 0 消费——现由 f06 考试门与 exam_cost_gate 消费）
+    cost_gate:
+      tiers_bp: [0, 5, 10, 20, 40]   # 真源=config/exam_scale_cost_gate.yaml（禁双头改）
+      survival_floor: 0.0            # 最高档(40bp) sharpe 下限
+      turnover_cap_annual_x: 8.0     # E7 换手上限门（批C 预注册档，禁改）
+      monotonic_tol: 1.0e-9          # 五档单调非增容差
+    negative_result_promise: T2 后主效应前 20% 层外的负结果如实入 negatives.csv 并计 N_eff，禁删改（预注册纪律）
+tracks:
+  f06_grid:
+    enabled: true
+    entry: scripts/backtest/factory_grid_executor.py
+    # FACT 族拉长持有期预注册轴（批E-①：换手主力=FACT 日频 top20 → 拉长持有期）
+    fact_family_axes:
+      B_top_n: [top10, top20, top30]
+      D1_rebalance_freq: [weekly, biweekly, monthly]
+    inherited_axes: 其余维度沿用 38b453ca 配方锁定值（E4=锁定配方滚动考核非再优化）
+    condition_stratification:
+      # T1 分层键（Owner 裁决①统计可用层）；输入包=MOD-BT-COND-PACKAGE（2026-09-24 真库验证 9 胞达标）
+      pack_module: zephyr.backtest.regime_validation.condition_package
+      search_window: ['2019-01-04', '2025-09-09']
+      axes: [emotion_grey_band, market_state_F4]
+      cells_eligible_measured: 9    # 2026-09-24 真库实测（4 灰度×F4 三态=12 胞，30 日地板达标 9）
+      sector_layer: observational_only   # 板块腿 17 交易日禁入统计判据
+  e1c:
+    enabled: true
+    entry: scripts/backtest/c4_batch_screen.py
+    pool_source: data/strategy_intake 池登记面（成本合格名单过滤后入搜）
+  llm_agent:
+    enabled: true
+    entry: LLM 智能体轨（LSG 内置，提案经 exam_cost_gate 预检后才入试）
+    note: LLM 提案空间=因子族新假设卡（预注册卡模板），禁直接改冻结翻译件
+budget_caps:
+  # 口径真源=w3_w5_precheck §2.5（59h 窗 212,400s × 0.8 占空 ÷ 6.8s/格 ≈ 24,990 格）
+  wall_clock_hours: 59              # 09-25 12:00 → 09-27 23:00（Owner 锁定窗）
+  effective_duty_pct: 80
+  per_point_seconds_measured: null  # T0 标定后回填实测值；null=T1/T2 禁开跑（执行器 fail-closed）
+  grid_points_cap: 25000            # 含五档成本门（跳门禁用；旧值 200 为哑门时代误设）
+  trial0_calibration_points: 200    # T0 标定跑：唯一用途=实测 s/格 并回填上一行
+  tier1_points: 17100               # T1 真 1% 分层粗扫（≈32h）
+  tier2_points: 13000               # T2 主效应前 20% 层参数展开+4440 型成本门复验（≈26h）
+  cost_gate_in_every_tier: true     # Owner 采纳令：任何粗扫阶段禁跳成本门（跳=判死件回池）
+  vram:
+    physical_gb: 24
+    train_quota_gb: 18
+    concurrency: 1                  # 单卡禁共存（与本地 LLM 21.6GB 硬顶互斥：exclusive_group=gpu_default）
+  single_job_wall_clock_cap_hours: 12   # schedule_gate_policy timebox gpu 键同值（超时=调度层中止）
+e7_defense:
+  # 多重检验校正：DSR 门槛随 N_trial 浮动（裁定#306 预注册族 N_eff 口径）
+  dsr_denominator: n_trial_ledger cumulative_trials（累计可审计口径，自动管线）
+  dsr_floating: true
+  # 搜索空间族预注册（族外尝试计入族下限，禁事后入族）
+  family_registry_required: true
+  # 每次尝试必经 n_trial_ledger.record_run（账本接线，试跑起生效）
+  ledger_required: true
+honesty:
+  - GPU 第一轮搜索结果只标"成本后 IS/OOS 达标，待前向验证"（批D 烧毁条款）
+  - 进模拟盘仍走既定三步（模拟盘绿 N 日），本预注册不开捷径
+  - 状态轴 5 档口径已自纠=F4_BDI_MOMENTUM_Z20 族三态（neutral/risk_on/risk_off），
+    闭卷窗 uniqExact=5 系 F11/F14 稀疏族混入（condition_package 选族自纠 2026-09-24）
