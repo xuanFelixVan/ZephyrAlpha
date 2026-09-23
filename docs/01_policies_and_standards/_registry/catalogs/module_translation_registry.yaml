@@ -56828,6 +56828,46 @@ entries:
   desc_en: ""
   plain_zh: "在数据库里建排产段的工单表和审计日志表：脚本可以重复跑多少遍结果都一样，带防误删白名单和状态机取值范围检查，审计日志只许追加不许改删，是排产工单上岗前的建表工具。"
   responsibility_layer: governance
+- module_path: src/zephyr/governance/meta_question/__init__.py
+  domain_id: D_GOVERNANCE
+  name_zh: "原问题登记表包入口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这是原问题账本模块的门口：把对外用的登记、流转、快照三个工具统一从这里导出，外面只需要认识这一个门牌号。"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/meta_question/registry.py
+  domain_id: D_GOVERNANCE
+  name_zh: "原问题写入API"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这是问题账本唯一的柜台窗口：立项新问题先过五道安检再领PQ编号；问题每次搬家都要在这里盖章留痕；两个人同时改同一本账时会喊冲突重来，谁都不许偷偷覆盖。"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/meta_question/snapshot.py
+  domain_id: D_GOVERNANCE
+  name_zh: "原问题快照导出器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这是账本的复印机：把数据库里的全部问题按编号排序拍成一份YAML快照，文件头自动盖时间戳和行数章，专供只读查看，禁止拿复印件当真账改。"
+  responsibility_layer: governance
+- module_path: scripts/governance/apply_meta_question_ddl.py
+  domain_id: D_GOVERNANCE
+  name_zh: "原问题表DDL部署器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这是账本的开荒工具：第一次在PostgreSQL里把三张表和索引建出来，重复跑不会砸锅，还带验货模式核对表件齐不齐。"
+  responsibility_layer: governance
+- module_path: scripts/governance/check_meta_question_batch.py
+  domain_id: D_GOVERNANCE
+  name_zh: "原问题批次校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "这是问题总账本的入库预检仪：一批新问题要进账本前拿它扫一遍，每条五要素填齐没有、枚举合不合法、数据源在不在白名单、标题有没有重名，全绿才放行走正式通道。"
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
