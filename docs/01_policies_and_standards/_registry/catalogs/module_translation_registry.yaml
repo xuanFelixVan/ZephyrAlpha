@@ -56909,6 +56909,8 @@ entries:
   name_zh: 板块偏好表结构定义
   plain_zh: 板块偏好这张表的结构真源：记录每天给每个板块打的偏好标签、仓位倾斜幅度和禁入象限。同样以入仓时间做版本列并带 FINAL 读，消费方是 L2 门与选股漏斗（读禁入象限和倾斜幅度）。
   responsibility_layer: infrastructure
+  plain_zh: "这是做T考试的尺子。它把回测留下的每笔买卖按同一只票同一天配成一对，算出每对赚的价差够不够付手续费。配对满30对才允许下结论，不够就老实说样本不足，不许瞎下结论。原来这把尺子放在临时目录里丢了，现在按裁定搬进正式目录，以后不会再丢。"
+  responsibility_layer: business
 - module_path: src/zephyr/strategy_factory/owner_band_t/data_loader.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "数据装载"
@@ -59899,6 +59901,47 @@ entries:
   desc_en: ""
   plain_zh: "把门禁配置和死因处方自动汇编成一份按文件类型分类的提交前导航手册,让AI会话不用撞墙学规则,指南由配置生成禁止手改"
   responsibility_layer: governance
+- module_path: docs/_working/kimi_audit/lane_reports/cost_trio_exam.py
+- module_path: scripts/audit/t0_six_phase_materialize.py
+  domain_id: D_BACKTEST
+  name_zh: "六段情绪相位历史物化件"
+  name_en: ""
+  desc_zh: "把仓内既有的六段情绪周期判定器逐日算成一份可复查的历史标签表，供做T考试的情绪门取用"
+  desc_en: ""
+  plain_zh: "想知道过去每一天市场情绪处在点火、主升还是退潮这六个阶段里的哪一个，就照着仓库里已经定好的那套规则一天一天算出来，存成一张表给考试用；自己不加任何新规矩，只把现成的规则跑一遍"
+  responsibility_layer: business
+- module_path: scripts/audit/t0_conditional_e4_v2_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "条件化做T双门考试V2（已作废留档）"
+  name_en: ""
+  desc_zh: "第一版把60个回测流水合并配对来考做T，结果发现把不同组合的买卖拼成了假往返，本件按卡作废留档但其中的情绪门三态判定被V3继续复用"
+  desc_en: ""
+  plain_zh: "本来想多找点数据把做T考试做一遍，结果发现把不同人各自的买卖凑成一笔'先买后卖'是假的，所以这版作废；不过它算情绪阶段的那段逻辑是对的，下一版接着用"
+  responsibility_layer: business
+- module_path: scripts/audit/t0_conditional_e4_v3_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "条件化做T双门考试V3"
+  name_en: ""
+  desc_zh: "修正往返身份后的做T成本经济学考试：一次往返必须出自同一个组合、同一流水只算一次、超涨跌停极限的剔除，判据数值一字未改"
+  desc_en: ""
+  plain_zh: "重新考一次'在特定行情和情绪下做T能不能赚到覆盖手续费的钱'。这次先立了三条规矩：买和卖得是同一个人同一个账户干的、同一段流水不许换名字重复数、一天之内价差大得不可能的直接不算。考完的分数规则跟上次完全一样，只是不再拿假数据充数"
+  responsibility_layer: business
+- module_path: scripts/audit/t0_gpu_condition_pack.py
+  domain_id: D_BACKTEST
+  name_zh: "做T条件维度GPU输入包"
+  name_en: ""
+  desc_zh: "把六段情绪、宏观状态、波动分桶和指数振幅按日拼成一张条件网格，连同样本不足的死格一起交给周五GPU矩阵当搜索空间输入"
+  desc_en: ""
+  plain_zh: "周五要用显卡大规模试参数，得先告诉它'哪天算同一个情形'。这个件把每天的情绪阶段、市场状态、波动大小、当天能挣多少振幅整理成一张对照表；顺便把样本太少、根本没法统计的那些格子点名列成一张'别去试'的清单，免得白跑还假装找到了规律"
+  responsibility_layer: business
+- module_path: scripts/audit/t0_ceiling_capacity_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "做T价差上界容量考试件"
+  name_en: ""
+  desc_zh: "用当日先低后高的可达价差做数学上界，检验哪些状态组里先买后卖族被成本直接判死；上界够不构成任何通过证明"
+  desc_en: ""
+  plain_zh: "先不去设计任何做T策略，只算一件事：假如你能未卜先知，在当天最低点买、最高点卖，最多能挣多少。如果连这个天花板都盖不过手续费，那这一类方法全部可以判定不用试了；反过来天花板够高也不代表你找得到那个点，所以这条只用来杀，不用来夸"
+  responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

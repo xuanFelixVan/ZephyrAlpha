@@ -43761,7 +43761,6 @@ creation_tokens:
   token: auto-scaffold-tilib_dwm_shard_runner-20260922
   created_by: st-b10-final-20260922
   capability: tilib_dwm_shard_runner
-  merge_evaluation: "丁线词表SSOT自裁书（第一性原理+四源对照），无同真源可派生项"
 - file: src/zephyr/shared/vocab/market_state.py
   token: state-vocab-market-state-20260921
   created_by: st-dloop-20260921
@@ -45166,6 +45165,7 @@ creation_tokens:
   created_by: st-ibt-remedy-b-20260923
   capability: ibt_batch_b_pit_repair
   merge_evaluation: "批B 预注册验收交付物（对照表冻结件），附 max_remediation_plan §2-批B 任务态 ttl=task_bound，批D 归档即退役，无第二真源"
+  merge_evaluation: "FOLDER-CAPACITY 121>120 共堵治理迁册（registry_family 子目录新建，registry 族 gate 专柜，非同域重复对象）"
 - file: "scripts/backtest/ibt/ibt_runner.py"
   token: "ibt-remedy-a-runner-20260923"
   created_by: "st-ibt-remedy-a-20260923"
@@ -46769,4 +46769,159 @@ creation_tokens:
   created_by: st-audit-all-20260924
   capability: audit_all_casebook
   merge_evaluation: "跨域不同对象→不并：八图↔物对账案卷是本包唯一滚动真源，与 commit_system_opt/align_dirty 等他包台账不同对象"
+- file: scripts/audit/t0_six_phase_materialize.py
+  token: t0-matrix-t0-six-phase-materialize-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: scripts/audit/t0_conditional_e4_v2_exam.py
+  token: t0-matrix-t0-conditional-e4-v2-exam-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: scripts/audit/t0_conditional_e4_v3_exam.py
+  token: t0-matrix-t0-conditional-e4-v3-exam-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: scripts/audit/t0_gpu_condition_pack.py
+  token: t0-matrix-t0-gpu-condition-pack-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/HANDOFF_emoreplay_stranded.md
+  token: t0-matrix-handoff-emoreplay-stranded-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/REDEVID_mutation_probe_matrix.md
+  token: t0-matrix-redevid-mutation-probe-matrix-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/rerun_frozen/cost_trio_pairs.csv
+  token: t0-matrix-cost-trio-pairs-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/rerun_frozen/cost_trio_result.yaml
+  token: t0-matrix-cost-trio-result-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/six_phase_history_v1.csv
+  token: t0-matrix-six-phase-history-v1-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/six_phase_history_v1.meta.yaml
+  token: t0-matrix-six-phase-history-v1meta-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/t0_conditional_e4_v2_VOID.md
+  token: t0-matrix-t0-conditional-e4-v2-void-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/t0_conditional_e4_v2_pairs.csv
+  token: t0-matrix-t0-conditional-e4-v2-pairs-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/t0_conditional_e4_v2_result.yaml
+  token: t0-matrix-t0-conditional-e4-v2-result-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/t0_conditional_e4_v3_pairs.csv
+  token: t0-matrix-t0-conditional-e4-v3-pairs-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/t0_conditional_e4_v3_result.yaml
+  token: t0-matrix-t0-conditional-e4-v3-result-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/t0_conditional_v2_prereg_card.md
+  token: t0-matrix-t0-conditional-v2-prereg-card-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/t0_conditional_v3_prereg_card.md
+  token: t0-matrix-t0-conditional-v3-prereg-card-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: data/strategy_intake/grid_t0_conditional_v1/negatives.csv
+  token: t0-matrix-negatives-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: data/strategy_intake/grid_t0_conditional_v1/t0_condition_cells_v1.csv
+  token: t0-matrix-t0-condition-cells-v1-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: data/strategy_intake/grid_t0_conditional_v1/t0_condition_matrix_v1.csv
+  token: t0-matrix-t0-condition-matrix-v1-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: data/strategy_intake/grid_t0_conditional_v1/t0_condition_matrix_v1.meta.yaml
+  token: t0-matrix-t0-condition-matrix-v1meta-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "做T考试族重考专用件：与既有 cost_trio/t0_conditional 判据族同真源但对象不同（V3=材料资格+双门，v1=单门），不并；零触发零消费不成立（GPU 输入包与 E4 重考均消费）"
+- file: docs/_working/t0_matrix/t0_conditional_e4_v3_verdict.md
+  token: t0-matrix-t0-conditional-e4-v3-verdict-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "V3 考试 verdict 留档件，与 result.yaml 一对一（机械生成禁手抄），不与他件并"
+- file: docs/_working/t0_matrix/FINAL_REPORT_t0_matrix_reexam.md
+  token: t0-matrix-final-report-t0-matrix-reexam-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "本包终报（三清单+复核命令+待裁三件），与 LEDGER/verdict 各司其职不并"
+- file: scripts/audit/t0_ceiling_capacity_exam.py
+  token: t0-matrix-t0-ceiling-capacity-exam-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "R1③ 容量上界考试族新件（对象=市场可达价差上限，与 T0-CONDITIONAL 同体往返对象不同），不并；TTL=task_bound 随做T战役退役"
+- file: docs/_working/t0_matrix/t0_ceiling_prereg_card.md
+  token: t0-matrix-t0-ceiling-prereg-card-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "R1③ 容量上界考试族新件（对象=市场可达价差上限，与 T0-CONDITIONAL 同体往返对象不同），不并；TTL=task_bound 随做T战役退役"
+- file: docs/_working/t0_matrix/t0_ceiling_verdict.md
+  token: t0-matrix-t0-ceiling-verdict-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "容量考试 verdict（机械生成自 result.yaml），与 t0_conditional_e4_v3_verdict 一考一文件不并"
+- file: docs/_working/t0_matrix/METHOD_MINING_t0.md
+  token: t0-matrix-method-mining-t0-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "R1②③④ 扩围交付件（矿册/矩阵/容量考/供给设计），与既有考试族卡一考一卡不并；TTL=task_bound 随做T战役退役"
+- file: docs/_working/t0_matrix/T0_SCHEME_MATRIX.md
+  token: t0-matrix-t0-scheme-matrix-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "R1②③④ 扩围交付件（矿册/矩阵/容量考/供给设计），与既有考试族卡一考一卡不并；TTL=task_bound 随做T战役退役"
+- file: docs/_working/t0_matrix/BOARD_INDEX_INTRADAY_SUPPLY_DESIGN.md
+  token: t0-matrix-board-index-intraday-supply-design-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "R1②③④ 扩围交付件（矿册/矩阵/容量考/供给设计），与既有考试族卡一考一卡不并；TTL=task_bound 随做T战役退役"
+- file: docs/_working/t0_matrix/t0_ceiling_result.yaml
+  token: t0-matrix-t0-ceiling-result-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "R1②③④ 扩围交付件（矿册/矩阵/容量考/供给设计），与既有考试族卡一考一卡不并；TTL=task_bound 随做T战役退役"
+- file: docs/_working/t0_matrix/t0_ceiling_daily.csv
+  token: t0-matrix-t0-ceiling-daily-20260923
+  created_by: st-t0-matrix-20260924
+  capability: t0_matrix
+  merge_evaluation: "R1②③④ 扩围交付件（矿册/矩阵/容量考/供给设计），与既有考试族卡一考一卡不并；TTL=task_bound 随做T战役退役"
 di_seam_exemptions: []
