@@ -59891,6 +59891,14 @@ entries:
   desc_en: ""
   plain_zh: "回踩质量 A/B/C 判定（22 号 spec §3.1②，BM-SEL-08 缺失态补施工）。"
   responsibility_layer: business
+- module_path: scripts/governance/generators/generate_commit_guide.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "提交指路指南机生器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把门禁配置和死因处方自动汇编成一份按文件类型分类的提交前导航手册,让AI会话不用撞墙学规则,指南由配置生成禁止手改"
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
