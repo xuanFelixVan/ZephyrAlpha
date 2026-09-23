@@ -685,3 +685,24 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   git show HEAD:docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | grep -c "build_status"                  # 42 / 8655 条
   python -c "import json,glob;print([json.load(open(f,encoding='utf-8'))['qid'] for f in glob.glob('.runtime/commit_queue/dead/*t0-matrix*') if 't0_ceiling_capacity_exam.py' in json.dumps(json.load(open(f,encoding='utf-8')))])"
   ```
+
+## 心跳 2026-09-24 05:53 CST 实测（`date`=05:53:49）· 在干=MTR-01 追到**机制级根因**（批量灌册 + 门禁单向），把上块 ② 的"推断级"升为亲验 · 卡住=无 · 下一步=见 ③
+
+- **① 25 条真幽灵从哪来=一次"双语真源扩容"批，且该批零新建代码**（尺=`git log --all -S` 定位 + `--name-status` 核形）：
+  - 引入批=`ab168e55c8`（**2026-08-01 14:03**，`feat(doc-gen): 域文档三视图 + 大图增量渲染 + 模块翻译注册表双语真源扩容`）：单批向翻译册新增 **2,978 条 `- module_path:`**，而该批 **11 个文件全是 `M`（修改）、零 `A`**（11 件=翻译册 + 02_enterprise_architecture 下 6 份文档等），即 **一条 .py 都没新建**。⇒ 结论确定（不再是推断）：这批的登记来源=**文档/蓝图里的"应然模块清单"，不是磁盘派生**；上块 ② 那句"第一性判断"由 **推断级 → 亲验级**。
+  - 152 条真悬空与该批的重合度（尺=批内新增 module_path 集合 ∩ 三分清单）：**N 31 中 13 条｜H 71 中 16 条｜R 45 中 27 条 ⇒ 合计 56/152=37% 出自该单批**（其余来自后续多批同类登记，未逐批展开）。
+- **② 🔴 新立 F-AUDIT-MTR-03（本块最有处置价值的一条=为什么悬空必然积累）**：翻译册族的所有校验器**只查"有件无册"，全仓不存在"有册无件"方向的反向校验**。
+  - 亲验两把尺：(a) `translation_coverage_reconciler.py:251` 的循环是 `for node in nodes:`——nodes 取自 **depgraph 代码节点**，产出 `missing_plain`/`short_plain`/`generic` 三类漂移 ⇒ 方向严格=物→册；(b) 对该 reconciler 与 `translation_coverage_gate.py` 全文 grep `stale|orphan|reverse|ghost|不存在|幽灵` = **0 命中**，`gate_registry.yaml` 中 grep `module_translation` = **0 命中** ⇒ 无"册→物"门禁/对账器存在。
+  - 与 ①合起来即完整因果链：**批量灌册无存在性校验（入口无闸）+ 册→物无反向对账（存量无清）⇒ 悬空只增不减**，且 02 块已证 `build_status` 仅有 `dormant`×42 一种取值 ⇒ 连"计划未建"的合法标注通道也没被使用。这条正好解释为什么本包八图审查在其它七图只见个位数悬空、在翻译册见到 152 条。
+  - **处方（净零合规版，§4.1：不新增 gate，改既有对账器）**：给 `translation_coverage_reconciler` 加**第四类漂移 `registry_only`**（遍历册内 `module_path` 对 HEAD 文件清单求差），复用其现有三分类上报面与 keep-list 语义；`R_改名未同步` 类由该漂移项自动提示"同名件在别处"（本包尺已实现判据，可直接移植）；入口侧 `add_module_translation.py` 加存在性校验，但**须同时提供 `--planned` 显式旗并强制写 `build_status: planned`**（否则会把"蓝图先行"的合法用法打死——本批 2,978 条正是该用法的历史形态）。落地涉翻译册条目净删=§5 high 域 ⇒ **只登记上交**，建议与 DANG-02（台账/索引分层）、MTR-02（退役跨册同批）并为**一条"册↔物双向对账与生命周期位"修闸需求**交 st-commitsys，勿三条分散立项。
+- **③ 下一步（轮次）**：①等 0019（05:48 块）与 `st-align-dirty` 队列消化后**复跑三把尺**（fieldslice / d1_verdict / batch 交集）做收官判据第 1 轮"零新问题" ②红蓝反证节并档（现 **11 例**，本块不新增——本轮两次自纠已记于 05:48 块 ③）③终报三清单按 MTR-01 三分 + MTR-02 点名 + MTR-03 机制稿落笔。
+- **队列/align 状态**：本包 0019 pending（05:52 入队，files=1 纯增 33/0）；HEAD=`10e16d9ae4`(05:49:45, st-align-dirty 翻译册重复行中性化批) ⇒ **本包 152 条结论所在的册正被他包改写**，故本块所有计数一律标注"测于 05:48–05:53 的 HEAD=`10e16d9ae4`/其前一态"。align：第 1-5 步工作树硬=3（HEAD 口径=0）、第 6 步崩（st-ailayer BLIND-01）、7-9 步未及。本包对 `注册表/配置册` 类写入累计仍=**0**。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  git log --all --oneline -S "src/zephyr/ex_core/auction_deviation_executor.py" -- docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | cat   # =ab168e55c8
+  git show --format= --name-status ab168e55c8 | sort | uniq -c | head    # 期望 11 M、0 A（零新建代码却灌 2978 条 module_path）
+  git show --format= ab168e55c8 -- docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | grep -c "^+ *- module_path:"   # 2978
+  sed -n '249,262p' src/zephyr/governance/audit/translation_coverage_reconciler.py    # for node in nodes ⇒ 方向=物→册
+  grep -cE "stale|orphan|reverse|ghost" src/zephyr/governance/audit/translation_coverage_reconciler.py src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py   # 期望 0/0
+  grep -c module_translation docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml   # 期望 0=无册→物门禁
+  ```
