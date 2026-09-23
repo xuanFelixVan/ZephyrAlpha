@@ -1,0 +1,867 @@
+# [A_config] module_id=CFG-COMMIT-GATE-DIGEST | layer=config | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+module_id: CFG-COMMIT-GATE-DIGEST-001
+ttl: permanent
+title: "99 台提交门禁判据蒸馏册（提交指路指南生成器的判据源）"
+doc_type: register
+registry_id: CFG-COMMIT-GATE-DIGEST-001
+name: 提交门禁判据蒸馏册
+description: >-
+  提交指路指南（commit_navigation_playbook.md，机生禁手改）的判据蒸馏层。
+  每条 entry = 一台提交门禁的操作性摘要（触发面/判据/豁免语法/处方），
+  2026-09-24 由 st-commitsys-20260924 从各 gate 源码 docstring+阻断消息蒸馏。
+  生成器 generate_commit_guide.py 的硬校验：
+  gate_id 必须在 in_process_gate_registry.yaml 在册（漂移即生成失败）；
+  source_file 必须实存且记录 sha256——重生成时哈希不符的台目在指南标"待重蒸馏"横幅，
+  指南正文永不无声过期（机生新鲜度闸）。gate 判据变更后重跑生成器，按横幅逐台更新本册。
+owner: MOD-INF-005
+tier: tier_1_governance
+status: active
+version: 1.1.0
+created: '2026-09-24'
+last_updated: '2026-09-24'
+unique_key: gate_id
+entry_schema:
+  gate_id: "string (required, unique) — 与 in_process_gate_registry.yaml gates[].gate_id 一致（registry: false 者除外）"
+  source_file: "string (required) — gate 源码相对路径（新鲜度哈希锚）"
+  block_or_warn: "string (required) — block | warn | conditional"
+  trigger: "string (required) — 触发面"
+  enforce: "string (required) — 判据"
+  exempt: "string (required) — 豁免语法（none=无豁免）"
+  fix: "string (required) — 处方（工具命令/格式）"
+  registry: "boolean (optional, default true) — false=机制红线（非 in-process 台）进附录"
+gates:
+  - gate_id: HELD-OVERLAP
+    source_sha256: 5585376dd077a3be23685f3249be19bfac5d144306dc514dc4536bbc618d5be2
+    source_file: src/zephyr/gov_enforcement/commit_gates/held_overlap_gate.py
+    block_or_warn: block
+    trigger: "提交目标文件被其他活跃 session 持有（SessionRegistry+.ailocks 双轨）"
+    enforce: "命中即阻断（搭便车防护）；Path.resolve 归一化比较"
+    exempt: "commit(allow_overlap=True)（CLI --allow-overlap），message 自动追加重叠标记"
+    fix: "等锁释放；确需同窗走 --allow-overlap 逃生（留审计）"
+  - gate_id: FORGED-GW-MARKER
+    source_sha256: 68e396d22c628d61a373bffd0e59f25a8438a60aebada47275116a8c4035e7c6
+    source_file: src/zephyr/gov_enforcement/commit_gates/forged_gw_marker_gate.py
+    block_or_warn: block
+    trigger: "commit message 含 [GW: 标记"
+    enforce: "存在非本 session 的 [GW: 标记=伪造/嫁祸，硬阻断；无标记放行（网关自动追加）"
+    exempt: "merge commit 的合并标记（session 已注册自然通过）"
+    fix: "从 message 移除手写 [GW:] 片段——留痕标记由网关自动追加，永不手写"
+  - gate_id: FOREIGN-CHANGE-DETECTION
+    source_sha256: 78ef8154979cdf7d9670ae4d1c46cbf93aa06f3072cceccf47cf452852f22071
+    source_file: src/zephyr/gov_enforcement/commit_gates/foreign_change_gate.py
+    block_or_warn: block
+    trigger: "目标文件在 claim_files 时有基线快照且他会话 claim 痕迹存在"
+    enforce: "防搭便车提交他会话 WIP（FOREIGN_CHANGE）"
+    exempt: "allow_overlap=True；--adopt-prior-work 认领前序工作（失败重提必带，防 staged 差异判外来）"
+    fix: "失败提交重试带 --adopt-prior-work；或 --allow-overlap"
+  - gate_id: DERIVED-FILE-DELETION-PROTECTION
+    source_sha256: 8162b6913993e331f25a3b9f45696955d439342d76c9026e5c21c4f1da2a5683
+    source_file: src/zephyr/gov_enforcement/commit_gates/derived_file_deletion_gate.py
+    block_or_warn: block
+    trigger: "staged 删除清单命中受保护派生文件（blueprint_registry.yaml 等）"
+    enforce: "派生文件删除致 20+ 消费方静默降级，硬阻断"
+    exempt: "--allow-derived-deletion 逃生（显式声明+留痕）"
+    fix: "跑 sync_registry_from_blueprints.py --write 恢复派生文件；确需删走逃生通道"
+  - gate_id: COMMIT-SCOPE
+    source_sha256: cdfd5c5ce4d9c4f3ad15835e45f4f21b481d795787bb0fd7de3ee47e6e5396af
+    source_file: src/zephyr/gov_enforcement/commit_gates/commit_scope_gate.py
+    block_or_warn: block
+    trigger: "每个 commit 的 files 清单"
+    enforce: "不得跨两个以上功能域（.py 读 [DOMAIN] 头；非 .py 用 functional_domain_registry ssot_path 前缀匹配）"
+    exempt: "allow_multi_domain=True + message multi-domain 标记（留痕合法）"
+    fix: "拆分为每域一笔；确需跨域（裁定+registry 原子批）用 --allow-multi-domain"
+  - gate_id: SESSION-REQUIRED
+    source_sha256: 1a8da73d0c7a93bc26fa1b99b51131504df63298c25cc15cf70e3338c2bd929c
+    source_file: src/zephyr/gov_enforcement/commit_gates/session_required_gate.py
+    block_or_warn: block
+    trigger: "每次 commit"
+    enforce: "session_id 非空且已注册（先 session_worktree_start()）"
+    exempt: "commit(allow_overlap=True)"
+    fix: "会话启动第一步 session_worktree_start()；git_commit.py --session <sid>"
+  - gate_id: CLAIM-REQUIRED
+    source_sha256: bd668c400836eb7c97b341fedae3111b85f37cd5e13f134290104f9b6c0b8095
+    source_file: src/zephyr/gov_enforcement/commit_gates/claim_required_gate.py
+    block_or_warn: block
+    trigger: "commit 目标 files 清单"
+    enforce: "session 已注册时目标文件必须在 held_files（先 claim 后改后提交）"
+    exempt: "allow_overlap=True；session 未注册放行（SESSION-REQUIRED 已拦）"
+    fix: "提交前 lock_files.py acquire <file> <sid>（或 gateway claim_files）"
+  - gate_id: CAPABILITY-OVERLAP
+    source_sha256: 4f3511222d6fe8e4feb56334eb76d657e3fddbaa4043d004d906ba49b2db0a46
+    source_file: src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py
+    block_or_warn: conditional
+    trigger: "staged 新建 .py（own-scope）"
+    enforce: "CloneGuard 语义克隆——extract 级（3+ 副本）硬阻断必须合并；review 级 warn"
+    exempt: "tests/；CloneGuard 不可用降级 warn；触碰税豁免（与 HEAD AST 等价不判本批）"
+    fix: "扩展现有函数而非新建；写前预查 clone_guard.check_before_write，合理重复 resolve_finding 标 acknowledged"
+  - gate_id: DIRECTORY-CONTRACT
+    source_sha256: a10e1efc168ffa9467755382003824e0bb6ed9d2b4d05d950433a9638d541536
+    source_file: src/zephyr/gov_enforcement/commit_gates/directory_contract_gate.py
+    block_or_warn: block
+    trigger: "本次 commit 全部 files"
+    enforce: "目录契约 DCR-001~007（doc_type 目录归属/扩展名白黑名单/根目录白名单）；fail-closed"
+    exempt: "none"
+    fix: "按目录契约放置/改名；docs/_working 只许 .csv/.html/.md/.yaml（.meta.json 违规改 .meta.yaml）"
+  - gate_id: TTL-METADATA
+    source_sha256: 947e55ce526a48e74bb0642f338d7fe85fd094ebfd5062db2e044f65dd7a3cb7
+    source_file: src/zephyr/gov_enforcement/commit_gates/ttl_gate.py
+    block_or_warn: block
+    trigger: "commit 清单中 .md/.py/.sh/.ps1/.mmd/.yaml/.json（超 500 文件触发全量防 WinError 206）"
+    enforce: "frontmatter ttl 必填且合法——v2 只剩 permanent/task_bound 两值；fail-closed"
+    exempt: "豁免区/neutral 无 frontmatter 文件 PASS；temporary zone .md 有 frontmatter 跳 doc_type"
+    fix: "永久区文件加 ttl permanent，临时区（docs/_working 等）加 ttl task_bound；ttl 词表仅 permanent/task_bound 两值，7d/30d/session 等不在词表；禁注释锚定自欺"
+  - gate_id: FILE-PLACEMENT-TTL
+    source_sha256: 5564c44750699f195b0d9fd2cd390962ba9ba117089c6542c426daa693e0db36
+    source_file: src/zephyr/gov_enforcement/commit_gates/file_placement_ttl_gate.py
+    block_or_warn: block
+    trigger: "全部 staged 非删除文件"
+    enforce: "永久区新文件需 allow_promote 准入；ttl 与 zone 一致性（permanent 在临时区/task_bound 在永久区均拦）；一级子目录须在 directory_zones 登记"
+    exempt: "隐藏目录；changes/reports/delivery 过程性子目录"
+    fix: "正式新文件走 promote 准入旗；临时件落 docs/_working/ 并带 task_bound"
+  - gate_id: CREATE-GUARD
+    source_sha256: 9d1cea9f9a91d1b958d9ae08c746d6dbe97646bc7b9845a506fc866fa1cf72e2
+    source_file: src/zephyr/gov_enforcement/commit_gates/create_guard.py
+    block_or_warn: block
+    trigger: "staged 新增的 .py/.yaml/.md/.sh/.ps1/.mmd/.json（非 tests/）"
+    enforce: "六道链——creation_token 精确路径匹配（7 格式）；merge_evaluation 缺失 warn；.py 头 30 行 14 字段（__init__ 3 字段）；governance/ 根禁新增；类名跨模块唯一；basename 碰撞（含未注册 basename 面）"
+    exempt: "tests/ 全豁免；rules/ .yaml 走命名检查不走 token；codegen（BEGIN CODEGEN）豁免字段头；类名豁免标记 class-name-alias"
+    fix: "先 python scripts/governance/d3_metadata/batch_creation_tokens.py --prefix <目录> --created-by <sid> --capability <名> --merge-evaluation <四判据一句话> 登记，再写文件；token 与内容同批原子或 token 批先行（队列 gate 读 HEAD，倒序必死）"
+  - gate_id: RULE-EXECUTION-PAIRING
+    source_sha256: 24b7099033178b1dc5aa10e11427d7bb08bf88942db142d7c8a8acc34dd22da8
+    source_file: src/zephyr/gov_enforcement/commit_gates/rule_execution_pairing_gate.py
+    block_or_warn: block
+    trigger: "rules/trae_*.yaml 变更或 message 含 [rule-mod]"
+    enforce: "每规则 YAML 须有 enforcement.paired_gate_id（null 允许=文档型；值须 gate_registry 在册）"
+    exempt: "message [no-pairing:reason]；paired_gate_id null"
+    fix: "enforcement 段补 paired_gate_id（挂真 gate 或 null）"
+  - gate_id: TRANSLATION-COVERAGE
+    source_sha256: 34ac8a2e10371c00afad50423fba516a65950144cf6af411ca3d68efd0896064
+    source_file: src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py
+    block_or_warn: block
+    trigger: "新增 .py（src/zephyr/ 或 scripts/ 下）"
+    enforce: "翻译册须有合格条目——存在+非空+CJK 大于等于 8+非通用模板"
+    exempt: "tests/、demos/、test_ 前缀、*_test.py 后缀、__init__.py、_archive/"
+    fix: "python scripts/governance/d3_metadata/add_module_translation.py --path <file> --domain <D_*> --name-zh <中文名> --plain-zh <大白话至少 8 汉字>"
+  - gate_id: REFERENCE-INTEGRITY
+    source_sha256: 90908a5ccbfc34f4f737ab5ce27b3a3632933126479265bac455fedddbf06250
+    source_file: src/zephyr/gov_enforcement/commit_gates/dangling_reference_gate.py
+    block_or_warn: block
+    trigger: "staged 新增文本中的三类引用——#ARCH-NNN、AGENTS.md 章节号、ruling 文档里的 commit hash 声明（聚合台）"
+    enforce: "新增 #ARCH- 引用须在 architecture_issue_registry.yaml 在册且同 commit（禁 grep-and-claim 占位）；AGENTS.md 章节号须实存；声明已完成 commit 的 hash 须 git cat-file -e 实存"
+    exempt: "tests/；存量悬空不追溯；模板占位符；message [no-verify-ruling:reason]"
+    fix: "补登 architecture_issue_registry.yaml（与引用同批）或删引用；核对 AGENTS.md 章节号；核对 hash 拼写与是否已合并"
+  - gate_id: RULING-COMMIT-VERIFIED
+    source_sha256: f2f41890e29d30786ccdcf893a5e77907d757e69012f9dcf830a430e69031d85
+    source_file: src/zephyr/gov_enforcement/commit_gates/ruling_commit_verified_gate.py
+    block_or_warn: block
+    trigger: "ruling 文档/架构登记册新增行声明已完成 commit hash"
+    enforce: "每个 hash 必须 git cat-file -e 实存（防捏造/拼错/未合并）"
+    exempt: "message [no-verify-ruling:reason]；tests/"
+    fix: "核对 hash 拼写与是否已合并；确需先行声明用逃生标记"
+  - gate_id: DATETIME-NOW-FORBIDDEN
+    source_sha256: 8a4711d133d1faff25bd823969804a90a7d09148d53270e4e1326c5a24231310
+    source_file: src/zephyr/gov_enforcement/commit_gates/datetime_now_forbidden_gate.py
+    block_or_warn: block
+    trigger: "生成器代码（generators 目录或 generate_ 前缀）新增行；src/zephyr/ 新增行"
+    enforce: "生成器禁 datetime.now 任何形式（幂等）；运行时禁 naive datetime.now/time.time"
+    exempt: "tests/；import/注释/docstring；行级 noqa m46-time（须 noqa_exempt_registry 登记）"
+    fix: "改 now_utc() 或 datetime.now(UTC)"
+  - gate_id: DEPGRAPH-FRESHNESS
+    source_sha256: e56e906fdac5c70e8df84ff6eb7b32710c228d14de348ce1fdfd46b1345eeca1
+    source_file: src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py
+    block_or_warn: conditional
+    trigger: "always-on 每次 commit"
+    enforce: "depgraph 扫描缓存超 30min warn、超 24h 硬阻断（防在过期快照上设计）"
+    exempt: "缓存缺失 fail-open；PG 离线探针证实超 24h 留痕豁免"
+    fix: "python scripts/governance/generate_project_depgraph.py 刷新后再提交"
+  - gate_id: DEPGRAPH-ENFORCEMENT
+    source_sha256: 38837f11a29d308361664811f9fb676da59f3090927dd85e5a948cc3a38df62c
+    source_file: src/zephyr/gov_enforcement/commit_gates/depgraph_pre_registration_gate.py
+    block_or_warn: block
+    trigger: "staged src/zephyr/**.py 带 [TTL] permanent（聚合台）"
+    enforce: "build_status=planned 且实质行数超 50 即阻断（施工完成须转 production）；新文件无 depgraph 记录同拦"
+    exempt: "task_bound 临时件；DB 不可达 fail-open"
+    fix: "先 apply_depgraph.py --add-design-node 登记，完工后 --transition-build-status <node> production"
+  - gate_id: DERIVATION-ANNOTATION
+    source_sha256: fc226733b91d8a4d86306da5b7ae7872962e07beef65caceeff1dbdc40ef9b5e
+    source_file: src/zephyr/gov_enforcement/commit_gates/derivation_annotation_gate.py
+    block_or_warn: block
+    trigger: "新增 .py/.yaml 头部 DERIVES_FROM 声明"
+    enforce: "声明的源文件必须实存（防悬空派生）"
+    exempt: "tests/；无声明不检"
+    fix: "修路径或删声明"
+  - gate_id: PROTECTED-PATHS
+    source_sha256: 330a39aea0f808dee71fa658f3615a4c7ae34729e36e095e6070c45ceb3bd3df
+    source_file: src/zephyr/gov_enforcement/commit_gates/protected_paths_gate.py
+    block_or_warn: block
+    trigger: "staged 命中受保护路径（.gitignore/.gitattributes/AGENTS.md 等）"
+    enforce: "写受保护路径须审批（防 27 包误忽略事故复发）；撞墙成本最高档（P50 183min）"
+    exempt: "message [ARCH-APPROVAL:ISSUE_ID]（issue 须在册）；紧急 env ZEPHYR_PROTECTED_PATHS_BYPASS=1（留痕）"
+    fix: "走 [ARCH-APPROVAL:<issue_id>] 标记（裁定登记后），勿硬闯"
+  - gate_id: ALGO-FLOW-LINK
+    source_sha256: c7feb93f8cebbb61fcfdff242dff684df4b10edd2ac41aea35f134ea427e9166
+    source_file: src/zephyr/gov_enforcement/commit_gates/algo_flow_link_gate.py
+    block_or_warn: block
+    trigger: "触碰含 ALGO_FLOW external 锚的 .py 或 algo_flow 镜像 yaml"
+    enforce: "锚指向 yaml 实存+可解析+图完整+source_of_truth 实存；.py 内 ALGO_FLOW 块只许 module docstring 内且锚/块二选一"
+    exempt: "源+镜像同批删（退役反向锚）；基础设施故障 fail-open"
+    fix: "新增外锚 token 与 yaml 同批；退役同批删锚+yaml；收/起标记+边段+docstring 内锚全要齐"
+  - gate_id: ALGO-NOTE-SYNC
+    source_sha256: 70fc740156da2f68d13a8e079d5c3dcaf86e927ce6c1c3228ca3bc60dee95e17
+    source_file: src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py
+    block_or_warn: block
+    trigger: "触碰决策地图节点 module_ref 指向的 .py"
+    enforce: "该节点 algo_note_zh 须同 commit 修订或加 note_confirmed 行"
+    exempt: "module_ref null；地图缺失 fail-open"
+    fix: "同批改 algo_note_zh 或加 note_confirmed 日期行（TDM 地图与触码批同批原子）"
+  - gate_id: NO-BARE-SQL
+    source_sha256: 132db0944b56738e3d63b1f83f338494a55bdba439e8c0bdf34b7724457191ab
+    source_file: src/zephyr/gov_enforcement/commit_gates/bare_sql_gate.py
+    block_or_warn: block
+    trigger: "staged .py 中 SQL 字符串"
+    enforce: "禁裸 SQL 散落——一律 DatabaseService"
+    exempt: "SQL_ 前缀常量（预检行级正则不认下划线中缀，三引号多行过）；行级豁免见 noqa 册"
+    fix: "SQL 提为模块级常量或走 DatabaseService；模块级容器加 Final（MUTABLE-CONST 联动）"
+  - gate_id: MUTABLE-CONST-WITHOUT-FINAL
+    source_sha256: e616d01a3a7ae0c801b32b4d6bba3b4ca3e630855519c0dbb74da6a45e3b67e0
+    source_file: src/zephyr/gov_enforcement/commit_gates/mutable_const_without_final_gate.py
+    block_or_warn: block
+    trigger: "src/zephyr/ .py 新增的模块级可变容器赋值（List/Dict/Set）"
+    enforce: "须 Final 标注（5.114）"
+    exempt: "AnnAssign；import/注释/docstring；行级 noqa n114-final"
+    fix: "写法改 AnnAssign+Final（如 __all__ 加 Final 注解）；tuple 不检"
+  - gate_id: NOQA-VALIDATION
+    source_sha256: 7f6cc9735fdf5835a81968422976642e2f44d49f60af829cc5ee71c21835fb01
+    source_file: src/zephyr/gov_enforcement/commit_gates/noqa_validation_gate.py
+    block_or_warn: block
+    trigger: "全部 staged .py 全文行"
+    enforce: "自定义 noqa 三查——非标准码须在 noqa_exempt_registry.yaml 登记；登记后须附至少 10 字符理由；单文件密度超 10 判滥用"
+    exempt: "ruff/flake8 标准码（E402 等）；存量 grandfather"
+    fix: "先在 noqa_exempt_registry.yaml 登记 marker（理由至少 10 字），行内 marker 后直接附理由（两空格为登记约定非机器强制）"
+  - gate_id: SYNTAX-VALIDATION
+    source_sha256: 144ad43ed95193de5f2a1662d7d6e85a11fc33a3a45975f8697c1ebe69179f79
+    source_file: src/zephyr/gov_enforcement/commit_gates/syntax_validation_gate.py
+    block_or_warn: block
+    trigger: "本 commit 清单全部 .py（含 tests/）"
+    enforce: "ast.parse 全绿（全仓唯一语法硬拦真源）"
+    exempt: "仅行级 syntax-fixture 豁免（marker 与理由间须 2+ 空格且理由至少 10 字符，测试夹具坏语法）"
+    fix: "修语法错误；测试夹具用 syntax-fixture 豁免"
+  - gate_id: ENCODING-SAFETY
+    source_sha256: ead825421389c45a01e2e949b68fae5df6d4a46f6dc1f61b1a9bb1326b2113ec
+    source_file: src/zephyr/gov_enforcement/commit_gates/encoding_gate.py
+    block_or_warn: block
+    trigger: ".py/.md/.yaml/.yml/.json/.toml/.ps1"
+    enforce: "去 BOM/无乱码/LF 行尾/.ps1 纯 ASCII（PS5.1 GBK 假语法错误）"
+    exempt: "环境异常 fail-open"
+    fix: ".ps1 注释写英文；全仓 LF；中文内容只进 UTF-8 文本格式"
+  - gate_id: COMPLEXITY-GUARD
+    source_sha256: 963ab33b93fb17ad3c424f6ca2978b11614a80c292b6b88a6b84eadcd146b85a
+    source_file: src/zephyr/gov_enforcement/commit_gates/high_complexity_gate.py
+    block_or_warn: block
+    trigger: "staged .py 真正新增的函数（改签名已有函数不重罚）"
+    enforce: "McCabe 超 15 阻断（5.158）"
+    exempt: "tests/；AST 失败 fail-open"
+    fix: "拆短函数+回归；死信后先核 HEAD 现状再 requeue（入队快照陈旧会判旧单体——q-0005 实案）"
+  - gate_id: ORPHAN-MODULE
+    source_sha256: 4dc24affb5df166f7f45009aa60e92ee5c9e60e89a48be7e0bf1e465993e562f
+    source_file: src/zephyr/gov_enforcement/commit_gates/orphan_module_gate.py
+    block_or_warn: block
+    trigger: "staged 新增 src/ 下 .py"
+    enforce: "git grep 限 src/**/*.py 面须有 import 引用（scripts/tests 引用不计入；防死代码 on creation）"
+    exempt: "__main__/__init__/main/conftest；scripts/、bin/ 路径；含 __main__ guard 块"
+    fix: "引用方与模块同批；文件搬移+同批改引用形态注意 ORPHAN 门引用检测不含同批新 import 的结构性拦死（k4 三连死实证）——搬移要么三方（文件+import+名册）同批原子，要么延后另案"
+  - gate_id: IMPORT-INTEGRITY
+    source_sha256: 76ebb20569fc54dec7da1a896518b44d345a2b98c65e413901ee5ca79f77f812
+    source_file: src/zephyr/gov_enforcement/commit_gates/import_integrity_gate.py
+    block_or_warn: block
+    trigger: "本 session staged .py 的绝对 import"
+    enforce: "悬空 import 硬阻断（zephyr/scripts 映射路径在 main HEAD+staged 找不到即拦）；撞墙成本次高（P50 148min）"
+    exempt: "sys.path 注入目录裸模块；相对 import/star import 跳过"
+    fix: "import 目标与 import 语句同 commit；他会话未 merge 先等或同批建目标模块"
+  - gate_id: FILE-COPY
+    source_sha256: 339d3ba1ea9a47b5297755615f8e920189edb0168f3d962d4eacfb2628e34521
+    source_file: src/zephyr/gov_enforcement/commit_gates/file_copy_gate.py
+    block_or_warn: block
+    trigger: "staged 新增 .py 与主仓已有同名 basename 文件比对"
+    enforce: "AST 归一化相似度超 70% 阻断（裁定 221）"
+    exempt: "只查新增"
+    fix: "扩展现有文件而非复制；空 __init__.py 假阳性先例在案"
+  - gate_id: FUNCTION-DUP
+    source_sha256: e04f7d4e824a065b727f5dcbf76fc2e0cae8ef18476b9bf051c929c690c5de4b
+    source_file: src/zephyr/gov_enforcement/commit_gates/function_dup_gate.py
+    block_or_warn: block
+    trigger: "新增 .py 顶层函数"
+    enforce: "同目录他文件同名同 body（去 docstring）阻断"
+    exempt: "同名不同实现；类方法不查"
+    fix: "扩展而非复制"
+  - gate_id: SSOT-REDEFINITION
+    source_sha256: 1b6f8e5f15411a5bce5bf818acdfc7ba68be8197b8685e29fd7ce7dcd2e94982
+    source_file: src/zephyr/gov_enforcement/commit_gates/ssot_redefinition_gate.py
+    block_or_warn: block
+    trigger: "staged .py 新增 class 或赋值且符号在 SSoT 清单"
+    enforce: "已 SSoT 化符号禁止重定义，必须 import/扩展"
+    exempt: "canonical 文件自身；tests/"
+    fix: "查 capability_canonical_file_registry.yaml 找 canonical 文件后 import"
+  - gate_id: NO-SECRET-HARDCODE
+    source_sha256: 6d413b2a7b72dc760995c5a3f5eac4ee1fbed8da0149f892bcea9e1e30252047
+    source_file: src/zephyr/gov_enforcement/commit_gates/secret_hardcode_gate.py
+    block_or_warn: block
+    trigger: ".py/.yaml/.yml/.json/.toml added 行密钥模式（sk-/AKIA/ghp_/KEY 赋值）"
+    enforce: "密钥禁硬编码（三道 gate 之首）"
+    exempt: "tests/；.env 与 .env.example；扫描器自身；docstring/注释"
+    fix: "走 zephyr.shared.security.secrets（get_required_secret 等）；新密钥三步=.env、.env.example、config/secret_registry.yaml（SECRET-REGISTRY-CONSISTENCY 联动）"
+  - gate_id: SECRET-REGISTRY-CONSISTENCY
+    source_sha256: 558059431aebcd147d68c12362fb9f6904c71889bf2e76812f3d13bf03ea3f3c
+    source_file: src/zephyr/gov_enforcement/commit_gates/secret_registry_consistency_gate.py
+    block_or_warn: block
+    trigger: "staged 含 .env.example 或 config/secret_registry.yaml"
+    enforce: "两册 KEY 集合双向一致"
+    exempt: "注释行；非 .env 的 service 配置"
+    fix: "新密钥三步流程齐步走（裁定 S-1）"
+  - gate_id: NO-BARE-GETENV
+    source_sha256: b88710637349c104183cae1d3744dbb7703e61335f2d48d47a8545a8f5b87986
+    source_file: src/zephyr/gov_enforcement/commit_gates/bare_getenv_gate.py
+    block_or_warn: block
+    trigger: ".py 新增行裸 os.getenv/os.environ 读密钥类变量"
+    enforce: "密钥类变量禁裸读"
+    exempt: "tests/；变量参数（非字面量）"
+    fix: "get_secret/get_secret_or_default"
+  - gate_id: ZEPHYR-ENV-DIRECT-ACCESS
+    source_sha256: 40cb59a2345b1b928e1b884ad0d2e9079d65e47a16300df33830c1eed47e867b
+    source_file: src/zephyr/gov_enforcement/commit_gates/zephyr_env_direct_access_gate.py
+    block_or_warn: block
+    trigger: "src/zephyr/ .py added 行 os.environ 访问 ZEPHYR_ENV"
+    enforce: "必须走 config 层（5.34）"
+    exempt: "config 层目录；tests/；行级 noqa e34-env（理由至少 10 字符）"
+    fix: "经 src/zephyr/shared/foundation/config 读取"
+  - gate_id: R5-DIGIT-SUFFIX
+    source_sha256: 1836c6696066b3ce4fb1bf2a00e00eb2d459b8643aded26b404eba5e23af7de7
+    source_file: src/zephyr/gov_enforcement/commit_gates/r5_digit_suffix_gate.py
+    block_or_warn: block
+    trigger: "文件路径任意父级目录名匹配数字后缀（新引入才拦，历史不追溯）"
+    enforce: "禁 _NN 后缀目录（暗示多真源违 SSoT）；git ls-tree 失败 fail-closed 也拦"
+    exempt: "已在 HEAD 的历史目录（progressive_convergence）；删除件"
+    fix: "用语义名目录（e2e_20260924 违规、e2e_integration 合法；registry_incident 去 0b 后缀合法先例）"
+  - gate_id: FOLDER-CAPACITY-HARD-LIMIT
+    source_sha256: a1cd16634df493d8abcc2e3cf695bf314028c761fd103063ab08e91ce197b65d
+    source_file: src/zephyr/gov_enforcement/commit_gates/folder_capacity_hard_limit_gate.py
+    block_or_warn: block
+    trigger: "staged .py/.yaml/.md 所在目录"
+    enforce: "目录平铺文件数（不含子目录/__init__）超 120 阻断"
+    exempt: "tests/"
+    fix: "拆子目录；注意主区盘与工棚面不同口径（nightfix 121 实案=数主区盘平铺 .py）"
+  - gate_id: REGISTRY-MASS-DELETION
+    source_sha256: 0bc3bb785d18284340bf2b0a3cf5f4082ddd6ca0ccba7a47a64ba997a3307d6f
+    source_file: src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py
+    block_or_warn: block
+    trigger: "staged YAML 命中 _registry/catalogs/ 或 ROOR"
+    enforce: "三信号任一拦——净删行/条目数减少/条目身份消失（防删 16 插 25 代数抵消）"
+    exempt: "message [allow-mass-deletion:<理由至少 10 字>]（合法重排/整文件重生成；放行仍审计）"
+    fix: "批量补登走 scripts/governance/registry_batch_edit.py 纯插入；共享热册 CAS 写（safe_write_text）+写前守恒闸；共享暂存区副本陈旧会误报——git add 自愈"
+  - gate_id: REGISTRY-YAML-PARSE
+    source_sha256: 90b10d1f4eec7905605043cc16b1d94a55c4efcf4b1404eb9b36e4f5ecdc09a0
+    source_file: src/zephyr/gov_enforcement/commit_gates/registry_yaml_parse_gate.py
+    block_or_warn: block
+    trigger: "staged capability_canonical_file_registry.yaml / data_asset_registry.yaml"
+    enforce: "safe_load 过+顶层根键唯一+capability 档 di_seam_exemptions 末位键+creation_tokens 为 list；fail-closed 无逃生"
+    exempt: "none"
+    fix: "token 条目插 creation_tokens 列表尾（di_seam_exemptions 行之前，注意嵌套同名键勿错插）；插后本地 yaml.safe_load 预验再提交"
+  - gate_id: STATE-VOCAB-REGISTRY
+    source_sha256: 9c87a76ab743c2b2a9bbbdb0d99f128a5924e9b9e332f64c523eaaafa255fc92
+    source_file: src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py
+    block_or_warn: warn
+    trigger: ".py 新定义状态枚举类（类名含 state/phase/regime/emotion/mode）"
+    enforce: "须登记 state_vocabulary_registry.yaml（观察期 warn）"
+    exempt: "行注释 noqa 豁免（STATE-VOCAB-REGISTRY 加原因）；登记即白名单"
+    fix: "词表登记或 noqa；在飞件盘有 HEAD 无时全仓拦（落地环境全员阻断案例——词表先行）"
+  - gate_id: TAG-VOCAB
+    source_sha256: d58acfc7e50ae83a41d1d2d1df80e23122086bedf9b4563d20a26f48eb35224c
+    source_file: src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py
+    block_or_warn: warn
+    trigger: "catalogs/ yaml 的 tags 列表"
+    enforce: "tags 只选词不造词（别名可解析）；warn 期"
+    exempt: "别名解析合法"
+    fix: "改标准词或先收编 library_tag_vocabulary.yaml"
+  - gate_id: BLOOD-FLESH
+    source_sha256: 4f6771bfe5e28c36e086fe6cfe9c05827e44ed0034b40ae59e76b95be3bf0ddd
+    source_file: src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py
+    block_or_warn: warn
+    trigger: "新增 .py 翻译条目 A 面/翻译册新增条目 B 面"
+    enforce: "新资产登记必填血肉——A 面 name_zh；B 面 name_zh+plain_zh 双全非模板"
+    exempt: "存量不追溯；翻译册损坏 fail-open"
+    fix: "add_module_translation.py 一条命令（同 TRANSLATION-COVERAGE）"
+  - gate_id: EXEMPT-ZONE-FM
+    source_sha256: 2055dd28834925e02f506594d4bfd7991b65c123e55b42b83796cbff5008bc7e
+    source_file: src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py
+    block_or_warn: block
+    trigger: "豁免区（docs/_working、_archive、.runtime、.trae、templates）.md/.yaml 带 doc_type frontmatter"
+    enforce: "本应正式目录的文件不得塞豁免区带 doc_type"
+    exempt: "HEAD 已存在的历史违规（允许维护）"
+    fix: "去 doc_type 或迁正式目录；docs/_working 件用 ttl/title/session 三字段不带 doc_type"
+  - gate_id: DOC-REF-BROKEN
+    source_sha256: b924bdf520396177d61b2a5e8f82b1c37fd75427e44b9b027d2c8d7d04f57c2d
+    source_file: src/zephyr/gov_enforcement/commit_gates/doc_ref_broken_gate.py
+    block_or_warn: block
+    trigger: "新增 .md 的相对链接"
+    enforce: "链接目标必须实存（git index 面）"
+    exempt: "草稿区（docs/_working 等 skip 目录）；URL/锚点"
+    fix: "目标文件同批创建或修相对路径"
+  - gate_id: PURE-ASSERTION
+    source_sha256: e98707885c976a5de5fae22b7c049fa8aa8bd39665dfae4542d0525bcfefd486
+    source_file: src/zephyr/gov_enforcement/commit_gates/pure_assertion_gate.py
+    block_or_warn: block
+    trigger: "本 session staged .md added 行"
+    enforce: "禁过渡文本（曾用 X 现为 Y 式表述）——直接写当前值"
+    exempt: "checker 环境异常 fail-open；外来 staged warn"
+    fix: "删过渡表述写现值"
+  - gate_id: HOT-FILE-BASE-FRESHNESS
+    source_sha256: 6d5c93a1d7fddb50c5926f47a47e4eec559c54b2a433f70464cb839d8f974ae5
+    source_file: src/zephyr/gov_enforcement/commit_gates/hot_file_base_freshness_gate.py
+    block_or_warn: block
+    trigger: "热文件（注册表/宪法/tracker）+有 claim_head 锚点"
+    enforce: "claim 后 HEAD 上游改过该热文件即拦陈旧快照覆写（STALE_BASE）"
+    exempt: "allow_overlap；无 claim_head"
+    fix: "git log -p 区间核对上游改动；已含则 release 后重 claim（锚刷新）再提交；claim_snapshots 删快照刷锚配方在案"
+  - gate_id: STASH-ACCUMULATION
+    source_sha256: 220b19b501ec58ae184a086cc8685085846ba150d7320f45d2c95e17ffeb9d69
+    source_file: src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py
+    block_or_warn: conditional
+    trigger: "每次 commit 全局状态"
+    enforce: "stash 超 20 warn、超 40 阻断（实测 34 个已致 AI 误判）"
+    exempt: "无"
+    fix: "ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1 触发 reconciler 清理；手动 drop；编辑消失先查 .runtime/workspace_alerts/stash_notice.json"
+  - gate_id: WORKTREE-REQUIRED
+    source_sha256: 372cb9954bd63b2fb52c402e76beccf5281bb8f45260ec5658460aa323c6e2a6
+    source_file: src/zephyr/gov_enforcement/commit_gates/worktree_required_gate.py
+    block_or_warn: block
+    trigger: "每次 commit"
+    enforce: "非 worktree+有其他活跃 session 即拦（共享区搭便车/黑洞风险）"
+    exempt: "worktree 内；solo；--allow-non-worktree；--allow-overlap"
+    fix: "session_worktree_start 隔离施工；逃生后改完即提交不留窗"
+  - gate_id: SPLIT-COORDINATION
+    source_sha256: af56840ba3031f6bb98437710446f8db6e519a90f1426d07f8251a40652f4997
+    source_file: src/zephyr/gov_enforcement/commit_gates/split_coordination_gate.py
+    block_or_warn: block
+    trigger: "活跃拆分声明在案且提交命中 old_paths"
+    enforce: "拆分进行中他会话不得在旧路径重建文件"
+    exempt: "mover 本人；超 48h 陈旧声明降级 warn"
+    fix: "re-base 到新位置；mover 走 split_coordination.py finish 收尾"
+  - gate_id: MSG-EXPOSURE
+    source_sha256: f2adff4d33dc2d9f70a5fd5bab87a85b124ba9ba548e3c80966b80a295868c84
+    source_file: src/zephyr/gov_enforcement/commit_gates/msg_exposure_gate.py
+    block_or_warn: block
+    trigger: ".py 异常消息 f-string 含敏感变量（路径/tx_id/凭据/连接串/SQL）"
+    enforce: "敏感值走结构化 details 字段"
+    exempt: "行尾 noqa MSG-EXPOSURE（走 details 契约）"
+    fix: "raise XxxError(消息, details=字典)"
+  - gate_id: MSG-STYLE
+    source_sha256: 443e62582db244c8ce56ff82d491f55aceb2046cd58f76fe3bc28bd352836633
+    source_file: src/zephyr/gov_enforcement/commit_gates/msg_style_gate.py
+    block_or_warn: block
+    trigger: ".py 异常消息字符串"
+    enforce: "禁 Unicode 箭头、禁中文句号结尾"
+    exempt: "行级 noqa MSG-STYLE；tests/"
+    fix: "统一 ASCII 箭头+无句号结尾"
+  - gate_id: NO-IMPORT-SIDE-EFFECT
+    source_sha256: bf362122249b280bfb417adfa870f37e4ed6fac50ace6e58640852449e0d65e8
+    source_file: src/zephyr/gov_enforcement/commit_gates/no_import_side_effect_gate.py
+    block_or_warn: block
+    trigger: "src/ .py 模块级语句"
+    enforce: "禁 import 期 I/O/网络/DB/急切实例化"
+    exempt: "__main__；main guard；TypeVar/NamedTuple/Enum/Path 纯构造"
+    fix: "副作用移入函数或惰性工厂"
+  - gate_id: PERMANENT-SYSTEM-TRIGGER
+    source_sha256: 8fc6d7a077fd9f390460b8814d9313ef74959693300c1e939afe7dc25382daef
+    source_file: src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py
+    block_or_warn: block
+    trigger: "新增 [TTL] permanent .py"
+    enforce: "禁 while True/time.sleep/schedule 时间触发，须事件订阅（永久系统四要素）"
+    exempt: "只查新增；检测器自身 noqa m10-time-trigger"
+    fix: "改 event_bus.subscribe 事件驱动；M11 豁免通道=permanent CLI runner 加 m11-perm-manual-legitimate 尾注"
+  - gate_id: UNDEFINED-NAME
+    source_sha256: f13144c8cdfd77ebea6784763e3f6c3e794f2118bf6aeae68611ab2d3ca151e7
+    source_file: src/zephyr/gov_enforcement/commit_gates/undefined_name_gate.py
+    block_or_warn: block
+    trigger: "scripts/governance/** 与 src/** .py"
+    enforce: "F821 未定义符号 commit 时硬拦（--no-verify 绕不过）"
+    exempt: "wildcard import 文件跳过"
+    fix: "补 import/修拼写/补本地定义"
+  - gate_id: SCRIPTS-IMPORT-INTEGRITY
+    source_sha256: bfbedaca2e148f49cf4b480594d7f58166b0eebe8be3eddd254344bb47fc870c
+    source_file: src/zephyr/gov_enforcement/commit_gates/scripts_import_integrity_gate.py
+    block_or_warn: block
+    trigger: "本 session staged scripts/governance/**.py"
+    enforce: "用了 _shared.constants 符号须显式 import"
+    exempt: "constants.py 自身；wildcard import 文件"
+    fix: "顶部补 from _shared.constants import 符号"
+  - gate_id: OPEN-WITHOUT-WITH
+    source_sha256: 9834e102165f89b3f66fe6cd2e39ea758b27cbdf2023bc6f9dbff97959c6e92a
+    source_file: src/zephyr/gov_enforcement/commit_gates/open_without_with_gate.py
+    block_or_warn: block
+    trigger: "src/zephyr/ .py 新增行裸 open()"
+    enforce: "必须 with 上下文"
+    exempt: "with open 形态；tests/；行级 noqa r144-open"
+    fix: "with open 上下文管理器"
+  - gate_id: ASYNCIO-RUN-IN-CONTEXT
+    source_sha256: 4360783c66336c7ab8b224a31bd7821ae458d483f90146a7c9440a1db8241cd8
+    source_file: src/zephyr/gov_enforcement/commit_gates/asyncio_run_in_context_gate.py
+    block_or_warn: block
+    trigger: "src/zephyr/ .py 新增行"
+    enforce: "禁 asyncio.run/get_event_loop/new_event_loop"
+    exempt: "tests/；注释；行级 noqa a100-asyncio（登记制）"
+    fix: "改 async_utils.run_coroutine_sync"
+  - gate_id: BARE-SUBPROCESS
+    source_sha256: 8fd2c56c51e84ca401876e8dc8e9b4587b03a49af99fe42862bef4c13dbf058d
+    source_file: src/zephyr/gov_enforcement/commit_gates/bare_subprocess_gate.py
+    block_or_warn: block
+    trigger: ".py 新增行 subprocess.run/Popen 等"
+    enforce: "必须带 CREATE_NO_WINDOW（防弹窗；桌面弹窗根治战役同源）"
+    exempt: "tests/；6 个基础设施文件；行级 noqa bare-subprocess（理由至少 10 字符）"
+    fix: "改 process_pool.py 的 run_subprocess_hidden/spawn_python_hidden"
+  - gate_id: GIT-CALL-BUDGET
+    source_sha256: 3231c1fac878dd9202c9b3feb81df879be56f8a60c6fe9c7f389840b771b04d7
+    source_file: src/zephyr/gov_enforcement/commit_gates/git_call_budget_gate.py
+    block_or_warn: warn
+    trigger: ".py added 行循环体内 subprocess git 调用"
+    enforce: "禁逐文件 git 调用（N 文件=N subprocess 反模式）"
+    exempt: "tests/"
+    fix: "改 GitCommandBatcher.git_show_batch"
+  - gate_id: NO-HARDCODED-URL
+    source_sha256: 6a4232b31b1fcb998b256fdffa8c351a75d21d60c0ad601df6d2c6038f344071
+    source_file: src/zephyr/gov_enforcement/commit_gates/hardcoded_url_gate.py
+    block_or_warn: block
+    trigger: ".py added 行 localhost URL"
+    enforce: "走 SSoT 常量"
+    exempt: "constants.py 定义位；注释"
+    fix: "import DEFAULT_OLLAMA_URL 等常量"
+  - gate_id: NO-UPWARD-IMPORT
+    source_sha256: 62f4eeb1181285335794d12f152dd0af6bd3a87930d2483cbb8b60162ffd06d5
+    source_file: src/zephyr/gov_enforcement/commit_gates/import_direction_gate.py
+    block_or_warn: block
+    trigger: "staged shared 层 .py 的 ImportFrom"
+    enforce: "shared 层禁止向上依赖（5.152）"
+    exempt: "TYPE_CHECKING 块；tests/"
+    fix: "类型真源下沉 shared 或放 TYPE_CHECKING"
+  - gate_id: RELATIVE-PATH-LITERAL
+    source_sha256: 1f60d87dc2f54391d9df5c9515bca58bb6270de4de335db6f059f2e03c843f8c
+    source_file: src/zephyr/gov_enforcement/commit_gates/relative_path_literal_gate.py
+    block_or_warn: block
+    trigger: ".py added 行字符串以 ./ ../ ~/ 开头"
+    enforce: "全路径绝对化铁律"
+    exempt: "__file__ 基准行；tests/；注释"
+    fix: "REPO_ROOT 或 Path(__file__).resolve().parent 拼接"
+  - gate_id: TABLE-NAME-REGISTRY
+    source_sha256: 57167d3cccf9d0b5c44ce1a2616944e4f764ccb853976f15a45639864fa3c793
+    source_file: src/zephyr/gov_enforcement/commit_gates/table_name_registry_gate.py
+    block_or_warn: block
+    trigger: ".py added 行硬编码表名字符串"
+    enforce: "走 TableRegistry.table(category_id) 真源"
+    exempt: "tests/；table_registry 自身；docstring"
+    fix: "常量替换为 TableRegistry 引用；与 NO-BARE-SQL 判据不同（行级正则 vs AST）勿混淆豁免方式"
+  - gate_id: GATE-VOCAB
+    source_sha256: 38ff4c090b195f9cd6adee3b9f56ee65402a9716bc9804beb982b0efb9270c93
+    source_file: src/zephyr/gov_enforcement/commit_gates/vocab_hardcode_gate.py
+    block_or_warn: block
+    trigger: "新增 .py 硬编码词表合法值"
+    enforce: "词表值从词表 YAML/加载器读取"
+    exempt: "tests/；只查新增"
+    fix: "按 check_vocab_hardcode.py 输出改加载器读取"
+  - gate_id: TEST-RESIDUE-SSOT
+    source_sha256: ba1a15d58835d08cceed24b067db623cdb30373949ee18d5979414045405756a
+    source_file: src/zephyr/gov_enforcement/commit_gates/test_residue_ssot_gate.py
+    block_or_warn: block
+    trigger: ".py 新增/修改中硬编码测试残留前缀集合（两个以上元素命中）"
+    enforce: "必须动态加载 _load_test_residue_config()"
+    exempt: "单前缀巧合；exact_names/tmp 前缀"
+    fix: "改 reconciliation_registry._load_test_residue_config() 动态加载"
+  - gate_id: TEST-SOURCE-CONSISTENCY
+    source_sha256: f61d7b9ba02669ee1dc63c7aced45e9bb1339964139afa043b263957f9ae238f
+    source_file: src/zephyr/gov_enforcement/commit_gates/test_source_consistency_gate.py
+    block_or_warn: block
+    trigger: "tests/ .py added 行 from zephyr import"
+    enforce: "符号必须在源码模块顶层实存（防测试漂移 ImportError）"
+    exempt: "pytest.skip module_level/importorskip 文件；外来 warn"
+    fix: "import 实存符号或源码补齐；废弃测试 module-level skip"
+  - gate_id: META-TESTS-COVERAGE
+    source_sha256: 6d138c344a8d53da996806f83b63e1baf327e4650307fe41af310cfd0da94a9f
+    source_file: src/zephyr/gov_enforcement/commit_gates/tests_coverage_gate.py
+    block_or_warn: block
+    trigger: "staged 触碰 commit_gates/*.py 时扫全目录"
+    enforce: "每台 gate 头部 [TESTS] 声明的测试文件必须实存（守卫者的守卫者）"
+    exempt: "[TESTS] 显式声明无；_ 前缀 helper"
+    fix: "补测试文件或改 [TESTS] 豁免值"
+  - gate_id: BLUEPRINT-FORMAT
+    source_sha256: 5b1ea4f7eac1a9d571c925cff5671b3076b70103c9fc97ecc5e7358c9a6b3867
+    source_file: src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py
+    block_or_warn: block
+    trigger: ".py added 行 [BLUEPRINT] 头（无 tests/ 豁免）"
+    enforce: "module_id 合规（裁定 208 双轨 MOD-/SH- 前缀+格式）；chainpile 盲发循环死因"
+    exempt: "存量 grandfather（只检 added 行）"
+    fix: "对照裁定 214/208 改 [BLUEPRINT] 头 module_id 格式后再发（盲发重发=白死三连实证）"
+  - gate_id: BLUEPRINT-HEADER
+    source_sha256: dfb20ce9f8639e3beb9af0cbe776bd36182c1939c66fc369913579f86fcf50fc
+    source_file: src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py
+    block_or_warn: block
+    trigger: ".py added 行 [A_module] module_id 与 [BLUEPRINT] 头（聚合台含双头一致性）"
+    enforce: "禁 malformation（层码后下划线+小写）；同文件双头 normalize 后相等的不同拼写拦"
+    exempt: "tests/；docstring 行；行级 noqa blueprint-amodule-cross-check"
+    fix: "MOD-INF_a2a 改 MOD-INF-a2a（DASH 或大写）；双头统一拼写"
+  - gate_id: BLUEPRINT-NODE-ID-HARDCODE
+    source_sha256: 110d570736c0b296a139b5166174a79859fc3a515c51bb5a290a688f463a4d53
+    source_file: src/zephyr/gov_enforcement/commit_gates/blueprint_node_id_hardcode_gate.py
+    block_or_warn: block
+    trigger: "blueprint.md 新增/修改"
+    enforce: "禁硬编码 node_id/edge_id（物理自增 ID 易变）；写 module_id/blueprint_id/path"
+    exempt: "脚本环境异常 fail-open；外来 warn"
+    fix: "用稳定逻辑标识替换物理 ID"
+  - gate_id: MODULE-ID-CONSISTENCY
+    source_sha256: 65678b657d18874978ad84c79214dc0479ebc292a68b5c718dec04d463b57126
+    source_file: src/zephyr/gov_enforcement/commit_gates/module_id_consistency_gate.py
+    block_or_warn: block
+    trigger: ".py 含 CFG-/MOD-/PS- 三轨道声明头"
+    enforce: "三轨道 module_id 一致+count 派生匹配+跨文件唯一"
+    exempt: "none（fail-closed）"
+    fix: "对齐三轨道声明；撞车 ID 改名"
+  - gate_id: GATE-ERRCODE-CONSISTENCY
+    source_sha256: 37d3fc40ac819fd3bbc27385daf784acbcda1eac9644c2c0e3446c750491c578
+    source_file: src/zephyr/gov_enforcement/commit_gates/errcode_consistency_gate.py
+    block_or_warn: block
+    trigger: "staged src/**.py 或 error_code_registry.yaml"
+    enforce: "注册表与代码六断言对账（只拦本次新增，存量 warn 归属责任人）"
+    exempt: "存量违规；SSoT 缺失 fail-closed"
+    fix: "按 detail 内下一可用号（ZA-前缀-N）取号登记"
+  - gate_id: BUSINESS-REGISTRY
+    source_sha256: cf0c8421a7a006c8257c4b9b014235808142055767c949a237030358f8eae933
+    source_file: src/zephyr/gov_enforcement/commit_gates/business_registry_gate.py
+    block_or_warn: block
+    trigger: "staged 命中 19 文件/21 段业务资产库"
+    enforce: "条目 id 唯一+module_id 必填 MOD- 格式且在 depgraph 实存"
+    exempt: "PG 不可达跳过存在性子检查；空库放行"
+    fix: "先 apply_depgraph 登记 blueprint 再入库"
+  - gate_id: REGISTRY-CODE-ANCHOR
+    source_sha256: e1af26e14d1edc57529e2d02fc7dab603dc31cd015132d7af5f57538a6c334cd
+    source_file: src/zephyr/gov_enforcement/commit_gates/registry_code_anchor_gate.py
+    block_or_warn: block
+    trigger: "staged 命中 15 业务注册表或 src/ .py 删除/改名"
+    enforce: "库条目 code_path/code_symbol 引用的代码不得悬空（防锚点漂移）"
+    exempt: "deprecated/retired 条目"
+    fix: "同步改条目或标 deprecated"
+  - gate_id: SCHEMA-FILE-EXISTS
+    source_sha256: 0423f2c3353beecddeb4351f7906d46f397a84e75481fd152bbd42c4d49a86cd
+    source_file: src/zephyr/gov_enforcement/commit_gates/schema_file_exists_gate.py
+    block_or_warn: block
+    trigger: "staged business_data_categories.yaml"
+    enforce: "schema_file 引用实存（只拦本次新增悬空）"
+    exempt: "schema_file null"
+    fix: "schema 文件同批 git add 或修路径"
+  - gate_id: SNAPSHOT-DRIFT
+    source_sha256: c524557835afd66095a30a8a309d2eea3866815cccf2db25c0d59e81c3f79a13
+    source_file: src/zephyr/gov_enforcement/commit_gates/snapshot_drift_gate.py
+    block_or_warn: block
+    trigger: "staged data/runtime_violation_snapshot/latest.json"
+    enforce: "JSON 可解析+字段齐+generated_at 24h 内+commit_sha=HEAD"
+    exempt: "本 gate 自身修改"
+    fix: "重新生成快照再提交"
+  - gate_id: RESOURCE-SCHEDULE
+    source_sha256: e7bd5c75c0b126952888f248645d48f36de71a7b5d9d3a13e713d865f95290ad
+    source_file: src/zephyr/gov_enforcement/commit_gates/resource_schedule_gate.py
+    block_or_warn: block
+    trigger: "staged config/resource_profile_registry.yaml"
+    enforce: "五查（时间窗交叠/内存红线 10GB/交易时段/池并发/真源漂移）"
+    exempt: "双侧 co_start_intent；内存永不豁免"
+    fix: "错峰/互斥声明/co_start_intent；内存降 peak 或错窗"
+  - gate_id: RULE-FOUR-WAY-ALIGN
+    source_sha256: 11786a3ed6a28efa3d4e8f3b2530c8ef7932bee9720880961f985985bfe17afc
+    source_file: src/zephyr/gov_enforcement/commit_gates/rule_four_way_alignment_gate.py
+    block_or_warn: block
+    trigger: "staged 规则文件或 rule_catalog_registry"
+    enforce: "YAML/Catalog/Disk/Code 四方一致"
+    exempt: "tests/"
+    fix: "改 YAML 后同步 catalog/disk/code 引用"
+  - gate_id: RECONCILER-FILE-OPS
+    source_sha256: 47285c7799cfd230ac9d7d675e7918281532cce19e41edca06a01e1d0ebb9559
+    source_file: src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py
+    block_or_warn: block
+    trigger: "治理代码（governance/gov_enforcement/scripts/governance/backup）新增裸删除/移动原语"
+    enforce: "删除/移动必须走 ops_guard guard 系列 API（声明制+审计+回收站）"
+    exempt: "ops_guard 真源；emergency_commit 等；tests/；行级 ops-guard-exempt 标记"
+    fix: "guard_remove/guard_move/guard_recycle"
+  - gate_id: RECONCILER-HEALTH
+    source_sha256: 4f88fabc8ec33d040a0f6210fb0d5c71f56b9e331ffaee7f500ba8fbe4361834
+    source_file: src/zephyr/gov_enforcement/commit_gates/reconciler_health_gate.py
+    block_or_warn: conditional
+    trigger: "always-on"
+    enforce: "近 24h reconciler block_next 级失败拦（critical_warn 仅告警）"
+    exempt: "governance.db 缺失 fail-open；allow_overlap"
+    fix: "resolve_blocks() 清障后提交"
+  - gate_id: CAPABILITY-LOOKUP-REQUIRED
+    source_sha256: 5d6209f1a3ad95de3e73e643cce1cd56abce44eadc64bab763e33c9dc7f3f763
+    source_file: src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py
+    block_or_warn: block
+    trigger: "commit 含 src/zephyr/**.py 业务代码"
+    enforce: "本 session 审计日志须有 capability_lookup/rule_discovery 调用记录"
+    exempt: "message [no-lookup:<白名单 reason>]（gate-fix/continuation/mechanical 等 16 项；sweep 两封死因=reason 不在白名单）；env 紧急逃生"
+    fix: "写码前 capability_lookup.find()（留审计）；纯机械批用白名单 reason 词；requeue 不改 message——死因是 message 类必须新 enqueue"
+  - gate_id: CH-BATCH-SIZE
+    source_sha256: 33d84d6b50a1825ddeff3ff7eed07c2dcdc2ece789ba17e371f4c00bb015a8cb
+    source_file: src/zephyr/gov_enforcement/commit_gates/ch_batch_size_gate.py
+    block_or_warn: block
+    trigger: ".py added 行循环体内 write_result"
+    enforce: "禁逐条写 CH，走 BufferedWriter"
+    exempt: "ch_writer/buffered_writer 自身；tests/"
+    fix: "writer.add 循环+flush"
+  - gate_id: CH-FINAL-GATE
+    source_sha256: 0d6a7095f6da5954f36a0b8bf9a8a44aeabb3405a70a3f1f3c43f0cdf4b0e5aa
+    source_file: src/zephyr/gov_enforcement/commit_gates/ch_final_gate.py
+    block_or_warn: block
+    trigger: ".py 直调 ch_writer.query 或硬编码 ReplacingMergeTree 查询"
+    enforce: "CH 查询走 ch_reader.query 自动 FINAL"
+    exempt: "ch_reader/ch_writer 自身；DDL 部署脚本；tests/"
+    fix: "ch_writer.query 改 ch_reader.query"
+  - gate_id: CH-VERSION-COL
+    source_sha256: 43b0b451d1234c987ea81afffd646a64c26ceb91eef6349797cdd95a8c57bac5
+    source_file: src/zephyr/gov_enforcement/commit_gates/ch_version_col_gate.py
+    block_or_warn: block
+    trigger: "新增行含 ReplacingMergeTree 带非时间列"
+    enforce: "version 列禁布尔/状态列（blocked 集合）"
+    exempt: "tests/"
+    fix: "用 ingest_ts DateTime DEFAULT now()"
+  - gate_id: CAP-CONSISTENCY
+    source_sha256: ac3e6324937cef17d44eb2a39674d13b7713ee2218ea0684d58f7d767c27476b
+    source_file: src/zephyr/gov_enforcement/commit_gates/capability_consistency_gate.py
+    block_or_warn: block
+    trigger: "staged provider .py"
+    enforce: "fetch 路由能力集与 meta.capabilities 声明一致+fetch 方法实存（只拦新增）"
+    exempt: "AST/git 异常 fail-open"
+    fix: "meta.capabilities 补声明或补方法"
+  - gate_id: GATE-DOMAIN-FK
+    source_sha256: 8bedcbfb8f59f2e76b24fb999cc17b9f1ce961fcdb34fddb0e81262279ac4560
+    source_file: src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py
+    block_or_warn: block
+    trigger: ".py added 行 [DOMAIN] D_XXX"
+    enforce: "域必须在 functional_domain_registry.yaml 在册"
+    exempt: "tests/；docstring 行"
+    fix: "改已注册域或同 commit 新增域条目"
+  - gate_id: MAP-ALIGNMENT
+    source_sha256: cc23c9210aaf74fc6e945f75757ad0719205708a72697db50f371d7cae9716a0
+    source_file: src/zephyr/gov_enforcement/commit_gates/panorama_alignment_gate.py
+    block_or_warn: block
+    trigger: "触碰 depgraph/dataflow/decision 相关路径（聚合台含 legacy 注册）"
+    enforce: "三图 domain 不一致拦（阈值 0）；orphans/state_drifts warn"
+    exempt: "run_alignment 异常 fail-open；三图空跳过"
+    fix: "python scripts/governance/sync_panorama_module.py --all 对齐后提交"
+  - gate_id: CONSUMERS-ACCURACY
+    source_sha256: a10842e95ff6ec64477023f0f572d3410cfbcdd1afc391982e977f09b31e416d
+    source_file: src/zephyr/gov_enforcement/commit_gates/consumers_accuracy_gate.py
+    block_or_warn: warn
+    trigger: ".py [CONSUMERS] 头部"
+    enforce: "orphan/phantom 声明告警"
+    exempt: "tests/；抽象代号 MOD-XXX；行级 noqa consumers-accuracy（理由至少 10 字符）"
+    fix: "核实/删除失实声明"
+  - gate_id: EMPTY-HANDLER
+    source_sha256: e52972e1447ff56769723422e45ce97efdbcd4903eddc1852836f2fe6985df75
+    source_file: src/zephyr/gov_enforcement/commit_gates/empty_handler_gate.py
+    block_or_warn: block
+    trigger: "新增 .py 事件 handler"
+    enforce: "禁空 handler（仅 pass/logger/return）"
+    exempt: "tests/"
+    fix: "补实际逻辑"
+  - gate_id: MCP-VERSION-FIELD
+    source_sha256: 1c1ccdfe2d1e4a60dbce5df0ca3dd59cc6c048ea435e0c52dd4d70fe2100a0fc
+    source_file: src/zephyr/gov_enforcement/commit_gates/mcp_version_field_gate.py
+    block_or_warn: block
+    trigger: "staged mcp.json"
+    enforce: "顶层必须有 version 字段"
+    exempt: "none"
+    fix: "补 version 字段"
+  - gate_id: FRONTEND-TRUTH-SOURCE
+    source_sha256: 0398a82c0070d44f8e44cbc767b09fb71ab0cc978ad7ff4ce9d4118162c2c507
+    source_file: src/zephyr/gov_enforcement/commit_gates/frontend_truth_source_gate.py
+    block_or_warn: warn
+    trigger: "dashboard/web/ .js（豁免 api.js/loader.js 等）"
+    enforce: "禁内联数据数组/零后端接线（TRAE-086）"
+    exempt: "七类目录边界；红灯明示的断线回退数据"
+    fix: "接 services/api.js 真源通道"
+  - gate_id: UNSAFE-DICT-SPREAD
+    source_sha256: c0cbf200cf808c3daa0147d9743c2e06dd0fe438dab7a32aa5e8e50dedc7cbda
+    source_file: src/zephyr/gov_enforcement/commit_gates/unsafe_dict_spread_gate.py
+    block_or_warn: warn
+    trigger: ".py 新增行类构造直接字典展开"
+    enforce: "提醒 schema 演进 TypeError 风险"
+    exempt: "kwargs；filter_dataclass_fields 过滤后；字面量"
+    fix: "改 SomeClass(**filter_dataclass_fields(SomeClass, data))"
+  - gate_id: GATE-PRECOMMIT-OFFLINE
+    source_sha256: 64cd3d5e5c815fc23463546422803cadfa0646e6c3064ed666fd58671ee86463
+    source_file: src/zephyr/gov_enforcement/commit_gates/precommit_offline_gate.py
+    block_or_warn: block
+    trigger: "staged .pre-commit-config.yaml"
+    enforce: "禁外部 repo 引用+language python（离线强制）"
+    exempt: "YAML 解析失败 fail-open"
+    fix: "repo local+stdlib local hook；language system"
+  - gate_id: ID-UNIQUENESS
+    source_sha256: 19ad0b8543a23891bb939daff0903b6f64cb39610d0a91bc31b2b1b585ebed43
+    source_file: src/zephyr/gov_enforcement/commit_gates/id_uniqueness_gate.py
+    block_or_warn: block
+    trigger: "staged .pre-commit-config.yaml"
+    enforce: "hook id 不得重复"
+    exempt: "脚本错误 fail-open"
+    fix: "去重 hook id"
+  - gate_id: PURE-SHIM
+    source_sha256: 0cddd4b0c90a7f97126ec64fe4cf2901392a8f86bf579d43b037bad453085670
+    source_file: src/zephyr/gov_enforcement/commit_gates/pure_shim_gate.py
+    block_or_warn: block
+    trigger: "全部 staged .py"
+    enforce: "禁纯 re-export shim 新建"
+    exempt: "__init__.py 包聚合"
+    fix: "删 shim，消费者改引 canonical 路径"
+  - gate_id: NO-DOMAIN-NAME-ZH-DIRECT-ACCESS
+    source_sha256: cf96196327b420710c45bf605a249de8e14dc6eaf2397a578e9e5af69e0d21ec
+    source_file: src/zephyr/gov_enforcement/commit_gates/domain_name_zh_direct_access_gate.py
+    block_or_warn: block
+    trigger: ".py added 行 DOMAIN_NAME_ZH 字典直访"
+    enforce: "走 get_domain_name_zh helper（DB 优先）"
+    exempt: "定义文件；tests/"
+    fix: "import get_domain_name_zh 或 get_domain_name_zh_strict（strict 未找到返回空串，用于 mermaid 标签）"
+  - gate_id: GIT-DANGEROUS
+    source_sha256: a8e96afabd056918273b1fe46ddaaeaad111373c552bfd8886a0a1690d00cb6c
+    source_file: scripts/git_safety_wrapper.ps1
+    block_or_warn: block
+    registry: false
+    trigger: "危险 git 命令（reset hard/checkout 等）+plumbing 绕过"
+    enforce: "清单禁用；[GW:] 标记不可伪造（POST-COMMIT-GUARD 自动 reset 回滚）"
+    exempt: "无直觉例外"
+    fix: "走 git_commit.py 正门；合并器/落地器语义修复走队列正门送 HEAD（serializer 读 HEAD 代码，盘面热修对它无效——K1 铁证）"
+  - gate_id: SESSION-HEARTBEAT
+    source_sha256: 1a8da73d0c7a93bc26fa1b99b51131504df63298c25cc15cf70e3338c2bd929c
+    source_file: src/zephyr/gov_enforcement/commit_gates/session_required_gate.py
+    block_or_warn: warn
+    registry: false
+    trigger: "长任务会话（reaper 看护面）"
+    enforce: "SESSION 心跳保活（独立心跳进程配方），防 reaper 误杀"
+    exempt: "短会话"
+    fix: "长批先登记 data/runtime/process_reaper_keep.txt（每行一个 cmdline 子串）；daemon 只在心跳陈旧+30min 零落地双条件才杀，epoch 换血（pid 变+队列在动）=健康"
+  - gate_id: CONSTITUTION-LINE-LIMIT
+    source_file: src/zephyr/ai_layer/redline/negative_list_gates.py
+    block_or_warn: block
+    trigger: "own-diff 含任意目录深度的 AGENTS.md"
+    enforce: "staged 全文行数超 300 即阻断（宪法 300 行硬上限）；fail-closed"
+    exempt: "none——AI 只有提案权，走 OBJ_R 四步流水线"
+    fix: "等长替换压回 300 行内；新增内容走 OBJ_R 提案而非直写"
+    source_sha256: 6e5e3488bb4a28bfefb5403f4605ebdff2c6c26fc5419e8526a38c21e79018fc
+  - gate_id: REAL-KEY-REFERENCE-SCAN
+    source_file: src/zephyr/ai_layer/redline/negative_list_gates.py
+    block_or_warn: block
+    trigger: "own-diff 任意文本文件出现 QMT前缀+REAL后缀组合键名 字样"
+    enforce: "白名单外禁 QMT前缀+REAL后缀组合键名 引用（NL-2 泄密面）；审计落 gate_audit jsonl"
+    exempt: "仅 secret_registry.yaml 本体与 SECRETS.md 文档行；无 allow 逃生（泄密面不给漂洗通道）"
+    fix: "代码/配置/文档删 QMT前缀+REAL后缀组合键名 字样改间接引用；实盘键只进 secret_registry.yaml 或 SECRETS.md"
+    source_sha256: 6e5e3488bb4a28bfefb5403f4605ebdff2c6c26fc5419e8526a38c21e79018fc
+  - gate_id: TASK-ORDER-DOCS-LOCK
+    source_file: src/zephyr/ai_layer/redline/negative_list_gates.py
+    block_or_warn: block
+    trigger: "own-diff 含 TO-*.yaml 任务书且同批含其他施工产物"
+    enforce: "definition_of_done/red_lines/acceptance 三字段 YAML 解析级深比较，判据变更+同批施工产物即拦（NL-5）；无基线=判据预注册放行"
+    exempt: "同批无施工产物（放行+near_miss 审计）；新任务书预注册"
+    fix: "判据变更拆出本批，独立复核会话出修订案或 Owner 改判后再交施工产物（主文档 3.2 协议）"
+
+    source_sha256: 6e5e3488bb4a28bfefb5403f4605ebdff2c6c26fc5419e8526a38c21e79018fc
