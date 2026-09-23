@@ -46759,4 +46759,14 @@ creation_tokens:
   created_by: st-gpu-final-20260924
   capability: condition_axis_package
   merge_evaluation: "契约钉非第二真源"
+- file: docs/_working/audit_all/AUDIT_REPORT.md
+  token: audit-all-casebook-audit-report-20260923
+  created_by: st-audit-all-20260924
+  capability: audit_all_casebook
+  merge_evaluation: "跨域不同对象→不并：八图↔物对账案卷是本包唯一滚动真源，与 commit_system_opt/align_dirty 等他包台账不同对象"
+- file: docs/_working/audit_all/LEDGER.md
+  token: audit-all-casebook-ledger-20260923
+  created_by: st-audit-all-20260924
+  capability: audit_all_casebook
+  merge_evaluation: "跨域不同对象→不并：八图↔物对账案卷是本包唯一滚动真源，与 commit_system_opt/align_dirty 等他包台账不同对象"
 di_seam_exemptions: []
