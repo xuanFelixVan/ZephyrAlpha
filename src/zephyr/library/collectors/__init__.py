@@ -2,7 +2,7 @@
 # [MODULE] zephyr.library.collectors
 # [DOMAIN] D_GOVERNANCE
 # [TTL] permanent
-"""collectors — 图书馆六采集器（MOD-LIB-004）：fs/pg/ch/schtasks/mcp/logs，全部只读。
+"""collectors — 图书馆五采集器（MOD-LIB-004）：fs/pg/ch/schtasks/mcp，全部只读。
 
 ingest_all 把采集结果经馆员 act(register) 写入总账（幂等 upsert）。
 # [ALGO_FLOW] external: docs/03_modules/_domain_library/algo_flow/collectors/__init__.yaml
@@ -28,7 +28,6 @@ def collect_all(names: list[str] | None = None) -> dict[str, list[dict[str, Any]
     """
     from zephyr.library.collectors.ch_collector import collect as ch_collect
     from zephyr.library.collectors.fs_collector import collect as fs_collect
-    from zephyr.library.collectors.logs_collector import collect as logs_collect
     from zephyr.library.collectors.mcp_collector import collect as mcp_collect
     from zephyr.library.collectors.pg_collector import collect as pg_collect
     from zephyr.library.collectors.schtasks_collector import collect as sch_collect
@@ -39,7 +38,6 @@ def collect_all(names: list[str] | None = None) -> dict[str, list[dict[str, Any]
         "ch": ch_collect,
         "schtasks": sch_collect,
         "mcp": mcp_collect,
-        "logs": logs_collect,
     }
     selected = {k: v for k, v in registry.items() if names is None or k in names}
     out: dict[str, list[dict[str, Any]]] = {}

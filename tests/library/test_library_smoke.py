@@ -1,5 +1,3 @@
-# [BLUEPRINT] MOD-LIB-001 | docs/03_modules/_domain_library/blueprint.md | §
-# [TTL] permanent
 """图书馆总账域冒烟测试（MOD-LIB-001..004 纯函数层，零 DB 依赖）。"""
 
 from __future__ import annotations
@@ -69,7 +67,7 @@ def test_real_tag_vocabulary_loads_strict() -> None:
     """真词库自检（st-ulib3c 红证）：TAG-VOCAB 闸对真词库 strict 必须加载成功。
 
     别名冲突会让闸内 `_load_vocab` 退化为空词库——生产实测后果是 catalogs 每笔
-    tags 全被判"非枚举"（假红风暴），而合成词库的单测全绿看不见。
+    tags 全被判“非枚举”（假红风暴），而合成词库的单测全绿看不见。
     """
     from pathlib import Path
 
@@ -84,11 +82,14 @@ def test_real_tag_vocabulary_loads_strict() -> None:
     assert "turnover" not in canonical
 
 
-def test_fs_collector_family_dirs_are_not_itemized(tmp_path) -> None:
-    """族级大盘目录只出 1 条族资产（st-ulib3c）：逐件入册=轮转删除即产 ghost 债。"""
-    from zephyr.library.collectors.fs_collector import _FAMILY_DIRS, collect
+def test_fs_collector_skips_rotating_snapshot_dirs(tmp_path) -> None:
+    """轮转快照目录不入册（st-ulib3c 红证）：盘上会滚动删除，入册即产 ghost 债。"""
+    from zephyr.library.collectors.fs_collector import collect
 
-    for rel in ("data/architecture_health/dash_20260923.json", "data/runtime_violation_snapshot/s.json"):
+    for rel in (
+        "data/architecture_health/dashboard_20260923T000000Z.json",
+        "data/runtime_violation_snapshot/v_20260923T000000Z.json",
+    ):
         p = tmp_path / rel
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text("{}", encoding="utf-8")
@@ -96,21 +97,6 @@ def test_fs_collector_family_dirs_are_not_itemized(tmp_path) -> None:
     keep.parent.mkdir(parents=True, exist_ok=True)
     keep.write_text("{}", encoding="utf-8")
 
-    assets = collect(str(tmp_path))
-    homes = {a["home"] for a in assets}
-    assert "data/keep_me.json" in homes, homes  # 绝对路径父目录含跳词也不吞全树（旧缺陷面）
-    fams = [a for a in assets if a["home"] in _FAMILY_DIRS]
-    assert len(fams) == len(_FAMILY_DIRS)
-    assert all(a["fingerprint_aux"].get("family") for a in fams)
-    assert not [h for h in homes if h.startswith(tuple(f"{d}/" for d in _FAMILY_DIRS))]
-
-
-def test_logs_collector_emits_unique_ids_for_placeholder_paths() -> None:
-    """日志抽屉 98 条必须出 98 唯一索书号（st-ulib3c）：占位 path 不得塌缩同 id。"""
-    from zephyr.library.collectors.logs_collector import collect
-
-    assets = [a for a in collect(".") if "error" not in a]
-    ids = [a["asset_id"] for a in assets]
-    assert len(ids) == len(set(ids)), f"抽屉 asset_id 塌缩：{len(ids)} 条只出 {len(set(ids))} 号"
-    registry_homes = [a["home"] for a in assets if "#" in a["home"]]
-    assert registry_homes, "占位 path 抽屉应改以 registry_of_logs#log_id 定位"
+    homes = {a["home"] for a in collect(str(tmp_path))}
+    assert any(h.endswith("data/keep_me.json") for h in homes), homes
+    assert not [h for h in homes if "architecture_health" in h or "runtime_violation_snapshot" in h]

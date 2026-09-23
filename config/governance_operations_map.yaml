@@ -4,15 +4,15 @@ name_zh: 治理运行地图
 ttl: permanent
 effective_from: '2026-09-15'
 generator: scripts/governance/generate_governance_map.py
-generated_at: '2026-09-16T23:41:42.626110+00:00'
+generated_at: '2026-09-23T16:01:09.732767+00:00'
 ssot_note_zh: 骨架机生(宪法 §9.5):families 层由生成器全量重建,禁手工编辑;pipeline/out_of_scope_refs/effective_from 为人工语义层,生成器保留(effective_from
   首次落定 '2026-09-15',防重跑漂移)。模块明细以稳定标识符引用,禁复制条目内容(TDM INV-1 同款纪律)。
 counts:
-  total_modules: 416
-  wired: 244
+  total_modules: 424
+  wired: 250
   wired_dynamic: 6
-  wired_by_header: 71
-  suspect_orphans: 95
+  wired_by_header: 76
+  suspect_orphans: 92
 out_of_scope_refs:
 - name_zh: 提交门禁体系
   ref: docs/01_policies_and_standards/_registry/catalogs/commit_gate_registry.yaml
@@ -78,7 +78,9 @@ pipeline:
     - mod: zephyr.infrastructure.hot_plane_budget
       note_zh: 未反查到消费方(A5)
     - mod: 系统级看护空白
-      note_zh: 已补真闸（2026-09-18 wiresafe BRK-066）——capacity_assurance.host_resource_governor 由硬编码 12.5%/OK 假通道治本为实探（RAM＋Windows 提交内存 commit charge＋CPU），阈值真源 config/alert_rules.yaml 的 ALERT-SYS-003/004/005，消费方 zephyr.trading.process_reaper（OS 计划任务 10min 心跳）→ OpsAlertFeed 通知板；resource_guard 只护 gov_drift、L5 只护 LLM 成本的原口径不变
+      note_zh: 已补真闸（2026-09-18 wiresafe BRK-066）——capacity_assurance.host_resource_governor 由硬编码 12.5%/OK 假通道治本为实探（RAM＋Windows
+        提交内存 commit charge＋CPU），阈值真源 config/alert_rules.yaml 的 ALERT-SYS-003/004/005，消费方 zephyr.trading.process_reaper（OS
+        计划任务 10min 心跳）→ OpsAlertFeed 通知板；resource_guard 只护 gov_drift、L5 只护 LLM 成本的原口径不变
   - id: GOM-L3
     name_zh: 熔断降级
     desc_zh: kill_switch/熔断器/降级级联/死人开关
@@ -93,13 +95,17 @@ pipeline:
     - zephyr.autonomy_core.killswitch_response_levels
     disconnected:
     - mod: zephyr.autonomy_core.kill_switch_orchestrator
-      note_zh: 普查记载已陈旧并更正——A3/裁定#254 已于 2026-09-16 接线（boot_hooks._init_kill_switch_orchestrator 注册系统级＋skills/trading/rollback/capacity 四域）；2026-09-18 wiresafe 批同批注册 MOD-AU-004 响应策略层为唯一权威 dispatcher，保命动作唯一入口＝route_incident（见 emergency_track_guardian）
+      note_zh: 普查记载已陈旧并更正——A3/裁定#254 已于 2026-09-16 接线（boot_hooks._init_kill_switch_orchestrator 注册系统级＋skills/trading/rollback/capacity
+        四域）；2026-09-18 wiresafe 批同批注册 MOD-AU-004 响应策略层为唯一权威 dispatcher，保命动作唯一入口＝route_incident（见 emergency_track_guardian）
     - mod: zephyr.governance.resilience_governance.last_resort_watchdog
-      note_zh: 写方已接（A4/escalation_engine L4 末端 activate）；读方 2026-09-18 wiresafe 批补＝emergency_track_guardian 把旗标当一条失效判据腿消费，旗标只写不读的静默兜底已消除；头注释 CONSUMERS 原写 zephyr.infrastructure.escalation 系蓝图↔代码漂移，已改真名
+      note_zh: 写方已接（A4/escalation_engine L4 末端 activate）；读方 2026-09-18 wiresafe 批补＝emergency_track_guardian 把旗标当一条失效判据腿消费，旗标只写不读的静默兜底已消除；头注释
+        CONSUMERS 原写 zephyr.infrastructure.escalation 系蓝图↔代码漂移，已改真名
     - mod: zephyr.orchestrator.fault_tolerance.degrade_cascade
       note_zh: 已删（2026-09-15 治理减法批 A5 收官 9deb35e709 确认死码删除，零生产引用；原 A5 待裁定项已结）
     - mod: KillSwitch×5/CircuitBreaker×9 重复族
-      note_zh: 2026-09-18 wiresafe 入口收敛——策略层 MOD-AU-004（该停什么）→路由层 MOD-AU-002 route_incident（停哪里）→5 套本体（怎么停），boot 同批注册且进程级持有；生产侧 respond() 调用点仍为 0（记黄，施工包 lanes/wiresafe_BRK-064_construction_pack.md）；净删候选只登记不删（注册表净删＝Owner 门位）＝infrastructure/kill_switch_sim.py 与 capacity_assurance/kill_switch 域重复面。原 R4 记载 活链 KS=2(access_control/rollback)、CB=4(shared.resilience/resilience_governance/rule_enforcement/adversarial_validation)；死员已删(reliability
+      note_zh: 2026-09-18 wiresafe 入口收敛——策略层 MOD-AU-004（该停什么）→路由层 MOD-AU-002 route_incident（停哪里）→5 套本体（怎么停），boot 同批注册且进程级持有；生产侧
+        respond() 调用点仍为 0（记黄，施工包 lanes/wiresafe_BRK-064_construction_pack.md）；净删候选只登记不删（注册表净删＝Owner 门位）＝infrastructure/kill_switch_sim.py
+        与 capacity_assurance/kill_switch 域重复面。原 R4 记载 活链 KS=2(access_control/rollback)、CB=4(shared.resilience/resilience_governance/rule_enforcement/adversarial_validation)；死员已删(reliability
         CB/failover_coordinator/api_lifecycle×2/ghost_scan)，daban_instant+trade_level 系业务特性保留
   - id: GOM-L4
     name_zh: 收割清理
@@ -480,7 +486,7 @@ families:
     wiring: wired
   - module: zephyr.infrastructure.health_monitor
     path: src/zephyr/infrastructure/health_monitor/__init__.py
-    domain: ''
+    domain: D_INFRA_RUNTIME
     maturity: ''
     family: L1_monitor
     wiring: suspect_orphan
@@ -516,7 +522,7 @@ families:
     wiring: wired_by_header
   - module: zephyr.infrastructure.system_telemetry.ai_behavior
     path: src/zephyr/infrastructure/system_telemetry/ai_behavior/__init__.py
-    domain: ''
+    domain: D_INFRA_TELEMETRY
     maturity: ''
     family: L1_monitor
     wiring: wired
@@ -528,7 +534,7 @@ families:
     wiring: wired
   - module: zephyr.infrastructure.system_telemetry.alerts
     path: src/zephyr/infrastructure/system_telemetry/alerts/__init__.py
-    domain: ''
+    domain: D_INFRA_TELEMETRY
     maturity: ''
     family: L1_monitor
     wiring: wired
@@ -546,7 +552,7 @@ families:
     wiring: wired
   - module: zephyr.infrastructure.system_telemetry.archive
     path: src/zephyr/infrastructure/system_telemetry/archive/__init__.py
-    domain: ''
+    domain: D_INFRA_TELEMETRY
     maturity: ''
     family: L1_monitor
     wiring: wired
@@ -582,7 +588,7 @@ families:
     wiring: wired
   - module: zephyr.infrastructure.system_telemetry.health
     path: src/zephyr/infrastructure/system_telemetry/health/__init__.py
-    domain: ''
+    domain: D_INFRA_TELEMETRY
     maturity: ''
     family: L1_monitor
     wiring: wired
@@ -630,7 +636,7 @@ families:
     wiring: wired
   - module: zephyr.infrastructure.system_telemetry.metrics
     path: src/zephyr/infrastructure/system_telemetry/metrics/__init__.py
-    domain: ''
+    domain: D_INFRA_TELEMETRY
     maturity: ''
     family: L1_monitor
     wiring: wired
@@ -666,7 +672,7 @@ families:
     wiring: suspect_orphan
   - module: zephyr.infrastructure.system_telemetry.profiles
     path: src/zephyr/infrastructure/system_telemetry/profiles/__init__.py
-    domain: ''
+    domain: D_INFRA_TELEMETRY
     maturity: ''
     family: L1_monitor
     wiring: wired
@@ -684,13 +690,13 @@ families:
     wiring: wired
   - module: zephyr.infrastructure.system_telemetry.schema
     path: src/zephyr/infrastructure/system_telemetry/schema/__init__.py
-    domain: ''
+    domain: D_INFRA_TELEMETRY
     maturity: ''
     family: L1_monitor
     wiring: wired
   - module: zephyr.infrastructure.system_telemetry.traces
     path: src/zephyr/infrastructure/system_telemetry/traces/__init__.py
-    domain: ''
+    domain: D_INFRA_TELEMETRY
     maturity: ''
     family: L1_monitor
     wiring: wired
@@ -952,7 +958,7 @@ families:
     domain: D_AUTONOMY_CORE
     maturity: production
     family: L3_fuse
-    wiring: wired_by_header
+    wiring: wired
   - module: zephyr.autonomy_core.skills.skill_kill_switch
     path: src/zephyr/autonomy_core/skills/skill_kill_switch.py
     domain: D_AUTONOMY_CORE
@@ -1047,6 +1053,12 @@ families:
     path: src/zephyr/shared/resilience/circuit_breaker.py
     domain: D_SHARED
     maturity: production
+    family: L3_fuse
+    wiring: wired
+  - module: zephyr.trading.trading_contracts.risk.kill_switch_state_store
+    path: src/zephyr/trading/trading_contracts/risk/kill_switch_state_store.py
+    domain: D_TRADING
+    maturity: testing
     family: L3_fuse
     wiring: wired
   - module: zephyr.trading.trading_contracts.risk.trading_kill_switch
@@ -1226,7 +1238,7 @@ families:
     wiring: wired
   - module: zephyr.infrastructure.capacity_assurance
     path: src/zephyr/infrastructure/capacity_assurance/__init__.py
-    domain: ''
+    domain: D_INFRA_RUNTIME
     maturity: ''
     family: L2_resource
     wiring: wired_dynamic
@@ -1238,7 +1250,7 @@ families:
     wiring: suspect_orphan
   - module: zephyr.infrastructure.capacity_assurance.contracts
     path: src/zephyr/infrastructure/capacity_assurance/contracts/__init__.py
-    domain: ''
+    domain: D_INFRA_RUNTIME
     maturity: ''
     family: L2_resource
     wiring: suspect_orphan
@@ -1277,7 +1289,7 @@ families:
     domain: D_INFRA_RUNTIME
     maturity: production
     family: L2_resource
-    wiring: suspect_orphan
+    wiring: wired
   - module: zephyr.infrastructure.capacity_assurance.risk_mitigation
     path: src/zephyr/infrastructure/capacity_assurance/risk_mitigation.py
     domain: D_INFRA_RUNTIME
@@ -1362,6 +1374,12 @@ families:
     maturity: production
     family: L2_resource
     wiring: suspect_orphan
+  - module: zephyr.intelligence.budget_analyzer
+    path: src/zephyr/intelligence/budget_analyzer.py
+    domain: D_GOVERNANCE
+    maturity: new
+    family: L2_resource
+    wiring: wired_by_header
   - module: zephyr.orchestrator.governance.capacity_budget
     path: src/zephyr/orchestrator/governance/capacity_budget.py
     domain: D_ORCHESTRATOR
@@ -1483,6 +1501,12 @@ families:
     maturity: production
     family: L4_reap
     wiring: suspect_orphan
+  - module: scripts.governance.d8_doc_sync.algo_flow_reverse_orphan_reconciler
+    path: scripts/governance/d8_doc_sync/algo_flow_reverse_orphan_reconciler.py
+    domain: D_GOV_SCRIPTS
+    maturity: production
+    family: L4_reap
+    wiring: wired
   - module: scripts.governance.governance.d9_knowledge.detect_orphan_documents
     path: scripts/governance/d9_knowledge/detect_orphan_documents.py
     domain: D_GOV_SCRIPTS
@@ -1700,6 +1724,18 @@ families:
     maturity: design
     family: L5_selfheal
     wiring: wired_by_header
+  - module: scripts.ch.repair_etf_minute_tz_split
+    path: scripts/ch/repair_etf_minute_tz_split.py
+    domain: D_DATA
+    maturity: experimental
+    family: L5_selfheal
+    wiring: wired_by_header
+  - module: scripts.ch.rolling_archive_reconciler
+    path: scripts/ch/rolling_archive_reconciler.py
+    domain: D_INFRASTRUCTURE
+    maturity: production
+    family: L5_selfheal
+    wiring: wired_by_header
   - module: scripts.governance.audit_llm_registry_reconciliation
     path: scripts/governance/audit_llm_registry_reconciliation.py
     domain: D_GOV_SCRIPTS
@@ -1752,6 +1788,12 @@ families:
     path: scripts/governance/meta/verify_reconciliation_registry.py
     domain: D_GOV_SCRIPTS
     maturity: production
+    family: L5_selfheal
+    wiring: wired_by_header
+  - module: scripts.governance.reconcile_chain_refs
+    path: scripts/governance/reconcile_chain_refs.py
+    domain: D_GOVERNANCE
+    maturity: testing
     family: L5_selfheal
     wiring: wired_by_header
   - module: scripts.governance.reconcile_generators
@@ -1940,6 +1982,12 @@ families:
     maturity: production
     family: L5_selfheal
     wiring: wired
+  - module: zephyr.governance.audit.schedule_consistency_reconciler
+    path: src/zephyr/governance/audit/schedule_consistency_reconciler.py
+    domain: D_GOV_AUDIT
+    maturity: testing
+    family: L5_selfheal
+    wiring: wired
   - module: zephyr.governance.audit.translation_coverage_reconciler
     path: src/zephyr/governance/audit/translation_coverage_reconciler.py
     domain: D_GOV_AUDIT
@@ -1972,7 +2020,7 @@ families:
     wiring: wired
   - module: zephyr.infrastructure.auto_fix_engine
     path: src/zephyr/infrastructure/auto_fix_engine/__init__.py
-    domain: ''
+    domain: D_INFRA_RUNTIME
     maturity: ''
     family: L5_selfheal
     wiring: wired
@@ -2144,18 +2192,24 @@ families:
     maturity: production
     family: L5_selfheal
     wiring: wired
+  - module: zephyr.library.library_regen_reconciler
+    path: src/zephyr/library/library_regen_reconciler.py
+    domain: D_GOVERNANCE
+    maturity: production
+    family: L5_selfheal
+    wiring: wired
   - module: zephyr.orchestrator.execution.reconciliation_loop
     path: src/zephyr/orchestrator/execution/reconciliation_loop.py
     domain: D_ORCHESTRATOR
     maturity: production
     family: L5_selfheal
-    wiring: suspect_orphan
+    wiring: wired_by_header
   - module: zephyr.position.position_reconciler
     path: src/zephyr/position/position_reconciler.py
     domain: D_POSITION
     maturity: production
     family: L5_selfheal
-    wiring: suspect_orphan
+    wiring: wired_by_header
   - module: zephyr.reporting.reconciliation_schema
     path: src/zephyr/reporting/reconciliation_schema.py
     domain: D_REPORTING
@@ -2381,7 +2435,7 @@ families:
     wiring: wired
   - module: zephyr.infrastructure.lifecycle
     path: src/zephyr/infrastructure/lifecycle/__init__.py
-    domain: ''
+    domain: D_INFRA_RUNTIME
     maturity: ''
     family: L0_lifecycle
     wiring: suspect_orphan
