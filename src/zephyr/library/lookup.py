@@ -38,6 +38,10 @@ from zephyr.library.librarian import Librarian
 __all__ = ["lookup_assets"]  # noqa: n114-final  n114-final豁免: __all__是Python导出约定，非可变常量，无需Final标注（先例=asyncio_run_in_context_gate.py L77）
 
 _BACKTEST_HOME_PREFIX: Final[str] = "data/backtest_artifacts/"
+_COMMIT_GUIDE_PREFIX: Final[str] = "commit-guide:"
+_COMMIT_GUIDE_PLAYBOOK_REL: Final[str] = (
+    "docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md"
+)
 _BACKTEST_LOG_HINT: Final[str] = "回测运行日志抽屉：logs/c1_repro/、logs/c1_real_*.log（族级入册=T10，明细见 registry_of_logs.yaml）"
 _VOCAB_REL: Final[str] = "docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml"
 
@@ -138,6 +142,50 @@ def lookup_assets(
         conn.close()
 
 
+def _query_commit_guide(topic: str) -> int:
+    """提交指路指南查询面（st-commitsys×st-library 协同，机生 playbook 的投影检索）。
+
+    用法::
+
+        python -m zephyr.library.lookup commit-guide:            # 全部锚点目录
+        python -m zephyr.library.lookup commit-guide:FT-py       # 类型节全文
+        python -m zephyr.library.lookup commit-guide:SESSION-REQUIRED  # gate 卡全文
+
+    topic 匹配规则：空=列锚点目录；精确锚点=节全文；其余=子串检索命中的节全文（≤3 节）。
+    指南真源=机生 playbook（禁手改），本面只读投影零第二真源。
+    """
+    from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415
+
+    playbook = REPO_ROOT / _COMMIT_GUIDE_PLAYBOOK_REL
+    if not playbook.exists():
+        print(f"(commit guide playbook missing: {_COMMIT_GUIDE_PLAYBOOK_REL})")
+        return 1
+    sections: list[tuple[str, list[str]]] = []
+    for line in playbook.read_text(encoding="utf-8").splitlines():
+        if line.startswith(("## ", "### ")):
+            sections.append((line, []))
+        elif sections:
+            sections[-1][1].append(line)
+    topic = topic.strip()
+    if not topic:
+        print(f"commit-guide anchors ({len(sections)} sections):")
+        for head, _ in sections:
+            print(f"  {head}")
+        return 0
+    matched = [(h, body) for h, body in sections if topic in h]
+    if not matched:
+        matched = [(h, body) for h, body in sections if topic in " ".join(body)][:3]
+    if not matched:
+        print(f"(no commit-guide section matching {topic!r})")
+        return 1
+    for head, body in matched[:3]:
+        print(head)
+        text = "\n".join(body).strip()
+        print(text[:2000])
+        print()
+    return 0
+
+
 def _query_backtest(strategy: str | None, since: str | None, until: str | None, limit: int) -> int:
     """回测产物查询面（增量A）：按策略/日期段列产物+关联日志抽屉提示。退出码语义同主查询。"""
     import json  # noqa: PLC0415 — 懒加载
@@ -199,6 +247,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.backtest:
         return _query_backtest(args.strategy, args.since, args.until, max(1, min(args.limit, 10000)))
 
+    if args.query.startswith(_COMMIT_GUIDE_PREFIX):
+        return _query_commit_guide(args.query[len(_COMMIT_GUIDE_PREFIX):])
     if not args.query:
         parser.print_usage()
         return 1
