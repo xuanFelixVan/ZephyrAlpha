@@ -546,3 +546,50 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   git show HEAD:docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml | grep -cE "library_coverage_gate|data_task_completeness_gate|issue_resolved_integrity_gate"  # 期望 0=无静默失效
   find src -name "tag_vocab_gate.py"    # 真身在 commit_gates/library/（册指旧路径）
   ```
+
+【总指挥批注 R7·05:05·0011 落地=passthrough 实弹验证通过——裁定册批解锁确认】你的裁定册修复批 0011 已落地——**合并器 passthrough 修复实弹验证通过**，全场注册表批解锁。你复跑 align_all 确认 3→0（收官三件套第一件），完成后报告。
+
+### 追记 2026-09-24 05:03 CST 实测（`date`=05:03:39，HEAD=`4843e85072`=本包 0013）· 落地回执 + DEAD-01 定性升级（A1 清扫按 claim 快照归因 ⇒ 死信残留结构性不可自动卸载）+ WIP 官方定性与本包普查互证
+
+- **① 0013 落地回执（用自己的尺核）**：done，`landed_id=4843e85072`(05:01:28)，numstat=**`106 0` 单件纯增**（04:46 未落块+04:56 新块一次带走，零删除零连带），BAG-01 尺 **MATCH**（HEAD 侧 548 行），四新案 ID 在 HEAD 命中 7 处。GATE-01 的自解（散文引用去 `#`）经实弹验证可通行，**registry/代码面引用零改动**。
+- **② DEAD-01 升级（从"等属主收拾"改为"现机制永远收不到它"）**：`worktree_drift_watchdog.py` 的 #ARCH-308 A1 死会话清扫在 `:755-772` **按 claim 快照归因**：`claimed_files` 取自 `.runtime/claim_snapshots/<sid>.json`，`to_unstage = claimed_files ∩ staged`（注释自证只 `git reset HEAD` 动 index、工作树内容永不销毁——方向正确）。但实测：
+  - `.runtime/claim_snapshots/` 内**无 `st-mapcensus-20260924.json`**（同目录有 `st-gpu-final-20260924.json`，证明非目录级缺失）；活锁权威视图 `lock_files.py list` 现仅 2 条（capability 册=st-mapcensus、module_translation 册=st-align-dirty），**均不含 `ruling_registry.yaml`**（旁证：`.ailocks/registry.json` 顶层=`{version,locks,updated_at}`，全文 grep `mapcensus`/`ruling_registry` 双 0 ⇒ 该文件非活锁真源，勿据其反推"无 claim"，判据以 `lock_files.py list` 为准）。
+  - ⇒ 对这条**正压着我已落地修复**的 staged 残留，`claimed_files=[]` → `to_unstage=[]` → **A1 永不清扫（该会话死或活都一样）**。根因=**死信处置的时序不对称**：landing 失败时释放了 claim/快照，却把 staged 字节留在膛里。与 EVAP-02/IDX-04 同根（index 被当作真源），合起来是三面：**吸收面**（陈旧 index 进提交）、**判定面**（陈旧 index 参与门禁）、**清扫面**（陈旧 index 因失去 claim 而逃逸 watchdog）。
+  - **处方收窄为一句**（给 st-commitsys 修闸与 watchdog 属主，本包不自修他包写域）：dead 分支与 A1 的归因键**除 claim 快照外再加队列袋 `files` 清单**（`.runtime/commit_queue/{pending,processing,dead}/<qid>.json` 的 `files[].path` 是机器可读的权威声明面，本包 `probe_bags_for.py` 已证可枚举）；验收尺=`dead 后 git diff --cached --name-only` 对本袋 paths 必为空。
+- **③ 官方 WIP 定性与本包普查互证（两把独立尺同向，非我自证）**：`classify_workspace_wip.py` 全仓分类 = `active_wip 19 / derived_sync 482 / **stale_rollback 540** / fresh_change 1 / untracked_new 139`，且**把 `ruling_registry.yaml（staged）` 亲自判入 `stale_rollback` [mtime<HEAD]** ⇒ 与 ② 的归因链一致。同时其 `untracked_new 139 件`清单里正是 `config/ai_search_veins.yaml / ai_source_registry.yaml / cleaning_policy.yaml / comparison_policy.yaml …`——**与 DANG-01 的 HEAD 侧悬空引用逐条同名** ⇒ DANG-01 的"册引用从未提交的件"由第二把独立尺复证（GEN-01→DANG-01 因果链闭合）。
+  - 本包 D2a=256（从未进任何提交）与官方 `untracked_new=139` 的关系：139 是"当前盘上未跟踪件数"，256 是"已落地册内声明且从未入提交的路径数"（含已被后续提交带走的、以及 D 状态件）⇒ **两数不必相等，勿当矛盾报**；交叉点（config/* 那批）才是定性证据。
+- **④ 收官三件套进度**：第一件（align_all 3→0）**已在 HEAD 口径闭环**（工作树口径 3 系外来残留，且 ② 已证其不会自愈 ⇒ 只能由属主 rebase 或您下令卸载）；第二件 连续两轮复跑零新问题=进行中（本轮新增 4 案均系"新发现"而非"未修回归"）；第三件 红蓝反证+终报=待做（已积 6 例自证材料）。
+- **⑤ 下一步（轮次）**：①DANG-01 的 D1 `docs/_working` 542 条按 TTL 工作区语义出"是否需回收"判据（避免把设计内过期当缺陷刷数）②BAG-01 扩窗数据再分层给保守分母 ③IDX-03 现规模已=15 件/1079 行纯删（6 件 `D ` + 9 件 `MM `），按 ③ 官方分类其中 library 族 6 件为整文件删除待属主定性 ④红蓝反证节 ⑤终报。
+- **队列/align 状态**：HEAD=`4843e85072`(05:01:28，本包)；本包 0013/0011/0010/0001/0008 done-in位、0012 dead（=GATE-01 红证，已被 0013 取代，勿 requeue）、0002 改判不重投、0009 done-未落地待裁、0003-0007 dead 待裁；align 工作树硬=3（HEAD 口径=0）、6-9 步仍被 BLIND-01 阻断。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  git show --format= --numstat 4843e85072                       # 期望 106 0 单件
+  sed -n '755,772p' src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py   # claim 快照归因
+  ls .runtime/claim_snapshots/ | grep -c mapcensus              # 期望 0（无快照=A1 收不到）
+  python scripts/governance/classify_workspace_wip.py 2>&1 | grep -E "^\[" | head -6     # 19/482/540/1/139
+  python .runtime/tmp/audit_all_20260924/probe_bags_for.py ruling_registry                # 死信袋定位
+  ```
+
+### 更正 2026-09-24 05:12 CST 实测 · BAG-01 分母自我更正（35.5% → **24.6%**），并给出按类分层口径（尺=`probe_bag01_stratified.py`，逐条 `bag01_stratified.txt`）
+
+- **为什么要更正**：04:18 块发表的 **35.5%（11/31）"done 声明字节不在 HEAD"** 是 `>=2026-09-24` 窄窗 + **未剔除合成/审查类会话** 的口径。扩窗到 `>=2026-09-23`（**111 袋 / 314 对**）并分层后，该数**虚高**，原因是把压力测试袋算进了真损。
+- **两把尺互证与漂移解释（防"两个探针不一致"误读）**：`probe_done_bag_vs_head.py`=106 袋/307 对，`probe_bag01_stratified.py`=111 袋/314 对；差 **5 袋 7 对**已逐袋点名（st-align-dirty 0030/0031/0032、st-commitsys 0013、本包 0013，创建时刻 04:35:19~05:00:26）⇒ 差异全部来自队列在两次跑之间继续落地，**非方法分歧**；且两跑对 `NEVER_IN_LANDING=76` 完全一致。
+- **终报应引用的口径（真实施工会话，剔除 stress/gaudit/本包 = 268 对）**：
+  | 状态 | 对数 | 占比 | 是否可据此定罪 |
+  |---|---|---|---|
+  | IN_HEAD | 168 | 62.7% | — |
+  | NEVER_IN_LANDING(落地批自身字节≠袋声明) | 44 | **16.4%** | 次硬（三向合并改写可解释一部分，须逐件判） |
+  | LANDED_THEN_LOST | 34 | 12.7% | **不可**（热册被后续批合法修改是常态；真损由 v3 sweep 的 26 条点名） |
+  | NO_BLOB(landed_id 里根本没有该路径) | 22 | **8.2%** | **最硬**（不依赖任何"后被修改"解释即证伪 done） |
+  - **合计最硬+次硬 = 24.6%**（对全体含合成会话则为 31.8%；合成会话 46 对里有 32 对落在 NEVER_IN_LANDING，这就是 04:18 那个数被抬高的来源）。
+- **按文件类分层的真信号（本块最有处置价值的部分）**：`注册表/配置册` 类 n=78 → IN_HEAD 仅 **23**、NO_BLOB **22（28.2%）**、NEVER_IN_LANDING 22、LANDED_THEN_LOST 11 ⇒ **热册/配置册的 done 声明有约 28% 其"落地提交里连该路径都没有"**，是全仓最不诚实的一类；而 `代码` 类 n=108 → IN_HEAD 81、NEVER_IN_LAND 9、LOST 17、NO_BLOB 1 ⇒ **代码面落地质量良好（悬空率 0.9%）**。
+  ⇒ 处置指向因此收窄：**问题不在"队列不可靠"，而在"热册（注册表/配置册）这条路径上袋面与落地面脱钩"**，与 EVAP-02/IDX-01/DEAD-01 三个同根案完全同向（三案病灶都在 index/合并器对热册的处置），可并为**一条**修闸需求交 st-commitsys，勿按 22+22 条分散立项。
+- **红蓝反证节材料第 7 例（自家数字自纠）**：04:18 的 35.5% 属"窄窗+含合成会话"未加限定即发表；本轮先按扩窗复算、再分层、再点名差异来源后才定稿。终报中凡引用比率，一律带 **窗口 / 是否剔除合成会话 / 分母** 三要素（本块即范式）。
+- **队列/align 状态**：HEAD 侧本包 0013 已落（`4843e85072`，106/0 单件纯增、MATCH）、**0014 pending→在队**（05:03 追记块）；align 工作树硬=3（HEAD 口径=0）、6-9 步仍 BLIND-01。本包对 `注册表/配置册` 类路径写入仍=0。
+- **复核命令（只读）**：
+  ```bash
+  git show --format= --numstat 4843e85072                       # 期望恰好 1 件 106/0（本包 0013 零连带）
+  python .runtime/tmp/audit_all_20260924/probe_bag01_stratified.py           # 111 袋/314 对 + 按类分层
+  SINCE=2026-09-23 python .runtime/tmp/audit_all_20260924/probe_done_bag_vs_head.py   # 独立同尺复跑
+  python .runtime/tmp/audit_all_20260924/probe_bags_for.py "st-align-dirty-20260924-0030"  # 差异袋点名（两跑口径差的来源）
+  ```
