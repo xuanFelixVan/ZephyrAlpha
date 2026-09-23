@@ -5093,7 +5093,7 @@ entries:
   affected_files:
   - src/zephyr/data/storage_tiering.py
   - docs/_working/cold_backup_automation/01_mining_findings.md
-  related_arch: ['MOD-L00-004']
+  related_arch: []
   related_rulings: ['裁定#375', '裁定#378']
   superseded_by: ''
 - ruling_id: '裁定#384'
@@ -5169,7 +5169,7 @@ entries:
   - docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
   - scripts/ch/rolling_archive_reconciler.py
   - scripts/backup/backup.ps1
-  related_arch: ['PS-CTR-003', 'MOD-INF-043']
+  related_arch: []
   related_rulings: ['裁定#380', '裁定#381', '裁定#382', '裁定#383']
   superseded_by: ''
 - ruling_id: '裁定#388'
