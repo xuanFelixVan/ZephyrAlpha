@@ -147,6 +147,30 @@ gaps:
     last_updated: "2026-07-24"
 
   # === 2026-07-24: audit_opinion 任务禁用（无可用数据源接口）===
+  - id: "alt_shipping_index_charter_discontinued"
+    table: "c1_market.alt_shipping_index"
+    gap_type: "source_discontinued"
+    start_date: "2011-08-24"
+    end_date: null  # 持续中，上游源侧停发（2011-08-23 最后值，11 年零回补）
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 已接受——上游停发无法补齐；仅涉租船指数子序列，BDI+四分项五序列供给正常
+    root_cause: "国际集装箱租船指数上游源停发（库内止于 2011-08-23，211 行）；
+      akshare 接口对该子指数长期无新值，非本仓采集故障（st-metaq-20260923 PQ-0172 作业簿取证登记）"
+    detected_at: "2026-09-23"
+    registered_by: "st-metaq-20260923"
+  - id: "alt_shipping_index_handy_stale"
+    table: "c1_market.alt_shipping_index"
+    gap_type: "source_discontinued"
+    start_date: "2009-01-29"
+    end_date: null  # 持续中，上游从未稳定供给（全史仅 1 行，2009-01-28）
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 已接受——上游从未稳定供给该子指数，无法补齐
+    root_cause: "灵便型船综合运价指数上游源自 2009 年后从未稳定供给（库内全史 1 行）；
+      非本仓采集故障（st-metaq-20260923 PQ-0172 作业簿取证登记）"
+    detected_at: "2026-09-23"
+    registered_by: "st-metaq-20260923"
   - id: "audit_opinion_no_interface"
     table: "c3_fundamental.audit_opinion"
     gap_type: "no_data_source"
