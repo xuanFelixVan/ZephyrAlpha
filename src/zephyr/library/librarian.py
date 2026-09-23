@@ -151,6 +151,7 @@ class Librarian:
         fingerprint_sha256 = f.get("fingerprint_sha256")
         fingerprint_aux = f.get("fingerprint_aux")
         title = f.get("title")
+        one_liner = f.get("one_liner")
         ai_contract = f.get("ai_contract")
         owner_domain = f.get("owner_domain")
         retention_class = f.get("retention_class", "long")
@@ -175,6 +176,7 @@ class Librarian:
                         owner_domain,
                         retention_class,
                         title,
+                        one_liner,
                         ai_contract,
                         tags_list,
                         actor,
@@ -218,6 +220,7 @@ class Librarian:
                         asset.get("owner_domain"),
                         "long",
                         asset.get("title"),
+                        asset.get("one_liner"),
                         asset.get("ai_contract"),
                         asset.get("tags") or [],
                         actor,
