@@ -52907,19 +52907,19 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/data/implementations/akshare_alt_provider.py
   domain_id: D_DATA
-  name_zh: akshare另类源provider
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: akshare另类源provider（2026-09-12 另类数据第1批施工：akshare 免注册直连，千股千评+航运运价）
+  name_zh: "akshare另类源provider"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "AkshareAltProvider — 另类数据第 1 批免注册直连源（千股千评 + 航运运价）。背景（docs/_working/2026-09-12-alt-data-handoff.md §8-1，另类数据施工第 1 批）： 为什么独立成模块而不开进 akshare_provider： - akshare_provider.py 为他在会（研报批）claim 在途文件，另类批独立成件零冲突； - 另类源与行情主链路生命周期解耦（接口漂移风险独立演进，alt_source_health_manager 监控）。"
   responsibility_layer: business
 - module_path: src/zephyr/alt_data/alt_source_bootstrap.py
   domain_id: D_ALT_DATA
-  name_zh: alt治理三件接线器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: alt治理三件接线器（2026-09-12 另类数据第1批施工：akshare 免注册直连，千股千评+航运运价）
+  name_zh: "alt治理三件接线器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "alt_source_bootstrap — 另类数据源治理三件（catalog/合规/健康）统一登记接线。背景（2026-09-12 另类数据第 1 批，docs/_working/2026-09-12-alt-data-handoff.md §8-5）： alt_data 包治理三件（AltDataCatalog/AltDataComplianceReviewer/AltSourceHealthManager） 此前 DORMANT 零调用方；本模块首次实弹接线——每新增一个免注册直连另类源，在 ALT_SOURCES 登记一份 spec（目录元数据 + 合规四要素台账 + 逐项审查证据）， build_governance_triple() 一次构建三件并完成登记→审查→放行闭环。"
   responsibility_layer: business
 - module_path: schemas/categories/market/market_alt_stock_comment.py
   domain_id: D_DATA
@@ -60056,6 +60056,15 @@ entries:
   desc_en: ""
   plain_zh: "process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Scheduler 托管）治本背景（2026-08-28 裁定）- 旧 ide_health_daemon「常驻守护 + AI 冷启动自觉拉起」模式违反 boot_autostart_architecture.md C1（永久系统全自动）/C3（Task Scheduler 唯一入口），实证失效（守护死亡后 stale PID 残留、AI 会话不执行冷启动协定，系统长期裸奔）。"
   responsibility_layer: infrastructure
+- module_path: scripts/backup/library_ledger_backup.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: 词表加载器
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: meta_question 包的词表读取小帮手：把层、状态、频率这些固定选项从配置文件里读出来给注册表和部署脚本用，大家共用一份避免各写各的
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
