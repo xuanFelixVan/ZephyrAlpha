@@ -382,7 +382,8 @@ _PRECOMMIT_SLOW_TAIL_HOOKS: tuple[str, ...] = (
     "gate-script-q",
     "gate-nested-flat-prefix",
     "gate-rules-integrity",
-    "ruff-format",
+    # ruff-format 移出慢尾（st-gslim-20260923 P6，Owner E7 两段式定案）：格式化检查
+    # 属确定性子集（秒级），Phase-A 先行；与 dispatch 确定性 7 hooks 口径对齐。
 )
 
 
