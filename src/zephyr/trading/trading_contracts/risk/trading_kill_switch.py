@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-INF-022 ; MOD-INF-020
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 交易风险熔断器;五级KillSwitch;Pydantic数据模型
+# [INVARIANTS] 交易风险熔断器;五级KillSwitch;Pydantic数据模型;触发/复位自动落盘影子(O-6/S-3 kill_switch_state_store,fail-open)
 # [MODIFY-GUARD] docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md;src/zephyr/rollback/__init__.py
 # [STABILITY] stable
 # [SAFETY] H
@@ -116,11 +116,23 @@ def get_switch(level: KillSwitchLevel) -> KillSwitch | None:
     return KILL_SWITCHES.get(level)
 
 
+def _persist_state() -> None:
+    """O-6/S-3：触发/复位落盘磁盘影子（fail-open——内存态已生效=主保护在手，
+    落盘失败 CRITICAL 留痕不回滚熔断；影子消费=rebuild_from_disk 进程启动重臂）。"""
+    try:
+        from zephyr.trading.trading_contracts.risk.kill_switch_state_store import save_state
+
+        save_state()
+    except Exception as exc:  # noqa: BLE001 — 落盘异常不阻断熔断主路径
+        logger.critical("KILL_SWITCH_STATE_HOOK_FAILED error=%s", exc)
+
+
 def trigger(level: KillSwitchLevel) -> bool:
     ks = KILL_SWITCHES.get(level)
     if ks is None:
         return False
     ks.active = True
+    _persist_state()
     return True
 
 
@@ -129,6 +141,7 @@ def reset(level: KillSwitchLevel) -> bool:
     if ks is None:
         return False
     ks.active = False
+    _persist_state()
     return True
 
 

@@ -15,6 +15,11 @@
 #   ch_parts_monitor 阈值由码内硬编码改为注册表 fail-closed 统读（session AI-WAVE0-001，路线图 A17）。
 # 2026-09-11 v1.4.0：新增 THD-ALERT-003/004（提交队列死信积压阈值 50 项 + 告警冷却 6h）——死信率告警最小落地
 #   （st-perf-plan-20260910；884 项死信积压 8 天无人发现的事故补课，方案 §2.4-4a-③ Owner 裁定要做）。
+# 2026-09-22 v1.5.0：新增 THD-ALERT-007（belt daemon 离线>24h 告警）——注册表事故观测死亡补课
+#   （st-regfix-laneB-20260922；belt daemon 09-18 起死 4 天无人发现的同族病，DISPATCH_v1.md Lane B W5④）。
+# 2026-09-23 v1.6.0：新增 TRADING 类 4 条（THD-TRD-001..004，交易级告警专条）——live O-6/S-2（G8 补齐，
+#   st-oddjobs-20260923 Owner 增补令授权；阈值定义锚=trading_kill_switch.py 五级熔断，消费面=交易运行时
+#   监控（G2b/G5 sim 部署接线点），status=design 代码未落）。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -27,9 +32,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.4.0
+version: 1.6.0
 created: '2026-08-15'
-last_updated: '2026-09-11'
+last_updated: '2026-09-23'
 related_arch: '#ARCH-MON-001'
 unique_key:
 - threshold_id
@@ -513,6 +518,29 @@ thresholds:
     evidence: "0921 st-dloop 0001→0015 十三连败 92 分钟撞 13 个不同门禁——单会话连败=死修循环在烧租约的强信号"
     last_verified: '2026-09-22'
 
+  # ── W5 观测复活（st-regfix-laneB-20260922，注册表事故 DISPATCH_v1.md Lane B W5④：
+  #    belt daemon 09-18 起无进程无锁无计划任务、死信记账断流 4 天无人发现——
+  #    守护死后无法自查离线，唯一记账人=下一次启动（计划任务 10 分钟兜底触发），
+  #    启动时读心跳年龄量化离线缺口，超阈即堵点本告警）──
+  - threshold_id: "THD-ALERT-007"
+    module_id: MOD-GOV_GATE_ENGINE
+    name: "Belt Daemon Offline Max"
+    name_zh: "传送带守护离线上限"
+    category: alert
+    metric_zh: "守护离线时长（上次心跳至本次启动的墙钟缺口）"
+    value: 86400
+    param_origin: 经验拍定（施工令 W5④：离线>24h 告警，结构照抄 005/006）
+    unit: seconds
+    comparator: gt
+    severity_action: "启动时离线缺口检查超阈 → 堵点本 alert 行（belt_daemon_offline_gap）+logger.error；处置入口 python -m zephyr.gov_enforcement.rule_bridge.commit_belt_daemon --status / register_belt_daemon_task.ps1"
+    source_code: "src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py::_check_daemon_offline_gap"
+    consumer: "src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py (MOD-GOV_GATE_ENGINE)"
+    status: active
+    doc_ref: "docs/_working/registry_incident_20260922/DISPATCH_v1.md Lane B W5④（09-22 注册表事故六层根因之观测死亡补课）"
+    tags: [提交队列, 传送带守护, 离线, 告警]
+    evidence: "09-22 事故实证：belt daemon 09-18 起死 4 天（无进程无锁无计划任务），lease 事件唤醒失效+队列无自动排空+死信记账断流全无人发现；心跳文件 belt_daemon.heartbeat 30s 心跳窗刷新为离线度量基准"
+    last_verified: '2026-09-22'
+
   # ============================================================
   # AUDIT（日终审计五件套参数，55 号 §3.1C）— 3 条
   # ============================================================
@@ -926,3 +954,79 @@ thresholds:
     tags: [AI层, L2收集库, 入考率]
     evidence: "DESIGN §2.7 动作二；quota=1 保留最小探测通道，禁清零防源永久熄灭"
     last_verified: '2026-09-18'
+
+  # ============================================================
+  # TRADING（交易级告警专条，live O-6/S-2 G8——与五级熔断一一对应）— 4 条
+  # ============================================================
+  - threshold_id: "THD-TRD-001"
+    module_id: MOD-INF-016
+    name: "Position Limit Breach Alert"
+    name_zh: "持仓位置超限告警"
+    category: trading
+    metric_zh: "持仓量对 max_position_limit 限额的突破"
+    value: "position > max_position_limit（限额绝对值=G7 仓位参数 Owner 签字定案项）"
+    param_origin: 五级熔断定义在册件（trading_kill_switch POSITION_LIMIT 级，先于本条在 HEAD）
+    unit: "ratio"
+    comparator: "gt"
+    severity_action: "触发 → REDUCE_ONLY（禁开仓许平仓，cooldown 300s 自恢复）+ 交易级告警（拒单通道=pre_execution_checker live_env_gate 之后的 kill_switch 消费面）"
+    source_code: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py::KillSwitchLevel.POSITION_LIMIT"
+    consumer: "trading 运行时监控（G2b/G5 sim 部署接线点，接 threshold_loader 统读）；本级判定真源=trading_kill_switch.evaluate"
+    status: design
+    doc_ref: "docs/_working/live_readiness/admission_gate_design.md G8 + live_admission_checklist.md R1（O-6 三安全卡 Owner 增补令 2026-09-23）"
+    tags: [交易, 仓位, 位置超限, 五级熔断, 告警]
+    evidence: "五级定义 trading_kill_switch.py:74-142 在 HEAD 逐行实证（POSITION_LIMIT→REDUCE_ONLY 300s 自恢复）"
+    last_verified: '2026-09-23'
+  - threshold_id: "THD-TRD-002"
+    module_id: MOD-INF-016
+    name: "Daily Loss Limit Alert"
+    name_zh: "日亏熔断告警（-3% AUM）"
+    category: trading
+    metric_zh: "当日盈亏对 AUM 的比值跌破 -3%"
+    value: -0.03
+    param_origin: 五级熔断定义在册件（daily_pnl < -0.03 * aum，AUM 口径随 G10 资金规模定案）
+    unit: "ratio"
+    comparator: "lt"
+    severity_action: "触发 → CANCEL_ALL + DISABLE_NEW（撤全部挂单+禁新单，86400s 不自动恢复，当日终态）+ 交易级 CRITICAL 告警"
+    source_code: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py::KillSwitchLevel.DAILY_LOSS"
+    consumer: "trading 运行时监控（G2b/G5 接线点，threshold_loader 统读）；本级判定真源=trading_kill_switch.evaluate"
+    status: design
+    doc_ref: "docs/_working/live_readiness/admission_gate_design.md G8（O-6 三安全卡 Owner 增补令 2026-09-23）"
+    tags: [交易, 日亏, 熔断, AUM, 告警]
+    evidence: "五级定义 trading_kill_switch.py:93-99（DAILY_LOSS 86400s auto_reenable=False 当日终态语义在案）"
+    last_verified: '2026-09-23'
+  - threshold_id: "THD-TRD-003"
+    module_id: MOD-INF-016
+    name: "Circuit Breaker Disconnect Alert"
+    name_zh: "断路器断连告警"
+    category: trading
+    metric_zh: "连续拒单次数或成交价偏离幅度（连续拒单≥5 OR 价偏>5%）"
+    value: "consecutive_rejections >= 5 OR price_deviation > 5%"
+    param_origin: 五级熔断定义在册件（CIRCUIT_BREAKER 级）
+    unit: "trades"
+    comparator: "gte"
+    severity_action: "触发 → DISCONNECT 断开 Broker 连接（cooldown 600s 不自动重连）+ 交易级 CRITICAL 告警"
+    source_code: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py::KillSwitchLevel.CIRCUIT_BREAKER"
+    consumer: "trading 运行时监控（G2b/G5 接线点，threshold_loader 统读）；本级判定真源=trading_kill_switch.evaluate"
+    status: design
+    doc_ref: "docs/_working/live_readiness/admission_gate_design.md G8 + exception_handling_manual.md（O-6 三安全卡 Owner 增补令 2026-09-23）"
+    tags: [交易, 断连, 断路器, 拒单, 告警]
+    evidence: "五级定义 trading_kill_switch.py:100-107（CIRCUIT_BREAKER→DISCONNECT 600s 在案）"
+    last_verified: '2026-09-23'
+  - threshold_id: "THD-TRD-004"
+    module_id: MOD-INF-016
+    name: "API Timeout Heartbeat Miss Alert"
+    name_zh: "API超时/心跳丢失告警"
+    category: trading
+    metric_zh: "Broker API 超时时长或心跳丢失次数（>10s OR 心跳丢≥3）"
+    value: 3
+    param_origin: 五级熔断定义在册件（API_TIMEOUT 级：broker_api_timeout>10s OR heartbeat_miss>=3）
+    unit: "seconds"
+    comparator: "gte"
+    severity_action: "触发 → AUTO_KILL 自动终止当前 Session（cooldown 120s 自恢复）+ 交易级 CRITICAL 告警；独立心跳守护缺口另见 live_admission_checklist M4"
+    source_code: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py::KillSwitchLevel.API_TIMEOUT"
+    consumer: "trading 运行时监控（G2b/G5 接线点，threshold_loader 统读）；本级判定真源=trading_kill_switch.evaluate"
+    status: design
+    doc_ref: "docs/_working/live_readiness/admission_gate_design.md G8 + live_admission_checklist.md M4（O-6 三安全卡 Owner 增补令 2026-09-23）"
+    tags: [交易, API超时, 心跳, 会话, 告警]
+    evidence: "五级定义 trading_kill_switch.py:108-114（API_TIMEOUT→AUTO_KILL 120s 自恢复在案）"
+    last_verified: '2026-09-23'

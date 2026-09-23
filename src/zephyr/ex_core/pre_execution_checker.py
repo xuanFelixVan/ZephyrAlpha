@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-L06-001(TradingSession 逐单执行前硬拦：_validate_and_submit→_is_blocked_by_pre_execution，经 attach_pre_execution_gate()/pre_execution_checker= 注入即生效，快照源=TradingSession.build_risk_snapshot) ; MOD-EX-007(Execution Risk Gate, planned—全仓无实现代码，未落地)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 四级检查顺序固定(熔断→时段→快照→否决); 熔断激活短路不建快照; 各环节Fail-Closed(探针异常按熔断/非交易时段处理,快照失败拒单,C-004默认拒绝); 风险判定核心委托MOD-RK-24纯函数(本模块只编排不重造); 报告frozen不可变
+# [INVARIANTS] 五级检查顺序固定(熔断→live档阻断→时段→快照→否决); live档探针异常Fail-Closed拒单(O-6/S-1); 熔断激活短路不建快照; 各环节Fail-Closed(探针异常按熔断/非交易时段处理,快照失败拒单,C-004默认拒绝); 风险判定核心委托MOD-RK-24纯函数(本模块只编排不重造); 报告frozen不可变
 # [MODIFY-GUARD] docs/03_modules/MOD-EX-024/
 # [STABILITY] evolving
 # [SAFETY] H
@@ -17,9 +17,11 @@
 """
 Pre-Execution Checker — 执行前检查器 (MOD-EX-024)
 
-下单前统一四级硬检查（编排层，对接 MOD-RK-25 快照 + MOD-RK-24 否决引擎 + 既有风控件）：
+下单前统一五级硬检查（编排层，对接 MOD-RK-25 快照 + MOD-RK-24 否决引擎 + 既有风控件）：
   1. Kill Switch 闸门  — 熔断激活拒绝全部新订单（短路，不建快照；
      探针异常按已熔断处理，Fail-Closed；生产接线: DefaultRiskValidator.kill_switch_active）
+  1.5 live 档阻断闸门  — blocks_live_trading=true 拒全部新单（O-6/S-1 G6 接线；
+     探针异常按阻断处理 Fail-Closed；默认读 qmt_environments.yaml，环境解析走 config 层）
   2. 交易时段闸门      — L-003 非交易时段禁下单（默认 A 股窗口 09:30-11:30 / 13:00-15:00
      Asia/Shanghai + 交易日判定；探针异常按非交易时段处理，Fail-Closed；
      CAND-CRYPTO-006/#262 改造：支持 market_calendar 注入，默认 ASHareCalendar）
@@ -37,7 +39,7 @@ import logging
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime, time
-from typing import Final
+from typing import TYPE_CHECKING, Final
 from zoneinfo import ZoneInfo
 
 from zephyr.data.calendar import MarketCalendar, get_market_calendar
@@ -47,11 +49,58 @@ from zephyr.risk.core.risk_veto_engine import (
     RiskVetoEngine,
     VetoDecision,
 )
+from zephyr.shared.foundation.env import Env as EnvName
+from zephyr.shared.foundation.env import current_env
 
 _logger = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    from pathlib import Path
+
+LiveBlockProbe = Callable[[], bool]
+"""live 档阻断探针：返回 True=blocks_live_trading 生效拒单（O-6/S-1，G6）。"""
+
+
+def _default_live_block_probe(
+    config_path: Path | None = None,
+) -> LiveBlockProbe:
+    """默认探针：查 qmt_environments.yaml 当前环境档 blocks_live_trading（纯加闸）。
+
+    环境解析走 config 层 shared.foundation.env.current_env()（禁散落直访 ZEPHYR_ENV，
+    ZEPHYR-ENV-DIRECT-ACCESS 门纪律）；prod→live 档，其余→sim 档。
+    Fail-Closed：配置不可读/环境档缺失/旗标缺失/解析异常 一律返回 True（拒单不放行）。
+    """
+    resolved_path = config_path
+    cache: dict[str, bool] = {}
+
+    def _probe() -> bool:
+        from pathlib import Path as _Path
+
+        import yaml as _yaml
+
+        from zephyr.shared.io.paths import REPO_ROOT
+
+        nonlocal resolved_path
+        if resolved_path is None:
+            resolved_path = _Path(REPO_ROOT) / "config" / "qmt_environments.yaml"
+        env_key = "live" if current_env() == EnvName.PROD else "sim"
+        if env_key in cache:
+            return cache[env_key]
+        data = _yaml.safe_load(resolved_path.read_text(encoding="utf-8")) or {}
+        entries = {str(e.get("env")): e for e in data.get("environments") or []}
+        entry = entries.get(env_key)
+        if entry is None or "blocks_live_trading" not in entry:
+            raise ValueError(f"qmt_environments 缺 {env_key} 档 blocks_live_trading 旗标")
+        flag = bool(entry["blocks_live_trading"])
+        cache[env_key] = flag
+        return flag
+
+    return _probe
+
+
 __all__: Final = [
     "KillSwitchProbe",
+    "LiveBlockProbe",
     "PreExecutionBlock",
     "PreExecutionChecker",
     "PreExecutionReport",
@@ -154,6 +203,7 @@ class PreExecutionChecker:
         session_window_probe: SessionWindowProbe | None = None,
         veto_engine: RiskVetoEngine | None = None,
         market_calendar: MarketCalendar | None = None,
+        live_block_probe: LiveBlockProbe | None = None,
     ) -> None:
         """
         Args:
@@ -162,6 +212,8 @@ class PreExecutionChecker:
             session_window_probe: 交易时段探针；None=用 market_calendar 或默认 A 股窗口实现。
             veto_engine: 否决引擎；None=内置默认硬规则集。
             market_calendar: 市场日历注入（CAND-CRYPTO-006/#262）；None=ASHareCalendar 默认。
+            live_block_probe: live 档阻断探针（O-6/S-1 G6）；None=默认读
+                qmt_environments.yaml 当前环境档 blocks_live_trading（fail-closed）。
         """
         self._snapshot_builder = snapshot_builder
         self._kill_switch_probe = kill_switch_probe
@@ -171,6 +223,7 @@ class PreExecutionChecker:
             calendar = market_calendar or get_market_calendar("ashare")
             self._session_window_probe = lambda now: _is_trading_window(now, calendar)
         self._veto_engine = veto_engine or RiskVetoEngine()
+        self._live_block_probe = live_block_probe or _default_live_block_probe()
 
     def check(self, request: OrderRiskRequest, *, now: datetime | None = None) -> PreExecutionReport:
         """执行前四级检查。blocks 为空 → allowed=True。"""
@@ -202,6 +255,26 @@ class PreExecutionChecker:
                     )
                 )
                 return self._report(request, blocks, None, None, evaluated_at)
+
+        # ── 闸门 1.5: live 档阻断（O-6/S-1，blocks_live_trading 接线 G6）─────
+        try:
+            live_blocked = bool(self._live_block_probe())
+        except Exception as exc:  # noqa: BLE001 — Fail-Closed（纯加闸不加放）
+            _logger.critical("LIVE_BLOCK_PROBE_ERROR fail-closed error=%s", exc)
+            live_blocked = True
+        if live_blocked:
+            _logger.critical(
+                "LIVE_TRADING_BLOCKED 拒单 symbol=%s（blocks_live_trading=true，实盘门禁未解锁）",
+                getattr(request, "symbol", "?"),
+            )
+            blocks.append(
+                PreExecutionBlock(
+                    check_id="live_env_gate",
+                    reason_code="LIVE_TRADING_BLOCKED",
+                    message="blocks_live_trading=true：live 档实盘门禁未解锁，拒绝全部新订单（Fail-Closed）",
+                )
+            )
+            return self._report(request, blocks, None, None, evaluated_at)
 
         # ── 闸门 2: 交易时段（L-003）────────────────────────────────
         try:

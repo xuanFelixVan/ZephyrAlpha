@@ -360,3 +360,88 @@ class TestMarketCalendarInjection:
         assert not report.allowed
         codes = [b.reason_code for b in report.blocks]
         assert "OUTSIDE_TRADING_WINDOW" in codes
+
+
+# ── 闸门 1.5: live 档阻断（O-6/S-1，blocks_live_trading 接线 G6）────────────
+
+
+class TestLiveEnvGate:
+    """S-1 红蓝：live 档旗标拒单/探针异常 fail-closed/sim 放行到下一闸/默认探针配置语义。"""
+
+    def test_live_flag_blocks_all(self):
+        checker, builder = _checker(live_block_probe=lambda: True)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "LIVE_TRADING_BLOCKED" in codes
+        assert builder.calls == 0  # 短路: live 阻断不建快照
+
+    def test_probe_error_fail_closed(self):
+        def _boom():
+            raise RuntimeError("qmt_environments unreadable")
+
+        checker, builder = _checker(live_block_probe=_boom)
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "LIVE_TRADING_BLOCKED" in codes
+        assert builder.calls == 0
+
+    def test_sim_flag_reaches_next_gate(self):
+        # sim 档放行 live 闸 → 流到闸门2 时段（注入非交易时段=被时段闸拦，证到达）
+        checker, builder = _checker(
+            live_block_probe=lambda: False, session_window_probe=lambda now: False
+        )
+        report = checker.check(_request())
+        assert not report.allowed
+        codes = [b.reason_code for b in report.blocks]
+        assert "LIVE_TRADING_BLOCKED" not in codes
+        assert "OUTSIDE_TRADING_WINDOW" in codes
+
+    def test_default_probe_config_semantics(self, tmp_path, monkeypatch):
+        # env 层 current_env() 有进程级缓存，不可 mid-process 切换环境变量——
+        # 改 monkeypatch 模块符号 current_env（工厂调用面），语义覆盖同构。
+        import zephyr.ex_core.pre_execution_checker as pec
+        from zephyr.ex_core.pre_execution_checker import _default_live_block_probe
+
+        cfg = tmp_path / "qmt_environments.yaml"
+        cfg.write_text(
+            "\n".join(
+                [
+                    "environments:",
+                    "  - env: sim",
+                    "    blocks_live_trading: false",
+                    "  - env: live",
+                    "    blocks_live_trading: true",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        # production 环境读 live 档 → 阻断
+        monkeypatch.setattr(pec, "current_env", lambda: pec.EnvName.PROD)
+        assert _default_live_block_probe(cfg)() is True
+        # dev 环境读 sim 档 → 放行（新探针实例，防实例内 cache 串味）
+        monkeypatch.setattr(pec, "current_env", lambda: pec.EnvName.DEV)
+        assert _default_live_block_probe(cfg)() is False
+        # 配置损坏 → 探针上抛（闸门侧 fail-closed 兜底）
+        bad = tmp_path / "bad.yaml"
+        bad.write_text("{ not: [valid", encoding="utf-8")
+        monkeypatch.setattr(pec, "current_env", lambda: pec.EnvName.PROD)
+        try:
+            _default_live_block_probe(bad)()
+        except Exception:  # noqa: BLE001
+            pass
+        else:
+            pytest.fail("损坏配置必须上抛（闸门 fail-closed 兜底依赖）")
+        # 旗标缺失 → 上抛（缺条目=拒单语义）
+        cfg2 = tmp_path / "missing_flag.yaml"
+        cfg2.write_text(
+            "\n".join(["environments:", "  - env: live"]),
+            encoding="utf-8",
+        )
+        try:
+            _default_live_block_probe(cfg2)()
+        except Exception:  # noqa: BLE001
+            pass
+        else:
+            pytest.fail("缺 blocks_live_trading 旗标必须上抛（fail-closed）")

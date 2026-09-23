@@ -1,0 +1,51 @@
+# ALGO_FLOW 外部真源——kill_switch_state_store（_domain_trading 域，真源 src/zephyr/trading/trading_contracts/risk/kill_switch_state_store.py）
+# 2026-09-23 O-6/S-3 新建随批出仓（st-oddjobs-20260923，Owner 增补令授权）；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.trading.trading_contracts.risk.kill_switch_state_store
+source_of_truth: src/zephyr/trading/trading_contracts/risk/kill_switch_state_store.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: KILL_SWITCHES 内存态
+    #   fields: trading_kill_switch.KILL_SWITCHES（五级 KillSwitch pydantic 模型，active 旗标）
+    #   code: save_state 读侧（同包唯一真源，本件零第二真源）
+    # - id: I2
+    #   name: state_path 参数
+    #   fields: Path | None，None=data/runtime/trading_kill_switch_state.json
+    #   code: save_state/rebuild_from_disk 形参
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 快照五级 active 旗标为 {level:{active}} 载荷
+    #   code: save_state payload 构造
+    # - id: A2
+    #   name_zh: 原子落盘 tmp→os.replace（paper_hedge state 同款纪律，data/runtime gitignored）
+    #   code: save_state mkstemp+os.replace
+    # - id: A3
+    #   name_zh: 落盘失败 fail-open（CRITICAL 留痕，不回滚内存态——内存态已生效=主保护在手）
+    #   code: save_state except 分支
+    # - id: A4
+    #   name_zh: rebuild 读影子按级重臂；auto_reenable 且冷却已过→跳过交自然复评，其余 active 一律重臂（纯加闸不加放）
+    #   code: rebuild_from_disk 主循环
+    # - id: A5
+    #   name_zh: 影子缺失/损坏=零重臂空表返回（不阻断启动，逐单闸门仍 fail-closed 兜底）
+    #   code: rebuild_from_disk 早退分支
+    # 层: 输出
+    # - id: O1
+    #   name: save 布尔/rebuild 重臂级别列表
+    #   code: 两函数返回值
+    invariants:
+    - 状态文件永不入库（data/runtime gitignored）
+    - 本件不持有第二真源状态（唯一真源=KILL_SWITCHES 内存态）
+    - save fail-open / rebuild fail-closed 缺文件零重臂
+    # [/ALGO_FLOW]
+
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> A5
+    # A5 --> O1

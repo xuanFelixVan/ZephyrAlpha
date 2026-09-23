@@ -509,7 +509,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L1-AGG
-  note_confirmed: 2026-09-18
+  note_confirmed: 2026-09-23
   name_zh: 市场状态判定
   market: cn_a
   flow: entry_flow
@@ -523,8 +523,7 @@ nodes:
     #   封顶：周级退潮→日级最高 RISK_OFF；月级危机→日级最高 RISK_OFF（封顶不覆盖，日级如实报告）
     #   对齐加成：月+周+日三层同向→预算带取上限（业界三级共振）；冲突→取下限+高层赢
     # （D90 终裁 2026-09-07）：六段冲突场景=听弱的（预算带按较弱信号降一档机械执行，废除人工接管）；量×轮动二维状态机（成交额 250 日滚动分位<25%=存量博弈：小盘题材加权/主线降权/持仓≤2-3 天；>60%=主线放行；轮动强度>80% 分位=电风扇市=无主线不推大板块）；二值权限门滞回=进段连续 2 日隶属度>60%、退出<40%
-  decision_question: "双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner
-    接管）；日级水温受月/周档位封顶"
+  decision_question: "双轨判定：锚定四档状态输入（宏观）×情绪六段分布（微观）；谨慎度预算带仍由 L1 总闸独家；冲突仲裁熵高降档；日级水温受月/周档位封顶"
   activation: premarket
   algo_note_zh: "双轴相乘：宏观 RegimeSnapshot 概率（月级 7 态）×情绪六段分布（周级）。两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁；缺供数时按最谨慎档处置（R-055a fail-closed，细则见下）。输出三件套：预算带（给
     C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。（2026-09-15 ALGO_FLOW 块出仓至
@@ -533,10 +532,10 @@ nodes:
     裁定 R-055a 2026-09-18：本节点降级口径由 fail-open 改 fail-closed——RiskSignal 缺供数（整包缺 / params 空壳 /
     主腿 #1 为 NULL）不再取 1.0，改落地板值 0.30，且主腿未报平静时不得把覆盖层危机概率清零。实测危机中断一条腿
     Shrinkage 从放量 3.137 倍（0.255→0.800、dominant r10→r1）改为持平收紧（0.255）；四形态缺数与 13 参数全正常
-    （0.800）可区分，新增 risk_signal_source=neutral_fail_closed 溯源。档位数值未动，两套档表统一到哪一档待 A16 裁定）"
+    （0.800）可区分，新增 risk_signal_source=neutral_fail_closed 溯源。档位数值未动，两套档表统一到哪一档待 A16 裁定）。【AGG 消费切换终批 2026-09-23，Owner production 翻转确认】：本节点状态输入源切换为锚定风险四档（c1_backtest.regime_state_anchored，vol_pct 结构阈值零拟合，裁定#229 重印批；夜批连续零缺勤+当日更新判据①机械复核通过）；总暴露熔断上限=连续灰度曲线 cap=1−0.70×clamp((vol_pct−0.30)/0.70,0,1)（agg-switch-design §2 Owner 2026-09-14 签字），接线 pf_alloc 组合层 ANCHORED_CAP 裁剪，与 L1 预算取 min 只减不加；谨慎度/shrinkage 轴仍由 L1 总闸 RegimeSnapshot 独家给出（P0-001 valid 不动，两套各管各的）；策略路由阈值未冻结暂不接线（设计稿原文随双轨证据定稿）；一键切回=创建 data/runtime/anchored_cap.disabled 空文件即整段旁路（回滚窗至 2026-10-23，旧 HMM 链 regime_detector/regime_snapshot_history 全量保留；预案=docs/_working/tdm20_campaign/06_agg_switch_rollback_plan.md）"
   factor_refs: []
   data_refs: [DS-098]
-  module_ref: src/zephyr/regime/core/regime_detector.py
+  module_ref: src/zephyr/regime/core/anchored_state_machine.py
   module_id: MOD-REGIME-001
   model_refs: [ML-REGIME-001]
   strategy_mounts: []
@@ -2478,7 +2477,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-12
-  note_confirmed: 2026-09-23  # O-6/S-1（裁定授权=Owner 增补令）：四级升五级——新增闸门1.5 live 档阻断（blocks_live_trading=true 拒全部新单，环境解析走 config 层，探针异常 fail-closed；纯加闸不加放，判定顺序熔断→live档→时段→快照→否决）；其余四级算法口径逐字未变。前史：H5-P0 接线复核（09-16）实现四级闸门真实装配方
+  note_confirmed: 2026-09-23  # O-6/S-1（裁定授权=Owner 增补令）：四级升五级——新增闸门1.5 live 档阻断（blocks_live_trading=true 拒全部新单，环境解析走 config 层，探针异常 fail-closed；纯加闸不加放，判定顺序熔断→live档→时段→快照→否决）；其余四级算法口径逐字未变。同夜配套=THD-TRD-001..004 告警四条入 alert_threshold_registry v1.6.0（S-2，alert_threshold_registry v1.6.0）+五级熔断态持久化 kill_switch_state_store 触发/复位自动落盘影子与 rebuild 重臂（S-3，state 纪律=data/runtime 原子写）。前史：H5-P0 接线复核（09-16）实现四级闸门真实装配方
 
   name_zh: 订单级预检
   market: cn_a
