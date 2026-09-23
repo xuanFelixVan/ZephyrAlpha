@@ -47194,4 +47194,14 @@ creation_tokens:
   created_by: st-gpu-final-20260924
   capability: condition_axis_package
   merge_evaluation: "内收判据：condition_package 的 ALGO_FLOW 外置真源（gate-algo-flow-marker P2-1 口径），替代 docstring 内联机器块，零新规则面"
+- file: docs/_working/align_dirty/align_dirty_ledger.md
+  token: align-dirty-ledger-ledger-20260923
+  created_by: st-align-dirty-20260924
+  capability: align_dirty_ledger
+  merge_evaluation: "本包唯一台账+R2 交付件（任务过程真源，非能力件，与既有能力册零重叠；裁定#375 四判据=零触发零消费不适用，属过程档案须入库备复核）"
+- file: docs/_working/align_dirty/working_cleanup_r2.md
+  token: align-dirty-ledger-working-cleanup-r2-20260923
+  created_by: st-align-dirty-20260924
+  capability: align_dirty_ledger
+  merge_evaluation: "本包唯一台账+R2 交付件（任务过程真源，非能力件，与既有能力册零重叠；裁定#375 四判据=零触发零消费不适用，属过程档案须入库备复核）"
 di_seam_exemptions: []
