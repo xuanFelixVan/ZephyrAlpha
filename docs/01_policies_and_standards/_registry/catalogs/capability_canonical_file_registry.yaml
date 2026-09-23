@@ -46595,4 +46595,9 @@ creation_tokens:
   created_by: st-commitsys-20260924
   capability: commit_guide_generator
   merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/_working/disk_reorg_campaign/LEDGER_final.md
+  token: eight-pack-commander-ledger-ledger-final-20260923
+  created_by: st-backup-cold-20260924
+  capability: eight-pack-commander-ledger
+  merge_evaluation: "跨域不同对象→不并：八包各自监控台账为总指挥令 2026-09-24 指定落位路径，与战役过程台账 a1_ledger.md 分工（批注面 vs 过程真源），非同真源派生"
 di_seam_exemptions: []
