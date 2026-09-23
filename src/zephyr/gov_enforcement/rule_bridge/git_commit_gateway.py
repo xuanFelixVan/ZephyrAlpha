@@ -398,8 +398,13 @@ def _precommit_fast_subset_enabled() -> bool:
     return "PYTEST_CURRENT_TEST" not in os.environ
 
 
-# 网关通道 SKIP 的 pre-commit hook id（二者与网关通道存在结构性冲突，理由见 _run_precommit_channel docstring）
-_PRECOMMIT_CHANNEL_SKIP_HOOKS = "gate-commit-gw,gate-worktree-required"
+# 网关通道 SKIP 的 pre-commit hook id（三者与网关通道存在结构性冲突，理由见 _run_precommit_channel docstring）
+# gate-protected-paths 加入依据（2026-09-24 四死信实证 q-...-sweep-tail-0041/0050/0052/0053）：
+# 该 hook 为消息盲（pre-commit hook 层拿不到 commit message），而其豁免语义（[ARCH-APPROVAL]
+# 标记）恰定义在 message 上——同批被 Layer-1 PROTECTED-PATHS 门放行的已审批写入会被本 hook
+# 无差别再杀（0053 实测：env ZEPHYR_PROTECTED_PATHS_BYPASS=1 全链透传验证通过仍死）。
+# 防护不降级：Layer-1 in-process PROTECTED-PATHS 门（消息感知+审计）继续全量拦截无审批写入。
+_PRECOMMIT_CHANNEL_SKIP_HOOKS = "gate-commit-gw,gate-worktree-required,gate-protected-paths"
 _PRECOMMIT_EXIT_CODE_RE = re.compile(r"- exit code: (\d+)")
 
 
