@@ -46545,4 +46545,54 @@ creation_tokens:
   merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
   merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
   merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
+- file: docs/_working/commit_system_opt/03_gate_health_audit.md
+  token: commit-system-opt-03-gate-health-audit-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/_working/commit_system_opt/04_deadletter_cost_analysis.md
+  token: commit-system-opt-04-deadletter-cost-analysis-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/_working/commit_system_opt/05_staging_blackhand_forensics.md
+  token: commit-system-opt-05-staging-blackhand-forensics-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/_working/commit_system_opt/LEDGER.md
+  token: commit-system-opt-ledger-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/_working/flash_speedup/F5_registry_debt/LEDGER_flash_speedup_F5.md
+  token: commit-system-opt-ledger-flash-speedup-f5-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml
+  token: commit-guide-sources-death-cases-registry-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_sources
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml
+  token: commit-guide-sources-file-type-checklists-registry-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_sources
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
+  token: commit-guide-sources-gate-digest-registry-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_sources
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md
+  token: commit-navigation-guide-commit-navigation-playbook-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_navigation_guide
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: scripts/governance/generators/generate_commit_guide.py
+  token: commit-guide-generator-generate-commit-guide-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_generator
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
 di_seam_exemptions: []
