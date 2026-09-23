@@ -45052,7 +45052,6 @@ creation_tokens:
   created_by: st-ibt-remedy-b-20260923
   capability: ibt_batch_b_pit_repair
   merge_evaluation: "批B 预注册验收交付物（对照表冻结件），附 max_remediation_plan §2-批B 任务态 ttl=task_bound，批D 归档即退役，无第二真源"
-  merge_evaluation: "FOLDER-CAPACITY 121>120 共堵治理迁册（registry_family 子目录新建，registry 族 gate 专柜，非同域重复对象）"
 - file: "scripts/backtest/ibt/ibt_runner.py"
   token: "ibt-remedy-a-runner-20260923"
   created_by: "st-ibt-remedy-a-20260923"
@@ -46532,4 +46531,18 @@ creation_tokens:
   created_by: st-e2e-20260924
   capability: exam_cost_gate
   merge_evaluation: "内收判据：本 yaml 是 exam_cost_gate.py 的 ALGO_FLOW 外置真源（gate-algo-flow-marker P2-1 口径），替代原拟内联 docstring 的机器块，零新规则面"
+- file: src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py
+  token: registry-family-gates-registry-mass-deletion-gate-20260922
+  created_by: st-regfix-laneA-20260922
+  capability: registry_mass_deletion_gates
+  merge_evaluation: "FOLDER-CAPACITY 121>120 共堵治理迁册（registry_family 子目录新建，registry 族 gate 专柜，非同域重复对象）；2026-09-24 该迁册撤案，本条回指 flat 根路径"
+- file: src/zephyr/gov_enforcement/commit_gates/__init__.py
+  token: regfix-lane0b---init---20260923
+  created_by: st-regfix-lane0b-20260923
+  capability: regfix_lane0b
+  merge_evaluation: "子包__init__补齐（对齐library/结构），无同真源可派生项；2026-09-24 registry_family 迁册撤案，本条回指 flat commit_gates/__init__.py"
+  merge_evaluation: "W-M1施工总图v1.0（三设计合体+波次计划+Owner决策包B呈签件），无同真源可派生项"
+  merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
+  merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
+  merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
 di_seam_exemptions: []
