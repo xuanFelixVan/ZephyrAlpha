@@ -202,30 +202,22 @@ def _format_violations(violations: list[str]) -> tuple[bool, str]:
     )
 
 
-def make_blueprint_amodule_cross_check_gate() -> GateSpec:
-    """构造 [BLUEPRINT] vs [A_module] 交叉校验门禁 GateSpec（硬阻断型）。
-
-    Returns:
-        GateSpec(gate_id="BLUEPRINT-AMODULE-CROSS-CHECK", priority=119)。
-        priority=119——在 STASH-ACCUMULATION(118) 之后（117 被 ISSUE-RESOLVED-INTEGRITY 占用）。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = [f for f in _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CROSS-CHECK") if not is_test_exempt(f)]
-        if not py_files:
-            return True, ""
-
-        violations = _check_cross_consistency(gateway, py_files)
-        if violations:
-            logger.error(
-                "BLUEPRINT-AMODULE-CROSS-CHECK gate block: %d violation(s)",
-                len(violations),
-            )
-            return _format_violations(violations)
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    py_files = [f for f in _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CROSS-CHECK") if not is_test_exempt(f)]
+    if not py_files:
         return True, ""
 
-    return GateSpec(
-        gate_id="BLUEPRINT-AMODULE-CROSS-CHECK",
-        priority=119,
-        check=_check,
-    )
+    violations = _check_cross_consistency(gateway, py_files)
+    if violations:
+        logger.error(
+            "BLUEPRINT-AMODULE-CROSS-CHECK gate block: %d violation(s)",
+            len(violations),
+        )
+        return _format_violations(violations)
+    return True, ""
+
+
+def make_blueprint_amodule_cross_check_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 BLUEPRINT-HEADER，不再注册；保留供历史测试/引用兼容）。"""
+    return GateSpec(gate_id="BLUEPRINT-AMODULE-CROSS-CHECK", check=_check, priority=119)

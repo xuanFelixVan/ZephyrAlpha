@@ -16,7 +16,7 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-BATTLE-MAP-HARD-001
 # [CREATION-TOKEN] auto-battle-map-gate-20260905
-"""battle_map_alignment_gate.py — 作战地图对齐硬化门禁（GATE-BATTLE-MAP-ALIGNMENT，priority=833）
+"""battle_map_alignment_gate.py — 作战地图对齐硬化门禁（GATE-BATTLE-MAP-ALIGNMENT，priority=146）
 
 病根（第一性原理）
 -----------------
@@ -72,7 +72,7 @@ _TRIGGER_SUFFIXES: tuple[str, ...] = (
 _TRIGGER_DIR_PARTS = ("battle_map",)
 
 
-def evaluate_battle_map_report(report: Any) -> tuple[list[str], list[str]]:
+def evaluate_battle_map_report(report: object) -> tuple[list[str], list[str]]:
     """纯判定：report → (hard_list, soft_list)。
 
     硬=违规孤儿环节 / 缺失叙事（git 可见状态——修复面在 module_translation_registry.yaml /
@@ -113,52 +113,49 @@ def evaluate_battle_map_report(report: Any) -> tuple[list[str], list[str]]:
     return hard, soft
 
 
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    if not files:
+        return True, ""
+    norm = [f.replace("\\", "/") for f in files]
+    triggered = any(
+        any(f.endswith(sfx) for sfx in _TRIGGER_SUFFIXES) or _TRIGGER_DIR_PARTS[0] in f.split("/") for f in norm
+    )
+    if not triggered:
+        return True, ""
+
+    if str(_GOV_DIR) not in sys.path:
+        sys.path.insert(0, str(_GOV_DIR))
+    try:
+        from align_battle_map import run_alignment  # noqa: import-integrity  sys.path 动态加载
+    except Exception as e:  # noqa: BLE001 — 检测器不可达=fail-open（与 panorama gate 同惯例）
+        logger.error("GATE-BATTLE-MAP-ALIGNMENT: 检测器加载失败（fail-open）: %s", e)
+        return True, ""
+
+    try:
+        report = run_alignment(write_report=False)
+    except Exception as e:  # noqa: BLE001 — PG/检测异常=fail-open
+        logger.error("GATE-BATTLE-MAP-ALIGNMENT: run_alignment 异常（fail-open）: %s", e)
+        return True, ""
+
+    hard, soft = evaluate_battle_map_report(report)
+    if soft:
+        logger.info("GATE-BATTLE-MAP-ALIGNMENT: soft warn=%d（不阻断）", len(soft))
+    if not hard:
+        return True, ""
+
+    detail_lines = "\n".join(f"  - {x}" for x in hard)
+    detail = (
+        f"GATE-BATTLE-MAP-ALIGNMENT：作战地图对齐硬检查 {len(hard)} 类违规\n"
+        f"{detail_lines}\n"
+        "-> 幽灵锚点：apply_battle_map 清理 / 孤儿环节：挂锚点或登记 acknowledged "
+        "（battle_map_domain_policy.yaml）/ 缺失叙事：module_translation_registry.yaml "
+        "battle_map_steps 段补条目"
+    )
+    logger.error("GATE-BATTLE-MAP-ALIGNMENT block:\n%s", detail)
+    return False, detail
+
+
 def make_battle_map_alignment_gate() -> GateSpec:
-    """构造作战地图对齐硬化 GateSpec（G3：BM-INV-001/003 驱零后升硬）。
-
-    Returns:
-        GateSpec(gate_id="GATE-BATTLE-MAP-ALIGNMENT", priority=833)。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        if not files:
-            return True, ""
-        norm = [f.replace("\\", "/") for f in files]
-        triggered = any(
-            any(f.endswith(sfx) for sfx in _TRIGGER_SUFFIXES) or _TRIGGER_DIR_PARTS[0] in f.split("/") for f in norm
-        )
-        if not triggered:
-            return True, ""
-
-        if str(_GOV_DIR) not in sys.path:
-            sys.path.insert(0, str(_GOV_DIR))
-        try:
-            from align_battle_map import run_alignment  # noqa: import-integrity  sys.path 动态加载
-        except Exception as e:  # noqa: BLE001 — 检测器不可达=fail-open（与 panorama gate 同惯例）
-            logger.error("GATE-BATTLE-MAP-ALIGNMENT: 检测器加载失败（fail-open）: %s", e)
-            return True, ""
-
-        try:
-            report = run_alignment(write_report=False)
-        except Exception as e:  # noqa: BLE001 — PG/检测异常=fail-open
-            logger.error("GATE-BATTLE-MAP-ALIGNMENT: run_alignment 异常（fail-open）: %s", e)
-            return True, ""
-
-        hard, soft = evaluate_battle_map_report(report)
-        if soft:
-            logger.info("GATE-BATTLE-MAP-ALIGNMENT: soft warn=%d（不阻断）", len(soft))
-        if not hard:
-            return True, ""
-
-        detail_lines = "\n".join(f"  - {x}" for x in hard)
-        detail = (
-            f"GATE-BATTLE-MAP-ALIGNMENT：作战地图对齐硬检查 {len(hard)} 类违规\n"
-            f"{detail_lines}\n"
-            "-> 幽灵锚点：apply_battle_map 清理 / 孤儿环节：挂锚点或登记 acknowledged "
-            "（battle_map_domain_policy.yaml）/ 缺失叙事：module_translation_registry.yaml "
-            "battle_map_steps 段补条目"
-        )
-        logger.error("GATE-BATTLE-MAP-ALIGNMENT block:\n%s", detail)
-        return False, detail
-
-    return GateSpec(gate_id="GATE-BATTLE-MAP-ALIGNMENT", check=_check, priority=833)
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 MAP-ALIGNMENT，不再注册；保留供历史测试/引用兼容）。"""
+    return GateSpec(gate_id="GATE-BATTLE-MAP-ALIGNMENT", check=_check, priority=146)

@@ -16,7 +16,7 @@
 
 # [INVARIANTS] 硬阻断——staged .py added 行含 [A_module] module_id 头部时，module_id 不得匹配 _MALFORMATION_RE（层码后下划线+小写）；tests/豁免；docstring 行豁免；git diff 不可达 fail-open；检出违规则 fail-closed 阻断
 
-# [MODIFY-GUARD] gate_id="BLUEPRINT-AMODULE-CONSISTENCY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；diff-based 只检测 added 行
+# [MODIFY-GUARD] gate_id="BLUEPRINT-HEADER"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；diff-based 只检测 added 行
 
 # [STABILITY] stable
 
@@ -188,6 +188,17 @@ def _format_amodule_violations(violations: list[str]) -> tuple[bool, str]:
     )
 
 
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """BLUEPRINT-AMODULE-CONSISTENCY 判定体（模块级——make_blueprint_header_gate 聚合器同调；磁盘垫片，gslim 在飞修复落地即覆盖）。"""
+    py_files = [f for f in _get_staged_py_files(gateway, "BLUEPRINT-AMODULE-CONSISTENCY") if not is_test_exempt(f)]
+    if not py_files:
+        return True, ""
+    violations = _check_amodule_format(gateway, py_files)
+    if violations:
+        return _format_amodule_violations(violations)
+    return True, ""
+
+
 def make_blueprint_amodule_consistency_gate() -> GateSpec:
     """构造 [A_module] 格式一致性门禁 GateSpec（硬阻断型）。
 
@@ -212,7 +223,7 @@ def make_blueprint_amodule_consistency_gate() -> GateSpec:
 
         if violations:
             logger.error(
-                "BLUEPRINT-AMODULE-CONSISTENCY gate block: %d violation(s)",
+                "BLUEPRINT-HEADER gate block: %d violation(s)",
                 len(violations),
             )
 
@@ -225,3 +236,35 @@ def make_blueprint_amodule_consistency_gate() -> GateSpec:
         check=_check,
         priority=79,
     )
+
+
+def make_blueprint_header_gate() -> GateSpec:
+    """构造 BLUEPRINT-HEADER 聚合门禁（st-gslim-20260923 P4 合并，gate_audit_report_v1 §C2/Owner E 全批）。
+
+    聚合子检查（各自独立判定，违规聚合呈现带 [源台名] 前缀，任一失败即阻断）：
+    - BLUEPRINT-HEADER（本文件 _check_impl）
+    - BLUEPRINT-AMODULE-CROSS-CHECK（blueprint_amodule_cross_check_gate._check_impl）
+    """
+    def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        failures: list[str] = []
+        subs = [
+            ("BLUEPRINT-AMODULE-CONSISTENCY", None, "_check"),
+            ("BLUEPRINT-AMODULE-CROSS-CHECK", "blueprint_amodule_cross_check_gate", "_check"),
+        ]
+        for sgid, mod, impl_name in subs:
+            try:
+                if mod is None:
+                    fn = globals()["_check"]  # globals 解析=取模块级本件判定体，避免绑定聚合器自身闭包（递归爆栈修）
+                else:
+                    import importlib  # noqa: PLC0415
+                    fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
+            except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
+                failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
+                continue
+            ok, detail = fn(gateway, files, **kwargs)
+            if not ok:
+                failures.append(f"[{sgid}] " + detail)
+        if failures:
+            return False, "\n".join(failures)
+        return True, ""
+    return GateSpec(gate_id="BLUEPRINT-HEADER", check=_union_check, priority=79)

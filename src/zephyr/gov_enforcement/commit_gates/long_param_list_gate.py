@@ -64,6 +64,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_staged_py_files,
     _make_noqa_pattern,
     _read_staged_file,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -95,44 +96,44 @@ def _count_params(node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
     return posonly + len(regular) + kwonly + vararg + kwarg
 
 
-def make_long_param_list_gate() -> GateSpec:
-    """构造长参数列表阻断 GateSpec（硬阻断型）。
-
-    Returns:
-        GateSpec(gate_id="NO-LONG-PARAM-LIST", priority=95)。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = [f for f in _get_staged_py_files(gateway, "NO-LONG-PARAM-LIST") if not is_test_exempt(f)]
-        violations: list[str] = []
-        for py_file in py_files:
-            file_content = _read_staged_file(gateway, py_file)
-            if not file_content:
-                continue
-            added_lines = {ln for ln, _ in _get_added_lines(gateway, py_file, "NO-LONG-PARAM-LIST")}
-            if not added_lines:
-                continue
-            noqa_lines = _extract_noqa_lines(file_content, _NOQA_PATTERN)
-            try:
-                tree = ast.parse(file_content, filename=py_file)
-            except SyntaxError:
-                continue
-            for node in ast.walk(tree):
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.lineno in added_lines:
-                    if node.lineno in noqa_lines:
-                        continue  # 行级豁免（存量签名契约绑定，标记+理由已登记校验）
-                    count = _count_params(node)
-                    if count > _MAX_PARAMS:
-                        violations.append(f"  {py_file}:{node.lineno}: {node.name}({count} params > {_MAX_PARAMS})")
-        if violations:
-            detail = (
-                "NO-LONG-PARAM-LIST：检测到长参数列表（>7参数），\n"
-                "  违反 §5.150 Long Parameter List 反模式。\n"
-                + "\n".join(violations)
-                + "\n-> 考虑引入参数对象/Builder模式/dataclass 封装参数"
-            )
-            logger.error("NO-LONG-PARAM-LIST gate block:\n%s", detail)
-            return False, detail
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    py_files = [f for f in _get_staged_py_files(gateway, "NO-LONG-PARAM-LIST") if not is_test_exempt(f)]
+    py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="NO-LONG-PARAM-LIST")[0]
+    if not py_files:
         return True, ""
+    violations: list[str] = []
+    for py_file in py_files:
+        file_content = _read_staged_file(gateway, py_file)
+        if not file_content:
+            continue
+        added_lines = {ln for ln, _ in _get_added_lines(gateway, py_file, "NO-LONG-PARAM-LIST")}
+        if not added_lines:
+            continue
+        noqa_lines = _extract_noqa_lines(file_content, _NOQA_PATTERN)
+        try:
+            tree = ast.parse(file_content, filename=py_file)
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.lineno in added_lines:
+                if node.lineno in noqa_lines:
+                    continue  # 行级豁免（存量签名契约绑定，标记+理由已登记校验）
+                count = _count_params(node)
+                if count > _MAX_PARAMS:
+                    violations.append(f"  {py_file}:{node.lineno}: {node.name}({count} params > {_MAX_PARAMS})")
+    if violations:
+        detail = (
+            "NO-LONG-PARAM-LIST：检测到长参数列表（>7参数），\n"
+            "  违反 §5.150 Long Parameter List 反模式。\n"
+            + "\n".join(violations)
+            + "\n-> 考虑引入参数对象/Builder模式/dataclass 封装参数"
+        )
+        logger.error("NO-LONG-PARAM-LIST gate block:\n%s", detail)
+        return False, detail
+    return True, ""
 
+
+def make_long_param_list_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 COMPLEXITY-GUARD，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="NO-LONG-PARAM-LIST", check=_check, priority=95)

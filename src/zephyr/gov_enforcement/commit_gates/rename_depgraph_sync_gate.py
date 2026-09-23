@@ -170,70 +170,65 @@ def _format_violation_detail(missing: list[tuple[str, str]]) -> str:
     return f"{pairs}{suffix}"
 
 
-def make_rename_depgraph_sync_gate() -> GateSpec:
-    """构造文件重命名 depgraph 同步阻断门禁 GateSpec（硬阻断型）。
-
-    Returns:
-        GateSpec(gate_id="RENAME-DEPGRAPH-SYNC", priority=39)。
-        priority=39——在 CH-VERSION-COL(38) 之后、CLAIM-REQUIRED(40) 之前
-        （结构性检查应尽早拦截；原 36 与 CH-BATCH-SIZE 冲突，迁移到空闲 39）。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 重命名 .py 文件（None 表示 fail-open 检测器失效）
-        renames = _get_staged_renamed_py_files(gateway)
-        if not renames:
-            return True, ""
-        # own 化（st-gslim-20260923 P2）：只查本 session 重命名（新旧路径任一归属即算自家），外来 warn+审计不阻断
-        own_renames = _split_own_foreign(gateway, [n for _, n in renames], files, kwargs.get("session_id"), gate_name="RENAME-DEPGRAPH-SYNC")[0]
-        own_new = set(own_renames)
-        renames = [(o, n) for o, n in renames if n in own_new]
-        if not renames:
-            return True, ""
-
-        # 2. 逐个查询 depgraph 是否已记录新路径
-        missing: list[tuple[str, str]] = []
-        degraded: list[tuple[str, str]] = []  # DB 查询失败被降级放行的重命名（#116 B1 留痕）
-        for old_path, new_path in renames:
-            result = _check_depgraph_has_file(new_path)
-            if result is None:
-                # DB 查询失败 → fail-open（不阻断此文件）
-                degraded.append((old_path, new_path))
-                continue
-            if not result:
-                missing.append((old_path, new_path))
-
-        # 2b. tracker #116 B1（#ARCH-119）：fail-open 放行统一接 log_gate_failure
-        # 持久化（critical_warn，下次 commit 网关 banner 浮现）；探针状态区分
-        # 「DB 离线降级」（当日同签名去重）vs「真实错误」（逐次留痕不静默）。
-        # 放行语义不变——只加留痕。
-        if degraded:
-            from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
-                log_db_failopen,
-                pg_probe_shows_offline,
-            )
-
-            _offline = pg_probe_shows_offline(gateway.project_root)
-            log_db_failopen(
-                gateway.project_root,
-                "RENAME-DEPGRAPH-SYNC",
-                db_offline=_offline,
-                reason=(
-                    "depgraph 查询失败，重命名同步状态无法验证，降级放行"
-                    + ("（探针证实 PG 离线）" if _offline else "（探针未证实离线——真实连接错误）")
-                ),
-                affected_files=[f"{o} -> {n}" for o, n in degraded],
-                session_id=kwargs.get("session_id", ""),
-            )
-
-        # 3. 有未同步的重命名 → 阻断
-        if missing:
-            detail = _format_violation_detail(missing)
-            return False, (
-                f"RENAME-DEPGRAPH-SYNC: {len(missing)} 个 .py 文件重命名后 depgraph 未同步。"
-                f"先运行 'python scripts/governance/generate_project_depgraph.py --output-db depgraph --force' "
-                f"重建 depgraph，再提交。详情: {detail}"
-            )
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    # 1. 获取 staged 重命名 .py 文件（None 表示 fail-open 检测器失效）
+    renames = _get_staged_renamed_py_files(gateway)
+    if not renames:
+        return True, ""
+    # own 化（st-gslim-20260923 P2）：只查本 session 重命名（新旧路径任一归属即算自家），外来 warn+审计不阻断
+    own_renames = _split_own_foreign(gateway, [n for _, n in renames], files, kwargs.get("session_id"), gate_name="RENAME-DEPGRAPH-SYNC")[0]
+    own_new = set(own_renames)
+    renames = [(o, n) for o, n in renames if n in own_new]
+    if not renames:
         return True, ""
 
+    # 2. 逐个查询 depgraph 是否已记录新路径
+    missing: list[tuple[str, str]] = []
+    degraded: list[tuple[str, str]] = []  # DB 查询失败被降级放行的重命名（#116 B1 留痕）
+    for old_path, new_path in renames:
+        result = _check_depgraph_has_file(new_path)
+        if result is None:
+            # DB 查询失败 → fail-open（不阻断此文件）
+            degraded.append((old_path, new_path))
+            continue
+        if not result:
+            missing.append((old_path, new_path))
+
+    # 2b. tracker #116 B1（#ARCH-119）：fail-open 放行统一接 log_gate_failure
+    # 持久化（critical_warn，下次 commit 网关 banner 浮现）；探针状态区分
+    # 「DB 离线降级」（当日同签名去重）vs「真实错误」（逐次留痕不静默）。
+    # 放行语义不变——只加留痕。
+    if degraded:
+        from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
+            log_db_failopen,
+            pg_probe_shows_offline,
+        )
+
+        _offline = pg_probe_shows_offline(gateway.project_root)
+        log_db_failopen(
+            gateway.project_root,
+            "RENAME-DEPGRAPH-SYNC",
+            db_offline=_offline,
+            reason=(
+                "depgraph 查询失败，重命名同步状态无法验证，降级放行"
+                + ("（探针证实 PG 离线）" if _offline else "（探针未证实离线——真实连接错误）")
+            ),
+            affected_files=[f"{o} -> {n}" for o, n in degraded],
+            session_id=kwargs.get("session_id", ""),
+        )
+
+    # 3. 有未同步的重命名 → 阻断
+    if missing:
+        detail = _format_violation_detail(missing)
+        return False, (
+            f"RENAME-DEPGRAPH-SYNC: {len(missing)} 个 .py 文件重命名后 depgraph 未同步。"
+            f"先运行 'python scripts/governance/generate_project_depgraph.py --output-db depgraph --force' "
+            f"重建 depgraph，再提交。详情: {detail}"
+        )
+    return True, ""
+
+
+def make_rename_depgraph_sync_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 DEPGRAPH-ENFORCEMENT，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="RENAME-DEPGRAPH-SYNC", check=_check, priority=39)

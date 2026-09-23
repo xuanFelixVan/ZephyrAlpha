@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged src/zephyr/**/*.py 文件含 [TTL]=permanent 且 depgraph build_status=planned 且文件实质行数 > _IMPL_THRESHOLD(50) 时阻断 commit（planned 表示"计划但未做"，但代码已 >50 行，应转 production）；tests/ 豁免；DB 不可达 fail-open；git diff 不可达 fail-open；检出违规则 fail-closed（passed=False）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
-# [MODIFY-GUARD] gate_id="DEPGRAPH-PRE-REGISTRATION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [MODIFY-GUARD] gate_id="DEPGRAPH-ENFORCEMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -147,7 +147,7 @@ def _get_staged_py_files(gateway) -> list[str] | None:
         diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
-                "DEPGRAPH-PRE-REGISTRATION gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                "DEPGRAPH-ENFORCEMENT gate fail-open: git diff 失败(rc=%d)，检测器失效。",
                 diff_result.returncode,
             )
             return None
@@ -166,7 +166,7 @@ def _get_staged_py_files(gateway) -> list[str] | None:
         return result
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning(
-            "DEPGRAPH-PRE-REGISTRATION gate fail-open: git diff 异常(%s: %s)，检测器失效。",
+            "DEPGRAPH-ENFORCEMENT gate fail-open: git diff 异常(%s: %s)，检测器失效。",
             type(e).__name__,
             e,
             exc_info=True,
@@ -194,7 +194,7 @@ def _query_build_status(file_path: str) -> str | None:
             conn.close()
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning(
-            "DEPGRAPH-PRE-REGISTRATION gate fail-open: depgraph 查询失败(%s: %s)。",
+            "DEPGRAPH-ENFORCEMENT gate fail-open: depgraph 查询失败(%s: %s)。",
             type(e).__name__,
             e,
             exc_info=True,
@@ -288,36 +288,33 @@ def _scan_violations(gateway, py_files: list[str], session_id: str = "") -> list
     return violations
 
 
-def make_depgraph_pre_registration_gate() -> GateSpec:
-    """构造 depgraph planned→production 流转强制 GateSpec（硬阻断型）。
-
-    Returns:
-        GateSpec(gate_id="DEPGRAPH-PRE-REGISTRATION", priority=113)。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = _get_staged_py_files(gateway)
-        if not py_files:
-            return True, ""
-        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
-        py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="DEPGRAPH-PRE-REGISTRATION")[0]
-        if not py_files:
-            return True, ""
-
-        violations = _scan_violations(gateway, py_files, session_id=kwargs.get("session_id", ""))
-
-        if violations:
-            detail = (
-                "DEPGRAPH-PRE-REGISTRATION：检测到 depgraph 状态滞后，\n"
-                "  违反 L1 铁律'施工完成转 production'（#ARCH-DEP-PREMERGE-ENFORCE）。\n"
-                + "\n".join(violations)
-                + "\n-> 运行 apply_depgraph.py --transition-build-status <node_id> production"
-            )
-            logger.error("DEPGRAPH-PRE-REGISTRATION gate block:\n%s", detail)
-            return False, detail
-
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    py_files = _get_staged_py_files(gateway)
+    if not py_files:
+        return True, ""
+    # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+    py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="DEPGRAPH-PRE-REGISTRATION")[0]
+    if not py_files:
         return True, ""
 
+    violations = _scan_violations(gateway, py_files, session_id=kwargs.get("session_id", ""))
+
+    if violations:
+        detail = (
+            "DEPGRAPH-PRE-REGISTRATION：检测到 depgraph 状态滞后，\n"
+            "  违反 L1 铁律'施工完成转 production'（#ARCH-DEP-PREMERGE-ENFORCE）。\n"
+            + "\n".join(violations)
+            + "\n-> 运行 apply_depgraph.py --transition-build-status <node_id> production"
+        )
+        logger.error("DEPGRAPH-ENFORCEMENT gate block:\n%s", detail)
+        return False, detail
+
+    return True, ""
+
+
+def make_depgraph_pre_registration_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 DEPGRAPH-ENFORCEMENT，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="DEPGRAPH-PRE-REGISTRATION", check=_check, priority=113)
 
 
@@ -337,3 +334,39 @@ def extract_ttl(file_path) -> str | None:
 def count_impl_lines(file_path) -> int:
     """公共接口：count_impl_lines（Stage 4 公共化）。"""
     return _count_impl_lines(file_path)
+
+
+def make_depgraph_enforcement_gate() -> GateSpec:
+    """构造 DEPGRAPH-ENFORCEMENT 聚合门禁（st-gslim-20260923 P4 合并，gate_audit_report_v1 §C2/Owner E 全批）。
+
+    聚合子检查（各自独立判定，违规聚合呈现带 [源台名] 前缀，任一失败即阻断）：
+    - DEPGRAPH-ENFORCEMENT（本文件 _check_impl）
+    - NEW-FILE-DEPGRAPH-ENFORCEMENT（new_file_depgraph_gate._check_impl）
+    - RENAME-DEPGRAPH-SYNC（rename_depgraph_sync_gate._check_impl）
+    - DEPGRAPH-WRITE-PATH（depgraph_write_path_gate._check_impl）
+    """
+    def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        failures: list[str] = []
+        subs = [
+            ("DEPGRAPH-PRE-REGISTRATION", None, "_check"),
+            ("NEW-FILE-DEPGRAPH-ENFORCEMENT", "new_file_depgraph_gate", "_check"),
+            ("RENAME-DEPGRAPH-SYNC", "rename_depgraph_sync_gate", "_check"),
+            ("DEPGRAPH-WRITE-PATH", "depgraph_write_path_gate", "_check"),
+        ]
+        for sgid, mod, impl_name in subs:
+            try:
+                if mod is None:
+                    fn = _check
+                else:
+                    import importlib  # noqa: PLC0415
+                    fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
+            except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
+                failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
+                continue
+            ok, detail = fn(gateway, files, **kwargs)
+            if not ok:
+                failures.append(f"[{sgid}] " + detail)
+        if failures:
+            return False, "\n".join(failures)
+        return True, ""
+    return GateSpec(gate_id="DEPGRAPH-ENFORCEMENT", check=_union_check, priority=113)

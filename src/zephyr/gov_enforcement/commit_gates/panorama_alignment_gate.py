@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 五图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）+ 持久化 critical_warn 到 reconcile_execution_log（Ruling:100PCT-AI-GOVERNANCE P1-5）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）；own 化 2026-09-23(st-gslim P2)：扫描范围=全暂存∩本 session，外来 staged warn+审计不阻断(_split_own_foreign)
-# [MODIFY-GUARD] gate_id="GATE-PANORAMA-ALIGNMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；domain_mismatches 阻断阈值=0（任何不一致即阻断）
+# [MODIFY-GUARD] gate_id="MAP-ALIGNMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；domain_mismatches 阻断阈值=0（任何不一致即阻断）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -96,188 +96,224 @@ def _should_trigger(staged_files: list[str]) -> bool:
     return False
 
 
-def make_panorama_alignment_gate() -> GateSpec:
-    """构造三图模块对齐 warn-only 门禁 GateSpec。
-
-    Returns:
-        GateSpec(gate_id="GATE-PANORAMA-ALIGNMENT", priority=830)。
-        priority=830——在 GATE-MODULE-INVENTORY-SYNC 之后执行。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # P0-3 (2026-07-20): 调用前校验 cwd（wt_path）存在性，防 worktree 被 sweep 后 NotADirectoryError
-        # 根因: session_worktree_merge 期间 worktree_lifecycle_reconciler 并发 sweep 删除 wt_path,
-        #       导致 gateway.run_git(cwd=wt_path) 抛 NotADirectoryError (P1-2 跨进程 lockfile 治本).
-        # fail-open + log_gate_failure 持久化（不阻断 commit，但失败可见可追踪）.
-        cwd_to_check = str(gateway.project_root)
-        if not os.path.isdir(cwd_to_check):
-            detail = (
-                f"git diff cwd 不存在({cwd_to_check})，可能 worktree 被 sweep。"
-                f"根因: session_worktree_merge 与 worktree_lifecycle_reconciler 缺跨进程互斥 (P1-2 待治本)"
-            )
-            logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail)
-            try:
-                log_gate_failure(
-                    gateway.project_root,
-                    "GATE-PANORAMA-ALIGNMENT",
-                    detail,
-                    session_id=kwargs.get("session_id", ""),
-                )
-            except Exception:  # noqa: BLE001 — log 失败不阻断 gate
-                pass
-            return True, ""
-        # 1. 获取 staged 文件清单
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    # P0-3 (2026-07-20): 调用前校验 cwd（wt_path）存在性，防 worktree 被 sweep 后 NotADirectoryError
+    # 根因: session_worktree_merge 期间 worktree_lifecycle_reconciler 并发 sweep 删除 wt_path,
+    #       导致 gateway.run_git(cwd=wt_path) 抛 NotADirectoryError (P1-2 跨进程 lockfile 治本).
+    # fail-open + log_gate_failure 持久化（不阻断 commit，但失败可见可追踪）.
+    cwd_to_check = str(gateway.project_root)
+    if not os.path.isdir(cwd_to_check):
+        detail = (
+            f"git diff cwd 不存在({cwd_to_check})，可能 worktree 被 sweep。"
+            f"根因: session_worktree_merge 与 worktree_lifecycle_reconciler 缺跨进程互斥 (P1-2 待治本)"
+        )
+        logger.error("MAP-ALIGNMENT gate fail-open: %s", detail)
         try:
-            diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only"])
-            if diff_result.returncode != 0:
-                # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
-                detail = f"git diff 失败(rc={diff_result.returncode})，检测器失效"
-                logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail)
-                log_gate_failure(
-                    gateway.project_root,
-                    "GATE-PANORAMA-ALIGNMENT",
-                    detail,
-                    session_id=kwargs.get("session_id", ""),
-                )
-                return True, ""
-            staged_files = diff_result.stdout.strip().splitlines()
-            # own 化（st-gslim-20260923 P2）：只对齐本 session staged，外来 warn+审计不阻断
-            staged_files = _split_own_foreign(gateway, staged_files, files, kwargs.get("session_id"), gate_name="GATE-PANORAMA-ALIGNMENT")[0]
-            if not staged_files:
-                return True, ""
-        except (NotADirectoryError, FileNotFoundError) as e:
-            # #ARCH-PANORAMA-TOCTOU-001（2026-07-22）：P0-3 isdir 检查与 _run_git 之间的
-            # TOCTOU 竞态——worktree 在 isdir 通过后被 worktree_lifecycle_reconciler sweep。
-            # 特定 handler 给出明确诊断（"worktree 被 sweep"），而非泛化 "git diff 异常"。
-            # fail-open 不变（gate 永不阻断 commit）。
-            detail = (
-                f"git diff cwd 被 sweep({type(e).__name__}: {e})——"
-                f"worktree 在 isdir 检查后被 worktree_lifecycle_reconciler 并发删除（TOCTOU 竞态）。"
-                f"根因: session_worktree_merge 与 worktree_lifecycle_reconciler 缺跨进程互斥 (P1-2)"
-            )
-            logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail)
-            try:
-                log_gate_failure(
-                    gateway.project_root,
-                    "GATE-PANORAMA-ALIGNMENT",
-                    detail,
-                    session_id=kwargs.get("session_id", ""),
-                )
-            except Exception:  # noqa: BLE001 — log 失败不阻断 gate
-                pass
-            return True, ""
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
-            # P1-3 (2026-07-20): 持久化 stack_trace 提升诊断能力
-            detail = f"git diff 异常({type(e).__name__}: {e})，检测器失效"
-            logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
             log_gate_failure(
                 gateway.project_root,
                 "GATE-PANORAMA-ALIGNMENT",
                 detail,
                 session_id=kwargs.get("session_id", ""),
-                stack_trace=traceback.format_exc(),
             )
-            return True, ""
-
-        # 2. 判断是否触发检测
-        if not _should_trigger(staged_files):
-            return True, ""  # 不涉及三图变更，跳过
-
-        # 3. 调用 align_panoramas.run_alignment()
-        #    动态导入避免模块加载时硬依赖 scripts/ 路径
-        try:
-            # scripts/governance/d5_architecture/generators/ 需要在 sys.path 中
-            scripts_root = os.path.join(str(gateway.project_root), "scripts")
-            if scripts_root not in sys.path:
-                sys.path.insert(0, scripts_root)
-
-            from governance.d5_architecture.generators.align_panoramas import (  # noqa: import-integrity  scripts_root 依赖运行时 gateway.project_root，静态不可解析
-                PanoramaEmptyError,
-                run_alignment,
-            )
-
-            # 不写报告文件（门禁场景只需检测结果，不污染 docs/）
-            report = run_alignment(write_report=False)
-        except PanoramaEmptyError as e:
-            # 三图任一为空——跳过检测（可能是初始化阶段）
-            logger.info(
-                "GATE-PANORAMA-ALIGNMENT skip: 三图任一为空(%s)，跳过对齐检测。",
-                str(e),
-            )
-            return True, ""
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        except Exception:  # noqa: BLE001 — log 失败不阻断 gate
+            pass
+        return True, ""
+    # 1. 获取 staged 文件清单
+    try:
+        diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only"])
+        if diff_result.returncode != 0:
             # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
-            # ——检测器失效时持久化到 reconcile_execution_log，下次 commit 横幅告警
-            # P1-3 (2026-07-20): 持久化 stack_trace 提升诊断能力
-            detail = f"run_alignment 异常({type(e).__name__}: {e})，检测器失效"
-            logger.error("GATE-PANORAMA-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
+            detail = f"git diff 失败(rc={diff_result.returncode})，检测器失效"
+            logger.error("MAP-ALIGNMENT gate fail-open: %s", detail)
             log_gate_failure(
                 gateway.project_root,
                 "GATE-PANORAMA-ALIGNMENT",
                 detail,
                 session_id=kwargs.get("session_id", ""),
-                stack_trace=traceback.format_exc(),
             )
             return True, ""
-
-        # 4. 检查阈值并告警
-        orphan_count = len(report.orphans)
-        drift_count = len(report.state_drifts)
-        domain_mismatch_count = len(report.domain_mismatches)
-        design_only_count = len(report.design_only_in_one)
-
-        # 4a. 核心字段 domain_id 不一致 → 阻断 commit（ARCH-056 升级）
-        #     ARCH-056 五图升级：只阻断三图（depgraph/dataflow/decision）内部的不一致；
-        #     blueprint 图的域不一致只 warn（blueprint 是 depgraph 的派生数据，
-        #     其不一致是同步延迟问题，需通过 sync_panorama_module.py 渐进修复）。
-        #     判定：三图内部不一致 = 三图中存在 ≥2 个不同的非空 domain；
-        #     blueprint-only = 三图 domain 一致，仅 blueprint 不同。
-        def _is_three_graph_internal(m: dict) -> bool:
-            three_graph_domains = {
-                v for v in (m.get("depgraph", "-"), m.get("dataflow", "-"), m.get("decision", "-")) if v != "-"
-            }
-            return len(three_graph_domains) > 1
-
-        strict_mismatches = [m for m in report.domain_mismatches if _is_three_graph_internal(m)]
-        if len(strict_mismatches) > 0:
-            detail = (
-                f"核心字段 domain_id 不一致（三图内部）：{len(strict_mismatches)} 处，"
-                f"请运行 `python scripts/governance/sync_panorama_module.py --all` "
-                f"对齐全景后重试"
-            )
-            logger.error(
-                "GATE-PANORAMA-ALIGNMENT BLOCK: %s (orphans=%d, drifts=%d, design_only=%d, blueprint_mismatches=%d)",
+        staged_files = diff_result.stdout.strip().splitlines()
+        # own 化（st-gslim-20260923 P2）：只对齐本 session staged，外来 warn+审计不阻断
+        staged_files = _split_own_foreign(gateway, staged_files, files, kwargs.get("session_id"), gate_name="GATE-PANORAMA-ALIGNMENT")[0]
+        if not staged_files:
+            return True, ""
+    except (NotADirectoryError, FileNotFoundError) as e:
+        # #ARCH-PANORAMA-TOCTOU-001（2026-07-22）：P0-3 isdir 检查与 _run_git 之间的
+        # TOCTOU 竞态——worktree 在 isdir 通过后被 worktree_lifecycle_reconciler sweep。
+        # 特定 handler 给出明确诊断（"worktree 被 sweep"），而非泛化 "git diff 异常"。
+        # fail-open 不变（gate 永不阻断 commit）。
+        detail = (
+            f"git diff cwd 被 sweep({type(e).__name__}: {e})——"
+            f"worktree 在 isdir 检查后被 worktree_lifecycle_reconciler 并发删除（TOCTOU 竞态）。"
+            f"根因: session_worktree_merge 与 worktree_lifecycle_reconciler 缺跨进程互斥 (P1-2)"
+        )
+        logger.error("MAP-ALIGNMENT gate fail-open: %s", detail)
+        try:
+            log_gate_failure(
+                gateway.project_root,
+                "GATE-PANORAMA-ALIGNMENT",
                 detail,
-                orphan_count,
-                drift_count,
-                design_only_count,
-                domain_mismatch_count - len(strict_mismatches),
+                session_id=kwargs.get("session_id", ""),
             )
-            return False, detail
-
-        # 4b. orphans / state_drifts / blueprint-only domain_mismatches 保持 warn-only
-        warnings: list[str] = []
-        if orphan_count > _ORPHAN_WARN_THRESHOLD:
-            warnings.append(f"孤儿数 {orphan_count} > 阈值 {_ORPHAN_WARN_THRESHOLD}")
-        if drift_count > _STATE_DRIFT_WARN_THRESHOLD:
-            warnings.append(f"状态漂移 {drift_count} > 阈值 {_STATE_DRIFT_WARN_THRESHOLD}")
-        blueprint_only_mismatches = domain_mismatch_count - len(strict_mismatches)
-        if blueprint_only_mismatches > 0:
-            warnings.append(
-                f"blueprint 域不一致 {blueprint_only_mismatches} 处（warn-only，"
-                f"运行 sync_panorama_module.py --all 对齐）"
-            )
-
-        if warnings:
-            warn_msg = " | ".join(warnings)
-            logger.warning(
-                "GATE-PANORAMA-ALIGNMENT gate warn-only: %s (设计态孤立=%d)",
-                warn_msg,
-                design_only_count,
-            )
-
-        # domain_mismatches=0 + warn-only → 通过
+        except Exception:  # noqa: BLE001 — log 失败不阻断 gate
+            pass
+        return True, ""
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
+        # P1-3 (2026-07-20): 持久化 stack_trace 提升诊断能力
+        detail = f"git diff 异常({type(e).__name__}: {e})，检测器失效"
+        logger.error("MAP-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
+        log_gate_failure(
+            gateway.project_root,
+            "GATE-PANORAMA-ALIGNMENT",
+            detail,
+            session_id=kwargs.get("session_id", ""),
+            stack_trace=traceback.format_exc(),
+        )
         return True, ""
 
+    # 2. 判断是否触发检测
+    if not _should_trigger(staged_files):
+        return True, ""  # 不涉及三图变更，跳过
+
+    # 3. 调用 align_panoramas.run_alignment()
+    #    动态导入避免模块加载时硬依赖 scripts/ 路径
+    try:
+        # scripts/governance/d5_architecture/generators/ 需要在 sys.path 中
+        scripts_root = os.path.join(str(gateway.project_root), "scripts")
+        if scripts_root not in sys.path:
+            sys.path.insert(0, scripts_root)
+
+        from governance.d5_architecture.generators.align_panoramas import (  # noqa: import-integrity  scripts_root 依赖运行时 gateway.project_root，静态不可解析
+            PanoramaEmptyError,
+            run_alignment,
+        )
+
+        # 不写报告文件（门禁场景只需检测结果，不污染 docs/）
+        report = run_alignment(write_report=False)
+    except PanoramaEmptyError as e:
+        # 三图任一为空——跳过检测（可能是初始化阶段）
+        logger.info(
+            "GATE-PANORAMA-ALIGNMENT skip: 三图任一为空(%s)，跳过对齐检测。",
+            str(e),
+        )
+        return True, ""
+    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+        # Ruling:100PCT-AI-GOVERNANCE P1-5: fail-open 持久化（不再 silent）
+        # ——检测器失效时持久化到 reconcile_execution_log，下次 commit 横幅告警
+        # P1-3 (2026-07-20): 持久化 stack_trace 提升诊断能力
+        detail = f"run_alignment 异常({type(e).__name__}: {e})，检测器失效"
+        logger.error("MAP-ALIGNMENT gate fail-open: %s", detail, exc_info=True)
+        log_gate_failure(
+            gateway.project_root,
+            "GATE-PANORAMA-ALIGNMENT",
+            detail,
+            session_id=kwargs.get("session_id", ""),
+            stack_trace=traceback.format_exc(),
+        )
+        return True, ""
+
+    # 4. 检查阈值并告警
+    orphan_count = len(report.orphans)
+    drift_count = len(report.state_drifts)
+    domain_mismatch_count = len(report.domain_mismatches)
+    design_only_count = len(report.design_only_in_one)
+
+    # 4a. 核心字段 domain_id 不一致 → 阻断 commit（ARCH-056 升级）
+    #     ARCH-056 五图升级：只阻断三图（depgraph/dataflow/decision）内部的不一致；
+    #     blueprint 图的域不一致只 warn（blueprint 是 depgraph 的派生数据，
+    #     其不一致是同步延迟问题，需通过 sync_panorama_module.py 渐进修复）。
+    #     判定：三图内部不一致 = 三图中存在 ≥2 个不同的非空 domain；
+    #     blueprint-only = 三图 domain 一致，仅 blueprint 不同。
+    def _is_three_graph_internal(m: dict) -> bool:
+        three_graph_domains = {
+            v for v in (m.get("depgraph", "-"), m.get("dataflow", "-"), m.get("decision", "-")) if v != "-"
+        }
+        return len(three_graph_domains) > 1
+
+    strict_mismatches = [m for m in report.domain_mismatches if _is_three_graph_internal(m)]
+    if len(strict_mismatches) > 0:
+        detail = (
+            f"核心字段 domain_id 不一致（三图内部）：{len(strict_mismatches)} 处，"
+            f"请运行 `python scripts/governance/sync_panorama_module.py --all` "
+            f"对齐全景后重试"
+        )
+        logger.error(
+            "GATE-PANORAMA-ALIGNMENT BLOCK: %s (orphans=%d, drifts=%d, design_only=%d, blueprint_mismatches=%d)",
+            detail,
+            orphan_count,
+            drift_count,
+            design_only_count,
+            domain_mismatch_count - len(strict_mismatches),
+        )
+        return False, detail
+
+    # 4b. orphans / state_drifts / blueprint-only domain_mismatches 保持 warn-only
+    warnings: list[str] = []
+    if orphan_count > _ORPHAN_WARN_THRESHOLD:
+        warnings.append(f"孤儿数 {orphan_count} > 阈值 {_ORPHAN_WARN_THRESHOLD}")
+    if drift_count > _STATE_DRIFT_WARN_THRESHOLD:
+        warnings.append(f"状态漂移 {drift_count} > 阈值 {_STATE_DRIFT_WARN_THRESHOLD}")
+    blueprint_only_mismatches = domain_mismatch_count - len(strict_mismatches)
+    if blueprint_only_mismatches > 0:
+        warnings.append(
+            f"blueprint 域不一致 {blueprint_only_mismatches} 处（warn-only，"
+            f"运行 sync_panorama_module.py --all 对齐）"
+        )
+
+    if warnings:
+        warn_msg = " | ".join(warnings)
+        logger.warning(
+            "MAP-ALIGNMENT gate warn-only: %s (设计态孤立=%d)",
+            warn_msg,
+            design_only_count,
+        )
+
+    # domain_mismatches=0 + warn-only → 通过
+    return True, ""
+
+
+def make_panorama_alignment_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 MAP-ALIGNMENT，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="GATE-PANORAMA-ALIGNMENT", check=_check, priority=830)
+
+
+def make_map_alignment_gate() -> GateSpec:
+    """构造 MAP-ALIGNMENT 聚合门禁（st-gslim-20260923 P4 合并，gate_audit_report_v1 §C2/Owner E 全批）。
+
+    聚合子检查（各自独立判定，违规聚合呈现带 [源台名] 前缀，任一失败即阻断）：
+    - MAP-ALIGNMENT（本文件 _check_impl）
+    - GATE-BATTLE-MAP-ALIGNMENT（battle_map_alignment_gate._check_impl）
+    - DECISION-MAP（decision_map_gate._check_impl）
+    - FRONTEND-MAP（frontend_map_gate._check_impl）
+    - INDUSTRY-CHAIN-MAP（industry_chain_map_gate._check_impl）
+    - FACTORY-MAP（strategy_factory_map_gate._check_impl）
+    """
+    def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        failures: list[str] = []
+        subs = [
+            ("GATE-PANORAMA-ALIGNMENT", None, "_check"),
+            ("GATE-BATTLE-MAP-ALIGNMENT", "battle_map_alignment_gate", "_check"),
+            ("DECISION-MAP", "decision_map_gate", "_check"),
+            ("FRONTEND-MAP", "frontend_map_gate", "_check"),
+            ("INDUSTRY-CHAIN-MAP", "industry_chain_map_gate", "_check"),
+            ("FACTORY-MAP", "strategy_factory_map_gate", "_check"),
+        ]
+        for sgid, mod, impl_name in subs:
+            try:
+                if mod is None:
+                    fn = _check
+                else:
+                    import importlib  # noqa: PLC0415
+                    fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
+            except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
+                failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
+                continue
+            ok, detail = fn(gateway, files, **kwargs)
+            if not ok:
+                failures.append(f"[{sgid}] " + detail)
+        if failures:
+            return False, "\n".join(failures)
+        return True, ""
+    return GateSpec(gate_id="MAP-ALIGNMENT", check=_union_check, priority=141)

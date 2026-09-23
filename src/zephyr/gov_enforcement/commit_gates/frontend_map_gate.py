@@ -60,44 +60,41 @@ __all__: list[str] = ["make_frontend_map_gate"]
 _GENERATORS_DIR = Path(__file__).resolve().parents[4] / "scripts" / "governance" / "d5_architecture" / "generators"
 
 
-def make_frontend_map_gate() -> GateSpec:
-    """构造 frontend_map 对齐硬阻断 GateSpec（六图对齐 commit 链闭环）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    if str(_GENERATORS_DIR) not in sys.path:
+        sys.path.insert(0, str(_GENERATORS_DIR))
+    try:
+        from check_frontend_map import run_checks  # noqa: import-integrity  sys.path 动态加载（align_all 同模式）
+    except Exception as e:  # noqa: BLE001 — 校验器不可达=fail-closed（安全优先）
+        logger.error("FRONTEND-MAP gate: 校验器加载失败（fail-closed）: %s", e)
+        return False, f"FRONTEND-MAP: 校验器 check_frontend_map 加载失败（fail-closed）: {e}"
 
-    Returns:
-        GateSpec(gate_id="FRONTEND-MAP", priority=137)。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        if str(_GENERATORS_DIR) not in sys.path:
-            sys.path.insert(0, str(_GENERATORS_DIR))
-        try:
-            from check_frontend_map import run_checks  # noqa: import-integrity  sys.path 动态加载（align_all 同模式）
-        except Exception as e:  # noqa: BLE001 — 校验器不可达=fail-closed（安全优先）
-            logger.error("FRONTEND-MAP gate: 校验器加载失败（fail-closed）: %s", e)
-            return False, f"FRONTEND-MAP: 校验器 check_frontend_map 加载失败（fail-closed）: {e}"
-
-        try:
-            fails, warns, total = run_checks()
-        except Exception as e:  # noqa: BLE001 — YAML 解析异常=真源损坏=fail-closed（须先修图）
-            logger.error("FRONTEND-MAP gate: frontend_map.yaml 校验异常（fail-closed）: %s", e)
-            return False, (
-                f"FRONTEND-MAP: frontend_map.yaml 校验异常（真源损坏须先修）: {e}\n"
-                "-> 检查 src/zephyr/frontend/dashboard/web/frontend_map.yaml 语法（参照 2026-09-04 E:\\q 转义炸先例）"
-            )
-
-        if not fails:
-            if warns:
-                logger.info("FRONTEND-MAP gate: fail=0 warn=%d（放行）", len(warns))
-            return True, ""
-
-        detail_lines = "\n".join(f"  - {x}" for x in fails)
-        detail = (
-            f"FRONTEND-MAP：frontend_map 对齐校验 {len(fails)} 项 fail（共 {total} 功能点）\n"
-            f"{detail_lines}\n"
-            "-> 修复 src/zephyr/frontend/dashboard/web/frontend_map.yaml 后重提"
-            "（backend_ref 五前缀类型化：module:/registry:/table:/api:/none:；id 禁重复）"
+    try:
+        fails, warns, total = run_checks()
+    except Exception as e:  # noqa: BLE001 — YAML 解析异常=真源损坏=fail-closed（须先修图）
+        logger.error("FRONTEND-MAP gate: frontend_map.yaml 校验异常（fail-closed）: %s", e)
+        return False, (
+            f"FRONTEND-MAP: frontend_map.yaml 校验异常（真源损坏须先修）: {e}\n"
+            "-> 检查 src/zephyr/frontend/dashboard/web/frontend_map.yaml 语法（参照 2026-09-04 E:\\q 转义炸先例）"
         )
-        logger.error("FRONTEND-MAP gate block:\n%s", detail)
-        return False, detail
 
+    if not fails:
+        if warns:
+            logger.info("FRONTEND-MAP gate: fail=0 warn=%d（放行）", len(warns))
+        return True, ""
+
+    detail_lines = "\n".join(f"  - {x}" for x in fails)
+    detail = (
+        f"FRONTEND-MAP：frontend_map 对齐校验 {len(fails)} 项 fail（共 {total} 功能点）\n"
+        f"{detail_lines}\n"
+        "-> 修复 src/zephyr/frontend/dashboard/web/frontend_map.yaml 后重提"
+        "（backend_ref 五前缀类型化：module:/registry:/table:/api:/none:；id 禁重复）"
+    )
+    logger.error("FRONTEND-MAP gate block:\n%s", detail)
+    return False, detail
+
+
+def make_frontend_map_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 MAP-ALIGNMENT，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="FRONTEND-MAP", check=_check, priority=137)

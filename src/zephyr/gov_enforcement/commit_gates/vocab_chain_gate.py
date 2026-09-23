@@ -197,57 +197,53 @@ def _get_staged_new_py_files(gateway) -> tuple[list[str], str]:
     return py_files, wt_root
 
 
-def make_vocab_chain_gate() -> GateSpec:
-    """构造 SSoT 引用硬编码阻断门禁 GateSpec（硬阻断型）。
-
-    Returns:
-        GateSpec(gate_id="VOCAB-CHAIN", priority=73)。
-        priority=73——在 DOMAIN-NAME-ZH(72) 之后、RULING-REFERENCE(74) 之前。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增 .py 文件
-        py_files, wt_root = _get_staged_new_py_files(gateway)
-        if not py_files:
-            return True, ""
-        # own 化（st-gslim-20260923 P2）：只扫本 session 新增文件，外来 warn+审计不阻断
-        py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="VOCAB-CHAIN")[0]
-        if not py_files:
-            return True, ""
-
-        # 2. AST 检测每个文件
-        all_violations: list[str] = []
-        for rel_path in py_files:
-            # 豁免：本 gate 自身、注册表、生成器、检查器目录
-            if _is_exempt_path(rel_path):
-                continue
-
-            abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
-            if not os.path.isfile(abs_path):
-                continue
-
-            try:
-                with open(abs_path, encoding="utf-8", errors="replace") as f:
-                    content = f.read()
-            except OSError as e:
-                logger.warning(
-                    "VOCAB-CHAIN gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path,
-                    type(e).__name__,
-                    e,
-                )
-                continue
-
-            violations = _detect_ssot_hardcoding(abs_path, content)
-            for v in violations:
-                all_violations.append(f'{rel_path}: "{v}"')
-
-        if all_violations:
-            detail = "; ".join(all_violations[:5])
-            return False, (
-                f"新增 .py 文件含 SSoT 路径硬编码（应通过 capability_canonical_file_registry "
-                f"反查发现，非硬编码）: {detail}"
-            )
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    # 1. 获取 staged 新增 .py 文件
+    py_files, wt_root = _get_staged_new_py_files(gateway)
+    if not py_files:
+        return True, ""
+    # own 化（st-gslim-20260923 P2）：只扫本 session 新增文件，外来 warn+审计不阻断
+    py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="VOCAB-CHAIN")[0]
+    if not py_files:
         return True, ""
 
+    # 2. AST 检测每个文件
+    all_violations: list[str] = []
+    for rel_path in py_files:
+        # 豁免：本 gate 自身、注册表、生成器、检查器目录
+        if _is_exempt_path(rel_path):
+            continue
+
+        abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
+        if not os.path.isfile(abs_path):
+            continue
+
+        try:
+            with open(abs_path, encoding="utf-8", errors="replace") as f:
+                content = f.read()
+        except OSError as e:
+            logger.warning(
+                "VOCAB-CHAIN gate skip file %s: 读取失败(%s: %s)。",
+                abs_path,
+                type(e).__name__,
+                e,
+            )
+            continue
+
+        violations = _detect_ssot_hardcoding(abs_path, content)
+        for v in violations:
+            all_violations.append(f'{rel_path}: "{v}"')
+
+    if all_violations:
+        detail = "; ".join(all_violations[:5])
+        return False, (
+            f"新增 .py 文件含 SSoT 路径硬编码（应通过 capability_canonical_file_registry "
+            f"反查发现，非硬编码）: {detail}"
+        )
+    return True, ""
+
+
+def make_vocab_chain_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 GATE-VOCAB，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="VOCAB-CHAIN", check=_check, priority=73)

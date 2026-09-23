@@ -63,6 +63,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _build_own_scope,
     _norm_rel,
 )
+
 # 复用 perm_trigger_gate 的辅助函数（SSoT，避免 FUNCTION-DUP 重复定义）
 from zephyr.gov_enforcement.commit_gates.perm_trigger_gate import (
     _decorator_name,
@@ -379,89 +380,84 @@ def _check_manual_only_permanent_modified(gateway, rel_path: str, abs_path: str,
         return True  # AST 解析失败，认为无事件订阅
 
 
-def make_manual_only_permanent_gate() -> GateSpec:
-    """构造永久系统脚本 manual 触发无事件订阅阻断门禁 GateSpec（硬阻断型）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    # 1. 获取 staged .py 文件 + worktree root
+    py_files, wt_root = _get_staged_py_files(gateway)
+    if not py_files:
+        return True, ""
 
-    Returns:
-        GateSpec(gate_id="MANUAL-ONLY-PERMANENT", priority=43)。
-        priority=43——避开 33-42 区间（FILE-PLACEMENT-TTL/CH-* / RENAME-DEPGRAPH-SYNC），
-        在 ENCODING(42) 之后、FOREIGN-CHANGE(45) 之前。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged .py 文件 + worktree root
-        py_files, wt_root = _get_staged_py_files(gateway)
+    # 1.5 own-scope（宪法 §3.3，接续 #ARCH-GATE-OWN-SCOPE-001 推广批；连坐治本）：
+    # 扫描集=全暂存区∩本 session 范围（files∪held_files，_build_own_scope）；
+    # 外来 staged 文件剔除——不检查不阻断（owner 责任制），降级 warn+审计；
+    # own_scope=None（files 与 session 归属均空，历史直调）→ 退化全量保守=旧行为。
+    # 2026-09-16 实证：他会话 3 个外来 .py 拦了纯 docs 提交（连坐路障）。
+    session_id = kwargs.get("session_id")
+    own_scope = _build_own_scope(gateway, files, session_id)
+    if own_scope is not None:
+        own_files = [f for f in py_files if _norm_rel(gateway, f) in own_scope]
+        foreign_staged = [f for f in py_files if _norm_rel(gateway, f) not in own_scope]
+        if foreign_staged:
+            _audit_foreign_staged(
+                gateway, session_id, foreign_staged, gate_name="MANUAL-ONLY-PERMANENT"
+            )
+            logger.warning(
+                "MANUAL-ONLY-PERMANENT: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                len(foreign_staged),
+                ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+            )
+        py_files = own_files
         if not py_files:
             return True, ""
 
-        # 1.5 own-scope（宪法 §3.3，接续 #ARCH-GATE-OWN-SCOPE-001 推广批；连坐治本）：
-        # 扫描集=全暂存区∩本 session 范围（files∪held_files，_build_own_scope）；
-        # 外来 staged 文件剔除——不检查不阻断（owner 责任制），降级 warn+审计；
-        # own_scope=None（files 与 session 归属均空，历史直调）→ 退化全量保守=旧行为。
-        # 2026-09-16 实证：他会话 3 个外来 .py 拦了纯 docs 提交（连坐路障）。
-        session_id = kwargs.get("session_id")
-        own_scope = _build_own_scope(gateway, files, session_id)
-        if own_scope is not None:
-            own_files = [f for f in py_files if _norm_rel(gateway, f) in own_scope]
-            foreign_staged = [f for f in py_files if _norm_rel(gateway, f) not in own_scope]
-            if foreign_staged:
-                _audit_foreign_staged(
-                    gateway, session_id, foreign_staged, gate_name="MANUAL-ONLY-PERMANENT"
-                )
-                logger.warning(
-                    "MANUAL-ONLY-PERMANENT: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
-                    len(foreign_staged),
-                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
-                )
-            py_files = own_files
-            if not py_files:
-                return True, ""
+    # 2. 获取新增文件集合（区分 A/M）
+    added_set = _get_added_set(gateway)
 
-        # 2. 获取新增文件集合（区分 A/M）
-        added_set = _get_added_set(gateway)
+    # 3. AST 检测：permanent 文件含 manual 触发但无事件/自动触发订阅
+    violations: list[str] = []
+    for rel_path in py_files:
+        abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
+        if not os.path.isfile(abs_path):
+            continue
 
-        # 3. AST 检测：permanent 文件含 manual 触发但无事件/自动触发订阅
-        violations: list[str] = []
-        for rel_path in py_files:
-            abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
-            if not os.path.isfile(abs_path):
-                continue
-
-            try:
-                with open(abs_path, encoding="utf-8", errors="replace") as f:
-                    content = f.read()
-            except OSError as e:
-                logger.warning(
-                    "MANUAL-ONLY-PERMANENT gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path,
-                    type(e).__name__,
-                    e,
-                )
-                continue
-
-            if not _has_permanent_ttl(content):
-                continue  # 非 permanent 文件，跳过
-
-            # 门禁文件自豁免：检测器本身含 pattern 字符串（非真实 manual 触发）
-            # 2026-08-20 修 governance→gov_enforcement 迁移漂移：原匹配 governance/commit_gates/ 已失配
-            if "commit_gates/" in rel_path.replace("\\", "/"):
-                continue
-
-            if rel_path in added_set:
-                # 新增文件：全文件 AST 检测
-                if _check_manual_only_permanent_new(abs_path, content):
-                    violations.append(rel_path)
-            else:
-                # 修改文件：只检测 staged diff 新增行中的 manual 触发模式
-                if _check_manual_only_permanent_modified(gateway, rel_path, abs_path, content):
-                    violations.append(rel_path + " (modified)")
-
-        if violations:
-            detail = "; ".join(violations[:5])
-            return False, (
-                f"永久系统脚本使用 manual 触发模式（argparse/input/__main__+argv）但未注册"
-                f"事件订阅/自动触发（违反'永久系统必须全自动事件触发'铁律）: {detail}"
+        try:
+            with open(abs_path, encoding="utf-8", errors="replace") as f:
+                content = f.read()
+        except OSError as e:
+            logger.warning(
+                "MANUAL-ONLY-PERMANENT gate skip file %s: 读取失败(%s: %s)。",
+                abs_path,
+                type(e).__name__,
+                e,
             )
-        return True, ""
+            continue
 
+        if not _has_permanent_ttl(content):
+            continue  # 非 permanent 文件，跳过
+
+        # 门禁文件自豁免：检测器本身含 pattern 字符串（非真实 manual 触发）
+        # 2026-08-20 修 governance→gov_enforcement 迁移漂移：原匹配 governance/commit_gates/ 已失配
+        if "commit_gates/" in rel_path.replace("\\", "/"):
+            continue
+
+        if rel_path in added_set:
+            # 新增文件：全文件 AST 检测
+            if _check_manual_only_permanent_new(abs_path, content):
+                violations.append(rel_path)
+        else:
+            # 修改文件：只检测 staged diff 新增行中的 manual 触发模式
+            if _check_manual_only_permanent_modified(gateway, rel_path, abs_path, content):
+                violations.append(rel_path + " (modified)")
+
+    if violations:
+        detail = "; ".join(violations[:5])
+        return False, (
+            f"永久系统脚本使用 manual 触发模式（argparse/input/__main__+argv）但未注册"
+            f"事件订阅/自动触发（违反'永久系统必须全自动事件触发'铁律）: {detail}"
+        )
+    return True, ""
+
+
+def make_manual_only_permanent_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 PERMANENT-SYSTEM-TRIGGER，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="MANUAL-ONLY-PERMANENT", check=_check, priority=43)

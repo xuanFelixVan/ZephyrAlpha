@@ -60,9 +60,9 @@ import logging
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _audit_foreign_staged,
     _build_own_scope,
-    _norm_rel,
     _get_added_lines,
     _get_staged_py_files,
+    _norm_rel,
     _read_staged_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
@@ -79,59 +79,56 @@ def _count_methods(node: ast.ClassDef) -> int:
     return sum(1 for child in node.body if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)))
 
 
-def make_god_class_gate() -> GateSpec:
-    """构造 God Class 阻断 GateSpec（硬阻断型）。
-
-    Returns:
-        GateSpec(gate_id="NO-GOD-CLASS", priority=93)。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        staged = [f for f in _get_staged_py_files(gateway, "NO-GOD-CLASS") if not is_test_exempt(f)]
-        if not staged:
-            return True, ""
-        # 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广，2026-09-10）：外来 staged 不扫描、降级 warn+审计；
-        # own_scope=None 退化旧行为扫全量；本 session 自身违规仍硬阻断；fail-open 红线不变。
-        session_id = kwargs.get("session_id")
-        own_scope = _build_own_scope(gateway, files, session_id)
-        if own_scope is None:
-            py_files = staged
-        else:
-            py_files = [f for f in staged if _norm_rel(gateway, f) in own_scope]
-            foreign_staged = [f for f in staged if _norm_rel(gateway, f) not in own_scope]
-            if foreign_staged:
-                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="NO-GOD-CLASS")
-                logger.warning(
-                    "NO-GOD-CLASS: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
-                    len(foreign_staged),
-                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
-                )
-        violations: list[str] = []
-        for py_file in py_files:
-            file_content = _read_staged_file(gateway, py_file)
-            if not file_content:
-                continue
-            added_lines = {ln for ln, _ in _get_added_lines(gateway, py_file, "NO-GOD-CLASS")}
-            if not added_lines:
-                continue
-            try:
-                tree = ast.parse(file_content, filename=py_file)
-            except SyntaxError:
-                continue
-            for node in ast.walk(tree):
-                if isinstance(node, ast.ClassDef) and node.lineno in added_lines:
-                    method_count = _count_methods(node)
-                    if method_count > _MAX_METHODS:
-                        violations.append(
-                            f"  {py_file}:{node.lineno}: class {node.name}({method_count} methods > {_MAX_METHODS})"
-                        )
-        if violations:
-            detail = (
-                "NO-GOD-CLASS：检测到 God Class（方法数>20），\n"
-                "  违反 §5.150 God Class 反模式。\n" + "\n".join(violations) + "\n-> 考虑按职责拆分类（单一职责原则）"
-            )
-            logger.error("NO-GOD-CLASS gate block:\n%s", detail)
-            return False, detail
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    staged = [f for f in _get_staged_py_files(gateway, "NO-GOD-CLASS") if not is_test_exempt(f)]
+    if not staged:
         return True, ""
+    # 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广，2026-09-10）：外来 staged 不扫描、降级 warn+审计；
+    # own_scope=None 退化旧行为扫全量；本 session 自身违规仍硬阻断；fail-open 红线不变。
+    session_id = kwargs.get("session_id")
+    own_scope = _build_own_scope(gateway, files, session_id)
+    if own_scope is None:
+        py_files = staged
+    else:
+        py_files = [f for f in staged if _norm_rel(gateway, f) in own_scope]
+        foreign_staged = [f for f in staged if _norm_rel(gateway, f) not in own_scope]
+        if foreign_staged:
+            _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="NO-GOD-CLASS")
+            logger.warning(
+                "NO-GOD-CLASS: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                len(foreign_staged),
+                ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+            )
+    violations: list[str] = []
+    for py_file in py_files:
+        file_content = _read_staged_file(gateway, py_file)
+        if not file_content:
+            continue
+        added_lines = {ln for ln, _ in _get_added_lines(gateway, py_file, "NO-GOD-CLASS")}
+        if not added_lines:
+            continue
+        try:
+            tree = ast.parse(file_content, filename=py_file)
+        except SyntaxError:
+            continue
+        for node in ast.walk(tree):
+            if isinstance(node, ast.ClassDef) and node.lineno in added_lines:
+                method_count = _count_methods(node)
+                if method_count > _MAX_METHODS:
+                    violations.append(
+                        f"  {py_file}:{node.lineno}: class {node.name}({method_count} methods > {_MAX_METHODS})"
+                    )
+    if violations:
+        detail = (
+            "NO-GOD-CLASS：检测到 God Class（方法数>20），\n"
+            "  违反 §5.150 God Class 反模式。\n" + "\n".join(violations) + "\n-> 考虑按职责拆分类（单一职责原则）"
+        )
+        logger.error("NO-GOD-CLASS gate block:\n%s", detail)
+        return False, detail
+    return True, ""
 
+
+def make_god_class_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 COMPLEXITY-GUARD，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="NO-GOD-CLASS", check=_check, priority=93)

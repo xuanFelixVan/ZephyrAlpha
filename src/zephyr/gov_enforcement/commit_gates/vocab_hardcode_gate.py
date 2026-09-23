@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增 .py 文件含词表硬编码时阻断 commit（passed=False）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A），不检测修改文件（避免基线 13 个存量违规划死工作流，存量违规由第2期批量修复）；检测真源=check_vocab_hardcode.py（subprocess 调用 --files --ci），本 gate 是 thin wrapper 不重复检测逻辑（SSoT）；check_vocab_hardcode.py 缺失/超时/exit 2（脚本异常）时 fail-open（logger.warning 告警检测器失效，不阻断——脚本故障是环境异常非违规）；exit 1（检出违规）时硬阻断；worktree 适配——通过 git rev-parse --show-toplevel 获取 worktree root 作为 subprocess cwd；own 化 2026-09-23(st-gslim P2)：只送检本 session 新增文件，外来 staged warn+审计不阻断(_split_own_foreign)
-# [MODIFY-GUARD] gate_id="VOCAB-HARDCODE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [MODIFY-GUARD] gate_id="GATE-VOCAB"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -88,14 +88,14 @@ def _get_staged_new_py_files(gateway) -> list[str] | None:
         diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=A"])
         if diff_result.returncode != 0:
             logger.warning(
-                "VOCAB-HARDCODE gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                "GATE-VOCAB gate fail-open: git diff 失败(rc=%d)，检测器失效。",
                 diff_result.returncode,
             )
             return None
         staged_new = diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "VOCAB-HARDCODE gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
+            "GATE-VOCAB gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
     return [f.replace("\\", "/") for f in staged_new if f.endswith(".py") and not is_test_exempt(f)]
@@ -131,7 +131,7 @@ def _run_vocab_script(abs_files: list[str], wt_root: str):
     """
     if not os.path.isfile(_VOCAB_SCRIPT):
         logger.warning(
-            "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 不存在(%s)，检测器失效。",
+            "GATE-VOCAB gate fail-open: check_vocab_hardcode.py 不存在(%s)，检测器失效。",
             _VOCAB_SCRIPT,
         )
         return None
@@ -143,11 +143,11 @@ def _run_vocab_script(abs_files: list[str], wt_root: str):
             timeout=60,
         )
     except subprocess.TimeoutExpired:
-        logger.warning("VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 超时(60s)，检测器失效。")
+        logger.warning("GATE-VOCAB gate fail-open: check_vocab_hardcode.py 超时(60s)，检测器失效。")
         return None
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "VOCAB-HARDCODE gate fail-open: subprocess 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
+            "GATE-VOCAB gate fail-open: subprocess 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return None
 
@@ -161,7 +161,7 @@ def _parse_vocab_result(result) -> tuple[bool, str]:
         return True, ""
     if result.returncode == 2:
         logger.warning(
-            "VOCAB-HARDCODE gate fail-open: check_vocab_hardcode.py 异常(exit 2)：%s",
+            "GATE-VOCAB gate fail-open: check_vocab_hardcode.py 异常(exit 2)：%s",
             result.stderr[:200] if result.stderr else "",
         )
         return True, ""
@@ -176,41 +176,69 @@ def _parse_vocab_result(result) -> tuple[bool, str]:
     return False, f"新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: {detail_str}"
 
 
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    # 1. 获取 staged 新增 .py 文件
+    new_py_files = _get_staged_new_py_files(gateway)
+    if new_py_files is None or not new_py_files:
+        return True, ""
+    # own 化（st-gslim-20260923 P2）：只送检本 session 新增文件，外来 warn+审计不阻断
+    new_py_files = _split_own_foreign(
+        gateway, new_py_files, files, kwargs.get("session_id"), gate_name="VOCAB-HARDCODE"
+    )[0]
+    if not new_py_files:
+        return True, ""
+
+    # 2. 获取 worktree root（worktree 模式下 cwd 是 worktree，文件在 worktree 文件系统）
+    wt_root = _resolve_worktree_root(gateway)
+
+    # 3. 解析为绝对路径（相对 worktree root）；过滤不存在的文件（防御性）
+    abs_files = _resolve_abs_files(new_py_files, wt_root)
+    if not abs_files:
+        return True, ""
+
+    # 4. subprocess 调用 check_vocab_hardcode.py --files --ci
+    result = _run_vocab_script(abs_files, wt_root)
+    if result is None:
+        return True, ""
+
+    # 5. 解析结果
+    # exit 0 = 无违规；exit 1 = 有违规（EXIT_FINDINGS）；exit 2 = 脚本异常（EXIT_ERROR）
+    return _parse_vocab_result(result)
+
+
 def make_vocab_hardcode_gate() -> GateSpec:
-    """构造新增 .py 文件词表硬编码阻断门禁 GateSpec（硬阻断型）。
-
-    Returns:
-        GateSpec(gate_id="VOCAB-HARDCODE", priority=80)。
-        priority=80——在 ARCH-REFERENCE(75) 之后、CAPABILITY-OVERLAP(200) 之前。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增 .py 文件
-        new_py_files = _get_staged_new_py_files(gateway)
-        if new_py_files is None or not new_py_files:
-            return True, ""
-        # own 化（st-gslim-20260923 P2）：只送检本 session 新增文件，外来 warn+审计不阻断
-        new_py_files = _split_own_foreign(
-            gateway, new_py_files, files, kwargs.get("session_id"), gate_name="VOCAB-HARDCODE"
-        )[0]
-        if not new_py_files:
-            return True, ""
-
-        # 2. 获取 worktree root（worktree 模式下 cwd 是 worktree，文件在 worktree 文件系统）
-        wt_root = _resolve_worktree_root(gateway)
-
-        # 3. 解析为绝对路径（相对 worktree root）；过滤不存在的文件（防御性）
-        abs_files = _resolve_abs_files(new_py_files, wt_root)
-        if not abs_files:
-            return True, ""
-
-        # 4. subprocess 调用 check_vocab_hardcode.py --files --ci
-        result = _run_vocab_script(abs_files, wt_root)
-        if result is None:
-            return True, ""
-
-        # 5. 解析结果
-        # exit 0 = 无违规；exit 1 = 有违规（EXIT_FINDINGS）；exit 2 = 脚本异常（EXIT_ERROR）
-        return _parse_vocab_result(result)
-
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 GATE-VOCAB，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="VOCAB-HARDCODE", check=_check, priority=80)
+
+
+def make_gate_vocab_gate() -> GateSpec:
+    """构造 GATE-VOCAB 聚合门禁（st-gslim-20260923 P4 合并，gate_audit_report_v1 §C2/Owner E 全批）。
+
+    聚合子检查（各自独立判定，违规聚合呈现带 [源台名] 前缀，任一失败即阻断）：
+    - GATE-VOCAB（本文件 _check_impl）
+    - VOCAB-CHAIN（vocab_chain_gate._check_impl）
+    """
+    def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        failures: list[str] = []
+        subs = [
+            ("VOCAB-HARDCODE", None, "_check"),
+            ("VOCAB-CHAIN", "vocab_chain_gate", "_check"),
+        ]
+        for sgid, mod, impl_name in subs:
+            try:
+                if mod is None:
+                    fn = _check
+                else:
+                    import importlib  # noqa: PLC0415
+                    fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
+            except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
+                failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
+                continue
+            ok, detail = fn(gateway, files, **kwargs)
+            if not ok:
+                failures.append(f"[{sgid}] " + detail)
+        if failures:
+            return False, "\n".join(failures)
+        return True, ""
+    return GateSpec(gate_id="GATE-VOCAB", check=_union_check, priority=80)

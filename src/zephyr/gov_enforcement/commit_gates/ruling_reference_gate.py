@@ -248,62 +248,54 @@ def _format_gap_warning(missing: list[int]) -> str:
     )
 
 
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    from pathlib import Path
+
+    project_root = Path(gateway.project_root)
+
+    ok, detail, registered_nums = _load_registered_nums(project_root)
+    if not ok:
+        return False, detail
+    # manual stage 下 registry 加载失败时返回 WARNING 放行
+    if not registered_nums and _MANUAL_STAGE:
+        return True, detail
+
+    violations, error = scan_file_violations(project_root, files, registered_nums, _extract_refs)
+    if error is not None:
+        if _MANUAL_STAGE:
+            return True, f"⚠️ RULING-REFERENCE manual stage：扫描异常 {error}，本会话不阻断。"
+        return False, error
+
+    if violations:
+        violation_detail = _format_violations_detail(violations)
+        if _MANUAL_STAGE:
+            return True, f"⚠️ RULING-REFERENCE manual stage（阶段1 不阻断，建立基线）——\n{violation_detail}"
+        return False, violation_detail
+
+    # L2: 同提交原子性检查
+    head_nums = load_head_registered_nums(project_root, _REGISTRY_REL, _extract_registered_nums)
+    if head_nums is not None:
+        new_refs_by_file = collect_new_refs_by_file(project_root, files, head_nums, _REGISTRY_REL, _extract_refs)
+        if new_refs_by_file:
+            registry_rel = _REGISTRY_REL.replace("\\", "/")
+            registry_in_commit = any(
+                os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel for f in files
+            )
+            atomicity_violations = check_atomicity(new_refs_by_file, registry_in_commit)
+            if atomicity_violations:
+                atomicity_detail = _format_atomicity_detail(atomicity_violations)
+                if _MANUAL_STAGE:
+                    return True, f"⚠️ RULING-REFERENCE manual stage（阶段1 不阻断）——\n{atomicity_detail}"
+                return False, atomicity_detail
+
+    # L1: 编号空洞检测（WARNING，不阻断）
+    gaps = _detect_id_gaps(registered_nums)
+    if gaps:
+        return True, _format_gap_warning(gaps)
+    return True, ""
+
+
 def make_ruling_reference_gate() -> GateSpec:
-    """构造 裁定#NNN 悬空引用检测门禁 GateSpec。
-
-    阶段1（_MANUAL_STAGE=True，裁定#20-B 2026-07-18）：所有违规返回 passed=True + WARNING 不阻断。
-    阶段2（_MANUAL_STAGE=False）：hard block 违规。
-
-    Returns:
-        GateSpec(gate_id="RULING-REFERENCE", priority=74)。
-        priority=74——紧跟 DANGLING-REFERENCE(70) + NOQA-VALIDATION(71) 之后，
-        ARCH-REFERENCE(75) 之前（同属"引用完整性"类检查，集中执行）。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        from pathlib import Path
-
-        project_root = Path(gateway.project_root)
-
-        ok, detail, registered_nums = _load_registered_nums(project_root)
-        if not ok:
-            return False, detail
-        # manual stage 下 registry 加载失败时返回 WARNING 放行
-        if not registered_nums and _MANUAL_STAGE:
-            return True, detail
-
-        violations, error = scan_file_violations(project_root, files, registered_nums, _extract_refs)
-        if error is not None:
-            if _MANUAL_STAGE:
-                return True, f"⚠️ RULING-REFERENCE manual stage：扫描异常 {error}，本会话不阻断。"
-            return False, error
-
-        if violations:
-            violation_detail = _format_violations_detail(violations)
-            if _MANUAL_STAGE:
-                return True, f"⚠️ RULING-REFERENCE manual stage（阶段1 不阻断，建立基线）——\n{violation_detail}"
-            return False, violation_detail
-
-        # L2: 同提交原子性检查
-        head_nums = load_head_registered_nums(project_root, _REGISTRY_REL, _extract_registered_nums)
-        if head_nums is not None:
-            new_refs_by_file = collect_new_refs_by_file(project_root, files, head_nums, _REGISTRY_REL, _extract_refs)
-            if new_refs_by_file:
-                registry_rel = _REGISTRY_REL.replace("\\", "/")
-                registry_in_commit = any(
-                    os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel for f in files
-                )
-                atomicity_violations = check_atomicity(new_refs_by_file, registry_in_commit)
-                if atomicity_violations:
-                    atomicity_detail = _format_atomicity_detail(atomicity_violations)
-                    if _MANUAL_STAGE:
-                        return True, f"⚠️ RULING-REFERENCE manual stage（阶段1 不阻断）——\n{atomicity_detail}"
-                    return False, atomicity_detail
-
-        # L1: 编号空洞检测（WARNING，不阻断）
-        gaps = _detect_id_gaps(registered_nums)
-        if gaps:
-            return True, _format_gap_warning(gaps)
-        return True, ""
-
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 REFERENCE-INTEGRITY，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="RULING-REFERENCE", check=_check, priority=74)

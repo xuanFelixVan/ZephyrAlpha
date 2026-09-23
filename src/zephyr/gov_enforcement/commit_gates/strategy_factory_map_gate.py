@@ -16,7 +16,33 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-FACTORY-MAP-GATE-001
 # [CREATION-TOKEN] factory-map-gate-20260913
-"""strategy_factory_map_gate.py — 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=142）
+"""strategy_factory_map_gate.py — 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=148）
+
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: strategy_factory_map_gate.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① make_strategy_factory_map_gate
+    #   name_en: make_strategy_factory_map_gate
+    #   intro: 构造聚合门禁 GateSpec（st-gslim-20260923 P4 并入 MAP-ALIGNMENT）。
+    #   desc: 构造 GateSpec。 Returns: GateSpec(gate_id="MAP-ALIGNMENT", priority=141)。
+    #   inputs: 无参数
+    #   outputs: GateSpec
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec
+    #   name_en: GateSpec
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
+    # [/ALGO_FLOW]
 
 病根（第一性原理）
 -----------------
@@ -85,58 +111,55 @@ _TRIGGER_FILES_NORMCASE: Final[frozenset[str]] = frozenset(
 _MAP_PATH: Final[Path] = _REPO_ROOT / "config" / "strategy_production_map.yaml"
 
 
-def make_strategy_factory_map_gate() -> GateSpec:
-    """构造策略生产全景图结构门禁 GateSpec（图 9 挂总线，alignment_checklist §3）。
-
-    Returns:
-        GateSpec(gate_id="FACTORY-MAP", priority=142)。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        if not files:
-            return True, ""
-        # 生产形态=绝对路径（gateway abspath），_norm_rel 归一到 normcase 相对路径
-        # （实弹教训 2026-09-13：朴素反斜杠替换对绝对路径恒 miss）
-        norm = {_norm_rel(gateway, f) for f in files}
-        triggered = sorted(_TRIGGER_FILES_NORMCASE & norm)
-        if not triggered:
-            return True, "skip: 本 commit 未触及工厂图触发面（图 YAML/校验器真源）"
-
-        # 校验逻辑单一真源（批1 validator），懒加载防 zephyr↔scripts 成环（先例=decision_map_gate）
-        if str(_VALIDATORS_DIR) not in sys.path:
-            sys.path.insert(0, str(_VALIDATORS_DIR))
-        try:
-            from validate_strategy_production_map import validate_structure  # noqa: import-integrity  sys.path 动态加载
-        except Exception as e:  # noqa: BLE001 — 校验器不可达=fail-closed
-            logger.error("FACTORY-MAP gate: 校验器加载失败（fail-closed）: %s", e)
-            return False, f"FACTORY-MAP: 校验器 validate_strategy_production_map 加载失败（fail-closed）: {e}"
-
-        try:
-            data = yaml.safe_load(_MAP_PATH.read_text(encoding="utf-8"))
-        except Exception as e:  # noqa: BLE001 — 真源损坏=fail-closed
-            logger.error("FACTORY-MAP gate: 图真源解析失败（fail-closed）: %s", e)
-            return False, f"FACTORY-MAP: config/strategy_production_map.yaml 解析失败（真源损坏须先修）: {e}"
-        if not isinstance(data, dict):
-            return False, "FACTORY-MAP: config/strategy_production_map.yaml 顶层非对象（真源损坏须先修）"
-
-        try:
-            errors = validate_structure(data)
-        except Exception as e:  # noqa: BLE001 — 校验器异常=fail-closed
-            logger.error("FACTORY-MAP gate: 结构校验异常（fail-closed）: %s", e)
-            return False, f"FACTORY-MAP: 结构校验异常（fail-closed）: {e}"
-
-        if errors:
-            detail_lines = "\n".join(f"  - {x}" for x in errors)
-            detail = (
-                f"FACTORY-MAP：策略生产全景图结构校验 {len(errors)} 项 error"
-                f"（nodes={len(data.get('nodes') or [])}）\n{detail_lines}\n"
-                "-> 修复 config/strategy_production_map.yaml 后重提"
-                "（字段完整性/边引用闭合/E0-E9 层位/built 代码锚/lane 归属/store_refs 三要素/反馈环声明）"
-            )
-            logger.error("FACTORY-MAP gate block:\n%s", detail)
-            return False, detail
-        if triggered:
-            logger.info("FACTORY-MAP gate: 结构校验通过（触发面=%s）", ",".join(triggered))
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    if not files:
         return True, ""
+    # 生产形态=绝对路径（gateway abspath），_norm_rel 归一到 normcase 相对路径
+    # （实弹教训 2026-09-13：朴素反斜杠替换对绝对路径恒 miss）
+    norm = {_norm_rel(gateway, f) for f in files}
+    triggered = sorted(_TRIGGER_FILES_NORMCASE & norm)
+    if not triggered:
+        return True, "skip: 本 commit 未触及工厂图触发面（图 YAML/校验器真源）"
 
-    return GateSpec(gate_id="FACTORY-MAP", check=_check, priority=142)
+    # 校验逻辑单一真源（批1 validator），懒加载防 zephyr↔scripts 成环（先例=decision_map_gate）
+    if str(_VALIDATORS_DIR) not in sys.path:
+        sys.path.insert(0, str(_VALIDATORS_DIR))
+    try:
+        from validate_strategy_production_map import validate_structure  # noqa: import-integrity  sys.path 动态加载
+    except Exception as e:  # noqa: BLE001 — 校验器不可达=fail-closed
+        logger.error("FACTORY-MAP gate: 校验器加载失败（fail-closed）: %s", e)
+        return False, f"FACTORY-MAP: 校验器 validate_strategy_production_map 加载失败（fail-closed）: {e}"
+
+    try:
+        data = yaml.safe_load(_MAP_PATH.read_text(encoding="utf-8"))
+    except Exception as e:  # noqa: BLE001 — 真源损坏=fail-closed
+        logger.error("FACTORY-MAP gate: 图真源解析失败（fail-closed）: %s", e)
+        return False, f"FACTORY-MAP: config/strategy_production_map.yaml 解析失败（真源损坏须先修）: {e}"
+    if not isinstance(data, dict):
+        return False, "FACTORY-MAP: config/strategy_production_map.yaml 顶层非对象（真源损坏须先修）"
+
+    try:
+        errors = validate_structure(data)
+    except Exception as e:  # noqa: BLE001 — 校验器异常=fail-closed
+        logger.error("FACTORY-MAP gate: 结构校验异常（fail-closed）: %s", e)
+        return False, f"FACTORY-MAP: 结构校验异常（fail-closed）: {e}"
+
+    if errors:
+        detail_lines = "\n".join(f"  - {x}" for x in errors)
+        detail = (
+            f"FACTORY-MAP：策略生产全景图结构校验 {len(errors)} 项 error"
+            f"（nodes={len(data.get('nodes') or [])}）\n{detail_lines}\n"
+            "-> 修复 config/strategy_production_map.yaml 后重提"
+            "（字段完整性/边引用闭合/E0-E9 层位/built 代码锚/lane 归属/store_refs 三要素/反馈环声明）"
+        )
+        logger.error("FACTORY-MAP gate block:\n%s", detail)
+        return False, detail
+    if triggered:
+        logger.info("FACTORY-MAP gate: 结构校验通过（触发面=%s）", ",".join(triggered))
+    return True, ""
+
+
+def make_strategy_factory_map_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 MAP-ALIGNMENT，不再注册；保留供历史测试/引用兼容）。"""
+    return GateSpec(gate_id="FACTORY-MAP", check=_check, priority=148)

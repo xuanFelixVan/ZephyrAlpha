@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged 新增 .py 文件含 [TTL] permanent 头标且使用时间触发模式（while True / time.sleep / schedule. / APScheduler）但未注册事件订阅时阻断 commit；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；只检测新增文件（diff-filter=A）；in-process AST 分析无 subprocess；AST 解析失败/文件读取失败 fail-open（logger.warning）；own-scope（宪法 §3.3，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描集=staged∩本 session 范围（files∪held，_build_own_scope），外来 staged 剔除不阻断、降级 warn+_audit_foreign_staged 审计；own_scope=None 退化全量保守=旧行为
-# [MODIFY-GUARD] gate_id="PERM-TRIGGER"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [MODIFY-GUARD] gate_id="PERMANENT-SYSTEM-TRIGGER"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -226,14 +226,14 @@ def _get_staged_py_files(gateway) -> tuple[list[str], str]:
         diff_result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
         if diff_result.returncode != 0:
             logger.warning(
-                "PERM-TRIGGER gate fail-open: git diff 失败(rc=%d)，检测器失效。",
+                "PERMANENT-SYSTEM-TRIGGER gate fail-open: git diff 失败(rc=%d)，检测器失效。",
                 diff_result.returncode,
             )
             return [], ""
         staged_files = diff_result.stdout.strip().splitlines()
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
-            "PERM-TRIGGER gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
+            "PERMANENT-SYSTEM-TRIGGER gate fail-open: git diff 异常(%s: %s)，检测器失效。", type(e).__name__, e, exc_info=True
         )
         return [], ""
 
@@ -265,7 +265,7 @@ def _check_permanent_trigger_new(abs_path: str, content: str) -> bool:
         tree = ast.parse(content, filename=abs_path)
     except SyntaxError as e:
         logger.warning(
-            "PERM-TRIGGER gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
+            "PERMANENT-SYSTEM-TRIGGER gate skip file %s: AST 解析失败(%s: %s)，检测器失效。",
             abs_path,
             type(e).__name__,
             e,
@@ -303,84 +303,112 @@ def _check_permanent_trigger_modified(gateway, rel_path: str, abs_path: str, con
         return True  # AST 解析失败，认为无事件订阅
 
 
-def make_perm_trigger_gate() -> GateSpec:
-    """构造永久系统脚本时间触发无事件订阅阻断门禁 GateSpec（硬阻断型）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    # 1. 获取 staged .py 文件 + worktree root
+    py_files, wt_root = _get_staged_py_files(gateway)
+    if not py_files:
+        return True, ""
 
-    Returns:
-        GateSpec(gate_id="PERM-TRIGGER", priority=82)。
-        priority=82——在 VOCAB-HARDCODE(80) 之后、EMPTY-HANDLER(84) 之前。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged .py 文件 + worktree root
-        py_files, wt_root = _get_staged_py_files(gateway)
+    # 1.5 own-scope（宪法 §3.3，接续 #ARCH-GATE-OWN-SCOPE-001 推广批；连坐治本）：
+    # 扫描集=全暂存区∩本 session 范围（files∪held_files，_build_own_scope）；
+    # 外来 staged 文件剔除——不检查不阻断（owner 责任制），降级 warn+审计；
+    # own_scope=None（files 与 session 归属均空，历史直调）→ 退化全量保守=旧行为。
+    session_id = kwargs.get("session_id")
+    own_scope = _build_own_scope(gateway, files, session_id)
+    if own_scope is not None:
+        own_files = [f for f in py_files if _norm_rel(gateway, f) in own_scope]
+        foreign_staged = [f for f in py_files if _norm_rel(gateway, f) not in own_scope]
+        if foreign_staged:
+            _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="PERM-TRIGGER")
+            logger.warning(
+                "PERM-TRIGGER: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                len(foreign_staged),
+                ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+            )
+        py_files = own_files
         if not py_files:
             return True, ""
 
-        # 1.5 own-scope（宪法 §3.3，接续 #ARCH-GATE-OWN-SCOPE-001 推广批；连坐治本）：
-        # 扫描集=全暂存区∩本 session 范围（files∪held_files，_build_own_scope）；
-        # 外来 staged 文件剔除——不检查不阻断（owner 责任制），降级 warn+审计；
-        # own_scope=None（files 与 session 归属均空，历史直调）→ 退化全量保守=旧行为。
-        session_id = kwargs.get("session_id")
-        own_scope = _build_own_scope(gateway, files, session_id)
-        if own_scope is not None:
-            own_files = [f for f in py_files if _norm_rel(gateway, f) in own_scope]
-            foreign_staged = [f for f in py_files if _norm_rel(gateway, f) not in own_scope]
-            if foreign_staged:
-                _audit_foreign_staged(gateway, session_id, foreign_staged, gate_name="PERM-TRIGGER")
-                logger.warning(
-                    "PERM-TRIGGER: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
-                    len(foreign_staged),
-                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
-                )
-            py_files = own_files
-            if not py_files:
-                return True, ""
+    # 2. 获取新增文件集合（区分 A/M）
+    added_set = _get_added_set(gateway)
 
-        # 2. 获取新增文件集合（区分 A/M）
-        added_set = _get_added_set(gateway)
+    # 3. AST 检测：permanent 文件含时间触发但无事件订阅
+    violations: list[str] = []
+    for rel_path in py_files:
+        abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
+        if not os.path.isfile(abs_path):
+            continue
 
-        # 3. AST 检测：permanent 文件含时间触发但无事件订阅
-        violations: list[str] = []
-        for rel_path in py_files:
-            abs_path = rel_path if os.path.isabs(rel_path) else os.path.join(wt_root, rel_path.replace("/", os.sep))
-            if not os.path.isfile(abs_path):
-                continue
-
-            try:
-                with open(abs_path, encoding="utf-8", errors="replace") as f:
-                    content = f.read()
-            except OSError as e:
-                logger.warning(
-                    "PERM-TRIGGER gate skip file %s: 读取失败(%s: %s)。",
-                    abs_path,
-                    type(e).__name__,
-                    e,
-                )
-                continue
-
-            if not _has_permanent_ttl(content):
-                continue  # 非 permanent 文件，跳过
-
-            # 门禁文件自豁免：检测器本身含 pattern 字符串（非真实时间触发）
-            # 2026-08-20 修 governance→gov_enforcement 迁移漂移：原匹配 governance/commit_gates/ 已失配
-            if "commit_gates/" in rel_path.replace("\\", "/"):
-                continue
-
-            if rel_path in added_set:
-                # 新增文件：全文件 AST 检测
-                if _check_permanent_trigger_new(abs_path, content):
-                    violations.append(rel_path)
-            else:
-                # 修改文件：只检测 staged diff 新增行中的时间触发模式
-                if _check_permanent_trigger_modified(gateway, rel_path, abs_path, content):
-                    violations.append(rel_path + " (modified)")
-
-        if violations:
-            detail = "; ".join(violations[:5])
-            return False, (
-                f"永久系统脚本使用时间触发模式但未注册事件订阅（违反'永久系统必须全自动事件触发'铁律）: {detail}"
+        try:
+            with open(abs_path, encoding="utf-8", errors="replace") as f:
+                content = f.read()
+        except OSError as e:
+            logger.warning(
+                "PERMANENT-SYSTEM-TRIGGER gate skip file %s: 读取失败(%s: %s)。",
+                abs_path,
+                type(e).__name__,
+                e,
             )
-        return True, ""
+            continue
 
+        if not _has_permanent_ttl(content):
+            continue  # 非 permanent 文件，跳过
+
+        # 门禁文件自豁免：检测器本身含 pattern 字符串（非真实时间触发）
+        # 2026-08-20 修 governance→gov_enforcement 迁移漂移：原匹配 governance/commit_gates/ 已失配
+        if "commit_gates/" in rel_path.replace("\\", "/"):
+            continue
+
+        if rel_path in added_set:
+            # 新增文件：全文件 AST 检测
+            if _check_permanent_trigger_new(abs_path, content):
+                violations.append(rel_path)
+        else:
+            # 修改文件：只检测 staged diff 新增行中的时间触发模式
+            if _check_permanent_trigger_modified(gateway, rel_path, abs_path, content):
+                violations.append(rel_path + " (modified)")
+
+    if violations:
+        detail = "; ".join(violations[:5])
+        return False, (
+            f"永久系统脚本使用时间触发模式但未注册事件订阅（违反'永久系统必须全自动事件触发'铁律）: {detail}"
+        )
+    return True, ""
+
+
+def make_perm_trigger_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 PERMANENT-SYSTEM-TRIGGER，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="PERM-TRIGGER", check=_check, priority=82)
+
+
+def make_permanent_system_trigger_gate() -> GateSpec:
+    """构造 PERMANENT-SYSTEM-TRIGGER 聚合门禁（st-gslim-20260923 P4 合并，gate_audit_report_v1 §C2/Owner E 全批）。
+
+    聚合子检查（各自独立判定，违规聚合呈现带 [源台名] 前缀，任一失败即阻断）：
+    - PERMANENT-SYSTEM-TRIGGER（本文件 _check_impl）
+    - MANUAL-ONLY-PERMANENT（manual_only_permanent_gate._check_impl）
+    """
+    def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        failures: list[str] = []
+        subs = [
+            ("PERM-TRIGGER", None, "_check"),
+            ("MANUAL-ONLY-PERMANENT", "manual_only_permanent_gate", "_check"),
+        ]
+        for sgid, mod, impl_name in subs:
+            try:
+                if mod is None:
+                    fn = _check
+                else:
+                    import importlib  # noqa: PLC0415
+                    fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
+            except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
+                failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
+                continue
+            ok, detail = fn(gateway, files, **kwargs)
+            if not ok:
+                failures.append(f"[{sgid}] " + detail)
+        if failures:
+            return False, "\n".join(failures)
+        return True, ""
+    return GateSpec(gate_id="PERMANENT-SYSTEM-TRIGGER", check=_union_check, priority=82)

@@ -169,6 +169,315 @@ def extract_commit_gates() -> list[dict]:
 # 新增已合并门禁时在此追加条目即可，无需改 generate() 逻辑。
 MANUAL_GATES: list[dict] = [
     {
+        "gate_id": "ARCH-REFERENCE",
+        "name": "ARCH-REFERENCE: #ARCH-NNN 悬空引用检测（已合并至 REFERENCE-INTEGRITY，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into REFERENCE-INTEGRITY, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 REFERENCE-INTEGRITY。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "REFERENCE-INTEGRITY",
+    },
+    {
+        "gate_id": "RULING-REFERENCE",
+        "name": "RULING-REFERENCE: 裁定 #NNN 悬空引用检测（已合并至 REFERENCE-INTEGRITY，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into REFERENCE-INTEGRITY, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 REFERENCE-INTEGRITY。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "REFERENCE-INTEGRITY",
+    },
+    {
+        "gate_id": "DANGLING-REFERENCE",
+        "name": "DANGLING-REFERENCE: AGENTS §X.Y 悬空引用检测（已合并至 REFERENCE-INTEGRITY，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into REFERENCE-INTEGRITY, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 REFERENCE-INTEGRITY。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "REFERENCE-INTEGRITY",
+    },
+    {
+        "gate_id": "MANUAL-ONLY-PERMANENT",
+        "name": "MANUAL-ONLY-PERMANENT: 永久系统 manual 无订阅检测（已合并至 PERMANENT-SYSTEM-TRIGGER，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into PERMANENT-SYSTEM-TRIGGER, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 PERMANENT-SYSTEM-TRIGGER。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "PERMANENT-SYSTEM-TRIGGER",
+    },
+    {
+        "gate_id": "PERM-TRIGGER",
+        "name": "PERM-TRIGGER: 时间触发无订阅检测（已合并至 PERMANENT-SYSTEM-TRIGGER，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into PERMANENT-SYSTEM-TRIGGER, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 PERMANENT-SYSTEM-TRIGGER。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "PERMANENT-SYSTEM-TRIGGER",
+    },
+    {
+        "gate_id": "VOCAB-HARDCODE",
+        "name": "VOCAB-HARDCODE: 新 py 词表硬编码检测（已合并至 GATE-VOCAB，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into GATE-VOCAB, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 GATE-VOCAB。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "GATE-VOCAB",
+    },
+    {
+        "gate_id": "VOCAB-CHAIN",
+        "name": "VOCAB-CHAIN: SSoT 词表路径硬编码检测（已合并至 GATE-VOCAB，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into GATE-VOCAB, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 GATE-VOCAB。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "GATE-VOCAB",
+    },
+    {
+        "gate_id": "DEPGRAPH-PRE-REGISTRATION",
+        "name": "DEPGRAPH-PRE-REGISTRATION: depgraph planned→production（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into DEPGRAPH-ENFORCEMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DEPGRAPH-ENFORCEMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DEPGRAPH-ENFORCEMENT",
+    },
+    {
+        "gate_id": "NEW-FILE-DEPGRAPH-ENFORCEMENT",
+        "name": "NEW-FILE-DEPGRAPH-ENFORCEMENT: 新 py 未登记 depgraph（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into DEPGRAPH-ENFORCEMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DEPGRAPH-ENFORCEMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DEPGRAPH-ENFORCEMENT",
+    },
+    {
+        "gate_id": "RENAME-DEPGRAPH-SYNC",
+        "name": "RENAME-DEPGRAPH-SYNC: 重命名 depgraph 同步（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into DEPGRAPH-ENFORCEMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DEPGRAPH-ENFORCEMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DEPGRAPH-ENFORCEMENT",
+    },
+    {
+        "gate_id": "DEPGRAPH-WRITE-PATH",
+        "name": "DEPGRAPH-WRITE-PATH: depgraph 写路径白名单（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into DEPGRAPH-ENFORCEMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DEPGRAPH-ENFORCEMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DEPGRAPH-ENFORCEMENT",
+    },
+    {
+        "gate_id": "GATE-PANORAMA-ALIGNMENT",
+        "name": "GATE-PANORAMA-ALIGNMENT: 三图模块对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into MAP-ALIGNMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 MAP-ALIGNMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "MAP-ALIGNMENT",
+    },
+    {
+        "gate_id": "GATE-BATTLE-MAP-ALIGNMENT",
+        "name": "GATE-BATTLE-MAP-ALIGNMENT: 作战地图对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into MAP-ALIGNMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 MAP-ALIGNMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "MAP-ALIGNMENT",
+    },
+    {
+        "gate_id": "DECISION-MAP",
+        "name": "DECISION-MAP: 决策图对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into MAP-ALIGNMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 MAP-ALIGNMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "MAP-ALIGNMENT",
+    },
+    {
+        "gate_id": "FRONTEND-MAP",
+        "name": "FRONTEND-MAP: 前端全景图对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into MAP-ALIGNMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 MAP-ALIGNMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "MAP-ALIGNMENT",
+    },
+    {
+        "gate_id": "INDUSTRY-CHAIN-MAP",
+        "name": "INDUSTRY-CHAIN-MAP: 产业链图工件（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into MAP-ALIGNMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 MAP-ALIGNMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "MAP-ALIGNMENT",
+    },
+    {
+        "gate_id": "FACTORY-MAP",
+        "name": "FACTORY-MAP: 策略生产图对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into MAP-ALIGNMENT, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 MAP-ALIGNMENT。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "MAP-ALIGNMENT",
+    },
+    {
+        "gate_id": "BLUEPRINT-AMODULE-CONSISTENCY",
+        "name": "BLUEPRINT-AMODULE-CONSISTENCY: A_module 头格式一致（已合并至 BLUEPRINT-HEADER，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into BLUEPRINT-HEADER, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 BLUEPRINT-HEADER。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "BLUEPRINT-HEADER",
+    },
+    {
+        "gate_id": "BLUEPRINT-AMODULE-CROSS-CHECK",
+        "name": "BLUEPRINT-AMODULE-CROSS-CHECK: 蓝图↔A_module 交叉校验（已合并至 BLUEPRINT-HEADER，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into BLUEPRINT-HEADER, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 BLUEPRINT-HEADER。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "BLUEPRINT-HEADER",
+    },
+    {
+        "gate_id": "NO-GOD-CLASS",
+        "name": "NO-GOD-CLASS: God Class 检测（已合并至 COMPLEXITY-GUARD，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into COMPLEXITY-GUARD, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 COMPLEXITY-GUARD。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "COMPLEXITY-GUARD",
+    },
+    {
+        "gate_id": "NO-HIGH-COMPLEXITY",
+        "name": "NO-HIGH-COMPLEXITY: 高循环复杂度检测（已合并至 COMPLEXITY-GUARD，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into COMPLEXITY-GUARD, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 COMPLEXITY-GUARD。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "COMPLEXITY-GUARD",
+    },
+    {
+        "gate_id": "NO-LONG-PARAM-LIST",
+        "name": "NO-LONG-PARAM-LIST: 长参数列表检测（已合并至 COMPLEXITY-GUARD，st-gslim-20260923 P4）",
+        "entry": "N/A (merged into COMPLEXITY-GUARD, see redirect_to)",
+        "description": "【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 COMPLEXITY-GUARD。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "COMPLEXITY-GUARD",
+    },
+
+    {
         # 裁定#347/#372：临界区锁机制实名登记（in-process 机制非钩子，生成器三源合并会漏——
         # 不入此清单则全量重跑会删该条，P9c3 附带发现②治本 2026-09-20）
         "gate_id": "COMMIT-CRITICAL-SECTION-LOCK",
@@ -300,6 +609,16 @@ def generate(entry_count: int | None = None) -> dict:
     gates.extend(extract_commit_gates())
     # ARCH-018 治本：merge 手动覆盖条目（已合并/退役门禁的重定向锚点）
     # 避免生成器覆盖手动添加的 GATE-SCHEMA-HEALTH 等重定向条目
+    # 跨源去重（st-gslim-20260923）：家文件 gate_id 与 pre-commit hook 同名时保先到源，
+    # 防 GATE-VOCAB 类跨源同名重复条目（三源合并旧口径只查 MANUAL_GATES 撞名）。
+    seen: set = set()
+    deduped = []
+    for g in gates:
+        if g["gate_id"] in seen:
+            continue
+        seen.add(g["gate_id"])
+        deduped.append(g)
+    gates = deduped
     auto_ids = {g["gate_id"] for g in gates}
     for mg in MANUAL_GATES:
         if mg["gate_id"] not in auto_ids:

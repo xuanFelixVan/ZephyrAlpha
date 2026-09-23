@@ -69,6 +69,7 @@ from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _get_staged_py_files,
     _is_exempt_line,
     _read_staged_file,
+    _split_own_foreign,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -136,55 +137,55 @@ def _is_self(file_path: str) -> bool:
     return normalized == _SELF_FILE
 
 
-def make_depgraph_write_path_gate() -> GateSpec:
-    """构造 depgraph 写入路径白名单 GateSpec（硬阻断型）。
-
-    Returns:
-        GateSpec(gate_id="DEPGRAPH-WRITE-PATH", priority=100)。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        py_files = [
-            f
-            for f in _get_staged_py_files(gateway, "DEPGRAPH-WRITE-PATH")
-            if not is_test_exempt(f) and not _is_whitelisted(f) and not _is_self(f)
-        ]
-        violations: list[str] = []
-        for py_file in py_files:
-            file_content = _read_staged_file(gateway, py_file)
-            docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
-            for line_no, content in _get_added_lines(gateway, py_file, "DEPGRAPH-WRITE-PATH"):
-                if line_no in docstring_lines or _is_exempt_line(content):
-                    continue
-                if _WRITE_PARAM_RE.search(content):
-                    violations.append(f"  {py_file}:{line_no}: {content.strip()}")
-        if violations:
-            detail = (
-                "DEPGRAPH-WRITE-PATH：检测到 depgraph 写入权限参数\n"
-                "  (read-only disabled / superuser / edge-delete enabled)，\n"
-                "  但文件不在白名单中。裁定#ARCH-DEPGRAPH_ACCESS_CONTROL 规定\n"
-                "  仅以下文件可使用写入权限：\n"
-                "    - scripts/governance/apply_depgraph.py\n"
-                "    - scripts/governance/generate_project_depgraph.py\n"
-                "    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py\n"
-                "    - scripts/governance/_shared/constants.py\n"
-                "    - scripts/governance/sync_panorama_module.py\n"
-                "    - scripts/governance/generate_project_path_tree.py\n"
-                "    - scripts/governance/apply_battle_map.py (battle_map_* 表写入器)\n"
-                "    - scripts/governance/migrations/add_acquisition_fields.py (nodes_metadata schema 迁移)\n"
-                "    - src/zephyr/governance/depgraph_schema.py\n"
-                "    - scripts/industry_graph/quality_fix_p2.py (ig_* 图谱质量修复写入器)\n"
-                "    - scripts/entity_graph/apply_entity_graph_ddl.py (entity_graph 六表 DDL 部署器)\n"
-                "    - scripts/entity_graph/entity_graph_ingest.py (A 层 node/edge 灌入器)\n"
-                "    - scripts/entity_graph/equity_penetration.py (ig 并入器+穿透比对)\n"
-                "  白名单扩展规则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree\n"
-                "  等）的脚本必须加入白名单，扩展三步——(a) 脚本传 read_only=False\n"
-                "  (b) 更新本白名单+错误信息 (c) 更新 architecture_issue_registry.yaml 裁定文档\n"
-                + "\n".join(violations)
-                + "\n-> 如需写入 depgraph，请通过 apply_depgraph.py CLI 操作"
-            )
-            logger.error("DEPGRAPH-WRITE-PATH gate block:\n%s", detail)
-            return False, detail
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    py_files = [
+        f
+        for f in _get_staged_py_files(gateway, "DEPGRAPH-WRITE-PATH")
+        if not is_test_exempt(f) and not _is_whitelisted(f) and not _is_self(f)
+    ]
+    py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="DEPGRAPH-WRITE-PATH")[0]
+    if not py_files:
         return True, ""
+    violations: list[str] = []
+    for py_file in py_files:
+        file_content = _read_staged_file(gateway, py_file)
+        docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
+        for line_no, content in _get_added_lines(gateway, py_file, "DEPGRAPH-WRITE-PATH"):
+            if line_no in docstring_lines or _is_exempt_line(content):
+                continue
+            if _WRITE_PARAM_RE.search(content):
+                violations.append(f"  {py_file}:{line_no}: {content.strip()}")
+    if violations:
+        detail = (
+            "DEPGRAPH-WRITE-PATH：检测到 depgraph 写入权限参数\n"
+            "  (read-only disabled / superuser / edge-delete enabled)，\n"
+            "  但文件不在白名单中。裁定#ARCH-DEPGRAPH_ACCESS_CONTROL 规定\n"
+            "  仅以下文件可使用写入权限：\n"
+            "    - scripts/governance/apply_depgraph.py\n"
+            "    - scripts/governance/generate_project_depgraph.py\n"
+            "    - scripts/governance/d8_doc_sync/sync_yaml_to_depgraph.py\n"
+            "    - scripts/governance/_shared/constants.py\n"
+            "    - scripts/governance/sync_panorama_module.py\n"
+            "    - scripts/governance/generate_project_path_tree.py\n"
+            "    - scripts/governance/apply_battle_map.py (battle_map_* 表写入器)\n"
+            "    - scripts/governance/migrations/add_acquisition_fields.py (nodes_metadata schema 迁移)\n"
+            "    - src/zephyr/governance/depgraph_schema.py\n"
+            "    - scripts/industry_graph/quality_fix_p2.py (ig_* 图谱质量修复写入器)\n"
+            "    - scripts/entity_graph/apply_entity_graph_ddl.py (entity_graph 六表 DDL 部署器)\n"
+            "    - scripts/entity_graph/entity_graph_ingest.py (A 层 node/edge 灌入器)\n"
+            "    - scripts/entity_graph/equity_penetration.py (ig 并入器+穿透比对)\n"
+            "  白名单扩展规则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree\n"
+            "  等）的脚本必须加入白名单，扩展三步——(a) 脚本传 read_only=False\n"
+            "  (b) 更新本白名单+错误信息 (c) 更新 architecture_issue_registry.yaml 裁定文档\n"
+            + "\n".join(violations)
+            + "\n-> 如需写入 depgraph，请通过 apply_depgraph.py CLI 操作"
+        )
+        logger.error("DEPGRAPH-WRITE-PATH gate block:\n%s", detail)
+        return False, detail
+    return True, ""
 
-    return GateSpec(gate_id="DEPGRAPH-WRITE-PATH", check=_check, priority=100)
+
+def make_depgraph_write_path_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 DEPGRAPH-ENFORCEMENT，不再注册；保留供历史测试/引用兼容）。"""
+    return GateSpec(gate_id="DEPGRAPH-WRITE-PATH", check=_check)

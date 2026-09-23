@@ -16,7 +16,33 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-ALIGN-NAMING-001
 # [CREATION-TOKEN] industry-chain-map-gate-20260911
-"""industry_chain_map_gate.py — 产业链全景图 git 侧工件门禁（INDUSTRY-CHAIN-MAP，priority=141）
+"""industry_chain_map_gate.py — 产业链全景图 git 侧工件门禁（INDUSTRY-CHAIN-MAP，priority=147）
+
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: industry_chain_map_gate.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① make_industry_chain_map_gate
+    #   name_en: make_industry_chain_map_gate
+    #   intro: 构造聚合门禁 GateSpec（st-gslim-20260923 P4 并入 MAP-ALIGNMENT）。
+    #   desc: 构造 GateSpec。 Returns: GateSpec(gate_id="MAP-ALIGNMENT", priority=141)。
+    #   inputs: 无参数
+    #   outputs: GateSpec
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec
+    #   name_en: GateSpec
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
+    # [/ALGO_FLOW]
 
 病根（第一性原理）
 -----------------
@@ -91,45 +117,46 @@ def _check_cluster_names() -> list[str]:
     return fails
 
 
-def make_industry_chain_map_gate() -> GateSpec:
-    """构造产业链全景图 git 侧工件门禁 GateSpec（图 8 挂总线，checklist §3）。"""
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    if not files:
+        return True, ""
+    # 生产形态=绝对路径（gateway abspath），_norm_rel 归一到 normcase 相对路径
+    norm = {_norm_rel(gateway, f) for f in files}
+    triggered = sorted(_TRIGGER_FILES_NORMCASE & norm)
+    if not triggered:
+        return True, ""
 
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        if not files:
-            return True, ""
-        # 生产形态=绝对路径（gateway abspath），_norm_rel 归一到 normcase 相对路径
-        norm = {_norm_rel(gateway, f) for f in files}
-        triggered = sorted(_TRIGGER_FILES_NORMCASE & norm)
-        if not triggered:
-            return True, ""
+    from zephyr.gov_enforcement.registry_alignment import check_industry_graph_field_dictionary
 
-        from zephyr.gov_enforcement.registry_alignment import check_industry_graph_field_dictionary
+    all_fails: list[str] = []
+    try:
+        errors, warnings = check_industry_graph_field_dictionary()
+        all_fails.extend(errors)
+        for w in warnings:
+            logger.warning("INDUSTRY-CHAIN-MAP gate warn: %s", w)
+    except Exception as e:  # noqa: BLE001 — 共享核查异常=环境异常放行
+        logger.warning("INDUSTRY-CHAIN-MAP gate: 字典核查异常（fail-open）: %s", e)
 
-        all_fails: list[str] = []
+    if any(f.endswith("chainmap_cluster_names.yaml") for f in triggered):
         try:
-            errors, warnings = check_industry_graph_field_dictionary()
-            all_fails.extend(errors)
-            for w in warnings:
-                logger.warning("INDUSTRY-CHAIN-MAP gate warn: %s", w)
-        except Exception as e:  # noqa: BLE001 — 共享核查异常=环境异常放行
-            logger.warning("INDUSTRY-CHAIN-MAP gate: 字典核查异常（fail-open）: %s", e)
+            all_fails.extend(_check_cluster_names())
+        except Exception as e:  # noqa: BLE001
+            logger.warning("INDUSTRY-CHAIN-MAP gate: 簇名词表核查异常（fail-open）: %s", e)
 
-        if any(f.endswith("chainmap_cluster_names.yaml") for f in triggered):
-            try:
-                all_fails.extend(_check_cluster_names())
-            except Exception as e:  # noqa: BLE001
-                logger.warning("INDUSTRY-CHAIN-MAP gate: 簇名词表核查异常（fail-open）: %s", e)
+    if not all_fails:
+        return True, ""
 
-        if not all_fails:
-            return True, ""
+    detail_lines = "\n".join(f"  - {x}" for x in all_fails)
+    detail = (
+        f"INDUSTRY-CHAIN-MAP：产业链全景图 git 侧工件对齐 {len(all_fails)} 项违规（触发: {', '.join(triggered)}）\n"
+        f"{detail_lines}\n"
+        "-> 字典↔DDL↔引擎三方必须同 commit 同步（alignment_checklist §3 图 8 行）"
+    )
+    logger.error("INDUSTRY-CHAIN-MAP gate block:\n%s", detail)
+    return False, detail
 
-        detail_lines = "\n".join(f"  - {x}" for x in all_fails)
-        detail = (
-            f"INDUSTRY-CHAIN-MAP：产业链全景图 git 侧工件对齐 {len(all_fails)} 项违规（触发: {', '.join(triggered)}）\n"
-            f"{detail_lines}\n"
-            "-> 字典↔DDL↔引擎三方必须同 commit 同步（alignment_checklist §3 图 8 行）"
-        )
-        logger.error("INDUSTRY-CHAIN-MAP gate block:\n%s", detail)
-        return False, detail
 
-    return GateSpec(gate_id="INDUSTRY-CHAIN-MAP", check=_check, priority=141)
+def make_industry_chain_map_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 MAP-ALIGNMENT，不再注册；保留供历史测试/引用兼容）。"""
+    return GateSpec(gate_id="INDUSTRY-CHAIN-MAP", check=_check, priority=147)

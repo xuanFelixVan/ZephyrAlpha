@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 硬阻断——staged .py 新增函数循环复杂度>15时阻断commit(passed=False); tests/豁免; AST解析失败fail-open; git diff不可达fail-open; 检出违规则fail-closed
-# [MODIFY-GUARD] gate_id="NO-HIGH-COMPLEXITY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [MODIFY-GUARD] gate_id="COMPLEXITY-GUARD"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -126,75 +126,106 @@ def _cyclomatic_complexity(node: ast.FunctionDef | ast.AsyncFunctionDef) -> int:
     return complexity
 
 
-def make_high_complexity_gate() -> GateSpec:
-    """构造高循环复杂度阻断 GateSpec（硬阻断型）。
-
-    Returns:
-        GateSpec(gate_id="NO-HIGH-COMPLEXITY", priority=92)。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        staged = [f for f in _get_staged_py_files(gateway, "NO-HIGH-COMPLEXITY") if not is_test_exempt(f)]
-        if not staged:
-            return True, ""
-
-        # 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广，2026-09-10）：扫描范围=全暂存区∩本
-        # session 范围。own_scope=None（无归属信息）→ 退化为旧行为扫全量（保守面不改宽）。
-        # 背景：共享暂存区多会话并发下，他人半成品函数 cc>16 曾锁死本 gate 一整个工作夜
-        # （2026-09-09/10 夜班实证，clearance-night 晨报遗留 7）。
-        session_id = kwargs.get("session_id")
-        own_scope = _build_own_scope(gateway, files, session_id)
-        if own_scope is None:
-            py_files = staged
-        else:
-            py_files = [f for f in staged if _norm_rel(gateway, f) in own_scope]
-            foreign_staged = [f for f in staged if _norm_rel(gateway, f) not in own_scope]
-            if foreign_staged:
-                # 外来 staged 不扫描、降级 warn+审计（本 session 自身违规分支不动）
-                _audit_foreign_staged(
-                    gateway, session_id, foreign_staged, gate_name="NO-HIGH-COMPLEXITY"
-                )
-                logger.warning(
-                    "NO-HIGH-COMPLEXITY: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
-                    len(foreign_staged),
-                    ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
-                )
-
-        violations: list[str] = []
-        for py_file in py_files:
-            file_content = _read_staged_file(gateway, py_file)
-            if not file_content:
-                continue
-            added_lines = {ln for ln, _ in _get_added_lines(gateway, py_file, "NO-HIGH-COMPLEXITY")}
-            if not added_lines:
-                continue
-            try:
-                tree = ast.parse(file_content, filename=py_file)
-            except SyntaxError:
-                continue
-            # 裁定#214：读取 HEAD 版本函数名集合，区分"新增函数"与"修改函数"
-            # 只对 HEAD 中不存在的函数名检测复杂度（gate 设计意图："只检测新增函数"）
-            head_content = _read_head_file(gateway, py_file)
-            head_func_names: set[str] = set()
-            if head_content is not None:
-                head_func_names = _collect_function_names(head_content)
-            for node in ast.walk(tree):
-                if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.lineno in added_lines:
-                    # 跳过已存在于 HEAD 的函数（修改函数，非新增函数）
-                    if node.name in head_func_names:
-                        continue
-                    complexity = _cyclomatic_complexity(node)
-                    if complexity > _MAX_COMPLEXITY:
-                        violations.append(
-                            f"  {py_file}:{node.lineno}: {node.name}(complexity={complexity} > {_MAX_COMPLEXITY})"
-                        )
-        if violations:
-            detail = (
-                "NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），\n"
-                "  违反 §5.158 循环复杂度反模式。\n" + "\n".join(violations) + "\n-> 考虑拆分为短函数/策略模式/查表法"
-            )
-            logger.error("NO-HIGH-COMPLEXITY gate block:\n%s", detail)
-            return False, detail
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    staged = [f for f in _get_staged_py_files(gateway, "NO-HIGH-COMPLEXITY") if not is_test_exempt(f)]
+    if not staged:
         return True, ""
 
+    # 只查自己（#ARCH-GATE-OWN-SCOPE-001 推广，2026-09-10）：扫描范围=全暂存区∩本
+    # session 范围。own_scope=None（无归属信息）→ 退化为旧行为扫全量（保守面不改宽）。
+    # 背景：共享暂存区多会话并发下，他人半成品函数 cc>16 曾锁死本 gate 一整个工作夜
+    # （2026-09-09/10 夜班实证，clearance-night 晨报遗留 7）。
+    session_id = kwargs.get("session_id")
+    own_scope = _build_own_scope(gateway, files, session_id)
+    if own_scope is None:
+        py_files = staged
+    else:
+        py_files = [f for f in staged if _norm_rel(gateway, f) in own_scope]
+        foreign_staged = [f for f in staged if _norm_rel(gateway, f) not in own_scope]
+        if foreign_staged:
+            # 外来 staged 不扫描、降级 warn+审计（本 session 自身违规分支不动）
+            _audit_foreign_staged(
+                gateway, session_id, foreign_staged, gate_name="NO-HIGH-COMPLEXITY"
+            )
+            logger.warning(
+                "NO-HIGH-COMPLEXITY: %d 个外来 session staged 文件未检查（warn+审计，不阻断）: %s",
+                len(foreign_staged),
+                ", ".join(foreign_staged[:5]) + ("..." if len(foreign_staged) > 5 else ""),
+            )
+
+    violations: list[str] = []
+    for py_file in py_files:
+        file_content = _read_staged_file(gateway, py_file)
+        if not file_content:
+            continue
+        added_lines = {ln for ln, _ in _get_added_lines(gateway, py_file, "NO-HIGH-COMPLEXITY")}
+        if not added_lines:
+            continue
+        try:
+            tree = ast.parse(file_content, filename=py_file)
+        except SyntaxError:
+            continue
+        # 裁定#214：读取 HEAD 版本函数名集合，区分"新增函数"与"修改函数"
+        # 只对 HEAD 中不存在的函数名检测复杂度（gate 设计意图："只检测新增函数"）
+        head_content = _read_head_file(gateway, py_file)
+        head_func_names: set[str] = set()
+        if head_content is not None:
+            head_func_names = _collect_function_names(head_content)
+        for node in ast.walk(tree):
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.lineno in added_lines:
+                # 跳过已存在于 HEAD 的函数（修改函数，非新增函数）
+                if node.name in head_func_names:
+                    continue
+                complexity = _cyclomatic_complexity(node)
+                if complexity > _MAX_COMPLEXITY:
+                    violations.append(
+                        f"  {py_file}:{node.lineno}: {node.name}(complexity={complexity} > {_MAX_COMPLEXITY})"
+                    )
+    if violations:
+        detail = (
+            "NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），\n"
+            "  违反 §5.158 循环复杂度反模式。\n" + "\n".join(violations) + "\n-> 考虑拆分为短函数/策略模式/查表法"
+        )
+        logger.error("COMPLEXITY-GUARD gate block:\n%s", detail)
+        return False, detail
+    return True, ""
+
+
+def make_high_complexity_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 COMPLEXITY-GUARD，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="NO-HIGH-COMPLEXITY", check=_check, priority=92)
+
+
+def make_complexity_guard_gate() -> GateSpec:
+    """构造 COMPLEXITY-GUARD 聚合门禁（st-gslim-20260923 P4 合并，gate_audit_report_v1 §C2/Owner E 全批）。
+
+    聚合子检查（各自独立判定，违规聚合呈现带 [源台名] 前缀，任一失败即阻断）：
+    - COMPLEXITY-GUARD（本文件 _check_impl）
+    - NO-GOD-CLASS（god_class_gate._check_impl）
+    - NO-LONG-PARAM-LIST（long_param_list_gate._check_impl）
+    """
+    def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        failures: list[str] = []
+        subs = [
+            ("NO-HIGH-COMPLEXITY", None, "_check"),
+            ("NO-GOD-CLASS", "god_class_gate", "_check"),
+            ("NO-LONG-PARAM-LIST", "long_param_list_gate", "_check"),
+        ]
+        for sgid, mod, impl_name in subs:
+            try:
+                if mod is None:
+                    fn = _check
+                else:
+                    import importlib  # noqa: PLC0415
+                    fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
+            except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
+                failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
+                continue
+            ok, detail = fn(gateway, files, **kwargs)
+            if not ok:
+                failures.append(f"[{sgid}] " + detail)
+        if failures:
+            return False, "\n".join(failures)
+        return True, ""
+    return GateSpec(gate_id="COMPLEXITY-GUARD", check=_union_check, priority=92)

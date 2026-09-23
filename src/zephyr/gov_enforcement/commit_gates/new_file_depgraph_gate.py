@@ -207,98 +207,93 @@ def _format_violation_detail(missing: list[str]) -> str:
     return f"{', '.join(shown)}{suffix}"
 
 
-def make_new_file_depgraph_gate() -> GateSpec:
-    """构造新建 .py 文件 depgraph 未登记硬阻断门禁 GateSpec（硬阻断型）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    # 1. 非 Zephyr 项目（tmp_path 测试仓库等）skip
+    # 对标 CREATE-GUARD 的 non-Zephyr project skip 设计
+    _governance_dir = gateway.project_root / "scripts" / "governance" / "d1_structure"
+    if not _governance_dir.is_dir():
+        return (
+            True,
+            "non-Zephyr project (no scripts/governance/d1_structure), skipping NEW-FILE-DEPGRAPH-ENFORCEMENT",
+        )
 
-    Returns:
-        GateSpec(gate_id="NEW-FILE-DEPGRAPH-ENFORCEMENT", priority=58)。
-        priority=58——在 HELD-OVERLAP(50) 之后、CREATE-GUARD(60) 之前
-        （结构性检查应尽早拦截，在文件登记类检查之前）。
-    """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 非 Zephyr 项目（tmp_path 测试仓库等）skip
-        # 对标 CREATE-GUARD 的 non-Zephyr project skip 设计
-        _governance_dir = gateway.project_root / "scripts" / "governance" / "d1_structure"
-        if not _governance_dir.is_dir():
-            return (
-                True,
-                "non-Zephyr project (no scripts/governance/d1_structure), skipping NEW-FILE-DEPGRAPH-ENFORCEMENT",
-            )
-
-        # 2. 获取 staged 新增 .py 文件（None 表示 fail-open 检测器失效）
-        new_py_files = _get_staged_new_py_files(gateway)
-        if not new_py_files:
-            return True, ""
-        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
-        new_py_files = _split_own_foreign(gateway, new_py_files, files, kwargs.get("session_id"), gate_name="NEW-FILE-DEPGRAPH")[0]
-        if not new_py_files:
-            return True, ""
-
-        # 3. 治本 2026-06-30（对标 CREATE-GUARD）：只检测 commit 文件中的新增 .py
-        # （gateway 选择性提交时，staged 区可能含未在 commit files 中的文件）
-        commit_files_rel: set[str] = set()
-        for f in files:
-            try:
-                rel = os.path.relpath(f, str(gateway.project_root)).replace("\\", "/")
-                commit_files_rel.add(rel)
-            except (ValueError, OSError):
-                continue
-        new_py_files = [f for f in new_py_files if f in commit_files_rel]
-        if not new_py_files:
-            return True, ""
-
-        # 4. 逐个查询 depgraph 是否已记录
-        missing: list[str] = []
-        degraded: list[str] = []  # DB 查询失败被降级放行的新文件（#116 B1 留痕）
-        for file_path in new_py_files:
-            result = _check_depgraph_has_file(file_path)
-            if result is None:
-                # DB 查询失败 → fail-open（不阻断此文件）
-                degraded.append(file_path)
-                continue
-            if not result:
-                missing.append(file_path)
-
-        # 4b. tracker #116 B1（#ARCH-119）：fail-open 放行统一接 log_gate_failure
-        # 持久化（critical_warn，下次 commit 网关 banner 浮现）；探针状态区分
-        # 「DB 离线降级」（当日同签名去重）vs「真实错误」（逐次留痕不静默）。
-        # 放行语义不变——只加留痕。
-        if degraded:
-            from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
-                log_db_failopen,
-                pg_probe_shows_offline,
-            )
-
-            _offline = pg_probe_shows_offline(gateway.project_root)
-            log_db_failopen(
-                gateway.project_root,
-                "NEW-FILE-DEPGRAPH-ENFORCEMENT",
-                db_offline=_offline,
-                reason=(
-                    "depgraph 查询失败，新文件登记状态无法验证，降级放行"
-                    + ("（探针证实 PG 离线）" if _offline else "（探针未证实离线——真实连接错误）")
-                ),
-                affected_files=degraded,
-                session_id=kwargs.get("session_id", ""),
-            )
-
-        # 5. 有未登记的新文件 → 阻断
-        if missing:
-            detail = _format_violation_detail(missing)
-            return False, (
-                f"NEW-FILE-DEPGRAPH-ENFORCEMENT: {len(missing)} 个新建 .py 文件"
-                f"在 depgraph (PostgreSQL) nodes 表无记录。L1 铁律（依赖关系先行）"
-                f"从君子协定升级为技术强制（#ARCH-DEP-001 第三期）。"
-                f"修复（二选一）："
-                f"① 先登记设计态再施工——python scripts/governance/apply_depgraph.py "
-                f"--add-design-node <file_path> <module_id> <domain_id> --granularity file；"
-                f"② 施工完毕直接全量重扫登记运营态——python scripts/governance/"
-                f"generate_project_depgraph.py --output-db depgraph --force"
-                f"（#ARCH-70 起：同 path design 预登记节点由重扫自动同身份 UPDATE 转 production，"
-                f"无需手工 transition）。"
-                f"详情: {detail}"
-            )
+    # 2. 获取 staged 新增 .py 文件（None 表示 fail-open 检测器失效）
+    new_py_files = _get_staged_new_py_files(gateway)
+    if not new_py_files:
+        return True, ""
+    # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+    new_py_files = _split_own_foreign(gateway, new_py_files, files, kwargs.get("session_id"), gate_name="NEW-FILE-DEPGRAPH")[0]
+    if not new_py_files:
         return True, ""
 
+    # 3. 治本 2026-06-30（对标 CREATE-GUARD）：只检测 commit 文件中的新增 .py
+    # （gateway 选择性提交时，staged 区可能含未在 commit files 中的文件）
+    commit_files_rel: set[str] = set()
+    for f in files:
+        try:
+            rel = os.path.relpath(f, str(gateway.project_root)).replace("\\", "/")
+            commit_files_rel.add(rel)
+        except (ValueError, OSError):
+            continue
+    new_py_files = [f for f in new_py_files if f in commit_files_rel]
+    if not new_py_files:
+        return True, ""
+
+    # 4. 逐个查询 depgraph 是否已记录
+    missing: list[str] = []
+    degraded: list[str] = []  # DB 查询失败被降级放行的新文件（#116 B1 留痕）
+    for file_path in new_py_files:
+        result = _check_depgraph_has_file(file_path)
+        if result is None:
+            # DB 查询失败 → fail-open（不阻断此文件）
+            degraded.append(file_path)
+            continue
+        if not result:
+            missing.append(file_path)
+
+    # 4b. tracker #116 B1（#ARCH-119）：fail-open 放行统一接 log_gate_failure
+    # 持久化（critical_warn，下次 commit 网关 banner 浮现）；探针状态区分
+    # 「DB 离线降级」（当日同签名去重）vs「真实错误」（逐次留痕不静默）。
+    # 放行语义不变——只加留痕。
+    if degraded:
+        from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
+            log_db_failopen,
+            pg_probe_shows_offline,
+        )
+
+        _offline = pg_probe_shows_offline(gateway.project_root)
+        log_db_failopen(
+            gateway.project_root,
+            "NEW-FILE-DEPGRAPH-ENFORCEMENT",
+            db_offline=_offline,
+            reason=(
+                "depgraph 查询失败，新文件登记状态无法验证，降级放行"
+                + ("（探针证实 PG 离线）" if _offline else "（探针未证实离线——真实连接错误）")
+            ),
+            affected_files=degraded,
+            session_id=kwargs.get("session_id", ""),
+        )
+
+    # 5. 有未登记的新文件 → 阻断
+    if missing:
+        detail = _format_violation_detail(missing)
+        return False, (
+            f"NEW-FILE-DEPGRAPH-ENFORCEMENT: {len(missing)} 个新建 .py 文件"
+            f"在 depgraph (PostgreSQL) nodes 表无记录。L1 铁律（依赖关系先行）"
+            f"从君子协定升级为技术强制（#ARCH-DEP-001 第三期）。"
+            f"修复（二选一）："
+            f"① 先登记设计态再施工——python scripts/governance/apply_depgraph.py "
+            f"--add-design-node <file_path> <module_id> <domain_id> --granularity file；"
+            f"② 施工完毕直接全量重扫登记运营态——python scripts/governance/"
+            f"generate_project_depgraph.py --output-db depgraph --force"
+            f"（#ARCH-70 起：同 path design 预登记节点由重扫自动同身份 UPDATE 转 production，"
+            f"无需手工 transition）。"
+            f"详情: {detail}"
+        )
+    return True, ""
+
+
+def make_new_file_depgraph_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 DEPGRAPH-ENFORCEMENT，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="NEW-FILE-DEPGRAPH-ENFORCEMENT", check=_check, priority=58)

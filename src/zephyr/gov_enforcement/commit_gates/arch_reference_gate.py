@@ -296,68 +296,63 @@ def _format_non_numeric_warning(non_numeric: list[str]) -> str:
     )
 
 
-def make_arch_reference_gate() -> GateSpec:
-    """构造 #ARCH-NNN 悬空引用检测门禁 GateSpec（fail-closed，阻断型）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    project_root = gateway.project_root
 
-    Returns:
-        GateSpec(gate_id="ARCH-REFERENCE", priority=75)。
-        priority=75——紧跟 DANGLING-REFERENCE(70) 之后、CAPABILITY-OVERLAP(200) 之前
-        （同属"引用完整性"类检查，集中执行）。
-    """
+    ok, detail, registered_nums = _load_registered_nums(project_root)
+    if not ok:
+        return False, detail
 
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        project_root = gateway.project_root
+    # 治本（M03，2026-07-18）：scan_file_violations 等共享 helper 已下沉到
+    # _reference_helpers，通过 _extract_refs 参数注入本 gate 专用正则。
+    violations, error = scan_file_violations(project_root, files, registered_nums, _extract_refs)
+    if error is not None:
+        return False, error
 
-        ok, detail, registered_nums = _load_registered_nums(project_root)
-        if not ok:
-            return False, detail
+    if violations:
+        return False, _format_violations_detail(violations)
 
-        # 治本（M03，2026-07-18）：scan_file_violations 等共享 helper 已下沉到
-        # _reference_helpers，通过 _extract_refs 参数注入本 gate 专用正则。
-        violations, error = scan_file_violations(project_root, files, registered_nums, _extract_refs)
-        if error is not None:
-            return False, error
-
-        if violations:
-            return False, _format_violations_detail(violations)
-
-        # L2: 同提交原子性检查——新引用不在 HEAD registry 时，要求 registry 同 commit
-        # 防止"引用了新编号但 registry 没同提交登记"导致 commit 后 HEAD registry 仍缺条目
-        head_nums = load_head_registered_nums(project_root, _REGISTRY_REL, _extract_registered_nums)
-        if head_nums is not None:
-            new_refs_by_file = collect_new_refs_by_file(project_root, files, head_nums, _REGISTRY_REL, _extract_refs)
-            if new_refs_by_file:
-                registry_rel = _REGISTRY_REL.replace("\\", "/")
-                registry_in_commit = any(
-                    os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel for f in files
-                )
-                atomicity_violations = check_atomicity(new_refs_by_file, registry_in_commit)
-                if atomicity_violations:
-                    return False, _format_atomicity_detail(atomicity_violations)
-
-        # L3 + L1: 合并 WARNING（不阻断）
-        warnings: list[str] = []
-
-        # L3: 新条目数字制检测（WARNING，不阻断）——铁律#7 冻结条款（2026-08-05）
-        # 只在 registry 在本次 commit 中时检测（registry 未修改则无新条目）
-        if head_nums is not None:
-            registry_rel_normalized = _REGISTRY_REL.replace("\\", "/")
+    # L2: 同提交原子性检查——新引用不在 HEAD registry 时，要求 registry 同 commit
+    # 防止"引用了新编号但 registry 没同提交登记"导致 commit 后 HEAD registry 仍缺条目
+    head_nums = load_head_registered_nums(project_root, _REGISTRY_REL, _extract_registered_nums)
+    if head_nums is not None:
+        new_refs_by_file = collect_new_refs_by_file(project_root, files, head_nums, _REGISTRY_REL, _extract_refs)
+        if new_refs_by_file:
+            registry_rel = _REGISTRY_REL.replace("\\", "/")
             registry_in_commit = any(
-                os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel_normalized for f in files
+                os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel for f in files
             )
-            if registry_in_commit:
-                new_entries = registered_nums - head_nums
-                non_numeric = sorted(n for n in new_entries if not _is_numeric_suffix(n))
-                if non_numeric:
-                    warnings.append(_format_non_numeric_warning(non_numeric))
+            atomicity_violations = check_atomicity(new_refs_by_file, registry_in_commit)
+            if atomicity_violations:
+                return False, _format_atomicity_detail(atomicity_violations)
 
-        # L1: 编号空洞检测（WARNING，不阻断）——发现编号空洞时通过但不报错
-        gaps = _detect_id_gaps(registered_nums)
-        if gaps:
-            warnings.append(_format_gap_warning(gaps))
+    # L3 + L1: 合并 WARNING（不阻断）
+    warnings: list[str] = []
 
-        if warnings:
-            return True, "\n\n".join(warnings)
-        return True, ""
+    # L3: 新条目数字制检测（WARNING，不阻断）——铁律#7 冻结条款（2026-08-05）
+    # 只在 registry 在本次 commit 中时检测（registry 未修改则无新条目）
+    if head_nums is not None:
+        registry_rel_normalized = _REGISTRY_REL.replace("\\", "/")
+        registry_in_commit = any(
+            os.path.relpath(f, str(project_root)).replace("\\", "/") == registry_rel_normalized for f in files
+        )
+        if registry_in_commit:
+            new_entries = registered_nums - head_nums
+            non_numeric = sorted(n for n in new_entries if not _is_numeric_suffix(n))
+            if non_numeric:
+                warnings.append(_format_non_numeric_warning(non_numeric))
 
+    # L1: 编号空洞检测（WARNING，不阻断）——发现编号空洞时通过但不报错
+    gaps = _detect_id_gaps(registered_nums)
+    if gaps:
+        warnings.append(_format_gap_warning(gaps))
+
+    if warnings:
+        return True, "\n\n".join(warnings)
+    return True, ""
+
+
+def make_arch_reference_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 REFERENCE-INTEGRITY，不再注册；保留供历史测试/引用兼容）。"""
     return GateSpec(gate_id="ARCH-REFERENCE", check=_check, priority=75)

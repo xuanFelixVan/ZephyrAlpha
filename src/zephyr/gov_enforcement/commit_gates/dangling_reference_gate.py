@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 只检测 staged 文件中**新增的** AGENTS.md §X.Y 引用（不阻断已有的悬空引用，防阻塞大量历史文件）；fail-closed——AGENTS.md 缺失或 git 异常时阻断；跳过 tests/ 豁免区；不检测 blueprint.md §X.Y 或"蓝图 MOD-XXX §X.Y"（蓝图内部引用非 AGENTS.md）；扫描文件类型 .py/.yaml/.yml/.md/.json/.txt（REFERENCE_TEXT_EXTS 单一真源，audit-02 2026-08-02）；章节号从工作区 AGENTS.md 提取（commit 后的新真源）
-# [MODIFY-GUARD] gate_id="DANGLING-REFERENCE"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
+# [MODIFY-GUARD] gate_id="REFERENCE-INTEGRITY"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -150,77 +150,108 @@ def _load_valid_sections(project_root: Path) -> tuple[set[str] | None, tuple[boo
     return valid_sections, None
 
 
-def make_dangling_reference_gate() -> GateSpec:
-    """构造 AGENTS.md §X.Y 悬空引用检测门禁 GateSpec（fail-closed，阻断型）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """DANGLING-REFERENCE 判定体（模块级——make_reference_integrity_gate 聚合器同调）。"""
+    project_root = gateway.project_root
+    valid_sections, err = _load_valid_sections(project_root)
+    if err is not None:
+        return err
 
-    Returns:
-        GateSpec(gate_id="DANGLING-REFERENCE", priority=70)。
-        priority=70——在 CREATE-GUARD(60) 之后、CAPABILITY-OVERLAP(200) 之前执行
-        （悬空引用是文档质量问题，优先级低于根因级检查）。
-    """
+    # 检测 staged 文件中新增的悬空引用
+    violations: list[tuple[str, list[str]]] = []  # (rel_path, [dangling_sections])
+    for f in files:
+        if not os.path.isfile(f):
+            continue  # deletion commit：文件不存在，跳过
+        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+        if is_test_exempt(rel):
+            continue  # tests/ 豁免区
+        if not rel.endswith(REFERENCE_TEXT_EXTS):
+            continue  # 非可扫描文件类型
 
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        project_root = gateway.project_root
-        valid_sections, err = _load_valid_sections(project_root)
-        if err is not None:
-            return err
+        # 读取当前工作区版本
+        try:
+            current_content = Path(f).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue  # 读取失败跳过（其他 gate 会处理）
 
-        # 检测 staged 文件中新增的悬空引用
-        violations: list[tuple[str, list[str]]] = []  # (rel_path, [dangling_sections])
-        for f in files:
-            if not os.path.isfile(f):
-                continue  # deletion commit：文件不存在，跳过
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if is_test_exempt(rel):
-                continue  # tests/ 豁免区
-            if not rel.endswith(REFERENCE_TEXT_EXTS):
-                continue  # 非可扫描文件类型
+        current_refs = _extract_refs(current_content)
+        if not current_refs:
+            continue  # 无 AGENTS.md §X.Y 引用
 
-            # 读取当前工作区版本
-            try:
-                current_content = Path(f).read_text(encoding="utf-8", errors="replace")
-            except OSError:
-                continue  # 读取失败跳过（其他 gate 会处理）
+        # 获取 HEAD 版本，计算新增引用
+        # 治本（M03，2026-07-18）：get_head_content 已下沉到 _reference_helpers，
+        # 消除与 arch_reference_gate / ruling_reference_gate 的 M03 重复簇。
+        try:
+            head_content = get_head_content(project_root, rel)
+        except OSError as e:
+            # git 命令失败 -> fail-closed 阻断
+            return False, f"git show failed for {rel} (fail-closed): {e}"
 
-            current_refs = _extract_refs(current_content)
-            if not current_refs:
-                continue  # 无 AGENTS.md §X.Y 引用
+        if head_content is None:
+            # 新文件：所有引用都是新增
+            new_refs = current_refs
+        else:
+            head_refs = _extract_refs(head_content)
+            new_refs = current_refs - head_refs
 
-            # 获取 HEAD 版本，计算新增引用
-            # 治本（M03，2026-07-18）：get_head_content 已下沉到 _reference_helpers，
-            # 消除与 arch_reference_gate / ruling_reference_gate 的 M03 重复簇。
-            try:
-                head_content = get_head_content(project_root, rel)
-            except OSError as e:
-                # git 命令失败 -> fail-closed 阻断
-                return False, f"git show failed for {rel} (fail-closed): {e}"
+        if not new_refs:
+            continue  # 无新增引用
 
-            if head_content is None:
-                # 新文件：所有引用都是新增
-                new_refs = current_refs
-            else:
-                head_refs = _extract_refs(head_content)
-                new_refs = current_refs - head_refs
+        # 检查新增引用是否悬空
+        dangling = sorted(new_refs - valid_sections)
+        if dangling:
+            violations.append((rel, dangling))
 
-            if not new_refs:
-                continue  # 无新增引用
-
-            # 检查新增引用是否悬空
-            dangling = sorted(new_refs - valid_sections)
-            if dangling:
-                violations.append((rel, dangling))
-
-        if violations:
-            detail_lines = []
-            for rel, secs in violations:
-                detail_lines.append(f"  - {rel}: §{', §'.join(secs)}")
-            return False, (
-                "新增 AGENTS.md 悬空引用（DANGLING_REFERENCE_VIOLATION）——"
-                "以下文件引用了 AGENTS.md 中不存在的章节号：\n"
-                + "\n".join(detail_lines)
-                + "\n修复：检查 AGENTS.md 实际章节号，或移除/修正引用。"
-                "（注：本门禁只检测新增引用，历史悬空引用不阻断。）"
-            )
-        return True, ""
+    if violations:
+        detail_lines = []
+        for rel, secs in violations:
+            detail_lines.append(f"  - {rel}: §{', §'.join(secs)}")
+        return False, (
+            "新增 AGENTS.md 悬空引用（DANGLING_REFERENCE_VIOLATION）——"
+            "以下文件引用了 AGENTS.md 中不存在的章节号：\n"
+            + "\n".join(detail_lines)
+            + "\n修复：检查 AGENTS.md 实际章节号，或移除/修正引用。"
+            "（注：本门禁只检测新增引用，历史悬空引用不阻断。）"
+        )
+    return True, ""
 
     return GateSpec(gate_id="DANGLING-REFERENCE", check=_check, priority=70)
+
+
+def make_dangling_reference_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 REFERENCE-INTEGRITY，不再注册；保留供历史测试/引用兼容）。"""
+    return GateSpec(gate_id="DANGLING-REFERENCE", check=_check, priority=70)
+
+
+def make_reference_integrity_gate() -> GateSpec:
+    """构造 REFERENCE-INTEGRITY 聚合门禁（st-gslim-20260923 P4 合并，gate_audit_report_v1 §C2/Owner E 全批）。
+
+    聚合子检查（各自独立判定，违规聚合呈现带 [源台名] 前缀，任一失败即阻断）：
+    - REFERENCE-INTEGRITY（本文件 _check_impl）
+    - ARCH-REFERENCE（arch_reference_gate._check_impl）
+    - RULING-REFERENCE（ruling_reference_gate._check_impl）
+    """
+    def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        failures: list[str] = []
+        subs = [
+            ("DANGLING-REFERENCE", None, "_check"),
+            ("ARCH-REFERENCE", "arch_reference_gate", "_check"),
+            ("RULING-REFERENCE", "ruling_reference_gate", "_check"),
+        ]
+        for sgid, mod, impl_name in subs:
+            try:
+                if mod is None:
+                    fn = globals()["_check"]  # globals 解析=取模块级本件判定体，避免绑定聚合器自身闭包（递归爆栈修）
+                else:
+                    import importlib  # noqa: PLC0415
+                    fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
+            except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
+                failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
+                continue
+            ok, detail = fn(gateway, files, **kwargs)
+            if not ok:
+                failures.append(f"[{sgid}] " + detail)
+        if failures:
+            return False, "\n".join(failures)
+        return True, ""
+    return GateSpec(gate_id="REFERENCE-INTEGRITY", check=_union_check, priority=70)

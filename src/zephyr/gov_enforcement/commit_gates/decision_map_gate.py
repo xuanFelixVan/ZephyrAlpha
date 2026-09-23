@@ -16,7 +16,7 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-DECISION-MAP-GATE-001
 # [CREATION-TOKEN] auto-decision-map-gate-20260905
-"""decision_map_gate.py — 第七图（交易决策地图）对齐阻断门禁（DECISION-MAP，priority=138）
+"""decision_map_gate.py — 第七图（交易决策地图）对齐阻断门禁（DECISION-MAP，priority=145）
 
 病根（第一性原理）
 -----------------
@@ -80,53 +80,50 @@ def _is_map_input(norm_rel: str) -> bool:
     return norm_rel in _MAP_INPUT_YAML or (norm_rel.startswith(_PF_CORE_PREFIX) and norm_rel.endswith(".py"))
 
 
-def make_decision_map_gate() -> GateSpec:
-    """构造交易决策地图对齐硬阻断 GateSpec（七图对齐 commit 链闭环）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """合并前原 _check 闭包体（st-gslim-20260923 P4 闭包提级，行为逐字节保留）。"""
+    # 触发式收窄（2026-09-11 Owner 批准，方案 §5-4）：本 commit（files∪held）未触及
+    # 地图输入面（trading_decision_map.yaml + strategy/factor/data_asset 三注册表 +
+    # pf_core/**.py）时跳过全量校验（实测 8-10s）——地图断链只能由这些文件的改动
+    # 引入，触及者（含地图归属会话）必经全量校验，覆盖保证不变；own_scope=None
+    # （无归属信息）→ 退化为恒跑（保守面不改宽，原 INVARIANTS 行为）。
+    own_scope = _build_own_scope(gateway, files, kwargs.get("session_id"))
+    if own_scope is not None and not any(_is_map_input(f) for f in own_scope):
+        return True, "skip: 本 commit 未触及地图输入面（触发式收窄，2026-09-11 Owner 批准）"
 
-    Returns:
-        GateSpec(gate_id="DECISION-MAP", priority=138)。
-    """
+    if str(_GENERATORS_DIR) not in sys.path:
+        sys.path.insert(0, str(_GENERATORS_DIR))
+    try:
+        from check_decision_map import run_checks  # noqa: import-integrity  sys.path 动态加载
+    except Exception as e:  # noqa: BLE001 — 校验器不可达=fail-closed
+        logger.error("DECISION-MAP gate: 校验器加载失败（fail-closed）: %s", e)
+        return False, f"DECISION-MAP: 校验器 check_decision_map 加载失败（fail-closed）: {e}"
 
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 触发式收窄（2026-09-11 Owner 批准，方案 §5-4）：本 commit（files∪held）未触及
-        # 地图输入面（trading_decision_map.yaml + strategy/factor/data_asset 三注册表 +
-        # pf_core/**.py）时跳过全量校验（实测 8-10s）——地图断链只能由这些文件的改动
-        # 引入，触及者（含地图归属会话）必经全量校验，覆盖保证不变；own_scope=None
-        # （无归属信息）→ 退化为恒跑（保守面不改宽，原 INVARIANTS 行为）。
-        own_scope = _build_own_scope(gateway, files, kwargs.get("session_id"))
-        if own_scope is not None and not any(_is_map_input(f) for f in own_scope):
-            return True, "skip: 本 commit 未触及地图输入面（触发式收窄，2026-09-11 Owner 批准）"
-
-        if str(_GENERATORS_DIR) not in sys.path:
-            sys.path.insert(0, str(_GENERATORS_DIR))
-        try:
-            from check_decision_map import run_checks  # noqa: import-integrity  sys.path 动态加载
-        except Exception as e:  # noqa: BLE001 — 校验器不可达=fail-closed
-            logger.error("DECISION-MAP gate: 校验器加载失败（fail-closed）: %s", e)
-            return False, f"DECISION-MAP: 校验器 check_decision_map 加载失败（fail-closed）: {e}"
-
-        try:
-            fails, warns, total = run_checks()
-        except Exception as e:  # noqa: BLE001 — 真源损坏=fail-closed（须先修图）
-            logger.error("DECISION-MAP gate: trading_decision_map.yaml 校验异常（fail-closed）: %s", e)
-            return False, (
-                f"DECISION-MAP: trading_decision_map.yaml 校验异常（真源损坏须先修）: {e}\n"
-                "-> 检查 config/trading_decision_map.yaml 语法与 schema v1.0 结构"
-            )
-
-        if not fails:
-            if warns:
-                logger.info("DECISION-MAP gate: fail=0 warn=%d（放行，缺口红节点占位）", len(warns))
-            return True, ""
-
-        detail_lines = "\n".join(f"  - {x}" for x in fails)
-        detail = (
-            f"DECISION-MAP：交易决策地图校验 {len(fails)} 项 error（共 {total} 节点）\n"
-            f"{detail_lines}\n"
-            "-> 修复 config/trading_decision_map.yaml 后重提"
-            "（R1 枚举/R2 边/R3 策略引用/R4 因子/R5 数据/R6 置信度/R7 矩阵格/R8 成环）"
+    try:
+        fails, warns, total = run_checks()
+    except Exception as e:  # noqa: BLE001 — 真源损坏=fail-closed（须先修图）
+        logger.error("DECISION-MAP gate: trading_decision_map.yaml 校验异常（fail-closed）: %s", e)
+        return False, (
+            f"DECISION-MAP: trading_decision_map.yaml 校验异常（真源损坏须先修）: {e}\n"
+            "-> 检查 config/trading_decision_map.yaml 语法与 schema v1.0 结构"
         )
-        logger.error("DECISION-MAP gate block:\n%s", detail)
-        return False, detail
 
-    return GateSpec(gate_id="DECISION-MAP", check=_check, priority=138)
+    if not fails:
+        if warns:
+            logger.info("DECISION-MAP gate: fail=0 warn=%d（放行，缺口红节点占位）", len(warns))
+        return True, ""
+
+    detail_lines = "\n".join(f"  - {x}" for x in fails)
+    detail = (
+        f"DECISION-MAP：交易决策地图校验 {len(fails)} 项 error（共 {total} 节点）\n"
+        f"{detail_lines}\n"
+        "-> 修复 config/trading_decision_map.yaml 后重提"
+        "（R1 枚举/R2 边/R3 策略引用/R4 因子/R5 数据/R6 置信度/R7 矩阵格/R8 成环）"
+    )
+    logger.error("DECISION-MAP gate block:\n%s", detail)
+    return False, detail
+
+
+def make_decision_map_gate() -> GateSpec:
+    """旧单门工厂（st-gslim-20260923 P4 已并入新台 MAP-ALIGNMENT，不再注册；保留供历史测试/引用兼容）。"""
+    return GateSpec(gate_id="DECISION-MAP", check=_check, priority=145)
