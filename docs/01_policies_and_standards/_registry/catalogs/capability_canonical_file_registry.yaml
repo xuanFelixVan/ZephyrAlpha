@@ -46366,4 +46366,19 @@ creation_tokens:
   created_by: st-ailayer-p1-20260923
   capability: ai_layer_vision
   merge_evaluation: "P1收尾班夜报（八段代码面落地+收尾工序审计记录），vision目录夜报序列件非第二真源"
+- file: docs/_working/e2e_20260924/w0_ruling_404_collision_fix.md
+  token: e2e-20260924-w0-ruling-404-collision-fix-20260923
+  created_by: st-e2e-20260924
+  capability: e2e_20260924
+  merge_evaluation: "内收判据：三件均为本班一次性班次案卷（撞号取证/回补 dry-run/预检），零同真源可派生、零同域重复簇，不替代任何既有条目"
+- file: docs/_working/e2e_20260924/w2_sector_minute_resample_dryrun.md
+  token: e2e-20260924-w2-sector-minute-resample-dryrun-20260923
+  created_by: st-e2e-20260924
+  capability: e2e_20260924
+  merge_evaluation: "内收判据：三件均为本班一次性班次案卷（撞号取证/回补 dry-run/预检），零同真源可派生、零同域重复簇，不替代任何既有条目"
+- file: docs/_working/e2e_20260924/w3_w5_precheck_20260923.md
+  token: e2e-20260924-w3-w5-precheck-20260923-20260923
+  created_by: st-e2e-20260924
+  capability: e2e_20260924
+  merge_evaluation: "内收判据：三件均为本班一次性班次案卷（撞号取证/回补 dry-run/预检），零同真源可派生、零同域重复簇，不替代任何既有条目"
 di_seam_exemptions: []
