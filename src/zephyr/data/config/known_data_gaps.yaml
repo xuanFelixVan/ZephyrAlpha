@@ -1370,4 +1370,22 @@ gaps:
     created: "2026-09-21"
     last_updated: "2026-09-21"
 
-last_updated: "2026-09-21"
+
+  # === 2026-09-23 清扫班: resample 写通道全失败仍记 SUCCESS（P1，本班只登记不修，修复归明晚 E2E 班） ===
+  - id: "kline_sector_880_resample_false_success"
+    table: "c1_market.kline_sector_880"
+    gap_type: "pipeline_idempotency"
+    start_date: "2026-09-22"
+    end_date: "2026-09-23"
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "open"
+    priority: "P1"
+    root_cause: "kline_sector_880_resample 的 ALTER TABLE ... DELETE 与 INSERT ... SELECT 四条语句全部报 'CH query 失败(TCP+HTTP 均失败)'，但任务终态仍记 SUCCESS，仅由 alerter 出一条 'SUCCESS 但 0 行写入' WARN，缺口对下游不可见。同因两日连复现（09-22 16:35 / 09-23 16:32）。注: 该报错文案本身不可作结论——ch_writer TCP 失败即降级走 HTTP，HTTP 分支用 GET 触发 Code 164 readonly mode，且非 200 分支不读错误体，真因在客户端永久丢失，取证须绕 system.query_log / system.mutations。"
+    impact: "c1_market.kline_sector_880 的 15min/30min/60min 重采样行在 09-22 与 09-23 两个交易日缺失；日K腿无恙（09-23 16:30 实跑 rows=14198 last_key=2026-09-23），缺的是重采样派生层。"
+    evidence: "tmp/scheduler_run.log 内 '2026-09-23 16:32:08' 与 '2026-09-23 16:32:09,286 WARNING 任务 kline_sector_880_resample SUCCESS 但 0 行写入' 两串; 昨日同型 '2026-09-22 16:35:22' 起段"
+    resolution_plan: "明晚 E2E 班必改项: 写通道报错或 0 行写入时任务终态必须记 FAILED（不得 SUCCESS），并把 CH 服务端真因写入 task_runs 供归因; 本登记班不动代码、不补数（缺行可由该任务幂等重放补齐，前提是失败态先能被看见）。"
+    primary_alternative: "无。resample 自身幂等（先 ALTER DELETE 后 INSERT SELECT），修好判据即可整窗重放。"
+    created: "2026-09-23"
+    last_updated: "2026-09-23"
+last_updated: "2026-09-23"
