@@ -485,7 +485,7 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
             probe = query_backup_log_created(probe_since)
             if (not probe.get("ok")) or probe.get("count", 0) == 0:
                 # P2-10/P1-4：瞬时抖动/flush 边窗复查一次。立即重试而非 sleep——
-                # PERM-TRIGGER 门禁字面 .sleep( 模式（宪法事件触发铁律守门），
+                # PERM-TRIGGER 门禁对 sleep 类调用字面扫描（宪法事件触发铁律守门），
                 # 300s 回看窗 + ps1 尾段落盘耗时已给 backup_log flush 留足余量。
                 probe = query_backup_log_created(probe_since)
             if probe.get("ok") and probe.get("count", 0) > 0 and ch_verified is not False:
