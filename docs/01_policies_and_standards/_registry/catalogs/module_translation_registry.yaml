@@ -59434,7 +59434,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "SQL 集中化（§5.160.2）：模块级 SQL_* 常量，参数化查询禁 f-string 插值。"
+  plain_zh: "MOD-SIG-058 — 期指基差情绪监测器（44号备忘录 §9.8 通道2，M1-⑧/M3-⑥）第一性原理：期货=机构带杠杆的实时投票机，价格发现领先现货（恐慌时贴水急扩先行）。"
   responsibility_layer: business
 - module_path: src/zephyr/signal_ashare/limit_up/lhb_premium_analyzer.py
   domain_id: D_ASHARE_SIGNAL
@@ -59442,7 +59442,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "SQL 集中化（§5.160.2）：模块级 SQL_* 常量，参数化查询禁 f-string 插值。"
+  plain_zh: "MOD-SIG-057 — 龙虎榜盘后溢价分析器（44号备忘录 §9.7，M3-⑤ 次日预判）管\"明天会怎样\"：消费前一交易日龙虎榜（dragon_tiger_seat 608k 行 2022 起 + dragon_tiger 汇总，62 号注册表数据已在库未消费），输出次日开盘预判三名单 + 个股级溢价系数"
   responsibility_layer: business
 - module_path: src/zephyr/signal_ashare/market_cap_tier.py
   domain_id: D_SIGNAL_ASHARE
