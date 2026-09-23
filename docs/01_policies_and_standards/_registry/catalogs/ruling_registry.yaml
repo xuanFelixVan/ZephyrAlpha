@@ -15,7 +15,7 @@ tier: tier_1_governance
 status: active
 version: "1.1.1"
 created: '2026-07-18'
-last_updated: '2026-09-20'
+last_updated: '2026-09-23'
 # 裁定#20-A/#20-B/#20-D 建立（2026-07-18 治本）
 
 # ============================================================
@@ -5518,7 +5518,7 @@ entries:
   related_rulings: ['裁定#392', '裁定#402']
   superseded_by: null
 
-- ruling_id: "裁定#404"
+- ruling_id: "裁定#407"
   title: 批次排序代裁=IBT 整改批C→F 按方案时间线（st-ibt-remedy-cf-20260923 随批登记）
   date: '2026-09-23'
   category: 执行追认
@@ -5528,11 +5528,39 @@ entries:
     IBT 整改批次排序按 max_remediation_plan §1/§3 时间线执行——修考卷(B)→成本焊进考尺(C)
     →新鲜窗重考(D)→降换手+脱钩(E)→GPU 搜索放行(F)；铁律顺序不可换序（修卷→焊尺→重考→
     才放搜索）。批B 已由 st-ibt-remedy-b 班收尾三件完成，本裁确认直接进批C。
+    编号让位：本条原登记 裁定#404，与 TC-06 四卡代裁条撞号（同日夜两会话取号窗口重叠），
+    经 Owner 2026-09-23 夜裁定本条迁 裁定#407，撞号处置留痕见 裁定#408。
   related_files:
   - docs/_working/integrated_backtest/max_remediation_plan.md
   related_arch: []
   related_rulings: ['裁定#325', '裁定#402']
   superseded_by: null
+
+- ruling_id: '裁定#408'
+  title: 撞号处置留痕（tombstone，非裁定）——裁定#404 曾双挂，IBT 批次排序条让位改 裁定#407
+  date: '2026-09-23'
+  category: 数据治理
+  status: void
+  summary: >-
+    本条不承载新裁定，只做编号留痕，堵"编号连续分配铁律"下的复用与归属歧义缺口
+    （样式先例=裁定#265 空号保留）。事实：ruling_registry.yaml 在 HEAD 面 979091ad08
+    第 5521/5567 行同时存在两条 ruling_id=裁定#404 的异体条目——①「批次排序代裁=IBT
+    整改批C→F 按方案时间线」（st-ibt-remedy-cf-20260923 随批登记）；②「TC-06 四卡代裁定版
+    （Max 代裁 Owner 全批）」（st-oddjobs-20260923 件7 随批登记）。后果：落地侧注册表三向
+    合并判身份键不唯一，凡携带裁定册的队列批结构性必死（实证死信
+    q-20260923-st-ibt-remedy-cf-20260923-0023）。处置（Owner 2026-09-23 夜裁定，
+    st-e2e-20260924 执行）：②系引用链主体（HEAD 面 max_remediation_plan §R2/§R3、
+    experiments_ledger 修正案#2、known_data_gaps etf_minute_tz_split_pre_202607 结案行、
+    oddjobs_shift_ledger 件7、08_gate_safety_recheck REFERENCE-INTEGRITY 样本行共 6 处按
+    裁定#404 引用），原地不动；①零外部引用，让位迁 裁定#407——取号前实测 HEAD 册/工作区册/
+    全队列袋（pending+processing+dead+done）裁定号 max=406 且 裁定#407 无人占用，非默认顺取。
+  evidence: >-
+    docs/_working/e2e_integration/w0_ruling_404_collision_fix.md（含撞号双挂行号取证命令原文、
+    取号扫描口径与改后全册唯一性自检输出）
+  related_arch: []
+  related_rulings: ['裁定#404', '裁定#407', '裁定#265']
+  superseded_by: ''
+
 - ruling_id: "裁定#405"
   title: 4440 判死代裁（IS -91%+超容量；留复活窄口先例#304）
   date: '2026-09-23'
