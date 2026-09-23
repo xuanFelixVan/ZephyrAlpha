@@ -5038,7 +5038,6 @@ creation_tokens:
   token: registry-migration-02-ledger-design-20260922
   created_by: st-wm1-mineB-20260923
   capability: registry_migration
-  merge_evaluation: "W-M1 车道乙 PG 账本设计矿唯一交付物；与车道甲数据现状矿/丙红蓝用例矿同目录分工零重叠"
 - file: docs/_working/registry_migration/03_projection_design.md
   token: wm1-registry-migration-03-projection-design-20260922
   created_by: st-wm1-mineC-20260923
@@ -45566,10 +45565,6 @@ creation_tokens:
   token: regfix-lane0b-09-wm1-master-plan-20260923
   created_by: st-regfix-lane0b-20260923
   capability: regfix_lane0b
-  merge_evaluation: "W-M1施工总图v1.0（三设计合体+波次计划+Owner决策包B呈签件），无同真源可派生项"
-  merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
-  merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
-  merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
 - file: src/zephyr/trading/trading_contracts/risk/kill_switch_state_store.py
   token: trading-killswitch-state-persistence-kill-switch-state-store-20260922
   created_by: st-oddjobs-20260923
@@ -46015,14 +46010,17 @@ creation_tokens:
   token: agg-switch-rollback-06-agg-switch-rollback-plan-20260923
   created_by: st-tdm20-20260923
   capability: agg_switch_rollback
+  merge_evaluation: "AGG 消费切换一键切回预案（增补令终批）：替代无（回滚窗 governance 件），与 pf_alloc cap 接线同批互锚"
 - file: docs/_working/sim_launch/daily_report_20260922.md
   token: sim-launch-daily-report-daily-report-20260922-20260923
   created_by: st-sim-launch-20260923
   capability: sim_launch_daily_report
+  merge_evaluation: "战役台账渲染日报，真源=sim_daily_report 表无第二真源，随战役归档"
 - file: docs/_working/sim_launch/delivery_report_20260923.md
   token: sim-launch-delivery-report-delivery-report-20260923-20260923
   created_by: st-sim-launch-20260923
   capability: sim_launch_delivery_report
+  merge_evaluation: "终局班交付报告回执六要素，承 09-22 版delivery_report 同域续件"
 - file: docs/_working/registry_incident_20260922/DISPATCH_v1.md
   token: gate-slimming-campaign-dispatch-v1-20260923
   created_by: st-gslim-20260923
@@ -46163,14 +46161,29 @@ creation_tokens:
   token: canonical-hash-canonical-hash-20260923
   created_by: st-ailayer-p1-20260923
   capability: canonical-hash
+  merge_evaluation: "CloneGuard合并件：dual_run/criteria两处同构规范化哈希收敛为公共底座（净零=吸收两重复实现）"
 - file: docs/_working/registry_migration/08_gate_safety_recheck.md
   token: gate-safety-recheck-08-gate-safety-recheck-20260923
   created_by: st-gaudit2-20260923
   capability: gate_safety_recheck
   merge_evaluation: "gate审计复验报告独件，替代无：净零=纯新增交付物，退役观察网燃料"
-  merge_evaluation: "CloneGuard合并件：dual_run/criteria两处同构规范化哈希收敛为公共底座（净零=吸收两重复实现）"
-  merge_evaluation: "终局班交付报告回执六要素，承 09-22 版delivery_report 同域续件"
-  merge_evaluation: "战役台账渲染日报，真源=sim_daily_report 表无第二真源，随战役归档"
-  merge_evaluation: "AGG 消费切换一键切回预案（增补令终批）：替代无（回滚窗 governance 件），与 pf_alloc cap 接线同批互锚"
-  merge_evaluation: "ALGO_FLOW 外部真源随批出仓件，同族 trading_kill_switch.yaml 先例，零重复"
+- file: docs/_working/registry_migration/04_mess_inventory.md
+  token: registry-migration-04-mess-inventory-20260923
+  created_by: st-deepclean-20260923
+  capability: registry_migration
+  merge_evaluation: "盘点真源件与01/02/03/05-07同目录族同域共存，非重复真源（04=混乱盘点，01=注册表盘点）；随批落地后由 Owner 判归档窗"
+  merge_evaluation: "W-M1 车道乙 PG 账本设计矿唯一交付物；与车道甲数据现状矿/丙红蓝用例矿同目录分工零重叠"
+- file: src/zephyr/gov_enforcement/commit_gates/registry_family/__init__.py
+  token: regfix-lane0b---init---20260923
+  created_by: st-regfix-lane0b-20260923
+  capability: regfix_lane0b
+  merge_evaluation: "子包__init__补齐（对齐library/结构），无同真源可派生项"
+  merge_evaluation: "W-M1施工总图v1.0（三设计合体+波次计划+Owner决策包B呈签件），无同真源可派生项"
+  merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
+  merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
+  merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
+- file: docs/_working/registry_migration/stress/config.md
+  token: stress-test-config-20260923
+  created_by: st-stress-20260923
+  capability: stress_test
 di_seam_exemptions: []
