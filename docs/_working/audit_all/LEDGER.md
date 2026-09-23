@@ -652,3 +652,36 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   git status --porcelain -- src/zephyr/library/collectors/logs_collector.py    # 期望同时出现 "D " 与 "??"（删在 index，字节还在盘上）
   git show HEAD:src/zephyr/library/collectors/__init__.py | grep -n logs_collector   # :31 断链硬证
   ```
+
+## 心跳 2026-09-24 05:48 CST 实测（`date`=05:48:37，非估钟）· 在干=翻译册 152 条真悬空**逐条三分定性完成**（新立 MTR-01/MTR-02）+ 自尺两处假阳性自纠（反证第 10/11 例）· 卡住=无 · 下一步=见 ④
+
+- **① 0018（05:41 心跳册）已 done**；本包袋面 0001–0018 全为 done/dead、无待 requeue 项 ⇒ 提交面持续零欠账。
+- **② 🔴 新立 F-AUDIT-MTR-01（八图审查"悬空"栏的终稿口径）**：对上一块定出的"业务面 D1 里 152 条在 `module_translation_registry.yaml`"逐条三分（三道判据=HEAD 存在性 / `git log --all --reflog` 可及历史 / 非泛名唯一同名；尺=`probe_translation_d1_verdict.py`，152 行全量带判据=`dangling_translation_d1_verdict.tsv`）：**R_改名未同步 45 + R?_多候选不判 5｜H_退役未销册 71｜N_从未落地 31**。
+  - **R_改名未同步 = 45**（物在、位置变了、册未跟）：例 `scripts/governance/_archive/vms_ri/vms_{build_completion_check,cron_monitor,cross_file_check,health_check,migrate,migration_dry_run,phase_rollback,version_sync_check}.py → scripts/governance/vms/同名`（8 条同族）、`src/zephyr/ex_core/adapters/{risk_validation_bridge,simulation_broker}.py → src/zephyr/governance/adapters/同名`、`src/zephyr/ex_sor/core/api_rate_limiter.py → src/zephyr/ex_sor/api/同名` ⇒ 图↔物断链里最易修、且**本该由生成器自动跟随**的一类（对照 RULE-DEPGRAPH"改名后 `--force` 重建"，翻译册无此联动）。
+  - **H_退役未销册 = 71**：物曾在可及历史、后被删，册条目未销。**其中三条已追到可点名到 commit+行号的欠账，升为 F-AUDIT-MTR-02**：
+    - 退役有据：批A=`4b8fb00a555`（09-23「P3退役批A·纯文件删除」，自述"注册表除名随批B紧随"）；批B=`9b0c31ab125`（「P3退役批B·**注册表除名**+库门入HEAD」，in_process gate 册 117→114 三条目删除、gate 册重生成、三块 deprecated 墓碑）。
+    - **但批B 实改 13 件里 `_registry/catalogs` 只含 `fail_open_register`/`gate_registry`/`in_process_gate_registry` 三册，`module_translation_registry.yaml` 命中=0** ⇒ "注册表除名"承诺**漏了翻译册这一面**。铁证（HEAD 版字节）：`module_translation_registry.yaml:55798` 仍为 `- module_path: src/zephyr/gov_enforcement/commit_gates/library_coverage_gate.py`、:55801 `name_en: "library_coverage_gate.py"`；三闸在该册命中 3/2/2 行。
+    - 与 DANG-01 ⑤ 互证：同三闸在 gate 两册命中=**0**（已同步退出可执行 gate 集合）⇒ 结论=**退役动作跨册同步不完整**（gate 侧销了、翻译侧没销），非统计猜测。处方=补销须"同批跨册"（翻译册+`docs/03_modules` 卡片同批），属 §5 **注册表净删=high 域** ⇒ 只登记上交，路由=st-gslim 收棚方或 st-commitsys 修闸族。
+  - **N_从未落地 = 31 = 5（他包在途死信件）+ 25（真幽灵）+ 1（我尺假阳性，见 ③例10）**：
+    - **5 条=门禁自造悬空（时序倒挂）实锤**（尺=与全部队列袋文件清单求交）：`scripts/audit/t0_{ceiling_capacity,e4_v2,e4_v3,gpu_condition_pack,six_phase_materialize}.py` 全命中 `st-t0-matrix-20260924` 的 **dead 0007/0008** ⇒ 该袋死因正是 TRANSLATION-COVERAGE 门禁"给这 5 个新件登记大白话"的要求，而**登记先落地面、件本体仍在死队列** ⇒ 闭环=门禁要求→登记先落地→本体死信→册侧悬空→悬空检查又红。本条定级=**非缺陷**（其批落地即自愈），但闭环本身是结构性缺陷（与 DANG-02 并一条）。
+    - **25 条真幽灵**：`src/zephyr/ex_core` **16**（auction_deviation_executor / batch_executor / batch_take_profit_executor / blueprint_implementer / conditional_order_manager / deployment_consistency_manager / execution_mcp_server / execution_risk_gate / execution_tca / factory / fill_processor / microstructure_modeler / rl_optimal_executor / sell_priority_scheduler / stop_loss_take_profit_executor / value_objects）+ `pf_core/strategies` 2（min_variance_strategy / risk_parity_strategy）+ `risk` 2（ashare_stop_loss_rule_engine / drawdown_realtime_tracker）+ `sell_decision/core` 2 + `backtest/services/result_deployer` + `infrastructure/h1_redis_hot/h1_factor_source` + `docs/_working/kimi_audit/lane_reports/cost_trio_exam`。原文（HEAD :3971）=`module_path: …auction_deviation_executor.py` + `name_zh: 拍卖偏差执行器` + `plain_zh: 拍卖偏差执行器，执行核心的执行器…` + `responsibility_layer: business` ⇒ **有中文名、有大白话、有责任层，唯独物从未存在于任何可及 ref**。
+    - 第一性判断：`execution_mcp_server` / `rl_optimal_executor` / `microstructure_modeler` 这类命名是"机构级执行系统**本该**有的样子"，不是本项目建成的样子 ⇒ 登记来源=蓝图/愿望清单批量灌入，而非磁盘派生（是否同一生成器所为待 ④①核，此说目前为**推断级**）。
+  - **定性判据缺口（本条要害，与数量无关）**：全册 **8,655 条**中 `build_status` 仅出现 **42 次且取值全为 `dormant`** ⇒ 25 条真幽灵**没有任何"计划未建/待施工"标记**，消费者（门禁、capability 反查、前端全景）无法区分"应存在而被删"与"从未落地"。对照机构实践：清单类真源必带生命周期位（K8s 资源有 apiVersion/deprecate 语义、ADR 有 accepted/superseded）；扁平"目录即真源"在 AI 批量生成下必然积累幻觉条目。
+  - **处置路由（不自修）**：翻译册=他包在途写域（`st-align-dirty-0037` 正在飞；其 05:34 批即"翻译册末级收口批 14 件新登记+自造 5 组重复键塌回"），且删条目=**注册表净删 high 域** ⇒ 只登记。处方两条：**(a)** `add_module_translation.py` 对 `module_path` 加存在性校验，或强制新登记带 `build_status: planned`（把"计划"与"事实"分栏，零净删即得）；**(b)** 退役批须跨册同批销（gate 册/翻译册/能力册三联）+ 改名须接 `git mv` 后自动跟随。
+- **③ 红蓝反证第 10、11 例（本轮两次自否证，均已从数字里扣除）**：
+  - **例10（正则抓散文占位符）**：`module_translation_registry.yaml` HEAD :60079 有一行**模板说明**`⑤代码映射：MOD-xxx / src/zephyr/.../xxx.py；`，我的 PATHRE 把 `src/zephyr/.../xxx.py` 当真实路径收进 D1 ⇒ **上一块"业务面 D1=165"更正为 164**（该条即 N 族里唯一假阳性）。教训：凡"册里有这个字符串"≠"册声明了这个件"，扫描面须排模板/示例行。
+  - **例11（改名判据 v1 太松，造出 11 条假改名）**：v1 仅按 basename 在 HEAD 找同名 ⇒ `src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py` 被"匹配"到 `data_governance/services/__init__.py`（荒谬）。v2 收紧为**非泛名黑名单 + 唯一候选**后：R 56→45、5 条降"多候选不判"、11 条回落 H=71。**同一份清单两把尺差 11 条** ⇒ 终报凡引用分类计数一律标注判据版本。
+  - 顺带量化一项**不成问题的问题**（防噪声立项）：册内空壳条目（只有 `module_path` 无任何翻译字段）全册仅 **2/8655=0.02%**（`strategy_factory/owner_band_t/data_loader.py`〔盘上真实存在，仅缺翻译〕与 kimi_audit 幽灵）⇒ 不立项。
+- **④ 下一步（轮次）**：①核翻译册生成器是否从磁盘派生（把 ②的"推断级"升到"亲验级"或推翻它）②`st-align-dirty`/`st-ailayer` 落地后复跑 DANG-02 v2 尺做**第 1 轮零新问题**判定 ③终报三清单按本轮口径落稿（悬空=164 条带 R/H/N 三分标注 + 断链=45 改名 + 3 闸跨册未同步 + 漏挂=25 真幽灵待裁"补建 or 销册"）④红蓝反证节并档（现 **11 例**）⑤终报。
+- **队列/align 状态**：本包 0016/0017/0018 全 done（0016=`8639ed73c7`@05:35、0017=`91e462a5b1`@05:36、0018=`7a77de4e1a`@05:45:38；写块时 0018 尚未落地，号已就地补齐）；队列在飞=`st-align-dirty-0037`(05:48)、lease=drain-active；align：第 1-5 步工作树 硬=3（HEAD 口径=0）、第 6 步崩（st-ailayer 暂存件 BLIND-01）、第 7-9 步未及。**本包对 `注册表/配置册` 类路径写入累计仍=0**（本轮全部动作=只读探针 + 本台账 + `.runtime/tmp/`）。
+- **复核命令（只读，全部本轮实跑）**：
+- **并发事实（决定本轮计数时点）**：`10e16d9ae4`(05:49:45, st-align-dirty)=「翻译册·重复行遮蔽中性化批」刚落地 ⇒ 本轮 R/H/N 三分测于该批**之前**的 HEAD 字节，而该批改的正是我 152 条所在的同一本册 ⇒ 终稿必须复跑；这也是 ② 那句「翻译册=他包在途写域」最直接的现场证据，本包全程未碰该册。
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_translation_d1_verdict.py      # targets=152 R=45 R?=5 H=71 N=31
+  git show --format= --name-only 9b0c31ab125 | grep -c module_translation_registry   # 期望 0=批B 未碰翻译册
+  git show --format= --name-only 9b0c31ab125 | grep -c "_registry/catalogs"           # 期望 3（只三册）
+  git show HEAD:docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | sed -n '55798p;55801p;3971,3978p;60079p'
+  git show HEAD:docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | grep -oE "build_status: .*" | sort -u   # 只 dormant
+  git show HEAD:docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | grep -c "build_status"                  # 42 / 8655 条
+  python -c "import json,glob;print([json.load(open(f,encoding='utf-8'))['qid'] for f in glob.glob('.runtime/commit_queue/dead/*t0-matrix*') if 't0_ceiling_capacity_exam.py' in json.dumps(json.load(open(f,encoding='utf-8')))])"
+  ```
