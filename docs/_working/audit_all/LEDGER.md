@@ -440,3 +440,109 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
 - **① 能力册复原已入 HEAD，但 index 仍持短版本=第四次蒸发已上膛（实测）**：`git diff --cached --numstat -- docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml` = **`0 159`**（index 相对 HEAD **纯删 159 行**），而 `git status --porcelain -- 该文件`=空、盘上 blob==HEAD blob。⇒ HEAD 侧 159 行由 **`e88eb3f786`(st-align-dirty·04:10:36「自伤复原批」)** 复原落地（`git log -S ai_perceive_l1` 两笔=`53cdc66e06` 删/`e88eb3f786` 补）（04:0x 的 `grep -c`=0 现=4，本包 04:08 补记 ①"未愈 B"据此**改判为已愈**）；但 **index 侧仍是复原前的旧字节** → 任何吸收 index 的落地（EVAP-02 机制）会再吃一次 159 行。这是 IDX-01 在**最热真源册**上的活体实例，也是 st-commitsys 修闸验收尺的最佳靶例（袋面 files 唯一 add 面后，该差异不得进任何提交）。
 - **② 本包案卷从未入 HEAD（自我逮正，属 BAG-01 同一把自己打）**：`git show HEAD:docs/_working/audit_all/LEDGER.md` = 不存在，`git status --porcelain`=**`AM`**（LEDGER 436 行 / AUDIT_REPORT 均在 index+盘上、HEAD 无）⇒ 审查案卷自身正是 IDX-02 那 596 件 index-only 之一。已做两手：(a) 读侧快照 `.runtime/tmp/audit_all_20260924/{LEDGER,AUDIT_REPORT}_snap_0420.md`（.runtime 已 gitignore，git 侧操作碰不到）；(b) 本轮走正门补投（token 先行同批：`batch_creation_tokens.py --capability audit_all_casebook` 已在册，diff 面 2 token）。死因史：0006=`landing TimeoutExpired（git commit 60s 上限）`、0007=`他包 FRONTEND-MAP R1 红连坐`（`none:` 后端引用未类型化，作者 st-gpu-final，本包不代修）。
 - **③ cron 型会话生命周期处方（新踩坑，值得入尺）**：本轮三次失去会话活性——`heartbeat_daemon` 与 `SessionRegistry` 的 `host_type=main` 记录（pid 46192→36540→12684）随**每轮 CLI 进程树被回收而终止**（`-WindowStyle Hidden` 的 Start-Process 在 Windows 作业对象下并不真脱离）。`.runtime/sessions/<sid>/heartbeat.jsonl` 末条=`{"status":"exited","reason":"session not in registry"}` 即该链指纹。⇒ **处方=每轮冷启动必须重做 `register(sid,pid=0)`+起 daemon，且该轮所有提交必须在同一轮内完成**，勿指望跨轮存活；另 `lock_files.py cleanup`（他包冷启动也会跑）会删死 pid 记录，故"注册成功"不等于"下一分钟仍注册"。
+
+### 追记 2026-09-24 04:28 CST 实测（shell `date`=04:27:54，HEAD=`3919c83d87` 04:26:38）· 🔴 **F-AUDIT-IDX-04【预检门消费 index 字节而非袋/盘字节 → 外来陈旧 index 可阻断无辜提交】+ 本包两次就地排雷（内容零变化可证）**
+
+- **① 实证链（一次被挡、一次放行，同一条命令）**：
+  - 04:24 `git_commit.py --session st-audit-all-20260924 --enqueue --files <LEDGER,AUDIT_REPORT,capability册>` → **PREFLIGHT BLOCKED**：`REGISTRY-MASS-DELETION … capability_canonical_file_registry.yaml: 净删行 deleted=159 added=0（条目数 10568→10550，身份消失 18 条，示例 ai_cleaning_l3/ai_comparator_l4/ai_heritage_l7）`。
+  - 而**我当时对该册的真实改动=纯增 10 行**（`git diff --numstat`=169/0 是相对陈旧 index 而非 HEAD；`disk blob==HEAD blob` 已亲验，HEAD 侧 159 行由 `e88eb3f786` 04:10:36「自伤复原批」补回）。⇒ **门读的是 index 里的旧字节**，把一个无辜追加判成大规模删除。
+  - 04:26 我 `lock_files.py acquire` 后 `git add -- <该册>`（盘字节==HEAD+我的 2 token ⇒ 排雷**内容零变化**，可证：`pre-add index=e96d04ee80 / HEAD=6d9d606828 / disk=75fd06c6cf`，`post-add index=75fd06c6cf`==disk），`git diff --cached --numstat` 由 `0 159` → **`10 0`** → **同一条 git_commit 命令立即 ENQUEUED `q-20260924-st-audit-all-20260924-0010`（files=3）**。
+- **② 定性（给 st-commitsys 的第四闸处方，属他包写域本包不自修）**：预检/门禁的**比对基线**应取"袋内/盘上字节 vs HEAD"，或在对 own path 判定前先 `git add` 刷新 index；现行为=**他人陈旧 index 能挡住我的提交**，这是 EVAP-02 家族的第二面：同一"index 被当作真源"病根，一面是让陈旧 index **进入提交**（吸收落地面，见 IDX-01/EVAP-02），一面是让陈旧 index **参与判定**（门禁面，本条）。⇒ 与处方"landing 以袋面 files 为唯一 git-add 面"配成对：**门禁侧亦须以袋面字节为唯一判据面**。
+- **③ 本包就地排雷两件（只做自己修法相关的、可证零内容变化的）**：(a) capability 册（①，index 由 −159 → +10）；(b) `config/strategy_production_map.yaml`（本包工厂图修法的**第 4 发回退弹**：`idx=1f129196` 为 `53cdc66e06` 旧态而 `disk=HEAD=512ae478` ⇒ `git add` 后 `idx==HEAD`，该路径从 staged 清单消失）。**未碰**：`config/governance_operations_map.yaml`（idx=d89b4b7b，disk=92d17ced，均!=HEAD=8eb063a1，属他包在途生成）、`config/trading_decision_map.yaml`（disk==idx!=HEAD，属他包在途）、以及 IDX-03 的 6 件 staged 删除弹（04:24 复测**仍 6 件在膛**）——按 §3.4 owner 责任制只登记不代修。
+- **④ 案卷交付态**：`LEDGER.md`/`AUDIT_REPORT.md` 此前从未入 HEAD（`git show HEAD:…`=不存在，status `AM`），04:26 起走正门 pending 袋 **0010**（含 token 先行同批：`audit_all_casebook` 2 token 已在册）；读侧快照另存 `.runtime/tmp/audit_all_20260924/{LEDGER,AUDIT_REPORT}_snap_0420.md`（gitignore 区，git 侧操作碰不到）。**下一轮第一件事=验 0010 是否 done 且 HEAD 侧字节==袋 `blob_sha256`（用 BAG-01 那把尺验自己）**。
+- **队列/align 状态**：HEAD=`3919c83d87`(04:26:38) 持续在落；本包 0010 pending、0001 done-in位、0002 改判不重投、0008 done-in位、0009 done-未落地（待随 0010 之后的裁定册通道）、0003-0007 dead 待裁；align 工作树口径硬=3。
+- **复核命令（只读）**：
+  ```bash
+  git show --format= --numstat 3919c83d87 | head            # 观察 drain 是否在落
+  git diff --cached --numstat -- docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml   # 期望 10 0
+  git ls-files -s -- config/strategy_production_map.yaml; git rev-parse HEAD:config/strategy_production_map.yaml  # 期望同 sha
+  python .runtime/tmp/audit_all_20260924/probe_done_bag_vs_head.py   # 0010 落地后自验尺
+  ```
+
+## 心跳 2026-09-24 04:28 CST 实测（`date`=04:27:54）· 在干=本轮已干完（4 面新尺+4 项立案+2 次排雷+案卷入队）· 卡住=无 · 下一步=见 ③
+- **① 本轮（第 3 次心跳周期内）净产出**：立案 IDX-01/02/03/04 + GEN-01 + BAG-01 + EVAP-02 第三实例；改判自家 0002（HEAD 正确、不重投）与"能力册未愈"（已愈，但 index 侧仍留弹）；扫描器 v3 落地并三处自纠（直连提交声明面/正负例过期/负例又选错）；就地排雷 2 件（capability 册 + 工厂图，均证零内容变化）；案卷 436→442 行走正门入队 0010。
+- **② 并发实况**：`st-gpu-final` pid 23924（04:21:56）以 `--allow-promote --skip-preflight --no-auto-enqueue --message probe-full` 直连提交 10 件（含 `condition_package.py`/`condition_attribution.py`/`factory_grid_executor.py` 三件**新路径**，本包未见过其设计面）——只登记不评判，供总指挥交叉核（`--skip-preflight` 是逃生通道，用得是否恰当属其属主与门位口径）；`st-align-dirty` 04:10 自伤复原批已入 HEAD。本包对其全部路径**零写入**。
+- **③ 下一步（轮次）**：①验 0010 落位（BAG-01 尺自验，含 `git show HEAD:docs/_working/audit_all/LEDGER.md | wc -l` 期望 ≥442）②GEN-01 推论扩面：对 `module_translation_registry`/`in_process_gate_registry` 等互撞热册做"同一 HEAD 两口径"复现实验，把 GEN-01 从一册实证升到族级 ③BAG-01 尺窗口扩到 `>=2026-09-23` 给终报分母 ④红蓝反证节（含本战役已积的 4 类自证案例：时钟外推、探针 v1/v2 自否、v3 负例三选错、本轮"门读 index"逮到自己案卷从未落地）⑤终报。
+
+### 落地回执 2026-09-24 04:31 CST 实测（`date`=04:31:42）· 案卷首次入 HEAD，用自己的尺验自己 PASS
+- `q-20260924-st-audit-all-20260924-0010` → **done**，`landed_id=0c7e42b3ba`(04:30:55)。BAG-01 那把尺（`sha256(git cat-file blob HEAD:<path>)` vs 袋 `blob_sha256`）三件**全 MATCH**：LEDGER.md 442 行 / AUDIT_REPORT.md 137 行 / capability 册。
+- **零连带实证**：`git show --format= --numstat 0c7e42b3ba` = 恰好 3 件、全为纯插入（10/0、137/0、442/0），无第 4 路径 → 与 EVAP-02 三笔（1 声明↔28/3/8 实提交）反向对照，本包这次提交是**同机制下干净落地的一例正样本**（可作 st-commitsys 修闸后的回归用例）。
+- **排雷未反弹**：`git show HEAD:<capability册> | grep -c -E 'ai_perceive_l1|obj_m_models|obj_s_redline|obj_t_tools'` = **4/4**（`e88eb3f786` 复原的 159 行仍在），我的 2 条 `audit_all_casebook` token 已在册；工厂图 `idx==HEAD==512ae478` 第 4 发弹已拆。
+- **下轮第一件事改判**：盘上案卷 465 行已领先 HEAD 442 行 → 滚动补投新版（含 IDX-04 与本回执）；GEN-01 族级扩面与 BAG-01 窗口扩到 `>=2026-09-23` 依次进行。
+
+【总指挥批注 R6·04:40·收官第一件解锁】passthrough 修复已入 HEAD，你的裁定册修复批已 requeue=0011 在队——落地后你复跑 align_all 确认 3→0，即收官三件套第一件闭环。
+
+### 落地回执 + 心跳 2026-09-24 04:46 CST 实测（`date`=04:46:15，HEAD=`9a760906ac`）· 在干=执行批注 R6 完毕 · 卡住=无 · 下一步=见 ④
+
+> 本块只新增两案（**F-AUDIT-DEAD-01** 死信陈旧快照面 / **F-AUDIT-RULING-01** Owner 裁定整批悬置）+ 收官第一件的**双口径判定**（HEAD 3→0 已证）。IDX/GEN/BAG/EVAP 各案不重述。
+
+- **① 批注 R6 执行回执（0011 已落，收官第一件在 HEAD 口径闭环）**：
+  - `q-20260924-st-audit-all-20260924-0011` → **done**，`landed_id=a74e9a6c48`(04:36:19)。BAG-01 尺自验 **MATCH**（`sha256(HEAD:ruling_registry.yaml)`=`7e49c0c0f3af`==袋声明）。**零连带**：`git show --format= --numstat a74e9a6c48` = 恰好 1 件 `2 2`，即 `裁定#383 related_arch ['MOD-L00-004']→[]`、`#387 ['PS-CTR-003','MOD-INF-043']→[]`，无第 2 路径。
+  - **passthrough 修复复证**：同内容袋 0003/0004 此前两次死于"注册表三向合并失败（死信回退人工）"，其袋声明字节 `7e49c0c0f3af` 与本次落地字节**逐字节相同** ⇒ 死因确在合并器而非内容，批注定性成立。
+- **② 🔴 收官第一件的口径分歧（本战役最重要的一条判读）**：`align_all` 复跑 **exit1、第 5 步仍报硬=3**（同三条 `related_arch 悬空`）——但**这不是没修**：
+  - 尺=`probe_align_step5_head_anchored.py`：把 `registry_alignment.CATALOGS_DIR` 指向 `git show HEAD:` 具现的临时目录、调**同一个** `check_governance_bidirectional()`（不另造判据）。结果 **工作树口径=硬 3 / HEAD 锚定口径=硬 0**。
+  - ⇒ **HEAD 侧 3→0 成立**；align_all 恒红的原因=其观测面读工作树，而工作树此刻被外来陈旧快照占据（见 ③）。这正是 F-AUDIT-LAND-02/GEN-01 预言的"两口径"病根的**反向实例**：同一 HEAD，脏工作树可以让**已落地的正确内容被判为仍有缺陷**（假红，且会误导修复者重复动手）。
+  - 收官判据据此定形：**"连续两轮零新问题"必须以 HEAD 锚定口径计**，工作树口径只作并发实况记录。
+  - 另核 **F-AUDIT-BLIND-01 未解堵**：`align_all.py:100` 有模块级 `import run_subprocess_hidden`，但 `:697`（`main()` 内 "L1 接线批挂点③ st-ailayer-final"）又局部 import 同名 ⇒ 该名字在 `main()` 全程为局部变量 ⇒ `:536/:556` 首次使用即 `UnboundLocalError` ⇒ **第 6-9 步永不执行、exit0 结构不可达**（与 0011 无关，属 st-ailayer-final 写域，只登记）。
+- **③ 🔴 F-AUDIT-DEAD-01（P0 新面·未爆弹）：死信袋把陈旧快照留在主区 index+盘上，既回退已落地 HEAD 内容、又让 worktree 口径恒假红，且当前正压着本包刚落地的那笔修复**：
+  - 实况：`git status --porcelain` = `M  ruling_registry.yaml`，`git diff --cached --numstat` = **`26 2`**；盘上/ index 第 5096/5172 行 `related_arch` 仍是**修复前旧值**，而 HEAD 已是 `[]` ⇒ **任何吸收 index 的落地（EVAP-02 机制）会把这三条悬空引用放回 HEAD**。属主=`st-mapcensus-20260924`（其袋 0001 创建 04:35:14，早于我落地 04:36:19）。
+  - 新点（相对 IDX-01/03 的增量）：此前登记的 index 残弹来自**在途**袋；本次是**已判死信的袋**残留 `M ` 状态继续参与后续判定——即 "dead" 不等于"其 staged 面被撤销"。⇒ 处方补一条：**landing 失败进入 dead 分支时，MUST 对本袋 paths 做 index 撤销（`git restore --staged` 语义）或至少落一条 `dead_index_residue` 告警**，否则死信即成永久哑弹。归 st-commitsys（其修闸 #1 验收尺应新增本例：dead 分支后的 `git diff --cached` 必为空）。
+- **④ 🔴 F-AUDIT-RULING-01（P0·交您裁）：Owner 终裁 裁定 409「一域一图立法 + 系统宪章 §8」整批悬置 27 分钟，死因是他包未提交的 frontend_map 脏字节**：
+  - 事实链：袋 `q-…-st-mapcensus-20260924-0001`（files=`system_charter.md` + `ruling_registry.yaml`，RULE-RULING 要求的**同批原子**）→ **dead**，`dead_reason=门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] R1 F-BUDGET-PAGE / F-SCHEDULEGATE-PAGE backend_ref 含非类型化元素 'none:后端模块MOD-INF-037未入depgraph前端模块集（st-gpu-final-20260924代…'`。
+  - 归属实测：**该违规字节从未进 HEAD**（`git show HEAD:…frontend_map.yaml | grep -c "none:后端模块MOD-INF-037"`=**0**，盘上=**2**，`git status`=**`M `**，该文件最近一次提交=`9521af656c`(09-16) ⇒ 脏改动属 st-gpu-final 未提交在途工作）。**两文件均悬置、未半批落地**（宪章 §8 在 HEAD 计数=0，盘上=3 ⇒ 原子性未被破坏，这点是好的）。
+  - 连坐面量化：同一条 `FRONTEND-MAP R1`（同一对 F-BUDGET-PAGE/F-SCHEDULEGATE-PAGE）**已打死两包无辜** ——本包 0007（04:2x，案卷补投）与 st-mapcensus 0001（04:3x，Owner 裁定）；且 align_all 第 3 步当前仍报这 2 条 FAIL。⇒ 这是 §3.1「内容扫描型 gate 默认 own-diff 作用域」的**违反实例**：一个会话的工作树脏字节能挡住**其它会话以其自己袋面为唯一 add 面**的提交。**建议列为您本轮首要处置**（要么令 st-gpu-final 先落/先清其 frontend_map 脏字节，要么令 MAP-ALIGNMENT 对本场景走 own-scope/白名单），因为 ①Owner 裁定悬置=治理真源缺口 ②它会继续打死后续任何碰该扫描面的批，包括本包收官终报批。
+  - **本包不自修**（`frontend_map.yaml`=他包写域；且"由审查者代修被审对象"违 §3.4 owner 责任制与本包自裁框架）。
+- **⑤ 并发与避让（本轮实测）**：对 `ruling_registry.yaml`（st-mapcensus 悬置面）/**`capability_canonical_file_registry.yaml`(st-mapcensus claim 25.9m)/`module_translation_registry.yaml`(st-align-dirty claim 25.0m)**/`frontend_map.yaml`(st-gpu-final 在途)/GOMAP/TDM/strategy_production_map **全部零写入**；`lock_files.py list` 亲验无我需要的路径。本包唯一写入=本文件（acquire→CAS `safe_write_text`→进程外核实）。
+- **⑥ 队列/align 状态**：HEAD=`9a760906ac`(04:39:55，st-align-dirty 自伤复原批④)持续在落；本包 0011 **done-in位（HEAD 口径硬=0）**、0010 done-in位、0001/0008 done-in位、0002 改判不重投、0009 done-未落地（待裁）、0003-0007 dead 待裁、**0012（本块补投）pending**；align 工作树口径硬=3（HEAD 口径=0）、第 6-9 步仍被 BLIND-01 阻断。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  git show --format= --numstat a74e9a6c48                                   # 期望 1 件 2/2
+  python .runtime/tmp/audit_all_20260924/probe_align_step5_head_anchored.py  # A=3 B=0（两口径判据）
+  python scripts/governance/d5_architecture/generators/align_all.py --no-report 2>&1 | tail -12   # 硬=3 + UnboundLocalError
+  python .runtime/tmp/audit_all_20260924/probe_bags_for.py ruling_registry    # 死信袋定位
+  git diff --cached --numstat -- docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml  # 期望 26 2（未爆弹在膛）
+  git show HEAD:src/zephyr/frontend/dashboard/web/frontend_map.yaml | grep -c "none:后端模块MOD-INF-037"  # 0=未落地，脏字节属他包
+  sed -n '100p;536p;697p' scripts/governance/d5_architecture/generators/align_all.py   # BLIND-01 双 import  scopes
+  ```
+- **⑦ 下一步（轮次，顺序不变）**：①BAG-01 尺已扩窗 `>=2026-09-23`：**106 袋/307 对**，IN_HEAD=173(56.4%)、NEVER_IN_LANDING(字节被改写)=76(24.8%)、LANDED_THEN_LOST=37(12.1%)、NO_BLOB(landed_id 无此件)=21(6.8%)、skip=1 ⇒ **落地批自身字节≠袋声明者占 24.8%（+6.8% 根本无该路径）**；需按"合法后续修改"再分层，终报给保守分母（明细 `bag01_since0923.txt`）②GEN-01 族级扩面（现锁定 `capability_canonical_file_registry`/`module_translation_registry`/`in_process_gate_registry`/`terminology_glossary` 四族的生成器候选）③IDX-03 六件 staged 删除弹复验 ④红蓝反证节 ⑤终报。
+
+
+### 心跳 2026-09-24 04:56 CST 实测（`date`=04:56:34，HEAD=`9a760906ac`）· 在干=GEN-01 族级扩面 + 八图"图↔物"悬空普查已完 · 卡住=0012 死信（新立 GATE-01，见 ⑦）· 下一步=见 ⑧
+
+> 本块新立 **F-AUDIT-GEN-02（生成器输入面族级普查）/ F-AUDIT-DANG-01（派生册图↔物 HEAD 侧悬空普查）/ F-AUDIT-GATE-01（RULING-REFERENCE 无草稿区豁免致"审查报告自引用死锁"）**，并对 DANG-01 的**更严重假设主动否证**（防把册内陈旧边说成门禁静默失效）。
+
+- **① F-AUDIT-GEN-02（把 GEN-01 从"一册实证"升为"族级定性"，尺=`probe_gen01_family.py`）**：按 GEN-01 同一判据（有工作树递归采集 rglob/glob/walk 且全文零 HEAD 面引用）对 `scripts/`+`src/zephyr/` 的 generate_*/regen_* 逐器分类：
+  - **命中"产出派生册"过滤条件的生成器 37 器**（下限口径，见 ②的自纠），其中**真正做文件树采集者 15 器 = HEAD-BLIND 14 / HEAD-AWARE 1**（唯一 HEAD-AWARE=`generate_commit_guide.py`，其 `head_ref` 命中 `HEAD:`）。⇒ **GEN-01 病根是族级常态而非孤例：14/15≈93% 的采集型派生册生成器输入面不锚 HEAD**。
+  - 高危成员（不止 GOMAP）：`generate_project_depgraph.py`（**depgraph 是 RULE-DEPGRAPH/多门禁的存在性真源**，HEAD-BLIND ⇒ 未提交 .py 直接进图）、`generate_resource_profile_registry.py`、`generate_skeleton_health.py`、`generate_rule_ai_perception_index.py`、`generate_pathway_registry.py`、`generate_code_wiki_stats.py`、`generate_dataflow_diagram.py`（R-B1 同族）、`generate_data_asset_coverage.py`、`generate_manifest.py`、`generate_asset_index.py`（+_archive/prototype 版）、`generate_governance_map.py`（=GEN-01 原证）、`generate_resource_morning_report.py`。
+  - **触发条件此刻即成立**：工作树独有/仅 index 的 `.py`=**184 件**（全部脏面 1176）⇒ 上述 14 器任一重跑都会产出 HEAD 侧不存在的条目，这就是"同一 HEAD 两口径"与热册互判回退的机理。
+  - **探针自纠（红蓝反证第 5 例，与 v3 负例三选错同列）**：`generate_gate_registry.py` 实际写 `gate_registry.yaml` 却**未进 37 器候选** ⇒ 我的收录过滤（`WRITES`+`REGTARGET` 双正则）有假阴性 ⇒ ①14/15 是**命中率**（比例口径稳），②"37/15"须标**下限**，终报不得写成"全仓生成器总数"。
+- **② F-AUDIT-DANG-01（八图审查的正题=图↔物双向对账，尺=`probe_dangling_tristate.py`+`probe_dangling_d2_split.py`，全量清单 `dangling_full.tsv` 1086 行）**：对 7 张已落地册（GOMAP/能力册/翻译册/gate 册/in_process gate 册/TDM/工厂图）取 **HEAD 侧字节** 解析其引用的一切 `src|scripts|config|tests|docs` 路径，存在性以 `git ls-tree -r HEAD` 判定，并三态分层防误判：
+  - **D1 真悬空（盘上无+HEAD 无+非 gitignore）=758**：按根 `docs/_working` **542** / src 95 / tests 60 / docs(非工作区) 34 / scripts 27；
+  - **D2 仅工作树（盘上有、HEAD 无而册已入 HEAD）=272** → 二次定性：**D2a 从未进过任何提交=256**（`git log --all -- <path>` 空，即 GEN-01 直证：脏件被生成器吸收进册、册落了地面件没落）／D2b 曾有提交史=16（文件侧回退，与 EVAP 家族交叠）；
+  - **D3 gitignore 豁免=56** → **不计缺陷**（这一层就是我为避免"758 条吓人数字"而加的，与 F-AUDIT-BLIND-02 的派生件豁免同源）。
+  - 分布集中度：`capability_canonical_file_registry.yaml` D1=606/D2=181、`module_translation_registry.yaml` D1=147/D2=91，其余五册 D1≤3（GOMAP=1、gate 册=1、TDM=3、in_process gate 册=0、工厂图=0）⇒ **悬空面是"两张派生大册"的问题，不是八图普遍问题**（此判据请总指挥按此口径下处置令，勿按总数 758 铺开）。
+- **③ 🔴 DANG-01 里唯一"不自愈"的子集（本块真正要交裁的）**：能力册自述"canonical_file 等由磁盘扫描+git log 自动派生，**不持久化为第二真源**"（`capability_lookup.py:8`）⇒ D1/D2 多数属下次重扫即修的**缓存性陈旧边**，不该按缺陷逐条追。**例外=人工裁定面**：该册 `canonical_override:`（人裁最高优先级，不自愈）**HEAD 侧 253 条，其中 11 条指向不在 HEAD 的文件 → 9 条目标件从未落任何提交、2 条指向已被退役批删除的 gate**：
+  - 9 条（**盘上有、HEAD 永远没有**，=人裁了 canonical 却从未把件落地面）：`ai_layer/{cleaning/washer,comparator/executor,heritage/store,perceive/translator,redline/negative_list,scheduling/maturity,tools/suite,intelligence/model_profiling/dual_run,intelligence/switch_engine/switch_engine}.py`；
+  - 2 条（**凭空挂边**）：`commit_gates/{data_task_completeness_gate,issue_resolved_integrity_gate}.py`。
+  ⇒ 直接命中 **RULE-CAPABILITY-LOOKUP 冷启动第 4 步**：会话按宪法调 `capability_lookup.find()` 时，人裁真源可指向仓库里不存在的文件（拿到即空手）。**建议处置=人工裁的 override 必须与目标件同批落地**（补一条"override 存在性"机检，成本=一次 `ls-tree` 交集，可挂进现有 gate 家族）。
+- **④ 退役未收口 + 路径漂移两子类（同尺顺手取到，均为册侧边、非门禁失效）**：
+  - 退役未收口：`library_coverage_gate/data_task_completeness_gate/issue_resolved_integrity_gate` 三闸由 **`4b8fb00a555`（st-gslim-20260923「P3 退役批A·纯文件删除」，09-23 23:31 时间戳 1790119878）** 删除，**闸体本身已从 HEAD 与盘上双双消失=退役动作已完成**，但其能力册条目（含 ③ 的 2 条人裁 override）未回收。
+  - 路径漂移：`tag_vocab_gate.py`/`state_vocab_registry_gate.py`/`library_blood_flesh_gate.py` 现真身=`commit_gates/library/`，`registry_mass_deletion_gate.py`=`commit_gates/`（离 `registry_family/`）⇒ 册内仍指旧路径，属 RULE-DEPGRAPH/RENAME-DEPGRAPH-SYNC 既有义务的漏网面（改名未 `generate_project_depgraph.py --force`，或 --force 也修不到册侧）。
+- **⑤ 🔴 我对本条最严重假设的主动否证（务必按此定级，勿升 P0）**：直觉上"注册表声明的 gate 文件不存在"=**门禁静默失效（最高危）**。实测**否证成立、该假设不成立**：`git show HEAD:gate_registry.yaml | grep -cE "library_coverage_gate|data_task_completeness_gate|issue_resolved_integrity_gate"`=**0**，`in_process_gate_registry.yaml` 同=**0** ⇒ 三闸已同步退出**可执行 gate 集合**，跑的闸与文件一一对应；本块 DANG-01 定级因此=**P2 册侧一致性/人裁自愈例外**，而非 P0 安全洞。（此条与 [[feedback-weak-model-dossier-not-verdict]] 同构：我出案卷+出否证，升不升格由您裁。）
+- **⑦ 🔴 F-AUDIT-GATE-01（P1·结构性死锁，本包 0012 因此死信）：RULING-REFERENCE 缺草稿区豁免 ⇒ "报告某裁定未落地"这一动作本身被该裁定未落地所阻断**：
+  - 事实：`q-…-st-audit-all-20260924-0012`(04:47:58, files=1=LEDGER) → **dead**，`dead_reason=门禁 REFERENCE-INTEGRITY 阻断: [RULING-REFERENCE] … docs/_working/audit_all/LEDGER.md: 裁定 409 …修复：在 ruling_registry.yaml 中补登对应条目，或移除/修正引用。（注：本门禁只检测新增引用，历史悬空引用不阻断。）`
+  - 死锁链：**0011 已落=我修的是 #383/#387**；**裁定 409 未落**（其整批因 ④ of 04:46 块所述他包 frontend_map 脏字节而 dead）⇒ 我记录"409 悬置"必写其编号 ⇒ 正则 `裁定#(\d+(?:-[A-Z]+)?)`（`ruling_reference_gate.py:83`）命中"未登记编号" ⇒ 阻断 ⇒ **案卷无法入册，而被审的缺口因此更不可见**。这是"审查器把报告行为当成施工行为"的机制错配。
+  - 与同族闸不一致（=可判定的立法缺陷，非我臆断）：`doc_ref_broken_gate.py` 对同一区有**显式豁免清单**含 `"_working"  # 草稿区豁免（施工方案/评估报告/临时笔记）`；`exempt_zone_frontmatter_gate.py` 亦以 `docs/_working/` 为豁免区；`folder_capacity_hard_limit_gate.py` 注释自证曾因 `docs/_working/` 123 件连坐拦死 src+tests 提交而专项治本 ⇒ **草稿区豁免是本闸族已确立的既有政策，RULING-REFERENCE 是唯一漏配者**。
+  - 处方（归 gate 属主，本包不自修他包写域）：RULING-REFERENCE 增加与 doc_ref_broken_gate 同源的 `_working` 豁免（或将 md 内的裁定编号降级为 warn 不阻断），并保留对 YAML/代码内引用的硬拦——那里才是真注册表外键。
+  - **本包本轮合规自解（不藏改动）**：按门禁给出的三个合法 remedy 之"**修正引用**"执行——案卷散文中的引用记法由 `裁定#+编号` 改为 `裁定 编号`（去 `#`，人读不受影响，机读不再误判为登记外键），并在本块与 04:46 块就地同批改写；**registry/代码面引用零改动**，未用任何 skip 逃生通道。此例同时成为 GATE-01 的**第二个红证**（同一闸在合法报告场景下的必红实例）。
+- **⑧ 下一步（轮次）**：①把 DANG-01 的"人裁 11 条"与 GEN-02 的"14 器"并入终报三清单（悬空/漏挂/断链各带口径与自愈标注）②BAG-01 扩窗数据（106 袋/307 对）按"合法后续修改"再分层给保守分母 ③IDX-03 六件 staged 删除弹复验 ④红蓝反证节（已积 5 例：时钟外推／探针 v1v2 自否／v3 负例三选错／"门读 index"逮到自己案卷未落／本轮 GEN-02 收录假阴性+DANG-01 自我否证）⑤终报（含 0013 落地回执）。
+- **队列/align 状态**：HEAD=`9a760906ac`(04:39:55)；本包 **0011 done-in位（HEAD 口径 align 硬=0）**、**0012 dead（⑦ F-AUDIT-GATE-01，非内容缺陷）**、0010/0001/0008 done-in位、0002 改判不重投、0009 done-未落地待裁、0003-0007 dead 待裁；本轮补投=**0013（含 04:46 未落块，同批改写引用记法）**；align 工作树口径硬=3（=外来陈旧快照，非本包欠账）、第 6-9 步仍被 BLIND-01 阻断。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_gen01_family.py                 # 37 候选/15 采集型/14 HEAD-BLIND/1 AWARE
+  python .runtime/tmp/audit_all_20260924/probe_dangling_tristate.py            # D1=758 D2=272 D3=56（含按根分层）
+  python .runtime/tmp/audit_all_20260924/probe_dangling_d2_split.py            # D2a=256 从未入提交 / D2b=16
+  git ls-tree -r --name-only HEAD | grep -cE "/(library_coverage_gate|data_task_completeness_gate|issue_resolved_integrity_gate)\.py$"   # 期望 0=闸体确已退役
+  git show HEAD:docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml | grep -cE "library_coverage_gate|data_task_completeness_gate|issue_resolved_integrity_gate"  # 期望 0=无静默失效
+  find src -name "tag_vocab_gate.py"    # 真身在 commit_gates/library/（册指旧路径）
+  ```
