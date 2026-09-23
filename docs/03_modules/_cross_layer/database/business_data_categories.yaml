@@ -5513,3 +5513,37 @@
   table: cohort_daily_ledger
   schema_file: schemas/categories/cohort_daily_ledger.py
   data_type: 成品
+
+# --- 板块层两表（2026-09-23 通宵总攻 st-secbuild-20260923 批2，骨架 v0 §5）---
+# 查重边界：板块日K=既有 kline_sector_880（行情事实）/ 本两表=板块层聚合状态与偏好
+# （22号spec §3.2 架构的落库面；供料 L2 门三原料=丁线 owner_gate C1 乙档治本）
+
+- category_id: market_sector_state
+  name: "板块状态表(每板块每日五成分:动量分位/RRG象限/结构强度/净流入分位/市场级轮动状态,close_final+pre_open双stage,22号spec§3.1①④⑧⑨口径)"
+  engine: clickhouse
+  database: c1_market
+  table: sector_state
+  schema_file: schemas/categories/sector_state.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "算法真源=22号spec公式级条目+sector_state_aggregator纯函数；ReplacingMergeTree(ingest_ts)版本列latest-wins；时戳纪律=T日收盘态=T+1盘前输入，同一ts禁循环（板块热度禁回灌emotion_index）"
+  calc_mode: compute
+  producer: sector_state_pipeline.run_close_final/run_pre_open
+  schedule: sector_close_final/sector_pre_open
+
+- category_id: market_sector_preference
+  name: "板块偏好表(大盘×情绪双轴映射:5档偏好标签+tilt倾斜系数+禁入RRG象限,水温响应面板块层兄弟件,D2预注册考试卡口径)"
+  engine: clickhouse
+  database: c1_market
+  table: sector_preference
+  schema_file: schemas/categories/sector_preference.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: "映射表frozen（考试卡D2预承诺，阈值变更=升版+重考）；tilt∈[0.8,1.2]；消费emotion_index真值并留version；情绪轴缺窗如实mock标注axis_status"
+  calc_mode: compute
+  producer: sector_state_pipeline.run_pre_open
+  schedule: sector_pre_open

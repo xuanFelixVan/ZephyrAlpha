@@ -60056,15 +60056,6 @@ entries:
   desc_en: ""
   plain_zh: "process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Scheduler 托管）治本背景（2026-08-28 裁定）- 旧 ide_health_daemon「常驻守护 + AI 冷启动自觉拉起」模式违反 boot_autostart_architecture.md C1（永久系统全自动）/C3（Task Scheduler 唯一入口），实证失效（守护死亡后 stale PID 残留、AI 会话不执行冷启动协定，系统长期裸奔）。"
   responsibility_layer: infrastructure
-- module_path: scripts/backup/library_ledger_backup.py
-  domain_id: D_GOV_ENFORCEMENT
-  name_zh: 词表加载器
-  name_en: ''
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: meta_question 包的词表读取小帮手：把层、状态、频率这些固定选项从配置文件里读出来给注册表和部署脚本用，大家共用一份避免各写各的
-  responsibility_layer: governance
-
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

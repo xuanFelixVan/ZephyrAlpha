@@ -1,0 +1,31 @@
+# ALGO_FLOW 外部真源——sector_state_aggregator（_domain_signal 域，真源 src/zephyr/signal_ashare/sector/sector_state_aggregator.py）
+# 2026-09-23 st-secbuild-20260923 批1：五成分+偏好映射纯函数（22号spec §3.1①④⑧⑨ 指认，零重造）
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.sector.sector_state_aggregator
+source_of_truth: src/zephyr/signal_ashare/sector/sector_state_aggregator.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: closes_panel（板块收盘升序面板，RRG 需 ≥62 日）+ benchmark_closes（880001.SH）
+    # - id: I2
+    #   name: 涨停数/连板梯队/成分数/资金流四类 T 日截面（money_flow×constituent 聚合）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 五成分组装
+    #   desc: multi_tf_momentum(0.4/0.3/0.3) + RRG DualEma(10/26)whipsaw 确认 + 涨停比40/梯队30/趋势30 强度 + 净流入分位 + classify_rotation_state 市场级
+    # - id: A2
+    #   name_zh: 偏好映射
+    #   desc: map_preference 大盘×情绪 3×3 frozen 表 → 5 档标签+tilt(0.8-1.2)+禁入象限；情绪缺窗契约 mock 如实标注
+    # 层: 输出
+    # - id: O1
+    #   name: SectorStateRow 列表 + MarketState + PreferenceResult（全纯函数零 IO）
+    #   intro: 落库编排归 sector_state_pipeline；消费归 daily_gate_snapshot L2 门/选股漏斗
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> O1
+    # A2 --> O1

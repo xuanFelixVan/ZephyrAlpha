@@ -1,0 +1,38 @@
+# ALGO_FLOW 外部真源——sector_state_pipeline（_domain_data 域，真源 src/zephyr/data/sector_state_pipeline.py）
+# 2026-09-23 st-secbuild-20260923 批2：板块状态管道编排（close_final 定格 / pre_open 消费）
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.sector_state_pipeline
+source_of_truth: src/zephyr/data/sector_state_pipeline.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: kline_sector_880 日K 面板（115 日历窗，(code,date) 去重后写胜）
+    # - id: I2
+    #   name: sector_constituent（PIT 成分，valid_from ≤ T < valid_to 或 open-ended）
+    # - id: I3
+    #   name: limit_up_pool(T 日涨停+consec_limit 梯队) / money_flow(T 日主力净额)
+    # - id: I4
+    #   name: regime_state_anchored.dominant + emotion_index(T 日 close_final 真值)
+    # 层: 算法
+    # - id: A1
+    #   name_zh: close_final 定格
+    #   desc: assemble_sector_states 组装五成分截面（纯函数），write_tsv_outcome 落库 stage=close_final, ts=15:10
+    # - id: A2
+    #   name_zh: pre_open 复制+重映射
+    #   desc: 复制 T 日定格态为 T+1 pre_open（09:15）；map_preference(dominant@T, emotion@T) 落偏好行
+    # 层: 输出
+    # - id: O1
+    #   name: c1_market.sector_state（469 板 × close_final/pre_open）+ c1_market.sector_preference（偏好行）
+    #   intro: L2 门三原料（top/retained/score）供料端 load_l2_admission；丁线 owner_gate C1 乙档治本
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I3 --> A1
+    # I2 --> A1
+    # A1 --> O1
+    # I4 --> A2
+    # A1 --> A2
+    # A2 --> O1

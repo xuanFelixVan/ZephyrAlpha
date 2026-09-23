@@ -431,6 +431,36 @@ def _run_special_schedule(
             except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
                 pass
         return {"dloop_post": _ok}
+    # 板块状态管道两槽（st-secbuild-20260923 批2，骨架 v0 §6）：close_final=T日 15:10
+    # 五成分定格（L2 门三原料供料真源）；pre_open=T+1 09:15 复制定格态+偏好重映射
+    # （丁线 owner_gate C1 乙档治本供料端）。编排型调用走特殊槽（dloop_post 同款先例，
+    # 不入 tasks.yaml——计算时刻非数据源）；幂等=ReplacingMergeTree 同键去重。
+    # 总闸 data/runtime/sector_state_pipeline.disabled 存在=停用（服务总闸惯例，即时生效）。
+    if schedule_name in ("sector_close_final", "sector_pre_open"):
+        _flag = Path(__file__).resolve().parents[3] / "data" / "runtime" / "sector_state_pipeline.disabled"
+        if _flag.exists():
+            log.info("时段 %s 跳过：总闸 sector_state_pipeline.disabled 存在", schedule_name)
+            return {schedule_name: False}
+        try:
+            from zephyr.data.sector_state_pipeline import run_close_final, run_pre_open
+
+            if schedule_name == "sector_close_final":
+                ok = run_close_final(alerter=scheduler._alerter)
+            else:
+                ok = run_pre_open(alerter=scheduler._alerter)
+        except Exception as exc:  # noqa: BLE001 — 管道故障降级告警，永不抛反噬调度器
+            log.error("时段 %s 异常: %s", schedule_name, exc)
+            try:
+                scheduler._alerter.notify(
+                    schedule_name,
+                    f"sector_state_pipeline 异常: {str(exc)[:200]}",
+                    level="ERROR",
+                    source="sector_state_pipeline",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+                pass
+            return {schedule_name: False}
+        return {schedule_name: ok}
     return None
 
 

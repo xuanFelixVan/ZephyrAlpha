@@ -200,6 +200,24 @@ _TBL_CHINA_BOND_YIELD = get_registry().table("market_china_bond_yield")
 # D6 行情补充五族新建四表（2026-09-18 夜班 st-datapack-20260918，altdata_line D6）：
 # 大盘资金流/ETF份额快照/中金所前20会员排名/可转债条款快照
 _TBL_MARKET_FUND_FLOW_DAILY = get_registry().table("market_fund_flow_daily")
+# 大盘资金流混合回填（批0 2026-09-23 st-secbuild）：东财 CDN 层对 fflow/daykline 字段面
+# 选择性断供（2026-09-18 起 akshare stock_market_fund_flow 全量 RemoteDisconnected；
+# 实测 fields2 仅 f51,f52,f53 可通且编号镜像同灭，短时重试即被限速）——akshare 腿
+# 结构性死亡非瞬时故障。兜底口径经 09-17 已知行机械校准：close/pct_chg ← kline_index
+# （3875.6/-0.41/13409.91/-0.33 逐位吻合）；pct 分母=沪深两市场成交额之和（-292.42亿/
+# 18231.3亿=-1.6% 与源行一致）。只补缺失交易日，零重写既有 akshare_em 行。
+_SQL_HYBRID_MFF_INDEX_WINDOW = (
+    "SELECT trade_date, symbol, close, amount "
+    "FROM {table} "
+    "WHERE symbol IN ('000001', '399001') AND trade_date >= '{start}' "
+    "ORDER BY trade_date, symbol"
+)
+_SQL_HYBRID_MFF_EXISTING_DATES = (
+    "SELECT DISTINCT trade_date FROM {table} WHERE trade_date >= '{start}' ORDER BY trade_date"
+)
+_FFLOW_MINIMAL_URL = "https://push2his.eastmoney.com/api/qt/stock/fflow/daykline/get"
+_FFLOW_MINIMAL_FIELDS2 = "f51,f52,f53"  # 2026-09-23 实测唯一可通字段组合
+_HYBRID_MFF_LOOKBACK_DAYS = 15  # 缺失日扫描窗（回补近期缺口，勿全窗回写）
 _TBL_ETF_SHARE_SNAPSHOT = get_registry().table("market_etf_share_snapshot")
 _TBL_CFFEX_MEMBER_RANKING = get_registry().table("market_cffex_member_ranking")
 _TBL_CB_CLAUSE = get_registry().table("market_convertible_bond_clause")
@@ -3224,23 +3242,31 @@ class AkshareIngestProvider(IngestProviderBase):
         try:
             df = self._call_with_policy(ak.stock_market_fund_flow, policy)
         except Exception as e:  # noqa: BLE001 — 单源失败 FAIL-VISIBLE 走集成器重试/告警
+            hybrid = self._hybrid_market_fund_flow_rows(payload, table, t0)
+            if hybrid is not None:
+                yield hybrid
+                return
             yield FetchResult(
                 table=table,
                 columns=columns,
                 rows=[],
                 last_key="",
                 elapsed_sec=time.monotonic() - t0,
-                error=f"stock_market_fund_flow 失败: {str(e)[:120]}",
+                error=f"stock_market_fund_flow 失败且混合回填不可用: {str(e)[:120]}",
             )
             return
         if df is None or len(df) == 0:
+            hybrid = self._hybrid_market_fund_flow_rows(payload, table, t0)
+            if hybrid is not None:
+                yield hybrid
+                return
             yield FetchResult(
                 table=table,
                 columns=columns,
                 rows=[],
                 last_key="",
                 elapsed_sec=time.monotonic() - t0,
-                error="stock_market_fund_flow 零行（源异常），拒绝写库（FAIL-VISIBLE）",
+                error="stock_market_fund_flow 零行（源异常）且混合回填不可用，拒绝写库（FAIL-VISIBLE）",
             )
             return
         rows: list[tuple] = []
@@ -3285,6 +3311,169 @@ class AkshareIngestProvider(IngestProviderBase):
             columns=columns,
             rows=rows,
             last_key=last_key,
+            elapsed_sec=time.monotonic() - t0,
+        )
+
+    def _fflow_daykline_minimal(self) -> dict[str, tuple[float, float]]:
+        """东财 fflow daykline 漏网字段单次礼貌请求（fields2=f51,f52,f53，2026-09-23 实测唯一可通组合）。
+
+        返回 {date_iso: (main_net, small_net)}；任何异常/限速返回 {}——本方法失败
+        不阻断 close/pct 回填（兜底列如实 NULL），亦不抛错。
+        """
+        import requests
+
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+            ),
+            "Referer": "https://data.eastmoney.com/zjlx/dpzjlx.html",
+        }
+        params = {
+            "lmt": "0",
+            "klt": "101",
+            "secid": "1.000001",
+            "secid2": "0.399001",
+            "fields1": "f1,f2,f3,f7",
+            "fields2": _FFLOW_MINIMAL_FIELDS2,
+            "ut": "b2884a393a59ad64002292a3e90d46a5",
+            "_": int(now_utc().timestamp() * 1000),  # cache-buster（浏览器行为对齐；now_utc 走时区真源）
+        }
+        try:
+            resp = requests.get(_FFLOW_MINIMAL_URL, params=params, headers=headers, timeout=12)
+            klines = ((resp.json() or {}).get("data") or {}).get("klines") or []
+            out: dict[str, tuple[float, float]] = {}
+            for item in klines:
+                parts = str(item).split(",")
+                if len(parts) < 3:
+                    continue
+                try:
+                    out[parts[0]] = (float(parts[1]), float(parts[2]))
+                except ValueError:
+                    continue
+            return out
+        except Exception:  # noqa: BLE001 — 漏网字段取不到如实缺，兜底列 NULL
+            return {}
+
+    def _hybrid_missing_dates(self, payload: FetchPayload, table: str) -> tuple[dict, list[str]] | None:
+        """缺失日扫描：现有日期集合 + kline_index 窗口数据。
+
+        Returns:
+            (idx, dates)；CH 不可达/零面板/零缺失 → None（调用方保持 FAIL-VISIBLE）。
+        """
+        from zephyr.data import ch_reader
+        from zephyr.data.table_registry import get_registry
+
+        start = (payload.end - datetime.timedelta(days=_HYBRID_MFF_LOOKBACK_DAYS)).isoformat()
+        existing_tsv = ch_reader.query(_SQL_HYBRID_MFF_EXISTING_DATES.format(table=table, start=start))
+        if not existing_tsv:
+            return None  # CH 不可达（ch_reader 故障静默空串）——保持 FAIL-VISIBLE
+        existing = {line.strip() for line in existing_tsv.splitlines() if line.strip()}
+        idx_tsv = ch_reader.query(
+            _SQL_HYBRID_MFF_INDEX_WINDOW.format(table=get_registry().table("market_index_kline"), start=start)
+        )
+        idx: dict[tuple[str, str], tuple[float, float]] = {}
+        for line in idx_tsv.splitlines():
+            parts = line.split("\t")
+            if len(parts) < 4:
+                continue
+            try:
+                idx[(parts[0], parts[1])] = (float(parts[2]), float(parts[3]))
+            except ValueError:
+                continue
+        if not idx:
+            return None
+        dates = sorted({d for (d, _sym) in idx if d not in existing and d <= payload.end.isoformat()})
+        if not dates:
+            return None
+        return idx, dates
+
+    def _hybrid_build_row(
+        self,
+        day: str,
+        idx: dict[tuple[str, str], tuple[float, float]],
+        flows: dict[str, tuple[float, float]],
+    ) -> tuple | None:
+        """单缺失日混合行（close/pct←指数K线；main/small←fflow 漏网字段；余列如实 NULL）。"""
+        prev_closes: dict[str, float] = {}
+        for sym in ("000001", "399001"):
+            prev_dates = sorted(p for (p, s) in idx if s == sym and p < day)
+            if prev_dates:
+                prev_closes[sym] = idx[(prev_dates[-1], sym)][0]
+        day_idx = {sym: idx[(day, sym)] for sym in ("000001", "399001") if (day, sym) in idx}
+        if len(day_idx) < 2 or len(prev_closes) < 2:
+            return None
+        turnover = day_idx["000001"][1] + day_idx["399001"][1]
+        sh_close, sz_close = day_idx["000001"][0], day_idx["399001"][0]
+        sh_pct = (sh_close / prev_closes["000001"] - 1.0) * 100.0
+        sz_pct = (sz_close / prev_closes["399001"] - 1.0) * 100.0
+        main_net, small_net = flows.get(day, (None, None))
+        main_pct = f"{main_net / turnover * 100.0:.4f}" if main_net is not None and turnover > 0 else None
+        small_pct = f"{small_net / turnover * 100.0:.4f}" if small_net is not None and turnover > 0 else None
+        vals = [
+            f"{sh_close:.4f}",
+            f"{sh_pct:.4f}",
+            f"{sz_close:.4f}",
+            f"{sz_pct:.4f}",
+            f"{main_net:.4f}" if main_net is not None else None,
+            main_pct,
+            None,  # super_net（源字段面被掐，如实缺）
+            None,  # super_net_pct
+            None,  # big_net
+            None,  # big_net_pct
+            None,  # mid_net
+            None,  # mid_net_pct
+            f"{small_net:.4f}" if small_net is not None else None,
+            small_pct,
+        ]
+        return tuple([day, *vals, "em_fflow_hybrid", 0])
+
+    def _hybrid_market_fund_flow_rows(self, payload: FetchPayload, table: str, t0: float) -> FetchResult | None:
+        """大盘资金流缺失日混合回填（akshare 腿结构性死亡兜底，批0 2026-09-23）。
+
+        口径：只回填扫描窗（15 历日）内缺失交易日，零重写既有 akshare_em 行
+        （防派生值回写历史造成口径回归）；close/pct_chg ← kline_index 000001/399001
+        （pct=close/prev_close-1，经 09-17 源行逐位校准）；main/small 净额 ← 东财
+        fflow 漏网字段单次请求（取不到如实 NULL）；行级 data_source='em_fflow_hybrid'
+        如实标注派生口径，quality_flag=0（super/big/mid 四档列缺失=部分行）。
+        kline_index 不可达或零缺失日返回 None（调用方保持原 FAIL-VISIBLE 错误）。
+        """
+        collected = self._hybrid_missing_dates(payload, table)
+        if collected is None:
+            return None
+        idx, dates = collected
+        flows = self._fflow_daykline_minimal()
+        rows: list[tuple] = []
+        for day in dates:
+            row = self._hybrid_build_row(day, idx, flows)
+            if row is not None:
+                rows.append(row)
+        if not rows:
+            return None
+        self._log.info(f"market_fund_flow 混合回填: {len(rows)} 行（em_fflow_hybrid，缺失日 {dates[0]}~{dates[-1]}）")
+        return FetchResult(
+            table=table,
+            columns=[
+                "trade_date",
+                "sh_close",
+                "sh_pct_chg",
+                "sz_close",
+                "sz_pct_chg",
+                "main_net",
+                "main_net_pct",
+                "super_net",
+                "super_net_pct",
+                "big_net",
+                "big_net_pct",
+                "mid_net",
+                "mid_net_pct",
+                "small_net",
+                "small_net_pct",
+                "data_source",
+                "quality_flag",
+            ],
+            rows=rows,
+            last_key=payload.end.isoformat(),
             elapsed_sec=time.monotonic() - t0,
         )
 

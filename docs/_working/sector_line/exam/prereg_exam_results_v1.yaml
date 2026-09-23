@@ -1,0 +1,56 @@
+{
+  "frozen_source": "sector_prereg_exam_cards_v1_frozen.md",
+  "run_date": "2026-09-23",
+  "panel_days": 1584,
+  "panel_sectors": 469,
+  "S10": {
+    "card": "S10",
+    "n_days": 986,
+    "n_sectors_effective": 382,
+    "w_full_mean": -0.0027174196575101726,
+    "w_full_nw_t": -0.5711243147532372,
+    "w_recent_mean": -0.0009196089802986113,
+    "w_recent_nw_t": -0.15386506773738723,
+    "yearly_pos_rate": 0.2,
+    "yearly_detail": {
+      "2022": -0.00672,
+      "2023": -0.002206,
+      "2024": -0.005705,
+      "2025": -0.001169,
+      "2026": 0.000478
+    },
+    "fast_mean": -0.0011987877887073032,
+    "slow_mean": -0.0032959460837207895,
+    "quad_means": {
+      "leading": 0.0006766862266199215,
+      "weakening": 0.00027093962926283573,
+      "lagging": 0.0014306338190787562,
+      "improving": 0.0035384703278642316
+    },
+    "verdict": "NO_EDGE"
+  },
+  "D2": {
+    "card": "D2",
+    "n_dual_axis_days": 16,
+    "label_counts_dual": {
+      "FOLLOW": 9,
+      "OFFENSIVE": 7
+    },
+    "n_single_axis_days": 805,
+    "per_label_days_single": {
+      "BALANCED": 304,
+      "FOLLOW": 839,
+      "OFFENSIVE": 441
+    },
+    "single_mean": -0.0034810239350054053,
+    "single_nw_t": -1.707290619071345,
+    "single_hit_rate": 0.5167701863354037,
+    "label_hit_rate": {
+      "FOLLOW": 0.54,
+      "OFFENSIVE": 0.4787
+    },
+    "note": "情绪轴真值仅 2026-09-15 起（frozen §F.3），单轴降档版=regime-only(emotion=契约mock)",
+    "verdict_dual": "INSUFFICIENT",
+    "verdict_single": "NO_MAP"
+  }
+}

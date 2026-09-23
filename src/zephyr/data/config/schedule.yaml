@@ -242,3 +242,17 @@ schedules:
     executor: default
     max_instances: 1
     description: "日循环总扳手自动圈——run_daily_loop(None) 全链排班编排（预案/盘中/收盘/结算/拍板，观察记录模式零下单），失败 ERROR 告警经 Alerter"
+
+  # 板块状态管道两槽（st-secbuild-20260923 批2，骨架 v0 §6）：close_final 盘后定格=真源态，
+  # pre_open 盘前消费=T 日定格态复制+偏好重映射。特殊槽编排型调用（dloop_post 同款，
+  # 不入 tasks.yaml）；总闸 data/runtime/sector_state_pipeline.disabled。
+  sector_close_final:
+    cron: "10 15 * * 0-4"
+    executor: default
+    max_instances: 1
+    description: "板块状态定格——sector_state 五成分截面落库（c1_market.sector_state stage=close_final，L2 门三原料供料真源）"
+  sector_pre_open:
+    cron: "15 9 * * 0-4"
+    executor: default
+    max_instances: 1
+    description: "板块状态盘前——T 日 close_final 复制为 pre_open+大盘×情绪偏好重映射（sector_preference，丁线 owner_gate C1 乙档治本供料端）"

@@ -475,6 +475,10 @@ from schemas.categories.market.market_us_futures_intraday import US_FUTURES_INTR
 from schemas.categories.meta.meta_stock_profile_ths import STOCK_PROFILE_THS_DDL
 from schemas.categories.meta.meta_stock_profile_ths import TABLE_NAME as _THS_PROFILE_TABLE
 from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
+
+# 板块层两表 DDL（st-secbuild-20260923 批2，骨架 v0 §5）：sector_state/sector_preference
+from schemas.categories.sector_preference import SECTOR_PREFERENCE_DDL
+from schemas.categories.sector_state import SECTOR_STATE_DDL
 from schemas.categories.sim_attribution_daily import SIM_ATTRIBUTION_DAILY_DDL
 
 # 所有 DDL（按依赖顺序）
@@ -595,6 +599,11 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_backtest.crisis_gate_log", CRISIS_GATE_LOG_DDL),
     ("c1_backtest.sim_attribution_daily", SIM_ATTRIBUTION_DAILY_DDL),
     ("c1_backtest.cohort_daily_ledger", COHORT_DAILY_LEDGER_DDL),
+    # 板块层两表（st-secbuild-20260923 批2，骨架 v0 §5）：sector_state 每板块每日状态/
+    # sector_preference 大盘×情绪偏好映射——DDL 真源 schemas/categories/ 根目录两件，
+    # 表落 c1_market；排序键含 stage（契约四态），ReplacingMergeTree 幂等重跑
+    ("c1_market.sector_state", SECTOR_STATE_DDL),
+    ("c1_market.sector_preference", SECTOR_PREFERENCE_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
