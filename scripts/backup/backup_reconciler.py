@@ -5,7 +5,7 @@
 # [CONSUMERS] GitCommitGateway._reconciliation_registry.register
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:双条件触发(重要文件+8h间隔) | INV-10:状态持久化backup_state.json
+# [INVARIANTS] INV-08:post-commit reconciler触发非时间触发 | INV-09:双条件触发(重要文件+8h间隔) | INV-10:状态持久化backup_state.json | INV-11:ok状态写入前须过system.backup_log当日BACKUP_CREATED交叉核验,假绿降级ch_log_missing并连带摘除last_ch_backup_status的ok,cadence-skip单独记账
 # [MODIFY-GUARD] gate_id="BACKUP-RECONCILER"
 # [STABILITY] evolving
 # [SAFETY] L
@@ -28,6 +28,14 @@
   - 间隔保护：8小时最小间隔，避免频繁备份
   - 状态持久化：backup_state.json 记录上次备份时间/快照ID/状态
   - 容错：备份失败降级为 warn ReconcileResult，不阻断其他reconciler
+  - 假绿闸（INV-11，2026-09-24）：exit=0 的 ok 落账前，以持久真源
+    system.backup_log（BACKUP_CREATED 行）交叉核验 CH 段自报的 ok；核验不过
+    （零行或探针故障）则降级 last_backup_status=ch_log_missing 并连带摘除
+    last_ch_backup_status 的 ok（下游 db_dumps 轮转闸消费该字段，宁停转勿假绿）。
+    CH 段因 24h cadence 跳过属合法 ok，以 last_run_outcome=ok_ch_skipped 与
+    "确实备份过"（backed_up）分开记账；trigger 的 8h 节奏跳过同样单独记
+    last_cadence_skip_*，skip 不得被误读成备份健康。（2026-09-22 实证：
+    state 记 verified=true 而 backup_log 当日零行）
 
 公共 API（无下划线前缀）为真源实现；带下划线前缀的私有名（_load_config /
 _get_state_file / _load_state / _update_state / _trigger / _reconcile 等）保留为
@@ -47,7 +55,10 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 import subprocess
+import urllib.error
+import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -88,6 +99,20 @@ IMPORTANT_FILES: frozenset[str] = frozenset(
 
 # 最小间隔秒数（触发条件2，默认8小时）
 MIN_INTERVAL_SECONDS = 8 * 3600
+
+# CH HTTP 端点配置真源（与 backup.ps1 同读 config/.env.clickhouse）
+CH_ENV_FILE = PROJECT_ROOT / "config" / ".env.clickhouse"
+# backup_log 交叉核验回看窗缓冲：system.backup_log 有 flush 延迟，且宿主机与
+# CH VM 时钟允许小偏移；真实备份从点火到 BACKUP_CREATED 落行远大于此缓冲。
+CH_LOG_WINDOW_BUFFER_SECONDS = 300
+
+# §5.160.2 SQL 集中化：CH system.backup_log 假绿交叉核验查询（唯一消费点=query_backup_log_created）。
+# 列名以 CH 26.6 实测 schema 为准：判别列是 status Enum8，无 event_type 列。
+_SQL_BACKUP_LOG_CREATED_PROBE = (
+    "SELECT count(), max(event_time) FROM system.backup_log "
+    "WHERE status = 'BACKUP_CREATED' AND event_time >= toDateTime('{literal}', 'UTC') "
+    "FORMAT TSV"
+)
 
 # ── 向后兼容别名（公共名为真源；私有名为静态快照/薄包装，仅供历史调用方过渡）──
 # 注意：PROJECT_ROOT / CONFIG_FILE / STATE_FILE 可被 make_backup_reconciler 重新赋值，
@@ -178,6 +203,99 @@ def _update_state(**kwargs: Any) -> None:
     return update_state(**kwargs)
 
 
+def read_ch_http_endpoint() -> tuple[str, int]:
+    """读取 CH HTTP 端点（config/.env.clickhouse，与 backup.ps1 同一真源）。
+
+    缺文件/缺键回退 localhost:8123（backup.ps1 同款兜底）。
+    """
+    host, port = "localhost", 8123
+    try:
+        with open(CH_ENV_FILE, encoding="utf-8") as f:
+            for line in f:
+                m = re.match(r"^CLICKHOUSE_HOST=(.+)$", line.strip())
+                if m:
+                    host = m.group(1).strip()
+                m = re.match(r"^CLICKHOUSE_HTTP_PORT=(.+)$", line.strip())
+                if m:
+                    port = int(m.group(1).strip())
+    except (FileNotFoundError, ValueError):
+        pass
+    return host, port
+
+
+def query_backup_log_created(since_utc: datetime) -> dict[str, Any]:
+    """假绿交叉核验数据源：system.backup_log（持久 MergeTree 表）中
+    status='BACKUP_CREATED' 且 event_time >= since_utc 的行数。
+
+    列名以 CH 26.6 实测 schema 为准：判别列是 status Enum8
+    ('CREATING_BACKUP'/'BACKUP_CREATED'/'BACKUP_FAILED'/...)，无 event_type 列
+    （2026-09-24 活体试射实证，禁凭记忆写列名）。
+
+    since_utc 必须是带时区的 UTC 时间（RULE-SCHEMA-TZ：显式时区，禁 naive）；
+    查询字面量按 UTC 解析，与列的显示时区无关（按 epoch 比较）。
+
+    Fail-closed：查询失败一律返回 ok=False，调用方不得把 ok 记成已核验。
+    """
+    host, port = read_ch_http_endpoint()
+    if since_utc.tzinfo is None:
+        since_utc = since_utc.replace(tzinfo=timezone.utc)
+    literal = since_utc.astimezone(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    query = _SQL_BACKUP_LOG_CREATED_PROBE.format(literal=literal)
+    try:
+        req = urllib.request.Request(f"http://{host}:{port}/", data=query.encode("utf-8"))
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            body = resp.read().decode("utf-8", "replace").strip()
+        parts = body.split("\t")
+        count = int(parts[0].strip() or 0)
+        max_event_time = parts[1].strip() if len(parts) > 1 else ""
+        return {"ok": True, "count": count, "max_event_time": max_event_time, "error": None}
+    except (urllib.error.URLError, OSError, ValueError) as exc:
+        return {"ok": False, "count": 0, "max_event_time": "", "error": str(exc)}
+
+
+def read_report_ch_status(run_start_utc: datetime, stdout: str = "") -> dict[str, Any]:
+    """读 backup.ps1 STAGE 4 落盘的本轮报告，取 databases.clickhouse 段。
+
+    报告路径发现双通道：
+      1. stdout 里的 "Report saved: <path>"（backup.ps1 自报路径，最可靠——
+         reconciler 可能在序列器 worktree 进程里跑，其 PROJECT_ROOT 指向
+         worktree，而 backup.ps1 内部硬编码主仓根，报告永远落在主仓 logs/）；
+      2. 兜底 glob PROJECT_ROOT/logs/backup_report_*.json。
+    只认 run_start_utc（容差 90s）之后新写的报告，防止吃到上一轮旧报告。
+    found=False 表示本轮无可用报告（含 lock-skip 短退出，本就不产报告），
+    调用方走 fail-closed。
+    """
+    threshold = run_start_utc - timedelta(seconds=90)
+    candidates: list[Path] = []
+    m = re.search(r"Report saved:\s*(\S+\.json)", stdout or "")
+    if m:
+        candidates.append(Path(m.group(1)))
+    logs_dir = Path(PROJECT_ROOT) / "logs"
+    try:
+        candidates.extend(sorted(logs_dir.glob("backup_report_*.json"), key=lambda p: p.stat().st_mtime, reverse=True))
+    except OSError:
+        pass
+    for path in candidates:
+        try:
+            mtime = datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc)
+        except OSError:
+            continue
+        if mtime < threshold:
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8-sig"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        ch = (data.get("databases") or {}).get("clickhouse") or {}
+        return {
+            "found": True,
+            "ch_status": ch.get("status"),
+            "reason": ch.get("reason"),
+            "report": str(path),
+        }
+    return {"found": False, "ch_status": None, "reason": None, "report": None}
+
+
 def trigger(committed_files: list[str]) -> bool:
     """触发条件判断（INV-09：双条件触发）
 
@@ -215,6 +333,16 @@ def trigger(committed_files: list[str]) -> bool:
                 last_backup = last_backup.replace(tzinfo=timezone.utc)
             elapsed = (datetime.now(timezone.utc) - last_backup).total_seconds()
             if elapsed < min_interval:
+                # cadence-skip 单独记账（2026-09-24 假绿处方）：重要文件在飞但被
+                # 节奏闸挡住 ≠ 备过份；与"当日确实备份过"（last_backup_log_verified）
+                # 分开记，避免 skip 被误读成健康。写失败降级 debug，不碰触发链。
+                try:
+                    update_state(
+                        last_cadence_skip_time=datetime.now(timezone.utc).isoformat(),
+                        last_cadence_skip_reason=(f"min_interval elapsed={int(elapsed)}s < {int(min_interval)}s"),
+                    )
+                except (OSError, TypeError, ValueError):
+                    logger.debug("cadence-skip state write failed", exc_info=True)
                 logger.debug(
                     "backup_reconciler: skip (elapsed=%.0fs < %ds)",
                     elapsed,
@@ -252,6 +380,7 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
         )
 
     try:
+        run_start = datetime.now(timezone.utc)
         result = subprocess.run(
             [
                 "powershell",
@@ -274,17 +403,64 @@ def reconcile(committed_files: list[str], session_id: str) -> Any:
 
     if result.returncode == 0:
         now_iso = datetime.now(timezone.utc).isoformat()
+        # 取最后200字符作为摘要
+        summary = result.stdout[-200:] if result.stdout else ""
+        # ── 假绿交叉核验闸（2026-09-24 处方，INV-11）────────────────────────
+        # 2026-09-22 实证：backup.ps1 CH 段轮询 system.backups（内存态）成功即写
+        # verified=true，但持久真源 system.backup_log 当日零行——状态假绿会连带
+        # 让 db_dumps 轮转闸（消费 last_ch_backup_status=="ok"）在 CH 断档期照删
+        # 旧 dump。故 exit=0 的 ok 落账前必须过 backup_log 当窗 BACKUP_CREATED 核验。
+        report = read_report_ch_status(run_start, result.stdout)
+        ch_status = report.get("ch_status")
+        probe_since = run_start - timedelta(seconds=CH_LOG_WINDOW_BUFFER_SECONDS)
+        if ch_status != "skipped":
+            probe = query_backup_log_created(probe_since)
+            if probe.get("ok") and probe.get("count", 0) > 0:
+                update_state(
+                    last_backup_time=now_iso,
+                    last_backup_status="ok",
+                    last_session_id=session_id,
+                    last_run_outcome="backed_up",
+                    last_backup_log_verified=True,
+                    last_backup_log_count=probe.get("count"),
+                    last_backup_log_max_event_time=probe.get("max_event_time"),
+                )
+                ch_detail = ch_status if ch_status else "unknown"
+                return ReconcileResult(
+                    action="auto_committed",
+                    detail=f"backup ok (clickhouse={ch_detail}, backup_log verified, "
+                    f"rows={probe.get('count')}): {summary}",
+                )
+            # 核验不过=假绿嫌疑：降级记账 + 连带摘掉 last_ch_backup_status 的 ok，
+            # 下游 db_dumps 轮转闸随之停摆（宁停转，勿假绿）。
+            update_state(
+                last_backup_time=now_iso,
+                last_backup_status="ch_log_missing",
+                last_session_id=session_id,
+                last_run_outcome="fake_green_blocked" if ch_status == "ok" else "unverified_no_log",
+                last_backup_log_verified=False,
+                last_ch_backup_status="ch_log_missing",
+                last_ch_backup_verified=False,
+            )
+            probe_state = "probe_error" if not probe.get("ok") else "zero_rows"
+            return ReconcileResult(
+                action="warn",
+                detail="FAKE-GREEN BLOCKED: exit=0 but system.backup_log has no "
+                f"BACKUP_CREATED row in window ({probe_state}, ch_status={ch_status}); "
+                "state demoted to ch_log_missing",
+            )
+        # CH 段 cadence 跳过是合法 ok（代码/PG/SQLite 已备）：与"确实备份过"
+        # 分开记 outcome，健康面板不得把 skip 读成备份成功。
         update_state(
             last_backup_time=now_iso,
             last_backup_status="ok",
             last_session_id=session_id,
+            last_run_outcome="ok_ch_skipped",
+            last_ch_skip_reason=str(report.get("reason") or "unknown"),
         )
-        # 取最后200字符作为摘要；附带CH阶段状态（ok/skipped及原因）保持可见性
-        summary = result.stdout[-200:] if result.stdout else ""
-        ch_status = load_state().get("last_ch_backup_status", "unknown")
         return ReconcileResult(
             action="auto_committed",
-            detail=f"backup ok (clickhouse={ch_status}): {summary}",
+            detail=f"backup ok (clickhouse=skipped: {report.get('reason')}): {summary}",
         )
     if result.returncode == 2:
         # CH阶段失败但代码/PG/SQLite/CH配置同步成功（backup.ps1已持久化last_ch_backup_*
