@@ -45562,6 +45562,11 @@ creation_tokens:
   token: regfix-lane0b-07-benchmark-finance-configcenter-20260922
   created_by: st-regfix-lane0b-20260923
   capability: regfix_lane0b
+- file: docs/_working/registry_migration/09_wm1_master_plan.md
+  token: regfix-lane0b-09-wm1-master-plan-20260923
+  created_by: st-regfix-lane0b-20260923
+  capability: regfix_lane0b
+  merge_evaluation: "W-M1施工总图v1.0（三设计合体+波次计划+Owner决策包B呈签件），无同真源可派生项"
   merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
   merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
   merge_evaluation: "门禁审计+对标调研归档件迁址重发（原registry_incident_20260922带日期名触R5数字后缀门，迁入migration序号系列05/06/07；旧路径3条token悬垂待晨清），无同真源可派生项"
@@ -46158,6 +46163,11 @@ creation_tokens:
   token: canonical-hash-canonical-hash-20260923
   created_by: st-ailayer-p1-20260923
   capability: canonical-hash
+- file: docs/_working/registry_migration/08_gate_safety_recheck.md
+  token: gate-safety-recheck-08-gate-safety-recheck-20260923
+  created_by: st-gaudit2-20260923
+  capability: gate_safety_recheck
+  merge_evaluation: "gate审计复验报告独件，替代无：净零=纯新增交付物，退役观察网燃料"
   merge_evaluation: "CloneGuard合并件：dual_run/criteria两处同构规范化哈希收敛为公共底座（净零=吸收两重复实现）"
   merge_evaluation: "终局班交付报告回执六要素，承 09-22 版delivery_report 同域续件"
   merge_evaluation: "战役台账渲染日报，真源=sim_daily_report 表无第二真源，随战役归档"
