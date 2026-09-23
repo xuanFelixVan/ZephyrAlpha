@@ -46924,4 +46924,234 @@ creation_tokens:
   created_by: st-t0-matrix-20260924
   capability: t0_matrix
   merge_evaluation: "R1②③④ 扩围交付件（矿册/矩阵/容量考/供给设计），与既有考试族卡一考一卡不并；TTL=task_bound 随做T战役退役"
+- file: docs/_working/commit_system_opt/06_final_report.md
+  token: commit-system-opt-06-final-report-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "终局报告非独立真源"
+- file: scripts/backup/library_ledger_backup.py
+  token: library-ledger-backup-library-ledger-backup-20260923
+  created_by: st-library-final-20260924
+  capability: library_ledger_backup
+  merge_evaluation: "图书馆账本双链备份+恢复演练，backup_pg_architecture 架构表之外的业务账本备份缺口，跨域不同对象不并"
+- file: scripts/register_library_ledger_backup_task.ps1
+  token: library-ledger-backup-register-library-ledger-backup-task-20260923
+  created_by: st-library-final-20260924
+  capability: library_ledger_backup
+  merge_evaluation: "备份馆 schtasks 注册脚本（纯 ASCII），与 library_ledger_backup.py 同一能力面，不替代任何条目"
+- file: src/zephyr/governance/meta_question/vocab_loader.py
+  token: metaq-vocab-dynamic-loading-vocab-loader-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：词表收敛到 docs vocabularies 标准词表+vocab_loader SSoT，五份 yaml 取代包内字面量与全部 gate-vocab 豁免（净零摘除），无新增重复簇"
+- file: docs/01_policies_and_standards/_registry/vocabularies/ai_autonomy_level_planned_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-ai-autonomy-level-planned-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/ai_autonomy_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-ai-autonomy-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/ai_capability_slot_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-ai-capability-slot-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/blueprint_refs_status_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-blueprint-refs-status-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/category_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-category-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/classification_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-classification-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/compliance_tags_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-compliance-tags-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/contract_status_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-contract-status-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/created_by_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-created-by-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/dep_type_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-dep-type-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/derived_from_relationship_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-derived-from-relationship-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/doc_type_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-doc-type-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/domain_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-domain-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/evolution_policy_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-evolution-policy-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/file_category_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-file-category-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/governance_family_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-governance-family-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/granularity_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-granularity-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/header_format_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-header-format-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/index.md
+  token: metaq-vocab-dynamic-loading-index-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/language_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-language-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/layer_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-layer-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/maturity_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-maturity-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/meta_question_frequencies_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-meta-question-frequencies-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/meta_question_layers_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-meta-question-layers-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/meta_question_origins_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-meta-question-origins-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/meta_question_outcomes_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-meta-question-outcomes-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/meta_question_statuses_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-meta-question-statuses-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/module_lifecycle_status_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-module-lifecycle-status-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/node_type_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-node-type-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/provenance_audit_chain_verdict_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-provenance-audit-chain-verdict-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/review_status_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-review-status-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/rule_form_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-rule-form-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/safety_level_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-safety-level-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/scope_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-scope-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/section_type_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-section-type-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/semantic_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-semantic-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/stability_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-stability-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/startup_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-startup-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/status_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-status-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/terminology_mapping.yaml
+  token: metaq-vocab-dynamic-loading-terminology-mapping-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/ttl_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-ttl-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/01_policies_and_standards/_registry/vocabularies/verifiability_vocabulary.yaml
+  token: metaq-vocab-dynamic-loading-verifiability-vocabulary-20260923
+  created_by: st-metaq-20260923
+  capability: metaq-vocab-dynamic-loading
+  merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
 di_seam_exemptions: []
