@@ -46532,4 +46532,39 @@ creation_tokens:
   created_by: st-e2e-20260924
   capability: exam_cost_gate
   merge_evaluation: "内收判据：本 yaml 是 exam_cost_gate.py 的 ALGO_FLOW 外置真源（gate-algo-flow-marker P2-1 口径），替代原拟内联 docstring 的机器块，零新规则面"
+- file: src/zephyr/backtest/regime_validation/condition_package.py
+  token: gpu-final-condition-package-20260924
+  created_by: st-gpu-final-20260924
+  capability: condition_axis_package
+  merge_evaluation: "GPU条件轴输入包唯一实现（Owner裁决①统计层+F4选族自纠），替代文档态31胞散记"
+- file: scripts/backtest/condition_attribution.py
+  token: gpu-final-condition-attribution-20260924
+  created_by: st-gpu-final-20260924
+  capability: condition_cell_attribution
+  merge_evaluation: "条件胞归因唯一读端（只读零重跑，胞级数字仅分层观察禁挑优）"
+- file: tests/backtest/test_condition_package.py
+  token: gpu-final-test-condition-package-20260924
+  created_by: st-gpu-final-20260924
+  capability: condition_axis_package
+  merge_evaluation: "契约钉非第二真源：MOD-BT-COND-PACKAGE MODIFY-GUARD"
+- file: tests/backtest/test_condition_attribution.py
+  token: gpu-final-test-condition-attribution-20260924
+  created_by: st-gpu-final-20260924
+  capability: condition_cell_attribution
+  merge_evaluation: "契约钉非第二真源：MOD-BT-COND-ATTR MODIFY-GUARD"
+- file: docs/_working/e2e_integration/panorama_health_snapshot_20260924.md
+  token: gpu-final-panorama-health-snapshot-20260924
+  created_by: st-gpu-final-20260924
+  capability: panorama_health_snapshot
+  merge_evaluation: "机生探针时点快照：meta_question按graph_ref聚合健康度，Friday点火判据底单"
+- file: docs/_working/e2e_integration/LEDGER.md
+  token: gpu-final-ledger-20260924
+  created_by: st-gpu-final-20260924
+  capability: gpu_ignition_campaign_ledger
+  merge_evaluation: "通宵总包台账（任务账+事故取证+点火清单），单真源协调面，无第二真源"
+- file: docs/03_modules/_domain_backtest/algo_flow/condition_package.yaml
+  token: gpu-final-condpkg-algo-flow-20260924
+  created_by: st-gpu-final-20260924
+  capability: condition_axis_package
+  merge_evaluation: "内收判据：condition_package 的 ALGO_FLOW 外置真源（gate-algo-flow-marker P2-1 口径），替代 docstring 内联机器块，零新规则面"
 di_seam_exemptions: []

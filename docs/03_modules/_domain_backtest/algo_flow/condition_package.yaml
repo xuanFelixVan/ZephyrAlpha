@@ -1,0 +1,54 @@
+# ALGO_FLOW 外部真源——condition_package（_domain_backtest 域，真源 src/zephyr/backtest/regime_validation/condition_package.py）
+# 2026-09-24 st-gpu-final P2-1 外置口径：docstring 内留一行锚，机器块出仓本文件；
+# 算法公共面变化时同步更新本块（gate-algo-flow-marker / ALGO-FLOW-LINK 双门同源）。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.backtest.regime_validation.condition_package
+source_of_truth: src/zephyr/backtest/regime_validation/condition_package.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name_zh: 情绪指数逐日值（v0.1.0 冻结公式产出）
+    #   fields: trade_date, emotion_index ∈ [0,1]
+    #   code: load_condition_pack 查 c1_market.emotion_index（闭卷窗 2019-01-04→2025-09-09）
+    # - id: I2
+    #   name_zh: 大盘状态逐日值（F4_BDI_MOMENTUM_Z20 族）
+    #   fields: signal_date, state ∈ {neutral, risk_on, risk_off}
+    #   code: load_condition_pack 查 c1_market.alt_regime_signal（键列 signal_date，选族铁规）
+    # 层: 特征
+    # - id: F1
+    #   name_zh: 情绪灰度五档
+    #   name_en: emotion_grey_band5
+    #   intro: 冻结边界 (0.2,0.4,0.6,0.8] 分冰点/降温/温和/升温/沸点五档，窗内空档如实剔除（实测冰点 0 日→四档）
+    #   formula: band(v) = 1 if v<=0.2 else 2 if v<=0.4 else 3 if v<=0.6 else 4 if v<=0.8 else 5
+    #   code: grey_band
+    #   registry: factor_registry: 不适用（条件轴输入包，非选股因子）
+    #   is_break: false
+    # - id: F2
+    #   name_zh: 市场状态三态
+    #   name_en: market_state_f4
+    #   intro: F4 族唯一真身（本班选族自纠：uniqExact=5 系 F11 猪周期/F14 BTC 污染）
+    #   formula: state(signal_date) where signal_id='F4_BDI_MOMENTUM_Z20'
+    #   code: load_condition_pack SQL_STATE
+    #   registry: factor_registry: 不适用（市场状态轴）
+    #   is_break: false
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 条件胞划分+30 日地板
+    #   name_en: cell_floor_sink
+    #   intro: 灰度档×状态档定胞，<30 交易日地板的胞日期下沉 conditional-free（禁凑 n 禁当独立样本）
+    #   inputs: F1 F2
+    #   outputs: O1
+    # - id: A2
+    #   name_zh: 闭卷纪律守卫
+    #   name_en: closed_book_guard
+    #   intro: 搜索窗锁闭卷窗；窗内 state 去重>5 fail-closed（选族失败/映射册缺失）；任一轴缺失即抛
+    #   inputs: I1 I2
+    #   outputs: O1
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 条件轴输入包 ConditionPack
+    #   intro: 逐日(灰度档,状态,胞,达标)+胞级台账+provenance（真库实测 1570 日/12 胞/9 胞达标）；消费方=factory_grid_executor T1 分层/condition_attribution 归因
+    # 边: I1 --> F1 ; I2 --> F2 ; F1 --> A1 ; F2 --> A1 ; I1 --> A2 ; I2 --> A2 ; A1 --> O1 ; A2 --> O1
+    # [/ALGO_FLOW]
