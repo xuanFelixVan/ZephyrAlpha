@@ -59894,6 +59894,21 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "回踩质量 A/B/C 判定（22 号 spec §3.1②，BM-SEL-08 缺失态补施工）。"
+- module_path: src/zephyr/backtest/regime_validation/condition_package.py
+  domain_id: D_BACKTEST
+  name_zh: "GPU条件轴输入包"
+  name_en: "condition_package"
+  desc_zh: "情绪灰度×大盘状态逐日条件包：闭卷窗分档/30日地板定胞/F4族选族过滤"
+  desc_en: "Per-day condition pack of emotion grey band x market state with 30d cell floor"
+  plain_zh: "把每一天贴上情绪冷热标签和市场状态标签，只有凑够30天的小格子才能用来分组考试，数据不够的日期统一扔进不分组桶"
+  responsibility_layer: business
+- module_path: scripts/backtest/condition_attribution.py
+  domain_id: D_BACKTEST
+  name_zh: "条件胞归因"
+  name_en: "condition_attribution"
+  desc_zh: "网格跑批净收益按条件胞分层主效应表（只读零重跑）"
+  desc_en: "Attribute grid-run daily net returns by condition cell"
+  plain_zh: "把回测每天的盈亏按标签小格子分组算成绩，只统计够30天的格子，胞级数字只做参考不直接定生死"
   responsibility_layer: business
 - module_path: scripts/governance/generators/generate_commit_guide.py
   domain_id: D_GOV_SCRIPTS
@@ -60064,23 +60079,6 @@ entries:
   desc_en: ''
   plain_zh: meta_question 包的词表读取小帮手：把层、状态、频率这些固定选项从配置文件里读出来给注册表和部署脚本用，大家共用一份避免各写各的
   responsibility_layer: governance
-
-- module_path: scripts/governance/_shared/registry_batch_edit.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: "re-export 壳"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "registry_batch_edit re-export 壳——真源单一（scripts/governance/registry_batch_edit.py）。Usage: from _shared.registry_batch_edit import insert_blocks, verify_pure_insertion。 re-export 壳（对标 _shared/file_utils.py 惯例）：真源在 scripts/governance/registry_batch_edit.py"
-  responsibility_layer: governance
-- module_path: src/zephyr/backtest/regime_validation/c3_throttle_attribution.py
-  domain_id: D_BACKTEST
-  name_zh: "C3 节流归因分析"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "D_BACKTEST — C3 节流归因分析（11 号 memo §4.3 C3）。纯分析函数：基于 C1 既有回测产物（零新回测成本），按 Viterbi 主导态 + overlay 态分组归因：各态天数占比、平均 Shrinkage、避免损失 （Σ(ret_开 − ret_关)，正值=该态节流后少亏/多赚）及其正部归一化份额 （MaxDD 改善的可加代理分解）。"
-  responsibility_layer: business
 
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）

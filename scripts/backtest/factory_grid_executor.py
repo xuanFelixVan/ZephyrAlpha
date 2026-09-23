@@ -84,8 +84,9 @@ _SQL_MV = (
     + " WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND total_mv > 0"
 )
 _SQL_ALL_A = (
-    "SELECT DISTINCT symbol FROM " + _get_table_registry().table("meta_stock_basic") +
-    " WHERE valid_to IS NULL AND name NOT LIKE '%ST%' AND name NOT LIKE '%退%'"
+    "SELECT DISTINCT symbol FROM "
+    + _get_table_registry().table("meta_stock_basic")
+    + " WHERE valid_to IS NULL AND name NOT LIKE '%ST%' AND name NOT LIKE '%退%'"
 )
 # T2b 行业锚: c1_market.industry_class L1 现行快照（category_id=market_industry_class 真源反查）
 _SQL_INDUSTRY_MAP = (
@@ -94,9 +95,7 @@ _SQL_INDUSTRY_MAP = (
     + " WHERE industry_level = 1 AND valid_to IS NULL"
 )
 # 行业词表真源（sws2021_l1 = schema industry_anchor.vocabulary_source；禁硬编码行业清单）
-_SWS_VOCAB_SOURCE = (
-    _REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "io_sector_sws_map.yaml"
-)
+_SWS_VOCAB_SOURCE = _REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "io_sector_sws_map.yaml"
 # v1 因子集（F-02 接线后扩展；全部从 close 现算，零额外依赖）
 V1_FACTORS = ("f_mom20", "f_lowvol20", "f_ma_gap")
 
@@ -106,10 +105,10 @@ class NegativeRecord:
     """阴性配方记录——死亡层+死因缺失即校验拒绝（机械可校验）。"""
 
     recipe_id: str
-    death_layer: str            # eval / backtest / gate
-    death_reason: str           # 结构化原因码（禁空串）
+    death_layer: str  # eval / backtest / gate
+    death_reason: str  # 结构化原因码（禁空串）
     values: dict[str, str]
-    degraded_dimensions: str    # 逗号分隔降级维（空=无）
+    degraded_dimensions: str  # 逗号分隔降级维（空=无）
     detail: str = ""
 
     def __post_init__(self) -> None:
@@ -267,8 +266,9 @@ def _regress_out(factor: pd.DataFrame, ctrl: pd.DataFrame) -> pd.DataFrame:
     return f0.sub(x0.mul(beta, axis=0)).where(m)
 
 
-def _normalize(factor: pd.DataFrame, mode: str, industry_map: dict[str, str] | None = None,
-               mkt_cap_w: pd.DataFrame | None = None) -> tuple[pd.DataFrame, bool]:
+def _normalize(
+    factor: pd.DataFrame, mode: str, industry_map: dict[str, str] | None = None, mkt_cap_w: pd.DataFrame | None = None
+) -> tuple[pd.DataFrame, bool]:
     """A1 标准化。返回 (截面, degraded)。
 
     行业族精确实现（T2b 2026-09-16，数据锚经 schema industry_anchor）:
@@ -307,8 +307,9 @@ def _normalize(factor: pd.DataFrame, mode: str, industry_map: dict[str, str] | N
     return _degraded_zscore()
 
 
-def _combine(factors: dict[str, pd.DataFrame], normalized: list[pd.DataFrame], mode: str,
-             closes: pd.DataFrame) -> tuple[pd.DataFrame, bool]:
+def _combine(
+    factors: dict[str, pd.DataFrame], normalized: list[pd.DataFrame], mode: str, closes: pd.DataFrame
+) -> tuple[pd.DataFrame, bool]:
     """A2 合成。返回 (合成截面, degraded)。
 
     IC 类权重=60 日滚动 rank-IC（ic_mean 均值 / ic_ir 均值÷std / halflife 指数衰减均值），
@@ -382,8 +383,9 @@ def _combine(factors: dict[str, pd.DataFrame], normalized: list[pd.DataFrame], m
                     # tol=1e-4（默认 1e-4 即坐标下降收敛阈，显式化）——坐标下降随机
                     # 遍历序显著加速大窗口 fit；60 日滚动重训节奏/alpha/前视防御不变，
                     # 格点语义等价（非逐位等价，偏差在 tol 量级内）
-                    mdl = Lasso(alpha=1e-4, fit_intercept=False, max_iter=2000,
-                                tol=1e-4, selection="random", random_state=0)
+                    mdl = Lasso(
+                        alpha=1e-4, fit_intercept=False, max_iter=2000, tol=1e-4, selection="random", random_state=0
+                    )
                     mdl.fit(Xtr[ok], ytr[ok])
                     w_abs = np.abs(mdl.coef_)
                     s = float(w_abs.sum())
@@ -411,11 +413,16 @@ def _combine(factors: dict[str, pd.DataFrame], normalized: list[pd.DataFrame], m
     return stack.groupby(level=0).mean(), True
 
 
-def _sizing(scores: pd.DataFrame, top_n: int, mode: str,
-            vol20: pd.DataFrame, mkt_cap_w: pd.DataFrame | None = None,
-            rets60_mean: pd.DataFrame | None = None,
-            rets60_var: pd.DataFrame | None = None,
-            rank_pre: pd.DataFrame | None = None) -> tuple[pd.DataFrame, bool]:
+def _sizing(  # noqa: long-param-list  存量函数签名（E4成本门接线仅追加net_fn/config两参，重构归批F账）
+    scores: pd.DataFrame,
+    top_n: int,
+    mode: str,
+    vol20: pd.DataFrame,
+    mkt_cap_w: pd.DataFrame | None = None,
+    rets60_mean: pd.DataFrame | None = None,
+    rets60_var: pd.DataFrame | None = None,
+    rank_pre: pd.DataFrame | None = None,
+) -> tuple[pd.DataFrame, bool]:
     """B 选股 + C 定尺寸。返回 (weights 截面, degraded)。
 
     rank_pre（T2c 缓存加速）: 同一 scores 已算好的 rank（combined 缓存随附）；
@@ -524,13 +531,18 @@ def _combine_cache_store(cache: dict, key, entry: tuple) -> None:
         cache.pop(old_key)
 
 
-def evaluate_recipe(recipe, closes: pd.DataFrame, factors: dict[str, pd.DataFrame],
-                    vol20: pd.DataFrame, universe_cols: list[str],
-                    mkt_cap_w: pd.DataFrame | None = None,
-                    rets60_mean: pd.DataFrame | None = None,
-                    rets60_var: pd.DataFrame | None = None,
-                    industry_map: dict[str, str] | None = None,
-                    combine_cache: dict | None = None) -> tuple[pd.DataFrame, tuple[str, ...]]:
+def evaluate_recipe(  # noqa: long-param-list  存量函数签名（E4成本门接线演进为10参，参数对象重构归批F账非本批）
+    recipe,
+    closes: pd.DataFrame,
+    factors: dict[str, pd.DataFrame],
+    vol20: pd.DataFrame,
+    universe_cols: list[str],
+    mkt_cap_w: pd.DataFrame | None = None,
+    rets60_mean: pd.DataFrame | None = None,
+    rets60_var: pd.DataFrame | None = None,
+    industry_map: dict[str, str] | None = None,
+    combine_cache: dict | None = None,
+) -> tuple[pd.DataFrame, tuple[str, ...]]:
     """recipe → (weights 宽表, degraded 维元组)。求值失败抛 RuntimeError（fail-closed，调用方记阴性）。
 
     combine_cache（T2c）: 按 (G,A1,A2) prefix 复用 combined 截面+rank——同 prefix 格点
@@ -560,8 +572,7 @@ def evaluate_recipe(recipe, closes: pd.DataFrame, factors: dict[str, pd.DataFram
         a1_deg = False
         for n in names:
             f = factors[n][cols]
-            nf, deg = _normalize(f, v["A1_factor_normalize"], industry_map=industry_map,
-                                 mkt_cap_w=mkt_cap_w)
+            nf, deg = _normalize(f, v["A1_factor_normalize"], industry_map=industry_map, mkt_cap_w=mkt_cap_w)
             if deg:
                 a1_deg = True
             normalized.append(nf)
@@ -578,9 +589,16 @@ def evaluate_recipe(recipe, closes: pd.DataFrame, factors: dict[str, pd.DataFram
     # M=ceil(1/cap) 只——M>top_n 时有效持仓数扩展为 M（仍按分数序取）
     cap_val = {"cap5": 0.05, "cap10": 0.10, "cap20": 0.20}[v["E_single_cap"]]
     effective_n = max(top_n, -(-1 // cap_val) if (top_n * cap_val) < 1.0 else top_n)
-    weights, deg3 = _sizing(combined, effective_n, v["C_sizing"], vol20[cols],
-                            mkt_cap_w=mkt_cap_w, rets60_mean=rets60_mean,
-                            rets60_var=rets60_var, rank_pre=rank)
+    weights, deg3 = _sizing(
+        combined,
+        effective_n,
+        v["C_sizing"],
+        vol20[cols],
+        mkt_cap_w=mkt_cap_w,
+        rets60_mean=rets60_mean,
+        rets60_var=rets60_var,
+        rank_pre=rank,
+    )
     if deg3:
         degraded.append("C_sizing")
     weights = _apply_freq_trigger(weights, v["D1_rebalance_freq"], v["D2_rebalance_trigger"])
@@ -588,8 +606,7 @@ def evaluate_recipe(recipe, closes: pd.DataFrame, factors: dict[str, pd.DataFram
     return weights, tuple(degraded)
 
 
-def stratified_sample(expansion, n_samples: int, seed: int,
-                      stratify_dims: tuple[str, ...] = ()):
+def stratified_sample(expansion, n_samples: int, seed: int, stratify_dims: tuple[str, ...] = ()):
     """分层均匀抽样；n_samples>=N_raw 时全量直返。
 
     stratify_dims 空=按 signal 侧 prefix_key 分层（默认）；
@@ -627,9 +644,15 @@ def stratified_sample(expansion, n_samples: int, seed: int,
     return picked[:n_samples]
 
 
-def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = False,
-              subspace: dict[str, list[str]] | None = None,
-              stratify_dims: tuple[str, ...] = ()) -> dict:
+def run_batch(
+    n_samples: int,
+    seed: int,
+    start: str,
+    end: str,
+    smoke: bool = False,
+    subspace: dict[str, list[str]] | None = None,
+    stratify_dims: tuple[str, ...] = (),
+) -> dict:
     """批次 A 主入口。返回 summary dict；manifest/negatives 落 data/strategy_intake/grid_<ts>/。"""
     from zephyr.position.core.position_recipe_compiler import GridCompiler
 
@@ -639,15 +662,15 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
     recipes_all = list(expansion.recipes)
     if subspace:
         # 批次 B 子空间枚举（裁定: A 给出的高价值子空间全因子穷尽——过滤即全跑，非抽样）
-        recipes_all = [r for r in recipes_all
-                       if all(r.values.get(k) in vs for k, vs in subspace.items())]
+        recipes_all = [r for r in recipes_all if all(r.values.get(k) in vs for k, vs in subspace.items())]
+
     class _Sub:
         pass
+
     sub_view = _Sub()
     sub_view.recipes = recipes_all
     sub_view.n_raw = len(recipes_all)
-    picked = stratified_sample(sub_view, 8 if smoke else n_samples, seed,
-                               stratify_dims=stratify_dims)
+    picked = stratified_sample(sub_view, 8 if smoke else n_samples, seed, stratify_dims=stratify_dims)
     run_ts = time.strftime("%Y%m%d-%H%M%S")
     out_dir = INTAKE_DIR / f"grid_{run_ts}"
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -692,13 +715,18 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
             try:
                 universe_cache[g] = _load_universe(g, start, end)
             except Exception as exc:  # noqa: BLE001
-                negatives.append(NegativeRecord(r.recipe_id, "eval", f"universe_load_fail:{type(exc).__name__}",
-                                                r.values, "", str(exc)[:120]))
+                negatives.append(
+                    NegativeRecord(
+                        r.recipe_id, "eval", f"universe_load_fail:{type(exc).__name__}", r.values, "", str(exc)[:120]
+                    )
+                )
                 eval_dead += 1
                 continue
         cols = [c for c in universe_cache[g] if c in closes_eval.columns]
         if len(cols) < 30:
-            negatives.append(NegativeRecord(r.recipe_id, "eval", "universe_too_small", r.values, "", f"cols={len(cols)}"))
+            negatives.append(
+                NegativeRecord(r.recipe_id, "eval", "universe_too_small", r.values, "", f"cols={len(cols)}")
+            )
             eval_dead += 1
             continue
         if g not in factors_cache:
@@ -707,13 +735,22 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
             slice_cache[g] = (closes_g, vol20[cols])
         closes_g, vol20_g = slice_cache[g]
         try:
-            weights, degraded = evaluate_recipe(r, closes_g, factors_cache[g], vol20_g, cols,
-                                                mkt_cap_w=mkt_cap_w, rets60_mean=rets60_mean,
-                                                rets60_var=rets60_var, industry_map=industry_map,
-                                                combine_cache=combine_cache)
+            weights, degraded = evaluate_recipe(
+                r,
+                closes_g,
+                factors_cache[g],
+                vol20_g,
+                cols,
+                mkt_cap_w=mkt_cap_w,
+                rets60_mean=rets60_mean,
+                rets60_var=rets60_var,
+                industry_map=industry_map,
+                combine_cache=combine_cache,
+            )
         except Exception as exc:  # noqa: BLE001
-            negatives.append(NegativeRecord(r.recipe_id, "eval", f"eval_fail:{type(exc).__name__}",
-                                            r.values, "", str(exc)[:120]))
+            negatives.append(
+                NegativeRecord(r.recipe_id, "eval", f"eval_fail:{type(exc).__name__}", r.values, "", str(exc)[:120])
+            )
             eval_dead += 1
             continue
         try:
@@ -724,14 +761,31 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
             sharpe = stats["sharpe"]
             nets_for_neff[r.recipe_id] = [float(v) for v in net.values]
         except Exception as exc:  # noqa: BLE001
-            negatives.append(NegativeRecord(r.recipe_id, "backtest", f"backtest_fail:{type(exc).__name__}",
-                                            r.values, ",".join(degraded), str(exc)[:120]))
+            negatives.append(
+                NegativeRecord(
+                    r.recipe_id,
+                    "backtest",
+                    f"backtest_fail:{type(exc).__name__}",
+                    r.values,
+                    ",".join(degraded),
+                    str(exc)[:120],
+                )
+            )
             bt_dead += 1
             continue
-        manifest_rows.append(GridEvalOutcome(r.recipe_id, r.prefix_key, r.values, degraded,
-                                         sharpe=sharpe, ann_return=stats["ann_return"],
-                                         max_drawdown=stats["max_drawdown"],
-                                         avg_turnover=stats["avg_turnover_1side"], net_days=len(net)))
+        manifest_rows.append(
+            GridEvalOutcome(
+                r.recipe_id,
+                r.prefix_key,
+                r.values,
+                degraded,
+                sharpe=sharpe,
+                ann_return=stats["ann_return"],
+                max_drawdown=stats["max_drawdown"],
+                avg_turnover=stats["avg_turnover_1side"],
+                net_days=len(net),
+            )
+        )
 
     # N_eff（预注册 effective_rank）——批次级双口径披露+账本披露位（非 smoke 才写账本）
     n_eff: int | None = None
@@ -774,10 +828,14 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
         "mode": "smoke" if smoke else ("batch_b_subspace" if subspace else "batch_a_census"),
         "subspace": subspace or None,
         "stratify_dims": list(stratify_dims) or None,
-        "n_raw": expansion.n_raw, "n_sampled": len(picked),
-        "evaluated": len(manifest_rows), "eval_dead": eval_dead, "backtest_dead": bt_dead,
+        "n_raw": expansion.n_raw,
+        "n_sampled": len(picked),
+        "evaluated": len(manifest_rows),
+        "eval_dead": eval_dead,
+        "backtest_dead": bt_dead,
         "degraded_recipes": int(manifest["degraded_dimensions"].apply(bool).sum()) if len(manifest) else 0,
-        "window": [start, end], "seed": seed,
+        "window": [start, end],
+        "seed": seed,
         "out_dir": str(out_dir),
         "net_returns_file": net_returns_file,
         "n_trials_effective": n_eff,
@@ -785,6 +843,48 @@ def run_batch(n_samples: int, seed: int, start: str, end: str, smoke: bool = Fal
     }
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     return summary
+
+
+def _apply_prereg_budget(stage: str, n_samples: int) -> int:
+    """预注册预算钳制（w3_w5_precheck §2.2/§2.5：冻结册零消费方缺口治本）。
+
+    fail-closed：册缺失/cost_gate_in_every_tier 未冻结/T1T2 未标定单格点耗时 → 拒跑。
+    钳制次序：grid_points_cap 总帽 → stage 帽（t0/t1/t2 各自点数）。
+    """
+    import yaml
+
+    prereg = Path(__file__).resolve().parents[2] / "config" / "search_space_prereg.yaml"
+    if not prereg.exists():
+        raise SystemExit("[prereg] config/search_space_prereg.yaml 缺失——预注册冻结缺失，禁开跑（fail-closed）")
+    cfg = yaml.safe_load(prereg.read_text(encoding="utf-8")) or {}
+    caps = cfg.get("budget_caps") or {}
+    if not caps.get("cost_gate_in_every_tier", False):
+        raise SystemExit("[prereg] budget_caps.cost_gate_in_every_tier 未冻结为 true——成本门禁跳，禁开跑")
+    cap_total = caps.get("grid_points_cap")
+    if cap_total and n_samples > int(cap_total):
+        print(f"[prereg] --n-samples {n_samples} > grid_points_cap {cap_total}，钳制")
+        n_samples = int(cap_total)
+    stage_key = {"t0": "trial0_calibration_points", "t1": "tier1_points", "t2": "tier2_points"}.get(stage)
+    if stage_key:
+        cap_stage = caps.get(stage_key)
+        if cap_stage and n_samples > int(cap_stage):
+            print(f"[prereg] stage={stage} 点数 {n_samples} > {stage_key}={cap_stage}，钳制")
+            n_samples = int(cap_stage)
+        if stage in ("t1", "t2") and not caps.get("per_point_seconds_measured"):
+            raise SystemExit("[prereg] budget_caps.per_point_seconds_measured=null（T0 未标定回填）——T1/T2 禁开跑")
+    return n_samples
+
+
+def _ask_compute_window_gate() -> None:
+    """E0 问闸（w3_w5_precheck §2.3：F06/grid 路 0 接缺口治本）。拒=SystemExit(3)。"""
+    from datetime import datetime as _dt
+    from zoneinfo import ZoneInfo
+
+    from compute_window_gate import check_gate
+
+    decision = check_gate("f06_grid_batch", "local_gpu", _dt.now(ZoneInfo("Asia/Shanghai")))
+    if not decision.get("allowed"):
+        raise SystemExit(f"[E0] 算力窗问闸拒绝: reason_code={decision.get('reason_code')}")
 
 
 def main() -> int:
@@ -795,13 +895,30 @@ def main() -> int:
     ap.add_argument("--start", default="2020-01-01")
     ap.add_argument("--end", default="2023-12-31")
     ap.add_argument("--stratify-dims", default="", help="逗号分隔定向分层维（批次 A 扩容）")
-    ap.add_argument("--subspace-json", default="", help='子空间枚举 JSON（批次 B）')
+    ap.add_argument("--subspace-json", default="", help="子空间枚举 JSON（批次 B）")
+    ap.add_argument(
+        "--stage",
+        default="",
+        choices=["", "t0", "t1", "t2"],
+        help="预算阶段（t0 标定 200/t1 粗扫 17100/t2 细化 13000；空=沿用 n-samples 不受 stage 帽）",
+    )
+    ap.add_argument(
+        "--skip-compute-gate", action="store_true", help="跳过 E0 问闸（仅 --smoke 管线联通允许；正式跑批禁用）"
+    )
     args = ap.parse_args()
+    if not args.smoke and not args.skip_compute_gate:
+        _ask_compute_window_gate()
+    if args.stage and not args.smoke:
+        args.n_samples = _apply_prereg_budget(args.stage, args.n_samples)
+    elif not args.smoke:
+        args.n_samples = _apply_prereg_budget("", args.n_samples)
     import json as _json
+
     subspace = _json.loads(args.subspace_json) if args.subspace_json else None
     stratify = tuple(d for d in args.stratify_dims.split(",") if d)
-    s = run_batch(args.n_samples, args.seed, args.start, args.end, smoke=args.smoke,
-                  subspace=subspace, stratify_dims=stratify)
+    s = run_batch(
+        args.n_samples, args.seed, args.start, args.end, smoke=args.smoke, subspace=subspace, stratify_dims=stratify
+    )
     print(json.dumps(s, ensure_ascii=False, indent=2))
     return 0
 

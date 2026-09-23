@@ -699,8 +699,14 @@ def load_anchored_cap(
             degraded_reasons=("no_row",),
         )
     row = rows[0]
-    src_date = _date_or_none(row.get("trade_date"))
-    vol_raw = row.get("vol_pct")
+    # reader 双形态兼容：DatabaseService execute 返回位置 tuple（SQL 列序=trade_date, dominant,
+    # vol_pct），dict 形态仅注入式测试 reader 使用。2026-09-24 st-gpu-final 治本：
+    # pf_alloc_daily 三连 poison（PIPE-20260923-163410 等）根因=tuple 调 .get() AttributeError。
+    if isinstance(row, dict):
+        src_raw, dom_raw, vol_raw = row.get("trade_date"), row.get("dominant"), row.get("vol_pct")
+    else:
+        src_raw, dom_raw, vol_raw = row[0], row[1], row[2]
+    src_date = _date_or_none(src_raw)
     try:
         vol = float(vol_raw) if vol_raw is not None else None
     except (TypeError, ValueError):
@@ -719,7 +725,7 @@ def load_anchored_cap(
     if reasons:
         return AnchoredCap(
             cap=1.0,
-            dominant=str(row.get("dominant") or "unknown"),
+            dominant=str(dom_raw or "unknown"),
             vol_pct=vol,
             source_date=src_date,
             lag_days=lag,
@@ -728,7 +734,7 @@ def load_anchored_cap(
         )
     return AnchoredCap(
         cap=anchored_cap_from_vol_pct(vol),  # type: ignore[arg-type]
-        dominant=str(row.get("dominant") or "unknown"),
+        dominant=str(dom_raw or "unknown"),
         vol_pct=vol,
         source_date=src_date,
         lag_days=lag,

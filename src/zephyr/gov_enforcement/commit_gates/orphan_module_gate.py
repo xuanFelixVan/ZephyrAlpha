@@ -252,7 +252,15 @@ def _detect_orphans(gateway, abs_files: list[str], wt_root: str) -> list[str] | 
         )
         try:
             grep_result = gateway.run_git(
-                ["git", "grep", "-l", "-E", pattern, "--", "src/**/*.py"],
+                [
+                    "git",
+                    "grep",
+                    "-l",
+                    "-E",
+                    pattern,
+                    "--",
+                    ":(glob)src/**/*.py",
+                ],  # 2026-09-24 st-gpu-final 修：裸 ** 在非 glob pathspec 下不跨层，5层深模块恒误判孤儿（env级bug，GT-ORPHAN-PATHSPEC-001）
                 cwd=wt_root,
             )
         except subprocess.TimeoutExpired:
@@ -308,7 +316,9 @@ def make_orphan_module_gate() -> GateSpec:
         if not abs_files:
             return True, ""
         # own 化（st-gslim-20260923 P2）：只查本 session 新增文件，外来 warn+审计不阻断
-        abs_files = _split_own_foreign(gateway, abs_files, files, kwargs.get("session_id"), gate_name="ORPHAN-MODULE")[0]
+        abs_files = _split_own_foreign(gateway, abs_files, files, kwargs.get("session_id"), gate_name="ORPHAN-MODULE")[
+            0
+        ]
         if not abs_files:
             return True, ""
         violations = _detect_orphans(gateway, abs_files, wt_root)

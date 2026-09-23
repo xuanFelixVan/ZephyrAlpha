@@ -190,9 +190,22 @@ def load_valuation(start: str, end: str, fields: tuple[str, ...] = ("pe", "pb"))
 
 
 _FIN_METRICS: tuple[str, ...] = (
-    "announce_date", "report_period", "np_excl_cum", "equity_incl_minority",
-    "rev_q_yoy", "np_q_yoy", "total_current_assets", "total_current_liabilities",
-    "fcff_cum", "np_q", "np_cum", "np_ttm", "ocf_ttm", "rev_ttm", "operating_profit_cum", "total_assets",
+    "announce_date",
+    "report_period",
+    "np_excl_cum",
+    "equity_incl_minority",
+    "rev_q_yoy",
+    "np_q_yoy",
+    "total_current_assets",
+    "total_current_liabilities",
+    "fcff_cum",
+    "np_q",
+    "np_cum",
+    "np_ttm",
+    "ocf_ttm",
+    "rev_ttm",
+    "operating_profit_cum",
+    "total_assets",
 )
 _fin_cache: dict[str, pd.DataFrame] = {}
 
@@ -246,8 +259,7 @@ def load_index_constituents(index_code: str, start: str, end: str) -> set[str]:
     披露：_UNIVERSE_DISCLOSURE 记录窗口并集 vs 期末快照差额（幸存者偏差可见化）。
     """
     global _UNIVERSE_DISCLOSURE
-    rows = _q(SQL_INDEX_CONS_WINDOW.format(
-        index_code=index_code, start=start, end=end, sentinel=_NO_EXPIRY_SENTINEL))
+    rows = _q(SQL_INDEX_CONS_WINDOW.format(index_code=index_code, start=start, end=end, sentinel=_NO_EXPIRY_SENTINEL))
     universe: set[str] = set()
     still_in_at_end: set[str] = set()
     for raw, valid_to in rows:
@@ -298,7 +310,7 @@ def filter_st(wide_close: pd.DataFrame, flags: pd.DataFrame) -> pd.DataFrame:
     st = flags[flags["st_flag"] > 0]
     if st.empty:
         return wide_close
-    st_pairs = set(zip(st["trade_date"], st["symbol"]))
+    st_pairs = set(zip(st["trade_date"], st["symbol"], strict=False))  # 等长序列，strict=False=原语义
     mask = pd.DataFrame(False, index=wide_close.index, columns=wide_close.columns)
     idx_map = {d: i for i, d in enumerate(wide_close.index)}
     col_map = {s: i for i, s in enumerate(wide_close.columns)}
@@ -335,7 +347,7 @@ def _load_seal_masks(index: pd.DatetimeIndex, columns: pd.Index) -> tuple[pd.Dat
             f"FROM {_T_STK_LIMIT} FINAL "
             f"WHERE trade_date >= '{start}' AND trade_date <= '{end}' AND symbol IN ({sym_list})"
         )
-    except Exception:
+    except Exception:  # noqa: BLE001 — 闸原料不可得不得炸正考（fail-open 有意为之，见下行注记）
         # 闸原料不可得=不阻断回测（fail-open），但不得伪装成已闸——调用方 stats 里带注记
         return empty, empty
     raw = {(str(d)[:10], str(s)[:6]): float(c) for d, s, c in raw_rows}
@@ -384,13 +396,21 @@ def apply_fillability_gate(weights: pd.DataFrame, gate_limits: bool = True) -> p
     return pd.DataFrame(out, index=weights.index, columns=weights.columns)
 
 
-def run_backtest(weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: bool = True) -> dict[str, Any]:
+def run_backtest(
+    weights: pd.DataFrame,
+    px_close: pd.DataFrame,
+    gate_limits: bool = True,
+    slippage_bp: float | None = None,
+) -> dict[str, Any]:
     """T+1 收盘执行向量化回测——与 pilot_002_ma_cross 逐行同口径。
 
     weights: index=trade_date, columns=symbol，目标权重（收盘再平衡）；
     px_close: 同结构收盘价宽表（可含额外列，内部 reindex 对齐）；
     gate_limits: 涨跌停可成交性闸（默认开，E7 引擎洞修复 2026-09-18——封板买入/跌停卖出
     不可成交；False=旧行为，仅供反例对照）。
+    slippage_bp: 滑点档覆盖（批C 考尺成本敏感性扫描专用，st-ibt-remedy-cf-20260923）；
+    None=冻结土规 SLIPPAGE_BP 零变更。仅滑点项可覆盖，佣金/印花不动——
+    正考口径必须传 None，档位扫描是侧向分析不改冻结土规。
     """
     closes = px_close.reindex(weights.index.union(weights.index)).ffill()
     rets = closes.pct_change()
@@ -398,7 +418,8 @@ def run_backtest(weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: boo
     w = apply_fillability_gate(w, gate_limits=gate_limits)
     gross = (w.shift(1) * rets).sum(axis=1).fillna(0.0)
     turnover = (w - w.shift(1)).abs().sum(axis=1).fillna(0.0) / 2.0
-    cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + SLIPPAGE_BP * 2) / 10000.0
+    slip = SLIPPAGE_BP if slippage_bp is None else float(slippage_bp)
+    cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + slip * 2) / 10000.0
     net = gross - cost
     equity = (1.0 + net).cumprod()
     years = max(len(net) / 244.0, 1e-9)
@@ -416,11 +437,15 @@ def run_backtest(weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: boo
 
 
 def daily_net_returns(
-    weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: bool = True
+    weights: pd.DataFrame,
+    px_close: pd.DataFrame,
+    gate_limits: bool = True,
+    slippage_bp: float | None = None,
 ) -> pd.Series:
     """与 run_backtest 同口径的净收益序列（供 DSR 批内偏度/峰度合并计算）。
 
     gate_limits: 涨跌停可成交性闸（默认开，与 run_backtest 一致）。
+    slippage_bp: 滑点档覆盖（批C 考尺成本敏感性扫描专用）；None=冻结土规零变更。
     """
     closes = px_close.reindex(weights.index.union(weights.index)).ffill()
     rets = closes.pct_change()
@@ -428,13 +453,12 @@ def daily_net_returns(
     w = apply_fillability_gate(w, gate_limits=gate_limits)
     gross = (w.shift(1) * rets).sum(axis=1).fillna(0.0)
     turnover = (w - w.shift(1)).abs().sum(axis=1).fillna(0.0) / 2.0
-    cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + SLIPPAGE_BP * 2) / 10000.0
+    slip = SLIPPAGE_BP if slippage_bp is None else float(slippage_bp)
+    cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + slip * 2) / 10000.0
     return (gross - cost).fillna(0.0)
 
 
-def batch_deflated_sharpe(
-    nets_by_id: dict[str, pd.Series], num_trials: int | None = None
-) -> dict[str, float | None]:
+def batch_deflated_sharpe(nets_by_id: dict[str, pd.Series], num_trials: int | None = None) -> dict[str, float | None]:
     """批内 Deflated Sharpe 折减——全委托官方件（SSOT）。
 
     zephyr.backtest.regime_validation.c4_deflated_sharpe_runner.run_deflated_sharpe_batch。
@@ -478,9 +502,7 @@ def window_for(kind: str = "stock") -> tuple[str, str]:
 # 本目录 c4_*.py 全是 AI 翻译产物：策略原文发表于某日、译文由某次会话生成，
 # 二者取晚者=该产物的"知识生效日"。回测窗口早于它=用了当时的未来知识，
 # 按 D120 三态（clean/drift/blocked）判漂移，放行但必须声明。
-_KNOWLEDGE_SENTINEL_RE = re.compile(
-    r"\[KNOWLEDGE_EFFECTIVE_FROM\]\s*(\d{4}-\d{2}-\d{2})"
-)
+_KNOWLEDGE_SENTINEL_RE = re.compile(r"\[KNOWLEDGE_EFFECTIVE_FROM\]\s*(\d{4}-\d{2}-\d{2})")
 _KNOWLEDGE_SCAN_DIR = Path(__file__).resolve().parent
 
 
@@ -505,9 +527,7 @@ def scan_knowledge_sentinels(root: str | Path | None = None) -> dict[str, str]:
     return out
 
 
-def knowledge_drift_report(
-    start: str, end: str, root: str | Path | None = None
-) -> dict[str, Any]:
+def knowledge_drift_report(start: str, end: str, root: str | Path | None = None) -> dict[str, Any]:
     """S3 预检：回测窗口 vs AI 产物知识生效日（D120 三态，复用地图漂移口径）。
 
     clean   = 所有带哨兵产物的生效日都 <= 窗口起点 → 无漂移
@@ -518,8 +538,13 @@ def knowledge_drift_report(
     """
     sents = scan_knowledge_sentinels(root)
     if not sents:
-        return {"verdict": "empty", "reason": "翻译目录无带哨兵的 AI 产物",
-                "backtest_range": [start, end], "drift_items": [], "scanned": 0}
+        return {
+            "verdict": "empty",
+            "reason": "翻译目录无带哨兵的 AI 产物",
+            "backtest_range": [start, end],
+            "drift_items": [],
+            "scanned": 0,
+        }
     s_d = date.fromisoformat(start[:10])
     drift_items = [
         {"artifact": name, "knowledge_effective_from": eff}
@@ -535,7 +560,9 @@ def knowledge_drift_report(
     }
 
 
-def emit(strategy_id: str, stats: dict[str, Any], diffs: list[str], extra: dict[str, Any] | None = None) -> dict[str, Any]:
+def emit(
+    strategy_id: str, stats: dict[str, Any], diffs: list[str], extra: dict[str, Any] | None = None
+) -> dict[str, Any]:
     """统一输出结构（单策略 main() 打印 + C4 runner 消费）。"""
     out = {"strategy_id": strategy_id, "stats": stats, "translation_diffs": diffs}
     if extra:
