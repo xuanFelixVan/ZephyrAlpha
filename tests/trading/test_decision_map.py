@@ -199,8 +199,24 @@ class TestValidate:
         payload = _minimal_payload()
         payload["nodes"].append(_make_min_node(node_id="TDM-T-2", name_zh="第二环节"))
         payload["edges"] = [
-            {"from_node": "TDM-T-1", "to_node": "TDM-T-2", "edge_type": "sequence"},
-            {"from_node": "TDM-T-2", "to_node": "TDM-T-1", "edge_type": "feedback"},
+            {
+                "from_node": "TDM-T-1",
+                "to_node": "TDM-T-2",
+                "edge_type": "sequence",
+                "payload_type": "decision",
+                "frequency": "daily",
+                "lag": "0d",
+                "pit_proof": "漏斗顺序边，同日闭环",
+            },
+            {
+                "from_node": "TDM-T-2",
+                "to_node": "TDM-T-1",
+                "edge_type": "feedback",
+                "payload_type": "feedback",
+                "frequency": "daily",
+                "lag": "T-1",
+                "pit_proof": "反馈边：次日方可生效",
+            },
         ]
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
@@ -385,7 +401,16 @@ class TestXrefAxes:
         """合规 payload_zh（≤20 字）→ error=0。"""
         payload = _minimal_payload()
         payload["edges"] = [
-            {"from_node": "TDM-T-1", "to_node": "TDM-T-1", "edge_type": "feed", "payload_zh": "今日预算带与仓位档"}
+            {
+                "from_node": "TDM-T-1",
+                "to_node": "TDM-T-1",
+                "edge_type": "feed",
+                "payload_zh": "今日预算带与仓位档",
+                "payload_type": "state",
+                "frequency": "daily",
+                "lag": "0d",
+                "pit_proof": "预算带读数带时戳",
+            }
         ]
         dm = load_decision_map(_write_map(tmp_path, payload))
         ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
@@ -689,6 +714,10 @@ _GOVERNANCE_EXEMPT = frozenset(
         # industry_graph_field_dictionary 字典先例）：TDM 节点零引用（grep 实证 src/scripts/tests 零消费方），
         # 消费归属=产业链图谱 ig_io_edge 桥接（IO 结构锚任务线）；豁免卫生由 K3 stale 检查保底
         "io_sector_sws_map.yaml",
+        # library_tag_vocabulary.yaml 已于 2026-09-23 代登记豁免（st-tdm20-20260923 红蓝轮发现：
+        # ulib3b 批(bb9777873f)落词表未同步本清单，TDM 双套件 4 红传染）——治理类（图书馆标签词表
+        # SSOT，MOD-LIB-003 lookup.py 消费），同 io_sector_sws_map 词表映射先例；ulib 线复审可翻案改挂轴
+        "library_tag_vocabulary.yaml",
         # risk_tier_registry.yaml 已于 2026-09-12 登记豁免（A5 同步）——治理类（域风险分级与人机门位，
         # R5 human-gate 治理改革交付物），不入 TDM 决策索引
         "risk_tier_registry.yaml",
@@ -937,3 +966,172 @@ class TestRepoTruthSource:
         """V0 血肉阶段：矩阵格子只允许 proposed/untested，禁止冒充 verified（D5）。"""
         dm = load_decision_map(_MAP_PATH)
         assert all(c.confidence != "verified" for c in dm.state_matrix.cells)
+
+
+class TestEdgeSemanticQuad:
+    """边语义四元组（payload_type/frequency/lag/pit_proof；st-tdm20-20260923 扩容批 R43）。
+
+    lag 语义=数据时点相对消费时点（T-1=昨日数据今日用）；触及 L9 知识供给层的边四元组
+    硬门禁，其余边缺失/legacy-unaudited=欠账 warning（只报不清）。
+    """
+
+    @staticmethod
+    def _payload_with_edge(edge: dict) -> dict:
+        payload = _minimal_payload()
+        payload["nodes"].append(
+            _make_min_node(node_id="TDM-T-2", layer="L1", name_zh="测试非L9节点")
+        )
+        payload["edges"].append(edge)
+        return payload
+
+    def test_quad_fields_parse(self, tmp_path: Path) -> None:
+        payload = self._payload_with_edge(
+            {
+                "from_node": "TDM-T-1",
+                "to_node": "TDM-T-2",
+                "edge_type": "feed",
+                "payload_type": "data",
+                "frequency": "daily",
+                "lag": "T-1",
+                "pit_proof": "快照落定不修订",
+            }
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        e = dm.edges[0]
+        assert (e.payload_type, e.frequency, e.lag, e.pit_proof) == (
+            "data",
+            "daily",
+            "T-1",
+            "快照落定不修订",
+        )
+
+    def test_r43_l9_edge_missing_quad_is_error(self, tmp_path: Path) -> None:
+        payload = self._payload_with_edge(
+            {"from_node": "TDM-T-1", "to_node": "TDM-T-2", "edge_type": "feed"}
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        r43 = [i for i in issues if i.code == "R43"]
+        assert any(i.level == "error" for i in r43)
+
+    def test_r43_l9_edge_legacy_pit_rejected(self, tmp_path: Path) -> None:
+        payload = self._payload_with_edge(
+            {
+                "from_node": "TDM-T-1",
+                "to_node": "TDM-T-2",
+                "edge_type": "feed",
+                "payload_type": "data",
+                "frequency": "daily",
+                "lag": "0d",
+                "pit_proof": "legacy-unaudited",
+            }
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(
+            i.code == "R43" and i.level == "error" and "legacy-unaudited" in i.detail
+            for i in issues
+        )
+
+    def test_r43_l9_edge_full_quad_ok(self, tmp_path: Path) -> None:
+        payload = self._payload_with_edge(
+            {
+                "from_node": "TDM-T-1",
+                "to_node": "TDM-T-2",
+                "edge_type": "feed",
+                "payload_type": "state",
+                "frequency": "intraday",
+                "lag": "T-1",
+                "pit_proof": "今日输出明日输入，同戳禁循环",
+            }
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R43" and i.level == "error" for i in issues)
+        _assert_no_unexpected_errors(issues)
+
+    def test_r43_l9_edge_bad_payload_type(self, tmp_path: Path) -> None:
+        payload = self._payload_with_edge(
+            {
+                "from_node": "TDM-T-1",
+                "to_node": "TDM-T-2",
+                "edge_type": "feed",
+                "payload_type": "乱写",
+                "frequency": "daily",
+                "lag": "0d",
+                "pit_proof": "真陈述",
+            }
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(
+            i.code == "R43" and i.level == "error" and "payload_type" in i.detail
+            for i in issues
+        )
+
+    def test_r43_legacy_edge_missing_pit_warns_only(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"].append(
+            _make_min_node(node_id="TDM-T-3", layer="L1", name_zh="测试非L9节点2")
+        )
+        payload["edges"].append(
+            {"from_node": "TDM-T-2", "to_node": "TDM-T-3", "edge_type": "feedback"}
+        )
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        r43 = [i for i in issues if i.code == "R43"]
+        assert r43 and all(i.level == "warning" for i in r43)
+
+
+class TestChainRefAxis:
+    """传导链轴（chain_refs，st-tdm20-20260923 W4）：表驱动注册+R45 存在性+R17 容量。
+
+    值域真源=chain_registry.yaml（生成器机生自 PG ig_chain 族，禁手改）；
+    吸收对齐 583/873（w4_1 triage canonical 口径，禁重画）。
+    """
+
+    def test_axis_registered_in_specs(self) -> None:
+        from zephyr.trading.decision_map import _XREF_MAX, _XREF_SPECS
+
+        spec = {s[0]: s for s in _XREF_SPECS}["chain_refs"]
+        assert spec[1] == "chain_registry.yaml"
+        assert spec[4] == "R45"
+        assert "chain_refs" in _XREF_MAX
+
+    def test_r45_unknown_chain_ref(self, tmp_path: Path) -> None:
+        payload = _minimal_payload()
+        payload["nodes"][0]["chain_refs"] = ["CH-NO-SUCH-0000"]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert ok is False
+        assert any(i.code == "R45" and "CH-NO-SUCH-0000" in i.detail for i in issues)
+
+    def test_r45_known_chain_ref_ok(self, tmp_path: Path) -> None:
+        import yaml as _yaml
+
+        reg = _yaml.safe_load(
+            (_REGISTRY_DIR / "chain_registry.yaml").read_text(encoding="utf-8")
+        )
+        known_id = reg["chains"][0]["chain_id"]
+        payload = _minimal_payload()
+        payload["nodes"][0]["chain_refs"] = [known_id]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert not any(i.code == "R45" for i in issues)
+        _assert_no_unexpected_errors(issues)
+
+    def test_r17_chain_ref_capacity(self, tmp_path: Path) -> None:
+        from zephyr.trading.decision_map import _XREF_MAX
+
+        payload = _minimal_payload()
+        payload["nodes"][0]["chain_refs"] = [
+            f"CH-CAP-OVER-{i:03d}" for i in range(_XREF_MAX["chain_refs"] + 1)
+        ]
+        dm = load_decision_map(_write_map(tmp_path, payload))
+        ok, issues = validate_decision_map(dm, _REGISTRY_DIR, _KNOWN_STRATEGIES)
+        assert any(
+            i.code == "R17" and "chain_refs" in i.detail for i in issues
+        )

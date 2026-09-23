@@ -56,6 +56,12 @@ _CONFIDENCE = frozenset({"verified", "proposed", "untested"})
 #   by-design-empty=该状态按节点口径本就不挂策略（设计留空）
 #   pending-evidence=候选已有但证据未达 proposed→verified 门槛，暂不挂
 _EMPTY_CELL_REASONS = frozenset({"pending-owner-adoption", "by-design-empty", "pending-evidence"})
+# R43 边语义四元组词表（2026-09-23 st-tdm20 扩容批）：封闭枚举防随手写
+_QUAD_FIELDS: Final = ("payload_type", "frequency", "lag", "pit_proof")
+_PAYLOAD_TYPES = frozenset({"data", "signal", "state", "decision", "exam", "evidence", "feedback", "governance"})
+_FREQUENCIES = frozenset({"realtime", "intraday", "daily", "weekly", "monthly", "quarterly", "annual", "adhoc", "static", "continuous"})
+_LEGACY_PIT = "legacy-unaudited"  # 存量边欠账显式标记（未经逐边 PIT 审计，不冒充已证）
+_L9_LAYER = "L9"  # 知识供给层（TDM 2.0 扩容轴）：触及该层的边四元组硬门禁
 _SCHEMA_VERSIONS = frozenset({"1.0", "1.1", "1.2"})
 _LAYER_PREFIX_BY_FLOW: Final = {
     "entry_flow": "L",
@@ -106,6 +112,9 @@ _XREF_SPECS: Final = (
     ("threshold_refs", "alert_threshold_registry.yaml", "thresholds", "threshold_id", "R36", "告警阈值库 THD"),
     # D38 补挂（Owner 2026-09-09 批准）：ML 模型库=算法家族最后缺锚的业务库（75 库盘点唯一真缺口）
     ("model_refs", "model_registry.yaml", "models", "model_id", "R38", "模型库 ML"),
+    # v2.0 扩容批（st-tdm20-20260923 W4）：传导链轴——值域真源=chain_registry.yaml（生成器机生自 PG ig_chain 族，
+    # 生成器=scripts/governance/generate_chain_registry.py，生成物禁手改）；吸收对齐 583/873（禁重画）
+    ("chain_refs", "chain_registry.yaml", "chains", "chain_id", "R45", "传导链库 CHN"),
 )
 _XREF_MAX: Final = {  # 各轴容量上限（D33 同款：超出=粒度过粗强制拆节点）
     "pattern_refs": 12,
@@ -120,6 +129,7 @@ _XREF_MAX: Final = {  # 各轴容量上限（D33 同款：超出=粒度过粗强
     "benchmark_refs": 4,
     "threshold_refs": 8,
     "model_refs": 4,
+    "chain_refs": 8,  # st-tdm20 W4：传导链轴容量（节点挂链 id 上限，超出=该按产业链拆节点）
 }
 
 
@@ -186,6 +196,8 @@ class DecisionMapNode:
     benchmark_refs: tuple[str, ...] = ()
     threshold_refs: tuple[str, ...] = ()
     model_refs: tuple[str, ...] = ()
+    # v2.0 扩容批（st-tdm20 W4）：传导链轴（表驱动，chain_registry.yaml 机生值域；吸收 583/873 禁重画）
+    chain_refs: tuple[str, ...] = ()
     # v1.9（Owner 2026-09-10 字段升级批复）：tags 自由标签（检索/过滤用，零强制）；
     #   latency_budget 时效预算（"时间是交易系统的灵魂"——盘中/持续节点缺省=R39 欠账 warning，
     #   运行时超时联动既有 fallback 字段；批量补值需逐节点工程实测，禁拍脑袋）
@@ -203,12 +215,22 @@ class DecisionMapEdge:
 
     payload_zh（2026-09-09 Owner 批准）：一句大白话说清"这条边喂了什么数据或结论"，
     ≤20 字（R2 长度门禁）；可选字段，存量边可空。全量内容由评审会话起草、Owner 审定后另批入库。
+
+    语义四元组（2026-09-23 st-tdm20 扩容批，v1.2 内可选字段演进，payload_zh 先例）：
+    payload_type/frequency/lag/pit_proof。R43 分级：触及 L9（知识供给层）节点的边四元组
+    全必填且走封闭词表（error）；其余边缺失或 pit=legacy-unaudited=欠账（warning，只报不清，
+    读数归对账报告）。lag 语义=数据时点相对消费时点（T-1=昨日数据今日用），时间分层铁律
+    （今日输出→明日输入，同一时戳禁循环）在边上机械化。
     """
 
     from_node: str
     to_node: str
     edge_type: str
     payload_zh: str | None = None
+    payload_type: str | None = None
+    frequency: str | None = None
+    lag: str | None = None
+    pit_proof: str | None = None
 
 
 @dataclass(frozen=True)
@@ -366,6 +388,11 @@ def load_decision_map(path: Path) -> DecisionMap:
             to_node=str(e["to_node"]),
             edge_type=str(e["edge_type"]),
             payload_zh=(str(e["payload_zh"]) if e.get("payload_zh") else None),
+            # v1.2 扩容批（st-tdm20）：边语义四元组，缺失=None（R43 分级校验）
+            payload_type=(str(e["payload_type"]) if e.get("payload_type") else None),
+            frequency=(str(e["frequency"]) if e.get("frequency") else None),
+            lag=(str(e["lag"]) if e.get("lag") else None),
+            pit_proof=(str(e["pit_proof"]) if e.get("pit_proof") else None),
         )
         for e in raw["edges"]
     )
@@ -586,7 +613,7 @@ def _check_dal_code_refs(registry_dir: Path, repo_root: Path, add) -> None:
 
 
 def _validate_edge(e: DecisionMapEdge, by_id: dict[str, DecisionMapNode], add) -> None:
-    """R2 边端点存在性 + edge_type 枚举。"""
+    """R2 边端点存在性 + edge_type 枚举 + R43 边语义四元组分级。"""
     if e.from_node not in by_id:
         add("error", "R2", e.from_node, f"边 from_node 不存在（→{e.to_node}）")
     if e.to_node not in by_id:
@@ -604,6 +631,27 @@ def _validate_edge(e: DecisionMapEdge, by_id: dict[str, DecisionMapNode], add) -
                 e.from_node,
                 f"payload_zh {len(e.payload_zh)} 字超上限 20（边大白话粒度门禁）: {e.payload_zh}",
             )
+    # R43 边语义四元组（2026-09-23 st-tdm20 扩容批）：触及 L9 知识供给层的边=硬门禁；
+    # 其余边缺失或 pit=legacy-unaudited=欠账 warning（只报不清，读数归对账报告）
+    fn_node = by_id.get(e.from_node)
+    tn_node = by_id.get(e.to_node)
+    touches_l9 = any(
+        n is not None and n.layer == _L9_LAYER for n in (fn_node, tn_node)
+    )
+    if touches_l9:
+        quad = dict(payload_type=e.payload_type, frequency=e.frequency, lag=e.lag, pit_proof=e.pit_proof)
+        for field in _QUAD_FIELDS:
+            if not (quad[field] or "").strip():
+                add("error", "R43", e.from_node, f"触及 L9 节点的边缺四元组字段 {field}（→{e.to_node}）")
+        if e.payload_type and e.payload_type not in _PAYLOAD_TYPES:
+            add("error", "R43", e.from_node, f"payload_type 非法: {e.payload_type}（词表 {sorted(_PAYLOAD_TYPES)}）")
+        if e.frequency and e.frequency not in _FREQUENCIES:
+            add("error", "R43", e.from_node, f"frequency 非法: {e.frequency}（词表 {sorted(_FREQUENCIES)}）")
+        if (e.pit_proof or "").strip() == _LEGACY_PIT:
+            add("error", "R43", e.from_node, f"触及 L9 节点的边 pit_proof 不得为 {_LEGACY_PIT}（新边须真 PIT 陈述）")
+    else:
+        if not (e.pit_proof or "").strip() or (e.pit_proof or "").strip() == _LEGACY_PIT:
+            add("warning", "R43", e.from_node, f"边四元组欠账（pit={e.pit_proof or '缺'}，→{e.to_node}）")
 
 
 def _validate_matrix_cell(

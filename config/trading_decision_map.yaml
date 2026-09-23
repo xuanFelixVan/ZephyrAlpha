@@ -48,6 +48,7 @@ nodes:
   node_type: aggregation
   point: 持续
   decision_question: 今天买什么、买多少、什么时候买？（本流最终输出=今日建仓清单）
+  activation: continuous
   algo_note_zh: >-
     全流终端聚合点：上游=盘前作战计划（L0）与买卖执行段（L4），下游无（终点）。
     组成=计划（L0）→选什么（L2 板块/L3 个股）→怎么买（L4 执行）。本节点只承载结构与指向，不写机制不存实时数据。
@@ -68,6 +69,7 @@ nodes:
   node_type: aggregation
   point: 持续
   decision_question: 手上的仓位今天怎么照顾？（本流最终输出=持仓动作清单）
+  activation: continuous
   algo_note_zh: >-
     全流终端聚合点：上游=持仓体检段（P1）→做T与加减仓段（P2/P3），下游无（终点）。
     组成=对账体检（P1）→做T（P2）→加仓（P3）。本节点只承载结构与指向，不写机制不存实时数据。
@@ -88,6 +90,7 @@ nodes:
   node_type: aggregation
   point: 持续
   decision_question: 今天卖什么、什么时候卖？（本流最终输出=今日离场清单）
+  activation: continuous
   algo_note_zh: >-
     全流终端聚合点：上游=卖出信号段（S1）与离场执行段（S2），下游无（终点）。
     组成=信号收集评分（S1，含应急保命 R1 横切）→执行路由（S2）。本节点只承载结构与指向，不写机制不存实时数据。
@@ -108,6 +111,7 @@ nodes:
   node_type: aggregation
   point: 持续
   decision_question: 钱怎么分、明天怎么调？（本流最终输出=预算切分+目标组合权重）
+  activation: continuous
   algo_note_zh: >-
     全流终端聚合点：上游=预算切分（C1）→组合聚合（C2）→归因反馈（C3），下游无（终点）。
     组成=预算（C1）→约束聚合（C2）→归因调权（C3）。本节点只承载结构与指向，不写机制不存实时数据。
@@ -268,6 +272,7 @@ nodes:
   node_type: gate
   point: 盘前
   decision_question: 今天下不下单/给多少总仓位（消费 RegimeSnapshot 概率=谨慎度，六段预算带见 C1）
+  activation: premarket
   algo_note_zh: "不自己算宏观——消费 RegimeSnapshot 的 7 态概率分布当谨慎度系数：概率越分裂越谨慎；没供数时同样按最谨慎档处理（R-055a 数值侧 fail-closed：缺数落地板值 0.30 并带 risk_signal_source 溯源，禁把降级读作'确无风险'）。 再查六段情绪预算带（如吸筹 30-50%/点火 50-70%/扩张 60-80%/亢奋封顶 30% 只卖不买），月级定大档、日级水温微调，输出当日总仓位上限。
     已建成叠加波动率目标化仓位系数（凯利简版：滚动 σ 目标化）：
     src/zephyr/pf_alloc/core/vol_target_allocator.py（MOD-BT-082），
@@ -318,6 +323,7 @@ nodes:
   node_type: sensor
   point: 盘前
   decision_question: 指数趋势/位置如何（数据面）
+  activation: premarket
   algo_note_zh: >-
     看均线排列与位置：MA20 在 MA60 上=多头加分，指数距 60 日高点<3%=高位减分；破 MA20 减一档、破 MA60 减两档。
     输出指数趋势分（-2~+2）。
@@ -342,6 +348,7 @@ nodes:
   node_type: sensor
   point: 盘中
   decision_question: 涨停/跌停/炸板/连板梯队显示的参与度如何（广度面）
+  activation: intraday
   algo_note_zh: >-
     数涨停/跌停家数、算炸板率、看连板梯队高度：涨跌停比>3 且炸板率<30%=强势；连板高度从 5 板断崖到 2 板=退潮预警。
     广度结构给市场参与度打分。
@@ -365,6 +372,7 @@ nodes:
   node_type: sensor
   point: 盘前
   decision_question: 昨日涨停溢价/晋级率显示的投机情绪如何（结果面，短线领先）
+  activation: premarket
   algo_note_zh: >-
     算昨日涨停股今天的平均溢价（低开多少/高开多少）和晋级率（昨天涨停今天又板的占比）：平均溢价>2% 且晋级率>50%=情绪健康；连续两天负溢价=退潮确认。
     这是短线最领先的指标——打板资金赚不赚钱直接决定明天还敢不敢接。
@@ -387,6 +395,7 @@ nodes:
   node_type: sensor
   point: 盘前
   decision_question: 市场波动状态是否允许正常仓位（双路径通道：期权 IV 主路径 + 合成 VIX 后备）
+  activation: premarket
   algo_note_zh: >-
     两条路径算同一个量——"当前恐慌处于历史什么分位"（vix_pct∈[0,1]），主路径优先：
     ① 主路径（期权 IV 曲面）：取 50ETF+300ETF 期权 IV 曲面，按 ATM 筛子 |abs(delta)-0.5|<0.15
@@ -433,6 +442,7 @@ nodes:
   node_type: sensor
   point: 盘前
   decision_question: 市场之外的宏观环境（货币/流动性/海外/政策）对这段行情的支撑或压制
+  activation: premarket
   algo_note_zh: >-
     四维扫一遍：货币（Shibor 隔夜利率骤升=紧）、流动性（两融余额环比连续降=去杠杆）、海外（隔夜纳指跌>2%=压制）、政策（监管动态人工录入）。
     输出宏观支撑/压制分。
@@ -485,6 +495,7 @@ nodes:
   node_type: sensor
   point: 盘中
   decision_question: 当日盘面骤变读数（11 信号环比）显示今天该多激进
+  activation: intraday
   algo_note_zh: >-
     当日盘中 11 个信号环比（涨跌停比变化/成交额环比/炸板率走向等）→ 合成 S0-S4 五档水温：水烫=当日可激进，水冰=当日只看不动。
     9:35 首算，盘中可更新，是唯一盘中可变的 L1 输入。
@@ -514,6 +525,7 @@ nodes:
     # （D90 终裁 2026-09-07）：六段冲突场景=听弱的（预算带按较弱信号降一档机械执行，废除人工接管）；量×轮动二维状态机（成交额 250 日滚动分位<25%=存量博弈：小盘题材加权/主线降权/持仓≤2-3 天；>60%=主线放行；轮动强度>80% 分位=电风扇市=无主线不推大板块）；二值权限门滞回=进段连续 2 日隶属度>60%、退出<40%
   decision_question: "双轴合成：RegimeSnapshot 概率（宏观）×情绪六段分布（微观）；输出预算带+策略路由+冲突仲裁（熵高分裂市→降档+Owner
     接管）；日级水温受月/周档位封顶"
+  activation: premarket
   algo_note_zh: "双轴相乘：宏观 RegimeSnapshot 概率（月级 7 态）×情绪六段分布（周级）。两轴指向一致=直接取结论；指向分裂（熵值超阈）=按'就低不就高'仲裁；缺供数时按最谨慎档处置（R-055a fail-closed，细则见下）。输出三件套：预算带（给
     C1）+六段状态（给全流）+策略路由（哪些 sleeve 今天开），一次判定 broadcast 全图。（2026-09-15 ALGO_FLOW 块出仓至
     docs/03_modules/_domain_regime/algo_flow/regime_detector.yaml：算法推导图外迁，算法口径不变；
@@ -539,6 +551,7 @@ nodes:
   node_type: stage
   point: 盘前
   decision_question: 今天打哪个板块/赛道
+  activation: premarket
   algo_note_zh: >-
     板块层总枢纽：下有 10 个子环节（强度/轮动/调整进度/市场状态/水温响应/个股传导/回踩质量/生命周期/催化剂/补涨比价），产出当日板块候选池（3-5
     个主攻板块）排序喂给 L3 个股层。
@@ -1387,6 +1400,7 @@ nodes:
   node_type: stage
   point: 盘前
   decision_question: 板块里选哪只票
+  activation: premarket
   algo_note_zh: >-
     个股层总枢纽：从全市场 5000+ 压缩到 10-20 只精选（业界漏斗压缩率 3000→10 参照），子环节含 Universe 剔除/九阶段主链/双池评分/负面否决/顺位排序/环境开关/策略专属链/可交易性预检。
   factor_refs: [FCT-MOM-003]
@@ -1551,7 +1565,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-03-3
-  note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
+  note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 双策略合流体检
   market: cn_a
   flow: entry_flow
@@ -2136,6 +2150,7 @@ nodes:
   node_type: stage
   point: 盘中
   decision_question: 何时进场/怎么下单
+  activation: intraday
   algo_note_zh: >-
     执行层总枢纽：分批建仓/时序/价格锚定/资金分配/打板专项/执行算法/条件队列/突破降级/硬约束/订单九态/部分成交/预检/容灾对账 13 子环节。
     管'什么时候、怎么把单下出去'。
@@ -2463,7 +2478,8 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-12
-  note_confirmed: 2026-09-16  # H5-P0 决策门接线复核：算法五查口径逐字未变（本批只改契约头/__all__ 导出）；实现侧变化=四级闸门自此有真实装配方（TradingSession.attach_pre_execution_gate + start_paper_session 模拟盘装配链），此前生产链路零装配
+  note_confirmed: 2026-09-23  # O-6/S-1（裁定授权=Owner 增补令）：四级升五级——新增闸门1.5 live 档阻断（blocks_live_trading=true 拒全部新单，环境解析走 config 层，探针异常 fail-closed；纯加闸不加放，判定顺序熔断→live档→时段→快照→否决）；其余四级算法口径逐字未变。前史：H5-P0 接线复核（09-16）实现四级闸门真实装配方
+
   name_zh: 订单级预检
   market: cn_a
   flow: entry_flow
@@ -2558,6 +2574,7 @@ nodes:
   node_type: stage
   point: 盘前
   decision_question: 每只持仓的现状/逻辑是否仍在
+  activation: premarket
   algo_note_zh: >-
     持仓体检枢纽：六个子环节（对账/分级/逻辑存活/风险否决/组合级/结论汇总）盘前并行跑一遍+盘中持续，输出每只持仓的当日动作清单。
   factor_refs: []
@@ -2576,6 +2593,7 @@ nodes:
   node_type: stage
   point: 盘中
   decision_question: 今日持仓怎么做T/要不要加减仓
+  activation: intraday
   algo_note_zh: >-
     做T与加减仓枢纽：资格前置→策略调度→闭环判定，加减仓在 P3。
     做T=在底仓上高抛低吸赚差价降成本，与加减仓是三件事（做T 不改变底仓股数）。
@@ -2600,6 +2618,7 @@ nodes:
   node_type: stage
   point: 盘中
   decision_question: 浮盈仓要不要加/什么时候加
+  activation: intraday
   algo_note_zh: >-
     加仓决策枢纽：资格门→金字塔规则→量级核算→时点执行四步。
     核心纪律=只加浮盈仓（赚钱的才加，亏钱的禁补——补亏损仓=扩大错误）。
@@ -2649,7 +2668,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-P-P1-02
-  note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
+  note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 持仓分级与监控频率
   market: cn_a
   flow: position_flow
@@ -3099,6 +3118,7 @@ nodes:
   node_type: stage
   point: 持续
   decision_question: 哪些卖出信号触发了/强度如何
+  activation: continuous
   algo_note_zh: >-
     卖出信号枢纽：六桶分类（risk/signal/target/trailing/time/volatility）收集→止损族/止盈族/破位退潮族并行判定→融合评分→强制清仓旁路。
     产出'卖不卖+多急'。
@@ -3121,6 +3141,7 @@ nodes:
   node_type: stage
   point: 盘中
   decision_question: 怎么卖（一次性/分批/竞价/尾盘）
+  activation: intraday
   algo_note_zh: >-
     离场执行枢纽：方式路由（一次性/分批/竞价/尾盘）→约束（T+1/涨跌停）→时段路由→条件单/分批执行→闭环复盘。
     '卖不卖'定了之后管'怎么卖'。
@@ -3142,6 +3163,7 @@ nodes:
   node_type: cross_cutting
   point: 持续
   decision_question: 暴跌/流动性危机是否触发无条件降仓
+  activation: continuous
   algo_note_zh: >-
     应急保命横切（kill switch 常驻任何档位不可移除）：组合级回撤 25% 或单日 -6% 触发→无条件全清仓+冻结所有开仓通道，只能 Owner 手动解除。
     AI 熔断只降档不升档。
@@ -3304,7 +3326,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S1-02
-  note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
+  note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 止损族判定
   market: cn_a
   flow: exit_flow
@@ -3344,7 +3366,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-X-S1-03
-  note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
+  note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 止盈族判定
   market: cn_a
   flow: exit_flow
@@ -3477,7 +3499,7 @@ nodes:
 
   # S2 树枝：路由→{涨跌停约束/时段路由/条件单/分批}→闭环退出效率；paper×4 实盘执行
 - node_id: TDM-X-S2-01
-  note_confirmed: 2026-09-22  # WO-14 归置批次：该模块源文件仅路径注释改指 archive，算法口径零变化
+  note_confirmed: 2026-09-22  # 同批原子确认（B09）：实现侧仅文档指针行改指归档路径，算法口径零变化
   name_zh: 执行方式路由
   market: cn_a
   flow: exit_flow
@@ -3718,6 +3740,7 @@ nodes:
     #   小资金容量优势允许高集中度（earned 单票集中，游资路径），风险百分比制资金无关
   decision_question: "总仓位怎么切给各 sleeve（Millennium pod 单体版）；带内实际仓位=状态分布加权插值（灰度非查表）；过渡带降仓×0.5-0.7+尾部预备金
     10-15% 恒定预留"
+  activation: premarket
   algo_note_zh: "预算切分（Millennium pod 模式）：总仓位预算（L1 预算带）按 sleeve 权重切分（PP-001 配置：打板 20%/多因子
     20%/事件 15%…），各 sleeve 账本独立、风险独立核算、互不挪用。sleeve 间资金流动只通过月度调权（C3-03）。 前瞻风险预算建议通道（2026-09-20 UP-3 接线，final3 P5）：各 sleeve 预测 VaR(5%)/CVaR 作带内再分配（DAL-RISK-BUDGET，MOD-PA-022：inverse_var/risk_parity/sharpe_weight 三模式，权重和=1.0），预算带仍为上限、与 C3-01 历史 Component VaR 双口径并存。"
     # D88（F 流第二轮审计，69 号 §2.32）：预备金管理三件——①存放分层（当日可用逆回购 GC001 一层/
@@ -3742,6 +3765,7 @@ nodes:
   node_type: aggregation
   point: 持续
   decision_question: 各 sleeve 的信号/持仓怎么聚合成组合（相关性/总仓位约束/风控叠加）
+  activation: continuous
   algo_note_zh: >-
     聚合四步：各 sleeve 目标仓位求和轧平（对冲净额）→组合约束栈全检→相关性聚类去扎堆→输出组合净指令流。
     多策略并发时'每个策略各自的账'与'组合是一盘棋'在这里合流。
@@ -3762,6 +3786,7 @@ nodes:
   node_type: stage
   point: 盘后
   decision_question: 哪个 sleeve 赚/亏 → 预算倾斜与矩阵格 verified 升级（系统自我进化闭环）
+  activation: postmarket
   algo_note_zh: >-
     归因反馈闭环：多维归因（哪赚哪亏为什么）→升降级评审（sleeve 维持/减半/清退）→权重调权→参数校准→传感器可靠度反馈 L1。
     系统自我进化的发动机——赚的加码亏的减码，全部凭数据不凭感觉。
@@ -4154,6 +4179,7 @@ nodes:
   node_type: gate
   point: 持续
   decision_question: BTC 趋势/山寨季状态允许什么仓位
+  activation: continuous
   algo_note_zh: >-
     币圈预留框架节点（未施工）：BTC 站稳 200 日线且斜率向上=趋势档开仓；ALT/BTC 汇率上行=山寨季开进攻档；BTC 破位则总闸收紧只留核心仓。
     v1 空壳，等 A 股链路验证后移植。
@@ -4173,6 +4199,7 @@ nodes:
   node_type: stage
   point: 持续
   decision_question: 哪条赛道在轮动（A股板块层的币圈弱化版）
+  activation: continuous
   algo_note_zh: >-
     币圈预留框架节点（未施工）：山寨季指标+赛道资金流轮动定主赛道（A 股板块层的弱化版——币圈赛道少、轮动快，直接看资金流排名前 3）。
   factor_refs: []
@@ -4191,6 +4218,7 @@ nodes:
   node_type: stage
   point: 持续
   decision_question: 赛道里选哪个币
+  activation: continuous
   algo_note_zh: >-
     币圈预留框架节点（未施工）：赛道内按市值+流动性+7 日动量排名选币，流动性差的排序再靠前也剔除（深度不足吃不掉滑点）。
   factor_refs: []
@@ -4209,6 +4237,7 @@ nodes:
   node_type: stage
   point: 持续
   decision_question: 何时进出（7x24 无 T+1 约束）
+  activation: continuous
   algo_note_zh: >-
     币圈预留框架节点（未施工）：7x24 无 T+1 无涨跌停，突破确认与回踩两类时点，止损用 ATR 倍数（2×ATR）移动式。
   factor_refs: []
@@ -4219,229 +4248,1312 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 
+  # ══ TDM 2.0 知识供给层（layer=L9，st-tdm20-20260923 扩容：吸收 chainpile 定桩 283 问施工面）══
+  # 设计真源=docs/_working/tdm20_campaign/01_node_expansion_list.md；时间分层铁律见各 V 节点注记
+- node_id: TDM-E-L9-A01
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·日线/分钟行情
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "价量趋势与动量能否预测N日收益？"
+  activation: premarket
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=MINIQMT/TUSHARE/BAOSTOCK/TDX；全表挂接密度最高线。U3频率=daily，时滞=hours；PIT=K线落定不修订，复权因子禁进PIT窗。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-002]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: critical
+  decay_scan_frequency: monthly
+  tags: ["tdm20", "source-line", "SL-A01", "A档"]
+- node_id: TDM-E-L9-A02
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·Tick分笔
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘中
+  decision_question: "日内微观结构能否预测次日方向与冲击成本？"
+  activation: intraday
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=TICKFLOW/TDX/BAIDUYUN；滑点/冲击近独占来源。U3频率=realtime，时滞=0d；PIT=TDX分笔仅近交易日，历史依赖包断档不可补。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-001, DS-057]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: critical
+  decay_scan_frequency: monthly
+  tags: ["tdm20", "source-line", "SL-A02", "A档"]
+  latency_budget: "realtime-seconds"
+- node_id: TDM-E-L9-A03
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·板块/概念指数
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘中
+  decision_question: "板块轮动与强弱持续性能否领先个股？"
+  activation: intraday
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=TQCENTER/TDX/AKSHARE。U3频率=realtime，时滞=0d；PIT=指数快照落定不修订，成分随披露更新。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-117, DS-119]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: critical
+  decay_scan_frequency: monthly
+  tags: ["tdm20", "source-line", "SL-A03", "A档"]
+- node_id: TDM-E-L9-A04
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·估值
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "估值横截面能否区分未来收益？"
+  activation: premarket
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=AKSHARE。U3频率=daily，时滞=hours；PIT=估值按交易日落定，回补须按披露日对齐。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-123, DS-141]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A04", "A档"]
+- node_id: TDM-E-L9-A05
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·财务
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "基本面改善能否被定价滞后捕捉？"
+  activation: premarket
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=TUSHARE/BAOSTOCK。U3频率=quarterly，时滞=T-1；PIT=按公告日PIT，财报修订挂披露时戳。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-208, DS-232]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A05", "A档"]
+- node_id: TDM-E-L9-A06
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·资金流
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘中
+  decision_question: "主力/大单净流向能否预测短期方向？"
+  activation: intraday
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=TUSHARE。U3频率=daily，时滞=hours；PIT=日度聚合盘后落定不修订。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-016]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: critical
+  decay_scan_frequency: monthly
+  tags: ["tdm20", "source-line", "SL-A06", "A档"]
+- node_id: TDM-E-L9-A07
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·千股千评
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "机构评级变化能否领先股价？"
+  activation: premarket
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=AKSHARE-ALT。U3频率=daily，时滞=hours；PIT=评级快照日更，历史不修订。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-230]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A07", "A档"]
+- node_id: TDM-E-L9-A08
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·航运运价BDI
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "全球贸易实物景气能否经运价领先映射出口链？"
+  activation: premarket
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=AKSHARE-ALT。U3频率=daily，时滞=T-1；PIT=运价指数发布日锚定。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-231]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A08", "A档"]
+- node_id: TDM-E-L9-A09
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·财经快讯情绪
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘中
+  decision_question: "快讯流密度与情感能否量化情绪并预测次日？"
+  activation: intraday
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=CLS/EASTMONEY_NEWS/RSS。U3频率=realtime，时滞=0d；PIT=快讯时戳不可回填，聚合窗口须右闭。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-104, DS-107]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: critical
+  decay_scan_frequency: monthly
+  tags: ["tdm20", "source-line", "SL-A09", "A档"]
+  latency_budget: "realtime-minutes"
+- node_id: TDM-E-L9-A10
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·国际宏观
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "全球风险因子如何传导A股风险偏好？"
+  activation: premarket
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=FRED。U3频率=daily，时滞=T-1；PIT=FRED发布日锚定，修订挂vintage。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-101]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A10", "A档"]
+- node_id: TDM-E-L9-A11
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·能源库存
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "库存意外变化能否领先油价与石化链？"
+  activation: premarket
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=EIA。U3频率=weekly，时滞=T-1；PIT=EIA周报发布时点锚定。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A11", "A档"]
+- node_id: TDM-E-L9-A12
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·天气
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘中
+  decision_question: "极端天气能否预测用电负荷/农产品/航运扰动？"
+  activation: intraday
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=QWEATHER。U3频率=realtime，时滞=0d；PIT=观测时戳即落定，预报分版本。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-198, DS-237]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A12", "A档"]
+  latency_budget: "near-realtime"
+- node_id: TDM-E-L9-A13
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·股东户数
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "筹码集中度变化能否领先个股行情？"
+  activation: premarket
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=EASTMONEY_DATACENTER。U3频率=adhoc，时滞=T-1；PIT=披露日锚定。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: [DS-218]
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A13", "A档"]
+- node_id: TDM-E-L9-A14
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·互动易问答
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘中
+  decision_question: "官方回应能否提前捕捉题材催化？"
+  activation: intraday
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=IRM。U3频率=intraday，时滞=0d；PIT=问答时戳不可回填。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A14", "A档"]
+  latency_budget: "near-realtime"
+- node_id: TDM-E-L9-A15
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·加密永续/费率
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘中
+  decision_question: "全球杠杆拥挤能否跨市场预警A股情绪？"
+  activation: intraday
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=HYPERLIQUID；消费定位=A股跨市场风险偏好（cn_a）；消费定位=A股跨市场风险偏好预警。U3频率=realtime，时滞=0d；PIT=交易所快照，资金费率8小时周期锚定。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A15", "A档"]
+  latency_budget: "realtime-seconds"
+- node_id: TDM-E-L9-A16
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·投入产出
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "部门间上下游强度能否机械判定传导路径？"
+  activation: premarket
+  algo_note_zh: >-
+    A档在产源线节点：DS锚=IO_TABLE（国家统计局）。U3频率=static，时滞=static；PIT=统计口径年份锚定（2020版153部门）。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-A16", "A档"]
+- node_id: TDM-E-L9-B01
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·卫星影像
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "物理量能否领先官方数据？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：Copernicus免费/Planet商业；接入=资金门位。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B01", "B档"]
+- node_id: TDM-E-L9-B02
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·美国官方天气/海洋
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "极端事件能否预警能源中断与减产？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：NWS API免费。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B02", "B档"]
+- node_id: TDM-E-L9-B03
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·招聘JD
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "扩缩招动能能否领先营收与行业景气？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：智联招聘抓取。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B03", "B档"]
+- node_id: TDM-E-L9-B04
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·电商价格
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "在线价格能否做高频通胀与单品景气映射？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：Keepa付费API。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B04", "B档"]
+- node_id: TDM-E-L9-B05
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·招投标
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "中标能否领先企业营收与基建链景气？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：政采网/公共资源平台。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B05", "B档"]
+- node_id: TDM-E-L9-B06
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·社媒舆情X/Reddit
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "海外散户情绪能否领先中概与联动板块？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：Reddit/X API。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B06", "B档"]
+- node_id: TDM-E-L9-B07
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·雪球/股吧散户情绪
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "A股散户讨论热度能否量化情绪并预警极端？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：雪球强反爬。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B07", "B档"]
+- node_id: TDM-E-L9-B08
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·APP榜单
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "APP下载排名能否领先用户增长与MAU拐点？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：七麦会员/SensorTower。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B08", "B档"]
+- node_id: TDM-E-L9-B09
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·进出口贸易
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "分商品出口量价能否领先出口链与航运需求？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：UN Comtrade免费API。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B09", "B档"]
+- node_id: TDM-E-L9-B10
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·信用卡/支付消费
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "消费高频代理能否领先社零与消费板块？"
+  activation: premarket
+  algo_note_zh: >-
+    B档外采未接源线节点：B档外采：SpendingPulse proxy。U3频率=adhoc，时滞=unknown；PIT=渠道未接，PIT未评估。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-B10", "B档"]
+- node_id: TDM-E-L9-C01
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·实时门店客流
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "线下消费景气的实时观测？"
+  activation: premarket
+  algo_note_zh: >-
+    C档无渠道源线节点：C档无渠道：想得到无机械接入渠道。U3频率=adhoc，时滞=unknown；PIT=无渠道，挂起不入批。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-C01", "C档"]
+- node_id: TDM-E-L9-C02
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·银行网点/信贷活跃
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "信贷投放动能的草根实时观测？"
+  activation: premarket
+  algo_note_zh: >-
+    C档无渠道源线节点：C档无渠道。U3频率=adhoc，时滞=unknown；PIT=无渠道，挂起不入批。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-C02", "C档"]
+- node_id: TDM-E-L9-C03
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 源线·直播电商实时成交
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: sensor
+  point: 盘前
+  decision_question: "新消费品牌动销的实时观测？"
+  activation: premarket
+  algo_note_zh: >-
+    C档无渠道源线节点：C档无渠道。U3频率=adhoc，时滞=unknown；PIT=无正式渠道，挂起不入批。
+    本节点=源线身份与供给语义上图画（U1-U6 六问结论的图谱投影），数据本体按 DS/CH 真源引用，不在地图复制条目。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "source-line", "SL-C03", "C档"]
+- node_id: TDM-E-L9-G1
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 图谱·Zephyr产业链
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 持续
+  decision_question: "产业链环节谁传导到谁？（873链/5560节点/1726结构边共享结构）"
+  activation: continuous
+  algo_note_zh: >-
+    传导图谱供给侧（G1）：ig_*14表（PG depgraph图谱域）；583/873链有链内传导边（w4_1 triage canonical口径）；缺口=ig_entity_code_map消歧桥仅2行（假边风险）；真源=scripts/industry_graph/apply_industry_graph_ddl.py；本节点不复制图谱内容，chain_refs轴引用链id。
+    本节点引用图谱真源不复制内容；下游消费经 chain_refs 轴挂具体链 id（W4 对账轴）。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  # st-tdm20 W4 首批引用：8 条关键在产链（半导体/算力/新能源车族，服务 TDM-E-L2-06 板块个股传导消费）
+  chain_refs: ["CH-985a1b1852e5", "CH-c4902e175ffb", "CH-dccc45c14a88", "CH-6a82b10e0891", "CH-74af4f035d18", "CH-fc21cde2542f", "CH-cb6c39f34f26", "CH-f9d3d490a8c5"]
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "graph", "G1"]
+  latency_budget: "T-1"
+- node_id: TDM-E-L9-G2
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 图谱·ChainKnowledgeGraph事实层
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 持续
+  decision_question: "开源产业链事实层提供结构先验（4654上市公司/95559产品）"
+  activation: continuous
+  algo_note_zh: >-
+    传导图谱供给侧（G2）：已导入ig_fact（source=ckg_2021，as_of=2021-10-26，PIT诚实）；静态快照仅结构先验不作现势事实；导入件=scripts/industry_graph/import_ckg_dataset.py。
+    本节点引用图谱真源不复制内容；下游消费经 chain_refs 轴挂具体链 id（W4 对账轴）。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "graph", "G2"]
+  latency_budget: "static"
+- node_id: TDM-E-L9-G3
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 图谱·实体股权穿透
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 持续
+  decision_question: "谁控制谁？（股权/任职/隐形边N度向上穿透）"
+  activation: continuous
+  algo_note_zh: >-
+    传导图谱供给侧（G3）：ig_equity_edge 804条+十大股东274,865对；穿透函数=scripts/entity_graph/equity_penetration.py（600566/600927/601963实测）；境外BVI/开曼断线不编造。
+    本节点引用图谱真源不复制内容；下游消费经 chain_refs 轴挂具体链 id（W4 对账轴）。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: scripts/entity_graph/equity_penetration.py
+  module_id: MOD-ENTITY-GRAPH
+  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "graph", "G3"]
+  latency_budget: "T-1"
+- node_id: TDM-E-L9-G4
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 图谱·概念/题材
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 持续
+  decision_question: "公司属于什么概念题材？（与产业链结构正交的标签面）"
+  activation: continuous
+  algo_note_zh: >-
+    传导图谱供给侧（G4）：stock_concept as_of 2026-09-14（THS导出）；概念≠产业链硬边界（概念型链名禁入ig_chain）；行情数据落库前W6须先补行数实测。
+    本节点引用图谱真源不复制内容；下游消费经 chain_refs 轴挂具体链 id（W4 对账轴）。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "graph", "G4"]
+  latency_budget: "static"
+- node_id: TDM-E-L9-G5
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 图谱·投入产出传导
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 持续
+  decision_question: "部门间上下游强度有多大？（量化传导的机械判定依据）"
+  activation: continuous
+  algo_note_zh: >-
+    传导图谱供给侧（G5）：ig_io_edge 16,859条（2020版153部门直接消耗系数）；头号缺口=部门码与ig_node两套id体系，边100%挂零（altdata_line WP-0.5）；挂载消费=传导链证据链建成后生效。
+    本节点引用图谱真源不复制内容；下游消费经 chain_refs 轴挂具体链 id（W4 对账轴）。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/03_graph_registry.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "graph", "G5"]
+  latency_budget: "static"
+- node_id: TDM-E-L9-V1
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 状态变量快照·大盘
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 盘后
+  decision_question: "昨日大盘状态变量的T-1快照是否就绪且带时戳？"
+  activation: postmarket
+  algo_note_zh: >-
+    状态变量快照（宪章L3三件之一）：大盘状态=RegimeSnapshot 7维概率分布（4态HMM+CRISIS/RECOVERY/BREAKOUT overlay）；快照落台=judgment台账（CH c1_market）；今日输出→明日输入，同一时戳禁循环（宪章§2时间分层铁律）。
+    时间分层铁律本层显式生效：今日输出→明日输入，同一时戳禁循环；出边 lag=T-1。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: src/zephyr/plan_engine/judgment_ledger.py
+  module_id: MOD-PLAN-026
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: monthly
+  tags: ["tdm20", "state-var", "V1"]
+- node_id: TDM-E-L9-V2
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 状态变量快照·情绪
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 盘后
+  decision_question: "昨日情绪相位六段的T-1快照是否就绪且带时戳？"
+  activation: postmarket
+  algo_note_zh: >-
+    状态变量快照（宪章L3三件之一）：情绪聚合器=独立对话未建（纪要§8.3定案不代建）→红节点如实；既有六段相位判定（TDM-E-L1-AGG）产出带时戳后经本节点落台。
+    时间分层铁律本层显式生效：今日输出→明日输入，同一时戳禁循环；出边 lag=T-1。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: not_built
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: monthly
+  tags: ["tdm20", "state-var", "V2"]
+- node_id: TDM-E-L9-V3
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 状态变量快照·板块
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 盘后
+  decision_question: "昨日板块级状态变量的T-1快照是否就绪且带时戳？"
+  activation: postmarket
+  algo_note_zh: >-
+    状态变量快照（宪章L3三件之一）：板块层五成分接线=集成窗（secmine板块线移交）；快照落台=judgment台账；板块 sector_state 骨架v0已有（2026-09-22挖矿班）。
+    时间分层铁律本层显式生效：今日输出→明日输入，同一时戳禁循环；出边 lag=T-1。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: src/zephyr/plan_engine/judgment_ledger.py
+  module_id: MOD-PLAN-026
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: monthly
+  tags: ["tdm20", "state-var", "V3"]
+- node_id: TDM-E-L9-AGG
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 知识供给汇聚
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: aggregation
+  point: 持续
+  decision_question: "知识供给轴（源线/图谱/状态变量）的覆盖与健康总览？"
+  activation: continuous
+  algo_note_zh: >-
+    知识供给汇聚：29源线+5图谱+3状态变量快照的汇聚点：供给健康读数喂建仓流根（数据就绪度输入）；本节点只承载结构与指向，不存实时数据。
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "agg"]
+  latency_budget: "T-1 08:00"
+- node_id: TDM-E-L9-D1
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 决策假设·因子组合挖掘
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 盘后
+  decision_question: "在T-1状态变量+传导链证据上挖组合假设？（E1C三轨：gplearn+智能体+MCTS）"
+  activation: postmarket
+  algo_note_zh: >-
+    关联定名=因子组合挖掘（纪要§4）；E1C三轨已建，缺积木/考试链加固/GPU燃料（GPU周五硬前置仅IBT三件，不含本轮）；只产出决策假设不自证对错，验证必交考试链
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: scripts/backtest/mcts_expression_search.py
+  module_id: MOD-BT-202
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "decision"]
+- node_id: TDM-E-L9-D2
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 决策假设·登记与考试方案
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 盘后
+  decision_question: "决策假设是否带预注册exam_plan入表（禁临场改题）？"
+  activation: postmarket
+  algo_note_zh: >-
+    入表即挂exam_plan（criterion/threshold/method），一问一考拆到不能再拆；载体=meta_question三表（PG在产283问）；registry代码随B7v2尾批落地（worktree在飞，本班不代落）
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "decision"]
+- node_id: TDM-E-L9-E1
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 验证·一问一考考试链
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 盘后
+  decision_question: "每问是否按预注册exam_plan考出可证伪结论？"
+  activation: postmarket
+  algo_note_zh: >-
+    以考试证伪为心脏：考尺/E4/WFA已建成（骨架审计）；考题一律来自入表exam_plan；GPU资源前置遵Owner定案（周五硬前置仅IBT修卷+焊成本+新鲜重考三件）
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: src/zephyr/trading/validation/runner.py
+  module_id: MOD-TDMVAL-001
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "exam"]
+- node_id: TDM-E-L9-E2
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 验证·结论回传与修正
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: stage
+  point: 盘后
+  decision_question: "考试结论是否次日生效回传（决策修正/复考退役建议）？"
+  activation: postmarket
+  algo_note_zh: >-
+    反馈数据边：今日考试结论次日方可进入下游修正/复裁（时间分层铁律）；向L4回传证伪结论，向L0回传复考/退役建议；last_exam/evidence_refs留痕
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: pending_gate
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "exam"]
+- node_id: TDM-E-L9-Z1
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 治理·问题治理与状态机
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: cross_cutting
+  point: 持续
+  decision_question: "全表schema（18列）与十态状态机是否被强制执行？"
+  activation: continuous
+  algo_note_zh: >-
+    draft→registered→mining→in_exam→answered→复考/挂起/合并/退役；墓碑q_id不复用；净零声明/provenance/乐观锁version；载体=meta_question三表+审计双轨
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: null
+  red_reason: structural
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "governance"]
+  latency_budget: "continuous"
+- node_id: TDM-E-L9-Z2
+  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  name_zh: 治理·净零与资产对账
+  market: cn_a
+  flow: entry_flow
+  layer: L9
+  node_type: cross_cutting
+  point: 持续
+  decision_question: "新增条目是否声明替代物？图↔库双向对账读数是否在册？"
+  activation: continuous
+  algo_note_zh: >-
+    净零增长审计+chain_refs双向对账探测器（scripts/governance/reconcile_chain_refs.py）：无标记资产数=遗漏探测器读数，只报不清；对账判据复用w4_1 triage canonical（禁重画）
+  factor_refs: []
+  data_refs: []
+  algo_refs: []
+  module_ref: scripts/governance/reconcile_chain_refs.py
+  module_id: MOD-GOV-CHAINRECON
+  doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
+  strategy_mounts: []
+  materiality: normal
+  decay_scan_frequency: semiannual
+  tags: ["tdm20", "governance"]
+  latency_budget: "weekly"
 edges:
   # 传感器 → 聚合（feed）
-- {from_node: TDM-E-L1-S1, to_node: TDM-E-L1-AGG, edge_type: feed}
-- {from_node: TDM-E-L1-S2, to_node: TDM-E-L1-AGG, edge_type: feed}
-- {from_node: TDM-E-L1-S3, to_node: TDM-E-L1-AGG, edge_type: feed}
-- {from_node: TDM-E-L1-S4, to_node: TDM-E-L1-AGG, edge_type: feed}
+- {from_node: TDM-E-L1-S1, to_node: TDM-E-L1-AGG, edge_type: feed, payload_type: data, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-S2, to_node: TDM-E-L1-AGG, edge_type: feed, payload_type: data, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-S3, to_node: TDM-E-L1-AGG, edge_type: feed, payload_type: data, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-S4, to_node: TDM-E-L1-AGG, edge_type: feed, payload_type: data, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
   # 指数→情绪 因果边（D6：双向互动、短线情绪领先——以 feedback 表达互动性）
-- {from_node: TDM-E-L1-S1, to_node: TDM-E-L1-S3, edge_type: feedback}
+- {from_node: TDM-E-L1-S1, to_node: TDM-E-L1-S3, edge_type: feedback, payload_type: feedback, frequency: daily, lag: "T-1", pit_proof: legacy-unaudited}
   # 漏斗主链（sequence，受上一步约束）
-- {from_node: TDM-E-L1-AGG, to_node: TDM-E-L1, edge_type: sequence}
+- {from_node: TDM-E-L1-AGG, to_node: TDM-E-L1, edge_type: sequence, payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
   # ── E-L2 树枝边（D19）：树枝内 feed/sequence + L1 融合接口 + 跨层输出 ──
-- {from_node: TDM-E-L2-01-1, to_node: TDM-E-L2-01, edge_type: feed}
-- {from_node: TDM-E-L2-01-2, to_node: TDM-E-L2-01, edge_type: feed}
-- {from_node: TDM-E-L2-01-3, to_node: TDM-E-L2-01, edge_type: feed}
-- {from_node: TDM-E-L2-01-4, to_node: TDM-E-L2-01, edge_type: feed}
-- {from_node: TDM-E-L2-01-5, to_node: TDM-E-L2-01, edge_type: feed}
-- {from_node: TDM-E-L2-02-1, to_node: TDM-E-L2-01, edge_type: feed}
-- {from_node: TDM-E-L2-04-1, to_node: TDM-E-L2-01-5, edge_type: feed}
-- {from_node: TDM-E-L2-04-2, to_node: TDM-E-L2-06-2, edge_type: feed}
-- {from_node: TDM-E-L1-AGG, to_node: TDM-E-L2-05-1, edge_type: feed}
-- {from_node: TDM-E-L1-S5, to_node: TDM-E-L2-05-1, edge_type: feed}
-- {from_node: TDM-E-L1-S5, to_node: TDM-E-L1-AGG, edge_type: feed}
+- {from_node: TDM-E-L2-01-1, to_node: TDM-E-L2-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-01-2, to_node: TDM-E-L2-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-01-3, to_node: TDM-E-L2-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-01-4, to_node: TDM-E-L2-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-01-5, to_node: TDM-E-L2-01, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-02-1, to_node: TDM-E-L2-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-04-1, to_node: TDM-E-L2-01-5, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-04-2, to_node: TDM-E-L2-06-2, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-AGG, to_node: TDM-E-L2-05-1, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-S5, to_node: TDM-E-L2-05-1, edge_type: feed, payload_type: data, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-S5, to_node: TDM-E-L1-AGG, edge_type: feed, payload_type: data, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
   # G1 增长批1：盘中水温读数→明日情绪滚动预测
 - {from_node: TDM-E-L1-S5, to_node: TDM-E-L0-04, edge_type: feed, payload_zh: "盘中
-    11 信号水温读数"}
-- {from_node: TDM-E-L1-S0, to_node: TDM-E-L1-AGG, edge_type: feed}
-- {from_node: TDM-E-L2-05-1, to_node: TDM-E-L2-05-2, edge_type: sequence}
-- {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-06-1, edge_type: feed}
-- {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-02-1, edge_type: feed}
-- {from_node: TDM-E-L2-06-1, to_node: TDM-E-L2-06-2, edge_type: sequence}
-- {from_node: TDM-E-L2-06-2, to_node: TDM-E-L2-06-3, edge_type: sequence}
-- {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3, edge_type: feed}
-- {from_node: TDM-E-L2-03-1, to_node: TDM-E-L4, edge_type: feed}
-- {from_node: TDM-E-L2-07-1, to_node: TDM-E-L4, edge_type: feed}
-- {from_node: TDM-E-L2-08, to_node: TDM-E-L2-01, edge_type: feed}
-- {from_node: TDM-E-L2-09, to_node: TDM-E-L2-01, edge_type: feed}
-- {from_node: TDM-E-L2-10, to_node: TDM-E-L2-06-3, edge_type: feed}
+    11 信号水温读数", payload_type: data, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-S0, to_node: TDM-E-L1-AGG, edge_type: feed, payload_type: data, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-05-1, to_node: TDM-E-L2-05-2, edge_type: sequence, payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-06-1, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-05-2, to_node: TDM-E-L2-02-1, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-06-1, to_node: TDM-E-L2-06-2, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-06-2, to_node: TDM-E-L2-06-3, edge_type: sequence, payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-03-1, to_node: TDM-E-L4, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-07-1, to_node: TDM-E-L4, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-08, to_node: TDM-E-L2-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-09, to_node: TDM-E-L2-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-10, to_node: TDM-E-L2-06-3, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
   # ── E-L3 树枝边（D28）：漏斗主链+双池+否决+顺位+环境开关+策略专属链 ──
-- {from_node: TDM-E-L3-01, to_node: TDM-E-L3-02, edge_type: sequence}
-- {from_node: TDM-E-L3-02, to_node: TDM-E-L3-03-1, edge_type: feed}
-- {from_node: TDM-E-L3-02, to_node: TDM-E-L3-03-2, edge_type: feed}
-- {from_node: TDM-E-L3-03-1, to_node: TDM-E-L3-03-3, edge_type: feed}
-- {from_node: TDM-E-L3-03-2, to_node: TDM-E-L3-03-3, edge_type: feed}
-- {from_node: TDM-E-L3-03-3, to_node: TDM-E-L3-04, edge_type: feed}
-- {from_node: TDM-E-L3-04, to_node: TDM-E-L3-05, edge_type: feed}
-- {from_node: TDM-E-L3-05, to_node: TDM-E-L3-08, edge_type: feed}
-- {from_node: TDM-E-L3-06, to_node: TDM-E-L3-02, edge_type: feed}
-- {from_node: TDM-E-L3-06, to_node: TDM-E-L3-07, edge_type: feed}
-- {from_node: TDM-E-L3-07-1, to_node: TDM-E-L3-08, edge_type: feed}
-- {from_node: TDM-E-L3-07-2, to_node: TDM-E-L3-08, edge_type: feed}
-- {from_node: TDM-E-L3-07-3, to_node: TDM-E-L3-08, edge_type: feed}
-- {from_node: TDM-E-L3-08, to_node: TDM-E-L3-09, edge_type: feed}
-- {from_node: TDM-E-L3-09, to_node: TDM-E-L3-10, edge_type: feed}
-- {from_node: TDM-E-L3-10, to_node: TDM-E-L4, edge_type: feed}
+- {from_node: TDM-E-L3-01, to_node: TDM-E-L3-02, edge_type: sequence, payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-02, to_node: TDM-E-L3-03-1, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-02, to_node: TDM-E-L3-03-2, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-03-1, to_node: TDM-E-L3-03-3, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-03-2, to_node: TDM-E-L3-03-3, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-03-3, to_node: TDM-E-L3-04, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-04, to_node: TDM-E-L3-05, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-05, to_node: TDM-E-L3-08, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-06, to_node: TDM-E-L3-02, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-06, to_node: TDM-E-L3-07, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-07-1, to_node: TDM-E-L3-08, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-07-2, to_node: TDM-E-L3-08, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-07-3, to_node: TDM-E-L3-08, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-08, to_node: TDM-E-L3-09, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-09, to_node: TDM-E-L3-10, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-10, to_node: TDM-E-L4, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
   # ── E-L4 树枝边（D30）：41 号九要点链+扳机横切+降级衔接 ──
-- {from_node: TDM-E-L4-01, to_node: TDM-E-L4-02, edge_type: sequence}
-- {from_node: TDM-E-L4-02, to_node: TDM-E-L4-03, edge_type: sequence}
-- {from_node: TDM-E-L4-03, to_node: TDM-E-L4-04, edge_type: sequence}
-- {from_node: TDM-E-L4-04, to_node: TDM-E-L4-05, edge_type: feed}
-- {from_node: TDM-E-L4-04, to_node: TDM-E-L4-06, edge_type: feed}
-- {from_node: TDM-E-L4-07, to_node: TDM-E-L4-05, edge_type: feed}
-- {from_node: TDM-E-L4-07, to_node: TDM-E-L4-06, edge_type: feed}
-- {from_node: TDM-E-L4-08, to_node: TDM-X-S1, edge_type: feed}
+- {from_node: TDM-E-L4-01, to_node: TDM-E-L4-02, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-02, to_node: TDM-E-L4-03, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-03, to_node: TDM-E-L4-04, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-04, to_node: TDM-E-L4-05, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-04, to_node: TDM-E-L4-06, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-07, to_node: TDM-E-L4-05, edge_type: feed, payload_type: state, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-07, to_node: TDM-E-L4-06, edge_type: feed, payload_type: state, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-08, to_node: TDM-X-S1, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
   # ── E-L3/D31 补缺边：日内动态选股+多维验证 ──
-- {from_node: TDM-E-L3-11-1, to_node: TDM-E-L3-08, edge_type: feed}
-- {from_node: TDM-E-L3-11-2, to_node: TDM-E-L3-08, edge_type: feed}
-- {from_node: TDM-E-L3-04, to_node: TDM-E-L3-12, edge_type: feed}
-- {from_node: TDM-E-L3-12, to_node: TDM-E-L3-05, edge_type: feed}
+- {from_node: TDM-E-L3-11-1, to_node: TDM-E-L3-08, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-11-2, to_node: TDM-E-L3-08, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-04, to_node: TDM-E-L3-12, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-12, to_node: TDM-E-L3-05, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
   # ── E-L4/D31 补缺边：订单级预检+订单生命周期+部分成交+容灾对账 ──
-- {from_node: TDM-E-L4-04, to_node: TDM-E-L4-12, edge_type: feed}
-- {from_node: TDM-E-L4-12, to_node: TDM-E-L4-05, edge_type: feed}
-- {from_node: TDM-E-L4-12, to_node: TDM-E-L4-06, edge_type: feed}
-- {from_node: TDM-E-L4-05, to_node: TDM-E-L4-10, edge_type: feed}
-- {from_node: TDM-E-L4-06, to_node: TDM-E-L4-10, edge_type: feed}
-- {from_node: TDM-E-L4-10, to_node: TDM-E-L4-11, edge_type: feed}
-- {from_node: TDM-E-L4-10, to_node: TDM-E-L4-13, edge_type: feed}
-- {from_node: TDM-E-L4-11, to_node: TDM-E-L4-13, edge_type: feed}
-- {from_node: TDM-E-L4-13, to_node: TDM-F-C3-01, edge_type: feed}     # 归因汇聚改落引擎节点（原落 hub 父节点致引擎零入边，外审 M-04）
+- {from_node: TDM-E-L4-04, to_node: TDM-E-L4-12, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-12, to_node: TDM-E-L4-05, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-12, to_node: TDM-E-L4-06, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-05, to_node: TDM-E-L4-10, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-06, to_node: TDM-E-L4-10, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-10, to_node: TDM-E-L4-11, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-10, to_node: TDM-E-L4-13, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-11, to_node: TDM-E-L4-13, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-13, to_node: TDM-F-C3-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
   # ── 增长批2（G4 执行成本反馈闭环，night-pathfinding-2300）：L4-14 盘后成本评估+选型回写 ──
-- {from_node: TDM-E-L4-10, to_node: TDM-E-L4-14, edge_type: feed}     # 订单生命周期/成交流水喂成本评估
-- {from_node: TDM-E-L4-14, to_node: TDM-E-L4-06, edge_type: feedback}     # 实测成本回写算法选型偏好（S1↔S3 双向 feedback 同款先例）
-- {from_node: TDM-E-L2-05-1, to_node: TDM-E-L3-06, edge_type: feed}
-- {from_node: TDM-E-L2-06-2, to_node: TDM-E-L3-07-1, edge_type: feed}
-- {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3-02, edge_type: feed}
-- {from_node: TDM-E-L1, to_node: TDM-E-L2, edge_type: sequence}
-- {from_node: TDM-E-L2, to_node: TDM-E-L3, edge_type: sequence}
-- {from_node: TDM-E-L3, to_node: TDM-E-L4, edge_type: sequence}
+- {from_node: TDM-E-L4-10, to_node: TDM-E-L4-14, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-14, to_node: TDM-E-L4-06, edge_type: feedback, payload_type: feedback, frequency: intraday, lag: "T-1", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-05-1, to_node: TDM-E-L3-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-06-2, to_node: TDM-E-L3-07-1, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-06-3, to_node: TDM-E-L3-02, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1, to_node: TDM-E-L2, edge_type: sequence, payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2, to_node: TDM-E-L3, edge_type: sequence, payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3, to_node: TDM-E-L4, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
   # L1 广播到持仓/离场（大盘转弱→风险处置/警戒）
-- {from_node: TDM-E-L1-AGG, to_node: TDM-P-P1, edge_type: broadcast}
-- {from_node: TDM-E-L1-AGG, to_node: TDM-X-S1, edge_type: broadcast}
-- {from_node: TDM-E-L2-01, to_node: TDM-E-L2-06-3, edge_type: feed}     # 板块强度分主输血管（D19 双通道①机器 feed；外审 B-08）
-- {from_node: TDM-E-L2-02-2, to_node: TDM-E-L2-02-1, edge_type: feed}     # 轮动预警喂 RRG 象限转移确认（外审 m-01）
-- {from_node: TDM-E-L1-S3, to_node: TDM-E-L1-S1, edge_type: feedback}     # D6 双向边补全：短线情绪领先→指数（外审 m-02）
-- {from_node: TDM-E-L3-06, to_node: TDM-E-L3-11, edge_type: feed}     # 环境开关覆盖日内动态选股链（外审 m-04）
-- {from_node: TDM-E-L3-12-1, to_node: TDM-E-L3-12, edge_type: feed}     # 多维验证子喂父（对齐 L2-01 约定，外审 M-10）
-- {from_node: TDM-E-L3-12-2, to_node: TDM-E-L3-12, edge_type: feed}     # 多维验证子喂父（对齐 L2-01 约定，外审 M-10）
-- {from_node: TDM-E-L3-12-3, to_node: TDM-E-L3-12, edge_type: feed}     # 多维验证子喂父（对齐 L2-01 约定，外审 M-10）
-- {from_node: TDM-E-L3-12-4, to_node: TDM-E-L3-12, edge_type: feed}     # 多维验证子喂父（对齐 L2-01 约定，外审 M-10）
-- {from_node: TDM-E-L4, to_node: TDM-E-L4-01, edge_type: feed}     # hub 分发第一跳：候选池+预算入执行链（外审 M-09）
-- {from_node: TDM-E-L4-10, to_node: TDM-E-L4-08, edge_type: feed}     # 成交/订单状态喂突破失败判定（外审 M-09）
-- {from_node: TDM-E-L4-09, to_node: TDM-E-L4-12, edge_type: feed}     # 硬约束+成本估算并入订单级预检（外审 M-09）
-- {from_node: TDM-E-L4-10, to_node: TDM-P-P1-01, edge_type: feed}     # 成交回报驱动持仓台账入库（T+1 可卖性由台账状态机承载，外审 M-02）
-- {from_node: TDM-E-L3-08, to_node: TDM-F-C3-01, edge_type: feed}     # 决策时快照喂选股漏斗分层归因（D87①，外审 m-09）
+- {from_node: TDM-E-L1-AGG, to_node: TDM-P-P1, edge_type: broadcast, payload_type: governance, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-AGG, to_node: TDM-X-S1, edge_type: broadcast, payload_type: governance, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-01, to_node: TDM-E-L2-06-3, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-02-2, to_node: TDM-E-L2-02-1, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-S3, to_node: TDM-E-L1-S1, edge_type: feedback, payload_type: feedback, frequency: daily, lag: "T-1", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-06, to_node: TDM-E-L3-11, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-12-1, to_node: TDM-E-L3-12, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-12-2, to_node: TDM-E-L3-12, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-12-3, to_node: TDM-E-L3-12, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-12-4, to_node: TDM-E-L3-12, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4, to_node: TDM-E-L4-01, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-10, to_node: TDM-E-L4-08, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-09, to_node: TDM-E-L4-12, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L4-10, to_node: TDM-P-P1-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L3-08, to_node: TDM-F-C3-01, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
   # 组合资金流闭环（v1.1：预算→聚合→归因→反馈回大盘闸=系统自我进化闭环）
-- {from_node: TDM-E-L1-AGG, to_node: TDM-F-C1, edge_type: broadcast}     # L1 预算输出喂资金切分
-- {from_node: TDM-F-C1, to_node: TDM-F-C2, edge_type: sequence}
-- {from_node: TDM-F-C2, to_node: TDM-F-C3, edge_type: sequence}
-- {from_node: TDM-F-C3, to_node: TDM-E-L1-AGG, edge_type: feedback}      # 归因反馈回状态判定（闭环）；叙事边（执行取 C3-05→AGG 精确承载边，勿双计数，外审 m-03）
+- {from_node: TDM-E-L1-AGG, to_node: TDM-F-C1, edge_type: broadcast, payload_type: governance, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C1, to_node: TDM-F-C2, edge_type: sequence, payload_type: decision, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C2, to_node: TDM-F-C3, edge_type: sequence, payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3, to_node: TDM-E-L1-AGG, edge_type: feedback, payload_type: feedback, frequency: daily, lag: "T-1", pit_proof: legacy-unaudited}
   # 持仓流
-- {from_node: TDM-P-P1, to_node: TDM-P-P2, edge_type: sequence}
-- {from_node: TDM-P-P2, to_node: TDM-P-P3, edge_type: sequence}
+- {from_node: TDM-P-P1, to_node: TDM-P-P2, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P2, to_node: TDM-P-P3, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
   # ── P 流血肉边（D39-D49）：体检链并行汇聚+三树枝主链+跨流联动 ──
-- {from_node: TDM-P-P1-01, to_node: TDM-P-P1-02, edge_type: sequence}
-- {from_node: TDM-P-P1-01, to_node: TDM-P-P1-03, edge_type: feed}
-- {from_node: TDM-P-P1-01, to_node: TDM-P-P1-04, edge_type: feed}
-- {from_node: TDM-P-P1-01, to_node: TDM-P-P1-05, edge_type: feed}
-- {from_node: TDM-P-P1-02, to_node: TDM-P-P1-06, edge_type: feed}
-- {from_node: TDM-P-P1-03, to_node: TDM-P-P1-06, edge_type: feed}
-- {from_node: TDM-P-P1-04, to_node: TDM-P-P1-06, edge_type: feed}
-- {from_node: TDM-P-P1-05, to_node: TDM-P-P1-06, edge_type: feed}
-- {from_node: TDM-P-P1-06, to_node: TDM-P-P2-01, edge_type: feed}
-- {from_node: TDM-P-P2-01, to_node: TDM-P-P2-02, edge_type: sequence}
-- {from_node: TDM-P-P2-02, to_node: TDM-P-P2-03, edge_type: sequence}
-- {from_node: TDM-P-P1-05, to_node: TDM-P-P2-04, edge_type: feed}
-- {from_node: TDM-P-P3-01, to_node: TDM-P-P3-02, edge_type: sequence}
-- {from_node: TDM-P-P3-02, to_node: TDM-P-P3-03, edge_type: sequence}
-- {from_node: TDM-P-P3-03, to_node: TDM-P-P3-04, edge_type: sequence}
-- {from_node: TDM-E-L1-AGG, to_node: TDM-P-P3-01, edge_type: feed}
-- {from_node: TDM-P-P2, to_node: TDM-X-S1, edge_type: sequence}     # 存疑待裁：骨架期边、D48 未收编；语义=做T统计供离场评估参考，非前置约束（外审 m-06）
-- {from_node: TDM-P-P1-04, to_node: TDM-X-S1, edge_type: feed}     # 风险否决持仓转离场评估
-- {from_node: TDM-P-P2-04, to_node: TDM-X-S2, edge_type: feed}     # 减仓执行走离场执行件【叙事边：payload 取下行 P2-04→X-S2-01，勿双计数，外审 R2-02】
-- {from_node: TDM-P-P2-04, to_node: TDM-X-S2-01, edge_type: feed}     # 风控减仓/再平衡 payload 直送执行路由（D44 最高优先级源的执行面，外审 R2-02）
-- {from_node: TDM-P-P2-03, to_node: TDM-F-C3-01, edge_type: feed}     # 做T成功/失败统计喂归因（L4-13 同款）；归因汇聚改落引擎节点（原落 hub 父节点致引擎零入边，外审 M-04）
-- {from_node: TDM-P-P3-04, to_node: TDM-E-L4, edge_type: feed}     # 加仓执行复用建仓流执行件
+- {from_node: TDM-P-P1-01, to_node: TDM-P-P1-02, edge_type: sequence, payload_type: decision, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-01, to_node: TDM-P-P1-03, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-01, to_node: TDM-P-P1-04, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-01, to_node: TDM-P-P1-05, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-02, to_node: TDM-P-P1-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-03, to_node: TDM-P-P1-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-04, to_node: TDM-P-P1-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-05, to_node: TDM-P-P1-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-06, to_node: TDM-P-P2-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P2-01, to_node: TDM-P-P2-02, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P2-02, to_node: TDM-P-P2-03, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-05, to_node: TDM-P-P2-04, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P3-01, to_node: TDM-P-P3-02, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P3-02, to_node: TDM-P-P3-03, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P3-03, to_node: TDM-P-P3-04, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-AGG, to_node: TDM-P-P3-01, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P2, to_node: TDM-X-S1, edge_type: sequence, payload_type: decision, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-04, to_node: TDM-X-S1, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P2-04, to_node: TDM-X-S2, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P2-04, to_node: TDM-X-S2-01, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P2-03, to_node: TDM-F-C3-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P3-04, to_node: TDM-E-L4, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
   # ── 外审修复补边（2026-09-07 Round 1）──
-- {from_node: TDM-P-P1-04, to_node: TDM-P-P2-01, edge_type: feed}     # 风险否决=做T资格冻结（外审 M-06）
-- {from_node: TDM-P-P1-04, to_node: TDM-P-P2-04, edge_type: feed}     # 风控减仓最高优先级源（D44，外审 M-06）
-- {from_node: TDM-E-L1-AGG, to_node: TDM-P-P2-01, edge_type: feed}     # 做T状态门输入（对齐 AGG→P3-01 先例 D48，外审 M-07）
-- {from_node: TDM-P-P1-06, to_node: TDM-P-P3-01, edge_type: feed}     # 体检动作分流：加仓候选喂资格门（外审 M-08）
-- {from_node: TDM-P-P1-06, to_node: TDM-X-S1, edge_type: feed}     # 体检动作分流：逻辑失效转离场（外审 M-08）
-- {from_node: TDM-P-P2-03, to_node: TDM-P-P3-01, edge_type: feed}     # 活仓未闭环冻结加仓额度（D58④ 底仓-活仓隔离，外审 m-05）
-- {from_node: TDM-P-P2-03, to_node: TDM-X-S2-01, edge_type: feed}     # 14:50 强平执行通道（payload 直送执行路由，外审 M-11/R2-02）
-- {from_node: TDM-X-S1, to_node: TDM-X-S2, edge_type: sequence}
+- {from_node: TDM-P-P1-04, to_node: TDM-P-P2-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-04, to_node: TDM-P-P2-04, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-AGG, to_node: TDM-P-P2-01, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-06, to_node: TDM-P-P3-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P1-06, to_node: TDM-X-S1, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P2-03, to_node: TDM-P-P3-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P2-03, to_node: TDM-X-S2-01, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S1, to_node: TDM-X-S2, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
   # ── X 流血肉边（D60-D66）：六桶并行喂三族→融合→路由分发→闭环 ──
-- {from_node: TDM-X-S1-01, to_node: TDM-X-S1-02, edge_type: feed}
-- {from_node: TDM-X-S1-01, to_node: TDM-X-S1-03, edge_type: feed}
-- {from_node: TDM-X-S1-01, to_node: TDM-X-S1-04, edge_type: feed}
-- {from_node: TDM-X-S1-02, to_node: TDM-X-S1-05, edge_type: feed}
-- {from_node: TDM-X-S1-03, to_node: TDM-X-S1-05, edge_type: feed}
-- {from_node: TDM-X-S1-04, to_node: TDM-X-S1-05, edge_type: feed}
-- {from_node: TDM-X-S1-05, to_node: TDM-X-S2-01, edge_type: sequence}
-- {from_node: TDM-X-S1-06, to_node: TDM-X-S2-01, edge_type: feed}     # 强制清仓绕过融合直执行；强清直送执行路由（中断语义：优先于一切 sequence/feed；原落点 S2-02 零出边为缺陷，外审 B-09）
-- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-02, edge_type: feed}
-- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-03, edge_type: feed}
-- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-04, edge_type: feed}
-- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-05, edge_type: feed}
-- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-06, edge_type: feed}     # 执行产出喂闭环
-- {from_node: TDM-X-S2-05, to_node: TDM-X-S2-06, edge_type: feed}     # 分批批次结果喂闭环
-- {from_node: TDM-X-S2-06, to_node: TDM-F-C3-01, edge_type: feed}        # 退出效率喂归因（L4-13/P2-03 同款）；归因汇聚改落引擎节点（原落 hub 父节点致引擎零入边，外审 M-04）
+- {from_node: TDM-X-S1-01, to_node: TDM-X-S1-02, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S1-01, to_node: TDM-X-S1-03, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S1-01, to_node: TDM-X-S1-04, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S1-02, to_node: TDM-X-S1-05, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S1-03, to_node: TDM-X-S1-05, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S1-04, to_node: TDM-X-S1-05, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S1-05, to_node: TDM-X-S2-01, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S1-06, to_node: TDM-X-S2-01, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-02, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-03, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-04, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-05, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-01, to_node: TDM-X-S2-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-05, to_node: TDM-X-S2-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-06, to_node: TDM-F-C3-01, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
   # ── F 流血肉边（D74-D83）：净额→约束栈→cluster；归因结论分发四路 ──
-- {from_node: TDM-F-C2-01, to_node: TDM-F-C2-02, edge_type: sequence}
-- {from_node: TDM-F-C2-02, to_node: TDM-F-C2-03, edge_type: feed}
-- {from_node: TDM-F-C1, to_node: TDM-F-C2-04, edge_type: feed}        # 预算变动喂三级升级
-- {from_node: TDM-F-C2-04, to_node: TDM-F-C2-01, edge_type: feed}     # 新 budget 目标进聚合
-- {from_node: TDM-F-C2-01, to_node: TDM-E-L4, edge_type: feed}        # 组合净指令喂执行件（P3-04 同款）
-- {from_node: TDM-F-C3-01, to_node: TDM-F-C3-02, edge_type: feed}     # 归因结论→升降级评审
-- {from_node: TDM-F-C3-01, to_node: TDM-F-C3-03, edge_type: feed}     # 归因→月度调权
-- {from_node: TDM-F-C3-01, to_node: TDM-F-C3-04, edge_type: feed}     # 诊断→参数校准
-- {from_node: TDM-F-C3-01, to_node: TDM-F-C3-05, edge_type: feed}     # 信号质量数据→健康监控
-- {from_node: TDM-F-C3-02, to_node: TDM-F-C3-03, edge_type: feed}     # verdict 影响权重
-- {from_node: TDM-F-C3-05, to_node: TDM-E-L1-AGG, edge_type: feedback}    # 传感器可靠度权重喂大盘判定
+- {from_node: TDM-F-C2-01, to_node: TDM-F-C2-02, edge_type: sequence, payload_type: decision, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C2-02, to_node: TDM-F-C2-03, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C1, to_node: TDM-F-C2-04, edge_type: feed, payload_type: state, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C2-04, to_node: TDM-F-C2-01, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C2-01, to_node: TDM-E-L4, edge_type: feed, payload_type: state, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-01, to_node: TDM-F-C3-02, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-01, to_node: TDM-F-C3-03, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-01, to_node: TDM-F-C3-04, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-01, to_node: TDM-F-C3-05, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-02, to_node: TDM-F-C3-03, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-05, to_node: TDM-E-L1-AGG, edge_type: feedback, payload_type: feedback, frequency: daily, lag: "T-1", pit_proof: legacy-unaudited}
   # ── 外审修复补边（2026-09-07 Round 1）──
-- {from_node: TDM-X-S1-04, to_node: TDM-X-S1-06, edge_type: feed}     # K≥3 破位失败触发源（节点注释已声明，外审 B-09）
-- {from_node: TDM-X-R1, to_node: TDM-X-S1-06, edge_type: feed}     # 组合级 KillSwitch 触发单仓强清（外审 B-09）
-- {from_node: TDM-X-R1, to_node: TDM-F-C2-01, edge_type: broadcast}     # 熔断=停新 intent【中断语义：优先于一切 sequence/feed】（外审 B-09）
-- {from_node: TDM-X-R1, to_node: TDM-P-P2-01, edge_type: broadcast}     # 熔断=停做T【中断语义】（外审 B-09）
-- {from_node: TDM-X-S2-02, to_node: TDM-X-S2-06, edge_type: feed}     # 闭环统计收编（跌停排队通道，外审 M-03）
-- {from_node: TDM-X-S2-03, to_node: TDM-X-S2-06, edge_type: feed}     # 闭环统计收编（时段/竞价通道，外审 M-03）
-- {from_node: TDM-X-S2-04, to_node: TDM-X-S2-06, edge_type: feed}     # 闭环统计收编（条件单通道，外审 M-03）
-- {from_node: TDM-F-C2-01, to_node: TDM-X-S2-01, edge_type: feed}     # 净卖出/强裁指令路由卖出执行件（外审 B-09）
-- {from_node: TDM-F-C2-03, to_node: TDM-F-C2-02, edge_type: feed}     # 聚类判定回写约束栈相关性层（D77 禁新仓不再死信，外审 M-05）
-- {from_node: TDM-F-C3-03, to_node: TDM-F-C1, edge_type: feedback}     # 月度调权结论回写预算切分（PP-001 演进，D80，外审 M-04）
-- {from_node: TDM-F-C3-05, to_node: TDM-E-L2, edge_type: feedback}     # 板块命中表反馈 L2（D87②，外审 m-09/R2-07 边型修正）
+- {from_node: TDM-X-S1-04, to_node: TDM-X-S1-06, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-R1, to_node: TDM-X-S1-06, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-R1, to_node: TDM-F-C2-01, edge_type: broadcast, payload_type: governance, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-R1, to_node: TDM-P-P2-01, edge_type: broadcast, payload_type: governance, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-02, to_node: TDM-X-S2-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-03, to_node: TDM-X-S2-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2-04, to_node: TDM-X-S2-06, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C2-01, to_node: TDM-X-S2-01, edge_type: feed, payload_type: state, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C2-03, to_node: TDM-F-C2-02, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-03, to_node: TDM-F-C1, edge_type: feedback, payload_type: feedback, frequency: daily, lag: "T-1", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-05, to_node: TDM-E-L2, edge_type: feedback, payload_type: feedback, frequency: daily, lag: "T-1", pit_proof: legacy-unaudited}
   # ── 外审修复补边 Round 2（2026-09-07，R2 收敛扫描修复）──
-- {from_node: TDM-X-S2-06, to_node: TDM-E-L4-12, edge_type: feed}     # 冷却期清单+参数漂移锁消费（D72 买侧拦截闭环，两端注释早已声明，外审 B-06/R2-01）
-- {from_node: TDM-E-L1-AGG, to_node: TDM-X-S1-04, edge_type: feed}     # 情绪退潮联动六段输入（S1-04 注释已声明联动 AGG，外审 R2-03）
+- {from_node: TDM-X-S2-06, to_node: TDM-E-L4-12, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-AGG, to_node: TDM-X-S1-04, edge_type: feed, payload_type: state, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
   # ── R1 血肉边（D112-D114，Owner 2026-09-07 终裁；熔断五级状态机分叉）──
-- {from_node: TDM-X-R1, to_node: TDM-X-R1-01, edge_type: sequence}     # 应急保命→熔断分级判定（D112，树深 3）
-- {from_node: TDM-X-R1-01, to_node: TDM-X-R1-02, edge_type: sequence}     # 等级判定→减仓动作
-- {from_node: TDM-X-R1-01, to_node: TDM-X-R1-03, edge_type: feed}     # L2/L3 状态授权白名单窄门（D114）
-- {from_node: TDM-X-R1-02, to_node: TDM-P-P2-04, edge_type: feed}     # L3 减仓指令路由 P2-04 执行（冲突优先级仍=风控减仓最高，D44）
-- {from_node: TDM-X-R1-03, to_node: TDM-E-L4, edge_type: feed}     # 白名单加仓复用建仓执行件（P3-04→E-L4 同款，D114）
+- {from_node: TDM-X-R1, to_node: TDM-X-R1-01, edge_type: sequence, payload_type: decision, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-R1-01, to_node: TDM-X-R1-02, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-R1-01, to_node: TDM-X-R1-03, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-R1-02, to_node: TDM-P-P2-04, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-R1-03, to_node: TDM-E-L4, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
   # 应急保命横切（示意主边：触发即接管离场）
-- {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast}     # 叙事边（可执行路径=R1→S1-06→S2-01 与 R1→F-C2-01/P-P2-01，勿双计数，外审 R2-04）
+- {from_node: TDM-X-R1, to_node: TDM-X-S2, edge_type: broadcast, payload_type: governance, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
   # 币圈链
-- {from_node: TDM-C-L1, to_node: TDM-C-L2, edge_type: sequence}
-- {from_node: TDM-C-L2, to_node: TDM-C-L3, edge_type: sequence}
-- {from_node: TDM-C-L3, to_node: TDM-C-L4, edge_type: sequence}
+- {from_node: TDM-C-L1, to_node: TDM-C-L2, edge_type: sequence, payload_type: decision, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-C-L2, to_node: TDM-C-L3, edge_type: sequence, payload_type: decision, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-C-L3, to_node: TDM-C-L4, edge_type: sequence, payload_type: decision, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
   # ── E-L0 盘前作战计划边（Owner 2026-09-09 B-1 裁定）：上游喂计划 + 计划喂下游 + 三子时序 ──
-- {from_node: TDM-E-L1-AGG, to_node: TDM-E-L0, edge_type: feed, payload_zh: "今天市场体温单：几成仓+哪些打法开门"}
-- {from_node: TDM-F-C3-01, to_node: TDM-E-L0, edge_type: feed, payload_zh: "昨天钱赚亏在哪、哪个打法为什么"}
-- {from_node: TDM-F-C3-04, to_node: TDM-E-L0, edge_type: feed, payload_zh: "参数体检报告：哪些参数今天可信"}
-- {from_node: TDM-E-L0, to_node: TDM-E-L0-01, edge_type: sequence, payload_zh: "总仓位档+分批预案+禁做清单"}
-- {from_node: TDM-E-L0-01, to_node: TDM-E-L0-02, edge_type: sequence}
-- {from_node: TDM-E-L0-02, to_node: TDM-E-L0-03, edge_type: sequence}
+- {from_node: TDM-E-L1-AGG, to_node: TDM-E-L0, edge_type: feed, payload_zh: "今天市场体温单：几成仓+哪些打法开门", payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-01, to_node: TDM-E-L0, edge_type: feed, payload_zh: "昨天钱赚亏在哪、哪个打法为什么", payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3-04, to_node: TDM-E-L0, edge_type: feed, payload_zh: "参数体检报告：哪些参数今天可信", payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L0, to_node: TDM-E-L0-01, edge_type: sequence, payload_zh: "总仓位档+分批预案+禁做清单", payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L0-01, to_node: TDM-E-L0-02, edge_type: sequence, payload_type: decision, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L0-02, to_node: TDM-E-L0-03, edge_type: sequence, payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
   # G1 增长批1：明日降档预警→偏离监控（修订权在 L0-02）
-- {from_node: TDM-E-L0-04, to_node: TDM-E-L0-02, edge_type: feed, payload_zh: "明日降档预警触发边界修订"}
-- {from_node: TDM-E-L0, to_node: TDM-E-L1, edge_type: sequence, payload_zh: "总仓位建议档+应急触发线"}
-- {from_node: TDM-E-L0, to_node: TDM-E-L3-06, edge_type: feed}
-- {from_node: TDM-E-L0, to_node: TDM-X-R1, edge_type: broadcast}
+- {from_node: TDM-E-L0-04, to_node: TDM-E-L0-02, edge_type: feed, payload_zh: "明日降档预警触发边界修订", payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L0, to_node: TDM-E-L1, edge_type: sequence, payload_zh: "总仓位建议档+应急触发线", payload_type: decision, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L0, to_node: TDM-E-L3-06, edge_type: feed, payload_type: state, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L0, to_node: TDM-X-R1, edge_type: broadcast, payload_type: governance, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
   # ── 流根汇聚边（Owner 2026-09-09）：各流末端→流根，视图最终汇于输出点 ──
-- {from_node: TDM-E-L4, to_node: TDM-E-FLOW, edge_type: feed}
-- {from_node: TDM-E-L0, to_node: TDM-E-FLOW, edge_type: feed}
-- {from_node: TDM-P-P3, to_node: TDM-P-FLOW, edge_type: feed}
-- {from_node: TDM-X-S2, to_node: TDM-X-FLOW, edge_type: feed}
-- {from_node: TDM-F-C3, to_node: TDM-F-FLOW, edge_type: feed}
+- {from_node: TDM-E-L4, to_node: TDM-E-FLOW, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L0, to_node: TDM-E-FLOW, edge_type: feed, payload_type: state, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-P-P3, to_node: TDM-P-FLOW, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-X-S2, to_node: TDM-X-FLOW, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-F-C3, to_node: TDM-F-FLOW, edge_type: feed, payload_type: signal, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
   # ── 新闻/事件链边（Owner 2026-09-09 骨架落盘）：情绪理解→事件传导→冲击扩散→消费 ──
-- {from_node: TDM-E-L1-S0-1, to_node: TDM-E-L1-S0, edge_type: feed}
-- {from_node: TDM-E-L1-S0-1, to_node: TDM-E-L2-09-1, edge_type: feed}
-- {from_node: TDM-E-L2-09-1, to_node: TDM-E-L2-09-2, edge_type: sequence}
-- {from_node: TDM-E-L2-09-2, to_node: TDM-E-L3-04, edge_type: feed}
-- {from_node: TDM-E-L2-09-2, to_node: TDM-E-L0-02, edge_type: feed}
+- {from_node: TDM-E-L1-S0-1, to_node: TDM-E-L1-S0, edge_type: feed, payload_type: data, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L1-S0-1, to_node: TDM-E-L2-09-1, edge_type: feed, payload_type: data, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-09-1, to_node: TDM-E-L2-09-2, edge_type: sequence, payload_type: decision, frequency: continuous, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-09-2, to_node: TDM-E-L3-04, edge_type: feed, payload_type: signal, frequency: daily, lag: "0d", pit_proof: legacy-unaudited}
+- {from_node: TDM-E-L2-09-2, to_node: TDM-E-L0-02, edge_type: feed, payload_type: signal, frequency: intraday, lag: "0d", pit_proof: legacy-unaudited}
 
+  # ══ TDM 2.0 新增边（全带语义四元组 payload_type/frequency/lag/pit_proof）══
+- {from_node: TDM-E-L9-A01, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "日线/分钟行情供给", payload_type: data, frequency: daily, lag: "hours", pit_proof: "K线落定不修订，复权因子禁进PIT窗"}
+- {from_node: TDM-E-L9-A02, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "Tick分笔供给", payload_type: data, frequency: realtime, lag: "0d", pit_proof: "TDX分笔仅近交易日，历史依赖包断档不可补"}
+- {from_node: TDM-E-L9-A03, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "板块/概念指数供给", payload_type: data, frequency: realtime, lag: "0d", pit_proof: "指数快照落定不修订，成分随披露更新"}
+- {from_node: TDM-E-L9-A04, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "估值供给", payload_type: data, frequency: daily, lag: "hours", pit_proof: "估值按交易日落定，回补须按披露日对齐"}
+- {from_node: TDM-E-L9-A05, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "财务供给", payload_type: data, frequency: quarterly, lag: "T-1", pit_proof: "按公告日PIT，财报修订挂披露时戳"}
+- {from_node: TDM-E-L9-A06, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "资金流供给", payload_type: data, frequency: daily, lag: "hours", pit_proof: "日度聚合盘后落定不修订"}
+- {from_node: TDM-E-L9-A07, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "千股千评供给", payload_type: data, frequency: daily, lag: "hours", pit_proof: "评级快照日更，历史不修订"}
+- {from_node: TDM-E-L9-A08, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "航运运价BDI供给", payload_type: data, frequency: daily, lag: "T-1", pit_proof: "运价指数发布日锚定"}
+- {from_node: TDM-E-L9-A09, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "财经快讯情绪供给", payload_type: data, frequency: realtime, lag: "0d", pit_proof: "快讯时戳不可回填，聚合窗口须右闭"}
+- {from_node: TDM-E-L9-A10, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "国际宏观供给", payload_type: data, frequency: daily, lag: "T-1", pit_proof: "FRED发布日锚定，修订挂vintage"}
+- {from_node: TDM-E-L9-A11, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "能源库存供给", payload_type: data, frequency: weekly, lag: "T-1", pit_proof: "EIA周报发布时点锚定"}
+- {from_node: TDM-E-L9-A12, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "天气供给", payload_type: data, frequency: realtime, lag: "0d", pit_proof: "观测时戳即落定，预报分版本"}
+- {from_node: TDM-E-L9-A13, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "股东户数供给", payload_type: data, frequency: adhoc, lag: "T-1", pit_proof: "披露日锚定"}
+- {from_node: TDM-E-L9-A14, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "互动易问答供给", payload_type: data, frequency: intraday, lag: "0d", pit_proof: "问答时戳不可回填"}
+- {from_node: TDM-E-L9-A15, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "加密永续/费率供给", payload_type: data, frequency: realtime, lag: "0d", pit_proof: "交易所快照，资金费率8小时周期锚定"}
+- {from_node: TDM-E-L9-A16, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "投入产出供给", payload_type: data, frequency: static, lag: "static", pit_proof: "统计口径年份锚定（2020版153部门）"}
+- {from_node: TDM-E-L9-B01, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "卫星影像供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-B02, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "美国官方天气/海洋供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-B03, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "招聘JD供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-B04, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "电商价格供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-B05, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "招投标供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-B06, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "社媒舆情X/Reddit供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-B07, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "雪球/股吧散户情绪供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-B08, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "APP榜单供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-B09, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "进出口贸易供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-B10, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "信用卡/支付消费供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "渠道未接，PIT未评估"}
+- {from_node: TDM-E-L9-C01, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "实时门店客流供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "无渠道，挂起不入批"}
+- {from_node: TDM-E-L9-C02, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "银行网点/信贷活跃供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "无渠道，挂起不入批"}
+- {from_node: TDM-E-L9-C03, to_node: TDM-E-L9-AGG, edge_type: feed, payload_zh: "直播电商实时成交供给", payload_type: data, frequency: adhoc, lag: "unknown", pit_proof: "无正式渠道，挂起不入批"}
+- {from_node: TDM-E-L9-G2, to_node: TDM-E-L9-G1, edge_type: feed, payload_zh: "开源事实层增强", payload_type: evidence, frequency: static, lag: "static", pit_proof: "as_of=2021-10-26静态快照仅结构先验"}
+- {from_node: TDM-E-L9-G1, to_node: TDM-E-L2-06, edge_type: feed, payload_zh: "产业链位置传导证据", payload_type: evidence, frequency: static, lag: "static", pit_proof: "ig_edge带source_doc溯源，as_of双标记"}
+- {from_node: TDM-E-L9-G1, to_node: TDM-E-L3-01, edge_type: feed, payload_zh: "链成分股映射", payload_type: evidence, frequency: static, lag: "static", pit_proof: "ig_node_company成分随披露更新"}
+- {from_node: TDM-E-L9-G3, to_node: TDM-E-L3-12-2, edge_type: feed, payload_zh: "席位↔实体归并", payload_type: evidence, frequency: quarterly, lag: "T-1", pit_proof: "报告期口径+公告日PIT双轴"}
+- {from_node: TDM-E-L9-G4, to_node: TDM-E-L1-AGG, edge_type: feed, payload_zh: "题材热度维度", payload_type: evidence, frequency: daily, lag: "hours", pit_proof: "概念标签静态快照as_of=2026-09-14"}
+- {from_node: TDM-E-L9-G5, to_node: TDM-E-L1-S0, edge_type: feed, payload_zh: "大宗价格行业弹性", payload_type: evidence, frequency: static, lag: "static", pit_proof: "IO系数2020口径滞后已登记"}
+- {from_node: TDM-E-L9-G5, to_node: TDM-E-L9-D1, edge_type: feed, payload_zh: "传导先验证据链", payload_type: evidence, frequency: static, lag: "static", pit_proof: "边100%挂零，id治本后生效"}
+- {from_node: TDM-E-L1-S0, to_node: TDM-E-L9-V1, edge_type: feed, payload_zh: "宏观状态产出", payload_type: state, frequency: daily, lag: "0d", pit_proof: "regime快照含时戳"}
+- {from_node: TDM-E-L1-AGG, to_node: TDM-E-L9-V2, edge_type: feed, payload_zh: "情绪相位产出", payload_type: state, frequency: daily, lag: "0d", pit_proof: "六段相位判定带时戳"}
+- {from_node: TDM-E-L2-04, to_node: TDM-E-L9-V3, edge_type: feed, payload_zh: "板块状态产出", payload_type: state, frequency: daily, lag: "0d", pit_proof: "板块五分类快照带时戳"}
+- {from_node: TDM-E-L9-V1, to_node: TDM-E-L0-01, edge_type: feed, payload_zh: "T-1大盘快照", payload_type: state, frequency: daily, lag: "T-1", pit_proof: "今日输出→明日输入，同戳禁循环"}
+- {from_node: TDM-E-L9-V1, to_node: TDM-X-S1, edge_type: feed, payload_zh: "T-1大盘快照", payload_type: state, frequency: daily, lag: "T-1", pit_proof: "今日输出→明日输入，同戳禁循环"}
+- {from_node: TDM-E-L9-V2, to_node: TDM-E-L2-05, edge_type: feed, payload_zh: "T-1情绪快照", payload_type: state, frequency: daily, lag: "T-1", pit_proof: "今日输出→明日输入，同戳禁循环"}
+- {from_node: TDM-E-L9-V2, to_node: TDM-X-S1-04, edge_type: feed, payload_zh: "T-1情绪快照", payload_type: state, frequency: daily, lag: "T-1", pit_proof: "今日输出→明日输入，同戳禁循环"}
+- {from_node: TDM-E-L9-V3, to_node: TDM-E-L2-01, edge_type: feed, payload_zh: "T-1板块快照", payload_type: state, frequency: daily, lag: "T-1", pit_proof: "今日输出→明日输入，同戳禁循环"}
+- {from_node: TDM-E-L9-V1, to_node: TDM-E-L9-D1, edge_type: feed, payload_zh: "T-1状态变量输入", payload_type: state, frequency: daily, lag: "T-1", pit_proof: "决策只消费T-1快照"}
+- {from_node: TDM-E-L9-D1, to_node: TDM-E-L9-D2, edge_type: sequence, payload_zh: "组合假设产出", payload_type: decision, frequency: daily, lag: "0d", pit_proof: "假设带预注册exam_plan"}
+- {from_node: TDM-E-L9-D2, to_node: TDM-E-L9-E1, edge_type: sequence, payload_zh: "入考移交", payload_type: exam, frequency: daily, lag: "0d", pit_proof: "入表即定考题禁临场改题"}
+- {from_node: TDM-E-L9-E1, to_node: TDM-E-L9-E2, edge_type: sequence, payload_zh: "考试结论与置信度", payload_type: exam, frequency: daily, lag: "0d", pit_proof: "结论带data_window与pit_assertion"}
+- {from_node: TDM-E-L9-E2, to_node: TDM-F-C3-02, edge_type: feed, payload_zh: "证伪结论回传", payload_type: evidence, frequency: daily, lag: "T-1", pit_proof: "结论次日生效（时间分层铁律）"}
+- {from_node: TDM-E-L9-E2, to_node: TDM-E-L9-D1, edge_type: feedback, payload_zh: "决策修正", payload_type: feedback, frequency: daily, lag: "T-1", pit_proof: "反馈边：次日方可修正"}
+- {from_node: TDM-E-L9-E2, to_node: TDM-E-L0, edge_type: feedback, payload_zh: "复考/退役建议", payload_type: feedback, frequency: daily, lag: "T-1", pit_proof: "反馈边：次日方可复裁"}
+- {from_node: TDM-E-L9-Z1, to_node: TDM-E-L9-AGG, edge_type: broadcast, payload_zh: "schema与状态机罩", payload_type: governance, frequency: continuous, lag: "0d", pit_proof: "规则流边非数据流不涉时戳"}
+- {from_node: TDM-E-L9-Z2, to_node: TDM-E-L9-AGG, edge_type: broadcast, payload_zh: "对账读数", payload_type: governance, frequency: weekly, lag: "0d", pit_proof: "读数只报不清"}
+- {from_node: TDM-E-L9-A01, to_node: TDM-E-L3-02, edge_type: feed, payload_zh: "日线价量原料", payload_type: data, frequency: daily, lag: "hours", pit_proof: "K线落定不修订"}
+- {from_node: TDM-E-L9-A03, to_node: TDM-E-L2-01-2, edge_type: feed, payload_zh: "板块行情原料", payload_type: data, frequency: realtime, lag: "0d", pit_proof: "指数快照落定不修订"}
+- {from_node: TDM-E-L9-A06, to_node: TDM-E-L2-01-4, edge_type: feed, payload_zh: "板块资金流原料", payload_type: data, frequency: daily, lag: "hours", pit_proof: "日度聚合盘后落定"}
+- {from_node: TDM-E-L9-A09, to_node: TDM-E-L1-S0-1, edge_type: feed, payload_zh: "快讯流原料", payload_type: data, frequency: realtime, lag: "0d", pit_proof: "快讯时戳不可回填"}
+- {from_node: TDM-E-L9-A15, to_node: TDM-E-L1-S0, edge_type: feed, payload_zh: "跨市场风险偏好", payload_type: signal, frequency: realtime, lag: "0d", pit_proof: "费率/OI极值预警快照"}
+- {from_node: TDM-E-L9-A02, to_node: TDM-E-L4-14, edge_type: feed, payload_zh: "tick成交原料", payload_type: data, frequency: daily, lag: "hours", pit_proof: "历史包到货日为界断档不可补"}
+- {from_node: TDM-E-L9-AGG, to_node: TDM-E-FLOW, edge_type: feed, payload_zh: "供给健康读数", payload_type: governance, frequency: daily, lag: "0d", pit_proof: "T日聚合读数喂次日数据就绪度"}
 state_matrix:
   # 列轴六段定稿（v1.2，Owner 裁定"机构命名+修复期独立成段"）
   # 命名=Wyckoff 阶段论+行为金融标准术语（机构通用），MarketTriage 六态同构验证：

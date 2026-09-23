@@ -237,55 +237,61 @@ plans:
     risk_profile: balanced
     description: >-
       生成器产物（scripts/backtest/generate_framework_plan_from_tdm.py，禁手工维护）——
-      真源=config/trading_decision_map.yaml portfolio_plan.sleeves（PP-001，sha12=d74fa80d4a86）；
+      真源=config/trading_decision_map.yaml portfolio_plan.sleeves（PP-001，sha12=d8d65f0e8b53）；
       regime 激活态为静态模式：activation 只落 role/x_tdm_provenance 记录，
       不生成 regime_overrides（composer 权重合法域 (0,1] 不收 0，动态化待其支持零权重成员）。
     weights:
       - strategy_id: default-equity
-        weight: 0.140000
+        weight: 0.126000
         role: "TDM sleeve（activation: 全段）"
       - strategy_id: multifactor-sleeve
-        weight: 0.140000
+        weight: 0.126000
         role: "TDM sleeve（activation: 全段）"
       - strategy_id: daban-sleeve
-        weight: 0.105000
+        weight: 0.094500
         role: "TDM sleeve（activation: ignition+expansion+euphoria）"
       - strategy_id: eventdriven-sleeve
-        weight: 0.070000
+        weight: 0.063000
         role: "TDM sleeve（activation: 全段）"
       - strategy_id: topn-momentum
-        weight: 0.070000
+        weight: 0.063000
         role: "TDM sleeve（activation: 全段）"
       - strategy_id: intraday-surge-fall
-        weight: 0.070000
+        weight: 0.063000
         role: "TDM sleeve（activation: accumulation+expansion）"
       - strategy_id: orderbook-imbalance
-        weight: 0.052500
+        weight: 0.047250
         role: "TDM sleeve（activation: accumulation+expansion）"
       - strategy_id: vwap-reversion
-        weight: 0.052500
+        weight: 0.047250
         role: "TDM sleeve（activation: accumulation+expansion）"
       - strategy_id: STR-VREV-025
-        weight: 0.050000
+        weight: 0.045000
         role: "TDM sleeve（activation: capitulation）"
       - strategy_id: STR-VREV-026
-        weight: 0.050000
+        weight: 0.045000
         role: "TDM sleeve（activation: accumulation）"
       - strategy_id: STR-MOMTREND-033
-        weight: 0.050000
+        weight: 0.045000
         role: "TDM sleeve（activation: expansion）"
       - strategy_id: STR-DABAN-023
-        weight: 0.050000
+        weight: 0.045000
         role: "TDM sleeve（activation: accumulation+expansion）"
       - strategy_id: STR-TSMALL-001
-        weight: 0.050000
+        weight: 0.045000
         role: "TDM sleeve（activation: 全段）"
       - strategy_id: STR-VAL-001
+        weight: 0.045000
+        role: "TDM sleeve（activation: 全段）"
+      - strategy_id: STR-MULTIFACTOR-097
         weight: 0.050000
         role: "TDM sleeve（activation: 全段）"
+      - strategy_id: STR-VREV-027
+        weight: 0.050000
+        role: "TDM sleeve（activation: accumulation+capitulation）"
     x_tdm_provenance:
       source: config/trading_decision_map.yaml
-      source_sha256_12: d74fa80d4a86
+      source_sha256_12: d8d65f0e8b53
       generated_by: scripts/backtest/generate_framework_plan_from_tdm.py
       plan_ref: PP-001
       static_mode: true
@@ -304,3 +310,5 @@ plans:
         - {strategy_ref: STR-DABAN-023, activation: [accumulation, expansion]}
         - {strategy_ref: STR-TSMALL-001, activation: null}
         - {strategy_ref: STR-VAL-001, activation: null}
+        - {strategy_ref: STR-MULTIFACTOR-097, activation: null}
+        - {strategy_ref: STR-VREV-027, activation: [accumulation, capitulation]}

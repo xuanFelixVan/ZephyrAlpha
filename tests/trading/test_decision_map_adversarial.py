@@ -455,8 +455,24 @@ class TestCombined:
         payload = _payload()
         payload["nodes"].append(_node(node_id="TDM-T-2", name_zh="第二环节"))
         payload["edges"] = [
-            {"from_node": "TDM-T-1", "to_node": "TDM-T-2", "edge_type": "sequence"},
-            {"from_node": "TDM-T-2", "to_node": "TDM-T-1", "edge_type": "feedback"},
+            {
+                "from_node": "TDM-T-1",
+                "to_node": "TDM-T-2",
+                "edge_type": "sequence",
+                "payload_type": "decision",
+                "frequency": "daily",
+                "lag": "0d",
+                "pit_proof": "漏斗顺序边，同日闭环",
+            },
+            {
+                "from_node": "TDM-T-2",
+                "to_node": "TDM-T-1",
+                "edge_type": "feedback",
+                "payload_type": "feedback",
+                "frequency": "daily",
+                "lag": "T-1",
+                "pit_proof": "反馈边：次日方可生效",
+            },
         ]
         ok, issues = _validate(tmp_path, payload)
         assert ok is True
