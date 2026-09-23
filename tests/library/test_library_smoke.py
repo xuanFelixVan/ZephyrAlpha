@@ -61,3 +61,42 @@ def test_mcp_tool_counter() -> None:
     """MCP 契约 tool 计数器基本形态。"""
     assert _server_tools({"gateway_server": {"t1": {}, "t2": {}}}) == {"gateway_server": 2}
     assert _server_tools({}) == {}
+
+
+def test_real_tag_vocabulary_loads_strict() -> None:
+    """真词库自检（st-ulib3c 红证）：TAG-VOCAB 闸对真词库 strict 必须加载成功。
+
+    别名冲突会让闸内 `_load_vocab` 退化为空词库——生产实测后果是 catalogs 每笔
+    tags 全被判“非枚举”（假红风暴），而合成词库的单测全绿看不见。
+    """
+    from pathlib import Path
+
+    from zephyr.shared.io.yaml_utils import load_vocabulary_alias_map
+
+    root = Path(__file__).resolve().parents[2]
+    vocab = root / "docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml"
+    canonical, alias_map = load_vocabulary_alias_map(vocab, strict=True)
+    assert canonical and alias_map
+    # 物理真源：market_kline_daily.turnover 注释=换手率(%)，成交额列名=amount
+    assert alias_map["turnover"] == "换手"
+    assert "turnover" not in canonical
+
+
+def test_fs_collector_skips_rotating_snapshot_dirs(tmp_path) -> None:
+    """轮转快照目录不入册（st-ulib3c 红证）：盘上会滚动删除，入册即产 ghost 债。"""
+    from zephyr.library.collectors.fs_collector import collect
+
+    for rel in (
+        "data/architecture_health/dashboard_20260923T000000Z.json",
+        "data/runtime_violation_snapshot/v_20260923T000000Z.json",
+    ):
+        p = tmp_path / rel
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text("{}", encoding="utf-8")
+    keep = tmp_path / "data/keep_me.json"
+    keep.parent.mkdir(parents=True, exist_ok=True)
+    keep.write_text("{}", encoding="utf-8")
+
+    homes = {a["home"] for a in collect(str(tmp_path))}
+    assert any(h.endswith("data/keep_me.json") for h in homes), homes
+    assert not [h for h in homes if "architecture_health" in h or "runtime_violation_snapshot" in h]

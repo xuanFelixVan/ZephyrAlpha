@@ -43,7 +43,6 @@ values:
   aliases:
   - 成交量
   - 成交额
-  - turnover
 - value: 量价
   group: 行情K线
   aliases:
