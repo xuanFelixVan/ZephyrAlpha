@@ -662,7 +662,8 @@ gates:
   name: 'ASYNCIO-RUN-IN-CONTEXT: ASYNCIO-RUN-IN-CONTEXT（CommitGate, priority=122）'
   entry: in-process (GitCommitGateway)
   description: ASYNCIO-RUN-IN-CONTEXT
-  files_trigger: ''
+  files_trigger:
+  - .py
   always_run: false
   category: commit_gate
   status: active
@@ -673,7 +674,14 @@ gates:
   name: 'NO-BARE-GETENV: NO-BARE-GETENV（CommitGate, priority=81）'
   entry: in-process (GitCommitGateway)
   description: NO-BARE-GETENV
-  files_trigger: ''
+  files_trigger:
+  - .env
+  - secret
+  - credential
+  - token
+  - password
+  - api_key
+  - private_key
   always_run: false
   category: commit_gate
   status: active
@@ -695,7 +703,14 @@ gates:
   name: 'BARE-SUBPROCESS: BARE-SUBPROCESS（CommitGate, priority=132）'
   entry: in-process (GitCommitGateway)
   description: BARE-SUBPROCESS
-  files_trigger: ''
+  files_trigger:
+  - .env
+  - secret
+  - credential
+  - token
+  - password
+  - api_key
+  - private_key
   always_run: false
   category: commit_gate
   status: active
@@ -703,10 +718,10 @@ gates:
   own_scope: true
   enforcement_channel: commit-gate
 - gate_id: GATE-BATTLE-MAP-ALIGNMENT
-  name: 'GATE-BATTLE-MAP-ALIGNMENT: 作战地图对齐硬化门禁（GATE-BATTLE-MAP-ALIGNMENT，priority=833）（CommitGate,
-    priority=833）'
+  name: 'GATE-BATTLE-MAP-ALIGNMENT: 作战地图对齐硬化门禁（GATE-BATTLE-MAP-ALIGNMENT，priority=146）（CommitGate,
+    priority=146）'
   entry: in-process (GitCommitGateway)
-  description: 作战地图对齐硬化门禁（GATE-BATTLE-MAP-ALIGNMENT，priority=833）
+  description: 作战地图对齐硬化门禁（GATE-BATTLE-MAP-ALIGNMENT，priority=146）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -715,17 +730,18 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: BLUEPRINT-AMODULE-CONSISTENCY
-  name: 'BLUEPRINT-AMODULE-CONSISTENCY: BLUEPRINT-AMODULE-CONSISTENCY（CommitGate,
-    priority=79）'
-  entry: in-process (GitCommitGateway)
-  description: BLUEPRINT-AMODULE-CONSISTENCY
+  name: 'BLUEPRINT-AMODULE-CONSISTENCY: A_module 头格式一致（已合并至 BLUEPRINT-HEADER，st-gslim-20260923
+    P4）'
+  entry: N/A (merged into BLUEPRINT-HEADER, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 BLUEPRINT-HEADER。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: BLUEPRINT-HEADER
 - gate_id: BLUEPRINT-AMODULE-CROSS-CHECK
   name: 'BLUEPRINT-AMODULE-CROSS-CHECK: BLUEPRINT-AMODULE-CROSS-CHECK（CommitGate,
     priority=119）'
@@ -831,7 +847,9 @@ gates:
   name: 'CH-VERSION-COL: CH-VERSION-COL（CommitGate, priority=38）'
   entry: in-process (GitCommitGateway)
   description: CH-VERSION-COL
-  files_trigger: ''
+  files_trigger:
+  - schema
+  - ddl
   always_run: false
   category: commit_gate
   status: active
@@ -864,7 +882,8 @@ gates:
   name: 'CONSUMERS-ACCURACY: CONSUMERS-ACCURACY（CommitGate, priority=116）'
   entry: in-process (GitCommitGateway)
   description: CONSUMERS-ACCURACY
-  files_trigger: ''
+  files_trigger:
+  - capability_canonical
   always_run: false
   category: commit_gate
   status: active
@@ -883,16 +902,18 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: DANGLING-REFERENCE
-  name: 'DANGLING-REFERENCE: DANGLING-REFERENCE（CommitGate, priority=70）'
-  entry: in-process (GitCommitGateway)
-  description: DANGLING-REFERENCE
+  name: 'DANGLING-REFERENCE: AGENTS §X.Y 悬空引用检测（已合并至 REFERENCE-INTEGRITY，st-gslim-20260923
+    P4）'
+  entry: N/A (merged into REFERENCE-INTEGRITY, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 REFERENCE-INTEGRITY。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: REFERENCE-INTEGRITY
 - gate_id: DATETIME-NOW-FORBIDDEN
   name: 'DATETIME-NOW-FORBIDDEN: DATETIME-NOW-FORBIDDEN（CommitGate, priority=34）'
   entry: in-process (GitCommitGateway)
@@ -905,9 +926,9 @@ gates:
   own_scope: true
   enforcement_channel: commit-gate
 - gate_id: DECISION-MAP
-  name: 'DECISION-MAP: 第七图（交易决策地图）对齐阻断门禁（DECISION-MAP，priority=138）（CommitGate, priority=138）'
+  name: 'DECISION-MAP: 第七图（交易决策地图）对齐阻断门禁（DECISION-MAP，priority=145）（CommitGate, priority=145）'
   entry: in-process (GitCommitGateway)
-  description: 第七图（交易决策地图）对齐阻断门禁（DECISION-MAP，priority=138）
+  description: 第七图（交易决策地图）对齐阻断门禁（DECISION-MAP，priority=145）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -919,7 +940,10 @@ gates:
   name: 'DEPGRAPH-FRESHNESS: DEPGRAPH-FRESHNESS（CommitGate, priority=67）'
   entry: in-process (GitCommitGateway)
   description: DEPGRAPH-FRESHNESS
-  files_trigger: ''
+  files_trigger:
+  - src/
+  - scripts/
+  - depgraph
   always_run: false
   category: commit_gate
   status: active
@@ -927,16 +951,18 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: DEPGRAPH-PRE-REGISTRATION
-  name: 'DEPGRAPH-PRE-REGISTRATION: DEPGRAPH-PRE-REGISTRATION（CommitGate, priority=58）'
-  entry: in-process (GitCommitGateway)
-  description: DEPGRAPH-PRE-REGISTRATION
+  name: 'DEPGRAPH-PRE-REGISTRATION: depgraph planned→production（已合并至 DEPGRAPH-ENFORCEMENT，st-gslim-20260923
+    P4）'
+  entry: N/A (merged into DEPGRAPH-ENFORCEMENT, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 DEPGRAPH-ENFORCEMENT。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DEPGRAPH-ENFORCEMENT
 - gate_id: DEPGRAPH-WRITE-PATH
   name: 'DEPGRAPH-WRITE-PATH: DEPGRAPH-WRITE-PATH（CommitGate, priority=100）'
   entry: in-process (GitCommitGateway)
@@ -997,7 +1023,8 @@ gates:
   name: 'GATE-DOMAIN-FK: GATE-DOMAIN-FK（CommitGate, priority=78）'
   entry: in-process (GitCommitGateway)
   description: GATE-DOMAIN-FK
-  files_trigger: ''
+  files_trigger:
+  - .py
   always_run: false
   category: commit_gate
   status: active
@@ -1043,7 +1070,8 @@ gates:
     priority=131）'
   entry: in-process (GitCommitGateway)
   description: error_code 注册表↔代码真源对账门禁 in-process 版（GATE-ERRCODE-CONSISTENCY）
-  files_trigger: ''
+  files_trigger:
+  - architecture_model/contracts/
   always_run: false
   category: commit_gate
   status: active
@@ -1196,16 +1224,17 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: NO-HIGH-COMPLEXITY
-  name: 'NO-HIGH-COMPLEXITY: NO-HIGH-COMPLEXITY（CommitGate, priority=92）'
-  entry: in-process (GitCommitGateway)
-  description: NO-HIGH-COMPLEXITY
+  name: 'NO-HIGH-COMPLEXITY: 高循环复杂度检测（已合并至 COMPLEXITY-GUARD，st-gslim-20260923 P4）'
+  entry: N/A (merged into COMPLEXITY-GUARD, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 COMPLEXITY-GUARD。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: COMPLEXITY-GUARD
 - gate_id: HOT-FILE-BASE-FRESHNESS
   name: 'HOT-FILE-BASE-FRESHNESS: HOT-FILE-BASE-FRESHNESS（CommitGate, priority=47）'
   entry: in-process (GitCommitGateway)
@@ -1221,7 +1250,8 @@ gates:
   name: 'ID-UNIQUENESS: ID-UNIQUENESS（CommitGate, priority=86）'
   entry: in-process (GitCommitGateway)
   description: ID-UNIQUENESS
-  files_trigger: ''
+  files_trigger:
+  - .pre-commit-config.yaml
   always_run: false
   category: commit_gate
   status: active
@@ -1251,10 +1281,10 @@ gates:
   own_scope: true
   enforcement_channel: commit-gate
 - gate_id: INDUSTRY-CHAIN-MAP
-  name: 'INDUSTRY-CHAIN-MAP: 产业链全景图 git 侧工件门禁（INDUSTRY-CHAIN-MAP，priority=141）（CommitGate,
-    priority=141）'
+  name: 'INDUSTRY-CHAIN-MAP: 产业链全景图 git 侧工件门禁（INDUSTRY-CHAIN-MAP，priority=147）（CommitGate,
+    priority=147）'
   entry: in-process (GitCommitGateway)
-  description: 产业链全景图 git 侧工件门禁（INDUSTRY-CHAIN-MAP，priority=141）
+  description: 产业链全景图 git 侧工件门禁（INDUSTRY-CHAIN-MAP，priority=147）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1266,7 +1296,8 @@ gates:
   name: 'BLOOD-FLESH: BLOOD-FLESH（CommitGate, priority=59）'
   entry: in-process (GitCommitGateway)
   description: BLOOD-FLESH
-  files_trigger: ''
+  files_trigger:
+  - .py
   always_run: false
   category: commit_gate
   status: active
@@ -1277,7 +1308,9 @@ gates:
   name: 'STATE-VOCAB-REGISTRY: STATE-VOCAB-REGISTRY（CommitGate, priority=135）'
   entry: in-process (GitCommitGateway)
   description: STATE-VOCAB-REGISTRY
-  files_trigger: ''
+  files_trigger:
+  - src/
+  - .py
   always_run: false
   category: commit_gate
   status: active
@@ -1288,7 +1321,9 @@ gates:
   name: 'TAG-VOCAB: TAG-VOCAB（CommitGate, priority=134）'
   entry: in-process (GitCommitGateway)
   description: TAG-VOCAB
-  files_trigger: ''
+  files_trigger:
+  - library
+  - catalogs/
   always_run: false
   category: commit_gate
   status: active
@@ -1429,32 +1464,35 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: GATE-PANORAMA-ALIGNMENT
-  name: 'GATE-PANORAMA-ALIGNMENT: GATE-PANORAMA-ALIGNMENT（CommitGate, priority=830）'
-  entry: in-process (GitCommitGateway)
-  description: GATE-PANORAMA-ALIGNMENT
+  name: 'GATE-PANORAMA-ALIGNMENT: 三图模块对齐（已合并至 MAP-ALIGNMENT，st-gslim-20260923 P4）'
+  entry: N/A (merged into MAP-ALIGNMENT, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 MAP-ALIGNMENT。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: MAP-ALIGNMENT
 - gate_id: PERM-TRIGGER
-  name: 'PERM-TRIGGER: PERM-TRIGGER（CommitGate, priority=82）'
-  entry: in-process (GitCommitGateway)
-  description: PERM-TRIGGER
+  name: 'PERM-TRIGGER: 时间触发无订阅检测（已合并至 PERMANENT-SYSTEM-TRIGGER，st-gslim-20260923 P4）'
+  entry: N/A (merged into PERMANENT-SYSTEM-TRIGGER, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 PERMANENT-SYSTEM-TRIGGER。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: PERMANENT-SYSTEM-TRIGGER
 - gate_id: GATE-PRECOMMIT-OFFLINE
   name: 'GATE-PRECOMMIT-OFFLINE: GATE-PRECOMMIT-OFFLINE（CommitGate, priority=111）'
   entry: in-process (GitCommitGateway)
   description: GATE-PRECOMMIT-OFFLINE
-  files_trigger: ''
+  files_trigger:
+  - .pre-commit-config.yaml
   always_run: false
   category: commit_gate
   status: active
@@ -1498,7 +1536,11 @@ gates:
   name: 'R5-DIGIT-SUFFIX: R5-DIGIT-SUFFIX（CommitGate, priority=35）'
   entry: in-process (GitCommitGateway)
   description: R5-DIGIT-SUFFIX
-  files_trigger: ''
+  files_trigger:
+  - docs/
+  - scripts/
+  - src/
+  - data/
   always_run: false
   category: commit_gate
   status: active
@@ -1509,7 +1551,8 @@ gates:
   name: 'RECONCILER-FILE-OPS: RECONCILER-FILE-OPS（CommitGate, priority=117）'
   entry: in-process (GitCommitGateway)
   description: RECONCILER-FILE-OPS
-  files_trigger: ''
+  files_trigger:
+  - governance
   always_run: false
   category: commit_gate
   status: active
@@ -1520,7 +1563,8 @@ gates:
   name: 'RECONCILER-HEALTH: RECONCILER-HEALTH（CommitGate, priority=64）'
   entry: in-process (GitCommitGateway)
   description: RECONCILER-HEALTH
-  files_trigger: ''
+  files_trigger:
+  - governance
   always_run: false
   category: commit_gate
   status: active
@@ -1587,7 +1631,9 @@ gates:
     priority=144）'
   entry: in-process (GitCommitGateway)
   description: 排班冲突检测 commit gate（MOD-RESCHED-GATE，B2 闸）。
-  files_trigger: ''
+  files_trigger:
+  - tasks.yaml
+  - config/
   always_run: false
   category: commit_gate
   status: active
@@ -1598,7 +1644,9 @@ gates:
   name: 'RULE-EXECUTION-PAIRING: RULE-EXECUTION-PAIRING（CommitGate, priority=61）'
   entry: in-process (GitCommitGateway)
   description: RULE-EXECUTION-PAIRING
-  files_trigger: ''
+  files_trigger:
+  - docs/01_policies_and_standards/rules/
+  - rule_
   always_run: false
   category: commit_gate
   status: active
@@ -1609,7 +1657,9 @@ gates:
   name: 'RULE-FOUR-WAY-ALIGN: RULE-FOUR-WAY-ALIGN（CommitGate, priority=76）'
   entry: in-process (GitCommitGateway)
   description: RULE-FOUR-WAY-ALIGN
-  files_trigger: ''
+  files_trigger:
+  - docs/01_policies_and_standards/rules/
+  - rule_
   always_run: false
   category: commit_gate
   status: active
@@ -1642,7 +1692,8 @@ gates:
   name: 'SCHEMA-FILE-EXISTS: SCHEMA-FILE-EXISTS（CommitGate, priority=121）'
   entry: in-process (GitCommitGateway)
   description: SCHEMA-FILE-EXISTS
-  files_trigger: ''
+  files_trigger:
+  - schema
   always_run: false
   category: commit_gate
   status: active
@@ -1653,7 +1704,8 @@ gates:
   name: 'SCRIPTS-IMPORT-INTEGRITY: SCRIPTS-IMPORT-INTEGRITY（CommitGate, priority=104）'
   entry: in-process (GitCommitGateway)
   description: SCRIPTS-IMPORT-INTEGRITY
-  files_trigger: ''
+  files_trigger:
+  - scripts/
   always_run: false
   category: commit_gate
   status: active
@@ -1664,7 +1716,14 @@ gates:
   name: 'NO-SECRET-HARDCODE: NO-SECRET-HARDCODE（CommitGate, priority=128）'
   entry: in-process (GitCommitGateway)
   description: NO-SECRET-HARDCODE
-  files_trigger: ''
+  files_trigger:
+  - .env
+  - secret
+  - credential
+  - token
+  - password
+  - api_key
+  - private_key
   always_run: false
   category: commit_gate
   status: active
@@ -1739,9 +1798,9 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: FACTORY-MAP
-  name: 'FACTORY-MAP: 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=142）（CommitGate, priority=142）'
+  name: 'FACTORY-MAP: 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=148）（CommitGate, priority=148）'
   entry: in-process (GitCommitGateway)
-  description: 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=142）
+  description: 策略生产全景图（图 9）结构门禁（FACTORY-MAP，priority=148）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1797,7 +1856,8 @@ gates:
   name: 'META-TESTS-COVERAGE: META-TESTS-COVERAGE（CommitGate, priority=99）'
   entry: in-process (GitCommitGateway)
   description: META-TESTS-COVERAGE
-  files_trigger: ''
+  files_trigger:
+  - tests/
   always_run: false
   category: commit_gate
   status: active
@@ -1841,7 +1901,8 @@ gates:
   name: 'UNSAFE-DICT-SPREAD: UNSAFE-DICT-SPREAD（CommitGate, priority=66）'
   entry: in-process (GitCommitGateway)
   description: UNSAFE-DICT-SPREAD
-  files_trigger: ''
+  files_trigger:
+  - .py
   always_run: false
   category: commit_gate
   status: active
@@ -1860,16 +1921,17 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: VOCAB-HARDCODE
-  name: 'VOCAB-HARDCODE: VOCAB-HARDCODE（CommitGate, priority=80）'
-  entry: in-process (GitCommitGateway)
-  description: VOCAB-HARDCODE
+  name: 'VOCAB-HARDCODE: 新 py 词表硬编码检测（已合并至 GATE-VOCAB，st-gslim-20260923 P4）'
+  entry: N/A (merged into GATE-VOCAB, see redirect_to)
+  description: 【已合并/重定向】P4 七簇合并（gate_audit_report_v1 §C2，Owner 2026-09-23 全批 E）。本条目为重定向锚点保留
+    gate_id 供历史引用可追溯，实际执行入口见 GATE-VOCAB。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: GATE-VOCAB
 - gate_id: WORKTREE-REQUIRED
   name: 'WORKTREE-REQUIRED: WORKTREE-REQUIRED（CommitGate, priority=44）'
   entry: in-process (GitCommitGateway)
@@ -1959,3 +2021,73 @@ gates:
   source: manual
   enforcement_channel: manual
   redirect_to: gate_audit_report_v1.md#C1
+- gate_id: BLUEPRINT-HEADER
+  name: 'BLUEPRINT-HEADER: BLUEPRINT-HEADER（CommitGate, priority=79）'
+  entry: in-process (GitCommitGateway)
+  description: BLUEPRINT-HEADER
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
+  enforcement_channel: commit-gate
+- gate_id: REFERENCE-INTEGRITY
+  name: 'REFERENCE-INTEGRITY: REFERENCE-INTEGRITY（CommitGate, priority=70）'
+  entry: in-process (GitCommitGateway)
+  description: REFERENCE-INTEGRITY
+  files_trigger:
+  - docs/
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
+  enforcement_channel: commit-gate
+- gate_id: DEPGRAPH-ENFORCEMENT
+  name: 'DEPGRAPH-ENFORCEMENT: DEPGRAPH-ENFORCEMENT（CommitGate, priority=58）'
+  entry: in-process (GitCommitGateway)
+  description: DEPGRAPH-ENFORCEMENT
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
+  enforcement_channel: commit-gate
+- gate_id: COMPLEXITY-GUARD
+  name: 'COMPLEXITY-GUARD: COMPLEXITY-GUARD（CommitGate, priority=92）'
+  entry: in-process (GitCommitGateway)
+  description: COMPLEXITY-GUARD
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
+  enforcement_channel: commit-gate
+- gate_id: MAP-ALIGNMENT
+  name: 'MAP-ALIGNMENT: MAP-ALIGNMENT（CommitGate, priority=830）'
+  entry: in-process (GitCommitGateway)
+  description: MAP-ALIGNMENT
+  files_trigger:
+  - docs/02_enterprise_architecture/
+  - docs/03_modules/
+  - alignment_checklist
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
+  enforcement_channel: commit-gate
+- gate_id: PERMANENT-SYSTEM-TRIGGER
+  name: 'PERMANENT-SYSTEM-TRIGGER: PERMANENT-SYSTEM-TRIGGER（CommitGate, priority=82）'
+  entry: in-process (GitCommitGateway)
+  description: PERMANENT-SYSTEM-TRIGGER
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
+  enforcement_channel: commit-gate
