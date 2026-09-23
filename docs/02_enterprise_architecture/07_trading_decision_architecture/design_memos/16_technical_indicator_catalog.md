@@ -5,8 +5,8 @@ title: 技术指标目录
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.12.0"
-date: 2026-09-22
+version: "1.12.1"
+date: 2026-09-24
 topic: technical_indicator_catalog
 scope: 07_trading_decision_architecture
 ---
@@ -21,7 +21,7 @@ scope: 07_trading_decision_architecture
 
 # 技术指标目录
 
-> **性质**：architecture_view / 清单文档。记录系统支持的全部传统技术指标（40 指标 / 58 输出列 / 5 大类）的目录、计算规范和周期覆盖。
+> **性质**：architecture_view / 清单文档。记录系统支持的全部传统技术指标（142 在产指标 / 214 输出列 / 9 计算族，注册 143 条含退役 1；2026-09-24 机读复核对齐 REG-IND-001）的目录、计算规范和周期覆盖。
 > **代码真源**：`src/zephyr/factor/technical_indicators/`（7 文件，MATURITY=production，纯 pandas/numpy 自实现，无 TA-Lib 依赖，算法对齐通达信）+ `schemas/categories/market_technical_indicator.py`。
 > **口径修正**：早期文档写"~55 输出列"为过时约数；实际 **58 列**（测试契约 `test_indicator_base.py` `_EXPECTED_TOTAL=40 / _EXPECTED_COLUMN_TOTAL=58` 锁定）。
 > **历史说明**：00_index 标本文"active v1.0.0（8大类指标规范）"，磁盘仅存 0.1.0 骨架——曾丢失；重建后分类口径以代码为准（5 大类，非 8 大类）。
@@ -34,7 +34,7 @@ scope: 07_trading_decision_architecture
 | 依赖 | [15_data_feature_layer_spec](15_data_feature_layer_spec.md)（特征层规范） |
 | 正交性 | ✅ 纯数据计算，与 regime/alpha/组合/风控正交 |
 | 优先级 | P1（技术指标是因子工程和策略层的基础输入） |
-| 状态 | ✅ active v1.0.1（计算+存储+测试已施工；调度挂接与注册表待施工，见 §7） |
+| 状态 | ✅ active v1.12.1（计算+存储+测试+调度挂接+注册表全闭环，§7 六项结案） |
 
 ## 2. 技术指标计算规范
 
@@ -51,7 +51,7 @@ scope: 07_trading_decision_architecture
 - **`trade_time DateTime64(3,'Asia/Shanghai')`**——日/周/月=当天 00:00，分钟线=K 线起始时间戳，解决日内多根 K 线被 ReplacingMergeTree 误去重的原设计缺口；
 - **PARTITION BY (period, toYYYYMM(trade_date))**——周期+月双键分区，回算/归档可按周期整批 DROP；
 - **ORDER BY (symbol, period, trade_time)**——与 K 线表对齐，JOIN 不迷路；
-- 58 个指标列全部 `Nullable(Float64)`；治理列 `data_source`（固定 'internal'）+ `ingest_ts` + MATERIALIZED 派生列 `exchange`/`symbol_canonical`（TRAE-082）。
+- **214 个指标列**全部 `Nullable(Float64)`（注册表 142 在产指标输出列合计；退役 candle_pattern 已不在 INSERT_COLUMNS——裁定#233 停产，物理列季度后 DROP）；治理列 `data_source`（固定 'internal'）+ `ingest_ts` + MATERIALIZED 派生列 `exchange`/`symbol_canonical`（TRAE-082）。
 
 ## 4. 调度策略
 
@@ -76,7 +76,7 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 > 注册表真源：`TechnicalIndicatorRegistry`（运行时装饰器注册）；YAML 注册表 REG-IND-001 已在位（条目真源）。测试 762 个用例锁定数值正确性 + Registry↔DDL 双向交叉校验。
 > **48 指标 vs "MVP 只需 15-20 个"的裁定**：全部已施工且 470 测试已绿，**裁剪已完成的指标 = 删已绿代码 + 删表列，纯负收益**；指标是数据不是策略，多算一列的边际成本≈0（单表 Nullable 列），而策略侧"只用其中一部分"的选择自由始终在消费方。故维持全集（2026-09-14 扩至 92：标配+统计族+批 2a/2b+批 3+批 6 挖矿立卡全清偿）。
 
-### 6.1 趋势类 trend.py（18 指标 / 29 列）
+### 6.1 趋势类 trend.py（37 指标 / 64 列，2026-09-24 机读对齐 REG-IND-001）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -114,8 +114,11 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | supersmoother | supersmoother_10 | 10 | Ehlers 正典二极低通（批9-3，TASC 2024-09 论文原生组件） |
 | highpass | highpass_40 | 40 | HighPass3 三阶高通（批9-3，论文原生组件） |
 | ptrend | ptrend_250_40/ptrend_roc | 250/40 | 谱带差分趋势线+TROC 确认（批9-3，TASC 2024-09 "Precision Trend Analysis" 正主） |
+| alligator | alligator_jaw/teeth/lips | jaw=13/teeth=8/lips=5 前移 8/5/3 | SMMA(HL/2) 三线；存储=显示位，PIT 无前视（批8，Bill Williams） |
+| gmma | gmma_s3/5/8/10/12/15 + gmma_l30/35/40/45/50/60 | short=[3..15], long=[30..60] | 短期组 EMA3-15 与长期组 EMA30-60 共 12 条；组收敛/发散判趋势（批8，Guppy） |
+| gann_hilo | gann_hilo/gann_hilo_dir | period=10 | HiLo=SMA(HL/2,10)；收盘上/下方定多空向逐 bar 翻转（批8，Gann） |
 
-### 6.2 动量类 momentum.py（31 指标 / 50 列）
+### 6.2 动量类 momentum.py（43 指标 / 66 列，2026-09-24 机读对齐 REG-IND-001）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -156,8 +159,14 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | cti | cti_12 | 12 | close 对序数列滚动 Pearson r（批9-2，Ehlers） |
 | vhf | vhf_28 | 28 | (maxC−minC)/Σ\|ΔC\|（批9-2，Bressert） |
 | er | er_10 | 10 | \|C−C_N\|/Σ\|ΔC\| 效率比率，KAMA 内核独立立条（批9-2） |
+| ac | ac | fast=5, slow=34 | AC=AO−SMA5(AO)，AO=SMA5(中价)−SMA34(中价)（批8，Bill Williams） |
+| fractals | fractal_high/fractal_low | period=5 | 5bar 模式：高价比左右各 2 根高都高=上分形；对称=下分形（批8，Bill Williams） |
+| elder | bull_power_13/bear_power_13 | period=13 | Bull=H−EMA13；Bear=L−EMA13（批8，Alexander Elder） |
+| coppock | coppock | roc1=14, roc2=11, wma=10 | WMA10[ROC14+ROC11]×100，长周期底部探测（批8，Coppock 1962） |
+| squeeze | squeeze_on/squeeze_mom | period=20, bb=2.0, kc=1.5 | squeeze_on=1 表 BB(20,2) 完全嵌入 KC(20,1.5)；squeeze_mom=线性回归动量−KC 中轨（批8，LazyBear） |
+| wavetrend | wt1/wt2 | channel=10, avg=21, signal=4 | HLC3→EMA10→0.015 归一→EMA21=WT1；WT2=SMA4(WT1)（批8，LazyBear 口径） |
 
-### 6.3 波动类 volatility.py（15 指标 / 20 列）
+### 6.3 波动类 volatility.py（18 指标 / 23 列，2026-09-24 机读对齐 REG-IND-001）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -180,7 +189,7 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | cvi | cvi | 3/10 | Chaikin 波动率 EMA3(H−L) 十日变动率（批9-2） |
 | ulcer | ulcer_14 | 14 | 回撤深度均方根（批9-2，Martin） |
 
-### 6.4 量能类 volume.py（14 指标 / 15 列）
+### 6.4 量能类 volume.py（17 指标 / 18 列，2026-09-24 机读对齐 REG-IND-001）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -200,8 +209,9 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | wad | wad | 无 | 威廉累积/派发线 cumsum(TAD)（批9-2，Tulip 口径） |
 | vo | vo | 5/20 | 成交量快慢 MA 震荡（批9-2） |
 | marketfi | marketfi | 无 | (H−L)/V 市场促进指数（批9-2，Bill Williams） |
+| force_index | fi_13 | period=13 | FI=EMA13[ΔC×V]（批8，Alexander Elder） |
 
-### 6.5 反转类 reversal.py（5 指标 / 5 列）
+### 6.5 反转类 reversal.py（4 在产指标 / 4 列；注册 5 条含退役 candle_pattern，裁定#233）
 
 | indicator_id | 输出列 | 默认参数 | 公式要点 |
 |---|---|---|---|
@@ -211,7 +221,7 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 | boll_breakout | boll_breakout | 20/2 | C>上轨→1；C<下轨→−1 |
 | vol_price_divergence | vol_price_div | lookback=10 | 价升量缩→1；价跌量增→−1 |
 
-### 6.6 统计族 statistics.py（4 指标 / 5 列，2026-09-14 统计族批新建）
+### 6.6 统计族 statistics.py（9 指标 / 10 列，2026-09-14 统计族批新建+批9 扩充）
 
 对齐 TA-Lib Statistic Functions 组（通达信无对应函数）；MOD-L02-028。
 
@@ -235,7 +245,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 |---|---|---|---|
 | ichimoku | tenkan_sen/kijun_sen/senkou_span_a/senkou_span_b/chikou_span | 9/26/52/位移26 | 转折/基准=(HH+LL)/2；先行 A/B 存**显示位移后**位置（值来自 26 根前，PIT 无前视）；迟行存计算时点收盘（后移 26 是显示语义，存储不前视） |
 
-### 6.8 循环族 cycle.py（5 指标 / 7 列，2026-09-14 批 3 新建，MOD-L02-029）
+### 6.8 循环族 cycle.py（8 指标 / 11 列，2026-09-14 批 3 新建+批9 扩充，MOD-L02-029）
 
 对齐 TA-Lib HT 家族理论源（Ehlers, Rocket Science for Traders），实现采用**相位累积**口径（homodyne 移植实证存在带通自锁：初始周期钳位使自适应带通自锁于 6，纯正弦/随机游走全收敛 6——故弃用）。
 
@@ -273,8 +283,8 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 
 1. **调度未闭环（P0）** → **已闭环（2026-08-31 终审批实证核销）**：tasks.yaml 已挂 technical_indicator_incremental（L1877）/ technical_indicator_full_refresh（L1892）两条目，scheduler.py L1227 `source=="internal"` 分支已落地（64 号 Q18 施工批，2026-08-28）。Provider→调度→回算链路全通。
 2. **REG-IND-001 YAML 注册表未施工** → **已闭环（2026-08-31 终审批实证核销）**：`docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml` 已在位（registry_id=REG-IND-001，条目真源），本文按原裁定降级为 why 层。
-3. **命名陷阱**：tasks.yaml 的 `stock_indicator_full_refresh` 实为 AKShare 估值指标写 stock_indicator 表，与本表无关——后续调度挂接时防止误挂。
-4. **公式简化项**：rsi/macd_divergence 为简化趋势对比（非峰谷检测），精度需求出现时再升级。
+3. **命名陷阱**：tasks.yaml 的 `stock_indicator_full_refresh` 实为 AKShare 估值指标写 stock_indicator 表，与本表无关——后续调度挂接时防止误挂。→ **注释挂接执行中受阻（2026-09-24 oddjobs 实勘）**：tasks.yaml 工作树有他会话在途未提交改动（emotion_index_auction 槽，无人 claim），本包同文件提交将吸收他方内容故跳过——待其落地后由 oddjobs 台账跟踪补挂行注结案。
+4. **公式简化项** → **已结案（2026-09-24 精度需求条件化，oddjobs 总包②）**：rsi/macd_divergence 现为简化趋势对比（非峰谷检测）。**升级触发条件**（登记制——满足其一才立项峰谷检测级升级，观察型用途不触发）：①divergence 列被消费端用作直接交易触发信号（规则卡/止损带实际下单），假信号成本敏感化；②回测/考试判据要求背离事件严格可复现定义（左右 k 窗 pivot+确认 bar、PIT 无未来函数）；③需与外部基准（TA-Lib pivot 变体/学术口径）逐位对标验收；④出现简化口径致误触发的实证归因证据（模拟盘/回测复盘）。面板展示/研究参考等观察用途维持简化实现。
 5. **00_index 同步（越界登记）** → **已闭环（2026-08-31 终审批实证核销）**：00_index 现行描述已为"5大类指标规范"，分类口径一致，无需再同步。
 6. **日/周/月线历史深度缺口（2026-09-14 探针发现）**：daily/weekly/monthly 指标数据起点=2026-08（调度闭环日），仅 ~1 个月；而 30/60/120min 有 5 年、15min 2 年、5min 1 年历史。三级时间框架栈（§5）的交易层/趋势层以日/周/月为主战场，长历史缺失直接影响回测消费。待办：一次性 full_refresh 回填日/周/月（或裁定滚动窗口口径），挂下一施工批。 → **已闭环（2026-09-14 回填六轮）**：回填器 scripts/data/backfill_technical_indicator_dwm.py 补齐 d(2021-01)/w/m(2019-01) 历史；daily 批 3-6 新列由六轮重跑覆盖；CH Code 241 内存超限中断由 local_fallback 兜底（scheduler 自动回灌）。
 6a. **消费端接线（批 7 立项）** → **已闭环（53a00cdfb7）**：indicator_reader.py PIT 读取 API （as_of 硬拒/列白名单/FINAL 去重/预热 NaN 不填充）+ 消费样板 indicator_consumption_demo.py （B1 ATR 止损带/B2 均值回归因子，真实 CH 端到端）+ REG-IND-001 四条目 used_by_factors 锚点回填；后续=更多因子照 demo 模式扩展。
@@ -283,6 +293,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-09-24 | 1.12.1 | 口径治本（机读对齐 REG-IND-001）：§6 分节小标题计数按注册表机读复核改写（趋势 37/64、动量 43/66、波动 18/23、量能 17/18、反转 4 在产+退役 1、统计 9/10、循环 8/11；全表 142 在产/214 列逐一合计吻合，DDL INSERT_COLUMNS 214 指标列实证）；补 §6.1/6.2/6.4 批 8（v1.6.0）漏列 10 行（alligator/gmma/gann_hilo、ac/fractals/elder/coppock/squeeze/wavetrend、force_index，公式自注册表机生）；性质行/§1 状态行/§3 列数改现役口径；§7#4 精度需求条件化结案；§7#3 注释挂接受阻登记（tasks.yaml 他会话在途） | oddjobs 总包②号扫尾令：机读计数 vs 散文口径一致性 |
 | 2026-09-22 | 1.12.0 | 分包2 volume 量纲治本：kline_daily volume 全表统一"股"（写侧 miniqmt ×100 + 存量 8.4M 行 mutation + CYC 去 ÷100 + 指标 58 片重算）；§6.10 量纲注记改写 | 批10 终局令分包2（手/股混合量纲病实证后治本） |
 | 2026-09-21 | 1.11.1 | 批10 扩项（Owner 扩项令）：CYQ 增列 chips_cost_15/85（同一分布分位）+CHIP_CONC_90/70 两指标（通达信集中度族，conc_90=集中度(90) 与 SCR 同公式双条目 overlap 已记、conc_70=集中度(70) 用新分位对）；全表 140→142 在产/210→214 列（注册 141→143）；版本 v1.6.1；峰突破/发散信号=消费端规则卡不进指标库（collection_intake 规格边界） | 分包4 WO-4 扩项令 |
 | 2026-09-21 | 1.11.0 | 批10 筹码族施工（总包甲 WO-4）：+CYQ/SCR/CYC 3 指标/9 列（新建 chips.py MOD-L02-031，第 9 类 chips）；全表 137→140 在产/201→210 列（注册 138→141 条）；契约扩张=指标输入首次引入换手率 stock_daily_basic（仅 daily，软降级 NULL）；kline_daily volume 手/股量纲实证留痕（CYC ÷100）；CYQ 独立实现复算 000852 近 20 日逐日 0 偏差对表 PASS；单票试跑两票 33 日全列有数；全市场回填待时序板乙 W1 解禁 | 分包4 tilib 延续批·批10 令（§3 配方 CYQ/SCR/CYC 施工） |
