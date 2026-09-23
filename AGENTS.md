@@ -91,7 +91,7 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 
 1. 本宪法 ≤300 行是硬上限；新增内容必须等长替换。
 2. 细节检索序：capability_cards/（L0-L3 渐进披露）→ docs/01.../rules/*.yaml →
-   capability_canonical_file_registry.yaml → Grep 符号发现。方法论真源地图=sop/README.md（九族
+   capability_canonical_file_registry.yaml → docs/library/INDEX.md（总目，查 python -m zephyr.library.lookup）→ Grep 符号发现。方法论真源地图=sop/README.md（九族
    索引）：调研=mining_sop/ 施工=construction_sop/ 数据操作=data_ops_sop/ 对齐改图=governance_sop/。
 3. 会话内不复制大段规则进上下文；引用真源路径+锚点。
 
@@ -102,7 +102,7 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 | AutoRuntime Core | `python -m zephyr.trading` |
 | GitCommitGateway | `zephyr.gov_enforcement.rule_bridge.git_commit_gateway`（唯一合法 commit 入口） |
 | 提交队列 | `scripts/commit_queue.py`（enqueue/status/drain/requeue；drain=真落地） |
-| DatabaseService | `zephyr.infrastructure.database_service`（唯一真源，禁裸 duckdb） |
+| DatabaseService | `zephyr.infrastructure.database_service`（唯一真源，禁裸 duckdb）；存储分工：冷库=F:/zephyr_cold、备份总仓=G:/backup、CH 备份双链（F 主/G 二）——地图=INFRA-STORE-003 |
 | LSG | `zephyr.security.llm_defense.llm_security.gateway`（所有 LLM 调用必经） |
 | CapabilityLookup | `zephyr.governance.capability_lookup` |
 | KillSwitch | `zephyr.security.access_control.kill_switch` |
