@@ -55843,6 +55843,7 @@ entries:
   desc_zh: "technical_indicator 表 210 列非空审计台账工具：summary 单次聚合扫描出全列台账，sample 轻查询抽验"
   desc_en: ""
   plain_zh: "批10 筹码族上表后，technical_indicator 大表新增 chips_winner、scr、cyc_inf 这类列，全市场回填跑没跑全靠这张台账说话。它有两种用法：sample 模式白天就能用，挑 000852、000001 几只股票打印最近几天筹码列的数值，确认链路是通的；summary 模式把两百一十列从早数到晚数出每列有多少空值，空列就是回填漏洞。因为 summary 要整表扫描一百多 GiB，白天跑会把 ClickHouse 内存顶爆，必须等收盘后低峰再跑，还要避开凌晨两点半的夜跑批次。"
+  responsibility_layer: governance
 - module_path: scripts/backtest/league_registry.py
   domain_id: D_BACKTEST
   name_zh: "联赛注册表"
