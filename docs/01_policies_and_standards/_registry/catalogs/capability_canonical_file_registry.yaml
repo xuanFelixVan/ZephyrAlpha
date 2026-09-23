@@ -46186,4 +46186,24 @@ creation_tokens:
   token: stress-test-config-20260923
   created_by: st-stress-20260923
   capability: stress_test
+- file: docs/_working/chain_piling_campaign/99_final_report.md
+  token: chain-piling-campaign-99-final-report-20260923
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "定桩战役W8终局报告（死信袋恢复落地），替代物：无，战役收口件"
+- file: docs/_working/chain_piling_campaign/infra_mining/92_rb_w8_acceptance.md
+  token: chain-piling-campaign-92-rb-w8-acceptance-20260923
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "定桩战役W8红蓝验收报告（死信袋恢复落地），替代物：无，验收证据件"
+- file: docs/_working/chain_piling_campaign/HANDOFF.md
+  token: chain-piling-campaign-handoff-20260923
+  created_by: st-chainpile-20260922
+  capability: chain_piling_campaign
+  merge_evaluation: "定桩战役交接包（代收尾班新建），替代物：无，交接真源"
+- file: docs/03_modules/MOD-CHAINPILE-METAQ/blueprint.md
+  token: meta-question-registry-mod-chainpile-metaq-blueprint-20260923
+  created_by: st-chainpile-20260922
+  capability: meta_question_registry
+  merge_evaluation: "S-3裁定蓝图ID加MOD-前缀后文件路径补token（旧CHAINPILE-METAQ路径token悬垂移交晨清审计）"
 di_seam_exemptions: []
