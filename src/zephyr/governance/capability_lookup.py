@@ -1286,6 +1286,10 @@ class CapabilityLookup:
             return None
 
         basename = rel_path.rsplit("/", 1)[-1]
+        # __init__.py 是包标记，按包结构天然唯一（根 vs 子包同名属合法层级）；
+        # 根vs子目录碰撞场景针对真实模块文件，包标记豁免（st-chainpile q-0055 红证）
+        if basename == "__init__.py":
+            return None
 
         collisions: list[str] = []
         for existing_path in self._disk_headers:

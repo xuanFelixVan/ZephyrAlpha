@@ -1009,6 +1009,37 @@ def test_check_capability_duplicates_no_signal(setup_registry):
     assert dups == []
 
 
+def test_unregistered_basename_collision_skips_init_py(setup_registry):
+    """__init__.py 包标记不构成根vs子目录碰撞（合法子包层级非实现重复）。
+
+    场景：governance/__init__.py（根）已存在时新建 governance/subpkg/__init__.py
+    ——包标记按包结构天然唯一，ARCH-031 碰撞检测只针对真实模块文件（st-chainpile
+    close 红证：meta_question/__init__.py 被误拦，q-...-0055 死信）。
+    """
+    yaml_path, scan_root = setup_registry
+    _make_py_file(
+        scan_root / "governance" / "__init__.py",
+        "zephyr.governance",
+        "MOD-GOVERNANCE",
+        blueprint="MOD-GOVERNANCE",
+        domain="D-GOV",
+        maturity="production",
+    )
+    reg = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
+    assert reg._check_unregistered_basename_collision("src/zephyr/governance/subpkg/__init__.py") is None
+    # 对照：真实模块文件根vs子目录碰撞仍阻断
+    _make_py_file(
+        scan_root / "governance" / "thing_impl.py",
+        "zephyr.governance.thing_impl",
+        "MOD-GOV_thing_impl",
+        blueprint="MOD-GOVERNANCE",
+        domain="D-GOV",
+        maturity="production",
+    )
+    reg2 = CapabilityLookup(yaml_path=yaml_path, scan_root=scan_root)
+    assert reg2._check_unregistered_basename_collision("src/zephyr/governance/subpkg/thing_impl.py") is not None
+
+
 def test_removed_duplicates_no_git_keeps_manual(tmp_path: Path, monkeypatch):
     """非 git 仓库（git log 失败）→ git 派生为空，manual 条目保留。"""
     yaml_path = tmp_path / "registry.yaml"
