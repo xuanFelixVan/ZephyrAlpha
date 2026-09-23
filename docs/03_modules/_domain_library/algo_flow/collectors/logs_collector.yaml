@@ -1,0 +1,34 @@
+# ALGO_FLOW 外部真源——logs_collector（真源 src/zephyr/library/collectors/logs_collector.py）
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.library.collectors.logs_collector
+source_of_truth: src/zephyr/library/collectors/logs_collector.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: root
+    #   fields: 仓库根（默认 "."）
+    #   code: root
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 读日志总索引 registry_of_logs.yaml（REG-LOG-001 SSOT）
+    #   name_en: read registry
+    #   intro: 缺失 fail-soft 返回单条 error 记录。
+    #   outputs: logs 条目
+    # - id: A2
+    #   name_zh: 逐条派生抽屉族资产（FILE:<path>，tags=日志，legacy→archived）
+    #   name_en: derive assets
+    #   intro: 方案 A 族级入册——一条登记=一个抽屉，日志文件不逐件登记。
+    #   outputs: asset list
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 抽屉族资产列表（ingest_all 入总账）
+    #   name_en: assets
+    #   intro: coverage 对账须并入本结果防 ghost 误报（check_library_coverage）。
+    #   downstream: collect_all / ingest_all
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> O1

@@ -194,6 +194,76 @@ def load_vocabulary_values(
     return _collect_vocab_values(data, fallback_key)
 
 
+def load_vocabulary_alias_map(
+    vocab_file: str | Path,
+    *,
+    vocab_dir: str | Path | None = None,
+    value_key: str = "value",
+    alias_key: str = "aliases",
+    strict: bool = True,
+) -> tuple[set[str], dict[str, str]]:
+    """从 vocabulary YAML 加载标准词集合+别名→标准词映射（ulib3 T7 SSoT 扩展）。
+
+    YAML 结构约定：顶层 ``values`` 列表，每个 entry 为 dict，取 ``value`` 键为标准词、
+    ``aliases`` 键（list[str]，可缺省）为别名层。
+
+    结构校验（strict=True 抛 ValueError）：
+        - 重复 value（重复 canonical）
+        - 同一别名挂多个标准词（别名冲突/孤儿）
+
+    失败模式与 :func:`load_vocabulary_values` 一致（strict=True fail-fast / False 宽容）。
+
+    Args:
+        vocab_file: YAML 文件名或绝对/相对路径（相对时拼 vocab_dir）。
+        vocab_dir: YAML 所在目录；默认 ``docs/01_policies_and_standards/_registry/vocabularies``。
+        value_key: 标准词键名。
+        alias_key: 别名列表键名。
+        strict: True=fail-fast；False=宽容模式（返回空集合）。
+
+    Returns:
+        (canonical 标准词集合, alias→canonical 映射)。
+
+    Raises:
+        FileNotFoundError: ``strict=True`` 且文件不存在。
+        yaml.YAMLError: ``strict=True`` 且 YAML 解析错误。
+        ValueError: ``strict=True`` 且结构非法（重复值/别名冲突/非 dict 顶层）。
+    """
+    p = _resolve_vocab_path(vocab_file, vocab_dir)
+    data = _load_vocab_data(
+        p,
+        strict,
+        f"vocabulary YAML 不存在: {p}",
+        f"vocabulary YAML 顶层非 dict 结构: {p}",
+    )
+    canonical: set[str] = set()
+    alias_map: dict[str, str] = {}
+    if data is None:
+        return canonical, alias_map
+
+    def _fail(msg: str) -> None:
+        if strict:
+            raise ValueError(msg)
+
+    for entry in data.get("values") or []:
+        if not isinstance(entry, dict):
+            continue
+        value = str(entry.get(value_key) or "").strip()
+        if not value:
+            continue
+        if value in canonical:
+            _fail(f"重复标准词（canonical）：{value}")
+        canonical.add(value)
+        for alias in entry.get(alias_key) or []:
+            a = str(alias or "").strip()
+            if not a:
+                continue
+            if a in alias_map and alias_map[a] != value:
+                _fail(f"别名冲突：{a} 同时挂在 {alias_map[a]} 与 {value}")
+            else:
+                alias_map[a] = value
+    return canonical, alias_map
+
+
 def load_all_vocabulary_values(
     *,
     vocab_dir: str | Path | None = None,
