@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.gov_enforcement.commit_gates.library_coverage_gate import _has_call_number
 from zephyr.library.collectors.mcp_collector import _server_tools
 from zephyr.library.ledger_schema import (
     _SQL_ENSURE_ASSETS,
     _SQL_ENSURE_EVENTS,
     ACTIONS,
+    _has_call_number,
     derive_asset_id,
     validate_action,
 )

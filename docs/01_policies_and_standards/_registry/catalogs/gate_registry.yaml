@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-09-20T20:53:26Z'
+generated_at: '2026-09-22T22:18:47Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 171
+total_gates: 174
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -825,7 +825,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: CH-VERSION-COL
   name: 'CH-VERSION-COL: CH-VERSION-COL（CommitGate, priority=38）'
@@ -886,17 +886,6 @@ gates:
   name: 'DANGLING-REFERENCE: DANGLING-REFERENCE（CommitGate, priority=70）'
   entry: in-process (GitCommitGateway)
   description: DANGLING-REFERENCE
-  files_trigger: ''
-  always_run: false
-  category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
-- gate_id: DATA-TASK-COMPLETENESS
-  name: 'DATA-TASK-COMPLETENESS: DATA-TASK-COMPLETENESS（CommitGate, priority=41）'
-  entry: in-process (GitCommitGateway)
-  description: DATA-TASK-COMPLETENESS
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -980,7 +969,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: DIRECTORY-CONTRACT
   name: 'DIRECTORY-CONTRACT: DIRECTORY-CONTRACT（CommitGate, priority=30）'
@@ -1273,21 +1262,32 @@ gates:
   source: commit-gate
   own_scope: false
   enforcement_channel: commit-gate
-- gate_id: ISSUE-RESOLVED-INTEGRITY
-  name: 'ISSUE-RESOLVED-INTEGRITY: ISSUE-RESOLVED-INTEGRITY（CommitGate, priority=130）'
+- gate_id: BLOOD-FLESH
+  name: 'BLOOD-FLESH: BLOOD-FLESH（CommitGate, priority=59）'
   entry: in-process (GitCommitGateway)
-  description: ISSUE-RESOLVED-INTEGRITY
+  description: BLOOD-FLESH
   files_trigger: ''
   always_run: false
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
-- gate_id: LIBRARY-COVERAGE
-  name: 'LIBRARY-COVERAGE: 馆藏覆盖观察闸（LIBRARY-COVERAGE，warn-only）。（CommitGate, priority=145）'
+- gate_id: STATE-VOCAB-REGISTRY
+  name: 'STATE-VOCAB-REGISTRY: STATE-VOCAB-REGISTRY（CommitGate, priority=135）'
   entry: in-process (GitCommitGateway)
-  description: 馆藏覆盖观察闸（LIBRARY-COVERAGE，warn-only）。
+  description: STATE-VOCAB-REGISTRY
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: true
+  enforcement_channel: commit-gate
+- gate_id: TAG-VOCAB
+  name: 'TAG-VOCAB: TAG-VOCAB（CommitGate, priority=134）'
+  entry: in-process (GitCommitGateway)
+  description: TAG-VOCAB
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1536,7 +1536,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: REGISTRY-MASS-DELETION
   name: 'REGISTRY-MASS-DELETION: REGISTRY-MASS-DELETION（CommitGate, priority=140）'
@@ -1580,7 +1580,7 @@ gates:
   category: commit_gate
   status: active
   source: commit-gate
-  own_scope: false
+  own_scope: true
   enforcement_channel: commit-gate
 - gate_id: RESOURCE-SCHEDULE
   name: 'RESOURCE-SCHEDULE: 排班冲突检测 commit gate（MOD-RESCHED-GATE，B2 闸）。（CommitGate,
@@ -1919,36 +1919,43 @@ gates:
   redirect_to: GATE-C2
   source: manual
   enforcement_channel: manual
-- gate_id: BLOOD-FLESH
-  name: 'BLOOD-FLESH: BLOOD-FLESH（CommitGate, priority=59）'
-  entry: in-process (GitCommitGateway)
-  description: BLOOD-FLESH
+- gate_id: DATA-TASK-COMPLETENESS
+  name: 'DATA-TASK-COMPLETENESS: 数据任务完整性门禁（已退役 2026-09-23，st-gslim P3）'
+  entry: N/A (retired, see redirect_to)
+  description: 【已退役】warn-only 零触发零消费（窗口期 0 拦截 0 运行触发，src/scripts 外零引用）——w5_1 条2 退役判据直接命中。门文件+测试+in_process
+    条目+token 同批删除；tasks.yaml 内三处历史warn 提示注释为历史事实留档。退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md
+    §C1/§E。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
-  enforcement_channel: commit-gate
-- gate_id: TAG-VOCAB
-  name: 'TAG-VOCAB: TAG-VOCAB（CommitGate, priority=134）'
-  entry: in-process (GitCommitGateway)
-  description: TAG-VOCAB
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: gate_audit_report_v1.md#C1
+- gate_id: ISSUE-RESOLVED-INTEGRITY
+  name: 'ISSUE-RESOLVED-INTEGRITY: issue 标记真实性门禁（已退役 2026-09-23，st-gslim P3）'
+  entry: N/A (retired, see redirect_to)
+  description: 【已退役】warn-only；计时数据中从未出现（连执行都没有）；零消费方（0 处引用）——w5_1 条2 退役判据直接命中。门文件+测试+in_process
+    条目+token+外锚同批删除。退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md
+    §C1/§E。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
-  enforcement_channel: commit-gate
-- gate_id: STATE-VOCAB-REGISTRY
-  name: 'STATE-VOCAB-REGISTRY: STATE-VOCAB-REGISTRY（CommitGate, priority=135）'
-  entry: in-process (GitCommitGateway)
-  description: STATE-VOCAB-REGISTRY
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: gate_audit_report_v1.md#C1
+- gate_id: LIBRARY-COVERAGE
+  name: 'LIBRARY-COVERAGE: 馆藏覆盖观察闸（已退役 2026-09-23，st-gslim P3）'
+  entry: N/A (retired, see redirect_to)
+  description: 【已退役】warn-only 自述观察闸；0 拦截 0 触发；零消费方（0 处引用）——w5_1 条2 退役判据直接命中。门文件+测试+in_process
+    条目+token+外锚+fail_open 行同批删除；_has_call_number 纯函数迁 zephyr.library.ledger_schema（测试改挂
+    7 passed）。退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md
+    §C1/§E。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: true
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: gate_audit_report_v1.md#C1

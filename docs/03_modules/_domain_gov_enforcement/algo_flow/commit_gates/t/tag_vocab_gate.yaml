@@ -1,0 +1,46 @@
+# ALGO_FLOW 外部真源——tag_vocab_gate（真源 src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py）
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.library.tag_vocab_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: gateway/files/session_id
+    #   fields: gate 闭包签名
+    #   code: files
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 加载词库（canonical+别名映射+结构缺陷自检）
+    #   name_en: _load_vocab
+    #   intro: 词库缺失/损坏 fail-open 返回 None，调用方跳过。
+    #   outputs: _Vocab|None
+    # - id: A2
+    #   name_zh: 圈定 staged yaml（catalogs 登记面+词库本尊）
+    #   name_en: scope
+    #   intro: 词库本尊 staged 时加做重复 canonical/别名冲突自检。
+    #   outputs: yaml_files
+    # - id: A3
+    #   name_zh: own-scope 过滤+外来 staged 审计
+    #   name_en: own_scope
+    #   intro: 宪法 §3.3，外来剔除不阻断 warn+审计。
+    #   outputs: own_files
+    # - id: A4
+    #   name_zh: 递归收集 tags 值并逐词 resolve
+    #   name_en: _scan_yaml_files_for_findings
+    #   intro: 非枚举词且不可解析别名=违规；单文件解析失败降级跳过。
+    #   outputs: findings
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 审计留痕+warn/block 按 mode
+    #   name_en: GateSpec check result
+    #   intro: warn 模式 passed=True+detail 留痕。
+    #   downstream: gate_auto_registrar
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> A4
+    # A4 --> O1

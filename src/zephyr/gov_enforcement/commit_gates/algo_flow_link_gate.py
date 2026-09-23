@@ -38,6 +38,32 @@
 # noqa: m10-time-trigger  M10豁免: 本模块由 commit 事件触发（非 cron/manual）
 """algo_flow_link_gate.py — ALGO_FLOW external 锚链接校验门禁（ALGO-FLOW-LINK）
 
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 模块内部数据
+    #   fields: 无公共形参/无再导出（AST 事实）
+    #   code: algo_flow_link_gate.py
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① make_algo_flow_link_gate
+    #   name_en: make_algo_flow_link_gate
+    #   intro: 构造 ALGO_FLOW 锚链接校验门禁。
+    #   desc: external 锚 yaml 存在可解析、source_of_truth 实存、同批退役反向锚豁免。 Returns: GateSpec(gate_id="ALGO-FLOW-LINK", priority=108)。
+    #   inputs: 无参数
+    #   outputs: GateSpec
+    # 层: 输出
+    # - id: O1
+    #   name_zh: GateSpec
+    #   name_en: GateSpec
+    #   intro: 顶层公共函数返回值（真实返回注解，AST 提取）
+    #   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> O1
+    # [/ALGO_FLOW]
+
 病根（第一性原理）
 -----------------
 P2-1 ALGO_FLOW 出仓战役后，源码 docstring 以单行 external 锚引用
@@ -460,10 +486,17 @@ def make_algo_flow_link_gate() -> object:
                     return [f"<git grep 不可达: {type(exc).__name__}>"]
                 if r.returncode not in (0, 1):  # 1=无命中，其它=git 故障
                     return [f"<git grep exit={r.returncode}>"]
+
+                def _strip_rev(line: str) -> str:
+                    # git grep 对 tree-ish 检索输出 `<rev>:<path>` 形态（HEAD:src/...）——
+                    # 不剥前缀则与 deleted_set（纯相对路径）永不相等，同批退役豁免失效
+                    #（st-gslim-20260923 实证：三台退役连坐误杀，模块+镜像同批必被拦）。
+                    return line.split(":", 1)[-1] if line != rel else line
+
                 return [
-                    p
+                    _strip_rev(p)
                     for p in (str(x).strip() for x in (r.stdout or "").splitlines())
-                    if p and p not in deleted_set
+                    if p and _strip_rev(p) not in deleted_set
                 ]
 
             blocked, msg = check_algo_flow_links(

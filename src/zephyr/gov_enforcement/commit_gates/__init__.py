@@ -64,8 +64,14 @@ from zephyr.gov_enforcement.commit_gates.frontend_truth_source_gate import (  # 
 from zephyr.gov_enforcement.commit_gates.industry_chain_map_gate import (  # noqa: F401  # INDUSTRY-CHAIN-MAP 产业链全景图 git 侧工件门禁（图 8 挂总线，alignment_checklist §3 图 8 行 2026-09-11）
     make_industry_chain_map_gate as _make_industry_chain_map_gate,
 )
-from zephyr.gov_enforcement.commit_gates.library_coverage_gate import (  # noqa: F401  # LIBRARY-COVERAGE 图书馆覆盖度门禁（in_process_gate_registry 条目驱动；st-dloop 死会话遗物补记批完成注册，st-workclean-20260921）
-    make_library_coverage_gate as _make_library_coverage_gate,
+from zephyr.gov_enforcement.commit_gates.library.library_blood_flesh_gate import (  # noqa: F401  # BLOOD-FLESH 新资产登记必填血肉门（ulib3 T8，观察期 warn；经 in_process_gate_registry.yaml auto_registrar 注册；0046-prime 移 library/ 子目录=FOLDER-CAPACITY 治本）
+    make_library_blood_flesh_gate as _make_library_blood_flesh_gate,
+)
+from zephyr.gov_enforcement.commit_gates.library.state_vocab_registry_gate import (  # noqa: F401  # STATE-VOCAB-REGISTRY 词表 SSOT 登记观察门（W3，Owner 批四步施工 2026-09-21/22，观察期 warn；0046-prime 移 library/ 子目录）
+    make_state_vocab_registry_gate as _make_state_vocab_registry_gate,
+)
+from zephyr.gov_enforcement.commit_gates.library.tag_vocab_gate import (  # noqa: F401  # TAG-VOCAB 图书馆标签枚举门（ulib3 T7，观察期 warn；经 in_process_gate_registry.yaml auto_registrar 注册；0046-prime 移 library/ 子目录）
+    make_tag_vocab_gate as _make_tag_vocab_gate,
 )
 from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (  # noqa: F401  # RECONCILER-FILE-OPS 裸删除原语静态扫描（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③）
     make_reconciler_file_ops_gate as _make_reconciler_file_ops_gate,

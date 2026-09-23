@@ -201,6 +201,56 @@ MANUAL_GATES: list[dict] = [
         "status": "deprecated",
         "redirect_to": "GATE-C2",
     },
+    # st-gslim-20260923 P3 退役墓碑（gate_audit_report_v1 §C1，Owner 2026-09-23 全批 E）：
+    # 三台 warn-only 零触发零消费退役（w5_1 条2）。统一册条目无路径字段，REGISTRY-MASS-DELETION
+    # W3 机械验证对"条目+路径双消失"之外的删除判 fail-closed——按 GATE-SCHEMA-HEALTH 先例留
+    # deprecated 重定向锚点，gate_id 供历史引用可追溯，不再有执行体。
+    {
+        "gate_id": "DATA-TASK-COMPLETENESS",
+        "name": "DATA-TASK-COMPLETENESS: 数据任务完整性门禁（已退役 2026-09-23，st-gslim P3）",
+        "entry": "N/A (retired, see redirect_to)",
+        "description": "【已退役】warn-only 零触发零消费（窗口期 0 拦截 0 运行触发，src/scripts 外零引用）——"
+        "w5_1 条2 退役判据直接命中。门文件+测试+in_process 条目+token 同批删除；tasks.yaml 内三处历史"
+        "warn 提示注释为历史事实留档。退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md §C1/§E。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "gate_audit_report_v1.md#C1",
+    },
+    {
+        "gate_id": "ISSUE-RESOLVED-INTEGRITY",
+        "name": "ISSUE-RESOLVED-INTEGRITY: issue 标记真实性门禁（已退役 2026-09-23，st-gslim P3）",
+        "entry": "N/A (retired, see redirect_to)",
+        "description": "【已退役】warn-only；计时数据中从未出现（连执行都没有）；零消费方（0 处引用）——"
+        "w5_1 条2 退役判据直接命中。门文件+测试+in_process 条目+token+外锚同批删除。"
+        "退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md §C1/§E。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "gate_audit_report_v1.md#C1",
+    },
+    {
+        "gate_id": "LIBRARY-COVERAGE",
+        "name": "LIBRARY-COVERAGE: 馆藏覆盖观察闸（已退役 2026-09-23，st-gslim P3）",
+        "entry": "N/A (retired, see redirect_to)",
+        "description": "【已退役】warn-only 自述观察闸；0 拦截 0 触发；零消费方（0 处引用）——w5_1 条2 退役"
+        "判据直接命中。门文件+测试+in_process 条目+token+外锚+fail_open 行同批删除；_has_call_number 纯函数"
+        "迁 zephyr.library.ledger_schema（测试改挂 7 passed）。"
+        "退役依据：docs/_working/registry_incident_20260922/gate_audit_report_v1.md §C1/§E。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "gate_audit_report_v1.md#C1",
+    },
 ]
 
 

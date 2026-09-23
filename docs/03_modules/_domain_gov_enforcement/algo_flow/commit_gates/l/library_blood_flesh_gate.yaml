@@ -1,0 +1,40 @@
+# ALGO_FLOW 外部真源——library_blood_flesh_gate（真源 src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py）
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.library.library_blood_flesh_gate
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/library/library_blood_flesh_gate.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: gateway/files/session_id
+    #   fields: gate 闭包签名
+    #   code: files
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 懒加载翻译 loader（get/is_generic 双 helper）
+    #   name_en: _load_loader
+    #   intro: 不可达 fail-open 返回 None，调用方跳过。
+    #   outputs: loader 三元组|None
+    # - id: A2
+    #   name_zh: A 面——staged 新增 .py 翻译条目 name_zh 检查
+    #   name_en: _load_staged_new_py_files
+    #   intro: 范围同 TRANSLATION-COVERAGE（_is_in_scope 复用）；plain_zh 归 59 号硬闸不重复罚。
+    #   outputs: A 面 findings
+    # - id: A3
+    #   name_zh: B 面——翻译册相对 HEAD 新增条目血肉双全检查
+    #   name_en: _parse_registry_entries
+    #   intro: staged 翻译册且属 own-scope 时，新增条目 name_zh+plain_zh 双全且非 generic；存量不追溯。
+    #   outputs: B 面 findings
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 审计留痕+warn/block 按 mode
+    #   name_en: GateSpec check result
+    #   intro: warn 模式 passed=True+detail 留痕（BLOOD_FLESH_GATE_MODE 翻 block 升硬）。
+    #   downstream: gate_auto_registrar
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1
