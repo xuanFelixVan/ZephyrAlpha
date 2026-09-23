@@ -46005,6 +46005,7 @@ creation_tokens:
   token: killswitch-state-store-algoflow-kill-switch-state-store-20260923
   created_by: st-oddjobs-20260923
   capability: killswitch-state-store-algoflow
+  merge_evaluation: "ALGO_FLOW 外部真源随批出仓件，同族 trading_kill_switch.yaml 先例，零重复"
 - file: docs/_working/tdm20_campaign/06_agg_switch_rollback_plan.md
   token: agg-switch-rollback-06-agg-switch-rollback-plan-20260923
   created_by: st-tdm20-20260923
