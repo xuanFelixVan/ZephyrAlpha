@@ -56868,6 +56868,47 @@ entries:
   desc_en: ""
   plain_zh: "这是问题总账本的入库预检仪：一批新问题要进账本前拿它扫一遍，每条五要素填齐没有、枚举合不合法、数据源在不在白名单、标题有没有重名，全绿才放行走正式通道。"
   responsibility_layer: governance
+- module_path: scripts/audit/cost_trio_exam.py
+  domain_id: D_BACKTEST
+  name_zh: 做T配对成本判据（重建版）
+  name_en: cost_trio_exam (rebuilt)
+  desc_zh: 做T配对成本三件套判据脚本：bt产物D后成交按symbol×day双边配对，出CST-T0-001成本口径下的毛/净价差四数与insufficient土规判定
+  desc_en: ''
+  plain_zh: 这是做T考试的尺子。它把回测留下的每笔买卖按同一只票同一天配成一对，算出每对赚的价差够不够付手续费。配对满30对才允许下结论，不够就老实说样本不足，不许瞎下结论。原来这把尺子放在临时目录里丢了，现在按裁定搬进正式文档目录，以后不会再丢。
+  responsibility_layer: business
+- module_path: scripts/audit/t0_conditional_e4_exam.py
+  domain_id: D_BACKTEST
+  name_zh: 条件化做T E4考试执行件
+  name_en: t0_conditional_e4_exam
+  desc_zh: T0-CONDITIONAL预注册卡的机械执行件：加载cost_trio配对+regime_state_anchored宏观门PIT标注，按卡五态枚举出fail-closed verdict
+  desc_en: ''
+  plain_zh: 这是做T复活考试的判卷员。它按预注册卡写死的规则，只数'允许做T的日子'里的买卖配对够不够30对、价差够不够付成本，不够就老实写'样本不足'。情绪六段没有历史数据，它就不装懂，明确标注情绪门没法评，绝不用别的指标冒充。
+  responsibility_layer: business
+- module_path: src/zephyr/data/sector_state_pipeline.py
+  domain_id: D_DATA
+  name_zh: 板块状态落库编排器
+  plain_zh: 每天收盘后把板块的体检结果写进两张表的跑腿员：它自己去读板块行情面板、算好状态，再落库。算法一律不自己重写，全交给板块状态聚合器那个纯函数件；收盘定格档在 15:10 出真值，次日 09:15 的盘前档只是把前一天的定格复制一份再按盘前口径重映射，保证盘前也有数可用。
+  responsibility_layer: infrastructure
+- module_path: src/zephyr/signal_ashare/sector/sector_state_aggregator.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 板块状态聚合器
+  plain_zh: 把五路板块体检指标捏成一份板块状态的算法件：动量、相对强弱四象限、涨停家数与梯队强度、资金净流入分位、市场级五状态。它只做计算不碰数据库，喂进来的表格自己出结果，所以能在考试跑批里反复重放。五路算法全部沿用 22 号设计稿已定的公式与权重，不另起炉灶。
+  responsibility_layer: business
+- module_path: scripts/backtest/sector_prereg_exam_runner.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 板块预注册考试跑批器
+  plain_zh: 给板块状态这套尺子做考前承诺、考后对账的跑批件：先按冻结卡把判档标准钉死，再用历史数据一格一格算出结果，够证据就判成立、不够就老实写样本不足。当天信号只准用当天收盘前的数，收益往后错一天算，所有多重检验格子全部披露，禁写全绿。
+  responsibility_layer: business
+- module_path: schemas/categories/sector_state.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 板块状态表结构定义
+  plain_zh: 板块状态这张表的结构真源：表怎么建、按什么排序、版本列怎么取舍，都以这份文件为准。用 ReplacingMergeTree 以入仓时间做版本列，读时带 FINAL 保证写后能立刻读到最新一条，避免刚写完就读到旧行的竞态。
+  responsibility_layer: infrastructure
+- module_path: schemas/categories/sector_preference.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: 板块偏好表结构定义
+  plain_zh: 板块偏好这张表的结构真源：记录每天给每个板块打的偏好标签、仓位倾斜幅度和禁入象限。同样以入仓时间做版本列并带 FINAL 读，消费方是 L2 门与选股漏斗（读禁入象限和倾斜幅度）。
+  responsibility_layer: infrastructure
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

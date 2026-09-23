@@ -46381,4 +46381,135 @@ creation_tokens:
   created_by: st-e2e-20260924
   capability: e2e_20260924
   merge_evaluation: "内收判据：三件均为本班一次性班次案卷（撞号取证/回补 dry-run/预检），零同真源可派生、零同域重复簇，不替代任何既有条目"
+- file: scripts/audit/cost_trio_exam.py
+  token: cost-trio-exam-cost-trio-exam-20260922
+  created_by: st-t0-revival-20260922
+  capability: cost_trio_exam
+  merge_evaluation: R4卡A选项重建件（裁定#399二）：判据住scripts/产物住docs/_working（目录契约DCR-005），替代.runtime/tmp灭失判据，同真源唯一判据件不并
+- file: docs/_working/kimi_audit/lane_reports/cost_trio_reexam_report.md
+  token: cost-trio-exam-cost-trio-reexam-report-20260922
+  created_by: st-t0-revival-20260922
+  capability: cost_trio_exam
+  merge_evaluation: R4卡A选项重建件（裁定#399二）：判据住scripts/产物住docs/_working（目录契约DCR-005），替代.runtime/tmp灭失判据，同真源唯一判据件不并
+- file: docs/_working/kimi_audit/lane_reports/cost_trio_result.yaml
+  token: cost-trio-exam-cost-trio-result-20260922
+  created_by: st-t0-revival-20260922
+  capability: cost_trio_exam
+- file: docs/_working/t0_revival/t0_conditional_prereg_card.md
+  token: t0-conditional-t0-conditional-prereg-card-20260922
+  created_by: st-t0-revival-20260922
+  capability: t0_conditional
+  merge_evaluation: 条件化做T复活轴预注册考试件（裁定#399二）：复活唯一口=新预注册假设卡+E4考试，与#331被砍旧形态不同真源不并
+- file: docs/_working/t0_revival/t0_conditional_e4_verdict.md
+  token: t0-conditional-t0-conditional-e4-verdict-20260922
+  created_by: st-t0-revival-20260922
+  capability: t0_conditional
+  merge_evaluation: 条件化做T复活轴预注册考试件（裁定#399二）：复活唯一口=新预注册假设卡+E4考试，与#331被砍旧形态不同真源不并
+- file: docs/_working/t0_revival/t0_conditional_e4_result.yaml
+  token: t0-conditional-t0-conditional-e4-result-20260922
+  created_by: st-t0-revival-20260922
+  capability: t0_conditional
+- file: scripts/audit/t0_conditional_e4_exam.py
+  token: t0-conditional-t0-conditional-e4-exam-20260922
+  created_by: st-t0-revival-20260922
+  capability: t0_conditional
+- file: docs/_working/t0_revival/t0_revival_session_report.md
+  token: t0-conditional-t0-revival-session-report-20260922
+  created_by: st-t0-revival-20260922
+  capability: t0_conditional
+  merge_evaluation: 条件化做T复活轴预注册考试件（裁定#399二）：复活唯一口=新预注册假设卡+E4考试，与#331被砍旧形态不同真源不并
+- file: docs/_working/vocab_legislation/01_official_state_vocabulary.md
+  token: state-vocab-leg-01-official-state-vocabulary-20260922
+  created_by: st-t0-revival-20260922
+  capability: state_vocab_leg
+  merge_evaluation: 词表SSOT第一步立法件（裁定#398五①）：官方词表本体+28套映射登记表，与market_state.py常量模块互补不并
+- file: docs/_working/vocab_legislation/02_state_vocabulary_mapping_register.md
+  token: state-vocab-leg-02-state-vocabulary-mapping-register-20260922
+  created_by: st-t0-revival-20260922
+  capability: state_vocab_leg
+  merge_evaluation: 丁线词表SSOT自裁书（第一性原理+四源对照），无同真源可派生项
+- file: src/zephyr/data/sector_state_pipeline.py
+  token: secbuild-sector-state-pipeline-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_state_pipeline
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_state_pipeline 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: src/zephyr/signal_ashare/sector/sector_state_aggregator.py
+  token: secbuild-sector-state-aggregator-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_state_aggregator
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_state_aggregator 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: scripts/backtest/sector_prereg_exam_runner.py
+  token: secbuild-sector-prereg-exam-runner-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_prereg_exam
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_prereg_exam 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: schemas/categories/sector_state.py
+  token: secbuild-sector-state-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_state
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_state 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: schemas/categories/sector_preference.py
+  token: secbuild-sector-preference-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_preference
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_preference 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: docs/03_modules/_domain_data/algo_flow/sector_line/sector_state_pipeline.yaml
+  token: secbuild-sector-state-pipeline-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_state_pipeline
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_state_pipeline 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: docs/03_modules/_domain_signal/algo_flow/sector_state_aggregator.yaml
+  token: secbuild-sector-state-aggregator-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_state_aggregator
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_state_aggregator 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: docs/_working/sector_line/MORNING_REPORT_st-secbuild_20260923.md
+  token: secbuild-MORNING-REPORT-st-secbuild-20260923-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_line
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_line 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: docs/_working/sector_line/batch2_consumer_wiring_patch.md
+  token: secbuild-batch2-consumer-wiring-patch-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_line
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_line 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: docs/_working/sector_line/sector_prereg_exam_cards_v1_frozen.md
+  token: secbuild-sector-prereg-exam-cards-v1-frozen-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_prereg_exam
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_prereg_exam 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: docs/_working/sector_line/exam/prereg_exam_report_v1.md
+  token: secbuild-prereg-exam-report-v1-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_prereg_exam
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_prereg_exam 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: docs/_working/sector_line/exam/prereg_exam_results_v1.yaml
+  token: secbuild-prereg-exam-results-v1-20260923
+  created_by: st-secbuild-20260923
+  capability: sector_prereg_exam
+  merge_evaluation: secbuild 板块线批0-批3 交付件，随代投首次入册；同真源唯一件不并（sector_prereg_exam 域内无第二件）
+  note: 代登 by st-sweep-tail-20260923（该车道晨报自报 token/翻译已被 5b6ee808a6 吸收，经 git log --all -S 全历史零命中证伪=从未入册；Max 2026-09-23 令 CAS 补登后代投）
+- file: docs/_working/sweep_tail/sweep_tail_ledger_st-sweep-tail-20260923.md
+  token: sweep-tail-sweep_tail_ledger-20260923
+  created_by: st-sweep-tail-20260923
+  capability: sweep_tail_ledger
+  merge_evaluation: 清扫班唯一交付件（台账/取证探针存档），与既有战役台账不同对象不并
+  note: 本班（st-sweep-tail-20260923）交付件，登记为 token 先行批（队列落地读 HEAD 册，同批无效）
+- file: docs/_working/sweep_tail/sweep_tail_probes_st-sweep-tail-20260923.md
+  token: sweep-tail-sweep_tail_probes-20260923
+  created_by: st-sweep-tail-20260923
+  capability: sweep_tail_probes
+  merge_evaluation: 清扫班唯一交付件（台账/取证探针存档），与既有战役台账不同对象不并
+  note: 本班（st-sweep-tail-20260923）交付件，登记为 token 先行批（队列落地读 HEAD 册，同批无效）
 di_seam_exemptions: []
