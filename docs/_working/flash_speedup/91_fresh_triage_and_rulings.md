@@ -143,3 +143,5 @@ src 消费方 staged 改），叠加一个 **deep_review_full 评审战役的 18
    §2.10/2.11 N-1/N-2 外来连坐（本轮 §1 强证 N-2 值得做）> §2.1 gate_id > 余下。
 4. 每批守：改前 claim、毕后 release；热文件 safe_write_text；门禁语义判据除非 Owner 明确放行不动；
    压测 worker ≤20。
+
+> **勘误（2026-09-23，Max 追加，历史行不改）**：上文括注的实际落地批次号 q-20260921-st-taskcards-exec-20260921-0017 有误——X-5 表驱动收编真实落地 commit=211219040b（st-residual-20260922 A1 车道，含 102 测试全绿）。以本行为准。
