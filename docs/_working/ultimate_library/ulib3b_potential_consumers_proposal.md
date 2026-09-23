@@ -44,3 +44,22 @@ lib_assets 增一列 **`potential_consumers text[] DEFAULT '{}'`**（供数用�
 - [ ] Owner 指定回填班次（建议：增补令 #12 别名展开同批或紧随，共用 lookup 面）
 
 **呈批不施工**：DDL 迁移待 Owner 批文后另批执行（机械判定门铁律：schema 变更不可自裁）。
+
+## 六、终验班复核记录（st-ulib3c-20260923，2026-09-23）
+
+- 询证：本班就四件事列单请裁（词库假红治修 / ulib3b 残件接手 / 增枝授权 / coverage 处置），
+  Owner 对增枝选 **"未批，登记待令"**。本班因此零 DDL、零 08 词典改动、零登记闸改动、零回填、
+  零 `--feeds` 代码——§四 五步一步未动。
+- 效力自认（宪法 §9.11）：对话内口头答复**不构成批文**，§五 两格保持为空；启动 §四 全量的前置
+  =Owner 勾 §五 复选框或经裁定登记/正式通道下达批文。
+- 若批准，时序约束（本班实测所得）：须待①词库 turnover 别名冲突治修（已落 a436eca546）、
+  ②ulib3b 残件九件袋 q-20260923-st-ulib3c-20260923-0005（含 load_vocabulary_alias_map 本体+
+  六采集器接线，HEAD 现悬空 import）、③族级/抽屉出号袋 -0007 落地且 coverage 两轮归零后，
+  再执行 §四——否则首批 36 项回填所依的 owner_domain/tags 口径与 ghost 账面都在漂，回填即写脏。
+- 本班已把"能不能回填"的账面前置做掉：coverage 两轮 blind=0/ghost=0（族级 1762 行 archived、
+  真缺 31+258 条死亡证明、123 件入册），词库闸假红 38→0（真词表缺口浮出 1197 occurrences
+  待清，详见 11_handoff_next_session.md §本班终报⑤）。
+- 附带发现（不属本件，另登记待裁）：registry_of_logs 98 条中 LOG-TRD-008（执行审计台账）与
+  LOG-TRD-009（持仓审计台账）共用占位 path，两器生产侧零 persist_path 实参调用点（构造默认
+  None=仅内存）→ 采集塌缩同一 asset_id。本班已按 Owner 裁示走"采集器按 log_id 出号"
+  （32 条改 `registry_of_logs.yaml#<log_id>` 定位，98/98 唯一号达成，零改注册表）。
