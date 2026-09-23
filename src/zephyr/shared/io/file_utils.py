@@ -49,6 +49,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import math
 import os
 import shutil
 import tempfile
@@ -81,6 +82,7 @@ __all__: Final = [
     "AtomicWriteError",
     "AtomicWriteFn",
     "DEFAULT_HOT_FILES",
+    "RegistryMassEditRefused",
     "SafeWriteResult",
     "StaleWriteRefused",
     "UnsafeDeleteRefused",
@@ -210,7 +212,7 @@ def atomic_write(
     encoding: str = "utf-8",
     auto_backup: bool = False,
     max_backups: int = 5,
-    newline: str | None = None,
+    newline: str | None = "\n",
 ) -> Path:
     """原子写入文件——先写临时文件，再 rename 到目标路径。
 
@@ -225,9 +227,10 @@ def atomic_write(
         encoding: 文件编码。
         auto_backup: 是否在写入前自动备份原文件。
         max_backups: 最多保留的备份版本数。
-        newline: 行尾策略（透传 TextIOWrapper）。None=平台默认（Windows 会把
-            ``\\n`` 翻成 ``\\r\\n``）；注册表 YAML 等 .gitattributes 钉 LF 的
-            热文件必须显式传 ``newline="\\n"`` 保字节级行尾约定。
+        newline: 行尾策略（透传 TextIOWrapper）。默认 ``"\\n"``——.gitattributes
+            全仓钉 LF，写盘侧必须同口径（CRLF 存量归一 D 块治本，st-deepclean-
+            20260923；此前 None=平台默认在 Windows 落 CRLF 是 8,534 件盘面污染
+            根因）。显式传 ``None`` 可恢复平台默认（不推荐，仅限仓外产物）。
 
     Returns:
         写入后的目标文件 Path。
@@ -413,15 +416,47 @@ DEFAULT_HOT_FILES: Final = frozenset(
         "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml",
         "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml",
         "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
-        "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md",
-        "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md",
+        "docs/_working/archive/2026-09/design_memos/construction_progress_tracker.md",
+        "docs/_working/archive/2026-09/design_memos/00_index_trading_decision.md",
         # AI-DRIFT-001（2026-08-26）：94号当日连遭 4 起并发覆写事故（frontmatter 回滚/
         # 候选表行丢失/秒级反复覆写），扩列纳入 CAS 写前读新+commit base 新鲜度门禁覆盖。
-        "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/94_crypto_quant_expansion.md",
+        "docs/_working/archive/2026-09/design_memos/94_crypto_quant_expansion.md",
     }
 )
 
 _SAFE_WRITE_AUDIT_REL = ".runtime/audit/safe_write.jsonl"
+
+# W4 注册表族质量守卫（2026-09-22 注册表事故，emomine 4772 条误删治本）：
+# 与 registry_mass_deletion_gate._REGISTRY_DIR_MARKER 同源语义（shared 层不反向依赖
+# gov_enforcement，本地常量+注释指源）。命中目录的写入做行级 diff，删除行数超过
+# max(1, ceil(旧文件总行数×0.5%)) 且未显式 allow_mass_edit=True → 拒写。
+# 批C B-F1 阈值数学修正（st-ibt-remedy-cf-20260923，Owner 通宵令）：原实现小册子
+# 病——70 行册阈值 0.35 行，任何 1 行变更即触发拒写（0.5%×N<1 时比例阈值无意义）；
+# 加 max(1, ceil(·)) 下限后 1 行编辑永不误炸，比例语义对大册不变。
+_REGISTRY_CATALOGS_MARKER: Final = "/_registry/catalogs/"
+_REGISTRY_MASS_EDIT_MAX_RATIO: Final = 0.005
+
+
+def _is_registry_catalog_path(path: Path, root: Path) -> bool:
+    """目标是否注册表族文件（POSIX 相对路径含 /_registry/catalogs/ 标记）。"""
+    try:
+        rel = path.resolve().relative_to(root.resolve()).as_posix()
+    except (ValueError, OSError):
+        return False  # 仓外路径不守卫
+    return _REGISTRY_CATALOGS_MARKER in rel
+
+
+def _registry_deleted_line_ratio(old_text: str, new_text: str) -> int:
+    """写前行级 diff 的删除行数（SequenceMatcher opcodes，与 gate _line_delta 同款口径）。"""
+    import difflib
+
+    old_lines = old_text.splitlines()
+    new_lines = new_text.splitlines()
+    deleted = 0
+    for tag, i1, i2, _j1, _j2 in difflib.SequenceMatcher(a=old_lines, b=new_lines, autojunk=False).get_opcodes():
+        if tag in ("delete", "replace"):
+            deleted += i2 - i1
+    return deleted
 
 
 class DetailsCarryingError(RuntimeError):
@@ -438,6 +473,15 @@ class StaleWriteRefused(DetailsCarryingError):
     """热文件未声明 base-hash，或 base-hash 与磁盘内容不符（陈旧缓冲区）。
 
     路径/哈希等细节入 details 字段（MSG-EXPOSURE 合规：消息文本不含敏感信息）。
+    """
+
+
+class RegistryMassEditRefused(DetailsCarryingError):
+    """注册表族文件删除行数超阈值且未显式 allow_mass_edit（W4 防呆，2026-09-22）。
+
+    emomine 会话 4772 条误删治本：safe_write_text 对 ``/_registry/catalogs/`` 下文件
+    做写前行级 diff，删除行数 >0.5% 且调用方未传 ``allow_mass_edit=True`` → 拒写
+    （外科脚本/裁定授权的批量编辑才允许传该参数）。
     """
 
 
@@ -487,7 +531,8 @@ def safe_write_text(
     expected_base_sha256: str | None = None,
     repo_root: str | Path | None = None,
     encoding: str = "utf-8",
-    newline: str | None = None,
+    newline: str | None = "\n",
+    allow_mass_edit: bool = False,
 ) -> SafeWriteResult:
     """CAS 语义写文本文件：base 校验→原子写→回读校验→审计。
 
@@ -498,11 +543,16 @@ def safe_write_text(
             热文件必填；非热文件可选（给了就校验）。
         repo_root: 仓根（热文件判定/审计锚定）；None 时经 paths.REPO_ROOT 解析。
         encoding: 读写编码。
-        newline: 行尾策略（透传 atomic_write）；.gitattributes 钉 LF 的注册表
-            热文件传 ``"\\n"`` 保字节级行尾约定。
+        newline: 行尾策略（透传 atomic_write）。默认 ``"\\n"``（.gitattributes
+            全仓钉 LF，写盘侧同口径；此前缺省平台默认在 Windows 落 CRLF 是
+            盘面污染根因，D 块治本）。显式传 ``None`` 恢复平台默认（不推荐）。
+        allow_mass_edit: 注册表族质量守卫逃生旗（W4，2026-09-22）。目标在
+            ``/_registry/catalogs/`` 下且删除行数 >0.5% 时，缺省拒写；只有
+            外科脚本/裁定授权的批量编辑显式传 True 才放行（审计留痕）。
 
     Raises:
         StaleWriteRefused: 热文件未带 base，或 base 与磁盘不符（拒写，不落盘）。
+        RegistryMassEditRefused: 注册表族删除行数超阈值且未显式 allow_mass_edit。
         WriteVerificationError: 回读校验失败（落盘内容≠预期）。
     """
     from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415
@@ -512,8 +562,10 @@ def safe_write_text(
     hot = _is_hot_file(target, root)
 
     before_hash = ""
+    old_text: str | None = None
     if target.exists():
-        before_hash = content_sha256(target.read_text(encoding=encoding))
+        old_text = target.read_text(encoding=encoding)
+        before_hash = content_sha256(old_text)
 
     base_record = {
         "ts": datetime.now(timezone.utc).isoformat(),
@@ -540,6 +592,42 @@ def safe_write_text(
             details={"path": str(target), "expected": expected_base_sha256[:12], "disk": before_hash[:12]},
         )
 
+    # ②.5 注册表族质量守卫（W4，2026-09-22 注册表事故治本）：删除行数 >0.5% 且未
+    # 显式 allow_mass_edit → 拒写。守卫读盘失败静默跳过（fail-open：新防线不引入
+    # 新故障点，写入主链路行为零变更）。
+    if not allow_mass_edit and old_text is not None and _is_registry_catalog_path(target, root):
+        try:
+            deleted_lines = _registry_deleted_line_ratio(old_text, content)
+        except Exception:  # noqa: BLE001 — diff 失败跳过守卫
+            deleted_lines = 0
+        total_old = len(old_text.splitlines())
+        # B-F1 阈值数学修正：max(1, ceil(0.5%×N)) 下限——小册子 1 行编辑永不误炸，
+        # 大册比例语义不变（禁用 allow_mass_edit 绕闸的口径不变，下限只救个位行编辑）。
+        mass_edit_threshold = max(1, math.ceil(total_old * _REGISTRY_MASS_EDIT_MAX_RATIO))
+        if deleted_lines > mass_edit_threshold:
+            _safe_write_audit(
+                root,
+                {
+                    **base_record,
+                    "event": "refused",
+                    "reason": "registry_mass_edit_guard",
+                    "deleted_lines": deleted_lines,
+                    "total_old_lines": total_old,
+                    "threshold": mass_edit_threshold,
+                },
+            )
+            raise RegistryMassEditRefused(
+                f"注册表族文件删除行数 {deleted_lines} 超阈值 max(1, ceil(0.5%×{total_old}))="
+                f"{mass_edit_threshold} 且未显式 allow_mass_edit，拒写——"
+                "批量编辑请走外科脚本/裁定通道并显式传 allow_mass_edit=True",
+                details={
+                    "path": str(target),
+                    "deleted_lines": deleted_lines,
+                    "total_old_lines": total_old,
+                    "threshold": mass_edit_threshold,
+                },
+            )
+
     # ③ 原子写（复用本模块 atomic_write 真源）
     atomic_write(target, content, encoding=encoding, newline=newline)
 
@@ -553,7 +641,10 @@ def safe_write_text(
             details={"path": str(target), "expect": expected_after[:12], "disk": after_hash[:12]},
         )
 
-    _safe_write_audit(root, {**base_record, "event": "written", "after_sha256": after_hash})
+    written_record = {**base_record, "event": "written", "after_sha256": after_hash}
+    if allow_mass_edit and _is_registry_catalog_path(target, root):
+        written_record["registry_mass_edit_allowed"] = True  # 旗放行的批量编辑审计留痕
+    _safe_write_audit(root, written_record)
     return SafeWriteResult(path=str(target), written=True, before_sha256=before_hash, after_sha256=after_hash)
 
 

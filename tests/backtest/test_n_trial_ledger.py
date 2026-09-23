@@ -24,13 +24,12 @@ from pathlib import Path
 import pytest
 import yaml
 
-from zephyr.backtest.core.n_trial_ledger import ( 
-    compute_effective_rank,
-
+from zephyr.backtest.core.n_trial_ledger import (
     LEDGER_REGISTRY_PATH,
     REGISTRY_SKELETON,
     TrialLedger,
     TrialLedgerError,
+    compute_effective_rank,
 )
 
 
@@ -250,17 +249,18 @@ def test_skeleton_bootstrap_keeps_lf_on_lf_pinned_registry(lf_pinned_repo):
     assert yaml.safe_load(reg.read_text(encoding="utf-8"))["screen_runs"]["total_trials"] == 0
 
 
-def test_default_newline_channel_not_flipped():
-    """③ 阴性对照护栏：本车道只修调用点，未翻 safe_write_text 默认。
+def test_default_newline_channel_is_lf():
+    """③ 正向护栏（2026-09-23 D 块翻转）：safe_write_text/atomic_write 默认=LF。
 
-    钉 LF 的册由调用点禁翻译；未钉定的目标经默认通道仍按平台默认走
-    ——默认值一改影响全部调用方（门位级行为变更），此断言锁死"不顺手改默认"。
+    09-19 车道曾立阴性护栏锁 None（当时未授权翻默认）；Owner 已批 cleaninv
+    §7-5 写盘工具 newline 口径统一（st-deepclean-20260923 D 块），默认翻为
+    LF 与 .gitattributes 全仓钉 LF 同口径。本断言锁死新政策防回退。
     """
     from zephyr.shared.io.file_utils import safe_write_text
 
     sig = inspect.signature(safe_write_text)
-    assert sig.parameters["newline"].default is None, (
-        "safe_write_text 的 newline 默认值被改动——默认变更属门位级，本车道未授权"
+    assert sig.parameters["newline"].default == "\n", (
+        "safe_write_text 的 newline 默认值必须为 LF（反斜杠 n）——回退即重开 CRLF 盘面污染"
     )
 
 
@@ -319,9 +319,11 @@ class TestEffectiveRank:
         d = led.load_registry()
         assert d["n_trials_effective"]["previous"]["value"] == 7
 
+
 def test_count_of_missing_n_trials_fails_closed():
     """rpt_v04 回归：batch_records 缺 n_trials 必须 raise（旧码 or 0 静默缩水分母=DSR 欠折减）"""
     from zephyr.backtest.core.n_trial_ledger import TrialLedger
+
     data = {"screen_runs": {"total_trials": 10}, "batch_records": [{"batch_id": "b1", "n_trials": None}]}
     with pytest.raises(ValueError, match="n_trials"):
         TrialLedger._count_of(data)
