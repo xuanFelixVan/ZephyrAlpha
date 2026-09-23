@@ -16,12 +16,6 @@ D_BACKTEST — Regime 回测验证包（11_regime_backtest_validation_plan 验�
 # A1 --> O1
 """
 
-# 单行 from-import 系刻意写法：ORPHAN-MODULE 用行级 grep 认 `from X import Y`，
-# 括号多行 import 匹配不到 → 新模块被判孤儿（实证死信 q-20260923-st-e2e-20260924-0001）。
-from zephyr.backtest.regime_validation import (
-    condition_package,  # noqa: F401  GPU 条件轴输入包（MOD-BT-COND-PACKAGE）
-    exam_cost_gate,  # noqa: F401  批C 考尺成本门
-)
 from zephyr.backtest.regime_validation.c1_comparator import (
     C1ComparisonResult,
     C1Config,
@@ -134,6 +128,4 @@ __all__ = [
     "E4CostReport",
     "E4CostSensitivityError",
     "analyze_cost_sensitivity",
-    # GPU 条件轴输入包（MOD-BT-COND-PACKAGE，2026-09-24 st-gpu-final）
-    "condition_package",
 ]

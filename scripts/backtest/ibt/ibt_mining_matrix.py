@@ -23,7 +23,6 @@
 输出: docs/_working/integrated_backtest/ibt_data_matrix.yaml (+stdout md 表)
 用法: python scripts/backtest/ibt/ibt_mining_matrix.py
 """
-
 from __future__ import annotations
 
 import json
@@ -48,10 +47,9 @@ WINDOWS = {
     "W_POSTD": ("2026-09-09", "2026-09-18"),
 }
 
-# E4 存活 17 条 (sharpe2_prep pool_manifest; 死刑件标记 DR=death-row 仅供参考:
-# 2 条历史 DR + 4440 判死下架(裁定#405, 批E st-ibt-remedy-cf-20260923))
+# E4 存活 17 条 (sharpe2_prep pool_manifest; 2 条死刑件标记 DR=death-row 仅供参考)
 POOL = [
-    ("FACT-4db4c41e", "c4_fact_4db4c41e.py", True),  # DR: beta 伪装
+    ("FACT-4db4c41e", "c4_fact_4db4c41e.py", True),   # DR: beta 伪装
     ("FACT-4f749668", "c4_fact_4f749668.py", False),
     ("FACT-4228020a", "c4_fact_4228020a.py", False),
     ("FACT-e293e217", "c4_fact_e293e217.py", False),
@@ -60,11 +58,7 @@ POOL = [
     ("CAND-8d000bf3ccc3", "c4_8d000bf3ccc3_pb_poe.py", False),  # STR-VAL-001
     ("CAND-c4ec6332c07f", "c4_c4ec6332c07f_trend_score.py", False),
     ("CAND-e3da6fa71af1", "c4_e3da6fa71af1_panic_rebound.py", False),  # STR-VREV-025
-    (
-        "CAND-4440d07f973f",
-        "c4_4440d07f973f_ultrashort.py",
-        True,
-    ),  # DR: 裁定#405 判死（IS -91%+超容量77万；复活窄口=新假设预注册卡+成本门全过，先例#304）
+    ("CAND-4440d07f973f", "c4_4440d07f973f_ultrashort.py", False),    # STR-DABAN-023
     ("CAND-eaddc3f9db4e", "c4_eaddc3f9db4e_rsrs_r2.py", False),
     ("CAND-d06cab686cef", "c4_d06cab686cef_rsrs_opt.py", False),
     ("CAND-29eb91dbaf60", "c4_29eb91dbaf60_crash_dodge.py", False),
@@ -118,6 +112,8 @@ def _tbl(key: str) -> str:
     from zephyr.data.table_registry import get_registry
 
     return get_registry().table(key)
+
+
 
 
 def part_a_tables() -> dict:

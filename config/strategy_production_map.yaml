@@ -354,7 +354,7 @@ nodes:
       三维筛选 MOD-PA-014/BMA 加权 MOD-PA-015，有 pf_core/signal 域消费端）；
       sleeve 装配落库+再平衡调度+TDM 组合流对接未闭环=partial 非 built
     compute_class: local
-    data_refs: [c1_market.account_nav_daily]
+    data_refs: [c1_backtest.account_nav_daily]
     module_ref: MOD-PA-002..024
     build_status: partial
     design_refs:
@@ -377,7 +377,7 @@ nodes:
       MOD-RK-16，813 行有 risk 域消费端）；IS 分解决策时间戳 FIELD-GAP 未落+
       影子组合工作流未建=partial 非 built
     compute_class: local
-    data_refs: [c1_market.execution_report, c1_market.account_nav_daily]
+    data_refs: [c1_market.execution_report, c1_backtest.account_nav_daily]
     module_ref: MOD-PF-007
     build_status: partial
     design_refs:
@@ -403,7 +403,6 @@ edges:
   - [FAC-E1, FAC-E1C]
   - [FAC-E1, FAC-E1D]
   - [FAC-E1, FAC-E1E]
-  - [FAC-E1, FAC-E1G]
 
 feedback_loops:
   - {from: FAC-E9, to: FAC-E2, note: 实盘归因回灌假说先验（RD-Agent 式闭环）}

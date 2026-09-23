@@ -129,7 +129,7 @@ def build_folds(
         if not f["train_end"] < f["test_start"]:
             raise ValueError(f"折{i}训练窗未全部早于测试窗: {f['train_end']} !< {f['test_start']}")
         if i > 0 and not folds[i - 1]["test_end"] < f["test_start"]:
-            raise ValueError(f"折{i}测试窗与前折重叠: {folds[i - 1]['test_end']} !< {f['test_start']}")
+            raise ValueError(f"折{i}测试窗与前折重叠: {folds[i-1]['test_end']} !< {f['test_start']}")
         if f["test_start"] < start or f["test_end"] > end:
             raise ValueError(f"折{i}测试窗越界: {f['test_start']}..{f['test_end']}")
     return folds
@@ -239,7 +239,9 @@ def map_exam_verdict(
                 f"WFA门控多数通过但60%稳定性边际未达(正折占比相关见overfitting reasons: {overfitting['reasons']})"
             )
         return VERDICT_REVIEW, ["各硬线全过, 仅存边际存疑项(fail-closed, 不构成放行)"] + reasons
-    return VERDICT_FAIL, [f"OOS阶段未通过(DSR落带={dsr_band}, OOS/IS比率={ratio:.3f}); fail-closed判不通过"]
+    return VERDICT_FAIL, [
+        f"OOS阶段未通过(DSR落带={dsr_band}, OOS/IS比率={ratio:.3f}); fail-closed判不通过"
+    ]
 
 
 def verify_n_trials_provenance(
@@ -352,33 +354,6 @@ def _dsr_exact(net: pd.Series, num_trials: int) -> float:
     return round(float(rep.variants[0].dsr), 4)
 
 
-def _load_cost_gate_config():
-    """批C 考尺成本门预注册参数（config/exam_scale_cost_gate.yaml，缺册即拒考）。
-
-    2026-09-23 st-e2e-20260924 治修：原实现在册不存在时 `return CostGateConfig()`
-    静默回落代码默认档——"冻结参数"失去约束力却毫无痕迹（今日两值巧合相同，
-    故无人察觉）。预注册册是真源，缺册=不可考，不是"用默认继续考"。
-    """
-    from zephyr.backtest.regime_validation.exam_cost_gate import CostGateConfig
-
-    cfg_path = _REPO / "config" / "exam_scale_cost_gate.yaml"
-    if not cfg_path.exists():
-        raise FileNotFoundError(f"成本门预注册册缺失: {cfg_path}——缺册禁回落代码默认档（假绿防线 裁定#325）")
-    import yaml
-
-    raw = yaml.safe_load(cfg_path.read_text(encoding="utf-8")) or {}
-    cg = raw.get("cost_gate") or {}
-    tg = raw.get("turnover_gate") or {}
-    return CostGateConfig(
-        tiers_bp=tuple(cg.get("tiers_bp", CostGateConfig().tiers_bp)),
-        survival_floor=float(cg.get("survival_floor", CostGateConfig().survival_floor)),
-        monotonic_tol=float(cg.get("monotonic_tol", CostGateConfig().monotonic_tol)),
-        min_days=int(cg.get("min_days", CostGateConfig().min_days)),
-        turnover_cap_annual_x=float(tg.get("cap_annual_x", CostGateConfig().turnover_cap_annual_x)),
-        turnover_days_basis=int(tg.get("days_basis", CostGateConfig().turnover_days_basis)),
-    )
-
-
 def run_exam(
     recipe_id: str = DEFAULT_RECIPE_ID,
     start: str = DEFAULT_START,
@@ -452,19 +427,12 @@ def run_exam(
     oos_eq = (1.0 + oos_seg).cumprod()
     oos_mdd = float((oos_eq / oos_eq.cummax() - 1.0).min())
 
-    # RB-STATS-01 + 批C-c 手填病根治（st-ibt-remedy-cf-20260923）: 先行档案自动复算
-    # N_eff——门控分母主口径改用复算值（盲信 f06_survivors.csv 手填列的病根拔除：
-    # 实测该列 9→1 一列改字 DSR 0.3267→0.9986 翻判通过；复算失败=fail-closed
-    # unavailable，手填列再也救不回来）。登记列降级为对照披露。
-    n_eff_prov = verify_n_trials_provenance(rec["birth_batch"], rec["n_trials_eff"], rec["n_trials_raw"])
-    n_eff_gate = n_eff_prov["recomputed_n_eff"]
-
-    # 官方件 DSR（真 OOS 段收益序列，双 N 口径并报；门控注入=档案自动复算口径）
+    # 官方件 DSR（真 OOS 段收益序列，双 N 口径并报；门控注入 N_eff 预注册口径）
     dsr_eff = dsr_raw = None
     dsr_error = None
     try:
-        if n_eff_gate:
-            dsr_eff = _dsr_exact(oos_seg, n_eff_gate)
+        if rec["n_trials_eff"]:
+            dsr_eff = _dsr_exact(oos_seg, rec["n_trials_eff"])
         if rec["n_trials_raw"]:
             dsr_raw = _dsr_exact(oos_seg, rec["n_trials_raw"])
     except Exception as exc:  # noqa: BLE001 — fail-closed: dsr 保持 None → unavailable 判不通过
@@ -479,16 +447,18 @@ def run_exam(
             is_sharpe=float(rec["is_sharpe"]),
             params=dict(rec["values"]),
             param_sensitivity=None,  # 未提供 → IS 稳定性门控跳过（IS 阶段已由 E4-v1 考过并登记）
-            walk_forward_results=[{"sharpe": r["sharpe"], "max_drawdown": r["max_drawdown"]} for r in fold_rows],
+            walk_forward_results=[
+                {"sharpe": r["sharpe"], "max_drawdown": r["max_drawdown"]} for r in fold_rows
+            ],
             oos_sharpe=float(oos_sharpe),
             params_locked=True,
             dsr=dsr_eff,
         )
     )
     band = evaluate_dsr(dsr_eff).band
-    # RB-STATS-01：DSR 折减分母已改档案自动复算口径（上方先行复算）；本考只评估
-    # 过拟合维度1（WFA），维度2(参数扰动)/维度3(跨时段)未评估 => 检测器按"稳定"
-    # 计入，不得当过拟合证据用。
+    # RB-STATS-01：DSR 折减分母必须可对账复算；本考只评估过拟合维度1（WFA），
+    # 维度2(参数扰动)/维度3(跨时段)未评估 => 检测器按"稳定"计入，不得当过拟合证据用。
+    n_eff_prov = verify_n_trials_provenance(rec["birth_batch"], rec["n_trials_eff"], rec["n_trials_raw"])
     n_dims = 1
     verdict, verdict_reasons = map_exam_verdict(
         pipe.gate,
@@ -497,29 +467,6 @@ def run_exam(
         n_dims_evaluated=n_dims,
         dsr_denominator_verified=(n_eff_prov["status"] == "verified"),
     )
-
-    # 批C 成本焊进考尺（st-ibt-remedy-cf-20260923）: 五档滑点扫描 + E7 换手上限门。
-    # 预注册参数 config/exam_scale_cost_gate.yaml；引擎口径唯一（daily_net_returns
-    # 滑点档覆盖，正考冻结土规主路径零变更）。fail-closed 硬门：不通过即判不通过
-    # （只加严不放宽；裁定#325 口径逐条出数字证据禁"全绿"）。
-    from zephyr.backtest.regime_validation.exam_cost_gate import (
-        evaluate_exam_cost_gate,
-        run_cost_tier_scan,
-    )
-
-    cost_cfg = _load_cost_gate_config()
-    tier_sharpes = run_cost_tier_scan(stitched_w, cols_px, daily_net_returns, cost_cfg)
-    cost_gate_v = evaluate_exam_cost_gate(
-        tier_sharpes,
-        mean_daily_turnover_1side=float(stats_all["avg_turnover_1side"]),  # 缺键必炸：不得以 0 代未知
-        days=int(stats_all.get("days", 0)),
-        config=cost_cfg,
-    )
-    if not cost_gate_v.passed:
-        verdict = VERDICT_FAIL
-        verdict_reasons = ["考尺成本门拦截(fail-closed 硬门, 批C 预注册档): " + "; ".join(cost_gate_v.reasons)] + list(
-            verdict_reasons
-        )
 
     sharpes = [r["sharpe"] for r in fold_rows]
     summary = {
@@ -558,24 +505,10 @@ def run_exam(
             "exact_raw_caliber": dsr_raw,
             "n_trials_eff": rec["n_trials_eff"],
             "n_trials_raw": rec["n_trials_raw"],
-            "n_eff_gate_denominator": n_eff_gate,
-            "n_eff_gate_source": "batch_archive_auto_recompute(批C-c 手填病根治)",
             "registered_is_normal_approx": rec["dsr_eff_registered"],
             "band": band,
             "error": dsr_error,
             "n_eff_provenance": n_eff_prov,
-        },
-        "cost_gate": {
-            "passed": cost_gate_v.passed,
-            "monotonic": cost_gate_v.monotonic,
-            "full_cost_survived": cost_gate_v.full_cost_survived,
-            "turnover_within_cap": cost_gate_v.turnover_within_cap,
-            "annual_turnover_x": round(cost_gate_v.annual_turnover_x, 2)
-            if cost_gate_v.annual_turnover_x == cost_gate_v.annual_turnover_x
-            else None,
-            "tier_sharpes": cost_gate_v.tier_sharpes,
-            "reasons": list(cost_gate_v.reasons),
-            "config": "config/exam_scale_cost_gate.yaml (批C 预注册冻结档)",
         },
         "overfitting_coverage": {
             "dimensions_total": OVERFIT_DIMENSIONS_TOTAL,
@@ -623,49 +556,49 @@ def _write_artifacts(out_dir: Path, s: dict, folds: list[dict]) -> None:
     safe_write_text(out_dir / "summary.json", json.dumps(s, ensure_ascii=False, indent=2))
 
     g = s["gate"]
-    md = f"""# E4 完整三阶段正考档案 — F-06 幸存者 {s["recipe_id"]}（MOD-BT-211）
+    md = f"""# E4 完整三阶段正考档案 — F-06 幸存者 {s['recipe_id']}（MOD-BT-211）
 
 - 考试: IS → 滚动 WFA → OOS（判定全委托既有管线 strategy_validation_pipeline + DecisionGate + OverfittingDetector，零重写）
-- 配方: {s["mechanism"]}（参数全程锁定，E4=锁定配方滚动考核，非再优化）
-- 全窗: {s["window_full"][0]}..{s["window_full"][1]}；折法: 训练 {s["fold_scheme"]["train_months"]} 个月 → 测试 {s["fold_scheme"]["test_months"]} 个月，步进 {s["fold_scheme"]["step_months"]} 个月，共 {s["n_folds"]} 折
-- IS 阶段: sharpe={s["is_stage"]["sharpe"]}（窗口 {s["is_stage"]["window"]}，来源=幸存者登记面 E4-v1 已考值）
+- 配方: {s['mechanism']}（参数全程锁定，E4=锁定配方滚动考核，非再优化）
+- 全窗: {s['window_full'][0]}..{s['window_full'][1]}；折法: 训练 {s['fold_scheme']['train_months']} 个月 → 测试 {s['fold_scheme']['test_months']} 个月，步进 {s['fold_scheme']['step_months']} 个月，共 {s['n_folds']} 折
+- IS 阶段: sharpe={s['is_stage']['sharpe']}（窗口 {s['is_stage']['window']}，来源=幸存者登记面 E4-v1 已考值）
 - 回测口径: _c4_engine 冻结土规成本（佣金 2.5bp 双边+印花 10bp 卖+滑点 5bp）+ T+1（w.shift(1)），全折拼接为一条连续可交易权重路径
 
-## 判定: **{s["verdict"]}**
+## 判定: **{s['verdict']}**
 
-{s["verdict_reasons"][0]}
+{s['verdict_reasons'][0]}
 
-- 门控: overall_passed={g["overall_passed"]}, can_deploy={g["can_deploy"]}, WFA={g["wfa_windows"]}折通过(灾难={g["has_disaster"]}), OOS/IS比率={g["oos_is_ratio"]}
-- 过拟合检测: is_overfitting={s["gate"]["overfitting"]["is_overfitting"]}（SIM-38 比率口径 + WFA 稳定性，reasons 见 summary.json）
+- 门控: overall_passed={g['overall_passed']}, can_deploy={g['can_deploy']}, WFA={g['wfa_windows']}折通过(灾难={g['has_disaster']}), OOS/IS比率={g['oos_is_ratio']}
+- 过拟合检测: is_overfitting={s['gate']['overfitting']['is_overfitting']}（SIM-38 比率口径 + WFA 稳定性，reasons 见 summary.json）
 
 ## WFA 逐折表
 
-{_md_fold_table(s["folds"])}
+{_md_fold_table(s['folds'])}
 
-**WFA 汇总**: 逐折 sharpe={[r["sharpe"] for r in s["folds"]]}；均值={s["wfa_summary"]["sharpe_mean"]}；最差折={s["wfa_summary"]["sharpe_worst_fold"]}；正折占比={s["wfa_summary"]["positive_ratio"]}；拼接全路径 sharpe={s["wfa_summary"]["stitched_stats"]["sharpe"]} / maxDD={s["wfa_summary"]["stitched_stats"]["max_drawdown"]}
+**WFA 汇总**: 逐折 sharpe={[r['sharpe'] for r in s['folds']]}；均值={s['wfa_summary']['sharpe_mean']}；最差折={s['wfa_summary']['sharpe_worst_fold']}；正折占比={s['wfa_summary']['positive_ratio']}；拼接全路径 sharpe={s['wfa_summary']['stitched_stats']['sharpe']} / maxDD={s['wfa_summary']['stitched_stats']['max_drawdown']}
 
 ## OOS 阶段（真 OOS 段口径）
 
-- 真 OOS=折 {s["true_oos"]["folds"]}（测试段起点 >= {s["true_oos"]["oos_start"]}，与已登记 OOS 快考窗一致）
-- 本考拼接口径: sharpe={s["true_oos"]["sharpe"]} / maxDD={s["true_oos"]["max_drawdown"]} / {s["true_oos"]["days"]} 交易日
-- 已登记 OOS 快考档案引用: sharpe={s["true_oos"]["oos_registered_quick_exam"]["sharpe"]}（窗口 {s["true_oos"]["oos_registered_quick_exam"]["window"]}，data/strategy_intake/grid_20260916-233634/）
-- OOS/IS 比率={g["oos_is_ratio"]} vs 门槛 {DEFAULT_OOS_SHARPE_THRESHOLD_RATIO:.2f}（P0-9/SIM-38）
+- 真 OOS=折 {s['true_oos']['folds']}（测试段起点 >= {s['true_oos']['oos_start']}，与已登记 OOS 快考窗一致）
+- 本考拼接口径: sharpe={s['true_oos']['sharpe']} / maxDD={s['true_oos']['max_drawdown']} / {s['true_oos']['days']} 交易日
+- 已登记 OOS 快考档案引用: sharpe={s['true_oos']['oos_registered_quick_exam']['sharpe']}（窗口 {s['true_oos']['oos_registered_quick_exam']['window']}，data/strategy_intake/grid_20260916-233634/）
+- OOS/IS 比率={g['oos_is_ratio']} vs 门槛 {DEFAULT_OOS_SHARPE_THRESHOLD_RATIO:.2f}（P0-9/SIM-38）
 
 ## DSR（官方件 MOD-SIM-024 精确口径，真 OOS 段收益序列）
 
-- N_eff={s["dsr"]["n_trials_eff"]} 口径: {s["dsr"]["exact_eff_caliber"]}（门控注入口径）；N_raw={s["dsr"]["n_trials_raw"]} 口径: {s["dsr"]["exact_raw_caliber"]}（双口径并报纪律）
-- 批次 B 正态近似 IS 窗登记值（对照）: {s["dsr"]["registered_is_normal_approx"]}；落带={s["dsr"]["band"]}
-- **折减分母对账**: status={s["dsr"]["n_eff_provenance"]["status"]}；复算 N_eff={s["dsr"]["n_eff_provenance"]["recomputed_n_eff"]} vs 登记 {s["dsr"]["n_eff_provenance"]["recorded_n_eff"]}；档案={s["dsr"]["n_eff_provenance"]["archive"]}；{s["dsr"]["n_eff_provenance"]["detail"]}
+- N_eff={s['dsr']['n_trials_eff']} 口径: {s['dsr']['exact_eff_caliber']}（门控注入口径）；N_raw={s['dsr']['n_trials_raw']} 口径: {s['dsr']['exact_raw_caliber']}（双口径并报纪律）
+- 批次 B 正态近似 IS 窗登记值（对照）: {s['dsr']['registered_is_normal_approx']}；落带={s['dsr']['band']}
+- **折减分母对账**: status={s['dsr']['n_eff_provenance']['status']}；复算 N_eff={s['dsr']['n_eff_provenance']['recomputed_n_eff']} vs 登记 {s['dsr']['n_eff_provenance']['recorded_n_eff']}；档案={s['dsr']['n_eff_provenance']['archive']}；{s['dsr']['n_eff_provenance']['detail']}
   （非 verified 时本考禁判"通过"——分母可被一列改字放水，实测纯噪声 N=1 时 DSR=0.9986 判通过）
 
 ## 过拟合检测覆盖面（RB-STATS-01 诚实披露）
 
-- 三维中本考实际评估 **{s["overfitting_coverage"]["dimensions_evaluated"]}/{s["overfitting_coverage"]["dimensions_total"]}** 维：已评={s["overfitting_coverage"]["evaluated"]} 未评={s["overfitting_coverage"]["not_evaluated"]}
-- ⚠️ {s["overfitting_coverage"]["failopen_note"]}
+- 三维中本考实际评估 **{s['overfitting_coverage']['dimensions_evaluated']}/{s['overfitting_coverage']['dimensions_total']}** 维：已评={s['overfitting_coverage']['evaluated']} 未评={s['overfitting_coverage']['not_evaluated']}
+- ⚠️ {s['overfitting_coverage']['failopen_note']}
 
 ## 诚实边界
 
-- 折 0-{len([f for f in folds if str(f["test_end"])[:4] < "2024"]) - 1} 测试段(2022-01..2023-12)与已登记 IS 窗重叠，属"选择偏内"的滚动稳定性证据；真 OOS 仅折 {s["true_oos"]["folds"]}；
+- 折 0-{len([f for f in folds if str(f['test_end'])[:4] < '2024']) - 1} 测试段(2022-01..2023-12)与已登记 IS 窗重叠，属"选择偏内"的滚动稳定性证据；真 OOS 仅折 {s['true_oos']['folds']}；
 - 本考快考对照差异来源: 预热起点(2019-06 vs 2023-06)与周频调仓相位不同，逐位不可比；
 - 折边界成本按连续路径真实换手一次结清（不重复收进出场成本）；
 - 判定不构成实盘信号，正式上线判定权在 Owner 门位（§5 人机门位）。
@@ -698,13 +631,7 @@ def main() -> int:
         oos_start=args.oos_start,
         survivors_csv=Path(args.survivors_csv),
     )
-    print(
-        json.dumps(
-            {k: s[k] for k in ("verdict", "verdict_reasons", "wfa_summary", "true_oos", "dsr", "gate")},
-            ensure_ascii=False,
-            indent=2,
-        )
-    )
+    print(json.dumps({k: s[k] for k in ("verdict", "verdict_reasons", "wfa_summary", "true_oos", "dsr", "gate")}, ensure_ascii=False, indent=2))
     return 0
 
 

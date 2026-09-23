@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.library.collectors
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只读扫描白名单目录（src/scripts/tests/docs/config/data/schemas/architecture_model）；跳过运行时/平行副本目录；>1MB 只记 size+mtime 不算哈希
+# [INVARIANTS] 只读扫描白名单目录（src/scripts/tests/docs/config/data/schemas/architecture_model）；跳过运行时/平行副本目录（跳判按仓内相对路径成分，禁吃绝对路径）；族级目录 _FAMILY_DIRS 只出 1 条族资产不逐件入册；>1MB 只记 size+mtime 不算哈希
 # [MODIFY-GUARD] gate_id 不适用
 # [STABILITY] stable
 # [SAFETY] L
@@ -49,6 +49,14 @@ _SKIP_DIRS: Final[frozenset[str]] = frozenset(
         ".openclaw",
     }
 )
+
+# 族级目录（ulib3 方案 A 同法）：按保留期滚动删除的运行态大盘，逐件入册=每轮转一次积一笔
+# ghost 债（2026-09-23 实测两目录占 226/259 ghost、馆内 1988 行）。只出 1 条族资产指大盘，
+# 明细不入册——与日志抽屉"族级入册、明细自查大盘"同口径。
+_FAMILY_DIRS: Final[dict[str, str]] = {
+    "data/architecture_health": "架构健康大盘（轮转快照，族级登记不逐件入册）",
+    "data/runtime_violation_snapshot": "运行态违规快照大盘（轮转快照，族级登记不逐件入册）",
+}
 
 _SCAN_ROOTS: Final[tuple[str, ...]] = (
     "src",
@@ -123,8 +131,12 @@ def collect(root: str = ".", limit: int = 60000) -> list[dict[str, Any]]:
             if not path.is_file():
                 continue
             rel = path.relative_to(base).as_posix()
-            if any(part in _SKIP_DIRS for part in path.parts):
+            # 只按仓内相对路径成分判跳（旧写法吃 path.parts=绝对路径全成分，仓库父目录名
+            # 一旦撞上 tmp/vendor/models 等跳词，整棵扫描树静默归零）
+            if any(part in _SKIP_DIRS for part in rel.split("/")):
                 continue
+            if any(rel == fam or rel.startswith(f"{fam}/") for fam in _FAMILY_DIRS):
+                continue  # 族级目录逐件不入册，由下方族资产行统一代表
             suffix = path.suffix.lower()
             if suffix not in _TEXT_SUFFIXES:
                 continue
@@ -163,4 +175,25 @@ def collect(root: str = ".", limit: int = 60000) -> list[dict[str, Any]]:
                     "tags": ["fs"],
                 }
             )
+    for fam_rel, fam_title in _FAMILY_DIRS.items():
+        fam_dir = base / fam_rel
+        if not fam_dir.is_dir():
+            continue
+        n_files = sum(1 for p in fam_dir.rglob("*") if p.is_file())
+        out.append(
+            {
+                "asset_id": derive_asset_id("file", fam_rel),
+                "kind": "file",
+                "home": fam_rel,
+                "fingerprint_sha256": None,
+                "fingerprint_aux": {"family": True, "files_on_disk": n_files},
+                "title": fam_title,
+                "ai_contract": (
+                    f"族级资产：{fam_title}；当前在盘 {n_files} 件，明细不编目，进大盘自查"
+                    "（与日志抽屉方案 A 同口径）。轮转删除不再产生 ghost。"
+                ),
+                "owner_domain": None,
+                "tags": ["fs"],
+            }
+        )
     return out

@@ -26,7 +26,6 @@
   python scripts/backtest/ibt/ibt_runner.py --window W_IS --sensitivity   (成本敏感性扫描, 仅 IS/OOS)
 产物: docs/_working/integrated_backtest/artifacts/<WINDOW>/*.yaml|csv（机读=.yaml，批H③口径）
 """
-
 from __future__ import annotations
 
 import argparse
@@ -70,16 +69,11 @@ MEMBERS = {  # 15 参与成员（死刑 2 已剔除）: sid -> 文件名
     "CAND-6a6ec8869ddb": "c4_6a6ec8869ddb_momentum62.py",
 }
 INDEX_LEGS = {"000300", "000852", "000016"}  # 指数腿（协议 §4 不可实盘代理）
-REGIME_RUN_MAIN = "VAL-P0-20260916-230726"  # 规范全窗 run（矩阵 §1）
-REGIME_RUN_TAIL = "VAL-P0-20260921-050922"  # 2026-09-16..18 补尾（仅 POSTD 段）
+REGIME_RUN_MAIN = "VAL-P0-20260916-230726"   # 规范全窗 run（矩阵 §1）
+REGIME_RUN_TAIL = "VAL-P0-20260921-050922"   # 2026-09-16..18 补尾（仅 POSTD 段）
 SHRINK_MAP = {  # 预注册先验映射（协议 §2；非拟合）
-    "r1": 1.0,
-    "r2": 1.0,
-    "r3": 1.0,
-    "r11": 1.0,
-    "r12": 1.0,
-    "r4": 0.5,
-    "r10": 0.2,
+    "r1": 1.0, "r2": 1.0, "r3": 1.0, "r11": 1.0, "r12": 1.0,
+    "r4": 0.5, "r10": 0.2,
 }
 INITIAL_CAPITAL = 1_000_000.0
 
@@ -94,7 +88,9 @@ _SQL_REGIME_SCHEDULE = (
     "SELECT trade_date, dominant FROM {tbl} "
     "WHERE run_id IN ({runs}) AND trade_date < toDate('{e}') + 1 ORDER BY trade_date"
 )
-_SQL_REGIME_SNAPSHOT_DATES = "SELECT DISTINCT trade_date FROM {tbl} WHERE run_id IN ({runs}) ORDER BY trade_date"
+_SQL_REGIME_SNAPSHOT_DATES = (
+    "SELECT DISTINCT trade_date FROM {tbl} WHERE run_id IN ({runs}) ORDER BY trade_date"
+)
 _SQL_BENCHMARK_CLOSE = (
     "SELECT trade_date, close FROM {tbl} FINAL WHERE symbol = '{sym}' "
     "AND trade_date >= toDate('{s}') AND trade_date <= toDate('{e}') ORDER BY trade_date"
@@ -145,9 +141,8 @@ def ch_query(sql: str) -> str:
 # ---------------------------------------------------------------------------
 def build_panels(wname: str) -> dict[str, pd.DataFrame]:
     PANEL_CACHE.mkdir(parents=True, exist_ok=True)
-    # 池覆盖运行禁用缓存读（防 v1 冻结池缓存串味进 v2 面板；v2 池写独立缓存键）
-    cache = PANEL_CACHE / (f"{wname}_pooloverride.pkl" if _POOL_OVERRIDE_ACTIVE else f"{wname}.pkl")
-    if cache.exists() and not _POOL_OVERRIDE_ACTIVE:
+    cache = PANEL_CACHE / f"{wname}.pkl"
+    if cache.exists():
         obj = pd.read_pickle(cache)
         log(f"panels cache hit: {len(obj)} members")
         return obj
@@ -160,24 +155,15 @@ def build_panels(wname: str) -> dict[str, pd.DataFrame]:
         try:
             import importlib.util
 
-            spec = importlib.util.spec_from_file_location(
-                f"p_{sid}", ROOT / "scripts" / "backtest" / "translated" / fname
-            )
+            spec = importlib.util.spec_from_file_location(f"p_{sid}", ROOT / "scripts" / "backtest" / "translated" / fname)
             mod = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(mod)
             w, _closes = mod.build(start, e)
             w = w.fillna(0.0)
             w.index = pd.to_datetime(pd.Index(w.index))  # 索引类型归一（load_px=Timestamp / load_index=date 混存）
-            w.columns = [
-                str(c).split(".")[0] for c in w.columns
-            ]  # 符号归一为裸码（load_history 出口裸码；FACT 面板带 .SZ/.SH 后缀）
+            w.columns = [str(c).split(".")[0] for c in w.columns]  # 符号归一为裸码（load_history 出口裸码；FACT 面板带 .SZ/.SH 后缀）
             panels[sid] = w
-            meta[sid] = {
-                "start": start,
-                "rows": int(len(w)),
-                "cols": int(len(w.columns)),
-                "sec": round(time.time() - t0, 1),
-            }
+            meta[sid] = {"start": start, "rows": int(len(w)), "cols": int(len(w.columns)), "sec": round(time.time() - t0, 1)}
             log(f"  panel {sid}: {len(w)}x{len(w.columns)} ({meta[sid]['sec']}s, start={start})")
         except Exception as exc:  # noqa: BLE001
             meta[sid] = {"start": start, "err": f"{type(exc).__name__}: {exc}"}
@@ -206,16 +192,14 @@ def load_engine_data(panels: dict[str, pd.DataFrame], start: str, end: str) -> t
     data["trade_date"] = pd.to_datetime(data["trade_date"])
 
     if idx_legs:
-        sql = _SQL_KLINE_INDEX_OHLC.format(tbl=kline_index_table(), symbols=_format_symbols(idx_legs), s=start, e=end)
+        sql = _SQL_KLINE_INDEX_OHLC.format(
+            tbl=kline_index_table(), symbols=_format_symbols(idx_legs), s=start, e=end
+        )
         tsv = ch_query(sql)
         if not tsv.strip():
             raise RuntimeError(f"kline_index 查询空（legs={idx_legs}）——数据缺失 fail-closed")
         idx_df = pd.read_csv(
-            __import__("io").StringIO(tsv),
-            sep="\t",
-            header=None,
-            names=_INDEX_OHLC_COLUMNS,
-            dtype={"symbol": str},
+            __import__("io").StringIO(tsv), sep="\t", header=None, names=_INDEX_OHLC_COLUMNS, dtype={"symbol": str},
             na_values=["\\N"],
         )
         idx_df["trade_date"] = pd.to_datetime(idx_df["trade_date"])
@@ -246,7 +230,9 @@ def load_engine_data(panels: dict[str, pd.DataFrame], start: str, end: str) -> t
 # L1 regime schedule（PIT：trade_date<t 严格早于消费日 → 键+1日实现 as-of≤d 语义）
 # ---------------------------------------------------------------------------
 def regime_shrinkage_schedule(start: str, end: str) -> tuple[dict, dict]:
-    sql = _SQL_REGIME_SCHEDULE.format(tbl=regime_table(), runs=_format_runs([REGIME_RUN_MAIN, REGIME_RUN_TAIL]), e=end)
+    sql = _SQL_REGIME_SCHEDULE.format(
+        tbl=regime_table(), runs=_format_runs([REGIME_RUN_MAIN, REGIME_RUN_TAIL]), e=end
+    )
     tsv = ch_query(sql)
     by_date: dict = {}
     for line in tsv.splitlines():
@@ -263,11 +249,7 @@ def regime_shrinkage_schedule(start: str, end: str) -> tuple[dict, dict]:
         # 严格 PIT：快照日 d 的节流自 d+1 交易日才可作用
         schedule[d + pd.Timedelta(days=1)] = factor
         state_counts[state] = state_counts.get(state, 0) + 1
-    return schedule, {
-        "states": state_counts,
-        "snapshot_rows": len(by_date),
-        "pit": "snapshot date < t (key shifted +1d)",
-    }
+    return schedule, {"states": state_counts, "snapshot_rows": len(by_date), "pit": "snapshot date < t (key shifted +1d)"}
 
 
 def fetch_regime_snapshot_dates(run_ids: list[str] | None = None) -> set[pd.Timestamp]:
@@ -301,15 +283,7 @@ def compose(panels: dict[str, pd.DataFrame]):
     return report
 
 
-def run_engine(
-    data: pd.DataFrame,
-    signals: pd.DataFrame,
-    *,
-    variant: str,
-    schedule: dict | None,
-    slippage_bps=None,
-    zero_cost=False,
-):
+def run_engine(data: pd.DataFrame, signals: pd.DataFrame, *, variant: str, schedule: dict | None, slippage_bps=None, zero_cost=False):
     from decimal import Decimal
 
     from zephyr.backtest.implementations.shrinkage_engine import ShrinkageBacktestEngine
@@ -336,10 +310,8 @@ def run_engine(
 
         eng = DefaultBacktestEngine(config=config)
         eng._matching_config = MatchingConfig(
-            commission_rate=Decimal("0"),
-            stamp_tax_rate=Decimal("0"),
-            transfer_fee_rate=Decimal("0"),
-            min_commission=Decimal("0"),
+            commission_rate=Decimal("0"), stamp_tax_rate=Decimal("0"),
+            transfer_fee_rate=Decimal("0"), min_commission=Decimal("0"),
             slippage_bps=Decimal("0"),
         )
         result = eng.run(data=data, signals=signals, strategy_name=variant)
@@ -424,54 +396,12 @@ def _dump_yaml(obj, path: Path) -> None:
     )
 
 
-def _apply_pool_override(pool_file: str) -> None:
-    """IBT-v2 池清单覆盖（协议 v1.1: 只改池成员，窗口/成本口径仍走协议冻结常量）。"""
-    import yaml
-
-    global _POOL_OVERRIDE_ACTIVE
-    pf = Path(pool_file)
-    if not pf.exists():
-        raise SystemExit(f"池清单不存在: {pf}")
-    spec = yaml.safe_load(pf.read_text(encoding="utf-8")) or {}
-    members = spec.get("members") or {}
-    if not members:
-        raise SystemExit("池清单缺 members——拒绝空池")
-    MEMBERS.clear()
-    MEMBERS.update(members)
-    _POOL_OVERRIDE_ACTIVE = True
-    log(f"pool override v1.1: {len(MEMBERS)} members from {pf.name} (note={spec.get('note', '')})")
-
-
-_POOL_OVERRIDE_ACTIVE = False
-
-
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--window", required=True, choices=list(WINDOWS))
-    ap.add_argument(
-        "--variants",
-        default="A",
-        help="逗号分隔: A(静态整装)/B(regime节流)。批E 脱钩默认口径=A（节流开关挂'检测器治本完成'条件，S-OWNER-002: r4/r10 方向失真治本前禁启用）",
-    )
-    ap.add_argument(
-        "--enable-regime-throttle",
-        action="store_true",
-        help="B 变体启用旗（检测器治本完成前的硬守卫，默认关=fail-closed）",
-    )
-    ap.add_argument(
-        "--pool-file", default=None, help="IBT-v2 池清单 yaml（协议 v1.1: members 覆盖；缺省=协议 v1 冻结池）"
-    )
     ap.add_argument("--sensitivity", action="store_true")
     ap.add_argument("--holdout-guard", action="store_true", help="W_HOLDOUT 单次烧毁确认（须显式传）")
     args = ap.parse_args()
-    variants = [v.strip().upper() for v in args.variants.split(",") if v.strip()]
-    if any(v not in ("A", "B") for v in variants):
-        raise SystemExit(f"--variants 非法: {variants}（合法 A/B）")
-    if "B" in variants and not args.enable_regime_throttle:
-        raise SystemExit(
-            "IBT-B(regime节流) 需显式 --enable-regime-throttle——批E 脱钩：节流开关挂"
-            "'检测器治本完成'条件（丁线 r4/r10 方向失真治本前禁启用，S-OWNER-002 caveat），fail-closed"
-        )
     if args.window == "W_HOLDOUT" and not args.holdout_guard:
         raise SystemExit("W_HOLDOUT=保密考卷（协议 §3）：须显式 --holdout-guard 且 IS/OOS 产物已落盘")
     if args.sensitivity and args.window not in ("W_IS", "W_OOS"):
@@ -479,11 +409,9 @@ def main() -> None:
 
     wname = args.window
     s, e = WINDOWS[wname]
-    if args.pool_file:
-        _apply_pool_override(args.pool_file)
     out_dir = ART_ROOT / wname
     out_dir.mkdir(parents=True, exist_ok=True)
-    log(f"=== {wname} [{s}..{e}] variants={variants} ===")
+    log(f"=== {wname} [{s}..{e}] ===")
 
     panels = build_panels(wname)
     usable = {k: v for k, v in panels.items() if not v.empty}
@@ -513,15 +441,11 @@ def main() -> None:
         "data": data_disc,
         "regime": regime_disc,
         "shrink_map": SHRINK_MAP,
-        "variants_run": [f"IBT-{v}" for v in variants],
-        "throttle_enabled": bool(args.enable_regime_throttle),
     }
 
-    variants_map = {"A": (signals_a, None), "B": (signals_b, schedule)}
+    variants = {"IBT-A": (signals_a, None), "IBT-B": (signals_b, schedule)}
     summary: dict = {}
-    for v in variants:
-        vid = f"IBT-{v}"
-        sig, sched = variants_map[v]
+    for vid, (sig, sched) in variants.items():
         t0 = time.time()
         result, portfolio, extras = run_engine(data, sig, variant=vid, schedule=sched)
         summary[vid] = result_json(result, portfolio, extras)
@@ -529,9 +453,7 @@ def main() -> None:
         if portfolio is not None:
             portfolio.nav_series.to_frame("nav").to_csv(out_dir / f"nav_{vid}.csv")
             pd.DataFrame(portfolio.trades_log).to_csv(out_dir / f"trades_{vid}.csv", index=False)
-        log(
-            f"  {vid}: ret={result.total_return:.4f} sharpe={result.sharpe_ratio:.3f} dd={result.max_drawdown:.4f} trades={result.trades_count} ({summary[vid]['wall_sec']}s)"
-        )
+        log(f"  {vid}: ret={result.total_return:.4f} sharpe={result.sharpe_ratio:.3f} dd={result.max_drawdown:.4f} trades={result.trades_count} ({summary[vid]['wall_sec']}s)")
 
     # 成员单跑（个股层）
     member_summary = {}
@@ -545,16 +467,16 @@ def main() -> None:
             p.index = pd.to_datetime(p.index)
             result, portfolio, extras = run_engine(data, p, variant=sid, schedule=None)
             member_summary[sid] = result_json(result, portfolio, extras)["core"]
-            log(
-                f"  member {sid}: sharpe={result.sharpe_ratio:.3f} ret={result.total_return:.4f} dd={result.max_drawdown:.4f}"
-            )
+            log(f"  member {sid}: sharpe={result.sharpe_ratio:.3f} ret={result.total_return:.4f} dd={result.max_drawdown:.4f}")
         except Exception as exc:  # noqa: BLE001
             member_summary[sid] = {"err": f"{type(exc).__name__}: {exc}"}
             log(f"  member {sid}: FAIL {exc}")
 
     # 基准：000300 buy&hold（同窗；指数口径不可交易，披露）
     bench_sql = _SQL_BENCHMARK_CLOSE.format(tbl=kline_index_table(), sym="000300", s=s, e=e)
-    bench_rows = [line.split("\t") for line in ch_query(bench_sql).splitlines() if line.strip()]
+    bench_rows = [
+        line.split("\t") for line in ch_query(bench_sql).splitlines() if line.strip()
+    ]
     if bench_rows:
         closes = pd.Series({pd.Timestamp(r[0]): float(r[1]) for r in bench_rows})
         bench = {

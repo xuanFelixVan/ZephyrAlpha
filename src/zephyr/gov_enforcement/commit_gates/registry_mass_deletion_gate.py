@@ -274,11 +274,7 @@ def make_registry_mass_deletion_gate() -> GateSpec:
                 hits.append(
                     f"  {rel}: 净删行 deleted={deleted} added={added}"
                     + (f"（条目数 {n_head} -> {n_staged} 减少）" if entry_shrunk else "")
-                    + (
-                        f"（条目身份消失 {len(lost_keys)} 条，示例 {sorted(lost_keys)[:3]}）"
-                        if identity_loss
-                        else ""
-                    )
+                    + (f"（条目身份消失 {len(lost_keys)} 条，示例 {sorted(lost_keys)[:3]}）" if identity_loss else "")
                 )
                 _audit(
                     gateway,
@@ -338,3 +334,21 @@ def make_registry_mass_deletion_gate() -> GateSpec:
         check=_check,
         priority=140,
     )
+
+
+def entry_identity_key(item: object) -> str | None:
+    """单条目身份键：每条首个标量字段 → ``"key=value"``（身份定义唯一真源）。
+
+    W2 落地器三向合并（commit_queue_landing）复用本函数——落地侧与门禁侧必须用
+    同一份身份定义，否则"门禁放行的"与"合并器救回的"会各说各话。
+
+    Returns:
+        身份键；条目非 dict / 空条目 / 首字段非标量 → None（判不了不误报，fail-open 同向）。
+    """
+    if not isinstance(item, dict) or not item:
+        return None
+    first = next(iter(item))
+    value = item[first]
+    if isinstance(value, (str, int, float, bool)):
+        return f"{first}={value}"
+    return None
