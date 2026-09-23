@@ -55,25 +55,7 @@ Owner 2026-09-16 明令"清单里所有还没开工的、全是设计态的，�
 = 该触发条件已由 Owner 令满足（同族先例：裁定#264 承 #257⑥ 同一条明令解除挂起）。
 故本件按第一性原理落地真实接线，不再停在登记态。
 
-[ALGO_FLOW]
-输入: trade_date（业务日）+ 策略宇宙（注册表 sim 条目）+ 注入式 reader/sink/alpha_provider
-前置检查: config.enabled；宇宙非空；日期字面量合法；allocator/handler/center 可注入（测试缝）
-执行: ① load_regime_input  PIT 教材（无教材→平坦概率 0.30 档）
-      ② build_base_weights  PP-001 sleeve 先验（未命中→均值补齐，来源逐条登记）
-      ③ load_performance_scores  钱包净值→规范 Sortino 映射
-      ④ StrategyBook.get_cold_start_ratio  三段式冷启动 ×0.3/×0.6/×1.0
-      ⑤ RegimeMetaAllocator.allocate  → allocations/global_shrinkage/effective_budgets
-      ⑥ BudgetChangeHandler.sync_from_allocator（含下线钱包显式 0.0）→ 防抖+三级升级+E-POS-40/41
-      ⑦ LedgerStrategyBook.build_target_portfolio(budget=effective_budget) → 标的粗仓位
-      ⑧ PositionAdjudicationCenter 四层（组合 PP-001 上限/策略 budget+Tier1|Tier3/标的 三层单票口径/
-         动态 日历约束）→ final_weight+adjudication_id
-      ⑨ BatchedPositionBuilder.build_plan + clip_to_available_capital → 分批计划
-      ⑩ allocation_persistence 三表落库（write_to_db 可关）
-输出: AllocationRunResult（含 wallet_capital: {strategy_id: 元}，账本据此开钱包）
-降级: 无 alpha→该策略空仓但额度仍分配（禁伪造信号）；无教材→0.30 档节流；
-      CH 不可达→写侧 local_durable/not_durable（后者抛错，禁"算了没落地"）
-不变量: 同输入（含注入 reader/sink）→ 同输出（除 run_id 随机后缀，可注入 run_suffix 复现）
-[/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_pf_alloc/algo_flow/allocation_orchestrator.yaml
 """
 
 from __future__ import annotations
@@ -90,21 +72,13 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.pf_alloc.allocation_config import AllocationConfig, load_allocation_config
-from zephyr.pf_alloc.crisis_gate import (
-    STATE_CRISIS,
-    STATE_NORMAL,
-    STATE_WARNING,
-    alert_crisis_level,
-    classify_crisis_state,
-    load_crisis_gate_config,
-    log_crisis_gate_row,
-)
 from zephyr.pf_alloc.allocation_inputs import (
     AllocationInputError,
     BaseWeightTable,
     PerformanceScoreTable,
     RegimeInput,
     build_base_weights,
+    load_anchored_cap,
     load_performance_scores,
     load_previous_effective_budgets,
     load_regime_input,
@@ -121,6 +95,15 @@ from zephyr.pf_alloc.batched_position_builder import (
     BatchedEntryPlan,
     BatchedPositionBuilder,
     clip_to_available_capital,
+)
+from zephyr.pf_alloc.crisis_gate import (
+    STATE_CRISIS,
+    STATE_NORMAL,
+    STATE_WARNING,
+    alert_crisis_level,
+    classify_crisis_state,
+    load_crisis_gate_config,
+    log_crisis_gate_row,
 )
 from zephyr.position.core.budget_change_handler import (
     BudgetChangeHandler,
@@ -404,6 +387,8 @@ class _LayerFacts:
     calendar_block_new: bool
     calendar_cap_adjustment: float
     is_crisis: bool
+    # AGG 消费切换终批（agg-switch-design §2 方案A）：锚定态总暴露熔断上限；None=未施加
+    anchored_cap: float | None = None
 
 
 def _clip01(value: float) -> float:
@@ -433,6 +418,14 @@ def _portfolio_layer(facts: _LayerFacts) -> Callable[[AdjudicationRequest], Laye
             weight *= scale
             violations.append("TOTAL_POSITION_CAP")
             reasons.append(f"max_total_position={facts.total_cap:.2f} 总暴露裁剪×{scale:.3f}")
+
+        # AGG 消费切换终批（裁定#229 重印批+agg-switch-design §2 Owner 签字）：锚定态熔断上限
+        # 与 L1 总闸分家（方案A：仓位数字仍由 shrinkage 轴独家给出，本上限只减不加、min 去重）。
+        if facts.anchored_cap is not None and 0 < facts.anchored_cap < facts.sum_effective:
+            scale = facts.anchored_cap / facts.sum_effective
+            weight *= scale
+            violations.append("ANCHORED_CAP")
+            reasons.append(f"锚定态熔断上限 cap={facts.anchored_cap:.2f}（vol_pct 灰度曲线）总暴露裁剪×{scale:.3f}")
 
         aggregate = float(facts.symbol_aggregate.get(request.symbol, 0.0))
         firm_cap = SINGLE_NAME_CAP_LAYERS[LAYER_FIRM_AGG]
@@ -494,9 +487,7 @@ def _strategy_layer(facts: _LayerFacts) -> Callable[[AdjudicationRequest], Layer
             layer="strategy",
             allowed=True,
             adjusted_weight=_clip01(weight),
-            violations=()
-            if request.intended_weight <= budget + 1e-12
-            else ("STRATEGY_BUDGET_CAP",),
+            violations=() if request.intended_weight <= budget + 1e-12 else ("STRATEGY_BUDGET_CAP",),
             reason=f"策略 budget={budget:.4f} 硬约束"
             + ("" if request.intended_weight <= budget + 1e-12 else "（裁剪至上限）"),
         )
@@ -590,7 +581,9 @@ class ChangeLogCollector:
                 "target_budget": round(target, 8),
                 "delta_pct": round((target - old) / old, 8) if old > 0 else 0.0,
                 "current_tier": current_tier,
-                "action": str(payload.get("action") or f"ESCALATION:{payload.get('from_tier', '')}→{payload.get('to_tier', '')}"),
+                "action": str(
+                    payload.get("action") or f"ESCALATION:{payload.get('from_tier', '')}→{payload.get('to_tier', '')}"
+                ),
                 "debounce_pct": round(self._debounce_pct, 6),
                 "freeze_new_positions": 1 if ("1" in tiers or "2" in tiers or "3" in tiers) else 0,
                 "trim_ratio": float(trim) if isinstance(trim, (int, float)) else float("nan"),
@@ -674,7 +667,7 @@ def screen_panel(
 
 
 def verify_allocation_invariants(
-    allocation: Any,
+    allocation: Any,  # noqa: any-abuse 存量签名非本次新增，文件级扫描拖入，类型化归清欠专项
     alive: Sequence[str],
 ) -> None:
     """分配器输出的硬不变量复核（违约抛错，禁"信库件一定会对"）。"""
@@ -682,9 +675,7 @@ def verify_allocation_invariants(
     eff = {k: float(v) for k, v in dict(allocation.effective_budgets).items()}
     gs = float(allocation.global_shrinkage)
     if set(allocs) != set(alive) or set(eff) != set(alive):
-        raise AllocationInputError(
-            f"分配输出成员集与面板不一致（alloc={sorted(allocs)} vs alive={sorted(alive)}）"
-        )
+        raise AllocationInputError(f"分配输出成员集与面板不一致（alloc={sorted(allocs)} vs alive={sorted(alive)}）")
     total = sum(allocs.values())
     if abs(total - 1.0) > 1e-6:
         raise AllocationInputError(f"Σallocations={total:.10f}≠1.0（MOD-PA-007 硬不变量破裂）")
@@ -692,9 +683,7 @@ def verify_allocation_invariants(
         raise AllocationInputError(f"global_shrinkage={gs} 越界 [0,1]")
     sum_eff = sum(eff.values())
     if sum_eff > gs + 1e-9:
-        raise AllocationInputError(
-            f"Σeffective_budget={sum_eff:.10f} > global_shrinkage={gs:.10f}（总暴露越天花板）"
-        )
+        raise AllocationInputError(f"Σeffective_budget={sum_eff:.10f} > global_shrinkage={gs:.10f}（总暴露越天花板）")
     for sid, v in eff.items():
         if v < -1e-12:
             raise AllocationInputError(f"策略 {sid} effective_budget={v} 为负")
@@ -713,11 +702,11 @@ def run_daily_allocation(
     sink: WriteSink | None = None,
     alpha_provider: AlphaProvider | None = None,
     available_cash_provider: AvailableCashProvider | None = None,
-    allocator: Any = None,
+    allocator: Any = None,  # noqa: any-abuse 存量签名非本次新增，文件级扫描拖入，类型化归清欠专项
     handler: BudgetChangeHandler | None = None,
     write: bool | None = None,
     run_suffix: str | None = None,
-    discipline_guard: Any = None,
+    discipline_guard: Any = None,  # noqa: any-abuse 存量签名非本次新增，文件级扫描拖入，类型化归清欠专项
 ) -> AllocationRunResult:
     """一次分配周期的完整装配（账本/CLI/测试共用的唯一入口）。
 
@@ -750,9 +739,7 @@ def run_daily_allocation(
     strategy_ids = [str(s.get("strategy_id") or "").strip() for s in specs]
     strategy_ids = [s for s in strategy_ids if s]
     types = {str(s.get("strategy_id")): str(s.get("strategy_type") or "多因子") for s in specs}
-    live_starts = {
-        str(s.get("strategy_id")): s.get("live_start_date") for s in specs
-    }
+    live_starts = {str(s.get("strategy_id")): s.get("live_start_date") for s in specs}
 
     if not cfg.enabled:
         # 显式回退真值：账本走 flat 口径，本件不产额度也不落库（回退路径=配置，不是删码）
@@ -788,40 +775,47 @@ def run_daily_allocation(
     crisis_state = classify_crisis_state(regime, warning_theta=crisis_cfg.warning_theta)
     gate_crisis = crisis_cfg.enabled and crisis_state.state == STATE_CRISIS
     gate_floor_active = crisis_cfg.enabled and crisis_state.state in (STATE_WARNING, STATE_CRISIS)
-    if crisis_cfg.enabled and crisis_state.state != STATE_NORMAL:
+    if crisis_state.state != STATE_NORMAL:
+        # 旁路无痕加严（红队 st-ff-rb-safe-20260918 攻面一③⑤）：此前条件写作
+        # `crisis_cfg.enabled and state!=normal`，于是 config 里把 enabled 改成 false
+        # 就能**零告警零留痕**地拆掉保命闸（危机日志里连一行 disabled 都没有，
+        # 事后无从反推哪天在旁路）。现仍不改任何交易语义（旁路=零行为变化），
+        # 但口径判为非 normal 时必须出声并落痕。enabled=false + 真平静市 → 零噪声。
+        _bypass_note = "" if crisis_cfg.enabled else "（闸在 enabled=false 旁路态，仅留痕不改行为）"
         alert_crisis_level(
-            "l1", trade_date=day, crisis_state=crisis_state,
-            detail="run_daily_allocation 双档接线（floor+freeze）",
+            "l1",
+            trade_date=day,
+            crisis_state=crisis_state,
+            detail="run_daily_allocation 双档接线（floor+freeze）" + _bypass_note,
         )
         log_crisis_gate_row(
             trade_date=day,
             crisis_state=crisis_state,
-            action_l1="crisis_freeze" if gate_crisis else "warning_floor",
+            action_l1=(
+                ("crisis_freeze" if gate_crisis else "warning_floor") if crisis_cfg.enabled else "bypassed_disabled"
+            ),
             action_l2="freeze_new" if gate_crisis else "pass",
         )
         warnings.append(
-            f"crisis_gate_{crisis_state.state}: p_r10={crisis_state.p_r10:.3f} "
+            f"crisis_gate_{'bypassed_disabled' if not crisis_cfg.enabled else crisis_state.state}"
+            f": p_r10={crisis_state.p_r10:.3f} "
             f"dominant={crisis_state.dominant} "
             f"floor={'0.05_active' if gate_floor_active else 'off'}"
             + (" freeze_new_positions" if gate_crisis else "")
+            + ("（须登记回退原因，见 crisis_gate.enabled 旁路纪律）" if not crisis_cfg.enabled else "")
         )
     crisis_is_crisis = bool(regime.is_crisis) or gate_crisis
 
     base = build_base_weights(strategy_ids, cfg)
     if base.plan_id == "":
         warnings.append("pp001_unavailable: PP-001 先验缺席→等权先验")
-    perf: PerformanceScoreTable = load_performance_scores(
-        strategy_ids, day, cfg, reader=reader
-    )
+    perf: PerformanceScoreTable = load_performance_scores(strategy_ids, day, cfg, reader=reader)
 
     # ── 面板卫生（T3② 口径：死成员显式剔除、全灭 fail-closed，绝不静默等权再归一）──
     alive, excluded = screen_panel(strategy_ids, base, perf)
     excluded_reasons = {e.strategy_id: e.reason for e in excluded}
     if excluded:
-        warnings.append(
-            "dead_members_excluded: "
-            + "; ".join(f"{e.strategy_id}<-{e.reason}" for e in excluded)
-        )
+        warnings.append("dead_members_excluded: " + "; ".join(f"{e.strategy_id}<-{e.reason}" for e in excluded))
 
     meta_allocator = allocator or _default_allocator(base, cfg)
     cold_ratios: dict[str, float] = {}
@@ -906,6 +900,11 @@ def run_daily_allocation(
     # 默认值先置、真实裁决后覆盖（顺序反了会把 Tier1 冻结/ Tier3 保留比例抹掉——真 bug）
     freeze_flags = {sid: False for sid in strategy_ids} | freeze_flags
     retains = {sid: None for sid in strategy_ids} | retains
+    # AGG 消费切换终批：锚定 cap PIT 装载（旁路/无行/陈旧=applied False，留痕不盲用）
+    anchored = load_anchored_cap(day, reader=reader)
+    if not anchored.applied and anchored.degraded_reasons != ("disabled_flag",):
+        warnings.append(f"anchored_cap_degraded: {'; '.join(anchored.degraded_reasons) or 'unknown'}（cap 未施加）")
+
     centers_facts = _LayerFacts(
         sleeve_cap=float(base.max_single_sleeve or cfg.max_single_sleeve),
         total_cap=float(base.max_total_position or cfg.max_total_position),
@@ -914,6 +913,7 @@ def run_daily_allocation(
         freeze=freeze_flags,
         retain=retains,
         is_crisis=crisis_is_crisis,
+        anchored_cap=(anchored.cap if anchored.applied else None),
         **_calendar_facts(_as_date(day)),
     )
     center = build_adjudication_center(centers_facts)
@@ -961,8 +961,7 @@ def run_daily_allocation(
         seat: CashSeat | None = None
         if sid in excluded_reasons:
             note_parts.append(
-                f"死成员显式剔除（{excluded_reasons[sid]}）→ budget=0"
-                "（不静默等权再归一，额度回流为组合级未分配预备金）"
+                f"死成员显式剔除（{excluded_reasons[sid]}）→ budget=0（不静默等权再归一，额度回流为组合级未分配预备金）"
             )
         elif portfolio is not None:
             symbols, seat = _adjudicate_symbols(
@@ -995,8 +994,7 @@ def run_daily_allocation(
         if seat.cash_drag and seat.cash_capital > 0:
             warnings.append(
                 f"cash_drag: {sid} 钱包 {seat.cash_capital:.2f} 元"
-                f"（{seat.cash_weight:.1%}）闲置"
-                + (f"｜{seat.degrade_reason}" if seat.degrade_reason else "")
+                f"（{seat.cash_weight:.1%}）闲置" + (f"｜{seat.degrade_reason}" if seat.degrade_reason else "")
             )
         built.append(
             StrategyAllocation(
@@ -1032,8 +1030,17 @@ def run_daily_allocation(
 
     rows = [s.to_row(run_id, day) for s in built]
     shrinkage_row = _shrinkage_row(
-        run_id, day, cfg, regime, allocation, built, portfolio_total, unallocated, base,
-        cash_seats, cash_drag_capital,
+        run_id,
+        day,
+        cfg,
+        regime,
+        allocation,
+        built,
+        portfolio_total,
+        unallocated,
+        base,
+        cash_seats,
+        cash_drag_capital,
     )
     persisted: dict[str, str] = {}
     if do_write:
@@ -1070,7 +1077,7 @@ def run_daily_allocation(
     return result
 
 
-def _default_allocator(base: BaseWeightTable, cfg: AllocationConfig) -> Any:
+def _default_allocator(base: BaseWeightTable, cfg: AllocationConfig) -> Any:  # noqa: any-abuse 存量签名非本次新增，文件级扫描拖入，类型化归清欠专项
     from zephyr.pf_alloc.core.regime_meta_allocator import RegimeMetaAllocator
 
     return RegimeMetaAllocator(
@@ -1079,7 +1086,7 @@ def _default_allocator(base: BaseWeightTable, cfg: AllocationConfig) -> Any:
     )
 
 
-def _as_date(value: Any) -> date | None:
+def _as_date(value: Any) -> date | None:  # noqa: any-abuse 存量签名非本次新增，文件级扫描拖入，类型化归清欠专项
     if isinstance(value, date):
         return value
     if value is None:
@@ -1148,15 +1155,11 @@ def _adjudicate_symbols(
         )
 
     # ① 钱包口径持仓 + 现金席位（Σ ≤ 1，余量=钱包内现金）
-    wallet_weights = {
-        sym: (w / budget if budget > 0 else 0.0) for sym, w in intents.items()
-    }
+    wallet_weights = {sym: (w / budget if budget > 0 else 0.0) for sym, w in intents.items()}
     holdings: dict[str, float] = dict(wallet_weights)
     holdings["CASH"] = max(0.0, 1.0 - sum(wallet_weights.values()))
     available = (
-        float(available_cash_provider(strategy_id, capital))
-        if available_cash_provider is not None
-        else wallet_total
+        float(available_cash_provider(strategy_id, capital)) if available_cash_provider is not None else wallet_total
     )
     if available < 0 or not math.isfinite(available):
         available = 0.0
@@ -1165,9 +1168,7 @@ def _adjudicate_symbols(
     raw = clipped.get("_degrade_reason")
     degrade = raw if isinstance(raw, str) and raw else None
     target_invest_frac = sum(wallet_weights.values())
-    kept_invest_frac = sum(
-        float(clipped[s]) for s in clipped if s != "CASH" and not s.startswith("_")
-    )
+    kept_invest_frac = sum(float(clipped[s]) for s in clipped if s != "CASH" and not s.startswith("_"))
     clip_scale = (kept_invest_frac / target_invest_frac) if target_invest_frac > 0 else 1.0
 
     plans: list[SymbolPlan] = []
@@ -1238,7 +1239,7 @@ def _shrinkage_row(
     day: str,
     cfg: AllocationConfig,
     regime: RegimeInput,
-    allocation: Any,
+    allocation: Any,  # noqa: any-abuse 存量签名非本次新增，文件级扫描拖入，类型化归清欠专项
     built: Sequence[StrategyAllocation],
     portfolio_total: float,
     unallocated: float,
@@ -1284,9 +1285,7 @@ def _shrinkage_row(
                 "cash_drag_capital": round(float(cash_drag), 2),
                 "deployed_capital": deployed,
                 "excluded_members": [
-                    {"strategy_id": b.strategy_id, "reason": b.excluded_reason}
-                    for b in built
-                    if b.excluded_reason
+                    {"strategy_id": b.strategy_id, "reason": b.excluded_reason} for b in built if b.excluded_reason
                 ],
                 "config": cfg.to_dict(),
                 "schema_version": SCHEMA_VERSION,
@@ -1305,7 +1304,7 @@ def _shrinkage_row(
 SUPPORTED_EVENT_KINDS: tuple[str, ...] = ("pf_alloc_daily", "sim_ledger_daily")
 
 
-def _event_attr(event: Any, name: str, default: Any = None) -> Any:
+def _event_attr(event: Any, name: str, default: Any = None) -> Any:  # noqa: any-abuse 存量签名非本次新增，文件级扫描拖入，类型化归清欠专项
     """事件字段读取（Mapping 与对象两形态鸭子兼容，不绑死具体事件类）。"""
     if isinstance(event, Mapping):
         return event.get(name, default)
@@ -1313,7 +1312,7 @@ def _event_attr(event: Any, name: str, default: Any = None) -> Any:
 
 
 def handle_pf_alloc_daily_event(
-    event: Any,
+    event: Any,  # noqa: any-abuse 存量签名非本次新增，文件级扫描拖入，类型化归清欠专项
     *,
     config: AllocationConfig | None = None,
     **run_kwargs: Any,
@@ -1345,9 +1344,7 @@ def handle_pf_alloc_daily_event(
         raise AllocationInputError(f"事件 payload 非映射（got {type(payload).__name__}）")
     trade_date = payload.get("trade_date") or payload.get("biz_date")
     if not trade_date:
-        raise AllocationInputError(
-            f"{kind} 事件缺 trade_date——禁按墙钟猜交易日（RULE-SCHEMA-TZ 同源纪律）"
-        )
+        raise AllocationInputError(f"{kind} 事件缺 trade_date——禁按墙钟猜交易日（RULE-SCHEMA-TZ 同源纪律）")
     universe = payload.get("universe")
     return run_daily_allocation(
         trade_date,

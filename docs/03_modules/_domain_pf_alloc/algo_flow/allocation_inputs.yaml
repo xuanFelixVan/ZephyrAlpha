@@ -1,0 +1,50 @@
+# ALGO_FLOW 外部真源——allocation_inputs（_domain_pf_alloc 域，真源 src/zephyr/pf_alloc/allocation_inputs.py）
+# 2026-09-23 P2-1 契约头减负出仓（AGG 消费切换终批同批触碰该文件触发 GATE-ALGO-FLOW）：
+# extractor 经 external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块
+# （新增④锚定 cap 供件段已随批补记为 O1 前置层）。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.pf_alloc.allocation_inputs
+source_of_truth: src/zephyr/pf_alloc/allocation_inputs.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: trade_date 业务交易日
+    #   fields: 业务交易日（validate_date_literal 校验 YYYY-MM-DD，防裸串入 SQL）
+    #   code: build_base_weights/load_regime_input/load_anchored_cap 入参
+    # - id: I2
+    #   name: PP-001 sleeves（TDM 真源）
+    #   fields: strategy_ref/weight/activation_state（load_pp001_plan 只读）
+    #   code: load_pp001_plan
+    # - id: I3
+    #   name: regime 快照与锚定四档
+    #   fields: regime_snapshot_history PIT 7 维（禁未来函数）；regime_state_anchored PIT vol_pct（陈旧>7 日=cap 不施加）
+    #   code: load_regime_input/load_anchored_cap
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 输入供件四件套
+    #   name_en: allocation_inputs
+    #   intro: ① PP-001 sleeves→base_weights（未命中用已知先验均值补齐逐条登记来源）② sim_pocket_daily 净值→PerformanceScore ③ regime PIT→7 维概率+RiskSignal（直取/反演/中性三档，无教材=平坦概率）④ alloc_budget_daily→previous effective_budgets+孤儿钱包
+    #   inputs: I1 I2 I3
+    #   outputs: BaseWeightTable PerformanceScoreTable RegimeInput
+    # - id: A2
+    #   name_zh: 锚定态熔断上限
+    #   name_en: load_anchored_cap
+    #   intro: cap=1−0.70×clamp((vol_pct−0.30)/0.70,0,1)（agg-switch-design §2 已签灰度曲线，禁档位跳变）；旁路 flag/无行/陈旧>7 日=applied False 留痕不盲用
+    #   inputs: I3
+    #   outputs: AnchoredCap
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 供件包
+    #   name_en: allocation_inputs_bundle
+    #   intro: BaseWeightTable/PerformanceScoreTable/RegimeInput/AnchoredCap/历史 budget 映射（全纯数据）；同一(数据,日期)→同一输出（纯函数无墙钟，RULE-SCHEMA-TZ）
+    #   downstream: allocation_orchestrator
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # I3 --> A1
+    # I3 --> A2
+    # A1 --> O1
+    # A2 --> O1
+    # [/ALGO_FLOW]

@@ -1,0 +1,89 @@
+# ALGO_FLOW 外部真源——allocation_orchestrator（_domain_pf_alloc 域，真源 src/zephyr/pf_alloc/allocation_orchestrator.py）
+# 2026-09-23 P2-1 出仓（AGG 消费切换终批同批触碰触发 GATE-ALGO-FLOW）：散文块→节点格式；
+# 新增 ANCHORED_CAP 裁剪步已随批补记为 A6b。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.pf_alloc.allocation_orchestrator
+source_of_truth: src/zephyr/pf_alloc/allocation_orchestrator.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: trade_date+策略宇宙+注入件
+    #   fields: 业务日/注册表 sim 条目/reader·sink·alpha_provider（测试缝）
+    #   code: run_daily_allocation 入参
+    # 层: 算法
+    # - id: A1
+    #   name_zh: regime PIT 教材
+    #   name_en: load_regime_input
+    #   intro: 无教材→平坦概率 0.30 档（fail-closed）
+    #   inputs: I1
+    #   outputs: RegimeInput
+    # - id: A2
+    #   name_zh: PP-001 sleeve 先验
+    #   name_en: build_base_weights
+    #   intro: 未命中→均值补齐，来源逐条登记
+    #   inputs: I1
+    #   outputs: BaseWeightTable
+    # - id: A3
+    #   name_zh: PerformanceScore
+    #   name_en: load_performance_scores
+    #   intro: 钱包净值→规范 Sortino 映射
+    #   inputs: I1
+    #   outputs: PerformanceScoreTable
+    # - id: A4
+    #   name_zh: 组合分配
+    #   name_en: RegimeMetaAllocator.allocate
+    #   intro: allocations/global_shrinkage/effective_budgets；冷启动三段式 ×0.3/×0.6/×1.0
+    #   inputs: A1 A2 A3
+    #   outputs: AllocationResult
+    # - id: A5
+    #   name_zh: 预算同步
+    #   name_en: BudgetChangeHandler.sync_from_allocator
+    #   intro: 防抖+三级升级+E-POS-40/41；下线钱包显式 0.0
+    #   inputs: A4
+    #   outputs: BudgetChangeLog
+    # - id: A6
+    #   name_zh: 四层裁决目标组合
+    #   name_en: PositionAdjudicationCenter
+    #   intro: 组合 PP-001 上限/策略 budget+Tier1|Tier3/标的单票/动态日历 → final_weight+adjudication_id
+    #   inputs: A5
+    #   outputs: TargetPortfolio
+    # - id: A6b
+    #   name_zh: 锚定态熔断上限裁剪
+    #   name_en: anchored_cap_trim
+    #   intro: AGG 消费切换终批——cap=1−0.70×clamp((vol_pct−0.30)/0.70,0,1) 与总暴露取 min 只减不加；旁路/无行/陈旧=不施加
+    #   inputs: I1
+    #   outputs: TOTAL 层裁剪留痕
+    # - id: A7
+    #   name_zh: 分批计划
+    #   name_en: BatchedPositionBuilder.build_plan
+    #   intro: clip_to_available_capital → 分批计划
+    #   inputs: A6
+    #   outputs: BatchPlan
+    # - id: A8
+    #   name_zh: 三表落库
+    #   name_en: allocation_persistence
+    #   intro: write_to_db 可关；CH 不可达→local_durable/not_durable（后者抛错禁静默）
+    #   inputs: A7
+    #   outputs: AllocationRunResult
+    # 层: 输出
+    # - id: O1
+    #   name_zh: AllocationRunResult
+    #   name_en: AllocationRunResult
+    #   intro: 含 wallet_capital {strategy_id: 元}，账本据此开钱包
+    #   downstream: sim_platform_journal
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I1 --> A3
+    # A1 --> A4
+    # A2 --> A4
+    # A3 --> A4
+    # A4 --> A5
+    # A5 --> A6
+    # I1 --> A6b
+    # A6 --> A7
+    # A7 --> A8
+    # A8 --> O1
+    # [/ALGO_FLOW]

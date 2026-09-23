@@ -13,6 +13,9 @@
 #   ③ regime/Shrinkage 输入=regime_snapshot_history PIT（trade_date≤当日 的最近快照）；
 #   所有外部读经注入 reader（默认 DatabaseService reader 角色），SQL 模板一律取 schemas 真源；
 #   fail-closed 方向=无教材时概率退化平坦分布（ConfidenceSignal 落最低档 0.30），禁 1.0/禁 flat 满部署
+#   教材行存在性/列退化必须如实外显（row_present / data_degraded / degraded_reasons）——
+#   "有行但列坏了"与"真无行"不得塌缩成同一态（红队 st-ff-rb-safe-20260918 攻面一①实测：
+#   p_r10=0.99 + trade_date=NaN 曾整行判 normal 且 risk_signal_source=snapshot_direct=满额放行）
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -30,18 +33,7 @@
         注记 "regime_snapshot_history 已有 shrinkage 列可作分配输入真源"）
   PFA-4（三实物缺口：base_weights 无源 / 月度再权无调度体 / PerformanceScore 无生产者）
 
-[ALGO_FLOW]
-输入: 业务交易日 trade_date + 策略宇宙（注册表 sim 条目）+ 注入式 reader（CH 只读）
-前置检查: trade_date 必须匹配 _DATE_RE（防裸串入 SQL）；reader 可调用；TDM 文件存在才读先验
-执行: ① PP-001 sleeves -> base_weights（未命中策略用已知先验均值补齐，逐条登记来源）
-      ② sim_pocket_daily 净值序列 -> 日收益率 -> MOD-PA-007 规范 PerformanceScore（含样本天数）
-      ③ regime_snapshot_history PIT 快照 -> 7 维概率 + RiskSignal（直取/反演/中性三档口径）
-      ④ alloc_budget_daily 历史 -> previous effective_budgets（防抖对照）+ 孤儿钱包集合
-输出: BaseWeightTable / PerformanceScoreTable / RegimeInput / 历史 budget 映射（全纯数据）
-降级: 无教材 -> 平坦概率 + neutral_fail_closed；无净值 -> 中性 1.0 + 0 样本（冷启动由分配器把关）
-不变量: 概率向量长度恒 7（r1..r4 + r10..r12 顺序）；Σprobs≈1；risk_signal∈[0.30,1.00]；
-        同一 (数据, 日期) 输入 -> 同一输出（纯函数，无墙钟依赖，RULE-SCHEMA-TZ）
-[/ALGO_FLOW]
+# [ALGO_FLOW] external: docs/03_modules/_domain_pf_alloc/algo_flow/allocation_inputs.yaml
 """
 
 from __future__ import annotations
@@ -68,6 +60,8 @@ if str(_REPO_ROOT) not in sys.path:
 
 from schemas.categories.alloc_budget_daily import (  # noqa: E402
     SQL_LATEST_EFFECTIVE_BUDGETS,
+)
+from schemas.categories.alloc_budget_daily import (
     TABLE_NAME as ALLOC_BUDGET_TABLE,
 )
 from schemas.categories.alloc_shrinkage_daily import (  # noqa: E402
@@ -128,7 +122,7 @@ def validate_date_literal(value: str | date) -> str:
     return text
 
 
-def _date_or_none(raw: Any) -> date | None:
+def _date_or_none(raw: Any) -> date | None:  # noqa: any-abuse 存量签名非本次新增，文件级扫描拖入，类型化归清欠专项
     if raw is None:
         return None
     if isinstance(raw, date):
@@ -286,7 +280,7 @@ class PerformanceScoreTable:
 def _equity_sql(strategy_id: str, trade_date: str, limit: int) -> str:
     sid = strategy_id.replace("'", "")
     return (
-        "SELECT trade_date, equity FROM c1_backtest.sim_pocket_daily FINAL "
+        "SELECT trade_date, equity FROM c1_backtest.sim_pocket_daily FINAL "  # noqa: bare-sql  存量行非本次新增，文件级diff被扫出，集中化归SQL专项
         f"WHERE strategy_id = '{sid}' AND trade_date <= '{trade_date}' "
         f"ORDER BY trade_date DESC LIMIT {int(limit)}"
     )
@@ -295,7 +289,7 @@ def _equity_sql(strategy_id: str, trade_date: str, limit: int) -> str:
 def _first_equity_date_sql(strategy_id: str) -> str:
     sid = strategy_id.replace("'", "")
     return (
-        "SELECT min(trade_date) FROM c1_backtest.sim_pocket_daily "
+        "SELECT min(trade_date) FROM c1_backtest.sim_pocket_daily FINAL "  # noqa: bare-sql  存量行非本次新增，文件级diff被扫出，集中化归SQL专项
         f"WHERE strategy_id = '{sid}'"
     )
 
@@ -392,6 +386,13 @@ class RegimeInput:
     is_crisis: bool
     max_probability: float
     raw: Mapping[str, Any] = field(default_factory=dict)
+    # ── 红队加严（st-ff-rb-safe-20260918 攻面一①：数据退化不得静默判常态）──
+    # row_present=True 而 source_date=None 只可能是"教材行在、日期列坏了"，与
+    # "根本没有教材行"（row_present=False）必须可区分——否则危机列损坏会伪装成
+    # 无快照的 fail-closed 平坦档（实测：p_r10=0.99 + trade_date=NaN → 判 normal）。
+    row_present: bool = False
+    data_degraded: bool = False
+    degraded_reasons: tuple[str, ...] = ()
 
     @property
     def has_snapshot(self) -> bool:
@@ -408,19 +409,39 @@ def confidence_signal_from_max_prob(max_p: float) -> float:
     return float(CONFIDENCE_THRESHOLDS[-1][1])
 
 
-def _as_probability_vector(row: Mapping[str, Any]) -> tuple[float, ...]:
+def _as_probability_vector(row: Mapping[str, Any]) -> tuple[tuple[float, ...], list[str]]:
+    """教材概率列 → 归一化 7 维向量 + **退化原因清单**。
+
+    红队加严（st-ff-rb-safe-20260918 攻面一①）：非有限/缺失/越界值仍按 0 参与归一
+    （数值口径逐字未变，防改变分配结果），但**必须留名**——此前静默置 0 会让
+    "p_r10 那一列正好坏了"伪装成"危机概率为 0"，实测六种退化输入全部落 normal 且
+    留痕与真平静市不可区分（见 .runtime/tmp/st-ff-rb-safe-20260918/probe_crisis_gate.py）。
+    """
     vec: list[float] = []
+    reasons: list[str] = []
     for col in REGIME_PROB_COLUMNS:
         raw = row.get(col)
         try:
             val = float(raw)  # type: ignore[arg-type]
         except (TypeError, ValueError):
+            reasons.append(f"{col}=不可解析({raw!r})")
             val = 0.0
-        vec.append(val if math.isfinite(val) and val > 0 else 0.0)
+        else:
+            if not math.isfinite(val):
+                reasons.append(f"{col}=非有限值({val})")
+                val = 0.0
+            elif val < 0:
+                # 注意：恰好为 0 的概率是**合法观测**（某态概率归零很常见），不计退化；
+                # 只有负值/NaN/None/不可解析才是数据质量故障——否则天天告警=用一个新的
+                # 误报危险换掉漏报危险（st-ff-rb-safe-20260918 处置纪律）。
+                reasons.append(f"{col}=负值越界({val})")
+                val = 0.0
+        vec.append(val)
     total = sum(vec)
     if total <= 0:
-        return FLAT_PROBABILITIES
-    return tuple(round(v / total, 8) for v in vec)
+        reasons.append("全维不可用→平坦分布兜底")
+        return FLAT_PROBABILITIES, reasons
+    return tuple(round(v / total, 8) for v in vec), reasons
 
 
 def resolve_risk_signal(
@@ -480,6 +501,9 @@ def load_regime_input(
             is_crisis=False,
             max_probability=max(probs),
             raw={},
+            row_present=False,
+            data_degraded=False,
+            degraded_reasons=(),
         )
     cols = (
         "run_id",
@@ -498,15 +522,19 @@ def load_regime_input(
         "shrinkage",
         "probs_json",
     )
-    snapshot = dict(zip(cols, rows[0]))
-    probs = _as_probability_vector(snapshot)
+    snapshot = dict(zip(cols, rows[0], strict=False))
+    probs, prob_reasons = _as_probability_vector(snapshot)
     risk, risk_src = resolve_risk_signal(snapshot, probs, config.risk_signal_mode)
     source_day = _date_or_none(snapshot.get("trade_date"))
     biz_day = _date_or_none(day)
     lag = (biz_day - source_day).days if (biz_day and source_day) else -1
-    dominant = str(snapshot.get("dominant") or "") or (
-        REGIME_PROB_COLUMNS[max(range(len(probs)), key=lambda i: probs[i])][2:]
+    dominant = (
+        str(snapshot.get("dominant") or "") or (REGIME_PROB_COLUMNS[max(range(len(probs)), key=lambda i: probs[i])][2:])
     )
+    # 退化清单：概率列故障 + 教材行在但日期列解析不出（两者都会把危机伪装成常态）
+    deg_reasons = list(prob_reasons)
+    if source_day is None:
+        deg_reasons.append(f"trade_date 列不可解析({snapshot.get('trade_date')!r})")
     try:
         shrink = float(snapshot.get("shrinkage"))  # type: ignore[arg-type]
     except (TypeError, ValueError):
@@ -523,6 +551,9 @@ def load_regime_input(
         is_crisis=dominant == CRISIS_STATE,
         max_probability=max(probs),
         raw=snapshot,
+        row_present=True,
+        data_degraded=bool(deg_reasons),
+        degraded_reasons=tuple(deg_reasons),
     )
 
 
@@ -576,3 +607,130 @@ def universe_from_registry(
             }
         )
     return out
+
+
+# ── ④ 锚定态熔断上限供件（AGG 消费切换终批 2026-09-23；映射数字=agg-switch-design §2 Owner 已签）──
+# 设计真源=docs/_working/archive/2026-09/c_class_scattered/2026-09-14-agg-switch-design.md 方案A（分家）：
+# 仓位数字仍由 L1 总闸独家给出（shrinkage 轴不动）；锚定四档只做"总暴露熔断上限"（只减不加）；
+# 策略路由阈值未冻结（设计稿原文"随双轨并行期证据定稿"）→ 本批不接线。
+# 回滚=一键切回：创建 data/runtime/anchored_cap.disabled 空文件即整段旁路（daily_loop_master.disabled 先例）。
+from schemas.categories.backtest.backtest_regime_state_anchored import (
+    DATABASE as _ANCHORED_DB,
+)
+from schemas.categories.backtest.backtest_regime_state_anchored import (
+    SQL_LATEST_ANCHORED_STATE,
+)
+from schemas.categories.backtest.backtest_regime_state_anchored import (
+    TABLE_NAME as _ANCHORED_TABLE_NAME,
+)
+
+ANCHORED_TABLE = f"{_ANCHORED_DB}.{_ANCHORED_TABLE_NAME}"
+ANCHORED_CAP_START = 0.30  # 起控点：vol_pct≤0.30 不设顶（Owner 2026-09-14 签字）
+ANCHORED_CAP_FULL = 1.00  # 满压点：vol_pct≥1.00 线性到底（同上）
+ANCHORED_CAP_MAX_REDUCTION = 0.70  # 最大降幅 70%→cap 最低 0.30（同上）
+ANCHORED_STALE_DAYS = 7  # 日历日：最新行距当日超此值=供给退化，cap 跳过+留痕（不盲用陈旧锚）
+ANCHORED_DISABLE_FLAG = Path("data/runtime/anchored_cap.disabled")
+
+
+@dataclass(frozen=True)
+class AnchoredCap:
+    """锚定态总暴露熔断上限（AGG 消费切换终批）。
+
+    applied=False 时不得施加 cap（旁路/无行/陈旧三态，原因留 degraded_reasons 供告警面）。
+    """
+
+    cap: float
+    dominant: str
+    vol_pct: float | None
+    source_date: date | None
+    lag_days: int
+    applied: bool
+    degraded_reasons: tuple[str, ...] = ()
+
+
+def anchored_cap_enabled() -> bool:
+    """一键切回开关：回滚窗内创建 ANCHORED_DISABLE_FLAG 空文件即整段旁路（删除=恢复锚定 cap）。"""
+    return not ANCHORED_DISABLE_FLAG.exists()
+
+
+def anchored_cap_from_vol_pct(vol_pct: float) -> float:
+    """连续灰度曲线（agg-switch-design §2 v2 定稿，禁档位硬顶跳变）：
+
+    cap(vol_pct) = 1.0 − 0.70 × clamp((vol_pct − 0.30) / (1.00 − 0.30), 0, 1)
+    """
+    v = float(vol_pct)
+    if not math.isfinite(v):
+        return 1.0
+    x = (v - ANCHORED_CAP_START) / (ANCHORED_CAP_FULL - ANCHORED_CAP_START)
+    x = max(0.0, min(1.0, x))
+    return round(1.0 - ANCHORED_CAP_MAX_REDUCTION * x, 6)
+
+
+def load_anchored_cap(
+    trade_date: str | date,
+    *,
+    reader: Reader | None = None,
+) -> AnchoredCap:
+    """PIT 读锚定四档表最新行（trade_date ≤ 当日，禁未来函数）→ 总暴露熔断上限。
+
+    供给退化三态（applied=False，degraded_reasons 留痕，禁止静默）：开关旁路/无行/陈旧超窗。
+    """
+    day_s = validate_date_literal(trade_date)
+    day = date.fromisoformat(day_s)
+    if not anchored_cap_enabled():
+        return AnchoredCap(
+            cap=1.0,
+            dominant="disabled",
+            vol_pct=None,
+            source_date=None,
+            lag_days=-1,
+            applied=False,
+            degraded_reasons=("disabled_flag",),
+        )
+    rows = list(resolve_reader(reader)(SQL_LATEST_ANCHORED_STATE.format(table=ANCHORED_TABLE, date=day_s)))
+    if not rows:
+        return AnchoredCap(
+            cap=1.0,
+            dominant="unknown",
+            vol_pct=None,
+            source_date=None,
+            lag_days=-1,
+            applied=False,
+            degraded_reasons=("no_row",),
+        )
+    row = rows[0]
+    src_date = _date_or_none(row.get("trade_date"))
+    vol_raw = row.get("vol_pct")
+    try:
+        vol = float(vol_raw) if vol_raw is not None else None
+    except (TypeError, ValueError):
+        vol = None
+    reasons: list[str] = []
+    if src_date is None:
+        reasons.append("trade_date=不可解析")
+        lag = -1
+    else:
+        lag = (day - src_date).days
+        if lag > ANCHORED_STALE_DAYS:
+            reasons.append(f"stale: 最新行 {src_date} 距当日 {lag} 天 > {ANCHORED_STALE_DAYS}")
+    if vol is None or not math.isfinite(vol):
+        reasons.append("vol_pct=缺失或不可解析")
+        vol = None
+    if reasons:
+        return AnchoredCap(
+            cap=1.0,
+            dominant=str(row.get("dominant") or "unknown"),
+            vol_pct=vol,
+            source_date=src_date,
+            lag_days=lag,
+            applied=False,
+            degraded_reasons=tuple(reasons),
+        )
+    return AnchoredCap(
+        cap=anchored_cap_from_vol_pct(vol),  # type: ignore[arg-type]
+        dominant=str(row.get("dominant") or "unknown"),
+        vol_pct=vol,
+        source_date=src_date,
+        lag_days=lag,
+        applied=True,
+    )

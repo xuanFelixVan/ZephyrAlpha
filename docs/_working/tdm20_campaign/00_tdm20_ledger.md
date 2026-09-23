@@ -68,7 +68,16 @@ GW 计数+周审计照常生效。commit 后必做 `git log -1 --name-only` 核�
 | W2 | trading_decision_map.yaml 138→182 节点+194→254 边+R43+chain 轴+测试+图表册 9 册重渲染 | 完成 |
 | W3 | 03_pp001_slot_alignment.md+activation 72 缺档补齐（182/182）+判定表实测+sector 反查 2 条目 | 完成 |
 | W4 | generate_chain_registry.py+reconcile_chain_refs.py+chain_registry.yaml（873 链机生）+04 号首跑读数 | 完成 |
-| 收尾 | 红蓝两轮+GW 落地+晨报六要素 | 进行中 |
+| 收尾 | 红蓝两轮+GW 落地+晨报六要素 | 完成（13fb043689/9c9b1276a8/24384af100/4590c975a9 四批落 HEAD；翻译册 2 条在 q-0026 随合并器环境债修复落地） |
+
+## §3b 增补令·AGG 消费切换终批（Owner production 翻转确认，2026-09-23）
+
+- **范围**：TDM-E-L1-AGG module_ref 改指 anchored_state_machine.py（module_id=MOD-REGIME-001 同族不变）；pf_alloc 运行时消费接线锚定四档 cap；L1 总闸 shrinkage 轴不动（两套各管各的）；旧 HMM 链全量保留一个月回滚窗（至 2026-10-23）。
+- **判据复核**：①夜批连续 5 交易日零缺勤+当日更新=机械复核**通过**（09-14..09-22 七日全在，最新 09-22；首查误报断供系输出截断误读，已纠正）；②并行期无事故；③Owner 签字=本令。
+- **实现**（agg-switch-design §2 方案A 已签数字）：allocation_inputs 新增 ④ 锚定 cap 供件（连续灰度曲线 cap=1−0.70×clamp((vol_pct−0.30)/0.70,0,1)，PIT 读最新行，旁路/无行/陈旧>7 日=applied False 留痕不盲用）；orchestrator 组合层新增 ANCHORED_CAP 裁剪（_LayerFacts.anchored_cap，与总暴露取 min 只减不加，违规标签可归因）；策略路由阈值未冻结**不接线**（设计稿原文随双轨证据定稿）。
+- **一键切回**：创建 data/runtime/anchored_cap.disabled 空文件即整段旁路（下一次分配日生效，零代码零重启）；预案=06_agg_switch_rollback_plan.md。
+- **测试**：新增 tests/pf_alloc/test_anchored_cap.py 13 例（曲线边界/PIT 三态/组合层裁剪链）；既有 pf_alloc 套件基线对照=crisis_gate 10F/sim_ledger 6F/event_wiring 挂死均为**基线既有红**（stash 对照实证，非本批引入）。
+- **地图**：L1-AGG algo_note 追加切换史+note_confirmed=2026-09-23（ALGO-NOTE-SYNC 同批）；dq 精简至 67 字（R17 ≤100）；run_checks fails=0。
 
 ## §4a 旧版风险账（初稿留档）
 
