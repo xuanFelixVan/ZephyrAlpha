@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.gate_auto_registrar（in_process_gate_registry.yaml 条目驱动）
 # [STARTUP] imported by gate_auto_registrar
 # [MATURITY] evolving
-# [INVARIANTS] 观察期 warn-only（TAG_VOCAB_GATE_MODE="warn"，未来翻 "block" 硬阻断）——staged yaml 中资产登记 tags 出现非枚举词/不可解析别名则 WARN+审计放行；library_tag_vocabulary.yaml 缺失 fail-open 跳过（观察门不得比词库先行阻断）；staged 词库本尊时加做结构自检（重复 canonical/别名冲突=孤儿）；own-scope（宪法 §3.3）外来 staged 剔除不阻断、warn+审计；解析异常 fail-open；净零声明=词库收编 15 份内联标签簇，本闸只管"词准不准"不立平行登记表（ulib3 T7）
+# [INVARIANTS] 观察期 warn-only（TAG_VOCAB_GATE_MODE="warn"，未来翻 "block" 硬阻断）——staged yaml 中资产登记 tags 出现非枚举词/不可解析别名则 WARN+审计放行；library_tag_vocabulary.yaml 缺失 fail-open 跳过（观察门不得比词库先行阻断）；staged 词库本尊时加做结构自检（重复 canonical/别名冲突=孤儿/双语缺位=标准词无英文别名）+双语校验（词汇表强制双语，A 班增补）；own-scope（宪法 §3.3）外来 staged 剔除不阻断、warn+审计；解析异常 fail-open；净零声明=词库收编 15 份内联标签簇，本闸只管"词准不准"不立平行登记表（ulib3 T7）
 # [MODIFY-GUARD] gate_id="TAG-VOCAB"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -123,6 +123,27 @@ def _collect_yaml_tags(node: object, out: list[str]) -> None:
             _collect_yaml_tags(item, out)
 
 
+def _missing_english_aliases(data: object) -> list[str]:
+    """词库本尊双语校验（词汇表强制双语，st-library-final-20260924 A 班增补）：
+
+    每个标准词的 aliases 须含至少一个 ASCII 别名（英文/物理列名）。存量 182 词 0 洞
+    （ulib3c 补 成交/大宗/每日基本面 三词条后），本维度只拦新词条双语缺位——
+    馆员增补流程的强制门槛，warn 期跟随闸模式。
+    """
+    out: list[str] = []
+    values = data.get("values") if isinstance(data, dict) else None
+    if not isinstance(values, list):
+        return out
+    for entry in values:
+        if not isinstance(entry, dict):
+            continue
+        canon = entry.get("value")
+        aliases = entry.get("aliases")
+        if not isinstance(aliases, list) or not any(isinstance(a, str) and a.strip() and a.isascii() for a in aliases):
+            out.append(f"双语缺位：标准词「{canon}」aliases 无英文别名（词汇表强制双语）")
+    return out
+
+
 def _audit_findings(gateway, findings: dict[str, list[str]]) -> None:
     """审计落盘（non-blocking）：供 Owner 回评误报率与升硬决策。"""
     try:
@@ -172,6 +193,7 @@ def _scan_yaml_files_for_findings(gateway, yaml_files: list[str], vocab: _Vocab)
         file_findings: list[str] = []
         if is_vocab_self:
             file_findings.extend(vocab.defects)
+            file_findings.extend(_missing_english_aliases(data))
         tags: list[str] = []
         _collect_yaml_tags(data, tags)
         for tag in tags:
