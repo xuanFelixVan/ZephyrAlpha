@@ -47154,4 +47154,9 @@ creation_tokens:
   created_by: st-metaq-20260923
   capability: metaq-vocab-dynamic-loading
   merge_evaluation: "同真源可派生必并：五份 meta_question 词表为 registry.py/apply_ddl/check_batch 动态加载的唯一真源（取代包内字面量与 gate-vocab 豁免），与 decision_layer 10 值词表为子集关系不同对象不并"
+- file: docs/_working/oddjobs_final/LEDGER.md
+  token: oddjobs-final-ledger-20260923
+  created_by: st-oddjobs-final-20260924
+  capability: oddjobs_final
+  merge_evaluation: "总包台账替代散点汇报（总指挥30分钟批注制唯一读取面），独占写者=本会话；不替代任何注册表条目"
 di_seam_exemptions: []
