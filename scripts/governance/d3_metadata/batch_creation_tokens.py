@@ -10,6 +10,9 @@
 #   写后 yaml.safe_load+语义落位+条目数守恒三自检，失败即回滚写前字节（2026-09-15 治理上报件1 收口；
 #   条目数守恒=本文件 2026-09-19 B22 治本新增，判据见 _mass_deletion_issues）；
 #   基底相对 HEAD 净删条目 ⇒ 写前即拒（fail-safe 方向=故障退化为不写，绝不"照写+只 warning"）；
+#   宽前缀防呆（2026-09-22 注册表事故 W4，emomine 481 条误扫治本）：实跑前计划登记数
+#   >_WIDE_PREFIX_ENTRY_LIMIT(50) 或扫描跨多个一级目录 ⇒ 拒执行，须先 --dry-run 预览
+#   贴回确认再显式 --wide-prefix；
 #   --merge-evaluation 可选（裁定#375 合并评估结论一句话，写入每条 token 的 merge_evaluation
 #   字段；缺省不阻断仅提示补填——CREATE-GUARD 对缺字段新建件 warn+审计）
 # [MODIFY-GUARD] 插入锚点=creation_tokens 段内 capability 锚行（找不到时 fail-closed 拒写）
@@ -70,6 +73,9 @@ import yaml
 _REPO = Path(__file__).resolve().parents[3]
 _REGISTRY = _REPO / "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
 _TOKEN_RE = re.compile(r"^[a-z0-9][a-z0-9-]*[a-z0-9]$")
+# W4 防呆（2026-09-22 注册表事故，emomine 481 条误扫治本）：计划登记数超限或前缀
+# 扫出多个一级目录 → 非显式 --wide-prefix 拒绝执行（先 --dry-run 预览贴回确认）。
+_WIDE_PREFIX_ENTRY_LIMIT = 50
 
 
 class TokenInsertError(RuntimeError):
@@ -379,6 +385,83 @@ def insert_block(block: str, anchor_capability: str, expect_files: list[str] | N
     raise TokenInsertError("5 次 CAS 重试仍冲突——有会话高频写此文件，稍后再试")
 
 
+def _wide_prefix_issues(files: list[str]) -> list[str]:
+    """W4 宽前缀判定：计划登记数超限 或 扫描结果跨多个一级目录 → 出拒执行理由。"""
+    issues: list[str] = []
+    if len(files) > _WIDE_PREFIX_ENTRY_LIMIT:
+        issues.append(f"计划登记 {len(files)} 条 > 上限 {_WIDE_PREFIX_ENTRY_LIMIT}")
+    top_dirs = {p.replace("\\", "/").split("/", 1)[0] for p in files if p}
+    if len(top_dirs) > 1:
+        issues.append(f"前缀扫出 {len(top_dirs)} 个一级目录: {sorted(top_dirs)[:5]}")
+    return issues
+
+
+# === 提交指路指南递送接口（②，2026-09-24 st-commitsys-20260924） ===
+# Owner 定调「拦截成本前移为指引成本」：token 登记仪式时点按路径类型递送对应
+# checklist 段（规则递送）。加法面：只新增 stdout 输出，不改任何登记语义；
+# 指南源册解析失败时降级为一行指针（绝不影响登记主流程）。
+_GUIDE_SOURCES = _REPO / "docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources"
+_GUIDE_REL = "docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md"
+
+
+_TYPE_RULES = [
+    ("tests/", ".py", "new_test_py"),
+    ("src/zephyr/", ".py", "new_src_py"),
+    ("scripts/", ".py", "new_script_py"),
+    ("docs/01_policies_and_standards/rules/", ".yaml", "rules_yaml"),
+]
+_OTHER_ASSET_EXTS = (".json", ".sh", ".mmd")
+
+
+def detect_file_type(rel_path: str) -> str | None:
+    """按路径判定文件类型（表驱动；与 file_type_checklists_registry.yaml type_id 对齐，未分类返回 None）。"""
+    p = rel_path.replace("\\", "/").lower()
+    for prefix, ext, type_id in _TYPE_RULES:
+        if p.startswith(prefix) and p.endswith(ext):
+            return type_id
+    if "_registry/catalogs/" in p and p.endswith((".yaml", ".yml")):
+        return "registry_yaml"
+    if p.startswith("docs/_working/") and p.endswith(".md"):
+        return "working_md"
+    if p.endswith(".md"):
+        return "formal_md"
+    if p.endswith((".yaml", ".yml")):
+        return "config_yaml"
+    if p.endswith(".ps1"):
+        return "ps1"
+    if p.endswith(_OTHER_ASSET_EXTS):
+        return "other_new_asset"
+    return None
+
+
+def print_guide_for_path(rel_path: str) -> None:
+    """打印该路径类型对应的 checklist 段 + 通用前置（fail-open 降级为指针行）。"""
+    try:
+        doc = yaml.safe_load((_GUIDE_SOURCES / "file_type_checklists_registry.yaml").read_text(encoding="utf-8")) or {}
+        type_id = detect_file_type(rel_path)
+        sections = []
+        uni = doc.get("universal") or {}
+        if uni:
+            sections.append(("通用前置（每笔提交）", uni))
+        sec = next(
+            (s for s in (doc.get("file_types") or []) if s.get("type_id") == type_id),
+            None,
+        )
+        if sec:
+            sections.append((f"{sec.get('type_id')} — {sec.get('title', '')}", sec))
+        print("=== 提交指路（指南递送）===")
+        for title, s in sections:
+            print(f"--- {title} ---")
+            for step in s.get("steps", []) or []:
+                print(f"  1. {step}")
+            refs = s.get("gate_refs") or []
+            if refs:
+                print(f"  关联门禁: {', '.join(refs)}")
+        print(f"  指南全文（机生禁手改）: {_GUIDE_REL}")
+    except Exception as exc:  # noqa: BLE001 — 递送是加法面，故障零影响登记主流程
+        print(f"=== 提交指路（降级）=== 指南全文: {_GUIDE_REL}（递送详情不可用: {type(exc).__name__}）")
+
+
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser(description="creation_token 批量登记（CREATE-GUARD 批量通道，纯插入幂等）")
@@ -396,7 +479,23 @@ def main() -> int:
         help="合并评估结论一句话（裁定#375 四判据，写入每条 token 的 merge_evaluation 字段；缺省仅提示补填）",
     )
     ap.add_argument("--dry-run", action="store_true", help="只列计划，零写入")
+    ap.add_argument(
+        "--wide-prefix",
+        action="store_true",
+        help="宽前缀确认旗（W4 防呆）：计划登记 >50 条或跨多个一级目录时，须先 --dry-run "
+        "预览并把输出贴回 Owner/会话确认，再显式带本旗实跑（emomine 481 条误扫治本）",
+    )
+    ap.add_argument(
+        "--emit-guide",
+        default=None,
+        metavar="PATH",
+        help="只查不改：按路径类型打印提交指路 checklist 段（提交前自检正门；登记成功后也会自动递送）",
+    )
     args = ap.parse_args()
+
+    if args.emit_guide:
+        print_guide_for_path(args.emit_guide)
+        return 0
 
     if not _REGISTRY.exists():
         print("FAIL: registry 不可达", file=sys.stderr)
@@ -423,6 +522,21 @@ def main() -> int:
     if len(files) > 10:
         print(f"  ...（共 {len(files)}）")
 
+    # W4 防呆（2026-09-22 注册表事故，emomine 481 条误扫治本）：宽前缀批须显式确认。
+    # dry-run 是预览通道不受限；实跑（写盘）前拦截。
+    wide_issues = _wide_prefix_issues(files)
+    if wide_issues:
+        if not args.dry_run and not args.wide_prefix:
+            print(
+                "FAIL: 宽前缀批拦截（W4 防呆）: " + "；".join(wide_issues) + "\n"
+                "确认流程：①先加 --dry-run 预览完整清单；②把输出贴回 Owner/会话确认；"
+                "③确认后显式加 --wide-prefix 重新实跑。",
+                file=sys.stderr,
+            )
+            return 1
+        if args.wide_prefix:
+            print(f"WARN: --wide-prefix 显式确认宽前缀批: {'；'.join(wide_issues)}")
+
     if args.dry_run:
         print("DRY-RUN：零写入")
         return 0
@@ -437,6 +551,7 @@ def main() -> int:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
     print(f"OK: 已插入 {len(files)} 条（锚点 capability: {anchor}）")
+    print_guide_for_path(args.prefix)
     return 0
 
 

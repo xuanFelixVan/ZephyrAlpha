@@ -1,0 +1,246 @@
+# [A_config] module_id=CFG-COMMIT-GUIDE-FILETYPES | layer=config | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+module_id: CFG-COMMIT-GUIDE-FILETYPES-001
+ttl: permanent
+title: 提交指路指南·文件类型 checklist 真源（按类型千人千面）
+doc_type: register
+registry_id: CFG-COMMIT-GUIDE-FILETYPES-001
+name: 文件类型提交清单真源
+description: >-
+  提交指路指南生成器的第二真源：按文件类型组织"必带头/登记/豁免格式/常见死因"。
+  gate_refs 引用的 gate_id 由生成器硬校验（不在 in_process_gate_registry.yaml 在册即生成失败）；
+  每类 checklist 的 gate 卡片正文从 gate_digest_registry.yaml 机生引用，本册只写类型特有步骤，不复制判据。
+owner: MOD-INF-005
+tier: tier_1_governance
+status: active
+version: 1.0.0
+created: '2026-09-24'
+last_updated: '2026-09-24'
+unique_key: type_id
+entry_schema:
+  type_id: string (required, unique)
+  title: string (required)
+  match_hint: string (required) — 判定口诀（token 工具按此分派 checklist 段）
+  steps: list (required) — 类型特有必做步骤（不与 gate 卡片重复）
+  gate_refs: list — 关联门禁（生成器校验在册）
+  common_deaths: list — case/gate/prescription 三元组（真实死因+处方，evidence 可选 qid）
+universal:
+  title: 每一笔提交的通用前置（不分文件类型）
+  steps:
+    - "会话注册：session_worktree_start() 注册 session（SESSION-REQUIRED 硬拦未注册提交）"
+    - "改前 claim：lock_files.py acquire <file> <sid>；毕后 release（CLAIM-REQUIRED）"
+    - "隔离施工：worktree 内改（WORKTREE-REQUIRED：主区+他会话活跃=硬拦；降级直改=显式申请制）"
+    - "能力反查：写第一行业务代码前 capability_lookup.find()（CAPABILITY-LOOKUP-REQUIRED 查审计日志）"
+    - "施工登记：新 .py 模块先 apply_depgraph.py --add-design-node；完工 --transition-build-status production"
+    - "提交正门：python scripts/git_commit.py --session <sid> --files <清单>（禁裸 git commit；[GW:] 标记网关自动追加禁手写）"
+    - "锁忙改道：LOCK_TIMEOUT 自动入队；失败重试带 --adopt-prior-work；需要同步语义才 --no-auto-enqueue"
+    - "提交后核账：git log -1 --name-only 核实真实归属（暂存区可能吸收他会话内容）"
+    - "worktree 施工注意假回执：worktree 内 --enqueue 落本区局部队列主带不排——用 --queue-root 主区 --worktree-root 本区；判据只认 git show HEAD:<file>"
+  gate_refs: [SESSION-REQUIRED, CLAIM-REQUIRED, WORKTREE-REQUIRED, CAPABILITY-LOOKUP-REQUIRED, DEPGRAPH-ENFORCEMENT, FORGED-GW-MARKER, FOREIGN-CHANGE-DETECTION, HELD-OVERLAP]
+file_types:
+  - type_id: new_src_py
+    title: 新建 src/zephyr/ 生产模块
+    match_hint: 路径 src/zephyr/** 且新文件且 .py
+    steps:
+      - "token 先行：batch_creation_tokens.py --prefix <模块目录> 登记（--merge-evaluation 带四判据一句话）；token 与内容同批原子或 token 批先落（队列 gate 读 HEAD，倒序必死）"
+      - "文件头 30 行 14 字段标注（[BLUEPRINT]/[MODULE]/[DOMAIN]/[DEPENDENCIES]/[CONSUMERS]/[STARTUP]/[MATURITY]/[INVARIANTS]/[MODIFY-GUARD]/[STABILITY]/[SAFETY]/[AI_AUTONOMY]/[ERROR_CONTRACT]/[TESTS]；__init__.py 最低 3 字段）"
+      - "翻译登记：add_module_translation.py --name-zh --plain-zh（大白话 ≥8 汉字禁模板话）"
+      - "新类名全仓唯一（同名加 # class-name-alias: <理由> 豁免）；禁纯 shim；禁 governance/ 根新增"
+      - "模块级可变容器写 Final（__all__: Final = [...]）；异常消息 ASCII 无句号、敏感值走 details"
+      - "时间一律 now_utc()/datetime.now(UTC)；subprocess 带 CREATE_NO_WINDOW（走 process_pool）；CH 查询走 ch_reader；SQL 提 _SQL_ 常量走 DatabaseService"
+    gate_refs: [CREATE-GUARD, TRANSLATION-COVERAGE, ORPHAN-MODULE, IMPORT-INTEGRITY, COMPLEXITY-GUARD, MUTABLE-CONST-WITHOUT-FINAL, SSOT-REDEFINITION, CAPABILITY-OVERLAP, FILE-COPY, FUNCTION-DUP, MODULE-ID-CONSISTENCY, BLUEPRINT-FORMAT, BLUEPRINT-HEADER, GATE-DOMAIN-FK, DEPGRAPH-ENFORCEMENT, PERMANENT-SYSTEM-TRIGGER, NO-IMPORT-SIDE-EFFECT, SYNTAX-VALIDATION, NOQA-VALIDATION, MSG-EXPOSURE, MSG-STYLE]
+    common_deaths:
+      - case: "新文件无 token 直提"
+        gate: CREATE-GUARD
+        prescription: "先登记 token 再写文件；登记时带 --merge-evaluation"
+      - case: "翻译缺失/模板话（'提供包入口和模块加载功能'）"
+        gate: TRANSLATION-COVERAGE
+        prescription: "add_module_translation.py 一条命令；plain_zh 写人话 ≥8 汉字"
+      - case: "文件搬运+同批改引用被 ORPHAN/IMPORT 轮番拦死"
+        gate: ORPHAN-MODULE
+        prescription: "三方（文件+import+名册）同批原子；或迁移延后另案（k4-0007 三连死实证）"
+  - type_id: new_script_py
+    title: 新建 scripts/ 治理/业务脚本
+    match_hint: 路径 scripts/** 且新文件且 .py
+    steps:
+      - "token 先行（同 src 模块）；14 字段头照带"
+      - "scripts/governance/** 须 from _shared.constants import <sym>（用了就显式 import）"
+      - "manual CLI 永久脚本加 # noqa: m11-perm-manual-legitimate 尾注（M11 豁免通道）"
+      - "入口形态带 if __name__ == '__main__':（ORPHAN-MODULE 入口豁免面）"
+      - "翻译登记同 src（TRANSLATION-COVERAGE 照拦 scripts/ 新增）"
+    gate_refs: [CREATE-GUARD, TRANSLATION-COVERAGE, SCRIPTS-IMPORT-INTEGRITY, UNDEFINED-NAME, PERMANENT-SYSTEM-TRIGGER, ORPHAN-MODULE, SYNTAX-VALIDATION]
+    common_deaths:
+      - case: "CLI runner 被判永久系统时间触发"
+        gate: PERMANENT-SYSTEM-TRIGGER
+        prescription: "M11 豁免尾注 # noqa: m11-perm-manual-legitimate（manual CLI 合法先例）"
+  - type_id: new_test_py
+    title: 新建 tests/ 测试件
+    match_hint: 路径 tests/** 且 .py
+    steps:
+      - "tests/ 全豁免 CREATE-GUARD token/翻译——直接写"
+      - "语法必须过（SYNTAX-VALIDATION 不豁免 tests/）；坏语法夹具用 # noqa: syntax-fixture  <理由≥10字符>"
+      - "from zephyr.* import 的符号必须在源码实存（TEST-SOURCE-CONSISTENCY）"
+      - "禁写生产路径 data/ 业务目录——输出一律 tmp_path fixture（运维红线）"
+    gate_refs: [SYNTAX-VALIDATION, TEST-SOURCE-CONSISTENCY, META-TESTS-COVERAGE]
+    common_deaths:
+      - case: "测试 import 源码不存在的符号"
+        gate: TEST-SOURCE-CONSISTENCY
+        prescription: "import 实存符号；废弃测试 module-level pytest.skip"
+  - type_id: working_md
+    title: 新建 docs/_working/ 工作文档（报告/台账/案卷）
+    match_hint: 路径 docs/_working/** 且 .md
+    steps:
+      - "frontmatter 三件套：ttl: task_bound + title + session（TTL-METADATA fail-closed；禁 doc_type——EXEMPT-ZONE-FM 拦豁免区带 doc_type）"
+      - "目录用语义名禁 _NN 日期后缀（R5-DIGIT-SUFFIX 拦新引入目录：e2e_20260924 违规→e2e_integration 合法）"
+      - "扩展名只许 .csv/.html/.md/.yaml（DIRECTORY-CONTRACT；.meta.json 违规→改 .meta.yaml）"
+      - "token 照登记（CREATE-GUARD 全 7 格式含 .md）"
+      - "md 相对链接目标须实存（DOC-REF-BROKEN，草稿区 skip 面除外）"
+      - "docs/_working 是 24h TTL 暂存面——成果要转正须 promote 到正式目录（FILE-PLACEMENT-TTL）"
+    gate_refs: [TTL-METADATA, EXEMPT-ZONE-FM, DIRECTORY-CONTRACT, R5-DIGIT-SUFFIX, CREATE-GUARD, DOC-REF-BROKEN, FILE-PLACEMENT-TTL]
+    common_deaths:
+      - case: "frontmatter 缺 ttl 或用了废除值 7d/30d"
+        gate: TTL-METADATA
+        prescription: "ttl: task_bound（临时区）/permanent（永久区）二选一；禁旧值"
+      - case: "日期后缀目录被拦"
+        gate: R5-DIGIT-SUFFIX
+        prescription: "案卷迁语义名目录；已落 HEAD 的老文件不受影响"
+      - case: ".meta.json 扩展名违规"
+        gate: DIRECTORY-CONTRACT
+        prescription: "改 .meta.yaml（内容同步转 YAML），消费侧同批改"
+  - type_id: formal_md
+    title: 新建正式 docs/** 文档（SOP/政策/规范）
+    match_hint: 路径 docs/** 且非 _working/_archive 且 .md
+    steps:
+      - "frontmatter ttl: permanent + doc_type（正式区必带，TTL-METADATA --strict-doctype）"
+      - "永久区新文件需 promote 准入旗（FILE-PLACEMENT-TTL 规则 1）"
+      - "禁过渡文本（'曾用X现为Y'式表述——PURE-ASSERTION 直接写现值）"
+      - "#ARCH-NNN 引用必须先在 architecture_issue_registry.yaml 登记（同批）；AGENTS.md §章节号须实存（REFERENCE-INTEGRITY）"
+      - "token 照登记"
+      - "ruling_*.md 专项：裁定号先登记 ruling_registry 且与文档同 commit 原子（RULE-RULING）；文档里声明的 commit hash 必须已落地本仓（RULING-COMMIT-VERIFIED）"
+    gate_refs: [TTL-METADATA, FILE-PLACEMENT-TTL, PURE-ASSERTION, REFERENCE-INTEGRITY, CREATE-GUARD, FOLDER-CAPACITY-HARD-LIMIT]
+    common_deaths:
+      - case: "引用 #ARCH-XXX 未在册编号"
+        gate: REFERENCE-INTEGRITY
+        prescription: "先登记 architecture_issue_registry.yaml 再引用，同批原子"
+  - type_id: registry_yaml
+    title: 注册表 YAML（docs/.../_registry/catalogs/）
+    match_hint: 路径含 _registry/catalogs/ 且 .yaml
+    steps:
+      - "共享热册必走 safe_write_text CAS（禁裸 Edit/Write 后不复核）；写后进程外复核"
+      - "纯插入；条目插既有根键列表尾（capability 册 token 插 creation_tokens 尾、di_seam_exemptions 行之前）"
+      - "插后本地 yaml.safe_load 预验（REGISTRY-YAML-PARSE fail-closed 无逃生）"
+      - "净删/条目减少/身份消失任一信号触发 REGISTRY-MASS-DELETION——合法重排须 message [allow-mass-deletion:<理由≥10字>]"
+      - "批量补登走 scripts/governance/registry_batch_edit.py；token 批量走 batch_creation_tokens.py（守恒闸防吃他会话刚落地条目）"
+      - "tags 只选词不造词（TAG-VOCAB）；资产登记带 name_zh+plain_zh 血肉（BLOOD-FLESH）"
+    gate_refs: [REGISTRY-MASS-DELETION, REGISTRY-YAML-PARSE, TAG-VOCAB, BLOOD-FLESH, HOT-FILE-BASE-FRESHNESS, CREATE-GUARD]
+    common_deaths:
+      - case: "整文件快照压盘（陈旧基底覆写他会话刚落地条目）"
+        gate: REGISTRY-MASS-DELETION
+        prescription: "热文件 safe_write_text+expected_base_sha256；写前守恒闸拒写即停，勿强行重写"
+      - case: "三向合并失败/快照撕裂死信"
+        gate: REGISTRY-YAML-PARSE
+        prescription: "解析护栏（yaml.safe_load 预验）过了再入队；同族多条插入注意合并器同点插入语义"
+  - type_id: config_yaml
+    title: 非 rules 配置 YAML（config/ data/ schemas/ 及 docs/_working 的 .yaml/.yml）
+    match_hint: .yaml 或 .yml 且新文件且非 _registry/catalogs 且非 rules/
+    steps:
+      - "token 照登记（非 rules .yaml 无 token 硬拦——YAML 是配置真源，第二真源危害最大；注：.yml 后缀当前不在 CREATE-GUARD 机器强制面，按同标准自律防扩面）"
+      - "frontmatter ttl 按区：config/ 永久区=permanent；docs/_working 下 .yaml/.yml 一律 task_bound（FILE-PLACEMENT-TTL 拦错区）"
+      - "表名走 TableRegistry；词表值走加载器禁硬编码"
+    gate_refs: [CREATE-GUARD, TTL-METADATA, TABLE-NAME-REGISTRY, GATE-VOCAB]
+    common_deaths: []
+  - type_id: rules_yaml
+    title: 规则 YAML（docs/01_policies_and_standards/rules/trae_*.yaml）
+    match_hint: 路径 docs/01_policies_and_standards/rules/ 且 .yaml
+    steps:
+      - "命名铁律 trae_NNN_<主题>_<描述>.yaml（主题段必须含下划线；非 trae 命名/单段 name 硬拦）"
+      - "enforcement.paired_gate_id 必填（null=文档型；值须 gate_registry 在册）"
+      - "四方式对齐：YAML↔Catalog↔Disk↔Code 同步改"
+      - "scaffold 正门：python scripts/scaffold.py rule <主题_描述>"
+      - "rules/ .yaml 不走 CREATE-GUARD token（走命名检查）；rules/*.yaml 双层保护死路勿闯（勿想给 rules yaml 登 token 绕命名）"
+    gate_refs: [RULE-EXECUTION-PAIRING, RULE-FOUR-WAY-ALIGN, EXEMPT-ZONE-FM]
+    common_deaths:
+      - case: "paired_gate_id 悬空（指向未注册 gate）"
+        gate: RULE-EXECUTION-PAIRING
+        prescription: "挂真 gate_id 或显式 null"
+  - type_id: rename_move
+    title: 文件改名/搬移
+    match_hint: git diff --diff-filter=R 或同批 A+D 对
+    steps:
+      - "git mv 后 commit 前 MUST generate_project_depgraph.py --force 重建（RENAME-DEPGRAPH-SYNC 硬拦）"
+      - "三方同批原子：文件+引用方 import+名册 module_path 同一批（否则 ORPHAN/IMPORT/名册三方分裂轮番拦死——k4 三连死+lane0b-0017 死锁实证）"
+      - "改名后注册表条目 code_path/code_symbol 同步（REGISTRY-CODE-ANCHOR 反查）"
+      - "rules/ .yaml rename 也拦命名违规（--diff-filter=R 检测新名）"
+    gate_refs: [ORPHAN-MODULE, IMPORT-INTEGRITY, REGISTRY-CODE-ANCHOR, DEPGRAPH-FRESHNESS, DERIVED-FILE-DELETION-PROTECTION]
+    common_deaths:
+      - case: "搬家批死于 ORPHAN（HEAD 引用方还指旧路径），改引用批死于 IMPORT（新路径不存在）——互为前置死锁"
+        gate: ORPHAN-MODULE
+        prescription: "合一批原子落地（8 文件合一批先例）；或反方案三方全回原位零新文件"
+  - type_id: deletion_batch
+    title: 删除批/退役批
+    match_hint: git diff --diff-filter=D
+    steps:
+      - "派生文件删除被拦——先跑 sync 真源脚本或 --allow-derived-deletion"
+      - "注册表净删走 [allow-mass-deletion:<理由≥10字>]"
+      - "退役批注意时序毒窗：主区文件删了、退役注册表批未落地的窗口内一切 landing fail-closed（gslim P3 实证）——文件+注册表+测试单批原子，或先 enabled:false 软开关"
+      - "反查 code_path 引用（REGISTRY-CODE-ANCHOR）；dangling 引用先清"
+    gate_refs: [DERIVED-FILE-DELETION-PROTECTION, REGISTRY-MASS-DELETION, REGISTRY-CODE-ANCHOR, REFERENCE-INTEGRITY]
+    common_deaths:
+      - case: "退役半落地窗内他会话全量死信（LandingEnvironmentError）"
+        gate: RECONCILER-HEALTH
+        prescription: "退役=单批原子或软开关先行；窗口期施工旗让队列暂停该类落地（立法提案在案）"
+  - type_id: migration_batch
+    title: 迁移/DDL/数据批
+    match_hint: apply_*.py / DDL / 数据回填批
+    steps:
+      - "新 schema 表 15 字段头 + DateTime64(3) 显式时区（RULE-SCHEMA-TZ）"
+      - "ReplacingMergeTree version 列用 ingest_ts；查询走 ch_reader FINAL；写入走 BufferedWriter"
+      - "表名注册 business_data_categories.yaml（SCHEMA-FILE-EXISTS 校验 schema_file 实存）"
+      - "破坏性 DB 操作三步验证（必要性/真实性/可逆性）+判重用 check_tick_duplication.py"
+      - "错误码按 detail 提示的下一可用号 ZA-<前缀>-N 登记"
+    gate_refs: [CH-VERSION-COL, CH-FINAL-GATE, CH-BATCH-SIZE, SCHEMA-FILE-EXISTS, GATE-ERRCODE-CONSISTENCY, TABLE-NAME-REGISTRY, BUSINESS-REGISTRY]
+    common_deaths: []
+  - type_id: ps1
+    title: PowerShell 脚本（.ps1）
+    match_hint: .ps1 文件
+    steps:
+      - "纯 ASCII（PS5.1 无 BOM 按 GBK 解码，中文注释=假语法错误）——注释写英文"
+      - "原生重定向用 cmd /c 形态（PS5.1 stderr NativeCommandError 釜底抽薪）"
+      - "token 照登记（7 格式含 .ps1）"
+    gate_refs: [ENCODING-SAFETY, CREATE-GUARD]
+    common_deaths: []
+  - type_id: other_new_asset
+    title: 其他新建资产（.json/.sh/.mmd）
+    match_hint: 新文件且扩展名为 .json/.sh/.mmd（CREATE-GUARD 七格式覆盖面）
+    steps:
+      - "token 照登记（CREATE-GUARD 七格式含 .json/.sh/.mmd，data/runtime/*.json 也拦）"
+      - "ttl 义务同在（TTL-METADATA 格式面含 .json/.sh/.mmd）：永久区 frontmatter ttl permanent，临时区 task_bound"
+      - "目录契约扩展名面：docs/_working 只许 .csv/.html/.md/.yaml——.json 落别处或改 .meta.yaml"
+    gate_refs: [CREATE-GUARD, TTL-METADATA, DIRECTORY-CONTRACT]
+    common_deaths: []
+  - type_id: queue_channel
+    title: 队列通道专项（enqueue/requeue/死信分诊）
+    match_hint: 任何走 commit_queue 的提交
+    steps:
+      - "token 先行纪律：token 批与内容同批原子，或 token 批严格先行——队列 gate 读 HEAD，倒序必死（cleaninv-0007 实证）"
+      - "死信三分类：吸收型（禁 requeue！核袋=git show HEAD:<file> 对照，内容已在他批落地）/内容死（属主自修）/冤案（环境性，修复后 requeue）"
+      - "requeue 用新快照：死信后先核 HEAD 现状（判据可能已随重构过时——q-0005 判旧单体实证），带 --from-bag 前先核袋"
+      - "requeue 不改 message——死因是 message 类（no-lookup reason 不在白名单）必须新 enqueue（sweep-0002/0013 实证）"
+      - "直连配方：--allow-non-worktree --adopt-prior-work --allow-overlap + 全暂存区扫描连坐时先临时 unstage 外来件"
+      - "代修代投：修文件→release_files 精准释放死 sid claim→commit_queue enqueue 留痕（st-cmd 0007 配方）"
+      - "bag 回执自检：落地后 git show HEAD:<file> 验真；NOTHING_TO_COMMIT+blob 不符=陈旧吸收型勿重放"
+    gate_refs: [CAPABILITY-LOOKUP-REQUIRED, REGISTRY-YAML-PARSE, GATE-PRECOMMIT-RUN, SNAPSHOT-DRIFT]
+    common_deaths:
+      - case: "吸收型死信盲目 requeue 反复白死"
+        gate: REGISTRY-YAML-PARSE
+        prescription: "先 git show HEAD 核袋；已吸收=放弃重放并销账"
+      - case: "no-lookup 理由不在白名单"
+        gate: CAPABILITY-LOOKUP-REQUIRED
+        prescription: "reason 改白名单关键词（gate-fix/continuation/mechanical 等 16 项）重新 enqueue"
+extra_registry:
+  title: 机制红线（非 in-process 台，但同硬阻断级）
+  items:
+    - "GIT-SAFE：危险 git 命令清单禁用；禁 plumbing 绕过（read-tree/update-index/write-tree）；[GW:] 伪造=POST-COMMIT-GUARD 自动 reset"
+    - "热文件写入必 safe_write_text CAS；写后进程外核实"
+    - "belt daemon 只在心跳陈旧+30min 零落地双条件才杀；epoch 换血（pid 变+队列在动）=健康"
+    - "serializer 读 HEAD 代码：盘面热修对落地器无效，修复须走队列正门送 HEAD（K1 铁证）"
+    - "全暂存区 33 台扫描=连坐来源：会话收尾清自己 staged；外来违规不代修（owner 责任制）"

@@ -106,6 +106,33 @@ from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E40
 
 logger = logging.getLogger(__name__)
 
+# 指南锚点（②递送接口，2026-09-24 st-commitsys-20260924）：失败文案附带指路锚点——
+# 拦截成本前移为指引成本。加法改：只追加 stderr 一行，不改任何 exit code/判定分支；
+# 锚点故障静默降级（logger.debug），绝不影响原失败语义。
+_GUIDE_REL = "docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md"
+_DIGEST_REL = "docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml"
+
+
+def _print_guide_anchor(detail: str) -> None:
+    """检索失败文案中的已蒸馏门禁名，打印指南锚点行（_own_guide 递送面）。"""
+    try:
+        import yaml as _yaml
+
+        from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415
+
+        digest = _yaml.safe_load((REPO_ROOT / _DIGEST_REL).read_text(encoding="utf-8")) or {}
+        names = [str(g.get("gate_id")) for g in (digest.get("gates") or []) if g.get("gate_id")]
+        hit = sorted({n for n in names if n in detail}, key=len, reverse=True)[:3]
+        if hit:
+            print(
+                f'GUIDE: 指路锚点 -> {_GUIDE_REL} 检索 "{"|".join(hit)}"'
+                f"（对应 GATE 卡片含判据/豁免格式/处方；改源头册后用 generate_commit_guide.py 重生成）",
+                file=sys.stderr,
+            )
+    except Exception as exc:  # noqa: BLE001 — 锚点递送是加法面，故障零影响
+        logger.debug("guide anchor skipped: %s", exc)
+
+
 # commit 结果状态查表：CommitStatus → (exit_code, line_template, help_text, to_stdout)
 # line_template 使用 {message}/{commit_hash}/{stash_ref} 占位符；
 # 未列出的状态走 _COMMIT_RESULT_DEFAULT（exit 1, FAILED）。
@@ -204,6 +231,8 @@ def _format_commit_result(result) -> int:
             help_text.format(stash_ref=getattr(result, "stash_ref", "")),
             file=out,
         )
+    if exit_code != 0:
+        _print_guide_anchor(result.message or "")
     return exit_code
 
 
@@ -777,7 +806,9 @@ def _run_preflight(gw, args, files: list[str], *, mode: str, extra_skip: frozens
         logger.warning("preflight 异常降级放行（锁内兜底）: %s", exc)
         return None
     if result.blocking:
-        print(result.render_report(args.session), file=sys.stderr)
+        report_text = result.render_report(args.session)
+        print(report_text, file=sys.stderr)
+        _print_guide_anchor(report_text)
         return 8
     if result.degraded:
         logger.info("preflight degraded（不阻断）: %s", result.degraded)

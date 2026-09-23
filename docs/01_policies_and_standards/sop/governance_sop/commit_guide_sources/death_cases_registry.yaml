@@ -1,0 +1,163 @@
+# [A_config] module_id=CFG-COMMIT-DEATH-CASES | layer=config | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+module_id: CFG-COMMIT-DEATH-CASES-001
+ttl: permanent
+title: 提交撞墙死因案例册（死因→处方蒸馏，附实弹证据）
+doc_type: register
+registry_id: CFG-COMMIT-DEATH-CASES-001
+name: 提交死因案例册
+description: >-
+  提交指路指南生成器的第三真源：从 2026-09-22/23 死信战役（112 封实测+overnight_decisions 流水）
+  蒸馏的死因→处方对。每条带实弹证据（qid/commit），处方与 gate_digest_registry.yaml 的 gate 联动
+  （gate 字段由生成器校验在册）。成本数据口径：created_at→dead_at 分钟（含排队等待）。
+owner: MOD-INF-005
+tier: tier_1_governance
+status: active
+version: 1.0.0
+created: '2026-09-24'
+last_updated: '2026-09-24'
+unique_key: case_id
+entry_schema:
+  case_id: string (required, unique)
+  symptom: string (required) — 你看到什么（死信文案特征）
+  gate: string (required) — 关联门禁
+  root_cause: string (required) — 机制
+  prescription: string (required) — 怎么修（可直接执行）
+  cost_note: string (optional) — 实测成本
+  evidence: list (optional) — qid/commit 证据
+cases:
+  - case_id: DEATH-001-TOKEN-MISSING
+    symptom: "无 creation_token，禁止造第二真源"
+    gate: CREATE-GUARD
+    root_cause: 新文件未登记 token（队列 gate 读 HEAD 名册，盘面登记未落地=无）
+    prescription: "batch_creation_tokens.py --prefix <目录> --created-by <sid> --capability <名> --merge-evaluation \"<四判据一句话>\"；token 与内容同批原子或 token 批先行独立批"
+    cost_note: "P50 14.1min/封，112 封中 13 封"
+    evidence: [q-20260923-st-cleaninv-20260923-0007]
+  - case_id: DEATH-002-BASENAME-COLLISION
+    symptom: "新文件与已有文件 basename 碰撞（第二函数面）"
+    gate: CREATE-GUARD
+    root_cause: basename 碰撞检测有两条函数面，只豁免修复其一=盲发重发连死
+    prescription: "对照两处检查函数确认豁免面（basename==__init__.py）后重发；盲发重发=白死（0058/59/60 连三实证）"
+    evidence: [chainpile-0058, chainpile-0059, chainpile-0060]
+  - case_id: DEATH-003-R5-DIGIT-DIR
+    symptom: "R5 数字后缀目录禁止"
+    gate: R5-DIGIT-SUFFIX
+    root_cause: 目录名 _NN/日期后缀=暗示多真源；新引入目录硬拦，历史不追溯
+    prescription: "案卷迁语义名目录重发；已落 HEAD 文件不受影响"
+    cost_note: "P50 28.9min/封"
+    evidence: [lane0b-0009, e2e-0005]
+  - case_id: DEATH-004-TTL-FRONTMATTER
+    symptom: "TTL-METADATA frontmatter 校验失败（工棚新 .py 常见）"
+    gate: TTL-METADATA
+    root_cause: worktree 新文件缺 frontmatter ttl 或用了废除值
+    prescription: "frontmatter 补 ttl: task_bound（临时区）；ttl 合法值动态真源=ttl_vocabulary.yaml（现只 permanent/task_bound）"
+    cost_note: "P50 101.3min/封（昂贵档）"
+    evidence: [buildB-0001]
+  - case_id: DEATH-005-TRANSLATION
+    symptom: "TRANSLATION-COVERAGE 新模块无大白话简介"
+    gate: TRANSLATION-COVERAGE
+    root_cause: 新增 .py 未登记翻译册（或 plain_zh 模板话 CJK<8）
+    prescription: "python scripts/governance/d3_metadata/add_module_translation.py --path <f> --domain <D_*> --name-zh <中文> --plain-zh <人话>"
+    cost_note: "P50 7.5min/封，9 封"
+    evidence: [emoreplay-0002]
+  - case_id: DEATH-006-DIRECTORY-CONTRACT
+    symptom: "DIRECTORY-CONTRACT 扩展名/目录违规"
+    gate: DIRECTORY-CONTRACT
+    root_cause: docs/_working 只许 .csv/.html/.md/.yaml
+    prescription: "改后缀（.meta.json→.meta.yaml 内容转 YAML）+消费侧同批改"
+    evidence: [emoreplay-0001]
+  - case_id: DEATH-007-ORPHAN-MOVE
+    symptom: "ORPHAN-MODULE：文件搬移后全仓无 import 引用"
+    gate: ORPHAN-MODULE
+    root_cause: ORPHAN 门引用检测不含同批新 import（结构性盲区）；"搬运+同批改引用"被 ORPHAN/IMPORT/格式三门轮番拦死
+    prescription: "三方（文件+import+名册）合一批原子；或反方案全回原位零新文件；迁移延后另案"
+    cost_note: "P50 36.8min/封；k4 三投三死（0006 ruff→0007 ORPHAN→0008 反方案）"
+    evidence: [lane0b-0017, k4-0007, k4-0008]
+  - case_id: DEATH-008-IMPORT-DANGLING
+    symptom: "IMPORT-INTEGRITY 悬空 import"
+    gate: IMPORT-INTEGRITY
+    root_cause: import 目标在 main HEAD+staged 都不存在（他会话未 merge/新路径未同批）
+    prescription: "import 与目标文件同 commit；他会话未落地先等 merge；改 import 前核目标在 HEAD"
+    cost_note: "P50 148.4min/封（次昂贵档）"
+    evidence: [k4-0003]
+  - case_id: DEATH-009-STALE-SNAPSHOT-REQUEUE
+    symptom: "NO-COMPLEXITY-GUARD 等判据与盘面现状明显不符"
+    gate: COMPLEXITY-GUARD
+    root_cause: 入队快照是旧单体（判 42>15 时盘上已重构为线性流水）——死信判据可能已过时
+    prescription: "死信后先核 HEAD 现状再 requeue 新快照；勿拿旧死因反复盲修"
+    evidence: [q-0005-lane0b]
+  - case_id: DEATH-010-RUFF-FORMAT
+    symptom: "GATE-PRECOMMIT-RUN ruff-format 失败"
+    gate: GATE-PRECOMMIT-RUN
+    root_cause: 落地前未 ruff format 归一
+    prescription: "提交前 ruff format <files>；代修配方=ruff format→git rm --cached 旧路径→release_files→enqueue 代投"
+    cost_note: "P50 4.1min/封（高频便宜档，20 封居首）"
+    evidence: [k4-0006]
+  - case_id: DEATH-011-FINAL-MISSING
+    symptom: "MUTABLE-CONST-WITHOUT-FINAL（__all__ 等缺 Final）"
+    gate: MUTABLE-CONST-WITHOUT-FINAL
+    root_cause: 模块级 List/Dict/Set 赋值未 Final 标注
+    prescription: "写 __all__: Final = [...]（AnnAssign 形态）；一行修"
+    cost_note: "P50 44.6min/封"
+    evidence: [k4-0004, e2e-0004]
+  - case_id: DEATH-012-NO-LOOKUP-REASON
+    symptom: "no-lookup reason 不匹配白名单"
+    gate: CAPABILITY-LOOKUP-REQUIRED
+    root_cause: message [no-lookup:<reason>] 的 reason 不在 16 项白名单
+    prescription: "改白名单关键词（gate-fix/continuation/mechanical 等）重新 enqueue（requeue 不改 message 必须新 enqueue）"
+    evidence: [sweep-0002, sweep-0013]
+  - case_id: DEATH-013-BLUEPRINT-HEADER-FORMAT
+    symptom: "BLUEPRINT-FORMAT：[BLUEPRINT] 头 module_id 不合规格"
+    gate: BLUEPRINT-FORMAT
+    root_cause: module_id 不合裁定#214/#208 规格（MOD-/SH- 前缀格式）
+    prescription: "对照规格改头格式再发；未修先重发=盲发白死（chainpile 0061/0062 连死实证）"
+    evidence: [chainpile-0061, chainpile-0062]
+  - case_id: DEATH-014-MASS-DELETION
+    symptom: "REGISTRY-MASS-DELETION 净删/条目数减少/身份消失"
+    gate: REGISTRY-MASS-DELETION
+    root_cause: 三信号任一（含删16插25代数抵消）；共享暂存区副本陈旧也会误报
+    prescription: "合法重排带 [allow-mass-deletion:<理由≥10字>]；共享册 git add 自愈；批量补登走 registry_batch_edit.py"
+    cost_note: "8 封"
+    evidence: [in_process 册误报案]
+  - case_id: DEATH-015-PROTECTED-PATHS
+    symptom: "PROTECTED-PATHS 写受保护路径"
+    gate: PROTECTED-PATHS
+    root_cause: .gitignore/.gitattributes/AGENTS.md 等须审批
+    prescription: "message 加 [ARCH-APPROVAL:<issue_id>]（issue 须在册）；勿硬闯勿 env 逃（除非真紧急留痕）"
+    cost_note: "P50 182.8min/封（最贵档）"
+  - case_id: DEATH-016-ABSORBED-DEAD-LETTER
+    symptom: "死信 requeue 后 NOTHING_TO_COMMIT/blob 不符"
+    gate: QUEUE-MECHANICS
+    root_cause: 吸收型死信——内容已被他会话更信落地覆盖，旧袋重放=假落地风险
+    prescription: "核袋=git show HEAD:<file> 对照；已吸收=销账勿 requeue（unified-0012 定性先例）"
+    evidence: [unified-0012]
+  - case_id: DEATH-017-WORKTREE-FAKE-RECEIPT
+    symptom: "worktree 内提交回执成功但 HEAD 无此提交"
+    gate: SESSION-REQUIRED
+    root_cause: worktree 局部队列根主传送带永不排它（statreplay 实证）
+    prescription: "commit_queue.py --queue-root 主区 enqueue --worktree-root 本区 --no-bootstrap；判据只认 git show HEAD:<file>"
+    evidence: [statreplay]
+  - case_id: DEATH-018-MERGE-BASE-CONFLICT
+    symptom: "冲突：入队基底之后 dev 已推进且触及同路径"
+    gate: QUEUE-MECHANICS
+    root_cause: 同路径他会话先行落地，快照基底陈旧
+    prescription: "重取最新基底重新入队；热门共享册错峰写"
+    evidence: [scripts/go 冲突案]
+  - case_id: DEATH-019-FOLDER-CAPACITY
+    symptom: "FOLDER-CAPACITY 目录平铺超 120"
+    gate: FOLDER-CAPACITY-HARD-LIMIT
+    root_cause: 平铺 .py 计数（主区盘口径）超硬限
+    prescription: "拆子目录/删残留；注意主区盘与工棚口径差（nightfix 121>120 实案）"
+    evidence: [nightfix q-0008]
+  - case_id: DEATH-020-STATE-VOCAB-MISSING
+    symptom: "state_vocab 词表线在飞件盘有 HEAD 无——落地环境全员阻断"
+    gate: STATE-VOCAB-REGISTRY
+    root_cause: 词表注册表先行落地与否决定全仓门禁状态（xhs 复职全阻案）
+    prescription: "词表/注册表类先行批独立落地；落地阻断等先行批自愈勿对抗"
+    evidence: [xhs-full 复职案]
+  - case_id: DEATH-021-HOT-REGISTRY-EVAPORATION
+    symptom: "刚登记的 token/翻译条目从盘面消失；提交被 CREATE-GUARD 拦无 token；batch_creation_tokens 写前守恒闸报基底缺条目拒写"
+    gate: REGISTRY-MASS-DELETION
+    root_cause: "共享热册被并发写手与还原机制（watchdog quarantine_tamper 搬移/检查点流程/B2 盾 staging）CAS-less 覆盖——盘面回落旧态，未提交写入蒸发（09-24 实测：盘面缺 31 条+写入后 42s 逐字节回滚+watchdog 三次 quarantine 案底）"
+    prescription: "①写前做三方条目集对账（HEAD/盘面/index 各自 safe_load 抽 creation_tokens 集合比对，任一守恒闸拒写即停勿强写）②写后立即入袋（袋读盘面快照，落地走三向合并不受盘面翻转影响）③整段修复用段级重建+CAS（safe_write_text expected_base_sha256），禁 git checkout 整片覆盖 ④证据交黑手取证包治本（G1 还原审计闸/G2 还原 CAS 化）"
+    cost_note: "单次损失 15-60min（重写+重登记+死信循环）；2026-09-22 蒸发事故 116 条净损的同机制前案"
+    evidence: [st-commitsys-20260924-tripwire, .runtime/quarantine/drift_20260923T*]
