@@ -5028,6 +5028,120 @@ capabilities:
     状态机+intake_events.py JSONL 事件+kpi.py 周度 KPI）；DDL=scripts/ai_layer/apply_ai_intake_ddl.py；真源
     DESIGN=docs/_working/ai_layer_vision/L2_intake_library/DESIGN.md。canonical_override 显式钉定（裸词 intake
     派生面过宽，auto 派生误绑 strategy_pipeline/intake.py，2026-09-23 st-ailayer-p1 改钉）。
+- capability_id: ai_perceive_l1
+  aliases:
+  - L1感知段
+  - 感知包
+  - 外扫矿脉
+  - ai_perceive
+  canonical_override: src/zephyr/ai_layer/perceive/translator.py
+  description: AI 层 L1 感知段——12 源注册表（config/ai_source_registry.yaml 真源）驱动的外部情报采集与配额同步、搜索任务单登记、翻译器（L7 先验消费接口挂起待 L7 定稿）、矿脉清单生成器与月度体检生成器。canonical
+    = src/zephyr/ai_layer/perceive/（translator+search_orders+source_registry）；脚本=scripts/ai_layer/gen_search_veins.py 等；真源
+    DESIGN=docs/_working/ai_layer_vision/L1_perceive/DESIGN.md。2026-09-24 st-ailayer-final-20260924 接线批登记（02:3x 重插：首插被夜间热册覆写吞没，同型事故留痕台账）。
+- capability_id: ai_cleaning_l3
+  aliases:
+  - L3清洗段
+  - 清洗包
+  - ai_cleaning
+  canonical_override: src/zephyr/ai_layer/cleaning/washer.py
+  description: AI 层 L3 清洗段——ai_cleaning_spec 表驱动规格化清洗（spec_store/washer/local_prefill/auditor
+    抽验审计），策略=config/cleaning_policy.yaml 唯一真源；DDL 随 apply_ai_intake_ddl.py。canonical
+    = src/zephyr/ai_layer/cleaning/；真源 DESIGN=docs/_working/ai_layer_vision/L3_cleaning/DESIGN.md。2026-09-24
+    st-ailayer-final-20260924 接线批登记（02:3x 重插同上）。
+- capability_id: ai_comparator_l4
+  aliases:
+  - L4比较段
+  - 比较器
+  - 红蓝考场
+  - ai_comparator
+  canonical_override: src/zephyr/ai_layer/comparator/executor.py
+  description: AI 层 L4 比较段——实验执行器+frozen_criteria_immutable 判据冻结账本（experiment_store
+    DDL-as-Code）+公平性三轴+too_good 三查+四考场适配器（c4/replay/dual_run/tool_bench，考尺缺席拒考）。canonical
+    = src/zephyr/ai_layer/comparator/；判据=config/comparison_policy.yaml；真源 DESIGN=docs/_working/ai_layer_vision/L4_compare/DESIGN.md。2026-09-24
+    st-ailayer-final-20260924 接线批登记（02:3x 重插同上）。
+- capability_id: ai_scheduling_l5
+  aliases:
+  - L5排产段
+  - 排产段
+  - 排班门闸
+  - 工单生成守护
+  - ai_scheduling
+  canonical_override: src/zephyr/ai_layer/scheduling/maturity.py
+  description: AI 层 L5 排产段（门闸判定/工单生成/派工编排/种子登记）——成熟度/配额/算力三条件 AND
+    门闸+胜者证据包→任务书自动套模板（journal 唯一真源断点续读）+三证据机检分流（骨架级必
+    Owner）+进化量尺两问打分派工。canonical = src/zephyr/ai_layer/scheduling/（maturity.py 门闸判定+order_daemon.py
+    工单守护+router.py 三证据机检+dispatcher.py 派工编排+seed_writer.py 种子登记+scheduling_events.py
+    JSONL 事件账本）；测试=tests/ai_layer/scheduling/（104 用例）；真源
+    DESIGN=docs/_working/ai_layer_vision/L5_schedule_gate/DESIGN.md。canonical_override 显式钉定（门闸判定=排产段同名核心；
+    排班一张真源 D-L5-01：登记只写 evolution_schedule_seeds.yaml 种子，禁直改 resource_profile_registry.yaml）。
+- capability_id: ai_switch_l6
+  aliases:
+  - L6切换段
+  - 切换段
+  - AB蓝绿切换
+  - 影子运行
+  - ai_switch_engine
+  canonical_override: src/zephyr/intelligence/switch_engine/switch_engine.py
+  description: AI 层 L6 切换段（A/B 蓝绿 champion/challenger 进化安全带，两棵树一体）——七态状态机+影子运行+治理
+    四件（墓碑/审批/回切演练/灰度三档）。canonical = src/zephyr/intelligence/switch_engine/（switch_registry.py
+    七态注册表+criteria.py 判据加载+shadow_runner.py 影子运行+switch_engine.py 状态机 EVENT_EDGES 白名单）+src/zephyr/ai_layer/switch_engine/（tombstone_manager.py
+    墓碑制+approval_router.py+revert_drill.py+rollout_tiers.py 灰度三档）；测试=tests/intelligence/switch_engine/（37
+    用例）+tests/ai_layer/switch_engine/（34 用例）；真源 DESIGN=docs/_working/ai_layer_vision/L6_ab_switch/DESIGN.md。canonical_override
+    显式钉定（状态机=两棵树的迁移唯一合法通道；铁律=B 组产出只写对比区永不回流生产决策路径）。
+- capability_id: ai_heritage_l7
+  aliases:
+  - L7传承段
+  - 传承段
+  - 经验回流
+  - 坑集
+  - ai_heritage
+  canonical_override: src/zephyr/ai_layer/heritage/store.py
+  description: AI 层 L7 传承段（经验结构化回流，闭环的关键边）——传承库只进一个真源下游全只读：登记闸（validate_draft+sha
+    精确+simhash 近似自查重）/三类条目状态机只降级不越级/三类差异化遗忘/关单机检/事件账本；零物理删除（遗忘=降
+    status 压缩留痕可反查）。canonical = src/zephyr/ai_layer/heritage/（store.py 登记闸库+priors.py 先验+heritage_events.py+closure_check.py+forget.py+policy.py）；脚本=scripts/ai_layer/{apply_ai_heritage_ddl,gen_heritage_dedup_snapshot,gen_heritage_human_digest}.py；测试=tests/ai_layer/heritage/（70
+    用例）；真源 DESIGN=docs/_working/ai_layer_vision/L7_heredity/DESIGN.md。canonical_override 显式钉定（store.py=读写唯一通道真源；PostgreSQL
+    ai_heritage schema 必经 DatabaseService/depgraph 禁裸连接，记忆目录永不写入）。
+- capability_id: obj_s_redline
+  aliases:
+  - OBJ_S红线
+  - 红线负面清单
+  - 负面清单机检
+  - 自由域周报
+  - obj_s
+  canonical_override: src/zephyr/ai_layer/redline/negative_list.py
+  description: OBJ_S 红线与自由域机检面（九件）——负面清单 NL-1..6 编号层/env 白名单启动器/三台提交 gate/破坏性
+    DDL 扫描门禁/禁删清单生成器×2/双指标看板数据链/SEV 分级路由/自由域透明度周报/年审立案包。canonical
+    = src/zephyr/ai_layer/redline/（negative_list.py 编号层常量+session_env_guard.py+negative_list_gates.py+drop_gate.py+no_delete_manifest.py+dashboard_pipeline.py+sev_router.py+freedom_weekly_report.py+annual_review.py）；测试=tests/ai_layer/redline/（77
+    用例）；真源 DESIGN=docs/_working/ai_layer_vision/OBJ_S_perimeter/DESIGN.md。canonical_override 显式钉定（negative_list.py=NL
+    编号与注册 helper 常量真源；红线语义归 Owner 变更走 OBJ_R 四步流水线，本包零新刹车）。
+- capability_id: obj_t_tools
+  aliases:
+  - OBJ_T工具线
+  - 工具对象线
+  - 工具考尺
+  - 工具盘点
+  - obj_t
+  canonical_override: src/zephyr/ai_layer/tools/suite.py
+  description: OBJ_T 工具对象线（T1 盘点/T2 考尺，给工具建考试制）——五源聚合盘点生成器（config/tool_inventory.yaml）+用量计量三源接线+考卷
+    21 题装载 fail-closed+Tier B 判分（Wilson 区间/效应量门槛/红线一票否决）。canonical = src/zephyr/ai_layer/tools/（inventory_generator.py+usage_stats.py+suite.py
+    考尺+scoring.py 判分）+考场适配 src/zephyr/ai_layer/comparator/venue_tool_bench.py（L4 同基准任务集版本号双跑）；测试=tests/ai_layer/tools/（78
+    用例）；真源 DESIGN=docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md。canonical_override 显式钉定（suite.py=L4
+    RULER_MODULES 指针锁定契约面；考尺缺席即拒考 fail-closed 绝不本地造考卷）。
+- capability_id: obj_m_models
+  aliases:
+  - OBJ_M模型线
+  - 模型对象线
+  - 模型双跑
+  - 模型预算
+  - obj_m
+  canonical_override: src/zephyr/intelligence/model_profiling/dual_run.py
+  description: OBJ_M 模型对象线（M1-M5，给模型建考试制）——模型情报扫描（价快照 diff+情报卡四闸+simhash 查重）/模型库三表
+    DDL/同任务双跑执行器（分层抽样+McNemar/Wilcoxon+判据冻结）/预算分析器（纯函数判据+告警路由）。canonical
+    = src/zephyr/intelligence/model_intel/（intel_card.py+scanner.py）+src/zephyr/intelligence/model_profiling/（dual_run.py
+    双跑核心等）+src/zephyr/intelligence/budget_analyzer.py+考场适配 src/zephyr/ai_layer/comparator/venue_dual_run.py（零考尺逻辑薄封装）；DDL=scripts/ai_layer/apply_model_library_ddl.py（ai_layer_model
+    schema）；测试=tests/intelligence/{model_intel,model_profiling}+tests/intelligence/test_budget_analyzer.py+tests/ai_layer/{test_model_library_ddl,test_model_scoring_policy}.py（116
+    用例）；真源 DESIGN=docs/_working/ai_layer_vision/OBJ_M_models/DESIGN.md。canonical_override 显式钉定（dual_run.py=统计判定与判据冻结唯一真源，venue_dual_run
+    只做薄封装禁复制逻辑）。
 creation_tokens:
 - file: docs/_working/integrated_backtest/max_remediation_plan.md
   token: ibt-remediation-max-remediation-plan-20260922
@@ -46532,4 +46646,104 @@ creation_tokens:
   created_by: st-e2e-20260924
   capability: exam_cost_gate
   merge_evaluation: "内收判据：本 yaml 是 exam_cost_gate.py 的 ALGO_FLOW 外置真源（gate-algo-flow-marker P2-1 口径），替代原拟内联 docstring 的机器块，零新规则面"
+- file: docs/_working/commit_system_opt/LEDGER.md
+  token: commit-system-opt-ledger-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，替代散装记忆配方，无同域重复册"
+- file: docs/_working/commit_system_opt/03_gate_health_audit.md
+  token: commit-system-opt-03-gate-health-audit-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/_working/commit_system_opt/04_deadletter_cost_analysis.md
+  token: commit-system-opt-04-deadletter-cost-analysis-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/_working/commit_system_opt/05_staging_blackhand_forensics.md
+  token: commit-system-opt-05-staging-blackhand-forensics-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/_working/flash_speedup/F5_registry_debt/LEDGER_flash_speedup_F5.md
+  token: commit-system-opt-ledger-flash-speedup-f5-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "N-16 让路改名件，LEDGER 契约路径不动"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases.yaml
+  token: commit-guide-sources-death-cases-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_sources
+  merge_evaluation: "指南生成器结构化真源（判据/清单/案例三层），与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists.yaml
+  token: commit-guide-sources-file-type-checklists-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_sources
+  merge_evaluation: "指南生成器结构化真源（判据/清单/案例三层），与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest.yaml
+  token: commit-guide-sources-gate-digest-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_sources
+  merge_evaluation: "指南生成器结构化真源（判据/清单/案例三层），与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_registry.yaml
+  token: commit-guide-sources-death-cases-registry-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_sources
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/file_type_checklists_registry.yaml
+  token: commit-guide-sources-file-type-checklists-registry-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_sources
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/gate_digest_registry.yaml
+  token: commit-guide-sources-gate-digest-registry-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_sources
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_navigation_guide.md
+  token: commit-navigation-guide-commit-navigation-guide-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_navigation_guide
+  merge_evaluation: "机生产物非独立真源（生成器+三源册为准），登记仅为CREATE-GUARD路径放行"
+- file: docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md
+  token: commit-navigation-guide-commit-navigation-playbook-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_navigation_guide
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: scripts/governance/generators/generate_commit_guide.py
+  token: commit-guide-generator-generate-commit-guide-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_guide_generator
+  merge_evaluation: "四源机生唯一产出通道，替代手写指南第二真源，净零（无新增规则册）"
+- file: docs/_working/disk_reorg_campaign/LEDGER_final.md
+  token: eight-pack-commander-ledger-ledger-final-20260923
+  created_by: st-backup-cold-20260924
+  capability: eight-pack-commander-ledger
+  merge_evaluation: "跨域不同对象→不并：八包各自监控台账为总指挥令 2026-09-24 指定落位路径，与战役过程台账 a1_ledger.md 分工（批注面 vs 过程真源），非同真源派生"
+- file: src/zephyr/backtest/regime_validation/condition_package.py
+  token: condition-axis-package-condition-package-20260923
+  created_by: st-gpu-final-20260924
+  capability: condition_axis_package
+  merge_evaluation: "GPU条件轴输入包唯一实现（Owner裁决①统计层+F4选族自纠）"
+- file: tests/backtest/test_condition_package.py
+  token: condition-axis-package-test-condition-package-20260923
+  created_by: st-gpu-final-20260924
+  capability: condition_axis_package
+  merge_evaluation: "契约钉非第二真源"
+- file: scripts/backtest/condition_attribution.py
+  token: condition-cell-attribution-condition-attribution-20260923
+  created_by: st-gpu-final-20260924
+  capability: condition_cell_attribution
+  merge_evaluation: "条件胞归因唯一读端（只读零重跑）"
+- file: tests/backtest/test_condition_attribution.py
+  token: condition-cell-attribution-test-condition-attribution-20260923
+  created_by: st-gpu-final-20260924
+  capability: condition_cell_attribution
+  merge_evaluation: "契约钉非第二真源"
+- file: docs/_working/e2e_integration/panorama_health_snapshot_20260924.md
+  token: panorama-health-snapshot-panorama-health-snapshot-20260924-20260923
+  created_by: st-gpu-final-20260924
+  capability: panorama_health_snapshot
+  merge_evaluation: "机生探针时点快照Friday点火判据底单"
 di_seam_exemptions: []
