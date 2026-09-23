@@ -624,3 +624,31 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   git show HEAD:scripts/governance/d5_architecture/generators/align_all.py | grep -c "import run_subprocess_hidden"   # HEAD=1（无 bug）；工作树=2（有 bug）
   # 注：本块提及 409 一律用"裁定 409"（去 #），正则写 `裁定[# ] *409` 以免自触 GATE-01——这同时是 GATE-01 第三例红证（审查器连"记录某裁定尚未落地"都必须改拼写才能入册）。
   ```
+
+## 心跳 2026-09-24 05:41 CST 实测（`date`=05:41:12，非估钟）· 在干=DANG-01 判据出齐并**自我否证原尺**（新立 DANG-02）+ IDX-03 复验分层 · 卡住=无 · 下一步=见 ⑤
+
+- **① 上轮两袋落地回执（本包首次同轮双袋齐落，正门无连带）**：`8639ed73c7`(05:35:02)=**0016 battle_map 断链治本**（收官清单 #11 闭：HEAD 版 `file:///` 命中=**0**、`_archive/架构图/交易决策架构.md` 命中=2、`--name-only` 恰 1 件零连坐）；`91e462a5b1`(05:36:00)=0017 心跳册。⇒ 0005/0006/0007 同死因三袋由 0016 一投即闭，"只投最新一袋"的判断成立。
+- **② 🔴 新立 F-AUDIT-DANG-02（本包第 9 例自我否证，且是**改分母**级别）：DANG-01 原尺把 `creation_tokens:` 台账正文当成图边，**785 条 D1 里只有 165 条是真的**。
+  - 事实（尺=`probe_dangling_v2_fieldslice.py`，输出 `dangling_v2_fieldslice.txt`+`dangling_v2_lists.txt`，HEAD 侧字节、按顶层键切片）：`capability_canonical_file_registry.yaml` 总 **47,163 行**中 **42,018 行=89%** 属 `creation_tokens:` 段（起始 :5145，下一个顶层键 `di_seam_exemptions` 在 :47162）；原尺 `PATHRE.findall(整册)` 得 9,790 refs，切片后业务面仅 **363 refs**。
+  - **七册同尺复算（整册口径 → 业务面口径）**：D1 **785 → 165**、D2 **278 → 110**。逐册：capability 册 628→**8**（D2 187→19）、module_translation 册 152→**152**（无台账段，不受影响）、GOMAP 1→1、gate 册 1→1、in_process 0、TDM 3→3、工厂图 0。
+  - **上一块 ②③ 里那句"D1 `docs/_working` 539 条"因此作废**：594 个唯一 `_working` 路径中 **599 行落在台账正文**（字段=creation_tokens>capability 543 / >merge_evaluation 48 / >note 7 / >created_by 1），业务面仅剩 4 行且全是 `description`/`responsibility_layer`/`ai_autonomy` 这类**散文字段**（`canonical_override:` 命中=**0**）。⇒ 我此前怀疑的"永久册引用 TTL 临时区=SSOT 方向错"**证伪**，临时区引用是 CREATE-GUARD 收据正文，不是边。**"是否需回收"这个判据问题的前提是错的**——不需要 TTL 判据，因为压根没有需要判的引用。
+  - **真信号（终报三清单里"悬空"那一栏的诚实口径）**：D1 165 条中 **152 条在 `module_translation_registry.yaml`**（`ex_core` 18 / `governance` 8 / `integration` 8 / `gov_enforcement` 7 / `infrastructure` 4 / `_archive` 12；扩展名 .py=157/165）⇒ 翻译册在册、物在任意 ref/任意盘面皆无 = **图挂了物从未存在**，这才是八图审查的正题欠账。D2 110 条中 **55 条= `src/zephyr/ai_layer`**（属 st-ailayer 在途面，他包写域，只登记）。
+- **③ 由 ② 顺带挖出的结构因（比 ② 本身更有处置价值）**：**CREATE-GUARD 的 token 台账内嵌在"能力→真源反查册"这本 `ttl: permanent` 热册里**，两面皆伤——(a) 任何整册文本扫描器（我这把尺、以及可能的引用类门禁）都会被 42k 行收据污染，假边率 96%（9,790→363）；(b) **每个"新建文件"批都必须回头写这本册** ⇒ 它就是近期反复出现的"热册拉锯/旧快照冲掉新登记"的放大器（HEAD 侧 `a94d18ef1b` 自述"热册拉锯第二次实证"即此路径）。家族归并：与 EVAP-02 / IDX-01 / DEAD-01 / STASH-01 同根第五面=**"台账与索引同册"（审计收据与查询真源未分层）**。
+  - **定级与路由（不自修）**：迁出台账=对在册热册做**净删** ⇒ 触 §5 high 域四类之"注册表净删"+ 需同步改 CREATE-GUARD 读取路径 ⇒ **只登记上交**，建议并入交 st-commitsys 的那一条修闸需求（与 BAG-01 收窄出的"热册袋面/落地面脱钩"合为**一册分层**议题，勿分散立项）。
+- **④ IDX-03 复验（第 4 轮，规模与定性双更正）**：index 是活面，现测=**9 件 / 3,058 行纯删**（上轮记的"15 件/1079 行"已过时，勿再引用）。按"是否自洽重构"二分：
+  - **真弹 6 件（library 族，仍无人 claim、`lock_files.py list` 该族命中=0）**：`src/zephyr/library/collectors/logs_collector.py` / `tests/library/test_logs_collector.py` / `tests/gov_enforcement/test_library_blood_flesh_gate.py` / `docs/library/regulations.md` / `.../library_sop/blood_flesh_cataloging_sop.md` / `docs/03_modules/_domain_library/algo_flow/collectors/logs_collector.yaml`。硬证不变：HEAD 三件 `git cat-file -e` 全 IN_HEAD，且 `collectors/__init__.py:31` 仍 `from ... import logs_collect` ⇒ 吸收即 HEAD 侧 import 断链。**新观察到的一环**：这 6 件在工作树以 `??`（untracked）**同路径同名仍在** ⇒ "删"只发生在 index/HEAD 面，盘上字节还在 ⇒ 一次 `git clean` 或一次 checkout 才会真丢，这也是它比"盘上也没了"更难被发现的形态。
+  - **撤销 3 件（commit_guide 族，判为属主自洽重构，非弹）**：`gate_digest_registry.yaml` / `commit_navigation_playbook.md` / `tests/governance/generators/test_generate_commit_guide.py` 同批配 `generate_commit_guide.py`(`M`) + `test_commit_guide_delivery.py`(`M`) + `death_cases_registry.yaml`(`M`) + `file_type_checklists_registry.yaml`(`M`) ⇒ 生成器与其交付测试同步在改，退役旧件属正常演化。**本包对其写入仍=0**。
+- **⑤ 下一步（轮次）**：①终报三清单按 ②③ 更正后的口径重算（"悬空"栏 D1=165 带自愈标注、D2=110 点名在途属主）②`module_translation_registry` 152 条 D1 逐条定性（退役未销册 vs 从未落地 vs 改名未同步——改名族可用 `git log --all --diff-filter=A` 对照，本轮已跑该尺：ai_layer 1 条命中=0 从未落地）③红蓝反证节并档（现 **9 例**）④终报。已完成的判据项：DANG-01-D1 TTL 判据（=前提证伪）、IDX-03 复验（第 4 轮）。
+- **队列/align 状态**：HEAD=`91e462a5b1`(05:36)；本包现存袋 **0001-0017 共 16 个**（0014 无独立袋文件=已被 0015 的 `meta.supersedes` 正常合并，非号位丢失），其中 0001/0002/0008/0009/0010/0011/0013/0015/0016/0017 **全 done**、0003/0004/0005/0006/0007/0012 dead 且**已无可 requeue 项**（0003/0004 内容已由 0010/0011/0013 分批落地判过时，0012=GATE-01 红证勿 requeue）⇒ **本包提交面清零欠账**。队列在飞=`st-align-dirty-0035`(05:40)；align：第 1-5 步工作树 硬=3（HEAD 口径=0）、第 6 步崩（st-ailayer 暂存件 BLIND-01）、第 7-9 步未及。本包对 `注册表/配置册` 类路径写入累计仍=**0**。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  python -c "import json;d=json.load(open('.runtime/commit_queue/done/q-20260924-st-audit-all-20260924-0015.json',encoding='utf-8'));print(d['meta']['supersedes'])"   # 0014 归并证据
+  git show --format= --name-only 8639ed73c7                                   # 期望恰 1 件（battle_map 零连带）
+  git show HEAD:docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md | grep -c 'file:///'   # 期望 0
+  python .runtime/tmp/audit_all_20260924/probe_dangling_v2_fieldslice.py      # D1 785→165 / D2 278→110 逐册表
+  python .runtime/tmp/audit_all_20260924/probe_d1_working_ttl_verdict.py      # _working 引用 599/603 行落在 creation_tokens 字段
+  git show HEAD:docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml | sed -n '5145p;47162p'   # 台账段边界
+  git diff --cached --numstat --diff-filter=D                                 # 现 9 件/3058 行
+  git status --porcelain -- src/zephyr/library/collectors/logs_collector.py    # 期望同时出现 "D " 与 "??"（删在 index，字节还在盘上）
+  git show HEAD:src/zephyr/library/collectors/__init__.py | grep -n logs_collector   # :31 断链硬证
+  ```
