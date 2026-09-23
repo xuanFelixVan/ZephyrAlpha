@@ -59942,6 +59942,118 @@ entries:
   desc_en: ""
   plain_zh: "先不去设计任何做T策略，只算一件事：假如你能未卜先知，在当天最低点买、最高点卖，最多能挣多少。如果连这个天花板都盖不过手续费，那这一类方法全部可以判定不用试了；反过来天花板够高也不代表你找得到那个点，所以这条只用来杀，不用来夸"
   responsibility_layer: business
+- module_path: scripts/scan_forward_days.py
+  domain_id: D_REGIME
+  name_zh: "记录校准误差"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扫描 B1 验证器的 forward_days 参数，找校准误差（ECE）最小的预测周期::预测力本身就弱——若扫描后所有周期误差都高，可能不是 forward_days 的问题，"
+  responsibility_layer: business
+- module_path: src/zephyr/data/sector_intraday_aggregator.py
+  domain_id: D_DATA
+  name_zh: "sector_snapshot 30s 轮询字段"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "MOD-DATA-061 — 盘中板块实时聚合器（SEC-02，92号清单 §7.6；架构审查报告 §11.5 SEC-02 行）。"
+  responsibility_layer: business
+- module_path: src/zephyr/data/sector_report_builder.py
+  domain_id: D_DATA
+  name_zh: "编排已落码库模块"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "MOD-L00-009 — 板块盘后全景报告器（92号清单 §7.5，架构审查报告 §11.5 SEC-01 P1 观测层）。"
+  responsibility_layer: business
+- module_path: src/zephyr/feedback_loop/meta_harness_optimizer.py
+  domain_id: D_FEEDBACK_LOOP
+  name_zh: "递归优化护栏"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "递归优化护栏（仅调学习参数、不动策略参数硬约束 + 递归深度上限）。"
+  responsibility_layer: ai
+- module_path: src/zephyr/intelligence/llm_research_agent.py
+  domain_id: D_INTELLIGENCE
+  name_zh: "规划器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "规划器（任务→步骤计划）+ 工具白名单（检索/计算/数据库工具注册表注入，白名单"
+  responsibility_layer: ai
+- module_path: src/zephyr/orchestrator/task_orchestration_skill.py
+  domain_id: D_ORCHESTRATOR
+  name_zh: "循环拒绝"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "TaskOrchestrationSkill — 任务编排技能（MOD-ORCH-003）。task-orchestration 技能封装——任务分解 → DAG 生成（work_dag 语义：拓扑分层 +"
+  responsibility_layer: ai
+- module_path: src/zephyr/plan_engine/llm_premarket_analysis.py
+  domain_id: D_PLAN
+  name_zh: "44号备忘 §9.14 M3"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "LlmPremarketAnalysis — LLM 盘前综合复盘与当日情景分析核心件 (MOD-PLAN-007) 44号备忘 §9.14 M3-⑨ 落码（92号清单 §8.6 工单）。"
+  responsibility_layer: business
+- module_path: src/zephyr/regime/features/lppl_detector.py
+  domain_id: D_REGIME
+  name_zh: "LPPL 赶顶检测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "LPPL 赶顶检测（10_regime_detector_spec §4.8.1，T4 疯狂期）。实证 KOSPI/SOX）检测泡沫的超指数加速 + 对数周期震荡结构："
+  responsibility_layer: business
+- module_path: src/zephyr/regime/validation/b2_crps.py
+  domain_id: D_REGIME
+  name_zh: "纯分析函数"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "D_REGIME — B2 CRPS 概率预测技能（11 号 memo §4.2 B2）。类别形式），并对照 climatology 基准（样本经验频率常数预测）判定："
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/mainline_candidates.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "最可能成主线的板块 Top3"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "MOD-SIG-061 — 主线候选榜（92号清单 §7.8，架构审查报告 §11.5 SEC-05，22号 spec 消费层）。"
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/sector/sector_divergence.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "合并施工 M1"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "MOD-SIG-060 — 板块分歧度与轮动速度计 + SEC-03 概率标定器（44号备忘录 §9.13，M1-⑩；"
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/sector/sector_leader.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "板块内个股角色四档定位"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "MOD-SIG-062 — 板块龙头识别器（SEC-04，92号清单 §7.7；22号 spec §3.1⑦ 步骤① 落码）。"
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/sentiment/option_sentiment.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "佐证"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "MOD-SIG-059 — 期权情绪三件套（44号备忘录 §9.9，M1-⑨，华泰 2026-03 机构范式）A 股单边做多市场衍生品\"少而精\"只取 PCR+IV 两指标最有效，加 Skew 尾部偏度作机构行为佐证，三件套合成\"情绪注解维度⑨\"（候选消费方 MOD-SIG-025 综合分，权重 ≤0.10 纪律，"
+  responsibility_layer: business
+- module_path: src/zephyr/trading/process_reaper.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "治本背景"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Scheduler 托管）治本背景（2026-08-28 裁定）- 旧 ide_health_daemon「常驻守护 + AI 冷启动自觉拉起」模式违反 boot_autostart_architecture.md C1（永久系统全自动）/C3（Task Scheduler 唯一入口），实证失效（守护死亡后 stale PID 残留、AI 会话不执行冷启动协定，系统长期裸奔）。"
+  responsibility_layer: infrastructure
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
