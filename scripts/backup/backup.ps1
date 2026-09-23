@@ -127,9 +127,15 @@ try {
 # ==================== STAGE 1: Pre-check ====================
 if ($Mode -ne "ch") {
     Write-Stage "Stage 1: Pre-check"
-    $targetDrive = $CodeTarget.Substring(0,2)
-    if (-not (Test-Path $targetDrive)) { Write-Err "Target drive $targetDrive not online"; exit 1 }
-    Write-OK "Target drive $targetDrive online"
+    # (B1, 2026-09-24): guard the drives that actually hold backup targets
+    # (vault/db_dumps/dump_dir), not the dead code_backup.target literal.
+    $targetDrives = @($VaultBase, $DumpsTarget, $DumpDir, $CodeTarget) |
+        ForEach-Object { if ($_ -match '^[A-Za-z]:') { $_.Substring(0, 2).ToUpper() } } |
+        Sort-Object -Unique
+    foreach ($td in $targetDrives) {
+        if (-not (Test-Path $td)) { Write-Err "Target drive $td not online"; exit 1 }
+        Write-OK "Target drive $td online"
+    }
 
     $robocopy = Get-Command robocopy -ErrorAction SilentlyContinue
     if (-not $robocopy) { Write-Err "robocopy not found (should be built-in on Windows)"; exit 1 }
@@ -159,11 +165,19 @@ if ($Mode -ne "ch") {
                 }
             }
             $env:PGPASSWORD = $pgPassword
-            & $pgDumpCmd -Fc -h localhost -U $pgUser -d depgraph -f "$DumpDir\depgraph.dump" 2>&1 | Out-Null
+            # ulib3 T2 fix (2026-09-22): full-db dump failed silently since 09-21 (0-byte dump) --
+            # role zephyr lacks LOCK on ai_intake* schemas owned by others. Scope = public
+            # (all depgraph/lib tables). Cross-schema backup needs owner GRANT = Owner gate.
+            & $pgDumpCmd -Fc -h localhost -U $pgUser -d depgraph -n public -f "$DumpDir\depgraph.dump" 2>&1 | Out-Null
             if ($LASTEXITCODE -eq 0) {
                 $pgSize = (Get-Item "$DumpDir\depgraph.dump").Length
-                $dbStatus.postgres = @{status="ok"; size_bytes=$pgSize}
-                Write-OK "PostgreSQL dump: $([math]::Round($pgSize/1MB,2))MB"
+                if ($pgSize -lt 1MB) {
+                    $dbStatus.postgres = @{status="failed"; error="dump suspiciously small ($pgSize bytes)"}
+                    Write-Warn "PostgreSQL dump suspiciously small ($pgSize bytes)"
+                } else {
+                    $dbStatus.postgres = @{status="ok"; size_bytes=$pgSize; scope="public"}
+                    Write-OK "PostgreSQL dump (public): $([math]::Round($pgSize/1MB,2))MB"
+                }
             } else {
                 $dbStatus.postgres = @{status="failed"; error="pg_dump exit $LASTEXITCODE"}
                 Write-Warn "PostgreSQL dump failed (exit $LASTEXITCODE)"
@@ -398,7 +412,7 @@ if ($Mode -eq "code") {
         # (first chain remains source of truth; second chain self-heals next run).
         try {
             Write-Stage "ClickHouse dual-write sync (chbackup_local -> chbackup2)"
-            $dualSync = & python $ChSshHelper --cmd "sudo -n rsync -a /mnt/chbackup_local/market.zip /mnt/chbackup_local/inc.zip /mnt/chbackup2/ && ls -la /mnt/chbackup2/*.zip | tail -2" 2>&1
+            $dualSync = & python $ChSshHelper --cmd "sudo -n rsync -a /mnt/chbackup_local/market.zip /mnt/chbackup_local/inc.zip /mnt/chbackup2/ && ls -la /mnt/chbackup2/*.zip | tail -2" --timeout 14400 2>&1
             $dualLast = ($dualSync | Select-Object -Last 2) -join " | "
             if ($LASTEXITCODE -eq 0 -and "$dualSync" -match "inc.zip") { Write-OK "Dual-write sync ok: $dualLast" }
             else { Write-Warn "Dual-write sync inconclusive (exit=$LASTEXITCODE): $dualLast" }
@@ -616,7 +630,10 @@ if ($Mode -eq "ch") {
             $dumpsStateOk = ([string]$sJson.last_ch_backup_status -eq "ok")
         } catch { $dumpsStateOk = $false }
         if ($dumpsStateOk) {
+            # (B5, 2026-09-24): retention is configurable (ruling #380-7/#381) --
+            # parse it instead of the hardcoded 14.
             $dumpsRetention = 14
+            if ($yamlContent -match 'db_dumps:[\s\S]*?retention_days:\s*(\d+)') { $dumpsRetention = [int]$matches[1] }
             $cutoffDumps = (Get-Date).AddDays(-$dumpsRetention).ToString("yyyyMMdd")
             foreach ($d in (Get-ChildItem -LiteralPath $DumpsTarget -Directory -ErrorAction SilentlyContinue | Where-Object { $_.Name -match '^\d{8}$' -and $_.Name -lt $cutoffDumps } | Sort-Object Name)) {
                 Remove-Item -LiteralPath $d.FullName -Recurse -Force -ErrorAction SilentlyContinue
@@ -746,8 +763,10 @@ if ($Mode -eq "ch") {
 }
 
 # ==================== STAGE 3d: G-drive fallback mirror (3-2-1 G-side, ruling #380-6/#381) ====================
-# Added 2026-09-20: mirror F backup artifacts to G:\zephyr_backup_mirror\<id>\ for the
-# 3-2-1 G-side fallback. Section config: backup_config.yaml g_mirror (same line-state-machine
+# Added 2026-09-20: mirror F backup artifacts to the G fallback store (per-target
+# paths from config g_mirror; base default G:\backup). The former
+# G:\zephyr_backup_mirror region was deleted 2026-09-24 (incomplete-copy remnant,
+# dual-proof verified) and must never be recreated. Section config: backup_config.yaml g_mirror (same line-state-machine
 # parse as 3c, no powershell-yaml dep). G is USB HDD (70MB/s) - mirror only, never online path.
 # First full sync done 2026-09-20 overnight by st-disk-ch-20260921.
 $gMirrorResult = @{status="skipped"; reason="Mode=ch"}
@@ -755,7 +774,11 @@ if ($Mode -eq "ch") {
     Write-Stage "Mode=ch, skipping G-drive mirror (Stage 3d)"
 } else {
     Write-Stage "Stage 3d: G-drive fallback mirror"
-    $gMirrorBase = "G:\zephyr_backup_mirror"
+    # 2026-09-24: default base corrected from the retired G:\zephyr_backup_mirror
+    # (incomplete-copy remnant deleted 2026-09-24 after dual-proof verification) to
+    # the canonical backup store, so a config-parse failure can never recreate the
+    # deleted region.
+    $gMirrorBase = "G:\backup"
     if ($yamlContent -match 'g_mirror:[\s\S]*?base:\s*"([^"]+)"') { $gMirrorBase = $matches[1] -replace '\\\\','\' }
 
     $gMirrorTargets = @()
@@ -824,7 +847,15 @@ $state = if (Test-Path $StateFile) { Get-Content $StateFile -Raw -Encoding UTF8 
 if (-not $state) { $state = [PSCustomObject]@{} }
 if ($Mode -ne "ch") {
     $state | Add-Member -NotePropertyName last_backup_time -NotePropertyValue (Get-Date).ToString("o") -Force
-    $state | Add-Member -NotePropertyName last_backup_status -NotePropertyValue "ok" -Force
+    # (B2, 2026-09-24): aggregate stage outcomes instead of unconditional ok --
+    # code vault / offrepo mirror / g_mirror failures must not be masked as ok.
+    $failedStages = @()
+    foreach ($stageResult in @($codeResult, $offrepoResult, $gMirrorResult)) {
+        if ($stageResult -and [string]$stageResult.status -eq "failed") { $failedStages += "stage" }
+    }
+    $overall = "ok"
+    if ($failedStages.Count -gt 0) { $overall = "failed" }
+    $state | Add-Member -NotePropertyName last_backup_status -NotePropertyValue $overall -Force
 }
 if ($dbStatus.clickhouse) {
     $chSt = [string]$dbStatus.clickhouse.status
@@ -848,6 +879,10 @@ if ($dbStatus.clickhouse) {
 }
 $stateJson = ($state | ConvertTo-Json -Depth 3) -replace "`r`n", "`n"
 [System.IO.File]::WriteAllText($StateFile, $stateJson, (New-Object System.Text.UTF8Encoding($false)))
+# State-anchor channel (P0-1): the post-commit reconciler may run inside a queue
+# worktree process whose PROJECT_ROOT differs from this hardcoded root - it parses
+# this line to write its gate verdicts into THIS state file (the consumed one).
+Write-Host "State saved: $StateFile"
 
 # ==================== STAGE 4b: Rolling archive evaluation ====================
 # Backup-success event hook (contract v1.3.0 INV-RET-002 / ruling #380-#384).

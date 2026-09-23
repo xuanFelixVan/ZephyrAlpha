@@ -6,9 +6,12 @@
     v2.2 (2026-09-15): code restore switched to the v2.1 versioned vault
     (F:\code_backup was frozen on 2026-09-14 when backup.ps1 v2.1 replaced
     the /MIR mirror with hardlink-deduped daily snapshots).
-      F:\working_vault\<yyyyMMdd>\ <- code + config daily snapshots (hardlink-deduped)
-      F:\working_vault\git_bundles\ <- git history bundle (.git not in snapshots)
-      F:\db_dumps\             <- PG dump + SQLite dump + pg_globals.sql
+    Artifact homes below are as of a3 stage 4.2-4.5 (2026-09-21: backup store
+    moved F: -> G:\backup; roots parsed from backup_config.yaml, not hardcoded):
+      G:\backup\working_vault\<yyyyMMdd>\ <- code + config daily snapshots (hardlink-deduped)
+      G:\backup\git_bundles\             <- git history bundle (.git not in snapshots)
+      G:\backup\db_dumps\<yyyyMMdd>\     <- PG dump + SQLite dump + pg_globals.sql
+      G:\backup\offrepo\                 <- off-repo critical assets mirror
       F:\ch_backup_disk.vhdx   <- CH data backup (VHDX, base + inc)
       F:\ch_vm_backup\         <- CH VM (boot.vhdx + data.vhdx + config)
 
@@ -58,9 +61,18 @@ param(
 $ErrorActionPreference = "Continue"
 $ProjectRoot = "D:\ZephyrAlpha"
 $FDrive = "F:"
-$VaultBase = "F:\working_vault"
-$DbDumps = "F:\db_dumps"
+# Backup-store roots: single source of truth = backup_config.yaml (same parse idiom as
+# backup.ps1). a3 stage 4.2/4.3 moved the vault and DB dumps F: -> G:\backup on
+# 2026-09-21; the literals below are only the pre-config fallback.
+$VaultBase = "G:\backup\working_vault"
+$DbDumps = "G:\backup\db_dumps"
 $ChVmBackup = "F:\ch_vm_backup"
+$_pathsCfg = "$ProjectRoot\scripts\backup\backup_config.yaml"
+if (Test-Path $_pathsCfg) {
+    $_yaml = Get-Content $_pathsCfg -Raw -Encoding UTF8
+    if ($_yaml -match 'working_vault:[\s\S]*?base:\s*"([^"]+)"') { $VaultBase = $matches[1] -replace '\\\\','\' }
+    if ($_yaml -match 'db_dumps:[\s\S]*?target:\s*"([^"]+)"') { $DbDumps = $matches[1] -replace '\\\\','\' }
+}
 $ChSshHelper = "$ProjectRoot\scripts\backup\ch_vm_ssh.py"
 $StateFile = "$ProjectRoot\data\databases\backup_state.json"
 
@@ -129,10 +141,28 @@ function Get-LatestSnapshot {
 }
 
 function Get-LatestGitBundle {
-    <# Newest .bundle under <vault>\git_bundles, or $null. #>
-    return (Get-ChildItem "$VaultBase\git_bundles\*.bundle" -File -ErrorAction SilentlyContinue |
+    <# Newest .bundle in the bundle store. a3 4.4: home = config git_bundle.base,
+       pre-config fallback = <vault>\git_bundles (same idiom as backup.ps1). #>
+    $bundleDir = ""
+    if (Test-Path $_pathsCfg) {
+        $_yc = Get-Content $_pathsCfg -Raw -Encoding UTF8
+        if ($_yc -match 'git_bundle:[\s\S]*?base:\s*"([^"]+)"') { $bundleDir = $matches[1] -replace '\\\\','\' }
+    }
+    if (-not $bundleDir) { $bundleDir = Join-Path $VaultBase "git_bundles" }
+    return (Get-ChildItem "$bundleDir\*.bundle" -File -ErrorAction SilentlyContinue |
             Sort-Object LastWriteTime -Descending |
             Select-Object -First 1)
+}
+
+function Get-LatestDumpsDir {
+    <# Newest dated snapshot dir under DbDumps (v2.1.1 dated dumps since 2026-09-20),
+       or $null for legacy root-only stores. #>
+    $d = Get-ChildItem -LiteralPath $DbDumps -Directory -ErrorAction SilentlyContinue |
+         Where-Object { $_.Name -match '^\d{8}$' } |
+         Sort-Object Name -Descending |
+         Select-Object -First 1
+    if ($d) { return $d.FullName }
+    return $null
 }
 
 # ==================== inventory ====================
@@ -171,13 +201,28 @@ function Do-Inventory {
     } else { Write-Warn "  $VaultBase not found" }
     Write-Host ""
 
-    # DB dumps
+    # DB dumps (v2.1.1: dated snapshot dirs since 2026-09-20; legacy root files shown too)
     Write-Host "[DB dumps]" -ForegroundColor Cyan
     if (Test-Path $DbDumps) {
         Write-Host "  Path: $DbDumps"
-        Get-ChildItem $DbDumps -File | ForEach-Object {
-            $sizeMB = [math]::Round($_.Length / 1MB, 2)
-            Write-Host ("  {0,-30} {1,10} MB  {2}" -f $_.Name, $sizeMB, $_.LastWriteTime)
+        $latestDumps = Get-ChildItem -LiteralPath $DbDumps -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match '^\d{8}$' } |
+            Sort-Object Name -Descending |
+            Select-Object -First 1
+        if ($latestDumps) {
+            Write-Host ("  Latest dated snapshot: {0}" -f $latestDumps.Name)
+            Get-ChildItem -LiteralPath $latestDumps.FullName -File -ErrorAction SilentlyContinue | ForEach-Object {
+                $sizeMB = [math]::Round($_.Length / 1MB, 2)
+                Write-Host ("  {0,-30} {1,10} MB  {2}" -f $_.Name, $sizeMB, $_.LastWriteTime)
+            }
+        }
+        $rootFiles = Get-ChildItem $DbDumps -File -ErrorAction SilentlyContinue
+        if ($rootFiles) {
+            Write-Host "  Legacy root files:"
+            $rootFiles | ForEach-Object {
+                $sizeMB = [math]::Round($_.Length / 1MB, 2)
+                Write-Host ("  {0,-30} {1,10} MB  {2}" -f $_.Name, $sizeMB, $_.LastWriteTime)
+            }
         }
     } else { Write-Warn "  $DbDumps not found" }
     Write-Host ""
@@ -259,12 +304,22 @@ function Do-Verify {
         $issues += "code:git-bundle"
     }
 
-    # 2. PG/SQLite dumps
+    # 2. PG/SQLite dumps (v2.1.1 dated snapshots since 2026-09-20: files live in
+    #    <DbDumps>\<yyyyMMdd>\; legacy root-level loose files are the fallback)
+    $dumpsDateDir = $null
+    if (Test-Path $DbDumps) {
+        $dumpsDateDir = Get-ChildItem -LiteralPath $DbDumps -Directory -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -match '^\d{8}$' } |
+            Sort-Object Name -Descending |
+            Select-Object -First 1
+        if ($dumpsDateDir) { $dumpsDateDir = $dumpsDateDir.FullName }
+    }
     foreach ($f in @("depgraph.dump","pg_globals.sql","governance_backup.db","session_backup.db")) {
-        $p = Join-Path $DbDumps $f
+        $p = if ($dumpsDateDir) { Join-Path $dumpsDateDir $f } else { Join-Path $DbDumps $f }
         if (Test-Path $p) {
             $mb = [math]::Round((Get-Item $p).Length / 1MB, 2)
-            Write-OK "dumps: $f (${mb}MB)"
+            $loc = if ($dumpsDateDir) { "dated $(Split-Path -Leaf $dumpsDateDir)" } else { "root(legacy)" }
+            Write-OK "dumps: $f (${mb}MB, $loc)"
         } else { Write-Err "dumps: $f MISSING"; $issues += "dumps:$f" }
     }
 
@@ -344,9 +399,14 @@ function Do-Code {
 # ==================== pg ====================
 function Do-Pg {
     Write-Stage "Restoring PostgreSQL (depgraph.dump + pg_globals.sql)"
-    $dump = Join-Path $DbDumps "depgraph.dump"
-    $globals = Join-Path $DbDumps "pg_globals.sql"
-    if (-not (Test-Path $dump)) { Write-Err "depgraph.dump not found in $DbDumps"; exit 1 }
+    # (R1, 2026-09-24): dumps live in dated snapshots since 2026-09-20 -- restoring
+    # from root-level legacy files would silently restore a frozen pre-09-20 database.
+    $dumpsDir = Get-LatestDumpsDir
+    $loc = if ($dumpsDir) { $dumpsDir } else { $DbDumps }
+    $dump = Join-Path $loc "depgraph.dump"
+    $globals = Join-Path $loc "pg_globals.sql"
+    if (-not (Test-Path $dump)) { Write-Err "depgraph.dump not found in $loc"; exit 1 }
+    if ($dumpsDir) { Write-Stage ("Using dated dumps snapshot: {0}" -f (Split-Path -Leaf $dumpsDir)) }
 
     # Locate pg_restore + psql
     $pgRestore = Get-Command pg_restore -ErrorAction SilentlyContinue
@@ -376,8 +436,10 @@ function Do-Pg {
     # 1. Restore globals (roles) first -- passwords masked, must reset from .env.postgres
     if (Test-Path $globals) {
         Write-Stage "Restoring PG globals (roles, passwords masked)"
-        & $psql -h localhost -U $pgUser -d postgres -f $globals 2>&1 | Out-Null
-        Write-OK "Globals restored (reset role passwords from config/.env.postgres)"
+        # (R6, 2026-09-24): ON_ERROR_STOP so per-role errors are not silently swallowed
+        & $psql -v ON_ERROR_STOP=1 -h localhost -U $pgUser -d postgres -f $globals 2>&1 | Out-Null
+        if ($LASTEXITCODE -eq 0) { Write-OK "Globals restored (reset role passwords from config/.env.postgres)" }
+        else { Write-Warn "Globals restore reported errors (exit $LASTEXITCODE) - verify roles manually" }
         Write-Host "  ALTER ROLE zephyr PASSWORD '...';  (run for each role per .env.postgres)" -ForegroundColor Yellow
     }
 
@@ -409,9 +471,12 @@ function Do-Pg {
 # ==================== sqlite ====================
 function Do-Sqlite {
     Write-Stage "Restoring SQLite databases"
+    # (R1, 2026-09-24): dated dumps snapshot aware (see Do-Pg)
+    $dumpsDir = Get-LatestDumpsDir
+    $loc = if ($dumpsDir) { $dumpsDir } else { $DbDumps }
     $targets = @(
-        @{src="$DbDumps\governance_backup.db"; dst="$ProjectRoot\data\databases\governance.db"}
-        @{src="$DbDumps\session_backup.db";    dst="$ProjectRoot\data\databases\session_continuity.db"}
+        @{src="$loc\governance_backup.db"; dst="$ProjectRoot\data\databases\governance.db"}
+        @{src="$loc\session_backup.db";    dst="$ProjectRoot\data\databases\session_continuity.db"}
     )
     foreach ($t in $targets) {
         if (-not (Test-Path $t.src)) { Write-Warn "$($t.src) not found, skipping"; continue }
@@ -424,8 +489,10 @@ function Do-Sqlite {
 }
 
 # ==================== ch ====================
-function Restore-ChFile($filename, $label) {
-    <# RESTORE a single backup file via CH RESTORE ASYNC + poll. Returns $true on success. #>
+function Restore-ChFile($filename, $label, [string]$BaseBackup = "") {
+    <# RESTORE a single backup file via CH RESTORE ASYNC + poll. Returns $true on success.
+       For incremental backups, pass -BaseBackup <base filename>: CH requires the
+       base_backup setting to resolve an increment (R3, 2026-09-24). #>
     $stat = & python $ChSshHelper --stat-backup $filename --json 2>&1 | ConvertFrom-Json
     if (-not $stat.exists) {
         Write-Warn "$label : $filename not found on VHDX, skipping"
@@ -434,7 +501,11 @@ function Restore-ChFile($filename, $label) {
     $gb = [math]::Round($stat.bytes / 1GB, 2)
     Write-Stage "$label : RESTORE $filename (${gb} GiB)"
 
-    $q = "RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM Disk('backups', '$filename') ASYNC"
+    if ($BaseBackup) {
+        $q = "RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM Disk('backups', '$filename') SETTINGS base_backup = Disk('backups', '$BaseBackup') ASYNC"
+    } else {
+        $q = "RESTORE DATABASE c1_market, DATABASE c3_fundamental FROM Disk('backups', '$filename') ASYNC"
+    }
     $fireResp = curl.exe -s --max-time 60 $chBaseUrl --data-binary $q
     if ($LASTEXITCODE -ne 0 -or $fireResp -notmatch '([0-9a-f-]{36})') {
         Write-Err "$label RESTORE fire failed: $fireResp"
@@ -469,6 +540,15 @@ function Do-Ch {
     if (-not (Test-ChAlive)) { Write-Err "ClickHouse not reachable at $chBaseUrl -- start VM first (restore.ps1 vm)"; exit 1 }
     Write-OK "ClickHouse reachable"
 
+    # (R2, 2026-09-24): verify the base backup exists BEFORE any destructive DROP --
+    # dropping first and failing after leaves zero rollback window.
+    $preStat = & python $ChSshHelper --stat-backup $ChBaseFile --json 2>&1 | ConvertFrom-Json
+    if (-not $preStat.exists -or [int64]$preStat.bytes -lt 1GB) {
+        Write-Err "base backup $ChBaseFile missing or too small ($($preStat.bytes) bytes) - aborting BEFORE DROP"
+        exit 1
+    }
+    Write-OK ("Base backup present: {0} ({1:N1} GiB)" -f $ChBaseFile, ($preStat.bytes / 1GB))
+
     if (-not (Confirm-Action "DROP + RESTORE c1_market, c3_fundamental? This is destructive.")) { Write-Host "Aborted."; exit 0 }
 
     # 1. Drop existing databases (RESTORE requires clean target)
@@ -485,7 +565,10 @@ function Do-Ch {
     if (-not $SkipInc) {
         $incStat = & python $ChSshHelper --stat-backup $ChIncFile --json 2>&1 | ConvertFrom-Json
         if ($incStat.exists) {
-            Restore-ChFile $ChIncFile "INC" | Out-Null
+            # (R3, 2026-09-24): increments need base_backup setting; failure must be
+            # loud (base data is already restored, inc can be retried standalone).
+            $incOk = Restore-ChFile $ChIncFile "INC" -BaseBackup $ChBaseFile
+            if (-not $incOk) { Write-Err "INC restore failed (base is restored; retry INC alone)"; exit 1 }
         } else {
             Write-Warn "inc.zip not found -- base-only restore (acceptable if just rebased)"
         }
