@@ -113,18 +113,21 @@ gates:
   register_line: 416
   enabled: true
 - gate_id: RULE-EXECUTION-PAIRING
+  files_trigger: ["docs/01_policies_and_standards/rules/", "rule_"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.rule_execution_pairing_gate
   factory_function: make_rule_execution_pairing_gate
   source: in_process
   register_line: 417
   enabled: true
 - gate_id: REFERENCE-INTEGRITY
+  files_trigger: ["docs/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.dangling_reference_gate
   factory_function: make_reference_integrity_gate
   source: in_process
   register_line: 418
   enabled: true
 - gate_id: RULE-FOUR-WAY-ALIGN
+  files_trigger: ["docs/01_policies_and_standards/rules/", "rule_"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.rule_four_way_alignment_gate
   factory_function: make_rule_four_way_alignment_gate
   source: in_process
@@ -137,6 +140,7 @@ gates:
   register_line: 422
   enabled: true
 - gate_id: R5-DIGIT-SUFFIX
+  files_trigger: ["docs/", "scripts/", "src/", "data/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.r5_digit_suffix_gate
   factory_function: make_r5_digit_suffix_gate
   source: in_process
@@ -160,6 +164,7 @@ gates:
   register_line: 427
   enabled: true
 - gate_id: UNSAFE-DICT-SPREAD
+  files_trigger: [".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.unsafe_dict_spread_gate
   factory_function: make_unsafe_dict_spread_gate
   source: in_process
@@ -214,6 +219,7 @@ gates:
   register_line: 437
   enabled: true
 - gate_id: ID-UNIQUENESS
+  files_trigger: [".pre-commit-config.yaml"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.id_uniqueness_gate
   factory_function: make_id_uniqueness_gate
   source: in_process
@@ -268,6 +274,7 @@ gates:
   register_line: 449
   enabled: true
 - gate_id: NO-BARE-GETENV
+  files_trigger: [".env", "secret", "credential", "token", "password", "api_key", "private_key"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.bare_getenv_gate
   factory_function: make_bare_getenv_gate
   source: in_process
@@ -292,6 +299,7 @@ gates:
   register_line: 453
   enabled: true
 - gate_id: MAP-ALIGNMENT
+  files_trigger: ["docs/02_enterprise_architecture/", "docs/03_modules/", "alignment_checklist"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.panorama_alignment_gate
   factory_function: make_map_alignment_gate
   source: in_process
@@ -316,6 +324,7 @@ gates:
   register_line: 458
   enabled: true
 - gate_id: CH-VERSION-COL
+  files_trigger: ["schema", "ddl"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.ch_version_col_gate
   factory_function: make_ch_version_col_gate
   source: in_process
@@ -339,6 +348,7 @@ gates:
   source: in_process
   enabled: true
 - gate_id: META-TESTS-COVERAGE
+  files_trigger: ["tests/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.tests_coverage_gate
   factory_function: make_tests_coverage_gate
   source: in_process
@@ -357,6 +367,7 @@ gates:
   register_line: 464
   enabled: true
 - gate_id: GATE-DOMAIN-FK
+  files_trigger: [".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.domain_fk_gate
   factory_function: make_domain_fk_gate
   source: in_process
@@ -381,18 +392,21 @@ gates:
   register_line: 470
   enabled: true
 - gate_id: DEPGRAPH-FRESHNESS
+  files_trigger: ["src/", "scripts/", "depgraph"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate
   factory_function: make_depgraph_freshness_gate
   source: in_process
   register_line: 471
   enabled: true
 - gate_id: RECONCILER-HEALTH
+  files_trigger: ["governance"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.reconciler_health_gate
   factory_function: make_reconciler_health_gate
   source: in_process
   register_line: 472
   enabled: true
 - gate_id: SCRIPTS-IMPORT-INTEGRITY
+  files_trigger: ["scripts/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.scripts_import_integrity_gate
   factory_function: make_scripts_import_integrity_gate
   source: in_process
@@ -405,6 +419,7 @@ gates:
   register_line: 474
   enabled: true
 - gate_id: BARE-SUBPROCESS
+  files_trigger: [".env", "secret", "credential", "token", "password", "api_key", "private_key"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.bare_subprocess_gate
   factory_function: make_bare_subprocess_gate
   source: in_process
@@ -429,6 +444,7 @@ gates:
   register_line: 478
   enabled: true
 - gate_id: GATE-PRECOMMIT-OFFLINE
+  files_trigger: [".pre-commit-config.yaml"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.precommit_offline_gate
   factory_function: make_precommit_offline_gate
   source: in_process
@@ -459,12 +475,14 @@ gates:
   register_line: 483
   enabled: true
 - gate_id: CONSUMERS-ACCURACY
+  files_trigger: ["capability_canonical"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.consumers_accuracy_gate
   factory_function: make_consumers_accuracy_gate
   source: in_process
   register_line: 484
   enabled: true
 - gate_id: SCHEMA-FILE-EXISTS
+  files_trigger: ["schema"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.schema_file_exists_gate
   factory_function: make_schema_file_exists_gate
   source: in_process
@@ -472,6 +490,7 @@ gates:
   enabled: true
 # --- warn-only→hard gate 批量升级（ARCH-WARN-TO-HARD-GATE-BATCH，2026-07-23）---
 - gate_id: ASYNCIO-RUN-IN-CONTEXT
+  files_trigger: [".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.asyncio_run_in_context_gate
   factory_function: make_asyncio_run_in_context_gate
   source: in_process
@@ -565,6 +584,7 @@ gates:
 # priority=128（SECRET-REGISTRY-CONSISTENCY=127 之后、CAPABILITY-OVERLAP=200 之前）。
 # 三密钥治理 gate 聚簇：81(读违规)/127(一致性)/128(值硬编码)。
 - gate_id: NO-SECRET-HARDCODE
+  files_trigger: [".env", "secret", "credential", "token", "password", "api_key", "private_key"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.secret_hardcode_gate
   factory_function: make_secret_hardcode_gate
   source: in_process
@@ -574,6 +594,7 @@ gates:
 # 治理代理代码裸删除/移动原语静态扫描——防收敛后回流；删除/移动 MUST 走
 # ops_guard 安全 API（file_ops 声明制+全量审计+回收站可逆）。priority=117。
 - gate_id: RECONCILER-FILE-OPS
+  files_trigger: ["governance"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate
   factory_function: make_reconciler_file_ops_gate
   source: in_process
@@ -607,6 +628,7 @@ gates:
   register_line: 0  # priority=120
   enabled: true
 - gate_id: GATE-ERRCODE-CONSISTENCY
+  files_trigger: ["architecture_model/contracts/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.errcode_consistency_gate
   factory_function: make_errcode_consistency_gate
   source: in_process
@@ -619,18 +641,21 @@ gates:
   register_line: 0  # priority=47；2026-08-23 陈旧快照覆写事故治本（claim_head 锚点 vs 当前 HEAD：热文件上游已推进则阻断，与 safe_write_text CAS 文件级防线互补）
   enabled: true
 - gate_id: STATE-VOCAB-REGISTRY
+  files_trigger: ["src/", ".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.library.state_vocab_registry_gate
   factory_function: make_state_vocab_registry_gate
   source: in_process
   register_line: 0  # priority=135；2026-09-22 词表 SSOT 制度 W3 执行门（Owner 批，观察期 warn-only——staged .py 状态枚举类未登记 state_vocabulary_registry.yaml 则 WARN+审计放行；注册表缺失 fail-open；STATE_VOCAB_GATE_MODE 翻 "block" 升硬）
   enabled: true
 - gate_id: TAG-VOCAB
+  files_trigger: ["library", "catalogs/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.library.tag_vocab_gate
   factory_function: make_tag_vocab_gate
   source: in_process
   register_line: 0  # priority=134；2026-09-22 图书馆标签枚举门（ulib3 T7，st-ulib3-20260922，观察期 warn-only——staged catalogs yaml 的 tags 非枚举词/别名冲突则 WARN+审计放行；词库缺失 fail-open；TAG_VOCAB_GATE_MODE 翻 "block" 升硬）
   enabled: true
 - gate_id: BLOOD-FLESH
+  files_trigger: [".py"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.library.library_blood_flesh_gate
   factory_function: make_library_blood_flesh_gate
   source: in_process
@@ -673,6 +698,7 @@ gates:
   register_line: 0  # priority=49；2026-09-14 红蓝 v3 P0-1 批 2 治本：staged .py 语法错误硬阻断（含文件名+行号+错误信息）——填全仓 6+ 个 AST 类 gate 集体 except SyntaxError: fail-open 的责任真空（实证：def broken(: 零拦截入库 2c6d1719d6）；检测范围含 tests/（豁免只认 '# noqa: syntax-fixture  <理由≥10字符>' 标记不认目录）；非 SyntaxError 解析异常 fail-open；在 worktree 通道 check_all 全量生效（不进 _WORKTREE_SKIP_GATES）；初选 48 与 COMMIT-SCOPE 撞号 auto_registrar 实测抓出让位 49；测试 tests/governance/commit_gates/test_syntax_validation_gate.py
   enabled: true
 - gate_id: RESOURCE-SCHEDULE
+  files_trigger: ["tasks.yaml", "config/"]  # P5 条件触发（st-gslim-20260923；C5 慢门/零触发观察/安全三台）
   module_path: zephyr.gov_enforcement.commit_gates.resource_schedule_gate
   factory_function: make_resource_schedule_gate
   source: in_process

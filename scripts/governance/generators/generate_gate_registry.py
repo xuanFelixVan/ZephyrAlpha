@@ -108,6 +108,17 @@ _RE_PRIORITY = re.compile(r"priority\s*=\s*(\d+)")
 _RE_DOCSTRING_FIRST_LINE = re.compile(r'^"""[^\n]*?—\s*(.+?)$', re.MULTILINE)
 
 
+def _roster_triggers() -> dict:
+    """in_process 名册的 files_trigger 字段（P5 条件触发真源），供统一册贯通。"""
+    roster_path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "in_process_gate_registry.yaml"
+    try:
+        import yaml as _yaml  # noqa: PLC0415
+        data = _yaml.safe_load(roster_path.read_text(encoding="utf-8"))
+        return {g.get("gate_id"): g.get("files_trigger") for g in data.get("gates", []) if g.get("files_trigger")}
+    except Exception:  # noqa: BLE001 — 名册不可得时统一册退回空触发面
+        return {}
+
+
 def extract_commit_gates() -> list[dict]:
     """扫描 commit_gates/*.py，从 GateSpec 声明 + docstring 提取 CommitGate 元数据。
 
@@ -137,6 +148,9 @@ def extract_commit_gates() -> list[dict]:
         if gate_id in seen_gate_ids:
             continue
         seen_gate_ids.add(gate_id)
+        _trigger_map = globals().setdefault("_TRIGGER_MAP", None)
+        if _trigger_map is None:
+            globals()["_TRIGGER_MAP"] = _trigger_map = _roster_triggers()
         m_pri = _RE_PRIORITY.search(text)
         priority = int(m_pri.group(1)) if m_pri else 100
         m_doc = _RE_DOCSTRING_FIRST_LINE.search(text)
@@ -160,6 +174,8 @@ def extract_commit_gates() -> list[dict]:
                 "own_scope": "_build_own_scope" in text,
             }
         )
+        # P5 条件触发贯通（st-gslim-20260923）：统一册 files_trigger 拉通自 in_process 名册
+        gates[-1]["files_trigger"] = globals().setdefault("_TRIGGER_MAP", {}).get(gate_id, "")
     return gates
 
 

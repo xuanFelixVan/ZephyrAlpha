@@ -218,6 +218,9 @@ def auto_register_gates(
         # 调用工厂函数 + register
         try:
             spec = factory()
+            ft = entry.get("files_trigger")
+            if ft:
+                spec.files_trigger = tuple(ft) if isinstance(ft, list) else (str(ft),)
             registry.register(spec)
             registered_count += 1
         except Exception as e:  # noqa: BLE001 — 逐台收集后统一 fail-closed（裁定#351）

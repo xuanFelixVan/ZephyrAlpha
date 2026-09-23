@@ -277,6 +277,23 @@ def run_checker_script(
     return run_subprocess_hidden([sys.executable, str(script_path), *args], **kwargs)
 
 
+def _files_trigger_hit(patterns: tuple[str, ...], files: list[str] | None) -> bool:
+    """P5 条件触发匹配（st-gslim-20260923）：目录前缀 / fnmatch 通配 / 子串。"""
+    if not patterns:
+        return True
+    if not files:
+        return False
+    import fnmatch  # noqa: PLC0415
+
+    for f in files:
+        rel = str(f).replace("\\", "/")
+        for p in patterns:
+            p = p.replace("\\", "/")
+            if (p.endswith("/") and rel.startswith(p)) or rel == p.rstrip("/") or fnmatch.fnmatch(rel, p) or p in rel:
+                return True
+    return False
+
+
 @dataclass
 class GateResult:
     """pre-commit 门禁检查结果。
@@ -320,6 +337,11 @@ class GateSpec:
     gate_id: str
     check: Callable[..., tuple[bool, str]]
     priority: int = 100
+    # 条件触发（st-gslim-20260923 P5，gate_audit_report_v1 §C5/Owner E6/E7）：非空时
+    # 仅当本次提交清单命中任一模式才执行；空=无条件执行（历史行为）。匹配语义：
+    # 目录前缀（尾随 /）/ fnmatch 通配 / 子串（如 ".py"、"schema"）。由
+    # gate_auto_registrar 从 in_process_gate_registry.yaml files_trigger 字段注入。
+    files_trigger: tuple[str, ...] = ()
 
 
 class CommitGateRegistry:
@@ -372,7 +394,7 @@ class CommitGateRegistry:
         gateway: object,
         files: list[str],
         skip_gates: frozenset[str] = frozenset(),
-        preflight_results: "dict[str, tuple[bool, str]] | None" = None,
+        preflight_results: dict[str, tuple[bool, str]] | None = None,
         **kwargs: Any,
     ) -> list[GateResult]:
         """按 priority 升序执行所有 gate，返回结果列表。
@@ -407,6 +429,16 @@ class CommitGateRegistry:
             cache_ctx = None
         results: list[GateResult] = []
         for spec in sorted(self._specs.values(), key=lambda s: s.priority):
+            if spec.files_trigger and not _files_trigger_hit(spec.files_trigger, files):
+                results.append(
+                    GateResult(
+                        gate_id=spec.gate_id,
+                        passed=True,
+                        detail="skipped: files_trigger 未命中（P5 条件触发）",
+                    )
+                )
+                _stat_ms(spec.gate_id, 0.0, True, "trigger_skip")
+                continue
             if spec.gate_id in skip_gates:
                 results.append(
                     GateResult(
