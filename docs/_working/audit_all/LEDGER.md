@@ -745,3 +745,30 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   git log --all --reflog --diff-filter=A --oneline -1 -- scripts/backtest/sector_prereg_exam_runner.py | cat
   git show --format= --name-only 9b0c31ab125 | grep -c "_registry/catalogs"   # 3（批B 只改 YAML 三册，无 DB 回写）
   ```
+
+## 心跳 2026-09-24 06:09 CST 实测（`date`=06:09:31）· 在干=红蓝反证**正门件跑通**（尺自检器能红）+ 两轮复跑零新问题 + **现场拆掉本包名下两枚 index 回退弹**（新立 IDX-05）· 卡住=无 · 下一步=终报
+
+- **① 红蓝反证正门件已落地：尺自检器 `redblue_ruler_selfcheck.py`（14 真判 + 1 有意负例，exit 码可用）**
+  - 三把尺各做**阳性对照（该红必红）+ 阴性对照（不该红不瞎报）**：尺A 字段切片（业务面幽灵→必判 1｜同路径只在 `creation_tokens` 正文→必判 0｜切片不误伤业务面）；尺B 三分定性（唯一同名→R｜**泛名 `__init__.py` 不得判改名=例11 防复发**｜多候选→降格｜历史有→H｜两头无→N）；尺C 双向（HEAD 有件无节点→报漏挂｜节点有件而 HEAD/盘皆无且标 production→报硬悬空｜标 `planned/deprecated`→**不判缺陷**）。
+  - **自红验证（防"恒绿假工具"，即 [[feedback-executor-cannot-sign-own-work]] 与 [[autoclaw-btfix-campaign]] 立的"判通过的脚本须先证明能红"）**：本件内置一条**故意改坏**的断言（want=999），实跑打印 `[SELF-RED] 注入必错断言 ⇒ FAIL 计数 +1`，且若该负例不红则自检器自身判 FAIL。现测=**真判 14 条全 PASS + 1 条有意负例已触发红**。
+  - 顺带两处自检器自身的坑（记为反证第 14、15 例）：**例14** 我第一版把断言数硬写成"16"而实为 14（未实测计数即写死数字=自家犯的"计数写死"病，与 §4.3 同族）⇒ 改为运行时计数；**例15** 第一版 `chk` 用 `NCHK += 1` 手工补正导致汇总文案与实际不符 ⇒ 撤手工补正，改由负例分支表达。
+- **② 收官判据第 1、2 轮复跑=零新问题（同尺两跑，测于 05:5x 与 06:05）**：业务面 **D1=165 / D2=110 两轮完全同值**；同窗"整册口径"却从 D1=785→**786**、D2=278→**277** ⇒ 唯一动的是他包并发新增的一行台账收据。**这正是 ② 那把切片尺的价值证明：不切片的口径连"跑两遍"都稳不住，切了片的才叫结论**。
+- **③ 🔴 新立 F-AUDIT-IDX-05（现场逮到、当场拆掉，属 §9.4/§2 授权内的自家写域排雷）**：本包冷启动跑 `lock_files.py cleanup` 后复查 `git status`，发现**我自己的两本案卷正被 index 回退弹压着**：
+  - 事实（尺=`git ls-files -s` + `git show :<path> | wc -l`）：`LEDGER.md` 的 **index 字节=22 行**（本会话最开头那一版，含"28 硬"基线行），而 HEAD=盘上=**747 行**；`AUDIT_REPORT.md` 的 index 字节比 HEAD 少 51 行。⇒ 一旦有任何落地吸收主区 index，**今晚全部案卷（25 块、含交裁项与处方）会瞬间退回 22 行**。
+  - 已拆：亲验 `git diff HEAD --numstat` 两本皆**空输出（盘==HEAD 逐字节同）**后 `git add -- <自家两件>`（显式清单、非 `-A`）⇒ 两件从 staged 清单消失，`git ls-files -s` 现指回 HEAD blob（LEDGER=f1708b9c54）。零内容风险，因为它只是把 index 对齐到盘与 HEAD 已同的字节。
+  - 面上规模（不止本包）：主 index 已跟踪件与 HEAD 字节不同的=**68 件**，其中 **12 件恰等于本会话起点 `f017ce3bf7` 的 blob**（=落后已落地面，含 **`AGENTS.md` 宪法本身**、`config/governance_operations_map.yaml` 落后 48 行、`src/zephyr/shared/io/yaml_utils.py` 落后 70 行、`library/lookup.py` 落后 50 行、`fs_collector.py` 落后 33 行…合计约 **278 行已落地工作**停在 index 后面）。其余 56 件属他会话在途/新件（587 件 index 有 HEAD 无），**非本包写域，只登记不代清**。
+  - **机制：一个被我自己否证的假设**（反证第 16 例）：我先猜"`--enqueue` 每次把当时字节写进主 index，落地在 serializer worktree 的独立 index，故主区 index 永久停在首次快照"。**前半被代码证伪**：`scripts/commit_queue.py:694` 入袋走**内容寻址 blob 文件**（`blob_ref: blobs/<sha256>`）、`scripts/git_commit.py` 全文无 `git add`（仅 :247 一条注释）⇒ 队列路径不触主 index。**后半（首次 staging 后无人回写）仍为候选但未证**；诚实结论=**主区 index 是第二真源且无人回收**（与 EVAP-02/IDX-01/DEAD-01/STASH-01 同根第五面），处方=落地完成后须把触及路径的 index 对齐新 HEAD（或干脆禁主区 index 承载任何非当轮字节），属修闸面 ⇒ **交 st-commitsys**，与本包已提的"热册袋面/落地面脱钩"合为一条。
+- **③b 编号险撞（自记·反证第 17 例）**：本块初稿把新案卷命名为 **IDX-04**，追加脚本的 MARK 幂等检查把它判为"已存在"而**拒绝追加**——查 `grep -oE "F-AUDIT-[A-Z0-9]+-[0-9]+" | sort -u` 才发现 **04:28 块早已立了 F-AUDIT-IDX-04（预检门消费面）**。若我当时为绕过幂等检查而直接改 MARK 追加，就成了**同包案卷撞号**（与裁定册撞号事故 [[registry-collision-blocks-own-queue-fix]] 同构）。⇒ 立法建议（并入"审查包自身纪律"一条，不新开册）：**新立 F-AUDIT-* 前必须先跑该 grep 取号段，取 max+1**；幂等 MARK 检查恰好替我拦下了这次撞号，属"门能红"的正例。
+- **④ 下一步**：①写终报（把 DANG-02 口径更正、MTR-01/02/03、DEPG-01、STASH-01、BAG-01 分层、IDX-03 终态、IDX-05、16 例反证全部并入《挂齐缺口总账》三清单，逐条带复核命令与证据等级）②终报落地面复跑一次尺做收官第 2 轮确认 ③向 Owner 交三清单（待裁项=25 真幽灵"补建 or 销册"、R1 连坐已解堵后的 3 袋归属、裁定 409 同批原子归属、stash 定向提取）④满足收官判据后自删本自动化。
+- **队列/align 状态**：本包 0019/0020/0021 **全 done**（0021=`b37398ff62`@06:04:26），队列此刻 `head=None`（暂无待投）；align：1-5 步工作树硬=3（HEAD 口径=0，等 st-cmd/st-commitsys 的裁定册面）、第 6 步崩（st-ailayer BLIND-01）、7-9 步未及。**本包对 `注册表/配置册`/depgraph DB 写入累计=0**（depgraph 全程只 SELECT）。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  python .runtime/tmp/audit_all_20260924/redblue_ruler_selfcheck.py | tail -3     # 期望 exit0 + "1 条有意负例已触发红"
+  echo $?
+  grep "合计" .runtime/tmp/audit_all_20260924/dangling_v2_fieldslice.txt          # 第二轮仍 D1=165/D2=110
+  git ls-files -s -- docs/_working/audit_all/LEDGER.md                            # 期望 f1708b9c54（=HEAD blob，非 87cb0c275b）
+  git diff --cached --name-only | wc -l                                           # 全部 staged 路径（含新件 587 件，故 ≠68）
+  # "已跟踪且 idx!=HEAD = 68" 与 "其中 idx==起点 blob = 12" 须用下面纯集合法复算（勿逐件起 git 进程、勿用 --diff-filter=D）：
+  #   idx: `git ls-files -s` 取第 2 列；两态: `git ls-tree -r HEAD` / `git ls-tree -r f017ce3bf7` 取第 3 列；三集合交集即 12 件
+  git diff --cached --numstat -- AGENTS.md                                        # 2/2=宪法本身也在回退弹里
+  ```
