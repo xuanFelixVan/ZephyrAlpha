@@ -45991,4 +45991,14 @@ creation_tokens:
   merge_evaluation: "AI层P1批次4/5八段施工件，README§3净零批次表已声明，各段DESIGN照单施工，无重复建设"
   merge_evaluation: "跨对象不并：access_control.kill_switch 是AI行为风控进程内存态（职责边界P1-2 明文），paper_hedge state是仓位影子，本件=交易资金侧五级熔断磁盘影子唯一载体"
   merge_evaluation: "净零合规：P2-1 契约头减负出仓产物（docstring 内联机器块迁出，文件本体行数净减），非新增规则面"
+- file: docs/_working/tdm20_campaign/00_tdm20_ledger.md
+  token: tdm20-expansion-00-tdm20-ledger-20260922
+  created_by: st-tdm20-20260923
+  capability: tdm20_expansion
+  merge_evaluation: "TDM2.0扩容班战役文档补登（00改名/05晨报后建）：幂等插入缺失 token"
+- file: docs/_working/tdm20_campaign/05_morning_report.md
+  token: tdm20-expansion-05-morning-report-20260922
+  created_by: st-tdm20-20260923
+  capability: tdm20_expansion
+  merge_evaluation: "TDM2.0扩容班战役文档补登（00改名/05晨报后建）：幂等插入缺失 token"
 di_seam_exemptions: []
