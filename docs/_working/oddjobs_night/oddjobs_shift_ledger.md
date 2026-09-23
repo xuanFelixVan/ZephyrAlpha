@@ -100,3 +100,26 @@ topic: oddjobs_20260923
 - 备份件移交：两共享册的 pile 暂存版备份移 .runtime/tmp/oddjobs_night_backup/（24h TTL，
   内含他会话在飞注册条目全量，维护班可查）。
 - 会话收尾：release 全 claim + 心跳 daemon idle 自退（30min）+ 清临时完成。
+
+
+## 增补班回执（Owner 全批 2026-09-23 上午，件6/件7）
+
+- 件7 TC-06 裁定落地 ✅ **2b9e7805**：裁定#404 随批登记（Max 代裁四卡）+R1 结案回写
+  （known_data_gaps completed→resolved+experiments_ledger 修正案#2）+R2/R3 批D/批G 注记。
+- 件6 live 三安全卡 ✅ **bca95a63**（15 步正门，实盘四禁=纯加闸不加放）：
+  S-1 blocks_live_trading 断言接线（pre_execution_checker 闸门1.5 live_env_gate，config 层
+  环境解析合规 ZEPHYR-ENV-DIRECT-ACCESS，默认探针 fail-closed，红蓝 4 用例）；
+  S-2 交易级告警 4 条（THD-TRD-001..004 入 alert_threshold_registry v1.6.0，锚五级熔断，
+  status=design 消费面= G2b/G5 接线点）；S-3 五级熔断态持久化（kill_switch_state_store.py
+  新模块+trigger/reset 自动落盘钩子+rebuild 重臂 auto_reenable 冷却豁免，7 用例绿；
+  depgraph 节点 14950798+翻译+token 三注册齐+ALGO_FLOW external yaml 出仓）。
+- 验收判据（admission G6/G8/G9）：G6=下单路径含 blocks_live_trading 消费方 ✅；
+  G8=注册表 4 条在册 ✅；G9=熔断 state 落盘+rebuild 重建 API ✅。
+- 增补班基建抢修两件（全仓阻断修复）：①四台 map 门 priority=100 撞车 fail-closed
+  →后到者让位改 145-148；②gslim 晨批两聚合门（REFERENCE-INTEGRITY/BLUEPRINT-HEADER）
+  本地子检查名遮蔽自递归→globals 解析修+磁盘垫片（gslim 持 claim 件未代提交）。
+- 增补班门禁配方新增：queue 落地侧 ALGO-NOTE-SYNC/ALGO-FLOW-LINK 咬合=TDM 注记与
+  algo_flow yaml（起/收标记+边段）必须同批；CAPABILITY-LOOKUP 审计=会话键 jsonl
+  （CLI --find 不写会话账，须 API find(session_id=...)）；HOT-FILE 锚点=claim_snapshots
+  .json 持久化，stale 时删快照→release→re-claim 刷新；CCFR 高频吸收战=HEAD 基底重插+
+  紧凑 add→commit 窗口。
