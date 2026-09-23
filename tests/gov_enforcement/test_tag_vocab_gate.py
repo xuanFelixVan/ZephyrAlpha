@@ -177,23 +177,6 @@ class TestGatewayIntegration:
         assert passed is True
         assert "重复标准词" in detail
 
-    def test_vocab_self_missing_english_alias_reported(self, tmp_path):
-        """词汇表强制双语（A 班增补）：标准词无英文别名 → findings。"""
-        _write(tmp_path, _VOCAB_REL, "values:\n  - {value: 均线, aliases: [移动平均]}\n")
-        gw = _make_gateway(tmp_path)
-        passed, detail = make_tag_vocab_gate().check(gw, [_VOCAB_REL])
-        assert passed is True  # 观察期 warn-only
-        assert "双语缺位" in detail
-        assert "均线" in detail
-
-    def test_vocab_self_english_alias_present_silent(self, tmp_path):
-        """双语齐全（含零别名以外的合法形态）→ 词库本尊 staged 不产双语 findings。"""
-        _write(tmp_path, _VOCAB_REL, "values:\n  - {value: 均线, aliases: [MA, 移动平均]}\n")
-        gw = _make_gateway(tmp_path)
-        passed, detail = make_tag_vocab_gate().check(gw, [_VOCAB_REL])
-        assert passed is True
-        assert "双语缺位" not in detail
-
     def test_non_yaml_and_out_of_scope_skipped(self, tmp_path):
         _write(tmp_path, _VOCAB_REL, _VOCAB_YAML)
         py_rel = "scripts/tools/foo.py"

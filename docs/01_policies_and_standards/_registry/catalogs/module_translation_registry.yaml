@@ -59688,6 +59688,174 @@ entries:
   desc_en: ""
   plain_zh: "验证 runner——节点验证批入口（PB-12 排序：第一批=L4 执行类 14 节点 exec_quality；"
   responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_8d000bf3ccc3_pb_poe_dual_ma.py
+  domain_id: D_BACKTEST
+  name_zh: "C4 翻译 094"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "C4 翻译 094: PB-POE+双均线（原文: 2024年度精选策略1/65，md5=8d000bf3ccc3）。原文逻辑: 池=全 A；market_cap>800 亿 且 pb_ratio<20 且 roe>7，按 (roe-pb) 降序取前 100；"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog2_mktcap5.py
+  domain_id: D_BACKTEST
+  name_zh: "价值投资策略"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "价值投资策略-大盘择时·大市值月频前 5 等权（源=2025年度精选策略/54，CAND-ab4dc295d8eb）。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog2_wiz_largecap.py
+  domain_id: D_BACKTEST
+  name_zh: "向导式"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "向导式-1·大市值（流通市值降序）周频前 20 等权（源=2020年度精选策略/26，CAND-5e3284032a17）。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog3_div_roe5.py
+  domain_id: D_BACKTEST
+  name_zh: "菜场大妈·高股息高 ROE 前 5"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "菜场大妈·高股息高 ROE 前 5（源=2024年度精选策略1/36，CAND-bb0b9f37ce93）。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog3_growth_peg4.py
+  domain_id: D_BACKTEST
+  name_zh: "业绩增长+PEG·前 4"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "业绩增长+PEG·前 4（源=2024年度精选策略1/44，CAND-751983843b3f）。原文=归母净利增速前 50%+PEG(PE/增速)>0.08 最小前 10%→等权前 4。本件=增速门+PE 升序近似。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog3_mclean_rev_accel.py
+  domain_id: D_BACKTEST
+  name_zh: "柯林·麦克连成长价值·营收增长门近似"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "柯林·麦克连成长价值·营收增长门近似（源=2022年度精选策略/90，CAND-38cceabf3946）。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog3_mclean_screen.py
+  domain_id: D_BACKTEST
+  name_zh: "穿越牛熊价值精选·麦克连六门近似"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "穿越牛熊价值精选·麦克连六门近似（源=2025年度精选策略/87，CAND-0319395c57a7）。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog3_novice_value5.py
+  domain_id: D_BACKTEST
+  name_zh: "新手价值五门·月频市值前 20"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "新手价值五门·月频市值前 20（源=2020年度精选策略/44，CAND-3238a5ce80c8）。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog3_pb_range_lowdebt.py
+  domain_id: D_BACKTEST
+  name_zh: "低估值+低负债·PB 区间门市值前 20"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "低估值+低负债·PB 区间门市值前 20（源=2020年度精选策略/42，CAND-b1ab2a40225a）。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog3_peg_ebit_tiny.py
+  domain_id: D_BACKTEST
+  name_zh: "PEG+EBIT+小市值·前 5"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "PEG+EBIT+小市值·前 5（源=2022年度精选策略/56，CAND-9519cb55d6b7）。原文=净利 TTM 增速>10%+EBIT yield 前 25%+换手波动<0.5 门→流通市值升序前 5。本件=增速+EBIT>0 门+市值升序近似。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog3_peg_ebit_tiny2.py
+  domain_id: D_BACKTEST
+  name_zh: "PEG+EBIT 小市值优化·前 5"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "PEG+EBIT 小市值优化·前 5（源=2023年度精选策略/36，CAND-b1fb7e2246dd）。原文=PEG 最低 10%+EBIT yield 前 25% 门→流通市值升序前 5。本件=增速+EBIT 门+市值升序近似。"
+  responsibility_layer: business
+- module_path: scripts/backtest/translated/c4_backlog3_peg_growth_tiny.py
+  domain_id: D_BACKTEST
+  name_zh: "PEG+成长+小市值·前 4"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "PEG+成长+小市值·前 4（源=2022年度精选策略/6，CAND-79ae77fb3af7）。原文=PEG<0.5 门+成长池→流通市值升序前 4+RSRS 择时。本件=增速门+市值升序近似，RSRS 剔除。"
+  responsibility_layer: business
+- module_path: scripts/battle_map_coverage_audit.py
+  domain_id: D_GOVERNANCE
+  name_zh: "battle_map 锚点覆盖率盘点器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "battle_map 锚点覆盖率盘点器（BM-INV-007 孤儿模块反向检测的机械化落地）。"
+  responsibility_layer: governance
+- module_path: scripts/clone_guard_audit.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "CloneGuard L2 周期审计触发脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "CloneGuard L2 周期审计触发脚本（事件驱动，非 cron）。守 AGENTS.md 永久系统四要素：禁止时间触发（cron/Timer/sleep-loop）。"
+  responsibility_layer: governance
+- module_path: scripts/compute_signals.py
+  domain_id: D_SIGNAL
+  name_zh: "日频因子信号计算器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "日频因子信号计算器（管道 B，#BT-PIPELINE-001 阶段三）。"
+  responsibility_layer: business
+- module_path: scripts/crypto_daily_review.py
+  domain_id: D_TRADING
+  name_zh: "功能"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "crypto_daily_review.py — UTC 日切复盘脚本（24/7 连续市场班次运营）功能按 UTC 日切三班（00:00/08:00/16:00）生成班次复盘 Markdown 报告- ``--date``：复盘日（UTC 日历日），缺省=今日（UTC）。"
+  responsibility_layer: business
+- module_path: scripts/print_exam_summary.py
+  domain_id: D_GOVERNANCE
+  name_zh: "输出所有模型考试成绩清单"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "输出所有模型考试成绩清单（中文版）。"
+  responsibility_layer: governance
+- module_path: scripts/run_backtest.py
+  domain_id: D_BACKTEST
+  name_zh: "BTRUN 标准回测 CLI"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "BTRUN 标准回测 CLI（2026-09-01 设立，治本\"产物曲线为空\"问题）治本动机data/backtest_artifacts/ 早期 5 件产物 equity_curve/trade_log 全空——sink_backtest_result 四时序是可选参数，早期跑批没传。本 CLI 把\"跑回测 → 从 engine.last_portfolio 取净值/成交 → 强制传入 sink →落盘\" 固化为唯一标准入口，任何路径（CLI/API）发起都走 run_one。"
+  responsibility_layer: business
+- module_path: scripts/run_qwen3_baseline_exam.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "验收口径"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "run_qwen3_baseline_exam.py — qwen3:8b 本地推理质量基线考试（10号文 §4 Phase 2.4）。验收口径：基线成绩入库 data/model_profiles/（ModelRouter.load_benchmark_from_disk默认消费目录）。"
+  responsibility_layer: governance
+- module_path: scripts/session_worktree.py
+  domain_id: D_GOVERNANCE
+  name_zh: "设计文档"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "Session Worktree — 每 AI 独立 checkout + 分支（§11.3.1 v2.1.0 简化版）设计文档: 65_git_safety_governance.md §11.3.1关联议题: #ARCH-AICOLLAB-001 v2.1.0 简化- 去 7 天告警（22 路审查是一次性的，merge 后立即 abort 清理）- create/exec/merge/abort/list 五命令目录结构└── .worktrees\\\\          # worktree 根目录（.gitignore）├── AI-01\\\\           # AI-01 的独立 checkout"
+  responsibility_layer: governance
+- module_path: scripts/verify_sentiment_hidden_driver.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "情绪周期\"隐形驱动\"验证脚本"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "情绪周期\"隐形驱动\"验证脚本（28 号 memo §3.7.4，G07 施工前必做）。"
+  responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
