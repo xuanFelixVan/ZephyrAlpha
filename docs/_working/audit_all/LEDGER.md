@@ -593,3 +593,34 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   SINCE=2026-09-23 python .runtime/tmp/audit_all_20260924/probe_done_bag_vs_head.py   # 独立同尺复跑
   python .runtime/tmp/audit_all_20260924/probe_bags_for.py "st-align-dirty-20260924-0030"  # 差异袋点名（两跑口径差的来源）
   ```
+
+## 心跳 2026-09-24 05:29 CST 实测（`date`=05:29:23，非估钟）· 在干=R7 令执行毕（align 复跑两轮，3→0 定性到"口径+机制"双层面）· 卡住=无（本包不 pop 不 drop 他人 stash）· 下一步=见 ⑤
+
+- **① R7 指令回执（总指挥 05:05 令"复跑 align_all 确认 3→0，完成后报告"）**：**HEAD 口径=0 亲验成立；工作树口径=3 且已能点名机制**（不再是"陈旧快照"这类模糊语）。
+  - HEAD 侧：我的修复 commit=`a74e9a6c48`(04:36，"align_all 全图硬 3->0 exit0"自述) 在 HEAD 祖先链，且该册 `related_arch` 已置空——尺=`git show HEAD:docs/.../ruling_registry.yaml | grep -cE "MOD-L00-004|PS-CTR-003|MOD-INF-043"` = **0**。
+  - 工作树侧：05:15 与 05:27 两轮复跑第 5 步**恒 硬=3（治理双向 3 条，逐条同名）**，因该热册索引/工作树字节=`f84392cd7e` ≠ HEAD=`771ec4acf4`，其 +26/−2 里含**对我修复的回退**（见 ②④）。
+  - **exit0 结构不可达≠本包欠账，且本轮新证 HEAD 版引擎是好的**：崩在第 6 步 `UnboundLocalError: run_subprocess_hidden`。`git show HEAD:scripts/governance/d5_architecture/generators/align_all.py` 该 import **只出现 1 次（:100 模块级）**、工作树/暂存版出现 **2 次**（第二处 `:697` 在 `main()` 内 ⇒ 名字在 `main()` 全程为局部 ⇒ `:536/:556` 首用即崩）。⇒ **BLIND-01 是 st-ailayer-final 在途暂存件引入的回归**：该批一旦按现字节落地，align 引擎变"恒 exit1 + 第 6-9 步永不执行"。**给 st-ailayer 的处置建议=落地前必改**（删 `:697` 那行局部 import 即可，:100 已导入；零功能影响）。
+- **② 🔴 新立案 F-AUDIT-STASH-01（P1·死会话 stash=标签"14 行"/实测"663 文件"的全树回退弹）**：
+  - 事实：`stash@{0}` 建于 **05:18:36**，消息 `On dev: st-pipeline-final-20260924: frontend_map 14行A包WIP临时隔离（secbuild落地后pop恢复）`；`git stash show --stat stash@{0}` 实测=**663 files / +236,564 / −5,305** ⇒ 消息自述规模与实差 **47×**（14 行 vs 663 件）。而该会话此刻已被本包冷启动 `lock_files.py cleanup` 判为**死会话并 SALVAGED**（`stash=0件` 即清理器不认识这个既成 stash）⇒ **"待 pop 恢复"的承诺无主可兑现**。
+  - 里面装什么（逐件实测，三件各自指向"pop 即回退已落地面"）：
+    - `src/zephyr/frontend/dashboard/web/frontend_map.yaml`：stash 版含 `F-BUDGET-PAGE`/`F-SCHEDULEGATE-PAGE` **各 1 行、合计 2 处 R1 非类型化 backend_ref**（尺=`grep -cE 'F-BUDGET-PAGE|F-SCHEDULEGATE-PAGE'`=2；单查 `F-BUDGET-PAGE`=1——两数不等是"行计数 vs 两类各一行"，勿当矛盾报），而 HEAD/索引/工作树现均 **0 命中** ⇒ **pop = 重新武装那条已连坐打死 ≥3 包的门禁**（本包 0005/0007、st-mapcensus 0001/0004、st-oddjobs 0001）；
+    - `ruling_registry.yaml`：stash 版含 `MOD-L00-004/PS-CTR-003/MOD-INF-043` ⇒ pop 即回退 ① 的已落地修复；
+    - 与"stash 之后落地"求交=**1 件**命中 `capability_canonical_file_registry.yaml`（05:20:28 `1735200b6a` st-commitsys / 05:23:49 `886ec028e2` st-oddjobs 之后落地）⇒ pop 会把已落地热册拉回旧字节。
+  - **两向皆毁 ⇒ 只登记，不 pop 不 drop**：drop=毁 663 件在途 WIP（含他包唯一副本）；pop=回退刚落地面。**建议交您/属主定向处置**：按件提取 `git show 'stash@{0}:<path>' > <path>`（只取自己那 1 件），禁整弹 pop。
+  - **立法侧建议（一条，勿分散）**：stash 卫生缺"规模自证"——消息须带 `files=<n>`（或由 `session_worktree_*` 在 push 后回写），且 watchdog 应把**死会话名下 stash** 纳入可见面。家族归并：与 DEAD-01（staged 残留因失去 claim 而逃逸清扫）/EVAP-02/IDX-01 同根="index 或工作树被当第二真源"，本条是**第四面=stash 面**（无归属登记、无 TTL、无清扫可见性）。
+- **③ 05:18 事件顺带解堵（R7 正面副产品，已复测）**：`check_frontend_map.run_checks()` 现测=**359 功能点 / fail=0 / warn=10**；align 第 3 步 05:15=`361/fail2` → 05:27=`359/fail0`。⇒ 死于 `MAP-ALIGNMENT→FRONTEND-MAP R1` 的袋具备重投条件：本包 **0007 已 requeue→0016 pending**。重投前先证"三袋同源"：0005/0006/0007 声明字节 sha256 **全等**=`6547ac25c5174040…`，且其 `blob_ref` 存件哈希=盘上现内容哈希 ⇒ **只投最新一袋即闭，不三投**（防三连坐）。他包 `st-oddjobs-final-0001`（同死因，其台账已自记"待落地后 requeue"）**由其属主自投，我不代投**。
+  - **探针自纠（红蓝反证材料第 8 例）**：我第一版判"0005/0006/0007 袋面字节不在 HEAD"用的是 `files[].sha` —— **该字段在袋 schema 中根本不存在**（真字段=`blob_sha256` + `blob_ref`），且 git blob sha(12) 与 sha256 不可直接比 ⇒ 假"袋面丢失"结论。换正字段+盘上哈希双证后结论翻转为"袋面完好、只待重投"。⇒ 铁律补一条：**凡"内容丢失"类结论，先自证所用字段存在**（本包 BAG-01 尺已按 `blob_sha256` 复核，无需更正其 24.6% 结论）。
+- **④ 本轮唯一真正需要您点头的事（其余全部自解或已上交）**：**Owner 裁定 409 全文只活在未提交面**。`ruling_registry.yaml` 现 `M `=`f84392cd7e`（含该条）而 HEAD 命中=**0**；文件 mtime=**04:29:41**（未被 05:18 事件改写，也没被清扫）；其配套件同样未提交：`docs/02_enterprise_architecture/04_architecture_principles_decisions/system_charter.md`（`M `）+ 新件 `docs/_working/map_census/00_panorama_map_census_v1.md`（`A `）。承载它的两袋 `st-mapcensus-20260924-0001/0004` 均 **dead**（死因=② 的 R1 连坐，**现已解堵**），该会话 claim 已空（`lock_files.py list`=CLEAN）。⇒ 现状=**一次普通的 index 清理/一次 stash pop 事故/一次 gc 都可能让这条 Owner 终裁蒸发**（gc 前可取：`git cat-file -p f84392cd7e`）。**请裁**：是否令 st-mapcensus 的"裁定+宪章同批原子"由您指定会话走正门重投（其原死因已消；`RULE-RULING` 要求同 commit 原子，故须 3 件同批）。本包不代投（他包写域+热册）。
+- **⑤ 下一步（轮次）**：①盯 0016 落地（=收官清单 #11 battle_map 小修）②DANG-01 D1 `docs/_working` 542 条按 TTL 语义出"是否需回收"判据 ③IDX-03 15 件删除弹复验 ④红蓝反证节（已积 **8 例**：时钟外推／探针 v1v2 自否／v3 负例三选错／"门读 index"逮到自己案卷未落／GEN-02 收录假阴性／DANG-01 主动否证 P0／BAG-01 比率 35.5%→24.6% 自纠／本轮 `files[].sha` 假字段）⑤终报。
+- **队列/align 状态**：HEAD=`886ec028e2`(05:23:49，st-oddjobs)；本包 0013/0011/0010/0001/0008 done-in位、**0016 pending（=0007 重投）**、0012 dead(=GATE-01 红证，勿 requeue)、0002 改判不重投、0009 done-未落地待裁、0003/0004 dead(裁定册三向合并失败；其内容已由 0010/0011/0013 分批落地⇒**判过时不重投**)、0005/0006 与 0007 同源由 0016 代表；align：第 1-5 步工作树 硬=3（HEAD 口径=0）、第 6 步崩（暂存版 BLIND-01）、第 7-9 步未及。本包对 `注册表/配置册` 类路径写入仍=**0**。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  P=docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  git show HEAD:$P | grep -cE "MOD-L00-004|PS-CTR-003|MOD-INF-043"     # 期望 0=HEAD 口径 3→0 已闭
+  git ls-files -s -- $P; git hash-object "$P"                          # 期望 f84392cd7e（回退弹在膛）
+  git stash list; git stash show --stat 'stash@{0}' | tail -1          # 663 files / +236564 / -5305
+  git show 'stash@{0}:src/zephyr/frontend/dashboard/web/frontend_map.yaml' | grep -cE "F-BUDGET-PAGE|F-SCHEDULEGATE-PAGE"   # 期望 2（单查 F-BUDGET-PAGE=1）=pop 即重新武装
+  python -c "import sys;sys.path.insert(0,'scripts/governance/d5_architecture/generators');import check_frontend_map as m;print(m.run_checks()[2],len(m.run_checks()[0]))"   # 期望 359 0
+  git show HEAD:scripts/governance/d5_architecture/generators/align_all.py | grep -c "import run_subprocess_hidden"   # HEAD=1（无 bug）；工作树=2（有 bug）
+  # 注：本块提及 409 一律用"裁定 409"（去 #），正则写 `裁定[# ] *409` 以免自触 GATE-01——这同时是 GATE-01 第三例红证（审查器连"记录某裁定尚未落地"都必须改拼写才能入册）。
+  ```
