@@ -57411,7 +57411,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "仓外资产扫描器（Off-repo Asset Scanner）用途scan   扫描 C/E/D 盘项目相关目录，与 offrepo_assets 清单 diff - 新增候选（盘上有、清单无）→ 提示 Owner 确认后 --adopt - 消失警告（清单有、盘上无）→ 提示更新清单- junction 健康检查（登记为 junction 的路径穿透校验）"
+  plain_zh: "仓外资产扫描器（Off-repo Asset Scanner）scan   扫描 C/E/D 盘项目相关目录，与 offrepo_assets 清单 diff - 新增候选（盘上有、清单无）→ 提示 Owner 确认后 --adopt - 消失警告（清单有、盘上无）→ 提示更新清单- junction 健康检查（登记为 junction 的路径穿透校验）"
   responsibility_layer: governance
 - module_path: scripts/industry_graph/apply_industry_graph_ddl.py
   domain_id: D_DATA
@@ -57819,7 +57819,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "策略验证流水线编排入口模块(52号 §7①)职责- 统一\"策略验证流水线\"调用入口: 过拟合三维度检测 → IS→WFA→OOS 三阶段门控→ 综合裁决, 供首批策略上线前验证使用- 只编排不重造: 过拟合检测委托 OverfittingDetector, 门控委托 DecisionGate,"
+  plain_zh: "策略验证流水线编排入口模块(52号 §7①) - 统一\"策略验证流水线\"调用入口: 过拟合三维度检测 → IS→WFA→OOS 三阶段门控→ 综合裁决, 供首批策略上线前验证使用- 只编排不重造: 过拟合检测委托 OverfittingDetector, 门控委托 DecisionGate,"
   responsibility_layer: business
 - module_path: src/zephyr/backtest/implementations/ch_tick_replay.py
   domain_id: D_DATA
@@ -59197,26 +59197,29 @@ entries:
   desc_en: ""
   plain_zh: "日/周频批量入口（Batch Entry）——研究证据关联组件 P0-4（11号文 §4.2）。"
 - module_path: src/zephyr/research/evidence/evidence_chain.py
-  domain_id: "D_KNOWLEDGE  # 2026-08-22 统筹裁定：D_RESEARCH 不在 depgraph domains 表，归属 D_KNOWLEDGE（知识管理——假设/证据=知识资产）"
+  domain_id: D_KNOWLEDGE
   name_zh: "证据链"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "证据链（Evidence Chain）——研究证据关联组件 P0-2（11号文 §4.2）。职责：证据条目的三态挂链（支持/反驳/中性）+ 来源 + 日期 + 假设外键 + 完整性hash 固化防篡改，append-only jsonl 落盘。"
+  responsibility_layer: ai
 - module_path: src/zephyr/research/evidence/hypothesis_registry.py
-  domain_id: "D_KNOWLEDGE  # 2026-08-22 统筹裁定：D_RESEARCH 不在 depgraph domains 表，归属 D_KNOWLEDGE（知识管理——假设/证据=知识资产）"
+  domain_id: D_KNOWLEDGE
   name_zh: "假设注册表"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "假设注册表（Hypothesis Registry）——研究证据关联组件 P0-1（11号文 §4.2）。"
+  responsibility_layer: ai
 - module_path: src/zephyr/research/evidence/iteration_guide.py
-  domain_id: "D_KNOWLEDGE  # 2026-08-22 统筹裁定：D_RESEARCH 不在 depgraph domains 表，归属 D_KNOWLEDGE（知识管理——假设/证据=知识资产）"
+  domain_id: D_KNOWLEDGE
   name_zh: "迭代引导器"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "迭代引导器（Iteration Guide）——研究证据关联组件 P0-3（11号文 §4.2）。"
+  responsibility_layer: ai
 - module_path: src/zephyr/risk/core/ai_agent_monitor.py
   domain_id: D_RISK
   name_zh: "和自治边界违反"
@@ -59646,7 +59649,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "citrusquant volume-aware sqrt impact 形式模块(53号 §3.2 v2.0 候选)职责- citrusquant #19(2026-07-10 合并)的 square-root impact 工程实现形式——按权重变化率而非订单大小建模, 直接在 NAV loop 的 rebalance_cost 中用participation-scaled sqrt impact 替换 flat slippage - 与既有 SquareRootImpactPredictor 同源(sqrt market impact): 既有实现用"
+  plain_zh: "citrusquant volume-aware sqrt impact 形式模块(53号 §3.2 v2.0 候选) - citrusquant #19(2026-07-10 合并)的 square-root impact 工程实现形式——按权重变化率而非订单大小建模, 直接在 NAV loop 的 rebalance_cost 中用participation-scaled sqrt impact 替换 flat slippage - 与既有 SquareRootImpactPredictor 同源(sqrt market impact): 既有实现用order_size/ADV 参与率(order-driven 单笔场景), 本模块用 |Δw|×notional/dollar_volume"
   responsibility_layer: business
 - module_path: src/zephyr/trading/post_settlement_pipeline.py
   domain_id: D_TRADING
@@ -59855,6 +59858,38 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "情绪周期\"隐形驱动\"验证脚本（28 号 memo §3.7.4，G07 施工前必做）。"
+  responsibility_layer: business
+- module_path: src/zephyr/ex_core/open_order_resolver.py
+  domain_id: D_EX_CORE
+  name_zh: "未成交/部分成交订单续接处理"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "未成交/部分成交订单续接处理（40_execution_broker §决策⑪ gap 6 施工）。"
+  responsibility_layer: business
+- module_path: src/zephyr/research/evidence/batch_entry.py
+  domain_id: D_KNOWLEDGE
+  name_zh: "日/周频批量入口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "日/周频批量入口（Batch Entry）——研究证据关联组件 P0-4（11号文 §4.2）。"
+  responsibility_layer: ai
+- module_path: src/zephyr/risk/core/ai_agent_monitor.py
+  domain_id: D_RISK
+  name_zh: "AI/Agent 行为越界监控器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "AI/Agent 行为越界监控器——检测交易 Agent 的 ASI/AST/MCP 隐性串谋和自治边界违反。"
+  responsibility_layer: business
+- module_path: src/zephyr/signal_ashare/sector/sector_pullback.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "回踩质量 A/B/C 判定"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "回踩质量 A/B/C 判定（22 号 spec §3.1②，BM-SEL-08 缺失态补施工）。"
   responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
