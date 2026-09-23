@@ -21,7 +21,9 @@
 #   - 注意：QMT UI【补充数据】无 tick 下载入口（仅 K 线），SDK 路径 ≠ UI 路径
 #
 # 【通道 B：深史（>1 个月）】
-#   - bdpan 百度网盘月度归档（分笔成交_按月归档，bdpan_tick_watch 每日 08:00 看门狗；
+#   - bdpan 百度网盘月度归档（分笔成交_按月归档；看门狗脚本 scripts/data/bdpan_tick_watch.py
+#     在册，但其 OS 计划任务 ZephyrAlpha_BdpanTickWatch（每日 08:00）已退役——2026-09-24
+#     schtasks 全量查询实证无此任务，故"每日自动巡检缺口"不再成立，见缺口须人工/另行登记触发）
 #     导入器 scripts/data/import_bdpan_tick* ——2026-08-15 实证 3.19 亿行回补）
 #   - 自有囤货：c1_market.tick_data 88 亿行（2025-01 起）；竞价窗口仅 2026-06 起
 #     40 密集日（见 auction_window_pre_202606_gap 条目）
