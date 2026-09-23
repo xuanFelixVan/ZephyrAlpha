@@ -59192,12 +59192,13 @@ entries:
   plain_zh: "D_REPORTING — 周复盘模板引擎（55 号 §6 暂缓项固化，函数级 MVP）。"
   responsibility_layer: business
 - module_path: src/zephyr/research/evidence/batch_entry.py
-  domain_id: "D_KNOWLEDGE  # 2026-08-22 统筹裁定：D_RESEARCH 不在 depgraph domains 表，归属 D_KNOWLEDGE（知识管理——假设/证据=知识资产）"
+  domain_id: D_KNOWLEDGE
   name_zh: "职责"
   name_en: ""
   desc_zh: ""
   desc_en: ""
   plain_zh: "日/周频批量入口（Batch Entry）——研究证据关联组件 P0-4（11号文 §4.2）。"
+  responsibility_layer: ai
 - module_path: src/zephyr/research/evidence/evidence_chain.py
   domain_id: D_KNOWLEDGE
   name_zh: "证据链"
