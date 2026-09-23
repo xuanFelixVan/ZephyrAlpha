@@ -706,3 +706,42 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   grep -cE "stale|orphan|reverse|ghost" src/zephyr/governance/audit/translation_coverage_reconciler.py src/zephyr/gov_enforcement/commit_gates/translation_coverage_gate.py   # 期望 0/0
   grep -c module_translation docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml   # 期望 0=无册→物门禁
   ```
+
+## 心跳 2026-09-24 06:02 CST 实测（`date`=06:01:28→06:02）· 在干=第二张图（**depgraph DB**）双向对账，本轮主结论 · 卡住=无 · 下一步=见 ④
+
+- **① 为什么这是今晚最该做的一件**：前 8 块案卷的对账对象全是 **YAML 派生册**，而 RULE-SSOT 规定"架构数据直写 DB"——depgraph(PostgreSQL `localhost:5432/depgraph`, nodes=12,509/edges=24,643) 才是**架构轴的真图**。只审 YAML 不审 DB=只审了影子。本轮尺：nodes 表 `granularity='file'` 路径集 ↔ `git ls-tree -r HEAD` + 盘上存在性 + `git log --all --reflog --diff-filter=A`（四把尺交叉）。
+- **② 🔴 新立 F-AUDIT-DEPG-01（depgraph 侧图↔物双向计数 + 10 条硬悬空逐条定性，全量=`depgraph_hard_subset.txt`）**：
+  - **正向（物在 HEAD、图上无节点）= 55 / 4,680 = 1.2%**（`src/zephyr` 40、`scripts/industry_graph` 10、`scripts/ch` 4）⇒ 量级健康，**不是**系统性漏挂。
+  - **反向（图上挂物、HEAD 无此件）= 183**，分层后**大部分是自明的**：`on_disk` 128（stable 65 / generated 54 / production 5 / testing 4=本机件与生成件，属 gitignore/在途面）+ `planned` 26 + `deprecated` 19（**这两类是生命周期位的正确用法，不计缺陷**）⇒ **真需处置=10 条**（HEAD 无 + 盘上无 + 状态却标 production/stable/testing）。
+  - **10 条逐案三分**（每条给同名后继/删除批/可及历史三重证据）：
+    - **移动未跟 = 4**（旧路径节点仍在且标 production/stable，新路径节点也已生成=**新旧双节点并存**）：`commit_gates/{library_blood_flesh_gate,tag_vocab_gate,state_vocab_registry_gate}.py → commit_gates/library/同名`、`commit_gates/registry_family/registry_mass_deletion_gate.py → commit_gates/registry_mass_deletion_gate.py`（**移回**）。
+    - **退役未更 = 3**：`commit_gates/{data_task_completeness_gate,issue_resolved_integrity_gate,library_coverage_gate}.py` 全标 `production`，实际由 `4b8fb00a555`(09-23 07:31 P3退役批A) 删除文件、`9b0c31ab125`(批B) 改了 gate 三册却**未回写 depgraph**（批B 名自述"注册表除名"，其"注册表"口径只含 YAML 册不含 DB）。⇒ 与 MTR-02 同一笔账的**第三个面**。
+    - **从未在可及历史 = 3**：`scripts/backtest/sector_prereg_exam_runner.py`（标 **production**；其唯一添加件 `f44c1bfd742`@09-23 10:24 **非 HEAD 祖先**=只在未合并会话分支上）、`scripts/data/backfill_option_daily_stats.py`、`src/zephyr/alt_data/emotion_index_replay.py`（两条标 testing，`--diff-filter=A` 全 ref 零命中）。
+  - **机制级结论（与 MTR-03 同构、且这次在 DB 侧）**：**两套图都缺"销旧"这一半**——YAML 册无"册→物"反向校验（MTR-03 已亲验 `gate_registry` grep=0），depgraph 重建只新增/更新不删除消失路径的节点（4 条移动未跟 = 直接实证，且本仓明明有 RENAME-DEPGRAPH-SYNC 硬门禁，说明该门查的是"改名批有没有跑重建"，**不查"重建后旧节点是否消失"**）。
+  - **另一个方向性证据（推翻"depgraph 从 HEAD 生成"的默认假设）**：`sector_prereg_exam_runner.py` 只在**非祖先会话分支**里出现过，却进了共享 DB 并标 `production` ⇒ depgraph 的快照源可以是**会话工作树**（与既有 [[merge-relay-via-queue-pattern]] 记的"`--worktree-root` 才是快照源"完全一致），即 **A 会话的工作树态可越界写成全场架构真源**。定级=**P1 候选**（涉及共享真源的写入边界），但**修它是修闸+DB 净删双属性** ⇒ 只登记上交，路由=st-commitsys/st-gslim 收棚方，处方一句：**depgraph 节点写入须以 HEAD（或 serializer 落地后的权威树）为唯一快照源，且重建须删除"路径已不存在且非 planned/deprecated"的节点**。
+  - **附带一个反直觉的正向发现（该说就好话）**：`build_status` 生命周期位在 DB 侧**确实在用**（production 2419 / generated 1106 / stable 381 / planned 44 / deprecated 28 / testing 6），且 planned+deprecated 恰好覆盖了大部分"物不存在"的情形 ⇒ MTR-03 的处方应修正为：**翻译册不该新造 `planned` 旗，而应从 depgraph 同步 `build_status`**（RULE-SSOT 正解：架构状态在 DB，YAML 是视图）。本条把 YAML 侧与 DB 侧两条处方**并成一条**，符合 §4.1 净零。
+- **③ 红蓝反证第 12、13 例（本轮两次自否证，均已用更正版尺重跑）**：
+  - **例12（漏挂尺 v1 只取 node_type='module' 造出 22.9% 假漏挂）**：v1 得 1,070/4,680=22.9% 未挂，按目录族看 `scripts/governance/d5_architecture` 134 条最"触目"；实为 depgraph 把脚本类文件登记为 `node_type='script'`（1,138 条）/'config'(3,562)/'test'(3,696)。改用**全 node_type 路径并集**后真漏挂=**55 条 1.2%**。⇒ 凡"覆盖率/漏挂率"结论，先自证**分母与节点类型口径**，否则把 schema 设计读成治理失效。
+  - **例13（用 `--diff-filter=D` 判"从未存在"是错的）**：初查 3 条时打印"最后删除于: 从未在任何 ref 出现"，其中 `sector_prereg_exam_runner.py` 其实**有添加件** `f44c1bfd742`（只是从未被删除，所以 D 过滤器零命中）。改用 `--diff-filter=A` 重判后它的定性从"从未存在"**改为"仅存于未合并分支"**（②第三类的说法才成立）。⇒ "从未存在"与"从未被删除"是两个命题，探针须写清 filter。
+- **④ 下一步（轮次）**：①终报"悬空"栏现分两张图落笔：YAML 册侧 164（R45/H71/N25+3 自尺修正）｜depgraph DB 侧 硬 10（移动 4／退役 3／越界 3）+ 漏挂 55 ②把 MTR-03 与 DEPG-01 处方**合并为一条**"图↔物双向对账 + 生命周期位从 DB 同步"修闸需求（净零）③复跑本轮三把尺做收官第 2 轮零新问题判定 ④红蓝反证并档（现 **13 例**）⑤终报。
+- **队列/align 状态**：本包 0019 pending（05:52，05:48 块）、0020 pending（05:54，05:53 块）；HEAD 侧最新仍=`10e16d9ae4`(05:49:45 st-align-dirty)；align：1-5 步工作树硬=3（HEAD 口径=0）、第 6 步崩（st-ailayer BLIND-01）、7-9 步未及。**本包全程对 depgraph 只 SELECT（未 UPDATE/DELETE 任何节点），对 `注册表/配置册` 写入累计=0**。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  # ② 的四个数（正向 55 / 反向 183 / 硬 10 / 逐案同名后继）
+  python - <<'EOF'
+  import sys,os,subprocess; sys.path.insert(0,'src'); BS=chr(92)
+  from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+  c=get_depgraph_pg_connection(); k=c.cursor()
+  k.execute("select node_type,path,build_status from nodes where granularity='file'")
+  rows=[(a,b.replace(BS,'/'),s) for a,b,s in k.fetchall()]
+  head={x.strip() for x in subprocess.run(['git','ls-tree','-r','--name-only','HEAD'],capture_output=True,text=True).stdout.splitlines()}
+  allp={p for _,p,_ in rows}
+  py=[p for p in head if p.endswith('.py') and p.startswith(('src/','scripts/'))]
+  print('正向漏挂', len(set(py)-allp), '/', len(py))
+  hard=[(p,s) for _,p,s in rows if p.startswith(('src/','scripts/')) and p not in head and not os.path.exists(p) and s in ('production','stable','testing')]
+  print('反向硬悬空', len(hard)); [print('  ',s,p) for s,p in sorted(hard)]
+  EOF
+  git merge-base --is-ancestor f44c1bfd742 HEAD && echo 已合并 || echo 未合并=会话分支越界写DB的现场   # 期望 未合并
+  git log --all --reflog --diff-filter=A --oneline -1 -- scripts/backtest/sector_prereg_exam_runner.py | cat
+  git show --format= --name-only 9b0c31ab125 | grep -c "_registry/catalogs"   # 3（批B 只改 YAML 三册，无 DB 回写）
+  ```
