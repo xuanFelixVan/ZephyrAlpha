@@ -36,8 +36,16 @@ if (-not (Test-Path $pythonExe)) { $pythonExe = "python.exe" }
 $logPath = Join-Path $repoRoot "data\runtime\post_settlement_last_run.log"
 $cliPath = Join-Path $repoRoot "scripts\run_post_settlement.py"
 
-$action = New-ScheduledTaskAction -Execute $pythonExe `
-    -Argument ('-u "' + $cliPath + '" >> "' + $logPath + '" 2>&1') `
+# FIX 2026-09-24 (st-schedfix-20260924): the original action fed '>> log 2>&1' to
+# python.exe directly - those are SHELL redirection tokens, so python received them
+# as bogus positional args and argparse exited 2 on every single run since
+# registration (the Owner-approved automation never executed once). Fix: wrap in
+# cmd.exe for real redirection, wrapped in conhost --headless so the 15:30 run
+# stays windowless (same pattern as ZephyrAlpha_IndexMinuteEOD / BeltDaemon).
+$conhost = Join-Path $env:SystemRoot "System32\conhost.exe"
+$cmdExe = Join-Path $env:SystemRoot "System32\cmd.exe"
+$action = New-ScheduledTaskAction -Execute $conhost `
+    -Argument ('--headless -- "' + $cmdExe + '" /c cd /d "' + $repoRoot + '" && "' + $pythonExe + '" -u "' + $cliPath + '" >> "' + $logPath + '" 2>&1') `
     -WorkingDirectory $repoRoot
 $trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Monday,Tuesday,Wednesday,Thursday,Friday -At "15:30"
 $settings = New-ScheduledTaskSettingsSet `
