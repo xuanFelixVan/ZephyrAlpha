@@ -173,6 +173,28 @@ def resolve_anchor(section: str, wanted: str) -> str:
     return m[-1]
 
 
+def _anchor_block_end(section: str, anchor_line_start: int) -> int:
+    """锚点条目**整块**的结束偏移（下一个条目、顶格键或段末）。
+
+    2026-09-23 压测实弹：原实现插到锚点"那一行"之后；锚点条目若 capability 之后还有
+    merge_evaluation 等字段，新条目即被劈进该块中间——YAML 把后续字段划归新条目，
+    邻条静默丢字段、新条静默冒领。行级 diff 是纯 4 增 0 删，只有 parse 面才现形。
+    """
+    pos = section.find("\n", anchor_line_start)
+    if pos < 0:
+        return len(section)
+    pos += 1
+    while pos < len(section):
+        nl = section.find("\n", pos)
+        line = section[pos : nl if nl >= 0 else len(section)]
+        if not line.strip() or line[0] not in " \t" or line.lstrip().startswith("- "):
+            return pos
+        if nl < 0:
+            return len(section)
+        pos = nl + 1
+    return len(section)
+
+
 def _post_write_issues(expect_files: list[str] | None) -> list[str]:
     """写后自检：①yaml parse 完整性 ②语义落位（expect_files 必须解析进 creation_tokens 段）。
 
@@ -297,7 +319,7 @@ def _stale_base_issues(head_keys: set[tuple[str, str]] | None, base_keys: set[tu
 
 
 def insert_block(block: str, anchor_capability: str, expect_files: list[str] | None = None) -> None:
-    """纯插入：锚定 creation_tokens **段内**最后一条 capability: <anchor> 行之后。
+    """纯插入：锚定 creation_tokens **段内**最后一条 capability: <anchor> 所属条目整块之后。
 
     锚点行找不到（段内）→ fail-closed 拒绝写入（防盲插/防落段外死区）。
     写入走 safe_write_text（CAS+原子写）+ 重试——2026-09-14 四连炸实证：裸 write_text
@@ -334,8 +356,8 @@ def insert_block(block: str, anchor_capability: str, expect_files: list[str] | N
         if stale:
             raise TokenInsertError("写前自检不过，未落盘任何改动（fail-safe=不写）: " + "; ".join(stale))
         keep = set(base_keys or set()) | set(head_keys or set())
-        line_end = sec_start + section.find("\n", rel)
-        new_text = text[: line_end + 1] + block + text[line_end + 1 :]
+        cut = sec_start + _anchor_block_end(section, section.rfind("\n", 0, rel) + 1)
+        new_text = text[:cut] + block + text[cut:]
         try:
             res = safe_write_text(_REGISTRY, new_text, expected_base_sha256=base_sha, newline="")
             print(f"落盘: {res.written} (CAS attempt {attempt + 1})")
