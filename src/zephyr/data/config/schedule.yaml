@@ -31,6 +31,11 @@ schedules:
     description: "盘前元数据层——JOB-077 股票基本信息/涨跌停价格/停复牌/指数成分/ST状态（universe构造与回测撮合约束前提）"
 
   # L1 盘中实时层：每5分钟在交易时段轮询（9:00-15:59，周一至周五）
+  post_auction:
+    cron: "30 9 * * 0-4"
+    executor: default
+    description: "竞价后档位层——09:25 集合竞价收官后一次性聚合（情绪指数 auction 档等；2026-09-23 st-emomine-20260923 新增；executor light→default 2026-09-24 st-gpu-final 机械代修：幽灵池词表守卫 POOL-BLOCK 指正+仪表盘 undeclared_executor standing alert 同源，daily_crypto 先例=触发时摘 job）"
+
   intraday_realtime:
     cron: "*/5 9-15 * * 0-4"
     executor: realtime
@@ -114,9 +119,13 @@ schedules:
   # L8 周末后校准层：周一 03:00（周末后首个工作日，QMT服务器可用；与L10补下载02:00错峰1小时）
   # 原周六02:00已废弃：miniqmt源任务周末连不上QMT服务器(error 10061 WSAECONNREFUSED)
   weekend_calibration:
-    cron: "00 3 * * 0"
+    cron: "00 3 * * 1"
     executor: heavy
     description: "周末后校准层——全量校准/TDX板块/概念板块/美股全量（周一03:00，QMT可用）"
+    # 2026-09-23 st-emomine-20260923 根因修复（S1）：原 cron "0"=周日03:00（crontab 0=周日），
+    # 与注释意图"周一"差一天——周日 QMT 不可达（周六废弃同因）+周日晨维护窗，双重撞死=
+    # 09-20 周窗未 firing 的根因（daban 链断 09-15 起 5 日的上游）；改 "1"=周一。不热载，
+    # 调度器重启后生效；过渡期靠 catchup_guard overdue 检测+手动 integrator run 重放。
 
   # L9 月初静态层：每月1日 09:00
   monthly_static:

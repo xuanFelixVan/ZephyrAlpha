@@ -56909,6 +56909,30 @@ entries:
   name_zh: 板块偏好表结构定义
   plain_zh: 板块偏好这张表的结构真源：记录每天给每个板块打的偏好标签、仓位倾斜幅度和禁入象限。同样以入仓时间做版本列并带 FINAL 读，消费方是 L2 门与选股漏斗（读禁入象限和倾斜幅度）。
   responsibility_layer: infrastructure
+- module_path: src/zephyr/backtest/regime_validation/condition_package.py
+  domain_id: D_BACKTEST
+  name_zh: "GPU条件轴输入包"
+  name_en: "condition_package"
+  desc_zh: "情绪灰度×大盘状态逐日条件包：闭卷窗分档/30日地板定胞/F4族选族过滤"
+  desc_en: "Per-day condition pack of emotion grey band x market state with 30d cell floor"
+  plain_zh: "把每一天贴上情绪冷热标签和市场状态标签，只有凑够30天的小格子才能用来分组考试，数据不够的日期统一扔进不分组桶"
+  responsibility_layer: business
+- module_path: scripts/backtest/condition_attribution.py
+  domain_id: D_BACKTEST
+  name_zh: "条件胞归因"
+  name_en: "condition_attribution"
+  desc_zh: "网格跑批净收益按条件胞分层主效应表（只读零重跑）"
+  desc_en: "Attribute grid-run daily net returns by condition cell"
+  plain_zh: "把回测每天的盈亏按标签小格子分组算成绩，只统计够30天的格子，胞级数字只做参考不直接定生死"
+  responsibility_layer: business
+- module_path: scripts/governance/generators/generate_commit_guide.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "提交指路指南机生器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把门禁配置和死因处方自动汇编成一份按文件类型分类的提交前导航手册,让AI会话不用撞墙学规则,指南由配置生成禁止手改"
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
