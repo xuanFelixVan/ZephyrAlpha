@@ -55037,6 +55037,7 @@ entries:
   plain_zh: "佣金+滑点+冲击+做T加成的单边全成本"
   responsibility_layer: business
 - module_path: src/zephyr/strategy_factory/owner_band_t/data_loader.py
+  responsibility_layer: business
 - module_path: src/zephyr/strategy_factory/owner_regime_switcher/switcher.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "regime切换器核心"
@@ -59894,6 +59895,7 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "回踩质量 A/B/C 判定（22 号 spec §3.1②，BM-SEL-08 缺失态补施工）。"
+  responsibility_layer: business
 - module_path: src/zephyr/backtest/regime_validation/condition_package.py
   domain_id: D_BACKTEST
   name_zh: "GPU条件轴输入包"
@@ -59919,6 +59921,7 @@ entries:
   plain_zh: "把门禁配置和死因处方自动汇编成一份按文件类型分类的提交前导航手册,让AI会话不用撞墙学规则,指南由配置生成禁止手改"
   responsibility_layer: governance
 - module_path: docs/_working/kimi_audit/lane_reports/cost_trio_exam.py
+  responsibility_layer: business
 - module_path: scripts/audit/t0_six_phase_materialize.py
   domain_id: D_BACKTEST
   name_zh: "六段情绪相位历史物化件"
