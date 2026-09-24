@@ -5,7 +5,7 @@ title: 技术指标目录
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.12.1"
+version: "1.12.2"
 date: 2026-09-24
 topic: technical_indicator_catalog
 scope: 07_trading_decision_architecture
@@ -283,7 +283,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 
 1. **调度未闭环（P0）** → **已闭环（2026-08-31 终审批实证核销）**：tasks.yaml 已挂 technical_indicator_incremental（L1877）/ technical_indicator_full_refresh（L1892）两条目，scheduler.py L1227 `source=="internal"` 分支已落地（64 号 Q18 施工批，2026-08-28）。Provider→调度→回算链路全通。
 2. **REG-IND-001 YAML 注册表未施工** → **已闭环（2026-08-31 终审批实证核销）**：`docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml` 已在位（registry_id=REG-IND-001，条目真源），本文按原裁定降级为 why 层。
-3. **命名陷阱**：tasks.yaml 的 `stock_indicator_full_refresh` 实为 AKShare 估值指标写 stock_indicator 表，与本表无关——后续调度挂接时防止误挂。→ **注释挂接执行中受阻（2026-09-24 oddjobs 实勘）**：tasks.yaml 工作树有他会话在途未提交改动（emotion_index_auction 槽，无人 claim），本包同文件提交将吸收他方内容故跳过——待其落地后由 oddjobs 台账跟踪补挂行注结案。
+3. **命名陷阱**：tasks.yaml 的 `stock_indicator_full_refresh` 实为 AKShare 估值指标写 stock_indicator 表，与本表无关——后续调度挂接时防止误挂。→ **已闭环（2026-09-24 oddjobs 补注，同批落地）**：注释已挂 tasks.yaml 该条目正上方。前情：一度受阻于他会话 emotion_index_auction 在途 WIP，该 WIP 后于当日蒸发窗（EVAP-03，见 oddjobs 台账）被灭未落 HEAD，阻塞自行解除；其死会话处置呈报与两处方存 oddjobs 台账。
 4. **公式简化项** → **已结案（2026-09-24 精度需求条件化，oddjobs 总包②）**：rsi/macd_divergence 现为简化趋势对比（非峰谷检测）。**升级触发条件**（登记制——满足其一才立项峰谷检测级升级，观察型用途不触发）：①divergence 列被消费端用作直接交易触发信号（规则卡/止损带实际下单），假信号成本敏感化；②回测/考试判据要求背离事件严格可复现定义（左右 k 窗 pivot+确认 bar、PIT 无未来函数）；③需与外部基准（TA-Lib pivot 变体/学术口径）逐位对标验收；④出现简化口径致误触发的实证归因证据（模拟盘/回测复盘）。面板展示/研究参考等观察用途维持简化实现。
 5. **00_index 同步（越界登记）** → **已闭环（2026-08-31 终审批实证核销）**：00_index 现行描述已为"5大类指标规范"，分类口径一致，无需再同步。
 6. **日/周/月线历史深度缺口（2026-09-14 探针发现）**：daily/weekly/monthly 指标数据起点=2026-08（调度闭环日），仅 ~1 个月；而 30/60/120min 有 5 年、15min 2 年、5min 1 年历史。三级时间框架栈（§5）的交易层/趋势层以日/周/月为主战场，长历史缺失直接影响回测消费。待办：一次性 full_refresh 回填日/周/月（或裁定滚动窗口口径），挂下一施工批。 → **已闭环（2026-09-14 回填六轮）**：回填器 scripts/data/backfill_technical_indicator_dwm.py 补齐 d(2021-01)/w/m(2019-01) 历史；daily 批 3-6 新列由六轮重跑覆盖；CH Code 241 内存超限中断由 local_fallback 兜底（scheduler 自动回灌）。
@@ -293,6 +293,7 @@ IND-COMP-001 candidate→active；类别 composite，代码在 trend.py（regist
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-09-24 | 1.12.2 | §7#3 命名陷阱闭环：tasks.yaml `stock_indicator_full_refresh` 条目正上方补注（AKShare 估值指标勿误挂，与技术指标目录无关）——与 tasks.yaml 同批原子；受阻前情（emotion WIP 蒸发窗解除）见 oddjobs 台账 | oddjobs 总包②扫尾收口 |
 | 2026-09-24 | 1.12.1 | 口径治本（机读对齐 REG-IND-001）：§6 分节小标题计数按注册表机读复核改写（趋势 37/64、动量 43/66、波动 18/23、量能 17/18、反转 4 在产+退役 1、统计 9/10、循环 8/11；全表 142 在产/214 列逐一合计吻合，DDL INSERT_COLUMNS 214 指标列实证）；补 §6.1/6.2/6.4 批 8（v1.6.0）漏列 10 行（alligator/gmma/gann_hilo、ac/fractals/elder/coppock/squeeze/wavetrend、force_index，公式自注册表机生）；性质行/§1 状态行/§3 列数改现役口径；§7#4 精度需求条件化结案；§7#3 注释挂接受阻登记（tasks.yaml 他会话在途） | oddjobs 总包②号扫尾令：机读计数 vs 散文口径一致性 |
 | 2026-09-22 | 1.12.0 | 分包2 volume 量纲治本：kline_daily volume 全表统一"股"（写侧 miniqmt ×100 + 存量 8.4M 行 mutation + CYC 去 ÷100 + 指标 58 片重算）；§6.10 量纲注记改写 | 批10 终局令分包2（手/股混合量纲病实证后治本） |
 | 2026-09-21 | 1.11.1 | 批10 扩项（Owner 扩项令）：CYQ 增列 chips_cost_15/85（同一分布分位）+CHIP_CONC_90/70 两指标（通达信集中度族，conc_90=集中度(90) 与 SCR 同公式双条目 overlap 已记、conc_70=集中度(70) 用新分位对）；全表 140→142 在产/210→214 列（注册 141→143）；版本 v1.6.1；峰突破/发散信号=消费端规则卡不进指标库（collection_intake 规格边界） | 分包4 WO-4 扩项令 |

@@ -2559,6 +2559,7 @@ tasks:
   extra:
     description: "分析师预期全量刷新（AKShare，5年历史回补）"
 
+# 注：实为 AKShare 估值指标（写 stock_indicator 表），与技术指标目录（technical_indicator）无关——调度挂接勿误挂（16 号 memo §7#3 命名陷阱，2026-09-24 oddjobs 补注）
 - task_id: stock_indicator_full_refresh
   table: c1_market.stock_indicator
   source: akshare
