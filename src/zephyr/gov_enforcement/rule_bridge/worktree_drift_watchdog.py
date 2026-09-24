@@ -70,6 +70,7 @@ __all__: Final = [
     "make_worktree_drift_watchdog_reconciler",
 ]
 
+import hashlib
 import json
 import logging
 import os
@@ -113,9 +114,7 @@ _AUTO_STAGE_MIN_AGE_SECONDS = 120  # 落盘后不足 N 秒不动（防半截文�
 _AUTO_STAGE_STATE_CAP = 2000  # state.auto_staged 登记上限（防状态文件膨胀）
 
 # ── #ARCH-308 工作区孤儿 WIP 治本（2026-09-03 Owner 当案授权"全套 A+B+C"）──────
-_TRACKED_WRITE_ALLOWLIST_REL = (
-    "docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml"
-)
+_TRACKED_WRITE_ALLOWLIST_REL = "docs/01_policies_and_standards/_registry/catalogs/gate_tracked_write_allowlist.yaml"
 _AUTO_DERIVED_SESSION = "auto-derived-sync"  # A2 合成会话标识（GW 标记自证来源）
 _DERIVED_STABLE_SCANS = 2  # A2：连续 N 个全量周期 work_hash 不变才视为"写入完成"
 _DERIVED_MAX_FAILS = 3  # A2：同一文件自动提交失败 N 次后放弃（回落告警路径）
@@ -415,11 +414,21 @@ def _audit(root: Path, record: dict) -> None:
         d = root / _AUDIT_DIR
         d.mkdir(parents=True, exist_ok=True)
         line = json.dumps(record, ensure_ascii=False) + "\n"
-        with _STATE_IO_LOCK:
-            with open(d / "worktree_drift_watchdog.jsonl", "a", encoding="utf-8") as fh:
-                fh.write(line)
+        with _STATE_IO_LOCK, open(d / "worktree_drift_watchdog.jsonl", "a", encoding="utf-8") as fh:
+            fh.write(line)
     except OSError as e:
         logger.warning("drift watchdog audit append failed: %s", e)
+
+
+def _quarantine_content_sha(root: Path, quarantine_rel: str) -> str:
+    """G1 审计闸（总指挥 R4 批）：取隔离区快照内容 sha256（防空证词）。"""
+    try:
+        p = root / quarantine_rel
+        if not p.is_file():
+            return "missing"
+        return "sha256:" + hashlib.sha256(p.read_bytes()).hexdigest()[:16]
+    except OSError:
+        return "unreadable"
 
 
 def _snapshot(root: Path, rel: str, work_hash: str) -> str:
@@ -679,10 +688,23 @@ def _index_locked(root: Path) -> bool:
     return p.exists()
 
 
+def _make_locked_entry(impl):
+    """#ARCH-308 A1/A2 共享锁入口工厂（DEATH-022 结构去重，2026-09-24）。
+
+    原两只"锁+委托"包装器 AST 同构 100%（CloneGuard extract 级按设计逼并），
+    工厂闭包后模块层只剩唯一 _entry 定义，同构对物理消失；锁语义与委托行为不变。
+    """
+
+    def _entry(root: Path) -> dict:
+        with _SWEEP_LOCK:
+            return impl(root)
+
+    return _entry
+
+
 def _sweep_dead_sessions(root: Path) -> dict:
-    """#ARCH-308 A1 入口（进程内互斥包装，R1.1 红队治本）。"""
-    with _SWEEP_LOCK:
-        return _sweep_dead_sessions_impl(root)
+    """#ARCH-308 A1 入口（进程内互斥包装，R1.1 红队治本）。DEATH-022：工厂产物。"""
+    return _make_locked_entry(_sweep_dead_sessions_impl)(root)
 
 
 def _sweep_dead_sessions_impl(root: Path) -> dict:
@@ -762,10 +784,7 @@ def _sweep_dead_sessions_impl(root: Path) -> dict:
                 data = json.loads(snap.read_text(encoding="utf-8"))
                 files = data.get("files")
                 if files is None:
-                    files = [
-                        os.path.relpath(str(k), str(root)).replace(os.sep, "/")
-                        for k in data.get("snapshots", {})
-                    ]
+                    files = [os.path.relpath(str(k), str(root)).replace(os.sep, "/") for k in data.get("snapshots", {})]
                 claimed_files = [str(f).replace("\\", "/") for f in files]
             except Exception:  # noqa: BLE001 — 快照损坏按空 claim 处置
                 claimed_files = []
@@ -845,9 +864,8 @@ def _release_session_locks(root: Path, sid: str) -> bool:
 
 
 def _auto_commit_derived(root: Path) -> dict:
-    """#ARCH-308 A2 入口（进程内互斥包装，R1.2 红队治本）。"""
-    with _SWEEP_LOCK:
-        return _auto_commit_derived_impl(root)
+    """#ARCH-308 A2 入口（进程内互斥包装，R1.2 红队治本）。DEATH-022：工厂产物。"""
+    return _make_locked_entry(_auto_commit_derived_impl)(root)
 
 
 def _auto_commit_derived_impl(root: Path) -> dict:
@@ -1095,6 +1113,12 @@ def scan_once(
                         "verdict": "quarantine_tamper",
                         "head_sha": head_sha,
                         "active_sessions": sessions,
+                        # G1 审计闸（总指挥 R4 批，2026-09-24）：三入账补全——
+                        # 谁（pid+进程名）/什么（file）/前后 hash（隔离区内容 sha+现盘缺失）。
+                        "pid": os.getpid(),
+                        "process": Path(sys.argv[0]).name if sys.argv else "watchdog",
+                        "quarantine_content_sha256": _quarantine_content_sha(root, d),
+                        "worktree_now": "missing",
                     },
                 )
                 known_q.remove(d)

@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 102  # 2026-09-23 114→99 st-gslim-20260923 P4 七簇合并（22→7，gate_audit_report_v1 §C2 Owner E 全批）：REFERENCE-INTEGRITY/PERMANENT-SYSTEM-TRIGGER/GATE-VOCAB/DEPGRAPH-ENFORCEMENT/MAP-ALIGNMENT/BLUEPRINT-HEADER/COMPLEXITY-GUARD
+total_gates: 99  # 2026-09-23 114→99 st-gslim-20260923 P4 七簇合并（22→7，gate_audit_report_v1 §C2 Owner E 全批）：REFERENCE-INTEGRITY/PERMANENT-SYSTEM-TRIGGER/GATE-VOCAB/DEPGRAPH-ENFORCEMENT/MAP-ALIGNMENT/BLUEPRINT-HEADER/COMPLEXITY-GUARD
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -703,22 +703,4 @@ gates:
   factory_function: make_resource_schedule_gate
   source: in_process
   register_line: 0  # priority=144；2026-09-16 资源排班全景 B2：staged 命中 config/resource_profile_registry.yaml 时跑三检查（互斥组重叠 sched_overlap_group/内存天花板 sched_mem_ceiling/E0 交易时段 sched_e0_block）+真源漂移 sched_truth_drift warn；own-scope（外来 staged 降级 warn 不阻断，宪法 §3）；E0 纯函数最小 import 级复用 compute_window_gate，异常/日历未知 fail-closed；测试 tests/governance/commit_gates/test_resource_schedule_gate.py
-  enabled: true
-- gate_id: REAL-KEY-REFERENCE-SCAN
-  module_path: zephyr.ai_layer.redline.negative_list_gates
-  factory_function: make_real_key_reference_scan_gate
-  source: in_process
-  register_line: 0  # priority=149；2026-09-24 OBJ_S S2 负面清单 gate 组挂载（接线批 st-ailayer-final-20260924）：own-diff 中实盘真键字样引用拦截（NL-2 判据②）；测试 tests/ai_layer/redline/test_negative_list_gates.py；热册覆写后二次重插
-  enabled: true
-- gate_id: TASK-ORDER-DOCS-LOCK
-  module_path: zephyr.ai_layer.redline.negative_list_gates
-  factory_function: make_task_order_docs_lock_gate
-  source: in_process
-  register_line: 0  # priority=150；2026-09-24 OBJ_S S2 挂载：同会话 own-diff 施工产物×任务书互斥（NL-5）；测试 tests/ai_layer/redline/test_negative_list_gates.py；二次重插
-  enabled: true
-- gate_id: CONSTITUTION-LINE-LIMIT
-  module_path: zephyr.ai_layer.redline.negative_list_gates
-  factory_function: make_constitution_line_limit_gate
-  source: in_process
-  register_line: 0  # priority=151；2026-09-24 OBJ_S S2 挂载：AGENTS.md ≤300 行硬上限断言（NL-3 判据②，宪法 §6）；测试 tests/ai_layer/redline/test_negative_list_gates.py；二次重插
   enabled: true

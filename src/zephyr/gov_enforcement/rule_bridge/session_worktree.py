@@ -7814,6 +7814,113 @@ def _classify_workspace_files(
     return auto_sync_files, real_changes
 
 
+def _hot_restore_audit(root: Path, record: dict) -> None:
+    """G1 审计闸（总指挥 R4 批，2026-09-24）：热文件还原动作三入账。
+
+    谁（pid/process）/什么（file）/前后 hash → .runtime/audit/hot_file_restore_audit.jsonl。
+    fail-open：审计写失败不阻断还原主流程（与 watchdog._audit 同向）。
+    """
+    import json as _json
+    import os as _os
+
+    try:
+        d = root / ".runtime" / "audit"
+        d.mkdir(parents=True, exist_ok=True)
+        rec = {
+            "pid": _os.getpid(),
+            "process": Path(_os.sys.argv[0]).name if _os.sys.argv else "?",
+            **record,
+        }
+        with open(d / "hot_file_restore_audit.jsonl", "a", encoding="utf-8") as fh:
+            fh.write(_json.dumps(rec, ensure_ascii=False) + "\n")
+    except OSError as e:  # noqa: BLE001 — 审计 fail-open
+        logger.warning("hot restore audit failed: %s", e)
+
+
+def _cas_restore_hot_files(
+    root: Path,
+    files: list[str],
+    context: str,
+    *,
+    head_reader=None,
+    hot_checker=None,
+    disk_hash_reader=None,
+) -> tuple[list[str], list[str]]:
+    """G2 治本（总指挥 R4 批，2026-09-24）：热册还原禁 CAS-less git restore。
+
+    热文件（注册表/宪法/tracker，真源 file_utils.is_hot_file）还原改走
+    safe_write_text CAS 写：expected_base=还原前盘面哈希——读盘与写盘之间若有任何
+    并发写入（他会话 token/翻译落地等），StaleWriteRefused 即拒（宁可少还原不可
+    静默覆盖=蒸发根因封堵），并写还原审计三入账。非热文件不进本路径（保持批量
+    git restore 原语义）。disk_hash_reader 为测试并发竞态注入缝（默认真实读盘）。
+
+    Returns:
+        (cas_restored, cas_refused) — CAS 还原成功 / 拒绝的文件列表（相对路径）。
+    """
+    import hashlib as _hashlib
+
+    from zephyr.shared.io.file_utils import StaleWriteRefused, is_hot_file, safe_write_text
+
+    if head_reader is None:
+        from zephyr.infrastructure.git_batcher import GitCommandBatcher
+
+        blobs = GitCommandBatcher(root).git_show_batch("HEAD", files)
+        head_reader = lambda rel: blobs.get(rel)  # noqa: E731
+    if hot_checker is None:
+        hot_checker = lambda rel: is_hot_file(root / rel, root)  # noqa: E731
+    if disk_hash_reader is None:
+        disk_hash_reader = lambda p: _hashlib.sha256(p.read_bytes()).hexdigest()  # noqa: E731
+
+    restored: list[str] = []
+    refused: list[str] = []
+    for rel in files:
+        p = root / rel
+        if not p.is_file() or not hot_checker(rel):
+            continue
+        try:
+            before = disk_hash_reader(p)
+        except OSError:
+            continue
+        target_bytes = head_reader(rel)
+        if target_bytes is None:
+            continue  # HEAD 无基线（未跟踪新文件）→ 无还原语义，交批量通道
+        try:
+            target_text = target_bytes.decode("utf-8")
+        except UnicodeDecodeError:
+            continue  # 非 UTF-8 内容不在 safe_write 语义面，退批量通道
+        try:
+            safe_write_text(p, target_text, expected_base_sha256=before)
+        except StaleWriteRefused:
+            refused.append(rel)
+            _hot_restore_audit(
+                root,
+                {
+                    "event": "hot_restore_refused_concurrent_write",
+                    "file": rel,
+                    "before_sha256": before,
+                    "context": context,
+                },
+            )
+            logger.warning(
+                "_check_workspace_clean[%s]: 热文件 %s 还原被 CAS 拒（读盘后并发写入）——宁可少还原不静默覆盖",
+                context,
+                rel,
+            )
+            continue
+        restored.append(rel)
+        _hot_restore_audit(
+            root,
+            {
+                "event": "hot_restore_cas",
+                "file": rel,
+                "before_sha256": before,
+                "after_sha256": _hashlib.sha256(target_bytes).hexdigest(),
+                "context": context,
+            },
+        )
+    return restored, refused
+
+
 def _restore_auto_sync_batch(
     root: Path,
     auto_sync_files: list[str],
@@ -7856,6 +7963,14 @@ def _restore_auto_sync_batch(
 
     from zephyr.infrastructure.git_batcher import GitCommandBatcher
 
+    # G2 治本（总指挥 R4 批，2026-09-24）：热册还原先走 CAS 通道（读盘后并发写入
+    # 即拒+审计三入账，宁可少还原不静默覆盖）；非热文件保持批量 git restore 原语义。
+    cas_restored, cas_refused = _cas_restore_hot_files(root, auto_sync_files, context)
+    cas_done = set(cas_restored) | set(cas_refused)
+    remaining = [f for f in auto_sync_files if f not in cas_done]
+    if not remaining:
+        return len(cas_restored), list(cas_refused)
+
     try:
         batcher = GitCommandBatcher(root)
 
@@ -7877,9 +7992,9 @@ def _restore_auto_sync_batch(
         else:
             fully_restored_set = restored_set
 
-        restored_count = len(fully_restored_set)
+        restored_count = len(fully_restored_set) + len(cas_restored)
 
-        restore_failed = [f for f in auto_sync_files if f not in fully_restored_set]
+        restore_failed = [f for f in auto_sync_files if f not in fully_restored_set and f not in cas_done]
 
         return restored_count, restore_failed
 
