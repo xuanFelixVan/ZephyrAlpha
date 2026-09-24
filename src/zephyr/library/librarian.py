@@ -153,7 +153,9 @@ class Librarian:
         fingerprint_aux = f.get("fingerprint_aux")
         title = f.get("title")
         one_liner = f.get("one_liner")
-        potential_consumers = f.get("potential_consumers") or []
+        # 缺省 None=保留存量（防采集器再采集冲掉人工回填，#410②批1 教训）；
+        # 显式空数组=有意清空。
+        potential_consumers = f.get("potential_consumers")
         ai_contract = f.get("ai_contract")
         owner_domain = f.get("owner_domain")
         retention_class = f.get("retention_class", "long")
@@ -224,7 +226,7 @@ class Librarian:
                         "long",
                         asset.get("title"),
                         asset.get("one_liner"),
-                        asset.get("potential_consumers") or [],
+                        asset.get("potential_consumers"),
                         asset.get("ai_contract"),
                         asset.get("tags") or [],
                         actor,

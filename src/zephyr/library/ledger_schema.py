@@ -83,7 +83,8 @@ CREATE TABLE IF NOT EXISTS lib_assets (
   one_liner text,
   ai_contract text,
   tags text[] NOT NULL DEFAULT '{}',
-  ext jsonb NOT NULL DEFAULT '{}'
+  ext jsonb NOT NULL DEFAULT '{}',
+  potential_consumers text[] NOT NULL DEFAULT '{}'
 );
 """
 
@@ -100,13 +101,16 @@ CREATE TABLE IF NOT EXISTS lib_events (
 CREATE INDEX IF NOT EXISTS lib_events_asset_idx ON lib_events (asset_id);
 """
 
+# potential_consumers 语义：NULL（字段缺省）=保留存量——采集器再采集不携此字段，
+# COALESCE 防全量 ingest 把人工回填冲回空数组（#410②批1 实测事故：回填 31→被
+# post-commit reconciler 再采集清零）；显式空数组=有意清空。
 _SQL_UPSERT_ASSET = """
 INSERT INTO lib_assets (
   asset_id, kind, home, fingerprint_sha256, fingerprint_aux, status,
   owner_domain, retention_class, title, one_liner, potential_consumers, ai_contract, tags, registered_by
 ) VALUES (
   %s, %s, %s, %s, %s::jsonb, COALESCE(%s, 'active'),
-  %s, %s, %s, %s, %s::text[], %s, %s::text[], %s
+  %s, %s, %s, %s, COALESCE(%s::text[], '{}'), %s, %s::text[], %s
 )
 ON CONFLICT (asset_id) DO UPDATE SET
   kind = EXCLUDED.kind,
