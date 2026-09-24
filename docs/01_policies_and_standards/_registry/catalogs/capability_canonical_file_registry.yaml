@@ -47504,7 +47504,7 @@ creation_tokens:
   created_by: st-wm1-buildB-20260923
   capability: registry-projection
   merge_evaluation: "W-M1波0车道B投影生成器六模块：YAML:=render(账本快照)纯函数+四象限漂移判别+PG wins自愈执法链，替代capability册手工维护语义（丙号文W2）"
-- file: src/zephyr/governance/registry_projection/generator.py
+- file: src/zephyr/governance/registry_projection/projection_generator.py
   token: registry-projection-generator-20260923
   created_by: st-wm1-buildB-20260923
   capability: registry-projection

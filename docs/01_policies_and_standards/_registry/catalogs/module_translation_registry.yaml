@@ -55945,7 +55945,7 @@ entries:
   name_en: "cost_trio_exam (rebuilt)"
   desc_zh: "做T配对成本三件套判据脚本：bt产物D后成交按symbol×day双边配对，出CST-T0-001成本口径下的毛/净价差四数与insufficient土规判定"
   desc_en: ""
-  plain_zh: "做T 成本三件套考试的归档副本：Kimi 战役 lane_reports 区内与原件同字节的留档拷贝，不是第二把尺子；要改判据只改 scripts/audit/cost_trio_exam.py 原件再同步此副本，本条只负责让人查得见这份拷贝存在、以及它与原件的关系。"
+  plain_zh: "这是做T考试的尺子。它把回测留下的每笔买卖按同一只票同一天配成一对，算出每对赚的价差够不够付手续费。配对满30对才允许下结论，不够就老实说样本不足，不许瞎下结论。原来这把尺子放在临时目录里丢了，现在按裁定搬进正式文档目录，以后不会再丢。"
   responsibility_layer: business
 - module_path: src/zephyr/alt_data/cohort_daily_writer.py
   domain_id: D_ALT_DATA
@@ -56878,11 +56878,11 @@ entries:
   responsibility_layer: governance
 - module_path: scripts/audit/cost_trio_exam.py
   domain_id: D_BACKTEST
-  name_zh: "做T配对成本判据（重建版）"
-  name_en: "cost_trio_exam (rebuilt)"
-  desc_zh: "做T配对成本三件套判据脚本：bt产物D后成交按symbol×day双边配对，出CST-T0-001成本口径下的毛/净价差四数与insufficient土规判定"
-  desc_en: ""
-  plain_zh: "把成交流水按'同一只票同一天既买又卖'配成对，先算毛价差（卖均价比买均价），再扣掉 CST-T0-001 那 31.2 个基点的固定往返成本，最后数配对够不够 30 对：够格才允许出'做T 划不划算'的结论，不够格就只报样本不足，禁止硬给方向。"
+  name_zh: 做T配对成本判据（重建版）
+  name_en: cost_trio_exam (rebuilt)
+  desc_zh: 做T配对成本三件套判据脚本：bt产物D后成交按symbol×day双边配对，出CST-T0-001成本口径下的毛/净价差四数与insufficient土规判定
+  desc_en: ''
+  plain_zh: 这是做T考试的尺子。它把回测留下的每笔买卖按同一只票同一天配成一对，算出每对赚的价差够不够付手续费。配对满30对才允许下结论，不够就老实说样本不足，不许瞎下结论。原来这把尺子放在临时目录里丢了，现在按裁定搬进正式文档目录，以后不会再丢。
   responsibility_layer: business
 - module_path: scripts/audit/t0_conditional_e4_exam.py
   domain_id: D_BACKTEST
@@ -60296,7 +60296,7 @@ entries:
   desc_en: ""
   plain_zh: "考题做完后把结论正式记进账本的唯一通道：先查你是不是这题当前认领人，再记考试完成和回填两个时刻，不合规直接拒"
   responsibility_layer: governance
-- module_path: src/zephyr/governance/meta_question/exam_loop/state_machine.py
+- module_path: src/zephyr/governance/meta_question/exam_loop/exam_lifecycle.py
   domain_id: D_GOVERNANCE
   name_zh: "题目状态流转拦截器"
   name_en: ""
@@ -60311,6 +60311,14 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把考试流程里发生的每件事写成一条可回溯的流水账，事后能查谁在何时把哪道题改成了什么"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/meta_question/exam_loop/state_machine.py
+  domain_id: D_GOVERNANCE
+  name_zh: "题目状态流转拦截器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "规定题目只能按合法路径换状态（比如已登记→考试中→已作答），想跳步或走非法路径会被拦下并记账"
   responsibility_layer: governance
 - module_path: src/zephyr/governance/meta_question/exam_loop/reexam_scheduler.py
   domain_id: D_GOVERNANCE
@@ -60778,6 +60786,63 @@ entries:
   plain_zh: "想知道改了门禁以后判结果跟以前一不一样，光靠嘴说不行，得把最近一批提交原样再考一遍。这个工具就是那个考官：把每笔提交的试卷（base/head 两棵树）重新铺出来，让所有门禁重新判一遍，然后把前后两次的判定逐台对答案，谁改了口供就点名。怕考太久还带了闹钟和限量开关。"
   responsibility_layer: governance
 
+- module_path: src/zephyr/governance/meta_question/exam_ops.py
+  domain_id: D_GOVERNANCE
+  name_zh: "考题考试记账核"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把一道题的考试过程记成账：状态怎么流转、谁认领了、结论写没写、审计双轨留没留，全在这一件里，别的模块只准调它不准另起炉灶"
+  responsibility_layer: governance
+- module_path: scripts/backtest/calibrate_cost_tier_redblue.py
+  domain_id: D_BACKTEST
+  name_zh: "成本档位红蓝对拍标定件"
+  name_en: "cost tier red/blue calibration"
+  desc_zh: "同格复算五档成本sharpe，输出轻档[0,5]与全档排名Spearman+topK重合率与单格耗时"
+  desc_en: ""
+  plain_zh: "这个脚本用来验证一个新的省钱办法靠不靠谱。原来每个策略格点要跑五档滑点成本检查，很费时间；新办法想在前期的粗筛阶段只跑两档（零成本和轻成本）。这个脚本把同一批格点用两档和五档各算一遍排名，对比两种排名有多一致（相关性有多高、前50名重合多少），还顺便量一下两档模式到底能省多少时间。它只出报告不做决定，跑一次就结束，不常驻。"
+  responsibility_layer: business
+
+- module_path: src/zephyr/governance/registry_projection/projection_generator.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "生成器编排层"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "四象限总调度：对比盘上文件、本地状态和最新渲染结果，干净就收工，私改就留证据再自动覆盖回来，账本前进了就静默重打，数据库挂了就降级观察不拦任何人"
+  responsibility_layer: governance
+- module_path: scripts/governance/enqueue_preflight.py
+  domain_id: D_GOV_RULE
+  name_zh: "入队预检器"
+  name_en: "enqueue preflight"
+  desc_zh: "入队口字节级冲突标记扫描与落地同源预检挂线"
+  desc_en: ""
+  plain_zh: "袋子进队列前先做两件事：扫有没有没解决完的合并冲突记号，再快速跑一遍关键门禁。有问题当场拒绝并告诉你怎么修，不让它排队排几个小时后被处决。"
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/commit_gates/approval_resolver.py
+  domain_id: D_GOV_RULE
+  name_zh: "审批解析器"
+  name_en: "approval resolver"
+  desc_zh: "保护路径审批统一判定：标记防伪+裁定册授权双通道"
+  desc_en: ""
+  plain_zh: "判断一次提交碰了受保护文件时有没有真批文。两种批文都认：提交说明里写了登记过的议题号，或者裁定册里有活跃裁定明确授权这些路径。假冒的批号会被识破拦下。"
+  responsibility_layer: governance
+- module_path: scripts/governance/qcure_offset_report.py
+  domain_id: D_GOV_RULE
+  name_zh: "死信对消报表生成器"
+  name_en: "deadletter offset report"
+  desc_zh: "死信族×预检拦截周窗对消统计生成器"
+  desc_en: ""
+  plain_zh: "每周把队列死信和预检拦截的记录对一遍账：哪类问题该拦的拦住了没有、死信是多了还是少了。用生成器出表，不许手写数字。"
+  responsibility_layer: governance
+- module_path: scripts/data/backfill_sector881_history.py
+  domain_id: D_DATA
+  name_zh: "881行业族历史补采CLI"
+  name_en: "sector881 history backfill CLI"
+  desc_zh: "kline_sector_880 行业族历史补采（881+8803/8804 新码，DU-01 治本）"
+  desc_en: "backfill 881/8803/8804 daily bars into kline_sector_880"
+  plain_zh: "给 881 行业板块和 8803/8804 行业板块补历史日K线数据的小工具，默认只看不写，加 --execute 才真正入库"
+  responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
