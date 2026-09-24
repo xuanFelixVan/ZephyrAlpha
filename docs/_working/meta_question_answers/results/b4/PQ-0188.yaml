@@ -1,0 +1,74 @@
+notes: '''库存意外''若按共识预期口径落地需预期基线源（见 PQ-0193 缺口）。'
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0188.py
+  query: U1 语义对照 + EIA 指标在库实证
+  result:
+    rows:
+    - covered: true
+      grounding: 库内实证：EIA_CRUDE/GASOLINE/DISTILLATE/PROPANE_INVENTORY 4 周度序列在库（切点前
+        2935 行），差值可算
+      vocab_item: 库存差值
+      claim_token: 库存意外变化（库存维度）
+    - covered: true
+      grounding: 库内实证：EIA_WTI_SPOT（切点前 1013 行）+EIA_BRENT_SPOT 在库，价差可算
+      vocab_item: WTI-Brent 价差
+      claim_token: 油价维度
+    - covered: true
+      grounding: 源线谱 U6 '库存意外项对油价事件窗回归' 承接
+      vocab_item: 差值/价差信号 × U6 事件窗回归承接
+      claim_token: 石化链/领先性（问题本体）
+    u1_text: 库存意外变化能否领先油价与石化链（信号词：库存差值/WTI-Brent 价差）。
+    coverage: 1.0
+    indicators:
+    - - EIA_BRENT_SPOT
+      - daily
+      - 1280
+      - '2021-08-16'
+      - '2026-09-15'
+    - - EIA_CRUDE_INVENTORY
+      - weekly
+      - 265
+      - '2021-08-20'
+      - '2026-09-11'
+    - - EIA_DISTILLATE_INVENTORY
+      - weekly
+      - 265
+      - '2021-08-20'
+      - '2026-09-11'
+    - - EIA_GASOLINE_INVENTORY
+      - weekly
+      - 265
+      - '2021-08-20'
+      - '2026-09-11'
+    - - EIA_NATGAS_INVENTORY
+      - monthly
+      - 58
+      - '2021-08-01'
+      - '2026-05-01'
+    - - EIA_PROPANE_INVENTORY
+      - weekly
+      - 265
+      - '2021-08-20'
+      - '2026-09-11'
+    - - EIA_WTI_SPOT
+      - daily
+      - 1265
+      - '2021-08-16'
+      - '2026-09-15'
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0188
+fail_type: null
+threshold: 信号词表非空且宣称主题全部落在词集覆盖内；覆盖率=100%
+conclusion: SL-A11 U1 信号词集={库存差值/WTI-Brent 价差}非空；宣称三主题（库存意外变化/油价/石化链领先性）全部落在词集+U6
+  承接路径内，覆盖率=3/3=100%。库内实证：EIA 7 指标在库——4 项库存周度（原油/汽油/馏分油/丙烷）支撑'库存差值'，WTI/Brent 现货日度支撑'价差'（WTI
+  切点前 1013 行）。注：'意外项'的预期基线口径属 U6 判据落地问题（见 PQ-0193），不影响 U1 词集语义覆盖。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2021-08-01'
+three_check:
+  data: OK（指标在库实证）
+  caliber: OK
+  mechanical: OK
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0188

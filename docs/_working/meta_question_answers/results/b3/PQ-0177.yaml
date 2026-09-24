@@ -1,0 +1,25 @@
+notes: ''
+outcome: pass
+evidence:
+- probe: architecture_model/data/data_sources_registry.yaml
+  query: DS-CLS(free,RSSHub 路由 /cls/telegraph,rpm30)/DS-EASTMONEY_NEWS(free,HTTP 直连,rpm30)/DS-RSS(free,robots)
+    对照 U2 行
+  result:
+    DS在册: 3
+    渠道数: 3
+    成本字段缺失渠道: 0
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0177
+fail_type: null
+threshold: 未评估成本项=0（获取方式与成本与源线谱/DS 册登记一致）
+conclusion: 三渠道（财联社 RSSHub 路由/东财 7x24 HTTP 直连/财经 RSS）全部在册且均 account_type=free，路由/限频/robots
+  口径登记齐全，与 U2 行一致，未评估成本项=0。 （SL-A09 财经快讯情绪）
+confidence: 0.6
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（源线谱 U2 行+DS 册 status/account_type/rate_limit/policy 逐字段在册可读）
+  caliber: OK（判据=每渠道有 DS 锚且成本字段非空，未评估项计数=0，机械可判）
+  mechanical: OK（渠道级对照表留痕）
+pit_assertion: U2 成本核验为登记册静态对照，不涉时序取数；切点约束以登记现状为对象无涉未来数据。
+q_id: PQ-0177

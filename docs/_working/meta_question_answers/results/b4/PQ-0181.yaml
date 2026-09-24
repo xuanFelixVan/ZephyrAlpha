@@ -1,0 +1,36 @@
+notes: 复考前置：(1) 对存量 news_data（2010~2025-09-09）回填情绪分并生成 news_sentiment_window 历史段；(2)
+  U6 注册文本补写显式阈值（如 t>2）与评估窗口。两项齐备后重放即可执行（管线通路已由 PQ-0015 验证）。SL-A09 密度线（PQ-0015）不受本缺口影响，已实跑判
+  no_alpha。
+outcome: insufficient
+_comment: batch_stat_alt 分包生成
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_alt_PQ-0016_insuff.py
+  query: SELECT count(), countIf(sentiment_score != 0), countIf(sentiment_label !=
+    '') FROM c3_fundamental.news_data WHERE publish_time <= '2025-09-09'；SELECT count(),
+    min(window_date), max(window_date) FROM c1_market.news_sentiment_window；U6 原文=02_source_line_registry.md
+    §SL-A09
+  result:
+    nsw_date_range: 2026-02-24~2026-09-22
+    nsw_total_rows: 19819
+    nsw_precut_rows: 0
+    newsdata_precut_rows: 7887387
+    newsdata_precut_score_nonzero: 0
+    u6_explicit_numeric_threshold_in_registry: 0
+exam_ref: st-metaq-20260923/probe/batch_stat_alt_PQ-0181
+fail_type: null
+threshold: 判据可执行率=100%（退役判据含明确阈值与数据窗口可重放）
+conclusion: insufficient：SL-A09 U6 退役判据（'情绪分位 vs 次日收益回归+极端情绪日事件研究；证伪=预测力不显著'）口径本身可代码化（回归+事件研究+t>2
+  均可机械执行，兄弟问 PQ-0015 的密度事件研究已实跑验证管线通路），但'历史重放演练'所需的情绪分位序列在闭卷窗内为零样本，重放无法真实执行，判据可执行率达不到
+  100%。缺口实证：news_data 切点前 7,887,387 条中 sentiment_score≠0 为 0 条；news_sentiment_window
+  切点前 0 行（全表 19,819 行均在 2026-02-24 之后）。判据文本另缺显式数值阈值与数据窗口（U6 原文仅写'预测力不显著'），重放阈值需借 exam_plan
+  的 t>2 补齐——文本完备性缺陷与数据缺口并存，本次以数据缺口为主判 insufficient。
+confidence: 0.9
+data_window:
+  end: '2025-09-09'
+  start: '2010-01-02'
+three_check:
+  data: NO——重放输入（情绪分位日度序列）切点前零样本：news_data 情绪字段全空、news_sentiment_window 无切点前行
+  caliber: OK——判据两构件（情绪分位 vs 次日收益回归、极端情绪日事件研究）口径可无歧义落地；但 U6 注册文本未写明数值阈值与窗口，完备性存瑕疵
+  mechanical: 部分 OK——检验逻辑可代码化且管线已验证（PQ-0015 密度事件研究实跑成功），唯缺情绪分输入序列
+pit_assertion: 本题结论未使用切点后数据；news_sentiment_window 的切点后行数仅作现状观察。
+q_id: PQ-0181

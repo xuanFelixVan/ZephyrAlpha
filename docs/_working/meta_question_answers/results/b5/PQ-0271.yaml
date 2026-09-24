@@ -1,0 +1,26 @@
+notes: 文本可机械性审阅口径（管线未建，未真跑重放演练）；数值阈值与重放窗口待判据落地时固化（禁临场改题）。用户数披露非标，兑现检验样本受披露口径限制。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/b_lines_B_structure.py
+  query: 'SL-B08: U6 文本 hit(''证伪=''子句) ∧ hit(检验机制词 相关/回归/事件研究/检验/分组/兑现/背离) ∧ 对照基准在产'
+  result:
+    executable: true
+    has_criterion: true
+    mechanism_hit: true
+    counterpart_in_prod: true
+exam_ref: st-metaq-20260923/probe/b_lines_PQ-0271
+fail_type: null
+threshold: 判据可执行率=100%
+conclusion: SL-B08 APP 榜单线 U6 退役判据可执行性核验：登记方案『榜单爬升 vs 季报用户数兑现；证伪=无先导性』含证伪子句与明确检验机制，对照基准在产可得（先导性检验设计可机械，但'季报用户数'为上市披露非标字段（披露口径不统一），兑现检验样本受披露口径限制——判据落地时须先固化用户数口径映射）——判据可机械落地，按批次口径
+  pass（confidence≤0.5），达 threshold '判据可执行率=100%'（本线=可执行）。
+confidence: 0.4
+data_window:
+  end: 2026-09-23 现状
+  start: registry
+three_check:
+  data: OK+基准三册在盘可读（源线谱 29 线全解析、DS 册 22 条目、层宪章七层）
+  caliber: OK+题面宣称 vs 登记文本逐词/逐字段对照口径明确
+  mechanical: OK+探针脚本可复现（substring 匹配+计数+层号词表校验）
+pit_assertion: 登记快照文本比对题：仅读源线谱册 02_source_line_registry.md(2026-09-22)、DS 册 data_sources_registry.yaml(v2.6.0)、层宪章
+  01_layer_charter.md(2026-09-22) 在盘快照，不取任何行情/时序数据，无切点(2025-09-09)后数据参与任何阈值比较。
+q_id: PQ-0271

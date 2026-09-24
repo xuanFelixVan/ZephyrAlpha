@@ -1,0 +1,58 @@
+notes: 登记债与复考前置：①U6 文本无数值阈值（'条件相关性消失'未定显著性水平），演练采用 |t|>=2 通行判据；②宏观值为回补终值，vintage 发布快照切点内未存证（PQ-0185），正式复考须待
+  vintage 存证补建后按发布时点重放；③市场代理为等权全 A，正式复考可换用指数序列。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0187.py
+  query: 重放：FRED_DGS10/DXY/VIX 变化率 × kline_daily 等权市场 T+1 收益 Pearson；rate_decision_calendar
+    fed 去重日事件窗
+  result:
+    replay:
+      leg1:
+        FRED_DXY:
+          n: 1014
+          t_stat: 1.224
+          pearson_r: 0.0385
+        FRED_VIX:
+          n: 1044
+          t_stat: -3.515
+          pearson_r: -0.1082
+        FRED_DGS10_US:
+          n: 1013
+          t_stat: 0.238
+          pearson_r: 0.0075
+      leg2:
+        welch_t: -2.036
+        n_fed_dates: 292
+        all_day_mean_bp: 26.8
+        n_event_next_day_obs: 187
+        event_day_next_mean_bp: -2.69
+      window:
+      - '1990-12-19'
+      - '2025-09-09'
+      executable: true
+      legs_executed:
+      - 因子回归（3 信号变化率 vs T+1 等权市场收益）
+      - FOMC 议息日事件研究
+    u6_text: 因子回归+FOMC/议息日事件研究；证伪=条件相关性消失。
+    fomc_source: c1_market.rate_decision_calendar bank_code='fed'（库内已登记序列，584 行/去重
+      292 日切点前）
+    numeric_threshold_registered: false
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0187
+fail_type: null
+threshold: 退役判据含明确阈值与数据窗口可重放；判据可执行率=100%
+conclusion: 'SL-A10 U6 退役证伪方案（因子回归+FOMC 议息日事件研究）历史重放演练成功：两腿均在闭卷窗端到端机跑出数，判据可执行率=2/2=100%。腿1
+  因子回归（变化率 vs T+1 全 A 等权市场收益）：{"FRED_DGS10_US": {"pearson_r": 0.0075, "t_stat": 0.238,
+  "n": 1013}, "FRED_DXY": {"pearson_r": 0.0385, "t_stat": 1.224, "n": 1014}, "FRED_VIX":
+  {"pearson_r": -0.1082, "t_stat": -3.515, "n": 1044}}；腿2 FOMC 议息日事件研究：fed 切点前去重议息日
+  292 个（1982-09-28~2025-07-31），议息次日等权市场收益均值 -2.69bp vs 全样本 26.8bp，Welch t=-2.036。判据''条件相关性消失''可用显著性判据（|t|<2
+  或事件效应消失）机械落地。演练只证可执行性，数值不构成 alpha/退役结论。'
+confidence: 0.5
+data_window:
+  end: '2025-09-09'
+  start: '2021-08-16'
+three_check:
+  data: OK（3 信号序列+市场代理+议息日历均在库且切点前可考）
+  caliber: OK（重放口径=演练声明：等权市场代理+kline 日历对齐）
+  mechanical: OK（两腿全部跑通出数）
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0187

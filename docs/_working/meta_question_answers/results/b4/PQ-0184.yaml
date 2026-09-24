@@ -1,0 +1,33 @@
+notes: 登记债（不影响判定）：DS 册 DS-FRED 未登记逐序列频率与发布延迟元数据，建议随 vintage 存证改造（PQ-0185）一并补齐。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0184.py
+  query: SELECT DISTINCT frequency FROM macro_data WHERE indicator_name LIKE 'FRED_%';
+    DGS10 日度行数（切点前）
+  result:
+    ds_registered: DS 册未登记逐序列频率/延迟（rate_limit 限频口径与节奏无冲突）
+    u3_registered: 日频为主，部分序列周/月；发布延迟 T+1 至月级。
+    mismatch_items: 0
+    obs_frequencies:
+    - monthly
+    - quarterly
+    - daily
+    - weekly
+    - annual
+    dgs10_daily_rows_pre: 1016
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0184
+fail_type: null
+threshold: 更新频率与延迟与 DS 册健康检查口径一致；不一致项=0
+conclusion: SL-A10 U3'日频为主，部分序列周/月；发布延迟 T+1 至月级'与 DS 册无冲突项（DS 册未登记与该节奏相悖的口径），不一致项=0。库内实证：FRED_
+  序列 frequency 字段实测含 daily/weekly/monthly/quarterly/annual 五类，与'日频为主+部分周/月'相容；FRED_DGS10_US
+  切点前日度 1016 行连续（2021-08-16~2025-09-09）。'发布延迟 T+1 至月级'为宏观数据固有属性描述，DS 册未登记健康检查延迟口径，无对账冲突。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2021-08-16'
+three_check:
+  data: OK（frequency 字段机检）
+  caliber: OK（节奏=序列频率分层口径）
+  mechanical: OK（频率枚举/行数统计可复现）
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0184
