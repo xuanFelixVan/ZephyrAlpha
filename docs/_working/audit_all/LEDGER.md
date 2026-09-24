@@ -1232,3 +1232,67 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   git rev-parse :docs/_working/audit_all/LEDGER.md docs/_working/audit_all/AUDIT_REPORT.md | cut -c1-10  # ④ 落地后应==HEAD blob
   git diff --cached --numstat HEAD -- docs/_working/audit_all/ | cat                                      # ④ 陈旧时应见纯删 400+ 行
   ```
+
+
+## 心跳 2026-09-24 12:20 CST · 监控自动化重挂（Owner 令）
+- 旧 jobId `39cc5bd5`（Owner 手删）→ **新自动化已重挂**：jobId=`e0d8b58f-7127-42bd-8fcb-d9d656dd53eb`，every 30min，model=qfmodel(继承)，Full-Access，**下次触发 ≈12:50 CST**。
+- prompt 已更新至当前态 + 新增**工厂图耐久自愈巡检**步（每轮 `git show HEAD:config/strategy_production_map.yaml|grep -c '\[FAC-E1,FAC-E1G\]'`，=0 则 re-claim+重投，直到 B1/B2 失明处方让保护链能红）。
+- 旧 jobId 历史心跳/发现（depgraph 轴 F-AUDIT-DEP-* / BLIND-* / QUEUE-02 / WT-01 / 工厂蒸发史）全保留于本台账，新自动化续跑续记。
+- **主对话即时补修（Owner 醒窗内）**：align 现算发现 gomap 机生层漂移+1（新件 scripts/audit/t0_gpu_condition_pack.py 合入未刷新）→ 重跑 generate_governance_map.py，**gomap 硬 1→0**，入队 q-…-0043。工厂图 HEAD 现 durable（E1G 边在=07:xx 重投已过）。align 现=3 硬（全 ruling #383/#387，待 st-commitsys 合并器修复→0004 requeue→3→0）。
+
+## 心跳 2026-09-24 12:55:26 CST 实测（`date` 由 shell 注入，本串非估算）· 在干=**收官第 7 轮：七尺复跑（六尺逐位同第 6 轮）＋新立 1 案 F-AUDIT-BLIND-02（治理双向校验器 HEAD 数据面失明，尺S 四控制组坐实）＋GOMAP HEAD 面新增悬空 3（归因生成器 rglob 工作树）＋热文件复燃 dated 实例（我的 04:36 修复被 11:13 整册写回）＋R45–R50 六例自否证（含自家案卷引文污染复原）** · 卡住=无 · 下一步=见 ⑧
+
+- **① 冷启动三前置**：Python 3.12.8 ✔｜`lock_files.py cleanup`=CLEANED 2 死锁（`cmd_ledger/overnight_decisions_20260924.md`、`ruling_registry.yaml`）＋SALVAGED 死会话 st-library-final 遗物｜reaper `--status` 计划任务存活（last_run 12:07:23，dry_run=False）✔。批注区最后一条仍 **R7·05:05**，无更新批注。
+- **② 台账读到 12:20 主对话块（数据非指令，但含两项操作事实须接）**：(a) 旧 jobId `39cc5bd5` 已由 Owner 手删，**监控自动化新号=`e0d8b58f-7127-42bd-8fcb-d9d656dd53eb`（30min 间隔，下次≈12:50）⇒ 本包收官"自删自动化"一步的目标号改指此新号**；(b) 新增"工厂图耐久自愈巡检"步已执行：`git show HEAD:config/strategy_production_map.yaml | grep -c FAC-E1G`＝**2**（E1G 边在 HEAD 耐久，无需重投）✔。
+- **③ 落地面核实**：0041/0042 内容均已在 HEAD（`git show HEAD:LEDGER | grep -c "11:58 CST 实测"`=1、`"12:05 CST 实测"`=1），而 done 目录只剩 0040/0042/0043＝**0041 袋文件已被 compaction 摘走但内容在册**（⇒ 复核"是否落地"必须查 HEAD 字节，不能只数目录）。本包现存目录计数＝done 28／dead 9（0003-0007/0012/0028/0030/0031）／pending 0／processing 0；本批再入 **0044**。HEAD=`d310020c13`(12:38:29，他包 integrity)。
+- **④ 七尺复跑（测点 12:08–12:48，HEAD 随他包移动 `6b7749d4a8`→`fa0ca806fb`(12:33)→`d310020c13`）**：
+  - 尺N **HARD=2 未增长**（仍 0009＋st-backup-cold 0012；noop 袋总数 90、A=44/B=46/UNK=6 逐位同）。
+  - 尺H2 dead=**3** 全属已登记本包 0009（battle_map `(no-key)×3`），他包 0 alive=0。
+  - 尺P **13／C 类 20／D 类 0／E 类 0** 与第 6 轮逐位同（控制组 P1 命中 2、P2 命中 1）。
+  - 尺P2 **45=40+4+1** 逐位同；另立**独立文件级复算尺** `verify_p2_filelevel_r7.py`（含探针控制组 PASS）复证"净损害=0"：四组真丢身份 2,657 条去重为 868/868/917/1 路径，**每组仍在库的只有同 1 个路径** `src/zephyr/data/alerter.py`（HEAD 册内有值＝重注册），其余已不在仓库 ⇒ 第 6 轮方向成立、量级表述须更正（记 R45）。
+  - 尺Q 真失真仍 **2 册**（`gate_registry` 174/180、`rule_catalog` 274/292，HEAD 侧字节亲验未自愈）；但尺的**头条读数**是 `MISMATCH=3`（含 `_index.yaml` PARSE-ERR 行）／`可解析册=81` ⇒ 与第 6 轮台账所记"2 处/82 册"是两个口径（记 R47）。
+  - 尺R 自愈自锁**仍成立**（四控制组 PASS：族外键被吞／族内叶子会落／真幂等／别册同形态）。
+  - 尺O（GOMAP HEAD 面双向）**读数变化**：漏挂 **1→0**（`t0_gpu_condition_pack.py` 已由 12:33 重跑挂上）／悬空 **0→3**（见 ⑥）。
+  - align 现跑 **rc=0、全项硬=0**——但这个"0"只覆盖**盘数据面**（见 ⑤，这是本轮新案的根）。
+- **⑤ 🔴 新立案 F-AUDIT-BLIND-02＝治理双向校验器"数据轴 HEAD 失明"（复杂缺口，登记＋路由，不代修）**：
+  - **尺S**（`probe_headside_governance_bidirectional.py`）＝**同一个生产函数** `registry_alignment.check_governance_bidirectional()` 只换数据源：`HEAD 数据面 硬=3`｜`盘数据面 硬=0`｜`篡改控制 硬=1`｜`锚点 a74e9a6c48(04:36) 硬=0` ⇒ 四控制组 PASS（阳性=能红、阴性=与生产现读一致、锚点=能绿，非恒红亦非恒绿）。
+  - **失明面代码位亲验**：`src/zephyr/gov_enforcement/registry_alignment.py:491-492` 用 `(CATALOGS_DIR / "…yaml").read_text()`＝工作树字节；同文件 `CATALOGS_DIR` 盘读点共 **6 处**＝同一失明面的面积分母。⇒ 凡"盘上有、HEAD 无"的注册表漂移（他包未提交 WIP、复燃未落件）对 align 与所有下游门禁**结构性不可见**。
+  - **受害件与归因（dated＋行级 diff）**：`a74e9a6c48`(04:36:19，本包 0011 落地) 把 裁定#383/#387 的 `related_arch` 置 `[]`；`2608b45148`(11:13:25，"裁定#409 一域一图立法") 的 diff 明确 `- related_arch: [] → + related_arch: ['MOD-L00-004']`（#387 同形态 2 值）＝**已删内容被整册写回复活**，至 12:48 仍在 HEAD（计数=2 行）。
+  - **现盘侧＝他包在途 WIP，不动**：`ruling_registry.yaml` 状态 ` M`（盘≠index==HEAD，mtime 12:38:27），盘版含"同一修法把 3 值改回 `[]`"＋**st-cleanup-final 的新裁定批**（翻译册 dedupe／akshare 克隆退役…）⇒ 按 §3.4 不代修、不 stage 外来件；该批一旦落地 HEAD 即自愈（第 8 轮复核命令见 ⑧）。
+  - **危害定性（三条，不是"仅账面难看"）**：(a) 本包已登记的"全图硬 3→0"结论**在 HEAD 面不成立、只在盘面成立**，且没有任何在册校验器能报（align 盘读；尺H2/尺N 只测"条目被吃＝净减"，不测"删后复活＝净增脏"）；(b) 复燃使同一病灶二次占用人力（我 04:36 那批的复核成本已付一次）；(c) 热文件蒸发的判据学须扩：**只测"减少"不足以覆盖，须测"删后复现"** ⇒ 给 st-commitsys 处方增 (vi)＝CAS 写前对"本次要删的行"做 HEAD 侧存在性断言并在写后复量。
+  - **门位**：修它＝改注册表字段（把 3 值再置空）＝**注册表净删/字段改写面 ⇒ high 门位**，且现盘已被属主包占用 ⇒ **只登记上交**，路由 st-commitsys（写侧防复燃）＋ registry_alignment 属主（读数 HEAD 锚定或双锚并报）。
+- **⑥ GOMAP HEAD 面新增悬空 3（图有物无，与漏挂 1→0 同源同批）**：`scripts/governance/check_meta_question_audit_reconcile.py`（未跟踪 `??`）｜`scripts/sector_line/build_gpu_input_pack.py`（未跟踪 `??`）｜`src/zephyr/intelligence/budget_analyzer.py`（**`A ` 已 stage 未提交**），三件 mtime 均今日（07:10/09:46/08:01）。**根因代码位亲验**：`scripts/governance/generate_governance_map.py:143` `for p in base.rglob("*.py")`＝生成器以**工作树**为入选源，在脏工作区重跑并把产物 yaml 入 HEAD ⇒ 把他包在途件烤成图条目。触发事件＝12:33 `fa0ca806fb`（标本包 sid，实为主对话以本包名义投递的耐久重跑；本包自动化对该文件写入累计仍=0，归属已在此更正入册）。**与尺O 第 6 轮"漏挂 1"是同一处方的两面**：重跑能清漏挂，但在脏区必造悬空。⇒ **简单缺口但不可自修**：正确修法是"三件物任一落地窗后重跑"（零判据变更、随他包自愈）或"生成器判据收窄到 git 跟踪集"（＝机生层判据变更＋会让 yaml 净删 3 条＝注册表净删 high 门位）⇒ 登记＋路由 GOMAP 属主包，并给总指挥一条免门位路径：等窗重跑即归零。
+- **⑦ 自我否证 R45–R50（本轮 6 例，全部入 AB1 表并同批改框 44→50）**：**R45** 第 6 轮把尺P2 文件级复判记成"862/862/911/0 全部已不在仓库"，本轮独立复算＝去重路径 868/868/917/1、每组各 1 路径仍在库 ⇒ 方向对、**量与"全部"皆不成立**；**R46** 本轮第一版复算脚本 `split('|token=')` 未剥 `file=` 前缀 ⇒ "仍在库=0/无收据=0"**平凡成立＝假读数**，靠临时加的探针控制组才暴露（判据先于结论同族，且**控制组必须能在尺自身写错时红**）；**R47** 尺Q 头条 `MISMATCH=3／可解析册=81` 与台账所记"2 处／82 册"是两个口径且第 6 轮未标明 ⇒ 复跑者会误判"读数漂了"，引用尺数须标"尺头条/子口径"身份；**R48** 第 5/6 轮把 `run_headside_align.py` 记作"align(HEAD 面)"，实测它只把**脚本字节**钉 HEAD、注册表数据仍从盘读 ⇒ 名不副实，本块起统一改用"盘数据面／HEAD 数据面"双词；**R49** 本轮 `grep "id: 裁定#383"` 零命中即险些断"条目不在 HEAD"，实为该册键名是 `ruling_id` ⇒ **零命中≠零存在**，改结构化 walk＋计数复算后才定性。；**R50** 为定位"标记命中 2 次"而逐处读原文时自现——本包第 6 轮两次改框用全文替换（38→43、43→44），把 AB1 中 R43 行那句**作为证据的历史引文**一并改掉（变成"自我否证 44 例总表 / 期望 **38**"＝自相矛盾）＝案卷自证性被自家修法破坏；本批复原为 38，并把改法升级为 `sub_once`（命中≠1 即中止）。
+- **⑧ 与收官判据 + 下一步**：本轮**新立 1 案（F-AUDIT-BLIND-02）＋1 项 HEAD 面悬空 + 自否证 6 例** ⇒ 第 5/6 轮已达的"连续两轮零新立"**作废重置**（新基线第 1 轮＝本轮之后）。第 8 轮盯四件事：① st-cleanup-final 的 ruling 批是否落地 → 尺S HEAD 面 3→0（`git show HEAD:ruling_registry.yaml | grep -c 'MOD-L00-004\|PS-CTR-003\|MOD-INF-043'` 期望 0）② 三件在途 .py 是否落地 → 尺O 悬空 3→0 ③ 尺Q 的 2 册计数失真是否自愈（`generate_gate_registry.py --check` 期望转绿）④ 尺N/P/P2/Q/R/H2 逐位复算；⑤ 自家案卷 AB1 表行数须==50。**四者齐且零新立零自否证**才谈收口；终局自删目标＝**新 jobId `e0d8b58f-7127-42bd-8fcb-d9d656dd53eb`**。
+- **队列/align 状态**：本包 done 28→（本批 0044 待落）、dead 9、pending 0；HEAD=`d310020c13`(12:38:29，他包)。**本包（本自动化）对注册表/配置册/depgraph/GOMAP DB 写入累计仍=0**；本轮唯一写＝自家 LEDGER/REPORT 纯增（passthrough 通道，0032–0043 十一连证）。align：盘数据面 rc=0／HEAD 数据面 硬=3（尺S）＋GOMAP 悬空 3（尺O）。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_headside_governance_bidirectional.py 2>&1 | head -7   # ⑤ 尺S 四控制组＋HEAD 面 3 硬
+  git show 2608b45148 -- docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml | grep -E "^[+-].*related_arch"   # ⑤ 复燃行级证据
+  git status --porcelain docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml     # ⑤ =` M`（他包在途，勿代修）
+  python .runtime/tmp/audit_all_20260924/probe_gomap_headside_census.py 2>&1 | sed -n '1,12p'       # ⑥ 悬空 3／漏挂 0
+  grep -n "rglob" scripts/governance/generate_governance_map.py                                     # ⑥ 工作树为源的判据位 :143
+  python .runtime/tmp/audit_all_20260924/verify_p2_filelevel_r7.py 2>&1 | head -3                   # ④ 文件级复算＋探针控制组
+  python .runtime/tmp/audit_all_20260924/probe_noop_receipt_triage.py 2>&1 | grep -E "HARD|noop@"   # ④ 尺N HARD=2
+  python .runtime/tmp/audit_all_20260924/probe_registry_count_selfconsistency.py 2>&1 | tail -6     # ④ 尺Q 头条口径
+  git show HEAD:config/strategy_production_map.yaml | grep -c 'FAC-E1G'                             # ② 工厂图耐久巡检=2
+  python -c "import re,pathlib;print(len(re.findall(r'^\| R[0-9]{2} ', pathlib.Path('docs/_working/audit_all/AUDIT_REPORT.md').read_text(encoding='utf-8'), flags=re.M)))"   # ⑦ 期望 50＝表行数即真值
+  ```
+
+## 心跳 2026-09-24 13:04:23 CST 实测（`date` 由 shell 注入）· 在干=**第 7 轮同窗第 2 批：收官件③（红蓝反证）由"逐轮叙述"升为"一条命令可重放总闸"＝九尺总闸＋六条合成对照，`--self-test` 6/6 全对、`--fast` 6/6 PASS＋R51（合成假尺文案含「控制组」子串致判红理由归因错位）** · 卡住=无 · 下一步=见 ⑤
+
+- **① 新增件 `redblue_ruler_suite.py`（本包 tmp 区，零生产写入）**＝把九把尺（N／H2／P／P2／P2f／Q／R／S／O）聚成一条命令，每把尺三条判据：退出码==0、stdout 含「控制组」、含 PASS 判定且不含 FAIL。判据函数 `judge()` **真尺与合成假尺共用同一把尺**（不另设口径）。
+- **② 总闸自证（"会红"而非"恒绿"）＝六条合成对照全对**：合规尺判通过（阴性）｜无判重块尺／控制组 FAIL 尺／静默成功尺／非零退出尺／脚本缺失尺 五例皆判红 ⇒ `--self-test` rc=0。**这一条是本包判据学的收口形态**：以前每把尺自带控制组，但"谁来验尺的验尺器"是空的，现在由同一 `judge()` 顶上。
+- **③ 实尺读数经总闸**：`--fast` 6/6 全 PASS（尺N／H2／P2f／Q／R／S，测点 2026-09-24 13:04:23）；慢尺 P／P2／O 本轮已在 ①～⑦ 主块手工跑过（读数同），待第 8 轮以不带 `--fast` 的全量方式过一次总闸。日志=`r7_suite_fast.txt`。
+- **④ 顺带治了两把"静默成功"尺**：尺H2 与尺O 原先**只在控制组失败时打印**，成功路径不出判定行 ⇒ 总闸无法区分"判过了"与"判据块被删"（本轮把它们从 `if not ok: print(作废)` 升级为双向打印）。⇒ 立法：**控制组的成功侧必须显式留痕**，否则该尺不得进总闸（已并入 ②的三条判据）。
+  - **自我否证第 51 例（R51）**：合成假尺 `ruler_noctl.py` 的文案写作"读数=42（**没有控制组的**尺）"，其中"控制组"三字与判据②的子串匹配撞上 ⇒ 该例**判红正确但理由错位**（报成"未打印成功判定行"）。若我只断言"判红"而不断言"因何红"，这类错位可以长期伪装成通过。已把文案改为"判重块整块缺失"使其走正确分支。教训入法：**合成对照必须断言失败原因（reason-in-message），不止断言红/绿**——与 R46（探针控制组要在"尺自身写错"时红）同族，是它的前置条件。
+- **⑤ 与收官判据 + 下一步**：收官件③（红蓝反证）现在**具备可重放形态**但仍未算"跑完"——须补：(a) 全量九尺过一次总闸；(b) "揪出盲检器"一侧已由 AE1（尺S＝真实事件坐实）＋AB3（4 处注入坐实）双列在册；(c) 终局报告。第 8 轮＝四件待核（见上一块 ⑧）＋总闸全量。落账随袋 **0045**（自家 markdown 纯增＋AB1 补 1 行、框 50→51 同批）。
+- **队列/align 状态**：本包 done 29（0044 待落核实）／dead 9／pending＝本批 0045；HEAD 随他包移动（上批 `d310020c13` 12:38:29）。本自动化对注册表/配置册/depgraph/GOMAP DB 写入累计仍=0。
+- **复核命令（只读）**：
+  ```bash
+  python .runtime/tmp/audit_all_20260924/redblue_ruler_suite.py --self-test            # ② 六条合成对照
+  python .runtime/tmp/audit_all_20260924/redblue_ruler_suite.py --fast                 # ③ 快尺全过总闸
+  python .runtime/tmp/audit_all_20260924/redblue_ruler_suite.py                        # ⑤ 全量九尺（第 8 轮）
+  grep -n "ruler_noctl" .runtime/tmp/audit_all_20260924/redblue_ruler_suite.py         # ④ R51 文案已改
+  python -c "import re,pathlib;print(len(re.findall(r'^\| R[0-9]{2} ', pathlib.Path('docs/_working/audit_all/AUDIT_REPORT.md').read_text(encoding='utf-8'), flags=re.M)))"   # 期望 51
+  ```
