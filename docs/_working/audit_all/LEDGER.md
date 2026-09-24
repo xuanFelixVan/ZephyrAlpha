@@ -1084,3 +1084,33 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   python .runtime/tmp/audit_all_20260924/ruler_J_restore.py 2>&1 | tail -1                    # ② 待补块=0
   python .runtime/tmp/audit_all_20260924/run_headside_align.py --no-report 2>&1 | grep -E "硬阻断|gomap"   # ②③ 唯一硬=gomap 且为在途
   ```
+
+## 心跳 2026-09-24 10:04 CST 实测（`date`=2026-09-24 10:04:16，本串由 shell `date` 传入）· 在干=**收官第 3 轮三尺复跑＋GOMAP 唯一硬项机制再取证（升级为"派生册生成器无 HEAD 基线闸门"，且本轮发现一条真·HEAD 面漏挂）** · 卡住=无 · 下一步=见 ⑤
+
+- **① 承 09:34 块 ⑤：0035 已落地**＝`21709f8f49`(09:38:36·LEDGER 纯增)；本包 done=21、dead=9、pending=0。
+- **② 收官"连续两轮零新问题"第 3 轮（三尺，全部只读可重放）**：
+  - **尺H2**＝命中袋-件对=31（较上轮 +1＝他包 st-align-dirty 0034 新袋入袋面）、合法改写侧 152 行、**条目被吃侧 3 行且全属已登记 0009**（`battle_map_domain_policy.yaml` `(no-key)×3`）＝**零新死件**；**合成控制组阳性=3／阴性=0**（09:34 块把控制组改合成样本的处方复验有效，不再随落地 rot）。
+  - **尺J**＝`待补块=0`。
+  - **align**（HEAD 字节 checker × 工作树数据，只读 `--no-report`）＝**rc=1**，唯一硬项=GOMAP 机生层漂移（下 ③）；余六类（domain/ghost/frontend/decision/factory）硬=0；软 1005（chainmap 长城专项在清＋翻译册 6 组重复 module_path 已知）。
+- **③ 🔴 GOMAP 唯一硬项再取证＝比 09:34 定性更深，且本轮新见一条真·HEAD 面漏挂（仍判不代修）**：本轮报的漂移文件**已换**（上轮 `scripts/sector_line/build_gpu_input_pack.py` → 本轮 `scripts/audit/t0_gpu_condition_pack.py`）。四证：
+  - **(a)** `git cat-file -e HEAD:scripts/audit/t0_gpu_condition_pack.py`=**AT_HEAD**（由他包 `96870e1fd3`@09:43:45 落地，`git log --diff-filter=A` 亲验），但 `git ls-files -s <该路径>`＝**空**（index 已无此物），`git status --porcelain <该路径>` 同路径并出 `D `＋`??`＝**"`git rm --cached` 式取消跟踪但留盘"**；同窗 `scripts/audit/` 下 4 个 `t0_*.py`（ceiling_capacity_exam / conditional_e4_exam / gpu_condition_pack / six_phase_materialize）皆 `D `＝他包正在整族搬迁。⇒ **"HEAD 有物、HEAD 派生册无条目"＝HEAD 纯检出亦会 rc=1 的真漏挂**（不是纯工作树幻影）。
+  - **(b)** 派生册 `config/governance_operations_map.yaml` 盘版状态 `M`、`generated_at=2026-09-24T01:31:24Z`（＝本地 09:31:24）**早于** 09:43 落地 ⇒ 生成器快照天然先于被检物，属"落地批未自跑刷新器"欠账。
+  - **(c)** 盘版 yaml 已含 `scripts.sector_line.build_gpu_input_pack`（HEAD 版 0 处、盘版 2 处）＝他包自己重跑机生层、把其**当时未跟踪**的草稿写进派生册并随其批提交（源码同批落地＝对其自洽，**非缺陷**）；但确证 09:34 告诫的机制面：**任何旁观包在此刻重跑，都会把他包瞬态烙进派生册**。
+  - **(d)** 根因代码位＝`generate_governance_map.py:143` `_iter_py_files()` 用 `base.rglob("*.py")` **走文件系统** ⇒ **机生层不是 HEAD 纯函数**；HEAD／index／盘三态不一致窗口内必报"新增"。
+  - **可复用量法（本轮新立，建议纳入审查方法论）**＝**四元组三态一致性探针** `<HEAD存在?, index存在?, 盘存在?, yaml含?>`：本轮两例分别落 `(0,0,1,0→1)`（sector_line，上轮）与 `(1,0,1,0)`（t0_gpu_condition_pack，本轮）；任何 `HEAD=1 且 yaml=0` 者＝真漏挂（须物主批补），其余＝在途幻影（勿代修）。
+  - **处置＝登记上交、不代修**（§3.4 owner 责任制＋RULE-SSOT），`F-AUDIT-GOMAP-INFLIGHT` 定性由"未跟踪草稿"改准为 **"派生册生成器以工作树为输入、缺 HEAD 基线闸门；他包搬迁窗口内 align 必红"**，并附本包可复核证据链（下 复核命令）。
+- **④ 自家口径诚实更正（防总指挥误读，非自我推翻）**：09:34 块"HEAD 面 GOMAP 漂移=0"在其钟点为真（该轮 align 探针跑于 09:30~09:34，`96870e1fd3` 于 09:43 才落地）；本轮据 (a) 证得 **HEAD 面新增一条真漏挂**，主体=他包落地批未自跑 `generate_governance_map.py`，且其 yaml 重跑已在盘（`M`）在路上。⇒ 归"已登记他包项"，本包不代修、也不自证为"本包已修"。**对终态判据的适用**：本轮 align 仍 rc=1，命中判据第二支（"仅剩已登记他包/门位项"），故"零新问题"成立；但为稳计，第 4 轮再做一次收敛性确认后才进终审。
+- **⑤ 下一步（轮次）**：① 本块随袋 **0036** 入队（自家 LEDGER 纯增，通道 0032-0035 四连证可用）② **第 4 轮＝收敛确认轮**：复跑三尺＋专查 (a) 四元组是否归一（他包 yaml 落地→盘版含 `t0_gpu_condition_pack` 或该路径三态一致）；若他包已 settle 而 align 仍红→升为真缺陷并重定性 ③ 红蓝反证并档（终审前，累计 31 例）④ 终报三清单（悬空/漏挂/断链 逐条带证据+处置态）+ 复查清单（每条附复核命令+可能错在哪+证据等级）⑤ 满足判据后自删本自动化（jobId `39cc5bd5`）+ 台账记"自动化已自删·本包收官"。
+- **队列/align 状态**：本包 done=21、dead=9、pending=0（本轮入 0036）；HEAD=`f1fff10182`(09:49:14·他包 rules_integrity_db 落地后再注册，非本包)。**本包对注册表/配置册（含 `config/governance_operations_map.yaml`）/depgraph DB 写入累计仍=0**（全程 `git show`／`git ls-files`／只读探针＋自家两件案卷）。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  git log --diff-filter=A --format="%h %ci %s" -- scripts/audit/t0_gpu_condition_pack.py | cat                 # ③(a) 09:43 他包落地
+  git ls-files -s scripts/audit/t0_gpu_condition_pack.py | wc -l                                              # ③(a) =0（index 已无）
+  git status --porcelain scripts/audit/ | grep -E "^[D ]" | head                                              # ③(a) t0_ 族整批 D（在途搬迁）
+  git status --porcelain config/governance_operations_map.yaml                                               # ③(b) =` M`（他包刷新在路上）
+  git show HEAD:config/governance_operations_map.yaml | grep -c t0_gpu_condition_pack                         # ③(a)(c) HEAD=0
+  grep -c sector_line config/governance_operations_map.yaml                                                  # ③(c) 盘版=2
+  python .runtime/tmp/audit_all_20260924/probe_bag_regression_attribute.py 2>&1 | grep -E "控制组|dead=[^0 ]" # ② 仅 0009×3；合成控制 3/0
+  python .runtime/tmp/audit_all_20260924/ruler_J_restore.py 2>&1 | tail -1                                    # ② 待补块=0
+  python .runtime/tmp/audit_all_20260924/run_headside_align.py --no-report 2>&1 | grep -E "硬阻断|gomap"      # ② 唯一硬=gomap
+  ```
