@@ -1,0 +1,31 @@
+notes: 首次真实合并发生后需复考留痕率（当前留痕率系空集成立）；归一化规则建议注册为机检 grammar 防实现漂移。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_static.py
+  query: SELECT q_id, layer, title, status, merged_into FROM meta_question.meta_question；归一化：unicodedata.NFKC
+    + lower + 去空白；按 (layer, norm_title) 分组计数
+  result:
+    dup_rows: 0
+    dup_pairs: 0
+    dup_groups: 0
+    total_rows: 283
+    dup_row_ratio: 0.0
+    raw_dup_groups: 0
+    merged_into_nonnull: 0
+exam_ref: st-metaq-20260923/probe/gov_PQ-0002
+fail_type: null
+threshold: 占比≤5% 且留痕率=100%
+conclusion: pass：全表 283 问按层归一化（NFKC+lower+去全部空白）后，同层重复组=0、重复行=0、重复对=0，重复行占比=0.0% ≤
+  5% ✓；未归一化原始标题同层重复组亦=0。因零重复，无待并对象，merged_into 留痕率按空集=100% ✓（当前 merged_into 非空=0、merged/retired
+  行=0，与零重复自洽）。双条件过线。
+confidence: 0.7
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: OK：283 行全量取回比对
+  caliber: OK：归一化规则（NFKC+lower+去空白）为机械可复现规则，题面未给定正则，所用规则已声明
+  mechanical: OK：分组计数可复现
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0002

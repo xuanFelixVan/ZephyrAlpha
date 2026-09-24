@@ -1,0 +1,37 @@
+notes: 事件级 t=17.5 受同季公告事件截面相关膨胀，故另报季度聚类 t=9.367——两口径均远超 2，结论稳健。重述修正事件（同 report_period
+  多次公告）按最早公告版计算，PIT 安全。express_report/disclosure_plan 未参与本题口径（营收二阶差分仅依赖 income_statement），表存在性已在探针
+  0 中 DESCRIBE 实证。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_fund_PQ-0021.py
+  query: SELECT symbol, report_period, min(announce_date), argMin(total_revenue, announce_date)
+    FROM c3_fundamental.income_statement WHERE announce_date<='2025-09-09' AND total_revenue
+    IS NOT NULL GROUP BY symbol, report_period；d2>0 事件按公告日对齐 kline 复权价取 20 交易日窗口，基准=全A等权日收益复利同窗
+  result:
+    win_rate: 0.4839
+    mean_raw_20d: 0.02082
+    mean_excess_20d: 0.00823
+    n_signal_events: 103945
+    n_quarters_cluster: 63
+    excess_t_event_level: 17.529
+    excess_t_quarter_cluster: 9.367
+exam_ref: st-metaq-20260923/probe/batch_stat_fund_PQ-0021
+fail_type: null
+threshold: '>0 且 t>2'
+conclusion: pass：营收增速二阶差分>0（同比增速加速度为正）的业绩超预期组，按 announce_date PIT 对齐、公告日起 20 个交易日窗口（收益窗自公告日次日起，base=公告日/公告后首个交易日收盘），对全
+  A 等权基准的超额收益均值 +0.823%（原始 20 日收益均值 +2.082%），事件级 t=17.529（p<1e-6，n=103945 个公告事件）；按公告季度聚类（63
+  个季度、每季 ≥10 事件的季度均值做 t 检验）t=9.367（季度均值超额 +0.948%），排除同季事件截面相关对 t 的膨胀后仍显著。胜率 48.4%（超额>0
+  占比，右偏分布）。判据 >0 且 t>2 达成 → PEAD 漂移在闭卷窗内真实存在。
+confidence: 1.0
+data_window:
+  end: '2025-09-09'
+  start: '2010-01-01'
+three_check:
+  data: OK：c3_fundamental.income_statement 切点前 322891 个 (symbol, report_period) 首公告记录、5783
+    只股票；kline_daily 复权价 8718119 行；两源 symbol 口径一致（6 位码）
+  caliber: OK：二阶差分=同比增速的一阶差分（季频序列相邻期）；超额=个股 20 日复权收益−全A等权同窗复利收益；t 检验事件级+季度聚类双层
+  mechanical: OK：>0 且 t>2 代码判定
+pit_assertion: 信号构造只用 announce_date<=2025-09-09 的首次公告数据（argMin(total_revenue, announce_date)
+  取最早公告版营收，规避追溯重述前视）；g_t=rev_t/rev_{t-12月}-1 要求上年同期营收>0 且已公告；g_{t-1季} 同理；收益窗自公告日次日起。协议窗口
+  2010-01-01~2025-08-01 为探针运行前固定，未做任何调窗调参重跑。
+q_id: PQ-0021

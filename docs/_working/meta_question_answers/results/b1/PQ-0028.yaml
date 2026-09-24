@@ -1,0 +1,43 @@
+notes: no_alpha（对题设方向而言）：因子在闭卷窗内无正向预测力，反而显著负向（近十年更明显）。如实登记两条事实：(1) 负 IC 与'户数下降/筹码集中利多'的事件研究结论（PQ-0027）在筹码逻辑上方向可自洽——高户均持股市值≈户数相对少/股价高，追高风险；(2)
+  早期月份池浅（全史池中位数 193 只）系户数与股本双覆盖约束，深池（2015 后，中位 3,943 只）结论一致，判定不依赖浅池。复考前置：无（数据与口径已闭环，判
+  fail 即终局，除非 Owner 决定按反向信号另行立题）。
+outcome: fail
+_comment: batch_stat_alt 分包生成
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_alt_PQ-0028.py
+  query: kline_daily 月度聚合 argMax(close)+复利月收益（HAVING nd>=5）；shareholder_count/balance_sheet
+    按 announce_date merge-asof PIT 取值；factor=total_shares*close_me/holder_count；scipy.stats.spearmanr
+    逐月；Newey-West lag=3
+  result:
+    n_months: 352
+    t_nw3_full: -2.276
+    threshold_t: 2
+    mean_ic_full: -0.018707
+    pos_ic_share: 0.457
+    threshold_ic: 0.02
+    formation_range: 1996-04~2025-08
+    recent_n_months: 120
+    t_nw3_recent_2015: -2.23
+    median_pool_recent: 3943
+    mean_ic_recent_2015: -0.031668
+    mean_ic_excl_partial_last_month: -0.018471
+exam_ref: st-metaq-20260923/probe/batch_stat_alt_PQ-0028
+fail_type: no_alpha
+threshold: IC>0.02 且 t>2（月频秩 IC，Newey-West）
+conclusion: fail(no_alpha)：户均持股市值分位因子的月频 IC 预设方向（IC>0.02 且 t>2）不成立，实际显著为负。因子=（balance_sheet.total_shares
+  按 announce_date PIT 取最新 × 月末收盘价）÷（shareholder_count.holder_count 按 announce_date
+  PIT 取最新），在全 A 池逐月计算对次月收益的 Spearman 秩 IC。全史（形成月 1996-04~2025-08，n=352 个月，池中位数 193
+  只——受户数+股本双覆盖约束）：平均 IC=-0.0187，Newey-West(3) t=-2.28，正 IC 占比 45.7%。深池子样本（2015-09
+  起，n=120 个月，池中位数 3,943 只）：平均 IC=-0.0317，NW(3) t=-2.23——近十年负 IC 更强且显著。即因子方向与题设相反：户均持股市值高的股票次月收益显著更低（筹码分散度反向信号），不满足
+  IC>0.02 且 t>2；按契约如实登记，不做调参翻向施工。与兄弟批 PQ-0088 独立结论（IC=-0.066）方向一致互证。
+confidence: 0.8
+data_window:
+  end: '2025-09-09'
+  start: '1996-04-30'
+three_check:
+  data: OK——shareholder_count 切点前 458,277 行；balance_sheet total_shares>0 且 announce_date≤切点
+    315,319 行/5,799 只（1990-03~2025-09-06）；kline_daily 切点前 872 万行
+  caliber: OK——'户均持股市值分位'=月末截面秩（Spearman 本身秩化，免分位歧义）；'月频 IC'=次月收益秩相关；池门槛 n≥50
+  mechanical: OK——IC 序列、NW(3) t 值阈值比较可代码复现（IC 序列已落 probes/stat_alt_PQ-0028_series.json）
+pit_assertion: 户数与股本均按 announce_date≤月末 取最新已知值（披露滞后为信息延迟非前视），月末价与次月收益全部 ≤2025-09-09；未用任何切点后数据。
+q_id: PQ-0028

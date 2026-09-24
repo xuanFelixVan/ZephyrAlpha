@@ -1,0 +1,28 @@
+notes: 零消费方判定按'数组非空且元素非空串'执行；消费方有效性（指向真实消费系统）属语义层，建议红蓝抽检兜底。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_static.py
+  query: SELECT q_id, jsonb_typeof(consumers), jsonb_array_length(consumers) FROM
+    meta_question.meta_question；+ jsonb_array_elements_text 校验元素非空
+  result:
+    total: 283
+    bad_type: 0
+    parse_rate: 1.0
+    bad_element: 0
+    zero_consumer: 0
+exam_ref: st-metaq-20260923/probe/gov_PQ-0003
+fail_type: null
+threshold: 可解析率=100% 且零消费方=0
+conclusion: pass：未答看板当前队列=全部 283 问（283 全 registered，0 answered）。consumers 字段 283/283
+  为 jsonb 数组、数组长度≥1、全部元素为非空字符串（逐元素校验 0 违例）→ 可解析率=100% ✓；零消费方问题=0 ✓。双条件过线。
+confidence: 0.7
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: OK：283 行全量扫描
+  caliber: OK：可解析=jsonb 数组且元素为非空字符串，口径机械明确
+  mechanical: OK：jsonb_typeof+jsonb_array_length+逐元素校验可复现
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0003

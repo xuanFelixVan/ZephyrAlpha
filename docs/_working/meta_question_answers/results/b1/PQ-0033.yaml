@@ -1,0 +1,35 @@
+notes: 复考前置已满足（数据在库）；fail=no_alpha 登记退役方向；原 insufficient 判定的中文指标名匹配缺陷已记录为探针教训。
+outcome: fail
+evidence:
+- probe: reexamine_pq0033.py（总包亲跑）+ 三轮复核 verify3_ch.py 纠错
+  query: macro_data FRED_* 三序列 pct_change→z 等权合成；kline_index symbol='000300' log ret→RV20；滞后0-15
+    pearsonr + block bootstrap CI
+  result:
+    peak_p: 0.37281439527711635
+    peak_r: 0.0293
+    n_merged: 941
+    peak_lag: 14
+    bootstrap_ci:
+    - -0.0096
+    - 0.082
+    n_factor_days: 1051
+    ci_excludes_zero: false
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0033
+fail_type: no_alpha
+threshold: 峰值滞后落在 1-5 日且 CI 不含 0（滚动 250 日互相关+block bootstrap）
+conclusion: 【三轮复核实证改判 insufficient→fail(no_alpha)】复核推翻原『三序列切点前不存在』前提：macro_data 以
+  FRED_* 英文命名在库（FRED_DGS10_US/FRED_DXY/FRED_VIX 各 1,016/1,017/1,050 行，2021-08-16 起），原探针以中文指标名匹配漏检。按
+  exam_plan 真考（2021-08-16~2025-09-09，合并样本 941 日）：三序列日变化率 z-score 等权合成全球风险因子 vs 沪深300
+  RV20 波动状态，滞后 0-15 日互相关全部 |r|≤0.029（峰值滞后 k=14，r=0.0293，p=0.37），block bootstrap(块长20×1000)
+  95% CI=[-0.0096, 0.082] 含 0。判据『领先期稳定落 1-5 日』与『峰值 CI 不含 0』双违——全球风险因子对 A 股大盘波动状态在闭卷窗内无显著领先性，fail
+  属因子无预测力型（no_alpha），登记退役方向，禁调参重跑。
+confidence: 0.9
+data_window:
+  end: '2025-09-09'
+  start: '2021-08-16'
+three_check:
+  data: OK（FRED_* 三序列切点前 1,016-1,050 行，三轮复核纠错后实跑）
+  caliber: OK（合成口径=日变化率 z-score 等权；波动状态=RV20 年化）
+  mechanical: OK（若数据齐，互相关+block bootstrap 可机械执行）
+pit_assertion: 全部取数与统计仅用 2021-08-16~2025-09-09 切点前数据；合成与检验未用任何切点后信息。
+q_id: PQ-0033

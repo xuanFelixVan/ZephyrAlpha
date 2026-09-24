@@ -1,0 +1,31 @@
+notes: 缺口=清算账本捕获管线 2026-09-18 才投产，闭卷窗内永久断档（快照历史不可回补，SL-A15 U4 已登记'断档即永久缺口'）。复考前置：以切点后新积累的清算样本重立新题（新切点）再考，或等待可回溯的替代清算数据源落库。
+outcome: insufficient
+_comment: batch_stat_alt 分包生成
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_alt_PQ-0016_insuff.py
+  query: SELECT count(), min(trade_time), max(trade_time) FROM c1_market.hl_liquidation_raw
+    WHERE trade_time <= '2025-09-09'；SELECT count(), min(trade_time), max(trade_time)
+    FROM c1_market.hl_liquidation_raw
+  result:
+    liq_total_rows: 5
+    liq_precut_rows: 0
+    liq_max_trade_time: 2026-09-23 01:11:20 UTC
+    liq_min_trade_time: 2026-09-18 03:15:24 UTC
+exam_ref: st-metaq-20260923/probe/batch_stat_alt_PQ-0030
+fail_type: null
+threshold: IC>0.02（清算极值日对次日已实现波动 IC）
+conclusion: insufficient：清算量因子在闭卷窗内零样本，IC 无法计算。c1_market.hl_liquidation_raw 全表仅 5
+  行，trade_time 最小值 2026-09-18 03:15 UTC，切点 2025-09-09 前 0 行；hl_perp_snapshot_daily/hl_oi_snapshot_daily
+  快照段同样自 2026-09-18 起（1170 行全为切点后）。题面 exam_plan 的评估方法本身亦为'2026-09-18 起快照段滚动评估'——即该问的整个评估窗口位于切点之后，闭卷规则下不可考。'清算量
+  99 分位日→次日沪深300 已实现波动 IC'口径可代码化，但无切点前清算数据，禁用切点后数据硬答。
+confidence: 1.0
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: NO——hl_liquidation_raw 切点前 0 行（全表 5 行，起点 2026-09-18）；配套快照表 hl_perp_snapshot_daily/hl_oi_snapshot_daily
+    亦全部为切点后
+  caliber: OK——'清算量日聚合→99 分位极值日→次日沪深300 已实现波动（日收益平方/振幅口径）秩 IC'可无歧义落地
+  mechanical: OK——若清算序列存在，IC>0.02 判定可完全代码复现
+pit_assertion: 本题结论未使用任何切点后数据；清算/快照表的切点后行数仅作登记现状观察，不进入 IC 或阈值比较。
+q_id: PQ-0030
