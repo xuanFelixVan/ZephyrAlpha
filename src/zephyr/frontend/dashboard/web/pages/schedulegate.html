@@ -1,0 +1,9 @@
+<section class="page" id="p-schedulegate">
+    <h2 class="page-title">排程骨架闸（AI 层 L5 C9） <span class="badge b-na">只读+一键确认</span></h2>
+    <div class="page-sub">Scheduling · L5 排程门闸：排产队列投影（score 排序+配额四读数+挂起态）与骨架级提案包（利弊对照+两问打分）——数据真源 /api/schedulegate-queue 与 /api/schedulegate-skeletons（fetch 只读），由 scheduling dispatcher 纯函数排序生成，禁止手工造队列</div>
+
+    <!-- 队列+骨架卡（JS 渲染：引擎 features/schedulegate/schedulegate.js） -->
+    <div id="schedulegate-body"></div>
+
+    <div class="note">唯一写路由=POST /api/schedulegate-confirm（骨架级一键确认，两段式确认后局部刷新）；确认态判定落点批文前该路由诚实拒执行。其余全部只读。</div>
+  </section>

@@ -92,6 +92,15 @@ ZK.api = (function(){
     postPromotionDecide: function(advisoryId, decision){   /* Owner 拍板 approve/reject（api_server 第四获准写端点；两段式确认在前端 window.confirm，token 服务端自取） */
       return fetchJson('/api/promotion-decide', 15000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({advisory_id:advisoryId, decision:decision})});
     },
+    fetchSchedulegateQueue: function(){   /* L5 排产队列投影（schedulegate 页真源：load_seeds+dispatcher.rank_pending 服务端逐请求打分无缓存，15s 兜底）；响应 {ok,count,data:scored}，降级=ok:false+data:[] */
+      return fetchJson('/api/schedulegate-queue', 15000);
+    },
+    fetchSchedulegateSkeletons: function(){   /* 骨架级提案包（owner_gate 提案不占自动派工队列，只读）；响应 {ok,count,data}，降级=ok:false+data:[] */
+      return fetchJson('/api/schedulegate-skeletons', 10000);
+    },
+    postSchedulegateConfirm: function(orderId, decision){   /* 骨架级一键确认 confirm/reject（本页唯一写路由；C9 确认态落点批文前后端诚实拒执行 ok:false，前端渲染拒因不假持久化） */
+      return fetchJson('/api/schedulegate-confirm', 15000, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({order_id:orderId, decision:decision})});
+    },
     fetchSourcesStatus: function(){   /* 数据源监管真源（健康探针日志解析+alerter 告警流水） */
       return fetchJson('/api/sources-status', 8000);
     },

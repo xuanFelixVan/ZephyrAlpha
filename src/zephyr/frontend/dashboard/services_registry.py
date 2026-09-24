@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L08-001 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 """服务总闸——启动项注册表（Owner 2026-09-02 裁定：桌面 Dashboard 承担启动编排，本模块=唯一真源）
-* 目录：16 个启动项（服务域/数据域/交易域/基础设施/守护域），大白话说明随目录走
+* 目录：len(SERVICE_CATALOG) 实测 35 个启动项（2026-09-25 实测；服务域6/数据域5/交易域6/基础设施6/守护域12），大白话说明随目录走
 * 状态：psutil 进程扫描 + tmp/*.heartbeat 心跳 freshness + 端口探测 + schtasks 计划任务（60s 缓存）
 * 四态灯 DS-12：green=正常 / yellow=延迟 / red=断线 / gray=未启动
 * 控制：分级开关（free=自由 / confirm=二次确认 / guard=保命禁操作 / external=外部程序禁操作 / self=本页宿主）
@@ -26,7 +26,7 @@ _REPO = Path(__file__).resolve().parents[4]
 _TMP = _REPO / "tmp"
 _LOG = _TMP / "services_control_log.jsonl"
 
-# ── 服务目录（16 项；desc=大白话功能说明——Owner 口径"写成人话"）──────────────
+# ── 服务目录（35 项=len(SERVICE_CATALOG)，2026-09-25 实测；desc=大白话功能说明——Owner 口径"写成人话"）──────────────
 # tier: free=自由开关 / confirm=二次确认 / guard=保命禁操作 / external=外部程序只读 / self=本页宿主
 # detect: heartbeat=<tmp 文件名> / port=<端口号> / proc=<cmdline|name 正则> / task=<schtasks 任务名>
 # start: 拉起命令（argv 列表，cwd=仓库根）；stop: how=tree(kill 进程树)/heartbeat(kill guard+child)/port(kill 监听进程)
