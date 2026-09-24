@@ -1065,3 +1065,22 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   git show a74e9a6c48 --stat --format="%h %ci %s" | head -8                                                                                                  # ③ 383/387 本包自修落地
   git merge-base --is-ancestor 90889679b2 HEAD && git merge-base --is-ancestor 5f4136315e HEAD && echo 两处已落dev真                                          # ④ 非假绿
   ```
+
+
+## 心跳 2026-09-24 09:34 CST 实测（`date`=09:34:59，本串由 shell `date` 传入）· 在干=**收官"连续两轮"第 2 轮三尺复跑 + 自家尺H2 控制组 rot 治本 + GOMAP 新"硬"定性为并发在途非落地缺陷** · 卡住=无 · 下一步=见 ④
+
+- **① 承 09:04 块 ⑤：0033 已落地**＝`00a3bda7ac`(09:09:40·报告口径追至09:04)；盘 LEDGER/REPORT == HEAD(1067/408 行，`diff` 空)。本包 done=20 dead=9 pending=0。
+- **② 收官"连续两轮"第 2 轮（三尺，全部只读可重放）**：
+  - **尺J**＝`待补块=0`（跨袋零截断残留，与第 1 轮一致）。
+  - **尺H2**＝**先治自家工具病再读数**：第 1 轮后本尺**自我作废**——其阳性控制组被钉死在"本包 0023 报告袋 vs 现 HEAD"，而 0023 已随 0033 落地 ⇒ HEAD 吞下该袋全部行 ⇒ dead 归 0 ⇒ 控制判"dead 应>0"失败 ⇒ 整尺作废（**这正是控制组"与仓态无关"铁律的又一次现形：钉真件的阳性控制必然随落地 rot**）。处方＝控制组改**合成样本**（absent-key 阳性必 dead=3、自比对阴性必 0），与尺J 同法、永不随落地漂移；已落地并复跑通过（阳性=3/阴性=0，不再作废）。复跑读数：命中袋-件对=30、合法改写侧 150 行、**条目被吃侧=3 行且全属已登记 0009**（`battle_map_domain_policy.yaml` `(no-key)×3`）＝**零新死件**。
+  - **align_all（HEAD 面只读探针 `run_headside_align.py`）**＝**rc=1**，但**唯一硬项=GOMAP 机生层漂移**（下 ③）；余六类（domain/ghost/frontend/decision/factory）硬=0，软 1003（chainmap 12 长城专项在清、翻译册 6 组重复 module_path 已知）。
+- **③ 🔴 GOMAP "error=1" 定性＝并发会话在途未落地草稿，非落地缺陷（HEAD 纯函数无漂移）**：报 `机生层漂移 L2_resource: scripts/sector_line/build_gpu_input_pack.py（scan() 重建新增，yaml 未刷新）`。三证：①`git status --porcelain`＝`?? scripts/sector_line/`（**整个目录未跟踪**）；②`git cat-file -e HEAD:…/build_gpu_input_pack.py`＝**NOT at HEAD**；③`mtime`＝09:27（本轮开跑前 7 分钟、他包正在写）。根因＝`generate_governance_map.py:143` 的 `scan()` 用 `base.rglob("*.py")` **走文件系统**（工作树），故把某并发包（sector_line/GPU 族，与图 8"长城专项清欠中"同源）的**在途草稿**读成"新增资源"。**HEAD 面 GOMAP 漂移=0**（本包 `5f4136315e` 重跑修仍成立）。**处置＝登记上交不代修**（§3.4 owner 责任制 + RULE-SSOT：重跑机生层会把别包未提交草稿烙进派生册，方向错误），挂 `F-AUDIT-GOMAP-INFLIGHT`＝待该包 commit+自跑 `generate_governance_map.py` 后自然清零；下轮复验：若该目录已被跟踪且 GOMAP 已刷新→本尺转 rc=0；若仍在途→维持"仅剩已登记他包在途项"合格口径。
+- **④ 下一步（轮次）**：① 本块随袋 **0034** 入队（自家 LEDGER 纯增，通道 0032/0033 已证可用）② **第 3 轮**＝复跑三尺，验 GOMAP 在途项是否自清 + 尺H2 合成控制稳定 + 尺J 仍 0 ③ 红蓝反证并档（终审前，累计 31 例）④ 终报三清单（悬空/漏挂/断链 逐条带证据+处置态）+ 复查清单 ⑤ 满足判据后自删本自动化（jobId `39cc5bd5`）+ 台账记"自动化已自删·本包收官"。**对"连续两轮"的诚实修正**：第 2 轮并非无观察项——新出现 GOMAP 在途草稿（HEAD-clean 但工作树新观测），故按 §0.8/⑤ 需第 3 轮确认其为稳定他包在途项或已自清，方算"连续两轮零落地新问题"，不抢跑宣布收官。
+- **队列/align 状态**：本包 done=20、dead=9、pending=0（本轮入 0034）；HEAD=`ff96377f56`(09:14:47·他包 st-oddjobs-final tasks.yaml 注释，非本包)。**本包对注册表/配置册/depgraph/GOMAP DB 写入累计仍=0**（全程 `git show`/`git log`/只读探针＋自家案卷；GOMAP 仅"重跑生成器"级动作且判为不代修）。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  git status --porcelain scripts/sector_line/ ; git cat-file -e HEAD:scripts/sector_line/build_gpu_input_pack.py && echo AT_HEAD || echo NOT_at_HEAD   # ③ 三证：??未跟踪 + NOT at HEAD
+  python .runtime/tmp/audit_all_20260924/probe_bag_regression_attribute.py 2>&1 | grep -E "控制组|dead=[^0 ]"   # ② 合成控制阳性=3/阴性=0；dead 仅 0009×3
+  python .runtime/tmp/audit_all_20260924/ruler_J_restore.py 2>&1 | tail -1                    # ② 待补块=0
+  python .runtime/tmp/audit_all_20260924/run_headside_align.py --no-report 2>&1 | grep -E "硬阻断|gomap"   # ②③ 唯一硬=gomap 且为在途
+  ```
