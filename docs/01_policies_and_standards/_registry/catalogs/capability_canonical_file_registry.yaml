@@ -48985,4 +48985,901 @@ creation_tokens:
   capability: metaq-question-exam-campaign
   merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
 # [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
+- file: docs/_working/meta_question_answers/03_HANDOFF_NEW_GC.md
+  token: metaq-question-exam-campaign-handoff-new-gc-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "新总包车道交接书，战役配套件无重复簇"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
+- file: docs/_working/cleanup_final/ledger.md
+  token: cleanup-final-ledger-20260924
+  created_by: st-cleanup-final-20260924
+  capability: cleanup_final
+  merge_evaluation: "遗留修复收尾总包专用台账目录，六件套一次性使用，收包后无新文件增长即停"
+- file: scripts/ch/backfill_money_flow_history.py
+  token: metaq-wo011-moneyflow-backfill-backfill-money-flow-history-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo011-moneyflow-backfill
+  merge_evaluation: "WO-011 独占新管线：money_flow 深历史回填，无同域重复件（既有 money_flow_incremental 仅增量无窗控），四判据=零替代关系"
+- file: scripts/governance/meta_question/build_closure_ledger.py
+  token: metaq-closure-ledger-build-closure-ledger-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-closure-ledger
+  merge_evaluation: "新增机读闭环台账派生器，替代手工维护 02_final_ledger 散文计数（四判据：同域无既有派生器、零重复、不退役任何旧件）"
+- file: docs/_working/meta_question_answers/04_closure_ledger.yaml
+  token: metaq-closure-ledger-04-closure-ledger-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-closure-ledger
+  merge_evaluation: "闭环台账生成物（数字全由 PG 现算，非第二真源），登记为可追溯产物"
+- file: scripts/governance/meta_question/wo005/generate_board_symbol_routing.py
+  token: metaq-wo-graph-registers-generate-board-symbol-routing-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-graph-registers
+  merge_evaluation: "283问战役 WO-005/008 独占产物：图谱口径映射册与产品同义词册，无同域旧件可替代（四判据：零触发零消费不适用、非同域重复、不可从既有真源派生）"
+- file: scripts/governance/meta_question/wo008/generate_product_synonym_register.py
+  token: metaq-wo-graph-registers-generate-product-synonym-register-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-graph-registers
+  merge_evaluation: "283问战役 WO-005/008 独占产物：图谱口径映射册与产品同义词册，无同域旧件可替代（四判据：零触发零消费不适用、非同域重复、不可从既有真源派生）"
+- file: data/registers/metaq_board_routing/board_symbol_routing.yaml
+  token: metaq-wo-graph-registers-board-symbol-routing-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-graph-registers
+  merge_evaluation: "283问战役 WO-005/008 独占产物：图谱口径映射册与产品同义词册，无同域旧件可替代（四判据：零触发零消费不适用、非同域重复、不可从既有真源派生）"
+- file: data/registers/metaq_product_synonyms/ckg_edge_alignment.csv
+  token: metaq-wo-graph-registers-ckg-edge-alignment-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-graph-registers
+  merge_evaluation: "283问战役 WO-005/008 独占产物：图谱口径映射册与产品同义词册，无同域旧件可替代（四判据：零触发零消费不适用、非同域重复、不可从既有真源派生）"
+- file: data/registers/metaq_product_synonyms/product_synonym_links.csv
+  token: metaq-wo-graph-registers-product-synonym-links-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-graph-registers
+  merge_evaluation: "283问战役 WO-005/008 独占产物：图谱口径映射册与产品同义词册，无同域旧件可替代（四判据：零触发零消费不适用、非同域重复、不可从既有真源派生）"
+- file: data/registers/metaq_product_synonyms/product_synonym_register.yaml
+  token: metaq-wo-graph-registers-product-synonym-register-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-graph-registers
+  merge_evaluation: "283问战役 WO-005/008 独占产物：图谱口径映射册与产品同义词册，无同域旧件可替代（四判据：零触发零消费不适用、非同域重复、不可从既有真源派生）"
+- file: scripts/governance/meta_question/wo009/apply_pledge_event_version_ddl.py
+  token: metaq-wo009-pledge-carrier-apply-pledge-event-version-ddl-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo009-pledge-carrier
+  merge_evaluation: "WO-009 质押事件版本载体三件（DDL/回填/复算），无同域旧件：现库无事件版本载体，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo009/backfill_pledge_event_version.py
+  token: metaq-wo009-pledge-carrier-backfill-pledge-event-version-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo009-pledge-carrier
+  merge_evaluation: "WO-009 质押事件版本载体三件（DDL/回填/复算），无同域旧件：现库无事件版本载体，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo009/patches/wo009_depgraph_write_path_whitelist.patch
+  token: metaq-wo009-pledge-carrier-wo009-depgraph-write-path-whitelist-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo009-pledge-carrier
+  merge_evaluation: "WO-009 质押事件版本载体三件（DDL/回填/复算），无同域旧件：现库无事件版本载体，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo009/recheck_pq0072_violation.py
+  token: metaq-wo009-pledge-carrier-recheck-pq0072-violation-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo009-pledge-carrier
+  merge_evaluation: "WO-009 质押事件版本载体三件（DDL/回填/复算），无同域旧件：现库无事件版本载体，四判据=新建非替代"
+- file: docs/_working/meta_question_answers/casefiles/WO-001-003.yaml
+  token: metaq-wo-casefiles-wo-001-003-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单施工案卷（数字回指 results/PG 真源，非第二真源；原置于 build/ 触 .gitignore:15 通配致不可落地，已迁至 casefiles/）"
+- file: docs/_working/meta_question_answers/casefiles/WO-004.yaml
+  token: metaq-wo-casefiles-wo-004-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单施工案卷（数字回指 results/PG 真源，非第二真源；原置于 build/ 触 .gitignore:15 通配致不可落地，已迁至 casefiles/）"
+- file: docs/_working/meta_question_answers/casefiles/WO-005.yaml
+  token: metaq-wo-casefiles-wo-005-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单施工案卷（数字回指 results/PG 真源，非第二真源；原置于 build/ 触 .gitignore:15 通配致不可落地，已迁至 casefiles/）"
+- file: docs/_working/meta_question_answers/casefiles/WO-007.yaml
+  token: metaq-wo-casefiles-wo-007-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单施工案卷（数字回指 results/PG 真源，非第二真源；原置于 build/ 触 .gitignore:15 通配致不可落地，已迁至 casefiles/）"
+- file: docs/_working/meta_question_answers/casefiles/WO-008.yaml
+  token: metaq-wo-casefiles-wo-008-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单施工案卷（数字回指 results/PG 真源，非第二真源；原置于 build/ 触 .gitignore:15 通配致不可落地，已迁至 casefiles/）"
+- file: docs/_working/meta_question_answers/casefiles/WO-009.yaml
+  token: metaq-wo-casefiles-wo-009-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单施工案卷（数字回指 results/PG 真源，非第二真源；原置于 build/ 触 .gitignore:15 通配致不可落地，已迁至 casefiles/）"
+- file: docs/_working/meta_question_answers/casefiles/REEXAM-A06.yaml
+  token: metaq-wo-casefiles-reexam-a06-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单案卷目录补登：三件由 .yaml 更为 .md（frontmatter+散文正文挂 .yaml 会触 YAML 双文档解析失败，机读性不达标）"
+- file: docs/_working/meta_question_answers/casefiles/REEXAM-CARRIERS.yaml
+  token: metaq-wo-casefiles-reexam-carriers-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单案卷目录补登：三件由 .yaml 更为 .md（frontmatter+散文正文挂 .yaml 会触 YAML 双文档解析失败，机读性不达标）"
+- file: docs/_working/meta_question_answers/casefiles/REEXAM-FAILS.yaml
+  token: metaq-wo-casefiles-reexam-fails-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单案卷目录补登：三件由 .yaml 更为 .md（frontmatter+散文正文挂 .yaml 会触 YAML 双文档解析失败，机读性不达标）"
+- file: docs/_working/meta_question_answers/casefiles/WO-001-003.md
+  token: metaq-wo-casefiles-wo-001-003-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单案卷目录补登：三件由 .yaml 更为 .md（frontmatter+散文正文挂 .yaml 会触 YAML 双文档解析失败，机读性不达标）"
+- file: docs/_working/meta_question_answers/casefiles/WO-004.md
+  token: metaq-wo-casefiles-wo-004-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单案卷目录补登：三件由 .yaml 更为 .md（frontmatter+散文正文挂 .yaml 会触 YAML 双文档解析失败，机读性不达标）"
+- file: docs/_working/meta_question_answers/casefiles/WO-007.md
+  token: metaq-wo-casefiles-wo-007-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "工单案卷目录补登：三件由 .yaml 更为 .md（frontmatter+散文正文挂 .yaml 会触 YAML 双文档解析失败，机读性不达标）"
+- file: docs/_working/meta_question_answers/casefiles/REEXAM-DSRHYTHM.yaml
+  token: metaq-wo-casefiles-reexam-dsrhythm-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "复考案卷补登（各工单与复考轮的证据件）"
+- file: docs/_working/meta_question_answers/casefiles/GC-FINAL-REPORT.md
+  token: metaq-wo-casefiles-gc-final-report-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "终局交付报告与复考案卷补登（数字回指 PG/CH 真源与闭环台账，非第二真源）"
+- file: docs/_working/meta_question_answers/casefiles/WO-004-CASCADE.yaml
+  token: metaq-wo-casefiles-wo-004-cascade-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-casefiles
+  merge_evaluation: "级联修复案卷（总包盘外独立复验记录，数字为自跑实测非转述）"
+- file: src/zephyr/governance/meta_question/exam_loop/__init__.py
+  token: metaq-exam-loop---init---20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_loop/arbitration.py
+  token: metaq-exam-loop-arbitration-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_loop/config/examloop_audit_event_vocabulary.yaml
+  token: metaq-exam-loop-examloop-audit-event-vocabulary-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_loop/config/examloop_reexam_window_rules.yaml
+  token: metaq-exam-loop-examloop-reexam-window-rules-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_loop/event_codes.py
+  token: metaq-exam-loop-event-codes-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_loop/exam_plan.py
+  token: metaq-exam-loop-exam-plan-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_loop/ledger.py
+  token: metaq-exam-loop-ledger-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_loop/reexam_scheduler.py
+  token: metaq-exam-loop-reexam-scheduler-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_loop/state_machine.py
+  token: metaq-exam-loop-state-machine-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_loop/writeback.py
+  token: metaq-exam-loop-writeback-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: tests/governance/meta_question/conftest.py
+  token: metaq-exam-loop-tests-conftest-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/test_build_closure_ledger.py
+  token: metaq-exam-loop-tests-test-build-closure-ledger-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/test_exam_loop_arbitration.py
+  token: metaq-exam-loop-tests-test-exam-loop-arbitration-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/test_exam_loop_exam_plan.py
+  token: metaq-exam-loop-tests-test-exam-loop-exam-plan-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/test_exam_loop_ledger.py
+  token: metaq-exam-loop-tests-test-exam-loop-ledger-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/test_exam_loop_scheduler.py
+  token: metaq-exam-loop-tests-test-exam-loop-scheduler-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/test_exam_loop_state_machine.py
+  token: metaq-exam-loop-tests-test-exam-loop-state-machine-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/test_exam_loop_writeback.py
+  token: metaq-exam-loop-tests-test-exam-loop-writeback-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/wo001_003/test_intake_batch.py
+  token: metaq-exam-loop-tests-test-intake-batch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/wo001_003/test_registry_real_check.py
+  token: metaq-exam-loop-tests-test-registry-real-check-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/wo001_003/test_replay_audit_to_jsonl.py
+  token: metaq-exam-loop-tests-test-replay-audit-to-jsonl-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: tests/governance/meta_question/wo001_003/test_source_line_register_generator.py
+  token: metaq-exam-loop-tests-test-source-line-register-generator-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop-tests
+  merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
+- file: scripts/governance/meta_question/wo_b1_examloop/check_exam_loop.py
+  token: metaq-wo-builds-check-exam-loop-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo_b1_examloop/run_exam_loop.py
+  token: metaq-wo-builds-run-exam-loop-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo001_003/generate_source_line_register.py
+  token: metaq-wo-builds-generate-source-line-register-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo001_003/intake_batch.py
+  token: metaq-wo-builds-intake-batch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo001_003/patches/0001-wo001-registry-degraded-stub-to-real-check.patch
+  token: metaq-wo-builds-0001-wo001-registry-degraded-stub-to-real-check-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo001_003/patches/0002-wo003-campaign-regime-95-ratified.patch
+  token: metaq-wo-builds-0002-wo003-campaign-regime-95-ratified-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo001_003/patches/0003-schedule-metaq-audit-reconcile-daily-task.patch
+  token: metaq-wo-builds-0003-schedule-metaq-audit-reconcile-daily-task-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo001_003/patches/0004-wo002-daily-reconcile-window-in-policy-table.patch
+  token: metaq-wo-builds-0004-wo002-daily-reconcile-window-in-policy-table-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo001_003/patches/README.md
+  token: metaq-wo-builds-readme-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo001_003/replay_audit_to_jsonl.py
+  token: metaq-wo-builds-replay-audit-to-jsonl-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_source_line/source_line_registry.yaml
+  token: metaq-wo-builds-source-line-registry-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_node_binding/apply_ledger_wo006.yaml
+  token: metaq-wo-builds-apply-ledger-wo006-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_node_binding/merged_node_supersede_wo006.yaml
+  token: metaq-wo-builds-merged-node-supersede-wo006-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_node_binding/micro_chain_retirement_nominations_wo006.yaml
+  token: metaq-wo-builds-micro-chain-retirement-nominations-wo006-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_node_binding/node_binding_candidates_wo006.yaml
+  token: metaq-wo-builds-node-binding-candidates-wo006-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_node_binding/pq0064_recompute_wo006.yaml
+  token: metaq-wo-builds-pq0064-recompute-wo006-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_node_binding/source_c_forensics_wo006.yaml
+  token: metaq-wo-builds-source-c-forensics-wo006-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_io_edge/ckg_structural_prior_tier.yaml
+  token: metaq-wo-builds-ckg-structural-prior-tier-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_io_edge/io_edge_binding_register.yaml
+  token: metaq-wo-builds-io-edge-binding-register-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_io_edge/io_sector_two_level_map.yaml
+  token: metaq-wo-builds-io-sector-two-level-map-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_io_2018/china_2018_153.matrix.json
+  token: metaq-wo-builds-china-2018-153matrix-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_io_2018/china_2018_153.rda
+  token: metaq-wo-builds-china-2018-153-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_io_2018/china_2020_153.matrix.json
+  token: metaq-wo-builds-china-2020-153matrix-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_io_2018/china_2020_153.rda
+  token: metaq-wo-builds-china-2020-153-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_io_2018/io_2018_alignment_report.json
+  token: metaq-wo-builds-io-2018-alignment-report-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_sector_name/sector_code_name_registry.csv
+  token: metaq-wo-builds-sector-code-name-registry-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_sector_name/sector_code_name_registry.yaml
+  token: metaq-wo-builds-sector-code-name-registry-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/e1c_space_cmb_e1c_v1.yaml
+  token: metaq-wo-builds-e1c-space-cmb-e1c-v1-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/e1c_space_design_cmb_e1c_v1.yaml
+  token: metaq-wo-builds-e1c-space-design-cmb-e1c-v1-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/e1c_yardstick_v1.yaml
+  token: metaq-wo-builds-e1c-yardstick-v1-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/vocab/metaq_e1c_gate_verdict_vocabulary.yaml
+  token: metaq-wo-builds-metaq-e1c-gate-verdict-vocabulary-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/vocab/metaq_e1c_n_eff_estimator_vocabulary.yaml
+  token: metaq-wo-builds-metaq-e1c-n-eff-estimator-vocabulary-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/vocab/metaq_e1c_record_kind_vocabulary.yaml
+  token: metaq-wo-builds-metaq-e1c-record-kind-vocabulary-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/vocab/metaq_e1c_space_action_vocabulary.yaml
+  token: metaq-wo-builds-metaq-e1c-space-action-vocabulary-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/vocab/metaq_e1c_space_status_vocabulary.yaml
+  token: metaq-wo-builds-metaq-e1c-space-status-vocabulary-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/vocab/metaq_e1c_track_vocabulary.yaml
+  token: metaq-wo-builds-metaq-e1c-track-vocabulary-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: data/registers/metaq_e1c/vocab/metaq_e1c_window_vocabulary.yaml
+  token: metaq-wo-builds-metaq-e1c-window-vocabulary-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
+- file: scripts/governance/meta_question/reexam/a06/exam_a06.py
+  token: metaq-wo-builds-exam-a06-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/reexam/a06/panels.py
+  token: metaq-wo-builds-panels-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/reexam/a06/stats_core.py
+  token: metaq-wo-builds-stats-core-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo004_cascade/recalc_hfq_cascade.py
+  token: metaq-wo-builds-recalc-hfq-cascade-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo004_cascade/verify_hfq_cascade.py
+  token: metaq-wo-builds-verify-hfq-cascade-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo004_cascade/verify_hfq_cascade.py.tmp.35364.1790241193184
+  token: metaq-wo-builds-verify-hfq-cascadepytmp35364-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo006/apply_node_bindings.py
+  token: metaq-wo-builds-apply-node-bindings-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo006/emit_case_file.py
+  token: metaq-wo-builds-emit-case-file-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo006/generate_merged_node_convergence.py
+  token: metaq-wo-builds-generate-merged-node-convergence-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo006/generate_micro_chain_retirement_nominations.py
+  token: metaq-wo-builds-generate-micro-chain-retirement-nominations-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo006/generate_node_binding_candidates.py
+  token: metaq-wo-builds-generate-node-binding-candidates-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo006/probe_source_c_ths.py
+  token: metaq-wo-builds-probe-source-c-ths-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo006/recompute_pq0064.py
+  token: metaq-wo-builds-recompute-pq0064-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo006/recompute_pq0064.py.tmp.35364.1790236272443
+  token: metaq-wo-builds-recompute-pq0064pytmp35364-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo006/wo006_common.py
+  token: metaq-wo-builds-wo006-common-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/build_ckg_prior_tier.py
+  token: metaq-wo-builds-build-ckg-prior-tier-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/build_io_edge_bindings.py
+  token: metaq-wo-builds-build-io-edge-bindings-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/build_io_sector_map.py
+  token: metaq-wo-builds-build-io-sector-map-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/io_edge_binding_loader.py
+  token: metaq-wo-builds-io-edge-binding-loader-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/patches/00_INDEX.md
+  token: metaq-wo-builds-00-index-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/patches/wo007-ckg-prior-01.md
+  token: metaq-wo-builds-wo007-ckg-prior-01-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/patches/wo007-ckg-prior-02.md
+  token: metaq-wo-builds-wo007-ckg-prior-02-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/patches/wo007-ckg-prior-03.md
+  token: metaq-wo-builds-wo007-ckg-prior-03-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/patches/wo007-ckg-prior-04.md
+  token: metaq-wo-builds-wo007-ckg-prior-04-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/patches/wo007-ckg-prior-04.md.tmp.35364.1790235645459
+  token: metaq-wo-builds-wo007-ckg-prior-04mdtmp35364-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/patches/wo007-ckg-prior-05.md
+  token: metaq-wo-builds-wo007-ckg-prior-05-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo007/wo007_reexam.py
+  token: metaq-wo-builds-wo007-reexam-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/_probe.py
+  token: metaq-wo-builds--probe-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/backfill_news_sentiment.py
+  token: metaq-wo-builds-backfill-news-sentiment-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/backfill_sw_member_history.py
+  token: metaq-wo-builds-backfill-sw-member-history-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/build_news_sentiment_window.py
+  token: metaq-wo-builds-build-news-sentiment-window-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/build_sector_name_registry.py
+  token: metaq-wo-builds-build-sector-name-registry-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/prepare_io_2018.py
+  token: metaq-wo-builds-prepare-io-2018-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/probe_backfill_sources.py
+  token: metaq-wo-builds-probe-backfill-sources-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/probe_sector_name_sources.py
+  token: metaq-wo-builds-probe-sector-name-sources-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/probe_tdx_cfg_coverage.py
+  token: metaq-wo-builds-probe-tdx-cfg-coverage-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/probe_unmatched_880_identity.py
+  token: metaq-wo-builds-probe-unmatched-880-identity-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/register_reaper_keep.py
+  token: metaq-wo-builds-register-reaper-keep-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_a2legs/write_sector_name_map_to_ch.py
+  token: metaq-wo-builds-write-sector-name-map-to-ch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b2_e1c/apply_e1c_ledgers.py
+  token: metaq-wo-builds-apply-e1c-ledgers-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b2_e1c/build_e1c_space_register.py
+  token: metaq-wo-builds-build-e1c-space-register-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b2_e1c/e1c_ledger.py
+  token: metaq-wo-builds-e1c-ledger-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/apply_macro_vintage_ddl.py
+  token: metaq-wo-builds-apply-macro-vintage-ddl-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/apply_macro_vintage_ddl.py.tmp.35364.1790234163665
+  token: metaq-wo-builds-apply-macro-vintage-ddlpytmp35364-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/audit_macro_vintage.py
+  token: metaq-wo-builds-audit-macro-vintage-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/audit_macro_vintage.py.tmp.35364.1790239951649
+  token: metaq-wo-builds-audit-macro-vintagepytmp35364-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/macro_vintage.py
+  token: metaq-wo-builds-macro-vintage-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/patches/0001-macro-vintage-ingest-mirror.patch
+  token: metaq-wo-builds-0001-macro-vintage-ingest-mirror-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/register_macro_history_inventory.py
+  token: metaq-wo-builds-register-macro-history-inventory-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/reports/vintage_audit_202608.yaml
+  token: metaq-wo-builds-vintage-audit-202608-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/reports/vintage_sandbox_20260924T072407Z.json
+  token: metaq-wo-builds-vintage-sandbox-20260924t072407z-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/reports/vintage_sandbox_20260924T072539Z.json
+  token: metaq-wo-builds-vintage-sandbox-20260924t072539z-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/vocab/metaq_macro_pub_ts_basis_vocabulary.yaml
+  token: metaq-wo-builds-metaq-macro-pub-ts-basis-vocabulary-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "283问战役工单车道产物（生成器/复考器/机读册），四判据=新建非替代、无同域重复簇、不可由既有真源派生"
+- file: scripts/governance/meta_question/wo_b3_macro/reports/vintage_sandbox_20260924T072407Z.yaml
+  token: metaq-wo-builds-vintage-sandbox-20260924t072407z-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "宏数 vintage 沙箱稽核报告（json→yaml 合规转换，非第二真源）"
+- file: scripts/governance/meta_question/wo_b3_macro/reports/vintage_sandbox_20260924T072539Z.yaml
+  token: metaq-wo-builds-vintage-sandbox-20260924t072539z-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo-builds
+  merge_evaluation: "宏数 vintage 沙箱稽核报告（json→yaml 合规转换，非第二真源）"
+- file: scripts/governance/meta_question/wo004/recalc_hfq.py
+  token: metaq-wo004-hfq-recalc-recalc-hfq-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo004-hfq-recalc
+  merge_evaluation: "WO-004 复权链重算三件（重算器/对拍器/月度抽检器），现库无同类件：bdpan 基座生成器不产 raw×adj_factor 对拍，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo004/sample_check_hfq.py
+  token: metaq-wo004-hfq-recalc-sample-check-hfq-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo004-hfq-recalc
+  merge_evaluation: "WO-004 复权链重算三件（重算器/对拍器/月度抽检器），现库无同类件：bdpan 基座生成器不产 raw×adj_factor 对拍，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo004/verify_hfq.py
+  token: metaq-wo004-hfq-recalc-verify-hfq-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo004-hfq-recalc
+  merge_evaluation: "WO-004 复权链重算三件（重算器/对拍器/月度抽检器），现库无同类件：bdpan 基座生成器不产 raw×adj_factor 对拍，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo004/verify_hfq.py.tmp.35364.1790237999209
+  token: metaq-wo004-hfq-recalc-verify-hfqpytmp35364-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo004-hfq-recalc
+  merge_evaluation: "WO-004 复权链重算三件（重算器/对拍器/月度抽检器），现库无同类件：bdpan 基座生成器不产 raw×adj_factor 对拍，四判据=新建非替代"
+- file: scripts/governance/meta_question/redblue_metaq_suite.py
+  token: metaq-redblue-redblue-metaq-suite-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-redblue
+  merge_evaluation: "红蓝对抗套件独占（四把尺各带能红证据），无同类既有件"
+- file: scripts/governance/meta_question/reexam/dsrhythm/exam_dsrhythm.py
+  token: metaq-reexam-engine-exam-dsrhythm-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-reexam-engine
+  merge_evaluation: "复考器族（各题族判据按库内原文重放），四判据=新建非替代、与首考探针非同源重复"
+- file: scripts/governance/meta_question/reexam/dsrhythm/writeback_dsrhythm.py
+  token: metaq-reexam-engine-writeback-dsrhythm-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-reexam-engine
+  merge_evaluation: "复考器族（各题族判据按库内原文重放），四判据=新建非替代、与首考探针非同源重复"
+- file: scripts/governance/meta_question/wo001_003/patches/0001-wo001-registry-degraded-stub-to-real-check.pending_patch.yaml
+  token: metaq-pending-patches-0001-wo001-registry-degraded-stub-to-real-checkpending-patch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-pending-patches
+  merge_evaluation: "待落地补丁 yaml 承载件（scripts/ 契约禁 .patch/.diff 的合规替代），非第二真源：正文即 git apply 输入"
+- file: scripts/governance/meta_question/wo001_003/patches/0002-wo003-campaign-regime-95-ratified.pending_patch.yaml
+  token: metaq-pending-patches-0002-wo003-campaign-regime-95-ratifiedpending-patch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-pending-patches
+  merge_evaluation: "待落地补丁 yaml 承载件（scripts/ 契约禁 .patch/.diff 的合规替代），非第二真源：正文即 git apply 输入"
+- file: scripts/governance/meta_question/wo001_003/patches/0003-schedule-metaq-audit-reconcile-daily-task.pending_patch.yaml
+  token: metaq-pending-patches-0003-schedule-metaq-audit-reconcile-daily-taskpending-patch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-pending-patches
+  merge_evaluation: "待落地补丁 yaml 承载件（scripts/ 契约禁 .patch/.diff 的合规替代），非第二真源：正文即 git apply 输入"
+- file: scripts/governance/meta_question/wo001_003/patches/0004-wo002-daily-reconcile-window-in-policy-table.pending_patch.yaml
+  token: metaq-pending-patches-0004-wo002-daily-reconcile-window-in-policy-tablepending-patch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-pending-patches
+  merge_evaluation: "待落地补丁 yaml 承载件（scripts/ 契约禁 .patch/.diff 的合规替代），非第二真源：正文即 git apply 输入"
+- file: scripts/governance/meta_question/wo009/patches/wo009_depgraph_write_path_whitelist.pending_patch.yaml
+  token: metaq-pending-patches-wo009-depgraph-write-path-whitelistpending-patch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-pending-patches
+  merge_evaluation: "待落地补丁 yaml 承载件（scripts/ 契约禁 .patch/.diff 的合规替代），非第二真源：正文即 git apply 输入"
+- file: scripts/governance/meta_question/wo_b3_macro/patches/0001-macro-vintage-ingest-mirror.pending_patch.yaml
+  token: metaq-pending-patches-0001-macro-vintage-ingest-mirrorpending-patch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-pending-patches
+  merge_evaluation: "待落地补丁 yaml 承载件（scripts/ 契约禁 .patch/.diff 的合规替代），非第二真源：正文即 git apply 输入"
+- file: scripts/governance/meta_question/apply_pending_patch.py
+  token: metaq-pending-patches-apply-pending-patch-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-pending-patches
+  merge_evaluation: "共用施加器（还原 diff 后 git apply），替代散落手工 apply，四判据=新建非替代"
+- file: scripts/governance/meta_question/wo004_cascade/sample_check_hfq_cascade.py
+  token: metaq-wo004-cascade-sample-check-hfq-cascade-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-wo004-cascade
+  merge_evaluation: "WO-004 复权表族级联三器（重算/族内对拍/月度抽检），现库无同类件：族内一致性从未被机检，四判据=新建非替代"
+- file: docs/_working/commit_speedup_campaign/00_HANDOFF.md
+  token: commit-speedup-00-handoff-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/00_MASTER_PLAN.md
+  token: commit-speedup-00-master-plan-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/00_skeleton/S1_stage_inventory.md
+  token: commit-speedup-s1-stage-inventory-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/00_skeleton/S2_substage_tree.yaml
+  token: commit-speedup-s2-substage-tree-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/00_skeleton/S3_gaps_and_blindspots.md
+  token: commit-speedup-s3-gaps-and-blindspots-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/10_D1_D2/D1_stats_lock.md
+  token: commit-speedup-d1-stats-lock-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/10_D1_D2/D2_env_flag_leak.md
+  token: commit-speedup-d2-env-flag-leak-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/10_D1_D2/README.md
+  token: commit-speedup-readme-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/20_target_arch/A1_conflict_graph.yaml
+  token: commit-speedup-a1-conflict-graph-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/20_target_arch/A2_target_architecture.md
+  token: commit-speedup-a2-target-architecture-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/20_target_arch/A3_gate_repointing_matrix.yaml
+  token: commit-speedup-a3-gate-repointing-matrix-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/20_target_arch/A4_migration_ladder.md
+  token: commit-speedup-a4-migration-ladder-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/20_target_arch/README.md
+  token: commit-speedup-readme-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/30_gate_census/C1_gate_dossier.md
+  token: commit-speedup-c1-gate-dossier-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/40_B0_derived_offload/B0_1_sync_sites.md
+  token: commit-speedup-b0-1-sync-sites-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/40_B0_derived_offload/B0_2_gate_dependency_matrix.yaml
+  token: commit-speedup-b0-2-gate-dependency-matrix-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/40_B0_derived_offload/B0_3_design_and_tests.md
+  token: commit-speedup-b0-3-design-and-tests-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/40_B0_derived_offload/README.md
+  token: commit-speedup-readme-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commit_speedup_campaign/90_verification/decisions_log.md
+  token: commit-speedup-decisions-log-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "任务卷宗非新治理面：本役结论将由落地代码+decisions_log 承载，卷宗按 ttl:task_bound 随役归档，不与永久区任何册重复（跨域不同对象→不并）"
+- file: docs/_working/commitspeed_audit/2026-09-24-commit_wait_investigation_report.md
+  token: commit-speedup-2026-09-24-commit-wait-investigation-report-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "原始调查报告随役归档（ttl:task_bound），与 campaign 卷宗同域同役唯一真源，不新增治理面"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 di_seam_exemptions: []
