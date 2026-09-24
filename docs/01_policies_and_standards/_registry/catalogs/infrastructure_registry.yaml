@@ -226,8 +226,7 @@ infrastructure:
     sla: "数据第一公理：任何删除前两份验证副本；冷储 immutable；备份版本化（working_vault 14 天/db_dumps 14 天/git bundle 留 2 份/CH 双链）"
     status: connected
     provisioned_at: "2026-09-21"
-    note: "2026-09-21/22 磁盘重整战役定案（Owner 六项签字）；蓝图=disaster_recovery_backup/blueprint.md v3.0 纪要；2026-09-24 ch_vm_backup 去重结案（st-backup-cold-20260924，总指挥令两证制）：真值口径=两份等值整机备份（G:/backup/ch_vm_backup ≡ G:/zephyr_cold/ch_vm_backup，5 件 sha256 逐位等值，data.vhdx=f963a773…b77b，2026-09-23 全量实测）+F:/ch_vm_backup 原件；G:/zephyr_backup_mirror 实为 2026-09-21 未完成拷贝残件（前 ~41GiB 有数据其后零填充），46GiB 逐块差分+40.75GiB 撕裂尾块逐字节法证独有字节=∅ 后两证齐删除，净腾 591.57G（G 空闲 228.4→819.9GB=22.0%）；方法论注记：WizTree 同名+同尺寸判重≠内容等值（a4 §4.9『三份等值/1774.7G』口径作废），等值判定必须全量 hash；遗留=阶段5（2026-10-05 摘 F 旧链盘+ch_vm_backup B 瘦身）+日历删除（10-18/10-20/10-21，冷抽屉 G:/zephyr_cold/ch_vm_backup 按 10-21 原排期禁动）"
-
+    note: "2026-09-21/22 磁盘重整战役定案（Owner 六项签字）；2026-09-24 ch_vm_backup 收敛终态（Owner 早执裁定）：全机镜像 data.vhdx（591.57G，sha256 f963a773…b77b）仅存冻结档 G:/backup/ch_vm_backup（g_mirror 已摘其目标防 /MIR 回删），F:/ch_vm_backup 降配置级（boot.vhdx+zephyr-ch 配置），G:/zephyr_cold 冷抽屉 591.57G 经三点抽样+前夜全量 hash 后早删，嵌套 zephyr_cold 274.49GiB 对账定性纯冗余（1,842 件 vintage 归档）后删除；F:/ch_backup_disk.vhdx 实测 716.32GiB（+164G 备份 churn 撑胀）待 10-05 摘盘（第二链每日核验证据链挂起）；方法论注记：WizTree 同名+同尺寸判重≠内容等值，等值判定必须全量 hash；遗留=10-05 摘盘+10-21 原抽屉库 137.6G 删；蓝图=disaster_recovery_backup/blueprint.md v3.0 纪要"
   # --- 配置中心（RI-04 ConfigCenter）---
   - infra_id: "INFRA-CFG-001"
     name: "zephyr-config-center"
