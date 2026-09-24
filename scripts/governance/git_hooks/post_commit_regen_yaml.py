@@ -79,15 +79,91 @@ import time
 from pathlib import Path
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
+def _resolve_main_root(local_root: Path) -> Path:
+    """脚本定位根 → 主仓根（M2/T5，st-commitspeed-tbl-20260924）。
+
+    worker/serializer worktree 里本脚本的 _REPO_ROOT 是 worktree 根，其 .git 是
+    gitdir 指针文件——锁/账/日志若落在 worktree 侧即"每工一把锁"（R2c 病根），
+    且再生产物会被下一件 reset --hard 抹掉（B0_1 已证纯负收益）。统一解析到主区：
+    .git 是目录=本就在主区；是文件=剥 /worktrees/* 段取主 .git 的父目录。
+    解析失败一律回落原值（fail-safe 不变行为）。
+    """
+    git_path = local_root / ".git"
+    if git_path.is_dir() or not git_path.exists():
+        return local_root
+    try:
+        first = git_path.read_text(encoding="utf-8", errors="replace").splitlines()[0]
+    except (OSError, IndexError):
+        return local_root
+    if not first.startswith("gitdir:"):
+        return local_root
+    gd = first[len("gitdir:") :].strip().replace("\\", "/")
+    if "/worktrees/" in gd:
+        gd = gd.split("/worktrees/", 1)[0]
+    main_git = Path(gd)
+    if main_git.is_dir():
+        return main_git.parent
+    return local_root
+
+
+# 主区根：锁/意图账/状态/日志/编排器 spawn 一律钉主区（R2c：跨工单点）
+_MAIN_ROOT = _resolve_main_root(_REPO_ROOT)
+_IS_WORKTREE_CTX = _MAIN_ROOT != _REPO_ROOT
 _REGISTRY_YAML = (
     _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "generator_registry.yaml"
 )
-_ORCHESTRATOR = _REPO_ROOT / "scripts" / "governance" / "reconcile_generators.py"
+_ORCHESTRATOR = _MAIN_ROOT / "scripts" / "governance" / "reconcile_generators.py"
 
 # #1 并发去重：lockfile TTL 机制（防止连续 commit spawn 多个 reconcile_stale）
 # lockfile 存在且 TTL 内视为活跃，跳过 spawn；TTL 过期视为僵尸可覆盖。
-_LOCK_FILE = _REPO_ROOT / ".runtime" / "locks" / "reconcile_stale.pid"
+_LOCK_FILE = _MAIN_ROOT / ".runtime" / "locks" / "reconcile_stale.pid"
 _LOCK_TTL_SECONDS = 60  # reconcile_stale 通常几秒~几十秒完成，60s TTL 足够覆盖且不长时间阻塞
+
+# M2 意图账（C4 治理洞：近 7 日 81 合格触发 vs 20 份日志≈75% 静默丢弃零留痕；
+# P-3：逃生口只抑制执行、不抑制记账——先写意图再谈 spawn）
+_DIRTY_DIR = _MAIN_ROOT / ".runtime" / "derived_dirty"
+_LEDGER_FILE = _DIRTY_DIR / "ledger.jsonl"
+_PENDING_RERUN = _DIRTY_DIR / "pending_rerun"
+
+
+def _regen_scope() -> str:
+    """读 flags.yaml 的 git_operations.regen_scope（缺省=any_worktree 出厂暗发）。
+
+    main_only：worktree 语境只记账不 spawn（消费归主区事件）；翻转属 Owner 门位
+    （flag 出厂翻转=high tier，宪法 §5）。
+    """
+    try:
+        import yaml  # type: ignore[import-untyped]
+
+        data = yaml.safe_load((_MAIN_ROOT / "config" / "flags.yaml").read_text(encoding="utf-8")) or {}
+        git_ops = (data.get("flags") or {}).get("git_operations") or {}
+        val = (git_ops.get("regen_scope") or "any_worktree").strip()
+        return val if val in ("any_worktree", "main_only") else "any_worktree"
+    except Exception:  # noqa: BLE001 — 配置不可读=出厂缺省
+        return "any_worktree"
+
+
+def _ledger_append(record: dict) -> None:
+    """意图记账（append-only；写失败静默——post-commit 不得阻断 git）。"""
+    try:
+        import json
+
+        _DIRTY_DIR.mkdir(parents=True, exist_ok=True)
+        with _LEDGER_FILE.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+
+
+def _mark_pending_rerun() -> None:
+    """锁占用时标记"跑完这轮再补一轮 stale 检查"（尾事件收敛，禁定时器）。"""
+    try:
+        _DIRTY_DIR.mkdir(parents=True, exist_ok=True)
+        _PENDING_RERUN.write_text("1\n", encoding="utf-8")
+    except OSError:
+        pass
 
 
 def _committed_yaml_files() -> list[str]:
@@ -205,10 +281,6 @@ def main() -> int:
     """
     # 顶层兜底：post-commit hook 绝不阻断 git 操作（§ERROR_CONTRACT）
     try:
-        # 逃生通道
-        if os.environ.get("ZEPHYR_SKIP_REGENERATE") == "1":
-            return 0
-
         committed = _committed_yaml_files()
         if not committed:
             return 0
@@ -220,13 +292,33 @@ def main() -> int:
         if not _matches_generator_input(committed, inputs, outputs):
             return 0  # 非生成器输入源，或命中生成器产物（#3 防循环）
 
-        # #1 并发去重：lockfile 活跃时跳过 spawn（防止连续 commit 并发冲突）
-        if _is_lock_active():
-            sys.stderr.write("[POST-COMMIT-REGEN] ⏭ 已有重生成任务运行中（lockfile 活跃），跳过本次 spawn\n")
+        # M2 意图记账前置（P-3）：无论后续 spawn 与否，先落账——逃生口/锁占用/
+        # main_only 抑制都只影响执行，不影响记账。
+        _ledger_append(
+            {
+                "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                "trigger": "post_commit",
+                "ctx": "worktree" if _IS_WORKTREE_CTX else "main",
+                "input_paths": committed[:20],
+            }
+        )
+
+        # 逃生通道（P-3 后移：执行抑制，记账已完成）
+        if os.environ.get("ZEPHYR_SKIP_REGENERATE") == "1":
             return 0
 
-        # 异步 spawn reconcile_stale（非阻塞）
-        log_dir = _REPO_ROOT / ".runtime" / "logs"
+        # M2 regen_scope=main_only：worktree 语境只记账不 spawn，消费归主区事件
+        if _regen_scope() == "main_only" and _IS_WORKTREE_CTX:
+            return 0
+
+        # #1 并发去重：lockfile 活跃时跳过 spawn（防止连续 commit 并发冲突）
+        if _is_lock_active():
+            _mark_pending_rerun()  # 尾事件收敛：跑完这轮再补一轮 stale 检查
+            sys.stderr.write("[POST-COMMIT-REGEN] ⏭ 已有重生成任务运行中（lockfile 活跃），记账并标记补跑\n")
+            return 0
+
+        # 异步 spawn reconcile_stale（非阻塞；日志/编排器钉主区）
+        log_dir = _MAIN_ROOT / ".runtime" / "logs"
         log_dir.mkdir(parents=True, exist_ok=True)
         ts = time.strftime("%Y%m%d_%H%M%S")
         log_file = log_dir / f"post_commit_regen_yaml_{ts}.log"
@@ -240,12 +332,13 @@ def main() -> int:
             log_handle.write(
                 f"[POST-COMMIT-REGEN] 检测到生成器 YAML 输入源变更，异步触发 reconcile_stale\n"
                 f"[POST-COMMIT-REGEN] 变更文件: {committed}\n"
+                f"[POST-COMMIT-REGEN] ctx={'worktree(pinned->main)' if _IS_WORKTREE_CTX else 'main'}\n"
             )
             log_handle.flush()
             _acquire_lock()  # #1 创建 lockfile（TTL 60s，防止后续 commit 并发 spawn）
             proc = subprocess.Popen(  # noqa: S603 — 受控 _ORCHESTRATOR
                 [sys.executable, str(_ORCHESTRATOR), "--stale"],
-                cwd=str(_REPO_ROOT),
+                cwd=str(_MAIN_ROOT),
                 stdout=log_handle,
                 stderr=subprocess.STDOUT,
                 creationflags=creationflags,

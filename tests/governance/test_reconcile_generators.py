@@ -230,7 +230,7 @@ class TestReconcileInProcess:
         """reconcile('battle_map_db') 通过 in-process 路径成功调用 battle_map 生成器。"""
         try:
             result = rg.reconcile("battle_map_db")
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — DB 不可达属环境态，跳过不判败
             pytest.skip(f"reconcile('battle_map_db') 抛异常（DB 不可达？）: {e}")
 
         assert result["source"] == "battle_map_db"
@@ -646,18 +646,28 @@ class TestPostCommitRegenYaml:
         """空 committed 列表 → False。"""
         assert pcr._matches_generator_input([], {"docs/foo.yaml"}) is False
 
-    def test_main_skip_env_returns_zero(self, pcr, monkeypatch):
-        """ZEPHYR_SKIP_REGENERATE=1 → 立即返回 0，不触发任何检测。"""
+    def test_main_skip_env_returns_zero(self, pcr, monkeypatch, tmp_path):
+        """ZEPHYR_SKIP_REGENERATE=1 → 返回 0 且不 spawn；检测照跑但只喂记账。
+
+        契约改判（st-commitspeed-tbl-20260924 T5/M2，B0_3 §3 P-3）：原"立即返回
+        不触发任何检测"使逃生通道同时变成丢件通道（近 7 日 81 触发 vs 20 日志≈75%
+        静默丢的病灶之一）；新契约=执行抑制、记账不抑制。
+        """
         monkeypatch.setenv("ZEPHYR_SKIP_REGENERATE", "1")
-        called = {"n": 0}
-
-        def _boom():
-            called["n"] += 1
-            return ["should_not_be_called.yaml"]
-
-        monkeypatch.setattr(pcr, "_committed_yaml_files", _boom)
+        monkeypatch.setattr(pcr, "_committed_yaml_files", lambda: ["docs/_registry/catalogs/fake.yaml"])
+        monkeypatch.setattr(pcr, "_generator_yaml_inputs", lambda: {"docs/_registry/catalogs/fake.yaml"})
+        monkeypatch.setattr(pcr, "_generator_yaml_outputs", lambda: set())
+        monkeypatch.setattr(pcr, "_IS_WORKTREE_CTX", False)
+        monkeypatch.setattr(pcr, "_DIRTY_DIR", tmp_path)
+        monkeypatch.setattr(pcr, "_LEDGER_FILE", tmp_path / "ledger.jsonl")
+        monkeypatch.setattr(pcr, "_PENDING_RERUN", tmp_path / "pending_rerun")
+        spawned = {"n": 0}
+        monkeypatch.setattr(
+            pcr.subprocess, "Popen", lambda *a, **k: spawned.__setitem__("n", spawned["n"] + 1) or MagicMock()
+        )
         assert pcr.main() == 0
-        assert called["n"] == 0, "逃生通道应跳过 _committed_yaml_files 调用"
+        assert spawned["n"] == 0, "逃生通道必须抑制 spawn"
+        assert (tmp_path / "ledger.jsonl").exists(), "P-3：逃生通道不得抑制记账"
 
     def test_main_no_yaml_change_returns_zero(self, pcr, monkeypatch):
         """commit 无 YAML 变更 → 返回 0，不 spawn。"""

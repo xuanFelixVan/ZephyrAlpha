@@ -83,7 +83,36 @@ _OK_RETURNCODES = {0, 1}
 _DETACHED_PROCS: list = []
 
 # 仓库根（编排器在 scripts/governance/，parents[2]=repo root）
-_REPO_ROOT = Path(__file__).resolve().parents[2]
+# M2/T5 主区钉定：从 worktree 语境被 spawn 时（历史形态），锁与产物根解析到主区——
+# 每 worktree 一把锁是 R2c 病根（"全局锁"实为 N 把），产物落 worktree 会被下件 reset 抹掉。
+_SCRIPT_ROOT = Path(__file__).resolve().parents[2]
+
+
+def _resolve_main_root(local_root: Path) -> Path:
+    """worktree .git 指针文件 → 主仓根；主区/解析失败原样返回（fail-safe）。"""
+    git_path = local_root / ".git"
+    if git_path.is_dir() or not git_path.exists():
+        return local_root
+    try:
+        first = git_path.read_text(encoding="utf-8", errors="replace").splitlines()[0]
+    except (OSError, IndexError):
+        return local_root
+    if not first.startswith("gitdir:"):
+        return local_root
+    gd = first[len("gitdir:") :].strip().replace("\\", "/")
+    if "/worktrees/" in gd:
+        gd = gd.split("/worktrees/", 1)[0]
+    main_git = Path(gd)
+    return main_git.parent if main_git.is_dir() else local_root
+
+
+_REPO_ROOT = _resolve_main_root(_SCRIPT_ROOT)
+_DIRTY_DIR = _REPO_ROOT / ".runtime" / "derived_dirty"
+_STATE_FILE = _DIRTY_DIR / "state.yaml"
+_PENDING_RERUN = _DIRTY_DIR / "pending_rerun"
+_BOTTLENECK_LEDGER = _REPO_ROOT / ".runtime" / "audit" / "bottleneck_ledger.jsonl"
+_STATE_STALE_SEC = 1800.0  # 脏账龄阈值（B0_3 §3 卡死表）
+_STATE_FAIL_N = 3  # 连败阈值
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
@@ -214,6 +243,14 @@ def _acquire_regen_lock() -> tuple[bool, str]:
     if not stale:
         return False, f"held by pid={holder_pid}"
     _LOGGER.info("regen lock: 抢占僵尸锁（%s）", reason)
+    _dirty_ledger_append(
+        {
+            "ts": time.strftime("%Y-%m-%dT%H:%M:%S"),
+            "kind": "stolen_after_ttl",
+            "holder_pid": holder_pid,
+            "reason": reason,
+        }
+    )
     try:
         lock_path.unlink()
     except OSError:
@@ -255,6 +292,97 @@ def _read_success_marker(gen_name: str) -> float | None:
         return float(marker.read_text(encoding="utf-8").strip())
     except (OSError, ValueError):
         return None
+
+
+def _dirty_ledger_append(record: dict) -> None:
+    """M2 派生脏账附录（append-only jsonl；写失败静默不阻断再生）。"""
+    import json
+
+    try:
+        _DIRTY_DIR.mkdir(parents=True, exist_ok=True)
+        with (_DIRTY_DIR / "ledger.jsonl").open("a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+
+
+def _bottleneck_append(kind: str, gen: str, detail: str) -> None:
+    """卡死信号写 bottleneck_ledger（B0_3 §3 卡死表：账龄/连败两档）。"""
+    import json
+
+    try:
+        _BOTTLENECK_LEDGER.parent.mkdir(parents=True, exist_ok=True)
+        ts = time.strftime("%Y-%m-%dT%H:%M:%S")
+        with _BOTTLENECK_LEDGER.open("a", encoding="utf-8") as f:
+            f.write(json.dumps({"ts": ts, "kind": kind, "generator": gen, "detail": detail}, ensure_ascii=False) + "\n")
+    except OSError:
+        pass
+
+
+def _state_load() -> dict:
+    """加载 state.yaml（按生成器脏账；缺/坏返回空 dict）。"""
+    try:
+        import yaml  # type: ignore[import-untyped]
+
+        return yaml.safe_load(_STATE_FILE.read_text(encoding="utf-8")) or {}
+    except Exception:  # noqa: BLE001 — 状态账不可读=从零记起，不影响再生本体
+        return {}
+
+
+def _state_save(state: dict) -> None:
+    try:
+        import yaml  # type: ignore[import-untyped]
+
+        _DIRTY_DIR.mkdir(parents=True, exist_ok=True)
+        _STATE_FILE.write_text(yaml.safe_dump(state, allow_unicode=True, sort_keys=True), encoding="utf-8")
+    except OSError:
+        pass
+
+
+def _state_mark_dirty(names: list[str]) -> None:
+    """stale 判定命中 → dirty_count+1、首见记 dirty_since。"""
+    state = _state_load()
+    now = time.time()
+    changed = False
+    for n in names:
+        ent = state.setdefault(n, {})
+        ent["dirty_count"] = int(ent.get("dirty_count", 0)) + 1
+        if not ent.get("dirty_since"):
+            ent["dirty_since"] = now
+        changed = True
+    if changed:
+        _state_save(state)
+
+
+def _state_mark_result(name: str, ok: bool) -> None:
+    """单生成器执行结果回写：成功清脏账，失败计连败。"""
+    state = _state_load()
+    ent = state.setdefault(name, {})
+    if ok:
+        ent["last_success_ts"] = time.time()
+        ent["consecutive_failures"] = 0
+        ent.pop("dirty_since", None)
+        ent["dirty_count"] = 0
+        ent.pop("alerted_stale", None)
+        ent.pop("alerted_stuck", None)
+    else:
+        ent["consecutive_failures"] = int(ent.get("consecutive_failures", 0)) + 1
+    _state_save(state)
+
+
+def _stuck_check() -> None:
+    """卡死检测（B0_3 §3）：账龄>1800s→derived_stale；连败≥3→derived_stuck（去抖：每条件每生成器一次）。"""
+    state = _state_load()
+    now = time.time()
+    for n, ent in state.items():
+        ds = ent.get("dirty_since")
+        if ds and (now - float(ds)) > _STATE_STALE_SEC and not ent.get("alerted_stale"):
+            _bottleneck_append("derived_stale", n, f"dirty_since 账龄 {int(now - float(ds))}s")
+            ent["alerted_stale"] = True
+        if int(ent.get("consecutive_failures", 0)) >= _STATE_FAIL_N and not ent.get("alerted_stuck"):
+            _bottleneck_append("derived_stuck", n, f"consecutive_failures={ent['consecutive_failures']}")
+            ent["alerted_stuck"] = True
+    _state_save(state)
 
 
 def _load_registry() -> dict:
@@ -636,6 +764,9 @@ def reconcile_stale() -> dict:
             else:
                 skipped.append(name)
                 _LOGGER.debug("reconcile_stale: %s skipped (reason=%s)", name, reason)
+        # M2 脏账：stale 命中即记（无论本轮执行成败，L-1 无丢的记账面）
+        if stale_entries:
+            _state_mark_dirty([e.get("name", "<unknown>") for e, _ in stale_entries])
 
         # 阶段2：并行重生成 stale 生成器（慢——subprocess spawn）
         raw_results = _invoke_parallel([e for e, _ in stale_entries])
@@ -644,6 +775,7 @@ def reconcile_stale() -> dict:
             name = entry.get("name", "<unknown>")
             r["stale_reason"] = reason
             regenerated.append(r)
+            _state_mark_result(name, r.get("status") == "ok")
             if r.get("status") == "ok":
                 _LOGGER.info("reconcile_stale: %s regenerated (reason=%s)", name, reason)
             else:
@@ -653,6 +785,7 @@ def reconcile_stale() -> dict:
                     reason,
                     r.get("error"),
                 )
+        _stuck_check()  # M2 卡死检测（本轮结束后判一次账龄/连败）
         return {
             "regenerated": regenerated,
             "skipped": skipped,
@@ -660,6 +793,22 @@ def reconcile_stale() -> dict:
         }
     finally:
         _release_regen_lock()
+        # M2 尾事件收敛（R2b 去抖不丢）：锁占用期有新意图 → 异步补跑一轮 stale 检查
+        # （detached 新进程；链式有界——每轮补跑只由"运行期间确实来过新意图"触发，禁定时器）
+        try:
+            if _PENDING_RERUN.exists():
+                _PENDING_RERUN.unlink()
+                _LOGGER.info("regen: pending_rerun 命中——异步补跑一轮 stale 检查")
+                creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0) if sys.platform == "win32" else 0
+                subprocess.Popen(  # noqa: S603 — 受控自身脚本
+                    [sys.executable, str(Path(__file__).resolve()), "--stale"],
+                    cwd=str(_REPO_ROOT),
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    creationflags=creationflags,
+                )
+        except OSError:
+            pass
 
 
 def _fmt_result(r: dict) -> str:

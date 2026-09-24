@@ -42,6 +42,15 @@ flags:
     description: "AI行为监控 (event_sink 已接通)"
     implementation_status: "beta"
 
+  git_operations:
+    enabled: true
+    description: "提交链操作旗组（提交链治本夜战 st-commitspeed-tbl-20260924）"
+    regen_scope: "any_worktree"
+    # regen_scope 语义（M2/T5 衍生再生出窗，B0_3 设计）：
+    #   any_worktree=出厂态（现行为）：post-commit 触发照旧 spawn，但锁/账/产物根已钉主区；
+    #   main_only=worktree 语境只记账不 spawn，消费归主区事件。
+    # 翻转属 Owner 门位（flag 出厂翻转=high tier）。
+
   archive:
     enabled: false
     description: "遥测数据归档 (未实现，保留flag)"
