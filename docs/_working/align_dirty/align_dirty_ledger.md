@@ -517,3 +517,11 @@ D1 残（fail_open 14 处 merger 结构无能 = `content_sha256` 标量流被切
 - 派生册悬空普查（带负控）：`fail_open_register` 已产 0 悬空字节但被队列结构性拒收（R2/D25）；`rule_catalog` 2、`rule_ai_perception_index` 1（glob 假阳）随 D21/D23 派；`path_ownership_map` 62 经重跑生成器证伪＝确定性产物含"所有权先于落码/退役留痕"，**D23 已撤回**（§3.17）。
 
 **D28（新登记·自动化覆盖率的诚实分母，本包不擅扩面）**：`scripts/` 下 tracked `generate_*.py` 非 `_archive` 共 **56** 件，而 `generator_registry.yaml` 编排器只挂 **30** 条 ⇒ **26 件生成器不在自动再生链**（其中 `generate_gate_registry`/`generate_registry_master_index`/`generate_rule_catalog`/`generate_path_ownership_map`/`generate_fail_open_register`/`generate_standard_family_registry` 等是"册会过期"的直接来源）。**注意分母口径**：部分生成器由别的事件路径显式调用（如 `gate_auto_registrar`、`apply_*.py` 内联），未挂本表≠未自动化——逐件判"谁触发/是否幂等/产物是否 tracked"需要一次专项普查（本包只给尺子：`git ls-files -- scripts | grep '/generate_.*\.py$'` 与册内 `module_path` 集合差）。建议派治理派 D5 生成器域，与 D25/D27 同窗（都是"提交-落地-再生"链路的闸）。
+
+### 3.20 拆营记录（08:2x，本包终笔）
+
+- **claim 全清**：`lock_files.py list` = `CLEAN — 无任何文件锁`（本包 10 枚 claim 均由网关在各自落地笔内自动释放，无需手工 `--release-only`）。
+- **会话工作树已退役**：`session_worktree_abort("st-align-dirty-20260924")` → `aborted=True / unregistered=True`，`git worktree list` 本包 0 枚；退役存证 `.runtime/quarantine/st-align-dirty-20260924-retire-20260924T001828Z.patch`（派生 0／幻影 0／实质 8 件，均已入 HEAD）。
+- **临时面按"引用即保留"清理**：`.runtime/tmp/align_dirty` 删 66 件（567 KB）留 25 件（496 KB）——保留集＝台账 §3.5/§3.13/§3.19 逐条点名的尺子与证据（`measure_head.py`/`closing_selfcheck.py`/`probe_dangling_refs.py`/`idempotency_test.py`/`idem_diff.py`/`probe_map8_full.py`/`batch_add_translation.py`/`headcopy/align_all_head.py` + 三份 JSON 证据 + 两轮 align 输出），**不留未被引用的脚本、不留被引用的悬空指针**；R2 底座 `.runtime/tmp/working_cleanup_r2/`（1.7 MB）按 §3.14-R2/§3.18 复跑需要整目录保留（交付件 §9 复核命令直指它）。一次性驱动（add_two_rows / fix_generic_plain / heal_dups 等）已随删，其配方与字节效应全部写进本台账。
+- **终验（HEAD 位面，本包最后一次量）**：`closing_selfcheck.py` 16 检查 **15 绿 / 1 红**，连跑两轮输出 diff=0；唯一红=§3.14-R1（unique_key 违例 6 组，Owner §5.2 门位）。翻译覆盖 `universe 3990 / missing 1 / short 0 / generic 2`；本包 4 枚关键条目 HEAD 命中各=1（`alt_source_bootstrap`/`akshare_alt_provider`/`_shared/registry_batch_edit`/`c3_throttle_attribution`）。
+- **拆营时点仍存的外来隐患（登记不代修，§3.4）**：主区**盘面**的翻译册快照此刻缺本包刚落地的 2 径（`HEAD=1 / disk=0`×2），主区 index 另有 206 件他会话 staged 内容 ⇒ 任何"从主区直提且不核袋面"的班次都会把这 2 径（连同 §3.9-2 那颗 `ruling_registry` 雷）再吃一遍。复验一行：`git show HEAD:<册> | grep -c c3_throttle_attribution` 应为 1。
