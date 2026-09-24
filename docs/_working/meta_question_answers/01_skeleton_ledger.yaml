@@ -1,0 +1,6660 @@
+generated_by: st-metaq-20260923
+pit_cutoff: '2025-09-09'
+table_probe:
+  ch:adj_factor:
+    rows: 21055022
+    dmin: '1990-12-19'
+    dmax: '2026-09-23'
+  ch:alt_shipping_index:
+    rows: 31986
+    dmin: '1988-10-19'
+    dmax: '2026-09-23'
+  ch:alt_stock_comment:
+    rows: 46777
+    dmin: '2026-09-11'
+    dmax: '2026-09-23'
+  ch:alt_sz_weather_warning:
+    rows: 10020
+    dmin: null
+    dmax: null
+  ch:auction_book:
+    rows: 3899074
+    dmin: '2026-07-21'
+    dmax: '2026-09-23'
+  ch:auction_snapshot:
+    rows: 266363
+    dmin: '2026-06-01'
+    dmax: '2026-09-23'
+  ch:block_trade:
+    rows: 1426
+    dmin: '2026-08-07'
+    dmax: '2026-09-23'
+  ch:commodity_futures_main:
+    rows: 153
+    dmin: '2026-09-01'
+    dmax: '2026-09-23'
+  ch:commodity_spot_price:
+    rows: 918
+    dmin: '2026-09-01'
+    dmax: '2026-09-23'
+  ch:concept_board:
+    rows: 750
+    dmin: null
+    dmax: null
+  ch:concept_board_constituent:
+    rows: 35343
+    dmin: null
+    dmax: null
+  ch:crypto_kline_daily:
+    rows: 18431
+    dmin: '2025-08-08'
+    dmax: '2026-09-22'
+  ch:emotion_index:
+    rows: 8647
+    dmin: '1991-06-10'
+    dmax: '2026-09-23'
+  ch:execution_report:
+    rows: 1
+    dmin: null
+    dmax: null
+  ch:futures_warehouse_receipt:
+    rows: 2909109
+    dmin: '2014-05-19'
+    dmax: '2026-09-23'
+  ch:hl_funding_history:
+    rows: 4693915
+    dmin: null
+    dmax: null
+  ch:hl_liquidation_raw:
+    rows: 5
+    dmin: null
+    dmax: null
+  ch:hl_oi_snapshot_daily:
+    rows: 1170
+    dmin: '2026-09-18'
+    dmax: '2026-09-23'
+  ch:hl_perp_snapshot_daily:
+    rows: 1170
+    dmin: '2026-09-18'
+    dmax: '2026-09-23'
+  ch:index_quote:
+    rows: 233925
+    dmin: '2026-07-14'
+    dmax: '2026-09-23'
+  ch:index_valuation_daily:
+    rows: 16216
+    dmin: '2010-01-04'
+    dmax: '2026-09-22'
+  ch:index_valuation_daily_quar_20260920:
+    rows: 8125
+    dmin: '2010-01-01'
+    dmax: '2026-09-17'
+  ch:kline_30min:
+    rows: 49107016
+    dmin: '2021-09-01'
+    dmax: '2026-09-23'
+  ch:kline_60min:
+    rows: 24611429
+    dmin: '2021-09-01'
+    dmax: '2026-09-23'
+  ch:kline_daily:
+    rows: 10102587
+    dmin: '1990-12-19'
+    dmax: '2026-09-23'
+  ch:kline_daily_hfq:
+    rows: 8431745
+    dmin: '2015-01-05'
+    dmax: '2026-09-23'
+  ch:kline_index:
+    rows: 3100590
+    dmin: '1990-12-19'
+    dmax: '2026-09-23'
+  ch:kline_sector:
+    rows: 96982
+    dmin: '2025-07-18'
+    dmax: '2026-09-23'
+  ch:kline_sector_880:
+    rows: 443380
+    dmin: '2020-03-17'
+    dmax: '2026-09-23'
+  ch:macro_data:
+    rows: 59753
+    dmin: '1993-03-31'
+    dmax: '2026-09-23'
+  ch:market_breadth_snapshot:
+    rows: 145
+    dmin: '2026-08-24'
+    dmax: '2026-09-23'
+  ch:market_china_bond_yield:
+    rows: 11880
+    dmin: '2025-09-23'
+    dmax: '2026-09-23'
+  ch:market_fund_flow_daily:
+    rows: 123
+    dmin: '2026-03-27'
+    dmax: '2026-09-22'
+  ch:money_flow:
+    rows: 522469
+    dmin: '2026-06-01'
+    dmax: '2026-09-23'
+  ch:news_sentiment_window:
+    rows: 19819
+    dmin: null
+    dmax: null
+  ch:sector_constituent_snapshot:
+    rows: 285372
+    dmin: '2026-09-14'
+    dmax: '2026-09-23'
+  ch:sector_fund_flow:
+    rows: 3529
+    dmin: '2026-09-15'
+    dmax: '2026-09-23'
+  ch:stock_daily_basic:
+    rows: 7157299
+    dmin: '2021-01-04'
+    dmax: '2026-09-23'
+  ch:stock_hot_rank:
+    rows: 6593
+    dmin: '2026-08-04'
+    dmax: '2026-09-23'
+  ch:tick_data:
+    rows: 8925440697
+    dmin: '2025-01-02'
+    dmax: '2026-09-23'
+  ch:tick_depth_5:
+    rows: 86599089
+    dmin: '2026-07-24'
+    dmax: '2026-09-23'
+  ch:us_index:
+    rows: 22630
+    dmin: '1993-01-29'
+    dmax: '2026-09-22'
+  ch:weather_data:
+    rows: 10033
+    dmin: null
+    dmax: null
+  ch3:balance_sheet:
+    rows: 339738
+    dmin: '1990-03-21'
+    dmax: '2026-09-02'
+  ch3:cashflow_statement:
+    rows: 310447
+    dmin: '1999-01-30'
+    dmax: '2026-09-02'
+  ch3:disclosure_plan:
+    rows: 316739
+    dmin: '2001-02-06'
+    dmax: '2026-08-31'
+  ch3:earnings_forecast:
+    rows: 125582
+    dmin: '1999-01-08'
+    dmax: '2026-07-03'
+  ch3:express_report:
+    rows: 28708
+    dmin: '2005-01-08'
+    dmax: '2026-07-02'
+  ch3:income_statement:
+    rows: 346176
+    dmin: '1995-01-05'
+    dmax: '2026-09-02'
+  ch3:irm_interactive_extracted:
+    rows: 74
+    dmin: null
+    dmax: null
+  ch3:irm_interactive_qa:
+    rows: 500
+    dmin: null
+    dmax: null
+  ch3:news_data:
+    rows: 8155360
+    dmin: null
+    dmax: null
+  ch3:shareholder_count:
+    rows: 514091
+    dmin: '1993-01-12'
+    dmax: '2026-09-23'
+  chb:alloc_budget_daily:
+    rows: 18
+    dmin: '2026-09-15'
+    dmax: '2026-09-23'
+  chb:alloc_shrinkage_daily:
+    rows: 9
+    dmin: '2026-09-15'
+    dmax: '2026-09-23'
+  chb:crisis_gate_log:
+    rows: 44
+    dmin: '2026-07-17'
+    dmax: '2026-09-03'
+  chb:decision_daily:
+    rows: 69
+    dmin: '2026-09-16'
+    dmax: '2026-09-24'
+  chb:hypothesis_precheck:
+    rows: 58
+    dmin: null
+    dmax: null
+  chb:node_verdict:
+    rows: 58
+    dmin: null
+    dmax: null
+  chb:regime_snapshot_history:
+    rows: 3627
+    dmin: '2019-04-01'
+    dmax: '2026-09-22'
+  chb:sim_trade_log:
+    rows: 67
+    dmin: '2026-07-17'
+    dmax: '2026-09-23'
+  chb:strategy_screen:
+    rows: 1340
+    dmin: null
+    dmax: null
+  pg:ig_chain:
+    rows: 873
+    dmin: '2026-08-28 04:08:55.327935+08'
+    dmax: '2026-09-14 02:57:26.540651+08'
+  pg:ig_company_edge:
+    rows: 58207
+    dmin: '2026-08-28 00:45:14.855876+08'
+    dmax: '2026-09-11 04:01:08.44896+08'
+  pg:ig_edge:
+    rows: 1726
+    dmin: '2026-08-28 04:08:55.327935+08'
+    dmax: '2026-09-14 06:46:07.326219+08'
+  pg:ig_entity_code_map:
+    rows: 88
+    dmin: '2026-09-17'
+    dmax: '2026-09-18'
+  pg:ig_equity_edge:
+    rows: 804
+    dmin: '2022-12-31'
+    dmax: '2025-12-31'
+  pg:ig_fact:
+    rows: 264072
+    dmin: '2021-10-26'
+    dmax: '2021-10-26'
+  pg:ig_io_edge:
+    rows: 16859
+    dmin: '2020-12-31'
+    dmax: '2020-12-31'
+  pg:ig_node:
+    rows: 5560
+    dmin: '2026-08-28 04:08:55.327935+08'
+    dmax: '2026-09-14 06:46:07.326219+08'
+  pg:ig_node_company:
+    rows: 18830
+    dmin: '2026-08-28 04:08:55.327935+08'
+    dmax: '2026-09-18 05:54:31.894867+08'
+  pg:ig_product_revenue:
+    rows: 165255
+    dmin: '2021-10-26'
+    dmax: '2026-08-06'
+  pg:meta_question.meta_question:
+    rows: 283
+    dmin: null
+    dmax: null
+  pg:meta_question.meta_question_audit:
+    rows: 1419
+    dmin: null
+    dmax: null
+  pg:meta_question.meta_question_exam_result:
+    rows: 287
+    dmin: null
+    dmax: null
+  pg:stock_concept:
+    rows: 61053
+    dmin: '2026-09-14'
+    dmax: '2026-09-14'
+questions:
+- q_id: PQ-0001
+  layer: L0
+  line_ref: null
+  title: 入库闸五要素机检对 W6 批候选的拒绝率是否≤20%且单拒绝码占比≤50%（资格线收敛检验）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: W6 批 register 拒绝码分布
+  threshold: 拒绝率≤20% 且单码占比≤50%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 入库闸
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0002
+  layer: L0
+  line_ref: null
+  title: 问题表同层标题归一化后重复对占比是否≤5%且全部经 merged_into 合并留痕（一问一考拆并纪律存量检验）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: 同层归一化标题重复对占比与留痕率
+  threshold: 占比≤5% 且留痕率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0003
+  layer: L0
+  line_ref: null
+  title: 未答看板排队问题的消费方可解析率是否=100%且无零消费方问题存留（什么值得问的资格复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: 排队问题 consumers 可解析计数
+  threshold: 可解析率=100% 且零消费方=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0004
+  layer: L0
+  line_ref: null
+  title: register 审计中 degraded_check 降级事件占比是否降至 0（降级口径随源线谱与消费方登记建成而关闭）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: degraded_check 事件占 register 事件比例
+  threshold: =0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0005
+  layer: L1
+  line_ref: null
+  title: 源线谱 29 条线中 A 档 16 条是否全部现答 U1 且信号词表非空（每线回答什么交易问题的母问）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: A 档 16 条 U1 现答与信号词表非空计数
+  threshold: =16/16
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L1源线层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0006
+  layer: L1
+  line_ref: null
+  title: A 档 16 条源线的获取方式与边际成本是否全部现答 U2 且无未评估成本项（母问）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: U2 现答完整率与未评估成本项
+  threshold: =16/16 且未评估项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0007
+  layer: L1
+  line_ref: null
+  title: A 档 16 条源线的更新频率与延迟是否全部现答 U3 且与 DS 册健康检查口径一致（母问）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: U3 现答完整率与口径不一致项
+  threshold: =16/16 且不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0008
+  layer: L1
+  line_ref: null
+  title: A 档 16 条源线的 PIT 风险是否全部现答 U4 且高危线（A04/A05/A09）均有对齐方案（母问）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: U4 现答完整率与高危线对齐方案齐备数
+  threshold: =16/16 且高危线方案=3/3
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0009
+  layer: L1
+  line_ref: null
+  title: A 档 16 条源线的消费层挂接是否全部现答 U5 且与七层挂载表一致（母问）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: U5 现答完整率与七层挂载不一致项
+  threshold: =16/16 且不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0010
+  layer: L1
+  line_ref: null
+  title: A 档 16 条源线的证伪方案是否全部现答 U6 且每条含明确退役判据（母问）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: U6 现答完整率与退役判据含阈值比例
+  threshold: =16/16 且判据齐备率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0011
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 分钟线 30 分钟均线斜率因子在全 A 池对次日开盘后 30 分钟收益的方向预测准确率是否显著>50%（t>2，执行择时消费）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: 方向预测准确率二项检验
+  threshold: '>50% 且 t>2'
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0012
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 的 kline_daily 复权因子对齐链路 PIT 违例率是否=0（复权算子进 PIT 窗月度抽检）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: 复权算子时点合规抽检违例数
+  threshold: =0
+  sample_window: 月度（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0013
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 板块新高家数占比与板块资金净流入合成的强度分位对板块指数 10 日收益的预测 IC 是否显著>0（IC>0.02 且 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: 板块池 10 日收益秩 IC（Newey-West）
+  threshold: IC>0.02 且 t>2
+  sample_window: 10 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0014
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 概念成分快照按日存证覆盖率是否≥99.5%（成分调整改写历史风险的 PIT 对冲验收）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: 成分快照按日存证覆盖率
+  threshold: ≥99.5%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0015
+  layer: L1
+  line_ref: SL-A09
+  title: SL-A09 财联社电报条数 30 分钟滚动密度进入当日 95 分位的事件日，次日沪深300 收益分布是否显著异于常态日（t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch3:news_data(8155360,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 事件日 vs 常态日次日收益分布差异 t 检验
+  threshold: t>2
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0016
+  layer: L1
+  line_ref: SL-A09
+  title: SL-A09 按发布时戳 PIT 计算的日度情感分位与次日全 A 中位数收益的回归系数是否显著>0（β>0 且 t>2）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch3:news_data(8155360,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 情感分位对次日中位数收益回归 t 检验
+  threshold: β>0 且 t>2
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0017
+  layer: L1
+  line_ref: SL-A16
+  title: SL-A16 上游价格冲击沿 ig_io_edge 直接消耗系数加权传导对下游行业指数 20 日收益的预测 IC 是否显著>0（IC>0.02 且
+    t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:ig_node(5560,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  field_caliber: 下游行业池 20 日收益秩 IC
+  threshold: IC>0.02 且 t>2
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L2传导图谱层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0018
+  layer: L1
+  line_ref: SL-A16
+  title: SL-A16 ig_node_company 成分聚合口径与 TQCENTER 板块成分的重合率是否≥80%（图谱与行情两套板块口径对齐验收）？
+  qtype: PIT纪律问
+  need_tables:
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:ig_node(5560,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  field_caliber: 两套板块口径成分重合率
+  threshold: ≥80%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L2传导图谱层
+  - L3状态变量层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0019
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 开盘集合竞价阶段买卖队列失衡度对当日日内收益方向的预测 AUC 是否>0.55（近一年样本且 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: 方向预测 AUC 与 DeLong 检验
+  threshold: '>0.55 且 p<0.05'
+  sample_window: 近一年（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0020
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 的 TDX 仅最近交易日断档在 tick_data 落库覆盖率中是否 100% 显式登记（断档登记完整率审计）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: 断档显式登记完整率
+  threshold: =100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0021
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 业绩超预期（营收增速二阶差分>0）分组在公告后 20 日的 PEAD 超额收益是否显著>0（按 ann_date 对齐，t>2）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: 公告后 20 日超预期组超额 t 检验
+  threshold: '>0 且 t>2'
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0022
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 存量财务表 ann_date/end_date 口径误用率是否=0（抽样 500 条对照公告日核验）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: 口径误用样本数
+  threshold: =0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0023
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 全 A 池 EP（1/PE）十分位分组的多空年化差是否>5%且横截面单调性检验通过（Spearman |ρ|>0.5）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: EP 十分位多空年化差与单调性
+  threshold: '>5% 且 |ρ|>0.5'
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0024
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 按公告日 PIT 口径与未对齐口径的估值因子 IC 差是否≥0（PIT 口径不劣化验收）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: PIT 口径与非对齐口径 IC 差
+  threshold: ≥0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0025
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 主力净流入占成交额比前 10% 个股的次日收益是否显著为正（事件研究 t>2，全 A 池）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: 极端净流入组次日收益 t 检验
+  threshold: '>0 且 t>2'
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y-但缺数据(转insufficient)
+  check_data: 'NO'
+  check_caliber: OK
+  check_mech: Y-但缺数据(转insufficient)
+  precondition_gap: 闭卷窗内零样本（候选表均始于 2025-09-09 之后）
+  verdict_skeleton: gap
+- q_id: PQ-0026
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 主力口径版本切换前后因子 IC 是否存在显著断点（Chow 检验 p<0.05 即须口径版本标记）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: 版本切换点 Chow 断点检验
+  threshold: p<0.05 即须标记
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L1源线层
+  mechanical: Y-但缺数据(转insufficient)
+  check_data: 'NO'
+  check_caliber: OK
+  check_mech: Y-但缺数据(转insufficient)
+  precondition_gap: 闭卷窗内零样本（候选表均始于 2025-09-09 之后）
+  verdict_skeleton: gap
+- q_id: PQ-0027
+  layer: L1
+  line_ref: SL-A13
+  title: SL-A13 股东户数环比降幅>5% 个股在公告日后 20 日的超额收益是否显著>0（按 HOLD_NOTICE_DATE 窗口过滤，t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  field_caliber: 公告后 20 日超额 t 检验
+  threshold: '>0 且 t>2'
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0028
+  layer: L1
+  line_ref: SL-A13
+  title: SL-A13 户均持股市值分位因子在全 A 池的月频 IC 是否显著>0（IC>0.02 且 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  field_caliber: 月频秩 IC（Newey-West）
+  threshold: IC>0.02 且 t>2
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0029
+  layer: L1
+  line_ref: SL-A15
+  title: SL-A15 234 永续资金费率极值（|费率|>95 分位）日后 3 日 A 股情绪代理指标是否显著回落（跨市场传导检验 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:hl_liquidation_raw(5,?~?,闭卷窗内)
+  - ch:hl_perp_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:hl_oi_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:crypto_kline_daily(18431,2025-08-08~2026-09-22,闭卷窗内)
+  field_caliber: 费率极值日后 3 日情绪代理变化 t 检验
+  threshold: 显著回落且 t>2
+  sample_window: 3 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0030
+  layer: L1
+  line_ref: SL-A15
+  title: SL-A15 清算量进入 99 分位的交易日对次日沪深300 已实现波动的预测 IC 是否显著>0（IC>0.02）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:hl_liquidation_raw(5,?~?,闭卷窗内)
+  - ch:hl_perp_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:hl_oi_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:crypto_kline_daily(18431,2025-08-08~2026-09-22,闭卷窗内)
+  field_caliber: 清算极值日对次日已实现波动 IC
+  threshold: IC>0.02
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0031
+  layer: L3
+  line_ref: null
+  title: 基于 kline_daily 的沪深300 趋势状态变量（20/60 日均线上下与斜率符号）的状态转移矩阵是否统计稳定（月度转移概率 bootstrap
+    置信区间半宽<0.1）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 月度转移概率 bootstrap 置信区间半宽
+  threshold: 半宽<0.1
+  sample_window: 60 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0032
+  layer: L3
+  line_ref: null
+  title: 全 A 估值中位数分位（PE/PB）作为大盘风险偏好状态变量是否存在均值回归（分位>80% 后 20 日收益显著低于分位<20% 情形，t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 高/低分位组后 20 日收益差 t 检验
+  threshold: 差<0 且 t<-2（高分位组显著更差）
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0033
+  layer: L3
+  line_ref: null
+  title: 美债 10Y/DXY/VIX 变化率合成的全球风险因子对 A 股大盘波动状态的领先期是否稳定落在 1-5 日（互相关峰值 CI 不含 0）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 互相关峰值滞后的 bootstrap 置信区间
+  threshold: 峰值滞后落在 1-5 日且 CI 不含 0
+  sample_window: 5 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0034
+  layer: L3
+  line_ref: null
+  title: 加密永续费率与清算量分位合成的跨市场风险偏好状态对 A 股大盘风险状态的增量预测力是否显著（logit AUC 提升>0.02）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: logit 加入跨市场变量后 AUC 提升
+  threshold: ΔAUC>0.02 且样本外方向一致
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0035
+  layer: L3
+  line_ref: null
+  title: 快讯情感分位与散户关注度代理（雪球/股吧低频采样）双源情绪指数的秩相关是否≥0.6（互证双源一致性）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 双源日度情绪指数秩相关
+  threshold: Spearman ρ≥0.6
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0036
+  layer: L3
+  line_ref: null
+  title: 主力净流入全 A 合计 20 日滚动情绪代理与快讯情绪指数的领先滞后关系是否稳定（领先期 bootstrap CI 不含 0）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 领先期估计的 block bootstrap CI
+  threshold: 领先期 CI 不含 0
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0037
+  layer: L3
+  line_ref: null
+  title: 多源合成情绪状态变量的极端分位（>95%）次日是否出现显著反转（极端情绪日后 5 日收益反转 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 极端情绪日后 5 日全 A 收益反转幅度 t 检验
+  threshold: 反转显著且 t>2
+  sample_window: 5 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0038
+  layer: L3
+  line_ref: null
+  title: 千股千评综合得分变化与评级家数增减合成的评级情绪变量对个股横截面收益的周频 IC 是否显著>0（IC>0.02）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 评级情绪因子周频秩 IC
+  threshold: IC>0.02 且 t>2
+  sample_window: 周频（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0039
+  layer: L3
+  line_ref: null
+  title: 880xxx 板块 20 日动量排名的排名持续性是否显著高于随机（月度 Spearman 自相关均值>0.3）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 20 日动量排名月度 Spearman 自相关
+  threshold: 均值>0.3 且 t>2
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0040
+  layer: L3
+  line_ref: null
+  title: 板块资金净流入集中度（CR5）作为板块情绪状态变量对板块指数 5 日收益的预测 IC 是否显著>0（IC>0.02 且 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: CR5 集中度对板块 5 日收益秩 IC
+  threshold: IC>0.02 且 t>2
+  sample_window: 5 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0041
+  layer: L3
+  line_ref: null
+  title: 互动易问答激增与快讯实体提及热度合成的概念热度对概念板块指数是否具≥1 个交易日先行性（先行期 t>2）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 热度对概念指数先行期的 t 检验
+  threshold: 先行期≥1 日且 t>2
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L2传导图谱层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0042
+  layer: L3
+  line_ref: null
+  title: 极端天气冲击（40 城温度距平/降水超阈）对公用事业与农业板块相对收益的 5 日事件窗效应是否显著（超额 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 天气冲击日公用事业/农业板块 5 日超额收益
+  threshold: 事件窗超额 t>2
+  sample_window: 5 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0043
+  layer: L4
+  line_ref: null
+  title: T-1 三类状态变量快照驱动的风险预算仓位规则相对等权基准的样本外最大回撤改善是否>15%？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 样本外年化超额与最大回撤改善
+  threshold: 回撤改善>15% 且超额>0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0044
+  layer: L4
+  line_ref: null
+  title: 单因子积木入库判据（全 A 池 5 日窗口 IC>0.02 且 t>2 且扣成本后为正）是否被入库闸严格执行（通过率<30% 且执行一致率 100%）？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 积木库入库通过率与判据执行一致率
+  threshold: 通过率<30% 且执行一致率=100%
+  sample_window: 5 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - 入库闸
+  - 模板生成器
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0045
+  layer: L4
+  line_ref: null
+  title: 板块动量+资金流双信号的 top3 板块组合相对板块等权的扣费后年化超额是否>3%？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 扣费后年化超额（vs 板块等权）
+  threshold: '>3% 年化'
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0046
+  layer: L4
+  line_ref: null
+  title: 大盘风险状态由低转高时降仓 20% 的切换规则其事件后 20 日避险收益是否显著>0（t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 降仓事件后 20 日避险收益（避免回撤）
+  threshold: '>0 且 t>2'
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0047
+  layer: L4
+  line_ref: null
+  title: 全 A 估值中位数 PE 分位>80% 触发的系统性降风险决策其后 20 日回撤收窄命中率是否>60%？
+  qtype: 管线挂接问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 触发后 20 日回撤收窄命中率
+  threshold: '>60%'
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0048
+  layer: L4
+  line_ref: null
+  title: 加密资金费率极值信号触发的 A 股降仓动作其后 3 日组合与基准回撤差是否显著>0（t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 信号后 3 日组合与基准回撤差
+  threshold: '>0 且 t>2'
+  sample_window: 3 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0049
+  layer: L4
+  line_ref: null
+  title: 单因子组合权重上限 15% 的约束是否在不损失超 1% 年化收益的前提下将特质波动降低>10%？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 单因子权重上限 15% 的特质波动降幅与收益损失
+  threshold: 特质波动降>10% 且年化损失≤1%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0050
+  layer: L4
+  line_ref: null
+  title: 源线 PIT 风险升级事件发生后受影响决策假设的暂停响应时延是否≤1 个交易日？
+  qtype: PIT纪律问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: PIT 风险升级事件到受影响假设暂停的时延
+  threshold: 时延≤1 个交易日
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0051
+  layer: L5
+  line_ref: null
+  title: 问题表内 in_exam 及以后状态问题的 exam_plan 含 criterion 与 threshold 的比例是否=100%？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: in_exam 及以后状态 exam_plan 双字段齐备率
+  threshold: =100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0052
+  layer: L5
+  line_ref: null
+  title: GPU 周五窗口 IBT 修卷任务完成率是否连续 4 周=100%（硬前置第一件）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 周五 GPU 窗口 IBT 修卷任务完成率
+  threshold: =100%（连续 4 周）
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0053
+  layer: L5
+  line_ref: null
+  title: 焊成本滑点模型输出与 tick_data 实盘回执的偏差均值是否≤2bp（月度校准验收）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 滑点模型输出 vs 实盘回执偏差
+  threshold: 偏差均值≤2bp
+  sample_window: 月度（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0054
+  layer: L5
+  line_ref: null
+  title: answered 问题新鲜窗（月度）到期复考执行率是否≥95%（逾期挂起率≤5%）？
+  qtype: PIT纪律问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 新鲜窗到期复考执行率
+  threshold: ≥95%（逾期挂起≤5%）
+  sample_window: 月度（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0055
+  layer: L5
+  line_ref: null
+  title: 全部考试的样本外份额是否≥1/3 且考试窗口与问题生成时戳无重叠（时间分层机检通过率 100%）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 样本外份额≥1/3 且窗口无重叠的考试占比
+  threshold: =100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0056
+  layer: L5
+  line_ref: null
+  title: 考试完成后 exam_writeback 落账时延 P99 是否≤1 个交易日？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: exam_writeback 落账时延 P99
+  threshold: ≤1 个交易日
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0057
+  layer: L5
+  line_ref: null
+  title: reexam 状态问题三取二多数裁定执行率是否=100%（无跳过三取二的直接终裁）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: reexam 三取二多数裁定执行率
+  threshold: =100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0058
+  layer: L6
+  line_ref: null
+  title: 本批次新增问题条目的 net_zero_note 非空率是否=100%且替代声明可解析（模板/替代对象字段齐备）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: net_zero_note 非空且含可解析替代声明比例
+  threshold: =100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0059
+  layer: L6
+  line_ref: null
+  title: 全表 merged/retired 终态 q_id 的复用事件数是否=0且连号缺口全部可解释（墓碑不复用）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: 终态 q_id 复用事件数与连号缺口
+  threshold: 复用=0 且缺口可解释（墓碑）
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0060
+  layer: L6
+  line_ref: null
+  title: 全表状态流转的非法边拦截率是否=100%（审计账内 illegal_transition 落账异常=0）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: illegal_transition 异常事件数
+  threshold: =0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0061
+  layer: L6
+  line_ref: null
+  title: 乐观锁 VersionConflict 后重读重放的成功率是否≥99%？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: VersionConflict 后重读重放成功率
+  threshold: ≥99%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0062
+  layer: L6
+  line_ref: null
+  title: PG 审计表与 JSONL 审计账的逐日事件数差是否=0（双轨对账无缺账）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: PG 审计表与 JSONL 事件数差
+  threshold: =0（按日）
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0063
+  layer: L2
+  line_ref: null
+  title: 产业链图谱中上游大宗涨价冲击沿 ig_io_edge 系数加权路径对下游行业 20 日毛利变化的传导弹性是否显著非零（边级 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 边级传导弹性（下游毛利变化对上游冲击×系数回归）
+  threshold: 弹性显著非零且 t>2
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0064
+  layer: L2
+  line_ref: null
+  title: ig_chain 873 条链的节点→公司映射完整度是否达到可考分级 A 档阈值（ig_node_company 覆盖率≥80% 的链占比）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 链级 ig_node_company 覆盖率
+  threshold: A 档链占比≥80%（覆盖率≥80%）
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L2传导图谱层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0065
+  layer: L2
+  line_ref: null
+  title: CKG 产品-产品边（source=ckg_2021）与研报线抽取边的交叉验证一致率是否≥70%（低于则 CKG 降级为结构先验）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: CKG 产品-产品边与研报抽取边一致率
+  threshold: ≥70%（低于则 CKG 降级为结构先验）
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L2传导图谱层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0066
+  layer: L2
+  line_ref: null
+  title: ig_entity_code_map 消歧桥覆盖率对 ig_fact 假边率的敏感性是否显著（覆盖率每提升 10% 假边率可测下降且方向为负）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 消歧桥覆盖率分档下的假边率斜率
+  threshold: 斜率<0 且显著
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L4决策层
+  mechanical: N(含人工/外部核实环节)
+  check_data: OK
+  check_caliber: OK
+  check_mech: N(含人工/外部核实环节)
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0067
+  layer: L2
+  line_ref: null
+  title: CKG 2021 行业上游聚合（supplies_to）对当期行业传导判定的仍有效比例是否≥60%（2021 静态快照陈旧度界）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 2021 上游聚合与当期判定的一致比例
+  threshold: ≥60%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L2传导图谱层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0068
+  layer: L2
+  line_ref: null
+  title: ig_fact 中 CKG 产品名消歧对齐后可升级为链结构边的比例是否≥30%（ig_node/ig_edge 防污染边界下的升级空间）？
+  qtype: PIT纪律问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 消歧对齐后可升级边占 ig_fact 产品边比例
+  threshold: ≥30%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L2传导图谱层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0069
+  layer: L2
+  line_ref: null
+  title: CKG 行业树（480 节点）与申万行业词表映射的覆盖率是否≥90%且冲突率≤5%（映射质量双阈值）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 行业树↔申万词表覆盖率与冲突率
+  threshold: 覆盖率≥90% 且冲突率≤5%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L2传导图谱层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0070
+  layer: L2
+  line_ref: null
+  title: 同一实控人穿透链下的上市公司组合收益联动性是否显著高于非关联组（滚动 60 日收益相关差 t>2，equity_penetration 现行版本口径）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 同实控人组合与非关联组滚动 60 日收益相关差
+  threshold: 相关差>0 且 t>2
+  sample_window: 滚动 60 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0071
+  layer: L2
+  line_ref: null
+  title: 十大股东口径（274,865 对）与 ig_equity_edge 互补边对组合收益联动的解释增量是否显著（ΔR²>0.02）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 互补边并入后组合收益联动解释增量
+  threshold: ΔR²>0.02
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0072
+  layer: L2
+  line_ref: null
+  title: 股权质押/冻结公告事件与 edge_holding 现行版本（as_of=2025-12-31）的时序一致性是否满足 PIT（事件日晚于版本生效日的违规样本=0）？
+  qtype: PIT纪律问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 事件日与版本生效日的时序合规率
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0073
+  layer: L2
+  line_ref: null
+  title: 境外断线（BVI/开曼止步）导致的穿透覆盖率缺口是否可量化且≤总穿透路径的 20%（三家样本 600566/600927/601963 扩样复测）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 境外断线止步路径占全穿透路径比例
+  threshold: ≤20%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0074
+  layer: L2
+  line_ref: null
+  title: stock_concept 概念成分股与产业链链名公司的重合度是否显著低于随机基线（概念≠产业链边界的 Jaccard 置换检验 p<0.05）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 概念成分与链名公司重合度 vs 随机基线
+  threshold: Jaccard 显著低于随机（p<0.05）
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L2传导图谱层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0075
+  layer: L2
+  line_ref: null
+  title: 东财概念（akshare）与 THS 概念标签（stock_concept）的重合率是否随新鲜度衰减收敛（月度趋势斜率>0 且显著）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 东财 vs THS 概念标签重合率月度趋势
+  threshold: 重合率收敛（斜率>0 且显著）或登记差异
+  sample_window: 月度（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L2传导图谱层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0076
+  layer: L2
+  line_ref: null
+  title: 概念热度聚合（快讯实体提及+互动易问答激增按概念归并）对 L3 情绪变量是否具先行性（先行期≥1 日且 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 概念热度先行期
+  threshold: 先行≥1 日且 t>2
+  sample_window: 1 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0077
+  layer: L2
+  line_ref: null
+  title: stock_concept 装载前市场分类标签过滤规则的误杀率是否≤2%（人工抽检 500 条对照）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 市场分类标签过滤误杀率
+  threshold: ≤2%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L4决策层
+  mechanical: N(含人工/外部核实环节)
+  check_data: OK
+  check_caliber: OK
+  check_mech: N(含人工/外部核实环节)
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0078
+  layer: L2
+  line_ref: null
+  title: io_edge 部门码↔ig_node 映射补齐后可挂边比例是否≥95%（现 16859 条边 100% 挂零的 WP-0.5 缺口关闭验收）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 映射补齐后 io_edge 可挂边比例
+  threshold: ≥95%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0079
+  layer: L2
+  line_ref: null
+  title: ig_company_edge 58207 条供应链边按置信度分层后高置信层（confidence≥0.8）占比是否≥30%且层间传导预测力单调（高层>低层，t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 高置信层占比与层间传导预测力单调性
+  threshold: 占比≥30% 且高层>低层（t>2）
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0080
+  layer: L2
+  line_ref: null
+  title: IO 表 2020 口径滞后对当期部门传导判定的误差界是否≤30%（以 2018/2020 两版系数差的外推误差上界估计）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_chain(873,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  - pg:ig_edge(1726,2026-08-28~2026-09-14,切点后)
+  - pg:ig_fact(264072,2021-10-26~2021-10-26,闭卷窗内)
+  - pg:ig_entity_code_map(88,2026-09-17~2026-09-18,切点后)
+  - pg:ig_equity_edge(804,2022-12-31~2025-12-31,闭卷窗内)
+  - pg:ig_company_edge(58207,2026-08-28~2026-09-11,切点后)
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:stock_concept(61053,2026-09-14~2026-09-14,切点后)
+  - pg:ig_product_revenue(165255,2021-10-26~2026-08-06,闭卷窗内)
+  field_caliber: 两版系数外推误差上界
+  threshold: ≤30%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0081
+  layer: L3
+  line_ref: null
+  title: 沪深300 已实现波动 20 日分位状态变量的半衰期是否稳定落在 5-15 日区间（支持日频状态机切换）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 波动分位状态半衰期估计
+  threshold: 5-15 日且滚动估计 CI 半宽<5 日
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0082
+  layer: L3
+  line_ref: null
+  title: 全 A 涨跌家数比宽度变量对均线状态拐点的领先命中率是否>55%（领先≥3 日且样本≥30 次）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 宽度拐点领先均线的命中率
+  threshold: '>55% 且样本≥30 次'
+  sample_window: 3 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0083
+  layer: L3
+  line_ref: null
+  title: 千股千评得分横截面离散度对情绪极值（>90 分位）后 10 日情绪回落的预警概率是否>60%？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 离散度>90 分位后 10 日情绪回落频率
+  threshold: '>60%'
+  sample_window: 10 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0084
+  layer: L3
+  line_ref: null
+  title: 主力净流入 20 日滚动占成交额比与快讯情绪指数的高低状态一致率是否≥70%（月度窗口）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 两源高低状态一致率
+  threshold: ≥70%
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0085
+  layer: L3
+  line_ref: null
+  title: 板块新高家数占比>10% 的板块其后 5 日延续上涨概率是否>60%（动量确认）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 条件延续上涨频率
+  threshold: '>60%'
+  sample_window: 5 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0086
+  layer: L3
+  line_ref: null
+  title: 概念热度排名与行业动量排名的温度差对板块轮动拐点是否具≥2 日领先（命中率>55%）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 温度差领先拐点命中率
+  threshold: ≥2 日且>55%
+  sample_window: 2 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0087
+  layer: L3
+  line_ref: null
+  title: BDI 六指数合成周期景气变量对 A 股周期板块相对收益的领先期是否稳定落在 10-30 日（滚动互相关 CI 不含 0）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 滚动互相关峰值滞后 CI
+  threshold: 峰值落 10-30 日且 CI 不含 0
+  sample_window: 30 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0088
+  layer: L3
+  line_ref: null
+  title: 全市场户数降幅家数占比合成的筹码情绪变量对市场 20 日收益的预测 IC 是否显著>0（月频 IC>0.02 且 t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:index_quote(233925,2026-07-14~2026-09-23,切点后)
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:alt_stock_comment(46777,2026-09-11~2026-09-23,切点后)
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:alt_shipping_index(31986,1988-10-19~2026-09-23,闭卷窗内)
+  - ch:market_breadth_snapshot(145,2026-08-24~2026-09-23,切点后)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  - ch:stock_hot_rank(6593,2026-08-04~2026-09-23,切点后)
+  - ch:weather_data(10033,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 月频秩 IC
+  threshold: IC>0.02 且 t>2
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0089
+  layer: L4
+  line_ref: null
+  title: 波动率倒数加权的风险预算仓位规则样本外年化超额是否>3%且最大回撤优于等权？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 样本外年化超额与回撤对比
+  threshold: 超额>3% 且回撤更小
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0090
+  layer: L4
+  line_ref: null
+  title: 板块轮动+资金流双确认的 top3 板块超配 5% 决策对组合信息比率 IR 的贡献是否>0.1？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 超配子组合信息比率贡献
+  threshold: '>0.1'
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0091
+  layer: L4
+  line_ref: null
+  title: 情绪极值状态下动量因子暴露减半是否降低组合回撤>10%且年化损失≤1%？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 回撤降幅与收益损失
+  threshold: 回撤降>10% 且损失≤1%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - pf_alloc
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0092
+  layer: L4
+  line_ref: null
+  title: 沿 ig_io_edge 上游成本冲击触发的下游行业回避清单其 20 日避损是否显著>0（t>2）？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 回避清单 20 日避损
+  threshold: '>0 且 t>2'
+  sample_window: 20 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L2传导图谱层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0093
+  layer: L4
+  line_ref: null
+  title: L5 证伪结论回传 L4 的决策修正是否全部次日生效（当日回环违例=0）？
+  qtype: 管线挂接问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 证伪→修正生效时戳差
+  threshold: 次日生效率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0094
+  layer: L4
+  line_ref: null
+  title: 单票≤10%/单板块≤30% 仓位硬约束的违例检出率是否=100%（pf_alloc 前置校验覆盖）？
+  qtype: 管线挂接问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 约束违例检出率
+  threshold: =100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - pf_alloc
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0095
+  layer: L5
+  line_ref: null
+  title: 同一模板族（同 tpl）问题的 exam_plan 阈值口径是否一致（族内漂移=0）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 同族阈值口径一致率
+  threshold: 漂移=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0096
+  layer: L5
+  line_ref: null
+  title: 考试取数时戳早于决策时戳的 PIT 抽检违例是否=0（每周抽样 20 条逐笔比对）？
+  qtype: PIT纪律问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 抽样考试时戳比对违例数
+  threshold: =0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0097
+  layer: L5
+  line_ref: null
+  title: GPU 周五硬前置三件（IBT 修卷/焊成本/新鲜窗重考）的整体周五完成率是否连续 4 周=100%？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 三件周五整体完成率
+  threshold: 连续 4 周=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - Owner
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0098
+  layer: L5
+  line_ref: null
+  title: IC 类考试的检验功效是否≥80%且样本不足时自动延期而非降阈值（降阈值事件=0）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 功效曲线核验通过率
+  threshold: ≥80% 且降阈值事件=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0099
+  layer: L5
+  line_ref: null
+  title: answered/reexam/suspended 状态分布是否落在健康带（answered 占 30-70% 且无单状态>80%）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 状态分布占比
+  threshold: answered 30-70% 且单状态≤80%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  - Owner
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0100
+  layer: L6
+  line_ref: null
+  title: 问题表净增速是否≤批次配额且每批替代声明齐备率=100%（净零季检）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: 净增速与配额比、替代声明齐备率
+  threshold: ≤配额 且 =100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0101
+  layer: L6
+  line_ref: null
+  title: merged_into 悬空引用（指向不存在 q_id）数是否=0？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: 悬空合并引用数
+  threshold: =0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0102
+  layer: L6
+  line_ref: null
+  title: JSONL 审计账与 PG 审计表的逐日事件数差是否=0（第三道对账线）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: 双轨逐日计数差
+  threshold: =0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0103
+  layer: L6
+  line_ref: null
+  title: 非 Max/Owner 角色的越权 transition 尝试拦截率是否=100%（claim_mismatch 事件全数被拒）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question(283,?~?,闭卷窗内)
+  - pg:meta_question.meta_question_audit(1419,?~?,闭卷窗内)
+  field_caliber: claim_mismatch 拦截率
+  threshold: =100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0104
+  layer: L4
+  line_ref: null
+  title: 因子组合挖掘预注册空间（积木族×算子×窗口笛卡尔积）单批候选是否≤600 且 N_eff/名义组合数比≥30%（塌缩防线验收）？
+  qtype: 管线挂接问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 单批候选数与 N_eff 占比
+  threshold: ≤600 且 ≥30%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - E1C三轨
+  - L6治理层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0105
+  layer: L4
+  line_ref: null
+  title: E1C 三轨（gplearn/智能体/MCTS）在同一预注册积木库与统一考尺下的有效因子产出率差异是否显著（卡方 p<0.05）？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 三轨产出率（过考/候选）齐性卡方
+  threshold: p<0.05（差异显著）
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - E1C三轨
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0106
+  layer: L4
+  line_ref: null
+  title: 组合候选 |秩相关|>0.7 的合并闸是否将积木库冗余度压至≤40%（高相关对占比）？
+  qtype: 因子效力问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 合并后冗余度（高相关对占比）
+  threshold: ≤40%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - 模板生成器
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0107
+  layer: L5
+  line_ref: null
+  title: E1C 三轨统一考尺（IC>0.02 且 t>2 且扣费后多空年化>3%、样本外份额≥1/3）是否三轨一致执行（口径漂移=0）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 三轨考尺口径一致率
+  threshold: 漂移=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - E1C三轨
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0108
+  layer: L5
+  line_ref: null
+  title: 组合因子新鲜窗重考（GPU 周五硬前置第三件）的逾期率是否≤5%（新鲜窗=月度滚动 20 日）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:meta_question.meta_question_exam_result(287,?~?,闭卷窗内)
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  field_caliber: 新鲜窗（20 日滚动）到期重考逾期率
+  threshold: ≤5%
+  sample_window: 月度（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - Owner
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0109
+  layer: L4
+  line_ref: null
+  title: 组合空间扩容申请（新 space_hash）是否全部伴随旧空间封存登记（禁事后扩空间纪律的存量检查违例=0）？
+  qtype: 管线挂接问
+  need_tables:
+  - chb:alloc_budget_daily(18,2026-09-15~2026-09-23,切点后)
+  - chb:decision_daily(69,2026-09-16~2026-09-24,切点后)
+  - chb:regime_snapshot_history(3627,2019-04-01~2026-09-22,闭卷窗内)
+  - chb:sim_trade_log(67,2026-07-17~2026-09-23,切点后)
+  - chb:alloc_shrinkage_daily(9,2026-09-15~2026-09-23,切点后)
+  - chb:crisis_gate_log(44,2026-07-17~2026-09-03,切点后)
+  - chb:hypothesis_precheck(58,?~?,闭卷窗内)
+  - chb:node_verdict(58,?~?,闭卷窗内)
+  - chb:strategy_screen(1340,?~?,闭卷窗内)
+  - ch:execution_report(1,?~?,闭卷窗内)
+  field_caliber: 扩容批次旧空间封存登记齐备率
+  threshold: =100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0110
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 的均线斜率+20日突破信号在全 A 池对 1日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 20日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0111
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 的均线斜率+20日突破信号在全 A 池对 5日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 20日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0112
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 的均线斜率+20日突破信号在全 A 池对 20日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 20日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0113
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 的尾盘主买净额占比信号在全 A 池对 1日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 1日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0114
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 的尾盘主买净额占比信号在全 A 池对 5日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 5日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0115
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 的尾盘主买净额占比信号在全 A 池对 20日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 20日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0116
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 的板块涨幅排名前十分位成分股跟随信号在全 A 池对 1日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West
+    t>2，样本外 IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 1日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0117
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 的板块涨幅排名前十分位成分股跟随信号在全 A 池对 5日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West
+    t>2，样本外 IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 5日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0118
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 的板块涨幅排名前十分位成分股跟随信号在全 A 池对 20日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West
+    t>2，样本外 IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 20日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0119
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 的EP/BP 分位信号在全 A 池对 1日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 1日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0120
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 的EP/BP 分位信号在全 A 池对 5日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 5日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0121
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 的EP/BP 分位信号在全 A 池对 20日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 20日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0122
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 的业绩超预期（营收增速二阶差分>0，按 ann_date PIT）信号在全 A 池对 1日前瞻收益的预测 IC 是否显著>0（IC>0.02
+    且 Newey-West t>2，样本外 IC>0.01）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 1日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0123
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 的业绩超预期（营收增速二阶差分>0，按 ann_date PIT）信号在全 A 池对 5日前瞻收益的预测 IC 是否显著>0（IC>0.02
+    且 Newey-West t>2，样本外 IC>0.01）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 5日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0124
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 的业绩超预期（营收增速二阶差分>0，按 ann_date PIT）信号在全 A 池对 20日前瞻收益的预测 IC 是否显著>0（IC>0.02
+    且 Newey-West t>2，样本外 IC>0.01）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 20日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0125
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 的主力净流入占比信号在全 A 池对 1日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 1日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y-但缺数据(转insufficient)
+  check_data: 'NO'
+  check_caliber: OK
+  check_mech: Y-但缺数据(转insufficient)
+  precondition_gap: 闭卷窗内零样本（候选表均始于 2025-09-09 之后）
+  verdict_skeleton: gap
+- q_id: PQ-0126
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 的主力净流入占比信号在全 A 池对 5日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 5日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y-但缺数据(转insufficient)
+  check_data: 'NO'
+  check_caliber: OK
+  check_mech: Y-但缺数据(转insufficient)
+  precondition_gap: 闭卷窗内零样本（候选表均始于 2025-09-09 之后）
+  verdict_skeleton: gap
+- q_id: PQ-0127
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 的主力净流入占比信号在全 A 池对 20日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外
+    IC>0.01）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+  threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+  sample_window: 20日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L4决策层
+  - L5执行验证层
+  mechanical: Y-但缺数据(转insufficient)
+  check_data: 'NO'
+  check_caliber: OK
+  check_mech: Y-但缺数据(转insufficient)
+  precondition_gap: 闭卷窗内零样本（候选表均始于 2025-09-09 之后）
+  verdict_skeleton: gap
+- q_id: PQ-0128
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 日线/分钟行情线的收盘价/成交量/振幅/均线斜率/20日突破信号词集能否覆盖价量趋势与动量预测问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 01 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0129
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 日线/分钟行情线的provider 增量拉取入库边际成本≈0（账号内/免费接口）是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 01 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0130
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 日线/分钟行情线的日线日更盘后+分钟线小时级延迟节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 01 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0131
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 日线/分钟行情线的复权算子改写历史风险是否被复权因子对齐且禁进 PIT 窗100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 01 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0132
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 日线/分钟行情线对L3大盘状态/L4决策/L5执行验证的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 01 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0133
+  layer: L1
+  line_ref: SL-A01
+  title: SL-A01 日线/分钟行情线的IC/分层回测+样本外复考领先性消失即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:kline_daily(10102587,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_daily_hfq(8431745,2015-01-05~2026-09-23,闭卷窗内)
+  - ch:adj_factor(21055022,1990-12-19~2026-09-23,闭卷窗内)
+  - ch:kline_30min(49107016,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_60min(24611429,2021-09-01~2026-09-23,闭卷窗内)
+  - ch:kline_index(3100590,1990-12-19~2026-09-23,闭卷窗内)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 01 日（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0134
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 Tick 分笔线的逐笔净额/买卖队列失衡信号词集能否覆盖日内微观结构预测次日方向与冲击成本问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0135
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 Tick 分笔线的实时订阅+日级落库、历史回补靠一次性包的存储成本结构是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0136
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 Tick 分笔线的实时推送+日级落库、历史覆盖以包到货日为界节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0137
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 Tick 分笔线的TDX 分笔仅最近交易日的历史断档风险是否被回填缺口显式登记100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0138
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 Tick 分笔线对L5执行验证（滑点/冲击）/L3微观情绪的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0139
+  layer: L1
+  line_ref: SL-A02
+  title: SL-A02 Tick 分笔线的模拟成交 vs 实盘回执对比 tick 信号无增量即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:tick_data(8925440697,2025-01-02~2026-09-23,闭卷窗内)
+  - ch:tick_depth_5(86599089,2026-07-24~2026-09-23,切点后)
+  - ch:auction_book(3899074,2026-07-21~2026-09-23,切点后)
+  - ch:auction_snapshot(266363,2026-06-01~2026-09-23,切点后)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0140
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 板块/概念指数线的板块涨幅排名/板块资金净流入/新高家数信号词集能否覆盖板块轮动与强弱持续领先个股问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0141
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 板块/概念指数线的TQCENTER/TDX/AKSHARE 三渠道账号内/免费运营是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0142
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 板块/概念指数线的盘中实时快照+日更 K 线节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0143
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 板块/概念指数线的概念成分官方调整改写历史归属风险是否被成分快照按日存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0144
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 板块/概念指数线对L3板块变量/L2传导图谱/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0145
+  layer: L1
+  line_ref: SL-A03
+  title: SL-A03 板块/概念指数线的轮动策略扣费后超额检验无超额即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:kline_sector(96982,2025-07-18~2026-09-23,闭卷窗内)
+  - ch:kline_sector_880(443380,2020-03-17~2026-09-23,闭卷窗内)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:sector_constituent_snapshot(285372,2026-09-14~2026-09-23,切点后)
+  - ch:concept_board(750,?~?,闭卷窗内)
+  - ch:concept_board_constituent(35343,?~?,闭卷窗内)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0146
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 估值线的EP/BP/股息率分位信号词集能否覆盖估值横截面区分未来收益问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0147
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 估值线的akshare 免费接口 rpm60 限频下的采集成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0148
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 估值线的日更盘后节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0149
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 估值线的财务快报修正改写估值分母风险是否被按公告日 PIT 取数100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0150
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 估值线对L4决策/L3大盘（全 A 估值中位数分位）的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0151
+  layer: L1
+  line_ref: SL-A04
+  title: SL-A04 估值线的多空分组年化差+分位均值回归检验横截面单调性破坏即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:stock_daily_basic(7157299,2021-01-04~2026-09-23,闭卷窗内)
+  - ch:index_valuation_daily(16216,2010-01-04~2026-09-22,闭卷窗内)
+  - ch:index_valuation_daily_quar_20260920(8125,2010-01-01~2026-09-17,闭卷窗内)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0152
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 财务线的ROE/营收增速/增速二阶差分信号词集能否覆盖基本面改善被定价滞后捕捉问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0153
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 财务线的tushare 积分制/baostock 免费的配额成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0154
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 财务线的季频公告日离散分布节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0155
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 财务线的追溯重述与 end_date 误用风险是否被以 ann_date 对齐取数100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0156
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 财务线对L2传导图谱（企业节点基本面）/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0157
+  layer: L1
+  line_ref: SL-A05
+  title: SL-A05 财务线的PEAD 漂移收益消失即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch3:income_statement(346176,1995-01-05~2026-09-02,闭卷窗内)
+  - ch3:balance_sheet(339738,1990-03-21~2026-09-02,闭卷窗内)
+  - ch3:cashflow_statement(310447,1999-01-30~2026-09-02,闭卷窗内)
+  - ch3:earnings_forecast(125582,1999-01-08~2026-07-03,闭卷窗内)
+  - ch3:disclosure_plan(316739,2001-02-06~2026-08-31,闭卷窗内)
+  - ch3:express_report(28708,2005-01-08~2026-07-02,闭卷窗内)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0158
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 资金流线的主力净流入/超大单占比/连续流入天数信号词集能否覆盖主力流向预测短期方向问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y-但缺数据(转insufficient)
+  check_data: 'NO'
+  check_caliber: OK
+  check_mech: Y-但缺数据(转insufficient)
+  precondition_gap: 闭卷窗内零样本（候选表均始于 2025-09-09 之后）
+  verdict_skeleton: gap
+- q_id: PQ-0159
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 资金流线的tushare 积分制配额成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0160
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 资金流线的日更盘后节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0161
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 资金流线的主力划分推断属性与口径版本调整风险是否被口径版本存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: 'NO'
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: 闭卷窗内零样本（候选表均始于 2025-09-09 之后）
+  verdict_skeleton: gap
+- q_id: PQ-0162
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 资金流线对L3情绪/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0163
+  layer: L1
+  line_ref: SL-A06
+  title: SL-A06 资金流线的净流入极端日事件研究无显著超额即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:money_flow(522469,2026-06-01~2026-09-23,切点后)
+  - ch:sector_fund_flow(3529,2026-09-15~2026-09-23,切点后)
+  - ch:market_fund_flow_daily(123,2026-03-27~2026-09-22,切点后)
+  - ch:block_trade(1426,2026-08-07~2026-09-23,切点后)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y-但缺数据(转insufficient)
+  check_data: 'NO'
+  check_caliber: OK
+  check_mech: Y-但缺数据(转insufficient)
+  precondition_gap: 闭卷窗内零样本（候选表均始于 2025-09-09 之后）
+  verdict_skeleton: gap
+- q_id: PQ-0164
+  layer: L1
+  line_ref: SL-A07
+  title: SL-A07 千股千评线的评级增减/综合得分变化信号词集能否覆盖机构评级领先股价问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0165
+  layer: L1
+  line_ref: SL-A07
+  title: SL-A07 千股千评线的akshare 免费+日快照自积的反爬限频成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0166
+  layer: L1
+  line_ref: SL-A07
+  title: SL-A07 千股千评线的收盘后日快照节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0167
+  layer: L1
+  line_ref: SL-A07
+  title: SL-A07 千股千评线的快照时点口径漂移风险是否被快照时点存证且自积序列不回填100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0168
+  layer: L1
+  line_ref: SL-A07
+  title: SL-A07 千股千评线对L3情绪/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0169
+  layer: L1
+  line_ref: SL-A07
+  title: SL-A07 千股千评线的得分变化分组收益差检验无领先性即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0170
+  layer: L1
+  line_ref: SL-A08
+  title: SL-A08 航运运价线的BDI/BCI/BPI 动量信号词集能否覆盖全球贸易景气映射出口链与周期股问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0171
+  layer: L1
+  line_ref: SL-A08
+  title: SL-A08 航运运价线的akshare 免费渠道采集成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0172
+  layer: L1
+  line_ref: SL-A08
+  title: SL-A08 航运运价线的交易日日更（BDI 1988 起+六指数约 2006 起）节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0173
+  layer: L1
+  line_ref: SL-A08
+  title: SL-A08 航运运价线的指数编制口径调整风险是否被发布即定不回补的序列存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0174
+  layer: L1
+  line_ref: SL-A08
+  title: SL-A08 航运运价线对L3大盘（周期风险偏好）/L2传导图谱（贸易链边权重）的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0175
+  layer: L1
+  line_ref: SL-A08
+  title: SL-A08 航运运价线的领先-滞后互相关+出口链横截面检验领先相关不显著即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0176
+  layer: L1
+  line_ref: SL-A09
+  title: SL-A09 财经快讯情绪线的电报条数/情感分/实体提及热度信号词集能否覆盖快讯密度与情感极性量化情绪并预测次日的问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch3:news_data(8155360,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0177
+  layer: L1
+  line_ref: SL-A09
+  title: SL-A09 财经快讯情绪线的RSSHub 路由+HTTP 直连三渠道免费成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch3:news_data(8155360,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0178
+  layer: L1
+  line_ref: SL-A09
+  title: SL-A09 财经快讯情绪线的分钟级/准实时节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch3:news_data(8155360,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0179
+  layer: L1
+  line_ref: SL-A09
+  title: SL-A09 财经快讯情绪线的新闻撤稿/更正改写情绪流风险是否被情感打分按发布时戳 PIT 且撤稿留痕100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch3:news_data(8155360,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0180
+  layer: L1
+  line_ref: SL-A09
+  title: SL-A09 财经快讯情绪线对L3情绪变量（纪要§8.1 定桩正源）的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch3:news_data(8155360,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0181
+  layer: L1
+  line_ref: SL-A09
+  title: SL-A09 财经快讯情绪线的情绪分位 vs 次日收益回归+极端情绪日事件研究预测力不显著即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:news_sentiment_window(19819,?~?,闭卷窗内)
+  - ch3:news_data(8155360,?~?,闭卷窗内)
+  - ch:emotion_index(8647,1991-06-10~2026-09-23,闭卷窗内)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0182
+  layer: L1
+  line_ref: SL-A10
+  title: SL-A10 国际宏观线的美债10Y/DXY/VIX 变化率信号词集能否覆盖全球风险因子传导 A 股风险偏好问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0183
+  layer: L1
+  line_ref: SL-A10
+  title: SL-A10 国际宏观线的FRED/世界银行官方免费 API 成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0184
+  layer: L1
+  line_ref: SL-A10
+  title: SL-A10 国际宏观线的日频为主+发布延迟 T+1 至月级节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 日频（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0185
+  layer: L1
+  line_ref: SL-A10
+  title: SL-A10 国际宏观线的vintage 初值/修正值修订风险是否被发布快照入库存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0186
+  layer: L1
+  line_ref: SL-A10
+  title: SL-A10 国际宏观线对L3大盘状态变量/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0187
+  layer: L1
+  line_ref: SL-A10
+  title: SL-A10 国际宏观线的因子回归+FOMC 议息日事件研究条件相关性消失即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0188
+  layer: L1
+  line_ref: SL-A11
+  title: SL-A11 能源库存线的库存差值/WTI-Brent 价差信号词集能否覆盖库存意外领先油价与石化链问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0189
+  layer: L1
+  line_ref: SL-A11
+  title: SL-A11 能源库存线的EIA 官方免费 API 成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0190
+  layer: L1
+  line_ref: SL-A11
+  title: SL-A11 能源库存线的周度周三发布+现货日度节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0191
+  layer: L1
+  line_ref: SL-A11
+  title: SL-A11 能源库存线的周度值后续修订风险是否被按发布时戳 PIT 取数100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0192
+  layer: L1
+  line_ref: SL-A11
+  title: SL-A11 能源库存线对L3大盘（通胀预期）/L2传导图谱（能源产业链上游节点）的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0193
+  layer: L1
+  line_ref: SL-A11
+  title: SL-A11 能源库存线的库存意外项对油价事件窗回归意外项不再被定价即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0194
+  layer: L1
+  line_ref: SL-A12
+  title: SL-A12 天气线的温度距平/降水/风力信号词集能否覆盖极端天气预测用电负荷/农产品/航运扰动问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 因子效力问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0195
+  layer: L1
+  line_ref: SL-A12
+  title: SL-A12 天气线的和风免费额度 40 城实时+7 天预报的配额成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0196
+  layer: L1
+  line_ref: SL-A12
+  title: SL-A12 天气线的实时/小时级节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0197
+  layer: L1
+  line_ref: SL-A12
+  title: SL-A12 天气线的预报滚动修订风险是否被预报值与实现值分字段存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0198
+  layer: L1
+  line_ref: SL-A12
+  title: SL-A12 天气线对L3板块（公用事业/农业）/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0199
+  layer: L1
+  line_ref: SL-A12
+  title: SL-A12 天气线的天气冲击日板块事件研究无异常收益即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0200
+  layer: L1
+  line_ref: SL-A13
+  title: SL-A13 股东户数线的户数环比降幅/户均持股市值信号词集能否覆盖筹码集中度变化领先个股行情问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0201
+  layer: L1
+  line_ref: SL-A13
+  title: SL-A13 股东户数线的东财数据中心 HTTP 免费的采集成本（miniqmt 清退后续采正门）是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0202
+  layer: L1
+  line_ref: SL-A13
+  title: SL-A13 股东户数线的随公司披露不定期+批处理日更节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0203
+  layer: L1
+  line_ref: SL-A13
+  title: SL-A13 股东户数线的披露滞后的时点错位风险是否被HOLD_NOTICE_DATE 公告日窗口过滤100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0204
+  layer: L1
+  line_ref: SL-A13
+  title: SL-A13 股东户数线对L3筹码情绪/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0205
+  layer: L1
+  line_ref: SL-A13
+  title: SL-A13 股东户数线的户数变动分组后续收益差检验集中度信号无领先性即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch3:shareholder_count(514091,1993-01-12~2026-09-23,闭卷窗内)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0206
+  layer: L1
+  line_ref: SL-A14
+  title: SL-A14 互动易问答线的问答数量激增/关键词命中信号词集能否覆盖公司官方回应捕捉题材催化问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0207
+  layer: L1
+  line_ref: SL-A14
+  title: SL-A14 互动易问答线的官方接口免费+冷库快照存储成本（provider 已在跑）是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0208
+  layer: L1
+  line_ref: SL-A14
+  title: SL-A14 互动易问答线的发布即采准实时节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0209
+  layer: L1
+  line_ref: SL-A14
+  title: SL-A14 互动易问答线的问答内容编辑撤回风险是否被原文快照落 G 盘冷库并携 snapshot_path100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0210
+  layer: L1
+  line_ref: SL-A14
+  title: SL-A14 互动易问答线对L3题材情绪/L2传导图谱（公司-概念边证据源）/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0211
+  layer: L1
+  line_ref: SL-A14
+  title: SL-A14 互动易问答线的题材关键词命中后 N 日超额收益检验无事件窗效应即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0212
+  layer: L1
+  line_ref: SL-A15
+  title: SL-A15 加密永续/资金费率线的资金费率极值/OI 骤变/清算量信号词集能否覆盖全球杠杆拥挤跨市场预警 A 股情绪问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:hl_liquidation_raw(5,?~?,闭卷窗内)
+  - ch:hl_perp_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:hl_oi_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:crypto_kline_daily(18431,2025-08-08~2026-09-22,闭卷窗内)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0213
+  layer: L1
+  line_ref: SL-A15
+  title: SL-A15 加密永续/资金费率线的官方免费 info+WS 自积成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:hl_liquidation_raw(5,?~?,闭卷窗内)
+  - ch:hl_perp_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:hl_oi_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:crypto_kline_daily(18431,2025-08-08~2026-09-22,闭卷窗内)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0214
+  layer: L1
+  line_ref: SL-A15
+  title: SL-A15 加密永续/资金费率线的日更快照+逐小时费率+WS 准实时节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:hl_liquidation_raw(5,?~?,闭卷窗内)
+  - ch:hl_perp_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:hl_oi_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:crypto_kline_daily(18431,2025-08-08~2026-09-22,闭卷窗内)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0215
+  layer: L1
+  line_ref: SL-A15
+  title: SL-A15 加密永续/资金费率线的快照历史不可回补（起点 2026-09-18）风险是否被断档显式登记且费率回溯边界 2023-05-12 存证100%对冲（U4
+    PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:hl_liquidation_raw(5,?~?,闭卷窗内)
+  - ch:hl_perp_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:hl_oi_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:crypto_kline_daily(18431,2025-08-08~2026-09-22,闭卷窗内)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0216
+  layer: L1
+  line_ref: SL-A15
+  title: SL-A15 加密永续/资金费率线对L3大盘（跨市场风险偏好）/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:hl_liquidation_raw(5,?~?,闭卷窗内)
+  - ch:hl_perp_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:hl_oi_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:crypto_kline_daily(18431,2025-08-08~2026-09-22,闭卷窗内)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0217
+  layer: L1
+  line_ref: SL-A15
+  title: SL-A15 加密永续/资金费率线的费率极值与 A 股情绪指数领先滞后检验传导不显著即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - ch:hl_funding_history(4693915,?~?,闭卷窗内)
+  - ch:hl_liquidation_raw(5,?~?,闭卷窗内)
+  - ch:hl_perp_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:hl_oi_snapshot_daily(1170,2026-09-18~2026-09-23,切点后)
+  - ch:crypto_kline_daily(18431,2025-08-08~2026-09-22,闭卷窗内)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0218
+  layer: L1
+  line_ref: SL-A16
+  title: SL-A16 投入产出线的直接消耗系数/影响力系数信号词集能否覆盖部门间上下游强度机械判定价格冲击传导路径问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:ig_node(5560,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0219
+  layer: L1
+  line_ref: SL-A16
+  title: SL-A16 投入产出线的官方免费一次性装载成本（io_ingest 已入库 16859 边）是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:ig_node(5560,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0220
+  layer: L1
+  line_ref: SL-A16
+  title: SL-A16 投入产出线的5 年频结构锚不追新鲜（2025 调查表最早 2027 发布）节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:ig_node(5560,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0221
+  layer: L1
+  line_ref: SL-A16
+  title: SL-A16 投入产出线的口径年代陈旧风险是否被官方一次性发布无修订+时效粗为登记代价100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:ig_node(5560,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0222
+  layer: L1
+  line_ref: SL-A16
+  title: SL-A16 投入产出线对L2传导图谱核心原料/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:ig_node(5560,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0223
+  layer: L1
+  line_ref: SL-A16
+  title: SL-A16 投入产出线的上游涨价冲击沿 ig_io_edge 传导预测力检验传导边无增量即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - pg:ig_io_edge(16859,2020-12-31~2020-12-31,闭卷窗内)
+  - pg:ig_node(5560,2026-08-28~2026-09-14,切点后)
+  - pg:ig_node_company(18830,2026-08-28~2026-09-18,切点后)
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0224
+  layer: L1
+  line_ref: SL-B01
+  title: SL-B01 卫星影像线的储罐浮顶位移/停车场占用率信号词集能否覆盖物理量领先官方数据问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0225
+  layer: L1
+  line_ref: SL-B01
+  title: SL-B01 卫星影像线的Copernicus 免费+Planet 商业订阅+自建解译管线成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0226
+  layer: L1
+  line_ref: SL-B01
+  title: SL-B01 卫星影像线的Sentinel 天级过境/Planet 日级节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0227
+  layer: L1
+  line_ref: SL-B01
+  title: SL-B01 卫星影像线的解译算法版本改写历史估值风险是否被解译算法版本号冻结100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0228
+  layer: L1
+  line_ref: SL-B01
+  title: SL-B01 卫星影像线对L3板块（能源/零售）/L2传导图谱的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0229
+  layer: L1
+  line_ref: SL-B01
+  title: SL-B01 卫星影像线的卫星估值 vs EIA 库存误差检验解译量与真值无相关即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0230
+  layer: L1
+  line_ref: SL-B02
+  title: SL-B02 美国官方天气/海洋线的警报级别/温度距平信号词集能否覆盖飓风寒潮预警能源中断与农产品减产问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0231
+  layer: L1
+  line_ref: SL-B02
+  title: SL-B02 美国官方天气/海洋线的NWS API 免费无钥自建采集成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0232
+  layer: L1
+  line_ref: SL-B02
+  title: SL-B02 美国官方天气/海洋线的准实时/小时级节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0233
+  layer: L1
+  line_ref: SL-B02
+  title: SL-B02 美国官方天气/海洋线的预报滚动修订风险是否被实测/警报不可改+预报分版存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0234
+  layer: L1
+  line_ref: SL-B02
+  title: SL-B02 美国官方天气/海洋线对L3板块（能源/农业）/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0235
+  layer: L1
+  line_ref: SL-B02
+  title: SL-B02 美国官方天气/海洋线的警报日相关资产事件研究无异常定价即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0236
+  layer: L1
+  line_ref: SL-B03
+  title: SL-B03 招聘 JD线的岗位数同比/薪酬中位数变化信号词集能否覆盖扩缩招动能领先营收与行业景气问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0237
+  layer: L1
+  line_ref: SL-B03
+  title: SL-B03 招聘 JD线的无 API 爬虫的合规评估+反爬对抗成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0238
+  layer: L1
+  line_ref: SL-B03
+  title: SL-B03 招聘 JD线的日级抓取节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0239
+  layer: L1
+  line_ref: SL-B03
+  title: SL-B03 招聘 JD线的JD 下架改写历史风险是否被即时快照存证+站点改版口径版本化100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0240
+  layer: L1
+  line_ref: SL-B03
+  title: SL-B03 招聘 JD线对L2传导图谱（企业节点景气证据）/L3板块的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0241
+  layer: L1
+  line_ref: SL-B03
+  title: SL-B03 招聘 JD线的招聘动能 vs 行业后续营收增速回归无领先性即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0242
+  layer: L1
+  line_ref: SL-B04
+  title: SL-B04 电商价格线的降价广度/类目排名爬升信号词集能否覆盖在线价格做高频通胀与单品景气映射问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0243
+  layer: L1
+  line_ref: SL-B04
+  title: SL-B04 电商价格线的Keepa 付费 token+国内爬虫合规风险成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0244
+  layer: L1
+  line_ref: SL-B04
+  title: SL-B04 电商价格线的小时-日级节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0245
+  layer: L1
+  line_ref: SL-B04
+  title: SL-B04 电商价格线的排名口径随平台算法调整风险是否被价格史平台侧不可改+排名口径版本存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0246
+  layer: L1
+  line_ref: SL-B04
+  title: SL-B04 电商价格线对L3（消费景气）/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0247
+  layer: L1
+  line_ref: SL-B04
+  title: SL-B04 电商价格线的线上价格指数 vs 官方 CPI 分项系统性背离无解释力即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0248
+  layer: L1
+  line_ref: SL-B05
+  title: SL-B05 招投标线的中标金额环比/预披露项目数信号词集能否覆盖政采中标领先企业营收与基建链景气问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0249
+  layer: L1
+  line_ref: SL-B05
+  title: SL-B05 招投标线的公开数据结构化抓取的工程成本（无正式批量 API）是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0250
+  layer: L1
+  line_ref: SL-B05
+  title: SL-B05 招投标线的公告随发随挂日级节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0251
+  layer: L1
+  line_ref: SL-B05
+  title: SL-B05 招投标线的更正公告混叠风险是否被公告不可改+更正另发关联去重100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0252
+  layer: L1
+  line_ref: SL-B05
+  title: SL-B05 招投标线对L2传导图谱（企业-订单边）/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0253
+  layer: L1
+  line_ref: SL-B05
+  title: SL-B05 招投标线的中标事件后续营收兑现检验中标不预示业绩即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0254
+  layer: L1
+  line_ref: SL-B06
+  title: SL-B06 社媒舆情 X/Reddit线的提及量激增/情绪极值信号词集能否覆盖海外散户情绪领先中概股与联动板块问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0255
+  layer: L1
+  line_ref: SL-B06
+  title: SL-B06 社媒舆情 X/Reddit线的Reddit 免费限额/X API 付费成本（境外直连未核实，Owner 侧复验前置）是否与登记一致且无未评估成本项（U2
+    获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: N(含人工/外部核实环节)
+  check_data: OK
+  check_caliber: OK
+  check_mech: N(含人工/外部核实环节)
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0256
+  layer: L1
+  line_ref: SL-B06
+  title: SL-B06 社媒舆情 X/Reddit线的准实时（受 API 限额约束）节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0257
+  layer: L1
+  line_ref: SL-B06
+  title: SL-B06 社媒舆情 X/Reddit线的删帖/封号致历史不可复现风险是否被即时落库存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0258
+  layer: L1
+  line_ref: SL-B06
+  title: SL-B06 社媒舆情 X/Reddit线对L3情绪/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0259
+  layer: L1
+  line_ref: SL-B06
+  title: SL-B06 社媒舆情 X/Reddit线的话题热度峰值事件研究无领先性即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0260
+  layer: L1
+  line_ref: SL-B07
+  title: SL-B07 雪球/股吧散户情绪线的关注数骤变/热帖情感信号词集能否覆盖散户关注度量化情绪并预警极端问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0261
+  layer: L1
+  line_ref: SL-B07
+  title: SL-B07 雪球/股吧散户情绪线的无开放 API+强反爬低频合规抓取的对抗成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0262
+  layer: L1
+  line_ref: SL-B07
+  title: SL-B07 雪球/股吧散户情绪线的准实时（受抓取频率约束）节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0263
+  layer: L1
+  line_ref: SL-B07
+  title: SL-B07 雪球/股吧散户情绪线的删帖常见风险是否被即时快照落库（PIT 前提）100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0264
+  layer: L1
+  line_ref: SL-B07
+  title: SL-B07 雪球/股吧散户情绪线对L3情绪变量（与 SL-A09 互证双源）的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0265
+  layer: L1
+  line_ref: SL-B07
+  title: SL-B07 雪球/股吧散户情绪线的关注度 vs 成交额/波动率相关+极端值反转检验无信息含量即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0266
+  layer: L1
+  line_ref: SL-B08
+  title: SL-B08 APP 榜单线的榜单排名爬升/下载量预估信号词集能否覆盖下载排名领先用户增长与 MAU 拐点问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0267
+  layer: L1
+  line_ref: SL-B08
+  title: SL-B08 APP 榜单线的七麦会员+SensorTower 订阅成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0268
+  layer: L1
+  line_ref: SL-B08
+  title: SL-B08 APP 榜单线的榜单日更节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0269
+  layer: L1
+  line_ref: SL-B08
+  title: SL-B08 APP 榜单线的下载量为平台估算且算法会调风险是否被估算口径版本存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0270
+  layer: L1
+  line_ref: SL-B08
+  title: SL-B08 APP 榜单线对L2传导图谱（公司节点运营证据）/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0271
+  layer: L1
+  line_ref: SL-B08
+  title: SL-B08 APP 榜单线的榜单爬升 vs 季报用户数兑现无先导性即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0272
+  layer: L1
+  line_ref: SL-B09
+  title: SL-B09 进出口贸易线的HS 分章出口同比/对美份额变化信号词集能否覆盖出口量价领先出口链营收与航运需求问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0273
+  layer: L1
+  line_ref: SL-B09
+  title: SL-B09 进出口贸易线的Comtrade 免费 API 限额+海关月度页面解析成本是否与登记一致且无未评估成本项（U2 获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 月度（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0274
+  layer: L1
+  line_ref: SL-B09
+  title: SL-B09 进出口贸易线的月度滞后约 1-2 月节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 月度（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0275
+  layer: L1
+  line_ref: SL-B09
+  title: SL-B09 进出口贸易线的月度修订+HS 编码版次切换风险是否被修订存证+编码对齐映射表100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 月度（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0276
+  layer: L1
+  line_ref: SL-B09
+  title: SL-B09 进出口贸易线对L2传导图谱（贸易链边权重）/L3板块的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0277
+  layer: L1
+  line_ref: SL-B09
+  title: SL-B09 进出口贸易线的出口冲击行业分组收益检验无传导效应即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0278
+  layer: L1
+  line_ref: SL-B10
+  title: SL-B10 信用卡/支付消费线的消费脉冲同比信号词集能否覆盖消费动能高频代理领先社零与消费板块问题的全部宣称（U1 信号词表范围核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 信号词表非空且宣称主题全部落在词集覆盖内
+  threshold: 覆盖率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0279
+  layer: L1
+  line_ref: SL-B10
+  title: SL-B10 信用卡/支付消费线的SpendingPulse 报告级 proxy 无开放 API（真卡数据商业采购未核实）是否与登记一致且无未评估成本项（U2
+    获取方式与成本复核）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 获取方式与成本与源线谱/DS 册登记一致
+  threshold: 未评估成本项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - Owner
+  - L1源线层
+  mechanical: N(含人工/外部核实环节)
+  check_data: OK
+  check_caliber: OK
+  check_mech: N(含人工/外部核实环节)
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0280
+  layer: L1
+  line_ref: SL-B10
+  title: SL-B10 信用卡/支付消费线的周报/月度节奏是否与 DS 册健康检查口径一致（U3 更新频率与延迟一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 更新频率与延迟与 DS 册健康检查口径一致
+  threshold: 不一致项=0
+  sample_window: 月度（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L3状态变量层
+  - L4决策层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0281
+  layer: L1
+  line_ref: SL-B10
+  title: SL-B10 信用卡/支付消费线的proxy 与本体相关性未证风险是否被proxy 先证再用+官方汇总口径存证100%对冲（U4 PIT 控制执行审计）？
+  qtype: PIT纪律问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: PIT 风险控制措施在入库链路执行
+  threshold: 违规样本=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L6治理层
+  - L5执行验证层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0282
+  layer: L1
+  line_ref: SL-B10
+  title: SL-B10 信用卡/支付消费线对L3（消费景气）/L4决策的挂接是否与源线谱七层登记一致（U5 消费方一致性核验）？
+  qtype: 管线挂接问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: consumers 与源线谱七层挂载登记一致
+  threshold: 不一致项=0
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L0元问题层
+  - 未答看板
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
+- q_id: PQ-0283
+  layer: L1
+  line_ref: SL-B10
+  title: SL-B10 信用卡/支付消费线的proxy 序列 vs 社零先导相关检验相关不显著即弃线证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+  qtype: 因子效力问
+  need_tables:
+  - 基准=源线谱册02+DS册（登记核验，无需落库）
+  field_caliber: 退役判据含明确阈值与数据窗口可重放
+  threshold: 判据可执行率=100%
+  sample_window: 全史（截止 PIT 切点 2025-09-09）
+  consumers:
+  - L5执行验证层
+  - L0元问题层
+  mechanical: Y
+  check_data: OK
+  check_caliber: OK
+  check_mech: Y
+  precondition_gap: ''
+  verdict_skeleton: ready
