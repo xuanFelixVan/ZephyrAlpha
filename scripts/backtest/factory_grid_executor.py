@@ -708,6 +708,7 @@ def run_batch(
     manifest_rows: list[GridEvalOutcome] = []
     negatives: list[NegativeRecord] = []
     nets_for_neff: dict[str, list[float]] = {}
+    nets_archive: dict[str, pd.Series] = {}  # recipe_id → 带日期索引 net（归因读端消费，2026-09-24 st-gpu-final）
     eval_dead = bt_dead = 0
     for r in picked:
         g = r.values["G_universe"]
@@ -760,6 +761,7 @@ def run_batch(
                 raise RuntimeError(f"insufficient_net:{len(net)}")
             sharpe = stats["sharpe"]
             nets_for_neff[r.recipe_id] = [float(v) for v in net.values]
+            nets_archive[r.recipe_id] = net  # 带日期索引归档（values-only 落盘=产物不自描述，归因读端实证缺陷）
         except Exception as exc:  # noqa: BLE001
             negatives.append(
                 NegativeRecord(
@@ -809,8 +811,8 @@ def run_batch(
     # T2c 收益序列档案: 成功格点 net 序列落盘（行=交易日 T，列=recipe_id）——
     # DSR 精确口径数据基础；环境无 pyarrow 时兜底 csv.gz
     net_returns_file: str | None = None
-    if nets_for_neff:
-        nr = pd.concat([pd.Series(v, name=k) for k, v in nets_for_neff.items()], axis=1)
+    if nets_archive:
+        nr = pd.concat(nets_archive.values(), axis=1)  # 带 DatetimeIndex 对齐落盘（行=交易日）
         try:
             nr_path = out_dir / "net_returns.parquet"
             nr.to_parquet(nr_path)
