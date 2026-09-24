@@ -331,3 +331,24 @@ EOF
 重放路径（断点续做，零猜测）：
 `python .runtime/tmp/audit_fix_20260924/apply_audit_fix_20260924.py`（把 23 件成品按 sha256 校验装回工作树）
 → 再按本包正门口径入队（`commit_queue.py enqueue --queue-root 主区 --worktree-root 工作树`）。
+- **S-19（改名 saga 的正解：本地预跑权威判据，别再拿队列试错）**：本包为案卷文件名连死 4 袋
+  （TTL 超时→CREATE-GUARD→N-16→N-01/N-13）。最后 30 秒就定位了：
+  `python scripts/governance/d3_metadata/check_naming_convention.py --check-new-full <文件清单>`
+  ＝**网关内嵌的同一条判据**（N-01~N-17 + N-16 全量），而我先前只跑 `--check-new`（仅 N-16 增量），
+  所以漏了大写违规。立法：**新建文件前用与落地侧同一入口的 `--check-new-full` 预跑**；
+  本仓文件名规则＝全小写 snake_case + 全局 basename 唯一（目录名同样禁大写 N-10）。
+- **S-20（Windows 大小写不敏感是改名陷阱）**：`AUDIT_FIX_LEDGER.md` 与 `audit_fix_ledger.md`
+  在该文件系统上是**同一个文件**——我第一次"改名"实际让两条拼写指向同一 inode（sha 相同），
+  随后按大写名的 `rm` 把台账整体删掉了。当时我从备份恢复（备份救场一次）。
+  立法：**大小写转换类改名必须经临时名两步走（或先写新名再核对唯一性）**，
+  且改名后必须跑"`- file:` 条目集 vs 盘上实存集"双向差分，不能只看单个文件存在。
+- **S-21（本包最重要的一次自我拦阻）**：收官前想把 2 条伪 token 条目用直提清掉，
+  一算差分发现**我的工作树登记册比 HEAD 少 215 条他人登记**（基线旧于 f53316c6f9 之后各批）
+  ⇒ 直提整册＝抹掉他人 215 条 token＝我自己正在修的 EVAP-02 病形。
+  因此：①该热册一律不再由我整件投；②**反向证明了 ① 号修复有效**——我此前那只"缺 215 条"的
+  登记册袋经条目级三向合并落地后，那 215 条在 HEAD 里**完好无损**（修前 `base=None → old_dev^` 兜底
+  会把"陈旧快照不含"读成"theirs 主动删除"并执行）。这一条是本包五件里最硬的成效证据。
+  残留 2 条伪条目（`AUDIT_FIX_AUDIT_FIX_*`）的外科式清法已登记给维护班：
+  取 **HEAD 版**该册，删掉 `- file: docs/_working/audit_fix/AUDIT_FIX_AUDIT_FIX_00_skeleton.md`
+  与 `..._AUDIT_FIX_LEDGER.md` 两个 5 行块，单件直提（**禁用本包工作树版覆盖**）。
+
