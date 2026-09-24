@@ -43895,7 +43895,7 @@ creation_tokens:
   token: commitchain-ledger-renamed-20260922
   created_by: st-commitchain-20260922
   capability: commit_chain_mining
-  merge_evaluation: "同一条目改名（gate-naming 基名撞车整改：LEDGER.md 与 flash_speedup/F5_registry_debt/LEDGER.md 撞名），旧 token 条目随之退役，非第二真源"
+  merge_evaluation: "同一条目改名（gate-naming 基名撞车整改：AUDIT_FIX_LEDGER.md 与 flash_speedup/F5_registry_debt/AUDIT_FIX_LEDGER.md 撞名），旧 token 条目随之退役，非第二真源"
 - file: docs/03_modules/_domain_gov_enforcement/algo_flow/rule_bridge/commit_belt_daemon.yaml
   token: algo-flow-external-commit-belt-daemon-20260922
   created_by: st-commitchain-20260922
@@ -49881,5 +49881,113 @@ creation_tokens:
   created_by: st-commitspeed-tbl-20260924
   capability: commit_speedup
   merge_evaluation: "原始调查报告随役归档（ttl:task_bound），与 campaign 卷宗同域同役唯一真源，不新增治理面"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
+- file: docs/_working/automation/campaign/CAMPAIGN_AUDIT_FIX_LEDGER.md
+  token: automation-linkage-campaign-ledger-20260916
+  created_by: st-autolnk-20260917
+  capability: automation_linkage
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/AUDIT_FIX_00_skeleton.md
+  token: vocab-consolidation-campaign-00-skeleton-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation_campaign
+- file: docs/_working/fullflow_campaign/COORDINATION_AUDIT_FIX_LEDGER.md
+  token: wiresafe-pack-coordination-ledger-20260918
+  created_by: st-ff-wiresafe-20260918
+  capability: wiresafe-pack
+- file: docs/_working/meta_question_answers/gaps/FAIL_CLOSURE_AUDIT_FIX_LEDGER.md
+  token: metaq-question-exam-campaign-fail-closure-ledger-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/rule_audit_campaign/CONSTRUCTION_AUDIT_FIX_LEDGER.md
+  token: rule-audit-campaign-construction-ledger-20260918
+  created_by: st-fullflow-20260918
+  capability: rule_audit_campaign
+- file: docs/_working/archive/2026-09/2026-09-18_vocab_consolidation_campaign/AUDIT_FIX_00_skeleton.md
+  token: working-archive-00-skeleton-20260920
+  created_by: st-maxexec-20260920
+  capability: working_archive
+- file: docs/_working/flash_speedup/F5_registry_debt/AUDIT_FIX_LEDGER.md
+  token: flash-speedup-f5-registry-debt-ledger-20260921
+  created_by: st-taskcards-exec-20260921
+  capability: flash_speedup
+  merge_evaluation: "tc_04卡步骤3 三项移交补登：原「全部登记」声明证伪，三项逐条实态+可机判判据+ARCH-331定义不可考附节"
+- file: "docs/_working/integrated_backtest/IBT-CAMPAIGN-AUDIT_FIX_LEDGER.md"
+  token: "auto-ibt-20260922-001"
+  created_by: "st-integrated-bt-20260922"
+  capability: "integrated_backtest_first_run"
+- file: docs/_working/commit_chain_mining/AUDIT_FIX_LEDGER.md
+  token: commit-chain-mining-ledger-20260921
+  created_by: st-commitchain-20260922
+  capability: commit_chain_mining
+- file: docs/_working/2026-09-18_vocab_consolidation_campaign/AUDIT_FIX_00_skeleton.md
+  token: vocab-consolidation-00-skeleton-20260918
+  created_by: st-vocabconsol-20260918
+  capability: vocab_consolidation
+- file: docs/_working/commit_system_opt/AUDIT_FIX_LEDGER.md
+  token: commit-system-opt-ledger-20260923
+  created_by: st-commitsys-20260924
+  capability: commit_system_opt
+  merge_evaluation: "死信112封+99台判据三源蒸馏唯一产出面，与gate配置指纹联动零第二真源"
+- file: docs/_working/audit_all/AUDIT_FIX_LEDGER.md
+  token: audit-all-casebook-ledger-20260923
+  created_by: st-audit-all-20260924
+  capability: audit_all_casebook
+  merge_evaluation: "跨域不同对象→不并：八图↔物对账案卷是本包唯一滚动真源，与 commit_system_opt/align_dirty 等他包台账不同对象"
+- file: docs/_working/oddjobs_final/AUDIT_FIX_LEDGER.md
+  token: oddjobs-final-ledger-20260923
+  created_by: st-oddjobs-final-20260924
+  capability: oddjobs_final
+  merge_evaluation: "总包台账替代散点汇报（总指挥30分钟批注制唯一读取面），独占写者=本会话；不替代任何注册表条目"
+- file: docs/_working/e2e_integration/AUDIT_FIX_LEDGER.md
+  token: gpu-final-ledger-20260924
+  created_by: st-gpu-final-20260924
+  capability: gpu_ignition_campaign_ledger
+  merge_evaluation: "通宵总包台账（任务账+事故取证+点火清单），单真源协调面，无第二真源"
+- file: docs/_working/cleanup_final/AUDIT_FIX_LEDGER.md
+  token: cleanup-final-ledger-20260924
+  created_by: st-cleanup-final-20260924
+  capability: cleanup_final
+  merge_evaluation: "遗留修复收尾总包专用台账目录，六件套一次性使用，收包后无新文件增长即停"
+- file: docs/_working/audit_fix/AUDIT_FIX_AUDIT_FIX_00_skeleton.md
+  token: audit-fix-00-skeleton-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
+- file: docs/_working/audit_fix/AUDIT_FIX_AUDIT_FIX_LEDGER.md
+  token: audit-fix-ledger-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
+- file: docs/_working/audit_fix/cross/00_channels_and_rulers.md
+  token: audit-fix-00-channels-and-rulers-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
+- file: docs/_working/audit_fix/lanes/L1_commit_base/L1_commit_base_mining.md
+  token: audit-fix-00-overview-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
+- file: docs/_working/audit_fix/lanes/L2_ruling_resurrection/L2_ruling_resurrection_mining.md
+  token: audit-fix-00-overview-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
+- file: docs/_working/audit_fix/lanes/L3_dangling_py_gomap/L3_dangling_py_gomap_mining.md
+  token: audit-fix-00-overview-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
+- file: docs/_working/audit_fix/lanes/L4_registry_counts/L4_registry_counts_mining.md
+  token: audit-fix-00-overview-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
+- file: docs/_working/audit_fix/lanes/L5_align_head_anchor/L5_align_head_anchor_mining.md
+  token: audit-fix-00-overview-20260924
+  created_by: st-audit-fix-20260924
+  capability: audit_fix
+  merge_evaluation: "同真源可派生→必并：本批 8 件是审计班 .runtime/tmp 一次性探针/案卷（尺T/尺U/九尺读数）的可检索固化面，判据统一登记在 cross/00 §二尺册单一表，不另立第二真源；跨域不同对象→不并：与 docs/_working/audit_all/（审计班发现面）互补不重叠——本包是修复面"
 # [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 di_seam_exemptions: []
