@@ -47204,4 +47204,165 @@ creation_tokens:
   created_by: st-align-dirty-20260924
   capability: align_dirty_ledger
   merge_evaluation: "本包唯一台账+R2 交付件（任务过程真源，非能力件，与既有能力册零重叠；裁定#375 四判据=零触发零消费不适用，属过程档案须入库备复核）"
+- file: docs/_working/meta_question_answers/00_triage.md
+  token: metaq-question-exam-campaign-00-triage-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/01_phase2_plan.md
+  token: metaq-question-exam-campaign-01-phase2-plan-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/01_skeleton_ledger.md
+  token: metaq-question-exam-campaign-01-skeleton-ledger-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/01_skeleton_ledger.yaml
+  token: metaq-question-exam-campaign-01-skeleton-ledger-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/02_final_ledger.md
+  token: metaq-question-exam-campaign-02-final-ledger-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/ANSWER_CONTRACT.md
+  token: metaq-question-exam-campaign-answer-contract-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/A06_MONEYFLOW_BACKFILL_workbook.md
+  token: metaq-question-exam-campaign-a06-moneyflow-backfill-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/FAIL_CLOSURE_LEDGER.md
+  token: metaq-question-exam-campaign-fail-closure-ledger-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/FAIL_REGISTER.md
+  token: metaq-question-exam-campaign-fail-register-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PHASE2_AUDIT.md
+  token: metaq-question-exam-campaign-phase2-audit-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0004_workbook.md
+  token: metaq-question-exam-campaign-pq-0004-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0012_workbook.md
+  token: metaq-question-exam-campaign-pq-0012-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0018_workbook.md
+  token: metaq-question-exam-campaign-pq-0018-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0062_workbook.md
+  token: metaq-question-exam-campaign-pq-0062-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0064_workbook.md
+  token: metaq-question-exam-campaign-pq-0064-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0065_workbook.md
+  token: metaq-question-exam-campaign-pq-0065-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0067_workbook.md
+  token: metaq-question-exam-campaign-pq-0067-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0068_workbook.md
+  token: metaq-question-exam-campaign-pq-0068-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0072_workbook.md
+  token: metaq-question-exam-campaign-pq-0072-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0078_workbook.md
+  token: metaq-question-exam-campaign-pq-0078-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0099_workbook.md
+  token: metaq-question-exam-campaign-pq-0099-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0102_workbook.md
+  token: metaq-question-exam-campaign-pq-0102-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0131_workbook.md
+  token: metaq-question-exam-campaign-pq-0131-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0172_workbook.md
+  token: metaq-question-exam-campaign-pq-0172-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/PQ-0196_workbook.md
+  token: metaq-question-exam-campaign-pq-0196-workbook-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/R2_VERIFY.md
+  token: metaq-question-exam-campaign-r2-verify-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/RETIREMENT_REGISTER.md
+  token: metaq-question-exam-campaign-retirement-register-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/gaps/WORKORDER_MASTER.md
+  token: metaq-question-exam-campaign-workorder-master-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: docs/_working/meta_question_answers/results/results_all.yaml
+  token: metaq-question-exam-campaign-results-all-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: scripts/governance/check_meta_question_audit_reconcile.py
+  token: metaq-question-exam-campaign-check-meta-question-audit-reconcile-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: scripts/governance/check_meta_question_status_band.py
+  token: metaq-question-exam-campaign-check-meta-question-status-band-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+- file: tests/governance/meta_question/test_registry.py
+  token: metaq-question-exam-campaign-test-registry-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试战役交付件/基建件，与既有能力无重复簇；跨域不同对象不并"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 di_seam_exemptions: []
