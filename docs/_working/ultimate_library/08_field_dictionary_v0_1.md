@@ -38,6 +38,7 @@ session: "st-ulib-20260921"
 | 13 | title / one_liner | 名称+一句话 |
 | 14 | ai_contract | "这是什么+怎么读+读取成本"——AI 检索后第一眼看到的接地摘要 |
 | 15 | tags | 实物类型标签（横轴），收编既有登记表的 own_scope 等字段 |
+| 16 | potential_consumers | text[] DEFAULT '{}'——供数用途维度：该资产能喂什么（标尺/节点/消费方清单，粒度对标 TDM 节点名与骨架成分名）。v1.1 增枝（裁定#410，2026-09-24；增枝申请=ulib3b_potential_consumers_proposal.md）。NULL=未评估，空数组=已评估无供数关系，两态分开；回填须注出处（供给台账 S 编号），反查面=lookup --feeds |
 
 ## §2 分类型扩展字段（每 kind 3-6 个，总账 JSON 字段或侧表）
 

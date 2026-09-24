@@ -103,10 +103,10 @@ CREATE INDEX IF NOT EXISTS lib_events_asset_idx ON lib_events (asset_id);
 _SQL_UPSERT_ASSET = """
 INSERT INTO lib_assets (
   asset_id, kind, home, fingerprint_sha256, fingerprint_aux, status,
-  owner_domain, retention_class, title, ai_contract, tags, registered_by
+  owner_domain, retention_class, title, one_liner, potential_consumers, ai_contract, tags, registered_by
 ) VALUES (
   %s, %s, %s, %s, %s::jsonb, COALESCE(%s, 'active'),
-  %s, %s, %s, %s, %s::text[], %s
+  %s, %s, %s, %s, %s::text[], %s, %s::text[], %s
 )
 ON CONFLICT (asset_id) DO UPDATE SET
   kind = EXCLUDED.kind,
@@ -117,6 +117,8 @@ ON CONFLICT (asset_id) DO UPDATE SET
   generation = lib_assets.generation + 1,
   status = EXCLUDED.status,
   title = COALESCE(EXCLUDED.title, lib_assets.title),
+  one_liner = COALESCE(EXCLUDED.one_liner, lib_assets.one_liner),
+  potential_consumers = COALESCE(EXCLUDED.potential_consumers, lib_assets.potential_consumers),
   ai_contract = COALESCE(EXCLUDED.ai_contract, lib_assets.ai_contract),
   tags = EXCLUDED.tags
 """
