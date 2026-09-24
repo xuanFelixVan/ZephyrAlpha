@@ -1,0 +1,24 @@
+notes: notes：money_flow 等四表闭卷窗内 0 行（2026-06-01 起在库）——本问审计对象为获取渠道/成本登记一致性（登记在册即可判），数据腿现状观察：切点后逐日在库+哨兵（trade_date,5d）在位。
+outcome: pass
+evidence:
+- probe: architecture_model/data/data_sources_registry.yaml
+  query: DS-TUSHARE 在册（积分制/rpm200/告警阈值）；IFIND 退役能力迁移 money_flow→tushare 登记在 v1.0/退役注记
+  result:
+    DS在册: 1
+    渠道数: 1
+    成本字段缺失渠道: 0
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0159
+fail_type: null
+threshold: 未评估成本项=0（获取方式与成本与源线谱/DS 册登记一致）
+conclusion: 唯一渠道 DS-TUSHARE 积分制在册（含 IFIND 退役→tushare 能力迁移登记），与 U2 行一致，未评估成本项=0。 （SL-A06
+  资金流）
+confidence: 0.6
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（源线谱 U2 行+DS 册 status/account_type/rate_limit/policy 逐字段在册可读）
+  caliber: OK（判据=每渠道有 DS 锚且成本字段非空，未评估项计数=0，机械可判）
+  mechanical: OK（渠道级对照表留痕）
+pit_assertion: U2 成本核验为登记册静态对照，不涉时序取数；切点约束以登记现状为对象无涉未来数据。
+q_id: PQ-0159

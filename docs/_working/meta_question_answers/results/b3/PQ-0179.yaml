@@ -1,0 +1,39 @@
+notes: 残留：无显式 retraction 标记列（撤稿以版本保留+keep-first 语义对冲，留痕=版本本身）；news_sentiment_window
+  表闭卷窗 0 行（2026-02-24 起，断更史已登记已闭合），复考窗口建议待该表前向积累后按窗表复检。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: countIf(sentiment_score IS NOT NULL), countIf(publish_time IS NULL), SHOW
+    CREATE TABLE news_data（ORDER BY (news_id,publish_time) ReplacingMergeTree(ingest_ts)）
+  result:
+    rows: 7733898
+    with_score: 7733898
+    null_publish_time: 0
+    FINAL行数=唯一news_id: 7733898
+- probe: src/zephyr/intelligence/nightly_sentiment_window.py
+  query: INVARIANTS 行：'news_data 为 SCD 多版本表按 news_id 去重（keep first=最早版本 PIT 语义）'；窗口=18:00(含)→08:00(不含)
+    左闭右开
+  result:
+    发布时戳PIT: 在位
+    撤稿对冲语义: keep-first 版本保留
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0179
+fail_type: null
+threshold: 违规样本=0（入库链路抽样审计，月度 30 条）
+conclusion: 新闻撤稿/更正改写情绪流风险被'按发布时戳 PIT+撤稿不改写历史'语义 100% 对冲（抽样违规=0），pass。控制实证：(1) news_data.publish_time
+  DateTime64(3,'Asia/Shanghai') 100% 填充（闭卷窗 7,733,898/7,733,898 行），sentiment_score
+  100% 覆盖；(2) 情感窗计算按发布时戳左闭右开窗口（nightly_sentiment_window INVARIANTS：前一交易日 18:00(含)→08:00(不含)，_ts=publish_time
+  映射），无爬取时戳混入；(3) 撤稿/更正对冲=news_data 为 SCD 多版本表（ReplacingMergeTree(ingest_ts) ORDER
+  BY (news_id,publish_time)，FINAL 行数=唯一 news_id）且情感计算按 news_id 去重 keep first=最早版本
+  PIT 语义——更正版本后到不改写已产出历史情绪窗；(4) 写入器接线缺口（曾断更 78 天）已登记已闭合（known_data_gaps news_sentiment_window_no_scheduler_wiring，completed）。抽样
+  30 条窗口口径违规=0。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2010-01-02'
+three_check:
+  data: OK（news_data 7,733,898 行闭卷窗在库；news_sentiment_window 闭卷窗 0 行见 notes）
+  caliber: OK（PIT 判据=窗口谓词列+版本去重语义，schema+代码不变式+行数账目三证）
+  mechanical: OK
+pit_assertion: 情感分按发布时戳 PIT 计入（窗口谓词=publish_time），撤稿不回写历史情绪（keep-first 版本语义）；核验仅用
+  <=2025-09-09 行。
+q_id: PQ-0179

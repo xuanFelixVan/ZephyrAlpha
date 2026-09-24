@@ -1,0 +1,47 @@
+notes: 登记债：BPI（巴拿马型）无库内对应序列，DS 册 coverage '六指数约2006起' 未逐一列名——建议 DS 册补六指数清单时一并注明 BPI
+  可得性。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0170.py
+  query: U1 语义对照 + 库内指数名称实证
+  result:
+    rows:
+    - covered: true
+      grounding: 库内实证：波罗的海综合运价指数（1988-10-19 起 14070 行）、波罗的海好望角型船运价指数（2006-07-17 起）均在库
+      vocab_item: BDI（波罗的海综合运价指数=干散货景气综合）+BCI（好望角型=原材料运量）
+      claim_token: 全球贸易实物景气
+    - covered: true
+      grounding: 源线谱 U5/U6 行明确登记传导与检验路径
+      vocab_item: BDI/BCI/BPI 运价动量（词集）+ U5 'L2 贸易链边权重' + U6 '出口链横截面检验' 承接
+      claim_token: 出口链映射
+    - covered: true
+      grounding: 源线谱 U6 '领先-滞后互相关+出口链横截面检验' 承接'周期股'对象
+      vocab_item: 运价动量信号 × U6 横截面检验承接
+      claim_token: 周期股
+    u1_text: 全球贸易实物景气能否经运价领先映射出口链与周期股（信号词：BDI/BCI/BPI 动量）。
+    coverage: 1.0
+    db_index_names:
+    - 波罗的海综合运价指数
+    - 成品油运价指数
+    - 原油运价指数
+    - 波罗的海好望角型船运价指数
+    - 波罗的海超级大灵便型船指数
+    - 国际集装箱租船指数
+    - 灵便型船综合运价指数
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0170
+fail_type: null
+threshold: 信号词表非空且宣称主题全部落在词集覆盖内；覆盖率=100%
+conclusion: SL-A08 U1 信号词集={BDI/BCI/BPI 动量}非空；题面宣称三主题（全球贸易实物景气/出口链映射/周期股）全部落在词集+U5/U6
+  承接路径覆盖内，覆盖率=3/3=100%。库内实证：BDI（波罗的海综合运价指数，1988-10-19 起 14070 行）与 BCI（波罗的海好望角型船运价指数，2006-07-17
+  起 5042 行）在库可落地。现状观察：库内 7 指数中未见'巴拿马型'（BPI）对应名称，词集第三项暂无落地序列——属 DS 册 coverage 粒度问题，不影响
+  U1 语义覆盖判定，登记债已入 notes。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '1988-10-19'
+three_check:
+  data: OK（登记核验为主；指数名称实证为辅）
+  caliber: OK（词集-宣称映射无歧义）
+  mechanical: OK（覆盖率布尔表可复现）
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0170

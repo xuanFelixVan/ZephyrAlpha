@@ -1,0 +1,33 @@
+notes: 登记债（不影响判定）：DS 册/表内均未存发布时戳字段，'周三发布'无法库内核验，与 PQ-0191 vintage 缺口同源，建议一并补建。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0190.py
+  query: coverage 两册对照; EIA_CRUDE_INVENTORY report_date 星期分布（切点前）; WTI 日度行数
+  result:
+    ds_coverage: 石油库存（原油/汽油/馏分油/丙烷，周度）、石油现货价格（WTI/Brent，日度）、天然气库存（周度）
+    crude_window:
+    - '2021-08-20'
+    - '2025-09-05'
+    u3_registered: 周度（周三发布）/现货日度。
+    crude_pre_rows: 212
+    mismatch_items: 0
+    crude_weekday_dist:
+    - - 5
+      - 212
+    wti_daily_rows_pre: 1013
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0190
+fail_type: null
+threshold: 更新频率与延迟与 DS 册健康检查口径一致；不一致项=0
+conclusion: SL-A11 U3'周度（周三发布）/现货日度'与 DS-EIA coverage 逐字一致（库存周度/现货日度），不一致项=0。库内实证：EIA_CRUDE_INVENTORY
+  切点前 212 个 report_date 全部为周五（weekday=5，周度期止日，间隔最小 7 天），周度节奏合规；EIA_WTI_SPOT 切点前 1013
+  行日度，现货日度合规。'周三发布'为发布日属性（report_date 存期止日），DS 册未登记发布日字段，无对账冲突。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2021-08-01'
+three_check:
+  data: OK（星期分布/行数机检）
+  caliber: OK（周度=期止周五、发布日另计口径）
+  mechanical: OK
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0190
