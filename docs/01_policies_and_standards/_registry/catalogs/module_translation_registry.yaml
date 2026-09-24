@@ -55037,6 +55037,13 @@ entries:
   plain_zh: "佣金+滑点+冲击+做T加成的单边全成本"
   responsibility_layer: business
 - module_path: src/zephyr/strategy_factory/owner_band_t/data_loader.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "数据装载"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "数据装载：000300 指数日线（信号面）+ 510300 ETF 60min（执行面）+ regime 快照。"
+  responsibility_layer: business
 - module_path: src/zephyr/strategy_factory/owner_regime_switcher/switcher.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "regime切换器核心"
@@ -56862,12 +56869,12 @@ entries:
   plain_zh: "这是账本的开荒工具：第一次在PostgreSQL里把三张表和索引建出来，重复跑不会砸锅，还带验货模式核对表件齐不齐。"
   responsibility_layer: governance
 - module_path: scripts/governance/check_meta_question_batch.py
-  domain_id: D_GOVERNANCE
-  name_zh: "原问题批次校验器"
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "批次快照校验器"
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "这是问题总账本的入库预检仪：一批新问题要进账本前拿它扫一遍，每条五要素填齐没有、枚举合不合法、数据源在不在白名单、标题有没有重名，全绿才放行走正式通道。"
+  plain_zh: "把新入库的一批问题从头到尾检查一遍：字段齐不齐、选项合不合法、有没有重复，全对才放行"
   responsibility_layer: governance
 - module_path: scripts/audit/cost_trio_exam.py
   domain_id: D_BACKTEST
@@ -56911,14 +56918,6 @@ entries:
   plain_zh: 板块偏好这张表的结构真源：记录每天给每个板块打的偏好标签、仓位倾斜幅度和禁入象限。同样以入仓时间做版本列并带 FINAL 读，消费方是 L2 门与选股漏斗（读禁入象限和倾斜幅度）。
   responsibility_layer: infrastructure
   plain_zh: "这是做T考试的尺子。它把回测留下的每笔买卖按同一只票同一天配成一对，算出每对赚的价差够不够付手续费。配对满30对才允许下结论，不够就老实说样本不足，不许瞎下结论。原来这把尺子放在临时目录里丢了，现在按裁定搬进正式目录，以后不会再丢。"
-  responsibility_layer: business
-- module_path: src/zephyr/strategy_factory/owner_band_t/data_loader.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "数据装载"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "数据装载：000300 指数日线（信号面）+ 510300 ETF 60min（执行面）+ regime 快照。"
   responsibility_layer: business
 - module_path: scripts/backtest/indicator_consumption_demo.py
   domain_id: D_FACTOR
@@ -58170,7 +58169,7 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/ex_core/open_order_resolver.py
   domain_id: D_EX_CORE
-  name_zh: "未成交"
+  name_zh: "未成交/部分成交订单续接处理"
   name_en: ""
   desc_zh: ""
   desc_en: ""
@@ -59194,7 +59193,7 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/research/evidence/batch_entry.py
   domain_id: D_KNOWLEDGE
-  name_zh: "职责"
+  name_zh: "日/周频批量入口"
   name_en: ""
   desc_zh: ""
   desc_en: ""
@@ -59226,7 +59225,7 @@ entries:
   responsibility_layer: ai
 - module_path: src/zephyr/risk/core/ai_agent_monitor.py
   domain_id: D_RISK
-  name_zh: "和自治边界违反"
+  name_zh: "AI/Agent 行为越界监控器"
   name_en: ""
   desc_zh: ""
   desc_en: ""
@@ -59489,7 +59488,7 @@ entries:
   responsibility_layer: business
 - module_path: src/zephyr/signal_ashare/sector/sector_pullback.py
   domain_id: D_ASHARE_SIGNAL
-  name_zh: "回踩质量 A"
+  name_zh: "回踩质量 A/B/C 判定"
   name_en: ""
   desc_zh: ""
   desc_en: ""
@@ -59863,37 +59862,6 @@ entries:
   desc_en: ""
   plain_zh: "情绪周期\"隐形驱动\"验证脚本（28 号 memo §3.7.4，G07 施工前必做）。"
   responsibility_layer: business
-- module_path: src/zephyr/ex_core/open_order_resolver.py
-  domain_id: D_EX_CORE
-  name_zh: "未成交/部分成交订单续接处理"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "未成交/部分成交订单续接处理（40_execution_broker §决策⑪ gap 6 施工）。"
-  responsibility_layer: business
-- module_path: src/zephyr/research/evidence/batch_entry.py
-  domain_id: D_KNOWLEDGE
-  name_zh: "日/周频批量入口"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "日/周频批量入口（Batch Entry）——研究证据关联组件 P0-4（11号文 §4.2）。"
-  responsibility_layer: ai
-- module_path: src/zephyr/risk/core/ai_agent_monitor.py
-  domain_id: D_RISK
-  name_zh: "AI/Agent 行为越界监控器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "AI/Agent 行为越界监控器——检测交易 Agent 的 ASI/AST/MCP 隐性串谋和自治边界违反。"
-  responsibility_layer: business
-- module_path: src/zephyr/signal_ashare/sector/sector_pullback.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "回踩质量 A/B/C 判定"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "回踩质量 A/B/C 判定（22 号 spec §3.1②，BM-SEL-08 缺失态补施工）。"
 - module_path: src/zephyr/backtest/regime_validation/condition_package.py
   domain_id: D_BACKTEST
   name_zh: "GPU条件轴输入包"
@@ -59918,7 +59886,6 @@ entries:
   desc_en: ""
   plain_zh: "把门禁配置和死因处方自动汇编成一份按文件类型分类的提交前导航手册,让AI会话不用撞墙学规则,指南由配置生成禁止手改"
   responsibility_layer: governance
-- module_path: docs/_working/kimi_audit/lane_reports/cost_trio_exam.py
 - module_path: scripts/audit/t0_six_phase_materialize.py
   domain_id: D_BACKTEST
   name_zh: "六段情绪相位历史物化件"
@@ -60097,14 +60064,6 @@ entries:
   plain_zh: "D_BACKTEST — C3 节流归因分析（11 号 memo §4.3 C3）。纯分析函数：基于 C1 既有回测产物（零新回测成本），按 Viterbi 主导态 + overlay 态分组归因：各态天数占比、平均 Shrinkage、避免损失 （Σ(ret_开 − ret_关)，正值=该态节流后少亏/多赚）及其正部归一化份额 （MaxDD 改善的可加代理分解）。"
   responsibility_layer: business
 
-- module_path: scripts/governance/check_meta_question_batch.py
-  domain_id: D_GOV_ENFORCEMENT
-  name_zh: "批次快照校验器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把新入库的一批问题从头到尾检查一遍：字段齐不齐、选项合不合法、有没有重复，全对才放行"
-  responsibility_layer: governance
 - module_path: src/zephyr/governance/registry_ledger/api.py
   domain_id: D_GOVERNANCE
   name_zh: "注册表账本意图API"
@@ -60273,7 +60232,6 @@ entries:
   desc_en: ""
   plain_zh: "盯着 283 个问题各自处于什么状态，超出健康比例就报警"
   responsibility_layer: governance
-
 - module_path: scripts/ch/backfill_money_flow_history.py
   domain_id: D_DATA
   name_zh: "资金流深历史回填器"
@@ -60794,31 +60752,15 @@ entries:
   desc_en: ""
   plain_zh: "每月抽查一批标的，核对周线月线的收盘与高低开收是否真由日线聚合得来、成交量是否守恒，长期盯住三张复权表不再互相矛盾"
   responsibility_layer: business
+- module_path: scripts/construction/qmt_bridge_regression_smoke.py
+  domain_id: D_EX_CORE
+  name_zh: "QMT文件桥回归冒烟"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "QMT 文件桥回归冒烟脚本：用一笔模拟盘小单把下单、撤单、成交回执、成交上报全链路重放一遍并逐断点核对（只认模拟环境，碰到实盘账户直接拒绝运行），把 2026-09-18 全流通战役发现的两处检测误判固化成可重复的自动回归。"
+  responsibility_layer: business
 
-- module_path: scripts/audit/cost_trio_exam.py
-  domain_id: D_BACKTEST
-  name_zh: "做T配对成本判据（重建版）"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "逐笔回测成交按 symbol×交易日做双边配对，对每对计算 CST-T0-001 成本口径下的毛价差与净价差并对照手续费阈值，配对数满 30 输出统计判定、不足 30 输出 insufficient 禁止下结论；本件由临时目录按裁定迁入 scripts/audit 正式位，含重建来源标注。"
-  responsibility_layer: business
-- module_path: scripts/sector_line/build_gpu_input_pack.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "GPU板块条件矩阵输入包建造器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "把板块状态库里985天的动量分位、RRG象限、市场温度和保密段位图打包成搜索算法直接吃的数组文件，让59小时算力窗全部花在搜索上而不是准备数据上。生成前先验证原始行情数据没被人动过，生成后逐格自查。"
-  responsibility_layer: business
-- module_path: scripts/sector_line/freeze_baseline.py
-  domain_id: D_ASHARE_SIGNAL
-  name_zh: "状态层回放基线冻结器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "给板块行情和状态表拍快照存指纹的工具：跑一次记住每张表长什么样，以后再跑就对比指纹有没有变，变了就说明有人动过数据。只读不写，是回放和考试对账的公正尺子。"
-  responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
