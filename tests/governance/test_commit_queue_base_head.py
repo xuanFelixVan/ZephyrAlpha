@@ -276,8 +276,7 @@ def test_legitimate_new_registry_file_is_not_dead_lettered(cq, cql, repo: Path, 
     base = _git(repo, "rev-parse", "refs/heads/dev")
     _commit(repo, REG_REL, _book(["A"]), "file created after base")
     old_dev = _git(repo, "rev-parse", "refs/heads/dev")
-    landing = cql.WorktreeLanding(repo_root=repo, queue_root=tmp_path / "queue",
-                                  worktree_path=tmp_path / "wt")
+    landing = cql.WorktreeLanding(repo_root=repo, queue_root=tmp_path / "queue", worktree_path=tmp_path / "wt")
     theirs = _book(["A", "B"]).encode("utf-8")
     item = {"qid": "q-new", "base_head": base, "files": [{"path": REG_REL, "base_blob": None}]}
     out = landing._merge_registry_file(item, REG_REL, theirs, old_dev)
@@ -288,12 +287,12 @@ def test_malformed_item_degrades_to_dead_letter_not_crash(cql, repo: Path, tmp_p
     """畸形项（files 缺 base_blob/整键缺失）→ 带处方的死信，不抛非受控异常。"""
     base = _commit(repo, REG_REL, _book(["A"]), "seed")
     old_dev = _commit(repo, REG_REL, _book(["A", "B"]), "dev moves")
-    landing = cql.WorktreeLanding(repo_root=repo, queue_root=tmp_path / "queue",
-                                  worktree_path=tmp_path / "wt")
-    for item in ({"qid": "q-m1", "files": [{"path": REG_REL}]},   # 连 base_head 都没有
-                 {"qid": "q-m2", "base_head": None, "files": []},  # files 空
-                 {"qid": "q-m3", "base_head": base[:8] + "x" * 32,
-                  "files": [{"path": REG_REL, "base_blob": "0" * 40}]}):  # 假对象
+    landing = cql.WorktreeLanding(repo_root=repo, queue_root=tmp_path / "queue", worktree_path=tmp_path / "wt")
+    for item in (
+        {"qid": "q-m1", "files": [{"path": REG_REL}]},  # 连 base_head 都没有
+        {"qid": "q-m2", "base_head": None, "files": []},  # files 空
+        {"qid": "q-m3", "base_head": base[:8] + "x" * 32, "files": [{"path": REG_REL, "base_blob": "0" * 40}]},
+    ):  # 假对象
         with pytest.raises(RuntimeError) as ei:
             landing._merge_registry_file(item, REG_REL, _book(["A", "C"]).encode("utf-8"), old_dev)
         assert "requeue" in str(ei.value) or "不可读" in str(ei.value), str(ei.value)[:120]
@@ -302,12 +301,12 @@ def test_malformed_item_degrades_to_dead_letter_not_crash(cql, repo: Path, tmp_p
 def test_legacy_guard_is_conservative_on_unparseable_time(cql, repo: Path, tmp_path: Path) -> None:
     """存量袋时间基底兜底：时间不可解析/无会话名 → 保守放行（绝不误杀无辜历史项）。"""
     _commit(repo, "docs/a.md", "one\n", "seed")
-    landing = cql.WorktreeLanding(repo_root=repo, queue_root=tmp_path / "queue",
-                                  worktree_path=tmp_path / "wt")
+    landing = cql.WorktreeLanding(repo_root=repo, queue_root=tmp_path / "queue", worktree_path=tmp_path / "wt")
     dev = _git(repo, "rev-parse", "refs/heads/dev")
-    for item in ({"session_id": "", "created_at": "2026-09-24T99:99:99+08:00",
-                  "files": [{"path": "docs/a.md"}]},
-                 {"session_id": "probe", "created_at": "", "files": [{"path": "docs/a.md"}]}):
+    for item in (
+        {"session_id": "", "created_at": "2026-09-24T99:99:99+08:00", "files": [{"path": "docs/a.md"}]},
+        {"session_id": "probe", "created_at": "", "files": [{"path": "docs/a.md"}]},
+    ):
         assert landing._conflict_reason(item, dev) is None
 
 
@@ -318,21 +317,29 @@ def test_legacy_guard_blocks_foreign_landing_on_same_path(cql, repo: Path, tmp_p
     再让一个 created_at 早于它的无基底袋去过判定。
     """
     early = _commit(repo, "docs/shared.md", "v1\n", "seed")
-    landing = cql.WorktreeLanding(repo_root=repo, queue_root=tmp_path / "queue",
-                                  worktree_path=tmp_path / "wt")
-    foreign = _commit(repo, "docs/shared.md", "v2 by other session\n",
-                      f"landed work [GW:other-session:q-20260924-other-session-0001] x")
-    item = {"session_id": "probe-stale", "created_at": "2000-01-01T00:00:00+08:00",
-            "files": [{"path": "docs/shared.md"}]}
+    landing = cql.WorktreeLanding(repo_root=repo, queue_root=tmp_path / "queue", worktree_path=tmp_path / "wt")
+    foreign = _commit(
+        repo,
+        "docs/shared.md",
+        "v2 by other session\n",
+        "landed work [GW:other-session:q-20260924-other-session-0001] x",
+    )
+    item = {
+        "session_id": "probe-stale",
+        "created_at": "2000-01-01T00:00:00+08:00",
+        "files": [{"path": "docs/shared.md"}],
+    }
     reason = landing._conflict_reason(item, foreign)
     assert isinstance(reason, str) and "时间基底" in reason, f"他会话后落同路径必须拦，实得 {reason!r}"
     # 阴性①：无他人触及的同路径文件，本会话自己后落一笔不算冲突
     own = _commit(repo, "docs/own.md", "v1\n", "seed own")
     _commit(repo, "docs/own.md", "v2\n", "[GW:probe-stale:q-x] own progress")
     own_now = _git(repo, "rev-parse", "refs/heads/dev")
-    item_own = {"session_id": "probe-stale", "created_at": "2000-01-01T00:00:00+08:00",
-                "files": [{"path": "docs/own.md"}]}
+    item_own = {
+        "session_id": "probe-stale",
+        "created_at": "2000-01-01T00:00:00+08:00",
+        "files": [{"path": "docs/own.md"}],
+    }
     assert landing._conflict_reason(item_own, own_now) is None, "同会话自己的推进不得判冲突（防系统性假死信）"
     # 阴性②：dev 回指到他人落地之前的点 ⇒ 放行（同一把尺在两个 dev 点位上给出不同答案）
     assert landing._conflict_reason(item, early) is None
-

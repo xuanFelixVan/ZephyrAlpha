@@ -101,13 +101,6 @@ from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: E402
 
 _REPO_ROOT_A = next(p for p in Path(__file__).resolve().parents if (p / "src" / "zephyr").exists())
 from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS  # noqa: E402
-from zephyr.gov_enforcement.registry_alignment import (  # noqa: E402  # 第二层注册表对齐共享核心（满贯施工 2026-09-11）
-    check_candidate_promotion_chain,
-    check_field_dictionary_fk,
-    check_governance_bidirectional,
-    check_industry_graph_field_dictionary,
-    run_all_registry_validations,
-)
 from align_battle_map import (  # noqa: E402
     BattleMapAlignmentReport,
 )
@@ -120,14 +113,22 @@ from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 
     PanoramaAlignmentReport,
     PanoramaEmptyError,
 )
+from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
+    run_alignment as run_panorama_alignment,
+)
+
+# 第七图 trading_decision_map 校验器（2026-09-05 七图升级 #ARCH-DECISION-MAP-GATE-001，同目录）
+from check_decision_map import run_checks as run_decision_map_checks  # noqa: E402
 
 # 第六图 frontend_map 校验器（2026-09-04 六图对齐升级，同目录）
 from check_frontend_map import run_checks as run_frontend_map_checks  # noqa: E402
 
-# 第七图 trading_decision_map 校验器（2026-09-05 七图升级 #ARCH-DECISION-MAP-GATE-001，同目录）
-from check_decision_map import run_checks as run_decision_map_checks  # noqa: E402
-from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
-    run_alignment as run_panorama_alignment,
+from zephyr.gov_enforcement.registry_alignment import (  # noqa: E402  # 第二层注册表对齐共享核心（满贯施工 2026-09-11）
+    check_candidate_promotion_chain,
+    check_field_dictionary_fk,
+    check_governance_bidirectional,
+    check_industry_graph_field_dictionary,
+    run_all_registry_validations,
 )
 
 # 默认输出路径
@@ -523,12 +524,36 @@ def main() -> int:
     layer2_soft = 0
 
     def _layer2_family(src: str):
-        """注册表层五族校验，锚点可选 worktree（现盘）/ head（已入库真源）。"""
-        rf, rt = run_all_registry_validations(include_depgraph=True, source=src)
-        fe, fw = check_field_dictionary_fk(source=src)
-        ce, cw = check_candidate_promotion_chain(source=src)
-        ge, gw = check_governance_bidirectional(source=src)
-        ie, iw = check_industry_graph_field_dictionary(source=src)
+        """注册表层五族校验，锚点可选 worktree（现盘）/ head（已入库真源）。
+
+        版本偏斜兜底（本包自纠 S-14）：调用方与被调方必须同批落地；若在册模块版本
+        还不认识 source 关键字（例如主区工作树仍挂他包未提交的旧版 registry_alignment，
+        而 align_all 已更新），原实现会抛 TypeError → 被外层 except 吞成
+        「整层降级跳过」＝注册表层静默失明，比偏斜本身更坏。
+        故这里退回盘锚并**显式告警**（告警在偏斜消除后自动消失，不是长期兼容层）。
+        """
+        try:
+            rf, rt = run_all_registry_validations(include_depgraph=True, source=src)
+            fe, fw = check_field_dictionary_fk(source=src)
+            ce, cw = check_candidate_promotion_chain(source=src)
+            ge, gw = check_governance_bidirectional(source=src)
+            ie, iw = check_industry_graph_field_dictionary(source=src)
+        except TypeError as exc:
+            if "source" not in str(exc):
+                raise
+            if src != "worktree":
+                # 不拿盘读冒充 head 读——那会把"测不到"谎报成"盘侧失明=0"。
+                # 交给调用方既有的 HEAD 锚点 WARN 分支诚实呈现。
+                raise RuntimeError(f"HEAD 锚点不可用（在册模块版本偏斜：{exc}）") from None
+            print(
+                f"  WARN: 读数锚点参数不可用（版本偏斜：{exc}）→ 本层退回盘锚，"
+                "HEAD 锚定面本轮缺失（在册模块收敛到 HEAD 后自动恢复）"
+            )
+            rf, rt = run_all_registry_validations(include_depgraph=True)
+            fe, fw = check_field_dictionary_fk()
+            ce, cw = check_candidate_promotion_chain()
+            ge, gw = check_governance_bidirectional()
+            ie, iw = check_industry_graph_field_dictionary()
         hard = rf + fe + ce + ge + ie
         return hard, len(fw) + len(cw) + len(gw) + len(iw), rt
 
@@ -612,7 +637,10 @@ def main() -> int:
         _validators_dir = str(_REPO_ROOT / "scripts" / "governance" / "d5_architecture" / "validators")
         if _validators_dir not in sys.path:
             sys.path.insert(0, _validators_dir)
-        from validate_strategy_production_map import check_stores, validate_structure  # noqa: import-integrity  sys.path 动态加载
+        from validate_strategy_production_map import (  # noqa: import-integrity  sys.path 动态加载
+            check_stores,
+            validate_structure,
+        )
 
         _fac_map = _REPO_ROOT / "config" / "strategy_production_map.yaml"
         _fac_data = yaml.safe_load(_fac_map.read_text(encoding="utf-8"))

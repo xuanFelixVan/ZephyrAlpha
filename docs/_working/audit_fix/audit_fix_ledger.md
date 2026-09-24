@@ -1,0 +1,333 @@
+---
+ttl: task_bound
+---
+# 审计遗留修复总包 · 台账（LEDGER）
+
+> sid=`st-audit-fix-20260924` ｜ 立项 2026-09-24 14:3x ｜ 骨架=`audit_fix_skeleton.md` ｜ 尺册=`cross/00_channels_and_rulers.md` §二
+> 交付纪律：每条结论标【亲验】（本包跑过并贴读数）或【引述】（案卷/他人所记，未复算）；
+> 交付必附三清单（裁定/执行/复查）——见 §3。
+
+## 1. 五件进度（Owner 令 ①②③④⑤ 逐件）
+
+| 件 | lane | 状态 | 落地通道 | 验收判据 | 读数 |
+|---|---|---|---|---|---|
+| ① 提交链基底（最急） | L1 | 施工毕+7 尺全绿 | 队列 | grep≥1 且红测检出漂移 | 修前 grep=0/C4=HARD【亲验】；worktree grep=6 |
+| ② 裁定册复燃 2 行 | L2 | **已被属主批吸收**（本包同修不同抢，未投该册） | 属主 bag `st-cleanup-final-…-0009` 落地 | HEAD 侧三值 grep=0 | **实测 0**【亲验 f53316c6f9 后】 |
+| ③ 三件悬空 .py | L3 | 定性+生成侧治本+图归零 | 队列（passthrough） | GOMAP 硬=0；HEAD 版图报 3 幽灵 | 双证到手【亲验】 |
+| ④ 计数失真 | L4 | 施工毕，worktree GATE-21 PASS | 直提（gate/script/importlinter）+ 检测器常驻 | `--check` rc=0 | 修前 rc=1 报 5 项【亲验】 |
+| ⑤ align HEAD 锚定 | L5 | 施工毕+双锚并报 | 队列 | 同函数盘 0 硬 / HEAD 3 硬 | 【亲验】 |
+
+## 2. 心跳（实测 `date` 注入，不估算）
+
+- 14:3x 冷启动四闸过（PATH 3.12.8 / cleanup 14 死锁 / reaper last_run=14:27:23 killed=0 / worktree `.aidrafts/st-audit-fix-20260924` 心跳 PID 27136）。
+- 15:0x 四取证子代理回卷（L2/L3/L4/L5），三条案卷被本包复算改口（见 §4 自否证）。
+- 15:1x L1 首袋 0001 实测 `base_head=None`（因跑的是主区未修 CLI）→ 改投 worktree 已修版 CLI → 0002 `base_head==dev`、三件带 blob、新增件 None（正确）。
+- 15:2x 0002 死信＝`GATE-PRECOMMIT-RUN hook=['ruff-format']` → 按处方格式化 → requeue→0003。
+- 15:3x-15:4x L3/L4/L5 施工+红绿双证；GATE-21 在 worktree 由 rc=1(5 项) 转 rc=0。
+
+## 3. 三清单（交付面）
+
+### 3.1 裁定清单（本包按"第一性原理+专业实践"自裁，Owner 醒后可覆）
+
+| # | 事项 | 本包裁定 | 理由一句话 |
+|---|---|---|---|
+| R-1 | 基底口径取 dev HEAD 还是会话 HEAD | dev HEAD | 落地侧语义是 `diff(base,dev)`，用会话 HEAD 会把自算改动判成"他人推进"⇒系统性假冲突；且与 machine 车道同源不另立口径 |
+| R-2 | 缺基底时注册表合并是否继续兜底 `old_dev^` | 否，fail-closed 死信 | 兜底已被两晚"0 增 N 删"实证为杀手；死信可见可恢复，静默吃条目不可查 |
+| R-3 | 存量 47 只 `base_head=None` 袋是否另治 | 加时间基底兜底（他会话后落同路径即冲突，无证据则放行） | 正门修复救不了已入袋的存量；今晚仍会互吃 |
+| R-4 | `base_blob=None` 能否当"新增件"语义用 | 否，一律按"基底不可知"死信 | JSON 里键缺失与值 null 不可分，误读会让合并器复活已删条目 |
+| R-5 | GOMAP 幻影 3 是否等属主落地窗自愈 | 否，治生成侧 HEAD 基 | 案卷的"等窗重跑"只治当次；rglob 口径不改则每次脏区重跑必复发 |
+| R-6 | 是否代投三件他包 .py | 否（登记归属+让属主投） | 代投=EVAP-02 搭便车；且①②依赖模块同样未跟踪，单独落地制造 HEAD 悬空 import |
+| R-7 | `rule_catalog_registry.yaml` 本包是否投 | **不投** | 主区盘上已被他会话重生成到位（292/292 自洽），同修不争件；本包只留常驻检测器 |
+| R-8 | GATE-21 自洽检查作用域 | 先只点尺Q 实测出的两册 | 扩全 catalogs 面会在他包在飞时打红无辜提交；扩面成本=加文件名一行 |
+| R-9 | 三值 `related_arch` 置空是否丢信息 | 不丢（可追溯性外置本簿） | 案卷"真身在 affected_files"部分失真——册内指针确会丢，故本包把 id→文件行号登记进 L2 §子环节3 |
+| R-10 | 主区 index 的 RR 陈旧层（含会删 第 411 号裁定/#412 的 36 行） | 不代修，登记首条风险 | 宪法第 3 章第 4 条 他会话在途违规 owner 责任制 |
+
+### 3.2 执行清单（改了什么）
+
+- 提交链：`scripts/git_commit.py`（+13 行：基底与 base_blobs 接线）、`scripts/commit_queue.py`（`EnqueueOptions.base_blobs`、两处 base_blob 填充、CLI enqueue/requeue 自取基底、`requeue_dead_item` 透传）、
+  `scripts/governance/commit_queue_landing.py`（新增 `resolve_base_head`/`resolve_base_blobs`/`_entry_base_blob`/`_legacy_base_drift_reason`/`_GW_OWNER_RE`；`_merge_registry_file` 去 `old_dev^` 兜底；reroute 车道补 base_blobs）。
+- 校验面：`src/zephyr/gov_enforcement/registry_alignment.py`（单读口 + `source` 参数 + HEAD 批量缓存）、
+  `scripts/governance/d5_architecture/generators/align_all.py`（第 5 步双锚并报；第 9 步两条文案改准）。
+- 生成面：`scripts/governance/generate_governance_map.py`（HEAD 树入选集）、`scripts/governance/generators/generate_script_manifest.py`（同口径）、
+  `src/zephyr/governance/audit/_git_helpers.py`（共享件 `git_ls_tree_paths`，收敛口径防 FUNCTION-DUP）。
+- 检测面：`scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py`（册内自洽 2 台 + `--auto-fix` 转真）。
+- 派生产物：`config/governance_operations_map.yaml`（重生成，幻影 3 清零）、`scripts/governance/script_manifest.yaml`（452→448）、`.importlinter`（+`zephyr.library`）、两册标量归位。
+- 数据：`ruling_registry.yaml` `#383/#387` `related_arch` → `[]`。
+- 测试与案卷：`tests/governance/test_commit_queue_base_head.py`（7 例）+ `docs/_working/audit_fix/**`（骨架+5 lane+横切+本台账）。
+
+### 3.3 复跑清单（Owner 一条命令可复核；E11 亦按此跑两轮）
+
+```bash
+grep -c "base-head\|base_head" scripts/git_commit.py                         # 期望 ≥1
+python -m pytest tests/governance/test_commit_queue_base_head.py -q          # 期望 7 passed
+git show HEAD:docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml \
+  | grep -c "MOD-L00-004\|PS-CTR-003\|MOD-INF-043"                           # 期望 0
+python scripts/governance/d5_architecture/validators/validate_static_manifest_drift.py --check; echo rc=$?  # 期望 rc=0
+python scripts/governance/d5_architecture/generators/align_all.py --no-report # 期望 硬=0（含新 HEAD 锚行）
+python .runtime/tmp/audit_all_20260924/probe_stale_base_revalidation_inert_r9.py  # 期望生产读数转 SOFT
+```
+
+### 主区遗留字节（本包留下的未提交面，如实交代归属与用途）
+
+| 文件 | 状态 | 内容 | 处置 |
+|---|---|---|---|
+| `gate_registry.yaml` | index 与盘 = 180/180，HEAD=174/180 | 本包 `--auto-fix` 产物（条目集与 HEAD 全等，只标量归位） | 由 0013/0014 之后的正门批或属主批落；**本包不 `git add` 抢落**（该册被他会话 claim 持有） |
+| `rule_catalog_registry.yaml` | index 与盘 = 292/292，HEAD=274/292 | 同上（机道再生与本包复核同结论） | 同上 |
+| `scripts/governance/script_manifest.yaml` | 盘=448（HEAD 基生成器产出），HEAD=503 | 本包跑已落地的新生成器产出，55 条幻影移除经逐条亲验 | 随 0013 正门落地 |
+| `.importlinter` | 盘已含 `zephyr.library` | 生成器产出 | 随 0010 已落（HEAD 已含，核对无差异） |
+
+⇒ 这四件**不是孤儿脏文件**：每一件都是"已落地生成器"的确定性输出，且都在本包待落袋的清单里；
+若传送带恢复，正门落地即自动收敛主区。若长期不恢复，`apply_*.py` + 本表即完整重放依据。
+
+## 4. 自否证与案卷改口（本包自己抓的，含对审计班三条）
+
+- **S-1**（对审计班尺Q）：`rule_catalog total_files=274 vs 292` 复算后**条目集与 HEAD 完全一致**，
+  但盘上已被他会话修到位 ⇒ 本包不改口"陈旧"定性，只改口**处置**（R-7：不投）。
+- **S-2**（对案卷 §尺O 第 7 轮）：GOMAP 面积分母非 3——HEAD 版 `script_manifest.yaml` 同样带 **4 条 NOT_IN_HEAD 幻影**，
+  同病灶第三例，案卷未载 ⇒ 已并入 L3 §子环节4。
+- **S-3**（对案卷"处方 (i) 捆族内条目可送标量"）：实测**条目落地、标量仍留旧值** ⇒ 该处方不成立，已在横切 §一 标 ✗。
+- **S-4**（本包自身）：阴性控制组首版用 pytest `tmp_path` 当"非 git 目录"，实测返回主仓 dev HEAD（它在仓内，
+  `rev-parse` 向上穿透）⇒ 改 `tempfile.TemporaryDirectory()`。立法：做"非仓库"对照前先证目录不在任何仓内。
+- **S-5**（本包自身）：L5 首版按主区**未提交**形态（`spec_path`/`base_dir`）写，worktree HEAD 形态下必 NameError
+  ⇒ 改回 HEAD 口径并留接续注释。
+- **S-6**（环境级发现，影响所有 worktree 施工）：会话工作树内 `import zephyr` **默认仍解析主仓**（可编辑安装 .pth），
+  ⇒ worktree 里跑测试/工具会"测的是主区未改码"；本包所有 worktree 验证一律带 `PYTHONPATH=<worktree>/src`。
+  连带后果：worktree 无 `config/.env.*`、无 DB ⇒ 集成级验证只能在主区跑。
+- **S-7**（同族归因）：`TestCommitAutoFlagGating` 在 worktree 内 62s/条 LOCK_TIMEOUT，
+  主区同一类 4.84s 全绿 ⇒ 归因＝S-6 使 worktree 测试撞**主区全局提交锁**（此刻多会话在提交），非本包改动。
+
+## 5. 待窗 / 待裁（本包不能或不应自决的，全量列此，不夹带进代码）
+
+1. 【风险·高】主区 index 的 RR 陈旧层：0 增 36 删，含删 `第 411 号裁定/#412` 与三值复燃 ⇒ 任何吸收该 index 的落地会同时带回两类倒退。属主=会话语义 owner 制（§3.4）。
+2. 【待窗】`rule_catalog_registry.yaml` 标量 274→292 由在途袋落地即归零；本包检测器会持续报直到它落地。
+3. 【待窗】三件他包 .py 落地后重跑 `generate_governance_map.py`（HEAD 基已就位，无需再改判据）。
+4. 【门位·未触发】本包未做注册表净删：所有条目级变化均为幻影/标量（零真实资产净损，逐字段差分见各 lane）。
+5. 【新立 F-AUDITFIX-DEREF-01｜派生册引用未入库文件＝clean checkout 必红】
+   发现路径=静默窗内在 worktree 跑既有测试（主区同测 7 passed，worktree 1 failed，差异只可能来自"盘上有、HEAD 无"）。
+   证据：`capability_canonical_file_registry.yaml:46117` 与 `module_translation_registry.yaml:56713` 均登记
+   `src/zephyr/ai_layer/redline/negative_list_gates.py`，而该文件 **`git ls-files` 在册（已 add 未提交）＋ `git cat-file -e HEAD:` 不存在**；
+   受影响的常驻校验＝`tests/governance/generators/test_generate_commit_guide.py::test_integration_real_repo_render_readonly`
+   （指南生成器逐条验 `gate_digest.source_file` 存在性）。
+   意义=这是 BLIND-02 的**镜像面**：align/门禁读盘 ⇒ "HEAD 缺文件"这类断裂在脏主区里永远读成绿，
+   只有干净 checkout（新会话、CI、灾备恢复）才会红——而本仓 100% AI 施工恰恰高度依赖干净 checkout。
+   处置（二选一，均非本包授权面）：① 属主批把该模块连同其依赖一起落地（正解，随 st-ailayer-final 收尾即闭）；
+   ② 注册表净删相关条目＝高门位（AGENTS 第 5 章第 2 条"注册表净删→Owner"），本包不自动执行。
+   本包贡献＝把该形态变成**可重放判据**（首版用 shell grep 被 YAML 引号形态污染出 245 条假阳性，
+   已换 YAML 解析版并带双控制组——阴性=在册文件不误报 PASS、阳性=锚点必报 PASS【亲验】）：
+   口径=只检代码面引用（`src/ scripts/ tests/ config/ schemas/ architecture_model/` 前缀），
+   刻意排除 `docs/_working/**`（TTL 区合法消失，纳入即假阳性淹没，实测差异 245→160 全靠这一刀）。
+   实测分母：HEAD 版 capability 册代码面引用 **2866 条，其中 160 条不在 HEAD**。
+   160 条的构成（抽样判读，非全量定性）：绝大多数＝`scripts/ai_layer/*`、`schemas/categories/registry_ledger/*`
+   等 st-ailayer 批在途件（随其收尾自解）；余下需逐条判"该落"还是"该从册摘除"。
+   ⇒ 本包**不代裁、不代删**：逐条摘除＝注册表净删（高门位），且多数属他会话在途资产；
+     但把判据与分母立此，使该面从此可复核、可缩表。判据脚本本体见
+     `.runtime/tmp/audit_fix_20260924/backup/manifest.json` 同级的 `deref_probe`（会话收官前会把它的内容
+     内联进本行下方，避免只活在临时区）。
+
+```bash
+python - <<'EOF'
+import subprocess, yaml
+def head(p): return subprocess.run(['git','show',f'HEAD:{p}'],capture_output=True,text=True,encoding='utf-8',errors='replace').stdout
+def ok(p): return subprocess.run(['git','cat-file','-e',f'HEAD:{p}'],capture_output=True).returncode==0
+seen=set()
+def walk(o):
+    if isinstance(o,dict): [walk(v) for v in o.values()]
+    elif isinstance(o,list): [walk(v) for v in o]
+    elif isinstance(o,str):
+        s=o.strip()
+        if s.endswith('.py') and s.startswith(('src/','scripts/','tests/','config/','schemas/','architecture_model/')) and ' ' not in s: seen.add(s)
+walk(yaml.safe_load(head('docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml')))
+ph=[s for s in sorted(seen) if not ok(s)]
+print('代码面引用', len(seen), '幻影', len(ph)); print(ph[:10])
+EOF
+```
+（控制组：`src/zephyr/governance/capability_lookup.py` 必须在册且不被报；
+ `src/zephyr/ai_layer/redline/negative_list_gates.py` 必须在候选集且被报——两条本包皆实测 PASS。）
+
+6. 【新立 F-AUDITFIX-PIDLIFE-01｜存活判据可被守护进程 pid 伪锁死】（高风险，交 Owner 定）
+   实测：`SessionRegistry.get_session('st-ailayer-final-20260924')` → **pid=41380**，而 41380 正是
+   `commit_belt_daemon`（05:14 起，常驻数天）；该会话心跳 740s 前刚刷新，其 `held_files=575`。
+   在册判据（`session_concurrency.py` 头部 [INVARIANTS]）＝"pid>0 → PID liveness + TTL(3600s) 双判据"
+   ⇒ **只要注册的 pid 恰好是常驻守护的 pid（pid 复用或gateway在守护内取 getpid），该会话就被永久判活**，
+   其 575 项 claim 永不自动释放，可无限期挡住别人对这批热册的提交。
+   本包实证后果：④ 的 `gate_registry`/`rule_catalog` 标量重落被该 claim 挡住（`claim_file conflict`），
+   而该会话自身已无在途袋（pending/dead/processing 内零声明）⇒ "判活但不再干活"＝纯阻塞态。
+   处方（本包不自动执行，理由：改存活语义＝高爆炸半径，可能在夜窗批量误判死会话→
+   正在施工的 claim 被放掉，或反向把无辜会话判活；两种失败都比现在更坏）：
+   ① 登记 pid 时禁止取自常驻守护（register 时 `pid` 必须是会话自身短命进程，或改记 `pid_kind`）；
+   ② 判活加一条"pid 属于常驻守护白名单（belt/heartbeat/watchdog）时不得单独作为存活证据"；
+   ③ 或按 `last_activity`（头部已声明它是"仅 register/claim_file/register_dependency 刷新"的独立锚点）
+      作为第二轨参与 claim 释放判定——现实现只用它做 daemon idle 退出，未参与 claim 释放。
+   复核命令：`python -c "import sys;sys.path[:0]=['src'];from zephyr.security.access_control.session_concurrency import SessionRegistry;import time;i=SessionRegistry().get_session('st-ailayer-final-20260924');print(i.pid, time.time()-i.last_heartbeat, len(i.held_files))"`
+
+7. 【③ 残留三条 GOMAP 幻影的逐条归因与解法（18:4x 实测，全部可自愈或已给出口）】
+   | 幻影 | 属主袋 | 现状 | 归零路径 |
+   |---|---|---|---|
+   | `scripts/governance/check_meta_question_audit_reconcile.py` | `st-metaq-20260923-0022` | **pending**（12:09 入袋，`base_head=None`＝存量） | 其落地后重跑 `generate_governance_map.py`；或按 T3 时间基兜底判冲突后属主 requeue |
+   | `scripts/sector_line/build_gpu_input_pack.py` | `st-pipeline-final-20260924-0029` | **pending**（10:03，带基底 `602778fdef`） | 同上，且它带基底 ⇒ 已有快进保护 |
+   | `src/zephyr/intelligence/budget_analyzer.py` | `st-ailayer-final` 三连死（0001 CREATE-GUARD 缺 3 件 .md token；0003 同因；0005 **修复后带基底仍死于 GATE-VOCAB 词表硬编码**） | 无在途袋 | 属主两步自解：①给其 3 个新 .md 补 creation_token（同袋投）②其新 .py 的词表改从 `*_vocabulary.yaml` 动态加载；**且该批 185 件已远超单批硬顶，须拆分**——本包不代投（代投＝把它的门禁违规搬到本包头上） |
+   ⇒ 三条均**不需要本包改判据**：③ 的生成侧根因已修（HEAD 基），残余只是"属主代码尚未入库"，
+     且 `align_all` 第 9 步已能把它们逐条报出（修前完全不可见）。
+
+## 6. 并发让路实录（线间并行流水的真实代价与处置，逐条可复核）
+
+| 时刻 | 事件 | 本包处置 | 依据 |
+|---|---|---|---|
+| 14:39 | `st-ailayer-final` 主区直提 ~140 件（含本包 L3 清单里的 `budget_analyzer.py`） | 继续避让；不碰其文件面 | 宪法 §3.4 + 记忆"并发施工期避让是硬约束" |
+| 15:5x | 本包给 `ruff format` 传了 `scripts/` 目录，**误格式化 275 个文件** | 白名单精确还原 273 件，改动面回到 12+2；此后只对自家文件跑格式化 | 自否证 S-8（见下） |
+| 15:57 | 属主批 `f53316c6f9` 落地：同时带走本包第②件（related_arch 清零）**和** `spec_path/base_dir` 重构 | ① 不投 `ruling_registry.yaml`（已被吸收，投了只会造 noop）；② worktree 复位到新 dev 后逐件重贴自家补丁，L5 改接其 `spec_path` 统一口 | 记忆 merge-relay / 让路纪律 |
+| 15:5x-16:0x | 直提 `gate_registry` 被全局锁改道成"无基底袋"（exit 0＝假成功，HEAD 未变） | 只认 `git show HEAD:` 不认退出码；改为合入收官批随队列正门走 | 记忆"判据只认 git show HEAD:<file>" |
+| 16:2x | 陈旧袋 0005/0006（pre-f53316c6f9 字节）仍在 pending，若落地会覆盖属主刚落的 `registry_alignment` | 收官批 0007 以同路径 compaction 自动清掉两袋（`supersedes=[0005,0006]`） | 队列 §6.2 compaction 语义 |
+
+## 7. 自否证补记
+
+- **S-8（本包，最严重的一次）**：对共享树给格式化工具传**目录**＝把别人/别处的文件一起改。
+  275 文件中 273 个非本包面，若未被 `git status` 白名单核对即入袋，就是又一例 EVAP-02"搭便车"。
+  立法：**格式化/lint/生成器类工具在本仓一律按显式文件清单调用；入袋前必做 `git status` 白名单核对并还原面外文件。**
+- **S-9**：`ruff check` 报 4 处 I001，逐一对 HEAD 复算后归因＝3 处 HEAD 本有（不顺手修，避免面外扩）、
+  1 处系本包把 `import subprocess` 插错位置（已修）。教训：**报红先分"我引入"还是"存量"，前者必修、后者另案**。
+
+- **S-10（自写总闸的假红，第 1 轮就抓到）**：本包总闸 v1 的 C5 断言"尺T/尺U 生产读数应转 SOFT"——
+  但那两把尺的"生产读数"分支是用 `enqueue_item(options=None)` 直接构造的，量的是**入队 API 的默认值**，
+  而本包刻意保留该默认值不动（不破 `enqueue_item` 零 git 依赖不变量，测试靠它做全 tmp 隔离），
+  故该读数按设计恒为 HARD ⇒ 我的检查项恒红＝假红。改法：尺T/尺U 只断言"控制组 PASS（能红能绿）"，
+  生产面真信号换成 **C5b 修复后新入袋 `base_head` 非空率**（真实生产队列读数）。
+  立法沿用仓内铁律：**判据要量的那个东西，必须先证明它随修复会动**。
+- **S-11（第 1 轮其余 FAIL 逐条定性，防"把未完成当失败"）**：C4（tests 尚未进 HEAD）、
+  C7（主区脏工作树下旧版 `generate_script_manifest` 按 rglob 算 452 vs 已修文件 448，新生成器落地后自洽）、
+  C9-gate_registry（HEAD 仍 174/180，随收官批落地）——三条皆为"未落地"而非"修错"。
+
+- **S-13（九尺总闸在我改动前后各跑一轮：8 绿 1 崩，崩的那条与我的代码无关，且是好消息）**
+  静默窗内跑审计班 `redblue_ruler_suite.py` 全量＝`9/9 已跑，FAIL=1 [尺S]`（先过 `--self-test` 六条合成对照全对）。
+  归因三查：①主区盘上 `registry_alignment.py` **尚不含本包 L5 改动**（在 0010 袋里未落地）⇒ 崩的那次跑的是我未碰过的码；
+  ②读它的控制判据 `ok = (len(e_head) > 0 and len(e_disk) == 0 and len(e_tamp) > 0 and len(e_anchor) == 0)`
+  ——把"缺陷仍在"（`e_head>0`）写进了**活性判据**，于是第②件在 HEAD 被修好（`e_head` 3→0）后它必自判"读数作废"，
+  属本仓反复立法的**恒红尺**（分不清"已修"与"尺坏"）；③本包另写 v2 把"活性"与"缺陷面"解耦
+  （活性只由 篡改注入必>0 ＋ 历史自洽锚点必=0 两控决定；HEAD/盘差值才作面积读数）
+  ⇒ v2 实跑 `尺活性 PASS，HEAD 面读数=0 ⇒ SOFT（已修）`【亲验】。
+  处方（交维护班，勿留在我区）：审计班探针第 68 行按 v2 口径改一行即可；
+  本包 L5 落地后更根本的解法是**生产函数自带 `source="head"`**，探针不再需要重定向 `CATALOGS_DIR`。
+
+- **S-14（本包自己造的耦合，抓到并补硬）**：⑤ 让 `align_all` 给五个 check 传 `source=`，而调用方与被调方
+  必须同批生效——0010 落地后两册都在 HEAD 里是一致的，但**主区工作树仍挂他会话未提交的旧版
+  `registry_alignment`**，实跑 `align_all` 即抛 `TypeError: unexpected keyword 'source'` →
+  被外层 `except` 吞成"注册表层整层降级跳过"＝**比偏斜本身更坏的静默失明**（该层此前一直是跑的）。
+  补法：`_layer2_family` 仅在 `src="worktree"` 时退回盘读并打显式 WARN（偏斜消除后 WARN 自动消失，
+  不是长期兼容层）；`src="head"` 时**不拿盘读冒充 head 读**（那会把"测不到"谎报成"盘侧失明=0"），
+  而是抛给既有 HEAD 锚 WARN 分支诚实呈现。立法：**改共享函数的消费方时，必须同时问"盘上/在册版本
+  不一致时会怎样"，并保证失败方向是"报不出来可见"而不是"整层不报"**。
+
+### 顺带澄清一处"看着像我改坏了"的读数（避免后人误追）
+
+`align_all` 第 9 步在主区报 **10 条机生层幽灵**，其中只有 3 条属 HEAD 版 map
+（`check_meta_question_audit_reconcile.py`／`build_gpu_input_pack.py`／`budget_analyzer.py`，即案卷原悬空 3），
+另 7 条（`meta_question/wo006/*`、`wo_a2legs/*`）＝**他会话未提交的盘上 map 条目**被如实照出。
+修前两侧同读盘 ⇒ 这类"盘引用、HEAD 无物"完全不可见；修后由 HEAD 基 scan() 自动显形。
+⇒ 这条红**不是回归，是 ③ 生效的证据**；处置归该会话（其 map 增量落地或撤 edits）。
+
+- **S-15（第二次因同一根因死信，教训升级）**：文档袋 0009 死于 CREATE-GUARD「无 creation_token」。
+  我 15:5x 确实登记过 8 条 token，但**登记只写在 worktree 的册里，册本身没跟着进袋**（它在 0008 里，0008 死了）
+  ⇒ 落地侧读 dev 上的册，当然读不到 ⇒ 死信。
+  立法：**creation_token 与它保护的新文件必须同袋**——同袋时 gate 读的是暂存态，登记与新建件同时可见。
+  （"登记一次就完"是错觉；登记的持久性取决于登记册是否落地。）
+- **S-16（④ 的标量被回退一次，已重落）**：首笔 `052c2817f4`(16:28) 落地后 1 分钟被 `fc039cc891`(16:29，
+  他会话机道袋) 回退成 174——那袋入袋时刻早于本包正门修复 ⇒ 无基底 ⇒ 快进判定无从触发。
+  这是"修复有时效边界"的实物证据：**base_head 修复只保护修复之后入的袋**，存量袋另由 T3 时间基兜底。
+
+- **S-17（仓库自有命名门把我包设计打回，一次死信学到）**：GATE-NAMING 的 **N-16 要求 basename 全局唯一**，
+  我按"每 lane 一个 `00_overview.md`"的直觉做了 5 份同名文件（分目录合理，但本仓按文件名唯一性立规），
+  0015 因此死信。改法＝`L<n>_<lane>_mining.md` 唯一名，并同步 token 登记册路径与骨架/文内交叉引用，
+  改后做**引用一致性自检**（正则抽出全部 `docs/_working/audit_fix/...` 引用逐个 stat）＝悬空引用 0。
+- **S-18（本包最重要的机制级新发现：compaction 会把内容"悬空在两袋之间"）**
+  袋 0013 入袋时声明 **10 件**、`done` 且 `landed_id=5aa14c8ceb`，但该 commit 实际只含 **1 件**（script_manifest），
+  且 0013 的 `files` 现只剩那 1 件——其余 9 件（登记册+8 文档）是被**后袋 0015 的同路径 compaction 抽走**的，
+  而 0015 随后死于 N-16 ⇒ **9 件既不在 0013 也不在 0015 的待落集里＝悬空在两袋之间，且 0013 记着 done**。
+  这是案卷在册的"同 sid 后袋静默吞没"的**加害者侧实证**：吞没本身按设计发生，但**"前袋记 done 而后袋死亡"
+  这一组合没有任何告警**＝假成功的新亚种（LAND-01 的近亲）。
+  本包应对（三条纪律，写给后续所有会话）：
+  ① **终批一次性投足**：需要同时落地的件（尤其"登记册+被登记件"）必须在同一袋，投出后不再追加同路径袋；
+  ② 每轮收尾前用 `git show HEAD:<path>` 逐件核收，**不认 done**；
+  ③ 若必须追加，先查前一袋是否已被抽件（读 pending 袋的 files 与入袋时件数对比）。
+  建议登记给属主包的修闸需求（本包不自修 landing，避免与在途改动叠加）：
+  compaction 抽走某袋全部剩余件时，该袋应转 `dead/superseded-empty`（或至少在 done 回执里带
+  `files_landed=1/10` 的数量差），而不是记 `done` 且零提示。
+
+## 8. 落地凭据（可复核）
+
+- 第①件落地笔＝`c58da6cb06`；`git show HEAD:scripts/git_commit.py | grep -c base_head` = **6**【亲验】。
+  主区工作树已收敛同一版本 ⇒ 此后**任何会话**经 `git_commit.py --enqueue` 入袋都带基底（不只在野会话各自修）。
+- 修复生效的**生产现场双证**（不是测试里的证）：
+  ① 袋 0007 被新快进判定拦下——`冲突：入队基底 f53316c6f9 之后 dev 已推进且触及同路径
+  [scripts/commit_queue.py, scripts/git_commit.py, scripts/governance/commit_queue_landing.py,
+  tests/governance/test_commit_queue_base_head.py]`；放在修前这就是一次静默整覆盖
+  （覆盖掉本包 3 秒前刚落的 L1 代码）。
+  ② 袋 0004 被 §6.4 陈旧基底重校验判 `cascade_stale`——`base_blob` 此前恒空 ⇒ 该检测器结构空转，现在有数据可判。
+- 让路记录：第②件由属主批 `f53316c6f9` 吸收，本包未投该册（避免制造一次 noop 假落地）。
+- 激活面如实记：常驻 `commit_belt_daemon`（PID 41380，05:14 起）持旧 landing 码，
+  其落地侧改动（去 `old_dev^` 兜底、存量袋时间基底兜底）随该守护下次由计划任务
+  `scripts/register_belt_daemon_task.ps1` 探测重拉后生效；入队侧与进程内自举排空路径已是新码
+  （0007/0004 两次判定即由新数据驱动）。本包不重启共享守护进程（属基础设施动作，非本包授权面）。
+- **S-12（红蓝对抗抓到自己产品的真 bug，最重要的一条）**：`_legacy_base_drift_reason` 首版把
+  `git log` 的起点写成实时 `refs/heads/dev`，而 `_conflict_reason` 的入参是**调用方传入的 dev 点位**
+  （CAS 重试每轮不同：`landing()` 循环里 `old_dev = self._dev_head()` 每次重取）。
+  后果=重试第 2 轮起会拿"最新 dev"去判"上一轮点位"，判定与实到点位不一致（偏保守但语义错位）。
+  抓法=为兜底函数补"同一把尺在两个 dev 点位上必须给出不同答案"的阴性控制组——
+  恒绿型测试（只测一个点位）永远抓不到它。已修并补 4 例对抗用例（新增册不得被 fail-closed 误杀 /
+  畸形项走受控死信不崩 / 时间不可解析保守放行 / 他人落地与同会话自落的分界）。
+  ⇒ 尺册 16 例（11 L1 + 5 L3-L5）全绿【亲验】。
+  追注：修好版随 0008 之后的补充批落地；`c58da6cb06` 里是缺陷版（判定偏保守，不放行坏数据，
+  但语义错位）——**本包不掩饰自己第一版落地了带缺陷的代码，并给出被抓路径**。
+
+## 9. 让道令执行与断点（16:35-17:20 提交静默窗，Owner 16:35 转达）
+
+- sid=`st-audit-fix-20260924`（凭据=① worktree 目录名 `.aidrafts/st-audit-fix-20260924`；② 自有提交尾注 `GW:st-audit-fix-20260924`）。非 st-ailayer-final ⇒ 只执行 A 段。
+- A.1 静默窗内**不再** commit/enqueue/requeue（此前已投的 0009/0010 两袋留在队列由传送带自行消化，不插队不手排）。
+- A.2 不动主区暂存区：窗口内零 `git add`；本包成品一律留在自己 worktree。
+- A.3 成品自保双份：`.runtime/tmp/audit_fix_20260924/backup/`（23 件 + `manifest.json` 逐件 sha256）
+  ＋幂等重放脚本 `.runtime/tmp/audit_fix_20260924/apply_audit_fix_20260924.py`（只装字节不碰 git；`--check` 零写入自检）。
+- A.4 未做任何自救动作：未 kill 守护、未手工 drain、未插队重投、未加旗绕门、未动 `_registry/` 热册（窗口内）、未动两个 hold 目录。
+- A.5 17:20 后按 pending 计数决定节奏（16:31 实测 pending=54）。
+
+### 断点与待办（醒后可直接从这行接续）
+
+| # | 待办 | 现状与依据 | 恢复动作（窗口后） |
+|---|---|---|---|
+| T1 | **④ 被回退，须重落** | 我 16:28 笔 `052c2817f4` 把 `gate_registry total_gates` 改到 180；**16:29 他包袋 `fc039cc891`（st-backup-cold q-0022，入袋早于我的修复⇒无基底）又回退成 174/180**——这是 F-AUDIT-QUEUE-04 的活体复现，也正是本包存在的理由。修复版字节现存活于主区 index+盘 与本包备份 | 走直提通道重落一次（标量经队列必被吞，实测两次）；已扫队列 pending/dead/processing 内**无任何袋再带该册** ⇒ 重落不会再被在途陈旧袋吃掉 |
+| T2 | 0009/0010 两袋落地核验 | 只认 `git show HEAD:<file>`，不认退出码 | 逐件核 HEAD 字节==备份哈希；死信则读 dead_reason 对症 requeue |
+| T3 | 最终文档批 | LEDGER/L1/L4/L5 在 0009 快照之后又改过（S-10/S-11/S-12、§8、§9） | 一件 docs 批走正门 |
+| T5 | **机道再生会回退本包 ③**（新发现，时序级） | 本包 16:28 提交触发 post-commit reconciler，机器道袋 `…-0011`(16:36) 携 `script_manifest total_scripts=503` 且**4 条 NOT_IN_HEAD 幻影全在**。原因=再生器读"当时盘上的旧版 `generate_script_manifest.py`"，而本包的 HEAD 基改造在 0010 里尚未落地 ⇒ **修工具未落地前，工具的旧输出已在途** | 0010 落地后，用已修生成器重跑 script_manifest 再落一次；复验=`total_scripts==len(scripts)` 且逐条 `git cat-file -e HEAD:<path>` 全命中 |
+| T6 | `rule_catalog total_files` 仍 274 | 机器道袋 0011 虽带 292，但该册属 `catalogs/*.yaml` ⇒ 标量必被合并器取 ours 而丢（**这是该规律的第三次独立实证**：0006 队列版/0011 机道版/本包复现实验） | 待 0011 落地使 index==HEAD 后走直提单件；GATE-21 自洽台在此期间持续报红，不会静默 |
+| T1' | **④标量重落遇 HELD-OVERLAP ⇒ 裁定=不硬闯、不代释放** | 两册 claim 由 `st-ailayer-final-20260924` 持有（held=574）；**判"死会话"不成立**：该会话 14:39 那笔正是短命进程 `scripts/git_commit.py` 提交的（与本包同款形态），"查不到常驻进程"不能证明其已死 ⇒ §2.7「死会话 stale claim 精准释放」前提不满足，本包不碰他包 claim | 属主批落地即归零：其盘上字节**已经是修好的** gate_registry 180/180 与 rule_catalog 292/292（本包已复核与 HEAD 条目集全等，只差标量）；期间 GATE-21 自洽台持续报红 ⇒ 不可能静默腐化。若属主批收尾后仍留失真，则一条命令即可：`git_commit.py --session st-audit-fix-20260924 --allow-non-worktree --no-auto-enqueue --files <两册>`（先 `gateway.claim_files` 且确认无 HELD） |
+| T4 | 两轮零 + 终报 | 总闸 v2 已备（11→13 项，含 C5b 生产真信号） | T1-T3 完成后连跑两轮，然后清临时/释放 claim/关 worktree |
+
+## 10. 收官时段的外部熄火取证（18:2x 实测，不属本包五件面，交维护班）
+
+现象：dev 自 `4442b1b4f6`(17:35) 起 45 分钟零推进；本包 3 只袋（0013/0014/0015）滞留 pending。
+
+取证（全部 `python scripts/commit_queue.py status` / 文件系统实测）：
+- lease：`{"pid": 41380, "renewed_at": ...}`，读时 age=54s ⇒ **守护活着且在续租**；`daemon.online=true`。
+- `processing/` 仅一只：`q-20260923-st-stress-20260923-0053`，**age=82169s≈22.8h**（被 claim 后工线程未归位）。
+- 队首（head of line）：`q-20260923-st-stress-20260923-0055`，`waiting_s=82246`，lane=interactive，files=1。
+- pending 总数 71（45 分钟内从 52 涨到 71——各方仍在入队）。
+
+两处机制叠加（都是**在册已记**病灶，本包不另立案，只补一次现场实证）：
+1. **队首=sorted(qid) 且 qid 含日期** ⇒ 昨天的 `20260923-*` 天然排在今天所有 `20260924-*` 之前；
+   昨天 `st-stress` 一批 ~20 只遗留袋因此长期把住队首。
+2. **interactive 车道无防饿死兜底**（30min 保护只覆盖 machine 车道）⇒ 上述排序结果没有逃生阀。
+3. 叠加形态＝已登记测量结论"D3：工线程早退把整波永久占住"的现场复现——
+   在册恢复路径是"下一波 `_recover_orphans`"，但波次不再起（守护只剩续租心跳线程）。
+
+本包按纪律**没有**做的三件事（都属越权自救）：kill/重启 belt 守护、手工 serializer drain 抢 lease、
+插队重投或加旗绕门。做了的两件都在册命令范围内：`status`（自带一次排空尝试）、`drain --max-items 3`
+（结果 `SKIPPED: Serializer lease 被活体持有`——即设计上正确的互斥行为，未强抢）。
+
+待落清单（本包侧，恢复后一条命令即可续做，成品字节已在备份且 apply 脚本幂等）：
+| 袋 | 内容 | 落地后判据 |
+|---|---|---|
+| 0013 | creation_token 登记册 + script_manifest(HEAD 基 448) + 8 件案卷 | `git show HEAD:docs/_working/audit_fix/audit_fix_ledger.md` 非空；`C10 幻影=0` 转绿 |
+| 0014 | align_all 偏斜补硬 + 案卷终态 | `C4` 在主区不再假红（skipped 或 passed） |
+| 0015 | 测试遮蔽 skip 分支 + 案卷终态 | 主区 `pytest tests/governance/test_audit_fix_lanes_rulers.py` 无 FAILED |
+
+重放路径（断点续做，零猜测）：
+`python .runtime/tmp/audit_fix_20260924/apply_audit_fix_20260924.py`（把 23 件成品按 sha256 校验装回工作树）
+→ 再按本包正门口径入队（`commit_queue.py enqueue --queue-root 主区 --worktree-root 工作树`）。
