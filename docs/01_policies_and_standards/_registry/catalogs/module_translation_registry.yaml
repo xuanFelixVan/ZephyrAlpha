@@ -60843,6 +60843,15 @@ entries:
   desc_en: "backfill 881/8803/8804 daily bars into kline_sector_880"
   plain_zh: "给 881 行业板块和 8803/8804 行业板块补历史日K线数据的小工具，默认只看不写，加 --execute 才真正入库"
   responsibility_layer: business
+- module_path: src/zephyr/infrastructure/duckdb_runtime_gate.py
+  domain_id: D_INFRA_RUNTIME
+  name_zh: "裸duckdb运行时拦截门"
+  name_en: "Bare DuckDB Runtime Gate"
+  desc_zh: "运行时拦截裸 duckdb.connect：白名单豁免+审计 jsonl 落账，warn/block 双模式，补齐 bare_sql_gate 的运行时侧防线"
+  desc_en: ""
+  plain_zh: "以前只在你提交代码时检查有没有绕过数据库服务直连数据库，但程序跑起来之后直连是管不住的。这个门装上后，谁在运行中偷偷直连数据库就会被记一笔账（严重的模式可以直接拒绝），而走正规数据库服务的调用完全不受打扰。"
+  responsibility_layer: infrastructure
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
