@@ -54,7 +54,7 @@ budget_caps:
   # 口径真源=w3_w5_precheck §2.5（59h 窗 212,400s × 0.8 占空 ÷ 6.8s/格 ≈ 24,990 格）
   wall_clock_hours: 59              # 09-25 12:00 → 09-27 23:00（Owner 锁定窗）
   effective_duty_pct: 80
-  per_point_seconds_measured: null  # T0 标定后回填实测值；null=T1/T2 禁开跑（执行器 fail-closed）
+  per_point_seconds_measured: 35.33  # T0 实测回填 2026-09-24（run=grid_20260924-080309, 7065s/200 格, 全成本门真跑）——实测=预算估 6.8s 的 5.2x，59h 窗有效容量≈4809 格，T1/T2 配比待裁定重排
   grid_points_cap: 25000            # 含五档成本门（跳门禁用；旧值 200 为哑门时代误设）
   trial0_calibration_points: 200    # T0 标定跑：唯一用途=实测 s/格 并回填上一行
   tier1_points: 17100               # T1 真 1% 分层粗扫（≈32h）
