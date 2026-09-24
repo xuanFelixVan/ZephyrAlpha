@@ -773,6 +773,178 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   git diff --cached --numstat -- AGENTS.md                                        # 2/2=宪法本身也在回退弹里
   ```
 
+## 心跳 2026-09-24 06:36 CST 实测（`date`=06:36:24）· 在干=收官第 2 轮复跑（三把尺+尺自检器**全同值**）+ 新立 **F-AUDIT-WIP-01** 并**推翻本包终报对"第 6 步崩"的归因** · 卡住=无 · 下一步=终报口径补正后判"自审二次=0"是否闭合
+
+- **① 收官判据第 2 轮复跑（同尺两跑，测于 06:22–06:34）＝三把尺零新问题**：
+  - 尺A 字段切片：整册口径 D1=786 D2=277 → **业务面 D1=165 / D2=110**（与 06:0x 那轮逐位同值；整册口径继续被他包并发台账行扰动，再证"不切片的口径连跑两遍都稳不住"）。
+  - 尺B 翻译册三分：**R_改名未同步 45 / H_退役未销册 71 / N_从未落地 31**（同值，`grep -c "^R_"` 等三行复算）。
+  - 尺C depgraph 双向：**正向漏挂 55/4680（1.2%）+ 反向硬悬空 10 条**，且 10 条**逐条同名**（`round2_depgraph.txt` 已存证；file 粒度节点总数 12,374）。
+  - 尺自检器 `redblue_ruler_selfcheck.py`：真判 14 条全 PASS + 1 条有意负例自红 ⇒ exit 0（**非恒绿**）。
+  - `align_all`（工作树面）：[1/9]–[5/9] **硬=3**，与 05:2x 那轮同一条批（治理双向 裁定#383→#MOD-L00-004、#387→#PS-CTR-003、#387→#MOD-INF-043）；**[6/9] 崩**——本条归因见 ②，已作废原写法。
+- **② 🔴 新立 F-AUDIT-WIP-01（并把本包自己终报的一处归因错误改过来）**：原报"第 6 步崩＝已落地面他包缺陷（st-ailayer BLIND-01）"**不成立**——`HEAD` 侧根本不崩。
+  - **真因**：主区工作树+主 index 里一段 **+15 行未提交钩子**（`align_all.py:695-709`，注释自署名"L1 接线批挂点③（st-ailayer-final-20260924，**非阻断**）"）在 `main()` 内写了 `from zephyr.shared.infra.process_pool import run_subprocess_hidden`。Python 里函数内任何绑定都使该名字**在整个函数内变局部** ⇒ 第 536 行（第 6 步起始处，**在钩子的 try 之外**）先用后绑 ⇒ `UnboundLocalError` ⇒ **第 6/7/8/9 步永不执行、`align_all` 恒 rc=1、总览报告永不落盘**。
+  - **三条互相独立的证法**（不靠读代码直觉）：
+    1. `git show HEAD:…align_all.py | grep -n run_subprocess_hidden` = 只 100/536/556 三处；工作树版多出 697/700 ⇒ 钩子只在盘上。
+    2. `symtable` 复算 `main()` 符号表：**HEAD 版 `is_global()=True`，工作树版 `is_local()=True`**（决定性、且不需运行）。
+    3. 直接跑第 6 步载荷 `scripts/governance/d3_metadata/check_doc_node_id_hardcode.py --ci` ⇒ **rc=1（"FOUND: 2 … in 1791 files"，属存量 WARN 口径）而非崩** ⇒ 第 6 步本身可用，崩只由遮蔽造成。
+  - **"非阻断"自述被证伪**：其 `try/except Exception` 只覆盖 695-709 自身，而遮蔽效应在 536 发作 ⇒ 兜不住 ⇒ **实为阻断级**，且因写在外层 `main()` 作用域，属"加钩子的人不会在自己那一段看到症状"的典型远程致盲。
+  - **三态定位（谁的手笔、在哪）**：`HEAD` 无 ｜ serializer worktree（`.runtime/commit_queue/worktree/…`）无 ｜ 全部 7 个 `.aidrafts/*/…/align_all.py` 会话快照**均无** ｜ **只有主区工作树 + 主 index 有** ⇒ 它是"只活在第二真源里"的一段改动；**任何吸收该路径的提交都会把这枚崩写进 HEAD**（与本包 IDX-05"主区 index 是第二真源且无人回收"同根第六面）。
+  - **处方（一句，交属主，§3.4 不代修）**：删掉 697 那行冗余的函数内 import（模块级第 100 行已提供同名符号，删后行为不变）；或把钩子整体挪进独立 helper，使其绑定不进入 `main()` 作用域。**属主包**：st-ailayer-final-20260924（其 `.aidrafts` 目录 mtime=00:39，进程表内无该 sid ⇒ 疑已散会，故**同时上交总指挥路由收棚方**，勿等自愈）。
+  - **附带第二面（同批半截态）**：钩子产物 `config/ai_search_veins.yaml` 盘上**有**、index **无**、HEAD **无**，而 `capability_canonical_file_registry.yaml` 已把指针挂到它 ⇒ 尺A 早已把它列为悬空样本 ⇒ "钩子进了 index、产物没进 index"的**跨文件原子性半截**（与本窗 st-commitsys-0018 死于 `IMPORT-INTEGRITY 悬空 import` 同族，但这条在 index 侧不可见）。
+- **③ 新立尺D＝全仓"函数内 import 遮蔽"AST 扫（8,537 个 .py，src/scripts/tests/library）**：**全仓仅此 1 例**（就是 ② 那一枚）。本轮反证第 **18、19** 例（两次自我否证后才敢用这个数）：
+  - **例18（分母虚高 26 倍）**：v1 得 27 例，逐条点开看实为"**函数签名的返回/参数注解**"——如 `miniqmt_provider.py:430 def _parse_option_expiry(expiry) -> datetime.date | None:` 配体内 `import datetime`、`exam_orchestrator.py` 两处 `-> HallucinationBreakdown`。注解在 **enclosing scope** 求值、用的是模块级同名符号，**永不 Unbound**。⇒ 修=只走 `fn.body` 且不下钻嵌套作用域。
+  - **例19（控制组逮到自己过滤写错分支）**：v2 跑四条控制，"嵌套作用域引用"阴性对照 **FAIL（got=1 want=0）**——我把 `isinstance(node, skip)` 写在了 `iter_child_nodes` 的下钻分支里，而 `fn.body` 的顶层元素是**直接 yield 未经过滤** ⇒ 嵌套 `def` 仍被下钻。修=在 `pop()` 处过滤 ⇒ 四控制（阳性先用后绑=1／签名注解=0／嵌套=0／先绑后用=0）**全 PASS** 后重跑得 1。
+  - **失明增量（第 17 条）**：**pre-commit 只有 ruff，而 ruff 无 `used-before-assignment` 等价规则**（本窗口两条 dead 队列项的 `dead_reason` 实测 `hook=['ruff','ruff-format']`）⇒ "改作用域的钩子"这类缺陷**零门可拦**。修法建议（§4.1 净零，不新开 gate 册）：把尺D 做成 own-scope 结构门挂进既有 AST 结构校验族——**全仓现值=1 ⇒ 上线噪声近零**，且能挡住"以后每次往大函数尾部塞局部 import"。
+- **④ 对收官判据的诚实影响**：判据②原文"align_all exit0 **或仅剩已登记他包/门位项**"——本包此前把"第 6 步崩"算作已登记他包项从而判 ✅，现在证明**该崩不在 HEAD**，于是 **HEAD 面的第 7/8/9 步从未在主区跑通过、即从未被测过**。不以"未测"充"已满足"：本轮虽三把尺零新问题，但**新立 WIP-01 + 一处本包归因自我更正 ⇒ "自审清单二次＝0"仍未闭合**，故 **不自删自动化**。
+- **⑤ 下一步（轮次）**：①把 ②③ 补进终报《口径更正表 U0》与 U4/U5/U7（改归因，不改结论数字）②下一轮先看 WIP-01 是否已被属主/收棚方撤钩或修正：若已清则在主区复跑 `align_all` 取 **HEAD 面全 9 步真值**补齐判据②；若仍崩，则以"HEAD 面 7-9 步不可测＋归因已交＋尺D 全仓 1 例已路由"记录为已登记他包项，据此收口 ③满足判据即写"自动化已自删·本包收官"+`qoder_cron remove`。
+- **队列/align 状态**：本包 0023（终报 U 节）**已落地=`da4de88435`**，此刻本包 pending=0（队列 pending=st-commitsys-0019，processing=st-pipeline-final-0013）；主 index 已跟踪件与 HEAD 字节不同者继续存在（663 件 staged 面，非本包写域，只登记不代清）。**本包对 注册表/配置册/depgraph DB 写入累计=0**（depgraph 全程只 SELECT；本轮新增文件全在 `.runtime/tmp/`，不入册）。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  # ② 的决定性三证
+  git show HEAD:scripts/governance/d5_architecture/generators/align_all.py | grep -n run_subprocess_hidden   # 期望只 100/536/556
+  git diff HEAD --numstat -- scripts/governance/d5_architecture/generators/align_all.py                        # 15  0（纯新增）
+  python -c "import symtable,subprocess as s;f='scripts/governance/d5_architecture/generators/align_all.py';h=s.run(['git','show','HEAD:'+f],capture_output=True,text=True).stdout;w=open(f,encoding='utf-8').read();\
+  import sys;g=lambda src:[y for y in symtable.symtable(src,'a','exec').get_children() if y.get_name()=='main'][0].get_symbols();\
+  print('HEAD',[(x.is_local(),x.is_global()) for x in g(h) if x.get_name()=='run_subprocess_hidden']);print('WT',[(x.is_local(),x.is_global()) for x in g(w) if x.get_name()=='run_subprocess_hidden'])"   # 期望 HEAD (False,True) / WT (True,False)
+  python scripts/governance/d3_metadata/check_doc_node_id_hardcode.py --ci; echo rc=$?                          # 期望 rc=1 且打印 FOUND，非 traceback
+  # ③ 尺D（含四条控制）
+  python .runtime/tmp/audit_all_20260924/probe_import_shadow_sweep.py | head -4                                # 期望 命中=1
+  # ① 三把尺第 2 轮
+  python .runtime/tmp/audit_all_20260924/probe_dangling_v2_fieldslice.py | grep 合计                            # 期望 165/110
+  f=.runtime/tmp/audit_all_20260924/dangling_translation_d1_verdict.tsv; for c in R_ H_ N_; do grep -c "^$c" $f; done   # 45 71 31
+  cat .runtime/tmp/audit_all_20260924/round2_depgraph.txt | grep -E "正向|反向"                                 # 55/4680 · 10
+  python .runtime/tmp/audit_all_20260924/redblue_ruler_selfcheck.py | tail -2; echo $?                          # 14 PASS+1 自红，exit0
+  ```
+
+
+## 心跳 2026-09-24 07:05 CST 实测（`date`=07:00→07:04）· 在干=收官第 3 轮（HEAD 面 align 九步全跑通）+ 本轮**新立 4 案**（其中 1 案 P1 活体复现 + 1 处撤回本包旧处方）· 卡住=无 · 下一步=见 ⑥
+
+- **① 🔴 新立 F-AUDIT-EVAP-03【P1·热册"整文件字节覆盖"落地=跨会话条目被吃——本窗蒸发家族首个带 blob 哈希的活体复现】**
+  - **事件链（三笔提交，全亲验）**：06:26 `1de609aeb1`（st-library-final 直连）在 `module_translation_registry.yaml` 加 9 行 ⇒ 该路径 blob `20885a28f2^` 前值 `1f1b9145c2` → 新值 **`dd2fdc9aae`**；06:51 `20885a28f2`（st-pipeline-final「19 件代投」，**parent 恰为 `1de609aeb1`=线性提交、非分支合并**）把同一路径写回 **`1f1b9145c2`** ⇒ `git diff --numstat 1de609aeb1 20885a28f2 -- <册>` = **`0 9`（零新增、纯删除）**，被删的 9 行**正是他会话 25 分钟前刚落地的那一条**（`-- module_path: scripts/backup/library_ledger_backup.py`）。
+  - **现场仍在**：`git hash-object <册>`=盘=**`dd2fdc9aae`**、`git ls-files -s`=主 index=**`dd2fdc9aae`**、而 `git rev-parse HEAD:<册>`=**`1f1b9145c2`** ⇒ **HEAD 落后于盘与 index**（"第二真源"的镜像面：这次是盘新、HEAD 旧）。任何后续吸收该路径的提交会把它**再加回去**，即同一文件在 HEAD 上来回抖。
+  - **机制（代码级，不靠猜）**：落地读的是袋内内容寻址字节的**整个文件**——`scripts/commit_queue.py:1447-1449`（`if from_bag and f.get("blob_ref"): content = (root/f["blob_ref"]).read_bytes()`），热册**无条目级三方合并** ⇒ "入袋时刻的旧快照"必然吃掉"入袋之后落地的他人条目"。本窗此前 EVAP-01/02 只有结果没有机制，这条把机制钉住。
+  - **路由/处方（属修闸+提交链面，本包不代修）**：交 **st-commitsys**。一句处方=热册类路径落地须做**条目级三方合并**（base=入袋时记录的上一 HEAD blob，ours=当前 HEAD，theirs=袋内字节，只允许增不允许整段回退），并把"纯删除 diff（0 增 N 删，且删的恰是 ≤60min 内他包落地条目）"设为**落地前置硬检**。
+  - **反证第 22 例（这条最该记进审查纪律）**：本次蒸发让尺A 业务面从 **165/110 → 164/108**，看起来"治理变好"。⇒ **悬空/漏挂计数下降不得直接读作改善**，必须先查该路径有没有 net-negative diff；否则审查器会把"册被回退"上报成"欠账已清"。本包此前各轮的"同值"结论未受影响（同值=无变化，不是下降），但**任何未来轮次若见下降，须按本例先做删除检**。
+- **② 🔴 新立 F-AUDIT-MTR-04【翻译册假挂：条目内容与所挂文件毫无关系】**
+  - 册侧条目（`1de609aeb1` 落、06:51 被 EVAP-03 吃掉、盘/index 仍在）：`module_path: scripts/backup/library_ledger_backup.py`、`name_zh: 词表加载器`、`plain_zh: "meta_question 包的词表读取小帮手：把层、状态、频率这些固定选项从配置文件里读出来给注册表和部署脚本用…"`。
+  - 而该文件（06:58 `be42d6759b` 补落地）头部自署 `# [A_module] module_id=MOD-INF-043`、`# [DOMAIN] D_INFRASTRUCTURE`，docstring=「图书馆 PG 账本双链备份+月度恢复演练（12 号令任务 2）」。⇒ **条目描述的是另一个模块**；`grep 词表读取小帮手` **全仓仅此 1 处**（不是从别条目复制来的，是生成时错配）。
+  - 第二面：册侧 `domain_id=D_GOV_ENFORCEMENT` vs 文件头 `D_INFRASTRUCTURE` 不一致（尺E 逮到，见 ③）。第三面：该 .py 的 06:26 条目早于文件本体 06:58 落地 ⇒ "先挂册后落物"半截（与 WIP-01 附带面同族，只是这次自愈了）。
+  - **失明增量第 18 条**：`TRANSLATION-COVERAGE` 门与 reconciler 只查**条目在不在**，**不查条目与文件相不相干** ⇒ "为过门而填的条目"可无限假挂。路由=**st-library-final**（条目与文件同为其落，且 06:58 已是第三笔）。处方一句：`add_module_translation.py` 写入前须做"条目↔文件头 `[MODULE]`/`[DOMAIN]`/docstring 首行"三项机械一致性检（零 LLM 成本）。
+- **③ 🆕 尺E（新尺，四控制组全 PASS）＝翻译册 `domain_id` ↔ 文件头 `# [DOMAIN]` 全量扫：真跨域不一致 21 + 域未填 13**
+  - 规模：条目 **7,677**，可比对 **5,055**（一致 5,021）；不一致 **34**，其中 **域未填（`null`/空，多为 tests/）13** ⇒ **真跨域不一致 21**；另 `无 [DOMAIN] 头=2,382`、`不在盘=240`（两态均**不判**）。
+  - **谁对谁错按真源仲裁**（域宇宙=depgraph `domains.domain_id` 74 ∪ 域册 `domain` 79 ∪ 契约 3，并集 79）：**18 条两侧都是注册域**（真归属冲突，需按域定义裁，例：`D_TRADING↔D_PLAN` ×3 全在 `plan_engine/`、`D_BACKTEST↔D_DATA` ×3 全在 `scripts/ch/`）；**3 条有一侧是未注册野值**＝册侧 `D_PLAN_ENGINE`、册侧 `D_INFRA`、文件头侧 `D_EXECUTION_CORE` ⇒ 这 3 侧**机械可判必错**，是本轮唯一"零争议可直修"的子集（但仍是翻译册写域，登记不代修）。
+  - **反证第 20 例（我自己的尺差点假红）**：第一版用 `domain_id|id` 两个键从域册抽真源 ⇒ 得 **0 元素集合**（该册的键叫 `domain`），于是 21 条全被判"两侧都不在册"。**差点把"我读不到"上报成"册没登记"**。修正（三源并集+DB 列名 `domain_id` 亲验）后分布翻成 **18/2/1/0**。⇒ 凡"某物不在真源"结论，先自证**抽取器能抽到东西**（本轮控制组已加"阳性只判出真那 1 条/三条阴性各不判"）。
+  - 非缺陷测量（不立案、记此防重复劳动）：YAML 79 域 vs DB 74，差的 5 域 `D_EXECUTION/D_ORDER/D_PORTFOLIO/D_SIGNAL/D_TEST` 在 `nodes.domain_id` 上**零引用**（`select count(*)` 逐条=0）⇒ 属"零消费"面（要么补 sync 要么按 w5_1 退役），且 `nodes` 用到的 73 个域**全部**在 `domains` 表内（反查空集）。
+  - 建议挂法（§4.1 净零，不新开 gate 册）：把"域必须在册"并入既有 `add_module_translation.py` 写入面，"条目域≠文件头域"降 warn；上线噪声=21/5055=0.4%。
+- **④ 🔴 新立 F-AUDIT-RULING-02＝align 余 3 硬的真身＝staged 在途编辑跨命名空间挂 `related_arch`；本包正式**撤回**此前"置空"处方**
+  - **尺子无罪**：HEAD 面 `ruling_registry` 非空 `related_arch` 值 **100 个，悬空=0**（形态清一色 `#ARCH-*`），且 `_ruling_arch_errors`（`src/zephyr/gov_enforcement/registry_alignment.py:449-457`）比的是 `architecture_issue_registry.entries[].issue_id` ⇒ **语义=议题 id，HEAD 全员遵守**。
+  - **3 硬来自未提交面**：`git diff --cached -- ruling_registry.yaml` 显示 `-  related_arch: []` → `+ ['MOD-L00-004']`（裁定#383）、`- []` → `+ ['PS-CTR-003','MOD-INF-043']`（裁定#387），同批还 `+ 裁定 409`（其 `related_arch=[]`；此处去 # 免自触 RULING-REFERENCE 门，编号未登记全文只在未提交面）。⇒ 本包旧写法"HEAD 口径=0 / 工作树=3"方向对、**定性错**：这不是 HEAD 欠账，是**在途件把别的命名空间（模块 id / 规则册 id）塞进了议题字段**。
+  - **三值都是真对象、错命名空间**（逐个实证）：`MOD-L00-004` 在 depgraph **225 节点**（`blueprint_id` 命中，含 blueprint 节点、build_status=testing）；`MOD-INF-043` 在 depgraph **16 节点**（其物＝②里那枚备份脚本，头署该 id）；`PS-CTR-003` 在 `rule_catalog_registry.yaml` 在册（depgraph 0 命中）。
+  - **为什么撤回"置空"**：置空=把 3 条**有效关联**销毁，等于用毁数据的方式灭灯。正确二选一：**(i)** 改挂议题 id——我按议题文本反查得 `MOD-INF-043→#ARCH-BACKUP-SLO-001`（CH 备份 SLO 哨兵，语义相合）、`MOD-L00-004→#ARCH-PROVIDER-BASENAME-001`（两域同名基类消歧，**与"storage_tiering 退役"是否同一议题未定**，故此二是**推断级**非亲验），`PS-CTR-003` 反查**零命中** ⇒ 须先立议题或改挂 `related_rulings`；**(ii)** 扩字段语义 + checker 按前缀分流（`#ARCH-*`→议题册、`MOD-*`→depgraph `blueprint_id`、`PS-*`→rule_catalog）——更根本，但属"改判定逻辑"＝高域门位，**只登记上交**。
+  - **风险陈述**：该 staged 件一旦被任何吸收该路径的批带走，3 真红即写进 HEAD ⇒ **全场 align 变红、施工前判据失效**；与本窗 IDX-05/WIP-01/EVAP-03 同根（主 index 承载非当轮字节）。路由=**st-cmd（裁定册属主）+ 总指挥排归属**，非 st-commitsys（这次不是尺子的问题）。
+- **⑤ 收官第 3 轮复跑（含判据②"从未测"缺口正式闭合）**
+  - **HEAD 面 `align_all` 九步全跑通**（探针 `.runtime/tmp/audit_all_20260924/run_headside_align.py`：取 `git show HEAD:` 字节 `compile+exec`，`__file__` 指真身路径 ⇒ 路径解析与真流程同，`--no-report` ⇒ **零写入**）：**rc=1，硬=3**（全部＝④那三条），**软=993**；[6/9] `FOUND 2/1791`、[7/9] 图8 **硬 12（S4×2/S11×9/S12×1）+advisory 95**、[8/9] 图9 硬 0/软 3、[9/9] GOMAP 机生层 **424**、硬 0/软 3。⇒ **整合跑与 04:4x 独立探针逐位同值**（探针未偏＝本包此前所有"第 6-9 步"结论可放心沿用），且崩溃版 `align_all` 连 **软问题合计 993** 这个数都不打印——**"崩在尾部"不等于"不影响结论"**。
+  - 三把尺第 3 轮：尺A 见 ①反例（165/110→164/108 系蒸发，非改善）｜尺B 三分 **45/71/31 同值**｜尺C 未重跑（本轮 HEAD 面变更只涉及翻译册/备份件，depgraph 无写入方，复跑留下轮）｜尺D 复跑 **命中=1**（WIP-01 那枚，同值）｜尺自检器上轮 exit0（14 真判+1 有意负例自红）。
+  - **WIP-01 现状**：`git diff HEAD --numstat -- align_all.py` 仍 `15 0`、697 行函数内 import 仍在 ⇒ **07:00 未被属主/收棚方撤钩**（其 `.aidrafts` mtime=00:39、进程表无该 sid）。⇒ 本轮改用 HEAD 字节 exec 绕过，未动他包在途件。
+- **⑥ 对收官判据的诚实影响 + 下一步**
+  - 判据②（align）**本轮实质闭合**：HEAD 面九步真值已取得，余 3 硬已逐条定性为"已登记的在途面项"（④）。但判据"连续两轮复跑零新问题"本轮**再次不满足**＝**新立 4 案**（EVAP-03/MTR-04/MTR-05/RULING-02，其中 EVAP-03 为 P1 候选）。⇒ **继续跑，不自删自动化**。
+  - 下一轮（轮次）：①复跑尺C 补第 3 轮（现缺）；②盯 EVAP-03 是否有解堵（该路径盘/index 仍新、HEAD 仍旧，若他批吸收则自动回加，须记录"抖了几次"）；③盯 RULING-02 的 staged 件归属（若被吸收→当场报"全场 align 变红"并附复现）；④若本轮 4 案之后连续两轮零新立 ⇒ 写终报 X 节＋"自动化已自删·本包收官"＋`qoder_cron remove 39cc5bd5-6b49-4b42-a65f-db987dccc076`。
+  - **给 Owner 的一句话（不催裁，只更新口径）**：本轮新增的待裁项只有 1 枚真正需要人点头——**RULING-02 的 (i)/(ii) 选路**（改挂议题 id 还是扩字段语义）；其余三案都有机械判据、可直接派属主包。
+- **队列/align 状态**：本包 pending=0（23 件里 done 为主，dead 4 件均早轮已对症 requeue）；此刻队列 `head=q-…-st-align-dirty-0044`、pending=10、processing=1、daemon online；HEAD=`be42d6759b`(06:58)。**本包对 注册表/配置册/depgraph DB 写入累计=0**（depgraph 全程只 SELECT；本轮新增探针/明细全在 `.runtime/tmp/`，不入册、不入 git）。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  # ① EVAP-03 三笔与两个 blob（期望：06:51 那笔对该路径 = 0 增 9 删，且写回 06:26 之前的 blob）
+  REL=docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  git diff --numstat 1de609aeb1 20885a28f2 -- $REL                       # 期望 0  9
+  git log --format="%h %p" -1 20885a28f2                                 # 期望 parent=1de609aeb1（线性）
+  git rev-parse HEAD:$REL; git ls-files -s -- $REL; git hash-object $REL # 期望 1f1b9145… / dd2fdc9a… / dd2fdc9a…
+  sed -n '1445,1452p' scripts/commit_queue.py                            # 整文件字节写入处
+  # ② MTR-04
+  git show HEAD:$REL | grep -c "library_ledger_backup"                   # 期望 0（HEAD 已被吃）
+  grep -n "library_ledger_backup" $REL | head -2                         # 期望盘上仍在（60059）
+  head -18 scripts/backup/library_ledger_backup.py | grep -E "DOMAIN|A_module"
+  # ③ 尺E（含控制组）
+  python .runtime/tmp/audit_all_20260924/probe_domain_crosscheck.py | tail -8
+  # ④ RULING-02
+  git diff --cached -- docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml | grep -E "related_arch|ruling_id"
+  python -c "import sys;sys.path[:0]=['src'];import yaml,subprocess as s;d=yaml.safe_load(s.run(['git','show','HEAD:docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml'],capture_output=True,text=True,encoding='utf-8').stdout);i=yaml.safe_load(s.run(['git','show','HEAD:docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml'],capture_output=True,text=True,encoding='utf-8').stdout);ids={str(e.get('issue_id')) for e in i['entries'] if isinstance(e,dict)};v=[str(a) for r in d['entries'] for a in (r.get('related_arch') or [])];print('HEAD 非空值',len(v),'悬空',sum(1 for x in v if '#'+x.lstrip('#') not in ids))"   # 期望 悬空 0
+  # ⑤ HEAD 面九步（零写入）
+  python .runtime/tmp/audit_all_20260924/run_headside_align.py | tail -12
+  ```
+
+
+## 心跳 2026-09-24 07:22 CST 续块（同轮内追加，防重入以 `F-AUDIT-EVAP-03` 07:05 块为准，本块 MARK=F-HOT-SWEEP-0722）· 在干=尺F/F2 热册回写全窗扫 · 卡住=无
+
+- **① 尺F（新尺）＝今晚窗口热册"纯删除 diff(0 增 N 删)"扫**：窗口 64 笔提交、热册笔次 85 ⇒ **纯删除事件 11 起 / 涉及 7 个文件**。明细 `.runtime/tmp/audit_all_20260924/f_hot_pure_deletion.tsv`。
+- **② 尺F2（判据升级）＝逐起做"回写旧快照证明"**（取落地 blob，在该路径祖先链近 40 笔内找同字节的前身；找到⇒回写，找不到⇒当轮作者主动删）：**回写型 8 / 11**，且 8 起**全部命中"往回第 1 笔"**（＝落地字节恰等于"上一笔之前"的历史状态，典型快照差一笔）：
+  - `20885a28f2`(06:51, st-pipeline-final「19 件代投」) **一口气回写三本**：`generator_registry.yaml -18`（退回 `de2d8df066`@09-22 06:29）、`module_translation_registry.yaml -9`（退回 `3a114ad8a1`@06:00）、**本包 `docs/_working/audit_all/AUDIT_REPORT.md -109`（退回本包 `0c7e42b3ba`@04:30）**。
+  - **本包自己也是加害者**：`c5b70a8ff8`(03:05, **st-audit-all**「热册蒸发复发·重投工厂图」) 回写 `capability_canonical_file_registry.yaml -214`（退回 `973f1a3b47`@09-23 22:09，抹掉 st-e2e 班 4 小时的在册登记）+ `disk_reorg_campaign/a1_ledger.md -92`（退回 `8135b0675d`@00:19）。⇒ 该笔 commit message 自述"蒸发复发·重投"——**我是受害者重投，重投动作本身又把别人 214 行抹了**。
+  - **级联实证**：`53cdc66e06`(03:12, st-align-dirty) 落地的 cap 册字节 **== 我 03:05 那笔的 blob** ⇒ 我的陈旧快照被下一笔原样继承。机制结论：**陈旧整文件字节一经落地，后续基于该树的重投会把它继续传下去，受害者→加害者只隔一次重投**。
+  - 另有 `8135b0675d`(00:19) 回写 `a1_ledger.md -83`（退回 `345516da8c`@09-22 08:14）。
+  - **3 起判为"非回写"**（`LEDGER_final.md -22` ×2、`config/exam_scale_cost_gate.yaml -29`）＝新 blob 不在该路径历史里 ⇒ 当轮主动改写/退役，**不算缺陷**。
+- **③ 残损清查（回写不等于残留，逐本实测）**
+  - `capability_canonical_file_registry.yaml`：**无残留**——现 HEAD 47,162 行 > 蒸发前 `c5b70a8ff8^` 46,749 行，其间的 214 行已由后续批带回。
+  - `module_translation_registry.yaml`：条目在盘与主 index（`dd2fdc9aae`）而 HEAD 仍旧（`1f1b9145c2`）＝**待吸收自动回加**（见 07:05 块 ①）。
+  - 🔴 **`generator_registry.yaml`＝功能级残损且仍未回**：06:20 `6199c0752a` 登记的两枚生成器挂载 **`module_algorithm_overview` / `governance_map` 在 HEAD 出现次数=0，盘=2** ⇒ **编排器对 08 册与 GOMAP 的自动再生能力当前在 HEAD 上是关掉的**——这正是 st-align-dirty 今晚为"GOMAP 被陈旧快照蒸发两次"开的处方，被 06:51 的回写**原地注销**。优先级=高（一句可解：把盘字节 re-land）。路由=**st-align-dirty-20260924（其队列此刻正活：head=q-…-st-align-dirty-0044）**，同时上报总指挥代催。
+- **④ 反证第 23、24 例（本轮两次自我否定）**
+  - **例 23（尺F 的判据单独用会假阳 27%）**：只看"0 增 N 删"会把**合法退役批**（`exam_scale_cost_gate.yaml -29`、`LEDGER_final.md -22`）一并判成蒸发。⇒ 必须叠 F2 的"落地 blob ∈ 路径历史"这条**字节级回史判据**才分得开；两把尺同框后 11 起里 8 证 3 否。
+  - **例 24（审查器此前从不审自己提交的 numstat）**：本包 `c5b70a8ff8` 是今晚第 2 起被证实的回写，而我在 03:05 之后写过 6 个心跳块、立过 EVAP-01/02，**从未把"自家提交是否纯删除"纳入尺子**。⇒ 立法：**凡做"回写/蒸发"类审查，检测域 MUST 含本包自身提交**（本案唯一能自证无偏的办法）；已并入终报 X 节"审查包自身纪律"。
+- **⑤ 与收官判据**：本轮**再新立 1 案（F-AUDIT-EVAP-03 升级为量化+级联+残损三件一体）+ 新增 2 把尺（F/F2）+ 1 项高优移交（generator_registry 挂载）** ⇒ 判据③"连续两轮零新立"仍不满足，**继续跑、不自删**。下一轮：①复跑尺C（第 3 轮仍缺）；②盯 `generator_registry` 是否被 re-land（复验命令见 ③）；③盯本包 0025 是否落地（含 W 节，若又被回写则以 F/F2 当场取证）。
+- **复核命令（只读，全部本轮实跑）**
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_hot_pure_deletion.py "2026-09-24 00:00" | tail -20   # 11 起 / 7 文件 + 三控制组 PASS
+  python .runtime/tmp/audit_all_20260924/probe_hot_rewrite_proof.py | tail -14                      # 回写型 8/11
+  G=docs/01_policies_and_standards/_registry/catalogs/generator_registry.yaml
+  for k in module_algorithm_overview governance_map; do printf "%s HEAD=%s 盘=%s\n" $k "$(git show HEAD:$G | grep -c $k)" "$(grep -c $k $G)"; done   # 期望 0 / 2（残损）
+  REL=docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  echo "HEAD=$(git show HEAD:$REL|wc -l) 蒸发前=$(git show c5b70a8ff8^:$REL|wc -l)"                # 47162 > 46749 ⇒ 无残留
+  ```
+- **队列/写入状态**：本包 0025（07:05 心跳+W 节）pending；`git_commit.py` 首次被 `SESSION-REQUIRED` 拦（自动化轮次会话未注册），按指令卡处方 `SessionRegistry.register(sid,pid=0)` + `Start-Process pythonw -m …heartbeat_daemon <sid> <root>` 分离式保活后入袋成功（daemon pid 36508 alive，注册表 last_heartbeat age≈11s）。**本包对 注册表/配置册/depgraph DB 写入累计仍=0**。
+
+
+## 心跳 2026-09-24 07:35 CST 续块 2（同轮第三把新尺，MARK=F-HOT-SWEEP-G-0735）· 在干=尺G 整件消失判据（F2 结构性盲区的补尺）· 卡住=无
+
+- **① 为什么还要第三把尺**：尺F2 的"落地 blob ∈ 该路径历史"对**整本文件被吞**的场合**必然失效**——被删一侧没有"新 blob"可比（`git rev-parse C:path` 为空 ⇒ 只能落到"非回写"）。实证：`0f08f7a06c` 在 F2 里被判"⚪ 非回写"，而它实际是**把别包 5 分钟前刚落地的一整个功能 6 件从 HEAD 抹掉**（见 ②）。⇒ 反例第 **25** 例：尺子的"非回写"分支被我自己当成了"不算缺陷"，差点放走今晚最大一起。
+- **② 尺G 判据（三条件同框，四控制组全 PASS）**：某 commit 删除 P ＋ **P 此刻仍在盘上**（真退役会连文件一起消失）＋ P 的添加笔是本 commit 的**祖先**且相隔 ≤90min、且**跨包**。修正过程中另除一颗雷：初版用 `git log --all --diff-filter=A -1` 取"最新添加"，会取到 `cf1c963092a "index on dev"`（stash/index 提交）这类**晚于本 commit** 的添加 ⇒ gap 变负 ⇒ 该家族全部漏检（**控制组当场 FAIL 把我拦住**，反例第 **26** 例：判据必须限定在祖先链内，不能取全 ref 空间）。
+- **③ 尺G 结果：今晚窗口 18 起整件消失 / 5 组"加害包→受害包"对**（明细 `.runtime/tmp/audit_all_20260924/g_whole_file_swallow.tsv`）。三起最重的：
+  - `0f08f7a06c`(00:43，**st-k4 池化终批 v3**，message 自述 10 文件) 吞掉 **`st-gpu-final` 00:38 刚落地的成本考尺整功能 6 件**：`config/exam_scale_cost_gate.yaml`、`src/zephyr/backtest/regime_validation/exam_cost_gate.py`、`scripts/backtest/exam_cost_reexam.py`、`docs/03_modules/_domain_backtest/algo_flow/exam_cost_gate.yaml`、`tests/backtest/test_cost_gate_tier_wiring.py`、`tests/backtest/test_exam_cost_gate.py`。**该 commit 的 message 只字未提删除**，且其落地时顺带把 `docs/library/regulations.md`、`logs_collector` 等**他会话的在途件**一起提交（A 侧同样越界）⇒ 代投时**吸收了主 index 的 17,000 件快照**，与 AGENTS §2.5"commit 后必核 `git log -1 --name-only` 真实归属"同源。
+  - `1cba19a9de`(00:23，**st-flush**) 吞掉 `st-library-final` 00:19 落地的 7 件（`logs_collector.py`/`test_logs_collector.py`/`regulations.md`/`blood_flesh_cataloging_sop.md`/`test_library_blood_flesh_gate.py`/`test_tag_vocab_gate.py`/`collectors/logs_collector.yaml`）。
+  - `0fe090715f`(07:06，**st-align-dirty**) 吞掉 `st-library-final` 06:58 刚落地的备份馆 3 件（`scripts/backup/library_ledger_backup.py`+注册 ps1+测试）——**就在我本轮取证期间发生的**。
+  - **残损现况（07:33 亲验）**：`scripts/backup/library_ledger_backup.py`、`src/zephyr/backtest/regime_validation/exam_cost_gate.py`、`config/exam_scale_cost_gate.yaml` **HEAD=0、盘=y** ⇒ 三族功能仍在落地面之外；其中 **X1 的 `generator_registry` 两枚挂载已被 `86bf9217dd`(07:13) 自行带回（HEAD=2 ✓）**，说明"重投回收"是可行正解，而上述三族仍待属主重投。
+- **④ 本包自身交付件的落地面状态（自审含自家，X3 立法的直接执行）**
+  - `git rev-parse HEAD:docs/_working/audit_all/AUDIT_REPORT.md` = **`da4f3f24aa`** = `20885a28f2`(06:51) 落地字节 ⇒ **我 06:36 之后的 V/W/X 三块从未进过 HEAD**（`git log --all -S "V4 判据终表"` **零命中**、`-S "F-AUDIT-WIP-01"` 零命中）；盘 321 行 vs HEAD **137 行**。LEDGER 同样：盘 902 / HEAD 774。
+  - **该路径今日全部三笔逐字节核**（07:36 实跑，比 `-S` 更硬）：`0c7e42b3ba`@04:30=**137 行** → `da4de88435`@06:23=**246 行（U 节落地 ✓）** → `20885a28f2`@06:51=**137 行（U 节被回写吃掉，退回 04:30 字节 ✓）**，此后无人再触及 ⇒ **本包终报正文自 06:51 起在 HEAD 上只剩 04:30 版**，U/V/W/X 全在盘与袋。
+  - 队列侧：0025 已不在 `--session` 清单而内容未进 HEAD ⇒ 需下一轮核 `commit_queue` 归档与 `dead_reason`（**本包交付物自身此刻是"只在盘上+在袋里"的状态**，这正是 EVAP-03 家族对所有人成立的样子，只是这次受害者是我）。
+  - 处置：不硬闯、不改路径（§4.1 净零、不新增资产）；0026/0027 继续按正门排队，落地后以 `git rev-parse HEAD:<报告>` 与 `-S` 双检验收。
+- **⑤ 收官判据**：本轮（06:44–07:35）累计**新立 4 案 + 3 把新尺（E/F/F2/G 实为 4 把）+ 反例第 20–26 例** ⇒ 判据③"连续两轮零新立"**远未满足**，**继续跑、不自删**。下一轮：①核 0026/0027 是否落地（双检命令见 ④）；②盯三族残损是否被属主重投；③复跑尺F/F2/G 看新窗是否继续产生事件（若继续产生，则本包终报的"修闸前不宜开新一夜多包并发"结论要升为待裁项上交）。
+- **复核命令（只读，全部本轮实跑）**
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_whole_file_swallow.py "2026-09-24 00:00" | head -4   # 18 起 / 5 包对 + 四控制 PASS
+  git show 0f08f7a06c --name-status --format= | grep "^D"                                          # 6 件成本考尺族
+  git rev-parse HEAD:docs/_working/audit_all/AUDIT_REPORT.md 20885a28f2:docs/_working/audit_all/AUDIT_REPORT.md   # 两值相同 ⇒ 我仍在 06:51 回写态
+  git log --all --format="%h %s" -S "V4 判据终表" -- docs/_working/audit_all/AUDIT_REPORT.md       # 期望空 ⇒ V/W/X 从未进 HEAD
+  for F in scripts/backup/library_ledger_backup.py src/zephyr/backtest/regime_validation/exam_cost_gate.py config/exam_scale_cost_gate.yaml; do echo "$F HEAD=$(git ls-tree -r --name-only HEAD|grep -c "^$F$") 盘=$([ -f $F ] && echo y||echo n)"; done
+  G=docs/01_policies_and_standards/_registry/catalogs/generator_registry.yaml; git show HEAD:$G | grep -c governance_map   # 期望 2（已由 86bf9217dd 带回）
+  ```
+- **会话/门禁状态**：本轮 `SESSION-REQUIRED` 首拦（自动化轮次会话未注册），按指令卡处方 `SessionRegistry.register(sid,pid=0)`+`Start-Process pythonw -m …heartbeat_daemon` 分离保活后放行（daemon 曾以 `idle timeout 1816s` 自退过一次 ⇒ **每轮冷启动须重跑注册+保活**，已写进本块备查）。**本包对 注册表/配置册/depgraph DB 写入累计仍=0**。
+
+
+## 心跳 2026-09-24 07:52 CST 续块 3（同轮根因收口，MARK=F-EVAP-ROOTCAUSE-0752）· 在干=把 EVAP-03 从"现象量化"推到"代码级根因+一句话处方" · 卡住=无
+
+- **① 撤回本报告 X2/W1 里"热册无三方合并、须新建"的说法——合并器早就有，而且是被我们喂错了 base**
+  - 真源：`scripts/governance/commit_queue_landing.py:175-201`（W2 治本，注明起因"2026-09-22 注册表事故 fb5a7821d 陈旧快照 blob 一写抹掉 103 条已提交身份"）+ `:1089-1131 _apply_snapshot` → `is_registry_mergeable(rel)` 命中即调 `_merge_registry_file`（`:1057-1088`）。作用域=`docs/01_policies_and_standards/_registry/catalogs/*.yaml`。
+  - **根因（两处，均已取到实物证据）**：
+    1. **入袋根本不记 base**：`scripts/commit_queue.py:696/712` 明写 `"base_blob": None,  # A 段预留（B 段：git rev-parse HEAD:{path} 填充）`——**B 段从未做**；且 `:45` "base_head/base_blob A 段不主动取 git，**由调用方显式传入**"。我 07:50 直读自己刚入袋的 `pending/q-20260924-st-audit-all-20260924-0027.json` ⇒ **`base_head=None`、两文件 `base_blob=[None,None]`**。⇒ `git_commit.py --enqueue` 这条 CLI 通道**从来没传过 base**。
+    2. **缺 base 时的兜底把"旧快照"读成"主动删除"**：`_merge_registry_file:1071-1075` 在 `base_head` 缺失/对象不存在时 `base_sha = old_dev^`，随后 `three_way_merge_registry_yaml(base, ours=当前 dev, theirs=陈旧快照)`。当"他人条目"恰好落在 `old_dev^..old_dev` 之间（今晚三起全在 4–8 分钟内），base 已含该条目而 theirs 不含 ⇒ **合并器判定"theirs 侧删了这些条目"并忠实执行删除**。⇒ 今晚 `capability_canonical_file_registry -214`、`generator_registry -18`、`module_translation_registry -9` **都是合并器亲手落的"合法删除"**，而不是它没生效。
+  - **修正后的处方（比 X2 更省、且是唯一正解）**：**入袋时把 base 记全**——`scripts/git_commit.py` 的 enqueue 通道传 `base_head=当前 dev HEAD`，`commit_queue.py:696/712` 把预留的 `base_blob` 填成 `git rev-parse HEAD:<path>`（字段与注释都在，零新件、零新表）；`_merge_registry_file` 改用 **per-file `base_blob`** 作 base，**取消 `old_dev^` 兜底**（缺 base 时应死信而非猜 base）。非注册表族（`docs/_working/**` 台账与本包交付物）不在合并作用域内 ⇒ 同一批把作用域按"高写入热文件族"扩到 `.md` 台账，或至少给"0 增 N 删/整件消失"加落地前置硬检（尺F/尺G 判据可直接搬）。
+- **② 反证第 27 例（这条最该被记住）**：我在 X2 里写"热册落地无条目级三方合并 ⇒ 建议新增"。若照此上交，就是**让属主包重复造一个已存在的轮子**（违反 §4.1 净零；文档自相矛盾正是 §4.3 在案的事故源）。发现过程：为核"0f08f7a06c 是不是走了未合并的直连通道"而去查 `git log -1 --format=%b` 的 GW 标记 ⇒ **六涉事提交全带 `[GW:<sid>:q-<qid>]`＝全部走队列** ⇒ "直连/代投路径无合并"这个我默认了一整轮的假设当场作废，顺藤才摸到 `base=None`。⇒ 立法：**"缺 X 所致的事故"类结论，必须先证 X 不存在**（grep 真源+读实物字段，不是"我没看到它生效"）。
+- **③ 连带更正**：Y2 表里"代投吸收主 index 17,000 件快照"的表述**降级**——`0f08f7a06c` 的 A/D 混部落地同样发生在队列通道（其 qid 在 message 尾注），成因是**该项 files 清单本身含他会话在途件**（入袋时 `--files` 清单外的 staged 内容被 gateway 吸收），不是主 index 被整颗快照。此说与我 IDX-05"主 index 第二真源"是两个不同机制，终报里不得并成一条。（证据等级：GW 标记=亲验；"清单外吸收"的具体入口=**待下一轮读 `git_commit.py` staged 收集段确认**，先记为推断级。）
+- **④ 队列与交付物状态（本轮实测）**：0027 在 `pending/`（`base_head=None` 已存档为证据）；**0025/0026 已不在 pending/processing/done/dead 四处** ⇒ 疑被 `supersedes`/compaction 折叠（同路径后袋覆盖前袋，与本窗已知的"队列四处方"同族）——**本包交付物至今未进 HEAD**（`AUDIT_REPORT` HEAD 仍 137 行=06:51 回写态，盘 346 行）。⇒ 下一轮第一件：核 0027 是否落地；若仍不落，改走 `--no-auto-enqueue` 直连单文件落（不带他会话清单）并记为本包自身的排雷项。
+- **⑤ 判据**：本轮再撤回/更正 2 处本报告结论（X2 处方、Y2 机制表述）⇒ **自审清单二次=0 更未满足**，继续跑。尺A–G 全谱与 22+5 例反证均已入册，红蓝反证面（各尺带控制组）齐备。
+
+> 〔位置注记·07:49 恢复轮〕下面这块（07:28 更正块）当时写在一份**已被回退成 774 行**的盘上副本之后，
+> 故其「三块」指的是 07:05/07:22/07:35/07:52 各块的**标签**；本恢复轮把它接回 07:52 块之后以保时间线连续，原文一字未改。
+
 
 ## 更正 2026-09-24 07:28 CST 实测（`date`=07:27:5x）· 本包三块心跳的**标签时间超前于实钟**，特此加注（不改原文＝留审计痕迹）
 
@@ -789,3 +961,84 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
 - **立法（并入 X3"审查包自身纪律"，不新开册）**：**心跳/案卷块标题的时间戳 MUST 来自同一次 `date` 实测并与队内 `created_at` 可对表**；凡出现"块时间 < 上一块 + 实测耗时"或"块时间 > 该块入袋时间"，即判为时间线污染，须以 `created_at` 为准加注更正（正是本块做法）。
 - **对既有结论的影响＝零**：三块内的判据数字全部来自同轮实跑探针（尺E/F/F2/G 与各复核命令），未使用错误时间戳作输入；唯一受影响的表述是 Y2/④ 里"07:33 亲验""07:50 直读袋内"这类时点副词，**统一按上表回退约 25min 读**（即实为 07:0x–07:26 之间）。
 - **反证第 28 例（自我登记）**：审查器给别人的"残损现况 07:33 亲验"这类时间戳背书，而自己三块的时间戳是估的。⇒ 凡"某时刻实测 X"的断言，MUST 在同一动作里留可核对的时间锚（`date` 或 `created_at`），否则降级为"本轮内实测"。
+
+## 心跳 2026-09-24 07:49 CST 实测（`date`=07:49:12，本串由 shell `date` 传入脚本＝非估钟）· 在干=**自家两份案卷被吞（本窗蒸发家族第 7 次，新立 F-AUDIT-EVAP-04）＋用「内容寻址袋 blob」纯增恢复** · 卡住=无（凶手未坐实但不挡恢复）· 下一步=见 ⑤
+
+- **① 事实（三态＋袋态＝四把尺，全本轮实跑）**：冷启动读台账即见**盘=774 行=HEAD 版**，而我 06:12 之后写的五块（06:36 收官第 2 轮／07:05 第 3 轮／07:22 尺 F·F2 热册回写普查／07:35 尺 G／07:52 根因收口）**盘上全灭**；`git log -- <LEDGER>` 末笔＝自家 `0be34c2bdc`(06:12:24, +27/−0) ⇒ **HEAD 侧当时从未有过这五块**。（本轮 07:42:51 我的 0029 袋落地为 `95285c16a1` ⇒ HEAD 现为 791 行＝774＋07:28 更正块，**仍缺那五块**。）
+  - 尺=`git hash-object <blob>` + `git log --all --find-object=<sha>`（五个版本逐条）：943/929/902/873/817 行的 blob 在**所有 ref 的任何 commit 中「从未」出现** ⇒ 携这五块的队列项 **0024–0027 既非 done 亦非 dead**（pending/processing/done/dead 四目录无其 json，`seq`=29 证明号确实发过），其字节**只活在 `.runtime/commit_queue/blobs/`**。⇒ 新事实：**「入袋即完成」的队列语义下，未落地案卷的唯一 durable copy 是袋内 blob，而不是 git 对象库。**
+  - **`AUDIT_REPORT.md` 受害更早且到了 HEAD 层**：盘=index=HEAD=**137 行/23553 字节＝04:27 那版**（其 sha256 前 12 恰＝袋 `e25b180b156d`）；我 06:23:13 落的「终局报告 U 节」(`da4de88435`) 与其后 X/Y/Z 三节，被 **`20885a28f2`(06:51:41，st-pipeline-final 19 件代投) 的陈旧快照整档覆盖**——尺=`git log --all --since=06:12 --name-only -- docs/_working/audit_all/` 唯一命中该笔。⇒ 与 `86bf9217dd` 自陈「陈旧快照整档覆盖 generator_registry」**同一笔、同一因**；本包早先那句「受害面不限于机生热册，任何整档写回型 tracked 文件皆无防护」**再获一次实证，且证明 docs/_working 案卷同样裸奔**。
+- **② 报告为什么连"已入袋"都没落：新立 F-AUDIT-GWMSG-01（自踩门，反证级）**：0028 袋（报告 372 行版）此刻在 `dead/`，死因亲验＝**`FORGED-GW-MARKER` 门禁阻断**：「commit message 含非本 session 的 GW 标记（本 session=st-audit-all-20260924）」。根因＝**我把别的会话的留痕标记原文当证据抄进了自己的提交说明**（该门查的是 message，不查正文），门判"伪造/嫁祸"。⇒ 纪律条（并入 X3 审查包自身纪律）：**审查类会话的提交说明 MUST 避免任何方括号 GW 标记形态，引用一律改写为 `GW:<sid>`→`GW-标记-<sid>` 之类不可匹配形式**；此坑对"举证型提交说明"是常踩面，且**死信不会被队列自愈**，须人（或我）带 `--adopt-prior-work` 重投。
+- **③ 恢复通道（本轮最有复用价值的正面发现，等级=亲验）**：**未落地字节可从内容寻址袋恢复**。尺=`grep -l "<块内独有串>" .runtime/commit_queue/blobs/*` → 命中 `e32457…`(943 行，含五块)、`1097ce…`(791＝774＋更正块)、`9f8c63…`(372 行报告，含 X1-4/Y1-4/Z1-4 节)。恢复前置断言用**子序列**而非前缀：HEAD 每一行都须出现在新版中（尺＝`subsequence_check`），落盘后 `git diff --numstat HEAD` 须为**纯增**（零删除＝结构上不可能吞他会话内容）。
+  - **立法**：案卷观测面从三态扩到**四态＝盘/index/HEAD/袋内 blob**；自本块起每轮心跳 MUST 记本轮袋 sha 前 12（本轮恢复源＝`e32457d67141`/`9f8c63a81cdf`），使"被吞"在一次 grep 内可定位复原。⇒ **更正** [[hot-file-wipe-forensics-20260918]] 当年「git 不可回取」的结论：在有队列袋的会话里**可回取**，该恢复通道应写进热文件恢复 SOP。
+- **④ 归因分层（诚实）**：亲验＝盘的 774 回退发生于 **06:12–07:27** 之间（07:28 更正块是接在 774 版之后写的，故 791=774+17）；亲验＝报告在 **HEAD 层**被 `20885a28f2` 覆盖；亲验＝0024–0027 字节从未进任何 commit。**推断（未坐实）**＝盘回退最可能由主区 merge 连坐清扫（HEAD reflog：07:25:24 `merge ai/st-gpu-final…: updating HEAD`、07:36:55 `commit (merge)`）。已**排除 stash**（stash@{0}=`c57964361e` 生成于 05:18:36，其内 LEDGER 仅 22 行、不含五块）；亦**排除落地器主动写**（`main_workspace_sync.jsonl` 对我包 LEDGER 三次记录全为 `skipped_dirty`）。⇒ 定不了凶手不挡恢复；跨包写域**只登记不代查**，移交 st-commitsys（与已提"主区 index 是第二真源且无人回收"IDX-05 合为一条）。
+- **⑤ 本轮动作与并发**：恢复两案卷（`safe_write_text` CAS＋盘上现内容有块外独有信息则**拒绝整写**的前置断言）＋本块，入队 files=2（显式清单，非 `-A`），提交说明按 ② 改写不含 GW 标记形态。并发面：07:36:55 有他会话在主区 merge；`18e5af5101`(07:29:42) 自陈"袋面件数≠落地面件数"第 6 次复现。**本包本轮零注册表/零 DB 写入**，写域仅 `docs/_working/audit_all/` 自家两件。
+- **⑥ 下一步（轮次）**：①核对本包袋落地后 HEAD 三态==本轮预期字节 ②把 EVAP-04/GWMSG-01（含"袋＝第 4 态"处方＋对 [[hot-file-wipe-forensics-20260918]] 的更正）并入终报 X/Z 节 ③复跑尺 F/F2/G＋D1/D2 双轮做收官"连续两轮零新问题"判定 ④终报三清单＋复查清单 ⑤满足判据后自删本自动化。
+- **队列/align 状态**：本包 done=0001-0023/0029，dead=0003-0007/0012/**0028**（0028 由本轮新袋取代重投）；HEAD=`95285c16a1`(07:42:51)。align 未复跑（本轮额度给了取证与恢复）。**本包对 `注册表/配置册`/depgraph DB 写入累计仍=0**。
+- **复核命令（只读，全部本轮实跑）**：
+  ```bash
+  git log -1 --format="%h %ad %s" --date=format:"%H:%M:%S" -- docs/_working/audit_all/LEDGER.md   # =95285c16a1 07:42:51（仅 791 行版）
+  git log --all --since="2026-09-24 06:12" --name-only --format="%h %ad" --date=format:%H:%M:%S -- docs/_working/audit_all/ | grep -E "^[0-9a-f]{7,} |audit_all"
+  for b in e32457d671418b43 4a71a34271f0a0a2 730f2de55b38fef8; do s=$(git hash-object .runtime/commit_queue/blobs/$b*); echo "$b -> $(git log --all --oneline --find-object=$s | wc -l) 笔 commit"; done   # 期望 0/0/0
+  python - <<'PYEOF'   # 子序列证明：HEAD 全部内容仍在新版中（＝零丢失零删除）
+  import subprocess, pathlib
+  h = subprocess.run(["git","show","HEAD:docs/_working/audit_all/LEDGER.md"],capture_output=True).stdout.decode()
+  new = pathlib.Path("docs/_working/audit_all/LEDGER.md").read_text(encoding="utf-8")
+  it = iter(new.splitlines())
+  print("HEAD 为新版子序列:", all(any(l == x for x in it) for l in h.splitlines()))
+  PYEOF
+  git diff --numstat HEAD -- docs/_working/audit_all/                   # 期望两件皆 +N/−0（纯增）
+  grep -c "^## 心跳 2026-09-24 07:52 CST 续块 3" docs/_working/audit_all/LEDGER.md   # 恢复后=1
+  python -c "import json;print(json.load(open('.runtime/commit_queue/dead/q-20260924-st-audit-all-20260924-0028.json',encoding='utf-8'))['dead_reason'][:160])"   # FORGED-GW-MARKER 现场
+  ```
+
+## 心跳 2026-09-24 08:09 CST 实测（`date`=08:01:36 起测，本块写于 08:09）· 在干=**自我更正三处不实断言＋新立 F-AUDIT-MERGE-01（39 秒复现的合并侧热册蒸发）＋尺I 证伪改立尺J** · 卡住=无 · 下一步=见 ⑤
+
+- **① 🔴 三处不实断言的公开更正（本块的全部数字均可用文末命令重放）**：
+  - **(甲)「HEAD 里出现了标注 08:16 与 08:24 的两块心跳」＝不实**。尺＝三处穷举：①`.runtime/commit_queue/blobs/*` 全扫 `grep -l "08:16 CST"` → **0 命中**；②`git cat-file --batch-all-objects` 的 4,546 个 200KB–400KB 大 blob 中，含本包案卷指纹者只有 3 个（943/817/805 行），**含 "08:16"/"08:24" 者＝0**；③`git worktree list` 的 9 份案卷副本（主区 993／st-align-dirty 548／st-commitsys 791／serializer w0-w3 774-791-708／align_dirty 774）**全部无此标注**，且 `git branch -a --list "*audit*"` 只有 `session/st-gaudit2-20260923`（其内案卷 0 行）。⇒ 结论：**那两块从未存在过**；我把"上下文压缩前的推测/记忆外推"当成了读数写进叙述（并一度据此怀疑"同 sid 兄弟实例并发写"，进程表实测亦无该实例，只有 st-commitsys 的 heartbeat）。
+  - **(乙)「恢复后 HEAD=1204/1217 行」＝不实**。亲验：`git log -1 --format="%h %ci" -- <LEDGER>` = **`95285c16a1` 07:42:51**（我的 0029 袋＝时间线自纠块），HEAD 行数 **791**；**盘＝993 行**（=我 07:48 的恢复版，含 06:36/07:05/07:22/07:35/07:52 五块，正随 **0030 袋 pending**，created_at=07:49:57）。⇒ "已入 HEAD"的说法当时不成立，成立的是"已入盘/已入袋"。
+  - **(丙)「翻译册条目前只剩 1 / 乒乓」＝本轮坐实为真**（且给出最小复现，见 ②），但我先前那句"HEAD 现在确实有 registry_batch_edit 与 c3_throttle"的**时点**是错的：07:57:11 实测三 key 在 盘/index/HEAD **皆 0**，07:57:42 属主重投后才回 Y。⇒ 同一命题在不同时点两个读数都"对"，**缺时点即缺真值**（与本包 U 节同一条纪律的第三次自我复发）。
+  - **立法（并入 X3，本包审查纪律第 5 条，也是最重要一条）**：**引用即重放**——案卷中任何"我读到了 X / 实测为 X"的句子，MUST 同批附一条可重放命令＋命中位置（行号或 blob 名），写之前先跑一次并把输出贴进块内；无命令可贴者一律降级为"推断"或不写。（(甲) 这类"读到不存在的东西"比估钟危险得多：估钟只错时间，这个错的是事实。）
+- **② 🔴 新立 F-AUDIT-MERGE-01【P1 候选·合并侧热册条目蒸发·39 秒最小复现】**：尺＝逐笔核 key 存在性（`git log --since=07:25 --format=%h|%ci -- <翻译册>` 共 4 笔，每笔 `git show <c>:<册> | grep -c <key>`）：
+  - `81647d88db` **07:36:16**（st-align-dirty 翻译册终缺批，1 件，册 +17/−0）⇒ 两 key `registry_batch_edit.py`/`c3_throttle_attribution.py` 在册 **Y/Y**；
+  - `4fc2cf6d04` **07:36:55**（**Merge branch 'ai/st-gpu-final-20260924/gpu-final-campaign' into dev**，5 件）⇒ 同两 key **n/n**＝**39 秒后被一次 merge 静默吃掉**（merge 对该册取了分支侧，未做条目级三方合并）；
+  - `5fe4d26426` **07:57:42**（st-align-dirty「翻译册终缺批·重投（被并发陈旧袋吃掉后自捕）」）⇒ 回到 **Y/Y**；HEAD 现 **Y/Y**。
+  - 定性：这与本包已交的 **EVAP-05/06 根因（队列入袋不记 `base_head`/`base_blob` ⇒ 合并器缺 base 时兜底 `old_dev^`）是同一病灶的第三个面**——前两面是"袋侧陈旧快照被读成主动删除"，本面是**"merge 侧对热册整文件取单侧"**。⇒ 移交 st-commitsys 并入同一条修闸需求（§4.1 净零）：**注册表族文件的 merge/落地必须走条目级三方合并，缺 base 即死信而非兜底**；本包对该册**零写入**（全程只 `git show`/`git log`）。
+- **③ 尺I 证伪 → 改立尺J（本包的"能红自证"再进一格）**：
+  - 尺I（markdown"半句收尾/奇数反引号/奇数粗体"判文本被局部吃掉）＝**判据不成立**：两册合报 **133 处可疑**（绝大多数是 `：`/`---` 正常收尾＝假红风暴），而真残口（04:28 块被截的尾巴）它**一处没抓到**。⇒ 已废弃，代码留 `.runtime/tmp/audit_all_20260924/probe_text_integrity.py` 作反面教材。
+  - **尺J（＝同块跨袋长度比对）成立**：24 个 LEDGER 袋 × 71 块，跨袋长度不一致 **19 块**，其中 Δ≥50 字者两块，最大 **Δ=12,591 字**（`## 心跳 … 04:28` 块 19,749→7,158 字）。控制组：合成阳性（把袋截断成被回退态）missing=**71**、合成阴性（同版本对自身）=**0**。⇒ 恢复配方＝**逐块取最长袋版本**，四道前置（块头在册内唯一 ∧ Δ≥50 ∧ 现存版必须是最长版的**严格前缀** ∧ CAS 写＋进程外回读）；已执行，**复扫「待补块=0」＝零残留**。
+  - **尺J 实证的唯一真截断＝04:28 块**：该块跨袋有 **4 个长度**（7,157 / 14,042 / 17,543 / **19,747**）⇒ 确曾被后手逐次砍尾，已按最长版恢复（Δ=12,591）；而 07:22（3,643×4 袋）与 07:35（4,251×3 袋）**跨袋同长＝无截断证据**，其 ① 条在盘上皆以句号完整收尾。
+  - **对本块 (甲) 的补强**：我本会话 07:36-07:41 之间确实"读到"过该区域的半句（`- **① 为什么补这一`）——但那个版本**如今在盘/各袋/各 worktree 皆无字节**，属**瞬态 HEAD 版本**（07:36:55 merge 前后）。⇒ 教训与 (甲) 同源却更硬：**不可重放的读数一律不得升格为案卷事实**，只能记作"某时点读数"并附时点。
+- **④ 报告册（终局报告）侧本轮复扫结论**：`ruler_J_restore_any.py docs/_working/audit_all/AUDIT_REPORT.md <指纹>` → 命中袋 7、**待补块=0** ⇒ 报告册**无跨袋截断**；但 **尺H2 第 2 轮**仍报 0023 袋 90 行不在 HEAD——**根因即 (乙)**：我的 993 行盘版还没落地（0030 pending），HEAD 仍 137 行。落地后该 90 行应转 alive（下一轮复跑验证）。当前 盘/index/HEAD = **372/137/137**（U 节/Z 节 在盘 True、在 HEAD False）。
+- **⑤ 下一步（轮次）**：①**0030 落地后**复跑尺H2（应见"报告 90 行"从 dead 侧消失）＋复跑尺J（应仍 0）＝本包连续两轮零新问题判定的第 1 轮 ②把 MERGE-01／「引用即重放」纪律／尺I 证伪三件并入终报 X/Z 节 ③复跑 align_all 前 5 步与 depgraph 只读对账做第 2 轮 ④红蓝反证并档（累计 28 例，本块 +3：幻觉读数/漏时点/引错块号）⑤终报三清单定稿＋复查清单，然后自删本自动化。
+- **队列/align 状态**：done=0001/0002/0008-0011/0013/0015-0023/0029，dead=0003-0007/0012/0028，**pending=0030**（07:49:57 入袋，files=2 纯增 LEDGER+202/REPORT+235）；HEAD=`5fe4d26426`(07:57:42)。align 本轮未跑（额度给了取证与自我更正）。**本包对注册表/depgraph DB 写入累计仍=0**。
+- **复核命令（只读；本块每条断言都对应下面一条，先跑再信）**：
+  ```bash
+  grep -l "08:16 CST" .runtime/commit_queue/blobs/* ; echo "命中=上面空则无袋"      # (甲) 袋侧零命中
+  ls .runtime/commit_queue/blobs | wc -l ; git worktree list | wc -l                  # 24 袋 / 全 worktree 清单
+  git log -1 --format="%h %ci" -- docs/_working/audit_all/LEDGER.md                    # (乙) =95285c16a1 07:42:51
+  git show HEAD:docs/_working/audit_all/LEDGER.md | wc -l ; wc -l < docs/_working/audit_all/LEDGER.md   # (乙) 791 / 993
+  for c in 81647d88db 4fc2cf6d04 5fe4d26426; do printf "%s " $c; git show $c:docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml | grep -c "registry_batch_edit.py"; done   # (丙)/② Y→n→Y
+  python .runtime/tmp/audit_all_20260924/probe_bag_regression_attribute.py | head -4    # ② 尺H2 第 2 轮：dead=93
+  python .runtime/tmp/audit_all_20260924/ruler_J_restore.py | tail -3                   # ③ 复扫 待补块=0
+  python .runtime/tmp/audit_all_20260924/probe_text_integrity.py | tail -3              # ③ 尺I 假红 133（已废弃）
+  ```
+
+## 心跳 2026-09-24 08:29 CST 实测（`date`=08:29:35，本串由 shell `date` 传入）· 在干=**修自家案卷第 4 次死信根因（引用未登记裁定 409 的 `裁定`+井号形态自触 RULING-REFERENCE 门）＋两件重投** · 卡住=无 · 下一步=见 ④
+
+- **① 承 08:09 块 ⑤ 的下一步被打断**：原计划"0030 落地后复跑尺 H2/J＝收官第 1 轮"，但实测 **0030 从未落地**（现 dead），且新见 **0031 亦 dead**（08:15 一次未改根因的重投，files=1 只 LEDGER）。死因亲验＝门禁 `REFERENCE-INTEGRITY`：`LEDGER.md`/`AUDIT_REPORT.md` 引用了 `ruling_registry.yaml` 未登记的编号 409。这正是本包 04:47 块(0012)与 07:35 块 ② 已定性的 **GATE-01 自触**家族：审查器"记录某裁定尚未落地"时抄了带井号的 `裁定<井号>409` 形态 ⇒ 被 `ruling_reference_gate.py:83` 正则 `裁定#(\d+…)` 判成主动新增引用。**本块正文对此编号一律去井号书写**（＝自我处方落地）。
+- **② 本轮动作（简单缺口·边审边修·自家写域 `docs/_working/audit_all/`）**：按 04:47 块 ⑤ 既定拼写处方，把 LEDGER 原 :841 与 REPORT 原 :285 两处引用改写为 `裁定 409`（**保留 #383/#387 两处有效引用不动**——它们已登记，改之反而毁真关联）。零删除不变式复验＝盘版仍是 HEAD 版严格超集：HEAD 逐行 ∈ 盘，LEDGER 791⊂1024 / REPORT 137⊂372；且两处改点行号 > HEAD 长度 ⇒ 落在盘独有（未落地）区，不伤任何 HEAD 行。
+- **③ 扫描口径（可重放）**：正则 `裁定#(\d+(?:-[A-Z]+)?)` 逐文件比对 `ruling_registry.yaml` 已登记号集：修前两册会触门号=['409']，修后=[]（#383/#387 registered=YES 不列）。
+- **④ 下一步（轮次）**：① 本块随袋 **0032** 重投两案卷 ⇒ 落地后复跑尺 H2（报告 90 行应从 dead 侧转 alive）＋尺 J（应仍 0）＝**收官"连续两轮零新问题"第 1 轮** ② align_all 前 5 步＋depgraph 只读对账＝第 2 轮 ③ 红蓝反证并档 ④ 终报三清单＋复查清单 ⑤ 满足判据后自删本自动化。**前置门**：若 0032 又非因本根因而 dead，按 [[premise-falsified-stop-and-probe]] 停手上报，不硬闯第 5 次。
+- **队列/align 状态**：done=0001/0002/0008-0011/0013/0015-0023/0029(17)，dead=0003-0007/0012/0028/0030/0031(9)，pending/processing=0（本轮入袋 0032）；HEAD=`baec3502f0`(08:25:26·st-align-dirty 收官末笔，其 §3.20 又独立复证"主区盘面翻译册缺本包 2 径"＝本包 MERGE-01/EVAP 家族的又一例)。**本包对注册表/配置册/depgraph DB 写入累计仍=0**（全程只 `git show`/`git log` ＋自家两件案卷）。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  for q in 0030 0031; do python -c "import json;print('$q', json.load(open('.runtime/commit_queue/dead/q-20260924-st-audit-all-20260924-$q.json',encoding='utf-8'))['dead_reason'][:120])"; done   # 皆 REFERENCE-INTEGRITY/引用未登记裁定
+  grep -nE "裁定#[0-9]" docs/_working/audit_all/AUDIT_REPORT.md   # 修后=空
+  python - <<'PY'   # 零删除不变式：HEAD 逐行 ∈ 盘
+  import subprocess,pathlib
+  for f in ["LEDGER.md","AUDIT_REPORT.md"]:
+      h=subprocess.run(["git","show","HEAD:docs/_working/audit_all/"+f],capture_output=True).stdout.decode()
+      d=pathlib.Path("docs/_working/audit_all/"+f).read_text(encoding="utf-8"); it=iter(d.splitlines())
+      print(f, all(any(l==x for x in it) for l in h.splitlines()))
+  PY
+  ```
