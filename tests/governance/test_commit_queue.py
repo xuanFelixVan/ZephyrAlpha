@@ -169,7 +169,7 @@ class TestConcurrentEnqueue:
                     with lock:
                         errors.append(exc)
 
-        threads = [threading.Thread(target=worker, args=(sid, idx)) for sid, idx in zip(sessions, shards)]
+        threads = [threading.Thread(target=worker, args=(sid, idx)) for sid, idx in zip(sessions, shards, strict=True)]
         for t in threads:
             t.start()
         for t in threads:
@@ -188,9 +188,17 @@ class TestConcurrentEnqueue:
         states = _all_state_qids(queue_root)
         assert set(states) == set(qids)
         assert all(s == "done" for s in states.values())
-        # FIFO 序断言：处理序 == qid 单调序（字典序 == seq 数值序，66 号 §6.1 seq:04d 零填充）
-        assert stats["processed_qids"] == sorted(qids)
-        # 同会话 FIFO 子序：每会话内按 seq 升序
+        # B4 判据重铸（st-commitspeed-tbl-20260924）：本用例三线程先到先服务，跨会话
+        # 到达顺序**恰好等于**字母序（AI-A 先起且 17 项连投），故它对"队首按到达序 vs
+        # 按会话名"没有判别力——旧断言 processed==sorted(qids) 实际把"会话名字母序"
+        # 当成了 FIFO 契约（这正是 09-24 实测 56% 倒挂的根）。此处改为断言队列**与自身
+        # 声明的到达序自洽**（判别力另由 test_b4_head_follows_arrival_not_session_name 保证）。
+        by_arrival = sorted(
+            (_read_done(queue_root)),
+            key=lambda r: (r[0], r[1]),
+        )
+        assert stats["processed_qids"] == [q for _ts, q in by_arrival], "全局处理序≠到达序"
+        # 同会话 FIFO 子序：每会话内按 seq 升序（真不变量，保留不动）
         for sid in sessions:
             own = [q for q in stats["processed_qids"] if f"-{sid}-" in q]
             assert own == sorted(own), f"{sid} 会话内 FIFO 破裂"
@@ -558,9 +566,7 @@ class TestSerializerLease:
     def test_expired_no_pid_lease_reclaimed(self, queue_root: Path) -> None:
         """无持有者 PID 的超期租约（旧格式/损坏）保留 TTL 回收语义——排空成功。"""
         _enqueue(queue_root, "AI-L3b", "m", [("a.txt", b"v")])
-        (queue_root / "serializer.lease").write_text(
-            json.dumps({"acquired_at": time.time() - 400}), encoding="utf-8"
-        )
+        (queue_root / "serializer.lease").write_text(json.dumps({"acquired_at": time.time() - 400}), encoding="utf-8")
         stats = cq.drain_queue(queue_root, lease_timeout=1.0)
         assert stats["done"] == 1
 
@@ -575,9 +581,7 @@ class TestSerializerLease:
             # 人为做旧 acquired_at（模拟单项墙钟拖长），renew 后 MUST 回到新鲜
             lease_file = queue_root / "serializer.lease"
             stale = time.time() - 400
-            lease_file.write_text(
-                json.dumps({"pid": os.getpid(), "acquired_at": stale}), encoding="utf-8"
-            )
+            lease_file.write_text(json.dumps({"pid": os.getpid(), "acquired_at": stale}), encoding="utf-8")
             assert lease.renew() is True
             data = json.loads(lease_file.read_text(encoding="utf-8"))
             assert data["pid"] == os.getpid(), "续租后持有者仍是本进程"
@@ -1122,7 +1126,9 @@ class TestQueueHealthAndDeadBacklogAlert:
         _enqueue(queue_root, "sess-a", "one", [("a.py", b"a=1\n")])
 
         def _env_fail(item: dict, root: Path) -> cq.LandingResult:
-            return cq.LandingResult(ok=False, reason="landing 异常: RuntimeError: git reset --hard -> index.lock: File exists.")
+            return cq.LandingResult(
+                ok=False, reason="landing 异常: RuntimeError: git reset --hard -> index.lock: File exists."
+            )
 
         cq.drain_queue(queue_root, landing=_env_fail)
         snap = cq.queue_health(queue_root)
@@ -1207,3 +1213,102 @@ class TestQueueHealthAndDeadBacklogAlert:
         assert rc == 0
         snap = json.loads(capsys.readouterr().out)
         assert snap["counts"]["pending"] == 1 and snap["dead_total"] == 0
+
+
+def _read_done(queue_root: Path):
+    """done/ 侧逐项取 (created_at 纪元秒, qid)——B4 到达序断言的数据源。"""
+    out = []
+    for f in (queue_root / "done").glob("q-*.json"):
+        d = json.loads(f.read_text(encoding="utf-8"))
+        ts = datetime.fromisoformat(d["created_at"]).timestamp()
+        out.append((ts, d["qid"]))
+    return out
+
+
+def test_b4_head_follows_arrival_not_session_name(queue_root: Path) -> None:
+    """B4 排队键专项：队首＝最早 created_at，会话名字母序不得插队（确定性、必能红）。
+
+    构造：`zz-late` 会话**先创建**、`aa-early` 会话**后创建**——旧实现（qid 字典序）
+    必选 aa-early＝插队成功；新实现必选 zz-late＝到达序。
+    红证：HEAD 版此断言 1 failed（已在 st-commitspeed-tbl-20260924 实跑记录）。
+    """
+
+    (queue_root / "pending").mkdir(parents=True, exist_ok=True)
+    old_later_name = queue_root / "pending" / "q-20260924-zz-sess-0001.json"
+    new_earlier_name = queue_root / "pending" / "q-20260924-aa-sess-0001.json"
+    base = datetime.now().astimezone()
+    old_later_name.write_text(
+        json.dumps(
+            {
+                "qid": old_later_name.stem,
+                "session_id": "zz-sess",
+                "created_at": (base - timedelta(minutes=30)).isoformat(),
+                "branch": "dev",
+                "files": [],
+                "meta": {"lane": "interactive"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    new_earlier_name.write_text(
+        json.dumps(
+            {
+                "qid": new_earlier_name.stem,
+                "session_id": "aa-sess",
+                "created_at": (base - timedelta(minutes=1)).isoformat(),
+                "branch": "dev",
+                "files": [],
+                "meta": {"lane": "interactive"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    heads = sorted((queue_root / "pending").glob("q-*.json"))
+    # 字典序首件确实是 aa-sess（先证明构造有判别力，防"断言恒真"假绿）
+    assert heads[0].name == "q-20260924-aa-sess-0001.json", "构造无效：字典序未落在 aa"
+    picked, lane = cq._pick_head(heads)
+    assert lane == "interactive"
+    assert picked.name == old_later_name.name, f"B4 失效：仍按会话名字母序选了 {picked.name}"
+
+    # 位次表与队首同源：先到的 zz 位次 0，后到的 aa 位次 1
+    pos = cq._pending_position_map(queue_root)
+    assert pos[old_later_name.stem] == 0 and pos[new_earlier_name.stem] == 1, pos
+
+    # 队首快照同样不得说谎（旧实现直接取字典序首件）
+    snap = cq._head_snapshot(queue_root)
+    assert snap["qid"] == old_later_name.stem, f"快照与队首不同源：{snap}"
+
+
+def test_b4_machine_lane_starvation_escape_still_works(queue_root: Path) -> None:
+    """B4 不得回退车道语义：持续交互流量下，超 30min 的 machine 件仍须提前放行。"""
+
+    (queue_root / "pending").mkdir(parents=True, exist_ok=True)
+    base = datetime.now().astimezone()
+    m = queue_root / "pending" / "q-20260924-mach-sess-0001.json"
+    i = queue_root / "pending" / "q-20260924-int-sess-0001.json"
+    m.write_text(
+        json.dumps(
+            {
+                "qid": m.stem,
+                "session_id": "mach-sess",
+                "created_at": (base - timedelta(minutes=40)).isoformat(),
+                "files": [],
+                "meta": {"lane": "machine"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    i.write_text(
+        json.dumps(
+            {
+                "qid": i.stem,
+                "session_id": "int-sess",
+                "created_at": (base - timedelta(minutes=2)).isoformat(),
+                "files": [],
+                "meta": {"lane": "interactive"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    picked, lane = cq._pick_head(sorted((queue_root / "pending").glob("q-*.json")))
+    assert lane == "machine" and picked.name == m.name, "machine 防饿死兜底被 B4 改坏"

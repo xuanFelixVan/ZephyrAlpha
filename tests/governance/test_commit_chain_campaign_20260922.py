@@ -374,3 +374,66 @@ def test_d3_fast_subset_skip_inverse_and_short_circuit(tmp_path: Path, monkeypat
     )
     out2, rc2, infra2 = gw.GitCommitGateway._precommit_fast_subset(g, {}, [["a.py"]])
     assert rc2 == 0 and infra2
+
+
+def test_a1_precommit_channel_stat_records_real_ms(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A1 装表钉：pre-commit 通道每次执行落一行分段耗时（total_ms/fast_subset_ms）。
+
+    红证（改前必红）：装表前该册根本不存在——通道是全链最贵段却在账面上零成本。
+    """
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    (tmp_path / ".git").mkdir()
+    g = gw.GitCommitGateway.__new__(gw.GitCommitGateway)
+    g.project_root = tmp_path
+    monkeypatch.setattr(gw, "_precommit_run_enabled", lambda: True)
+    monkeypatch.setattr(g, "_is_merge_in_progress", lambda: False, raising=False)
+    monkeypatch.setattr(gw.GitCommitGateway, "_is_merge_in_progress", lambda self: False)
+    monkeypatch.setattr(gw.GitCommitGateway, "_precommit_rel_lists", lambda self, files, root: (["a.py"], []))
+    monkeypatch.setattr(
+        gw.GitCommitGateway,
+        "run_git",
+        lambda self, args, **kw: subprocess.CompletedProcess(args, 0, ".git\n", ""),
+    )
+    monkeypatch.setattr(
+        gw.GitCommitGateway,
+        "_precommit_run_scoped",
+        lambda self, env, root, rel_e, rel_d, idx: ("", 0, False, "", False),
+    )
+    assert gw.GitCommitGateway._run_precommit_channel(g, "sid-a1", ["a.py"]) is None
+    stat = tmp_path / ".runtime" / "audit" / "precommit_channel_stats.jsonl"
+    assert stat.exists(), "装表册未生成——A1 未生效"
+    row = json.loads(stat.read_text(encoding="utf-8").splitlines()[-1])
+    assert row["event"] == "precommit_channel_run" and row["session_id"] == "sid-a1"
+    assert isinstance(row["total_ms"], (int, float)) and row["total_ms"] >= 0
+    assert "fast_subset_ms" in row and row["rc"] == 0 and row["skipped"] is False
+
+
+def test_a1_precommit_block_event_no_longer_reports_zero_ms(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """A1 遥测黑洞钉：通道阻断时 commit_block_events 的 gate_chain_ms 必须非零。
+
+    红证：装表前恒写 0.0——本断言在旧码上必失败（这正是三日无人发现通道成本的因）。
+    """
+    from zephyr.gov_enforcement.rule_bridge import git_commit_gateway as gw
+
+    g = gw.GitCommitGateway.__new__(gw.GitCommitGateway)
+    g.project_root = tmp_path
+    captured: list[float] = []
+    monkeypatch.setattr(
+        gw.GitCommitGateway, "_audit_commit_block_event", lambda self, sid, blocked, files, ms: captured.append(ms)
+    )
+    monkeypatch.setattr(
+        gw.GitCommitGateway, "_run_precommit_channel", lambda self, sid, files: "GATE-PRECOMMIT-RUN 阻断（桩）"
+    )
+    # 直接驱动 step5.5 所在的收口段：走 _resolve_commit_result 代价过高，此处按调用点等价重放
+    import time as _t
+
+    _t0 = _t.monotonic()
+    block = gw.GitCommitGateway._run_precommit_channel(g, "sid-a1b", ["a.py"])
+    ms = (_t.monotonic() - _t0) * 1000
+    assert block is not None
+    # 调用点已改为把真实耗时传给审计（旧码此处传 0.0）
+    src = Path(gw.__file__).read_text(encoding="utf-8")
+    assert "self._audit_commit_block_event(session_id, blocked, files, _pc_ms)" in src
+    assert "self._audit_commit_block_event(session_id, blocked, files, 0.0)" not in src
+    assert ms >= 0

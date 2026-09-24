@@ -1090,6 +1090,9 @@ def _revalidate_stale_base(item: dict, head_reader) -> tuple[bool, list[str]]:
 
 
 _MACHINE_LANE_STARVATION_SEC = 1800.0  # machine 单饿死上限 30min（P1-D 护栏）
+_HEAD_SCAN_BOUND = 400  # B4 队首选择扫描界（FIFO 须见到全部在途项才能定"最老"；
+# 原 64 是"字典序==到达序"谬误下的防御上界——改按 created_at 后 64 会把第 65 位起
+# 的最老件永久看不见，等于把饿死藏回排序里。400 覆盖实测峰值 56 件约 7 倍余量。）
 
 
 def _item_lane(item: dict | None) -> str:
@@ -1108,37 +1111,52 @@ def _item_lane(item: dict | None) -> str:
 
 
 def _pick_head(heads: list) -> tuple:
-    """P1-D 车道优先选队首：interactive 先落、machine 让路；30min 防饿死兜底。
+    """B4 排队键：车道内按 **created_at 先来先服务**（qid 仅破平），不改车道优先语义。
 
-    返回 (path, lane)。interactive 项存在 → qid 序取首个 interactive；无
-    interactive → qid 序取首个 machine（队空时 machine 自然落地）。最老 machine
-    等待超 _MACHINE_LANE_STARVATION_SEC → 提前放行（防持续交互流量饿死）。
-    项读取失败按 interactive 保守处理（不降级跳过——FIFO 不跳项铁律）。
+    返回 (path, lane)。interactive 项存在 → 取其中最老 interactive；无 interactive
+    → 取其中最老 machine。最老 machine 等待超 _MACHINE_LANE_STARVATION_SEC → 提前放行。
+    项读取失败按 interactive 保守处理，排序时刻退化用文件 mtime（既不让它插队也不冤枉垫底）。
+
+    为什么必须改（实测，st-commitspeed-tbl-20260924 提交等待调查 R5）：入参 heads 由调用方
+    按 qid 字典序预排，而 qid 形如 `q-<日期>-<session_id>-<序号>` ⇒ 全局排序主键其实是
+    **会话名字母序**而非到达顺序。实测 24h 内 1081 对先后关系里 **56% 倒挂**（后到先走），
+    最老件等 5.9 小时、而字母序在前的反复失败会话可持续独占队首
+    （09-24 14:29-15:21 主区 HEAD 零推进 52 分钟即该形态）。
+    残留风险（本件不修，属 B5 退避范围）：环境失败回退 pending 的件保留原 created_at，
+    先来先服务下它仍居队首——需 attempts 计数 + 退避降级才能把"毒药队首"移出。
     """
     from datetime import datetime
 
-    oldest_machine_age = 0.0
-    now = datetime.now().astimezone()
-    first_interactive = None
-    first_machine = None
-    for h in heads[:64]:  # 有界扫描（pending 通常 <10，64=防御上界）
-        item = _read_item(h)
-        if _item_lane(item) == "machine":
-            if first_machine is None:
-                first_machine = h
-            if item and item.get("created_at"):
-                try:
-                    age = (now - datetime.fromisoformat(item["created_at"])).total_seconds()
-                    oldest_machine_age = max(oldest_machine_age, age)
-                except (ValueError, TypeError):
-                    pass
-        elif first_interactive is None:
-            first_interactive = h
-    if oldest_machine_age > _MACHINE_LANE_STARVATION_SEC and first_machine is not None:
-        return first_machine, "machine"
-    if first_interactive is not None:
-        return first_interactive, "interactive"
-    return first_machine, "machine"
+    now_ts = datetime.now().astimezone().timestamp()
+
+    def _rank(path: Path) -> tuple:
+        """(到达时刻, qid, lane, path) 排序键；时刻不可解析时退化文件 mtime。"""
+        item = _read_item(path)
+        lane = _item_lane(item)
+        raw = (item or {}).get("created_at")
+        ts = None
+        if raw:
+            try:
+                ts = datetime.fromisoformat(str(raw)).timestamp()
+            except (TypeError, ValueError):
+                ts = None
+        if ts is None:
+            try:
+                ts = path.stat().st_mtime
+            except OSError:
+                ts = now_ts
+        return ts, str(path.name), lane, path
+
+    ranked = [_rank(h) for h in heads[:_HEAD_SCAN_BOUND]]
+    interactive = sorted((r for r in ranked if r[2] != "machine"), key=lambda r: (r[0], r[1]))
+    machine = sorted((r for r in ranked if r[2] == "machine"), key=lambda r: (r[0], r[1]))
+    if machine and (now_ts - machine[0][0]) > _MACHINE_LANE_STARVATION_SEC:
+        return machine[0][3], "machine"
+    if interactive:
+        return interactive[0][3], "interactive"
+    if machine:
+        return machine[0][3], "machine"
+    return None, "machine"
 
 
 def drain_queue(
@@ -1631,10 +1649,15 @@ def _head_snapshot(root: Path) -> dict | None:
         return None
     if not heads:
         return None
+    # B4 口径一致性：队首快照必须与 _pick_head 同判据（旧实现直接取字典序首件＝
+    # 报出来的"队首是谁/已等多久"在跨会话场景下是错的，会把真正在办的项说成别的）
+    head_path, _head_lane = _pick_head(heads)
+    if head_path is None:
+        return None
     try:
-        item = json.loads(heads[0].read_text(encoding="utf-8"))
+        item = json.loads(head_path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        return {"qid": heads[0].stem, "_corrupt": True}
+        return {"qid": head_path.stem, "_corrupt": True}
     created = item.get("created_at")
     waiting_s = None
     if created:
@@ -1667,12 +1690,54 @@ def _daemon_snapshot(root: Path) -> dict:
     return {"online": online}
 
 
+def _pending_position_map(root: Path) -> dict:
+    """B4 位次表：qid → 前面还有几项，判据与 _pick_head 完全一致。
+
+    旧实现用"字典序枚举下标"当位次，跨会话时报的是**会话名排名**不是到达排名——
+    与队首选择改 FIFO 后会出现"位次说排第 3、实际最后一个走"的自相矛盾，故必须同源。
+    车道优先保留：interactive 全部排在 machine 之前（machine 防饿死例外由 _pick_head 处理）。
+    """
+    from datetime import datetime
+
+    try:
+        entries = sorted((root / "pending").glob("q-*.json"))
+    except OSError:
+        return {}
+    now_ts = datetime.now().astimezone().timestamp()
+    parsed: list[tuple] = []
+    for e in entries:
+        item = _read_item(e)
+        raw = (item or {}).get("created_at")
+        ts = None
+        if raw:
+            try:
+                ts = datetime.fromisoformat(str(raw)).timestamp()
+            except (TypeError, ValueError):
+                ts = None
+        if ts is None:
+            try:
+                ts = e.stat().st_mtime
+            except OSError:
+                ts = now_ts
+        parsed.append((e.stem, ts, _item_lane(item)))
+    inter = sorted((p for p in parsed if p[2] != "machine"), key=lambda p: (p[1], p[0]))
+    mach = sorted((p for p in parsed if p[2] == "machine"), key=lambda p: (p[1], p[0]))
+    out: dict[str, int] = {}
+    for i, p in enumerate(inter):
+        out[p[0]] = i
+    for j, p in enumerate(mach):
+        out[p[0]] = len(inter) + j
+    return out
+
+
 def queue_status(queue_root: str | os.PathLike | None = None, *, session_id: str | None = None) -> dict:
     """队列状态总览；--session 过滤该会话各 qid 的 pending/processing/done/dead 状态。"""
     root = resolve_queue_root(queue_root)
     _ensure_dirs(root)
     counts: dict[str, int] = {}
     items: list[dict] = []
+    # B4 位次表与队首选择同源计算（一次遍历，pending 量级实测 <60，成本可忽略）
+    pos_map = _pending_position_map(root)
     for state in _STATES:
         state_dir = root / state
         entries = sorted(state_dir.glob("q-*.json"))
@@ -1696,8 +1761,9 @@ def queue_status(queue_root: str | os.PathLike | None = None, *, session_id: str
             if state == "done":
                 record["landed_id"] = item.get("landed_id")
             if state == "pending":
-                # R5 位置感：前面还有几项（FIFO 序=qid 字典序，与 drain :1134 同口径）
-                record["position_ahead"] = entry_idx
+                # B4 位次感：与 _pick_head 同源判据（旧口径＝字典序枚举下标，跨会话报的是
+                # 会话名排名而非到达排名，会与队首选择自相矛盾）
+                record["position_ahead"] = pos_map.get(entry.stem, entry_idx)
             items.append(record)
     return {
         "queue_root": str(root),

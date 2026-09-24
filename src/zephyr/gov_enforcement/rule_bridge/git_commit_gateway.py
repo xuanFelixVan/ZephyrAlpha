@@ -1828,6 +1828,24 @@ class GitCommitGateway:
         except OSError:
             pass
 
+    def _append_precommit_channel_stat(self, record: dict) -> None:
+        """A1 装表：pre-commit 通道每次执行记一行分段耗时。
+
+        独立成册（不进 commit_block_events）原因：该册是阈值化设计（只在阻断时写一行），
+        每次通道都写会破坏其"只记异常"约定；本册量级≈每日通道执行数，可控。
+        根目录随 project_root 键控 ⇒ k=4 池各工天然分账（与 gate_execution_stats 同根同语义）。
+        写失败静默——可观测性永不阻断提交主链路。
+        """
+        try:
+            from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+            audit_dir = Path(str(self.project_root)) / ".runtime" / "audit"
+            audit_dir.mkdir(parents=True, exist_ok=True)
+            with open(audit_dir / "precommit_channel_stats.jsonl", "a", encoding="utf-8") as f:
+                f.write(json.dumps({"timestamp": now_utc().isoformat(), **record}, ensure_ascii=False) + "\n")
+        except OSError:
+            pass
+
     def _audit_commit_block_event(self, session_id: str, blocked, existing: list[str], elapsed_ms: float) -> None:
         """堵点溯源审计①阻断事件（2026-09-13 极限红蓝对抗 D5，Owner 指令堵点可查可修）。
 
@@ -3247,8 +3265,25 @@ class GitCommitGateway:
             "SKIP": _PRECOMMIT_CHANNEL_SKIP_HOOKS,
         }
 
+        _ch_t0 = time.monotonic()
+        self._pc_fast_ms = 0.0
         output, rc, mutation, infra_error, skipped = self._precommit_run_scoped(
             env, root, rel_existing, rel_deleted, tmp_index
+        )
+        # 判定可由 rc/skipped/infra_error 三字段还原（失败归因仍归 _precommit_decide_failure），
+        # 故此处不复制判定逻辑、只记耗时面——避免装表改动语义（宪法 §3 判据不漂移）。
+        self._append_precommit_channel_stat(
+            {
+                "event": "precommit_channel_run",
+                "session_id": session_id,
+                "files_count": len(files),
+                "scoped_files": len(rel_existing),
+                "total_ms": round((time.monotonic() - _ch_t0) * 1000, 1),
+                "fast_subset_ms": round(getattr(self, "_pc_fast_ms", 0.0), 1),
+                "rc": rc,
+                "skipped": skipped,
+                "infra_error": bool(infra_error),
+            }
         )
         if skipped:
             return None  # 空 repo（无 HEAD）：临时索引无从建立，放行走既有门禁链
@@ -3308,7 +3343,11 @@ class GitCommitGateway:
                 # 全局 fail_fast 禁用原因：会以 foreign 失败掩蔽 own 失败→误放行。
                 fa_output, fa_rc, fa_infra = "", 0, ""
                 if _precommit_fast_subset_enabled():  # P1-1（红队 0922）：开关必须门住调用本身
+                    _fa_t0 = time.monotonic()
                     fa_output, fa_rc, fa_infra = self._precommit_fast_subset(env, chunks)
+                    # A1 装表：快段与全段的差≈慢尾成本（不改调用形态——逐 hook 已被
+                    # 实测否决："会把真落地集成套件时长乘 N 倍"，50-commit 挂死教训）
+                    self._pc_fast_ms = (time.monotonic() - _fa_t0) * 1000
                 if not fa_infra and fa_rc != 0:
                     logger.info(
                         "GitCommitGateway: precommit fast-subset 命中违规，短路全通道（rc=%d）",
@@ -3472,10 +3511,14 @@ class GitCommitGateway:
             )
         # 5.5 裁定#341 方案②（2026-09-19 Owner 批）：落地前 staged 面 pre-commit run
         # （own-scope 临时索引，见 _run_precommit_channel；返回非 None = 阻断）
+        _pc_t0 = time.monotonic()
         precommit_block = self._run_precommit_channel(session_id, files)
+        # A1 装表：此前阻断审计恒写 0.0——本通道常是全链最贵一段（实测单件 ≥6 分钟），
+        # 却在 24h 账面上表现为零成本，故三日无人从数据看见它（=提交等待调查 R1 遥测黑洞）。
+        _pc_ms = (time.monotonic() - _pc_t0) * 1000
         if precommit_block is not None:
             blocked = CommitResult(status=CommitStatus.COMMIT_FAILED, message=precommit_block)
-            self._audit_commit_block_event(session_id, blocked, files, 0.0)
+            self._audit_commit_block_event(session_id, blocked, files, _pc_ms)
             return blocked
         # 6. commit（rename 检测内置到 _commit_with_file_message）
         pathspec_for_commit = None if has_gitignored else pathspec_file

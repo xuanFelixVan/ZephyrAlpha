@@ -93,6 +93,7 @@ flag OFF 灰度期已知过渡语义（如实记录，非缺陷）：队列落�
 
 from __future__ import annotations
 
+import functools
 import hashlib
 import json
 import logging
@@ -103,8 +104,10 @@ import sys
 import tempfile
 import threading
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Final
 
 import scripts.commit_queue as cq
 from scripts.governance._shared.thresholds import get as _get_threshold  # 治本(AI-20 P0③ 2026-09-05): 阈值SSoT
@@ -771,6 +774,101 @@ def _run_git(repo_or_wt: Path, args: list[str], *, check: bool = True) -> subpro
     return r
 
 
+# ── A2 装表：单件落地分段计时（st-commitspeed-tbl-20260924，提交等待调查 A2）──────────
+# 背景：队列单件实测 p50≈597s，而已装表的门禁链只占 110-133s——其余数百秒在既有账面上
+# 无任何归属，故无人能判定该优化哪一段（＝调查 R6 无法收口的直接原因）。
+# 本段只测不判：不改任何门禁判据、不改任何控制流；计时器按方法 def 位挂载，
+# 因此 CAS 重试段与双分支等全部调用路径自动覆盖，无需拆函数（拆名即丢
+# COMPLEXITY-GUARD 存量豁免，q-20260923-st-k4-20260923-0002 死信实证）。
+_PHASE_ACC: Final = "_phase_ms"
+_PHASE_FILE: Final = "landing_phase_stats.jsonl"
+
+
+def _worker_tag(landing: object) -> str:
+    """从序列化分支名反推工号（WorktreeLanding 无 worker_id 属性位）。
+
+    k=4 池此前所有账本都不按工归因——这正是"三路工熄火 9 小时"看不见的原因。
+    """
+    branch = str(getattr(landing, "serializer_branch", "") or "")
+    return "w" + branch.rsplit("-w", 1)[-1] if "-w" in branch else "single"
+
+
+def _record_phase(landing: object, name: str, ms: float) -> None:
+    """同段多次进入（CAS 重试/双分支）累加而非覆盖。"""
+    bucket = getattr(landing, _PHASE_ACC, None)
+    if bucket is None:
+        bucket = {}
+        setattr(landing, _PHASE_ACC, bucket)
+    bucket[name] = round(float(bucket.get(name, 0.0)) + ms, 1)
+
+
+def _timed_phase(name: str) -> Callable[..., Callable[..., object]]:
+    """按方法定义位挂分段计时上下文（装饰器形态＝零控制流改动）。"""
+
+    def deco(fn: Callable[..., object]) -> Callable[..., object]:
+        @functools.wraps(fn)
+        def inner(self: object, *args: object, **kwargs: object) -> object:
+            t0 = time.monotonic()
+            try:
+                return fn(self, *args, **kwargs)
+            finally:
+                _record_phase(self, name, (time.monotonic() - t0) * 1000)
+
+        return inner
+
+    return deco
+
+
+def _emit_landing_phase_stat(landing: object, item: dict, total_ms: float) -> None:
+    """一行一单件：分段耗时 + 未归属残差（residual_ms 即下一轮装表的靶子）。
+
+    账本随本工 worktree 落盘（与 gate_execution_stats 同根语义＝池各工天然分账）。
+    可观测性永不阻断主链路：任何写入异常静默吞掉。
+    """
+    try:
+        from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+        bucket = dict(getattr(landing, _PHASE_ACC, None) or {})
+        setattr(landing, _PHASE_ACC, {})
+        anchor = getattr(landing, "worktree_path", None) or getattr(landing, "repo_root", None)
+        audit_dir = Path(str(anchor)) / ".runtime" / "audit"
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        accounted = round(sum(bucket.values()), 1)
+        record = {
+            "timestamp": now_utc().isoformat(),
+            "event": "landing_phase_run",
+            "qid": item.get("qid", "?"),
+            "session_id": item.get("session_id", ""),
+            "worker": _worker_tag(landing),
+            "files_count": len(item.get("files") or []),
+            "total_ms": round(total_ms, 1),
+            "phases": bucket,
+            "accounted_ms": accounted,
+            "residual_ms": round(total_ms - accounted, 1),
+        }
+        with open(audit_dir / _PHASE_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except (OSError, TypeError, ValueError):
+        pass
+
+
+_POOL_WAVE_LOG: Final = "pool_wave.log"
+
+
+def _pool_wave_log(root: Path, line: str) -> None:
+    """A3 装表：工线程出口原因落**文件**（队列根下 pool_wave.log）。
+
+    必落文件而非 logger 的原因（实测取证）：belt 守护只 getLogger、不装任何 handler，
+    其 logger.error 全走 lastResort→stderr→被丢弃——所以"三路工为何不再认领"在盘上
+    至今零证据（调查 R6 判 UNPROVABLE 的直接原因）。只记不判：不改任何认领/中止语义。
+    """
+    try:
+        with open(Path(root) / _POOL_WAVE_LOG, "a", encoding="utf-8") as f:
+            f.write(time.strftime("%Y-%m-%dT%H:%M:%S%z ") + line + "\n")
+    except OSError:
+        pass
+
+
 class WorktreeLanding:
     """Serializer 落盘执行体：队列项 → 专用 worktree → GitCommitGateway 全门禁 → CAS 推进 dev。
 
@@ -882,6 +980,7 @@ class WorktreeLanding:
         except Exception as exc:  # noqa: BLE001
             logger.warning("[landing] 专用 worktree 环境备置异常（不阻断落盘）: %s", exc)
 
+    @_timed_phase("worktree")
     def ensure_worktree(self) -> Path:
         """确保专用 worktree 就位（幂等；仅 Serializer 调用，单写者无竞态）。
 
@@ -937,6 +1036,7 @@ class WorktreeLanding:
         logger.info("[landing] 专用 worktree 就位: %s (branch=%s)", wt, self.serializer_branch)
         return wt
 
+    @_timed_phase("sync")
     def _sync_worktree(self) -> None:
         """每项处理前同步：serializer 分支 reset --hard 到 dev HEAD + clean -fd。
 
@@ -1000,6 +1100,7 @@ class WorktreeLanding:
         r = self._git_repo("diff", "--name-only", from_sha, to_sha)
         return {line.strip() for line in r.stdout.splitlines() if line.strip()}
 
+    @_timed_phase("conflict")
     def _conflict_reason(self, item: dict, current_dev: str) -> str | None:
         """base_head 基底冲突判定；无 base_head（A 段兼容项）→ None（快进应用）。
 
@@ -1011,7 +1112,7 @@ class WorktreeLanding:
         if not base:
             # 存量项兜底（F-AUDIT-QUEUE-04 残面）：正门修好之前入袋的项仍无 base_head，
             # 光修正门救不了今晚在飞的存量袋 ⇒ 用时间基底替代（见 _legacy_base_drift_reason）。
-            return self._legacy_base_drift_reason(item, current_dev)
+            return self._legacy_base_drift_reason(item)
         if base == current_dev:
             return None
         if self._git_repo("cat-file", "-e", base, check=False).returncode != 0:
@@ -1026,7 +1127,7 @@ class WorktreeLanding:
             )
         return None
 
-    def _legacy_base_drift_reason(self, item: dict, current_dev: str) -> str | None:
+    def _legacy_base_drift_reason(self, item: dict) -> str | None:
         """无 base_head 的存量项：以「袋创建时间 + GW 归属」替代时间基底做快进判定。
 
         判据=dev 上本袋 `created_at` 之后触及本袋路径的提交里，是否存在**别的会话**的
@@ -1044,7 +1145,7 @@ class WorktreeLanding:
             "log",
             f"--since={created}",
             "--format=%H%x09%s",
-            current_dev,
+            "refs/heads/" + self.target_branch,
             "--",
             *paths,
             check=False,
@@ -1162,6 +1263,7 @@ class WorktreeLanding:
             return None  # 合并未给 dev 带来任何变化（快照侧新增全被退役判定吸收等）
         return merged.encode("utf-8")
 
+    @_timed_phase("snapshot")
     def _apply_snapshot(self, item: dict, queue_root: Path, old_dev: str) -> list[str]:
         """把队列项快照落成 worktree 真实文件，返回 worktree 内绝对路径列表（commit pathspec 用）。"""
         wt_files: list[str] = []
@@ -1205,6 +1307,7 @@ class WorktreeLanding:
     # ------------------------------------------------------------------
     # dev CAS 推进（66 号 §6.3 修正 4：带上期望旧值，单写者免费保险）
     # ------------------------------------------------------------------
+    @_timed_phase("prestage")
     def _prestage_snapshot(self, item: dict, commit_files: list[str]) -> None:
         """快照预暂存：把快照文件 add/rm 进 index（gate 链 staged-diff 完整性前置）。
 
@@ -1265,6 +1368,7 @@ class WorktreeLanding:
             len(dels),
         )
 
+    @_timed_phase("cas")
     def _advance_dev(self, old_sha: str, new_sha: str) -> None:
         """`git update-ref refs/heads/<dev> <new> <old>` CAS；失败抛 CasConflict。
 
@@ -1387,6 +1491,7 @@ class WorktreeLanding:
         os.replace(tmp, target)  # 原子替换，并发读者不见半成品
         return "fast_forwarded"
 
+    @_timed_phase("converge")
     def _converge_main_workspace(self, item: dict, old_sha: str, new_sha: str) -> None:
         """landing 后主工作区受限收敛：干净文件快进 / 脏文件跳过留痕（fail-open）。"""
         qid = item.get("qid", "?")
@@ -1445,6 +1550,7 @@ class WorktreeLanding:
         "AGENTS.md",
     )
 
+    @_timed_phase("baseline")
     def _refresh_integrity_baseline_main_repo(self, item: dict) -> str:
         """落地成功后在主仓补跑 integrity 基线注册（fail-open，返回空=成功）。
 
@@ -2086,6 +2192,12 @@ def drain_queue_pool(
     return stats
 
 
+# D3 工线程连错上限：同一工连续 err_streak 次异常才允许收工（防"每项必抛"退化成活锁）。
+# 取 20 = 认领有界重扫 8 轮的 2.5 倍余量，且远小于实测队深峰值 83——保证暂时性异常自愈续跑，
+# 系统性异常仍能收工，交波尾 _recover_orphans 兜底（绝不静默把整波永久占住）。
+_WORKER_ERR_STREAK = 20
+
+
 def _run_pool_wave(root: Path, repo: Path, k: int, budget: int | None, stats: dict) -> int:
     """一波 k 工并发（工收工即退出，全队收工即波终）。返回本波处理项数。
 
@@ -2110,14 +2222,54 @@ def _run_pool_wave(root: Path, repo: Path, k: int, budget: int | None, stats: di
                 shared["budget_left"] = shared["budget_left"] - 1 if shared["budget_left"] is not None else None
                 return True
 
+        # D3（st-commitspeed-tbl-20260924）：工线程**不得早退**。
+        # 一波 wave 只在全部线程返回后才结束；而外层只在"本波处理数>0"时起下一波。
+        # 因此任何单工异常退出都会让余下的 straggler 把这一波无限开着——新波永不开，
+        # 死亡工永不得重生（09-24 实测：三路工 06:2x 后停止认领，w2 单工把同一波开到 17 点，
+        # 排空速率 18 件/时 → 2-4 件/时，积压 83 件；并发度恰为 1.000 的直接机理）。
+        # 治法=认领/处理任一抛错都记档后继续循环；同因连错 _WORKER_ERR_STREAK 次才收工，
+        # 防"每项必抛"变成活锁（收工后由波尾 join→下一波 _recover_orphans 兜底）。
+        err_streak = 0
         while _reserve_slot():
-            processing_path = _pool_claim_item(root)
+            try:
+                processing_path = _pool_claim_item(root)
+            except Exception as exc:  # noqa: BLE001 — 早退即全队停摆，必须就地吞下并记账
+                err_streak += 1
+                _pool_wave_log(
+                    root,
+                    f"w{worker_id} claim_raised {type(exc).__name__}: {exc} streak={err_streak}"
+                    f"{' GIVEUP' if err_streak >= _WORKER_ERR_STREAK else ''}",
+                )
+                if err_streak >= _WORKER_ERR_STREAK:
+                    return
+                continue
             if processing_path is None:
                 with stats_lock:
                     if shared["budget_left"] is not None:
                         shared["budget_left"] += 1  # 未消费预扣预算归还
+                # A3 装表：出口三选其一必须留痕——"认领 8 轮全被撞空"与"队空"是两种病，
+                # 处方互斥（前者=认领竞态治本，后者=无事可干属正常收工）。
+                _pool_wave_log(root, f"w{worker_id} exit=claim_none")
                 return
-            _pool_process_item(landing, root, processing_path, stats, stats_lock, shared)
+            try:
+                _pool_process_item(landing, root, processing_path, stats, stats_lock, shared)
+            except Exception as exc:  # noqa: BLE001 — 同上：处理段异常不得杀工
+                err_streak += 1
+                _pool_wave_log(
+                    root,
+                    f"w{worker_id} process_raised {processing_path.stem} "
+                    f"{type(exc).__name__}: {exc} streak={err_streak}"
+                    f"{' GIVEUP' if err_streak >= _WORKER_ERR_STREAK else ''}",
+                )
+                if err_streak >= _WORKER_ERR_STREAK:
+                    return
+                continue
+            err_streak = 0
+        # A3 装表：走到这里＝名额预扣失败（环境终止旗或预算耗尽），与 claim_none 分流
+        _pool_wave_log(
+            root,
+            f"w{worker_id} exit=no_slot env_aborted={shared['env_aborted']} budget_left={shared['budget_left']}",
+        )
 
     threads = [
         threading.Thread(target=_worker, args=(i,), daemon=True, name=f"commit-queue-pool-w{i}") for i in range(k)
@@ -2192,6 +2344,9 @@ def _pool_process_item(
             result = cq.LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
         finally:
             _release_path_locks(path_locks)
+            # A2 装表：本 finally 覆盖成功/死信/环境失败三条出口（env 分支 return
+            # 也走 finally），单件账不因失败路径漏记——失败件恰恰最该有账。
+            _emit_landing_phase_stat(landing, item, (time.monotonic() - _item_t0) * 1000)
 
     with stats_lock:
         if result.ok:

@@ -511,3 +511,73 @@ class TestGenericGreenPath:
             assert (tmp_repo / f"g{i}.txt").read_text(encoding="utf-8") == f"g{i}\n"
         for i in range(4):
             assert cql.worker_worktree_path(queue_root, i).is_dir()
+
+
+class TestWorkerNeverRetiresEarly:
+    """D3 判据：工线程遇异常不得早退（早退＝把整波无限占住，新波永不开）。
+
+    红证（旧码必红）：旧实现里 `_pool_claim_item` 抛出的 FileExistsError（Windows 下
+    os.rename 目标已存在）不在其容忍集内，也未在 `_worker` 被接住 ⇒ 该工线程直接死亡；
+    只要还有 straggler 在循环，本波就永不结束、外层不再起新波，死亡工再无回收机会。
+    生产实测形态：09-24 三路工 06:2x 后停止认领，排空速率 18→2-4 件/时，积压 83 件。
+    """
+
+    def test_transient_claim_exception_keeps_worker_alive_and_logged(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch
+    ):
+        """判别构造：一次瞬时认领异常后，该工**必须仍在岗**且有账（旧码两处皆失）。
+
+        为什么不能只断言 done==N：多工构造下死一工会被余工掩盖（曾据此写出过
+        一条"两边都绿"的伪判别测试，workers=1 更会命中 k<=1 降级开关直走单传送带
+        `_pool_claim_item` 根本不被调用＝注入零生效）。故直接断言 D3 真正保证的不变量：
+        ① 异常被记档（旧码无 _pool_wave_log ⇒ 零账）；② 抛异常的工随后仍正常收工
+        （旧码该线程直接死亡 ⇒ 无第二行）。
+        """
+        for i in range(3):
+            _enqueue(tmp_repo, queue_root, f"sess-e{i}", f"e{i}.txt", f"e{i}\n", f"add e{i}")
+        _inject_stub_workers(monkeypatch, slow_s=0.05)
+
+        real_claim = cql._pool_claim_item
+        state = {"fired": 0}
+
+        def flaky_claim(root):
+            if state["fired"] < 1:  # 仅一次：模拟 Windows rename 撞同名残留的瞬时态
+                state["fired"] += 1
+                raise FileExistsError(17, "File exists")
+            return real_claim(root)
+
+        monkeypatch.setattr(cql, "_pool_claim_item", flaky_claim)
+        stats = cql.drain_queue_pool(queue_root=queue_root, repo_root=tmp_repo, workers=3)
+        assert state["fired"] == 1, "注入未生效（测试无判别力）"
+        assert stats["done"] == 3, f"队列未排空: {stats}"
+        assert stats["dead"] == 0, stats
+
+        log = queue_root / "pool_wave.log"
+        assert log.exists(), "D3 失效：异常未被记档（旧码该工静默死亡、盘上零证据）"
+        lines = log.read_text(encoding="utf-8").splitlines()
+        raised = [x for x in lines if "claim_raised" in x]
+        assert len(raised) == 1, f"异常账缺失: {lines}"
+        assert "streak=1" in raised[0], raised[0]
+        # 行格式："<带时区时间戳> w<id> claim_raised ..."（第 0 字段是时间戳，勿取错）
+        woken = raised[0].split()[1]
+        assert woken.startswith("w"), raised[0]
+        # 同工必须随后正常收工（早退＝该波被 straggler 永久占住的根因）
+        assert any(woken in x and "claim_raised" not in x for x in lines), (
+            f"{woken} 抛异常后再无收工记录＝线程已早退: {lines}"
+        )
+
+    def test_persistent_exception_eventually_gives_up_but_does_not_hang(
+        self, tmp_repo: Path, queue_root: Path, monkeypatch
+    ):
+        """系统性异常须在上限处收工（活锁防线），且波仍能正常结束。"""
+        _enqueue(tmp_repo, queue_root, "sess-g", "g.txt", "g\n", "add g")
+        _inject_stub_workers(monkeypatch, slow_s=0.01)
+
+        def always_raise(_root):
+            raise FileExistsError(17, "File exists")
+
+        monkeypatch.setattr(cql, "_pool_claim_item", always_raise)
+        stats = cql.drain_queue_pool(queue_root=queue_root, repo_root=tmp_repo, workers=3)
+        assert stats["done"] == 0 and stats["dead"] == 0, stats  # 无人能认领＝不误判死信
+        # 关键断言：调用返回了（没有把波永久占住），且每项都留 pending 可下波重试
+        assert len(list((queue_root / "pending").glob("q-*.json"))) == 1

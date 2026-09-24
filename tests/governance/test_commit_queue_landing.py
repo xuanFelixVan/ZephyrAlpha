@@ -50,6 +50,7 @@ import os
 import subprocess
 import tempfile
 import threading
+import time
 from pathlib import Path
 
 import pytest
@@ -1770,3 +1771,81 @@ class TestRegistryMergeLandingIntegration:
         assert stats["done"] == 1 and stats["dead"] == 0, f"drain 异常: {stats}"
         landed = yaml.safe_load(_git_bytes(tmp_repo, "show", f"dev:{_REG_REL}").decode("utf-8"))
         assert "B" not in [e["id"] for e in landed["entries"]], "真退役条目不被快照复活"
+
+
+def test_a2_phase_timer_accumulates_and_emits_per_worker_ledger(tmp_path: Path) -> None:
+    """A2 装表钉：分段计时按段累加、按工落账、发完即复位（红证：装表前无此册无此函数）。"""
+    from scripts.governance.commit_queue_landing import (
+        _emit_landing_phase_stat,
+        _timed_phase,
+    )
+
+    class _Fake:
+        worktree_path = tmp_path
+        serializer_branch = "serializer/commit-queue-w2"
+
+        @_timed_phase("sync")
+        def _sync(self) -> None:
+            time.sleep(0.01)
+
+    obj = _Fake()
+    obj._sync()
+    obj._sync()  # 同段两次（CAS 重试形态）必须累加不是覆盖
+    assert len(obj._phase_ms) == 1
+    assert obj._phase_ms["sync"] >= 15.0, obj._phase_ms
+    _emit_landing_phase_stat(obj, {"qid": "q-t", "session_id": "s", "files": [{"path": "a"}]}, 500.0)
+    assert obj._phase_ms == {}, "发射后未复位→下一件会串账"
+    lines = (tmp_path / ".runtime" / "audit" / "landing_phase_stats.jsonl").read_text(encoding="utf-8")
+    row = json.loads(lines.strip().splitlines()[-1])
+    assert row["worker"] == "w2" and row["event"] == "landing_phase_run"
+    assert row["accounted_ms"] > 0 and abs(row["total_ms"] - row["accounted_ms"] - row["residual_ms"]) < 0.2
+    assert row["phases"]["sync"] >= 15.0 and row["files_count"] == 1
+
+
+def test_a2_all_landing_leaves_are_wired(tmp_path: Path) -> None:
+    """A2 接线钉：八台叶子方法必须都挂上计时器（防"装了表但没接上"＝假绿）。
+
+    红证：任一段漏挂（装饰器丢失/方法改名）即此断言失败——分段账会静默漏测，
+    而漏测正是本次调查要治的病（pre-commit 通道就是这样隐身三日的）。
+    """
+    from scripts.governance.commit_queue_landing import WorktreeLanding
+
+    leaves = {
+        "ensure_worktree": "worktree",
+        "_sync_worktree": "sync",
+        "_conflict_reason": "conflict",
+        "_apply_snapshot": "snapshot",
+        "_prestage_snapshot": "prestage",
+        "_advance_dev": "cas",
+        "_converge_main_workspace": "converge",
+        "_refresh_integrity_baseline_main_repo": "baseline",
+    }
+    for name in leaves:
+        fn = getattr(WorktreeLanding, name)
+        assert hasattr(fn, "__wrapped__"), f"{name} 未挂分段计时（装表漏接）"
+        assert fn.__name__ == name, f"{name} 装饰后丢了函数名（functools.wraps 失效）"
+
+
+def test_a3_pool_wave_log_is_on_disk_with_three_exits(tmp_path: Path) -> None:
+    """A3 装表钉：工线程出口原因必须落**文件**（守护无 handler，stderr 被丢弃）。
+
+    红证：装表前既无 _pool_wave_log 也无 pool_wave.log——"三路工为何不再认领"当时
+    在盘上没有任何证据（调查 R6 因此只能判 UNPROVABLE）。
+    """
+    import inspect
+    import re
+
+    import scripts.governance.commit_queue_landing as cql
+
+    cql._pool_wave_log(tmp_path, "w2 exit=claim_none")
+    cql._pool_wave_log(tmp_path, "w0 exit=no_slot env_aborted=True budget_left=None")
+    log = tmp_path / "pool_wave.log"
+    assert log.exists(), "出口册未生成——A3 未生效"
+    lines = log.read_text(encoding="utf-8").strip().splitlines()
+    assert len(lines) == 2 and lines[0].endswith("w2 exit=claim_none")
+    # 时间戳带显式时区偏移（本仓心跳口径：叙述 ts 必须可与 date 对表）
+    assert re.match(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{4} ", lines[0]), lines[0]
+    # 接线钉：三出口（收工/无名额/认领抛错）都要在模块里真的存在，漏接＝静默漏测
+    body = inspect.getsource(cql)
+    for tag in ("exit=claim_none", "exit=no_slot", "claim_raised", "process_raised"):
+        assert tag in body, f"{tag} 未接线——该出口将永久无账"
