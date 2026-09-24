@@ -77,16 +77,22 @@ CATALOGS_DIR = _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" /
 
 @dataclass(frozen=True)
 class RegistrySpec:
-    """单库（单段）校验规格（文件名/段名/id 键/显示名）。"""
+    """单库（单段）校验规格（文件名/段名/id 键/显示名/可选根目录）。"""
 
     filename: str
     section: str
     id_key: str
     display: str
+    base_dir: Path | None = None  # 缺省=CATALOGS_DIR；册真源不在 catalogs 时显式给根
 
 
-# 19 文件 / 21 段全量业务资产库（2026-09-11 满贯扩容，原 6 库 → 全量；
-# 基线 1460 条目 module_id 填充率 100% + MOD-* 格式 100% 已实证后纳入）
+def spec_path(spec: RegistrySpec) -> Path:
+    """spec → 实文件路径（base_dir 覆盖 CATALOGS_DIR；全部消费方必经此口）。"""
+    return (spec.base_dir or CATALOGS_DIR) / spec.filename
+
+
+# 全量业务资产库（2026-09-11 满贯扩容，原 6 库 → 全量；段数/文件数勿在散文写死，
+# 口径唯一真源=本元组；2026-09-24 审计失明清单#8 纳入数据源资产库，base_dir 出 catalogs）
 REGISTRY_SPECS: tuple[RegistrySpec, ...] = (
     RegistrySpec("strategy_registry.yaml", "strategies", "strategy_id", "策略库"),
     RegistrySpec("factor_registry.yaml", "factors", "factor_id", "因子库"),
@@ -109,6 +115,10 @@ REGISTRY_SPECS: tuple[RegistrySpec, ...] = (
     RegistrySpec("alert_threshold_registry.yaml", "thresholds", "threshold_id", "告警阈值库"),
     RegistrySpec("field_dictionary.yaml", "fields", "field_id", "字段字典"),
     RegistrySpec("experiment_registry.yaml", "experiments", "experiment_id", "实验库"),
+    RegistrySpec(
+        "data_sources_registry.yaml", "data_sources", "id", "数据源资产库",
+        base_dir=_REPO_ROOT / "architecture_model" / "data",
+    ),
 )
 
 
@@ -281,7 +291,7 @@ def run_all_registry_validations(include_depgraph: bool = True) -> tuple[list[st
     fails: list[str] = []
     total = 0
     for spec in REGISTRY_SPECS:
-        path = CATALOGS_DIR / spec.filename
+        path = spec_path(spec)
         try:
             raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
         except Exception as e:  # noqa: BLE001 — 损坏转 error 条目

@@ -17,6 +17,7 @@ description: "外部数据源资产清单真源。从 data_source_operation_manu
 
 data_sources:
   - id: DS-IFIND
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     # 已退役(2026-08-14 #ARCH-DATA-IFIND-RETIRE-001): 试用账号到期不续费,provider 代码/任务/策略全项目切除。
     # 能力迁移: money_flow→tushare; industry_class/industry_class_suppl→tushare; concept_sector/realtime_snapshot/sector_meta→akshare;
     #          EDB宏观→akshare macro_data+FRED/EIA; kline_daily→miniqmt(baostock fallback); daily_valuation→akshare。
@@ -41,6 +42,7 @@ data_sources:
     policy: {}
 
   - id: DS-MINIQMT
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: miniqmt
     name: "miniQMT"
     name_en: "miniQMT"
@@ -70,6 +72,7 @@ data_sources:
         requires_process: "XtMiniQmt.exe"
 
   - id: DS-AKSHARE
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: akshare
     name: "AKShare"
     name_en: "AKShare"
@@ -99,6 +102,7 @@ data_sources:
   # 2026-09-12 另类数据第 1 批免注册直连（docs/_working/2026-09-12-alt-data-handoff.md §8-1）：
   # 独立 runtime 成件（避开 akshare 主 provider 在途 claim），接口漂移由 alt_source_health_manager 独立监控
   - id: DS-AKSHARE-ALT
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: akshare_alt
     name: "AKShare-Alt"
     name_en: "AKShare Alt"
@@ -125,6 +129,7 @@ data_sources:
       disconnect_vpn: true
 
   - id: DS-BAOSTOCK
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: baostock
     name: "Baostock"
     name_en: "Baostock"
@@ -155,6 +160,7 @@ data_sources:
         data_lag_days: 7
 
   - id: DS-TUSHARE
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: tushare
     name: "Tushare"
     name_en: "Tushare"
@@ -184,6 +190,7 @@ data_sources:
         points_alert_threshold: 2000
 
   - id: DS-TICKFLOW
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: tickflow
     name: "TickFlow"
     name_en: "TickFlow"
@@ -210,6 +217,7 @@ data_sources:
       retry_on: ["ConnectionError"]
 
   - id: DS-TDX
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: tdx
     name: "通达信"
     name_en: "TDX"
@@ -238,6 +246,7 @@ data_sources:
         bestip: true
 
   - id: DS-RSS
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: rss
     name: "RSS"
     name_en: "RSS"
@@ -267,6 +276,7 @@ data_sources:
       respect_robots_txt: true
 
   - id: DS-IO_TABLE
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: io_table
     name: "国家统计局投入产出表"
     name_en: "NBS Input-Output Tables"
@@ -288,6 +298,7 @@ data_sources:
       check: "fetch 子命令探测 ionet repo 新年份表,数年一更,无需集成器日频调度"
 
   - id: DS-CLS
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: cls
     name: "财联社电报"
     name_en: "CLS Telegraph"
@@ -319,6 +330,7 @@ data_sources:
         rsshub_route: "/cls/telegraph"
 
   - id: DS-EASTMONEY_NEWS
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: eastmoney_news
     name: "东方财富新闻"
     name_en: "EastMoney News"
@@ -347,6 +359,7 @@ data_sources:
       relogin_on_auth_error: false
 
   - id: DS-BAIDUYUN
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: baiduyun
     name: "百度云"
     name_en: "BaiduYun"
@@ -366,6 +379,7 @@ data_sources:
     policy: {}
 
   - id: DS-NEWSAPI
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: newsapi
     name: "NewsAPI"
     name_en: "NewsAPI"
@@ -385,6 +399,7 @@ data_sources:
     policy: {}
 
   - id: DS-YFINANCE
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: yfinance
     name: "yfinance"
     name_en: "yfinance"
@@ -404,6 +419,7 @@ data_sources:
     policy: {}
 
   - id: DS-STOOQ
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: stooq
     name: "Stooq"
     name_en: "Stooq"
@@ -423,6 +439,7 @@ data_sources:
     policy: {}
 
   - id: DS-TQCENTER
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: tqcenter
     name: "tqcenter"
     name_en: "tqcenter"
@@ -458,6 +475,7 @@ data_sources:
         note: "tqcenter 非 pip 安装，需 sys.path.insert 注入；由 sector_kline_downloader.py 独立脚本触发"
 
   - id: DS-FRED
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     # #ARCH-EDB-EXPAND（2026-08-04）：FRED + 世界银行免费宏观数据，扩展 EDB 国际对比数据
     runtime_id: fred
     name: "FRED/世界银行 宏观数据"
@@ -492,6 +510,7 @@ data_sources:
         note: "海外站点，国内访问可能需 VPN；FRED key 免费注册；与 akshare macro_data 共表 c1_market.macro_data，indicator_name 前缀 FRED_/WB_ 区分"
 
   - id: DS-EIA
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     # #ARCH-EDB-EXPAND（2026-08-04）：EIA 能源数据，石油/天然气库存与价格
     runtime_id: eia
     name: "EIA 能源数据"
@@ -525,6 +544,7 @@ data_sources:
         note: "海外站点，国内访问可能需 VPN；EIA key 免费注册；与 akshare/FRED macro_data 共表 c1_market.macro_data，indicator_name 前缀 EIA_ 区分"
 
   - id: DS-QWEATHER
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     # #ARCH-REALTIME-ACCUM（2026-08-04）：和风天气，免费版无历史API——必须每日积累
     runtime_id: qweather
     name: "和风天气"
@@ -557,6 +577,7 @@ data_sources:
         note: "国内服务不需 VPN；QWeather key 免费注册（1000次/天）；写入 c1_market.weather_data，每日积累"
 
   - id: DS-EASTMONEY_DATACENTER
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: eastmoney_datacenter
     name: "东方财富数据中心"
     name_en: "EastMoney DataCenter"
@@ -580,6 +601,7 @@ data_sources:
       backoff: exponential
 
   - id: DS-IRM
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: irm
     name: "深交所互动易"
     name_en: "SZSE Interactive Easy (irm.cninfo.com.cn)"
@@ -603,6 +625,7 @@ data_sources:
       backoff: exponential
 
   - id: DS-HYPERLIQUID
+    module_id: MOD-L00-001  # 数据域蓝图锚（本册 file 级 anchor 同源，审计失明清单#8 纳入校验面）
     runtime_id: hyperliquid
     name: "Hyperliquid 全市场永续"
     name_en: "Hyperliquid"

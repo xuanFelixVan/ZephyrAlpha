@@ -73,6 +73,7 @@ from zephyr.gov_enforcement.registry_alignment import (
     REGISTRY_SPECS,
     RegistrySpec,
     query_one as _query_one,
+    spec_path as _spec_path,
     validate_registry_file,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
@@ -133,7 +134,7 @@ def make_business_registry_gate() -> GateSpec:
 
         all_fails: list[str] = []
         for spec in triggered:
-            path = _CATALOGS_DIR / spec.filename
+            path = _spec_path(spec)
             try:
                 fails = validate_registry_file(path, spec)
             except Exception as e:  # noqa: BLE001 — 库文件损坏=fail-closed

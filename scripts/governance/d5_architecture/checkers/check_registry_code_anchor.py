@@ -45,6 +45,8 @@ import argparse
 import ast
 import subprocess
 import sys
+
+import yaml
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
@@ -226,6 +228,33 @@ def _split_code_paths(code_path: str) -> list[str]:
     return [_strip_anchor_annotation(t) for t in tokens if "/" in t and not t.startswith("#")]
 
 
+_FD_KEYS_CACHE: set[str] | None = None
+
+
+def _field_dictionary_keys(violations: list[str]) -> set[str]:
+    """字段字典闭合键集（field_id ∪ field_name；进程内缓存）。
+
+    审计失明清单#10 处方 B8：因子 inputs 全仓无校验（junk inputs→GREEN）。
+    读取失败=闭包无法判定，报 [Parse] 违规并返回空集（调用方跳过逐条判定）。
+    """
+    global _FD_KEYS_CACHE
+    if _FD_KEYS_CACHE is None:
+        keys: set[str] = set()
+        try:
+            fd = yaml.safe_load(
+                (_CATALOGS / "field_dictionary.yaml").read_text(encoding="utf-8")) or {}
+            for f in fd.get("fields") or []:
+                if isinstance(f, dict):
+                    if f.get("field_id"):
+                        keys.add(str(f["field_id"]))
+                    if f.get("field_name"):
+                        keys.add(str(f["field_name"]))
+        except Exception as e:  # noqa: BLE001
+            violations.append(f"  - [Parse] field_dictionary.yaml 读取失败，inputs 闭包检查跳过: {e}")
+        _FD_KEYS_CACHE = keys
+    return _FD_KEYS_CACHE
+
+
 def check_registry_file(reg_path: Path, violations: list[str]) -> int:
     """校验单个注册表文件的条目锚点。返回检查条目数。"""
     try:
@@ -257,6 +286,17 @@ def check_registry_file(reg_path: Path, violations: list[str]) -> int:
             # status ∈ {deprecated, retired}：锚点为历史记录（tombstone），豁免存在性校验
             if entry.get("status") in ("deprecated", "retired"):
                 continue
+            # [Inputs↔Dict]（审计失明清单#10）：因子 inputs 引用必须落在字段字典
+            # 闭包内（field_id 或 field_name；tombstone 同享豁免）。
+            if reg_path.name == "factor_registry.yaml" and entry.get("inputs"):
+                fd_keys = _field_dictionary_keys(violations)
+                if fd_keys:
+                    for inp in entry["inputs"]:
+                        if str(inp) not in fd_keys:
+                            violations.append(
+                                f"  - [Inputs↔Dict] {reg_path.name} {lk}/{eid}: "
+                                f"inputs 引用不在字段字典（field_id/field_name 均未命中）: {inp}"
+                            )
             code_path = entry.get("code_path")
             if code_path:
                 for rel in _split_code_paths(code_path):

@@ -45,10 +45,11 @@ from zephyr.gov_enforcement.commit_gates.industry_chain_map_gate import (  # noq
 # ── 基线绿测（数据回退即红）───────────────────────────────────────────
 
 
-def test_specs_cover_21_sections():
-    assert len(REGISTRY_SPECS) == 21
-    files = {s.filename for s in REGISTRY_SPECS}
-    assert len(files) == 19, f"满贯应为 19 文件，实际 {len(files)}"
+def test_specs_cover_all_sections():
+    # 审计失明清单#8 后段数去硬化（散文/断言禁写死计数，AGENTS §4；
+    # 段名可合法复用——indicators×2/data_asset_registry×3——故只断言 DS 册在面）。
+    assert len(REGISTRY_SPECS) > 0
+    assert any(s.filename == "data_sources_registry.yaml" for s in REGISTRY_SPECS),         "数据源资产库必须在校验面（审计失明清单#8）"
 
 
 def test_all_registries_pass_full_validation():
@@ -144,6 +145,10 @@ def test_business_gate_blocks_bad_entry(tmp_path: Path, monkeypatch: pytest.Monk
         encoding="utf-8",
     )
     monkeypatch.setattr(brg, "_CATALOGS_DIR", bad_dir)
+    # spec_path 真源在 registry_alignment.CATALOGS_DIR（审计#8 扩面后 gate 经 spec_path 取文件）
+    import zephyr.gov_enforcement.registry_alignment as ra
+
+    monkeypatch.setattr(ra, "CATALOGS_DIR", bad_dir)
     gate = make_business_registry_gate()
     ok, msg = gate.check(None, files=["docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml"])
     assert ok is False
@@ -180,3 +185,51 @@ def test_industry_gate_blocks_bad_cluster_names(tmp_path: Path, monkeypatch: pyt
     ok, msg = gate.check(None, files=["config/chainmap_cluster_names.yaml"])
     assert ok is False
     assert "C<N>" in msg and "超 6 字" in msg
+
+
+def test_data_sources_registry_spec_resolves_outside_catalogs():
+    """DS 册真源在 architecture_model/data/（非 catalogs），spec_path 必须解析到位。"""
+    from zephyr.gov_enforcement.registry_alignment import REGISTRY_SPECS, spec_path
+
+    ds_specs = [s for s in REGISTRY_SPECS if s.filename == "data_sources_registry.yaml"]
+    assert len(ds_specs) == 1
+    assert spec_path(ds_specs[0]).exists(), spec_path(ds_specs[0])
+
+
+def test_data_sources_registry_rejects_duplicate_id(tmp_path: Path):
+    """红测：DS 册注入重复 id 必拦（base_dir 语义规格走 validate_registry_file）。"""
+    entries = [
+        {"id": "DS-DEMO", "module_id": "MOD-L00-001"},
+        {"id": "DS-DEMO", "module_id": "MOD-L00-001"},
+    ]
+    base = tmp_path / "custom_root"
+    base.mkdir()
+    path = base / "data_sources_registry.yaml"
+    import yaml as _yaml
+
+    path.write_text(_yaml.safe_dump({"data_sources": entries}), encoding="utf-8")
+    from zephyr.gov_enforcement.registry_alignment import RegistrySpec, validate_registry_file
+
+    spec = RegistrySpec(
+        "data_sources_registry.yaml", "data_sources", "id", "数据源资产库", base_dir=base,
+    )
+    fails = validate_registry_file(path, spec)
+    assert any("DS-DEMO" in f and "重复" in f for f in fails), fails
+
+
+def test_data_sources_registry_rejects_missing_module_id(tmp_path: Path):
+    """红测：DS 册条目缺 module_id 必拦（纳入校验面前 23 条全缺=历史假绿面）。"""
+    entries = [{"id": "DS-DEMO"}]
+    base = tmp_path / "custom_root"
+    base.mkdir()
+    path = base / "data_sources_registry.yaml"
+    import yaml as _yaml
+
+    path.write_text(_yaml.safe_dump({"data_sources": entries}), encoding="utf-8")
+    from zephyr.gov_enforcement.registry_alignment import RegistrySpec, validate_registry_file
+
+    spec = RegistrySpec(
+        "data_sources_registry.yaml", "data_sources", "id", "数据源资产库", base_dir=base,
+    )
+    fails = validate_registry_file(path, spec)
+    assert any("module_id" in f for f in fails), fails

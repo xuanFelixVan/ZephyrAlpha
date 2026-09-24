@@ -29,6 +29,7 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+import yaml
 
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 if str(_PROJECT_ROOT) not in sys.path:
@@ -474,3 +475,60 @@ class TestDeletedPyParse:
 
         gw.run_git = _run_git
         assert _deleted_or_renamed_py(gw) == []
+
+
+class TestInputsClosure:
+    """审计失明清单#10 红测：因子 inputs 闭包（junk inputs 不得再 GREEN）。"""
+
+    def _setup_dict(self, ws, monkeypatch):
+        cat = ws / "cat"
+        cat.mkdir(exist_ok=True)
+        (cat / "field_dictionary.yaml").write_text(
+            yaml.safe_dump({"fields": [{"field_id": "FLD-T-001", "field_name": "close"}]}),
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(anchor, "_CATALOGS", cat)
+        monkeypatch.setattr(anchor, "_FD_KEYS_CACHE", None)  # 清进程内缓存
+        _write(ws, "src/a.py", _PY_CODE)
+
+    def test_junk_input_rejected(self, ws, monkeypatch):
+        self._setup_dict(ws, monkeypatch)
+        reg = _write(
+            ws, "factor_registry.yaml",
+            yaml.safe_dump({"factors": [{
+                "factor_id": "FCT-T-009", "status": "active",
+                "code_path": "src/a.py", "code_symbol": "null",
+                "inputs": ["nonexistent_field_xyz"],
+            }]}),
+        )
+        v: list[str] = []
+        anchor.check_registry_file(reg, v)
+        assert any("Inputs↔Dict" in x and "nonexistent_field_xyz" in x for x in v), v
+
+    def test_known_name_and_id_pass(self, ws, monkeypatch):
+        self._setup_dict(ws, monkeypatch)
+        reg = _write(
+            ws, "factor_registry.yaml",
+            yaml.safe_dump({"factors": [{
+                "factor_id": "FCT-T-010", "status": "active",
+                "code_path": "src/a.py", "code_symbol": "null",
+                "inputs": ["close", "FLD-T-001"],
+            }]}),
+        )
+        v: list[str] = []
+        anchor.check_registry_file(reg, v)
+        assert not any("Inputs↔Dict" in x for x in v), v
+
+    def test_tombstone_exempt(self, ws, monkeypatch):
+        self._setup_dict(ws, monkeypatch)
+        reg = _write(
+            ws, "factor_registry.yaml",
+            yaml.safe_dump({"factors": [{
+                "factor_id": "FCT-T-011", "status": "deprecated",
+                "code_path": "src/a.py", "code_symbol": "null",
+                "inputs": ["nonexistent_field_xyz"],
+            }]}),
+        )
+        v: list[str] = []
+        anchor.check_registry_file(reg, v)
+        assert not any("Inputs↔Dict" in x for x in v), v

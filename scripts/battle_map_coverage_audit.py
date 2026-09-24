@@ -35,13 +35,13 @@ _CATALOGS = _REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalo
 
 def collect_universe() -> dict[str, set[str]]:
     """按库收集 module_id 宇宙（同 gate 真源 REGISTRY_SPECS）。"""
-    from zephyr.gov_enforcement.registry_alignment import REGISTRY_SPECS
+    from zephyr.gov_enforcement.registry_alignment import REGISTRY_SPECS, spec_path
 
     if not _CATALOGS.exists():
         raise RuntimeError(f"注册表目录缺失: {_CATALOGS}")
     universe: dict[str, set[str]] = defaultdict(set)
     for spec in REGISTRY_SPECS:
-        path = _CATALOGS / spec.filename
+        path = _spec_path(spec)
         if not path.exists():
             continue
         data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
