@@ -1,0 +1,23 @@
+card: docs/_working/t0_revival/t0_conditional_prereg_card.md (frozen)
+mode: single_macro_gate
+emotion_gate:
+  available: false
+  detail: sentiment_panel metrics=['cb_conversion_premium_median', 'fear_greed_index']
+    无丁线情绪六段历史标签（fear_greed_index 为异轴指标，卡 §2.2 禁顶替）；六段持久化为前瞻接线义务
+measured:
+  n_pairs_total: 24
+  n_gate_pairs: 8
+  n_control_pairs: 16
+  dropped_asof_days: 0
+  gate_pairs_days:
+  - '2026-09-15'
+  gate_edge_ge_30bp: 0
+  gate_net_positive: 0
+  gate_gross_mean_bp: -5.5
+  gate_net_mean_bp: -36.7
+  control_gross_mean_bp: -11.05
+  control_net_mean_bp: -42.25
+  material_parse_skips: 0
+verdict:
+  status: INSUFFICIENT_SAMPLES
+  conclusion: 门内配对数 8 < 30（卡 §5 土规），禁硬出方向性结论

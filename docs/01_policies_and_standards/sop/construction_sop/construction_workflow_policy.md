@@ -437,6 +437,9 @@ pytest tests/path/to/test_xxx.py -v
 - 每施工单元的验证 = 六断言（若涉错误码）+ 语法校验 + **测试面清单全量 pytest**，三者缺一不可；仅跑前两项即声明完成 = 执行偏差
 - 批量收尾必须留存测试面清单文件（如 `.runtime/tmp/<批次>_tests.txt`）+ 全量结果（passed 数）供复查——当日实证：227 文件 4991 passed 补课即靠此清单复跑
 
+**状态词表出厂纪律**（2026-09-22 立规，裁定#398五①+#399四授权，真源=docs/_working/vocab_legislation/01_official_state_vocabulary.md + 02_state_vocabulary_mapping_register.md；执法门观察期由 rule_audit 线另行施工）：
+- 新模块状态输出必须引用官方词表（`zephyr.shared.vocab.market_state` 四轴常量）或在词表映射登记册登记映射；描述"市场最坏状态"一律走官方归一表 EXTREME_STATE_ALIASES→m.regime.r10，禁裸字符串 r1-r4 跨轴使用（C1 撞名）；无登记的新封闭状态枚举=验收不通过（W3 观察期先 warn）
+
 **通过判据**：连续 2 次验收 0 错误（CIRCULAR_ACCEPTANCE_ROUNDS=2）
 **不通过处置**：3 轮修复仍无法归零 → 标记 FAILED 升级 Owner
 **产出物**：测试报告（对话内）
