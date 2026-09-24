@@ -534,7 +534,8 @@ directory_extensions:
   # 真源：directory_contract.yaml P1 阶段新增（2026-07-01 治 34 个裸奔目录）
   # 调研依据：data/ 下 35 个子目录扩展名分布调研报告
   - path: "data/"
-    allowed: [".json", ".jsonl", ".yaml", ".md", ".csv", ".db", ".duckdb", ".sqlite3", ".bin", ".index", ".wal", ".sql", ".ndjson", ".log", ".tar.gz", ".mmd", ".gitkeep"]
+    allowed: [".json", ".jsonl", ".yaml", ".md", ".csv", ".db", ".duckdb", ".sqlite3", ".bin", ".index", ".wal", ".sql", ".ndjson", ".log", ".tar.gz", ".mmd", ".gitkeep", ".npy"]  # 2026-09-24 st-pipeline-final: numpy 数值产物（ML 数据包标准格式，同类=.pt/.bin 模型二进制），GPU 板块条件矩阵包首个用例
+
     forbidden: [".py", ".sh", ".ps1", ".bak", ".baseline", ".tmp"]
     zone: neutral
     allowed_doc_types: []

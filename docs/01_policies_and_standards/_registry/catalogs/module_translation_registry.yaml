@@ -55037,7 +55037,6 @@ entries:
   plain_zh: "佣金+滑点+冲击+做T加成的单边全成本"
   responsibility_layer: business
 - module_path: src/zephyr/strategy_factory/owner_band_t/data_loader.py
-  responsibility_layer: business
 - module_path: src/zephyr/strategy_factory/owner_regime_switcher/switcher.py
   domain_id: D_ASHARE_SIGNAL
   name_zh: "regime切换器核心"
@@ -59895,7 +59894,6 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "回踩质量 A/B/C 判定（22 号 spec §3.1②，BM-SEL-08 缺失态补施工）。"
-  responsibility_layer: business
 - module_path: src/zephyr/backtest/regime_validation/condition_package.py
   domain_id: D_BACKTEST
   name_zh: "GPU条件轴输入包"
@@ -59921,7 +59919,6 @@ entries:
   plain_zh: "把门禁配置和死因处方自动汇编成一份按文件类型分类的提交前导航手册,让AI会话不用撞墙学规则,指南由配置生成禁止手改"
   responsibility_layer: governance
 - module_path: docs/_working/kimi_audit/lane_reports/cost_trio_exam.py
-  responsibility_layer: business
 - module_path: scripts/audit/t0_six_phase_materialize.py
   domain_id: D_BACKTEST
   name_zh: "六段情绪相位历史物化件"
@@ -60798,6 +60795,30 @@ entries:
   plain_zh: "每月抽查一批标的，核对周线月线的收盘与高低开收是否真由日线聚合得来、成交量是否守恒，长期盯住三张复权表不再互相矛盾"
   responsibility_layer: business
 
+- module_path: scripts/audit/cost_trio_exam.py
+  domain_id: D_BACKTEST
+  name_zh: "做T配对成本判据（重建版）"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "逐笔回测成交按 symbol×交易日做双边配对，对每对计算 CST-T0-001 成本口径下的毛价差与净价差并对照手续费阈值，配对数满 30 输出统计判定、不足 30 输出 insufficient 禁止下结论；本件由临时目录按裁定迁入 scripts/audit 正式位，含重建来源标注。"
+  responsibility_layer: business
+- module_path: scripts/sector_line/build_gpu_input_pack.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "GPU板块条件矩阵输入包建造器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把板块状态库里985天的动量分位、RRG象限、市场温度和保密段位图打包成搜索算法直接吃的数组文件，让59小时算力窗全部花在搜索上而不是准备数据上。生成前先验证原始行情数据没被人动过，生成后逐格自查。"
+  responsibility_layer: business
+- module_path: scripts/sector_line/freeze_baseline.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "状态层回放基线冻结器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给板块行情和状态表拍快照存指纹的工具：跑一次记住每张表长什么样，以后再跑就对比指纹有没有变，变了就说明有人动过数据。只读不写，是回放和考试对账的公正尺子。"
+  responsibility_layer: business
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
