@@ -60761,6 +60761,23 @@ entries:
   plain_zh: "QMT 文件桥回归冒烟脚本：用一笔模拟盘小单把下单、撤单、成交回执、成交上报全链路重放一遍并逐断点核对（只认模拟环境，碰到实盘账户直接拒绝运行），把 2026-09-18 全流通战役发现的两处检测误判固化成可重复的自动回归。"
   responsibility_layer: business
 
+- module_path: src/zephyr/gov_enforcement/commit_gates/_tree_view.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "提交树视图"
+  name_en: "CommitTreeView"
+  desc_zh: "按不可变 git 树复现门禁可见的暂存视图，替代共享暂存区直读"
+  desc_en: ""
+  plain_zh: "门禁本来都去翻大家共用的暂存篮子，互相看得见还互相干扰。这个模块给每笔提交造一个只属于它的快照视图，门禁看快照就不看篮子了，谁也污染不了谁。它还装了报警器：谁偷偷绕过快照去看真实篮子就会被记录。"
+  responsibility_layer: governance
+- module_path: scripts/governance/replay_gate_verdicts.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "门禁判定重放器"
+  name_en: "Gate Verdict Replayer"
+  desc_zh: "对最近 N 笔提交逐笔重建两树视图并重跑全部门禁，产出逐台 verdict 供前后比对"
+  desc_en: ""
+  plain_zh: "想知道改了门禁以后判结果跟以前一不一样，光靠嘴说不行，得把最近一批提交原样再考一遍。这个工具就是那个考官：把每笔提交的试卷（base/head 两棵树）重新铺出来，让所有门禁重新判一遍，然后把前后两次的判定逐台对答案，谁改了口供就点名。怕考太久还带了闹钟和限量开关。"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

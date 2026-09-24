@@ -50358,4 +50358,19 @@ creation_tokens:
   created_by: st-mapbuild-20260924
   capability: trading_day_cycle_map
   merge_evaluation: "图本体结构门禁子检查，挂 MAP-ALIGNMENT 聚合台（st-gslim P4 既定合并形态，不新建独立 gate=零资产净增面）"
+- file: src/zephyr/gov_enforcement/commit_gates/_tree_view.py
+  token: commit-speedup-campaign--tree-view-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup_campaign
+  merge_evaluation: "新仪器件：重放安全网＝包8/S1出厂判据唯一仪器，无可并旧件（四判据逐条过：非同源可派生/有消费/无同域簇/跨域不适用）"
+- file: scripts/governance/replay_gate_verdicts.py
+  token: commit-speedup-campaign-replay-gate-verdicts-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup_campaign
+  merge_evaluation: "新仪器件：重放安全网＝包8/S1出厂判据唯一仪器，无可并旧件（四判据逐条过：非同源可派生/有消费/无同域簇/跨域不适用）"
+- file: docs/_working/commit_speedup_campaign/50_replay_baseline/r1_design.md
+  token: commit-speedup-campaign-r1-design-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup_campaign
+  merge_evaluation: "新仪器件：重放安全网＝包8/S1出厂判据唯一仪器，无可并旧件（四判据逐条过：非同源可派生/有消费/无同域簇/跨域不适用）"
 di_seam_exemptions: []
