@@ -55,3 +55,23 @@ creation_token: eight-pack-commander-ledger-ledger-final-20260923
 
 ### 加固 backlog（11 项，非阻塞，均有处方）
 T1 SLO 哨兵接入计划任务 action｜T2 计划任务 S4U 化｜T3 logs 轮转｜B4 skipped 不覆写 ok｜B6 sudo NOPASSWD 确认｜B7 锁 PID 探活｜B8 长任务拆分（g_mirror 周级化）｜B9 G/D 空间闸扩展｜B11 ASYNC 超时孤儿核销｜R4/R5/R7 restore 双链枚举与 code 恢复排除状态文件｜V1 周六 VM 备份错峰+state 原子化｜P0-2 结构修（backup_log 核验下沉 ps1）+P1-5 钟差监控+P1-8 ps1 侧原子写——补偿控制=本包 30 分钟监控自动化在岗
+【心跳 09:00】在干=手动全备份轮监督中（PID 41360，06:12 点火：CH 增量 07:09 完成 82.1GiB verified=True→双写 rsync 首次通过 14400s 修复→vault Stage 3 差分拷贝 ~120k 件磨盘中）；干完=02:48 死轮法证（CH 03:51 成功但进程死于半路，非 reaper，白天法证）+陈旧锁清除+补登 token 5 行纯增落地；卡住=无。下一步=报告出炉→verify_0600 四探针→0600-VERIFY-PASS→终报收官。
+
+## 0600-VERIFY-PASS（2026-09-24 10:2x 落账，四探针 11/11 两轮全绿）
+
+- 完成轮=06:12 手动点火全备份（PID 41360，14108.3s）：CH 增量 07:09 完成（82.1GiB verified=True，backup_log 2 行/12h 窗）→双写 rsync 首次通过（--timeout 14400 修复端到端生效，chbackup2 拿到 88.1G 当日增量）→vault 20260924 自愈（AGENTS.md/pyproject/.env 双件全回）→dumps 20260924 复活→Stage 3c/3d 全过→10:07 报告+state 落账
+- 四探针终判：0a 报告✓ 0b lock-skip=持锁期健康观测✓ 1 段完整+CH ok✓ 2 vault/dumps 自愈复活✓ 3 state ok/ok/计时推进+backup_log 交叉核对✓ 4 restore verify ALL CHECKS PASSED（灾备就绪态）
+- 收官仪表 Final A+B：31/31 两轮零（G 阈值校准 500G=一次性追赶消耗后的稳态线，真地板 60GB 的 8 倍余量；G 现 668.9G/18.0%）
+- 02:48 死轮法证结论：CH 03:51 成功后进程死于半路（非 reaper 击杀，kill log 无 25576），白天法证归档；其代价=06:00 计划任务被 3h12m 活锁跳过（skip 文件三连，全部可观测）
+
+## 本包终报（st-backup-cold-20260924）
+
+1. **任务序列 ①-⑤ 全闭环**：①mirror 残件两证删除净腾 591.57G（G 6.1%→22.0%，冷抽屉留 10-21）+注册表真值口径；②假绿闸 INV-11/12（backup_log 交叉核验+假绿降级+lock-skip 甄别+skipped 分因+state 真源锚定）实战双拦；③restore.ps1 四处 config 化验收 PASS+第 4 处同类缺陷治本；④假期 59h 推演绿+排班全确认；⑤五盘对照+审计终表+晨报六要素。
+2. **红蓝对抗**：三子代理并发（reconciler 16 发现/PS1 栈 21 发现/证据链 7 项全 PASS 复核）→16 项修复落地（47e9673e 等）+21 项结构性 backlog（全带处方，无待裁定）；修复批自身经 PERM-TRIGGER/NO-BARE-SQL/MASS-DELETION 三门实战调校。
+3. **三裁定执行**：C4 52.7G 迁冷库（60,245 件三重验证）/个人文件 Owner 亲迁确认/五会话目录双侧归档清除（6.2MiB 全保）。
+4. **收官判据全达成**：0600-VERIFY-PASS（两轮 11/11）+verify_suite 连续两轮 31/31+证据链独立审计 7/7+蒸发战争防御落袋（四落三蒸发后内容存活，仪表常查哨兵在位）。
+5. **交付物清单**：代码=backup_reconciler.py/backup.ps1/restore.ps1/backup_config.yaml/测试 44 例；台账=LEDGER_final.md+a1_ledger.md 全程；证据=G:ackup\predelete_deltas\G_zephyr_backup_mirror_torn_evidence_20260924\（8 件 sha256 清单）；注册表=INFRA-STORE-003 真值口径+token；仪表=verify_suite 31 项+verify_0600 11 项（.runtime/tmp/diskaudit_20260924/，24h TTL 自然清）。
+6. **移交接班**：加固 backlog 11 项（T1 哨兵接任务/B8 g_mirror 周级化/P0-2 核验下沉 ps1 为最优先）；蒸发战争根治归维护班（stale-index 并发提交回退他人内容，今晨三起）；02:48 死轮根因白天法证；capability 册孤儿 merge_evaluation 行修复归维护班。
+7. **自动化**：30 分钟监控轮任务全部达成，本终报落账后自删（收官行见下）。
+
+自动化已自删，本包收官。
