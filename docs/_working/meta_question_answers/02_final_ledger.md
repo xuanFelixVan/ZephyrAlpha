@@ -76,3 +76,6 @@ date: 2026-09-24
 
 - results 283 从 PG 重建逐数核验（142/45/96）；五生成器重跑+全补丁重放；本件重写后与 R8 终态口径逐项对齐（30/15、A28/B37/C31、0163 标题、1137、30.7%）。
 - [09:50 心跳] **六件全在队**：q-0004（0076 内容 13 文件）→q-0005（0077 内容 3 文件）→q-0006（双轨对账器）→q-0007（状态带监控器）→q-0008（docs token 批 311 条）→q-0009（docs 内容 29 文件合并单文件架构 results_all.yaml，json→yaml 转换符合目录契约 G6 先例）。**接力指令补充**：①module_translation_registry.yaml 工作区改动（vocab_loader 摘条+reconciler 加条）未随批——下一批捎带该文件落地；②docs 311 token 若被热册拉锯清场：每轮重跑 batch_creation_tokens（prefix=docs/_working/meta_question_answers，capability=metaq-question-exam-campaign）。0347 起改用绝对路径写台账（后台 shell cwd 漂移教训）。
+- [10:30 心跳] **q-0010 落地（5d742cb9）**=capability 册净清洁+全 token 永久化（战火期收官）。q-0011 死于 CLASS-UNIQUENESS（AuditEvent 七模块重名）→改名 MetaQuestionAuditEvent+38 测试绿→q-0016 重投。q-0012 processing、q-0013/0014/0015 pending。下一步：五件落 HEAD→终局行生效→R9/R10+红蓝-3→收官。
+- [11:55 心跳] **落地战况**：docs 核心批 311 文件已落 HEAD（e41a06c295 ✓ sweep-proof 达成）。在队五件：q-0021（batch B）/q-0022（对账器）/q-0023（状态带）/q-0016（批次 A v6 NO-GOD-CLASS 拆分版）/q-0020 排序见队列。本轮修复：0017 冲突标记毛刺（工作区实证零标记=worktree 物化毛刺，requeue 重应用）、0018/0019 翻译条目被热册清场（重注册三条）。
+- [11:55 心跳] **自动化轮接力指令（持续有效直至五件全落）**：每轮若五件有死信→按死因重注册（translation 三条 add_module_translation 同参数；capability token 若缺→线级外科插 creation_tokens 尾，禁 round-trip）→requeue。五件全落 HEAD 后：①a1_chainpile_ledger 终局行下补"0004 系全落，终局行生效"②R9 恢复复核+红蓝-3③收官自删。
