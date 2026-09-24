@@ -43921,6 +43921,7 @@ creation_tokens:
   token: auto-scaffold-tilib_dwm_shard_runner-20260922
   created_by: st-b10-final-20260922
   capability: tilib_dwm_shard_runner
+  merge_evaluation: "丁线词表SSOT自裁书（第一性原理+四源对照），无同真源可派生项"
 - file: src/zephyr/shared/vocab/market_state.py
   token: state-vocab-market-state-20260921
   created_by: st-dloop-20260921
@@ -45325,7 +45326,6 @@ creation_tokens:
   created_by: st-ibt-remedy-b-20260923
   capability: ibt_batch_b_pit_repair
   merge_evaluation: "批B 预注册验收交付物（对照表冻结件），附 max_remediation_plan §2-批B 任务态 ttl=task_bound，批D 归档即退役，无第二真源"
-  merge_evaluation: "FOLDER-CAPACITY 121>120 共堵治理迁册（registry_family 子目录新建，registry 族 gate 专柜，非同域重复对象）"
 - file: "scripts/backtest/ibt/ibt_runner.py"
   token: "ibt-remedy-a-runner-20260923"
   created_by: "st-ibt-remedy-a-20260923"
@@ -47384,4 +47384,9 @@ creation_tokens:
   created_by: st-library-final-20260924
   capability: library_final_ledger
   merge_evaluation: "终局班交付面，台账族延续，不并"
+- file: docs/_working/map_census/00_panorama_map_census_v1.md
+  token: panorama-map-census-00-panorama-map-census-v1-20260923
+  created_by: st-mapcensus-20260924
+  capability: panorama_map_census
+  merge_evaluation: "裁定#409配套一次性盘点件，同真源(alignment_checklist§3)可派生目录但census承载缺口判定语义非重复册，域空白无合并对象"
 di_seam_exemptions: []
