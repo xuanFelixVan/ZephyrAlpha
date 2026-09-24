@@ -2514,6 +2514,26 @@ def _pool_process_item(
         return
     qid = item.get("qid", processing_path.stem)
     _item_t0 = time.monotonic()
+    # B5 attempts 耗尽（st-commitspeed-tbl-20260924 止血，与 drain_queue 同语义）：
+    # attempts≥死信阈值的毒药件拾取即死信，不再白耗一次 landing——队首让位。
+    # dead_reason 注明 attempts 耗尽并附末次失败原因（三分类随末次原因走）。
+    if cq._attempts_backoff_enabled() and cq._item_attempts(item) >= cq._ATTEMPTS_DEAD_THRESHOLD:
+        item["dead_at"] = cq._now_iso()
+        item["dead_reason"] = cq._attempts_exhausted_reason(item)
+        cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+        os.replace(processing_path, root / "dead" / processing_path.name)
+        with stats_lock:
+            stats["dead"] += 1
+            stats["processed_qids"].append(qid)
+            shared["processed"] += 1
+        logger.warning(
+            "[pool] qid=%s attempts=%d 耗尽，拾取即死信（队首止血）: %s",
+            qid,
+            cq._item_attempts(item),
+            item["dead_reason"],
+        )
+        cq._notify_task_board_dead_letter(item)
+        return
     result: cq.LandingResult | None = None
     if (item.get("meta") or {}).get("stale"):
         still_ok, mismatched = cq._revalidate_stale_base(item, _pool_head_reader(landing))
@@ -2539,6 +2559,10 @@ def _pool_process_item(
         except cq.LandingEnvironmentError as exc:
             # 环境失败≠物品失败：当前项退回 pending、置共享终止旗（其余工收工不新增
             # 失败面）、本波结束——与 drain_queue「终止整轮」同语义。
+            # B5（st-commitspeed-tbl-20260924）：退回前 attempts+1 持久化（≥3 惩罚
+            # 退避、≥5 拾取死信，毒药件不再无限占队首）。
+            if cq._attempts_backoff_enabled():
+                cq._bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
             try:
                 cq._retry_transient(lambda: os.rename(processing_path, root / "pending" / processing_path.name))
             except OSError:

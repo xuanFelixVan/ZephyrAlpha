@@ -187,6 +187,24 @@ _READ_RETRY_INTERVAL = 0.05  # 重试间隔 50ms × 20 = 1s 上限
 _DONE_TTL_DAYS_DEFAULT = 7.0  # 66 号 §12 Q3 已闭环：done 保留 7 天 TTL；dead 永不自动清理
 
 # ---------------------------------------------------------------------------
+# B5 attempts 计数+退避（st-commitspeed-tbl-20260924 止血，B4 排队键 docstring 登记
+# 的残留风险本件落地）：毒药件（反复落地失败退回 pending）保留原 created_at 居队首，
+# 每轮自举白耗一次 landing+终止整轮（实测 09-24 主区 HEAD 零推进 52 分钟即该形态）。
+# 调度面三件：①重试退回 pending 前 attempts+1 持久化在项文件；②attempts≥
+# _ATTEMPTS_BACKOFF_THRESHOLD 在 _pick_head 排序键加惩罚（延迟可拾取，复用
+# (created_at,qid) 排序）；③attempts≥_ATTEMPTS_DEAD_THRESHOLD 拾取即死信
+# （dead_reason=attempts_exhausted 附末次失败原因，三分类随末次原因走——env 失败
+# 仍归 env 可 requeue）。不改门禁判据/退出码语义；只动队列调度面。
+# 开关：env _ATTEMPTS_BACKOFF_ENV（默认 ON；"0"/"false"=关闭回退现行为）。登记锚=
+# config/flags.yaml `commit_queue_attempts_backoff`（本脚本零 yaml 依赖，代码只读 env）。
+# ---------------------------------------------------------------------------
+_ATTEMPTS_FIELD = "attempts"  # 项 JSON 字段：累计落地失败退回次数（终态留档可追溯）
+_ATTEMPTS_BACKOFF_THRESHOLD = 3  # attempts≥3 排队键退避（惩罚单调递增）
+_ATTEMPTS_DEAD_THRESHOLD = 5  # attempts≥5 拾取即死信（不再白耗 landing）
+_ATTEMPTS_BACKOFF_PENALTY_SECONDS = 900.0  # 退避惩罚步长 15min/超限次
+_ATTEMPTS_BACKOFF_ENV = "ZEPHYR_CQ_ATTEMPTS_BACKOFF"  # 覆盖位（先例：QUEUE_ENV_VAR）
+
+# ---------------------------------------------------------------------------
 # F2 前置②（2026-09-18 st-flashspeed，判据书 F2「前置（机读）」行）：跨域热文件
 # 单通道闸——域映射配置在案。S18-R3 签署后 k=4 分区通道的 drain 按域取队 MUST 咨
 # 询本路由：不变量=任一通道键任一时间点活跃 lease≤1（机读判据「lease 双写者窗口
@@ -1105,6 +1123,60 @@ _HEAD_SCAN_BOUND = 400  # B4 队首选择扫描界（FIFO 须见到全部在途�
 # 的最老件永久看不见，等于把饿死藏回排序里。400 覆盖实测峰值 56 件约 7 倍余量。）
 
 
+def _attempts_backoff_enabled() -> bool:
+    """B5 退避总开关：env 覆盖位缺省 ON（"0"/"false"/"off"/"no"=关闭回退现行为）。"""
+    raw = os.environ.get(_ATTEMPTS_BACKOFF_ENV, "").strip().lower()
+    return raw not in ("0", "false", "off", "no")
+
+
+def _item_attempts(item: dict | None) -> int:
+    """读项的 attempts 计数；缺失/不可解析一律 0（历史项/损坏项不惩罚）。"""
+    try:
+        return int((item or {}).get(_ATTEMPTS_FIELD, 0) or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
+def _backoff_penalty_seconds(item: dict | None) -> float:
+    """B5 排队键惩罚：attempts≥阈值 → (attempts-阈值+1)×步长 秒（单调递增）。
+
+    调用方（_pick_head._rank）把惩罚加在 **max(原时刻, now)** 上=未来时刻，延迟可
+    拾取（等效挪队尾）；正常件（attempts<3/缺字段/None）与开关关闭恒 0 零影响。
+    """
+    if not _attempts_backoff_enabled():
+        return 0.0
+    attempts = _item_attempts(item)
+    if attempts < _ATTEMPTS_BACKOFF_THRESHOLD:
+        return 0.0
+    return (attempts - _ATTEMPTS_BACKOFF_THRESHOLD + 1) * _ATTEMPTS_BACKOFF_PENALTY_SECONDS
+
+
+def _bump_retry_attempts(processing_path: Path, item: dict, reason: str = "") -> int:
+    """重试退回 pending 前 attempts+1 持久化在该 qid 的状态文件（项 JSON 本体）。
+
+    附 last_failure（截断 500 字符）/last_retry_at 留痕；持久化失败吞掉不阻断退回
+    （计数丢失仅损失一轮退避精度，物品绝不因此丢——宁漏不误）。
+    """
+    item[_ATTEMPTS_FIELD] = _item_attempts(item) + 1
+    if reason:
+        item["last_failure"] = str(reason)[:500]
+    item["last_retry_at"] = _now_iso()
+    try:
+        _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+    except OSError:
+        logger.warning("[drain] qid=%s attempts 计数持久化失败（退回照常，宁漏不误）", item.get("qid"))
+    return item[_ATTEMPTS_FIELD]
+
+
+def _attempts_exhausted_reason(item: dict) -> str:
+    """attempts 耗尽死因串：注明 attempts 耗尽+末次失败原因（三分类随末次原因走）。"""
+    attempts = _item_attempts(item)
+    return (
+        f"attempts_exhausted: 落地失败退回 {attempts} 次耗尽（B5 退避止血，拾取即死信不再白耗 landing）"
+        f": {item.get('last_failure', '')}"
+    )
+
+
 def _item_lane(item: dict | None) -> str:
     """P1-D 车道判定（方案 v2.1 §3.6）：machine=reconciler 派生自动批；缺省 interactive。
 
@@ -1132,8 +1204,11 @@ def _pick_head(heads: list) -> tuple:
     **会话名字母序**而非到达顺序。实测 24h 内 1081 对先后关系里 **56% 倒挂**（后到先走），
     最老件等 5.9 小时、而字母序在前的反复失败会话可持续独占队首
     （09-24 14:29-15:21 主区 HEAD 零推进 52 分钟即该形态）。
-    残留风险（本件不修，属 B5 退避范围）：环境失败回退 pending 的件保留原 created_at，
-    先来先服务下它仍居队首——需 attempts 计数 + 退避降级才能把"毒药队首"移出。
+    残留风险（B5 已止血，st-commitspeed-tbl-20260924）：环境失败回退 pending 的件
+    原保留原 created_at 恒居队首——现 attempts 计数+退避已落地：重试退回前
+    attempts+1（_bump_retry_attempts），attempts≥3 排序键加惩罚（
+    _backoff_penalty_seconds，延迟可拾取），attempts≥5 拾取即死信（drain attempts
+    耗尽分支）——毒药队首最多白耗 _ATTEMPTS_DEAD_THRESHOLD 次即让位/入墓。
     """
     from datetime import datetime
 
@@ -1155,6 +1230,13 @@ def _pick_head(heads: list) -> tuple:
                 ts = path.stat().st_mtime
             except OSError:
                 ts = now_ts
+        # B5 退避（st-commitspeed-tbl-20260924）：attempts≥阈值 → 有效时刻=max(原时刻,
+        # now)+惩罚=**未来时刻**（延迟可拾取，等效挪队尾）。必须锚定 now 而非原时刻加
+        # 偏移——固定偏移压不过年龄差（实测毒药件比新件老 24h，+15min 偏移仍居队首），
+        # 未来时刻才能保证让位所有正常件；多毒药件之间按惩罚单调（轻者先行）。
+        penalty = _backoff_penalty_seconds(item)
+        if penalty:
+            ts = max(ts, now_ts) + penalty
         return ts, str(path.name), lane, path
 
     ranked = [_rank(h) for h in heads[:_HEAD_SCAN_BOUND]]
@@ -1183,6 +1265,8 @@ def drain_queue(
     流程（66 号 §6.3 + §8）：拿 lease → 回收 processing 孤儿 → FIFO（qid 单调序）取
     pending 队首 → 原子 rename processing → landing → done/（附 landed_at/landed_id）
     或 dead/（附 dead_reason/dead_at，不卡队后续继续）→ 排空释放 lease。
+    B5 attempts 退避（st-commitspeed-tbl-20260924）：环境失败退回前 attempts+1 持久化；
+    attempts≥5 的项拾取即死信（dead_reason=attempts_exhausted），毒药队首有限让位。
 
     landing : callable(item: dict, queue_root: Path) -> LandingResult；None=默认桩
         （仅标记 done 不真提交，B 段接专用 worktree 真落盘）。
@@ -1261,6 +1345,26 @@ def drain_queue(
                 break
             qid = item.get("qid", head.stem)
             _item_t0 = time.monotonic()  # D7 单项墙钟挂账（环节2 E4）
+            # B5 attempts 耗尽（st-commitspeed-tbl-20260924 止血）：attempts≥死信阈值的
+            # 毒药件拾取即死信，不再白耗一次 landing——队首让位，后续件同轮照常落地。
+            # dead_reason 注明 attempts 耗尽并附末次失败原因（classify_dead_reason 随
+            # 末次原因三分类：env 失败耗尽仍归 env 可 requeue，物品不被冤枉）。
+            if _attempts_backoff_enabled() and _item_attempts(item) >= _ATTEMPTS_DEAD_THRESHOLD:
+                item["dead_at"] = _now_iso()
+                item["dead_reason"] = _attempts_exhausted_reason(item)
+                _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+                os.replace(processing_path, root / "dead" / head.name)
+                stats["dead"] += 1
+                logger.warning(
+                    "[drain] qid=%s attempts=%d 耗尽，拾取即死信（队首止血）: %s",
+                    qid,
+                    _item_attempts(item),
+                    item["dead_reason"],
+                )
+                _notify_task_board_dead_letter(item)  # 死信标签联动同口径（宁漏不误）
+                stats["processed_qids"].append(qid)
+                processed += 1
+                continue
             result: LandingResult | None = None
             if (item.get("meta") or {}).get("stale"):
                 # P1 级联（66 号 §6.4）：stale 项重校验基底——仍适用清标放行走正常
@@ -1286,6 +1390,10 @@ def drain_queue(
                     # 环境失败 ≠ 物品失败（2026-09-10 死信事故治本）：landing 自身
                     # repo/worktree 不可用时，本轮所有项都必然同样失败——当前项退回
                     # pending、终止整轮、绝不死信（真实物品不被环境事故拖进坟墓）。
+                    # B5（st-commitspeed-tbl-20260924）：退回前 attempts+1 持久化——
+                    # 毒药件不再无限保留队首资格（≥3 惩罚退避、≥5 拾取死信）。
+                    if _attempts_backoff_enabled():
+                        _bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
                     try:
                         _retry_transient(lambda: os.rename(processing_path, head))
                     except OSError:
