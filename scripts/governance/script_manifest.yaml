@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-22T21:45:59Z
+# 自动生成于 2026-09-24T01:11:15Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-22T21:45:59Z'
+generated_at: '2026-09-24T01:11:15Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 447
-with_manifest: 407
-missing_manifest: 40
+total_scripts: 452
+with_manifest: 409
+missing_manifest: 43
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 60
+  governance: 64
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -25,7 +25,7 @@ categories:
   governance:d8_doc_sync: 15
   governance:d9_knowledge: 2
   governance:data_quality: 2
-  governance:generators: 18
+  governance:generators: 19
   governance:git_hooks: 1
   governance:meta: 48
   governance:migrate_sqlite_to_pg: 2
@@ -176,6 +176,16 @@ scripts:
   description: depgraph 变更写入工具（RULE-SIXTEEN 强制配套）
   tags:
   - Quick
+- name: apply_meta_question_ddl.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: apply_resource_plan.py
   owner: governance
   dimensions: []
@@ -267,6 +277,40 @@ scripts:
   args: []
   warn_only: false
   description: check_commit_message.py — GitHub Actions PR commit message guard (P4-3).
+  tags:
+  - Quick
+- name: check_meta_question_audit_reconcile.py
+  owner: governance
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 120
+  args: []
+  warn_only: false
+  description: PQ-0062/0102 审计双轨对账：PG meta_question_audit vs JSONL 追加账逐日+逐行差集（20§2.2，差集以
+    PG 为真源）。
+  tags:
+  - Quick
+- name: check_meta_question_batch.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
+- name: check_meta_question_status_band.py
+  owner: governance
+  dimensions:
+  - D3
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: PQ-0099 状态分布健康带监控器：只读拉取 meta_question.status 分布，对照 answered 30-70%+单状态≤80%
+    判档（default/campaign 双 regime，campaign 数值待 Owner 裁定）。
   tags:
   - Quick
 - name: check_registry_of_logs.py
@@ -4113,6 +4157,16 @@ scripts:
   tags:
   - Disruptive
   - Quick
+- name: generators/generate_commit_guide.py
+  owner: governance:generators
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: generators/generate_gate_registry.py
   owner: governance:generators
   dimensions:
