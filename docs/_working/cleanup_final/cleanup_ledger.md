@@ -47,3 +47,10 @@ title: "遗留修复收尾总包 — 台账 ledger（st-cleanup-final-20260924�
 
 - 六件套+追加⑦⑧⑨ 全部执行完毕；R3=回填；claims 释放=收尾序列执行；自动化核删=零新增确认。
 - 残余移交：⑨ 的 09-23 synth 行缺席归数据作业车道；capability 册三会话拉锯残影（AUDIT_FIX_LEDGER 条目属他会话）；合并器对 bucket-dict 族派生册的合并能力缺口归 st-commitsys 基建债。
+
+## 事故处置补记（20:5x）
+
+- **rule_bridge 假警报裁定（st-ailayer-final 告急呈报复核）**：呈报路径 src/zephyr/governance/rule_bridge/ 在全 git 历史中从未作为实体存在（governance→gov_enforcement 为早已落库的模块改名，20bd27d095 明载含 stale 副本合法删除）；真路径 src/zephyr/gov_enforcement/rule_bridge/ 完好（盘上 19 文件、belt daemon pid 41380 心跳 10s、零删除态）。"双视角交叉确认"实为对同一不存在路径的两次一致确认，无证据力。已建议其对真路径重查并照常施工。教训入册：**蒸发类告警第一动作=git log --all 核路径历史存在性，防 phantom path 假警报消耗干预资源。**
+- **本包自查疏漏一处（已修复）**：绕 BLUEPRINT-FORMAT 连坐时按 W1 处方 unstage 的 src/zephyr/governance/registry_ledger/ WIP 未及时回加（提交改道队列后遗漏），该目录一度呈未跟踪态——文件全程在盘零丢失，已全部 git add 回 A 态。
+- **capability 册拉锯残影定性**：cleanup_final 下 LEDGER.md/ledger.md 两条 stale token 条目随 audit-fix 会话陈旧基底落地反复复活（其在途袋各驮旧基底，砍即复活）；非功能性残留（dangling token 元数据，零消费方），待其袋管道排干后由下一笔新基底批次自然收敛，本包停止缠斗免 whack-a-mole。
+- **⑨ residual 维持**：kline_sector_intraday 09-23 synth 行仍缺席（20:5x 复查），归数据作业车道。
