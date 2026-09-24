@@ -1043,6 +1043,20 @@ _N16_SKIP_DIR_PREFIXES: set[str] = _N16_SKIP_DIR_PREFIXES_RAW
 _N16_SRC_EXEMPT_NAMES: frozenset[str] = _N16_TESTS_EXEMPT_NAMES | frozenset({"__main__.py"})
 
 
+def _in_n16_skip_dir(rel_path: str) -> bool:
+    """N-16 目录豁免判定（与 _check_basename_uniqueness 的 os.walk 剪枝同语义）。
+
+    全扫面（check_docs/src_name_uniqueness）按目录名剪枝 skip_dirs_docs，增量面曾漏用
+    同一份真源，导致 #ARCH-PRECOMMIT-INCREMENTAL 立法的「_working 草稿区重名不阻断
+    commit」只在审计面生效、提交面仍硬阻断。
+    """
+    parts = rel_path.split("/")[:-1]
+    return any(
+        p in _N16_DOCS_SKIP_DIRS or any(p.startswith(pre) for pre in _N16_SKIP_DIR_PREFIXES)
+        for p in parts
+    )
+
+
 def _check_basename_uniqueness(
     scan_root: Path,
     project_root: Path,
@@ -1236,6 +1250,11 @@ def check_new_files_naming(
         except ValueError:
             continue  # 不在项目内
         if not scope_prefixes or rel.startswith(scope_prefixes):
+            # 增量面同全库面豁免 skip_dirs（#ARCH-PRECOMMIT-INCREMENTAL 2026-08-05 立法原意
+            # =「草稿区重名不阻断 commit」；此前只有 _check_basename_uniqueness 生效，
+            # 真源 n16_config.skip_dirs_docs 在本路径空转 → docs/_working 下按窗同名产物被硬拦）
+            if _in_n16_skip_dir(rel):
+                continue
             new_rel_files.append(rel)
 
     if not new_rel_files:
@@ -1289,6 +1308,9 @@ def check_new_files_naming(
     for rel_path in tracked_files:
         basename = os.path.basename(rel_path)
         if basename in exempt:
+            continue
+        # 已跟踪基线同样豁免 skip_dirs：归档/草稿区里的既有件不得反过来拦正式区新增
+        if _in_n16_skip_dir(rel_path.replace("\\", "/")):
             continue
         # normcase 归一 basename 作 key：Windows 下 on-disk 与 git index 大小写不一致时
         # 确保同名文件正确匹配（治本·与 _is_new_file 一致性归一）

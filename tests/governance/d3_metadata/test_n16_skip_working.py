@@ -11,12 +11,17 @@
     test_working_in_skip_dirs_yaml  —— YAML 真源（trae_028）含 _working
     test_working_in_skip_dirs_code —— 代码 fallback（_N16_DOCS_SKIP_DIRS_FALLBACK）含 _working
                                        （human_gated MOD-INF-005，diff 批准落盘后由红转绿）
+    test_incremental_path_honours_skip_dirs —— 提交面（check_new_files_naming）真正消费 skip_dirs
+                                       （2026-09-25 治本：立法原意「草稿区重名不阻断 commit」
+                                        曾只在全扫面生效，增量面空转真源）
 """
 
 from __future__ import annotations
 
+import importlib.util
 import pathlib
 import re
+import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[3]
 TRAEE_028_YAML = ROOT / "docs" / "01_policies_and_standards" / "rules" / "trae_028_doc_structure_naming.yaml"
@@ -75,3 +80,40 @@ def test_working_in_skip_dirs_code():
         "human_gated diff 批准落盘后本测试转绿。当前 fallback_block="
         f"{fallback_block.strip()}"
     )
+
+
+def _load_gate_module():
+    spec = importlib.util.spec_from_file_location("cnc_under_test", GATE_SRC)
+    mod = importlib.util.module_from_spec(spec)
+    # @dataclass 在 exec_module 期间要回查 sys.modules[cls.__module__]，不注册会 AttributeError
+    sys.modules["cnc_under_test"] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_incremental_path_honours_skip_dirs():
+    """提交面（check_new_files_naming）必须消费 n16_config.skip_dirs_docs。
+
+    双向尺：_working 草稿区内按窗同名不得阻断（回归 2026-09-22 整装首跑 22 件 13 轮死因），
+    正式区同名仍必须阻断（防把豁免改成 N-16 静默失效）。
+    """
+    mod = _load_gate_module()
+    draft = mod.check_new_files_naming(
+        [
+            "docs/_working/integrated_backtest/artifacts/W_IS/run_summary.yaml",
+            "docs/_working/integrated_backtest/artifacts/W_OOS/run_summary.yaml",
+        ],
+        project_root=ROOT,
+        require_staged=False,
+    )
+    assert not draft, f"docs/_working 属 skip_dirs_docs，草稿区重名不得阻断：{[v.message for v in draft]}"
+
+    formal = mod.check_new_files_naming(
+        [
+            "docs/01_policies_and_standards/n16_probe_alpha.yaml",
+            "docs/02_enterprise_architecture/n16_probe_alpha.yaml",
+        ],
+        project_root=ROOT,
+        require_staged=False,
+    )
+    assert formal, "正式区同名新件必须仍被 N-16 阻断（豁免不得扩到 skip_dirs 之外）"

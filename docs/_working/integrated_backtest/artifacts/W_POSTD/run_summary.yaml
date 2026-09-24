@@ -1,0 +1,336 @@
+meta:
+  window: W_POSTD
+  protocol: IBT-PROTOCOL-V1 (frozen 2026-09-22T01:05)
+  members:
+  - CAND-29eb91dbaf60
+  - CAND-4440d07f973f
+  - CAND-6a6ec8869ddb
+  - CAND-8d000bf3ccc3
+  - CAND-a4543012b464
+  - CAND-bd42540f86e4
+  - CAND-c4ec6332c07f
+  - CAND-d06cab686cef
+  - CAND-e3da6fa71af1
+  - CAND-eaddc3f9db4e
+  - FACT-4228020a
+  - FACT-4b200528
+  - FACT-4f749668
+  - FACT-e293e217
+  - FACT-e831084c
+  skipped_members:
+  - - CAND-8d000bf3ccc3
+    - all-zero weight rows
+  - - CAND-e3da6fa71af1
+    - all-zero weight rows
+  - - CAND-eaddc3f9db4e
+    - all-zero weight rows
+  - - CAND-d06cab686cef
+    - all-zero weight rows
+  - - CAND-29eb91dbaf60
+    - all-zero weight rows
+  - - CAND-bd42540f86e4
+    - all-zero weight rows
+  rescale_factor: 1.666666658
+  alpha_total: 0.600000003
+  compose_notes: '参与成员权重合计 0.600000<1（跳过 6 员，其中死成员 α 合计 0.400000＝方案 40.0% 被摊派；明细: CAND-8d000bf3ccc3(all-zero weight rows);
+    CAND-e3da6fa71af1(all-zero weight rows); CAND-eaddc3f9db4e(all-zero weight rows); CAND-d06cab686cef(all-zero weight rows);
+    CAND-29eb91dbaf60(all-zero weight rows); CAND-bd42540f86e4(all-zero weight rows)），已显式再归一化 ×1.666667（禁静默纪律，ablation 同款；逐员口径见
+    metrics.dead_weight_disclosed）; 行级 Σw 偏差最大 0.7778（>0.05 显著阈值）已归一至 1.0（6 行）——该日缺口由幸存成员按 α 摊派承担，逐员零信号日计数见 metrics.dead_weight_disclosed.member_zero_row_counts'
+  dead_weight:
+    schema: 1
+    plan_id: IBT-A
+    plan_weight_total: 1.000000005
+    participants:
+    - strategy_id: FACT-4f749668
+      alpha: 0.066666667
+      alpha_share_of_participating_base: 0.111111111
+      zero_signal_rows: 1
+    - strategy_id: FACT-4228020a
+      alpha: 0.066666667
+      alpha_share_of_participating_base: 0.111111111
+      zero_signal_rows: 1
+    - strategy_id: FACT-e293e217
+      alpha: 0.066666667
+      alpha_share_of_participating_base: 0.111111111
+      zero_signal_rows: 1
+    - strategy_id: FACT-e831084c
+      alpha: 0.066666667
+      alpha_share_of_participating_base: 0.111111111
+      zero_signal_rows: 1
+    - strategy_id: FACT-4b200528
+      alpha: 0.066666667
+      alpha_share_of_participating_base: 0.111111111
+      zero_signal_rows: 1
+    - strategy_id: CAND-c4ec6332c07f
+      alpha: 0.066666667
+      alpha_share_of_participating_base: 0.111111111
+      zero_signal_rows: 6
+    - strategy_id: CAND-4440d07f973f
+      alpha: 0.066666667
+      alpha_share_of_participating_base: 0.111111111
+      zero_signal_rows: 3
+    - strategy_id: CAND-a4543012b464
+      alpha: 0.066666667
+      alpha_share_of_participating_base: 0.111111111
+      zero_signal_rows: 5
+    - strategy_id: CAND-6a6ec8869ddb
+      alpha: 0.066666667
+      alpha_share_of_participating_base: 0.111111111
+      zero_signal_rows: 0
+    skipped_members:
+    - strategy_id: CAND-8d000bf3ccc3
+      alpha: 0.066666667
+      alpha_share_of_plan: 0.066666667
+      reason: all-zero weight rows
+      kind: dead-member
+    - strategy_id: CAND-e3da6fa71af1
+      alpha: 0.066666667
+      alpha_share_of_plan: 0.066666667
+      reason: all-zero weight rows
+      kind: dead-member
+    - strategy_id: CAND-eaddc3f9db4e
+      alpha: 0.066666667
+      alpha_share_of_plan: 0.066666667
+      reason: all-zero weight rows
+      kind: dead-member
+    - strategy_id: CAND-d06cab686cef
+      alpha: 0.066666667
+      alpha_share_of_plan: 0.066666667
+      reason: all-zero weight rows
+      kind: dead-member
+    - strategy_id: CAND-29eb91dbaf60
+      alpha: 0.066666667
+      alpha_share_of_plan: 0.066666667
+      reason: all-zero weight rows
+      kind: dead-member
+    - strategy_id: CAND-bd42540f86e4
+      alpha: 0.066666667
+      alpha_share_of_plan: 0.066666667
+      reason: all-zero weight rows
+      kind: dead-member
+    member_zero_row_counts:
+      FACT-4f749668: 1
+      FACT-4228020a: 1
+      FACT-e293e217: 1
+      FACT-e831084c: 1
+      FACT-4b200528: 1
+      CAND-c4ec6332c07f: 6
+      CAND-4440d07f973f: 3
+      CAND-a4543012b464: 5
+      CAND-6a6ec8869ddb: 0
+    participants_alpha_base: 0.600000003
+    skipped_alpha_base: 0.400000002
+    skipped_alpha_share_of_plan: 0.4
+    dead_member_alpha_base: 0.400000002
+    explicit_zero_weight_alpha: 0
+    rescale_factor: 1.666666658
+    row_normalization:
+      rows_total: 8
+      rows_all_zero: 0
+      rows_normalized: 6
+      max_deviation: 0.777777778
+      mean_abs_deviation: 0.263888889
+      materiality_threshold: 0.05
+      material: true
+    activation:
+      applied: false
+      note: 静态模式无 regime 序可依，activation 不套用（二期逐位一致锚）
+  data:
+    schema: ibt_engine_data/v1
+    traded_n: 61
+    stock_n: 60
+    index_legs:
+    - '000300'
+    index_leg_note: kline_index 并入作不可实盘代理（协议 §4 披露）
+    rows: 488
+  regime:
+    states:
+      r2: 296
+      r12: 6
+      r4: 239
+      r10: 202
+      r1: 557
+      r3: 514
+      r11: 1
+    snapshot_rows: 1815
+    pit: snapshot date < t (key shifted +1d)
+  shrink_map:
+    r1: 1.0
+    r2: 1.0
+    r3: 1.0
+    r11: 1.0
+    r12: 1.0
+    r4: 0.5
+    r10: 0.2
+variants:
+  IBT-A:
+    core:
+      total_return: -0.021358967425137876
+      annual_return: -0.45366907205173024
+      sharpe_ratio: 0.0
+      max_drawdown: 0.07491419654371331
+      win_rate: 0.375
+      trades_count: 194
+      start_date: '2026-09-09 00:00:00'
+      end_date: '2026-09-18 00:00:00'
+      overfitting_flag: true
+    extras:
+      signal_row_stats:
+        schema: target_weight_renormalization/v1
+        rows_with_signal: 7
+        rows_all_zero: 0
+        rows_absent: 0
+        rows_renormalized: 0
+        rows_below_unit: 0
+        target_sum_min: 1.0
+        target_sum_max: 1.0
+        target_sum_mean: 1.0
+        swallowed_cash_mass: 0.0
+        swallowed_cash_fraction_mean: 0.0
+        note: 引擎对每个非零目标权重行执行 Σ→1 归一（满仓口径，裁定#270 §6④）；rows_below_unit>0 即策略/成员的现金缓冲被引擎吞掉，全零行=当日不下单≠清仓（持现金意图须经 ShrinkageBacktestEngine）
+      skipped_fills:
+        schema: skipped_fills/v1
+        count: 0
+        by_reason: {}
+        note: apply_fill 被拒（现金缺口/T+1 锁定/持仓不足）→ 实际执行偏离信号意图
+      unmodeled: see engine module docstring UNMODELED map (static disclosure)
+    wall_sec: 0.5
+  IBT-B:
+    core:
+      total_return: -0.021358967425137876
+      annual_return: -0.45366907205173024
+      sharpe_ratio: 0.0
+      max_drawdown: 0.07491419654371331
+      win_rate: 0.375
+      trades_count: 194
+      start_date: '2026-09-09 00:00:00'
+      end_date: '2026-09-18 00:00:00'
+      overfitting_flag: true
+    extras:
+      signal_row_stats:
+        schema: target_weight_renormalization/v1
+        rows_with_signal: 7
+        rows_all_zero: 0
+        rows_absent: 0
+        rows_renormalized: 0
+        rows_below_unit: 0
+        target_sum_min: 1.0
+        target_sum_max: 1.0
+        target_sum_mean: 1.0
+        swallowed_cash_mass: 0.0
+        swallowed_cash_fraction_mean: 0.0
+        note: 引擎对每个非零目标权重行执行 Σ→1 归一（满仓口径，裁定#270 §6④）；rows_below_unit>0 即策略/成员的现金缓冲被引擎吞掉，全零行=当日不下单≠清仓（持现金意图须经 ShrinkageBacktestEngine）
+      skipped_fills:
+        schema: skipped_fills/v1
+        count: 0
+        by_reason: {}
+        note: apply_fill 被拒（现金缺口/T+1 锁定/持仓不足）→ 实际执行偏离信号意图
+      unmodeled: see engine module docstring UNMODELED map (static disclosure)
+    wall_sec: 0.5
+members:
+  FACT-4f749668:
+    total_return: 0.01376147027361393
+    annual_return: 0.4662292222920308
+    sharpe_ratio: 0.0
+    max_drawdown: 0.018821019505113015
+    win_rate: 0.25
+    trades_count: 26
+    start_date: '2026-09-09 00:00:00'
+    end_date: '2026-09-18 00:00:00'
+    overfitting_flag: true
+  FACT-4228020a:
+    total_return: 0.015930761033006127
+    annual_return: 0.5566647485954019
+    sharpe_ratio: 0.0
+    max_drawdown: 0.014150360103100189
+    win_rate: 0.25
+    trades_count: 54
+    start_date: '2026-09-09 00:00:00'
+    end_date: '2026-09-18 00:00:00'
+    overfitting_flag: true
+  FACT-e293e217:
+    total_return: 0.016528389015445486
+    annual_return: 0.5825095236143605
+    sharpe_ratio: 0.0
+    max_drawdown: 0.015407061144180013
+    win_rate: 0.375
+    trades_count: 48
+    start_date: '2026-09-09 00:00:00'
+    end_date: '2026-09-18 00:00:00'
+    overfitting_flag: true
+  FACT-e831084c:
+    total_return: 0.005973547568218317
+    annual_return: 0.18147274199910202
+    sharpe_ratio: 0.0
+    max_drawdown: 0.02212746362787264
+    win_rate: 0.25
+    trades_count: 51
+    start_date: '2026-09-09 00:00:00'
+    end_date: '2026-09-18 00:00:00'
+    overfitting_flag: true
+  FACT-4b200528:
+    total_return: 0.020453594369275147
+    annual_return: 0.7628334100428495
+    sharpe_ratio: 0.0
+    max_drawdown: 0.021790461789538456
+    win_rate: 0.5
+    trades_count: 78
+    start_date: '2026-09-09 00:00:00'
+    end_date: '2026-09-18 00:00:00'
+    overfitting_flag: true
+  CAND-8d000bf3ccc3:
+    no_signal_window: true
+  CAND-c4ec6332c07f:
+    total_return: 0.002684335830174503
+    annual_return: 0.07794958495223692
+    sharpe_ratio: 0.0
+    max_drawdown: 0.0
+    win_rate: 0.125
+    trades_count: 1
+    start_date: '2026-09-09 00:00:00'
+    end_date: '2026-09-18 00:00:00'
+    overfitting_flag: true
+  CAND-e3da6fa71af1:
+    no_signal_window: true
+  CAND-4440d07f973f:
+    total_return: -0.08970742655826104
+    annual_return: -0.928043838416299
+    sharpe_ratio: 0.0
+    max_drawdown: 0.16551297771741127
+    win_rate: 0.375
+    trades_count: 7
+    start_date: '2026-09-09 00:00:00'
+    end_date: '2026-09-18 00:00:00'
+    overfitting_flag: true
+  CAND-eaddc3f9db4e:
+    no_signal_window: true
+  CAND-d06cab686cef:
+    no_signal_window: true
+  CAND-29eb91dbaf60:
+    no_signal_window: true
+  CAND-a4543012b464:
+    total_return: 0.023127160209886612
+    annual_return: 0.8968333819545529
+    sharpe_ratio: 0.0
+    max_drawdown: 0.002883832091180568
+    win_rate: 0.25
+    trades_count: 1
+    start_date: '2026-09-09 00:00:00'
+    end_date: '2026-09-18 00:00:00'
+    overfitting_flag: true
+  CAND-bd42540f86e4:
+    no_signal_window: true
+  CAND-6a6ec8869ddb:
+    total_return: 0.0037792315666638314
+    annual_return: 0.11139838634768706
+    sharpe_ratio: 0.0
+    max_drawdown: 0.022636946856837953
+    win_rate: 0.375
+    trades_count: 49
+    start_date: '2026-09-09 00:00:00'
+    end_date: '2026-09-18 00:00:00'
+    overfitting_flag: true
+benchmark:
+  benchmark: 000300 buy&hold (index, 不可交易口径)
+  total_return: -0.01426016145303799
+  days: 8
