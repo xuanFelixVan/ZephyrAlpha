@@ -73,3 +73,16 @@ ttl: task_bound
   袋 0004 被 §6.4 重校验判 `cascade_stale`（`base_blob` 有数据后该检测器才第一次真正工作）。
 - 常驻 `commit_belt_daemon`（05:14 起，旧码）由计划任务探测重拉后接受落地侧改动；
   本包不重启共享守护（非授权面）。入队侧与进程内自举路径已是新码。
+
+- **口径自纠（2026-09-24 21:5x，F-AUDITFIX-STALE-01）**：本包第一版把 `base_head` 取成
+  "入队那一刻看到的 `refs/heads/dev` 尖"——工作区落后 dev 时这是**错的**：快照字节来自本工作区
+  自己的树，基底却记成了比字节还新的点位 ⇒ `diff(base, dev)` 恒空 ⇒ 快进判定结构性失明。
+  今晚正是这个口径让 `q-20260924-st-commitspeed-tbl-20260924-0005`（**带** base_head=e500df6dfe）
+  把已在册的 `4442b1b4f6`（本 lane S-12 那一批）整文件覆回旧版——修复被自己的修复口径吃掉，
+  构成 ① 号任务的实际未收口面（不是"没记基底"，而是"记的点位不是字节的来源"）。
+  现口径三改：`resolve_base_head(工作区) = git rev-parse HEAD`（快照真源）；dev 侧推进一律以
+  `merge-base` 为界度量（会话分支上有自有未并入提交时不得假红）；仅当"快照字节与 dev 现态同
+  git blob id"（覆盖＝无操作）才短接放行。`reroute_auto_commit_to_queue` 里另写的那条
+  `rev-parse refs/heads/dev` 同步改调 `resolve_base_head`——两通道一律同源，禁各写一条口径。
+  永久尺＝本文件末 4 例（`tests/governance/test_commit_queue_base_head.py`），其中含**反事实
+  控制组**：把同一袋的基底填回旧口径必判 None，用以证明本红来自口径而非路径重叠。
