@@ -1,0 +1,38 @@
+notes: ''
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: SELECT toYYYYMM(announce_date) ym, count() FROM c3_fundamental.income_statement
+    FINAL WHERE announce_date BETWEEN '2024-01-01' AND '2025-09-09' GROUP BY ym ORDER
+    BY ym
+  result:
+    shape: 季频公告日离散分布吻合
+    window: 2024-01~2025-09
+    peak_months:
+      '202404': 9698
+      '202408': 5478
+      '202410': 5411
+      '202504': 9949
+      '202508': 5544
+    off_season_rows_range: 30-120
+- probe: src/zephyr/data/config/data_supply_sentinel.yaml
+  query: data_supply_sentinel.yaml disclosure_plan 哨兵行（季频健康检查口径在册）
+  result:
+    date_col: announce_date
+    max_lag_days: 60
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0154
+fail_type: null
+threshold: 不一致项=0（更新频率与延迟与 DS 册健康检查口径一致）
+conclusion: 登记节奏'季频，公告日离散分布'与库内实况一致，不一致项=0。income_statement 公告日月度分布（2024-01~2025-09）呈标准季报披露季离散形态：4
+  月峰值 9,698/9,949（年报+一季报截止）、8 月 5,478/5,544（半年报）、10 月 5,411（三季报）、非披露月 30~120 行——与'季频公告日离散分布'登记语义吻合（balance/cashflow
+  同构）。健康检查口径：哨兵 disclosure_plan(announce_date,60d) 在册。 （SL-A05 财务）
+confidence: 0.85
+data_window:
+  end: '2025-09-09'
+  start: '2024-01-01'
+three_check:
+  data: OK（源线谱 U3 行+哨兵配置+库内日历三者在册/在库可查）
+  caliber: OK（判据=登记节奏 vs 实有交易日覆盖 vs 哨兵阈值语义，逐项机械对账）
+  mechanical: OK（应考日数×实有日数+哨兵字段留痕）
+pit_assertion: U3 对账对象=登记文本+哨兵配置+闭卷窗内数据覆盖（全部 <=2025-09-09）；切点后信息仅作现状观察不进入一致性判定。
+q_id: PQ-0154

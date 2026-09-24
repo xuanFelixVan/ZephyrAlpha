@@ -1,0 +1,33 @@
+notes: notes：news_sentiment_window 闭卷窗 0 行（2026-02-24 起，断更史已登记已闭合）——窗表聚合腿窗内缺位不影响词表覆盖判定；news_data
+  明细腿完整。
+outcome: pass
+evidence:
+- probe: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  query: §2 SL-A09 U1 行：'快讯流密度与情感极性能否量化市场情绪并预测次日（信号词：电报条数/情感分/实体提及热度）'
+  result:
+    主题覆盖: 2/2=100%
+    词表词数: 3
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: news_data 闭卷窗 uniqExact(发布日)/count；sentiment_score 非空率
+  result:
+    days: 5641
+    rows: 7733898
+    sentiment_score覆盖: 1.0
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0176
+fail_type: null
+threshold: 覆盖率=100%（信号词表非空且宣称主题全部落在词集覆盖内）
+conclusion: 词表非空（3 词：电报条数/情感分/实体提及热度）。宣称主题 2/2 全覆盖：①快讯密度量化←电报条数；②情感极性量化情绪并预测次日←情感分+实体提及热度。机械背书：news_data
+  闭卷窗 5,641 发布日/7,733,898 行、sentiment_score 100% 覆盖、related_symbols/related_tags 列在库（实体热度）；news_sentiment_window
+  有 total_count/sentiment_index/avg_polarity/top_events_json（窗表 2026-02 起，闭卷窗 0 行——见
+  notes）。覆盖率=100%。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（审计对象=源线谱 U1 行+DS 册，均在册可读；底层表列名经 DESCRIBE 实证）
+  caliber: OK（判据=宣称主题→信号词逐词映射，词表非空+覆盖计数，机械可判）
+  mechanical: OK（词级对照表全文留痕于 evidence）
+pit_assertion: U1 词表核验为静态登记审计（词级对照），不涉时序取数；情感分只按发布时戳 PIT 计入，撤稿/更正不回写历史情绪，收益窗自 T+1
+  起
+q_id: PQ-0176

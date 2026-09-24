@@ -1,0 +1,37 @@
+notes: 本题为主要靠登记册文本比对的核验（confidence=0.4 口径）。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0168.py
+  query: 题面宣称消费方 × 源线谱 U5 行 × 层宪章层职责逐词对照
+  result:
+    token_map:
+    - claim: L3 情绪
+      match: 逐词一致
+      charter: L3 定桩含情绪变量（定案锁）
+      u5_token: L3 情绪
+    - claim: L4 决策
+      match: 逐词一致
+      charter: L4 决策层定稿存在，接收 L1/L3 输入
+      u5_token: L4 决策
+    registry_u5: L3 情绪 / L4 决策。
+    title_claim:
+    - L3 情绪
+    - L4 决策
+    mismatch_items: 0
+    charter_excerpt: 01_layer_charter.md：L3 定桩含'情绪与大盘'两变量（Owner 定案锁）；L4 决策层为七层定稿层；L1
+      源线向 L3 供状态变量原始数据、向 L4 供决策输入。
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0168
+fail_type: null
+threshold: consumers 与源线谱七层挂载登记一致；不一致项=0
+conclusion: SL-A07 消费方挂接三方一致：题面宣称（L3 情绪/L4 决策）=源线谱 U5 登记（'L3 情绪 / L4 决策'）逐词一致；层宪章侧
+  L3 定桩含'情绪'变量（Owner 定案锁）、L4 决策层为定稿层且接收 L1 原料，挂接合法。不一致项=0。
+confidence: 0.4
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（对照基准=源线谱册+层宪章两份文本，无需落库）
+  caliber: OK（消费方=七层命名，词序无歧义）
+  mechanical: OK（逐词布尔对照可复现）
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0168

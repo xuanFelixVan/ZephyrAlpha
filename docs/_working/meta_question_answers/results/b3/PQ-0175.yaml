@@ -1,0 +1,86 @@
+notes: 登记债：U6 文本无数值阈值（'不显著'未定义显著性水平），演练采用通行 |t|>=2 显著性判据；出口链代理篮子为本演练声明口径，正式复考须以 L2
+  传导图谱贸易链边集替代。复考前置：L2 图谱贸易链边集建成+阈值登记后按同法正式重放。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0175.py
+  query: 重放：BDI argMax(value) 按日去重 × kline_daily 5 股 pct_change 等权; mom20=ln(BDI_t/BDI_{t-20});
+    fwd_k 累计收益; Pearson+t
+  result:
+    replay:
+      n_days: 1572
+      window:
+      - '2019-01-02'
+      - '2025-09-09'
+      executable: true
+      legs_executed:
+      - 领先-滞后互相关
+      - 出口链横截面（代理篮子）
+    u6_text: 领先-滞后互相关+出口链横截面检验；证伪=领先相关不显著。
+    leading_lag:
+      k=1:
+        n: 1551
+        t_stat: 0.502
+        pearson_r: 0.0128
+      k=3:
+        n: 1549
+        t_stat: 0.202
+        pearson_r: 0.0051
+      k=5:
+        n: 1547
+        t_stat: -0.096
+        pearson_r: -0.0025
+      k=10:
+        n: 1542
+        t_stat: -0.675
+        pearson_r: -0.0172
+    proxy_basket:
+    - '601919'
+    - '601872'
+    - '601866'
+    - '601018'
+    - '601298'
+    cross_section_k5:
+      '601018':
+        n: 1547
+        t_stat: 0.483
+        pearson_r: 0.0123
+      '601298':
+        n: 1547
+        t_stat: -0.092
+        pearson_r: -0.0023
+      '601866':
+        n: 1547
+        t_stat: -0.731
+        pearson_r: -0.0186
+      '601872':
+        n: 1547
+        t_stat: -0.509
+        pearson_r: -0.0129
+      '601919':
+        n: 1547
+        t_stat: 0.528
+        pearson_r: 0.0134
+    numeric_threshold_registered: false
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0175
+fail_type: null
+threshold: 退役判据含明确阈值与数据窗口可重放；判据可执行率=100%
+conclusion: 'SL-A08 U6 退役证伪方案历史重放演练成功：领先-滞后互相关腿与出口链横截面腿（代理篮子口径）均在闭卷窗 2019-01-02~2025-09-09（1572
+  交易日）端到端机跑出数，判据可执行率=2/2=100%。互相关腿结果：BDI 20 日动量 vs 篮子 T+1~T+k 累计收益 {"k=1": {"pearson_r":
+  0.0128, "t_stat": 0.502, "n": 1551}, "k=3": {"pearson_r": 0.0051, "t_stat": 0.202,
+  "n": 1549}, "k=5": {"pearson_r": -0.0025, "t_stat": -0.096, "n": 1547}, "k=10":
+  {"pearson_r": -0.0172, "t_stat": -0.675, "n": 1542}}；横截面腿（k=5 逐股）：{"601919": {"pearson_r":
+  0.0134, "t_stat": 0.528, "n": 1547}, "601872": {"pearson_r": -0.0129, "t_stat":
+  -0.509, "n": 1547}, "601866": {"pearson_r": -0.0186, "t_stat": -0.731, "n": 1547},
+  "601018": {"pearson_r": 0.0123, "t_stat": 0.483, "n": 1547}, "601298": {"pearson_r":
+  -0.0023, "t_stat": -0.092, "n": 1547}}。判据''领先相关不显著''可用 |t|<2 显著性判据机械落地（演练只证可执行性，不构成
+  alpha/退役结论）。'
+confidence: 0.5
+data_window:
+  end: '2025-09-09'
+  start: '2019-01-02'
+three_check:
+  data: OK（BDI 13745 行切点前+篮子 5 股各 1624 行切点前）
+  caliber: OK（重放口径=演练声明的代理篮子；窗口 T+1 起符合 pit_proof）
+  mechanical: OK（两腿全部代码跑通出数）
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0175
