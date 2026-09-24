@@ -2106,14 +2106,36 @@ def _pool_claim_item(root: Path) -> Path | None:
         head, _lane = cq._pick_head(heads)
         if head is None:
             return None
+        # D4 终止性复查·第二层：done/ 已有同名＝已落地件的幽灵（_mark_cascade_stale 回写复活
+        # 或其他时序残留）——弃置续扫，不二次落地（判据：done 恒等于件数）
+        if (root / "done" / head.name).exists():
+            try:
+                head.unlink()
+            except (FileNotFoundError, PermissionError):
+                pass
+            continue
         processing_path = root / "processing" / head.name
         try:
             os.rename(head, processing_path)
-            return processing_path
         except FileNotFoundError:
             continue  # 他工已抢——重扫
         except PermissionError:
             continue  # enqueue 写入窗——重扫（同 drain_queue 竞态口径，不冤枉慢写入者）
+        except FileExistsError:
+            # processing 同名＝幽灵/竞态窗残留（D3 在工层兜底续跑，此处顺手清源防复发）
+            try:
+                head.unlink()
+            except (FileNotFoundError, PermissionError):
+                pass
+            continue
+        # 认领后终止性复查：rename 成功后 done/ 出现同名（同窗另一时序）⇒ 本副本亦幽灵——弃置
+        if (root / "done" / head.name).exists():
+            try:
+                processing_path.unlink()
+            except (FileNotFoundError, PermissionError):
+                pass
+            continue
+        return processing_path
     return None
 
 

@@ -1054,10 +1054,20 @@ def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
         meta["stale"] = True
         meta["stale_by"] = landed_qid
         meta["stale_at"] = _now_iso()
+        # D4 幽灵写回防御·第一层（st-commitspeed-tbl-20260924 T1'）：读窗内项可能已被工线程
+        # 认领（rename→processing）——_atomic_write 的 os.replace 会把 pending 路径**重新创建**
+        # （FileNotFoundError 保护对 replace 永不触发），产幽灵与真件同名并存。先收窄、写后清扫。
         try:
+            if not candidate.exists():
+                continue  # 已被认领/移除——不再是 pending，stale 标记无从谈起
             _retry_transient(
                 lambda: _atomic_write(candidate, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
             )
+            if (root / "processing" / candidate.name).exists() or (root / "done" / candidate.name).exists():
+                # 写回瞬间清扫：同名已在认领/终态 ⇒ 本回写产物即幽灵（认领=rename，pending 侧
+                # 恒为后复活的副本），当场移除防再认领双落地/再认领撞名杀工
+                candidate.unlink(missing_ok=True)
+                continue
             marked.append(item.get("qid", candidate.stem))
         except (FileNotFoundError, PermissionError):
             pass  # 并发 compaction 移除/写入窗口——跳过（同 _compact_pending 竞态口径）
