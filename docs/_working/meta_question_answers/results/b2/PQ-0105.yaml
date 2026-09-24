@@ -1,0 +1,56 @@
+notes: 与 PQ-0104/0106/0109 同属组合空间/E1C 载体缺口; birth_channel 分布仅现状观察。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l4_PQ-0105.py
+  query: SELECT count(),min(ingest_ts),max(ingest_ts) FROM c1_backtest.hypothesis_precheck/strategy_screen
+    WHERE ingest_ts<='2025-09-09'; SELECT birth_channel,count() FROM hypothesis_precheck
+    GROUP BY birth_channel
+  result:
+    note: PG public 无 %e1c%/%track%/%gplearn%/%mcts% 载体表; strategy_screen 无 track
+      字段
+    strategy_screen:
+      pre:
+        max: '1970-01-01 00:00:00+00:00'
+        min: '1970-01-01 00:00:00+00:00'
+        rows: 0
+      full:
+        max: '2026-09-22 22:35:06.901000+00:00'
+        min: '2026-09-12 11:29:11.015000+00:00'
+        rows: 1340
+      table: c1_backtest.strategy_screen
+      date_col: ingest_ts
+    hypothesis_precheck:
+      pre:
+        max: '1970-01-01 00:00:00+00:00'
+        min: '1970-01-01 00:00:00+00:00'
+        rows: 0
+      full:
+        max: '2026-09-19 02:01:35.832000+00:00'
+        min: '2026-09-13 21:24:57.786000+00:00'
+        rows: 58
+      table: c1_backtest.hypothesis_precheck
+      date_col: ingest_ts
+    birth_channel_dist_observation_only:
+      B: 15
+      C: 10
+      D: 15
+      I: 10
+      C2: 8
+exam_ref: st-metaq-20260923/probe/batch_l4_decision_PQ-0105
+fail_type: null
+threshold: p<0.05(差异显著)
+conclusion: 'E1C 三轨同空间同考尺的产出账不存在: ①三轨标识未落库——hypothesis_precheck.birth_channel 现值 {''B'':
+  15, ''D'': 15, ''C'': 10, ''I'': 10, ''C2'': 8}(渠道编码 B/C/C2/D/I, 非 gplearn/智能体/MCTS
+  三轨), strategy_screen 无 track 字段; ②即便按现有账, hypothesis_precheck(58 行)与 strategy_screen(1340
+  行)全部为切点后 ingest, 切点前 0 行——闭卷窗零样本, 2×3 产出率列联表与卡方检验不可构造。→ insufficient(E1C 三轨载体未建+闭卷窗零样本),
+  复考前置=三轨候选/过考记录按 track 落账并在同一 space_hash 下积累批次。'
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-05'
+three_check:
+  data: 'NO: 切点前 hypothesis_precheck 0 行 / strategy_screen 0 行; 三轨标识字段不存在'
+  caliber: 'NO: ''同一预注册积木库与统一考尺''载体未建(PQ-0104 同源), 产出率口径无法落地'
+  mechanical: 'OK(不可执行): 卡方齐性检验机械, 零样本未执行'
+pit_assertion: 本题取数(现状证据查询)不使用任何切点后数据作为判据; 切点后记录仅作在产状态观察, 不进入阈值比较。
+q_id: PQ-0105

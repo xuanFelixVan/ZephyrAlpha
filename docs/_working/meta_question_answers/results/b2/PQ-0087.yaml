@@ -1,0 +1,46 @@
+notes: '''BDI 六指数''在库仅 5 个有效序列（BHMI 单行、HRCI 2011-08 停更），复合按 5 指数落地；周期板块代理=上证周期指数（覆盖沪市周期行业样本）。'
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_pq0087.py
+  query: alt_shipping_index IN(BDI,BCI,BSI,BDTI,BCTI)→20d logchg 的 rolling750 z→均值=
+    C_t; corr_k=corr(C[:M], fwdrel20[k:k+M]) M=n-20-k; k̂=argmax; moving-block bootstrap
+    块长20×1000→CI(corr_k̂)
+  result:
+    k_hat: 10
+    n_obs: 4279
+    corr_ci:
+    - 0.06533168482345598
+    - 0.24839598553152434
+    rho_at_peak: 0.16210771088999842
+    rolling_windows: 16
+    window_peak_mode: 2
+    corr_by_lag_selected:
+      '0': 0.0747141916654899
+      '5': 0.13911813747184876
+      '10': 0.16210771088999842
+      '15': 0.1320035788237827
+      '20': 0.07169858442783689
+      '25': -0.005977520229131689
+      '30': -0.06614607693896264
+      '40': -0.057450757273322196
+      '60': 0.06814289090504662
+    rolling_peak_in_10_30_share: 0.5
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0087
+fail_type: null
+threshold: 峰值落 10-30 日且 CI 不含 0（block bootstrap 互相关）
+conclusion: 因子构造：BDI/BCI/BSI/BDTI/BCTI 五指数（BHMI 仅 1 行、HRCI 2011 停更故剔除）各自 20 日对数变化的
+  trailing 750 日 z 分数等权平均=周期景气复合 C_t；周期板块=上证周期(000063)；领先度量=corr(C_t, [t+k, t+k+20]
+  窗相对收益(上证周期−上证指数)), k=0..60 取峰。样本 2007-10-17~2025-09-09（n=4279），峰值滞后 k̂=10 日，峰值 ρ=0.1621（该滞后配对数=4249），block
+  bootstrap(块长20×1000,seed42) 95%CI=[0.0653,0.2484]；滚动 250 日窗峰值落 10-30 日占比=50.00%（16
+  窗，众数滞后=2 日）。峰值滞后落 10-30 日且相关 CI 不含 0，判据通过。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2007-10-17'
+three_check:
+  data: OK alt_shipping_index 切点前 30369 行：BDI 1988 起、BCI/BSI/BDTI/BCTI 2006-07 起；000063
+    上证周期 2005 起在库
+  caliber: OK 复合=可用 5 指数 20 日变化 z 等权（'六指数'中 2 个无效序列已剔除并注明）；领先=互相关峰值滞后
+  mechanical: OK 峰值 10-30 日且 CI 不含 0 机械可判
+pit_assertion: 运价发布即定不回补（切点前 3.0 万行）；z 分数与收益窗均只用 t 及以前信息，全部数据 trade_date<='2025-09-09'。
+q_id: PQ-0087

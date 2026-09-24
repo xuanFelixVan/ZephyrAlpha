@@ -1,0 +1,40 @@
+notes: 复考前置：模板族标识字段落表（或注册 title/provenance 前缀族口径约定）后按族分组比对复考。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT status,count(*) FROM meta_question.meta_question GROUP BY status;
+    SELECT what,count(*) FROM meta_question.meta_question_audit GROUP BY what; SELECT
+    count(*) FROM meta_question.meta_question_exam_result
+  result:
+    audit_rows: 849
+    status_all: registered
+    audit_update: 283
+    audit_register: 283
+    exam_result_rows: 0
+    meta_question_rows: 283
+    audit_degraded_check: 283
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT column_name FROM information_schema.columns WHERE table_schema='meta_question'
+    AND table_name='meta_question' ORDER BY ordinal_position
+  result:
+    columns: 25
+    tpl_column: NOT_EXIST
+    template_id_column: NOT_EXIST
+    exam_plan_criterion_threshold_full: 283
+exam_ref: st-metaq-20260923/probe/gov_PQ-0095
+fail_type: null
+threshold: 族内漂移=0
+conclusion: 模板族字段不存在：meta_question 表无 tpl/template_id 列（information_schema.columns
+  实证 COLUMN_NOT_EXIST，25 列全量枚举核对），同 tpl 分组无法执行，族内阈值漂移不可算。现状观察（不作为判据）：exam_plan 的 criterion+threshold
+  字段全表 283/283 齐备。
+confidence: 0.8
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: NO：tpl/template_id 列不存在，模板族无法分组
+  caliber: OK：若族字段存在，阈值口径比对可机械落地
+  mechanical: OK：分组比对可复现
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0095

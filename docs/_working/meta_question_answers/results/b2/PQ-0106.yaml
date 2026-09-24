@@ -1,0 +1,83 @@
+notes: '机制在产证据: src/zephyr/pf_alloc/core/strategy_correlation_gate.py(MOD-PA-004);
+  复考前置=秩相关口径对齐+冗余度账积累。'
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l4_PQ-0106.py
+  query: grep correlation thresholds in strategy_correlation_gate.py; SHOW TABLES
+    FROM c1_backtest (查 merge/cluster/correlation 载体); strategy_screen ingest coverage
+  result:
+    note: strategy_screen 有 cluster_id 字段但无逐对秩相关矩阵/合并闸判定账, 且 1340 行全部切点后
+    strategy_screen:
+      pre:
+        max: '1970-01-01 00:00:00+00:00'
+        min: '1970-01-01 00:00:00+00:00'
+        rows: 0
+      full:
+        max: '2026-09-22 22:35:06.901000+00:00'
+        min: '2026-09-12 11:29:11.015000+00:00'
+        rows: 1340
+      table: c1_backtest.strategy_screen
+      date_col: ingest_ts
+    merge_run_tables: []
+    c1_backtest_tables:
+    - alloc_budget_change_log
+    - alloc_budget_daily
+    - alloc_shrinkage_daily
+    - cohort_daily_ledger
+    - crisis_gate_log
+    - decision_daily
+    - hypothesis_precheck
+    - node_verdict
+    - regime_snapshot_history
+    - regime_state_anchored
+    - sim_attribution_daily
+    - sim_daily_report
+    - sim_platform_journal
+    - sim_pocket_daily
+    - sim_trade_log
+    - strategy_screen
+    gate_threshold_code:
+    - '114: reject_correlation: float = 0.85  # > 0.85 → REJECT'
+    - '115: hard_reject_correlation: float = 0.90  # > 0.90 → HARD_REJECT'
+    - '123: reject_tail_correlation: float = 0.70  # > 0.7 且 same_direction → REJECT'
+    - '126: correlation_reject_sustained_days: int = 30'
+    - '130: ("reject_correlation", self.reject_correlation),'
+    - '131: ("hard_reject_correlation", self.hard_reject_correlation),'
+    - '136: ("reject_tail_correlation", self.reject_tail_correlation),'
+    - '140: if not (self.reject_correlation < self.hard_reject_correlation):'
+    - '141: raise InvalidCorrelationInputError("reject_correlation must be < hard_reject_correlation")'
+    - '143: raise InvalidCorrelationInputError("warn_factor_overlap must be < reject_factor_overlap")'
+    - '144: if self.correlation_reject_sustained_days < 0:'
+    - '145: raise InvalidCorrelationInputError("correlation_reject_sustained_days
+      must be >= 0")'
+    - '336: if corr > cfg.hard_reject_correlation:'
+    - '340: "hard_correlation_reject",'
+    - '343: cfg.hard_reject_correlation,'
+    - '344: self._correlation_verdict(pair, GateVerdict.HARD_REJECT),'
+    - '347: elif corr > cfg.reject_correlation:'
+    - '351: "correlation_reject",'
+    - '354: cfg.reject_correlation,'
+    - '355: self._correlation_verdict(pair, GateVerdict.REJECT),'
+    - '399: if pair.tail_correlation > cfg.reject_tail_correlation:'
+    - '403: "tail_correlation_reject",'
+    - '406: cfg.reject_tail_correlation,'
+    - '416: 提供了持续天数且未达 correlation_reject_sustained_days → 降级 WARN'
+    - '420: if days is not None and days < self._config.correlation_reject_sustained_days:'
+exam_ref: st-metaq-20260923/probe/batch_l4_decision_PQ-0106
+fail_type: null
+threshold: ≤40%
+conclusion: '合并闸机制在产但口径不一致且无运行账: ①代码阈值——strategy_correlation_gate.py 为 Pearson 相关
+  reject=0.85/hard_reject=0.90+尾部相关 0.70(同向), 与题面''|秩相关|>0.7 合并闸''不一致(Spearman 秩相关口径未实现);
+  ②运行账——c1_backtest 16 张表无 merge/cluster/correlation 判定账, strategy_screen 虽有 cluster_id
+  字段但无逐对相关矩阵留痕, 且全部 1340 行为切点后 ingest(切点前 0 行)——闭卷窗内合并闸零运行样本, 合并后冗余度(高相关对占比≤40%)不可计算
+  → insufficient。复考前置=合并闸落地秩相关 0.7 口径+逐批冗余度(高相关对占比)账留痕。'
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-05'
+three_check:
+  data: 'NO: 合并闸运行账表不存在; strategy_screen 切点前 0 行'
+  caliber: 'NO(部分): 题面 |秩相关|>0.7 口径与在产代码阈值(Pearson 0.85/0.90+尾部0.70)不一致'
+  mechanical: 'OK(不可执行): 高相关对占比机械可算, 零样本未执行'
+pit_assertion: 本题取数(现状证据查询)不使用任何切点后数据作为判据; 切点后记录仅作在产状态观察, 不进入阈值比较。
+q_id: PQ-0106

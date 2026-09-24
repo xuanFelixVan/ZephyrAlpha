@@ -1,0 +1,65 @@
+notes: 与 PQ-0043 同源缺口; 复考前置=切点前回填 alloc/回测账 或 新窗样本积累。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l4_PQ-0089.py
+  query: SELECT count(),min(trade_date),max(trade_date) FROM c1_backtest.<t> WHERE
+    trade_date<='2025-09-09' (vs 全量); tables=alloc_budget_daily/decision_daily/sim_trade_log/regime_snapshot_history
+  result:
+    coverage:
+    - pre:
+        max: '1970-01-01'
+        min: '1970-01-01'
+        rows: 0
+      full:
+        max: '2026-09-22'
+        min: '2026-09-15'
+        rows: 16
+      table: c1_backtest.alloc_budget_daily
+      date_col: trade_date
+    - pre:
+        max: '1970-01-01'
+        min: '1970-01-01'
+        rows: 0
+      full:
+        max: '2026-09-24'
+        min: '2026-09-16'
+        rows: 69
+      table: c1_backtest.decision_daily
+      date_col: trade_date
+    - pre:
+        max: '1970-01-01'
+        min: '1970-01-01'
+        rows: 0
+      full:
+        max: '2026-09-23'
+        min: '2026-07-17'
+        rows: 66
+      table: c1_backtest.sim_trade_log
+      date_col: trade_date
+    - pre:
+        max: '2025-09-09'
+        min: '2019-04-01'
+        rows: 3132
+      full:
+        max: '2026-09-22'
+        min: '2019-04-01'
+        rows: 3627
+      table: c1_backtest.regime_snapshot_history
+      date_col: trade_date
+exam_ref: st-metaq-20260923/probe/batch_l4_decision_PQ-0089
+fail_type: null
+threshold: 超额>3% 且回撤更小
+conclusion: '波动率倒数加权(inverse-vol)风险预算规则的样本外回测样本为零: alloc_budget_daily 全量16行(2026-09-15~2026-09-22),
+  decision_daily 69行, sim_trade_log 66行, 切点前行数均为 0; 样本外年化超额与回撤对比无法计算。机制在产: pf_alloc/core/risk_budget_allocator.py
+  mode=inverse_var(反 VaR/波动倒数加权, MOD-PA-022)+vol_target_allocator.py(MOD-BT-082 波动率目标化),
+  且 regime_snapshot_history 切点前 3132 行状态输入在库。→ insufficient(基建在产但闭卷窗零样本), 复考前置=切点前回填回测样本或新窗积累。'
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2019-04-01'
+three_check:
+  data: 'NO: 三张运行账切点前全为 0 行'
+  caliber: 'OK: inverse-vol 权重/样本外超额/回撤对比均可机械落地'
+  mechanical: 'OK(不可执行): 阈值(超额>3%且回撤更小)机械明确, 因零样本未执行'
+pit_assertion: 本题取数(现状证据查询)不使用任何切点后数据作为判据; 切点后记录仅作在产状态观察, 不进入阈值比较。
+q_id: PQ-0089
