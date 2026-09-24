@@ -50373,4 +50373,19 @@ creation_tokens:
   created_by: st-commitspeed-tbl-20260924
   capability: commit_speedup_campaign
   merge_evaluation: "新仪器件：重放安全网＝包8/S1出厂判据唯一仪器，无可并旧件（四判据逐条过：非同源可派生/有消费/无同域簇/跨域不适用）"
+- file: docs/_working/map_build/fig12_datachain/90_writeback_inventory.md
+  token: map-build-90-writeback-inventory-20260924
+  created_by: st-mapbuild-20260924
+  capability: map_build
+  merge_evaluation: "六图案卷宿主目录增量件（外部对标三扫卷/溢出补扫账，同域派生不另立册）"
+- file: docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md
+  token: map-build-10--20260924
+  created_by: st-mapbuild-20260924
+  capability: map_build
+  merge_evaluation: "六图案卷宿主目录增量件（外部对标三扫卷/溢出补扫账，同域派生不另立册）"
+- file: docs/_working/map_build/fig12_datachain/11_消费端需求反查.md
+  token: map-build-11--20260924
+  created_by: st-mapbuild-20260924
+  capability: map_build
+  merge_evaluation: "六图案卷宿主增量（消费端反查卷，同域派生不另立册）"
 di_seam_exemptions: []
