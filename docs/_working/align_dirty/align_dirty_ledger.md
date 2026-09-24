@@ -481,3 +481,15 @@ D1 残（fail_open 14 处 merger 结构无能 = `content_sha256` 标量流被切
 - 其 63 处"不在 HEAD 树"的路径经分类：一部分**盘上存在但未入库**（他包在途 WIP 的"所有权先于落码登记"），一部分是已退役路径的所有权留痕 ⇒ 二者都非脏数据。
 - ⇒ 本包**撤回 D23**，并把 §3.14 残面的 R6 一行改判为"无需动作"；同时把这条并入 **D21 的正解口径**：`悬空引用`必须先分三类再谈清剿——①**真悬空**（指向被撤案/改名后的位置，如 `fail_open_register` 的 registry_family 14 处、`ruling_registry` 已被 `a74e9a6c48` 摘掉的 3 处）＝该修；②**前置登记**（先记账后落码，如 `library_ledger_backup`、`t0_*` 五件、path_ownership_map 的在途件）＝该由判据决定允许与否，不是脏；③**历史凭证**（creation_tokens 建件凭据、退役留痕，见 §3.2-③）＝**禁改**，改了是篡改审计链。
   本包的尺子（`probe_dangling_refs.py`）只能给"形状可疑"的分母，**分类必须逐册读语义**；把三类混成一个数字报给上级＝下一班照数去删就会删错。这也是本包今晚第四次给自己的盘点脚本开红证（前三次：D3 撤回、GOMAP 424/423 口径、粗尺 substring 假阳）。
+
+### 3.18 两轮零达成 + 本包袋二次连坐（07:5x，终批内容）
+
+1. **⑤「两轮零」按定义达成（HEAD 位面，口径先声明再给数）**
+   - 判据口径：`align_all` 的**硬问题=0** 且**连续两轮语义等值**（软 warn 属君子协定存量，逐条分类见 §2-D 族与 [7/9] 长城专项口径，不在本判据内）。
+   - 实测：连跑两轮 `HEAD` 保真副本 `.runtime/tmp/align_dirty/headcopy/align_all_head.py --no-report`，两轮 **rc=0**、`硬阻断=0`、`软问题=986` 同值，滤时间戳后**两轮输出 diff = 0 行**。
+   - 关键归因闭环：本夜早前两跑（06:0x）恒报"硬=3"（`裁定#383/#387 related_arch 悬空`），当时已判为**主区外来 staged 陈旧快照**所致、HEAD 侧同判据函数 dangling=0；07:2x `st-pipeline-final` 把 662 件外来 staged 整体 `git stash -u` 后主区 `ruling_registry.yaml` 回到 HEAD 态 ⇒ 硬 3→**0** 自证。⇒ §3.9-2 的定性由"推断"升级为"复现实证"：**盘面红≠HEAD 红，多会话期判对齐只读 HEAD 位面**。
+2. **本包过程真源已入库** = `b9aae483cb`（07:51:51）：`A docs/_working/align_dirty/align_dirty_ledger.md`（483 行）+ `A docs/_working/align_dirty/working_cleanup_r2.md`（R2 交付件）+ `M canonical 册`（2 条 creation_token）。改名原因与三门三类修正轨迹见该笔提交信息（REFERENCE-INTEGRITY → REAL-KEY-REFERENCE-SCAN → GATE-NAMING，全部改**原料/命名**后重跑生成器，产物零手改、判据零绕开）。
+3. **本包袋二次连坐（同一病灶，加害方仍是本包）**：同一笔 `b9aae483cb` 的 `--name-status` 里又出现 **3 件 `D`**——正是本包 07:29 在 `18e5af5101` 刚复原的 st-library-final 三件套。根因不在合并器而在**落地块 index**：serializer 常驻工作树 `.runtime/commit_queue/worktree` 的 index 仍带 `0fe090715f` 时代的 delete 态，`_prestage_snapshot` 只 `git add` 袋内件、不先 `read-tree HEAD` 复位 ⇒ 每个后续落地袋都把"删除"再提交一次。
+   - 处置（本笔终批）：**同一 commit 内**同时 ①按 `0fe090715f^` 逐字节再复原三件（sha256 f505056f80df/8e75cd1963c5/ba24b7fe43f0）②追加本节；此后 HEAD 已无这些路径 ⇒ 该 delete 态不再是"变更"，后续袋不会重复带出（受害面闭合）。
+   - 处方补条（仍归 st-commitsys，与本包无涉的通用面）：`_prestage_snapshot` 在 `git add` 前应对该 worktree 执行一次 `git read-tree HEAD`（或 `git checkout HEAD -- <袋外路径>`）以清除跨袋残留 index 态；否则"谁在谁之后落地"决定谁吃删除。登记为 **D27**。
+4. **本包收官动作**（本节即终批）：释放本包全部 claim → 会话工作树 abort（袋均 content-addressed 存 `.runtime/commit_queue/blobs`，可复核）→ 清 `.runtime/tmp/align_dirty` 一次性驱动脚本（保留两把尺子 `probe_dangling_refs.py`/`closing_selfcheck.py` 与 R2 底座 `.runtime/tmp/working_cleanup_r2/`，因 §3.13/§3.17/R2-b 候裁须复跑）→ 主区从 HEAD 复位两枚本包文档 → 向 Owner 交终报。
