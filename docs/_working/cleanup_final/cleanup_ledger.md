@@ -22,7 +22,7 @@ title: "遗留修复收尾总包 — 台账 ledger（st-cleanup-final-20260924�
 
 ## 追加令 ⑦⑧⑨（17:20 让道窗解除后执行）
 
-- ⑦ 模拟盘 17 件终批：原始批=死信 q-20260923-st-sim-launch-20260923-0002（死于 COMPLEXITY-GUARD bridge_execute=25；09-24 晨重构后该函数已不存在=阻断条件消失）。5 件盘面蒸发件（两 ps1+smoke+两报告）从死信袋 blob 精确恢复（sha256 全对）；代投前补注册 st-sim-launch-20260923 会话；按 Owner 原文 message 入队 q-20260924-st-sim-launch-20260923-0003。
+- ⑦ 模拟盘 17 件终批：原始批=死信 q-20260923-st-sim-launch-20260923-0002（死于 COMPLEXITY-GUARD bridge_execute=25；09-24 晨重构后该函数已不存在=阻断条件消失）。5 件盘面蒸发件（两 ps1+smoke+两报告）从死信袋 blob 精确恢复（sha256 全对）；代投前补注册 st-sim-launch-20260923 会话；按 Owner 原文 message 入队 q-20260923-0003。**窄批终态（q-0007 在队）**：0003 实死于 TRANSLATION-COVERAGE（恢复件 qmt_bridge_regression_smoke.py 系新 .py 缺 plain_zh，已补注册直落 ab15cfb3）；0004 死于 ALGO-NOTE-SYNC（note_confirmed 更新 2026-09-24）；0005 死于 NEW-DEPGRAPH（add-design-node 15140456 MOD-L06-001-QMTFB）；0006 死于 ALGO-FLOW+DEBT-BRIDGE（app_panel/broker/position_monitor 三件 ALGO_FLOW 锚=HEAD 历史缺口，触碰触发补装级联，归 sim 车道清偿）。窄批定案=5 件真增量（smoke+两 ps1+两报告，全链本地预检过），其余 12 件中 8 件已随前批在 HEAD 零增量、4 件纯 lint 尾差另清。教训： Monitor grep 模式须含完整 qid 尾段（'sim-launch-0003' 匹配不到 '…20260923-0003'，一度假读成蒸发）。
 - ⑧ 压测 Phase B 30 件放行：按令从 hold_stress_phaseB_20260923/ 移回 pending（manifest 留守）。结构性发现：全部空转死信——payload（registry_migration/stress/lane_XX.md）已随 PhaseA 合一批 166525c204 落 HEAD，快照 vs 盘面=NOTHING_TO_COMMIT，逐件速死（~2.5min/件，31=30+旧1）。"after vs 59min/笔"吞吐不可测（无真实提交面），不 requeue 不凑数；Phase B 真吞吐须压力车道产新 payload（归 st-stress 决策）。旁证：本会话②批 9 文件全链约 60min、④ef 8 文件约 25min（池化+并发下）。
 - ⑨ 板块分钟K 回补：码面核实 kline_resampler/sector_intraday_aggregator/ch_writer/scheduler/tasks/两测试在 HEAD 全净（回补码已由他会话先落，无可投变更）；数据面实证 c1_market.kline_sector_intraday 每交易日 139,780 行 synth_sh 流入至 09-22（周六正确缺席）；09-23 行缺席（截至 19:5x）=合成器当日作业待核，归数据作业车道 residual。
 
