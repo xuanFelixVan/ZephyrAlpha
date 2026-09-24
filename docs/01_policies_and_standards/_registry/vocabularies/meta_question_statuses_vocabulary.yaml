@@ -1,0 +1,18 @@
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: meta_question 问题生命周期状态机（13_exam_backfill_loop_design §1.5+裁定#401）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-20260923
+date: '2026-09-24'
+values:
+- value: draft
+- value: registered
+- value: mining
+- value: in_exam
+- value: answered
+- value: reexam
+- value: suspended
+- value: merged
+- value: retired
+- value: blinded

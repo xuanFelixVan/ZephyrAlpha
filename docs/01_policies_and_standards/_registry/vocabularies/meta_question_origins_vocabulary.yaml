@@ -1,0 +1,12 @@
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: meta_question provenance.origin 枚举（入库闸设计§1）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-20260923
+date: '2026-09-24'
+values:
+- value: base62
+- value: template
+- value: combo
+- value: manual

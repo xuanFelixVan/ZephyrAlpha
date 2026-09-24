@@ -1,0 +1,12 @@
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: meta_question exam_result.outcome 枚举（考试考次生命周期；meta_question_exam_result_outcome_check
+  同源）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-20260923
+date: '2026-09-24'
+values:
+- value: answered
+- value: reexam
+- value: suspended

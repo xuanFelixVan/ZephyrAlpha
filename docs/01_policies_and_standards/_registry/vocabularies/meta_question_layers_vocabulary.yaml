@@ -1,0 +1,15 @@
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: meta_question 问题层枚举（decision_layer 七值子集 L0-L6；01_layer_charter.md+裁定#400/401）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-20260923
+date: '2026-09-24'
+values:
+- value: L0
+- value: L1
+- value: L2
+- value: L3
+- value: L4
+- value: L5
+- value: L6
