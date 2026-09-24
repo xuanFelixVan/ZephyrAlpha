@@ -1162,3 +1162,27 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   python scripts/commit_queue.py status --session st-audit-all-20260924 2>&1 | tail -6                 # ① 袋态
   ```
 - **队列/align 状态**：本包 done=23、dead=9、pending=1（0038 在途，本轮再入 0039）；HEAD=`5471d43a52`(10:58:03·他包)。**本包对注册表/配置册/depgraph/GOMAP DB 写入累计仍=0**（尺O 亦为 HEAD 字节只读重放）。
+
+## 心跳 2026-09-24 11:23 CST 实测（`date`=2026-09-24 11:23:34，本串由 shell `date` 传入）· 在干=**收官第 5 轮＝新基线第 1 轮：0038/0039 已落地核实＋复跑五尺＋由尺N HARD 1→2 逮到别包静默丢失、并入 MERGE-02 第二枝（不另立）＋自否证第 39 例（尺M"可承载"口径失真）** · 卡住=无 · 下一步=见 ⑤
+
+- **① 冷启动三前置**：Python 3.12.8 ✔｜`lock_files.py cleanup`=CLEAN｜reaper `--status` 计划任务存活（last_run 11:07:23）✔。总指挥批注区无晚于 11:05 新条（最后一条仍 R7·05:05），按上轮 ⑤ 计划续做第 5 轮。
+- **② 0038/0039 落地面核实**：本包 done 23→25、pending=0。0038＝`4ea0814bb9`(11:07:03·收官第4轮+MERGE-02)、0039＝`23b064acd2`(11:09:37·并案+穷尽 AC5/AC6)。`git show HEAD:LEDGER` 含 11:05 心跳（count=1）、`git show HEAD:REPORT` 含 AC5/AC6/MERGE-02（count=9）⇒ 上轮两件纯增自家案卷经 passthrough 整件写落地成功（0032-0039 八连证）。
+- **③ 五尺复跑（只读＋合成控制，测点 11:12–11:23，HEAD 从 `74ebcb0a50`→`2608b45148` 随他包移动）**：
+  - **尺H2**＝dead=3 行**全属已登记 0009**（battle_map `(no-key)×3`）、alive=158；合成控制阳=3/阴=0（与第 3、4 轮逐位同）。
+  - **尺J**＝待补块=0。
+  - **尺O**＝424/423/漏1/悬0，唯一漏挂=`scripts/audit/t0_gpu_condition_pack.py`（GOMAP 他包在途），控制组双 PASS。
+  - **align（HEAD 面 `--no-report`）**＝rc=1，**4 硬全为已登记项**：1×GOMAP（`F-AUDIT-GOMAP-INFLIGHT`）+3×裁定册 related_arch 悬空（`#383`→`#MOD-L00-004`、`#387`→`#PS-CTR-003`/`#MOD-INF-043`，处方交 st-cmd）。**自校正**：第 4 轮"唯一硬项=GOMAP"是其复核命令 `grep "硬阻断|gomap"` 漏看"治理双向=3"行的呈现盲区（非状态变化），已记 AC8。
+  - **尺N（本轮真增量）**＝HARD **1→2**：新增受害者 `st-backup-cold-20260924` q-…-0012 袋 `rule_catalog_registry.yaml`（末改 `bdc21d2240`@09:46:48 ≤ 落地 11:02:00 ⇒ 确证静默丢失）。
+- **④ 🔴 新受害者归因＝MERGE-02 **第二枝**（不另立案）**：`rule_catalog_registry.yaml` 是**有 `files:` 族**、被尺M 判"可承载"的册，但被吞的 2 行恒为**族外顶层标量键** `generated_at`+`total_files`（`_split_registry_entries` 只 splice 族内条目、族外键无人接管）；同一"改 rule_catalog 元数据"动作跨 **4 包 6 袋**（st-ibt-remedy 0017/0021、st-oddjobs 0003/0010、st-regfix 0011、st-backup-cold 0012）**每次都被吞同样 2 行**＝结构性不承载、非竞态。**severity 分级**：本枝目标值已 staged 于工作树（该册现 `MM`，盘=09-24/292 vs HEAD=09-20/274）⇒ 可经他批自愈、非永久丢；但 `noop@` 回执仍误导（claim ok 实未落 HEAD）。我 0009（零族册、盘无待落值）更硬。**尺互补**：尺H2 对本枝 dead=0（顶层标量无 own-key），只有尺N 逮到 ⇒ 两尺不可互替。**处方增 (iii′)**：入队普查须核对**被改的顶层键是否落在可 splice 族内**，族外者当场拒绝或走 passthrough（纠正尺M"按文件有族即放行"的粒度错）。⇒ 属他包写域+注册表 high 门位，**不代修**（§3.4/§0.8），仅入本包案卷 AC7、路由 st-commitsys。
+- **④b 自我否证第 39 例（R39）**：尺M 的"可承载 77"口径失真——它按"文件含 ≥1 顶层 list 族"判，但实际承载粒度是族内条目、族外键仍丢。造阳性控制时我只造了"整册无族"，漏造"有族但改族外键"这一形态 ⇒ 若本轮不遇 st-backup-cold，这个盲区会一直被我 82/77/3/2 的读数掩盖。教训入法：**承载能力度量必须按"键区域"而非"文件"，控制组须覆盖"有族但改族外键"**。
+- **⑤ 与收官判据 + 下一步**：本轮**零新立案**（新枝并入 MERGE-02）＝新基线**第 1 轮通过**。② 第 6 轮＝新基线第 2 轮：复跑五尺（盯尺N HARD 是否再增长、他包是否续出 rule_catalog/族外键新受害者）；③ 若第 6 轮再零新立 ⇒ 满足"连续两轮零新立"，写终局"自动化已自删·本包收官"＋`qoder_cron remove 39cc5bd5-6b49-4b42-a65f-db987dccc076`；④ 本块＋REPORT R39/AC7/AC8/AC9 随袋 **0040** 入队（自家 markdown 纯增，passthrough 通道八连证可用）。
+- **队列/align 状态**：本包 done=25、dead=9、pending=0（本轮入 0040）；HEAD=`2608b45148`(11:13:25·他包)。**本包对注册表/配置册/depgraph/GOMAP DB 写入累计仍=0**（尺N/H2/O 全为 `git show`/blob 只读比对，st-backup-cold 受害件仅读取取证未改字节）。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_noop_receipt_triage.py 2>&1 | grep -E "HARD|noop@"      # ④ HARD=2 及明细
+  git show HEAD:docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml | grep -nE "^(generated_at|total_files):"  # ④ HEAD=09-20/274
+  git status --porcelain docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml   # ④ =MM（盘值已 staged）
+  python .runtime/tmp/audit_all_20260924/probe_bag_regression_attribute.py 2>&1 | grep -E "尺H2|控制组" # ③ dead=3 全 0009
+  python .runtime/tmp/audit_all_20260924/probe_gomap_headside_census.py 2>&1 | sed -n '1,8p'            # ③ 424/423/漏1/悬0
+  python .runtime/tmp/audit_all_20260924/run_headside_align.py --no-report 2>&1 | grep -E "硬=|gomap|治理双向"  # ③ 4硬全登记
+  ```

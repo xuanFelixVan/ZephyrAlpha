@@ -67,10 +67,6 @@ $FDrive = "F:"
 $VaultBase = "G:\backup\working_vault"
 $DbDumps = "G:\backup\db_dumps"
 $ChVmBackup = "F:\ch_vm_backup"
-# 2026-09-24 (Owner early-execute ruling): F holds CONFIG-LEVEL VM backup only
-# (boot.vhdx + VM config); the full data.vhdx image is frozen at the G archive
-# home below and is no longer /MIR-mirrored from F.
-$ChVmImageHome = "G:\backup\ch_vm_backup"
 $_pathsCfg = "$ProjectRoot\scripts\backup\backup_config.yaml"
 if (Test-Path $_pathsCfg) {
     $_yaml = Get-Content $_pathsCfg -Raw -Encoding UTF8
@@ -251,25 +247,23 @@ function Do-Inventory {
     } else { Write-Warn "  config/.env.ch_backup not found (cannot stat CH backups)" }
     Write-Host ""
 
-    # CH VM backup (config-level at F, full image at G archive home)
+    # CH VM backup
     Write-Host "[CH VM backup]" -ForegroundColor Cyan
     if (Test-Path $ChVmBackup) {
-        Write-Host "  Path: $ChVmBackup (config-level)"
-        $p = Join-Path $ChVmBackup "boot.vhdx"
-        if (Test-Path $p) {
-            $gb = [math]::Round((Get-Item $p).Length / 1GB, 2)
-            Write-Host "  [OK] boot.vhdx (${gb} GB)" -ForegroundColor Green
-        } else {
-            Write-Host "  [MISSING] boot.vhdx" -ForegroundColor Red
+        Write-Host "  Path: $ChVmBackup"
+        foreach ($f in @("boot.vhdx","data.vhdx")) {
+            $p = Join-Path $ChVmBackup $f
+            if (Test-Path $p) {
+                $gb = [math]::Round((Get-Item $p).Length / 1GB, 2)
+                Write-Host "  [OK] $f (${gb} GB)" -ForegroundColor Green
+            } else {
+                Write-Host "  [MISSING] $f" -ForegroundColor Red
+            }
         }
         if (Test-Path "$ChVmBackup\zephyr-ch") {
             Write-Host "  [OK] VM config dir zephyr-ch\" -ForegroundColor Green
         } else { Write-Host "  [MISSING] VM config dir zephyr-ch\" -ForegroundColor Red }
     } else { Write-Warn "  $ChVmBackup not found (run backup_ch_vm.ps1 first)" }
-    if (Test-Path "$ChVmImageHome\data.vhdx") {
-        $gb = [math]::Round((Get-Item "$ChVmImageHome\data.vhdx").Length / 1GB, 2)
-        Write-Host "  [OK] data.vhdx full image at $ChVmImageHome (${gb} GB)" -ForegroundColor Green
-    } else { Write-Host "  [MISSING] data.vhdx full image at $ChVmImageHome" -ForegroundColor Red }
     Write-Host ""
 
     # Last backup state
@@ -352,20 +346,14 @@ function Do-Verify {
         $issues += "config:.env.ch_backup"
     }
 
-    # 4. CH VM backup (config-level at F, full data.vhdx image at G archive home)
-    $bootP = Join-Path $ChVmBackup "boot.vhdx"
-    if (Test-Path $bootP) {
-        $gb = [math]::Round((Get-Item $bootP).Length / 1GB, 2)
-        Write-OK "vm: boot.vhdx (${gb} GB, config-level F)"
-    } else { Write-Err "vm: boot.vhdx MISSING"; $issues += "vm:boot.vhdx" }
-    if (Test-Path "$ChVmBackup\zephyr-ch") {
-        Write-OK "vm: VM config dir zephyr-ch\ (F)"
-    } else { Write-Err "vm: VM config dir MISSING"; $issues += "vm:config" }
-    $imgP = Join-Path $ChVmImageHome "data.vhdx"
-    if (Test-Path $imgP) {
-        $gb = [math]::Round((Get-Item $imgP).Length / 1GB, 2)
-        Write-OK "vm: data.vhdx full image (${gb} GB, G archive)"
-    } else { Write-Err "vm: data.vhdx full image MISSING at $ChVmImageHome"; $issues += "vm:data.vhdx" }
+    # 4. CH VM backup
+    foreach ($f in @("boot.vhdx","data.vhdx")) {
+        $p = Join-Path $ChVmBackup $f
+        if (Test-Path $p) {
+            $gb = [math]::Round((Get-Item $p).Length / 1GB, 2)
+            Write-OK "vm: $f (${gb} GB)"
+        } else { Write-Err "vm: $f MISSING"; $issues += "vm:$f" }
+    }
 
     Write-Host ""
     if ($issues.Count -eq 0) {
@@ -609,17 +597,8 @@ function Do-Vm {
     if (-not (Test-Path "$ChVmBackup\zephyr-ch")) {
         Write-Err "VM config not found at $ChVmBackup\zephyr-ch. Run backup_ch_vm.ps1 first."; exit 1
     }
-    if (-not (Test-Path "$ChVmBackup\boot.vhdx")) { Write-Err "boot.vhdx missing in $ChVmBackup"; exit 1 }
-    # (2026-09-24) F is config-level: the full data.vhdx image lives at the G archive
-    # home. Restore = bring it back next to boot.vhdx before Import-VM.
-    $imgSrc = Join-Path $ChVmImageHome "data.vhdx"
-    $imgDst = Join-Path $ChVmBackup "data.vhdx"
-    if (-not (Test-Path $imgDst)) {
-        if (-not (Test-Path $imgSrc)) { Write-Err "data.vhdx missing in BOTH $ChVmBackup and $ChVmImageHome"; exit 1 }
-        Write-Stage "Config-level backup detected: copying data.vhdx image from $ChVmImageHome (591 GB, ~1-2 h on USB)"
-        if (-not (Confirm-Action "Copy data.vhdx from $imgSrc to $imgDst now?")) { Write-Host "Aborted."; exit 0 }
-        Copy-Item $imgSrc $imgDst -Force
-        Write-OK "data.vhdx image restored to $imgDst"
+    foreach ($f in @("boot.vhdx","data.vhdx")) {
+        if (-not (Test-Path "$ChVmBackup\$f")) { Write-Err "$f missing in $ChVmBackup"; exit 1 }
     }
 
     # Locate .vmcx config file
