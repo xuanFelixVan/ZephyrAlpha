@@ -1147,3 +1147,18 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   python .runtime/tmp/audit_all_20260924/run_headside_align.py --no-report 2>&1 | grep -E "硬阻断|gomap" # ② 唯一硬=gomap
   git show --name-status e964aeadbe 1fa27fb090 --format="%h %s" | grep -c "^D" ; echo 本包未连坐＝0      # ③ 反证 D27 边界
   ```
+
+## 心跳 心跳 2026-09-24 11:05 CST 实测（`date`=2026-09-24 11:05:45，本串由 shell `date` 传入）· 在干=**0038 在途期间补做两项：① 机制级反查⇒AC1 与 st-align-dirty 的 D25 并案（差点重复立案）② 尺O 把 GOMAP 结论从"1 条被报出的漏挂"升格为"HEAD 面 423/424 挂齐、悬空 0"穷尽表述** · 卡住=无 · 下一步=见 ⑤
+
+- **① 0038 状态**：pending（10:59:47 入袋，袋内两件字节==盘 亲验 sha `4c4c59d090`/`4b1e298e62`）。**入袋仍不带基底**：`base_head=None`，且**本包 done 的 23 张袋 23/23 全为 `base_head=None`**（本轮实测计数，非引述）＝MERGE-01 病灶仍未修；本包两件是 markdown 走 passthrough 整件写，不受其害（0032-0037 六连证）。HEAD 现=`5471d43a52`(10:58:03·他包 st-library-final)。
+- **② 🔴 自我否证第 38 例（差点重复立案）**：AC1 写完才想起 R17 纪律的**完整形态**应是"机制级反查"，而我此前只反查**编号**撞车（`grep -oE 'F-AUDIT-*'` 取 max+1）。补做机制级 grep 后逮到：**st-align-dirty 已立 D25**（`align_dirty_ledger.md:446/463`）——同一个根（`is_registry_mergeable()` 按目录前缀判作用域、承载却按条目族）已经报过一次，只是那枝表现为**显式死信**（`fail_open_register.yaml` 顶层纯标量列表 → 判"身份判不了" → q-0042 死信），本包这枝表现为**静默 noop＋回执 ok=True**。⇒ 按 §4.2"同域重复簇→收敛唯一"**并案不另立**，本案对 D25 的增量缩为四项（静默分支判据／人口 82/77/3/2＋跨族锚点第三成因／零竞态复现／全窗 89 张 noop 回执量化），处方第三条（回执语义显式化）与 D25 原两条合并为一条完整需求交 st-commitsys。**教训入法**：立案前 grep 的对象是"机制描述里的函数名/代码位"，不是自己的编号前缀。
+- **③ 尺O＝图 10 纯 HEAD 面双向普查（把单点升为穷尽）**：生成器入选判据（`SCAN_ROOTS`+`SCAN_EXCLUDE_PARTS`+`_BUSINESS_EXCLUDE_PREFIXES`+`classify_family` 只看路径）原样重放到 HEAD 提交树 ↔ HEAD 版 yaml 条目集差集 ⇒ **应然 424／实册 423／漏挂 1／悬空 0**，且唯一漏挂正是校验器报的那条 `scripts/audit/t0_gpu_condition_pack.py`（一致性锚点通过；控制组阳性=抹掉真条目必判漏挂、阴性=自减必 0）。⇒ 图 10 收官结论现可写成**穷尽口径**："HEAD 面 423/424 挂齐、悬空 0、唯一漏挂属他包落地批未自跑刷新器"；成因仍归 `F-AUDIT-GOMAP-INFLIGHT`（派生册生成器无 HEAD 基线闸），**不新增案**。
+- **④ 判据影响**：本轮（第 4 轮）**未新立案**（AC1 已并入 D25＝案数净减面的收敛），但 AC1 那次"新立"已发生 ⇒ 计数基线仍以第 5 轮起算。**本包累计净新增案＝1**（MERGE-02，现以 D25 静默枝名义存在）。
+- **⑤ 下一步（轮次）**：① 本块＋AC5/AC6 随袋 **0039** 入队，AB1 表补 R38 并把派生计数 37→38 同批改框 ② **第 5 轮**＝新基线第 1 轮：复跑三尺＋尺N（盯 HARD 是否仍只 0009）＋核 0038/0039 落地面 ③ 第 5、6 轮连续零新立 ⇒ 写"自动化已自删·本包收官"＋`qoder_cron remove 39cc5bd5-6b49-4b42-a65f-db987dccc076` ④ 复核命令：
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_gomap_headside_census.py 2>&1 | sed -n '1,8p'          # ③ 424/423/漏1/悬0＋控制组
+  grep -n "D25" docs/_working/align_dirty/align_dirty_ledger.md | tail -3                              # ② 同根先立案亲验
+  python .runtime/tmp/audit_all_20260924/probe_noop_receipt_triage.py 2>&1 | sed -n '3,4p'             # ② 89/A46/B43/HARD1/UNK6
+  python scripts/commit_queue.py status --session st-audit-all-20260924 2>&1 | tail -6                 # ① 袋态
+  ```
+- **队列/align 状态**：本包 done=23、dead=9、pending=1（0038 在途，本轮再入 0039）；HEAD=`5471d43a52`(10:58:03·他包)。**本包对注册表/配置册/depgraph/GOMAP DB 写入累计仍=0**（尺O 亦为 HEAD 字节只读重放）。
