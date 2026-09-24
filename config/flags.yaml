@@ -111,3 +111,10 @@ flags:
     enabled: true
     description: "P2⑨ 交互式提交入队（方案 §2.4-4b）：scripts/git_commit.py --enqueue 快照入队即返回 qid（AI 会话轮询 status 而非占锁重试）；LOCK_TIMEOUT 自动改道入队（P2⑨b，#ARCH-310 P0-1，st-govreform-20260912 施工）。【2026-09-12 Owner 批准启用（AI 原生治理评审 P0-1：'现在可以全部开工'），前置六项处置：①4a 死信清零已完成（952 项闭环）②会话协议改造已落（--enqueue 快照路径+status 轮询）③CloneGuard 索引=登记已知限制（serializer worktree 内 echo_guard 恒降级 warn-only+acknowledged 豁免吸收，不阻断）④压测 P95 与⑤docs 域两周灰度压缩为实弹观察（2026-09-12 并发事故为真实负载场景，回滚通道随时可用）⑥assert_single_writer_dev_history 断言实存（commit_queue_landing/gateway）继续作为日检防线】；回滚=flag OFF（存量 drain 完毕后关闭）"
     implementation_status: "production"
+
+  duckdb_runtime_gate:
+    enabled: true
+    mode: "warn"
+    description: "裸 duckdb.connect 运行时拦截门（M3-C1，宪法 §9.1 运行时侧补齐，挖矿册 04 T1；实现=zephyr.infrastructure.duckdb_runtime_gate，对齐 runtime_interceptor 模式：eager patch+meta_path finder；白名单豁免 DatabaseService 自身与既有直连点 zephyr.factor.offline_store；审计落 .runtime/audit/duckdb_runtime_gate.jsonl）；mode=warn 出厂态（放行+审计），翻转 mode:block 属 Owner 门位（flag 出厂翻转=high tier）；kill-switch=ZEPHYR_RUNTIME_GATE=0；回滚=flag enabled:false 或 revert"
+    audit_path: ".runtime/audit/duckdb_runtime_gate.jsonl"
+    implementation_status: "gated_mvp"
