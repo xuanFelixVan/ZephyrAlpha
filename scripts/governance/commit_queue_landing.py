@@ -138,6 +138,9 @@ _MAIN_WS_SYNC_AUDIT_NAME = (
 
 # 队列标记正则：[GW:{sid}:{qid}]——sid 字符集 [A-Za-z0-9._-]（入队校验保证无冒号/右括号）
 _QUEUE_MARKER_RE = re.compile(r"\[GW:[^\]:\s]+:q-[^\]\s]+\]")
+# 提交归属提取（存量兜底判定用）：直提形态 [GW:sid] 与队列形态 [GW:sid:q-xxx] 都要认，
+# 故不能用上面的 _QUEUE_MARKER_RE（它强制 :q- 段，只用于假落地防线的标记核验）。
+_GW_OWNER_RE = re.compile(r"\[GW:([^:\]\s]+)")
 
 # 网关 env 标记（FORGED-GW-MARKER env 逃生语义=确为网关内部调用；与 run_git 同款）
 _GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
@@ -1005,7 +1008,11 @@ class WorktreeLanding:
         此处若照旧死信，合并器永远无执行机会。非注册表路径维持逐文件快进判定零变更。
         """
         base = item.get("base_head")
-        if not base or base == current_dev:
+        if not base:
+            # 存量项兜底（F-AUDIT-QUEUE-04 残面）：正门修好之前入袋的项仍无 base_head，
+            # 光修正门救不了今晚在飞的存量袋 ⇒ 用时间基底替代（见 _legacy_base_drift_reason）。
+            return self._legacy_base_drift_reason(item)
+        if base == current_dev:
             return None
         if self._git_repo("cat-file", "-e", base, check=False).returncode != 0:
             return f"冲突判定失败：base_head 无效（{base}）——死信回退人工（66 号 §6.4）"
@@ -1018,6 +1025,48 @@ class WorktreeLanding:
                 f"——逐文件快进判定失败，死信回退属主会话（66 号 §6.4/§9.1）"
             )
         return None
+
+    def _legacy_base_drift_reason(self, item: dict) -> str | None:
+        """无 base_head 的存量项：以「袋创建时间 + GW 归属」替代时间基底做快进判定。
+
+        判据=dev 上本袋 `created_at` 之后触及本袋路径的提交里，是否存在**别的会话**的
+        GW 落地。有 ⇒ 本袋快照必是陈旧字节，快进＝整覆盖他人已落地内容 ⇒ 冲突死信；
+        没有 ⇒ 快进放行。拿不到时间/无法归属（早期无标记提交）⇒ 保守放行——
+        本函数是存量过渡兜底，不是新主路，宁可漏判也不误杀无辜袋。
+        刻意不猜 base（不重演 old_dev^ 那类兜底），只在证据确实存在时判红。
+        """
+        created = str(item.get("created_at") or "")[:19].replace("T", " ")
+        sid = str(item.get("session_id") or "")
+        paths = sorted(self._item_paths(item))
+        if not created or not sid or not paths:
+            return None
+        r = self._git_repo(
+            "log",
+            f"--since={created}",
+            "--format=%H%x09%s",
+            "refs/heads/" + self.target_branch,
+            "--",
+            *paths,
+            check=False,
+        )
+        if r.returncode != 0:
+            return None
+        offenders: list[str] = []
+        for row in (r.stdout or "").splitlines():
+            sha, sep, subj = row.partition("\t")
+            if not sep:
+                continue
+            m = _GW_OWNER_RE.search(subj)
+            owner = m.group(1) if m else ""
+            if owner and owner != sid:
+                offenders.append(f"{sha.strip()[:12]}←{owner}")
+        if not offenders:
+            return None
+        return (
+            f"冲突：历史项无 base_head，时间基底判定 dev 在本袋创建（{created}）之后由"
+            f"他会话落过同路径 {len(offenders)} 笔（{offenders[:3]}）——快进必整覆盖他人"
+            f"已落地内容，死信回属主 requeue 取新基底（F-AUDIT-QUEUE-04 存量兜底）"
+        )
 
     # ------------------------------------------------------------------
     # 快照应用（blob → 真实文件；delete action 删文件）
@@ -1054,6 +1103,13 @@ class WorktreeLanding:
                 return False
         return True
 
+    def _entry_base_blob(self, item: dict, rel: str) -> str | None:
+        """袋内该路径记录的基底 git blob sha（无记录→None，调用方 fail-closed）。"""
+        for f in item.get("files") or []:
+            if f.get("path") == rel:
+                return f.get("base_blob") or None
+        return None
+
     def _merge_registry_file(self, item: dict, rel: str, theirs_bytes: bytes, old_dev: str) -> bytes | None:
         """注册表族单文件三向合并（W2）；冲突/结构漂移抛 RuntimeError → 死信回人工。
 
@@ -1069,10 +1125,30 @@ class WorktreeLanding:
         if ours_text == theirs_text:
             return None  # 快照与 dev 一致 → 零合并零提交（幂等 noop）
         base_sha = item.get("base_head") or ""
-        if not base_sha or self._git_repo("cat-file", "-e", base_sha, check=False).returncode != 0:
-            parent = self._git_repo("rev-parse", "--verify", f"{old_dev}^", check=False)
-            base_sha = parent.stdout.strip() if parent.returncode == 0 else ""
-        base_text = self._read_blob_text_opt(base_sha, rel) if base_sha else None
+        base_text: str | None = None
+        if base_sha and self._git_repo("cat-file", "-e", base_sha, check=False).returncode == 0:
+            base_text = self._read_blob_text_opt(base_sha, rel)
+        else:
+            # F-AUDIT-QUEUE-04（2026-09-24 治本）：缺 base_head 时**不再兜底 old_dev^**。
+            # 旧兜底把「陈旧快照不含该条目」读成「theirs 侧主动删除」并忠实执行——
+            # 09-22 fb5a7821d 与 09-24 通宵 11 起热册「0 增 N 删」的同一真通道。
+            # 现口径：退而求其次用袋内逐路径 base_blob（与 _pool_head_reader 同为 git
+            # blob id 空间，直接 cat-file）；两样都没有 ⇒ fail-closed 死信，绝不猜基底。
+            # 注：base_blob 键缺失与值 null 在 JSON 里不可区分（历史项都写 null），故
+            # 本分支一律按「基底不可知」处理，不把 null 误读成「基底无此文件＝新增件」
+            # ——那会让合并器把 ours-only 条目判成 theirs 新增而复活已删条目。
+            base_blob = self._entry_base_blob(item, rel)
+            if not base_blob:
+                raise RuntimeError(
+                    f"[landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——"
+                    f"拒绝以 {old_dev[:12]}^ 猜基底做合并（09-24 热册被吃病根）。"
+                    f"修复通道：python scripts/commit_queue.py requeue <qid> "
+                    f"--worktree-root <会话工作区>（重投即带新基底，66 号 §6.4 死信闭环）"
+                )
+            r = self._git_repo("cat-file", "blob", base_blob, check=False)
+            if r.returncode != 0:
+                raise RuntimeError(f"[landing] base_blob 对象不可读（{base_blob[:12]}）——死信回退人工")
+            base_text = r.stdout
         merged, conflict = three_way_merge_registry_yaml(
             base_text,
             ours_text,
@@ -2155,6 +2231,58 @@ def _pool_head_reader(landing: WorktreeLanding):
 
 
 # ---------------------------------------------------------------------------
+# 入队基底取数（F-AUDIT-QUEUE-04 治本，2026-09-24）
+# ---------------------------------------------------------------------------
+
+_LSTREE_CHUNK = 50  # Windows 命令行长度上限 ⇒ ls-tree pathspec 分块
+
+
+def resolve_base_head(repo_root: Path | str) -> str | None:
+    """入队基底 = 目标分支当前 HEAD（66 号 §6.4 逐文件快进判定的锚点）。
+
+    病根：此前只有 machine 车道（``reroute_auto_commit_to_queue``）取基底，交互正门
+    ``git_commit.py --enqueue`` 与裸 CLI ``commit_queue.py enqueue`` 均不传 ⇒ 生产袋
+    全量 ``base_head=None`` ⇒ ``_conflict_reason`` 在 ``if not base`` 处先于注册表/
+    非注册表分流即早退 None ⇒ 在库注释承诺的「非注册表文件维持逐文件快进判定」在
+    生产形态下不成立，后落地快照可整文件覆盖他包已落地内容。
+
+    取不到（非 git 目录/分支不存在）→ None：保持 tmp 隔离测试可跑，不因此拒绝入队
+    （落地侧对 None 的处理见 ``_merge_registry_file`` 的 fail-closed 收紧）。
+    """
+    r = _run_git(Path(repo_root), ["rev-parse", f"refs/heads/{cq._TARGET_BRANCH}"], check=False)
+    sha = (r.stdout or "").strip()
+    return sha or None if r.returncode == 0 else None
+
+
+def resolve_base_blobs(repo_root: Path | str, base_head: str | None, paths: list[str]) -> dict[str, str | None]:
+    """逐路径取 base_head 树上的 git blob sha —— ``EnqueueOptions.base_blobs`` 填充器。
+
+    此前 ``base_blob`` 全仓无填充点（``enqueue_item`` 两处硬编码 None），§6.4 陈旧基底
+    重校验 ``_revalidate_stale_base`` 对每条恒走 ``if not base_blob: continue``＝结构
+    空转。id 空间与 ``_pool_head_reader`` 的 ``rev-parse refs/heads/dev:<rel>`` 同为
+    git blob sha（三套哈希口径不可互换——此处只认这一套）。
+
+    单条 ``git ls-tree <base> -- <路径…>`` 覆盖一批（ARCH-GIT-CALL-BUDGET 批量化强制，
+    禁逐文件子进程）；树上不存在（新增件）→ None。
+    """
+    uniq = [p for p in dict.fromkeys(paths) if p]
+    if not base_head:
+        return {p: None for p in uniq}
+    found: dict[str, str] = {}
+    for i in range(0, len(uniq), _LSTREE_CHUNK):
+        chunk = uniq[i : i + _LSTREE_CHUNK]
+        r = _run_git(Path(repo_root), ["ls-tree", base_head, "--", *chunk], check=False)
+        if r.returncode != 0:
+            continue  # 该块取不到 ⇒ 块内全 None（宁可少记基底，不猜）
+        for line in (r.stdout or "").splitlines():
+            meta, sep, path = line.partition("\t")
+            parts = meta.split()
+            if sep and len(parts) == 3 and parts[1] == "blob":
+                found[path] = parts[2]
+    return {p: found.get(p) for p in uniq}
+
+
+# ---------------------------------------------------------------------------
 # _commit_auto 改道（66 号 §7 一处改动；flag 门控，默认 OFF——启用=Owner 窗口批准）
 # ---------------------------------------------------------------------------
 
@@ -2276,6 +2404,11 @@ def reroute_auto_commit_to_queue(gateway, session_id: str, files: list[str], mes
             )
     head_r = gateway.run_git(["git", "rev-parse", f"refs/heads/{cq._TARGET_BRANCH}"])
     base_head = head_r.stdout.strip() if head_r.returncode == 0 else None
+    base_blobs = resolve_base_blobs(
+        gateway.project_root,
+        base_head,
+        [p for p, _ in payload] + list(deletes or []),
+    )
     # QueueReject 等入队异常向上传播 → gateway fail-safe 降级直提（warning 留痕）
     # 签名对齐 A 段定稿：可选参数束走 options=EnqueueOptions（NO-LONG-PARAM-LIST 收口）
     item = cq.enqueue_item(
@@ -2284,6 +2417,7 @@ def reroute_auto_commit_to_queue(gateway, session_id: str, files: list[str], mes
         payload,
         options=cq.EnqueueOptions(
             base_head=base_head,
+            base_blobs=base_blobs,
             deletes=deletes or None,
             meta_extra={
                 "rerouted_from": "_commit_auto",

@@ -617,6 +617,12 @@ class EnqueueOptions:
 
     base_head : 入队时观察到的目标分支 HEAD（A 段不主动取 git，由调用方显式传入；
         B 段落盘接通后用于 §6.4 逐文件快进/冲突判定）。
+    base_blobs : 逐路径基底 blob sha（仓内相对路径 → base_head 树上的 git blob sha；
+        新增件值为 None 或键缺席）。F-AUDIT-QUEUE-04 治本：`enqueue_item` 保持零 git
+        依赖（§6.1 刻意出入 #3 不破），git 取数由调用方经
+        `commit_queue_landing.resolve_base_blobs` 完成后经此入参落袋——此前 base_blob
+        全仓无填充点，§6.4 陈旧基底重校验（_revalidate_stale_base）恒走
+        `if not base_blob: continue`＝结构空转。
     depends_on : meta.depends_on 预留字段（A 段只做 schema 预留，不实现级联逻辑）。
     deletes : 删除路径列表（B 段新增，66 号 §6.1 action=delete 语义细化）：已跟踪但
         盘上缺失的文件经此通道入袋，落盘时从 dev 树删除；与 files 共享同键 compaction。
@@ -627,6 +633,7 @@ class EnqueueOptions:
     """
 
     base_head: str | None = None
+    base_blobs: dict | None = None
     depends_on: list[str] | None = None
     deletes: list[str] | None = None
     meta_extra: dict | None = None
@@ -657,6 +664,7 @@ def enqueue_item(
     """
     opts = options or EnqueueOptions()
     base_head = opts.base_head
+    base_blobs = opts.base_blobs or {}
     depends_on = opts.depends_on
     deletes = opts.deletes
     meta_extra = opts.meta_extra
@@ -693,7 +701,9 @@ def enqueue_item(
                 "path": norm,
                 "blob_sha256": sha,
                 "blob_ref": f"blobs/{sha}",
-                "base_blob": None,  # A 段预留（B 段：git rev-parse HEAD:{path} 填充，66 号 §6.1 v0.4.0）
+                "base_blob": base_blobs.get(norm),  # B 段填充接通（QUEUE-04）：调用方经
+                # resolve_base_blobs 取 base_head 树上的 git blob sha 入袋；None=该路径在
+                # 基底不存在（新增件）。id 空间与 _pool_head_reader 的 rev-parse 同口径。
                 "action": "modify",  # add/modify 统一 modify；delete 经 deletes 通道（B 段细化）
             }
         )
@@ -709,7 +719,7 @@ def enqueue_item(
                 "path": norm,
                 "blob_sha256": None,
                 "blob_ref": None,
-                "base_blob": None,
+                "base_blob": base_blobs.get(norm),  # 删除项同样记基底 blob（§6.4 重校验可比）
                 "action": "delete",
             }
         )
@@ -1392,6 +1402,7 @@ def requeue_dead_item(
     session_id: str | None = None,
     message: str | None = None,
     base_head: str | None = None,
+    base_blobs: dict | None = None,
     from_bag: bool = False,
 ) -> dict:
     """死信取回重入队（66 号 §6.4 死信闭环 + 08 号文 §4.3 P1）。
@@ -1479,6 +1490,7 @@ def requeue_dead_item(
         queue_root=root,
         options=EnqueueOptions(
             base_head=base_head,
+            base_blobs=base_blobs,
             deletes=deletes or None,
             # requeue 豁免大批硬顶（R2）：死信重试是既定决策的延续，尺寸判定在原入队时
             # 已做出——若此处拒绝，超大死信将永远无法重入队（死锁）。
@@ -2100,12 +2112,25 @@ def _cmd_enqueue(args: argparse.Namespace) -> int:
     try:
         files = _read_files_from_worktree(worktree_root, files_arg)
         depends_on = [d.strip() for d in (args.depends_on or "").split(",") if d.strip()]
+        base_head = args.base_head
+        base_blobs: dict | None = None
+        if base_head is None:
+            # B 段接通（F-AUDIT-QUEUE-04，2026-09-24）：裸 CLI 与交互正门同口径自取
+            # 基底——此前只有 --base-head 显式传入才有，缺省即 None（两套入口不一致）。
+            # 非 git 目录（tmp 隔离测试）取不到→None，行为与修复前逐字节一致。
+            from scripts.governance.commit_queue_landing import (  # noqa: PLC0415
+                resolve_base_blobs,
+                resolve_base_head,
+            )
+
+            base_head = resolve_base_head(worktree_root)
+            base_blobs = resolve_base_blobs(worktree_root, base_head, [p for p, _ in files])
         item = enqueue_item(
             args.session,
             message or "",
             files,
             queue_root=args.queue_root,
-            options=EnqueueOptions(base_head=args.base_head, depends_on=depends_on or None),
+            options=EnqueueOptions(base_head=base_head, base_blobs=base_blobs, depends_on=depends_on or None),
         )
     except QueueReject as exc:
         # fail-closed：报错非静默（66 号 §11 #3：畸形项全拦且报错非静默）
@@ -2191,13 +2216,22 @@ def _cmd_requeue(args: argparse.Namespace) -> int:
             print(f"ERROR: message-file 读取失败: {exc}", file=sys.stderr)
             return 1
     try:
+        base_head = args.base_head
+        if base_head is None and args.worktree_root:
+            # requeue 也必须带基底：死信重投是恢复通道，若再投 base_head=None 的袋，
+            # 注册表项会撞上 _merge_registry_file 的 fail-closed（QUEUE-04 收紧后）。
+            from scripts.governance.commit_queue_landing import (  # noqa: PLC0415
+                resolve_base_head,
+            )
+
+            base_head = resolve_base_head(args.worktree_root)
         result = requeue_dead_item(
             args.qid,
             queue_root=args.queue_root,
             worktree_root=args.worktree_root,
             session_id=args.session,
             message=message,
-            base_head=args.base_head,
+            base_head=base_head,
             from_bag=args.from_bag,
         )
     except RequeueError as exc:

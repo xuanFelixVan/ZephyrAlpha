@@ -898,11 +898,24 @@ def _enqueue_mode(args, files: list[str], message: str) -> int:
     if not payload and not deletes:
         print("ERROR: --enqueue 空文件清单（文件缺失且未跟踪）", file=sys.stderr)
         return 1
+    # F-AUDIT-QUEUE-04 治本（2026-09-24）：入袋必记基底。此前交互正门从不传 base_head
+    # ⇒ 生产袋全量 base_head=None ⇒ 落地侧 _conflict_reason 在 `if not base` 处早退
+    # ⇒ 任意文件可被后落地快照整文件覆盖（09-24 热册/案卷被吃真通道）。基底口径与
+    # machine 车道 reroute_auto_commit_to_queue 同源（refs/heads/<_TARGET_BRANCH>）。
+    from scripts.governance.commit_queue_landing import (  # noqa: PLC0415
+        resolve_base_blobs,
+        resolve_base_head,
+    )
+
+    base_head = resolve_base_head(wt)
+    base_blobs = resolve_base_blobs(wt, base_head, rel_files)
     item = enqueue_item(
         args.session,
         message,
         payload,
         options=EnqueueOptions(
+            base_head=base_head,
+            base_blobs=base_blobs,
             deletes=deletes or None,
             allow_oversize_batch=bool(getattr(args, "allow_oversize_batch", False)),
             meta_extra={
