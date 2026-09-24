@@ -493,3 +493,27 @@ D1 残（fail_open 14 处 merger 结构无能 = `content_sha256` 标量流被切
    - 处置（本笔终批）：**同一 commit 内**同时 ①按 `0fe090715f^` 逐字节再复原三件（sha256 f505056f80df/8e75cd1963c5/ba24b7fe43f0）②追加本节；此后 HEAD 已无这些路径 ⇒ 该 delete 态不再是"变更"，后续袋不会重复带出（受害面闭合）。
    - 处方补条（仍归 st-commitsys，与本包无涉的通用面）：`_prestage_snapshot` 在 `git add` 前应对该 worktree 执行一次 `git read-tree HEAD`（或 `git checkout HEAD -- <袋外路径>`）以清除跨袋残留 index 态；否则"谁在谁之后落地"决定谁吃删除。登记为 **D27**。
 4. **本包收官动作**（本节即终批）：释放本包全部 claim → 会话工作树 abort（袋均 content-addressed 存 `.runtime/commit_queue/blobs`，可复核）→ 清 `.runtime/tmp/align_dirty` 一次性驱动脚本（保留两把尺子 `probe_dangling_refs.py`/`closing_selfcheck.py` 与 R2 底座 `.runtime/tmp/working_cleanup_r2/`，因 §3.13/§3.17/R2-b 候裁须复跑）→ 主区从 HEAD 复位两枚本包文档 → 向 Owner 交终报。
+
+### 3.19 收官账（08:0x，含"自动化覆盖率"的诚实分母）
+
+**落地清单（本包全部经 GitCommitGateway 正门，袋面均 content-addressed 存 `.runtime/commit_queue/blobs`）**
+
+| 袋 | 内容 | 落地 | 复核口径 |
+|---|---|---|---|
+| q-0036/0037 | 重复行非键字段广播（尾巴域 1→0、样板 2→0） | `10e16d9ae4` / `3a114ad8a1` | `git show HEAD:<册> \| grep -c` |
+| q-0040 | ⑤生成器自动化补挂 +2 条 | `6199c0752a`（后被 `20885a28f2` 抹） | 已被重投 |
+| q-0043 | 反样板 2 行就地替换（只抄不写） | `0fe090715f` | generic 4→2 实测；本笔连带 3 件 D ⇒ §3.15 |
+| q-0044 | ⑤补挂**重投**（蒸发第三次复现） | HEAD 30 条含本二径 命中 | `git show HEAD:<册> \| grep -c "name: governance_map"`=1 |
+| q-0046 | 本包连坐蒸发复原（3 件逐字节） | `18e5af5101` | sha256 对 `0fe090715f^` 全等；本笔又带 1 件外来 M（§3.16） |
+| q-0047/0050 | 翻译册终缺 2 件（首投被并发袋吃 ⇒ 重投） | 0047=`81647d88db`（被吃）⇒ 0050 命中 | HEAD `grep -c` 各=1；`missing 3→1` |
+| q-0049 | 台账＋R2 交付件＋creation_token | `b9aae483cb` | 483/2404 行入库；本笔又带 3 件 D ⇒ §3.18 |
+| q-0051 | 三件二次复原＋台账 §3.18 | 见本笔 | `git show HEAD --name-status` D=0 |
+| q-0052 | 重复行派生层补齐（+3/−0 纯新增） | 见本笔 | 收官尺该项 offending=0 |
+
+**终验数字（全部 HEAD 位面，两轮一致）**
+- `align_all`（HEAD 保真副本）：两轮 **rc=0**、硬阻断 **0**、软 986 同值、**两轮语义 diff=0 行** ⇒ ⑤「两轮零」按定义达成（定义与口径先声明：软 warn 为君子协定存量）。
+- `closing_selfcheck.py`（16 检查）：改前两轮 diff=0（14/16，两项红=派生层+unique_key）⇒ q-0052 后应为 15/16，唯一红=R1（§5.2 Owner 门位）。
+- 翻译覆盖：`universe 3989 / missing 1 / short 0 / generic 2`（开工基线 4049 宇宙 430 缺）。余 1=被重复 stub 遮蔽（R1 一刀内）；余 2 generic=克隆对（R3）。
+- 派生册悬空普查（带负控）：`fail_open_register` 已产 0 悬空字节但被队列结构性拒收（R2/D25）；`rule_catalog` 2、`rule_ai_perception_index` 1（glob 假阳）随 D21/D23 派；`path_ownership_map` 62 经重跑生成器证伪＝确定性产物含"所有权先于落码/退役留痕"，**D23 已撤回**（§3.17）。
+
+**D28（新登记·自动化覆盖率的诚实分母，本包不擅扩面）**：`scripts/` 下 tracked `generate_*.py` 非 `_archive` 共 **56** 件，而 `generator_registry.yaml` 编排器只挂 **30** 条 ⇒ **26 件生成器不在自动再生链**（其中 `generate_gate_registry`/`generate_registry_master_index`/`generate_rule_catalog`/`generate_path_ownership_map`/`generate_fail_open_register`/`generate_standard_family_registry` 等是"册会过期"的直接来源）。**注意分母口径**：部分生成器由别的事件路径显式调用（如 `gate_auto_registrar`、`apply_*.py` 内联），未挂本表≠未自动化——逐件判"谁触发/是否幂等/产物是否 tracked"需要一次专项普查（本包只给尺子：`git ls-files -- scripts | grep '/generate_.*\.py$'` 与册内 `module_path` 集合差）。建议派治理派 D5 生成器域，与 D25/D27 同窗（都是"提交-落地-再生"链路的闸）。
