@@ -106,7 +106,7 @@ class Fingerprint:
     head_sha: str
     flags_mtime: float
 
-    def matches(self, other: "Fingerprint") -> bool:
+    def matches(self, other: Fingerprint) -> bool:
         return (
             self.staged_tree_sha == other.staged_tree_sha
             and self.head_sha == other.head_sha
@@ -137,6 +137,29 @@ def compute_fingerprint(gateway) -> Fingerprint | None:
         return None
 
 
+def _own_content_hash(gateway, files: list[str]) -> str | None:
+    """own 文件的 staged blob sha 合集哈希（T7/B2 键的"本件内容"分量）。
+
+    逐文件取 index blob sha（``git ls-files -s -- <file>``），排序后合集哈希。
+    任何异常返回 None ⇒ 缓存整体不可用（fail-safe 回退全量现算，绝不阻断）。
+    """
+    try:
+        if not files:
+            return hashlib.sha256(b"").hexdigest()
+        specs: list[str] = []
+        for f in sorted({str(x).replace("\\", "/") for x in files}):
+            r = gateway.run_git(["git", "ls-files", "-s", "--", f])
+            if r.returncode != 0:
+                return None
+            line = r.stdout.strip().splitlines()[0] if r.stdout.strip() else ""
+            # 形态: mode blob_sha stage	path——取 blob sha 段
+            parts = line.split()
+            specs.append(parts[1] if len(parts) >= 2 else "")
+        return hashlib.sha256("\n".join(specs).encode("utf-8", "replace")).hexdigest()
+    except Exception:  # noqa: BLE001 — fail-safe 回退现算
+        return None
+
+
 def own_scope_hash(gateway, files: list[str]) -> str:
     """own_scope 集合指纹（files∪session held_files；与 _diff_helpers._build_own_scope 同源语义）。"""
     try:
@@ -155,16 +178,23 @@ class GateResultCache:
         self._gateway = gateway
         self._own_scope_hash = own_scope_hash(gateway, files)
         self._fp = compute_fingerprint(gateway)
+        self._own_content_sha = _own_content_hash(gateway, files)
         root = Path(gateway.project_root) / _CACHE_DIR
-        self._dir: Path | None = root if self._fp is not None else None
+        self._dir: Path | None = root if self._fp is not None and self._own_content_sha is not None else None
 
     @property
     def usable(self) -> bool:
         return self._dir is not None
 
     def _path(self, gate_id: str, own_scope: str) -> Path:
+        # T7/B2（st-commitspeed-tbl-20260924）：键去 staged_tree_sha/head_sha 全局
+        # 分量——write-tree 对共享 index 逐字节敏感、HEAD 任何人可推 ⇒ 他人一切
+        # 活动都会作废我的缓存（24h 仅 87 命中的结构性根因）。改用 own 文件的
+        # staged blob sha 合集：只有"本件内容变化"才失效（等价性：白名单门全是
+        # 纯 staged 扫描器，其判定输入=own staged 内容∪own_scope 集合，全局态
+        # 从不在输入面——A3 矩阵逐门核过）。
         key = hashlib.sha256(
-            f"{gate_id}\x1e{own_scope}\x1e{self._fp.staged_tree_sha}\x1e{self._fp.head_sha}\x1e{self._fp.flags_mtime}".encode()
+            f"{gate_id}\x1e{own_scope}\x1e{self._own_content_sha}\x1e{self._fp.flags_mtime}".encode()
         ).hexdigest()
         return self._dir / f"{key}.json"  # type: ignore[union-attr]
 
@@ -176,8 +206,6 @@ class GateResultCache:
         try:
             data = json.loads(p.read_text(encoding="utf-8"))
             if now_utc().timestamp() - float(data["ts"]) > _TTL_SECONDS:
-                return None
-            if data.get("head_sha") != self._fp.head_sha:  # type: ignore[union-attr]
                 return None
             return str(data["detail"])
         except (OSError, ValueError, KeyError, TypeError):
@@ -191,7 +219,7 @@ class GateResultCache:
             self._dir.mkdir(parents=True, exist_ok=True)  # type: ignore[union-attr]
             p.write_text(
                 json.dumps(
-                    {"gate_id": gate_id, "detail": detail, "ts": now_utc().timestamp(), "head_sha": self._fp.head_sha},
+                    {"gate_id": gate_id, "detail": detail, "ts": now_utc().timestamp()},
                     ensure_ascii=False,
                 ),
                 encoding="utf-8",
