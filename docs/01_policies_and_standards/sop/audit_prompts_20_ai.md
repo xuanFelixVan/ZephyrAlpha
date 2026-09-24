@@ -8,7 +8,7 @@ title: "全仓打扫卫生+自主审计治本闭环 v4（AI-00 总控 + 22 域�
 
 > **一句话定位**：这是一份"广度 × 文件"的自动打扫+审计+治本修复工作流——总控并发派单，各域对自家责任区做全量审查→直接治本修复→复检循环→零问题收口。
 > **它不是"只打扫"**：审计面是打扫，修复面是动手术（改代码/改注册表/提交/合并）。所以"自主"必须关进门位笼子（见 0.8），不做无条件自裁。
-> **分工矩阵**（防双真源，本文件不复述他库方法论）：本文件=广度×文件；深度×代码=`review_sop/deep_review_policy.md`（六轴法）；文档七轮=`review_sop/document_review_sop`；机会挖矿=`mining_sop/`；缺陷模式库=`review_sop/defect_pattern_checklist.md`。
+> **分工矩阵**（防双真源，本文件不复述他库方法论）：本文件=广度×文件；深度×代码=`review_sop/deep_review_policy.md`（六轴法）；文档七轮=`review_sop/document_review_sop`；机会挖矿=`mining_sop/`；缺陷模式库=`review_sop/defect_pattern_checklist.md`；自动化白班深审岗=22 域的分片执行编排（见 `automation_sop/automation_crew_policy.md`，域定义仍以本文件为唯一真源）。
 
 > **⚠️ 保护与修改规程**
 > - 用途：全项目"自动审计→自动治本修复→复检循环→零问题闭环"的总控 + 各域提示词**唯一真源**。

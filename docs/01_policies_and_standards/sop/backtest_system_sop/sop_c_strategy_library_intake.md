@@ -116,3 +116,13 @@ related_issues:
 **净零声明**：本条非新增规范对象——是 backtest_strategy_screen DDL `oos_years_decay` 存疑土规（>=0.5）
 与 BT-P0-002 decay_watch 框架在策略入库线的显式化合并；执行工具=strategy_screen_query.py bothwin
 子命令（只读判定，结果可检索）；lifecycle 变更（candidate→sim）仍走规则册治理动作留痕。
+
+## 9. 外网渠道与全网战法收集岗挂接（2026-09-24 增补）
+
+本节是 C1 盘点归一的上游进料口，服务自动化业务班"全网战法收集岗"（编制=automation_sop/automation_crew_policy.md）：
+
+- 渠道起步清单：GitHub（quant/trading/factor/alpha 仓库，star+活跃度+许可证三筛）｜论文站（SSRN/arXiv quant 版块）｜中外量化社区与博客｜TASC 等指标专栏（走 indicator_mining_sop 通道）。
+- GitHub 专项：检索式（language:Python + topic:quant/trading/factor）｜许可证闸（GPL/无许可证=只学思想不入码）｜去重闸（先查 strategy_library 存量，入库仍过 C5 聚类）。
+- 合规铁律：外部代码禁直接复制入库（Owner 定性"外仓禁商用只学思想"）——一律走 C3 翻译适配重实现。
+- 战法卡必备字段：原文链接｜许可证｜逻辑描述｜伪代码｜所需数据源映射（对齐源线谱 SL-*）。
+- 产出物流：战法卡→C1 盘点归一→C1-C6 漏斗→夜班挖矿审查席复核→合格入库。

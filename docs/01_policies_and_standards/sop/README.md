@@ -2,9 +2,9 @@
 module_id: SOP-INDEX-001
 doc_type: index
 ttl: permanent
-title: SOP 方法论真源地图（九族文件夹导航）
+title: SOP 方法论真源地图（文件夹导航）
 status: active
-version: 1.5.0
+version: 1.6.0
 owner: ZephyrAlpha-Owner
 language: zh
 ---
@@ -26,6 +26,8 @@ language: zh
 | `ops_sop/` | **运维协作与应急族**：冲突三分法（merge_conflict_resolution_policy：全项目冲突处理唯一真源）+ worktree 四证清理（worktree_cleanup_policy）+ 保命轨人工 Runbook（emergency_runbook，D-L1~D-L3） | 合并冲突时；清理 worktree 前（四证缺一不可）；系统应急时 |
 | `data_audit_sop/` | **数据审计族**：产业链数据审计修复循环（industry_chain_data_audit_policy，配套标准=policies/graph_quality_standard.md） | 图谱数据质量修复、数据审计班次开工前 |
 | `review_sop/` | **深度审查族**：代码与算法深度审查六轴法（deep_review_policy：数学正确性四问+上游/下游/旁系传导+红蓝对抗+SOTA 新鲜度+证据纪律+收口闭环）+ 缺陷模式库（defect_pattern_checklist：15 条历史系统性缺陷机械 checklist）+ **规则处置程序法**（rule_disposition_policy：六道闸判定 × 六类归宿，每条规则/每台裁判的唯一判决流程，是前三者与 audit_prompts 的共同下游） | 强模型审查窗口开工前；新算法/管线转 production 验收前；系统性漏洞横向排查（T3）前；**判任何一条规则该留/该改/该退役时** |
+| `automation_sop/` | **自动化班底族**：自动化班底值守 SOP（automation_crew_policy：双引擎两班制=治理班×业务班／夜班 9 席／白天深审岗位／切碎四件套+重复指令模板／铁律／晨报插单协议／两班任务清单附录／业务全链挂点附录） | 自动化班底开工前（每岗每席）；排班／插单前 |
+| `library_sop/` | **图书馆族**：血肉编目 SOP（blood_flesh_cataloging_sop：人读描述区质量标准） | 图书馆编目、人读描述质量审计前（2026-09-24 补登，此前未入索引） |
 | 根下 `audit_prompts_20_ai.md` | **全仓打扫卫生+自主审计治本闭环 v4**：AI-00 总控 + 公共指令（唯一真源）+ AI-01~AI-22 域差异表（含门位优先、能红自证、无主区收编）。文件名保留 `audit_prompts_20_ai` 以稳引用（禁删/禁改名/禁挪路径；只读属性保护，修改走 attrib -r → claim → Gateway 提交 → 复位；旧 `skip-worktree` 声明实测已失效，见文件头） | 发起多模型交叉审计前（design memo 68 的执行蓝本） |
 
 ## 使用纪律
@@ -33,3 +35,4 @@ language: zh
 1. **族内唯一真源**：每族的方法论问题以该族文件为准；族文件互相引用已同批对齐（2026-09-14 重分类全量路径同步）。
 2. **新 SOP 入驻**：新方法论按功能归族入对应文件夹；命名遵循 `*_policy.md`（doc_type=policy 时，N-11 命名闸）；新建文件须登记 creation_token。
 3. **发现入口**：本表由 capability 反查（`capability_lookup`）与 `rule_catalog_registry.yaml`（生成器产出）双通道冗余可达；本文件是人为导航层，条目计数勿写死（只述族与功能）。
+4. **两班导航**：治理班入口=governance/construction/review/data_audit/ops/automation 各族；业务班入口=mining/backtest/data_ops/trading_decision_map 各族；域审计方法论唯一真源=根 `audit_prompts_20_ai.md`（22 域）。

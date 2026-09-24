@@ -50388,4 +50388,34 @@ creation_tokens:
   created_by: st-mapbuild-20260924
   capability: map_build
   merge_evaluation: "六图案卷宿主增量（消费端反查卷，同域派生不另立册）"
+- file: src/zephyr/governance/registry_projection/projection_generator.py
+  token: registry-projection-generator-20260923
+  created_by: st-wm1-buildB-20260923
+  capability: registry-projection
+  merge_evaluation: "W-M1波0车道B投影生成器六模块：YAML:=render(账本快照)纯函数+四象限漂移判别+PG wins自愈执法链，替代capability册手工维护语义（丙号文W2）"
+- file: docs/01_policies_and_standards/sop/automation_sop/automation_crew_policy.md
+  token: automation-sop-automation-crew-policy-20260924
+  created_by: st-autoplan-20260924
+  capability: automation_sop
+  merge_evaluation: "自动化班底操作机制唯一真源:收拢讨论册口头机制+两班任务清单附录(内收,不新增gate/规则);README索引同批登记"
+- file: docs/01_policies_and_standards/sop/automation_sop/index.md
+  token: automation-sop-index-20260924
+  created_by: st-autoplan-20260924
+  capability: automation_sop
+  merge_evaluation: "自动化班底操作机制唯一真源:收拢讨论册口头机制+两班任务清单附录(内收,不新增gate/规则);README索引同批登记"
+- file: docs/_working/cmd_ledger/automation_master_plan.md
+  token: autoplan-automation-master-plan-20260924
+  created_by: st-autoplan-20260924
+  capability: autoplan
+  merge_evaluation: "双引擎自动化讨论记录册:编制讨论过程真源,定稿转正式桥册后转存档(内收无新规则/gate)"
+- file: docs/_working/cmd_ledger/automation_plan_discussion.md
+  token: autoplan-automation-plan-discussion-20260924
+  created_by: st-autoplan-20260924
+  capability: autoplan
+  merge_evaluation: "双引擎自动化讨论记录册:编制讨论过程真源,定稿转正式桥册后转存档(内收无新规则/gate)"
+- file: docs/_working/cmd_ledger/overnight_decisions_20260924.md
+  token: autoplan-overnight-decisions-20260924-20260924
+  created_by: st-autoplan-20260924
+  capability: autoplan
+  merge_evaluation: "双引擎自动化讨论记录册:编制讨论过程真源,定稿转正式桥册后转存档(内收无新规则/gate)"
 di_seam_exemptions: []
