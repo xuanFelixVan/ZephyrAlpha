@@ -1114,3 +1114,36 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   python .runtime/tmp/audit_all_20260924/ruler_J_restore.py 2>&1 | tail -1                                    # ② 待补块=0
   python .runtime/tmp/audit_all_20260924/run_headside_align.py --no-report 2>&1 | grep -E "硬阻断|gomap"      # ② 唯一硬=gomap
   ```
+
+## 心跳 心跳 2026-09-24 10:58 CST 实测（`date`=2026-09-24 10:58:25，本串由 shell `date` 传入）· 在干=**收官第 4 轮＝收敛确认轮（三尺逐位与第 3 轮一致）＋ 由"死信袋载荷是否真落地"这一未验面挖出新案 F-AUDIT-MERGE-02（注册表合并作用域与承载能力错配＝零族册任何入队编辑被静默判 noop 且回执 ok）＋ 自家归因更正 1 处** · 卡住=无 · 下一步=见 ⑤
+
+- **① 承 10:04 块 ⑤**：0036 已落地＝`e964aeadbe`(10:10:12)、**0037 亦已落地**＝`1fa27fb090`(10:13:32)＝上轮 10:10 续做的"红蓝反证并档 附录 AB"（我 10:04 块只预告了 0036，故 0037 属**同轮后延动作**、非新一轮；本轮据盘核实）。本包 done=23→24、dead=9、pending=0。
+- **② 收官"连续两轮零新问题"第 4 轮＝收敛确认（三尺全部只读可重放，测点 10:26–10:54）**：
+  - **尺H2**＝命中袋-件对=31、合法改写侧 152 行、条目被吃侧 3 行且**全属已登记 0009**；**合成控制组 阳性=3／阴性=0**（与第 3 轮逐位一致）。
+  - **尺J**＝`待补块=0`（与第 3 轮一致）。
+  - **align（HEAD 面只读探针 `--no-report`）**＝`rc=1`，**唯一硬项仍＝图 10 GOMAP** `scripts/audit/t0_gpu_condition_pack.py`；其余八类硬=0；软 1005（chainmap 长城专项在清＋翻译册 6 组重复 module_path 已知）。
+  - **四元组三态探针**（第 3 轮新立法，本轮专查归一性）＝`scripts/audit/t0_gpu_condition_pack.py` → `<HEAD=1, index=0, 盘=1, yaml盘=0, yamlHEAD=0>`，与第 3 轮**同一条、未归一**（他包 `git rm --cached` 式整族搬迁仍在途：`scripts/audit/` 下 4 个 `t0_*.py` 仍并出 `D `+`??`）；另一支 `scripts/sector_line/build_gpu_input_pack.py` → `<HEAD=0, index=0, 盘=1, yaml盘=2, yamlHEAD=0>`＝**盘版 yaml 已含它、HEAD 版 0 处**＝第 3 轮 ③(c) 那次"他包把自己的未跟踪草稿烙进派生册"仍未随批落地。**HEAD=1 且 yamlHEAD=0 只有 t0_gpu_condition_pack 一条**＝HEAD 面真漏挂（须物主批补），其余为在途幻影 ⇒ **判"仅剩已登记他包在途项"成立且稳定**，`F-AUDIT-GOMAP-INFLIGHT` 不升为真缺陷、维持不代修（§3.4）。
+- **③ 🔴 本轮真增量＝把一条从未验过的面验穿了，并因此新立 1 案**：收官判据①"全部应修落地"此前只由 尺H2（done 袋 own-key 存活）＋ 尺J（LEDGER 块级最长版）支撑，**"dead 袋里那份字节到底进没进 HEAD"无人量过**。新立 5 把尺补此面（全部只读、全部带合成控制）：
+  - **尺K**（`probe_dead_bag_payload_landing.py`）＝本包 9 个死信袋逐件 blob↔HEAD 行比对：**8 件零缺行**、4 件各报 1 缺行。
+  - **尺K2**（`probe_dead_bag_line_triage.py`）＝把"缺行"三分（净化/截断/真丢）：5 条全判 **REWRITE**，逐条对到 GATE-01 去井号净化（HEAD 版甚至自带"（去 # 免自触门；编号未登记）"注）⇒ **死信袋载荷面零真残损**（判据①的这条支撑由此成立）。控制组阳性＝人造前缀行必判 PREFIX、阴性＝HEAD 自取行必判 PRESENT，皆 PASS。
+  - **尺L**（`probe_registry_merge_silent_drop.py`）＝追 0009 为何 noop：该文件**自 09-22 13:20 起无人改动**（`ours==base@落地父` 亲验＝`48c26cd5a862`），theirs 只差 3 行 ⇒ 按 `_plan_kept_splices`"theirs 改了、ours 没动(==base)→采纳 theirs"分支**应当落地**，但把 `three_way_merge_registry_yaml` 当纯函数直喂三侧字节，**三种形态的编辑全部判"合并结果==ours"**：P1 文件尾新增顶层键／P2 改已存在条目叶子值／P3 族内新增条目 ⇒ **不是竞态、是结构性不承载**（无竞态最小复现，比 MERGE-01 的 39 秒复现更硬）。
+  - **尺M**（`probe_registry_merge_population.py`）＝人口普查：`is_registry_mergeable()` 按**目录前缀+`.yaml`** 判（`commit_queue_landing.py:197-201`），而 `_split_registry_entries()` **只认顶层 list 族**（同文件 `:223-259` 自陈"ScalarNode/空文档→无族…走 noop 短路"）⇒ 命中作用域但切不出族的册＝**任何入队编辑都静默丢失**。实测分母 **82 册**：可承载 77｜**零族 3**＝`battle_map_domain_policy.yaml`/`depgraph_scan_exclusions.yaml`/`industry_graph_field_dictionary.yaml`｜**切分报错 2**＝`_index.yaml` 与 **`risk_tier_registry.yaml`**（后者根因＝`domain_tiers` 条目引用 `*high_human_gate` 别名，锚点 `&high_human_gate` 定义在**另一个族** `tiers:` 的第 42 行，条目块被独立解析 ⇒ 整册合并**永**失败、任何改动必死信——而这正是宪法 §5 的人机门位册）。控制组：阳性"人造纯嵌套 dict"必 0 族、阴性"ruling_registry"必 >0（=227），皆 PASS。
+  - **尺N**（`probe_noop_receipt_triage.py`）＝全窗 `noop@` 回执判决（不限本包）：`done/` 现存 **89 袋**带 `landed_id=noop@` ⇒ 合法幂等 **A=46**｜袋≠HEAD **B=43**｜其中**确证静默丢失 HARD=1**（＝本包 0009；判据＝件在 HEAD 且该件末次改动时间 ≤ 袋落地时间 ⇒ 那次落地从未写过它）｜不可判 UNK=6（件已不在 HEAD，git 侧无法区分"从未写入"与"写入后被删"）。**分母与时点诚实声明**：读数随 HEAD 移动（同一脚本三次跑出 HARD=5→3→1，因他包持续落地把歧义行改判），本节以 **10:54 时点 HARD=1** 为准；`dead/` 不计。
+  - ⇒ **新案 `F-AUDIT-MERGE-02`【合并作用域与承载能力错配＝静默假成功】**，三条处方（全部路由 st-commitsys，本包不改提交系统＝§3.4/§0.8）：**(i) 可观测性**＝`merged==ours` 而 `theirs!=ours` 时**禁止**记 `ok=True/noop`，须死信并写原因"该册无顶层 list 族，条目级合并器不承载"（现回执与真幂等不可区分，是全场最坏的一种假绿）；**(ii) 承载**＝零族册回退行级三方（`base==ours` 已证无竞态时等价于整件写入）；**(iii) 前移到入队侧**＝按尺M 的 82/77/3/2 分母做"结构普查册"，不可承载者在 `enqueue` 当场拒绝而非落地侧静默吞。
+- **④ 自家归因更正（自我否证，非被审对象）＝第 36、37 例**：**R36** 尺M 首版阳性控制样本我写成 `another: [a, b]`（flow-style＝顶层 Sequence，真有 2 条目）⇒ 期望 0 族被判 2 ⇒ **尺自己 fail-closed 拦下、拒不读数**，修样本为纯嵌套 mapping 后才通——造控制组时我又犯了"未先证判据成立"的同族错（R20/R26 同病）。**R37 归因更正**：本包台账 03:0x 起把 0009 记为"注册表族条目蒸发同病灶（base=None ⇒ 陈旧快照被读成删除）"家族，**本轮证明该归因对 0009 不成立**——0009 场景 `base==ours`、零竞态，真因是"零族册不被承载"；蒸发家族（MERGE-01/EVAP）仍是别的案例的因，两案**不可再并成一条**（净零判据"跨域不同对象→不并"）。
+- **⑤ 与收官判据**：本轮**新立 1 案 ⇒ "连续两轮零新立"计数重置**（第 3、4 轮本已达成，第 4 轮末又出案，据实重来，不抢跑宣布收官）。且判据①"全部应修落地"现给出**精确边界**：授权内可自修项全落 ✅（9 死信袋载荷面经尺K/K2 亲验零残损）；**唯一未落地面＝0009 那 3 行**，其因已升格为独立案 MERGE-02（有合成样本级复现，重投 N 次仍会被吞，非"再试一次"可解），维持登记上交、**不再重投**。
+- **⑥ 下一步（轮次）**：① 本块随袋 **0038** 入队（自家 LEDGER 纯增，通道 0032-0037 六连证可用），同批把 MERGE-02/尺K-N/归因更正并入 REPORT 附录 **AC** ② **第 5 轮＝重设计数基线后的第 1 轮**：复跑三尺＋尺N（看 HARD 是否仍只 0009、他包是否出现新的静默丢失受害者）③ 若第 5、6 轮连续零新立 ⇒ 写终局"自动化已自删·本包收官"＋`qoder_cron remove 39cc5bd5-6b49-4b42-a65f-db987dccc076` ④ 复核命令见下。
+- **队列/align 状态**：本包 done=24、dead=9、pending=0（本轮入 0038/0039）；HEAD=`e41a06c295`(10:50:30·他包 st-metaq 283 问战役批，非本包)。**本包对注册表/配置册/depgraph/GOMAP DB 写入累计仍=0**（全程 `git show`/`git ls-files`/纯函数级内存重放＋自家两件案卷；尺L 是"直喂 three_way_merge_registry_yaml 纯函数"，零落盘零提交）。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_dead_bag_payload_landing.py 2>&1 | tail -3                # ③ 9 死信袋缺行面
+  python .runtime/tmp/audit_all_20260924/probe_dead_bag_line_triage.py 2>&1 | tail -3                    # ③ 三分全 REWRITE＝零真残损
+  python .runtime/tmp/audit_all_20260924/probe_registry_merge_silent_drop.py 2>&1 | sed -n '1,12p'       # ③ 无竞态复现（三正一负）
+  python .runtime/tmp/audit_all_20260924/probe_registry_merge_population.py 2>&1 | sed -n '1,14p'        # ③ 82/77/3/2 人口普查
+  python .runtime/tmp/audit_all_20260924/probe_noop_receipt_triage.py 2>&1 | sed -n '3,4p'               # ③ 89 袋 A46/B43/HARD1/UNK6
+  grep -n "REGISTRY_CATALOGS_PREFIX\|ScalarNode / 空文档" scripts/governance/commit_queue_landing.py     # ③ 两条代码位亲验
+  git log -1 --format="%h %ci" -- docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml | cat   # ③ 末次改动=09-22 ⇒ 零竞态
+  python .runtime/tmp/audit_all_20260924/probe_bag_regression_attribute.py 2>&1 | grep -E "^尺H2|控制组" # ② 与第 3 轮逐位同
+  python .runtime/tmp/audit_all_20260924/run_headside_align.py --no-report 2>&1 | grep -E "硬阻断|gomap" # ② 唯一硬=gomap
+  git show --name-status e964aeadbe 1fa27fb090 --format="%h %s" | grep -c "^D" ; echo 本包未连坐＝0      # ③ 反证 D27 边界
+  ```
