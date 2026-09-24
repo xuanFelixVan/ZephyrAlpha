@@ -53,6 +53,7 @@ from zephyr.gov_enforcement.commit_gates.business_registry_gate import (  # noqa
 from zephyr.gov_enforcement.commit_gates.decision_map_gate import (  # noqa: E402
     make_decision_map_gate,
 )
+from zephyr.gov_enforcement.registry_alignment import spec_path  # noqa: E402
 
 # ═══════════════════════ 红队：攻击注入 ═══════════════════════
 
@@ -259,9 +260,9 @@ class TestBlueTruthSources:
         assert len(ids) >= 8
 
     def test_b2_six_registries_clean(self) -> None:
-        catalogs = _REPO / "docs" / "01_policies_and_standards" / "_registry" / "catalogs"
+        # 审计#8 扩面后路径解析唯一口=spec_path（DS 册 base_dir 出 catalogs）
         for spec in REGISTRY_SPECS:
-            fails = validate_registry_file(catalogs / spec.filename, spec)
+            fails = validate_registry_file(spec_path(spec), spec)
             assert fails == [], f"{spec.filename} 存在违规: {fails}"
 
     def test_b3_acknowledged_excluded(self) -> None:
@@ -277,8 +278,10 @@ class TestBlueTruthSources:
         # §acknowledged_orphans.steps，豁免集非空且逐条在册（防"未登记即豁免"）。
         assert len(report.acknowledged_orphan_steps) >= 1, "豁免集空=豁免机制失效或数据被清"
         import yaml as _yaml
+
         policy_path = Path(__file__).resolve().parents[2] / (
-            "docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml")
+            "docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml"
+        )
         policy = _yaml.safe_load(policy_path.read_text(encoding="utf-8"))
         pol_ids = set()
         for item in (policy.get("acknowledged_orphans") or {}).get("steps") or []:
@@ -344,6 +347,10 @@ class TestBlueFailOpenAndTrigger:
             encoding="utf-8",
         )
         monkeypatch.setattr(brg, "_CATALOGS_DIR", tmp_path)
+        # spec_path 真源在 registry_alignment.CATALOGS_DIR（审计#8 扩面后 gate 经 spec_path 取文件）
+        import zephyr.gov_enforcement.registry_alignment as _ra
+
+        monkeypatch.setattr(_ra, "CATALOGS_DIR", tmp_path)
         passed2, detail2 = gate.check(
             gateway=None, files=["docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml"]
         )
@@ -573,7 +580,9 @@ class TestBadEncodingFailOpenBattleMap:
     测试隔离：tmp_path 构造坏字节文件，monkeypatch 模块级路径常量，不碰真源。
     """
 
-    def test_bad_encoding_blueprint_scan_fail_open(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog) -> None:
+    def test_bad_encoding_blueprint_scan_fail_open(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog
+    ) -> None:
         """蓝图扫描含 0xd6 字节文件 → 跳过该文件（好文件正常采集），warn 记路径。"""
         import align_battle_map as abm
 
@@ -591,7 +600,9 @@ class TestBadEncodingFailOpenBattleMap:
             f"warn 应含坏文件路径: {[r.getMessage() for r in caplog.records]}"
         )
 
-    def test_bad_encoding_domain_policy_degrades_to_none(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog) -> None:
+    def test_bad_encoding_domain_policy_degrades_to_none(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, caplog
+    ) -> None:
         """battle_map_domain_policy.yaml 含 0xd6 字节 → 返回 None（跳过域漂移检查），warn 记路径。"""
         import align_battle_map as abm
 
