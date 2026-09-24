@@ -408,10 +408,10 @@ GOMAP漂移 · related_arch双向 · TDM R19/R21 · 库 blind/ghost 集合差 ·
 - ⬜ 高域/他包项维持上交（不属本包收官阻塞）：F-AUDIT-LAND-01/MERGE-01/EVAP（交 st-commitsys 修队列入袋记 base＋注册表族 merge/落地条目级三方合并）、图 8 chainmap 12 硬（st-gpu-final 清欠）、counts/generated_at 盲检（图 10 属主裁）、翻译册 6 组重复（`--dedupe` 清源）。
 ---
 
-# 附录 AB · 红蓝反证并档（AB2 轮：2026-09-24 10:10 CST · 自我否证 38 例总表 + 失明清单 18 条指针 + 盲检器 4 处）
+# 附录 AB · 红蓝反证并档（AB2 轮：2026-09-24 10:10 CST · 自我否证 44 例总表 + 失明清单 18 条指针 + 盲检器 4 处）
 
 > **为什么要并这一档（＝本档第 34 例自触）**：台账自 09:04 起三块反复引用"累计 31 例"，但两册合看**显式编号只到 28**，29–31 从未逐条落地 ⇒ 该计数当时**不可重放**。本节把 1–35 全部枚举，并按 §4.3"计数不写死在散文"把例数降为**由表行派生的字段**。
-> **计数重放命令**：`python -c "import re,pathlib;print(len(re.findall(r'^\| R[0-9]{2} ', pathlib.Path('docs/_working/audit_all/AUDIT_REPORT.md').read_text(encoding='utf-8'), flags=re.M)))"` ⇒ 期望 **38**（本表行数即真值，散文里的数字皆须与之同框）。
+> **计数重放命令**：`python -c "import re,pathlib;print(len(re.findall(r'^\| R[0-9]{2} ', pathlib.Path('docs/_working/audit_all/AUDIT_REPORT.md').read_text(encoding='utf-8'), flags=re.M)))"` ⇒ 期望 **44**（本表行数即真值，散文里的数字皆须与之同框）。
 
 ## AB0 本轮（10:10）能红自证复跑读数（内存注入，零生产写入）
 - `redblue_ruler_selfcheck.py`＝**真判 14 条断言全 PASS ＋ 1 条有意负例触发红**（`[SELF-RED] +1`，exit 0）⇒ 自检器既能红也不瞎报，本轮再复证。
@@ -459,6 +459,11 @@ GOMAP漂移 · related_arch双向 · TDM R19/R21 · 库 blind/ghost 集合差 ·
 | R37 | 归因错并：0009 的静默丢失被记进「陈旧快照被读成删除」（MERGE-01/EVAP）家族，实为零竞态下「零族册不被承载」的另一条机制 | 收官第 4 轮 10:5x 尺L/尺M | 机制不同＋复现不同＋处方不同 ⇒ 判「跨域不同对象→不并」，分立 MERGE-02 | 已更正（见附录 AC1/AC3） |
 | R38 | 立案前只做**编号级**反查（R17 原式）未做**机制级**反查 ⇒ 差点把 st-align-dirty 已立 D25 的同根另一枝另立新案 | 收官第 4 轮 AC5 | 反查对象＝机制描述里的函数名/代码位（`is_registry_mergeable`/`_split_registry_entries`），不是自家编号前缀 | 已并案（AC5） |
 | R39 | **口径失真**：尺M 的"可承载 77"按"文件含 ≥1 顶层 list 族"判定，但合并器实际只 splice **族内条目**——族外的顶层标量/嵌套键编辑仍被静默吞。`rule_catalog_registry.yaml`（有 `files:` 族、被 M 计入 77）实证被吞 2 行（`generated_at`/`total_files`），跨 4 包 6 袋复现 ⇒ "可承载"应改述"部分可承载"，处方(iii)入队普查须核对**被改的键是否落在可 splice 的族内**，而非只看文件有没有族 | 收官第 5 轮 11:1x 尺N HARD 1→2 | 承载能力是**按键区域**非**按文件**度量；阳性控制不能只造"整册无族"，须造"有族但改族外键" | 已并入 MERGE-02 第二枝（AC7） |
+| R40 | **严重度分级失真**：尺M 把 `_index.yaml` 记为“切分报错”、并与“零族 3”同列高危人口，未区分两态真后果——解析失败走 `return None, err`→调用方抛错＝**死信可见**（`commit_queue_landing.py:1083`），零族走 `merged==ours`＝**静默 noop**；且 `_index.yaml` 实测根本不是 YAML（Markdown 表装 `.yaml` 扩展名）＝“非 YAML 件混入 YAML 合并作用域”而非损坏件 | 第 6 轮尺P 跑批读到 `PermissionError` 顺藤 | 人口分母必须按**后果可见性**分层（死信／静默），不按“切分是否报错”这一表层形态 | 已更正（AD5），处方按两态分别验收 |
+| R41 | **判据过报**：尺P 首版把“theirs 值 ≠ HEAD 今值”一律记“确证丢失”，未区分**时变性元数据**（`generated_at` 本就该被后批覆盖）与**有客观真值可核的派生计数**（`total_files`）⇒ 13 处读数里 6 处 `generated_at` 属过报 | 第 6 轮 AD1 自查 | 静默丢失判据须绑定“该键是否存在客观真值”二次筛，可验证损害面交尺Q 独立度量 | 已收紧（AD1/AD5） |
+| R42 | **未先量字段分布**：尺P 首版 `not bp.exists()` 把 `blob_ref` 为空的 delete 条目当文件读 → `PermissionError`（全窗 delete 条目 done 侧 689＋noop 袋内 64 条本就无载荷＝设计如此） | 第 6 轮尺P 首跑崩溃 | 与 R20/R26/R36 同族：**动手前先量判据所辖字段的取值分布**，别拿“字段存在”当“字段有值” | 已修（delete/无载荷显式分流，并升为独立 E 类判据） |
+| R43 | **本包自己中了本包那枪尺Q**：AB1 表实测 39 行，而散文两处仍写“自我否证 44 例总表 / 期望 **38**”（第 5 轮加 R39 时只改表未改框）＝**声明计数 ≠ 实际条目数**，与本轮给 `gate_registry.yaml`(174 vs 180) 定的病灶同型同判据 | 第 6 轮写 AD 前用尺Q 自查自家案卷 | 凡“条目＋计数”结构（含自家案卷）同属一个失效面；派生计数改框必须与表增行**同批**，且改后用同一把尺回量 | 已修（本批表 43 行、散文两处改 43，复核命令在 AD5 末） |
+| R44 | **判据粒度≠损害粒度**：尺P2 首版拿“合并器身份键 ∈ HEAD 身份集”当“真丢条目”判据 ⇒ 把“同文件重注册（token 值变）”与“袋为陈旧快照（所引文件早已不在仓）”都算成损失，读数 4 对/2660 条；按**文件级**三级对账复判后**现存文件缺收据=0**（862/862/911/0 全为已退役路径） | 第 6 轮 AD7 复判 | 身份层读数只用于**提名候选**，损失量必须落在与损害定义同粒度的键上（本例＝文件路径，非 file+token 双件） | 已更正；净损害口径见 AD7 |
 
 ## AB2 失明清单指针（18 条，勿在本档复述正文）
 - 第 1–9 条＝本报告"红蓝反证（§0.14）"章 (B) 组；第 10–16 条＝U5"失明清单增量"；第 17 条＝V2（pre-commit 仅 ruff、无 `used-before-assignment` 等价规则）；第 18 条＝W1（`TRANSLATION-COVERAGE` 门只查条目在不在、不查条目↔文件相干性）。
@@ -554,3 +559,71 @@ AC1/AC5 把 MERGE-02 定性为"零族册（顶层无 list 族）任何编辑被 
 
 ## AC9 第 5 轮收敛判定
 - 尺H2 dead=3（全属已登记 0009）｜尺J 待补块=0｜尺O 424/423/漏1/悬0（漏挂=GOMAP 他包在途）｜align 4 硬全登记｜尺N HARD=2（0009 + rule_catalog 第二枝）——**本轮零新立案**（新枝并入 MERGE-02＝AC7），为新基线**第 1 轮通过**。待第 6 轮再零新立，且尺N 的 HARD 不再增长（盯他包是否持续出现 rule_catalog/族外键类新受害者）→ 满足"连续两轮零新立"方可收官自删。
+
+# 附录 AD · 收官第 6 轮（新基线第 2 轮，2026-09-24 11:26–11:52 CST 实测，HEAD=`6b7749d4a8`）
+
+> 本轮净增：**三把新尺（P/Q/R）＋MERGE-02 枝2 严重度重定性（"吞 2 行"→"HEAD 混合半态"，两例 dated）＋自我否证 R40–R43（含自家案卷同型病灶）**；新立案数＝**0**（全部并案/路由）。
+
+## AD1 尺P＝noop 袋"结构性不承载"穷尽判据（把尺N 的时间启发式换成键区域判据）
+
+- 尺N 的 HARD 判据依赖"件在 HEAD 且该件末次改动 ≤ 袋落地时间"——**随 HEAD 移动而改判**（本包实测同一脚本三次跑出 HARD=5→3→1→2），是启发式不是判据。尺P 改为纯结构：**不承载编辑**＝顶层键 `theirs != ours@落地` 且该键不在可 splice 族集（族集由合并器自己的 `_split_registry_entries` + `_scalar_family_keys` 现算，不另立口径）；**确证丢失**＝且 HEAD(今) 仍不含 theirs 该键值。
+- 全窗分母＝`done/` 现存 **90 张 `landed_id=noop@`** 袋的**全部袋-件对**（尺H2 只覆盖 34 对，本轮穷尽）。读数：
+  | 类别 | 含义 | 读数 |
+  |---|---|---|
+  | 不承载-确证丢失 | 键区域判据 + HEAD 今仍不含 | **13 处 / 7 袋** |
+  | C 类 | 族内整体差异却 noop（须再经尺H2 条目级复判，多为"ours 后续又增条目"的良性差异） | 20 |
+  | **D 类** | noop 袋内**非注册表件**字节 ≠ 落地 HEAD | **0** |
+  | **E 类** | 袋 `action=delete`、回执 ok、件至今仍在 HEAD | **0** |
+- **预测性验证**（不是自洽，是命中已知案）：P1＝尺N 时间判据已确证的 `st-backup-cold-0012/rule_catalog` 被结构判据**独立命中**（`generated_at`+`total_files` 两键）；P2＝本包 0009 零族册亦命中。控制组 PASS。
+- **D/E 双零的价值＝排除面**：整件写（passthrough）路径与删除动作路径**没有**静默失效面 ⇒ 病灶精确锁定在"注册表条目级合并的族外键"一处，不必扩大战线（§4.1 净零：不给属主包摊派已被证伪的排查项）。
+- 过报更正（R41）：13 处中 6 处是 `generated_at`（时变量，后批覆盖本属正常，不构成损害）⇒ 可验证损害面由尺Q 独立度量（AD2），不以本尺 13 为口径。
+
+## AD2 尺Q＝图↔物对账的"册内那一半"：声明计数 ↔ 实际条目（HEAD 面 82 册穷尽）
+
+- 判据：`total_*`/`*_count` 顶层标量 ↔ 同名段长度；三态 MATCH/MISMATCH/UNRESOLVED（无同名段不计红面）。控制组三例齐（阴性＝盘版 rule_catalog 292/292 必零红、阳性＝声明值 +1 必红、锚点＝HEAD 版必红）⇒ PASS。
+- 分母：catalogs 下 tracked `.yaml`=**82**，可解析 81（`_index.yaml` 见 R40），声明计数键 UNRESOLVED=23。
+- **MISMATCH 恰 2 处 / 2 册**（排除"声明的是 enabled 子集"这一替代解释后成立）：
+  1. `gate_registry.yaml`：`total_gates: 174` vs `gates:` 实 **180**（status 分布 active=169/deprecated=11 ⇒ 174 不等于任何子集＝纯陈旧）。生成器源码 `"total_gates": len(gates)` ⇒ **该组合不可能出自一次生成运行**。
+  2. `rule_catalog_registry.yaml`：`total_files: 274` vs `files:` 实 **292**（status 分布 active=164/空=113/archived=5/draft=10 ⇒ 274 亦非子集）。
+- 宪法 §4.3"计数用字段不写死在散文"的**前提**是该字段可信；本轮给出该前提的**度量尺**（可复跑、带三控制组），并对 2 处失真给出 AD3 的机制归因。
+
+## AD3 枝2 重定性＝合并器产出 **ours 头部 + theirs 条目** 的混合半态（两例 dated，并案不另立）
+
+| 例 | 自洽的前态 | 落地批 | 袋内 theirs（意图） | 落地后 HEAD | 至今 |
+|---|---|---|---|---|---|
+| ① gate 册 | `7e9083ff9e^`＝174/174、gen 09-22 | `7e9083ff9e`(09-23 11:50，自述"统一册重生成版落库…队列正门") | **180/180 自洽**、gen 09-23（`q-…-st-gslim-20260923-0016`，`base_head=None`） | **174/180**、gen 仍 09-22 | 未愈 |
+| ② rule_catalog | `b2caaa9666`(09-20)＝274/274 | `8b3bc287e7`(09-23 04:46) | **283/283 自洽**、gen 09-22（`q-…-st-ailayer-p1-20260923-0001`，**`base_head=cb7786e75d` 存在**） | **274/283** | 扩至 274/292 |
+
+- **例②是关键增量**：该袋 `base_head` 存在 ⇒ 枝2 **独立成立**，不是 MERGE-01（base=None 兜底 `old_dev^`）的副作用。⇒ **两案不可互解、不可并成一条**（§4.2"同根不同枝"判据的又一次应用）；给 st-commitsys 的修闸需求须**分别**验收。
+- **后果面（非"仅误导人"）**：`scripts/context/generate_architecture_context.py:132` 读 `gate_registry.total_gates` → 打印"治理 GATE 登记: 174" ⇒ 少 6 的数字进 AI 上下文；`generate_gate_registry.py --check` 现即 RED（真 exit=1）。
+- **处方增 (iv)（并成一条完整需求交 st-commitsys，勿拆）**：条目级合并落地后**禁止**产出"族内取 theirs、族外留 ours"的混合字节——或整件采纳 theirs（passthrough/白名单），或在检出"族外顶层键有差异"时死信；对生成器语义为 `total_x = len(x)` 的头部计数，合并器应**重算**而非沉默。
+
+## AD4 自愈自锁（尺R）＋"在册能红有映射却带病 2 天"第三态（问题面，不预判）
+
+- **自锁**：修 gate 漂移的最小 diff＝1 行族外标量（`total_gates: 174`→`180`）。尺R 直喂合并器纯函数（base==ours==HEAD，零竞态）⇒ `merged==ours` → `commit_queue_landing.py:1085 return None` → 文件跳过 → 袋内仅此件 ⇒ `ok=True / noop@`。四控制组 PASS：**改族内条目叶子 MUST != ours**（证明本尺非"恒等于 ours"的假红）｜真幂等 ==ours｜别册同形态（rule_catalog `total_files`）亦 ==ours。⇒ **枝2 把"修枝2 后遗症"的通道也堵死**；主区直改热册＝并发连坐禁区（EVAP-01 多次复证）⇒ 该漂移在现有正门下**无自修路径**，只能随处方 (ii)/(iii′)/(iv) 落地。
+- **第三态（交总指挥/属主定性，本包不断言）**：该漂移的现成尺**在册且接线**——`_detector_registry.yaml` `static_manifest_drift` severity=HIGH → `validate_static_manifest_drift.py`（GATE-21）→ `reconciler.py:168 auto_fix["D5_static_manifest"]→_fix_yaml_append`。三种可能我未判别：**(a)** 从未触发（boot hook `boot_hooks.py:224` F6 只挂 `zephyr.gov_drift.detector_core.bridges.drift_bridge`，而 `detector_core/` 目录 `grep static_manifest`=0 命中；本地未检索到该 detector 的运行留痕）｜**(b)** 触发但 `_fix_yaml_append`（追加条目语义）与"重跑生成器"不匹配｜**(c)** 修了但落点正是上面证明的自锁通道。证据等级＝**推断**（代码位亲验、留痕检索为空）；一句"该 detector 最近一次运行时间/记录在哪"即可判别。
+- 诚实声明：AD4 的"重生成 diff"是在**脏工作树**上算的（+169/-169 行，含他包在途件与顺序差），**只用作"重生成≠1 行修"的量级证据**，不当 HEAD 面漂移定量；HEAD 面漂移定量以 AD2/AD3 的 `174 vs 180`、`274 vs 292` 为准（纯 `git show` 字节）。
+
+## AD5 自我否证 4 例（R40–R43）与"尺Q 可自套"实证
+
+- **R40**（分级失真）：尺M 把 `_index.yaml` 记为"切分报错"，实测其内容**根本不是 YAML**（Markdown 表装 `.yaml` 扩展名，头注释自陈由 `sync_rule_registry.py` 校验一致性）⇒ 应为"非 YAML 件混入 YAML 合并作用域"；且我把"切分报错 2"（`return None, err` → 调用方抛错＝**死信可见**，`commit_queue_landing.py:1083`）与"零族 3"（`merged==ours`＝**静默 noop**）同列"高危人口"未分级 ⇒ 严重度差一档，处方须按两态分别验收。
+- **R41**（判据过报）：尺P 首版把"theirs≠HEAD"一律记"确证丢失"，未区分**时变量**与**有客观真值的派生量** ⇒ 6 处 `generated_at` 过报。收紧后可验证损害＝尺Q 的 2 册。
+- **R42**（未先量分母）：尺P 首版把 `blob_ref` 为空的 delete 条目当文件读 → `PermissionError`。全窗 delete 条目 689(done)+64(noop 内) 条本就无载荷＝设计如此。教训与 R20/R26/R36 同族：**动手前先量字段的取值分布**。
+- **R43**（本包自己中了一枪尺Q，最重要）：AB1 表实测 **39 行**，而散文两处仍写"自我否证 **38** 例总表 / 期望 **38**"——第 5 轮加 R39 时**只改表未改框** ⇒ 声明计数≠实际条目数，与我本轮给 `gate_registry.yaml` 定的病灶**同型同判据**。本批已补 R40–R43 四行并把两处框改为 **43**，同批用尺Q 判据自查（见本附录末复核命令）。**这条是"图↔物自洽"审查在自家案卷上的第一次自我命中**，也说明 AD2 那把尺不是特设判据。
+- 复核：
+  ```bash
+  python -c "import re,pathlib;print(len(re.findall(r'^\| R[0-9]{2} ', pathlib.Path('docs/_working/audit_all/AUDIT_REPORT.md').read_text(encoding='utf-8'), flags=re.M)))"   # 表行数＝真值，须与散文同框
+  grep -n "自我否证 4\|期望 \*\*4" docs/_working/audit_all/AUDIT_REPORT.md | head -4
+  ```
+
+## AD6 判据影响（覆盖 AC9）
+
+①授权内可自修项全落 ✅｜②五尺逐位复算零新立（第 5、6 轮连成立）✅｜②b **自审清单二次=0 未成立**（第 5 轮 R39、第 6 轮 R40–R43）🔴｜④红蓝反证：尺P/Q/R 三把新尺各带**合成正负控制组**（尺Q 阳性＝人为 +1 必红；尺R 阳性＝族内改动必落地＝防"恒等于 ours"假红；尺P 阳性＝两例已知受害预测命中），且尺P 首版因 R42 当场崩、R41 当场过报＝**尺不判重即作废**这条在本轮 again 生效 ✅｜⑤终报：U–Z+AA+AB+AC+AD 已成档。⇒ **不收口、不自删自动化**；第 7 轮＝复跑五尺＋P/Q/R，若同时"零新立且零自否证"则判据②闭合，写终局"自动化已自删·本包收官"。
+
+## AD7 尺P2＝C 类条目级→文件级双重复判 ⇒ 全窗 90 袋净损害口径（含 R44）
+
+- **分解**：noop 袋内注册表件对穷尽 **45** ＝ 身份集全在 HEAD(已吸收/良性) **40** ｜ 不可判(零身份＝本包 0009 零族册) **1** ｜ 疑似真丢 **4 对**（2660 条身份，全在 `capability_canonical_file_registry.yaml`）。
+- **复判（三级对账：袋内 `file:` 路径去重 ↔ HEAD 册内 `file:` 全集 10,199 ↔ `git ls-files`）**：疑似真丢的 862/862/911/0 个路径**全部已不在仓库**（袋是陈旧快照，收据随文件退役失效），**现存文件缺收据=0**；st-secmine 那 1 条是**同文件重注册**（`src/zephyr/data/alerter.py` 在册，仅 token 值不同）。
+- **⇒ 全窗静默假成功的净可验证损害（穷尽、分母诚实）**：(a) 2 册头部派生计数失真（AD2/AD3，`gate_registry` 174/180、`rule_catalog` 274/292）＋(b) 本包 0009 的 3 行 ＋ (c) 0 条现存文件缺 CREATE-GUARD 收据 ＋ (d) 0 例 passthrough 字节静默差（AD1 D 类）＋ (e) 0 例删除被静默忽略（AD1 E 类）。**真实损害比 AD1 的 13/C20 原始读数小两个量级，且 100% 集中在"族外顶层标量键"这一条** ⇒ st-commitsys 处方 (i)–(iv) 的优先级分母以此为准。
+- **判据学（R44）**：合并器身份键＝`file+token` 双件，而**损害只发生在"文件仍在仓而无收据"这一层** ⇒ 身份层读数只能**提名候选**，不得当损失量；判据粒度必须与损害定义粒度一致（与 R20/R26/R36/R42 同族，本轮由自家尺再次拦下自家读数＝尺不判重即作废这条纪律的可复用性证据）。
+- **本包自家案卷回退弹（登记＋本包写域内已拆）**：主区 index 对本包 `LEDGER.md`/`AUDIT_REPORT.md` 持陈旧短 blob（`f46e69ea67` 相对 HEAD 纯删 414 行／`da4f3f24aa` 纯删 419 行），而 `git_commit.py --enqueue` **入袋不刷主 index**（连续 10 笔落地后仍陈旧）⇒ 任何"按 index 提交/merge finalize"路径会把本包案卷回退成早期版（09-24 台账"index 侧盲区"在**自家 markdown** 上的活体复现）。本包已对自身两件显式 `git add`（非 `-A`）拆除，改后 index==盘（`3b074d8a28`/`70dcc3dec0`）亲验。**机制面登记不代修**：队列落地侧是否回刷主区 index ＝ st-commitsys 写域，作为第 (v) 项**并入 AD3 那条完整需求**（§4.1 净零：不另立需求条目）＝"落地成功后把该件字节同步回主区 index，或显式声明不同步的理由"。

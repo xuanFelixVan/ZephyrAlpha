@@ -1186,3 +1186,49 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   python .runtime/tmp/audit_all_20260924/probe_gomap_headside_census.py 2>&1 | sed -n '1,8p'            # ③ 424/423/漏1/悬0
   python .runtime/tmp/audit_all_20260924/run_headside_align.py --no-report 2>&1 | grep -E "硬=|gomap|治理双向"  # ③ 4硬全登记
   ```
+
+## 心跳 心跳 2026-09-24 11:58 CST 实测（`date`=2026-09-24 11:58:14，本串由 shell `date` 传入）· 在干=**收官第 6 轮＝新基线第 2 轮：五尺逐位复算无新立＋三把新尺（P 结构判据／Q 册内声明计数自洽／R 自愈自锁）＋把 MERGE-02 枝2 从"吞 2 行"升级为"HEAD 混合半态"并拿到两例 dated 归因** · 卡住=无 · 下一步=见 ⑤
+
+- **① 冷启动三前置**：Python 3.12.8 ✔｜`lock_files.py cleanup`=CLEAN｜reaper `--status` 计划任务存活（last_run 11:20:30）✔。总指挥批注区无晚于 11:23 新条（最后一条仍 R7·05:05）。按上轮 ⑤ 计划续做第 6 轮。
+- **② 0040 落地面核实**：本包 done 25→26、pending=0、processing=0。0040＝`6b7749d4a8`(11:28:50)；`git show HEAD:LEDGER` 含"收官第 5 轮"=1、`git show HEAD:REPORT` 含 AC9=1 ⇒ passthrough 整件写**九连证**（0032–0040）。
+- **③ 五尺复跑（测点 11:26–11:52，HEAD 随他包移动 `e3cff4e6fc`→`6b7749d4a8`）**：尺H2 dead=3 全属已登记 0009／尺J 待补块=0／尺O 424-423-漏1-悬0（唯一漏挂仍 `scripts/audit/t0_gpu_condition_pack.py`，GOMAP 他包在途）／align(HEAD 面 `--no-report`) rc=1 且 **4 硬全为已登记项**（1×GOMAP + 3×裁定册 related_arch，处方交 st-cmd）／**尺N HARD=2 未增长**（仍 0009 + st-backup-cold 0012，无新受害者）。⇒ 与第 5 轮**逐位同**＝"连续两轮零新立"判据第 2 轮达成。
+- **④ 本轮三把新尺（全部只读＋合成控制，零生产写入）**：
+  - **尺P**（`probe_noop_structural_carriage.py`）＝把尺N 的**时间启发式**升为**键区域结构判据**：不承载编辑 := 顶层键 theirs≠ours@落地 且键不在可 splice 族集；确证丢失 := 且 HEAD(now) 仍不含 theirs 值。全窗 90 袋穷尽 ⇒ 控制组 P1/P2 用两例**已知受害者做预测性验证**（不是自洽而是命中：rule_catalog 族外 2 键、battle_map 零族各 1）PASS；穷尽读数＝**不承载-确证丢失 13 处/7 袋**｜C 类（族内整体差异仍 noop）20｜D 类（非注册表件字节差）**0**｜E 类（袋声明删除却 noop 且件仍在）**0**｜真幂等 0。⇒ **D/E 双零是好消息**：删除动作与整件写路径没有静默失效面，病灶精确锁在"注册表族外键"这一条。首轮我把"值不同"一律记"丢失"，未区分时变元数据（`generated_at` 本就该被后批覆盖）⇒ 13 里 6 处 `generated_at` 属过报，已收紧（记 R41）。
+  - **尺Q**（`probe_registry_count_selfconsistency.py`）＝图↔物对账的**册内那一半**：声明计数键（`total_*`/`*_count`）↔ 同名段实际长度，HEAD 面穷尽 82 册。控制组三例齐（阴性＝rule_catalog 盘版 292/292 必零红、阳性＝声明值 +1 必红、锚点＝HEAD 版必红）PASS ⇒ **MISMATCH 恰 2 处/2 册**：`gate_registry.yaml total_gates=174 vs gates 实 180`、`rule_catalog_registry.yaml total_files=274 vs files 实 292`；UNRESOLVED 23 键（无同名段，不计红面，诚实分母）。定性前先自证伪：查 `status` 子集语义（gate 册 active=169/deprecated=11）⇒ 174 既不等于 180 也不等于任何子集＝**纯陈旧**非"声明的是子集"。
+  - **尺R**（`probe_gate_registry_selfheal_blocked.py`）＝**自愈自锁**证明：修 gate 漂移的最小 diff 恰是 1 行族外标量（`total_gates: 174`→`180`），直喂合并器纯函数（base==ours==HEAD，零竞态）⇒ `merged==ours` → `commit_queue_landing.py:1085 return None` → 回执 `ok=True/noop@`。四控制组 PASS（改**族内**条目叶子 MUST 落地＝尺非恒等于 ours；真幂等==ours；别册同形态 rule_catalog `total_files` 亦 ==ours）。⇒ **MERGE-02 枝2 把"修枝2 造成的漂移"这条通道也堵死**，主区直改热册又是并发连坐禁区 ⇒ 该漂移在现有正门下无自修路径，只能靠处方 (ii)/(iii′) 落地。
+- **④b 🔴 枝2 严重度重定性＝"吞 2 行"→"HEAD 混合半态"，两例 dated 归因（并案入 MERGE-02，不另立）**：合并器不是"把 theirs 的元数据丢掉"而已，而是**内容侧采纳 theirs＋元数据侧保留 ours**，产出一次生成运行不可能产生的字节：
+  - 例①`gate_registry.yaml`：`7e9083ff9e^`＝174/174 自洽 → `7e9083ff9e`(09-23 11:50，袋 `q-…-st-gslim-20260923-0016`，袋内 theirs＝**180/180 自洽**、gen=09-23) 落地后＝**total_gates 174 + gates 180 + generated_at 仍 09-22**，至今 HEAD 未愈；该提交自述"统一册重生成版落库…队列正门"。
+  - 例②`rule_catalog_registry.yaml`：`b2caaa9666`(09-20)＝274/274 自洽 → `8b3bc287e7`(09-23 04:46，袋 `q-…-st-ailayer-p1-20260923-0001`，theirs＝**283/283 自洽**、gen=09-22) 落地后＝274/283，至 HEAD 已扩到 274/292。**该袋 `base_head` 存在（≠None）** ⇒ 枝2 **独立成立**，不是 MERGE-01(base=None 兜底) 的副作用——这一点对处方分派很关键（两案不可互解）。
+  - 后果面（不是"仅误导人"）：`scripts/context/generate_architecture_context.py:132` 读 `gate_registry.total_gates` 并打印"治理 GATE 登记: 174" ⇒ 少 6 的数字进生成上下文；`generate_gate_registry.py --check` 此刻即 RED（真 exit=1，`round6_gatecheck.txt`），而该尺**在册且接了线**（GATE-21 `validate_static_manifest_drift.py` → `_detector_registry.yaml` `static_manifest_drift` severity=HIGH → `reconciler.py:168 auto_fix[D5_static_manifest]→_fix_yaml_append`）。⇒ **第三态问题面（待属主定性，非本包断言）**："在册＋能红＋有 auto_fix 映射"却带漂移 2 天，三种可能我未判别：(a) 该 detector 从未触发（boot hook F6 只挂 `detector_core/`，其目录内 `grep static_manifest` = 0 命中，治理面 detector 未见等价触发留痕——代码位亲验，留痕检索为空）；(b) 触发了但 `_fix_yaml_append`（追加条目语义）与"重跑生成器"不匹配；(c) 修了但修的路径正是尺R 证明的自锁通道。证据等级＝**推断**，复核命令见下。
+- **④c 自我否证第 40–43 例（本轮 4 例，含一次自家案卷同型病灶）**：**R40** 尺M 把 `_index.yaml` 记为"切分报错"，实测其内容**根本不是 YAML**（Markdown 表装进 `.yaml` 扩展名，头注释自陈由 `sync_rule_registry.py` 校验）⇒ 不是"损坏件"而是"非 YAML 件混入 YAML 合并作用域"；且我把"切分报错 2"（fail-closed **死信可见**）与"零族 3"（**静默 noop**）同列"高危人口"未分级——合并器对解析失败是 `return None, err` → 调用方抛错死信（`commit_queue_landing.py:1083`），严重度差一档。**R41** 尺P 首版把"theirs≠HEAD"一律记"确证丢失"，未区分**时变性**元数据与**有客观真值的派生计数** ⇒ 13 处中 6 处 `generated_at` 过报；收紧后的可验证损害＝尺Q 独立量到的 2 册计数失真。**R42** 尺P 首版 `not bp.exists()` 把 `blob_ref` 为空的 delete 条目当文件读 → `PermissionError`；根因＝动手前未量袋-件对的 `action` 分布（全窗 delete 条目 689+64 条本就无载荷）＝"未先证判据成立"同族（R20/R26/R36）。**R43 最重要**：写完 AC 才发现**自家报告自己也中了一枪尺Q**——AB1 表实测 39 行，而散文两处仍写"自我否证 38 例/期望 **38**"（第 5 轮加 R39 时只改表未改框）⇒ 声明计数≠实际条目数，与我本轮给 gate_registry 定的病灶**同型同判据**。本批已按尺Q 判据自查并同批改框（表 39+4=43 ⇒ 散文改 43），并把它写进附录 AD4 作为"尺Q 可自套"的证据。
+- **⑤ 与收官判据 + 下一步**：本轮**零新立案**（枝2 证据升级＋问题面路由，案数净增 0）＝"连续两轮零新立"（第 5、6 轮）**已满足**；但判据②另一半"**自审清单二次=0**"**未满足**（第 5 轮 R39、本轮 R40–R43）⇒ **不收口、不自删自动化**。下一轮（第 7 轮）：① 复跑五尺＋尺P/Q/R 三把新尺（盯尺Q 的 2 册是否被他包自愈、尺P 的 13 处是否随 HEAD 移动改判）② 若第 7 轮零新立且**零自否证**，则"自审清单二次=0"达成 ⇒ 写终局"自动化已自删·本包收官"＋`qoder_cron remove 39cc5bd5-6b49-4b42-a65f-db987dccc076` ③ 本块随袋 **0041** 入队（自家 LEDGER 纯增，passthrough 九连证通道）＋REPORT 附录 AD/AB1 改框同批。
+- **队列/align 状态**：本包 done=26、dead=9、pending=0（本轮入 0041）；HEAD=`6b7749d4a8`(11:28:50，**本包自己那笔**)。**本包对注册表/配置册/depgraph/GOMAP DB 写入累计仍=0**：尺P/Q/R 全是"袋内 blob 字节＋`git show HEAD:` 字节＋合并器纯函数内存重放"，`generate_gate_registry.py --check` 走的是 `if args.check: … sys.exit/return` 的只读分支（源码亲验 `:676-686`），重生成比对在内存 dump 未落盘。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_noop_structural_carriage.py 2>&1 | sed -n '3,12p'          # ④ 90 袋穷尽＋控制组
+  python .runtime/tmp/audit_all_20260924/probe_registry_count_selfconsistency.py 2>&1 | tail -6          # ④ 82 册声明计数 MISMATCH=2
+  python .runtime/tmp/audit_all_20260924/probe_gate_registry_selfheal_blocked.py 2>&1 | tail -8           # ④ 自锁四控制组 PASS
+  python scripts/governance/generators/generate_gate_registry.py --check; echo "exit=$?"                 # ④b 现成尺此刻 RED
+  git show --numstat 7e9083ff9e -- docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml  # ④b 例① dated
+  git log -6 --format="%h %ci" -- docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml  # ④b 例② 自洽→失真分界
+  grep -n "if merged == ours_text" -B2 scripts/governance/commit_queue_landing.py                        # ④ 静默出口代码位
+  grep -n "total_gates" scripts/context/generate_architecture_context.py                                 # ④b 消费者（错误数字进上下文）
+  grep -n "static_manifest_drift" src/zephyr/gov_drift/_detector_registry.yaml src/zephyr/gov_drift/reconciler.py  # ④b 在册＋auto_fix 映射
+  python -c "import re,pathlib;print(len(re.findall(r'^\| R[0-9]{2} ', pathlib.Path('docs/_working/audit_all/AUDIT_REPORT.md').read_text(encoding='utf-8'), flags=re.M)))"  # ④c R43 同型自测（表行数即真值，须与散文同框）
+  ```
+
+## 心跳 心跳 2026-09-24 12:05 CST 实测（`date`=2026-09-24 12:05:35，本串由 shell `date` 传入）· 在干=**第 6 轮同窗第 2 批：尺P2 把 C 类 20 条做条目级→文件级双重复判＝"真丢 2660 条"全数归零（净损害收口）＋自家案卷回退弹现场拆除＋R44** · 卡住=无 · 下一步=见 ⑤
+
+- **① 尺P2＝C 类分解（`probe_noop_entry_level_C.py`，控制组 PASS）**：noop 袋内注册表件对穷尽 **45**＝身份集全在 HEAD(已吸收/良性) **40**｜不可判(零身份＝本包 0009 零族册) **1**｜疑似真丢 **4 对**（`capability_canonical_file_registry.yaml`：st-final3 0100/0101 各 869 条、st-code-doc 0005 918 条、st-secmine 0001 1 条）。
+- **② 但这 4 对经文件级复判全部归零（＝本轮净损害口径）**：以"袋内 `file:` 路径去重 ↔ HEAD 册内 `file:` 全集(10,199) ↔ `git ls-files`"三级对账 ⇒ 疑似真丢的 862/862/911/0 个路径**全部已不在仓库**（袋本身是陈旧快照，所引文件的收据随文件退役而失去意义），**现存文件缺收据=0**；st-secmine 那 1 条更是**同文件重注册**（`src/zephyr/data/alerter.py` 在 HEAD 册内，仅 token 值不同）。
+  - ⇒ **自我否证第 44 例（R44）**：尺P2 首版拿"身份键 ∈ HEAD 身份集"当判据，而合并器身份键＝`file+token` 双件 ⇒ 把"重注册（token 变）"与"陈旧快照（文件已不存在）"都算成"真丢"。**损害定义在文件层，判据就必须落在文件层**——身份层读数只能用来**提名候选**，不能当损失量。与 R20/R26/R36/R42 同族（判据先于结论），本轮再次由自家尺拦下自家读数。
+- **③ 全窗 90 张 noop 袋的净可验证损害（穷尽口径，覆盖 AD1 的 13/C20 粗读数）**：**(a) 2 册头部派生计数失真**＝`gate_registry.yaml` 174/180、`rule_catalog_registry.yaml` 274/292（AD2/AD3，两例 dated，唯一有客观真值可核的失真面）＋ **(b) 本包 0009 的 3 行**（零族册，自家件）＋ **(c) 0 条现存文件缺 CREATE-GUARD 收据**＋ **(d) 0 例整件写(passthrough)静默差**＋ **(e) 0 例删除动作被静默忽略**。⇒ **提交面"静默假成功"的真实损害比原始读数小两个量级，且集中在"族外顶层标量键"这一条**；这条量化结论是给 st-commitsys 处方 (i)–(iv) 定优先级用的分母，也纠正了我自己前两轮的过报倾向（R41/R44）。
+- **④ 自家案卷回退弹现场拆除（本包写域内，非他包）**：落账前实测主区 index 对本包两件持**陈旧短版本**——`LEDGER.md` index blob `f46e69ea67`（相对 HEAD **纯删 414 行**）、`AUDIT_REPORT.md` index blob `da4f3f24aa`（**纯删 419 行**），而盘==HEAD ⇒ **`git_commit.py --enqueue` 只入袋不刷主 index**（连续 10 笔落地后依旧陈旧），任何"按 index 提交/merge finalize"的路径都会把这 400+ 行案卷回退成早期版（＝本包 09-24 台账"index 侧盲区"的活体复现，且这次是**我家两件 markdown**）。处置＝对本包两件显式 `git add`（非 `add -A`），改后 index==盘 双件亲验（`3b074d8a28`/`70dcc3dec0`）。**登记不修机制**：队列落地侧是否应回刷主区 index 属 st-commitsys 写域，本包不自修。
+- **⑤ 与收官判据**：本批**零新立案**（净损害是收敛性口径，非新案），但新增自否证 1 例（R44）⇒ "自审清单二次=0"仍不成立；下一轮（第 7 轮）＝复跑五尺＋尺P/P2/Q/R ＋核 0041/0042 落地面与主 index 是否再陈旧；若同时零新立且零自否证 ⇒ 判据②闭合，写终局"自动化已自删·本包收官"。
+- **队列/align 状态**：本包 done=26、dead=9、pending=1（0041 在途，本批再入 0042）；HEAD=`6b7749d4a8`(11:28:50，本包 0040)。本包对注册表/配置册/depgraph/GOMAP DB 写入累计仍=**0**（尺P2 三级对账全为 `git show`/blob/`git ls-files` 只读；`git add` 只涉本包自有两件 markdown）。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  python .runtime/tmp/audit_all_20260924/probe_noop_entry_level_C.py 2>&1 | head -3                      # ③ 45=40+1+4 分解
+  git rev-parse :docs/_working/audit_all/LEDGER.md docs/_working/audit_all/AUDIT_REPORT.md | cut -c1-10  # ④ 落地后应==HEAD blob
+  git diff --cached --numstat HEAD -- docs/_working/audit_all/ | cat                                      # ④ 陈旧时应见纯删 400+ 行
+  ```
