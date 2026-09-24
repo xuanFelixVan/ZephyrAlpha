@@ -137,6 +137,21 @@ CHECKS = [
 ]
 
 
+def derived_total_pairs() -> dict[str, dict[str, str]]:
+    """册名 → {声明标量: 集合段}——GATE-21 自洽台的配对对外读口。
+
+    存在的唯一理由＝让"检测口径"与"落地侧自愈口径"可被一把尺直接比对
+    （见 tests/governance/test_audit_fix_lanes_rulers.py 的配对一致性尺）。
+    """
+    out: dict[str, dict[str, str]] = {}
+    for chk in CHECKS:
+        sc = chk.get("selfcheck") or {}
+        pairs = sc.get("pairs")
+        if pairs:
+            out[Path(str(sc.get("path", ""))).name] = dict(pairs)
+    return out
+
+
 def _run_selfcheck(item: dict) -> str | None:
     """声明计数 vs 同名段实际长度；不一致返回漂移描述，一致返回 None。
 

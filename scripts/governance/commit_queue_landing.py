@@ -145,6 +145,24 @@ _QUEUE_MARKER_RE = re.compile(r"\[GW:[^\]:\s]+:q-[^\]\s]+\]")
 # 故不能用上面的 _QUEUE_MARKER_RE（它强制 :q- 段，只用于假落地防线的标记核验）。
 _GW_OWNER_RE = re.compile(r"\[GW:([^:\]\s]+)")
 
+# 派生计数标量 → 集合段（按册名）。与 GATE-21 selfcheck 的 pairs 同一份口径——
+# 检测器（判红）与落地侧自愈（改对）必须同源，否则"检测说 174、修补写 180"会变成新漂移源；
+# 两处一致性由 tests/governance/test_audit_fix_lanes_rulers.py 的配对标尺断言。
+_DERIVED_TOTAL_PAIRS: dict[str, dict[str, str]] = {
+    "gate_registry.yaml": {"total_gates": "gates"},
+    "rule_catalog_registry.yaml": {"total_files": "files"},
+}
+
+
+def _git_blob_sha(data: bytes) -> str:
+    """内容字节 → git blob id（与 base_blob / _pool_head_reader 同一 id 空间）。
+
+    三套哈希口径不可互换（bytes-sha ≠ git-blob-sha ≠ content_sha256）；此处必须用
+    git 那一套才能与 ls-tree 输出直接比对。
+    """
+    return hashlib.sha1(b"blob " + str(len(data)).encode() + b"\x00" + data).hexdigest()
+
+
 # 网关 env 标记（FORGED-GW-MARKER env 逃生语义=确为网关内部调用；与 run_git 同款）
 _GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
 # Serializer 可信 git 调用 env（66 号 §4 裁定 7 plumbing 白名单 + worktree_pool fast-path 先例）
@@ -1102,32 +1120,176 @@ class WorktreeLanding:
 
     @_timed_phase("conflict")
     def _conflict_reason(self, item: dict, current_dev: str) -> str | None:
-        """base_head 基底冲突判定；无 base_head（A 段兼容项）→ None（快进应用）。
+        """base_head 基底冲突判定（66 号 §6.4 逐文件快进）；无基底见下方两分支。
 
         W2（2026-09-22 注册表事故治本）：注册表族文件（is_registry_mergeable）不做
         path 级死信——同路径漂移交由落地侧条目级三向合并消化（同键内容异才死信）；
         此处若照旧死信，合并器永远无执行机会。非注册表路径维持逐文件快进判定零变更。
+
+        F-AUDITFIX-STALE-01（2026-09-24 晚，q-…-st-commitspeed-tbl-…-0005 实证）：
+        基底＝快照真源（入队工作区自己的 HEAD），不是「当时看到的 dev 尖」。取 dev 尖
+        时陈旧工作区记到的基底**比自己的字节还新** ⇒ diff(base, dev) 恒空 ⇒ 快进判定
+        结构性失明（那件就是把在册的 4442b1b4f6 修复整文件覆掉的袋：它带 base_head，
+        值是入队时的 dev 尖 e500df6dfe，而快照来自早于该修复的工作区）。
+        dev 侧推进一律以 merge-base 为界度量：会话分支上有自有未并入提交时，
+        直接 diff(base, dev) 会把"dev 从没改过、只是我没跟上"判成冲突（假红）。
         """
         base = item.get("base_head")
-        if not base:
-            # 存量项兜底（F-AUDIT-QUEUE-04 残面）：正门修好之前入袋的项仍无 base_head，
-            # 光修正门救不了今晚在飞的存量袋 ⇒ 用时间基底替代（见 _legacy_base_drift_reason）。
-            return self._legacy_base_drift_reason(item)
-        if base == current_dev:
-            return None
-        if self._git_repo("cat-file", "-e", base, check=False).returncode != 0:
-            return f"冲突判定失败：base_head 无效（{base}）——死信回退人工（66 号 §6.4）"
         paths = self._item_paths(item)
         mergeable = {p for p in paths if is_registry_mergeable(p)}
-        overlap = self._changed_paths_between(base, current_dev) & (paths - mergeable)
-        if overlap:
+        if not base:
+            # 存量项兜底（F-AUDIT-QUEUE-04 残面）：装表之前入袋的项仍无 base_head，
+            # 光修正门救不了在飞的存量袋 ⇒ 用时间基底替代（见 _legacy_base_drift_reason）。
+            # 刻意不按"缺基底即拒"收紧：实证今晚吃人的袋**有**基底、只是口径错（已由
+            # resolve_base_head 取真源治掉），而按缺失收紧会打死按契约直投的存量通道。
+            return self._legacy_base_drift_reason(item, current_dev)
+        if base == current_dev:
+            return None
+        if self._git_repo("cat-file", "-t", base, check=False).stdout.strip() != "commit":
+            # 红队 P2：`-e` 认 blob/tree/tag，非 commit 值会让 merge-base 失败后再抛
+            # 异常——把"受控死信"变成崩栈。类型判一次，异常形态一律回死信通道。
+            return f"冲突判定失败：base_head 非可判 commit（{str(base)[:12]}）——死信回退人工（66 号 §6.4）"
+        anchor = self._merge_base(base, current_dev) or base
+        overlap = self._changed_paths_between(anchor, current_dev) & (paths - mergeable)
+        if not overlap:
+            return None
+        real = sorted(overlap - self._noop_overwrite_paths(item, overlap, current_dev))
+        if real and self._drift_all_same_session(item, anchor, current_dev, real):
+            logger.info(
+                "[landing] qid=%s 同路径漂移 %s 全部由本会话此前落地构成 ⇒ 同包迭代非互踩，放行",
+                item.get("qid"),
+                real,
+            )
+            return None
+        if real:
             return (
-                f"冲突：入队基底 {base[:12]} 之后 dev 已推进且触及同路径 {sorted(overlap)}"
-                f"——逐文件快进判定失败，死信回退属主会话（66 号 §6.4/§9.1）"
+                f"冲突：快照基底 {base[:12]}（与 dev 的共同祖先 {anchor[:12]}）之后 dev 已推进"
+                f"且触及同路径 {real}——逐文件快进判定失败，死信回退属主会话"
+                f"（66 号 §6.4/§9.1；解法＝同步工作区后重新入队）"
             )
         return None
 
-    def _legacy_base_drift_reason(self, item: dict) -> str | None:
+    def _noop_overwrite_paths(self, item: dict, paths: set[str], current_dev: str) -> set[str]:
+        """快照字节与 dev 现字节同 git blob id 的路径＝覆盖是无操作，可安全快进。
+
+        同会话连投多袋是常态（前袋已把内容送上 dev、后袋基底早于前袋）：路径重叠而
+        字节一致。不短接则每次自投都吃死信（系统性假红）；短接只放"字节完全一致"这一
+        种可证的无害形态。口径＝git blob sha 三套哈希不可互换（此处只认 git 那一套）。
+        """
+        dev_blobs = resolve_base_blobs(self.repo_root, current_dev, sorted(paths))
+        git_blob_of: dict[str, str | None] = {}
+        for entry in item.get("files") or []:
+            rel = entry.get("path") or ""
+            if rel not in paths or str(entry.get("action") or "modify") != "modify":
+                continue
+            ref = entry.get("blob_ref") or ""
+            if not ref:
+                continue
+            try:
+                data = (Path(self.queue_root) / ref).read_bytes()
+            except OSError:
+                continue  # 读不到袋内字节 ⇒ 不短接（保守判冲突）
+            git_blob_of[rel] = _git_blob_sha(data)
+        return {rel for rel, sha in git_blob_of.items() if sha is not None and dev_blobs.get(rel) == sha}
+
+    def _heal_derived_totals(self, rel: str, merged: str) -> str:
+        """条目合并后重算"声明计数"标量——派生值不得靠"某人恰好直提"才对。
+
+        病形（④ 号任务实证，2026-09-24）：本合并器对标量/头部行恒取 ours（dev 侧），
+        那是防热册头部被陈旧快照吃掉的正确设计，副作用是**计数标量永远进不来**：
+        gate_registry 的 total_gates 被 052c2817f4 直提成 180 后又被陈旧袋压回 174，
+        rule_catalog 的 total_files 停在 274 而实际 292 条。逐册直提＝把结构缺陷转嫁给
+        "谁的基底恰好最新"，不成立。现口径：条目合并完成后按段实际长度就地重算，
+        于是任何一只碰这两册的袋都会把标量修正，无需任何人去直提。
+
+        行级改写（不用正则）：只认"顶层『键: 整数』"，且原样保留该行行尾（CRLF 仓里
+        把一行改成 LF＝制造混合行尾）。红队 P1 补硬：顶层同键**必须恰好一行**——YAML
+        重复顶层键时 safe_load 取最后一个而我改第一个，会把"改错行"伪装成自愈成功，
+        且让 GATE-21 永红并振荡；段不是集合/标量不是整数/计数已一致/形态不认识 ⇒
+        一律不动（自愈是附加收益，绝不因此把可落地的袋变成死信，解析失败只 log 不抛）。
+        """
+        pairs = _DERIVED_TOTAL_PAIRS.get(rel.rsplit("/", 1)[-1])
+        if not pairs:
+            return merged
+        try:
+            import yaml  # noqa: PLC0415
+
+            data = yaml.safe_load(merged)
+        except Exception as exc:  # noqa: BLE001 — 解析不了就交给 GATE-21 判红，此处不改
+            logger.warning("[landing] 派生标量自愈跳过（YAML 不可解析）%s: %s", rel, exc)
+            return merged
+        if not isinstance(data, dict):
+            return merged
+        out = merged
+        lf = chr(10)
+        cr = chr(13)
+        for scalar, section in pairs.items():
+            declared = data.get(scalar)
+            actual = data.get(section)
+            if not isinstance(actual, (list, dict)) or not isinstance(declared, int):
+                continue
+            if declared == len(actual):
+                continue
+            prefix = scalar + ":"
+            lines = out.split(lf)
+            bodies = [ln[:-1] if ln.endswith(cr) else ln for ln in lines]
+            idxs = [i for i, b in enumerate(bodies) if b.startswith(prefix) and b == b.lstrip()]
+            if len(idxs) != 1:
+                logger.warning(
+                    "[landing] 派生标量不改写 %s: %s（顶层同键行 %d 个，须恰好 1——"
+                    "重复键/缺位交 GATE-21 判红，禁在这里猜哪行是真）",
+                    rel,
+                    scalar,
+                    len(idxs),
+                )
+                continue
+            i = idxs[0]
+            tail_cr = lines[i].endswith(cr)
+            lines[i] = f"{scalar}: {len(actual)}" + (cr if tail_cr else "")
+            out = lf.join(lines)
+            logger.info(
+                "[landing] 派生标量自愈 %s: %s %d → %d（按段 %s 实际长度重算）",
+                rel,
+                scalar,
+                declared,
+                len(actual),
+                section,
+            )
+        return out
+
+    def _drift_all_same_session(self, item: dict, anchor: str, current_dev: str, paths: list[str]) -> bool:
+        """漂移提交是否**全部**归属本会话（同会话连投多袋是常态，不得系统性假死信）。
+
+        红队 B5：工作区停在分叉点、同会话先后两袋改同一文件——按纯字节判定第二袋必红，
+        而它吃的正是本会话自己的前一次落地，不是他人内容。判据用 `[GW:sid]` 归属：
+        任一提交无标记或归属他会话 ⇒ 不豁免（保守判红）。
+        """
+        sid = str(item.get("session_id") or "")
+        if not sid:
+            return False
+        r = self._git_repo("log", "--format=%H%x09%s", f"{anchor}..{current_dev}", "--", *paths, check=False)
+        if r.returncode != 0:
+            return False
+        rows = [ln for ln in (r.stdout or "").splitlines() if ln.strip()]
+        if not rows:
+            return False  # 拿不到漂移提交清单 ⇒ 不豁免
+        for row in rows:
+            _sha, sep, subj = row.partition(chr(9))
+            if not sep:
+                return False
+            m = _GW_OWNER_RE.search(subj)
+            if not m or m.group(1) != sid:
+                return False
+        return True
+
+    def _merge_base(self, base: str, other: str) -> str | None:
+        """两 commit 的共同祖先；不可判（浅克隆/对象缺失）→ None，调用方退回 base。"""
+        r = self._git_repo("merge-base", base, other, check=False)
+        if r.returncode != 0:
+            return None
+        return (r.stdout or "").strip() or None
+
+    def _legacy_base_drift_reason(self, item: dict, current_dev: str) -> str | None:
         """无 base_head 的存量项：以「袋创建时间 + GW 归属」替代时间基底做快进判定。
 
         判据=dev 上本袋 `created_at` 之后触及本袋路径的提交里，是否存在**别的会话**的
@@ -1135,6 +1297,10 @@ class WorktreeLanding:
         没有 ⇒ 快进放行。拿不到时间/无法归属（早期无标记提交）⇒ 保守放行——
         本函数是存量过渡兜底，不是新主路，宁可漏判也不误杀无辜袋。
         刻意不猜 base（不重演 old_dev^ 那类兜底），只在证据确实存在时判红。
+
+        S-12（2026-09-24 本包治本，被 815312f93d 陈旧快照覆回后又读实时分支尖）：
+        判定点位必须用调用方传入的 `current_dev`——CAS 每轮重试重取 dev 点位，用实时
+        `refs/heads/dev` 会让"判定点位"与"实到点位"错位（第 2 轮起判的是别处的历史）。
         """
         created = str(item.get("created_at") or "")[:19].replace("T", " ")
         sid = str(item.get("session_id") or "")
@@ -1145,7 +1311,7 @@ class WorktreeLanding:
             "log",
             f"--since={created}",
             "--format=%H%x09%s",
-            "refs/heads/" + self.target_branch,
+            current_dev,
             "--",
             *paths,
             check=False,
@@ -1211,6 +1377,13 @@ class WorktreeLanding:
                 return f.get("base_blob") or None
         return None
 
+    def _base_had_path(self, item: dict, rel: str) -> bool:
+        """袋内基底是否**有正证据**包含该路径（不可知一律按"没有"，不误杀新增件）。"""
+        base_sha = str(item.get("base_head") or "")
+        if base_sha and self._git_repo("cat-file", "-e", f"{base_sha}:{rel}", check=False).returncode == 0:
+            return True
+        return bool(self._entry_base_blob(item, rel))
+
     def _merge_registry_file(self, item: dict, rel: str, theirs_bytes: bytes, old_dev: str) -> bytes | None:
         """注册表族单文件三向合并（W2）；冲突/结构漂移抛 RuntimeError → 死信回人工。
 
@@ -1222,7 +1395,14 @@ class WorktreeLanding:
         theirs_text = theirs_bytes.decode("utf-8", errors="replace")
         ours_text = self._read_blob_text_opt(old_dev, rel)
         if ours_text is None:
-            return theirs_bytes  # dev 侧无此文件（新增落地）→ 无合并语义
+            # P0 补齐（红队 A1）：dev 侧无此文件≠"无合并语义"——若本袋**基底**里有它，
+            # 那是 dev 在基底之后删了它；直接写回＝陈旧袋复活已删件，且绕过全部冲突判定。
+            if self._base_had_path(item, rel):
+                raise RuntimeError(
+                    f"[landing] 注册表族 {rel} 在本袋基底存在而 dev 已删——拒绝用陈旧快照"
+                    f"整文件写回（确需恢复请显式新建一袋并写明理由）"
+                )
+            return theirs_bytes  # 基底也无此文件＝真·新增件落地，无合并语义
         if ours_text == theirs_text:
             return None  # 快照与 dev 一致 → 零合并零提交（幂等 noop）
         base_sha = item.get("base_head") or ""
@@ -1259,6 +1439,7 @@ class WorktreeLanding:
         )
         if conflict:
             raise RuntimeError(f"[landing] 注册表三向合并失败（死信回退人工）: {conflict}")
+        merged = self._heal_derived_totals(rel, merged)
         if merged == ours_text:
             return None  # 合并未给 dev 带来任何变化（快照侧新增全被退役判定吸收等）
         return merged.encode("utf-8")
@@ -1950,8 +2131,14 @@ class WorktreeLanding:
         不触发 hook/门禁——门禁语义已由内容判据保全。
         """
         mergeable_paths = {p for p in self._item_paths(item) if is_registry_mergeable(p)}
-        need_remerge = bool(mergeable_paths & self._changed_paths_between(base_dev, new_dev))
-        if not need_remerge:
+        drifted = self._changed_paths_between(base_dev, new_dev)
+        need_remerge = bool(mergeable_paths & drifted)
+        # P0 治本（红队 2026-09-24 A2，生产实证 9de51e673f）：prev_commit 的树是
+        # 「base_dev + 本袋 files」的**全量快照**，袋里没有的路径在树里仍是 base_dev 的旧
+        # 字节。只要 base_dev..new_dev 之间存在任何漂移（哪怕与本袋路径零交集），re-parent
+        # 就等于把期间他人落地的一切整树回退——mapbuild 那只只带 2 件的袋就是这样把本包
+        # 4 件在册文件回退掉的。旧判据只看"注册表路径是否重叠"，看不见这条。
+        if not drifted:
             r = self._git_repo("rev-parse", f"{prev_commit}^{{tree}}")
             tree = r.stdout.strip()
             return self._commit_tree_same_message(prev_commit, new_dev, tree)
@@ -2415,7 +2602,14 @@ _LSTREE_CHUNK = 50  # Windows 命令行长度上限 ⇒ ls-tree pathspec 分块
 
 
 def resolve_base_head(repo_root: Path | str) -> str | None:
-    """入队基底 = 目标分支当前 HEAD（66 号 §6.4 逐文件快进判定的锚点）。
+    """入队基底 = 快照真源 commit（该工作区自己的 HEAD）——66 号 §6.4 快进判定的锚点。
+
+    F-AUDITFIX-STALE-01（2026-09-24 晚）：原口径取「入队时刻看到的 refs/heads/dev 尖」，
+    而快照字节来自这个工作区的树。两者不是一回事——工作区落后 dev 时取到的基底**比字节
+    还新**，于是 diff(base, dev) 恒空、快进判定结构性失明，陈旧字节照样整覆盖他人已落地
+    内容（正门装表后依然存在的通道，与今晚 815312f93d 吃掉在册修复同一病类）。
+    现取 HEAD＝字节真源；工作区与 dev 对齐时两者同值＝零行为变化，落后时才能判红。
+
 
     病根：此前只有 machine 车道（``reroute_auto_commit_to_queue``）取基底，交互正门
     ``git_commit.py --enqueue`` 与裸 CLI ``commit_queue.py enqueue`` 均不传 ⇒ 生产袋
@@ -2426,7 +2620,7 @@ def resolve_base_head(repo_root: Path | str) -> str | None:
     取不到（非 git 目录/分支不存在）→ None：保持 tmp 隔离测试可跑，不因此拒绝入队
     （落地侧对 None 的处理见 ``_merge_registry_file`` 的 fail-closed 收紧）。
     """
-    r = _run_git(Path(repo_root), ["rev-parse", f"refs/heads/{cq._TARGET_BRANCH}"], check=False)
+    r = _run_git(Path(repo_root), ["rev-parse", "HEAD"], check=False)
     sha = (r.stdout or "").strip()
     return sha or None if r.returncode == 0 else None
 
@@ -2579,8 +2773,7 @@ def reroute_auto_commit_to_queue(gateway, session_id: str, files: list[str], mes
                 status=CommitStatus.NOTHING_TO_COMMIT,
                 message=f"all {len(skipped_protected)} files protected-skipped: {skipped_protected[:5]}",
             )
-    head_r = gateway.run_git(["git", "rev-parse", f"refs/heads/{cq._TARGET_BRANCH}"])
-    base_head = head_r.stdout.strip() if head_r.returncode == 0 else None
+    base_head = resolve_base_head(gateway.project_root)  # 同源真口径（勿再各写一条 rev-parse）
     base_blobs = resolve_base_blobs(
         gateway.project_root,
         base_head,
