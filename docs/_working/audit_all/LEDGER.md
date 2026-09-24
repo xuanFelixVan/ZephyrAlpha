@@ -1042,3 +1042,26 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
       print(f, all(any(l==x for x in it) for l in h.splitlines()))
   PY
   ```
+
+
+## 心跳 2026-09-24 09:04 CST 实测（`date`=09:04:29，本串由 shell `date` 传入）· 在干=**收官"连续两轮零新问题"第 1 轮三尺齐绿（0032 落地→报告 90 行转 alive）＋自家过时基线更正（383/387 本包 04:36 已自修落地）** · 卡住=无 · 下一步=见 ④
+
+- **① 承 08:29 块 ④：0032 已落地**＝`65225f4534`(08:38:26, files=2 纯增 LEDGER+202/REPORT+235)；`git show HEAD:…LEDGER.md|wc -l`=**1044**、`…AUDIT_REPORT.md`=**372**，盘==HEAD（`diff` 空）。⇒ GATE-01 自触（未登记号 409 的 `裁定`+井号形态）经"去井号"处方修后一次通过，本包案卷落地通道复证可用。
+- **② 收官"连续两轮零新问题"第 1 轮（三尺齐绿，全部只读可重放）**：
+  - **尺H2**（`probe_bag_regression_attribute.py`）：命中袋-件对=30，合法改写侧 151 行、条目被吃侧 **3 行＝全属 0009**（`battle_map_domain_policy.yaml` 的 `authoritative_source` 单字段+2 注释行，`(no-key)×3`）；**上一块 08:09 报的"REPORT 90 行不在 HEAD"已随 0032 落地转 alive（现 dead 侧无报告/台账项）**。除已登记的 0009 外**零新死件**。
+  - **尺J**（`ruler_J_restore.py`）：**待补块=0**（跨袋零截断残留）。
+  - **align_all**（HEAD 面只读探针 `run_headside_align.py --no-report`）：**`rc=0`、✅ 硬问题清零**（domain_mismatch/ghost_anchor/frontend_map/decision_map/factory_map/gomap 六类全 0），软 984（图 8 chainmap 硬违规 12 条按长城专项暂计软＝st-gpu-final 清欠中；翻译册 6 组重复 module_path＝已知，清源走 `--dedupe`）。
+- **③ 🔴 自家过时基线更正（诚实口径，非新问题）**：先前滚动基线写"余 3＝裁定册 related_arch×3（383/387）→处方交 st-cmd，勿硬闯"——**实为本包 04:36 commit `a74e9a6c48`（done 袋 0011）自修落地**（383/387 `related_arch` 违字段契约填了模块/契约号→置空 `[]`，真身在 `affected_files` 已存；align 全图硬 3→0）。⇒ 该"交 st-cmd"路由项 **closed（本包已自毕，非他包待办）**；本块把它从待办移到已办，防总指挥重复派单。
+- **④ 0009 指针修再定性（第 N 次不硬闯·守 §3.4/§5 与 premise-falsified 纪律）**：`battle_map_domain_policy.yaml:286` FF-16 `authoritative_source` 仍写废弃副本 `architecture_model/frontend/frontend_map.yaml`（web 版为唯一真源，两文件 HEAD 皆存在＝**SSOT 误指非硬断链、低危**）。本包 03:52 已登记 **F-AUDIT-LAND-01**（done 但 noop、落地假绿，交 st-commitsys），与 **F-AUDIT-MERGE-01/EVAP-05/06** 同病灶＝队列入袋 `base_head/base_blob=None`→注册表册"单字段"级边修在条目三向合并里被判"无变化"静默吞且记 done。**队列通道对该类未修前，本包不再 requeue 该热册（同因必再 noop），维持登记上交；本包对该册零写入（全程 `git show`）。** 复证两处"已落 dev"非假绿：`90889679b2`/`5f4136315e`（工厂图补边/GOMAP 机生层）皆 HEAD 祖先，align 图 8/9/10 轴硬=0 亲验。
+- **⑤ 下一步（轮次）**：① 本块随袋 **0033** 入队（自家两案卷纯增，0032 已证该通道可用）② 收官"连续两轮"第 2 轮＝下一轮复跑尺H2/J + align（须仍仅 0009 已知项、rc=0）③ 红蓝反证并档（终审前，累计 31 例）④ 终报三清单（悬空/漏挂/断链 逐条带证据+处置态）+ 复查清单（每条附复核命令+可能错在哪+证据等级）⑤ 满足判据后自删本自动化（jobId `39cc5bd5`）+ 台账记"自动化已自删·本包收官"。
+- **队列/align 状态**：本包 done=0001/0002/0008-0011/0013/0015-0023/0029/0032(18)、dead=0003-0007/0012/0028/0030/0031(9)、pending=0（本轮入 0033）；HEAD=`21c1aa5d61`(08:55:06·他包 in_process_gate_registry 计数漂移修，非本包)。**本包对注册表/配置册/depgraph DB 写入累计仍=0**（全程 `git show`/`git log` 只读＋自家两件案卷）。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  python -c "import json;print(json.load(open('.runtime/commit_queue/done/q-20260924-st-audit-all-20260924-0032.json',encoding='utf-8'))['landed_id'])"   # ① =65225f4534
+  git show HEAD:docs/_working/audit_all/AUDIT_REPORT.md | wc -l                                                                                              # ② =372（报告 90 行已转 alive）
+  python .runtime/tmp/audit_all_20260924/probe_bag_regression_attribute.py 2>&1 | grep -E "dead= *[1-9]"                                                    # ② 仅 0009 一行
+  python .runtime/tmp/audit_all_20260924/ruler_J_restore.py 2>&1 | tail -1                                                                                   # ② 待补块=0
+  python .runtime/tmp/audit_all_20260924/run_headside_align.py --no-report 2>&1 | tail -3                                                                    # ② rc=0 硬清零
+  git show a74e9a6c48 --stat --format="%h %ci %s" | head -8                                                                                                  # ③ 383/387 本包自修落地
+  git merge-base --is-ancestor 90889679b2 HEAD && git merge-base --is-ancestor 5f4136315e HEAD && echo 两处已落dev真                                          # ④ 非假绿
+  ```
