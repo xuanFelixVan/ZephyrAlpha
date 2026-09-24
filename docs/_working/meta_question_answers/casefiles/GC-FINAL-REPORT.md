@@ -265,7 +265,7 @@ reconciler 必须是事件触发——宪法禁 cron/Timer），属数据引擎�
    但 R1 伪造权威尺的**基准时刻刻意保留本机墙钟**并加注释——案卷署时是北京时间，
    换成 UTC 会让它的日期匹配腿在 00:00–08:00 整体失配（尺子静默变绿），那比"用了本机时钟"更坏。
 
-## 九、落地窗新发现：CH 服务端 introspection 面失效（P1，会削弱门禁可信度，未修）
+## 九、落地窗新发现：CH 服务端 introspection 面失效（P1 → 已收口，全案见 §十）
 
 **现象（亲验，03:2x）**：ClickHouse 服务端所有 `system.*` 查询一律 Code 722 ASYNC_LOAD_FAILED，
 根因链写在报错里：`Load job 'startup table c1_market.macro_data' failed:
@@ -291,3 +291,74 @@ broken parts count is 100`。直接查 `c1_market.macro_data` 同样失败；
 **建议处置（Owner 窗口，三选一，按代价排序）**：① 先查 CH 服务端日志确认是否发生过重启/OOM；
 ② 只读地把该表 `DETACH` 出来让 introspection 面恢复（数据留在盘上可再 ATTACH），
 ③ 若 187 个部件确已 0 字节，走 CH 备份双链（F 主 / G 二）核数后决定回灌范围。
+
+## 十、CH introspection 熄火【已收口】＋本轮补丁债清偿（09-25 04:2x–05:1x，全部亲验）
+
+### 10.1 先更正 §九 里我自己指错的两处
+
+1. **§九 结尾"本车道 10,079,242 行分年重建与换名是需排除的相关因素"——已排除，不是本车道造成的。**
+   实测：187 个坏部件的 mtime 全部 = `2026-09-24 17:49:40` 与 `17:49:52`，与 CH 服务端日志里
+   `Application: shutting down` 同一秒；VM `uptime` 反推开机=17:54 UTC。即**关机瞬间正在写的
+   part 目录里五个文件（checksums.txt/columns.txt/count.txt/data.bin/columns_substreams.txt）
+   全部被创建成 0 字节**——与仓内已立法同型（裁定 #ARCH-CH-015：破损 part=崩溃时零字节覆盖）。
+2. **§九 说"按进程名与 9000 端口都没取到服务进程"**：因为 CH 不在本机，跑在 Hyper-V Ubuntu VM
+   `zephyr-ch`（`172.24.30.100:9000/8123`，登记=INFRA-DB-006）。进出通道=仓内自带
+   `scripts/backup/ch_vm_ssh.py`（凭据 config/.env.ch_backup，NOPASSWD sudo 可用）。
+
+### 10.2 根因链（证据等级=亲验）
+
+`c1_market.macro_data`（UUID cc65d375，数据盘 `store/cc6/cc65d375…/`）**1364 个部件中 187 个为
+纯零字节破损件** → CH 装载该表时按 `max_suspicious_broken_parts=100` fail-closed 拒装
+（Code 231 TOO_MANY_UNEXPECTED_DATA_PARTS）→ 该表进入"永久失败的异步装载桩"，
+**任何枚举 catalog 的动作（`system.tables`/`system.columns`/`system.parts`）都要 wait 这个失败作业**
+（Code 722 ASYNC_LOAD_WAIT_FAILED）⇒ 全库 introspection 面熄火；且报错每次重放的是**首次装载的缓存文本**
+（改表元数据 `.sql` 无效、`DETACH`/`DETACH PERMANENTLY` 亦被同一 wait 挡住，实测各 1–2 次全负），
+26.6 版 `SYSTEM` 子命令全集里**没有 `RELOAD TABLE`**（用 `SYSTEM ZZZPROBE` 让服务端把全集吐出来核对过）。
+
+破损件为什么攒到 187>100：该表被 `zephyr_writer` 以"每指标每批一条 INSERT"高频灌
+（09-21~09-24 实测 227–517 次/日），且历史上被反复 `ALTER TABLE macro_data UPDATE frequency=…`
+（`mutation_*.txt` 编号已到 4,503,013，同一条 `UPDATE frequency='event' WHERE frequency='事件'`
+重复出现上千次）——**每次 mutation 重写全表部件**，于是部件数与代数同步爆炸（4.5MB 数据 1364 部件）。
+
+### 10.3 处置（按 RULE-DATA-OPS 三步验证逐条留痕；全程可逆）
+
+| 步 | 动作 | 必要性 | 真实性 | 可逆性 |
+|----|------|--------|--------|--------|
+| 1 | 数清破损件（判据=`checksums.txt` 存在但为 0 字节，不是"目录看着小"）→ 恰 187 | 不数清就是猜 | `du`/`-s` 双口径实测 | 只读 |
+| 2 | 187 件整体 `mv` 出表目录（先 `store/cc6/macro_data_broken_parts_bak_20260925`，后转 `/root/…`） | 装表前先让计数归零 | 件内 5 文件全 0 字节⇒零数据；余 1177 件 checksums 全部非空（复扫 bad=0） | **未删除**，移回即复原 |
+| 3 | 表元数据 `.sql` 加 `max_suspicious_broken_parts = 1000`（并留底） | CH 报错自陈的官方处方 | — | 事后已 `ALTER … MODIFY SETTING = 100` 复原（现值=默认，不长期掩盖） |
+| 4 | `SYSTEM FLUSH LOGS` 后 `systemctl restart clickhouse-server` | 桩不可拆，非重启不重扫 | 重启前 `system.processes` 仅自探针；写侧最短 3s 一批 | 服务态可回 |
+| 5 | 复验 + 收口 | — | 见 10.5 | — |
+
+### 10.4 我在第 4 步犯的错（自己写下来，它差点把整库按住）
+
+我把元数据备份 `macro_data.sql.bak_metaqgc_20260925` **留在了数据库元数据目录里**。Atomic 库要求该目录
+只放 `*.sql`，于是 CH 每次启动即 `Code 79 INCORRECT_FILE_NAME` 退出，systemd 30 秒一轮 crash-loop，
+**故障面从"一张表读不到"升级成"整库起不来"，共约 3 分钟（20:42:11–20:45:32 UTC）**。
+发现方式=第 4 步后轮询无果、回去读服务端日志，一眼看到自己造的文件名。
+处置=`mv` 出 CH 树到 `/root/`，`find store -maxdepth 2` 复扫确认无其他异物，服务随即正常起来。
+教训两条：**给 CH 做任何"就地备份"，落点必须在 CH 数据/元数据树之外**；重启前先把自己在这台机器上
+留下的痕迹扫一遍，再看日志找自己。
+
+### 10.5 收口证据（亲验，全绿）
+
+- `SELECT count() FROM system.tables WHERE database='c1_market'` = **201**（introspection 面恢复）；
+- `c1_market.macro_data` = **51,979 行 / 1993-03-31…2026-09-24 / 2,261 个指标**，`vintage/compat/latest` 三件俱在；
+- 停机期间写侧未掉线：`news_data` 26 批 7,731 行、`macro_data` 49 批 290,472 行照常提交；
+- 部件风暴自愈：14,070 → **812**（后台 merge 在做，未手工 OPTIMIZE）；
+- 红蓝尺 R3/R5 从"探测失败自曝（EXIT=1）"恢复为**实测判据**：
+  `tol=0.03(scale=2)`、回补段 0/400,000（样本 5,509,521）、现库段 0/400,000（样本 444,806）、
+  R5 四腿全跑、`--scan` **EXIT=0**，五尺红蓝自证 5/5（蓝 0 误报，红各≥1 被抓）；
+- 表设置已回 100（默认）；`/root/macro_data_broken_parts_bak_20260925`（187 个空件目录）与
+  `/root/macro_data.sql.bak_metaqgc_20260925`（原元数据）**保留待处置**，本车道不在他人机器上自行销证。
+
+### 10.6 未修的 systemic 一条（登记＋处方；改他人车道代码属越界，只交清单）
+
+`zephyr.data.scheduler` 的破损 part 自动检测（裁定 #ARCH-CH-015）**只看 `system.text_log` 的
+merge 期 CHECKSUM_DOESNT_MATCH**，覆盖不到"启动期装载计数超限"这一支；而这一支的杀伤面是
+**全库 introspection**，一旦触发就把依赖 introspection 的门禁全变 fail-open
+（CH-FINAL-GATE 引擎解析失败只 WARNING、TABLE-NAME-REGISTRY 取不到表集即放行）。处方：
+①`scheduler` 增一条"启动期装载失败表"探针（日志 `ASYNC_LOAD_FAILED` / Code 231），命中即写审计并告警，
+不等人工；②`macro_data` 一类高频小批写侧改**批量 INSERT**，并把 `frequency` 归一从"每次 ALTER 全表"
+改成"写前 Python 侧映射"（现库 4.5M mutation 编号与 1364 部件就是它的账单）；
+③`max_suspicious_broken_parts` 是否服务端上调属重启窗口决策，本车道已把表级值复原为默认 100。

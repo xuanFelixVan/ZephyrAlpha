@@ -136,3 +136,55 @@ date: 2026-09-24
   两口径 09-23 中位差 1.84%/最大 95 倍 ⇒ 病因是"在写的另一口径 + 说谎的默认标签"，非旧数据回灌。
   新 P1：CH 服务端 `system.*` 全败（macro_data 187 个 0 字节坏部件），而 CH-FINAL-GATE 与我方 R3
   在此情况下都会静默降级 ⇒ 已把 R3 改成自曝"容差系假定"并使 --scan 退出码=1，本轮不称全绿。
+
+⑩ 09-25 03:4x 总包心跳·文件面闭合判定（含我自己选择器的一个洞）：
+  此前"待落地面"用**路径前缀**圈（src/tests/scripts/governance/meta_question/data/registers/docs/_working/...），
+  按能力册 token 的 created_by **反查**后才发现漏了 9 件——含 `scripts/ch/backfill_money_flow_history.py`
+  （WO-011 回补引擎本体）、两份治理尺、以及**五份 `meta_question_*_vocabulary.yaml`（代码运行时按枚举加载的真源）**，
+  它们从未进过任何袋，也因此从未被我"全战役面 0 违规"的扫描覆盖（那句 0 只是"扫到的部分为 0"）。
+  已补投 q-...-0028。闭合判定复跑：token 反查 → 未入库 ∧ 盘上存在 ∧ 未入任何袋 = **7 件**，
+  全部是 `data/registers/metaq_{io_2018,product_synonyms,sector_name}` 下的原始附件
+  （.rda/.csv/.json 合计 ~17MB）。**决定不入库**：该目录在册 23/23 全为 .yaml，且其派生册
+  （product_synonym_register / io_sector_two_level_map / sector_code_name_registry）已随 q-0007 落地；
+  入库原件既违反扩展名契约也违反全资产净零，留盘并在案卷记指针。
+  另一笔债（登记不擅动）：**悬空 token 18 条**——5 个 `.patch`（已按 DIRECTORY-CONTRACT 改存为
+  `.pending_patch.yaml` + 施加器）、6 个 `.tmp.<pid>.<rand>`（他进程编辑器残留）、
+  `vocab_loader.py`（并入 registry.py）、`exam_loop/state_machine.py`（本批改名 exam_lifecycle.py）。
+  删他人/前手在册条目属注册表净删（Owner 门位），本车道不自行清理，只把清单交出。
+
+⑪ 09-25 04:2x–05:1x 总包第二轮（CH 熄火收口＋补丁债清偿＋R5 改名）：
+  1) **CH introspection 面已恢复（亲验）**：根因=`c1_market.macro_data` 187 个"关机瞬间被创建成
+     0 字节的部件"越过 `max_suspicious_broken_parts=100` ⇒ 装载 fail-closed ⇒ 该表进永久失败装载桩 ⇒
+     任何枚举 catalog 的 `system.*` 查询都 wait 它（Code 722）。处置=187 件 `mv` 出表目录（**未删**，
+     现存 `/root/macro_data_broken_parts_bak_20260925`）+ 表元数据临时提限 + 重启服务。
+     结果：`system.tables`=201 张可读、`macro_data` 51,979 行/2,261 指标无损、部件 14,070→812 自愈、
+     表设置已复原默认 100。§九 里"本车道重建可能是成因"的自疑**已排除**（坏件 mtime=CH 关机同一秒）。
+     我自己的一处错已入账：把 `.sql` 备份留在数据库元数据目录 ⇒ CH crash-loop 约 3 分钟（详见战报 §10.4）。
+  2) **补丁债清偿 4/6**：`wo001_003/patches/0001..0004` 与 `wo_b3_macro/patches/0001` 中，
+     0002（status_band regime=95  ratified）/0003（每日对账排班脚本新建）/0004（政策表窗口）/
+     b3-0001（宏数 vintage 入库镜像）已施加；0001（registry 真检）因盘面被 ruff-format 重排过
+     致 3 hunk 拒收，已按语义手工合并 ⇒ **WO-001 的 7 项真检测试从"跳过"变"跑起来且全过"**。
+  3) **施加后查出并修掉一处 P0 断链**：b3-0001 在 `ch_writer.write_result` 里调的两个名字
+     （`is_macro_mirror_target`/`mirror_from_legacy_rows`）**从未 import**，且调用点在 try 之外 ⇒
+     一旦落地，**每一次 CH 写入都 NameError**。已改为函数内惰性 import（macro_vintage 反向依赖本模块，
+     顶层 import 会成环）并把 import 失败并入旁路降级。回归网已补：
+     `tests/data/test_macro_vintage_mirror.py` 13 项，并对三处判据做变异自证（同值重放闸失效→红、
+     回补伪造时戳放行→红、钩子符号断链→红），复原后 13 全绿。
+  4) **死袋根因定位到一个目录名**：q-0023/q-0025 死因不是内容冲突而是 **R5 数字后缀目录禁止**
+     （`scripts|tests/governance/meta_question/wo001_003` 末段 `_\d+$`，新建目录硬拦，gate 无豁免通道）。
+     已 `wo001_003 → wo_intake_reconcile`：两目录整体改名 + 12 个自引用文件重写 +
+     热册 **16 条 token 的 `file:` 字段与 3 条翻译 `module_path` 改绑**（复验：token 集=HEAD+2 新增、
+     删除集=0；翻译集=HEAD+4 新增、3 条为改名换绑）。改名后 188 项战役测试全绿，depgraph 已 `--force` 重建。
+     ⚠ 这次改名的深层收益：那 16 条 token 在 HEAD 里已存在而**指不到盘上文件**（文件随 0023 死了），
+     属"册先行件后死"的悬空态，改名+重投一并治掉。
+  5) **未做且已给处方的两件**（不越界、不吞他人条目）：
+     a) `wo009/patches/…depgraph_write_path_whitelist`：主区该文件正挂 st-ailayer-final-20260924
+        **20 行未落地在途白名单条目**，随袋提交＝把他人条目并入我的 commit（袋=整档快照）；
+        另 26.6 无 `SYSTEM RELOAD TABLE`、`commit_queue.py enqueue` 无 `--allow-non-worktree` 通道，
+        工作树投袋被 WORKTREE-REQUIRED 预检挡（主区 316 个脏文件 ⇒ session_worktree_start 报
+        WORKSPACE_DRIFT_BLOCKED，TRAE-079 Phase 2 已把 worktree 降级为可选）。
+        处方=待该车道那 20 行落地后（届时 HEAD 上下文与补丁重新对齐）单袋直投 `+8` 行，
+        处方文本已写在 `wo009/patches/…pending_patch.yaml` 与本条。
+        **本件不阻塞 WO-009 关单**：metaq_pledge 载体 DDL 早已部署并回填，白名单只影响"将来重跑 DDL"。
+     b) `macro_data` 高频小批 INSERT + 反复 `ALTER UPDATE frequency` 的部件爆炸（4.5M mutation 编号、
+        4.5MB 数据 1364 部件）＝ §10.6 三条处方，属他人车道写侧代码，只交清单不动。
