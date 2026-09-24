@@ -1,0 +1,29 @@
+notes: 题面要求'与 DS 册健康检查口径一致'——B 档在 DS 册无条目（未落库，设计内），健康检查口径尚不存在，故一致性按题面 vs 源线谱登记三方对照口径执行；DS
+  册无 B 档条目=设计内（源线谱§6 分工边界：DS 册=在产资产唯一真源，B 档未落库仅登记渠道判定+U 族治理元数据）；接入施工建 DS 条目后须按§6 做
+  DS 册字段级对账复考。管线建成后复考真跑日志对账。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/b_lines_B_structure.py
+  query: 'SL-B04: 题面节奏 vs U3 行 vs §1 新鲜度列三方对照'
+  result:
+    claim: 小时-日级节奏
+    u3_row: 小时-日级
+    freshness_col: 时-日级
+    mismatch_items: 0
+    ds_healthcheck_caliber: 无(B档未落库,设计内)
+exam_ref: st-metaq-20260923/probe/b_lines_PQ-0244
+fail_type: null
+threshold: 不一致项=0
+conclusion: SL-B04 电商价格线 U3 更新频率与延迟核验：题面『小时-日级节奏』与源线谱 U3 行『小时-日级』及§1 总表新鲜度『时-日级』三方一致，不一致项=0，达
+  threshold '不一致项=0'。
+confidence: 0.4
+data_window:
+  end: 2026-09-23 现状
+  start: registry
+three_check:
+  data: OK+基准三册在盘可读（源线谱 29 线全解析、DS 册 22 条目、层宪章七层）
+  caliber: OK+题面宣称 vs 登记文本逐词/逐字段对照口径明确
+  mechanical: OK+探针脚本可复现（substring 匹配+计数+层号词表校验）
+pit_assertion: 登记快照文本比对题：仅读源线谱册 02_source_line_registry.md(2026-09-22)、DS 册 data_sources_registry.yaml(v2.6.0)、层宪章
+  01_layer_charter.md(2026-09-22) 在盘快照，不取任何行情/时序数据，无切点(2025-09-09)后数据参与任何阈值比较。
+q_id: PQ-0244

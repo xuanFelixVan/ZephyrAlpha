@@ -1,0 +1,38 @@
+notes: ''
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: SELECT uniqExact(coin), uniqExact(toDate(funding_time)) FROM c1_market.hl_funding_history
+    FINAL WHERE funding_time <= '2025-09-09'；逐 coin/日行数分位；SELECT count() FROM c1_market.hl_perp_snapshot_daily
+    FINAL WHERE snapshot_date <= '2025-09-09'
+  result:
+    days: 851
+    coins: 206
+    funding_window: 2023-05-12~2025-09-08
+    rows_per_coin_day_p50: 24
+    snapshot_registered_start: '2026-09-18'
+    snapshot_closed_window_rows: 0
+- probe: src/zephyr/data/config/data_supply_sentinel.yaml
+  query: data_supply_sentinel.yaml hl_funding_history/hl_perp_snapshot_daily/hl_oi_snapshot_daily
+    哨兵行
+  result:
+    hl_funding_history: funding_time,3d
+    hl_oi_snapshot_daily: snapshot_date,2d
+    hl_perp_snapshot_daily: snapshot_date,2d
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0214
+fail_type: null
+threshold: 不一致项=0（更新频率与延迟与 DS 册健康检查口径一致）
+conclusion: 登记节奏'日更快照+逐小时费率，WS 准实时'与库内实况一致，不一致项=0。逐小时费率腿：hl_funding_history 闭卷窗 851
+  日、206 coin、逐 coin/日行数 p50=24（≈逐小时）——逐小时节奏机检吻合；日更快照腿：hl_perp_snapshot_daily/hl_oi_snapshot_daily
+  起点 2026-09-18 为登记口径内（自积起点，窗内 0=一致非缺口）；WS 准实时为切点后现状。哨兵三行（funding_time 3d/snapshot_date
+  2d×2）在册。 （SL-A15 加密永续/资金费率）
+confidence: 0.75
+data_window:
+  end: '2025-09-09'
+  start: '2023-05-12'
+three_check:
+  data: OK（源线谱 U3 行+哨兵配置+库内日历三者在册/在库可查）
+  caliber: OK（判据=登记节奏 vs 实有交易日覆盖 vs 哨兵阈值语义，逐项机械对账）
+  mechanical: OK（应考日数×实有日数+哨兵字段留痕）
+pit_assertion: U3 对账对象=登记文本+哨兵配置+闭卷窗内数据覆盖（全部 <=2025-09-09）；切点后信息仅作现状观察不进入一致性判定。
+q_id: PQ-0214

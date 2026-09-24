@@ -1,0 +1,63 @@
+notes: '复考前置: ①切点前准入账回填 ②入库闸逐候选判据(IC/t/扣成本)留痕字段; verdict 分布仅为现状观察, 不得进入阈值比较。'
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l4_PQ-0044.py
+  query: SELECT count(),min(ingest_ts),max(ingest_ts) FROM c1_backtest.strategy_screen
+    WHERE ingest_ts<='2025-09-09' (vs 全量); SELECT verdict,count() GROUP BY verdict
+    (切点后现状观察)
+  result:
+    columns:
+    - ingest_ts
+    - run_id
+    - screen_batch
+    - strategy_id
+    - source_file
+    - translated
+    - is_sharpe
+    - deflated_sharpe
+    - max_drawdown
+    - turnover
+    - oos_years_decay
+    - cluster_id
+    - verdict
+    - verdict_reason
+    - screened_at
+    - notes
+    - num_trials
+    coverage:
+      pre:
+        max: '1970-01-01 00:00:00+00:00'
+        min: '1970-01-01 00:00:00+00:00'
+        rows: 0
+      full:
+        max: '2026-09-22 22:35:06.901000+00:00'
+        min: '2026-09-12 11:29:11.015000+00:00'
+        rows: 1340
+      table: c1_backtest.strategy_screen
+      date_col: ingest_ts
+    verdict_dist_post_cutoff_observation_only:
+      rejected: 216
+      oos_tested: 160
+      deferred_c4: 321
+      screened_in: 381
+      sim_deviation: 52
+      translated_c4: 206
+      failed_obsolete: 4
+exam_ref: st-metaq-20260923/probe/batch_l4_decision_PQ-0044
+fail_type: null
+threshold: 通过率<30% 且执行一致率=100%
+conclusion: '入库闸载体 c1_backtest.strategy_screen 全量 1340 行, ingest_ts 范围 2026-09-12
+  11:29:11.015000+00:00~2026-09-22 22:35:06.901000+00:00——切点(2025-09-09)前 0 行, 通过率与判据执行一致率在闭卷窗内无样本可考。现状观察(不入判,
+  切点后): verdict 分布 screened_in=381(28.4%, 恰<30%)/rejected=216 等; 表含 is_sharpe/deflated_sharpe/max_drawdown/turnover/oos_years_decay/num_trials
+  考尺字段, 但 IC>0.02 且 t>2 且扣成本为正的三判据与逐候选执行判定的一致率账未在表内逐字段留痕。→ insufficient(闸在产但闭卷窗零样本),
+  复考前置=切点前准入记录回填 或 新窗积累≥1个完整批次的准入账+判据逐条留痕。'
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-05'
+three_check:
+  data: 'NO: strategy_screen 切点前 0 行'
+  caliber: 'OK: 通过率(<30%)/一致率(=100%)口径机械, 但判据字段(IC/t/扣成本)未逐候选留痕, 一致率核验需准入判据账'
+  mechanical: 'OK(不可执行): 零样本未执行'
+pit_assertion: 本题取数(现状证据查询)不使用任何切点后数据作为判据; 切点后记录仅作在产状态观察, 不进入阈值比较。
+q_id: PQ-0044

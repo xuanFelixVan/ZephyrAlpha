@@ -1,0 +1,41 @@
+notes: 复考前置：①产生切点前（≤2025-09-09）的滑点模型成交输出样本（当前 0 行），或②确立新闭卷窗后待该窗内积累≥20 交易日模型成交样本再按月度重估复考。切点后存量
+  66 行仅可作现状观察。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_ch.py
+  query: SELECT count() FROM c1_backtest.sim_trade_log WHERE trade_date <= '2025-09-09';
+    SELECT count(),min(trade_date),max(trade_date) FROM c1_backtest.sim_trade_log;
+    SELECT count() FROM c1_market.tick_data WHERE trade_date <= '2025-09-09'
+  result:
+    sim_max: '2026-09-23'
+    sim_min: '2026-07-17'
+    sim_total: 66
+    sim_precutoff: 0
+    tick_precutoff_rows: 3476481797
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_env.py
+  query: git ls-files 全仓查 meta_question_audit.jsonl；遍历 src/ scripts/ 4753 个 .py 查
+    'meta_question' 子串
+  result:
+    impl_code_hits: 0
+    jsonl_disk_hits: 0
+    pyfiles_scanned: 4753
+    jsonl_tracked_hits: 0
+exam_ref: st-metaq-20260923/probe/gov_PQ-0053
+fail_type: null
+threshold: 偏差均值≤2bp（月度校准，近 20 交易日样本）
+conclusion: 焊成本滑点偏差校准零合规样本：c1_backtest.sim_trade_log 总量 66 行，其中 trade_date <= '2025-09-09'（PIT
+  切点）的行=0，成交全部落在 2026-07-17~2026-09-23（切点后）；月度校准口径'近 20 交易日样本'窗口全在切点后，按契约切点后数据禁用于任何校正与阈值比较，故偏差均值不可算。回执侧
+  c1_market.tick_data 切点前有 3,476,481,797 行（34.8 亿，字段含 bid_price/ask_price/price/direction，可作实盘回执），缺口纯在模型输出侧。另：滑点模型与月度校准管线代码全仓零实现（grep
+  meta_question 零命中）。
+confidence: 0.8
+data_window:
+  end: '2025-09-09'
+  start: '2025-08-10'
+three_check:
+  data: NO：模型输出侧（滑点模型成交样本）切点前=0 行
+  caliber: OK：sim_trade_log DESCRIBE 实证 cost_paid/price 字段在表，tick_data 有 bid/ask/direction
+    可作回执侧，偏差≤2bp 口径可机械落地
+  mechanical: OK：若有切点前样本即可回归对比
+pit_assertion: 市场/成交取数全部带 <= '2025-09-09' 闭卷约束：sim_trade_log 切点前计数=0（实证零合规样本）；切点后
+  66 行仅作现状计数，未进入任何校正或阈值比较。
+q_id: PQ-0053

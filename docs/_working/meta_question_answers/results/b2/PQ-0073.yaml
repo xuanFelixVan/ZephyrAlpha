@@ -1,0 +1,43 @@
+notes: 口径备注：①本测度走控股股东链（rank_no=1），全十大股东分支的境外止步占比会高一些但混入大量基金/券商境外托管通道（HKSCC NOMINEES、CICC
+  HK 等），不构成实控穿透断线；②境内工商层（gsxt）未接入使部分链在境内未上市主体处提前止步——那是境内断线不是境外断线，如实区分；③境外判定为名称正则，无
+  holder_country 显式标注，复考可接入境外注册地字段后重测。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l2_q0073.py 与内联 rank-1 链探针
+  query: SELECT from_entity,to_entity,stake_pct,rank_no FROM edge_holding WHERE valid_to
+    IS NULL AND rank_no=1；node_entity 取名；沿最大持股上游爬链至终端
+  result:
+    sample_600566:
+      chain: 济川药业→济川控股(66.13%)
+      overseas_ratio: 0.0
+    sample_600927:
+      chain: 永安行→财通证券经纪(33.54%)
+      overseas_ratio: 0.0
+    sample_601963:
+      chain: 重庆银行→重庆渝富(14.96%)
+      overseas_ratio: 0.0
+    expanded_ratio: 0.0235
+    expanded_companies: 5839
+    holder_country_dist:
+      CN: 635
+      None: 169
+    expanded_overseas_stop: 137
+    expanded_terminal_paths: 5838
+exam_ref: st-metaq-20260923/probe/batch_l2_graph_PQ-0073
+fail_type: null
+threshold: 境外断线止步路径占全穿透路径比例 ≤20%
+conclusion: 三家样本按现行版本 rank_no=1 控股链向上穿透：600566 济川药业→济川控股（66.13%，境内止步）、600927 永安行→财通证券经纪（33.54%，境内止步）、601963
+  重庆银行→重庆渝富（14.96%，境内止步），三家境外止步路径占比均为 0/1=0% ≤20% 达标。扩样复测（edge_holding 现行版本 rank_no=1
+  有链的 5,839 家上市公司，沿最大持股非名义人向上最多 5 跳）：终端路径 5,838 条，境外（香港/开曼/BVI/新加坡等名称正则判定）止步 137 条，占比
+  2.35% ≤20% → pass。注：ig_equity_edge.holder_country 仅 CN 635/None 169，无显式境外国家值，境外判定用节点名称模式；名义持股（香港中央结算等）已剔除。
+confidence: 0.7
+data_window:
+  end: snapshot 2026-09 现状（edge_holding 现行版本 valid_to IS NULL 快照）
+  start: snapshot
+three_check:
+  data: 'OK: edge_holding 1,500,341 行（现行 275,669）、node_entity 名称表、ig_equity_edge 804
+    行实查在库；三家样本均有现行 rank_no=1 控股链'
+  caliber: 'OK: 穿透路径=rank_no=1 控股链最大持股上游（剔除香港中央结算等名义人）；境外止步=链终端节点名命中境外模式且无更上游；缺口=境外止步路径/全终端路径'
+  mechanical: 'OK: BFS 穿透代码可复现（probes/l2_q0073.py + 内联 rank1 链版）'
+pit_assertion: 穿透路径按现行静态快照统计，境外止步如实登记不编造；未使用切点后行情/收益数据。
+q_id: PQ-0073

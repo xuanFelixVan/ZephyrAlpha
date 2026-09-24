@@ -1,0 +1,43 @@
+notes: 重放结论本身（分组收益差显著>0，即集中度信号有领先性）不触发退役，但这不是本问判据——本问只考退役证伪方案能否机械执行：能（一次重放即出可裁定数值）。样本窗受
+  hfq 价格覆盖起点（2018-12）约束，与 PQ-0027 一致。U6 注册文本未写显式数值阈值（如 t>2），本次以题面 exam_plan 口径补齐后执行，文本完备性瑕疵已在
+  PQ-0018x 同类问中登记。
+outcome: pass
+_comment: batch_stat_alt 分包生成
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_alt_PQ-0027.py
+  query: 同 PQ-0027 数据链；对全部有环比记录样本（含非事件）按环比五分位分组，Q1 vs Q5 的 20 日超额 Welch ttest_ind；scipy.stats.ttest_ind(equal_var=False)
+  result:
+    q_median_pct:
+    - -0.1025
+    - -0.0349
+    - -0.0103
+    - 0.0062
+    - 0.0896
+    replay_n_obs: 210104
+    Q1_vs_Q5_spread: 0.010957
+    group_monotonic: true
+    Q1_vs_Q5_welch_p: 1.12e-29
+    Q1_vs_Q5_welch_t: 11.319
+    q_mean_excess_20d:
+    - 0.015859
+    - 0.015089
+    - 0.013302
+    - 0.012889
+    - 0.004908
+exam_ref: st-metaq-20260923/probe/batch_stat_alt_PQ-0205
+fail_type: null
+threshold: 判据可执行率=100%（退役判据含明确阈值与数据窗口可重放）
+conclusion: pass：SL-A13 U6 退役判据（'户数变动分组后续收益差；证伪=集中度信号无领先性'）历史重放演练真实执行成功，判据可执行率=100%。重放实现：以同股相邻
+  end_date 记录的户数环比为分组变量（全样本按环比五分位分组，事件日=announce_date，收益窗 T+1~T+20 超额对沪深300），210,104
+  个有效观测（2018-12~2025-08-12）。五分位组均值超额从 Q1（户数降幅中位数 -10.2%）+1.59% 单调降至 Q5（增幅中位数 +8.96%）+0.49%（rank
+  单调性成立），Q1 vs Q5 组间收益差 +1.10pp，Welch t=11.32（p≈1.1e-29）。判据含明确分组变量、收益窗与可比统计量，历史重放一次通过且产出可判定量（组间差显著≠0，即'集中度信号无领先性'的证伪条件可被数据裁定），故退役证伪方案机械可执行。
+confidence: 0.8
+data_window:
+  end: '2025-09-09'
+  start: '2018-12-03'
+three_check:
+  data: OK——shareholder_count 切点前 45.8 万行+kline_daily_hfq+kline_index 均已落库且覆盖重放窗
+  caliber: OK——'户数变动分组后续收益差'落地为环比五分位组 20 日超额收益的组间 Welch 检验，无歧义
+  mechanical: OK——重放已实跑并产出数值（t=11.32），判据条件可被数据机械裁定
+pit_assertion: 分组变量按公告日 PIT 取数（announce_date 后收益），全部价格数据 ≤2025-09-09；分组重放未使用切点后数据。
+q_id: PQ-0205

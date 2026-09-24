@@ -1,0 +1,46 @@
+notes: 复考前置：GPU 周五窗口任务账机制建立并连续运行≥4 个周五窗口后复考。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT status,count(*) FROM meta_question.meta_question GROUP BY status;
+    SELECT what,count(*) FROM meta_question.meta_question_audit GROUP BY what; SELECT
+    count(*) FROM meta_question.meta_question_exam_result
+  result:
+    audit_rows: 849
+    status_all: registered
+    audit_update: 283
+    audit_register: 283
+    exam_result_rows: 0
+    meta_question_rows: 283
+    audit_degraded_check: 283
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_env.py
+  query: git ls-files 全仓查 meta_question_audit.jsonl；遍历 src/ scripts/ 4753 个 .py 查
+    'meta_question' 子串
+  result:
+    impl_code_hits: 0
+    jsonl_disk_hits: 0
+    pyfiles_scanned: 4753
+    jsonl_tracked_hits: 0
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid='meta_question.meta_question_audit'::regclass
+    AND contype='c'
+  result:
+    task_like_events: 0
+    audit_what_enum_size: 23
+exam_ref: st-metaq-20260923/probe/gov_PQ-0052
+fail_type: null
+threshold: =100%（连续 4 周）
+conclusion: 审计对象'GPU 周五窗口 IBT 修卷任务账'不存在：meta_question_exam_result 0 行（考试循环从未运行），meta_question_audit
+  的 what CHECK 枚举 23 个事件值中无任何任务/修卷类事件且 849 条已落账事件仅 register/update/degraded_check
+  三种；IBT 修卷任务调度代码在 src/ scripts/ 4753 个 .py 中零实现。连续 4 周完成率无任何数据源，无法计算。
+confidence: 0.7
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: NO：任务账与考试记录零行、零事件、零实现
+  caliber: OK：'周五窗口完成率、连续 4 周=100%'口径可机械落地
+  mechanical: OK：若有账即可对账
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0052

@@ -116,7 +116,7 @@ data_sources:
     auth_method: "无"
     rate_limit: "东财数据中心公开接口,60RPM 自限速"
     status: active
-    coverage: "千股千评日快照/航运运价指数(BDI 1988起+六指数约2006起;其中租船/灵便综合两子指数源侧断供见 known_data_gaps alt_shipping_index_charter_discontinued/handy_stale);电影票房源断供见 known_data_gaps(艺恩endata权限墙)"
+    coverage: "千股千评日快照/航运运价指数(BDI 1988起+六指数约2006起);电影票房源断供见 known_data_gaps(艺恩endata权限墙)"
     owner: ZephyrAlpha-Owner
     operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §4"
     policy:

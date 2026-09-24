@@ -1,0 +1,33 @@
+notes: 复考前置：①news_data 回填 related_symbol（实体链接管线）或以概念成员公司名做标题/正文匹配的归并键（需 Owner 认可口径与误归并控制）；②互动易与情绪窗回补切点前历史；③概念指数收益可由
+  kline_daily 成分等权合成（该侧可行）。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l2_q0075_0076_0077.py 与后续内联复核
+  query: SELECT min(publish_time),max(publish_time),count() FROM news_data WHERE publish_time<='2025-09-09
+    23:59:59'；uniqExact(related_symbol)=1（空）；irm_interactive_qa 窗内 count()=0；news_sentiment_window
+    GROUP BY scope,window_type 的 min(window_ts)=2026-02-24
+  result:
+    nsw_rows: 19819
+    irm_rows_le_cut: 0
+    news_rows_le_cut: 7887387
+    nsw_min_window_ts: '2026-02-24'
+    concept_daily_heat_in_window: 0
+    news_related_symbol_distinct: 1
+exam_ref: st-metaq-20260923/probe/batch_l2_graph_PQ-0076
+fail_type: null
+threshold: 先行≥1 日且 t>2
+conclusion: 三查拦截，闭卷窗内三要素全部缺样本：①快讯实体提及——c3_fundamental.news_data 切点前 7,887,387 行（2010-01-02~2025-09-09）但
+  related_symbol 100% 空置（窗内 distinct 取值仅 1 个=空串），新闻无法归并到个股→概念，概念热度聚合不可构造；②互动易问答——irm_interactive_qa
+  全表仅 500 行且 question_date 全部在切点后（窗内 0 行），'问答激增'无样本；③L3 情绪变量——news_sentiment_window
+  19,819 行的 window_ts 全部≥2026-02-24（窗内 0 行），情绪因变量在闭卷窗内为零覆盖。先行期≥1 日且 t>2 的领先滞后回归在零样本下不可跑
+  → insufficient。
+confidence: 0.8
+data_window:
+  end: '2025-09-09'
+  start: snapshot
+three_check:
+  data: 'NO: 窗内 related_symbol 全空 + 互动易窗内 0 行 + 情绪变量窗内 0 行'
+  caliber: 'PART: 热度分位与概念指数收益领先滞后回归口径可定义，但无归并键与因变量样本'
+  mechanical: 'NO: 零样本下回归不可构造'
+pit_assertion: 数据量核查全部带 publish_time/question_date/window_ts ≤2025-09-09 闭卷条件；未使用切点后数据。
+q_id: PQ-0076

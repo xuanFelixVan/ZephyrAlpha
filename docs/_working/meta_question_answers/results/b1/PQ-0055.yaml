@@ -1,0 +1,37 @@
+notes: 复考前置：考试循环运行并产生含 data_window 的考试记录后复考。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT status,count(*) FROM meta_question.meta_question GROUP BY status;
+    SELECT what,count(*) FROM meta_question.meta_question_audit GROUP BY what; SELECT
+    count(*) FROM meta_question.meta_question_exam_result
+  result:
+    audit_rows: 849
+    status_all: registered
+    audit_update: 283
+    audit_register: 283
+    exam_result_rows: 0
+    meta_question_rows: 283
+    audit_degraded_check: 283
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT column_name FROM information_schema.columns WHERE table_name='meta_question_exam_result'（data_window
+    jsonb 字段在表）
+  result:
+    exam_result_rows: 0
+    data_window_column: jsonb(在表)
+exam_ref: st-metaq-20260923/probe/gov_PQ-0055
+fail_type: null
+threshold: =100%
+conclusion: 考试记录 data_window 机检零对象：meta_question_exam_result 0 行（考试循环从未运行，283 问全部
+  registered），无任何考试窗口可做'样本外份额≥1/3 且窗口与生成时戳无重叠'的机检，通过率分母为零。
+confidence: 0.8
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: NO：exam_result 0 行
+  caliber: OK：样本外份额与窗口重叠口径可机械落地
+  mechanical: OK：若有考试记录即可机检
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0055
