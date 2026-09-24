@@ -1,0 +1,358 @@
+# REEXAM-DSRHYTHM —— DS 登记节奏↔实测更新节奏 对账族 2 问复考案卷（PQ-0172 / PQ-0196）
+# 生成：283 问战役复考班（st-metaq-gc-20260924）；判据真源=PG meta_question.meta_question.exam_plan（复考器运行时回读，本卷逐字抄录）
+# 纪律：本卷零 UPDATE/DELETE、不改既有 results/b*/ 文件、不改判据口径与阈值；达不到即照实判
+case_id: REEXAM-DSRHYTHM
+title: 航运运价线（SL-A08）与天气线（SL-A12）日更/日批节奏复考（PQ-0172 / PQ-0196）
+date: '2026-09-24'
+session: st-metaq-gc-20260924
+completes_when: 两问各出 conclusion->>'outcome' 三态且不一致项逐条可复算（复考器双跑 payload_md5 相等）
+
+supersedes_note: >-
+  替代原判：results/b3/PQ-0172.yaml 与 results/b4/PQ-0196.yaml 均为 outcome=fail
+  （inconsistency=1/1，fail_type=infra）。本卷复考后两问仍为 fail，但案由与项数重算：
+  PQ-0172 由 1 项改 5 项（新增三处切点前大断档+DS 册本体未注记+健康检查日志面零覆盖），
+  PQ-0196 由 1 项改 4 项。原卷"两子指数未标注断更"一项在 HEAD 已不成立
+  （known_data_gaps 两条 accepted 由 0cd098e56b 落地），本卷改记为 DS 册本体注记未落地（WO-010）。
+  PG 侧改判由 writeback_dsrhythm.py 纯追加完成，历史行零触碰。
+
+# ───────────────────────── 1. 前置落地面（复考有效性根）
+precondition_landing:
+  small_fix_batch:
+    hash: 0cd098e56b
+    in_head: true
+    verify_cmd: git merge-base --is-ancestor 0cd098e56b HEAD   # 退出码 0
+    landed_files:
+      - docs/_working/chain_piling_campaign/02_source_line_registry.md（SL-A08 U3 收窄五序列+SL-A12 U3 改日批积累+总表新鲜度列）
+      - src/zephyr/data/config/known_data_gaps.yaml（alt_shipping_index_charter_discontinued / alt_shipping_index_handy_stale 两条 accepted）
+  wo010_ds_book_annotation:
+    landed_in_head: false
+    verify_cmds:
+      - 'git show HEAD:architecture_model/data/data_sources_registry.yaml | grep -c alt_shipping_index_charter_discontinued  → 0'
+      - 'grep -c alt_shipping_index_charter_discontinued architecture_model/data/data_sources_registry.yaml               → 1'
+    head_ds_coverage_verbatim: 千股千评日快照/航运运价指数(BDI 1988起+六指数约2006起);电影票房源断供见 known_data_gaps(艺恩endata权限墙)
+    reading: DS 册 coverage 断供补注仅存工作区（architecture_model/ 保护路径，待审批批），未进 HEAD
+    consequence: 判定基准取 HEAD（已落地治理记录），工作区文本并披不用于销项 → 本卷 PQ-0172 第 4 项由此产生
+  head_sha_at_exam: fc039cc89163e794d4bac8477fab461816a79a24
+
+# ───────────────────────── 2. 登记面（逐字摘要，全部取 HEAD）
+registered_side:
+  PQ-0172:
+    ds_book: architecture_model/data/data_sources_registry.yaml v2.6.0 · DS-AKSHARE-ALT
+    ds_fields:
+      status: active
+      rate_limit: 东财数据中心公开接口,60RPM 自限速
+      coverage: 千股千评日快照/航运运价指数(BDI 1988起+六指数约2006起);电影票房源断供见 known_data_gaps(艺恩endata权限墙)
+      cadence_field_present: false   # DS 册本体无独立更新频率/延迟字段，节奏口径分散在三处（见下）
+    alt_catalog: 'src/zephyr/alt_data/alt_source_bootstrap.py ALT_SOURCES[source_id=alt_shipping_index].update_frequency="daily"；AltSourceHealthManager max_staleness_seconds=48h / max_latency_seconds=60s'
+    task_registry: 'tasks.yaml：alt_shipping_index_incremental schedule=daily_event incremental=true；alt_shipping_index_full_refresh schedule=weekend_calibration'
+    line_book_u3_head: 'U3｜日更（交易日；BDI+好望角/超级大灵便/原油/成品油五序列；租船/灵便综合两子指数源侧断供已登记见 known_data_gaps，2026-09-23 PQ-0172 审计修订）。'
+    known_gaps_head:
+      - alt_shipping_index_charter_discontinued: gap_type=source_discontinued status=accepted start_date=2011-08-24 date_column=trade_date detection_threshold=1
+      - alt_shipping_index_handy_stale: gap_type=source_discontinued status=accepted start_date=2009-01-29 date_column=trade_date detection_threshold=1
+  PQ-0196:
+    ds_book: architecture_model/data/data_sources_registry.yaml v2.6.0 · DS-QWEATHER
+    ds_fields:
+      status: active
+      rate_limit: 免费版 1000次/天
+      coverage: 40 个主要城市实时天气 + 7天预报（温度/湿度/降水/风力/气压等）
+      coverage_reason: 天气数据影响农业/能源/消费板块；免费版无历史API，必须每日积累
+      policy_extra_note: 国内服务不需 VPN；QWeather key 免费注册（1000次/天）；写入 c1_market.weather_data，每日积累
+    alt_catalog: 'alt_source_bootstrap ALT_SOURCES[source_id=heat_weather].update_frequency="daily"（派生信号侧，同一 48h 陈旧容忍）'
+    task_registry: 'tasks.yaml：qweather_now_incremental / qweather_forecast_incremental 均 schedule=daily_capital incremental=false'
+    line_book_u3_head: 'U3｜日批积累（每日单批拉取 40 城实况+7 天预报；免费版无历史 API，内容口径为实时观测但采集节奏为日批，2026-09-23 PQ-0196 审计修订）。'
+    pg_question_field: "meta_question.frequency='realtime'（题目标题亦沿用「实时/小时级」）——与 DS 册/02 册「日批」并存未收敛"
+    known_gaps_head:
+      - weather_data_sparse_31_days: gap_type=date_range status=accepted start_date=2026-08-04 end_date=(空/持续) date_column=record_date detection_threshold=365
+
+# ───────────────────────── 3. 实测面（CH FINAL，测量基准日 2026-09-24）
+measured_side:
+  table_map:
+    PQ-0172: c1_market.alt_shipping_index（02 册 SL-A08 行 + PG data_sources=DS-AKSHARE-ALT 定位；ReplacingMergeTree→FINAL）
+    PQ-0196: c1_market.weather_data（02 册 SL-A12 行 + DS-QWEATHER policy.extra.note 点名；ReplacingMergeTree→FINAL）
+  trading_calendar: c1_market.trade_calendar（SSE，1990-12-19~2026-12-31，is_open=1 共 8800 日）+ 周一至周五双基披露
+  shipping:
+    rows_total_no_final: 31986
+    rows_total_final: 27201
+    per_series:   # 名称 / code / FINAL行数 / 首末落库日 / 相邻间隔中位 / 最大 / >12天断档数 / 切点(2025-09-09)前行数
+      - [波罗的海综合运价指数, BDI, 9545, '1988-10-19', '2026-09-23', 1, 11, 0, 9285]
+      - [波罗的海好望角型船运价指数, BCI, 4977, '2006-07-17', '2026-09-22', 1, 11, 0, 4719]
+      - [波罗的海超级大灵便型船指数, BSI, 4895, '2006-07-17', '2026-09-22', 1, 36, 1, 4637]
+      - [原油运价指数, BDTI, 3987, '2006-07-17', '2026-09-22', 1, 1209, 4, 3729]
+      - [成品油运价指数, BCTI, 3585, '2006-07-17', '2026-09-22', 1, 1790, 4, 3327]
+      - [国际集装箱租船指数, HRCI, 211, '2006-07-19', '2011-08-23', 7, 77, 30, 211]
+      - [灵便型船综合运价指数, BHMI, 1, '2009-01-28', '2009-01-28', null, null, 0, 1]
+    largest_holes:
+      BDTI: ['2014-09-11→2018-01-02 (1209 天，2015/2016/2017 三年零行)', '2013-12-19→2014-01-09 (21)', '2012-10-15→2012-10-31 (16)', '2013-11-22→2013-12-06 (14)']
+      BCTI: ['2014-09-11→2019-08-06 (1790 天，2015~2018 四年零行，2019 仅 99 行)', '2013-12-19→2014-01-09 (21)', '2012-10-15→2012-10-31 (16)', '2013-11-22→2013-12-06 (14)']
+      BSI: ['2006-10-23→2006-11-28 (36 天)']
+    weekday_basis_missing: {BDI: 361, BCI: 305, BSI: 388, BDTI: 1293, BCTI: 1696}
+    sse_open_day_basis_missing: {BDI: 280, BCI: 228, BSI: 288, BDTI: 1130, BCTI: 1506}
+    ingest_last_ts: {BDI: '2026-09-23 11:01:37Z', BCI: '2026-09-23 11:01:37Z', BSI: '2026-09-23 11:01:37Z',
+                     BDTI: '2026-09-23 11:01:37Z', BCTI: '2026-09-23 11:01:37Z',
+                     HRCI: '2026-09-20 19:00:23Z', BHMI: '2026-09-20 19:00:23Z'}
+    freshness_days_at_base: {BDI: 1, BCI: 2, BSI: 2, BDTI: 2, BCTI: 2}
+    reading: 采集面日频在跑（五序列同批 09-23 入库），非日更断言不成立的序列是 HRCI/BHMI（已 accepted 登记）
+  weather:
+    rows_final: 10033
+    locations: 40
+    record_date_span: '2026-08-04 ~ 2026-09-23'
+    record_days: 34
+    ingest_days_tz_shanghai: 34
+    ingest_days_tz_utc: 33
+    calendar_span_days: 51
+    missing_calendar_days: 17
+    missing_calendar_day_list: ['2026-08-08', '2026-08-09', '2026-08-12', '2026-08-16', '2026-08-21',
+                                '2026-08-22', '2026-08-23', '2026-08-29', '2026-08-30', '2026-09-02',
+                                '2026-09-06', '2026-09-11', '2026-09-12', '2026-09-13', '2026-09-16',
+                                '2026-09-19', '2026-09-20']
+    missing_sse_open_days: ['2026-08-12', '2026-08-21', '2026-09-02', '2026-09-11', '2026-09-16']
+    days_with_more_than_one_batch_hour: 0      # 每有采集日恰 1 个批次小时 → "每日单批"成立
+    rows_per_day: {min: 40, max: 320, avg: 295.09}
+    incomplete_batch_days: [['2026-08-15', 40, 'now=40 forecast=0'], ['2026-09-03', 40, 'now=40 forecast=0'],
+                            ['2026-09-05', 40, 'now=40 forecast=0'], ['2026-09-14', 313, 'now=40 forecast=273']]
+    last_batch_day: '2026-09-23'
+    stale_days_at_base: 1
+    pre_cutoff_rows: 0   # 表首 2026-08-04 晚于闭卷切点 2025-09-09 → 闭卷窗内零行
+    registered_gap_count_reproduced: 已知缺口登记文本"仅 31 个记录日（2026-08-04..2026-09-18）"与本卷实测
+      （record_date<=2026-09-18 恰 31 日）逐位吻合 → 该登记面数字忠实；但 2026-09-19 登记后仍新增漏采 2 日（09-19/09-20）
+
+# ───────────────────────── 4. 对账（逐条不一致项，阈值 不一致项=0）
+reconciliation:
+  hole_tolerance: 相邻落库日间隔 > 12 日历天判为断档（12 = 已观测最长节假日型断档 11 天 + 1；常数，不因结果调参）
+  PQ-0172:
+    items:
+      - item_no: 1
+        item: 原油运价指数(BDTI) 2014-09-11→2018-01-02 断档 1209 天（2015/2016/2017 三年零行）+ 另有 21/16/14 天散点断档
+        assertion_broken: 02 册 SL-A08 U3（HEAD）把"原油"列为"日更（交易日）"五序列之一
+        attribution: 实测断供（known_data_gaps 无该序列任何条目）
+      - item_no: 2
+        item: 成品油运价指数(BCTI) 2014-09-11→2019-08-06 断档 1790 天（2015~2018 四年零行，2019 仅 99 行）+ 21/16/14 天散点
+        assertion_broken: 同上（"成品油"列在日更五序列）
+        attribution: 实测断供（未登记）
+      - item_no: 3
+        item: 波罗的海超级大灵便型船指数(BSI) 2006-10-23→2006-11-28 断档 36 天
+        assertion_broken: 同上（"超级大灵便"列在日更五序列）
+        attribution: 实测断供（未登记，建线早期段）
+      - item_no: 4
+        item: DS 册（HEAD）coverage 仍作"BDI 1988起+六指数约2006起"，未标注 HRCI 2011-08-23 止更（211 行）与 BHMI 全史 1 行；WO-010 补注仅存工作区未落 HEAD
+        assertion_broken: 判据点名的"DS 册"本体口径与实测覆盖不符（criterion 字面对象即 DS 册）
+        attribution: 登记面缺项（architecture_model/ 保护路径待审批，非采集故障）
+      - item_no: 5
+        item: 45 份 logs/source_health_2026*.log（08-04~09-24）无 akshare_alt/alt_shipping 任何记录，最新日志探测源集仅 11 个主流源
+        assertion_broken: method 字面要求"健康检查日志与登记节奏对账"——日志侧对本源不存在，对账无法闭环
+        attribution: 登记/监控面缺项（alt_source_bootstrap 自述健康探针调度层"属后续批"）
+    counted_zero: HRCI/BHMI 的止更/单点本身不另计项——known_data_gaps（HEAD）两条 accepted 已合法登记，其残余问题即第 4 项
+    n_items: 5
+  PQ-0196:
+    items:
+      - item_no: 1
+        item: 「每日积累/日批」与实测不符——2026-08-04~2026-09-23 共 51 日历日仅 34 日有批次，漏采 17 日（含 5 个 SSE 交易日）
+        assertion_broken: DS-QWEATHER coverage_reason/policy.extra.note"必须每日积累" + 02 册 U3（HEAD）"日批积累（每日单批…）"
+        attribution: 实测断供（已知缺口 weather_data_sparse_31_days 登记的是"记录日深度 31 日"这一总量口径，
+          非逐日漏采清单，且登记日 2026-09-19 之后仍新增漏采 2 日 09-19/09-20）
+      - item_no: 2
+        item: 4 个批次日内容不完整（应 40 城×(1 实况+7 预报)=320 行）：2026-08-15/09-03/09-05 各仅 40 行（forecast=0）、2026-09-14 为 313 行（forecast 缺 40 行）
+        assertion_broken: DS-QWEATHER coverage"40 城实时天气 + 7天预报"
+        attribution: 实测断供（预报支路偶发零行，登记面无对应缺口条目）
+      - item_no: 3
+        item: "meta_question.frequency='realtime'（题面标题亦称「实时/小时级」）与 DS 册「每日积累」/实测「每日单批」矛盾"
+        assertion_broken: 登记面内部自相矛盾未收敛
+        attribution: 口径表述差异（PG 元数据在纯追加体制下不可 UPDATE，需后续登记/裁定通道收敛）
+      - item_no: 4
+        item: 45 份 source_health_*.log 无 qweather/weather_data 任何记录
+        assertion_broken: method 要求的日志侧对本源不存在
+        attribution: 登记/监控面缺项
+    n_items: 4
+  threshold_check:
+    rule: 不一致项=0 → pass；否则 fail（判据与阈值逐字回读 PG，未改）
+    PQ-0172: 5 ≠ 0 → fail
+    PQ-0196: 4 ≠ 0 → fail
+
+# ───────────────────────── 5. PIT 时间基准声明
+pit:
+  closed_book_cutoff: '2025-09-09'
+  basis_declared: >-
+    判据对象是"当前更新节奏"，属盘上最新态核验，故主口径用全窗实测（CH 现库 至测量基准日 2026-09-24）。
+    同时逐序列另出切点前（trade_date<=2025-09-09）计数以示稳健：PQ-0172 的三处大断档（BDTI 1209 天、
+    BCTI 1790 天、BSI 36 天）全部落在切点之前，闭卷窗内即成立，改判不依赖切点后数据；
+    PQ-0196 的 weather_data 表首记录日 2026-08-04 晚于切点，闭卷窗内零行，该问只能按"盘上最新态"核，
+    原卷对此未披露（见第 6 节差异 5）。
+  shipping_pre_cutoff_rows: {BDI: 9285, BCI: 4719, BSI: 4637, BDTI: 3729, BCTI: 3327, HRCI: 211, BHMI: 1}
+  shipping_pre_cutoff_holes_hold: true
+  weather_pre_cutoff_rows: 0
+
+# ───────────────────────── 6. 与作业簿 / 原始结论数字不一致处（逐条）
+discrepancies_vs_prior_records:
+  - item_no: 1
+    where: results/b3/PQ-0172.yaml evidence.result.per_index 与 conclusion 文本
+    prior: 未加 FINAL 的行数 BDI=14070/BCI=5042/BSI=4960/BDTI=4052/BCTI=3650（合计 31986）；文本另称 BDI"13745 行切点前数据"
+    now: FINAL 后 BDI=9545/BCI=4977/BSI=4895/BDTI=3987/BCTI=3585（合计 27201）；BDI 切点前 9285 行
+    handling: 本卷一律用 FINAL（ReplacingMergeTree 未合并重复行不得作判定基）；差异 4785 行=未合并版本重复
+  - item_no: 2
+    where: results/b3/PQ-0172.yaml threshold 判定
+    prior: mismatch_items=1（仅"两子指数未标注断更"）
+    now: 5 项
+    handling: 原卷只对 BDI 序列做 2020-2025 段 gap 扫描，未对其余序列做全期连续性检验，漏判三处切点前大断档；
+      且其"两册均未标注断更"在 HEAD 已过期（0cd098e56b 落 known_data_gaps+02 册 U3），残余问题移置 DS 册本体（第 4 项）
+  - item_no: 3
+    where: results/b4/PQ-0196.yaml evidence.result.ingest_days=33 vs conclusion 文本"30 个 ingest 日"
+    prior: 同卷两数互斥（33 vs 30）
+    now: 上海时区日切 34 日 / UTC 日切 33 日
+    handling: 本卷主口径 Asia/Shanghai 日切并披露 UTC；原卷 30 无从复现，判为其文本笔误
+  - item_no: 4
+    where: results/b4/PQ-0196.yaml data_window 与 pit_assertion
+    prior: data_window start=end='2025-09-09' 且称"所有取数 SQL 均带 <=2025-09-09 闭卷切点"
+    now: 表首记录日 2026-08-04，切点前零行——该断言与其自身 33/30 ingest 日数字不可能同时成立
+    handling: 本卷改为显式声明"盘上最新态"基准（第 5 节），不再沿用无法复现的闭卷断言
+  - item_no: 5
+    where: results/b3/PQ-0172.yaml evidence.result.bdi_gap_days_gt7_2020_2025 首行 ['2020-01-02', 18263]
+    prior: 18263 天伪 gap（把序列首行当作间隔）
+    now: BDI 2020-2025 最大相邻间隔=11 天（元旦/圣诞+春节型）
+    handling: 本卷 gap 一律取相邻两落库日之差，首行不参与
+  - item_no: 6
+    where: results/b3/PQ-0172.yaml evidence.result.u3_registered="日更（交易日）。"
+    prior: 引用修订前 U3 文本
+    now: HEAD U3 已含五序列与断供指针（0cd098e56b）
+    handling: 本卷登记面改以 HEAD 现文本为准
+  - item_no: 7
+    where: 两卷 confidence=0.7
+    prior: 0.7（"证据齐=1.0 全窗机检 / 0.5 文本比对 / 0.2 现状观察"）
+    now: PQ-0172=0.85（三面机检齐：CH FINAL 逐序列断档计数+HEAD 三处登记面文本+45 份日志覆盖度）；
+      PQ-0196=0.8（日志/PG 元数据/CH 三面齐，惟闭卷窗零行为固有局限）
+    handling: 复考前置件已落地使登记面可字面回读，置信度上调并在此声明依据
+
+# ───────────────────────── 7. 复考器（范式件）与可重放证据
+reexam_engine:
+  dir: scripts/governance/meta_question/reexam/dsrhythm/
+  files:
+    exam_dsrhythm.py: 两面装载（HEAD git show + 工作区并披）+ CH FINAL 实测 + 逐项对账 + payload_md5
+    writeback_dsrhythm.py: 读本卷 exams 段纯追加 PG（meta_question schema only），回写后跑三态自证
+  interface: |
+    exam(cutoff=2025-09-09, repo='D:/ZephyrAlpha') -> payload dict
+    load_exam_plan() / load_registered(repo) / measure_shipping(conn, open_days, cutoff)
+    measure_weather(conn, open_days, cutoff) / reconcile_shipping(reg, msr, health) / reconcile_weather(...)
+  run_cmd: python scripts/governance/meta_question/reexam/dsrhythm/exam_dsrhythm.py --out <json>
+  output_json: .runtime/tmp/st-metaq-gc-20260924/reexam_dsrhythm/exam.json
+  determinism:
+    payload_md5: b66de0304696286ddb47d33ed0ed96ce
+    runs: 双跑（exam.json / exam_run2.json）payload_md5 相等 → 同输入必同输出
+  machine_output: .runtime/tmp/st-metaq-gc-20260924/reexam_dsrhythm/exam.json（含 registered/measured/health_log 全量原始读数）
+
+# ───────────────────────── 8. 回写载荷（writeback 脚本逐字消费）
+exams:
+  PQ-0172:
+    outcome: fail
+    fail_type: infra
+    confidence: 0.85
+    exam_plan_ref:
+      method: 健康检查日志与登记节奏对账
+      criterion: 更新频率与延迟与 DS 册健康检查口径一致
+      threshold: 不一致项=0
+    metrics:
+      n_inconsistency_items: 5
+      series_with_unregistered_holes: {BDTI: 1209, BCTI: 1790, BSI: 36}
+      daily_series_conforming: [波罗的海综合运价指数, 波罗的海好望角型船运价指数]
+      rows_final_total: 27201
+      rows_no_final_total: 31986
+      bdi_first: '1988-10-19'
+      bdi_last: '2026-09-23'
+      bdi_rows_pre_cutoff: 9285
+      adjacent_gap_median_all_live_series: 1
+      freshness_days_at_base: {BDI: 1, BCI: 2, BSI: 2, BDTI: 2, BCTI: 2}
+      health_log_files_scanned: 45
+      health_log_hits_for_source: 0
+    threshold_check:
+      required: 不一致项=0
+      measured: 不一致项=5
+      holds: false
+    pit: {cutoff: '2025-09-09', basis: 全窗最新态（2026-09-24 基准日）+ 切点前同判复核,
+          pre_cutoff_holes_hold: true, pre_cutoff_rows: 'BDI 9285 / BCI 4719 / BSI 4637 / BDTI 3729 / BCTI 3327'}
+    pit_assertion: >-
+      判据对象为"当前更新节奏"，主口径取盘上最新态（CH FINAL 全窗，基准日 2026-09-24），
+      并对每序列另出 trade_date<=2025-09-09 切点前计数：三处大断档（1209/1790/36 天）全部位于切点前，
+      故 fail 结论在闭卷窗内独立成立，未用切点后数据改判；登记面只读 HEAD 已落地文本，零写库。
+    three_check:
+      data: OK（CH FINAL 逐序列 min/max/行数/相邻间隔/断档清单机检，另披露未加 FINAL 对照数）
+      caliber: OK（"日更（交易日）"= 相邻落库日间隔<=12 日历天；阈值 12 为常数，双基（周中/SSE 交易日）缺口并列披露）
+      mechanical: OK（复考器双跑 payload_md5=b66de0304696286ddb47d33ed0ed96ce；判据逐字回读 PG，口径与阈值零改动）
+    impl: |
+      scripts/governance/meta_question/reexam/dsrhythm/exam_dsrhythm.py
+      :: load_registered（git show HEAD 三册 + alt_source_bootstrap + tasks.yaml + known_data_gaps）
+      :: measure_shipping（_SQL_SHIP_SERIES/_SQL_SHIP_DATES/_SQL_SHIP_INGEST/_SQL_OPEN_DAYS，全 FINAL）
+      :: reconcile_shipping（HOLE_TOLERANCE_DAYS=12 逐项计数 + DS 册 HEAD 注记位判定 + 健康日志覆盖度）
+    notes: >-
+      时间基准=盘上最新态（基准日 2026-09-24），理由：判据核"更新节奏"，闭卷窗内 BDI 切点前 9285 行同样可核，
+      且三处大断档全在切点前 → 结论不依赖切点后数据。PQ-0172 小修批 0cd098e56b 已落 HEAD 并确实消除了
+      原卷第 1 项（两子指数改判为"已合法登记"），但原卷未做的其余序列全期连续性检验暴露三处更大的未登记断档，
+      且 DS 册本体断供注记（WO-010）未进 HEAD、健康检查日志面对本源零覆盖 → 不一致项=5，照实判 fail。
+      处方方向（不改判据）：BDTI/BCTI/BSI 三处断档按 known_data_gaps 逐序列登记或补 weekend_calibration 回补；
+      WO-010 的 DS 册补注走保护路径审批落地；alt 源健康探针调度层接线后本 method 才真正闭环。
+  PQ-0196:
+    outcome: fail
+    fail_type: infra
+    confidence: 0.8
+    exam_plan_ref:
+      method: 健康检查日志与登记节奏对账
+      criterion: 更新频率与延迟与 DS 册健康检查口径一致
+      threshold: 不一致项=0
+    metrics:
+      n_inconsistency_items: 4
+      calendar_span_days: 51
+      batch_days_present: 34
+      missing_calendar_days: 17
+      missing_sse_open_days: 5
+      batches_per_present_day: 1
+      days_with_more_than_one_batch: 0
+      rows_per_day: {min: 40, max: 320, avg: 295.09}
+      incomplete_batch_days: 4
+      distinct_locations: 40
+      rows_final: 10033
+      last_batch_day: '2026-09-23'
+      stale_days_at_base: 1
+      pre_cutoff_rows: 0
+      health_log_files_scanned: 45
+      health_log_hits_for_source: 0
+    threshold_check:
+      required: 不一致项=0
+      measured: 不一致项=4
+      holds: false
+    pit: {cutoff: '2025-09-09', basis: 盘上最新态（表首 2026-08-04 晚于切点，闭卷窗内零行）,
+          pre_cutoff_rows: 0, weather_in_closed_book: false}
+    pit_assertion: >-
+      本问判据"实时/日批节奏"在闭卷窗内不可核（weather_data 表首记录日 2026-08-04 晚于切点 2025-09-09，
+      窗内零行），故采"盘上最新态"基准（2026-08-04~2026-09-23，CH FINAL），并在案卷第 5 节显式声明该时间基准；
+      未以任何切点后信息回填闭卷窗，亦未修改判据口径。
+    three_check:
+      data: OK（34 批次日/51 日历日跨度/每日行数/forecast_type 分解/40 城 全机检）
+      caliber: OK（"每日积累"按日历日计，另披 SSE 交易日基（漏采 5 交易日）；"每日单批"按批次小时唯一数判）
+      mechanical: OK（双跑 payload_md5=b66de0304696286ddb47d33ed0ed96ce；判据逐字回读 PG）
+    impl: |
+      同上器 :: measure_weather（_SQL_WEATHER_OVERVIEW/_SQL_WEATHER_DAYS/_SQL_WEATHER_UTC_DAYS，全 FINAL）
+      + reconcile_weather（漏采日计数 / 批次完整性 / PG frequency 矛盾 / 健康日志覆盖度）
+    notes: >-
+      时间基准=盘上最新态（0cd098e56b 把 02 册 U3 由"实时/小时级"改登记为"日批积累"后，登记面与实测的
+      "批次结构"确实一致（每采集日恰 1 批、40 城、320 行满配），但残余四项不一致：51 日历日中 17 日无批次
+      （已知缺口登记的是"31 记录日"总量口径，非逐日清单，且登记后仍新增漏采 2 日）、4 日批次内容缺预报支路、
+      PG meta_question.frequency 仍为 'realtime' 与 DS 册"每日积累"并存矛盾、健康检查日志面对 qweather 零覆盖
+      → 不一致项=4，照实判 fail。免费源无历史 API，漏采日不可回补，故该项不一致具不可逆性。
+
+# ───────────────────────── 9. PG 三态基线（复考前 / 复考后）
+pg_baseline:
+  before: {pass: 152, fail: 45, insufficient: 86, sum: 283}
+  before_note: >-
+    派单给的基线为 pass 149 / fail 44 / insufficient 90；本卷复考前实测和恰为 283（无问掉桶），
+    差异 +3 pass/+1 fail/-4 insufficient 全部可归因于同会话 reexam/carriers 车道 17:06 的一批回写
+    （PQ-0001/0051~0057/0060/0061/0096 等）与 17:10 的 PQ-0055 fail_type 更正，非并发争抢写入。
+  after: {pass: 152, fail: 45, insufficient: 86, sum: 283}
+  after_note: >-
+    复考回写 17:35 提交后重读：两问裁决均仍为 fail（原判即 fail），故三态分布不变、和恰=283，
+    无问掉桶；每问 exam_result 行数由 1 增至 2（历史行零触碰）。审计事件 meta_question_audit
+    what='update' 两条已追加（before/after 各带 outcome 与 n_inconsistency_items）。
+
+writeback:
+  script: scripts/governance/meta_question/reexam/dsrhythm/writeback_dsrhythm.py
+  exam_ref_pattern: st-metaq-gc-20260924/reexam/dsrhythm/<QID>
+  mode: 纯追加（insert meta_question_exam_result + meta_question_audit what='update'），零 UPDATE/DELETE
+  conclusion_contract: 11 规范键齐（outcome/conclusion/evidence/fail_type/confidence/data_window/exam_ref/pit_assertion/three_check/notes/threshold）+ 复考附加键
+  outcome_contract: 列 outcome=生命周期 'answered'；裁决写在 conclusion->>'outcome'
+  machine_output: .runtime/tmp/st-metaq-gc-20260924/reexam_dsrhythm/exam.json
