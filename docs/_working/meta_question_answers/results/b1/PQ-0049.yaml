@@ -1,0 +1,61 @@
+notes: 与 PQ-0044(入库闸)同源缺口——积木库 2026-09 才在产; 三前置(约束常量/组合账/口径登记)齐备后方可复考。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l4_PQ-0049.py
+  query: grep 0.15/15%/weight_cap in pf_alloc(allocation_config.py/regime_meta_allocator.py
+    等); SHOW TABLES c1_backtest; PG %factor%/%block%; strategy_screen 切点前 coverage
+  result:
+    alloc_015_hits: []
+    grep_conclusion: pf_alloc/position 内 0.15 命中均为 MaxDD阈值0.15/target_vol 0.15/participation
+      0.15 等异义常量; 无'单因子组合权重上限15%'实现; 最接近为 DEFAULT_MAX_SINGLE_SLEEVE=0.25(策略sleeve上限)
+    strategy_screen:
+      pre:
+        max: '1970-01-01 00:00:00+00:00'
+        min: '1970-01-01 00:00:00+00:00'
+        rows: 0
+      full:
+        max: '2026-09-22 22:35:06.901000+00:00'
+        min: '2026-09-12 11:29:11.015000+00:00'
+        rows: 1340
+      table: c1_backtest.strategy_screen
+      date_col: ingest_ts
+    c1_backtest_tables:
+    - alloc_budget_change_log
+    - alloc_budget_daily
+    - alloc_shrinkage_daily
+    - cohort_daily_ledger
+    - crisis_gate_log
+    - decision_daily
+    - hypothesis_precheck
+    - node_verdict
+    - regime_snapshot_history
+    - regime_state_anchored
+    - sim_attribution_daily
+    - sim_daily_report
+    - sim_platform_journal
+    - sim_pocket_daily
+    - sim_trade_log
+    - strategy_screen
+    alloc_config_evidence:
+    - '\zephyr\pf_alloc\allocation_config.py:59: DEFAULT_MAX_SINGLE_SLEEVE = 0.25  #
+      PP-001 aggregator.max_single_sleeve 常态上限'
+    - '\zephyr\pf_alloc\allocation_config.py:97: max_single_sleeve: float = DEFAULT_MAX_SINGLE_SLEEVE'
+    pg_factor_block_tables: []
+exam_ref: st-metaq-20260923/probe/batch_l4_decision_PQ-0049
+fail_type: null
+threshold: 特质波动降>10% 且年化损失≤1%
+conclusion: '审计对象不完整+零样本: ①''单因子组合权重上限15%''约束在代码中未定位——pf_alloc/position 全模块 0.15 命中均为异义常量(MaxDD
+  阈值/目标波动/成交量参与率), 组合分配链仅有 DEFAULT_MAX_SINGLE_SLEEVE=0.25(策略 sleeve 上限); ②单因子积木组合池载体切点前零样本——strategy_screen
+  全量 1340 行(ingest 2026-09-12 11:29:11.015000+00:00 起, 切点前 0 行), c1_backtest 16 表/PG
+  public 无积木库或因子组合表(命中=[]); ③''特质波动''无登记口径(无残差模型/因子暴露回归的载体字段)。有/无约束对比回测无法执行 → insufficient;
+  复考前置=①约束落地为代码常量并登记 ②积木库切点前组合构成与收益账回填 ③特质波动口径登记(如市场模型残差波动)。'
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-05'
+three_check:
+  data: 'NO: 积木库/因子组合账切点前 0 行(strategy_screen 切点前 0 行); 无因子库表'
+  caliber: 'NO: 特质波动口径未登记; 15% 约束未实现(最接近 0.25 sleeve 上限, 口径不同)'
+  mechanical: 'NO(不可执行): 无因子组合收益序列, 对比回测不可构造'
+pit_assertion: 本题取数(现状证据查询)不使用任何切点后数据作为判据; 切点后记录仅作在产状态观察, 不进入阈值比较。
+q_id: PQ-0049

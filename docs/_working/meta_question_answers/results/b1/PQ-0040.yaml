@@ -1,0 +1,24 @@
+notes: 复考前置：回填切点前个股/板块资金流数据；当前源 2026-06/09 起，届时闭卷窗外，须以新切点命题。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_insufficient.py
+  query: SELECT count() FROM money_flow WHERE trade_date<='2025-09-09'; SELECT count()
+    FROM sector_fund_flow WHERE trade_date<='2025-09-09'
+  result:
+    money_flow_pre: 0
+    sector_fund_flow_pre: 0
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0040
+fail_type: null
+threshold: IC>0.02 且 t>2（板块池周频 IC 序列）
+conclusion: insufficient：板块资金净流入 CR5 的分子数据切点前缺失——个股级 money_flow 切点前 0 行（2026-06 起）、板块级
+  sector_fund_flow 切点前 0 行（2026-09-15 起）。CR5 集中度因子与板块 5 日收益 IC 序列无从构造。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-01'
+three_check:
+  data: NO：money_flow 与 sector_fund_flow 切点前均 0 行
+  caliber: OK（口径清楚：板块内资金净流入 CR5 集中度）
+  mechanical: OK（若数据齐可机械执行）
+pit_assertion: 所有存在性核查均带切点过滤 <= '2025-09-09'；未使用任何切点后数据进入统计量。
+q_id: PQ-0040

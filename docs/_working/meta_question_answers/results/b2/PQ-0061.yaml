@@ -1,0 +1,40 @@
+notes: 复考前置：乐观锁冲突留痕机制（冲突事件类型+重放结果关联）建成并积累冲突样本后复考。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT status,count(*) FROM meta_question.meta_question GROUP BY status;
+    SELECT what,count(*) FROM meta_question.meta_question_audit GROUP BY what; SELECT
+    count(*) FROM meta_question.meta_question_exam_result
+  result:
+    audit_rows: 849
+    status_all: registered
+    audit_update: 283
+    audit_register: 283
+    exam_result_rows: 0
+    meta_question_rows: 283
+    audit_degraded_check: 283
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_env.py
+  query: git ls-files 全仓查 meta_question_audit.jsonl；遍历 src/ scripts/ 4753 个 .py 查
+    'meta_question' 子串
+  result:
+    impl_code_hits: 0
+    jsonl_disk_hits: 0
+    pyfiles_scanned: 4753
+    jsonl_tracked_hits: 0
+exam_ref: st-metaq-20260923/probe/gov_PQ-0061
+fail_type: null
+threshold: ≥99%
+conclusion: 乐观锁冲突样本=0：meta_question 有 version 整型列（NOT NULL）但 audit 表无 version 字段、what
+  枚举 23 值中无 VersionConflict/conflict 类事件，849 条已落账事件零冲突记录；冲突后重读重放的留痕机制不存在，成功率无分母（0
+  冲突 ≠ 成功率≥99%，无法区分'真无冲突'与'冲突未记录'）。
+confidence: 0.8
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: NO：冲突事件无枚举类型、零落账
+  caliber: OK：重放成功率口径可机械落地
+  mechanical: OK：若有冲突事件即可关联统计
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0061

@@ -1,0 +1,35 @@
+notes: 方向判定说明：题面假设方向为'显著低于'，实测方向相反（显著高于，p_upper=0.000）。如 Owner 认为'显著异于随机'即算边界可分，可按上尾
+  p<0.05 判 pass 复考；本答严格按题面方向判 fail。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l2_q0074.py
+  query: SELECT symbol,concept FROM stock_concept；SELECT nc.symbol,n.chain_id FROM
+    ig_node_company JOIN ig_node；mean-max-Jaccard 统计量 + rng.integers 均匀重指派 1000 次置换
+  result:
+    n_perm: 1000
+    p_lower: 1.0
+    p_upper: 0.0
+    observed: 0.15429
+    perm_p05: 0.03508
+    perm_p95: 0.03618
+    universe: 5364
+    perm_mean: 0.03562
+    chains_ge3: 690
+    concepts_ge3: 374
+exam_ref: st-metaq-20260923/probe/batch_l2_graph_PQ-0074
+fail_type: no_alpha
+threshold: Jaccard 显著低于随机（p<0.05）
+conclusion: Jaccard 置换检验（numpy 随机 1000 次，随机种子 20250909）：stock_concept 概念（≥3 家成分的 374
+  个概念，61,053 行/5,210 只）对 ig_node_company 链（≥3 家的 690 链，18,830 行/5,362 只）在 5,364 只并集宇宙上的'概念-最接近链
+  Jaccard 均值'=0.1543，而同规模随机置换基线均值=0.0356（95% 区间 0.0351~0.0362）。观测值位于基线极端上尾：p(显著更低)=1.0，p(显著更高)=0.000——重合度显著高于随机基线而非低于，题设'显著低于随机基线（p<0.05）'不成立
+  → fail。现状观察：Jaccard 0.154 仍远小于 1，概念边界与链边界是部分交叠而非同一划分；'概念≠产业链'的边界区隔成立，但其方向是'显著正交叠'，与题设方向相反。
+confidence: 0.9
+data_window:
+  end: snapshot 2026-09 现状（stock_concept as_of=2026-09-14 与 ig_node_company 静态快照置换检验）
+  start: snapshot
+three_check:
+  data: 'OK: stock_concept 61,053 行/ig_node_company 18,830 行实查在库'
+  caliber: 'OK: 统计量=每概念对其最接近链的 Jaccard 的均值；基线=保持概念规模、成员在并集宇宙均匀重指派置换 1000 次；单侧 p 按下尾/上尾双报'
+  mechanical: 'OK: 置换检验代码可复现（probes/l2_q0074.py）'
+pit_assertion: 两表静态快照置换检验，不涉时间序列；概念表 as_of=2026-09-14 为静态词表快照（与切点无时间序列关系，未做任何切点后收益比较）。
+q_id: PQ-0074

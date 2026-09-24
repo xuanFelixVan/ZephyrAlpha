@@ -1,0 +1,30 @@
+notes: 复考前置：回填 40 城历史逐日观测与气象警报事件（PIT 对齐警报发布时点，预报/实测分字段）；或降格为深圳单城事件研究并重命题。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_insufficient.py
+  query: SELECT count() FROM weather_data WHERE record_date<='2025-09-09'
+  result:
+    full_range: (datetime.date(2026, 8, 4), datetime.date(2026, 9, 23), 10033)
+    pre_cut_rows: 0
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_insufficient.py
+  query: SELECT count() FROM alt_sz_weather_warning WHERE crt_time<='2025-09-09'
+  result:
+    note: 深圳单城，不满足 40 城口径
+    sz_warning_pre_rows: 8352
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0042
+fail_type: null
+threshold: 事件窗超额 t>2（警报触发事件研究，对照组匹配）
+conclusion: insufficient：天气事件源切点前缺失——weather_data（QWeather 40 城观测）切点前 0 行（record_date
+  2026-08-04 起）；exam_plan 引用的 DS-QWEATHER 气象警报/阈值超限事件表未落库。替代源 alt_sz_weather_warning（2012
+  起，切点前 8352 行）与 alt_sz_ground_obs（2015 起）均为深圳单城，无法支撑'40 城温度距平/降水超阈'事件定义；公用事业(000007
+  公用指数等)与农业板块指数虽在库，事件侧无数据。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-01'
+three_check:
+  data: NO：weather_data 切点前 0 行；40 城警报事件表未建
+  caliber: NO：40 城距平/降水超阈事件在可用数据上无法定义
+  mechanical: OK（若数据齐：事件窗超额 t 检验可机械执行）
+pit_assertion: 所有存在性核查均带切点过滤 <= '2025-09-09'；未使用任何切点后数据进入统计量。
+q_id: PQ-0042
