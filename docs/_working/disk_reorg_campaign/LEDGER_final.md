@@ -105,3 +105,14 @@ T1 SLO 哨兵接入计划任务 action｜T2 计划任务 S4U 化｜T3 logs 轮�
   - G:\zephyr_cold\README.md 与 F:\zephyr_cold\README.md——追加 09-24 状态块（早执后构成/清偿记录/60_mirror 关系）
 - 导航设计原则：只写"作用+规则+真源指针"，路径/计数的机器真源=backup_config.yaml+drawers.jsonl+INFRA-STORE-003（防第二真源漂移）；双向协调=备份系统按 config 写、导航指 config、新增顶层目录强制同步导航+注册表。
 - 附带清偿：working_vault 内 git_bundles 旧导出件（0914/0915，853.7MB）按"留最新 2 份"政策删除（正规家 G:ackup\git_bundles 在册）；env_cleanup_20260923（10.1G deepclean 取证）保留记账归属。
+
+## E 盘详查+早删轮（2026-09-24 15:2x，Owner"E 只留软件与个人"批文）
+
+| 项 | 实测 | 定性/处置 |
+|---|---|---|
+| E:\zephyr_cold_archive | 2,211 件/117.6GiB，robocopy /L 对账 Copied=0（全部与 F:\zephyr_cold(_archive 逐一同等）| 已验证冗余副本→**早删**（原排期 10-20），E 回收 117.6G |
+| E:\数据下载\研报 | 30,159 件/84.7GiB，对账 Copied=0（全部与 F:\zephyr_cold_corpusesearch_reports 同等；较 09-2x 对账 29,998 件自然增长）| 已验证冗余副本→**早删**（原排期 10-18），E 回收 84.7G |
+| E 盘回收合计 | **+202.3GB（free 241.9GB）** | 两项删前均 zero-unique 复验 |
+| E:\ZephyrAlpha | **非仓库拷贝**——仅 deals_events.txt（2.8MB/83,237 行）=QMT 模拟端 Deal.csv 变更看门狗活动日志（交易时段每 3s 一行，15:05 收盘后停）| 活盘桥生态**保留**；重定向日志路径入 bridge backlog（实盘四禁不碰运行中进程） |
+| E:\数据下载 其余 ~53G | 产业链数据 12.44+P1归一 2.81 / 新闻文本 11.52 / 指数分笔 8.29 / ETF分钟 3.81 / A股zip 3.21 / 1分钟 2.73 / 财务 2.59 / LOF 1.28 / 5分钟 0.80 / tick缺口件 1.07 | **未删**——每数据集需对 CH(c1/c3)/冷库做 ingest 核验后才能定性，登记为 E 盘数据集核验工作包（下一班）；tick 缺口件大概率已冗余（缺口 09-21 已修验证） |
+| E 盘软件/个人 | 7-Zip/Lightroom/VS Code/Miniconda/QMT 端/QQ/Quark/1127锦晖运动会等 | ✅ 按设计保留（E=软件+个人） |
