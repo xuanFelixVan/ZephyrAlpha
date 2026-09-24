@@ -1,0 +1,49 @@
+notes: 复考前置：状态机拦截器建成（LEGAL_TRANSITIONS 注册）、流转事件纳入审计落账后全量回放复考。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT status,count(*) FROM meta_question.meta_question GROUP BY status;
+    SELECT what,count(*) FROM meta_question.meta_question_audit GROUP BY what; SELECT
+    count(*) FROM meta_question.meta_question_exam_result
+  result:
+    audit_rows: 849
+    status_all: registered
+    audit_update: 283
+    audit_register: 283
+    exam_result_rows: 0
+    meta_question_rows: 283
+    audit_degraded_check: 283
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_env.py
+  query: git ls-files 全仓查 meta_question_audit.jsonl；遍历 src/ scripts/ 4753 个 .py 查
+    'meta_question' 子串
+  result:
+    impl_code_hits: 0
+    jsonl_disk_hits: 0
+    pyfiles_scanned: 4753
+    jsonl_tracked_hits: 0
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint WHERE conrelid='meta_question.meta_question_audit'::regclass
+    AND contype='c'
+  result:
+    observed_what:
+    - register
+    - update
+    - degraded_check
+    audit_what_enum: 23值无illegal_transition
+exam_ref: st-metaq-20260923/probe/gov_PQ-0060
+fail_type: null
+threshold: illegal_transition 落账异常=0
+conclusion: illegal_transition 事件类型在 audit 表 CHECK 枚举（23 值实证：register/update/merge/retire/reexam/suspend/template_*/board_config/read/intake_*/dedup_hit/degraded_check/blind_*/exam_*）中不存在，849
+  条已落账事件仅 register(初始态)/update/degraded_check 三种，无状态流转事件序列可供回放比对 LEGAL_TRANSITIONS；状态机拦截代码在
+  src/ scripts/ 4753 个 .py 中零实现。'非法边拦截率=100%'无法验证——不是拦截了 0 次异常，而是拦截器与流转事件机制均未建。
+confidence: 0.7
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: NO：无流转事件可回放、无状态机实现
+  caliber: OK：合法边集与拦截率口径可机械落地
+  mechanical: OK：若有流转事件即可回放
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0060

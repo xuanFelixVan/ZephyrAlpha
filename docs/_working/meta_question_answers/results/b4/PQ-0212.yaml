@@ -1,0 +1,33 @@
+notes: notes：OI/清算两腿窗内零样本按登记口径解释（快照起点+WS 链缺口 open），词表覆盖本身完整；复考待两腿前向积累。
+outcome: pass
+evidence:
+- probe: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  query: §2 SL-A15 U1 行：'全球杠杆拥挤与风险偏好能否跨市场预警 A 股情绪（信号词：资金费率极值/OI 骤变/清算量）'
+  result:
+    主题覆盖: 2/2=100%
+    词表词数: 3
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_01_dateranges.py
+  query: hl_funding_history 闭卷窗 min/max/count；hl_oi_snapshot_daily/hl_liquidation_raw
+    闭卷窗
+  result:
+    min: '2023-05-12'
+    oi闭卷窗: 0
+    funding_rows: 2624473
+    清算闭卷窗: 0
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0212
+fail_type: null
+threshold: 覆盖率=100%（信号词表非空且宣称主题全部落在词集覆盖内）
+conclusion: 词表非空（3 词：资金费率极值/OI 骤变/清算量）。宣称主题 2/2 全覆盖：①全球杠杆拥挤←资金费率极值+OI 骤变；②跨市场预警 A
+  股情绪←三者组合信号。机械背书：hl_funding_history 闭卷窗 2,624,473 行/206 coin/851 日逐小时（费率极值腿完整）；OI
+  骤变腿 hl_oi_snapshot_daily 起点 2026-09-18、清算腿 hl_liquidation_raw 5 行测试行——两腿窗内缺位均已显式登记（DS
+  册 coverage+known_data_gaps hl_liquidation_raw_empty）。词表覆盖判定=100%。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（审计对象=源线谱 U1 行+DS 册，均在册可读；底层表列名经 DESCRIBE 实证）
+  caliber: OK（判据=宣称主题→信号词逐词映射，词表非空+覆盖计数，机械可判）
+  mechanical: OK（词级对照表全文留痕于 evidence）
+pit_assertion: U1 词表核验为静态登记审计（词级对照），不涉时序取数；快照历史不可回补且断档显式登记，只用采集时点已落库数据，收益窗自 T+1 起
+q_id: PQ-0212

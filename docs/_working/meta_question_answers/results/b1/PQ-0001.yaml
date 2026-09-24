@@ -1,0 +1,50 @@
+notes: 复考前置：①JSONL 双轨账建成入账；②W4 源线谱与消费方登记建成、入库闸机检非降级运行；③新注册批次带完整 intake_reject 拒绝码留痕后按周复考。W1-W7
+  标记在审计中仅出现于 st-metaq Phase0 分诊认领 update 事件，注册批无批次标记字段，批次归属靠 actor+时窗锚定。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT status,count(*) FROM meta_question.meta_question GROUP BY status;
+    SELECT what,count(*) FROM meta_question.meta_question_audit GROUP BY what; SELECT
+    count(*) FROM meta_question.meta_question_exam_result
+  result:
+    audit_rows: 849
+    status_all: registered
+    audit_update: 283
+    audit_register: 283
+    exam_result_rows: 0
+    meta_question_rows: 283
+    audit_degraded_check: 283
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_env.py
+  query: git ls-files 全仓查 meta_question_audit.jsonl；遍历 src/ scripts/ 4753 个 .py 查
+    'meta_question' 子串
+  result:
+    impl_code_hits: 0
+    jsonl_disk_hits: 0
+    pyfiles_scanned: 4753
+    jsonl_tracked_hits: 0
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_static.py
+  query: SELECT count(*) FROM meta_question.meta_question_audit WHERE what IN ('intake_reject','intake_rate_limited','intake_override','dedup_hit')；按
+    what/actor/left(evidence,120) 分组抽样
+  result:
+    register批: 228@02:30+55@02:31
+    intake_reject类事件: 0
+    degraded_check_evidence: W4_source_line_registry_pending
+    register_evidence_空串: 283
+exam_ref: st-metaq-20260923/probe/gov_PQ-0001
+fail_type: null
+threshold: 拒绝率≤20% 且单码占比≤50%
+conclusion: W6 挖干注册批（actor=st-chainpile-20260922，2026-09-23 02:30-02:31 落账 register
+  283 条，对应 01_campaign_directive.md 'W6 原问题挖干入表 62→250-400'）中：PG 审计侧 intake_reject/intake_rate_limited/dedup_hit
+  事件=0，283 条 register 行 evidence 字段均为空串；指定统计载体 meta_question_audit.jsonl 全仓零命中（git
+  ls-files+磁盘扫描）；入库闸机检代码在 src/ scripts/ 4753 个 .py 中零实现；且 283 问注册全程伴随 degraded_check×283（evidence=W4_source_line_registry_pending），五要素机检为降级运行。因此无法区分'真零拒绝'与'拒绝未记录'，拒绝率与单拒绝码占比不可算、不可信。
+confidence: 0.7
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: NO：JSONL 审计账不存在；PG 拒绝事件=0 且 register evidence 空串；机检降级运行下拒绝统计不可信
+  caliber: OK：拒绝率=拒绝事件/候选数、单码占比口径可机械落地
+  mechanical: OK：事件聚合可复现
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0001

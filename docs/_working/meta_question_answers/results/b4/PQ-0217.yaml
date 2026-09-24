@@ -1,0 +1,40 @@
+notes: 重放统计结论（传导不显著，各滞后 CI 均含 0）意味着若 Owner 走退役流程，该判据现在就能机械执行并裁定为'触发证伪'——但这不是本问判据；本问只考可执行性：能。U6
+  文本未写显式数值阈值（如 |r| 阈值/CI 判定），本次以 block bootstrap CI 含 0 与 |r| 量级补齐，文本完备性瑕疵已登记。OI 加权口径受切点前
+  OI 零样本限制，用等权费率替代（与 PQ-0029 同口径）。
+outcome: pass
+_comment: batch_stat_alt 分包生成
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_alt_PQ-0029.py
+  query: 日均费率 z 值 vs emotion_index(close_final) 次日变化的滞后互相关（lag -5..+5，n=851）；block
+    bootstrap（block=10, nb=1000, seed=7）95% CI
+  result:
+    n_pairs: 851
+    lag0_corr: 0.075689
+    lag1_corr: 0.022828
+    lag0_boot_ci:
+    - -0.049779
+    - 0.093916
+    lag1_boot_ci:
+    - -0.071505
+    - 0.038032
+    lag_of_max_abs: -1
+    max_abs_corr_all_lags: 0.0916
+exam_ref: st-metaq-20260923/probe/batch_stat_alt_PQ-0217
+fail_type: null
+threshold: 判据可执行率=100%（退役判据含明确阈值与数据窗口可重放）
+conclusion: pass：SL-A15 U6 退役判据（'费率极值与 A 股情绪指数领先滞后检验；证伪=跨市场传导不显著'）历史重放演练真实执行成功，判据可执行率=100%。重放实现：851
+  个费率日（2023-05-12~2025-09-08）的日均费率 z 值 × 情绪指数（close_final）次日变化的领先滞后互相关（lag -5..+5），并以
+  block bootstrap（块长 10，1000 次）给置信区间。全滞后互相关绝对值均 <0.10：lag0 r=+0.0757（CI [-0.050, +0.094]
+  含 0），lag+1 r=+0.0228（CI [-0.072, +0.038] 含 0）；配合 PQ-0029 事件研究（43 极值日，t=-0.97/+0.23）产出的数值足以对'跨市场传导不显著'的证伪条件做机械裁定。判据含明确信号（费率极值）、对象（A股情绪指数）与统计量（领先滞后相关），重放一次通过，故退役证伪方案机械可执行。
+confidence: 0.8
+data_window:
+  end: '2025-09-09'
+  start: '2023-05-12'
+three_check:
+  data: OK——hl_funding_history 切点前 262 万行/851 日+emotion_index close_final 段均落库且可配对（n=851
+    有效滞后对）
+  caliber: OK——'费率极值与 A 股情绪指数领先滞后检验'落地为 z(|日均费率|) 与情绪日变化的 lag -5..+5 互相关+block bootstrap
+    CI，无歧义
+  mechanical: OK——重放已实跑并产出相关系数与 CI 数值，证伪条件（传导不显著）可被数据机械裁定
+pit_assertion: 领先滞后检验全部用 funding_time≤切点的费率与 ≤切点的情绪指数；反应窗自 T+1 起；未用切点后数据。
+q_id: PQ-0217

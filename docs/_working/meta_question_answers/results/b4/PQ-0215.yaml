@@ -1,0 +1,43 @@
+notes: 复考前置=清算 WS 采集链修复后重抽清算量信号腿（当前该腿数据不可考已登记）；快照双腿 2026-09-18 起前向积累，满考试窗后复检。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_01_dateranges.py
+  query: SELECT min(funding_time),max(funding_time),count() FROM hl_funding_history
+    FINAL WHERE funding_time<='2025-09-09'
+  result:
+    max: 2025-09-08 23:00 UTC
+    min: 2023-05-12 00:00:00 UTC
+    rows: 2624473
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: uniqExact(coin),uniqExact(toDate(funding_time))；逐 coin/日行数分位；hl_perp_snapshot_daily
+    闭卷窗行数
+  result:
+    days: 851
+    coins: 206
+    行每coin日p50: 24
+    快照表闭卷窗行: 0
+- probe: src/zephyr/data/config/known_data_gaps.yaml
+  query: hl_liquidation_raw_empty 条目（gap_type=empty_table, status=open）
+  result:
+    登记状态: open-归数据线
+    清算表实测行: 5
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0215
+fail_type: null
+threshold: 违规样本=0（入库链路抽样审计，月度 30 条）
+conclusion: 快照历史不可回补（起点 2026-09-18）风险已被断档显式登记+费率回溯边界 2023-05-12 存证 100% 对冲，pass（违规样本=0）。(1)
+  费率回溯边界存证实证：hl_funding_history 闭卷窗 2,624,473 行，min(funding_time)=2023-05-12 00:00
+  UTC——与 DS 册/源线谱登记的回溯边界 2023-05-12 逐位一致；206 coin、851 日、逐小时节奏（p50 24 行/coin/日）在库；(2)
+  快照断档显式登记：DS-HYPERLIQUID coverage '起点 2026-09-18,历史不可回补'+源线谱 SL-A15 U4 '分裂——快照历史不可回补（起点
+  2026-09-18,自积断档即永久缺口）'+哨兵 hl_perp_snapshot_daily/hl_oi_snapshot_daily (snapshot_date,
+  2d) 在册；hl_perp_snapshot_daily 闭卷窗 0 行与登记起点一致（0=登记口径内，非未登记缺口）；(3) hl_liquidation_raw
+  5 行（连接性测试行，零业务行）缺口已登记 known_data_gaps hl_liquidation_raw_empty（open，归数据线核查 WS 链）。
+confidence: 0.8
+data_window:
+  end: '2025-09-09'
+  start: '2023-05-12'
+three_check:
+  data: OK（费率腿 262 万行闭卷窗；快照/清算腿按登记口径为 0/5 行）
+  caliber: OK（对冲判据=登记文本↔库内边界值逐位对账+哨兵配置核对）
+  mechanical: OK
+pit_assertion: 费率边界与节奏仅用 funding_time<=2025-09-09 行实证；快照表 0 行=登记起点前的预期状态，非窗内缺口。
+q_id: PQ-0215

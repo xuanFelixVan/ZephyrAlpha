@@ -1,0 +1,40 @@
+notes: 登记册文本比对核验（confidence=0.4 口径）。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0210.py
+  query: 题面宣称消费方 × 源线谱 U5 行 × 层宪章对照
+  result:
+    token_map:
+    - claim: L3 题材情绪
+      match: 逐词一致
+      charter: L3 承载情绪类状态变量（定案锁含情绪）
+      u5_token: L3 题材情绪
+    - claim: L2 传导图谱（公司-概念边证据源）
+      match: 一致（'L2 图谱'=L2 传导图谱层简写）
+      charter: L2 共享传导结构，源线作图谱证据源合法
+      u5_token: L2 图谱（公司-概念边的证据源）
+    - claim: L4 决策
+      match: 一致（简写）
+      charter: L4 决策层定稿存在
+      u5_token: L4
+    registry_u5: L3 题材情绪 / L2 图谱（公司-概念边的证据源）/ L4。
+    title_claim:
+    - L3 题材情绪
+    - L2 传导图谱（公司-概念边证据源）
+    - L4 决策
+    mismatch_items: 0
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0210
+fail_type: null
+threshold: consumers 与源线谱七层挂载登记一致；不一致项=0
+conclusion: SL-A14 消费方挂接三方一致：题面（L3 题材情绪/L2 公司-概念边证据源/L4 决策）与源线谱 U5（'L3 题材情绪 / L2 图谱（公司-概念边的证据源）/
+  L4'）一致（'L2 图谱'/'L4'为层名简写）；层宪章侧 L3 情绪定桩、L2 共享传导结构（源线为证据源合法）、L4 定稿层。不一致项=0。
+confidence: 0.4
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（登记文本对照）
+  caliber: OK
+  mechanical: OK
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0210

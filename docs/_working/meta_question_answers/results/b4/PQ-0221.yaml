@@ -1,0 +1,31 @@
+notes: 复考前置=2027 年 2025 调查表发布后按 io_ingest fetch 正门换版（新 vintage 另起 as_of，禁覆盖 2020 版），届时复检双
+  vintage 共存语义。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: PG：DISTINCT as_of,year,source,min(valid_from)；count(*) vs DISTINCT 键；count(DISTINCT
+    coefficient)>1 的键数
+  result:
+    rows: 16859
+    vintages:
+    - 2020-12-31/2020/io_official/valid_from=2022-08-31
+    修订键: 0
+    distinct_keys: 16859
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0221
+fail_type: null
+threshold: 违规样本=0（入库链路抽样审计，月度 30 条）
+conclusion: 投入产出口径年代陈旧风险被'官方一次性发布无修订+时效粗为登记代价' 100% 对冲，pass（违规样本=0）。机械实证：(1) 无修订——ig_io_edge
+  16,859 行=16,859 个 distinct (from,to,year) 键，多系数版本键=0，单一 vintage（as_of=2020-12-31/year=2020/source=io_official
+  全表唯一）；(2) 可得时点诚实登记——valid_from=2022-08-31（官方发布可得日，非编表年），source_doc 登记转存出处（io_china_2020_153|ionet
+  转存）；(3) 时效粗登记为已知代价——DS-IO_TABLE coverage '2025 调查表最早 2027 年发布'+源线谱 U4 '官方一次性发布无修订；时效粗是已知代价'+U3
+  '5 年频结构锚不追新鲜' 双册一致；哨兵无需日频（DS 册 policy frequency=manual_lowfreq）。静态口径陈旧风险在登记与数据两层完全对冲。
+confidence: 0.85
+data_window:
+  end: '2025-09-09'
+  start: '2020-12-31'
+three_check:
+  data: OK（pg ig_io_edge 16,859 行）
+  caliber: OK（对冲判据=vintage 唯一性+版本键账目+valid_from=发布可得日，机械可判）
+  mechanical: OK
+pit_assertion: 官方一次性发布静态口径，单 vintage 无修订由全表键账目证明；冲击信号取 T-1 价格的用法不在本题取数范围。
+q_id: PQ-0221

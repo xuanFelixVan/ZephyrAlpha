@@ -1,0 +1,40 @@
+notes: 复考前置：①建 IO 部门码↔CH 行情板块（880/申万）显式映射表并回填 880 sector_name；②定'20 日毛利变化'的可落地口径（如行业指数
+  20 日收益代理或季频毛利率的事件窗差分——需 Owner 裁定）；③指定上游大宗冲击源（如 kline_futures 主力合约映射到上游部门）。ig_io_edge
+  系数与官方 2020 口径本身在库可用。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l2_q0063_0078_0079_0080.py
+  query: DESCRIBE financial_indicator（gross_margin 在列）；SELECT toYYYYMM(report_period),count()
+    ... GROUP BY 1（季频）；SELECT count(DISTINCT sector_code),countIf(sector_name=''),count()
+    FROM kline_sector_880（462/322995/322995）；ig_io_edge coefficient 列在库
+  result:
+    io_distinct_sectors:
+    - 147
+    - 153
+    gross_margin_symbols: 5772
+    gross_margin_frequency: quarterly
+    kline_sector_880_codes: 462
+    kline_sector_rows_le_cut: 11
+    gross_margin_rows_nonnull: 319394
+    io_edge_rows_with_coefficient: 16859
+    kline_sector_880_empty_name_ratio: 1.0
+exam_ref: st-metaq-20260923/probe/batch_l2_graph_PQ-0063
+fail_type: null
+threshold: 弹性显著非零且 t>2（边级传导弹性，20 日窗事件回归）
+conclusion: 三查不过，禁硬答：①响应侧缺失——'下游行业 20 日毛利变化'无可构造载体：c3_fundamental.financial_indicator.gross_margin
+  在库（319,394 非空行/5,772 只）但为季频（report_period 最新 202506/202503/202412...），20 日窗毛利变化在季频数据上无法机械定义；②传导载体半缺——ig_io_edge
+  16,859 条边带 coefficient 权重（在库，好的一半），但行业层行情载体缺失：c1_market.kline_sector 切点前仅 11 行/1
+  个码，kline_sector_880 462 个码但 sector_name 100% 空置（322,995/322,995 空名），IO 官方部门名（147/153
+  个 distinct，如'电子元器件''煤炭加工品'）与任何行情板块码之间无映射表；③冲击侧未定——'上游大宗涨价冲击'未指定落库的商品价格序列（kline_futures
+  存在但未提供 IO 部门↔商品映射）。边级 t>2 的事件回归在上述三缺口下无法机械落地 → insufficient。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: snapshot
+three_check:
+  data: 'NO: 行业层行情载体缺失（kline_sector 11 行/880 板块无名称）+毛利仅季频+大宗冲击源未落库映射；ig_io_edge 系数与
+    gross_margin 季频数据在库'
+  caliber: 'NO: ''20 日毛利变化''在季频 gross_margin 上无歧义落地路径；''上游冲击''未定义代理序列'
+  mechanical: 'NO: 边级弹性回归的三要素（冲击×系数、20日响应窗、行业映射）缺二'
+pit_assertion: 本题未进入取数回归阶段（三查拦截）；已实证的表结构/行数核查均只读且不带切点后数据。
+q_id: PQ-0063

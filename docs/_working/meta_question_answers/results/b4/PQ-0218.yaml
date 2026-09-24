@@ -1,0 +1,29 @@
+notes: notes：U6=上游涨价冲击沿 ig_io_edge 传导对下游板块收益的预测力检验在册；与行情板块口径对齐缺口另见 PQ-0018（fail infra）。
+outcome: pass
+evidence:
+- probe: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  query: §2 SL-A16 U1 行：'部门间上下游强度能否机械判定价格冲击传导路径（信号词：直接消耗系数/影响力系数）'
+  result:
+    主题覆盖: 1/1=100%
+    词表词数: 2
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: PG ig_io_edge：rows=16859，distinct (from,to,year)=16859，source=io_official
+  result:
+    边数: 16859
+    coefficient列: 在库
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0218
+fail_type: null
+threshold: 覆盖率=100%（信号词表非空且宣称主题全部落在词集覆盖内）
+conclusion: 词表非空（2 词：直接消耗系数/影响力系数）。宣称主题 1/1 全覆盖：部门间上下游强度机械判定价格冲击传导路径←直接消耗系数（边强度）+影响力系数（矩阵派生聚合）。机械背书：ig_io_edge
+  16,859 边 coefficient 列实测在库（PG），153 部门 2020 调查表口径；影响力系数=系数矩阵列和/行和派生。覆盖率=100%。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（审计对象=源线谱 U1 行+DS 册，均在册可读；底层表列名经 DESCRIBE 实证）
+  caliber: OK（判据=宣称主题→信号词逐词映射，词表非空+覆盖计数，机械可判）
+  mechanical: OK（词级对照表全文留痕于 evidence）
+pit_assertion: U1 词表核验为静态登记审计（词级对照），不涉时序取数；IO 系数为官方一次性发布静态口径，冲击信号取 T-1 价格，收益窗自 T+1
+  起
+q_id: PQ-0218

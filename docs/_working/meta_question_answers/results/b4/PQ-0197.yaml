@@ -1,0 +1,31 @@
+notes: 复考前置：①自积跨越切点后按月度 30 条抽样；②审计时核同一 (location, forecast_date) 多版预报的版次存证情况（当前 schema
+  以 forecast_type 区分预报/实况，预报版次粒度建议在复考时一并核查）。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0197.py
+  query: SELECT count() FROM weather_data WHERE record_date <= '2025-09-09'; DESCRIBE
+    weather_data
+  result:
+    pre_cutoff_rows: 0
+    table_first_day: '2026-08-04'
+    forecast_vs_obs_counts:
+      now: 1360
+      forecast: 8673
+    auditable_samples_in_window: 0
+    forecast_type_field_present: true
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0197
+fail_type: null
+threshold: PIT 风险控制措施在入库链路执行；违规样本=0
+conclusion: SL-A12 U4'预报滚动修订风险被预报值与实现值分字段存证100%对冲'审计对象在闭卷窗内为零样本：weather_data 表起点 2026-08-04，切点前
+  0 行，月度 30 条抽样无从执行。控制机制本身已建：forecast_type 字段区分 forecast（8673 行）/now（实况 1360 行）实现分类型存证，但'预报修订对冲'的执行证据（同一
+  forecast_date 多版预报值序列）须待自积跨切点后审计。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: NO（切点窗内 0 行，表起点 2026-08-04 在切点后）
+  caliber: OK（违规=预报/实况混存或多版预报无版次，定义明确）
+  mechanical: OK（字段存在性+抽样 SQL 可复现，仅样本为空）
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0197

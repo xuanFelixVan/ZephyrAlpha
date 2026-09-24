@@ -1,0 +1,37 @@
+notes: 备注：①映射为名称精确匹配，非登记式映射表，若申万词表改名需重跑；②13 个 CKG 特有节点可作人工映射补登记；③industry_class_suppl
+  全部 valid_from 在切点后，若需严格闭卷词表快照需回源 2021 版申万词表（预计结论不变，CKG 树本身即申万 2021 谱系派生）。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l2_q0066_0069.py 及后续段名拆分内联探针
+  query: SELECT subject,object FROM ig_fact WHERE relation='sector_parent_of' 取树节点；SELECT
+    DISTINCT industry_sw FROM industry_class_suppl 拆 '--' 成段名集合；求覆盖与层级/父路径冲突
+  result:
+    matched: 498
+    sw_paths: 336
+    tree_rows: 480
+    unmatched: 13
+    tree_nodes: 511
+    sw_segments: 498
+    conflict_rate: 0.0
+    coverage_ratio: 0.9746
+    level_conflicts: 0
+    parent_conflicts: 0
+exam_ref: st-metaq-20260923/probe/batch_l2_graph_PQ-0069
+fail_type: null
+threshold: 覆盖率≥90% 且冲突率≤5%
+conclusion: CKG 行业树（sector_parent_of 480 条边，distinct 节点 511 个=480 subject+165 object
+  去重）对申万行业词表（industry_class_suppl.industry_sw，336 条完整路径 '--' 拆分后 498 个层级行业段名）的名称映射覆盖
+  498/511=97.46%≥90% 达标；冲突率 0%≤5% 达标（无任何树节点名在申万路径中出现在两个不同层级，也无同名节点挂两个不同父行业）。13 个未匹配节点为
+  CKG 特有行业（互联网药店/博彩/社交Ⅱ/音频媒体/其他银行Ⅱ 等）。双阈值满足 → pass。说明：映射载体为词段名称精确匹配（库中无显式 CKG↔申万映射表，ig_entity_code_map
+  仅公司级 88 行）；申万词表快照 valid_from=2026-09-03~2026-09-23。
+confidence: 0.7
+data_window:
+  end: snapshot 2026-09 现状（CKG 树 as_of=2021-10-26 与申万词表静态比对）
+  start: snapshot
+three_check:
+  data: 'OK: ig_fact sector_parent_of 480 行、industry_class_suppl 10,141 行（336 distinct
+    路径）实查在库'
+  caliber: 'OK: 覆盖率=树节点名命中申万路径层段名/树节点数；冲突率=出现在多层级或多父路径的节点数/已匹配节点数'
+  mechanical: 'OK: 路径拆分+集合匹配代码可复现'
+pit_assertion: 静态词表映射比对：CKG 树为 2021-10-26 闭卷快照；申万词表为分类字典类静态资产，取的是当前快照段名集合，不涉时间序列校正，未参与任何切点后收益/阈值动态比较。
+q_id: PQ-0069

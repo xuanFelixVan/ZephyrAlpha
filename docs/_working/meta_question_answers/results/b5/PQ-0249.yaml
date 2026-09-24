@@ -1,0 +1,28 @@
+notes: 政采网/公共资源平台两渠道均已核实，与题面'无正式批量 API'一致。DS 册无 B 档条目=设计内（源线谱§6 分工边界：DS 册=在产资产唯一真源，B
+  档未落库仅登记渠道判定+U 族治理元数据）；接入施工建 DS 条目后须按§6 做 DS 册字段级对账复考
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/b_lines_B_structure.py
+  query: 'SL-B05: 题面获取方式/成本 vs 源线谱§3 U2 行+渠道行逐字段对照'
+  result:
+    claim: 公开数据结构化抓取的工程成本（无正式批量 API）
+    ds_entry: 无(B档设计内)
+    registry: 公开数据无正式批量 API，结构化抓取（公开信息合规成本低，工程成本中）
+    unEvaluated_cost_items: 0
+exam_ref: st-metaq-20260923/probe/b_lines_PQ-0249
+fail_type: null
+threshold: 未评估成本项=0
+conclusion: SL-B05 招投标线 U2 获取方式与成本复核：题面『公开数据结构化抓取的工程成本（无正式批量 API）』与源线谱登记『公开数据无正式批量
+  API，结构化抓取（公开信息合规成本低，工程成本中）』逐字段一致；未评估成本项=0（政采网/公共资源平台两渠道均已核实，与题面'无正式批量 API'一致）。达
+  threshold '未评估成本项=0'。
+confidence: 0.4
+data_window:
+  end: 2026-09-23 现状
+  start: registry
+three_check:
+  data: OK+基准三册在盘可读（源线谱 29 线全解析、DS 册 22 条目、层宪章七层）
+  caliber: OK+题面宣称 vs 登记文本逐词/逐字段对照口径明确
+  mechanical: OK+探针脚本可复现（substring 匹配+计数+层号词表校验）
+pit_assertion: 登记快照文本比对题：仅读源线谱册 02_source_line_registry.md(2026-09-22)、DS 册 data_sources_registry.yaml(v2.6.0)、层宪章
+  01_layer_charter.md(2026-09-22) 在盘快照，不取任何行情/时序数据，无切点(2025-09-09)后数据参与任何阈值比较。
+q_id: PQ-0249

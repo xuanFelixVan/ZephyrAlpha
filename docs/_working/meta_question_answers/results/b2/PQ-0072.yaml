@@ -1,0 +1,41 @@
+notes: 复考前置：①建质押/冻结事件→股权边版本的联动更新（事件日后新增版本 valid_from≥事件公告日）或事件侧独立版本载体；②冻结事件独立落库；③as_of=2025-12-31
+  口径在切点 2025-09-09 下无判别力，建议复考时把切点移到 as_of 之后。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l2_q0072.py
+  query: SELECT symbol,announce_date,shareholder_name FROM equity_pledge_detail WHERE
+    announce_date<='2025-09-09'；edge_holding 按 (归一股东名,symbol) 取 max(valid_from)；比较
+    announce_date>valid_from
+  result:
+    example:
+    - 000415 深圳市淳大投资有限公司 事件2009-07-27 vs 版本2008-12-31
+    - 600146 大连实德投资有限公司 事件2009-07-02 vs 版本2008-12-31
+    match_rate: 0.981
+    violations: 5238
+    matched_pairs: 110690
+    violation_rate: 0.0473
+    distinct_symbols: 3508
+    events_in_window: 112822
+    freeze_dedicated_table: false
+    events_after_as_of_2025_12_31: 0
+exam_ref: st-metaq-20260923/probe/batch_l2_graph_PQ-0072
+fail_type: infra
+threshold: 违规样本=0
+conclusion: 质押公告事件（equity_pledge_detail，公告日≤2025-09-09 共 112,822 条/3,508 只，公告窗 2003-06-10~2025-09-09）与
+  edge_holding 股权边版本比对：按（股东名称归一+symbol）匹配到 110,690 对（98.1%），其中事件日晚于该对最新版本生效日（valid_from，通常=报告期）的违规样本
+  5,238 条=4.73%≠0 → 不满足 PIT 时序一致性阈值，fail。违规实质：现行版本生效日停在事件前的报告期（如事件 2009-07-27 vs 版本
+  2008-12-31），质押事件不驱动版本推进（equity_penetration.py 按设计将 pledge/judicial_frozen 排除在持股边外、且无事件→版本联动机制）——fail
+  性质=infra（事件到版本的时序联动管线未建）。对照 ig_equity_edge 现行版本 as_of=2025-12-31：闭卷窗内事件晚于该 as_of
+  的样本=0（切点 2025-09-09<as_of，结构性无判别力，如实登记）。冻结事件无独立落库表（仅 2,724 行 remark 含'冻结'字样），无法同口径检验。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2003-06-10'
+three_check:
+  data: 'OK: equity_pledge_detail 120,628 行（窗内 112,822）、edge_holding 1,500,341 行、ig_equity_edge
+    804 行实查在库；冻结事件独立表缺失（如实登记）'
+  caliber: 'OK: 事件日=公告日 announce_date；版本生效日=edge_holding 同对最新 valid_from；违规=事件日>生效日；名称归一后精确匹配'
+  mechanical: 'OK: 匹配+时序比较代码可复现（probes/l2_q0072.py + 内联 symbol 归一版）'
+pit_assertion: 事件侧严格取公告日≤2025-09-09；版本侧比较使用版本生效日与事件公告日的单向时序关系；未使用切点后数据做违规判定（切点后 valid_from
+  的 76,538 行现行版本仅作现状说明不进入违规计数）。
+q_id: PQ-0072
