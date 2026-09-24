@@ -184,8 +184,8 @@ try:
     from zephyr.governance.architecture_governance.llm_impact_analyzer import RiskLevel
     from zephyr.governance.audit.snapshot_manager import SnapshotError
     from zephyr.governance.capability_lookup import CapabilityLookup
-    from zephyr.governance.data_governance.akshare_quote_provider import (
-        AkshareQuoteProvider,  # noqa: import-integrity  git rename staging boundary false-positive, file exists at line 69
+    from zephyr.governance.data_governance.akshare_provider import (
+        AkshareQuoteProvider,  # noqa: import-integrity  裁定#412 克隆退役：符号迁自同体件 akshare_provider.py（227B 同体，逐字核验）
     )
     from zephyr.governance.engine.pipeline_base import ExperimentConfig
     from zephyr.governance.ops_governance.token_budget import PoolLevel

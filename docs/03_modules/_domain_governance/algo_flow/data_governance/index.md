@@ -20,7 +20,6 @@ ttl: "permanent"
 | 文件/目录 | 类型 | 说明 |
 |-----------|------|------|
 | [akshare_provider.yaml](akshare_provider.yaml) | YAML | |
-| [akshare_quote_provider.yaml](akshare_quote_provider.yaml) | YAML | |
 | [data_classification.yaml](data_classification.yaml) | YAML | |
 | [data_governance__init__.yaml](data_governance__init__.yaml) | YAML | |
 | [data_lifecycle.yaml](data_lifecycle.yaml) | YAML | |

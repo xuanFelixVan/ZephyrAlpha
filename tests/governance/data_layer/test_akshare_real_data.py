@@ -107,7 +107,7 @@ def _akshare_has_usable_bar_data() -> bool:
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            from zephyr.governance.data_governance.akshare_quote_provider import AkshareQuoteProvider
+            from zephyr.governance.data_governance.akshare_provider import AkshareQuoteProvider
 
             provider = AkshareQuoteProvider()
             end = datetime.now(UTC)

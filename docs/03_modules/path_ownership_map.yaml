@@ -44463,13 +44463,6 @@ ownership:
     existence: '已实现'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/governance/data_governance/akshare_quote_provider.py'
-    owner_blueprint: 'MOD-L00-001'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_data/blueprint.md'
-    existence: '已实现'
-    ownership_judgment: '本模块'
-
   - path: 'tests/ml_train/test_patchtst_density_encoder.py'
     owner_blueprint: 'MOD-ML-011'
     claim_type: 'depgraph_node'

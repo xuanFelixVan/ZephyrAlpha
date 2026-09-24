@@ -5658,3 +5658,39 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#411"
+  title: 翻译册 6 组重复行 dedupe（遗留修复收尾总包①）
+  date: '2026-09-24'
+  category: 治理
+  status: decided
+  summary: |-
+    Owner 2026-09-24 全批（遗留修复收尾总包 st-cleanup-final-20260924 六件套之①）：
+    module_translation_registry.yaml 存量 6 组重复条目机械去重，信息最全条目胜出+扩展
+    字段合并，entries 7712→7706。执行通道=add_module_translation.py --dedupe（dry-run
+    预演 6 组与审计班清点吻合后实跑），本裁定与去重产物同 commit 原子（RULE-RULING）。
+  related_files:
+  - docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  related_arch: []
+  related_rulings: []
+  superseded_by: null
+
+- ruling_id: "裁定#412"
+  title: akshare 克隆对退役（遗留修复收尾总包②，保留被引多者）
+  date: '2026-09-24'
+  category: 治理
+  status: decided
+  summary: |-
+    Owner 2026-09-24 全批（收尾总包六件套之②）：data_governance 克隆对
+    akshare_provider.py ↔ akshare_quote_provider.py（227 字节同体，仅 [MODULE]/[ALGO_FLOW]
+    头注两行异，类名 AkshareQuoteProvider 逐字同）按「保留被引多者」裁决退役
+    akshare_quote_provider.py：全仓引用计数 94 vs 4（前者= constructions demo 管线+测试
+    8 处导入；后者仅 governance/__init__:187+测试 1 处）。退役面=实物 git rm+algo_flow
+    YAML 同删+两处 import 改指 akshare_provider+注册表条目四处摘除（翻译册/capability
+    token/path_ownership/algo_flow index.md）。属 RULE-CLONEGUARD extract 级克隆无逃生
+    的裁决面，本裁定即裁决记录。
+  related_files:
+  - src/zephyr/governance/data_governance/akshare_provider.py
+  - docs/_working/align_dirty/align_dirty_ledger.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null

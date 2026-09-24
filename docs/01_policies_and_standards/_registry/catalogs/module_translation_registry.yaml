@@ -60100,6 +60100,183 @@ entries:
   plain_zh: "D_BACKTEST — C3 节流归因分析（11 号 memo §4.3 C3）。纯分析函数：基于 C1 既有回测产物（零新回测成本），按 Viterbi 主导态 + overlay 态分组归因：各态天数占比、平均 Shrinkage、避免损失 （Σ(ret_开 − ret_关)，正值=该态节流后少亏/多赚）及其正部归一化份额 （MaxDD 改善的可加代理分解）。"
   responsibility_layer: business
 
+- module_path: scripts/governance/check_meta_question_batch.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "批次快照校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把新入库的一批问题从头到尾检查一遍：字段齐不齐、选项合不合法、有没有重复，全对才放行"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_ledger/api.py
+  domain_id: D_GOVERNANCE
+  name_zh: "注册表账本意图API"
+  name_en: "Registry Ledger Intent API"
+  desc_zh: "注册表 PG 行级账本的按条目声明写接口：register/update/retire/takeover，version CAS 并发拒绝，事件全留痕"
+  desc_en: "Per-entry intent API for the registry PG row-level ledger with version CAS and full event trail"
+  plain_zh: "大白话：这是一本改不了的流水账前台。想改注册表某一条，只能到这里点名报备——改哪条、为什么改、谁批准的都要写清楚；两个人同时改同一条，后到的会被拒收，而且拒收本身也记账，谁也别想偷偷覆盖"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_ledger/deploy.py
+  domain_id: D_GOVERNANCE
+  name_zh: "注册表账本DDL部署器"
+  name_en: "Registry Ledger DDL Deployer"
+  desc_zh: "幂等部署 registry_ledger 四表+不可变双保险触发器+角色 GRANT+_schema_version 台账，可重跑零漂移"
+  desc_en: "Idempotent deployer for registry_ledger tables with append-only triggers and schema version bookkeeping"
+  plain_zh: "大白话：给账本装账本的师傅。建四张表和保险锁，装错了或重复装都不出事——跑一百遍结果和跑一遍一模一样"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_ledger/identity.py
+  domain_id: D_GOVERNANCE
+  name_zh: "注册表条目身份键"
+  name_en: "Registry Entry Identity Key"
+  desc_zh: "条目身份键唯一真源桥：门禁单键+token 复合升级，与合并器同规则防身份分叉"
+  desc_en: "Bridge to the canonical entry identity key with composite token suffix, shared by gate and merger"
+  plain_zh: "大白话：给每条注册表条目发身份证。规则只有一条：第一个字段是谁，它就是谁；有 token 的加上 token。门禁、合并器、账本三家认同一张证，不各发各的"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_ledger/schema.py
+  domain_id: D_GOVERNANCE
+  name_zh: "注册表账本DDL聚合"
+  name_en: "Registry Ledger DDL Aggregate"
+  desc_zh: "聚合 schemas/categories/registry_ledger 四表 DDL 真源并声明 _schema_version 台账与不可变守卫定义"
+  desc_en: "Aggregates the four-table DDL truth source plus schema version and append-only guard definitions"
+  plain_zh: "大白话：账本四张表的图纸集。图纸只放在一个抽屉里，施工队照图施工，谁也不许手画"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_ledger/__init__.py
+  domain_id: D_GOVERNANCE
+  name_zh: "注册表账本包入口"
+  name_en: "Registry Ledger Package Init"
+  desc_zh: "注册表 PG 行级账本包导出入口：意图 API+部署器+身份键"
+  desc_en: "Package exports for the registry PG row-level ledger"
+  plain_zh: "大白话：账本子系统的门牌。要办事从这进门"
+  responsibility_layer: governance
+- module_path: schemas/categories/registry_ledger/__init__.py
+  domain_id: D_GOVERNANCE
+  name_zh: "注册表账本DDL子包"
+  name_en: "Registry Ledger DDL Subpackage"
+  desc_zh: "注册表 PG 账本四表 DDL-as-Code 真源子包目录地图（施工令写域特批）"
+  desc_en: "Subpackage map for the registry PG ledger DDL-as-Code truth source"
+  plain_zh: "大白话：账本表图纸的抽屉标签，说明这个抽屉里放的是哪四张表的图纸"
+  responsibility_layer: governance
+- module_path: schemas/categories/registry_ledger/registry_catalog.py
+  domain_id: D_GOVERNANCE
+  name_zh: "registry_catalog表图纸"
+  name_en: "registry_catalog DDL"
+  desc_zh: "册级登记表 DDL 真源：ROOR 派生种子位，登记每册的身份模式/族键/维护介质"
+  desc_en: "DDL truth source for the per-registry catalog table"
+  plain_zh: "大白话：账本的户口簿——每本注册表来登记一行：你家在哪、条目怎么认、谁管"
+  responsibility_layer: governance
+- module_path: schemas/categories/registry_ledger/registry_entry.py
+  domain_id: D_GOVERNANCE
+  name_zh: "registry_entry表图纸"
+  name_en: "registry_entry DDL"
+  desc_zh: "条目状态表 DDL 真源：唯一约束+version CAS+tombstone 永不物理删"
+  desc_en: "DDL truth source for the entry state table with unique key, version CAS and tombstones"
+  plain_zh: "大白话：账本的正文页。每条注册表条目一行，改一条占一行坑，注销也不撕页"
+  responsibility_layer: governance
+- module_path: schemas/categories/registry_ledger/registry_event.py
+  domain_id: D_GOVERNANCE
+  name_zh: "registry_event表图纸"
+  name_en: "registry_event DDL"
+  desc_zh: "事件表 DDL 真源：只增不改，谁/何时/改了什么/基线是什么四元组全留痕"
+  desc_en: "DDL truth source for the append-only event table"
+  plain_zh: "大白话：账本的监控录像带。谁动过、什么时候动的、动之前长什么样，全录下来，录了就改不掉删不掉"
+  responsibility_layer: governance
+- module_path: schemas/categories/registry_ledger/registry_snapshot.py
+  domain_id: D_GOVERNANCE
+  name_zh: "registry_snapshot表图纸"
+  name_en: "registry_snapshot DDL"
+  desc_zh: "快照表 DDL 真源：发布=不可变全量+每册单调版本+git 提交关联"
+  desc_en: "DDL truth source for the immutable snapshot/release table"
+  plain_zh: "大白话：账本的定期拍照存档。每发一版全册拍一张快照，老照片永不褪色，随时能翻回任何一天"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_projection/__init__.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "投影生成器包"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "注册表投影子系统的公开出口：把PG账本快照单向渲染成YAML文件，门禁和守护进程从这里取渲染器和漂移判别器，读端永远只读本地YAML不碰数据库"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_projection/model.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "快照模型与提取器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "定义账本快照在内存里长什么样：头部元行加条目列表，每条按原始顺序记字段对；从YAML提取时连重复字段这类脏数据都原样保留，是回填预览和红蓝测试的共同输入口"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_projection/renderer.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "纯函数渲染器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把快照变成YAML文本的唯一格式决定者：同一份快照永远输出同一串字节，没有时间戳没有随机数；写盘前还会自己读一遍确认没渲染错，错了就拒写"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_projection/state.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "投影状态文件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "记下最后一次成功渲染的字节指纹和账本版本号，放在本地运行时目录里；门禁拿它就能抓住有人偷偷手改YAML，哪怕数据库当机也一样抓得到"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_projection/pg_source.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "快照只读消费端"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "从PG快照表读最新发布版给生成器用，全程只读连接；数据库连不上或表还没建就报不可用，生成器收到后零写退出绝不堵别人的路"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_projection/generator.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "生成器编排层"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "四象限总调度：对比盘上文件、本地状态和最新渲染结果，干净就收工，私改就留证据再自动覆盖回来，账本前进了就静默重打，数据库挂了就降级观察不拦任何人"
+  responsibility_layer: governance
+- module_path: scripts/governance/registry_projection/registry_projection_generator.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "投影生成器命令行"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "运维和验收用的命令行入口：--check只对账不写盘，--render按四象限全自动处置并打印报告，支持从JSON文件喂快照做影子期演练"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_ledger/baseline.py
+  domain_id: D_GOVERNANCE
+  name_zh: "基线导入与双轨对账引擎"
+  name_en: "Baseline Import and Dual-track Reconcile Engine"
+  desc_zh: "Phase 0 机械扫描+幂等基线导入+快照发布+Phase 1 双轨insert-only对账（缺=补登记，异=只记账）"
+  desc_en: "Phase 0 mechanical scan, idempotent baseline import, snapshot publish, Phase 1 insert-only dual-track reconcile"
+  plain_zh: "大白话：把现有注册表一次性搬进PG账本的搬运工兼门卫。搬的时候重复跑不出错；之后每天对账，发现账本里缺了就补上，发现两边对不上就只记账不乱改，谁也别想趁机覆盖别人"
+  responsibility_layer: governance
+- module_path: scripts/governance/registry_migration/wave0_phase0_gate.py
+  domain_id: D_GOVERNANCE
+  name_zh: "波0对账门命令行"
+  name_en: "Wave0 Phase0 Gate CLI"
+  desc_zh: "scan/import/publish/reconcile/gate 五命令验收通道，报告落 .runtime/registry_ledger/"
+  desc_en: "Five-command acceptance CLI (scan/import/publish/reconcile/gate) writing reports under .runtime/registry_ledger/"
+  plain_zh: "大白话：迁移动的遥控器。先看清单、试搬、真搬、发快照、对账，一条命令跑完全套并给出 PASS 或 FAIL 的机械结论"
+  responsibility_layer: governance
+- module_path: scripts/governance/check_meta_question_audit_reconcile.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "双轨对账器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "对着两本账逐页核对：PG 审计表和 JSONL 追加账每天各记了多少条要不要一致，不一致就报出来"
+  responsibility_layer: governance
+- module_path: scripts/governance/check_meta_question_status_band.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "状态健康带监控器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯着 283 个问题各自处于什么状态，超出健康比例就报警"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
