@@ -8,10 +8,10 @@ ttl: task_bound
 > **✅ 已完成（10 条，摘录）**
 > - L16: 另类因子对话（本对话）已完成：① 免费另类数据源全网扫描（v1 清单 12 源 6 组）；② 可持续性审计 + 裁定复核 + 政府/国际宏观接入（施工图 v2，四批施工）；③ Owner 逐平台申请 API 后的密钥入库（本轮完成，见 §3）。
 > - L22: ## 2. Owner 已申请到的 API 与密钥状态（本轮已入库）
-> - L26: | Alpha Vantage | `R0EI5AGNMTSABYE5`（明文完整） | ✅ 已入库 | .env `ALPHAVANTAGE_API_KEY`（registry 原有条目，本轮补值） |
-> - L27: | EODHD | `6aa56e7c5d6d83.56448068`（明文完整） | ✅ 已入库 | .env `EODHD_API_KEY` + registry 新条目（免费层每日请求逐日积累，无历史回补） |
-> - L28: | 百度指数·数据开放平台 Access-Token | JWT（**约 24h 过期**，exp≈2026-09-13） | ✅ 已入库（短时） | .env `BAIDU_INDEX_TOKEN`；appKey=69ba9d46fec452d84d661da1bdf50898；平台账号 uid=
-> - L29: | 北京市开放平台 key | `1789224430654`（明文完整） | ✅ 已入库 | .env `BJ_DATA_OPEN_KEY`；**个人 token 有效期 3 个月**，cron 续期提醒已建（见 §5） |
+> - L26: | Alpha Vantage | `[已轮换 2026-09-24]`（原明文已占位） | ✅ 已入库 | .env `ALPHAVANTAGE_API_KEY`（registry 原有条目，本轮补值） |
+> - L27: | EODHD | `[已轮换 2026-09-24]`（原明文已占位） | ✅ 已入库 | .env `EODHD_API_KEY` + registry 新条目（免费层每日请求逐日积累，无历史回补） |
+> - L28: | 百度指数·数据开放平台 Access-Token | JWT（**约 24h 过期**，exp≈2026-09-13） | ✅ 已入库（短时） | .env `BAIDU_INDEX_TOKEN`；appKey=[已轮换 2026-09-24]；平台账号 uid=
+> - L29: | 北京市开放平台 key | `[已轮换 2026-09-24]`（原明文已占位） | ✅ 已入库 | .env `BJ_DATA_OPEN_KEY`；**个人 token 有效期 3 个月**，cron 续期提醒已建（见 §5） |
 > - （另有 4 条完成信号，见正文）
 >
 > **⚠️ 未完成（2 条，逐条摘录）**
@@ -48,10 +48,10 @@ Owner 运营 ZephyrAlpha 个人量化系统（主仓 `D:\ZephyrAlpha`）。数�
 
 | 平台 | key 值摘要 | 状态 | 位置 |
 |------|-----------|------|------|
-| Alpha Vantage | `R0EI5AGNMTSABYE5`（明文完整） | ✅ 已入库 | .env `ALPHAVANTAGE_API_KEY`（registry 原有条目，本轮补值） |
-| EODHD | `6aa56e7c5d6d83.56448068`（明文完整） | ✅ 已入库 | .env `EODHD_API_KEY` + registry 新条目（免费层每日请求逐日积累，无历史回补） |
-| 百度指数·数据开放平台 Access-Token | JWT（**约 24h 过期**，exp≈2026-09-13） | ✅ 已入库（短时） | .env `BAIDU_INDEX_TOKEN`；appKey=69ba9d46fec452d84d661da1bdf50898；平台账号 uid=90557200 |
-| 北京市开放平台 key | `1789224430654`（明文完整） | ✅ 已入库 | .env `BJ_DATA_OPEN_KEY`；**个人 token 有效期 3 个月**，cron 续期提醒已建（见 §5） |
+| Alpha Vantage | `[已轮换 2026-09-24]`（原明文已占位） | ✅ 已入库 | .env `ALPHAVANTAGE_API_KEY`（registry 原有条目，本轮补值） |
+| EODHD | `[已轮换 2026-09-24]`（原明文已占位） | ✅ 已入库 | .env `EODHD_API_KEY` + registry 新条目（免费层每日请求逐日积累，无历史回补） |
+| 百度指数·数据开放平台 Access-Token | JWT（**约 24h 过期**，exp≈2026-09-13） | ✅ 已入库（短时） | .env `BAIDU_INDEX_TOKEN`；appKey=[已轮换 2026-09-24]；平台账号 uid=90557200 |
+| 北京市开放平台 key | `[已轮换 2026-09-24]`（原明文已占位） | ✅ 已入库 | .env `BJ_DATA_OPEN_KEY`；**个人 token 有效期 3 个月**，cron 续期提醒已建（见 §5） |
 | 上海市开放平台 | 未申请到 API（占位） | ⏳ 待按话术申请 | .env `SH_OPEN_DATA_TOKEN=`（注释占位）+ registry 占位条目 |
 | Tushare | `f42ada…c6bb`（原有） | ✅ 原已在库（2000 积分） | .env `TUSHARE_TOKEN`；irm_qa 互动易接口积分门槛需在 tushare.pro 核对 |
 | FRED / 和风 / EIA / OKX | 原有 | ✅ 原已在库 | .env 对应条目 |
