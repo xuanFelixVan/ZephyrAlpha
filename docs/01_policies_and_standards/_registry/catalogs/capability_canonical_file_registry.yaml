@@ -47554,4 +47554,1435 @@ creation_tokens:
   created_by: st-cleanup-final-20260924
   capability: cleanup_final
   merge_evaluation: "遗留修复收尾总包专用台账目录，六件套一次性使用，收包后无新文件增长即停"
+- file: docs/_working/ai_layer_vision/LEDGER_final.md
+  token: ai-layer-p1-ledger-final-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_layer_p1
+  merge_evaluation: "总包指挥台账（总指挥30分钟批注载体），任务绑定件与卡族不重复"
+- file: docs/_working/ai_layer_vision/P1_final_report_20260924.md
+  token: ai-layer-p1-final-report-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_layer_p1
+  merge_evaluation: "P1 终局总包终报（要素一至八），任务绑定件"
+- file: docs/_working/ai_layer_vision/P1_full_construction_inventory.md
+  token: ai-layer-p1-inventory-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_layer_p1
+  merge_evaluation: "11 本 DESIGN 全对照施工清单，任务绑定件"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0001.yaml
+  token: metaq-question-exam-campaign-result-0001-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0002.yaml
+  token: metaq-question-exam-campaign-result-0002-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0003.yaml
+  token: metaq-question-exam-campaign-result-0003-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0004.yaml
+  token: metaq-question-exam-campaign-result-0004-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0005.yaml
+  token: metaq-question-exam-campaign-result-0005-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0006.yaml
+  token: metaq-question-exam-campaign-result-0006-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0007.yaml
+  token: metaq-question-exam-campaign-result-0007-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0008.yaml
+  token: metaq-question-exam-campaign-result-0008-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0009.yaml
+  token: metaq-question-exam-campaign-result-0009-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0010.yaml
+  token: metaq-question-exam-campaign-result-0010-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0011.yaml
+  token: metaq-question-exam-campaign-result-0011-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0012.yaml
+  token: metaq-question-exam-campaign-result-0012-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0013.yaml
+  token: metaq-question-exam-campaign-result-0013-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0014.yaml
+  token: metaq-question-exam-campaign-result-0014-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0015.yaml
+  token: metaq-question-exam-campaign-result-0015-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0016.yaml
+  token: metaq-question-exam-campaign-result-0016-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0017.yaml
+  token: metaq-question-exam-campaign-result-0017-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0018.yaml
+  token: metaq-question-exam-campaign-result-0018-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0019.yaml
+  token: metaq-question-exam-campaign-result-0019-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0020.yaml
+  token: metaq-question-exam-campaign-result-0020-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0021.yaml
+  token: metaq-question-exam-campaign-result-0021-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0022.yaml
+  token: metaq-question-exam-campaign-result-0022-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0023.yaml
+  token: metaq-question-exam-campaign-result-0023-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0024.yaml
+  token: metaq-question-exam-campaign-result-0024-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0025.yaml
+  token: metaq-question-exam-campaign-result-0025-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0026.yaml
+  token: metaq-question-exam-campaign-result-0026-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0027.yaml
+  token: metaq-question-exam-campaign-result-0027-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0028.yaml
+  token: metaq-question-exam-campaign-result-0028-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0029.yaml
+  token: metaq-question-exam-campaign-result-0029-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0030.yaml
+  token: metaq-question-exam-campaign-result-0030-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0031.yaml
+  token: metaq-question-exam-campaign-result-0031-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0032.yaml
+  token: metaq-question-exam-campaign-result-0032-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0033.yaml
+  token: metaq-question-exam-campaign-result-0033-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0034.yaml
+  token: metaq-question-exam-campaign-result-0034-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0035.yaml
+  token: metaq-question-exam-campaign-result-0035-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0036.yaml
+  token: metaq-question-exam-campaign-result-0036-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0037.yaml
+  token: metaq-question-exam-campaign-result-0037-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0038.yaml
+  token: metaq-question-exam-campaign-result-0038-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0039.yaml
+  token: metaq-question-exam-campaign-result-0039-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0040.yaml
+  token: metaq-question-exam-campaign-result-0040-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0041.yaml
+  token: metaq-question-exam-campaign-result-0041-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0042.yaml
+  token: metaq-question-exam-campaign-result-0042-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0043.yaml
+  token: metaq-question-exam-campaign-result-0043-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0044.yaml
+  token: metaq-question-exam-campaign-result-0044-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0045.yaml
+  token: metaq-question-exam-campaign-result-0045-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0046.yaml
+  token: metaq-question-exam-campaign-result-0046-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0047.yaml
+  token: metaq-question-exam-campaign-result-0047-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0048.yaml
+  token: metaq-question-exam-campaign-result-0048-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0049.yaml
+  token: metaq-question-exam-campaign-result-0049-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0050.yaml
+  token: metaq-question-exam-campaign-result-0050-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0051.yaml
+  token: metaq-question-exam-campaign-result-0051-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0052.yaml
+  token: metaq-question-exam-campaign-result-0052-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0053.yaml
+  token: metaq-question-exam-campaign-result-0053-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0054.yaml
+  token: metaq-question-exam-campaign-result-0054-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0055.yaml
+  token: metaq-question-exam-campaign-result-0055-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0056.yaml
+  token: metaq-question-exam-campaign-result-0056-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0057.yaml
+  token: metaq-question-exam-campaign-result-0057-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0058.yaml
+  token: metaq-question-exam-campaign-result-0058-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0059.yaml
+  token: metaq-question-exam-campaign-result-0059-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b1/PQ-0060.yaml
+  token: metaq-question-exam-campaign-result-0060-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0061.yaml
+  token: metaq-question-exam-campaign-result-0061-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0062.yaml
+  token: metaq-question-exam-campaign-result-0062-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0063.yaml
+  token: metaq-question-exam-campaign-result-0063-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0064.yaml
+  token: metaq-question-exam-campaign-result-0064-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0065.yaml
+  token: metaq-question-exam-campaign-result-0065-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0066.yaml
+  token: metaq-question-exam-campaign-result-0066-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0067.yaml
+  token: metaq-question-exam-campaign-result-0067-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0068.yaml
+  token: metaq-question-exam-campaign-result-0068-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0069.yaml
+  token: metaq-question-exam-campaign-result-0069-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0070.yaml
+  token: metaq-question-exam-campaign-result-0070-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0071.yaml
+  token: metaq-question-exam-campaign-result-0071-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0072.yaml
+  token: metaq-question-exam-campaign-result-0072-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0073.yaml
+  token: metaq-question-exam-campaign-result-0073-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0074.yaml
+  token: metaq-question-exam-campaign-result-0074-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0075.yaml
+  token: metaq-question-exam-campaign-result-0075-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0076.yaml
+  token: metaq-question-exam-campaign-result-0076-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0077.yaml
+  token: metaq-question-exam-campaign-result-0077-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0078.yaml
+  token: metaq-question-exam-campaign-result-0078-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0079.yaml
+  token: metaq-question-exam-campaign-result-0079-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0080.yaml
+  token: metaq-question-exam-campaign-result-0080-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0081.yaml
+  token: metaq-question-exam-campaign-result-0081-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0082.yaml
+  token: metaq-question-exam-campaign-result-0082-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0083.yaml
+  token: metaq-question-exam-campaign-result-0083-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0084.yaml
+  token: metaq-question-exam-campaign-result-0084-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0085.yaml
+  token: metaq-question-exam-campaign-result-0085-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0086.yaml
+  token: metaq-question-exam-campaign-result-0086-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0087.yaml
+  token: metaq-question-exam-campaign-result-0087-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0088.yaml
+  token: metaq-question-exam-campaign-result-0088-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0089.yaml
+  token: metaq-question-exam-campaign-result-0089-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0090.yaml
+  token: metaq-question-exam-campaign-result-0090-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0091.yaml
+  token: metaq-question-exam-campaign-result-0091-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0092.yaml
+  token: metaq-question-exam-campaign-result-0092-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0093.yaml
+  token: metaq-question-exam-campaign-result-0093-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0094.yaml
+  token: metaq-question-exam-campaign-result-0094-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0095.yaml
+  token: metaq-question-exam-campaign-result-0095-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0096.yaml
+  token: metaq-question-exam-campaign-result-0096-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0097.yaml
+  token: metaq-question-exam-campaign-result-0097-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0098.yaml
+  token: metaq-question-exam-campaign-result-0098-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0099.yaml
+  token: metaq-question-exam-campaign-result-0099-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0100.yaml
+  token: metaq-question-exam-campaign-result-0100-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0101.yaml
+  token: metaq-question-exam-campaign-result-0101-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0102.yaml
+  token: metaq-question-exam-campaign-result-0102-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0103.yaml
+  token: metaq-question-exam-campaign-result-0103-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0104.yaml
+  token: metaq-question-exam-campaign-result-0104-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0105.yaml
+  token: metaq-question-exam-campaign-result-0105-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0106.yaml
+  token: metaq-question-exam-campaign-result-0106-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0107.yaml
+  token: metaq-question-exam-campaign-result-0107-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0108.yaml
+  token: metaq-question-exam-campaign-result-0108-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0109.yaml
+  token: metaq-question-exam-campaign-result-0109-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0110.yaml
+  token: metaq-question-exam-campaign-result-0110-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0111.yaml
+  token: metaq-question-exam-campaign-result-0111-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0112.yaml
+  token: metaq-question-exam-campaign-result-0112-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0113.yaml
+  token: metaq-question-exam-campaign-result-0113-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0114.yaml
+  token: metaq-question-exam-campaign-result-0114-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0115.yaml
+  token: metaq-question-exam-campaign-result-0115-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0116.yaml
+  token: metaq-question-exam-campaign-result-0116-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0117.yaml
+  token: metaq-question-exam-campaign-result-0117-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0118.yaml
+  token: metaq-question-exam-campaign-result-0118-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0119.yaml
+  token: metaq-question-exam-campaign-result-0119-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b2/PQ-0120.yaml
+  token: metaq-question-exam-campaign-result-0120-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0121.yaml
+  token: metaq-question-exam-campaign-result-0121-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0122.yaml
+  token: metaq-question-exam-campaign-result-0122-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0123.yaml
+  token: metaq-question-exam-campaign-result-0123-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0124.yaml
+  token: metaq-question-exam-campaign-result-0124-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0125.yaml
+  token: metaq-question-exam-campaign-result-0125-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0126.yaml
+  token: metaq-question-exam-campaign-result-0126-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0127.yaml
+  token: metaq-question-exam-campaign-result-0127-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0128.yaml
+  token: metaq-question-exam-campaign-result-0128-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0129.yaml
+  token: metaq-question-exam-campaign-result-0129-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0130.yaml
+  token: metaq-question-exam-campaign-result-0130-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0131.yaml
+  token: metaq-question-exam-campaign-result-0131-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0132.yaml
+  token: metaq-question-exam-campaign-result-0132-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0133.yaml
+  token: metaq-question-exam-campaign-result-0133-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0134.yaml
+  token: metaq-question-exam-campaign-result-0134-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0135.yaml
+  token: metaq-question-exam-campaign-result-0135-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0136.yaml
+  token: metaq-question-exam-campaign-result-0136-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0137.yaml
+  token: metaq-question-exam-campaign-result-0137-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0138.yaml
+  token: metaq-question-exam-campaign-result-0138-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0139.yaml
+  token: metaq-question-exam-campaign-result-0139-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0140.yaml
+  token: metaq-question-exam-campaign-result-0140-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0141.yaml
+  token: metaq-question-exam-campaign-result-0141-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0142.yaml
+  token: metaq-question-exam-campaign-result-0142-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0143.yaml
+  token: metaq-question-exam-campaign-result-0143-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0144.yaml
+  token: metaq-question-exam-campaign-result-0144-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0145.yaml
+  token: metaq-question-exam-campaign-result-0145-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0146.yaml
+  token: metaq-question-exam-campaign-result-0146-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0147.yaml
+  token: metaq-question-exam-campaign-result-0147-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0148.yaml
+  token: metaq-question-exam-campaign-result-0148-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0149.yaml
+  token: metaq-question-exam-campaign-result-0149-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0150.yaml
+  token: metaq-question-exam-campaign-result-0150-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0151.yaml
+  token: metaq-question-exam-campaign-result-0151-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0152.yaml
+  token: metaq-question-exam-campaign-result-0152-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0153.yaml
+  token: metaq-question-exam-campaign-result-0153-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0154.yaml
+  token: metaq-question-exam-campaign-result-0154-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0155.yaml
+  token: metaq-question-exam-campaign-result-0155-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0156.yaml
+  token: metaq-question-exam-campaign-result-0156-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0157.yaml
+  token: metaq-question-exam-campaign-result-0157-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0158.yaml
+  token: metaq-question-exam-campaign-result-0158-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0159.yaml
+  token: metaq-question-exam-campaign-result-0159-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0160.yaml
+  token: metaq-question-exam-campaign-result-0160-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0161.yaml
+  token: metaq-question-exam-campaign-result-0161-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0162.yaml
+  token: metaq-question-exam-campaign-result-0162-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0163.yaml
+  token: metaq-question-exam-campaign-result-0163-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0164.yaml
+  token: metaq-question-exam-campaign-result-0164-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0165.yaml
+  token: metaq-question-exam-campaign-result-0165-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0166.yaml
+  token: metaq-question-exam-campaign-result-0166-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0167.yaml
+  token: metaq-question-exam-campaign-result-0167-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0168.yaml
+  token: metaq-question-exam-campaign-result-0168-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0169.yaml
+  token: metaq-question-exam-campaign-result-0169-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0170.yaml
+  token: metaq-question-exam-campaign-result-0170-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0171.yaml
+  token: metaq-question-exam-campaign-result-0171-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0172.yaml
+  token: metaq-question-exam-campaign-result-0172-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0173.yaml
+  token: metaq-question-exam-campaign-result-0173-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0174.yaml
+  token: metaq-question-exam-campaign-result-0174-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0175.yaml
+  token: metaq-question-exam-campaign-result-0175-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0176.yaml
+  token: metaq-question-exam-campaign-result-0176-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0177.yaml
+  token: metaq-question-exam-campaign-result-0177-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0178.yaml
+  token: metaq-question-exam-campaign-result-0178-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0179.yaml
+  token: metaq-question-exam-campaign-result-0179-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b3/PQ-0180.yaml
+  token: metaq-question-exam-campaign-result-0180-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0181.yaml
+  token: metaq-question-exam-campaign-result-0181-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0182.yaml
+  token: metaq-question-exam-campaign-result-0182-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0183.yaml
+  token: metaq-question-exam-campaign-result-0183-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0184.yaml
+  token: metaq-question-exam-campaign-result-0184-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0185.yaml
+  token: metaq-question-exam-campaign-result-0185-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0186.yaml
+  token: metaq-question-exam-campaign-result-0186-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0187.yaml
+  token: metaq-question-exam-campaign-result-0187-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0188.yaml
+  token: metaq-question-exam-campaign-result-0188-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0189.yaml
+  token: metaq-question-exam-campaign-result-0189-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0190.yaml
+  token: metaq-question-exam-campaign-result-0190-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0191.yaml
+  token: metaq-question-exam-campaign-result-0191-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0192.yaml
+  token: metaq-question-exam-campaign-result-0192-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0193.yaml
+  token: metaq-question-exam-campaign-result-0193-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0194.yaml
+  token: metaq-question-exam-campaign-result-0194-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0195.yaml
+  token: metaq-question-exam-campaign-result-0195-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0196.yaml
+  token: metaq-question-exam-campaign-result-0196-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0197.yaml
+  token: metaq-question-exam-campaign-result-0197-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0198.yaml
+  token: metaq-question-exam-campaign-result-0198-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0199.yaml
+  token: metaq-question-exam-campaign-result-0199-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0200.yaml
+  token: metaq-question-exam-campaign-result-0200-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0201.yaml
+  token: metaq-question-exam-campaign-result-0201-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0202.yaml
+  token: metaq-question-exam-campaign-result-0202-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0203.yaml
+  token: metaq-question-exam-campaign-result-0203-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0204.yaml
+  token: metaq-question-exam-campaign-result-0204-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0205.yaml
+  token: metaq-question-exam-campaign-result-0205-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0206.yaml
+  token: metaq-question-exam-campaign-result-0206-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0207.yaml
+  token: metaq-question-exam-campaign-result-0207-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0208.yaml
+  token: metaq-question-exam-campaign-result-0208-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0209.yaml
+  token: metaq-question-exam-campaign-result-0209-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0210.yaml
+  token: metaq-question-exam-campaign-result-0210-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0211.yaml
+  token: metaq-question-exam-campaign-result-0211-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0212.yaml
+  token: metaq-question-exam-campaign-result-0212-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0213.yaml
+  token: metaq-question-exam-campaign-result-0213-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0214.yaml
+  token: metaq-question-exam-campaign-result-0214-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0215.yaml
+  token: metaq-question-exam-campaign-result-0215-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0216.yaml
+  token: metaq-question-exam-campaign-result-0216-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0217.yaml
+  token: metaq-question-exam-campaign-result-0217-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0218.yaml
+  token: metaq-question-exam-campaign-result-0218-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0219.yaml
+  token: metaq-question-exam-campaign-result-0219-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0220.yaml
+  token: metaq-question-exam-campaign-result-0220-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0221.yaml
+  token: metaq-question-exam-campaign-result-0221-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0222.yaml
+  token: metaq-question-exam-campaign-result-0222-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0223.yaml
+  token: metaq-question-exam-campaign-result-0223-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0224.yaml
+  token: metaq-question-exam-campaign-result-0224-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0225.yaml
+  token: metaq-question-exam-campaign-result-0225-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0226.yaml
+  token: metaq-question-exam-campaign-result-0226-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0227.yaml
+  token: metaq-question-exam-campaign-result-0227-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0228.yaml
+  token: metaq-question-exam-campaign-result-0228-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0229.yaml
+  token: metaq-question-exam-campaign-result-0229-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0230.yaml
+  token: metaq-question-exam-campaign-result-0230-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0231.yaml
+  token: metaq-question-exam-campaign-result-0231-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0232.yaml
+  token: metaq-question-exam-campaign-result-0232-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0233.yaml
+  token: metaq-question-exam-campaign-result-0233-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0234.yaml
+  token: metaq-question-exam-campaign-result-0234-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0235.yaml
+  token: metaq-question-exam-campaign-result-0235-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0236.yaml
+  token: metaq-question-exam-campaign-result-0236-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0237.yaml
+  token: metaq-question-exam-campaign-result-0237-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0238.yaml
+  token: metaq-question-exam-campaign-result-0238-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0239.yaml
+  token: metaq-question-exam-campaign-result-0239-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b4/PQ-0240.yaml
+  token: metaq-question-exam-campaign-result-0240-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0241.yaml
+  token: metaq-question-exam-campaign-result-0241-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0242.yaml
+  token: metaq-question-exam-campaign-result-0242-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0243.yaml
+  token: metaq-question-exam-campaign-result-0243-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0244.yaml
+  token: metaq-question-exam-campaign-result-0244-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0245.yaml
+  token: metaq-question-exam-campaign-result-0245-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0246.yaml
+  token: metaq-question-exam-campaign-result-0246-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0247.yaml
+  token: metaq-question-exam-campaign-result-0247-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0248.yaml
+  token: metaq-question-exam-campaign-result-0248-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0249.yaml
+  token: metaq-question-exam-campaign-result-0249-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0250.yaml
+  token: metaq-question-exam-campaign-result-0250-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0251.yaml
+  token: metaq-question-exam-campaign-result-0251-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0252.yaml
+  token: metaq-question-exam-campaign-result-0252-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0253.yaml
+  token: metaq-question-exam-campaign-result-0253-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0254.yaml
+  token: metaq-question-exam-campaign-result-0254-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0255.yaml
+  token: metaq-question-exam-campaign-result-0255-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0256.yaml
+  token: metaq-question-exam-campaign-result-0256-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0257.yaml
+  token: metaq-question-exam-campaign-result-0257-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0258.yaml
+  token: metaq-question-exam-campaign-result-0258-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0259.yaml
+  token: metaq-question-exam-campaign-result-0259-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0260.yaml
+  token: metaq-question-exam-campaign-result-0260-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0261.yaml
+  token: metaq-question-exam-campaign-result-0261-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0262.yaml
+  token: metaq-question-exam-campaign-result-0262-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0263.yaml
+  token: metaq-question-exam-campaign-result-0263-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0264.yaml
+  token: metaq-question-exam-campaign-result-0264-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0265.yaml
+  token: metaq-question-exam-campaign-result-0265-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0266.yaml
+  token: metaq-question-exam-campaign-result-0266-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0267.yaml
+  token: metaq-question-exam-campaign-result-0267-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0268.yaml
+  token: metaq-question-exam-campaign-result-0268-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0269.yaml
+  token: metaq-question-exam-campaign-result-0269-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0270.yaml
+  token: metaq-question-exam-campaign-result-0270-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0271.yaml
+  token: metaq-question-exam-campaign-result-0271-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0272.yaml
+  token: metaq-question-exam-campaign-result-0272-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0273.yaml
+  token: metaq-question-exam-campaign-result-0273-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0274.yaml
+  token: metaq-question-exam-campaign-result-0274-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0275.yaml
+  token: metaq-question-exam-campaign-result-0275-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0276.yaml
+  token: metaq-question-exam-campaign-result-0276-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0277.yaml
+  token: metaq-question-exam-campaign-result-0277-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0278.yaml
+  token: metaq-question-exam-campaign-result-0278-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0279.yaml
+  token: metaq-question-exam-campaign-result-0279-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0280.yaml
+  token: metaq-question-exam-campaign-result-0280-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0281.yaml
+  token: metaq-question-exam-campaign-result-0281-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0282.yaml
+  token: metaq-question-exam-campaign-result-0282-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+- file: docs/_working/meta_question_answers/results/b5/PQ-0283.yaml
+  token: metaq-question-exam-campaign-result-0283-20260924
+  created_by: st-metaq-20260923
+  capability: metaq-question-exam-campaign
+  merge_evaluation: "283 问考试结果镜像分片（真源=PG exam_result；results_all.yaml 为合并人读版），无重复簇"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 di_seam_exemptions: []
