@@ -55945,7 +55945,7 @@ entries:
   name_en: "cost_trio_exam (rebuilt)"
   desc_zh: "做T配对成本三件套判据脚本：bt产物D后成交按symbol×day双边配对，出CST-T0-001成本口径下的毛/净价差四数与insufficient土规判定"
   desc_en: ""
-  plain_zh: "这是做T考试的尺子。它把回测留下的每笔买卖按同一只票同一天配成一对，算出每对赚的价差够不够付手续费。配对满30对才允许下结论，不够就老实说样本不足，不许瞎下结论。原来这把尺子放在临时目录里丢了，现在按裁定搬进正式文档目录，以后不会再丢。"
+  plain_zh: "做T 成本三件套考试的归档副本：Kimi 战役 lane_reports 区内与原件同字节的留档拷贝，不是第二把尺子；要改判据只改 scripts/audit/cost_trio_exam.py 原件再同步此副本，本条只负责让人查得见这份拷贝存在、以及它与原件的关系。"
   responsibility_layer: business
 - module_path: src/zephyr/alt_data/cohort_daily_writer.py
   domain_id: D_ALT_DATA
@@ -56878,11 +56878,11 @@ entries:
   responsibility_layer: governance
 - module_path: scripts/audit/cost_trio_exam.py
   domain_id: D_BACKTEST
-  name_zh: 做T配对成本判据（重建版）
-  name_en: cost_trio_exam (rebuilt)
-  desc_zh: 做T配对成本三件套判据脚本：bt产物D后成交按symbol×day双边配对，出CST-T0-001成本口径下的毛/净价差四数与insufficient土规判定
-  desc_en: ''
-  plain_zh: 这是做T考试的尺子。它把回测留下的每笔买卖按同一只票同一天配成一对，算出每对赚的价差够不够付手续费。配对满30对才允许下结论，不够就老实说样本不足，不许瞎下结论。原来这把尺子放在临时目录里丢了，现在按裁定搬进正式文档目录，以后不会再丢。
+  name_zh: "做T配对成本判据（重建版）"
+  name_en: "cost_trio_exam (rebuilt)"
+  desc_zh: "做T配对成本三件套判据脚本：bt产物D后成交按symbol×day双边配对，出CST-T0-001成本口径下的毛/净价差四数与insufficient土规判定"
+  desc_en: ""
+  plain_zh: "把成交流水按'同一只票同一天既买又卖'配成对，先算毛价差（卖均价比买均价），再扣掉 CST-T0-001 那 31.2 个基点的固定往返成本，最后数配对够不够 30 对：够格才允许出'做T 划不划算'的结论，不够格就只报样本不足，禁止硬给方向。"
   responsibility_layer: business
 - module_path: scripts/audit/t0_conditional_e4_exam.py
   domain_id: D_BACKTEST
