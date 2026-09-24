@@ -1,0 +1,27 @@
+notes: ''
+outcome: pass
+evidence:
+- probe: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  query: §2 SL-A02 Tick 分笔 U5 行 vs 题面消费层逐层对照
+  result:
+    层数: 2
+    一致层数: 2
+    不一致项: 0
+    题面层→登记层:
+      L3 微观情绪: L3 微观情绪
+      L5 执行验证（滑点/冲击）: L5 执行验证（滑点/冲击，近独占来源）
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0138
+fail_type: null
+threshold: 不一致项=0（consumers 与源线谱七层挂载登记一致）
+conclusion: consumers 与源线谱七层挂载登记逐层一致，不一致项=0。题面宣称 2 个消费层与 SL-A02 Tick 分笔 U5 登记行逐字对应（对照表见
+  evidence）；七层模型（L0~L6）在源线谱/战役纪要中口径统一，各层命名无漂移。 （SL-A02 Tick 分笔）
+confidence: 0.6
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（源线谱 §2 各线 U5 行在册可读）
+  caliber: OK（判据=题面消费层集合 vs U5 登记集合逐层相等，机械可判）
+  mechanical: OK（逐层对照表留痕）
+pit_assertion: U5 消费方核验为登记静态对照；tick 流水以到货时戳落库；历史覆盖以包到货日为界并显式登记断档，收益窗自 T+1 起
+q_id: PQ-0138

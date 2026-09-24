@@ -1,0 +1,36 @@
+notes: ''
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: SELECT DISTINCT trade_date FROM c1_market.kline_sector_880 FINAL WHERE trade_date
+    BETWEEN '2020-03-17' AND '2025-09-09'（对照 kline_daily 交易日历同窗）
+  result:
+    window: 2020-03-17~2025-09-09
+    missing_days: 0
+    trading_days_actual: 1333
+    trading_days_expected: 1333
+- probe: src/zephyr/data/config/known_data_gaps.yaml
+  query: known_data_gaps.yaml kline_sector_880_history_structural 条目（312 缺口日 tqcenter
+    换道回补）
+  result:
+    status: completed
+    backfill_rows: 664687
+    final_gap_days: 0
+    trading_days_covered_full_table: 1577
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0142
+fail_type: null
+threshold: 不一致项=0（更新频率与延迟与 DS 册健康检查口径一致）
+conclusion: 登记节奏'盘中实时快照（subscribe_hq 推送独有）+日更 K 线'与库内实况一致，不一致项=0。日更 K 线腿：kline_sector_880
+  2020-03-17~2025-09-09 应考 1,333 交易日、实有 1,333/1,333（100%）——含已回补归零的历史 312 缺口日（gaps
+  kline_sector_880_history_structural status=completed，终验全表缺日=0）；盘中实时快照为 TQCENTER
+  subscribe_hq 独占能力（DS 册 coverage/coverage_reason 登记），切点后现状在跑。 （SL-A03 板块/概念指数）
+confidence: 0.8
+data_window:
+  end: '2025-09-09'
+  start: '2020-03-17'
+three_check:
+  data: OK（源线谱 U3 行+哨兵配置+库内日历三者在册/在库可查）
+  caliber: OK（判据=登记节奏 vs 实有交易日覆盖 vs 哨兵阈值语义，逐项机械对账）
+  mechanical: OK（应考日数×实有日数+哨兵字段留痕）
+pit_assertion: U3 对账对象=登记文本+哨兵配置+闭卷窗内数据覆盖（全部 <=2025-09-09）；切点后信息仅作现状观察不进入一致性判定。
+q_id: PQ-0142

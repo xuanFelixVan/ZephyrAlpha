@@ -1,0 +1,33 @@
+notes: notes：U6 考试方案（IC/分层回测+样本外复考）在册；复权腿对齐违例另见 PQ-0012（fail infra），不影响词表覆盖判定。
+outcome: pass
+evidence:
+- probe: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  query: §2 SL-A01 U1 行：'回答个股/指数价量趋势与动量能否预测 N 日收益（信号词：收盘价/成交量/振幅/均线斜率/20 日突破）'
+  result:
+    主题覆盖: 2/2=100%
+    宣称主题:
+    - 价量趋势
+    - 动量预测
+    词表词数: 5
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_schema_dump.json
+  query: DESCRIBE c1_market.kline_daily → close/volume/amplitude；kline_30min → close/volume/amplitude
+  result:
+    列名实证: 全部在库
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0128
+fail_type: null
+threshold: 覆盖率=100%（信号词表非空且宣称主题全部落在词集覆盖内）
+conclusion: 词表非空（5 词：收盘价/成交量/振幅/均线斜率/20 日突破）。宣称主题 2/2 全覆盖：①价量趋势预测←收盘价+成交量+振幅；②动量预测←均线斜率+20
+  日突破（均为 close 派生）。机械背书：DESCRIBE 实证 kline_daily/kline_30min 均有 close/volume/amplitude
+  列，派生算子可算；kline_daily 闭卷窗 1990-12-19~2025-09-09 共 8,718,119 行、kline_30min 38,075,528
+  行，数据腿在库。覆盖率=100%。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（审计对象=源线谱 U1 行+DS 册，均在册可读；底层表列名经 DESCRIBE 实证）
+  caliber: OK（判据=宣称主题→信号词逐词映射，词表非空+覆盖计数，机械可判）
+  mechanical: OK（词级对照表全文留痕于 evidence）
+pit_assertion: U1 词表核验为静态登记审计（词级对照），不涉时序取数；K 线落定不修订；复权算子禁进 PIT 窗，信号只用 T 日及以前落定数据，收益窗自
+  T+1 起
+q_id: PQ-0128

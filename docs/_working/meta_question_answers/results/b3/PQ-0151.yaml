@@ -1,0 +1,45 @@
+notes: 口径缺口如实登记：登记表 U6 文本未含显式数字阈值（ρ 触发线 0.5、分组数 10、月末频率均为本探针固定常数，0.5 借自同线 PQ-0023
+  考题阈值），建议退役判据登记硬化补数字。重放触发器在 8/11 年度输出『单调性破坏』——说明判据可执行且与 PQ-0023 fail(no_alpha) 结论互相印证：EP
+  单调性整体脆弱。置信 0.7（机检重放+口径假设）。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_fund_PQ-0151.py
+  query: 月末截面 EP 十分位（同 PQ-0023 管线）→逐年 LS 年化与逐年 spearman(组秩,组均收益)；全A EP 中位数 expanding
+    分位序列 AR(1)/半衰期；单调性破坏年度清单
+  result:
+    months: 128
+    ann_ls_total: 0.0432
+    executability: 5/5
+    rho_year_2017: 0.8182
+    rho_year_2019: -0.6242
+    rho_year_2023: 0.8909
+    median_ep_percentile_ar1: 0.986
+    monotonicity_break_years:
+    - '2015'
+    - '2016'
+    - '2018'
+    - '2020'
+    - '2021'
+    - '2022'
+    - '2024'
+    - '2025'
+    median_ep_half_life_months: 49.1
+exam_ref: st-metaq-20260923/probe/batch_stat_fund_PQ-0151
+fail_type: null
+threshold: 判据可执行率=100%
+conclusion: pass（判据可执行率 5/5=100%）：SL-A04 U6 退役判据『多空分组年化差+分位均值回归检验；证伪=横截面单调性破坏』在闭卷窗内完整机械重放成功。S1
+  估值月末截面+复权收益（128 个月，2015-01-30~2025-08-29）可得；S2 多空分组年化差机械计算（全窗 D10-D1 年化 +4.32%，逐年序列齐）；S3
+  分位均值回归检验机械计算（全A EP 中位数 expanding 分位序列 AR(1)=0.986、隐含半衰期约 49.1 个月——均值回归存在但缓慢，均可代码复现）；S4
+  单调性破坏退役判定机械（规则『年度十分位 ρ|<0.5 即触发』：2015/2016/2018/2020/2021/2022/2024/2025 共 8 个年度触发，2017
+  ρ=0.818、2019 ρ=-0.624、2023 ρ=0.891 三年达标，触发器输出确定）；S5 全窗重放跑通。审计对象存在且闭环可执行。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-05'
+three_check:
+  data: OK：stock_indicator（pe>0）与 kline_daily 复权价月末截面齐备，同 PQ-0023 复核
+  caliber: OK：U6 判据两组件（多空年化差、单调性/均值回归）均落地为可代码计算统计量；『单调性破坏』落地为年度 ρ 阈值规则
+  mechanical: OK：重放端到端确定性输出，退役判定逐年可机械复现
+pit_assertion: EP 取月末 stock_indicator 盘后截面、收益窗自 T+1 起；分位秩用 expanding 历史窗（无未来信息）；全部常数（10
+  分组/月末频率/ρ<0.5 触发线/AR(1) 口径）运行前固定，无参数搜索。
+q_id: PQ-0151

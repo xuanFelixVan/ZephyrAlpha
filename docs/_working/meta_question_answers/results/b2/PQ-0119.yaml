@@ -1,0 +1,42 @@
+notes: 合成信号为『EP/BP 分位信号』主判对象；EP、BP 单因子结果同批留存（stat_fund out_PQ-0119_120_121.json）。个别交易日
+  join 后截面 n 最小 51（kline 与 indicator 日历错位残留），日均 2365，对 IC 序列影响可忽略。PQ-0120（5日）/PQ-0121（20日）同口径另卷。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_fund_PQ-0119_120_121.py
+  query: WITH kd AS(…close*adj_factor ac…), fw AS(leadInFrame(ac,1/5/20) OVER symbol),
+    j AS(stock_indicator INNER JOIN fw ON trade_date,symbol WHERE pe>0 AND pb>0 AND
+    trade_date<='2025-09-09'), r1/r2 AS(rank() OVER d …) SELECT d, count(), corr(re,rf1)
+    ic_ep1, corr(rb,rf1) ic_bp1, corr(rc,rf1) ic_cp1 … GROUP BY d（corr on ranks=Spearman；本
+    CH 无 spearmanCorr 函数）
+  result:
+    n_days: 2579
+    n_mean: 2364.7
+    bp_1d_ic: 0.02752
+    cp_1d_ic: 0.02663
+    ep_1d_ic: 0.01817
+    cp_1d_nw_t: 8.437
+    cp_1d_is_ic: 0.02116
+    cp_1d_oos_t: 6.313
+    cp_1d_oos_ic: 0.03484
+    cp_1d_oos_days: 1032
+exam_ref: st-metaq-20260923/probe/batch_stat_fund_PQ-0119
+fail_type: null
+threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+conclusion: pass：EP/BP 分位信号（1/PE 与 1/PB 截面秩均值合成）在全 A 池对 1 日前瞻收益的日频秩 IC=0.02663>0.02，Newey-West
+  t(lag=1)=8.437>2；60/40 切分后样本外 IC=0.03484>0.01（OOS t=6.313，1032 日），样本内 IC=0.02116/t=5.647。全窗口
+  2579 个交易日（2015-01-05~2025-08-12，末 20 日因前瞻窗截断自然剔除），日均截面 2365 只（pe>0 且 pb>0 过滤后）。分因子看
+  BP 单因子 IC=0.02752/t=9.025、EP 单因子 IC=0.01817/t=6.520（EP 单独略低于 0.02 但合成信号达标）。结论：EP/BP
+  分位信号 1 日前瞻预测力显著>0，通过阈值。
+confidence: 1.0
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-05'
+three_check:
+  data: OK：stock_indicator 10298332 行（2015-01-05~2025-09-09，pe/pb 齐备，无重复主键），kline_daily
+    8718119 行 adj_factor 零缺失
+  caliber: OK：EP=1/pe、BP=1/pb、合成=(EP秩+BP秩)/2；IC=corr(日截面秩,前瞻收益秩)=Spearman；NW t 取 lag=1；60/40
+    按交易日序切分
+  mechanical: OK：IC>0.02 且 t>2、OOS IC>0.01 全部代码判定
+pit_assertion: 因子取自 stock_indicator 当日盘后 pe/pb（T 日收盘可得），前瞻收益按 kline_daily 复权价 ac_f1/ac-1
+  自 T 收盘起算（收益窗自 T+1 起）；kline 窗口硬约束 <= 2025-09-09，末端前瞻窗越界自然为 NULL 被剔除，无前视。
+q_id: PQ-0119

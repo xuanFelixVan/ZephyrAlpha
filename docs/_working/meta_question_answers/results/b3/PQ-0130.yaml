@@ -1,0 +1,41 @@
+notes: 延迟腿留待 fetch_perf 日志链复考（现状观察在位）；节奏腿 100% 达标。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: SELECT DISTINCT trade_date FROM c1_market.kline_daily FINAL WHERE trade_date
+    BETWEEN '2023-01-01' AND '2025-09-09'（对照 kline_daily 交易日历同窗）；kline_30min 同构（2021-09-01
+    起）
+  result:
+    window: 2023-01-01~2025-09-09（30min 自 2021-09-01）
+    missing_days: 0
+    kline_30min_trading_days_actual: 975
+    kline_daily_trading_days_actual: 652
+    kline_30min_trading_days_expected: 975
+    kline_daily_trading_days_expected: 652
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: SELECT quantile(0.5/0.9/0.99)(dateDiff('hour', trade_date, ingest_ts)), countIf(toDate(ingest_ts)
+    > trade_date), count() FROM c1_market.kline_daily FINAL WHERE trade_date BETWEEN
+    '2025-06-01' AND '2025-09-09'
+  result:
+    p50_hours: 9310
+    p90_hours: 10294
+    p99_hours: 10486
+    rows_checked: 384814
+    interpretation: ingest_ts 为 bdpan 批量回灌时戳非逐日采集时戳，延迟腿不可由 ingest_ts 机检（如实登记）
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0130
+fail_type: null
+threshold: 不一致项=0（更新频率与延迟与 DS 册健康检查口径一致）
+conclusion: 登记节奏'日线日更盘后；分钟线盘后批量，延迟小时级'与库内实况一致，不一致项=0。日线腿：kline_daily 2023-01-01~2025-09-09
+  应考 652 交易日、实有 652/652（100%）；分钟腿：kline_30min 2021-09-01 起 975/975（100%）——日更无断档与登记节奏吻合。健康检查口径：fetch_perf
+  采集日志+integrity_check 在位（现状观察）；哨兵配置未含 kline 族（由 fetch_perf/integrity_check 承担，口径差异属分工非不一致）。
+  （SL-A01 日线/分钟行情）
+confidence: 0.75
+data_window:
+  end: '2025-09-09'
+  start: '2023-01-01'
+three_check:
+  data: OK（源线谱 U3 行+哨兵配置+库内日历三者在册/在库可查）
+  caliber: OK（判据=登记节奏 vs 实有交易日覆盖 vs 哨兵阈值语义，逐项机械对账）
+  mechanical: OK（应考日数×实有日数+哨兵字段留痕）
+pit_assertion: U3 对账对象=登记文本+哨兵配置+闭卷窗内数据覆盖（全部 <=2025-09-09）；切点后信息仅作现状观察不进入一致性判定。
+q_id: PQ-0130

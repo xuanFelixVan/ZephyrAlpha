@@ -1,0 +1,30 @@
+notes: 复考建议=对 2026 断档窗做登记↔实况全量对账（4 断档 4 登记，本次仅现状观察）；2022-2024 回补工单在册（open）。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0020.py
+  query: tick_data 逐日行数 vs kline_daily 交易日历（闭卷窗全查）+ known_data_gaps.yaml tick 条目解析
+  result:
+    实有日: 168
+    断档数: 0
+    登记条目: 4
+    违规样本: 0
+    窗内应考日: 168
+    登记与实况吻合: 4
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0137
+fail_type: null
+threshold: 违规样本=0（入库链路抽样审计，月度 30 条）
+conclusion: TDX 分笔仅最近交易日的历史断档风险已被回填缺口显式登记机制 100% 对冲，pass（违规样本=0）。登记载体在位且机械执行：known_data_gaps.yaml（#ARCH-CH-029
+  缺口注册表）+ backfill_checker（对已登记缺口全范围回看、不受 7 天窗口限制）；tick_data 断档登记 4/4 条与库内实况吻合——2022-2024
+  个股 tick 不在库(open, bdpan 通道可回补)/2026-06 缺口(completed, 回补 3.19 亿行)/2026-07~08 八日(accepted,
+  全渠道确认永久不存在)/2026-09-17(completed, 模拟盘回补 2,832 万行)。闭卷窗全查 168 交易日 0 断档（168/168 日、34.76
+  亿行），抽样审计违规样本=0。历史覆盖以包到货日为界实证：窗内 data_source 100%='bdpan'。
+confidence: 0.8
+data_window:
+  end: '2025-09-09'
+  start: '2025-01-02'
+three_check:
+  data: OK
+  caliber: OK（断档=日缺失/行数<5M；登记对账=YAML 条目字段逐项核对）
+  mechanical: OK
+pit_assertion: 审计=落库台账现状比对（库内日历 vs YAML 登记条目），2026 年断档仅作机制在位佐证（现状观察），不进入窗内阈值比较。
+q_id: PQ-0137

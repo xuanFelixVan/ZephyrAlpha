@@ -1,0 +1,27 @@
+notes: ''
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_u3u4_rest.py
+  query: SELECT DISTINCT trade_date FROM c1_market.stock_daily_basic FINAL WHERE trade_date
+    BETWEEN '2021-01-04' AND '2025-09-09'（对照 kline_daily 交易日历同窗）
+  result:
+    window: 2021-01-04~2025-09-09
+    rows_window: 5692453
+    missing_days: 0
+    trading_days_actual: 1137
+    trading_days_expected: 1137
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0148
+fail_type: null
+threshold: 不一致项=0（更新频率与延迟与 DS 册健康检查口径一致）
+conclusion: 登记节奏'日更盘后'与库内实况一致，不一致项=0。stock_daily_basic 2021-01-04~2025-09-09 应考 1,137
+  交易日、实有 1,137/1,137（100%），零缺日。 （SL-A04 估值）
+confidence: 0.85
+data_window:
+  end: '2025-09-09'
+  start: '2021-01-04'
+three_check:
+  data: OK（源线谱 U3 行+哨兵配置+库内日历三者在册/在库可查）
+  caliber: OK（判据=登记节奏 vs 实有交易日覆盖 vs 哨兵阈值语义，逐项机械对账）
+  mechanical: OK（应考日数×实有日数+哨兵字段留痕）
+pit_assertion: U3 对账对象=登记文本+哨兵配置+闭卷窗内数据覆盖（全部 <=2025-09-09）；切点后信息仅作现状观察不进入一致性判定。
+q_id: PQ-0148
