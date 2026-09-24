@@ -1,0 +1,30 @@
+notes: notes：PQ-0024 判 fail 为判据结构问题（PIT vs 前视口径差），不影响本问词表覆盖判定。
+outcome: pass
+evidence:
+- probe: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  query: §2 SL-A04 U1 行：'估值横截面（PE/PB/股息率）能否区分未来收益（信号词：EP/BP/分位数）'
+  result:
+    主题覆盖: 1/1=100%
+    词表词数: 3
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_val_ic_result.json
+  query: EP 因子 PIT 口径实测（55 信号月×月均 4,726 只）
+  result:
+    mean_IC_PIT: 0.02141
+    信号月数: 55
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0146
+fail_type: null
+threshold: 覆盖率=100%（信号词表非空且宣称主题全部落在词集覆盖内）
+conclusion: 词表非空（3 词：EP/BP/分位数）。宣称主题 1/1 全覆盖：估值横截面区分未来收益←EP/BP 横截面+分位数分组。机械背书：EP=net_profit_excl_minority/total_mv
+  可算（income_statement×stock_daily_basic，PQ-0024 即按此构装并实测 PIT 口径月均 rank IC=+0.0214/55
+  月）；BP=equity_excl_minority/total_mv 可算；分位数=横截面 rank 派生。stock_daily_basic 5,692,453
+  行+三财务表 92.9 万行闭卷窗在库。覆盖率=100%。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（审计对象=源线谱 U1 行+DS 册，均在册可读；底层表列名经 DESCRIBE 实证）
+  caliber: OK（判据=宣称主题→信号词逐词映射，词表非空+覆盖计数，机械可判）
+  mechanical: OK（词级对照表全文留痕于 evidence）
+pit_assertion: U1 词表核验为静态登记审计（词级对照），不涉时序取数；估值因子按公告日 PIT 取数且 T 日盘后可得，收益窗自 T+1 起
+q_id: PQ-0146

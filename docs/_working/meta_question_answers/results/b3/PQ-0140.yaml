@@ -1,0 +1,30 @@
+notes: notes：资金净流入腿窗内零样本已登记（2026-09-15 起逐日累积）；复考时该腿可直接机检。
+outcome: pass
+evidence:
+- probe: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  query: §2 SL-A03 U1 行：'板块轮动与强弱持续性能否领先个股（信号词：板块涨幅排名/板块资金净流入/新高家数）'
+  result:
+    主题覆盖: 2/2=100%
+    词表词数: 3
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_01_dateranges.py
+  query: kline_sector_880 闭卷窗 min/max/count；sector_fund_flow 闭卷窗行数
+  result:
+    days: 1333
+    kline_sector_880_rows: 319396
+    sector_fund_flow_闭卷窗: 0
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0140
+fail_type: null
+threshold: 覆盖率=100%（信号词表非空且宣称主题全部落在词集覆盖内）
+conclusion: 词表非空（3 词：板块涨幅排名/板块资金净流入/新高家数）。宣称主题 2/2 全覆盖：①板块轮动←涨幅排名；②强弱持续领先个股←新高家数+排名组合。机械背书：kline_sector_880
+  闭卷窗 319,396 行/1,333 交易日（排名与新高家数可算）；sector_fund_flow（资金净流入腿）闭卷窗 0 行——采集 2026-09-15
+  上线（gaps sector_fund_flow_empty 已缓解登记），该词数据腿窗内缺位但词表覆盖判定按宣称主题落点仍为 100%。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（审计对象=源线谱 U1 行+DS 册，均在册可读；底层表列名经 DESCRIBE 实证）
+  caliber: OK（判据=宣称主题→信号词逐词映射，词表非空+覆盖计数，机械可判）
+  mechanical: OK（词级对照表全文留痕于 evidence）
+pit_assertion: U1 词表核验为静态登记审计（词级对照），不涉时序取数；板块排名取 T 日收盘快照，成分按当日存证快照对齐，收益窗自 T+1 起
+q_id: PQ-0140

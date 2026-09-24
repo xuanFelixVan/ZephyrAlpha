@@ -1,0 +1,33 @@
+notes: 复考前置：①实盘成交回执按单落库（execution_report）并覆盖 >= 一个闭卷窗样本段（tick_data 现覆盖 2025-01-02
+  起）；②'无增量信息'阈值（如 模拟成交价 vs 实盘回执 VWAP 滑点差 bps 的显著性判据）登记进谱册 U6 或 SOP；③两者齐备后本判据可按 PQ-0133
+  同法重放。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_market_03_tzverify.py
+  query: 'c1_market.execution_report: SELECT count(), min(execution_start), max(execution_start)
+    -> (1, 2026-09-18, 2026-09-18), 切点前 0 行; c1_backtest.sim_trade_log 全表 66 行, 无与实盘回执配对字段/机制;
+    谱册 SL-A02 U6 文本无数字阈值'
+  result:
+    sim_trade_log_rows: 66
+    tick_data_pre_cut_rows: 3476481797
+    execution_report_total_rows: 1
+    execution_report_pre_cut_rows: 0
+    registry_u6_threshold_registered: 0
+    execution_report_max_execution_start: '2026-09-18'
+exam_ref: st-metaq-20260923/probe/stat_market_PQ-0139
+fail_type: null
+threshold: 判据可执行率=100%
+conclusion: SL-A02 U6 退役证伪方案（模拟成交 vs 实盘成交回执对比；证伪=tick 级信号无增量信息）当前不可重放：对比对象缺失——实盘回执表
+  c1_market.execution_report 切点前 0 行（全表仅 1 行，execution_start=2026-09-18，切点后），c1_backtest.sim_trade_log
+  仅 66 行（模拟侧）且无与实盘回执的配对机制；且'tick 级信号无增量信息'在谱册 U6 原文无数字阈值/增量量化口径。模拟侧原料虽在（tick_data
+  切点内 34.76 亿行可算模拟成交），但无实盘回执则'对比'与'增量'均无法计算，判据闭环不可执行。判 insufficient（机制未建，非 no_alpha）。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-01-02'
+three_check:
+  data: 'NO: execution_report 切点前 0 行；sim_trade_log 66 行但无实盘配对对象'
+  caliber: 'NO: ''无增量信息''无登记的数字阈值与量化口径（谱册 U6 原文仅一句定性）'
+  mechanical: 'NO: 对比管线（信号->模拟成交->实盘回执->增量比较->退役布尔）关键节点缺数据与阈值，无法闭环'
+pit_assertion: 核查均限切点前（execution_report WHERE execution_start<=2025-09-09 为 0 行），未使用切点后数据参与判定。
+q_id: PQ-0139

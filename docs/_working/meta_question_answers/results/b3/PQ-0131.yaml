@@ -1,0 +1,33 @@
+notes: 复考前置=hfq 链重算对齐（同 PQ-0012 notes）。禁以调容差方式消违例。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0012.py
+  query: 同 PQ-0012 三表 JOIN 月度采样复算（月度 30 条口径=每月前 30 采样符号子集）
+  result:
+    违例点: 24130
+    抽检点数: 53134
+    2024年子样本点: 8180
+    2024年子样本违例: 6986
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0012_diag2.py
+  query: 复权隔离核验：kline_daily.data_source 分布与 pct_change/close 自洽抽查（000028 2021-01，close_ret
+    与 pct_chg 逐日吻合）
+  result:
+    原始表被复权改写行数: 0
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0131
+fail_type: infra
+threshold: 违规样本=0（入库链路抽样审计，月度 30 条）
+conclusion: U4 口径下同链路抽样审计（月度 30 条）违例样本≠0，fail（infra）。与 PQ-0012 同批数据：56 个月×50 只抽样中按每月前
+  30 只取子集口径，违例点全域 24,130/53,134（45.4%），2024 单年 20 只 8,180 点中违例 6,986（85.4%）；违例性质=hfq
+  表（bdpan_hfq）与 raw×adj_factor 重算不对齐、日收益逐日漂移，非孤立坏行。'复权算子禁进 PIT 窗'结构对冲在位：复权序列隔离于独立表未改写
+  kline_daily 原始价（1,383 万行原始数据 data_source=miniqmt/空/tushare 无复权改写痕迹，pct_change 与
+  close 比值在非除权日自洽）；但因子对齐执行违例>0，threshold 不达标。
+confidence: 0.85
+data_window:
+  end: '2025-09-09'
+  start: '2021-01-04'
+three_check:
+  data: OK
+  caliber: OK（违例=|hfq/raw−k·adj_factor|/k·adj_factor>1e-3 机械可判）
+  mechanical: OK
+pit_assertion: 抽样审计仅用 <=2025-09-09 落库三表时戳数据；复权数据隔离独立表，原始表未进复权算子。
+q_id: PQ-0131

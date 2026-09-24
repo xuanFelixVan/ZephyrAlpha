@@ -1,0 +1,49 @@
+notes: 缺口备注：谱册 02_source_line_registry.md SL-A01 U6 原文（'IC/分层回测+样本外复考；证伪=领先性样本外消失即退役'）不含数字阈值与窗口参数；本次重放以
+  exam_plan 绑定阈值替代并证明可闭环。建议把阈值/窗口参数回写谱册或 SOP，使退役判据文本自足，方可视为完全闭环（本判定按'能否机械执行'给 pass，阈值文本缺口不影响可执行性本身）。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_market_PQ-011x.py
+  query: 'SELECT d.trade_date, d.symbol, toFloat64(d.close) c, toFloat64(a.adj_factor)
+    af FROM c1_market.kline_daily d INNER JOIN c1_market.adj_factor a ON a.symbol=d.symbol
+    AND a.trade_date=d.trade_date WHERE d.trade_date>=''2019-01-01'' AND d.trade_date<=''2025-09-09'';
+    wide 矩阵上: slope=MA20(ac)/MA20(ac).shift(5)-1, breakout=1{ac>max(ac,t-20..t-1)},
+    signal=sign(slope)+breakout; retk=ac.shift(-k)/ac-1; 逐日截面 spearman 秩 IC (min 300
+    名), NW t lag=k, 60/40 时间切分; 分层=信号横截面 5 分位等权组合次日收益，L5-L1 价差'
+  result:
+    n_1d: 1599
+    n_5d: 1595
+    ic_1d: -0.02769
+    ic_5d: -0.03963
+    n_20d: 1580
+    ic_20d: -0.05006
+    nw_t_1d: -9.466
+    nw_t_5d: -7.991
+    nw_t_20d: -5.782
+    oos_ic_1d: -0.03159
+    oos_ic_5d: -0.04932
+    oos_ic_20d: -0.05293
+    steps_total: 5
+    可执行率: 1.0
+    steps_executable: 5
+    layered_Q1_ann_pct: 27.932
+    layered_Q5_ann_pct: 16.335
+    L5_minus_L1_daily_bp: -4.79
+exam_ref: st-metaq-20260923/probe/stat_market_PQ-0133
+fail_type: null
+threshold: 判据可执行率=100%
+conclusion: SL-A01 U6 退役证伪方案（IC/分层回测+样本外复考；领先性样本外消失即退役）经闭卷窗真实重放，5 步组件全部机械可执行，判据可执行率=100%（5/5）：①信号定义机械落地（sign(MA20斜率5日)+20日突破布尔，公式入
+  evidence）；②IC 序列计算（全 A 秩 IC，1/5/20 日前瞻 n=1599/1595/1580 日）；③分层回测（5 分位等权 1 日持有，Q1..Q5
+  年化 27.932%/8.035%/39.017%/7.437%/16.335%，L5-L1=-0.000479bp/日）；④样本外复考（60/40 时间切分，OOS
+  IC 与 NW t 均产出：1 日 -0.0316/t=-6.56，5 日 -0.0493/-6.23，20 日 -0.0529/-3.91）；⑤退役判定含明确阈值机械产出布尔（exam_plan
+  阈值 IC>0.02/t>2/OOS IC>0.01 代入：全 horizon IC<0.02 -> 领先性不达 -> 退役判定=True，无需人工裁量）。重放同时证明当前该合成信号在闭卷窗为显著负
+  IC（反向），退役判据会机械触发。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2019-01-01'
+three_check:
+  data: 'OK: kline_daily+adj_factor 759.6 万行真实重放（非纸面核验）'
+  caliber: 'OK: 阈值取 exam_plan 绑定（IC>0.02/t>2/OOS>0.01）；谱册 U6 原文无数字阈值，已在 notes 登记缺口'
+  mechanical: 'OK: 每步产出数字或布尔，退役判定规则可代码化'
+pit_assertion: 重放全部在 2019-01-01..2025-09-09 闭卷窗内；信号 T 日盘后落定、收益自 T+1、复权因子取 T 日前已发布值。
+q_id: PQ-0133

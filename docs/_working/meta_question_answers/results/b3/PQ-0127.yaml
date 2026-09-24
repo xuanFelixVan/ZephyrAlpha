@@ -1,0 +1,24 @@
+notes: 复考前置=tushare money_flow 历史回补（DS-TUSHARE 渠道在册已运营，回补 2021-01-04~2025-09-09 全A
+  主力净流入/超大单/成交额日频），回补后按本题 exam_plan 原判据重考；缺口工单见 gaps/A06_MONEYFLOW_BACKFILL_workbook.md
+outcome: insufficient
+evidence:
+- probe: skeleton.py 表探针
+  query: money_flow 切点前行数
+  result:
+    precutoff_rows: 0
+exam_ref: st-metaq-20260923/probe/a06_gap_PQ-0127
+fail_type: null
+threshold: 见 exam_plan
+conclusion: 20 日前瞻 IC 同上，闭卷窗内零样本。　闭卷窗内零样本：c1_market.money_flow 仅 2026-06-01 起（533,575
+  行）、sector_fund_flow 2026-09-15 起、market_fund_flow_daily 2026-03-27 起、block_trade
+  2026-08-07 起，四表在 PIT 切点 2025-09-09 前均 0 行，主力净流入信号无法在闭卷窗内构建。
+confidence: 0.9
+data_window:
+  end: 2025-09-09 闭卷切点
+  start: n/a（登记核验/零样本）
+three_check:
+  data: NO（闭卷零样本）
+  caliber: OK
+  mechanical: OK
+pit_assertion: 本题未使用任何切点后数据做校正；零样本判定本身基于表级 min(trade_date) 实证。
+q_id: PQ-0127
