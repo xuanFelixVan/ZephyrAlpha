@@ -1296,3 +1296,73 @@ title: "全项目无孔不入审查总包 — 台账 LEDGER"
   grep -n "ruler_noctl" .runtime/tmp/audit_all_20260924/redblue_ruler_suite.py         # ④ R51 文案已改
   python -c "import re,pathlib;print(len(re.findall(r'^\| R[0-9]{2} ', pathlib.Path('docs/_working/audit_all/AUDIT_REPORT.md').read_text(encoding='utf-8'), flags=re.M)))"   # 期望 51
   ```
+
+
+## 心跳 2026-09-24 13:37:07 CST 实测（`date` 由 shell 注入）· 在干=**第 8 轮：九尺总闸全量首跑 9/9 PASS（收官件③(a) 达成）＋新立 1 案 F-AUDIT-QUEUE-03＝0003/0004 死信前提被当前 HEAD 合并器重放证伪（requeue 条件已具备·不自投）＋合并器"不传播 theirs 删除"结构性结论＋R52–R55 四例自否证** · 卡住=无 · 下一步=见 ⑦
+
+- **① 冷启动三前置**：Python 3.12.8 ✔｜`lock_files.py cleanup`=CLEAN（无死锁需清）｜reaper `--status` 存活（last_run 13:17:23、dry_run=False）✔。批注区最后一条仍 **R7·05:05** ⇒ 无新命令。0003/0004 **仍在 dead/ 且 `updated_at=None`＝未被总指挥 requeue**；本包 done=29／dead=9／pending=0。
+- **② 工厂图耐久自愈巡检（收官判据 a）**：`git show HEAD:config/strategy_production_map.yaml | grep -c '\[FAC-E1, FAC-E1G\]'` = **1** ⇒ E1G 边在 HEAD 耐久，无需重投 ✔（HEAD=`68f3429e9e` 13:20，即本包 0045 落地笔）。
+- **③ 在跑检查（决定本轮只登记不 requeue）**：`ruling_registry.yaml` 状态 `MM`（index≠HEAD 且盘≠index）＝他会话在途；本包欲 requeue 的 0004 目标文件与之同路径 ⇒ 按步③**不 requeue、不并行写**。全场 pending=41／processing=1（`st-ailayer-final-0003` 正飞，含 `budget_analyzer.py`）。本包 0045 已落＝LEDGER 盘==HEAD 纯增基线干净（`git diff --numstat HEAD -- docs/_working/audit_all/` 空）。
+- **④ 九尺总闸全量首跑＝收官件③(a) 达成**：`redblue_ruler_suite.py`（不带 `--fast`）**9/9 PASS、SUITE_RC=0**，日志=`.runtime/tmp/audit_all_20260924/r8_suite_full.txt`（1337B，末行 `SUITE_RC=0`，倒数第二段"总闸读数：已跑 9/9 把尺，FAIL=0 []"）。九尺＝N/H2/P/P2/P2f/Q/R/S/O；读数逐位同第 6/7 轮（HARD=2、dead=3、P=13、45=40+4+1、真失真 2 册、自愈自锁成立）。
+- **⑤ 第 8 轮盯防四件结果**：
+  - **(1) ruling 复燃未自愈**：HEAD 与 index 各命中 `related_arch` 复燃 **2 行**，盘侧 **0 行**（修法已在属主工作树）；尺S 现跑＝**HEAD 数据面 硬=3**（#383→MOD-L00-004／#387→PS-CTR-003、MOD-INF-043）、**盘数据面 硬=0** ⇒ 失明面未变（`registry_alignment.py:491-492` 工作树读，同文件盘读点 6 处）。属主袋 `q-20260924-st-cleanup-final-20260924-0009`（12:55:35 入队，8 文件含此册）**仍 pending** ⇒ 其落地即 3→0。
+  - **(2) GOMAP 悬空 3 未闭，但三件各有在途袋（免门位自愈路径已成立）**：`check_meta_question_audit_reconcile.py`←`st-metaq-0022`(12:09)、`build_gpu_input_pack.py`←`st-pipeline-final-0029`(10:03)、`budget_analyzer.py`←`st-ailayer-final-0003`(13:18，正在 processing)。三件 `git cat-file -e HEAD:` 全 NOT_IN_HEAD ⇒ 尺O 悬空仍 3／漏挂仍 0。⇒ 属主三袋任一窗后重跑 `generate_governance_map.py` 即归零，无须判据变更。
+  - **(3) 尺Q 真失真 2 册未自愈**：`gate_registry` 174/180、`rule_catalog` 274/292（HEAD 侧字节亲验，属主＝门禁册生成器包）。
+  - **(4) 逐位复算**：尺N HARD=2、尺H2 dead=3（全属已登记 0009 面）、尺P 13、尺P2 45、尺P2f 净损害=0、尺R 四控制组全 PASS。
+- **⑥ 🔴 新立 F-AUDIT-QUEUE-03＝"合并器对 ruling_registry 结构无能"前提被证伪，requeue 条件已具备（登记上交，不自投）**：
+  - **证据链**：0003/0004 死信串"ours 存在身份判不了的条目（非 dict/首字段非标量）"＝00:07/00:49 时点产物，**早于 04:26 passthrough 修复入 HEAD**（R7·05:05 总指挥亲证 0011 同册落地）。用**当前 HEAD 的合并器**按生产语义重放当次三向合并（`three_way_merge_registry_yaml`，`retired_check`＝`_registry_entry_retired` 同款复刻：条目引用路径盘上+HEAD 双不存在才判合法退役）：
+    - 双基底（兜底 `HEAD^`=5081f0ca91 与 00:49 时点真基底=0f08f7a06c）**皆 MERGE-OK**；merged vs ours 差分 **恰 4 行且 4/4 全为 related_arch**、其它差分 0 行；条目身份集 ours=230 / merged=230，**丢失 0 新增 0**。⇒ 在册案 [[audit-all-hotregistry-eviction-rootcause-20260924]] 的"陈旧快照被读成主动删除"风险在**本袋上不存在**。
+    - 面积探针：catalogs 82 册中 **39 册**含"顶层 list 族带非 dict 项"（多为 `unique_key:` 的标量列表，另有 `regime_cycle_registry` 的 boundary_notes、`standard_family_registry` 的 tags/derived_from 等）＝passthrough 若回退则同因死信名单；控制组 `gate_registry.yaml` 在不死名单（能绿侧证明）。
+  - **附带结构性结论（给 st-commitsys 的判据学）**：合并器**不传播 theirs 侧删除**（阳性对照＝从 theirs 删掉 `裁定#1`，其路径盘上+HEAD 双不存在，重放净删=0）⇒ 热册蒸发的唯一来源＝**盘侧整册写回**（与 F-AUDIT-BLIND-02 复燃案同因）；防复燃处方应集中在写侧 CAS，**不必**在合并器再加"删除防御"。
+  - **门位与处置**：requeue 属本包自家袋、AGENTS.md §2 第 6 条（多会话并发窗口）正规通道，但①本轮令下 requeue 归总指挥、②同文件他包在途（步③）⇒ **只登记**，附总指挥一条命令即可：`python scripts/commit_queue.py requeue q-20260924-st-audit-all-20260924-0004`（落地后你复跑尺S 断言 HEAD 面 3→0）。
+- **⑦ 自我否证 R52–R55（4 例，AB1 表行数暂仍 51＝本轮令"只 append LEDGER、不动 AUDIT_REPORT"，欠账 4 行在此在册等『更新终报』明批）**：
+  - **R52** 用 grep 行号比较（`_index_family_blocks` 定义体内 623/626/629 vs `three_way_merge_registry_yaml` 体内 663）断言"索引早于 passthrough＝顺序颠倒"，实读函数体才见 passthrough 在前并 `pop` 豁免族 ⇒ **行号位置≠调用顺序**，差点据此给属主包开一张"修顺序"假处方。
+  - **R53** 首版重放传 `retired_check=None` 即欲断言"requeue 安全"——None＝"一律不认退役"的保守面，结论适用范围被高估；生产同款复刻后同结论，但表述须钉"含退役判定"。
+  - **R54** 阳性对照预设"合并器应传播 theirs 删除，否则尺失能"＝把不存在的语义当判据（该对照恒不红）；本件真能红证据＝结构漂移注入（theirs 独有顶层 list 族 → DEAD）。
+  - **R55** 后台任务日志在进程存活期读到 0/半截内容，即起意写"证据被吃／.runtime/tmp 不可靠"；实测同目录 marker 文件 75 秒存活、目标日志最终 1337B 完整含 SUITE_RC ⇒ **读异步产物须等完成标记行，未见标记只能记"未定"**。
+- **⑧ 与收官判据 + 下一步**：(a) 工厂图 durable ✔；(b) ruling **仍 3** 但阻塞性质已变＝不再是"合并器无能"，而是"待 requeue 或待 st-cleanup-final-0009 落地"，二者任一即 0；(c) 派属主项全部在他包在途袋（悬空 3／计数失真 2 册／复燃批）；(d) 红蓝总闸全量 9/9 PASS ✔、终报已定稿未再动。⇒ "连续零新立"基线重置（本轮新立 1＋自否证 4）。**第 9 轮盯**：① 0009 或 0004-requeue 是否落地（`git show HEAD:docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml | grep -c 'MOD-L00-004\|PS-CTR-003\|MOD-INF-043'` 期望 **0**）② 三件在途 .py 落地 → 尺O 悬空 3→0 ③ 尺Q 2 册是否自愈 ④ 总闸全量复跑（等 SUITE_RC 行）⑤ AB1 是否获明批补至 **55**。
+- **队列/align 状态**：本包 done=29→（本批 **0046** 待落）／dead=9（0003/0004 前提已证伪、未 requeue）／pending=0；HEAD=`68f3429e9e`。**本自动化对注册表/配置册/depgraph/GOMAP DB 写入累计仍=0**；本轮唯一写＝自家 LEDGER 纯增。align：本轮未重跑 `align_all`（无本包可动面）；尺S 现跑＝盘数据面 rc=0（上轮实测）／HEAD 数据面 硬=3。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  git show HEAD:config/strategy_production_map.yaml | grep -c '\[FAC-E1, FAC-E1G\]'                  # ② 期望 1
+  tail -3 .runtime/tmp/audit_all_20260924/r8_suite_full.txt                                          # ④ 期望 9/9 FAIL=0 + SUITE_RC=0
+  python .runtime/tmp/audit_all_20260924/probe_requeue_production_semantics_r8.py 2>&1 | tail -4    # ⑥ 生产语义重放（双基底 MERGE-OK，差分 4 行全 related_arch，零丢失）
+  python .runtime/tmp/audit_all_20260924/probe_merger_identity_blindarea_r8.py 2>&1 | head -2        # ⑥ 面积：82 册中 39 册含标量族
+  python .runtime/tmp/audit_all_20260924/probe_headside_governance_bidirectional.py 2>&1 | tail -9   # ⑤(1) 尺S HEAD 面 3 硬
+  python .runtime/tmp/audit_all_20260924/probe_gomap_headside_census.py 2>&1 | sed -n '1,12p'       # ⑤(2) 悬空 3／漏挂 0
+  python -c "import json,glob;[print(d.get('qid'),d.get('created_at')) for d in (json.loads(open(f,encoding='utf-8').read()) for f in glob.glob('.runtime/commit_queue/pending/*.json')) if any('ruling_registry' in str(e.get('path','')) for e in (d.get('files') or []) if isinstance(e,dict))]"   # ⑥ 属主袋是否在队
+  python -c "import re,pathlib;print(len(re.findall(r'^\| R[0-9]{2} ', pathlib.Path('docs/_working/audit_all/AUDIT_REPORT.md').read_text(encoding='utf-8'), flags=re.M)))"   # ⑦ 期望 51（欠账 4 行待明批）
+  ```
+
+
+## 心跳 2026-09-24 14:05:10 CST 实测（`date` 由 shell 注入）· 在干=**第 9 轮：九尺总闸全量 9/9 PASS＋同轮 --self-test 六对照全对（引用条件成立）＋新立 F-AUDIT-QUEUE-04＝"入袋不记 base"面积比在册记载大一档（非注册表文件现亦无快进保护）＋BLIND-02 上交面被实测降级（属主袋不覆盖失明面）** · 卡住=无 · 下一步=见 ⑧
+
+- **① 冷启动三前置＋会话复活**：Python 3.12.8 ✔｜`lock_files.py cleanup`＝CLEANED 1 死锁 ＋ **SALVAGED 把本包自己判成死会话回收**（merge=skipped/stash=0/释放 claim=0）⇒ 本轮按处方重注册 `SessionRegistry(...).register(sid,pid=0)` ＋ `Start-Process pythonw -m …heartbeat_daemon <sid> <root> 30`（PID 31600，实测心跳 age=4.4s）✔｜reaper `--status` 存活（last_run 13:47:23，dry_run=False）✔。批注区最后一条仍 **R7·05:05**（grep 全部 `总指挥批注` 只 R2/R3/R6/R7 四条）⇒ 无新命令；**0003/0004 仍在 `dead/` 且 `updated_at=None`＝未被总指挥 requeue**；台账之外另查近 95 分钟 `_working` 顶层零改动、无他处批注通道（防"命令写在别处我看不见"盲区）。
+- **② 工厂图耐久自愈巡检（收官判据 a）**：`git show HEAD:config/strategy_production_map.yaml | grep -c '\[FAC-E1, FAC-E1G\]'`＝**1**、`c1_market.account_nav_daily`＝2 ⇒ E1G 边在 HEAD 耐久 ✔，无需重投。
+- **③ 在跑检查（据此本轮不 requeue、不并行写）**：`ruling_registry.yaml` 状态 **`MM`**（index≠HEAD 且盘≠index，属主 st-cleanup-final 在途），其袋 `q-20260924-st-cleanup-final-20260924-0009`（12:55:35，8 文件含此册）**仍 pending** ⇒ 按步③不 requeue。全场 pending=43／processing=1（`st-ailayer-final-0003` 13:18:45 起）。**队列活性三查＝慢而非楔死**：我在队首（字母序 #1＝本包 0046，13:39:04 入袋）、`belt_daemon.heartbeat` mtime 13:55:32（age 13s）、`serializer.lease` 13:55:16 刚续、`checker_supervisor` worker（PID 24832）在算 ⇒ 无需插队无需报楔死。
+- **④ 九尺总闸全量复跑＝引用条件本轮成立**：`redblue_ruler_suite.py`（不带 `--fast`）**9/9 PASS、FAIL=0**，进程 rc=0，日志=`r9_suite_full.txt`（1336B）；同轮补跑 `--self-test`＝**六条合成对照全对 rc=0**（合规尺判通过／无判重块／控制组 FAIL／静默成功／非零退出／脚本缺失皆判红），日志=`r9_suite_selftest.txt` ⇒ 满足总闸自设引用条件"全部 PASS 且本件先过 --self-test"。九尺读数逐位同第 6/7/8 轮（尺S＝HEAD 数据面 3 硬／盘数据面 0；尺N HARD=2；尺H2 dead=3；尺P 13；尺P2 45；尺O 悬空 3／漏挂 0）。
+- **⑤ 第 9 轮盯防四件结果**：(1) **ruling 复燃未自愈**：HEAD 侧 `related_arch` 复燃 **2 行仍在**（尺S HEAD 面 硬=3），盘侧 0 行（修法在属主工作树）⇒ 待 0009 落地或 0004 requeue，二者任一即 3→0。(2) **三件在途 .py 全 NOT_IN_HEAD**（`git cat-file -e` 逐件亲验）⇒ 尺O 悬空仍 3／漏挂仍 0，三袋各在途（st-metaq-0022／st-pipeline-final-0029／st-ailayer-final-0003）。(3) **尺Q gate_registry 仍失真**：HEAD 侧 `total_gates: 174` ↔ 实数 180（结构化计数复算，非 grep 行号）。(4) **AB1 表仍 51 行**＝R52–R55 欠账未获『更新终报』明批（本轮令"只 append LEDGER、勿重写 AUDIT_REPORT"已守，AUDIT_REPORT mtime 仍 13:04:23）。
+- **⑥ 🔴 新立 F-AUDIT-QUEUE-04（登记上交，不自修）＝"入袋不记 base"这味老药的面积比在册记载大一档**：
+  - **尺T**（`probe_stale_base_revalidation_inert_r9.py`，tmp 队列根零生产写入，三控制组 C1/C2/C3 全 PASS）＝`base_blob` **全仓无填充点**（`enqueue_item:696/712` 硬编码 `None # A 段预留`，git grep 除 tests 外无写点）⇒ `_revalidate_stale_base`（66 号 §6.4 陈旧基底重校验）对每一条目恒走 `if not base_blob: continue` ⇒ **该重校验在生产形态恒判"仍适用"＝结构空转**（生产读数 HARD；C2 填 base 且漂移必报、C3 填 base 且一致必不报＝尺非恒红非恒绿）。
+  - **尺U**（`probe_maindoor_base_missing_r9.py`，tmp 真 git 仓＋tmp 队列根，C4/C5/C6 全 PASS）＝**提交正门 `scripts/git_commit.py:901` 的 `enqueue_item` 调用根本不传 `base_head`**（`grep -c base.head scripts/git_commit.py`=0；而 `commit_queue.py` 自己的 CLI 在 :2278 会 `rev-parse` 取基底——同仓两套入口，正门那套缺）⇒ 袋 `base_head=None`（实测 0046/0009 皆 None）⇒ `_conflict_reason`（landing:1007-1009）在 `if not base` 处**先于注册表/非注册表分流即早退 None** ⇒ 在库注释承诺的"非注册表文件维持逐文件快进判定零变更"（landing:179-181 与 196-197）**在生产形态下不成立**；`_apply_snapshot` 内 HEAD 比对关键词命中=0 ⇒ 非注册表路径＝后落地快照整文件覆盖（该函数自身注释 line 177 已把"整文件覆盖写回抹掉 103 条已提交身份"列为病根，但把漏网面写成"旧格式项/无 base_head 项"，实测＝**正门全量**）。
+  - **与在册案的关系**：LEDGER 07:52 块（MARK=`F-EVAP-ROOTCAUSE-0752`）处方"入袋把 base 记全：`git_commit.py` enqueue 通道传 `base_head`=当前 dev HEAD"**至今未落地**（本轮 grep 实证）⇒ 本件不另开新方，只做两件事：①**面积更正**＝受害面从"热册被吃"扩到"任意非注册表文件被覆盖"；②**给属主包一条可验判据**＝补 base_head 后尺U C5 必须红（dev 推进且触同路径）、C6 必须不红（基底对齐），两半缺一即视为未修好。
+  - **门位**：改 `git_commit.py`/`commit_queue_landing.py`＝提交链核心＋st-commitsys 写域 ⇒ 只登记上交。**给总指挥 0004 requeue 的附注**：`requeue --base-head` 旗存在（:2307，默认 None），但第 8 轮双基底重放已证同果（兜底 HEAD^ 与 0f08f7a06c 皆 MERGE-OK、差分 4 行全 related_arch、条目零丢失）⇒ 不带不阻塞本袋，带上则与生产语义一致。
+- **⑦ BLIND-02 上交面实测降级（本轮最该被总指挥看到的一条）**：属主袋 0009 的 8 文件里**确含** `src/zephyr/gov_enforcement/registry_alignment.py`（我第 8 轮据此写"其落地即 3→0"——那只对**数据**成立）。按内容寻址 blob 取袋内字节亲验：`CATALOGS_DIR` 盘读点 **HEAD 5 处 ↔ 袋内 5 处**（一行未动）、袋内 `git show|cat-file|rev-parse` 命中=0、袋相对 HEAD **+10 行**（改的是 `spec_path` 唯一解析口与数据源入校验面）⇒ **HEAD 失明面不在该袋覆盖内**，0009 落地只会让"复燃 2 行"归零、不会让"align 只读盘"归零。⇒ BLIND-02 仍属**未派到真属主**状态，路由需重下（registry_alignment 属主＋写侧 HEAD 锚定，非 cleanup-final 那袋）。
+- **⑧ 自我否证 R56–R58（欠账入册，待『更新终报』明批一并补 AB1）**：**R56** 台账所记"registry_alignment 盘读点 6 处"错，实为 **5 处**（HEAD 与袋两侧同口径复算）＝面积分母虚高一档，来源是把非 `read_text` 的 `CATALOGS_DIR` 行计入；**R57** 尺U 第一版设计用 `commit_queue.py enqueue --root <tmp>`——该 CLI **没有 --root 旗**且队列根恒取主仓 `.runtime/commit_queue`，照跑会往**生产队列**投 probe 袋并被传送带真落地（且 enqueue 默认自举排空）；改进程内 `enqueue_item(queue_root=tmp)` 后跑，并核实生产 pending 内 probe 命中=0 ⇒ 立法：**探针"零生产污染"必须是判据的一条（跑后复核），不能靠写的时候自觉**；**R58** 本轮引用"总闸末行标记"时沿用第 8 轮的 `SUITE_RC=0` 字样，实测本形态末行是 `总闸读数：已跑 9/9 把尺，FAIL=0 []`＋我 wrapper 的 `PROC_RC=0`——两种标记同源不同串，引用标记名须与调用形态对齐。
+- **⑨ 与收官判据 + 下一步**：(a) 工厂图 durable ✔；(b) ruling **仍 3**（外部阻塞性质未变＝待 0009 落地或 0004 requeue）；(c) 派属主项：GOMAP 悬空 3／尺Q 计数失真 1 册在他包在途袋 ✔，但 **BLIND-02 本轮实测被降级为"未派到真属主"**（见 ⑦）＋ **QUEUE-04 新案待派 st-commitsys** ⇒ (c) 未满足；(d) 红蓝可重放形态两轮连证 ✔、终报未动（守令）。⇒ 基线：本轮新立 1（QUEUE-04）＋ 1 项上交降级（BLIND-02）＋自否证 3 ⇒ "连续零新立"重置。**第 10 轮盯**：① 0004 是否被 requeue／0009 是否落地 → 尺S HEAD 面 3→0 ② 三件 .py 落地 → 尺O 悬空 3→0 ③ gate_registry 174/180 是否自愈 ④ `grep -c "base-head" scripts/git_commit.py` 是否 ≥1（QUEUE-04 落地判据，须同时尺U C5 转红/C6 仍不红）⑤ AB1 是否获明批补至 **58**。
+- **队列/align 状态**：本包 done=29→（本批 **0047** 待落）、dead=9（0003/0004 未 requeue）、pending=0→本批；HEAD=`68f3429e9e`（13:20，我包 0045 落地笔）。**本自动化对注册表/配置册/depgraph/GOMAP DB/提交链代码写入累计仍=0**；本轮唯一写＝自家 LEDGER 纯增＋本包 tmp 区两把新尺（`.runtime/tmp/` 非生产路径）。align：本轮未重跑 `align_all`（无本包可动面）；尺S 现跑＝盘数据面 0 硬／HEAD 数据面 3 硬。
+- **复核命令（只读·先跑再信）**：
+  ```bash
+  git show HEAD:config/strategy_production_map.yaml | grep -c '\[FAC-E1, FAC-E1G\]'                  # ② 期望 1
+  tail -3 .runtime/tmp/audit_all_20260924/r9_suite_full.txt                                          # ④ 期望 9/9 FAIL=0
+  python .runtime/tmp/audit_all_20260924/redblue_ruler_suite.py --self-test 2>&1 | tail -2           # ④ 期望 合成对照全对 rc=0
+  python .runtime/tmp/audit_all_20260924/probe_stale_base_revalidation_inert_r9.py 2>&1 | tail -4   # ⑥ 尺T 三控制组 PASS＋HARD
+  python .runtime/tmp/audit_all_20260924/probe_maindoor_base_missing_r9.py 2>&1 | tail -4            # ⑥ 尺U 三控制组 PASS＋HARD
+  grep -c "base-head\|base_head" scripts/git_commit.py                                               # ⑥ 期望 0（属主包修好后应 ≥1）
+  python -c "import subprocess,re;h=subprocess.run(['git','show','HEAD:src/zephyr/gov_enforcement/registry_alignment.py'],capture_output=True,text=True,encoding='utf-8').stdout;print('盘读点=',len([l for l in h.splitlines() if 'read_text' in l and 'CATALOGS_DIR' in l]))"   # ⑦ 期望 5
+  git show HEAD:docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml | grep -c "MOD-L00-004\|PS-CTR-003\|MOD-INF-043"   # ⑤(1) 期望 0，现=2
+  ls .runtime/commit_queue/pending/ | grep -ci probe                                                 # ⑧ R57 探针零污染，期望 0
+  python -c "import re,pathlib;print(len(re.findall(r'^\| R[0-9]{2} ', pathlib.Path('docs/_working/audit_all/AUDIT_REPORT.md').read_text(encoding='utf-8'), flags=re.M)))"   # ⑤(4) 期望 51（欠 7 行待明批）
+  ```
+
+> **【第 9 轮落账后追注 2026-09-24 14:13:54·实测】** 上文"本批 0047 待落"已失真：0047 落地时被 `[DANGLING-REFERENCE] 新增 AGENTS.md 悬空引用（章下子节号形态）` 判死（本仓 AGENTS.md 只有 `## 0…9`，章下是编号项无 `§N.M`）⇒ 该引用已就地改 `§2 第 6 条（多会话并发窗口）`、按 §2 第 6 条死信通道 `commit_queue.py requeue …-0047 --worktree-root`（快照源＝现盘，新 qid=**0048**，排 FIFO 队尾）。同轮实测另证两案：① 上轮 0046 已因同 sid 同件后袋吞没（袋==盘 1366 行、含第 8/9 两块＝零丢失，按在册纪律不开案）；② 本包自家袋 `base_head=None`＝本轮新立 QUEUE-04 的**自我复现**（正门全量袋皆如此，非个案）。
