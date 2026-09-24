@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.library.collectors
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只读扫描白名单目录（src/scripts/tests/docs/config/data/schemas/architecture_model）；跳过运行时/平行副本目录（跳判按仓内相对路径成分，禁吃绝对路径）；族级目录 _FAMILY_DIRS 只出 1 条族资产不逐件入册；>1MB 只记 size+mtime 不算哈希
+# [INVARIANTS] 只读扫描白名单目录（src/scripts/tests/docs/config/data/schemas/architecture_model）；跳过运行时/平行副本目录（跳判按仓内相对路径成分，禁吃绝对路径）；vendored 模型产物走 _SKIP_PATHS 显式前缀（data/models；裸词 models 已废——审计失明清单#6：裸词吞掉全部 src/*/models 真包）；族级目录 _FAMILY_DIRS 只出 1 条族资产不逐件入册；>1MB 只记 size+mtime 不算哈希
 # [MODIFY-GUARD] gate_id 不适用
 # [STABILITY] stable
 # [SAFETY] L
@@ -43,12 +43,15 @@ _SKIP_DIRS: Final[frozenset[str]] = frozenset(
         ".venv",
         "tmp",
         "vendor",
-        "models",
         "_archive",
         ".trae",
         ".openclaw",
     }
 )
+
+# vendored/运行态模型产物显式前缀（审计失明清单#6 处方 B4：裸词 "models" 换显式白名单——
+# 裸词按路径成分匹配会把 src/zephyr/<dom>/models/ 真包 26 处静默吞掉）。
+_SKIP_PATHS: Final[tuple[str, ...]] = ("data/models",)
 
 # 族级目录（ulib3 方案 A 同法）：按保留期滚动删除的运行态大盘，逐件入册=每轮转一次积一笔
 # ghost 债（2026-09-23 实测两目录占 226/259 ghost、馆内 1988 行）。只出 1 条族资产指大盘，
@@ -135,6 +138,8 @@ def collect(root: str = ".", limit: int = 60000) -> list[dict[str, Any]]:
             # 一旦撞上 tmp/vendor/models 等跳词，整棵扫描树静默归零）
             if any(part in _SKIP_DIRS for part in rel.split("/")):
                 continue
+            if any(rel == sp or rel.startswith(f"{sp}/") for sp in _SKIP_PATHS):
+                continue  # vendored 模型产物（显式前缀，不误伤 src/*/models 真包）
             if any(rel == fam or rel.startswith(f"{fam}/") for fam in _FAMILY_DIRS):
                 continue  # 族级目录逐件不入册，由下方族资产行统一代表
             suffix = path.suffix.lower()
