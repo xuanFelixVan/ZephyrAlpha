@@ -1,0 +1,29 @@
+notes: notes：U6=公告日后漂移（PEAD）检验在册；PIT 取数控制实证见 PQ-0155。
+outcome: pass
+evidence:
+- probe: docs/_working/chain_piling_campaign/02_source_line_registry.md
+  query: §2 SL-A05 U1 行：'基本面改善（ROE/营收增速及其加速度）能否被定价滞后捕捉（信号词：业绩超预期/增速二阶差分）'
+  result:
+    主题覆盖: 1/1=100%
+    词表词数: 4
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_schema_dump.json
+  query: DESCRIBE income_statement/balance_sheet/cashflow_statement → total_revenue/net_profit_excl_minority/equity_excl_minority；DESCRIBE
+    earnings_forecast
+  result:
+    列名实证: 全部在库
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0152
+fail_type: null
+threshold: 覆盖率=100%（信号词表非空且宣称主题全部落在词集覆盖内）
+conclusion: 词表非空（4 词：ROE/营收增速/增速二阶差分/业绩超预期）。宣称主题 1/1 全覆盖：基本面改善被定价滞后捕捉←ROE 与营收增速及其加速度（改善三代理）+业绩超预期（PEAD
+  入口）。机械背书：ROE=net_profit_excl_minority/equity_excl_minority、营收增速=total_revenue 同比、二阶差分=增速差分、超预期=earnings_forecast(125,582
+  行) vs 实际——列全部实证在库；三表闭卷窗 92.9 万行。覆盖率=100%。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（审计对象=源线谱 U1 行+DS 册，均在册可读；底层表列名经 DESCRIBE 实证）
+  caliber: OK（判据=宣称主题→信号词逐词映射，词表非空+覆盖计数，机械可判）
+  mechanical: OK（词级对照表全文留痕于 evidence）
+pit_assertion: U1 词表核验为静态登记审计（词级对照），不涉时序取数；信号以 ann_date 对齐，仅用公告日已披露财务，收益窗自公告日次日起算
+q_id: PQ-0152

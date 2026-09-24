@@ -1,0 +1,32 @@
+notes: 20 日重叠窗自相关已 NW lag=20 修正。IC 幅度未达 0.02；如需更高强度须事件对齐口径（见 PQ-0021 pass），但那非本题口径，不作替代。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_fund_PQ-0122_123_124.py
+  query: 同 PQ-0122 管线，取 fwd=ac_f20/ac-1 的逐日 IC 列
+  result:
+    nw_t: 4.365
+    is_ic: 0.01192
+    n_days: 3791
+    oos_ic: 0.01886
+    ic_mean: 0.0147
+    oos_nw_t: 4.974
+    ic_pos_ratio: 0.627
+    n_stocks_mean: 2054.5
+exam_ref: st-metaq-20260923/probe/batch_stat_fund_PQ-0124
+fail_type: no_alpha
+threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+conclusion: fail(no_alpha)：业绩超预期持续因子（营收增速二阶差分>0，ann_date PIT 前向填充）对 20 日前瞻收益的日频秩 IC=0.0147<0.02（NW
+  t(lag=20)=4.365>2 显著；样本外 IC=0.01886>0.01、OOS t=4.974）。窗口 2010-01-04~2025-08-12 共
+  3791 个有效 IC 日，日均 2055 只。IC 幅度随前瞻窗拉长单调走强（1日 0.0055→5日 0.0094→20日 0.0147）但均未过 0.02——判
+  fail=no_alpha；PEAD 信息存在（PQ-0021 事件口径 pass）但持续因子化后强度不足。
+confidence: 1.0
+data_window:
+  end: '2025-09-09'
+  start: '2010-01-01'
+three_check:
+  data: OK：同 PQ-0122 数据源复核
+  caliber: OK：同 PQ-0122 口径，前瞻窗 20 日，NW lag=20
+  mechanical: OK：阈值代码判定
+pit_assertion: 同 PQ-0122：信号按 ann_date<=T 前向填充，收益窗 ac_f20/ac-1 自 T+1 起，取数硬约束 <= 2025-09-09；重叠收益窗用
+  Newey-West lag=20 修正。
+q_id: PQ-0124

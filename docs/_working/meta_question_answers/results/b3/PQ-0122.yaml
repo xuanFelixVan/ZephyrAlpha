@@ -1,0 +1,37 @@
+notes: 与 PQ-0123（5日）/PQ-0124（20日）同一信号不同前瞻窗。IC 不达 0.02 属真实效力结论：方向显著但幅度弱。若按『事件窗内新公告子样本』口径则接近
+  PQ-0021 的 PEAD 检验（该口径 pass）——两口径差异已分别在各自题目如实登记。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_fund_PQ-0122_123_124.py
+  query: income_statement 首公告→yoy 增速（rev_{t}/rev_{t-12月}-1，上年同期>0）→二阶差分 d2=g_t-g_{t-3月}；事件透视表
+    reindex 到全交易日 ffill 成持续信号矩阵；逐日 spearman(信号,fwd=ac_f1/ac-1)，n<100 剔除
+  result:
+    nw_t: 5.593
+    is_ic: 0.0047
+    n_days: 3810
+    oos_ic: 0.00664
+    ic_mean: 0.00548
+    oos_nw_t: 7.412
+    ic_pos_ratio: 0.5514
+    n_stocks_mean: 2072.4
+exam_ref: st-metaq-20260923/probe/batch_stat_fund_PQ-0122
+fail_type: no_alpha
+threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+conclusion: fail(no_alpha)：业绩超预期（营收同比增速二阶差分>0，按 ann_date PIT 取『截至 T 日最新一期已公告值』作为持续截面因子）在全
+  A 池对 1 日前瞻收益的日频秩 IC=0.00548，虽统计显著（Newey-West t(lag=1)=5.593>2，样本外 IC=0.00664>0.01）但幅度不过
+  IC>0.02 阈值。窗口 2010-01-04~2025-08-12 共 3810 个有效 IC 日（日均 2072 只持信号股票，n<100 的交易日剔除）。方向为正、显著性真实，但作为持续因子信号强度不足
+  0.02——与 PQ-0021 事件对齐口径的超额显著（+0.823%/20日，t=17.5）并存：PEAD 漂移存在于公告后窗口，而公告间『旧信号』被稀释后达不到
+  0.02 IC 门槛。真实数字不过阈值，判 fail=no_alpha，禁调参重跑。
+confidence: 1.0
+data_window:
+  end: '2025-09-09'
+  start: '2010-01-01'
+three_check:
+  data: OK：income_statement 首公告 322891 条→d2 定义事件 259215 个；kline 复权价 8480 交易日×5744
+    只全矩阵
+  caliber: OK：d2>0 为事件定义、持续因子化取最新公告值（题面『按 ann_date PIT』的机械落地）；IC=逐日 spearman(信号,前瞻收益)，NW
+    lag=1，60/40 交易日序切分
+  mechanical: OK：IC>0.02 且 t>2 且 OOS>0.01 代码判定
+pit_assertion: 信号矩阵按 announce_date 前向填充（T 日只用 ann_date<=T 的已公告财报，最早公告版营收 argMin 防重述前视）；前瞻收益自
+  T 收盘起算 ac_f1/ac-1；kline 与公告取数均硬约束 <= 2025-09-09。
+q_id: PQ-0122
