@@ -1,0 +1,24 @@
+notes: 复考前置：同 PQ-0041（互动易历史+实体热度管线）；命题方给出概念热度合成公式。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_insufficient.py
+  query: SELECT count() FROM irm_interactive_qa WHERE question_date<='2025-09-09'
+  result:
+    irm_qa_pre: 0
+    news_sent_pre: 0
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0086
+fail_type: null
+threshold: ≥2 日且>55%（概念/行业双排名序列拐点对齐）
+conclusion: insufficient：概念热度排名数据源缺切点前样本——互动易问答（irm_interactive_qa 2026-06 起）与快讯实体提及热度（管线
+  2026-02 起）切点前均 0 行，概念热度序列不存在；行业动量排名虽可由 kline_sector_880 构造，但单边数据无法做'温度差'。≥2 日领先与命中率>55%
+  不可执行。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-01'
+three_check:
+  data: NO：概念热度源切点前 0 行
+  caliber: NO：概念热度合成公式未给（激增阈值/提及热度加权）
+  mechanical: OK（若数据齐可机械执行）
+pit_assertion: 所有存在性核查均带切点过滤 <= '2025-09-09'；未使用任何切点后数据进入统计量。
+q_id: PQ-0086

@@ -1,0 +1,52 @@
+notes: 与 PQ-0104 同源缺口(组合空间预注册载体未建); 本题另需封存(seal)动作字段——设计稿亦未含, 复考前置=载体设计补齐。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l4_PQ-0109.py
+  query: 'PG: information_schema.tables ILIKE ''%space%''/''%seal%''/''%expand%''/''%manifest%''/''%e1c%'';
+    registry_ledger tables; SELECT count(*) FROM registry_ledger.registry_event; CH
+    SHOW TABLES FROM c1_backtest'
+  result:
+    note: registry_ledger.registry_event 为通用注册表事件账(与组合空间 space_hash 无关, 无 space_hash
+      字段记录)
+    c1_backtest_tables:
+    - alloc_budget_change_log
+    - alloc_budget_daily
+    - alloc_shrinkage_daily
+    - cohort_daily_ledger
+    - crisis_gate_log
+    - decision_daily
+    - hypothesis_precheck
+    - node_verdict
+    - regime_snapshot_history
+    - regime_state_anchored
+    - sim_attribution_daily
+    - sim_daily_report
+    - sim_platform_journal
+    - sim_pocket_daily
+    - sim_trade_log
+    - strategy_screen
+    registry_event_rows: 0
+    pg_space_like_tables: []
+    registry_ledger_tables:
+    - _schema_version
+    - registry_event
+    - registry_entry
+    - registry_catalog
+    - registry_snapshot
+exam_ref: st-metaq-20260923/probe/batch_l4_decision_PQ-0109
+fail_type: null
+threshold: =100%
+conclusion: 'space_hash 台账(登记/扩容/封存流水)不存在: PG public 无 %space%/%seal%/%expand%/%manifest%/%e1c%
+  表(命中=[]); registry_ledger 域(registry_catalog/registry_entry/registry_event/registry_snapshot)中
+  registry_event 0 行且为通用注册表事件账, 无 space_hash 字段; c1_backtest 16 张表无空间台账。''扩容批次旧空间封存登记齐备率=100%''的存量检查无审计对象(既无扩容申请也无封存记录)
+  → insufficient(待 space_hash 台账与扩容/封存流水建成并积累≥1 个扩容批次后复考)。'
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-05'
+three_check:
+  data: 'NO: space_hash 台账/扩容封存流水不存在'
+  caliber: 'OK: 齐备率=100% 口径机械(扩容批 vs 封存登记一一对应), 但无载体'
+  mechanical: 'NO(不可执行): 审计对象不存在'
+pit_assertion: 本题取数(现状证据查询)不使用任何切点后数据作为判据; 切点后记录仅作在产状态观察, 不进入阈值比较。
+q_id: PQ-0109

@@ -1,0 +1,55 @@
+notes: 复考前置=hfq 生成链治理：bdpan_hfq 与 raw×adj_factor 二选一重算对齐（或显式标定 hfq 基座口径并在文档登记）；kline_daily
+  内嵌 adj_factor 列与独立表口径差异（疑前复权 vs 后复权）须勘误。abstain 修改任何参数后重抽以'修复'违例率=换卷作弊。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0012.py
+  query: kline_daily k JOIN kline_daily_hfq h ON (symbol,trade_date) JOIN adj_factor
+    a；逐点 ratio=hfq/raw 与 k*adj_factor 比，|err|>1e-3 记违例
+  result:
+    违例点: 24130
+    违例率: 0.4541
+    抽检点数: 53134
+    采样月数: 56
+    采样符号总数: 2198
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0012_diag2.py
+  query: hfq 日收益 vs raw 日收益逐日对比（2024，20 只）：countIf(|hpc-kpc|>0.15pp)
+  result:
+    点数: 8180
+    失配率: 0.941
+    常数基座违例: 6986
+    hfq_vs_raw日收益失配>0.15pp: 7700
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0012_diag2.py
+  query: data_source 分布（2021+闭卷窗）：kline_daily ''=5,383,015/tushare 213,103/Baostock
+    141,973；hfq 'bdpan_hfq'=5,383,015；adj_factor 'bdpan'=5,817,730
+  result:
+    hfq来源: bdpan_hfq
+    raw来源: miniqmt(空标记)
+    factor来源: bdpan
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0012_diag2.py
+  query: lagInFrame 窗口函数按(symbol,exchange)查 adj_factor 下降点（5 只全史）
+  result:
+    占比: 0.00067
+    总点: 30073
+    下降点: 20
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0012
+fail_type: infra
+threshold: =0（月度抽样 50 只复权链路审计，复权算子时点合规抽检违例数）
+conclusion: 复权因子对齐链路抽检违例率≠0，fail（infra）。月度抽样 50 只×56 个月（2021-01~2025-08，闭卷窗），三表 JOIN
+  复算 53,134 个（symbol,日）点：按每股常数基座 k 检验 hfq_close=raw_close×adj_factor，违例 24,130 点（45.4%，容差
+  1e-3）；诊断实证 bdpan_hfq 序列日收益与 kline_daily 原始日收益系统性偏差（2024 年 20 只 8,180 点中 94.1% 日收益差>0.15pp，无除权日亦逐日漂移，比率/因子单月漂移
+  ~1.5%），即 hfq 表与 raw×adj_factor 链不对齐，两条腿不可能同时正确。辅证：kline_daily 内嵌 adj_factor 列与独立
+  adj_factor 表 87% 行不一致（2025-08-29 平均|Δ|=9.22，量纲口径不同）；因子单调性按(symbol,exchange)抽查 5
+  只全史 30,073 点中 20 个下降点（±0.0003 尾差/1990s 段，占比 0.07%）。对冲机制一半在位：复权数据隔离于 kline_daily_hfq
+  独立表未改写原始 K 线；但对齐本身违例>0，属 hfq 生成链与因子链口径分裂（bdpan_hfq vs bdpan adj_factor+miniqmt raw），转
+  fail 大挖矿治理。
+confidence: 0.9
+data_window:
+  end: '2025-09-09'
+  start: '2021-01-04'
+three_check:
+  data: OK（kline_daily 8,718,119 行/kline_daily_hfq 7,121,411 行/adj_factor 19,643,856
+    行，闭卷窗内均在）
+  caliber: OK（复权对齐判据=hfq=raw×factor(每股常数基座) 机械可复现，容差 1e-3，诊断两轮定位口径分裂根因）
+  mechanical: OK（56 月×50 只确定性采样 cityHash64，违例数可复算）
+pit_assertion: 审计只读已落库三表时戳对齐复算，方向单向（hfq/raw/factor 均 <=2025-09-09），无任何切点后数据进入判定；复权算子未写回原始表。
+q_id: PQ-0012

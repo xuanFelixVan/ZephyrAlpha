@@ -1,0 +1,30 @@
+notes: market_breadth_snapshot（limit_up 等）2026-08 起切点后不可用；以 kline_daily 自聚合涨跌家数替代（口径等价：涨跌家数比）。信号重叠未去重（机械判据优先）。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_pq0082.py
+  query: SELECT trade_date, countIf(pct_change>0) adv, countIf(pct_change<0) dec FROM
+    c1_market.kline_daily WHERE market_type='A_share' AND trade_date>='2017-06-01'
+    AND trade_date<='2025-09-09' GROUP BY trade_date; B5×B20 交叉→后3~15日内同向 MA20 态翻转为命中
+  result:
+    n_hits: 106
+    hit_rate: 0.2630272952853598
+    n_signals: 403
+    n_ma20_turns: 117
+    avg_lead_when_hit: 7.8584905660377355
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0082
+fail_type: no_alpha
+threshold: '>55% 且样本≥30 次（2018 年以来拐点对齐复盘；领先≥3 日）'
+conclusion: 因子构造：全A(kline_daily A_share) 逐日涨/跌家数比 B=adv/(adv+dec)，B5/B20 均线交叉为宽度拐点信号（金叉=看多/死叉=看空）；均线状态=沪深300
+  close>MA20，状态翻转（同向）出现在信号后第 3~15 个交易日记命中。2018 以来宽度信号 n=403（金叉 201/死叉 202），命中 106，命中率=26.30%，命中时平均领先提前量=7.9
+  个交易日（命中样本 106），同期 MA20 状态拐点共 117 次。判据（>55% 且样本≥30）未过——样本充足而命中率未达55%。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2018-01-02'
+three_check:
+  data: OK kline_daily A_share 全A 涨跌家数（SQL 聚合）+ kline_index 000300；market_breadth_snapshot
+    切点前 0 行故用 kline_daily 自聚
+  caliber: OK 涨跌家数比/均线状态/拐点与命中窗（3~15 日，满足领先≥3 日）均机械定义
+  mechanical: OK >55% 且样本≥30 机械可判
+pit_assertion: 宽度与均线均由 T 日收盘数据计算（信号 T 日盘后生成、T+1 可消费），命中判定只向后看；全部数据 trade_date<='2025-09-09'。
+q_id: PQ-0082

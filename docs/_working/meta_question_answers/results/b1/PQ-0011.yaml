@@ -1,0 +1,47 @@
+notes: no_alpha 如实登记，禁改参重跑。注：该因子呈显著反向信息（次日首 30min 收益与 T 日尾盘均线斜率负相关），如需反向利用须另立审计题，本题只判题面方向。近月（2025-06..09）命中率
+  44-46%，无改善迹象。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_market_PQ-0011.py
+  query: 'WITH bars AS (SELECT symbol, trade_date, trade_time, toFloat64(close) AS
+    c FROM c1_market.kline_30min WHERE trade_date >= ''2024-08-01'' AND trade_date
+    <= ''2025-09-09''), ma AS (SELECT *, avg(c) OVER (PARTITION BY symbol ORDER BY
+    trade_date, trade_time ROWS BETWEEN 19 PRECEDING AND CURRENT ROW) AS ma20 FROM
+    bars), sl AS (SELECT *, lagInFrame(ma20,5) OVER (PARTITION BY symbol ORDER BY
+    trade_date, trade_time ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS ma_lag5
+    FROM ma), rn AS (SELECT *, row_number() OVER (PARTITION BY symbol, trade_date
+    ORDER BY trade_time DESC) AS rk FROM sl) SELECT symbol, trade_date, ma20, ma_lag5
+    FROM rn WHERE rk=1; 首根 bar: SELECT symbol, trade_date, argMin(open,trade_time)
+    o1, argMin(close,trade_time) c1 FROM kline_30min [2024-09-09..2025-09-09] GROUP
+    BY symbol, trade_date; pandas: ret1=c1/o1-1, hit=sign(slope)==sign(ret1)'
+  result:
+    n: 1191956
+    hits: 564608
+    t_stat: -57.466
+    hit_rate: 0.473708
+    n_symbols: 5149
+    best_month: 2024-09 hit_rate=0.5655
+    worst_month: 2025-08 hit_rate=0.4425
+    n_signal_days: 243
+    binom_p_greater: 1.0
+exam_ref: st-metaq-20260923/probe/stat_market_PQ-0011
+fail_type: no_alpha
+threshold: '>50% 且 t>2'
+conclusion: 30 分钟 bar MA20 斜率因子（T 日末根 15:00 戳 bar 落定，slope=MA20/MA20_前5根-1）对次日开盘后
+  30 分钟收益（T+1 首根 10:00 戳 bar，ret=close1/open1-1）的方向预测：命中率 47.37%（564608/1191956），比例
+  t=-57.47，单侧二项检验 p=1.0，不满足 >50% 且 t>2；逐月分解 13 个月中 12 个月 <50%。结论=fail(no_alpha)：按题面方向无预测力且显著反向（t
+  绝对值极大来自样本量大 n=119.2 万，跨 5100+ 标的/243 个信号日）。窗口：信号 2024-09-09..2025-09-08，目标收益窗至 2025-09-09
+  切点内。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2024-08-01'
+three_check:
+  data: 'OK: kline_30min 切点内 3808 万行，2024-08-01 起样本充足，样本日 8 根 bar/标的（2025-09-05 实证
+    5149 标的全 8 根）'
+  caliber: 'OK: bar 戳为结束时刻（10:00=09:30-10:00）DESCRIBE+实测实证；因子=slope(MA20,5)；目标=次日首根
+    bar open->close'
+  mechanical: 'OK: 命中率/比例 t/二项检验全部代码可复现（scipy.stats.binomtest）'
+pit_assertion: 信号只用 T 日及以前 30min bar；目标收益为 T+1 首根 bar 内 open->close，不涉及任何 2025-09-09
+  之后数据；bar 内收益不受隔夜除权影响，未用复权。
+q_id: PQ-0011

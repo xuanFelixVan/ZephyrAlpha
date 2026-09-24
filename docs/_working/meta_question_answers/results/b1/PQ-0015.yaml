@@ -1,0 +1,44 @@
+notes: no_alpha：密度事件组次日收益与常态组无显著差异（t=0.15<<2）。注意财联社源在 2024-07-07 后至切点零样本，事件窗实际仅半年（12
+  个事件日），即使方向有利也不足以支持显著性；此为数据覆盖事实，非口径缺陷。复考前置：财联社电报采集续采回补 2024-07 之后存量后再考。
+outcome: fail
+_comment: 禁改他问文件；本文件由 batch_stat_alt 分包生成
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_alt_PQ-0015.py
+  query: SELECT toDate(full_publish_time), intDiv(toHour*60+toMinute,30), count()
+    FROM c3_fundamental.news_data WHERE publish_time<='2025-09-09' AND source='财联社'
+    AND toDate(full_publish_time)>='2024-01-01' GROUP BY 1,2；kline_index symbol='000300'
+    次日收益；scipy.stats.ttest_ind(equal_var=False)
+  result:
+    welch_p: 0.8828
+    welch_t: 0.1505
+    diff_mean: 0.000489
+    threshold_t: 2
+    n_event_days: 12
+    data_end_date: '2024-07-07'
+    n_normal_days: 176
+    days_with_news: 188
+    news_rows_2024: 43719
+    event_next_day_mean: 0.001394
+    normal_next_day_mean: 0.000905
+    p95_daily_max_bucket_count: 23
+exam_ref: st-metaq-20260923/probe/batch_stat_alt_PQ-0015
+fail_type: no_alpha
+threshold: t>2（事件日 vs 常态日次日收益分布差异 t 检验）
+conclusion: fail(no_alpha)：财联社电报 30 分钟滚动密度事件研究在闭卷窗内无预测力。取 c3_fundamental.news_data
+  source='财联社'（full_publish_time 含分钟级时戳），2024 年以来有效数据窗实为 2024-01-01~2024-07-07（共 43,719
+  条、188 个有电报日；2024-07-07 后至切点该源零样本）。以“日内 30 分钟桶峰值条数≥全样本日间 P95（=23 条）”定义事件日，共 12 个事件日；事件日次日沪深300
+  收益均值 +0.139%（sd 1.10%），常态电报日（n=176）次日均值 +0.091%（sd 0.93%），差 +0.049pp，Welch t=0.15（p=0.88），远低于
+  t>2 阈值。方向为正但不显著，事件组与常态组分布重叠度高，判 no_alpha；按契约不做调参重跑。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2024-01-01'
+three_check:
+  data: OK——news_data source='财联社' 切点前 166,361 条（2021-2024），2024 年以来 43,719 条含分钟级
+    full_publish_time；kline_index 000300 切点前 5,026 个交易日
+  caliber: OK——'30 分钟滚动密度进入当日 95 分位'落地为：日内 30 分钟桶峰值条数 ≥ 各日峰值的 P95（跨日分布），事件日 vs 常态电报日次日收益
+    Welch t 检验
+  mechanical: OK——阈值比较可代码复现（probe 脚本留档）
+pit_assertion: 密度事件按电报 full_publish_time（发布时戳）定界，事件判定仅用 T 日 23:59 前数据；次日收益窗自 T+1 交易日起，取
+  kline_index 000300 收盘价，全部 ≤2025-09-09。
+q_id: PQ-0015

@@ -1,0 +1,51 @@
+notes: 与 PQ-0109 同源缺口; 复考前置=组合空间预注册(space_hash)+批 manifest+N_eff 估计账落地并积累≥1 个批次。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l4_PQ-0104.py
+  query: 'PG: information_schema.tables WHERE table_name ILIKE ''%space%''/''%manifest%''/''%combin%''/''%e1c%''/''%precheck%'';
+    SELECT count(*) FROM registry_ledger.registry_catalog; CH: SHOW TABLES FROM c1_backtest
+    / c0_meta'
+  result:
+    src_note: grep space_hash 仅 src/zephyr/feedback_loop/detectors/correlation/external_validation_checkpoint.py(状态空间哈希一致性校验,
+      非组合空间预注册载体)
+    design_note: '设计在册: docs/_working/chain_piling_campaign/infra_mining/11_template_generator_design.md(模板生成器/组合空间设计稿,
+      未落地运行载体)'
+    c0_meta_tables:
+    - fetch_perf
+    c1_backtest_tables:
+    - alloc_budget_change_log
+    - alloc_budget_daily
+    - alloc_shrinkage_daily
+    - cohort_daily_ledger
+    - crisis_gate_log
+    - decision_daily
+    - hypothesis_precheck
+    - node_verdict
+    - regime_snapshot_history
+    - regime_state_anchored
+    - sim_attribution_daily
+    - sim_daily_report
+    - sim_platform_journal
+    - sim_pocket_daily
+    - sim_trade_log
+    - strategy_screen
+    pg_space_like_tables: []
+    registry_ledger_catalog_rows: 0
+exam_ref: st-metaq-20260923/probe/batch_l4_decision_PQ-0104
+fail_type: null
+threshold: ≤600 且 ≥30%
+conclusion: '审计对象(space_hash 预注册空间台账/批 manifest/N_eff 估计账)不存在: PG public 无 %space%/%manifest%/%combin%/%e1c%
+  表(命中=[]), registry_ledger.registry_catalog 0 行(登记账为空), c0_meta 仅 fetch_perf, c1_backtest
+  16 张表无空间/manifest 载体; 仓库内 space_hash 仅出现在 feedback_loop 状态哈希校验(语义不同)。组合挖掘预注册空间仅有设计稿(11_template_generator_design.md),
+  未建运行载体 → 单批候选数与 N_eff 占比均不可考 → insufficient(待 space_hash 预注册载体+批 manifest+N_eff
+  估计账建成后复考)。'
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-05'
+three_check:
+  data: 'NO: space_hash/manifest/N_eff 载体在 PG/CH 均不存在'
+  caliber: 'OK: ≤600 与 ≥30% 两判据本身机械, 但无载体无记录'
+  mechanical: 'NO(不可执行): 审计对象不存在'
+pit_assertion: 本题取数(现状证据查询)不使用任何切点后数据作为判据; 切点后记录仅作在产状态观察, 不进入阈值比较。
+q_id: PQ-0104

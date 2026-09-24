@@ -1,0 +1,26 @@
+notes: 首次真实 merge 后需复考（届时悬空检测才有非平凡检验力）；建议配合 parent_id 同步校验。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_static.py
+  query: SELECT count(*) FROM meta_question.meta_question m WHERE m.merged_into IS
+    NOT NULL AND NOT EXISTS (SELECT 1 FROM meta_question.meta_question p WHERE p.q_id=m.merged_into)
+  result:
+    dangling_refs: 0
+    terminal_rows: 0
+    merged_into_nonnull: 0
+exam_ref: st-metaq-20260923/probe/gov_PQ-0101
+fail_type: null
+threshold: =0
+conclusion: pass：merged_into 非空=0（283 行全量扫描），悬空引用（指向不存在 q_id）经左反连接实证=0 → 满足'=0' ✓。当前为空转状态：全表尚无任何合并发生（merged/retired
+  行=0），引用完整性在空集上成立。
+confidence: 0.7
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: OK：全表扫描+反连接
+  caliber: OK：悬空=merged_into 值不在主表 q_id 集，口径机械明确
+  mechanical: OK：NOT EXISTS 反连接可复现
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0101

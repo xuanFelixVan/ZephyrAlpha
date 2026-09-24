@@ -1,0 +1,30 @@
+notes: 复考前置：auction_book/auction_snapshot 历史回补覆盖 >= 近一年闭卷窗（当前最早 2026-07-21/2026-06-01，均在切点后）；回补后按题面重考
+  AUC+DeLong。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_market_00_probe.py
+  query: SELECT count(), min(trade_date), max(trade_date) FROM c1_market.auction_book
+    WHERE trade_date <= '2025-09-09' -> (0, 1970-01-01, 1970-01-01); 同法 auction_snapshot/tick_depth_5
+    均 (0, epoch, epoch)
+  result:
+    tick_data_pre_cut_rows: 3476481797
+    auction_book_pre_cut_rows: 0
+    tick_depth_5_pre_cut_rows: 0
+    auction_snapshot_pre_cut_rows: 0
+exam_ref: st-metaq-20260923/probe/stat_market_PQ-0019
+fail_type: null
+threshold: '>0.55 且 p<0.05'
+conclusion: 开盘集合竞价买卖队列失衡度因子无法在闭卷窗构造：auction_book 与 auction_snapshot（以及 tick_depth_5）切点前样本数为
+  0（实证 count()=0，min/max 为 1970-01-01 epoch 占位），即闭卷窗内零样本；tick_data 虽有切点内 34.76 亿行但为逐笔成交（无委托队列），无法替代竞价买卖队列口径。AUC>0.55
+  且 DeLong p<0.05 无法计算。判 insufficient。
+confidence: 1.0
+data_window:
+  end: '2025-09-09'
+  start: '2025-01-02'
+three_check:
+  data: 'NO: auction_book/auction_snapshot 切点前 0 行（2026-07 起才有数据，切点后）；tick_depth_5
+    亦 0 行'
+  caliber: 'NO: 竞价买卖队列失衡度依赖竞价委托簿数据，数据缺 -> 口径无法落地'
+  mechanical: 'OK: AUC/DeLong 本身可机械跑，但无输入数据'
+pit_assertion: 仅执行了切点前行数核查（count WHERE trade_date<=2025-09-09），未使用任何切点后数据参与判定。
+q_id: PQ-0019

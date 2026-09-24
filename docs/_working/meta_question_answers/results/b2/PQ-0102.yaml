@@ -1,0 +1,40 @@
+notes: 转总包 fail 作业簿：JSONL 轨建成后回放补账、双向清零方可复考（§2.2 差集仲裁：PG 为真源）。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_env.py
+  query: git ls-files 全仓查 meta_question_audit.jsonl；遍历 src/ scripts/ 4753 个 .py 查
+    'meta_question' 子串
+  result:
+    impl_code_hits: 0
+    jsonl_disk_hits: 0
+    pyfiles_scanned: 4753
+    jsonl_tracked_hits: 0
+- probe: .runtime/tmp/st-metaq-20260923/probes/gov_schema.py
+  query: SELECT status,count(*) FROM meta_question.meta_question GROUP BY status;
+    SELECT what,count(*) FROM meta_question.meta_question_audit GROUP BY what; SELECT
+    count(*) FROM meta_question.meta_question_exam_result
+  result:
+    audit_rows: 849
+    status_all: registered
+    audit_update: 283
+    audit_register: 283
+    exam_result_rows: 0
+    meta_question_rows: 283
+    audit_degraded_check: 283
+exam_ref: st-metaq-20260923/probe/gov_PQ-0102
+fail_type: infra
+threshold: =0
+conclusion: fail(infra)：与 PQ-0062 同一双轨缺口（第三道对账线）。JSONL 审计账全仓零命中（find+git ls-files
+  双重实证），PG 审计表 849 行（2026-09-23 单日）→ 当日差=849 ≠ 0。20_management_policy.md §2.2 抽查条款③'JSONL
+  与 PG 表逐行哈希比对（治理级事件）'的对账对象单侧不存在，哈希比对无法执行；缺因=JSONL 写入器未实现（机制未建），转总包 fail 作业簿。
+confidence: 0.9
+data_window:
+  end: '2026-09-23'
+  start: '2026-09-23'
+three_check:
+  data: OK：PG 侧可查、JSONL 侧缺失实证
+  caliber: OK：逐日计数差口径明确
+  mechanical: OK：对账逻辑可复现
+pit_assertion: 本题仅读 meta_question 治理表内现状与已落账审计事件（事件时戳 2026-09-23 为已发生历史事实，非未来数据）；未使用任何行情/成交数据，PIT
+  切点后市场数据零接触。
+q_id: PQ-0102

@@ -1,0 +1,685 @@
+notes: 上游价格代理为行业指数(含采选+冶炼, 与产品级口径存在带宽差), 已在结论声明; 下游边中无在建库指数映射者跳过(清单在 evidence.skipped_edges);
+  若复考需产品级/商品级上游价格(如煤炭坑口价)入库后重跑。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l4_PQ-0092.py
+  query: 'PG: SELECT from_sector_code,to_sector_code,coefficient FROM ig_io_edge WHERE
+    year=2020 AND from_sector_code IN (''006'',''007'',''009'') ORDER BY coefficient
+    DESC; CH: kline_index 行业指数 close; 事件=上游ret20>=+10%, 避损=-ret20_down(T+1..T+21)'
+  result:
+    events:
+    - ret20_up: 0.1033
+      upstream: '006'
+      shock_day: '2010-04-02'
+      avoid_mean: 0.12285333333333333
+    - ret20_up: 0.1098
+      upstream: '006'
+      shock_day: '2010-07-27'
+      avoid_mean: 0.00884
+    - ret20_up: 0.1549
+      upstream: '006'
+      shock_day: '2010-10-11'
+      avoid_mean: -0.09097
+    - ret20_up: 0.1737
+      upstream: '006'
+      shock_day: '2010-11-09'
+      avoid_mean: 0.12034333333333332
+    - ret20_up: 0.1075
+      upstream: '006'
+      shock_day: '2010-12-15'
+      avoid_mean: 0.034953333333333336
+    - ret20_up: 0.1268
+      upstream: '006'
+      shock_day: '2011-02-28'
+      avoid_mean: -0.04517333333333334
+    - ret20_up: 0.1072
+      upstream: '006'
+      shock_day: '2011-07-08'
+      avoid_mean: 0.12957333333333332
+    - ret20_up: 0.1041
+      upstream: '006'
+      shock_day: '2011-11-17'
+      avoid_mean: 0.12857333333333332
+    - ret20_up: 0.1168
+      upstream: '006'
+      shock_day: '2012-01-17'
+      avoid_mean: -0.05458
+    - ret20_up: 0.1068
+      upstream: '006'
+      shock_day: '2012-02-27'
+      avoid_mean: 0.04261666666666667
+    - ret20_up: 0.1259
+      upstream: '006'
+      shock_day: '2012-05-02'
+      avoid_mean: 0.02334
+    - ret20_up: 0.1022
+      upstream: '006'
+      shock_day: '2012-10-10'
+      avoid_mean: 0.0330675
+    - ret20_up: 0.1024
+      upstream: '006'
+      shock_day: '2012-12-24'
+      avoid_mean: -0.0315275
+    - ret20_up: 0.1196
+      upstream: '006'
+      shock_day: '2013-02-05'
+      avoid_mean: 0.0614275
+    - ret20_up: 0.1058
+      upstream: '006'
+      shock_day: '2013-08-12'
+      avoid_mean: -0.09073666666666667
+    - ret20_up: 0.1127
+      upstream: '006'
+      shock_day: '2014-07-28'
+      avoid_mean: -0.0523575
+    - ret20_up: 0.1085
+      upstream: '006'
+      shock_day: '2014-12-01'
+      avoid_mean: -0.12697999999999998
+    - ret20_up: 0.1326
+      upstream: '006'
+      shock_day: '2015-01-08'
+      avoid_mean: 0.0388775
+    - ret20_up: 0.135
+      upstream: '006'
+      shock_day: '2015-03-13'
+      avoid_mean: -0.23111250000000003
+    - ret20_up: 0.1477
+      upstream: '006'
+      shock_day: '2015-04-14'
+      avoid_mean: -0.09692
+    - ret20_up: 0.1365
+      upstream: '006'
+      shock_day: '2015-05-27'
+      avoid_mean: 0.017537499999999998
+    - ret20_up: 0.1184
+      upstream: '006'
+      shock_day: '2015-08-04'
+      avoid_mean: 0.1688025
+    - ret20_up: 0.1278
+      upstream: '006'
+      shock_day: '2015-10-19'
+      avoid_mean: -0.015390000000000001
+    - ret20_up: 0.1341
+      upstream: '006'
+      shock_day: '2016-03-03'
+      avoid_mean: -0.039467499999999996
+    - ret20_up: 0.118
+      upstream: '006'
+      shock_day: '2016-04-13'
+      avoid_mean: 0.126475
+    - ret20_up: 0.1634
+      upstream: '006'
+      shock_day: '2016-07-11'
+      avoid_mean: 0.0043275
+    - ret20_up: 0.1205
+      upstream: '006'
+      shock_day: '2016-10-24'
+      avoid_mean: -0.04226666666666667
+    - ret20_up: 0.1082
+      upstream: '006'
+      shock_day: '2017-06-29'
+      avoid_mean: -0.0537575
+    - ret20_up: 0.1253
+      upstream: '006'
+      shock_day: '2017-07-31'
+      avoid_mean: -0.013609999999999999
+    - ret20_up: 0.1183
+      upstream: '006'
+      shock_day: '2017-09-08'
+      avoid_mean: 0.0331075
+    - ret20_up: 0.1192
+      upstream: '006'
+      shock_day: '2018-01-08'
+      avoid_mean: 0.014537499999999995
+    - ret20_up: 0.117
+      upstream: '006'
+      shock_day: '2019-02-26'
+      avoid_mean: -0.039814999999999996
+    - ret20_up: 0.1659
+      upstream: '006'
+      shock_day: '2019-04-08'
+      avoid_mean: 0.1543475
+    - ret20_up: 0.104
+      upstream: '006'
+      shock_day: '2019-09-12'
+      avoid_mean: 0.063245
+    - ret20_up: 0.165
+      upstream: '006'
+      shock_day: '2020-07-06'
+      avoid_mean: -0.035289999999999995
+    - ret20_up: 0.1701
+      upstream: '006'
+      shock_day: '2020-11-23'
+      avoid_mean: 0.0589925
+    - ret20_up: 0.101
+      upstream: '006'
+      shock_day: '2021-03-04'
+      avoid_mean: 0.0004825000000000011
+    - ret20_up: 0.1272
+      upstream: '006'
+      shock_day: '2021-04-22'
+      avoid_mean: 0.013560000000000001
+    - ret20_up: 0.1014
+      upstream: '006'
+      shock_day: '2021-06-24'
+      avoid_mean: -0.0859275
+    - ret20_up: 0.1086
+      upstream: '006'
+      shock_day: '2021-08-06'
+      avoid_mean: -0.12845
+    - ret20_up: 0.2705
+      upstream: '006'
+      shock_day: '2021-09-06'
+      avoid_mean: 0.14012249999999998
+    - ret20_up: 0.1135
+      upstream: '006'
+      shock_day: '2021-12-13'
+      avoid_mean: -0.016107499999999997
+    - ret20_up: 0.1187
+      upstream: '006'
+      shock_day: '2022-02-18'
+      avoid_mean: 0.10168
+    - ret20_up: 0.1289
+      upstream: '006'
+      shock_day: '2022-04-13'
+      avoid_mean: 0.0724775
+    - ret20_up: 0.1548
+      upstream: '006'
+      shock_day: '2022-05-26'
+      avoid_mean: -0.0581925
+    - ret20_up: 0.1116
+      upstream: '006'
+      shock_day: '2022-08-22'
+      avoid_mean: 0.059515000000000005
+    - ret20_up: 0.1297
+      upstream: '006'
+      shock_day: '2023-09-14'
+      avoid_mean: 0.0815
+    - ret20_up: 0.1165
+      upstream: '006'
+      shock_day: '2023-12-04'
+      avoid_mean: 0.00046750000000000047
+    - ret20_up: 0.146
+      upstream: '006'
+      shock_day: '2024-02-22'
+      avoid_mean: -0.007379999999999999
+    - ret20_up: 0.1023
+      upstream: '006'
+      shock_day: '2024-09-27'
+      avoid_mean: 0.02005
+    - ret20_up: 0.1097
+      upstream: '006'
+      shock_day: '2025-07-22'
+      avoid_mean: -0.0142
+    - ret20_up: 0.1285
+      upstream: '007'
+      shock_day: '2004-01-14'
+      avoid_mean: -0.04916
+    - ret20_up: 0.1033
+      upstream: '007'
+      shock_day: '2004-03-15'
+      avoid_mean: 0.03963
+    - ret20_up: 0.1007
+      upstream: '007'
+      shock_day: '2005-02-22'
+      avoid_mean: 0.07336
+    - ret20_up: 0.1371
+      upstream: '007'
+      shock_day: '2005-08-02'
+      avoid_mean: -0.0095
+    - ret20_up: 0.1048
+      upstream: '007'
+      shock_day: '2005-11-18'
+      avoid_mean: -0.00851
+    - ret20_up: 0.1145
+      upstream: '007'
+      shock_day: '2005-12-29'
+      avoid_mean: -0.0397
+    - ret20_up: 0.1095
+      upstream: '007'
+      shock_day: '2006-02-17'
+      avoid_mean: -0.00401
+    - ret20_up: 0.1101
+      upstream: '007'
+      shock_day: '2006-04-27'
+      avoid_mean: -0.16853
+    - ret20_up: 0.1016
+      upstream: '007'
+      shock_day: '2006-09-21'
+      avoid_mean: -0.01759
+    - ret20_up: 0.1123
+      upstream: '007'
+      shock_day: '2006-10-31'
+      avoid_mean: -0.0696
+    - ret20_up: 0.1274
+      upstream: '007'
+      shock_day: '2006-11-29'
+      avoid_mean: -0.16266
+    - ret20_up: 0.106
+      upstream: '007'
+      shock_day: '2006-12-28'
+      avoid_mean: -0.18228
+    - ret20_up: 0.1385
+      upstream: '007'
+      shock_day: '2007-03-27'
+      avoid_mean: -0.22468
+    - ret20_up: 0.1868
+      upstream: '007'
+      shock_day: '2007-04-25'
+      avoid_mean: -0.06386
+    - ret20_up: 0.2334
+      upstream: '007'
+      shock_day: '2007-05-31'
+      avoid_mean: 0.04876
+    - ret20_up: 0.1067
+      upstream: '007'
+      shock_day: '2007-07-27'
+      avoid_mean: -0.11234
+    - ret20_up: 0.1104
+      upstream: '007'
+      shock_day: '2007-08-27'
+      avoid_mean: -0.14826
+    - ret20_up: 0.172
+      upstream: '007'
+      shock_day: '2007-09-25'
+      avoid_mean: 0.03211
+    - ret20_up: 0.27
+      upstream: '007'
+      shock_day: '2007-10-31'
+      avoid_mean: 0.03772
+    - ret20_up: 0.1257
+      upstream: '007'
+      shock_day: '2007-12-25'
+      avoid_mean: 0.03797
+    - ret20_up: 0.1219
+      upstream: '007'
+      shock_day: '2008-05-14'
+      avoid_mean: 0.24449
+    - ret20_up: 0.1079
+      upstream: '007'
+      shock_day: '2008-07-28'
+      avoid_mean: 0.21445
+    - ret20_up: 0.1304
+      upstream: '007'
+      shock_day: '2008-11-24'
+      avoid_mean: -0.00476
+    - ret20_up: 0.1107
+      upstream: '007'
+      shock_day: '2009-02-03'
+      avoid_mean: -0.02938
+    - ret20_up: 0.1003
+      upstream: '007'
+      shock_day: '2009-03-26'
+      avoid_mean: -0.01339
+    - ret20_up: 0.1097
+      upstream: '007'
+      shock_day: '2009-05-07'
+      avoid_mean: 1.0e-05
+    - ret20_up: 0.103
+      upstream: '007'
+      shock_day: '2009-07-06'
+      avoid_mean: -0.1502
+    - ret20_up: 0.1868
+      upstream: '007'
+      shock_day: '2009-08-04'
+      avoid_mean: 0.22035
+    - ret20_up: 0.1016
+      upstream: '007'
+      shock_day: '2009-11-05'
+      avoid_mean: -0.05511
+    - ret20_up: 0.1099
+      upstream: '007'
+      shock_day: '2010-07-29'
+      avoid_mean: 0.00949
+    - ret20_up: 0.1004
+      upstream: '007'
+      shock_day: '2010-10-25'
+      avoid_mean: 0.1062
+    - ret20_up: 0.1015
+      upstream: '007'
+      shock_day: '2012-12-27'
+      avoid_mean: -0.057913333333333324
+    - ret20_up: 0.1354
+      upstream: '007'
+      shock_day: '2014-02-20'
+      avoid_mean: 0.039023333333333333
+    - ret20_up: 0.1004
+      upstream: '007'
+      shock_day: '2014-08-12'
+      avoid_mean: -0.07165333333333333
+    - ret20_up: 0.1325
+      upstream: '007'
+      shock_day: '2014-12-04'
+      avoid_mean: -0.20431333333333335
+    - ret20_up: 0.1388
+      upstream: '007'
+      shock_day: '2015-01-08'
+      avoid_mean: 0.07142333333333334
+    - ret20_up: 0.1024
+      upstream: '007'
+      shock_day: '2015-03-17'
+      avoid_mean: -0.19119333333333333
+    - ret20_up: 0.1233
+      upstream: '007'
+      shock_day: '2015-04-16'
+      avoid_mean: -0.014946666666666664
+    - ret20_up: 0.1024
+      upstream: '007'
+      shock_day: '2015-06-05'
+      avoid_mean: 0.34876666666666667
+    - ret20_up: 0.1113
+      upstream: '007'
+      shock_day: '2015-10-19'
+      avoid_mean: -0.03860666666666667
+    - ret20_up: 0.109
+      upstream: '007'
+      shock_day: '2016-03-07'
+      avoid_mean: -0.07587333333333333
+    - ret20_up: 0.1166
+      upstream: '007'
+      shock_day: '2018-01-10'
+      avoid_mean: 0.05528333333333333
+    - ret20_up: 0.1023
+      upstream: '007'
+      shock_day: '2019-02-26'
+      avoid_mean: -0.06120333333333333
+    - ret20_up: 0.1139
+      upstream: '007'
+      shock_day: '2021-03-05'
+      avoid_mean: -0.028123333333333334
+    - ret20_up: 0.1128
+      upstream: '007'
+      shock_day: '2021-08-24'
+      avoid_mean: -0.10982999999999998
+    - ret20_up: 0.287
+      upstream: '007'
+      shock_day: '2021-09-24'
+      avoid_mean: 0.045976666666666666
+    - ret20_up: 0.1674
+      upstream: '007'
+      shock_day: '2022-03-03'
+      avoid_mean: 0.06553333333333333
+    - ret20_up: 0.1263
+      upstream: '007'
+      shock_day: '2022-04-14'
+      avoid_mean: 0.03230333333333334
+    - ret20_up: 0.1674
+      upstream: '007'
+      shock_day: '2022-05-27'
+      avoid_mean: -0.052399999999999995
+    - ret20_up: 0.1149
+      upstream: '007'
+      shock_day: '2022-08-22'
+      avoid_mean: 0.050710000000000005
+    - ret20_up: 0.1274
+      upstream: '007'
+      shock_day: '2024-02-27'
+      avoid_mean: -0.0015033333333333333
+    - ret20_up: 0.1057
+      upstream: '007'
+      shock_day: '2024-09-30'
+      avoid_mean: 0.03728666666666667
+    - ret20_up: 0.1132
+      upstream: 009
+      shock_day: '2012-09-28'
+      avoid_mean: 0.01758
+    - ret20_up: 0.1394
+      upstream: 009
+      shock_day: '2012-12-26'
+      avoid_mean: -0.10123
+    - ret20_up: 0.12
+      upstream: 009
+      shock_day: '2014-07-25'
+      avoid_mean: -0.07096
+    - ret20_up: 0.161
+      upstream: 009
+      shock_day: '2014-12-03'
+      avoid_mean: -0.02933
+    - ret20_up: 0.11
+      upstream: 009
+      shock_day: '2015-03-13'
+      avoid_mean: -0.20006
+    - ret20_up: 0.144
+      upstream: 009
+      shock_day: '2015-04-14'
+      avoid_mean: -0.10489
+    - ret20_up: 0.153
+      upstream: 009
+      shock_day: '2015-05-14'
+      avoid_mean: -0.34028
+    - ret20_up: 0.1821
+      upstream: 009
+      shock_day: '2015-06-12'
+      avoid_mean: 0.32777
+    - ret20_up: 0.1064
+      upstream: 009
+      shock_day: '2015-08-04'
+      avoid_mean: 0.20219
+    - ret20_up: 0.1629
+      upstream: 009
+      shock_day: '2015-10-20'
+      avoid_mean: -0.11584
+    - ret20_up: 0.1173
+      upstream: 009
+      shock_day: '2015-11-18'
+      avoid_mean: -0.02935
+    - ret20_up: 0.1614
+      upstream: 009
+      shock_day: '2016-03-02'
+      avoid_mean: -0.06852
+    - ret20_up: 0.1127
+      upstream: 009
+      shock_day: '2016-04-13'
+      avoid_mean: 0.13249
+    - ret20_up: 0.1054
+      upstream: 009
+      shock_day: '2016-06-07'
+      avoid_mean: -0.0559
+    - ret20_up: 0.1051
+      upstream: 009
+      shock_day: '2016-07-08'
+      avoid_mean: -0.00789
+    - ret20_up: 0.1089
+      upstream: 009
+      shock_day: '2017-02-23'
+      avoid_mean: -0.02367
+    - ret20_up: 0.1169
+      upstream: 009
+      shock_day: '2017-06-29'
+      avoid_mean: -0.02723
+    - ret20_up: 0.1969
+      upstream: 009
+      shock_day: '2017-07-28'
+      avoid_mean: 0.01523
+    - ret20_up: 0.1235
+      upstream: 009
+      shock_day: '2017-09-08'
+      avoid_mean: 0.00018
+    - ret20_up: 0.1115
+      upstream: 009
+      shock_day: '2018-01-08'
+      avoid_mean: 0.08317
+    - ret20_up: 0.1024
+      upstream: 009
+      shock_day: '2018-03-16'
+      avoid_mean: 0.06204
+    - ret20_up: 0.1207
+      upstream: 009
+      shock_day: '2018-11-15'
+      avoid_mean: 0.04911
+    - ret20_up: 0.1575
+      upstream: 009
+      shock_day: '2019-02-25'
+      avoid_mean: -0.07779
+    - ret20_up: 0.1003
+      upstream: 009
+      shock_day: '2019-04-08'
+      avoid_mean: 0.17897
+    - ret20_up: 0.105
+      upstream: 009
+      shock_day: '2019-06-24'
+      avoid_mean: 0.02364
+    - ret20_up: 0.1539
+      upstream: 009
+      shock_day: '2020-07-06'
+      avoid_mean: -0.1718
+    - ret20_up: 0.1133
+      upstream: 009
+      shock_day: '2020-11-05'
+      avoid_mean: -0.0578
+    - ret20_up: 0.1187
+      upstream: 009
+      shock_day: '2020-12-04'
+      avoid_mean: -0.13258
+    - ret20_up: 0.1525
+      upstream: 009
+      shock_day: '2021-01-05'
+      avoid_mean: -0.12749
+    - ret20_up: 0.1944
+      upstream: 009
+      shock_day: '2021-02-18'
+      avoid_mean: 0.16429
+    - ret20_up: 0.1007
+      upstream: 009
+      shock_day: '2021-04-29'
+      avoid_mean: -0.08493
+    - ret20_up: 0.109
+      upstream: 009
+      shock_day: '2021-07-09'
+      avoid_mean: -0.02087
+    - ret20_up: 0.1289
+      upstream: 009
+      shock_day: '2021-08-25'
+      avoid_mean: 0.00261
+    - ret20_up: 0.1055
+      upstream: 009
+      shock_day: '2022-02-25'
+      avoid_mean: 0.14259
+    - ret20_up: 0.137
+      upstream: 009
+      shock_day: '2022-05-26'
+      avoid_mean: -0.11772
+    - ret20_up: 0.1224
+      upstream: 009
+      shock_day: '2022-06-27'
+      avoid_mean: 0.06596
+    - ret20_up: 0.1138
+      upstream: 009
+      shock_day: '2022-11-07'
+      avoid_mean: -0.02088
+    - ret20_up: 0.1382
+      upstream: 009
+      shock_day: '2023-01-20'
+      avoid_mean: -0.00601
+    - ret20_up: 0.1092
+      upstream: 009
+      shock_day: '2024-03-06'
+      avoid_mean: -0.04141
+    - ret20_up: 0.1323
+      upstream: 009
+      shock_day: '2024-04-08'
+      avoid_mean: -0.03897
+    - ret20_up: 0.1339
+      upstream: 009
+      shock_day: '2024-09-27'
+      avoid_mean: 0.04554
+    - ret20_up: 0.1113
+      upstream: 009
+      shock_day: '2025-07-21'
+      avoid_mean: -0.02406
+    t_pair: -0.1197803911560029
+    n_pairs: 358
+    p_event: 0.5826981858569388
+    t_event: -0.550691950859273
+    n_events: 145
+    mappings_used:
+    - 006->000007
+    - 006->000813.CSI
+    - 006->399440
+    - 007->000007
+    - 007->000813.CSI
+    - 009->000813.CSI
+    skipped_edges:
+    - - '006'
+      - '042'
+      - 煤炭加工品
+    - - '006'
+      - '006'
+      - 煤炭开采和洗选产品
+    - - '006'
+      - '056'
+      - 砖瓦、石材等建筑材料
+    - - '006'
+      - '044'
+      - 肥料
+    - - '006'
+      - '054'
+      - 水泥、石灰和石膏
+    - - '006'
+      - '060'
+      - 石墨及其他非金属矿物制品
+    - - '006'
+      - 059
+      - 耐火材料制品
+    - - '006'
+      - 058
+      - 陶瓷制品
+    - - '007'
+      - '041'
+      - 精炼石油和核燃料加工品
+    - - '007'
+      - '045'
+      - 农药
+    - - '007'
+      - '044'
+      - 肥料
+    - - '007'
+      - '047'
+      - 合成材料
+    - - '007'
+      - '051'
+      - 化学纤维制品
+    - - '007'
+      - '057'
+      - 玻璃和玻璃制品
+    - - '007'
+      - 059
+      - 耐火材料制品
+    - - '007'
+      - '046'
+      - 涂料、油墨、颜料及类似产品
+    - - '007'
+      - '007'
+      - 石油和天然气开采产品
+    - - 009
+      - '064'
+      - 有色金属及其合金
+    - - 009
+      - '065'
+      - 有色金属压延加工品
+    - - 009
+      - 009
+      - 有色金属矿采选产品
+    mean_avoid_pair: -0.0006459776536312862
+    mean_avoid_event: -0.004750701149425287
+exam_ref: st-metaq-20260923/probe/batch_l4_decision_PQ-0092
+fail_type: no_alpha
+threshold: '>0 且 t>2'
+conclusion: '事件研究(路线A): ig_io_edge(2020年表) 上游 006煤炭/007油气/009有色矿采 各取 coefficient 前12
+  下游边, 可映射到在库行业指数的边: 电力热力/燃气->000007公用, 钢/钢压延->399440钢铁, 基础化学原料->000813细分化工(水泥/建材/肥料/造纸等无在建库指数映射的边跳过);
+  上游价格代理: 煤炭->399998, 油气->399439, 有色->000823。上游20日收益>=+10% 冲击事件 n=145; 事件级避损(=下游20日收益取负,
+  T+1 执行)均值=-0.48%, t=-0.551, p=0.5827; 边级合并(n=358)均值=-0.06%, t=-0.120。不达标(阈值>0且t>2)
+  → fail/no_alpha(上游成本冲击后下游行业未显著下跌, 回避清单无可证实的避损)。'
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2009-01-05'
+three_check:
+  data: 'OK: PG ig_io_edge 209 条上游边(2020); c1_market.kline_index 行业指数: 399998(4053日),
+    399439(5511日), 000823(5026日), 000007(7418日), 399440(5511日), 000813.CSI(2827日)'
+  caliber: 'OK(含判断): ig_io_edge 为产品级口径, 在库无产品级价格, 采用显式登记的产业指数映射(上游3类/下游5边); 冲击阈值+10%/20日与避损口径(含机会成本)机械可复现'
+  mechanical: 'OK: 事件状态机/映射表/避损与 t 检验全部代码复现, scipy.stats'
+pit_assertion: 冲击信号只用<=T收盘的上游指数收益; 回避窗 T+1..T+21 全部<=2025-09-09; ig_io_edge 系静态投入产出系数(2020年表),
+  事件全程可用(无前视)。
+q_id: PQ-0092

@@ -1,0 +1,30 @@
+notes: 复考前置：回填切点前主力资金流与快讯情绪历史；当前两源 2026-03/06 起才有样本，彼时再考（属切点后，本轮闭卷禁用）。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_insufficient.py
+  query: SELECT count() FROM money_flow WHERE trade_date<='2025-09-09'; market_fund_flow_daily
+    同查
+  result:
+    money_flow_pre: 0
+    market_fund_flow_pre: 0
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_insufficient.py
+  query: SELECT count() FROM news_sentiment_window WHERE window_date<='2025-09-09'
+  result:
+    range: (datetime.date(2026, 2, 24), datetime.date(2026, 9, 22))
+    news_sent_pre: 0
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0036
+fail_type: null
+threshold: 领先期 CI 不含 0（滚动 250 日领先滞后互相关，block bootstrap）
+conclusion: insufficient：两序列切点前均零样本——主力净流入 money_flow 切点前 0 行（2026-06 起），market_fund_flow_daily
+  切点前 0 行（2026-03-27 起）；快讯情绪指数 news_sentiment_window 切点前 0 行（2026-02 起）。滚动 250 日领先滞后互相关与
+  block bootstrap 无样本可算。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2015-01-01'
+three_check:
+  data: NO：主力净流入与快讯情绪两源切点前均 0 行
+  caliber: OK（口径清楚：20 日滚动主力净流入 vs 快讯情绪指数）
+  mechanical: OK（若数据齐可机械执行）
+pit_assertion: 所有存在性核查均带切点过滤 <= '2025-09-09'；未使用任何切点后数据进入统计量。
+q_id: PQ-0036

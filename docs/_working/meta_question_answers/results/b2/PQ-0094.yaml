@@ -1,0 +1,72 @@
+notes: '审计对象(前置校验)部分存在: 单票层有实现且更严, 板块层缺位; 按契约''零样本/对象不完整''判 insufficient, 禁拍 pass。'
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l4_PQ-0094.py
+  query: '代码审计(只读): grep SINGLE_NAME_CAP/单票上限/SYMBOL_AGGREGATE_CAP/sector_cap/板块上限
+    in src/zephyr/pf_alloc/allocation_orchestrator.py; 运行账: alloc_budget_daily/decision_daily/sim_trade_log
+    切点前 row count'
+  result:
+    coverage:
+    - pre:
+        max: '1970-01-01'
+        min: '1970-01-01'
+        rows: 0
+      full:
+        max: '2026-09-22'
+        min: '2026-09-15'
+        rows: 16
+      table: c1_backtest.alloc_budget_daily
+      date_col: trade_date
+    - pre:
+        max: '1970-01-01'
+        min: '1970-01-01'
+        rows: 0
+      full:
+        max: '2026-09-24'
+        min: '2026-09-16'
+        rows: 69
+      table: c1_backtest.decision_daily
+      date_col: trade_date
+    - pre:
+        max: '1970-01-01'
+        min: '1970-01-01'
+        rows: 0
+      full:
+        max: '2026-09-23'
+        min: '2026-07-17'
+        rows: 66
+      table: c1_backtest.sim_trade_log
+      date_col: trade_date
+    code_evidence:
+    - 'D:\ZephyrAlpha\src\zephyr\pf_alloc\allocation_orchestrator.py:128: SINGLE_NAME_CAP_LAYERS,'
+    - 'D:\ZephyrAlpha\src\zephyr\pf_alloc\allocation_orchestrator.py:431: firm_cap
+      = SINGLE_NAME_CAP_LAYERS[LAYER_FIRM_AGG]'
+    - 'D:\ZephyrAlpha\src\zephyr\pf_alloc\allocation_orchestrator.py:435: violations.append("SYMBOL_AGGREGATE_CAP")'
+    - 'D:\ZephyrAlpha\src\zephyr\pf_alloc\allocation_orchestrator.py:500: cap = min(SINGLE_NAME_CAP_LAYERS[LAYER_STRATEGY],
+      SINGLE_NAME_CAP_LAYERS[LAYER_FINAL_HARD])'
+    - 'D:\ZephyrAlpha\src\zephyr\pf_alloc\allocation_orchestrator.py:508: violations=()
+      if request.intended_weight <= cap + 1e-12 else ("SINGLE_NAME_CAP",),'
+    - 'D:\ZephyrAlpha\src\zephyr\pf_alloc\allocation_orchestrator.py:509: reason=f"单票上限
+      {cap:.2%}（MOD-POS 三层口径最严值）",'
+    sector_cap_note: grep sector_cap/板块上限/行业上限/industry_cap 在 pf_alloc 内零命中——单板块≤30%
+      约束未定位到实现
+    single_name_cap_note: 标的层 cap=min(策略层,最终硬限)=5%(三层口径最严值), 违例标签 SINGLE_NAME_CAP;
+      组合层另有 SYMBOL_AGGREGATE_CAP(跨策略同票聚合, firm 口径)
+exam_ref: st-metaq-20260923/probe/batch_l4_decision_PQ-0094
+fail_type: null
+threshold: =100%
+conclusion: '代码审计(只读): pf_alloc 裁决中心(allocation_orchestrator.py)存在标的层单票硬上限——cap=min(策略层,最终硬限)=5%(较题面
+  10% 更严, 违例标签 SINGLE_NAME_CAP, 意图权重被裁剪至 cap), 组合层另有跨策略同票聚合上限(SYMBOL_AGGREGATE_CAP);
+  但''单板块≤30%''约束在 pf_alloc 全模块 grep(sector_cap/板块上限/行业上限/industry_cap)零命中——未定位到实现。运行账:
+  alloc_budget_daily(16 行)/decision_daily(69 行)/sim_trade_log(66 行)全部在切点后, 切点前 0 行——闭卷窗内零校验样本(无违例样本亦无校验日志)。检出率=100%
+  无法证实(机制覆盖不全+零样本) → insufficient; 复考前置=①补建单板块≤30% 约束实现 ②构造违例注入测试+切点前/新窗运行账留痕后对账。'
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2019-04-01'
+three_check:
+  data: 'NO: 运行账切点前 0 行(alloc_budget_daily 0/decision_daily 0/sim_trade_log 0)'
+  caliber: 'NO(部分): 单票上限代码口径 5% 与题面 10% 不一致(更严); 单板块 30% 上限无代码实现'
+  mechanical: 'OK(不可执行): 检出率=检出违例/实际违例 机械可算, 但零违例样本+零校验日志使分母为 0'
+pit_assertion: 本题取数(现状证据查询)不使用任何切点后数据作为判据; 切点后记录仅作在产状态观察, 不进入阈值比较。
+q_id: PQ-0094
