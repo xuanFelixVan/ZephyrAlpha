@@ -1,0 +1,41 @@
+notes: 复考前置=无（可按季频滚动复用同探针）；残留 22 行 qe/倒挂行建议归数据线工单清理（bdpan 历史包段）。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0022.py
+  query: countIf(announce_date<report_period), countIf(announce_date=report_period),
+    countIf(announce_date IS NULL or <=1970-01-02), lag 分位（三表 FINAL，announce_date<=CUT）
+  result:
+    lag_p50: 52
+    抽样N: 500
+    null哨兵: 0
+    income行数: 323894
+    抽样违例: 0
+    balance行数: 317429
+    cashflow行数: 288181
+    ann早于period: 2
+    ann等于period: 20
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0022.py
+  query: IPO 假设核验：688428 report_period=2020-12-31 groupArray(announce_date)=['2022-09-01']（唯一版本=上市披露）
+  result:
+    结构解释: IPO招股书/北交所首披露
+    lag>366d行数: 80881
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0022
+fail_type: null
+threshold: =0（抽样 500 条 ann_date 核验，口径误用样本数）
+conclusion: 抽样 500 条口径误用样本数=0，pass。闭卷窗内三表 929,504 行（income 323,894/balance 317,429/cashflow
+  288,181）：确定性抽样 500 条（income 200/balance 150/cashflow 150，cityHash64 排序）中 ann_date/report_period
+  口径误用（公告日早于报告期、公告日=报告期(qe 冒充)、null/1970 哨兵）命中 0 条。全表机械普查（超越抽样的加严证据）：ann<period 仅
+  2 行（income 1 行 920185 2012-09-30←2012-01-19、balance 1 行，均 bdpan 源），announce==report_period
+  20 行（qe 冒充 0.002%），null/哨兵 0 行；lag 中位 49~53 日，p99 ~1,058 日——lag>366 日的 8.1 万行经核为
+  IPO 招股书补披露与北交所上市前期间首披露（如 688428 报告期 2020-12-31 唯一公告日 2022-09-01=上市披露日），属合法首次披露时点而非口径误用。阈值=0
+  达成（抽样口径）；全表残留 22 行（0.0024%）登记为数据线清理项。
+confidence: 0.85
+data_window:
+  end: '2025-09-09'
+  start: '1990-03-21'
+three_check:
+  data: OK（三表 92.9 万行闭卷窗在库）
+  caliber: OK（误用判据=ann<period ∪ ann==period ∪ 哨兵值，机械可判；lag>366 单列不计误用并给出结构性解释）
+  mechanical: OK（全表普查+抽样双口径）
+pit_assertion: 核验对照公告日原始披露方向单向：全部行以 announce_date<=2025-09-09 取数；无切点后数据。
+q_id: PQ-0022

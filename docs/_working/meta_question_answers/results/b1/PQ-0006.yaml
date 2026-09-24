@@ -1,0 +1,29 @@
+notes: DS-IFIND(deprecated)/NEWSAPI(planned) 仅作迁移锚注记出现（源线谱§6 允许），不计未评估成本项。成本评估均为定性口径（免费/积分制/付费/额度），数值化对账待各源账单/配额结构化后复考。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/b_lines_PQ-0006.py
+  query: A 档 16 线：DS 锚行 DS-* 记号 → DS 册 status 映射（active=主锚，非 active 仅允许迁移锚注记）+ U2
+    非空
+  result:
+    nonactive_notes: []
+    ds_entries_parsed: 22
+    unevaluated_items: 0
+    U2_answered_with_active_anchor: 16
+exam_ref: st-metaq-20260923/probe/b_lines_PQ-0006
+fail_type: null
+threshold: =16/16 且未评估项=0
+conclusion: A 档 16 条全部现答 U2 且主锚全部落在 DS 册 status:active（MINIQMT/TUSHARE/BAOSTOCK/TDX/TICKFLOW/BAIDUYUN/TQCENTER/AKSHARE/AKSHARE-ALT/CLS/EASTMONEY_NEWS/RSS/FRED/EIA/QWEATHER/EASTMONEY_DATACENTER/IRM/HYPERLIQUID/IO_TABLE
+  全 active）；U2 成本描述与 DS 册 rate_limit/policy 逐线比对无冲突（A04 rpm60=A 册 policy.rpm60、A05/A06
+  积分制=DS-TUSHARE rate_limit、A12 免费额度=1000次/天、A15 官方免费=DS-HYPERLIQUID free）：16/16 且未评估成本项=0，达
+  threshold。
+confidence: 0.4
+data_window:
+  end: 2026-09-23 现状
+  start: registry
+three_check:
+  data: OK+基准三册在盘可读（源线谱 29 线全解析、DS 册 22 条目、层宪章七层）
+  caliber: OK+题面宣称 vs 登记文本逐词/逐字段对照口径明确
+  mechanical: OK+探针脚本可复现（substring 匹配+计数+层号词表校验）
+pit_assertion: 登记快照文本比对题：仅读源线谱册 02_source_line_registry.md(2026-09-22)、DS 册 data_sources_registry.yaml(v2.6.0)、层宪章
+  01_layer_charter.md(2026-09-22) 在盘快照，不取任何行情/时序数据，无切点(2025-09-09)后数据参与任何阈值比较。
+q_id: PQ-0006

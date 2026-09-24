@@ -1,0 +1,42 @@
+notes: 状态定义含主观落地(斜率窗 5 日)；若要求逐格全部半宽<0.1 则远不达标(稀有格 CI 宽)，此处按中位数机械判。三态稳健性同期给出。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_pq0031.py
+  query: SELECT trade_date, close FROM c1_market.kline_index WHERE symbol='000300'
+    AND trade_date<='2025-09-09'; S=1 iff close>MA20 & close>MA60 & (MA20-MA20[-5])>0；月末态→转移矩阵；60月滚动窗
+    bootstrap1000 95%CI 半宽
+  result:
+    p11: 0.4880952380952381
+    binary:
+      hw_p90: 0.23232323232323232
+      hw_mean: 0.1773041175723927
+      n_cells: 744
+      hw_median: 0.16801212803962165
+      n_windows: 186
+      n_month_ends: 246
+      share_lt_0.1: 0.0
+    three_state_robust:
+      hw_p90: 0.2805460164835165
+      hw_mean: 0.20642837975221687
+      n_cells: 1636
+      hw_median: 0.19813423532328303
+      n_windows: 186
+      n_month_ends: 246
+      share_lt_0.1: 0.003056234718826406
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0031
+fail_type: no_alpha
+threshold: 月度转移概率 bootstrap 置信区间半宽<0.1（60 个月滚动转移矩阵估计+bootstrap 1000 次）
+conclusion: 因子构造：沪深300日收盘，趋势态 S=1 当且仅当 close>MA20 且 close>MA60 且 MA20斜率(MA20_t-MA20_{t-5})>0，否则
+  S=0；月末取态→月度转移矩阵，60个月滚动窗×bootstrap1000 次，95%CI 半宽。二态：186 个滚动窗、744 个(窗×格)估计，半宽中位数=0.1680，均值=0.1773，P90=0.2323，<0.1
+  占比=0.00%；p11(趋势持续)=0.488。三态(上下同时/混合、无斜率)稳健性：半宽中位数=0.1981，<0.1 占比=0.31%。半宽中位数≥0.1，判据不过：稀有状态的转移概率在
+  60 个月窗内样本不足致 CI 偏宽（稳定性不达标，非数据/管线问题，fail_type=no_alpha 口径登记）。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2005-01-04'
+three_check:
+  data: OK kline_index 000300 沪深300 自 2005-01-04 至切点 5026 行
+  caliber: OK 均线状态按题面落地为二态(上下+斜率)，另做三态稳健性
+  mechanical: OK 半宽阈值 0.1 可代码复现（bootstrap 1000，seed=42）
+pit_assertion: 仅用 000300 于 2025-09-09 前收盘 K 线；均线/斜率/月末态全部由 T 日及以前数据计算，bootstrap 在窗内重采样，无切点后数据。
+q_id: PQ-0031

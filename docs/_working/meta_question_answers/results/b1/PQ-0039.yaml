@@ -1,0 +1,32 @@
+notes: 实际可得 64 个月度对，覆盖 exam_plan 要求的 36 个月滚动窗的每个时点估计；板块名切点前为空故以 code 计。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_pq0039.py
+  query: SELECT trade_date, sector_code, close FROM c1_market.kline_sector_880 WHERE
+    trade_date BETWEEN '2020-03-17' AND '2025-09-09'; 月末 20 交易日动量→相邻月末 spearmanr(公共≥50)→ttest_1samp
+    vs 0
+  result:
+    p: 0.01208930598306825
+    t: 2.643028468601743
+    rho_max: 0.6711136440871087
+    rho_min: -0.3587414678842046
+    mean_rho: 0.1207255075705877
+    n_sectors: 462
+    n_month_pairs: 37
+    avg_common_codes: 416.97297297297297
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0039
+fail_type: no_alpha
+threshold: 均值>0.3 且 t>2（36 个月滚动排名持续性；月度 Spearman 自相关）
+conclusion: 因子构造：kline_sector_880 各板块(code) 收盘 20 交易日动量，月末截面排名，相邻月末 Spearman 秩自相关，要求公共板块≥50。共
+  37 个月度对（≥36 满足），平均 ρ=0.1207，单样本 t=2.64（p=0.01209），ρ 序列 min=-0.359 max=0.671，平均公共板块数=417。判据（均值>0.3
+  且 t>2）未过——20 日动量排名的月度持续性未达阈值。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2020-03-17'
+three_check:
+  data: OK kline_sector_880 切点前 32.3 万行、462 个板块、2020-03-17 起
+  caliber: OK 排名对象=880 板块代码（sector_name 切点前全空，用 code）；动量=20 交易日收盘收益
+  mechanical: OK 均值>0.3 且 t>2 机械可判
+pit_assertion: 动量与排名仅用 T 日及以前收盘；全部行 trade_date<='2025-09-09'。
+q_id: PQ-0039

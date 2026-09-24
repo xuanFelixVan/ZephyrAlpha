@@ -1,0 +1,39 @@
+notes: 窗内断档=0 使登记完整率平凡满足；登记机制有效性由 2026 年 4 条真实断档全部在册佐证（现状观察）。复考建议纳入 2026 断档窗（登记 4/4
+  与实断 4/4 对账）。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0020.py
+  query: SELECT trade_date,count(),uniqExact(symbol) FROM tick_data WHERE trade_date
+    BETWEEN '2025-01-02' AND '2025-09-09' GROUP BY trade_date；对照 kline_daily 交易日历
+  result:
+    实有日: 168
+    缺失日: 0
+    低量日(<5M): 0
+    应考日历日: 168
+    窗内总行数: 3476481797
+    data_source_bdpan占比: 1.0
+- probe: .runtime/tmp/st-metaq-20260923/probes/core_audit_PQ-0020.py
+  query: known_data_gaps.yaml tick_* 条目解析（id/start/end/status）
+  result:
+    登记完整率: 1.0
+    登记条目数: 4
+    窗内断档需登记数: 0
+    覆盖闭卷窗内断档: 0
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0020
+fail_type: null
+threshold: =100%（tick_data 覆盖率台账审计，断档显式登记完整率）
+conclusion: 断档显式登记完整率=100%，pass。闭卷窗 2025-01-02~2025-09-09：交易日历（kline_daily distinct
+  日）应考 168 日，tick_data 实有 168/168 日、合计 3,476,481,797 行，零缺失日、零低量日（<500 万行/日阈值命中 0），即窗内断档数=0、需登记断档=0、登记完整率=100%（168×168
+  口径）。登记载体在位且与实际断档吻合：src/zephyr/data/config/known_data_gaps.yaml（#ARCH-CH-029）登记 tick_data
+  断档 4 条——2022-2024 结构缺库(open)/2026-06(completed,百度云回补 3.19 亿行)/2026-07~08(accepted,全渠道确认不存在)/2026-09-17(completed,模拟盘回补
+  2,832 万行)，backfill_checker 对已登记缺口全范围回看。历史以包到货日为界实证：窗内 data_source 100%='bdpan'（月度归档包）。
+confidence: 0.9
+data_window:
+  end: '2025-09-09'
+  start: '2025-01-02'
+three_check:
+  data: OK（tick_data 89.3 亿行，窗内 34.76 亿行日粒度聚合）
+  caliber: OK（断档=交易日历日缺失或行数<500 万/日，机械可判；登记载体=YAML 条目逐条核对）
+  mechanical: OK
+pit_assertion: 断档登记审计按落库台账与库内日历现状比对（全部 <=2025-09-09），2026 年断档条目仅作登记机制在位证据、不进入窗内判定。
+q_id: PQ-0020

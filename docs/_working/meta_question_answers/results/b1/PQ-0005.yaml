@@ -1,0 +1,30 @@
+notes: C 档 3 线仅 U1 预设无 U2-U6（挂起态），不在本题 A 档口径内。YAML 化与 signal_vocab 正式字段属 W2/W6 施工件（源线谱§6）。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/b_lines_PQ-0005.py
+  query: parse §2 A 档 16 小节：U1 行存在性 + signal_vocab('信号词：…') 非空计数
+  result:
+    tier_dist:
+      A: 16
+      B: 10
+      C: 3
+    A_tier_total: 16
+    vocab_n_range: 2-5
+    U1_answered_and_vocab_nonempty: 16
+exam_ref: st-metaq-20260923/probe/b_lines_PQ-0005
+fail_type: null
+threshold: =16/16
+conclusion: 源线谱 §2 A 档 16 条（SL-A01~A16）全部现答 U1 且信号词表非空：探针逐线解析 16/16 含 'U1｜' 行，每线信号词
+  2~5 个（如 A01 收盘价/成交量/振幅/均线斜率/20 日突破 5 词，A05 业绩超预期/增速二阶差分 2 词），计数=16/16 达 threshold
+  '=16/16'。三档总表 29 行解析自洽（A=16/B=10/C=3）。
+confidence: 0.4
+data_window:
+  end: 2026-09-23 现状
+  start: registry
+three_check:
+  data: OK+基准三册在盘可读（源线谱 29 线全解析、DS 册 22 条目、层宪章七层）
+  caliber: OK+题面宣称 vs 登记文本逐词/逐字段对照口径明确
+  mechanical: OK+探针脚本可复现（substring 匹配+计数+层号词表校验）
+pit_assertion: 登记快照文本比对题：仅读源线谱册 02_source_line_registry.md(2026-09-22)、DS 册 data_sources_registry.yaml(v2.6.0)、层宪章
+  01_layer_charter.md(2026-09-22) 在盘快照，不取任何行情/时序数据，无切点(2025-09-09)后数据参与任何阈值比较。
+q_id: PQ-0005
