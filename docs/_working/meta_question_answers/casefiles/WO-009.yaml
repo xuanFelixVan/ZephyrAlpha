@@ -1,0 +1,273 @@
+# WO-009 案卷｜质押事件版本载体 DDL + 11.3 万条回填（PQ-0072 infra 缺口施工闭环）
+# 机读优先：值为实测，凡引用考试登记数字处均标 source 字段，禁手抄二次加工
+ttl: task_bound
+completes_when: 载体 DDL+11.3 万回填后 PQ-0072 时序违规=0（本档 record 已达成，复考由总包执行）
+title: WO-009 质押事件版本载体施工案卷
+owner: ZephyrAlpha-Owner
+session: st-metaq-gc-20260924
+workorder: WO-009
+fail_question: PQ-0072
+date: "2026-09-24"
+status: done_pending_reexam
+
+# ───────────────────────── 1. 判据精确复述（考试原尺子，一字未放宽）
+acceptance_criterion:
+  q_id: PQ-0072
+  question: 股权质押/冻结公告事件与 edge_holding 现行版本（as_of=2025-12-31）的时序一致性是否满足 PIT（事件日晚于版本生效日的违规样本=0）？
+  exam_plan:
+    method: 质押/冻结公告事件对版本时戳全量比对
+    criterion: 事件日与版本生效日的时序合规率
+    threshold: 违规样本=0
+  operational_definition:
+    event_side: >-
+      CH c3_fundamental.equity_pledge_detail，WHERE announce_date <= '2025-09-09'（PIT 闭卷切点）
+      AND shareholder_name != '' → 112,822 条事件
+    version_side_key: >-
+      (股东名去空白归一 re.sub(r"\s+","") , 6 位股票代码)；edge_holding 侧 symbol 由 to_entity
+      'CO:000415.SZ' 去前缀去后缀得到；事件侧 symbol 本身即 6 位裸码（实测 dot_in_symbol=0）
+    version_side_value: 该键下 max(valid_from)（考试探针取全部版本的最大生效日，不加时点过滤——原样继承）
+    violation_operator: str(announce_date) > str(max_valid_from)   # 与考试探针同为 ISO 字符串比较
+    denominator_exam: 匹配成功的事件条数（考试实测 110,690，即 112,822 中 2,132 条无对可配）
+  source_of_truth:
+    - docs/_working/meta_question_answers/results/b2/PQ-0072.yaml（three_check.caliber + evidence 数字）
+    - .runtime/tmp/st-metaq-20260923/probes/l2_q0072.py（探针实现）
+    - PG meta_question.meta_question q_id=PQ-0072（题面与 exam_plan 原文）
+  judge_code: scripts/governance/meta_question/wo009/recheck_pq0072_violation.py::judge
+
+# ───────────────────────── 2. 载体选型裁定（工单配套①）
+selection:
+  options:
+    A: 旁挂双时态 event_version 表（新增 metaq_pledge.pledge_event_version，不动 edge_holding）
+    B: edge_holding 加 as_of 链（本单约束下只能做成"旁挂新表+视图"，不得 ALTER 原表）
+  decision: A
+  one_line_reason: >-
+    违规的实质是"事件发生了但版本链没推进"（实测 5,238 条里 4,678 条在事件日之后该对根本没有任何持股版本行），
+    这是事实缺失不是时戳写错——所以必须新建一条能表达"事件即版本"的双时态链，而不是去改既有快照表的日期列。
+  evidence:
+    - name: 换口径无效（本单复测）
+      detail: 事件日改用 pledge_start_date 后违规 2,775/110,690=2.51%≠0
+      note: 考试作业簿登记为 44%，本单实测 2.51%，两值都不归零→"换口径无效"定性成立；差异已如实留档（见 open_items.O5）
+      source: .runtime/tmp/st-metaq-gc-20260924/wo009/probe03_out.json Q1
+    - name: 违规性质分解（决定性证据）
+      detail: >-
+        5,238 条违规中：事件日之后该对仍有持股版本公告的仅 560 条；4,678 条在事件日之后再无任何持股版本行
+        （版本链停在事件前，如 000506 中润置业 2012-10-27 事件 vs 最新版本 2009-06-30）
+      implication: 改 valid_from 等于伪造持股事实 → 只能新增事件驱动版本
+      source: probe03_out.json Q2
+    - name: 方案 B 污染面
+      detail: >-
+        需向 public.edge_holding（1,500,341 行）灌入 112,822 行=+7.52%，且引入 role 词表外的新值
+        （现库 role 仅 shareholder/invests_in/shareholding），穿透链与牛散/实控人信号全部下游连坐；
+        且该表只有 valid_from/valid_to 单时态轴，无处安放"何时知道"→ 语义上装不下本题
+      source: probe03_out.json Q5 + information_schema 实测
+    - name: 匹配键唯一性（可行性）
+      detail: node_entity.name_norm 全局唯一（实测同名多实体=0），edge_holding 侧 (归一名,代码) 对无多实体歧义
+        → 事件↔版本可确定join，不需引入模糊匹配
+      source: probe03_out.json Q3/Q4
+  open_source_contrast:
+    sql_2011_temporal_tables: >-
+      SYSTEM_TIME 只给单时态版本链，解不了"回填何时被知道"——本表按 SQL:2011 的 valid_from/valid_to
+      做区间，并额外加 transaction_time（PG 侧 DEFAULT now()），等价 PERIOD + 装载时刻
+    scd_type2: 仅记 current 行，历史快照语义靠 valid_to 闭链（本表已实现）；但 SCD2 无"知识到达"轴，故不足以单独支撑 PIT
+    bitemporal_dbt_snapshots: >-
+      dbt snapshot 的 valid_from/valid_to + dbt_updated_at 双轴是本设计直接对照的范式；
+      本表 event_uid=内容指纹做 snapshot 唯一键、ON CONFLICT DO UPDATE 等价 dbt 的 change-detection 重放
+    convention_name: 双时态（bitemporal）事件版本载体，valid_time=公告生效时点，transaction_time=入库时点
+
+# ───────────────────────── 3. DDL 落地（工单配套②）
+ddl:
+  schema: metaq_pledge
+  objects:
+    table_main: metaq_pledge.pledge_event_version        # 事件版本载体（双时态）
+    table_runlog: metaq_pledge.backfill_run_log          # 分片断点账本（续跑真源）
+    view_current: metaq_pledge.v_pledge_event_current
+    view_timeline: metaq_pledge.v_holder_edge_version_timeline   # 持股快照版本 ∪ 质押事件版本
+    function_pit: metaq_pledge.holder_versions_as_of(text, date, timestamptz)
+  deployer: scripts/governance/meta_question/wo009/apply_pledge_event_version_ddl.py
+  idempotent: true                # 全 CREATE ... IF NOT EXISTS / OR REPLACE；重放实测 20 条语句零报错
+  verified: "VERIFY metaq_pledge: OK（2 表 + 5 索引 + 2 视图 + 1 函数 + 时区列实核）"
+  timezone_compliance:
+    rule: RULE-SCHEMA-TZ
+    facts: known_at/recorded_at/finished_at 均 TIMESTAMPTZ；因果 CHECK 用 (valid_from::timestamp AT TIME ZONE 'Asia/Shanghai') 显式写时区；回填脚本零 datetime.now()/time.time()
+  key_invariants_plain_language:
+    - "一行=一条质押公告的一个版本；主键是源行全列内容指纹（源表无主键，实测窗内零重复行），所以重放不会长出第二行"
+    - "valid_from=公告日（市场从这天知道）；valid_to=同对下一个不同公告日，故 CHECK 恒要求 valid_to>valid_from（零长区间被硬拦）"
+    - "known_at=载体入库时点（transaction_time）；CHECK 硬拦 known_at<valid_from——不许未卜先知"
+    - "business_from/business_to 是业务真实区间，与公告日分列：这正是'换口径无效'的形状——判据要的是知识时点，不是业务时点"
+    - "源列 ingest_ts 实测不可当 transaction_time 用（DEFAULT now() 读时求值，全表仅 2 取值且最大值随查询时刻漂移）→ 已弃用并在列注释里写明"
+    - "股东实体解析：只在归一名唯一命中时写 holder_entity_id，未命中必 NULL（反幻觉，禁编造实体），并留 holder_resolution 标明"
+    - "business_span_inverted：源数据倒挂的行照原值保留 + 强制申报（CHECK 保证声明与数据逐行吻合），不改写不丢弃"
+  write_safety_by_code: >-
+    部署器每条语句先过 assert_statement_safe()：全局禁 DELETE/UPDATE/TRUNCATE/ALTER TABLE/DROP TABLE/DROP COLUMN；
+    任何非目标 schema 的关系引用即拒跑；新建对象必须 schema 限定（防 search_path 打偏）。
+    唯一维护通道 --rebuild-carrier 只能 DROP 本单自有 5 个对象（逐字白名单），public.* 在该路径同样不可达。
+
+# ───────────────────────── 4. 回填（工单配套③）
+backfill:
+  script: scripts/governance/meta_question/wo009/backfill_pledge_event_version.py
+  source: CH c3_fundamental.equity_pledge_detail（只读）
+  window: {start: "1990-01-01", end: "2025-09-09", pit_note: 默认终点即闭卷切点，防切点后版本洗白窗内违规}
+  sharding: 按月分片 259 片；片级提交；断点账本 metaq_pledge.backfill_run_log（rows_source 吻合才判 done）
+  idempotency_proof:
+    first_full_run: {run_id: wo009-174b6ece9088, written_this_run: 112822, skipped_resumed: 0}
+    replay_run: {written_this_run: 0, skipped_resumed: 112822, carrier_rows_after: 112822, source_vs_carrier: MATCH}
+    close_chain_replay: {rows_touched: 0, note: 链已自洽，重放无副作用}
+  rehearsal: 先在 metaq_pledge_test_wo009 演练单片（2019-03，1,160 行）→ 复核 → --drop-test-schema 清理（已清，schemata 已无该库）
+  result_stats:
+    rows: 112822
+    distinct_event_uid: 112822
+    distinct_symbols: 3508
+    distinct_holder_company_pairs: 10917
+    distinct_holder_entities_resolved: 9642
+    current_version_rows: 10918          # 10,917 对 + 1 对当日多事件并列
+    valid_time_span: {min: "2003-06-10", max: "2025-09-09"}
+    event_type_mix: {pledge: 94613, pledge_extension: 16477, pledge_release: 1732, judicial_freeze: 0}
+    holder_resolution: {resolved: 110814, unresolved: 2008}
+    business_from_null_from_sentinel: 2079
+    business_span_inverted_declared: 1
+    company_node_absent_rows: 77          # CO:<代码> 在 node_entity 缺节点的行数（涉及 16 家，未建 FK 故照收）
+    shards_done: 259
+
+# ───────────────────────── 5. 违规复算（验收）
+recheck:
+  script: scripts/governance/meta_question/wo009/recheck_pq0072_violation.py
+  output_json: .runtime/tmp/st-metaq-gc-20260924/wo009/recheck_pq0072.json
+  baseline_regression:              # 防"换尺子"自证：先复现考试基线，复现不出即非零退出（R2）
+    matched: 110690
+    violations: 5238
+    violation_rate: 0.047321
+    equals_exam_record: true
+  after_carrier:
+    version_set: public.edge_holding ∪ metaq_pledge.pledge_event_version（载体侧另加 valid_from<=切点过滤）
+    matched: 112822                 # 原 2,132 条"无对可配"事件由载体补齐覆盖
+    violations: 0
+    violation_rate: 0.0
+    verdict: PASS（脚本退出码 0）
+  same_day_version_hit_rate:        # 非自证的对照尺：考试登记"同公告日版本命中仅 1.2%"
+    before_edge_only: {hits: 1127, events: 112822, rate: 0.009989}
+    after_union: {hits: 112822, events: 112822, rate: 1.0}
+    note: 本单实测基线 1.00%（考试登记 1.2%，同量级；差异来自事件集/键归一口径细节，已留档不追改）
+  integrity_assertions:             # 与"归零"正交的 7 项，防纸面归零
+    I1_row_equality: {source: 112822, carrier: 112822, ok: true}
+    I2_fingerprint_recomputable: {distinct_uids: 112822, source_dup_uids: 0, carrier_only: 0, source_only: 0, ok: true}
+    I2b_value_level_sample: {rows_checked: 3000, fields: 12, mismatch_by_field: {}, ok: true}
+    I3_chain: {bad_span: 0, overlap: 0, gap: 0, is_current_mislabel: 0, ok: true}
+    I4_causality_and_purity: {known_before_valid: 0, rows_after_cutoff: 0, ok: true}
+    I5_resolution_honesty: {resolved_unbacked: 0, unresolved_filled: 0, ok: true}
+    I6_traceability: {dup_source_ref: 0, bad_source_ref: 0, ok: true}
+    I7_no_fabrication: {carrier_only: 0, source_only: 0, ok: true}
+  zero_is_partly_by_construction_disclosed: >-
+    如实声明：违规算子是 max(valid_from)>=事件日，载体为每条事件产出 valid_from=该事件公告日的版本行，
+    故归零在结构上必然——这不是放宽判据（判据与分母一字未改，且分母从 110,690 扩大到 112,822），
+    而是"事件→版本联动"这一缺失机制被真的建出来了（作业簿裁定摘要的处置①原样落地）。
+    因此本单把可信度压在 I1-I7 与命中率两把正交尺子上：载体行与源事件逐行同指纹同值（I2/I2b/I7）、
+    链无重叠无缝（I3）、不预知未来（I4）、不编造实体（I5）、条条可回溯（I6）——归零不是空表刷出来的。
+  residual_not_in_criterion:        # 验收外的遗留面（不据此判 pass/fail，须继续还债）
+    events_with_no_holding_version_at_all: 2132
+    events_whose_pair_holding_versions_all_postdate_event: 4086
+    lag_days_of_prior_holding_snapshot: {n: 106604, median: 70, p90: 542, max: 5776, over_120d: 32493}
+    reading: 持股快照本身仍是季末频率（载体不假装它更新鲜）；时序违规已 0，但"事件当日持股快照滞后"是下一层数据时效债
+
+# ───────────────────────── 6. 与 equity_penetration 的关系裁定（工单配套④）
+equity_penetration_ruling:
+  code_read: scripts/entity_graph/equity_penetration.py L50-51 _NON_HOLDING=("pledge","judicial_frozen") + L181 并入口跳过
+  current_effect_measured: >-
+    ig_equity_edge 现存 804 行 relation 仅 shareholding(1)/invests_in(803)，质押/冻结=0 行
+    → 该排除今天是个"零行命中"的守卫，作用在防止未来 ig 侧灌入非持股事件，而不是造成 PQ-0072 的原因
+  decision: 维持排除（不解除）
+  reasons:
+    - 语义：质押/司法冻结在股权上设的是质权/处分限制，不转移所有权与表决权，把它当持股边喂进穿透链会推出错误的控制关系
+    - 职责：PQ-0072 的缺口是"事件不驱动版本推进"，已由事件载体承接；把事件塞回持股边是用错误的表回答正确的问题
+    - 风险：解除排除=改写 275,370 对持股边的成员集，穿透深度/实控人判定/牛散跨票信号全部连坐，且 edge_holding 的
+      UNIQUE(from,to,role,valid_from,source) 会开始混装两套语义的行
+  how_consumers_should_use_the_carrier: >-
+    持股边保持纯净，质押作为"附标层"左连接叠加：
+    metaq_pledge.v_holder_edge_version_timeline（统一版本流，version_kind 区分 holding_snapshot / pledge_event）
+    或 metaq_pledge.holder_versions_as_of(code, as_of_date[, knowledge_cutoff]) 做 PIT 取版本；
+    实测烟测：000033 @2020-06-30 → 函数返回 3 条版本、视图该票 6 条版本行
+  production_code_changed: false   # 故本单无待落地业务补丁；仅白名单门禁补丁（见 pending_landing）
+
+# ───────────────────────── 7. 写操作三验证留痕（RULE-DATA-OPS）
+data_ops_verification:
+  printed_before_every_write: true          # DDL 部署/rebuild/回填三条命令均在执行前打印三步验证（会话日志已见）
+  logs:
+    - .runtime/tmp/st-metaq-gc-20260924/wo009/backfill_run1.log（含三步验证正文，因源缺陷 CHECK 中止）
+    - .runtime/tmp/st-metaq-gc-20260924/wo009/backfill_run3.log（终态成功轮）
+  necessity: PQ-0072 违规 5,238/110,690=4.73%≠0；其中 4,678 条事件日之后该对无任何持股版本；换口径仍 2.51%≠0 → 只能建事件版本载体
+  authenticity: 全部数字为本轮探针对 CH/PG 实查（probe01/02/03/05 + recheck 输出），非引用二手结论
+  reversibility: >-
+    只新建 metaq_pledge 下对象；零 DELETE/UPDATE/DROP/ALTER 既有业务表（代码级断言 + 事后复核）；
+    回滚单条 DROP SCHEMA metaq_pledge CASCADE；行级回滚口子 TRUNCATE metaq_pledge.pledge_event_version（脚本不自动执行，人工）
+  zero_touch_proof:
+    edge_holding_before_work: {rows: 1500341, max_valid_from: "2026-06-30"}
+    edge_holding_after_work: {rows: 1500341, max_valid_from: "2026-06-30"}
+    ig_equity_edge_rows: 804
+    pledge_rows_in_edge_holding: 0
+    rehearsal_schema_dropped: metaq_pledge_test_wo009
+
+# ───────────────────────── 8. 产出清单
+artifacts:
+  scripts:
+    - scripts/governance/meta_question/wo009/apply_pledge_event_version_ddl.py
+    - scripts/governance/meta_question/wo009/backfill_pledge_event_version.py
+    - scripts/governance/meta_question/wo009/recheck_pq0072_violation.py
+    - scripts/governance/meta_question/wo009/patches/wo009_depgraph_write_path_whitelist.patch
+  case_file: docs/_working/meta_question_answers/casefiles/WO-009.yaml
+  probes_and_logs:
+    - .runtime/tmp/st-metaq-gc-20260924/wo009/probe01_inventory.py
+    - .runtime/tmp/st-metaq-gc-20260924/wo009/probe02_reproduce.py
+    - .runtime/tmp/st-metaq-gc-20260924/wo009/probe03_selection.py
+    - .runtime/tmp/st-metaq-gc-20260924/wo009/probe05_residual.py
+    - .runtime/tmp/st-metaq-gc-20260924/wo009/backfill_stats.json
+    - .runtime/tmp/st-metaq-gc-20260924/wo009/recheck_pq0072.json
+  rerun_commands: |
+    export PATH="/c/Users/fanzi/AppData/Local/Programs/Python/Python312:/c/Users/fanzi/AppData/Local/Programs/Python/Python312/Scripts:$PATH"
+    export PYTHONPATH=src; cd /d/ZephyrAlpha
+    python scripts/governance/meta_question/wo009/apply_pledge_event_version_ddl.py --verify
+    python scripts/governance/meta_question/wo009/backfill_pledge_event_version.py --yes           # 幂等续跑
+    python scripts/governance/meta_question/wo009/recheck_pq0072_violation.py                     # 只读验收，期望 VERDICT PASS/退出码 0
+
+# ───────────────────────── 9. 待落地 / 待裁项
+pending_landing:
+  - id: P1
+    title: DEPGRAPH-WRITE-PATH 门禁白名单登记
+    why: 本单两个新脚本按 RULE-SSOT 合法走 apply_*.py→PG 写路径（read_only=False / superuser=True），
+      但该 gate 只认 src/zephyr/gov_enforcement/commit_gates/depgraph_write_path_gate.py 的 _WHITELIST；本单禁改 src/
+    how: git apply scripts/governance/meta_question/wo009/patches/wo009_depgraph_write_path_whitelist.patch（落地会话执行）
+  - id: P2
+    title: 新模块登记三件
+    why: 新建 .py 须登记大白话简介（add_module_translation.py）、登记 depgraph 设计节点、CREATE-GUARD creation_token
+    how: 本单禁写共享注册表/热文件 → 由总包在落地批次统一登记
+open_items:
+  - id: O1
+    title: 冻结事件独立源缺失（PQ-0072 题面含"冻结"，本单只闭环质押半边）
+    measured: CH 无冻结专表；equity_pledge_detail 窗内仅 2,724 行 remark/股东名含"冻结"字样，无独立事件粒度
+    recommendation: 载体 event_type 词表已预留 judicial_freeze（现 0 行）；建议另开工单接冻结披露源后同表回填，判据可同尺复算
+    owner_gate: Owner
+  - id: O2
+    title: 源 transaction_time 不可用 → 真双时态回放受限
+    measured: ingest_ts = DEFAULT now() 读时求值（全表 2 取值、最大值随查询时刻漂移）
+    consequence: 载体 known_at 只能是"载体入库时点"，无法回答"2019-03-15 那天我们是否已知某事件"
+    recommendation: 采集侧（CH 入库管线）改为落库即固化 ingest_ts；或另建公告到达日志作为知识时点真源
+    owner_gate: Owner
+  - id: O3
+    title: 77 行事件的公司节点在 node_entity 缺失（涉及 16 家）
+    decision: 载体不建外键、照收并留 company_entity_id 规则值（CO:<代码>），避免为守卫把数据丢掉
+    recommendation: 图谱侧补建 CO 前缀公司节点（或按 low_confidence 占位），与 entity_graph 施工线合并处理
+  - id: O4
+    title: 源数据质量四缺陷（不改判据，仅登记）
+    measured:
+      business_span_inverted: 1 行（600237 铜峰集团 2018-11-29，end<start，已用申报位标出）
+      pledge_start_before_1990_sentinel: 2,079 行（→business_from 置 NULL，不猜日期）
+      pledge_end_null: 46,371 行
+      release_date_before_pledge_start: 2 行
+  - id: O5
+    title: 作业簿数字与本轮实测的口径差
+    measured: 换 pledge_start_date 口径违规率 作业簿记 44% / 本单实测 2.51%（分母同为 110,690）；
+      同公告日命中率 考试登记 1.2% / 本单实测 1.00%
+    disposition: 两处均以本单实测为准并留档；结论方向不变（换口径不归零、命中率极低）
+  - id: O6
+    title: PQ-0072 复考口径建议
+    measured: 题面 as_of=2025-12-31 晚于闭卷切点 2025-09-09，"现行版本"支在切点下结构性无判别力（考试已登记）
+    recommendation: 复考以本单 operational_definition 为准（事件 vs 版本生效日，载体入集），
+      并把 as_of 移到切点之后或删该约束；否则该问只能长期停在"半个判据"

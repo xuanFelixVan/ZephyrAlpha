@@ -1,0 +1,17 @@
+# [A_config] module_id=MOD-CHAINPILE-METAQ | layer=config | stability=new | safety=L | ai_autonomy=ai_modifiable
+# 真源：metaq_e1c.n_eff_estimate.estimator 枚举唯一真源（动态加载，禁硬编码）。
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: 组合空间有效样本量 N_eff 估计器枚举（PQ-0104 塌缩防线分母口径）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-gc-20260924
+date: '2026-09-24'
+values:
+- value: structural_dedup
+  definition: 结构口径：名义笛卡尔积按模板 cross_slot 约束+指纹去重后可行组合数/名义数。
+    只需空间定义即可算，是"空间层"塌缩防线的第一道账（本工单首批用它）。
+- value: effective_rank
+  definition: 实证口径=既有预注册规格（zephyr.backtest.core.n_trial_ledger.compute_effective_rank，
+    N_eff 预注册 4.1：两两 Pearson 相关矩阵特征值熵广度 ceil(exp(-Σp ln p))，共同长度<min_T 判 boundary
+    不折减）。本工单复用该真源不另造估计器；待批次积累日净收益序列后自动出账。

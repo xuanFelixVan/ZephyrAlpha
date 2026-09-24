@@ -1,0 +1,1346 @@
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+doc_type: e1c_space_register
+generated_by: scripts/governance/meta_question/wo_b2_e1c/build_e1c_space_register.py
+hand_edit: forbidden
+space_id: cmb-e1c-v1
+version: 1.0.0
+tpl_ref: TPL-FAM-CMB@1.0.0
+cartesian_plan: full_product(3 cartesian slots x track)
+slots:
+  block:
+    mode: cartesian
+    values:
+    - FCT-CRYPTO-MOM-001
+    - FCT-CRYPTO-MOM-002
+    - FCT-CRYPTO-VOL-001
+    - FCT-EVENT-001
+    - FCT-EVENT-002
+    - FCT-EVENT-003
+    - FCT-EVENT-004
+    - FCT-EVENT-005
+    - FCT-EVENT-006
+    - FCT-EVENT-007
+    - FCT-EVENT-008
+    - FCT-EVENT-009
+    - FCT-EVENT-010
+    - FCT-EVENT-011
+    - FCT-EVENT-012
+    - FCT-EVENT-013
+    - FCT-EVENT-014
+    - FCT-EVENT-015
+    - FCT-EVENT-016
+    - FCT-EVENT-017
+    - FCT-EXP-001
+    - FCT-EXP-002
+    - FCT-EXP-003
+    - FCT-EXP-004
+    - FCT-EXP-005
+    - FCT-EXP-006
+    - FCT-FQ-001
+    - FCT-FQ-002
+    - FCT-FQ-003
+    - FCT-FQ-004
+    - FCT-FQ-005
+    - FCT-FQ-006
+    - FCT-GR-001
+    - FCT-GR-002
+    - FCT-INTRADAY-015
+    - FCT-INTRADAY-016
+    - FCT-INTRADAY-017
+    - FCT-INTRADAY-018
+    - FCT-INTRADAY-019
+    - FCT-INTRADAY-020
+    - FCT-INTRADAY-021
+    - FCT-INTRADAY-022
+    - FCT-INTRADAY-023
+    - FCT-INTRADAY-024
+    - FCT-INTRADAY-025
+    - FCT-INTRADAY-026
+    - FCT-INTRADAY-027
+    - FCT-INTRADAY-028
+    - FCT-INTRADAY-029
+    - FCT-INTRADAY-030
+    - FCT-LIQ-024
+    - FCT-LIQ-025
+    - FCT-LIQ-026
+    - FCT-LIQ-027
+    - FCT-LIQ-028
+    - FCT-LIQ-029
+    - FCT-LIQ-030
+    - FCT-LIQ-031
+    - FCT-LIQ-032
+    - FCT-LIQ-033
+    - FCT-LIQ-034
+    - FCT-LIQ-035
+    - FCT-LIQ-036
+    - FCT-LIQ-037
+    - FCT-LIQ-038
+    - FCT-LIQ-039
+    - FCT-LIQ-040
+    - FCT-LIQ-041
+    - FCT-LIQ-042
+    - FCT-LIQ-043
+    - FCT-LIQ-044
+    - FCT-LIQ-045
+    - FCT-LIQ-046
+    - FCT-LIQ-047
+    - FCT-LIQ-048
+    - FCT-LIQ-049
+    - FCT-LIQ-050
+    - FCT-LIQ-051
+    - FCT-LIQ-052
+    - FCT-LIQ-053
+    - FCT-LIQ-054
+    - FCT-LIQ-055
+    - FCT-LIQ-056
+    - FCT-LIQ-057
+    - FCT-LIQ-058
+    - FCT-LIQ-059
+    - FCT-LIQ-060
+    - FCT-LIQ-061
+    - FCT-LIQ-062
+    - FCT-MOM-001
+    - FCT-MOM-002
+    - FCT-MOM-003
+    - FCT-MOM-004
+    - FCT-MOM-005
+    - FCT-MOM-006
+    - FCT-MOM-007
+    - FCT-MOM-008
+    - FCT-MOM-009
+    - FCT-MOM-010
+    - FCT-MOM-011
+    - FCT-MOM-012
+    - FCT-MOM-013
+    - FCT-MOM-014
+    - FCT-MOM-015
+    - FCT-MOM-016
+    - FCT-MOM-017
+    - FCT-MOM-018
+    - FCT-MOM-019
+    - FCT-MOM-020
+    - FCT-MOM-021
+    - FCT-MOM-022
+    - FCT-MOM-023
+    - FCT-MOM-024
+    - FCT-MOM-025
+    - FCT-MOM-026
+    - FCT-MOM-027
+    - FCT-MOM-028
+    - FCT-MOM-029
+    - FCT-MOM-030
+    - FCT-QUAL-001
+    - FCT-QUAL-002
+    - FCT-SENT-006
+    - FCT-SENT-007
+    - FCT-SENT-008
+    - FCT-SENT-009
+    - FCT-SENT-010
+    - FCT-SENT-011
+    - FCT-SENT-012
+    - FCT-SENT-013
+    - FCT-SENT-014
+    - FCT-SENT-015
+    - FCT-SENT-016
+    - FCT-SENT-017
+    - FCT-SENT-018
+    - FCT-SENT-019
+    - FCT-SENT-020
+    - FCT-SENT-021
+    - FCT-SENT-022
+    - FCT-SENT-023
+    - FCT-SENT-024
+    - FCT-SENT-025
+    - FCT-SENT-026
+    - FCT-SENT-027
+    - FCT-SENT-028
+    - FCT-TECH-055
+    - FCT-TECH-056
+    - FCT-TECH-057
+    - FCT-TECH-058
+    - FCT-TECH-059
+    - FCT-TECH-060
+    - FCT-TECH-061
+    - FCT-TECH-062
+    - FCT-TECH-063
+    - FCT-TECH-064
+    - FCT-TECH-065
+    - FCT-TECH-066
+    - FCT-TECH-067
+    - FCT-TECH-068
+    - FCT-TECH-069
+    - FCT-TECH-070
+    - FCT-TECH-071
+    - FCT-TECH-072
+    - FCT-TECH-073
+    - FCT-TECH-074
+    - FCT-TECH-075
+    - FCT-TECH-076
+    - FCT-TECH-077
+    - FCT-TECH-078
+    - FCT-TECH-079
+    - FCT-TECH-080
+    - FCT-TECH-081
+    - FCT-TECH-082
+    - FCT-TECH-083
+    - FCT-TECH-084
+    - FCT-TECH-085
+    domain_ref: factor_registry#factor_id
+    blocks:
+      FCT-INTRADAY-015:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: e07e921f379dca84
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-016:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: d1f9f1787ef78607
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-017:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: 8ae21a85781930d1
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-018:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: 41ed73d94213d607
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-019:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: 5b3a6cac9811c9a5
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-020:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: 59f4f96ac3ed89e3
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-021:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: 0acf61c418648dac
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-022:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: 29aac1bb12cc20f2
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-023:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: a6b32712bbd547d9
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-024:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: af885d135068d0a5
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-025:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: 4d842af6a9f74fd4
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-026:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: 00964e36d5be1f95
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-027:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: 1a794e9028225d3c
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-028:
+        frequency: intraday
+        block_family: intraday
+        fingerprint: d56988df2c793299
+        eligible: true
+        status: candidate
+      FCT-TECH-055:
+        frequency: daily
+        block_family: technical
+        fingerprint: af3c8f79c0dbf46d
+        eligible: true
+        status: candidate
+      FCT-TECH-056:
+        frequency: daily
+        block_family: technical
+        fingerprint: 1776ca87b788d840
+        eligible: true
+        status: candidate
+      FCT-TECH-057:
+        frequency: daily
+        block_family: technical
+        fingerprint: bf0efb26b7ba4cd2
+        eligible: true
+        status: candidate
+      FCT-TECH-058:
+        frequency: daily
+        block_family: technical
+        fingerprint: 3f235c5f53ea93e1
+        eligible: true
+        status: candidate
+      FCT-TECH-059:
+        frequency: daily
+        block_family: technical
+        fingerprint: b3a7fea233e88528
+        eligible: true
+        status: candidate
+      FCT-TECH-060:
+        frequency: daily
+        block_family: technical
+        fingerprint: a29a231d78b19995
+        eligible: true
+        status: candidate
+      FCT-TECH-061:
+        frequency: daily
+        block_family: technical
+        fingerprint: 77298b476f94606b
+        eligible: true
+        status: candidate
+      FCT-TECH-062:
+        frequency: daily
+        block_family: technical
+        fingerprint: c4cfcad73f6218d0
+        eligible: true
+        status: candidate
+      FCT-TECH-063:
+        frequency: daily
+        block_family: technical
+        fingerprint: 2a88dbd680b99b3b
+        eligible: true
+        status: candidate
+      FCT-TECH-064:
+        frequency: daily
+        block_family: technical
+        fingerprint: fdf5520d60fcd80e
+        eligible: true
+        status: candidate
+      FCT-TECH-065:
+        frequency: daily
+        block_family: technical
+        fingerprint: 666e2fe2f5dc7584
+        eligible: true
+        status: candidate
+      FCT-TECH-066:
+        frequency: daily
+        block_family: technical
+        fingerprint: cbd93b55f77fd1e8
+        eligible: true
+        status: candidate
+      FCT-TECH-067:
+        frequency: daily
+        block_family: technical
+        fingerprint: 19ad3d8acff10aba
+        eligible: true
+        status: candidate
+      FCT-TECH-068:
+        frequency: daily
+        block_family: technical
+        fingerprint: d61250f480e7692a
+        eligible: true
+        status: candidate
+      FCT-TECH-069:
+        frequency: daily
+        block_family: risk_rule
+        fingerprint: 05bb32c54c7791e9
+        eligible: true
+        status: candidate
+      FCT-TECH-070:
+        frequency: daily
+        block_family: technical_indicator
+        fingerprint: a76c33d99966d275
+        eligible: true
+        status: candidate
+      FCT-TECH-071:
+        frequency: daily
+        block_family: technical
+        fingerprint: 19a5c29f2c1200fd
+        eligible: true
+        status: candidate
+      FCT-TECH-072:
+        frequency: daily
+        block_family: technical
+        fingerprint: 4744ea7b86ba0762
+        eligible: true
+        status: candidate
+      FCT-TECH-073:
+        frequency: daily
+        block_family: technical
+        fingerprint: a4f215a28a3d32fd
+        eligible: true
+        status: candidate
+      FCT-LIQ-024:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: e0839c1b852c70c4
+        eligible: true
+        status: candidate
+      FCT-LIQ-025:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 576c8e4cd9cf0eb0
+        eligible: true
+        status: candidate
+      FCT-LIQ-026:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 1c4870d3ab84ffe6
+        eligible: true
+        status: candidate
+      FCT-LIQ-027:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: e3f73635334cf861
+        eligible: true
+        status: candidate
+      FCT-LIQ-028:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 2b99b61a349b55e6
+        eligible: true
+        status: candidate
+      FCT-LIQ-029:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: d775b5bac962a242
+        eligible: true
+        status: candidate
+      FCT-LIQ-030:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: b0a8d9309eb780f7
+        eligible: true
+        status: candidate
+      FCT-LIQ-031:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 19c61d6d2a36b45f
+        eligible: true
+        status: candidate
+      FCT-LIQ-032:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 5157d9df707e8c33
+        eligible: true
+        status: candidate
+      FCT-LIQ-033:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: c35240fc09cbc88a
+        eligible: true
+        status: candidate
+      FCT-TECH-074:
+        frequency: daily
+        block_family: technical
+        fingerprint: 57750b8cf0343ad6
+        eligible: true
+        status: candidate
+      FCT-TECH-075:
+        frequency: daily
+        block_family: technical
+        fingerprint: 984e61feb254fc13
+        eligible: true
+        status: candidate
+      FCT-TECH-076:
+        frequency: daily
+        block_family: technical
+        fingerprint: 56e81c55f1e48fef
+        eligible: true
+        status: candidate
+      FCT-TECH-077:
+        frequency: daily
+        block_family: technical
+        fingerprint: 301bc575b6488932
+        eligible: true
+        status: candidate
+      FCT-TECH-078:
+        frequency: daily
+        block_family: technical
+        fingerprint: f0fda841360f19a2
+        eligible: true
+        status: candidate
+      FCT-TECH-079:
+        frequency: daily
+        block_family: technical
+        fingerprint: 71e728a13d16a5aa
+        eligible: true
+        status: candidate
+      FCT-TECH-080:
+        frequency: daily
+        block_family: technical
+        fingerprint: 1b27bedf7cbc4a24
+        eligible: true
+        status: candidate
+      FCT-TECH-081:
+        frequency: daily
+        block_family: technical
+        fingerprint: 8e54cc3d8331aa3e
+        eligible: true
+        status: candidate
+      FCT-TECH-082:
+        frequency: daily
+        block_family: technical
+        fingerprint: ff0931f571833d56
+        eligible: true
+        status: candidate
+      FCT-TECH-083:
+        frequency: daily
+        block_family: technical
+        fingerprint: 7affaf055e69fff3
+        eligible: true
+        status: candidate
+      FCT-TECH-084:
+        frequency: daily
+        block_family: technical
+        fingerprint: 796bf392f7080473
+        eligible: true
+        status: candidate
+      FCT-TECH-085:
+        frequency: daily
+        block_family: technical
+        fingerprint: bfabd2cb89335738
+        eligible: true
+        status: candidate
+      FCT-MOM-001:
+        frequency: daily
+        block_family: momentum
+        fingerprint: ef6477b324d3a6ab
+        eligible: true
+        status: candidate
+      FCT-MOM-002:
+        frequency: daily
+        block_family: knowledge_only
+        fingerprint: 6459b9f3db29962f
+        eligible: true
+        status: candidate
+      FCT-MOM-003:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 857cbda8bb7ccca1
+        eligible: true
+        status: candidate
+      FCT-MOM-004:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 7ee393a9120b1689
+        eligible: true
+        status: candidate
+      FCT-MOM-005:
+        frequency: daily
+        block_family: momentum
+        fingerprint: f10e938778616657
+        eligible: true
+        status: candidate
+      FCT-MOM-006:
+        frequency: daily
+        block_family: momentum
+        fingerprint: d1319dfec4d8491d
+        eligible: true
+        status: candidate
+      FCT-MOM-007:
+        frequency: daily
+        block_family: momentum
+        fingerprint: ce9ac362a4c7a17e
+        eligible: true
+        status: candidate
+      FCT-MOM-008:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 6524058a987233b3
+        eligible: true
+        status: candidate
+      FCT-MOM-009:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 0db0bef2bcc8d4ef
+        eligible: true
+        status: candidate
+      FCT-MOM-010:
+        frequency: daily
+        block_family: momentum
+        fingerprint: f33287e9a86f3efe
+        eligible: true
+        status: candidate
+      FCT-MOM-011:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 59a6f3b076061938
+        eligible: true
+        status: candidate
+      FCT-MOM-012:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 5810f138c35af6a4
+        eligible: true
+        status: candidate
+      FCT-MOM-013:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 0c908aa9e241a871
+        eligible: true
+        status: candidate
+      FCT-CRYPTO-MOM-001:
+        frequency: daily
+        block_family: momentum
+        fingerprint: df8c7c41db195b70
+        eligible: true
+        status: candidate
+      FCT-CRYPTO-MOM-002:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 2f8f037974e3b85a
+        eligible: true
+        status: candidate
+      FCT-CRYPTO-VOL-001:
+        frequency: daily
+        block_family: volatility
+        fingerprint: 408606e846f5ecb5
+        eligible: true
+        status: candidate
+      FCT-MOM-014:
+        frequency: daily
+        block_family: momentum
+        fingerprint: d3e6cac5cd89f6cc
+        eligible: true
+        status: candidate
+      FCT-MOM-015:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: 5bc3b9a004e26856
+        eligible: true
+        status: candidate
+      FCT-MOM-016:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 6432a63a4f6ab552
+        eligible: true
+        status: candidate
+      FCT-MOM-017:
+        frequency: daily
+        block_family: momentum
+        fingerprint: eae9d2cc22788b95
+        eligible: true
+        status: candidate
+      FCT-MOM-018:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 036da7f85152bfae
+        eligible: true
+        status: candidate
+      FCT-MOM-019:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 947e21b67df44134
+        eligible: true
+        status: candidate
+      FCT-MOM-020:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 7e037769fad5c20d
+        eligible: true
+        status: candidate
+      FCT-MOM-021:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 18b7c4e32f2e1b57
+        eligible: true
+        status: candidate
+      FCT-MOM-022:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 9ac7809604415c5c
+        eligible: true
+        status: candidate
+      FCT-MOM-023:
+        frequency: daily
+        block_family: momentum
+        fingerprint: f41879ac6d725c8a
+        eligible: true
+        status: candidate
+      FCT-MOM-024:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 3d7d5cd48404246c
+        eligible: true
+        status: candidate
+      FCT-MOM-025:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 869a9397dfca0572
+        eligible: true
+        status: candidate
+      FCT-MOM-026:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 5dfda4f8942f8a9b
+        eligible: true
+        status: candidate
+      FCT-MOM-027:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 84cc1ef01774ff86
+        eligible: true
+        status: candidate
+      FCT-MOM-028:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 9652432b0ae4e661
+        eligible: true
+        status: candidate
+      FCT-EVENT-001:
+        frequency: daily
+        block_family: event
+        fingerprint: 786b0efcba52d2e0
+        eligible: true
+        status: candidate
+      FCT-EVENT-002:
+        frequency: daily
+        block_family: event
+        fingerprint: ceba9bcbdd5390c7
+        eligible: true
+        status: candidate
+      FCT-EVENT-003:
+        frequency: daily
+        block_family: event
+        fingerprint: 92d34cdec33a45fc
+        eligible: true
+        status: candidate
+      FCT-EVENT-004:
+        frequency: daily
+        block_family: event
+        fingerprint: c3d8d3fdbdfb74a9
+        eligible: true
+        status: candidate
+      FCT-EVENT-005:
+        frequency: daily
+        block_family: event
+        fingerprint: 0f5f9c605b8c719c
+        eligible: true
+        status: candidate
+      FCT-EVENT-006:
+        frequency: daily
+        block_family: event
+        fingerprint: 09e1906dd336b76c
+        eligible: true
+        status: candidate
+      FCT-EVENT-007:
+        frequency: daily
+        block_family: event
+        fingerprint: ca451687e1252dcd
+        eligible: true
+        status: candidate
+      FCT-EVENT-008:
+        frequency: daily
+        block_family: knowledge_only
+        fingerprint: 79b7e6887c038a6b
+        eligible: true
+        status: candidate
+      FCT-EVENT-009:
+        frequency: daily
+        block_family: event
+        fingerprint: 921c3cefc4b829cc
+        eligible: true
+        status: candidate
+      FCT-EVENT-010:
+        frequency: daily
+        block_family: event
+        fingerprint: 17ddc2b983506b61
+        eligible: true
+        status: candidate
+      FCT-EVENT-011:
+        frequency: daily
+        block_family: event
+        fingerprint: 56527394768245b1
+        eligible: true
+        status: candidate
+      FCT-EVENT-012:
+        frequency: daily
+        block_family: event
+        fingerprint: 2183a70404236b10
+        eligible: true
+        status: candidate
+      FCT-EVENT-013:
+        frequency: daily
+        block_family: momentum
+        fingerprint: f4ccac65f85f4c13
+        eligible: true
+        status: candidate
+      FCT-EVENT-014:
+        frequency: daily
+        block_family: event
+        fingerprint: 63e6ffd62f9744bf
+        eligible: true
+        status: candidate
+      FCT-EVENT-015:
+        frequency: daily
+        block_family: event
+        fingerprint: 8a434311bff9e40c
+        eligible: true
+        status: candidate
+      FCT-EVENT-016:
+        frequency: daily
+        block_family: event
+        fingerprint: 6649b27174ed4c8c
+        eligible: true
+        status: candidate
+      FCT-EVENT-017:
+        frequency: daily
+        block_family: event
+        fingerprint: b2e20ba762c65197
+        eligible: true
+        status: candidate
+      FCT-SENT-006:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: 01a46fe3a5be0959
+        eligible: true
+        status: candidate
+      FCT-SENT-007:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: 200ce62c4a7204fc
+        eligible: true
+        status: candidate
+      FCT-SENT-008:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: 048eb7c0f4cb9f5d
+        eligible: true
+        status: candidate
+      FCT-SENT-009:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: cdc9f4dff510d9aa
+        eligible: true
+        status: candidate
+      FCT-SENT-010:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: 7805126de3788d07
+        eligible: true
+        status: candidate
+      FCT-SENT-011:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: 6ff8077ad1bc2d51
+        eligible: true
+        status: candidate
+      FCT-SENT-012:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: a4ad7aa39311b285
+        eligible: true
+        status: candidate
+      FCT-SENT-013:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: ac78eba536f2ec51
+        eligible: true
+        status: candidate
+      FCT-SENT-014:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: 3cbac50e9badcf7d
+        eligible: true
+        status: candidate
+      FCT-SENT-015:
+        frequency: daily
+        block_family: sentiment
+        fingerprint: 0f5f44387c0305bc
+        eligible: true
+        status: candidate
+      FCT-LIQ-034:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 17047e23c8d2bfcc
+        eligible: true
+        status: candidate
+      FCT-LIQ-035:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 33c6e11b4b07f37b
+        eligible: true
+        status: candidate
+      FCT-LIQ-036:
+        frequency: daily
+        block_family: event
+        fingerprint: 10340c746d3377ce
+        eligible: true
+        status: candidate
+      FCT-LIQ-037:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 1ccfaa50077ad476
+        eligible: true
+        status: candidate
+      FCT-LIQ-038:
+        frequency: daily
+        block_family: data_asset
+        fingerprint: 472d053e489b8604
+        eligible: true
+        status: candidate
+      FCT-LIQ-039:
+        frequency: intraday
+        block_family: liquidity
+        fingerprint: 20b5cd6fbe3b4cc0
+        eligible: true
+        status: candidate
+      FCT-LIQ-040:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 6703ee65630eb458
+        eligible: true
+        status: candidate
+      FCT-LIQ-041:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: a93dbcf0aae899f2
+        eligible: true
+        status: candidate
+      FCT-LIQ-042:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 2caae52f17a42d58
+        eligible: true
+        status: candidate
+      FCT-LIQ-043:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 16169186605fd360
+        eligible: true
+        status: candidate
+      FCT-LIQ-044:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 3cf3afaa6b30ce5b
+        eligible: true
+        status: candidate
+      FCT-LIQ-045:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 642e27d2ace38138
+        eligible: true
+        status: candidate
+      FCT-LIQ-046:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 8704b45d92f85e57
+        eligible: true
+        status: candidate
+      FCT-LIQ-047:
+        frequency: intraday
+        block_family: liquidity
+        fingerprint: 88def138a3d2ad04
+        eligible: true
+        status: candidate
+      FCT-LIQ-048:
+        frequency: intraday
+        block_family: liquidity
+        fingerprint: b81bb55a568498e6
+        eligible: true
+        status: candidate
+      FCT-LIQ-049:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 1bea2c7d6f841768
+        eligible: true
+        status: candidate
+      FCT-LIQ-050:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 4b19e3e14e9061a2
+        eligible: true
+        status: candidate
+      FCT-LIQ-051:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 55f0b0e69b91aec6
+        eligible: true
+        status: candidate
+      FCT-LIQ-052:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 0121922e430dd6ff
+        eligible: true
+        status: candidate
+      FCT-LIQ-053:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: a1f6bd5cd4c4102c
+        eligible: true
+        status: candidate
+      FCT-LIQ-054:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 81f374a325aebaf9
+        eligible: true
+        status: candidate
+      FCT-LIQ-055:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 0b6ed60a5320140e
+        eligible: true
+        status: candidate
+      FCT-LIQ-056:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 7b3f2be5ce163bcf
+        eligible: true
+        status: candidate
+      FCT-LIQ-057:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 4e13dc45c36c1345
+        eligible: true
+        status: candidate
+      FCT-LIQ-058:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 0cbf635202a04bdd
+        eligible: true
+        status: candidate
+      FCT-LIQ-059:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 9534e4d8236eb65d
+        eligible: true
+        status: candidate
+      FCT-LIQ-060:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: c2a26b687435fdea
+        eligible: true
+        status: candidate
+      FCT-LIQ-061:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 513f600509563e07
+        eligible: true
+        status: candidate
+      FCT-LIQ-062:
+        frequency: daily
+        block_family: liquidity
+        fingerprint: 9585ea05f58e580d
+        eligible: true
+        status: candidate
+      FCT-QUAL-001:
+        frequency: daily
+        block_family: quality
+        fingerprint: e082acd5bbbe95dd
+        eligible: true
+        status: candidate
+      FCT-SENT-016:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: 995ad76d0589ca32
+        eligible: true
+        status: candidate
+      FCT-SENT-017:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: f339809829326901
+        eligible: true
+        status: candidate
+      FCT-SENT-018:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: f7d0a083bc2d87e6
+        eligible: true
+        status: candidate
+      FCT-SENT-019:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: 6b25aa87ef401f3a
+        eligible: true
+        status: candidate
+      FCT-SENT-020:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: 7b7545c40b55a005
+        eligible: true
+        status: candidate
+      FCT-SENT-021:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: 8bd4e51eb092f8d0
+        eligible: true
+        status: candidate
+      FCT-SENT-022:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: 33c357d40e73c316
+        eligible: true
+        status: candidate
+      FCT-SENT-023:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: 82c9ba76bd6e1284
+        eligible: true
+        status: candidate
+      FCT-SENT-024:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: 12ec02348f1147aa
+        eligible: true
+        status: candidate
+      FCT-SENT-025:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: d972bf4933aaf0fd
+        eligible: true
+        status: candidate
+      FCT-SENT-026:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: 5250c56a7863d74e
+        eligible: true
+        status: candidate
+      FCT-SENT-027:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: 805bb52738ef4042
+        eligible: true
+        status: candidate
+      FCT-SENT-028:
+        frequency: intraday
+        block_family: sentiment
+        fingerprint: b61d951f84b4a869
+        eligible: true
+        status: candidate
+      FCT-MOM-029:
+        frequency: daily
+        block_family: momentum
+        fingerprint: 25b12263d10b52b0
+        eligible: true
+        status: candidate
+      FCT-MOM-030:
+        frequency: intraday
+        block_family: momentum
+        fingerprint: 429f09027442ae89
+        eligible: true
+        status: candidate
+      FCT-QUAL-002:
+        frequency: daily
+        block_family: value
+        fingerprint: a92210e1fe47dd8d
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-029:
+        frequency: daily
+        block_family: intraday
+        fingerprint: dd22b986cbeccea7
+        eligible: true
+        status: candidate
+      FCT-INTRADAY-030:
+        frequency: daily
+        block_family: intraday
+        fingerprint: dd22b986cbeccea7
+        eligible: true
+        status: candidate
+      FCT-FQ-001:
+        frequency: quarterly
+        block_family: quality
+        fingerprint: c625a9a4bb3aa3b8
+        eligible: true
+        status: experimental
+      FCT-FQ-002:
+        frequency: quarterly
+        block_family: quality
+        fingerprint: 53bcc3e9dd258871
+        eligible: true
+        status: experimental
+      FCT-FQ-003:
+        frequency: quarterly
+        block_family: quality
+        fingerprint: 1d0ec79f143ea215
+        eligible: false
+        status: deprecated
+      FCT-FQ-004:
+        frequency: quarterly
+        block_family: quality
+        fingerprint: aa066acdeac9a856
+        eligible: true
+        status: experimental
+      FCT-GR-001:
+        frequency: quarterly
+        block_family: momentum
+        fingerprint: e4e5eb74a84569a0
+        eligible: true
+        status: experimental
+      FCT-GR-002:
+        frequency: quarterly
+        block_family: momentum
+        fingerprint: b8df6a3c0b561208
+        eligible: true
+        status: candidate
+      FCT-FQ-005:
+        frequency: quarterly
+        block_family: quality
+        fingerprint: cb3777aea11cfc90
+        eligible: true
+        status: candidate
+      FCT-FQ-006:
+        frequency: quarterly
+        block_family: quality
+        fingerprint: 65d4d3de1370fcc5
+        eligible: true
+        status: candidate
+      FCT-EXP-001:
+        frequency: daily
+        block_family: expectations
+        fingerprint: 62f089d8b9556ad3
+        eligible: true
+        status: candidate
+      FCT-EXP-002:
+        frequency: daily
+        block_family: expectations
+        fingerprint: 5042f2e6cf2e0e32
+        eligible: true
+        status: candidate
+      FCT-EXP-003:
+        frequency: daily
+        block_family: expectations
+        fingerprint: ccbe2fc71e70ac07
+        eligible: true
+        status: candidate
+      FCT-EXP-004:
+        frequency: daily
+        block_family: expectations
+        fingerprint: 5645c6de20e93334
+        eligible: true
+        status: candidate
+      FCT-EXP-005:
+        frequency: daily
+        block_family: expectations
+        fingerprint: 8e8e93e5b9f0e9f3
+        eligible: true
+        status: candidate
+      FCT-EXP-006:
+        frequency: daily
+        block_family: expectations
+        fingerprint: 44f7ff9be226b3da
+        eligible: true
+        status: candidate
+    source_fingerprint: 2bbc5f5d866f4937
+  block_family:
+    mode: attribute
+    domain_ref: factor_registry#factor_class
+    values:
+    - data_asset
+    - event
+    - expectations
+    - intraday
+    - knowledge_only
+    - liquidity
+    - momentum
+    - quality
+    - risk_rule
+    - sentiment
+    - technical
+    - technical_indicator
+    - value
+    - volatility
+    summary:
+      blocks_total: 175
+      blocks_eligible: 174
+  operator:
+    mode: cartesian
+    values:
+    - abs1
+    - add2
+    - cos1
+    - div2
+    - inv1
+    - log1
+    - max2
+    - min2
+    - mul2
+    - neg1
+    - sig1
+    - sin1
+    - sqrt1
+    - sub2
+    - tan1
+    domain_ref: gplearn#primitives
+    source_fingerprint: gplearn.functions@0.4.3
+  window:
+    mode: cartesian
+    values:
+    - 1d
+    - 20d
+    - 5d
+    - 60d
+    domain_ref: metaq_e1c_window_vocabulary.yaml
+    source_fingerprint: metaq_e1c_window_vocabulary
+  track:
+    mode: cartesian
+    values:
+    - agent
+    - gplearn
+    - mcts
+    domain_ref: metaq_e1c_track_vocabulary.yaml
+    source_fingerprint: metaq_e1c_track_vocabulary
+constraints:
+  eligibility: 积木须可复算且未退役——status ∉ {deprecated, retired} 且 formula 非空（knowledge_only 类自然出局）
+  cross_slot: 积木频率决定可用窗口：frequency ∈ {quarterly, annual} → 仅 20d/60d； frequency = intraday → 仅 1d/5d；其余（daily/空/event）→
+    全窗可用。按 factor_registry 实读值机械算。
+  fingerprint_dedup: 同 (factor_class, formula, params) 指纹的积木只计 1 格（结构口径去马甲，与因子登记册 "日度秩相关>=0.85 不新登记"的判据同源，但在预注册层面先拒后算）。
+  pair_dedup: 候选指纹=sha256(track|block|operator|window)，同指纹跨批去重
+  commutative_dedup: 可交换算子（add2/mul2/max2/min2）不重复计操作数排列（本空间未展开排列维，零膨胀）
+  pit_guard: 取值域快照=冻结时刻已入库值；后续新增积木/算子/窗一律走 expand+新 space_hash
+cap_template: 200
+cap_batch: 600
+nominal_count: 31500
+feasible_count: 27720
+_design_ref: data/registers/metaq_e1c/e1c_space_design_cmb_e1c_v1.yaml
+generated_at: '2026-09-24T07:39:40.540749+00:00'
+space_hash: 602a2525a12c6e8a75fd5c78cb02740bfa0815485a56c51c602aeb2041830609
+n_eff_structural:
+  estimator: structural_dedup
+  nominal_count: 31500
+  n_trials: 31500
+  n_eff: 27720
+  ratio: 0.88
+  boundary: false
+  meta:
+    blocks_total: 175
+    blocks_eligible: 174
+    blocks_by_frequency:
+      intraday: 31
+      daily: 136
+      quarterly: 8
+    operators: 15
+    windows:
+    - 1d
+    - 20d
+    - 5d
+    - 60d
+    tracks:
+    - agent
+    - gplearn
+    - mcts
+seal_policy: 扩容申请（新 space_hash）必须先令旧空间 seal，否则 expand 拒登（PQ-0109 违例=0 的机制保障）
+applies_to_questions:
+- PQ-0104
+- PQ-0105
+- PQ-0106
+- PQ-0107
+- PQ-0108
+- PQ-0109

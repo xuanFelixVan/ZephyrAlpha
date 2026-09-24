@@ -1,0 +1,407 @@
+# REEXAM-A06 —— A06 资金流族 6 问真复考案卷（money_flow 历史回补前置已解除）
+# 生成：283 问战役施工期·复考执行；判据真源=PG meta_question.meta_question.exam_plan（运行时回读，逐字抄录）
+# 本卷不改既有 results/b*/ 文件（禁改他问文件），不写 PG（writeback API 由总包统一执行）
+case_id: REEXAM-A06
+title: A06 资金流族 6 问复考（PQ-0025/0026/0125/0126/0127/0163）
+date: '2026-09-25'
+session: st-metaq-gc-20260924
+completes_when: 6 问各出复考 outcome 且复考器同输入必同输出
+supersedes_note: >-
+  替代原判：results/b1/PQ-0025.yaml、b1/PQ-0026.yaml、b3/PQ-0125.yaml、b3/PQ-0126.yaml、
+  b3/PQ-0127.yaml、b3/PQ-0163.yaml 均为 outcome=insufficient（案由=闭卷窗内零样本）。
+  本卷只在案卷侧记录复考结论，原文件零改动；PG 侧改判由总包 writeback。
+
+# ───────────────────────── 1. 前置缺口是否真被解除（复考有效性根）
+precondition_cleared:
+  original_gap: c1_market.money_flow 切点前零行（原证据 precutoff_rows=0，四表同判）
+  now:
+    window: 2021-01-04 ~ 2025-09-09
+    rows: 5509521
+    trade_days_money_flow: 1137
+    trade_days_kline_daily: 1137
+    coverage: 100%（两表交易日数一致，无缺日）
+    symbols: 5535
+    data_source_marker: tushare（窗内唯一取值，空标记行=0）
+    ingest_batches: '1 批（ingest_day=2026-09-24，rows=5509521，symbols=5535）'
+    median_names_per_day: 4957
+    min_names_per_day: 4119
+    days_below_300_names: 0
+  verdict_premise: 前置缺口真已解除——六问全部在闭卷窗内实算出指标，无任何一问回落到"零样本"
+  caliber_note: >-
+    回补与现采同口径实证：scripts/ch/backfill_money_flow_history.py:90 明写"列映射与
+    tushare_provider._fetch_money_flow 同式"，且 _pct() 实现（该文件 84-86 行）与
+    src/zephyr/data/implementations/tushare_provider.py:855-867 逐式相同
+    （net=buy-sell、main=lg+elg、pct=100*net/(主力档 buy+sell)）；
+    money_flow.close/pct_change 恒 0（tushare moneyflow 接口无此二列），故价格/收益一律取自
+    c1_market.kline_daily，本案卷零处使用 money_flow 的价格列。
+
+# ───────────────────────── 2. 可重放复考器（范式件）
+reexam_engine:
+  dir: scripts/governance/meta_question/reexam/a06/
+  files:
+    exam_a06.py: 六问编排 + CLI + 判据 PG 回读 + payload_md5（新建）
+    panels.py: 面板装载（信号/后复权价/前瞻收益/池掩码/版本标记实测）+ PIT 硬断言（新建）
+    stats_core.py: 纯统计件（NW t / 单样本 t / 截面秩 IC / Chow 断点与全候选扫描）（新建）
+  interface: |
+    exam(p: A06Panels, exam_plan: dict, ...) -> dict  # 每问一个函数，返回
+    # {q_id, exam_plan_ref(判据原文回读), impl, pit, sample, metrics,
+    #  threshold_check(逐项比对), robustness, verdict, [fail_type], [caveat]}
+    load_panels(conn, start, cutoff, horizons=(1,5,20)) -> A06Panels   # 一次装载六问共用
+    A06Panels.fwd(n) / .pool('main'|'variant') / .signal_amount_ratio()
+    stats_core: nw_tstat(x,lag) / mean_ttest(x) / daily_rank_ic(f,r,min_names) /
+                chow_test(y,split,k) / chow_scan(y,min_seg_frac,k) / sub_period_ic(ic,spans)
+  run_cmd: python scripts/governance/meta_question/reexam/a06/exam_a06.py --out <json>
+    （可选 --cutoff/--start/--event-start/--questions/--selftest）
+  selftest: 全部通过——完美秩相关 IC==1.0；NW(1)≈普通 t（AR(0.95) 序列 |t| 由 2.12 收到 0.92）；
+    Chow 真断点 p=5.65e-35、无断点 p=0.627 且扫描 Bonferroni=1.0；fwd(20) 末行端点自动 NaN（PIT 截断）；
+    合成面板双跑 payload_md5 相等
+  determinism_proof:
+    payload_md5: ffe054da50da128e2172b701e86bb972
+    runs: |
+      同码同参多进程真库重跑，逐组指纹一致：
+        result_final_a == result_final_b        → ffe054da…（本卷结论源）
+        result_run4 == result_run5 == run6     → 3e40af2b…（增 PQ-0025 可交易池变体前）
+        result_run2 == result_run3              → 6d9e9ab7…（增稳健性变体前）
+      不同代码版本间 md5 不同属预期（新增字段），版本内一致即"同输入必同输出"成立
+    selftest_runs: 合成面板双跑 payload_md5 相等（不连库，可离线复验）
+    evidence_dir: .runtime/tmp/st-metaq-gc-20260924/reexam_a06/
+  read_only: CH 走 DatabaseService(role='reader')、PG 走 get_depgraph_pg_connection（默认只读）；零写库
+
+# ───────────────────────── 3. PIT 闭卷纪律（实算证据）
+pit_governance:
+  cutoff: '2025-09-09'
+  hard_rules:
+    - 全部取数 SQL 上界 trade_date <= '2025-09-09'（SQL 文本随 payload.panels.sqls 导出）
+    - 面板装载后二次断言端点 ≤ 切点；请求 cutoff 后移直接 AssertionError（实测 --cutoff 2025-12-31
+      → "PIT 闭卷切点不可后移：请求 cutoff=2025-12-31 > 战役切点 2025-09-09（用切点后数据=换卷作弊）"）
+    - 前瞻收益在面板内 shift(-n) 自然截断 ⇒ 信号端自动截止：1 日=2025-09-08、5 日=2025-09-02、20 日=2025-08-12
+    - 收益端最大实现日=2025-09-09（=切点），无切点后收益参与
+  panel_endpoints: {signal_window_first: '2021-01-04', panel_last_trade_date: '2025-09-09',
+                    forward_return_end_max: '2025-09-09'}
+
+# ───────────────────────── 4. 统一实现口径（六问共用，与先例对齐）
+caliber:
+  signal: c1_market.money_flow FINAL.main_net_inflow_pct（主力=大单+超大单净买 ÷ 主力档毛成交 ×100）
+  price: c1_market.kline_daily(close, market_type='A_share', close>0) × c1_market.adj_factor
+    （argMax(adj_factor, ingest_ts) 去版本；后复权自算——同 PQ-0110 先例 pool_note 口径）
+  forward_return: wide.shift(-n)/wide - 1（交易日历对齐；端点停牌无行→NaN→该名该日剔除，
+    禁把停牌期拉伸进收益窗）
+  ic: 逐日截面 Spearman 秩 IC（向量化 percentile-rank Pearson，并列平均秩），日截面有效名 ≥300 方计入
+    （MIN_NAMES=300，同 PQ-0110 先例）
+  inference: 日频 IC 序列均值的 Newey-West HAC t（Bartlett 核，lag=前瞻窗长 n，重叠窗修正）；
+    实现与 .runtime/tmp/st-metaq-20260923/probes/stat_market_PQ-011x.py:73-84 逐式等价
+  split: exam_plan method 原文"60/40 样本内外切分"=交易日历时间序前 60% 为样本内、后 40% 为样本外，
+    切点按 IC 序列下标 int(n*0.6)，禁随机打乱；月度滚动复考=按自然月 IC 均值分布一并披露
+  pool_primary: 全 A 现价池（kline_daily 有成交且 money_flow 有信号；题面未要求 ST/退市过滤，同 PQ-0110 先例）
+  pool_variant_for_disclosure: 稳健性变体=剔 ST（stk_limit.st_flag PIT）∧剔涨跌停锁板∧成交额≥1e7∧
+    剔次新（上市<120 日历日），仅作披露不改主判据
+  exam_plan_source: PG meta_question.meta_question.exam_plan 运行时回读（判据零改动，禁本地另写）
+
+# ───────────────────────── 5. 逐问复考
+exams:
+
+  PQ-0025:
+    exam_plan_ref:
+      title: SL-A06 主力净流入占成交额比前 10% 个股的次日收益是否显著为正（事件研究 t>2，全 A 池）？
+      method: 2023 年以来事件研究
+      criterion: 极端净流入组次日收益 t 检验
+      threshold: '>0 且 t>2'
+    impl: exam_a06.pq_0025（事件组=日截面 main_net_inflow_pct 分位≥0.90 且组内≥10 名；
+      逐日等权组合次日收益序列 → 单样本 t；取数 SQL=sqls.signal + sqls.price）
+    pit: {event_window: [2023-01-01, '2025-09-09'], signal_first: '2023-01-03', signal_last: '2025-09-08',
+          return_end_max: '2025-09-09'}
+    sample: {n_event_days: 651, median_cohort_names: 510, median_pool_names: 4957}
+    metrics:
+      mean_next_day_ret_pct: 0.2145
+      sd_next_day_ret_pct: 1.6697
+      t_plain: 3.278
+      p_plain: 0.0011
+      t_nw_lag1: 3.099
+      mean_pool_next_day_ret_pct: 0.067
+      excess_mean_pct: 0.1475
+      excess_t: 9.677
+      excess_t_nw1: 9.412
+      pos_day_share: 0.5883
+      decile_next_day_ret_pct: {D1: 0.0602, D2: 0.0747, D3: 0.067, D4: 0.0656, D5: 0.0583,
+                                D6: 0.0454, D7: 0.0194, D8: 0.0149, D9: 0.0498, D10: 0.2146}
+    threshold_check:
+      mean_gt_0: {value: 0.2145, bound: '> 0', met: true}
+      t_gt_2: {value: 3.278, bound: '> 2', met: true}
+    outcome: pass
+    fail_type: null
+    confidence: 0.45
+    three_check: {data: 'OK：窗内 5,509,521 行/651 个有效事件日/组内中位 510 名',
+                  caliber: 'OK：信号=表内主力净流入占比，收益=kline 后复权（money_flow 价格列恒 0 未用）',
+                  mechanical: 'OK：事件组定义/次日收益/单样本 t 全机械，可重放（payload_md5 一致）'}
+    pit_assertion: 信号 T 日盘后落定，收益窗自 T+1 起，全部端点 ≤ 2025-09-09；未用任何切点后数据
+    vs_original_insufficient: >-
+      原案由"闭卷窗内零样本无法执行"已真解除：同一判据、同一实现口径下实算出 t 并与阈值逐项比对，
+      两项子条件均满足。但结论强度有限（见下 caveat），故置信仅 0.45。
+    caveat: >-
+      两条如实披露：①与 PQ-0125 的张力——全窗秩 IC 为负且显著，而十分位分解显示只有 D10（前 10%）
+      次日收益跳升（0.2146% vs D1..D9 的 0.015%~0.075%），信号与收益非单调，题面"前 10%"组为正
+      不代表因子有序预测力；②可实现性——按可交易池变体（剔 ST/涨跌停锁板/成交额<1000万/次新）重跑，
+      事件组次日收益跌到 0.0616%、t=0.915、超额 t=-0.046，即极端净流入头部 largely 是信号日已锁板
+      买不进的名字，题面判据（全 A 池、无交易性约束）通过 ≠ 可落地。分母口径变体（主力净流入÷当日成交额）
+      结论不变（mean 0.2071%、t=3.316、超额 t=10.537）。
+
+  PQ-0125:
+    exam_plan_ref:
+      title: SL-A06 的主力净流入占比信号在全 A 池对 1日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外 IC>0.01）？
+      method: 60/40 样本内外切分+月度滚动复考
+      criterion: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+      threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    impl: exam_a06.pq_012x(h=1)（SQL=sqls.signal + sqls.price；秩 IC 见 §4 口径）
+    pit: {signal_start: '2021-01-04', signal_last: '2025-09-08', return_end_max: '2025-09-09'}
+    sample: {ic_days: 1136, coverage_days: 1137, median_pool_names: 4957, min_pool_names: 4119,
+             in_days: 681, oos_days: 455, oos_start: '2023-10-27'}
+    metrics:
+      ic_mean: -0.02434
+      ic_sd: 0.06436
+      ic_ir: -0.3783
+      nw_lag: 1
+      nw_t_full: -12.703
+      ic_in_mean: -0.02793
+      nw_t_in: -12.145
+      ic_oos_mean: -0.01897
+      nw_t_oos: -5.766
+      pos_ic_share: 0.3231
+      monthly_n: 57
+      monthly_mean: -0.02371
+      monthly_pos_share: 0.1404
+      monthly_min: -0.06449
+      monthly_max: 0.01915
+      sub_window_since_2023: {n_days: 651, ic_mean: -0.02256, ic_pos_share: 0.3134}
+    threshold_check:
+      ic_gt_0.02: {value: -0.02434, bound: '> 0.02', met: false}
+      nw_t_gt_2: {value: -12.703, bound: '> 2', met: false}
+      oos_ic_gt_0.01: {value: -0.01897, bound: '> 0.01', met: false}
+    outcome: fail
+    fail_type: no_alpha
+    confidence: 0.85
+    three_check: {data: 'OK：1136 个有效 IC 观测日（日池 4119~4957 名，中位 4957）',
+                  caliber: 'OK：信号/复权/秩 IC/NW 四项口径与 PQ-0110 先例逐式一致',
+                  mechanical: 'OK：60/40 时间序切分 + 月度滚动全机械，双跑 md5 一致'}
+    pit_assertion: 信号 T 日盘后落定、收益窗 T+1..T+1 且端点 ≤ 切点；样本外切点 2023-10-27 亦在闭卷窗内
+    vs_original_insufficient: >-
+      原案由"1 日前瞻 IC 需切点前全 A 截面，闭卷窗内零样本"已解除。实算结论=不达标且方向相反：
+      IC=-0.02434（NW t=-12.703，57 个月中仅 14% 月份为正），样本外 IC=-0.01897 同样为负，
+      三条件全不满足 → fail(no_alpha)。稳健性：可交易池变体 IC=-0.03556（t=-17.677）、
+      分母换成当日成交额变体 IC=-0.0189（t=-9.85）——负号与显著性在两种变体下都不翻。
+
+  PQ-0126:
+    exam_plan_ref:
+      title: SL-A06 的主力净流入占比信号在全 A 池对 5日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外 IC>0.01）？
+      method: 60/40 样本内外切分+月度滚动复考
+      criterion: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+      threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    impl: exam_a06.pq_012x(h=5)
+    pit: {signal_start: '2021-01-04', signal_last: '2025-09-02', return_end_max: '2025-09-09'}
+    sample: {ic_days: 1132, in_days: 679, oos_days: 453, oos_start: '2023-10-25', median_pool_names: 4957}
+    metrics:
+      ic_mean: -0.02059
+      ic_sd: 0.05914
+      ic_ir: -0.3481
+      nw_lag: 5
+      nw_t_full: -8.418
+      ic_in_mean: -0.02185
+      nw_t_in: -7.943
+      ic_oos_mean: -0.0187
+      nw_t_oos: -4.152
+      pos_ic_share: 0.364
+      monthly_n: 57
+      monthly_mean: -0.01892
+      monthly_pos_share: 0.1579
+      monthly_min: -0.07197
+      monthly_max: 0.06588
+      sub_window_since_2023: {n_days: 647, ic_mean: -0.01957, ic_pos_share: 0.3586}
+    threshold_check:
+      ic_gt_0.02: {value: -0.02059, bound: '> 0.02', met: false}
+      nw_t_gt_2: {value: -8.418, bound: '> 2', met: false}
+      oos_ic_gt_0.01: {value: -0.0187, bound: '> 0.01', met: false}
+    outcome: fail
+    fail_type: no_alpha
+    confidence: 0.85
+    three_check: {data: 'OK：1132 观测日', caliber: 'OK：同 PQ-0125，lag=5 与前瞻窗匹配',
+                  mechanical: 'OK：同器同参重放一致'}
+    pit_assertion: 信号端自动截止 2025-09-02（=切点−5 交易日），收益端 ≤ 2025-09-09
+    vs_original_insufficient: 原"5 日前瞻 IC 同上，闭卷窗内零样本"已解除；实算不达标（负 IC 且显著）
+    robustness: 可交易池变体 IC=-0.02343（t=-9.352）；成交额分母变体 IC=-0.01234（t=-5.732）
+
+  PQ-0127:
+    exam_plan_ref:
+      title: SL-A06 的主力净流入占比信号在全 A 池对 20日前瞻收益的预测 IC 是否显著>0（IC>0.02 且 Newey-West t>2，样本外 IC>0.01）？
+      method: 60/40 样本内外切分+月度滚动复考
+      criterion: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+      threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    impl: exam_a06.pq_012x(h=20)
+    pit: {signal_start: '2021-01-04', signal_last: '2025-08-12', return_end_max: '2025-09-09'}
+    sample: {ic_days: 1117, in_days: 670, oos_days: 447, oos_start: '2023-10-12', median_pool_names: 4957}
+    metrics:
+      ic_mean: -0.01787
+      ic_sd: 0.05336
+      ic_ir: -0.335
+      nw_lag: 20
+      nw_t_full: -5.544
+      ic_in_mean: -0.01988
+      nw_t_in: -5.182
+      ic_oos_mean: -0.01487
+      nw_t_oos: -2.655
+      pos_ic_share: 0.3447
+      monthly_n: 56
+      monthly_mean: -0.01765
+      monthly_pos_share: 0.2143
+      monthly_min: -0.06037
+      monthly_max: 0.05079
+      sub_window_since_2023: {n_days: 632, ic_mean: -0.01863, ic_pos_share: 0.3212}
+    threshold_check:
+      ic_gt_0.02: {value: -0.01787, bound: '> 0.02', met: false}
+      nw_t_gt_2: {value: -5.544, bound: '> 2', met: false}
+      oos_ic_gt_0.01: {value: -0.01487, bound: '> 0.01', met: false}
+    outcome: fail
+    fail_type: no_alpha
+    confidence: 0.85
+    three_check: {data: 'OK：1117 观测日（20 日窗使信号端前移至 2025-08-12，仍全程闭卷）',
+                  caliber: 'OK：lag=20 匹配重叠窗', mechanical: 'OK：双跑 md5 一致'}
+    pit_assertion: 信号端自动截止 2025-08-12（=切点−20 交易日），收益端 ≤ 2025-09-09
+    vs_original_insufficient: 原"20 日前瞻 IC 同上，闭卷窗内零样本"已解除；实算不达标
+    robustness: 可交易池变体 IC=-0.01755（t=-5.195）；成交额分母变体 IC=-0.00627（t=-2.703）
+
+  PQ-0026:
+    exam_plan_ref:
+      title: SL-A06 主力口径版本切换前后因子 IC 是否存在显著断点（Chow 检验 p<0.05 即须口径版本标记）？
+      method: 口径变更日志+IC 序列断点检验
+      criterion: 版本切换点 Chow 断点检验
+      threshold: p<0.05 即须标记
+    impl: exam_a06.pq_0026（SQL=sqls.version_census + sqls.ingest_batches；
+      Chow k=1 截距断裂：①可指认切换日 ②全候选断点扫描 max-F + Bonferroni 校正，禁人为挑日期）
+    pit: {cutoff: '2025-09-09', window: [2021-01-04, '2025-09-09'],
+          note: 断点序列全部 ≤ 切点；现采段起点（2026-06 起）在窗外，零参与}
+    sample: {rows_in_window: 5509521, days_in_window: 1137, ic_series_n_days: 1136,
+             distinct_version_markers: [tushare], empty_marker_rows: 0, ingest_batches_n: 1,
+             version_switch_events_in_window: 0}
+    metrics:
+      marker_coverage_complete_single_version: true
+      designated_switch_breakpoint_available: false
+      chow_scan_ic_series:
+        best_split_index: 789
+        break_date: '2024-04-09'
+        best_f: 11.21125
+        best_p_raw: 0.00084
+        best_p_bonferroni: 0.66759
+        n_candidates: 795
+      chow_scan_daily_mean_signal:
+        best_split_index: 742
+        break_date: '2024-01-23'
+        best_f: 175.94644
+        best_p_raw: 0.0
+        best_p_bonferroni: 0.0
+        n_candidates: 796
+    threshold_check:
+      raw_threshold: p<0.05 即须标记
+      版本标记存在且全覆盖: {value: [tushare], met: true}
+      IC 断点_p_lt_0.05: {raw: 0.00084, bonferroni: 0.66759,
+                          判定: 校正后 p≥0.05 ⇒ 无显著 IC 断点；标记列实测 100% 单值 ⇒ "须标记"义务满足}
+    outcome: pass
+    fail_type: null
+    confidence: 0.5
+    three_check:
+      data: 'OK：版本标记与断点检验两条腿均在闭卷窗内实算'
+      caliber: 'OK：判据所指 IC 断点=1 日前瞻秩 IC 日序列；辅助腿=日频截面信号均值（口径漂移最敏感统计量）'
+      mechanical: 'OK：Chow(k=1) + 全候选扫描 + Bonferroni 全机械，可重放'
+    pit_assertion: 断点检验序列全部 ≤ 2025-09-09，现采段零参与
+    vs_original_insufficient: >-
+      原案由两点（闭卷零样本 + "切点后单版本数据无法构造版本切换断点"）中，第一点已解除：
+      题面所指的 IC 序列断点检验现已实算（1136 日 IC 序列，795 个候选断点，max-F=11.21，
+      Bonferroni 校正 p=0.668≥0.05）⇒ 闭卷窗内无可检出断点；版本标记腿实测 data_source 单值
+      'tushare' 覆盖 100%、空标记行=0 ⇒ "若断点显著则须标记"的前后件均成立。
+      但"版本切换前后"这一对照结构在闭卷窗内仍不存在（窗内 0 次切换、1 个摄取批次），
+      故此 pass 是"标记齐备 + 无显著断点"意义上的 pass，不是"切换被证明无害"意义上的 pass。
+    caveat: >-
+      如实记录一处反向证据：日频截面信号均值序列存在极显著结构断裂（2024-01-23，F=175.9，
+      Bonferroni p≈0，前半窗均值 -7.05 → 后半窗 -5.66），而该日期不对应任何 data_source 或
+      摄取批次变化（全窗单批 ingest_day=2026-09-24）⇒ 判读为市场机制断裂（微盘流动性危机期），
+      非供应商口径断裂；题面判据对象是 IC 序列（校正后不显著），故不改判。此为待裁项之一。
+
+  PQ-0163:
+    exam_plan_ref:
+      title: SL-A06 资金流线的净流入极端日事件研究无显著超额即退役证伪方案能否机械执行（U6 退役判据闭环可执行性核验）？
+      method: 退役判据历史重放演练
+      criterion: 退役判据含明确阈值与数据窗口可重放
+      threshold: 判据可执行率=100%
+    impl: exam_a06.pq_0163（对 SL-A06 U6 原文做 5 组件重放演练，SQL=sqls.signal + sqls.price）
+    replay_target: docs/_working/chain_piling_campaign/02_source_line_registry.md §SL-A06 U6
+      原文="净流入极端日后续收益事件研究；证伪=无统计显著超额。"
+    steps:
+      - {step: R1, component: 事件定义可代码化, executable: true,
+         detail: "『净流入极端日』= 逐日截面主力净流入占比前 10%（分位≥0.90），组内中位 496 名"}
+      - {step: R2, component: 超额口径可代码化, executable: true,
+         detail: 次日组合等权收益 − 同日全池等权收益（后复权收盘，T+1 端）}
+      - {step: R3, component: 显著性检验可代码化, executable: true,
+         detail: 单样本 t（主窗 n=651，t=9.677；NW(1) t=9.412）}
+      - {step: R4, component: 数据窗口明确可指定, executable: true,
+         detail: 主窗（exam_plan『2023 年以来』）2023-01-01~2025-09-09 n=651 与对照窗
+           2021-01-04~2025-09-09 n=1136 两窗均可重放；信号端自动截止切点−1 交易日}
+      - {step: R5, component: 退役布尔可机械输出, executable: true,
+         detail: 证伪条件"无统计显著超额"⇒ retire=false（阈值 t>2 借 exam_plan 绑定，U6 原文无数字阈值）}
+    pit: {cutoff: '2025-09-09', windows_replayed: [[2021-01-04, '2025-09-09'], [2023-01-01, '2025-09-09']],
+          signal_last: '2025-09-08'}
+    sample: {replay_days_full_window: 1136, replay_days_since_2023: 651, median_cohort_names: 496}
+    metrics:
+      steps_total: 5
+      steps_executable: 5
+      executable_ratio: 1.0
+      replay_since_2023: {excess_mean_pct: 0.1475, t_plain: 9.677, t_nw1: 9.412, retire_flag: false}
+      replay_full_window: {excess_mean_pct: 0.1548, t_plain: 14.736, t_nw1: 14.407, retire_flag: false}
+      cross_ref_PQ0025_excess_t: 9.677
+    threshold_check: {raw_threshold: 判据可执行率=100%, 可执行率: {value: 1.0, bound: '= 1', met: true}}
+    outcome: pass
+    fail_type: null
+    confidence: 0.7
+    three_check: {data: 'OK：两窗真实重放（1136/651 日），非文本审阅式判定',
+                  caliber: 'OK：U6 原文无数字阈值与窗口 ⇒ 按 PQ-0133 先例以 exam_plan 绑定补齐并如实标注',
+                  mechanical: 'OK：R1..R5 五组件全机械可执行，退役布尔有确定输出'}
+    pit_assertion: 重放全程 ≤ 2025-09-09；无切点后数据
+    vs_original_insufficient: >-
+      原案由"闭卷窗内零样本无法真实重放执行，按同批 U6 先例（PQ-0139/0181）记 insufficient"已解除：
+      本次为真实重放（非纸面核验），可执行率 5/5=100%。原案同时记"判据三要素: 齐"，与本次一致；
+      残余缺陷=U6 注册文本仍无数字阈值/窗口（属文本完备性，不阻断可执行性，处置同 PQ-0133）。
+    caveat: >-
+      ①重放演练只证"判据可机械执行"，不等于退役成立——本窗实证超额 t=9.677~14.736 显著，
+      按 U6 判据 retire=false；②该超额在可交易池口径下消失（见 PQ-0025 caveat：t=0.915），
+      故若 Owner 认为退役判据应内建可交易性，则同一重放会给出 retire=true。此差异属判据口径问题，
+      本卷不改判据，登记为待裁项。
+
+# ───────────────────────── 6. 汇总与跨问发现
+summary:
+  outcomes: {PQ-0025: pass, PQ-0026: pass, PQ-0125: fail, PQ-0126: fail, PQ-0127: fail, PQ-0163: pass}
+  insufficient_remaining: 0（六问全部在闭卷窗内实算出指标并与阈值逐项比对）
+  cross_exam_finding_1: >-
+    同一信号的"极端组事件研究"与"全截面秩 IC"给出方向相反的答案（PQ-0025 pass vs PQ-0125/0126/0127
+    显著负 IC）。十分位分解显示这是真实的非单调结构（D10=0.2146% vs D7/D8=0.019%/0.015%），
+    非算错：A06 线若要留用，只能作为"极端流入头部"的事件驱动信号，不能作为线性因子。
+  cross_exam_finding_2: >-
+    主力净流入占比的截面均值与全市场宽度系统性偏负（窗内日均 -6.35%，日度均值 sd 3.21），
+    即 tushare 分档口径下主力档净卖出是常态；IC 为负与此同源，提示 L3/L4 消费方
+    （overnight_boundary_reviser/regime_data_loader 用 avg(main_net_inflow_pct)）的符号方向需复核。
+  no_alpha_lock_note: 本批三问（0125/0126/0127）是"前置缺口补齐后首次真判"，非对既有 no_alpha 翻案；
+    原判定为 insufficient，不存在禁止翻案的适用对象。
+
+pending_adjudication:
+  - id: PA-A06-1
+    question: PQ-0026 窗内零版本切换事件，Chow"切换前后"腿属 vacuous；本卷按"标记齐备+IC 断点校正后不显著"给 pass（置信 0.5）
+    ask: Owner 裁定 vacuous-Chow 记 pass 还是仍记 insufficient
+  - id: PA-A06-2
+    question: PQ-0025 判据为全 A 池无交易性约束（pass），可交易池口径下 t=0.915（不显著）
+    ask: 事件研究类考题是否统一内建可交易性掩码（涉及 283 问内同族题的一致性，不宜单题改口径）
+  - id: PA-A06-3
+    question: SL-A06 U6 注册文本无数字阈值与数据窗口（本次按 PQ-0133 先例借 exam_plan 绑定）
+    ask: 是否把阈值/窗口回写 02_source_line_registry.md §SL-A06 U6 使判据文本自足（本卷无权改注册表，未改）
+
+writeback:
+  pg_changed: false（本卷不写 meta_question.*；outcome 由总包统一 writeback）
+  casefile: docs/_working/meta_question_answers/casefiles/REEXAM-A06.yaml
+  machine_output: .runtime/tmp/st-metaq-gc-20260924/reexam_a06/result_final_a.json（payload_md5 ffe054da50da128e2172b701e86bb972）
+  followups_for_总包:
+    - 新建 3 个 .py 模块需登记大白话简介（add_module_translation.py），本单按路径限定未动注册表
+    - PQ-0125/0126/0127 判 fail(no_alpha) 后进退役/留用流程时，注意与 PQ-0025 的非单调并读结论

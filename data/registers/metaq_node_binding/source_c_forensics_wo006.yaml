@@ -1,0 +1,86 @@
+# 283 问战役施工机读册（生成器产出；本头由落地批补写，生成器侧重放须同步 emit 见 closure_ledger 待办）
+ttl: task_bound
+completes_when: 283 问战役施工闭环验收后随总包归档
+meta:
+  wo: WO-006
+  q_id: PQ-0064
+  session: st-metaq-gc-20260924
+  probed_at: '2026-09-24'
+  purpose: WO-006 配套项①『同花顺再跑（DS 账号在册）』通道可得性取证（先取证后施工）
+  method: 七项实跑：DS 册 status / provider 代码留存 / 离线导出件 / 装载器输入 / akshare THS 三接口 / iFinD 真登录返回码 / 历史回溯能力判定
+checks:
+  ds_registry_ifind:
+    id: DS-IFIND
+    status: deprecated
+    account_type: trial
+    auth_method: THS_iFinDLogin(同进程内调用)
+    coverage: A股K线/Tick/板块/财务/宏观/研报(已退役2026-08-14,试用账号到期;能力已全部迁至akshare/tushare/miniqmt)
+    retirement_note: '2026-08-14 #ARCH-DATA-IFIND-RETIRE-001'
+  ifind_provider_code_in_repo: false
+  secret_registry_ifind:
+    IFIND_USERNAME:
+      registered: false
+      note: null
+    IFIND_PASSWORD:
+      registered: true
+      note: null
+  credentials_present:
+    IFIND_USERNAME:
+      present: true
+      length: 8
+    IFIND_PASSWORD:
+      present: true
+      length: 8
+  offline_export_files:
+    dir_exists: true
+    loader_required_files:
+    - 个股1 (1).xlsx
+    - 个股1 (2).xlsx
+    - 板块行业.xlsx
+    files_present: []
+    files_missing:
+    - 个股1 (1).xlsx
+    - 个股1 (2).xlsx
+    - 板块行业.xlsx
+    dir_listing:
+    - 被投清单登记_ths_import_2026-09-08.md
+    - 被投清单登记_ths_import_20260908.md
+    xlsx_or_tsv_in_dir: []
+  akshare_ths_channel:
+    akshare_version: 1.18.75
+    has_name_ths: true
+    has_cons_ths: false
+    name_ths:
+      ok: true
+      rows: 375
+      columns:
+      - name
+      - code
+    info_ths:
+      ok: true
+      columns:
+      - 项目
+      - 值
+      carries_constituents: false
+    summary_ths:
+      ok: true
+      columns:
+      - 日期
+      - 概念名称
+      - 驱动事件
+      - 龙头股
+      - 成分股数量
+      carries_constituents: true
+  ifind_live_login:
+    sdk_importable: true
+    attempted: true
+    login_return_code: -2
+verdict:
+  runnable: false
+  constituent_channel_live: false
+  ifind_login_ok: false
+  offline_loader_input_available: false
+  history_rewindable: false
+  reason: ①DS 册 status=deprecated（试用账号到期退役，provider 代码全项目切除，本单禁改 src/ 与 git 取回）；②既有装载器（ths_import.py / concept_ingest.py）的输入=Owner 手工导出 GBK TSV，实测 docs/_working/同花顺资料/ 源件已不在仓（仅存两份被投清单登记 md）；③akshare 迁移承接面只有概念名录（stock_board_concept_name_ths），概念→成分股明细接口
+    cons_ths 在 1.18.75 不存在，info/summary 只回板块行情与驱动事件；④iFinDPy SDK 虽在装，真登录返回码非 0 → 账号不可用；⑤即使今夜可跑，同花顺概念成分仅当前快照，无时点回溯接口（PIT 类问不可用）。
+  consequence: 源 C 零产出（禁造假挂接）；缺口转由源 A（stock_concept 概念成分，其真身即 2026-09-14 同花顺公司档案导出快照=同花顺 lineage 的在库存量）+ 源 B 同名穿透 + 源 D node_ref 营收归因回收；未回收差额在案卷 shortfall 节如实报出。

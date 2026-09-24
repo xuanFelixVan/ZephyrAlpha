@@ -1,0 +1,18 @@
+# [A_config] module_id=MOD-CHAINPILE-METAQ | layer=config | stability=new | safety=L | ai_autonomy=ai_modifiable
+# 真源：metaq_e1c.*.record_kind 枚举唯一真源（三账共用的"这条记录从哪来"标签）。
+# 设立动机：载体建成当日在产批次多为零样本，若不留来源档就会被拿自证样例冒充实证（本战役红线）。
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: E1C 台账记录来源档枚举（live=在产实跑｜inventory_replay=存量盘点重放｜selftest_synthetic=载体自证）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-gc-20260924
+date: '2026-09-24'
+values:
+- value: live
+  definition: 在产批次真实产出的候选/判定/账（复考判据只认这一档）。
+- value: inventory_replay
+  definition: 由既有库表（strategy_screen/hypothesis_precheck/sim_pocket_daily）按现账重放出的存量盘点记录，
+    可复算、非新造观测；用于把"账的形状"接上，不可当作新考试样本。
+- value: selftest_synthetic
+  definition: 载体自证用合成记录（确定性种子可复现），只证写路径与字段齐备，永不进任何判定分子分母。

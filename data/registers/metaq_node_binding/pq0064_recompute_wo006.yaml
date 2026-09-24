@@ -1,0 +1,137 @@
+# 283 问战役施工机读册（生成器产出；本头由落地批补写，生成器侧重放须同步 emit 见 closure_ledger 待办）
+ttl: task_bound
+completes_when: 283 问战役施工闭环验收后随总包归档
+meta:
+  wo: WO-006
+  q_id: PQ-0064
+  session: st-metaq-gc-20260924
+  recomputed_at: '2026-09-24'
+  caliber: 覆盖率=链内有公司映射节点/链总节点；A 档=覆盖率≥0.8；分母=有节点链；活跃口径剔 name LIKE '%已并入%'（与考试 evidence.query 同构）
+  pre_definition: 实盘剔除 source_doc LIKE 'wo006|%' 的行（本单纯 INSERT，剔除即写前面）
+before:
+  chains_total: 873
+  chains_with_nodes: 871
+  chains_no_node: 0
+  aclass_chains_all: 288
+  aclass_chains_active: 606
+  ratio_all: 0.3307
+  ratio_active: 0.6958
+  chains_cov_zero: 50
+  chains_cov_lt50: 231
+  chains_cov_50to80: 302
+  mean_coverage_all: 0.6095
+  mean_coverage_active: 0.7836
+  micro_chains_zero_active: 115
+  nodes_total: 5560
+  merged_nodes: 2225
+  unattached_nodes: 2445
+  unattached_active_nodes: 1148
+  ig_node_company_rows_total: 25559
+  ig_node_company_rows_non_wo006: 18830
+  ig_node_company_rows_wo006: 6729
+  ig_node_company_distinct_nodes: 3321
+  threshold: A 档链占比≥80%（覆盖率≥80%）
+  pass_all: false
+  pass_active: false
+after:
+  chains_total: 873
+  chains_with_nodes: 871
+  chains_no_node: 0
+  aclass_chains_all: 309
+  aclass_chains_active: 642
+  ratio_all: 0.3548
+  ratio_active: 0.7371
+  chains_cov_zero: 48
+  chains_cov_lt50: 215
+  chains_cov_50to80: 299
+  mean_coverage_all: 0.6274
+  mean_coverage_active: 0.8106
+  micro_chains_zero_active: 108
+  nodes_total: 5560
+  merged_nodes: 2225
+  unattached_nodes: 2239
+  unattached_active_nodes: 942
+  ig_node_company_rows_total: 25559
+  ig_node_company_rows_non_wo006: 18830
+  ig_node_company_rows_wo006: 6729
+  ig_node_company_distinct_nodes: 3321
+  threshold: A 档链占比≥80%（覆盖率≥80%）
+  pass_all: false
+  pass_active: false
+caliber_self_check:
+  exam_ref: st-metaq-20260923/probe/batch_l2_graph_PQ-0064
+  compared_items: 12
+  mismatch: []
+  identical: true
+  exam_outcome: fail
+  exam_fail_type: infra
+write_integrity:
+  pre_existing_rows_reconstructed: 18830
+  wo006_rows: 6729
+  non_wo006_rows_after_write: 18830
+  non_wo006_rows_unchanged: true
+  foreign_rows_touched_in_write_window: 0
+  foreign_touched_attribution: []
+  wo006_rows_on_disallowed_nodes: 0
+  disallowed_definition: wo006 行落在'已并入'墓碑节点，或该节点写前已有挂接行（预检承诺=0）
+projection_reconciliation:
+  projection_source: node_binding_candidates_wo006.yaml:meta.projection
+  compared:
+    a_all:
+      projected: 309
+      actual: 309
+    a_active:
+      projected: 642
+      actual: 642
+    denominator:
+      projected: 871
+      actual: 871
+    ratio_all:
+      projected: 0.3548
+      actual: 0.3548
+    ratio_active:
+      projected: 0.7371
+      actual: 0.7371
+  matches: true
+delta:
+  ig_node_company_rows: 0
+  wo006_rows: 6729
+  unattached_nodes: 2445 -> 2239
+  unattached_active: 1148 -> 942
+  ratio_all: 0.3307 -> 0.3548
+  ratio_active: 0.6958 -> 0.7371
+  aclass_all: 288 -> 309
+  aclass_active: 606 -> 642
+verdict:
+  threshold: A 档链占比≥80%（覆盖率≥80%）
+  pass_all_caliber: false
+  pass_active_caliber: false
+  outcome_now: fail
+  fail_type_if_fail: infra（结构性：链池含 115 条零覆盖微链 + 2,225 个已并入墓碑 + 词表垃圾节点；挂接面已按四源尽力回收，剩余缺口非挂接可解）
+diagnostics:
+  unattached_active_nodes_now: 942
+  of_which_vocabulary_junk: 55
+  vocabulary_junk_definition: 节点名命中图谱写入通道今夜词表拦截项（超长>15 字 / 研报标题腔 / 结构违规）——这类'环节'按现行词表不该存在，属词表治理面而非挂接面
+  attachable_now: 887
+  attachment_ceiling_projection:
+    assumption: 把全部非垃圾未挂活跃节点 100% 挂上（理想上限，实际源覆盖率远低于 100%）
+    a_all: 418
+    a_active: 816
+    denominator: 871
+    ratio_all: 0.4799
+    ratio_active: 0.9369
+    meets_threshold_active: true
+  chain_gap_histogram_active:
+    1: 169
+    2: 27
+    3: 10
+    4: 2
+    5: 2
+    6: 19
+  now:
+    a_all: 309
+    a_active: 642
+    denominator: 871
+    ratio_all: 0.3548
+    ratio_active: 0.7371
+  all_vs_active_gap_chains: 336

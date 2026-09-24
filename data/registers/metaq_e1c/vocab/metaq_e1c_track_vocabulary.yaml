@@ -1,0 +1,18 @@
+# [A_config] module_id=MOD-CHAINPILE-METAQ | layer=config | stability=new | safety=L | ai_autonomy=ai_modifiable
+# 真源：metaq_e1c.track_run_ledger.track / yardstick_snapshot.tracks 枚举唯一真源（动态加载，禁硬编码）。
+# 题面出处=PQ-0105/PQ-0107「E1C 三轨（gplearn/智能体/MCTS）」；现有 hypothesis_precheck.birth_channel
+# 的 B/C/C2/D/I 是渠道编码不是三轨，二者不得混用（复考前置=本枚举落库后按 track 重灌）。
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: E1C 组合挖掘三轨标识枚举（同预注册空间、同考尺下的分轨落账维度）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-gc-20260924
+date: '2026-09-24'
+values:
+- value: gplearn
+  definition: 遗传规划轨（算子集真源=gplearn 库导出基元，随 space_hash 冻结版本锁定）。
+- value: agent
+  definition: 智能体轨（LLM 假设生成→预筛；题面"智能体"，机读值用 ASCII 'agent' 避免中文列值）。
+- value: mcts
+  definition: 蒙特卡洛树搜索轨（表达式树搜索）。

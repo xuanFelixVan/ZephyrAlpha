@@ -1,0 +1,256 @@
+# 283 问战役施工机读册（生成器产出；本头由落地批补写，生成器侧重放须同步 emit 见 closure_ledger 待办）
+ttl: task_bound
+completes_when: 283 问战役施工闭环验收后随总包归档
+meta:
+  wo: WO-006
+  q_id: PQ-0064
+  session: st-metaq-gc-20260924
+  channel: scripts/industry_graph/websearch_ingest.py ingest（SOP §5 唯一合法通道）
+  write_shape: ig_node_company 纯 INSERT（零 UPDATE/DELETE/DROP/TRUNCATE，零自开写连接）
+  shard_rows: 800
+  note: runs 为历次执行流水（首跑=真写入，后续=幂等复核）；write_evidence 每次从库侧现算，是写面存证的权威副本
+write_evidence:
+  created_at_span:
+  - '2026-09-24 15:47:09.629598+08:00'
+  - '2026-09-24 15:47:33.510988+08:00'
+  rows: 6729
+  nodes: 206
+  symbols: 840
+  per_minute_clusters:
+  - - 2026-09-24 15:47
+    - 6729
+  by_source_doc_segment:
+  - - srcA2_stock_concept_substr
+    - 5000
+    - 84
+    - 0.45
+    - 0.7
+  - - srcA1_stock_concept_exact
+    - 818
+    - 5
+    - 0.6
+    - 0.7
+  - - srcC2_ths_concept_substr
+    - 411
+    - 85
+    - 0.45
+    - 0.45
+  - - srcC4_ths_profile_mention
+    - 304
+    - 89
+    - 0.45
+    - 0.45
+  - - srcD_node_ref
+    - 81
+    - 35
+    - 0.5
+    - 0.65
+  - - srcB_symbol_penetration
+    - 73
+    - 22
+    - 0.4
+    - 0.4
+  - - srcC3_ths_industry
+    - 42
+    - 2
+    - 0.6
+    - 0.7
+  by_role:
+  - - 提及
+    - 5810
+  - - 参与
+    - 871
+  - - 主要
+    - 48
+runs:
+- meta:
+    wo: WO-006
+    q_id: PQ-0064
+    session: st-metaq-gc-20260924
+    applied_at: '2026-09-24'
+    channel: scripts/industry_graph/websearch_ingest.py ingest（SOP §5 唯一合法通道）
+    write_shape: ig_node_company 纯 INSERT（零 UPDATE/DELETE/DROP/TRUNCATE，零自开写连接）
+    shard_rows: 800
+  rule_data_ops_audit: []
+  pre_flight:
+    kept: 0
+    dropped:
+      already_bound_pair: 6729
+      node_no_longer_eligible: 0
+    shards: 0
+  pre_state:
+    chains_total: 873
+    chains_with_nodes: 871
+    chains_no_node: 0
+    aclass_chains_all: 309
+    aclass_chains_active: 642
+    ratio_all: 0.3548
+    ratio_active: 0.7371
+    chains_cov_zero: 48
+    chains_cov_lt50: 215
+    chains_cov_50to80: 299
+    mean_coverage_all: 0.6274
+    mean_coverage_active: 0.8106
+    micro_chains_zero_active: 108
+    nodes_total: 5560
+    merged_nodes: 2225
+    unattached_nodes: 2239
+    unattached_active_nodes: 942
+    ig_node_company_rows_total: 25559
+    ig_node_company_rows_non_wo006: 18830
+    ig_node_company_rows_wo006: 6729
+    ig_node_company_distinct_nodes: 3321
+    threshold: A 档链占比≥80%（覆盖率≥80%）
+    pass_all: false
+    pass_active: false
+  pre_state_wo006_excluded:
+    chains_total: 873
+    chains_with_nodes: 871
+    chains_no_node: 0
+    aclass_chains_all: 288
+    aclass_chains_active: 606
+    ratio_all: 0.3307
+    ratio_active: 0.6958
+    chains_cov_zero: 50
+    chains_cov_lt50: 231
+    chains_cov_50to80: 302
+    mean_coverage_all: 0.6095
+    mean_coverage_active: 0.7836
+    micro_chains_zero_active: 115
+    nodes_total: 5560
+    merged_nodes: 2225
+    unattached_nodes: 2445
+    unattached_active_nodes: 1148
+    ig_node_company_rows_total: 25559
+    ig_node_company_rows_non_wo006: 18830
+    ig_node_company_rows_wo006: 6729
+    ig_node_company_distinct_nodes: 3321
+    threshold: A 档链占比≥80%（覆盖率≥80%）
+    pass_all: false
+    pass_active: false
+  wrote_anything_this_run: false
+  batches: []
+  post_state:
+    chains_total: 873
+    chains_with_nodes: 871
+    chains_no_node: 0
+    aclass_chains_all: 309
+    aclass_chains_active: 642
+    ratio_all: 0.3548
+    ratio_active: 0.7371
+    chains_cov_zero: 48
+    chains_cov_lt50: 215
+    chains_cov_50to80: 299
+    mean_coverage_all: 0.6274
+    mean_coverage_active: 0.8106
+    micro_chains_zero_active: 108
+    nodes_total: 5560
+    merged_nodes: 2225
+    unattached_nodes: 2239
+    unattached_active_nodes: 942
+    ig_node_company_rows_total: 25559
+    ig_node_company_rows_non_wo006: 18830
+    ig_node_company_rows_wo006: 6729
+    ig_node_company_distinct_nodes: 3321
+    threshold: A 档链占比≥80%（覆盖率≥80%）
+    pass_all: false
+    pass_active: false
+  delta:
+    ig_node_company_rows: 0
+    wo006_tagged_rows: 6729
+    unattached_nodes: 2239 -> 2239
+    unattached_active_nodes: 942 -> 942
+    ratio_all: 0.3548 -> 0.3548
+    ratio_active: 0.7371 -> 0.7371
+- run_at: '2026-09-24T15:55:03'
+  rule_data_ops_audit: []
+  pre_flight:
+    kept: 0
+    dropped:
+      already_bound_pair: 6729
+      node_no_longer_eligible: 0
+    shards: 0
+  pre_state:
+    chains_total: 873
+    chains_with_nodes: 871
+    chains_no_node: 0
+    aclass_chains_all: 309
+    aclass_chains_active: 642
+    ratio_all: 0.3548
+    ratio_active: 0.7371
+    chains_cov_zero: 48
+    chains_cov_lt50: 215
+    chains_cov_50to80: 299
+    mean_coverage_all: 0.6274
+    mean_coverage_active: 0.8106
+    micro_chains_zero_active: 108
+    nodes_total: 5560
+    merged_nodes: 2225
+    unattached_nodes: 2239
+    unattached_active_nodes: 942
+    ig_node_company_rows_total: 25559
+    ig_node_company_rows_non_wo006: 18830
+    ig_node_company_rows_wo006: 6729
+    ig_node_company_distinct_nodes: 3321
+    threshold: A 档链占比≥80%（覆盖率≥80%）
+    pass_all: false
+    pass_active: false
+  pre_state_wo006_excluded:
+    chains_total: 873
+    chains_with_nodes: 871
+    chains_no_node: 0
+    aclass_chains_all: 288
+    aclass_chains_active: 606
+    ratio_all: 0.3307
+    ratio_active: 0.6958
+    chains_cov_zero: 50
+    chains_cov_lt50: 231
+    chains_cov_50to80: 302
+    mean_coverage_all: 0.6095
+    mean_coverage_active: 0.7836
+    micro_chains_zero_active: 115
+    nodes_total: 5560
+    merged_nodes: 2225
+    unattached_nodes: 2445
+    unattached_active_nodes: 1148
+    ig_node_company_rows_total: 25559
+    ig_node_company_rows_non_wo006: 18830
+    ig_node_company_rows_wo006: 6729
+    ig_node_company_distinct_nodes: 3321
+    threshold: A 档链占比≥80%（覆盖率≥80%）
+    pass_all: false
+    pass_active: false
+  wrote_anything_this_run: false
+  batches: []
+  post_state:
+    chains_total: 873
+    chains_with_nodes: 871
+    chains_no_node: 0
+    aclass_chains_all: 309
+    aclass_chains_active: 642
+    ratio_all: 0.3548
+    ratio_active: 0.7371
+    chains_cov_zero: 48
+    chains_cov_lt50: 215
+    chains_cov_50to80: 299
+    mean_coverage_all: 0.6274
+    mean_coverage_active: 0.8106
+    micro_chains_zero_active: 108
+    nodes_total: 5560
+    merged_nodes: 2225
+    unattached_nodes: 2239
+    unattached_active_nodes: 942
+    ig_node_company_rows_total: 25559
+    ig_node_company_rows_non_wo006: 18830
+    ig_node_company_rows_wo006: 6729
+    ig_node_company_distinct_nodes: 3321
+    threshold: A 档链占比≥80%（覆盖率≥80%）
+    pass_all: false
+    pass_active: false
+  delta:
+    ig_node_company_rows: 0
+    wo006_tagged_rows: 6729
+    unattached_nodes: 2239 -> 2239
+    unattached_active_nodes: 942 -> 942
+    ratio_all: 0.3548 -> 0.3548
+    ratio_active: 0.7371 -> 0.7371

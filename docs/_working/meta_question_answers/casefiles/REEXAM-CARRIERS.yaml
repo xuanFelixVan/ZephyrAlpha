@@ -1,0 +1,1397 @@
+case_id: REEXAM-CARRIERS
+title: 283 问战役 B 类载体复考案卷（建设面是否真在工作·逐问实测）
+date: '2026-09-24'
+session: st-metaq-gc-20260924
+scope:
+  clusters:
+    b1_examloop:
+    - PQ-0051
+    - PQ-0054
+    - PQ-0055
+    - PQ-0056
+    - PQ-0057
+    - PQ-0060
+    - PQ-0061
+    - PQ-0096
+    - PQ-0098
+    - PQ-0103
+    - PQ-0108
+    - PQ-0052
+    - PQ-0053
+    - PQ-0097
+    b2_e1c:
+    - PQ-0104
+    - PQ-0105
+    - PQ-0106
+    - PQ-0107
+    - PQ-0109
+    b3_macro:
+    - PQ-0185
+    - PQ-0191
+    intake_gate:
+    - PQ-0001
+  question_count: 22
+  excluded_other_lane:
+  - PQ-0012
+  - PQ-0018
+  - PQ-0064
+  - PQ-0065
+  - PQ-0067
+  - PQ-0072
+  - PQ-0078
+  - PQ-0131
+discipline:
+  判据真源: 逐问现读 PG meta_question.exam_plan(method/criterion/threshold)+title，未采用派单概括、未采用车道案卷重述
+  达标定义: 载体存在≠达标：每题须实到记录数/事件数级证据；分母为零者照实判不可判
+  禁改: 未改判据口径与阈值；未改 exam_loop 任何代码（纯函数直测只 import 不写）
+  PIT闭卷切点: '2025-09-09'
+  写库纪律: 纯追加；列 outcome=生命周期 answered，裁决只在 conclusion->>'outcome'；11 规范键齐备
+reproduce:
+- export PATH="$LOCALAPPDATA/Programs/Python/Python312:...Scripts:$PATH"; PYTHONPATH=src
+- python .runtime/tmp/st-metaq-gc-20260924/reexam_carriers/collect_measures.py
+- python .runtime/tmp/st-metaq-gc-20260924/reexam_carriers/build_casefile.py
+measurements_raw:
+  pq0051:
+    denom: 283
+    num: 283
+  scheduler:
+    scanned: 283
+    due_count: 119
+    overdue_count: 0
+    execution_rate: 100.0
+    as_of: '2026-09-24'
+    due_by_frequency: &id003
+      daily: 119
+    due_by_fresh_window: &id014
+      '1': 119
+    monthly_questions_total: 31
+  pq0055:
+    share_field_coverage: &id005
+    - ref_head: st-metaq-20260923
+      n: 287
+      with_share: 0
+    - ref_head: st-metaq-gc-20260924
+      n: 10
+      with_share: 0
+    - ref_head: wo-b1
+      n: 5
+      with_share: 5
+    wo_b1_window_check:
+      total: 5
+      ok: 0
+  pq0056:
+    ew_total: 292
+    dual_ts: 5
+    p99_seconds: 300.24714324
+    synthetic_offset_source: 'check_exam_loop.py:473 ''exam_completed_at'': (completed - timedelta(minutes=5))
+      → 申报的考试完成时戳由执行时刻回拨固定 5 分钟，latency_seconds 恒约 300.24，非实测'
+  pq0060:
+    rejection_traces: 3
+    trace_detail:
+    - q_id: PQ-0057
+      actor: st-wo-b1-examloop
+      what: update
+      reason: outcome_state_mismatch
+      rejected: 'true'
+      from_status: reexam
+      evidence: event_code=illegal_transition;exam_loop_reject;exam_writeback
+      created_at: '2026-09-24 15:53:38.275182+08:00'
+    - q_id: PQ-0061
+      actor: st-wo-b1-examloop
+      what: update
+      reason: outcome_state_mismatch
+      rejected: 'true'
+      from_status: reexam
+      evidence: event_code=illegal_transition;exam_loop_reject;exam_writeback
+      created_at: '2026-09-24 15:53:39.026871+08:00'
+    - q_id: PQ-0001
+      actor: st-wo-b1-examloop
+      what: update
+      reason: illegal_transition
+      rejected: 'true'
+      from_status: answered
+      evidence: event_code=illegal_transition;exam_loop_reject;wo-b1/redteam 非法边自测
+      created_at: '2026-09-24 15:58:27.112573+08:00'
+  extended_code_event_counts:
+    claim_mismatch: 0
+    claim_missing: 0
+    version_conflict: 0
+    threshold_lowered: 0
+    exam_contradiction_case: 0
+    exam_arbitrate: 0
+  pq0096:
+    sampled_wo_b1_rows: 5
+    fetch_equals_decision_minus_1h: 5
+    required_weekly_sample: 20
+    synthetic_offset_source: check_exam_loop.py:467-468 fetch_ts=completed-3h / decision_ts=completed-2h
+      → 两时戳之差恒为 1 小时，fetch<decision 由构造保证，判据不可伪
+    kline_daily_consulted: false
+  selfref_writer_incident:
+    rows_by_st_wo_b1_examloop:
+      n: 5
+      null_verdict: 5
+    distinct_qids:
+    - PQ-0051
+    - PQ-0054
+    - PQ-0056
+    - PQ-0108
+    correction_rows_by_central_pack: 4
+    conclusion_block_shape_now: 11 规范键齐备，但 outcome 键取自 payload['verdict']，调用方不传即落空串 ''（纯函数直测见 measures.shape_probe）
+  b1_selftest:
+    exit: 0
+    tail: SELFTEST 15/15 通过
+  b1_dryrun_live:
+    exit: 1
+    lines:
+    - 'PQ-0051 dir=支持 value=100.0 criterion=in_exam 及以后状态 exam_plan 双字段齐备率 threshold=''=100%'' written=-  '
+    - 'PQ-0054 dir=支持 value=100.0 criterion=新鲜窗到期复考执行率 threshold=''≥95%（逾期挂起≤5%）'' written=-  '
+    - 'PQ-0055 dir=证伪 value=0.0 criterion=样本外份额≥1/3 且窗口无重叠的考试占比 threshold=''=100%'' written=-  '
+    - 'PQ-0056 dir=支持 value=0.003475 criterion=exam_writeback 落账时延 P99 threshold=''≤1 个交易日'' written=-  '
+    - PQ-0057 dir=不可判 value=None criterion=reexam 三取二多数裁定执行率 threshold='=100%' written=-  探针分母为零或取数不可得（0
+      记录≠违例=0）
+    - 'PQ-0060 dir=支持 value=0.0 criterion=illegal_transition 异常事件数 threshold=''=0'' written=-  '
+    - PQ-0061 dir=不可判 value=None criterion=VersionConflict 后重读重放成功率 threshold='≥99%' written=-  探针分母为零或取数不可得（0
+      记录≠违例=0）
+    - 'PQ-0096 dir=支持 value=0.0 criterion=抽样考试时戳比对违例数 threshold=''=0'' written=-  '
+    - PQ-0098 dir=不可判 value=None criterion=功效曲线核验通过率 threshold='≥80% 且降阈值事件=0' written=-  探针分母为零或取数不可得（0
+      记录≠违例=0）
+    - PQ-0103 dir=不可判 value=None criterion=claim_mismatch 拦截率 threshold='=100%' written=-  探针分母为零或取数不可得（0
+      记录≠违例=0）
+    - 'PQ-0108 dir=支持 value=0.0 criterion=新鲜窗（20 日滚动）到期重考逾期率 threshold=''≤5%'' written=-  '
+  pq0103:
+    production_auth_traces: 0
+    redteam_case1_payload: '{"outcome": "answered", "exam_ref": "wo-b1/redteam/forge"}（无 exam_completed_at）'
+    auth_gate_reached: _parse_aware(exam_completed_at) 在 _attempt()→_authorize() 之前抛 ValueError
+    unit_test_evidence_only: true
+  e1c_verify:
+    exit: 2
+    output: "[ERROR] UndefinedTable: 错误:  关系 \"metaq_e1c.space_registry\" 不存在\nLINE 1: SELECT count(*)\
+      \ FROM metaq_e1c.space_registry\n                             ^"
+  e1c_pg:
+    schemas_present:
+    - ai_heritage
+    - ai_intake
+    - ai_intake_test_smoke
+    - ai_intake_test_smoke2
+    - ai_layer_model
+    - information_schema
+    - meta_question
+    - metaq_pledge
+    - pg_catalog
+    - public
+    - registry_ledger
+    metaq_e1c_tables: []
+  e1c_selftest:
+    exit: 0
+    checks:
+      hash 稳定可复算: true
+      属性维变更不改 hash: true
+      域变更必改 hash: true
+      quarterly 仅季窗: true
+      intraday 仅短窗: true
+      daily 全窗: true
+      结构计数名义=480: true
+      结构计数可行=192: true
+      结构 N_eff 比=0.4: true
+      spearman 单调=1: true
+      spearman 抗离群: true
+      双口径分歧可判: true
+      尾部相关可算: true
+      双口径判定命中题面: true
+      seal 无因拒封: true
+      expand 未封存拒登: true
+  e1c_drift_check:
+    exit: 0
+    output: '[CHECK-OK] space_hash=602a2525a12c6e8a… 无漂移'
+  e1c_register_facts:
+    space_hash: 602a2525a12c6e8a75fd5c78cb02740bfa0815485a56c51c602aeb2041830609
+    nominal_count: 31500
+    feasible_count: 27720
+    cap_batch: 600
+    n_eff_structural: &id022
+      estimator: structural_dedup
+      nominal_count: 31500
+      n_trials: 31500
+      n_eff: 27720
+      ratio: 0.88
+      boundary: false
+      meta: &id023
+        blocks_total: 175
+        blocks_eligible: 174
+        blocks_by_frequency:
+          intraday: 31
+          daily: 136
+          quarterly: 8
+        operators: 15
+        windows:
+        - 1d
+        - 20d
+        - 5d
+        - 60d
+        tracks:
+        - agent
+        - gplearn
+        - mcts
+  e1c_yardstick:
+    snapshot_id: YS-E1C-V1
+    status: frozen
+    criteria: &id027
+    - ic_mean_abs
+    - t_stat
+    - net_long_short_annual
+    - oos_share_min
+    - combined_rule
+    tracks_vocab: data/registers/metaq_e1c/vocab/metaq_e1c_track_vocabulary.yaml
+  vintage_ch:
+    by_source:
+    - data_source: fred
+      rows: 12428
+      with_pub_ts: 0
+      min_rd: '2021-01-01'
+      max_rd: '2026-09-23'
+    - data_source: eia
+      rows: 3663
+      with_pub_ts: 0
+      min_rd: '2021-08-01'
+      max_rd: '2026-09-15'
+    pub_ts_basis: &id031
+    - pub_ts_basis: backfill_final
+      rows: 16091
+      with_pub_ts: 0
+    vintage_levels: &id030
+    - vintage: 1
+      rows: 16091
+    multi_vintage_keys: 0
+    eia_inventory_series:
+    - indicator_name: EIA_BRENT_SPOT
+      frequency: daily
+      rows: 1280
+    - indicator_name: EIA_CRUDE_INVENTORY
+      frequency: weekly
+      rows: 265
+    - indicator_name: EIA_DISTILLATE_INVENTORY
+      frequency: weekly
+      rows: 265
+    - indicator_name: EIA_GASOLINE_INVENTORY
+      frequency: weekly
+      rows: 265
+    - indicator_name: EIA_NATGAS_INVENTORY
+      frequency: monthly
+      rows: 58
+    - indicator_name: EIA_PROPANE_INVENTORY
+      frequency: weekly
+      rows: 265
+    - indicator_name: EIA_WTI_SPOT
+      frequency: daily
+      rows: 1265
+  vintage_audit_report_202608:
+    carrier_table: c1_market.macro_data_vintage
+    month_window: 2026-08
+    sampled_keys: 30
+    sampled_rows: 30
+    totals:
+      rows: 16091
+      keys: 16091
+      by_basis:
+      - - backfill_final
+        - 16091
+    C1_vintage_monotonic:
+      keys: 30
+      multi_vintage_keys: 0
+      monotonic_no_gap: true
+      violations: {}
+      ok: true
+    C2_evidence_consistency:
+      rows: 30
+      by_basis:
+        backfill_final: 30
+      ok: true
+      violations: []
+    C3_no_fabrication:
+      backfill_rows_with_pub_ts: 0
+      non_backfill_rows_without_pub_ts: 0
+      ok: true
+    C4_pit_no_lookahead:
+      as_of_points:
+      - '2025-09-09'
+      - '2026-07-02'
+      - '2026-08-31'
+      rows_returned_last_point: 0
+      future_timestamp_rows: 0
+      violations: []
+      ok: true
+      note: 历史全为 backfill_final（pub_ts NULL）时 PIT 返回空=正确行为：宁缺勿假；非空返回须逐点等于暴力重算（本判据在 --sandbox 多版通路上亦跑）
+    C5_structure:
+      vintage_sorting_key: indicator_name, report_date, vintage
+      legacy_sorting_key: indicator_name, report_date
+      ok: true
+    verdict: PASS
+  pq0001:
+    w6_batch_id: W6-st-chainpile-20260922
+    candidates: 283
+    mode: dry_run
+    counts:
+      degraded: 283
+    action_dist:
+      dry_run_degraded: 283
+    reject_codes: {}
+    five_element_signature: '(q: ''dict[str, Any]'') -> ''list[str]'''
+    real_check_patch_landed: false
+    degraded_check_events: 283
+    degraded_evidence: &id035
+      evidence: W4_source_line_registry_pending
+    degraded_items: &id034
+      checks:
+      - source_line_resolvability
+      - consumer_registry_resolvability
+      - pit_timestamp_col_check
+    reject_what_events: 0
+    questions_total: 283
+  gpu_friday_task_ledger:
+    audit_traces_ibt_or_friday: 0
+    batch_task_ledger_files: &id016 []
+  pq0053:
+    execution_report_rows: 1
+    execution_report_sample: &id018
+    - order_id: f216058c-6df6-4752-8eb3-bb0854bf5430
+      symbol: 510300.SH
+      broker_id: qmt_sim
+      algo_type: NONE
+      intended_qty: 100
+      actual_qty: 0
+      vwap: '0'
+      slippage_bps: -10000.0
+    reconciliation_differences_rows: 0
+    slippage_calibration_output_tables: &id019 []
+exams:
+  PQ-0051:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: 问题表内 in_exam 及以后状态问题的 exam_plan 含 criterion 与 threshold 的比例是否=100%？
+      method: 全表扫描 jsonb 字段
+      criterion: in_exam 及以后状态 exam_plan 双字段齐备率
+      threshold: =100%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: exam_loop/exam_plan.structure_plan + run_exam_loop --upgrade-plan
+      commands: &id001
+      - python scripts/governance/meta_question/wo_b1_examloop/run_exam_loop.py --selftest
+      - python scripts/governance/meta_question/wo_b1_examloop/check_exam_loop.py --all-covered --dry-run
+    probe_commands: *id001
+    metrics:
+      in_exam及以后状态题数: 283
+      criterion与threshold双齐: 283
+      齐备率_pct: 100.0
+      POST_IN_EXAM态集:
+      - answered
+      - in_exam
+      - mining
+      - reexam
+      - registered
+      - suspended
+      结构化前遗留degraded集: 11 键中 min_confidence/power_min/threshold_clauses 已由 structure_plan 机解
+    threshold_check:
+      齐备率:
+        value: 100.0
+        bound: =100%
+        met: true
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: pass
+    fail_type: null
+    confidence: 0.86
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 自指题证据纪律：合法证据只取循环真写出的行（exam_result.recorded_by='st-wo-b1-examloop'）与 meta_question_audit 的 exam_writeback
+      类事件，且必须核形态合规。实测：该写手共 5 行／覆盖 4 问（PQ-0051, PQ-0054, PQ-0056, PQ-0108），5/5 行的 conclusion 均缺规范 outcome
+      键（null_verdict=5），即总包今夜误写的畸形载荷；其追加更正行 4 条（recorded_by='st-metaq-gc-20260924'，exam_ref LIKE '%/correction/%'）只恢复了读出、notes
+      自陈'正式复考待收官轮'，不构成裁决证据。故本问不得按'有记录=pass'判；载体形态经纯函数直测：_conclusion_block 11 规范键齐备，但 outcome 取 payload['verdict']，调用方缺该键时落空串''（仍会掉出三态桶）——残留风险，本卷如实登记不改码。
+      本问判据不依赖循环自写行：以全表 exam_plan 字段实数为准（283/283）。
+  PQ-0054:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: answered 问题新鲜窗（月度）到期复考执行率是否≥95%（逾期挂起率≤5%）？
+      method: 到期队列与回填账对账
+      criterion: 新鲜窗到期复考执行率
+      threshold: ≥95%（逾期挂起≤5%）
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: exam_loop/reexam_scheduler.ReexamScheduler.reconcile(book=False)
+      commands: &id002
+      - python .../check_exam_loop.py --all-covered --dry-run（probe_pq_0054）
+      - python -c ReexamScheduler(...).reconcile(book=False)
+    probe_commands: *id002
+    metrics:
+      扫描题数: 283
+      到期数: 119
+      逾期数: 0
+      执行率_pct: 100.0
+      到期集构成: *id003
+      新鲜窗档: daily/window=1 全 119 条到期；monthly(31 问) 本轮未到期
+      窗册: config/examloop_reexam_window_rules.yaml（frequency 词表键集全等断言）
+    threshold_check:
+      执行率:
+        value: 100.0
+        bound: '>=95%'
+        met: true
+      逾期挂起率:
+        value: 0.0
+        bound: <=5%
+        met: true
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: pass
+    fail_type: null
+    confidence: 0.72
+    carrier_functioning: true
+    three_check:
+      data: OK：到期 119/逾期 0 由调度器实扫（可重跑复算）
+      caliber: 口径注意：题面括注'新鲜窗（月度）'，实测到期集 119 条全为 daily 档，monthly 档 31 问本轮窗内未到期→月度子分母=0；判据按 exam_plan.criterion（新鲜窗到期复考执行率，未限定档）取全库口径判
+        pass，档偏差已登记
+      conclusion: 全库口径 100%≥95% 达标；月度子档待 10 月中旬窗到方能实检
+    notes: 载体在跑：ReexamScheduler 扫 283 出到期/逾期台账并机算 execution_rate（分母 0 时返 None 不报 100%，已核 _execution_rate
+      源码）。可信度打折原因：到期集 100% 来自 daily 档且考试循环系当日新建，属首个窗口的首轮读数，未经跨周期检验。
+  PQ-0055:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: 全部考试的样本外份额是否≥1/3 且考试窗口与问题生成时戳无重叠（时间分层机检通过率 100%）？
+      method: 考试记录 data_window 字段机检
+      criterion: 样本外份额≥1/3 且窗口无重叠的考试占比
+      threshold: =100%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: check_exam_loop.probe_pq_0055（data_window 机检）
+      commands: &id004
+      - python .../check_exam_loop.py --all-covered --dry-run
+      - 'SQL: exam_result JOIN meta_question 按 sample_out_share 与窗口/生成时戳重叠机检'
+    probe_commands: *id004
+    metrics:
+      全库考试行数: 302
+      带sample_out_share字段的行: 5
+      按写手分组: *id005
+      wo-b1自写行窗口不重叠通过数: 0/5
+      机检占比_pct: 0.0
+      证伪根因1: 287/302 行（st-metaq-20260923 写）根本无 sample_out_share 字段→题面'全部考试'不可满
+      证伪根因2: 5 行自写窗 [2026-08-24/09-23,2026-09-23] 与 registered_at 2026-09-22T18:30Z 在 ::timestamptz::date
+        会话时区(+08)下折为 2026-09-23 → 判跨越；runner 用 UTC 日算窗（reg_day+1）→ 两套时区口径互搏（触 RULE-SCHEMA-TZ）
+    threshold_check:
+      机检通过率:
+        value: 0.0
+        bound: =100%
+        met: false
+    pit:
+      cutoff: '2025-09-09'
+      note: 只读数考试记录自身字段，不涉行情未来数据
+    outcome: fail
+    fail_type: 载体在而判据未达（corpus 覆盖缺口 + 时区口径）
+    confidence: 0.83
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 复考机对本题给 dir=证伪（非'不可判'），即载体真算出了未达标，判 fail 与机器口径一致。两条根因均可修：①283 问原卷回写的 data_window 需补 sample_out_share（旧账字段缺位）；②窗口/生成时戳比较必须两端同显式时区。不判
+      insufficient，因分母非零且违例可实算。
+  PQ-0056:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: 考试完成后 exam_writeback 落账时延 P99 是否≤1 个交易日？
+      method: 审计账时戳差统计
+      criterion: exam_writeback 落账时延 P99
+      threshold: ≤1 个交易日
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: exam_loop/writeback 双时戳 + ledger
+      commands: &id006
+      - python .../run_exam_loop.py --status
+      - 'SQL: exam_writeback 事件按 after?exam_completed_at AND after?backfilled_at 计数'
+    probe_commands: *id006
+    metrics:
+      exam_writeback事件总数: 292
+      双时戳齐备事件: 5
+      双时戳覆盖率_pct: 1.71
+      P99_seconds: 300.24714324
+      P99_交易日: 0.003475
+      时戳性质: 'check_exam_loop.py:473 ''exam_completed_at'': (completed - timedelta(minutes=5)) → 申报的考试完成时戳由执行时刻回拨固定
+        5 分钟，latency_seconds 恒约 300.24，非实测'
+    threshold_check:
+      名义对照:
+        value: 0.003475
+        bound: <=1 交易日
+        met: true
+        but: 取值系工具自注常量之函数，不构成实测证据
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.5
+    carrier_functioning: true
+    three_check:
+      data: PARTIAL：双时戳机制确在写（5 条事件 after 内含两戳+latency_seconds），但仅占 1.7% 账量
+      caliber: 口径缺陷：exam_completed_at 由 completed-5min 回拨得到→latency 恒≈300.24s，P99 over 常量为空洞统计；判'≤1 交易日'无从证伪
+      conclusion: 不可判（等价于探针自报的'分母不可信'），照实判 insufficient
+    notes: 自指题证据纪律：合法证据只取循环真写出的行（exam_result.recorded_by='st-wo-b1-examloop'）与 meta_question_audit 的 exam_writeback
+      类事件，且必须核形态合规。实测：该写手共 5 行／覆盖 4 问（PQ-0051, PQ-0054, PQ-0056, PQ-0108），5/5 行的 conclusion 均缺规范 outcome
+      键（null_verdict=5），即总包今夜误写的畸形载荷；其追加更正行 4 条（recorded_by='st-metaq-gc-20260924'，exam_ref LIKE '%/correction/%'）只恢复了读出、notes
+      自陈'正式复考待收官轮'，不构成裁决证据。故本问不得按'有记录=pass'判；载体形态经纯函数直测：_conclusion_block 11 规范键齐备，但 outcome 取 payload['verdict']，调用方缺该键时落空串''（仍会掉出三态桶）——残留风险，本卷如实登记不改码。
+      另须指出：本题若按'有双时戳行=pass'即落入空洞判定——实测量是构造量。
+  PQ-0057:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: reexam 状态问题三取二多数裁定执行率是否=100%（无跳过三取二的直接终裁）？
+      method: 复考记录抽样对账（每季 30 条）
+      criterion: reexam 三取二多数裁定执行率
+      threshold: =100%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: exam_loop/arbitration.resolve_majority（三取二）
+      commands: &id007
+      - python .../check_exam_loop.py --all-covered --dry-run（probe_pq_0057）
+    probe_commands: *id007
+    metrics:
+      reexam态题数: 2
+      exam_contradiction_case事件: 0
+      exam_arbitrate事件: 0
+      探针自报: dir=不可判 note=探针分母为零或取数不可得（0 记录≠违例=0）
+      单测覆盖: tests/governance/meta_question/test_exam_loop_arbitration.py（在 156 passed 内）
+    threshold_check:
+      三取二执行率:
+        value: null
+        bound: =100%
+        met: null
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.45
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 载体代码与单测在，但生产账 zero-row：0 案卷 0 仲裁→无'跳过三取二直接终裁'可供检。；缺载体：矛盾案卷与仲裁事件的生产样本（需真出现同版本重复考试触发 detect_contradiction）
+  PQ-0060:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: 全表状态流转的非法边拦截率是否=100%（审计账内 illegal_transition 落账异常=0）？
+      method: 审计账全量回放比对 LEGAL_TRANSITIONS
+      criterion: illegal_transition 异常事件数
+      threshold: =0
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: exam_loop/state_machine LEGAL_TRANSITIONS + ledger 全量审计回放
+      commands: &id008
+      - python .../run_exam_loop.py --status
+      - python .../check_exam_loop.py --all-covered --dry-run（probe_pq_0060）
+      - 'SQL: 按 q_id 用 lag(after->>''status'') 回放状态链比对 is_legal_edge'
+    probe_commands: *id008
+    metrics:
+      illegal_transition拒收痕: 3
+      痕明细全为rejected=true: false
+      痕明细:
+      - q_id: PQ-0057
+        reason: outcome_state_mismatch
+        from_status: reexam
+        evidence: event_code=illegal_transition;exam_loop_reject;exam_writeback
+        created_at: '2026-09-24 15:53:38.275182+08:00'
+      - q_id: PQ-0061
+        reason: outcome_state_mismatch
+        from_status: reexam
+        evidence: event_code=illegal_transition;exam_loop_reject;exam_writeback
+        created_at: '2026-09-24 15:53:39.026871+08:00'
+      - q_id: PQ-0001
+        reason: illegal_transition
+        from_status: answered
+        evidence: event_code=illegal_transition;exam_loop_reject;wo-b1/redteam 非法边自测
+        created_at: '2026-09-24 15:58:27.112573+08:00'
+      非法边落库数: 0
+      回放覆盖事件: update/exam_writeback/register/reexam 等 STATUS_LIKE_WHATS 全量
+      红队自证: PQ-0001 answered→mining 跳边被拦并落痕（15:58:27），证该尺会红
+    threshold_check:
+      非法边落库异常数:
+        value: 0
+        bound: =0
+        met: true
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: pass
+    fail_type: null
+    confidence: 0.8
+    carrier_functioning: true
+    three_check:
+      data: OK：3 条拒收痕 + 全量回放 0 非法边落库
+      caliber: 口径择定：题面'落账异常'取'非法边却落库'数（非拒收痕数）——若按后者则任何有效拦截都算违例，阈值=0 自相矛盾；择定理由与两侧原始计数均已落 evidence
+      conclusion: 拦截机制真实工作且零漏库
+    notes: 三条痕性质分列：2 条为循环自纠（PQ-0057/0061 reexam 态重复回写被 outcome-state 闸拒），1 条为红队跳边实证（PQ-0001 answered→mining）。无一条非法边真落库。
+  PQ-0061:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: 乐观锁 VersionConflict 后重读重放的成功率是否≥99%？
+      method: 冲突事件与后续写审计关联统计
+      criterion: VersionConflict 后重读重放成功率
+      threshold: ≥99%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: writeback 乐观锁 VersionConflictError + 重读重放（replay_limit=3）
+      commands: &id009
+      - python .../check_exam_loop.py --all-covered --dry-run（probe_pq_0061）
+    probe_commands: *id009
+    metrics:
+      version_conflict事件: 0
+      replayed标记行: 0
+      探针自报: dir=不可判（分母零）
+      红队覆盖面: run_redteam 只做 ①冒名回写 ②跳边，未覆盖乐观锁冲突→无注入样本
+    threshold_check:
+      重读重放成功率:
+        value: null
+        bound: '>=99%'
+        met: null
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.45
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 重放代码路径与落痕契约在（_attempt 零行命中→trace_reject(CODE_VERSION_CONFLICT)→上层重试），但成功率的分母为 0，不可判。；缺载体：乐观锁冲突的真实/注入样本（生产并发写未发生，红队亦未覆盖该路径）
+  PQ-0096:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: 考试取数时戳早于决策时戳的 PIT 抽检违例是否=0（每周抽样 20 条逐笔比对）？
+      method: 每周抽样 20 条逐笔时戳比对
+      criterion: 抽样考试时戳比对违例数
+      threshold: =0
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: writeback._check_a5 双时戳比对（题面另指 kline_daily 逐笔）
+      commands: &id010
+      - python .../check_exam_loop.py --all-covered --dry-run（probe_pq_0096）
+    probe_commands: *id010
+    metrics:
+      可比对行数: 5
+      题面要求周抽样条数: 20
+      fetch与decision恒差1小时的行数: 5
+      时戳性质: check_exam_loop.py:467-468 fetch_ts=completed-3h / decision_ts=completed-2h → 两时戳之差恒为 1 小时，fetch<decision
+        由构造保证，判据不可伪
+      违例数: 0
+      kline_daily被查阅: false
+    threshold_check:
+      违例数:
+        value: 0.0
+        bound: =0
+        met: true
+        but: 0 由构造保证（fetch=completed-3h < decision=completed-2h），不可伪即不可证
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.5
+    carrier_functioning: true
+    three_check:
+      data: PARTIAL：5 行 < 每周 20 条抽样纪律；且 5/5 行两时戳差恰为 1 小时
+      caliber: 题面 data_sources 含 kline_daily（要逐笔比对取数可见性），探针与本次复考均未实作该比对→PIT 语义只验了时戳先后，未验'取数时点该数据是否已发布'
+      conclusion: 不可判（判据不可伪 + 抽样不足 + 逐笔比对缺位）
+    notes: 本题是'有记录≠达标'的典型：违例=0 看似达标，实为自证式空转。
+  PQ-0098:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: IC 类考试的检验功效是否≥80%且样本不足时自动延期而非降阈值（降阈值事件=0）？
+      method: 样本量×效应量功效计算
+      criterion: 功效曲线核验通过率
+      threshold: ≥80% 且降阈值事件=0
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: exam_plan.assess_power / fisher_z_power + threshold_lowered 落痕
+      commands: &id011
+      - python .../run_exam_loop.py --selftest（功效 0.79 必延期/0.80 边界达标 均 PASS）
+      - python .../check_exam_loop.py --all-covered --dry-run（probe_pq_0098）
+    probe_commands: *id011
+    metrics:
+      带power_min的exam_plan题数: 11
+      带真实effect_size的考试行: 0
+      threshold_lowered事件: 0
+      探针自报: dir=不可判（分母零）
+      功效闸适用面: is_ic_like(plan) 或申报 effect_size；本轮 0 场考试落入
+    threshold_check:
+      功效>=80%通过率:
+        value: null
+        bound: '>=80%'
+        met: null
+      降阈值事件:
+        value: 0
+        bound: =0
+        met: true
+        but: 无 IC 类考试可降→降阈值=0 属无机会，非受检验的 0
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.45
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 机制侧证据充分：自测矩阵两例钉死 0.79 延期/0.80 达标，_decide 中降阈值即强制 defer 并落痕。但题面判的是'IC 类考试的功效'，该集合当前为空。；缺载体：IC
+      类考试的实跑样本（须带 sample_size×effect_size 进账），否则功效曲线无从核验
+  PQ-0103:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: 非 Max/Owner 角色的越权 transition 尝试拦截率是否=100%（claim_mismatch 事件全数被拒）？
+      method: 审计账异常事件全量复核
+      criterion: claim_mismatch 拦截率
+      threshold: =100%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: writeback._authorize（claimed_by+租约+身份比对）
+      commands: &id012
+      - python .../check_exam_loop.py --all-covered --dry-run（probe_pq_0103）
+      - python .../check_exam_loop.py --redteam（分母来源，本次未重跑：其会 claim 主表）
+    probe_commands: *id012
+    metrics:
+      claim_mismatch生产痕: 0
+      claim_missing生产痕: 0
+      冒名写手落库行: 0
+      红队①是否触达鉴权闸: _parse_aware(exam_completed_at) 在 _attempt()→_authorize() 之前抛 ValueError
+      红队①载荷: '{"outcome": "answered", "exam_ref": "wo-b1/redteam/forge"}（无 exam_completed_at）'
+      单测覆盖: test_exam_loop_writeback.py 红腿（伪造越权必被拒+落痕）在 156 passed 内
+    threshold_check:
+      拦截率:
+        value: null
+        bound: =100%
+        met: null
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.5
+    carrier_functioning: true
+    three_check:
+      data: 生产账 0 条鉴权拒收痕→分母 0
+      caliber: 重大发现：--redteam 的 claim_mismatch 用例载荷缺 exam_completed_at，writeback() 在 _authorize 之前即于 _parse_aware
+        抛 ValueError→该用例'被拒'为假红，未真正触达鉴权闸，故跑完仍留 0 痕
+      conclusion: 拦截率不可判；鉴权闸本身仅由单测证明，非审计账证明
+    notes: 自指题证据纪律：合法证据只取循环真写出的行（exam_result.recorded_by='st-wo-b1-examloop'）与 meta_question_audit 的 exam_writeback
+      类事件，且必须核形态合规。实测：该写手共 5 行／覆盖 4 问（PQ-0051, PQ-0054, PQ-0056, PQ-0108），5/5 行的 conclusion 均缺规范 outcome
+      键（null_verdict=5），即总包今夜误写的畸形载荷；其追加更正行 4 条（recorded_by='st-metaq-gc-20260924'，exam_ref LIKE '%/correction/%'）只恢复了读出、notes
+      自陈'正式复考待收官轮'，不构成裁决证据。故本问不得按'有记录=pass'判；载体形态经纯函数直测：_conclusion_block 11 规范键齐备，但 outcome 取 payload['verdict']，调用方缺该键时落空串''（仍会掉出三态桶）——残留风险，本卷如实登记不改码。
+      判据要求'claim_mismatch 事件全数被拒'，需先有该事件；本轮既无自然事件、红队注入亦未落到该闸，故 insufficient。
+  PQ-0108:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: 组合因子新鲜窗重考（GPU 周五硬前置第三件）的逾期率是否≤5%（新鲜窗=月度滚动 20 日）？
+      method: 到期队列对账
+      criterion: 新鲜窗（20 日滚动）到期重考逾期率
+      threshold: ≤5%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: ReexamScheduler 月度 20 日新鲜窗 + overdue 台账
+      commands: &id013
+      - python .../check_exam_loop.py --all-covered --dry-run（probe_pq_0108）
+    probe_commands: *id013
+    metrics:
+      到期数: 119
+      逾期数: 0
+      按题面算的逾期率_pct: 0.0
+      到期集档构成: *id003
+      到期集新鲜窗天数构成: *id014
+      monthly档题数(20日窗所属档): 31
+      monthly档本轮到期数: 0
+      组合因子(E1C track_run)记录数: 0
+      窗长口径: 窗册自陈：kind=trading_days 以自然日近似，交易日历接入=待裁项 T-3
+    threshold_check:
+      逾期率:
+        value: 0.0
+        bound: <=5%
+        met: true
+        but: 分母 119 全为 daily/窗=1 档，题面所指 20 日月度窗子集到期数=0；且题面对象'组合因子'在库中零记录
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.5
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 探针给的 0% 是把全库到期集当分母的结果，与题面限定（组合因子／月度滚动 20 日）不同集，不采。判 insufficient 而非 fail：尚无该集成员可供判违例。；缺载体：①组合因子重考主体（E1C
+      track_run 台账零记录，见簇 2）②月度 20 日窗的首个到期批次③交易日历
+  PQ-0052:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: GPU 周五窗口 IBT 修卷任务完成率是否连续 4 周=100%（硬前置第一件）？
+      method: 批次任务账对账
+      criterion: 周五 GPU 窗口 IBT 修卷任务完成率
+      threshold: =100%（连续 4 周）
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: （无对应载体）
+      commands: &id015
+      - grep -rli 'IBT|周五|friday' scripts/governance data/registers → 无批次任务账
+      - 'SQL: meta_question_audit 中 evidence 含 IBT/周五/friday 的事件计数'
+    probe_commands: *id015
+    metrics:
+      审计账IBT或周五痕: 0
+      批次任务账文件: *id016
+      已存在的 ibt 代码: scripts/backtest/ibt/*（回测 IBT 归因，非'周五窗口修卷任务账'）
+    threshold_check:
+      连续4周完成率:
+        value: null
+        bound: =100%
+        met: null
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.4
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 建成物清单（wo_b1/b2/b3/wo001_003）确无该载体；实测审计账零痕，非仅凭清单推断。；缺载体：GPU 周五窗口 IBT 修卷的批次任务账（登记任务→完成→周次），及其
+      4 周历史窗
+  PQ-0053:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: 焊成本滑点模型输出与 tick_data 实盘回执的偏差均值是否≤2bp（月度校准验收）？
+      method: 月度校准回归测试（近 20 交易日样本）
+      criterion: 滑点模型输出 vs 实盘回执偏差
+      threshold: 偏差均值≤2bp
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: （无对应载体）
+      commands: &id017
+      - 'CH: SELECT count() FROM c1_market.execution_report'
+      - 'CH: SELECT count() FROM c1_market.reconciliation_differences'
+    probe_commands: *id017
+    metrics:
+      实盘回执行数: 1
+      回执样本: *id018
+      对账差异表行数: 0
+      滑点-回执校准输出表: *id019
+      tick_data行数: 8953151900
+    threshold_check:
+      偏差均值bp:
+        value: null
+        bound: <=2bp
+        met: null
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.4
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 有 tick_data 巨量行情不等于有实盘回执；判据要的是模型输出与真实成交价对的偏差，两者均缺。；缺载体：①成交回执样本量（现 1 行且 broker_id=qmt_sim、actual_quantity=0、slippage_bps=-10000
+      哨兵=未成交）②滑点模型输出↔回执的月度校准回归件与其落库表③近 20 交易日窗（题面 PIT 闭卷窗内亦无回执）
+  PQ-0097:
+    cluster: b1_examloop
+    exam_plan_ref:
+      title: GPU 周五硬前置三件（IBT 修卷/焊成本/新鲜窗重考）的整体周五完成率是否连续 4 周=100%？
+      method: 批次任务账对账
+      criterion: 三件周五整体完成率
+      threshold: 连续 4 周=100%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: （无对应载体，同 PQ-0052）
+      commands: &id020
+      - 同 PQ-0052 实测命令
+    probe_commands: *id020
+    metrics:
+      三件各自的账:
+        IBT修卷: 无任务账
+        焊成本/滑点: 无校准账（见 PQ-0053）
+        新鲜窗重考: 调度器已建（PQ-0054 侧），但非周五窗口口径
+      审计账周五痕: 0
+    threshold_check:
+      三件整体连续4周完成率:
+        value: null
+        bound: =100%
+        met: null
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.4
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 本题是三件的合取，任一未建即整体无账可核。；缺载体：GPU 周五窗口的三件整体任务账（0052/0053 两块未建即本题不可判，新鲜窗件虽建亦无周次账）
+  PQ-0104:
+    cluster: b2_e1c
+    exam_plan_ref:
+      title: 因子组合挖掘预注册空间（积木族×算子×窗口笛卡尔积）单批候选是否≤600 且 N_eff/名义组合数比≥30%（塌缩防线验收）？
+      method: 批 manifest 与 N_eff 估计对账
+      criterion: 单批候选数与 N_eff 占比
+      threshold: ≤600 且 ≥30%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: data/registers/metaq_e1c/e1c_space_cmb_e1c_v1.yaml + build_e1c_space_register.py
+      commands: &id021
+      - python .../wo_b2_e1c/build_e1c_space_register.py --check
+      - python .../wo_b2_e1c/apply_e1c_ledgers.py --verify（实测报错）
+    probe_commands: *id021
+    metrics:
+      space_hash: 602a2525a12c6e8a75fd5c78cb02740bfa0815485a56c51c602aeb2041830609
+      漂移自检: '[CHECK-OK] space_hash=602a2525a12c6e8a… 无漂移'
+      名义组合数: 31500
+      可行组合数: 27720
+      cap_batch: 600
+      N_eff_structural: *id022
+      N_eff/名义: 0.88
+      取值域实数: *id023
+      batch_manifest表: 不存在（--verify 报 UndefinedTable，exit=2）
+    threshold_check:
+      单批候选<=600:
+        value: null
+        bound: <=600
+        met: null
+        note: cap_batch=600 是预注册上限声明，非任何真实批的 emitted_count
+      N_eff/名义>=30%:
+        value: 0.88
+        bound: '>=30%'
+        met: true
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.5
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 半壁达标（N_eff 结构比 0.88，由 factor_registry 175 积木/174 可用 × gplearn 15 算子 × 4 窗 × 3 轨实算，hash 可复算无漂移），半壁无账：没有任何一批真实候选被发出并记账，'单批候选≤600'未被检验过。；缺载体：metaq_e1c
+      schema 与 7 张台账表（space_registry/batch_manifest/n_eff/candidate/相关对/冗余汇总…）从未部署→零 batch_manifest 记录，method
+      所要求的'批 manifest 与 N_eff 估计对账'无对账对象
+  PQ-0105:
+    cluster: b2_e1c
+    exam_plan_ref:
+      title: E1C 三轨（gplearn/智能体/MCTS）在同一预注册积木库与统一考尺下的有效因子产出率差异是否显著（卡方 p<0.05）？
+      method: 同空间同考尺批次对照
+      criterion: 三轨产出率（过考/候选）齐性卡方
+      threshold: p<0.05（差异显著）
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: 三轨 track_run 台账（应建于 metaq_e1c，未部署）
+      commands: &id024
+      - python .../wo_b2_e1c/apply_e1c_ledgers.py --verify
+      - 'SQL: information_schema.tables WHERE table_schema=''metaq_e1c'''
+    probe_commands: *id024
+    metrics:
+      metaq_e1c表数: 0
+      三轨词表: vocab/metaq_e1c_track_vocabulary.yaml（agent/gplearn/mcts 三值在册）
+      各轨候选记录数: 0
+      卡方可算性: 任一格为 0 频数即不可算
+    threshold_check:
+      卡方 p<0.05:
+        value: null
+        bound: p<0.05
+        met: null
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.4
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 同考尺前提（e1c_yardstick_v1 快照 frozen）已备好，但没有一轨跑过一步。；缺载体：metaq_e1c schema 与 7 张台账表（space_registry/batch_manifest/n_eff/candidate/相关对/冗余汇总…）从未部署→零
+      track_run 候选行，三轨'有效因子产出率'分子分母皆无
+  PQ-0106:
+    cluster: b2_e1c
+    exam_plan_ref:
+      title: 组合候选 |秩相关|>0.7 的合并闸是否将积木库冗余度压至≤40%（高相关对占比）？
+      method: 相关性矩阵分档统计
+      criterion: 合并后冗余度（高相关对占比）
+      threshold: ≤40%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: 相关性对/冗余汇总台账（corr pair + redundancy summary，未部署）
+      commands: &id025
+      - python .../wo_b2_e1c/e1c_ledger.py --print-ddl（DDL 在册但表未建）
+      - 'SQL: 查 metaq_e1c schema'
+    probe_commands: *id025
+    metrics:
+      metaq_e1c表数: 0
+      相关对记录数: 0
+      冗余度汇总记录数: 0
+      合并闸代码: e1c_ledger 含 spearman/pearson 双口径与 |ρ|>0.7 判据（selftest 4 例实过）
+    threshold_check:
+      高相关对占比<=40%:
+        value: null
+        bound: <=40%
+        met: null
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.4
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: e1c_ledger --selftest 的 17 项里含 'spearman 单调=1/抗离群/双口径分歧可判/尾部相关可算/双口径判定命中题面' 全 true，证尺子在；但尺下无物可量。；缺载体：metaq_e1c
+      schema 与 7 张台账表（space_registry/batch_manifest/n_eff/candidate/相关对/冗余汇总…）从未部署→无任何相关对可分档，合并闸只对合成数据自证过
+  PQ-0107:
+    cluster: b2_e1c
+    exam_plan_ref:
+      title: E1C 三轨统一考尺（IC>0.02 且 t>2 且扣费后多空年化>3%、样本外份额≥1/3）是否三轨一致执行（口径漂移=0）？
+      method: 考尺配置快照比对
+      criterion: 三轨考尺口径一致率
+      threshold: 漂移=0
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: e1c_yardstick_v1.yaml 冻结快照（SSOT）
+      commands: &id026
+      - 读 data/registers/metaq_e1c/e1c_yardstick_v1.yaml
+    probe_commands: *id026
+    metrics:
+      快照ID: YS-E1C-V1
+      状态: frozen
+      四判据在册: *id027
+      费率口径: one_way_cost_bps=20（三轨共用，费率变更=新快照）
+      轨词表真源: data/registers/metaq_e1c/vocab/metaq_e1c_track_vocabulary.yaml
+      各轨执行时引用该快照的记录数: 0
+    threshold_check:
+      口径漂移=0:
+        value: null
+        bound: =0
+        met: null
+        note: 单一冻结快照在结构上排除漂移，但'三轨一致执行'需三次执行方可验
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.45
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 这题最易被误判 pass：'只有一份尺子'当然'口径漂移=0'，但题面判的是'三轨一致执行'。无执行即无一致性可言。；缺载体：三轨各自的考尺引用留痕（track_run/批次快照锚），现零记录
+  PQ-0109:
+    cluster: b2_e1c
+    exam_plan_ref:
+      title: 组合空间扩容申请（新 space_hash）是否全部伴随旧空间封存登记（禁事后扩空间纪律的存量检查违例=0）？
+      method: space_hash 台账审计
+      criterion: 扩容批次旧空间封存登记齐备率
+      threshold: =100%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: space_registry seal/expand 台账 + ensure_sealed 闸
+      commands: &id028
+      - python .../wo_b2_e1c/e1c_ledger.py --selftest（'seal 无因拒封'/'expand 未封存拒登' 均 true）
+      - 'SQL: 查 metaq_e1c.space_registry'
+    probe_commands: *id028
+    metrics:
+      在册space_hash数: 1
+      space_hash: 602a2525a12c6e8a…
+      扩容申请(prev_space_hash非空)记录数: 0
+      seal事件数: 0
+      space_registry表存在: false
+      seal_policy: 扩容须先封旧空间（设计条款，机制在代码层）
+    threshold_check:
+      封存登记齐备率=100%:
+        value: null
+        bound: =100%
+        met: null
+      违例=0:
+        value: 0
+        bound: =0
+        met: true
+        but: 分母=0 扩容申请，属真空非受检
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.45
+    carrier_functioning: true
+    three_check:
+      data: OK：记录数/事件数由 PG/CH 只读通道实数复核，非引用案卷数字
+      caliber: OK：判据与阈值取自库内 exam_plan，未改口径未改阈值
+      conclusion: 见 outcome 与 threshold_check
+    notes: 单测自证了拒登逻辑会红（expand 未封存→拒），但题面判的是存量账违例率，需至少一笔真实扩容申请方有意义。；缺载体：metaq_e1c schema 与 7 张台账表（space_registry/batch_manifest/n_eff/candidate/相关对/冗余汇总…）从未部署→seal/expand
+      账面零行，无法做'存量检查'
+  PQ-0185:
+    cluster: b3_macro
+    exam_plan_ref:
+      title: SL-A10 国际宏观线的vintage 初值/修正值修订风险是否被发布快照入库存证100%对冲（U4 PIT 控制执行审计）？
+      method: 入库链路抽样审计（月度 30 条）
+      criterion: PIT 风险控制措施在入库链路执行
+      threshold: 违规样本=0
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: wo_b3_macro/macro_vintage.py + apply_macro_vintage_ddl.py + audit_macro_vintage.py
+      commands: &id029
+      - 'CH: c1_market.macro_data_vintage FINAL 分组实数'
+      - 读 reports/vintage_audit_202608.yaml（月度 30 键抽检产物）
+    probe_commands: *id029
+    metrics:
+      载体表: c1_market.macro_data_vintage（ReplacingMergeTree）
+      fred行数: 12428
+      fred带pub_ts行数: 0
+      report_date跨度:
+      - '2021-01-01'
+      - '2026-09-23'
+      全表版次分布: *id030
+      pub_ts_basis分布: *id031
+      多版次键数: 0
+      月度抽检键数: 30
+      抽检C1多版次键: 0
+      抽检C4_PIT末点返回行: 0
+      抽检自判verdict: PASS
+    threshold_check:
+      违规样本=0:
+        value: 0
+        bound: =0
+        met: true
+        but: 修订样本本身为 0（全表单一 vintage=1、pub_ts 全 NULL），无对冲对象可判
+      存证100%对冲:
+        value: 0.0
+        bound: =100%
+        met: false
+        note: 带发布时戳的行 0/12428
+    pit:
+      cutoff: '2025-09-09'
+      note: 本复考只读该表的元数据属性（版次列/发布时戳列是否具值），未把 2025-09-09 之后的宏观取值用于任何判定或信号；表内 report_date 延至 2026-09 仅作存量盘点
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.55
+    carrier_functioning: true
+    three_check:
+      data: OK：行数/版次分布/pub_ts 覆盖率均由 CH reader 只读实数（FINAL 已加）
+      caliber: 抽检 5 项检核（C1-C5）内部自洽且全绿，但它们检的是'存量账是否自相矛盾'，非'修订是否被存证'；后者需第二版次，实测 multi_vintage_keys=0
+      conclusion: 表与链路已建、行为 fail-safe（PIT 无发布时戳即返空不造假），但'100% 对冲'的正面证据不存在→insufficient
+    notes: SL-A10 国际宏观线（DS-FRED） 的数据本体确已入表，但题面问的是'修订风险是否被发布快照入库存证 100% 对冲'——存证维度零行，故不可判。审计件自判 PASS 属检核面自洽，不采纳为达标证据。；缺载体：发布快照维度本身：①pub_ts
+      实值（现 0 行带值）②第二版次（vintage>=2，现 0 行）③初值/修正值修订对（multi_vintage_keys=0）
+  PQ-0191:
+    cluster: b3_macro
+    exam_plan_ref:
+      title: SL-A11 能源库存线的周度值后续修订风险是否被按发布时戳 PIT 取数100%对冲（U4 PIT 控制执行审计）？
+      method: 入库链路抽样审计（月度 30 条）
+      criterion: PIT 风险控制措施在入库链路执行
+      threshold: 违规样本=0
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: wo_b3_macro/macro_vintage.py + apply_macro_vintage_ddl.py + audit_macro_vintage.py
+      commands: &id032
+      - 'CH: c1_market.macro_data_vintage FINAL 分组实数'
+      - 读 reports/vintage_audit_202608.yaml（月度 30 键抽检产物）
+    probe_commands: *id032
+    metrics:
+      载体表: c1_market.macro_data_vintage（ReplacingMergeTree）
+      eia行数: 3663
+      eia带pub_ts行数: 0
+      report_date跨度:
+      - '2021-08-01'
+      - '2026-09-15'
+      全表版次分布: *id030
+      pub_ts_basis分布: *id031
+      多版次键数: 0
+      月度抽检键数: 30
+      抽检C1多版次键: 0
+      抽检C4_PIT末点返回行: 0
+      抽检自判verdict: PASS
+    threshold_check:
+      违规样本=0:
+        value: 0
+        bound: =0
+        met: true
+        but: 修订样本本身为 0（全表单一 vintage=1、pub_ts 全 NULL），无对冲对象可判
+      存证100%对冲:
+        value: 0.0
+        bound: =100%
+        met: false
+        note: 带发布时戳的行 0/3663
+    pit:
+      cutoff: '2025-09-09'
+      note: 本复考只读该表的元数据属性（版次列/发布时戳列是否具值），未把 2025-09-09 之后的宏观取值用于任何判定或信号；表内 report_date 延至 2026-09 仅作存量盘点
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.55
+    carrier_functioning: true
+    three_check:
+      data: OK：行数/版次分布/pub_ts 覆盖率均由 CH reader 只读实数（FINAL 已加）
+      caliber: 抽检 5 项检核（C1-C5）内部自洽且全绿，但它们检的是'存量账是否自相矛盾'，非'修订是否被存证'；后者需第二版次，实测 multi_vintage_keys=0
+      conclusion: 表与链路已建、行为 fail-safe（PIT 无发布时戳即返空不造假），但'100% 对冲'的正面证据不存在→insufficient
+    notes: SL-A11 能源库存线（DS-EIA） 的数据本体确已入表，但题面问的是'修订风险是否被发布快照入库存证 100% 对冲'——存证维度零行，故不可判。审计件自判 PASS 属检核面自洽，不采纳为达标证据。；缺载体：发布快照维度本身：①pub_ts
+      实值（现 0 行带值）②第二版次（vintage>=2，现 0 行）③初值/修正值修订对（multi_vintage_keys=0）
+  PQ-0001:
+    cluster: intake_gate
+    exam_plan_ref:
+      title: 入库闸五要素机检对 W6 批候选的拒绝率是否≤20%且单拒绝码占比≤50%（资格线收敛检验）？
+      method: 审计 JSONL 拒绝事件聚合统计
+      criterion: W6 批 register 拒绝码分布
+      threshold: 拒绝率≤20% 且单码占比≤50%
+      source: PG meta_question.meta_question.exam_plan（现读，非转述）
+    before_state: insufficient
+    carrier:
+      name: wo001_003/intake_batch.py（真检复用 registry._check_five_elements）+ 双轨审计
+      commands: &id033
+      - python .../wo001_003/intake_batch.py --batch docs/_working/chain_piling_campaign/snapshots/question_batch_w6.yaml（dry-run）
+      - inspect.signature(MetaQuestionRegistry._check_five_elements)
+      - 'SQL: degraded_check 事件与 evidence 计数'
+    probe_commands: *id033
+    metrics:
+      W6批号: W6-st-chainpile-20260922
+      候选数(分母): 283
+      拒绝数: 0
+      实测拒绝率_pct: 0.0
+      降级数: 283
+      降级项: *id034
+      真检函数签名: '(q: ''dict[str, Any]'') -> ''list[str]'''
+      真检补丁是否落地: false
+      degraded_check审计事件: 283
+      degraded证据锚: *id035
+      reject类审计事件: 0
+      全库题数(未增): 283
+      红腿自证: 另以 3 问冒烟批 dry-run：缺 threshold 的一问被真拒（code=exam_plan_no_threshold, action=reject）→拒绝通道本身会红
+    threshold_check:
+      拒绝率<=20%:
+        value: 0.0
+        bound: <=20%
+        met: true
+        but: 分母真实(283)，但 5 要素中 3 要素为待挂桩→该 3 项上的候选被记 degraded 而非 reject，拒绝率被结构性压低，非资格线收敛的证据
+      单码占比<=50%:
+        value: null
+        bound: <=50%
+        met: null
+        note: 无任何拒绝码，码分布不可得
+    pit:
+      cutoff: '2025-09-09'
+      note: 治理自检类：只读判定时点已存在的账/记录，不涉未来数据
+    outcome: insufficient
+    fail_type: null
+    confidence: 0.55
+    carrier_functioning: true
+    three_check:
+      data: OK：283 候选全量 dry-run 实跑，reject/degraded 计数与审计账 283 条 degraded_check 互证
+      caliber: 未改判据未改阈值；如实报 0% 拒绝率并标其结构性成因
+      conclusion: 载体部分可用（限流/查重/预检/拒绝通道/双轨留痕均在），但五要素真检 3/5 待挂桩→本题的'拒绝率收敛'检验尚不成立
+    notes: 同一 trio 降级项在 2026-09-23 入库当夜与本次复跑逐字相同（evidence=W4_source_line_registry_pending），证该缺口自 W6 入库以来未闭合，非本次读数抖动。判
+      insufficient 而非 pass：0% 是被削弱的闸测出来的。；缺载体：registry 五要素真检补丁 patches/0001-wo001-registry-degraded-stub-to-real-check.patch
+      未施加（实测签名仍为 (q)->list，无 register 形参；_source_line_register 属性不存在）→W4 源线谱可解析性/消费方册可解析性/PIT 时戳列检查三项恒降级
+summary:
+  pass:
+  - PQ-0051
+  - PQ-0054
+  - PQ-0060
+  fail:
+  - PQ-0055
+  insufficient:
+  - PQ-0001
+  - PQ-0052
+  - PQ-0053
+  - PQ-0056
+  - PQ-0057
+  - PQ-0061
+  - PQ-0096
+  - PQ-0097
+  - PQ-0098
+  - PQ-0103
+  - PQ-0104
+  - PQ-0105
+  - PQ-0106
+  - PQ-0107
+  - PQ-0108
+  - PQ-0109
+  - PQ-0185
+  - PQ-0191
+  counts:
+    pass: 3
+    fail: 1
+    insufficient: 18
+writeback:
+  pg_changed: true
+  committed_at: 2026-09-24T16:5x+08:00
+  casefile: docs\_working\meta_question_answers\casefiles\REEXAM-CARRIERS.yaml
+  exam_ref_pattern: st-metaq-gc-20260924/reexam/carriers/<QID>
+  rows_appended: 22
+  audit_events_appended: 22
+  updates_or_deletes: 0
+  baseline_before_session:
+    pass: 145
+    fail: 48
+    insufficient: 90
+    sum: 283
+    source: 派单陈述
+  baseline_observed_at_write:
+    pass: 149
+    fail: 44
+    insufficient: 90
+    sum: 283
+    note: 写前实测基线已异于派单陈述——另路代理的 8 问回写已落地（4 问 fail→pass，exam_result 增 8 行），本班未触碰那 8 问
+  final_tri_state:
+    pass: 152
+    fail: 45
+    insufficient: 86
+    sum: 283
+  post_commit_checks:
+    sum_eq_283: true
+    dropped_bucket_questions: 0
+    canonical_11_keys_present_in_all_22: true
+    lifecycle_column_answered_all_22: true
+    exam_result_rows_total: 332
+  rollback_events:
+  - when: 本班第 1 次实跑
+    committed: false
+    cause: 本班自校验守卫查询语义错：把 where conclusion->>'outcome' is null 放在 distinct on 之前，于是"历史上有过畸形行"的 4 问(PQ-0051/0054/0056/0108)被误报为掉桶，守卫按约回滚
+    effect: 零写入（复核 exam_ref LIKE .../reexam/carriers/% = 0 行、审计 0 行）
+    fix: 改为子查询先取最新行再筛 v is null；重跑通过
+    lesson: '"掉桶"必须按最新行判定，不能按"存在任一缺裁决行"判定——否则历史畸形账会永久误报'

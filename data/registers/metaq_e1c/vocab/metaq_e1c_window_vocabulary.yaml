@@ -1,0 +1,20 @@
+# [A_config] module_id=MOD-CHAINPILE-METAQ | layer=config | stability=new | safety=L | ai_autonomy=ai_modifiable
+# 真源：组合空间 window 槽取值域（模板内建枚举 tpl_builtin#window，随 space_hash 冻结）。
+# 出处=设计真源 docs/_working/chain_piling_campaign/infra_mining/11_template_generator_design.md §2 示例1
+# （"window: 内建枚举 1d/5d/20d/60d"），本件把该内建枚举显式成词表，禁在代码里写字面量列表。
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: 组合空间窗口槽取值域（模板内建小枚举，随模板版本冻结）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-gc-20260924
+date: '2026-09-24'
+values:
+- value: 1d
+  definition: 单观测窗（日内/隔日敏感度，配 intraday 类积木）。
+- value: 5d
+  definition: 一周窗（短周期动量/反转）。
+- value: 20d
+  definition: 一月窗（标准月频截面）。
+- value: 60d
+  definition: 一季窗（慢变量/季频积木唯一可用档之一）。

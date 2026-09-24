@@ -1,0 +1,3334 @@
+---
+ttl: task_bound
+completes_when: 283 问战役施工闭环验收后随总包归档
+---
+# 283 问战役施工闭环总台账（生成器产出，手工维护违铁律）
+# 生成时刻(仅注释位，非数据水位): 2026-09-24T09:13:57.225008+00:00
+generated_by: scripts/governance/meta_question/build_closure_ledger.py
+items:
+  PQ-0001:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: W6 批 register 拒绝码分布
+    fail_type: null
+    layer: L0
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: 拒绝率≤20% 且单码占比≤50%
+    triage_class: B
+    workorders: []
+  PQ-0002:
+    casefiles: []
+    criterion: 同层归一化标题重复对占比与留痕率
+    fail_type: null
+    layer: L0
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 占比≤5% 且留痕率=100%
+    triage_class: null
+    workorders: []
+  PQ-0003:
+    casefiles: []
+    criterion: 排队问题 consumers 可解析计数
+    fail_type: null
+    layer: L0
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 可解析率=100% 且零消费方=0
+    triage_class: null
+    workorders: []
+  PQ-0004:
+    casefiles:
+    - WO-001-003.md
+    criterion: degraded_check 事件占 register 事件比例
+    fail_type: infra
+    layer: L0
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =0
+    triage_class: null
+    workorders:
+    - WO-001
+  PQ-0005:
+    casefiles: []
+    criterion: A 档 16 条 U1 现答与信号词表非空计数
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =16/16
+    triage_class: null
+    workorders: []
+  PQ-0006:
+    casefiles: []
+    criterion: U2 现答完整率与未评估成本项
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =16/16 且未评估项=0
+    triage_class: null
+    workorders: []
+  PQ-0007:
+    casefiles: []
+    criterion: U3 现答完整率与口径不一致项
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =16/16 且不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0008:
+    casefiles: []
+    criterion: U4 现答完整率与高危线对齐方案齐备数
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:14:49.718972+08:00'
+    registers: []
+    threshold: =16/16 且高危线方案=3/3
+    triage_class: null
+    workorders: []
+  PQ-0009:
+    casefiles: []
+    criterion: U5 现答完整率与七层挂载不一致项
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-24 01:44:57.844603+08:00'
+    registers: []
+    threshold: =16/16 且不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0010:
+    casefiles: []
+    criterion: U6 现答完整率与退役判据含阈值比例
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =16/16 且判据齐备率=100%
+    triage_class: null
+    workorders: []
+  PQ-0011:
+    casefiles: []
+    criterion: 方向预测准确率二项检验
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>50% 且 t>2'
+    triage_class: null
+    workorders: []
+  PQ-0012:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    - REEXAM-FAILS.yaml
+    - WO-004.md
+    criterion: 复权算子时点合规抽检违例数
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-24 17:01:22.383245+08:00'
+    registers: []
+    threshold: =0
+    triage_class: null
+    workorders:
+    - WO-004
+  PQ-0013:
+    casefiles: []
+    criterion: 板块池 10 日收益秩 IC（Newey-West）
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers:
+    - metaq_sector_name/sector_code_name_registry.yaml
+    threshold: IC>0.02 且 t>2
+    triage_class: A
+    workorders: []
+  PQ-0014:
+    casefiles: []
+    criterion: 成分快照按日存证覆盖率
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ≥99.5%
+    triage_class: C
+    workorders: []
+  PQ-0015:
+    casefiles: []
+    criterion: 事件日 vs 常态日次日收益分布差异 t 检验
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: t>2
+    triage_class: null
+    workorders: []
+  PQ-0016:
+    casefiles: []
+    criterion: 情感分位对次日中位数收益回归 t 检验
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: β>0 且 t>2
+    triage_class: A
+    workorders: []
+  PQ-0017:
+    casefiles: []
+    criterion: 下游行业池 20 日收益秩 IC
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2
+    triage_class: null
+    workorders: []
+  PQ-0018:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    - REEXAM-FAILS.yaml
+    - WO-005.yaml
+    - WO-008.yaml
+    criterion: 两套板块口径成分重合率
+    fail_type: infra
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-24 17:01:22.383245+08:00'
+    registers:
+    - metaq_board_routing/board_symbol_routing.yaml
+    threshold: ≥80%
+    triage_class: null
+    workorders:
+    - WO-005
+  PQ-0019:
+    casefiles: []
+    criterion: 方向预测 AUC 与 DeLong 检验
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>0.55 且 p<0.05'
+    triage_class: A
+    workorders: []
+  PQ-0020:
+    casefiles: []
+    criterion: 断档显式登记完整率
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =100%
+    triage_class: null
+    workorders: []
+  PQ-0021:
+    casefiles: []
+    criterion: 公告后 20 日超预期组超额 t 检验
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>0 且 t>2'
+    triage_class: null
+    workorders: []
+  PQ-0022:
+    casefiles: []
+    criterion: 口径误用样本数
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =0
+    triage_class: null
+    workorders: []
+  PQ-0023:
+    casefiles: []
+    criterion: EP 十分位多空年化差与单调性
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>5% 且 |ρ|>0.5'
+    triage_class: null
+    workorders: []
+  PQ-0024:
+    casefiles: []
+    criterion: PIT 口径与非对齐口径 IC 差
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ≥0
+    triage_class: null
+    workorders: []
+  PQ-0025:
+    casefiles:
+    - REEXAM-A06.yaml
+    criterion: 极端净流入组次日收益 t 检验
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-24 16:36:16.769632+08:00'
+    registers: []
+    threshold: '>0 且 t>2'
+    triage_class: A
+    workorders:
+    - WO-011
+  PQ-0026:
+    casefiles:
+    - REEXAM-A06.yaml
+    criterion: 版本切换点 Chow 断点检验
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-24 16:36:16.769632+08:00'
+    registers: []
+    threshold: p<0.05 即须标记
+    triage_class: A
+    workorders: []
+  PQ-0027:
+    casefiles: []
+    criterion: 公告后 20 日超额 t 检验
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>0 且 t>2'
+    triage_class: null
+    workorders: []
+  PQ-0028:
+    casefiles: []
+    criterion: 月频秩 IC（Newey-West）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2
+    triage_class: null
+    workorders: []
+  PQ-0029:
+    casefiles: []
+    criterion: 费率极值日后 3 日情绪代理变化 t 检验
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 显著回落且 t>2
+    triage_class: null
+    workorders: []
+  PQ-0030:
+    casefiles: []
+    criterion: 清算极值日对次日已实现波动 IC
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02
+    triage_class: C
+    workorders: []
+  PQ-0031:
+    casefiles: []
+    criterion: 月度转移概率 bootstrap 置信区间半宽
+    fail_type: no_alpha
+    layer: L3
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 半宽<0.1
+    triage_class: null
+    workorders: []
+  PQ-0032:
+    casefiles: []
+    criterion: 高/低分位组后 20 日收益差 t 检验
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-24 00:28:21.282656+08:00'
+    registers: []
+    threshold: 差<0 且 t<-2（高分位组显著更差）
+    triage_class: C
+    workorders: []
+  PQ-0033:
+    casefiles: []
+    criterion: 互相关峰值滞后的 bootstrap 置信区间
+    fail_type: no_alpha
+    layer: L3
+    outcome: fail
+    recorded_at: '2026-09-24 01:14:38.843548+08:00'
+    registers: []
+    threshold: 峰值滞后落在 1-5 日且 CI 不含 0
+    triage_class: null
+    workorders: []
+  PQ-0034:
+    casefiles: []
+    criterion: logit 加入跨市场变量后 AUC 提升
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ΔAUC>0.02 且样本外方向一致
+    triage_class: A
+    workorders: []
+  PQ-0035:
+    casefiles: []
+    criterion: 双源日度情绪指数秩相关
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: Spearman ρ≥0.6
+    triage_class: A
+    workorders: []
+  PQ-0036:
+    casefiles: []
+    criterion: 领先期估计的 block bootstrap CI
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 领先期 CI 不含 0
+    triage_class: A
+    workorders: []
+  PQ-0037:
+    casefiles: []
+    criterion: 极端情绪日后 5 日全 A 收益反转幅度 t 检验
+    fail_type: no_alpha
+    layer: L3
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 反转显著且 t>2
+    triage_class: null
+    workorders: []
+  PQ-0038:
+    casefiles: []
+    criterion: 评级情绪因子周频秩 IC
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2
+    triage_class: A
+    workorders: []
+  PQ-0039:
+    casefiles: []
+    criterion: 20 日动量排名月度 Spearman 自相关
+    fail_type: no_alpha
+    layer: L3
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 均值>0.3 且 t>2
+    triage_class: null
+    workorders: []
+  PQ-0040:
+    casefiles: []
+    criterion: CR5 集中度对板块 5 日收益秩 IC
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2
+    triage_class: A
+    workorders: []
+  PQ-0041:
+    casefiles: []
+    criterion: 热度对概念指数先行期的 t 检验
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 先行期≥1 日且 t>2
+    triage_class: B
+    workorders: []
+  PQ-0042:
+    casefiles: []
+    criterion: 天气冲击日公用事业/农业板块 5 日超额收益
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 事件窗超额 t>2
+    triage_class: A
+    workorders: []
+  PQ-0043:
+    casefiles: []
+    criterion: 样本外年化超额与最大回撤改善
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 回撤改善>15% 且超额>0
+    triage_class: A
+    workorders: []
+  PQ-0044:
+    casefiles: []
+    criterion: 积木库入库通过率与判据执行一致率
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 通过率<30% 且执行一致率=100%
+    triage_class: B
+    workorders: []
+  PQ-0045:
+    casefiles: []
+    criterion: 扣费后年化超额（vs 板块等权）
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>3% 年化'
+    triage_class: A
+    workorders: []
+  PQ-0046:
+    casefiles: []
+    criterion: 降仓事件后 20 日避险收益（避免回撤）
+    fail_type: no_alpha
+    layer: L4
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>0 且 t>2'
+    triage_class: null
+    workorders: []
+  PQ-0047:
+    casefiles: []
+    criterion: 触发后 20 日回撤收窄命中率
+    fail_type: no_alpha
+    layer: L4
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>60%'
+    triage_class: null
+    workorders: []
+  PQ-0048:
+    casefiles: []
+    criterion: 信号后 3 日组合与基准回撤差
+    fail_type: no_alpha
+    layer: L4
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>0 且 t>2'
+    triage_class: null
+    workorders: []
+  PQ-0049:
+    casefiles: []
+    criterion: 单因子权重上限 15% 的特质波动降幅与收益损失
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 特质波动降>10% 且年化损失≤1%
+    triage_class: B
+    workorders: []
+  PQ-0050:
+    casefiles: []
+    criterion: PIT 风险升级事件到受影响假设暂停的时延
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 时延≤1 个交易日
+    triage_class: B
+    workorders: []
+  PQ-0051:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: in_exam 及以后状态 exam_plan 双字段齐备率
+    fail_type: null
+    layer: L5
+    outcome: pass
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: =100%
+    triage_class: B
+    workorders: []
+  PQ-0052:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 周五 GPU 窗口 IBT 修卷任务完成率
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: =100%（连续 4 周）
+    triage_class: B
+    workorders: []
+  PQ-0053:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 滑点模型输出 vs 实盘回执偏差
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: 偏差均值≤2bp
+    triage_class: B
+    workorders: []
+  PQ-0054:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 新鲜窗到期复考执行率
+    fail_type: null
+    layer: L5
+    outcome: pass
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: ≥95%（逾期挂起≤5%）
+    triage_class: B
+    workorders: []
+  PQ-0055:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 样本外份额≥1/3 且窗口无重叠的考试占比
+    fail_type: infra
+    layer: L5
+    outcome: fail
+    recorded_at: '2026-09-24 17:10:26.165847+08:00'
+    registers: []
+    threshold: =100%
+    triage_class: B
+    workorders: []
+  PQ-0056:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: exam_writeback 落账时延 P99
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: ≤1 个交易日
+    triage_class: B
+    workorders: []
+  PQ-0057:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: reexam 三取二多数裁定执行率
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: =100%
+    triage_class: B
+    workorders: []
+  PQ-0058:
+    casefiles: []
+    criterion: net_zero_note 非空且含可解析替代声明比例
+    fail_type: null
+    layer: L6
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =100%
+    triage_class: null
+    workorders: []
+  PQ-0059:
+    casefiles: []
+    criterion: 终态 q_id 复用事件数与连号缺口
+    fail_type: null
+    layer: L6
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 复用=0 且缺口可解释（墓碑）
+    triage_class: null
+    workorders: []
+  PQ-0060:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: illegal_transition 异常事件数
+    fail_type: null
+    layer: L6
+    outcome: pass
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: =0
+    triage_class: B
+    workorders: []
+  PQ-0061:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: VersionConflict 后重读重放成功率
+    fail_type: null
+    layer: L6
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: ≥99%
+    triage_class: B
+    workorders: []
+  PQ-0062:
+    casefiles: []
+    criterion: PG 审计表与 JSONL 事件数差
+    fail_type: infra
+    layer: L6
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =0（按日）
+    triage_class: null
+    workorders:
+    - WO-002
+  PQ-0063:
+    casefiles: []
+    criterion: 边级传导弹性（下游毛利变化对上游冲击×系数回归）
+    fail_type: null
+    layer: L2
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers:
+    - metaq_sector_name/sector_code_name_registry.yaml
+    threshold: 弹性显著非零且 t>2
+    triage_class: B
+    workorders: []
+  PQ-0064:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    - REEXAM-FAILS.yaml
+    criterion: 链级 ig_node_company 覆盖率
+    fail_type: infra
+    layer: L2
+    outcome: fail
+    recorded_at: '2026-09-24 17:01:22.383245+08:00'
+    registers:
+    - metaq_node_binding/apply_ledger_wo006.yaml
+    - metaq_node_binding/merged_node_supersede_wo006.yaml
+    - metaq_node_binding/micro_chain_retirement_nominations_wo006.yaml
+    - metaq_node_binding/node_binding_candidates_wo006.yaml
+    - metaq_node_binding/pq0064_recompute_wo006.yaml
+    - metaq_node_binding/source_c_forensics_wo006.yaml
+    threshold: A 档链占比≥80%（覆盖率≥80%）
+    triage_class: null
+    workorders:
+    - WO-006
+  PQ-0065:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    - REEXAM-FAILS.yaml
+    - WO-007.md
+    criterion: CKG 产品-产品边与研报抽取边一致率
+    fail_type: infra
+    layer: L2
+    outcome: fail
+    recorded_at: '2026-09-24 17:01:22.383245+08:00'
+    registers:
+    - metaq_io_edge/ckg_structural_prior_tier.yaml
+    - metaq_io_edge/io_edge_binding_register.yaml
+    - metaq_io_edge/io_sector_two_level_map.yaml
+    threshold: ≥70%（低于则 CKG 降级为结构先验）
+    triage_class: null
+    workorders:
+    - WO-007
+  PQ-0066:
+    casefiles: []
+    criterion: 消歧桥覆盖率分档下的假边率斜率
+    fail_type: null
+    layer: L2
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 斜率<0 且显著
+    triage_class: B
+    workorders: []
+  PQ-0067:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    - REEXAM-FAILS.yaml
+    - WO-007.md
+    criterion: 2021 上游聚合与当期判定的一致比例
+    fail_type: null
+    layer: L2
+    outcome: pass
+    recorded_at: '2026-09-24 17:01:22.383245+08:00'
+    registers:
+    - metaq_io_edge/ckg_structural_prior_tier.yaml
+    - metaq_io_edge/io_edge_binding_register.yaml
+    - metaq_io_edge/io_sector_two_level_map.yaml
+    threshold: ≥60%
+    triage_class: null
+    workorders:
+    - WO-007
+  PQ-0068:
+    casefiles:
+    - WO-007.md
+    - WO-008.yaml
+    criterion: 消歧对齐后可升级边占 ig_fact 产品边比例
+    fail_type: infra
+    layer: L2
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers:
+    - metaq_product_synonyms/product_synonym_register.yaml
+    threshold: ≥30%
+    triage_class: null
+    workorders:
+    - WO-008
+  PQ-0069:
+    casefiles: []
+    criterion: 行业树↔申万词表覆盖率与冲突率
+    fail_type: null
+    layer: L2
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率≥90% 且冲突率≤5%
+    triage_class: null
+    workorders: []
+  PQ-0070:
+    casefiles: []
+    criterion: 同实控人组合与非关联组滚动 60 日收益相关差
+    fail_type: null
+    layer: L2
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 相关差>0 且 t>2
+    triage_class: null
+    workorders: []
+  PQ-0071:
+    casefiles: []
+    criterion: 互补边并入后组合收益联动解释增量
+    fail_type: no_alpha
+    layer: L2
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ΔR²>0.02
+    triage_class: null
+    workorders: []
+  PQ-0072:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    - REEXAM-FAILS.yaml
+    - WO-009.yaml
+    criterion: 事件日与版本生效日的时序合规率
+    fail_type: null
+    layer: L2
+    outcome: pass
+    recorded_at: '2026-09-24 17:01:22.383245+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders:
+    - WO-009
+  PQ-0073:
+    casefiles: []
+    criterion: 境外断线止步路径占全穿透路径比例
+    fail_type: null
+    layer: L2
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ≤20%
+    triage_class: null
+    workorders: []
+  PQ-0074:
+    casefiles: []
+    criterion: 概念成分与链名公司重合度 vs 随机基线
+    fail_type: no_alpha
+    layer: L2
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: Jaccard 显著低于随机（p<0.05）
+    triage_class: null
+    workorders: []
+  PQ-0075:
+    casefiles: []
+    criterion: 东财 vs THS 概念标签重合率月度趋势
+    fail_type: null
+    layer: L2
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 重合率收敛（斜率>0 且显著）或登记差异
+    triage_class: A
+    workorders: []
+  PQ-0076:
+    casefiles: []
+    criterion: 概念热度先行期
+    fail_type: null
+    layer: L2
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 先行≥1 日且 t>2
+    triage_class: B
+    workorders: []
+  PQ-0077:
+    casefiles: []
+    criterion: 市场分类标签过滤误杀率
+    fail_type: null
+    layer: L2
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ≤2%
+    triage_class: B
+    workorders: []
+  PQ-0078:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    - REEXAM-FAILS.yaml
+    - WO-007.md
+    criterion: 映射补齐后 io_edge 可挂边比例
+    fail_type: infra
+    layer: L2
+    outcome: fail
+    recorded_at: '2026-09-24 17:01:22.383245+08:00'
+    registers:
+    - metaq_io_edge/ckg_structural_prior_tier.yaml
+    - metaq_io_edge/io_edge_binding_register.yaml
+    - metaq_io_edge/io_sector_two_level_map.yaml
+    threshold: ≥95%
+    triage_class: null
+    workorders:
+    - WO-007
+  PQ-0079:
+    casefiles: []
+    criterion: 高置信层占比与层间传导预测力单调性
+    fail_type: null
+    layer: L2
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 占比≥30% 且高层>低层（t>2）
+    triage_class: B
+    workorders: []
+  PQ-0080:
+    casefiles: []
+    criterion: 两版系数外推误差上界
+    fail_type: null
+    layer: L2
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ≤30%
+    triage_class: A
+    workorders: []
+  PQ-0081:
+    casefiles: []
+    criterion: 波动分位状态半衰期估计
+    fail_type: no_alpha
+    layer: L3
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 5-15 日且滚动估计 CI 半宽<5 日
+    triage_class: null
+    workorders: []
+  PQ-0082:
+    casefiles: []
+    criterion: 宽度拐点领先均线的命中率
+    fail_type: no_alpha
+    layer: L3
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>55% 且样本≥30 次'
+    triage_class: null
+    workorders: []
+  PQ-0083:
+    casefiles: []
+    criterion: 离散度>90 分位后 10 日情绪回落频率
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>60%'
+    triage_class: A
+    workorders: []
+  PQ-0084:
+    casefiles: []
+    criterion: 两源高低状态一致率
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ≥70%
+    triage_class: A
+    workorders: []
+  PQ-0085:
+    casefiles: []
+    criterion: 条件延续上涨频率
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>60%'
+    triage_class: A
+    workorders: []
+  PQ-0086:
+    casefiles: []
+    criterion: 温度差领先拐点命中率
+    fail_type: null
+    layer: L3
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ≥2 日且>55%
+    triage_class: B
+    workorders: []
+  PQ-0087:
+    casefiles: []
+    criterion: 滚动互相关峰值滞后 CI
+    fail_type: null
+    layer: L3
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 峰值落 10-30 日且 CI 不含 0
+    triage_class: null
+    workorders: []
+  PQ-0088:
+    casefiles: []
+    criterion: 月频秩 IC
+    fail_type: no_alpha
+    layer: L3
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2
+    triage_class: null
+    workorders: []
+  PQ-0089:
+    casefiles: []
+    criterion: 样本外年化超额与回撤对比
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 超额>3% 且回撤更小
+    triage_class: A
+    workorders: []
+  PQ-0090:
+    casefiles: []
+    criterion: 超配子组合信息比率贡献
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>0.1'
+    triage_class: A
+    workorders: []
+  PQ-0091:
+    casefiles: []
+    criterion: 回撤降幅与收益损失
+    fail_type: no_alpha
+    layer: L4
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 回撤降>10% 且损失≤1%
+    triage_class: null
+    workorders: []
+  PQ-0092:
+    casefiles: []
+    criterion: 回避清单 20 日避损
+    fail_type: no_alpha
+    layer: L4
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: '>0 且 t>2'
+    triage_class: null
+    workorders: []
+  PQ-0093:
+    casefiles: []
+    criterion: 证伪→修正生效时戳差
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 次日生效率=100%
+    triage_class: B
+    workorders: []
+  PQ-0094:
+    casefiles: []
+    criterion: 约束违例检出率
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =100%
+    triage_class: B
+    workorders: []
+  PQ-0095:
+    casefiles: []
+    criterion: 同族阈值口径一致率
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 漂移=0
+    triage_class: B
+    workorders: []
+  PQ-0096:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 抽样考试时戳比对违例数
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: =0
+    triage_class: B
+    workorders: []
+  PQ-0097:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 三件周五整体完成率
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: 连续 4 周=100%
+    triage_class: B
+    workorders: []
+  PQ-0098:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 功效曲线核验通过率
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers:
+    - metaq_e1c/e1c_yardstick_v1.yaml
+    threshold: ≥80% 且降阈值事件=0
+    triage_class: B
+    workorders: []
+  PQ-0099:
+    casefiles:
+    - WO-001-003.md
+    criterion: 状态分布占比
+    fail_type: infra
+    layer: L5
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: answered 30-70% 且单状态≤80%
+    triage_class: null
+    workorders:
+    - WO-003
+  PQ-0100:
+    casefiles: []
+    criterion: 净增速与配额比、替代声明齐备率
+    fail_type: null
+    layer: L6
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: ≤配额 且 =100%
+    triage_class: null
+    workorders: []
+  PQ-0101:
+    casefiles: []
+    criterion: 悬空合并引用数
+    fail_type: null
+    layer: L6
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =0
+    triage_class: null
+    workorders: []
+  PQ-0102:
+    casefiles: []
+    criterion: 双轨逐日计数差
+    fail_type: infra
+    layer: L6
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: =0
+    triage_class: null
+    workorders:
+    - WO-002
+  PQ-0103:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: claim_mismatch 拦截率
+    fail_type: null
+    layer: L6
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: =100%
+    triage_class: B
+    workorders: []
+  PQ-0104:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 单批候选数与 N_eff 占比
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers:
+    - metaq_e1c/e1c_space_cmb_e1c_v1.yaml
+    - metaq_e1c/e1c_space_design_cmb_e1c_v1.yaml
+    - metaq_e1c/vocab/metaq_e1c_n_eff_estimator_vocabulary.yaml
+    - metaq_e1c/vocab/metaq_e1c_space_action_vocabulary.yaml
+    threshold: ≤600 且 ≥30%
+    triage_class: B
+    workorders: []
+  PQ-0105:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 三轨产出率（过考/候选）齐性卡方
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers:
+    - metaq_e1c/e1c_space_cmb_e1c_v1.yaml
+    - metaq_e1c/e1c_space_design_cmb_e1c_v1.yaml
+    - metaq_e1c/e1c_yardstick_v1.yaml
+    - metaq_e1c/vocab/metaq_e1c_track_vocabulary.yaml
+    threshold: p<0.05（差异显著）
+    triage_class: B
+    workorders: []
+  PQ-0106:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 合并后冗余度（高相关对占比）
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers:
+    - metaq_e1c/e1c_space_cmb_e1c_v1.yaml
+    - metaq_e1c/e1c_space_design_cmb_e1c_v1.yaml
+    threshold: ≤40%
+    triage_class: B
+    workorders: []
+  PQ-0107:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 三轨考尺口径一致率
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers:
+    - metaq_e1c/e1c_space_cmb_e1c_v1.yaml
+    - metaq_e1c/e1c_space_design_cmb_e1c_v1.yaml
+    - metaq_e1c/e1c_yardstick_v1.yaml
+    - metaq_e1c/vocab/metaq_e1c_track_vocabulary.yaml
+    threshold: 漂移=0
+    triage_class: B
+    workorders: []
+  PQ-0108:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 新鲜窗（20 日滚动）到期重考逾期率
+    fail_type: null
+    layer: L5
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers:
+    - metaq_e1c/e1c_space_cmb_e1c_v1.yaml
+    - metaq_e1c/e1c_space_design_cmb_e1c_v1.yaml
+    - metaq_e1c/e1c_yardstick_v1.yaml
+    threshold: ≤5%
+    triage_class: B
+    workorders: []
+  PQ-0109:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: 扩容批次旧空间封存登记齐备率
+    fail_type: null
+    layer: L4
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers:
+    - metaq_e1c/e1c_space_cmb_e1c_v1.yaml
+    - metaq_e1c/e1c_space_design_cmb_e1c_v1.yaml
+    - metaq_e1c/vocab/metaq_e1c_space_action_vocabulary.yaml
+    threshold: =100%
+    triage_class: B
+    workorders: []
+  PQ-0110:
+    casefiles:
+    - REEXAM-A06.yaml
+    criterion: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0111:
+    casefiles: []
+    criterion: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0112:
+    casefiles: []
+    criterion: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0113:
+    casefiles: []
+    criterion: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0114:
+    casefiles: []
+    criterion: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0115:
+    casefiles: []
+    criterion: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0116:
+    casefiles: []
+    criterion: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: C
+    workorders: []
+  PQ-0117:
+    casefiles: []
+    criterion: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: C
+    workorders: []
+  PQ-0118:
+    casefiles: []
+    criterion: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: C
+    workorders: []
+  PQ-0119:
+    casefiles: []
+    criterion: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders:
+    - WO-004
+  PQ-0120:
+    casefiles: []
+    criterion: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0121:
+    casefiles: []
+    criterion: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0122:
+    casefiles: []
+    criterion: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0123:
+    casefiles: []
+    criterion: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0124:
+    casefiles: []
+    criterion: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: null
+    workorders: []
+  PQ-0125:
+    casefiles:
+    - REEXAM-A06.yaml
+    criterion: 全 A 池1日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-24 16:36:16.769632+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: A
+    workorders: []
+  PQ-0126:
+    casefiles:
+    - REEXAM-A06.yaml
+    criterion: 全 A 池5日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-24 16:36:16.769632+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: A
+    workorders: []
+  PQ-0127:
+    casefiles:
+    - REEXAM-A06.yaml
+    criterion: 全 A 池20日前瞻收益秩 IC（Newey-West 修正 t）
+    fail_type: no_alpha
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-24 16:36:16.769632+08:00'
+    registers: []
+    threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+    triage_class: A
+    workorders: []
+  PQ-0128:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0129:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0130:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0131:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    - REEXAM-FAILS.yaml
+    - WO-004.md
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-24 17:01:22.383245+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders: []
+  PQ-0132:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0133:
+    casefiles:
+    - REEXAM-A06.yaml
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0134:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0135:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0136:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0137:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders: []
+  PQ-0138:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0139:
+    casefiles:
+    - REEXAM-A06.yaml
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: B
+    workorders: []
+  PQ-0140:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0141:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0142:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0143:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0144:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0145:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0146:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0147:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0148:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0149:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders: []
+  PQ-0150:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0151:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0152:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0153:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0154:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0155:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders: []
+  PQ-0156:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0157:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0158:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0159:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0160:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0161:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: B
+    workorders:
+    - WO-011
+  PQ-0162:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0163:
+    casefiles:
+    - REEXAM-A06.yaml
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-24 16:36:16.769632+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: A
+    workorders: []
+  PQ-0164:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0165:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0166:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0167:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: A
+    workorders: []
+  PQ-0168:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0169:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: C
+    workorders: []
+  PQ-0170:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0171:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0172:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: infra
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers:
+    - metaq_source_line/source_line_registry.yaml
+    threshold: 不一致项=0
+    triage_class: null
+    workorders:
+    - WO-010
+  PQ-0173:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders: []
+  PQ-0174:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0175:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0176:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0177:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0178:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0179:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders: []
+  PQ-0180:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0181:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: A
+    workorders: []
+  PQ-0182:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0183:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0184:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0185:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: B
+    workorders: []
+  PQ-0186:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0187:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0188:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0189:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0190:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0191:
+    casefiles:
+    - REEXAM-CARRIERS.yaml
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-24 17:06:54.198601+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: B
+    workorders: []
+  PQ-0192:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0193:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: C
+    workorders: []
+  PQ-0194:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0195:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0196:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: infra
+    layer: L1
+    outcome: fail
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers:
+    - metaq_source_line/source_line_registry.yaml
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0197:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: A
+    workorders: []
+  PQ-0198:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0199:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: C
+    workorders: []
+  PQ-0200:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0201:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0202:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0203:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders: []
+  PQ-0204:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0205:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0206:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0207:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0208:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0209:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: A
+    workorders: []
+  PQ-0210:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0211:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: C
+    workorders: []
+  PQ-0212:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0213:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0214:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0215:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders: []
+  PQ-0216:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0217:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0218:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0219:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0220:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:22:03.067185+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0221:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: null
+    workorders: []
+  PQ-0222:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0223:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0224:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0225:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0226:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0227:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0228:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0229:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0230:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0231:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0232:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0233:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0234:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0235:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0236:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0237:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0238:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0239:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0240:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0241:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0242:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0243:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0244:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0245:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0246:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0247:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0248:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0249:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0250:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0251:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0252:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0253:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0254:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0255:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0256:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0257:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0258:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0259:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0260:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0261:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0262:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0263:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0264:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0265:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0266:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0267:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0268:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0269:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0270:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0271:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0272:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0273:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0274:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0275:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0276:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0277:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:14:49.718972+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+  PQ-0278:
+    casefiles: []
+    criterion: 信号词表非空且宣称主题全部落在词集覆盖内
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 覆盖率=100%
+    triage_class: null
+    workorders: []
+  PQ-0279:
+    casefiles: []
+    criterion: 获取方式与成本与源线谱/DS 册登记一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 未评估成本项=0
+    triage_class: null
+    workorders: []
+  PQ-0280:
+    casefiles: []
+    criterion: 更新频率与延迟与 DS 册健康检查口径一致
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: null
+    workorders: []
+  PQ-0281:
+    casefiles: []
+    criterion: PIT 风险控制措施在入库链路执行
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 违规样本=0
+    triage_class: C
+    workorders: []
+  PQ-0282:
+    casefiles: []
+    criterion: consumers 与源线谱七层挂载登记一致
+    fail_type: null
+    layer: L1
+    outcome: insufficient
+    recorded_at: '2026-09-23 23:13:48.992345+08:00'
+    registers: []
+    threshold: 不一致项=0
+    triage_class: C
+    workorders: []
+  PQ-0283:
+    casefiles: []
+    criterion: 退役判据含明确阈值与数据窗口可重放
+    fail_type: null
+    layer: L1
+    outcome: pass
+    recorded_at: '2026-09-23 23:14:49.718972+08:00'
+    registers: []
+    threshold: 判据可执行率=100%
+    triage_class: null
+    workorders: []
+stats:
+  casefile_count: 9
+  fail_type_dist:
+    infra: 12
+    no_alpha: 33
+  open_total: 131
+  open_with_any_evidence: 102
+  open_with_casefile: 31
+  open_with_workorder: 11
+  open_without_any_evidence: 29
+  outcome_dist:
+    fail: 45
+    insufficient: 86
+    pass: 152
+  questions: 283
+  results_mirror_files: 283
+  triage_dist:
+    A: 28
+    B: 37
+    C: 31
+  triage_parsed: 96
+  workorder_count: 11
+watermark:
+  exam_result_rows: 333
+  latest_exam_result_at: '2026-09-24 17:10:26.165847+08:00'
+  questions: 283
+workorders:
+  WO-001:
+    gate_lines: []
+    heading: PQ-0004 degraded_check 关闸（S-M，代码+登记）
+    q_ids:
+    - PQ-0004
+  WO-002:
+    gate_lines: []
+    heading: PQ-0062/0102 JSONL 双轨（M，代码——已建成，待 0004/0006 落地收口）
+    q_ids:
+    - PQ-0062
+    - PQ-0102
+  WO-003:
+    gate_lines:
+    - '- 门位：campaign regime 数值 Owner 裁；选①②已施工。'
+    heading: PQ-0099 状态分布健康带（M，机制——半门位）
+    q_ids:
+    - PQ-0099
+  WO-004:
+    gate_lines:
+    - '- 门位：口径二选一与 712 万行重写属数据治理裁定，呈 Owner 批后施工；禁调容差。'
+    heading: PQ-0012/0131 复权链重算（L，跨域管线）
+    q_ids:
+    - PQ-0012
+    - PQ-0119
+  WO-005:
+    gate_lines:
+    - '- 门位：主从裁定 Owner。'
+    heading: PQ-0018 板块口径映射（M+门位）
+    q_ids:
+    - PQ-0018
+  WO-006:
+    gate_lines:
+    - '- 门位：微链退役提名 Owner；其余可施工。'
+    heading: PQ-0064 链覆盖补挂（L，图谱管线）
+    q_ids:
+    - PQ-0064
+  WO-007:
+    gate_lines:
+    - '- 门位：DDL 选型+人工映射确认窗+CKG 降级裁定。'
+    heading: PQ-0067/0078 io_edge 挂接+行业聚合（L，DDL+映射册，合批；含 0065 并案）
+    q_ids:
+    - PQ-0065
+    - PQ-0067
+    - PQ-0078
+  WO-008:
+    gate_lines:
+    - '- 门位：阈值或路线裁定。'
+    heading: PQ-0068 产品同义词册（M，结构性预警）
+    q_ids:
+    - PQ-0068
+  WO-009:
+    gate_lines:
+    - '- 门位：载体选型+口径关系裁定 Owner。'
+    heading: PQ-0072 质押事件版本载体（L，DDL+回填）
+    q_ids:
+    - PQ-0072
+  WO-010:
+    gate_lines:
+    - '- 门位：PROTECTED-PATHS Owner 审批（本批已按自裁拆出，不硬闯）。'
+    heading: PQ-0172 DS 册 coverage 补注（S，单行——待审批）
+    q_ids:
+    - PQ-0172
+  WO-011:
+    gate_lines:
+    - '- 门位：回补通道（tushare 积分）已运营在册，无新增门位；CH 写入走既有管线规范。'
+    heading: PQ-0025/0026/0125/0126/0127/0163 A06 资金流历史回补（M，数据管线）
+    q_ids:
+    - PQ-0025
+    - PQ-0161

@@ -1,0 +1,59 @@
+# [A_config] module_id=MOD-CHAINPILE-METAQ | layer=config | stability=new | safety=M | ai_autonomy=human_gated
+# 宏观数据 window 槽取值域见 vocab/metaq_e1c_window_vocabulary.yaml；本件=预注册空间的**决策面**（不是清单）。
+# 清单面（取值域成员、名义/可行组合数、space_hash）由
+# scripts/governance/meta_question/wo_b2_e1c/build_e1c_space_register.py 机生写入
+# data/registers/metaq_e1c/e1c_space_cmb_e1c_v1.yaml（静态清单禁手工维护 [宪法§9.5]）。
+# 本件只冻结"空间怎么定义"的四项决策：槽结构、笛卡尔方案、容量上限、约束规则。
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+doc_type: e1c_space_design
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-gc-20260924
+date: '2026-09-24'
+space_id: cmb-e1c-v1
+version: 1.0.0
+tpl_ref: TPL-FAM-CMB@1.0.0
+design_source: docs/_working/chain_piling_campaign/infra_mining/11_template_generator_design.md §6
+applies_to_questions: [PQ-0104, PQ-0105, PQ-0106, PQ-0107, PQ-0108, PQ-0109]
+slots:
+  block:
+    mode: cartesian
+    domain_ref: factor_registry#factor_id
+    domain_source: docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml
+    note: >-
+      最小格=积木实例而非积木族。题面"积木族×算子×窗口"是分层视角；族级展开会把同族内不同积木
+      计为 1 格、系统性低估名义空间（N_eff 分母虚小=塌缩防线自欺），故按第一性原理下钻到积木级，
+      factor_class 降为分层属性（mode=attribute，不进笛卡尔积）。
+  block_family:
+    mode: attribute
+    domain_ref: factor_registry#factor_class
+    note: 分层标签（截断序按族配额均衡用，见 11 号设计 §3），不参与展开维。
+  operator:
+    mode: cartesian
+    domain_ref: gplearn#primitives
+    domain_source: gplearn.functions（库导出基元，arity 后缀命名约定）
+    note: 算子真源=开源库 gplearn 自身导出（版本随空间冻结），禁手写算子清单。
+  window:
+    mode: cartesian
+    domain_ref: metaq_e1c_window_vocabulary.yaml
+    note: 模板内建枚举（设计稿 §2 示例1 冻结值）。
+  track:
+    mode: cartesian
+    domain_ref: metaq_e1c_track_vocabulary.yaml
+    note: 三轨同空间是同考尺比较的前提（PQ-0105），故 track 进空间维而非事后打标。
+cartesian_plan: full_product(3 cartesian slots x track)
+constraints:
+  eligibility: 积木须可复算且未退役——status ∉ {deprecated, retired} 且 formula 非空（knowledge_only 类自然出局）
+  cross_slot: >-
+    积木频率决定可用窗口：frequency ∈ {quarterly, annual} → 仅 20d/60d；
+    frequency = intraday → 仅 1d/5d；其余（daily/空/event）→ 全窗可用。按 factor_registry 实读值机械算。
+  fingerprint_dedup: >-
+    同 (factor_class, formula, params) 指纹的积木只计 1 格（结构口径去马甲，与因子登记册
+    "日度秩相关>=0.85 不新登记"的判据同源，但在预注册层面先拒后算）。
+  pair_dedup: "候选指纹=sha256(track|block|operator|window)，同指纹跨批去重"
+  commutative_dedup: "可交换算子（add2/mul2/max2/min2）不重复计操作数排列（本空间未展开排列维，零膨胀）"
+  pit_guard: 取值域快照=冻结时刻已入库值；后续新增积木/算子/窗一律走 expand+新 space_hash
+cap_template: 200
+cap_batch: 600
+preregistered_space: required
+seal_policy: 扩容申请（新 space_hash）必须先令旧空间 seal，否则 expand 拒登（PQ-0109 违例=0 的机制保障）

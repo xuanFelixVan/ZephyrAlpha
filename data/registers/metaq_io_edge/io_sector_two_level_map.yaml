@@ -1,0 +1,4652 @@
+# 283 问战役施工机读册（生成器产出；本头由落地批补写，生成器侧重放须同步 emit 见 closure_ledger 待办）
+ttl: task_bound
+completes_when: 283 问战役施工闭环验收后随总包归档
+registry: io_sector_two_level_map
+registry_version: 1.0.0
+workorder: WO-007（PQ-0067 / PQ-0078 / PQ-0065 三问并治）件 1
+generated_by: scripts/governance/meta_question/wo007/build_io_sector_map.py
+generated_at: '2026-09-24T15:44:18.050757+08:00'
+authority:
+  io_sector_vocab: 国家统计局《中国 2020 年投入产出表》153 部门分类（生产者价格）；实测真源=PG public.ig_io_edge（year=2020, source='io_official', market='cn',
+    as_of=2020-12-31, valid_from=2022-08-31, source_doc='io_china_2020_153|ionet(github Carol-seven/ionet) 官方表转存|2026-09-13'）
+  io_sector_field_measured: ig_io_edge 部门字段实测=(from_sector_code,to_sector_code) 三位零填码 001-153 + (from_sector,to_sector) 同名原生中文部门词；无任何
+    node 挂接列（实测列清单见件 2 header）
+  standard_industry_vocab: 申万 2021 一级 31 行业（在用口径）；词表实测真源=CH c1_market.industry_class(industry_level=1, data_source='ifind')；二级父系由同
+    symbol L1/L2 行共现机器派生；801xxx.SI 码锚由 CH c1_market.index_list(publisher 申银万国, category 行业指数, 名去'申万'前缀+无 Ⅱ/Ⅲ 档位后缀=一级) 派生
+  rejected_calibers:
+  - 中证/中信：industry_class.industry_zsi 在 L1 去重实测=0（全空列），不可用作在用口径
+  - 通达信/同花顺板块：c1_market.kline_sector(880xxx.SH)/concept_sector(akshare 375)/sector_list(miniqmt 5217) 系行情板块与概念板块，非行业分类真源（与
+    io 部门不同本体，且板块名单为空/漂移）
+  - ig_chain.category：粒度混杂（一级名/二级名/网页噪声标题），只能作为映射目标侧候选池，不能充当标准行业码
+  prior_rule_yaml:
+    path: D:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\io_sector_sws_map.yaml
+    sha256_12: 13c7a3503019
+    version: 1.0.0
+    role: 独立信号 sig_prior（不是裁决者；与本册冲突的行落 needs_human，反向修订 YAML 走规则数据通道）
+  graph_side_category_resolution:
+    category_is_l1: 28
+    category_is_l2_child: 9
+    category_unresolved: 11
+ch_vocab_meta:
+  sws_l1_names_in_use: 31
+  sws_l2_to_l1_derived_pairs: 131
+  sws_l1_index_code_anchors: 31
+  ch_zsi_l1_distinct: 1
+  ch_industry_class_data_source: ifind
+  ch_industry_class_valid_from_min: '2026-08-03'
+alias_lexicon_stats:
+  keys: 5721
+  entry_sources:
+    sws_l1_vocab: 33
+    ig_node_name: 5139
+    ig_chain_name: 615
+    ig_chain_token: 411
+    sws_l2_parent_from_ch: 157
+    ig_node_alias: 149
+method:
+  algorithm: 确定性四段：①归一化（去空白/去'（已并入…）'墓碑后缀/去Ⅰ-Ⅴ档位后缀/形态词缀剥一次/连接词切分）②生成式别名表命中（键=申万 L1 ∪ CH 派生 L2 父系 ∪ ig_node 名与别名 ∪ 活跃链名与切词）③代码带锚（153
+    码连号 ±3 带内，种子=sig_lex 与 sig_prior 一致行，多数表决）④非先验三票一致数定 confirm_status（≥2 或'包含'级 ≥3）
+  auto_rule: auto_matched ⇔ 目标 ∈ 在用申万一级词表 且 agree_votes ≥ (2 if basis∈{精确,别名} else 3)
+  no_manual_list: 零手工行：全部映射由算法产出；人工窗只升级 confirm_status，不新增映射面（静态清单禁手工维护铁律）
+  reproducibility: 无随机、无网络、无 wall-clock 参与判定；同输入必产同映射
+exemption_clause:
+  rule: confirm_status=needs_human（等价 hard_judge_allowed=false）的部门行，其 L1 行业归属在人工确认窗关闭前仅可用于结构分析、候选池构造与报告说明，禁止作为阈值判定、边激活、因子打分或决策路由的硬事实输入。
+  why: PQ-0078 题面实证「95% 需人工确认」。投入产出部门口径（产品/产业属性）与申万、图谱口径（上市公司行业属性）是两个不同本体，名称算法无法 100% 对齐；强行全 auto=制造第二假事实源（同 CKG 一致率陷阱，见件
+    3 ckg_structural_prior_tier.yaml）。
+  confirmation_window: 待排产（Owner 裁定④=153 部门映射排产）；确认人逐行复核 needs_human 行，升级为 confirm_status=human_confirmed 并填 confirm_by/confirm_note。
+  escalation: 人工确认后若与 io_sector_sws_map.yaml 冲突，反向修订该 YAML（规则数据单一真源方向不变：改 YAML→同步 DB），再重跑本生成器，禁止直接手改本册（本册=生成物）。
+stats:
+  sectors_total: 153
+  auto_matched: 24
+  needs_human: 129
+  auto_ratio: 0.1569
+  by_match_basis:
+    包含: 83
+    别名: 25
+    未命中: 43
+    精确: 2
+  by_confirm_status:
+    needs_human: 129
+    auto_matched: 24
+  unmatched_n: 43
+  unmatched:
+  - io_sector_code: '014'
+    io_sector_name: 植物油加工品
+  - io_sector_code: '017'
+    io_sector_name: 水产加工品
+  - io_sector_code: 019
+    io_sector_name: 方便食品
+  - io_sector_code: '023'
+    io_sector_name: 酒精和酒
+  - io_sector_code: '025'
+    io_sector_name: 精制茶
+  - io_sector_code: '027'
+    io_sector_name: 棉、化纤纺织及印染精加工品
+  - io_sector_code: 028
+    io_sector_name: 毛纺织及染整精加工品
+  - io_sector_code: 029
+    io_sector_name: 麻、丝绢纺织及加工品
+  - io_sector_code: '031'
+    io_sector_name: 纺织制成品
+  - io_sector_code: '032'
+    io_sector_name: 纺织服装服饰
+  - io_sector_code: '034'
+    io_sector_name: 鞋
+  - io_sector_code: '036'
+    io_sector_name: 家具
+  - io_sector_code: 039
+    io_sector_name: 工艺美术品
+  - io_sector_code: '041'
+    io_sector_name: 精炼石油和核燃料加工品
+  - io_sector_code: '044'
+    io_sector_name: 肥料
+  - io_sector_code: '045'
+    io_sector_name: 农药
+  - io_sector_code: '061'
+    io_sector_name: 钢
+  - io_sector_code: 068
+    io_sector_name: 金属加工机械
+  - io_sector_code: '070'
+    io_sector_name: 泵、阀门、压缩机及类似机械
+  - io_sector_code: '072'
+    io_sector_name: 文化、办公用机械
+  - io_sector_code: '076'
+    io_sector_name: 农、林、牧、渔专用机械
+  - io_sector_code: 088
+    io_sector_name: 家用器具
+  - io_sector_code: '103'
+    io_sector_name: 住宅房屋建筑
+  - io_sector_code: '105'
+    io_sector_name: 铁路、道路、隧道和桥梁工程建筑
+  - io_sector_code: '107'
+    io_sector_name: 建筑安装
+  - io_sector_code: '111'
+    io_sector_name: 铁路旅客运输
+  - io_sector_code: '112'
+    io_sector_name: 铁路货物运输和运输辅助活动
+  - io_sector_code: '113'
+    io_sector_name: 城市公共交通及公路客运
+  - io_sector_code: '114'
+    io_sector_name: 道路货物运输和运输辅助活动
+  - io_sector_code: '115'
+    io_sector_name: 水上旅客运输
+  - io_sector_code: '116'
+    io_sector_name: 水上货物运输和运输辅助活动
+  - io_sector_code: '117'
+    io_sector_name: 航空旅客运输
+  - io_sector_code: '118'
+    io_sector_name: 航空货物运输和运输辅助活动
+  - io_sector_code: '119'
+    io_sector_name: 管道运输
+  - io_sector_code: '120'
+    io_sector_name: 多式联运和运输代理
+  - io_sector_code: '122'
+    io_sector_name: 邮政
+  - io_sector_code: '123'
+    io_sector_name: 住宿
+  - io_sector_code: '136'
+    io_sector_name: 研究和试验发展
+  - io_sector_code: '139'
+    io_sector_name: 水利管理
+  - io_sector_code: '141'
+    io_sector_name: 公共设施及土地管理
+  - io_sector_code: '145'
+    io_sector_name: 卫生
+  - io_sector_code: '149'
+    io_sector_name: 文化艺术
+  - io_sector_code: '151'
+    io_sector_name: 娱乐
+  prior_rule_agreement: 89
+  prior_rule_method_manual: 31
+  ckg_corroboration_agrees: 7
+  distinct_l1_targets: 27
+  with_node_anchor: 85
+  node_anchor_exact: 13
+  node_anchor_alias: 2
+  auto_and_node_anchored: 19
+  empty_node_pool: 0
+mappings:
+- io_sector_code: '001'
+  io_sector_name: 农产品
+  edge_as_from_n: 68
+  edge_as_to_n: 109
+  l1_industry: 农林牧渔
+  l1_industry_code: 801010.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 农林牧渔
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 农林牧渔
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 27
+    node_anchor:
+      node_id: ND-24574cd134df
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '002'
+  io_sector_name: 林产品
+  edge_as_from_n: 131
+  edge_as_to_n: 105
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 农林牧渔
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '003'
+  io_sector_name: 畜牧产品
+  edge_as_from_n: 36
+  edge_as_to_n: 109
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 农林牧渔
+    sig_prior_method: keyword
+    sig_band_target: 煤炭
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '004'
+  io_sector_name: 渔产品
+  edge_as_from_n: 22
+  edge_as_to_n: 109
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 农林牧渔
+    sig_prior_method: keyword
+    sig_band_target: 煤炭
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '005'
+  io_sector_name: 农、林、牧、渔服务产品
+  edge_as_from_n: 13
+  edge_as_to_n: 117
+  l1_industry: 国防军工
+  l1_industry_code: 801740.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 国防军工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 基础化工
+    - 汽车
+    sig_prior_target: 农林牧渔
+    sig_prior_method: keyword
+    sig_band_target: 煤炭
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 116
+    node_anchor:
+      node_id: ND-92a3f9cab9e0
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '006'
+  io_sector_name: 煤炭开采和洗选产品
+  edge_as_from_n: 131
+  edge_as_to_n: 118
+  l1_industry: 煤炭
+  l1_industry_code: 801950.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 煤炭
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 煤炭
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 10
+    node_anchor:
+      node_id: ND-932a9f0a1006
+      match_method: exact:in_industry_pool
+      candidate_n: 2
+- io_sector_code: '007'
+  io_sector_name: 石油和天然气开采产品
+  edge_as_from_n: 60
+  edge_as_to_n: 119
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 石油石化
+    sig_prior_target: 石油石化
+    sig_prior_method: keyword
+    sig_band_target: 煤炭
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 008
+  io_sector_name: 黑色金属矿采选产品
+  edge_as_from_n: 10
+  edge_as_to_n: 119
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 钢铁
+    sig_prior_method: keyword
+    sig_band_target: 煤炭
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 009
+  io_sector_name: 有色金属矿采选产品
+  edge_as_from_n: 18
+  edge_as_to_n: 119
+  l1_industry: 有色金属
+  l1_industry_code: 801050.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 有色金属
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 有色金属
+    sig_prior_method: keyword
+    sig_band_target: 煤炭
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 32
+    candidate_node_pool_n: 183
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:graph_wide
+      candidate_n: 1
+- io_sector_code: '010'
+  io_sector_name: 非金属矿采选产品
+  edge_as_from_n: 132
+  edge_as_to_n: 118
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 建筑材料
+    sig_prior_method: manual
+    sig_band_target: 农林牧渔
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '011'
+  io_sector_name: 开采辅助活动和其他采矿产品
+  edge_as_from_n: 9
+  edge_as_to_n: 114
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 汽车
+    sig_prior_target: 石油石化
+    sig_prior_method: manual
+    sig_band_target: 农林牧渔
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '012'
+  io_sector_name: 谷物磨制品
+  edge_as_from_n: 32
+  edge_as_to_n: 102
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 建筑材料
+    - 综合
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: 农林牧渔
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: '013'
+  io_sector_name: 饲料加工品
+  edge_as_from_n: 15
+  edge_as_to_n: 117
+  l1_industry: 农林牧渔
+  l1_industry_code: 801010.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 农林牧渔
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 农林牧渔
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 27
+    node_anchor:
+      node_id: ND-a908ec5f5520
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '014'
+  io_sector_name: 植物油加工品
+  edge_as_from_n: 41
+  edge_as_to_n: 107
+  l1_industry: 食品饮料
+  l1_industry_code: 801120.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: 农林牧渔
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 34
+    node_anchor: null
+- io_sector_code: '015'
+  io_sector_name: 糖及糖制品
+  edge_as_from_n: 23
+  edge_as_to_n: 108
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 建筑材料
+    - 综合
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: 农林牧渔
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: '016'
+  io_sector_name: 屠宰及肉类加工品
+  edge_as_from_n: 26
+  edge_as_to_n: 117
+  l1_industry: 农林牧渔
+  l1_industry_code: 801010.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 农林牧渔
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: manual
+    sig_band_target: 农林牧渔
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 27
+    node_anchor: null
+- io_sector_code: '017'
+  io_sector_name: 水产加工品
+  edge_as_from_n: 27
+  edge_as_to_n: 116
+  l1_industry: 食品饮料
+  l1_industry_code: 801120.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 34
+    node_anchor: null
+- io_sector_code: 018
+  io_sector_name: 蔬菜、水果、坚果和其他农副食品加工品
+  edge_as_from_n: 30
+  edge_as_to_n: 115
+  l1_industry: 食品饮料
+  l1_industry_code: 801120.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 食品饮料
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 34
+    node_anchor: null
+- io_sector_code: 019
+  io_sector_name: 方便食品
+  edge_as_from_n: 12
+  edge_as_to_n: 119
+  l1_industry: 食品饮料
+  l1_industry_code: 801120.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 34
+    node_anchor: null
+- io_sector_code: '020'
+  io_sector_name: 乳制品
+  edge_as_from_n: 17
+  edge_as_to_n: 112
+  l1_industry: 食品饮料
+  l1_industry_code: 801120.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 食品饮料
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 34
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:graph_wide
+      candidate_n: 5
+- io_sector_code: '021'
+  io_sector_name: 调味品、发酵制品
+  edge_as_from_n: 16
+  edge_as_to_n: 118
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 建筑材料
+    - 综合
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: '022'
+  io_sector_name: 其他食品
+  edge_as_from_n: 32
+  edge_as_to_n: 119
+  l1_industry: 汽车
+  l1_industry_code: 801880.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 汽车
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: 食品加工
+    sig_ckg_target: 食品饮料
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 18
+    candidate_node_pool_n: 118
+    node_anchor: null
+- io_sector_code: '023'
+  io_sector_name: 酒精和酒
+  edge_as_from_n: 153
+  edge_as_to_n: 118
+  l1_industry: 食品饮料
+  l1_industry_code: 801120.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 34
+    node_anchor: null
+- io_sector_code: '024'
+  io_sector_name: 饮料
+  edge_as_from_n: 153
+  edge_as_to_n: 118
+  l1_industry: 食品饮料
+  l1_industry_code: 801120.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 食品饮料
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 34
+    node_anchor: null
+- io_sector_code: '025'
+  io_sector_name: 精制茶
+  edge_as_from_n: 153
+  edge_as_to_n: 107
+  l1_industry: 食品饮料
+  l1_industry_code: 801120.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 食品饮料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 34
+    node_anchor: null
+- io_sector_code: '026'
+  io_sector_name: 烟草制品
+  edge_as_from_n: 147
+  edge_as_to_n: 108
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 建筑材料
+    - 综合
+    - 轻工制造
+    sig_prior_target: 轻工制造
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: '027'
+  io_sector_name: 棉、化纤纺织及印染精加工品
+  edge_as_from_n: 95
+  edge_as_to_n: 111
+  l1_industry: 纺织服饰
+  l1_industry_code: 801130.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 纺织服饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 7
+    node_anchor: null
+- io_sector_code: 028
+  io_sector_name: 毛纺织及染整精加工品
+  edge_as_from_n: 45
+  edge_as_to_n: 110
+  l1_industry: 纺织服饰
+  l1_industry_code: 801130.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 纺织服饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 7
+    node_anchor: null
+- io_sector_code: 029
+  io_sector_name: 麻、丝绢纺织及加工品
+  edge_as_from_n: 75
+  edge_as_to_n: 110
+  l1_industry: 纺织服饰
+  l1_industry_code: 801130.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 纺织服饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 7
+    node_anchor: null
+- io_sector_code: '030'
+  io_sector_name: 针织或钩针编织及其制品
+  edge_as_from_n: 147
+  edge_as_to_n: 105
+  l1_industry: 有色金属
+  l1_industry_code: 801050.SI
+  match_basis: 别名
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 有色金属
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 纺织服饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 32
+    candidate_node_pool_n: 183
+    node_anchor:
+      node_id: ND-6ef046c31be9
+      match_method: alias:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '031'
+  io_sector_name: 纺织制成品
+  edge_as_from_n: 152
+  edge_as_to_n: 110
+  l1_industry: 纺织服饰
+  l1_industry_code: 801130.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 纺织服饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 7
+    node_anchor: null
+- io_sector_code: '032'
+  io_sector_name: 纺织服装服饰
+  edge_as_from_n: 153
+  edge_as_to_n: 108
+  l1_industry: 纺织服饰
+  l1_industry_code: 801130.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 纺织服饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 7
+    node_anchor: null
+- io_sector_code: '033'
+  io_sector_name: 皮革、毛皮、羽毛及其制品
+  edge_as_from_n: 140
+  edge_as_to_n: 112
+  l1_industry: 有色金属
+  l1_industry_code: 801050.SI
+  match_basis: 别名
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 有色金属
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 轻工制造
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 32
+    candidate_node_pool_n: 183
+    node_anchor:
+      node_id: ND-6ef046c31be9
+      match_method: alias:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '034'
+  io_sector_name: 鞋
+  edge_as_from_n: 150
+  edge_as_to_n: 109
+  l1_industry: 轻工制造
+  l1_industry_code: 801140.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 轻工制造
+    sig_prior_method: manual
+    sig_band_target: 轻工制造
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 7
+    candidate_node_pool_n: 15
+    node_anchor: null
+- io_sector_code: '035'
+  io_sector_name: 木材加工和木、竹、藤、棕、草制品
+  edge_as_from_n: 150
+  edge_as_to_n: 113
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 建筑材料
+    - 综合
+    sig_prior_target: 轻工制造
+    sig_prior_method: keyword
+    sig_band_target: 轻工制造
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: '036'
+  io_sector_name: 家具
+  edge_as_from_n: 153
+  edge_as_to_n: 114
+  l1_industry: 轻工制造
+  l1_industry_code: 801140.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 轻工制造
+    sig_prior_method: keyword
+    sig_band_target: 轻工制造
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 7
+    candidate_node_pool_n: 15
+    node_anchor: null
+- io_sector_code: '037'
+  io_sector_name: 造纸和纸制品
+  edge_as_from_n: 153
+  edge_as_to_n: 116
+  l1_industry: 轻工制造
+  l1_industry_code: 801140.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 轻工制造
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 轻工制造
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 7
+    candidate_node_pool_n: 15
+    node_anchor:
+      node_id: ND-af44118d5084
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 038
+  io_sector_name: 印刷和记录媒介复制品
+  edge_as_from_n: 153
+  edge_as_to_n: 109
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 建筑材料
+    - 电子
+    - 综合
+    - 轻工制造
+    sig_prior_target: 轻工制造
+    sig_prior_method: keyword
+    sig_band_target: 轻工制造
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: 039
+  io_sector_name: 工艺美术品
+  edge_as_from_n: 151
+  edge_as_to_n: 116
+  l1_industry: 轻工制造
+  l1_industry_code: 801140.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 轻工制造
+    sig_prior_method: manual
+    sig_band_target: 轻工制造
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 7
+    candidate_node_pool_n: 15
+    node_anchor: null
+- io_sector_code: '040'
+  io_sector_name: 文教、体育和娱乐用品
+  edge_as_from_n: 152
+  edge_as_to_n: 116
+  l1_industry: 社会服务
+  l1_industry_code: 801210.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 社会服务
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 轻工制造
+    sig_prior_method: keyword
+    sig_band_target: 轻工制造
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 4
+    candidate_node_pool_n: 5
+    node_anchor: null
+- io_sector_code: '041'
+  io_sector_name: 精炼石油和核燃料加工品
+  edge_as_from_n: 153
+  edge_as_to_n: 114
+  l1_industry: 石油石化
+  l1_industry_code: 801960.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 石油石化
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 17
+    node_anchor: null
+- io_sector_code: '042'
+  io_sector_name: 煤炭加工品
+  edge_as_from_n: 38
+  edge_as_to_n: 113
+  l1_industry: 煤炭
+  l1_industry_code: 801950.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 煤炭
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 煤炭
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 10
+    node_anchor: null
+- io_sector_code: '043'
+  io_sector_name: 基础化学原料
+  edge_as_from_n: 137
+  edge_as_to_n: 116
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 基础化工
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-b7a03446dc4f
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '044'
+  io_sector_name: 肥料
+  edge_as_from_n: 15
+  edge_as_to_n: 116
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 基础化工
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor: null
+- io_sector_code: '045'
+  io_sector_name: 农药
+  edge_as_from_n: 19
+  edge_as_to_n: 117
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 基础化工
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: 农化制品
+    sig_ckg_target: 基础化工
+    ckg_corroborates: true
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor: null
+- io_sector_code: '046'
+  io_sector_name: 涂料、油墨、颜料及类似产品
+  edge_as_from_n: 150
+  edge_as_to_n: 116
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 基础化工
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 3
+- io_sector_code: '047'
+  io_sector_name: 合成材料
+  edge_as_from_n: 144
+  edge_as_to_n: 115
+  l1_industry: 医药生物
+  l1_industry_code: 801150.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 医药生物
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 基础化工
+    - 电子
+    sig_prior_target: 基础化工
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 34
+    candidate_node_pool_n: 265
+    node_anchor:
+      node_id: ND-5c0914796995
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 048
+  io_sector_name: 专用化学产品和炸药、火工、焰火产品
+  edge_as_from_n: 149
+  edge_as_to_n: 119
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 基础化工
+    sig_prior_method: keyword
+    sig_band_target: 基础化工
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 3
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 049
+  io_sector_name: 日用化学产品
+  edge_as_from_n: 153
+  edge_as_to_n: 118
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 美容护理
+    sig_prior_method: manual
+    sig_band_target: 基础化工
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '050'
+  io_sector_name: 医药制品
+  edge_as_from_n: 151
+  edge_as_to_n: 124
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 交通运输
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 医药生物
+    - 基础化工
+    - 建筑材料
+    - 综合
+    sig_prior_target: 医药生物
+    sig_prior_method: keyword
+    sig_band_target: 基础化工
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:graph_wide
+      candidate_n: 5
+- io_sector_code: '051'
+  io_sector_name: 化学纤维制品
+  edge_as_from_n: 68
+  edge_as_to_n: 114
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 基础化工
+    sig_prior_method: keyword
+    sig_band_target: 基础化工
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 3
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 3
+- io_sector_code: '052'
+  io_sector_name: 橡胶制品
+  edge_as_from_n: 151
+  edge_as_to_n: 113
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 基础化工
+    sig_prior_method: keyword
+    sig_band_target: 基础化工
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 3
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-ba54c96c9786
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '053'
+  io_sector_name: 塑料制品
+  edge_as_from_n: 152
+  edge_as_to_n: 113
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 基础化工
+    sig_prior_method: keyword
+    sig_band_target: 基础化工
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 3
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 4
+- io_sector_code: '054'
+  io_sector_name: 水泥、石灰和石膏
+  edge_as_from_n: 141
+  edge_as_to_n: 110
+  l1_industry: 建筑材料
+  l1_industry_code: 801061.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 建筑材料
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 建筑材料
+    sig_prior_method: keyword
+    sig_band_target: 基础化工
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 7
+    candidate_node_pool_n: 69
+    node_anchor: null
+- io_sector_code: '055'
+  io_sector_name: 石膏、水泥制品及类似制品
+  edge_as_from_n: 131
+  edge_as_to_n: 110
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 建筑材料
+    - 综合
+    sig_prior_target: 建筑材料
+    sig_prior_method: keyword
+    sig_band_target: 基础化工
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: '056'
+  io_sector_name: 砖瓦、石材等建筑材料
+  edge_as_from_n: 136
+  edge_as_to_n: 110
+  l1_industry: 建筑材料
+  l1_industry_code: 801061.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 建筑材料
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 建筑材料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 7
+    candidate_node_pool_n: 69
+    node_anchor:
+      node_id: ND-b43624ed1f8a
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '057'
+  io_sector_name: 玻璃和玻璃制品
+  edge_as_from_n: 141
+  edge_as_to_n: 113
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 建筑材料
+    - 电子
+    - 综合
+    sig_prior_target: 建筑材料
+    sig_prior_method: keyword
+    sig_band_target: 建筑材料
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: 058
+  io_sector_name: 陶瓷制品
+  edge_as_from_n: 116
+  edge_as_to_n: 112
+  l1_industry: 医药生物
+  l1_industry_code: 801150.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 医药生物
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 国防军工
+    - 基础化工
+    - 建筑材料
+    - 汽车
+    - 电子
+    - 综合
+    - 通信
+    sig_prior_target: 建筑材料
+    sig_prior_method: keyword
+    sig_band_target: 建筑材料
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 34
+    candidate_node_pool_n: 265
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:graph_wide
+      candidate_n: 5
+- io_sector_code: 059
+  io_sector_name: 耐火材料制品
+  edge_as_from_n: 71
+  edge_as_to_n: 112
+  l1_industry: 建筑材料
+  l1_industry_code: 801061.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 建筑材料
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 建筑材料
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 7
+    candidate_node_pool_n: 69
+    node_anchor:
+      node_id: ND-0453904cb5bf
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '060'
+  io_sector_name: 石墨及其他非金属矿物制品
+  edge_as_from_n: 125
+  edge_as_to_n: 112
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 建筑材料
+    - 汽车
+    - 综合
+    sig_prior_target: 建筑材料
+    sig_prior_method: manual
+    sig_band_target: 建筑材料
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: '061'
+  io_sector_name: 钢
+  edge_as_from_n: 26
+  edge_as_to_n: 115
+  l1_industry: 钢铁
+  l1_industry_code: 801040.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 钢铁
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 4
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '062'
+  io_sector_name: 钢压延产品
+  edge_as_from_n: 143
+  edge_as_to_n: 115
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 钢铁
+    sig_prior_target: 钢铁
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '063'
+  io_sector_name: 铁及铁合金产品
+  edge_as_from_n: 86
+  edge_as_to_n: 117
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 钢铁
+    sig_prior_method: keyword
+    sig_band_target: 有色金属
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '064'
+  io_sector_name: 有色金属及其合金
+  edge_as_from_n: 114
+  edge_as_to_n: 121
+  l1_industry: 有色金属
+  l1_industry_code: 801050.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 有色金属
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 有色金属
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 32
+    candidate_node_pool_n: 183
+    node_anchor: null
+- io_sector_code: '065'
+  io_sector_name: 有色金属压延加工品
+  edge_as_from_n: 125
+  edge_as_to_n: 119
+  l1_industry: 有色金属
+  l1_industry_code: 801050.SI
+  match_basis: 包含
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 有色金属
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 有色金属
+    sig_prior_method: keyword
+    sig_band_target: 有色金属
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 3
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 32
+    candidate_node_pool_n: 183
+    node_anchor:
+      node_id: ND-b46020a658e7
+      match_method: contains:graph_wide
+      candidate_n: 1
+- io_sector_code: '066'
+  io_sector_name: 金属制品
+  edge_as_from_n: 153
+  edge_as_to_n: 121
+  l1_industry: 医药生物
+  l1_industry_code: 801150.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 医药生物
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 基础化工
+    - 建筑材料
+    - 有色金属
+    - 机械设备
+    - 电子
+    - 综合
+    sig_prior_target: 钢铁
+    sig_prior_method: manual
+    sig_band_target: 有色金属
+    sig_code_anchor: false
+    sig_ckg_root: 通用设备
+    sig_ckg_target: 机械设备
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 34
+    candidate_node_pool_n: 265
+    node_anchor:
+      node_id: ND-1bdff816a23b
+      match_method: contains:graph_wide
+      candidate_n: 5
+- io_sector_code: '067'
+  io_sector_name: 锅炉及原动设备
+  edge_as_from_n: 124
+  edge_as_to_n: 115
+  l1_industry: 综合
+  l1_industry_code: 801230.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 综合
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 通信
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: 有色金属
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 35
+    candidate_node_pool_n: 337
+    node_anchor:
+      node_id: ND-dbc77e8640eb
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 068
+  io_sector_name: 金属加工机械
+  edge_as_from_n: 125
+  edge_as_to_n: 115
+  l1_industry: 机械设备
+  l1_industry_code: 801070.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 120
+    node_anchor: null
+- io_sector_code: 069
+  io_sector_name: 物料搬运设备
+  edge_as_from_n: 130
+  edge_as_to_n: 117
+  l1_industry: 综合
+  l1_industry_code: 801230.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 综合
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 通信
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 35
+    candidate_node_pool_n: 337
+    node_anchor:
+      node_id: ND-dbc77e8640eb
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '070'
+  io_sector_name: 泵、阀门、压缩机及类似机械
+  edge_as_from_n: 139
+  edge_as_to_n: 114
+  l1_industry: 机械设备
+  l1_industry_code: 801070.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 120
+    node_anchor: null
+- io_sector_code: '071'
+  io_sector_name: 烘炉、风机、包装等设备
+  edge_as_from_n: 103
+  edge_as_to_n: 116
+  l1_industry: 综合
+  l1_industry_code: 801230.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 综合
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 通信
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 35
+    candidate_node_pool_n: 337
+    node_anchor:
+      node_id: ND-dbc77e8640eb
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '072'
+  io_sector_name: 文化、办公用机械
+  edge_as_from_n: 153
+  edge_as_to_n: 110
+  l1_industry: 机械设备
+  l1_industry_code: 801070.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 机械设备
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 120
+    node_anchor: null
+- io_sector_code: '073'
+  io_sector_name: 其他通用设备
+  edge_as_from_n: 152
+  edge_as_to_n: 115
+  l1_industry: 机械设备
+  l1_industry_code: 801070.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 机械设备
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: 通用设备
+    sig_ckg_target: 机械设备
+    ckg_corroborates: true
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 120
+    node_anchor:
+      node_id: ND-becf23221c52
+      match_method: contains:graph_wide
+      candidate_n: 2
+- io_sector_code: '074'
+  io_sector_name: 采矿、冶金、建筑专用设备
+  edge_as_from_n: 47
+  edge_as_to_n: 117
+  l1_industry: 机械设备
+  l1_industry_code: 801070.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 机械设备
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 120
+    node_anchor:
+      node_id: ND-becf23221c52
+      match_method: contains:graph_wide
+      candidate_n: 2
+- io_sector_code: '075'
+  io_sector_name: 化工、木材、非金属加工专用设备
+  edge_as_from_n: 64
+  edge_as_to_n: 116
+  l1_industry: 机械设备
+  l1_industry_code: 801070.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 机械设备
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 120
+    node_anchor:
+      node_id: ND-becf23221c52
+      match_method: contains:graph_wide
+      candidate_n: 2
+- io_sector_code: '076'
+  io_sector_name: 农、林、牧、渔专用机械
+  edge_as_from_n: 15
+  edge_as_to_n: 115
+  l1_industry: 机械设备
+  l1_industry_code: 801070.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 120
+    node_anchor: null
+- io_sector_code: '077'
+  io_sector_name: 医疗仪器设备及器械
+  edge_as_from_n: 3
+  edge_as_to_n: 114
+  l1_industry: 医药生物
+  l1_industry_code: 801150.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 医药生物
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 综合
+    - 通信
+    sig_prior_target: 医药生物
+    sig_prior_method: keyword
+    sig_band_target: 汽车
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 34
+    candidate_node_pool_n: 265
+    node_anchor:
+      node_id: ND-becf23221c52
+      match_method: contains:graph_wide
+      candidate_n: 2
+- io_sector_code: 078
+  io_sector_name: 其他专用设备
+  edge_as_from_n: 151
+  edge_as_to_n: 119
+  l1_industry: 机械设备
+  l1_industry_code: 801070.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 机械设备
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: 汽车
+    sig_code_anchor: false
+    sig_ckg_root: 专用设备
+    sig_ckg_target: 机械设备
+    ckg_corroborates: true
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 120
+    node_anchor:
+      node_id: ND-becf23221c52
+      match_method: contains:graph_wide
+      candidate_n: 2
+- io_sector_code: 079
+  io_sector_name: 汽车整车
+  edge_as_from_n: 18
+  edge_as_to_n: 114
+  l1_industry: 汽车
+  l1_industry_code: 801880.SI
+  match_basis: 包含
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 汽车
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 汽车
+    sig_prior_method: keyword
+    sig_band_target: 汽车
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 3
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 18
+    candidate_node_pool_n: 118
+    node_anchor:
+      node_id: ND-02f61227328a
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: 080
+  io_sector_name: 汽车零部件及配件
+  edge_as_from_n: 150
+  edge_as_to_n: 111
+  l1_industry: 汽车
+  l1_industry_code: 801880.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 汽车
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 汽车
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 18
+    candidate_node_pool_n: 118
+    node_anchor:
+      node_id: ND-8ae9eb0b8d05
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 081
+  io_sector_name: 铁路运输和城市轨道交通设备
+  edge_as_from_n: 37
+  edge_as_to_n: 117
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 交通运输
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 机械设备
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor:
+      node_id: ND-e6a626f250cc
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 082
+  io_sector_name: 船舶及相关装置
+  edge_as_from_n: 21
+  edge_as_to_n: 117
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 交通运输
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 国防军工
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: 083
+  io_sector_name: 其他交通运输设备
+  edge_as_from_n: 146
+  edge_as_to_n: 117
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 交通运输
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 汽车
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor:
+      node_id: ND-becf23221c52
+      match_method: contains:graph_wide
+      candidate_n: 2
+- io_sector_code: 084
+  io_sector_name: 电机
+  edge_as_from_n: 151
+  edge_as_to_n: 115
+  l1_industry: 电力设备
+  l1_industry_code: 801730.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 电力设备
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 电力设备
+    sig_prior_method: keyword
+    sig_band_target: 电力设备
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 3
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 25
+    candidate_node_pool_n: 193
+    node_anchor:
+      node_id: ND-7091eafbe724
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 085
+  io_sector_name: 输配电及控制设备
+  edge_as_from_n: 143
+  edge_as_to_n: 113
+  l1_industry: 综合
+  l1_industry_code: 801230.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 综合
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 通信
+    sig_prior_target: 电力设备
+    sig_prior_method: keyword
+    sig_band_target: 电力设备
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 35
+    candidate_node_pool_n: 337
+    node_anchor:
+      node_id: ND-dbc77e8640eb
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 086
+  io_sector_name: 电线、电缆、光缆及电工器材
+  edge_as_from_n: 151
+  edge_as_to_n: 111
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 电力设备
+    sig_prior_method: manual
+    sig_band_target: 电力设备
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor:
+      node_id: ND-c3d2de90bbc4
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 087
+  io_sector_name: 电池
+  edge_as_from_n: 142
+  edge_as_to_n: 113
+  l1_industry: 电力设备
+  l1_industry_code: 801730.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 电力设备
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 电力设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: 电力设备
+    sig_ckg_target: 电力设备
+    ckg_corroborates: true
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 25
+    candidate_node_pool_n: 193
+    node_anchor:
+      node_id: ND-ba23b881c7b0
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 088
+  io_sector_name: 家用器具
+  edge_as_from_n: 149
+  edge_as_to_n: 113
+  l1_industry: 家用电器
+  l1_industry_code: 801110.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 家用电器
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 10
+    candidate_node_pool_n: 50
+    node_anchor: null
+- io_sector_code: 089
+  io_sector_name: 其他电气机械和器材
+  edge_as_from_n: 153
+  edge_as_to_n: 114
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 别名
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 电力设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor:
+      node_id: ND-c3d2de90bbc4
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 090
+  io_sector_name: 计算机
+  edge_as_from_n: 153
+  edge_as_to_n: 109
+  l1_industry: 计算机
+  l1_industry_code: 801750.SI
+  match_basis: 精确
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 计算机
+    sig_lex_basis: 精确
+    sig_lex_ties: []
+    sig_prior_target: 计算机
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: true
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 13
+    candidate_node_pool_n: 39
+    node_anchor:
+      node_id: ND-74e734fd7117
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 091
+  io_sector_name: 通信设备
+  edge_as_from_n: 150
+  edge_as_to_n: 109
+  l1_industry: 通信
+  l1_industry_code: 801770.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 通信
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 通信
+    sig_prior_method: keyword
+    sig_band_target: 计算机
+    sig_code_anchor: false
+    sig_ckg_root: 通信
+    sig_ckg_target: 通信
+    ckg_corroborates: true
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 80
+    node_anchor:
+      node_id: ND-7cca60b1bac7
+      match_method: contains:in_industry_pool
+      candidate_n: 4
+- io_sector_code: 092
+  io_sector_name: 广播电视设备和雷达及配套设备
+  edge_as_from_n: 82
+  edge_as_to_n: 107
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 别名
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 国防军工
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor:
+      node_id: ND-68702413f9f7
+      match_method: exact:in_industry_pool
+      candidate_n: 2
+- io_sector_code: 093
+  io_sector_name: 视听设备
+  edge_as_from_n: 146
+  edge_as_to_n: 107
+  l1_industry: 综合
+  l1_industry_code: 801230.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 综合
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 通信
+    sig_prior_target: 电子
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 35
+    candidate_node_pool_n: 337
+    node_anchor:
+      node_id: ND-dbc77e8640eb
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 094
+  io_sector_name: 电子元器件
+  edge_as_from_n: 150
+  edge_as_to_n: 110
+  l1_industry: 国防军工
+  l1_industry_code: 801740.SI
+  match_basis: 别名
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 国防军工
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 电子
+    sig_prior_method: keyword
+    sig_band_target: 通信
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 116
+    node_anchor:
+      node_id: ND-4a0fb85c0e12
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 095
+  io_sector_name: 其他电子设备
+  edge_as_from_n: 147
+  edge_as_to_n: 111
+  l1_industry: 电子
+  l1_industry_code: 801080.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 电子
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 电子
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 45
+    candidate_node_pool_n: 322
+    node_anchor:
+      node_id: ND-becf23221c52
+      match_method: contains:graph_wide
+      candidate_n: 2
+- io_sector_code: 096
+  io_sector_name: 仪器仪表
+  edge_as_from_n: 151
+  edge_as_to_n: 113
+  l1_industry: 汽车
+  l1_industry_code: 801880.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 汽车
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 机械设备
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: 通用设备
+    sig_ckg_target: 机械设备
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 18
+    candidate_node_pool_n: 118
+    node_anchor:
+      node_id: ND-45bce8627937
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 097
+  io_sector_name: 其他制造产品
+  edge_as_from_n: 149
+  edge_as_to_n: 117
+  l1_industry: 基础化工
+  l1_industry_code: 801030.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 基础化工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 汽车
+    sig_prior_target: 综合
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 49
+    candidate_node_pool_n: 340
+    node_anchor:
+      node_id: ND-3e34012e3bce
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 098
+  io_sector_name: 废弃资源和废旧材料回收加工品
+  edge_as_from_n: 35
+  edge_as_to_n: 104
+  l1_industry: 医药生物
+  l1_industry_code: 801150.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 医药生物
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 电子
+    sig_prior_target: 环保
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 34
+    candidate_node_pool_n: 265
+    node_anchor:
+      node_id: ND-5c0914796995
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: 099
+  io_sector_name: 金属制品、机械和设备修理服务
+  edge_as_from_n: 153
+  edge_as_to_n: 112
+  l1_industry: 国防军工
+  l1_industry_code: 801740.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 国防军工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 基础化工
+    - 建筑材料
+    - 汽车
+    - 综合
+    - 通信
+    sig_prior_target: 机械设备
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 116
+    node_anchor:
+      node_id: ND-92a3f9cab9e0
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '100'
+  io_sector_name: 电力、热力生产和供应
+  edge_as_from_n: 153
+  edge_as_to_n: 116
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 交通运输
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 公用事业
+    - 基础化工
+    - 综合
+    sig_prior_target: 公用事业
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '101'
+  io_sector_name: 燃气生产和供应
+  edge_as_from_n: 140
+  edge_as_to_n: 109
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 交通运输
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 公用事业
+    - 基础化工
+    - 综合
+    sig_prior_target: 公用事业
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor:
+      node_id: ND-956b0d47b848
+      match_method: contains:graph_wide
+      candidate_n: 1
+- io_sector_code: '102'
+  io_sector_name: 水的生产和供应
+  edge_as_from_n: 153
+  edge_as_to_n: 106
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 交通运输
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 农林牧渔
+    - 医药生物
+    - 国防军工
+    - 基础化工
+    - 电子
+    - 综合
+    sig_prior_target: 公用事业
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '103'
+  io_sector_name: 住宅房屋建筑
+  edge_as_from_n: 0
+  edge_as_to_n: 115
+  l1_industry: 建筑装饰
+  l1_industry_code: 801062.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 建筑装饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 10
+    node_anchor: null
+- io_sector_code: '104'
+  io_sector_name: 体育场馆和其他房屋建筑
+  edge_as_from_n: 0
+  edge_as_to_n: 115
+  l1_industry: 汽车
+  l1_industry_code: 801880.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 汽车
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 社会服务
+    sig_prior_target: 建筑装饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 18
+    candidate_node_pool_n: 118
+    node_anchor: null
+- io_sector_code: '105'
+  io_sector_name: 铁路、道路、隧道和桥梁工程建筑
+  edge_as_from_n: 0
+  edge_as_to_n: 112
+  l1_industry: 建筑装饰
+  l1_industry_code: 801062.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 建筑装饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 10
+    node_anchor: null
+- io_sector_code: '106'
+  io_sector_name: 其他土木工程建筑
+  edge_as_from_n: 0
+  edge_as_to_n: 112
+  l1_industry: 汽车
+  l1_industry_code: 801880.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 汽车
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 建筑装饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 18
+    candidate_node_pool_n: 118
+    node_anchor: null
+- io_sector_code: '107'
+  io_sector_name: 建筑安装
+  edge_as_from_n: 0
+  edge_as_to_n: 108
+  l1_industry: 建筑装饰
+  l1_industry_code: 801062.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 建筑装饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 10
+    node_anchor: null
+- io_sector_code: '108'
+  io_sector_name: 建筑装饰、装修和其他建筑服务
+  edge_as_from_n: 153
+  edge_as_to_n: 108
+  l1_industry: 建筑装饰
+  l1_industry_code: 801062.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 建筑装饰
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 建筑装饰
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 10
+    node_anchor:
+      node_id: ND-8a4066b05ec3
+      match_method: contains:graph_wide
+      candidate_n: 2
+- io_sector_code: '109'
+  io_sector_name: 批发
+  edge_as_from_n: 153
+  edge_as_to_n: 103
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 医药生物
+    sig_prior_target: 商贸零售
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor: null
+- io_sector_code: '110'
+  io_sector_name: 零售
+  edge_as_from_n: 153
+  edge_as_to_n: 105
+  l1_industry: 医药生物
+  l1_industry_code: 801150.SI
+  match_basis: 别名
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 医药生物
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 商贸零售
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 34
+    candidate_node_pool_n: 265
+    node_anchor:
+      node_id: ND-79354accefaa
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '111'
+  io_sector_name: 铁路旅客运输
+  edge_as_from_n: 153
+  edge_as_to_n: 121
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '112'
+  io_sector_name: 铁路货物运输和运输辅助活动
+  edge_as_from_n: 153
+  edge_as_to_n: 122
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '113'
+  io_sector_name: 城市公共交通及公路客运
+  edge_as_from_n: 153
+  edge_as_to_n: 108
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '114'
+  io_sector_name: 道路货物运输和运输辅助活动
+  edge_as_from_n: 153
+  edge_as_to_n: 108
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '115'
+  io_sector_name: 水上旅客运输
+  edge_as_from_n: 153
+  edge_as_to_n: 108
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '116'
+  io_sector_name: 水上货物运输和运输辅助活动
+  edge_as_from_n: 153
+  edge_as_to_n: 118
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '117'
+  io_sector_name: 航空旅客运输
+  edge_as_from_n: 153
+  edge_as_to_n: 97
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '118'
+  io_sector_name: 航空货物运输和运输辅助活动
+  edge_as_from_n: 153
+  edge_as_to_n: 106
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '119'
+  io_sector_name: 管道运输
+  edge_as_from_n: 153
+  edge_as_to_n: 91
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '120'
+  io_sector_name: 多式联运和运输代理
+  edge_as_from_n: 153
+  edge_as_to_n: 97
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '121'
+  io_sector_name: 装卸搬运和仓储
+  edge_as_from_n: 153
+  edge_as_to_n: 98
+  l1_industry: 机械设备
+  l1_industry_code: 801070.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 机械设备
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 120
+    node_anchor: null
+- io_sector_code: '122'
+  io_sector_name: 邮政
+  edge_as_from_n: 153
+  edge_as_to_n: 84
+  l1_industry: 交通运输
+  l1_industry_code: 801170.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 交通运输
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 21
+    node_anchor: null
+- io_sector_code: '123'
+  io_sector_name: 住宿
+  edge_as_from_n: 153
+  edge_as_to_n: 114
+  l1_industry: 社会服务
+  l1_industry_code: 801210.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 社会服务
+    sig_prior_method: keyword
+    sig_band_target: 传媒
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 4
+    candidate_node_pool_n: 5
+    node_anchor: null
+- io_sector_code: '124'
+  io_sector_name: 餐饮
+  edge_as_from_n: 153
+  edge_as_to_n: 109
+  l1_industry: 社会服务
+  l1_industry_code: 801210.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 社会服务
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 食品饮料
+    sig_prior_target: 社会服务
+    sig_prior_method: keyword
+    sig_band_target: 传媒
+    sig_code_anchor: false
+    sig_ckg_root: 酒店餐饮
+    sig_ckg_target: 社会服务
+    ckg_corroborates: true
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 4
+    candidate_node_pool_n: 5
+    node_anchor: null
+- io_sector_code: '125'
+  io_sector_name: 电信
+  edge_as_from_n: 153
+  edge_as_to_n: 98
+  l1_industry: 通信
+  l1_industry_code: 801770.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 通信
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 通信
+    sig_prior_method: keyword
+    sig_band_target: 传媒
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 9
+    candidate_node_pool_n: 80
+    node_anchor: null
+- io_sector_code: '126'
+  io_sector_name: 广播电视及卫星传输服务
+  edge_as_from_n: 153
+  edge_as_to_n: 96
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 传媒
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor:
+      node_id: ND-801662e3d207
+      match_method: exact:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '127'
+  io_sector_name: 互联网和相关服务
+  edge_as_from_n: 153
+  edge_as_to_n: 89
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 包含
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 商贸零售
+    - 计算机
+    sig_prior_target: 传媒
+    sig_prior_method: manual
+    sig_band_target: 传媒
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 3
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor:
+      node_id: ND-71aa7ed1d571
+      match_method: contains:in_industry_pool
+      candidate_n: 3
+- io_sector_code: '128'
+  io_sector_name: 软件服务
+  edge_as_from_n: 3
+  edge_as_to_n: 88
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 医药生物
+    - 国防军工
+    - 机械设备
+    - 汽车
+    - 电子
+    - 综合
+    - 计算机
+    sig_prior_target: 计算机
+    sig_prior_method: keyword
+    sig_band_target: 传媒
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor:
+      node_id: ND-8a4066b05ec3
+      match_method: contains:graph_wide
+      candidate_n: 2
+- io_sector_code: '129'
+  io_sector_name: 信息技术服务
+  edge_as_from_n: 153
+  edge_as_to_n: 88
+  l1_industry: 计算机
+  l1_industry_code: 801750.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 计算机
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 计算机
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 13
+    candidate_node_pool_n: 39
+    node_anchor:
+      node_id: ND-0baa53a0f7ea
+      match_method: contains:graph_wide
+      candidate_n: 9
+- io_sector_code: '130'
+  io_sector_name: 货币金融和其他金融服务
+  edge_as_from_n: 153
+  edge_as_to_n: 96
+  l1_industry: 国防军工
+  l1_industry_code: 801740.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 国防军工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 汽车
+    sig_prior_target: 银行
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 116
+    node_anchor:
+      node_id: ND-92a3f9cab9e0
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '131'
+  io_sector_name: 资本市场服务
+  edge_as_from_n: 153
+  edge_as_to_n: 83
+  l1_industry: 国防军工
+  l1_industry_code: 801740.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 国防军工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 汽车
+    sig_prior_target: 非银金融
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 116
+    node_anchor:
+      node_id: ND-92a3f9cab9e0
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '132'
+  io_sector_name: 保险
+  edge_as_from_n: 153
+  edge_as_to_n: 84
+  l1_industry: 非银金融
+  l1_industry_code: 801790.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 非银金融
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 非银金融
+    sig_prior_method: keyword
+    sig_band_target: 房地产
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 5
+    candidate_node_pool_n: 11
+    node_anchor: null
+- io_sector_code: '133'
+  io_sector_name: 房地产
+  edge_as_from_n: 153
+  edge_as_to_n: 106
+  l1_industry: 房地产
+  l1_industry_code: 801180.SI
+  match_basis: 精确
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 房地产
+    sig_lex_basis: 精确
+    sig_lex_ties: []
+    sig_prior_target: 房地产
+    sig_prior_method: keyword
+    sig_band_target: 非银金融
+    sig_code_anchor: true
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 1
+    candidate_node_pool_n: 1
+    node_anchor:
+      node_id: ND-4dfe8b98dbab
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '134'
+  io_sector_name: 租赁
+  edge_as_from_n: 153
+  edge_as_to_n: 89
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 医药生物
+    - 综合
+    sig_prior_target: 非银金融
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: 多元金融
+    sig_ckg_target: 非银金融
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor: null
+- io_sector_code: '135'
+  io_sector_name: 商务服务
+  edge_as_from_n: 153
+  edge_as_to_n: 99
+  l1_industry: 国防军工
+  l1_industry_code: 801740.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 国防军工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 汽车
+    sig_prior_target: 社会服务
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 116
+    node_anchor:
+      node_id: ND-92a3f9cab9e0
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '136'
+  io_sector_name: 研究和试验发展
+  edge_as_from_n: 1
+  edge_as_to_n: 133
+  l1_industry: 医药生物
+  l1_industry_code: 801150.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 医药生物
+    sig_prior_method: manual
+    sig_band_target: 房地产
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 34
+    candidate_node_pool_n: 265
+    node_anchor: null
+- io_sector_code: '137'
+  io_sector_name: 专业技术服务
+  edge_as_from_n: 153
+  edge_as_to_n: 101
+  l1_industry: 国防军工
+  l1_industry_code: 801740.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 国防军工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 汽车
+    - 社会服务
+    sig_prior_target: 社会服务
+    sig_prior_method: manual
+    sig_band_target: 环保
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 116
+    node_anchor:
+      node_id: ND-92a3f9cab9e0
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '138'
+  io_sector_name: 科技推广和应用服务
+  edge_as_from_n: 142
+  edge_as_to_n: 97
+  l1_industry: 国防军工
+  l1_industry_code: 801740.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 国防军工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 基础化工
+    - 有色金属
+    - 汽车
+    - 电子
+    sig_prior_target: 综合
+    sig_prior_method: manual
+    sig_band_target: 环保
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 116
+    node_anchor:
+      node_id: ND-785da983a21b
+      match_method: contains:in_industry_pool
+      candidate_n: 2
+- io_sector_code: '139'
+  io_sector_name: 水利管理
+  edge_as_from_n: 23
+  edge_as_to_n: 98
+  l1_industry: 环保
+  l1_industry_code: 801970.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 环保
+    sig_prior_method: manual
+    sig_band_target: 环保
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 4
+    node_anchor: null
+- io_sector_code: '140'
+  io_sector_name: 生态保护和环境治理
+  edge_as_from_n: 148
+  edge_as_to_n: 111
+  l1_industry: 环保
+  l1_industry_code: 801970.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 环保
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 环保
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 4
+    node_anchor:
+      node_id: ND-cb6929a941ed
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '141'
+  io_sector_name: 公共设施及土地管理
+  edge_as_from_n: 147
+  edge_as_to_n: 112
+  l1_industry: 环保
+  l1_industry_code: 801970.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 环保
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 3
+    candidate_node_pool_n: 4
+    node_anchor: null
+- io_sector_code: '142'
+  io_sector_name: 居民服务
+  edge_as_from_n: 144
+  edge_as_to_n: 115
+  l1_industry: 国防军工
+  l1_industry_code: 801740.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 国防军工
+    sig_lex_basis: 包含
+    sig_lex_ties:
+    - 汽车
+    sig_prior_target: 社会服务
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 19
+    candidate_node_pool_n: 116
+    node_anchor:
+      node_id: ND-92a3f9cab9e0
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '143'
+  io_sector_name: 其他服务
+  edge_as_from_n: 153
+  edge_as_to_n: 108
+  l1_industry: 汽车
+  l1_industry_code: 801880.SI
+  match_basis: 别名
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 汽车
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 综合
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 18
+    candidate_node_pool_n: 118
+    node_anchor:
+      node_id: ND-8a4066b05ec3
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '144'
+  io_sector_name: 教育
+  edge_as_from_n: 153
+  edge_as_to_n: 119
+  l1_industry: 社会服务
+  l1_industry_code: 801210.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 社会服务
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 社会服务
+    sig_prior_method: keyword
+    sig_band_target: 传媒
+    sig_code_anchor: false
+    sig_ckg_root: 社会服务
+    sig_ckg_target: 社会服务
+    ckg_corroborates: true
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 4
+    candidate_node_pool_n: 5
+    node_anchor: null
+- io_sector_code: '145'
+  io_sector_name: 卫生
+  edge_as_from_n: 151
+  edge_as_to_n: 116
+  l1_industry: 医药生物
+  l1_industry_code: 801150.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 医药生物
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 34
+    candidate_node_pool_n: 265
+    node_anchor: null
+- io_sector_code: '146'
+  io_sector_name: 社会工作
+  edge_as_from_n: 0
+  edge_as_to_n: 108
+  l1_industry: 社会服务
+  l1_industry_code: 801210.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 社会服务
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 社会服务
+    sig_prior_method: manual
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 4
+    candidate_node_pool_n: 5
+    node_anchor: null
+- io_sector_code: '147'
+  io_sector_name: 新闻和出版
+  edge_as_from_n: 153
+  edge_as_to_n: 97
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 传媒
+    sig_prior_method: keyword
+    sig_band_target: 社会服务
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor: null
+- io_sector_code: '148'
+  io_sector_name: 广播、电视、电影和影视录音制作
+  edge_as_from_n: 152
+  edge_as_to_n: 99
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 传媒
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 传媒
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor:
+      node_id: ND-9dc5544630cc
+      match_method: contains:in_industry_pool
+      candidate_n: 1
+- io_sector_code: '149'
+  io_sector_name: 文化艺术
+  edge_as_from_n: 152
+  edge_as_to_n: 106
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 传媒
+    sig_prior_method: keyword
+    sig_band_target: null
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor: null
+- io_sector_code: '150'
+  io_sector_name: 体育
+  edge_as_from_n: 1
+  edge_as_to_n: 107
+  l1_industry: 社会服务
+  l1_industry_code: 801210.SI
+  match_basis: 别名
+  confirm_status: auto_matched
+  hard_judge_allowed: true
+  exemption_note: null
+  signals:
+    sig_lex_target: 社会服务
+    sig_lex_basis: 别名
+    sig_lex_ties: []
+    sig_prior_target: 社会服务
+    sig_prior_method: keyword
+    sig_band_target: 传媒
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 4
+    candidate_node_pool_n: 5
+    node_anchor: null
+- io_sector_code: '151'
+  io_sector_name: 娱乐
+  edge_as_from_n: 153
+  edge_as_to_n: 111
+  l1_industry: 传媒
+  l1_industry_code: 801221.SI
+  match_basis: 未命中
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: null
+    sig_lex_basis: 未命中
+    sig_lex_ties: []
+    sig_prior_target: 传媒
+    sig_prior_method: manual
+    sig_band_target: 社会服务
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 1
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 6
+    candidate_node_pool_n: 163
+    node_anchor: null
+- io_sector_code: '152'
+  io_sector_name: 社会保障
+  edge_as_from_n: 153
+  edge_as_to_n: 75
+  l1_industry: 社会服务
+  l1_industry_code: 801210.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 社会服务
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 综合
+    sig_prior_method: manual
+    sig_band_target: 社会服务
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 4
+    candidate_node_pool_n: 5
+    node_anchor: null
+- io_sector_code: '153'
+  io_sector_name: 公共管理和社会组织
+  edge_as_from_n: 153
+  edge_as_to_n: 92
+  l1_industry: 社会服务
+  l1_industry_code: 801210.SI
+  match_basis: 包含
+  confirm_status: needs_human
+  hard_judge_allowed: false
+  exemption_note: 人工确认前不得参与硬判定（见 header.exemption_clause）
+  signals:
+    sig_lex_target: 社会服务
+    sig_lex_basis: 包含
+    sig_lex_ties: []
+    sig_prior_target: 综合
+    sig_prior_method: manual
+    sig_band_target: 社会服务
+    sig_code_anchor: false
+    sig_ckg_root: null
+    sig_ckg_target: null
+    ckg_corroborates: false
+    independent_agree_votes: 2
+  node_level:
+    sector_industry_resolved: true
+    candidate_chain_pool_n: 4
+    candidate_node_pool_n: 5
+    node_anchor: null

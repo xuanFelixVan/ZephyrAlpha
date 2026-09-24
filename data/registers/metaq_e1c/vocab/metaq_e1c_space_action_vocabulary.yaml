@@ -1,0 +1,18 @@
+# [A_config] module_id=MOD-CHAINPILE-METAQ | layer=config | stability=new | safety=L | ai_autonomy=ai_modifiable
+# 真源：metaq_e1c.space_ledger_flow.action 枚举唯一真源（消费方经 load_vocabulary_values 动态加载）。
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: 组合空间预注册台账流水动作枚举（登记/扩容/封存——PQ-0104/PQ-0109）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-gc-20260924
+date: '2026-09-24'
+values:
+- value: register
+  definition: 新空间首登记（预注册）：冻结取值域快照+笛卡尔方案+容量上限+frozen_at，机生 space_hash。
+- value: expand
+  definition: 扩容申请=新 space_hash 新预注册（同 hash 禁追加新维度/新取值——N_eff 塌缩防线核心）；
+    必须携带 prev_space_hash，且旧空间须已 seal（PQ-0109 一一对应判据）。
+- value: seal
+  definition: 封存动作：旧空间转 sealed、此后只读（历史产物不回溯改），封存须登记 seal_reason 与证据引用。
+    设计稿 11 号 §6 只写"禁事后扩空间"未含封存动作字段，本工单按 PQ-0109 题面补齐（见案卷裁定段）。

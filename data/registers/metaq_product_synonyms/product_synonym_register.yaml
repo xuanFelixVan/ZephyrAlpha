@@ -1,0 +1,499 @@
+# 283 问战役施工机读册（生成器产出；本头由落地批补写，生成器侧重放须同步 emit 见 closure_ledger 待办）
+ttl: task_bound
+completes_when: 283 问战役施工闭环验收后随总包归档
+schema: metaq_product_synonym_register/v1
+workorder: WO-008
+closes: PQ-0068（fail_type=infra：产品名→图谱节点对齐载体缺失）
+generated_at_utc: '2026-09-24T07:57:38.893576Z'
+ruling_basis: 本案卷唯一在册权威=Owner 裁定⑤（2026-09-24 晨，真源交接书 §3）：PQ-0068 阈值 30%→5%，并明写'留同义词册升级口'——本册即该升级口载体；5% 的实证依据是产品级机械天花板 4.6%（symbol
+  路由 2,218/48,665，本器探针 p5 精确复算）；exam_plan 判据原文单位系边级，口径归属已登记待 Owner 裁（见 metrics.primary_metric.caliber_pending），施工侧不自裁。事故留痕：本车道一度收到并落地了伪造的'终版
+  Owner 裁定 B+B+B'（阈值改 1% 等，署时 17:35 晚于本单施工时刻=未来时戳，ruling_registry 查无此裁定），已由总包 2026-09-24 全部删除并回落裁定⑤；施工侧照对话内口头'Owner 说'改判据常量本身即违宪法（指令边界条款），教训已写入案卷。
+caliber:
+  alignment_target: public.ig_node 图谱节点（产品词→可挂接图谱节点）
+  identity_definition: 同一性=归一化后同一 norm_key 簇；is-a（ig_fact subtype_of 上下位）与名称包含关系不构成同一性，故不传播锚点（ceiling_analysis.isa_ruling）
+  match_basis_tiers:
+    exact: surface form 逐字命中机械锚点源（R1/R2a/R2b/R3/R4），置信=路由置信原值
+    alias: 经 k1 基础归一（NFKC/casefold/去标点）或 k2 括注剥离与锚定成员同键，置信×0.95
+    rule: 经 k3 数字锚定单位/规格剥离同键，置信×0.85
+    unmatched: 簇内无任何机械锚点，置信=0（match_basis=unmatched）
+  anchor_routes:
+    R1_node_ref:
+      rank: 1
+      granularity: direct
+      confidence: 1.0
+    R3_graph_vocab:
+      rank: 2
+      granularity: direct
+      confidence: 0.95
+    R2b_mainbiz_symbol:
+      rank: 3
+      granularity: company_set
+      confidence: 0.9
+    R2a_produces_symbol:
+      rank: 4
+      granularity: company_set
+      confidence: 0.9
+    R4_external:
+      rank: 5
+      granularity: external
+      confidence: 0.8
+pit_policy:
+  why_pit_needed: 产品→图谱锚点时变（公司退市/节点合并退役/成员边到期），无生效时点即不可复考；而词汇同一性链接本身时间不变，只需观测日期。
+  dual_axis: 双时间轴分离（施工侧自采设计，与 WO-005/WO-006 同构；PIT 基准归属待 Owner 裁）：valid_from=源数据业务期（source_as_of 轴，取主营构成/ig_fact 的 as_of），registered_as_of=载体入册期（库内观测轴，取源行
+    created_at）。两读法全量并报（metrics.primary_metric.pit_reading_dual），避免只报一个好看的基准。
+  fields:
+    valid_from: = 支撑该 surface form 的最早观测 as_of（ig_product_revenue.as_of / ig_fact.as_of）：断言自首次观测起成立；空值=该词项只来自图谱词表（ig_node
+      名/别名无 as_of 列），语义为'时间不变的词汇身份'（其锚点有效期仍由 valid_to 表达）
+    valid_to: 仅在被否证时闭合：锚点节点退役（ig_node.valid_to→pit_note=anchor_node_retired）或全部支撑成员边到期（ig_node_company.valid_to 取最大到期日→pit_note=membership_expired）
+    pit_note: 闭合原因，供审计回溯
+    dropped_by_design: 不存 canonical_label / norm_key（均可由 surface_form+归一规则重算，双写只会漂移并撑爆册体量）；不存 per-anchor 归属历史（见 attribution_change_rule）
+  attribution_change_rule: 同名产品在不同时期归属不同公司 → **不改写本册链接行**：公司↔节点归属的时变真源是 ig_node_company(valid_from, valid_to, pit_strength)，本册经
+    node_id/symbol 外派 join 即得历史，双写必漂移（RULE-SSOT）。册内规则：同一 canonical 簇允许多锚点候选并存（anchor_candidates>1 即多解留痕），主锚点按 (-路由置信, route
+    rank, node_id 升) 择一，落败候选不丢（按路由可重算）。
+  as_of_query_contract: as-of 取数谓词：valid_from <= :D and (valid_to is null or valid_to > :D)；复考默认 :D=闭卷切点，快照口径另出。
+  closed_book_cutoff: '2025-09-09'
+  forbidden: 生成器内禁 datetime.now()；时间戳一律 zephyr.shared.utils.time_utils.now_iso()（RULE-SCHEMA-TZ），且不入 content_hash 域。
+upgrade_contract:
+  purpose: Owner 裁定⑤明写'留同义词册升级口'：将来引入人工/LLM 别名扩充或 WO-007 部门映射接线。
+  injection_port:
+    flag: --extra-anchor-register <path>
+    formats:
+    - .csv（表头行）
+    - .yaml（anchors/rows/links 任一键下的映射列表）
+    required_columns:
+    - surface_form|product|name
+    - node_id|target_node（或 symbol）
+    optional_columns:
+    - as_of
+    - valid_to
+    - confidence
+    - source
+    - evidence
+    route: R4_external（rank=5, granularity=external, 默认 confidence=0.8）
+    wo007_wiring: 总包合批时把部门映射册转成 surface_form=部门/产品名、node_id=图谱节点、as_of=映射生效期 的行注入即可；本器不读 wo007/metaq_io_edge 目录（并发隔离）。
+  backward_compatibility: v1 冻结承诺：①CSV 只增列且新列一律追加尾部、YAML 头只增键；②match_basis 现有四态语义不变，新证据等级须新增枚举（manual/llm）且**默认不计入** primary_metric
+    分子；③canonical_product_id=sha1(norm_key) 内容派生前缀稳定，但归一规则升级会拆簇，故下游引用必须带 schema 版本号；④判据脚本只读 coverage/primary_metric 两键，新增口径不破坏既有消费。
+  back_to_30pct_preconditions:
+  - ①外部别名册净新增锚定端点 ≥11732 个（=未命中池的 25.6%）
+  - ②分层抽样 ≥400 条人工核验 precision ≥95%，并按 match_basis 给出各档假阳率
+  - ③is-a 粒度是否承认须 Owner 单独裁定（量化见 ceiling_analysis.isa_grain_uplift_if_admitted）
+  - ④同快照复跑两遍 content_hash 相等（确定性不破）+ 判据与册版本同批落地
+determinism:
+  policy: 行序=canonical_product_id 升序、簇内 surface 升序；主锚点/标签 tie-break 全显式；content_hash=sha256(json(metrics, sort_keys))，排除 generated_at（同快照必同
+    hash）。
+  content_hash: b230ed7575722218fe197274258f92e0212b551e6344b0d808b71b3ab372e0da
+  replay_cmd: python scripts/governance/meta_question/wo008/generate_product_synonym_register.py --threshold 0.05 --pit-cutoff
+    2025-09-09
+input_watermarks:
+  pg_tables_read:
+  - public.ig_fact
+  - public.ig_product_revenue
+  - public.ig_node
+  - public.ig_node_company
+  - public.ig_entity_code_map
+  distinct_surfaces_scanned: 104839
+  observations_by_source:
+    ig_product_revenue: 137857
+    ig_fact_produces: 53207
+    ig_fact_product_edge_endpoints: 114918
+    ig_node_vocab: 5173
+  align_edges: 57459
+  graph_names: 5058
+  graph_aliases: 115
+  graph_retired_nodes: 818
+  symbols_with_live_membership: 5367
+  entity_code_map_pairs: 87
+  external_register: null
+  external_register_rows_injected: 0
+  pit_cutoff: '2025-09-09'
+  note: 水位=输入数据侧计数（非墙钟）；复跑数字不等先核水位，水位等而 hash 不等即生成器漂移。
+metrics:
+  primary_metric:
+    name: product_endpoint_anchor_rate_identity
+    formula: ｜CKG 产品边端点中经机械锚定（identity 档=exact+alias+rule）落到 ig_node 的端点数｜/｜CKG 产品边 distinct 端点数｜
+    value: 0.0589
+    numerator: 2868
+    denominator: 48665
+    threshold: 0.05
+    meets_threshold: true
+    pit_cutoff: '2025-09-09'
+    threshold_authority: Owner 裁定⑤（2026-09-24 晨，真源=交接书 §3）：PQ-0068 阈值 30%→5%。本键只承载阈值授权，不含口径授权——口径见 caliber_pending。
+    caliber_pending: 待 Owner 裁定（总包 2026-09-24 登记，不得由施工侧自裁）：exam_plan 判据原文单位是『可升级为链结构边的比例』（边级），实测边级=reported_calibers.edge_both_end；而裁定⑤
+      设 5% 时引为实证依据的是产品级机械天花板 4.6%（2,218 产品），该参照数本身低于其所得阈值。三档实测：边级 2.49% / 端点级 identity 档 5.89% / 端点级严口径 1.17%。无一档能在『判据原单位=边级』且『阈值=5%』下同时达标。施工侧不自选口径，PQ-0068
+      因此维持未达标处置。
+    caliber_authority: 无 Owner 口径授权。本册三档全机读并报（见 reported_calibers），一个数字都不藏；primary_metric 采用端点级仅为册内工程主指标，不构成考试判据口径——考试口径归属见
+      caliber_pending（待裁）。
+    reported_calibers:
+      endpoint_identity_engineering_primary:
+        value: 0.0589
+        numerator: 2868
+        role: 册内工程主指标（非考试判据口径；考试单位见 caliber_pending）
+      endpoint_unique_node_pit:
+        value: 0.0117
+        numerator: 569
+        role: 严口径并报：只认唯一图谱节点锚定（剔 company_set 弱锚定）+ PIT 在效；只作并报档不作判据
+      edge_both_end:
+        value: 0.0249
+        numerator: 1431
+        role: exam_plan 判据原单位（边级）实测值——待 Owner 裁定是否即为考试口径；若采 5% 阈值则该档未达标
+      edge_upgrade_ready_direct_only:
+        value: 0.0014
+        numerator: 82
+        role: 最严诊断（旧算法族）：双端唯一节点+节点不同，今天可原样写 ig_edge 的边；边级诊断量以 reported_calibers.edge_both_end 为准，本键不替代
+    pit_reading_dual:
+      at_closed_book_cutoff:
+        value: 0.0589
+        numerator: 2868
+        reference: '2025-09-09'
+      at_carrier_build_time:
+        value: 0.0247
+        numerator: 1201
+        unique_node_variant:
+          value: 0.0044
+          numerator: 214
+        rule: 施工侧自采口径（无 Owner 授权，待裁）：PIT 阈值按载体建成时点解释。在册到期日最大者=（2026-09-14，数据派生非墙钟）早于本册建成日，故该基准=剔除一切已登记 valid_to 的断言。两 PIT
+          基准下主判据均 ≥ 阈值 1%，判据不因基准选择而翻转；但严口径（唯一节点档）在该基准下只剩贴线值，须进监控带跟踪。
+    composition_of_anchored_endpoints:
+      by_route:
+        R2b: 2297
+        R3: 475
+        R1: 94
+        R2a: 2
+      by_granularity:
+        c: 2299
+        d: 569
+      by_match_basis: &id001
+        unmatched: 45797
+        exact: 2855
+        alias: 8
+        rule: 5
+      unique_node_anchor: 569
+      weak_anchor_company_set: 2299
+      code_map:
+        routes:
+          R1: R1_node_ref
+          R2a: R2a_produces_symbol
+          R2b: R2b_mainbiz_symbol
+          R3: R3_graph_vocab
+          R4: R4_external
+        granularity:
+          d: direct
+          c: company_set
+          x: external
+          '-': none
+        sources:
+          P: pr
+          F: produces
+          C: ckg_edge
+          N: graph_node
+          X: external
+      honesty_note: 判据分子 2868 个端点里，唯一图谱节点锚定仅 569 个=1.17%，其余 2299 个系 company_set 弱锚定（语义=该产品的归属公司在图谱中已有节点，不等于该产品词已入图）。施工侧自采口径（待裁，无
+        Owner 授权）已指定端点级为主判据口径并要求双口径并报，故本册把两档同时机读化：消费'产品已入图'语义的下游必须读 reported_calibers.endpoint_unique_node_pit，不得用主判据数字冒充入图率。
+    pit_status:
+      anchored_endpoints_with_closed_valid_to: 1667
+      as_of_predicate: valid_from <= :D and (valid_to is null or valid_to > :D) （双时间轴另见 pit_policy.dual_axis）
+  secondary_metrics:
+    edge_both_end_anchor_rate_exam_caliber:
+      value: 0.0249
+      numerator: 1431
+      denominator: 57459
+      exam_baseline: 0.00148
+      note: 考卷原口径。本册把它列为边级实测档；考试判据口径归属待 Owner 裁定（见 caliber_pending）主口径（primary_metric）。0.14%（旧算法/最严）另见 reported_calibers。
+    edge_one_end_anchor_rate:
+      value: 0.2853
+      numerator: 16395
+      denominator: 57459
+    edge_upgrade_ready_rate_direct_only:
+      value: 0.0014
+      numerator: 82
+      denominator: 57459
+      note: 双端均为唯一图谱节点锚点且节点不同 = 真可直接写 ig_edge 的边。
+    edge_both_end_unique_node_rate_ruling1_caliber:
+      value: 0.0014
+      numerator: 82
+      denominator: 57459
+      note: 严口径（唯一节点档+PIT 在效+节点不同）下的边级双端率=今天真可写 ig_edge 的面。
+    endpoint_anchor_rate_strict_tiers:
+      value: 0.0588
+      note: 仅 exact+alias（不含单位规格 rule 档）
+    pit_dual_axis_lag:
+      library_lag_legit: 101387
+      no_source_axis: 3452
+      rule: 双时间轴分离（施工侧自采设计，待 Owner 裁基准）：source_as_of(业务期, 本册 valid_from) 与 registered_as_of(库内入册期) 分开存列；registered 晚于 source
+        = 合法滞后（图谱后补源数据早）不计违例；registered 早于 source = 真倒挂，须查写入路径。
+    endpoint_anchor_rate_direct_granularity:
+      value: 0.0117
+      note: 仅锚到唯一图谱节点（不含 company_set 弱锚定）
+    pit_sensitivity:
+      live_at_closed_book_cutoff: 2868
+      rate_live_at_cutoff: 0.0589
+      surviving_all_recorded_closures: 1201
+      rate_if_closures_honored: 0.0247
+      verdict: 闭卷切点口径下 2868 个达标端点全部仍 live（valid_to 均晚于切点）→ 5.89%；若把在册的membership_expired（全部集中在图谱维护窗 2026-09，疑似批量重建日期而非业务退市日）按字面采信，达标端点只剩
+        1201 个=2.47%，跌破阈值。此数敏感性必须随判据一并呈报，不得只报切点口径的好数字——ig_node_company.valid_to 语义澄清是复考前的前置待裁项。
+    endpoint_anchored_with_closed_pit:
+      value: 1667
+      note: valid_to 非空即在册否证；as-of 查询须按 valid_from<=:D<valid_to 剔除，见 pit_sensitivity
+  ceiling_analysis:
+    measured_unique_node_ceiling: 0.0117
+    measured_identity_ceiling: 0.0589
+    margin_engineering_primary_pp: 0.89
+    margin_engineering_primary_relative: 0.1787
+    margin_strict_unique_node_pp: -3.83
+    margin_exam_original_unit_edge_pp: -2.51
+    safety_margin_verdict: 贴线，不稳健：端点级工程主指标 5.89% 对阈值 5% 只余 +0.89pp（相对 +17.9%），主营构成年度批次或图谱成员边一次回归即翻负；严口径（唯一节点档）1.17%、考试原单位（边级）2.49%
+      对同一阈值分别差 -3.83pp、-2.50953pp——口径未裁之前，5% 事实上只在『端点级+含 company_set 弱锚定』这一档可达。另注：裁定⑤ 设 5% 时所引的天花板证据 4.6%本身低于该阈值，属阈值与其证据不自洽，须随口径一并复核。本册未为过线放宽任何归一/锚定规则（rule
+      档实测只贡献 5 个端点），建议复考规程加'先查天花板再判 fail'前置步。
+    structural_options_status: 原判据三选一（降阈值/退役/换源）中 Owner 裁定⑤ 已落定=降阈值到 5%；边级/端点级口径归属未裁，本车道不自裁（见 caliber_pending），故 CKG 2021
+      词系不退役、不换源；本册的 ceiling 数字保留作后续监控带设定与'先查天花板再判 fail'规程的依据。
+    edge_caliber_ceiling: 0.0249
+    isa_grain_uplift_if_admitted: 0.5956
+    isa_recoverable_endpoints: 26115
+    isa_ruling: is-a（subtype_of 成分→菜品）一跳可把端点对齐抬到 59.6%，但那是粒度降级不是同一性，本器**不采纳**——与裁定⑤ 不冲突（端点级机械锚定计为判据，is-a/名称包含均不构成对齐；唯一节点档在本册只作并报不作判据）。
+    what_30pct_would_need: 回到 30% 阈值需外部别名册净新增锚定端点 ≥14030 个（=当前未命中池的 29.2%），且分层抽样人工核验 precision ≥95%。
+  coverage:
+    link_rows: 104839
+    canonical_clusters: 102128
+    cluster_size_dist:
+      singleton: 101097
+      pair: 441
+      multi: 590
+    align_domain_endpoints: 48665
+    align_domain_edges: 57459
+    match_basis_dist_all:
+      exact: 55962
+      unmatched: 48852
+      alias: 19
+      rule: 6
+    match_basis_dist_align_domain: *id001
+    unmatched_reasons:
+      vocab_disjoint_ckg_only: 45716
+      company_offgraph_no_node: 81
+    symbol_route_offgraph_surfaces: 4330
+    pit_closed_rows:
+      all: 25364
+      align_domain: 1667
+      top_closure_months:
+        2026-09: 25364
+      caveat: valid_to 大面积落在同一月（图谱维护窗批量到期日），非业务退市日；闭卷切点前查询不受影响（valid_to 均晚于切点），但快照口径 as-of 今日会剔除这些断言——ig_node_company.valid_to
+        的业务语义须图谱侧澄清（待裁项）。
+    vocab_quality_flags:
+      suspect_non_product_surfaces: 1390
+      note: 主营构成词表混入登记/会计类非产品语（'其他''核准''摊销'等），本册只标记不删除；升级口引入人工/LLM 别名时须先按此线索清洗，否则会把噪声锚进图谱。
+    synonym_merge_yield:
+      multi_surface_clusters: 1031
+      alias_plus_rule_rows: 25
+      conclusion: 机械同义词归并对齐率的净增量以十位计（alias+rule 档总行数见 match_basis_dist_all），天花板由**路由**（公司 symbol 是否在图谱）而非词典决定——这实证强化了'30%
+        不可能靠同义词册达成'的结构结论；册子的长期价值在载体/可重放/升级口，不在归一增益。
+artifacts:
+  register_head: product_synonym_register.yaml（本文件=人审面：口径/PIT/判据/契约）
+  links_csv: product_synonym_links.csv（机器面：逐 surface form，含 match_basis/confidence/PIT）
+  edge_audit_csv:
+    full_audit_rows: 57459
+    full_audit_sha256: 14aa63bc85f2cdc889af3673ecc67a01ec46fa75b2d3dc20c3e64426e3b6cd73
+    emitted_rows: 16395
+    emit_policy: 只入『至少一端有锚点』的边（新信息面）；全量分母不入册以控体量，由 full_audit_sha256 + 下列 SQL 机械重算复现。
+    denominator_sql: select subject, object, relation, as_of from ig_fact where relation in ('supplies_to','product_downstream_of')
+      and as_of <= :pit_cutoff
+    file: ckg_edge_alignment.csv
+warnings: []
+samples:
+  anchored_align_domain:
+  - surface_form: LED
+    canonical_product_id: CP-6a9a37af6c
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-7980fb2af9e2
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: PCB板
+    canonical_product_id: CP-aea87d9492
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-c2b98e581acd
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 三元前驱体
+    canonical_product_id: CP-81ae1d73f6
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-559e6eeef35a
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 不定形耐火材料
+    canonical_product_id: CP-2e315f56fa
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-9e5da9499463
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 丙烯
+    canonical_product_id: CP-97219be81b
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-5da4c48dc851
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 二氧化锆
+    canonical_product_id: CP-a90d6f6b95
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-bcb5e6a171c2
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 价肺炎球菌多糖疫苗
+    canonical_product_id: CP-049a29b522
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-4b3afccf3544
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 伺服电机
+    canonical_product_id: CP-3cea147b7a
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-44d807c4cf95
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 保健品
+    canonical_product_id: CP-ecc5ca7e8b
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-7496fdd50d6d
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 制冷剂
+    canonical_product_id: CP-b45c97cb55
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-c1de778fc32a
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 动力煤
+    canonical_product_id: CP-bdd80bf3ed
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-732f5aab8bb0
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  - surface_form: 包装纸
+    canonical_product_id: CP-ec857c81e0
+    match_basis: exact
+    confidence: 1.0
+    anchor_node_id: ND-7908137efc37
+    anchor_route: R1
+    anchor_granularity: d
+    valid_from: '2021-10-26'
+    valid_to: ''
+  multi_surface_clusters:
+  - canonical_product_id: CP-0069d237ad
+    members:
+    - 耐高温尼龙行业
+    - 耐高温尼龙行业（已并入ND-6705e1125717-自ND-043d152bf95f）
+    - 耐高温尼龙行业（已并入ND-6705e1125717-自ND-04814c45da91）
+    - 耐高温尼龙行业（已并入ND-6705e1125717-自ND-164cb3ee45c2）
+    - 耐高温尼龙行业（已并入ND-6705e1125717-自ND-18f0f398b16d）
+    - 耐高温尼龙行业（已并入ND-6705e1125717-自ND-2022568a4c74）
+  - canonical_product_id: CP-00bfc7ecc7
+    members:
+    - 无人物流
+    - 无人物流（已并入ND-0d018900a5f5-自ND-08c3e178ce54）
+    - 无人物流（已并入ND-0d018900a5f5-自ND-1ac560874391）
+    - 无人物流（已并入ND-0d018900a5f5-自ND-77ad9d77d641）
+    - 无人物流（已并入ND-0d018900a5f5-自ND-b3fe5dc91861）
+  - canonical_product_id: CP-00e5a68dd4
+    members:
+    - 中国模具及模具材料市场和应用 调研
+    - 中国模具及模具材料市场和应用 调研（已并入ND-354f4c63a9a0-自ND-5c1b2cf1eef7）
+    - 中国模具及模具材料市场和应用 调研（已并入ND-354f4c63a9a0-自ND-6cef6f0cd5e9）
+  - canonical_product_id: CP-010ab79678
+    members:
+    - 轨道交通
+    - 轨道交通（已并入ND-97e7ca29bb4f-自ND-a13f0715ec37）
+    - 轨道交通（已并入ND-97e7ca29bb4f-自ND-b53346155fb8）
+  - canonical_product_id: CP-018a72e973
+    members:
+    - 富锂锰基正极材料行业
+    - 富锂锰基正极材料行业（已并入ND-c13e0b3dc63f-自ND-0a28ce5bb683）
+    - 富锂锰基正极材料行业（已并入ND-c13e0b3dc63f-自ND-33d4fe7b07ed）
+    - 富锂锰基正极材料行业（已并入ND-c13e0b3dc63f-自ND-74b286e49c62）
+    - 富锂锰基正极材料行业（已并入ND-c13e0b3dc63f-自ND-b71190c4fb2d）
+    - 富锂锰基正极材料行业（已并入ND-c13e0b3dc63f-自ND-da9e56da2576）
+    - 富锂锰基正极材料行业（已并入ND-c13e0b3dc63f-自ND-fb13b74839f9）
+  - canonical_product_id: CP-02199fe422
+    members:
+    - 豆粕
+    - 豆粕（已并入ND-83b1a7443df1-自ND-ca77b419fbb8）
+    - 豆粕（已并入ND-83b1a7443df1-自ND-d24ffd8575a1）
+    - 豆粕（已并入ND-83b1a7443df1-自ND-d3405e8b791e）
+  - canonical_product_id: CP-02bd23e857
+    members:
+    - 中国光纤预制棒行业
+    - 中国光纤预制棒行业（已并入ND-28bcbebba78f-自ND-1d92b76dfb95）
+    - 中国光纤预制棒行业（已并入ND-28bcbebba78f-自ND-5c8c35322d9e）
+    - 中国光纤预制棒行业（已并入ND-28bcbebba78f-自ND-658fc98bd03e）
+    - 中国光纤预制棒行业（已并入ND-28bcbebba78f-自ND-7273bd665af9）
+    - 中国光纤预制棒行业（已并入ND-28bcbebba78f-自ND-e3506e7607b4）
+    - 中国光纤预制棒行业（已并入ND-28bcbebba78f-自ND-fc1d36601f26）
+  - canonical_product_id: CP-02bdf6922f
+    members:
+    - 汽车线束行业
+    - 汽车线束行业（已并入ND-889146f31551-自ND-ae5d9002bfe4）
+    - 汽车线束行业（已并入ND-889146f31551-自ND-af28d86c4f70）
+    - 汽车线束行业（已并入ND-889146f31551-自ND-af9139b9b709）
+    - 汽车线束行业（已并入ND-889146f31551-自ND-c558565a9c14）
+    - 汽车线束行业（已并入ND-889146f31551-自ND-e554d613ec53）
+  - canonical_product_id: CP-02f681e8a5
+    members:
+    - 一张图看懂倒装芯片行业
+    - 一张图看懂倒装芯片行业（已并入ND-2f94df132dde-自ND-4fa9cfc471e7）
+    - 一张图看懂倒装芯片行业（已并入ND-2f94df132dde-自ND-536c4b719969）
+    - 一张图看懂倒装芯片行业（已并入ND-2f94df132dde-自ND-6e57c8ce860c）
+    - 一张图看懂倒装芯片行业（已并入ND-2f94df132dde-自ND-910fad7a4bc7）
+    - 一张图看懂倒装芯片行业（已并入ND-2f94df132dde-自ND-f6f43bbb14f5）
+  - canonical_product_id: CP-03084db1ac
+    members:
+    - 算力芯片
+    - 算力芯片（已并入ND-09ca610b5d78-自ND-37095051604e）
+    - 算力芯片（已并入ND-09ca610b5d78-自ND-3fa0e01883fa）
+    - 算力芯片（已并入ND-09ca610b5d78-自ND-75c8b31904e0）
+    - 算力芯片（已并入ND-09ca610b5d78-自ND-7914414f1a0a）
+  - canonical_product_id: CP-04296adf39
+    members:
+    - 基因检测行业
+    - 基因检测行业（已并入ND-e6b39091b797-自ND-57103d3d6cfa）
+    - 基因检测行业（已并入ND-e6b39091b797-自ND-61c36cf74c5a）
+    - 基因检测行业（已并入ND-e6b39091b797-自ND-63fcae2901d4）
+    - 基因检测行业（已并入ND-e6b39091b797-自ND-dcabbe756485）
+  - canonical_product_id: CP-044efca63e
+    members:
+    - 太空光伏
+    - 太空光伏（已并入ND-52842d0cdcb1-自ND-52c87a7c5859）
+    - 太空光伏（已并入ND-52842d0cdcb1-自ND-60a0bc649770）
+    - 太空光伏（已并入ND-52842d0cdcb1-自ND-72dcd5a70c38）
+    - 太空光伏（已并入ND-52842d0cdcb1-自ND-73bbd21e261a）
+    - 太空光伏（已并入ND-52842d0cdcb1-自ND-b363a5fac83c）
+    - 太空光伏（已并入ND-52842d0cdcb1-自ND-ce80b796e957）
+  note: 样例仅供人审直观校验，判据一律读 metrics（全量机械计算，不采信样例）。

@@ -1,0 +1,2338 @@
+# 283 问战役施工机读册（生成器产出；本头由落地批补写，生成器侧重放须同步 emit 见 closure_ledger 待办）
+ttl: task_bound
+completes_when: 283 问战役施工闭环验收后随总包归档
+meta:
+  wo: WO-006
+  q_id: PQ-0064
+  session: st-metaq-gc-20260924
+  generated_at: '2026-09-24'
+  artifact: 零覆盖微链退役提名册（WO-006 配套⑤，门位=Owner，本件只提名不执行）
+  gate: micro_chain_retirement = pending_owner_approval（注册表净删面属 high tier 人门位）
+  stats:
+    nominated_chains: 115
+    by_status:
+      active: 1
+      deprecated: 114
+    by_reason_class:
+      deprecated_fragment: 114
+      unfixable_micro_chain: 1
+    with_twin_chain: 0
+    criterion: 活跃节点数∈[1,2] 且活跃口径覆盖=0（与 PQ-0064 判据同构，与在案 115 条一致）
+  impact_if_approved:
+    note: 纯投影：以当前实盘（含 wo006 补挂）为基线，把提名链从参评分母剔除后的同口径复算
+    before_approval:
+      a_all: 288
+      a_active: 606
+      denominator: 871
+      ratio_all: 0.3307
+      ratio_active: 0.6958
+    after_approval_projection:
+      a_all: 287
+      a_active: 606
+      denominator: 756
+      ratio_all: 0.3796
+      ratio_active: 0.8016
+    threshold: A 档链占比≥80%
+    would_pass_active: true
+    would_pass_all: false
+columns:
+- chain_id
+- chain_name
+- status
+- category
+- level
+- version_year
+- nodes_total
+- nodes_active
+- active_node_names
+- tombstone_nodes
+- coverage_all
+- coverage_active
+- reason_class
+- reasons
+- suggested_disposition
+- execution_route
+- approval
+rows:
+- - CH-01d2cc50bdcc
+  - 牙科材料行业
+  - deprecated
+  - 医药生物
+  - 1
+  - null
+  - 6
+  - 1
+  - - 牙科材料行业
+  - 5
+  - 0.1667
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-038a5e9ac84f
+  - 硫磺
+  - deprecated
+  - 基础化工
+  - 1
+  - 2026
+  - 4
+  - 1
+  - - 硫磺
+  - 3
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 3 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-04bfbbc59776
+  - 泡沫铝行业
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 4
+  - 1
+  - - 泡沫铝行业
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-061f7d2ad095
+  - 天然气产业链介绍（二）——全球天然气供需格局
+  - deprecated
+  - 石油石化
+  - 1
+  - null
+  - 3
+  - 1
+  - - 天然气产业链介绍（二）——全球天然气供需格局
+  - 2
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''天然气产业链介绍（二）——全球天然气供需格局'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-07b7020eac51
+  - 一张图看懂车用铝合金
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 4
+  - 1
+  - - 一张图看懂车用铝合金
+  - 3
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 3 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-095b2ac650f3
+  - 一张图看懂高温合金
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 3
+  - 1
+  - - 一张图看懂高温合金
+  - 2
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-0cd232c48f39
+  - 江兵华 刘艳军-手机陶瓷外壳
+  - deprecated
+  - 消费电子
+  - 1
+  - null
+  - 5
+  - 1
+  - - 江兵华 刘艳军-手机陶瓷外壳
+  - 4
+  - 0.6
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-13cac609b86e
+  - 一张图看懂高纯溅射靶材行业
+  - deprecated
+  - 半导体
+  - 1
+  - null
+  - 4
+  - 1
+  - - 一张图看懂高纯溅射靶材行业
+  - 3
+  - 0.5
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-18dd42b5777d
+  - 唐山地区黑色产业链调研（四
+  - deprecated
+  - 钢铁
+  - 1
+  - null
+  - 1
+  - 1
+  - - 唐山地区黑色产业链调研（四
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''唐山地区黑色产业链调研（四'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-1be6b59b0acc
+  - 长鑫科技IPO启幕：半导体设备与材料产业链深度投资
+  - deprecated
+  - 2026新版100大行业全景图谱2025版图解产业链 持续更新08月已更新
+  - 1
+  - null
+  - 6
+  - 1
+  - - 长鑫科技IPO启幕：半导体设备与材料产业链深度投资
+  - 5
+  - 0.5
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''长鑫科技IPO启幕：半导体设备与材料产业链深度投资'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-1ca482b6c995
+  - 100页ppt全方位解读稀土
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 6
+  - 1
+  - - 100页ppt全方位解读稀土
+  - 5
+  - 0.5
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-21848fb20776
+  - 粉末冶金行业市场和应用调研
+  - deprecated
+  - 机械设备
+  - 1
+  - null
+  - 4
+  - 1
+  - - 粉末冶金行业市场和应用调研
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''粉末冶金行业市场和应用调研'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-2258f7efb46b
+  - 份钢铁
+  - deprecated
+  - 钢铁
+  - 1
+  - null
+  - 3
+  - 1
+  - - 份钢铁
+  - 2
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-2293c951ae4a
+  - 聚酯产业链2026年二季度展望
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 3
+  - 1
+  - - 聚酯产业链2026年二季度展望
+  - 2
+  - 0.6667
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''聚酯产业链2026年二季度展望'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-231baee4219a
+  - 全球AI应用平台市场
+  - deprecated
+  - 软件开发
+  - 1
+  - null
+  - 1
+  - 1
+  - - 全球AI应用平台市场
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-237fb19abddb
+  - 深度
+  - deprecated
+  - 综合
+  - 1
+  - null
+  - 5
+  - 1
+  - - 深度
+  - 4
+  - 0.6
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-25390a19344f
+  - 士丹利-中国思考：中国产业链能独善其身么
+  - deprecated
+  - 综合
+  - 1
+  - null
+  - 6
+  - 1
+  - - 士丹利-中国思考：中国产业链能独善其身么
+  - 5
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''士丹利-中国思考：中国产业链能独善其身么'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 5 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-257e21df0c79
+  - 东南亚餐饮
+  - deprecated
+  - 社会服务
+  - 1
+  - null
+  - 1
+  - 1
+  - - 东南亚餐饮
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-2be46f46091a
+  - 电力电子产业链
+  - deprecated
+  - 电力设备
+  - 1
+  - null
+  - 2
+  - 1
+  - - 面向新一代电网需求的电力电子技术与装备
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''面向新一代电网需求的电力电子技术与装备'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-30e20ff0523c
+  - 橡胶产业链概况及套利交易模式
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 2
+  - 1
+  - - 橡胶产业链概况及套利交易模式
+  - 1
+  - 0.5
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''橡胶产业链概况及套利交易模式'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-311aca74d6c8
+  - 半导体设备行业
+  - deprecated
+  - 新产业链全景图金融股票分析发展趋势分析新材料领域行业研究报告
+  - 1
+  - null
+  - 6
+  - 1
+  - - 半导体设备行业
+  - 5
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-318ae345b520
+  - 一张图看懂树脂基复合材料
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 3
+  - 1
+  - - 一张图看懂树脂基复合材料
+  - 2
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 2 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-32de53f7a776
+  - 骨科材料及骨科医疗器械市场
+  - deprecated
+  - 医药生物
+  - 1
+  - null
+  - 2
+  - 1
+  - - 骨科材料及骨科医疗器械市场
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-38fba86444af
+  - 一张图看懂改性塑料
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 7
+  - 1
+  - - 一张图看懂改性塑料
+  - 6
+  - 0.2857
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-3b24e7fdd261
+  - 一张图看懂钛材
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 4
+  - 1
+  - - 一张图看懂钛材
+  - 3
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 3 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-3c64b61b6858
+  - 美伊冲突对中国产业链的影响：哪些受损？哪些收益？
+  - deprecated
+  - 综合
+  - 1
+  - null
+  - 7
+  - 1
+  - - 美伊冲突对中国产业链的影响：哪些受损？哪些收益？
+  - 6
+  - 0.2857
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''美伊冲突对中国产业链的影响：哪些受损？哪些收益？'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-3da19faaf8f7
+  - 手机行业
+  - deprecated
+  - 消费电子
+  - 1
+  - null
+  - 7
+  - 1
+  - - 手机行业
+  - 6
+  - 0.2857
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-3fe4f3077baa
+  - 一张图看懂钛粉市场和应用
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 5
+  - 1
+  - - 一张图看懂钛粉市场和应用
+  - 4
+  - 0.2
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-4154daeb5af8
+  - 一张图看懂中国钛及钛合金行业
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 4
+  - 1
+  - - 一张图看懂中国钛及钛合金行业
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-42c42f42d9a4
+  - 外泌体技术行业
+  - deprecated
+  - 医药生物
+  - 1
+  - null
+  - 4
+  - 1
+  - - 外泌体技术行业
+  - 3
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 3 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-485d2f41e2b6
+  - 铝基中间合金产业链
+  - deprecated
+  - 有色金属
+  - 1
+  - 2026
+  - 6
+  - 1
+  - - 一张图看懂铝基中间合金
+  - 5
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 5 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-486d3fafb711
+  - 铀行业
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 4
+  - 1
+  - - 铀行业
+  - 3
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 3 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-4b83fa8e6137
+  - 微晶玻璃行业
+  - deprecated
+  - 建筑材料
+  - 1
+  - null
+  - 5
+  - 1
+  - - 微晶玻璃行业
+  - 4
+  - 0.4
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-4c2e6404e1ab
+  - 全球与中国钢铁产业供需贸易
+  - deprecated
+  - 钢铁
+  - 1
+  - null
+  - 4
+  - 1
+  - - 全球与中国钢铁产业供需贸易
+  - 3
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 3 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-4e8e47e37b52
+  - 一张图看懂PTFE
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 6
+  - 1
+  - - 一张图看懂PTFE
+  - 5
+  - 0.1667
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-507e0b34d6b2
+  - 抖音八大宠物心智人群
+  - deprecated
+  - 农林牧渔
+  - 1
+  - 2024
+  - 2
+  - 1
+  - - 抖音八大宠物心智人群
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-51adeab8350e
+  - 东南亚新能源
+  - deprecated
+  - 电力设备
+  - 1
+  - null
+  - 1
+  - 1
+  - - 东南亚新能源
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-537481d3a5f0
+  - 一张图看懂全国各省新材料产业规划
+  - deprecated
+  - 综合
+  - 1
+  - null
+  - 4
+  - 1
+  - - 一张图看懂全国各省新材料产业规划
+  - 3
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''一张图看懂全国各省新材料产业规划'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 3 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-585214dd6de6
+  - 纳米银线导电膜行业
+  - deprecated
+  - 光学光电子
+  - 1
+  - null
+  - 5
+  - 1
+  - - 纳米银线导电膜行业
+  - 4
+  - 0.6
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-58f941907cd9
+  - 全球棉纺产业链进出口格局
+  - deprecated
+  - 纺织服饰
+  - 1
+  - null
+  - 2
+  - 1
+  - - 全球棉纺产业链进出口格局
+  - 1
+  - 0.5
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''全球棉纺产业链进出口格局'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-5dd1566bb800
+  - 一张图看懂偏光片产业
+  - deprecated
+  - 光学光电子
+  - 1
+  - null
+  - 2
+  - 1
+  - - 一张图看懂偏光片产业
+  - 1
+  - 0.5
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-5dd6433d1821
+  - 石墨烯
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 4
+  - 1
+  - - 石墨烯
+  - 3
+  - 0.5
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-645c4ae97d4b
+  - 中国储能行业出口
+  - deprecated
+  - 电力设备
+  - 1
+  - null
+  - 2
+  - 1
+  - - 中国储能行业出口
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-64a4d148e4d4
+  - 纳米纤维素行业
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 6
+  - 1
+  - - 纳米纤维素行业
+  - 5
+  - 0.1667
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-662348e16edb
+  - 生育
+  - deprecated
+  - 医药生物
+  - 1
+  - null
+  - 1
+  - 1
+  - - 生育
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-662e728b76ab
+  - 智慧旅游产业链
+  - active
+  - 计算机设备
+  - 1
+  - 2021
+  - 2
+  - 1
+  - - 智旅新纪元：AI与旅游产业融合
+  - 1
+  - 0.0
+  - 0.0
+  - unfixable_micro_chain
+  - - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-67686f8b5456
+  - 中国轻工涂料市场与LED封装材料市场行业独立
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 6
+  - 1
+  - - 中国轻工涂料市场与LED封装材料市场行业独立
+  - 5
+  - 0.1667
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''中国轻工涂料市场与LED封装材料市场行业独立'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-6ab76277c44a
+  - 氯碱离子交换膜行业
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 5
+  - 1
+  - - 氯碱离子交换膜行业
+  - 4
+  - 0.2
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-6bf10d734414
+  - AI上游涨价链
+  - deprecated
+  - 综合
+  - 1
+  - 2026
+  - 3
+  - 1
+  - - AI上游涨价链
+  - 2
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-6db5e96188a1
+  - 氮化镓半导体材料行业
+  - deprecated
+  - 新产业链全景图金融股票分析发展趋势分析新材料领域行业研究报告
+  - 1
+  - null
+  - 5
+  - 1
+  - - 氮化镓半导体材料行业
+  - 4
+  - 0.4
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-6fbd85d75ca9
+  - 石墨烯市场
+  - deprecated
+  - 基础化工
+  - 1
+  - 2026
+  - 5
+  - 1
+  - - 石墨烯市场
+  - 4
+  - 0.4
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-72c81fc2839f
+  - 光纤预制棒行业
+  - deprecated
+  - 通信设备
+  - 1
+  - null
+  - 4
+  - 1
+  - - 光纤预制棒行业
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-7600f3d10196
+  - 低空经济产业生态
+  - deprecated
+  - 国防军工
+  - 1
+  - 2026
+  - 7
+  - 1
+  - - 低空经济产业生态
+  - 6
+  - 0.7143
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-7874e5e3429f
+  - 特斯拉modelX
+  - deprecated
+  - 汽车
+  - 1
+  - null
+  - 1
+  - 1
+  - - 特斯拉modelX
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-79e9c07d533e
+  - 一季度全国信用债增信市场与主体
+  - deprecated
+  - 综合
+  - 1
+  - null
+  - 1
+  - 1
+  - - 一季度全国信用债增信市场与主体
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-7bd1d9c59201
+  - 印刷电子产业链
+  - deprecated
+  - 元件
+  - 1
+  - 2026
+  - 4
+  - 1
+  - - 一张图看懂印刷电子
+  - 3
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 3 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-7d2ef1267b88
+  - 一张图看懂钛合金管
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 5
+  - 1
+  - - 一张图看懂钛合金管
+  - 4
+  - 0.2
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-80c7fef5638f
+  - 中国制造行业精益
+  - deprecated
+  - 综合
+  - 1
+  - 2026
+  - 6
+  - 1
+  - - 中国制造行业精益
+  - 5
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 5 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-82bc28969b34
+  - 丙烯系列
+  - deprecated
+  - 基础化工
+  - 1
+  - 2026
+  - 3
+  - 1
+  - - 丙烯系列
+  - 2
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 2 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-83d701aa9496
+  - G手机外壳行业
+  - deprecated
+  - 消费电子
+  - 1
+  - null
+  - 7
+  - 1
+  - - G手机外壳行业
+  - 6
+  - 0.2857
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-84ca24dfc4ff
+  - 中国新能源智能汽车行业产业链出海
+  - deprecated
+  - 汽车
+  - 1
+  - null
+  - 1
+  - 1
+  - - 中国新能源智能汽车行业产业链出海
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''中国新能源智能汽车行业产业链出海'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-866758a231ff
+  - 一张图看懂有机硅胶粘剂材料行业
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 5
+  - 1
+  - - 一张图看懂有机硅胶粘剂材料行业
+  - 4
+  - 0.2
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-87ad35274855
+  - 从OpenClaw看产业链增长机遇
+  - deprecated
+  - 软件开发
+  - 1
+  - null
+  - 5
+  - 1
+  - - 从OpenClaw看产业链增长机遇
+  - 4
+  - 0.2
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''从OpenClaw看产业链增长机遇'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-886c7ab4fd51
+  - 铝基复合材料产业链
+  - deprecated
+  - 有色金属
+  - 1
+  - 2026
+  - 3
+  - 1
+  - - 铝基复合材料
+  - 2
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 2 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-8891bfded91e
+  - 汽车胶粘剂行业
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 7
+  - 1
+  - - 汽车胶粘剂行业
+  - 6
+  - 0.1429
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-8d1ff75d3b2d
+  - 黑色产业链
+  - deprecated
+  - 钢铁
+  - 1
+  - null
+  - 1
+  - 1
+  - - 唐山地区黑色产业链调研（一
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''唐山地区黑色产业链调研（一'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-95aafe2ed24b
+  - 豆粕
+  - deprecated
+  - 农林牧渔
+  - 1
+  - 2026
+  - 4
+  - 1
+  - - 豆粕
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-95ba8aa43be4
+  - 先进封装行业
+  - deprecated
+  - 半导体
+  - 1
+  - null
+  - 4
+  - 1
+  - - 先进封装行业
+  - 3
+  - 0.5
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-95cbab5d2ed5
+  - 中国企业AI工具生态
+  - deprecated
+  - 软件开发
+  - 1
+  - 2026
+  - 2
+  - 1
+  - - 中国企业AI工具生态
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-9851fa217103
+  - 富勒烯调研
+  - deprecated
+  - 基础化工
+  - 1
+  - 2026
+  - 3
+  - 1
+  - - 富勒烯调研
+  - 2
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''富勒烯调研'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-992784b7743e
+  - 轨道交通行业
+  - deprecated
+  - 机械设备
+  - 1
+  - null
+  - 6
+  - 1
+  - - 轨道交通行业
+  - 5
+  - 0.6667
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-999314d0d69e
+  - 网球运动行业
+  - deprecated
+  - 社会服务
+  - 1
+  - 2025
+  - 3
+  - 1
+  - - 网球运动行业
+  - 2
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 2 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-9cc3cf7800b1
+  - 一张图看懂微创医疗
+  - deprecated
+  - 医药生物
+  - 1
+  - null
+  - 2
+  - 1
+  - - 一张图看懂微创医疗
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-9ccfdb055645
+  - 医用钛合金行业市场
+  - deprecated
+  - 医药生物
+  - 1
+  - null
+  - 2
+  - 1
+  - - 医用钛合金行业市场
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-9cdcce9fbf65
+  - 压电陶瓷产业链
+  - deprecated
+  - 元件
+  - 1
+  - 2026
+  - 7
+  - 1
+  - - 一张图看懂压电陶瓷
+  - 6
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 6 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-9dfa07ae0663
+  - 全球数智化人才指数
+  - deprecated
+  - 综合
+  - 1
+  - 2026
+  - 5
+  - 1
+  - - 全球数智化人才指数
+  - 4
+  - 0.8
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-a1cddf0fed50
+  - 一张图看懂聚醚醚酮
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 3
+  - 1
+  - - 一张图看懂聚醚醚酮
+  - 2
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-a3924aac2e42
+  - 一张图蓝宝石产业链
+  - deprecated
+  - 光学光电子
+  - 1
+  - null
+  - 7
+  - 1
+  - - 一张图蓝宝石产业链
+  - 6
+  - 0.4286
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''一张图蓝宝石产业链'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-a5fb09ff4d5c
+  - 智启万物-全球AI应用平台市场
+  - deprecated
+  - 软件开发
+  - 1
+  - 2026
+  - 1
+  - 1
+  - - 智启万物-全球AI应用平台市场
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-a69d7709c16e
+  - 金属3D打印行业
+  - deprecated
+  - 机械设备
+  - 1
+  - null
+  - 7
+  - 1
+  - - 金属3D打印行业
+  - 6
+  - 0.2857
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-a8a59656c378
+  - 生物医用镁合金行业
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 5
+  - 1
+  - - 生物医用镁合金行业
+  - 4
+  - 0.4
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-af1b661c6aa4
+  - D打印行业
+  - deprecated
+  - 机械设备
+  - 1
+  - null
+  - 8
+  - 1
+  - - D打印行业
+  - 7
+  - 0.125
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-b007bac27170
+  - 中国对美出口产业链期货品种
+  - deprecated
+  - 综合
+  - 1
+  - 2025
+  - 3
+  - 1
+  - - 中国对美出口产业链期货品种
+  - 2
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''中国对美出口产业链期货品种'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 2 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-b2f2cbce41dd
+  - 锂电池产业链行业2026年上半年投资策略
+  - deprecated
+  - 电力设备
+  - 1
+  - null
+  - 7
+  - 1
+  - - 锂电池产业链行业2026年上半年投资策略
+  - 6
+  - 0.4286
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''锂电池产业链行业2026年上半年投资策略'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-b393542bf7a9
+  - 资讯：柴油荒对铜产业链的影响
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 4
+  - 1
+  - - 资讯：柴油荒对铜产业链的影响
+  - 3
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''资讯：柴油荒对铜产业链的影响'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 3 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-b81468a2268f
+  - 中国茶饮咖啡数据
+  - deprecated
+  - 食品饮料
+  - 1
+  - null
+  - 1
+  - 1
+  - - 中国茶饮咖啡数据
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-ba0b7f2c25ba
+  - 中国铜加工新材料发展和应用
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 3
+  - 1
+  - - 中国铜加工新材料发展和应用
+  - 2
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 2 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-c0bcee21d814
+  - 海南封关背景下发展机遇、市场空间、产业链及相关公司深度
+  - deprecated
+  - 综合
+  - 1
+  - null
+  - 4
+  - 1
+  - - 海南封关背景下发展机遇、市场空间、产业链及相关公司深度
+  - 3
+  - 0.5
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''海南封关背景下发展机遇、市场空间、产业链及相关公司深度'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-c5a0aec97f49
+  - 氮化硅陶瓷行业
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 6
+  - 1
+  - - 氮化硅陶瓷行业
+  - 5
+  - 0.1667
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-c77e29985ebc
+  - ACF产业链
+  - deprecated
+  - 光学光电子
+  - 1
+  - 2026
+  - 4
+  - 1
+  - - 异方性导电胶膜（ACF）行业
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-c8d74d40fe84
+  - 聚砜（PSF）行业
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 5
+  - 1
+  - - 聚砜（PSF）行业
+  - 4
+  - 0.2
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-ca3cfa2c16ac
+  - 一张图看懂铝及铝合金市场
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 4
+  - 1
+  - - 一张图看懂铝及铝合金市场
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-d08582ab2454
+  - 量子计算
+  - deprecated
+  - 计算机设备
+  - 1
+  - null
+  - 5
+  - 1
+  - - 量子计算
+  - 4
+  - 0.6
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-d197221efe50
+  - 中国旅客出境游：人群调研及
+  - deprecated
+  - 社会服务
+  - 1
+  - null
+  - 1
+  - 1
+  - - 中国旅客出境游：人群调研及
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''中国旅客出境游：人群调研及'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-d686a5b72f03
+  - 一张图看懂倒装芯片行业
+  - deprecated
+  - 100大新材料行业全景图产业链供应链图上中下游详情图集研究报告
+  - 1
+  - null
+  - 6
+  - 1
+  - - 一张图看懂倒装芯片行业
+  - 5
+  - 0.1667
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-d9434b7d0f66
+  - 中国金融机构人才发展与培训
+  - deprecated
+  - 综合
+  - 1
+  - null
+  - 2
+  - 1
+  - - 中国金融机构人才发展与培训
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-d97806bf5758
+  - 智能经济：系统理解AI产业链
+  - deprecated
+  - 综合
+  - 1
+  - null
+  - 6
+  - 1
+  - - 智能经济：系统理解AI产业链
+  - 5
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''智能经济：系统理解AI产业链'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-d9b746e06a50
+  - 金融机构AI应用
+  - deprecated
+  - 非银金融
+  - 1
+  - null
+  - 2
+  - 1
+  - - 金融机构AI应用
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-d9f7d079b8ef
+  - 一张图看懂医用钛合金行业
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 2
+  - 1
+  - - 一张图看懂医用钛合金行业
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-dc34483010aa
+  - 一张图看懂聚酰亚胺及其市场
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 4
+  - 1
+  - - 一张图看懂聚酰亚胺及其市场
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-dc969427acc7
+  - 天然气产业链介绍（四）——天然气衍生品
+  - deprecated
+  - 石油石化
+  - 1
+  - null
+  - 2
+  - 1
+  - - 天然气产业链介绍（四）——天然气衍生品
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''天然气产业链介绍（四）——天然气衍生品'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-e1e73f8c9d52
+  - 中国风味
+  - deprecated
+  - 食品饮料
+  - 1
+  - 2026
+  - 1
+  - 1
+  - - 中国风味
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-e2133b9ca8bd
+  - 量子点行业
+  - deprecated
+  - 光学光电子
+  - 1
+  - null
+  - 4
+  - 1
+  - - 量子点行业
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-e2a4a45d5bf4
+  - 功能食品行业消费者
+  - deprecated
+  - 食品饮料
+  - 1
+  - null
+  - 1
+  - 1
+  - - 功能食品行业消费者
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-e8884580822e
+  - IAA消除类小游戏玩家群体行为趋势
+  - deprecated
+  - 游戏
+  - 1
+  - null
+  - 3
+  - 1
+  - - IAA消除类小游戏玩家群体行为趋势
+  - 2
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''IAA消除类小游戏玩家群体行为趋势'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 2 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-ec19d2faf656
+  - 教育行业智慧校园电气应用方案
+  - deprecated
+  - 电力设备
+  - 1
+  - null
+  - 3
+  - 1
+  - - 教育行业智慧校园电气应用方案
+  - 2
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-f0a4862a36dc
+  - 唐山、天津地区黑色产业链调研（二
+  - deprecated
+  - 钢铁
+  - 1
+  - null
+  - 1
+  - 1
+  - - 唐山、天津地区黑色产业链调研（二
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''唐山、天津地区黑色产业链调研（二'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-f26053655587
+  - 一张图看懂微波介质陶瓷
+  - deprecated
+  - 元件
+  - 1
+  - null
+  - 5
+  - 1
+  - - 一张图看懂微波介质陶瓷
+  - 4
+  - 0.2
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-f396c5043207
+  - 智能汽车产品功能
+  - deprecated
+  - 汽车
+  - 1
+  - 2025
+  - 1
+  - 1
+  - - 智能汽车产品功能
+  - 0
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-f57dcedbf54a
+  - 氮化铝陶瓷行业
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 5
+  - 1
+  - - 氮化铝陶瓷行业
+  - 4
+  - 0.2
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-f83ee26025d3
+  - 全球及中国印刷油墨产业供需贸易
+  - deprecated
+  - 基础化工
+  - 1
+  - null
+  - 2
+  - 1
+  - - 全球及中国印刷油墨产业供需贸易
+  - 1
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 1 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-fb48c9fdc350
+  - 中国模具及模具材料市场和应用 调研
+  - deprecated
+  - 机械设备
+  - 1
+  - null
+  - 3
+  - 1
+  - - 中国模具及模具材料市场和应用 调研
+  - 2
+  - 0.0
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - '节点名命中图谱写入通道词表拦截项（研报标题腔/超长）: [''中国模具及模具材料市场和应用 调研'']——这类''环节名''按现行词表今夜重放会被直接拒写，属应清理的历史污染'
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+    - 含 2 个'已并入'墓碑环节（收敛归并在案），链本体已无独立信息增量
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-fca9f4e06f91
+  - 一张图看懂铜和铜合金
+  - deprecated
+  - 有色金属
+  - 1
+  - null
+  - 4
+  - 1
+  - - 一张图看懂铜和铜合金
+  - 3
+  - 0.25
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-fd29a7e1b030
+  - 铝型材产业链
+  - deprecated
+  - 有色金属
+  - 1
+  - 2026
+  - 6
+  - 1
+  - - 一张图看懂铝型材
+  - 5
+  - 0.3333
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval
+- - CH-fe818b00d414
+  - 一张图看懂印制电路板行业
+  - deprecated
+  - 元件
+  - 1
+  - null
+  - 6
+  - 1
+  - - 一张图看懂印制电路板行业
+  - 5
+  - 0.1667
+  - 0.0
+  - deprecated_fragment
+  - - 链状态已是 deprecated（图谱链状态封闭枚举里的废弃态），仍留在参评分母里拉低覆盖率
+    - 链名命中词表拦截项（标题腔/结构违规），非规范产业链名
+    - 活跃环节仅 1 个（不构成可传导的链结构：无上下游可扩散拓扑），补挂也无法达到 80% 覆盖判据所需的环节基数
+  - merged_into_candidates: []
+    fallback: 无同名双生链时按 SOP 链废弃动作转 deprecated（去向归 Owner 裁）
+  - scripts/industry_graph/websearch_ingest.py ingest 的 chain 记录（status=deprecated MUST 带 merged_into）——本件不执行
+  - pending_owner_approval

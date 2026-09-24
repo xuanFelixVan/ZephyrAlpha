@@ -1,0 +1,14 @@
+# [A_config] module_id=MOD-CHAINPILE-METAQ | layer=config | stability=new | safety=L | ai_autonomy=ai_modifiable
+# 真源：metaq_e1c.space_registry.status 枚举唯一真源（消费方经 load_vocabulary_values 动态加载）。
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: 组合空间预注册台账状态枚举（open=可展开引用｜sealed=已封存只读）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-gc-20260924
+date: '2026-09-24'
+values:
+- value: open
+  definition: 已预注册且未封存：允许被展开/批 manifest 引用；取值域一经冻结不可改（改=新 space_hash）。
+- value: sealed
+  definition: 已封存：禁再展开（机检拒收），历史展开产物保留原 space_hash 可追溯；扩容申请的前置态。

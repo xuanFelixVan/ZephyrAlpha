@@ -1,0 +1,347 @@
+# =====================================================================
+# REEXAM-FAILS — 283 问战役 infra 型 fail 8 问真复考案卷
+# 执行人: reexam sub-agent（受总包 st-metaq-gc-20260924 派单）
+# 复考日期: 2026-09-24 | PIT 闭卷切点: 2025-09-09（所有判据取数 ≤ 切点）
+# 纪律声明: 判据一律取库内 meta_question.exam_plan 原文（下方逐问 verbatim）；
+#   未改任何口径/阈值/容差；口径歧义者两口径都算、都写、登记待 Owner 裁（§owner_pending_calibers），
+#   绝不自选有利侧；所有数字均为本执行人本机实跑产物（§probes），车道案卷数字仅作对账线索。
+# =====================================================================
+session: st-metaq-gc-20260924
+role: 复考执行人（8 infra fail 真复考 + PG 回写）
+pit_cutoff: "2025-09-09"
+pre_tristate: { pass: 145, fail: 48, insufficient: 90, sum: 283 }   # 2026-09-24 16:4x 总包态，回写前我复测一致
+exam_ref_pattern: "st-metaq-gc-20260924/reexam/fails/<QID>"
+
+probes:  # 本执行人实跑清单（输出件均在 .runtime/tmp/st-metaq-gc-20260924/reexam_fails/）
+  - id: hfq_point_50
+    cmd: "python scripts/governance/meta_question/wo004/verify_hfq.py --target-table c1_market.kline_daily_hfq --per-month 50 --only point"
+    out: hfq_point_50.json
+  - id: hfq_point_30
+    cmd: "python scripts/governance/meta_question/wo004/verify_hfq.py --target-table c1_market.kline_daily_hfq --per-month 30 --only point"
+    out: hfq_point_30.json
+  - id: hfq_chain
+    cmd: "python scripts/governance/meta_question/wo004/verify_hfq.py --target-table c1_market.kline_daily_hfq --only chain"
+    out: hfq_chain.json
+  - id: hfq_sampler_2025_06
+    cmd: "python scripts/governance/meta_question/wo004/sample_check_hfq.py --month 2025-06 --syms 50"
+    out: sampler_2025-06.yaml
+  - id: pq0131_isolation
+    cmd: "DatabaseService reader: kline_daily 中 data_source='recalc_raw_x_adjfactor' 行数 / 原始 ds 分布 / hfq 表隔离行数"
+    out: 见 pq0131_isolation_metrics
+  - id: hfq_family_weekly
+    cmd: ".runtime/tmp/.../hfq_family.py（周线 vs 日线重算基座端点因子对拍，闭卷窗）"
+    out: 见 caveats.hfq_family
+  - id: pq0018_independent
+    cmd: ".runtime/tmp/.../pq0018_independent.py（复用 WO-005 生成器 fetch/route/anchored_eval 只读实测两口径）"
+    out: pq0018_independent.out
+  - id: pq0064_recheck
+    cmd: "python scripts/governance/meta_question/wo006/recompute_pq0064.py --out .runtime/tmp/.../pq0064_recheck.yaml"
+    out: pq0064_recheck.yaml
+  - id: wo007_reexam
+    cmd: "python scripts/governance/meta_question/wo007/wo007_reexam.py"
+    out: ../wo007/wo007_reexam.yaml
+  - id: pq0078_bindings_reagg
+    cmd: "本执行人从 io_edge_binding_register.yaml:bindings 逐边重算三档比例（不读 meta.stats 头部数）"
+    out: 见 pq0078 metrics
+  - id: wo009_recheck
+    cmd: "python scripts/governance/meta_question/wo009/recheck_pq0072_violation.py"
+    out: ../wo009/recheck_pq0072.json
+
+# ───────────────────────── 逐问案卷 ─────────────────────────
+exams:
+  PQ-0012:
+    title: "SL-A01 的 kline_daily 复权因子对齐链路 PIT 违例率是否=0（复权算子进 PIT 窗月度抽检）？"
+    exam_plan_verbatim:
+      method: "月度抽样 50 只复权链路审计"
+      criterion: "复权算子时点合规抽检违例数"
+      threshold: "=0"
+    prereq_used: "WO-004 hfq 重算换名（线上 c1_market.kline_daily_hfq=10,073,683 行实查；旧表 kline_daily_hfq_legacy_20260924=8,431,745 行）"
+    metrics:
+      window: ["2021-01-04", "2025-09-09"]   # 闭卷窗，verify_hfq 默认 end=PQ_CUTOFF
+      points: 56516
+      months: 57
+      symbols_sampled: 2213
+      violations_strict_0tol: 0
+      violations_exam_1e_minus_3: 0
+      max_abs_delta: "0"
+      ch_server_independent_path: { points: 56516, violations_strict: 0, violations_exam_1e_minus_3: 0 }
+      sampler_crosscheck_2025_06: { points: 1000, symbols: 50, violations: 0, foreign_lineage: 0, no_factor: 0, dup_keys: 0 }
+      chain_health_aux: { rows: 10073683, duplicate_rows: 0, non_finite_close: 0, nonpositive_prices: 0, ohlc_order_violations: 0 }
+    threshold_check: "违例数 0 = 阈值 =0 → 达标（严格零容差与题面 1e-3 双口径均为 0）"
+    outcome: pass
+    fail_type: null
+    confidence: 0.95
+    data_window: { start: "2021-01-04", end: "2025-09-09", note: "闭卷窗逐点；表含切点后行但判据未取用" }
+    pit_assertion: "hfq/raw/factor 三表联查判据点全取 trade_date<=2025-09-09；因子主链窗内 FINAL 直取，与考试同构不放宽。"
+    three_check:
+      data: "OK 线上换名表实查 10,073,683 行（min 1990-12-19 max 2026-09-23）"
+      caliber: "OK 判据零改动：round_half_up(raw×因子,4) 逐位（strict）+ 相对误差 1e-3（题面）双报"
+      mechanical: "OK cityHash64 确定性分层抽样（每月 50 只），双异路径（Py decimal / CH 服务端）同判"
+    vs_lane_dossier: "考试在案违例 24,130/53,134（45.4%）→ 我实测 0/56,516；点数差因新表覆盖扩史（1990+），无 adverse 差异。换名前行数口径差异如实记录。"
+    notes: >-
+      复考通过。caveat：hfq 表族级联缺口——周线 kline_weekly_hfq 仍随旧基座（我实测 5,129 只中
+      4,723 只=92.1% 端点隐含因子与日线重算基座偏离>0.1%，闭卷窗，中位偏离 1.62%）；本问题面明书
+      kline_daily，族级联不入本题判据，登记为关联新缺口（见 new_gaps_registered）。
+
+  PQ-0131:
+    title: "SL-A01 日线/分钟行情线的复权算子改写历史风险是否被复权因子对齐且禁进 PIT 窗100%对冲（U4 PIT 控制执行审计）？"
+    exam_plan_verbatim:
+      method: "入库链路抽样审计（月度 30 条）"
+      criterion: "PIT 风险控制措施在入库链路执行"
+      threshold: "违规样本=0"
+    prereq_used: "同 PQ-0012（WO-004 换名表）；月度 30 条口径独立跑（与 PQ-0012 各读各题面：50 只 vs 30 条、时点合规 vs 入库链路对冲）"
+    metrics:
+      window: ["2021-01-04", "2025-09-09"]
+      ingest_audit_30_per_month: { points: 33904, months: 57, symbols_sampled: 1451, violations_strict: 0, violations_exam_1e_minus_3: 0, max_abs_delta: "0",
+                                   ch_server_path: { points: 33904, violations_strict: 0, violations_exam_1e_minus_3: 0 } }
+      pq0131_isolation_metrics:
+        raw_kline_daily_rows_carrying_recalc_mark: 0
+        raw_kline_daily_datasource_dist_closed_window: { "''": 7117389, Baostock: 1369701, tushare: 231029 }
+        hfq_table_recalc_marked_rows_closed_window: 8689380
+        reading: "复权算子全部隔离于独立 hfq 表，原始 kline_daily 零改写痕迹（'复权算子禁进 PIT 窗'结构对冲在位）"
+    threshold_check: "违规样本 0 = 阈值 =0 → 达标；对冲双要件（对齐违规=0 ∧ 原始表未被改写）均实测成立"
+    outcome: pass
+    fail_type: null
+    confidence: 0.9
+    data_window: { start: "2021-01-04", end: "2025-09-09" }
+    pit_assertion: "入库链路审计窗与隔离核验均 ≤2025-09-09；改写核验方向=原始表侧（复权算子不得进入），与考试同向同尺。"
+    three_check:
+      data: "OK 同 PQ-0012 实查"
+      caliber: "OK 判据未动：月度 30 条子集口径 + 违规=对齐违例（考试 b3 同构：全域违例子集即月度30条违规源）"
+      mechanical: "OK 确定性抽样可复算；隔离断言为全表 countIf 非抽样"
+    vs_lane_dossier: "考试在案：全域 24,130/53,134、2024 年 6,986/8,180（85.4%）→ 我实测月度30口径 0/33,904；原始表改写行数考试=0、我复测=0（一致）。"
+    notes: >-
+      复考通过。caveat 同 PQ-0012（周/月线族级联不在日线/分钟题面内）；kline_daily 内嵌
+      adj_factor 列为恒1死列（背景勘误，独立 adj_factor 表才是真源，判据未触及该死列）。
+
+  PQ-0018:
+    title: "SL-A16 ig_node_company 成分聚合口径与 TQCENTER 板块成分的重合率是否≥80%（图谱与行情两套板块口径对齐验收）？"
+    exam_plan_verbatim:
+      method: "ig_node_company 聚合 vs TQCENTER 成分对照"
+      criterion: "两套板块口径成分重合率"
+      threshold: "≥80%"
+    prereq_used: "WO-005 board_symbol_routing.yaml（223 板块实查一致）；本执行人复用生成器 fetch/route 现库重算"
+    metrics:
+      caliber_A_recorded_exam_symmetric_jaccard:
+        routed_domain_micro_jaccard: { inter_sum: 7471, union_sum: 205850, value: 0.0363, routed_pairs: 1613 }
+        exam_dossier_name_matched_value: 0.1345
+        symmetric_ceiling_anchored_domain: 0.3874
+        meets_80pct: false
+      caliber_B_lane_restated_asymmetric_admission:
+        anchored_nodes: 146
+        numerator: 3248
+        denominator: 4056
+        value: 0.8008
+        meets_80pct: true
+        margin_over_threshold_pp: 0.08
+      routing_coverage_live: { a_share_nodes: 1646, routed_any: 1613, rate: 0.98 }
+      source_watermarks_live: { boards: 223, board_member_pairs: 11177, graph_live_nodes: 4742, nodes_with_live_members: 1688, graph_member_edges_live: 11020 }
+    threshold_check: "题面判据'重合率'的考卷登记实现=对称 Jaccard→3.63%~13.45% ≪80% 不达；重述非对称承认率=80.08% 仅压线 +0.08pp。判据形态之争未获 Owner 明确→按在案口径判，不翻绿。"
+    outcome: fail
+    fail_type: infra
+    confidence: 0.8
+    data_window: { start: "2020-12-31", end: "2025-09-09", note: "题面 pit_proof=两表现状快照静态对照（无前视），与考试一致" }
+    pit_assertion: "静态快照对照不涉时序前视；PG ig_node_company(live)+CH sector_constituent 现库实查（max updated_at 2026-09-24 15:47）。"
+    three_check:
+      data: "OK 两套源表实查（223 板块/11,177 板块成员对/4,742 live 节点）"
+      caliber: "AMBIGUOUS→两口径并算并登记待裁（owner_pending #1）：对称重合率（考卷在案）vs 非对称承认率（车道重述）"
+      mechanical: "OK 确定性路由+显式 tie-break，逐节点集合交并可复算"
+    vs_lane_dossier: >-
+      与车道案卷不一致（live 漂移，如实记录）：车道册（16:33 落袋）A股节点 1534→我 live 1646、
+      命中 1502(97.91%)→1613(98.00%)、非对称承认率 82.65%→我实测 80.08%（分子分母域变大，贴线）、
+      routed 对称微 Jaccard 4.18%→3.63%、对称上限 37.45%→38.74%。DB ig_node_company 键后无新写
+      （max updated_at 15:47 早于册生成 16:33，疑册取数早于/不含 wo006 写面）。两桶结论均不受影响
+      （对称口径必 fail；非对称口径我从 82.65% 降至 80.08% 更贴线）。
+    notes: >-
+      Owner 裁定②（02_final_ledger.md 六裁定第②条，真实在册）只定'主从方向=TQCENTER 主/图谱从'，
+      未明书'以非对称承认率替代对称重合率作 ≥80% 阈的度量形态'——该替换是车道推断（其册内自评亦标
+      PASS-CANDIDATE 非 PASS）。按纪律：两口径都算、都写、不自选有利侧，维持考卷在案口径 fail，
+      待 Owner 裁度量形态后可一键翻绿（我实测非对称口径已过线）。
+
+  PQ-0064:
+    title: "ig_chain 873 条链的节点→公司映射完整度是否达到可考分级 A 档阈值（ig_node_company 覆盖率≥80% 的链占比）？"
+    exam_plan_verbatim:
+      method: "873 链逐一统计映射完整度并分级"
+      criterion: "链级 ig_node_company 覆盖率"
+      threshold: "A 档链占比≥80%（覆盖率≥80%）"
+    prereq_used: "WO-006 挂接行已在库（ig_node_company wo006 前缀 6,729 行实查；总行 25,559/live 15,086）；recompute_pq0064.py 现库重算"
+    metrics:
+      denominator_chains_with_nodes: 871
+      after_active_caliber: { aclass_chains_active: 642, ratio_active: 0.7371, pass: false }
+      after_all_caliber: { aclass_chains_all: 309, ratio_all: 0.3548, pass: false }
+      exam_baseline_reproduced: { ratio_active_pre: 0.6958, ratio_all_pre: 0.3307, caliber_self_check_identical: true }
+      projection_reconciliation_matches: true
+      write_integrity: { non_wo006_rows_unchanged: true, foreign_rows_touched_in_write_window: 0, wo006_rows_on_disallowed_nodes: 0 }
+      ceiling_hypothetical_active: { ratio_active_if_100pct_attach: 0.9369, note: "理想上限（全部非垃圾未挂活跃节点 100% 挂上），实际源覆盖率远低" }
+    threshold_check: "0.7371 < 0.80 且 0.3548 < 0.80 → 两口径均未达 → fail（挂接提升 +4.13pp/活跃口径，但缺口仍 6.29pp）"
+    outcome: fail
+    fail_type: infra
+    confidence: 0.95
+    data_window: { start: "snapshot", end: "snapshot 2026-09-24 现库（ig_chain/ig_node/ig_node_company 静态）", note: "与考试 snapshot 口径同构" }
+    pit_assertion: "静态结构审计，不涉行情时序；未用任何切点后行情数据。"
+    three_check:
+      data: "OK 871 有节点链/5,560 节点/25,559 映射行实查"
+      caliber: "OK 与考试 l2_q0064.py 逐字段对账 identical=True（12 项，含剔'已并入'活跃口径）"
+      mechanical: "OK SQL 聚合+分档可复现；纯 INSERT 完整性断言全绿"
+    vs_lane_dossier: "与 pq0064_recompute_wo006.yaml 全等（0.7371/0.3548/642/309），无差异。"
+    notes: >-
+      复考仍不达（照实判）。缺口结构性：115→108 条零覆盖微链 + 2,225 墓碑节点 + 55 词表垃圾节点；
+      剩余缺口非挂接管线可解（属词表/链池治理面）。禁靠放宽口径制造 pass（题面加'节点≥5 参评'等
+      更严口径会进一步拉低占比）。
+
+  PQ-0067:
+    title: "CKG 2021 行业上游聚合（supplies_to）对当期行业传导判定的仍有效比例是否≥60%（2021 静态快照陈旧度界）？"
+    exam_plan_verbatim:
+      method: "对 2026 行业样本回放 CKG 先验并对照当期边"
+      criterion: "2021 上游聚合与当期判定的一致比例"
+      threshold: "≥60%"
+    prereq_used: "WO-007 旁挂册 io_sector_two_level_map.yaml + io_edge_binding_register.yaml（Owner 裁定④旁挂方案）；wo007_reexam.py 真算 ig_fact 侧"
+    metrics:
+      ckg_side: { supplies_to_events: 57069, unmapped_events: 56801, ckg_raw_industry_pairs: 239, ckg_pairs_at_sws_l1: 139, endpoint_align_rate: 1.0 }
+      current_side: { io_industry_pairs_cross_industry: 668, distinct_industries: 27, pair_cap: 702, io_side_density: 0.9516 }
+      consistency_recorded_caliber_onesided: 0.7986   # |交|/|CKG行业对|，考卷登记同形
+      consistency_direction_relaxed: 0.8705
+      consistency_jaccard_symmetric: 0.1595
+      consistency_strict_io_topN: { top50: 0.1367, top100: 0.1942, top200: 0.3453 }
+      exam_period_reproduction: { ig_edge_total: 1726, cross_category_pairs: 0, consistency: 0.0 }   # 基线复现=考试 0%
+    threshold_check: "考卷在案判据形态（一致比例=交/CKG 行业对，单边）= 79.86% ≥ 60% → 达标；对称 Jaccard 15.95% 与 topN 严格域 <60% 并列如实报"
+    outcome: pass
+    fail_type: null
+    confidence: 0.6
+    data_window: { start: "2021-10-26", end: "snapshot 现库", note: "CKG as_of=2021-10-26（闭卷窗内）；对照=官方 2020 IO 表（valid_from 2022-08-31，闭卷窗内）" }
+    pit_assertion: "两侧时间戳均 ≤2025-09-09；静态结构比对，不涉行情前视。"
+    three_check:
+      data: "OK ig_fact 57,069 supplies_to 事件真查；旁挂册 668 行业对"
+      caliber: "判据形态未动（单边交/CKG 对=考卷在案式）；对照侧来源由'图内当期边（空集）'换为'官方 IO 矩阵'系本单前置（裁定④）——该换源登记待确认（owner_pending #4）"
+      mechanical: "OK 集合运算确定性可复现"
+    vs_lane_dossier: "与车道册微差：册存 literal=0.7971，我现库实跑=0.7986（CKG 爬升 unmapped 56800→56801 一处漂移），均 ≥60%，结论不变。基线 0% 复现一致。"
+    notes: >-
+      判 pass 但低置信（0.6）并附强制 caveat：IO 侧 95.16% 密度近完备二部图会天然抬高单边命中率
+      （密度基线≈随机对覆盖率，79.86% 的信息增量有限）；正确读法='CKG 行业结构与官方 IO 结构不矛盾、
+      载体已通'，不得读作'CKG 被证实'——这与 CKG 已降级为结构先验（裁定③）的语义自洽。对称口径
+      （15.95%）与严格 topN 口径均不达，一并入卷待 Owner 复裁。
+
+  PQ-0078:
+    title: "io_edge 部门码↔ig_node 映射补齐后可挂边比例是否≥95%（现 16859 条边 100% 挂零的 WP-0.5 缺口关闭验收）？"
+    exam_plan_verbatim:
+      method: "部门码映射后重放挂接"
+      criterion: "映射补齐后 io_edge 可挂边比例"
+      threshold: "≥95%"
+    prereq_used: "WO-007 io_edge_binding_register.yaml（旁挂册，原表零改动 untouched_proof 在案）；我从 bindings 16,859 条逐边重算三档，不采信 meta.stats 头部数"
+    metrics:
+      edges_total: 16859
+      baseline_reproduced: { any_end: 0.0412, both_end: 0.00053 }   # 考试 4.12%/0.05% 复现=True
+      tier_counts: { T1_node_identity: 193, T2_industry_proxy: 5259, T3_mapping_complete: 11407 }
+      ratio_T1_both_ends_node_identity: 0.0114
+      ratio_node_linked_both_ends_T1T2: 0.3234   # 双端有具体 ig_node 锚（题面『部门码↔ig_node』字面对象）
+      ratio_T3_industry_layer_resolved: 1.0      # 双端可解析到在用申万 L1，但端点无具体节点（node=null）
+      hard_judge_allowed_edges: 68
+      hard_judge_ratio: 0.004
+      anchor_concentration_top_share: 0.1708
+    threshold_check: "题面对象='部门码↔ig_node'映射→可挂边=双端有 ig_node 锚=32.34% < 95% → 不达；T3（行业码层 100%）映射目标≠ig_node，属有利读法，不自采"
+    outcome: fail
+    fail_type: infra
+    confidence: 0.9
+    data_window: { start: "2020-12-31", end: "snapshot 现库", note: "ig_io_edge as_of=2020-12-31 静态快照重放" }
+    pit_assertion: "静态挂接比例，不涉行情时序；旁挂册构建仅用静态词表/行业目录。"
+    three_check:
+      data: "OK 16,859 边逐条在册；原表零改动指纹对账（columns_n=16 无 node 列，sum_flow_wan 一致）"
+      caliber: "AMBIGUOUS→两口径并算并登记待裁（owner_pending #2）：可挂=挂到 ig_node（32.34%）vs 可挂=行业码解析（100%）"
+      mechanical: "OK 确定性归一+分层规则（bind_method_dict），逐边 tier/conf 可审计"
+    vs_lane_dossier: "与册 stats 头部全等（193/5259/11407，32.34%/100%），无差异；基线 4.12% 复现一致。"
+    notes: >-
+      缺口按节点同一性口径大幅改善（双端 0.053%→32.34%）但距 95% 仍差 62.66pp；可硬判定边仅 68 条
+      （0.4%）。两词系（IO 产品部门名 vs 图谱环节名）的节点同一性无法由名称算法补齐，需官方
+      《投入产出部门分类↔国民经济行业分类》对照表+人工确认窗（needs_human 129/153）。题面阈值原文
+      自带'映射补齐后'限定，若 Owner 认 T3 行业码口径为'可挂'，则可一键翻绿（100%）——待裁。
+
+  PQ-0065:
+    title: "CKG 产品-产品边（source=ckg_2021）与研报线抽取边的交叉验证一致率是否≥70%（低于则 CKG 降级为结构先验）？"
+    exam_plan_verbatim:
+      method: "重合边对 Jaccard 对照审计"
+      criterion: "CKG 产品-产品边与研报抽取边一致率"
+      threshold: "≥70%（低于则 CKG 降级为结构先验）"
+    prereq_used: "Owner 裁定③降级执行（WO-007 件 3 ckg_structural_prior_tier.yaml）；判据按降级后语义（题面自带条款）重述三判据 a/b/c 重跑，未沿用硬事实源一致率作裁决尺"
+    metrics:
+      original_consistency_reproduced: { consistency_mappable: 0.0122, mappable_ckg_pairs: 82, intersection_mappable: 1, consistency_full: 1.8e-05, self_confirming_if_not_excluded: 0.716, ckg_self_merged_edges_excluded: 76 }
+      restated_prior_usability:
+        a_endpoint_align_rate: { value: 1.0, threshold_borrowed: "≥0.95(借 PQ-0078 题面值)", meets: true }
+        a_granularity_compression: 0.5816
+        b_independent_side_evidence_rate: { value: 0.7986, threshold_borrowed: "≥0.60(借 PQ-0067 题面值)", meets: true }
+        c_consumer_compliance_rate: { value: 0.7619, threshold_required: "=1.00", meets: false, detail: "21 消费点中 5 个未先验化（降级补丁 5 册待落地，pending_patches 在案）" }
+      restated_verdict: "CONDITIONAL（a/b 达标，c 未达 1.00 → 先验暂不可入生产合成）"
+    threshold_check: "两条路径同判 fail：原题面 ≥70% 不达（1.22%）→ 触发降级条款；降级后三判据 c=76.19%≠100% → 先验尚不可用。裁决不依赖争议侧。"
+    outcome: fail
+    fail_type: infra
+    confidence: 0.8
+    data_window: { start: "2021-10-26", end: "snapshot 现库", note: "CKG as_of=2021-10-26 闭卷窗内；对照=ig_edge 当期快照" }
+    pit_assertion: "静态集合比对；未用切点后行情；剔源自并入边（source_doc LIKE 'ckg_2021%'）防自证同考试。"
+    three_check:
+      data: "OK ig_fact supplies_to/product_downstream_of 与 ig_edge 1,726 条（剔 76 自并入）实查"
+      caliber: "重述三判据阈值系借值（0.95/0.60）+ 纪律值（1.00），非本问库内题面原值→登记待 Owner 背书（owner_pending #3）；但无论按原口径或重述口径本题当前均 fail，桶位稳健"
+      mechanical: "OK 集合交并+消费点扫描确定性可复现"
+    vs_lane_dossier: "与考试在案微漂：mappable 81→82 对、一致率 1.23%→1.22%（产品名对齐域新增一对，交集仍 1）；b=0.7986 vs 册存 0.7971（同 PQ-0067 漂移）。方向与结论均不变。"
+    notes: >-
+      题面'低于则降级'条款已真实触发并执行（降级=消费侧口径，ig_fact 存量字节零触碰）。fail 性质=
+      infra：降级补丁 5 册未落地、5 个消费点仍把先验当硬事实；落地后按重述口径可复考（a/b 已过线）。
+
+  PQ-0072:
+    title: "股权质押/冻结公告事件与 edge_holding 现行版本（as_of=2025-12-31）的时序一致性是否满足 PIT（事件日晚于版本生效日的违规样本=0）？"
+    exam_plan_verbatim:
+      method: "质押/冻结公告事件对版本时戳全量比对"
+      criterion: "事件日与版本生效日的时序合规率"
+      threshold: "违规样本=0"
+      event_source_ref: "股权质押/冻结公告事件（公告线触发）"
+    prereq_used: "WO-009 metaq_pledge.pledge_event_version 载体（实查回填 112,822 行）+ recheck_pq0072_violation.py（判据零放宽重跑）"
+    metrics:
+      events_in_window: 112822
+      baseline_regression_reproduced: { matched: 110690, violations: 5238, violation_rate: 0.047321, identical_to_exam: true }   # 尺子未换自证
+      after_edge_union_carrier: { matched: 112822, violations: 0, violation_rate: 0.0 }
+      carrier_only: { matched: 112822, violations: 0 }
+      integrity_7_assertions: "I1 行数=源 112,822/112,822；I2 指纹双向差空集+uid 零重；I2b 抽 3,000 行×12 字段零错位；I3 链零倒挂/零重叠/零缝/is_current 零错标；I4 因果零违例+切点后零行（R3 洁净）；I5 解析诚实零违例；I6 source_ref 零重零非规范；I7 三元组双向空集（无虚构）——全绿"
+      same_day_version_hit_rate: { before_edge_only: 0.009989, after_union: 1.0, exam_registered: 0.012 }
+      version_keys: { edge: 275370, carrier: 10917 }
+      consumer_smoke: { holder_versions_as_of_rows: 3, timeline_view_rows: 6 }
+    threshold_check: "违规样本 0 = 阈值 =0 → 达标（匹配集全量 112,822 无一违例；同公告日版本命中率 100% 使归零非空转）"
+    outcome: pass
+    fail_type: null
+    confidence: 0.9
+    data_window: { start: "2003-06-10", end: "2025-09-09" }
+    pit_assertion: "事件侧 announce_date≤2025-09-09 全量；版本对照集 valid_from≤切点硬过滤（rows_after_cutoff=0 实测）；基线复现 5,238 证判据算子一字未动。"
+    three_check:
+      data: "OK CH equity_pledge_detail 窗内 112,822 行 + PG 载体 112,822 行逐 uid 对账"
+      caliber: "OK 违规算子=str(announce_date)>str(max valid_from) 照抄考试探针（回归自证通过）"
+      mechanical: "OK 全量比对非抽样；完整性七断言独立于归零结果（防自证式归零）"
+    vs_lane_dossier: "与考试案卷基线全等（5,238/110,690）；hit_rate_before 我实测 0.9989% vs 案卷记 1.2%（同为'仅 1.2%'量级，判定不依此数）。载体 112,822 行与派单预告数一致。"
+    notes: >-
+      复考通过。范围限制如实登记：题面 event_source 含'冻结'，冻结事件至今无独立落库表（仅 equity_pledge
+      内 remark 字样），本 pass 覆盖质押公告事件域——与考试同域同尺（考试亦未能测冻结），冻结落库缺口
+      另行登记（new_gaps #6），不影响本题桶位但影响完全性。
+
+# ───────────────────────── 待 Owner 裁口径歧义 ─────────────────────────
+owner_pending_calibers:
+  - id: REEXAM-FAILS-P1
+    q_id: PQ-0018
+    question: "题面'成分重合率≥80%'的度量形态：对称 Jaccard（考卷在案实现，我实测 3.63%/13.45%，锚定域上限 38.7%）vs 非对称从→主承认率（车道据裁定②重述，我实测 80.08% 压线过）？裁定②只定主从方向未定度量形态；若 Owner 背书非对称形态，按我实测即翻绿（但裕度仅 0.08pp，建议同时裁'域定义'）。"
+  - id: REEXAM-FAILS-P2
+    q_id: PQ-0078
+    question: "题面'部门码↔ig_node 映射补齐后可挂边'：可挂=双端挂到具体 ig_node（我实测 32.34%<95%）vs 可挂=部门可解析到在用申万 L1 行业码且候选池非空（T3=100%）？题面字面对象是 ig_node，故本复考判 fail；若 Owner 认行业码层即'可挂'，一键翻绿。"
+  - id: REEXAM-FAILS-P3
+    q_id: PQ-0065
+    question: "降级后重述三判据（a≥0.95/b≥0.60 借同族题面阈值、c=1.00 纪律二元）是否获 Owner 背书为该问正式复考判据？（当前两口径均判 fail，桶位不依赖此裁）"
+  - id: REEXAM-FAILS-P4
+    q_id: PQ-0067
+    question: "对照侧'当期行业传导判定'取官方 2020 IO 系数矩阵旁挂册（裁定④载体）是否即题面所指'当期边'？图内当期跨行业边实测仍为 0（ig_edge 1,726 条跨链仅 2）。本复考按在案单边判据形式+裁定④前置载体判 pass（置信 0.6），密度告警（IO 侧 95.16% 近完备）与 Jaccard 15.95% 已并列入卷。"
+
+new_gaps_registered:
+  - "hfq 表族级联：kline_weekly_hfq/kline_monthly_hfq 仍随旧基座（我实测周线 vs 日线重算端点因子偏离>0.1% 的标的 4,723/5,129=92.1%，闭卷窗中位 1.62%）；PQ-0012/0131 题面限日线（分钟线无 hfq 表），族级联不入本题判据，需另立工单族内对拍。"
+  - "PQ-0072 冻结事件独立落库表缺失（题面 event_source 含'冻结'；考试与本复考同域限制，如实登记）。"
+  - "PQ-0018 live 漂移：board 册取数域（1534 A股节点）与现库（1646）不一致，册重放需以重跑生成器为准（疑取数早于 wo006 15:47 写面）。"
+
+writeback:
+  machine_output: ".runtime/tmp/st-metaq-gc-20260924/reexam_fails/（各探针 JSON/YAML/LOG 全留存）"
+  contract: "meta_question_exam_result 追加：列 outcome='answered'（生命周期），裁决写 conclusion JSONB 'outcome' 键（11 规范键全齐）；meta_question_audit 追加 what='update' before/after 带 outcome；纯追加零 UPDATE/DELETE；exam_ref=st-metaq-gc-20260924/reexam/fails/<QID>"
+  expected_post_tristate: { pass: 149, fail: 44, insufficient: 90, sum: 283 }
+  executed_at: "2026-09-24（回写器 writeback_reexam_fails.py 单事务：8 行 exam_result + 8 条 audit，提交前三态自证通过，无回滚事件）"
+  actual_post_tristate: { pass: 149, fail: 44, insufficient: 90, sum: 283 }
+  post_verify: "进程外新连接复核：和=283；8 问逐一落期望桶（0012/0131/0067/0072→pass；0018/0064/0065/0078→fail(infra)）；11 规范键零缺失；每问本 actor audit 事件恰 1 条——ALL-GREEN"

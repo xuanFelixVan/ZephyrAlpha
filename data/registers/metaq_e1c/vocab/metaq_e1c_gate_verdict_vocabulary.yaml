@@ -1,0 +1,20 @@
+# [A_config] module_id=MOD-CHAINPILE-METAQ | layer=config | stability=new | safety=L | ai_autonomy=ai_modifiable
+# 真源：metaq_e1c.merge_gate_pairwise.verdict / merge_gate_redundancy.verdict 枚举唯一真源。
+# 对齐在产门禁 MOD-PA-004 zephyr.pf_alloc.core.strategy_correlation_gate.GateVerdict 四值，
+# 不另立口径（合并闸口径差异的处置见案卷 WO-B2 待落地补丁段）。
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: 合并闸逐对/整批裁决级别枚举（严重度递增，与 MOD-PA-004 同源四值）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-gc-20260924
+date: '2026-09-24'
+values:
+- value: PASS
+  definition: 未越任何相关性阈。
+- value: WARN
+  definition: 越告警阈未越否决阈（可留库但标记冗余）。
+- value: REJECT
+  definition: 越否决阈（在产 Pearson>0.85 或题面 |Spearman|>0.7）→ 合并候选。
+- value: HARD_REJECT
+  definition: 越硬否决阈（在产 Pearson>0.90）→ 禁入库。
