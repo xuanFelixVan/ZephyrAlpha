@@ -75,15 +75,38 @@ if [ "$state" != "prepared" ]; then
     exit 0
 fi
 
-# 获取主仓库根目录（worktree 内 git-common-dir 指向主仓库 .git）
-common_dir=$(git rev-parse --git-common-dir 2>/dev/null)
-if [ -n "$common_dir" ] && [ -d "$common_dir" ]; then
-    repo_root=$(cd "$common_dir/.." && pwd)
-    reports_dir="$repo_root/.runtime/reconcile_reports"
-else
-    repo_root=$(pwd)
-    reports_dir=".runtime/reconcile_reports"
+# 获取主仓库根目录——M3 零子进程根发现（st-commitspeed-tbl-20260924 T6）：
+# 实测 git 调本钩子不导出 GIT_DIR（scratch 仓 env dump 仅 PWD），但 cwd 恒为工作树顶层
+# ⇒ 从 $PWD 向上走查找 .git（目录=主仓；文件=worktree 的 gitdir 指针，剥 /worktrees/* 段
+# 即主 .git）。走查失败（异常布局/手动深目录裸调）回落 rev-parse——正确优先于快。
+repo_root=""
+_probe="$PWD"
+while [ "$_probe" != "/" ] && [ -n "$_probe" ]; do
+    if [ -d "$_probe/.git" ]; then
+        repo_root=$(cd "$_probe" && pwd)
+        break
+    fi
+    if [ -f "$_probe/.git" ]; then
+        _gd=$(sed -n 's/^gitdir:[[:space:]]*//p' "$_probe/.git" 2>/dev/null)
+        case "$_gd" in
+            */worktrees/*) _gd="${_gd%%/worktrees/*}" ;;
+        esac
+        if [ -n "$_gd" ] && [ -d "$_gd" ]; then
+            repo_root=$(cd "$_gd/.." && pwd)
+            break
+        fi
+    fi
+    _probe=$(dirname "$_probe")
+done
+if [ -z "$repo_root" ]; then
+    common_dir=$(git rev-parse --git-common-dir 2>/dev/null)
+    if [ -n "$common_dir" ] && [ -d "$common_dir" ]; then
+        repo_root=$(cd "$common_dir/.." && pwd)
+    else
+        repo_root=$(pwd)
+    fi
 fi
+reports_dir="$repo_root/.runtime/reconcile_reports"
 # 会话注册表锚点（红队加固 st-ff-rb-gov-20260918：分叉/伪造标记判定需要会话键真源）
 registry_file="$repo_root/.runtime/session_registry.json"
 
@@ -91,11 +114,15 @@ registry_file="$repo_root/.runtime/session_registry.json"
 ZERO_OID="0000000000000000000000000000000000000000"
 
 # 读取 stdin：每行 "<old-oid> <new-oid> <ref-name>"
+# M3 微优（st-commitspeed-tbl-20260924 T6）：CRLF 剥离去 fork（原每字段 echo|tr 各起
+# 2 进程，Windows fork 昂贵）；OID/ref 名内不含 \r，剥单个尾随 \r 与 tr -d 语义等价。
+_CR=$(printf '\r')
 while read -r old_oid new_oid ref_name; do
-    # Windows CRLF 兼容：strip 尾部 \r（Python subprocess / 文本模式 pipe 可能注入）
-    old_oid=$(echo "$old_oid" | tr -d '\r')
-    new_oid=$(echo "$new_oid" | tr -d '\r')
-    ref_name=$(echo "$ref_name" | tr -d '\r')
+    # Windows CRLF 兼容：剥全部尾随 \r（Python subprocess / 文本模式 pipe 可能注入；
+    # 畸形双重 \r 也全剥=与原 tr -d '\r' 尾部语义全等价，宁可多剥不可少查）
+    while :; do case "$old_oid" in *"$_CR") old_oid=${old_oid%"$_CR"};; *) break;; esac; done
+    while :; do case "$new_oid" in *"$_CR") new_oid=${new_oid%"$_CR"};; *) break;; esac; done
+    while :; do case "$ref_name" in *"$_CR") ref_name=${ref_name%"$_CR"};; *) break;; esac; done
 
     # 跳过空行
     [ -z "$ref_name" ] && continue
@@ -135,36 +162,33 @@ while read -r old_oid new_oid ref_name; do
         fi
     fi
 
-    # 跳过 reset/rewind：new 是 old 的祖先 = 真回退（如 git reset --soft HEAD~1）
-    #
-    # === 红队加固（st-ff-rb-gov-20260918，2026-09-18 全流通战役攻面一 A1-5）===
-    # 病根：原判定只有一条 `! merge-base --is-ancestor old new → continue`，
-    # 把"old 不是 new 的祖先"**全**当作 reset/rewind 静默放行。但 ref 移动有三态：
-    #   快进(new 含 old) / 回退(new 是 old 祖先) / **分叉(互不为祖先)**。
-    # 第三态此前无判据 → `git commit-tree -p <HEAD~n>` + `git update-ref refs/heads/dev`
-    # 可把一笔从未过任何闸的提交直落 dev，同时把 n 笔**他人已落地提交**挤出主线
-    # （scratch 实弹：dev 上 1 笔已落 GW 提交被静默吞出主线，事后 git log 不可见）。
-    # 治本：先认真回退（new 是 old 的祖先 → 放行，POST-COMMIT-GUARD 的 reset 走这条），
-    # 其余非快进=分叉，按正向更新对待（继续查 merge/标记），merge-base 自身异常
-    # 也归入分叉（fail-closed：读不懂的移动必须能说出它是回退才放行）。
-    if git merge-base --is-ancestor "$new_oid" "$old_oid" 2>/dev/null; then
-        continue  # 真回退（rewind）
-    fi
-    if ! git merge-base --is-ancestor "$old_oid" "$new_oid" 2>/dev/null; then
-        echo "[REFERENCE-TRANSACTION-GUARD] 检测到分叉式 ref 移动（old/new 互不为祖先），按正向更新审查" >&2
+    # === M3 单调用取数（st-commitspeed-tbl-20260924 T6）：回退判定+父数+正文合一次 git log ===
+    # 语义等价推导（与原 5 调用版逐路径对照）：
+    #   old..new 输出为空且 rc=0 ⇔ new 可从 old 达（含 old==new）＝原 is-ancestor(new,old)
+    #   真回退判定 → continue；
+    #   rc≠0（OID 不可读）→ 取数为空继续走检查 → BLOCK（fail-closed 不变；且对"old 不可读
+    #   但 new 可读"的畸形输入比原版更严——原版会单独读 new 放行合法标记，新版一律按不可
+    #   审查阻断，安全门对畸形输入收紧=有意为之）；
+    #   -1 只取 tip 单记录 ⇒ %B 扫描面与原 `git log -1 --format=%B new` 逐字节同界
+    #   （多记录 range 不混入 commit_msg——不因合批放宽或收紧伪造标记判定面）。
+    #   放弃项（有意，留档）：原第二条 is-ancestor 仅产 stderr 分叉警告、无控制流作用；
+    #   多提交快进与分叉在本取数下不可区分，警告移除——两态的后续检查完全相同，治理
+    #   判定不受影响。
+    _sep=$(printf '\001')
+    _range=$(git log -1 --format="%P${_sep}%B" "$old_oid..$new_oid" 2>/dev/null)
+    if [ $? -eq 0 ] && [ -z "$_range" ]; then
+        continue  # 真回退（rewind）/无移动
     fi
 
     # === Forward commit — 应用治理检查 ===
 
     # 检查是否 merge commit（2+ parents）
-    parent_line=$(git log -1 --format=%P "$new_oid" 2>/dev/null)
+    parent_line=${_range%%"$_sep"*}
+    commit_msg=${_range#*"$_sep"}
     parent_count=$(echo "$parent_line" | wc -w)
     if [ "$parent_count" -ge 2 ]; then
         continue  # Merge commit，已被 merge gate 校验
     fi
-
-    # 获取 commit message
-    commit_msg=$(git log -1 --format=%B "$new_oid" 2>/dev/null)
 
     # 检查是否含 [GW: 标记——红队加固（st-ff-rb-gov-20260918 A1-5b）：
     # 原判据只看子串 [GW: 是否存在，故任意伪造尾注（含拿注册表字段名当 sid）都能买通行证；
