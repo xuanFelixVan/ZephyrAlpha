@@ -216,7 +216,22 @@ def _derive_owner(rel_path: str) -> str:
 def scan_scripts() -> list[dict]:
     """scan_scripts implementation."""
     scripts = []
+    # 入选集以 HEAD 提交树为准：脏工作区里他包在途未提交的 .py 不得烤进已提交清单
+    # （F-AUDIT-GOMAP-INFLIGHT 同族第三例实证——HEAD 版清单曾带 4 条 NOT_IN_HEAD 幻影）。
+    from zephyr.governance.audit._git_helpers import git_ls_tree_paths  # noqa: PLC0415
+
+    head_paths = git_ls_tree_paths(str(REPO_ROOT), "HEAD", suffixes=(".py",))
+    if head_paths is None:
+        raise RuntimeError("HEAD 树枚举失败——清单入选集必须以已入库集合为准，拒绝降回工作树枚举")
+    head_set = set(head_paths)
     for py_file in sorted(SCRIPTS_DIR.rglob("*.py")):
+        try:
+            _rel = py_file.resolve().relative_to(REPO_ROOT).as_posix()
+        except ValueError:
+            _rel = ""
+        if _rel and _rel not in head_set:
+            continue  # 未入库在途件：不进清单
+
         parts = py_file.relative_to(SCRIPTS_DIR).parts
         if any(p in EXCLUDE_DIRS for p in parts):
             continue

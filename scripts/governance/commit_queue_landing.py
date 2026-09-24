@@ -1011,7 +1011,7 @@ class WorktreeLanding:
         if not base:
             # 存量项兜底（F-AUDIT-QUEUE-04 残面）：正门修好之前入袋的项仍无 base_head，
             # 光修正门救不了今晚在飞的存量袋 ⇒ 用时间基底替代（见 _legacy_base_drift_reason）。
-            return self._legacy_base_drift_reason(item)
+            return self._legacy_base_drift_reason(item, current_dev)
         if base == current_dev:
             return None
         if self._git_repo("cat-file", "-e", base, check=False).returncode != 0:
@@ -1026,7 +1026,7 @@ class WorktreeLanding:
             )
         return None
 
-    def _legacy_base_drift_reason(self, item: dict) -> str | None:
+    def _legacy_base_drift_reason(self, item: dict, current_dev: str) -> str | None:
         """无 base_head 的存量项：以「袋创建时间 + GW 归属」替代时间基底做快进判定。
 
         判据=dev 上本袋 `created_at` 之后触及本袋路径的提交里，是否存在**别的会话**的
@@ -1044,7 +1044,7 @@ class WorktreeLanding:
             "log",
             f"--since={created}",
             "--format=%H%x09%s",
-            "refs/heads/" + self.target_branch,
+            current_dev,
             "--",
             *paths,
             check=False,

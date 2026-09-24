@@ -90,10 +90,12 @@ CHECKS = [
     {
         "name": "script_manifest.yaml",
         "cmd": [sys.executable, str(GENERATORS_DIR / "generate_script_manifest.py"), "--check"],
+        "fix": [sys.executable, str(GENERATORS_DIR / "generate_script_manifest.py")],
     },
     {
         "name": "gate_registry.yaml",
         "cmd": [sys.executable, str(GENERATORS_DIR / "generate_gate_registry.py"), "--check"],
+        "fix": [sys.executable, str(GENERATORS_DIR / "generate_gate_registry.py")],
     },
     # 注（2026-08-19 退库终态跟进）：原 blueprint_registry.yaml 检查已摘除——
     # 该文件经 #ARCH-BP-REGISTRY-DELETION-001 后续裁定正式派生退库（commit 03df6215e8：
@@ -104,20 +106,95 @@ CHECKS = [
     {
         "name": ".importlinter forbidden_modules",
         "cmd": [sys.executable, str(GENERATORS_DIR / "generate_importlinter.py"), "--check"],
+        "fix": [sys.executable, str(GENERATORS_DIR / "generate_importlinter.py")],
+    },
+    # 册内自洽（2026-09-24 本包补，真源=docs/_working/audit_fix/lanes/L4_registry_counts/）：
+    # 上面 gate_registry 的 --check 只比对"声明计数 vs 生成器算出的计数"，从不比对
+    # "声明计数 vs 在册段实际长度"⇒ 队列落地把条目推进了、标量钉在旧值时检测器全盲
+    # （实测 total_gates=174 而 gates 实 180 带病 2 天，GATE-21 在册却报不出）。
+    # 现按 audit 尺Q 的口径把自洽检查立成常驻闸。作用域先只点两台（含尺Q 实测出的
+    # 两台失真），扩到全 catalogs 扫是加文件名一行的事——本轮不扩面，避免在其他会话
+    # 批次在飞时把无关提交打红（判读见 L4 挖矿簿 §3）。
+    {
+        "name": "gate_registry.yaml (declared total == section length)",
+        "selfcheck": {
+            "path": "docs/01_policies_and_standards/_registry/catalogs/gate_registry.yaml",
+            "pairs": {"total_gates": "gates"},
+        },
+        "fix": [sys.executable, str(GENERATORS_DIR / "generate_gate_registry.py")],
+    },
+    {
+        "name": "rule_catalog_registry.yaml (declared total == section length)",
+        "selfcheck": {
+            "path": "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml",
+            "pairs": {"total_files": "files"},
+        },
+        "fix": [
+            sys.executable,
+            str(_GOV_DIR / "d3_metadata" / "generate_rule_catalog.py"),
+        ],
     },
 ]
 
 
+def _run_selfcheck(item: dict) -> str | None:
+    """声明计数 vs 同名段实际长度；不一致返回漂移描述，一致返回 None。
+
+    刻意独立于生成器实现（生成器 --check 的口径是"磁盘 vs 生成"，本函数是
+    "磁盘内部自洽"——两半合起来才是完整的静态清单失真定义）。
+    """
+    import yaml  # noqa: PLC0415
+
+    p = _REPO_ROOT / item["selfcheck"]["path"]
+    if not p.is_file():
+        return f"{p.name} 不存在（自洽检查无从判定）"
+    try:
+        data = yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    except Exception as exc:  # noqa: BLE001 — 解析失败=失真，不得静默放行
+        return f"{p.name} YAML 解析失败: {type(exc).__name__}: {exc}"
+    for key, section in item["selfcheck"]["pairs"].items():
+        declared = data.get(key)
+        actual = data.get(section)
+        if declared is None or not isinstance(actual, (list, dict)):
+            return f"{p.name} 缺 {key} 或段 {section} 非集合（自洽键漂移）"
+        if int(declared) != len(actual):
+            return f"DRIFT: {p.name} 声明 {key}={declared} ≠ {section} 实际 {len(actual)}"
+    return None
+
+
 def main() -> None:
     """Entry point: parse args, run logic, return exit code."""
-    # --check 是唯一模式（pre-commit / 手动调用均传 --check）；忽略其他参数。
+    # --check=只判定（pre-commit 正门用）；--auto-fix=先跑各台的 fix 命令再复判定
+    # （post-commit reconciler 的 D5_static_manifest 通道用，reconciler._fix_yaml_append
+    #  一直按这个契约传旗，本脚本此前"忽略其他参数"＝映射到空操作，故漂移能带病两天）。
+    auto_fix = "--auto-fix" in sys.argv
     failures = []
     for check in CHECKS:
+        if auto_fix and check.get("fix"):
+            fr = subprocess.run(
+                check["fix"],
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                env=_SUBPROCESS_ENV,
+                cwd=str(_REPO_ROOT),
+            )
+            tail = (fr.stdout + fr.stderr).strip().splitlines()
+            print(f"AUTO-FIX [{check['name']}] rc={fr.returncode}: {(tail[-1] if tail else '')[:160]}")
+        if "selfcheck" in check:
+            drift = _run_selfcheck(check)
+            if drift:
+                failures.append(f"FAIL [{check['name']}]: {drift}")
+            else:
+                print(f"PASS [{check['name']}]")
+            continue
         result = subprocess.run(
             check["cmd"],
             capture_output=True,
             text=True,
             encoding="utf-8",
+            errors="replace",
             env=_SUBPROCESS_ENV,
             cwd=str(_REPO_ROOT),
         )
@@ -134,6 +211,7 @@ def main() -> None:
     print(f"\nGATE-21 FAIL: {len(failures)} static manifest(s) have drifted:\n")
     for f in failures:
         print(f"  - {f}")
+    print("修复（本包补的通道）：python " + __file__.replace(chr(92), "/") + " --auto-fix")
     print("\nFix: 运行对应生成器（不带 --check）重新生成，例如：")
     print("  python scripts/governance/generators/generate_script_manifest.py")
     print("  python scripts/governance/generators/generate_gate_registry.py")

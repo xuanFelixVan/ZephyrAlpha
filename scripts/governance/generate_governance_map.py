@@ -48,8 +48,9 @@ from __future__ import annotations
 import argparse
 import ast
 import re
+import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 import yaml
@@ -63,8 +64,14 @@ SCAN_ROOTS = ("src/zephyr", "scripts")
 SCAN_EXCLUDE_PARTS = ("__pycache__", "_archive", "tests", "test")
 # 业务/数据面排除(其 monitor/probe 属数据质量治理,非系统运行时治理,进图即噪音)
 _BUSINESS_EXCLUDE_PREFIXES = (
-    "src/zephyr/data/", "src/zephyr/data_eng/", "src/zephyr/factor/", "src/zephyr/backtest/",
-    "src/zephyr/ex_core/", "src/zephyr/regime/", "scripts/data/", "scripts/backtest/",
+    "src/zephyr/data/",
+    "src/zephyr/data_eng/",
+    "src/zephyr/factor/",
+    "src/zephyr/backtest/",
+    "src/zephyr/ex_core/",
+    "src/zephyr/regime/",
+    "scripts/data/",
+    "scripts/backtest/",
 )
 _HEADER_SCAN_LINES = 45
 
@@ -75,7 +82,10 @@ _FAMILY_PATTERNS: tuple[tuple[str, str], ...] = (
     ("L5_selfheal", r"self_heal|selfhealer|reconcil|auto_fix|repair"),
     ("L2_resource", r"resource_guard|resource_optimization|gpu_|vram|hot_plane_budget|capacity_assurance|budget"),
     ("L1_monitor", r"watchdog|health|heartbeat|probe|telemetry|monitor"),
-    ("L0_lifecycle", r"process_pool|process_lifecycle|supervisor|nssm|lifecycle|boot_hook|startup|shutdown|windows_service|spawn|daemon_registry|stop_gate"),
+    (
+        "L0_lifecycle",
+        r"process_pool|process_lifecycle|supervisor|nssm|lifecycle|boot_hook|startup|shutdown|windows_service|spawn|daemon_registry|stop_gate",
+    ),
     ("L6_audit", r"status_dashboard|ai_audit|ops_guard"),
 )
 _GOVERNANCE_UNIVERSE = "|".join(p for _, p in _FAMILY_PATTERNS)
@@ -92,7 +102,11 @@ _HEADER_RE = {
 }
 
 _OUT_OF_SCOPE_DEFAULTS = [
-    {"name_zh": "提交门禁体系", "ref": "docs/01_policies_and_standards/_registry/catalogs/commit_gate_registry.yaml", "note_zh": "门禁是每模块配套,非运行时流水线节点"},
+    {
+        "name_zh": "提交门禁体系",
+        "ref": "docs/01_policies_and_standards/_registry/catalogs/commit_gate_registry.yaml",
+        "note_zh": "门禁是每模块配套,非运行时流水线节点",
+    },
     {"name_zh": "数据治理", "ref": "docs/01_policies_and_standards/sop/data_ops_sop/data_ops_policy.md"},
     {"name_zh": "代码质量治理", "ref": "src/zephyr/gov_code_quality"},
     {"name_zh": "交易决策治理", "ref": "config/trading_decision_map.yaml"},
@@ -100,7 +114,12 @@ _OUT_OF_SCOPE_DEFAULTS = [
 
 _PIPELINE_DEFAULT = {
     "layers": [
-        {"id": "GOM-L0", "name_zh": "孵化", "desc_zh": "进程/服务出生:统一 spawn 入口、NSSM 永久服务、boot 编排", "mounts": []},
+        {
+            "id": "GOM-L0",
+            "name_zh": "孵化",
+            "desc_zh": "进程/服务出生:统一 spawn 入口、NSSM 永久服务、boot 编排",
+            "mounts": [],
+        },
         {"id": "GOM-L1", "name_zh": "运行监控", "desc_zh": "心跳/健康探针/看门狗互检/遥测", "mounts": []},
         {"id": "GOM-L2", "name_zh": "资源水位", "desc_zh": "内存/CPU/GPU/磁盘阈值与告警、预算", "mounts": []},
         {"id": "GOM-L3", "name_zh": "熔断降级", "desc_zh": "kill_switch/熔断器/降级级联/死人开关", "mounts": []},
@@ -133,18 +152,48 @@ def parse_header(path: Path) -> dict[str, Any]:
     return out
 
 
+def _head_py_paths() -> list[str]:
+    """HEAD 提交树上的全部 .py 相对路径。取不到即抛，不静默降回工作树枚举。
+
+    口径真源=zephyr.governance.audit._git_helpers.git_ls_tree_paths（与
+    generate_script_manifest 共用，禁各生成器各写一份）。
+    """
+    from zephyr.governance.audit._git_helpers import git_ls_tree_paths  # noqa: PLC0415
+
+    paths = git_ls_tree_paths(str(REPO_ROOT), "HEAD", suffixes=(".py",))
+    if paths is None:
+        raise RuntimeError(
+            "HEAD 树枚举失败——图入选集必须以已入库集合为准，拒绝降回工作树枚举"
+            "（静默降级=把 F-AUDIT-GOMAP-INFLIGHT 病根原样放回来）"
+        )
+    return paths
+
+
 def _iter_py_files() -> list[Path]:
-    """_iter_py_files implementation."""
+    """入选集=HEAD 提交树，**不是工作树**（F-AUDIT-GOMAP-INFLIGHT 治本，2026-09-24）。
+
+    病根：原实现 `base.rglob("*.py")` 以工作树为入选源 ⇒ 在脏工作区重跑生成器会把
+    **他包在途未提交的 .py 烤进已提交的图 YAML**（图有物无=悬空条目）。实测分母：
+    rglob 427 / index 424 / HEAD 424，多出的 3 条正是三件他包在途件，且已随
+    `fa0ca806fb` 等笔提交进 HEAD——污染是**已入库**的，不是只在盘上。
+    现按 HEAD 树取集；HEAD 有而盘上缺（他包正在删/移）→ 跳过并留痕计数，
+    因为图条目必须对应可读文件（parse_header 要打开它）。
+    """
     files: list[Path] = []
-    for root in SCAN_ROOTS:
-        base = REPO_ROOT / root
-        if not base.exists():
+    missing: list[str] = []
+    for rel in _head_py_paths():
+        if not any(rel == r or rel.startswith(r + "/") for r in SCAN_ROOTS):
             continue
-        for p in base.rglob("*.py"):
-            parts = set(p.parts)
-            if parts & set(SCAN_EXCLUDE_PARTS):
-                continue
-            files.append(p)
+        parts = set(PurePosixPath(rel).parts)
+        if parts & set(SCAN_EXCLUDE_PARTS):
+            continue
+        p = REPO_ROOT / rel
+        if not p.is_file():
+            missing.append(rel)
+            continue
+        files.append(p)
+    if missing:
+        print(f"WARN: HEAD 树上 {len(missing)} 个 .py 盘上缺失（他包删除/移动在途），本次不入图：{sorted(missing)[:5]}")
     return files
 
 
@@ -364,11 +413,7 @@ def build_document(dry_run: bool) -> dict[str, Any]:
     if OUTPUT_PATH.exists():
         try:
             existing = yaml.safe_load(OUTPUT_PATH.read_text(encoding="utf-8")) or {}
-            human_keys = {
-                k: existing[k]
-                for k in ("pipeline", "out_of_scope_refs", "effective_from")
-                if k in existing
-            }
+            human_keys = {k: existing[k] for k in ("pipeline", "out_of_scope_refs", "effective_from") if k in existing}
         except (OSError, yaml.YAMLError):
             human_keys = {}
     doc: dict[str, Any] = {

@@ -123,6 +123,7 @@ from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 
 
 # 第六图 frontend_map 校验器（2026-09-04 六图对齐升级，同目录）
 from check_frontend_map import run_checks as run_frontend_map_checks  # noqa: E402
+
 # 第七图 trading_decision_map 校验器（2026-09-05 七图升级 #ARCH-DECISION-MAP-GATE-001，同目录）
 from check_decision_map import run_checks as run_decision_map_checks  # noqa: E402
 from align_panoramas import (  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
@@ -263,8 +264,12 @@ def _build_overview(
     lines.append("# 全图全库对齐总览 (Full-Panorama Alignment Overview)")
     lines.append("")
     lines.append(f"> 生成时间: {generated_at}")
-    lines.append("> 对齐轴: module_id（图 1-4/图 10 机生层）+ step_id（图 5）+ feature_id（图 6）+ node_id（图 7 TDM-*/图 9 FAC-*）+ chain_id（图 8）+ import spec（图 10 人工层）")
-    lines.append("> 全景图（现 10 张）: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map / frontend_map / trading_decision_map / industry_chain_map / strategy_production_map / governance_operations_map")
+    lines.append(
+        "> 对齐轴: module_id（图 1-4/图 10 机生层）+ step_id（图 5）+ feature_id（图 6）+ node_id（图 7 TDM-*/图 9 FAC-*）+ chain_id（图 8）+ import spec（图 10 人工层）"
+    )
+    lines.append(
+        "> 全景图（现 10 张）: depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map / frontend_map / trading_decision_map / industry_chain_map / strategy_production_map / governance_operations_map"
+    )
     lines.append("")
 
     # === 图 1-4：全景对齐（module_id 轴）===
@@ -357,8 +362,13 @@ def _build_overview(
     lines.append("")
 
     hard_issues = (
-        len(pano.domain_mismatches) + len(bm.ghost_anchors) + len(fm_fails) + len(dm_fails)
-        + layer2_hard + fac_hard + gom_hard
+        len(pano.domain_mismatches)
+        + len(bm.ghost_anchors)
+        + len(fm_fails)
+        + len(dm_fails)
+        + layer2_hard
+        + fac_hard
+        + gom_hard
     )
     soft_issues = (
         pano.issues_total
@@ -405,7 +415,9 @@ def _build_overview(
     lines.append(
         "> 本报告由 align_all.py 自动生成（ARCH-ALIGN-UNIFIED-001 六图升级 2026-09-04），复用 align_panoramas + align_battle_map + check_frontend_map 检测逻辑。"
     )
-    lines.append("> 详细报告: panorama_alignment_report.md + battle_map_alignment_report.md + check_frontend_map.py 输出")
+    lines.append(
+        "> 详细报告: panorama_alignment_report.md + battle_map_alignment_report.md + check_frontend_map.py 输出"
+    )
 
     return "\n".join(lines) + "\n"
 
@@ -509,24 +521,37 @@ def main() -> int:
     print("[5/9] 注册表层对齐（19 文件/21 段业务库 + 字典 FK + CAND 转正链 + 治理双向）...")
     layer2_hard = 0
     layer2_soft = 0
+
+    def _layer2_family(src: str):
+        """注册表层五族校验，锚点可选 worktree（现盘）/ head（已入库真源）。"""
+        rf, rt = run_all_registry_validations(include_depgraph=True, source=src)
+        fe, fw = check_field_dictionary_fk(source=src)
+        ce, cw = check_candidate_promotion_chain(source=src)
+        ge, gw = check_governance_bidirectional(source=src)
+        ie, iw = check_industry_graph_field_dictionary(source=src)
+        hard = rf + fe + ce + ge + ie
+        return hard, len(fw) + len(cw) + len(gw) + len(iw), rt
+
     try:
-        reg_fails, reg_total = run_all_registry_validations(include_depgraph=True)
-        fk_errors, fk_warns = check_field_dictionary_fk()
-        cand_errors, cand_warns = check_candidate_promotion_chain()
-        gov_errors, gov_warns = check_governance_bidirectional()
-        ig_errors, ig_warns = check_industry_graph_field_dictionary()
-        layer2_hard = len(reg_fails) + len(fk_errors) + len(cand_errors) + len(gov_errors) + len(ig_errors)
-        layer2_soft = len(fk_warns) + len(cand_warns) + len(gov_warns) + len(ig_warns)
+        hard_w, layer2_soft, reg_total = _layer2_family("worktree")
         print(f"  OK: 条目={reg_total}（id 唯一 + module_id MOD-* + depgraph 存在性 fail-open）")
-        print(
-            f"  问题: 硬={layer2_hard}"
-            f"（注册表={len(reg_fails)}, 字典FK={len(fk_errors)}, CAND={len(cand_errors)}, "
-            f"治理双向={len(gov_errors)}, 产业链字典={len(ig_errors)}）, "
-            f"软={layer2_soft}"
-        )
-        for x in (reg_fails + fk_errors + cand_errors + gov_errors + ig_errors)[:20]:
+        print(f"  问题: 硬={len(hard_w)}（盘侧锚点=工作树字节）, 软={layer2_soft}")
+        for x in hard_w[:20]:
             print(f"    FAIL: {x}")
-    except Exception as e:  # noqa: BLE001 — 第二层故障不炸整个 align_all（降 warn）
+        # F-AUDIT-BLIND-02 双锚并报：只读盘的校验对「盘上有、HEAD 无」的注册表漂移
+        # 结构性失明（他包未提交 WIP / 复燃未落件）。head 锚点把这一面显式化；
+        # 只计盘侧看不见的增量，避免同一问题在两个锚点上重复计入。
+        try:
+            hard_h, _soft_h, _t = _layer2_family("head")
+            only_head = [x for x in hard_h if x not in set(hard_w)]
+            print(f"  HEAD 锚点: 硬={len(hard_h)}，其中盘侧失明={len(only_head)}（=已入库真源有违规而工作树看不到）")
+            for x in only_head[:20]:
+                print(f"    HEAD-ONLY FAIL: {x}")
+        except Exception as e:  # noqa: BLE001 — HEAD 锚点不可用不得掩盖盘侧判定
+            only_head = []
+            print(f"  WARN: HEAD 锚点读数异常（盘侧判定不受影响）: {e}")
+        layer2_hard = len(hard_w) + len(only_head)
+    except Exception as e:  # noqa: BLE001 — 第二层故障不卡死整轮（降 warn）
         print(f"  WARN: 注册表层校验异常（降级跳过）: {e}")
 
     # --- 第六节：代码↔文档对齐（文档 node_id 硬编码检测，第三层抽查）---
@@ -680,11 +705,25 @@ def main() -> int:
 
         generated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
         overview = _build_overview(
-            pano, bm, generated_at, fm_fails, fm_warns, fm_total, dm_fails, dm_warns, dm_total,
-            layer2_hard=layer2_hard, layer2_soft=layer2_soft, layer2_entries=reg_total,
-            doc_soft=1 if doc_run.returncode == 1 else 0, ig_hard=ig_hard, ig_soft=ig_soft,
-            fac_hard=fac_hard, fac_soft=fac_soft,
-            gom_hard=gom_hard, gom_soft=gom_soft,
+            pano,
+            bm,
+            generated_at,
+            fm_fails,
+            fm_warns,
+            fm_total,
+            dm_fails,
+            dm_warns,
+            dm_total,
+            layer2_hard=layer2_hard,
+            layer2_soft=layer2_soft,
+            layer2_entries=reg_total,
+            doc_soft=1 if doc_run.returncode == 1 else 0,
+            ig_hard=ig_hard,
+            ig_soft=ig_soft,
+            fac_hard=fac_hard,
+            fac_soft=fac_soft,
+            gom_hard=gom_hard,
+            gom_soft=gom_soft,
         )
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(overview, encoding="utf-8")

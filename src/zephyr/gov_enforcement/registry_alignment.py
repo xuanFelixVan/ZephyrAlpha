@@ -116,19 +116,103 @@ REGISTRY_SPECS: tuple[RegistrySpec, ...] = (
     RegistrySpec("field_dictionary.yaml", "fields", "field_id", "字段字典"),
     RegistrySpec("experiment_registry.yaml", "experiments", "experiment_id", "实验库"),
     RegistrySpec(
-        "data_sources_registry.yaml", "data_sources", "id", "数据源资产库",
+        "data_sources_registry.yaml",
+        "data_sources",
+        "id",
+        "数据源资产库",
         base_dir=_REPO_ROOT / "architecture_model" / "data",
     ),
 )
 
 
-def validate_registry_file(path: Path, spec: RegistrySpec) -> list[str]:
+# ---------------------------------------------------------------------------
+# 读数锚点（F-AUDIT-BLIND-02 治本，2026-09-24）
+#   worktree=现盘字节（门禁用：校验"即将提交的东西"必须是暂存态）
+#   head    =HEAD 树上字节（align/报表用：已入库真源口径）
+# 病根：此前全部读点恒取工作树字节 ⇒ 凡"盘上有、HEAD 无"的注册表漂移（他包未提交 WIP、
+# 复燃未落件）对 align 与所有下游门禁结构性不可见（审计尺S 四控制组实证）。
+# 路径解析一律经 spec_path（st-cleanup-final 落的统一口），本模块不再自拼 CATALOGS_DIR。
+# ---------------------------------------------------------------------------
+
+SOURCE_WORKTREE = "worktree"
+SOURCE_HEAD = "head"
+
+_HEAD_TEXTS: dict[str, str] | None = None
+
+
+def _catalog_rel(path: Path | str) -> str | None:
+    """绝对路径 → 仓内相对路径（POSIX）；不在本仓（测试用 tmp_path 造册）→ None。"""
+    try:
+        return Path(path).resolve().relative_to(_REPO_ROOT).as_posix()
+    except (ValueError, OSError):
+        return None
+
+
+def _all_catalog_rels() -> list[str]:
+    """本模块可能读到的注册表路径全集（口径真源=REGISTRY_SPECS + 下方硬编码名）。
+
+    含 spec.base_dir 出 catalogs 的形态（data_sources_registry 挂 architecture_model/data）
+    ⇒ 一律经 spec_path 解析后取相对，不假设全在 CATALOGS_DIR 下。
+    """
+    paths = {spec_path(spec) for spec in REGISTRY_SPECS}
+    paths |= {CATALOGS_DIR / fname for fname, _sec, _idk in _FD_CONSUMERS}
+    paths |= {
+        CATALOGS_DIR / n
+        for n in (
+            "field_dictionary.yaml",
+            "candidate_module_registry.yaml",
+            "architecture_issue_registry.yaml",
+            "ruling_registry.yaml",
+            "industry_graph_field_dictionary.yaml",
+        )
+    }
+    return sorted({r for r in (_catalog_rel(p) for p in paths) if r})
+
+
+def _head_texts() -> dict[str, str]:
+    """HEAD 树字节：单次 git archive 批量取全册 + 进程内缓存。
+
+    刻意不用逐文件 `git show`——本模块一次全量校验要读 20+ 册，逐册起子进程既撞
+    ARCH-GIT-CALL-BUDGET（GIT-BUDGET-INV-002 批量化强制）又把 align 拖慢数秒。
+    复用现成件 zephyr.infrastructure.git_batcher.GitCommandBatcher.git_show_batch。
+    取不到即抛，**不静默降回盘读**（降回盘读=把失明面重新藏起来）。
+    """
+    global _HEAD_TEXTS
+    if _HEAD_TEXTS is None:
+        from zephyr.infrastructure.git_batcher import GitCommandBatcher  # noqa: PLC0415
+
+        try:
+            batch = GitCommandBatcher(_REPO_ROOT).git_show_batch("HEAD", _all_catalog_rels())
+        except Exception as exc:  # noqa: BLE001 — 环境异常 fail-loud，不 fail-into-blindness
+            raise RuntimeError(f"HEAD 锚定读数不可用（批量取 HEAD 失败）: {type(exc).__name__}: {exc}") from exc
+        _HEAD_TEXTS = {rel: data.decode("utf-8", errors="replace") for rel, data in batch.items() if data is not None}
+    return _HEAD_TEXTS
+
+
+def _load_catalog_yaml(path: Path | str, *, source: str = SOURCE_WORKTREE) -> dict:
+    """注册表字节读取唯一口——本模块所有读字节点必走此口，禁再散 read_text。
+
+    source=worktree：现盘字节（门禁语义=拦下即将入库的坏字节，必须看暂存/工作树）；
+    source=head：HEAD 树字节（align/报表语义=已入库真源是否自洽）。
+    仓外路径（测试自造 tmp 册）无 HEAD 侧可言 → 自动回落盘读。
+    """
+    p = Path(path)
+    rel = None if source == SOURCE_WORKTREE else _catalog_rel(p)
+    if source == SOURCE_WORKTREE or rel is None:
+        return yaml.safe_load(p.read_text(encoding="utf-8")) or {}
+    texts = _head_texts()
+    if rel not in texts:
+        raise FileNotFoundError(f"{rel} 在 HEAD 不存在（head 锚定读数无此册）")
+    return yaml.safe_load(texts[rel]) or {}
+
+
+def validate_registry_file(path: Path, spec: RegistrySpec, *, source: str = SOURCE_WORKTREE) -> list[str]:
     """整库确定性校验：id 唯一 + module_id 非空且 MOD-* 前缀。
 
     Returns:
         fails 列表（空=通过）。YAML 解析异常向上抛（gate fail-closed）。
     """
-    raw = yaml.safe_load(Path(path).read_text(encoding="utf-8")) or {}
+    raw = _load_catalog_yaml(path, source=source)
     entries = raw.get(spec.section) or []
     fails: list[str] = []
     seen: dict[str, int] = {}
@@ -279,7 +363,9 @@ def in_flight_module_ids() -> frozenset[str]:
     return frozenset(mods)
 
 
-def run_all_registry_validations(include_depgraph: bool = True) -> tuple[list[str], int]:
+def run_all_registry_validations(
+    include_depgraph: bool = True, *, source: str = SOURCE_WORKTREE
+) -> tuple[list[str], int]:
     """全量 21 段注册表校验（align_all 第五节消费）。
 
     Args:
@@ -293,24 +379,20 @@ def run_all_registry_validations(include_depgraph: bool = True) -> tuple[list[st
     for spec in REGISTRY_SPECS:
         path = spec_path(spec)
         try:
-            raw = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            raw = _load_catalog_yaml(path, source=source)
         except Exception as e:  # noqa: BLE001 — 损坏转 error 条目
             fails.append(f"【{spec.display}】YAML 解析异常: {e}")
             continue
         entries = raw.get(spec.section) or []
         total += len(entries)
         try:
-            fails.extend(f"【{spec.display}】{x}" for x in validate_registry_file(path, spec))
+            fails.extend(f"【{spec.display}】{x}" for x in validate_registry_file(path, spec, source=source))
         except Exception as e:  # noqa: BLE001
             fails.append(f"【{spec.display}】校验异常: {e}")
             continue
         if include_depgraph:
             in_flight = {_norm_mid(x) for x in in_flight_module_ids()}
-            mids = {
-                str(e.get("module_id"))
-                for e in entries
-                if isinstance(e, dict) and e.get("module_id")
-            }
+            mids = {str(e.get("module_id")) for e in entries if isinstance(e, dict) and e.get("module_id")}
             missing, _db_ok = missing_depgraph_module_ids(mids)
             for m in sorted(missing):
                 if _norm_mid(m) in in_flight:
@@ -348,10 +430,19 @@ _FD_CONSUMERS: Final = (
 )
 
 
-def _fd_scan_consumer(fname: str, sec: str, idk: str, field_names: set[str], referenced: set[str], errors: list[str]) -> None:
+def _fd_scan_consumer(
+    fname: str,
+    sec: str,
+    idk: str,
+    field_names: set[str],
+    referenced: set[str],
+    errors: list[str],
+    *,
+    source: str = SOURCE_WORKTREE,
+) -> None:
     """扫描单个 FK 消费方文件的 inputs 引用（循环抽离降复杂度）。"""
     try:
-        raw = yaml.safe_load((CATALOGS_DIR / fname).read_text(encoding="utf-8")) or {}
+        raw = _load_catalog_yaml(CATALOGS_DIR / fname, source=source)
     except Exception as e:  # noqa: BLE001
         errors.append(f"{fname} 读取失败: {e}")
         return
@@ -367,7 +458,7 @@ def _fd_scan_consumer(fname: str, sec: str, idk: str, field_names: set[str], ref
                 errors.append(f"{fname} {e.get(idk)} inputs 引用字典不存在的字段: {v}")
 
 
-def check_field_dictionary_fk() -> tuple[list[str], list[str]]:
+def check_field_dictionary_fk(*, source: str = SOURCE_WORKTREE) -> tuple[list[str], list[str]]:
     """字段字典 FK 闭环（factor.inputs + technical_indicator.inputs ⊆ field_name）。
 
     Returns:
@@ -377,7 +468,7 @@ def check_field_dictionary_fk() -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
     try:
-        fd_raw = yaml.safe_load((CATALOGS_DIR / "field_dictionary.yaml").read_text(encoding="utf-8")) or {}
+        fd_raw = _load_catalog_yaml(CATALOGS_DIR / "field_dictionary.yaml", source=source)
     except Exception as e:  # noqa: BLE001
         return [f"字段字典读取失败: {e}"], []
     field_names, id_counts, dup_warns = _fd_build_indexes(fd_raw.get("fields") or [])
@@ -385,10 +476,12 @@ def check_field_dictionary_fk() -> tuple[list[str], list[str]]:
     errors.extend(f"字段字典 field_id 重复: {k}" for k, v in id_counts.items() if v > 1)
     referenced: set[str] = set()
     for fname, sec, idk in _FD_CONSUMERS:
-        _fd_scan_consumer(fname, sec, idk, field_names, referenced, errors)
+        _fd_scan_consumer(fname, sec, idk, field_names, referenced, errors, source=source)
     orphans = len(field_names - referenced)
     if orphans:
-        warnings.append(f"字段字典孤儿字段 {orphans} 个（无 inputs 消费方；字典为 16 域超集含契约消费方，正常态——仅计数不列清单）")
+        warnings.append(
+            f"字段字典孤儿字段 {orphans} 个（无 inputs 消费方；字典为 16 域超集含契约消费方，正常态——仅计数不列清单）"
+        )
     return errors, warnings
 
 
@@ -417,7 +510,7 @@ def _cand_anchor_errors(promoted: list[dict]) -> list[str]:
     return errors
 
 
-def check_candidate_promotion_chain() -> tuple[list[str], list[str]]:
+def check_candidate_promotion_chain(*, source: str = SOURCE_WORKTREE) -> tuple[list[str], list[str]]:
     """CAND 转正链核查（alignment_checklist §4.2：转正必须迁移+登记 depgraph）。
 
     分档（2026-09-11 基线标定：promoted=460，promoted_to 空=38 历史债，非空但无
@@ -427,7 +520,7 @@ def check_candidate_promotion_chain() -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
     try:
-        raw = yaml.safe_load((CATALOGS_DIR / "candidate_module_registry.yaml").read_text(encoding="utf-8")) or {}
+        raw = _load_catalog_yaml(CATALOGS_DIR / "candidate_module_registry.yaml", source=source)
     except Exception as e:  # noqa: BLE001
         return [f"candidate_module_registry 读取失败: {e}"], []
     entries = raw.get("entries") or []
@@ -480,7 +573,7 @@ def _issue_ruling_errors(issues: list[dict], ruling_ids: set[str]) -> list[str]:
     return errors
 
 
-def check_governance_bidirectional() -> tuple[list[str], list[str]]:
+def check_governance_bidirectional(*, source: str = SOURCE_WORKTREE) -> tuple[list[str], list[str]]:
     """治理库双向关联核查（裁定#20 体系：议题↔裁定互指闭合）。
 
     - ruling.related_arch → issue registry 存在性：硬（结构化字段，基线 0）
@@ -488,8 +581,8 @@ def check_governance_bidirectional() -> tuple[list[str], list[str]]:
       （commit 时 RULING-REFERENCE gate 管增量；此处管存量全量对账）
     """
     try:
-        ai_raw = yaml.safe_load((CATALOGS_DIR / "architecture_issue_registry.yaml").read_text(encoding="utf-8")) or {}
-        ru_raw = yaml.safe_load((CATALOGS_DIR / "ruling_registry.yaml").read_text(encoding="utf-8")) or {}
+        ai_raw = _load_catalog_yaml(CATALOGS_DIR / "architecture_issue_registry.yaml", source=source)
+        ru_raw = _load_catalog_yaml(CATALOGS_DIR / "ruling_registry.yaml", source=source)
     except Exception as e:  # noqa: BLE001
         return [f"治理库读取失败: {e}"], []
     issues = ai_raw.get("entries") or []
@@ -571,7 +664,9 @@ def _ig_table_errors(tables: dict, ddl_cols: dict[str, set[str]] | None) -> list
     return errors
 
 
-def _ig_field_errors(tables: dict, ddl_cols: dict[str, set[str]] | None, engine_ids: set[str] | None, vocab: dict) -> list[str]:
+def _ig_field_errors(
+    tables: dict, ddl_cols: dict[str, set[str]] | None, engine_ids: set[str] | None, vocab: dict
+) -> list[str]:
     """逐字段对账：DDL 列集/validated_by/enum vocab（循环抽离）。"""
     errors: list[str] = []
     for table, spec in tables.items():
@@ -602,7 +697,7 @@ def _ig_field_errors(tables: dict, ddl_cols: dict[str, set[str]] | None, engine_
     return errors
 
 
-def check_industry_graph_field_dictionary() -> tuple[list[str], list[str]]:  # noqa: gate-vocab  产业链字典=registry catalog，vocab 段是被交叉校验的数据而非加载词表
+def check_industry_graph_field_dictionary(*, source: str = SOURCE_WORKTREE) -> tuple[list[str], list[str]]:  # noqa: gate-vocab  产业链字典=registry catalog，vocab 段是被交叉校验的数据而非加载词表
     """产业链域字段字典结构四边核查（图 8 挂总线配套；词表↔常量比对留 pytest）。
 
     - YAML 表集 = DDL ig_* 表集（双向）
@@ -614,7 +709,7 @@ def check_industry_graph_field_dictionary() -> tuple[list[str], list[str]]:  # n
     warnings: list[str] = []
     dict_path = CATALOGS_DIR / "industry_graph_field_dictionary.yaml"
     try:
-        d = yaml.safe_load(dict_path.read_text(encoding="utf-8")) or {}
+        d = _load_catalog_yaml(dict_path, source=source)
     except Exception as e:  # noqa: BLE001
         return [f"industry_graph_field_dictionary 读取失败: {e}"], []
     tables: dict = d.get("tables") or {}
