@@ -10,7 +10,8 @@
 # [MATURITY] experimental
 # [INVARIANTS] 台账只读（本工具禁写）；结构错误=exit 1，警告（待定入库位）不阻断；
 #   检查项=字段完整性/边引用闭合/层位合法/laws 存在/反馈环声明/自环拒绝/built 必有锚/
-#   lane 必带归属/store_refs 三要素；判噪音规则=v0.2 schema 真源
+#   lane 必带归属/store_refs 三要素/连通性（孤立分量含 built|partial 拒）/data_refs
+#   存在性（c1_ 表 EXISTS+路径存在；待定与非可校形态=警告）；判噪音规则=v0.2 schema 真源
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -24,6 +25,7 @@
 不修改任何文件。结构错误（缺字段/断边/非法层位/built 无锚等）exit 1；
 "待定"入库位为警告不阻断（对应施工前占位声明）。
 """
+
 from __future__ import annotations
 
 import argparse
@@ -33,11 +35,31 @@ from pathlib import Path
 import yaml
 
 DEFAULT_MAP = Path("config/strategy_production_map.yaml")
-REQUIRED_TOP = ["schema_version", "map_id", "name_zh", "layers", "nodes", "edges",
-                "laws", "products", "boundary", "feedback_loops"]
-REQUIRED_NODE = ["node_id", "name_zh", "stage", "node_type", "decision_question",
-                 "algo_note_zh", "compute_class", "build_status", "data_refs",
-                 "design_refs", "store_refs"]
+REQUIRED_TOP = [
+    "schema_version",
+    "map_id",
+    "name_zh",
+    "layers",
+    "nodes",
+    "edges",
+    "laws",
+    "products",
+    "boundary",
+    "feedback_loops",
+]
+REQUIRED_NODE = [
+    "node_id",
+    "name_zh",
+    "stage",
+    "node_type",
+    "decision_question",
+    "algo_note_zh",
+    "compute_class",
+    "build_status",
+    "data_refs",
+    "design_refs",
+    "store_refs",
+]
 COMPUTE_CLASSES = {"local", "local_gpu", "api", "mixed"}
 BUILD_STATUS = {"built", "pending", "partial"}
 NODE_TYPES = {"stage", "lane"}
@@ -98,8 +120,7 @@ def validate_structure(data: dict) -> list[str]:
 
     valid_ids = set(ids)
     seen_edges: set[tuple[str, str]] = set()
-    feedback: set[tuple[str, str]] = {
-        (f.get("from"), f.get("to")) for f in data.get("feedback_loops", [])}
+    feedback: set[tuple[str, str]] = {(f.get("from"), f.get("to")) for f in data.get("feedback_loops", [])}
     import re
 
     def _stage_num(node_id: str):
@@ -124,13 +145,45 @@ def validate_structure(data: dict) -> list[str]:
             continue
         sa, sb = _stage_num(a), _stage_num(b)
         if sa is not None and sb is not None and sa > sb:
-            _err(errors, f"未声明为反馈环的反向边: {a}->{b}（反馈环必须在 "
-                         f"feedback_loops 显式声明）")
+            _err(errors, f"未声明为反馈环的反向边: {a}->{b}（反馈环必须在 feedback_loops 显式声明）")
+
+    # 连通性 pass（审计 F-AUDIT-BLIND-05 处方 B1：此前不查连通性，
+    # 孤立 built 节点长期放行）。弱连通分量 DFS：非主分量中含 built/partial
+    # 节点即报错（纯 pending 占位岛不拦，对应施工前声明）。
+    adj: dict[str, list[str]] = {i: [] for i in valid_ids}
+    for a, b in seen_edges:
+        adj[a].append(b)
+        adj[b].append(a)
+    live_nodes = {n.get("node_id") for n in nodes if n.get("build_status") in ("built", "partial")} & valid_ids
+    visited: set[str] = set()
+    components: list[set[str]] = []
+    for start in sorted(valid_ids):
+        if start in visited:
+            continue
+        comp = {start}
+        stack = [start]
+        visited.add(start)
+        while stack:
+            cur = stack.pop()
+            for nxt in adj[cur]:
+                if nxt not in visited:
+                    visited.add(nxt)
+                    comp.add(nxt)
+                    stack.append(nxt)
+        components.append(comp)
+    if len(components) > 1:
+        main_comp = max(components, key=len)
+        for comp in components:
+            if comp is main_comp:
+                continue
+            stranded = sorted(comp & live_nodes)
+            if stranded:
+                _err(errors, f"孤立连通分量（与主流程断连）含 built/partial 节点: {', '.join(stranded)}")
     return errors
 
 
 def check_stores(data: dict, root: Path | None = None) -> tuple[list[str], list[str]]:
-    """store_refs 入库位存在性：磁盘路径或 CH 表（c1_x.y 形态）。待定=警告。
+    """store_refs 入库位 + data_refs 数据源存在性：磁盘路径或 CH 表（c1_x.y 形态）。待定=警告。
 
     Args:
         data: 图 YAML 解析结果。
@@ -154,17 +207,40 @@ def check_stores(data: dict, root: Path | None = None) -> tuple[list[str], list[
                     if not part:
                         continue
                     if part.startswith("c1_") and "." in part:
-                        try:
-                            from zephyr.infrastructure.database_service import get_db_service
-                            db, tbl = part.split(".", 1)
-                            cli = get_db_service().get_clickhouse_conn(role="reader")
-                            if not cli.execute(f"EXISTS TABLE {db}.{tbl}")[0][0]:
-                                errors.append(f"CH 表不存在: {part}")
-                        except Exception as exc:  # noqa: BLE001
-                            errors.append(f"CH 表检查失败 {part}: {exc}")
+                        _check_ch_table(part, errors)
                     elif not (root / part).exists():
                         errors.append(f"路径不存在: {part}")
+    # data_refs 引用存在性（审计 F-AUDIT-BLIND-04 处方 B2：此前只校 store_refs，
+    # data_refs 全仓无校验——c1_market.news_data 全 CH 不存在也长年 GREEN）。
+    seen_data_refs: set[str] = set()
+    for n in data.get("nodes", []):
+        for dr in n.get("data_refs", []):
+            dr = str(dr)
+            if dr in seen_data_refs:
+                continue
+            seen_data_refs.add(dr)
+            if dr.startswith("待定"):
+                warnings.append(f"{n.get('node_id')}: 数据源待定（未接/未入库）: {dr}")
+            elif dr.startswith("c1_") and "." in dr:
+                _check_ch_table(dr, errors, label="数据源 CH 表")
+            elif "/" in dr:
+                if not (root / dr).exists():
+                    errors.append(f"数据文件/目录不存在: {dr}")
+            else:
+                warnings.append(f"{n.get('node_id')}: data_ref 非可校形态（非 c1_ 表且无路径分隔符）: {dr}")
     return errors, warnings
+
+
+def _check_ch_table(table: str, errors: list[str], label: str = "CH 表") -> None:
+    """EXISTS TABLE 探测；CH 不可达=检查失败入 errors（fail-closed）。"""
+    try:
+        from zephyr.infrastructure.database_service import get_db_service
+
+        cli = get_db_service().get_clickhouse_conn(role="reader")
+        if not cli.execute(f"EXISTS TABLE {table}")[0][0]:
+            errors.append(f"{label}不存在: {table}")
+    except Exception as exc:  # noqa: BLE001
+        errors.append(f"{label}检查失败 {table}: {exc}")
 
 
 def main() -> int:
