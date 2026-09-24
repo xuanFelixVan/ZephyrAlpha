@@ -5694,3 +5694,30 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+- ruling_id: "裁定#413"
+  title: GPU 点火三件套（方案②朴素重排+预注册签发+提前开考）+分钟/tick 口径立法
+  date: '2026-09-24'
+  category: 架构
+  status: decided
+  summary: |-
+    Owner 2026-09-24 晚对话连批"全部同意"+"现在就考试"（对话内批准，本裁定=落正式通道）：
+    ①搜索空间朴素重排（方案②，gpu 台账明文总指挥可裁项）：tier1 17100→3700、tier2 13000→900，
+    全档成本门语义不变（cost_gate_in_every_tier 维持 true，零冻结违规）；59h 窗全档实测容量
+    ≈4640 格，3700+900=4600 留余量。方案①两轮制（T1 轻档 9600 格）改列下一窗口升级案：
+    其需 T1 两档成本路径代码新建（factory_grid_executor 现无此实现且预算闸要求全档旗 true），
+    Owner 原则同意保留，待建成+红蓝后实施。
+    ②预注册三字段签发：frozen_at/frozen_by/owner_signoff=本裁定——预注册正式冻结，
+    factory_grid_executor._apply_prereg_budget 放行 T1/T2（原三字段 null/pending 为台账挂账项）。
+    ③提前开考：原定 09-25 12:00 Owner 人工触发改为 2026-09-24 22:00 st-cmd-20260924 交付点火
+    （Owner 对话令），窗口=点火起 59h；c4_exam×model_exam 周六 14:00/18:00 排程与 GPU 完赛
+    （预计周六午前）天然错开，原"错峰改周一"授权备而不用。
+    ④分钟/tick 分工口径立法：研究/考试=分钟 kline_1min（5 年 14.83 亿行）；执行优化与盘口
+    信号=tick L1 3s（21 个月 89.5 亿行）；l2_tick 0 行禁用维持；tick 独立信号判死维持
+    （62bp 成本实证）。依据=quant_methodology/appendix_B + appendix_C。
+  related_files:
+  - config/search_space_prereg.yaml
+  - docs/_working/quant_methodology/appendix_B_tick_vs_minute.md
+  - docs/_working/e2e_integration/LEDGER.md
+  related_arch: []
+  related_rulings: []
+  superseded_by: null

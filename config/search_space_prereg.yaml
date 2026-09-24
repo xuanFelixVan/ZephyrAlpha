@@ -9,9 +9,9 @@ schema_version: 2.0.0
 doc_type: search_space_preregistration
 title: GPU 搜索三路·预注册搜索空间+算力预算封顶+E7 防线
 created: '2026-09-23'
-frozen_at: null          # Owner 批文时刻回填（ISO8601）；null=未冻结，执行器禁按"已冻结"放行 T1/T2
-frozen_by: null          # Owner 批文裁定号回填
-owner_signoff: pending   # pending → 裁定号（⑤门位：production 流转归 Owner）
+frozen_at: '2026-09-24T22:00:00+08:00'  # 裁定#413 签发（Owner 对话令：全部同意+现在就考试）
+frozen_by: 裁定#413        # Owner 批文裁定号回填
+owner_signoff: 裁定#413   # Owner 2026-09-24 晚对话批（五门位已过，本裁定=正式通道）
 session: st-ibt-remedy-cf-20260923
 objective:
   # 批C 起目标函数=成本后 Sharpe（冻结土规净收益口径）；毛 Sharpe 仅观察项
@@ -52,13 +52,13 @@ tracks:
     note: LLM 提案空间=因子族新假设卡（预注册卡模板），禁直接改冻结翻译件
 budget_caps:
   # 口径真源=w3_w5_precheck §2.5（59h 窗 212,400s × 0.8 占空 ÷ 6.8s/格 ≈ 24,990 格）
-  wall_clock_hours: 59              # 09-25 12:00 → 09-27 23:00（Owner 锁定窗）
+  wall_clock_hours: 59              # 2026-09-24 22:00 点火（裁定#413 提前开考）-> 09-27 09:00
   effective_duty_pct: 80
   per_point_seconds_measured: 35.33  # T0 实测回填 2026-09-24（run=grid_20260924-080309, 7065s/200 格, 全成本门真跑）——实测=预算估 6.8s 的 5.2x，59h 窗有效容量≈4809 格，T1/T2 配比待裁定重排
   grid_points_cap: 25000            # 含五档成本门（跳门禁用；旧值 200 为哑门时代误设）
   trial0_calibration_points: 200    # T0 标定跑：唯一用途=实测 s/格 并回填上一行
-  tier1_points: 17100               # T1 真 1% 分层粗扫（≈32h）
-  tier2_points: 13000               # T2 主效应前 20% 层参数展开+4440 型成本门复验（≈26h）
+  tier1_points: 3700                # T1 真 1% 分层粗扫（裁定#413 朴素重排：全档容量 4640 = T1 3700 + T2 900 留余量）
+  tier2_points: 900                 # T2 主效应前 20% 层参数展开+4440 型成本门复验（裁定#413）
   cost_gate_in_every_tier: true     # Owner 采纳令：任何粗扫阶段禁跳成本门（跳=判死件回池）
   vram:
     physical_gb: 24
