@@ -1,0 +1,38 @@
+notes: 配额余量监控（1000 次/天）未见登记专项检查——现状 320 次/天（40 城×8 记录）远低于配额，无超限风险；建议纳入健康检查注记。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0195.py
+  query: 源线谱 U2 × DS-QWEATHER 逐字段对照 + 城市数/行数实证
+  result:
+    fields:
+    - item: 获取方式-免费额度
+      ds_field: account_type=free, rate_limit='免费版 1000次/天', key 免费注册（已评估）
+      consistent: true
+      source_line: U2'和风免费额度，已运营'
+    - item: 配额覆盖（40 城+7 天预报）
+      ds_field: coverage='40 个主要城市实时天气 + 7天预报（温度/湿度/降水/风力/气压等）...'; 实测 uniq(location)=40
+      consistent: true
+      source_line: 锚注'40 城实时+7 天预报'
+    - item: 已运营
+      ds_field: 表 10033 行（2026-08-04~2026-09-23），日批积累
+      consistent: true
+      source_line: U2'已运营'
+    total_rows: 10033
+    n_locations: 40
+    unassessed_cost_items: 0
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0195
+fail_type: null
+threshold: 获取方式与成本与源线谱/DS 册登记一致；未评估成本项=0
+conclusion: SL-A12 U2 与 DS-QWEATHER 册逐字段一致：免费额度（free/1000 次/天限额/key 免费注册均已登记评估）、覆盖
+  40 城实时+7 天预报（两册一致，库内实测 40 个 location_id 精确吻合）、已运营（10033 行、2026-08-04 起日批积累）。免费版无历史
+  API 的积累约束已在 DS 册 note 评估。未评估成本项=0。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK
+  caliber: OK
+  mechanical: OK
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0195

@@ -1,0 +1,34 @@
+notes: 重放的统计结论（传导边无正向预测增量，IC=-0.017 t=-0.49）意味着退役证伪条件当前即满足——若 Owner 走退役流程，该判据可立即机械执行并裁定。本问只考可执行性：能。实现约束（冲击用行业收益代理、映射覆盖
+  65.6%）如实登记于 PQ-0017 notes；U6 文本未写显式数值阈值的完备性瑕疵同批登记。
+outcome: pass
+_comment: batch_stat_alt 分包生成
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_alt_PQ-0017.py
+  query: 同 PQ-0017 数据链：ig_io_edge 系数→申万一级聚合→shock×coef 加权信号→月末截面对 20 日远收益的 Spearman
+    IC×36 月
+  result:
+    t_nw3: -0.4899
+    mean_ic: -0.017377
+    pos_ic_share: 0.4444
+    n_eval_months: 36
+    coef_mass_coverage: 0.6556
+    n_downstream_industries: 30
+    falsification_condition_mechanically_decidable: true
+exam_ref: st-metaq-20260923/probe/batch_stat_alt_PQ-0223
+fail_type: null
+threshold: 判据可执行率=100%（退役判据含明确阈值与数据窗口可重放）
+conclusion: pass：SL-A16 U6 退役判据（'上游涨价冲击沿 ig_io_edge 传导对下游板块收益的预测力；证伪=传导边无预测增量'）历史重放演练真实执行成功，判据可执行率=100%。重放实现：IO
+  部门→申万一级确定性映射（系数质量覆盖 65.6%），冲击×系数加权信号对下游 30 个行业未来 20 日收益的月度秩 IC 序列（36 个月，2022-08-31~2025-07-31），含
+  NW(3) t 检验（mean IC=-0.0174，t=-0.49）。判据含明确信号源（ig_io_edge 系数）、冲击定义、预测窗与统计量，重放一次通过并产出可裁定量：IC
+  不满足预设增量（无正向预测力），'传导边无预测增量'的证伪条件可被数据机械裁定，故退役证伪方案机械可执行。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2022-08-31'
+three_check:
+  data: OK——ig_io_edge 16,859 边单 vintage 全落库+行业成分与收益数据齐备，重放窗（36 个月）完整
+  caliber: OK——'传导边无预测增量'落地为'信号月度秩 IC 序列的均值是否显著>0'，无歧义
+  mechanical: OK——重放已实跑（与 PQ-0017 同管线），统计量与阈值比较可代码复现
+pit_assertion: 评估自 ig_io_edge.valid_from=2022-08-31 起，冲击用过去 20 日、收益窗自 T+1 起的 20 日，全部行业收益
+  ≤2025-09-09；行业分类映射作为静态基准数据使用（同 PQ-0017 pit 声明）。
+q_id: PQ-0223

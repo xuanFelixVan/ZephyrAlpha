@@ -1,0 +1,25 @@
+notes: ''
+outcome: pass
+evidence:
+- probe: architecture_model/data/data_sources_registry.yaml
+  query: DS-EASTMONEY_DATACENTER(free,active,HTTP REST datacenter-web,分页礼貌限速≤10页,v2.5.0
+    2026-09-18 登记'D2 股东户数续采正门') 对照 U2 行
+  result:
+    DS在册: 1
+    渠道数: 1
+    成本字段缺失渠道: 0
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0201
+fail_type: null
+threshold: 未评估成本项=0（获取方式与成本与源线谱/DS 册登记一致）
+conclusion: 唯一渠道 DS-EASTMONEY_DATACENTER 在册（免费匿名 HTTP+限速口径），且 v2.5.0 版本记录显式登记'miniqmt
+  清退后 D2 股东户数续采正门'——与 U2 行'东财数据中心 HTTP 免费，miniqmt 清退后续采正门'逐项一致，未评估成本项=0。 （SL-A13 股东户数）
+confidence: 0.6
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（源线谱 U2 行+DS 册 status/account_type/rate_limit/policy 逐字段在册可读）
+  caliber: OK（判据=每渠道有 DS 锚且成本字段非空，未评估项计数=0，机械可判）
+  mechanical: OK（渠道级对照表留痕）
+pit_assertion: U2 成本核验为登记册静态对照，不涉时序取数；切点约束以登记现状为对象无涉未来数据。
+q_id: PQ-0201

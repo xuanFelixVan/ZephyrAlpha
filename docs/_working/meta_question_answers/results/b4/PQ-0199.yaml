@@ -1,0 +1,26 @@
+notes: 复考前置：①天气自积跨越切点（建议覆盖四季≥1 年）；②登记极端事件阈值口径与气候基线源；③板块收益代理（公用事业/农业指数或成分篮子）口径登记。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0199.py
+  query: SELECT count() FROM weather_data WHERE record_date <= '2025-09-09'
+  result:
+    u6_text: 天气冲击日板块事件研究；证伪=无异常收益。
+    replay_executable: false
+    pre_cutoff_weather_rows: 0
+    numeric_threshold_registered: false
+    extreme_event_threshold_registered: false
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0199
+fail_type: null
+threshold: 退役判据含明确阈值与数据窗口可重放；判据可执行率=100%
+conclusion: SL-A12 U6 退役判据（天气冲击日板块事件研究；证伪=无异常收益）当前不可重放：天气信号切点前 0 行（表起点 2026-08-04），'历史重放演练'无样本可跑。文本审阅另有两处登记债：①'天气冲击日'无数值定义（温度距平/降水的极端阈值未登记）；②'无异常收益'未定义显著性水平与估计窗；③温度距平所需的气候基线序列未登记（见
+  PQ-0194）。窗口规则已登记（收益窗自冲击后起算）。
+confidence: 0.5
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: NO（切点窗内天气信号 0 行）
+  caliber: NO（极端事件阈值/异常收益判据未登记）
+  mechanical: NO（重放无数据可执行）
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0199

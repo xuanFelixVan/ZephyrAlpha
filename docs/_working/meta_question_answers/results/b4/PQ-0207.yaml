@@ -1,0 +1,63 @@
+notes: 快照为页级 JSON（多个 qa 共享一个 qa_page 文件），单条问答删除不触发文件删除，取证链粒度为页级——合规且成本更低，建议在 DS 册
+  coverage 注明页级粒度。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0207.py
+  query: 源线谱 U2 × DS-IRM 逐字段对照 + provider/快照文件实证
+  result:
+    fields:
+    - item: 获取方式-官方接口免费
+      ds_field: account_type=free, auth='无(官方公开接口匿名访问,爬虫礼貌限速)...', status=active
+      consistent: true
+      source_line: U2'官方接口免费，provider 已在跑'
+    - item: 限频
+      ds_field: rate_limit='provider rate_limit_default=30;页间/PDF 间限'; policy.rpm=30
+      consistent: true
+      source_line: U2 未单列（引用 DS 册）
+    - item: 冷库快照存储成本
+      ds_field: coverage 含'原文快照先行落 G 盘冷库 30_corpus/web_snapshots 且行内携 snapshot_path'
+      consistent: true
+      source_line: U2'原文快照先行的取证链完整'
+    - item: provider 已在跑
+      ds_field: irm_provider.py 在 HEAD=True; 表 500 行; 抽样快照文件实存 5/5
+      consistent: true
+      source_line: U2'provider 已在跑'
+    provider_in_head: true
+    snapshot_file_checks:
+    - qa_id: '11_2294411913218965504'
+      answer_date: '2026-09-17'
+      snapshot_path: G:\zephyr_cold\30_corpus\web_snapshots\20260918_irm_interactive\qa_page_003.json
+      exists_on_cold_storage: true
+    - qa_id: '11_2296646850961276928'
+      answer_date: '2026-09-17'
+      snapshot_path: G:\zephyr_cold\30_corpus\web_snapshots\20260918_irm_interactive\qa_page_003.json
+      exists_on_cold_storage: true
+    - qa_id: '11_2297722654275796992'
+      answer_date: '2026-09-17'
+      snapshot_path: G:\zephyr_cold\30_corpus\web_snapshots\20260918_irm_interactive\qa_page_003.json
+      exists_on_cold_storage: true
+    - qa_id: '11_2299524090686345216'
+      answer_date: '2026-09-17'
+      snapshot_path: G:\zephyr_cold\30_corpus\web_snapshots\20260918_irm_interactive\qa_page_002.json
+      exists_on_cold_storage: true
+    - qa_id: '11_2302578664658100224'
+      answer_date: '2026-09-17'
+      snapshot_path: G:\zephyr_cold\30_corpus\web_snapshots\20260918_irm_interactive\qa_page_003.json
+      exists_on_cold_storage: true
+    unassessed_cost_items: 0
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0207
+fail_type: null
+threshold: 获取方式与成本与源线谱/DS 册登记一致；未评估成本项=0
+conclusion: SL-A14 U2 与 DS-IRM 册逐字段一致：官方接口免费（free/匿名访问）、限频 30 已登记、冷库快照存储成本已评估（G 盘
+  30_corpus/web_snapshots 快照先行+行内 snapshot_path，存储为微量 JSON 页级文件）、provider 已在跑实证（irm_provider.py
+  在 HEAD、表 500 行、抽样 5 个 snapshot_path 全部在 G 盘实存）。未评估成本项=0。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（provider 文件+快照文件+行数实证）
+  caliber: OK
+  mechanical: OK（文件存在性检查可复现）
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0207

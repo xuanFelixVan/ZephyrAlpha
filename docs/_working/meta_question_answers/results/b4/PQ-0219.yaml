@@ -1,0 +1,27 @@
+notes: ''
+outcome: pass
+evidence:
+- probe: architecture_model/data/data_sources_registry.yaml
+  query: DS-IO_TABLE(free,active,ionet GitHub 转存,policy.frequency=manual_lowfreq,coverage='2020已入库16859边')
+    对照 U2 行；PG 实测 ig_io_edge 行数
+  result:
+    DS在册: 1
+    渠道数: 1
+    登记边数: 16859
+    PG实测边数: 16859
+    成本字段缺失渠道: 0
+exam_ref: st-metaq-20260923/probe/batch_core_audit_PQ-0219
+fail_type: null
+threshold: 未评估成本项=0（获取方式与成本与源线谱/DS 册登记一致）
+conclusion: 唯一渠道 DS-IO_TABLE 在册（官方免费+一次性装载+manual_lowfreq），coverage 登记的'io_ingest
+  已入库 16859 边'与 PG 实测 16,859 行逐位一致（登记数字机械验证通过），未评估成本项=0。 （SL-A16 投入产出）
+confidence: 0.6
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（源线谱 U2 行+DS 册 status/account_type/rate_limit/policy 逐字段在册可读）
+  caliber: OK（判据=每渠道有 DS 锚且成本字段非空，未评估项计数=0，机械可判）
+  mechanical: OK（渠道级对照表留痕）
+pit_assertion: U2 成本核验为登记册静态对照，不涉时序取数；切点约束以登记现状为对象无涉未来数据。
+q_id: PQ-0219

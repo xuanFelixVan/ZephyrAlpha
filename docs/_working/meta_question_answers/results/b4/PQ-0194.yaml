@@ -1,0 +1,67 @@
+notes: 复考注记：温度距平计算须先登记气候基线（1991-2020 常年值或滚动 30 年均值）来源。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/periph_a_PQ-0194.py
+  query: U1 语义对照 + weather_data 字段/类型实证
+  result:
+    cols:
+    - record_date
+    - location_id
+    - location_name
+    - forecast_type
+    - forecast_date
+    - temp
+    - temp_max
+    - temp_min
+    - feels_like
+    - text
+    - icon_code
+    - humidity
+    - precip
+    - pressure
+    - visibility
+    - wind_dir
+    - wind_scale
+    - wind_speed
+    - cloud
+    - dew_point
+    - data_source
+    - ingest_ts
+    rows:
+    - covered: true
+      grounding: 库内实证：temp/temp_max/temp_min 字段在（距平需气候基线，落地注记见 notes）；1360 行实况
+      vocab_item: 温度距平
+      claim_token: 用电负荷扰动（温度维度）
+    - covered: true
+      grounding: 库内实证：precip/humidity 字段在
+      vocab_item: 降水
+      claim_token: 农产品扰动（降水维度）
+    - covered: true
+      grounding: 库内实证：wind_speed/wind_scale/wind_dir 字段在
+      vocab_item: 风力
+      claim_token: 航运扰动（风力维度）
+    - covered: true
+      grounding: 源线谱 U6 承接
+      vocab_item: 距平/降水/风力信号 × U6 天气冲击日事件研究承接
+      claim_token: 极端天气预测（问题本体）
+    u1_text: 极端天气能否预测用电负荷/农产品/航运扰动（信号词：温度距平/降水/风力）。
+    coverage: 1.0
+    forecast_type_counts:
+      now: 1360
+      forecast: 8673
+exam_ref: st-metaq-20260923/probe/periph_a_PQ-0194
+fail_type: null
+threshold: 信号词表非空且宣称主题全部落在词集覆盖内；覆盖率=100%
+conclusion: SL-A12 U1 信号词集={温度距平/降水/风力}非空；宣称三对象（用电负荷/农产品/航运扰动）分别由温度/降水/风力词项覆盖，U6 事件研究承接预测本体，覆盖率=4/4=100%。库内实证：weather_data
+  含 temp/temp_max/temp_min（温度）、precip/humidity（降水）、wind_speed/wind_scale/wind_dir（风力）字段，forecast_type
+  分 now（实况 1360 行）/forecast（预报 8673 行）。落地注记：'距平'需气候平均值基线序列（未登记），属口径落地债非词集覆盖缺口。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2025-09-09'
+three_check:
+  data: OK（字段在库实证）
+  caliber: OK（词集-对象映射无歧义；距平基线为落地债）
+  mechanical: OK
+pit_assertion: 本题判定仅基于登记册文本字段比对与库内只读核查；所有取数 SQL 均带 <= '2025-09-09' 闭卷切点，切点后数据仅作现状观察、未参与任何阈值判定或校正。
+q_id: PQ-0194
