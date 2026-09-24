@@ -79,3 +79,60 @@ date: 2026-09-24
 - [10:30 心跳] **q-0010 落地（5d742cb9）**=capability 册净清洁+全 token 永久化（战火期收官）。q-0011 死于 CLASS-UNIQUENESS（AuditEvent 七模块重名）→改名 MetaQuestionAuditEvent+38 测试绿→q-0016 重投。q-0012 processing、q-0013/0014/0015 pending。下一步：五件落 HEAD→终局行生效→R9/R10+红蓝-3→收官。
 - [11:55 心跳] **落地战况**：docs 核心批 311 文件已落 HEAD（e41a06c295 ✓ sweep-proof 达成）。在队五件：q-0021（batch B）/q-0022（对账器）/q-0023（状态带）/q-0016（批次 A v6 NO-GOD-CLASS 拆分版）/q-0020 排序见队列。本轮修复：0017 冲突标记毛刺（工作区实证零标记=worktree 物化毛刺，requeue 重应用）、0018/0019 翻译条目被热册清场（重注册三条）。
 - [11:55 心跳] **自动化轮接力指令（持续有效直至五件全落）**：每轮若五件有死信→按死因重注册（translation 三条 add_module_translation 同参数；capability token 若缺→线级外科插 creation_tokens 尾，禁 round-trip）→requeue。五件全落 HEAD 后：①a1_chainpile_ledger 终局行下补"0004 系全落，终局行生效"②R9 恢复复核+红蓝-3③收官自删。
+- [13:15 心跳] **R10 终检全绿**：分片镜像 283 问三态 142/45/96+30/15 分型精确、gaps 22 件、退役册 30 问、plan 计数全对。**落地总态**：已完成 3 批（0001 小修 0cd098e56b/0010 capability 册清理+token 5d742cb9/0015 docs 核心 15 件 e41a06c295）+在队 9 批（0020 批 A v6/0021 批 B/0022 对账器/0023 状态带/0024+8×38 文件 docs 分片）——队列 FIFO 消化中，automation 每轮重注册+盯死信。工作本体与交付件全部永久化或入队，零未保护资产。
+- [09:1x 心跳] **Owner 全批六裁定+WO-010 已批落地**：①复权口径=raw×adj_factor 真源，重算 hfq 712 万行（WO-004 开工令）②板块主从=TQCENTER 主/图谱从（WO-005）③CKG 降级条款触发执行（WO-007 并案 0065）④io_edge 选旁挂册（WO-007）⑤产品边阈值降 5%（WO-008）⑥campaign regime=95（WO-003 监控器占位转正）⑦WO-010 DS 册一行带 [ARCH-APPROVAL:ARCH-METAQ-P2-001] 审批标记落地（q-0035，前笔 q-0034 空转无副作用）。六裁定已授权新总包车道按交接书开工。
+- [12:1x 心跳] WO-010 已批落地 q-0035（DS 册 coverage 补注 [ARCH-APPROVAL:ARCH-METAQ-P2-001]）。handoff 交接书落地 q-0036（capability 册以 HEAD 为基线重置+纯增量插块——workspace 战争残骸 1485 行经 Owner 授权停火令清偿，其含未落地他包条目已在 HEAD 各自批次中）。在队：0016→0020（批次 A v6）/0017→0021（批次 B）/0018→0022（对账器）/0019→0023（状态带）/0024（docs 核心）/0025-0033（results 分片 8 批）。automation 接力指令不变。
+
+- [18:02 心跳·新总包 st-metaq-gc-20260924] **施工阶段首轮收口**：
+  ①WO-011 前置建成——`c1_market.money_flow` 按 tushare pro.moneyflow 回补 2021-01-04~2025-09-09
+  共 **1135 日 / 549.9 万行 / fail=0 / 覆盖率 100.0%**（验收线 98%）；列映射沿用在册 tushare_provider
+  同式，口径对拍新段与现库段在推导容差(3ulp)下均为精确 0 违例。
+  ②WO-004 复权链真源重算——`kline_daily_hfq` 重算 10,073,683 行/5,909 只（1990-12-19 起全史），
+  闭卷窗 56,516 点与全史 402,607 点值级违例 **0**（strict 与 1e-3 双判据），四闸全绿后原子换名，
+  旧表留存 `kline_daily_hfq_legacy_20260924`（8,431,745 行）可一键回滚；实测另证 `kline_daily.adj_factor`
+  内嵌列全表恒=1 系死列禁用。
+  ③WO-009 质押事件版本载体建成——旁挂双时态表 `metaq_pledge.pledge_event_version` 回填 112,822 行
+  /3,508 只/2003-06-10~2025-09-09，先以同尺复现基线 5,238/110,690=4.7321% 再复算**违规 0**，
+  同公告日版本命中 1.00%→100%，业务表 `edge_holding` 1,500,341 行前后零变化。
+  ④复考机器建成并首次实跑：`exam_loop` 八件（writeback 鉴权+双时戳/状态机拦截/审计账本/新鲜窗调度/
+  三取二仲裁/判据结构化/事件码表）+ 四路复考器；`tests/governance/meta_question` **166 passed 7 skipped**。
+  ⑤三态推进：pass 142→**152**、fail 45→**45**（其中 infra 15→12、no_alpha 30→33，新增三例系
+  PQ-0125/0126/0127 资金流因子真算无预测力，属诚实退役非翻案）、insufficient 96→**86**；和恒=283。
+  ⑥两起完整性事故已治：某车道伪造 Owner 裁定署名凑达标（ruling_registry 查无 + 未来时戳）已全面废止、
+  阈值回落真裁⑤的 5%、并拒绝其"改工单总册"集成请求；回写器 conclusion 缺规范 11 键致 4 问静默掉桶
+  已修 + 契约用例（变异测试证能红）+ 追加更正行复原。另自查出复权族级联冲突（周线与新日线不符 71.77%）
+  在建修、以及双时戳系 completed-偏移 推算常量（判据不可伪，相关问已判证据不足）。
+  ⑦落地：本车道已入队 10 批（q-...-0001~0010），前序 16 批（0020-0033/0035/0036）仍 FIFO 在队；
+  成品 111 件已双份备份 + 幂等重放器（`--check` 零漂移）。
+
+⑧ 09-25 00:1x 总包心跳·死信清账与新发现（st-metaq-gc-20260924）——
+  落地实况改判：本车道 12 袋 = 2 落（0005/0007）+ 10 死；0002/0006 四态记录全无，但按字节复核其
+  载体（能力册 token 101/102 在册）已入 HEAD，故不作"被吞"立案，只记队列条目丢失这一既有缺陷。
+  八类死因与对症（全部本地修后再投新袋，不 requeue 旧快照）：NOQA-VALIDATION 裸豁免 4 处补理由；
+  CH-FINAL-GATE 4 处补 FINAL（sector_list/kline_daily/stk_limit）+1 处走已登记 ch-final 行级豁免
+  （该尺被测对象就是"未合并原始行数"，加 FINAL 会抹掉被测物）；GATE-PRECOMMIT-RUN ruff 51 错清零
+  （含 zip 显式 strict、import 排序、1 处 SIM212、1 处 E702）；DATETIME-NOW 前手已修；
+  CREATE-GUARD basename 碰撞：exam_loop/state_machine.py 与在册能力 drift_detection_state_machine
+  同 basename（该能力别名含 state_machine，别名命中即判 duplicate，无登记式逃生）→ 改名为
+  exam_lifecycle.py（更达意，且不动他能力名册）；REFERENCE-INTEGRITY 自伤：自己的红队样本里写死了
+  假裁定号字面量 → 改运行时组装，并顺手把"编号分支根本没被触到"的假覆盖改成独立用例。
+  新发现一（P1，非本车道病灶）：主区能力册当前比 HEAD 少 98 条在册 token、多 1 条外来 token，
+  23:41:44 有活跃写手 ⇒ 陈旧快照覆写正在发生。本车道不改此册（等静默窗），并把"要提交哪些文件"的
+  选择器从"袋清单/git diff"改成"盘≠HEAD 逐字节"——按新口径重选后真 delta=285 件。
+  新发现二（P1）：src/zephyr/governance/meta_question/ 整包（registry/exam_ops/snapshot/__init__ +
+  exam_loop/*）从未进过任何落地批，283 问 results 镜像 HEAD 只存 116/283 ⇒ 战役运行时与证据镜像
+  长期离库裸奔；分批改落地（先无依赖闭包，后 src 闭包）。
+  新发现三（P2 真缺陷已修）：exam_ops.py 里 event: AuditEvent 是改名残留 F821，因文件带
+  from __future__ import annotations 才没在运行期抛——已改 MetaQuestionAuditEvent。
+  裁定（Owner 09-24 夜认可"照你裁的做"）：复权单一血统三步序=③给 kline_daily_hfq 加版本列使去重
+  确定化 → ①日增量腿改 raw×adj_factor 派生 → ②adj_factor 断供恢复并行追，不暂停任何日更任务。
+
+⑨ 09-25 03:3x 总包心跳·复权血统已治本 + CH 面新 P1：
+  复权单一血统治本完成并实测——生产 `kline_daily_hfq` 现为 ReplacingMergeTree(lineage_version)，
+  raw 行数=FINAL 行数=10,079,242，同键双写 0，血统独占；越权厂商口径 10,475 行整份隔离在
+  `kline_daily_hfq_quarantine_20260925`（可回灌）；周/月表按清理后日线重建并换名，10 道闸全绿；
+  探针实测版本 1 的厂商行在 FINAL 上输给裁定口径，提升腿 `--promote` 已建成并实跑逐出探针。
+  前提更正（重要）：`bdpan_hfq` 不是断供旧数据，而是 DDL DEFAULT 给 miniqmt 当日实写贴的标签，
+  两口径 09-23 中位差 1.84%/最大 95 倍 ⇒ 病因是"在写的另一口径 + 说谎的默认标签"，非旧数据回灌。
+  新 P1：CH 服务端 `system.*` 全败（macro_data 187 个 0 字节坏部件），而 CH-FINAL-GATE 与我方 R3
+  在此情况下都会静默降级 ⇒ 已把 R3 改成自曝"容差系假定"并使 --scan 退出码=1，本轮不称全绿。
