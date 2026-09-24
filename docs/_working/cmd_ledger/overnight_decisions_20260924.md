@@ -145,3 +145,21 @@ automation-f18d34c8（一次性，18:00 触发）——终态扫描+GPU 就绪�
 - [排程推算] T1 3700×35.33s≈36h 全程含负载波动→预计周六 08:00-14:00 完；T2 900 格自动晋级后≈9h。59h 窗至周日 09:00 有余量。
 - [在队] q-0013 方法论十册、q-0014 裁定#413 原子批（prereg+裁定册）；本班在飞件合计 9。
 - [明日主线] P1 三张条件概率表（期望值+Wilson 下界口径，数据面已验：regime 全史 3629 日×kline_sector_880 六年）+T2 发车守望+蒸发源追凶。
+
+
+## ⚠️ 会话间事故通知（st-cleanup-final-20260924 → 各属主，09-24 23:1x）
+
+st-cleanup-final 在清理**自己**的 commit message 草稿时误用通配，连带删除了 Windows temp 下四个非我命名草稿：
+`msg_46.txt`、`msg_a.txt`、`msg_gw_sector.txt`、`msg_r2.txt`（C:/Users/fanzi/AppData/Local/Temp/）。
+属主若重跑 enqueue 报「message-file 读取失败」即为此故——内容在你们自己的会话上下文里，printf 重写即可复原
+（**勿**凭记忆占位投稿，防错 message 入 HEAD）。已查：四文件未再生、运行时无内容痕迹、相关袋不记源路径，
+st-cleanup-final 侧不可忠实代再生，故留此通知。给 st-cleanup-final 的异议/索赔直接在该会话对话中提出。
+
+## 指挥官 Round 44 · 2026-09-25 00:05（深夜 triage 轮——8 阵亡验尸四类死因全修+四审计车道发车）
+
+- [五线并发] GPU T1 跑批 + 四车道审计挖矿（11 整装回测/12 数据面宇宙/13 交易链/14 消费面， Owner 令"举一反三派出所有车道"）+ 方案①代码班 + 骨架班已交卷（758 行）+ 取证班已交卷（10 号文）+ 15 号文治本方案已写。
+- [8 阵亡验尸] ①q-0002/0008=CREATE-GUARD（图书馆遗物 token 链断）→token 补登记（归属原班 st-library-final）+--from-bag 重投 0026/0027；②q-0003~0005 清道三袋=PROTECTED-PATHS 再死——门禁语言=[ARCH-APPROVAL:ISSUE_ID] 且 issue 须在 architecture_issue_registry，#410 裁定号不在其语言体系（已立案待解：注册 issue ARCH-RULES-CLEAN-410 引 #410 后带标记重投）；③q-0010=CAPABILITY-LOOKUP-REQUIRED（会话无反查审计）→已补调 discover_applicable_rules（file_write+commit）+重投 0028；④q-0013=cascade_stale（audit-fix 批改了 capability 册基底）→重投 0029；⑤q-0016=TTL-METADATA（战役包 .md 无 frontmatter）→10 件补 ttl: task_bound 全部重投（0022-0025 超替 0018-0021）。
+- [系统性教训入册] CREATE-GUARD 读 HEAD 版 token 册——盘面 token 对落地侧不可见，**token 册必须单批先行落 HEAD**（q-0030 已占位）；今晚这波 token 依赖批（0022-0029）会按 FIFO 再死一轮，registry（q-0029 含册+q-0030）落 HEAD 后统一重投即全愈——已在守.watch 计划。
+- [大盘] 死信 266→393（+131）：我方 8，其余=各班收宫潮/级联 stale 族，归各班自行重投（§3.4）；done 907（+34 深夜吞吐健康）。
+- [里程碑确认] q-0014（#413 裁定+prereg 三字段签发）已落 HEAD——GPU 点火合法性正式入册。
+- [Owner 问询立卡×2] 881xxx 行业指数补采（469 vs 800+ 宇宙差值）；"全用了吗"消费面账本（14 号文在挖）。
