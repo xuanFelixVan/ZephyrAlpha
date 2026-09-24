@@ -80,6 +80,7 @@ from typing import Any, Final, Protocol
 from zephyr.library.ledger_schema import (
     _SQL_ENSURE_ASSETS,
     _SQL_ENSURE_EVENTS,
+    _SQL_FEEDS_LOOKUP,
     _SQL_INSERT_EVENT,
     _SQL_LOOKUP,
     _SQL_LOOKUP_COMPOSED,
@@ -232,6 +233,17 @@ class Librarian:
                 count += 1
         self._conn.commit()
         return count
+
+    def lookup_by_feeds(self, keyword: str, limit: int = 20) -> list[dict[str, Any]]:
+        """供数反查（裁定#410 步骤⑤）：potential_consumers 含关键词的活跃资产。"""
+        with self._conn.cursor() as cur:
+            cur.execute(_SQL_FEEDS_LOOKUP, (limit,))
+            rows = [
+                dict(zip(["asset_id", "kind", "home", "status", "title", "potential_consumers"], row, strict=False))
+                for row in cur.fetchall()
+            ]
+        kw = keyword.lower()
+        return [r for r in rows if any(kw in (c or "").lower() for c in (r.get("potential_consumers") or []))][:limit]
 
     def lookup(
         self,

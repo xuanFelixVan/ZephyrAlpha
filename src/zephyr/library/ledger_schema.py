@@ -123,6 +123,14 @@ ON CONFLICT (asset_id) DO UPDATE SET
   tags = EXCLUDED.tags
 """
 
+_SQL_FEEDS_LOOKUP = """
+SELECT asset_id, kind, home, status, title, potential_consumers
+FROM lib_assets
+WHERE status = 'active' AND cardinality(potential_consumers) > 0
+ORDER BY asset_id
+LIMIT %s
+"""
+
 _SQL_MARK_DECEASED = """
 UPDATE lib_assets SET status = 'deceased', disposition_authority = %s
 WHERE asset_id = %s

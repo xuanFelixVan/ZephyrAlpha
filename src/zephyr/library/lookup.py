@@ -42,7 +42,9 @@ _COMMIT_GUIDE_PREFIX: Final[str] = "commit-guide:"
 _COMMIT_GUIDE_PLAYBOOK_REL: Final[str] = (
     "docs/01_policies_and_standards/sop/governance_sop/commit_navigation_playbook.md"
 )
-_BACKTEST_LOG_HINT: Final[str] = "回测运行日志抽屉：logs/c1_repro/、logs/c1_real_*.log（族级入册=T10，明细见 registry_of_logs.yaml）"
+_BACKTEST_LOG_HINT: Final[str] = (
+    "回测运行日志抽屉：logs/c1_repro/、logs/c1_real_*.log（族级入册=T10，明细见 registry_of_logs.yaml）"
+)
 _VOCAB_REL: Final[str] = "docs/01_policies_and_standards/_registry/catalogs/library_tag_vocabulary.yaml"
 
 
@@ -239,6 +241,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--home-prefix", default=None, help="home 前缀过滤（如 TBL:ch:）")
     parser.add_argument("--backtest", action="store_true", help="回测产物查询面（按策略/日期段列产物+日志抽屉提示）")
     parser.add_argument("--no-alias", action="store_true", help="关闭 G15-① 别名轴展开（原词直查）")
+    parser.add_argument("--feeds", default=None, help="供数反查（裁定#410）：potential_consumers 含关键词的资产")
     parser.add_argument("--strategy", default=None, help="[backtest] 策略 ID 过滤")
     parser.add_argument("--since", default=None, help="[backtest] 起始日期 YYYY-MM-DD（含）")
     parser.add_argument("--until", default=None, help="[backtest] 截止日期 YYYY-MM-DD（含）")
@@ -247,8 +250,22 @@ def main(argv: list[str] | None = None) -> int:
     if args.backtest:
         return _query_backtest(args.strategy, args.since, args.until, max(1, min(args.limit, 10000)))
 
+    if args.feeds:
+        conn = get_depgraph_pg_connection()
+        try:
+            lib = Librarian(conn)
+            rows = lib.lookup_by_feeds(args.feeds, limit=max(1, min(args.limit, 10000)))
+        finally:
+            conn.close()
+        if not rows:
+            print(f"(no assets feeding {args.feeds!r})")
+            return 1
+        for row in rows:
+            consumers = ",".join(row.get("potential_consumers") or [])
+            print(f"{row['asset_id']}	{row['kind']}	{consumers}")
+        return 0
     if args.query.startswith(_COMMIT_GUIDE_PREFIX):
-        return _query_commit_guide(args.query[len(_COMMIT_GUIDE_PREFIX):])
+        return _query_commit_guide(args.query[len(_COMMIT_GUIDE_PREFIX) :])
     if not args.query:
         parser.print_usage()
         return 1
