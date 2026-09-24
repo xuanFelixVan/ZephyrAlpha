@@ -1,0 +1,44 @@
+notes: no_alpha 如实登记。反向信息显著（全样本与样本外均负），如需反因子须另立审计题；禁调参重跑出正 IC。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_market_PQ-011x.py
+  query: 'SELECT d.trade_date, d.symbol, toFloat64(d.close) c, toFloat64(a.adj_factor)
+    af FROM c1_market.kline_daily d INNER JOIN c1_market.adj_factor a ON a.symbol=d.symbol
+    AND a.trade_date=d.trade_date WHERE d.trade_date>=''2019-01-01'' AND d.trade_date<=''2025-09-09'';
+    wide 矩阵上: slope=MA20(ac)/MA20(ac).shift(5)-1, breakout=1{ac>max(ac,t-20..t-1)},
+    signal=sign(slope)+breakout; retk=ac.shift(-k)/ac-1; 逐日截面 spearman 秩 IC (min 300
+    名), NW t lag=k, 60/40 时间切分'
+  result:
+    k: 1
+    ic_ir: -0.2315
+    n_days: 1599
+    ic_mean: -0.02769
+    in_days: 959
+    nw_t_in: -6.848
+    nw_t_oos: -6.558
+    oos_days: 640
+    nw_t_full: -9.466
+    oos_start: '2023-01-18'
+    pool_note: 股票池=闭卷窗内 kline_daily 有成交标的（全 A 现价池，题面未要求 ST/退市过滤）；复权=raw close x adj_factor
+      表自算 hfq 口径（core_audit 已证 hfq 表与该口径 45.4% 不对齐，未采用 hfq 表）
+    ic_in_mean: -0.02509
+    ic_oos_mean: -0.03159
+exam_ref: st-metaq-20260923/probe/stat_market_PQ-0110
+fail_type: no_alpha
+threshold: IC>0.02 且 t>2（样本外 IC>0.01）
+conclusion: 均线斜率+20日突破合成信号（sign(MA20/MA20_5日前-1)+1{close_adj>20日前高}）对全 A 池 1 日前瞻收益（raw
+  x adj_factor 自算 hfq，close-to-close）的逐日截面秩 IC：IC=-0.02769（Newey-West t=-9.466，lag=1，n=1599
+  个交易日，2019-01-02..2025-09-09，日均 ~5100 名），未达 IC>0.02 且 t>2；样本外（后 40%，2023-01-18 起）IC=-0.03159（t=-6.558），未达
+  >0.01。结论=fail(no_alpha)：IC 全窗稳定为负且统计显著（ICIR=-0.2315），信号在闭卷窗呈反向（均值回归压制趋势），按题面方向无正预测力。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2019-01-01'
+three_check:
+  data: 'OK: kline_daily+adj_factor join 759.6 万行（2019-01-01..2025-09-09），wide 矩阵
+    1624 日 x 5641 标的'
+  caliber: 'OK: 复权=raw close x adj_factor 表自算 hfq（未用 hfq 表）；合成信号定义机械无歧义'
+  mechanical: 'OK: 逐日 spearman 秩 IC + NW t(lag=1) + 60/40 切分代码可复现'
+pit_assertion: 信号只用 T 日收盘及以前数据（MA/前高均截至 T 日）；前瞻收益窗自 T+1 起（close-to-close 跨 T+1 开盘）；复权因子取
+  adj_factor 表 T 日值（T 日前已发布），无切点后数据。
+q_id: PQ-0110

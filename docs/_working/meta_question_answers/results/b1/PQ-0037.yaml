@@ -1,0 +1,33 @@
+notes: 题面'多源合成情绪指数'在库内落地为 emotion_index（多组件加权合成，components 字段可见）；事件日重叠已按连续区间合并做稳健性。极端日事件重叠导致的
+  t 膨胀已在 episodes 列对照。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_pq0037.py
+  query: emotion_index stage='close_final' 2023 起; pct=rolling250 分位; fwd5_rev=close985[t+6]/close985[t+1]-1;
+    ttest_1samp vs 0
+  result:
+    p: 0.3612749659255539
+    t: 0.9438013526810863
+    p_ep: 0.29628190733695586
+    t_ep: -1.200199862370119
+    mean_rev: 0.0172234321664974
+    n_events: 15
+    n_episodes: 5
+    mean_rev_ep: -0.013679028531310089
+    n_extreme_days_raw: 16
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0037
+fail_type: no_alpha
+threshold: 反转显著且 t>2（2023 年以来极端分位日事件研究）
+conclusion: 因子构造：emotion_index(close_final 多源合成情绪，1991 起) 2023-01-01 起，trailing 250
+  日分位>95% 记极端情绪日；反转收益=中证全指 T+1 收盘→T+6 收盘 5 日收益。极端日事件 n=15，均值=0.0172，t=0.94（p=0.3613）；按连续极端区间合并为独立事件
+  n=5，均值=-0.0137，t=-1.20（p=0.2963）。判据（均值<0 且 |t|>2）不成立——极端情绪后的 5 日收益未出现显著反转。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2023-01-01'
+three_check:
+  data: OK emotion_index 1991 起切点前 8361 行（题面'多源合成'以库内多组件合成情绪指数 emotion_index 落地）
+  caliber: OK 极端分位>95%+后5日收益可机械落地；收益代理用中证全指(000985.CSI)
+  mechanical: OK t>2 与反转方向机械可判
+pit_assertion: 情绪分位用 trailing 250 日窗口（T 日收盘落定），反转收益窗自 T+1 起，全部数据 trade_date<='2025-09-09'。
+q_id: PQ-0037

@@ -1,0 +1,39 @@
+notes: 复考前置：ig_company_edge 增加 confidence 列（各 source 打分：如 top5_customer 销量占比归一、专利协同数归一、websearch
+  证据强度）并回填后重测；或 Owner 裁定以 weight 为置信代理并写明口径后复考。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l2_q0063_0078_0079_0080.py
+  query: SELECT column_name FROM information_schema.columns WHERE table_name='ig_company_edge'；count(weight)/count(rank)/count(relevance)
+    非空统计
+  result:
+    rows: 58207
+    source_dist:
+      websearch: 178
+      483_top5_customer: 53236
+      J88_collab_patent: 1718
+      match_list_2012_2023: 3075
+    rank_nonnull: 53236
+    weight_nonnull: 54897
+    weight_type_dist:
+      'null': 3235
+      sales_pct: 53236
+      revenue_pct: 18
+      collab_count: 1718
+    relevance_nonnull: 0
+    has_confidence_column: false
+exam_ref: st-metaq-20260923/probe/batch_l2_graph_PQ-0079
+fail_type: null
+threshold: 高置信层（confidence≥0.8）占比≥30% 且层间传导预测力单调（高层>低层，t>2）
+conclusion: 三查拦截：ig_company_edge（58,207 行）不存在 confidence 字段——information_schema.columns
+  实证 27 列中无 confidence（近义候选：weight 54,897 非空/sales_pct 等 weight_type、rank 53,236 非空、relevance
+  0 非空、evidence_type 分类型），'高置信层（confidence≥0.8）占比'与'层间传导预测力单调'在无该字段下无法机械落地 → insufficient。占比与单调性两部分均依赖分层键，分层键缺失则两层检验皆不可构造。
+confidence: 0.8
+data_window:
+  end: snapshot 2026-09 现状（ig_company_edge 静态快照）
+  start: snapshot
+three_check:
+  data: 'OK: ig_company_edge 58,207 行在库，但 confidence 列不存在'
+  caliber: 'NO: ''confidence≥0.8 分层''无字段可依；weight/rank 是别义字段（销量占比/客户排名）不能无声替代置信度'
+  mechanical: 'NO: 分层键缺失导致占比与层间 IC 对比皆不可构造'
+pit_assertion: 静态结构审计，不涉时间序列校正；未进入预测力回归阶段。
+q_id: PQ-0079

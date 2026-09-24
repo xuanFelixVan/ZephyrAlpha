@@ -1,0 +1,57 @@
+notes: 复考前置：(1) sector_fund_flow 历史回补至 2025-09-09 前（当前仅 2026-09 起 3529 行）；(2) 板块→个股成分映射存证回补（sector_constituent_snapshot/concept_board_constituent
+  现仅存切点后快照）。两前置齐备后本题可按原口径真算。注：kline_sector_880 切点前 sector_name 100% 为空，届时须用 sector_code
+  口径。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_fund_coverage.py
+  query: SELECT min(trade_date), max(trade_date), count() FROM c1_market.sector_fund_flow
+    WHERE trade_date <= '2025-09-09'
+  result:
+    min_max: 1970-01-01/1970-01-01(占位)
+    rows_in_closed_window: 0
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_fund_mapcheck.py
+  query: SELECT min(valid_from), max(valid_from), countIf(valid_from <= '2025-09-09')
+    FROM c1_market.sector_constituent / concept_board_constituent / industry_class（另
+    sector_constituent_snapshot DISTINCT snapshot_date）
+  result:
+    industry_class_valid_from: 2026-08-03起, 切点前0行
+    sector_constituent_valid_from: 2026-07-22起, 切点前0行
+    sector_constituent_snapshot_dates:
+    - '2026-09-14'
+    - '2026-09-15'
+    concept_board_constituent_valid_from: 2026-08-10起, 切点前0行
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_fund_mapcheck.py
+  query: SELECT min(trade_date), max(trade_date), count() FROM c1_market.money_flow
+    WHERE trade_date <= '2025-09-09'
+  result:
+    rows_in_closed_window: 0
+- probe: .runtime/tmp/st-metaq-20260923/probes/stat_fund_coverage.py
+  query: SELECT min(trade_date), max(trade_date), count(), uniqExact(sector_code)
+    FROM c1_market.kline_sector_880 WHERE trade_date <= '2025-09-09'（闭卷窗内唯一充足的 SL-A03
+    表）
+  result:
+    end: '2025-09-09'
+    rows: 322995
+    start: '2020-03-17'
+    n_boards: 462
+    sector_name_empty_ratio: 1.0
+exam_ref: st-metaq-20260923/probe/batch_stat_fund_PQ-0013
+fail_type: null
+threshold: IC>0.02 且 t>2
+conclusion: insufficient：合成强度分位的两个组件在闭卷窗（<=2025-09-09）内均无数据。组件A『板块新高家数占比』需板块→个股 PIT
+  成分映射，而全部映射表切点前为零行（sector_constituent_snapshot 仅 2026-09-14/15 两日；sector_constituent
+  valid_from 自 2026-07-22 起；concept_board_constituent valid_from 自 2026-08-10 起；industry_class
+  自 2026-08-03 起）。组件B『板块资金净流入』唯一正源 sector_fund_flow 在 trade_date<=2025-09-09 内 0 行（min=max=1970-01-01
+  占位值，真实样本自 2026-09 起）。备选源 money_flow 全A个股资金流切点前同样 0 行，无法个股聚合绕开成分映射。两组件皆缺，无法真实计算合成信号对板块指数
+  10 日收益的预测 IC。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2020-03-17'
+three_check:
+  data: NO：sector_fund_flow 切点前 0 行；板块成分 PIT 映射切点前不存在（5 张映射表实证均为 2026-07 之后才起步）；kline_sector_880
+    切点前 322995 行/462 板块充足但仅覆盖组件A的一部分且组件A本身仍需成分
+  caliber: OK：题面『新高家数占比+资金净流入→强度分位→对板块指数10日收益 IC』口径本身可机械落地（IC>0.02 且 t>2 可代码判定），但前提数据缺失
+  mechanical: OK：判据（IC>0.02 且 t>2）机械可比
+pit_assertion: 本题全部探查 SQL 均带 trade_date<='2025-09-09' 约束；未取用任何切点后数据做统计。
+q_id: PQ-0013

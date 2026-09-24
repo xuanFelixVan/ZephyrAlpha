@@ -1,0 +1,35 @@
+notes: 分位状态构造保证有界[0,1]，AR(1) 半衰期是其持续性标准刻画；滚动窗个别 φ∉(0,1) 的窗已剔除（数量见 n_windows-vs-hls
+  差）。
+outcome: fail
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l3_pq0081.py
+  query: rv20=std(logret,20); p=rolling250 分位; linregress(p[t-1],p[t])→φ→HL=ln(0.5)/ln(φ);
+    1000日窗 step250 → HL 分布 95%CI
+  result:
+    ci_hi: 48.3335061115221
+    ci_lo: 16.350238919447175
+    p_full: 0.0
+    n_valid: 4807
+    phi_full: 0.9733613557025707
+    hl_median: 26.832738455399777
+    n_windows: 16
+    ci_half_width: 15.991633596037461
+    half_life_full: 25.67222933297574
+    share_windows_in_5_15: 0.0
+exam_ref: st-metaq-20260923/probe/batch_l3_state_PQ-0081
+fail_type: no_alpha
+threshold: 5-15 日且滚动估计 CI 半宽<5 日（指数自相关拟合+滚动窗稳定性）
+conclusion: 因子构造：沪深300 日对数收益 20 日滚动标准差=已实现波动 RV20，其 trailing 250 日分位∈[0,1] 为波动分位状态；AR(1)
+  回归 p_t=c+φ·p_{t-1}+ε，半衰期=ln(0.5)/ln(φ)。全样本 n=4807 个有效日，φ=0.9734，半衰期=25.7 日；16 个
+  1000 日滚动窗半衰期中位数=26.8 日，95%CI=[16.4,48.3]，半宽=16.0 日。判据未过：全样本半衰期 25.7 日不在 5-15 日区间，且滚动估计
+  CI 半宽≥5 日（不稳）。
+confidence: 0.7
+data_window:
+  end: '2025-09-09'
+  start: '2005-01-04'
+three_check:
+  data: OK kline_index 000300 自 2005-01-04 切点前 5026 行
+  caliber: OK 波动分位状态=RV20 的 trailing 250 日分位，AR(1) 半衰期为标准估计量
+  mechanical: OK 阈值 5-15 日与 CI 半宽<5 日机械可判
+pit_assertion: RV20 与其 250 日分位均由 T 日收盘及以前 K 线计算，快照 T 日盘后生成；无切点后数据。
+q_id: PQ-0081

@@ -1,0 +1,30 @@
+notes: 复考前置：①落库国家统计局 2018 年投入产出表（153 部门与 2020 版可比口径或做部门映射）；②部门码对齐后按 max|a2018-a2020|/|a2020|
+  或矩阵范数相对差估计外推误差上界。
+outcome: insufficient
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/l2_q0063_0078_0079_0080.py
+  query: SELECT year, count(*) FROM ig_io_edge GROUP BY year；SELECT min(as_of),max(as_of)
+    FROM ig_io_edge
+  result:
+    source: io_official
+    rows_2018: 0
+    year_dist:
+      '2020': 16859
+    as_of_range: 2020-12-31~2020-12-31
+exam_ref: st-metaq-20260923/probe/batch_l2_graph_PQ-0080
+fail_type: null
+threshold: 两版系数外推误差上界 ≤30%
+conclusion: '三查拦截：ig_io_edge 在库仅 2020 一个年份版本（year 分布 {2020: 16,859}，as_of 全为 2020-12-31，source
+  全为 io_official），2018 版投入产出系数 0 行——exam_plan 要求的''2018/2020 两版系数差外推误差上界''无法构造（缺 2018
+  版整表）→ insufficient。注：题目口径为官方 2018/2020 两版可比部门系数；即便外部获取 2018 版，还需部门口径对齐（2017 年国民经济行业分类与
+  2020 版 138/153 部门差异）后才可机械计算。'
+confidence: 0.9
+data_window:
+  end: snapshot 2026-09 现状（ig_io_edge 2020 静态快照）
+  start: snapshot
+three_check:
+  data: 'NO: 2018 版 IO 系数表未落库（year 非空值仅 2020）'
+  caliber: 'PART: 误差上界口径（两版系数差的外推）可定义，但单版无差可求'
+  mechanical: 'NO: 缺 2018 版数据，外推计算不可构造'
+pit_assertion: 静态版本核对，不涉时间序列校正；2020 版 as_of=2020-12-31 诚实登记。
+q_id: PQ-0080

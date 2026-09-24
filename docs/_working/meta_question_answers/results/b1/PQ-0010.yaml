@@ -1,0 +1,24 @@
+notes: 判据均为方向性证伪语句（无领先性/无超额/不显著），数值阈值与重放窗口在考试落地时按 exam_plan 固化（禁临场改题）；本题只核登记文本判据齐备性。
+outcome: pass
+evidence:
+- probe: .runtime/tmp/st-metaq-20260923/probes/b_lines_PQ-0010.py
+  query: U6 非空 ∧ '证伪=' 子句存在且其后判据文本长度>2
+  result:
+    criterion_ratio: 1.0
+    U6_answered_with_criterion: 16
+exam_ref: st-metaq-20260923/probe/b_lines_PQ-0010
+fail_type: null
+threshold: =16/16 且判据齐备率=100%
+conclusion: A 档 16 条全部现答 U6 且每条含明确退役判据：16/16 含 '证伪=' 子句且判据文本非空（如 A01 领先性样本外消失即退役、A05
+  漂移收益消失、A16 传导边无预测增量），判据齐备率=100%，达 threshold '=16/16 且判据齐备率=100%'。
+confidence: 0.4
+data_window:
+  end: 2026-09-23 现状
+  start: registry
+three_check:
+  data: OK+基准三册在盘可读（源线谱 29 线全解析、DS 册 22 条目、层宪章七层）
+  caliber: OK+题面宣称 vs 登记文本逐词/逐字段对照口径明确
+  mechanical: OK+探针脚本可复现（substring 匹配+计数+层号词表校验）
+pit_assertion: 登记快照文本比对题：仅读源线谱册 02_source_line_registry.md(2026-09-22)、DS 册 data_sources_registry.yaml(v2.6.0)、层宪章
+  01_layer_charter.md(2026-09-22) 在盘快照，不取任何行情/时序数据，无切点(2025-09-09)后数据参与任何阈值比较。
+q_id: PQ-0010
