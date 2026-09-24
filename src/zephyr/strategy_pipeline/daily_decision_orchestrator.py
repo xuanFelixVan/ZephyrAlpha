@@ -2,9 +2,12 @@
 # [MODULE] zephyr.strategy_pipeline.daily_decision_orchestrator
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] daily_gate_snapshot(一闸); pf_alloc.allocation_inputs(只 import 不改);
-#   schemas.categories.decision_daily(表 DDL/列/SQL 真源); zephyr.data.ch_writer(写通道);
+#   schemas.categories.decision_daily(表 DDL/列/SQL 真源); schemas.categories.sim_trade_log(
+#   实际执行读侧真源——T4 盘后核对,2026-09-25); zephyr.data.ch_writer(写通道);
 #   zephyr.data.trading_calendar(XSHG 旁证); pipeline_events(resolve_pf_alloc_trade_date/
-#   SIM_DAILY_WAKE_TASKS/alert——函数级惰性导入避开事件层相互引用); PyYAML(TDM 只读查表)
+#   SIM_DAILY_WAKE_TASKS/alert——函数级惰性导入避开事件层相互引用); PyYAML(TDM 只读查表);
+#   pf_core.strategy_engine.framework_composer(REGIME_STATE_TO_ACTIVATION_PHASE=六段映射
+#   唯一真源，函数级惰性导入，2026-09-25 附录C 切源)
 # [CONSUMERS] pipeline_events(maybe_run_daily_decision 事件挂点，daily_kline SUCCESS 末棒);
 #   frontend.dashboard.components.warroom(读 decision_daily); 手工补跑=__main__ 直呼
 # [STARTUP] imported
@@ -38,7 +41,7 @@ sit_out_list 禁做清单/kill_switch 熔断）合成收拢为 c1_backtest.decis
 
 每日流程（蓝图 §二，机械时点=前一交易日盘后批尾，生效日=次交易日）：
     S1 查交易日历（trade_calendar 真源 + XSHG 旁证 + 行情实证 data_proven 三层，§三续期机制）
-    S2 读 regime 昨收 PIT（regime_snapshot_history，六段映射=v0 草案查表可调）
+    S2 读 regime 昨收 PIT（regime_snapshot_history；六段映射=法定真源引用，r1/r2 不路由）
     S3 读五层门快照（daily_gate_snapshot，缺席语义按蓝图 §四.2）
     S4 策略包选择（state_matrix TDM-E-L1 格查表∩已毕业包集；v1 包集=空→安全态）
     S5 定总仓位上限+no_trade 三源合成（预算带插值×过渡带折减 vs 60% 硬顶；三源=预算带 0%
@@ -53,7 +56,8 @@ sit_out_list 禁做清单/kill_switch 熔断）合成收拢为 c1_backtest.decis
 
 参数草案声明（裁定#305 第 1/3 点，标注可调，Owner 终裁后改常量+跑测试）：
     六段预算带=TDM-F-C1 注释值（全 proposed）；过渡带=最大隶属度<60% 折减×0.5（0.5-0.7
-    带内取保守下缘）；硬顶=60%（RLM-CONCENTRATION-002）；regime→六段映射=v0 查表。
+    带内取保守下缘）；硬顶=60%（RLM-CONCENTRATION-002）；regime→六段映射已切法定真源
+    （2026-09-25 附录C 六步之第 3 步，r4/r2/r1 三键行为变化由对照测试快照钉住）。
 """
 
 from __future__ import annotations
@@ -104,18 +108,13 @@ BUDGET_BANDS: Final[dict[str, tuple[float, float]]] = {
     "euphoria": (0.00, 0.30),
     "distribution": (0.00, 0.00),
 }
-# regime dominant（7 维 HMM+overlay）→ 六段 v0 映射查表（草案值，裁定#305 第 1 点标注可调；
-# 语义锚：r10 CRISIS→冰点投降 / r4 熊市阴跌→退潮派发 / r1 低波震荡+RECOVERY→修复吸筹 /
-# r2 中波震荡+BREAKOUT→点火 / r3 牛市趋势→发酵扩张；情绪六段判定器接电后切换真源）
-REGIME_TO_SEGMENT: Final[dict[str, str]] = {
-    "r10": "capitulation",
-    "r4": "distribution",
-    "r1": "accumulation",
-    "r11": "accumulation",
-    "r2": "ignition",
-    "r12": "ignition",
-    "r3": "expansion",
-}
+# regime dominant（7 维 HMM+overlay）→ 六段映射：2026-09-25 起弃用本地 v0 占位表
+# （原 REGIME_TO_SEGMENT，r4→distribution/r1→accumulation/r2→ignition 三键与法定真源
+# 冲突且无守卫——附录C §2 分叉定位，情绪门宽差 75% 教训），改为消费唯一映射位点
+# framework_composer.REGIME_STATE_TO_ACTIVATION_PHASE（见 _regime_to_segment，与挂图侧
+# auto_mount.R2SIX 同表有漂移守卫）。r1/r2 震荡态不路由=宁漏勿误；六段的
+# euphoria/distribution 无 r 态来源（composer 注如实披露）⇒ 预算带里这两段仅剩
+# compute_position_cap 直呼面可达，regime 腿天然不出。
 # 已毕业策略包集（v1=空，裁定#305 第 2 点：S-OWNER-001 考试 FAIL、S-OWNER-002 机制
 # 验证 FAIL——判定台账在案，裁定登记见各自交付分支待合并；当前无已毕业包，
 # "无已毕业包，今日不出手"安全态；毕业通道接电后由工厂考试台账喂入，禁手填）
@@ -172,6 +171,12 @@ _SQL_SCENARIO_PLAN: Final = (
 _SQL_SCENARIO_VERIFY: Final = ("SELECT data_date, actual_scenario_id, scenario_hits, verified_by "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
                                "FROM c1_market.judgment_plan_verification "
                                "WHERE data_date = '{date}' ORDER BY ingest_ts DESC LIMIT 1")
+# T4 盘后核对读口（TRD-A17 最小实体化：计划=decision_daily 当日最新 run 行（schema
+# SQL_LATEST_BY_TARGET_DATE 唯一真源）；实际=sim_trade_log 当日 entry/exit 事件计数。
+# 全程 DB 只读——核对行不落库，经既有播报链出声+返回值交付）
+_SQL_SIM_TRADE_ACTUAL: Final = (
+    "SELECT action, count() FROM {table} "  # noqa: bare-sql  模块级 _SQL_ 前缀 SQL 模板常量唯一真源(禁散落重拼)
+    "WHERE trade_date = '{date}' GROUP BY action")
 
 
 # ── 记号（业务日级先拍板先占，蓝图 S6；与 pipeline_events AUDIT_MARKER 分文件防互踩）──
@@ -526,6 +531,27 @@ def _scalar1_wrap(rd: Reader, sql: str) -> tuple | None:
 
 
 # ── S2/S3 分腿判定（复杂度拆分：每腿只做一件事，D1/D3/D6 折进各自腿）─────────
+def _regime_to_segment() -> dict[str, str] | None:
+    """六段映射唯一真源引用（惰性导入；真源不可用=None=fail-closed，禁 fallback 本地表）。
+
+    真源=framework_composer.REGIME_STATE_TO_ACTIVATION_PHASE（附录C 法定唯一映射位点，
+    与挂图侧 auto_mount.R2SIX 同表且有漂移守卫钉住；守卫镜像在
+    tests/strategy_pipeline/test_decision_orchestrator.py TestSixStateTruthChainSwitch）。
+    惰性导入写在函数内=静态 ImportFrom（depgraph AST 可抽取依赖边）且零冷导入成本
+    （vectorized_engine 腿重，无须在模块加载期付）；导入失败返回 None，S2 走不可映射
+    no_trade 保守侧（宁漏勿误）——占位表分叉 75% 情绪门宽教训，禁再落本地副本表。
+    """
+    try:
+        from zephyr.pf_core.strategy_engine.framework_composer import (
+            REGIME_STATE_TO_ACTIVATION_PHASE,
+        )
+    except Exception as exc:  # noqa: BLE001 — 真源不可用 fail-closed（禁 fallback 表）
+        log.error("[DAILY-DECISION] 六段映射真源导入失败（fail-closed 保守侧）: %s: %s",
+                  type(exc).__name__, exc)
+        return None
+    return REGIME_STATE_TO_ACTIVATION_PHASE
+
+
 def _s2_regime_leg(day: str, rd: Reader, cal: dict[str, Any],
                    ctx: "LegCtx") -> tuple[str | None, float, dict]:
     """S2 regime 腿：PIT 读+新鲜度（D1）+六段映射+预算带合成。缺席/陈旧→no_trade 原因落账。"""
@@ -542,7 +568,13 @@ def _s2_regime_leg(day: str, rd: Reader, cal: dict[str, Any],
         ctx.degrade.append("D1_regime_stale")
         ctx.notes.append(f"regime 快照陈旧（source={source_date} < 前交易日{prev_day or 'N/A'}）")
         return None, 0.0, compute_position_cap("", 0.0)
-    state = REGIME_TO_SEGMENT.get(str(regime.get("dominant")))
+    mapping = _regime_to_segment()
+    if mapping is None:     # 真源导入失败=fail-closed（同款降级码+如实归因，禁 fallback 表）
+        ctx.reasons.append("regime_missing")
+        ctx.degrade.append("D1_regime_state_unmappable")
+        ctx.notes.append("六段映射真源不可用（导入失败）→ no_trade（fail-closed 保守侧）")
+        return None, 0.0, compute_position_cap("", 0.0)
+    state = mapping.get(str(regime.get("dominant")))
     confidence = float(regime.get("confidence") or 0.0)
     if state is None:
         ctx.reasons.append("regime_missing")
@@ -564,6 +596,16 @@ def _s3_gate_leg(gate: dict[str, Any], ctx: "LegCtx") -> None:
     if gate_absent:
         ctx.degrade.append("D2_gate_absent:" + ",".join(gate_absent))
         ctx.notes.append(f"门缺席层按门关（依赖包今日禁用）：{gate_absent}")
+    # 乙档供料注记（batch2_consumer_wiring_patch.md §3.2，L03-C02 步2）：可观测 only 零行为
+    # 变更（position_cap/packages 判定变更归丁线 Owner 门位）；top 空防御防 join 崩（fail-open）。
+    l2 = gate.get("l2") or {}
+    adm = l2.get("admission") or {}
+    if adm.get("status") == "ok":
+        ctx.notes.append(
+            f"板块门供料: top={','.join((adm.get('top') or [])[:3])} "
+            f"偏好={adm.get('preference_label')} tilt={adm.get('tilt')} "
+            f"score={adm.get('score')} gate_level={l2.get('gate_level')}"
+        )
     ks = (gate.get("l5") or {}).get("kill_switch") or {}
     if ks.get("status") != "ok":
         ctx.reasons.append("kill_switch")
@@ -751,7 +793,7 @@ def maybe_run_daily_decision(task_id: Any = None, success: bool = True,
     return out
 
 
-# ── T3/T4 接口签名（蓝图 §九.7：首版只留签名不施工）────────────────────────
+# ── T3/T4 接口（蓝图 §九.7；T3 盘中修订仍预留，T4 盘后核对 TRD-A17 最小实体化）──
 def intraday_revoke(reason: str, *, trade_date: str | None = None) -> dict[str, Any]:
     """盘中修订接口（预留，不施工）：熔断触发时对当日决策追加修订行（新 run_id，no_trade=1）。
 
@@ -761,10 +803,88 @@ def intraday_revoke(reason: str, *, trade_date: str | None = None) -> dict[str, 
             "note": "盘中修订权 Owner 人工保留（裁定#305 第 7 点）；执行面接入后另裁触发白名单"}
 
 
-def postmarket_reconcile(data_date: str) -> dict[str, Any]:
-    """盘后核对接口（预留，不施工）：当日决策 vs 实际核对留痕（对接 plan_deviation_monitor 口径）。"""
-    return {"action": "reserved_v1", "data_date": data_date,
-            "note": "T4 盘后核对首版仅签名占位（蓝图 §九.7）"}
+def postmarket_reconcile(data_date: str, *, reader: Reader | None = None,
+                         alert_fn: AlertFn | None = None) -> dict[str, Any]:
+    """T4 盘后核对（TRD-A17 最小实体化，L09-C02）：当日计划快照 vs 实际执行 → 核对行。
+
+    计划行=decision_daily 按生效日取当日最新 run（SQL_LATEST_BY_TARGET_DATE 唯一真源）；
+    实际=sim_trade_log 当日 entry/exit 事件计数（schema 常量真源，DB 只读）。字段级核对：
+    no_trade/cap 禁新开仓语义 vs 实际 entry 数；核对行（一致/偏差+diff 计数）经既有播报链
+    出声（S7 同款 alert 通道）+返回 dict 供结算链消费；禁扩大为对账引擎（蓝图 §九.7 分期）。
+
+    ERROR_CONTRACT：date 非法=ValueError（fail-closed 唯一例外）；读通道故障折进
+    verdict=error 如实留痕，永不外抛反噬结算链。
+    """
+    day = validate_date_literal(data_date)
+    try:
+        from schemas.categories.decision_daily import (
+            INSERT_COLUMNS,
+            SQL_LATEST_BY_TARGET_DATE,
+            TABLE_NAME,
+        )
+        from schemas.categories.sim_trade_log import TABLE_NAME as SIM_TRADE_TABLE
+
+        rd = resolve_reader(reader)
+        cols = [c.strip() for c in INSERT_COLUMNS.strip().strip("()").split(",") if c.strip()]
+        plan_rows = list(rd(SQL_LATEST_BY_TARGET_DATE.format(table=TABLE_NAME, date=day)))
+        plan: dict[str, Any] | None = None
+        if plan_rows:
+            row = tuple(plan_rows[0])
+            if len(row) != len(cols):
+                raise ValueError(f"decision_daily 计划行列数 {len(row)}≠声明 {len(cols)}（通道契约漂移）")
+            plan = dict(zip(cols, row, strict=True))
+        trade_rows = list(rd(_SQL_SIM_TRADE_ACTUAL.format(table=SIM_TRADE_TABLE, date=day)))
+        counts = {str(a): int(n) for a, n in trade_rows}
+        entry_count = counts.get("entry", 0)
+        exit_count = counts.get("exit", 0)
+    except Exception as exc:  # noqa: BLE001 — 读通道故障不反噬结算链，verdict=error 出声
+        log.warning("[DAILY-DECISION] T4 盘后核对读通道失败（data_date=%s）: %s",
+                    day, type(exc).__name__)
+        return {"verdict": "error", "data_date": day,
+                "error": f"{type(exc).__name__}: {exc}"[:200]}
+
+    fields_compared = 0
+    deviations: list[dict[str, Any]] = []
+
+    def _judge(field: str, plan_side: Any, actual_side: Any, ok: bool) -> None:
+        nonlocal fields_compared
+        fields_compared += 1
+        if not ok:
+            deviations.append({"field": field, "plan": plan_side, "actual": actual_side})
+
+    if plan is None:
+        # 无快照行=无放行凭证（安全态前提）；当日却有执行=核对缺口，fail-visible 出声
+        _judge("plan_row", None, {"entry_count": entry_count, "exit_count": exit_count}, False)
+    else:
+        no_trade = int(plan["no_trade"])
+        cap = float(plan["position_cap"])
+        _judge("no_trade_vs_entries", {"no_trade": no_trade}, {"entry_count": entry_count},
+               no_trade == 0 or entry_count == 0)
+        if no_trade == 0:  # cap 核对仅在计划放行日做（禁做日 cap 恒 0，免同因双计）
+            _judge("position_cap_vs_entries", {"position_cap": cap},
+                   {"entry_count": entry_count}, cap > 0 or entry_count == 0)
+    verdict = "match" if not deviations else "deviation"
+    reconcile_row: dict[str, Any] = {
+        "data_date": day,
+        "plan_run_id": str(plan["run_id"]) if plan else "",
+        "plan_market_state": str(plan["market_state"]) if plan else "",
+        "plan_no_trade": int(plan["no_trade"]) if plan else None,
+        "plan_position_cap": float(plan["position_cap"]) if plan else None,
+        "actual_entry_count": entry_count,
+        "actual_exit_count": exit_count,
+        "verdict": verdict,
+        "fields_compared": fields_compared,
+        "fields_deviated": len(deviations),
+        "deviations": deviations,
+    }
+    _alert(alert_fn,
+           f"{ORCHESTRATOR_PREFIX}[T4-RECONCILE] {day} verdict={verdict} "
+           f"plan(no_trade={reconcile_row['plan_no_trade']},"
+           f"cap={reconcile_row['plan_position_cap']},state={reconcile_row['plan_market_state'] or '-'}) "
+           f"actual(entry={entry_count},exit={exit_count}) "
+           f"diff={len(deviations)}/{fields_compared}",
+           "INFO" if verdict == "match" else "WARN")
+    return reconcile_row
 
 
 # ── 手工补跑逃生口（P2b 同款：非自动链路；自动触发=pipeline_events wire 末棒事件订阅）──

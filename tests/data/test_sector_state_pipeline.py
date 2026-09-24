@@ -59,6 +59,8 @@ class TestPreferenceConsumptionContract:
         assert pref.axis_status == "ok"
         assert pref.tilt == 1.2
 
-    def test_map_preference_missing_emotion_mock(self):
+    def test_map_preference_missing_emotion_fail_visible(self):
+        """D13 接线（L02-C03）：无源=显式缺轴 fail-visible，禁静默 mock 0.5 温和档。"""
         pref = map_preference("r3", None)
-        assert pref.axis_status == "mock"
+        assert pref.axis_status == "missing_emotion"
+        assert pref.preference_label == ""  # 无偏好判决出库（label 空=下游可见无判决）

@@ -8,7 +8,6 @@ import pytest
 
 from zephyr.signal_ashare.sector.sector_state_aggregator import (
     AGGREGATOR_VERSION,
-    MOCK_EMOTION_INDEX,
     SectorPanelInputs,
     assemble_sector_states,
     compute_market_state,
@@ -164,14 +163,27 @@ class TestMapPreference:
         assert emotion_band(0.4) == "low"
         assert emotion_band(0.41) == "mid"
         assert emotion_band(0.7) == "high"
-        assert emotion_band(None) == "mid"
+        assert emotion_band(None) == ""  # D13 接线：无源=无档（禁静默 mock "mid"）
 
-    def test_mock_axis_status(self):
+    def test_missing_emotion_axis_fail_visible(self):
+        """D13 接线（L02-C03）无源契约：emotion=None 禁静默 mock 0.5 温和档——
+        显式缺轴 fail-visible：无偏好判决（label 空）+中位无倾斜+禁入清空。"""
         pref = map_preference("r3", None)
-        assert pref.axis_status == "mock"
-        assert pref.emotion_band == "mid"
-        assert "INSUFFICIENT" in pref.note
-        assert MOCK_EMOTION_INDEX == 0.5
+        assert pref.axis_status == "missing_emotion"
+        assert pref.preference_label == ""  # 无判决（D2 卡 INSUFFICIENT 禁放行口径）
+        assert pref.emotion_band == ""
+        assert pref.tilt == 1.0  # 中位无倾斜（frozen 界 [0.8,1.2] 内）
+        assert pref.banned_quadrant == ""
+        assert "missing" in pref.note
+        assert pref.regime_group == "up"  # regime 轴仍如实归组留痕
+
+    def test_real_emotion_axis_unchanged(self):
+        """D13 接线（L02-C03）有源对照：实值消费行为与 mock 时代逐字段一致（frozen 表零改动）。"""
+        pref = map_preference("r3", 0.482319)
+        assert pref.axis_status == "ok"
+        assert pref.preference_label == "OFFENSIVE"
+        assert pref.tilt == 1.2
+        assert pref.banned_quadrant == "lagging"
 
     def test_banned_quadrant_admission(self):
         pref = map_preference("r3", 0.55)  # 温和×上行 → OFFENSIVE, lagging 禁入

@@ -26,8 +26,9 @@
   1. assemble_sector_states：把日K 面板/涨停/成分/资金四类已查好的数据面板
      组装成每板块每日 sector_state 行（momentum_pct/rrg_quadrant/strength/
      net_inflow_pct 五成分 + 市场级 rotation_state）；
-  2. map_preference：大盘×情绪双轴 → 板块偏好标签（5 档）+tilt+禁入象限，
-     情绪轴开发期用契约形态 mock（0.5 温和档），axis_status='mock' 如实留痕。
+  2. map_preference：大盘×情绪双轴 → 板块偏好标签（5 档）+tilt+禁入象限；
+     情绪轴消费实值（emotion_index close_final 当日值由编排调用方查表注入），无源=
+     显式缺轴 fail-visible（axis_status='missing_emotion'，D13 接线删除 mock 0.5 分支）。
 
 调用方（批2 编排器）负责：CH 面板查询（closes 62+ 日升序、涨停成分反查、
 money_flow 板块聚合）、ReplacingMergeTree 落库、close_final/pre_open 两 stage 时点。
@@ -92,9 +93,6 @@ LABEL_OFFENSIVE = "OFFENSIVE"
 LABEL_FOLLOW = "FOLLOW"
 LABEL_WARN = "CROWDING_WARN"
 
-#: 契约 mock 情绪指数（开发期情绪班成品未出；0.5=温和档中性位，D2 期如实 INSUFFICIENT）
-MOCK_EMOTION_INDEX = 0.5
-
 
 @dataclass
 class SectorPanelInputs:
@@ -148,7 +146,7 @@ class PreferenceResult:
     banned_quadrant: str = ""
     regime_group: str = ""
     emotion_band: str = ""
-    axis_status: str = "ok"  # ok / mock / unknown_regime / insufficient
+    axis_status: str = "ok"  # ok / missing_emotion / unknown_regime
     note: str = ""
 
 
@@ -473,9 +471,9 @@ _PREFERENCE_TABLE: dict[str, dict[str, tuple[str, float, str, str]]] = {
 
 
 def emotion_band(value: float | None) -> str:
-    """情绪指数 → 三档（≤0.4 低温 / 0.4-0.7 温和 / ≥0.7 高温）。"""
+    """情绪指数 → 三档（≤0.4 低温 / 0.4-0.7 温和 / ≥0.7 高温）；None=无源 → ''（无档）。"""
     if value is None:
-        return "mid"  # 契约 mock 位（MOCK_EMOTION_INDEX=0.5）
+        return ""  # D13：无源=无档（禁静默归温和档，fail-visible 由 map_preference 标注）
     if value <= _EMOTION_LOW:
         return "low"
     if value >= _EMOTION_HIGH:
@@ -496,18 +494,29 @@ def map_preference(
 ) -> PreferenceResult:
     """大盘×情绪 → 板块偏好（D2 映射层纯函数，frozen 规则表 v0）。
 
-    情绪轴开发期 mock（emotion_index=None 时按契约 mock 0.5 温和档处理，
-    axis_status='mock' 如实留痕——D2 考试该段判 INSUFFICIENT 禁放行）。
+    情绪轴消费实值（emotion_index close_final 当日值，编排调用方 sector_state_pipeline
+    已接线查表注入）；无源=显式缺轴 fail-visible（axis_status='missing_emotion'，
+    label 空+tilt 1.0 中位——D13 接线删除契约 mock 0.5 分支，禁静默温和档；D2 考试
+    该段判 INSUFFICIENT 禁放行口径不变）。
     T 日收盘态=T+1 盘前输入；本函数不读任何行情（防循环红线）。
     """
     grp = regime_group(regime_dominant)
+    if emotion_index is None:
+        # D13（14 号文 §四#4 实证缺口）：情绪轴无源=显式缺轴，禁按 mock 0.5 温和档出判决
+        return PreferenceResult(
+            preference_label="",
+            tilt=1.0,
+            banned_quadrant="",
+            regime_group=grp,
+            emotion_band="",
+            axis_status="missing_emotion",
+            note=("emotion_axis=missing（无当日 close_final 实值）——无偏好判决，"
+                  "禁按 mock 温和档放行（D2 卡 INSUFFICIENT 口径）"),
+        )
     band = emotion_band(emotion_index)
     label, tilt, banned, note = _PREFERENCE_TABLE[band][grp]
     status = "ok"
     notes: list[str] = [note]
-    if emotion_index is None:
-        status = "mock"
-        notes.append("emotion_axis=contract_mock(0.5)——真值集成前该轴判 INSUFFICIENT")
     if regime_dominant is not None and regime_dominant not in _REGIME_GROUPS:
         status = "unknown_regime"
         notes.append(f"dominant={regime_dominant} 不在实测值域，归震荡组")

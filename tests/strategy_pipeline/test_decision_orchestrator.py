@@ -50,6 +50,18 @@ PREV = "2026-09-12"
 
 _REGIME_COLS = 15           # SQL_LATEST_REGIME_SNAPSHOT 列数
 
+# 切源前产线占位表快照（v0 草案；真值冻结自 daily_decision_orchestrator 旧 REGIME_TO_SEGMENT
+# 常量，2026-09-25 附录C 六步之第 3 步切源）。只作对照基准，禁 import 生产侧复活本地表。
+_LEGACY_V0_REGIME_TO_SEGMENT = {
+    "r10": "capitulation",
+    "r4": "distribution",
+    "r1": "accumulation",
+    "r11": "accumulation",
+    "r2": "ignition",
+    "r12": "ignition",
+    "r3": "expansion",
+}
+
 
 class FakeReader:
     """注入式只读通道：按 SQL 内容路由到可编排的假表（零生产路径）。"""
@@ -155,6 +167,14 @@ def tmp_marker(tmp_path: Path) -> Path:
     return tmp_path / "markers"
 
 
+@pytest.fixture(autouse=True)
+def _isolate_l2_admission(monkeypatch: pytest.MonkeyPatch) -> None:
+    """L2 三原料供料隔离（L03-C02 batch2 接线后 load_l2_admission 走生产 CH 读，
+    测试经 monkeypatch 供料件归零生产读取——宪法 §9.6 测试隔离）。"""
+    monkeypatch.setattr("zephyr.strategy_pipeline.daily_gate_snapshot._load_l2_admission",
+                        lambda: {"status": "absent"})
+
+
 def _run(reader: FakeReader, sink: FakeSink, tmp_marker: Path, **kw):
     alerts: list[tuple[str, str]] = []
     out = run_daily_decision(D, reader=reader, sink=sink, xshg_fn=lambda d: reader.calendar_open,
@@ -170,7 +190,7 @@ class TestHappyPath:
         out, alerts = _run(reader, sink, tmp_marker)
         assert out["action"] == "adjudicated"
         assert out["no_trade"] == 0
-        assert out["market_state"] == "expansion"          # r3→expansion（v0 映射）
+        assert out["market_state"] == "expansion"          # r3→expansion（法定真源映射）
         assert out["trade_date"] == TARGET                 # 生效日=次交易日
         assert out["disposition"] == "ch_committed"
         assert len(sink.rows) == 1
@@ -195,30 +215,121 @@ class TestHappyPath:
         assert pkg["source_confidence"] == "proposed"
 
     def test_ignition_transition_band(self, tmp_marker) -> None:
-        reader = FakeReader(regime=_regime_row(dominant="r2", confidence=0.50))
+        reader = FakeReader(regime=_regime_row(dominant="r12", confidence=0.50))
         sink = FakeSink()
         out, _ = _run(reader, sink, tmp_marker)
-        # ignition 带 0.3+0.2*0.5=0.4 → 过渡带×0.5=0.2（<60% 硬顶）
+        # ignition 带 0.3+0.2*0.5=0.4 → 过渡带×0.5=0.2（<60% 硬顶）；r12→ignition 新旧映射同键
         assert out["market_state"] == "ignition"
         assert out["position_cap"] == pytest.approx(0.20)
         assert "transition_band" in out["degrade_reasons"]
         assert out["no_trade"] == 0                        # 过渡带=折减不是禁做
 
-    def test_euphoria_sell_only_note(self, tmp_marker) -> None:
-        reader = FakeReader(regime=_regime_row(dominant="r1", confidence=0.9))
-        reader.regime = _regime_row(dominant="r2", confidence=0.9)  # r2→ignition 反例先抹掉
+    def test_ignition_mapped_r12_high_confidence(self, tmp_marker) -> None:
+        reader = FakeReader(regime=_regime_row(dominant="r12", confidence=0.9))
         sink = FakeSink()
         out, _ = _run(reader, sink, tmp_marker)
-        assert out["market_state"] == "ignition"
+        assert out["market_state"] == "ignition"           # r12 带内映射（切源零变化键）
+        assert out["no_trade"] == 0
 
     def test_euphoria_band_sell_only(self, tmp_marker) -> None:
-        reader = FakeReader(regime=_regime_row(dominant="r2", confidence=0.9))
+        reader = FakeReader(regime=_regime_row(dominant="r12", confidence=0.9))
         sink = FakeSink()
         cap = compute_position_cap("euphoria", 0.9)
         assert cap["sell_only"] is True
         assert cap["position_cap"] == pytest.approx(0.27)  # 0+0.3*0.9
         out, _ = _run(reader, sink, tmp_marker)
-        assert out["no_trade"] == 0                        # euphoria 折算限仓，非二元禁做
+        assert out["no_trade"] == 0                        # r12→ignition 限仓非禁做
+        # 切源披露：六段 euphoria/distribution 无 r 态来源（composer 注）⇒ regime 腿天然
+        # 不出这两段，sell_only 语义仅剩 compute_position_cap 直呼面可达（上两行断言）。
+
+
+# ── 六段温度真源链切源（附录C 六步之第 3 步：切产线+补守卫，2026-09-25）─────
+class TestSixStateTruthChainSwitch:
+    """产线六段映射切源对照与守卫件。
+
+    对照基准=_LEGACY_V0_REGIME_TO_SEGMENT（切源前占位表快照）；法定真源=
+    framework_composer.REGIME_STATE_TO_ACTIVATION_PHASE（附录C 唯一映射位点，
+    与挂图侧 auto_mount.R2SIX 有漂移守卫钉住）。默认行为变化仅限 r4/r2/r1 三键
+    冲突处（这正是切源目的），其余四键零变化。
+    """
+
+    def test_three_key_conflict_snapshot(self) -> None:
+        """三键冲突差异快照（附录C §2 逐键对照，快照即契约）。"""
+        from zephyr.pf_core.strategy_engine.framework_composer import (
+            REGIME_STATE_TO_ACTIVATION_PHASE as TRUTH,
+        )
+
+        legacy = _LEGACY_V0_REGIME_TO_SEGMENT
+        # r4：值相反键——法定=accumulation（修复）vs 占位=distribution（退潮，语义相反）
+        assert legacy["r4"] == "distribution"
+        assert TRUTH["r4"] == "accumulation"
+        # r2/r1：占位表凭空路由键——法定无此键=不路由（宁漏勿误）
+        assert legacy.get("r2") == "ignition" and "r2" not in TRUTH
+        assert legacy.get("r1") == "accumulation" and "r1" not in TRUTH
+        # 差异恰好只有这三键：其余四键（r10/r11/r12/r3）全等=切源零额外行为变化
+        diff = {k for k in set(legacy) | set(TRUTH)
+                if legacy.get(k) != TRUTH.get(k)}
+        assert diff == {"r4", "r2", "r1"}
+
+    def test_drift_guard_production_reference_is_truth_source(self) -> None:
+        """产线漂移守卫（镜像 tests/backtest/test_auto_mount_sle3 的 R2SIX 全等守卫）：
+        产线引用必须就是唯一位点对象本体（同源消费，无本地副本可漂移）。"""
+        from zephyr.pf_core.strategy_engine.framework_composer import (
+            REGIME_STATE_TO_ACTIVATION_PHASE as TRUTH,
+        )
+
+        assert orch._regime_to_segment() is TRUTH
+
+    def test_placeholder_table_retired_no_resurrection(self) -> None:
+        """占位表已弃用且禁复活：模块面不得再持有任何本地 r→六段映射表。"""
+        assert not hasattr(orch, "REGIME_TO_SEGMENT")
+
+    @pytest.mark.parametrize(("dominant", "expect_state", "expect_no_trade",
+                              "expect_cap"), [
+        ("r4", "accumulation", 0, 0.295),  # 旧占位=distribution 禁做 → 新=accumulation 限仓可做
+        ("r2", "unknown", 1, 0.0),         # 旧占位=ignition 凭空点火 → 新=不路由 fail-closed
+        ("r1", "unknown", 1, 0.0),         # 旧占位=accumulation → 新=不路由 fail-closed
+    ])
+    def test_three_key_end_to_end_snapshot(self, tmp_marker, monkeypatch,
+                                           dominant, expect_state,
+                                           expect_no_trade, expect_cap) -> None:
+        """三键行为变化端到端快照（confidence=0.95；L5 钉 normal 隔离 D6 干扰）。"""
+        monkeypatch.setattr("zephyr.strategy_pipeline.daily_gate_snapshot._collect_l5",
+                            lambda: {"layer": "L5", "kill_switch": {"status": "ok",
+                                    "state": "normal"}})
+        reader = FakeReader(regime=_regime_row(dominant=dominant, confidence=0.95))
+        sink = FakeSink()
+        out, _ = _run(reader, sink, tmp_marker)
+        assert out["action"] == "adjudicated"
+        assert out["market_state"] == expect_state
+        assert out["no_trade"] == expect_no_trade
+        assert out["position_cap"] == pytest.approx(expect_cap)
+        if expect_no_trade:
+            assert "D1_regime_state_unmappable" in out["degrade_reasons"]
+
+    def test_truth_source_import_failure_fail_closed(self, tmp_marker, monkeypatch) -> None:
+        """真源导入失败=fail-closed：按不可映射 no_trade 保守侧（禁 fallback 本地表）。
+
+        用 builtins.__import__ 拦截模拟真源不可用（#ARCH-107 禁 sys.modules 置 None 毒）。
+        """
+        import builtins
+
+        real_import = builtins.__import__
+
+        def _boom(name, *args, **kwargs):
+            if name == "zephyr.pf_core.strategy_engine.framework_composer":
+                raise ImportError("simulated truth-source outage")
+            return real_import(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", _boom)
+        reader = FakeReader(regime=_regime_row(dominant="r3", confidence=0.99))
+        sink = FakeSink()
+        out, _ = _run(reader, sink, tmp_marker)
+        assert out["no_trade"] == 1
+        assert "regime_missing" in out["no_trade_reason"]
+        assert "D1_regime_state_unmappable" in out["degrade_reasons"]
+        row = sink.rows[0][2].decode("utf-8").split("\t")
+        assert "真源不可用" in row[16]                     # 审计 note 如实归因导入失败
 
 
 # ── 休眠与日历（S1 / D4 / D5）────────────────────────────────────────────
@@ -316,15 +427,13 @@ class TestDegradeMatrixNoTrade:
         assert out["no_trade"] == 1
         assert "kill_switch" in out["no_trade_reason"]
 
-    def test_distribution_band_zero_budget(self, tmp_marker, monkeypatch) -> None:
-        monkeypatch.setattr("zephyr.strategy_pipeline.daily_gate_snapshot._collect_l5",
-                            lambda: {"layer": "L5", "kill_switch": {"status": "ok", "state": "normal"}})
-        reader = FakeReader(regime=_regime_row(dominant="r4", confidence=0.95))
-        sink = FakeSink()
-        out, _ = _run(reader, sink, tmp_marker)
-        assert out["market_state"] == "distribution"
-        assert out["no_trade"] == 1
-        assert "distribution_band" in out["no_trade_reason"]
+    def test_distribution_band_zero_budget_branch_direct(self) -> None:
+        """distribution 预算带 0% 分支保活（切源披露：该段无 r 态来源，regime 腿不可达，
+        附录C/composer 注如实披露；直呼单测保分支覆盖，禁经由 regime 伪造达成）。"""
+        ctx = orch.LegCtx(reasons=[], degrade=[], notes=[])
+        orch._no_trade_sources("distribution", ctx)
+        assert "distribution_band" in ctx.reasons
+        assert any("distribution 预算带 0%" in n for n in ctx.notes)
 
 
 # ── D2 门缺席（不阻断拍板）与 D7 fail-open ────────────────────────────────
@@ -334,11 +443,26 @@ class TestD2D7:
         out, _ = _run(reader, sink, tmp_marker)
         assert out["action"] == "adjudicated"
         assert out["no_trade"] == 0                        # D2 只降级不阻断
-        assert "D2_gate_absent:L2" in out["degrade_reasons"]  # v1 L2 板块门如实 absent
+        # L03-C02 水温桥接线后：L1 regime 在盘 → L2 出响应面不再 absent（D2_gate_absent:L2
+        # 解降，wiring_proposals §三.5 预期口径）；三原料供料测试隔离=absent → gate_level
+        # 如实 not_evaluated（不伪造放行门态）。
+        row = sink.rows[0][2].decode("utf-8").split("\t")
+        gate = json.loads(row[9])
+        assert gate["l2"]["status"] == "ok"
+        assert gate["l2"]["gate_level"] == "not_evaluated"
+        assert "L2" not in gate["absent_layers"]
+
+    def test_d2_gate_l2_absent_when_regime_missing(self, tmp_marker) -> None:
+        """L1 regime 缺席 → 水温桥无入参 → L2 如实 absent：D2_gate_absent:L2 降级保留（D2 矩阵不删格）。"""
+        reader, sink = FakeReader(regime_fail=True), FakeSink()
+        out, _ = _run(reader, sink, tmp_marker)
+        assert out["action"] == "adjudicated"              # 只降级不阻断
         row = sink.rows[0][2].decode("utf-8").split("\t")
         gate = json.loads(row[9])
         assert gate["l2"]["status"] == "absent"
         assert "L2" in gate["absent_layers"]
+        assert any(r.startswith("D2_gate_absent") and "L2" in r
+                   for r in str(out["degrade_reasons"]).split(";"))
 
     def test_d7_sink_fail_fail_open(self, tmp_marker) -> None:
         reader, sink = FakeReader(), FakeSink(fail=True)
@@ -454,3 +578,100 @@ class TestWriteSide:
         row = {c.strip(): "" for c in body.split(",") if c.strip()}
         n, disp = write_decision_row(row, sink=lambda t, c, p: "local_durable")
         assert (n, disp) == (1, "local_durable")           # 本地兜底=如实可接受
+
+
+# ── T4 盘后核对（TRD-A17 最小实体化，L09-C02）─────────────────────────────
+class ReconReader:
+    """T4 核对只读通道：decision_daily 计划行+sim_trade_log 当日事件计数（构造例，零生产路径）。"""
+
+    def __init__(self, plan_row: tuple | None = None, trade_counts: list | None = None) -> None:
+        self.plan_row = plan_row
+        self.trade_counts = trade_counts or []
+
+    def __call__(self, sql: str):
+        if "decision_daily" in sql:
+            return [self.plan_row] if self.plan_row else []
+        if "sim_trade_log" in sql:
+            return list(self.trade_counts)
+        raise AssertionError(f"ReconReader 未路由的 SQL: {sql[:120]}")
+
+
+def _plan_row(*, no_trade: int = 0, cap: float = 0.60) -> tuple:
+    """decision_daily 计划行构造（INSERT_COLUMNS 声明列序 18 列；target=TARGET）。"""
+    return ("decision-2026-09-16-test01", TARGET, D, "expansion", 0.99,
+            0.5, 0.7, cap, "{}", "{}", no_trade, "", "[]", "trade_calendar",
+            0, "", "", "v1")
+
+
+class TestPostmarketReconcile:
+    """计划 vs 实际核对（TRD-A17）：一致/偏差两例+字段级 diff 计数+播报出声（DB 只读）。"""
+
+    def _run(self, reader: ReconReader):
+        alerts: list[tuple[str, str]] = []
+        out = orch.postmarket_reconcile(TARGET, reader=reader,
+                                        alert_fn=lambda m, level="INFO": alerts.append((m, level)))
+        return out, alerts
+
+    def test_match_plan_permits_entries(self) -> None:
+        """一致例①：计划放行（no_trade=0, cap=60%）∧ 实际有进有出 → match。"""
+        reader = ReconReader(plan_row=_plan_row(no_trade=0, cap=0.60),
+                             trade_counts=[("entry", 2), ("exit", 1)])
+        out, alerts = self._run(reader)
+        assert out["verdict"] == "match"
+        assert out["fields_deviated"] == 0
+        assert out["fields_compared"] >= 2                 # 字段级：no_trade+position_cap 两字段核对
+        assert out["actual_entry_count"] == 2
+        assert out["actual_exit_count"] == 1
+        assert out["plan_run_id"] == "decision-2026-09-16-test01"
+        assert any("T4-RECONCILE" in m and lvl == "INFO" for m, lvl in alerts)
+
+    def test_match_no_trade_respected(self) -> None:
+        """一致例②：计划禁新开仓（no_trade=1）∧ 实际零 entry（只有存量 exit）→ match。"""
+        reader = ReconReader(plan_row=_plan_row(no_trade=1, cap=0.0),
+                             trade_counts=[("exit", 3)])
+        out, _ = self._run(reader)
+        assert out["verdict"] == "match"
+        assert out["actual_entry_count"] == 0
+
+    def test_deviation_no_trade_violated_by_entries(self) -> None:
+        """偏差例：计划禁新开仓 ∧ 实际 entry=3 → deviation（字段级 diff=1/1）+WARN 出声。"""
+        reader = ReconReader(plan_row=_plan_row(no_trade=1, cap=0.0),
+                             trade_counts=[("entry", 3), ("exit", 1)])
+        out, alerts = self._run(reader)
+        assert out["verdict"] == "deviation"
+        assert out["fields_deviated"] == 1
+        assert out["fields_compared"] == 1
+        assert out["deviations"][0]["field"] == "no_trade_vs_entries"
+        assert out["deviations"][0]["actual"]["entry_count"] == 3
+        assert any("T4-RECONCILE" in m and lvl == "WARN" for m, lvl in alerts)
+
+    def test_deviation_zero_cap_entries_when_permitted(self) -> None:
+        """偏差例②：计划放行但 cap=0（边界）∧ 实际 entry=1 → deviation 落 position_cap 字段。"""
+        reader = ReconReader(plan_row=_plan_row(no_trade=0, cap=0.0),
+                             trade_counts=[("entry", 1)])
+        out, _ = self._run(reader)
+        assert out["verdict"] == "deviation"
+        assert out["deviations"][0]["field"] == "position_cap_vs_entries"
+
+    def test_deviation_plan_row_missing(self) -> None:
+        """计划行缺席（无快照=无放行凭证却有执行）→ deviation 落 plan_row 字段（fail-visible）。"""
+        reader = ReconReader(plan_row=None, trade_counts=[("entry", 1)])
+        out, _ = self._run(reader)
+        assert out["verdict"] == "deviation"
+        assert out["deviations"][0]["field"] == "plan_row"
+        assert out["fields_deviated"] == 1
+
+    def test_channel_error_visible_not_raised(self) -> None:
+        """读通道故障→verdict=error 折进返回（永不外抛反噬结算链），错误如实留痕。"""
+        class Boom:
+            def __call__(self, sql: str):
+                raise RuntimeError("channel down")
+
+        out = orch.postmarket_reconcile(TARGET, reader=Boom(), alert_fn=lambda m, level="INFO": None)
+        assert out["verdict"] == "error"
+        assert "RuntimeError" in out["error"]
+
+    def test_bad_date_fail_closed(self) -> None:
+        """date 非法=ValueError（模块 ERROR_CONTRACT 唯一 fail-closed 例外）。"""
+        with pytest.raises(ValueError):
+            orch.postmarket_reconcile("20260916", reader=ReconReader())

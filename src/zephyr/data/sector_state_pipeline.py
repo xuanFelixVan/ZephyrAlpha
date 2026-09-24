@@ -456,7 +456,7 @@ def _copy_close_to_pre_open(ch_reader, base: datetime.date, target: datetime.dat
 
 
 def _read_regime_and_emotion(ch_reader, base: datetime.date) -> tuple[str | None, float | None, str]:
-    """dominant@T + emotion@T close_final（真值优先，缺窗返回 None 由映射层 mock 标注）。"""
+    """dominant@T + emotion@T close_final（真值优先，缺窗返回 None 由映射层显式缺轴标注）。"""
     regime_tsv = ch_reader.query(_sql(_REGIME_SQL, trade_date=base.isoformat()))
     dominant = (regime_tsv or "").strip().splitlines()[0].strip() if (regime_tsv or "").strip() else None
     emo_tsv = ch_reader.query(_sql(_EMOTION_SQL, trade_date=base.isoformat()))
@@ -502,6 +502,13 @@ def run_pre_open(trade_date: datetime.date | None = None, *, alerter=None) -> bo
 
     # ② 偏好重映射（市场级 watch_score 透传取 T 日 close_final 首行冗余列）
     dominant, emotion_value, emotion_version = _read_regime_and_emotion(ch_reader, base)
+    if emotion_value is None:
+        # D13 接线（L02-C03）记数面：情绪轴无源逐日告警计数（fail-visible，禁静默 mock 0.5）
+        log.warning(
+            "sector_preference pre_open(%s): emotion_index 当日 close_final 无源——"
+            "偏好行 label 空=无判决（missing_emotion fail-visible）",
+            target,
+        )
     pref = map_preference(dominant, emotion_value)
     pref_line = "\t".join(
         [
@@ -525,7 +532,7 @@ def run_pre_open(trade_date: datetime.date | None = None, *, alerter=None) -> bo
         target,
         dominant,
         emotion_value,
-        emotion_version or "mock",
+        emotion_version or "missing",
         pref.preference_label,
         pref.tilt,
         pref.axis_status,

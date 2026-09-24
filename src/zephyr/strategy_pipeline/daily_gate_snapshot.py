@@ -4,6 +4,8 @@
 # [DEPENDENCIES] zephyr.pf_alloc.allocation_inputs(SQL_LATEST_REGIME_SNAPSHOT/validate_date_literal/resolve_reader，只 import 不改);
 #   schemas.categories.alloc_budget_daily(SQL_DAY_SLICE，只 import 不改);
 #   zephyr.signal_ashare.core.environment_switch(六段×四开关查表，只 import 不改);
+#   zephyr.signal_ashare.sector.sector_gate(water_temp_response 查表，只 import 不改);
+#   zephyr.data.sector_state_pipeline(load_l2_admission 三原料供料，只 import 不改);
 #   zephyr.security.access_control.kill_switch(探针); zephyr.position.core.firm_risk_aggregator(约束栈默认面只读);
 #   zephyr.infrastructure.database_service(reader 角色，宪法 §9.1)
 # [CONSUMERS] zephyr.strategy_pipeline.daily_decision_orchestrator(唯一消费方，S3 步)
@@ -12,7 +14,8 @@
 # [INVARIANTS] 只读采集零判定改动（蓝图 §四.2：门模块一律不改，器侧聚合查询优先）；
 #   采集失败不炸拍板——缺席项标 status=absent+error 类型留痕，由编排器降级矩阵（蓝图 §六.2）接管；
 #   L5 kill_switch 读态失败=按熔断保守侧处理（保命件方向不猜，D6）；
-#   L2 板块门无持久化日度状态=v1 如实标 absent（蓝图原文），不伪造门态；
+#   L2 板块门=水温桥响应面（方案甲查表）+三原料门级三态（evaluated/insufficient/not_evaluated），
+#   admission_gate 放行判定不激活（归 G05 选股引擎），不伪造放行门态；
 #   所有读经注入 reader（默认 DatabaseService reader 角色），SQL 模板一律取 schemas/既有真源
 # [MODIFY-GUARD] none
 # [STABILITY] experimental
@@ -20,7 +23,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 本模块顶层函数永不外抛（缺席/异常全部折进返回结构 status=absent）；
 #   输入日期非法由 validate_date_literal 抛 ValueError（fail-closed，唯一例外）
-# [TESTS] tests/strategy_pipeline/test_decision_orchestrator.py
+# [TESTS] tests/strategy_pipeline/test_decision_orchestrator.py; tests/strategy_pipeline/test_daily_gate_snapshot_l2.py
 # [A_module] module_id=MOD-BT-213 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [CREATION-TOKEN] daily-gate-snapshot-mod-bt-213-20260916
@@ -32,8 +35,9 @@
 五层采集源与缺席语义（蓝图 §四.2 原表）：
     L1  regime_snapshot_history PIT 读（对齐 pf_alloc/allocation_inputs 先例）
         缺席→编排器 no_trade（D1 regime_missing）
-    L2  signal_ashare/sector/sector_gate.py（三级放行）——纯函数件无持久化日度状态，
-        v1 如实标 absent（依赖 L2 门参与的包今日禁用，D2）
+    L2  signal_ashare/sector/sector_gate.py 水温桥（方案甲：regime dominant→查表响应面）
+        + sector_state 三原料门级三态（L03-C02 batch2 接线，STAGE-CLOSED 供料端全绿）；
+        admission_gate 放行判定不激活（三原料判定归 G05 选股引擎），gate_level 如实三态
     L3  environment_switch 六段×四开关查表（纯函数，六段状态+两市成交额可得时评估；
         成交额代理=kline_index 399317 国证A指 amount/1e8，v0 口径标注）
     L4  alloc_budget_daily 当日 run 切片（SQL_DAY_SLICE 真源复用）+ 约束栈默认面
@@ -44,7 +48,7 @@
 [ALGO_FLOW]
 输入: data_date（数据日 YYYY-MM-DD）+ 可选六段状态/成交额（L3 评估用）+ 注入式 reader
 前置检查: 日期字面量校验 fail-closed；其余全部 fail-open（缺席折进返回结构）
-执行: 逐层采集（L1 PIT 读 → L2 恒 absent → L3 查表 → L4 日切片 → L5 读态）
+执行: 逐层采集（L1 PIT 读 → L2 水温桥+三原料三态 → L3 查表 → L4 日切片 → L5 读态）
 输出: {"l1":..., "l2":..., "l3":..., "l4":..., "l5":..., "absent_layers": [...]}（JSON 可序列化）
 降级: 每层独立 fail-open，单层异常不炸其余层
 不变量: 零写入、零判定、零门模块改动
@@ -153,13 +157,89 @@ def read_market_turnover_yi(data_date: str, *, reader: Reader | None = None) -> 
     return yi if yi > 0 else None
 
 
-def _collect_l2() -> dict[str, Any]:
-    """L2 采集：板块门（sector_gate 三级放行）。
+# 方案甲映射表（wiring_proposals_L2_sector_gate.md §二 甲档，Owner 已批；L03-C02 步1 落地）。
+# 红队修正（WIP 测试件回收版）：dominant 是 regime HMM 七态 r1~r12 而非情绪六段（C1 撞轴教训）——
+# 修复/点火段放宽（r11→PANIC_REPAIR），积累/派发段收紧（r4→RISK_OFF），崩盘段全拦（r10→CRASH）。
+_DOMINANT_TO_TEMP: Final[dict[str, str]] = {
+    "r1": "NEUTRAL",
+    "r2": "NEUTRAL",
+    "r3": "RISK_ON",
+    "r4": "RISK_OFF",
+    "r10": "CRASH",
+    "r11": "PANIC_REPAIR",
+    "r12": "RISK_ON",
+}
 
-    v1 事实：sector_gate 是纯函数件（放行档位=逐票实时判定，无持久化日度门态表），
-    蓝图 §四.2 原文口径=缺位如实标 absent——依赖 L2 门参与的包今日禁用（D2）。
+# 三原料键（batch2 供料契约：sector_state 聚合 top/retained_sectors/score；偏好标签/tilt/banned 随附）。
+_L2_ADMISSION_KEYS: Final = ("top", "retained_sectors", "score")
+
+
+def _load_l2_admission() -> dict[str, Any]:
+    """batch2 五行接线（st-secbuild-20260923 批2 §3.1）：sector_state 三原料供料读取。
+
+    fail-open：load_l2_admission 任何异常恒 absent，不改变本模块缺席语义（不炸拍板）。
+    独立成模块级函数：测试经 monkeypatch 本件实现零生产读取隔离（宪法 §9.6）。
     """
-    return {"status": "absent", "layer": "L2", "error": "no_persisted_gate_state_v1"}
+    try:
+        from zephyr.data.sector_state_pipeline import load_l2_admission
+
+        return load_l2_admission()
+    except Exception:  # noqa: BLE001 — 供料异常=门未评，保持 not_evaluated
+        return {"status": "absent"}
+
+
+def _l2_gate_level(admission: dict[str, Any]) -> str:
+    """门级三态求值：三原料齐=evaluated / 缺一=insufficient / 无供料=not_evaluated。
+
+    score=0.0 是合法值（falsy 但非缺）——缺判只认 None/空集，禁用真值判断。
+    """
+    if not isinstance(admission, dict) or admission.get("status") != "ok":
+        return "not_evaluated"
+    score = admission.get("score")
+    if all(admission.get(key) for key in _L2_ADMISSION_KEYS[:2]) and score is not None:
+        return "evaluated"
+    return "insufficient"
+
+
+def _collect_l2(
+    dominant: str | None,
+    consensus_climax: bool = False,
+    admission: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """L2 采集：水温桥响应面（方案甲查表）+ 三原料门级三态（batch2 接线）。
+
+    方案甲（Owner 已批）：复用 L1 已取 regime dominant 查 _DOMINANT_TO_TEMP →
+    water_temp_response 查表响应面（查表=采集非判定，门模块 sector_gate 零改动）。
+    batch2 批2：load_l2_admission 供料三原料（top/retained_sectors/score，fail-open 恒
+    absent 不炸门），gate_level 三态如实——admission_gate 放行判定仍不激活（归 G05）。
+    """
+    if not dominant:
+        return {"status": "absent", "layer": "L2", "error": "no_persisted_gate_state_v1"}
+    if dominant not in _DOMINANT_TO_TEMP:
+        return {"status": "absent", "layer": "L2", "error": "dominant_unmapped"}
+    try:
+        from zephyr.signal_ashare.sector.sector_gate import water_temp_response
+
+        resp = water_temp_response(_DOMINANT_TO_TEMP[dominant], consensus_climax=consensus_climax)
+    except Exception as exc:  # noqa: BLE001 — 查表入参非法/模块异常=该层门关（fail-open）
+        return {"status": "absent", "layer": "L2", "error": type(exc).__name__}
+    if admission is None:
+        try:  # 双保险：供料件自身 fail-open 之外，接缝异常同样折 absent（不炸拍板）
+            admission = _load_l2_admission()
+        except Exception:  # noqa: BLE001 — 供料异常=门未评，保持 not_evaluated
+            admission = {"status": "absent"}
+    return {
+        "status": "ok",
+        "layer": "L2",
+        "mode": "response_face_v1",
+        "water_temp": _DOMINANT_TO_TEMP[dominant],
+        "signal_weight": resp.signal_weight,
+        "rrg_filter": resp.rrg_filter,
+        "gate_thresholds": [resp.gate_thresholds.level2, resp.gate_thresholds.level3],
+        "gate_level": _l2_gate_level(admission),
+        "admission": admission,  # top/retained_sectors/score 三原料 + 偏好标签/tilt/banned
+        "threshold_provenance": "v2.1_proposed_pending_G05",
+    }
 
 
 def _collect_l3(market_state: str | None, turnover_yi: float | None) -> dict[str, Any]:
@@ -261,7 +341,9 @@ def collect_gate_snapshot(
     if turnover_yi is None:
         turnover_yi = read_market_turnover_yi(day, reader=reader)
     l1 = read_latest_regime_snapshot(day, reader=reader)
-    l2 = _collect_l2()
+    # 水温桥零新读（方案甲）：复用 L1 已取 dominant；情绪 S4=CONSENSUS_CLIMAX 联动 v1 未接
+    # （consensus_climax 恒 False，双抑制触发器挂 28 号情绪周期桥，另卡）。
+    l2 = _collect_l2(str(l1["dominant"]) if l1.get("status") == "ok" else None)
     l3 = _collect_l3(market_state, turnover_yi)
     l4 = _collect_l4(day, reader=reader)
     l5 = _collect_l5()

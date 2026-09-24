@@ -238,7 +238,7 @@ def _d2_axes(p: dict):
 
     def pointed_set(d) -> tuple[list[str], str]:
         """tilt≥1.0 档指向组（进攻组=领先象限∩动量Top三分位；防御组=滞后象限）。"""
-        pref = map_preference(dominant_of(d), None)  # 单轴降档：emotion=mock
+        pref = map_preference(dominant_of(d), None)  # 单轴降档：emotion 无源（D13 接线后=missing_emotion，label 空→指向集恒空；单轴重考须另行立项）
         ratio_d, mom_d = rs_ratio.loc[d], rs_mom.loc[d]
         m5 = mom_tercile.loc[d]
         if pref.preference_label in ("OFFENSIVE", "FOLLOW"):
