@@ -83,7 +83,10 @@ _REGISTRY_DIR = _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" 
 _PF_CORE_DIR = _REPO_ROOT / "src" / "zephyr" / "pf_core"
 
 # SQL 常量（NO-BARE-SQL 豁免命名约定 _SQL_*，先例=rename_depgraph_sync_gate）
-_SQL_CHECK_MODULE_EXISTS = "SELECT 1 FROM nodes WHERE module_id = %s LIMIT 1"
+# 审计 F-（AUDIT_REPORT 失明清单#5）修复：原查 nodes.module_id=不存在列→UndefinedColumn
+# 被下方 except 吞掉→垃圾 module_ref 恒 True=R9 死检查。TDM module_ref 实值=文件路径
+# （159 处），nodes 真列=file_path（111/111 实测命中）。
+_SQL_CHECK_MODULE_FILE_EXISTS = "SELECT 1 FROM nodes WHERE file_path = %s LIMIT 1"
 # 数据实存性（R11）：active parts 的最新写入日期与总行数（真源=system.parts）
 # 2026-09-06 修复：CH 26.x 列名为 modification_time（原 modification_date 报 Code 47
 # UNKNOWN_IDENTIFIER→HTTP 映射 404，TCP+HTTP 双失败被误判"CH 不可达"）；toDate() 统一
@@ -240,17 +243,26 @@ def _check_data_existence(dm, registry_dir: Path) -> list[str]:
     return warns
 
 
-def _module_exists_in_depgraph(module_id: str) -> bool:
-    """depgraph 只读存在性查询（fail-open：异常返回 True=跳过子检查，对标 BUSINESS-REGISTRY gate）。"""
+def _module_exists_in_depgraph(module_ref: str) -> bool:
+    """depgraph 只读存在性查询。
+
+    fail-open 只限 DB 不可用类异常（对标 BUSINESS-REGISTRY gate）；SQL 语法/列名错
+    （psycopg2.ProgrammingError）必须抛出——审计教训：UndefinedColumn 被吞→
+    R9 沦为垃圾 ID 恒 True 的死检查（AUDIT_REPORT 失明清单#5，处方 B3）。
+    """
     try:
+        from psycopg2 import ProgrammingError
+
         from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
 
         conn = get_depgraph_pg_connection()
         try:
             with conn.cursor() as cur:
-                cur.execute(_SQL_CHECK_MODULE_EXISTS, (module_id,))
+                cur.execute(_SQL_CHECK_MODULE_FILE_EXISTS, (module_ref,))
                 return cur.fetchone() is not None
         finally:
             conn.close()
+    except ProgrammingError:
+        raise
     except Exception:  # noqa: BLE001 — DB 不可用=fail-open（warn 交给调用方日志）
         return True
