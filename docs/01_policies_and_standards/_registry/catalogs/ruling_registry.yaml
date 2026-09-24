@@ -5093,7 +5093,7 @@ entries:
   affected_files:
   - src/zephyr/data/storage_tiering.py
   - docs/_working/cold_backup_automation/01_mining_findings.md
-  related_arch: []
+  related_arch: ['MOD-L00-004']
   related_rulings: ['裁定#375', '裁定#378']
   superseded_by: ''
 - ruling_id: '裁定#384'
@@ -5169,7 +5169,7 @@ entries:
   - docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml
   - scripts/ch/rolling_archive_reconciler.py
   - scripts/backup/backup.ps1
-  related_arch: []
+  related_arch: ['PS-CTR-003', 'MOD-INF-043']
   related_rulings: ['裁定#380', '裁定#381', '裁定#382', '裁定#383']
   superseded_by: ''
 - ruling_id: '裁定#388'
@@ -5614,4 +5614,27 @@ entries:
   - docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   related_arch: []
   related_rulings: ['裁定#398', '裁定#403']
+  superseded_by: null
+- ruling_id: "裁定#409"
+  title: 一域一图立法（翻案 final3 W4-5 第1条流程类新图禁令）+ 系统宪章 §8 全景图导航原则
+  date: '2026-09-24'
+  category: 架构
+  status: decided
+  summary: |-
+    Owner 2026-09-24 终裁：治理的基础是全景图，纵横两轴=找流程（纵轴）与找结构（横轴）
+    的唯一导航。翻案 final3 W4-5 第1条中"流程类新图提案一律违裁"的绝对禁令口径，改为
+    「一域一图」准入制：每条流程域（独立触发+终点+跨模块交接）只允许一张纵向图；域内
+    能收敛绝不放第二张；域间无连接点（交易域 vs 治理域）才分图；TDM 仍是交易决策域唯一
+    图（该语义保留，交易执行流=并 TDM 下游而非新图）。新图准入四道门=①独立触发终点
+    ②跨模块交接③不被现有图覆盖（存量图优先扩节点）④机生真源或结构校验器可建；新图须
+    声明吸收对象或域空白证明，走 D38 挂总线+校验器+gate 同批；全景图不设总数上限，收敛
+    靠一域一图+净零。地图目录真源=alignment_checklist §3，align_all 恒跑防漂移。
+    落地批次：①本裁+系统宪章 §8 同 commit 原子（RULE-RULING）；②全项目流程域盘点
+    census 另批；③alignment_checklist §W4-5 表补"第1条被#409 取代"注记行（该节只增
+    不改）随后续对齐批。
+  related_files:
+  - docs/02_enterprise_architecture/04_architecture_principles_decisions/system_charter.md
+  - docs/01_policies_and_standards/sop/governance_sop/alignment_checklist.md
+  related_arch: []
+  related_rulings: []
   superseded_by: null
