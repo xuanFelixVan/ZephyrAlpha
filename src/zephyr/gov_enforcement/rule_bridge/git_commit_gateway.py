@@ -3994,6 +3994,7 @@ class GitCommitGateway:
         try:
             with _GlobalCommitLock(self.project_root):
                 pathspec_file = self._write_pathspec_file(existing)
+                prev_gateway_env = os.environ.get(_GATEWAY_ENV)
                 try:
                     add_fail = self._git_add_with_index_lock_retry(
                         pathspec_file,
@@ -4029,6 +4030,12 @@ class GitCommitGateway:
                         commit_hash=commit_hash,
                     )
                 finally:
+                    # W4 止血（D2 §4 步 4 / R-D2-b）：auto-commit 后不得把授权旗永久留给本进程，
+                    # 还原置位前值——过授权方向泄漏（git_guard 认旗放行 reset --hard/clean/stash）止血。
+                    if prev_gateway_env is None:
+                        os.environ.pop(_GATEWAY_ENV, None)
+                    else:
+                        os.environ[_GATEWAY_ENV] = prev_gateway_env
                     try:
                         os.remove(pathspec_file)
                     except OSError:
@@ -4046,6 +4053,7 @@ class GitCommitGateway:
             )
             # 无锁降级：直接执行 auto-commit（不串行化，但 gate 仍在）
             pathspec_file = self._write_pathspec_file(existing)
+            prev_gateway_env = os.environ.get(_GATEWAY_ENV)
             try:
                 add_fail = self._git_add_with_index_lock_retry(
                     pathspec_file,
@@ -4080,6 +4088,12 @@ class GitCommitGateway:
                     commit_hash=commit_hash,
                 )
             finally:
+                # W4 止血（D2 §4 步 4 / R-D2-b）：fail-open 降级支同样还原置位前值，
+                # 杜绝无锁降级窗口后该进程永久持授权旗。
+                if prev_gateway_env is None:
+                    os.environ.pop(_GATEWAY_ENV, None)
+                else:
+                    os.environ[_GATEWAY_ENV] = prev_gateway_env
                 try:
                     os.remove(pathspec_file)
                 except OSError:

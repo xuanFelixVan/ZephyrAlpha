@@ -256,6 +256,7 @@ class TestEnsureScriptsPackageImportable:
     def test_real_package_kept(self, tmp_path: Path) -> None:
         """sys.modules['scripts'] 为真包（__path__ 含 project scripts/）→ 幂等不动。"""
         import scripts  # noqa: F401 — pytest 根可达，真实包已在
+
         before = sys.modules["scripts"]
         _ensure_scripts_package_importable(str(Path(__file__).resolve().parents[2]))
         assert sys.modules.get("scripts") is before, "真包不得被清除"
@@ -428,16 +429,56 @@ class TestGitCommitGatewayCommit:
         msg = _last_commit_message(tmp_path)
         assert "[GW:sess-abc" in msg, f"commit message 应含 GW 标记: {msg}"
 
-    def test_commit_sets_gateway_env(self, tmp_path: Path) -> None:
-        """commit 后环境变量 ZEPHYR_COMMIT_GATEWAY 被设置（finally 清理后应为空）。"""
+    def test_commit_sets_gateway_env(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+        """W4 止血回归（D2 §7 加严）：auto-commit 路径返回后进程不得残留授权旗。
+
+        原判据 `... or True` 是永真空断言（无判别力）。D2 §4 步 4 / §6 R-D2-b 已把
+        `_commit_auto` 两处 `os.environ[_GATEWAY_ENV]="1"` 配 prev-snapshot 还原，本测
+        改走 `_commit_auto` 形态（桩掉真 git/真 gate，仅证"返回后无残留"），
+        加严不放宽——对未还原码 MUST 红。
+        """
+        import types
+
+        import zephyr.gov_enforcement.rule_bridge.git_commit_gateway as gw_mod
+
         _init_git_repo(tmp_path)
         f = _write_file(tmp_path, "a.py", "x = 1\n")
+
+        # 桩掉真 commit / 真 git 子进程 / 真 gate：只让 _commit_auto 走到置位那一行
+        monkeypatch.setattr(gw_mod, "_commit_queue_serializer_enabled", lambda: False)
+
+        class _NoopLock:
+            def __init__(self, *a, **k):
+                pass
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+        monkeypatch.setattr(gw_mod, "_GlobalCommitLock", _NoopLock)
+        monkeypatch.setattr(gw_mod, "record_derived_write", lambda *a, **k: None)
+
         gw = GitCommitGateway(project_root=tmp_path)
-        gw.commit(session_id="s1", files=[str(f)], allow_overlap=True, message="feat: env test")
-        # finally 块清理后环境变量应被移除
-        assert GATEWAY_ENV not in os.environ or os.environ.get(GATEWAY_ENV) != "1" or True
-        # 注: 环境变量在 commit 子进程内设置，主进程 finally 清理；
-        # 这里验证 finally 清理逻辑不残留（不抛异常即通过）
+        gw._batcher.is_enabled = lambda: False
+        gw._is_merge_in_progress = lambda: False
+        gw._resolve_auto_commit_files = lambda files: [str(f)]
+        gw._run_auto_commit_gate = lambda *a, **k: None
+        gw._write_pathspec_file = lambda existing: str(tmp_path / "gw_pathspec_stub.txt")
+        gw._git_add_with_index_lock_retry = lambda *a, **k: None
+        gw.run_git = lambda cmd: types.SimpleNamespace(returncode=1, stdout=b"", stderr=b"")
+        gw._commit_with_file_message = lambda *a, **k: ("deadbeefcafebabe", None)
+
+        monkeypatch.delenv(GATEWAY_ENV, raising=False)
+        result = gw._commit_auto("s1", [str(f)], "feat: env test")
+        assert result.status == CommitStatus.OK, f"桩直提应 OK: {result.status} {result.message}"
+
+        # 加严断言（有判别力）：_commit_auto 返回后不得残留 "1"
+        assert GATEWAY_ENV not in os.environ, (
+            f"W4 泄漏未止血：auto-commit 后进程仍持 {GATEWAY_ENV}={os.environ.get(GATEWAY_ENV)!r}"
+        )
+        assert os.environ.get(GATEWAY_ENV) != "1"
 
     def test_commit_passes_message_to_gates(self, tmp_path: Path) -> None:
         """commit() 将 message 透传给 check_all 的 commit_message kwarg。
@@ -603,7 +644,7 @@ class TestSessionAwareStash:
                     if arg.startswith("--pathspec-from-file="):
                         spec_path = arg.split("=", 1)[1]
                         try:
-                            with open(spec_path, "r", encoding="utf-8") as sf:
+                            with open(spec_path, encoding="utf-8") as sf:
                                 for line in sf:
                                     line = line.strip()
                                     if line:
@@ -1887,9 +1928,7 @@ class TestTrackedDriftReadonlyHardening:
         """白名单存在但未覆盖写入文件，且漂移文件在**本提交清单内** → 硬阻断（TOCTOU）。"""
         gw = self._prepare(tmp_path, "entries:\n- path: scripts/governance/script_manifest.yaml\n  class: B\n")
         gw._gate_registry = self._WritingRegistry()
-        results = gw._check_gates_with_drift_watch(
-            [str(tmp_path / "tracked_audit.jsonl")], "sess-hard"
-        )
+        results = gw._check_gates_with_drift_watch([str(tmp_path / "tracked_audit.jsonl")], "sess-hard")
         hard = [r for r in results if r.gate_id == "TRACKED-DRIFT-READONLY"]
         assert hard and not hard[0].passed, "提交清单内未归因写入未触发硬阻断"
         assert "tracked_audit.jsonl" in hard[0].detail
@@ -1903,9 +1942,7 @@ class TestTrackedDriftReadonlyHardening:
         gw = self._prepare(tmp_path, "entries:\n- path: scripts/governance/script_manifest.yaml\n  class: B\n")
         gw._gate_registry = self._WritingRegistry()  # 写 tracked_audit.jsonl
         # 提交清单=另一文件 other_file.py → 漂移文件在清单外
-        results = gw._check_gates_with_drift_watch(
-            [str(tmp_path / "other_file.py")], "sess-foreign"
-        )
+        results = gw._check_gates_with_drift_watch([str(tmp_path / "other_file.py")], "sess-foreign")
         assert not [r for r in results if not r.passed], "零交集漂移不应阻断（他会话 WIP 不连坐）"
         rec = self._records(tmp_path)
         assert rec and rec[-1].get("unattributed_files") == ["tracked_audit.jsonl"], "降级仍须落审计"
@@ -1916,9 +1953,7 @@ class TestTrackedDriftReadonlyHardening:
         gw._gate_registry = self._WritingRegistry()  # 写 tracked_audit.jsonl
         _write_file(tmp_path, "other_wip.py", "x=1\n")  # 模拟他会话 WIP 漂移（无白名单）
         # 清单内=tracked_audit.jsonl；other_wip.py 在清单外
-        results = gw._check_gates_with_drift_watch(
-            [str(tmp_path / "tracked_audit.jsonl")], "sess-mixed"
-        )
+        results = gw._check_gates_with_drift_watch([str(tmp_path / "tracked_audit.jsonl")], "sess-mixed")
         hard = [r for r in results if r.gate_id == "TRACKED-DRIFT-READONLY"]
         assert hard and not hard[0].passed
         assert "tracked_audit.jsonl" in hard[0].detail
@@ -2048,9 +2083,7 @@ class TestTrackedWriteAllowlist55Families:
         # 生产真源在册断言（exact：③④；pattern docs/_working/**：①②）
         import yaml
 
-        prod = yaml.safe_load(
-            (self._REPO_ROOT / self._ALLOWLIST_REL).read_text(encoding="utf-8")
-        )
+        prod = yaml.safe_load((self._REPO_ROOT / self._ALLOWLIST_REL).read_text(encoding="utf-8"))
         exact = {e.get("path") for e in (prod.get("entries") or [])}
         patterns = [e.get("pattern") for e in (prod.get("entries") or []) if e.get("pattern")]
         assert "scripts/governance/meta/rules_integrity_db.json" in exact
@@ -2076,15 +2109,16 @@ class TestTrackedWriteAllowlist55Families:
         写入=TOCTOU 硬阻断语义正确。本用例同时钉住生产文件不得悄然把它 allowlist 化。
         """
         import fnmatch
+
         import yaml
 
-        prod = yaml.safe_load(
-            (self._REPO_ROOT / self._ALLOWLIST_REL).read_text(encoding="utf-8")
-        )
+        prod = yaml.safe_load((self._REPO_ROOT / self._ALLOWLIST_REL).read_text(encoding="utf-8"))
         entries = prod.get("entries") or []
         exact = {e.get("path") for e in entries}
         patterns = [e.get("pattern") for e in entries if e.get("pattern")]
-        assert self._RULING_REL not in exact, "ruling_registry 为会话 SSOT，禁止 allowlist 化（见生产 allowlist 判定留痕）"
+        assert self._RULING_REL not in exact, (
+            "ruling_registry 为会话 SSOT，禁止 allowlist 化（见生产 allowlist 判定留痕）"
+        )
         assert not any(fnmatch.fnmatch(self._RULING_REL, p) for p in patterns), "同上（模式命中亦禁止）"
 
         targets = [self._RULING_REL, self._TASKS_REL]
@@ -2170,9 +2204,21 @@ class TestCommitAnomalyAudit:
 
         gw = self._gw(tmp_path)
         cases = [
-            (CommitStatus.FOREIGN_CHANGE_VIOLATION, "目标文件在 claim 时已有外来变更（FOREIGN_CHANGE_VIOLATION）: [...]", "FOREIGN-CHANGE"),
-            (CommitStatus.COMMIT_SCOPE_VIOLATION, "commit 跨越多个功能域（COMMIT_SCOPE_VIOLATION）: 检测到 3 个域", "COMMIT-SCOPE"),
-            (CommitStatus.HELD_OVERLAP_VIOLATION, "HELD_OVERLAP_VIOLATION: 文件被其他活跃 session 持有", "HELD-OVERLAP"),
+            (
+                CommitStatus.FOREIGN_CHANGE_VIOLATION,
+                "目标文件在 claim 时已有外来变更（FOREIGN_CHANGE_VIOLATION）: [...]",
+                "FOREIGN-CHANGE",
+            ),
+            (
+                CommitStatus.COMMIT_SCOPE_VIOLATION,
+                "commit 跨越多个功能域（COMMIT_SCOPE_VIOLATION）: 检测到 3 个域",
+                "COMMIT-SCOPE",
+            ),
+            (
+                CommitStatus.HELD_OVERLAP_VIOLATION,
+                "HELD_OVERLAP_VIOLATION: 文件被其他活跃 session 持有",
+                "HELD-OVERLAP",
+            ),
             (CommitStatus.CLAIM_REQUIRED_VIOLATION, "文件未经 claim 登记", "CLAIM-REQUIRED"),
             (CommitStatus.WORKTREE_VIOLATION, "worktree 检测失败", "WORKTREE-REQUIRED"),
             (CommitStatus.PROMOTION_BLOCKED, "PROMOTION_BLOCKED: 永久区准入", "FILE-PLACEMENT-TTL"),
@@ -2221,9 +2267,7 @@ class TestBottleneckBanner:
 
         p = tmp_path / ".runtime" / "audit" / "commit_block_events.jsonl"
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text(
-            "".join(_json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8"
-        )
+        p.write_text("".join(_json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
 
     def test_banner_prints_recent_events(self, tmp_path: Path, capsys) -> None:
         """近 24h 有事件 → 打印横幅（TOP 门禁+次数+P50+详情指引）。"""
@@ -2232,14 +2276,35 @@ class TestBottleneckBanner:
 
         gw = self._gw(tmp_path)
         ts = now_utc().isoformat()
-        self._write_events(tmp_path, [
-            {"timestamp": ts, "session_id": "a", "event": "commit_blocked",
-             "gate_id": "SPLIT-COORDINATION", "files_count": 3, "gate_chain_ms": 10531},
-            {"timestamp": ts, "session_id": "b", "event": "commit_blocked",
-             "gate_id": "SPLIT-COORDINATION", "files_count": 3, "gate_chain_ms": 7250},
-            {"timestamp": ts, "session_id": "c", "event": "commit_slow",
-             "gate_id": "-", "files_count": 14, "total_ms": 99047},
-        ])
+        self._write_events(
+            tmp_path,
+            [
+                {
+                    "timestamp": ts,
+                    "session_id": "a",
+                    "event": "commit_blocked",
+                    "gate_id": "SPLIT-COORDINATION",
+                    "files_count": 3,
+                    "gate_chain_ms": 10531,
+                },
+                {
+                    "timestamp": ts,
+                    "session_id": "b",
+                    "event": "commit_blocked",
+                    "gate_id": "SPLIT-COORDINATION",
+                    "files_count": 3,
+                    "gate_chain_ms": 7250,
+                },
+                {
+                    "timestamp": ts,
+                    "session_id": "c",
+                    "event": "commit_slow",
+                    "gate_id": "-",
+                    "files_count": 14,
+                    "total_ms": 99047,
+                },
+            ],
+        )
         _print_bottleneck_banner(tmp_path, context="post_commit")
         out = capsys.readouterr().out
         assert "提交堵点提醒" in out and "近 24h 共 3 次" in out
@@ -2262,10 +2327,19 @@ class TestBottleneckBanner:
 
         self._gw(tmp_path)
         old = (datetime.now(timezone.utc) - timedelta(hours=72)).isoformat()
-        self._write_events(tmp_path, [
-            {"timestamp": old, "session_id": "a", "event": "commit_blocked",
-             "gate_id": "X", "files_count": 1, "gate_chain_ms": 1000},
-        ])
+        self._write_events(
+            tmp_path,
+            [
+                {
+                    "timestamp": old,
+                    "session_id": "a",
+                    "event": "commit_blocked",
+                    "gate_id": "X",
+                    "files_count": 1,
+                    "gate_chain_ms": 1000,
+                },
+            ],
+        )
         _print_bottleneck_banner(tmp_path, context="post_commit")
         assert capsys.readouterr().out == ""
 
@@ -2302,8 +2376,13 @@ class TestPhantomStagedAddSweep:
     def test_sweep_removes_phantom_ad(self, tmp_path: Path) -> None:
         """AD 幻影被清扫（git reset 只动 index）；正常 staged 条目不受影响。"""
         gw = self._repo(tmp_path)
-        env = {**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com",
-               "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@t.com"}
+        env = {
+            **os.environ,
+            "GIT_AUTHOR_NAME": "T",
+            "GIT_AUTHOR_EMAIL": "t@t.com",
+            "GIT_COMMITTER_NAME": "T",
+            "GIT_COMMITTER_EMAIL": "t@t.com",
+        }
         # 正常 staged：修改已跟踪文件
         _write_file(tmp_path, "base.txt", "b2\n")
         subprocess.run(["git", "add", "base.txt"], cwd=str(tmp_path), capture_output=True, env=env)
@@ -2324,8 +2403,13 @@ class TestPhantomStagedAddSweep:
     def test_sweep_noop_on_clean_index(self, tmp_path: Path) -> None:
         """干净 index → 空清扫零副作用。"""
         _init_git_repo(tmp_path)
-        env = {**os.environ, "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com",
-               "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@t.com"}
+        env = {
+            **os.environ,
+            "GIT_AUTHOR_NAME": "T",
+            "GIT_AUTHOR_EMAIL": "t@t.com",
+            "GIT_COMMITTER_NAME": "T",
+            "GIT_COMMITTER_EMAIL": "t@t.com",
+        }
         _write_file(tmp_path, "f.txt", "x\n")
         subprocess.run(["git", "add", "f.txt"], cwd=str(tmp_path), capture_output=True, env=env)
         subprocess.run(["git", "commit", "-m", "t", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env)
