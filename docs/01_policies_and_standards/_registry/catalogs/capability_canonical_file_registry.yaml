@@ -47389,4 +47389,169 @@ creation_tokens:
   created_by: st-mapcensus-20260924
   capability: panorama_map_census
   merge_evaluation: "裁定#409配套一次性盘点件，同真源(alignment_checklist§3)可派生目录但census承载缺口判定语义非重复册，域空白无合并对象"
+- file: data/capability_cards/ai_perceive_l1.yaml
+  token: ai-perceive-l1-card-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_perceive_l1
+  merge_evaluation: "L1感知段能力卡，与词典条目/canonical 钉定同批互证不重复（AI层卡族同构登记，capability 词典互引非重复真源）"
+- file: data/capability_cards/ai_cleaning_l3.yaml
+  token: ai-cleaning-l3-card-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_cleaning_l3
+  merge_evaluation: "L3清洗段能力卡（AI层卡族同构登记，capability 词典互引非重复真源）"
+- file: data/capability_cards/ai_comparator_l4.yaml
+  token: ai-comparator-l4-card-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_comparator_l4
+  merge_evaluation: "L4比较段能力卡（AI层卡族同构登记，capability 词典互引非重复真源）"
+- file: data/capability_cards/ai_scheduling_l5.yaml
+  token: ai-scheduling-l5-card-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_scheduling_l5
+  merge_evaluation: "L5排程段能力卡（AI层卡族同构登记，capability 词典互引非重复真源）"
+- file: data/capability_cards/ai_switch_l6.yaml
+  token: ai-switch-l6-card-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_switch_l6
+  merge_evaluation: "L6切换段能力卡（两棵树合一卡）（AI层卡族同构登记，capability 词典互引非重复真源）"
+- file: data/capability_cards/ai_heritage_l7.yaml
+  token: ai-heritage-l7-card-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_heritage_l7
+  merge_evaluation: "L7传承段能力卡（AI层卡族同构登记，capability 词典互引非重复真源）"
+- file: data/capability_cards/obj_s_redline.yaml
+  token: obj-s-redline-card-20260924
+  created_by: st-ailayer-final-20260924
+  capability: obj_s_redline
+  merge_evaluation: "OBJ_S红线包能力卡（AI层卡族同构登记，capability 词典互引非重复真源）"
+- file: data/capability_cards/obj_t_tools.yaml
+  token: obj-t-tools-card-20260924
+  created_by: st-ailayer-final-20260924
+  capability: obj_t_tools
+  merge_evaluation: "OBJ_T工具线能力卡（AI层卡族同构登记，capability 词典互引非重复真源）"
+- file: data/capability_cards/obj_m_models.yaml
+  token: obj-m-models-card-20260924
+  created_by: st-ailayer-final-20260924
+  capability: obj_m_models
+  merge_evaluation: "OBJ_M模型线能力卡（AI层卡族同构登记，capability 词典互引非重复真源）"
+- file: docs/_working/ai_layer_vision/P1_resume_files_v1.yaml
+  token: ai-layer-p1-resume-v1-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_layer_p1
+  merge_evaluation: "落地面权威清单 v1（.txt 转 yaml 合 DIRECTORY-CONTRACT），清单非能力真源与卡族不重复"
+- file: docs/_working/ai_layer_vision/P1_resume_files_v2.yaml
+  token: ai-layer-p1-resume-v2-20260924
+  created_by: st-ailayer-final-20260924
+  capability: ai_layer_p1
+  merge_evaluation: "落地面权威清单 v2（R2 扩单 8 件口径），同上不重复"
+- file: src/zephyr/governance/registry_ledger/__init__.py
+  token: registry-migration---init---20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道A 账本底座新对象：意图 API/部署器/身份模块，与 W2 合并器、门禁、claim 各司其职（02 号文 §5 收编表），净零=0 规则 0 gate"
+- file: src/zephyr/governance/registry_ledger/api.py
+  token: registry-migration-api-20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道A 账本底座新对象：意图 API/部署器/身份模块，与 W2 合并器、门禁、claim 各司其职（02 号文 §5 收编表），净零=0 规则 0 gate"
+- file: src/zephyr/governance/registry_ledger/deploy.py
+  token: registry-migration-deploy-20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道A 账本底座新对象：意图 API/部署器/身份模块，与 W2 合并器、门禁、claim 各司其职（02 号文 §5 收编表），净零=0 规则 0 gate"
+- file: src/zephyr/governance/registry_ledger/identity.py
+  token: registry-migration-identity-20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道A 账本底座新对象：意图 API/部署器/身份模块，与 W2 合并器、门禁、claim 各司其职（02 号文 §5 收编表），净零=0 规则 0 gate"
+- file: src/zephyr/governance/registry_ledger/schema.py
+  token: registry-migration-schema-20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+- file: schemas/categories/registry_ledger/__init__.py
+  token: registry-migration---init---20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道A 四表 PG DDL-as-Code 真源子包（施工令写域特批），与 depgraph CH DDL 真源跨域不同对象不并"
+- file: schemas/categories/registry_ledger/registry_catalog.py
+  token: registry-migration-registry-catalog-20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道A 四表 PG DDL-as-Code 真源子包（施工令写域特批），与 depgraph CH DDL 真源跨域不同对象不并"
+- file: schemas/categories/registry_ledger/registry_entry.py
+  token: registry-migration-registry-entry-20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道A 四表 PG DDL-as-Code 真源子包（施工令写域特批），与 depgraph CH DDL 真源跨域不同对象不并"
+- file: schemas/categories/registry_ledger/registry_event.py
+  token: registry-migration-registry-event-20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道A 四表 PG DDL-as-Code 真源子包（施工令写域特批），与 depgraph CH DDL 真源跨域不同对象不并"
+- file: schemas/categories/registry_ledger/registry_snapshot.py
+  token: registry-migration-registry-snapshot-20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+- file: docs/_working/registry_migration/10_wm1_laneA_build_report.md
+  token: registry-migration-10-wm1-lanea-build-report-20260923
+  created_by: st-wm1-buildA-20260923
+  capability: registry_migration
+  merge_evaluation: "W-M1 车道A 波0 施工战报，同目录 01-09 号设计真源的交付记录件，同域分工不并"
+  merge_evaluation: "W-M1 车道A 四表 PG DDL-as-Code 真源子包（施工令写域特批），与 depgraph CH DDL 真源跨域不同对象不并"
+  merge_evaluation: "W-M1 车道A 账本底座新对象：意图 API/部署器/身份模块，与 W2 合并器、门禁、claim 各司其职（02 号文 §5 收编表），净零=0 规则 0 gate"
+- file: src/zephyr/governance/registry_projection/__init__.py
+  token: registry-projection---init---20260923
+  created_by: st-wm1-buildB-20260923
+  capability: registry-projection
+  merge_evaluation: "W-M1波0车道B投影生成器六模块：YAML:=render(账本快照)纯函数+四象限漂移判别+PG wins自愈执法链，替代capability册手工维护语义（丙号文W2）"
+- file: src/zephyr/governance/registry_projection/generator.py
+  token: registry-projection-generator-20260923
+  created_by: st-wm1-buildB-20260923
+  capability: registry-projection
+  merge_evaluation: "W-M1波0车道B投影生成器六模块：YAML:=render(账本快照)纯函数+四象限漂移判别+PG wins自愈执法链，替代capability册手工维护语义（丙号文W2）"
+- file: src/zephyr/governance/registry_projection/model.py
+  token: registry-projection-model-20260923
+  created_by: st-wm1-buildB-20260923
+  capability: registry-projection
+  merge_evaluation: "W-M1波0车道B投影生成器六模块：YAML:=render(账本快照)纯函数+四象限漂移判别+PG wins自愈执法链，替代capability册手工维护语义（丙号文W2）"
+- file: src/zephyr/governance/registry_projection/pg_source.py
+  token: registry-projection-pg-source-20260923
+  created_by: st-wm1-buildB-20260923
+  capability: registry-projection
+  merge_evaluation: "W-M1波0车道B投影生成器六模块：YAML:=render(账本快照)纯函数+四象限漂移判别+PG wins自愈执法链，替代capability册手工维护语义（丙号文W2）"
+- file: src/zephyr/governance/registry_projection/renderer.py
+  token: registry-projection-renderer-20260923
+  created_by: st-wm1-buildB-20260923
+  capability: registry-projection
+  merge_evaluation: "W-M1波0车道B投影生成器六模块：YAML:=render(账本快照)纯函数+四象限漂移判别+PG wins自愈执法链，替代capability册手工维护语义（丙号文W2）"
+- file: src/zephyr/governance/registry_projection/state.py
+  token: registry-projection-state-20260923
+  created_by: st-wm1-buildB-20260923
+  capability: registry-projection
+- file: scripts/governance/registry_projection/registry_projection_generator.py
+  token: registry-projection-registry-projection-generator-20260923
+  created_by: st-wm1-buildB-20260923
+  capability: registry-projection
+  merge_evaluation: "投影生成器CLI入口：--check零写对账/--render四象限全自动处置，运维与验收通道"
+  merge_evaluation: "W-M1波0车道B投影生成器六模块：YAML:=render(账本快照)纯函数+四象限漂移判别+PG wins自愈执法链，替代capability册手工维护语义（丙号文W2）"
+- file: src/zephyr/governance/registry_ledger/baseline.py
+  token: registry-migration-baseline-20260924
+  created_by: st-wm1-wave0-20260924
+  capability: registry_migration
+  merge_evaluation: "W-M1 wave0 phase0 引擎：机械扫描+幂等导入+快照发布+双轨insert-only对账（02号文§4施工件），与投影生成器/意图API同包分工不并"
+- file: scripts/governance/registry_migration/wave0_phase0_gate.py
+  token: registry-migration-wave0-phase0-gate-20260924
+  created_by: st-wm1-wave0-20260924
+  capability: registry_migration
+  merge_evaluation: "W-M1 wave0 phase0 对账门 CLI：scan/import/publish/reconcile/gate 五命令，报告落.runtime/registry_ledger（.runtime卫生红线），验收通道唯一入口"
+- file: docs/_working/registry_migration/LEDGER_wave0.md
+  token: registry-migration-wave0-ledger-20260924
+  created_by: st-wm1-wave0-20260924
+  capability: registry_migration
+  merge_evaluation: "W-M1 wave0 施工总包台账（总指挥30分钟批注制），同目录01-10号设计/战报件的进度真源，同域分工不并"
+- file: docs/_working/cleanup_final/LEDGER.md
+  token: cleanup-final-ledger-20260924
+  created_by: st-cleanup-final-20260924
+  capability: cleanup_final
+  merge_evaluation: "遗留修复收尾总包专用台账目录，六件套一次性使用，收包后无新文件增长即停"
 di_seam_exemptions: []
