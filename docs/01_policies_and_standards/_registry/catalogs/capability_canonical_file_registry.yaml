@@ -49176,7 +49176,7 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: metaq-exam-loop
   merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
-- file: src/zephyr/governance/meta_question/exam_loop/state_machine.py
+- file: src/zephyr/governance/meta_question/exam_loop/exam_lifecycle.py
   token: metaq-exam-loop-state-machine-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-exam-loop
@@ -49186,6 +49186,11 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: metaq-exam-loop
   merge_evaluation: "考试循环与 writeback 正式载体（B 类簇1 六问前置），现库仅有临时 SQL 直写通道无正式入口，四判据=新建非替代、零同域重复"
+- file: src/zephyr/governance/meta_question/exam_ops.py
+  token: metaq-exam-loop-exam-ops-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq-exam-loop
+  merge_evaluation: "同域同一对象→不并（判据三）：exam_ops 是题目/结论/审计三表读写唯一入口，仓内无第二实现"
 - file: tests/governance/meta_question/conftest.py
   token: metaq-exam-loop-tests-conftest-20260924
   created_by: st-metaq-gc-20260924
@@ -49226,22 +49231,22 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: metaq-exam-loop-tests
   merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
-- file: tests/governance/meta_question/wo001_003/test_intake_batch.py
+- file: tests/governance/meta_question/wo_intake_reconcile/test_intake_batch.py
   token: metaq-exam-loop-tests-test-intake-batch-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-exam-loop-tests
   merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
-- file: tests/governance/meta_question/wo001_003/test_registry_real_check.py
+- file: tests/governance/meta_question/wo_intake_reconcile/test_registry_real_check.py
   token: metaq-exam-loop-tests-test-registry-real-check-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-exam-loop-tests
   merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
-- file: tests/governance/meta_question/wo001_003/test_replay_audit_to_jsonl.py
+- file: tests/governance/meta_question/wo_intake_reconcile/test_replay_audit_to_jsonl.py
   token: metaq-exam-loop-tests-test-replay-audit-to-jsonl-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-exam-loop-tests
   merge_evaluation: "exam_loop 与 WO-001/003 之配套测试，tests/ 面 CREation-GUARD 本豁免，登记为留痕"
-- file: tests/governance/meta_question/wo001_003/test_source_line_register_generator.py
+- file: tests/governance/meta_question/wo_intake_reconcile/test_source_line_register_generator.py
   token: metaq-exam-loop-tests-test-source-line-register-generator-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-exam-loop-tests
@@ -49256,42 +49261,42 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: metaq-wo-builds
   merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
-- file: scripts/governance/meta_question/wo001_003/generate_source_line_register.py
+- file: scripts/governance/meta_question/wo_intake_reconcile/generate_source_line_register.py
   token: metaq-wo-builds-generate-source-line-register-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-wo-builds
   merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
-- file: scripts/governance/meta_question/wo001_003/intake_batch.py
+- file: scripts/governance/meta_question/wo_intake_reconcile/intake_batch.py
   token: metaq-wo-builds-intake-batch-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-wo-builds
   merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
-- file: scripts/governance/meta_question/wo001_003/patches/0001-wo001-registry-degraded-stub-to-real-check.patch
+- file: scripts/governance/meta_question/wo_intake_reconcile/patches/0001-wo001-registry-degraded-stub-to-real-check.patch
   token: metaq-wo-builds-0001-wo001-registry-degraded-stub-to-real-check-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-wo-builds
   merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
-- file: scripts/governance/meta_question/wo001_003/patches/0002-wo003-campaign-regime-95-ratified.patch
+- file: scripts/governance/meta_question/wo_intake_reconcile/patches/0002-wo003-campaign-regime-95-ratified.patch
   token: metaq-wo-builds-0002-wo003-campaign-regime-95-ratified-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-wo-builds
   merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
-- file: scripts/governance/meta_question/wo001_003/patches/0003-schedule-metaq-audit-reconcile-daily-task.patch
+- file: scripts/governance/meta_question/wo_intake_reconcile/patches/0003-schedule-metaq-audit-reconcile-daily-task.patch
   token: metaq-wo-builds-0003-schedule-metaq-audit-reconcile-daily-task-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-wo-builds
   merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
-- file: scripts/governance/meta_question/wo001_003/patches/0004-wo002-daily-reconcile-window-in-policy-table.patch
+- file: scripts/governance/meta_question/wo_intake_reconcile/patches/0004-wo002-daily-reconcile-window-in-policy-table.patch
   token: metaq-wo-builds-0004-wo002-daily-reconcile-window-in-policy-table-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-wo-builds
   merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
-- file: scripts/governance/meta_question/wo001_003/patches/README.md
+- file: scripts/governance/meta_question/wo_intake_reconcile/patches/README.md
   token: metaq-wo-builds-readme-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-wo-builds
   merge_evaluation: "283问战役各工单车道产物（生成器与机读册），数字回指 PG/results 真源，四判据=新建非替代"
-- file: scripts/governance/meta_question/wo001_003/replay_audit_to_jsonl.py
+- file: scripts/governance/meta_question/wo_intake_reconcile/replay_audit_to_jsonl.py
   token: metaq-wo-builds-replay-audit-to-jsonl-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-wo-builds
@@ -49741,22 +49746,22 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: metaq-reexam-engine
   merge_evaluation: "复考器族（各题族判据按库内原文重放），四判据=新建非替代、与首考探针非同源重复"
-- file: scripts/governance/meta_question/wo001_003/patches/0001-wo001-registry-degraded-stub-to-real-check.pending_patch.yaml
+- file: scripts/governance/meta_question/wo_intake_reconcile/patches/0001-wo001-registry-degraded-stub-to-real-check.pending_patch.yaml
   token: metaq-pending-patches-0001-wo001-registry-degraded-stub-to-real-checkpending-patch-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-pending-patches
   merge_evaluation: "待落地补丁 yaml 承载件（scripts/ 契约禁 .patch/.diff 的合规替代），非第二真源：正文即 git apply 输入"
-- file: scripts/governance/meta_question/wo001_003/patches/0002-wo003-campaign-regime-95-ratified.pending_patch.yaml
+- file: scripts/governance/meta_question/wo_intake_reconcile/patches/0002-wo003-campaign-regime-95-ratified.pending_patch.yaml
   token: metaq-pending-patches-0002-wo003-campaign-regime-95-ratifiedpending-patch-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-pending-patches
   merge_evaluation: "待落地补丁 yaml 承载件（scripts/ 契约禁 .patch/.diff 的合规替代），非第二真源：正文即 git apply 输入"
-- file: scripts/governance/meta_question/wo001_003/patches/0003-schedule-metaq-audit-reconcile-daily-task.pending_patch.yaml
+- file: scripts/governance/meta_question/wo_intake_reconcile/patches/0003-schedule-metaq-audit-reconcile-daily-task.pending_patch.yaml
   token: metaq-pending-patches-0003-schedule-metaq-audit-reconcile-daily-taskpending-patch-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-pending-patches
   merge_evaluation: "待落地补丁 yaml 承载件（scripts/ 契约禁 .patch/.diff 的合规替代），非第二真源：正文即 git apply 输入"
-- file: scripts/governance/meta_question/wo001_003/patches/0004-wo002-daily-reconcile-window-in-policy-table.pending_patch.yaml
+- file: scripts/governance/meta_question/wo_intake_reconcile/patches/0004-wo002-daily-reconcile-window-in-policy-table.pending_patch.yaml
   token: metaq-pending-patches-0004-wo002-daily-reconcile-window-in-policy-tablepending-patch-20260924
   created_by: st-metaq-gc-20260924
   capability: metaq-pending-patches
@@ -50388,11 +50393,6 @@ creation_tokens:
   created_by: st-mapbuild-20260924
   capability: map_build
   merge_evaluation: "六图案卷宿主增量（消费端反查卷，同域派生不另立册）"
-- file: src/zephyr/governance/registry_projection/projection_generator.py
-  token: registry-projection-generator-20260923
-  created_by: st-wm1-buildB-20260923
-  capability: registry-projection
-  merge_evaluation: "W-M1波0车道B投影生成器六模块：YAML:=render(账本快照)纯函数+四象限漂移判别+PG wins自愈执法链，替代capability册手工维护语义（丙号文W2）"
 - file: docs/01_policies_and_standards/sop/automation_sop/automation_crew_policy.md
   token: automation-sop-automation-crew-policy-20260924
   created_by: st-autoplan-20260924
@@ -50418,4 +50418,94 @@ creation_tokens:
   created_by: st-autoplan-20260924
   capability: autoplan
   merge_evaluation: "双引擎自动化讨论记录册:编制讨论过程真源,定稿转正式桥册后转存档(内收无新规则/gate)"
+- file: docs/_working/qcure_commit_queue_plan.md
+  token: commit-queue-cure-qcure-commit-queue-plan-20260924
+  created_by: st-qcure-20260925
+  capability: commit_queue_cure
+  merge_evaluation: "一次性战役方案文档(task_bound TTL),无同域重复簇,方案结案后随TTL退役,不构成第二真源"
+- file: docs/_working/qcure_campaign/00_skeleton_overview.md
+  token: qcure-campaign-00-skeleton-overview-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/approval_language/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/bag_storage/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/cas_converge/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/deadletter/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/fullflow/red_light_diagnosis.md
+  token: qcure-campaign-red-light-diagnosis-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/fullflow/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/gate_chain/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/landing_materialize/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/observability/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/producer_enqueue/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: docs/_working/qcure_campaign/queue_scheduler/workbook.md
+  token: qcure-campaign-workbook-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_campaign
+  merge_evaluation: "QCure战役挖矿作业簿与施工文档(task_bound),单一真源战役记录,结案后随TTL归档,无同域重复"
+- file: scripts/governance/enqueue_preflight.py
+  token: qcure-modules-enqueue-preflight-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_modules
+  merge_evaluation: "QCure治本新模块,替代人肉搬运证据流程(对应死因族),净零:复用既有检测器零第二真源"
+- file: src/zephyr/gov_enforcement/commit_gates/approval_resolver.py
+  token: qcure-modules-approval-resolver-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_modules
+  merge_evaluation: "QCure治本新模块,替代人肉搬运证据流程(对应死因族),净零:复用既有检测器零第二真源"
+- file: scripts/governance/qcure_offset_report.py
+  token: qcure-modules-qcure-offset-report-20260924
+  created_by: st-qcure-20260925
+  capability: qcure_modules
+  merge_evaluation: "QCure治本新模块,替代人肉搬运证据流程(对应死因族),净零:复用既有检测器零第二真源"
+- file: src/zephyr/data/macro_vintage.py
+  token: macro-vintage-macro-vintage-20260924
+  created_by: st-metaq-gc-20260924
+  capability: macro_vintage
+  merge_evaluation: "跨域不同对象→不并（裁定#375"
+- file: scripts/register_metaq_audit_reconcile_task.ps1
+  token: metaq-schedule-register-metaq-audit-reconcile-task-20260924
+  created_by: st-metaq-gc-20260924
+  capability: metaq_schedule
+  merge_evaluation: "零触发零消费→不并（判据二反向）：本件是"
 di_seam_exemptions: []
