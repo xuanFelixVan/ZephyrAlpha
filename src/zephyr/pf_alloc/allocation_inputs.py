@@ -618,10 +618,22 @@ from schemas.categories.backtest.backtest_regime_state_anchored import (
     DATABASE as _ANCHORED_DB,
 )
 from schemas.categories.backtest.backtest_regime_state_anchored import (
-    SQL_LATEST_ANCHORED_STATE,
-)
-from schemas.categories.backtest.backtest_regime_state_anchored import (
     TABLE_NAME as _ANCHORED_TABLE_NAME,
+)
+
+# [L01-C01 本地定义] schema 件头标 [AI_AUTONOMY] human_only 禁改，且该件无此符号（59 行
+# 全文核实）——待 human_only 解除后迁移至 backtest_regime_state_anchored.py（迁移时删此块）。
+# 语义=锚定态表最新可用日快照（PIT：trade_date ≤ 当日，禁未来函数）；列序=trade_date,
+# dominant, vol_pct（与 load_anchored_cap 位置解包 row[0..2] 契约一致）；参数化 {table}/{date}
+# 对照同文件先例 SQL_LATEST_REGIME_SNAPSHOT（schemas/categories/alloc_shrinkage_daily.py
+# :93-99 同族写法）；tiebreaker ingest_ts=ReplacingMergeTree 版本列（DDL 真源=
+# backtest_regime_state_anchored.py，同 trade_date 重印行取最新）。
+# 来源=docs/_working/decision_map_campaign_20260924/links/L01_regime/SKEL.md appendix_C
+# 第 6 步/L01-C01（schema 缺符号随车修，2026-09-25 本地常量修法为总指挥裁定）。
+SQL_LATEST_ANCHORED_STATE = (
+    "SELECT trade_date, dominant, vol_pct "
+    "FROM {table} WHERE trade_date <= '{date}' "
+    "ORDER BY trade_date DESC, ingest_ts DESC LIMIT 1"
 )
 
 ANCHORED_TABLE = f"{_ANCHORED_DB}.{_ANCHORED_TABLE_NAME}"
