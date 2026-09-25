@@ -13,6 +13,8 @@
   meta/         参考元数据（meta_stock_profile_ths）
   market/       market_*（行情与另类数据，92+ 文件，2026-09-14 第二批；不含 kline/ 与 intraday/ 已持有前缀）
   backtest/     backtest_*（回测域，4 文件，2026-09-14 第二批，对齐 D_BACKTEST）
+  registry_ledger/ registry_*（注册表 PG 行级账本四表，W-M1 车道A·波0；施工令写域特批的
+                PG DDL-as-Code 子包，真源=docs/_working/registry_migration/02_ledger_design.md §2）
   macro/        macro_*（宏观，2 文件，2026-09-14 第二批）
   （根）        杂项参考数据区——异质本体（指数/板块/融资融券/日历/ST/龙虎榜/
                 港美股/可转债/期权期货等），非债，封顶型
