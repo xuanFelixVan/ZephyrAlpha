@@ -171,6 +171,8 @@ _OTHER_FORMAT_EXTENSIONS = (".md", ".sh", ".ps1", ".mmd", ".json")
 # 病根：并发会话写 capability registry 时存在瞬态撕裂读（读半个写入窗口），
 # yaml.safe_load 单次失败即 fail-closed 会把"设施瞬态故障"误报成"违规阻断"。
 _REGISTRY_PARSE_RETRIES = 3
+# T8 簇1：册解析进程内缓存（mtime_ns+size 键控单条；写后失效，进程生命周期复用）
+_REGISTRY_CACHE: dict = {"key": None, "data": None}
 _REGISTRY_RETRY_INTERVAL_S = 0.3
 # 解析失败审计路径（相对 project_root；.runtime/audit/ 是既有审计 jsonl 约定区）
 _PARSE_FAIL_AUDIT_REL = (".runtime", "audit", "create_guard_parse_fail.jsonl")
@@ -566,6 +568,14 @@ def _load_capability_registry(gateway) -> tuple[dict | None, str]:
             f"修复：git checkout HEAD -- {_registry_yaml} 恢复 registry 后重试。"
         )
 
+    # T8 簇1 进程内解析缓存（st-commitspeed-tbl-20260924）：{(mtime_ns, size) -> parsed}。
+    # 册 2.7MB/万条，每链全量 safe_load 在并发写窗口下把均值推到 85s（实测 n=89）；
+    # mtime+size 双键控保证写后失效，判据零变化（同一文件同一字节同一解析器）。
+    _try_stat = _registry_yaml.stat()
+    _cache_key = (_try_stat.st_mtime_ns, _try_stat.st_size)
+    if _REGISTRY_CACHE["key"] == _cache_key and _REGISTRY_CACHE["data"] is not None:
+        return _REGISTRY_CACHE["data"], ""
+
     parsed = False
     data = None
     last_err: Exception | None = None
@@ -578,6 +588,9 @@ def _load_capability_registry(gateway) -> tuple[dict | None, str]:
             last_err = e
             if _attempt < _REGISTRY_PARSE_RETRIES - 1:
                 time.sleep(_REGISTRY_RETRY_INTERVAL_S)  # noqa: m10-time-trigger — 注册表撕裂读失败重试的指数退避等待，错误恢复路径非周期轮询
+    if parsed and data is not None:
+        _REGISTRY_CACHE["key"] = _cache_key
+        _REGISTRY_CACHE["data"] = data
     if not parsed:
         _audit_registry_parse_fail(gateway.project_root, _registry_yaml, f"{type(last_err).__name__}: {last_err}")
         return None, (
@@ -904,7 +917,9 @@ def make_create_guard() -> GateSpec:
         # （§3.1 他会话在途违规不代修；骑乘本体由 FOREIGN-CHANGE-DETECTION 全暂存台负责。
         # 不设早退：下游 ARCH-031 governance 根 R-rename 检测直读 git 清单，空 staged_new
         # 时也必须执行（rename 绕过 --diff-filter=A 的反绕过面）；空清单由其后既有守卫放行）
-        staged_new = _split_own_foreign(gateway, staged_new, files, kwargs.get("session_id"), gate_name="CREATE-GUARD")[0]
+        staged_new = _split_own_foreign(gateway, staged_new, files, kwargs.get("session_id"), gate_name="CREATE-GUARD")[
+            0
+        ]
 
         # 过滤 .py / .yaml + 豁免 tests/（真源：commit_gate_registry.is_test_exempt）
         new_py_files, new_yaml_files = _filter_new_py_and_yaml(staged_new)
