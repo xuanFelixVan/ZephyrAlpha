@@ -1,6 +1,5 @@
 ---
 ttl: task_bound
-doc_type: design
 title: T0-MATERIAL 做T材料线预注册考试卡（草案，Owner 签发即 frozen）
 created: "2026-09-26"
 status: draft_pending_owner（签发即 frozen：签后任何字段不得改动，改动=作废重开；frozen 先于正式取数）

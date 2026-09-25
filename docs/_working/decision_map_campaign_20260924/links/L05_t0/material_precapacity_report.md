@@ -1,6 +1,5 @@
 ---
 ttl: task_bound
-doc_type: audit_report
 title: T0-MATERIAL 材料线容量预检报告（抽样 20 只实测外推，禁全量跑）
 created: "2026-09-25"
 status: draft（供 Owner/总指挥签 T0_MATERIAL_EXAM_CARD 前阅读；预检先行=17 号文 §三.1 硬规矩）

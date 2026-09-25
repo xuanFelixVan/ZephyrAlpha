@@ -7,7 +7,6 @@ lane: decision_map_campaign
 status: SEALED（6/8 子块封矿；B4/B5 MINING 见 §9；禁 commit；CREATE-GUARD 由总指挥统一登记）
 doc_version: v1.0
 mining_sources: 09_link_skeletons.md §环节3；docs/_working/sector_line/ 全目录 14 件；src/zephyr/signal_ashare/sector/ 18 文件头+CONSUMERS；src/zephyr/data/sector_state_pipeline.py；config/sector_attribute_labels.yaml；config/trading_decision_map.yaml:545-1393；12 号文 DU-01/02；04 号文+data/strategy_intake/conditional_tables/（v1 已交付实测）；22_sector_rotation_spec.md；wiring_proposals_L2_sector_gate.md；ruling_registry.yaml（至裁定#413）
-doc_type: log
 ---
 
 # L03 · 板块状态与轮动——挖干作业簿

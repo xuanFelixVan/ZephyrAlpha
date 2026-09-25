@@ -1,6 +1,5 @@
 ---
 ttl: task_bound
-doc_type: log
 ---
 
 # [BLUEPRINT] SH-DOC-001 | docs/_working/decision_map_campaign_20260924/links/L05_t0/SKEL.md §5 D1/D2/D3 + 17_quantified_acceptance.md §三

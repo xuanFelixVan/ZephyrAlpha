@@ -1,0 +1,98 @@
+---
+ttl: task_bound
+title: L05 做T · 状态匹配矩阵下游消费面矿（谁在吃这张矩阵/试验数记账/注册缺口）
+created: "2026-09-26"
+sid: st-qmine-20260925
+lane: L05 个股做T（深挖车道，只读挖掘+写文档）
+family_id: L05-T0-DOWNSTREAM
+executes: SKEL.md §5 D2 ④⑤ / §7 L05-C04·C10 的缺口面（在册 LK-05 的消费侧实证补强）
+inputs:
+  - docs/_working/decision_map_campaign_20260924/links/L05_t0/t0_state_match_readme.md §1/§3.2
+  - .worktrees/st-t0-matrix-20260924/docs/_working/t0_matrix/T0_CHAIN_WIRING_GAPS.md §A-§E（断点清单与接通配方，他班案卷只读）
+  - docs/_working/decision_map_campaign_20260924/09_link_skeletons.md:348,719（LK-05 定义）
+---
+
+# 状态匹配矩阵下游消费面 · MINE
+
+## ① 职责一句话
+
+回答一个此前无人逐条验过的问题：**这张 `rule×period×phase×sector_family×mcap_q×news_axis` 矩阵生成之后，谁会读它、读进哪条决策、它的试验数进没进多重检验账本**——把"研究面闭环"与"链路自动跑通"这两句话之间的距离量成条数。
+
+## ② 现状实测
+
+**生产侧（已存在，不复述口径）**
+- `scripts/backtest/t0_state_match_matrix.py:263-289` → 三件 CSV + 一件 meta.yaml，落 `--out-dir`（**自由命令行参数，无任何注册路径**），meta 内记 `manifest.sha256`/rules/periods/outputs 绝对路径。
+- 全交叉六键：`:233` `["rule","period","phase","sector_family","mcap_q","news_axis"]`；D2 主视图三键：`:234`。
+
+**消费侧实测（本矿主结论，逐条可复核）**
+- 全仓 grep（*.py/*.yaml/*.json）`t0_state_match|t0_rule_manifest|t0_rule_pairs|backtest_artifacts/t0_rule_engine` ⇒ 命中 **5 件**：两引擎 + 两测试 + `scripts/script-manifest.yaml`。`src/` **零命中**，前端 `api_server.py` 零命中 ⇒ **现生消费者=0**（对 SKEL §0.1 与在册 **LK-05** 的二次独立实证：不新增缺口编号，只补"到 2026-09-26 仍为零"的时间戳）。
+- 接通配方在册但**未执行且已过时**：`T0_CHAIN_WIRING_GAPS.md` §D 1-5 的配方对象是**旧包** `t0_condition_matrix_v1.csv`（B4 GPU 条件包），其 D-3 明写轴键 `t1_six_phase × t1_amp_bucket3`、D-4 明写 `config/search_space_prereg.yaml:36-44` 同区加 axes。新矩阵的六键（含 `rule`/`period`/`mcap_q`/`news_axis`）**不在该配方覆盖内**（L05-DS-G1）。
+- 搜索空间实测：`grep -n "t0\|T0" config/search_space_prereg.yaml` 只命中注释行 `:57`（`per_point_seconds_measured: 35.33`，T0 标定跑回填）与 `:59`（`trial0_calibration_points: 200`）⇒ **t0 axes 零登记**（D-4 未执行，Owner 门位；本矿不代签）。
+- 事件面：`pipeline_events.py` 无 `t0_condition_pack_due` kind（配方 D-1 在册未做）。
+- **试验数记账缺口（本矿新矿，非在册）**：`src/zephyr/backtest/core/n_trial_ledger.py:38` 自述自动发现口径=`data/strategy_intake/grid_*/summary.json`（代码位 `:421` `root.glob("grid_*/summary.json")`）。做T 侧两类产物**都不在该扫描面**：规则引擎对集在 `data/backtest_artifacts/t0_rule_engine/`、矩阵在 `docs/_working/.../L05_t0/` ⇒ 5 规则×5 周期×5,853 只×多维分格的构建尝试**不进 DSR/PBO 分母**，任何后续"Wilson LB/显著性"结论的多重检验校正都会**低估试验数**（L05-DS-G3）。注意与既有纪律同向不冲突：readme §1 的"禁 summary.json"是防 glob **虚增**分母，本条是防**漏计**分母，两头都要显式声明，禁靠 glob 侧碰运气。
+- 注册面：`docs/registry_of_registries.yaml`（ROOR）内 `t0` **零命中**；`capability_canonical_file_registry.yaml` 内 `t0_state_match|t0_rule` **零命中** ⇒ 矩阵产物既无 ROOR 条目也无 canonical 文件条目，下游要"显式常量路径读包"（禁 glob 的既有纪律）**无处领路径**（L05-DS-G2）。
+- 门位：`risk_tier_registry.yaml:61-62` 显示"持仓与 T0/T1 可卖判定"域 tier=**high** + `human_gate: *high_human_gate` ⇒ 矩阵若从"观察层"转"决策输入"即撞 Owner 门位（宪法 §5.2），这是消费面的**制度终点**，必须在矩阵 meta 里显式写死其当前身份=IS 观察层（现 meta 未写身份字段，L05-DS-G4）。
+- 数据新鲜度：输入 manifest 与语料窗由引擎锁死（`t0_material_line.py:60-61`，闭卷硬拦 :338）；本矿对 LANE-T0 在途产物**未读未列**（除已知 `data/backtest_artifacts/t0_rule_engine/` 对本车道可见为空目录）。
+
+## ③ 六向台账
+
+**①上游（消费面还该接什么）**
+- 内部反查：最近的**真实立项消费者**不在 L05 而在 L04——`links/L04_stock_wire/SKEL.md:148-157`（W7 个股状态轴物化）+ 施工项 **L04-C07**"个股层状态轴概率表立项（引 LK-05）"，其判据要求"载体（C01）有 ≥120 交易日真值后开算"，方法论对齐 04 号文 §一 + 17 §三 四元组 ⇒ 做T 矩阵与该概率表**共用格子四元组范式但键空间不同**（矩阵无 `symbol` 维），中间缺"矩阵→symbol 级传导"的降维件（L05-DS-G5）。
+- 全网搜索：状态条件化选策略（regime-conditional strategy selection）方向未取到可直接引用的 A 股条目（查法=Crossref 以 regime switching strategy selection fund 检索，命中的是波动率择时族，与"矩阵→调度"不是一回事）⇒ 判"已查无（按查法）"，不硬造引文。
+
+**②下游（输出还该喂给谁）**
+- 内部反查：四个候选下游按风险升序=①`position_recipe_grid_schema.yaml`/`factory_grid_executor`（T0 搜索空间加轴）②GPU 条件维包消费（L05-C14，前置=C05/C07 词表裁定）③P2-02 做T 策略调度池（TDM yaml:2867-2907，confidence=proposed）④L04-C07 概率表。四个**当前全部未接**。
+- 全网搜索：样本外判据族的权威锚点已双源核（见③）。
+
+**③算法/机制**
+- 内部反查：矩阵的判据族=四元组+Wilson LB（`readme §3.2`，复用 `pattern_win_rate_provider._wilson_lower_bound`，禁本地公式）；WFE≥50% 与 Wilson LB 衰减≤30% 双轨属闭卷侧，本批零触碰（口径不改）。
+- 全网搜索（**已过来源可溯闸+交叉验证闸**）：
+  - Bailey/Borwein/López de Prado/Zhu《The Probability of Backtest Overfitting》——两条独立记录：SSRN 工作稿 2013 https://doi.org/10.2139/ssrn.2326253 与 *The Journal of Computational Finance* 2016 https://doi.org/10.21314/jcf.2016.322 ⇒ 支撑"矩阵=IS 观察层、必须配 PBO/DSR 族校正"的判读纪律（**不改 17 §三.2 阈值，只补其外部依据**）。
+  - Mir & Shrestha《Quantifying Backtest Overfitting from Information Leakage: A Walk-Forward and Embargo-Based Diagnostic Framework...》SSRN 2026 https://doi.org/10.2139/ssrn.7029819 ⇒ "信息泄漏"是本矩阵最贴近的外部风险名（相位路由非 PIT、板块快照非 PIT，readme §3.3 已自陈）。单源=待验证，只登记。
+  - A 股适配闸：上述均为日频/组合层框架，用到分钟×同日两腿须把 embargo 概念换算成"闭卷窗右移"，本项目已有 `enforce_closed_book` 承担同一职能⇒ 适配后可用，无需新件。
+
+**④后端（代码侧缺什么）**
+- 内部反查：缺三小件（全部登记，不施工）——(1) 矩阵产物的 canonical 路径登记条目（供下游领常量，替代 glob）；(2) 试验数记账口径声明（做T 族计入 DSR 分母的规则与去重键，须与 `n_trial_ledger.py:421` 的扫描面正交而非重叠）；(3) meta.yaml 增 `artifact_identity`（当前=IS 观察层，非决策输入）。
+- 全网搜索：开源实现可复用面——`pbo` CRAN 包（Barry 2014, https://doi.org/10.32614/cran.package.pbo）提供 PBO 族计算，许可证/成熟度只登记不克隆（18 号文纪律：有标准件须引用，本件属"待选"，禁在本矿引入依赖）。
+
+**⑤前端（只登记不施工）**
+- 内部反查：零呈现（`api_server.py` 无消费）；D2 主视图 CSV 是人读面。登记边界：做T 矩阵呈现若上仪表盘属 L08/L09 链路，本矿不越界。
+- 全网搜索：已查无（同类呈现无外部惯例可考）。
+
+**⑥数据字段**
+- 内部反查：下游要 join 的键空间核对——矩阵有 `phase`（六段路由）/`mcap_q`（T-1 PIT 分位）/`sector_family`（**非 PIT 快照**）/`news_axis`（常量 `blocked_no_pit_symbol_news`）；**无 `symbol`、无 `trade_date`**。⇒ "字段在"≠"能消费"：两个轴（板块/news）当前只可观察不可作信号条件，一个轴（news）是占位常量。若下游按格取用而忽略轴身份=前视直入决策（L05-DS-G6，判读纪律项）。
+- 全网搜索：非 PIT 维=上引"信息泄漏"文献族所指的同一风险（登记，不重复引文）。
+
+## ④ 缺口清单（新登 `L05-DS-G*`）
+
+| 编号 | 缺口 | 归属/在册映射 |
+|---|---|---|
+| L05-DS-G1 | 接通配方（T0_CHAIN_WIRING_GAPS §D）只覆盖旧包轴键，新矩阵六键无配方无 axes | 承 L05-C10 D-3/D-4（须扩写） |
+| L05-DS-G2 | 矩阵产物无 canonical 路径/ROOR 条目 ⇒ "显式常量路径"纪律在字面上无处执行（禁 glob 却没有正门可读） | 承 L05-C10；ROOR 义务 |
+| L05-DS-G3 | 做T 族试验数不入 DSR/PBO 分母（扫描面不含 `data/backtest_artifacts/t0_rule_engine/` 与 docs 矩阵） | **新登 LK 类**（科学记账），承 L05-C14 算力/搜索空间面 |
+| L05-DS-G4 | 矩阵 meta 无 `artifact_identity` 字段（IS 观察层 vs 决策输入），撞 high 域门位时无人可判 | 小件，承 L05-C04 |
+| L05-DS-G5 | 矩阵→symbol 级传导降维件缺位（L04-C07 概率表键空间与本矩阵不同构） | 跨链 L04/L05 交接项 |
+| L05-DS-G6 | 两轴非 PIT/一轴占位常量的"不可作信号条件"约束只写在 README 散文，无机检字段 | 判读纪律项（闸 4 同构） |
+
+## ⑤ 自审闸三态裁定
+
+**裁定=施工（三小件）+ 挂起排期（接线主体）+ 不封矿。**
+
+- **施工**（全部消灭"人工去猜产物在哪/能不能用"环节，零新判据）：L05-DS-G2（canonical 路径登记条目）、L05-DS-G4（meta 加身份字段）、L05-DS-G6（三轴 PIT 身份机检化，字段级，非新 gate）。
+- **挂起排期**：接线主体 D-1/D-2/D-3（`pipeline_events.py` 等产线热件多会话在飞，配方原文 §E 已给出"不当场执行"的理由，本矿承其判据）→ 解锁条件=该批热件落地窗口 + LANE-T0 全量矩阵交付（有真格可接才有接线意义）。L05-DS-G3（记账口径）解锁条件=与 L05-C14 搜索空间裁定同窗处理（否则 n_trials 与预算双改互相污染）。L05-DS-G5 解锁条件=L04-C01 载体 ≥120 交易日真值。
+- **不封矿**：消费面是"零"恰恰说明终局位置最大（做T 若不接线，整条链路永远停在人工读 CSV），禁以"现状无消费者"封。
+- 反驳者一问（对"要不要现在就做接线"）：(a) 自由度≈1 悬案未裁，接进去的轴本身可疑 → 成立，接线批须排在 C05/C07 之后；(b) 矩阵格绝大多数将 INSUFFICIENT（相位 unrouted 40%+），接一个空轴不如不接 → 部分成立，故 G4 身份字段比接线优先；(c) 改产线热件=连坐风险 → 成立，正是 T0_CHAIN_WIRING_GAPS §E 的判据。三理由指向"先登记与身份字段（本矿三小件），后接线（排队）"，不构成封矿。
+
+## ⑥ 挖矿日志
+
+| 轮 | 矿脉 | 动作 | 判定 | 产出 |
+|---|---|---|---|---|
+| R1 | 消费者普查 | 全仓 grep 产物名（py/yaml/json） | signal | 命中 5 件、src/ 零 ⇒ 消费者=0（LK-05 二次实证） |
+| R2 | 配方覆盖度 | 读 worktree 案卷 T0_CHAIN_WIRING_GAPS §A-§E | signal | 配方对象=旧包；新六键无覆盖（G1） |
+| R3 | 搜索空间/事件面 | grep `config/search_space_prereg.yaml` + pipeline_events kind | signal | t0 axes 零登记；kind 不存在 |
+| R4 | 试验数账本 | 读 `n_trial_ledger.py:38,421` | signal | 扫描面 `grid_*/summary.json`，做T 族不入账（G3） |
+| R5 | 注册面 | grep ROOR + capability_canonical_file_registry | signal | 两处 t0 零命中（G2） |
+| R6 | 门位终点 | grep `risk_tier_registry.yaml` | signal | 持仓/T0 可卖域=high+human_gate ⇒ 消费终点须 Owner |
+| R7 | 外部判据族 | Crossref 两轮（backtest overfitting/PBO；information leakage embargo） | signal | 双源核（SSRN+JCF 同族两记录）+ CRAN pbo 标准件登记 |
+| R8 | 跨链消费候选 | 读 L04_stock_wire SKEL:148-157 + L04-C07 | signal | 概率表键空间不同构（G5） |
+| R9 | 未做（长尾） | 矩阵格实测样本量分布（须读 LANE-T0 产物，禁碰）；GPU 包消费面深读（属 L05-C14）；前端呈现归属核对 | 移长尾 | 交接后继车道 |
