@@ -1,7 +1,6 @@
 ---
 ttl: task_bound
 title: SKEL
-doc_type: log
 ---
 
 # L08 风控链路挖矿作业簿（环节 8 · 组合/回撤/熔断）

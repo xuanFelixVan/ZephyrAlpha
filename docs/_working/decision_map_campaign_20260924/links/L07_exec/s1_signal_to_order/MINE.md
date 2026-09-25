@@ -1,0 +1,70 @@
+---
+ttl: task_bound
+title: L07-EXE1 子块挖矿簿 · 信号→订单映射（姿态→动作翻译层）
+created: 2026-09-26
+sid: st-qmine-20260925
+lane: LANE-MINE-L07
+status: MINE 完成（六向封口；外部对表标待办）
+---
+
+# L07 · EXE-1 信号→订单映射（姿态→动作）
+
+**① 职责一句话**：把丁域日计划场景 + 盘中五态归类翻译成六值离散订单动作（`entry/hold/trim_half/exit/wait/none`），是 L07 唯一"决策语义 → 可执行指令"的翻译层，也是全链路里"意图"变成"数量"的唯一闸口。
+
+**② 现状实测**
+
+| 项 | 实测值 | 出处（本册 Read/Grep 实测） |
+|---|---|---|
+| 代码件 | `scripts/backtest/sim_daily_runner.py`，1,356 行，无 module_id（脚本域） | 本册 sed 实测 |
+| 翻译纯函数 | `_plan_decision(posture, holding, ret_1d, has_px) -> str`，:544-565，21 行五分支，无副作用 | sim_daily_runner.py:544 |
+| 动作→事件 | `_plan_action_events(action, day, cash, shares, px, ret_1d, run_id)`，:601 起，方案C 收盘价成交 | :601-660 |
+| 映射表 | `PLAN_ACTION_POSTURE` 仅 **2 键**（`stand_aside_defense→flat`、`trend_follow_no_chase→long_proxy`）；`STATE_EXTRA_POSTURE` 2 键（低迷→flat、亢奋→trim_half）；`STATE_TO_SCENARIO` 3 键（防御/进攻/震荡） | :146-157 |
+| 参数 | `NO_CHASE_MAX_RET_1D = 0.015`、`PLAN_ENTRY_FRACTION = 0.30`、`PLAN_POCKET_ID="SIM-PLAN-001"`、`PLAN_SYMBOL="510300"`、`_OBSERVE_NOTIONAL=1_000_000.0` | :98/:150-153 |
+| 上游取数 | `plan_bridge(day)` 读 `judgment_daily_plan` + `judgment_intraday_market_state`（五态 payload.state_label）；`inputs_ref` 双引用串自证血缘 | :268-335 |
+| 下游原料 | `_index_ret_1d`（000300 两日收盘，14 日回看窗，缺→None）、`_plan_etf_close_px`（510300 当日收盘，缺→None）；两者任一缺 → 动作恒 `none`（fail-visible） | :568-596 |
+| 生产触发面 | **已接电（sim 平面）**：`scripts/run_sim_pipeline_daily.ps1:39`（plan-bridge）与 `:90`（plan-execute）均带 `-Day $SimDay` 实调用，另有手工面 `SimEodManual.ps1:6`、`SimIntradayManual.ps1:5`；判定台账每日一行 | 本类 grep 全仓实测 |
+| 落地面 | 09-21 实弹：进攻日建仓 65,055 股 510300@4.608，不追高闸 ret=-0.78% 通过，权益 999,775；`sim_daily_report` 52 行全结算，plan_execute 行 `replay_consistent=1.0` | 01_ruling 卡 :46-48 |
+| 对账自校验 | `settle` 有 `posture_check` 分支：`expected_flat = payload.posture=="flat"` vs `actual_flat = scenario=="S2_defense"` 二元打分 | :1212-1220 |
+
+**③ 六向台账**
+
+| 向 | 发现 |
+|---|---|
+| ①上游（谁喂它） | 内部：双输入面——日计划（MOD-PLAN-030 三场景 `plan["payload"]["scenarios"]`）+ 盘中五态（`fetch_realized_state`）。**五态→姿态是两级查表**：先 `STATE_TO_SCENARIO` 命中计划树内三态走 action→posture；未命中走 `STATE_EXTRA_POSTURE` 类推；两者都不中 → `pending_owner_mapping`（不是 none、不是 unexecutable，第四态）。SKEL §2 未记 `pending_owner_mapping` 这一**未收口悬挂态**——它落台账但 `_plan_decision` 无对应分支，任何新五态标签（如未来加"轮动"）都会静默停在 pending 且**无告警**。外部：待办（本轮未做，见 §⑥日志）。 |
+| ②下游（谁吃它） | 内部：`_plan_decision` 出六值，`_plan_action_events` 只实现 4 值（entry/exit/trim_half/hold 语义内），**`wait` 与 `none` 在事件层无独立分支=与"什么都不做"不可区分**（wait 的"顺延"语义不落库、不产生次日重估边）→ 顺延是**无状态的**：明日若 ret_1d 仍 ≥1.5% 再顺延，永不追，也永无"放弃"终态。真实消费方仅 `plan-execute` 模拟腿与（载体重开后）`bridge-execute` 真单腿。外部：待办。 |
+| ③算法/机制 | 内部：仓位规模 = `spend = cash*0.30`，`shares = spend/px*(1-BUY_COST)`，`cash2 = cash-spend`——成本从**股数侧**扣而非现金侧，等价但导致 `cost_paid` 字段与实际现金流出**不同源**（cost_paid=spend*BUY_COST 记账，现金侧全额扣 spend），长期复利口径下权益自洽（现金+市值=初始-成本），但单行审计会看到"成本被算了两次方向的错觉"；**无 sizing 层**：30% 是硬编码常数，不随波动率/回撤/置信度变化（plan confidence 已在台账 payload 里但不进 `_plan_decision` 签名）。外部：待办。 |
+| ④后端 | 内部：全链纯函数 + fail-closed 落库（`_write_ledger` 写失败 raise `观察钱包落库未确认——fail-closed`，:493/:503）；无 class/无状态，可直接单测。可复用件已存在 = `zephyr.data.ch_writer.tsv_escape`（本件已复用，克隆防护在位）。外部：待办。 |
+| ⑤前端（人工面） | 内部：`app_panel.py:141` 列有「交易计划与复盘：日计划与执行差异」入口，但 plan_bridge 姿态行与 plan-execute 成交行的**逐日对照视图未验**（MINING 债）；人工修改映射=改 `PLAN_ACTION_POSTURE` 一行（决策卡 :29 明示"改一行=改政策"），**无 UI/无审批流**，改文件即改政策，仅靠 git 留痕。外部：待办。 |
+| ⑥数据字段 | 内部：所需字段=000300 两日收盘 + 510300 当日收盘 + 五态 state_label + 计划 scenarios[].action。**字段在 ≠ 数据可得**：`market_index_kline` 的 000300 行、`market_kline_etf_daily` 的 `510300%` 行、`judgment_intraday_market_state` 当日行三者任一断供即静默降级为 `none`，与"真该空仓"在台账里**同形**（都是 posture/动作无行）→ 归因不可分。行动建议=把"缺数致 none"与"姿态致 none"分码。外部：待办。 |
+
+**④ 缺口清单**（仅本册新立；SKEL §4 与 13 号文 TRD 已立项引用不重复）
+
+| 编号 | 内容 | 与既有账本关系 |
+|---|---|---|
+| L07-S1-G1 | **映射真源双件未收口**：`plan_order_mapping_proposal.md`（Owner 批复栏 5 行全空、frontmatter `completes_when` 要求"批准后改决策卡归档"）与 `01_ruling_plan_mapping_and_orphans.md` 表一（6 行全裁且与代码逐行一致：S2准/S1准改参 P=30% R=1.5%/S3驳/低迷类推/亢奋类推/钱包准）**并存**。SKEL §2 EXE-1 与 13 号文环节④"Owner 未批=语义空间仅批 1 行"的判读系读 proposal 未读裁定卡所致，**本册证伪并纠正**：真实态=AI 受托自裁已生效 + 提案件未归档未标"已被裁定卡取代"。风险=未来 AI 代理读 proposal 会误判"未批"而回滚在产行为（该卡 :40 已把"僵尸状态是复利毒药"列为同族事故先例）。 | 修订 TRD-A09 语义（原"批复接线"→实为"归档提案件+追认"）；新立 |
+| L07-S1-G2 | **裁定未归 ruling_registry**：卡自注"性质=AI 受托自裁，建议 Owner 追认后归 ruling_registry"。实测 `grep -c "SIM-PLAN\|plan_mapping\|plan 映射\|posture_for_action" docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml` = **0**（2026-09-26）→ 在产行为依赖一条未登记的裁定，触 RULE-RULING 精神（裁定必先登记、同 commit 原子）。 | 新立（Owner 门位：追认后销号） |
+| L07-S1-G3 | **`wait` 无状态**：顺延语义不落库、无重试计数、无放弃终态、无 N 日后升级人工；`wait` 与 `none` 在事件层同形。终局全貌下这必须是带 `wait_age`/`wait_expiry` 的显式小状态机。 | 新立 |
+| L07-S1-G4 | **`pending_owner_mapping` 悬挂态无告警**：新五态标签落入第四态后仅静默写台账，不告警、不进日报、不入 L07 缺口账——同类"分类器扩展 → 翻译层静默失效"正是本环节两个前车（隔夜单静默丢弃/回报断链）的模式。 | 与 A10 家族同模式、不同路径，本册增量 |
+| L07-S1-G5 | **无显式 sizing 层**：`confidence`（台账已带）与波动率/回撤信号不进 `_plan_decision` 签名；决策卡 :26 自认 LEAN 五层中 Portfolio Construction/Risk 两层"现仅隐式"。终局全貌（100% AI 自动化）下 sizing 必须是可标定件而非常数。 | 细化 SKEL EXE-1⑥"LEAN 五层中间层隐式"条，不重复立项 |
+| L07-S1-G6 | **缺数 vs 空仓在台账同形**（见 §③⑥）：需区分 `none_by_missing_data` 与 `none_by_posture` 两个 reason 码，否则任何"执行率/胜率"统计都被数据断供污染。 | 新立 |
+
+**⑤ 自审闸三态裁定**
+
+| 缺口 | 裁定 | 理由（量尺=终局全貌：Owner 一人 + 100% AI 自制） |
+|---|---|---|
+| L07-S1-G1/G2 | **施工（文档/登记侧，极小）**：归档 proposal 件（frontmatter 加 `superseded_by` 指针）+ 追认后登记 ruling_registry。Owner 门位仅涉追认一步。 | 双真源是"文档矛盾=事故"铁律的正面案例；不修则每次交接都要重推一遍，AI 代理成本单调上升。**不封矿**（禁以"现状规模小"封矿：本翻译层是所有未来多标的/多姿态订单的必经闸口）。 |
+| L07-S1-G3 | **挂起排期**：解锁条件=EXE-3 桥执行腿首次真单回读闭环稳定（LANE-BUILD 在办，本班不碰）后，`wait` 语义要同时驱动 sim 与真单两条腿才值得建状态机；单腿建=造第二条腿时要返工。 | 终局必要（顺延必须有年龄与放弃条件），但依赖真单腿。 |
+| L07-S1-G4/G6 | **施工（可并入 L07-C04 批次）**：两 reason 码 + 一条日报计数，改动面 ≤10 行，属"同类静默丢失路径"增量清单里最便宜的一条。 | 自动化系统里"无告警的静默降级"是复利毒药；判据/语义不动，只补可观测性=修复非新增。 |
+| L07-S1-G5 | **挂起排期**：解锁条件=L07-C03 算法层收口裁定出结果 + L4-14 断链接好（EXE-5）。sizing 若无执行成本反馈就是开环拍参数，先建反馈环再建 sizing。 | 顺序依赖，非优先级判断。 |
+
+**⑥ 挖矿日志**
+
+| 轮 | 矿脉 | 判定 | 备注 |
+|---|---|---|---|
+| R1 | SKEL §2 EXE-1 + 两篇 sim_launch 映射件全文（proposal 37 行 / 裁定卡 50 行） | signal | 证伪 SKEL"Owner 未批仅 1 行"判读 → G1/G2 |
+| R2 | `sim_daily_runner.py` :255-340（posture_for_action/plan_bridge）、:490-660（_plan_decision/_plan_position/_index_ret_1d/_plan_etf_close_px/_plan_action_events）、:1212-1220（settle posture_check）、常量区 :98-165 | signal | G3/G4/G5/G6 全部来自正文实读，非头注推断 |
+| R3 | 全仓 grep 触发面（`plan-execute\|plan_bridge`）+ 生产 `*.ps1` | signal | 新证：`run_sim_pipeline_daily.ps1:39/:90` 在产调用，SKEL 只记了 SimBridgeExecute 一支 |
+| R4 | ruling_registry.yaml 反查裁定登记（grep 计数=0） | signal | G2 立据 |
+| R5 | 外部对表（signal→execution 翻译层业界做法） | **未做** | 按轮次纪律推迟到 9 册全部落盘后的统一外部轮；若预算不及则本册标"受阻/未做外部对表" |
+
+**本册封矿判据**：六向均已填（外部向统一标"未做/待办"，非空转）；缺口 6 条全部本册正文级新立或改判；剩余长尾=前端 plan/exec 对照视图（app_panel 侧正文未读，已在 §③⑤ 记名）→ **子模块判 MINING（仅前端一向留尾），其余五向封口**。

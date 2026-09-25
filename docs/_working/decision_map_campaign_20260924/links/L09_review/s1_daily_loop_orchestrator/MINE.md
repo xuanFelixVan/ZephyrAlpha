@@ -1,0 +1,120 @@
+---
+ttl: task_bound
+title: L09-S1 子模块挖矿簿 · 日循环编排（全链心脏）
+created: 2026-09-26
+sid: st-qmine-20260925
+lane: LANE-MINE-L09
+status: MINE 完成（六向封口；触发面以 09-26 本机 schtasks/schedule.yaml/实码三处实测封顶）
+---
+
+# L09 · S1 日循环编排（心脏）
+
+**① 职责一句话**：把"数据就绪→盘前预案→盘中跟踪→收盘验证→判定结算→分配→拍板→日刊"这一串日级组件按节拍收拢成**可安全重跑的一圈**，并让全链路在无人值守下自己通电——本块是"全链是否真通电"的唯一判定点。
+
+**② 现状实测（2026-09-26 本机复测）**
+
+本块最重要的实测结论：**日循环不是"一条链"，而是两条并行的触发面在推同一批段**——这就是 L09-C01 收拢议题的物理成因。
+
+| 轨道 | 实码位置 | 触发面（实测） | 判定 |
+|---|---|---|---|
+| A 事件链（九棒→实为 16 钩子） | `src/zephyr/strategy_pipeline/pipeline_events.py:1026-1117` `wire_data_scheduler`，末行 `scheduler.subscribe("task_completed", _on_task_completed)` | **有**：APScheduler 数据任务完成→自然唤醒；宿主=Windows 计划任务 `ZephyrAlpha_DataScheduler`（09-26 21:47:42 实测在册/下次运行已排） | **已接电** |
+| B 总扳手 16 段 | `src/zephyr/plan_engine/daily_loop_master_switch.py:337-368` `PHASE_STAGES`（full=16 段，本册逐条数列复核=16，非 17：warroom 在 premarket/postmarket 各列一次，full 去重后单份） | **有**：`src/zephyr/data/config/schedule.yaml:249-253` `dloop_post` cron `"45 16 * * 0-4"`（实测全文件 `cron:` 槽=**29 个**，与 SKEL 一致） | **已接电** |
+| 总闸 | `data/runtime/daily_loop_master.disabled`（每次触发实查，即时生效） | 09-26 本机实测：文件**不存在** ⇒ 总闸开 | 在跑 |
+
+事件链 16 钩子实序（`pipeline_events.py:1038-1112`，本册逐行核；次序即"下游读到新鲜数据的顺序"，全部为钩子序契约的一部分）：
+`scan_translated_backlog` → `scan_c1_c2_backlog` → `maybe_refresh_regime_snapshot` → `maybe_emit_daily_plan` → `maybe_classify_intraday_scenario` → `maybe_verify_plan_close` → `maybe_settle_judgment_ledger` → `maybe_track_intraday_state` → `maybe_emit_next_day_forecast` → `maybe_run_warroom_pipeline` → `maybe_record_auction_hit` → `maybe_emit_pf_alloc_daily` → `maybe_emit_sim_daily` → `maybe_emit_monthly` → `drain(allow_heavy=False)` → `maybe_run_daily_decision`（末棒拍板）。
+
+### ②·主证据：逐跳通电判定表（总筹最想要的一张）
+
+链路口径=`盘前→判定→下单→结算→台账→日刊→监控告警`（Owner 指定七跳；本册把"结算/台账"拆为两跳、"数据就绪"作为第 0 跳补上，共 9 行，未改链义）。
+
+| 跳 | 内容 | 实码 | 触发面 | 通电裁定 |
+|---|---|---|---|---|
+| H0 | 数据就绪门（kline 落地/日历对齐，fail-closed） | `daily_loop_master_switch.py` `data_readiness` 段；`regime_freshness` 段（滞后>1 交易日补印） | `ZephyrAlpha_DataScheduler` 事件 + `dloop_post` 16:45 | **已接电**（双轨） |
+| H1 | 盘前：T 日晨间 08:00-09:15 就绪重评 | 预案实码在（`plan_engine/daily_plan.py`、`premarket_workflow.py` MOD-PLAN-021） | 预案由 **T-1 16:45** 的 dloop `premarket` 段产出；**T 日晨间无任何触发面**（schedule.yaml 无晨间 dloop 槽；schtasks 实测 08:00-09:15 段仅 QMTWatchdog 08:45 / PatternMining 09:01 / PaperSession 09:25，均非编排器）；MOD-PLAN-021 全仓零装配方 | **覆盖未接电**（T 日晨间窗真空；TRD-A04 属实） |
+| H2 | 判定：盘中 L1 五态 + 场景归类 + 竞价命中 | `plan_engine/intraday_l1_tracker` / `scenario_classifier` / `auction_hit` | 60min bar 到达=事件唤醒（钩子 5/8/11）；`dloop_post` full 相位含 `intraday_l1/classify/sentiment_loop/auction_hit` 四段 | **已接电**（事件面；16:45 圈属补算/重放语义） |
+| H3 | 收盘验证 | `plan_engine/close_verifier.py` `maybe_verify_plan_close` | 钩子 6（daily_kline SUCCESS）+ dloop `close_verify`（恒先于 settle，钩子序契约见 `daily_loop_master_switch.py:335` 注释） | **已接电** |
+| H4 | 结算 | `plan_engine/judgment_settler.py`，钩子 7 `maybe_settle_judgment_ledger`；Brier 走 T+1 grace 次日回填 | 事件链 + dloop `settle` | **已接电** |
+| H5 | 台账（判定三表 + decision_daily 快照） | 三表 + `schemas/categories/decision_daily.py`（DDL 唯一真源，写侧唯一=daily_decision_orchestrator） | 同上；拍板=事件链**末棒** 16 + dloop 末段 `decision`（date-marker 先拍先占幂等） | **已接电** |
+| H6 | 下单 | `daily_decision_orchestrator.py` 拍板体 → 执行门面；sim 通道 `ZephyrAlpha_SimBridgeExecute` 09:35（实测在册，09-26 09:35） | 事件链/16:45 在产；但**真实下单被安全态封零**（GRADUATED_PACKAGES=∅，ruling_registry 登记号 305 的安全态）⇒ 纸面/模拟通道有电，实盘通道=**结构性断开（非缺陷，是门位）** | **已接电（观察记录模式）**；实盘腿=Owner 门位未开，不许当缺口记账 |
+| H7 | 日刊（平台日刊 + 决策快照） | `scripts/backtest/sim_platform_journal.py`；`sim_observe_daily` FIFO 末位=账本→日刊→归因（`pipeline_events.py:508`，次序元组唯一保证） | 事件链 + `ZephyrAlpha_PostSettlement` 15:30（实测在册） | **已接电**（但两账互不消费 → 见 S4/L09-C03） |
+| H8 | 监控告警 | Alerter + 29 cron 哨兵槽 + `scripts/governance/decision_chain_sentinel.py` | `dloop_post` 失败单次 ERROR；**决策链累积哨兵已接电**（见下方勘误）；THD-TRD-001..004 消费代码仍=0 | **部分接电**（产报面通电；**告警消费面断**——TRD-A06 维持） |
+
+**逐跳计数：9 行中 7 跳已接电（H0/H2/H3/H4/H5/H6/H7）、1 跳覆盖未接电（H1 盘前晨间窗）、1 跳部分接电（H8）。**
+
+### ②·总结论（本册最重要的一句）
+**"链通电"≠"链每天通电"。** 本册用三源对拍证明当前**没有任何组件负责区分这两件事**：
+`.runtime/strategy_pipeline/last_audit.json` 实测 35 记号中**无任何 `*:2026-09-25`**（末批=09-24）｜`kline_index` 实测 `max=2026-09-24` ⇒ 09-25（周五交易日）数据未入库、事件链按 fail-closed **正确停摆**｜`decision_daily` 缺 `trade_date=2026-09-25` 却有 `2026-09-28`（`asof_data_date=09-24`，ingest 2026-09-25T00:43 UTC）⇒ **09-25 这一交易日在决策台账上被整日跳过**。
+而唯一相关的哨兵判据 `last=max(trade_date)=09-28 > ref=09-25` ⇒ `lag=0` 静默，其告警文件 `.runtime/logs/decision_chain_alert.jsonl` 实测 **ABSENT**（自 09-25 上线一次未发）。
+⇒ 逐跳表的"接电"判的是**触发面存不存在**（结构性，答案 7/9 通电）；上表之外的"缺勤"是**日频连续性**问题（运行性，当前无人测）。两问不许混谈，也不许因为前者绿了就报后者健康。完整链条见 S5 册 §②·停摆实证、S4 册 §②·哨兵消音、S6 册 §2.3 死总线。
+
+### ②·勘误（对 SKEL 的实码刷新，本册新增）
+
+SKEL §一 S9-1⑥ 与 S9-6⑤ 记「TRD-A01 / L09-C04 决策链哨兵**未落地**」。**本册实测：已落地并在产**。三重证据：
+1. `schtasks //query` 实测在册 `ZephyrAlpha_DecisionChainSentinel`，下次运行 2026-09-26 09:40，XML 实读 `<Command>pythonw.exe</Command> <Arguments>"D:\ZephyrAlpha\scripts\governance\decision_chain_sentinel.py"`，`<ScheduleByDay>`，`<StartBoundary>2026-09-25T09:40:00+08:00`；
+2. 件在盘：`scripts/governance/decision_chain_sentinel.py`（头注 `[MATURITY] trial` / `[STARTUP] scheduled_task` / CONSUMERS 自注登记该 schtasks）+ 注册器 `scripts/register_decision_chain_sentinel_task.ps1` + 测试 `tests/governance/test_decision_chain_sentinel.py` + `scripts/governance/script_manifest.yaml` 在册；
+3. 语义与 L09-C04 草案一致：连续 N（默认 2，`--lag-days` 参数化）交易日无 `decision_daily` 新行 → 写 alert jsonl 行 + `exit 4`；全史零行=视为断供需告警；参照日取 `min(日历最近开市日, kline_index max)` 防"日历超前数据面"虚计。
+
+⇒ **L09-C04 由"待施工"改判为"已落地（trial 期，待转正）"**；本簿 §四 沿用其编号不重复立项。附带三条转正欠账见 ④。
+
+### ②·新鲜度实测
+
+- `decision_daily` 统计列 `trade_date`（拍板生效日=次交易日口径）为哨兵判据真源；表在 `c1_backtest`（哨兵头注自带 09-25 DESCRIBE 勘误留档：**PG 全 schema 无 decision_daily**，仅 depgraph 四表，真源=CH）。
+- dloop 供给的 `regime_snapshot_history` 3 日错位已由消费侧滞后闸 max_staleness_days=1 治本（见 L01-S6 册实测：3,629 行 / 1,819 唯一交易日 / 5 run_id，至 2026-09-24）。
+- 本册未跑 CH 只读全表扫描（GPU/长批被他车道独占），台账深史口径沿用 L01-S6 册实测，不另立数。
+
+**③ 六向台账**
+
+| 向 | 发现 |
+|---|---|
+| ①上游 | 内部：`daily_kline`/`kline_index` SUCCESS 事件（数据层唯一唤醒词）；`dloop_post` 16:45 交易日 cron；总闸文件实查。外部：已查无（"日循环编排器"属本仓内部治理面，业界无同构标准件；最接近的是 Airflow/Dagster 的 data-driven DAG 调度范式——见 ③④，但引入受净零内收约束） |
+| ②下游 | 内部：16 段报告 dict（PHASE_STAGES）+ fetch_perf 心跳（SUCCESS/BLOCKED/PARTIAL）→ Alerter ERROR；E2E 验收（`docs/_working/daily_loop_campaign/e2e_manual_run_report.md`，09-18 圈 11/11、09-21 终圈 15 ok+1 skipped+0 error）；S9-4 拍板体=末棒；S9-3 结算/S9-5 warroom/S9-7 归因段全部内嵌于同一圈 ⇒ **本块下游即其余六子块本身** |
+| ③算法 | 内部：编排层**零算法**——`run_daily_loop` 自注"编排层零自建幂等键，全量委托底层既有闸（prediction_log UNIQUE/台账查重/业务日记号）"（`schedule.yaml:243-248` 注）。这是本块最重要的设计事实：**幂等责任下沉**，故双轨同日两触发面不产生重复行，但**不产生"谁负责发现没跑"的责任人**——这正是 L09-C01 的实质议题。外部：data-driven DAG（Airflow dataset triggers / Dagster asset observations）同构范式，本仓以 `task_completed` 订阅实现等价物 |
+| ④后端 | 内部：①双轨无对账声明（同日同段两触发面，幂等靠底层闸，无"哪条是真节拍"登记面）；②调度单点无灾备（DataScheduler 是唯一事件宿主，进程死=事件链全断而 16:45 cron 仍空跑，反之亦然）；③T3 盘中修订/T4 盘后核对仅签名占位（`daily_decision_orchestrator.py:754-767`）；④蓝图版 BT-P1-031 S1-S7 与双轨的实现映射未登记（哪个 S 对应哪段）。外部：多编排器并存需显式 lease/authority 声明（分布式惯例），本仓缺 |
+| ⑤前端 | 内部：`status_dashboard`/`app_panel` 自研面 + 仪表盘 warroom 组件；无时序面板。人工面=Owner 翻台账看绿天数（治本项在 S4 册 L09-C03）。外部：Grafana（AGPLv3，2021-04 起）自托管内部使用合规；现规模引入全家桶违净零 ⇒ 不引 |
+| ⑥数据字段 | 内部：本块自身无表（纯编排）；读侧依赖 `kline_index`（就绪门）、`regime_snapshot_history`（新鲜度）、`market_trade_calendar`、PP-001 配比只读快照；心跳写 `fetch_perf`。**"字段在"≠"数据可得"落点**：`decision_daily` 有 `trade_date` 列 ≠ 每日真有行——哨兵件的整件存在理由就是把这条差别变成可告警事实 |
+
+**④ 缺口清单**
+
+| 编号 | 内容 | 状态 |
+|---|---|---|
+| L09-C01 | 编排器收拢令（蓝图版 vs 双轨转正二选一，Owner 裁定项） | **在册·待裁定**，本册供裁定材料（⑤ 段） |
+| TRD-A04 | T 日 08:00-09:15 晨间窗真空（H1 未接电）+ MOD-PLAN-021 production 零接线双实现 | 在册，随 L09-C01 一并落 |
+| TRD-A01 / L09-C04 | 决策链累积哨兵 | **本册勘误：已落地（trial）**；转正三欠账见 G1/G2/G3 ↓ |
+| L09-S1-G1 | **哨兵双通道未被声明**：哨兵走 `schtasks` 09:40 日频，dloop 走 APScheduler 16:45——同一"决策链是否活着"命题现在有两个独立时间源，哨兵自身挂了无人知（"监控监控本身"缺位，SRE Workbook Ch.5 明列此为死法） | 新增 |
+| L09-S1-G2 | **哨兵告警出口 alert jsonl 无消费方登记**：头注自约"唯一出口=alert jsonl 追加行+退出码，不另开 Alerter 通道"⇒ 与 S9-6「有产报无消费」同型（详见 S6 册） | 新增 |
+| L09-S1-G3 | `[MATURITY] trial` 转正无判据：件里没有"观察期满/触发过真实告警即转 production"的自动口径（宪法§9.3 永久系统四要素之"自动关闭"仅有 `/change /disable`，无自动转正） | 新增 |
+| L09-C01 附带 | 双轨对账声明缺失（④ 内部①）：幂等下沉≠无冲突，"哪条轨道是权威节拍"无处可查 | 并入 L09-C01 |
+| BT-P1-031 | 蓝图版 S1-S7 完全体（T3 盘中修订/T4 计划vs实际核对） | 在册，随裁定分期 |
+| 宪法偏差登记 | `DecisionChainSentinel` 用 schtasks 日频驱动。**本册裁定=不构成 §9.3 偏差**：宪法禁的是"用 cron 驱动本应事件驱动的 reconciler"；哨兵检测对象恰是**事件的缺席**，缺席无法用事件唤醒，时间基是其唯一可能载体（同 `data_supply_sentinel`/`catchup_guard` 先例）。登记为"已论证豁免"而非偏差，防后续车道误判为整改项 | 新增（结论性） |
+| 宪法偏差登记 | 真偏差候选：dloop 的 `close_verify`/`settle`/`warroom` 段——三者在事件链已有事件唤醒钩子，却又被 16:45 cron 重放一遍。属"本应事件驱动、由计划任务二次驱动"的形态。本册**只登记不改**（Owner 明令），并列为 L09-C01 裁定必答题之一 | 新增（只登记） |
+
+**⑤ 自审闸三态裁定**
+
+| 项 | 裁定 | 理由 / 解锁条件 |
+|---|---|---|
+| L09-C01 编排器收拢 | **挂起排期 + 解锁条件**（Owner 一句话即解） | 不是本车道可拍的项：涉及"保留一条还是两条"，不可逆点是**退役现役双轨中某一条的触发面**（一旦摘钩，当日全链停摆且历史节拍无法追溯）。本册已把两版材料备齐，见下方"裁定材料" |
+| L09-C01 · 裁定材料 A：蓝图版（BT-P1-031） | 代码位置 `src/zephyr/strategy_pipeline/daily_decision_orchestrator.py`（774 行；S1-S7 六段态/预算带/门快照/sit_out/日历哨兵/kill_switch 全在，T3 盘中修订 + T4 计划vs实际核对=`:754-767` **仅签名占位**）；**当前谁在真跑=它在跑**（事件链末棒 + dloop 末段 `decision`，双触发面皆有它）；合并代价=补齐 T3/T4 两件 + 把 dloop 16 段收编为其 S 段壳；不可逆点=T4 落库新增列/伴生表（判定台账标准"判定/结算分离"口径），一旦有真实消费方就难回退 | — |
+| L09-C01 · 裁定材料 B：现役双轨转正 | 事件链 16 钩子（`pipeline_events.py:1038-1112`，实测）+ 总扳手 16 段（`daily_loop_master_switch.py:337-368`，实测）；**当前真跑=两条都在跑**（09-21 起 dloop_post 自动圈经 Owner 批解除 MANUAL-ONLY，事件链同日在产，双圈 E2E 实证绿）；转正=承认"两轨+底层幂等闸"就是编排器本体，蓝图降格为需求档案；不可逆点=几乎无（纯文档/命名收口），但**保留两条的运维代价**要如实记：①同一组件两触发面，故障归因要查两处；②节拍表要维护两份；③新增段默认要挂两处，漏一处即"有名无实假通道"（`schedule.yaml:219-227` R-021 自注先例）；④Owner 无法从任一单一视图确认"今天到底通没通电" | — |
+| L09-C01 · 合并成一条的技术路径（工作项序） | 1) **先写对账声明**（零代码：登记"每段=哪个触发面权威、另一个是重放"机读表，复用 date-marker/记号闸口径）；2) 二选一：a 路线=补 T3/T4 并把 16 段声明为 S1-S7 的实现投影（工作量大、需 GPU 让位后再排），b 路线=PHASE_STAGES 升格为唯一节拍真源、schedule.yaml 与 pipeline_events 钩子序都从它派生（工作量小、但 T3/T4 仍要单独立项）；3) 晨间窗 TRD-A04 随节拍表一并落；4) 摘除一条触发面是**最后一步且需 Owner 单独批准** | — |
+| L09-S1-G1 哨兵自身无人监控 | 施工（P1，微） | 解锁=并入既有 `DeadmanSwitch`/`ProcessReaper` 心跳面（不新建件，净零）：哨兵每次运行 append 一行"我活着+lag 实算值"，DeadmanSwitch 侧比对最近 N 日心跳；终局全貌下"人肉确认哨兵在跑"不成立 |
+| L09-S1-G2 alert jsonl 无消费 | 施工（P2） | 与 S6 册 TRD-A06 同批处置，避免两处各造一个 alert 读侧 |
+| L09-S1-G3 trial 转正无判据 | 挂起排期 | 解锁条件=先有 G1/G2（无消费面的告警件转正=把"有产报无消费"制度化） |
+| H1 盘前晨间窗 | 挂起（不独立施工） | 解锁=L09-C01（晨间班次要挂进权威节拍表，先定"谁权威"再排"何时醒"） |
+| H6 实盘下单腿 | **封矿（不作为缺口）** | 观察记录模式是门位选择，不是实现缺陷；开实盘腿的解锁条件=ruling_registry 中 GRADUATED_PACKAGES 非空，属 S3/风控车道议题，本块不重复立项 |
+| 宪法偏差候选（cron 二次驱动事件件） | 只登记，**不施工、不改** | Owner 明令；列为 L09-C01 必答子问题："转正后 16:45 cron 是否保留 close_verify/settle/warroom 三段的重复触发" |
+
+**⑥ 挖矿日志**
+
+| 轮 | 矿脉 | 判定 | 归因 |
+|---|---|---|---|
+| R1 | `schtasks //query //fo csv` 全量实测（GBK→UTF-8 转码，Zephyr 族 50 唯一任务）+ `//xml` 单件实读 | signal | **本轮最大发现**：DecisionChainSentinel 在册且指向真实脚本 ⇒ SKEL"未落地"结论作废 |
+| R2 | `PHASE_STAGES` 实码逐条数列（full=16） | signal | 校正"16 段"口径并厘清 warroom 双列/full 去重语义 |
+| R3 | `wire_data_scheduler` 全文逐钩子读（16 钩子实序 + 钩子序契约注释） | signal | 从"九棒"叙述升级为实测 16 钩子，并确认事件链宿主=scheduler.subscribe("task_completed") |
+| R4 | `schedule.yaml` dloop_post 槽 + 全文件 `cron:` 计数=29 | signal | 与 SKEL 双验一致，未漂移 |
+| R5 | `decision_chain_sentinel.py` 头注（含其自带 09-25 PG→CH 数据源勘误） | signal | 直接得到"哨兵为何必须走时间基"的一手自辩，用于 §9.3 豁免论证 |
+| R6 | 逐跳通电表编制（H0-H8） | signal | 结论：7 接电 / 1 覆盖未接电 / 1 部分接电 |
+| R7 | 外部对表 | 未做（本块留口） | 按轮次纪律：外部全网搜索延至全部落盘后统一一轮；已就位候选=data-driven DAG 调度范式（Airflow dataset triggers / Dagster assets）、SRE Workbook Ch.5 "alerting on symptoms + 监控监控本身"、Grafana AGPLv3。**登记为"未做外部对表"** |
+
+**本册封矿判据**：六向封口；逐跳通电判定表已产出（总筹指定主交付）；L09-C01 裁定材料 A/B + 合并路径 + 不可逆点 + 双轨运维代价四件套齐；SKEL 一处结论已勘误。
+未挖长尾：蓝图 238 行全文的降级矩阵 D1-D7 逐条对表现状（沿用 SKEL §三 未挖清单第 1 项，非本册阻塞）。⇒ **子模块封矿（附 L09-C01 待裁口）**。

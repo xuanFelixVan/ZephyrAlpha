@@ -1,0 +1,69 @@
+---
+ttl: task_bound
+title: RSK-1 MINE
+---
+
+# RSK-1 系统级 KillSwitch（AI Agent 行为熔断）— 深挖簿
+
+> 车道 L08 风控 · 子块 1 · 班次 st-qmine-20260925 · 只读挖掘（零生产写入、零熔断动作）。
+> 起点真源=`../SKEL.md` §1/§2 RSK-1；本簿往下钻一层：编排器层（MOD-AU-002）与响应策略层（MOD-AU-004）是骨架未展开的下钻重点。
+
+## ① 职责一句话
+
+对 **AI Agent 行为域**（越权写、技能风暴、审计篡改等进程内异常）做进程级熔断并把状态广播给告警/事件消费链；**其语义域与交易资金安全正交，不得当作交易 HALT 使用**。
+
+## ② 现状实测（生产触发面判定：**已接电**，且新增一条被立法的跨界传播链）
+
+| 项 | 实测 |
+|---|---|
+| 本体实码 | `src/zephyr/security/access_control/kill_switch.py`（MOD-INF-018，MATURITY=production）：9 个 detector 触发器（rapid_file_deletion / agent_spawn_storm / audit_log_tamper 等）`:125-135`；`manual_trip_global` / 单 Agent 拉闸 `:242-254`；四态 NORMAL/TRIPPED/RESET_PENDING/COOLDOWN `:49-55`；`owner_override` 标记 `:65-66`；`reset()` `:300-318`（注释声明"requires owner approval"，**代码内无权限闸**=SKEL 已记债） |
+| 本体状态持久化 | **无**（纯进程内存窗口计数，`window_seconds=60` 默认；进程崩即归零，头注 `:27-33` 自述）。AI 行为域可接受，如实注不判缺 |
+| 生产触发面（谁在拉） | ①**开机装配**：`src/zephyr/trading/boot_hooks.py:684` 调 `_init_kill_switch_orchestrator()`（定义 `:595-623`），交易进程每次启动即 `get_orchestrator()` 单例化并注册"系统级 + 4 套域级"开关（`kill_switch_orchestrator.py:729-735`，注释标 A3 接线/（该件注释自述为 boot_hooks 启动链 A3 接线并由既有裁定背书；裁定号本簿只作转引不落数字，登记状态未独立核验，复核真源=`ruling_registry.yaml`，交总指挥机械核））②**事件链消费探针（在产，三处）**：`ai_layer/intake/intake_events.py:128-133`、`ai_layer/scheduling/scheduling_events.py:250`、`ai_layer/comparator/compare_events.py:199`——三处 journal 消费前 `probe_kill_switch`，不可达即 `stop_reason=kill_switch_probe_error` 且**零消费**（fail-closed）③**告警**：`data/alert_webhook_dispatch.py:362`（触发源二：非 normal→外发告警）④**红线域级联**：`ai_layer/redline/session_env_guard.py:5,26`（SEV-3 密钥泄漏候选→`record_event` 进原生级联）；`ai_layer/redline/sev_router.py:161,165`（SEV 路由，**只出"建议"字段不调 trip**，即 route 本身不动开关） |
+| **误用面实测（本块靶心，三处实锤）** | ①**代码级联（有意立法）**：`_trip_system:556-567` 向 `supports_global_trip=True` 的域广播 `adapter.trip("")`，`_TradingSwitchAdapter.trip("") :174-176` 遍历 `KillSwitchLevel` 逐个 `trigger(level)` → 一次"AI 行为域全局事故"拉闸=**交易五级熔断物理全触发 + 各自落盘影子**（依据 15 号文 §3.4 收敛规则④，`:27-31` 头注）②**日度门读错对象**：`strategy_pipeline/daily_gate_snapshot.py:374-381 _collect_l5` 把 `get_kill_switch()`（本件，MOD-INF-018）当作 L5"熔断"层读，读失败还折算 `conservative_treatment="tripped"`→编排器判 no_trade；同函数 `:382` 却把真正的组合熔断级位（MOD-RK-049）硬编码为 absent——**同一个 L5 里"AI 行为闸当熔断、交易熔断当缺席"**（设计蓝图出处=`docs/_working/trading_vision/2026-09-16-daily-orchestrator-blueprint.md:110` L5 行）③**宪法入口歧义**：`AGENTS.md` §7 速查表把 KillSwitch 列为"熔断"入口（SKEL 已记，本簿补 ①② 两处实码后严重性上升） |
+| 生产事件实证 | 留痕件=`.runtime/audit/kill_switch_orchestrator.jsonl`（`kill_switch_orchestrator.py:287,693-723`）。本班只读取数：**14 行、全部 `action=trip`、`level=domain`、`scope=trading`、`approver=""`、reason 仅 `redteam-probe`(2) / `rb-cross-process`(12)，时间 2026-09-18/19，零 reset 行** → ①生产/演练侧确有真实拉闸（对交易域！）②**演练后无人经编排器复位**（复位链留痕不闭环）③`approver` 全空 ⇒ "复位须 Owner 批准"在既成记录里无从体现 |
+| **新发现：跨界传播已被立法**（骨架无记载） | `kill_switch_orchestrator.py:544-579 _trip_system`：拉系统级后**向所有 `supports_global_trip=True` 的域广播 `adapter.trip("")`**；`_TradingSwitchAdapter`（`:160-191`）`supports_global_trip=True`，其 `trip("")` 分支 `:174-176` **遍历 `KillSwitchLevel` 逐个 `trigger(level)`** → 结果：一次"AI 行为域全局事故"拉闸 = **交易五级熔断全部物理触发 + 各自落盘影子**（`trading_kill_switch.py:119-127` 落盘钩子）。设计依据=15 号文 §3.4 收敛规则④（`:27-31` 头注），**属有意立法不是事故**；但它把"禁误用作交易熔断"的边界从"文档约定"改写成"代码级联"，风险方向反转：AI 行为域误报（如 agent_spawn_storm 计数窗口抖动）可经此链造成真实 HALT，且解除要走 orchestrator.reset 反向链 |
+| 复位面实测 | 编排器 `reset()` `:393-430`：**仅校验 `approver` 非空字符串**（`:399-406`），无 RBAC/凭据/签名；`_reset_system` `:604-639` 先复位全域型域级开关再复位系统级 → 任何能 import 本件的调用方传 `approver="anything"` 即可**一次解开交易五级全部熔断 + 落盘影子**。系统级本体 `reset()` 同样无权限闸 → 复位权限闸缺口从"两套各缺"升级为"编排器一处可全解"（L08-C13，与 SKEL L08-C05 同批施工） |
+| 查询面实测 | `is_tripped()` `:479-496` 捕获异常后 **`return False`**（注释自称"查询面 fail-open"）→ 开关本体异常/导入失败时对外判"未熔断"。与 `check_consistency()` `:498-531`（异常判 inconsistent）语义不一致：一致性检查 fail-closed、实时查询 fail-open，两口径并存是新增缺陷候选 |
+
+## ③ 六向台账
+
+| 向 | 台账（本层新增以 ★ 标） |
+|---|---|
+| 上游 | detectors 域 9 触发器事件（`kill_switch.py:125-135`）；★ `redline/session_env_guard` SEV-3 候选 `record_event`；★ `governance/resilience_governance/emergency_track_guardian`（BRK-078"保命动作唯一入口"，头注 `:6,12,39` 声明零 import 任何开关、只经 `route_incident`）；★ `autonomy_core/autonomy_level_registry.py:5,32`（越级熔断信号委托本件，MOD-AU-001/002 互引）；人工 `manual_trip_global`（`:242-254`）；★ 响应策略层 `killswitch_response_levels`（MOD-AU-004，level_1/2/3 → `route_incident`，`boot_hooks.py:618-623`） |
+| 下游 | 告警外发（`alert_webhook_dispatch.py:362`）；三条 journal 消费停摆（intake/scheduling/comparator）；★ **交易五级熔断（经 `_trip_system` 传播）**；★ rollback / capacity / skills 三域开关（`kill_switch_orchestrator.py:136-256` 适配器；skills 与 rollback `supports_global_trip=False`，全域传播时被 skipped）；Agent RBAC（`tests/agent_rbac/test_kill_switch_agent_rbac.py`） |
+| 算法/机制 | 窗口计数 + 阈值（60s 窗）→ 四态机；★ 两级编排 + 适配器模式（编排器**不持态**，`:11` INVARIANT：编排器故障则各开关独立可用=fail-open 分散态）；★ 收敛路由 `route_incident` `:432-475`：funds/capital/trading→**交易级先行、失败才系统级兜底**；codebase/session/repo→系统级；domain+target→域级；global→只拉系统级（+传播）；★ 支配语义：系统级 TRIPPED 时域级查询一致返回 True（`:489-490`）、且禁止单独复位域级（`:650-651`） |
+| 后端 | 进程级单例 `get_orchestrator()`；★ lazy import 五套开关、单套导入失败不阻断其余（`:317-354` 返回 failures 表，仅 WARNING）；★ 审计句柄常驻 + `close()` 显式释放（`:533-540`，探针/测试场景）；写盘 `open(...,"a",buffering=1)` 行缓冲 |
+| 前端 | **未见消费实证**：风险仪表盘 / 告警面板是否呈现"系统级 KillSwitch 四态 + 编排器一致性报告"未查（`src/zephyr/frontend/dashboard/app_panel.py` 未 grep，列入 L08-C16）；owner_override 标记的人工接管入口缺位（同 SKEL M-55 债） |
+| 数据字段 | 内存态：`KillSwitchState` 四态、`owner_override`、事件窗口；★ 磁盘留痕（16 号文 §4.2 P0-1 统一事件 schema，`SCHEMA_VERSION="1.0"`、`source_domain="access_control"`、字段 `event_type/threat_category/severity/session_id/evidence{tripped,skipped,errors}/action/level/scope/success/reason/approver`，`:696-716`）；★ 落盘位 `.runtime/audit/kill_switch_orchestrator.jsonl`、`.runtime/audit/killswitch_response_levels.jsonl`（MOD-AU-004 同法，`:142`）——**均非 DB 表**，无物化/无复盘消费（RSK 全景 L08-C06 同源） |
+
+## ④ 缺口清单（本层新增，SKEL 已立项者引用不重复）
+
+| # | 缺口 | 证据 | 判级 |
+|---|---|---|---|
+| L08-C12 | 系统级→交易全域传播缺资金域门位：AI 行为域误报可造成真实交易 HALT，无"资金影响须二次确认"闸 | `kill_switch_orchestrator.py:556-567` × `:174-176` | P1（Owner 裁定：一致生效是否应排除 trading，或传播前置资金影响裁决） |
+| L08-C13 | 编排器复位仅"approver 非空字符串"，一次可解全部交易五级+系统级；无 RBAC/凭据 | `:399-406`、`:604-628` | P1（与 L08-C05 同批，纪律代码化零新增） |
+| L08-C14 | `is_tripped` 查询面 fail-open 与 `check_consistency` fail-closed 双口径并存：开关异常时对外报"未熔断" | `:479-496` vs `:498-531` | P2（明确统一为 fail-closed 或加降级旗） |
+| L08-C15 | 五套开关"只编排不持态"= 无跨进程/跨日熔断视图；编排器无状态落盘（只有动作 jsonl） | `:11` INVARIANT + `:287` | P2（并入 L08-C06 物化表设计） |
+| L08-C16 | 生产事件实证未取：`kill_switch_orchestrator.jsonl` 行数/最近动作、dashboard 消费面、MOD-AU-004 三级映射正文、15 号文 §3.4 全文 | 本班未读 | 挖掘债（非阻断） |
+| 引用不重复 | SKEL RSK-1⑥：宪法 §7 速查表把 KillSwitch 列为"熔断"入口的**文档面误导风险**（现由编排器级联部分"洗白"为有意设计——文档需按 §3.4 改写，否则读者仍以为纯 AI 行为域）；reset 权限闸本体缺口；纯内存无持久化 | `AGENTS.md` §7 + `kill_switch.py:27-33` | 已在账 |
+
+## ⑤ 自审闸三态裁定
+
+**MINING**（骨架判 SEALED，本班下钻新发现编排器层+传播链后**主动降级为 MINING**——新组件未读尽是事实不是态度）。
+未读指针清单（MINING 债）：
+1. `docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/15_autonomy_boundary_risk.md` §3.4/§4.1-S0.3 全文（收敛规则立法原文）；
+2. `killswitch_response_levels.py`（MOD-AU-004，488+ 行）正文：level_1/2/3 → route_incident 的实际映射表与 `render_killswitch_md()` 产物真源；
+3. `emergency_track_guardian.py`（BRK-078）正文：什么事件自动触发保命动作（决定"AI 行为域误报→交易 HALT"的现实概率）；
+4. `kill_switch.py` 九 detector 阈值实现正文（窗口计数与 auto-spawn 风暴判据）；
+5. `docs/03_modules/_domain_autonomy_core/algo_flow/kill_switch_orchestrator.yaml`（[ALGO_FLOW] 外部件）；
+6. `.runtime/audit/kill_switch_orchestrator.jsonl` 生产行数与最近动作（只读，禁写）。
+
+## ⑥ 挖矿日志
+
+- 起手 `../SKEL.md` 全文 → 定位骨架未展开的下钻面（编排器层）。
+- Grep `src/` 全仓 `access_control.kill_switch|KillSwitch` → 命中 `autonomy_core/kill_switch_orchestrator.py`、`ai_layer/redline/*`、`ai_layer/scheduling|comparator` 探针（后三族骨架台账缺记）。
+- Grep `rebuild_from_disk|_rearm_kill_switches_from_disk` → 交叉确认 RSK-2 接线已落地（另簿）。
+- Read `kill_switch_orchestrator.py` 全文（747 行）→ 提取 `_trip_system` 传播链、`route_incident` 四类路由、approver 校验强度、双口径查询面。
+- Grep `get_orchestrator|route_incident|manual_trip_global|is_global_tripped` → 确认 `boot_hooks.py:684` 开机接线 + MOD-AU-004/BRK-078 两个消费方。
+- 纪律遵守：全程只读；未触发任何 trip/reset/route_incident（含 sim）；未跑测试；无 git 写。
+- 外部对表：**未做**（按车道纪律，全部子块落盘后统一一轮；候选对表面=机构"kill switch"分级与人工双签实务，见 `../SKEL.md` §5 已登记 T. Rowe Price / Universal-Investment 条目）。

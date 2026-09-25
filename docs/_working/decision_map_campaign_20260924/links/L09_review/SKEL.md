@@ -4,7 +4,6 @@ title: L09 复盘与监控 · 挖干作业簿（SKEL）
 mining_session: st-l09-review（链路 L09 挖矿班，2026-09-25）
 skeleton_source: ../../09_link_skeletons.md（环节 9 · 623-691 行）
 status: MINING（收口清单见 §三态）
-doc_type: log
 ---
 
 # L09 · 复盘与监控挖干作业簿

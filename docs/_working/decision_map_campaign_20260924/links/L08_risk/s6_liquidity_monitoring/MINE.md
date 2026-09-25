@@ -1,0 +1,66 @@
+---
+ttl: task_bound
+title: RSK-6 MINE
+---
+
+# RSK-6 流动性监控 BM-RC-04-E + 37 号危机协议 — 深挖簿
+
+> 车道 L08 风控 · 子块 6 · 班次 st-qmine-20260925 · 只读挖掘。
+> 起点真源=`../SKEL.md` §2 RSK-6（其④"下游消费=MOD-L04-001"与③"LEVEL_3 逃生指令归 MOD-RK-21"两条由本簿实测改判）。
+
+## ① 职责一句话
+
+用纯机制零参数的结构性指标（Amihud 非流动性、量缩比、价差、卖压、涨跌停失效）识别"卖得掉吗"这一生存问题，并在危机级别上用滞后-恢复双阈值决定"停开仓 / 只平仓 / 逃生"。
+
+## ② 现状实测（生产触发面判定：**三腿分岔——恢复门禁腿已接电、盘中编排腿未接电、日频监控腿无活消费者**）
+
+| 件 | 实码 | 生产触发面实测 |
+|---|---|---|
+| `risk/core/liquidity_monitor.py`（MOD-RK-048，747 行，Amihud `ILLIQ_d=\|r_d\|/V_d` + 量缩比 `V_t/MA(V,N)`，`:8` INVARIANT "纯机制零参数"，`:79` A 股经验阈值） | **无活消费者**：头注 `:5` 声明的两个消费方，第一个 `MOD-L04-001 DefaultRiskManagerOrchestrator` **全仓零实例化=永不可达**（铁证：`tests/risk/test_risk_signal_consumer_wiring.py:164-165` "该编排器…全仓零实例化 → 永不可达"；其 G2 流动性检查代码在 `default_risk_manager_orchestrator.py:230-244` 确实写好了却无人调用）；第二个声明写作 `MOD-RK-09(AshareSystemicRiskDetector,…)`——**模块号与类名张冠李戴**（MOD-RK-09=ashare_stop_loss_engine，AshareSystemicRiskDetector=MOD-RK-10）→ 契约头本身带错登记（L08-C38）。真实可达消费仅两处：`liquidity_crisis_scenarios.py:55 compute_stress_exit_days`（被月度演练脚本调）+ `frontend/services/dashboard_feeds.py:67`（面板 BFE-30，`live.html:287` 自述"当前 mock 渲染"） | **覆盖未接电**（盘中/风控主链无消费点） |
+| `risk/core/liquidity_crisis_manager.py`（MOD-RK-21，787 行；**注意：无同名类**，它是六组自由函数：`compute_sell_pressure:320 / compute_bid_ask_spread:360 / detect_limit_status:389 / resolve_effective_spread:444 / check_recovery:526 / compute_ipo_liquidity_drain:578 / run_intraday_liquidity_check:653`） | **逐腿判定**：①**恢复门禁腿=已接电**：`ex_core/risk_layer_orchestrator.py:177-180` import `check_recovery` + `LiquidityRecoveryState`，`:579 self._systemic_state = LiquidityRecoveryState()`，`:1039/:1085/:1095` 降级机门禁调用并注记"复用 MOD-RK-21，真源唯一"（hysteresis 半阈值 + 最短持续门控，`:532` 注 LEVEL_3 的 30min 已覆盖 Kill Switch 冷却期）②**盘中编排腿=未接电**：`run_intraday_liquidity_check`（§3.8 单遍编排）在生产侧零调用，仅 `risk/core/__init__.py:30,63` 导出 + `tests/risk/core/test_liquidity_crisis_manager.py:39-48`；其内部 `:714-716 escape_directive = detector.build_escape_directive(alert)` 与 `:738 check_recovery(...)` ⇒ **前②腿一断，②③④⑤号算法（卖压/价差/涨跌停失效/逃生）全部连带惰化** ③**IPO 前瞻腿=未接电**：`compute_ipo_liquidity_drain` 仅被 `akshare_provider.py:9441` 的 docstring 声明为未来消费者（"37号 §3.2a 消费 list_date+…"），代码零调用 | **部分已接电（仅 check_recovery 与状态类）** |
+| `risk/core/liquidity_crisis_scenarios.py`（MOD-RK-047，417 行，四情景族静态冲击） | **已接电（演练口径）**：`scripts/backtest/crisis_drill_monthly.py:473-496 run_liquidity_crisis_check → run_liquidity_crisis_family(positions)`，该脚本头注 `:13` 明写目的="第三口径=流动性危机四情景族静态冲击（**治'产而不消'**）" | **已接电（月度演练，非盘中）** |
+| `intelligence/event_ipo_siphon.py`（同域另一件） | `compute_ipo_siphon_coefficient:63` + `ipo_siphon_position_adjustment:95`，头注 `[CONSUMERS] 事件驱动 sleeve（IPO/再融资事件类仓位策略）；37_liquidity_crisis_protocol §3.2 IPO 流动性抽离预警维度`；与 MOD-RK-21 的 `compute_ipo_liquidity_drain` **同一物理问题两套实现**（一在 risk 域一在 intelligence 域） | **覆盖未接电 + 同域重复簇**（L08-C37） |
+| `LEVEL_3 逃生指令归属（改判）` | 骨架 RSK-6③ 记"MOD-RK-21 …LEVEL_3 逃生指令"。实测：`build_escape_directive` 定义在 **MOD-RK-10 `ashare_systemic_risk_detector.py`**，由 orchestrator `:1062 directive = detector.build_escape_directive(alert)` 在**系统性风险**分支调用；MOD-RK-21 只是在自己的盘中循环里转调它（`:716`）→ 逃生指令真源=系统性检测器，流动性侧无独立逃生实现 | 归属更正（防 L08-C04/RSK-7 施工打错件） |
+
+## ③ 六向台账
+
+| 向 | 台账 |
+|---|---|
+| 上游 | OHLCV 日频（CTR-006）→ Amihud + 量缩比；盘内买卖价差 + 卖盘压力（`compute_bid_ask_spread/compute_sell_pressure` 入参：竞价/盘口）；涨跌停状态（`detect_limit_status`，跌停 spread=1.0 / 涨停=None）；S36（成交量+持仓+行情）；S43 `etf_nav` 折溢价 + S45 期货对冲池（`ulib3b_supply_relationship_ledger.md:97,99`，**14 号文§二#18：0 分析消费**）；IPO 日历（`akshare_provider` `ipo_calendar` capability，巨潮 `stock_new_ipo_cninfo`，DS-105） |
+| 下游 | 现役：orchestrator 降级门禁（`check_recovery` → 恢复目标级）、`_engage_kill_switch` 单一仲裁点（LEVEL_3 经系统性 detector → 同一仲裁点，`:8/:40/:116` INVARIANT）；`systemic_risk_alert_state_machine.py:182,207 liquidity_crisis: bool` 入参（组合侧五级把流动性危机当一个布尔输入，**上游口径注记"MOD-RK-048/21"**）；设计性死路：`DefaultRiskManagerOrchestrator` G2 流动性检查（件永不被实例化）、`run_intraday_liquidity_check`；前端 BFE-30（mock）；37 号联动=35 号 KILL 态禁 37 号恢复（orchestrator INVARIANTS `:8`） |
+| 算法/机制 | Amihud 单证非流动性 + N 日均值；量缩比（纯机制零参数，阈值= A 股经验值集中登记于 `:79`）；`resolve_effective_spread`（涨跌停失效处理：跌停=1.0、涨停=None 不可退出）；`check_recovery` 滞后-恢复双阈值 + 最短持续时间门控（§3.6 恢复条件矩阵，`:1085` 注释指向）；危机级别 LEVEL_1→0 恢复须过门控；`compute_ipo_liquidity_drain`/`ipo_siphon_coefficient` 前瞻抽离；**已被 memo 明文拒绝的能力**：实时 tick 级 spread 监控（§4.2"过度工程"）、盘口深度 LOB（§4.5"MVP 延后"）、VPIN 订单流毒性（§4.6"过度工程"）、Hawkes/Crumbling Labeler 仅"评估"（§3.7）、Karimi 流动性-信贷联合破产边界"暂缓 Phase 3"（§4.7） |
+| 后端 | orchestrator 内 `LiquidityRecoveryState()` 纯内存实例（`:579`）——**危机态跨重启不持久化**（与 RSK-2 影子同病，且本件无磁盘影子）；`check_recovery` 为纯函数（输入 `RecoveryCheckInput:478` + `_validate_recovery_input:507` 校验）；场景族经 `StressScenario` 契约（MOD-RK-12）复用压力测试引擎；`compute_stress_exit_days`（退出天数=流动性对清算可行性的约束） |
+| 前端 | `dashboard_feeds.py` BFE-30 `query_liquidity_status`（`live.html:287` 与 BFE-26/31 同批"均 prod，当前 mock 渲染"）；流动性危机级别在 warroom 卡片无独立位（系统性风险卡承载） |
+| 数据字段 | `MarketLiquiditySnapshot:178`、`LiquidityMetrics`（CTR-P1-018）、`IPOEvent:253`/`IPOLiquidityDrain:268`/`IPODrainLevel:112`、`LimitStatus:102`、`LiquidityLoopResult:285`（含 `recovery_target` + `escape_directive`）、`RecoveryCheckInput:478`；`LiquidityRecoveryState` 内 `enter_crisis/exit_crisis/elapsed_minutes`（`:224-245`，**分钟级时钟依赖调用方传 now**）；**缺**：危机态无落盘、无 S43/S45 消费字段绑定（折溢价与期货池"字段在"但零分析消费——**"字段在"≠"数据可得"**：折溢价需 NAV+市价同日对齐、期货池需换月与保证金口径，两表 freshness 未做风控可用性核验） |
+
+## ④ 缺口清单（本层新增）
+
+| # | 缺口 | 证据 | 判级 |
+|---|---|---|---|
+| L08-C39 | **盘中流动性监控整腿无生产调用者**：`run_intraday_liquidity_check` 及其上游四算法（卖压/价差/涨跌停失效/逃生转调）在生产侧全部惰化；13 号文 TRD-A07"缺独立盘中 runner"在本块的**具体形态**就是这一个函数缺一个事件源调用 | `__init__.py:30,63` 导出 + 零调用；orchestrator 只 import `check_recovery`/状态类 | **P0 候选**（A 股极端行情下"卖不掉"比"亏得多"更致命）；修法守红线 3（事件触发） |
+| L08-C40 | 危机态纯内存不持久化：`LiquidityRecoveryState()` 每次进程起即归零 → 最短持续时间门控（30min）在重启后被绕过（重启=门控时钟清零） | `risk_layer_orchestrator.py:579` | P1（与 RSK-2 磁盘影子同族，可并案 L08-C06 事件流物化） |
+| L08-C37 | IPO 流动性抽离**同域重复簇**：`risk/core/liquidity_crisis_manager.compute_ipo_liquidity_drain` vs `intelligence/event_ipo_siphon`（系数+仓位调整），两套实现同一物理问题、均零生产消费 → w5_1"同域重复簇→收敛唯一"对象 | 两文件头注 + 消费实测 | P1（内收窗口批次，禁永久双活） |
+| L08-C38 | 契约头错登：`liquidity_monitor.py:5` 把 MOD-RK-09 标为 AshareSystemicRiskDetector（应 MOD-RK-10），且首列消费者是不可达件 MOD-L04-001 → [CONSUMERS] 应改"无现役"+ 诚实声明（模板=`var_intraday_recalc.py:6`） | `:5` + `test_risk_signal_consumer_wiring.py:164-165` | P2（治理面，但会误导施工） |
+| L08-C41 | **37 号 memo 的"拒绝清单"与终局量尺冲突**：实时 spread / LOB 深度 / VPIN / Hawkes 均以"过度工程/MVP 延后"被拒（§4.2/4.5/4.6），§5"上限定义"与 §5.3"为何这是上限而非妥协"构成当年封矿论据 → 按本campaign 量尺（Owner 一人 + 100% AI 自制）**须重开评估**，尤其"跌停无法卖出"情形下的逃生可行性只靠日频 Amihud 不够 | `37_liquidity_crisis_protocol.md` §4/§5 | P2（裁定材料：不即时采，登记为"上限复审项"） |
+| 引用不重复 | SKEL RSK-6⑥（S43/S45 零分析消费、37 号 memo 全文对表、BM-RC-04-E runner 缺位=TRD-A07）；本簿把"runner 缺位"精确到函数名并给出归属更正（逃生指令真源=MOD-RK-10） | — | 已在账 |
+
+## ⑤ 自审闸三态裁定
+
+**MINING**。骨架 §3 三项 MINING 债：本簿清空"三件模块正文结构面"（公开 API 全表 + 归属改判 + 消费实测），仍欠：
+1. 37 号 memo 全文逐节对表（本簿只取 TOC + §236/:797 关键行）：§3.5 A 股涨跌停流动性失效处理全案、§3.6 恢复条件矩阵、§3.7 前沿算法评估、§6 待裁定（暂缓项清单）、§8.4 外部参考（含 `2604.20949` arXiv 线索，见 `scripts/grep_coverage.ps1:6` / `check_coverage.ps1:9` 的关键词覆盖闸）；
+2. `liquidity_monitor.py` 正文 747 行（`:408` 起 assess 实现、阈值表 `:79`、`to_risk_check_result`、`compute_stress_exit_days` 口径）；
+3. `liquidity_crisis_scenarios.py` 四情景族参数（`run_liquidity_crisis_family` 与 `ashare_systemic_risk_detector` 阈值口径的耦合，头注 `:4` 已声明依赖）；
+4. `crisis_drill_monthly.py` 流动性检查段（`:473-520,596-606`）是否产出可回看的演练台账；
+5. `docs/03_modules/_domain_risk/liquidity_monitor/`、`.../algo_flow/liquidity_monitor.yaml` 蓝图与实现一致性。
+禁封矿：本块是"卖得掉吗"这条腿，A 股流动性风险史（2015 千股跌停、2016 熔断、2024 微盘流动性踩踏）决定其终局必需性；现状零盘中消费恰是缺口不是结论。
+
+## ⑥ 挖矿日志
+
+- Grep src+scripts `LiquidityMonitor|LiquidityCrisisManager|build_escape_directive|ILLIQ|LIQUIDITY_CRISIS`（45 命中）→ 定位三条腿的装配/导出/mock/演练消费 + `trading/trigger_registry.py:282 "RISK_LIQUIDITY_CRISIS"` 触发器登记（事件面有登记位）。
+- Bash 只读：三件行数（747/787/417）+ **37 号 memo 全 TOC**（§3.1-3.8 决策七条 + §4 替代方案七条 + §5 上限定义 + §6 待裁定）→ 支撑 L08-C41。
+- Grep orchestrator 内 `liquid|Liquidity|crisis_manager` → 得 `:177-180` 仅 import `LiquidityRecoveryState` + `check_recovery`、`:579` 状态实例、`:1062` 逃生指令调 detector、`:1085-1095` 降级门禁复用 MOD-RK-21"真源唯一"。
+- Grep 全仓 `LiquidityCrisisManager|…|systemic_detector` → 证实**无同名类**（模块 ID 冒充类名的读码陷阱）+ 挖出 `candidate_module_registry.yaml.bak_pre_one_question:2214-2229` 的 **MOD-RSK-010 幽灵节点**历史（`src/zephyr/risk/ashare_systemic_risk_detector.py` 旧路径不存在，前缀 RSK 非规范 RK）→ 与 RSK-7 的路径归属直接相关（已跨记）。
+- Grep `run_intraday_liquidity_check|check_recovery|compute_ipo_liquidity_drain` → 决定性：盘中编排腿零调用、恢复门禁腿在产、IPO 前瞻零调用；并发现 `event_ipo_siphon` 重复簇（L08-C37）。
+- 顺带取证（零额外调用）：`check_recovery` 在 `liquidity_crisis_manager.py:738` 被自己调用（盘中腿内部），故盘中腿断=两腿同断。
+- 纪律：只读；未跑演练脚本；未起行情作业；无 git 写。
+- 外部对表：未做（留统一轮；本块候选=Amihud (2002) 原始定义与 A 股成交额口径适配、Bowen-Jacobson 式跌停流动性失效处理、VPIN 系列（memo 已拒，须按 §5 上限复审重评）；**A 股适配闸**：Amihud 用成交额而非股数、涨跌停不可成交必须显式建模）。

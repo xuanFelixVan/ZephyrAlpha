@@ -1,0 +1,83 @@
+---
+ttl: task_bound
+title: RSK-8 MINE
+---
+
+# RSK-8 质押否决器 + S41 解禁压力（设计态零消费）— 深挖簿
+
+> 车道 L08 风控 · 子块 8 · 班次 st-qmine-20260925 · 只读挖掘（重点=任务书要求的"实测谁在调用、把消费面挖干净"）。
+> 起点真源=`../SKEL.md` §2 RSK-8（其③"否决器未建码"与⑥"S41 解禁压力逻辑零码"两条由本簿**实测改判**）。
+
+## ① 职责一句话
+
+把 A 股特色的两类股权事件风险——**大股东质押（平仓链传导）**与**限售解禁（供给冲击）**——变成可裁决的买入否决/减仓提示，并让它们吃上已有的双时态数据载体。
+
+## ② 现状实测（生产触发面判定：**否决器已建码但零生产装配；入参字段无生产者；质押载体已建库但 src 零消费**）
+
+### 2.1 解禁侧——骨架"逻辑零码"判错，实为"**码在信号层、料没人喂**"
+
+| 面 | 实测 |
+|---|---|
+| 实码（否决器本体） | `src/zephyr/signal_fundamental/negative_veto.py`（**MOD-SIG-137**，TDM-L3-04 负面否决器）：六项一票否决=业绩暴雷/立案调查/大股东减持/**解禁>5% 流通盘**/商誉减值风险/配股圈钱 + 黑名单；INVARIANTS `:8`"命中任一即 vetoed=True、负面清单优先级高于一切加分项、**不短路——返回全部命中原因（可审计）**、解禁阈值默认 5% 流通盘 config 可调、**事实缺失(None) 不算命中（证据不足不否决，由上游数据完整性负责）**、同输入必同输出(frozen)"；`_UNLOCK_RATIO_DEFAULT=0.05` `:39`、`NegativeFacts.unlock_ratio:66`、判定 `:112`；ERROR_CONTRACT `:13` 解禁比例/商誉比率越界→`NegativeVetoError`（fail-closed）；高应计第七检已按既有裁定落码为 `high_accrual` 字段（`negative_veto.py:70` 注记，见 `docs/_working/align_dirty/working_cleanup_r2.md:379-381`） |
+| 建码史与测试 | `docs/_working/2026-09-09-tdm-missing-modules-construction.md:107,187`：commit `48c913a8`、18 测试绿、`VetoVerdict` 因**撞名**改名 `NegativeVetoVerdict`（撞名对象即风控层 `risk_veto_engine` 的 Veto 系列——两套否决器同处一仓的直接证据）；`2026-09-11-tdm-morning-review-report.md:60`：C7 在册、六条规则 `STR-MULTIFACTOR-034~041`、入边 L3-03-3+L2-09-2 / 出边 L3-05/L3-12（**图上有边，代码无边**） |
+| 生产装配 | **零**：`src/`+`scripts/` 内 `apply_negative_veto` 的调用者不存在（仅 `signal_fundamental/__init__.py:76` re-export）；`docs/_working/trading_vision/2026-09-16-skeleton-coverage-audit.md:108` 判 TDM-E-L3-04=**"覆盖未接电"**（与 RSK-3 的"已接电"误判不同，这条判对了） |
+| 入参生产者 | **零**：`unlock_ratio` 全仓仅出现在 `negative_veto.py:66,112` 两处（定义+判定），**无任何代码把 `share_unlock`/`restricted_shares` 表行映射为 `NegativeFacts.unlock_ratio`** → 否决器即使被调用，解禁检也永远走 `None`→不命中分支 |
+| 下游设计（未落地） | 候选池有真源列：`schemas/categories/market/market_stock_candidate_pool.py:37,80` `vetoed UInt8 / veto_reasons`，注释"否决**只标记不剔除**（一票否决裁决在上游 negative_veto）"；L3-08 聚合器设计稿 `docs/_working/2026-09-11-l308-aggregator-construction.md:47,57,119` 定义 `VetoMark.from_veto_verdict(verdict, symbol)` 留痕注入 → **链的下游三段（列 + 留痕姿态）都已定义，缺的正是中间那一脚调用** |
+
+### 2.2 质押侧——数据载体比骨架描述的更完整，消费面同样为零
+
+| 面 | 实测 |
+|---|---|
+| 产供链 | `data/implementations/akshare_provider.py:3868-3873` `ak.stock_gpzy_pledge_ratio_em`（东财质押比例）→ CH `c3_fundamental.equity_pledge_detail/summary`；周更 freshness 由 backfill_checker 管 |
+| ★ 双时态载体（骨架未记） | `scripts/governance/meta_question/wo009/`：`apply_pledge_event_version_ddl.py` 部署 **PostgreSQL schema `metaq_pledge`**（新载体，幂等可重放）——主表 `pledge_event_version`（一行=一条质押公告事件的一个版本，含 `pledge_ratio NUMERIC :221`、业务区间自洽约束 `:243`）、视图 `v_pledge_event_current`（现行质押版本，`:33,281`）、`v_holder_edge_version_timeline`（**持股版本 ∪ 质押版本的统一版本流=消费者入口**，`:34,292`）、函数 `holder_versions_as_of()`（按公司取质押版本流供穿透链附标 `:271`）；源表实测 **120,628 行**（`:426`）；回填器 `backfill_pledge_event_version.py`（分片/断点续跑/幂等，B1 不变量=源 CH 只读、写侧只碰 metaq_pledge 自己的表、无 DELETE/TRUNCATE/ALTER）；复算器 `recheck_pq0072_violation.py`（判据：`announce_date<=2025-09-09` 且股东名非空，股东名去空白归一 + 6 位代码匹配） |
+| 图谱侧 | `scripts/industry_graph/apply_industry_graph_ddl.py:287-289`（2026-09-09 调研注记：**中登口径 + 2025 质押新规**，质押=股权域事件，`relation='pledge'` 行的 `evidence/weight` 列承载**预警线/平仓线/质押率**，不另加列；relation 词表 invests_in/subsidiary/shareholding/actual_control/**pledge**/**judicial_frozen**）；`scripts/entity_graph/equity_penetration.py:5,50`（CONSUMERS=信号侧"牛散跨票/同实控人联动/**质押链传导**"，设计 §5 信号用途清单，明写"质押/司法冻结是股权域事件但不是持股边"） |
+| src 消费 | `holder_versions_as_of` / `v_pledge_event_current` / `pledge_event_version` 在 `src/` 内 **零命中**；质押语义词在 src 的唯一落点=`intelligence/news_sentiment_analyzer.py:177 "质押违约"`（新闻情绪词表，非风控裁决）→ 骨架"非风控语义"结论复证成立 |
+| 治理登记异常（新） | `scripts/governance/oneoff/data_domain_audit_report_db.md:21,25,28` 把 `schemas/categories/fundamental_equity_pledge_detail.py` / `fundamental_restricted_shares.py` / `fundamental_share_unlock.py` 三张品类册的归属模块登成 **MOD-L04-001**——而 MOD-L04-001（DefaultRiskManagerOrchestrator）已被实测证明"全仓零实例化=永不可达"（`tests/risk/test_risk_signal_consumer_wiring.py:164-165`）→ **数据资产挂在死模块上**（L08-C48，待复证是否同名不同域，但报告面必须改） |
+
+### 2.3 前端面（本块唯一"活"的解禁消费）
+
+`frontend/dashboard/web/pages/calendar.html:3,27-29`（事件日历页 PIT 纪律："只显示当时已知信息，event_calendar 注册表对接后转真；公司行动=解禁/新股/财报/分红"）；`features/reglib/reg-engine.js:166` 规则卡 `RC-005 解禁高峰窗口｜解禁日±5日｜回避高解禁占比（stable, 2026-08-13）`；`features/chainmap/chainmap-company-card.js:10,210-225` **share_unlock 真实供数**（"816 万行活跃灌入 / disclosure_plan+share_unlock 个股日历"，"calendar 域点亮（遗留修复 2026-09-10）"）；反之 `features/stockq/sq-host-engine.js:44`、`features/calendar/cal-engine.js:20` 的"宁德时代解禁 1.2 亿股"是**演示数据**，`features/screener/scr-engine.js:247`/`chainmap-cluster.js:748` 记"B8 解禁（Owner 2026-09-14 全部开工）：真源=ZK.Pool（**localStorage** zk-warroom-pool）"。
+⇒ **解禁压力信号今天在系统里的唯一活路径是"人看"（前端日历/规则卡），不是"机判"（否决/减仓）**；且部分面板真源落在浏览器 localStorage，不是后端（L08-C49）。
+
+## ③ 六向台账
+
+| 向 | 台账 |
+|---|---|
+| 上游 | 质押：akshare 质押比例（周更）→ CH c3_fundamental → PG `metaq_pledge` 双时态载体；解禁：`event_calendar_filler.py`（share_unlock 入日历）+ `restricted_shares/share_change`；行业图谱 `equity_edge(relation='pledge')` 预警线/平仓线；设计锚=`docs/_working/2026-09-12-fundamental-consumption-design.md` §1 不变量④（财务安全，Piotroski 2000 依据）与 `:134,:141`（预告-实报表落差检测供 negative_veto 消费；商誉减值改**实算** goodwill/equity_incl_minority 比率+预告亏损联动） |
+| 下游 | 设计下游：candidate_pool `vetoed/veto_reasons` 标记列（只标记不剔除）→ L3-08 聚合器 VetoMark 留痕 → 选股漏斗；P-P1-04 `ashare_stop_loss_engine` 的"财报解禁禁区"四类否决线（RSK-9）；35 号协议声明的解禁前 30 日提示+压力减仓（逻辑零码）；**实测下游=零条贯通**（前端人工面除外） |
+| 算法/机制 | 六项一票否决（布尔事实 + 唯一数值阈值=解禁 5% 流通盘）；不短路、理由全量（可审计）；**"证据不足不否决"**（`None` 不命中）——与风控层 `risk_veto_engine` 的 `RULE_ERROR=否决` fail-closed **方向相反**：信号侧宽松、风控侧严格（这是有意的分层设计，但必须在仲裁序里写明，否则同一标的"信号否决不生效、风控否决生效"会互相抵消，L08-C50）；质押侧算法尚未定义（预警线/平仓线只作为图谱 evidence/weight 存在，无平仓概率/压力比模型） |
+| 后端 | 双库分工：CH（分析）+ PG（载体/版本流），`get_registry().table("fund_equity_pledge_detail")` 品类册取源（禁硬编码表名，符合 RULE-SSOT）；DDL 幂等可重放；回填分片+断点续跑；写侧无破坏性权限（INVARIANT 明写）；前端 B8 真源=localStorage（无后端表） |
+| 前端 | 事件日历（PIT 纪律声明 + 五类事件）、规则库卡 RC-005、个股链图 share_unlock 实数、自选池 B8 面板；**无质押风险面板**（质押链传导只在设计文档 §5，UI 无位） |
+| 数据字段 | 质押：`pledge_ratio`、公告日 `announce_date`、`shareholder_name`、业务起止、预警线/平仓线/质押率（图谱 relation 行的 evidence/weight）；解禁：`unlock_ratio`（**无生产者**）、`share_unlock` 明细、`restricted_shares`；候选池：`vetoed/veto_reasons`；**缺**：质押"平仓距离"派生字段（需股价+质押价+比例三源对齐，当前只有比例）、解禁"占总股本 vs 占流通盘"双口径（negative_veto 用流通盘 5%，前端文案用总股本 2.7%/流通 3.1% 混用 → 口径未真源化，L08-C51） |
+
+## ④ 缺口清单（本层新增）
+
+| # | 缺口 | 证据 | 判级 |
+|---|---|---|---|
+| L08-C50 | **双否决器并存且语义相反**：`signal_fundamental/negative_veto`（MOD-SIG-137，证据不足不否决）vs `risk/risk_veto_engine`（MOD-RK-24，RULE_ERROR=否决 fail-closed）——无互认、无优先级声明；w5_1"同域重复簇→收敛唯一"或显式分层立法 | 两文件头注 + 改名撞名史（`2026-09-09-tdm-missing-modules-construction.md:187`） | **P0 治理**（先立法后接线，否则接了就打架） |
+| L08-C52 | `unlock_ratio` 无生产者：解禁否决检永久不命中；修法=`share_unlock`+流通盘口径 → `NegativeFacts` 映射器 + 挂进选股漏斗（否决器本体已完备，零新增算法） | 全仓 grep `unlock_ratio` 仅 2 处（同文件定义/判定） | P1（**骨架 L08-C04 的"新立 VetoRule P45"方向需据此修正**：解禁检不需要新建，质押检才需要新建） |
+| L08-C48 | 数据资产归属登记在不可达模块 MOD-L04-001 上（三张品类册）；需复核是否同名不同域并改登真 owner | `data_domain_audit_report_db.md:21,25,28` + `test_risk_signal_consumer_wiring.py:164-165` | P1 |
+| L08-C51 | 解禁口径未真源化（总股本 vs 流通盘混用；否决用流通盘 5%，前端文案两种都用） | `negative_veto.py:39` vs `sq-host-engine.js:44`/`cal-engine.js:20` | P2 |
+| L08-C49 | B8 解禁监控真源=浏览器 localStorage（跨设备/回测/审计均不可得），且部分解禁展示为演示数据 | `scr-engine.js:247`、`sq-host-engine.js:44` | P2 |
+| L08-C53 | 质押→风控的**算法层缺失**（不是数据层）：预警线/平仓线只作图谱附标存在，无"距平仓幅度/强平压力比"派生量 ⇒ 若要接 `risk_veto_engine` 的 P45，先要有可裁决量 | `apply_industry_graph_ddl.py:287-289` + src 零消费 | P1（施工前置研究项；对应 `2026-09-12-fundamental-consumption-design.md` 不变量④ 的 A 股投影） |
+| 引用不重复 | SKEL L08-C04（质押否决器接线 + S41 解禁压力消接，本簿给出修正：解禁侧改"喂料"不"建码"、质押侧需先做算法）；`VetoRule` OCP 扩展点 `risk_veto_engine.py:44-45` 仍是质押落点 | — | 已在账 |
+
+## ⑤ 自审闸三态裁定
+
+**MINING**。骨架 §3 三项债清空 1 项（基本面消费设计：本簿读了 §1 之外的 `:134,:141,:161,:181` 关键条款）。仍欠：
+1. `docs/_working/2026-09-12-fundamental-consumption-design.md` 全文对表（本簿只取消费端与 negative_veto 相关段）；
+2. `negative_veto.py` 正文 `:46-111`（frozen facts + 纯函数裁决实现，六检顺序与理由拼装）；
+3. `docs/03_modules/_domain_fundamental_signal/negative_veto/blueprint.md` + `docs/03_modules/_domain_signal/algo_flow/negative_veto.yaml`（TDM 侧口径）；
+4. `metaq_pledge` 载体是否已实部署（PG 侧存在性核验须走 `DatabaseService` 只读，本簿未查库，**禁以"脚本在"当"表在"**）；`v_holder_edge_version_timeline` 的行数与 freshness；
+5. `2025 质押新规` 与中登口径的原文对表（外部，见 ⑥）+ `entity_graph/equity_penetration.py` 设计 §5 信号用途清单；
+6. L3-08 聚合器施工单（`:47-119`）与实码的差距（`VetoMark.from_veto_verdict` 是否已落码）。
+**禁封矿声明**（纪律）：本块"零消费"是**缺口而非结论**——数据面（120,628 行 + 双时态载体 + 816 万行 share_unlock 灌入）明显已跑在消费面前，量尺=终局全貌时"AI 自己会读解禁/质押并否决"是必需能力，不得以"当前 AUM 小、否决器没需求"封。
+
+## ⑥ 挖矿日志
+
+- Grep src+scripts `equity_pledge|gpzy|pledge_ratio|质押`（40 命中）→ 挖出骨架未记的 **WO-009 `metaq_pledge` 双时态载体**（DDL/回填/复算三件套 + 120,628 行实测 + 统一版本流视图）与图谱侧"预警线/平仓线放 evidence/weight 不另加列"的建模决策。
+- Grep src+scripts `restricted_shares|share_unlock|解禁|VetoRule`（40 命中）→ **决定性**：`signal_fundamental/negative_veto.py` 六检含"解禁>5% 流通盘"已建码 ⇒ 骨架"否决器未建码/逻辑零码"两处改判；同时挖出候选池 `vetoed` 真源列与 L3-08 留痕设计（链的头尾都在、中间断）。
+- Grep 全仓 `negative_veto|unlock_ratio|holder_versions_as_of|v_pledge_event_current`（30 命中）→ ①`apply_negative_veto` 在 src/scripts **零调用**（仅 `__init__` re-export）②`unlock_ratio` 零生产者 ③`metaq_pledge` 消费入口在 src **零命中** ④建码史/改名撞名/规则在册图上出边已画（`2026-09-11-tdm-morning-review-report.md:60`）⑤覆盖审计 :108 判"覆盖未接电"（正面复证）。
+- 前端面顺带取证（零额外调用，同结果集）：calendar PIT 纪律、RC-005 规则卡、chainmap share_unlock 实数、B8 localStorage 真源、宁德时代解禁演示文案。
+- 纪律：只读；**未连库**（metaq_pledge 存在性判为"待核"而非"已在"，避免"脚本在=表在"的假绿）；未跑回填/复算脚本；无 git 写；未触碰熔断。
+- 外部对表：**未做**（留统一轮）。本块候选清单（已记待办，未搜）：①2025 年交易所质押新规与中登周更口径（发布方=沪深交易所/中证登，年份 2025）②质押平仓线实务（150%/160% 履约保障比例区间）③解禁供给冲击实证（A 股大小非解禁与后续收益的负相关研究，需 ≥2 独立来源 + 年份）④A 股适配闸：解禁"占流通盘 vs 总股本"双口径、质押比例分母（持股数 vs 总股本）在各源的定义差异。

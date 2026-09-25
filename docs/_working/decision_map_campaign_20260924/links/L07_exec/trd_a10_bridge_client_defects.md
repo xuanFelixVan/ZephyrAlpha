@@ -1,0 +1,102 @@
+---
+ttl: task_bound
+title: TRD-A10 桥客户端两缺陷施工案卷（LANE-BUILD · 2026-09-25 夜）
+---
+
+# TRD-A10 桥客户端两缺陷·施工案卷
+
+> 真源案卷=13 号文环节④「已知缺陷与断链」第 1 条；判据=17 号文§四（口径未改）。
+> 车道=LANE-BUILD（st-qmine-20260925 统筹）；本卷只出证据与终态，不代签 Owner。
+
+## 一、缺陷定位（先核 HEAD 与工作区差）
+
+| 面 | 位置 | HEAD/工作区状态 |
+|---|---|---|
+| 沙箱哑执行器（写侧，两缺陷真身） | `E:\qmt_bridge_sim\ZEPHYR_EXEC_v16.txt`（366 行）/ `E:\qmt_bridge\ZEPHYR_EXEC_REAL.txt`（v14 方言） | **不在仓内任何版本控制面**——全仓 grep `_mark_sending`/`_watch_orders` 只命中两份文档（blueprint + 93 号备忘），仓内零源码 |
+| 脑侧 Broker（读侧） | `src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py` | 工作区含 st-sim-launch-20260923 的 `read_only`+sysid 回填修复**未落 HEAD**（断裂态，LANE-LAND 须整文件落地并核归属） |
+| 撤单路由 | `src/zephyr/ex_core/order_manager.py:477-483` | 同上：cancel 改传本地 id 的修复在盘未落 HEAD |
+
+**断裂态结论**：两缺陷此前无人修过（HEAD 与工作区都没有终态原子性/柜台确认逻辑）；09-23 交付报告 §4 所称
+"containment=客户端自身 #DONE 终态标注原子改写指令行"只覆盖了后台线程路径（线程周期末重写
+`#SENDING→#DONE`），主线程 handlebar 的入口快照整文件回写仍在，故竞态未闭。
+
+## 二、病灶机制（逐行读 v16 所得）
+
+缺陷①隔夜单静默丢弃：`_watch_orders` 线程路径 `_mark_sending` → `_process_line`（盘外
+`passorder` 不抛异常）→ **立即**把该行改写成 `#DONE` 并 `_ack(...,SENT,...)`；`#SENDING→#DONE`
+在主线程里另有"柜台 remark 可见性"判定（`oid in remarks`），但线程路径绕过了它。结果=本地
+#DONE+ack(SENT)，柜台零收录，脑侧订单永远停在 SUBMITTED（`_apply_acks` 只处理 FAIL）。
+
+缺陷②submit→cancel 竞态重提交：主线程 `handlebar` 在周期入口 `lines = _read_orders()`，
+中途 `_mark_sending()` 另起一次读-改-写、`_process_line()` 下发并写 ack，周期末
+`_rewrite(lines)` **把入口快照整文件回写**——线程刚落的 `#DONE` 被抹回裸行；
+`bare_since` 又在下发后被 pop，于是 5 秒后同一 remark 再次下发（09-22 实测同 remark 36 张合同
+1805..1954、冻结 16,203.40）。撤单行为同构：撤单指令自身 id 永远不会成为柜台挂单 remark，
+故撤单行必然卡到超时重发。
+
+## 三、本夜落了什么（写侧真源 + 脑侧兜底 + 证尺）
+
+1. **新增协议内核** `src/zephyr/ex_core/bridge_instruction_kernel.py`：把"盖章规则"抽成一份
+   （终态单调 `_MARK_RANK`、柜台确认口径 `is_counter_confirmed`、读-合并-替换回写
+   `_merge_transitions`、写前重读护栏 `_disk_rank`、单写手 `ExecutorState.sent_oids`、
+   幽灵单判定 `unconfirmed_claims`、重复合同 `duplicate_remark_violations`、
+   撤单暂缓窗 `should_hold_cancel`）。沙箱与大脑共用同一张转移表（禁第二真源）。
+2. **脑侧兜底**（生产可达，与沙箱是否更新无关）：
+   - `_note_client_claims` + `_reconcile_phantom_claims`：客户端 ack(SENT)/自盖 #DONE 但柜台
+     零收录，超 `phantom_grace_ms`(180s) → 订单转 **REJECTED** + error 留痕，并由既有
+     `_observe_terminal_orders` 落 `execution_report` 行（被丢弃的单在台账可见，不再静默蒸发）。
+     两道误杀防线：柜台导出超龄(>60s)或不存在=禁判；柜台一出现该 remark 立即销案。
+     对账时点放在镜像刷新之后（`_sync_loop` 内），避免用上一轮缓存误判。
+   - `CounterStateMirror` 新增 `remark_order_counts()`/`order_export_age_ms()`；
+     `check_broker_health` 输出 `duplicate_remarks` 与 `unconfirmed_claims`（把 09-23 演练清单里
+     "监控=同 remark 合同数>1 告警"从口头纪律变成前端可读量）。
+   - `cancel_order` 撤单暂缓窗：未获柜台凭证且下单未满 20s → 返回 False 不写撤单行（关掉
+     竞态触发面）；**超窗必放行**（撤单是风控动作，不许被护栏挡住）。
+3. **证尺**（先红后绿，红证日志在 `.runtime/tmp/`，不入库）：
+   - `tests/ex_core/test_bridge_instruction_kernel_trd_a10.py` 13 例。把内核临时改回 v16 语义
+     （自盖 #DONE + 入口快照整文件回写 + 关掉两道护栏）后：**4 例转红**
+     （`trd_a10_red_before_fix.log`），恢复后 13/13 绿。含 100 轮撤单竞态压测
+     （100 轮=100 次下发、0 重复合同、0 未落终态）与 100 轮盘外零收录压测
+     （0 自盖 #DONE、全部 #FAIL 且每轮落 FAIL ack、柜台合同 0）。
+   - `tests/ex_core/adapters/test_qmt_file_bridge_broker.py` 新增 `TestTrdA10BridgeReconciliation`
+     7 例。把 `_note_client_claims`/撤单护栏临时停用后：**4 例转红**
+     （`trd_a10_broker_red_before_fix.log`），恢复后 25/25 绿。
+   - `tests/ex_core` 全套 1331 passed + 1 xfailed（零回归）。
+   - 压测全程假文件（tmp_path）+假时钟+假柜台挂单集，`http_port=None` 禁 HTTP 快路径，
+     零 socket、零交易通道、零生产 `data/` 写入（禁实盘四禁合规）。
+
+## 四、未闭部分（如实登记，不算通过）
+
+| 判据（17 号文§四） | 状态 |
+|---|---|
+| 复现用例入库 | **达成**（20 例，含 4+4 红证） |
+| 修复后连续 30 个交易日零静默丢弃 | **未达成——验收窗口待累积**。脑侧兜底已落（幽灵单转 REJECTED+台账可见），但"客户端不再自盖 #DONE"要求沙箱执行器换版并重启：QMT 无自启、登录须 Owner 手输密码（93 号备忘 P1-2），属 Owner 门位；且 `E:\qmt_bridge*\ZEPHYR_EXEC_v*.txt` 不在版本控制面，LANE-LAND 落不到它。窗口起点=换版落地日，预计到期日见下 |
+| 撤单竞态压测 100 次 0 漏单 | **协议层达成**（内核 100 轮压测绿）；沙箱侧等价改动待部署验证 |
+
+窗口推算：若 Owner 于 2026-09-26 完成沙箱换版+重启，30 个交易日≈2026-11-06 收盘后判据；
+若仅落脑侧兜底（现状），30 交易日零静默丢弃的判据对象变成"幽灵单被显式拒单并落账"，
+到期日同 2026-11-06，但**不等于**客户端缺陷已修，两项须分开销账。
+
+## 五、沙箱侧补丁规格（LANE-LAND/Owner 用，本卷不冒充已部署）
+
+`E:\qmt_bridge_sim\ZEPHYR_EXEC_v16.txt` → v17 的最小改动（语义与内核一一对应，勿另写一套）：
+
+1. `_watch_orders` 线程路径：删除"下发成功即改写 #DONE"的分支（现 146-152 行），改为
+   只写 `#SENDING`；#DONE 唯一来源=主线程 `oid in remarks` 那一条判定（现 331 行）。
+   盘外/零收录单因此必然走 30-tick 超时→3 次重试→`#FAIL`+`FAIL` ack（=治理建议"拒单化"）。
+2. 主线程 `handlebar` 周期末：把 `_rewrite(lines)`（入口快照整文件回写，现 366 行）换成
+   "写前重读盘上内容 + 按 order_id 逐行合并 + 标号只升不降"（内核 `_merge_transitions` 语义），
+   并以临时文件+rename 落盘（内核 `atomic_write_lines` 语义）。
+3. 撤单行的终态口径：撤单指令 id 永不等于柜台 remark，现行 `oid in remarks` 判据对撤单行
+   恒假→必然超时重发；改为"柜台 cancel 调用成功即写 #DONE + `CANCEL_SENT` ack"，
+   失败才走超时预算（内核 bare 分支语义）。
+4. 下发前置闸（可选加固）：盘外（09:30-11:30/13:00-15:00 之外）与 `is_last_bar()` 为假时
+   直接 `#FAIL,out_of_session`，不等超时预算。
+
+**建议总筹裁**（属"要不要把沙箱源码收编进仓"的制度问题，非本车道可自裁）：
+- 选项 A：在 `src/zephyr/ex_core/qmt_sandbox_executor/`（或 `scripts/qmt_sandbox/`）建沙箱执行器
+  真源目录，仓内维护+一键导出到 E:，部署靠人工粘贴；
+- 选项 B：维持 E: 为准，仓内只存内核与补丁规格（现状）。
+- 建议 A：本次两缺陷的病灶 100% 在无版本控制的 366 行脚本里，B 路线下"修复是否真在盘"
+  永远不可审计（09-23 的 containment 声称与 v16 文件实况不符就是后果）。
+- 不点的后果：下一次桥事故仍只能靠日志反推脚本行为，且 LANE-LAND 无法落地任何写侧修复。
