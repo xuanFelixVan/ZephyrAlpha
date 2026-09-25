@@ -60958,6 +60958,23 @@ entries:
   plain_zh: "这张表就是存每天候选股票名单的账本，表长什么样、有哪些栏位全以这个文件说了算，改表必须先改这里再跑部署脚本。"
   responsibility_layer: business
 
+- module_path: scripts/governance/decision_chain_sentinel.py
+  domain_id: D_GOVERNANCE
+  name_zh: "决策链哨兵"
+  name_en: "Decision Chain Sentinel"
+  desc_zh: "每日检查 decision_daily 快照是否跟上数据面，滞后超阈值即告警"
+  desc_en: "Daily check that decision_daily keeps up with data feed"
+  plain_zh: "每天早上自动看一眼决策流水有没有断供，断了就报警，防止决策链悄悄停摆"
+  responsibility_layer: governance
+- module_path: scripts/governance/evaporation_blackbox.py
+  domain_id: D_GOVERNANCE
+  name_zh: "蒸发黑匣子"
+  name_en: "Evaporation Blackbox"
+  desc_zh: "定期快照仓库状态（暂存树/未跟踪计数/stash/reflog）供蒸发案取证与恢复指引"
+  desc_en: "Periodic repo state snapshot for evaporation forensics"
+  plain_zh: "每 5 分钟给仓库拍一张快照存黑匣子，文件再被悄悄删掉就能查出什么时候丢的、丢了什么"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

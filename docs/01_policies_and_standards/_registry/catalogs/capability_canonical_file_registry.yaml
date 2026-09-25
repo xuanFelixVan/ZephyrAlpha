@@ -50798,4 +50798,34 @@ creation_tokens:
   created_by: st-cmd-20260924
   capability: stock_candidate_pool_l04c01
   merge_evaluation: "09-26 恢复轮补注册；L04-C01 DDL-as-code 配套"
+- file: docs/_working/emotion_line/gpu_emotion_condition_matrix_v1.meta.yaml
+  token: emoreplay-revival-l02c01-gpu-emotion-condition-matrix-v1meta-20260925
+  created_by: st-emoreplay-20260923
+  capability: emoreplay_revival_l02c01
+  merge_evaluation: "回放条件矩阵 meta 件（复职批 L02-C01）"
+- file: docs/_working/decision_map_campaign/links/L05_t0/material_precapacity_sample20_stats.yaml
+  token: decision-map-campaign-material-precapacity-sample20-stats-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r01_fixed_grid_day_t.yaml
+  token: decision-map-campaign-rule-card-r01-fixed-grid-day-t-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r02_vol_adaptive_band.yaml
+  token: decision-map-campaign-rule-card-r02-vol-adaptive-band-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r03_vwap_reversion_band.yaml
+  token: decision-map-campaign-rule-card-r03-vwap-reversion-band-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r04_open_range_breakout.yaml
+  token: decision-map-campaign-rule-card-r04-open-range-breakout-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
 di_seam_exemptions: []
