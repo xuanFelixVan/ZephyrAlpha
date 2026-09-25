@@ -13,6 +13,12 @@
      （processing/done 出现同名 ⇒ 本回写产物即幽灵，当场移除）；
   ② _pool_claim_item：认领前后终止性复查 done/（幽灵弃置续扫，不二次落地）。
 
+矿③ MVP（st-qmine-20260925）演进：① 的原地回写被影子旁路取代（级联 stale 改
+O_EXCL 写 pending/.stale/<qid>.json，袋体创建后不可变）——写手族唯一根因结构性
+消失，① 的断言对象翻转为 append-only 不变量；② 的 landing 侧四补丁按裁定留一版
+作保险带（下版净零拆除）。清标/落账/requeue 的影子随迁清理与双读合并另见
+TestStaleShadowSidecar / TestStaleShadowLifecycle / TestRequeueShadowAndLineage。
+
 判别力自证：每条测试在修复前的码上必红（ghost 复活/幽灵被认领/终态被覆盖），
 修复后全绿——不存在两边都绿的零判别力形态。
 """
@@ -65,27 +71,30 @@ class TestMarkCascadeStaleGhost:
         assert not p.exists(), "幽灵复活：读窗内项被认领后，回写仍重建了 pending 路径"
         assert (root / "processing" / p.name).exists(), "真件应在 processing"
         assert "q-ghost-0001" not in marked, "幽灵不应计入命中清单"
+        # 矿③ 影子化后语义收紧：读窗收窄保留——项已认领则影子也不写（stale 无从谈起，
+        # 同旧 D4 第一层口径；孤儿影子等波首清扫兜底）
+        assert not cq._stale_shadow_path(root, "q-ghost-0001").exists(), "已认领项不得残留影子指令"
 
     def test_writeback_sweeps_ghost_created_in_replace_window(self, tmp_path, monkeypatch):
-        """①补充：收窄检查之后、os.replace 之前才被认领 ⇒ 清扫必须当场移除幽灵。"""
+        """矿③ MVP 改断言：级联标记走影子旁路后，"回写产物幽灵"这一竞态面结构性消失——
+        判别对象翻转为 append-only 不变量：命中只写影子，袋体字节级零改写。"""
         root = tmp_path / "q"
         cq._ensure_dirs(root)
         item = _mk_item("q-ghost-0002", depends=["q-landed-0002"])
         p = root / "pending" / "q-ghost-0002.json"
-        p.write_text(json.dumps(item), encoding="utf-8")
+        original = json.dumps(item, ensure_ascii=False, indent=2)
+        p.write_text(original, encoding="utf-8")
 
-        real_atomic = cq._atomic_write
+        marked = cq._mark_cascade_stale(root, {"qid": "q-landed-0002", "base_head": "b" * 40})
 
-        def racing_atomic(path: Path, data: bytes):
-            os.rename(p, root / "processing" / p.name)
-            return real_atomic(path, data)
-
-        monkeypatch.setattr(cq, "_atomic_write", racing_atomic)
-
-        cq._mark_cascade_stale(root, {"qid": "q-landed-0002", "base_head": "b" * 40})
-
-        assert not p.exists(), "幽灵残留：replace 窗口内被认领后，回写产物未被清扫"
-        assert (root / "processing" / p.name).exists()
+        assert marked == ["q-ghost-0002"]
+        assert p.exists() and p.read_text(encoding="utf-8") == original, (
+            "append-only：级联标记不得触碰袋体（幽灵写手族根因=原地改写，MVP 后结构性消失）"
+        )
+        assert "stale" not in json.loads(p.read_text(encoding="utf-8"))["meta"]
+        shadow = cq._read_stale_shadow(root, "q-ghost-0002")
+        assert shadow is not None and shadow["stale"] is True and shadow["stale_by"] == "q-landed-0002"
+        assert shadow["trigger"] == "depends_on"
 
 
 class TestPoolClaimTerminalRecheck:
@@ -133,3 +142,179 @@ class TestPoolClaimTerminalRecheck:
             "认领返回的副本在 done 同名出现后仍存活：双落地窗口未闭合"
         )
         assert (root / "done" / name).exists()
+
+
+# ---------------------------------------------------------------------------
+# 矿③ stale 影子指令 MVP（st-qmine-20260925）：pending 袋 append-only 化——
+# 级联 stale 改 O_EXCL 写 pending/.stale/<qid>.json（袋体零改写=幽灵写手族根因
+# 结构性消失），读取侧 _read_item 双读合并一版过渡；影子随袋生命周期迁移清理。
+# ---------------------------------------------------------------------------
+
+
+class TestStaleShadowSidecar:
+    """影子写入 / 双读合并 / 无影子兼容 / glob 盲区。"""
+
+    def test_first_trigger_source_preserved(self, tmp_path):
+        """影子已存在（首个触发源 stale_by）→ 不重标不覆写，同旧 meta.stale 不重标口径。"""
+        root = tmp_path / "q"
+        cq._ensure_dirs(root)
+        qid = "q-shadow-0003"
+        (root / "pending" / f"{qid}.json").write_text(
+            json.dumps(_mk_item(qid, depends=["q-new-0001"])), encoding="utf-8"
+        )
+        assert cq._write_stale_shadow(root, qid, "q-first-0001", "depends_on")
+
+        marked = cq._mark_cascade_stale(root, {"qid": "q-new-0001", "base_head": ""})
+
+        assert marked == [], "已有影子（已标）MUST 不重复计入命中"
+        assert cq._read_stale_shadow(root, qid)["stale_by"] == "q-first-0001", "首个触发源不被后来者覆写"
+
+    def test_double_read_merges_stale_view(self, tmp_path):
+        """读取侧双读：影子存在 ⇒ _read_item 合并 meta.stale 视图（袋体仍零改写）。"""
+        root = tmp_path / "q"
+        cq._ensure_dirs(root)
+        item = _mk_item("q-shadow-0004")
+        bag = root / "processing" / "q-shadow-0004.json"
+        bag.write_text(json.dumps(item), encoding="utf-8")
+        cq._write_stale_shadow(root, "q-shadow-0004", "q-landed-0004", "base_head")
+
+        merged = cq._read_item(bag)
+
+        assert merged["meta"]["stale"] is True
+        assert merged["meta"]["stale_by"] == "q-landed-0004"
+        assert merged["meta"]["stale_at"]
+        assert "stale" not in json.loads(bag.read_text(encoding="utf-8"))["meta"], "合并只作用内存视图，不改袋体"
+
+    def test_no_shadow_read_is_noop(self, tmp_path):
+        """无影子兼容：读袋不注入任何 stale 键（历史袋/无级联路径逐字节零感知）。"""
+        root = tmp_path / "q"
+        cq._ensure_dirs(root)
+        item = _mk_item("q-plain-0005")
+        bag = root / "pending" / "q-plain-0005.json"
+        bag.write_text(json.dumps(item), encoding="utf-8")
+
+        merged = cq._read_item(bag)
+
+        assert "stale" not in merged["meta"]
+        assert "stale_by" not in merged["meta"] and "stale_at" not in merged["meta"]
+
+    def test_stale_dir_invisible_to_q_glob(self, tmp_path):
+        """.stale 子目录不进 q-*.json glob 视野（队首扫描/四态计数天然白名单）。"""
+        root = tmp_path / "q"
+        cq._ensure_dirs(root)
+        (root / "pending" / "q-vis-0006.json").write_text(json.dumps(_mk_item("q-vis-0006")), encoding="utf-8")
+        cq._write_stale_shadow(root, "q-vis-0006", "q-x", "depends_on")
+
+        heads = sorted((root / "pending").glob("q-*.json"))
+
+        assert [h.name for h in heads] == ["q-vis-0006.json"], "影子目录/文件不得被队列扫描误收"
+
+
+class TestStaleShadowLifecycle:
+    """影子随袋生命周期迁移：清标双清 / done/dead 影随迁 / 波首孤儿清扫。"""
+
+    def test_cleared_stale_removes_shadow(self, tmp_path):
+        """清标放行=双清：meta 视图 pop + 影子 unlink；done 袋留 stale_by 审计溯源。"""
+        root = tmp_path / "q"
+        cq._ensure_dirs(root)
+        ix = cq.enqueue_item("AI-X", "mx", [("x.txt", b"x")], queue_root=root)
+        iy = cq.enqueue_item(
+            "AI-Y", "my", [("y.txt", b"y")], queue_root=root, options=cq.EnqueueOptions(depends_on=[ix["qid"]])
+        )
+        cq.drain_queue(root, max_items=1)
+        assert cq._stale_shadow_path(root, iy["qid"]).exists(), "Y 留 pending 期间影子必须在"
+
+        stats = cq.drain_queue(root)
+
+        assert stats["stale_cleared"] == 1 and stats["done"] == 1
+        assert not cq._stale_shadow_path(root, iy["qid"]).exists(), "清标放行 MUST 影子随迁清理"
+        done_y = json.loads((root / "done" / f"{iy['qid']}.json").read_text(encoding="utf-8"))
+        assert "stale" not in done_y["meta"] and done_y["meta"]["stale_by"] == ix["qid"]
+
+    def test_dead_transition_removes_shadow(self, tmp_path):
+        """stale 项降死信（cascade_stale）→ 袋进 dead，影子随迁清理。"""
+        root = tmp_path / "q"
+        cq._ensure_dirs(root)
+        ix = cq.enqueue_item("AI-X", "mx", [("x.txt", b"x")], queue_root=root)
+        iy = cq.enqueue_item(
+            "AI-Y", "my", [("y.txt", b"y")], queue_root=root, options=cq.EnqueueOptions(depends_on=[ix["qid"]])
+        )
+        p = root / "pending" / f"{iy['qid']}.json"
+        it = json.loads(p.read_text(encoding="utf-8"))
+        it["files"][0]["base_blob"] = "blob-old"
+        p.write_text(json.dumps(it, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        cq.drain_queue(root, head_reader=lambda path: "blob-new")
+
+        dead = json.loads((root / "dead" / f"{iy['qid']}.json").read_text(encoding="utf-8"))
+        assert "cascade_stale" in dead["dead_reason"]
+        assert not cq._stale_shadow_path(root, iy["qid"]).exists(), "dead 转移点影子 MUST 随迁清理"
+
+    def test_orphan_shadow_swept_at_wave_start(self, tmp_path):
+        """孤儿影子（袋已不在 pending）drain 波首兜底清扫；在 pending 的影子不动。"""
+        root = tmp_path / "q"
+        cq._ensure_dirs(root)
+        cq._write_stale_shadow(root, "q-gone-0007", "q-x", "depends_on")
+        iq = cq.enqueue_item("AI-Q", "mq", [("q.txt", b"q")], queue_root=root)
+        cq._write_stale_shadow(root, iq["qid"], "q-x", "base_head")
+
+        stats = cq.drain_queue(root, landing=lambda i, r: cq.LandingResult(ok=True))
+
+        assert stats["orphan_shadows_swept"] == 1
+        assert not cq._stale_shadow_path(root, "q-gone-0007").exists(), "无主影子 MUST 清扫"
+        assert not cq._stale_shadow_path(root, iq["qid"]).exists(), "落账随迁（done 转移点清理）"
+
+
+class TestRequeueShadowAndLineage:
+    """requeue 件：影子指令合并进新袋（不丢 stale 语义）+ requeue_lineage 审计留痕。"""
+
+    @staticmethod
+    def _make_dead_with_counts(root: Path) -> str:
+        item = cq.enqueue_item("AI-R", "m-orig", [("a.txt", b"v1")], queue_root=root)
+        cq.drain_queue(root, landing=lambda i, r: cq.LandingResult(ok=False, reason="boom-模拟门禁失败"))
+        # 模拟死前计数积累 + 崩溃窗影子残留（生产上 done/dead 转移点已清，此处构造孤儿）
+        dead_path = root / "dead" / f"{item['qid']}.json"
+        dead = json.loads(dead_path.read_text(encoding="utf-8"))
+        dead["attempts"] = 2
+        dead["meta"]["env_retry"] = 1
+        dead["meta"]["snapshot_retry"] = 2
+        dead_path.write_text(json.dumps(dead, ensure_ascii=False, indent=2), encoding="utf-8")
+        cq._write_stale_shadow(root, item["qid"], "q-landed-0008", "base_head")
+        return item["qid"]
+
+    def test_requeue_merges_shadow_into_new_bag(self, tmp_path):
+        root = tmp_path / "q"
+        cq._ensure_dirs(root)
+        qid = self._make_dead_with_counts(root)
+        wt = tmp_path / "wt"
+        wt.mkdir()
+        (wt / "a.txt").write_bytes(b"v2-current")
+
+        result = cq.requeue_dead_item(qid, queue_root=root, worktree_root=wt)
+
+        new_item = cq._read_item(root / "pending" / f"{result['new_qid']}.json")
+        assert new_item["meta"]["stale"] is True, "影子 stale 语义 MUST 并入新袋（不丢）"
+        assert new_item["meta"]["stale_by"] == "q-landed-0008"
+        assert not cq._stale_shadow_path(root, qid).exists(), "旧 qid 影子随 requeue 终态清理"
+
+    def test_requeue_lineage_records_prev_counts_without_inheriting(self, tmp_path):
+        """矿②：lineage 留痕上一袋计数；袋寿命计数本体不继承（继承即事故）。"""
+        root = tmp_path / "q"
+        cq._ensure_dirs(root)
+        qid = self._make_dead_with_counts(root)
+        wt = tmp_path / "wt"
+        wt.mkdir()
+        (wt / "a.txt").write_bytes(b"v2-current")
+
+        result = cq.requeue_dead_item(qid, queue_root=root, worktree_root=wt)
+
+        new_item = cq._read_item(root / "pending" / f"{result['new_qid']}.json")
+        lineage = new_item["meta"]["requeue_lineage"]
+        assert lineage["attempts_prev"] == 2
+        assert lineage["env_retry_prev"] == 1
+        assert lineage["snapshot_retry_prev"] == 2
+        assert lineage["requeued_at"]
+        # 重置语义不变：attempts 不继承（否则≥5 继承→新袋拾取即死信变砖）
+        assert "attempts" not in new_item, "袋寿命计数 MUST 保持重置（不继承）"
+        assert new_item["meta"].get("env_retry") in (None, 0)
+        assert new_item["meta"].get("snapshot_retry") in (None, 0)

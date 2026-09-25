@@ -784,6 +784,8 @@ def _try_c1_absorb(root: Path, incoming: _C1Incoming) -> dict | None:
             item = json.loads(candidate.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             continue  # 写入窗口或损坏——跳过不碰（同 _compact_pending 读者容错口径）
+        # 矿③ 双读：影子 stale 件同旧位口径不具合批资格（_c1_target_meta_ok 读 meta.stale）
+        item = _merge_stale_view(candidate, item)
         if _is_c1_merge_target(item, incoming):
             target_path = candidate
             break
@@ -1226,7 +1228,8 @@ def _read_item(path: Path) -> dict | None:
     for _ in range(_READ_RETRY_TIMES):
         try:
             if path.stat().st_size > 0:
-                return json.loads(path.read_text(encoding="utf-8"))
+                # 矿③ 双读：影子存在则合并 stale 视图（一版过渡，见 _merge_stale_view）
+                return _merge_stale_view(path, json.loads(path.read_text(encoding="utf-8")))
         except (OSError, ValueError):
             pass
         threading.Event().wait(_READ_RETRY_INTERVAL)
@@ -1263,12 +1266,102 @@ def _recover_orphans(queue_root: Path) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
-# 依赖级联标记（66 号 §6.4 + 08 号文 §4.3 P1，2026-08-29 落地）
+# stale 影子指令（矿③ MVP，st-qmine-20260925）：pending 袋 append-only 化。
+# 级联 stale 不再原地改写袋 JSON（唯一 lease 外可写面=幽灵写手族根因，D4 四补丁
+# 皆为堵它的症状治疗），改 O_EXCL 原子写旁路指令 pending/.stale/<qid>.json，
+# 读取侧 _read_item 双读合并（一版过渡）。注：.stale 为点前缀子目录、内文件随
+# qid 命名——pending 全部消费方恒以非递归 glob("q-*.json") 扫描，影子目录天然
+# 不进队首扫描/四态计数/health 视野（白名单口径，勿成 hold_* 式暗仓）。
+# ---------------------------------------------------------------------------
+
+
+def _stale_shadow_path(root: Path, qid: str) -> Path:
+    """stale 影子指令路径：pending/.stale/<qid>.json（旁路目录，非四态）。"""
+    return root / "pending" / ".stale" / f"{qid}.json"
+
+
+def _write_stale_shadow(root: Path, qid: str, stale_by: str, trigger: str) -> bool:
+    """O_EXCL 原子写影子指令；已存在返回 False（保留首个触发源，同旧 meta.stale 不重标口径）。"""
+    try:
+        path = _stale_shadow_path(root, qid)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        _create_item_excl(
+            path,
+            json.dumps(
+                {"qid": qid, "stale": True, "stale_by": stale_by, "stale_at": _now_iso(), "trigger": trigger},
+                ensure_ascii=False,
+                indent=2,
+            ).encode("utf-8"),
+        )
+    except FileExistsError:
+        return False
+    return True
+
+
+def _read_stale_shadow(root: Path, qid: str) -> dict | None:
+    """读影子指令；缺失/损坏一律 None（读者容错：影子丢只损失 stale 视图，不伤袋体）。"""
+    try:
+        return json.loads(_stale_shadow_path(root, qid).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def _cleanup_stale_shadow(root: Path, qid: str) -> bool:
+    """随迁清理影子（done/dead 转移点/requeue 调用）；fail-open，返回是否确有删除。"""
+    try:
+        _stale_shadow_path(root, qid).unlink()
+    except OSError:
+        return False
+    return True
+
+
+def _sweep_orphan_stale_shadows(root: Path) -> int:
+    """孤儿影子清扫（drain 波首、lease 单写者内）：qid 已不在 pending 的影子删除。
+
+    兜底不经本仓清理面的出口（pool 车道死信路径/崩溃窗残留）——影子只为 pending
+    件存在，件走影随迁（done/dead 转移点清理）是常态路径，此处只清残留防暗仓。
+    """
+    shadow_dir = root / "pending" / ".stale"
+    if not shadow_dir.is_dir():
+        return 0
+    swept: list[str] = []
+    for shadow in sorted(shadow_dir.glob("*.json")):
+        if (root / "pending" / shadow.name).exists():
+            continue  # 袋仍在 pending——影子有效
+        if _cleanup_stale_shadow(root, shadow.stem):
+            swept.append(shadow.stem)
+    if swept:
+        logger.info("[queue] 清扫孤儿 stale 影子 %d 个: %s", len(swept), swept)
+    return len(swept)
+
+
+def _merge_stale_view(path: Path, item: dict) -> dict:
+    """双读一版过渡：影子存在 ⇒ 把 stale 指令并进 meta 视图（内存合并，不改袋体）。
+
+    袋内 meta.stale 旧位（历史袋）与影子新位并存，任一命中即 stale——兼容窗口内
+    旧袋照常工作。合并只作用调用方持有的内存副本：落账（done/dead）时随袋持久化
+    属预期（stale_by 审计溯源同旧口径）；重试退回路径若带回 pending 亦无害（清理
+    点 meta+影子双清，视图自愈）。root 取 path.parent.parent（pending/processing
+    两态通用，影子只在 pending 有）。
+    """
+    meta = item.setdefault("meta", {})
+    if meta.get("stale"):
+        return item  # 袋旧位已标——视图一致，省一次影子 IO
+    shadow = _read_stale_shadow(path.parent.parent, str(item.get("qid") or path.stem))
+    if shadow:
+        meta["stale"] = True
+        meta.setdefault("stale_by", shadow.get("stale_by", ""))
+        meta.setdefault("stale_at", shadow.get("stale_at", ""))
+    return item
+
+
+# ---------------------------------------------------------------------------
+# 依赖级联标记（66 号 §6.4 + 08 号文 §4.3 P1，2026-08-29 落地；矿③ MVP 改影子）
 # ---------------------------------------------------------------------------
 
 
 def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
-    """项 X 成功落盘后的级联标记：扫描 pending 剩余项，命中的标 stale，返回命中 qid 列表。
+    """项 X 成功落盘后的级联标记：扫描 pending 剩余项，命中的写 stale 影子指令，返回命中 qid 列表。
 
     命中条件（66 号 §6.4「级联标记」）：
     - meta.depends_on 含 X.qid（显式依赖前置项）；或
@@ -1277,11 +1370,15 @@ def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
 
     stale 项不立即处置——排到队首时经 _revalidate_stale_base 重校验基底：
     仍适用→清标放行，不适用→降死信候选（dead_reason=cascade_stale）。
-    仅 lease 持有者（单写者）调用；仅作用 pending（done/dead 是终态不触碰）；
-    并发 compaction 移除（FileNotFoundError）/写入窗口瞬态占用（PermissionError）
-    容错跳过。已标 stale 的项不重复标——保留首个触发源（stale_by 审计首因）。
+    矿③ MVP：袋 JSON **零改写**（append-only 不变量）——命中只 O_EXCL 写影子
+    pending/.stale/<qid>.json；影子已存在（袋旧位或旁路）=已标，不重标——保留
+    首个触发源（stale_by 审计首因）。读窗收窄语义保留（D4 第一层）：项已被认领
+    （rename→processing）则影子也不写——写了对已认领件不可见，徒增孤儿等清扫。
+    口部随迁清理落账项自身影子（pool 车道 done 出口不经本仓 drain 面，在此覆盖）。
+    仅 lease 持有者（单写者）调用；仅作用 pending（done/dead 是终态不触碰）。
     """
-    landed_qid = landed_item.get("qid", "")
+    landed_qid = str(landed_item.get("qid", ""))
+    _cleanup_stale_shadow(root, landed_qid)
     landed_base = landed_item.get("base_head")
     marked: list[str] = []
     for candidate in sorted((root / "pending").glob("q-*.json")):
@@ -1289,33 +1386,18 @@ def _mark_cascade_stale(root: Path, landed_item: dict) -> list[str]:
             item = json.loads(candidate.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             continue  # 写入窗口或损坏——跳过不碰（读者容错，同 _compact_pending 口径）
-        meta = item.setdefault("meta", {})
-        if meta.get("stale"):
-            continue
+        qid = str(item.get("qid") or candidate.stem)
+        meta = item.get("meta") or {}
+        if meta.get("stale") or _stale_shadow_path(root, qid).exists():
+            continue  # 已标（袋旧位/影子）——不重标，保留首个触发源
         depends_hit = landed_qid in (meta.get("depends_on") or [])
         base_hit = bool(landed_base) and bool(item.get("base_head")) and item["base_head"] == landed_base
         if not (depends_hit or base_hit):
             continue
-        meta["stale"] = True
-        meta["stale_by"] = landed_qid
-        meta["stale_at"] = _now_iso()
-        # D4 幽灵写回防御·第一层（st-commitspeed-tbl-20260924 T1'）：读窗内项可能已被工线程
-        # 认领（rename→processing）——_atomic_write 的 os.replace 会把 pending 路径**重新创建**
-        # （FileNotFoundError 保护对 replace 永不触发），产幽灵与真件同名并存。先收窄、写后清扫。
-        try:
-            if not candidate.exists():
-                continue  # 已被认领/移除——不再是 pending，stale 标记无从谈起
-            _retry_transient(
-                lambda: _atomic_write(candidate, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
-            )
-            if (root / "processing" / candidate.name).exists() or (root / "done" / candidate.name).exists():
-                # 写回瞬间清扫：同名已在认领/终态 ⇒ 本回写产物即幽灵（认领=rename，pending 侧
-                # 恒为后复活的副本），当场移除防再认领双落地/再认领撞名杀工
-                candidate.unlink(missing_ok=True)
-                continue
-            marked.append(item.get("qid", candidate.stem))
-        except (FileNotFoundError, PermissionError):
-            pass  # 并发 compaction 移除/写入窗口——跳过（同 _compact_pending 竞态口径）
+        if not candidate.exists():
+            continue  # 读窗内已被认领/移除——不再是 pending，stale 标记无从谈起
+        if _write_stale_shadow(root, qid, landed_qid, "depends_on" if depends_hit else "base_head"):
+            marked.append(qid)
     return marked
 
 
@@ -1521,6 +1603,8 @@ def drain_queue(
 
     with SerializerLease(root, timeout=lease_timeout) as lease:
         stats["recovered"] = len(_recover_orphans(root))
+        # 矿③ 孤儿影子兜底清扫（在孤儿回收之后——回收回 pending 的件影子仍有效）
+        stats["orphan_shadows_swept"] = _sweep_orphan_stale_shadows(root)
         processed = 0
         # 排空即退出（66 号 §6.3）：heads 为空 break；循环上界=max_items——有界批处理，
         # 非 while True 时间轮询（PERM-TRIGGER 口径：事件触发自举，无常驻）。
@@ -1581,6 +1665,7 @@ def drain_queue(
                 item["dead_reason"] = _attempts_exhausted_reason(item)
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "dead" / head.name)
+                _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
                 stats["dead"] += 1
                 logger.warning(
                     "[drain] qid=%s attempts=%d 耗尽，拾取即死信（队首止血）: %s",
@@ -1601,6 +1686,7 @@ def drain_queue(
                     meta = item["meta"]
                     meta.pop("stale", None)
                     meta["stale_cleared_at"] = _now_iso()  # stale_by 保留作审计溯源
+                    _cleanup_stale_shadow(root, qid)  # 矿③ 清标放行=影子双清（meta 视图+旁路指令）
                     stats["stale_cleared"] += 1
                     logger.info("[drain] qid=%s stale 重校验仍适用，清标放行（stale_by=%s）", qid, meta.get("stale_by"))
                 else:
@@ -1637,6 +1723,7 @@ def drain_queue(
                 item["landed_id"] = result.landed_id
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "done" / head.name)
+                _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 done，影子指令随迁清理
                 stats["done"] += 1
                 # 依赖级联标记（66 号 §6.4，P1 2026-08-29 落地）：X 成功落盘后扫描
                 # pending，meta.depends_on 含 X.qid 或 base_head 经由 X 的后续项标 stale
@@ -1656,6 +1743,7 @@ def drain_queue(
                 item["owner_session"] = item.get("session_id") or ""
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "dead" / head.name)
+                _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：袋进 dead，影子指令随迁清理
                 stats["dead"] += 1
                 logger.warning("[drain] qid=%s 进死信: %s", qid, result.reason)
                 _notify_task_board_dead_letter(item)  # 66 号 §6.4 task_board 死信标签联动（P1 已落地）
@@ -1768,6 +1856,14 @@ def _notify_task_board_requeued(old_item: dict, new_qid: str) -> None:
 _REQUEUE_CIRCUIT_LIMIT = 3
 
 
+def _retry_meta_prev(meta: dict, key: str) -> int:
+    """meta 重试计数宽容读（矿② lineage 用；历史袋缺失/坏值按 0——同 requeue_count 红队 P2 口径）。"""
+    try:
+        return int(meta.get(key) or 0)
+    except (TypeError, ValueError):
+        return 0
+
+
 def requeue_dead_item(
     qid: str,
     *,
@@ -1832,6 +1928,9 @@ def requeue_dead_item(
         )
     # M1.3-② envelope 继承：死信袋 meta.envelope（兼容读旧位顶层 envelope）带进新袋。
     envelope = old_meta.get("envelope") or old_item.get("envelope") or None
+    # 矿③ 影子随迁：原 qid 残留 stale 影子（崩溃窗/pool 死信出口残留）并入新袋——
+    # 不丢 stale 语义（新袋拾取时照走基底重校验），影子本体随旧袋终态清理（见取回留痕后）。
+    stale_shadow = _read_stale_shadow(root, qid)
 
     wt = Path(worktree_root) if worktree_root else Path.cwd()
     payload: list[tuple[str, bytes]] = []
@@ -1925,9 +2024,29 @@ def requeue_dead_item(
                 "requeued_from": qid,
                 # M1.3-③ 熔断计数随袋累计（dead→requeue 链一跳可见）
                 "requeue_count": new_count,
+                # 矿②（st-qmine-20260925）requeue_lineage 纯审计留痕：袋寿命计数
+                # （attempts/env_retry/snapshot_retry）重置语义**保持不变**——继承即事故
+                # （attempts≥5 继承→新袋拾取即死信变砖；env_retry≥3 继承→处方永远无法
+                # 执行），只堵"静默清零"：上一袋计数随 lineage 可溯。零消费方零副作用面。
+                "requeue_lineage": {
+                    "attempts_prev": _item_attempts(old_item),
+                    "env_retry_prev": _retry_meta_prev(old_meta, "env_retry"),
+                    "snapshot_retry_prev": _retry_meta_prev(old_meta, "snapshot_retry"),
+                    "requeued_at": _now_iso(),
+                },
                 **({"task_id": task_id} if task_id else {}),
                 # M1.3-② envelope 继承（bag_storage 作业簿⑤③：requeue 是唯一丢失点）
                 **({"envelope": envelope} if envelope else {}),
+                # 矿③ 影子指令合并：残留 stale 语义带进新袋（不丢——拾取时重校验基底）
+                **(
+                    {
+                        "stale": True,
+                        "stale_by": stale_shadow.get("stale_by", ""),
+                        "stale_at": stale_shadow.get("stale_at", ""),
+                    }
+                    if stale_shadow
+                    else {}
+                ),
                 # M1.3-③ --force 越权留痕
                 **({"requeue_forced": True} if force else {}),
             },
@@ -1936,6 +2055,7 @@ def requeue_dead_item(
     # 取回留痕：原死信项追加 requeued 标注（dead/ 永不清理——只标注不删除）
     old_item["requeued"] = {"new_qid": new_item["qid"], "at": _now_iso()}
     _atomic_write(dead_path, json.dumps(old_item, ensure_ascii=False, indent=2).encode("utf-8"))
+    _cleanup_stale_shadow(root, qid)  # 矿③ 影随迁：原袋终态留痕完成，残留影子清理（语义已并入新袋）
     _notify_task_board_requeued(old_item, new_item["qid"])
     logger.info("[requeue] %s -> %s（基于当前工作区重建快照，新 qid 排 FIFO 队尾）", qid, new_item["qid"])
     return {"old_qid": qid, "new_qid": new_item["qid"], "item": new_item}
