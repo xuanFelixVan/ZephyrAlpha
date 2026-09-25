@@ -135,6 +135,18 @@ _WHITELIST: frozenset[str] = frozenset(
         #   deploy.py = registry_ledger schema DDL 部署器（CREATE SCHEMA/TABLE+触发器需 superuser，
         #   同 add_acquisition_fields.py 先例；幂等可重跑，指纹校验防漂移）
         "src/zephyr/governance/registry_ledger/deploy.py",
+        # 待落地（2026-09-26, st-metaq-gc-20260924）：283 问复考机器写通道 + 质押事件版本载体
+        #   exam_loop/ledger.py         = 考试循环双时戳事件账（meta_question schema append-only，无 DELETE 路径）
+        #   exam_loop/writeback.py      = 复考回填唯一合法入口（乐观锁 + update 审计）
+        #   exam_loop/exam_lifecycle.py = 版本冲突有界重放（经 ledger.conn 复用同一写通道）
+        "src/zephyr/governance/meta_question/exam_loop/ledger.py",
+        "src/zephyr/governance/meta_question/exam_loop/writeback.py",
+        "src/zephyr/governance/meta_question/exam_loop/exam_lifecycle.py",
+        # 待落地（WO-009, st-metaq-gc-20260924）：质押事件版本载体施工件（PG 新 schema metaq_pledge 唯一写入者）
+        #   apply_pledge_event_version_ddl.py = 载体 DDL 部署器（CREATE 需 superuser，语句级安全断言禁触既有业务表）
+        #   backfill_pledge_event_version.py  = 事件版本回填器（depgraph_writer，只写本载体两表，无 DELETE/TRUNCATE 路径）
+        "scripts/governance/meta_question/wo009/apply_pledge_event_version_ddl.py",
+        "scripts/governance/meta_question/wo009/backfill_pledge_event_version.py",
     }
 )
 
@@ -206,6 +218,11 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
             "    - src/zephyr/ai_layer/comparator/experiment_store.py (ai_compare 实验账本)\n"
             "    - src/zephyr/ai_layer/heritage/store.py (ai_heritage 写入器)\n"
             "    - src/zephyr/ai_layer/tools/usage_stats.py (ai_tools 用量写入器)\n"
+            "    - src/zephyr/governance/meta_question/exam_loop/ledger.py (考试循环事件账)\n"
+            "    - src/zephyr/governance/meta_question/exam_loop/writeback.py (复考回填唯一入口)\n"
+            "    - src/zephyr/governance/meta_question/exam_loop/exam_lifecycle.py (版本冲突有界重放)\n"
+            "    - scripts/governance/meta_question/wo009/apply_pledge_event_version_ddl.py (质押事件版本 DDL 部署器)\n"
+            "    - scripts/governance/meta_question/wo009/backfill_pledge_event_version.py (质押事件版本回填器)\n"
             "  白名单扩展规则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree\n"
             "  等）的脚本必须加入白名单，扩展三步——(a) 脚本传 read_only=False\n"
             "  (b) 更新本白名单+错误信息 (c) 更新 architecture_issue_registry.yaml 裁定文档\n"

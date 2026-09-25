@@ -2458,6 +2458,12 @@ entries:
       硬阻断且无 noqa 通道，卡死全项目提交（gate 连坐），归属会话已死无法自愈——按扩展
       三步规则纳入白名单，SQL 已集中化为 _SQL_* 常量（§5.160.2）。）
     - 2026-09-20 补登：scripts/entity_graph/ 三件（apply_entity_graph_ddl.py /
+    - 2026-09-26 补登：src/zephyr/governance/meta_question/exam_loop/{ledger,writeback,
+      exam_lifecycle}.py（283 问复考机器写通道——meta_question schema 事件账 append-only、
+      乐观锁回填唯一入口、版本冲突有界重放；st-metaq-gc-20260924）与
+      scripts/governance/meta_question/wo009/{apply_pledge_event_version_ddl,
+      backfill_pledge_event_version}.py（质押事件版本载体 metaq_pledge 唯一写入者，
+      DDL 部署器需 superuser；WO-009 待投补丁语义落地）
       entity_graph_ingest.py / equity_penetration.py，W7 股权穿透底座施工，st-final3-20260919）。
       entity_graph 六表（node_entity/node_person/node_company/edge_holding/edge_role/edge_link）
       + equity_penetration() 穿透函数的 DDL 部署器、A 层 top10_shareholders 灌入器、
@@ -2525,7 +2531,7 @@ entries:
   fix_phase: 已完成（6 阶段全部完成 + 验证通过 + 2026-07-17 遗留项治本 + 2026-08-01 battle_map 写入路径治本 + 2026-08-05 acquisition 字段基础设施治本）
   status: resolved
   created: '2026-07-15'
-  last_updated: '2026-08-05'
+  last_updated: '2026-09-26'
 
 # --- #ARCH-BACKFILL-001: L10 周末补下载层（tick_data 缺失自动检测+补下载） ---
 - issue_id: '#ARCH-BACKFILL-001'
