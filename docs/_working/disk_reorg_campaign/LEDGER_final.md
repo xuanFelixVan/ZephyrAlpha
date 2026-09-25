@@ -273,3 +273,108 @@ ews_text_2000_2024；产业链 P2语料 0.35G→50_archiveltdata_p2_corpus_2026
 - 这与 0600 轮的 `copied=187,513 / hardlinked=234,299` 完全对得上：**每日"变更量"几乎全是 worktree 抖动**，不是项目本体变更（本体全量才 1.7 万件/0.3G）。
 - 也解释了 09-24 审计表 `working_vault=1,328,858 件/239.9GiB` 的体积来源。
 - 处方 **P-2**：`code_backup.exclude_dirs` 增补 `.worktrees`（→ 单轮枚举从 ~50.9 万降到 ~3.9 万，预计小时级降到分钟级）。**代价=其他会话 worktree 内的未提交 WIP 不再进日快照**，属"备份覆盖面上收"，按人机门位归 Owner 签字，本班会不擅自改配置。次选（Owner 若判覆盖面不可收）= 保留采集但改判据为"按 git 提交面增量"，即 worktree 只存 `.git` 引用不存签出物。
+
+### 七之二、§七 数字更正与新增实测（自写尺必自纠）
+
+- **分母更正**：§七 用本班会自算枚举求和写"~50.9 万条目"。权威口径=**本轮备份自身打出的索引计数**：`Source files: 501,192 / snapshot files: 431,972`（23:13:xx 落 `logs/manual_audit_rerun.log`）。差因＝本班会的 os.walk 未套"任意深度同名排除目录"规则（`tmp`/`__pycache__`/`.git` 等在任意层级都被排除）。按权威分母重算：**`.worktrees` 470,314 / 501,192 = 93.8%**。结论不变，分母与占比以本条为准。
+- **新增实测**：本轮 Mode B **仅"建两棵树索引"一段就用掉 21:53→23:13 = 80 分钟**（其后拷贝循环 23:13→00:2x 仍在进行，1 小时+）。这就是"每日枚举 50 万条目"的直接代价，也是 B8/P-2 的量化落点：排除 `.worktrees` 后源树枚举量级从 50 万降到 ~3.1 万。
+- 顺带噪声定性：拷贝期成串 `[WARN] Source vanished mid-run, skipped: .ailocks\...`＝他会话文件锁目录在索引后被正常删除，`vanished` 计数吸收、不判失败（`.ailocks` 实测仅 153 件/1.3MiB，非枚举成本来源）。
+
+### 八、处方集（本班会不擅自执行的项，全带可复算坐标）
+
+| # | 处方 | 触发证据 | 归口 |
+|---|---|---|---|
+| P-1 | `archive_manifest.jsonl` 2,210/2,515 行绝对路径仍指已删卷宗 `E:/zephyr_cold_archive/…` → 由生成器一次性 remap 至 `F:/zephyr_cold/50_archive/by_project/zephyralpha/…` 并留改前 hash 副本；**禁手改**（ constitution 静态清单禁手工维护；且 `scripts/ch/archiver.py:73` 是新行真源，改后须复跑一次 live 行对比确认无二次漂移） | 本轮全量 2,515 行核：305 直存 + 2,210 再锚定后件件字节相等 | 维护班（数据面账目，非生产风险） |
+| P-2 | `code_backup.exclude_dirs` 增补 `.worktrees`（或改"按提交面采集"） | 源树 50.9 万条目中 47.0 万=worktree 签出物；0600 轮 copied=187,513 与之同量级 | **Owner**（备份覆盖面上收） |
+| P-3 | `scripts/backup/restore_drill.py` 判据重立（表集合相等 ∧ drill≤live ∧ 抽样包含率 ∧ 良性 restore 错白名单），并把 `pg_restore_rc` 纳入裁决 | 本轮 `drill == live` 精确相等判据在增长库上恒红；rc=1 的 3 条错实为已知良性 | 维护班（尺缺陷，D-18 同族） |
+| P-4 | `F:/zephyr_cold/AUDIT_SOP.md` §二.1 指向"本 SOP §四期望清单"，而 §四 实为季检章无清单 → 期望清单已随 `F:/README.md`+`G:/README.md`+`G:/backup/README.md` 建成，SOP 应改指三张导航（本轮即按此执行） | 本轮机械执行时该条不可落地 | 本班会可改（SOP 属冷库文档非规则册；待 Owner 点头即改，禁双真源） |
+| P-5 | 备份报告 `Out-File -Encoding utf8` 落 **UTF-8 BOM** → 任何 `json.load(open(...,encoding='utf-8'))` 直接抛错；SOP 执行者须用 `utf-8-sig`（state 文件已是无 BOM，两文件口径不一致） | 本轮首次读报告即炸 `Unexpected UTF-8 BOM` | 维护班（一行改 `[IO.File]::WriteAllText`） |
+| P-6 | `scripts/backup/backup_ch_vm.ps1` `$BackupRoot="F:\ch_vm_backup"` 与 09-24 Owner 裁定（F 侧降配置级、全量镜像唯一冻结档在 `G:/backup/ch_vm_backup`）**方向相反**：CH 升级重做全量会向 F 再灌 ~591G（F free 766.7→约 175G，击穿 SOP §一.1 F≥700G 红线并推翻 10-05 摘盘预算），而 G 侧唯一冻结镜像**没有任何工具能刷新**（restore.ps1 vm 又依赖它回灌） | 该脚本全文 0 处 G: 引用；`G:/backup/README.md` 声称的刷新通道与实际写入路径不符 | **Owner**（双重：数据面+排程面） |
+| P-7 | post-commit 备份触发通道的载体寿命与流水线时长不匹配 → 三选：(a) 备份改由 `schtasks /run`（Task Scheduler 父链=svchost，免疫级联收割）承接，worker 只点火不托管；(b) worker 触发备份时把登记寿命抬到与 `subprocess timeout=14400` 同级；(c) worker 内检测到 `backup.lock` 由活轮持有时直接短路（本轮 B7 修复已使该短路生效，但**只解决并发，不解决 30 分钟处决**） | §二 根因 2（PID 18208 于 10:37:34 被级联杀，轮 B 无痕迹死亡） | **Owner/维护班**（进程契约变更） |
+| P-8 | D 盘 free **45.7GB < SOP §一.1 的 50G 线**；另 `git_bundles` 仅 1 份（契约"留最新 2 份"在 G 侧从未成立＝git 历史单副本+7 天 RPO） | 本轮实测 Get-Volume + 目录清点 | 即报 Owner（空间红线属运维门位；bundle 第二份可由 3b 段政策修正自动生成） |
+| P-9 | **ps1 侧锁语义无常驻测试**：本轮红绿 harness 靠"正则从 backup.ps1 抽函数 + Invoke-Expression"临时搭（`.runtime/tmp/bca_lock_test.ps1`，24h TTL 即灭），四案判据已全文入台账可据文重造。建议长期化为 `tests/dr/` 内一条 ps1 语义哨兵（HEAD 版必红/修复版必绿两态都锁住），否则下一个改锁的人没有尺 | 本轮 HEAD 版=RED（CASE1 False/CASE2 True）vs 修复版=GREEN（4/4）对拍成立 | 维护班 |
+| P-10 | **`ZephyrAlpha-DailyBackup` 的 `ExecutionTimeLimit=PT4H` + `AllowHardTerminate=True`**：任何 >4h 的完整轮，其**计划任务实例**在 4h 处被判死（LastTaskResult=267014≠0），而真正干活的 powershell 是 wscript 的孙进程、**逃出作业对象继续跑到 15:06**——于是出现"任务显示被终止、备份却成功落账"的双真象分裂，监控/日检读 LastResult 即天天假红。**建议=时限抬到 8-12h 或直接落 P-2（缩时长）**（改任务=生产流转门位，本班会不动）；同检 `ZephyrAlpha-WeeklyVMBackup` 亦 PT4H（591G VHDX 拷贝 4h 内未必完） | `Get-ScheduledTask` 实测 DailyBackup：last=09-25 06:00:01 result=**267014**，ExecTimeLimit=PT4H；LibraryLedgerBackup/RESTORE-DRILL 均 PT72H（对照说明"4h 是唯一紧的"） | **Owner** |
+
+| P-11 | 心跳守护经 `pythonw.exe + -WindowStyle Hidden` 启动会**静默消失**（无 err 无日志；启动后 10 秒内心跳面正常 age=10s，约 40 分钟后复查＝会话条目消失＋守护进程不在）；改 `python.exe + RedirectStandardError` 后常驻可查。另本会话在 registry 的条目曾在无人注销的情况下消失一次（与"会话不在册→守护自退"设计一致），属台账在案的并发非 CAS 写热册蒸发族。**建议=把 heartbeat 启动口径固化进会籍工具，而非各班口头传** | 本轮两次实测对照（同一命令换宿主即不再消失） | 维护班 |
+| P-12 | **收割日志不可归因**：`src/zephyr/trading/process_reaper.py:445-450 _log_kill()` 只写 `PID + reason`，**不落 name/cmdline**（调用点两者都在手）。本轮定性"10:37 那刀杀的是谁"只能靠 `.runtime/process_incubator/ledger.jsonl` 按 PID 反查——**若该进程未走孵化登记（多数非 spawn_python_hidden 的进程就不登记），日志即成悬案**。建议一行改：`f.write(... + f" name={info['name']} cmd={cmdline[:120]}")`。连带 SOP §一.2"在 kill 日志里找 powershell 击杀"=**死探针**（候选集只含 python，powershell 永不出现，见 §五③），应改判据为"找 reconcile_worker/reconcile_runner 被杀" | 本轮实测反查链：`grep 2026-09-25 reaper_kill.log` + 孵化册 PID=18208 行 | 维护班（观测面，无生产风险） |
+| P-13 | **仪表盘备份探针集体指错家**：`src/zephyr/frontend/dashboard/services_registry.py:120/123` 两行 detect 目录 = `E:\zephyr_cold_archive`（09-24 已删卷宗）与 `F:\code_backup`（09-21 起备份改家 `G:\backup\working_vault`，实测 F 侧该目录不存在）。后果=仪表盘备份健康位**恒红"灾备事故"**（`_daily_fresh_scan` 缺目录判红，属 fail-visible 不掩盖，方向正确），但长期狼来了会训练 Owner 忽略真红。修法不是两行：`name`/`desc` 里同样硬编码了旧路径（"F 盘代码备份仓"），须与 i18n/展示口径一并改，故**本班会不顺手改**，列此归维护班同批收敛 | `os.path.exists('F:/code_backup')=False` + E 盘顶层复扫无 `zephyr_cold_archive` | 维护班 |
+| P-14 | `logs/` 已积 **361 份** `backup_report_*.json` 无轮转（既有工具 `scripts/governance/d6_security/retire_tmp_artifacts.py` 覆盖该类且默认 dry-run，只是从未 --apply/未接入事件）＝backlog T3 的实身 | `len(glob('logs/backup_report_*.json'))=361` 实测 | 维护班 |
+| P-15 | **跨零点日期撕裂**：单次运行内 `vault 日目录`（21:53 取值=20260925）与 `db_dumps 日目录`（00:3x 取值=20260926）用两套日期，报告名又是第三种（起时刻）。按日恢复会拿到"昨日快照+今日 dump"的混搭。修法=脚本启动时把 `$today` 由 `$backupStartTime` 定格一次、全段共用（自包含小改）；本班会因验收窗口已过、留下轮带验证再动更稳 | 本轮实测：`working_vault/20260925` + `db_dumps/20260926` 同轮并存 | 维护班 |
+| **已闭** | ~~B7 锁 PID 探活~~ → 本批已落地并前后对照验证（failed/1 → ok/0）；~~60_mirror 对 C4 追赶~~ → 60,245 件/56,591,048,267B 双零差 + 5/5 sha256 全等，与 drawers 第 8 行登记值分毫不差 | 见 §九 表 + `bca_mirror.json` | 本班会 |
+
+
+
+
+
+### 九、四探针验收（手动重跑轮 PID 35532）
+
+_（待本轮跑完回填）_
+
+### 十、本班会终态与移交
+
+_（待回填）_
+
+### 九、四探针验收（手动重跑轮 PID 35532，21:51:58 点火 → 09-26 00:33:22 落账，**2h41m**）
+
+**先说结论：修复前后同段直接对照成立。**
+
+| 判据 | 09-25 06:00 轮（修复前，与轮 B 并发） | 本轮（B7 修复后，无并发） |
+|---|---|---|
+| `code_backup.status` | **failed**（failures=1） | **ok（failures=0）** |
+| hardlinked / copied / vanished | 234,299 / 187,513 / 5 | 0 / 70,204 / 14 |
+| `databases` 段 | 4 键全 ok（班令"全空"不成立） | postgres ok / sqlite ok / postgres_globals ok / clickhouse **skipped**（24h cadence，上成功=今晨 06:47） |
+| state | last_backup_status=failed | **last_backup_status=ok @00:33:22**，ch=skipped+verified=True（承 06:47 成功） |
+
+**探针逐项**
+1. **报告完整**✓ `logs/backup_report_20260925_215158.json` duration 9,683s；**新字段 `stage_timeline` 首次产出即破案**：Stage 1=0s｜Stage 2（PG/SQLite dump+配置同步）=**62.2s**｜**Stage 3 vault=63→9,569.5s（98.2% 的时间，2h38m）**｜3b bundle skip｜3c offrepo=2.7s｜3d g_mirror=110s｜Stage 4 落账。
+2. **vault 关键件**✓ `working_vault/20260925`：AGENTS.md ✓ pyproject.toml ✓ `config\.env.*` 5 件 ✓。
+3. **dumps 四件齐**✓ 新日目录 `db_dumps/20260926`＝depgraph.dump + governance_backup.db + pg_globals.sql + session_backup.db 齐全。
+4. **state + CH**✓ `last_backup_status=ok`；CH 侧本轮按 24h 节奏跳过（非失败），`last_ch_backup_verified=True`/88,580,255,288B 仍为今晨 06:47 那轮的成功凭据，`system.backup_log` 26h 窗=1 ✓。
+5. **`restore.ps1 verify` 全过**✓ 15 项全 `[OK]` 至 `ALL CHECKS PASSED -- backup is ready for disaster recovery`（code 5 件 / bundle 447MB age 4.1d / dumps 4 件 dated 20260926 / CH market 248.32GiB+inc 84,476.71MB / VM 三层含 G 侧 591.57GB 全量镜像），rc=0。
+
+**由本轮新观测直接得出的两条病理结论（写进 §七之二）**
+- Mode B **仅建两棵索引就用 80 分钟**（源 501,192 件 + 快照 431,972 件），拷贝循环再 78 分钟；两段相加＝整轮 98.2% 的时间。`copied=70,204` 全部来自 worktree 抖动（与 §七 的 93.8% 占比互证）。→ **P-2 的收益不再是估计，而是可计算：源树从 50 万降到 ~3.1 万。**
+- **跨零点撕裂**（新发现，处方 P-15）：本轮 vault 目录名取 21:53 的日期＝`20260925`，而同轮 dumps 目录取 00:3x 的日期＝`20260926`，报告名又是 `20260925_215158`——**一次运行产出两套日期标签**，按日恢复时"当日快照"与"当日 dump"不同一天。修法=脚本启动时把日期定格一次（`$today` 统一取 `$backupStartTime`），属自包含小改，本班会因"改窗口已过、留下轮验证更稳"未动。
+
+### 九之二、60_mirror 字节级验收（补 §五⑤，跑在 3d 段之后，避免边写边比）
+
+| 对照 | 源 | 镜像 | 差 |
+|---|---|---|---|
+| C4 考试研报 PDF 缓存 | 60,245 件 / 56,591,048,267B | 60,245 件 / 56,591,048,267B | **only_src=0 / only_mir=0 / size_mismatch=0**，sha256 抽 5 件全等 |
+| final3 会话目录归档 | 1,839 件 / 6,521,736B | 同 | 全等，sha 5/5 |
+| ETF/LOF 分钟 zip 原料 | 22 件 / 5,467,846,518B | 同 | 全等，sha 5/5 |
+| 分层抽样 11 个子树 | 73,639 件 / 230,384,622,425B | 同 | **零差** |
+
+三行绝对值与 `drawers.jsonl` 第 8/9/10 行登记数字**分毫不差**（独立两源互证：本班会尺 vs 09-24 登记）。→ **SOP §五.5 "60_mirror 对 C4 52.7G 追赶"判定：已完成**，09-25 夜债清。
+
+**本班会自清记录**：`F:/zephyr_cold/90_tmp/bca_drill_20260925/`（本班 T1 演练 clone + T2 sqlite 副本，16,250 件/810.5MiB）已删除，删后该抽屉仅剩前任遗件 `conv_etflof`/`drill_bundle`/`drill_gov.db`（**非本班 creations，未动，列移交**）。学费一条：git pack 文件带只读位，`shutil.rmtree` 首遍 `WinError 5` 半程失败，须先 `os.chmod(S_IWRITE)` 再删。
+
+### 十、本班会终态与移交
+
+**已修（两笔，均走 `scripts/git_commit.py` 正门）**
+- `5aef239f7c`（22:26 锁忙自动入队 → 队列落地，袋 `q-20260925-st-backup-cold-20260925-audit-0001` state=done）：**B7 锁 PID 探活**（红绿对拍见 §三，两案翻转＝尺有判别力）＋新增 `stage_timeline` 观测面。
+- `b7c668cc`（23:04:56 直连提交）：`$codeResult.error_sample`（前 10 条失败明细入报告，终结"failures=1 无从归因"）＋台账 §六/§七。
+- 两笔均 `git log -1 --name-only` 核归属＝各 2 文件、无外来吸收；`--is-ancestor HEAD` 双 YES。
+- **附带排雷**：队列落地后主区 index 仍存本班两文件的 **pre-fix 旧 blob**（ledger 侧为"78 行净删"旧版＝回退炸弹），已 `git add` 刷新并逐件核 `wt-sha == idx-sha` 双件 PASS。
+- 施工方式=主区直改（Owner 班令明示 claim→改→正门；`--allow-non-worktree` 留痕），改前 acquire／毕后 release。
+
+**未修（一律带处方，见 §八）**：P-1 manifest 路径漂移 / P-2 `.worktrees` 排除（=B8 的具体内容，收益已可计算）/ P-3 演练判据恒红 / P-4 SOP §二.1 空指针 / P-5 报告 BOM / P-6 ch_vm 写入方向与冻结档刷新断链 / P-7 post-commit 载体寿命 / P-8 D 盘空间红线+bundle 单副本 / P-9 ps1 锁语义无常驻测试 / P-10 计划任务 4h 硬时限 / P-11 心跳守护启动口径 / P-12 收割日志不可归因 / P-13 仪表盘备份探针指旧家 / P-14 logs 361 份报告零轮转 / P-15 跨零点日期撕裂（同轮产出 20260925 快照+20260926 dumps）。
+
+**复核命令（任何人可复算本班会三条最关键结论）**
+1. 并发轮存在＝锁换过手：`python -c "import json,glob;[print(f,json.load(open(f,encoding='utf-8-sig'))['lock_mtime']) for f in sorted(glob.glob('logs/backup_skipped_20260925_*.json'))]"` → 前四件 06:00:09 / 后六件 10:02:41。
+2. 轮 B 死于级联收割：`grep -n "2026-09-25 10:3" data/runtime/reaper_kill.log` ＋ `.runtime/process_incubator/ledger.jsonl` 内 PID 18208 登记行（owner=reconcile_runner, life=1800s, payload=3826755fa6）。
+3. worktree 撑爆源树：`python -c "import os;print(sum(len(f) for _,_,f in os.walk('D:/ZephyrAlpha/.worktrees')))"` → 470,314（本轮 23:3x 实测）。
+
+**移交他班的既存项**（本班会未动，状态复核后仍在册）：10-05 F 摘第一链盘（第二链日检证据链现已累计 2/14 天，本轮已补 09-25 行）；10-21 G 原抽屉库 137.6G；`G:/backup/offrepo/offrepo_backup`（136.6GiB 嵌套旧镜像）与 `G:/backup/db_dumps/db_dumps`（0.36G 旧 /MIR 根）待批清理；`F:/zephyr_cold/90_tmp` 内前任演练遗件（`drill_bundle`/`drill_gov.db`/`conv_etflof`）待清（本班会自造 `bca_drill_20260925` 已自清）。
+
+**本班会自纠两条**
+1. 时序判断失误：在手动备份轮正在枚举 G: 时并发起了 offrepo 全盘走查与 PG 演练（含 135MB dump 从 G: 读），三方互拖——offrepo 全量走查 6 分钟出数（22:12→22:18）、PG 演练 22:11 收尾，而备份 Mode B 索引至 22:52 已 60 分钟未完（RSS 501→557MB 缓增）。教训=**监督长跑时，任何全盘 walk 必须排在长跑之后**；本班会随后把 60_mirror 字节级对拍改到 3d 段完成后执行，即为此纠偏。
+2. 自写探针脚本两处低效：PG 子集证明用 `set(inter)` 放进列表推导（O(n²)，44K×重建集合＝空转 30 分钟后手动处决并清理临时库残留）；路径判定首版把 `os.sep` 写成字符串字面量致 4 行假 MISSING。两条均已改正后才出数，列此以防后人误读早先数字。
+
+**四探针终判＝全绿**（详数见 §九）：报告完整（databases 4 键齐全、CH 按 24h 节奏 skip 非失败）｜vault 关键件齐｜dumps 四件齐（新日目录 20260926）｜state `last_backup_status=**ok**`｜`restore.ps1 verify` 15 项 `ALL CHECKS PASSED`。**修复前后同段对照＝本次治本的唯一硬凭据**：06:00 轮（并发）`code_backup=failed / failures=1` → 本轮（无并发）`ok / failures=0`。
+
+**待 Owner 表态的三件（其余见 §八）**：P-6（ch_vm 全量重做写 F 与 09-24 裁定相反，且 G 冻结档无刷新通道）、P-10（DailyBackup 任务 4h 硬时限）、P-2（`.worktrees` 是否入排除清单＝备份覆盖面上收）。
+
+【灾备演练月检 09-25（SOP §三.1 四级非破坏，提前执行）】T1 git bundle 实 clone→19,055 commits/AGENTS.md 7,883 字符可读 ✅｜T2 SQLite 5 份 `integrity=ok`（45+1 表）✅｜T3 `pg_restore` 进临时库 depgraph_drill→**表 89/89 全等**、三表行数 drill≤live、rc=1 定性为 3 条已知良性错（CREATE SCHEMA public 已存在+2 条 ALTER DEFAULT PRIVILEGES）、临时库已 DROP 且复查 pg_database 残留=0 ✅｜T4 CH 验证层 `verified=True`+`system.backup_log` 26h 窗=1+`system.backups` 408,952,156,962B/900,239 文件 ✅｜附 `restore.ps1 verify` 15 项 ALL CHECKS PASSED ✅。**四条恢复路径（git/SQLite/PG/CH）本班会全部真实走通＝月检项达成**；CH 全量 RESTORE 与 VM 导入属破坏性演练，仍按 `ZEPHYR-RESTORE-DRILL`（下次 10-01 04:30）执行。**唯一红项不在恢复链而在尺**：`scripts/backup/restore_drill.py:140` 精确相等判据在增长库上恒红（处方 P-3）。
+【第二链日检 09-26 前置读数（09-25 22:4x 实采）】VM 内 `stat`：`/mnt/chbackup2/inc.zip` = 88,580,255,288B @ epoch 1790290045 与第一链 `/mnt/chbackup_local/inc.zip` **字节+时戳双同**，换算=本地 09-25 06:47:25（与 `system.backups` end_time 同秒）；market.zip 266,634,034,420B@09-15 重基线后稳定；inc/market=0.332≥0.15、时距 15.8h≤26h → **PASS，第 2/14 天**（10-05 摘盘证据链）。09-26 06:00 轮后再读一次即累计第 3 天。
+【本班会收口状态】sid=st-backup-cold-20260925-audit｜冷启动 21:25，收口 09-26 00:4x｜两笔提交 `5aef239f7c`+`b7c668cc` 均入 HEAD｜四探针全绿｜处方 15 条（P-1..P-15）全带坐标，其中 **P-6/P-10/P-2 待 Owner 表态**，余归维护班｜本班自造件（F 侧演练 clone 810.5MiB/16,250 件）已自清，临时 PG 库已 DROP，reaper keep 册新增本班心跳一行（他班可据 dead-sid 处方精准回收）｜零删除项目数据、零实盘触碰、零绕门。
