@@ -1,0 +1,59 @@
+# ALGO_FLOW 外部真源——gate_cache_preflight（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py）
+# 2026-09-26 T7/B2（st-commitspeed-tbl-20260924）键改内容哈希随批补登：GATE-ALGO-FLOW
+# P2-1 出仓口径（docstring 只留 external 锚，机器块落本 yaml，extractor 经锚加载走
+# 同一 parse_algo_flow 管线）；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.rule_bridge.gate_cache_preflight
+source_of_truth: src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: gateway（project_root/run_git/files）
+    #   fields: project_root, run_git, files
+    #   code: gate_cache_preflight.py
+    # - id: I2
+    #   name: flags（gate_result_cache/gate_preflight，出厂 OFF）
+    #   fields: enabled
+    #   code: flag_enabled()
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 键构造（T7/B2 内容哈希，禁含 HEAD/共享暂存树状态）
+    #   name_en: GateResultCache._path
+    #   intro: 键=gate_id×own_scope×own 内容哈希×spec_sha×manifest 输入哈希×flags mtime。
+    #   desc: _own_content_hash 一次 ls-files -s -z 批量取 own staged blob sha；_spec_sha 扫 commit_gates/*.py 字节（门源码一字节篡改即判失）；_manifest_inputs_sha 哈希 GATE_INPUT_MANIFEST 声明注册表字节（注册表字节篡改即判失）；任一异常=缓存整体不可用（fail-safe 回退现算，绝不阻断）。
+    #   inputs: gate_id, own_scope
+    #   outputs: 缓存键 Path
+    # - id: A2
+    #   name_zh: ② lookup/store（TTL 10min，只存 passed=True）
+    #   name_en: GateResultCache.lookup/store
+    #   intro: 命中返回 detail（cache-hit 前缀供审计）；过期/异常/未命中返回 None；失败结果绝不缓存（fail-open 不被缓存放大）。
+    #   inputs: 键 Path
+    #   outputs: detail | None
+    # - id: A3
+    #   name_zh: ③ P2⑦ 预跑采信指纹（公式未动，与缓存键正交）
+    #   name_en: compute_fingerprint/Fingerprint.matches
+    #   intro: write-tree×HEAD_sha×flags mtime 供 git_commit_gateway 锁外预跑+锁内 F′==F 采信。
+    #   inputs: gateway
+    #   outputs: Fingerprint | None
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 白名单门跳过现算
+    #   name_en: cache_hit
+    #   intro: commit_gate_registry.check_all 对 CONTENT_SCAN_CACHE_WHITELIST（gate_execution_stats 24h 实测 top15）查/存。
+    #   downstream: zephyr.gov_enforcement.rule_bridge.commit_gate_registry.CommitGateRegistry.check_all
+    # - id: O2
+    #   name_zh: 预跑结果采信
+    #   name_en: preflight_reused
+    #   intro: 指纹 F′==F 匹配时白名单门复用锁外预跑结果。
+    #   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> O1
+    # I1 --> A3
+    # A3 --> O2
