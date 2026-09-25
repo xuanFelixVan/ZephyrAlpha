@@ -122,4 +122,8 @@ __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-ex
 # 约定：新增文件必须延续所属簇前缀；新簇须先在本约定登记再落文件；
 # 单簇超过 20 件时应拆子目录（参照 tests/signal_ashare 拆分先例）。
 # ORPHAN-MODULE: 引用登记——_tree_view 为 S1 不可变树视图（消费面=replay_gate_verdicts 驱动+S1 接线批），scripts/ 引用不计入扫描面故此处登记  # noqa: F401
-from . import _tree_view  # noqa: F401
+# ORPHAN-MODULE: 引用登记——_capability_registry_io 为 T8簇1 共册解析缓存（消费面=create_guard/ssot_redefinition/capability_overlap 三台门+tests），同包内相对导入不计入扫描面故此处登记  # noqa: F401
+from . import (
+    _capability_registry_io,  # noqa: F401
+    _tree_view,  # noqa: F401
+)

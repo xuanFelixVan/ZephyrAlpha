@@ -48,6 +48,7 @@ from __future__ import annotations
 import logging
 import re
 
+from zephyr.gov_enforcement.commit_gates._capability_registry_io import parse_capability_registry_cached
 from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -123,28 +124,28 @@ def _load_registry_yaml(gateway, staged: list[str]) -> tuple[dict | None, tuple[
             f"({REGISTRY_YAML})。修复 registry（由持有该文件的会话提交修复后自动恢复）"
             f"或恢复 registry 后重试。",
         )
-    try:
-        import yaml
-
-        data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
-    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+    # T8 簇1 共册解析（st-commitspeed-pkg8-20260925）：与 CREATE-GUARD/CAPABILITY-OVERLAP
+    # 共享一次 yaml.safe_load（同真源可派生→必并）；判据零变化——本台 fail-open/
+    # fail-closed 分支、消息文案逐字节保留，仅读入+解析走共享缓存（永不抛，错经 exc 返回）。
+    data, parse_err = parse_capability_registry_cached(REGISTRY_YAML)
+    if parse_err is not None:
         if registry_being_fixed:
             logger.info(
                 "SSOT-REDEFINITION gate: registry 解析失败(%s: %s)但正在 staged 修复，放行。",
-                type(e).__name__,
-                e,
+                type(parse_err).__name__,
+                parse_err,
             )
             return None, (True, "")
         logger.error(
             "SSOT-REDEFINITION gate fail-closed: registry 解析失败(%s: %s)，阻断。",
-            type(e).__name__,
-            e,
+            type(parse_err).__name__,
+            parse_err,
             exc_info=True,
         )
         return None, (
             False,
             f"SSOT-REDEFINITION gate fail-closed: capability registry 解析失败"
-            f"({type(e).__name__}: {e})。修复 registry YAML 语法"
+            f"({type(parse_err).__name__}: {parse_err})。修复 registry YAML 语法"
             f"（由持有该文件的会话提交修复后自动恢复）后重试。",
         )
 
@@ -232,7 +233,9 @@ def make_ssot_redefinition_gate() -> GateSpec:
             return True, ""
         # own 化（st-gslim-20260923 P2，#ARCH-GATE-OWN-SCOPE-001 推广）：扫描范围=
         # 全暂存区∩本 session 范围；外来 staged 不扫描不阻断（warn+审计在共享原语内）。
-        own_staged = _split_own_foreign(gateway, staged, files, kwargs.get("session_id"), gate_name="SSOT-REDEFINITION")[0]
+        own_staged = _split_own_foreign(
+            gateway, staged, files, kwargs.get("session_id"), gate_name="SSOT-REDEFINITION"
+        )[0]
         py_files = [f for f in own_staged if f.endswith(".py") and not is_test_exempt(f)]
         if not py_files:
             return True, ""

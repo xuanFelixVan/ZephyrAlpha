@@ -149,6 +149,14 @@ import time
 
 import yaml
 
+from zephyr.gov_enforcement.commit_gates._capability_registry_io import (
+    _PARSE_CACHE as _SHARED_PARSE_CACHE,  # noqa: F401 — 别名再导出（历史引用兼容）
+)
+from zephyr.gov_enforcement.commit_gates._capability_registry_io import (
+    cache_key_of,
+    parse_capability_registry_cached,
+    reset_parse_cache,
+)
 from zephyr.gov_enforcement.commit_gates._diff_helpers import _split_own_foreign
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 from zephyr.governance.rule_patterns import RULE_NAME_RE
@@ -171,8 +179,10 @@ _OTHER_FORMAT_EXTENSIONS = (".md", ".sh", ".ps1", ".mmd", ".json")
 # 病根：并发会话写 capability registry 时存在瞬态撕裂读（读半个写入窗口），
 # yaml.safe_load 单次失败即 fail-closed 会把"设施瞬态故障"误报成"违规阻断"。
 _REGISTRY_PARSE_RETRIES = 3
-# T8 簇1：册解析进程内缓存（mtime_ns+size 键控单条；写后失效，进程生命周期复用）
-_REGISTRY_CACHE: dict = {"key": None, "data": None}
+# T8 簇1 共册解析（st-commitspeed-pkg8-20260925）：缓存下沉共享模块 _capability_registry_io
+# （六台同读 2.7MB 册收敛一次 yaml.safe_load；键含 normcase 路径+mtime_ns+size，写后失效）。
+# 本名保留为共享缓存同一容器的别名——历史测试/外部引用兼容，删名前先 grep 消费方。
+_REGISTRY_CACHE: dict = _SHARED_PARSE_CACHE
 _REGISTRY_RETRY_INTERVAL_S = 0.3
 # 解析失败审计路径（相对 project_root；.runtime/audit/ 是既有审计 jsonl 约定区）
 _PARSE_FAIL_AUDIT_REL = (".runtime", "audit", "create_guard_parse_fail.jsonl")
@@ -568,29 +578,32 @@ def _load_capability_registry(gateway) -> tuple[dict | None, str]:
             f"修复：git checkout HEAD -- {_registry_yaml} 恢复 registry 后重试。"
         )
 
-    # T8 簇1 进程内解析缓存（st-commitspeed-tbl-20260924）：{(mtime_ns, size) -> parsed}。
-    # 册 2.7MB/万条，每链全量 safe_load 在并发写窗口下把均值推到 85s（实测 n=89）；
-    # mtime+size 双键控保证写后失效，判据零变化（同一文件同一字节同一解析器）。
-    _try_stat = _registry_yaml.stat()
-    _cache_key = (_try_stat.st_mtime_ns, _try_stat.st_size)
-    if _REGISTRY_CACHE["key"] == _cache_key and _REGISTRY_CACHE["data"] is not None:
-        return _REGISTRY_CACHE["data"], ""
+    # T8 簇1 共册解析（st-commitspeed-pkg8-20260925）：读入+解析下沉共享缓存
+    # （ssot_redefinition/capability_overlap 同读此册，全链一次 yaml.safe_load）。
+    # 键=normcase 路径+mtime_ns+size，写后失效；解析失败不缓存。判据零变化。
+    data, parse_err = parse_capability_registry_cached(_registry_yaml, reader=_read_registry_text)
+    if parse_err is None and data is not None:
+        return data, ""
 
+    # B1 撕裂读重试（语义保留）：首次解析失败后最多再试 _REGISTRY_PARSE_RETRIES-1 次
+    # （总尝试次数与原版 3 次一致），0.3s 退避；失败不缓存，重试真读。
     parsed = False
-    data = None
-    last_err: Exception | None = None
-    for _attempt in range(_REGISTRY_PARSE_RETRIES):
+    last_err: Exception | None = parse_err
+    for _attempt in range(_REGISTRY_PARSE_RETRIES - 1):
         try:
             data = yaml.safe_load(_read_registry_text(_registry_yaml))
             parsed = True
             break
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             last_err = e
-            if _attempt < _REGISTRY_PARSE_RETRIES - 1:
+            if _attempt < _REGISTRY_PARSE_RETRIES - 2:
                 time.sleep(_REGISTRY_RETRY_INTERVAL_S)  # noqa: m10-time-trigger — 注册表撕裂读失败重试的指数退避等待，错误恢复路径非周期轮询
     if parsed and data is not None:
-        _REGISTRY_CACHE["key"] = _cache_key
-        _REGISTRY_CACHE["data"] = data
+        try:
+            reset_parse_cache(cache_key_of(_registry_yaml), data=data)
+        except OSError:
+            logger.debug("registry 缓存回填 stat 失败（下次调用重解析）", exc_info=True)
+        return data, ""
     if not parsed:
         _audit_registry_parse_fail(gateway.project_root, _registry_yaml, f"{type(last_err).__name__}: {last_err}")
         return None, (

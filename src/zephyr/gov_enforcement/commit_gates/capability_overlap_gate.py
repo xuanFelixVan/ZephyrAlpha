@@ -52,6 +52,7 @@ import os
 import re
 from pathlib import Path
 
+from zephyr.gov_enforcement.commit_gates._capability_registry_io import parse_capability_registry_cached
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _audit_foreign_staged,
     _build_own_scope,
@@ -145,15 +146,14 @@ def _load_registry_data() -> dict | None:
             REGISTRY_YAML,
         )
         return None
-    try:
-        import yaml
-
-        data = yaml.safe_load(REGISTRY_YAML.read_text(encoding="utf-8"))
-    except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+    # T8 簇1 共册解析（st-commitspeed-pkg8-20260925）：与 CREATE-GUARD/SSOT-REDEFINITION
+    # 共享一次 yaml.safe_load（同真源可派生→必并）；warn-only 判据与文案逐字节保留。
+    data, parse_err = parse_capability_registry_cached(REGISTRY_YAML)
+    if parse_err is not None:
         logger.warning(
             "CAPABILITY-OVERLAP gate fail-loud: registry 解析失败(%s: %s)，检测器失效，无法检测 capability 重叠。",
-            type(e).__name__,
-            e,
+            type(parse_err).__name__,
+            parse_err,
             exc_info=True,
         )
         return None
