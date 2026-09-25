@@ -506,11 +506,21 @@ def _log_kill(pid: int, reason: str, dry_run: bool, name: str = "", cmdline: str
 
 
 def _kill_pid_tree(pid: int) -> bool:
-    """terminate → 等 3s → kill 升级；级联杀子进程树（先子后父）。"""
+    """terminate → 等 3s → kill 升级；级联杀子进程树（先子后父）。
+
+    永不抛（2026-09-26 治本）：真实事故＝计划任务连续 23.5h 每次真跑都在这里被
+    `psutil.AccessDenied` 打断（快照里 `reap_aborted: psutil.AccessDenied(pid=4908)`），
+    一个打不开句柄的受保护进程把**同一轮其余收割 + 幽灵扫描 + drift 指标 + 挂在
+    本脉冲上的保命链（应急保命轨/内存水位闸）全部带走**。dry-run 不走本函数，故
+    手工验证永远复现不出来。杀不动＝记 False（调用方渲染 [FAILED]）并继续。
+    """
     try:
         proc = psutil.Process(pid)
     except psutil.NoSuchProcess:
         return True  # 已退出视为成功（幂等）
+    except psutil.AccessDenied:
+        logger.warning("PID=%d 句柄不可打开（AccessDenied）：本项记失败，收割继续", pid)
+        return False
     targets: list[Any] = []
     if _KILL_CHILD_RECURSIVE:
         try:
@@ -523,7 +533,12 @@ def _kill_pid_tree(pid: int) -> bool:
             t.terminate()
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
-    gone, alive = psutil.wait_procs(targets, timeout=3)
+    try:
+        gone, alive = psutil.wait_procs(targets, timeout=3)
+    except psutil.AccessDenied:
+        # wait_procs 内部会对每个句柄 wait；受保护进程读不到退出态
+        logger.warning("PID=%d 等待退出时句柄不可读（AccessDenied）：按尽力已发处理", pid)
+        return False
     for t in alive:
         try:
             t.kill()
@@ -536,6 +551,9 @@ def _kill_pid_tree(pid: int) -> bool:
         return False
     except psutil.NoSuchProcess:
         return True
+    except psutil.AccessDenied:
+        logger.warning("PID=%d 已发终止但读不到退出态（AccessDenied）：记失败", pid)
+        return False
 
 
 # ============== Trae 幽灵进程扫描（2026-08-28 终审重构：内核态拓扑 + 3 轮确认状态机）==============

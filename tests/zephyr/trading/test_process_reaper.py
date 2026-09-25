@@ -713,5 +713,67 @@ class TestReapCycleNeverBlindsStatus:
         assert "_write_status(report)" not in body, "落盘点又漏回主体＝中段爆炸仍会瞎"
 
 
+import psutil as _psutil  # noqa: E402 — 下方 _kill_pid_tree 容错用例需真异常类
+
+
+class TestKillPidTreeNeverRaises:
+    """_kill_pid_tree 遇 AccessDenied 必须"记失败并继续"，绝不能把整轮收割带走。
+
+    事故实形（2026-09-26 本班会，快照自证）：`reap_aborted: psutil.AccessDenied(pid=4908)`
+    ——计划任务连续 23.5h 每次真跑都死在这里，连带后面的幽灵扫描/drift 指标/挂在同一
+    脉冲上的保命链（应急保命轨 + 内存水位闸）一起停摆；dry-run 不走本函数，手工复现不出来。
+    """
+
+    class _FakeProc:
+        pid = 4908
+
+        def children(self, recursive: bool = False) -> list:  # noqa: ARG002, FBT001, FBT002
+            return []
+
+        def terminate(self) -> None:
+            pass
+
+        def kill(self) -> None:
+            pass
+
+        def wait(self, timeout: float | None = None) -> int:  # noqa: ARG002
+            raise _psutil.AccessDenied(pid=4908)
+
+    @staticmethod
+    def _fakes(monkeypatch: pytest.MonkeyPatch, wait_raises: bool = False) -> None:
+        monkeypatch.setattr(_psutil, "Process", lambda pid: TestKillPidTreeNeverRaises._FakeProc())
+        if wait_raises:
+
+            def boom(targets, timeout=3):  # noqa: ANN001, ARG001
+                raise _psutil.AccessDenied(pid=4908)
+
+            monkeypatch.setattr(_psutil, "wait_procs", boom)
+        else:
+            monkeypatch.setattr(_psutil, "wait_procs", lambda targets, timeout=3: ([], list(targets)))
+
+    def test_proc_wait_denied_returns_false(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        self._fakes(monkeypatch)
+        assert pr._kill_pid_tree(4908) is False, "读不到退出态却上抛＝整轮连坐的原始形态"
+
+    def test_wait_procs_denied_returns_false(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        self._fakes(monkeypatch, wait_raises=True)
+        assert pr._kill_pid_tree(4908) is False
+
+    def test_process_open_denied_returns_false(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        def boom(pid: int):  # noqa: ANN001, ARG001
+            raise _psutil.AccessDenied(pid=4908)
+
+        monkeypatch.setattr(_psutil, "Process", boom)
+        assert pr._kill_pid_tree(4908) is False
+
+    def test_legacy_unguarded_shape_raises_on_same_input(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """红证：同样的输入喂给"修复前无兜底"的调用序列，异常必然冲出（证明尺有牙）。"""
+        self._fakes(monkeypatch)
+        proc = _psutil.Process(4908)
+        _psutil.wait_procs([proc], timeout=3)
+        with pytest.raises(_psutil.AccessDenied):
+            proc.wait(timeout=2)
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-q"]))
