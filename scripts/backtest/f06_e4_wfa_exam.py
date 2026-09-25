@@ -395,7 +395,15 @@ def run_exam(  # noqa: long-param-list  存量考卷装配签名（E4成本门�
     folds = build_folds(start, end, train_months, test_months, step_months)
 
     fge = _load_factory_executor()
-    load_px, wide, filter_st, load_st_flags, run_backtest, daily_net_returns = fge._load_engine()
+    # st-ddup-20260925 去重改造②适配: _load_engine 7 元组；stats 取单趟双产物前件（逐位一致）
+    load_px, wide, filter_st, load_st_flags, run_backtest_full, daily_net_returns, net_returns_by_tiers = (
+        fge._load_engine()
+    )
+
+    def run_backtest(weights, px_close, gate_limits=True, slippage_bp=None):
+        stats, _net = run_backtest_full(weights, px_close, gate_limits=gate_limits, slippage_bp=slippage_bp)
+        return stats
+
     from zephyr.position.core.position_recipe_compiler import PositionRecipe
 
     # 数据一次拉取（窗口外多留 200 日作因子/滚动 IC 预热，与 run_batch 同法）
