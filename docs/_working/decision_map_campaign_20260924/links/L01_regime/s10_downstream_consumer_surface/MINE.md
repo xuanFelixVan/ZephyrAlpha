@@ -1,0 +1,44 @@
+---
+ttl: task_bound
+title: L01-S10 子模块挖矿簿 · 下游消费面（快照/锚定/六段三产物全消费清单）
+created: 2026-09-26
+sid: st-qmine-20260925
+lane: LANE-MINE-A
+status: MINE 完成（消费清单以本册全仓 grep 实测封顶）
+---
+
+# L01 · S10 下游消费面
+
+**① 职责一句话**：登记"状态层三个产物（七态快照 / 锚定四档 / 六段相位）被谁、在哪一行、以什么口径读走"，防第二读取面漂移。
+
+**② 现状实测（本册 grep 全仓，`regime_snapshot_history`∨`SQL_LATEST_REGIME_SNAPSHOT` 命中 24 文件）**
+
+| 分类 | 文件 | 口径要点 |
+|---|---|---|
+| 分配链 | `pf_alloc/allocation_inputs.py`、`allocation_orchestrator.py`、`crisis_gate.py` | PIT 读最新快照（ORDER BY trade_date DESC,run_id DESC）+ 锚定 cap + 双档危机门（θ 真源 config/crisis_gate.yaml 缺省 0.5） |
+| 门/编排 | `strategy_pipeline/daily_gate_snapshot.py`、`daily_decision_orchestrator.py`、`pipeline_events.py` | L1 采集缺席→no_trade D1；S2 腿新鲜度+六段映射（真源引用，见 S8 册） |
+| 计划链 | `plan_engine/daily_plan.py`、`daily_loop_master_switch.py` | _REGIME_SQL 读 dominant/confidence；二道新鲜度闸补印 |
+| 策略工厂 | `strategy_factory/owner_band_t/{data_loader,regime_gate}.py`、`owner_regime_switcher/data_loader.py` | **PINNED_RUN_ID="VAL-P0-20260916-230726" 钉死单 run**（本册实测该 run=1,812 日全窗，见 S6 册 run 表）；禁 FINAL（CH Code 181） |
+| 回测/挂图 | `fw_backtest.py`、`screen_source.py`、`scripts/backtest/{auto_mount,compare_state_dualrun,validate_p0_discrimination}.py`、`scripts/backtest/ibt/{ibt_runner,ibt_mining_matrix}.py` | screen_source:166 `count()` 未去重（污染实证）；load_regime_series 去重非确定性 |
+| 战役物化 | `scripts/audit/t0_gpu_condition_pack.py`、`t0_six_phase_materialize.py`、`scripts/data/pattern_win_rate_materialize.py` | **SKEL 未列的三个新消费者**（本册净增） |
+| 板块层 | `src/zephyr/data/sector_state_pipeline.py` | 读锚定 dominant（跨环节边，L03-B3 册对读） |
+| 人工面 | `frontend/dashboard/components/warroom.py` | 经 index_regime_panel（S12 册） |
+
+**③ 六向台账**
+
+| 向 | 发现 |
+|---|---|
+| ①上游 | 本块=消费汇总（输入即 S6/S7/S8 产物），内部已实测；外部不适用（登记"本向对消费面不适用"） |
+| ②下游 | 内部：battle_map_09 风控域"市场状态"消费无代码边回指（LK-L01-3 在册，本册复核：crisis_gate 头注未回指 RC 域）。外部：已查无（图-码对齐属治理域，无外部件） |
+| ③算法 | 内部：各消费点自带小算法（θ 门/cap 线性/查表）——**重复读 SQL 面 7 处**（allocation_inputs/daily_gate_snapshot/daily_plan/owner_band_t/owner_regime_switcher/fw_backtest/screen_source） | 外部：已查无 |
+| ④后端 | 内部：无统一"状态读取门面"，7 处各自 SELECT=最大结构性债；先例件=alloc_shrinkage_daily.py:93-99 | 外部：已查无 |
+| ⑤前端 | 内部：warroom 一处。外部：已查无 |
+| ⑥数据字段 | 内部：分量列 NULL 使消费侧只能读 dominant/shrinkage（同 S6）；PINNED_RUN_ID 视图停更（append-only 下 09-16 后新日不进该 run） |
+
+**④ 缺口清单**：LK-L01-3（在册）；L01-C03③（在册）；L01-C09（在册，PINNED run 盘点）；**L01-S10-G1 状态读取门面缺失（7 个散落 SELECT）**——册内未见；**L01-S10-G2 新增三脚本消费者未入 09 号文消费清单**——册内未见（叙述与现状脱节）。
+
+**⑤ 三态裁定**：G1=**施工 P1**（统一走 allocation_inputs.load_regime_input 先例，净 -6 读面，直接消灭"改一处漏六处"人工风险）；G2=**施工 P0 文档面**（本册即补全，随落地车道入 09 号文勘误）；LK-L01-3=挂起排期（解锁=治理班回指登记）；L01-C03③/C09=在册施工/登记。
+
+**⑥ 挖矿日志**：R1 全仓 grep 24 文件清单→signal（净增 5）；R2 读面计数→signal（7 处 SELECT 量化）；R3 外部"状态层消费惯例"→noise，归因=方向本就无矿（内部反查即足）。
+
+**封矿判据**：消费清单以 grep 封顶、逐点带路径行号 → **子模块封矿**。

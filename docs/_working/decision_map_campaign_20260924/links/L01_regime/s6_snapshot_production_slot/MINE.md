@@ -1,0 +1,68 @@
+---
+ttl: task_bound
+title: L01-S6 子模块挖矿簿 · 快照入库与自动产槽（印教材链）
+created: 2026-09-26
+sid: st-qmine-20260925
+lane: LANE-MINE-A
+status: MINE 完成（六向封口 + 行数口径以本册 CH 只读实测封顶）
+---
+
+# L01 · S6 快照入库与自动产槽
+
+**① 职责一句话**：把 S1/S2/S5 的当日结果机械"印"成 `c1_backtest.regime_snapshot_history` 一行（append-only + 新 run_id），并保证业务日级"至多一印"与新鲜度滞后闸。
+
+**② 现状实测（本册 CH 只读探针，2026-09-26 复测，禁裸 duckdb/只读）**
+
+| 项 | 实测值 |
+|---|---|
+| 表体量 | `regime_snapshot_history`：**3,629 行 / 1,819 唯一交易日 / 5 个 run_id**，2019-04-01→2026-09-24 |
+| run 分布 | VAL-P0-20260912-154118（1,809 日全窗）＋ VAL-P0-20260916-230726（1,812 日全窗）＝双写主体；另三个增量 run：20260921-050922（3 日）/20260922-164519（3 日）/20260924-164044（2 日，至 09-24 当日） |
+| 口径结论 | **战役文与 09 号文所记"3,629 日"=行数而非日数，真实 PIT 全史深度=1,819 交易日**（本册复测较 SKEL 的 1,817/1,818 再 +1~2 日，属正常增量） |
+| 产槽链 | `scripts/backtest/print_regime_history.py`（MOD-BT-032）→ `src/zephyr/strategy_pipeline/pipeline_events.py:maybe_refresh_regime_snapshot`（唯一自动产出者，挂 daily_kline/kline_daily/kline_index 任一 SUCCESS）→ CH_COMMITTED 才算成功（fail-closed） |
+| 滞后闸 | `fw_backtest.ensure_regime_snapshot` max_staleness_days=**1**（Owner 2026-09-21 批，与消费侧 D1 口径对齐）；缺口窗 append-only 补印 |
+| 二道闸 | `plan_engine/daily_loop_master_switch.py` ensure_regime_fresh（消费方口径补印） |
+| 未治点 | `src/zephyr/strategy_pipeline/screen_source.py:166` 仍是 `SELECT count()`（**无 run_id 去重/无 uniqExact**）→ 窗口天数双计污染仍在（本册 grep 实测） |
+| DDL 真源 | `schemas/categories/regime_snapshot_history.py`（经 `scripts/ch/apply_regime_snapshot_ddl.py`），16 列含 p_r1..p_r12/dominant/confidence/confidence_signal/risk_signal/shrinkage/probs_json |
+| 测试面 | `tests/regime/test_regime_detector.py` + 印教材相关测试；分量列 NULL 由 :151-152/:179-180 自注 |
+
+**③ 六向台账**
+
+| 向 | 发现 |
+|---|---|
+| ①上游 | 内部：业务日=`resolve_pf_alloc_trade_date`（禁墙钟猜日）；特征全量来自 S4。外部：已查无（入库编排属工程件，无外部方法论；查法=以"regime snapshot persistence walk forward"检索，命中皆为研究复现脚本，不构成分层惯例） |
+| ②下游 | 内部：全仓 `regime_snapshot_history`/`SQL_LATEST_REGIME_SNAPSHOT` 引用文件实测 **24 个**（生产 14：pf_alloc 三件 / daily_gate_snapshot / daily_decision_orchestrator / daily_plan / daily_loop_master_switch / owner_band_t 两件 / owner_regime_switcher / fw_backtest / pipeline_events / screen_source；脚本 10：t0_gpu_condition_pack / t0_six_phase_materialize / auto_mount / compare_state_dualrun / ibt_mining_matrix / ibt_runner / print_regime_history / validate_p0_discrimination / apply_regime_snapshot_ddl / pattern_win_rate_materialize）→ 详表见 S10 册 |
+| ③算法 | 内部：无（本块零算法）。外部：已查无（同上，登记即封顶） |
+| ④后端 | 内部：①行数/日数口径混计未清（screen_source 未去重实证）②`fw_backtest.load_regime_series` 同日双行的去重次序未定（依赖 dict 覆盖，非确定性）③每执行新 run_id 使"最新视图"必须带 run_id 语义，PINNED_RUN_ID 读法会停更。外部：事件溯源/append-only 台账去重=标准做法（CH `FINAL`/argMax），本仓已有先例件 alloc_shrinkage_daily.py:93-99 → 沿用不另引 |
+| ⑤前端 | 内部：Owner 面=仪表盘 warroom + run 档案归档（SOP-D）。外部：已查无 |
+| ⑥数据字段 | 内部：16 列 schema 在；**质量画像=confidence_signal/risk_signal 两列实测恒 NULL**（印教材自注未扩展），故任何按分量列做的分母统计（误报率剔除）当前不可算 |
+
+**④ 缺口清单**
+
+| 编号 | 内容 | 册内出处 |
+|---|---|---|
+| LK-L01-1 | 行数/日数口径混计（本册实测 3,629 行 / 1,819 日 / 5 run） | SKEL §13 在册，本册补实测数 |
+| L01-C03 | 双写去重与消费 SQL 统一（screen_source:166 仍未修） | SKEL §12 在册 |
+| L01-C08 | 分量列回填 | SKEL §12 在册 |
+| D29 | 滞后阈值文档漂移（代码=1，散文=3） | 需求册沿用 |
+| L01-S6-G1 | **run 台账无人盘点**：5 个 run 中两个全窗 run 谁作"教材正身"无登记面，考试冻结口径依赖人工记忆 PINNED_RUN_ID | 册内未见 |
+
+**⑤ 自审闸三态裁定**
+
+| 缺口 | 裁定 | 理由 |
+|---|---|---|
+| LK-L01-1 | 施工（P0，随 L01-C03） | 判据口径不改、只纠正"行/日"单位叙述——文档矛盾=事故（宪法 §4.3），终局全貌下 Owner 读到的每个数字都要能自动派生 |
+| L01-C03 | 施工（P0，在册） | 双计直接污染窗口选择 |
+| L01-C08 | 施工（P2，在册） | 分量列空→误报率不可算→档位校准无人验收 |
+| D29 | 施工（P0 顺手项，在册） | 三处文案同值即销口 |
+| L01-S6-G1 | 施工（P1，新增） | 建"run 台账机读件"（run_id/窗口/用途/是否考试冻结/是否正身）由印教材自动 append，消灭"人记 PINNED_RUN_ID"这一人工环节；净零：并入既有 run 档案归档目录，不新建表 |
+
+**⑥ 挖矿日志**
+
+| 轮 | 矿脉 | 判定 | noise 归因 |
+|---|---|---|---|
+| R1 | 内部：CH 只读探针三次（总量/run 分布/anchored 对照） | signal（**口径之争以实测封顶**：3,629=行、1,819=日） | — |
+| R2 | 内部：24 消费文件全清单 | signal | — |
+| R3 | 内部：screen_source 去重现状复核 | signal（L01-C03 未落的实证） | — |
+| R4 | 外部：入库编排标准件 | noise | 归因=**方向本就无矿**（纯工程落盘面）→ 已查无 |
+
+**本册封矿判据**：六向封口，口径问题从"叙述"升级为"实测数字"，未挖长尾无 → **子模块封矿**。
