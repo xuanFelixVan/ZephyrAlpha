@@ -50889,4 +50889,9 @@ creation_tokens:
   created_by: st-cmd-20260924
   capability: gpu_rewrite_mining_20260925
   merge_evaluation: "GPU 重写挖矿班五件：计算热点普查（13 族 ABC 分级）/业界全景（五框架全 CPU 实证，自研薄核正解）/三层架构（L1 hoisting 3-7x/L2 批量 GPU 10-30x/L3 条件触发）/验证框架（FP32 容差三层对拍）/路线图（六条负决策条款）"
+- file: docs/_working/disk_reorg_campaign/backup_cold_audit_sop.md
+  token: gfps-audit-sop-backup-cold-audit-sop-20260925
+  created_by: st-backup-cold-20260924
+  capability: gfps-audit-sop
+  merge_evaluation: "备份+冷库全景审计 SOP 与既有冷库 SOP（10_g_drive_cold_storage_sop）分工不同：彼=冷库入库规范，此=双盘周期审计与灾备演练规程，跨域不同对象不并"
 di_seam_exemptions: []
