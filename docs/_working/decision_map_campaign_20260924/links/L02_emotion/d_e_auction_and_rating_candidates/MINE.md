@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L02-D/E 子类目挖矿簿 · 竞价情绪 stage 与评级情绪候选（两条"原料通、腿未挂"候选类目合并一簿）
 created: 2026-09-26
 sid: st-qmine-20260925

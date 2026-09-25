@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L06-子模块 考试结果回写面（exam_result 双 outcome 语义 / 唯一合法写口 / 三态桶消费）挖干
 created: 2026-09-25
 sid: st-qmine-20260925

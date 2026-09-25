@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L04-S5 子模块挖矿簿 · 可交易性硬过滤层（市值流动性门槛 ⊕ ST/涨跌停/停牌/次新排除）
 created: 2026-09-26
 sid: st-qmine-20260925

@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L02-C5 子类目挖矿簿 · 杠杆资金成分（C5_margin）
 created: 2026-09-26
 sid: st-qmine-20260925

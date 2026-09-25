@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: index
 title: L04 板块→个股传导 · 子模块总勾表与本环节穷尽性声明
 created: 2026-09-26
 sid: st-qmine-20260925

@@ -7,6 +7,7 @@ lane: decision_map_campaign_20260924/links
 status: mining（六向全填、三态已裁、施工项待排）
 doc_version: v0.1
 skeleton_source: ../../09_link_skeletons.md#环节-4（291-353 行）
+doc_type: log
 ---
 
 # L04 · 板块→个股传导（选股/成分映射/因子）——挖干作业簿

@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L02-G 子类目挖矿簿 · 明日情绪盘中滚动预测（TDM-E-L0-04 三零件族）
 created: 2026-09-26
 sid: st-qmine-20260925

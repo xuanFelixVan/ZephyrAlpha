@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: audit_report
 title: L05 做T · tick 盘口失衡材料线矿（一档/五档盘口料与闭卷窗交集实测）
 created: "2026-09-26"
 sid: st-qmine-20260925

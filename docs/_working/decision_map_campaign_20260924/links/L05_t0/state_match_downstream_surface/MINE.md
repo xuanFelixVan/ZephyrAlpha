@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: audit_report
 title: L05 做T · 状态匹配矩阵下游消费面矿（谁在吃这张矩阵/试验数记账/注册缺口）
 created: "2026-09-26"
 sid: st-qmine-20260925

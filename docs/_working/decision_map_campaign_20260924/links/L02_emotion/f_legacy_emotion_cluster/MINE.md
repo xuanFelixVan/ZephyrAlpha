@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L02-F 子类目挖矿簿 · 存量同域情绪簇（四件并存与内收）
 created: 2026-09-26
 sid: st-qmine-20260925

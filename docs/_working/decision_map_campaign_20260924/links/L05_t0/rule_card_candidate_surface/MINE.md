@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: audit_report
 title: L05 做T · 规则卡可卡化扩面候选池矿（同日两腿契约=卡化硬边界与排除清单缺口）
 created: "2026-09-26"
 sid: st-qmine-20260925

@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L03-B1 子类目挖矿簿 · 板块指数族数据底座（880/881/分钟腿/名称映射）
 created: 2026-09-26
 sid: st-qmine-20260925

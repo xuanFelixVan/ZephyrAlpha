@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L03-B5 子类目挖矿簿 · 轮动算法族（RRG/状态/电风扇/龙头/动量等 16 件，逐件归位表）
 created: 2026-09-26
 sid: st-qmine-20260925

@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L03-B2 子类目挖矿簿 · sector_state 五成分聚合核（sector_state_aggregator）
 created: 2026-09-26
 sid: st-qmine-20260925

@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L03-B4 子类目挖矿簿 · 板块资金维（sector_fund_flow 与个股聚合主路径）
 created: 2026-09-26
 sid: st-qmine-20260925

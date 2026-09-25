@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: index
 title: L05 个股做T · 子模块深挖总勾表与穷尽性声明（六矿 43 条新缺口）
 created: "2026-09-26"
 sid: st-qmine-20260925

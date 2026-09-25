@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: audit_report
 title: L05 做T · 多周期买卖点轴语义矿（{1,5,15,30,60}min 分桶口径与 120min 边界）
 created: "2026-09-26"
 sid: st-qmine-20260925

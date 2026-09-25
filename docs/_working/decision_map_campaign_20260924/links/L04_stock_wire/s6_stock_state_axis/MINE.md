@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L04-S6 子模块挖矿簿 · 个股状态轴物化与条件概率面（载体史深/概率表范式/回补可达性）
 created: 2026-09-26
 sid: st-qmine-20260925

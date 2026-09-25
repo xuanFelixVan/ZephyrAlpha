@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L03-B8 子类目挖矿簿 · P1 板块×相位条件概率表（消费端）
 created: 2026-09-26
 sid: st-qmine-20260925

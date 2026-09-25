@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L03-B7 子类目挖矿簿 · 成分映射 SCD-2 与板块坐标系
 created: 2026-09-26
 sid: st-qmine-20260925

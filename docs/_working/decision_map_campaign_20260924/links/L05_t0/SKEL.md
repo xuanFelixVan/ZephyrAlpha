@@ -23,6 +23,7 @@ inputs:
   - docs/_working/trading_vision/2026-09-16-data-sufficiency-matrix.md（S-OWNER-001/002 料源）
   - docs/_working/archive/2026-09/bizmine_night/etf_t0_retest/etft0_prereg_card.md（ETF 三宇宙母本卡）
 grading_basis: 裁定#325 判档制 + links/README.md 挖干判据；34 法三态承 T0-SCHEME-MATRIX 口径（禁把"不可考"写成"未通过"）
+doc_type: log
 ---
 
 # L05 · 个股做T 链路挖干作业簿

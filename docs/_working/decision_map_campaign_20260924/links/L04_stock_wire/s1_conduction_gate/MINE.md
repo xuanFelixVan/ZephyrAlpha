@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L04-S1 子模块挖矿簿 · 板块→个股传导段（L2-06 家族：强度调节分/三级放行/龙头定位）
 created: 2026-09-26
 sid: st-qmine-20260925

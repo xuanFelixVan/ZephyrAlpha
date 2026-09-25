@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L03-B6 子类目挖矿簿 · L2 板块门三原料供料与接线（S66）
 created: 2026-09-26
 sid: st-qmine-20260925

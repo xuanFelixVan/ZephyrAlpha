@@ -8,6 +8,7 @@ status: SEALED（八子块六向全填；深读尾差 3 件见 §7 尾注，不�
 doc_version: v1.0
 skeleton_source: ../../09_link_skeletons.md 环节6（本簿=其挖干细化，禁作新增节点号出处）
 mining_sources: factory_grid_executor.py / calibrate_cost_tier_redblue.py / search_space_prereg.yaml / 战役 02·03·11·17·18 号文 / quant_methodology 01·02·04·06 册+routing_table_v1_draft / framework_composer.py / TDM yaml state_matrix 段 / IBT-PROTOCOL-V1 §7-10 / exam_policy.md / exam_cost_gate / condition_package / n_trial_ledger / deflated_sharpe_calculator / f06_e4_wfa_exam / daily-orchestrator-blueprint §二S4
+doc_type: log
 ---
 
 # L06 · 策略考试与条件共振上岗（GPU 成绩单→选策略规则）挖干作业簿
