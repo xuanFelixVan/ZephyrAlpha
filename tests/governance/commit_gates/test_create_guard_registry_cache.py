@@ -5,6 +5,10 @@
 - 命中：同 (mtime_ns, size) 二次加载不得重解析（_read_registry_text 调用计数=1）。
 - 失效：mtime 或 size 任一变化必须重解析（写后失效，并发写窗口防陈旧）。
 - 判据等价：命中与重解析返回同一 data 结构（同一文件同一字节同一解析器）。
+
+pkg8（st-commitspeed-pkg8-20260925）：缓存容器下沉共享模块
+_capability_registry_io（六台共册一次解析），fixture 改为复位共享容器；
+create_guard._REGISTRY_CACHE 保留为同一容器别名（引用兼容）。
 """
 
 from __future__ import annotations
@@ -14,6 +18,7 @@ from types import SimpleNamespace
 import pytest
 import yaml
 
+from zephyr.gov_enforcement.commit_gates import _capability_registry_io as crio
 from zephyr.gov_enforcement.commit_gates import create_guard as cg
 
 
@@ -25,7 +30,8 @@ def reg_env(tmp_path, monkeypatch):
         "schema_version: 1.1.0\ncapabilities: []\ncreation_tokens:\n  - file: a.md\n    token: t-a\n",
         encoding="utf-8",
     )
-    monkeypatch.setattr(cg, "_REGISTRY_CACHE", {"key": None, "data": None})
+    # 共享缓存容器复位（cg._REGISTRY_CACHE=crio._PARSE_CACHE 同一对象，别名不可替换）
+    monkeypatch.setattr(crio, "_PARSE_CACHE", {"key": None, "data": None})
     import zephyr.governance.capability_lookup as cl
 
     monkeypatch.setattr(cl, "REGISTRY_YAML", reg)
