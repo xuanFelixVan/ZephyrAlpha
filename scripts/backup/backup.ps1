@@ -30,7 +30,18 @@ param([switch]$Force, [ValidateSet("all","ch","code")][string]$Mode = "all")
 $ErrorActionPreference = "Continue"
 $ProjectRoot = "D:\ZephyrAlpha"
 $ConfigFile = "$ProjectRoot\scripts\backup\backup_config.yaml"
-$LogFile = "$ProjectRoot\logs\backup_report_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
+# Run anchor (P-15, 2026-09-26): ONE PASS = ONE DATE. Every date-typed product name
+# (report file name, vault day dir, db_dumps day dir, bundle name) is derived from
+# this single value instead of a fresh Get-Date at each site. Proof it was needed:
+# run backup_report_20260925_215158 (duration 9683s, ended 00:33) emitted
+# working_vault\20260925 (day_target in its own report) + db_dumps\20260926 --
+# same pass, two dates, so a per-day restore no longer found "that day's snapshot"
+# and "that day's dump" under the same label.
+# Deliberately NOT anchored: retention/rotation cutoffs (space guard, vault rotation,
+# dumps rotation) and the 7d bundle cadence keep the live clock -- no threshold, day
+# count or duration semantics are touched by this change.
+$RunAt = Get-Date
+$LogFile = "$ProjectRoot\logs\backup_report_$($RunAt.ToString('yyyyMMdd_HHmmss')).json"
 $LockFile = "$ProjectRoot\.runtime\backup.lock"
 $StateFile = "$ProjectRoot\data\databases\backup_state.json"
 $DumpDir = "D:\tmp_db_dumps"
@@ -144,7 +155,7 @@ if (Test-BackupLock) {
     try {
         $lockMtime = (Get-Item $LockFile).LastWriteTime
         $lockAgeH = [math]::Round(((Get-Date) - $lockMtime).TotalHours, 2)
-        $skipLog = "$ProjectRoot\logs\backup_skipped_$(Get-Date -Format 'yyyyMMdd_HHmmss').json"
+        $skipLog = "$ProjectRoot\logs\backup_skipped_$($RunAt.ToString('yyyyMMdd_HHmmss')).json"
         $skipObj = [ordered]@{
             timestamp  = (Get-Date -Format 'o')
             reason     = "lock_held"
@@ -153,12 +164,17 @@ if (Test-BackupLock) {
             lock_age_hours = $lockAgeH
             lock_mtime = $lockMtime.ToString('o')
         }
-        $skipObj | ConvertTo-Json | Out-File $skipLog -Encoding utf8
+        # (P-5) no-BOM writer, same class as the STAGE 4 report below
+        $skipJson = ($skipObj | ConvertTo-Json) -replace "`r`n", "`n"
+        [System.IO.File]::WriteAllText($skipLog, $skipJson, (New-Object System.Text.UTF8Encoding($false)))
     } catch { }
     exit 0
 }
 Acquire-Lock
-$backupStartTime = Get-Date
+# (P-15) the duration clock and the product-name clock are now the SAME instant
+# ($RunAt, taken once at script top) -- two separate Get-Date calls could straddle
+# midnight and disagree about which day this pass belongs to.
+$backupStartTime = $RunAt
 
 try {
 
@@ -537,7 +553,7 @@ if ($Mode -eq "ch") {
         return $idx
     }
 
-    $today = (Get-Date).ToString("yyyyMMdd")
+    $today = $RunAt.ToString("yyyyMMdd")
     $dayTarget = Join-Path $VaultBase $today
     New-Item -ItemType Directory -Path $dayTarget -Force | Out-Null
 
@@ -655,7 +671,7 @@ if ($Mode -eq "ch") {
     # rotation gated on CH backup ok -- oldest snapshot only removed when data body is in DB
     # and doubly backed up. Legacy /MIR files at target root stay as frozen extra copy.)
     if (Test-Path $DumpDir) {
-        $dumpsDay = (Get-Date).ToString("yyyyMMdd")
+        $dumpsDay = $RunAt.ToString("yyyyMMdd")
         $dumpsDayTarget = Join-Path $DumpsTarget $dumpsDay
         New-Item -ItemType Directory -Path $dumpsDayTarget -Force | Out-Null
         & robocopy $DumpDir $dumpsDayTarget "/E" "/COPY:DAT" "/R:2" "/W:5" "/MT:8" "/NFL" "/NDL" "/NP" 2>&1 | Out-Null
@@ -710,11 +726,18 @@ if ($Mode -ne "ch") {
     $latestBundle = Get-ChildItem "$bundleDir\*.bundle" -File -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending | Select-Object -First 1
     $bundleAgeDays = if ($latestBundle) { [math]::Round(((Get-Date) - $latestBundle.LastWriteTime).TotalDays, 2) } else { 999 }
-    $bundleTarget = Join-Path $bundleDir ("zephyralpha_full_{0}.bundle" -f (Get-Date -Format 'yyyyMMdd'))
+    # (P-8b, 2026-09-26) count clause. The age-only gate could never repair a dir holding
+    # fewer than 2 bundles: on 2026-09-26 G:\backup\git_bundles held exactly 1
+    # (zephyralpha_full_20260921.bundle, 468545940 B) and every pass logged reason=fresh,
+    # so the "at least 2 bundles" audit criterion was unreachable. Rebuild when the 7d
+    # cadence is due OR fewer than 2 bundles are on hand. The 7 threshold, the 2 in
+    # "keep the newest 2" and the rotation itself (Select-Object -Skip 2) are untouched.
+    $bundleCount = @(Get-ChildItem "$bundleDir\*.bundle" -File -ErrorAction SilentlyContinue).Count
+    $bundleTarget = Join-Path $bundleDir ("zephyralpha_full_{0}.bundle" -f $RunAt.ToString('yyyyMMdd'))
 
-    if ($bundleAgeDays -lt 7) {
-        Write-OK ("Bundle fresh ({0}d old), skipping" -f $bundleAgeDays)
-        $bundleResult = @{status="skipped"; reason="fresh"; latest=$latestBundle.Name; age_days=$bundleAgeDays}
+    if ($bundleAgeDays -lt 7 -and $bundleCount -ge 2) {
+        Write-OK ("Bundle fresh ({0}d old) with {1} bundle(s) on hand, skipping" -f $bundleAgeDays, $bundleCount)
+        $bundleResult = @{status="skipped"; reason="fresh"; latest=$latestBundle.Name; age_days=$bundleAgeDays; count=$bundleCount}
     } else {
         # Today's file may exist from a partial/failed prior attempt -- verify or rebuild
         if (Test-Path $bundleTarget) {
@@ -728,7 +751,7 @@ if ($Mode -ne "ch") {
             }
         }
         if (-not (Test-Path $bundleTarget)) {
-            Write-Stage "Creating bundle (latest is $bundleAgeDays days old)"
+            Write-Stage "Creating bundle (latest is $bundleAgeDays days old, $bundleCount bundle(s) on hand)"
             & git -c pack.windowMemory=256m -c pack.threads=2 bundle create $bundleTarget --all 2>&1 | Out-Null
             if ($LASTEXITCODE -eq 0 -and (Test-Path $bundleTarget)) {
                 & git bundle verify $bundleTarget 2>&1 | Out-Null
@@ -881,7 +904,16 @@ $report = @{
 }
 
 New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
-$report | ConvertTo-Json -Depth 5 | Out-File $LogFile -Encoding utf8
+# (P-5, 2026-09-26) Out-File -Encoding utf8 under PowerShell 5.1 writes a UTF-8 BOM,
+# so every report on disk starts EF BB BF and json.load(open(p, encoding='utf-8'))
+# dies with "Unexpected UTF-8 BOM" (reproduced on logs\backup_report_20260925_215158.json
+# the night of 2026-09-25). Readers audited before the change:
+#   backup_reconciler.read_report_ch_status -> read_text(encoding='utf-8-sig') = BOM-agnostic
+#   retire_tmp_artifacts.collect_logs_stale -> matches file NAME only, never parses
+#   tests\scripts\backup\test_backup_reconciler -> writes its own BOM-less fixture
+# No reader requires a BOM, so the no-BOM writer used for the state file applies here too.
+$reportJson = ($report | ConvertTo-Json -Depth 5) -replace "`r`n", "`n"
+[System.IO.File]::WriteAllText($LogFile, $reportJson, (New-Object System.Text.UTF8Encoding($false)))
 Write-OK "Report saved: $LogFile"
 
 # Update state file
