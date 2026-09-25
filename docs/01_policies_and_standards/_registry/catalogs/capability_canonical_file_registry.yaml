@@ -50508,4 +50508,9 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: metaq_schedule
   merge_evaluation: "零触发零消费→不并（判据二反向）：本件是"
+- file: src/zephyr/infrastructure/duckdb_runtime_gate.py
+  token: fullflow-mining-duckdb-runtime-gate-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: fullflow_mining
+  merge_evaluation: "新拦截面对齐 runtime_interceptor 既有模式同域新建（非同真源可派生、有消费方 tests+引导链、唯一 duckdb.connect 运行时面、与 bare_sql_gate 门/运行时互补）——四判据过，不并"
 di_seam_exemptions: []
