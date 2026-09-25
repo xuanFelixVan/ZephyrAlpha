@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] exit 0=成功（含 drain 拿不到 lease 跳过）; exit 1=参数/IO 错误（含 requeue 取回失败）; exit 2=入队轻检拒绝(DENIED)
-# [TESTS] tests/governance/test_commit_queue.py
+# [TESTS] tests/governance/test_commit_queue.py; tests/governance/test_enqueue_preflight.py
 # [A_module] module_id=MOD-GOV-046 | layer=script | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 本文件是 AI/CI 按需调用的 CLI 协调工具（入队自举排空，无常驻进程），与 lock_files.py/task_board.py 同类
@@ -301,6 +301,14 @@ _DEAD_REASON_ITEM_MARKERS = (
     "基底重校验",
     "TRACKED-DRIFT-READONLY",
     "网关落盘失败",
+    # QCure M3.3 标记表补族（st-qcure-20260925）：落地侧已产生但三分类归 other 的盲区——
+    # 死因族真源与处方映射见 _DEAD_PRESCRIPTIONS（同 commit 原子补齐，勿只改一处）。
+    "三向合并失败",  # 注册表三向合并 fail-closed（commit_queue_landing 注册表合并口）
+    "身份键重复",  # 注册表身份键碰撞（module_id/step_id 类）
+    "基底不可知",  # BASE-UNKNOWN：base_head/base_blob 缺失无法判定快进
+    "BASE-UNKNOWN",
+    "快照未真应用",
+    "冲突标记",  # 快照含未解决合并冲突标记（入队口 M2.2 预扫同源判据）
 )
 
 # session_id 字符白名单：session_id 进入 qid 与 seq 文件名，必须防路径注入
@@ -1421,6 +1429,12 @@ def drain_queue(
                 # 死信：附原因移 dead/，队列继续前进（DLQ 语义不堵队，66 号 §6.4）
                 item["dead_at"] = _now_iso()
                 item["dead_reason"] = result.reason
+                # M3.3（QCure st-qcure-20260925）：死因处方+责任会话随袋落册——dead 项
+                # 自带一键修复指引（dead_letter_prescription 按 classify 族映射），
+                # requeue 面人工排查成本直降；owner_session=袋 session_id（责任会话
+                # 一跳可达，死信爆发 per_session 聚合同源口径）。
+                item["prescription"] = dead_letter_prescription(result.reason)
+                item["owner_session"] = item.get("session_id") or ""
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "dead" / head.name)
                 stats["dead"] += 1
@@ -1530,6 +1544,11 @@ def _notify_task_board_requeued(old_item: dict, new_qid: str) -> None:
         logger.warning("[requeue] task_board 联动失败（忽略，重入队已完成）: %s", exc)
 
 
+# 重投熔断阈值（QCure M1.3，st-qcure-20260925）：新袋 meta.requeue_count=旧袋+1，
+# 计数 ≥3 拒绝重投（连败链非重复重试可解）——--force 显式旗可越（meta.requeue_forced 留痕）。
+_REQUEUE_CIRCUIT_LIMIT = 3
+
+
 def requeue_dead_item(
     qid: str,
     *,
@@ -1540,6 +1559,7 @@ def requeue_dead_item(
     base_head: str | None = None,
     base_blobs: dict | None = None,
     from_bag: bool = False,
+    force: bool = False,
 ) -> dict:
     """死信取回重入队（66 号 §6.4 死信闭环 + 08 号文 §4.3 P1）。
 
@@ -1558,6 +1578,10 @@ def requeue_dead_item(
 
     返回 {"old_qid", "new_qid", "item"}；异常 RequeueError（CLI 映射 exit 1）/
     QueueReject（新项入队轻检拒绝，CLI 映射 exit 2）。
+
+    QCure M1.3（st-qcure-20260925）三补：①base_blobs 基底补全（此前恒 None ⇒ 级联
+    重校验空转）；②死信袋 envelope 继承进新袋（requeue 是 envelope 唯一丢失点）；
+    ③重投熔断（requeue_count ≥3 拒绝，--force 显式越过留痕）。
     """
     if not qid or not _QID_RE.match(qid):
         raise RequeueError(f"非法 qid（白名单 q-YYYYMMDD-<session>-<seq>，防路径穿越）: {qid!r}")
@@ -1570,6 +1594,25 @@ def requeue_dead_item(
         old_item = json.loads(dead_path.read_text(encoding="utf-8"))
     except (OSError, ValueError) as exc:
         raise RequeueError(f"死信项读取失败: {qid}（{exc}）") from exc
+    old_meta = old_item.get("meta") or {}
+    # M1.3-③ 重投熔断：新袋计数=旧袋+1，≥_REQUEUE_CIRCUIT_LIMIT 拒绝并给死因处方
+    # （连败链说明重复重试不可解）；--force 显式旗可越（meta.requeue_forced=true 留痕）。
+    try:
+        requeue_count = int(old_meta.get("requeue_count") or 0)
+    except (TypeError, ValueError):
+        requeue_count = 0  # 手改 JSON 坏值按零起算（红队 P2）——熔断语义不因脏数据崩溃
+    new_count = requeue_count + 1
+    if new_count >= _REQUEUE_CIRCUIT_LIMIT and not force:
+        dead_reason = old_item.get("dead_reason", "")
+        raise RequeueError(
+            f"重投熔断：{qid} 已重投 {requeue_count} 次，第 {new_count} 次拒绝"
+            f"（≥{_REQUEUE_CIRCUIT_LIMIT} 连败非重复重试可解）\n"
+            f"  死因: {dead_reason}\n"
+            f"  死因处方: {dead_letter_prescription(dead_reason)}\n"
+            f"  确需越过的用 --force（meta.requeue_forced=true 留痕）"
+        )
+    # M1.3-② envelope 继承：死信袋 meta.envelope（兼容读旧位顶层 envelope）带进新袋。
+    envelope = old_meta.get("envelope") or old_item.get("envelope") or None
 
     wt = Path(worktree_root) if worktree_root else Path.cwd()
     payload: list[tuple[str, bytes]] = []
@@ -1618,7 +1661,35 @@ def requeue_dead_item(
     if not payload and not deletes:
         raise RequeueError(f"死信项无文件条目可取回: {qid}")
 
-    task_id = (old_item.get("meta") or {}).get("task_id")
+    # 红队 P1-2（QCure M2.2 闭环）：requeue 车道直读字节不经 _read_files_from_worktree
+    # ⇒ 冲突标记快照会经 requeue 原样重入袋。此处与入队口同源补扫（复用同一检测器，
+    # 禁第二判据）；from-bag 与 worktree 两分支的 payload 都过这道闸。
+    from scripts.governance.enqueue_preflight import scan_conflict_markers  # noqa: PLC0415
+
+    for _rq_path, _rq_content in payload:
+        _rq_violation = scan_conflict_markers(_rq_path, _rq_content, max_bytes=_MAX_BLOB_BYTES)
+        if _rq_violation:
+            raise RequeueError(
+                "重投快照含未解决合并冲突标记（与入队口同源预扫）——回会话 worktree 解决合并后再重投",
+                details={"path": _rq_path, "violation": _rq_violation},
+            )
+
+    # M1.3-① 基底补全（作业簿 producer_enqueue 矿#4）：此前 requeue 恒不填 base_blobs
+    # ⇒ 新袋 base_blob 全 None ⇒ 级联重校验 _revalidate_stale_base 结构空转、注册表
+    # 合并 fail-closed 死信面未闭合。口径与 _cmd_enqueue 同源（resolve_base_head/
+    # resolve_base_blobs）；非 git 目录（tmp 隔离测试）取不到→None/全 None，行为与
+    # 修复前一致。
+    if base_blobs is None:
+        from scripts.governance.commit_queue_landing import (  # noqa: PLC0415
+            resolve_base_blobs,
+            resolve_base_head,
+        )
+
+        if base_head is None:
+            base_head = resolve_base_head(wt)
+        base_blobs = resolve_base_blobs(wt, base_head, [p for p, _ in payload] + list(deletes))
+
+    task_id = old_meta.get("task_id")
     new_item = enqueue_item(
         session_id or old_item.get("session_id", ""),
         message or old_item.get("message", ""),
@@ -1631,7 +1702,16 @@ def requeue_dead_item(
             # requeue 豁免大批硬顶（R2）：死信重试是既定决策的延续，尺寸判定在原入队时
             # 已做出——若此处拒绝，超大死信将永远无法重入队（死锁）。
             allow_oversize_batch=True,
-            meta_extra={"requeued_from": qid, **({"task_id": task_id} if task_id else {})},
+            meta_extra={
+                "requeued_from": qid,
+                # M1.3-③ 熔断计数随袋累计（dead→requeue 链一跳可见）
+                "requeue_count": new_count,
+                **({"task_id": task_id} if task_id else {}),
+                # M1.3-② envelope 继承（bag_storage 作业簿⑤③：requeue 是唯一丢失点）
+                **({"envelope": envelope} if envelope else {}),
+                # M1.3-③ --force 越权留痕
+                **({"requeue_forced": True} if force else {}),
+            },
         ),
     )
     # 取回留痕：原死信项追加 requeued 标注（dead/ 永不清理——只标注不删除）
@@ -1910,6 +1990,41 @@ def classify_dead_reason(reason: str) -> str:
     if any(m in reason for m in _DEAD_REASON_ITEM_MARKERS):
         return "item"
     return "other"
+
+
+# 死因处方映射（QCure M3.3，st-qcure-20260925）：dead_reason 特征串→一键修复指引。
+# 首条命中即返回（具体特征优先于分类兜底）；未命中按 env/item/other 三分类给兜底处方。
+# 新增死因族 MUST 同 commit 原子补三处：本表 + _DEAD_REASON_*_MARKERS 标记表 + 测试。
+_DEAD_PRESCRIPTIONS: tuple[tuple[str, str], ...] = (
+    (
+        "CREATE-GUARD",
+        "新建 .py/.yaml 未登记 creation_token：python scripts/governance/d3_metadata/"
+        "batch_creation_tokens.py 登记 token 后重投",
+    ),
+    ("PROTECTED-PATHS", "触碰保护区路径：改投白名单路径或走 Owner 裁定通道后重投"),
+    ("COMMIT_SCOPE", "跨域连坐误判：核实文件归属后用 git_commit.py --allow-multi-domain（留痕）重投"),
+    ("三向合并失败", "注册表三向合并冲突：人工比对 基底/dev/快照 三方后手工合并登记，再重投"),
+    ("身份键重复", "注册表身份键碰撞：修正 module_id/step_id 等身份键后重投"),
+    ("基底不可知", "BASE-UNKNOWN：--base-head 显式传基底（或先对齐工作区与 dev）后重投"),
+    ("BASE-UNKNOWN", "BASE-UNKNOWN：--base-head 显式传基底（或先对齐工作区与 dev）后重投"),
+    ("快照未真应用", "快照未真应用：核对 worktree 文件实际内容与快照差异后重投"),
+    ("冲突标记", "快照含未解决合并冲突标记：回会话 worktree 解决合并后重新入队，勿直接重投"),
+    ("cascade_stale", "级联基底失效：前置项已落盘，重投前先按当前 dev 重取基底（--base-head）"),
+)
+_DEAD_PRESCRIPTION_FALLBACK = {
+    "env": "环境性失败（物品无辜）：直接 requeue 重投即可（瞬态环境争用类，requeue 即愈）",
+    "item": "门禁物品性失败：按 dead_reason 中 gate 标识修复物品本身后重投",
+    "other": "未归类死因：人工排查（python scripts/commit_queue.py health 看死因分类聚合）",
+}
+
+
+def dead_letter_prescription(reason: str) -> str:
+    """死因→一键修复处方（M3.3）：特征串精确命中优先，未命中按三分类兜底。"""
+    reason = reason or ""
+    for marker, prescription in _DEAD_PRESCRIPTIONS:
+        if marker in reason:
+            return prescription
+    return _DEAD_PRESCRIPTION_FALLBACK.get(classify_dead_reason(reason), _DEAD_PRESCRIPTION_FALLBACK["other"])
 
 
 def queue_health(queue_root: str | os.PathLike | None = None) -> dict:
@@ -2257,6 +2372,14 @@ def _read_files_from_worktree(worktree_root: Path, relpaths: list[str]) -> list[
     B 段衔接点：读取前 MUST 先 lock_files.py acquire（66 号 §6.1 v0.4.0 编辑期锁协议
     衔接）——A 段未集成（严格限界），由会话纪律层保证；快照落袋本身保数据不丢。
     """
+    # M2.2 冲突标记字节预扫（QCure st-qcure-20260925）：实现真源在
+    # scripts/governance/enqueue_preflight.py，本处薄调用（延迟 import 与本文件既有
+    # scripts.governance.* 引用同款防循环/直跑口径）。
+    from scripts.governance.enqueue_preflight import (  # noqa: PLC0415
+        CONFLICT_MARKER_REJECT_PRESCRIPTION,
+        scan_conflict_markers,
+    )
+
     out: list[tuple[str, bytes]] = []
     for rel in relpaths:
         norm = _validate_relpath(rel)  # 轻检前置：CLI 读盘前就拦穿越（不读越界文件）
@@ -2265,6 +2388,11 @@ def _read_files_from_worktree(worktree_root: Path, relpaths: list[str]) -> list[
             content = abs_path.read_bytes()
         except OSError as exc:
             raise QueueReject(f"文件读取失败: {norm}（{exc}）") from exc
+        # blob 落袋前字节预扫：历史 50 笔死因在入队口快败（零垃圾 blob，无条件扫描
+        # 不依赖 merge 状态触发——pre-commit check-merge-conflict 教训）
+        hit = scan_conflict_markers(norm, content, max_bytes=_MAX_BLOB_BYTES)
+        if hit:
+            raise QueueReject(f"{CONFLICT_MARKER_REJECT_PRESCRIPTION}\n  {hit}")
         out.append((norm, content))
     return out
 
@@ -2295,6 +2423,17 @@ def _cmd_enqueue(args: argparse.Namespace) -> int:
         return 2
     try:
         files = _read_files_from_worktree(worktree_root, files_arg)
+        # M1.1 入队预检挂线（QCure st-qcure-20260925）：三裸入口零预检补口（此前唯一有
+        # 预检的是交互正门 GC:847-855）。在冲突扫之后、enqueue_item 落袋之前锁外只读
+        # 执行；v1 skip 集={SESSION-REQUIRED, CLAIM-REQUIRED}（假红风暴防线，作业簿
+        # 矿#2，真源=enqueue_preflight.ENQUEUE_SKIP_GATES）；blocking→QueueReject
+        # exit 2+逐门禁处方；预检设施异常→模块内 warn+放行（degraded fail-open），
+        # 绝不因预检故障堵入队。
+        from scripts.governance.enqueue_preflight import run_enqueue_preflight  # noqa: PLC0415
+
+        pf_prescription = run_enqueue_preflight(worktree_root, [p for p, _ in files], args.session, message or "")
+        if pf_prescription:
+            raise QueueReject(pf_prescription)
         depends_on = [d.strip() for d in (args.depends_on or "").split(",") if d.strip()]
         base_head = args.base_head
         base_blobs: dict | None = None
@@ -2417,6 +2556,7 @@ def _cmd_requeue(args: argparse.Namespace) -> int:
             message=message,
             base_head=base_head,
             from_bag=args.from_bag,
+            force=args.force,
         )
     except RequeueError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
@@ -2523,6 +2663,11 @@ def main(argv: list[str] | None = None) -> int:
     p_rq.add_argument("--message", default=None, help="commit message（默认沿用原死信项 message）")
     p_rq.add_argument("--message-file", default=None, help="commit message 文件（UTF-8，中文推荐）")
     p_rq.add_argument("--base-head", default=None, help="新项 base_head（默认 None，由调用方/B 段填充）")
+    p_rq.add_argument(
+        "--force",
+        action="store_true",
+        help="越过重投熔断（requeue_count≥3 连败拒绝）显式越权——meta.requeue_forced=true 留痕",
+    )
     p_rq.add_argument("--no-bootstrap", action="store_true", help="重入队后不尝试自举排空")
     p_rq.set_defaults(func=_cmd_requeue)
 
