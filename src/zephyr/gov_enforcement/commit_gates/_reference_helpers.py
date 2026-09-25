@@ -53,7 +53,11 @@ from typing import Callable
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import is_test_exempt
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
-_GIT_SHOW_TIMEOUT = 10
+# QMine（st-qmine-20260925）：1.75MB 大册（architecture_issue_registry 805 条）在 drain 负载峰
+# 实测 10s 超时（CPU 峰值时反复击穿→ARCH-REFERENCE fail-closed 冤杀合法袋，当晚 2 连死）。
+# 提至 30s 并加一次重试（TimeoutExpired 仅重试一次，两次皆超时才抛——真锁死/坏盘不隐瞒）。
+_GIT_SHOW_TIMEOUT = 30
+_GIT_SHOW_RETRY = 1
 # 治本（audit-02，2026-08-02）：原"可含 #ARCH-/#裁定# 引用的文本文件扩展名"散布三处且不一致——
 # _reference_helpers._SCANNABLE_EXTS=(.py,.yaml,.yml,.md)、dangling_reference_gate._SCANNABLE_EXTS
 # （同上独立副本）、reconciliation_registry._ARCH_TEXT_EXTS=(.md,.yaml,.yml,.py,.txt)。三者均缺
@@ -75,16 +79,24 @@ def get_head_content(project_root: Path, rel_path: str) -> str | None:
         HEAD 版本文件内容；文件不在 HEAD 中（新文件）返回 None；
         git 命令本身失败（非"文件不存在"）抛 OSError 让调用方 fail-closed。
     """
-    try:
-        result = run_subprocess_hidden(
-            ["git", "show", f"HEAD:{rel_path}"],
-            capture_output=True,
-            cwd=str(project_root),
-            timeout=_GIT_SHOW_TIMEOUT,
-            text=False,
-        )
-    except (subprocess.TimeoutExpired, OSError) as e:
-        raise OSError(f"git show HEAD:{rel_path} failed: {e}") from e
+    last_err: Exception | None = None
+    for _attempt in range(1 + _GIT_SHOW_RETRY):
+        try:
+            result = run_subprocess_hidden(
+                ["git", "show", f"HEAD:{rel_path}"],
+                capture_output=True,
+                cwd=str(project_root),
+                timeout=_GIT_SHOW_TIMEOUT,
+                text=False,
+            )
+            last_err = None
+            break
+        except subprocess.TimeoutExpired as e:
+            last_err = e  # 超时重试一次（负载峰瞬态；OSError 不重试——真环境故障不隐瞒）
+        except OSError as e:
+            raise OSError(f"git show HEAD:{rel_path} failed: {e}") from e
+    if last_err is not None:
+        raise OSError(f"git show HEAD:{rel_path} failed: {last_err}") from last_err
     if result.returncode != 0:
         return None
     return result.stdout.decode("utf-8", errors="replace")
