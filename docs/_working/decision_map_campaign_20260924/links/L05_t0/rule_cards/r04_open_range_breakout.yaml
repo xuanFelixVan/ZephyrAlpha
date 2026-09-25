@@ -1,0 +1,58 @@
+# --- 治理锚定 ---
+# ttl: task_bound
+# --- 治理锚定结束 ---
+# [BLUEPRINT] SH-RULECARD-004 | docs/_working/decision_map_campaign_20260924/links/L05_t0/rule_cards/r04_open_range_breakout.yaml | T0_MATERIAL_EXAM_CARD_draft.md §4 骨架
+# [MODULE] t0_rule_card_r04（预注册规则卡，非代码；由 scripts/backtest/t0_rule_engine.py 消费）
+# [INVARIANTS] 参数 frozen 先于取数；OR 只用开盘前 K 根已收 bar（构造性 PIT）；突破腿=stop 进入语义（与限价腿方向相反，卡内显式声明）；临场改参=作废重开
+# [MODIFY-GUARD] 本卡任何字段改动=作废重开；or_bars 表与 target_bp 属预注册面禁调参转绿
+# [CONSUMERS] scripts/backtest/t0_rule_engine.py（--rule r04）
+# [STABILITY] registered_not_precap
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 卡哈希与引擎 manifest 不一致=引擎 SystemExit
+# [TESTS] tests/backtest/test_t0_rule_engine.py（OR 窗口机械复算；OR 内 bar 不触发；fill=max(open,or_high) stop 语义）
+# [TTL] task_bound
+---
+rule_id: r04
+rule_name_zh: 开盘区间突破（ORB）
+source_method: "34法 3.3 ORB 开盘区间突破（T0_SCHEME_MATRIX §二 ✅可考；SKEL.md §4 C-F3 行3）"
+family: C-F3 日内动量/回归族
+card_version: v1
+created: "2026-09-26"
+status: registered_not_precap
+
+registration_note: "本卡 v1 仅预注册不执行：全市场单规则单遍建模 ≈21.4h（material_precapacity_report §三 同量级外推），4 规则齐跑 ≈92h>48h 触发强制分层；跑前须先出独立容量预检报告"
+
+execution:
+  skeleton_ref: "T0_MATERIAL_EXAM_CARD_draft.md §4（成交模型 M0 公共骨架，逐字继承）：收盘强平=末根 close；单 T/票/日；整手 10 万；滑点唯一由 31.2bp 承担；M-4 板别门；MIN_BARS_BY_PERIOD 过滤；零价 bar 剔"
+  pairing_ref: "scripts/audit/cost_trio_exam.py build_pairs（31.2bp/≥30bp/30 对 import 复用禁重写）"
+  resample_ref: "t0_material_line.resample_period（序数分桶）"
+  window:
+    start: "2021-09-01"
+    end: "2025-09-09"
+    closed_book_cutoff: "2025-09-09"
+  periods: [1, 5, 15, 30, 60]
+
+params:
+  or_bars_by_period:
+    1: 30
+    5: 6
+    15: 2
+    30: 1
+    60: 1
+  or_window_note: "K 根≈开盘后 30 分钟（1min×30=30min；5min×6=30min；15min×2=30min；30/60min 单根即窗口），序数分桶口径下即前 K 根周期 bar（不按钟面对齐，承骨架）"
+  target_bp: 100.0
+
+or_definition:
+  or_high: "前 K 根周期 bar 的 max(high)"
+  or_low: "前 K 根周期 bar 的 min(low)"
+  guards: "当日 bar 数 ≤ K ⇒ 当日不可触发（reason=no_or）；or_high<=0 命零价挡（骨架同款剔）"
+
+trigger:
+  buy: "bar index >= K 且 bar.high >= or_high（当日首个突破 bar；stop 进入语义：触发价=or_high，买腿成交价=max(bar.open, or_high)——与限价腿 min(open,触发) 方向相反，开盘即高于 or_high 按开盘成交，偏保守方向如实披露）"
+  sell: "bar.high >= buy_fill * (1 + target_bp/1e4)（严格晚于买 bar 的首个触档 bar；卖腿成交价=max(bar.open, 触发价)；固定 100bp 目标档；末日未触发=末根 close 强平）"
+
+state_gate: none
+state_gate_note: "同 R01：D-14 与自由度≈1 Owner 裁定前禁状态门展开"
+
+academic_anchor: "S1 Market Intraday Momentum（Gao-Han-Li-Zhou JFE 2018，SKEL §8.1 表 S1）——A 股 T+1/涨跌停制度差下方向先验须重估，本卡只立规则不预设方向优势"

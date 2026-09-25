@@ -191,3 +191,10 @@ st-cleanup-final 侧不可忠实代再生，故留此通知。给 st-cleanup-fin
 - [队列恢复 v2] 夜批 9 批在 QCure 队列重整+我的误触 drain 中全灭（内容三保全：盘面/worktree/死信袋）。九死因全修后按依赖序重投：①注册册先行 q-0072（4 翻译重放+候选池 2 token）②复职/状态轴/哨兵+黑匣子+导入修复/材料线/881（build 复杂度 12→达标重构+CRLF 感知 CAS 配方：safe_write 的 base 必须按 read_text 归一 LF 口径算）/P1 v2（txt→csv 合规化）/战役文档 31 件 q-0079。③桥批押后：sim_daily_runner 三函数超复杂度（bridge_execute 22/settle 18）重构班在飞。
 - [ALGO-NOTE-SYNC 配方] order_manager 撤单传本地 id 的实现变化须同批同步两处注记（algo_flow yaml A3 节点 desc+TDM L4-10 algo_note_zh）——已同步随桥批。
 - [macro_data] metaq-gc 班已正修（61528 行可读，非我 DETACH 路径）；我的 DETACH 尝试被其覆盖，处置正确。
+
+## 指挥官 Round 49 · 2026-09-25 15:20（落地马拉松复盘轮——死亡地图全谱+综合修复班）
+
+- [落地马拉松] 夜班 20+ 批与门禁体系的多轮拉锯终局：env 解封（三 AI 层门暂禁用，4a0eac79dd）→ 注册册三落（717ec510ec/0b3724ed14）→ 内容批 0103-0114 十连死（每批不同门禁）。死亡地图全谱：BLUEPRINT 头缺字段（新 .py×2）/CREATE-GUARD（meta.yaml 无 token）/TRANSLATION×2/TTL×4（L05_t0 三件+README）/doc_type 迁移（readme→index）/COMPLEXITY（build CC22+sim_daily_runner 长参数）/ALGO-NOTE×2（order_manager+selector）。综合修复班在飞（8 项清单逐个修）。
+- [配方新增] ①--from-bag 重投陷阱：修复后重投必须全新入队（bag=修复前快照）②worktree 副本时效性：主区修复后必须重拷否则落地吃旧内容③TTL-METADATA 已升 strict-doctype（.md 需 ttl+doc_type 双字段，doc_type 从词表取，readme 已 deprecated→index）④git checkout HEAD -- <热册> 会抹掉他会话未落条目=第二次蒸发（工具自检拦截，增量补回才是正解）。
+- [T1 时间账] 重启 11:15+36h=09-26 23:15 完赛；T2 +9h=09-27 08:15——59h 窗（至 09-27 09:00）压线达成。备份护甲持续镜像。
+- [在飞] 综合修复班+L05C03C04 多周期引擎（CPU 长跑）+T1（GPU）。

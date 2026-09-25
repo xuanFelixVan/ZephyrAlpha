@@ -1,0 +1,51 @@
+# --- 治理锚定 ---
+# ttl: task_bound
+# --- 治理锚定结束 ---
+# [BLUEPRINT] SH-RULECARD-001 | docs/_working/decision_map_campaign_20260924/links/L05_t0/rule_cards/r01_fixed_grid_day_t.yaml | T0_MATERIAL_EXAM_CARD_draft.md §4 骨架
+# [MODULE] t0_rule_card_r01（预注册规则卡，非代码；由 scripts/backtest/t0_rule_engine.py 消费）
+# [INVARIANTS] 参数 frozen 先于取数；任何临场改参=卡作废重开（D-7 禁造料同构）；判据零改动（31.2bp/≥30bp/30 对全部 import 复用 cost_trio_exam）
+# [MODIFY-GUARD] 本卡任何字段改动=作废重开（17 号文 §三.1 预注册制）；扩 grid/换模型须修卡重开禁临场加档
+# [CONSUMERS] scripts/backtest/t0_rule_engine.py（--rule r01）
+# [STABILITY] frozen_for_v1_run
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 卡哈希与引擎 manifest 不一致=引擎 SystemExit
+# [TESTS] tests/backtest/test_t0_rule_engine.py（R01 与 t0_material_line.run_model_m0 同参逐位一致）
+# [TTL] task_bound
+---
+rule_id: r01
+rule_name_zh: 固定网格日内T
+source_method: "34法 2.1 固定网格日内 T（T0_SCHEME_MATRIX §二 ✅可考；SKEL.md §4 C-F2 行1）"
+family: C-F2 底仓滚动族
+card_version: v1
+created: "2026-09-26"
+status: frozen_for_v1_run
+registration_note: "规则数报备（17 号文 §三.1）：v1 执行=本卡 1 规则×5 周期；R02/R03/R04 已预注册未预检未跑"
+
+execution:
+  skeleton_ref: "T0_MATERIAL_EXAM_CARD_draft.md §4（成交模型 M0 公共骨架，逐字继承）：base=当日首根（周期级）bar 的 open；买腿成交价=min(bar.open, 触发价)（挂单限价机制）；卖腿成交价=max(bar.open, 触发价)；收盘强平=当日末根 close；每 symbol-day 至多一次往返（首触即用）；数量=floor(10万/买价/100)×100 股不足一手按一手；滑点唯一由 31.2bp 固定口径承担（模拟成交价零叠加，禁双计）；M-4 板别涨跌停门（主板±10%/创业科创±20%/北交所±30%）；周期级 bar 数<MIN_BARS_BY_PERIOD（1:200/5:40/15:14/30:7/60:4）剔；含零价 bar 剔（除零契约）"
+  pairing_ref: "scripts/audit/cost_trio_exam.py build_pairs（同票同日既买又卖计 1 对、配对量=min(Σ买,Σ卖)、全侧 VWAP 近似；RT_COST_BP=31.2/EDGE_PRECONDITION_BP=30/PAIR_GATE=30 import 复用禁重写）"
+  resample_ref: "t0_material_line.resample_period（日内 bar 序数分桶，每 P 根合成一根，桶时刻=桶内末根；不按钟面对齐，午休/缺 bar 免疫；120min 不做 Owner 明令）"
+  window:
+    start: "2021-09-01"
+    end: "2025-09-09"
+    closed_book_cutoff: "2025-09-09"
+  periods: [1, 5, 15, 30, 60]
+
+params:
+  grid_bp: 100.0
+
+trigger:
+  buy: "bar.low <= base * (1 - grid_bp/1e4)（当日首个触档 bar；买 bar 即定）"
+  sell: "bar.high >= buy_fill * (1 + grid_bp/1e4)（严格晚于买 bar 的首个触档 bar；末日未触发=末根 close 强平）"
+
+state_gate: none
+state_gate_note: "状态门化归后续卡：D-14 词表悬案（FINAL_REPORT §五-4）与自由度≈1（§五-3）Owner 裁定前禁按状态×情绪两维展开（SKEL D2 ⑥ 明令）"
+
+capacity:
+  precap_report: "links/L05_t0/material_precapacity_report.md（20 只抽样实测外推）"
+  v1_full_run_hours_estimate: 23.3
+  approved_for_v1: true
+  delegation_note: "本卡与 t0_material_line.py M0 同参同模型——引擎 R01 触发直接委托 t0_material_line.run_model_m0（零重实现，同参逐位一致由测试钉住）"
+
+academic_anchor: "S2 日内时序动量（SKEL §8.1）；先验=极值次序五五开+不可预知（t0_ceiling_verdict.md §1）——本卡是规则面基线，无信息先验下预期 FAIL 属诚实登记（M0 预检净均 −39.12bp 同构）"

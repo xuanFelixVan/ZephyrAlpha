@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/runtime
 title: "Runtime Integration 蓝图 — 15核心RI模块跨层协同与运行时基础设施"
 doc_type: blueprint
 status: Active
-version: 6.1.19
+version: 6.1.20
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: infra
@@ -196,8 +196,8 @@ design_maturity: production
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-002` 的 81 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-002` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-002` 的 83 个 file 节点 | production | `extract_depgraph.py --modules MOD-INF-002` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -208,7 +208,7 @@ design_maturity: production
 | module_id | MOD-INF-002 | MOD-INF-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 81 文件 | 26 文件（§0.1） | ❌ |
+| file_count | 83 文件 | 26 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -2046,6 +2046,7 @@ STEP 3: 拆分后验证
 | `tests/infrastructure/observability/test_cost_tracker.py` | ✅ 已实现 | |
 | `tests/infrastructure/process_lifecycle/test_kill_switch_sim.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_dry_run_simulator.py` | ✅ 已实现 | |
+| `tests/infrastructure/test_duckdb_runtime_gate.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_finding_task_bridge.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_infrastructure_base.py` | ✅ 已实现 | |
 | `tests/infrastructure/test_pydantic_v2_migrator.py` | ✅ 已实现 | |

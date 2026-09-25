@@ -1,0 +1,53 @@
+# --- 治理锚定 ---
+# ttl: task_bound
+# --- 治理锚定结束 ---
+# [BLUEPRINT] SH-RULECARD-002 | docs/_working/decision_map_campaign_20260924/links/L05_t0/rule_cards/r02_vol_adaptive_band.yaml | T0_MATERIAL_EXAM_CARD_draft.md §4 骨架
+# [MODULE] t0_rule_card_r02（预注册规则卡，非代码；由 scripts/backtest/t0_rule_engine.py 消费）
+# [INVARIANTS] 参数 frozen 先于取数；带宽只依赖 T-1 真波幅（PIT 构造性满足）；任何临场改参=卡作废重开
+# [MODIFY-GUARD] 本卡任何字段改动=作废重开；k/floor/cap 属预注册面禁调参转绿
+# [CONSUMERS] scripts/backtest/t0_rule_engine.py（--rule r02）
+# [STABILITY] registered_not_precap
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 卡哈希与引擎 manifest 不一致=引擎 SystemExit
+# [TESTS] tests/backtest/test_t0_rule_engine.py（band=clamp(k×T-1TR) 机械复算；首日无前置日=skip）
+# [TTL] task_bound
+---
+rule_id: r02
+rule_name_zh: 波动率自适应带日内T
+source_method: "34法 2.2 波动率自适应带 T（T0_SCHEME_MATRIX §二 ✅可考·最高优先；SKEL.md §4 C-F2 行2）"
+family: C-F2 底仓滚动族
+card_version: v1
+created: "2026-09-26"
+status: registered_not_precap
+
+registration_note: "本卡 v1 仅预注册不执行：全市场单规则单遍建模 ≈21.4h（承 material_precapacity_report §三 同量级外推），4 规则齐跑 ≈92h>48h 触发 17 号文 §三.1 强制分层；本卡跑前须先出独立容量预检报告（预检先行=硬规矩）"
+
+execution:
+  skeleton_ref: "T0_MATERIAL_EXAM_CARD_draft.md §4（成交模型 M0 公共骨架，逐字继承）：base=当日首根（周期级）bar 的 open；买腿成交价=min(bar.open, 触发价)；卖腿成交价=max(bar.open, 触发价)；收盘强平=末根 close；单 T/票/日；整手 10 万；滑点唯一由 31.2bp 承担；M-4 板别门；MIN_BARS_BY_PERIOD 过滤；零价 bar 剔"
+  pairing_ref: "scripts/audit/cost_trio_exam.py build_pairs（31.2bp/≥30bp/30 对 import 复用禁重写）"
+  resample_ref: "t0_material_line.resample_period（序数分桶）"
+  window:
+    start: "2021-09-01"
+    end: "2025-09-09"
+    closed_book_cutoff: "2025-09-09"
+  periods: [1, 5, 15, 30, 60]
+
+params:
+  band_k: 1.0
+  band_floor_bp: 50.0
+  band_cap_bp: 300.0
+
+band_definition:
+  prev_day_tr_bp: "前一交易日（同 symbol 同周期级重采样 bar 序列）的 (max(high)−min(low))/末日close×1e4"
+  band_bp: "clamp(band_k × prev_day_tr_bp, band_floor_bp, band_cap_bp)——当日开盘前即定（T-1 已知，PIT 构造性满足），日内不变"
+  first_day: "该 symbol 研究窗内首个交易日无前置日 ⇒ 当日 skip，reason=no_prev_day（如实计数禁静默）"
+
+trigger:
+  buy: "bar.low <= base * (1 - band_bp/1e4)（当日首个触档 bar）"
+  sell: "bar.high >= buy_fill * (1 + band_bp/1e4)（严格晚于买 bar 的首个触档 bar；末日未触发=末根 close 强平；带宽对称）"
+
+state_gate: none
+state_gate_note: "SKEL C-F2 2.2 完整版'带宽=f(状态,情绪段)'依赖 D-14 词表收敛（两门互斥悬案）与自由度≈1 裁定——本卡 v1 为状态无关波动率缩放变体；状态门变体待 C05/C07 Owner 裁后另立卡，禁在本卡上临场加门"
+
+academic_anchor: "S2 Intraday Time-Series Momentum（SKEL §8.1）；带宽定档方法论承 S5 阈值法先于分位相对法（SKEL §8.1 表 S5）"

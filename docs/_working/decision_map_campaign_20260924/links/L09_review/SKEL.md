@@ -1,0 +1,197 @@
+---
+ttl: task_bound
+title: L09 复盘与监控 · 挖干作业簿（SKEL）
+mining_session: st-l09-review（链路 L09 挖矿班，2026-09-25）
+skeleton_source: ../../09_link_skeletons.md（环节 9 · 623-691 行）
+status: MINING（收口清单见 §三态）
+doc_type: log
+---
+
+# L09 · 复盘与监控挖干作业簿
+
+> 骨架总表判"环节 9=骨架最弱层，心脏未装"。本簿按 09-25 现状重勘：**心脏已装一半**——
+> dloop 总扳手 16:45 自动圈 + E2E 双圈实证绿已部分刷新"编排器不存在/warroom 零调用"旧结论
+> （13 号文环节⑦已先行勘读，本簿沿用其勘误并落到子块级）。蓝图版编排器（BT-P1-031 S1-S7
+> 完全体）仍未施工，与现役双轨（事件链 9 棒 + 总扳手 16 段）的合并决策未做。
+
+## 〇 · 子块全树（7 块）
+
+```
+L09 复盘与监控
+├─ S9-1 日循环编排（心脏）…… dloop 总扳手 MOD-PLAN-033 + 事件链九棒 + BT-P1-031 蓝图版双轨
+├─ S9-2 盘前链 ……………… premarket_workflow(MOD-PLAN-021, production 零接线) + dloop premarket 段双实现
+├─ S9-3 判定台账与结算 …… judgment 三表 + close_verifier(032) + judgment_settler + Brier 校准(D7 大半已闭)
+├─ S9-4 日刊与 decision_daily 拍板快照 … 拍板体 MOD-BT-214(#305 安全态) + decision_daily(MOD-BT-212) + sim 平台日刊(MOD-BT-090)【双账未合流】
+├─ S9-5 warroom ……………… daily_warroom_pipeline(MOD-PLAN-018, 已挂两链) + 仪表盘组件(MOD-L28-WARROOM) + 三任务
+├─ S9-6 监控自动化 ………… schedule.yaml 29 槽哨兵族 + schtasks Zephyr 族 + health_monitor + THD-TRD 零消费
+└─ S9-7 归因引擎与绩效归因报告 … C3 五件(TDM-F-C3-01..05) + Brinson(MOD-PF-007/RPT-036/037/038) + 三维归因(009/016) + 计划vs实际(T4 占位)
+```
+
+---
+
+## 一 · 六向台账（逐子块）
+
+### S9-1 日循环编排（心脏）
+
+| 向 | 台账 |
+|---|---|
+| ①上游输入 | daily_kline SUCCESS 事件（`src/zephyr/data/scheduler.py:361-433` dloop_post 特殊槽）；dloop_post 16:45 cron（`src/zephyr/data/config/schedule.yaml:249-253`）；总闸 `data/runtime/daily_loop_master.disabled`（09-25 实测**不存在=总闸开**） |
+| ②数据原料 | kline_index（数据就绪门 fail-closed）、regime_snapshot_history（新鲜度>1 交易日即补印，消费方口径已治本——原供给 3 日错位见 dloop 头注 2026-09-21）、market_trade_calendar、PP-001 配比（只读快照） |
+| ③状态输出 | 16 段编排报告 dict（PHASE_STAGES：full=16 段，`src/zephyr/plan_engine/daily_loop_master_switch.py:337-368`）；fetch_perf 心跳（SUCCESS/BLOCKED/PARTIAL）+ Alerter ERROR |
+| ④下游消费 | 人工/Owner 门位逃生口；E2E 验收（`docs/_working/daily_loop_campaign/e2e_manual_run_report.md`：09-18 圈 11/11、09-21 终圈 15 ok+1 skipped+0 error）；决策链（S9-4 拍板体=末棒） |
+| ⑤自动化挂点 | **在产**：dloop_post 16:45 交易日自动圈（2026-09-21 Owner 批解除 MANUAL-ONLY）；事件链 daily_kline SUCCESS 唤醒 9 棒（`src/zephyr/strategy_pipeline/pipeline_events.py`） |
+| ⑥缺口债 | 双轨无对账声明（事件链 vs 总扳手同日同段两触发面，幂等靠底层闸，13 号文环节⑦缺 1）；蓝图版 BT-P1-031 S1-S7 完全体未施工（T3/T4 仅签名，`daily_decision_orchestrator.py:754-767`）；调度单点无灾备（13 号文环节①"仓内未见"）；TRD-A01 决策链哨兵（连续 N 日无 decision_daily 行告警）未落地 |
+
+### S9-2 盘前链
+
+| 向 | 台账 |
+|---|---|
+| ①上游输入 | pre_market 08:34 元数据槽、nightly_sentiment 08:20、sector_pre_open 09:15（schedule.yaml）；T-1 16:45 dloop premarket 段产的预案（target=次交易日） |
+| ②数据原料 | universe 元数据/涨跌停/停复牌/ST；隔夜新闻情绪窗；隔夜参照（美股/期货）；plan_engine 约束（premarket_constraint_loader） |
+| ③状态输出 | 晨间预案 judgment_daily_plan；llm_premarket 分析行（经 LSG，deepseek-v4-flash-0731 实测 success×2，E2E §6）；premarket 就绪确认（MOD-PLAN-021 三段式 08:00-09:15 DAG） |
+| ④下游消费 | **零**——MOD-PLAN-021 production 级编排件全仓无装配方（消费面只登记"运行时装配批"，`src/zephyr/plan_engine/premarket_workflow.py` CONSUMERS 行）；实际盘前"就绪"由 dloop 数据就绪门 fail-closed 兼任（13 号文环节②） |
+| ⑤自动化挂点 | **半缺**：MOD-PLAN-021 零接线（production 状态=休眠）；dloop 的 premarket 段不在 T 日晨跑（16:45 一班跑 full），T 日 08:00-09:15 晨间重评窗真空 |
+| ⑥缺口债 | 双实现治理（MOD-PLAN-021 vs dloop premarket 段，13 号文 TRD-A04 待 Owner 裁定复用/退役）；晨间窗无人上班（TRD-A04 后半：立项或显式豁免）；warroom 第三任务（盘中实时走势分析）触发面（TRD-A05） |
+
+### S9-3 判定台账与结算
+
+| 向 | 台账 |
+|---|---|
+| ①上游输入 | dloop 各段（premarket 备案/盘中 60min bar/收盘）；判定台账标准三表 schema（`docs/_working/trading_vision/2026-09-16-judgment-ledger-standard.md` §三，通用列+判定/结算分离铁律） |
+| ②数据原料 | judgment_intraday_market_state / judgment_next_day_forecast / judgment_daily_plan + judgment_plan_verification（E2E 实证验证环 0→6 行，从 0 到常态）；brier_calibration.py 纯函数（MOD-PLAN-010） |
+| ③状态输出 | 结算列组回填（outcome/brier_score/log_loss/plan_quality_score）+ unresolvable 留痕；close_verifier 写 EOD 验证行（`src/zephyr/plan_engine/close_verifier.py`，事件驱动 daily_kline SUCCESS） |
+| ④下游消费 | judgment_settler（`src/zephyr/plan_engine/judgment_settler.py`，import brier_score/brier_score_multiclass——**D7 大半已闭**：Brier 已接结算链，T+1 grace 自动落地）；W0 归因统计（S9-7）；次日 L0-01 计划生成 |
+| ⑤自动化挂点 | **在产**：事件链自动结算（E2E 16:52 实录 intraday scan=4 settled=4）；brier 按 T+1 grace 由次日自动链回填 |
+| ⑥缺口债 | D7 残余：8 态转移先验/相似日推理消费点（L0-04 覆盖未接电部分）——similar_day_evaluator 已入 dloop postmarket 段（观察面）但先验消费未接；结算聚合报告（按 module/model 聚合=逐层归因数据源，标准 §四）未见生成件 |
+
+### S9-4 日刊与 decision_daily 拍板快照
+
+| 向 | 台账 |
+|---|---|
+| ①上游输入 | 拍板体输入=S1-S7 全链（六段态/预算带/门快照/sit_out/日历哨兵/kill_switch，`src/zephyr/strategy_pipeline/daily_decision_orchestrator.py`）；日刊输入=sim_pocket_daily 权益+sim_trade_log 事件（`scripts/backtest/sim_platform_journal.py`） |
+| ②数据原料 | decision_daily 表 DDL 唯一真源 `schemas/categories/decision_daily.py`（MOD-BT-212，18 声明列+no_trade_reason 六枚举，MergeTree 只增不改，run_id 追加修订）；sim 平台日刊表 c1_backtest.sim_platform_journal（一交易日一行幂等替换） |
+| ③状态输出 | **账 A（决策复盘账）**：decision_daily 一行可审计快照（E2E 实证 expansion@1.00 cap=60% no_trade=0 degraded=1(D2:L2)，v1 安全态 GRADUATED_PACKAGES=∅ 零下单，裁定#305）；**账 B（平台日刊账）**：sim 三健康检（数据新鲜度/账本心跳/越界持仓）+日刊落库+warning 告警 |
+| ④下游消费 | 账 A：仪表盘 warroom 组件今日决策面板（`src/zephyr/frontend/dashboard/components/warroom.py` 读侧唯一）；账 B：Owner 人工翻台账（13 号文环节⑥"绿天数靠人翻台账"）；**两账互不消费** |
+| ⑤自动化挂点 | 账 A 在产：dloop 末棒拍板（date-marker 先拍先占）+事件链末棒唤醒；账 B 在产：sim_observe_daily FIFO（账本→日刊→归因，`pipeline_events.py:141` 次序元组唯一保证）+PostSettlement 15:30 尾挂（`scripts/run_post_settlement.py`）；09-23 起零人工闭环实证（13 号文环节⑥） |
+| ⑥缺口债 | **双账未合流**（日刊≠决策复盘，TRD-A17）；postmarket_reconcile 仅签名占位（蓝图 2026-09-16 §九.7/T4 行 36"只定义接口不展开"）→计划 vs 实际核对全史=0；decision_daily 逐日审计报表消费端缺（TRD-A19）；无"快照的快照"周/月循环（决策链周复盘件仓内未见） |
+
+### S9-5 warroom（作战室）
+
+| 向 | 台账 |
+|---|---|
+| ①上游输入 | scenario_plan 族 prediction_log（盘前 compute_and_record + 盘后 writeback_scenario_outcome）；预测输入件 scenario_planner（MOD-PLAN-005） |
+| ②数据原料 | market_trade_calendar（次交易日解析）、kline（9 格 outcome 判定归 MOD-PLAN-008）；判定台账三表（addendum 三任务接表） |
+| ③状态输出 | DailyWarroomPipelineResult（逐段 status/row_id/verdict）；scenario_plan+outcome 族日行（W0 20 日校准样本积累）；E2E 实证史上首批 scenario_plan×3+outcome 首行 |
+| ④下游消费 | dloop warroom 段（premarket/postmarket 两段委托）+事件链扩面钩子 maybe_run_warroom_pipeline（`pipeline_events.py:892-923`，2026-09-21 丁线 Owner 批——**"仓库内零调用方"旧结论已刷新，现有两调用方**）；仪表盘 warroom 组件（人工面） |
+| ⑤自动化挂点 | **在产**：dloop 16:45 圈 warroom 段 + daily_kline SUCCESS 事件钩子（记号 warroom_pipeline:<D> 先落后动幂等） |
+| ⑥缺口债 | warroom 第三任务（盘中实时走势分析）=盘中 L1 跟踪件挂 T3 接口（intraday_revoke 占位），触发面未立（TRD-A05）；作战室三任务产品需求（`docs/_working/trading_vision/2026-09-16-blueprint-addendum-warroom-three-tasks.md`）任务 1 本体=新增件未建 |
+
+### S9-6 监控自动化（现存清单实证）
+
+| 向 | 台账 |
+|---|---|
+| ①上游输入 | APScheduler 29 槽 cron（`src/zephyr/data/config/schedule.yaml`，头注"16 槽"已漂移，实测 29 个 cron: 槽）+ Windows schtasks Zephyr 族（`schtasks /query` 09-25 实测 50 项唯一任务/62 行含双实例） |
+| ②数据原料 | 表侧 max(date) 停更/日历 diff/7 天节奏闸（quality_sentinel）；fetch_perf 心跳；THD-HEALTH-001~004（health_monitor MOD-INF-035 阈值真源 fail-closed） |
+| ③状态输出 | 哨兵告警经 Alerter；日刊三健康检；CHHealthProbe/DeadmanSwitch/QMTWatchdog 进程面心跳（schtasks 实测"正在运行"） |
+| ④下游消费 | Owner（告警通道）；AI 层广播依赖监控（07 号文 A 栏"监控自动化被删，广播=人工"——监控自身在 09-24 被删班次为待办属实） |
+| ⑤自动化挂点 | **数据面哨兵族在产**：catchup_guard 05:30（对账补跑）/data_supply_sentinel 06:50（断供+托管 quality_sentinel）/calendar_coverage_check 07:10/integrity_check 23:00（只告警）/daily_backfill 17:00（补下载）；**决策链哨兵缺位**：dloop 圈失败仅单次 ERROR（schedule.yaml:249-253），无"连续 N 日未出 decision_daily"累积哨兵；THD-TRD-001..004 四条交易级告警 v1.6.0 入册（`docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml:961-1023`）**消费代码=0**（13 号文环节③，TRD-A06） |
+| ⑥缺口债 | TRD-A01（决策链哨兵条目）；TRD-A06（THD-TRD 消费面）；盘中持仓风控环无 runner（TRD-A07）；THD-TRD 零消费=有尺无人用；Grafana/Prometheus 型可视化面板缺位（现靠 status_dashboard/app_panel 自研+人工翻） |
+
+**schtasks Zephyr 族摘要（09-25 实测）**：在产守卫=BeltDaemon/DataScheduler/TickSubscriber/CHHealthProbe/WorktreeDriftWatchdog（正在运行）；数据批=DailyBackup/WeeklyVMBackup/CH-OptimizeMerge-Weekly/IOCheck-Monthly/RESTORE-DRILL/LibraryLedgerBackup+Drill；交易面=PaperSession 09:25/SimBridgeExecute 09:35/PostSettlement 15:30/SectorSnapshot 16:40/TTLRejudgeDaily 18:05/AltFxECB 23:30/C4Exam/IndexMinuteEOD 15:10/IntradayFundFlow/BoardIndexRealtime；守卫=ProcessReaper/QMTWatchdog/DeadmanSwitch/ConfigCheck/GateFullTreeAudit；禁用=NightlySentiment（已有 schedule.yaml 08:20 槽接管=双通道确认项 TRD-A03）/TradingWatchdog/WeeklyRest/C4Exam 与 FactoryLaneC 一次性两件。
+
+### S9-7 归因引擎与绩效归因报告
+
+| 向 | 台账 |
+|---|---|
+| ①上游输入 | C3 链输入=sim_trade_log 等模拟盘四件（S37）+L4-14 执行成本反馈（**断链 D34 未通**）+基准 BMK-INDEX-003/BMK-ABSOLUTE-001（`config/trading_decision_map.yaml` TDM-F-C3 benchmark_refs）；W0 三维归因输入=prediction_log outcome 族 |
+| ②数据原料 | Brinson 引擎 MOD-PF-007（`src/zephyr/pf_core/core/performance_attribution_engine.py`，production：allocation+selection+interaction 守恒）；BHB+Carino 链接 MOD-RPT-036（`src/zephyr/reporting/attribution_calculator.py`，testing）→落库 MOD-RPT-037（attribution_result_store，sqlite）；三维归因 MOD-PLAN-009（scenario_attribution_stats：情景×维度×信号源）；执行偏差六类归因 MOD-PLAN-016（execution_deviation_attributor 纯函数）；sim 归因日账 sim_attribution_daily（`schemas/categories/sim_attribution_daily.py`，P&L 三分毛/成本/净+基准相对+风险贡献） |
+| ③状态输出 | 归因结果行（attribution_results append-only）/三维边际桶+复合桶/sim 归因长表/meta 迭代评审建议（MOD-RPT-038，requires_human_decision 恒 True） |
+| ④下游消费 | **断最多的一环**：MOD-RPT-037 全仓消费方=0（仅 calculator↔store 互引）；MOD-PF-007 消费=风险降级检测（`src/zephyr/risk/core/performance_attribution_degradation.py`）+factor_exposure_manager，无报表面；C3-02 退役评审（lifecycle_state_machine）/C3-03 调权（regime_meta_allocator）/C3-04 校准（walk_forward）/C3-05 可靠度（signal_degradation_monitor）五件 module_ref 在图，**盘后事件链未接**（09 号文"未接线"结论维持）；ashare_performance_audit（MOD-RPT-026, production）外部消费=0 |
+| ⑤自动化挂点 | sim_attribution_report.py 已挂 FIFO 末位（账本→日刊→归因，在产）；其余归因件=纯函数库形态，零排班零事件挂点 |
+| ⑥缺口债 | **LK-15 归因三欠账**（D50：交易/持仓盈亏二分+策略级 P&L Explain+逐笔 TCA——yaml 注"由 C3-01 承接落位"但输入面 L4-14/S37 在途）；D34 执行成本反馈断链（TRD-A08）；归因结果→退役评审→调权的消费闭环（环节 6 上游回灌）未通；周/月复盘编排（55 号规划）未建 |
+
+---
+
+## 二 · 四判据重勘（对 09 骨架环节 9 ⑥的刷新）
+
+| 判据 | 09 骨架 | 09-25 重勘 | 证据 |
+|---|---|---|---|
+| 通道在线 | ✗ | **🟡**（盘后通道已通：双圈实证绿；蓝图版+晨间窗+归因消费仍缺） | E2E 双圈实录+13 号文环节⑦ |
+| 深史全 | 🟡 | 🟡（decision_daily 自 09-16 起产行（E2E 前已 45 行），但快照深史≈10 日量级；验证环 0→常态 09-21 起） | E2E §3 台账对照 |
+| 状态真值全史 | ✗ | ✗（维持）——postmarket_reconcile 占位，计划 vs 实际核对全史=0 | 蓝图 §九.7+13 号文 TRD-A17 |
+| 概率表可算 | ✗ | **🟡**（Brier 已接结算链自动回填=D7 大半闭；8 态先验/相似日消费点残缺） | judgment_settler 头注+E2E §2c |
+
+---
+
+## 三 · 自审闸三态：**MINING（待挖）**
+
+已读指针：09 骨架环节 9 全节、13 号文环节①②⑦+TRD 汇总表、E2E 实录全文、判定台账标准全文、
+warroom 三任务补录全文、蓝图 T4 行与 §九.7、dloop/拍板体/decision_daily DDL/warroom 管线/
+premarket_workflow/judgment_settler/close_verifier/plan_deviation_monitor/tomorrow_boundary_planner/
+两归因器/sim_platform_journal/schedule.yaml 全文/schtasks 实测/TDM F-C3 段。
+
+未挖清单（封矿前必补）：
+1. `docs/_working/trading_vision/2026-09-16-daily-orchestrator-blueprint.md` 238 行全文精读
+   （本簿仅核 T4/§九.7/S1-S7 索引；降级矩阵 D1-D7 逐条未对表现状）。
+2. `docs/_working/trading_vision/2026-09-16-owner-vision-system-mapping.md`（§二.3 逐层归因"不赚钱的层砍掉"消费语义）。
+3. `docs/_working/trading_vision/2026-09-16-data-sufficiency-matrix.md` §五层矩阵 L4 行（decision_daily 安全态判语原文）。
+4. 55 号周/月复盘件与 `scripts/backtest/sim_deviation_report.py` 月度件的合流关系（S9-4⑥）。
+5. `config/alert_threshold_registry.yaml` 全册 1000+ 行（仅核 THD-TRD 四条，THD-HEALTH 族与 dloop 心跳对接面未核）。
+
+BLOCKED 项：无（不依赖外部等待；上列均为仓内可读件）。
+
+---
+
+## 四 · 施工项（L09-C01 起；沿用账本编号对照）
+
+| # | 施工项 | 对应子块 | 沿用账本 | 类型 | 前置/门位 |
+|---|---|---|---|---|---|
+| **L09-C01** | **编排器收拢令草案（BT-P1-031 裁定件）**：Owner 二选一裁定——(a) 蓝图版 S1-S7 完全体施工、总扳手降级为其跑批壳；(b) 现役双轨（事件链 9 棒+总扳手 16 段）转正为编排器本体，BT-P1-031 蓝图降格为需求档案+T3/T4 接口分期施工。裁定前增量工作冻结在双轨上，防第三套平行实现。草案要点：①双轨对账声明先行（同日同段两触发面的幂等冲实说明，复用 date-marker/记号闸口径）；②T3 盘中修订/T4 盘后核对随裁定分期；③晨间窗（TRD-A04）随编排器节拍表一并落 | S9-1/S9-2 | BT-P1-031+TRD-A04 | Owner 裁定+施工 | **Owner 一句话** |
+| **L09-C02** | **计划 vs 实际核对实体化（postmarket_reconcile 实装）**：把 `daily_decision_orchestrator.py:764-767` 签名占位做成实装——T 日盘后取 T-1 decision_daily 快照行（SQL_LATEST_BY_TARGET_DATE）vs 当日实际（regime 态/收盘验证行/plan_verification deviations/执行偏差归因六类 MOD-PLAN-016 注入），产出 reconcile 行落新列或伴生表（判定台账标准"判定/结算分离"口径），喂 S9-7 归因与 TRD-A19 审计报表；与 sim 平台日刊双账合流（=TRD-A17 全量） | S9-4 | TRD-A17 | 施工 | 判定/结算分离真源对表（judgment-ledger-standard §一） |
+| **L09-C03** | **日刊双账合流（决策复盘×平台日刊）**：sim_platform_journal 三健康检产物并入 Owner 晨报面同一视图——decision_daily 快照（账 A）+平台健康行（账 B）+连续连绿判定件（13 号文环节⑥"绿天数靠人翻台账"治本），消除两账互不消费 | S9-4 | TRD-A17/TRD-A19 | 施工 | L09-C02 后串行 |
+| L09-C04 | 决策链哨兵：连续 N 日无 decision_daily 行/无 dloop_post SUCCESS 心跳即 ERROR 升级（N 草案=2），挂 data_supply_sentinel 同款宿主槽位（防"有名无实假通道"先例，schedule.yaml:219-227 自注） | S9-6 | TRD-A01 | 小施工 | 走注册表流程 |
+| L09-C05 | THD-TRD-001..004 消费面：4 条交易级告警接进运行时监控读侧（登记册 status=design→active） | S9-6 | TRD-A06 | 施工 | G2b/G5 sim 接线点 |
+| L09-C06 | 结算聚合报告件：judgment_settler 逐 judgment 结算行按 module_id/model_version/时间窗聚合（判定台账标准 §四 Phase 5 数据源），喂 MOD-PLAN-009 三维归因与 meta-回测 | S9-3/S9-7 | D7 残余/LK-15 | 施工 | L09-C02 并行可做 |
+| L09-C07 | C3 消费闭环接线：C3-01 归因产出→C3-02 退役评审→C3-03 调权盘后事件链（现五件 module_ref 在图零挂点）；前置=D34 执行成本反馈腿（TRD-A08 施工化不重复立项） | S9-7 | LK-15/D34 | 施工 | TRD-A08 先行 |
+| L09-C08 | warroom 第三任务触发面：盘中 L1 跟踪件（五态判定+证据列）挂 T3 接口节拍（60min bar 事件链已有五态行，缺预测/证据列对齐 addendum 需求） | S9-5 | TRD-A05 | 施工 | 排 GPU 后 |
+| L09-C09 | MOD-PLAN-021 复用/退役随 L09-C01 裁定落地（production 休眠件不许长期占名） | S9-2 | TRD-A04 | 裁定随批 | L09-C01 |
+
+优先级前 3：**L09-C01（编排器收拢——一切节拍问题的总闸）＞ L09-C02（计划 vs 实际核对实体化——四判据唯一维持 ✗ 的项）＞ L09-C04（决策链哨兵——小施工高杠杆，先于 C03/C05）**。
+
+---
+
+## 五 · §标准件（全网对表；18 号文纪律：有标准不自造）
+
+### 5.1 绩效归因（Brinson 族）
+- ** canonical 论文**：Brinson & Fachler (1985) "Measuring Non-US Equity Portfolio Performance"，*JPM*；Brinson, Hood & Beebower (1986) "Determinants of Portfolio Performance"，*FAJ*——BHB/BF 三效应（allocation/selection/interaction）与多期链接（Carino/GRAP/Frongello/Menchero）为行业正典。
+- **仓内对表**：MOD-PF-007 的 excess_return=allocation+selection+interaction 守恒式=Brinson-Fachler 同构（production，勿重造）；MOD-RPT-036 的 Carino 恒等（Σlinked=几何超额，residual<1e-6 门禁）=标准多期链接法同构。**结论：仓内两件已是标准件，无需引入；欠的是消费接线（L09-C07），不是算法。**
+- **可引入开源**：**pybrinson** v1.3.1（PyPI，2026-04-12 发布，**MIT**）——BHB+BF+多层汇总（Bacon 2008）+Carino/GRAP/Frongello/Menchero/Geometric 链接+Karnosky-Singer 币种归因，零运行时依赖；**约束=要求 Python≥3.14（本仓 3.12），只宜作离线对账基准/交叉验证参考实现，不作运行时依赖**。
+- 旁证生态：pyfolio（Quantopian，Apache-2.0，已归档）与 quantstats（MIT）不含 Brinson—— tear-sheet 面可参考，归因面不适用；DolphinDB Brinson 实现文（2025-01）可作工程口径参考。
+
+### 5.2 监控/可观测性（本地单机版 prometheus-grafana 模式）
+- **Prometheus**（**Apache-2.0**）+ **Alertmanager**（同族）+ **Grafana**（2021-04 起 **AGPLv3**；自托管内部使用无源码披露义务，改 Grafana 本体并网内提供服务才触发）——单机自用完全可行，License 组合安全。
+- **告警哲学正典**：Google SRE Workbook **Ch.5 "Alerting on SLOs"**（sre.google/workbook/alerting-on-slos/，免费全文）——症状优先于成因（alert on symptoms）、**burn-rate 多窗告警**（14.4×/1h 页呼 + 6×/6h 工单）、"监控监控本身"（单机 Prometheus 自身=SPOF）。
+- **仓内对表**：本仓哨兵族（data_supply_sentinel 停更检测/catchup_guard 档期对账/integrity_check 达标告警）=SRE 症状告警同构；L09-C04 决策链哨兵（连续 N 日无 decision_daily 行）=burn-rate 思想的离散版（缺勤率预算），**无需引入 Prometheus 栈**——现规模（单机+APScheduler+schtasks）引入全家桶违反净零内收；Grafana 面仅在 Owner 需要时序面板时按 AGPL 合规评估。
+- 反例教训入簿：schedule.yaml:219-227 自注"新开有名无实的槽位=假通道"（R-021）——监控挂点必须宿主实查，L09-C04 已按此约束设计。
+
+### 5.3 日循环复盘/计划-实际核对（post-trade review 自动化）
+- **行业正典=三账核对（three-way reconciliation）**：银行流水↔总账↔明细账三方逐日对平，差异（breaks）当日识别+账龄分桶+升级处置，日频在 post-trade 运营为标准节奏（监管面惯例：月度强制、机构日频自练）。
+- **仓内对表**：`src/zephyr/trading/recon_runner.py:392` run_daily_reconciliation（eod_reconciliation 15:40 槽）已是三账核对同构（柜台/内部/持仓）；**缺的是"计划↔实际"这第四本账**——即 L09-C02 实体化对象；行业无现成开源件直接可引（plan-vs-actual 属内部治理面），判定台账标准（仓内真源）即我方标准件，对表结论=按仓内标准施工即可。
+- 检索状态声明：2026-09-25 两轮全网检索（限流重试后）完成 5.1/5.2 主源核实；5.3 的 post-trade 开源生态（Fineract/ccxt 族）与本环节无关不引入；baton 交下批可续搜 "post-trade reconciliation open source" 细化（非封矿阻塞项）。
+
+---
+
+## 六 · 挖掘执行日志
+
+| 批 | 矿脉 | 证据源 | 判定 |
+|---|---|---|---|
+| B1 | 骨架+总纲 | 09_link_skeletons.md 环节 9（623-758 行）+links/README | signal |
+| B2 | 编排器面 | daily_loop_master_switch.py 全文+scheduler.py dloop_post 槽+schedule.yaml 全文（29 槽） | signal（16:45 自动圈在产实证） |
+| B3 | 拍板/快照面 | daily_decision_orchestrator.py（774 行，T3/T4 占位 754-767）+schemas/categories/decision_daily.py 全文 | signal |
+| B4 | E2E 实证 | daily_loop_campaign/e2e_manual_run_report.md 全文（双圈 15 ok+1 skipped） | signal（刷新"编排器不存在"） |
+| B5 | warroom/判定面 | daily_warroom_pipeline.py+pipeline_events.py 892-923 钩子+judgment-ledger-standard 全文+addendum 全文+13 号文环节⑦ | signal（刷新"零调用"） |
+| B6 | 盘前/归因/监控面 | premarket_workflow.py+plan_deviation_monitor/tomorrow_boundary_planner/close_verifier/judgment_settler+两归因器+performance_attribution_engine+attribution_calculator/result_store/meta_iteration+sim_platform_journal+THD-TRD 入册行 | signal |
+| B7 | OS 调度面 | schtasks //query 实测（Zephyr 族 50 项唯一/62 行，禁用 7 项） | signal |
+| B8 | 标准件 | pybrinson PyPI 核实（MIT/1.3.1/Py3.14+）+Prometheus/Grafana license+SRE Workbook Ch5+三账核对惯例 | signal（5.3 开源面留续搜口） |
+
+> 封矿条件：§三 未挖清单 5 件读完+L09-C01 Owner 裁定回来补录结果 → 转 SEALED。

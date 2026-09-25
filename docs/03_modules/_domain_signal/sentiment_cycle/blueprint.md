@@ -4,7 +4,7 @@ title: "五阶段情绪周期蓝图 — 冰点/反核/主升/疯狂/退潮"
 doc_type: blueprint
 status: Active
 version: "0.1.4"
-design_maturity: production
+design_maturity: design
 ttl: permanent
 layer: L01_market
 layer_name: market
@@ -75,8 +75,8 @@ design_memos/28_sentiment_cycle_trading.md §3.2-§3.10（原 [BLUEPRINT] 头引
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-SIG-140` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-SIG-140` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-SIG-140` 的 2 个 file 节点 | design | `extract_depgraph.py --modules MOD-SIG-140` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -86,7 +86,7 @@ design_memos/28_sentiment_cycle_trading.md §3.2-§3.10（原 [BLUEPRINT] 头引
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-SIG-140 | MOD-SIG-140 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | stable | N/A | — |
-| file_count | 1 文件 | N/A | — |
+| build_status | planned | N/A | — |
+| file_count | 2 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
