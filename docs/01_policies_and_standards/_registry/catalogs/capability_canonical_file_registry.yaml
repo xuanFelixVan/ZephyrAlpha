@@ -50894,4 +50894,639 @@ creation_tokens:
   created_by: st-backup-cold-20260924
   capability: gfps-audit-sop
   merge_evaluation: "备份+冷库全景审计 SOP 与既有冷库 SOP（10_g_drive_cold_storage_sop）分工不同：彼=冷库入库规范，此=双盘周期审计与灾备演练规程，跨域不同对象不并"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/_INDEX.md
+  token: decision-map-campaign-20260924--index-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s10_downstream_consumer_surface/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s11_validation_family/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s12_secondary_model_farm/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s1_hmm_kernel/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s2_overlay_transition_engine/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s3_overlay_signal_suppliers/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s4_feature_pipeline/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s5_shrinkage_risk_signals/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s6_snapshot_production_slot/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s7_anchored_state_track/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s8_six_phase_truth_chain/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/s9_alt_regime_channel/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/_INDEX.md
+  token: decision-map-campaign-20260924--index-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/a_builder_kernel/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/b_history_replay_line/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/c1_limitup_temperature/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/c2_promotion_rate/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/c3_breadth/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/c4_volume_energy/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/c5_leverage_margin/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/c6_news_sentiment/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/d_e_auction_and_rating_candidates/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/f_legacy_emotion_cluster/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/g_tomorrow_emotion_forecast/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/h_consumption_surface/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/_INDEX.md
+  token: decision-map-campaign-20260924--index-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/b1_index_data_foundation/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/b2_state_aggregation_kernel/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/b3_pipeline_slots_preference/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/b4_fund_dimension/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/b5_rotation_algorithm_family/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/b6_l2_gate_wiring/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/b7_constituent_and_coordinates/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/b8_p1_conditional_tables/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/_INDEX.md
+  token: decision-map-campaign-20260924--index-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/exam_result_writeback/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/exam_ruler_holdout/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/onboarding_rules_matrix/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/resonance_friction_assembly/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/search_executor_prereg/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/19_gpu_plan_and_master_backlog.md
+  token: decision-map-campaign-20260924-19-gpu-plan-and-master-backlog-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "承接 03号文 GPU 战役与主 backlog 的继任轮计划册（内收：01-08/12 号文缺失内容由本件承接）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/LEDGER.md
+  token: decision-map-campaign-20260924-ledger-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "继任轮总筹台账（内收：单入口台账）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/AUTO_t1_t2_handover.md
+  token: decision-map-campaign-20260924-auto-t1-t2-handover-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "LANE-AUTO 交接守望器案卷（内收：替代03号文§二自然语言巡检）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/ADJ_rulings.md
+  token: decision-map-campaign-20260924-adj-rulings-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/BUILD_trd_a10_du11.md
+  token: decision-map-campaign-20260924-build-trd-a10-du11-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/EV_root_cause_and_cure.md
+  token: decision-map-campaign-20260924-ev-root-cause-and-cure-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/GPU_merge_audit.md
+  token: decision-map-campaign-20260924-gpu-merge-audit-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/PIT_closed_book_and_dsr.md
+  token: decision-map-campaign-20260924-pit-closed-book-and-dsr-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/RB_redblue_verdict.md
+  token: decision-map-campaign-20260924-rb-redblue-verdict-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/T0_run_report.md
+  token: decision-map-campaign-20260924-t0-run-report-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/WM1_24h_evaluation.md
+  token: decision-map-campaign-20260924-wm1-24h-evaluation-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_ai_layer_gate_rearm.md
+  token: decision-map-campaign-20260924-adj-ai-layer-gate-rearm-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_emoreplay_reaccept.md
+  token: decision-map-campaign-20260924-adj-emoreplay-reaccept-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_l09c01_orchestrator.md
+  token: decision-map-campaign-20260924-adj-l09c01-orchestrator-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_prereg_resign_two_round.md
+  token: decision-map-campaign-20260924-adj-prereg-resign-two-round-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_qingdao_three_bags.md
+  token: decision-map-campaign-20260924-adj-qingdao-three-bags-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/adj/ADJ_t0_jiawei_versions.md
+  token: decision-map-campaign-20260924-adj-t0-jiawei-versions-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/casefile.md
+  token: decision-map-campaign-20260924-casefile-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/engine_caliber_map/caliber_map.md
+  token: decision-map-campaign-20260924-caliber-map-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/engine_caliber_map/caliber_map.yaml
+  token: decision-map-campaign-20260924-caliber-map-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_auto.yaml
+  token: decision-map-campaign-20260924-lane-auto-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_build.yaml
+  token: decision-map-campaign-20260924-lane-build-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_cmd.yaml
+  token: decision-map-campaign-20260924-lane-cmd-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_ev.yaml
+  token: decision-map-campaign-20260924-lane-ev-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_gpu.yaml
+  token: decision-map-campaign-20260924-lane-gpu-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_mine_a.yaml
+  token: decision-map-campaign-20260924-lane-mine-a-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_mine_l04.yaml
+  token: decision-map-campaign-20260924-lane-mine-l04-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_mine_l05.yaml
+  token: decision-map-campaign-20260924-lane-mine-l05-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_mine_l06.yaml
+  token: decision-map-campaign-20260924-lane-mine-l06-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_mine_l07.yaml
+  token: decision-map-campaign-20260924-lane-mine-l07-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_mine_l08.yaml
+  token: decision-map-campaign-20260924-lane-mine-l08-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_rb.yaml
+  token: decision-map-campaign-20260924-lane-rb-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_reexam.yaml
+  token: decision-map-campaign-20260924-lane-reexam-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_t0.yaml
+  token: decision-map-campaign-20260924-lane-t0-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_wm1.yaml
+  token: decision-map-campaign-20260924-lane-wm1-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/_INDEX.md
+  token: decision-map-campaign-20260924--index-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/du11_daily_valuation_partial_write_root_cause.md
+  token: decision-map-campaign-20260924-du11-daily-valuation-partial-write-root-cause-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s1_conduction_gate/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s2_constituent_mapping/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s3_candidate_pool_chain/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s4_factor_layer_and_news_dim/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s5_tradability_filters/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s6_stock_state_axis/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/_INDEX_MINE.md
+  token: decision-map-campaign-20260924--index-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/etf_t0_cost_and_pool/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/news_dimension_pit/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/period_axis_semantics/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/rule_card_candidate_surface/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/rule_cards/r01_fixed_grid_day_t.yaml
+  token: decision-map-campaign-20260924-r01-fixed-grid-day-t-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/rule_cards/r02_vol_adaptive_band.yaml
+  token: decision-map-campaign-20260924-r02-vol-adaptive-band-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/rule_cards/r03_vwap_reversion_band.yaml
+  token: decision-map-campaign-20260924-r03-vwap-reversion-band-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/rule_cards/r04_open_range_breakout.yaml
+  token: decision-map-campaign-20260924-r04-open-range-breakout-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/state_match_downstream_surface/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/t0_state_match_readme.md
+  token: decision-map-campaign-20260924-t0-state-match-readme-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/tick_imbalance_material/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/_INDEX_MINE.md
+  token: decision-map-campaign-20260924--index-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/s1_signal_to_order/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/s2_order_pipeline/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/s3_qmt_bridge_client/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/s4_execution_report_chain/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/s5_cost_feedback_loop/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/s6_execution_algorithms/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/s7_slippage_calibration/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/s8_depth_and_imbalance/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/s9_sell_and_daban/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/trd_a10_bridge_client_defects.md
+  token: decision-map-campaign-20260924-trd-a10-bridge-client-defects-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/_INDEX_MINE.md
+  token: decision-map-campaign-20260924--index-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/s1_system_killswitch_agent_behavior/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/s2_five_level_circuit_breaker/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/s3_tdm_drawdown_state_machine/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/s4_drawdown_protocol_family/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/s5_tail_risk_evt_pot/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/s6_liquidity_monitoring/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/s7_systemic_risk_signals/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/s8_pledge_veto_unlock_pressure/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/s9_order_veto_constraint_stack/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/_INDEX_MINE.md
+  token: decision-map-campaign-20260924--index-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/s1_daily_loop_orchestrator/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/s2_premarket_chain/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/s3_judgment_ledger_settlement/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/s4_daily_publication_and_decision_snapshot/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/s5_warroom_operations/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/s6_monitoring_automation/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/s7_attribution_engine_and_performance_reports/MINE.md
+  token: decision-map-campaign-20260924-mine-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "细化既有 SKEL 节点的子模块级挖掘簿与继任轮案卷（内收：不新立节点号/不改判据，仅文档承接，无第二真源）"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/LAND_landing_ledger.md
+  token: decision-map-campaign-20260924-land-landing-ledger-20260925
+  created_by: st-qmine-20260925
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "LANE-LAND2 落地案卷（内收：与 LEDGER 分工，落地进度/死因验尸专用，无第二真源）"
+- file: scripts/backtest/t1_t2_handover.py
+  token: backtest-t1-t2-handover-20260925
+  created_by: st-qmine-20260925
+  capability: backtest
+  merge_evaluation: "T1->T2 交接守望器：内收替代 03号文§二自然语言巡检（反查无同类件，仅复用不新建判据）"
 di_seam_exemptions: []

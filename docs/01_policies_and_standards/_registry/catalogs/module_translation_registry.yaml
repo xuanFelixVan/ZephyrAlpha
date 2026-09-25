@@ -60984,6 +60984,30 @@ entries:
   plain_zh: "把做T考试的规则和成交模型跑成一条条可复用的语料材料，供做T考试与复盘用，闭卷数据碰不到"
   responsibility_layer: business
 
+- module_path: scripts/governance/meta_question/wo_intake_reconcile/generate_source_line_register.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "源线谱机器册生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 A/B/C 三档共 29 条数据源线从那份人读文档里逐行抠出来，落成机器可查的册子，并拿文档自陈的条数、DS 锚、token 命中数七项互相对账，任一项对不上就不出货"
+  responsibility_layer: governance
+- module_path: scripts/governance/meta_question/wo_intake_reconcile/intake_batch.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "复考批次入题驱动器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一批新题正式进 meta_question 表之前的预跑器：先过五要素与枚举闸，撞题直接拒并回指原题，号段按全表最大值连号发，绝不回收旧号"
+  responsibility_layer: governance
+- module_path: scripts/governance/meta_question/wo_intake_reconcile/replay_audit_to_jsonl.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "审计双轨补账臂"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把 PG 里 meta_question_audit 表的流水按 id 顺序补抄一份到追加式 JSONL 双轨账，默认只演不写，真跑时缺口当天就要报出来不让两本账悄悄分叉"
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
