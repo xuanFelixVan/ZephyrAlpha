@@ -653,5 +653,65 @@ class TestKillLogAttributionOtherLanes:
         assert line.endswith(" name=- cmd=-"), line
 
 
+class TestReapCycleNeverBlindsStatus:
+    """reap() 必须保证：无论本轮死在哪一步，状态快照都落盘，且失能可归因。
+
+    病根实证（2026-09-26 本班会）：计划任务真跑分支自 09-25 01:49 起每次都在 kill 之后
+    爆炸——`tmp/process_reaper.log` 里 01:14:31 有真杀、01:33:53/01:40:22 有本轮 watch 行，
+    但 `.runtime/process_reaper/last_run.json` 连续 23.5h 停更且 LastTaskResult=1，
+    于是 RULE-GUARDIAN 与 SOP §一.2 唯一的健康凭据变成陈旧读数（冷启动被它误导过一次）。
+    """
+
+    def test_ghost_stage_failure_isolated_and_status_written(self, monkeypatch, tmp_path: Path) -> None:
+        monkeypatch.setattr(pr, "_STATUS_DIR", tmp_path)
+        monkeypatch.setattr(pr, "_STATUS_FILE", tmp_path / "last_run.json")
+
+        def boom(_dry_run: bool) -> dict[str, int]:
+            raise RuntimeError("ghost stage exploded")
+
+        monkeypatch.setattr(pr, "_reap_ghost_windows", boom)
+        drift_seen: list[bool] = []
+
+        def fake_drift(_dry_run: bool) -> dict[str, object]:
+            drift_seen.append(True)
+            return {"stash_count": 0, "worktree_changes": 0}
+
+        monkeypatch.setattr(pr, "_collect_drift_metrics", fake_drift)
+        report = pr.reap(dry_run=True)  # 不外抛：尾段一步失能不连坐其余两步
+
+        assert any("ghost_stage_failed" in e for e in report.errors), report.errors
+        assert "ghost stage exploded" in report.errors[0]
+        assert drift_seen, "幽灵步爆炸后 drift 步被一起跳过（三步未隔离）"
+        assert pr._STATUS_FILE.exists()
+        data = json.loads(pr._STATUS_FILE.read_text(encoding="utf-8"))
+        assert any("ghost_stage_failed" in e for e in data["errors"])
+
+    def test_mid_cycle_crash_still_writes_status_then_reraises(self, monkeypatch, tmp_path: Path) -> None:
+        """主循环中段爆炸（09-25 起的实际形态）：快照照落、异常照抛＝保留非零退出信号。"""
+        monkeypatch.setattr(pr, "_STATUS_DIR", tmp_path)
+        monkeypatch.setattr(pr, "_STATUS_FILE", tmp_path / "last_run.json")
+
+        def boom(*_a: object, **_k: object) -> None:
+            raise RuntimeError("incubation ledger writeback exploded")
+
+        monkeypatch.setattr(pr, "_reap_incubated_expired", boom)
+        with pytest.raises(RuntimeError, match="incubation ledger writeback exploded"):
+            pr.reap(dry_run=True)
+
+        assert pr._STATUS_FILE.exists(), "中段爆炸把健康快照一起吃掉＝23.5h 瞎火原形态复现"
+        data = json.loads(pr._STATUS_FILE.read_text(encoding="utf-8"))
+        assert any("reap_aborted" in e for e in data["errors"]), data["errors"]
+        assert "incubation ledger writeback exploded" in data["errors"][0]
+
+    def test_hardening_structure_is_present(self) -> None:
+        """治本结构守卫：主体不得再自行落盘，快照只由 reap 外层 finally 负责。"""
+        src = (pr.REPO_ROOT / "src" / "zephyr" / "trading" / "process_reaper.py").read_text(encoding="utf-8")
+        head = src[src.index("def reap(") : src.index("def _reap_cycle(")]
+        body = src[src.index("def _reap_cycle(") :]
+        assert "finally:" in head and "_write_status(report)" in head, "reap() 外层 finally 兜底丢失"
+        assert "raise" in head, "外层不再上抛＝计划任务退出码被吞（假绿）"
+        assert "_write_status(report)" not in body, "落盘点又漏回主体＝中段爆炸仍会瞎"
+
+
 if __name__ == "__main__":
     sys.exit(pytest.main([__file__, "-q"]))

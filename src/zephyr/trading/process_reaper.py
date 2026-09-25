@@ -1024,8 +1024,26 @@ def _reap_incubated_expired(
 
 
 def reap(dry_run: bool = False) -> ReapReport:
-    """执行一轮清理。one-shot：scan→判定→kill→落盘→返回，调用方随即退出。"""
+    """执行一轮清理。one-shot：scan→判定→kill→落盘→返回，调用方随即退出。
+
+    外层唯一职责＝**无论本轮死在哪一步，状态快照都要落盘**，随后原样上抛（保留
+    非零退出＝对计划任务可见的失败信号）。2026-09-26 实证：计划任务连续 23.5h 每次
+    真跑都在 kill 之后爆炸（`watch PID=` 行照写、快照停更、LastTaskResult=1），
+    而 RULE-GUARDIAN 与 SOP 日检恰恰只读这份快照——护栏健康通道因此静默瞎掉。
+    """
     report = ReapReport(timestamp=time.strftime("%Y-%m-%d %H:%M:%S"), dry_run=dry_run)
+    try:
+        return _reap_cycle(dry_run, report)
+    except Exception as exc:  # noqa: BLE001 — 兜住后照抛：不吞失败信号，只保住健康凭据
+        report.errors.append(f"reap_aborted: {exc!r}")
+        logger.error("reaper 本轮中途失能（快照仍落盘，异常照抛）: %s", exc, exc_info=True)
+        raise
+    finally:
+        _write_status(report)
+
+
+def _reap_cycle(dry_run: bool, report: ReapReport) -> ReapReport:
+    """本轮清理主体（判定与收割语义全在这里；失能兜底见 reap）。"""
     project_root = str(REPO_ROOT)
 
     # 1) python 进程清理（psutil 不可用时降级关闭，fail-safe 方向=不清理）
@@ -1110,19 +1128,24 @@ def reap(dry_run: bool = False) -> ReapReport:
         # 1.6) 孵化登记表超寿收割（M3 闭环，2026-09-16）——登记替代 cmdline 猜测
         _reap_incubated_expired(all_procs, dry_run, report, whitelist_res, keep_subs)
 
-    # 2) Trae 幽灵窗口
-    report.ghosts = _reap_ghost_windows(dry_run)
-
-    # 3) drift 指标
-    report.drift = _collect_drift_metrics(dry_run)
-
-    # 4) 保命链接线（全流通战役 wiresafe 车道）：应急保命轨评估 + 全系统内存水位真闸。
+    # 2) Trae 幽灵窗口 / 3) drift 指标 / 4) 保命链接线
+    #    保命链＝应急保命轨评估 + 全系统内存水位真闸（全流通战役 wiresafe 车道）。
     #    本任务是仓内唯一由 OS 计划任务托管的 10min one-shot 常驻脉冲，故两条"自动触发"
     #    挂在这里——**不新建 cron/Timer/sleep-loop**（宪法 §9.3）。任一失败只入
-    #    report.errors 并大声告警，绝不阻断收割主链（收割本身也是保命动作）。
+    #    report.errors 并大声告警，绝不阻断收割主链（收割本身也是保命动作），
+    #    且三步各自独立：任一步爆炸不连坐其余两步（快照由 reap 外层落盘）。
+    try:
+        report.ghosts = _reap_ghost_windows(dry_run)
+    except Exception as exc:  # noqa: BLE001
+        report.errors.append(f"ghost_stage_failed: {exc!r}")
+        logger.error("幽灵窗口扫描失能（继续跑 drift/保命链）: %s", exc, exc_info=True)
+    try:
+        report.drift = _collect_drift_metrics(dry_run)
+    except Exception as exc:  # noqa: BLE001
+        report.errors.append(f"drift_stage_failed: {exc!r}")
+        logger.error("drift 指标采集失能（继续跑保命链）: %s", exc, exc_info=True)
     _run_safety_wires(report)
 
-    _write_status(report)
     return report
 
 
