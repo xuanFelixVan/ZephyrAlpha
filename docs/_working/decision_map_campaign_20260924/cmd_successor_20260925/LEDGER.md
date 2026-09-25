@@ -132,3 +132,37 @@ title: 总筹台账（st-qmine-20260925 继任轮 · 2026-09-25 20:45 接管）
 4. **事故 B｜幻影还原**：未 claim 的 _c4_engine.py 编辑两次被盘面还原（写审计实锤=ZCode app-server pid 22232 safe_write 链；一次连 F1 注记定向回滚而 I5 保留=非全文件 HEAD 还原，根因未明）。处方已执行=改前 claim+改后立即 git add+写后读回复核。登记待高模型维护班追凶。
 5. **在飞**：旧引擎 T0 200 格基线 grid_20260925-232032（23:20 发车）→ 跑完即发新引擎同参对拍（manifest+net_returns 逐位）→ 过门则停 3584+新引擎 T1 3,700 脱管发车。
 6. **同场协调**：st-qmine-20260925 会话实测仍活（心跳+23:09/23:24 两笔 QMine 落地），其 LANE-LAND2 的 docs 落地面勿重复施工；本轮不碰其认领路径。
+
+## 九、去重改造轮终态（st-ddup-20260925 · 03:55 收班记账）
+
+### 已落 HEAD（GitCommitGateway 实证）
+| commit | 内容 |
+|---|---|
+| 62898892 | **去重改造三件**（掩码向量化+LRU/单趟合并/多档标量线）+T3 接线底座抢救落地；114 测试绿 |
+| 16d58a652d | quant_methodology 11 册 |
+| 070a11d549/93e55f2f46/75dcbbb0d1/870aa42fa6 | decision_map_campaign 既有面修正（97 件；doc_type 剥除+ttl 口径） |
+| 51581acf00 | token 先行批（cost_tier_redblue/ddup_verdict） |
+| 在队 q-0019~0022 | T3 桩 7 元组适配/交接哨兵三件/等价判据书+AI 三门翻回+台账/calibrate+f06 适配 |
+
+### 等价门 PASS（详见 EQUIVALENCE_VERDICT_T0_200.md）
+- T0 200 格双跑对拍：manifest 达标+net_returns max|Δ|=4.441e-16（1 ULP≪1e-5）；双测套 161×2 连续零。
+- 提速实测：单格 58s→10.5s（5.6x，同机同争用）；T1 3,700 格新引擎已发车（PID 33548，grid_20260926-024947，ETA ~12:30），守望 automation-bb243f8c 每 30 分钟巡检+完赛自动验收发 T2。
+
+### 红蓝对抗成果（自查即红队）
+1. 命中 t1_t2_handover 重放腿 6 元组解包（生产 T1→T2 交接必炸）→修。
+2. 命中 calibrate_cost_tier_redblue/f06_e4_wfa_exam 两处同族解包（红蓝标定/E4 正考下次起跑必炸）→修。
+3. 命中 T3 桩测试 6 元组（全量回归暴露）→修（27 绿）。
+4. 10号文取证原文触发 GIT-DANGEROUS → EXCLUDE_PATH_PARTS 按先例加豁免（本条编辑被 watchdog 收敛吞噬一次，待静窗重落，登记不弃）。
+
+### 数据修复（RULE-DATA-OPS 三步验证在案）
+- c1_market.trade_calendar 缺 09-25/26/27 三行（中秋缺口）→ fail-closed E0 问闸拒发车 → 插入休市行（SSE 官方口径，09-28 行 pretrade=09-24 自证；可逆=按日删）。
+
+### 根因追凶
+- 幻影还原真源=worktree_drift_watchdog auto-derived-sync（"零活跃会话"判定+派生缓存收敛回 HEAD）；根治=会话保活（keeper2 周期 re-register+心跳 daemon 34872 常驻）+ 改前 claim + 改后 git add。
+
+### 登记未决（不弃，静窗处置）
+1. cmd_successor_20260925/ 新件 R5 数字后缀目录（上轮已登记待 Owner 裁，本轮不重裁）。
+2. du881 案卷数据证据迁址 data/+casefile 引用同步（留盘面；HEAD 内自洽无破坏）。
+3. detect_git_dangerous.py 豁免条目（10号文取证原文）——编辑被 watchdog 吞一次，文件已在 HEAD 故当前无阻断，待下次触碰前先落豁免。
+4. 他会话在飞未落件回归红：reexam_cpcv_harness 族（haircut_sharpe 导入未落源）/closed_book_tick_gate 族（mock 漂移）/test_n_trial_ledger_t0_family 孤儿（收集错）——按"他会话在途不代修"铁律登记不代修。
+5. infra：test_f18 的 generate_board_symbol_routing.py eval 白名单化（存量红，非本轮引入）。
