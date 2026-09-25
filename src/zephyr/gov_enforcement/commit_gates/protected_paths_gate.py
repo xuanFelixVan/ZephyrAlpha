@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (via auto_register_gates)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 文件含受保护路径（.gitignore/.gitattributes/AGENTS.md 等）且 commit message 无 [ARCH-APPROVAL:ISSUE_ID] 逃生标记时阻断；有逃生标记则放行并落审计；环境变量 ZEPHYR_PROTECTED_PATHS_BYPASS=1 放行（紧急逃生通道，落审计）；staged 为空放行；issue registry 读取异常降级为放行（fail-open，避免 registry 损坏阻断所有 commit）
+# [INVARIANTS] 硬阻断——staged 文件含受保护路径（.gitignore/.gitattributes/AGENTS.md 等）且审批判定不过时阻断；审批判定收敛 approval_resolver.resolve_approval 三通道（QCure M4.2，裁定#410 授权落地）：a) message [ARCH-APPROVAL:ISSUE_ID] 标记且 id 实存于议题册/裁定册（防伪——查无即拒，堵假号洞）；b) 裁定册 status=active 且未过 expires_at 且 approved_paths 覆盖命中路径（裁定号机械可消费）；c) 都不命中阻断；环境变量 ZEPHYR_PROTECTED_PATHS_BYPASS=1 放行（紧急逃生通道，落审计）；staged 为空放行；registry 读取异常（resolver source=unknown）+ marker 在场时保持既有放行+审计降级（fail-open，避免 registry 损坏阻断所有 commit）；merge finalize 分支侧审批转置（L264-292）语义不变
 # [MODIFY-GUARD] gate_id="PROTECTED-PATHS"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；PROTECTED_PATTERNS 真源=scripts/governance/d6_security/check_protected_paths.py（本 gate 不复制清单，运行时 import 复用）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -36,9 +36,11 @@ protected_paths_gate.py — 受保护路径写入检测门禁（PROTECTED-PATHS�
 
 逃生通道设计
 ------------
-- commit message 含 ``[ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001]`` 标记 → 放行（落审计）
+- commit message 含 ``[ARCH-APPROVAL:ISSUE_ID]`` 标记 → 放行（落审计）；QCure M4.2 起
+  id 经 approval_resolver 回查议题册/裁定册防伪（查无即拒，堵假号洞）
+- 裁定册 active 条目 approved_paths 覆盖命中路径 → 放行（裁定#410 起，detail 引裁定号）
 - 环境变量 ``ZEPHYR_PROTECTED_PATHS_BYPASS=1`` → 放行（紧急逃生，落审计）
-- issue_id 可被 post-commit reconciler 校验是否在 architecture_issue_registry.yaml 登记
+- 判定收敛 approval_resolver.resolve_approval（preflight 同源复用预案，矿 N3）
 
 设计权衡
 --------
@@ -70,6 +72,12 @@ import time
 from pathlib import Path
 from typing import Any
 
+from zephyr.gov_enforcement.commit_gates.approval_resolver import (
+    SOURCE_MARKER,
+    SOURCE_RULING,
+    SOURCE_UNKNOWN,
+    resolve_approval,
+)
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
 # 逃生通道 env（紧急逃生，落审计）
@@ -129,7 +137,13 @@ def _load_protected_patterns() -> list[tuple[str, str]]:
     return _PROTECTED_PATTERNS
 
 
-def _audit_bypass(gateway: object, files: list[str], reason: str, issue_id: str | None = None) -> None:
+def _audit_bypass(
+    gateway: object,
+    files: list[str],
+    reason: str,
+    issue_id: str | None = None,
+    source: str | None = None,
+) -> None:
     """落审计：逃生通道使用记录（PROTECTED-PATHS gate 真源）。
 
     fail-open：审计写入失败不阻断 commit（check_all ERROR_CONTRACT：永不抛异常）。
@@ -137,8 +151,11 @@ def _audit_bypass(gateway: object, files: list[str], reason: str, issue_id: str 
     Args:
         gateway: GitCommitGateway 实例（取 project_root）。
         files: staged 文件列表。
-        reason: 逃生原因（"env_bypass" / "approval_marker"）。
-        issue_id: 审批标记中的 issue_id（reason="approval_marker" 时填）。
+        reason: 逃生原因（"env_bypass" / "approval_marker" / "ruling_approval" /
+            "merge_branch_approval"）。
+        issue_id: 审批标记中的 issue_id / 裁定号（reason 带审批依据时填）。
+        source: 审批判定来源（approval_resolver verdict.source：marker / ruling /
+            marker_registry_failopen 等——QCure M4.2 增字段，机读溯源）。
     """
     try:
         root = Path(getattr(gateway, "project_root", "."))
@@ -148,6 +165,7 @@ def _audit_bypass(gateway: object, files: list[str], reason: str, issue_id: str 
             "timestamp": int(time.time()),  # 审计事件时间戳（m46-time 豁免：gate 审计需 epoch 秒）
             "gate": "PROTECTED-PATHS",
             "reason": reason,
+            "source": source,
             "issue_id": issue_id,
             "files_count": len(files),
             "protected_hits": [f for f in files if _is_protected(f)],
@@ -243,17 +261,51 @@ def make_protected_paths_gate() -> GateSpec:
                 f"(emergency bypass, audited): {hits[:3]}"
             )
 
-        # 3b. commit message 审批标记逃生通道
+        # 3b. 审批判定收敛器（QCure M4.2，裁定#410 授权落地）：三通道判定收敛
+        # approval_resolver（矿 N3 同源铁律：preflight 复用同一 resolver，防"预检拒/锁内放"）。
+        # a) marker 防伪：id 必须实存于议题册/裁定册（堵假号洞——现状 regex 命中即放行零校验）；
+        # b) 裁定授权：ruling_registry status=active + 未过 expires_at + approved_paths 覆盖。
         commit_msg: str | None = kwargs.get("commit_message") or kwargs.get("message")
-        if commit_msg:
-            match = _APPROVAL_MARKER_RE.search(commit_msg)
-            if match:
-                issue_id = match.group(1)
-                _audit_bypass(gateway, files, "approval_marker", issue_id)
+        try:
+            verdict = resolve_approval(
+                [f for f, _r in hits], commit_msg, getattr(gateway, "project_root", None)
+            )
+        except Exception:  # noqa: BLE001 — resolver 契约外异常：保持既有 fail-open 降级
+            verdict = None
+        forgery_hint = ""
+        if verdict is not None and verdict.approved:
+            if verdict.source == SOURCE_MARKER and commit_msg:
+                marker_match = _APPROVAL_MARKER_RE.search(commit_msg)
+                issue_id = marker_match.group(1) if marker_match else None
+                _audit_bypass(gateway, files, "approval_marker", issue_id, source=verdict.source)
                 return True, (
                     f"PROTECTED-PATHS: {len(hits)} protected file(s) staged but commit message "
                     f"contains [ARCH-APPROVAL:{issue_id}] (approved, audited): {hits[:3]}"
                 )
+            if verdict.source == SOURCE_RULING:
+                rid_match = re.search(r"裁定#\d+(?:-[A-Z]+)?", verdict.detail)
+                ruling_id = rid_match.group(0) if rid_match else None
+                _audit_bypass(gateway, files, "ruling_approval", ruling_id, source=verdict.source)
+                return True, (
+                    f"PROTECTED-PATHS: {len(hits)} protected file(s) staged but covered by active "
+                    f"ruling {ruling_id} approved_paths (approved, audited): {hits[:3]}"
+                )
+        elif verdict is not None and verdict.source == SOURCE_UNKNOWN and commit_msg:
+            marker_match = _APPROVAL_MARKER_RE.search(commit_msg)
+            if marker_match:
+                # fail-open 沿袭（INVARIANTS）：registry 读失败 + marker 在场 → 保持既有放行+审计
+                # 降级——收紧方向是 marker 防伪，不引入 registry 损坏阻断一切 commit 的新风险
+                _audit_bypass(
+                    gateway, files, "approval_marker", marker_match.group(1),
+                    source="marker_registry_failopen",
+                )
+                return True, (
+                    f"PROTECTED-PATHS: {len(hits)} protected file(s) staged but commit message "
+                    f"contains [ARCH-APPROVAL:{marker_match.group(1)}] (approved, audited): {hits[:3]}"
+                )
+        elif commit_msg and _APPROVAL_MARKER_RE.search(commit_msg) and verdict is not None:
+            # marker 在场但未过防伪校验（source=none）——阻断时附防伪拒绝原因
+            forgery_hint = f"（message 标记未过防伪校验：{verdict.detail}）"
 
         # 3c. B4 治本（2026-08-19）：merge finalize 场景审批转置——受保护改动在分支侧
         # commit 已验过 [ARCH-APPROVAL]（Layer 1 在分支 commit 时检查），merge commit 只是
@@ -296,9 +348,10 @@ def make_protected_paths_gate() -> GateSpec:
         return False, (
             f"PROTECTED-PATHS: staged files contain protected paths ({len(hits)} hit(s)): "
             f"{hits_desc}. 修改受保护路径须经审批流程。"
-            f"逃生通道：① commit message 加 [ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001] 标记；"
-            f"② 紧急情况设 ZEPHYR_PROTECTED_PATHS_BYPASS=1 env（落审计）。"
-            f"详见 #ARCH-MODEL-LIFECYCLE-001 与 check_protected_paths.py。"
+            f"逃生通道：① commit message 加 [ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001] 标记"
+            f"（id 须实存）；② 裁定册 active 条目 approved_paths 覆盖（如裁定#410）；"
+            f"③ 紧急情况设 ZEPHYR_PROTECTED_PATHS_BYPASS=1 env（落审计）。"
+            f"详见 #ARCH-MODEL-LIFECYCLE-001 与 check_protected_paths.py。{forgery_hint}"
         )
 
     return GateSpec(gate_id="PROTECTED-PATHS", check=_check, priority=28)

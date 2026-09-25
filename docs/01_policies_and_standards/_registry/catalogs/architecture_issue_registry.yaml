@@ -22507,3 +22507,14 @@ entries:
   - data/governance/governance.db（删除，0 字节假库）
   - .runtime/tmp/governance.db（删除，0 字节假库）
   related_rulings: []
+- issue_id: '#ARCH-QCURE-APPROVAL-CHAIN-001'
+  title: 'QCure 裁定适配器授权链闭环：裁定册纳入保护清单+approved_paths 机判通道（PROTECTED-PATHS 审批语言统一）'
+  severity: P1高
+  category: architecture_metadata
+  status: in_progress
+  created: '2026-09-25'
+  last_updated: '2026-09-25'
+  owner: 'Owner 通宵总包令（st-qcure-20260925 执行，红队 P0-1 治本）'
+  description: '问题背景：PROTECTED-PATHS 门只认 [ARCH-APPROVAL:ARCH-*] 标记语言，裁定号（如裁定#410 批准 rules/ 清道三袋）机械上不被消费，属主只能人肉把裁定翻译成 ARCH 议题。QCure M4 立 approval_resolver 双通道（marker 防伪：id 必须实存议题册/裁定册；裁定通道：status=active+未过 expires_at+approved_paths fnmatch 覆盖）。红队 P0-1 实证：ruling_registry.yaml 原不在保护清单，会话可无批文自铸 approved_paths＝自我授权闭环洞。治本：本册（裁定册）入 PROTECTED_PATTERNS，改册须 ARCH 议题批文（即本议题），与 rules/ 同门槛。#410 三失真修补（status/affected_files/approved_paths+expires 2026-10-08）随本议题原子落地。'
+  impact: "['scripts/governance/d6_security/check_protected_paths.py（PROTECTED_PATTERNS+1）', 'src/zephyr/gov_enforcement/commit_gates/approval_resolver.py（新增）', 'src/zephyr/gov_enforcement/commit_gates/protected_paths_gate.py（复用 resolver）', 'docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml（#410 修补）']"
+  related_rulings: '["裁定#410"]'

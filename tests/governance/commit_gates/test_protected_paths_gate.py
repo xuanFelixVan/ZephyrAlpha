@@ -22,6 +22,9 @@
 - TestEnvBypassPass: ZEPHYR_PROTECTED_PATHS_BYPASS=1 env → 放行
 - TestGateSpecFields: gate_id / priority 字段正确
 - TestIsProtected: is_protected 公共接口
+- TestRulingApprovalGate: QCure M4.2——裁定册 active+approved_paths 覆盖 → 放行（审计 ruling_approval）；过期裁定阻断
+- TestMarkerAntiForgeryGate: QCure M4.2——marker id 实存放行 / 伪造 id 阻断（附防伪拒绝原因）
+- TestRegistryFailOpenGate: QCure M4.2——registry 读异常 + marker 在场保持既有放行+审计降级（fail-open 不收紧）
 """
 
 from __future__ import annotations
@@ -300,3 +303,144 @@ class TestMergeBranchApprovalGate:
         gate = make_protected_paths_gate()
         passed, detail = gate.check(gw, [".gitignore"], commit_message="normal commit")
         assert passed is False, f"非 merge 无标记应阻断: {detail}"
+
+
+# ── QCure M4.2（st-qcure-20260925 施工线C）：审批收敛器 approval_resolver gate 级集成 ──
+
+_CATALOGS = "docs/01_policies_and_standards/_registry/catalogs"
+_RULES_HIT = "docs/01_policies_and_standards/rules/trae_062_ssot_classification.yaml"
+
+
+def _make_catalogs(root: Path, issue_ids: list[str] | None = None, rulings: list[dict] | None = None) -> None:
+    """tmp_path 造最小注册表 fixture（议题册/裁定册，YAML 结构对齐真源 schema）。"""
+    import yaml
+
+    cat = root / _CATALOGS
+    cat.mkdir(parents=True, exist_ok=True)
+    if issue_ids is not None:
+        (cat / "architecture_issue_registry.yaml").write_text(
+            yaml.safe_dump({"entries": [{"issue_id": i} for i in issue_ids]}, allow_unicode=True),
+            encoding="utf-8",
+        )
+    if rulings is not None:
+        (cat / "ruling_registry.yaml").write_text(
+            yaml.safe_dump({"entries": rulings}, allow_unicode=True, sort_keys=False),
+            encoding="utf-8",
+        )
+
+
+def _ruling(**overrides) -> dict:
+    """裁定条目基模（#410 形态：active + approved_paths 目录前缀 + 有界 expires_at）。"""
+    entry = {
+        "ruling_id": "裁定#410",
+        "title": "终局班两件收口批准",
+        "date": "2026-09-24",
+        "category": "架构",
+        "status": "active",
+        "summary": "rules 清道三袋落地",
+        "affected_files": [],
+        "related_arch": [],
+        "related_rulings": [],
+        "superseded_by": None,
+        "approved_paths": ["docs/01_policies_and_standards/rules/"],
+        "expires_at": "2099-01-01",
+    }
+    entry.update(overrides)
+    return entry
+
+
+class TestRulingApprovalGate:
+    """QCure M4.2：裁定册授权通道接入 gate（裁定#410 授权落地）。"""
+
+    def test_ruling_coverage_passes_with_audit(self, tmp_path):
+        """active 裁定 approved_paths 覆盖命中路径 → 放行 + 审计 ruling_approval。"""
+        _make_catalogs(tmp_path, rulings=[_ruling()])
+        gw = _make_gateway(tmp_path)
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(gw, [_RULES_HIT], commit_message="chore: rules cleanup")
+        assert passed is True, f"裁定覆盖应放行: {detail}"
+        assert "裁定#410" in detail
+        audit_file = tmp_path / ".runtime" / "gate_audit" / "protected_paths_bypass.jsonl"
+        assert audit_file.is_file()
+        content = audit_file.read_text(encoding="utf-8")
+        assert "ruling_approval" in content
+        assert "裁定#410" in content
+        assert '"source": "ruling"' in content  # M4.2 审计 detail 增 source 字段
+
+    def test_expired_ruling_blocks(self, tmp_path):
+        """过期裁定不构成授权 → 维持阻断。"""
+        _make_catalogs(tmp_path, rulings=[_ruling(expires_at="2020-01-01")])
+        gw = _make_gateway(tmp_path)
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(gw, [_RULES_HIT], commit_message="chore: rules cleanup")
+        assert passed is False, f"过期裁定应阻断: {detail}"
+        assert "PROTECTED-PATHS" in detail
+
+    def test_ruling_without_gateway_still_blocks(self, tmp_path):
+        """无裁定册 fixture（缺册）+ 无 marker → 维持阻断（unknown 不打开逃生口）。"""
+        gw = _make_gateway(tmp_path)
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(gw, [_RULES_HIT], commit_message="chore: rules cleanup")
+        assert passed is False, f"缺册无 marker 应阻断: {detail}"
+
+
+class TestMarkerAntiForgeryGate:
+    """QCure M4.2：marker 防伪（假号洞顺堵）。"""
+
+    def test_registered_marker_passes(self, tmp_path):
+        """marker id 实存于议题册 → 放行（审计 source=marker）。"""
+        _make_catalogs(tmp_path, issue_ids=["ARCH-MODEL-LIFECYCLE-001"])
+        gw = _make_gateway(tmp_path)
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(
+            gw, [".gitignore"],
+            commit_message="fix: update gitignore [ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001]",
+        )
+        assert passed is True, f"实存 id 应放行: {detail}"
+        audit_file = tmp_path / ".runtime" / "gate_audit" / "protected_paths_bypass.jsonl"
+        content = audit_file.read_text(encoding="utf-8")
+        assert '"source": "marker"' in content
+
+    def test_forged_marker_blocks_with_hint(self, tmp_path):
+        """marker id 查无（册可读）→ 阻断，detail 附防伪拒绝原因。"""
+        _make_catalogs(tmp_path, issue_ids=["ARCH-OTHER-999"])
+        gw = _make_gateway(tmp_path)
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(
+            gw, [".gitignore"],
+            commit_message="sneak: [ARCH-APPROVAL:ARCH-FAKE-123]",
+        )
+        assert passed is False, f"伪造 id 应阻断: {detail}"
+        assert "未过防伪校验" in detail
+        assert "ARCH-FAKE-123" in detail
+
+
+class TestRegistryFailOpenGate:
+    """QCure M4.2：registry 读异常保持既有 fail-open 降级（不收紧）。"""
+
+    def test_unreadable_issue_registry_keeps_failopen(self, tmp_path):
+        """议题册读异常（目录占位）+ marker 在场 → 保持既有放行+审计降级。"""
+        bad = tmp_path / _CATALOGS / "architecture_issue_registry.yaml"
+        bad.parent.mkdir(parents=True, exist_ok=True)
+        bad.mkdir()  # 目录替代文件 → 读取抛 IsADirectoryError
+        gw = _make_gateway(tmp_path)
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(
+            gw, [".gitignore"],
+            commit_message="fix: [ARCH-APPROVAL:ARCH-MODEL-LIFECYCLE-001]",
+        )
+        assert passed is True, f"registry 异常应保持 fail-open 放行: {detail}"
+        audit_file = tmp_path / ".runtime" / "gate_audit" / "protected_paths_bypass.jsonl"
+        content = audit_file.read_text(encoding="utf-8")
+        assert "approval_marker" in content
+        assert "marker_registry_failopen" in content
+
+    def test_unreadable_ruling_registry_no_marker_blocks(self, tmp_path):
+        """裁定册读异常 + 无 marker → 无逃生口维持阻断（unknown 只对 marker fail-open）。"""
+        bad = tmp_path / _CATALOGS / "ruling_registry.yaml"
+        bad.parent.mkdir(parents=True, exist_ok=True)
+        bad.mkdir()
+        gw = _make_gateway(tmp_path)
+        gate = make_protected_paths_gate()
+        passed, detail = gate.check(gw, [_RULES_HIT], commit_message="chore: rules cleanup")
+        assert passed is False, f"读异常无 marker 应阻断: {detail}"

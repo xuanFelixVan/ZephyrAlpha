@@ -79,6 +79,13 @@ PROTECTED_PATTERNS = [
     # 强制走 ARCH-MODEL-LIFECYCLE-001 流程显式审批，防止静默回退。
     (".gitignore", "模型排除规则（ARCH-MODEL-LIFECYCLE-001），修改须通过该流程审批"),
     (".gitattributes", "LFS 规则已移除（ARCH-MODEL-LIFECYCLE-001），修改须通过该流程审批"),
+    # QCure 红队 P0-1（ARCH-QCURE-APPROVAL-CHAIN-001，st-qcure-20260925）：授权真源
+    # 自身必须受保护——裁定册的 approved_paths/expires_at 是 PROTECTED-PATHS 裁定通道
+    # 的机判依据（approval_resolver 消费），若本册可被会话无批文改写，等于允许会话
+    # 自铸任意路径的写授权（自我授权闭环洞）。加入保护后，改本册须 [ARCH-APPROVAL:
+    # <已登记issue>] 标记（与 rules/ 同门槛），或命中既有活跃裁定的 approved_paths。
+    ("docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml",
+     "裁定册＝审批授权真源（ARCH-QCURE-APPROVAL-CHAIN-001），修改须 ARCH 议题批文"),
 ]
 
 # GAP-010（2026-08-12）：AI 金融代码高敏区——下单/资金/风控/成本四类文件

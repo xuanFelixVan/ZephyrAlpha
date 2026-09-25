@@ -5643,7 +5643,7 @@ entries:
   title: 终局班两件收口批准（rules 清道三袋落地 + potential_consumers 增枝 DDL 五步）
   date: '2026-09-24'
   category: 架构
-  status: decided
+  status: active
   summary: |-
     Owner 2026-09-24 终批（本班死线对话直批）：①rules 清道三袋（q-20260923-st-ulib3c-20260923-
     0012/0013/0014，86 件 rules/*.yaml frontmatter tags 批注摘除，盘上零漂移三核）批准落地，
@@ -5652,12 +5652,15 @@ entries:
     全量：lib_assets 加列→08 词典 v1.1→librarian upsert 带新列→供给台账 S1-S70 回填注出处→
     lookup --feeds 反查面），依据=Owner 2026-09-23 总包批文 §五"2"+今日全批。
     两项执行完毕后终局班收官（终态行→自动化自删）。
-  related_files:
+  affected_files:
   - docs/_working/ultimate_library/ulib3b_potential_consumers_proposal.md
   - docs/_working/ultimate_library/library_final_ledger.md
+  approved_paths: ["docs/01_policies_and_standards/rules/"]
+  expires_at: '2026-10-08'
   related_arch: []
   related_rulings: []
   superseded_by: null
+
 - ruling_id: "裁定#411"
   title: 翻译册 6 组重复行 dedupe（遗留修复收尾总包①）
   date: '2026-09-24'
