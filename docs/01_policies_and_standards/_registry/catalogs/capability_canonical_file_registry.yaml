@@ -52652,4 +52652,9 @@ creation_tokens:
   created_by: st-commitspeed-tbl-20260924
   capability: commit_speedup_campaign
   merge_evaluation: "跨域不同对象不并：S1 咽喉行为（check_all 分道+四入口代理+base 语义+树内污染指标）的专属证尺；test_s1_immutable_tree_wire 只锁视图构造判别，零真源重叠"
+- file: docs/03_modules/_domain_data/algo_flow/data/macro_vintage.yaml
+  token: metaq-gc-algo-flow-macro-vintage-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物），锚随 src 件同袋"
 di_seam_exemptions: []
