@@ -1585,6 +1585,12 @@ def drain_queue(
             if _attempts_backoff_enabled() and _item_attempts(item) >= _ATTEMPTS_DEAD_THRESHOLD:
                 item["dead_at"] = _now_iso()
                 item["dead_reason"] = _attempts_exhausted_reason(item)
+                # 红队 R2-P1-2 同源补处方（包14 S6 红蓝实测补漏）：pool 支
+                # （commit_queue_landing._pool_process_item）attempts 耗尽出口已带
+                # prescription/owner_session，本 drain 支同形态出口此前漏配——
+                # 死因处方+责任会话随袋落册，M3.3 口径在两支对齐防脱节。
+                item["prescription"] = dead_letter_prescription(item["dead_reason"])
+                item["owner_session"] = item.get("session_id") or ""
                 _atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
                 os.replace(processing_path, root / "dead" / head.name)
                 stats["dead"] += 1
