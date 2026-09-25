@@ -52501,4 +52501,14 @@ creation_tokens:
   created_by: st-qmine-20260925
   capability: qmine_modules
   merge_evaluation: "api_server的ALGO_FLOW外部算法卡(裁定#214出仓契约),与源码同批原子,无同域重复"
+- file: scripts/backtest/calibrate_cost_tier_redblue.py
+  token: cost-tier-redblue-calibrate-cost-tier-redblue-20260925
+  created_by: st-ddup-20260925
+  capability: cost_tier_redblue
+  merge_evaluation: "红蓝标定件（方案①两轮制达标线实测器，LANE-RB 上一轮产物首次落地）；轻/全档 sharpe 对拍与 Spearman/top50 判据执行面"
+- file: docs/_working/decision_map_campaign_20260924/EQUIVALENCE_VERDICT_T0_200.md
+  token: ddup-verdict-equivalence-verdict-t0-200-20260925
+  created_by: st-ddup-20260925
+  capability: ddup_verdict
+  merge_evaluation: "去重改造等价判据书（T0 200 格对拍 PASS 存证，Owner 提速令验收件）"
 di_seam_exemptions: []
