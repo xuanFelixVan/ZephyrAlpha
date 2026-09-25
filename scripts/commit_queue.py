@@ -5,7 +5,7 @@
 # [CONSUMERS] 全部 AI session（提交入队唯一入口）；B 段 Serializer 落盘执行体（专用 worktree 真落盘）
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 单写者（serializer.lease 唯一持有者排空）；纯 FIFO（qid 单调序，无优先级插队）；快照入袋即安全（blob 落盘即完成）；死信不卡队；同键 (session_id,path) pending 内仅留最新；永不改主工作区文件
+# [INVARIANTS] 单写者（serializer.lease 唯一持有者排空）；纯 FIFO（qid 单调序，无优先级插队）；快照入袋即安全（blob 落盘即完成）；死信不卡队；同键 (session_id,path) pending 内仅留最新；C1 同会话短窗合批仅同 session+同 worktree-root（文件集并集不变，absorbed qid 不落状态目录）；永不改主工作区文件
 # [MODIFY-GUARD] 66 号备忘 §6 协议/schema 真源；08 号文 §4.2 Phase 0；CLI 子命令面（enqueue/status/drain）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -120,7 +120,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 提交队列串行化 MVP（enqueue/status/drain/requeue/cleanup/health + 入队自举排空 + 死信 + compaction + 级联标记 + done/ TTL 清理 + 死信积压告警）
+description: 提交队列串行化 MVP（enqueue/status/drain/requeue/cleanup/health + 入队自举排空 + 死信 + compaction + 级联标记 + done/ TTL 清理 + 死信积压告警 + C1 同会话短窗自动合批）
 dimensions:
 - D1
 priority: P0
@@ -633,6 +633,189 @@ def _compact_pending(queue_root: Path, session_id: str, new_paths: set[str]) -> 
 
 
 # ---------------------------------------------------------------------------
+# C1 同会话短窗自动合批（st-commitspeed-tbl-20260924 提速战役 T11/C1；A4 阶梯 S7
+# 「批均规模 ≥3」的前置编排档）：同一会话 <20 分钟窗口内的后续入队件并入已有
+# pending 件（文件集取并集，零内容改动、纯队列编排），判据口径=件数/日 158→<60、
+# 文件中位/件 1→>5。
+# 红线：合批只对「同 session_id + 同 worktree-root」生效（跨会话绝不合并；历史项
+# 无 worktree_root 键=不可证同根→不并）；门禁判据/阈值零变化；B4 created_at 排队
+# 键不破（合并件保持前件 created_at=先来先服务）。
+# 机制复用（勿造第二套）：吸收痕迹记 meta.supersedes——与 compaction 同一名册，语义
+# 统一为「本件吸收/覆盖的提交序列号全集」，compaction 的传递累积链路原样复用；另记
+# meta.absorbed 明细（qid/时刻/文件数/message 尾注）+ meta.merged_count 供审计。
+# 资格闸（全部命中才合并，宁不并不错并）：同 session + 同 worktree_root +
+# created_at 距今 ≤ _DEBOUNCE_WINDOW_SECONDS + 目标无 stale 标记 + 目标
+# attempts=0（B5 失败退回件不吸收，不拖新内容陪葬）+ 任一侧无 depends_on（显式
+# 依赖链是调用方编排）+ lane 相同（interactive/machine 不混）+ task_id 相同（死信
+# 打标归属不串）+ base_head 相同（None==None 可；基底不同则重校验/注册表合并口径
+# 不一致）+ 合并后条目数 ≤ _MAX_BATCH_FILES（R2 大批硬顶不因合批而破；machine
+# 车道与 allow_oversize_batch 豁免与 enqueue 主口径一致）。
+# 并发安全：rename 原子认领（target → *.merging-<pid>-<tid>，后缀不匹配 q-*.json
+# glob，drain/compaction/status 恒不可见）→ 独占期内重验资格 → 并集回写 → 摘除
+# claim；认领失败（已被 drain 取走/并发竞争）＝放弃合并走正常新建（宁不并不丢件）；
+# 回写失败恢复原位（claim 原字节 O_EXCL 重建兜底）——absorbed qid 永不落任何状态
+# 目录（它是消耗的序列号，不是队列项）。
+# 开关：env _C1_DEBOUNCE_ENV（默认 ON；"0"/"false"=关闭回退现行为）。登记锚=
+# config/flags.yaml `commit_queue_c1_debounce`（B5 同款：本脚本零 yaml 依赖，
+# 代码只读 env）。
+# ---------------------------------------------------------------------------
+_DEBOUNCE_WINDOW_SECONDS = 1200.0  # 20 分钟短窗（T11/C1 任务口径）
+_C1_DEBOUNCE_ENV = "ZEPHYR_CQ_C1_DEBOUNCE"  # 覆盖位（先例：_ATTEMPTS_BACKOFF_ENV）
+_ABSORBED_MESSAGE_TAIL_CHARS = 500  # absorbed 明细 message 尾注截断（项文件体积卫生）
+
+
+@dataclass(frozen=True)
+class _C1Incoming:
+    """C1 合批来件束（NO-LONG-PARAM-LIST/§5.150 合规：合并判据与载荷单一参数对象）。"""
+
+    session_id: str
+    worktree_root: str  # 已归一化（_normalize_worktree_root）
+    base_head: str | None
+    incoming_meta: dict  # 来件 meta_extra（lane/task_id 判据取自此）
+    allow_oversize: bool
+    now_ts: float
+    qid: str  # 为来件分配的 qid（吸收成功=被消耗的序列号，不落任何状态目录）
+    entries: list[dict]  # blob 条目（files+deletes 通道合一）
+    message: str
+
+    @property
+    def entries_count(self) -> int:
+        return len(self.entries)
+
+
+def _c1_debounce_enabled() -> bool:
+    """C1 合批总开关：env 覆盖位缺省 ON（"0"/"false"/"off"/"no"=关闭回退现行为）。"""
+    raw = os.environ.get(_C1_DEBOUNCE_ENV, "").strip().lower()
+    return raw not in ("0", "false", "off", "no")
+
+
+def _normalize_worktree_root(value: str | os.PathLike | None) -> str:
+    """worktree-root 归一化（normpath+normcase）：盘符大小写/斜杠方向差异不拆同根。"""
+    return os.path.normcase(os.path.normpath(str(value or "")))
+
+
+def _c1_target_meta_ok(meta: dict, incoming: _C1Incoming) -> bool:
+    """目标 meta 资格子闸（§5.158 复杂度合规拆分）：stale/depends_on/worktree/lane/task_id。"""
+    if meta.get("stale"):
+        return False  # 级联失效件命运未定（重校验/死信候选），不吸收新内容
+    if meta.get("depends_on"):
+        return False  # 目标在显式依赖链上——吸收会拖新文件陪绑前置项
+    if _normalize_worktree_root(meta.get("worktree_root")) != incoming.worktree_root:
+        return False  # 跨 worktree 不合并（红线）；历史项无此键=不可证同根→不并
+    if _item_lane({"meta": meta}) != _item_lane({"meta": incoming.incoming_meta}):
+        return False  # 车道不混（interactive/machine 调度优先语义不被合并改写）
+    return meta.get("task_id") == incoming.incoming_meta.get("task_id")  # 死信打标归属不串
+
+
+def _is_c1_merge_target(item: dict, incoming: _C1Incoming) -> bool:
+    """C1 合批目标资格闸（扫描与认领后重验共用同一判据——禁两套判据）。"""
+    if item.get("session_id") != incoming.session_id:
+        return False  # 跨会话绝不合并（红线）
+    if not _c1_target_meta_ok(item.get("meta") or {}, incoming):
+        return False
+    if _item_attempts(item):
+        return False  # B5 失败退回件不吸收——不拖新内容陪葬
+    if (item.get("base_head") or None) != (incoming.base_head or None):
+        return False  # 基底不同：重校验/注册表三向合并口径不一致，不并
+    created = item.get("created_at")
+    if not created:
+        return False
+    try:
+        age = incoming.now_ts - datetime.fromisoformat(str(created)).timestamp()
+    except (TypeError, ValueError):
+        return False
+    if age > _DEBOUNCE_WINDOW_SECONDS:
+        return False  # 短窗外（创建于 >20 分钟前）不合
+    combined = len(item.get("files") or []) + incoming.entries_count
+    if combined > _MAX_BATCH_FILES and not (incoming.allow_oversize or _item_lane(item) == "machine"):
+        return False  # R2 大批硬顶不因合批而破
+    return True
+
+
+def _c1_apply_absorb(item: dict, incoming: _C1Incoming) -> None:
+    """把来件并集写入目标项内存体（调用方负责原子写回；同路径后件胜）。"""
+    meta = item.setdefault("meta", {})
+    by_path = {f.get("path"): f for f in item.get("files") or []}
+    for entry in incoming.entries:
+        by_path[entry["path"]] = entry  # 同路径后件胜（快照=完整内容最终态，66 号 §4 裁定 2）
+    item["files"] = list(by_path.values())
+    meta["supersedes"] = list(dict.fromkeys((meta.get("supersedes") or []) + [incoming.qid]))
+    meta["absorbed"] = list(meta.get("absorbed") or []) + [
+        {
+            "qid": incoming.qid,
+            "at": _now_iso(),
+            "files": len(incoming.entries),
+            "message": (incoming.message or "")[:_ABSORBED_MESSAGE_TAIL_CHARS],
+        }
+    ]
+    meta["merged_count"] = len(meta["absorbed"])
+    item["message"] = f"{item.get('message') or ''}\n\n[C1合批+{incoming.qid}] {incoming.message}"
+
+
+def _c1_finalize_claim(claim: Path, target_path: Path, written: bool) -> None:
+    """认领收尾：成功摘除 claim；失败恢复原位（claim 原字节 O_EXCL 重建兜底）。"""
+    if written:
+        try:
+            claim.unlink()
+        except OSError:
+            pass  # 残留 claim 名不匹配 q-*.json glob，无害留痕（下轮 cleanup 可查）
+        return
+    try:
+        os.rename(claim, target_path)
+        return
+    except OSError:
+        pass  # 双失败兜底：从 claim 原字节重建原位（内容不丢——blob 在袋+原文在 claim）
+    try:
+        _create_item_excl(target_path, claim.read_bytes())
+        claim.unlink()
+    except OSError:
+        logger.error("[c1] 合并回滚失败，原项滞留 claim 名暂不可见需人工: %s", claim.name)
+
+
+def _try_c1_absorb(root: Path, incoming: _C1Incoming) -> dict | None:
+    """扫描 pending 找 C1 合批目标并吸收；无目标/竞争失败返回 None（调用方走正常新建）。
+
+    返回合并后的目标项 dict（已写回 pending）；调用方据此以 absorbed qid 出回执。
+    """
+    pending_dir = root / "pending"
+    target_path: Path | None = None
+    for candidate in sorted(pending_dir.glob("q-*.json")):  # qid 序≈同会话到达序：取最老合格件
+        try:
+            item = json.loads(candidate.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue  # 写入窗口或损坏——跳过不碰（同 _compact_pending 读者容错口径）
+        if _is_c1_merge_target(item, incoming):
+            target_path = candidate
+            break
+    if target_path is None:
+        return None
+    # rename 原子认领：独占期内 target 对 drain/compaction/status 不可见
+    # （claim 后缀不匹配 q-*.json glob）；认领失败=已被取走/竞争——放弃合并走正常新建。
+    claim = target_path.with_name(target_path.name + f".merging-{os.getpid()}-{threading.get_ident()}")
+    try:
+        os.rename(target_path, claim)
+    except OSError:
+        return None
+    written = False
+    result: dict | None = None
+    try:
+        item: dict | None = None
+        try:
+            item = json.loads(claim.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            item = None  # 认领后读取失败（异常损坏）——恢复原位，走正常新建
+        # 独占期内重验资格（读-认领窗口内状态可能被级联标记/B5 退回改写——同判据复用）
+        if item is not None and _is_c1_merge_target(item, incoming):
+            _c1_apply_absorb(item, incoming)
+            _atomic_write(target_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+            written = True
+            result = item
+    finally:
+        _c1_finalize_claim(claim, target_path, written)
+    return result
+
+
+# ---------------------------------------------------------------------------
 # enqueue（快照入袋即返回——防内容丢失的核心语义，66 号 §6.1「快照即落袋」）
 # ---------------------------------------------------------------------------
 
@@ -656,6 +839,9 @@ class EnqueueOptions:
     allow_oversize_batch : 超大批逃生旗（R2，meta 留痕）：确属原子大批（如整目录
         归档迁移）时由调用方显式给出——旗是必需品不是装饰（q-0007「gate+自家测试
         同批合法」先例）。
+    worktree_root : 入队来源工作区根（C1 合批判据键，meta.worktree_root 落袋）。
+        C1 同会话短窗合批只对「同 session + 同 worktree_root」生效（红线：跨会话/
+        跨 worktree 绝不合并）；None=不做合批（gateway 直调等历史调用方行为不变）。
     """
 
     base_head: str | None = None
@@ -664,6 +850,7 @@ class EnqueueOptions:
     deletes: list[str] | None = None
     meta_extra: dict | None = None
     allow_oversize_batch: bool = False
+    worktree_root: str | None = None
 
 
 def enqueue_item(
@@ -679,9 +866,11 @@ def enqueue_item(
     参数
     ----
     files : list[(仓内相对路径, 完整内容 bytes)]——完整快照非 diff（66 号 §4 裁定 2）。
-    options : 可选参数束（base_head/depends_on/deletes/meta_extra），见 EnqueueOptions。
+    options : 可选参数束（base_head/depends_on/deletes/meta_extra/worktree_root），
+        见 EnqueueOptions。
 
-    返回：落袋的队列项 dict（含 qid）。
+    返回：落袋的队列项 dict（含 qid）。C1 合批发生时返回合并后的目标项（qid=前件），
+        附 absorbed={qid, files}（被吸收提交的序列号与文件数；该 qid 不落任何状态目录）。
     异常：QueueReject（轻检拒绝，fail-closed 报错非静默）。
 
     并发安全（66 号 §6.1 v0.4.0 结论）：多会话同时 enqueue 各自 {qid}.json 独立文件，
@@ -761,6 +950,33 @@ def enqueue_item(
     lock = _get_session_lock(session_id)
     with lock:
         removed = _compact_pending(root, session_id, seen_paths)
+        # C1 合批去抖（同会话短窗并入 pending 前件；跨会话/跨 worktree 永不并）：
+        # 放在 compaction 之后——同路径覆盖语义已由 compaction 处理，合批只吃
+        # 互斥路径（重叠路径经 compaction 缩减后并入，文件集并集不变）。显式
+        # depends_on 来件不并（调用方编排优先）。
+        if _c1_debounce_enabled() and opts.worktree_root and not depends_on:
+            cand_seq = _read_seq(root, session_id) + 1
+            incoming = _C1Incoming(
+                session_id=session_id,
+                worktree_root=_normalize_worktree_root(opts.worktree_root),
+                base_head=base_head,
+                incoming_meta=dict(meta_extra or {}),
+                allow_oversize=opts.allow_oversize_batch,
+                now_ts=datetime.now().astimezone().timestamp(),
+                qid=_make_qid(session_id, cand_seq),
+                entries=blob_entries,
+                message=msg,
+            )
+            merged = _try_c1_absorb(root, incoming)
+            if merged is not None:
+                _write_seq(root, session_id, cand_seq)
+                logger.info(
+                    "[enqueue] qid=%s C1合批并入 %s（files=%d，同会话短窗）",
+                    incoming.qid,
+                    merged["qid"],
+                    len(blob_entries),
+                )
+                return {**merged, "absorbed": {"qid": incoming.qid, "files": len(blob_entries)}}
         seq = _read_seq(root, session_id)
         payload_item: dict = {}
         qid = ""
@@ -778,6 +994,9 @@ def enqueue_item(
                 "meta": {
                     "depends_on": list(depends_on or []),  # P1 级联标记依据（66 号 §6.4）
                     "supersedes": removed,  # compaction 覆盖全链（传递累积，审计可追溯）
+                    # C1 合批判据键：同会话+同 worktree_root 才允许短窗并入（红线）；
+                    # 不传=不做合批（历史调用方行为不变）
+                    **({"worktree_root": _normalize_worktree_root(opts.worktree_root)} if opts.worktree_root else {}),
                     **(meta_extra or {}),
                 },
             }
@@ -2453,13 +2672,24 @@ def _cmd_enqueue(args: argparse.Namespace) -> int:
             message or "",
             files,
             queue_root=args.queue_root,
-            options=EnqueueOptions(base_head=base_head, base_blobs=base_blobs, depends_on=depends_on or None),
+            options=EnqueueOptions(
+                base_head=base_head,
+                base_blobs=base_blobs,
+                depends_on=depends_on or None,
+                # C1 合批判据键透传（同会话+同 worktree-root 短窗自动并；跨会话/跨
+                # worktree 永不并——红线）。归一化在 enqueue_item 内做。
+                worktree_root=str(worktree_root),
+            ),
         )
     except QueueReject as exc:
         # fail-closed：报错非静默（66 号 §11 #3：畸形项全拦且报错非静默）
         print(f"DENIED: {exc}", file=sys.stderr)
         return 2
+    absorbed = item.get("absorbed")
     print(f"ENQUEUED: {item['qid']} (files={len(item['files'])}, supersedes={item['meta']['supersedes']})")
+    if absorbed:
+        # C1 同会话短窗自动合批回执：absorbed qid 已并入上件（其序列号已消耗、不落队列）
+        print(f"C1-MERGED: {absorbed['qid']}({absorbed['files']} files) -> {item['qid']}（同会话短窗自动合批）")
     if not args.no_bootstrap:
         result = try_bootstrap_drain(args.queue_root)  # 入队自举排空（66 号 §8）
         if not result.get("skipped"):
