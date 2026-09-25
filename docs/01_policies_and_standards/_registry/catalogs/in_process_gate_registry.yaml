@@ -712,19 +712,19 @@ gates:
   factory_function: make_real_key_reference_scan_gate
   source: in_process
   register_line: 0  # priority=149；2026-09-24 OBJ_S S2 负面清单 gate 组挂载（接线批 st-ailayer-final-20260924）：own-diff 中实盘真键字样引用拦截（NL-2 判据②）；测试 tests/ai_layer/redline/test_negative_list_gates.py；热册覆写后二次重插
-  enabled: false # 09-26 总指挥暂禁用（落地环境解封）：module 在 st-ailayer-final 245 件批内未落 HEAD，名册先行=同源断裂致全部 landing 死信；AI 层批落地同批翻回 enabled: true
+  enabled: true # 09-26 st-ddup 翻回（W4 看守项）：AI 层 245/678 件批已落 HEAD（30505c93f6），negative_list_gates 三工厂实测可导入，解封条件成立
 - gate_id: TASK-ORDER-DOCS-LOCK
   module_path: zephyr.ai_layer.redline.negative_list_gates
   factory_function: make_task_order_docs_lock_gate
   source: in_process
   register_line: 0  # priority=150；2026-09-24 OBJ_S S2 挂载：同会话 own-diff 施工产物×任务书互斥（NL-5）；测试 tests/ai_layer/redline/test_negative_list_gates.py；二次重插
-  enabled: false # 09-26 总指挥暂禁用（落地环境解封）：module 在 st-ailayer-final 245 件批内未落 HEAD，名册先行=同源断裂致全部 landing 死信；AI 层批落地同批翻回 enabled: true
+  enabled: true # 09-26 st-ddup 翻回（W4 看守项）：AI 层 245/678 件批已落 HEAD（30505c93f6），negative_list_gates 三工厂实测可导入，解封条件成立
 - gate_id: CONSTITUTION-LINE-LIMIT
   module_path: zephyr.ai_layer.redline.negative_list_gates
   factory_function: make_constitution_line_limit_gate
   source: in_process
   register_line: 0  # priority=151；2026-09-24 OBJ_S S2 挂载：AGENTS.md ≤300 行硬上限断言（NL-3 判据②，宪法 §6）；测试 tests/ai_layer/redline/test_negative_list_gates.py；二次重插
-  enabled: false # 09-26 总指挥暂禁用（落地环境解封）：module 在 st-ailayer-final 245 件批内未落 HEAD，名册先行=同源断裂致全部 landing 死信；AI 层批落地同批翻回 enabled: true
+  enabled: true # 09-26 st-ddup 翻回（W4 看守项）：AI 层 245/678 件批已落 HEAD（30505c93f6），negative_list_gates 三工厂实测可导入，解封条件成立
 - gate_id: DOC-HEADER-SUITE
   module_path: zephyr.gov_enforcement.commit_gates.blueprint_format_gate
   factory_function: make_doc_header_suite_gate
