@@ -52682,4 +52682,14 @@ creation_tokens:
   created_by: st-commitspeed-tbl-20260924
   capability: commit_speedup_campaign
   merge_evaluation: "T7/B2 键改内容哈希随批 GATE-ALGO-FLOW 出仓补登：机器块自 .py docstring 外移本 yaml（P2-1 口径单文件单块），无同真源重复块、无零消费条目（extractor 经 external 锚消费）、与 gate_cache_preflight.py 算法公共面一一对应"
+- file: docs/03_modules/_domain_governance/algo_flow/meta_question__init__.yaml
+  token: metaq-gc-algo-flow-metaq-registry-init-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物第三批），锚随 src 件同袋"
+- file: docs/03_modules/_domain_governance/algo_flow/registry.yaml
+  token: metaq-gc-algo-flow-metaq-registry-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物第三批），锚随 src 件同袋"
 di_seam_exemptions: []
