@@ -1,17 +1,17 @@
-# 自动生成于 2026-09-24T09:40:49Z
+# 自动生成于 2026-09-25T03:11:04Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-09-24T09:40:49Z'
+generated_at: '2026-09-25T03:11:04Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 448
+total_scripts: 450
 with_manifest: 407
-missing_manifest: 41
+missing_manifest: 43
 categories:
   governance:_sync: 4
   governance:_tasks: 3
-  governance: 60
+  governance: 62
   governance:d10_performance: 1
   governance:d11_compliance: 24
   governance:d12_ai_hallucination: 4
@@ -3954,6 +3954,16 @@ scripts:
   description: ⚠ __manifest__ 缺失——请添加元数据块
   tags: []
   _manifest_missing: true
+- name: enqueue_preflight.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: extract_decisiongraph.py
   owner: governance
   dimensions:
@@ -5146,6 +5156,16 @@ scripts:
   description: register_candidate_acquisitions.py — 为49行无候选条目的候选态环节补登骨架候选条目
   tags:
   - Quick
+- name: qcure_offset_report.py
+  owner: governance
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: query_candidate_registry.py
   owner: governance
   dimensions:

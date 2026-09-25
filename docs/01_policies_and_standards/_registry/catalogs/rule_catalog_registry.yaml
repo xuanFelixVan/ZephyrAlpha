@@ -7,7 +7,7 @@ status: active
 generated_at: '2026-09-20T09:41:29Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 274
+total_files: 294
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1856,10 +1856,10 @@ files:
   section_count: 6
 - path: docs/01_policies_and_standards/sop/README.md
   module_id: SOP-INDEX-001
-  title: SOP 方法论真源地图（九族文件夹导航）
+  title: SOP 方法论真源地图（文件夹导航）
   doc_type: index
   status: active
-  version: 1.5.0
+  version: 1.6.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -4784,6 +4784,36 @@ files:
   title: ''
   doc_type: vocabulary
   status: ''
+  version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/automation_sop/automation_crew_policy.md
+  module_id: ''
+  title: 自动化班底值守 SOP（双引擎两班制：治理班×业务班）
+  doc_type: policy
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/automation_sop/index.md
+  module_id: ''
+  title: 自动化班底族索引
+  doc_type: index
+  status: active
   version: ''
   rule_form: ''
   scope: ''
