@@ -21,6 +21,7 @@
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=stable | safety=L
 # [TTL] permanent
 """registry_yaml_parse_gate.py — 注册表结构硬化门禁（防尾追悬挂/防重复根键）
+# [ALGO_FLOW]
 
 背景（2026-09-14，同病四连）：
     capability_canonical_file_registry.yaml 顶层键序=[schema_version…capabilities,
@@ -100,6 +101,48 @@ _TEACH = (
     "顶层根键禁止重复（PyYAML 静默取后者，前段插条目会被解析层无感忽略），"
     "插入后必须 yaml.safe_load 验证通过再提交"
 )
+
+# ── W-M1 投影执法扩展（st-wm1-buildB-20260923）───────────────────────────────
+# 投影管理册（状态文件存在=已武装）私改检测：staged blob sha ≠ 投影状态文件
+# content_sha256 → 阻断。判别真源=本地状态文件（PG 宕机照样抓私改，丙号文 §3.2
+# 执法层契约：门禁只读 staged blob + 状态文件两个便宜物，零 PG 依赖）。
+# 未武装（状态文件缺失/损坏/registry_path 不符）→ fail-open 零行为（cutover 前
+# 登记正门仍是 batch_creation_tokens 直写，全量兼容）。生成器自身提交天然
+# staged==S 通过。挂本文件不新增 gate（净零红线），own-scope 由 _build_own_scope 既有。
+_PROJECTION_STATE_REL = ".runtime/projection/registry_projection_state.json"
+
+
+def _projection_tamper_issue(gateway, watch_file: str) -> str | None:
+    """投影私改判别（返回问题文案或 None=通过/不适用）。永不抛异常。"""
+    try:
+        import json
+
+        from zephyr.shared.io.file_utils import content_sha256
+
+        root = Path(getattr(gateway, "project_root", "."))
+        state_file = root / _PROJECTION_STATE_REL
+        if not state_file.exists():
+            return None  # 未武装：投影管理未启用，零行为
+        state = json.loads(state_file.read_text(encoding="utf-8"))
+        state_registry = str(state.get("registry_path", ""))
+        if not state_registry or _norm_rel(gateway, state_registry) != _norm_rel(gateway, watch_file):
+            return None  # 状态文件登记的是别册
+        expected = state.get("content_sha256")
+        if not expected:
+            return None  # 状态损坏 → fail-open（daemon 层兜底抓）
+        staged_text = _read_staged_file(gateway, watch_file)
+        if staged_text is None:
+            return None  # 读失败 fail-open（encoding 类 gate 覆盖）
+        if content_sha256(staged_text) != expected:
+            return (
+                "staged 内容与投影状态文件指纹不符（私改投影册无效）——"
+                "此文件是 PG 账本投影：改动请走意图 API 登记+生成器重打（"
+                "python scripts/governance/registry_projection/registry_projection_generator.py --render）"
+            )
+    except Exception:  # noqa: BLE001 — 执法扩展整体 fail-open
+        logger.debug("projection tamper check fail-open", exc_info=True)
+        return None
+    return None
 
 
 def _audit(gateway, record: dict) -> None:
@@ -182,7 +225,9 @@ def make_registry_yaml_parse_gate() -> GateSpec:
             result = gateway.run_git(["git", "diff", "--cached", "--name-only", "--diff-filter=AM"])
             if result.returncode != 0:
                 return True, ""  # fail-open：git 失败不阻断
-            staged_yaml = [f.replace("\\", "/") for f in result.stdout.strip().splitlines() if f and f.endswith(".yaml")]
+            staged_yaml = [
+                f.replace("\\", "/") for f in result.stdout.strip().splitlines() if f and f.endswith(".yaml")
+            ]
         except Exception:  # noqa: BLE001 — fail-open
             logger.warning("REGISTRY-YAML-PARSE fail-open: git diff 异常", exc_info=True)
             return True, ""
@@ -202,6 +247,9 @@ def make_registry_yaml_parse_gate() -> GateSpec:
             if staged_text is None:
                 continue  # fail-open：读失败（encoding 类 gate 覆盖）
             issues = _structural_issues(staged_text, profile)
+            tamper = _projection_tamper_issue(gateway, watch_file)
+            if tamper:
+                issues.append(tamper)
             if issues:
                 all_issues.append((watch_file, issues))
 
@@ -218,7 +266,9 @@ def make_registry_yaml_parse_gate() -> GateSpec:
         if not all_issues:
             return True, ""
         detail = "\n".join(
-            line for f, issues in all_issues for line in (f"REGISTRY-YAML-PARSE: {f} 结构校验未过:", *(f"  - {i}" for i in issues))
+            line
+            for f, issues in all_issues
+            for line in (f"REGISTRY-YAML-PARSE: {f} 结构校验未过:", *(f"  - {i}" for i in issues))
         )
         msg = f"{detail}\n  {_TEACH}"
         logger.error(msg)
