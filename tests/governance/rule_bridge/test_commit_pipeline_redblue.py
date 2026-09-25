@@ -14,10 +14,10 @@ import pytest
 
 from zephyr.gov_enforcement.rule_bridge.commit_preflight import PREFLIGHT_GATES, run_preflight
 
-
 # ---------------------------------------------------------------------------
 # 红队1：预检快败——真实网关只读集成（受保护路径必被锁外拦截）
 # ---------------------------------------------------------------------------
+
 
 class TestPreflightFastFailLive:
     def test_protected_path_blocked_outside_lock(self, tmp_path):
@@ -40,7 +40,10 @@ class TestPreflightFastFailLive:
         gate_ids = [f.gate_id for f in result.findings]
         assert "PROTECTED-PATHS" in gate_ids
         hint = next(f for f in result.findings if f.gate_id == "PROTECTED-PATHS").escape_hint
-        assert "Owner 审批" in hint
+        # M3（st-qcure-20260925）：处方升级为双通道口径——ARCH-APPROVAL 标记
+        # 或活跃裁定 approved_paths（ruling_registry.yaml，裁定#410 清道三袋）
+        assert "[ARCH-APPROVAL:" in hint
+        assert "approved_paths" in hint and "ruling_registry.yaml" in hint
         assert elapsed < 30, f"预检须快败（实测 {elapsed:.1f}s）"
 
     def test_clean_file_passes_preflight(self, tmp_path):
@@ -68,6 +71,7 @@ class TestPreflightFastFailLive:
 # 红队2：逃生旗映射——旗标对应 gate 必须跳过（防假阳性快败逼用户加错旗）
 # ---------------------------------------------------------------------------
 
+
 class TestEscapeFlagMapping:
     def test_worktree_flag_skips_gate(self, tmp_path):
         """WORKTREE-REQUIRED 在 skip 集时即便违规也不进失败清单。"""
@@ -92,6 +96,7 @@ class TestEscapeFlagMapping:
 # 红队3：own-scope 无自伤豁免（外来不连坐 + 自己违规照拦——引用 W4 批单测，此处断言白名单门禁齐备）
 # ---------------------------------------------------------------------------
 
+
 class TestOwnScopeCoverageContract:
     def test_preflight_whitelist_only_files_deriven_gates(self):
         """白名单契约：禁入依赖全暂存扫描的 gate（防外来 WIP 假阳性）。"""
@@ -110,13 +115,15 @@ class TestOwnScopeCoverageContract:
 # 红队4：车道防饿死——最老 machine 项超 30min 必须放行
 # ---------------------------------------------------------------------------
 
+
 class TestLaneStarvationGuard:
     def test_starved_machine_promoted(self, tmp_path, monkeypatch):
         import sys
 
         sys.path.insert(0, "scripts")
-        import commit_queue as cq
         from datetime import datetime, timedelta
+
+        import commit_queue as cq
 
         pending = tmp_path / "pending"
         pending.mkdir()
@@ -145,6 +152,7 @@ def json_dump(obj) -> str:
 # ---------------------------------------------------------------------------
 # 红队5：loader mtime 缓存失效（Serializer 长活进程陈旧缓存治本的回归钉）
 # ---------------------------------------------------------------------------
+
 
 class TestLoaderMtimeInvalidation:
     def test_mtime_change_forces_reload(self, tmp_path, monkeypatch):
@@ -177,6 +185,7 @@ class TestLoaderMtimeInvalidation:
 # ---------------------------------------------------------------------------
 # 红队6：pytest 生产根守卫（P0-C 测试隔离的回归钉）
 # ---------------------------------------------------------------------------
+
 
 class TestPytestProductionRootGuard:
     def test_bare_resolve_refuses_production_root(self, monkeypatch, tmp_path):

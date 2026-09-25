@@ -87,6 +87,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -142,18 +143,55 @@ PREFLIGHT_GATES: frozenset[str] = frozenset(
         # 输入面审计（PASS）：EXEMPT-ZONE-FM(87) _check 直接遍历 files 参数逐文件读磁盘
         # frontmatter（os.path.isfile + rel 路径）——零暂存依赖。死信实证：0921×11+0922 当日。
         "EXEMPT-ZONE-FM",
-        # CREATE-GUARD / NO-BARE-SQL 为 staged-diff 依赖型（diff --cached --diff-filter=A /
-        # _get_added_lines），不直接准入——经下方 _INLINE_PREFLIGHT_CHECKS 内联适配层
-        # （磁盘 vs HEAD 等价判定）进预检；TRANSLATION-COVERAGE 适配面大，挂起待复测。
+        # CREATE-GUARD / NO-BARE-SQL / TRANSLATION-COVERAGE 为 staged-diff 依赖型
+        # （diff --cached --diff-filter=A / _get_added_lines），不直接准入——经下方
+        # _INLINE_PREFLIGHT_CHECKS 内联适配层进预检。
+        # TRANSLATION-COVERAGE（M2.3，st-qcure-20260925 挂起解除）输入面审计（PASS）：
+        # gate 输入=files 清单 ∪ HEAD 翻译册（git show，落地仿真态——M2.1 同源口径）
+        # ∪ 磁盘内容（袋内快照）——零 git diff --cached / 零共享暂存区依赖；新文件
+        # 判定（files ∖ HEAD ls-tree × _is_in_scope）与质量判定（is_generic_plain_zh/
+        # is_generic_plain_suffix/_cjk_len）均复用 gate/loader 既有函数，不造第二检测器；
+        # 零 .py 批次零 git 面（ls-tree 都不付）。
     }
 )
 
 # 内联适配层注册表（st-commitchain-20260922）：(gate_id, check(gateway, files, **kw))。
 # 设计铁律：检测核心=复用 gate 模块既有函数/正则（不造第二检测器，全资产净零 §4.1）；
 # 适配只做「输入面等价替换」（磁盘 vs HEAD 的增行/新文件判定 ≈ 落地时 staged diff，
-# 因入队语义下磁盘内容=快照内容，git_commit.py:797-799 已论证）；预检只快败不豁免，
-# 锁内权威链照跑（本模块 INVARIANTS）。
+# 因入队语义下磁盘内容=快照内容，git_commit.py:797-799 已论证）；M2.1 落地同源化
+# （st-qcure-20260925）：注册表类检测面升级为「落地仿真态」（袋内容 ∪ HEAD 册）——
+# 根除入队盘面册（会话口径）与落地 HEAD 册的口径分歧假绿（CREATE-GUARD 23 笔
+# no-token 死因实证）；预检只快败不豁免，锁内权威链照跑（本模块 INVARIANTS）。
 _INLINE_PREFLIGHT_CHECKS: list[tuple] = []
+
+# 落地仿真态注册表仓内相对路径（M2.1/M2.3 同源口径，st-qcure-20260925）——与
+# create_guard._load_capability_registry / module_translation_loader._REGISTRY_YAML
+# 的路径逐字一致（注册表落点变更须同步）。
+_CAPABILITY_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
+_TRANSLATION_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml"
+
+
+def _head_registry_yaml_data(gateway: GitCommitGateway, rel: str) -> dict:
+    """HEAD 版注册表解析（落地仿真态的注册表面，M2.1 st-qcure-20260925）。
+
+    serializer 落地面=HEAD 干净面+袋内容物化——注册表不在袋内时其落地态就是 HEAD 版。
+    git show 失败/解析非 dict=预检无法仿真落地面 → 抛异常由 run_preflight 降级
+    degraded（锁内权威链 fail-closed 兜底），不假绿也不假红（ERROR_CONTRACT 契约）。
+    """
+    import yaml  # noqa: PLC0415 — 惰性导入对齐本模块既有风格
+
+    out = gateway.run_git(["git", "show", f"HEAD:{rel}"])
+    if getattr(out, "returncode", 1) != 0:
+        raise RuntimeError(f"HEAD 注册表不可读（预检落地仿真态无法判定，锁内权威链兜底）: {rel}")
+    text = (
+        (out.stdout or b"").decode("utf-8", errors="replace")
+        if isinstance(out.stdout, (bytes, bytearray))
+        else str(out.stdout or "")
+    )
+    data = yaml.safe_load(text)
+    if not isinstance(data, dict):
+        raise RuntimeError(f"HEAD 注册表顶层非 dict（预检落地仿真态无法判定，锁内权威链兜底）: {rel}")
+    return data
 
 
 def _head_tracked_relset(gateway: GitCommitGateway) -> set[str]:
@@ -204,8 +242,18 @@ def _check_inline_create_guard(gateway: GitCommitGateway, files: list[str], **kw
 
     新文件判定=files ∖ HEAD ls-tree（*.py / 非 rules *.y*ml / .md/.sh/.ps1/.mmd/.json，
     tests/ 豁免同锁内口径）；检测核心**原样复用** create_guard._check_creation_token +
-    _check_field_header（不造第二检测器）。磁盘内容=快照内容（入队语义），与落地侧
-    staged-diff 判定等价。
+    _check_field_header（不造第二检测器）。
+
+    M2.1 落地同源化（st-qcure-20260925）：token 判定基准从「会话盘面册」改为「落地
+    仿真态」——入队时盘上=会话快照（token 已登记→预检放行），落地时 serializer 在
+    HEAD 干净面物化袋内容，盘上册=HEAD 版（token 缺→冤杀；CREATE-GUARD 23 笔
+    no-token 死因实证）。同源口径：
+    - 注册表 ∈ 本次 files → 落地物化=盘上字节（=袋内容）→ registry_data=None 走
+      _check_creation_token 默认盘读（等价，且保留撕读重试/审计机生面）；
+    - 注册表 ∉ files → 落地面=HEAD 册 → _head_registry_yaml_data 经 git show 解析，
+      经 create_guard._check_creation_token 的 registry_data 注入点传入（L703 签名
+      既有，gate 零改动）。
+    14 字段头检查不动（盘上=袋内容，等价）。预检只快败不豁免，锁内权威链照跑。
     """
     from zephyr.gov_enforcement.commit_gates.create_guard import (  # noqa: PLC0415
         _check_creation_token,
@@ -218,10 +266,12 @@ def _check_inline_create_guard(gateway: GitCommitGateway, files: list[str], **kw
     new_py: list[str] = []
     new_yaml: list[str] = []
     new_other: list[str] = []
+    files_rel_norm: set[str] = set()
     for f in files:
         rel = _rel_of(gateway, f)
         if not rel:
             continue
+        files_rel_norm.add(os.path.normcase(rel))
         # P2-2（红队 0922）：Windows 盘大小写不敏感——normcase 后比对防假红
         if os.path.normcase(rel) in tracked or is_test_exempt(rel):
             continue
@@ -239,7 +289,12 @@ def _check_inline_create_guard(gateway: GitCommitGateway, files: list[str], **kw
             new_other.append(rel)
     if not (new_py or new_yaml or new_other):
         return True, ""
-    passed, detail = _check_creation_token(gateway, new_py, new_yaml, new_other)
+    # M2.1 落地同源化（见 docstring）：token 判定基准=落地仿真态注册表，非会话盘面册
+    if os.path.normcase(_CAPABILITY_REGISTRY_REL) in files_rel_norm:
+        registry_data = None  # 注册表 ∈ 袋 → 落地物化=盘上字节，默认盘读即同源
+    else:
+        registry_data = _head_registry_yaml_data(gateway, _CAPABILITY_REGISTRY_REL)
+    passed, detail = _check_creation_token(gateway, new_py, new_yaml, new_other, registry_data=registry_data)
     if not passed:
         return False, detail
     return _check_field_header(gateway, new_py)
@@ -296,10 +351,160 @@ def _check_inline_no_bare_sql(gateway: GitCommitGateway, files: list[str], **kwa
     return True, ""
 
 
+def _check_inline_translation_coverage(
+    gateway: GitCommitGateway, files: list[str], **kwargs: object
+) -> tuple[bool, str]:
+    """TRANSLATION-COVERAGE 入队面等价判定（M2.3，st-qcure-20260925 挂起解除）。
+
+    输入面审计（对齐 PREFLIGHT_GATES 白名单准入判据）：gate 输入=files 清单 ∪ HEAD
+    翻译册（git show，落地仿真态）∪ 磁盘内容（袋内快照）——零 git diff --cached /
+    零共享暂存区依赖。新文件判定=files ∖ HEAD ls-tree × translation_coverage_gate.
+    _is_in_scope（单一真源，tests/ 等豁免同锁内口径）；质量判定复用 loader
+    is_generic_plain_zh/is_generic_plain_suffix + gate._cjk_len/_MIN_CJK/
+    _format_violation_detail（不造第二检测器）。查询面=落地仿真态翻译册（M2.1 同源
+    口径，根除入队盘面册有简介→放行、落地 HEAD 册缺→冤杀的假绿——与 CREATE-GUARD
+    同病灶）：loader._load_from_yaml 只读盘面且无注入点（scripts/ 非本线可改面），
+    故映射构建逐行同构其投影+重复仲裁语义（裁定#335 结论7），投影/评分直接复用其
+    _project_entry/_info_score。零 .py 批次零 git 面。预检只快败不豁免。
+    """
+    import yaml  # noqa: PLC0415 — 惰性导入对齐本模块既有风格
+
+    from zephyr.gov_enforcement.commit_gates.translation_coverage_gate import (  # noqa: PLC0415
+        _MIN_CJK,
+        _cjk_len,
+        _format_violation_detail,
+        _is_in_scope,
+    )
+    from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415
+
+    candidates: list[str] = []
+    files_rel_norm: set[str] = set()
+    for f in files:
+        rel = _rel_of(gateway, f)
+        if not rel:
+            continue
+        files_rel_norm.add(os.path.normcase(rel))
+        if rel.endswith(".py"):
+            candidates.append(rel)
+    if not candidates:
+        return True, ""  # 零 .py 批次零 git 面（ls-tree 都不付）
+    tracked = {os.path.normcase(t) for t in _head_tracked_relset(gateway)}
+    root = Path(str(gateway.project_root))
+    new_py = [
+        rel
+        for rel in candidates
+        if os.path.normcase(rel) not in tracked and _is_in_scope(rel) and (root / rel).is_file()
+    ]
+    if not new_py:
+        return True, ""
+
+    # 质量判定函数=loader 单一真源（跨 src/scripts 边界 sys.path 注入，对标 gate 内
+    # _check_translation_entry 同款 bootstrap）；import 失败→抛异常降级 degraded，
+    # 不阻断（锁内权威链自带 fail-open 兜底，ERROR_CONTRACT 同构）。
+    _gov_dir = str(REPO_ROOT / "scripts" / "governance")
+    if _gov_dir not in sys.path:
+        sys.path.insert(0, _gov_dir)
+    from _shared.module_translation_loader import (  # noqa: PLC0415
+        _info_score,
+        _project_entry,
+        is_generic_plain_suffix,
+        is_generic_plain_zh,
+    )
+
+    trans_map = _translation_sim_map(gateway, files_rel_norm, root)
+    missing, short, generic = _judge_translation_quality(new_py, trans_map)
+    total = len(missing) + len(short) + len(generic)
+    if not total:
+        return True, ""
+    return False, (
+        f"TRANSLATION-COVERAGE 预检（入队面等价判定，落地仿真态翻译册）：{total} 个新建 .py 文件"
+        f"在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话简介。"
+        f"修复：python scripts/governance/d3_metadata/add_module_translation.py "
+        f"--path <file_path> --domain <D_*> --name-zh <中文名> --plain-zh <大白话简介>。"
+        f"详情: {_format_violation_detail(missing, short, generic)}"
+    )
+
+
+def _translation_sim_map(gateway: GitCommitGateway, files_rel_norm: set[str], root: Path) -> dict[str, dict[str, str]]:
+    """落地仿真态翻译册 → module_path → 投影条目（M2.3 辅助，控主函数复杂度）。
+
+    映射构建逐行同构 module_translation_loader._load_from_yaml 的重复仲裁语义
+    （裁定#335 结论7：信息最全者胜出、平分后登记者优先——防重复条目下与锁内查询
+    胜者错位）。注册表 ∈ 袋 → 盘上字节=落地物化内容；否则 HEAD 册（M2.1 同源口径）。
+    """
+    import yaml  # noqa: PLC0415 — 惰性导入对齐本模块既有风格
+
+    if os.path.normcase(_TRANSLATION_REGISTRY_REL) in files_rel_norm:
+        trans_raw = yaml.safe_load((root / _TRANSLATION_REGISTRY_REL).read_text(encoding="utf-8", errors="replace"))
+    else:
+        trans_raw = _head_registry_yaml_data(gateway, _TRANSLATION_REGISTRY_REL)
+    raw_entries: list = list(trans_raw.get("entries") or []) if isinstance(trans_raw, dict) else []
+    from _shared.module_translation_loader import (  # noqa: PLC0415
+        _info_score,
+        _project_entry,
+    )
+
+    trans_map: dict[str, dict[str, str]] = {}
+    best_score: dict[str, int] = {}
+    for entry in raw_entries:
+        if not isinstance(entry, dict):
+            continue
+        path = entry.get("module_path")
+        if not path:
+            continue
+        norm_path = str(path).replace("\\", "/")
+        projected = _project_entry(entry)
+        score = _info_score(projected)
+        if norm_path in trans_map and score < best_score[norm_path]:
+            continue  # 低信息条目让位（平分时后登记者胜出，同 loader 折叠语义）
+        trans_map[norm_path] = projected
+        best_score[norm_path] = score
+    return trans_map
+
+
+def _judge_translation_quality(
+    new_py: list[str], trans_map: dict[str, dict[str, str]]
+) -> tuple[list[str], list[str], list[str]]:
+    """逐文件质量判定（M2.3 辅助，判据与 translation_coverage_gate 同序同源）。"""
+    from _shared.module_translation_loader import (  # noqa: PLC0415
+        is_generic_plain_suffix,
+        is_generic_plain_zh,
+    )
+
+    from zephyr.gov_enforcement.commit_gates.translation_coverage_gate import (  # noqa: PLC0415
+        _MIN_CJK,
+        _cjk_len,
+    )
+
+    missing: list[str] = []
+    short: list[str] = []
+    generic: list[str] = []
+    for rel in new_py:
+        trans = trans_map.get(rel)
+        if not trans:
+            missing.append(rel)
+            continue
+        plain = (trans.get("plain_zh") or "").strip()
+        if not plain:
+            missing.append(rel)
+        elif _cjk_len(plain) < _MIN_CJK:
+            short.append(rel)
+        elif is_generic_plain_zh(plain):
+            generic.append(rel)
+        else:
+            name_zh = (trans.get("name_zh") or "").strip()
+            if name_zh and is_generic_plain_suffix(plain, name_zh):
+                generic.append(rel)
+    return missing, short, generic
+
+
 _INLINE_PREFLIGHT_CHECKS.extend(
     [
         ("CREATE-GUARD", _check_inline_create_guard),
         ("NO-BARE-SQL", _check_inline_no_bare_sql),
+        # M2.3（st-qcure-20260925）：TRANSLATION-COVERAGE 挂起解除——同款内联适配，
+        # 输入面审计见 PREFLIGHT_GATES 白名单注释（files ∪ HEAD 翻译册，零暂存依赖）。
+        ("TRANSLATION-COVERAGE", _check_inline_translation_coverage),
     ]
 )
 
@@ -310,7 +515,10 @@ _ESCAPE_HINTS: dict[str, str] = {
     "FILE-PLACEMENT-TTL": "--allow-promote（creation_token 已登记前提）",
     "SESSION-REQUIRED": "session_worktree_start 注册本会话后重试",
     "CLAIM-REQUIRED": "改前 claim：lock_files.py acquire <file> <sid>",
-    "PROTECTED-PATHS": "受保护路径须 Owner 审批（无 CLI 逃生旗）",
+    "PROTECTED-PATHS": (
+        "受保护路径需 [ARCH-APPROVAL:<已登记issue>] 标记，"
+        "或路径命中活跃裁定的 approved_paths（ruling_registry.yaml，裁定#410 已接清道三袋）"
+    ),
     "TTL-METADATA": "补 frontmatter ttl/completes_when 字段",
     "FOLDER-CAPACITY-HARD-LIMIT": "文件挪子目录（平铺目录容量上限）",
     "REGISTRY-MASS-DELETION": (
@@ -341,9 +549,16 @@ _ESCAPE_HINTS: dict[str, str] = {
     "EXEMPT-ZONE-FM": "豁免区文件（docs/_working 等）frontmatter 只带 ttl 禁 doc_type——按 gate 消息修正头",
     "CREATE-GUARD": (
         "新建资产先登记 token：python scripts/governance/d3_metadata/batch_creation_tokens.py "
-        "--prefix <目录> --created-by <本会话> --capability <能力名>（.py 另需 14 字段头；token 批与内容同批或先行落地）"
+        "--prefix <路径> --created-by <会话> --capability <能力> --merge-evaluation <一句话>"
+        "（.py 另需 14 字段头；token 批与内容同批或先行落地）"
     ),
     "NO-BARE-SQL": "SQL 提取到模块级常量或 TableRegistry/专用集中化文件；存量伪新增加行尾 # noqa: bare-sql <reason≥10字>",
+    # M2.3（st-qcure-20260925）：TRANSLATION-COVERAGE 内联适配准入随附的逃生指引
+    # （登记工具=gate 消息同款 Layer 0 写入真源）。
+    "TRANSLATION-COVERAGE": (
+        "新建 .py 先登记大白话简介：python scripts/governance/d3_metadata/add_module_translation.py "
+        "--path <文件> --domain <D_*> --name-zh <中文名> --plain-zh <大白话一句话（≥8 汉字，禁通用模板）>"
+    ),
 }
 
 _AUDIT_PATH = Path(".runtime/audit/preflight_events.jsonl")
