@@ -78,3 +78,14 @@ Owner 门位晨报清单（勿自动施工）：M7 合规门接线前置（人�
 5. 挖矿 113 件 staged：补 token（batch_creation_tokens.py --prefix 逐件）后拆 3-4 袋入队（防合并器丢袋）。
 6. 之后：包8（代理在飞）→包9→包7→包14→包15。
 **0120(CloneGuard) 处方**：gateway:493↔duckdb:130 error_code 异常惯用法平凡 __init__ 同构——工厂化（抽公共基类双侧继承）后再投 D2 半场（internal_call+landing W1 退役，内容全存 .worktrees/csx-pkg5b）。
+
+## 七、包8 收官（2026-09-26 凌晨）——速度主力战果
+三簇全落 dev（661494b62f/f3cac8b95c/7c315b54e8/a52dd425d0/3e09c6e683 五袋正门）；**出厂判据达标：96 台重放对照 diff 空**；性能：13 门合计 16.9s→6.1s/链（CREATE-GUARD 9933→2376ms、FUNCTION-DUP 243→11ms）；2601 测试绿。诚实归因：卷宗"六台共读"实为三台（四台不读册，维持原状）。
+**移交项**：①落地版重放器有签名不匹配 bug（修复副本 csx_pkg8/replay_gate_verdicts.pkg8.py，包9 代修回流）；②CAPABILITY-OVERLAP/GATE-VOCAB/ALGO-FLOW-LINK 三门被并行会话禁用（非本包所为，启用翻转=Owner 门位）；③RULE-EXECUTION-PAIRING paired_gate_id 旧台名清理批；④设计节点 15208297 派生册翻动待 reconciler 定性。
+**P3 v3 链守望在跑**：0125 落→自动 requeue 0084→0085（csx_watch_p3v3.py）。**包9 代理在飞**（own-tree，带 pinned 判据+15 台分道红线）。
+
+## 八、包9 收官（2026-09-26 晨）——最险一步安全落地
+72 台经 _diff_helpers 四入口一次改指（代理分派：有树读树/无树旧路，fail-open）；15 台分道名单单点收口 check_all（与 A3 yaml 逐台相等钉死）；**修正前置件 base_rev off-by-one（HEAD~1→HEAD）＝真静默假绿 bug 红证在案**；出厂判据 310/310 逐台全等（vs pristine 代码零漂移；vs 老基线差异全部归因基线后判据演进）；绊线红绿 13 例；flag git_operations.immutable_tree 出厂 OFF（回滚=一值）。性能：主区杂 index 单门输入 1291→725ms（1.8x）；64s→<25s 判据须 flag ON＋干净 index（Owner 门位后复测）。落地袋：8befc3b6d0/03a62d32d2/eba7b55b84。顺手治本落地版重放器 main TypeError。**包7 代理在飞**（缓存键内容哈希）。
+
+## 九、包7 收官（2026-09-26 晨）——提速三件套全落
+cb3c13b74f 落地：缓存键移除 staged_tree_sha+head_sha（87 命中/24h 病根），新增 spec_sha（122 门实现面哈希）+manifest_inputs_sha；top15 白名单全数据驱动（24h 实测）；红证三连（旧键他人提交必 miss 病根实证/源码字节篡改判失/注册表篡改判失）+命中绿证；19 测试绿。**提速三件套（包8/9/7）全部落齐**；>1500/24h 与 <15s 判据待 flag ON 后整窗复测（Owner 门位）。
