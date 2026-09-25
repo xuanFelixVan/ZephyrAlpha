@@ -796,7 +796,9 @@ def main(argv: list[str] | None = None) -> int:
                 noise_repeat=args.noise_repeat,
             )
             _replay_commit_on_gates(
-                host=host,
+                # 包9 修复（st-commitspeed-tbl-20260924）：main 调用点残留 host= 关键字，
+                # 与收敛后签名 (*, sha, parent, sid, own, noise, gates, ctx) 不匹配
+                # （host 已入 RunCtx）——首笔即 TypeError，重放安全网整网哑火。
                 sha=sha,
                 parent=parent,
                 sid=sid,
