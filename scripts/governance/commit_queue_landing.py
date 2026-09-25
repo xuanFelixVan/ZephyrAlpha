@@ -391,154 +391,10 @@ def _translation_family_identity(family_key: str | None, data: object) -> str | 
     return f"{base}|mp={mp}|name={nz}|{ne}"
 
 
-_DECL_KEY_PREFIX = "decl|"  # 声明键命名空间前缀（与默认复合键空间隔离，混轨不撞键）
-
-
-def _decl_fields(raw: object) -> tuple[str, ...] | None:
-    """声明字段清单归一：全为非空 str 才有效；空/含非 str → None（该声明退化）。"""
-    if not isinstance(raw, list) or not raw:
-        return None
-    if not all(isinstance(f, str) and f for f in raw):
-        return None
-    return tuple(raw)
-
-
-def _unique_key_decl(text: str) -> dict[str | None, tuple[str, ...]] | None:
-    """册头 ``unique_key`` 声明解析并归一（L1 文件自声明=SSOT，QMine A1 件③）。
-
-    支持两形态（实测 36/71 册自声明）：``[field,...]``=全册默认键（functional_domain
-    [domain,subdomain]/terminology [category,en] 形态）；``{family: [field,...]}``=
-    按族键（data_asset_registry 形态）。返回 {None: 默认键, 族名: 族键}；无声明/
-    解析失败/字段清单退化 → None（调用方退现状，不引入新死法）。
-    """
-    import yaml  # noqa: PLC0415 — 与合并内核同款惰性 import
-
-    try:
-        doc = yaml.safe_load(text)
-    except Exception:  # noqa: BLE001 — 解析失败退现状
-        return None
-    if not isinstance(doc, dict):
-        return None
-    raw = doc.get("unique_key")
-    if isinstance(raw, list):
-        fields = _decl_fields(raw)
-        return {None: fields} if fields else None
-    if isinstance(raw, dict):
-        decl: dict[str | None, tuple[str, ...]] = {}
-        for fam, fields_raw in raw.items():
-            fields = _decl_fields(fields_raw)
-            if fields:
-                decl[str(fam)] = fields
-        return decl or None
-    return None
-
-
-def _safe_load_doc(text: str) -> dict | None:
-    """yaml.safe_load 失败/非 dict → None（调用方退现状，解析死信交既有 _split 通道）。"""
-    import yaml  # noqa: PLC0415
-
-    try:
-        d = yaml.safe_load(text)
-    except Exception:  # noqa: BLE001
-        return None
-    return d if isinstance(d, dict) else None
-
-
-def _entries_carry_declared_fields(entries: object, fields: tuple[str, ...]) -> bool:
-    """族内 dict 条目是否全数携带声明标量字段（L1 逐族适用性校验）。
-
-    族缺位（None/非 list）=该侧无此族 → 空真；族内无 dict 条目（纯标量元数据族）
-    → 空真（passthrough 通道处理，与身份键无关）。
-    """
-    if not isinstance(entries, list):
-        return True
-    dict_entries = [e for e in entries if isinstance(e, dict)]
-    return all(all(isinstance(e.get(f), (str, int, float, bool)) for f in fields) for e in dict_entries)
-
-
-def _declared_family_plan(
-    ours_text: str, theirs_text: str | None, base_text: str | None
-) -> dict[str, tuple[str, ...]] | None:
-    """声明驱动逐族适用性计划（QMine A1 件③）。三防线，不引入新死法：
-
-    ① 三侧声明必须齐备且一致：theirs/base 任一侧声明缺失或不等 → None 整体退现状
-       （防声明跨合并窗口漂移导致跨侧身份错配）；
-    ② 逐族校验：**三侧**该族 dict 条目须全数携带声明标量字段，任一侧不满足 → 该族
-       不进计划（退默认复合键，防单侧缺字段条目混轨→跨侧身份错配）；
-    ③ 计划为空 → None（退现状）。
-    """
-    decl = _unique_key_decl(ours_text)
-    if decl is None:
-        return None
-    ours_doc = _safe_load_doc(ours_text)
-    if ours_doc is None:
-        return None
-    side_docs = [ours_doc]
-    for t in (theirs_text, base_text):
-        if t is None:
-            continue
-        if _unique_key_decl(t) != decl:
-            return None
-        other = _safe_load_doc(t)
-        if other is None:
-            return None
-        side_docs.append(other)
-    plan: dict[str, tuple[str, ...]] = {}
-    for fam, entries in ours_doc.items():
-        fields = decl.get(str(fam)) or decl.get(None)
-        if not fields or not isinstance(entries, list):
-            continue
-        if all(_entries_carry_declared_fields(d.get(str(fam)), fields) for d in side_docs):
-            plan[str(fam)] = fields
-    return plan or None
-
-
-def _declared_identity_from_plan(plan: dict[str, tuple[str, ...]]):
-    """声明驱动族身份函数（闭包工厂）：声明字段值拼接 + token 复合后缀。
-
-    键格式 ``decl|f1=v1|f2=v2[|token=t]``。token 后缀沿用 _merge_entry_identity 的
-    复合细化——声明字段替换其首标量分量、token 分量保留：capability_canonical_file
-    同 file 多 token 合法并存形态不被声明键错杀（q-0078 复形回归保护）。声明字段
-    缺失/非标量的条目（防御兜底，plan 已三侧验证）→ 退默认复合键，绝不判 None
-    引入新死法。
-    """
-
-    def _identity(family_key: str | None, data: object) -> str | None:
-        fields = plan.get(family_key)
-        if fields and isinstance(data, dict):
-            parts: list[str] = []
-            for f in fields:
-                v = data.get(f)
-                if not isinstance(v, (str, int, float, bool)):
-                    parts = []
-                    break
-                parts.append(f"{f}={v}")
-            if parts:
-                key = _DECL_KEY_PREFIX + "|".join(parts)
-                token = data.get("token")
-                if isinstance(token, (str, int, float)) and token is not None:
-                    key += f"|token={token}"
-                return key
-        return _merge_entry_identity(data)
-
-    return _identity
-
-
-def _family_identity_fn(
-    rel_path: str,
-    ours_text: str | None = None,
-    theirs_text: str | None = None,
-    base_text: str | None = None,
-):
-    """按文件路由族身份函数：翻译册→族真键；有 unique_key 声明且三侧校验齐备 →
-    声明驱动（L1 SSOT——functional_domain/terminology 类被单键错杀的册由此治愈）；
-    其余/声明不可用 → 默认复合键（零漂移退现状）。"""
+def _family_identity_fn(rel_path: str):
+    """按文件路由族身份函数：翻译册→族真键；其余注册表→默认复合键（零漂移）。"""
     if rel_path.replace("\\\\", "/").endswith(_TRANSLATION_REGISTRY_SUFFIX):
         return _translation_family_identity
-    if ours_text is not None:
-        plan = _declared_family_plan(ours_text, theirs_text, base_text)
-        if plan:
-            return _declared_identity_from_plan(plan)
     return None
 
 
@@ -570,37 +426,16 @@ def _extract_entry_paths(data: object) -> list[str]:
     return out
 
 
-def _first_field_value_is_non_scalar(data: object) -> bool:
-    """dict 条目首字段值是否非标量（QMine A1 件②：流式 list 元数据块的 dict 形态特征）。"""
-    if not isinstance(data, dict) or not data:
-        return False
-    return not isinstance(next(iter(data.values())), (str, int, float, bool))
-
-
 def _scalar_family_keys(fam_map: dict[str | None, _RegistryFamily]) -> set[str | None]:
-    """passthrough 族集合：纯标量族 + 首字段非标量的 dict 形态元数据族（剔出合并空间）。
+    """纯标量族集合（全部条目均非 dict——schema 元数据 list 特征，如 unique_key: [id]）。
 
-    两类形态同判（QMine A1 件②，工作簿 §4.1 L3 扩面）：
-    - 族内全块非 dict——schema 元数据 list 特征（unique_key: [id]；Lane B
-      THD-ALERT-007 q-0001 死信实证）；
-    - 族内全块为 dict 且身份判不了且首字段值非标量——流式 list 的块文本含族键前缀
-      （``tags: [a, b]`` 单行 → 每块 safe_load 出 ``{"tags": [...]}``），HEAD 6 册
-      14 块活雷实测（fail_open scan_roots×2 / ai_autonomy tags×7 / chain
-      related_arch×2 / compliance、feature_adjudication、registry_of_logs 各 1），
-      任一落地触册即死「身份判不了」。
-    共同点：条目级身份不可证（gate 对非 dict 跳过/首字段非标量判不了）→ 合并语义
-    不成立 → passthrough 保留 ours 原样零结构漂移（与 drift 检查同向 fail-closed）。
-    混合形态族（标量块与常规条目并存）不在此列，维持既有死信方向，不放宽。
+    gate 的身份语义对非 dict 条目本就跳过（fail-open 不计入身份集）；合并器同构：
+    这类族不参与条目合并，passthrough 保留 ours 原样（Lane B THD-ALERT-007
+    q-0001 死信实证：顶层 unique_key 元数据 list 被误判条目族致增量件死信）。
     """
     out: set[str | None] = set()
     for k, fam in fam_map.items():
-        if fam.blocks and (
-            all(b.identity is None and not isinstance(b.data, dict) for b in fam.blocks)
-            or all(
-                b.identity is None and isinstance(b.data, dict) and _first_field_value_is_non_scalar(b.data)
-                for b in fam.blocks
-            )
-        ):
+        if fam.blocks and all(b.identity is None and not isinstance(b.data, dict) for b in fam.blocks):
             out.add(k)
     return out
 
@@ -635,43 +470,17 @@ def _split_passthrough_and_drift(
 
 def _index_family_blocks(
     fam_map: dict[str | None, _RegistryFamily],
-) -> tuple[dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]], str | None, int]:
-    """族内条目按身份键建索引；身份判不了/同键真冲突 → 死信方向错误串。
-
-    侧内判等去重（QMine A1 件①，st-qmine-20260925，工作簿 §4.2「重复的语义学」）：
-    同键同侧两条先判等——``data`` 全等（yaml.safe_load 对象判等，覆盖字节级相同与
-    仅重序列化的语义同；死信袋回放实测 33% 死亡属此形态，token 双发窗口样本 69%）
-    → 真重复，静默去重保留首条并计数，不再白白陪死；``data`` 不等 → 同键异容=
-    仓库态缺陷，死信且 detail 升级为结构化双条 dump（落地器无权择优，处方=对账器）。
-    去重只做**侧内**、绝不跨侧：跨侧同键由既有三向规则处理（base 仲裁），静默吞
-    任一侧才是吞条目（CRDT MV-register 双值并存待裁决语义）。
-
-    Returns:
-        (idx, error, dedup_count)；dedup_count=本侧静默去重条数（审计日志出口）。
-    """
+) -> tuple[dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]], str | None]:
+    """族内条目按身份键建索引；身份判不了/同侧键重复 → 死信方向错误串。"""
     idx: dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]] = {}
-    dedup_count = 0
     for fam_key, family in fam_map.items():
         for block in family.blocks:
             if block.identity is None:
-                return {}, "存在身份判不了的条目（非 dict/首字段非标量）——合并语义不可证，死信回人工", 0
-            dup = idx.get(block.identity)
-            if dup is not None:
-                if dup[2].data == block.data:
-                    dedup_count += 1  # 真重复（字节同/token 双发/重序列化）——保留首条
-                    continue
-                return (
-                    {},
-                    (
-                        f"同侧身份键重复且内容冲突（同键异容，仓库态缺陷）: {block.identity}"
-                        f"——死信回人工；处方: 跑 registry 去重对账器核对存量，勿手拼 YAML\n"
-                        f"--- 在册先条 (first) ---\n{_yaml_dump_short(dup[2].data, _MERGE_CONFLICT_DUMP_CHARS)}\n"
-                        f"--- 重复后条 (dup) ---\n{_yaml_dump_short(block.data, _MERGE_CONFLICT_DUMP_CHARS)}"
-                    ),
-                    0,
-                )
+                return {}, "存在身份判不了的条目（非 dict/首字段非标量）——合并语义不可证，死信回人工"
+            if block.identity in idx:
+                return {}, f"同侧身份键重复: {block.identity}——身份不唯一，死信回人工"
             idx[block.identity] = (fam_key, family, block)
-    return idx, None, dedup_count
+    return idx, None
 
 
 def _yaml_dump_short(data: object, limit: int) -> str:
@@ -751,19 +560,6 @@ def _plan_insert_splices(
         if key in base_idx:
             # base 有+ours 无+theirs 有 → 采纳，除 ours 侧合法退役
             # （判据=条目引用路径盘上与 HEAD 双不存在；判定异常=不可证 → 采纳恢复）
-            # ATK-1 加侧闸（快照自洽见证的条目级形态，st-ff-snapself-20260926，案卷
-            # lane_stale_channel_repro ATK-1）：theirs 条目与其基底逐内容相同＝袋侧
-            # 纯陈旧携带（本包对该条目零意图）——不得复活 dev 已落地的删除（旧口径
-            # "宁可多救不可漏救"对陈旧袋把删除语义清零，加侧无任何闸）。theirs 确实
-            # 改过该条目（内容≠base）则维持 W2 采纳恢复语义（合并语义不回归；确需
-            # 原样恢复已删条目=同步工作区后重投，该条目相对新基底成为真实新增）。
-            if base_idx[key][2].data == t_block.data:
-                logger.warning(
-                    "[landing] %s 条目 %s 袋内内容恰等其基底携带（这不是你的改动）——拒绝复活 dev 已落地的删除",
-                    rel_path,
-                    key,
-                )
-                continue
             if retired_check is not None:
                 try:
                     if retired_check(t_block.data):
@@ -796,17 +592,11 @@ def _render_selfcheck(
     got, err = _split_registry_entries(merged, identity_fn)
     if err:
         return f"{rel_path}: 合并渲染自检失败（重切分异常）: {err}"
-    # 预期集=去重后恒等集（QMine A1 件①配套）：重切分经同一 _index_family_blocks——
-    # 侧内真重复（data 全等）在成品里合法共存（ours 原样保留），身份集按去重后口径
-    # 比对；同键异容真冲突在重切分即报错（防拼接产物引入身份不唯一）。passthrough
-    # 族（元数据标量/流式 dict 形态）先剔出，与主合并管线同序——身份判不了是这些族
-    # 的合法常态，不是自检失败。
-    for k in _scalar_family_keys(got):
-        got.pop(k, None)
-    got_idx, err2, _deduped = _index_family_blocks(got)
-    if err2:
-        return f"{rel_path}: 合并渲染自检失败（重切分索引异常）: {err2}"
-    got_keys: set[str] = set(got_idx)
+    got_keys: set[str] = set()
+    for fam in got.values():
+        for block in fam.blocks:
+            if block.identity is not None:
+                got_keys.add(block.identity)
     if got_keys != (kept_keys | inserted_keys):
         return (
             f"{rel_path}: 合并渲染自检失败（身份集漂移）预期 {len(kept_keys | inserted_keys)} 条 "
@@ -852,23 +642,18 @@ def _index_all_sides(
     dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]] | None,
     dict[str, tuple[str | None, _RegistryFamily, _RegistryEntryBlock]] | None,
     str | None,
-    int,
 ]:
-    """三侧条目索引构建；任一侧身份判不了/同键真冲突 → 错误串；带侧内去重计数。"""
-    total_dedup = 0
-    ours_idx, err, n = _index_family_blocks(ours_families)
+    """三侧条目索引构建；任一侧身份判不了/键重复 → 错误串。"""
+    ours_idx, err = _index_family_blocks(ours_families)
     if err:
-        return None, None, None, f"{rel_path}: ours {err}", 0
-    total_dedup += n
-    theirs_idx, err, n = _index_family_blocks(theirs_families)
+        return None, None, None, f"{rel_path}: ours {err}"
+    theirs_idx, err = _index_family_blocks(theirs_families)
     if err:
-        return None, None, None, f"{rel_path}: theirs(快照) {err}", 0
-    total_dedup += n
-    base_idx, err, n = _index_family_blocks(base_families)
+        return None, None, None, f"{rel_path}: theirs(快照) {err}"
+    base_idx, err = _index_family_blocks(base_families)
     if err:
-        return None, None, None, f"{rel_path}: base {err}", 0
-    total_dedup += n
-    return ours_idx, theirs_idx, base_idx, None, total_dedup
+        return None, None, None, f"{rel_path}: base {err}"
+    return ours_idx, theirs_idx, base_idx, None
 
 
 def three_way_merge_registry_yaml(
@@ -893,9 +678,8 @@ def three_way_merge_registry_yaml(
         (merged_text, "") 合并成功；(None, conflict_reason) 冲突/结构漂移/解析失败
         ——调用方落地死信回人工，绝不静默整文件覆盖。
     """
-    identity_fn = _family_identity_fn(rel_path, ours_text, theirs_text, base_text)
     ours_families, theirs_families, base_families, err = _split_all_sides(
-        ours_text, theirs_text, base_text, rel_path, identity_fn
+        ours_text, theirs_text, base_text, rel_path, _family_identity_fn(rel_path)
     )
     if err:
         return None, err
@@ -907,14 +691,9 @@ def three_way_merge_registry_yaml(
         for k in passthrough:
             fam_map.pop(k, None)
 
-    ours_idx, theirs_idx, base_idx, err, deduped = _index_all_sides(
-        ours_families, theirs_families, base_families, rel_path
-    )
+    ours_idx, theirs_idx, base_idx, err = _index_all_sides(ours_families, theirs_families, base_families, rel_path)
     if err:
         return None, err
-    if deduped:
-        # 审计计数出口（工作簿 §⑤：去重静默化须留计数）——landing 日志可回放
-        logger.info("[landing] %s 三向合并侧内去重 %d 条（data 全等真重复，保留首条）", rel_path, deduped)
 
     kept_splices, kept_keys, err = _plan_kept_splices(ours_idx, theirs_idx, base_idx, rel_path)
     if err:
@@ -938,7 +717,7 @@ def three_way_merge_registry_yaml(
         lines[start:end_excl] = [text] if text else []
     merged = "".join(lines)
 
-    err = _render_selfcheck(merged, kept_keys, inserted_keys, rel_path, identity_fn)
+    err = _render_selfcheck(merged, kept_keys, inserted_keys, rel_path, _family_identity_fn(rel_path))
     if err:
         return None, err
     return merged, ""
@@ -1177,22 +956,6 @@ def _pool_wave_log(root: Path, line: str) -> None:
         pass
 
 
-# ── EV-02 破坏性 git 动词护栏（15 号文，案卷=decision_map_campaign_20260924 EV_ 号文）──
-# 这些动词会改写 index/工作区：worktree 的 .git 指针一旦在校验与执行之间消失
-# （TOCTOU），git 以 cwd 向上查找即命中主仓 .git → reset --hard/clean -fd 打穿主工作区。
-# 2026-09-25 受控复现（案卷 §5.2）：摘链接后执行 reset --hard，主区 staged-new 文件被
-# 物理抹除、未提交修改被回滚、index 条目 2→1（正是 10 号文"index 条目蒸发"形态），
-# 而 `_sync_worktree` 全程未报错——旧护栏是 check-then-act，一个竞态窗口即失效。
-_DESTRUCTIVE_GIT_VERBS = frozenset({"reset", "clean", "checkout", "switch", "restore", "rm", "rebase", "merge"})
-
-#: 打穿对照组抽样上限（主区在册件存在性哨兵，纯 stat，不引入额外 git 成本）
-_MAIN_SAMPLE_CAP = 60
-
-
-class WorktreePunchThroughError(RuntimeError):
-    """EV-02 执行后复核发现打穿/环境漂移——必须冒泡，禁被 clean 容错分支降级吞掉。"""
-
-
 class WorktreeLanding:
     """Serializer 落盘执行体：队列项 → 专用 worktree → GitCommitGateway 全门禁 → CAS 推进 dev。
 
@@ -1256,141 +1019,26 @@ class WorktreeLanding:
         """_git_repo implementation."""
         return _run_git(self.repo_root, list(args), check=check)
 
-    def _wt_gitdir(self) -> Path:
-        """解析本 worktree 的专属 gitdir（EV-02 结构封死：破坏性调用不再依赖 cwd walk-up）。
-
-        `.git` 是目录=主仓形态；是指针文件则读 `gitdir: <path>` 并就地解析。
-        任一异常（缺文件/格式怪/目标不存在）一律 RuntimeError，绝不回落 cwd 推断。
-        """
-        link = self.worktree_path / ".git"
-        if link.is_dir():
-            return link.resolve()
-        if not link.exists():
-            raise WorktreePunchThroughError(f"[landing] 专用 worktree .git 链接丢失，拒绝执行: {self.worktree_path}")
-        try:
-            text = link.read_text(encoding="utf-8").strip()
-        except OSError as exc:
-            raise WorktreePunchThroughError(f"[landing] 专用 worktree .git 指针不可读: {exc}") from exc
-        if not text.startswith("gitdir:"):
-            raise WorktreePunchThroughError(f"[landing] 专用 worktree .git 指针格式异常，拒绝执行: {text[:80]}")
-        raw = text.split(":", 1)[1].strip().replace("\\", "/")
-        gd = Path(raw)
-        if not gd.is_absolute():
-            gd = (self.worktree_path / gd).resolve()
-        if not gd.exists():
-            raise WorktreePunchThroughError(f"[landing] 专用 worktree gitdir 不存在，拒绝执行: {gd}")
-        return gd
-
-    @staticmethod
-    def _wt_pin_args(gitdir: Path, worktree: Path) -> list[str]:
-        """显式钉死 gitdir/work-tree——即使 .git 指针在执行瞬间被摘，git 也不可能向上
-        查找到主仓 .git（打穿通道被结构性关闭，而非仅靠前置检查）。"""
-        return ["--git-dir", str(gitdir), "--work-tree", str(worktree)]
-
-    def _main_fingerprint(self) -> dict[str, object]:
-        """主仓侧"不该被 worktree 操作改动"的对照组快照：HEAD sha + 在册件存在性抽样。"""
-        head = _run_git(self.repo_root, ["rev-parse", "HEAD"], check=False).stdout.strip()
-        cache = getattr(self, "_main_sample_cache", None)
-        if cache is None or cache[0] != head:
-            listing = _run_git(
-                self.repo_root, ["ls-tree", "-r", "--name-only", "HEAD"], check=False
-            ).stdout.splitlines()
-            paths = [ln.strip() for ln in listing if ln.strip()]
-            step = max(1, len(paths) // _MAIN_SAMPLE_CAP) if paths else 1
-            sample = paths[::step][:_MAIN_SAMPLE_CAP]
-            self._main_sample_cache = (head, sample)  # type: ignore[attr-defined]
-            cache = self._main_sample_cache  # type: ignore[attr-defined]
-        _, sample = cache
-        present = {p for p in sample if (self.repo_root / p).exists()}
-        return {"head": head, "gitdir": self._wt_gitdir(), "present": present}
-
-    def _punch_audit(self, verb: str, pre: dict[str, object], problems: list[str]) -> None:
-        """打穿告警留痕（fail-closed 必配可取证）——落主仓 .runtime/audit/landing_guard.jsonl。"""
-        try:
-            from zephyr.shared.io.audit_jsonl_writer import append_audit_jsonl
-
-            append_audit_jsonl(
-                Path(self.repo_root) / ".runtime" / "audit",
-                "landing_guard.jsonl",
-                {
-                    "ts": cq._now_iso(),
-                    "event": "gitwt_punchthrough",
-                    "verb": verb,
-                    "worktree": str(self.worktree_path),
-                    "gitdir_before": str(pre.get("gitdir") or ""),
-                    "main_head_before": str(pre.get("head") or ""),
-                    "problems": problems,
-                    "pid": os.getpid(),
-                },
-            )
-        except Exception:  # noqa: BLE001  留痕失败不反转已判定的阻断（宁停勿伤优先）
-            pass
-
-    def _verify_no_punchthrough(self, verb: str, pin: list[str], pre: dict[str, object]) -> None:
-        """执行后复核（EV-02 核心：check-then-act 升级为 check-act-verify）。
-
-        三条独立判据，任一不成立即 WorktreePunchThroughError + 审计：
-          1. 钉死参数下的 toplevel/gitdir 仍解析回本 worktree（打穿=解析回主仓）；
-          2. 主仓 HEAD 未移动（reset/checkout 打穿必动 HEAD 或其 reflog）；
-          3. 主仓在册件抽样"执行前在位、执行后消失"=工作区被外人改写。
-        """
-        problems: list[str] = []
-        top_r = _run_git(self.worktree_path, [*pin, "rev-parse", "--show-toplevel"], check=False)
-        top = os.path.normcase(str(Path((top_r.stdout or "").strip() or ".").resolve()))
-        if top != os.path.normcase(str(self.worktree_path)):
-            problems.append(f"toplevel 漂移到 {top}")
-        gd_r = _run_git(self.worktree_path, [*pin, "rev-parse", "--absolute-git-dir"], check=False)
-        gd_now = (gd_r.stdout or "").strip().replace("\\", "/")
-        if gd_now and os.path.normcase(gd_now) != os.path.normcase(str(pre["gitdir"])):
-            problems.append(f"gitdir 漂移到 {gd_now}")
-        if not (self.worktree_path / ".git").exists():
-            problems.append("worktree .git 指针在执行期间消失（竞态窗口已被命中）")
-        head_now = _run_git(self.repo_root, ["rev-parse", "HEAD"], check=False).stdout.strip()
-        if head_now != pre["head"]:
-            problems.append(f"主仓 HEAD {str(pre['head'])[:10]} → {head_now[:10]}")
-        vanished = sorted(p for p in (pre.get("present") or set()) if not (self.repo_root / p).exists())
-        # 阈值 2：单会话并发删一件是常态（他会话在飞），打穿/reset-to-stale 是成片消失。
-        # 宁可漏判单件也不制造落地器误闸，漏判面由 EV-01 per-path 见证+watchdog 兜住。
-        if len(vanished) >= 2:
-            problems.append(f"主仓在册件执行后成片消失 {len(vanished)} 件，样本 {vanished[:5]}")
-        if problems:
-            self._punch_audit(verb, pre, problems)
-            raise WorktreePunchThroughError(
-                f"[landing] EV-02 打穿复核拦截：worktree 破坏性操作 `{verb}` 疑似打穿主仓——"
-                + "；".join(problems)
-                + f"（worktree={self.worktree_path}，审计 .runtime/audit/landing_guard.jsonl）"
-            )
-
     def _git_wt(self, *args: str, check: bool = True) -> subprocess.CompletedProcess:
         """_git_wt implementation.
 
-        fail-closed（2026-08-29 主仓打穿事故治本 + LANE-EV EV-02 补面）：
-          前置——.git 链接存在 且 rev-parse --show-toplevel 解析回自身（原有）；
-          执行——破坏性动词 MUST 显式带 --git-dir/--work-tree，结构性消除 cwd
-                walk-up 命中主仓 .git 的通道（旧实现校验后竞态即失效，2026-09-25
-                受控复现证实）；
-          后置——_verify_no_punchthrough 三条判据复核，异常即 WorktreePunchThroughError
-                + 审计（禁静默、禁被 clean 容错分支吞掉）。
+        fail-closed（2026-08-29 主仓打穿事故治本）：专用 worktree 目录在但 .git 链接
+        丢失时，git 以 cwd 向上查找会命中主仓 .git——reset --hard/clean 直接打穿主工作区
+        （当日 reflog 实证 6 次成对 reset）。执行前硬校验：.git 链接存在 且
+        rev-parse --show-toplevel 解析回自身，否则 RuntimeError（宁停勿伤）。
         """
         git_link = self.worktree_path / ".git"
         if not git_link.exists():
-            raise WorktreePunchThroughError(
+            raise RuntimeError(
                 f"[landing] 专用 worktree .git 链接丢失，拒绝执行（防 walk-up 打穿主仓）: {self.worktree_path}"
             )
         r = _run_git(self.worktree_path, ["rev-parse", "--show-toplevel"], check=True)
         top = os.path.normcase(str(Path(r.stdout.strip()).resolve()))
         if top != os.path.normcase(str(self.worktree_path)):
-            raise WorktreePunchThroughError(
+            raise RuntimeError(
                 f"[landing] 专用 worktree toplevel 漂移（{top} != {self.worktree_path}），拒绝执行（防打穿主仓）"
             )
-        verb = next((a for a in args if a in _DESTRUCTIVE_GIT_VERBS), "")
-        if not verb:
-            return _run_git(self.worktree_path, list(args), check=check)
-        pin = self._wt_pin_args(self._wt_gitdir(), self.worktree_path)
-        pre = self._main_fingerprint()
-        proc = _run_git(self.worktree_path, [*pin, *args], check=check)
-        self._verify_no_punchthrough(verb, pin, pre)
-        return proc
+        return _run_git(self.worktree_path, list(args), check=check)
 
     def _dev_head(self) -> str:
         """_dev_head implementation."""
@@ -1494,17 +1142,11 @@ class WorktreeLanding:
         self._git_wt("reset", "--hard", f"refs/heads/{self.target_branch}")
         try:
             self._git_wt("clean", "-fd")
-        except WorktreePunchThroughError:
-            # EV-02：打穿告警≠瞬态竞态，禁降级继续（旧口径只认 RuntimeError→warning，
-            # 会把"主仓已被改写"洗成一条日志；此处冒泡，由 drain 归类为环境/失败面）
-            raise
         except RuntimeError as exc:
             logger.warning("[landing] clean -fd 首次失败（worktree journal 瞬态竞态）: %s —— 0.5s 后重试", exc)
             time.sleep(0.5)
             try:
                 self._git_wt("clean", "-fd")
-            except WorktreePunchThroughError:
-                raise
             except RuntimeError as exc2:
                 logger.warning(
                     "[landing] clean -fd 重试仍失败，降级继续（pathspec 限定提交不受 worktree 残留影响）: %s",
@@ -1618,53 +1260,6 @@ class WorktreeLanding:
                 continue  # 读不到袋内字节 ⇒ 不短接（保守判冲突）
             git_blob_of[rel] = _git_blob_sha(data)
         return {rel for rel, sha in git_blob_of.items() if sha is not None and dev_blobs.get(rel) == sha}
-
-    def _witness_stale_carry(self, item: dict, queue_root: Path | str, current_dev: str) -> cq.LandingResult | None:
-        """快照自洽见证消费端（ATK-3 判据层补面，st-ff-snapself-20260926）。
-
-        活性护栏实测（tests/governance/test_commit_queue_snapshot_selfconsistency.py
-        L 组）：等值即拒（不看 dev 现态、整袋按携带档死信）会误杀正常并行——同会话
-        同步后连投与多文件正常改动都会被自家前袋/单枚携带拖死。故判据收紧到
-        stale-path 级：部分命中=剥除危险携带路径后其余照常落地（meta 留痕+日志
-        点名）；全部命中=袋内已无任何属于本包的改动，拒落整袋死信回属主并点名
-        "这不是你的改动"。注册表族与 delete 项不经此通道（条目级合并语义零变更，
-        其携带不复活闸在 _plan_insert_splices 以同一见证判据落地）。
-        """
-        dangerous, safe = assert_snapshot_selfconsistent(
-            item, queue_root=queue_root, repo_root=self.repo_root, current_dev=current_dev
-        )
-        if safe:
-            logger.info(
-                "[landing] qid=%s 快照自洽见证：%s 为安全携带（袋==基底==dev，写=noop），不拦",
-                item.get("qid"),
-                safe,
-            )
-        if not dangerous:
-            return None
-        hit = set(dangerous)
-        keep = [f for f in (item.get("files") or []) if f.get("path") not in hit]
-        meta = item.get("meta")
-        if not isinstance(meta, dict):
-            meta = item["meta"] = {}
-        meta["witness_stale_carry"] = sorted(hit)
-        if keep:
-            item["files"] = keep
-            logger.warning(
-                "[landing] qid=%s 快照自洽见证剥除陈旧携带路径 %s（袋字节恰等其自身基底——"
-                "这不是你的改动，且 dev 已推进）；其余文件照常落地",
-                item.get("qid"),
-                sorted(hit),
-            )
-            return None
-        return cq.LandingResult(
-            ok=False,
-            reason=(
-                f"快照自洽见证（stale-carry）：袋内路径 {sorted(hit)} 字节恰等其自身基底"
-                f"（本包没改它=纯陈旧携带）且 dev 已在这些路径上推进——落地必回退在册内容，"
-                f"这不是你的改动，拒落回属主（66 号 §6.4；解法=同步工作区后只重新入队"
-                f"真实改动的文件）"
-            ),
-        )
 
     def _heal_derived_totals(self, rel: str, merged: str) -> str:
         """条目合并后重算"声明计数"标量——派生值不得靠"某人恰好直提"才对。
@@ -2476,12 +2071,6 @@ class WorktreeLanding:
             reason = self._conflict_reason(item, old_dev)
             if reason:
                 return cq.LandingResult(ok=False, reason=reason)
-            # 快照自洽见证层（ATK-3 补面，st-ff-snapself-20260926）：快进判定之后、
-            # claim/快照应用之前——判定分工清晰（他包漂移归快进判定，陈旧携带归见证），
-            # 先于 claim 免无谓占锁。部分命中=stale-path 级剥除，全袋命中=拒落死信点名。
-            stale_verdict = self._witness_stale_carry(item, queue_root, old_dev)
-            if stale_verdict is not None:
-                return stale_verdict
 
             # 3) claim（净树基线）→ 快照应用 → 全门禁 commit → 释放 claim
             wt_files = [str(self.worktree_path / p) for p in sorted(self._item_paths(item))]
@@ -2511,7 +2100,6 @@ class WorktreeLanding:
                 # allow_non_worktree 见模块 docstring「门禁诚实记录」（不修改不放宽任何门禁判定）
                 prev_env = os.environ.get(_GATEWAY_ENV)
                 os.environ[_GATEWAY_ENV] = "1"
-                _gates_t0 = time.monotonic()  # M5 矿①：gates 相位计时锚（单点累加在下方 finally）
                 try:
                     result = gateway.commit(
                         session_id,
@@ -2580,10 +2168,6 @@ class WorktreeLanding:
                                 ),
                             )
                 finally:
-                    # gates 相位单点（QMine A1 件④，观测面 M5 矿①方案）：env 守卫 finally
-                    # 处累加——主路径与 Mode B 重试两次 commit 全覆盖；刻意不拆函数
-                    # （拆名即丢 COMPLEXITY-GUARD 存量豁免）。
-                    _record_phase(self, "gates", (time.monotonic() - _gates_t0) * 1000)
                     if prev_env is None:
                         os.environ.pop(_GATEWAY_ENV, None)
                     else:
@@ -2996,6 +2580,15 @@ def _pool_claim_item(root: Path) -> Path | None:
             except (FileNotFoundError, PermissionError):
                 pass
             continue
+        # F1 第二道保险（redblu_robust.md §五）：_mark_cascade_stale 延时二扫后仍可能有一线
+        # 写回幽灵漏网（回写与认领 rename 的极窄交错）——rename 落定后 pending 同名再现
+        # 即清扫竞态残留，unlink 之（本工持 processing 真身为准），防第三手再认领同件。
+        residue = root / "pending" / head.name
+        if residue.exists():
+            try:
+                residue.unlink(missing_ok=True)
+            except (FileNotFoundError, PermissionError):
+                pass
         return processing_path
     return None
 
@@ -3164,24 +2757,6 @@ def _run_pool_wave(root: Path, repo: Path, k: int, budget: int | None, stats: di
     return shared["processed"]
 
 
-def _stale_revalidate_counted(item: dict, head_reader) -> tuple[bool, list[str]]:
-    """stale 基底重校验的环境失败统一转 env 专类（QMine A1 件④，逃逸口封堵）。
-
-    head_reader 的 git 读（_git_repo）在锁争用/句柄占用等瞬态下抛 RuntimeError——
-    原样上抛会绕过 _pool_process_item 的 LandingEnvironmentError 计数分支（M3 线
-    移交实测 38 笔环境失败逃逸），项滞留 processing 无限重放。此处统一转专类：
-    调用方既有 env 分支计数 + 耗尽升级死信，与 landing 内部环境失败同闸同语义。
-    """
-    try:
-        return cq._revalidate_stale_base(item, head_reader)
-    except cq.LandingEnvironmentError:
-        raise
-    except Exception as exc:  # noqa: BLE001 — git/OS 瞬态统一转环境专类
-        raise cq.LandingEnvironmentError(
-            f"stale 基底重校验环境失败（已收进 env_retry 计数闸）: {type(exc).__name__}: {exc}"
-        ) from exc
-
-
 def _pool_process_item(
     landing: WorktreeLanding,
     root: Path,
@@ -3231,81 +2806,76 @@ def _pool_process_item(
         cq._notify_task_board_dead_letter(item)
         return
     result: cq.LandingResult | None = None
-    # M3 移交逃逸口封堵（QMine A1 件④，st-qmine-20260925）：stale 重校验的 git 读
-    # 原在本 try 之外——锁争用/句柄占用类瞬态环境失败直接逃逸 env_retry 计数闸
-    # （38 笔实测），项滞留 processing 无限重放。整段收进下方 try：环境失败经
-    # _stale_revalidate_counted 转 LandingEnvironmentError 走既有 env 分支
-    # （计数+耗尽升级死信），与 landing 内部环境失败同闸同语义。
-    path_locks: list[threading.Lock] = []
-    try:
-        if (item.get("meta") or {}).get("stale"):
-            still_ok, mismatched = _stale_revalidate_counted(item, _pool_head_reader(landing))
-            if still_ok:
-                meta = item["meta"]
-                meta.pop("stale", None)
-                meta["stale_cleared_at"] = cq._now_iso()
-                with stats_lock:
-                    stats["stale_cleared"] += 1
-            else:
-                result = cq.LandingResult(
-                    ok=False,
-                    reason=(f"cascade_stale: 基底重校验不适用 {mismatched}（stale_by={item['meta'].get('stale_by')}）"),
-                )
-        if result is None:
-            # 路径锁在调用方取/放（不改 __call__ 函数名——复杂度存量豁免按名绑定）：
-            # 同路径项门禁段前串行化，锁覆盖幂等短路+应用+门禁+CAS 全程；持锁工死亡
-            # （BaseException）经 finally 必释放。
+    if (item.get("meta") or {}).get("stale"):
+        still_ok, mismatched = cq._revalidate_stale_base(item, _pool_head_reader(landing))
+        if still_ok:
+            meta = item["meta"]
+            meta.pop("stale", None)
+            meta["stale_cleared_at"] = cq._now_iso()
+            with stats_lock:
+                stats["stale_cleared"] += 1
+        else:
+            result = cq.LandingResult(
+                ok=False,
+                reason=(f"cascade_stale: 基底重校验不适用 {mismatched}（stale_by={item['meta'].get('stale_by')}）"),
+            )
+    if result is None:
+        # 路径锁在调用方取/放（不改 __call__ 函数名——复杂度存量豁免按名绑定）：
+        # 同路径项门禁段前串行化，锁覆盖幂等短路+应用+门禁+CAS 全程；持锁工死亡
+        # （BaseException）经 finally 必释放。
+        path_locks: list[threading.Lock] = []
+        try:
             path_locks = _item_path_locks(landing._item_paths(item))
             result = landing(item, root)
-    except cq.LandingEnvironmentError as exc:
-        # 环境失败≠物品失败：当前项退回 pending、置共享终止旗（其余工收工不新增
-        # 失败面）、本波结束——与 drain_queue「终止整轮」同语义。
-        # M5.2 活锁治理：landing 内抛点已过计数闸（retried_key 标记）不重复计数；
-        # landing 外抛点（路径锁超时等）就地补计数，同一 item 达上限升级死信，
-        # 不再无限退 pending。
-        dead: cq.LandingResult | None = None
-        if not getattr(exc, "retried_key", ""):
-            n = _bump_item_retry(item, root, "env_retry")
-            if n >= _RETRY_META_MAX:
-                dead = _retry_dead_result(
-                    "env_retry",
-                    "环境类失败重试耗尽——排除环境故障后 requeue 重投",
-                    f"landing 环境失败: {exc}",
-                )
-        if dead is not None:
+        except cq.LandingEnvironmentError as exc:
+            # 环境失败≠物品失败：当前项退回 pending、置共享终止旗（其余工收工不新增
+            # 失败面）、本波结束——与 drain_queue「终止整轮」同语义。
+            # M5.2 活锁治理：landing 内抛点已过计数闸（retried_key 标记）不重复计数；
+            # landing 外抛点（路径锁超时等）就地补计数，同一 item 达上限升级死信，
+            # 不再无限退 pending。
+            dead: cq.LandingResult | None = None
+            if not getattr(exc, "retried_key", ""):
+                n = _bump_item_retry(item, root, "env_retry")
+                if n >= _RETRY_META_MAX:
+                    dead = _retry_dead_result(
+                        "env_retry",
+                        "环境类失败重试耗尽——排除环境故障后 requeue 重投",
+                        f"landing 环境失败: {exc}",
+                    )
+            if dead is not None:
+                with stats_lock:
+                    item["dead_at"] = cq._now_iso()
+                    item["dead_reason"] = dead.reason
+                    item["prescription"] = cq.dead_letter_prescription(dead.reason)
+                    item["owner_session"] = item.get("session_id") or ""
+                    cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
+                    os.replace(processing_path, root / "dead" / processing_path.name)
+                    stats["dead"] += 1
+                    stats["processed_qids"].append(qid)
+                    shared["processed"] += 1
+                logger.error("[pool] qid=%s 环境失败重试耗尽，升级死信（防活锁）: %s", qid, dead.reason)
+                return
+            # B5（st-commitspeed-tbl-20260924）：退回前 attempts+1 持久化（≥3 惩罚
+            # 退避、≥5 拾取死信，毒药件不再无限占队首）。
+            if cq._attempts_backoff_enabled():
+                cq._bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
+            try:
+                cq._retry_transient(lambda: os.rename(processing_path, root / "pending" / processing_path.name))
+            except OSError:
+                logger.error("[pool] qid=%s 环境失败退回 pending 失败，留 processing 等波首回收", qid)
             with stats_lock:
-                item["dead_at"] = cq._now_iso()
-                item["dead_reason"] = dead.reason
-                item["prescription"] = cq.dead_letter_prescription(dead.reason)
-                item["owner_session"] = item.get("session_id") or ""
-                cq._atomic_write(processing_path, json.dumps(item, ensure_ascii=False, indent=2).encode("utf-8"))
-                os.replace(processing_path, root / "dead" / processing_path.name)
-                stats["dead"] += 1
-                stats["processed_qids"].append(qid)
-                shared["processed"] += 1
-            logger.error("[pool] qid=%s 环境失败重试耗尽，升级死信（防活锁）: %s", qid, dead.reason)
+                shared["env_aborted"] = True
+                if shared["budget_left"] is not None:
+                    shared["budget_left"] += 1
+            logger.error("[pool] landing 环境失败，终止本波（项退回 pending，不死信）: %s", exc)
             return
-        # B5（st-commitspeed-tbl-20260924）：退回前 attempts+1 持久化（≥3 惩罚
-        # 退避、≥5 拾取死信，毒药件不再无限占队首）。
-        if cq._attempts_backoff_enabled():
-            cq._bump_retry_attempts(processing_path, item, f"{type(exc).__name__}: {exc}")
-        try:
-            cq._retry_transient(lambda: os.rename(processing_path, root / "pending" / processing_path.name))
-        except OSError:
-            logger.error("[pool] qid=%s 环境失败退回 pending 失败，留 processing 等波首回收", qid)
-        with stats_lock:
-            shared["env_aborted"] = True
-            if shared["budget_left"] is not None:
-                shared["budget_left"] += 1
-        logger.error("[pool] landing 环境失败，终止本波（项退回 pending，不死信）: %s", exc)
-        return
-    except Exception as exc:  # noqa: BLE001 — 单项失败→死信不卡队
-        result = cq.LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
-    finally:
-        _release_path_locks(path_locks)
-        # A2 装表：本 finally 覆盖成功/死信/环境失败三条出口（env 分支 return
-        # 也走 finally），单件账不因失败路径漏记——失败件恰恰最该有账。
-        _emit_landing_phase_stat(landing, item, (time.monotonic() - _item_t0) * 1000)
+        except Exception as exc:  # noqa: BLE001 — 单项失败→死信不卡队
+            result = cq.LandingResult(ok=False, reason=f"landing 异常: {type(exc).__name__}: {exc}")
+        finally:
+            _release_path_locks(path_locks)
+            # A2 装表：本 finally 覆盖成功/死信/环境失败三条出口（env 分支 return
+            # 也走 finally），单件账不因失败路径漏记——失败件恰恰最该有账。
+            _emit_landing_phase_stat(landing, item, (time.monotonic() - _item_t0) * 1000)
 
     with stats_lock:
         if result.ok:
@@ -3403,70 +2973,6 @@ def resolve_base_blobs(repo_root: Path | str, base_head: str | None, paths: list
             if sep and len(parts) == 3 and parts[1] == "blob":
                 found[path] = parts[2]
     return {p: found.get(p) for p in uniq}
-
-
-def _stale_carry_candidate_blobs(item: dict, queue_root: Path | str) -> dict[str, str]:
-    """见证前段（assert_snapshot_selfconsistent 拆件，COMPLEXITY-GUARD 处方）：收集
-    「非注册表 modify 且袋字节 git-blob==其 base_blob」的路径。
-
-    不判面（保守放行，与主函数 docstring 口径同源）：delete 项/注册表族/base_blob
-    缺失（历史项未填、真新增件）/blob_ref 缺失/袋内字节读不到——拿不到证据不动手。
-    """
-    candidates: dict[str, str] = {}
-    root = Path(queue_root)
-    for entry in item.get("files") or []:
-        rel = entry.get("path") or ""
-        base_blob = entry.get("base_blob")
-        if not rel or not base_blob or str(entry.get("action") or "modify") != "modify":
-            continue
-        if is_registry_mergeable(rel):
-            continue
-        ref = entry.get("blob_ref") or ""
-        if not ref:
-            continue
-        try:
-            data = (root / ref).read_bytes()
-        except OSError:
-            continue
-        if _git_blob_sha(data) == base_blob:
-            candidates[rel] = str(base_blob)
-    return candidates
-
-
-def assert_snapshot_selfconsistent(
-    item: dict,
-    *,
-    queue_root: Path | str,
-    repo_root: Path | str,
-    current_dev: str,
-) -> tuple[list[str], list[str]]:
-    """快照自洽见证：袋字节 × 袋自身基底树（案卷 lane_stale_channel_repro ATK-3 判据层补层）。
-
-    既有四机制（逐文件快进/基底重校验/注册表合并器/同会话豁免）的判据集恒为
-    「dev 移动 × 袋路径集」，没有任何一层比较「袋内 blob 字节 vs 袋记录的
-    base_blob」——「盘/袋字节陈旧而 dev 未被判到移动」遂成自由通道：同会话豁免
-    盲区里陈旧携带回退自家前袋在册内容（ATK-3 形态），from-bag 错误基底把旧字节
-    洗成"本包改动"吃非注册表热件（ATK-2 形态，其基底口径已在 requeue_dead_item
-    同批治掉）。本函数把这层比较升为独立见证，消费端=WorktreeLanding._witness_stale_carry。
-
-    口径：
-    - 仅非注册表 modify 条目——注册表族维持条目级三向合并语义不回归，其同判据的
-      加侧闸（陈旧携带条目不得复活 dev 已落地的删除，ATK-1）在 _plan_insert_splices；
-    - 袋字节 git blob id == 条目 base_blob（resolve_base_blobs 填充的基底树 blob，
-      同 id 空间，_git_blob_sha 唯一换算点）⇒ 本包没改该路径＝纯陈旧携带；
-    - 两档输出（活性护栏实测等值即杀误伤正常并行，消费端只拒危险档）：
-        dangerous: 携带且 dev 现字节≠袋字节 ⇒ 落地必回退在册内容，拒落对象；
-        safe:      携带且 dev 现字节==袋字节 ⇒ 写=无操作，仅审计不拦；
-    - base_blob 缺失（历史项未填/真新增件）一律不判——见证只比有底可证的条目；
-      袋内 blob 字节读不到同样不判（拿不到证据不动手，与保守放行口径同源）。
-    """
-    candidates = _stale_carry_candidate_blobs(item, queue_root)
-    if not candidates:
-        return [], []
-    dev_blobs = resolve_base_blobs(repo_root, current_dev, sorted(candidates))
-    dangerous = sorted(rel for rel, sha in candidates.items() if dev_blobs.get(rel) != sha)
-    safe = sorted(rel for rel, sha in candidates.items() if dev_blobs.get(rel) == sha)
-    return dangerous, safe
 
 
 # ---------------------------------------------------------------------------
