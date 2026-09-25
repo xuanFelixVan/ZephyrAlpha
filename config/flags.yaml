@@ -112,6 +112,11 @@ flags:
     description: "P2⑨ 交互式提交入队（方案 §2.4-4b）：scripts/git_commit.py --enqueue 快照入队即返回 qid（AI 会话轮询 status 而非占锁重试）；LOCK_TIMEOUT 自动改道入队（P2⑨b，#ARCH-310 P0-1，st-govreform-20260912 施工）。【2026-09-12 Owner 批准启用（AI 原生治理评审 P0-1：'现在可以全部开工'），前置六项处置：①4a 死信清零已完成（952 项闭环）②会话协议改造已落（--enqueue 快照路径+status 轮询）③CloneGuard 索引=登记已知限制（serializer worktree 内 echo_guard 恒降级 warn-only+acknowledged 豁免吸收，不阻断）④压测 P95 与⑤docs 域两周灰度压缩为实弹观察（2026-09-12 并发事故为真实负载场景，回滚通道随时可用）⑥assert_single_writer_dev_history 断言实存（commit_queue_landing/gateway）继续作为日检防线】；回滚=flag OFF（存量 drain 完毕后关闭）"
     implementation_status: "production"
 
+  commit_queue_c1_debounce:
+    enabled: true
+    description: "C1 同会话短窗自动合批（提速战役 T11/C1，A4 阶梯 S7『批均规模 ≥3』前置编排档，st-commitspeed-tbl-20260924 施工）：enqueue 时同 session 已有 pending 件且创建于 <20 分钟内则自动并入前件（文件集并集、零内容改动、纯队列编排；只对同 session+同 worktree-root 生效，跨会话绝不合并；吸收痕迹记 meta.supersedes/absorbed 复用 compaction 名册）。判据口径=件数/日 158→<60、文件中位/件 1→>5。资格闸：stale/attempts>0/depends_on 任一侧/lane 混用/task_id 异/base_head 异/超 R2 大批硬顶一律不并（宁不并不错并）。运行时开关=env ZEPHYR_CQ_C1_DEBOUNCE（commit_queue.py 零 yaml 依赖，B5 同款；缺省随本键出厂 ON）。净零声明：合并『同会话多件手动并批』的人工编排约定为机械自动（替代人工拆批/等批指引），不新增门禁判据/阈值/队列状态。回滚=本键 enabled:false（改 YAML 一值；或 env ZEPHYR_CQ_C1_DEBOUNCE=0 即时生效）"
+    implementation_status: "gated_mvp"
+
   duckdb_runtime_gate:
     enabled: true
     mode: "warn"
