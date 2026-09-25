@@ -16,6 +16,7 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-MODEL-LIFECYCLE-001
 """
+# [ALGO_FLOW] external: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/p/approval_resolver.yaml
 approval_resolver.py — 审批判定收敛器（三通道：marker 防伪 / 裁定册授权 / 都不命中）
 
 病根（QCure approval_language 矿 N2/N3/⑤）
@@ -70,10 +71,10 @@ _LOCAL_MARKER_RE = re.compile(r"\[ARCH-APPROVAL:(#?ARCH-[A-Z0-9_-]+)\]")
 _MARKER_RE_FALLBACK: re.Pattern[str] | None = None
 
 # verdict.source 取值（机读字段，gate 审计 detail 增 source 字段同源）
-SOURCE_MARKER = "marker"      # message 标记通道且 id 实存
-SOURCE_RULING = "ruling"      # 裁定册授权通道命中
-SOURCE_NONE = "none"          # 有判定能力但无通道命中（含伪造 marker）
-SOURCE_UNKNOWN = "unknown"    # 注册表读失败/解析异常（gate 侧 fail-open 降级语义接手）
+SOURCE_MARKER = "marker"  # message 标记通道且 id 实存
+SOURCE_RULING = "ruling"  # 裁定册授权通道命中
+SOURCE_NONE = "none"  # 有判定能力但无通道命中（含伪造 marker）
+SOURCE_UNKNOWN = "unknown"  # 注册表读失败/解析异常（gate 侧 fail-open 降级语义接手）
 
 
 @dataclass(frozen=True)
@@ -131,7 +132,7 @@ def _load_registry(path: Path) -> dict[str, Any] | None:
         return None
 
 
-def _norm_id(raw: Any) -> str:
+def _norm_id(raw: object) -> str:
     """编号归一化：去 # 前缀 + 大写（'#ARCH-001'/'ARCH-001' 同一编号空间）。"""
     return str(raw or "").strip().lstrip("#").upper()
 
@@ -157,7 +158,7 @@ def _normalize_rel(path: str) -> str:
     """路径归一化：反斜杠→正斜杠、去当前目录前缀（与 gate _is_protected 同口径）。"""
     normalized = path.replace("\\", "/")
     if normalized.startswith(_CUR_PREFIX):
-        normalized = normalized[len(_CUR_PREFIX):]
+        normalized = normalized[len(_CUR_PREFIX) :]
     return normalized
 
 
@@ -185,7 +186,7 @@ def _verdict_today() -> date:
     return datetime.now(timezone.utc).date()
 
 
-def _expires_ok(expires_at: Any) -> bool:
+def _expires_ok(expires_at: object) -> bool:
     """expires_at 未过判定——支持 str（YYYY-MM-DD）与 YAML 原生 date；损坏=不授权。"""
     if expires_at in (None, ""):
         return True
@@ -216,6 +217,10 @@ def _ruling_channel(files_hit: list[str], ruling_registry: dict[str, Any]) -> Ap
             continue  # 过期/字段损坏 → 不构成授权
         covered = [f for f in files_hit if _path_covered(f, [str(p) for p in approved_paths])]
         if covered:
+            uncovered = [f for f in files_hit if f not in covered]
+            if uncovered:
+                continue  # 红队 R3-P1-1：部分覆盖不构成整提交授权——混区提交会让未覆盖
+                # 保护路径随全 commit 逃过硬阻断；仅全覆盖才放行（未覆盖路径走标准阻断）。
             ruling_id = str(entry.get("ruling_id") or "裁定#?")
             return ApprovalVerdict(
                 approved=True,
@@ -255,9 +260,7 @@ def resolve_approval(
 
         # 注册表装载：裁定册恒读（b 通道）；议题册仅 marker 在场时读（a 通道防伪回查）
         ruling_registry = _load_registry(_registry_path(project_root, _RULING_REGISTRY_REL))
-        issue_registry = (
-            _load_registry(_registry_path(project_root, _ISSUE_REGISTRY_REL)) if marker_id else None
-        )
+        issue_registry = _load_registry(_registry_path(project_root, _ISSUE_REGISTRY_REL)) if marker_id else None
 
         # a) marker 通道（带防伪）
         marker_forged_verdict: ApprovalVerdict | None = None
@@ -268,13 +271,14 @@ def resolve_approval(
                 return ApprovalVerdict(
                     approved=False,
                     source=SOURCE_UNKNOWN,
-                    detail=(f"marker [ARCH-APPROVAL:{marker_id}] present but issue registry "
-                            f"unreadable (fail-open legacy path)"),
+                    detail=(
+                        f"marker [ARCH-APPROVAL:{marker_id}] present but issue registry "
+                        f"unreadable (fail-open legacy path)"
+                    ),
                 )
             # 双册回查（裁定册 ruling_id 与 ARCH-* 编号空间理论不相交，按"或"语义兜底）
             registered = _id_in_entries(issue_registry, "issue_id", marker_id) or (
-                ruling_registry is not None
-                and _id_in_entries(ruling_registry, "ruling_id", marker_id)
+                ruling_registry is not None and _id_in_entries(ruling_registry, "ruling_id", marker_id)
             )
             if registered:
                 return ApprovalVerdict(
@@ -286,8 +290,7 @@ def resolve_approval(
             marker_forged_verdict = ApprovalVerdict(
                 approved=False,
                 source=SOURCE_NONE,
-                detail=(f"marker id '{marker_id}' not registered in issue/ruling registry "
-                        f"(anti-forgery reject)"),
+                detail=(f"marker id '{marker_id}' not registered in issue/ruling registry (anti-forgery reject)"),
             )
 
         # b) 裁定通道

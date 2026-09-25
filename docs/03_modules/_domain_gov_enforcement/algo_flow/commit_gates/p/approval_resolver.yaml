@@ -1,0 +1,53 @@
+# ALGO_FLOW 外部真源——approval_resolver（_domain_gov_enforcement 域，真源 src/zephyr/gov_enforcement/commit_gates/approval_resolver.py）
+# QCure M4（ARCH-QCURE-APPROVAL-CHAIN-001）：三通道审批解析器的外部算法卡。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.gov_enforcement.commit_gates.approval_resolver
+source_of_truth: src/zephyr/gov_enforcement/commit_gates/approval_resolver.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: files_hit 参数
+    #   fields: 命中保护模式的路径集，类型 list[str]
+    # - id: I2
+    #   name: commit_message 参数
+    #   fields: 提交说明（marker 提取源），类型 str | None
+    # - id: I3
+    #   name: project_root 参数
+    #   fields: 仓根锚（经 anchor_main_root 主仓根化），类型 str | Path | None
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① marker 通道（带防伪）
+    #   name_en: marker_channel
+    #   intro: 提取 [ARCH-APPROVAL:<id>] 且 id 必须实存于议题册/裁定册，查无即拒（防伪造）。
+    #   desc: 正则 SSoT 复用 check_protected_paths.APPROVAL_MARKER_RE。
+    #   inputs: commit_message
+    #   outputs: ApprovalVerdict(source=marker)
+    # - id: A2
+    #   name_zh: ② 裁定通道
+    #   name_en: ruling_channel
+    #   intro: 裁定册 status=active 且未过 expires_at 且 approved_paths（fnmatch+目录前缀）全覆盖命中路径才放行。
+    #   desc: 红队 R3-P1-1 收紧：部分覆盖不构成整提交授权，混区提交走标准阻断。
+    #   inputs: files_hit
+    #   outputs: ApprovalVerdict(source=ruling)
+    # - id: A3
+    #   name_zh: ③ 降级仲裁
+    #   name_en: fallback
+    #   intro: 注册表读失败/缺册/异常一律 source=unknown 永不抛异常，gate 侧保持既有 fail-open 降级。
+    #   desc: 收紧方向是 marker 防伪，不是引入 fail-closed 新风险。
+    #   inputs: 异常面
+    #   outputs: ApprovalVerdict(source=unknown)
+    # 层: 输出
+    # - id: O1
+    #   name: ApprovalVerdict
+    #   fields: approved bool / source marker|ruling|none|unknown / detail 审计文本（引用议题号或裁定号）
+    #
+    # 边:
+    # I1 --> A2
+    # I2 --> A1
+    # I3 --> A1
+    # A1 --> O1
+    # A2 --> O1
+    # A3 --> O1
+    # [/ALGO_FLOW]
