@@ -334,14 +334,18 @@ class TestFailClosedCommitChain:
         assert "import failed" in msg
 
     def test_gateway_init_succeeds_when_all_healthy(self) -> None:
-        """全部健康 → GitCommitGateway() 构造放行，装载 113 台与名册一致。"""
+        """全部健康 → GitCommitGateway() 构造放行，装载台数=名册 enabled 台数。
+
+        演进注记（st-qmine-20260925）：断言从「== declared total_gates」改为「== enabled
+        台数」——registry 合法携带 disabled 条目（enabled=false 跳过装载是本模块设计 #3，
+        非蒸发），specs 只含 enabled 面，对账基数应是 enabled 台数而非总条数。"""
         from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
         from zephyr.shared.io.paths import REPO_ROOT
 
         gw = GitCommitGateway()
         raw = yaml.safe_load((Path(REPO_ROOT) / REGISTRY_REL_PATH).read_text(encoding="utf-8"))
-        declared = raw["total_gates"]
-        assert len(gw.gate_registry.specs) == declared
+        enabled_count = sum(1 for e in raw["gates"] if e.get("enabled", True))
+        assert len(gw.gate_registry.specs) == enabled_count
 
 
 # ========== 真实项目集成测试（smoke test） ==========
@@ -377,12 +381,16 @@ class TestRealProjectIntegration:
         )
 
     def test_real_yaml_all_enabled(self) -> None:
-        """真实 YAML 所有 gate enabled=true。"""
+        """真实 YAML enabled 字段全部为合法布尔（True/False 皆合法）。
+
+        演进注记（st-qmine-20260925）：原断言「全部 enabled=True」已过时——registry 现合法
+        携带 disabled 条目（如 CAPABILITY-OVERLAP，enabled=false 跳过装载是本模块设计 #3，
+        保留条目只删装载），断言改为字段存在且布尔（防字段缺失=缺省误装载）。"""
         from zephyr.shared.io.paths import REPO_ROOT
 
         entries = load_gate_entries(Path(REPO_ROOT))
         for entry in entries:
-            assert entry.get("enabled") is True, f"gate {entry.get('gate_id')} not enabled"
+            assert isinstance(entry.get("enabled"), bool), f"gate {entry.get('gate_id')} enabled 字段缺失/非布尔"
 
     def test_real_yaml_all_have_required_fields(self) -> None:
         """真实 YAML 所有条目有必填字段。"""
@@ -395,15 +403,19 @@ class TestRealProjectIntegration:
             assert entry.get("factory_function"), f"missing factory_function: {entry}"
 
     def test_auto_register_full_roster_fail_closed(self) -> None:
-        """全量装载：任一台坏即抛 GateAutoRegistrationError（fail-closed），全好则装满名册。"""
+        """全量装载：任一台坏即抛 GateAutoRegistrationError（fail-closed），全好则装满 enabled 面。
+
+        演进注记（st-qmine-20260925）：装载对账基数=enabled 台数（disabled 条目合法跳过，
+        见本类 test_real_yaml_all_enabled 演进注记），非名册总条数。"""
         from zephyr.shared.io.paths import REPO_ROOT
 
         registry = CommitGateRegistry()
         failures = auto_register_gates(registry, Path(REPO_ROOT))  # 坏门在此抛错
         assert failures == []
         reg_path = Path(REPO_ROOT) / REGISTRY_REL_PATH
-        declared = yaml.safe_load(reg_path.read_text(encoding="utf-8"))["total_gates"]
-        assert len(registry.list_gate_ids()) == declared
+        raw = yaml.safe_load(reg_path.read_text(encoding="utf-8"))
+        enabled_count = sum(1 for e in raw["gates"] if e.get("enabled", True))
+        assert len(registry.list_gate_ids()) == enabled_count
 
     def test_auto_register_matches_explicit_register(self) -> None:
         """auto_register 注册的 gate 集合与显式注册一致。"""

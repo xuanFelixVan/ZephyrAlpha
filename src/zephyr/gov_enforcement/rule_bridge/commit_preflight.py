@@ -170,6 +170,27 @@ _INLINE_PREFLIGHT_CHECKS: list[tuple] = []
 _CAPABILITY_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml"
 _TRANSLATION_REGISTRY_REL = "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml"
 
+# QMine M5 矿③（st-qmine-20260925）：HEAD 注册表解析 memo——键=(normcase(rel), blob sha)
+# 内容寻址。blob sha=内容哈希，HEAD:rel 内容对给定 sha 不可变 → 命中恒等价于现算，零失效
+# 逻辑（与 gate_cache_preflight 的 HEAD_sha-in-key 原则同源，复用思想不复用代码不新增账本）。
+# 实测解析占 99%（两册各 ≈3s，git show 本身 <100ms）：落地池长命进程第二件起全 hit，
+# 每件省 ≈6.5s；直连 CLI 一命一进程零收益（恒 1 miss=现状+一次 ls-tree ≈10ms）。
+_HEAD_REGISTRY_PARSE_CACHE: dict[tuple[str, str], dict] = {}
+_CACHE_CAP = 16  # 容量护栏（在用仅两册；超限整体清空，防长命进程缓慢泄漏）
+
+
+def _head_blob_sha(gateway: GitCommitGateway, rel: str) -> str:
+    """HEAD:rel 的 blob sha（单条 ls-tree，~10ms 级；不可读/非 blob 抛错同既有语义）。"""
+    out = gateway.run_git(["git", "ls-tree", "HEAD", "--", rel])
+    if getattr(out, "returncode", 1) != 0:
+        raise RuntimeError(f"HEAD 注册表不可读（预检落地仿真态无法判定，锁内权威链兜底）: {rel}")
+    raw = out.stdout or ""
+    meta = raw.decode("utf-8", errors="replace").strip() if isinstance(raw, (bytes, bytearray)) else str(raw).strip()
+    parts = meta.split("\t", 1)[0].split()
+    if len(parts) < 3 or parts[1] != "blob":
+        raise RuntimeError(f"HEAD 注册表不可读（非 blob 或不在 HEAD）: {rel}: {meta[:120]}")
+    return parts[2]
+
 
 def _head_registry_yaml_data(gateway: GitCommitGateway, rel: str) -> dict:
     """HEAD 版注册表解析（落地仿真态的注册表面，M2.1 st-qcure-20260925）。
@@ -177,9 +198,19 @@ def _head_registry_yaml_data(gateway: GitCommitGateway, rel: str) -> dict:
     serializer 落地面=HEAD 干净面+袋内容物化——注册表不在袋内时其落地态就是 HEAD 版。
     git show 失败/解析非 dict=预检无法仿真落地面 → 抛异常由 run_preflight 降级
     degraded（锁内权威链 fail-closed 兜底），不假绿也不假红（ERROR_CONTRACT 契约）。
+
+    QMine M5 矿③（st-qmine-20260925）：解析 memo 挂本单咽喉（capability+translation 两册
+    同治）——键=(normcase(rel), blob sha) 内容寻址，命中恒等价于现算（blob sha=内容哈希，
+    零失效窗口）；弃 HEAD commit sha 键（落地池每落一件 HEAD 即动，池内全 miss=没缓存）。
+    返回缓存 dict 本体（消费方均只读投影：create_guard._collect_registered_files /
+    _translation_sim_map，零变更）；Windows 路径键经 normcase 归一。
     """
     import yaml  # noqa: PLC0415 — 惰性导入对齐本模块既有风格
 
+    key = (os.path.normcase(rel.replace("\\", "/")), _head_blob_sha(gateway, rel))
+    cached = _HEAD_REGISTRY_PARSE_CACHE.get(key)
+    if cached is not None:
+        return cached
     out = gateway.run_git(["git", "show", f"HEAD:{rel}"])
     if getattr(out, "returncode", 1) != 0:
         raise RuntimeError(f"HEAD 注册表不可读（预检落地仿真态无法判定，锁内权威链兜底）: {rel}")
@@ -191,6 +222,9 @@ def _head_registry_yaml_data(gateway: GitCommitGateway, rel: str) -> dict:
     data = yaml.safe_load(text)
     if not isinstance(data, dict):
         raise RuntimeError(f"HEAD 注册表顶层非 dict（预检落地仿真态无法判定，锁内权威链兜底）: {rel}")
+    if len(_HEAD_REGISTRY_PARSE_CACHE) >= _CACHE_CAP:
+        _HEAD_REGISTRY_PARSE_CACHE.clear()
+    _HEAD_REGISTRY_PARSE_CACHE[key] = data
     return data
 
 

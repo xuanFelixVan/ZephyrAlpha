@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] fail-closed（裁定#351，2026-09-19）——任一 enabled gate 装载失败（YAML 损坏/import 失败/getattr 失败/register 失败）→ 抛 GateAutoRegistrationError 阻断提交并逐台报 gate_id+错误；装载数≠名册数（条数↔total_gates、去重 gate_id 集合↔实际注册集合）→ 硬告警（logger.error+抛错阻断）；名册文件缺失=0 门装载 warn 留痕（测试 harness/嵌入式合法用法，防蒸发归 REGISTRY-MASS-DELETION gate）；enabled=false 跳过；register 幂等（同 gate_id 覆盖，与显式注册共存不冲突）；YAML 真源 in_process_gate_registry.yaml
+# [INVARIANTS] fail-closed（裁定#351，2026-09-19）——任一 enabled gate 装载失败（YAML 损坏/import 失败/getattr 失败/register 失败/files_trigger 结构违例）→ 抛 GateAutoRegistrationError 阻断提交并逐台报 gate_id+错误；装载数≠名册数（条数↔total_gates、去重 gate_id 集合↔实际注册集合）→ 硬告警（logger.error+抛错阻断）；files_trigger 注入校验 fail-closed（QMine M5 矿②/st-qmine-20260925：非 list[str]/空串/边缘空白/反斜杠/控制符/纯 glob 恒真一律拒收，替换旧 (str(ft),) 静默 coercion；死触发/超宽=warn 不拦）；名册文件缺失=0 门装载 warn 留痕（测试 harness/嵌入式合法用法，防蒸发归 REGISTRY-MASS-DELETION gate）；enabled=false 跳过；register 幂等（同 gate_id 覆盖，与显式注册共存不冲突）；YAML 真源 in_process_gate_registry.yaml
 # [MODIFY-GUARD] gate_id="GATE-AUTO-REGISTRAR"（无独立 gate，本模块是注册器非门禁）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -67,8 +67,11 @@ Usage::
 
 from __future__ import annotations
 
+import fnmatch
 import importlib
 import logging
+import re
+import subprocess
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Final
 
@@ -121,6 +124,115 @@ def _read_roster(project_root: Path) -> dict[str, Any] | None:
             f"gate roster has non-dict entries at indexes {bad_indexes[:10]} ({REGISTRY_REL_PATH})"
         )
     return data
+
+
+# ── files_trigger 注入校验（QMine M5 矿②/st-qmine-20260925，fail-closed）──
+# 消费方语义唯一真源=commit_gate_registry._files_trigger_hit 四路 OR（目录前缀/精确/fnmatch/子串）。
+_CONTROL_CHARS_RE = re.compile(r"[\x00-\x1f\x7f]")
+#: 纯 glob 字符集——条目字符全部落在此集（如 `*`/`**/*`）=fnmatch 恒真，P5 条件触发形同虚设。
+_GLOB_ONLY_CHARS = frozenset("*/?[]!")
+#: 超宽 warn 阈值（观测簿实测：governance=2377、docs/=7858、.py=8764 命中；secret=34 不扰）。
+_OVERWIDE_WARN_THRESHOLD = 1000
+
+
+def _validate_files_trigger(gate_id: str, ft: object) -> tuple[str, ...]:
+    """files_trigger 注入校验，非法抛 ValueError（fail-closed，QMine M5 矿②）。
+
+    合法定义（对齐 _files_trigger_hit 四路匹配语义）：缺省/null/空 list（=always-fire，
+    消费侧 `not patterns: return True` 同义，合法）｜list[str] 且每条：非空、无边缘空白、
+    无反斜杠（名册 canonical 强制 posix）、无控制符（\\n\\r\\t 等，YAML 多行事故面）、
+    非纯 glob 字符集（恒真=触发面爆炸）。非 list 标量（dict/int/str…）一律拒收——
+    替换旧 `(str(ft),)` 静默 coercion（册侧笔误→触发面静默漂移，变小方向=门禁静默免检）。
+
+    Raises:
+        ValueError: 任一结构违例——调用位在 auto_register_gates 既有 try 块内，异常流入
+            failures 收集 → GateAutoRegistrationError（裁定#351 fail-closed 通道，零新增控制流）。
+    """
+    if not isinstance(ft, list):
+        raise ValueError(
+            f"files_trigger must be list[str], got {type(ft).__name__}（非 list 标量禁入，禁静默 str() 化）"
+        )
+    non_str = [type(p).__name__ for p in ft if not isinstance(p, str)]
+    if non_str:
+        raise ValueError(f"files_trigger 含非 str 条目: {non_str[:5]}")
+    for p in ft:
+        if not p or p.strip() != p:
+            raise ValueError(f"files_trigger 条目为空串或带边缘空白: {p!r}")
+        if "\\" in p:
+            raise ValueError(f"files_trigger 条目含反斜杠（名册 canonical 强制 posix）: {p!r}")
+        if _CONTROL_CHARS_RE.search(p):
+            raise ValueError(f"files_trigger 条目含控制符（YAML 多行事故面）: {p!r}")
+        if set(p) <= _GLOB_ONLY_CHARS:
+            raise ValueError(f"files_trigger 条目为纯 glob 字符集（恒真=条件触发形同虚设）: {p!r}")
+    return tuple(ft)
+
+
+def _trigger_hit(pattern: str, rel: str) -> bool:
+    """_files_trigger_hit 四路语义单条目移植（目录前缀/精确/fnmatch/子串，仅 warn 用）。"""
+    return (
+        (pattern.endswith("/") and rel.startswith(pattern))
+        or rel == pattern.rstrip("/")
+        or fnmatch.fnmatch(rel, pattern)
+        or pattern in rel
+    )
+
+
+def _head_tracked_relpaths(project_root: Path) -> set[str] | None:
+    """HEAD tracked 相对路径集（git ls-tree 单次，warn 通道专用；git 不可用→None 静默跳过）。"""
+    try:
+        out = subprocess.run(
+            ["git", "ls-tree", "-r", "HEAD", "--name-only"],
+            cwd=str(project_root),
+            capture_output=True,
+            timeout=30,
+        )
+        if out.returncode != 0:
+            return None
+        text = (
+            out.stdout.decode("utf-8", errors="replace")
+            if isinstance(out.stdout, (bytes, bytearray))
+            else str(out.stdout)
+        )
+        return {ln.strip() for ln in text.splitlines() if ln.strip()}
+    except Exception:  # noqa: BLE001 — warn 是观测不是门禁，绝不影响装载结果
+        return None
+
+
+def _warn_suspect_triggers(entries: list[dict[str, Any]], project_root: Path) -> None:
+    """死触发/超宽子串 warn 通道（不进 fail-closed——观测簿方案②：先可见再治理）。
+
+    死触发=对 HEAD tracked 树零命中（含"前向防御"合法用例，硬拦会误杀现网 6 条 secrets 门
+    模式）；超宽=命中文件数 ≥ _OVERWIDE_WARN_THRESHOLD（近 always-fire）。git 面不可用=静默
+    跳过；本函数绝不 raise、绝不阻断装载。
+    """
+    triggered: list[tuple[str, str]] = []
+    for entry in entries:
+        if not entry.get("enabled", True):
+            continue
+        ft = entry.get("files_trigger")
+        if isinstance(ft, list):
+            triggered.extend((str(entry.get("gate_id", "?")), p) for p in ft if isinstance(p, str))
+    if not triggered:
+        return
+    tracked = _head_tracked_relpaths(project_root)
+    if not tracked:
+        return
+    for gate_id, p in sorted(set(triggered)):
+        hits = sum(1 for rel in tracked if _trigger_hit(p, rel))
+        if hits == 0:
+            logger.warning(
+                "gate_auto_registrar: files_trigger 死触发（HEAD 树零命中，前向防御/死模式待 Owner 定性）: %s: %r",
+                gate_id,
+                p,
+            )
+        elif hits >= _OVERWIDE_WARN_THRESHOLD:
+            logger.warning(
+                "gate_auto_registrar: files_trigger 超宽（命中 %d 文件 ≥ 阈值 %d，近 always-fire）: %s: %r",
+                hits,
+                _OVERWIDE_WARN_THRESHOLD,
+                gate_id,
+                p,
+            )
 
 
 def load_gate_entries(project_root: Path) -> list[dict[str, Any]]:
@@ -219,8 +331,11 @@ def auto_register_gates(
         try:
             spec = factory()
             ft = entry.get("files_trigger")
-            if ft:
-                spec.files_trigger = tuple(ft) if isinstance(ft, list) else (str(ft),)
+            if ft:  # 缺省/null/空 list=always-fire（合法，与消费侧语义同义）
+                # QMine M5 矿②：注入校验替换旧 `(str(ft),)` 静默 coercion——结构违例
+                # 抛 ValueError，由本既有 except 收集 → GateAutoRegistrationError
+                # （裁定#351 fail-closed 通道，零新增控制流）。
+                spec.files_trigger = _validate_files_trigger(gate_id, ft)
             registry.register(spec)
             registered_count += 1
         except Exception as e:  # noqa: BLE001 — 逐台收集后统一 fail-closed（裁定#351）
@@ -257,6 +372,12 @@ def auto_register_gates(
         detail = "; ".join(mismatch_parts)
         logger.error(f"gate_auto_registrar 装载对账硬告警（装载数≠名册数）: {detail}")
         raise GateAutoRegistrationError(f"gate roster reconciliation failed (装载数≠名册数): {detail}")
+
+    # QMine M5 矿②：死触发/超宽子串 warn 通道（观测不拦，绝不影响装载结果）
+    try:
+        _warn_suspect_triggers(entries, project_root)
+    except Exception:  # noqa: BLE001 — warn 通道自身故障零外溢
+        logger.debug("gate_auto_registrar: suspect-trigger warn 扫描异常（忽略）", exc_info=True)
 
     logger.info(
         f"gate_auto_registrar: registered {registered_count}/{len(entries)} gates successfully "
