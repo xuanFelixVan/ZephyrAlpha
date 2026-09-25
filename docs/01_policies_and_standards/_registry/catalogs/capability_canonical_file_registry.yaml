@@ -52702,4 +52702,18 @@ creation_tokens:
   created_by: st-commitspeed-tbl-20260924
   capability: fullflow_mining
   merge_evaluation: "挖矿作业簿：战役过程文档非生产真源，收录期后归档（四判据：非同源派生/复盘消费/无同域簇/跨域不适用——不并）"
+- file: "scripts/data/audit_technical_indicator_columns.py"
+  token: "tilib-audit-ti-cols-r2-20260921"
+  created_by: "st-data-fix-20260921"
+  capability: "data_fix_campaign"
+  merge_evaluation: "同前 token tilib-audit-ti-cols-20260921 同一对象改道重登：原路径 scripts/data/ 属 .gitignore 再生产物区（q-0060 prestage 拒绝），按死因建议①移 scripts/ 顶级后重登；旧 token 条目随 HEAD 留痕不删"
+- file: scripts/data/audit_news_publish_time.py
+  token: auto-audit-news-publish-time-20260830
+  created_by: greatwall_20260830
+  capability: news_publish_time_audit
+- file: src/zephyr/governance/meta_question/meta_question_registry.py
+  token: metaq-gc-meta-question-registry-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "N-16 文件名唯一性改名：registry.py 改 meta_question_registry.py，路径变更重新登记（原 77 槽位撞号前就未落地，非退役）"
 di_seam_exemptions: []
