@@ -105,3 +105,67 @@ T1 SLO 哨兵接入计划任务 action｜T2 计划任务 S4U 化｜T3 logs 轮�
   - G:\zephyr_cold\README.md 与 F:\zephyr_cold\README.md——追加 09-24 状态块（早执后构成/清偿记录/60_mirror 关系）
 - 导航设计原则：只写"作用+规则+真源指针"，路径/计数的机器真源=backup_config.yaml+drawers.jsonl+INFRA-STORE-003（防第二真源漂移）；双向协调=备份系统按 config 写、导航指 config、新增顶层目录强制同步导航+注册表。
 - 附带清偿：working_vault 内 git_bundles 旧导出件（0914/0915，853.7MB）按"留最新 2 份"政策删除（正规家 G:ackup\git_bundles 在册）；env_cleanup_20260923（10.1G deepclean 取证）保留记账归属。
+
+## E 盘详查+早删轮（2026-09-24 15:2x，Owner"E 只留软件与个人"批文）
+
+| 项 | 实测 | 定性/处置 |
+|---|---|---|
+| E:\zephyr_cold_archive | 2,211 件/117.6GiB，robocopy /L 对账 Copied=0（全部与 F:\zephyr_cold(_archive 逐一同等）| 已验证冗余副本→**早删**（原排期 10-20），E 回收 117.6G |
+| E:\数据下载\研报 | 30,159 件/84.7GiB，对账 Copied=0（全部与 F:\zephyr_cold_corpus
+esearch_reports 同等；较 09-2x 对账 29,998 件自然增长）| 已验证冗余副本→**早删**（原排期 10-18），E 回收 84.7G |
+| E 盘回收合计 | **+202.3GB（free 241.9GB）** | 两项删前均 zero-unique 复验 |
+| E:\ZephyrAlpha | **非仓库拷贝**——仅 deals_events.txt（2.8MB/83,237 行）=QMT 模拟端 Deal.csv 变更看门狗活动日志（交易时段每 3s 一行，15:05 收盘后停）| 活盘桥生态**保留**；重定向日志路径入 bridge backlog（实盘四禁不碰运行中进程） |
+| E:\数据下载 其余 ~53G | 产业链数据 12.44+P1归一 2.81 / 新闻文本 11.52 / 指数分笔 8.29 / ETF分钟 3.81 / A股zip 3.21 / 1分钟 2.73 / 财务 2.59 / LOF 1.28 / 5分钟 0.80 / tick缺口件 1.07 | **未删**——每数据集需对 CH(c1/c3)/冷库做 ingest 核验后才能定性，登记为 E 盘数据集核验工作包（下一班）；tick 缺口件大概率已冗余（缺口 09-21 已修验证） |
+| E 盘软件/个人 | 7-Zip/Lightroom/VS Code/Miniconda/QMT 端/QQ/Quark/1127锦晖运动会等 | ✅ 按设计保留（E=软件+个人） |
+
+## E:\数据下载 ingest 核验工作包执行完毕（2026-09-24 13:2x，逐数据集 CH 对账）
+
+**CH 核验结论（HTTP 直查 172.24.30.100）**：
+- 可删（CH 全量在库）：1分钟/5分钟月度目录（CH 2025-12..2026-03 四个月 2.7亿+5,346万行）→删；A股 daily+daily_hfq zip（kline_daily 1990 起 1,010 万行+kline_daily_hfq 1,008 万行）→删；tick 8 天缺口件（六缺口日 CH 各 1,470-1,590 万行）→删；上市公司财务（income_statement 1990→2026Q2 141 期覆盖 E 件 120 期）→删；15/30/60分钟（CH 2021-09 起 9,855/4,916/2,464 万行）→删；2025-08 等月目录（0801 tick 2,146 万行在库）→删
+- 不可删（**下载件历史段深于 CH**）：ETF_15min_2005_2024/ETF_1min_2005_2022（CH 仅 2021-07 起）/LOF_15min_2005_2024（CH 2010-08 起）/LOF_1min_2005_2024（CH 2019-01 起）——**潜在历史补数据源，保留 E 原位待 Owner 表态补历史或删**（17.4G）
+- 归冷库 F:\zephyr_cold（E→F robocopy /MOVE 全部成功）：产业链图谱图集 13.35G→30_corpus\产业链图谱图集；产业链 P1归一 3.02G→50_archivey_projectltdata_p1_normalized_20260924；新闻文本 4zip 12.37G→30_corpus
+ews_text_2000_2024；产业链 P2语料 0.35G→50_archiveltdata_p2_corpus_20260924；供应链数据 0.50G→20_raw\supply_chain_20260924；指数分笔月档 8.29G→20_raw\index_tick_monthly_20260924；CKG 知识图谱→20_raw；基金复权因子→20_raw；淘宝因子库→20_raw；qmt聚宽策略 600 条源码→30_corpus\joinquant_strategies_600
+- 补发现：E:\ZephyrAlpha\deals_events.txt=QMT Deal.csv 看门狗日志（83,237 行）；"需要恢复的 7 个日期"+2023-08=2023 历史 tick（CH 不覆盖 2023）→20_raw\market_tick_2023_unrecovered 留待未来决策
+- **E:\数据下载 终态=仅 ETF/LOF 分钟 zip 族（17.4G，待裁定）**；E 盘 free 289GB（本轮累计 +248GB）
+
+## ETF/LOF 历史分钟族处置（2026-09-24 下午，Owner 裁定①补历史入 CH 后删+补冷库）
+
+- **数字更正**：zip 族实测 5.09GiB（22 zip：ETF 11+LOF 11），此前台账 17.4G 系误算，以本条为准。
+- **冷库固化完成**：F:\zephyr_cold_raw\etf_lof_minute_history_20260924\（E 件保留至 CH 补历史完成后再删）；drawers.jsonl 已登记。
+- **CH 侦查结论**：kline_etf_15min=ReplacingMergeTree ORDER BY(symbol,trade_time)——重复行自动去重，补历史可带重叠安全入；CSV 列=时间/代码(带.SH/.SZ后缀需剥)/OHLC/成交量/成交额/涨幅/振幅 与 CH 一一对应，需补 data_source+ingest_ts 两列；CH symbol=裸六位码（样例 159881）。
+- **补历史运行手册（下一班专班执行，预估数小时）**：①解压至 .runtime/tmp 或临时盘（勿占 CH 磁盘）；②逐标的 CSV→temp CSV 变换（剥后缀/列映射/data_source='download_20260924'/ingest_ts=now）；③clickhouse-client --query "INSERT INTO c1_market.kline_etf_15min FORMAT CSV" 分标的眼量灌入（ReplacingMergeTree 去重兜底，2005_2024 与 2025 版重叠无害）；④同法 LOF 四表+ETF 1/5/30/60min；⑤核验=min(trade_time) 前移至 2005+行数增量+抽样值对 CSV；⑥全绿后删 E:\数据下载 两汇总目录（冷库档永留）。
+- **磁盘预算**：估新增 3-8 万万行压缩后 ~20-50G，CH default 盘 free ~139G 可容；监控 process 磁盘。
+- E:\数据下载 终态修正：剩 ETF/LOF 汇总两目录（5.09G，冷库已有副本，CH 补历史完成后删）+零星。
+
+## ⚠️ ETF/LOF 历史分钟处置更正（2026-09-24 12:5x，Owner 纠偏：主库保留设计优先）
+
+- **Owner 纠偏**：主库有保留期规定——能持续获取的数据才进主库。2005-2021 历史分钟数据不可持续获取（一次性历史档），**灌 CH 热层违反 INV-RET 契约+滚动归档设计**（CH 热层只留窗口，老分区本就要滚出至冷 Parquet）。前一条"补历史入 CH 运行手册"**作废，禁止执行**。
+- **正确归宿（重立）**：转换进**冷库 Parquet 档案**（50_archive 结构：按表按月分区的 Parquet，与滚动归档历史市场数据同构同址，DuckDB 直查可回测）+原料 zip 已在 20_raw（已完成）。
+- **转换工作包（下一班，安全无生产风险）**：解压 22 zip→逐标的 CSV→按 kline_etf_15min/1min/5min/30min/60min、kline_lof_* 分表按月写 Parquet→入 50_archive 归档结构+archive_manifest.jsonl 登记（source=e_download_20260924，标注非 CH 滚出来源）→DuckDB 抽验。
+- E:\数据下载 两汇总目录：转换核验通过后删（数据在 Parquet+原料 zip 双层保全）。
+
+## ETF/LOF 冷 Parquet 转换完成（2026-09-24 15:4x，Owner 纠偏方案落地）
+
+- **20/20 zip 全部转换成功，约 7.8 亿行入冷 Parquet 档案**：`F:\zephyr_cold(_archive\c1_market\{kline_etf_15min,1min,30min,5min,60min,kline_lof_15min,1min,30min,5min,60min}_history\`（按年分区，DuckDB 直查）
+- 明细：ETF 1min 1.30+3.01 亿行、ETF 15min 1,528+1,999 万行、LOF 1min 1.71 亿行×2、LOF 5min 3,414 万行×2 等——2005 起历史段正式入冷库查询层（CH 热层按主库保留设计不动）
+- E:\数据下载 两汇总目录源件已删（冷库 zip 原料档+Parquet 双层保全）；E:\数据下载 现为空目录
+- 转换脚本与三轮迭代日志：.runtime/tmp/diskaudit_20260924/convert_parquet.{py,log}（学费：DuckDB union_by_name 对千 CSV 产 UNION 类型需显式 columns；COPY PARTITION_BY 不吃表达式需先算列；Windows 混合分隔符致建目录失败需 os.sep 归一）
+
+## E 盘复扫收口（2026-09-24 16:1x，Owner"还有没有该进冷库的"复检）
+
+- 复扫发现三目录：E:\c1_market（p2 量纲修复**前**取证 0.59G/6 件）、E:\c3_fundamental（p6 1970 清洗**前**取证 8 件微件）、E:\migration（空壳）——均为 09-21/22 修复战役 pre-fix 取证快照
+- 处置：整体归档 F:\zephyr_cold(_archivey_project\zephyralpha\{p2_volume_unit_prefix_20260922_E_archive, p6_1970_prefix_20260922_E_archive, p6_1970_migration_husk_20260924}（与在册 ch_waste_tables_1970clean_20260922 修复后档案合链）→E 侧三目录清零
+- E:\数据下载 确认清空。**E 盘终态=纯软件+工具+个人+活盘桥（qmt_bridge/qmt_bridge_sim/ZephyrAlpha 日志），零数据残留**
+- 备份链答 Owner：G 每日 06:00 备份覆盖=D 项目（working_vault+git bundle+CH 配置）、F 冷库夜镜像（60_mirror）、CH 增量+第二链、PG/SQLite dumps、offrepo（含 E:\qmt_bridge）；post-commit 8h 闸另有触发
+
+## 灾备恢复演练四项（2026-09-24 16:4x，非破坏性·临时目标，Owner 问"测过没"响应）
+
+| 演练 | 结果 |
+|---|---|
+| T1 git bundle 实际 clone（0921 bundle→临时目录） | ✅ clone 成功，19,055 commits，HEAD=1420128a70 可读 |
+| T2 SQLite 恢复+PRAGMA integrity_check | ✅ integrity=ok，45 表 |
+| T3 PG depgraph.dump 实际 pg_restore 进临时库 | ✅ 89/89 表与活库一致，真实数据在位（edge_holding 150 万行），验证后临时库已 DROP |
+| T4 CH 备份 | ✅（今晨 verified=True+backup_log 交叉核对；全量 RESTORE 属破坏性，已排 ZEPHYR-RESTORE-DRILL 月度任务 10-01 首射） |
+| T5 working_vault 快照 | ✅（verify 五关键件+当日快照全查过） |
+- 结论：四条恢复路径（git/SQLite/PG/CH-验证层）全部真实走通；CH 全量 RESTORE 与 VM 导入属破坏性演练，按月度任务排期执行。
+【第二链日检 09-25】PASS（inc=88,580,255,288B≈88.6G, ratio=0.217≥0.15, 时差=0min；market.zip 266.6G 自 09-15 重基线稳定；主链=今晨 06:00 计划任务 06:47 完成增量 408.95GB total_size）——第 1/14 天（10-05 摘盘证据链）
