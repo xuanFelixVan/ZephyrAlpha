@@ -60932,6 +60932,15 @@ entries:
   plain_zh: 把建账本四张表的图纸按先后顺序整理成一叠，照着念一遍就能把表建好，念一百遍也不会建错
   responsibility_layer: governance
 
+- module_path: src/zephyr/alt_data/emotion_index_replay.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "情绪指数回放器"
+  name_en: "Emotion Index Replay"
+  desc_zh: "按冻结公式对历史全量重算情绪指数（close_final 序列），分区聚块写入 CH，PIT 对拍与形状等价自证内置"
+  desc_en: "Replay emotion index over history with frozen formula"
+  plain_zh: "把历史每一天的情绪温度按今天的冻结合法公式重新算一遍存进库，让回测能查到任何一天的情绪指数"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
