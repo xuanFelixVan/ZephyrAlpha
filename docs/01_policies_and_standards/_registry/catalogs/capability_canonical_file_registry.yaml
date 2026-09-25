@@ -50543,4 +50543,244 @@ creation_tokens:
   created_by: st-commitspeed-tbl-20260924
   capability: fullflow_mining
   merge_evaluation: "新基建件：integrity 刷新意图账=B0/M1 治本唯一事件源，无可并旧件（四判据过：非同源派生/有消费/无同域簇/跨域不适用）"
+- file: docs/_working/decision_map_campaign_20260924/01_goal_and_architecture.md
+  token: decision-map-campaign-20260924-01-goal-and-architecture-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/02_rulings_and_calibers.md
+  token: decision-map-campaign-20260924-02-rulings-and-calibers-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/03_gpu_campaign.md
+  token: decision-map-campaign-20260924-03-gpu-campaign-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/04_p1_conditional_tables.md
+  token: decision-map-campaign-20260924-04-p1-conditional-tables-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/05_t0_and_strategy_library.md
+  token: decision-map-campaign-20260924-05-t0-and-strategy-library-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/06_methodology_index.md
+  token: decision-map-campaign-20260924-06-methodology-index-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/07_pending_work_master_list.md
+  token: decision-map-campaign-20260924-07-pending-work-master-list-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/08_watch_and_risks.md
+  token: decision-map-campaign-20260924-08-watch-and-risks-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/09_link_skeletons.md
+  token: decision-map-campaign-20260924-09-link-skeletons-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/10_evaporation_forensics.md
+  token: decision-map-campaign-20260924-10-evaporation-forensics-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/11_integrated_backtest_audit.md
+  token: decision-map-campaign-20260924-11-integrated-backtest-audit-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/12_data_universe_census.md
+  token: decision-map-campaign-20260924-12-data-universe-census-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/13_trading_chain_audit.md
+  token: decision-map-campaign-20260924-13-trading-chain-audit-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/14_consumption_census.md
+  token: decision-map-campaign-20260924-14-consumption-census-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/15_evaporation_cure_plan.md
+  token: decision-map-campaign-20260924-15-evaporation-cure-plan-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/16_missing22_recovery.md
+  token: decision-map-campaign-20260924-16-missing22-recovery-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/17_quantified_acceptance.md
+  token: decision-map-campaign-20260924-17-quantified-acceptance-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/18_professional_standards_mapping.md
+  token: decision-map-campaign-20260924-18-professional-standards-mapping-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/README.md
+  token: decision-map-campaign-20260924-readme-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L01_regime/SKEL.md
+  token: decision-map-campaign-20260924-skel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L02_emotion/SKEL.md
+  token: decision-map-campaign-20260924-skel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L03_sector/SKEL.md
+  token: decision-map-campaign-20260924-skel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/SKEL.md
+  token: decision-map-campaign-20260924-skel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/SKEL.md
+  token: decision-map-campaign-20260924-skel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/T0_MATERIAL_EXAM_CARD_draft.md
+  token: decision-map-campaign-20260924-t0-material-exam-card-draft-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/material_precapacity_report.md
+  token: decision-map-campaign-20260924-material-precapacity-report-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L05_t0/material_precapacity_sample20_stats.yaml
+  token: decision-map-campaign-20260924-material-precapacity-sample20-stats-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/SKEL.md
+  token: decision-map-campaign-20260924-skel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/allocation_rule_v1_draft.md
+  token: decision-map-campaign-20260924-allocation-rule-v1-draft-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L07_exec/SKEL.md
+  token: decision-map-campaign-20260924-skel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/SKEL.md
+  token: decision-map-campaign-20260924-skel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L08_risk/arbitration_order_v1_draft.md
+  token: decision-map-campaign-20260924-arbitration-order-v1-draft-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/L09_review/SKEL.md
+  token: decision-map-campaign-20260924-skel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/links/README.md
+  token: decision-map-campaign-20260924-readme-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/prereg_plan1_draft.patch
+  token: decision-map-campaign-20260924-prereg-plan1-draft-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: data/strategy_intake/conditional_tables/README.md
+  token: p1-conditional-tables-20260924-readme-20260925
+  created_by: st-cmd-20260924
+  capability: p1_conditional_tables_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：P1 条件概率表"
+- file: data/strategy_intake/conditional_tables/_cache_880.parquet
+  token: p1-conditional-tables-20260924--cache-880-20260925
+  created_by: st-cmd-20260924
+  capability: p1_conditional_tables_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：P1 条件概率表"
+- file: data/strategy_intake/conditional_tables/p1_phase_momentum.csv
+  token: p1-conditional-tables-20260924-p1-phase-momentum-20260925
+  created_by: st-cmd-20260924
+  capability: p1_conditional_tables_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：P1 条件概率表"
+- file: data/strategy_intake/conditional_tables/p1_phase_stay.csv
+  token: p1-conditional-tables-20260924-p1-phase-stay-20260925
+  created_by: st-cmd-20260924
+  capability: p1_conditional_tables_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：P1 条件概率表"
+- file: data/strategy_intake/conditional_tables/p1_phase_transition.csv
+  token: p1-conditional-tables-20260924-p1-phase-transition-20260925
+  created_by: st-cmd-20260924
+  capability: p1_conditional_tables_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：P1 条件概率表"
+- file: data/strategy_intake/conditional_tables/p1_sector_by_phase.csv
+  token: p1-conditional-tables-20260924-p1-sector-by-phase-20260925
+  created_by: st-cmd-20260924
+  capability: p1_conditional_tables_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：P1 条件概率表"
+- file: data/strategy_intake/conditional_tables/p1_top5_by_phase.txt
+  token: p1-conditional-tables-20260924-p1-top5-by-phase-20260925
+  created_by: st-cmd-20260924
+  capability: p1_conditional_tables_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：P1 条件概率表"
+- file: scripts/backtest/t0_material_line.py
+  token: t0-material-line-l05-t0-material-line-20260925
+  created_by: st-cmd-20260924
+  capability: t0_material_line_l05
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：做T材料线管线"
+- file: scripts/governance/evaporation_blackbox.py
+  token: evaporation-blackbox-ev01-evaporation-blackbox-20260925
+  created_by: st-cmd-20260924
+  capability: evaporation_blackbox_ev01
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：蒸发黑匣子"
+- file: scripts/governance/decision_chain_sentinel.py
+  token: decision-chain-sentinel-l09c04-decision-chain-sentinel-20260925
+  created_by: st-cmd-20260924
+  capability: decision_chain_sentinel_l09c04
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：决策链哨兵"
+- file: scripts/register_decision_chain_sentinel_task.ps1
+  token: decision-chain-sentinel-l09c04-register-decision-chain-sentinel-task-20260925
+  created_by: st-cmd-20260924
+  capability: decision_chain_sentinel_l09c04
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：哨兵注册件"
+- file: docs/_working/ultimate_library/b_batch_sample_cards.md
+  token: ultimate-library-final-20260924-b-batch-sample-cards-20260925
+  created_by: st-cmd-20260924
+  capability: ultimate_library_final_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：图书馆遗物"
+- file: docs/_working/ultimate_library/library_final_ledger.md
+  token: ultimate-library-final-20260924-library-final-ledger-20260925
+  created_by: st-cmd-20260924
+  capability: ultimate_library_final_20260924
+  merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：图书馆遗物"
 di_seam_exemptions: []

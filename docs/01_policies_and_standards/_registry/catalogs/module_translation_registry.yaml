@@ -60941,6 +60941,23 @@ entries:
   plain_zh: "把历史每一天的情绪温度按今天的冻结合法公式重新算一遍存进库，让回测能查到任何一天的情绪指数"
   responsibility_layer: business
 
+- module_path: src/zephyr/signal_ashare/core/candidate_pool_snapshot.py
+  domain_id: D_ASHARE_SIGNAL
+  name_zh: "候选池快照日批生产者"
+  name_en: "CandidatePoolSnapshot"
+  desc_zh: "把聚合器当日最终候选池物化为 stock_candidate_pool 快照行并经 ch_writer 落表（L04-C01/M-41 载体）"
+  desc_en: ""
+  plain_zh: "每天收盘后把当天选出来的候选股票名单连同排名、否决原因、环境开关状态一起存进数据库一张表里，以后任何时候都能查到当天到底选了哪些股票，下游买卖和回测不用再现算。"
+  responsibility_layer: business
+- module_path: schemas/categories/market/market_stock_candidate_pool.py
+  domain_id: D_DATA
+  name_zh: "候选池快照表 DDL 真源"
+  name_en: "stock_candidate_pool DDL"
+  desc_zh: "c1_market.stock_candidate_pool 表结构唯一真源（DDL-as-Code，ReplacingMergeTree 同键重放幂等）"
+  desc_en: ""
+  plain_zh: "这张表就是存每天候选股票名单的账本，表长什么样、有哪些栏位全以这个文件说了算，改表必须先改这里再跑部署脚本。"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
