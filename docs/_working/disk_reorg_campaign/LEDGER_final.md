@@ -700,3 +700,4 @@ python -m pytest <自家测试目录> -q                    # 自家测试同批
 P-7 本体（点火/托管分离：`launch_detached_backup`＋`settle_previous_ignition`＋
 锁自查前置）在恢复件里逐处在位（`backup_reconciler.py` 净变化 416 增/139 删，
 调用点 809/831 行），未因两次死袋丢任何逻辑。
+【第二链日检 09-26】PASS（inc=88,580,255,288B 与最近完成备份 06:47 逐位同步 ratio=0.217；今日 06:00 轮在飞 PID8404 存活 1h17m=keep 保护生效，完成候检）——第 2/14 天（10-05 摘盘证据链）
