@@ -5143,6 +5143,51 @@ capabilities:
     用例）；真源 DESIGN=docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md。canonical_override 显式钉定（suite.py=L4
     RULER_MODULES 指针锁定契约面；考尺缺席即拒考 fail-closed 绝不本地造考卷）。
 creation_tokens:
+- file: src/zephyr/alt_data/emotion_index_replay.py
+  token: emoreplay-revival-emotion-index-replay-20260926
+  created_by: st-cmd-20260924
+  capability: emoreplay_revival_l02c01
+  merge_evaluation: "09-26 恢复轮补注册（队列恢复 v2）；emoreplay 复职批 L02-C01 配套"
+- file: docs/_working/emotion_line/gpu_emotion_condition_matrix_v1.meta.yaml
+  token: emoreplay-revival-l02c01-gpu-emotion-condition-matrix-v1meta-20260925
+  created_by: st-emoreplay-20260923
+  capability: emoreplay_revival_l02c01
+  merge_evaluation: "回放条件矩阵 meta 件（复职批 L02-C01）"
+- file: docs/_working/decision_map_campaign/links/L05_t0/material_precapacity_sample20_stats.yaml
+  token: decision-map-campaign-material-precapacity-sample20-stats-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r01_fixed_grid_day_t.yaml
+  token: decision-map-campaign-rule-card-r01-fixed-grid-day-t-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r02_vol_adaptive_band.yaml
+  token: decision-map-campaign-rule-card-r02-vol-adaptive-band-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r03_vwap_reversion_band.yaml
+  token: decision-map-campaign-rule-card-r03-vwap-reversion-band-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r04_open_range_breakout.yaml
+  token: decision-map-campaign-rule-card-r04-open-range-breakout-rename-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign
+  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: src/zephyr/signal_ashare/core/candidate_pool_snapshot.py
+  token: stock-candidate-pool-snapshot-20260926
+  created_by: st-cmd-20260924
+  capability: stock_candidate_pool_l04c01
+  merge_evaluation: "09-26 恢复轮补注册；L04-C01 候选池载体 M-41 配套"
+- file: schemas/categories/market/market_stock_candidate_pool.py
+  token: stock-candidate-pool-ddl-20260926
+  created_by: st-cmd-20260924
+  capability: stock_candidate_pool_l04c01
+  merge_evaluation: "09-26 恢复轮补注册；L04-C01 DDL-as-code 配套"
 - file: docs/_working/integrated_backtest/max_remediation_plan.md
   token: ibt-remediation-max-remediation-plan-20260922
   created_by: st-unified-plan-20260920
@@ -50718,6 +50763,11 @@ creation_tokens:
   created_by: st-cmd-20260924
   capability: decision_map_campaign_20260924
   merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：战役文档包"
+- file: docs/_working/decision_map_campaign_20260924/HANDOVER.md
+  token: decision-map-campaign-20260924-handover-20260925
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "总筹交接书（继任者单入口）：四线在飞状态+剩余全量清单+血泪配方十条+Owner 待裁清单"
 - file: data/strategy_intake/conditional_tables/README.md
   token: p1-conditional-tables-20260924-readme-20260925
   created_by: st-cmd-20260924
@@ -50783,49 +50833,14 @@ creation_tokens:
   created_by: st-cmd-20260924
   capability: ultimate_library_final_20260924
   merge_evaluation: "09-26 幂等重放（队列重整后 token 册重建）：图书馆遗物"
-- file: src/zephyr/alt_data/emotion_index_replay.py
-  token: emoreplay-revival-emotion-index-replay-20260926
-  created_by: st-cmd-20260924
-  capability: emoreplay_revival_l02c01
-  merge_evaluation: "09-26 恢复轮补注册（队列恢复 v2）；emoreplay 复职批 L02-C01 配套"
-- file: src/zephyr/signal_ashare/core/candidate_pool_snapshot.py
-  token: stock-candidate-pool-snapshot-20260926
-  created_by: st-cmd-20260924
-  capability: stock_candidate_pool_l04c01
-  merge_evaluation: "09-26 恢复轮补注册；L04-C01 候选池载体 M-41 配套"
-- file: schemas/categories/market/market_stock_candidate_pool.py
-  token: stock-candidate-pool-ddl-20260926
-  created_by: st-cmd-20260924
-  capability: stock_candidate_pool_l04c01
-  merge_evaluation: "09-26 恢复轮补注册；L04-C01 DDL-as-code 配套"
-- file: docs/_working/emotion_line/gpu_emotion_condition_matrix_v1.meta.yaml
-  token: emoreplay-revival-l02c01-gpu-emotion-condition-matrix-v1meta-20260925
-  created_by: st-emoreplay-20260923
-  capability: emoreplay_revival_l02c01
-  merge_evaluation: "回放条件矩阵 meta 件（复职批 L02-C01）"
-- file: docs/_working/decision_map_campaign/links/L05_t0/material_precapacity_sample20_stats.yaml
-  token: decision-map-campaign-material-precapacity-sample20-stats-rename-20260925
-  created_by: st-cmd-20260924
-  capability: decision_map_campaign
-  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
-- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r01_fixed_grid_day_t.yaml
-  token: decision-map-campaign-rule-card-r01-fixed-grid-day-t-rename-20260925
-  created_by: st-cmd-20260924
-  capability: decision_map_campaign
-  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
-- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r02_vol_adaptive_band.yaml
-  token: decision-map-campaign-rule-card-r02-vol-adaptive-band-rename-20260925
-  created_by: st-cmd-20260924
-  capability: decision_map_campaign
-  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
-- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r03_vwap_reversion_band.yaml
-  token: decision-map-campaign-rule-card-r03-vwap-reversion-band-rename-20260925
-  created_by: st-cmd-20260924
-  capability: decision_map_campaign
-  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
-- file: docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r04_open_range_breakout.yaml
-  token: decision-map-campaign-rule-card-r04-open-range-breakout-rename-20260925
-  created_by: st-cmd-20260924
-  capability: decision_map_campaign
-  merge_evaluation: "战役目录改名（R5 去日期后缀）新路径重登记；旧路径 token 随删除通道退役"
+- file: docs/_working/disk_reorg_campaign/vhdx_precheck_20260924.md
+  token: vhdx-precheck-report-vhdx-precheck-20260924-20260925
+  created_by: st-backup-cold-20260924
+  capability: vhdx-precheck-report
+  merge_evaluation: "备份系统 STAGE 4b 自动产出的季度压缩预检单（裁定#380-4 提醒件），与既有 vhdx_precheck_20260920/21 序列同族续编，非同真源派生"
+- file: docs/_working/disk_reorg_campaign/vhdx_precheck_20260925.md
+  token: vhdx-precheck-report-vhdx-precheck-20260925-20260925
+  created_by: st-backup-cold-20260924
+  capability: vhdx-precheck-report
+  merge_evaluation: "备份系统 STAGE 4b 自动产出的季度压缩预检单（裁定#380-4 提醒件），与既有 vhdx_precheck_20260920/21 序列同族续编，非同真源派生"
 di_seam_exemptions: []

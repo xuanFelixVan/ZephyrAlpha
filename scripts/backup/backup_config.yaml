@@ -64,14 +64,13 @@ dump_dir: "D:\\tmp_db_dumps"
 # G 盘=USB 机械盘（写 70MB/s），只放镜像不放在线链路；源 immutable/版本化，/MIR 风险可控。
 g_mirror:
   base: "G:\\zephyr_cold"
-  # a3 阶段4.6 改址（2026-09-21）：总仓四类改直写 G 后，镜像仅剩冷库+ch_vm_backup（阶段5.2 前）
+  # a3 阶段4.6 改址（2026-09-21）；2026-09-24 ch_vm_backup 目标移除（Owner 早执裁定：
+  # F 原件瘦身=配置级轻备份，data.vhdx 全量镜像冻结于 G:\backup\ch_vm_backup 不再
+  # /MIR——若保留镜像目标，F 瘦身后 /MIR 会把 G 侧唯一全量镜像同步删除=三份全灭）
   targets:
     - id: zephyr_cold
       source: "F:\\zephyr_cold"
       target: "G:\\zephyr_cold\\60_mirror\\zephyr_cold_main"
-    - id: ch_vm_backup
-      source: "F:\\ch_vm_backup"
-      target: "G:\\backup\\ch_vm_backup"
 
 trigger:
   min_interval_seconds: 28800  # 8小时间隔保护（post-commit 触发用）
