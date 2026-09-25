@@ -1464,11 +1464,21 @@ class TestRegistryThreeWayMergePure:
         assert {"A", "B", "C", "D"} <= set(self._ids(merged)), "theirs 删 B 不生效（B 现役保留）"
 
     def test_ours_delete_revived_unless_legitimately_retired(self):
-        """规则 b：base 有+ours 无+theirs 有 → 采纳恢复；合法退役（retired_check=True）除外。"""
+        """规则 b（H 队 ATK-1 修后语义）：base 有+ours 无+theirs 有——
+        theirs 逐内容==基底＝纯陈旧携带 ⇒ 不复活（dev 已落地的删除是在册真身，
+        案卷 lane_stale_channel_repro ATK-1：旧口径把删除语义对陈旧袋清零）；
+        theirs 确实改过该条目 ⇒ 维持 W2 采纳恢复；合法退役（retired_check=True）⇒ 尊重删除。
+        """
         ours = _reg_text([("A", "a.md"), ("C", "c.md")])  # ours 侧 B 消失
         merged, err = cql.three_way_merge_registry_yaml(self.BASE, ours, self.BASE, rel_path=_REG_REL)
         assert err == "", err
-        assert "B" in self._ids(merged), "ours 侧消失但非退役 → 快照救回"
+        assert "B" not in self._ids(merged), "theirs 未动过 B（恰等其基底）⇒ 陈旧携带不得复活已落地删除"
+
+        # 反向控制（判据不恒红）：theirs 真改过 B（内容≠base）⇒ W2 采纳恢复语义保留
+        edited = self.BASE.replace("path: b.md", "path: b2.md")
+        merged_e, err_e = cql.three_way_merge_registry_yaml(self.BASE, ours, edited, rel_path=_REG_REL)
+        assert err_e == "", err_e
+        assert "B" in self._ids(merged_e), "本包确实编辑过的条目仍按 W2 救回（合并语义不回归）"
 
         merged2, err2 = cql.three_way_merge_registry_yaml(
             self.BASE,
@@ -1549,14 +1559,23 @@ class TestRegistryMergeCompoundIdentity:
         assert toks == ["cap-a-20260901", "cap-a-night-gw-20260902", "cap-a-third-20260903"]
 
     def test_same_file_token_removal_revived_unless_retired(self):
-        """复合键粒度下的规则 b/c：同 file 删其中一条 token——非退役救回/退役尊重。"""
+        """复合键粒度下的规则 b/c（H 队 ATK-1 修后语义）：同 file 删其中一条 token——
+        theirs==base 纯携带不复活（加侧闸）；theirs 编辑过该条仍救回；合法退役尊重。
+        """
         base = self._tok_reg([("src/a.py", "tok-1"), ("src/a.py", "tok-2")])
         ours = self._tok_reg([("src/a.py", "tok-1")])  # ours 侧 tok-2 消失
         theirs = base
         merged, err = cql.three_way_merge_registry_yaml(base, ours, theirs, rel_path="x.yaml")
         assert err == "", err
         toks = [e["token"] for e in yaml.safe_load(merged)["creation_tokens"]]
-        assert toks == ["tok-1", "tok-2"], "非退役删除被快照救回（复合键粒度判定）"
+        assert toks == ["tok-1"], "theirs 携带恰等基底（零意图）⇒ 不得复活 dev 已落地删除（ATK-1 加侧闸）"
+
+        # 反向控制：theirs 对 tok-2 有真实编辑 ⇒ W2 救回语义保留（本尺不得恒绿）
+        edited = base.replace("    token: tok-2\n", "    token: tok-2\n    created_by: ours-intent\n")
+        merged_e, err_e = cql.three_way_merge_registry_yaml(base, ours, edited, rel_path="x.yaml")
+        assert err_e == "", err_e
+        toks_e = [e["token"] for e in yaml.safe_load(merged_e)["creation_tokens"]]
+        assert toks_e == ["tok-1", "tok-2"], "非退役+有编辑意图的删除被快照救回（复合键粒度判定）"
 
         merged2, err2 = cql.three_way_merge_registry_yaml(
             base,
