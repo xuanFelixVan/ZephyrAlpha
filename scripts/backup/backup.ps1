@@ -37,21 +37,59 @@ $DumpDir = "D:\tmp_db_dumps"
 $ChSshHelper = "$ProjectRoot\scripts\backup\ch_vm_ssh.py"
 
 # -- Utility functions --
-function Write-Stage($msg) { Write-Host "[BACKUP] $msg" -ForegroundColor Cyan }
+# Stage timeline (2026-09-25 audit): a 9.1h pass could previously only be
+# reconstructed from NTFS mtimes. Each stage boundary now stamps
+# seconds-since-start into $script:StageLog, emitted by STAGE 4 as stage_timeline.
+$script:StageLog = @()
+function Write-Stage($msg) {
+    if ($backupStartTime) {
+        $script:StageLog += [ordered]@{ stage = $msg; t_seconds = [math]::Round(((Get-Date) - $backupStartTime).TotalSeconds, 1) }
+    }
+    Write-Host "[BACKUP] $msg" -ForegroundColor Cyan
+}
 function Write-OK($msg)    { Write-Host "[OK] $msg" -ForegroundColor Green }
 function Write-Warn($msg)  { Write-Host "[WARN] $msg" -ForegroundColor Yellow }
 function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red }
 
 # -- Lock file (prevent concurrent runs from daily task + post-commit) --
+# Holder liveness is the primary judgment; age is only a fallback when the holder
+# PID cannot be read. A full pass legitimately runs for hours (CH BACKUP poll +
+# in-VM rsync of the base/inc zips + 400k-file vault), so "older than 4h" was never
+# evidence of death: on 2026-09-25 the 06:00 run was still alive at 4.04h when a
+# post-commit run declared the lock stale and started a second pass over the same
+# vault day dir -> linked/copied race flipped code_backup to failed and both runs
+# crawled on the same G: volumes. Same contract as backup_runtime_state._backup_lock.
 function Test-BackupLock {
-    if (Test-Path $LockFile) {
-        $lockAge = ((Get-Date) - (Get-Item $LockFile).LastWriteTime).TotalHours
-        if ($lockAge -lt 4) {
-            Write-Warn "Another backup is running (lock age $([math]::Round($lockAge,1))h < 4h). Exiting."
-            return $true
+    if (-not (Test-Path $LockFile)) { return $false }
+    $lockAge = ((Get-Date) - (Get-Item $LockFile).LastWriteTime).TotalHours
+    $holderPid = 0; $holderStart = $null
+    try {
+        $lockRaw = Get-Content $LockFile -Raw -ErrorAction Stop
+        if ($lockRaw -match 'PID:(\d+)') { $holderPid = [int]$matches[1] }
+        if ($lockRaw -match 'START:(\S+)') { try { $holderStart = [datetime]$matches[1] } catch { $holderStart = $null } }
+    } catch { $holderPid = 0 }
+    if ($holderPid -gt 0) {
+        $holder = Get-Process -Id $holderPid -ErrorAction SilentlyContinue
+        if (-not $holder) {
+            Write-Warn "Lock holder PID $holderPid is dead (lock age $([math]::Round($lockAge,1))h). Proceeding."
+            return $false
         }
-        Write-Warn "Stale lock found (age $([math]::Round($lockAge,1))h >= 4h). Proceeding."
+        $pidRecycled = $false
+        if ($holderStart) {
+            try { $pidRecycled = ([Math]::Abs(($holder.StartTime - $holderStart).TotalMinutes) -gt 5) } catch { $pidRecycled = $false }
+        }
+        if ($pidRecycled) {
+            Write-Warn "Lock holder PID $holderPid is a recycled PID (start mismatch). Proceeding."
+            return $false
+        }
+        Write-Warn "Another backup is running (holder PID $holderPid alive, lock age $([math]::Round($lockAge,1))h). Exiting."
+        return $true
     }
+    if ($lockAge -lt 4) {
+        Write-Warn "Another backup is running (lock age $([math]::Round($lockAge,1))h < 4h, holder PID unreadable). Exiting."
+        return $true
+    }
+    Write-Warn "Stale lock found (age $([math]::Round($lockAge,1))h >= 4h, holder PID unreadable). Proceeding."
     return $false
 }
 function Acquire-Lock {
@@ -836,6 +874,7 @@ $report = @{
     git_bundle = $bundleResult
     offrepo_backup = $offrepoResult
     g_mirror = $gMirrorResult
+    stage_timeline = $script:StageLog
 }
 
 New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
