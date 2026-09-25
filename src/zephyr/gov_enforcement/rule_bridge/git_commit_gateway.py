@@ -213,6 +213,29 @@ def _ensure_scripts_package_importable(project_root: str) -> None:
 
 
 _GATEWAY_ENV = "ZEPHYR_COMMIT_GATEWAY"
+
+
+def _immutable_tree_enabled() -> bool:
+    """S1 不可变树开关（出厂 OFF；翻转属 Owner 门位，宪法 §5）。
+
+    读 config/flags.yaml 的 flags.git_operations.immutable_tree——直读 YAML 而非
+    FlagRegistry：嵌套子键不进注册表（flags.py 只注册顶层 enabled，在册陷阱），
+    直读是唯一能生效的读法（与 T5 regen_scope 同款）。fail-closed OFF：任何异常
+    都回退现行为（门禁输入源不动）。
+    """
+    try:
+        from pathlib import Path as _P  # noqa: PLC0415
+
+        import yaml  # type: ignore[import-untyped]  # noqa: PLC0415
+
+        _root = _P(__file__).resolve().parents[3]
+        data = yaml.safe_load((_root / "config" / "flags.yaml").read_text(encoding="utf-8")) or {}
+        git_ops = (data.get("flags") or {}).get("git_operations") or {}
+        return bool(git_ops.get("immutable_tree", False))
+    except Exception:  # noqa: BLE001 — fail-closed OFF
+        return False
+
+
 _GW_MARKER_FMT = "[GW:{session_id}]"
 _GLOBAL_LOCK_FILE = "git_commit_global.lock"
 _LOCK_TTL_SECONDS = 1800
@@ -2923,8 +2946,38 @@ class GitCommitGateway:
         # （run_git 侧置 None）。索引在窗口内不可变（锁内 + add 在链后），语义等价。
         self._git_read_cache = {}
         try:
+            # S1 不可变树接线（st-commitspeed-tbl-20260924，A3 改指矩阵执行件）：
+            # flag commit_immutable_tree=ON 时，门禁链跑在 CommitTreeView(HEAD^, index树)
+            # 替身上——四入口（_read_staged_file/_get_staged_py_files/_get_added_lines/
+            # _read_head_file）全经 gateway.run_git 同一咽喉，替身的 map_git_command 把
+            # `:p`/`HEAD:p`/`diff --cached`/`ls-files --cached` 改指 base/head 两棵不可变树
+            # ⇒ 72 台门一次改指，输入源不再读共享暂存区（并发作废链+等待随他人暂存涨的
+            # 病根）。等价性=出厂判据：replay 100 笔 verdict 逐笔全等（selfcheck 半场已满分：
+            # 100 笔/1522 文件/byte_mismatch=0/worktree_reads=0）；strict 缺省 False（工作树
+            # 直读透传+探针留痕，不阻断）——15 台"故意读全索引"门在测量模式行为不变，
+            # 分道校验改造归后批。
+            view_gateway = self
+            if _immutable_tree_enabled():
+                try:
+                    from zephyr.gov_enforcement.commit_gates._tree_view import (  # noqa: PLC0415
+                        CommitTreeView,
+                        WorktreeReadProbe,
+                    )
+
+                    head_rev = self.run_git(["git", "rev-parse", "HEAD~1"]).stdout.strip()
+                    staged_tree = self.run_git(["git", "write-tree"]).stdout.strip()
+                    if head_rev and staged_tree:
+                        view_gateway = CommitTreeView(
+                            head_rev,
+                            staged_tree,
+                            gateway=self,
+                            view_label="own_tree_gate_chain",
+                            probe=WorktreeReadProbe(),
+                        )
+                except Exception:  # noqa: BLE001 — 视图构造失败=回退本体 gateway（fail-safe 现行为）
+                    view_gateway = self
             results = self._gate_registry.check_all(
-                self,
+                view_gateway,
                 existing,
                 session_id=session_id,
                 skip_gates=skip_gates,

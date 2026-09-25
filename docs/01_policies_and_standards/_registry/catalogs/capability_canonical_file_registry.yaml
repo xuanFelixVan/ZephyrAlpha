@@ -50843,4 +50843,25 @@ creation_tokens:
   created_by: st-backup-cold-20260924
   capability: vhdx-precheck-report
   merge_evaluation: "备份系统 STAGE 4b 自动产出的季度压缩预检单（裁定#380-4 提醒件），与既有 vhdx_precheck_20260920/21 序列同族续编，非同真源派生"
+- file: src/zephyr/gov_enforcement/commit_gates/_tree_view.py
+  token: commit-speedup-tree-view-20260925
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "S1 不可变树视图（阶梯 S1 主体前置件），提交链治本役新组件，无同真源可并"
+- file: scripts/governance/replay_gate_verdicts.py
+  token: commit-speedup-replay-verdicts-20260925
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "S1 重放安全网驱动器（72 台门 verdict 逐笔比较），本役新组件，无同真源可并"
+- file: tests/governance/test_gate_replay_harness.py
+  token: commit-speedup-replay-harness-test-20260925
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "重放安全网判别测试（红证设计），随被测件同域"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/t/tree_view.yaml
+  token: commit-speedup-tree-view-af-20260925
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "S1 树视图 ALGO_FLOW 外部真源（机生 architecture_view），随被测件同域"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 di_seam_exemptions: []
