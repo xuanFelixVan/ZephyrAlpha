@@ -52692,4 +52692,9 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: metaq_exam_loop
   merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物第三批），锚随 src 件同袋"
+- file: docs/03_modules/_domain_governance/algo_flow/snapshot.yaml
+  token: metaq-gc-algo-flow-snapshot-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物第四批），锚随 src 件同袋"
 di_seam_exemptions: []
