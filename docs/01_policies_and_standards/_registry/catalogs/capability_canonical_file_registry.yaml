@@ -51721,4 +51721,755 @@ creation_tokens:
   capability: commit_speedup
   merge_evaluation: "红蓝对抗鲁棒组报告（task_bound 随役），证据面归档"
 # [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/CAGE_price_cure.md
+  token: decision-map-campaign-cage-price-cure-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/CNS_wiring_accounting.md
+  token: decision-map-campaign-cns-wiring-accounting-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/CORE_reaper_execution.md
+  token: decision-map-campaign-core-reaper-execution-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/DAY_daily_loop_skip.md
+  token: decision-map-campaign-day-daily-loop-skip-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/REEXAM_first_exam.md
+  token: decision-map-campaign-reexam-first-exam-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/SEC_realkey_scan.md
+  token: decision-map-campaign-sec-realkey-scan-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/constituent_expansion_manifest.yaml
+  token: decision-map-campaign-constituent-expansion-manifest-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/p1_v1_universe_469codes.txt
+  token: decision-map-campaign-p1-v1-universe-469codes-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/p1_v1v2_cell_diff.csv
+  token: decision-map-campaign-p1-v1v2-cell-diff-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/p1_v1v2_summary.yaml
+  token: decision-map-campaign-p1-v1v2-summary-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/engine_caliber_map/pairwise_report.md
+  token: decision-map-campaign-pairwise-report-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_cns.yaml
+  token: decision-map-campaign-lane-cns-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_core.yaml
+  token: decision-map-campaign-lane-core-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_d01.yaml
+  token: decision-map-campaign-lane-d01-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_day.yaml
+  token: decision-map-campaign-lane-day-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_du881.yaml
+  token: decision-map-campaign-lane-du881-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_mine_l09.yaml
+  token: decision-map-campaign-lane-mine-l09-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_pit.yaml
+  token: decision-map-campaign-lane-pit-20260925
+  created_by: st-ddup-20260925
+  capability: decision_map_campaign
+  merge_evaluation: "决策地图战役文档族（Owner 指定落 HEAD 面）：战役文档/SKEL/立法稿/深挖簿/案卷，各件唯一真源无重复族"
+- file: docs/_working/fullflow_mining/00_orchestration.md
+  token: fullflow-mining-00-orchestration-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/00_skeleton/00_全环节总册.md
+  token: fullflow-mining-00--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/00_skeleton/00_挖矿分工册.md
+  token: fullflow-mining-00--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/00_skeleton/90_crosscheck_link_census.md
+  token: fullflow-mining-90-crosscheck-link-census-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/00_skeleton_fullflow.md
+  token: fullflow-mining-00-skeleton-fullflow-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/00_overview.md
+  token: fullflow-mining-00-overview-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/01_f13_e0_compute_gate.md
+  token: fullflow-mining-01-f13-e0-compute-gate-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/02_f14_e1_intake_orchestration.md
+  token: fullflow-mining-02-f14-e1-intake-orchestration-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/03_f15_lane_a_community.md
+  token: fullflow-mining-03-f15-lane-a-community-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/04_f16_lane_b_ai_gen.md
+  token: fullflow-mining-04-f16-lane-b-ai-gen-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/05_f17_lane_c_formula_mining.md
+  token: fullflow-mining-05-f17-lane-c-formula-mining-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/06_f18_lane_d_three_high.md
+  token: fullflow-mining-06-f18-lane-d-three-high-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/07_f19_lane_e_model_baseline.md
+  token: fullflow-mining-07-f19-lane-e-model-baseline-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/08_f20_lane_g_stomach_intake.md
+  token: fullflow-mining-08-f20-lane-g-stomach-intake-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/09_f21_e2_hypothesis_precheck.md
+  token: fullflow-mining-09-f21-e2-hypothesis-precheck-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/10_f22_e3_construct_translate.md
+  token: fullflow-mining-10-f22-e3-construct-translate-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/B_后半断点清单.md
+  token: fullflow-mining-b--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/b2_f23_e4_exam.md
+  token: fullflow-mining-b2-f23-e4-exam-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/b2_f24_e5_synergy_dedup.md
+  token: fullflow-mining-b2-f24-e5-synergy-dedup-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/b2_f25_e6_intake_monitor.md
+  token: fullflow-mining-b2-f25-e6-intake-monitor-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/b2_f26_e7_paper_outpost.md
+  token: fullflow-mining-b2-f26-e7-paper-outpost-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/b2_f27_e8_assembly_allocation.md
+  token: fullflow-mining-b2-f27-e8-assembly-allocation-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/b2_f28_e9_live_attribution.md
+  token: fullflow-mining-b2-f28-e9-live-attribution-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/01_strategy_factory/b2_f29_factory_ledger_birth_cert.md
+  token: fullflow-mining-b2-f29-factory-ledger-birth-cert-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/00_overview_a_front.md
+  token: fullflow-mining-00-overview-a-front-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/10_f43_p2_t_trade_rebalance.md
+  token: fullflow-mining-10-f43-p2-t-trade-rebalance-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/11_f44_p3_pyramiding.md
+  token: fullflow-mining-11-f44-p3-pyramiding-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/12_f45_s1_sell_signal.md
+  token: fullflow-mining-12-f45-s1-sell-signal-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/13_f46_s2_exit_execution.md
+  token: fullflow-mining-13-f46-s2-exit-execution-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/14_f47_r1_emergency_lifeline.md
+  token: fullflow-mining-14-f47-r1-emergency-lifeline-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/15_f48_c1_capital_budget.md
+  token: fullflow-mining-15-f48-c1-capital-budget-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/16_f49_c2_portfolio_aggregation.md
+  token: fullflow-mining-16-f49-c2-portfolio-aggregation-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/17_f50_c3_attribution_feedback.md
+  token: fullflow-mining-17-f50-c3-attribution-feedback-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/18_f51_crypto_skeleton.md
+  token: fullflow-mining-18-f51-crypto-skeleton-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/19_f52_validation_dal.md
+  token: fullflow-mining-19-f52-validation-dal-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/f37_l0_premarket_plan.md
+  token: fullflow-mining-f37-l0-premarket-plan-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/f38_l1_market_gate.md
+  token: fullflow-mining-f38-l1-market-gate-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/f39_l2_sector_selection.md
+  token: fullflow-mining-f39-l2-sector-selection-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/f40_l3_stock_selection.md
+  token: fullflow-mining-f40-l3-stock-selection-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/f41_l4_execution.md
+  token: fullflow-mining-f41-l4-execution-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/f42_p1_position_checkup.md
+  token: fullflow-mining-f42-p1-position-checkup-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/02_tdm_decision/pending_rulings.md
+  token: fullflow-mining-pending-rulings-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/03_promotion_ab/01_paper_four_pieces.md
+  token: fullflow-mining-01-paper-four-pieces-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/03_promotion_ab/02_ab_league.md
+  token: fullflow-mining-02-ab-league-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/03_promotion_ab/03_promotion_gate.md
+  token: fullflow-mining-03-promotion-gate-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/03_promotion_ab/04_lifecycle_fsm.md
+  token: fullflow-mining-04-lifecycle-fsm-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/04_knowledge_supply/00_实件化路径总述.md
+  token: fullflow-mining-00--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/04_knowledge_supply/f30_源线行情基本面.md
+  token: fullflow-mining-f30--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/04_knowledge_supply/f31_源线另类.md
+  token: fullflow-mining-f31--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/04_knowledge_supply/f32_图谱谱系.md
+  token: fullflow-mining-f32--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/04_knowledge_supply/f33_状态变量快照.md
+  token: fullflow-mining-f33--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/04_knowledge_supply/f34_知识汇聚.md
+  token: fullflow-mining-f34--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/04_knowledge_supply/f35_一问一考.md
+  token: fullflow-mining-f35--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/04_knowledge_supply/f36_治理横切.md
+  token: fullflow-mining-f36--20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/90_chief_rulings_wave1.md
+  token: fullflow-mining-90-chief-rulings-wave1-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/01_ingest.md
+  token: fullflow-mining-01-ingest-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/02_cleaning.md
+  token: fullflow-mining-02-cleaning-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/03_ch_warehouse.md
+  token: fullflow-mining-03-ch-warehouse-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/04_cold_storage.md
+  token: fullflow-mining-04-cold-storage-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/05_tdm_crossaxis.md
+  token: fullflow-mining-05-tdm-crossaxis-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/06_registers_manifest.yaml
+  token: fullflow-mining-06-registers-manifest-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/90_backfill_wave.md
+  token: fullflow-mining-90-backfill-wave-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/pending_rulings.md
+  token: fullflow-mining-pending-rulings-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/补挖波_20260925/07_f02_source_onboarding.md
+  token: fullflow-mining-07-f02-source-onboarding-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/补挖波_20260925/08_f04_cleaning_zero_wiring.md
+  token: fullflow-mining-08-f04-cleaning-zero-wiring-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/补挖波_20260925/09_f08_cold_storage_confirm.md
+  token: fullflow-mining-09-f08-cold-storage-confirm-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m1_data/补挖波_20260925/10_f11_xref_counting_drift.md
+  token: fullflow-mining-10-f11-xref-counting-drift-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m2_backtest_sim/00_m2_overview.md
+  token: fullflow-mining-00-m2-overview-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m2_backtest_sim/01_auto_runtime.md
+  token: fullflow-mining-01-auto-runtime-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m2_backtest_sim/02_backtest.md
+  token: fullflow-mining-02-backtest-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m2_backtest_sim/03_sim_daily.md
+  token: fullflow-mining-03-sim-daily-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m2_backtest_sim/04_gpu_matrix.md
+  token: fullflow-mining-04-gpu-matrix-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m2_backtest_sim/05_cost_gates.md
+  token: fullflow-mining-05-cost-gates-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m2_backtest_sim/06_ibt_backtest.md
+  token: fullflow-mining-06-ibt-backtest-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m2_backtest_sim/07_pf_alloc.md
+  token: fullflow-mining-07-pf-alloc-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m2_backtest_sim/pending_rulings.md
+  token: fullflow-mining-pending-rulings-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m3_governance/01_runtime_guards.md
+  token: fullflow-mining-01-runtime-guards-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m3_governance/02_reconcilers.md
+  token: fullflow-mining-02-reconcilers-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m3_governance/03_registry_families.md
+  token: fullflow-mining-03-registry-families-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m3_governance/04_coverage_gaps.md
+  token: fullflow-mining-04-coverage-gaps-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m4_ai_layer/01_ai_layer_six_families.md
+  token: fullflow-mining-01-ai-layer-six-families-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m4_ai_layer/02_capability_lookup.md
+  token: fullflow-mining-02-capability-lookup-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m4_ai_layer/03_lsg_defense.md
+  token: fullflow-mining-03-lsg-defense-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m4_ai_layer/04_meta_question_pg.md
+  token: fullflow-mining-04-meta-question-pg-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m4_ai_layer/接续收口_20260925/01_lsg_dead_paths.md
+  token: fullflow-mining-01-lsg-dead-paths-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m4_ai_layer/接续收口_20260925/02_evolution_ignition_three_gaps.md
+  token: fullflow-mining-02-evolution-ignition-three-gaps-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m4_ai_layer/接续收口_20260925/03_f94_f95_construction_orders.md
+  token: fullflow-mining-03-f94-f95-construction-orders-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/01_windows_schedtasks.md
+  token: fullflow-mining-01-windows-schedtasks-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/02_inrepo_daemons.md
+  token: fullflow-mining-02-inrepo-daemons-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/03_cron_automations.md
+  token: fullflow-mining-03-cron-automations-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/04_silent_failure_modes.md
+  token: fullflow-mining-04-silent-failure-modes-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/05_master_health_table.md
+  token: fullflow-mining-05-master-health-table-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/90_backfill_wave.md
+  token: fullflow-mining-90-backfill-wave-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/补挖波_20260925/00_overview.md
+  token: fullflow-mining-00-overview-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/补挖波_20260925/01_fbl_feedback_loop.md
+  token: fullflow-mining-01-fbl-feedback-loop-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/补挖波_20260925/02_boot_chain.md
+  token: fullflow-mining-02-boot-chain-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/补挖波_20260925/03_backup_coldstore.md
+  token: fullflow-mining-03-backup-coldstore-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/补挖波_20260925/04_perf_watermark.md
+  token: fullflow-mining-04-perf-watermark-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m5_scheduling/补挖波_20260925/05_order_daemon_wiring.md
+  token: fullflow-mining-05-order-daemon-wiring-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m6_frontend/01_dashboard.md
+  token: fullflow-mining-01-dashboard-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m6_frontend/02_api_server.md
+  token: fullflow-mining-02-api-server-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m6_frontend/03_panel_caches.md
+  token: fullflow-mining-03-panel-caches-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m6_frontend/90_backfill_wave.md
+  token: fullflow-mining-90-backfill-wave-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m6_frontend/补挖波_20260925/04_reporting.md
+  token: fullflow-mining-04-reporting-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m6_frontend/补挖波_20260925/05_api_contract_forensics.md
+  token: fullflow-mining-05-api-contract-forensics-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m7_live_execution/00_m7_overview.md
+  token: fullflow-mining-00-m7-overview-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m7_live_execution/01_qmt_bridge.md
+  token: fullflow-mining-01-qmt-bridge-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m7_live_execution/02_kill_switch.md
+  token: fullflow-mining-02-kill-switch-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m7_live_execution/03_position_sell.md
+  token: fullflow-mining-03-position-sell-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m7_live_execution/04_ex_core_ladder.md
+  token: fullflow-mining-04-ex-core-ladder-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m7_live_execution/05_ex_sor.md
+  token: fullflow-mining-05-ex-sor-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m7_live_execution/06_compliance_gates.md
+  token: fullflow-mining-06-compliance-gates-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m8_bottlenecks/00_root_cause_synthesis.md
+  token: fullflow-mining-00-root-cause-synthesis-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m8_bottlenecks/01_open_wounds.md
+  token: fullflow-mining-01-open-wounds-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m8_bottlenecks/补裁证据_20260925/f120_skeleton_fouraxis_evidence.md
+  token: fullflow-mining-f120-skeleton-fouraxis-evidence-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m8_bottlenecks/补裁证据_20260925/f121_research_domains_evidence.md
+  token: fullflow-mining-f121-research-domains-evidence-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/fullflow_mining/m8_bottlenecks/补裁证据_20260925/f122_pipeline_routing_boundary_evidence.md
+  token: fullflow-mining-f122-pipeline-routing-boundary-evidence-20260925
+  created_by: st-fflead-20260925
+  capability: fullflow_mining
+  merge_evaluation: "全流通挖矿战役作业簿+总筹裁定册落库（九车道 M0-M8+01-04 四段册+裁定波1）：既有战役挖矿产出落库，非新建真源"
+- file: docs/_working/gpu_rewrite/hotspot_census.md
+  token: gpu-rewrite-mining-hotspot-census-20260925
+  created_by: st-ddup-20260925
+  capability: gpu_rewrite_mining
+  merge_evaluation: "LANE-GPU 挖矿五册+全景/验证/路线图族：同真源单册收敛无重复族（hotspot_census 已并 compute_inventory 草稿），全部带 ttl frontmatter"
+- file: docs/_working/gpu_rewrite/industry_gpu_landscape.md
+  token: gpu-rewrite-mining-industry-gpu-landscape-20260925
+  created_by: st-ddup-20260925
+  capability: gpu_rewrite_mining
+  merge_evaluation: "LANE-GPU 挖矿五册+全景/验证/路线图族：同真源单册收敛无重复族（hotspot_census 已并 compute_inventory 草稿），全部带 ttl frontmatter"
+- file: docs/_working/gpu_rewrite/migration_roadmap.md
+  token: gpu-rewrite-mining-migration-roadmap-20260925
+  created_by: st-ddup-20260925
+  capability: gpu_rewrite_mining
+  merge_evaluation: "LANE-GPU 挖矿五册+全景/验证/路线图族：同真源单册收敛无重复族（hotspot_census 已并 compute_inventory 草稿），全部带 ttl frontmatter"
+- file: docs/_working/gpu_rewrite/rewrite_architecture_three_tiers.md
+  token: gpu-rewrite-mining-rewrite-architecture-three-tiers-20260925
+  created_by: st-ddup-20260925
+  capability: gpu_rewrite_mining
+  merge_evaluation: "LANE-GPU 挖矿五册+全景/验证/路线图族：同真源单册收敛无重复族（hotspot_census 已并 compute_inventory 草稿），全部带 ttl frontmatter"
+- file: docs/_working/gpu_rewrite/verification_framework.md
+  token: gpu-rewrite-mining-verification-framework-20260925
+  created_by: st-ddup-20260925
+  capability: gpu_rewrite_mining
+  merge_evaluation: "LANE-GPU 挖矿五册+全景/验证/路线图族：同真源单册收敛无重复族（hotspot_census 已并 compute_inventory 草稿），全部带 ttl frontmatter"
+- file: docs/_working/quant_methodology/01_caliber_law.md
+  token: quant-methodology-01-caliber-law-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+- file: docs/_working/quant_methodology/02_overfitting_defense.md
+  token: quant-methodology-02-overfitting-defense-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+- file: docs/_working/quant_methodology/03_conditional_stats_spec.md
+  token: quant-methodology-03-conditional-stats-spec-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+- file: docs/_working/quant_methodology/04_switch_friction.md
+  token: quant-methodology-04-switch-friction-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+- file: docs/_working/quant_methodology/05_drift_reestimation.md
+  token: quant-methodology-05-drift-reestimation-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+- file: docs/_working/quant_methodology/06_institutional_benchmark.md
+  token: quant-methodology-06-institutional-benchmark-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+- file: docs/_working/quant_methodology/README.md
+  token: quant-methodology-readme-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+- file: docs/_working/quant_methodology/appendix_A_retired_strategies.md
+  token: quant-methodology-appendix-a-retired-strategies-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+- file: docs/_working/quant_methodology/appendix_B_tick_vs_minute.md
+  token: quant-methodology-appendix-b-tick-vs-minute-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+- file: docs/_working/quant_methodology/appendix_C_six_state_truth_chain.md
+  token: quant-methodology-appendix-c-six-state-truth-chain-20260925
+  created_by: st-ddup-20260925
+  capability: quant_methodology
+  merge_evaluation: "方法论十册（Owner 指定落 HEAD 面）：口径律/过拟防御/条件统计/换挡摩擦/漂移重估/机构对标/退役附录，同族单册无重复"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 di_seam_exemptions: []
