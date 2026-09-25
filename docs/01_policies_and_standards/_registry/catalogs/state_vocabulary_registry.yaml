@@ -1,0 +1,634 @@
+# 状态词表中央登记表（REG-STATE-VOCAB-001）——词表 SSOT 制度 W2 收编件 / W3 执法门比对基底
+# 真源方向（宪法 RULE-SSOT）：立法件=语义真源，本册=机读登记真源，market_state.py=官方常量的代码镜像。
+#   语义真源 docs/_working/vocab_legislation/01_official_state_vocabulary.md（裁定 #398 五①＋#399 四 已批）
+#   存量普查真源 docs/_working/vocab_legislation/02_state_vocabulary_mapping_register.md（逐套实物锚点）
+#   执法件 src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py（STATE-VOCAB-REGISTRY）
+#   官方常量 src/zephyr/shared/vocab/market_state.py（SH-VOCAB-001）
+# 本册不新造任何状态值：所有 values/tokens/映射逐字取自上列两件已立法文件。
+# 计数铁律（宪法 §4.3）：entry_count 为派生标量，由生成器/总筹按 vocabularies 数组长度重算，禁手改散文。
+schema_version: 1
+registry_id: REG-STATE-VOCAB-001
+name: 状态词表中央登记表
+status: active
+maintenance: manual
+created_by_lane: W3-E（st-ailayer-final-20260924 施工车道 W3-E，补建件＝使既有声明为真，不新开制度）
+ruling_basis: ['裁定#398 五①', '裁定#399 四']
+scope_statement: >-
+  登记面真源：凡"状态/阶段/市况/情绪/模式"封闭枚举，必须在本册有一条登记，
+  否则 STATE-VOCAB-REGISTRY 门在提交面记为未登记。本册不裁业务语义、不改分段判据。
+boundary_statement: >-
+  与 docs/01_policies_and_standards/_registry/catalogs/strategy_registry 的 lifecycle_status 词表
+  （对齐层 src/zephyr/shared/lifecycle/registry_state_vocab.py）是**跨域不同对象→不并**：
+  那边=策略生命周期"FSM 词↔注册表词"拼写对齐，这边=大盘状态/情绪本体。禁顺手合并（94 波2 裁定册 §四 边界）。
+
+# ── 官方本体（轴 M/E/S + C11 归一表；values_locked=true 的类由执法门做"值不在册→拦"）──────
+official_ontology:
+  module: zephyr.shared.vocab.market_state
+  constant_id: SH-VOCAB-001
+  physical_location: src/zephyr/shared/vocab/market_state.py
+  paradigm: vnpy constant.py 同构（类做命名空间 + 字符串字面量成员 + 模块级映射表；纯常量零逻辑零 IO）
+  classes:
+    - name: MacroRegime
+      target: zephyr.shared.vocab.market_state.MacroRegime
+      axis: m.regime
+      role: 官方本体（轴 M 宏观 regime，HMM 七态）
+      values_locked: true
+      canonical_values: [R1, R2, R3, R4, R10, R11, R12]
+      tokens: [m.regime.r1, m.regime.r2, m.regime.r3, m.regime.r4, m.regime.r10, m.regime.r11, m.regime.r12]
+      zh_labels: {R1: 低波震荡, R2: 中波震荡, R3: 牛市趋势, R4: 熊市阴跌, R10: 危机, R11: 复苏, R12: 突破}
+      state_count_rule: 七态是裁定#304 锚定的代码绑定资产；4 态收敛走裁定#398 五② 专项，回测证据出来前不动
+      data_source: c1_backtest.regime_state_anchored
+      collision_notes: [C1]
+    - name: EmotionCycleSix
+      target: zephyr.shared.vocab.market_state.EmotionCycleSix
+      axis: e.cycle
+      role: 官方本体（轴 E 情绪周期六段 v1.2，Owner 已批格子语义）
+      values_locked: true
+      canonical_values: [CAPITULATION, ACCUMULATION, IGNITION, EXPANSION, EUPHORIA, DISTRIBUTION]
+      tokens: [e.cycle.capitulation, e.cycle.accumulation, e.cycle.ignition, e.cycle.expansion, e.cycle.euphoria, e.cycle.distribution]
+      zh_labels: {CAPITULATION: 投降（冰点）, ACCUMULATION: 蓄势, IGNITION: 点火, EXPANSION: 主升, EUPHORIA: 亢奋, DISTRIBUTION: 退潮（派发）}
+      segmentation_ruling: 六段划分已裁（#398 五①＋#399 四）——本册与代码本体只做固化，禁重开设计、禁改分段语义
+      data_source: config/trading_decision_map.yaml state_matrix.states（映射册 E4 行＝官方 token 拼写源）
+      collision_notes: [C2]
+    - name: IntradayFive
+      target: zephyr.shared.vocab.market_state.IntradayFive
+      axis: e.intraday
+      role: 官方伴生轴（盘中五态，非第七段，经 INTRADAY_TO_SIX 挂六段）
+      values_locked: true
+      canonical_values: [LOW, DEFENSE, OSCILLATION, ATTACK, EUPHORIC]
+      approved_edges: {LOW: CAPITULATION, DEFENSE: ACCUMULATION, OSCILLATION: ACCUMULATION, ATTACK: IGNITION}
+      proposed_edges: {EUPHORIC: IGNITION}
+      proposed_note: 立法件 §2 明示 euphoric→ignition 为 proposed（Owner 未批），未批前不得当已批边消费
+      collision_notes: [最热方向相反陷阱（立法件 §3 末条）]
+    - name: AnchoredTier
+      target: zephyr.shared.vocab.market_state.AnchoredTier
+      axis: s.anchored
+      role: 官方本体（轴 S 个股锚定四档，C1 撞名消歧件）
+      values_locked: true
+      canonical_values: [ANCHORED_R3, ANCHORED_R2, ANCHORED_R1, ANCHORED_R4]
+      tokens: [s.anchored.r3, s.anchored.r2, s.anchored.r1, s.anchored.r4]
+      zh_labels: {ANCHORED_R3: 低风险, ANCHORED_R2: 中风险, ANCHORED_R1: 中高风险, ANCHORED_R4: 高风险}
+      thresholds_owner: 阈值 0.30/0.60/0.80 的真源是 anchored_state_machine（业务面），本册不搬阈值（防双真源）
+      collision_notes: [C1]
+  extreme_alias_table:
+    name: EXTREME_STATE_ALIASES
+    target: zephyr.shared.vocab.market_state.EXTREME_STATE_ALIASES
+    axis: m.regime
+    role: C11 官方归一表——九种"最坏状态"写法统一归一到 m.regime.r10
+    canonical_keys: [CRISIS, crisis, CRISIS_VOL, EMERGENCY, CRASH, S0_ICE, ICE, 冰点, 退潮]
+    normalization_target: m.regime.r10
+    emotion_face_note: >-
+      映射册 §G 对 S0_ICE/ICE/冰点/退潮 四键同时标注情绪落点（capitulation/distribution），
+      属"按语境"注记而非第二归一方向；主归一方向仍是 r10（立法件 §3-C11）。
+      代码侧镜像=market_state.EXTREME_ALIAS_EMOTION_FACE，仅披露不改向。
+
+# ── 存量逐套登记（34 套，逐字来自映射册 B/C/D/E/F 五段；location 带行号后缀＝故意为之，
+#    执法门 _is_registered 的模块路径匹配只认纯路径串，带 :行号 不触发整文件放行，
+#    登记粒度因此保持在"类/符号"级而非"文件"级）────────────────────────────────────────
+vocabularies:
+# [A_config] module_id=CFG-state-vocab-registry | layer=config | stability=stable | safety=M | ai_autonomy=human_gated
+# canonical_mapping 取值：identity（本套即官方）/ {target, mapping}（部分或全量映射）/ null（无映射：
+# 预测轴数值分布豁免、结构不同对象、语义映射未裁定）。conflicts=普查冲突编号+短注。
+# 状态名全部照抄源码原文名（v=枚举 value 中文仅备注）。
+  # ============================================================================
+  # ↓ 主区块 verbatim（他道 2026-09-22/23 版 vocabularies 全 29 条，一字未改，字段名沿用
+  #   其自身 vocabulary_id/name_zh/states/…；ROOR REG-STATE-VOCAB-001 entry_count 现值登记的
+  #   就是这一段）。合并=并集，禁覆盖禁抹条——依据=W6-V 任务书＋92 册 §一.4。
+  # ============================================================================
+  # ============================================================
+  # 宏观 regime 轴（10 套；官方=MacroRegime 七态）
+  # ============================================================
+  - vocabulary_id: regime-hmm-7
+    name_zh: 宏观 HMM 七态（官方宏观轴本尊）
+    axis: 宏观
+    granularity: daily
+    states: [r1, r2, r3, r4, r10, r11, r12]
+    source: src/zephyr/regime/core/regime_detector.py:107
+    status: production
+    canonical_mapping: {target: zephyr.shared.vocab.market_state.MacroRegime, mapping: identity}
+    conflicts:
+      - "C1（r1-r4 与锚定四档撞号且语义近镜像，消费须声明轴来源）"
+      - "C11（r10=CRISIS 为最坏状态九写法之一的本尊）"
+
+  - vocabulary_id: anchored-4
+    name_zh: 锚定四档风险档
+    axis: 宏观
+    granularity: daily
+    states: [r1, r2, r3, r4]
+    source: src/zephyr/regime/core/anchored_state_machine.py:86
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "C1（r1-r4 与 MacroRegime 撞号：此处 r3=低风险 vs HMM r3=牛市趋势，语义几乎镜像；官方消歧常量=AnchoredTier.ANCHORED_R1..R4）"
+
+  - vocabulary_id: regime-12
+    name_zh: 12 态（9 基础态+3 特殊态）
+    axis: 宏观
+    granularity: daily
+    states: [Bull-Low, Bull-Medium, Bull-High, Neutral-Low, Neutral-Medium, Neutral-High, Bear-Low, Bear-Medium, Bear-High, CRISIS, RECOVERY, BREAKOUT]
+    source: src/zephyr/signal_ashare/sentiment/sentiment_cycle.py:678
+    status: production
+    canonical_mapping:
+      target: zephyr.shared.vocab.market_state.MacroRegime
+      mapping: {CRISIS: R10, RECOVERY: R11, BREAKOUT: R12}
+    conflicts:
+      - "C5（类名 MarketRegime 与 volume_regime_adaptive/regime_gain_scheduling 等撞类名）"
+      - "C11（CRISIS 在九写法内）"
+
+  - vocabulary_id: market-grid-3x3
+    name_zh: 市场状态 3×3 网格（趋势×波动率）
+    axis: 宏观
+    granularity: daily
+    states: [BULL_LOW, BULL_MEDIUM, BULL_HIGH, NEUTRAL_LOW, NEUTRAL_MEDIUM, NEUTRAL_HIGH, BEAR_LOW, BEAR_MEDIUM, BEAR_HIGH]
+    source: src/zephyr/signal_ashare/market_state_sensor.py:110
+    status: production
+    canonical_mapping: null
+    conflicts: null
+
+  - vocabulary_id: volume-regime-3
+    name_zh: 量能体制三态
+    axis: 宏观
+    granularity: daily
+    states: [TREND, MEAN_REVERSION, CHOPPY]
+    source: src/zephyr/signal_ashare/volume_regime_adaptive.py:76
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "C5（类名 MarketRegime 与他模块撞类名）"
+
+  - vocabulary_id: crisis-gate-3
+    name_zh: 危机闸三档状态机
+    axis: 宏观
+    granularity: daily
+    states: [normal, warning, crisis]
+    source: src/zephyr/pf_alloc/crisis_gate.py:39
+    status: production
+    canonical_mapping:
+      target: zephyr.shared.vocab.market_state.MacroRegime
+      mapping: {crisis: R10}
+    conflicts:
+      - "C11（crisis 在九写法内，经 EXTREME_STATE_ALIASES 归一）"
+
+  - vocabulary_id: feedback-regime-4
+    name_zh: 反馈回路增益调度四态
+    axis: 宏观
+    granularity: daily
+    states: [CALM, NORMAL, VOLATILE, CRISIS]
+    source: src/zephyr/feedback_loop/diagnosers/reliability/regime_gain_scheduling.py:38
+    status: production
+    canonical_mapping:
+      target: zephyr.shared.vocab.market_state.MacroRegime
+      mapping: {CRISIS: R10}
+    conflicts:
+      - "C5（类名 MarketRegime 与他模块撞类名）"
+      - "C11（CRISIS 在九写法内）"
+
+  - vocabulary_id: market-mode-4
+    name_zh: 市场事件模式四态
+    axis: 宏观
+    granularity: daily
+    states: [NORMAL, CAUTION, EMERGENCY, HOLIDAY]
+    source: src/zephyr/feedback_loop/collectors/market_event_integrator.py:36
+    status: production
+    canonical_mapping:
+      target: zephyr.shared.vocab.market_state.MacroRegime
+      mapping: {EMERGENCY: R10}
+    conflicts:
+      - "C11（EMERGENCY 在九写法内）"
+
+  - vocabulary_id: lifecycle-season-4
+    name_zh: 行情生命周期四季
+    axis: 宏观
+    granularity: daily
+    states: [SPRING, SUMMER, AUTUMN, WINTER]
+    source: src/zephyr/signal_ashare/market_lifecycle_phase.py:87
+    status: production
+    canonical_mapping: null
+    conflicts: null
+
+  - vocabulary_id: warm-plane-7
+    name_zh: 暖板预算路由七状态
+    axis: 宏观
+    granularity: daily
+    states: [趋势向上, 高波动, 震荡, 压缩突破, 趋势向下, 事件驱动, 板块轮动]
+    source: src/zephyr/infrastructure/warm_plane_budget.py:142
+    status: production
+    canonical_mapping: null
+    conflicts: null
+
+  # ============================================================
+  # 情绪周期轴（12 套；官方=EmotionCycleSix 六段）
+  # ============================================================
+  - vocabulary_id: tdm-six
+    name_zh: TDM 情绪周期六段（官方情绪轴本尊，v1.2 定稿）
+    axis: 情绪
+    granularity: daily
+    states: [capitulation, accumulation, ignition, expansion, euphoria, distribution]
+    source: config/trading_decision_map.yaml:4474
+    status: production
+    canonical_mapping: {target: zephyr.shared.vocab.market_state.EmotionCycleSix, mapping: identity}
+    conflicts: null
+
+  - vocabulary_id: sent-cycle-5-A
+    name_zh: 情绪周期五阶段（A 拼写）
+    axis: 情绪
+    granularity: daily
+    states: [FREEZING, STARTING, FERMENTING, CONSENSUS, EBING]
+    source: src/zephyr/signal_ashare/sentiment/sentiment_cycle.py:52
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "C2（三套五段拼写之一：STARTING/FERMENTING/CONSENSUS/EBING 与 B/youzi 套互不兼容，仅 FREEZING 同名）"
+
+  - vocabulary_id: sent-phase-5-B
+    name_zh: 市场情绪阶段五段（B 拼写）
+    axis: 情绪
+    granularity: daily
+    states: [FREEZING, REVERSAL, MAIN_RALLY, EUPHORIA, RETREATING]
+    source: src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py:89
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "C2（三套五段拼写之一）"
+      - "方向陷阱（普查实证：本套把最热≥80分映射为 RETREATING 退潮，与 youzi 套最热=MANIA 方向相反）"
+
+  - vocabulary_id: youzi-5
+    name_zh: 游资接力情绪五段（4+1）
+    axis: 情绪
+    granularity: daily
+    states: [FREEZING, REVERSAL, MAIN_RISE, MANIA, RETREAT]
+    source: src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py:60
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "C2（三套五段拼写之一：MAIN_RISE/MANIA/RETREAT 与 A/B 套互不兼容）"
+      - "方向陷阱（最热=MANIA 疯狂，与 sent-phase-5-B 的 RETREATING 方向相反）"
+
+  - vocabulary_id: pyramiding-5
+    name_zh: 金字塔加仓情绪五段
+    axis: 情绪
+    granularity: daily
+    states: [ICE, IGNITION, EXPANSION, EXCITEMENT, EBB]
+    source: src/zephyr/position/core/pyramiding_rules.py:51
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "C11（ICE 在九写法内；注意 EXTREME_STATE_ALIASES 把 ICE 归一到 R10 危机档，与本套 ICE=冰点情绪档语义不同轴）"
+
+  - vocabulary_id: env-switch-six
+    name_zh: 环境开关六段（TDM 六段代码拷贝）
+    axis: 情绪
+    granularity: daily
+    states: [capitulation, accumulation, ignition, expansion, euphoria, distribution]
+    source: src/zephyr/signal_ashare/core/environment_switch.py:40
+    status: production
+    canonical_mapping: {target: zephyr.shared.vocab.market_state.EmotionCycleSix, mapping: identity}
+    conflicts:
+      - "拷贝注记（六段为 TDM state_matrix 列轴的代码拷贝，真源=TDM；漂移须以 TDM 为准回改）"
+
+  - vocabulary_id: limitup-4
+    name_zh: 涨停情绪四阶段 v1
+    axis: 情绪
+    granularity: daily
+    states: [高潮, 退潮, 发酵, 中性]
+    source: src/zephyr/alt_data/alt_regime_signals.py:130
+    status: testing
+    canonical_mapping: null
+    conflicts:
+      - "C11（退潮 在九写法内）"
+      - "provisional 阈值（挖矿 R10 社区共识），毕业前不得进决策硬链（源码 docstring 原注）"
+
+  - vocabulary_id: rotation-5
+    name_zh: 板块轮动五状态
+    axis: 情绪
+    granularity: daily
+    states: [CONSENSUS_CLIMAX, DISAGREEMENT_PULLBACK, HEALTHY_MAINLINE, DISTRIBUTION_RISK, NEUTRAL_MIXED]
+    source: src/zephyr/signal_ashare/sector/sector_rotation_state.py:52
+    status: production
+    canonical_mapping: null
+    conflicts: null
+
+  - vocabulary_id: water-temp-response-5
+    name_zh: 板块闸水温响应五档
+    axis: 情绪
+    granularity: daily
+    states: [NEUTRAL, RISK_ON, PANIC_REPAIR, RISK_OFF, CRASH]
+    source: src/zephyr/signal_ashare/sector/sector_gate.py:54
+    status: production
+    canonical_mapping:
+      target: zephyr.shared.vocab.market_state.MacroRegime
+      mapping: {CRASH: R10}
+    conflicts:
+      - "C6（水温两套之一，与本表 water-tier-5 撞'水温'名）"
+      - "C11（CRASH 在九写法内）"
+
+  - vocabulary_id: sent-state-4
+    name_zh: 情绪引擎状态四档
+    axis: 情绪
+    granularity: daily
+    states: [ICE, NORMAL, OVERHEAT, INSUFFICIENT_HISTORY]
+    source: src/zephyr/alt_data/sentiment_engine.py:68
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "C11（ICE 在九写法内；本套 ICE=冰点情绪档，与 EXTREME_STATE_ALIASES 的 ICE→R10 危机档语义不同轴，消费须声明）"
+
+  - vocabulary_id: water-tier-5
+    name_zh: 日级水温五档（S0 冰→S4 烫）
+    axis: 情绪
+    granularity: daily
+    states: [S0_ICE, S1_COOL, S2_NEUTRAL, S3_WARM, S4_HOT]
+    source: src/zephyr/signal_ashare/core/daily_condition_sensor.py:45
+    status: production
+    canonical_mapping:
+      target: zephyr.shared.vocab.market_state.MacroRegime
+      mapping: {S0_ICE: R10}
+    conflicts:
+      - "C6（水温两套之一，与 water-temp-response-5 撞'水温'名）"
+      - "C9（S 编号族：S0-S4，与 daily-plan-3 的 S1-S3 等他套 S 编号撞形）"
+      - "C11（S0_ICE 在九写法内）"
+
+  - vocabulary_id: canonical-phase-5
+    name_zh: 分层相关性情绪阶段（4+1 中文契约）
+    axis: 情绪
+    granularity: daily
+    states: [冰点, 反核, 主升, 疯狂, 退潮]
+    source: src/zephyr/factor/analysis/correlation_sentiment_stratifier.py:55
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "C11（冰点/退潮 在九写法内）"
+
+  # ============================================================
+  # 预测/预案轴（5 套；官方=数值分布，canonical_mapping=null 豁免）
+  # ============================================================
+  - vocabulary_id: next-day-8
+    name_zh: 次日走势八态
+    axis: 预测
+    granularity: next_day
+    states: [GAP_UP_UP, GAP_UP_DOWN, GAP_DOWN_UP, GAP_DOWN_DOWN, FLAT_UP, FLAT_DOWN, FLAT_CLOSE, VIOLENT]
+    source: src/zephyr/signal_ashare/ml_forecast/next_day_8state_forecast.py:78
+    status: production
+    canonical_mapping: null
+    conflicts: null
+
+  - vocabulary_id: similar-day-3
+    name_zh: 相似日三档标签
+    axis: 预测
+    granularity: next_day
+    states: [走强, 持平, 转弱]
+    source: src/zephyr/signal_ashare/ml_forecast/similar_day_inference.py:78
+    status: production
+    canonical_mapping: null
+    conflicts: null
+
+  - vocabulary_id: nextday-3
+    name_zh: 次日涨平跌概率三元（数值分布）
+    axis: 预测
+    granularity: next_day
+    states: [p_up, p_flat, p_down]
+    source: src/zephyr/plan_engine/next_day_forecaster.py:41
+    status: production
+    canonical_mapping: null
+    conflicts: null
+
+  - vocabulary_id: daily-plan-3
+    name_zh: 日预案三分支
+    axis: 预测
+    granularity: daily
+    states: [S1_attack, S2_defense, S3_oscillation]
+    source: src/zephyr/plan_engine/daily_plan.py:401
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "C9（S 编号族：S1-S3，与 water-tier-5 的 S0-S4 等他套 S 编号撞形）"
+
+  - vocabulary_id: cycle-eval-5
+    name_zh: 情绪周期定位评测五段（复用 sent-cycle-5-A 词表）
+    axis: 预测
+    granularity: eval
+    states: [FREEZING, STARTING, FERMENTING, CONSENSUS, EBING]
+    source: src/zephyr/signal_ashare/sentiment/sentiment_cycle_evaluator.py:48
+    status: testing
+    canonical_mapping: null
+    conflicts:
+      - "C2（词表复用 sent-cycle-5-A，拼写冲突随之继承）"
+
+  # ============================================================
+  # 个股行为轴（合并登记；登记不入官方）
+  # ============================================================
+  - vocabulary_id: stock-behavior-family
+    name_zh: 个股行为词表族（banker-6/behavior-7/wyckoff-3/cycle-phase-5/fusion-7/shock-3/fng-5 等合并条）
+    axis: 个股
+    granularity: mixed
+    states: [建仓, 洗盘, 拉升, 出货, 对倒, 护盘]
+    source: src/zephyr/signal_ashare/banker_pattern_simulator.py:58
+    status: production
+    canonical_mapping: null
+    conflicts:
+      - "DISTRIBUTION 拼写与 EmotionCycleSix.DISTRIBUTION（退潮/派发）同形异轴——个股轴登记不入官方，消费须声明轴来源"
+      - "本条为合并登记（代表条目=BankerPhase 六阶段；behavior-7/wyckoff-3/cycle-phase-5/fusion-7/shock-3/fng-5 等同轴词表随普查归档，不逐套展开）"
+
+  # ============================================================
+  # 盘中情绪子词表（红队 P2-9 补登记：真源三处同步 judgment_ledger.py:153）
+  # ============================================================
+  - vocabulary_id: intraday-five
+    name_zh: 盘中五态（官方情绪轴盘中子词表）
+    axis: 情绪
+    granularity: intraday
+    states: [LOW 低迷, DEFENSE 防御, OSCILLATION 震荡, ATTACK 进攻, EUPHORIC 亢奋]
+    source: src/zephyr/plan_engine/intraday_l1_tracker.py:134
+    status: production
+    canonical_mapping: {target: zephyr.shared.vocab.market_state.IntradayFiveVocab, mapping: INTRADAY_TO_SIX, note: 亢奋→IGNITION 与 防御→DISTRIBUTION 均 proposed 待 Owner 校准}
+    conflicts:
+      - "C12（中文词多轴复用）"
+  # B. 宏观 regime 轴存量（8 套）
+  - {id: M1, name: REGIME_STATES, class: REGIME_STATES, axis: m.regime, form: list, location: "src/zephyr/regime/core/regime_detector.py:107", official_mapping: [m.regime.r1, m.regime.r2, m.regime.r3, m.regime.r4, m.regime.r10, m.regime.r11, m.regime.r12], collision_notes: [C1], disposition: 原位保留=官方数据面（#304 锚定）}
+  - {id: M2, name: HMM_STATES+OVERLAY_STATES, class: HMM_STATES, axis: m.regime, form: list×2, location: "src/zephyr/regime/core/regime_detector.py:108-109", official_mapping: [m.regime.*], collision_notes: [C1], disposition: 原位保留}
+  - {id: M3, name: REGIME_STATES_12, class: REGIME_STATES_12, axis: m.regime, form: list, location: "src/zephyr/signal_ashare/sentiment/sentiment_cycle.py:678-691", official_mapping: [m.regime.r1, m.regime.r2, m.regime.r3, m.regime.r4, m.regime.r10, m.regime.r11, m.regime.r12], collision_notes: [与水温 S0-S4/转换 S 系撞号面], disposition: 原位保留+映射}
+  - {id: M4, name: SizingMarketRegime, class: SizingMarketRegime, axis: m.regime, form: enum, location: "src/zephyr/position/core/position_sizing_engine.py:89-100", official_mapping: [m.regime.r3, m.regime.r4, m.regime.r10, m.regime.r11, m.regime.r12], collision_notes: [MarketRegime 三胞胎之一], disposition: 原位保留+映射}
+  - {id: M5, name: MarketRegime(牛熊2态), class: MarketRegime, axis: m.regime, form: enum, location: "src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py:90-94", official_mapping: [m.regime.r3, m.regime.r10, m.regime.r11, m.regime.r12], collision_notes: [C1 三胞胎之二（ARCH-034）], disposition: 原位保留+映射}
+  - {id: M6, name: MarketRegime(ML3态), class: MarketRegime, axis: m.regime, form: enum, location: "src/zephyr/gov_drift/detector_core/ml_engineering.py:47-50", official_mapping: [m.regime.r3, m.regime.r10, m.regime.r11, m.regime.r12], collision_notes: [C1 三胞胎之三], disposition: 原位保留+映射}
+  - {id: M7, name: MarketRegime(增益调度4态), class: MarketRegime, axis: m.regime, form: enum, location: "src/zephyr/feedback_loop/diagnosers/reliability/regime_gain_scheduling.py:38-42", official_mapping: [m.regime.r1, m.regime.r2, m.regime.r4, m.regime.r10], collision_notes: [C1 三胞胎之四], disposition: 原位保留+映射}
+  - {id: M8, name: TrendDirection+VolatilityLevel, class: TrendDirection, axis: m.regime, form: enum×2, location: "src/zephyr/signal_ashare/market_state_sensor.py:94-107", official_mapping: [m.regime.*（笛卡尔面）], collision_notes: [与情绪轴无涉（正交分解）], disposition: 原位保留+映射}
+  # C. 情绪周期轴存量（11 套）
+  - {id: E1, name: SentimentPhase(28号memo五段), class: SentimentPhase, axis: e.cycle, form: enum, location: "src/zephyr/signal_ashare/sentiment/sentiment_cycle.py:52-63", official_mapping: [e.cycle.capitulation, e.cycle.accumulation, e.cycle.ignition, e.cycle.expansion, e.cycle.euphoria, e.cycle.distribution], collision_notes: [C2 三套之一], disposition: 原位保留+映射}
+  - {id: E2, name: SentimentPhase(4+1硬标签), class: SentimentPhase, axis: e.cycle, form: enum, location: "src/zephyr/signal_ashare/sentiment/market_sentiment_analyzer.py:89-96", official_mapping: [e.cycle.capitulation, e.cycle.accumulation, e.cycle.expansion, e.cycle.euphoria, e.cycle.distribution], collision_notes: [C2 之二＋最热方向陷阱（最热→RETREATING）], disposition: 原位保留+映射+方向注记（跨引擎禁直传）}
+  - {id: E3, name: EmotionPhase(4+1阶段), class: EmotionPhase, axis: e.cycle, form: enum, location: "src/zephyr/signal_ashare/limit_up/youzi_relay_emotion_engine.py:60-68", official_mapping: [e.cycle.capitulation, e.cycle.expansion, e.cycle.euphoria, e.cycle.distribution], collision_notes: [C2 之三＋最热→MANIA 对照面], disposition: 原位保留+映射+方向注记}
+  - {id: E4, name: TDM state_matrix.states(六段v1.2), class: null, axis: e.cycle, form: yaml_list, location: "config/trading_decision_map.yaml:5556 起（state_matrix.states）", official_mapping: [e.cycle.capitulation, e.cycle.accumulation, e.cycle.ignition, e.cycle.expansion, e.cycle.euphoria, e.cycle.distribution], collision_notes: [与 M 轴降维映射混用见 F4], disposition: 原位保留=官方数据面（Owner 批准真源）}
+  - {id: E5, name: MarketMode(事件模式), class: MarketMode, axis: e.cycle, form: enum, location: "src/zephyr/feedback_loop/collectors/market_event_integrator.py:36-40", official_mapping: [m.regime.r10], exempt_values: [NORMAL, CAUTION, HOLIDAY], collision_notes: [EMERGENCY 多处同名（C11）], disposition: 原位保留+映射}
+  - {id: E6, name: WaterTempTier(日级水温五档), class: WaterTempTier, axis: e.cycle, form: enum, location: "src/zephyr/signal_ashare/core/daily_condition_sensor.py:45-52", official_mapping: [e.cycle.capitulation, e.cycle.accumulation, e.cycle.ignition, e.cycle.euphoria], collision_notes: [S0-S4 与预案/转换事件撞号；S0_ICE 在 C11 九写法], disposition: 原位保留+映射}
+  - {id: E7, name: WaterTemp(情绪→板块门桥接五档), class: WaterTemp, axis: e.cycle, form: enum, location: "src/zephyr/signal_ashare/sector/sector_gate.py:54-61", official_mapping: [m.regime.r10], exempt_values: [NEUTRAL, RISK_ON, PANIC_REPAIR, RISK_OFF], collision_notes: [CRASH 在 C11 九写法], disposition: 原位保留+映射}
+  - {id: E8, name: SentimentState(历史分位三态), class: SentimentState, axis: e.cycle, form: enum, location: "src/zephyr/alt_data/sentiment_engine.py:68-74", official_mapping: [e.cycle.capitulation, e.cycle.euphoria], exempt_values: [NORMAL, INSUFFICIENT_HISTORY], collision_notes: [ICE 在 C11 九写法], disposition: 原位保留+映射}
+  - {id: E9, name: 六段降维映射 REGIME_TO_SEGMENT, class: null, axis: m-to-e, form: mapping_keys, location: "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py:110-118", official_mapping: [e.cycle.*（M→E 降维，属预测用途）], collision_notes: ["与 framework_composer 版不一致（r4 归属相反/缺 r1）——差异如实登记，收敛挂裁定#398 五②"], disposition: 原位保留+差异披露}
+  - {id: E10, name: 六段降维映射 _DOMINANT_TO_WATER_TEMP, class: null, axis: e-to-e7, form: mapping_keys, location: "src/zephyr/strategy_pipeline/daily_gate_snapshot.py:183-190", official_mapping: [桥接层（capitulation→CRASH 等）], collision_notes: [桥接层], disposition: 原位保留+映射}
+  - {id: E11, name: PHASE_DISCIPLINES/STRATEGY_DEPLOYMENT 组合键, class: null, axis: e.cycle, form: mapping_keys, location: "src/zephyr/signal_ashare/sentiment/sentiment_cycle.py:594-1087", official_mapping: [e.cycle.*（键值域=五段经 E1）], collision_notes: [], disposition: 原位保留+映射}
+  # D. 预测/预案轴存量（6 套；轴 F 官方=登记豁免轴，但存量逐套登记，立法件 §2 轴 F）
+  - {id: F1, name: "S1_attack/S2_defense/S3_oscillation（N=3 预案）", class: null, axis: f.plan, form: dict_list, location: "src/zephyr/plan_engine/daily_plan.py:401-428", official_mapping: [f.plan.s1_attack, f.plan.s2_defense, f.plan.s3_oscillation], collision_notes: [S1-S3 与水温/转换事件撞号→token 必带 f. 前缀], disposition: 原位保留+映射}
+  - {id: F2, name: SCENARIO_LIST 9 情景格, class: null, axis: f.plan, form: 注释声明, location: "src/zephyr/plan_engine/scenario_attribution_stats.py:26", official_mapping: [f.plan.*（明细展开时逐格登记）], collision_notes: [], disposition: 原位保留+映射}
+  - {id: F3, name: HoldingAction+PlaybookStatus, class: HoldingAction, axis: f.plan, form: enum×2, location: "src/zephyr/plan_engine/scenario_playbook.py:83-100", official_mapping: [f.plan.*（流程态；登记豁免语义但入册）], collision_notes: [], disposition: 原位保留+映射}
+  - {id: F4, name: regime→六段降维键（两版）, class: null, axis: m-to-e, form: mapping_keys, location: "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py:110-118 + framework_composer 版", official_mapping: [见 E9 差异披露], collision_notes: [两版 r4 归属相反], disposition: "原位保留+差异披露（收敛挂裁定#398 五②）"}
+  - {id: F5, name: TRANSITIONS(状态转换事件), class: null, axis: f.trans, form: list, location: "src/zephyr/regime/core/regime_detector.py:185", official_mapping: [f.trans.t1, f.trans.t2, f.trans.t3, f.trans.t4, f.trans.t5, f.trans.t6, f.trans.s1, f.trans.s2], collision_notes: [S 系与水温/预案撞号], disposition: 原位保留+映射}
+  - {id: F6, name: ChangePhase, class: ChangePhase, axis: f.trans, form: enum, location: "src/zephyr/signal_ashare/ml_forecast/regime_change_detector.py:97", official_mapping: [f.trans.*], collision_notes: [], disposition: 原位保留+映射}
+  # E. 个股行为轴存量（4 套）
+  - {id: S1, name: STATE_NAMES(锚定四档), class: null, axis: s.anchored, form: dict, location: "src/zephyr/regime/core/anchored_state_machine.py:86-91", official_mapping: [s.anchored.r1, s.anchored.r2, s.anchored.r3, s.anchored.r4], collision_notes: [C1 主语源②：r3=最安全 vs 轴 M r3=牛市趋势], disposition: 原位保留+映射（禁裸字符串跨轴）}
+  - {id: S2, name: StockCategory(个股七类), class: StockCategory, axis: s.category, form: enum, location: "src/zephyr/signal_ashare/quant_short_term_strength_engine.py:63-79", official_mapping: [s.category.main_leader, s.category.second_to_third, s.category.follower, s.category.recovery, s.category.fake_strong, s.category.inverse_board, s.category.neutral], collision_notes: [RECOVERY 与 m.regime.r11/风控 RECOVERY 同词异轴（跨轴禁直传）], disposition: 原位保留+映射（官方拼写源）}
+  - {id: S3, name: FusionDecision+SignalDirection, class: FusionDecision, axis: s.category, form: enum×2, location: "src/zephyr/signal_ashare/strategy_signal/dual_engine_fusion_decision_engine.py:70-88", official_mapping: [s.category.*（官方=StockCategory）, s.direction.*], collision_notes: [与 StockCategory 同词异源双胞胎], disposition: 原位保留+映射指向 S2}
+  - {id: S4, name: 强度五档 A-E, class: null, axis: s.strength, form: enum, location: "src/zephyr/signal_ashare/quant_short_term_strength_engine.py:63-79", official_mapping: [s.strength.a, s.strength.b, s.strength.c, s.strength.d, s.strength.e], collision_notes: [], disposition: 原位保留+映射（待收编进 market_state.py，收编＝另批，本册先登记）}
+  # F. 补充收编（封闭状态集/状态机，5 套）
+  - {id: X1, name: KNOWN_REGIME_STATES, class: null, axis: m.regime, form: frozenset, location: "src/zephyr/backtest/core/decision_gate.py:230", official_mapping: [m.regime.*（回测门消费面）], collision_notes: [C1 消费面], disposition: 原位保留+映射}
+  - {id: X2, name: ALL_SEVEN_STATES+trend_up_states, class: null, axis: m.regime, form: constant, location: "src/zephyr/strategy_factory/owner_regime_switcher/switcher.py:41,55", official_mapping: ["m.regime.*（trend_up={r3,r11,r12}）"], collision_notes: [], disposition: 原位保留+映射（Owner 切换器）}
+  - {id: X3, name: TREND_UP_STATES(band-T 门), class: null, axis: m.regime, form: constant, location: "src/zephyr/strategy_factory/owner_band_t/regime_gate.py:29", official_mapping: [m.regime.r3, m.regime.r12], collision_notes: ["与 switcher 版 trend_up 不同值（{r3,r12} vs {r3,r11,r12}）"], disposition: 原位保留+差异披露（收敛挂裁定#398 五②）}
+  - {id: X4, name: normal/warning/crisis 三态, class: null, axis: m.regime, form: constant, location: "src/zephyr/pf_alloc/crisis_gate.py:106-108", official_mapping: [m.regime.r10], collision_notes: [crisis 在 C11 九写法（小写拼写）], disposition: 原位保留+映射}
+  - {id: X5, name: 风控状态机 RECOVERY 族, class: null, axis: risk fsm, form: 状态机态, location: "src/zephyr/risk/core/drawdown_state_machine.py:102、var_breach_state_machine.py:87", official_mapping: [异轴同名声明=非 m.regime.r11，禁互转], collision_notes: [RECOVERY 三轴同名（HMM/风控/StockCategory）], disposition: 原位保留+异轴声明}
+
+# ── 撞名消解登记（立法件 §3 已裁三案；余三案见 gap_disclosures，不造内容）────────────────
+  # ↑ 本战役 W3-E 区块（34 条，原位未改）
+collision_resolutions:
+  C1: {topic: "r1-r4 两轴撞号（语义近镜像）", official_resolution: 命名空间强制 m.regime.r* vs s.anchored.r*；代码层以 MacroRegime/AnchoredTier 两个官方类引用，禁裸字符串跨轴}
+  C2: {topic: 三套五段情绪枚举拼写互不兼容, official_resolution: 官方拼写=EmotionCycleSix 六段；三套枚举原位保留，跨模块取值必经映射（E1-E3 行）}
+  C11: {topic: 九种"最坏状态"写法, official_resolution: 统一归一目标 m.regime.r10，执行件=market_state.EXTREME_STATE_ALIASES（九键）}
+
+# ── 如实披露（本册不掩盖的缺口，供总筹与后续班次对账）──────────────────────────────
+gap_disclosures:
+  - id: VOCAB-GAP-1
+    topic: ROOR 计数与本册实测条数不一致
+    detail: >-
+      ROOR REG-STATE-VOCAB-001 描述写"28 套（宏观 10/情绪 12/预案 5/个股 1 合并条）、
+      entry_count=29"；映射册与 01 立法件自述普查口径为"34 套存量 + 4 件官方本体 + 1 份归一表"。
+      本册 vocabularies 数组按映射册逐套登记（34 条）＋official_ontology 单列。
+      entry_count 属派生标量，须由总筹按数组长度重算后回写 ROOR（车道禁触热册）。
+  - id: VOCAB-GAP-2
+    topic: ROOR 描述的撞名编号 C5/C6/C9 无立法实物
+    detail: ROOR 描述列 C1/C2/C5/C6/C9/C11，但立法件 §3 只裁 C1/C2/C11 三案（映射册亦只有 §G 的 C11 专项）。
+      C5/C6/C9 未登记于本册，禁臆造消解方向；需回到 03 自裁书或另批补裁。
+  - id: VOCAB-GAP-3
+    topic: 情绪六段历史标签无持久化表
+    detail: 立法件 §2 轴 E 已披露（c1_market.sentiment_panel 是异轴指标）——持久化=前瞻接线义务，非本车道范围。
+  - id: VOCAB-GAP-4
+    topic: trend_up 面两版不同值
+    detail: "X2 {r3,r11,r12} vs X3 {r3,r12}；收敛挂裁定#398 五② 专项，本册只如实登记差异，不裁。"
+  - id: VOCAB-GAP-5
+    topic: 本册维护形态
+    detail: 宪法 §9.5"静态清单禁手工维护"——本册是 W1/W2 人工普查实物锚点版（映射册 §H-3 同口径），
+      后续应由符号扫描生成器接管；生成器上线属独立施工袋（本车道不建，见回执待登项）。
+
+module_id: REG-STATE-VOCAB-001
+ttl: permanent
+title: 状态词表中央登记表
+doc_type: register
+owner: SH-VOCAB-001
+tier: tier_1_governance
+created: 2026-09-22
+last_updated: 2026-09-22
+version: 1.0.0
+description: >-
+  封闭状态/情绪词表中央登记册（两套登记块并集，规模见 merge_provenance.count_reconciliation.vocabularies_len，
+  禁在散文写死条数=宪法 §4.3）。登记块 A=他道 2026-09-23 版（vocabulary_id 语义短横式 id），
+  登记块 B=本战役 W3-E 版（M/E/F/S/X 前缀式 id）；官方词表本体=zephyr.shared.vocab.market_state
+  （SH-VOCAB-001）的 official_ontology 四类，值级锁定判据即读该段；撞名消解与缺口披露见册内
+  collision_resolutions / gap_disclosures。
+
+merge_provenance:
+  merged_by_lane: W6-V（施工车道 W6-V·真源冲突合并，sid=st-ailayer-final-20260924）
+  policy: 并集：主区块 verbatim 在前、本战役区块原位在后；同 id 字面冲突=0（主区 id=语义短横式，本役 id=M/E/F/S/X 前缀式，命名空间不相交）⇒ 无自选一侧覆盖案
+  main_block:
+    state: 主区盘上未入 git 版（他道 2026-09-22/23 产出）；ROOR 现登记的就是它
+    backup: .runtime/tmp/st-ailayer-final-20260924/state_vocab_main_0923.bak.yaml
+    entry_count: 29
+    description_verbatim: 全项目 28 套封闭状态/情绪词表的中央登记表（W2 收编件，DLOOP-V2-STATE-VOCAB-UNIFICATION 第一步）。官方词表本体=src/zephyr/shared/vocab/market_state.py（SH-VOCAB-001，W1 立法件）： 宏观轴官方=MacroRegime 七态，情绪轴官方=EmotionCycleSix 六段，预测轴=数值分布（canonical_mapping 豁免），个股轴=登记不入官方。立法真源=docs/_working/daily_loop_campaign/02_state_vocabulary_unification.md。 纪律：新模块出厂必用官方词表或在本表登记映射；新增状态值必须先登记本表（SH-VOCAB-001 INVARIANTS）。撞名冲突注记 C1-C12（本表使用 C1/C2/C5/C6/C9/C11）。
+    promoted_metadata:
+      module_id: REG-STATE-VOCAB-001
+      ttl: permanent
+      title: 状态词表中央登记表
+      doc_type: register
+      owner: SH-VOCAB-001
+      tier: tier_1_governance
+      created: '2026-09-22'
+      last_updated: '2026-09-22'
+      version: 1.0.0
+    header_comments_kept_verbatim: 4
+  campaign_block:
+    state: 本战役 W3-E 产出（official_ontology 值级锁定判据本体）
+    record: docs/_working/fullflow_mining/05_missing_p0/wiring_E_state_vocab.md
+    pre_merge_sha256_backup: .runtime/tmp/st-ailayer-final-20260924/state_vocab_w3e_beforemerge.bak.yaml
+    entry_count: 34
+  count_reconciliation:
+    vocabularies_len: 63
+    roor_registry_id: REG-STATE-VOCAB-001
+    roor_entry_count_now: 29
+    roor_entry_count_should_be: 63
+    counting_rule_should_be: vocabularies 数组条目数（两套 id 命名空间并集）；official_ontology.classes 另列不计入
+    note: ROOR 是热册，本车道零改动；由总筹单点对账
+  same_object_pairs_cross_block:
+  - main_id: regime-hmm-7
+    campaign_id: M1
+  - main_id: anchored-4
+    campaign_id: S1
+  - main_id: regime-12
+    campaign_id: M3
+  - main_id: market-grid-3x3
+    campaign_id: M8
+  - main_id: crisis-gate-3
+    campaign_id: X4
+  - main_id: feedback-regime-4
+    campaign_id: M7
+  - main_id: market-mode-4
+    campaign_id: E5
+  - main_id: tdm-six
+    campaign_id: E4
+  - main_id: sent-cycle-5-A
+    campaign_id: E1
+  - main_id: sent-phase-5-B
+    campaign_id: E2
+  - main_id: youzi-5
+    campaign_id: E3
+  - main_id: water-temp-response-5
+    campaign_id: E7
+  - main_id: sent-state-4
+    campaign_id: E8
+  - main_id: water-tier-5
+    campaign_id: E6
+  - main_id: daily-plan-3
+    campaign_id: F1
+  main_block_only:
+  - volume-regime-3
+  - lifecycle-season-4
+  - warm-plane-7
+  - pyramiding-5
+  - env-switch-six
+  - limitup-4
+  - rotation-5
+  - canonical-phase-5
+  - next-day-8
+  - similar-day-3
+  - nextday-3
+  - cycle-eval-5
+  - stock-behavior-family
+  - intraday-five
+  campaign_block_only:
+  - M2
+  - M4
+  - M5
+  - M6
+  - E9
+  - E10
+  - E11
+  - F2
+  - F3
+  - F4
+  - F5
+  - F6
+  - S2
+  - S3
+  - S4
+  - X1
+  - X2
+  - X3
+  - X5
+  same_id_conflicts_pending_ruling: []
+  top_level_scalar_conflicts: {}
+  pending_ruling_notes:
+  - P-1 同对象双条 15 对（同实物两套登记、字段名不同）：本车道按'不抹他人条目'全保，是否并条属册维护口径，归总筹/Owner 裁
+  - P-2 主区块 intraday-five 的 canonical_mapping.target=…market_state.IntradayFiveVocab 实测该类名不存在（实存类=IntradayFive）；按 verbatim 原则未改，纠偏归该条作者
+  - P-3 散文计数漂移：主区块 description 写'28 套'、ROOR 写 29、本役写 34；合并后 vocabularies 实测 63 条——散文按宪法 §4.3 改指字段，主区块原文已按字存于 main_block.description_verbatim
