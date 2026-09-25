@@ -51579,4 +51579,9 @@ creation_tokens:
   created_by: st-qmine-20260925
   capability: qmine_modules
   merge_evaluation: "QMine治本新模块,内收原则零第二真源:复用既有分类器/真源清单/门禁判据"
+- file: src/zephyr/gov_enforcement/commit_gates/_capability_registry_io.py
+  token: commit-speedup-campaign--capability-registry-io-20260925
+  created_by: st-commitspeed-pkg8-20260925
+  capability: commit_speedup_campaign
+  merge_evaluation: "T8簇1 共册解析共享（六台同读册一次解析替代各自重复解析；判据零退役，重放等价出厂）"
 di_seam_exemptions: []

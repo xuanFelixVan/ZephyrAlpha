@@ -61033,6 +61033,15 @@ entries:
   plain_zh: "把登记册里声明的定时任务和系统里真实存在的任务对着查一遍：绿的正常跑，黄的要注意，红的就是断了或没建。只查不改。"
   responsibility_layer: governance
 
+- module_path: src/zephyr/gov_enforcement/commit_gates/_capability_registry_io.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "能力册共享解析缓存"
+  name_en: "capability registry shared parse cache"
+  desc_zh: "capability 册读入+解析进程级单条缓存（normcase 路径+mtime_ns+size 键控），CREATE-GUARD/SSOT-REDEFINITION/CAPABILITY-OVERLAP 同读一册共享一次 yaml.safe_load"
+  desc_en: "Process-level single-entry cache for capability registry read+parse shared by registry-reading commit gates"
+  plain_zh: "好几个检查门都要读同一个两兆多的大注册表，以前每个门各读各的、白白重复解析好几秒；现在改成大家共用一次解析结果，注册表一变就自动重读，检查结论一根手指头都不动"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
