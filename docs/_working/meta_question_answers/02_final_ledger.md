@@ -188,3 +188,36 @@ date: 2026-09-24
         **本件不阻塞 WO-009 关单**：metaq_pledge 载体 DDL 早已部署并回填，白名单只影响"将来重跑 DDL"。
      b) `macro_data` 高频小批 INSERT + 反复 `ALTER UPDATE frequency` 的部件爆炸（4.5M mutation 编号、
         4.5MB 数据 1364 部件）＝ §10.6 三条处方，属他人车道写侧代码，只交清单不动。
+
+⑫ 09-25 06:xx–07:xx 总包第三轮（八袋落地死因对症＋我自己两处越界自纠）：
+  0) **方法错误先记账**：我上一轮把"入队预检通过"当成"能落地"，实际 `enqueue_preflight` 自陈
+     "预检是快败优化不是新权威"，权威门在落地锁内才跑 ⇒ 9 袋里 8 袋落地侧被杀（只 B5 文档袋真进 HEAD）。
+     死因六类与对症：
+     CREATE-GUARD 类名冲突 ParsedLine→SourceLineRow（10 处含测试）；
+     TRANSLATION-COVERAGE「plain_zh 通用模板」真因＝该句被>1 模块共用（改名换绑后新旧条目同册并存），
+       已给 4 件写各自独有句（share 2→1）；
+     GATE-DOMAIN-FK `[DOMAIN] D_GOV`→`D_GOV_SCRIPTS`（未注册域）；
+     SSOT-REDEFINITION 7 件脚本各自 `REPO_ROOT=Path(...).parents[N]`→本地只做 sys.path 引导、
+       仓根 import canonical `src/zephyr/shared/io/paths.py`；
+     GATE-PRECOMMIT-RUN(ruff) 全战役面归零：9 处非法 `# noqa: BLE001——理由`（em-dash 紧贴＝指令失效，
+       本仓同坑第二次）改合法形、1 处 `zip()` 补 strict=True、1 处缺理由的 except 补理由、
+       `conftest.py` I001、审计补账臂 SQL 提 `_SQL_AUDIT_ROWS` 常量并按 §5.160.2 通道加行尾豁免；
+     BLUEPRINT-FORMAT 红蓝尺头 `WO-METAQ-GC`→`MOD-CHAINPILE-METAQ`。
+  1) **我越界过一次并已逐件回退**：修 lint 时跑了 `ruff format scripts/governance/`（全域），把 49 个
+     **他人已落地件**重排。判据＝「HEAD 字节经 ruff format 后恰等于当前盘面」逐件识别后按 HEAD 字节回退 49/49；
+     另 5 件（d5_architecture/check_registry_code_anchor.py、decision_chain_sentinel.py、
+     evaporation_blackbox.py、meta/rules_integrity_db.json、scripts/governance/script_manifest.yaml）
+     是他方在途改动，非我所动，原样未回退。教训：治本面 lint 只能按 own-diff 作用域跑，禁对全域目录跑 format。
+  2) **我又自伤一次并已复原**：为回退 REPO_ROOT 时误从**旧袋 blob** 恢复红蓝尺，导致 2 项 R5 测试变红；
+     改为从该路径**最新袋 q-0038 的 blob** 恢复后 188 全绿、`--scan` EXIT=0。
+     复证一条铁律：同一 path 在队列里可能有多个 blob，回退必须按 qid 取最新，不能按"第一次命中"。
+  3) **热册第 5 次被蒸发（本次只蒸到翻译册）**：他道袋以旧基底整档快照落地后，
+     翻译册同时留有 `wo001_003/*` 旧条目与我改绑的 `wo_intake_reconcile/*` 新条目（能力册未受影响，16+2 全在）。
+     3 条旧条目指向已不存在的路径＝账实不符退役项。删在册条目属注册表净删（Owner 门位，
+     宪法 §5 高风险 tier），本车道不自行删，已并入既交清单（原 18 条悬空 token 之外新增 3 条）。
+     本轮的规避做法＝把新条目的 plain_zh 写成独有句（让"共用即模板"判据自然成立），不改册结构。
+  4) **会话注册会掉**：SESSION-REQUIRED 曾把 6 袋全拦（我的会话注册在收尾期失效）。
+     正解＝`pythonw .runtime/tmp/st-metaq-gc-20260924/session_keeper.py`（注册＋claim 心跳，
+     因 heartbeat_daemon 自身不刷 last_activity，#ARCH-HEARTBEAT-002），起后 list_active 复验为 True 再重投。
+  5) 现态：战役测试 188 passed 连续通过、全战役面 ruff 0 error、红蓝 `--scan` EXIT=0（五尺自证 5/5）；
+     九袋重投在跑，落地结果与死信以 `python scripts/commit_queue.py status --session st-metaq-gc-20260924` 为准。

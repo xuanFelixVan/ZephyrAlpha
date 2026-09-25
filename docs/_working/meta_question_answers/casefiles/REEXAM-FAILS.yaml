@@ -319,20 +319,81 @@ exams:
       另行登记（new_gaps #6），不影响本题桶位但影响完全性。
 
 # ───────────────────────── 待 Owner 裁口径歧义 ─────────────────────────
-owner_pending_calibers:
-  - id: REEXAM-FAILS-P1
-    q_id: PQ-0018
-    question: "题面'成分重合率≥80%'的度量形态：对称 Jaccard（考卷在案实现，我实测 3.63%/13.45%，锚定域上限 38.7%）vs 非对称从→主承认率（车道据裁定②重述，我实测 80.08% 压线过）？裁定②只定主从方向未定度量形态；若 Owner 背书非对称形态，按我实测即翻绿（但裕度仅 0.08pp，建议同时裁'域定义'）。"
-  - id: REEXAM-FAILS-P2
-    q_id: PQ-0078
-    question: "题面'部门码↔ig_node 映射补齐后可挂边'：可挂=双端挂到具体 ig_node（我实测 32.34%<95%）vs 可挂=部门可解析到在用申万 L1 行业码且候选池非空（T3=100%）？题面字面对象是 ig_node，故本复考判 fail；若 Owner 认行业码层即'可挂'，一键翻绿。"
-  - id: REEXAM-FAILS-P3
-    q_id: PQ-0065
-    question: "降级后重述三判据（a≥0.95/b≥0.60 借同族题面阈值、c=1.00 纪律二元）是否获 Owner 背书为该问正式复考判据？（当前两口径均判 fail，桶位不依赖此裁）"
-  - id: REEXAM-FAILS-P4
-    q_id: PQ-0067
-    question: "对照侧'当期行业传导判定'取官方 2020 IO 系数矩阵旁挂册（裁定④载体）是否即题面所指'当期边'？图内当期跨行业边实测仍为 0（ig_edge 1,726 条跨链仅 2）。本复考按在案单边判据形式+裁定④前置载体判 pass（置信 0.6），密度告警（IO 侧 95.16% 近完备）与 Jaccard 15.95% 已并列入卷。"
-
+caliber_adjudication:
+  adjudicated_by: st-metaq-gc-20260924（总包裁定，未新增在册裁定号——升格为在册裁定须 Owner 一句话）
+  anchored_to_registered_rulings:
+    - "裁定#282 预注册判据禁挪"
+    - "裁定#283 Fellegi-Sunter 三区判定/复核区禁自动并入"
+    - "裁定#294 判不了=不放行 fail-closed"
+  note_on_authority: |
+    原 P1-P4 曾登记为"待 Owner 裁"。Owner 09-25 令"尽量不要留下需要我裁定的内容，遇问题自己裁定"，
+    故本块给出终局裁定并结清。但六裁定（复权口径/板块主从/CKG 降级/io_edge DDL/产品边阈值/campaign regime）
+    只存在于 handoff 工作区账本（03_HANDOFF_NEW_GC.md 第3节），不在 ruling_registry.yaml 在册面——
+    按宪法 11 条"对话内口头 Owner 说不构成门禁豁免"，本块只把它们当施工指令引用，
+    不替 Owner 升格为在册裁定：那正是本战役已查处的伪造署名事故的形态。
+  items:
+    - id: REEXAM-FAILS-P1
+      q_id: PQ-0018
+      decision: "fail（维持）"
+      caliber: "判据对象=题面 criterion 字面『两套板块口径成分重合率』→ 对称重合族（Jaccard 与承认率不可同阈值互换）"
+      measured: {symmetric_micro_routed: 0.0363, name_anchored_micro: 0.1329, anchored_domain_ceiling: 0.3874, asymmetric_recall_R7: 0.8008, routing_coverage: 0.98}
+      why_not_the_favorable_reading: |
+        裁定条2 只定"主从方向"未定度量形态，据以换度量族=事后重述判据（裁定#282 禁）；
+        且 R7 承认率与图谱规模负相关（+0.08pp 裕度会在下一次补挂后跌破），
+        把达标挂在会自漂移的读法上不是判据。
+      reported_not_judging: "非对称承认率/路由覆盖率作为 supporting calibers 强制入册并报，不作达标判据"
+    - id: REEXAM-FAILS-P2
+      q_id: PQ-0078
+      decision: "fail（维持）"
+      caliber: "题面对象明写 ig_node ⇒ 可挂=双端挂到具体 ig_node 节点，不是解析到申万 L1 行业码"
+      measured: {both_end_anchored: 0.3234, any_end_anchored: 0.8104, sector_code_resolvable_T3: 1.0, auto_only_both: 0.0276, hard_judge_domain: 0.004}
+      why_T3_not_accepted: |
+        T3 换的是目标层（码层不等于节点层），且 needs_human 129/153 属裁定#283 复核区禁自动并入；
+        另有同一性红旗：5452 条边只用 37 个 distinct 节点、单节点占锚点使用次数 17.08%。
+      infra_gap_registered: "public.ig_sector_bridge 等三表对生产消费方 PermissionDenied，既有第三套 sector→node 载体既不能对账也不能否决"
+    - id: REEXAM-FAILS-P3
+      q_id: PQ-0065
+      decision: "fail（维持；降级条款已触发即本问实质答案）"
+      caliber: "交叉验证必剔同源：对照侧剔 source_doc LIKE 'ckg_2021%' 的 76 条自并入边"
+      measured: {excl_self: 0.0122, incl_self: 0.7073, jaccard_aligned_domain: 0.000812}
+      why: |
+        不剔自并入的 70.73% 是"CKG 对 CKG"，零交叉验证信息（label leakage/circularity）；
+        题面 70% 恰好被这个自证口径跨过，是阈值被自证救活，不是一致率达标。
+        重述 a/b/c 阈值系借值未在册，不作正式判据；c=0.7619（5 份 ckg-prior 补丁未落地）单独披露。
+    - id: REEXAM-FAILS-P4
+      q_id: PQ-0067
+      decision: "由 pass 改判 fail（收紧，非放宽）"
+      caliber: "两条独立否决事实，任一成立即不达"
+      why_overturned: |
+        (i) PIT 倒置：被测快照 as_of=2021-10-26，对照基准 ig_io_edge 只有 year=2020（as_of=2020-12-31），
+            用比被测更旧的基准测"仍有效比例/陈旧度"结构上测不出陈旧度；题面 method 明写 2026 样本，
+            而图内当期跨行业对实测 0；
+        (ii) 对照侧 668 对由映射册派生，该册 129/153=84.31% 行 needs_human，其自身豁免条款明文
+             needs_human 行的 L1 归属在人工确认窗关闭前禁止作为阈值判定的硬事实输入（裁定#283 同构），
+             兑现该条款则 auto-only 一致比例 0.2230 < 0.60。
+        当时判 pass 的原因：按"载体建成即口径达成"的单边形式判据判，未把 (i)(ii) 纳入。此为自纠。
+      measured: {as_claimed_pair_level: 0.7986, auto_only_pair_level: 0.223, event_level: 0.0032, symmetric_jaccard: 0.1595, coefficient_weighted: 0.2856, uniform_null_expectation: 0.9516}
+    - id: REEXAM-FAILS-P5
+      q_id: PQ-0064
+      decision: "fail（维持；退役批准与否不改变结论，故不再挂 Owner）"
+      caliber: "参评域按先验框架定义 + 覆盖率按 PIT-live 生效口径（与 PQ-0018 的 WO-005 生成器一致）"
+      measured: {pit_live_all_chains: 0.1897, active_all_chains: 0.7371, deprecated_excluded: 0.7121, after_retirement_active: 0.8399, mean_per_chain_active: 0.8106}
+      why_retirement_not_approved: |
+        注册表净删属 Owner 门位（宪法 5 条），本车道不代批；且"剔零覆盖链"是按分子结果选分母=后验
+        （裁定#282/#283 禁），而"剔 deprecated 链"是先验框架——后者实测 0.7121 仍不过线，
+        前者 0.8399 过线，这个反差正是必须拒后者的理由。
+      cross_question_inconsistency_fixed: "判据 SQL 原对 ig_node_company 不加 valid_to 过滤，而兄弟问 PQ-0018 的生成器加 valid_to is null；同表两套时间口径已统一为 PIT-live（差异 0.7371 vs 0.1897）"
+    - id: WO008-P1
+      q_id: PQ-0068
+      decision: "fail（维持；并已补一次载体建成后复考写回——此前在库仅 1 行且是建册前的数）"
+      caliber: "题面 criterion 明写『占 ig_fact 产品边比例』=边级；裁定条5 只改阈值 30% 到 5%、未改判据单位（案卷自证『只改阈值数值，未改判据口径』），故按边级双端对 5% 判"
+      measured: {edge_both_end_post_carrier: 0.0249, edge_single_end: 0.2853, endpoint_identity_tier: 0.0589, endpoint_unique_node_pit: 0.0117, upgrade_ready_today: 0.0014}
+      owner_note_not_blocker: |
+        裁定条5 的实证依据 2218/48665=4.5577% 本身是端点级数，而被判对象是边级——阈值与单位不同源
+        （4.56% 在端点级下也低于 5%）。此为 Owner 所批裁定内部的不一致，我只指出并维持不翻绿，
+        不替他改判据。两条路径各留一句话即可结：(a) 承认边级=维持本裁定 fail；
+        (b) 承认端点级=需同时裁 company_set 弱锚算不算"对齐"（分子 2868 里 2299=80.2% 是弱锚，属裁定#283 复核区）。
+owner_pending_calibers: []
 new_gaps_registered:
   - "hfq 表族级联：kline_weekly_hfq/kline_monthly_hfq 仍随旧基座（我实测周线 vs 日线重算端点因子偏离>0.1% 的标的 4,723/5,129=92.1%，闭卷窗中位 1.62%）；PQ-0012/0131 题面限日线（分钟线无 hfq 表），族级联不入本题判据，需另立工单族内对拍。"
   - "PQ-0072 冻结事件独立落库表缺失（题面 event_source 含'冻结'；考试与本复考同域限制，如实登记）。"
