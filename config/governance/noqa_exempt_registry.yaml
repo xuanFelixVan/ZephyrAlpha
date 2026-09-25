@@ -435,10 +435,14 @@ exemptions:
   category: no_vocab_source
   reason: '反思介入级别（12号文 §3.4），levels_vocabulary.yaml 不存在，无适用词表真源'
 
-# Statistics: total=92, by_category={'business_subset': 49, 'arch_concept': 9, 'threshold_var': 15, 'no_vocab_source': 18, 'test_fixture': 1}
+- category: no_vocab_source
+  file: src/zephyr/ai_layer/cleaning/policy.py
+  line: 128
+  reason: '本函数是 cleaning_policy 考尺装载器（policy 文件含 controlled_vocab 节故报错误消息含 vocab 字样），非词表复制——SSoT 不支持的批量分组模式（2026-09-24 st-ailayer-final-20260924 P1 收官批登记）'
+# Statistics: total=95, by_category={'business_subset': 49, 'arch_concept': 9, 'threshold_var': 15, 'no_vocab_source': 18, 'test_fixture': 1}
 - category: business_subset
   file: src/zephyr/gov_enforcement/registry_alignment.py
-  line: 595
+  line: 610  # 行号漂移跟进 595→610（2026-09-24 st-ailayer-final-20260924 恢复验证轮）
   reason: 产业链字段字典=registry catalog（industry_graph_field_dictionary.yaml），vocab 
     段是被交叉校验的数据而非加载的合法值词表——check_industry_graph_field_dictionary 
     校验字典结构，gate-vocab豁免合理（2026-09-11 满贯批）
@@ -448,3 +452,17 @@ exemptions:
   reason: STRATEGIES 策略键名元组=业务数据 schema 值（daban/multifactor/event_driven 为
     交易决策地图既定策略键），非 knowledge_taxonomy 词表校验对象——gate-vocab 豁免合理
     （2026-09-13 夜班收编批 G07 验证脚本入库时补登记）
+- category: threshold_var
+  file: scripts/governance/reconcile_generators.py
+  line: 133
+  reason: '生成器 reconcile 间隔 30 分钟阈值（本地常量非词表域；st-ailayer-final-20260924 收官批代登记，归属 reconcile 工具线）'
+- category: threshold_var
+  file: scripts/governance/reconcile_generators.py
+  line: 176
+  reason: 'Win32 OpenProcess 访问权限标志（Windows API 常量非词表域；同上代登记）'
+- file: src/zephyr/governance/registry_projection/projection_generator.py
+  line: 68
+  category: business_subset
+  reason: '丙号文§1.1 投影器单写者契约定死的 managed 册路径常量  gate-vocab豁免: 单写者契约常量非词表值'
+  retire_plan: cutover 后由 generator_registry.yaml db: 输入源反查替代
+
