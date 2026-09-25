@@ -6,6 +6,9 @@
 # [ALGO_FLOW] external: docs/03_modules/_domain_infrastructure/algo_flow/infrastructure/infrastructure__init__.yaml
 """
 
+# NOTE(M3C1b): duckdb_runtime_gate discoverability re-export（ORPHAN-MODULE 可发现性通道；
+# B1 sitecustomize 引导接线另批施工）
+from zephyr.infrastructure import duckdb_runtime_gate  # noqa: F401
 from zephyr.infrastructure.gpu_hot_swap_model import GpuHotSwapModel
 
 # [TTL] permanent
@@ -30,6 +33,7 @@ __all__ = [
     "contract_tester",
     "cost_tracker",
     "database_service",
+    "duckdb_runtime_gate",
     "dry_run_simulator",
     "event_bus_upgrade",
     "event_store",
