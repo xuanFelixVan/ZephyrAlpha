@@ -52617,4 +52617,34 @@ creation_tokens:
   capability: fullflow_closure_wave2
   merge_evaluation: "波2 车道产物，内收复核逐条给，无平行新结构"
 # [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
+- file: docs/03_modules/_domain_data/algo_flow/macro_vintage.yaml
+  token: metaq-gc-algo-flow-macro-vintage-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物），锚随 src 件同袋"
+- file: docs/03_modules/_domain_governance/algo_flow/arbitration.yaml
+  token: metaq-gc-algo-flow-exam-arbitration-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物），锚随 src 件同袋"
+- file: docs/03_modules/_domain_governance/algo_flow/exam_ops.yaml
+  token: metaq-gc-algo-flow-exam-ops-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物），锚随 src 件同袋"
+- file: docs/03_modules/_domain_governance/algo_flow/exam_plan.yaml
+  token: metaq-gc-algo-flow-exam-plan-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物），锚随 src 件同袋"
+- file: docs/03_modules/_domain_governance/algo_flow/reexam_scheduler.yaml
+  token: metaq-gc-algo-flow-reexam-scheduler-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物），锚随 src 件同袋"
+- file: docs/03_modules/_domain_governance/algo_flow/writeback.yaml
+  token: metaq-gc-algo-flow-exam-writeback-20260926
+  created_by: st-metaq-gc-20260924
+  capability: metaq_exam_loop
+  merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物），锚随 src 件同袋"
 di_seam_exemptions: []
