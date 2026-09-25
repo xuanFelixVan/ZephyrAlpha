@@ -51710,4 +51710,15 @@ creation_tokens:
   capability: commit_speedup
   merge_evaluation: "任务卷宗随役归档（task_bound），跨域不同对象不并"
 # [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
+- file: docs/_working/commit_speedup_campaign/70_redblue/redblue_governance.md
+  token: commit-speedup-rb-governance-20260926
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "红蓝对抗治理组报告（task_bound 随役），证据面归档"
+- file: docs/_working/commit_speedup_campaign/70_redblue/redblue_robust.md
+  token: commit-speedup-rb-robust-20260926
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup
+  merge_evaluation: "红蓝对抗鲁棒组报告（task_bound 随役），证据面归档"
+# [REMOVED 2026-09-23 st-ailayer-p1-20260923] src/zephyr/ai_layer/intake/events.py 幽灵条目摘除（实物已改名 intake_events.py；token ai-intake-l2-events-20260918 对应真身 intake_events.py 条目如缺另行补登；P1复审裁定清单#4 授权）
 di_seam_exemptions: []
