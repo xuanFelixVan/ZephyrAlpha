@@ -408,3 +408,295 @@ _（待回填）_
 - **P-21（活缺陷，未修，给坐标）**：同一口径下 `gate_registry.yaml` 现 **gates=180 而声明 total_gates=174**（差 6）。该字段是"计数用字段不写死散文"的机器真源，漂移＝文档面失真；修法不是手改标量（本仓已证"派生标量经队列合并恒取 ours，永远进不了 HEAD"，正解＝跑该册生成器按段长度重算再随批落）。归维护班同批收敛，本班会不抢这张热册（8 路车道并发时段动热册＝蒸发病复现条件）。
 
 **归属与安全的一处正面证据**：我那份"内容已被更新提交超越"的陈旧袋 `q-...-0002` 被队列**判死而非强行回退**——`dead_reason="dev CAS 竞态：714981aa..bce9d7a8 间同路径被并发落地工推进"`。这正是队列作为正门的价值：它宁可死信也不覆盖更新的 HEAD。此死信**不应 requeue**（requeue 会按当前工作区重建＝与 HEAD 同内容，纯 noop），留档即可。
+
+### 十六、修复波终态（02:2x 收口，逐条带凭据）
+
+**P-19 根因坐实并二次治本（本会话自挖）**：外层兜底上线后**第一次计划触发**就把真凶写进快照——
+`errors=['reap_aborted: psutil.AccessDenied(pid=4908)']`、`dry_run=False`、快照照落（01:51:28 那次）。
+定位＝`_kill_pid_tree()` 三处 psutil 调用无 AccessDenied 兜底（`Process()` 构造 / `wait_procs` /
+`proc.wait`），而 **dry-run 分支根本不调本函数**，所以我此前所有手工复现都失败。
+后果比"没落快照"重得多：一个打不开句柄的受保护进程，把**同轮其余收割 + 幽灵扫描 + drift 指标 +
+挂在同一脉冲上的保命链（应急保命轨 BRK-078 / 内存水位真闸 BRK-066）整条带走**——即那两条"自动触发"
+自 09-25 01:49 起等于没跑过 23.5 小时。修法＝`_kill_pid_tree` 改为永不抛（杀不动=返回 False，
+调用方既有 `[FAILED]` 语义承接）＋ logger.warning 留痕；判定阈值与 kill 顺序零改动；
++4 例（三种 AccessDenied 形态各自返回 False 不上抛，红证＝同输入喂修复前调用序列必抛），
+**62 passed**，ruff 干净 → 袋 `q-20260926-st-backup-cold-20260925-audit-0003`。
+（刻意**没有**在调用点再包一层 try：唯一现实抛源已在本函数内闭合，不给假想场景加壳。）
+
+**P-3 演练尺（车道 C）**：判据重立为四条件合取纯函数 `judge_drill`（`c1_table_set_equal` /
+`c2_row_direction` / `c3_content_fingerprint` / `c4_pg_restore_rc`），旧 `drill==live` 恒红尺废除；
+陈旧度默认只入报告读数不设硬阈值（避免"用一次恒红换另一次恒红"）；C3 只比两侧**共有主键**的稳定列
+指纹（结构性消掉 09-25 我那次"前 5000 行 md5 不等"的真因＝新增行挤进前 N）；C4 把 rc!=0 入裁决但
+只白名单三条有实物证据的良性错，集合外一律红。26 例新建测试 + **9 条变异检验（8 条被抓，1 条等价）**；
+真数据双向对拍＝旧尺红/新尺绿 + 植入"删 7 表改 3 老键"立刻红。
+⚠ **归属实况**：车道 C 首轮回报的 `commit=3d100121b6` 经复核**不是有效对象**（`git cat-file -t` 报
+Not a valid object name），作业实际停在索引；总包逐读索引 blob 确认在位后尝试代投，被**外来 staged**
+连坐（MUTABLE-CONST 属全仓扫描型，违规点是他人 in-flight 的 `blueprint_format_gate.py:70 __all__`）→
+最终由**车道自己的袋** `q-20260926-st-bca-c-drill-20260926-0001` 落地，归属正确。此为"自报凭据必须复核"的现场教材。
+
+**P-13 仪表盘探针（车道 F 撞 150 轮上限中断、无案卷，总包验后代投）**：两行 detect 跟迁到
+`F:\zephyr_cold\50_archive\by_project\zephyralpha` 与 `G:\backup\working_vault`，并加 `cfg_key`
+从 `backup_config.yaml` 派生真源（盘上字面量降为 fallback）；`code_backup` 不再对 USB 盘做
+130 万件 os.walk，改关键件+最新日目录有界判定且"未落齐的更新日快照自动回看上一日"。
+本会话实测＝`code_backup → green（快照 20260925 · 关键件 5/5 在位 · 2 小时前）单次<0.05s`、
+`cold_archive → green（清单 2515 件在位 / 118.0 GB）单次 0.4s`（顺带独立复证 P-1 改锚后 2515 件全在位）；
+新建 22 例测试全绿；另补 `_TIER_LABEL: Final` 以过 5.114 门禁。**体量披露**：该文件 HEAD 版本本就
+"Would reformat"（不合规存量），车道 F 顺手做了 ruff-format 全文件归一，故 diff 达 923 行——
+理想应拆两笔，半路车道已不存在，本会话不再拆，如实标注。袋 `q-20260926-st-bca-f-dash-20260926-0001`。
+
+**新增两条待办**：**P-21** `gate_registry.yaml` 现 gates=180 而声明 `total_gates=174`（差 6）＝派生标量漂移，
+须经生成器重算（本仓已证"派生标量经队列合并恒取 ours，永远进不了 HEAD"），本会话不抢这张热册；
+**P-22** 车道 C 发现演练库 `CREATE DATABASE` 继承 template1 的 `datcollate=Chinese_PRC.936` 而生产库是 `C`
+——它本次靠钉 `COLLATE "C"` 规避，**建库保真度未修**：恢复出的库排序/比较语义与生产不同，属"演练通过
+但恢复不等价"的隐蔽面，建议 `restore_drill` 建库显式 `LC_COLLATE 'C' TEMPLATE template0` 并复核约束齐建。
+
+**并发实况三条（写下来给下一班省时间）**：① `SESSION-REQUIRED` 因心跳 idle-30min 设计自退，本班会
+**三次**被判"会话未注册"（含代投车道袋时），处方=每次提交前现登现用，别指望注册长存；② 车道工作树
+被外部进程回滚两例（本会话 `backup.ps1` 的锁函数被冲掉一次、车道 C 文件两次），凡改动必"改完立刻
+`git add`＋当条命令内提交/入袋"；③ 外来 staged 会让全仓扫描型门禁连坐无辜提交人，正解是走队列
+（serializer 干净暂存区结构性免疫），不是硬闯也不是代修他人违规。
+
+**终局（02:0x 快照，P-7 见第十七节更正）**：12 条处方＝已落地 8（P-1/P-3/P-4/P-5/P-9/P-12/P-13/P-15，P-8b/P-19 及 P-11 更正同批计入）、
+**在途 1（P-7 车道 B 首袋被判死，重建中）**、
+改判 1（P-14 前提证伪：362 份报告仅 1.96MB 且 git 内零副本 → 不做删除式轮转，要减先归档压缩）、
+不修 2（P-8 D 盘空间红线与 P-10 任务时限属 Owner/运维门位；P-2/P-6 亦待 Owner）。
+待你点头的仍是三件：**P-2**（`.worktrees` 进不进排除清单＝覆盖面取舍）、**P-6**（ch_vm 全量重做写 F
+与 09-24 裁定相反、G 冻结档无刷新通道）、**P-10**（DailyBackup/WeeklyVMBackup 的 PT4H 硬时限）。
+本班会零删除、零实盘触碰、零绕门；三笔在途袋（0002 已判死且不 requeue，内容与 HEAD 同＝noop）。
+
+### 十七、收口波（02:3x—03:0x）：P-7 重建落地＋P-19 判定口径更正＋新发现 P-23
+
+**P-7 车道 B 首袋死因与重建（本会话亲自动手，非移交维护班）**：袋
+`q-20260926-st-bca-b-recon-20260926-0001` 判死原因＝COMPLEXITY-GUARD
+（`scripts/backup/backup_reconciler.py` `_adjudicate_completed_run` 复杂度 16>15），
+且车道 worktree 内容同时被外部回滚。处置＝从死袋 blob 取回两文件（**双证**：
+blob 字节 sha256 与死袋 manifest 登记值逐件相等后才落盘），再对症降复杂度：
+- 真因不是"分支多"，是**我此前拆 helper 时留下的重复落库**——父函数里那一次
+  `update_state_at(...)` 与 `_fake_green_verdict` 内部那一次字段完全相同（同一轮把
+  `ch_log_missing` 写两遍）。删父函数侧那次，落库点唯一化，**顺带修掉一个自造缺陷**；
+- helper 不再自己 `import ReconcileResult` 再兜 `dict`（那是我为测试环境加的壳）——
+  沿用本仓 reconciler 既有"结果类作参数注入"约定（与
+  `scripts/governance/d8_doc_sync/*_reconciler.py` 同形），去掉 `factory` 分支；
+- 度量口径：用**门禁自己的尺** `high_complexity_gate._cyclomatic_complexity` 复算
+  ＝16→**15**（阈值是 `>15`，15 放行）。不用第三方 cc 工具读数，避免口径漂移。
+- 语义零改动（状态字段值、`detail` 文案、判据顺序均不变），
+  `pytest tests/scripts/backup/` **47 passed**，ruff format/check 干净。
+- 新袋 `q-20260926-st-bca-b-recon-20260926-0002`（files=2，入袋后逐件把盘上字节
+  sha256 与袋内 `blob_sha256` 对上：`b770f88166d4…` / `dc254a9e0197…` 两件 MATCH）。
+  第一次直连提交被 COMMIT-SCOPE 判 2 域（scripts/backup 与 tests/ 同批），
+  按正门加 `--allow-multi-domain` 留痕改道入队，未硬闯未代修他人 staged。
+
+**P-19 判定口径更正（自我复核，防下一班误读）**：02:21:30 那一轮快照
+`errors=[]`、`scanned=28`、`whitelist_hits=20`、34 条 `reported`——**这不构成
+"kill-tree 修复已生效"的证据**。病灶进程
+`pid 4908 = NgcIso.exe`（Windows 受保护进程，非提权句柄永久 AccessDenied，实测
+`psutil.AccessDenied (pid=4908, name='NgcIso.exe')`）**至今存活**；它只在"某次 kill
+的进程树扫到它"时才触发抛源，这一轮恰好没走到。所以：
+- 已生效且被本轮证实的＝**外层兜底**（`reap()` 的 `finally: _write_status`，已落地）：
+  中途失能也落快照、且 `errors` 里带 `reap_aborted: …`——正是它把真凶写进台账的；
+- 仍在袋里的＝**内层永不抛**（`_kill_pid_tree` 三处 AccessDenied 兜底，袋 `-0003`）；
+- 唯一硬证据＝那条红证：同一输入喂"修复前调用序列"必抛、喂修复后函数返回 False 不上抛。
+⇒ 验收 `-0003` 落地的标准不是"下一轮没报错"（间歇性，可能连跑几十轮都不撞），
+而是"`_kill_pid_tree` 对受保护 pid 返回 False 且 `reap` 不抛"这条测试在 HEAD 里跑绿。
+
+**P-23（新发现：keep 名单按"整条 cmdline 子串"匹配＝参数值里出现路径就拿到永久豁免）**：
+读本轮快照时为了解释"`killed=[]` 却有 27 条 `incubation_expired_whitelisted`"而实测出来：
+- 语义：`process_reaper.py:1011-1013`——孵化到期后先过 `_is_whitelisted(cmdline, …)`，
+  命中即 `report_only` 并 `continue`，**永远不杀**（这不是漏杀 bug，是设计上"keep=免死"）；
+- 命中面：keep 册现存 167 行有效子串，其中 `'commit_queue'` 匹配孵化台账 1492 条记录里的
+  **561 条**、`'pytest'` 匹配 **438 条**——因为匹配对象是**含参数值的整条 cmdline**；
+- 实物证据（现抓）：`python.exe -m zephyr.governance.audit.reconcile_worker --payload
+  D:\ZephyrAlpha\.runtime\commit_queue\worktrees\w1\.runtime\reconcile_reports\…json`
+  ——它的**参数里那条路径**含 `commit_queue`，于是这个早该到期的工人被永久豁免；
+  本轮 30 条 `incubation_expired_whitelisted` 逐条反查 keep 子串**全部命中不了**
+  （`matched-by=[]`），因为快照 `cmdline` 被截到 120 字符而路径在后面——
+  这是**取证面自身的截断坑**，判"某行为何豁免"必须回孵化台账取全串，别拿快照下结论；
+- 现状体量（此刻）：live python 36 个，其中"cmdline 含 commit_queue 但不是队列本体"=1
+  （pid 33084，1.0h，48.8MB），"含 pytest"=5 → **暂时不危险**；危险在趋势：队列每跑一轮
+  就多一类"参数带队列路径"的工人，豁免面随 payload 路径自动扩张，且 561/1492 的历史
+  命中说明这类记录一直在攒。
+- 处方（**待裁，不自行收紧**）：把 keep 匹配从"整条 cmdline 子串"改为
+  "只匹配可执行/模块身份段（`-m <module>` 或脚本 basename），参数值不参与"；
+  或直接收紧那两行（`commit_queue` → `commit_queue.py`／`-m zephyr…commit_queue`，
+  `pytest` → `pytest ` 结尾带界的 argv[0] 位）。**为什么不自己改**：收紧＝把原本免死的
+  进程重新纳入可杀集合，属于"改变保命面"，与 P-2 同族（覆盖面取舍），必须 Owner 点头；
+  且本班会硬红线是零删除/零绕门，不拿"看起来更安全"当理由动判据。
+
+**落地监护交接（三笔在途袋，均 `branch=dev`，`base_head=3bfeb4b174…`）**：
+① `-0003` 本会话 reaper 内层修复；② `st-bca-c-drill-…-0001` 车道 C 演练尺；
+③ `st-bca-f-dash-…-0001` 车道 F 探针；④（本波新增）`st-bca-b-recon-…-0002` P-7。
+查：`python scripts/commit_queue.py status --session <sid>`；落地后逐笔
+`git log -1 --name-only` 核归属（队列当前有他人在飞：`st-qmine-…0029` processing，
+`daemon=online`，队首按 qid 字典序，本班会四笔均排在自己车道位上，未插队）。
+
+**十七节补记（02:4x，落地后回填）**：`-0003` 已落地＝commit
+`dc1c66e651`（`git log -1 --name-only` 核实归属＝只含我那两件
+`src/zephyr/trading/process_reaper.py` + 其测试，零外来吸收），
+落地后从 **HEAD 的盘上代码**复跑判定测试
+`pytest tests/zephyr/trading/test_process_reaper.py -k "KillPidTree or NeverBlinds"`
+＝**7 passed**（4 例 kill-tree 永不抛＋3 例快照永不失明）。
+⇒ 本班会最高价值那条（保命链被一次 AccessDenied 连坐 23.5h）**判据已闭合**：
+不再依赖"下一轮没报错"这种间歇性观测。
+
+### 十八、P-24 新发现（提交链侧，非本班会范围，只登记不代修）
+
+**现象（02:35 我入队车道 C 修复袋时当场撞到）**：
+```
+gate_auto_registrar FAIL-CLOSED: 1/103 gates failed: DOC-HEADER-SUITE:
+register failed: GateRegistrationError: priority=77 冲突——gate 'DOC-HEADER-SUITE'
+与已注册的 'BLUEPRINT-FORMAT' 同 priority.
+preflight gateway 初始化失败，入队预校验跳过
+```
+
+**根因（实物定位，非推测）**：`f3cac8b95c`（st-commitspeed-pkg8 批·T8簇2，02:05 落地）
+把七台文档头门禁合并为 DOC-HEADER-SUITE，同时**保留 BLUEPRINT-FORMAT 薄工厂出册**
+（其 commit message 自述"gate_id/priority 保真，引用兼容"）。两处都写死了同一个
+priority：`src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py:182`
+（BLUEPRINT-FORMAT=77）与 `:231`（DOC-HEADER-SUITE=77）。而注册表是 **fail-closed** 的
+（`src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py:309-320`，
+#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2：warn-only 被判"AI 会把 warn 当通过"而升级为抛），
+其 docstring 明写"Phase 2 block 不会卡死现有系统"——依据是当时唯一已知的撞号
+（BLUEPRINT-FORMAT vs RULING-COMMIT-VERIFIED）已在 Phase 1 消除。
+⇒ **该前提被这笔落地提交重新打破**：新撞号是合并时自己造出来的，Phase 1 豁免表里没有它。
+
+**实测面积（不夸大）**：
+- 链**没停**：02:05 之后仍有 `3bfeb4b174`（02:22）、`dc1c66e651`（02:30，本会话袋）
+  两笔正常落地 ⇒ 落地侧（serializer→git commit→GATE-PRECOMMIT-RUN）硬门禁照跑；
+- 坏的是**锁外预检层**：`preflight gateway 初始化失败 → 入队预校验跳过`＝自 02:05 起
+  每个会话的"一次给全违规清单"保护实际处于关闭状态（我 02:31/02:36 两次入队的回执里
+  都印着这一行，而回执仍以 `ENQUEUED:` 成功结尾——生产者极易当成正常入队），
+  后果＝违规从"提交前 3 秒看到"退化为"排队几十分钟后死袋才知道"，
+  与本战役"提交链提速"目标反向；
+- 我自己的两次入队（车道 B `-0002` 02:31、车道 C `-0002` 02:36）都是在**预检被跳过**的
+  状态下投的，两笔至今 pending（未死、也未落地），所以本条只到"早停保护关闭"为止，
+  不下"硬闸失守"的结论——车道 C 那笔 B905 的拦回发生在 02:01 的 `-0001`（撞号之前），
+  不能算作本缺陷的后果。**这不是静默放行违规，是静默关掉了一道早停保护**。
+
+**处方（属主＝st-commitspeed-pkg8 车道 / 维护班；本班会不代修，理由＝§3.4 owner 责任制
+＋改别人刚落地的合并判据面属高半径动作）**：
+1. 二选一：给 DOC-HEADER-SUITE 换唯一 priority（历史先例：RULING-COMMIT-VERIFIED
+   77→109、DOC-REF-BROKEN 88→91），或把保留用的 BLUEPRINT-FORMAT 薄工厂**不再注册进
+   in-process 名册**（只保函数可导入，满足"历史测试/RULE-EXECUTION-PAIRING 引用兼容"）；
+2. 无论哪种，都要给"合并后台与吸收台的 priority 关系"加一条**注册期断言测试**
+   （union 台与其吸收台同 priority 即红），否则下次合并还会复现；
+3. `preflight gateway 初始化失败 → 跳过`这个降级本身应改为**可见**：把
+   "本轮预检未运行"写进入队回执与审计（现在是 INFO 一行，生产者很容易当成正常入队）。
+   ——这与本班会 P-19 同族：**兜底把异常吞成"继续跑"，比崩溃更难发现**。
+
+**附（同窗口另一条观测，属事实不属 P-24）**：本会话台账副本在 `-0004` 入袋后被
+**回退** 531→411 行（§十六/§十七 从盘上消失，仅存活于该袋 blob），这是本会话内第三次
+撞同类重置（前两次＝`backup.ps1` 尾块、reaper 测试新增块）。**成因未定位**：
+`.runtime/workspace_drift_warn.jsonl`（303 行）与 `.runtime/worktree_ops_log.jsonl`（9649 行）
+按路径 `disk_reorg` 检索均零条目，故不下"谁干的"结论。处方沿用既有铁律并再加一条：
+热文件"入袋≠落盘"，袋 blob 是唯一可靠副本，任何"我改过"的断言都要以
+`git show HEAD:<path>` 现读为准；重建走＝以 HEAD 文本为基重放全部草稿段
+（本次＝HEAD 411＋四段＝585 行，断言四个标记各出现 1 次且前缀与 HEAD 逐字节相等）。
+
+### 十九、未归因 hazards 记录（本班会只登记"已排除项"，防下一班重复排查）
+
+**H-1 主工作区在制品被回退（4 例，成因未定位）**：02:2x—02:4x 窗口内实测四次
+"盘上文件被退回 HEAD 版本"，其中两次紧跟"该文件的袋被判死/入袋"之后：
+| 时点 | 文件 | 发现方式 | 后果 |
+|---|---|---|---|
+| ~01:0x | `scripts/backup/backup.ps1` 锁函数尾块 | 改完再读发现回到 HEAD | 当条命令内重做并提交，无损失 |
+| ~01:4x | `tests/zephyr/trading/test_process_reaper.py` 新增两类 | 同上 | 重做后落 `-0003`，已落地 |
+| ~02:32 | `scripts/backup/restore_drill.py`＋`tests/backup/test_restore_drill.py` | 还原死袋时实测 `disk==HEAD`、测试文件 ABSENT | 从死袋 blob 双证取回，重投 `-0002` |
+| ~02:39 | `docs/_working/disk_reorg_campaign/LEDGER_final.md`（531→411 行） | 追加脚本报 `old=411` | 以 HEAD 为基重放四段重建 594 行，重投 `-0005` |
+
+**已排除的四条猜测（都是花时间花出来的，写下来给下一班省账）**：
+1. ❌"claim 释放时回写基线" —— 读 `git_commit_gateway.release_files()`（该文件 1358 行起）
+   实证：只做 `registry.release_files_batch` ＋清理 `_claim_snapshots`/`claim_heads`，
+   **不触碰工作区字节**；
+2. ❌"gateway stash 隔离吞掉未提交件" —— `.git/logs/refs/stash` **不存在**、
+   `git stash list` 空；（gateway docstring 里的"stash 隔离"字样是最初嫌疑来源，已否）
+3. ❌"reaper 顺手杀了写手进程" —— 四次回退都是**内容退回 HEAD**而非文件消失；
+   本班会读到的两份快照（02:21:30 与 02:37:24）`killed` 均为空、
+   `errors` 均为空（02:37 那轮 `reported=31`），杀进程也不产生 checkout 效果；
+4. ❌"我自己的脚本写坏" —— `bca_append2.py` 与 `bca_rebuild_ledger.py` 都走
+   `safe_write_text(expected_base_sha256=…)`，CAS 不匹配会拒绝写入而不是回退；
+   第一次追加的读回断言（`byte-equal-append: True`＋四个标记各 1）当场通过，
+   说明写入成功过，之后是被**第三方**改掉的。
+⇒ 剩下的可能性集中在"某会话在主干做了 `git checkout/restore <path>` 或 `git add -A`
+   后的清理"，需要的是**文件级 watcher**（对指定路径 mtime＋sha 采样，落在
+   `.runtime/tmp/` 之外的审计面），本班会不再扩范围，移交为 **P-25（观测类，带处方）**。
+
+**本班会因此加装的自保动作（已生效，直接可抄）**：
+① 入袋后立刻用袋内 `blob_sha256` 对盘上字节逐件验（`-0005`/`-0002` 均验过：
+ledger `ff4cb0ce9666` MATCH、lane C `cc5502f6a865`/`9f7d0e35f5df` MATCH；
+lane B 盘上已被退回 HEAD（`46d099ce0fb3`），但袋内 `61399079832b` 是我修好的版本
+——**袋是权威副本，落地不受盘上回退影响**）；
+② 任何"我改过"的断言改口径为 `git show HEAD:<path>` 现读；
+③ 台账重建走"HEAD 文本为基重放全部草稿段＋标记计数断言＋前缀逐字节断言"，
+   草稿段留在 `.runtime/tmp/bca_sec1[678]*.md`，重写幂等。
+
+### 二十、P-24 升级（同一缺陷的第二症状：GitCommitGateway 初始化直接失败）
+
+**新证据（02:43，本会话自己的收尾动作被挡）**：
+```
+python scripts/git_commit.py --release-only --session st-bca-f-dash-20260926 --files ...
+  gate_auto_registrar FAIL-CLOSED: 1/103 gates failed: DOC-HEADER-SUITE: GateRegistrationError: priority=77 冲突…
+  ERROR: GitCommitGateway 初始化失败: gate auto-registration fail-closed (裁定#351)
+```
+⇒ 第十八节原判"只坏锁外预检层"**低估了**：凡走 gateway 的 CLI 路径
+（`--release-only`／直连 commit）现在**直接构造失败**，只有 `--enqueue` 因内部
+try/except 降级为"跳过预检"而仍能入袋，队列落地（serializer 走另一条装配）也仍在工作
+（02:38 车道 F、02:41 他会话两笔正常落地为证）。**全局后果＝自 02:05 起所有会话
+都无法 release 自己的 claim**，claim 只能等 30 分钟 TTL 自灭——这会连带把
+"毕后 release"这条铁律变成做不到的动作。
+
+**三处真源互相矛盾（这才是根因，不是"priority 撞号"那么轻）**：
+| 面 | 说的是 | 实物 |
+|---|---|---|
+| 模块 docstring `blueprint_format_gate.py:22` | 薄工厂"供历史测试/引用兼容（**不再入册**）" | 与下两行矛盾 |
+| 名册 `gate_registry.yaml:757-769` | BLUEPRINT-FORMAT ＝"已合并至 DOC-HEADER-SUITE"，带 `redirect_to: DOC-HEADER-SUITE` 墓碑 | 同上 |
+| 触发名册 `in_process_gate_registry.yaml` | **同时**有 `gate_id: BLUEPRINT-FORMAT`(366) 与 `gate_id: DOC-HEADER-SUITE`(728) | 两行都被 auto-registrar 装配 ⇒ 同 priority 撞死 |
+
+即：**合并动作做完了、代码不再主张入册、外层名册也立了墓碑，唯独生成器产出的
+in-process 触发名册还留着被吸收台的活行**。
+
+**修法（一条命令级，属主仍是 st-commitspeed-pkg8；本班会不代改，理由见下）**：
+在 `scripts/governance/generators/generate_gate_registry.py` 的 in-process 名册产出环节
+**跳过带 `redirect_to` 的被吸收台**（与 gslim P4 的 NO-GOD-CLASS/NO-HIGH-COMPLEXITY
+墓碑锚点同族处理——那两个 gate_id 当年也是"保留 id、不再入册"），然后重生成两册；
+配一条注册期断言测试："名册内不得同时出现某台与其 `redirect_to` 目标台"，
+否则 T8 簇后续合并（还有 5 簇待做）必复发。
+**为什么不代改**：这要动**生成器＋两张热册**（`gate_registry.yaml` 1.75MB 级），
+而本会话主工作区此刻仍有 155 个外来 staged 文件——热册在主区改＝本仓已实证多次被
+覆盖/驱逐（memory 在案），且 pkg8 车道 `st-commitspeed-pkg8-20260925-0012` 袋还在队里，
+说明它随时可能自己补这一刀。我改＝抢它的热册并制造第二套重放器（这正是
+[[hot-registry-superset-delta-recipe]] 里"连拒即停手别造第四套重放器"点名的错法）。
+
+**本会话收尾被挡后的自保动作**：claim 释放改走底层 API
+`SessionRegistry.release_files_batch(sid, files)`（读代码确认
+`GitCommitGateway.release_files()` 内部就是调它＋清 claim 快照，**不触碰工作区字节**，
+所以直调与走 gateway 语义等价、不绕任何门禁），并在台账写明是被 P-24 逼出来的绕行，
+不是常规通道。
+
+### 二十一、入袋前置三查（本班会用两条死袋换来的可复用工序）
+
+**教训来源**：同一条 `GATE-PRECOMMIT-RUN`（落地前在 own-scope 临时索引上跑
+`hooks=['ruff','ruff-format']`）在本班会吃掉两袋——车道 C `-0001`（`B905 zip() 未给 strict=`）
+与车道 B `-0002`（`Would reformat: tests/scripts/backup/test_backup_reconciler.py`）。
+两次都不是判据错，而是**我只对"改过的那个文件"跑了格式/静态检查，没对袋内全部文件跑**。
+
+**入袋前三条命令（≤20 秒，能在 3 秒内预检被 P-24 关掉的情况下自己补上这道早停）**：
+```bash
+FILES="a.py,b.py"                      # 与 --files 完全同一串
+ruff check  $(echo $FILES | tr ',' ' ')               # 含 B905 这类规则
+ruff format --check $(echo $FILES | tr ',' ' ')       # 门禁用 --check 语义（只检不改）
+python -m pytest <自家测试目录> -q                    # 自家测试同批
+```
+要点：① **袋内每一件都要过 `ruff format --check`**，包括 `tests/` 下的新文件——
+门禁按 staged 面全量跑，不按"我手改过哪件"跑；
+② 改完立刻 `git add` 自己路径，再逐件把盘上字节 sha256 与袋内 `blob_sha256` 对上
+（本班会实测：`-0005` ledger `ff4cb0ce9666`、`-0003` `b770f88166d4`/`65f1c10f8c94` 全 MATCH；
+而车道 B 盘上曾一度被退回 HEAD＝`46d099ce0fb3`，靠袋 blob 复原）；
+③ 复杂度用**门禁自己的尺**复算（`high_complexity_gate._cyclomatic_complexity`）——
+本班会两次量到 16 的都是它，判死原因里的数字也是它，同口径才谈得上"改到 15 就放行"；
+不同工具口径不一致时不排除会误判（本会话未实测第三方工具，故只登记"用门禁尺"这一条做法）。
+
+**同批修正**：车道 B 的 `-0002` 判死后我按上述工序重建：死袋 blob 双证取回 →
+`ruff format` 两件全跑 → 47 passed → 重投 `-0003`。
+P-7 本体（点火/托管分离：`launch_detached_backup`＋`settle_previous_ignition`＋
+锁自查前置）在恢复件里逐处在位（`backup_reconciler.py` 净变化 416 增/139 删，
+调用点 809/831 行），未因两次死袋丢任何逻辑。
