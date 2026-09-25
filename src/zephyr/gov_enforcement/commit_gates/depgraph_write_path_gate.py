@@ -114,6 +114,27 @@ _WHITELIST: frozenset[str] = frozenset(
         "scripts/entity_graph/apply_entity_graph_ddl.py",
         "scripts/entity_graph/entity_graph_ingest.py",
         "scripts/entity_graph/equity_penetration.py",
+        # 治本（2026-09-24）：AI 层 P1 收官批 DDL/写侧部署器与表写入器
+        #   （st-ailayer-final-20260924；schema 全部落 depgraph 同实例 PG——
+        #    ai_layer_model/ai_layer_scheduling/ai_compare/ai_heritage_test/ai_cleaning_spec/
+        #    ai_tools/ai_source_quota/ai_intake quota/ai_compare experiment 写入面）
+        "scripts/ai_layer/apply_ai_heritage_ddl.py",
+        "scripts/ai_layer/apply_ai_layer_scheduling_ddl.py",
+        "scripts/ai_layer/apply_model_library_ddl.py",
+        "scripts/ai_layer/sync_ai_source_quota.py",
+        "src/zephyr/ai_layer/cleaning/spec_store.py",
+        "src/zephyr/ai_layer/comparator/experiment_store.py",
+        "src/zephyr/ai_layer/heritage/store.py",
+        "src/zephyr/ai_layer/tools/usage_stats.py",
+        # 治本（2026-09-25）：W-M1 注册表 PG 行级账本写侧（st-wm1-wave0-20260924；
+        #  02 号文 D-3 预案：v1=Python API 物理唯一入口+writer 白名单扩面）
+        #   api.py      = registry_ledger 意图 API（register/update/retire/takeover）
+        #   baseline.py = Phase 0 基线导入+双轨对账写侧（action=import/reconcile_drift/publish）
+        "src/zephyr/governance/registry_ledger/api.py",
+        "src/zephyr/governance/registry_ledger/baseline.py",
+        #   deploy.py = registry_ledger schema DDL 部署器（CREATE SCHEMA/TABLE+触发器需 superuser，
+        #   同 add_acquisition_fields.py 先例；幂等可重跑，指纹校验防漂移）
+        "src/zephyr/governance/registry_ledger/deploy.py",
     }
 )
 
@@ -144,7 +165,9 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
         for f in _get_staged_py_files(gateway, "DEPGRAPH-WRITE-PATH")
         if not is_test_exempt(f) and not _is_whitelisted(f) and not _is_self(f)
     ]
-    py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="DEPGRAPH-WRITE-PATH")[0]
+    py_files = _split_own_foreign(gateway, py_files, files, kwargs.get("session_id"), gate_name="DEPGRAPH-WRITE-PATH")[
+        0
+    ]
     if not py_files:
         return True, ""
     violations: list[str] = []
@@ -175,6 +198,14 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
             "    - scripts/entity_graph/apply_entity_graph_ddl.py (entity_graph 六表 DDL 部署器)\n"
             "    - scripts/entity_graph/entity_graph_ingest.py (A 层 node/edge 灌入器)\n"
             "    - scripts/entity_graph/equity_penetration.py (ig 并入器+穿透比对)\n"
+            "    - scripts/ai_layer/apply_ai_heritage_ddl.py (ai_heritage schema 部署器)\n"
+            "    - scripts/ai_layer/apply_ai_layer_scheduling_ddl.py (ai_layer_scheduling schema 部署器)\n"
+            "    - scripts/ai_layer/apply_model_library_ddl.py (ai_layer_model 三表部署器)\n"
+            "    - scripts/ai_layer/sync_ai_source_quota.py (源配额写回)\n"
+            "    - src/zephyr/ai_layer/cleaning/spec_store.py (ai_cleaning_spec 写入器)\n"
+            "    - src/zephyr/ai_layer/comparator/experiment_store.py (ai_compare 实验账本)\n"
+            "    - src/zephyr/ai_layer/heritage/store.py (ai_heritage 写入器)\n"
+            "    - src/zephyr/ai_layer/tools/usage_stats.py (ai_tools 用量写入器)\n"
             "  白名单扩展规则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree\n"
             "  等）的脚本必须加入白名单，扩展三步——(a) 脚本传 read_only=False\n"
             "  (b) 更新本白名单+错误信息 (c) 更新 architecture_issue_registry.yaml 裁定文档\n"
