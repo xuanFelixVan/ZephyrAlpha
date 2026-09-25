@@ -9,7 +9,11 @@
 #   与 pilot_002 完全一致）；回测引擎口径全 C4 批次统一（可比性）；数据只用健康表
 #   （kline_daily_hfq/kline_index/kline_etf_daily/stk_limit/index_constituent/stock_basic）；
 #   涨跌停可成交性闸默认开（E7 引擎洞修复 2026-09-18：封板收盘禁开仓/跌停收盘禁出逃，
-#   判定单位对齐原始价 kline_daily vs stk_limit；gate_limits=False 仅供反例对照）
+#   判定单位对齐原始价 kline_daily vs stk_limit；gate_limits=False 仅供反例对照）；
+#   st-ddup-20260925 去重改造（内收声明）：掩码 pivot 向量化+批级 LRU 缓存（替代逐行
+#   dict/iat+每 pass 重查 CH）、_backtest_core 单趟共享（替代 run_backtest 与
+#   daily_net_returns 同式两算）、net_returns_by_tiers 多档标量成本线（替代五档各全跑）；
+#   判定式/容差/fail-open/净收益公式逐位不变，gpu_rewrite/hotspot_census.md §二为实测依据
 # [MODIFY-GUARD] tests/backtest/test_c4_batch_smoke.py; tests/backtest/test_c4_deflated_sharpe_runner.py; tests/backtest/test_c4_auto_oos.py
 # [STABILITY] experimental
 # [SAFETY] L
@@ -35,6 +39,8 @@ DSR = Φ( (SR-SR0)·sqrt(T-1) / sqrt(1 - γ3·SR + ((γ4-1)/4)·SR²) )，γ3/γ
 from __future__ import annotations
 
 import re
+import threading
+from collections import OrderedDict
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -63,6 +69,14 @@ _T_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
 
 # 涨跌停封板判定容差（E7 探针同口径 2026-09-17：close_raw >= limit_up*(1-1e-4)）
 _LIMIT_SEAL_TOL = 1e-4
+
+# 掩码批级 LRU 缓存（st-ddup-20260925 去重改造③，gpu_rewrite/hotspot_census.md §二 L1-a/L1-b/L1-d）：
+# 掩码只依赖 (窗口, 宇宙列集)，与格点无关——键=(起,止,6字列集元组)；容量按批内宇宙族数
+# （hs300/zz500/all_a）×2 余量。命中即免 2 次 CH 全窗查询+7.2M 行 dict+93.5 万次 .iat
+# （实测占单 pass 74-95%）。仅缓存成功构建（fail-open 瞬断不落缓存防毒化）。
+_SEAL_MASK_CACHE: OrderedDict[tuple, tuple[pd.DataFrame, pd.DataFrame]] = OrderedDict()
+_SEAL_MASK_CACHE_MAX = 6
+_SEAL_MASK_LOCK = threading.Lock()
 
 # 最近一次窗口宇宙加载的披露（E4 retrofit：幸存者偏差可见化，禁静默）
 _UNIVERSE_DISCLOSURE: dict | None = None
@@ -322,6 +336,68 @@ def filter_st(wide_close: pd.DataFrame, flags: pd.DataFrame) -> pd.DataFrame:
     return wide_close.mask(mask)
 
 
+def _align_pivot_to_columns(
+    piv: pd.DataFrame, index: pd.DatetimeIndex, col_map: dict[str, int], n_cols: int
+) -> pd.DataFrame:
+    """pivot 宽表 → (index × n_cols 位置阵) 对齐：行 reindex，列按 col_map 摆位（缺→NaN）。
+
+    列对齐语义与原逐行实现同构：6 字前缀→列位置映射后者覆盖（dict 推导 last-wins）；
+    CH 侧缺行/索引外日期→NaN→后续比较 False（=原 dict.get miss→skip 不写）。
+    """
+    piv = piv.reindex(index=index)
+    out = np.full((len(piv.index), n_cols), np.nan)
+    src = piv.to_numpy()
+    for j_src, sym in enumerate(piv.columns):
+        j_tgt = col_map.get(str(sym)[:6])
+        if j_tgt is not None:
+            out[:, j_tgt] = src[:, j_src]
+    return pd.DataFrame(out, index=piv.index, columns=pd.RangeIndex(n_cols))
+
+
+def _wide_limit_agg(long_df: pd.DataFrame, field: str, how: str) -> pd.DataFrame:
+    """limit 长表→宽表，重复键按方向聚合——复刻原逐行实现"任一行判定封板即写 True
+    （False 从不回写）"的 OR 累积语义：sealed_up=any_k[close>=up_k*(1-tol)] ⇒ up 取
+    **min**（最严阈值）；sealed_down=any_k[close<=dn_k*(1+tol)] ⇒ dn 取 **max**。
+    NaN-skipping（groupby 聚合天然跳 NaN）；无重复键走纯 pivot 快路径（CH FINAL 常态）。"""
+    key = ["trade_date", "symbol"]
+    if long_df.duplicated(subset=key).any():
+        long_df = long_df.groupby(key, as_index=False, sort=False)[field].agg(how)
+    return long_df.pivot(index="trade_date", columns="symbol", values=field).sort_index()
+
+
+def _build_seal_masks(
+    index: pd.DatetimeIndex,
+    columns: pd.Index,
+    raw_rows: list[tuple],
+    lim_rows: list[tuple],
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """掩码向量化构建（st-ddup-20260925 去重改造③）：CH 行→pivot→列对齐→numpy 比较。
+
+    判定式与原逐行实现同序同精度：up*(1-_LIMIT_SEAL_TOL)/dn*(1+_LIMIT_SEAL_TOL)；
+    缺价/停牌/NULL 限制/非股票标的→NaN 比较 False（=原 skip）。
+    """
+    empty = pd.DataFrame(False, index=index, columns=columns)
+    if not raw_rows or not lim_rows:
+        return empty, empty
+    raw_px = pd.DataFrame(raw_rows, columns=["trade_date", "symbol", "close_raw"])
+    lim = pd.DataFrame(lim_rows, columns=["trade_date", "symbol", "limit_up", "limit_down"])
+    for df in (raw_px, lim):
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+    col_map: dict[str, int] = {str(c)[:6]: j for j, c in enumerate(columns)}  # last-wins 同原实现
+    raw_w = _align_pivot_to_columns(wide(raw_px, "close_raw"), index, col_map, len(columns))
+    up_w = _align_pivot_to_columns(
+        _wide_limit_agg(lim.drop(columns=["limit_down"]), "limit_up", "min"), index, col_map, len(columns)
+    )
+    dn_w = _align_pivot_to_columns(
+        _wide_limit_agg(lim.drop(columns=["limit_up"]), "limit_down", "max"), index, col_map, len(columns)
+    )
+    sealed_up = pd.DataFrame(raw_w.to_numpy() >= up_w.to_numpy() * (1 - _LIMIT_SEAL_TOL), index=index, columns=columns)
+    sealed_down = pd.DataFrame(
+        raw_w.to_numpy() <= dn_w.to_numpy() * (1 + _LIMIT_SEAL_TOL), index=index, columns=columns
+    )
+    return sealed_up, sealed_down
+
+
 def _load_seal_masks(index: pd.DatetimeIndex, columns: pd.Index) -> tuple[pd.DataFrame, pd.DataFrame]:
     """涨跌停封板掩码（E7 引擎洞修复 2026-09-18）：返回 (sealed_up, sealed_down) 布尔宽表。
 
@@ -329,6 +405,11 @@ def _load_seal_masks(index: pd.DatetimeIndex, columns: pd.Index) -> tuple[pd.Dat
     raw close 取 kline_daily，limit_up/limit_down 取 stk_limit（原始价口径）；
     缺价/停牌/无涨跌幅限制（NULL）或非股票标的（ETF 等 stk_limit 无行）→ False 不闸
     （fail-open 如实披露，不编造可成交性）。
+
+    st-ddup-20260925 去重改造（内收声明：替代本函数原"每 pass 两次 CH 全窗查询+
+    7.2M 行 dict 推导+93.5 万次 .iat 行循环"零缓存实现）：CH 两查询→pivot 宽表→
+    numpy 对齐比较+批级 LRU 缓存，同宇宙多 pass/多格共享一次构建；
+    判定式/容差/fail-open 语义逐位不变。
     """
     empty = pd.DataFrame(False, index=index, columns=columns)
     syms = [str(c)[:6] for c in columns]
@@ -336,6 +417,12 @@ def _load_seal_masks(index: pd.DatetimeIndex, columns: pd.Index) -> tuple[pd.Dat
         return empty, empty
     start = index.min().strftime("%Y-%m-%d")
     end = index.max().strftime("%Y-%m-%d")
+    key = (start, end, tuple(syms))
+    with _SEAL_MASK_LOCK:
+        hit = _SEAL_MASK_CACHE.get(key)
+        if hit is not None:
+            _SEAL_MASK_CACHE.move_to_end(key)
+            return hit
     sym_list = ", ".join(f"'{s}'" for s in sorted(set(syms)))
     try:
         raw_rows = _q(
@@ -350,23 +437,13 @@ def _load_seal_masks(index: pd.DatetimeIndex, columns: pd.Index) -> tuple[pd.Dat
     except Exception:  # noqa: BLE001 — 闸原料不可得不得炸正考（fail-open 有意为之，见下行注记）
         # 闸原料不可得=不阻断回测（fail-open），但不得伪装成已闸——调用方 stats 里带注记
         return empty, empty
-    raw = {(str(d)[:10], str(s)[:6]): float(c) for d, s, c in raw_rows}
-    sealed_up = empty.copy()
-    sealed_down = empty.copy()
-    idx_map = {d.strftime("%Y-%m-%d"): i for i, d in enumerate(index)}
-    col_map = {str(c)[:6]: j for j, c in enumerate(columns)}
-    for d, s, up, dn in lim_rows:
-        i, j = idx_map.get(str(d)[:10]), col_map.get(str(s)[:6])
-        if i is None or j is None:
-            continue
-        c_raw = raw.get((str(d)[:10], str(s)[:6]))
-        if c_raw is None:
-            continue
-        if up is not None and c_raw >= float(up) * (1 - _LIMIT_SEAL_TOL):
-            sealed_up.iat[i, j] = True
-        if dn is not None and c_raw <= float(dn) * (1 + _LIMIT_SEAL_TOL):
-            sealed_down.iat[i, j] = True
-    return sealed_up, sealed_down
+    masks = _build_seal_masks(index, columns, raw_rows, lim_rows)
+    with _SEAL_MASK_LOCK:
+        _SEAL_MASK_CACHE[key] = masks
+        _SEAL_MASK_CACHE.move_to_end(key)
+        while len(_SEAL_MASK_CACHE) > _SEAL_MASK_CACHE_MAX:
+            _SEAL_MASK_CACHE.popitem(last=False)
+    return masks
 
 
 def apply_fillability_gate(weights: pd.DataFrame, gate_limits: bool = True) -> pd.DataFrame:
@@ -396,6 +473,30 @@ def apply_fillability_gate(weights: pd.DataFrame, gate_limits: bool = True) -> p
     return pd.DataFrame(out, index=weights.index, columns=weights.columns)
 
 
+def _backtest_core(
+    weights: pd.DataFrame, px_close: pd.DataFrame, gate_limits: bool = True
+) -> tuple[pd.Series, pd.Series]:
+    """run_backtest / daily_net_returns 共享单趟（st-ddup-20260925 去重改造②，
+    gpu_rewrite/hotspot_census.md §二 L2-b：两函数体重叠 90%，执行器两连调=白付 1 个 pass）。
+    返回 (gross, turnover)，成本线由 _net_line 标量乘派生——净收益公式零改写。"""
+    closes = px_close.reindex(weights.index.union(weights.index)).ffill()
+    rets = closes.pct_change()
+    w = weights.reindex(closes.index).ffill().fillna(0.0)
+    w = apply_fillability_gate(w, gate_limits=gate_limits)
+    gross = (w.shift(1) * rets).sum(axis=1).fillna(0.0)
+    turnover = (w - w.shift(1)).abs().sum(axis=1).fillna(0.0) / 2.0
+    return gross, turnover
+
+
+def _net_line(gross: pd.Series, turnover: pd.Series, slippage_bp: float | None) -> pd.Series:
+    """冻结土规成本线（佣金 2.5bp 双边+印花 10bp 卖+滑点档双边）——与原
+    run_backtest/daily_net_returns 内联式同序同精度；改档=标量乘（五档 <0.1ms 实测，
+    gpu_rewrite/hotspot_census.md §二 L2-c）。"""
+    slip = SLIPPAGE_BP if slippage_bp is None else float(slippage_bp)
+    cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + slip * 2) / 10000.0
+    return gross - cost
+
+
 def run_backtest(
     weights: pd.DataFrame,
     px_close: pd.DataFrame,
@@ -412,15 +513,8 @@ def run_backtest(
     None=冻结土规 SLIPPAGE_BP 零变更。仅滑点项可覆盖，佣金/印花不动——
     正考口径必须传 None，档位扫描是侧向分析不改冻结土规。
     """
-    closes = px_close.reindex(weights.index.union(weights.index)).ffill()
-    rets = closes.pct_change()
-    w = weights.reindex(closes.index).ffill().fillna(0.0)
-    w = apply_fillability_gate(w, gate_limits=gate_limits)
-    gross = (w.shift(1) * rets).sum(axis=1).fillna(0.0)
-    turnover = (w - w.shift(1)).abs().sum(axis=1).fillna(0.0) / 2.0
-    slip = SLIPPAGE_BP if slippage_bp is None else float(slippage_bp)
-    cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + slip * 2) / 10000.0
-    net = gross - cost
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits)
+    net = _net_line(gross, turnover, slippage_bp)
     equity = (1.0 + net).cumprod()
     years = max(len(net) / 244.0, 1e-9)
     sharpe = float(net.mean() / net.std() * np.sqrt(244)) if net.std() > 0 else 0.0
@@ -447,15 +541,51 @@ def daily_net_returns(
     gate_limits: 涨跌停可成交性闸（默认开，与 run_backtest 一致）。
     slippage_bp: 滑点档覆盖（批C 考尺成本敏感性扫描专用）；None=冻结土规零变更。
     """
-    closes = px_close.reindex(weights.index.union(weights.index)).ffill()
-    rets = closes.pct_change()
-    w = weights.reindex(closes.index).ffill().fillna(0.0)
-    w = apply_fillability_gate(w, gate_limits=gate_limits)
-    gross = (w.shift(1) * rets).sum(axis=1).fillna(0.0)
-    turnover = (w - w.shift(1)).abs().sum(axis=1).fillna(0.0) / 2.0
-    slip = SLIPPAGE_BP if slippage_bp is None else float(slippage_bp)
-    cost = turnover * (COMMISSION_BP * 2 + STAMP_BP + slip * 2) / 10000.0
-    return (gross - cost).fillna(0.0)
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits)
+    return _net_line(gross, turnover, slippage_bp).fillna(0.0)
+
+
+def run_backtest_full(
+    weights: pd.DataFrame,
+    px_close: pd.DataFrame,
+    gate_limits: bool = True,
+    slippage_bp: float | None = None,
+) -> tuple[dict[str, Any], pd.Series]:
+    """单趟双产物 (stats, net)——run_backtest + daily_net_returns 合并入口
+    （st-ddup-20260925 去重改造②，内收声明：替代执行器两连调 run_backtest+
+    daily_net_returns；stats 与 run_backtest(...) 逐位一致，net 与
+    daily_net_returns(...) 逐位一致，两原函数签名/语义不变）。
+    slippage_bp 语义与 run_backtest 相同（None=冻结土规；扫描档走 net_returns_by_tiers）。"""
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits)
+    net = _net_line(gross, turnover, slippage_bp)
+    equity = (1.0 + net).cumprod()
+    years = max(len(net) / 244.0, 1e-9)
+    sharpe = float(net.mean() / net.std() * np.sqrt(244)) if net.std() > 0 else 0.0
+    mdd = float((equity / equity.cummax() - 1.0).min())
+    stats = {
+        "days": int(len(net)),
+        "sharpe": round(sharpe, 3),
+        "ann_return": round(float(equity.iloc[-1] ** (1 / years) - 1.0), 4),
+        "max_drawdown": round(mdd, 4),
+        "avg_turnover_1side": round(float(turnover.mean()), 4),
+        "equity_final": round(float(equity.iloc[-1]), 4),
+        "hold_days_pct": round(float((weights.sum(axis=1) > 0).mean()), 3),
+    }
+    return stats, net.fillna(0.0)
+
+
+def net_returns_by_tiers(
+    weights: pd.DataFrame,
+    px_close: pd.DataFrame,
+    slippage_bps,
+    gate_limits: bool = True,
+) -> dict[float, pd.Series]:
+    """一趟 gross/turnover × 多档成本标量乘（st-ddup-20260925 去重改造①，内收声明：
+    替代 run_cost_tier_scan 五档各自全量重算的引擎侧路径——档间唯一差异是一行标量
+    成本线，五遍全量回测收敛为一遍回测+五档后处理）。
+    返回 {float(bp): net}；各档 net 与 daily_net_returns(slippage_bp=bp) 逐位一致。"""
+    gross, turnover = _backtest_core(weights, px_close, gate_limits=gate_limits)
+    return {float(bp): _net_line(gross, turnover, bp).fillna(0.0) for bp in slippage_bps}
 
 
 def batch_deflated_sharpe(nets_by_id: dict[str, pd.Series], num_trials: int | None = None) -> dict[str, float | None]:

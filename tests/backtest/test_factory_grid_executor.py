@@ -119,14 +119,18 @@ class TestIndustryNeutralExact:
         return {f"{600000 + i}": names[i % 3] for i in range(n_sym)}
 
     @staticmethod
-    def _factor_with_industry_effect(industries: dict[str, str], n_days: int = 60,
-                                     seed: int = 11) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def _factor_with_industry_effect(
+        industries: dict[str, str], n_days: int = 60, seed: int = 11
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:
         """因子 = 行业效应(大) + 个股噪声(小)；返回 (因子, 噪声真值)。"""
         rng = np.random.default_rng(seed)
         idx = pd.bdate_range("2023-01-02", periods=n_days)
         symbols = list(industries)
-        effect = pd.Series({"银行": 2.0, "医药生物": -1.0, "食品饮料": 0.5}).reindex(
-            pd.Series(industries)).to_numpy()[None, :]  # (1, n_sym) 按列广播
+        effect = (
+            pd.Series({"银行": 2.0, "医药生物": -1.0, "食品饮料": 0.5})
+            .reindex(pd.Series(industries))
+            .to_numpy()[None, :]
+        )  # (1, n_sym) 按列广播
         noise = pd.DataFrame(rng.normal(0, 0.01, (n_days, len(symbols))), index=idx, columns=symbols)
         f = noise + effect
         return f, noise
@@ -145,8 +149,7 @@ class TestIndustryNeutralExact:
         f, noise = self._factor_with_industry_effect(industries)
         out, _ = mod._normalize(f, "industry_neutral", industry_map=industries)
         ser = pd.Series(industries)
-        gm = pd.DataFrame({ind: out[list(cols)].mean(axis=1)
-                           for ind, cols in ser.groupby(ser).groups.items()})
+        gm = pd.DataFrame({ind: out[list(cols)].mean(axis=1) for ind, cols in ser.groupby(ser).groups.items()})
         spread = gm.max(axis=1) - gm.min(axis=1)
         assert (spread < 0.1).all()  # 行业间组均值差消除（原始 spread≈3.0）
         corr = out.iloc[-1].corr(noise.iloc[-1])
@@ -197,8 +200,11 @@ class TestIndustryNeutralExact:
         symbols = list(industries)
         mv = pd.DataFrame(rng.uniform(1e9, 1e11, (30, 30)), index=idx, columns=symbols)
         lmv = np.log(mv)
-        effect = pd.Series({"银行": 2.0, "医药生物": -1.0, "食品饮料": 0.5}).reindex(
-            pd.Series(industries)).to_numpy()[None, :]
+        effect = (
+            pd.Series({"银行": 2.0, "医药生物": -1.0, "食品饮料": 0.5})
+            .reindex(pd.Series(industries))
+            .to_numpy()[None, :]
+        )
         f = lmv.sub(lmv.mean(axis=1), axis=0).mul(0.8) + effect
         out, deg = mod._normalize(f, "industsize_neutral", industry_map=industries, mkt_cap_w=mv)
         assert deg is False
@@ -220,10 +226,12 @@ class TestIndustryNeutralExact:
 
     def test_clean_industry_rows_blocks_nan_bad_row(self) -> None:
         """词表清洗拦截数据线已知坏行（688806 裸符号行 industry_sw='nan' 字面量）与空值。"""
-        rows = [("600000", "银行", "2026-08-03", "2026-08-03 02:57:53+00:00"),
-                ("688806", "nan", "2026-08-03", "2026-08-03 02:57:53+00:00"),
-                ("600001", "", "2026-08-03", "2026-08-03 02:57:53+00:00"),
-                ("", "银行", "2026-08-03", "2026-08-03 02:57:53+00:00")]
+        rows = [
+            ("600000", "银行", "2026-08-03", "2026-08-03 02:57:53+00:00"),
+            ("688806", "nan", "2026-08-03", "2026-08-03 02:57:53+00:00"),
+            ("600001", "", "2026-08-03", "2026-08-03 02:57:53+00:00"),
+            ("", "银行", "2026-08-03", "2026-08-03 02:57:53+00:00"),
+        ]
         m, dropped = mod._clean_industry_rows(rows, {"银行", "食品饮料"})
         assert m == {"600000": "银行"}
         assert dropped == 2  # 'nan' 坏行 + 空行业
@@ -243,8 +251,7 @@ class TestIndustryNeutralExact:
         cols = list(closes.columns)
         industries = {c: ["银行", "医药生物", "食品饮料"][i % 3] for i, c in enumerate(cols)}
         v = dict(V1, A1_factor_normalize="industry_neutral")
-        w, degraded = mod.evaluate_recipe(_recipe(v), closes, factors, vol20, cols,
-                                          industry_map=industries)
+        w, degraded = mod.evaluate_recipe(_recipe(v), closes, factors, vol20, cols, industry_map=industries)
         assert degraded == ()  # 行业锚在位 → 行业族转精确，无降级
         assert w.iloc[-1].sum() <= 1.0 + 1e-9
 
@@ -398,9 +405,15 @@ class TestEvaluateRecipe:
         factors, vol20 = _factors(closes)
         cols = list(closes.columns)
         v = dict(V1, A1_factor_normalize="industry_neutral", C_sizing="kelly_050")
-        w, degraded = mod.evaluate_recipe(_recipe(v), closes, factors, vol20, cols,
-                                          rets60_mean=closes.pct_change().rolling(60).mean(),
-                                          rets60_var=closes.pct_change().rolling(60).var())
+        w, degraded = mod.evaluate_recipe(
+            _recipe(v),
+            closes,
+            factors,
+            vol20,
+            cols,
+            rets60_mean=closes.pct_change().rolling(60).mean(),
+            rets60_var=closes.pct_change().rolling(60).var(),
+        )
         # T2b: kelly_050 已精确；行业锚未传入 → A1 行业族 fail-closed 降级
         assert set(degraded) == {"A1_factor_normalize"}
         assert w.iloc[-1].sum() <= 1.0 + 1e-9  # kelly 非满仓语义+cap 终态
@@ -453,7 +466,9 @@ class TestPerfEquivalence:
         for trigger in ("periodic", "drift_band"):
             pd.testing.assert_frame_equal(
                 mod._apply_freq_trigger(w, "monthly", trigger),
-                self._legacy_freq_trigger(w, "monthly", trigger), check_exact=True)
+                self._legacy_freq_trigger(w, "monthly", trigger),
+                check_exact=True,
+            )
 
     def test_sizing_rank_pre_bitwise_equal(self) -> None:
         """rank_pre 缓存直传与 _sizing 内部现算 rank 输出逐位一致。"""
@@ -476,15 +491,14 @@ class TestPerfEquivalence:
         r_unk_b = _recipe(dict(V1, A2_combine_weight="unknown_mode_x", B_top_n="top8"), "t2004")
         r_ind_a = _recipe(dict(V1, A1_factor_normalize="industry_neutral"), "t2005")
         r_ind_b = _recipe(dict(V1, A1_factor_normalize="industry_neutral", B_top_n="top3"), "t2006")
-        cases = {"ic_a": r_ic_a, "ic_b": r_ic_b, "unk_a": r_unk_a,
-                 "unk_b": r_unk_b, "ind_a": r_ind_a, "ind_b": r_ind_b}
+        cases = {"ic_a": r_ic_a, "ic_b": r_ic_b, "unk_a": r_unk_a, "unk_b": r_unk_b, "ind_a": r_ind_a, "ind_b": r_ind_b}
         # 无缓存基准
-        ref = {name: mod.evaluate_recipe(r, closes, factors, vol20, cols)
-               for name, r in cases.items()}
+        ref = {name: mod.evaluate_recipe(r, closes, factors, vol20, cols) for name, r in cases.items()}
         # 带缓存: 每 prefix 首算 miss + 二算 hit
         cache: dict = {}
-        got = {name: mod.evaluate_recipe(r, closes, factors, vol20, cols, combine_cache=cache)
-               for name, r in cases.items()}
+        got = {
+            name: mod.evaluate_recipe(r, closes, factors, vol20, cols, combine_cache=cache) for name, r in cases.items()
+        }
         assert len(cache) == 3  # ic_mean / unknown / industry_neutral 三个 prefix
         for name in ref:
             pd.testing.assert_frame_equal(got[name][0], ref[name][0], check_exact=True)
@@ -521,17 +535,28 @@ class TestNetReturnsArchive:
             r = px.reindex(weights.index.union(weights.index)).ffill().pct_change()
             return (weights.fillna(0.0).shift(1) * r).sum(axis=1).fillna(0.0)
 
-        def run_backtest(weights, px):
+        def run_backtest_full(weights, px):
+            # st-ddup-20260925 去重改造②：执行器单趟入口（stats, net）——桩与原两函数同值
             net = daily_net(weights, px)
-            return {"sharpe": float(net.mean() / net.std() * np.sqrt(244)),
-                    "ann_return": 0.1, "max_drawdown": -0.2, "avg_turnover_1side": 0.3}
+            stats = {
+                "sharpe": float(net.mean() / net.std() * np.sqrt(244)),
+                "ann_return": 0.1,
+                "max_drawdown": -0.2,
+                "avg_turnover_1side": 0.3,
+            }
+            return stats, net
 
-        return load_px, wide, filter_st, load_st_flags, run_backtest, daily_net
+        def net_returns_by_tiers(weights, px, tiers):
+            return {float(b): daily_net(weights, px) - float(b) * 1e-4 for b in tiers}
+
+        return load_px, wide, filter_st, load_st_flags, run_backtest_full, daily_net, net_returns_by_tiers
 
     def _run_batch(self, tmp_path, monkeypatch, seed: int = 7) -> tuple[dict, int]:
         closes = _synth_closes(self.N_DAYS, 36, seed=seed)  # 36 列 ≥ universe_too_small 门槛
         monkeypatch.setattr(mod, "_load_engine", lambda: self._stub_engine(closes))
-        monkeypatch.setattr(mod, "_load_universe", lambda u, start, end: set(closes.columns))  # 2026-09-18 SCD-2 retrofit 同步三参
+        monkeypatch.setattr(
+            mod, "_load_universe", lambda u, start, end: set(closes.columns)
+        )  # 2026-09-18 SCD-2 retrofit 同步三参
         monkeypatch.setattr(mod, "_load_mkt_cap_wide", lambda s, e, c: None)
         monkeypatch.setattr(mod, "_industry_map", lambda: None)
         monkeypatch.setattr(mod, "INTAKE_DIR", tmp_path)

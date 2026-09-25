@@ -43,6 +43,22 @@ v1 求值实现边界（诚实披露，立项稿 §十二 两批次的批次 A�
             收益序列档案: run_batch 成功分支 nets 落盘 net_returns.parquet（环境无
             pyarrow 兜底 net_returns.csv.gz），summary.net_returns_file=文件名——
             DSR 精确口径数据基础。
+  T3（2026-09-24）: 方案①两轮制 stage-aware 成本档位（裁定#413 下一窗口升级案）:
+            run_batch 新增 keyword-only cost_gate_tiers_bp——None（缺省）=现行行为
+            逐位零漂移（不做 per-point 档位扫描）；传入档位集（T1 轻档 [0,5] 两档 /
+            T2 全档 [0,5,10,20,40]）时每成功格点经 exam_cost_gate.run_cost_tier_scan
+            做档位扫描（引擎口径唯一：daily_net_returns slippage_bp kwarg 档覆盖），
+            扫描失败=gate 层阴性 fail-closed；档位子集真源分层——轻档=budget_caps.
+            cost_gate_t1_tiers_bp（prereg，缺省=分层语义未启用），全档=config/
+            exam_scale_cost_gate.yaml（禁双头硬编码）。manifest 新增
+            cost_tier_sharpes_json/cost_adjusted_sharpe 两列、summary 新增
+            cost_gate_tiers_bp/gate_dead 两键，均仅在档位扫描启用时写入。
+  T4（2026-09-25）: 去重改造（st-ddup-20260925，行为逐位保持）: ①每格两连调
+            run_backtest+daily_net_returns 合并为 run_backtest_full 单趟（stats/net
+            逐位一致）；②档位扫描经引擎 net_returns_by_tiers 一趟派生多档 net 注入
+            run_cost_tier_scan（nets_by_tier，逐档全量重算→标量成本线）；③掩码
+            批级缓存向量化在引擎侧（_c4_engine），本件零语义变化只换调用面。
+            实测依据=gpu_rewrite/hotspot_census.md §二（单 pass 74-95% 在掩码重建）。
 
 用法:
   python scripts/backtest/factory_grid_executor.py --smoke                 # 烟测（管线联通，8 格点）
@@ -53,6 +69,7 @@ v1 求值实现边界（诚实披露，立项稿 §十二 两批次的批次 A�
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import hashlib
 import json
 import sys
@@ -134,9 +151,17 @@ class GridEvalOutcome:
 
 
 def _load_engine():
-    from _c4_engine import daily_net_returns, filter_st, load_px, load_st_flags, run_backtest, wide
+    from _c4_engine import (
+        daily_net_returns,
+        filter_st,
+        load_px,
+        load_st_flags,
+        net_returns_by_tiers,
+        run_backtest_full,
+        wide,
+    )
 
-    return load_px, wide, filter_st, load_st_flags, run_backtest, daily_net_returns
+    return load_px, wide, filter_st, load_st_flags, run_backtest_full, daily_net_returns, net_returns_by_tiers
 
 
 def _load_universe(universe: str, start: str, end: str) -> set[str]:
@@ -652,11 +677,18 @@ def run_batch(
     smoke: bool = False,
     subspace: dict[str, list[str]] | None = None,
     stratify_dims: tuple[str, ...] = (),
+    *,
+    cost_gate_tiers_bp: tuple[float, ...] | None = None,
 ) -> dict:
-    """批次 A 主入口。返回 summary dict；manifest/negatives 落 data/strategy_intake/grid_<ts>/。"""
+    """批次 A 主入口。返回 summary dict；manifest/negatives 落 data/strategy_intake/grid_<ts>/。
+
+    cost_gate_tiers_bp（T3 方案①）: None（缺省）=现行行为逐位零漂移；传入档位集时
+    每成功格点追加 per-point 成本档位扫描（manifest 增 cost 两列/summary 增两键），
+    扫描异常=gate 层阴性（fail-closed，禁静默跳过）。
+    """
     from zephyr.position.core.position_recipe_compiler import GridCompiler
 
-    load_px, wide, filter_st, load_st_flags, run_backtest, daily_net_returns = _load_engine()
+    load_px, wide, filter_st, load_st_flags, run_backtest_full, daily_net_returns, net_returns_by_tiers = _load_engine()
     compiler = GridCompiler.from_yaml(SCHEMA_PATH)
     expansion = compiler.compile(DEFAULT_CONTEXT)
     recipes_all = list(expansion.recipes)
@@ -709,7 +741,8 @@ def run_batch(
     negatives: list[NegativeRecord] = []
     nets_for_neff: dict[str, list[float]] = {}
     nets_archive: dict[str, pd.Series] = {}  # recipe_id → 带日期索引 net（归因读端消费，2026-09-24 st-gpu-final）
-    eval_dead = bt_dead = 0
+    cost_rows: dict[str, dict[float, float]] = {}  # T3 方案①: recipe_id → {bp: sharpe}（仅档位扫描启用时非空）
+    eval_dead = bt_dead = gate_dead = 0
     for r in picked:
         g = r.values["G_universe"]
         if g not in universe_cache:
@@ -755,8 +788,9 @@ def run_batch(
             eval_dead += 1
             continue
         try:
-            stats = run_backtest(weights, closes_g)
-            net = daily_net_returns(weights, closes_g)
+            # st-ddup-20260925 去重改造②: run_backtest+daily_net_returns 两连调合并为
+            # run_backtest_full 单趟（stats/net 与原两调逐位一致，掩码批级缓存自动复用）。
+            stats, net = run_backtest_full(weights, closes_g)
             if len(net.dropna()) < 60 or float(net.std()) == 0:
                 raise RuntimeError(f"insufficient_net:{len(net)}")
             sharpe = stats["sharpe"]
@@ -775,6 +809,32 @@ def run_batch(
             )
             bt_dead += 1
             continue
+        if cost_gate_tiers_bp is not None:
+            # T3 方案① stage-aware per-point 成本档位扫描（档位集已过预算闸 validate；
+            # 引擎口径唯一=daily_net_returns slippage_bp kwarg，exam_cost_gate 零重实现）。
+            # st-ddup-20260925 去重改造①: 档位 net 序列经 net_returns_by_tiers 一趟
+            # gross/turnover×五档标量成本线派生后注入扫描（与逐档 daily_net_returns
+            # 逐位一致；exam_cost_gate nets_by_tier 注入口=其"净值序列由调用方注入"不变量）。
+            try:
+                from zephyr.backtest.regime_validation.exam_cost_gate import run_cost_tier_scan
+
+                nets_by_tier = net_returns_by_tiers(weights, closes_g, tuple(cost_gate_tiers_bp))
+                cost_rows[r.recipe_id] = run_cost_tier_scan(
+                    weights, closes_g, daily_net_returns, tiers_bp=tuple(cost_gate_tiers_bp), nets_by_tier=nets_by_tier
+                )
+            except Exception as exc:  # noqa: BLE001 档位扫描跑不出=gate 层死（fail-closed 禁静默）
+                negatives.append(
+                    NegativeRecord(
+                        r.recipe_id,
+                        "gate",
+                        f"cost_scan_fail:{type(exc).__name__}",
+                        r.values,
+                        ",".join(degraded),
+                        str(exc)[:120],
+                    )
+                )
+                gate_dead += 1
+                continue
         manifest_rows.append(
             GridEvalOutcome(
                 r.recipe_id,
@@ -821,8 +881,31 @@ def run_batch(
             nr.to_csv(nr_path, index=False, compression="gzip")
         net_returns_file = nr_path.name
 
-    manifest = pd.DataFrame([asdict(o) | {"values_json": json.dumps(o.values, sort_keys=True)} for o in manifest_rows])
-    manifest.drop(columns=["values"]).to_csv(out_dir / "manifest.csv", index=False)
+    if manifest_rows:
+        manifest = pd.DataFrame(
+            [asdict(o) | {"values_json": json.dumps(o.values, sort_keys=True)} for o in manifest_rows]
+        )
+    else:
+        # 全员阴性批: 空表也带 schema 表头（产物可解析、gate 阴性可审计，禁崩批丢证据）
+        manifest = pd.DataFrame(columns=[f.name for f in dataclasses.fields(GridEvalOutcome)] + ["values_json"])
+    if cost_rows:
+        # T3 方案①: 档位扫描证据随出生证落盘（仅启用时新增列，缺省路径 manifest schema 零变化）。
+        # cost_adjusted_sharpe=搜索主目标（search_objective.primary）在最高已扫档的成本后口径
+        # （T1 轻档=5bp；T2 全档=40bp 全成本档）。
+        cost_df = pd.DataFrame(
+            [
+                {
+                    "recipe_id": rid,
+                    "cost_tier_sharpes_json": json.dumps({str(bp): sh for bp, sh in sharpes.items()}, sort_keys=True),
+                    "cost_adjusted_sharpe": sharpes[max(sharpes)],
+                }
+                for rid, sharpes in cost_rows.items()
+            ]
+        )
+        manifest = manifest.merge(cost_df, on="recipe_id", how="left")
+    # errors="ignore": 全员阴性批（manifest 空 DataFrame 无列）时 legacy 会 KeyError 崩批——
+    # gate 阴性必须落 negatives.csv 可审计，禁崩批丢证据（非空路径输出逐位不变）
+    manifest.drop(columns=["values"], errors="ignore").to_csv(out_dir / "manifest.csv", index=False)
     neg_df = pd.DataFrame([asdict(n) for n in negatives])
     neg_df.to_csv(out_dir / "negatives.csv", index=False)
     summary = {
@@ -843,8 +926,76 @@ def run_batch(
         "n_trials_effective": n_eff,
         "n_eff_meta": n_eff_meta,
     }
+    if cost_gate_tiers_bp is not None:
+        # T3 方案①: 仅档位扫描启用时披露（缺省路径 summary 逐键零漂移）
+        summary["cost_gate_tiers_bp"] = [float(t) for t in cost_gate_tiers_bp]
+        summary["gate_dead"] = gate_dead
     (out_dir / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     return summary
+
+
+#: 方案①分层语义字段（prereg budget_caps；在场=启用，缺省=现行语义零变化）
+STAGED_TIERS_KEY = "cost_gate_t1_tiers_bp"
+
+
+def _load_prereg_caps() -> dict:
+    """prereg budget_caps 读取（缺册 fail-closed，错误文案与原 _apply_prereg_budget 逐字一致）。"""
+    import yaml
+
+    prereg = Path(__file__).resolve().parents[2] / "config" / "search_space_prereg.yaml"
+    if not prereg.exists():
+        raise SystemExit("[prereg] config/search_space_prereg.yaml 缺失——预注册冻结缺失，禁开跑（fail-closed）")
+    cfg = yaml.safe_load(prereg.read_text(encoding="utf-8")) or {}
+    return cfg.get("budget_caps") or {}
+
+
+def _load_cost_gate_tiers() -> list[float]:
+    """全档真源（config/exam_scale_cost_gate.yaml cost_gate.tiers_bp，禁双头硬编码）。"""
+    import yaml
+
+    p = Path(__file__).resolve().parents[2] / "config" / "exam_scale_cost_gate.yaml"
+    if not p.exists():
+        raise SystemExit("[prereg] config/exam_scale_cost_gate.yaml 缺失——全档真源缺失，禁开跑（fail-closed）")
+    cg = (yaml.safe_load(p.read_text(encoding="utf-8")) or {}).get("cost_gate") or {}
+    tiers = cg.get("tiers_bp")
+    if not tiers:
+        raise SystemExit("[prereg] exam_scale_cost_gate.cost_gate.tiers_bp 缺失/为空——全档真源损坏")
+    return list(tiers)
+
+
+def _resolve_stage_cost_tiers(stage: str, caps: dict | None = None) -> tuple[float, ...] | None:
+    """方案①两轮制（裁定#413 下一窗口升级案）: stage → per-point 成本档位集。
+
+    返回 None = 分层语义未启用（budget_caps.cost_gate_t1_tiers_bp 缺省）或无 stage 名义
+    （""：普通批次保持现行行为逐位零漂移）——调用方不做 per-point 档位扫描。启用时:
+      t1 → prereg 轻档集（如 [0,5] 两档粗筛）；t0/t2 → 全档（exam_scale_cost_gate.yaml
+      真源）。轻档须为全档子集（口径一致性），档位非法=SystemExit fail-closed。
+    """
+    from zephyr.backtest.regime_validation.exam_cost_gate import validate_scan_tiers
+
+    if caps is None:
+        caps = _load_prereg_caps()
+    if STAGED_TIERS_KEY not in caps:
+        return None
+    raw = caps[STAGED_TIERS_KEY]
+    if raw is None:
+        raise SystemExit(f"[prereg] budget_caps.{STAGED_TIERS_KEY}=null——分层语义字段在场但未冻结值（fail-closed）")
+    try:
+        light = validate_scan_tiers(raw)
+        full_tiers = tuple(validate_scan_tiers(_load_cost_gate_tiers()))
+    except ValueError as exc:  # 档位非法统一转 SystemExit（执行器预算闸 fail-closed 口径）
+        raise SystemExit(f"[prereg] budget_caps.{STAGED_TIERS_KEY} 分层档位非法: {exc}") from exc
+    if not set(light).issubset(full_tiers):
+        raise SystemExit(
+            f"[prereg] budget_caps.{STAGED_TIERS_KEY}={list(light)} 非全档 {list(full_tiers)} 子集——档位口径漂移，禁开跑"
+        )
+    # 字段在场即校验（冻结册损坏无论哪个 stage 都 fail-closed）；但 per-point 扫描
+    # 只随 stage 名义启用——t1=轻档 / t0,t2=全档 / ""（普通批次）=不启用（零漂移）。
+    if stage == "t1":
+        return light
+    if stage in ("t0", "t2"):
+        return full_tiers
+    return None
 
 
 def _apply_prereg_budget(stage: str, n_samples: int) -> int:
@@ -852,16 +1003,15 @@ def _apply_prereg_budget(stage: str, n_samples: int) -> int:
 
     fail-closed：册缺失/cost_gate_in_every_tier 未冻结/T1T2 未标定单格点耗时 → 拒跑。
     钳制次序：grid_points_cap 总帽 → stage 帽（t0/t1/t2 各自点数）。
+    T3 方案①（2026-09-24）: budget_caps.cost_gate_t1_tiers_bp 在场时校验分层档位语义
+    （轻档合法且为全档子集，master 开关 cost_gate_in_every_tier 仍须为 true——分层只
+    收窄 T1 扫描档位，不放松"每档必有成本门"）；字段缺省=现行语义逐字零变化。
     """
-    import yaml
-
-    prereg = Path(__file__).resolve().parents[2] / "config" / "search_space_prereg.yaml"
-    if not prereg.exists():
-        raise SystemExit("[prereg] config/search_space_prereg.yaml 缺失——预注册冻结缺失，禁开跑（fail-closed）")
-    cfg = yaml.safe_load(prereg.read_text(encoding="utf-8")) or {}
-    caps = cfg.get("budget_caps") or {}
+    caps = _load_prereg_caps()
     if not caps.get("cost_gate_in_every_tier", False):
         raise SystemExit("[prereg] budget_caps.cost_gate_in_every_tier 未冻结为 true——成本门禁跳，禁开跑")
+    if STAGED_TIERS_KEY in caps:
+        _resolve_stage_cost_tiers(stage, caps)
     cap_total = caps.get("grid_points_cap")
     if cap_total and n_samples > int(cap_total):
         print(f"[prereg] --n-samples {n_samples} > grid_points_cap {cap_total}，钳制")
@@ -910,16 +1060,30 @@ def main() -> int:
     args = ap.parse_args()
     if not args.smoke and not args.skip_compute_gate:
         _ask_compute_window_gate()
+    stage_tiers = None
     if args.stage and not args.smoke:
         args.n_samples = _apply_prereg_budget(args.stage, args.n_samples)
+        stage_tiers = _resolve_stage_cost_tiers(args.stage)
     elif not args.smoke:
         args.n_samples = _apply_prereg_budget("", args.n_samples)
+        stage_tiers = _resolve_stage_cost_tiers("")
+    if stage_tiers is not None:
+        print(
+            f"[prereg] stage={args.stage or '(none)'} per-point 成本档位={list(stage_tiers)}（方案①分层语义，裁定#413）"
+        )
     import json as _json
 
     subspace = _json.loads(args.subspace_json) if args.subspace_json else None
     stratify = tuple(d for d in args.stratify_dims.split(",") if d)
     s = run_batch(
-        args.n_samples, args.seed, args.start, args.end, smoke=args.smoke, subspace=subspace, stratify_dims=stratify
+        args.n_samples,
+        args.seed,
+        args.start,
+        args.end,
+        smoke=args.smoke,
+        subspace=subspace,
+        stratify_dims=stratify,
+        cost_gate_tiers_bp=stage_tiers,
     )
     print(json.dumps(s, ensure_ascii=False, indent=2))
     return 0

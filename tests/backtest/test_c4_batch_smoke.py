@@ -45,8 +45,7 @@ def _panel(days: int, syms: int, seed: int = 7) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
     idx = pd.bdate_range("2020-01-01", periods=days)
     rets = rng.normal(0.0005, 0.02, size=(days, syms))
-    px = pd.DataFrame(100 * np.cumprod(1 + rets, axis=0), index=idx,
-                      columns=[f"{i:06d}" for i in range(syms)])
+    px = pd.DataFrame(100 * np.cumprod(1 + rets, axis=0), index=idx, columns=[f"{i:06d}" for i in range(syms)])
     return px
 
 
@@ -78,6 +77,36 @@ class TestRunBacktest:
         s_hold = run_backtest(w_hold, px)
         s_churn = run_backtest(w_churn, px)
         assert s_churn["avg_turnover_1side"] > s_hold["avg_turnover_1side"]
+
+
+class TestRunBacktestFullMerged:
+    """st-ddup-20260925 去重改造②①守护：run_backtest_full/net_returns_by_tiers
+    与原 run_backtest/daily_net_returns 逐位一致（执行器单趟合并的等价性证尺）。"""
+
+    def test_full_matches_split(self):
+        from _c4_engine import run_backtest_full
+
+        px = _panel(150, 6, seed=11)
+        rng = np.random.default_rng(3)
+        w = pd.DataFrame(rng.uniform(0, 1, size=px.shape), index=px.index, columns=px.columns)
+        w[w < 0.7] = 0.0
+        w.iloc[:15] = 0.0
+        for gate in (True, False):
+            stats_full, net_full = run_backtest_full(w, px, gate_limits=gate)
+            assert stats_full == run_backtest(w, px, gate_limits=gate)
+            assert net_full.equals(daily_net_returns(w, px, gate_limits=gate))
+
+    def test_tiers_match_per_tier_daily(self):
+        from _c4_engine import net_returns_by_tiers
+
+        px = _panel(120, 4, seed=12)
+        rng = np.random.default_rng(4)
+        w = pd.DataFrame(rng.uniform(0, 0.5, size=px.shape), index=px.index, columns=px.columns)
+        tiers = (0.0, 5.0, 10.0, 20.0, 40.0)
+        by_tier = net_returns_by_tiers(w, px, tiers)
+        assert set(by_tier) == {float(t) for t in tiers}
+        for bp in tiers:
+            assert by_tier[float(bp)].equals(daily_net_returns(w, px, slippage_bp=bp))
 
 
 class TestDeflatedSharpe:
@@ -124,9 +153,7 @@ class TestKnowledgeEffectiveSentinel:
     def test_sentinel_parse_format(self, tmp_path):
         p = tmp_path / "c4_dummy.py"
         p.write_text(
-            '"""假翻译件。\n\n'
-            '[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文 | 生成=AI 会话\n'
-            '"""\n',
+            '"""假翻译件。\n\n[KNOWLEDGE_EFFECTIVE_FROM] 2026-09-14 | 源=策略原文 | 生成=AI 会话\n"""\n',
             encoding="utf-8",
         )
         assert parse_knowledge_effective_from(p) == "2026-09-14"
@@ -134,7 +161,8 @@ class TestKnowledgeEffectiveSentinel:
 
     def test_drift_report_three_states(self, tmp_path):
         (tmp_path / "c4_a.py").write_text(
-            '"""a.\n\n[KNOWLEDGE_EFFECTIVE_FROM] 2020-01-01 | 源=x\n"""\n', encoding="utf-8")
+            '"""a.\n\n[KNOWLEDGE_EFFECTIVE_FROM] 2020-01-01 | 源=x\n"""\n', encoding="utf-8"
+        )
         # 无哨兵文件不进字典（诚实缺，不假装扫过）
         (tmp_path / "c4_b.py").write_text('"""b."""\n', encoding="utf-8")
 
@@ -172,7 +200,9 @@ class TestWindowAndContract:
             sys.modules[spec.name] = mod
             spec.loader.exec_module(mod)
             assert mod.STRATEGY_ID, f"STRATEGY_ID 缺失: {p.name}"
-            assert pat.match(mod.STRATEGY_ID) or mod.STRATEGY_ID.startswith("VAL-"),                 f"STRATEGY_ID 非法: {p.name} -> {mod.STRATEGY_ID}"
+            assert pat.match(mod.STRATEGY_ID) or mod.STRATEGY_ID.startswith("VAL-"), (
+                f"STRATEGY_ID 非法: {p.name} -> {mod.STRATEGY_ID}"
+            )
             assert mod.WINDOW_KIND in {"stock", "index", "etf"}, f"WINDOW_KIND 非法: {p.name}"
             assert callable(mod.build), f"build 缺失: {p.name}"
 
@@ -181,8 +211,7 @@ class TestWindowAndContract:
         sys.path.insert(0, str(_REPO / "scripts" / "backtest"))
         import c4_batch_screen as runner
 
-        results, failures = runner.run_batch(limit=3, window=("2024-01-01", "2026-06-30"),
-                                             include_pilots=False)
+        results, failures = runner.run_batch(limit=3, window=("2024-01-01", "2026-06-30"), include_pilots=False)
         assert not failures
         assert results
         assert not any(r.get("pilot") for r in results)
@@ -204,20 +233,21 @@ class TestWindowAndContract:
 
         batch, verdict = "C4-translated-20260912", "translated_c4"
         k_zulu = runner._translated_dedup_key(
-            batch, {"strategy_id": "CAND-311220235636", "module": "c4_311220235636_zulu_value.py"}, verdict)
+            batch, {"strategy_id": "CAND-311220235636", "module": "c4_311220235636_zulu_value.py"}, verdict
+        )
         k_slater = runner._translated_dedup_key(
-            batch, {"strategy_id": "CAND-311220235636", "module": "c4_311220235636_slater_value.py"}, verdict)
+            batch, {"strategy_id": "CAND-311220235636", "module": "c4_311220235636_slater_value.py"}, verdict
+        )
         assert k_zulu != k_slater, "同 sid 不同文件必须产出不同幂等键（四键语义）"
         assert k_zulu == runner._translated_dedup_key(
-            batch, {"strategy_id": "CAND-311220235636", "module": "c4_311220235636_zulu_value.py"},
-            verdict), "同批同文件重跑必须同键（幂等保留）"
+            batch, {"strategy_id": "CAND-311220235636", "module": "c4_311220235636_zulu_value.py"}, verdict
+        ), "同批同文件重跑必须同键（幂等保留）"
         assert runner._translated_dedup_key(
-            batch, {"strategy_id": "CAND-40ca0da1a3ca", "module": "c4_40ca0da1a3ca_value55.py"},
-            "oos_tested") != runner._translated_dedup_key(
-            batch, {"strategy_id": "CAND-40ca0da1a3ca", "module": "c4_40ca0da1a3ca_value55.py"},
-            "translated_c4"), "不同 verdict 不同键（deferred 不挡 translated）"
-        assert runner._deferred_dedup_key(batch, "CAND-x", "orig.csv") == (
-            batch, "CAND-x", "deferred_c4", "orig.csv")
+            batch, {"strategy_id": "CAND-40ca0da1a3ca", "module": "c4_40ca0da1a3ca_value55.py"}, "oos_tested"
+        ) != runner._translated_dedup_key(
+            batch, {"strategy_id": "CAND-40ca0da1a3ca", "module": "c4_40ca0da1a3ca_value55.py"}, "translated_c4"
+        ), "不同 verdict 不同键（deferred 不挡 translated）"
+        assert runner._deferred_dedup_key(batch, "CAND-x", "orig.csv") == (batch, "CAND-x", "deferred_c4", "orig.csv")
 
 
 class TestPitDailyFrame:
@@ -226,11 +256,13 @@ class TestPitDailyFrame:
     def test_announce_date_effective_and_ffill(self):
         from _valuation_engine import pit_daily_frame
 
-        ann = pd.DataFrame({
-            "announce_date": pd.to_datetime(["2020-01-10", "2020-04-15"]),
-            "symbol": ["000001", "000001"],
-            "val": [5.0, 8.0],
-        })
+        ann = pd.DataFrame(
+            {
+                "announce_date": pd.to_datetime(["2020-01-10", "2020-04-15"]),
+                "symbol": ["000001", "000001"],
+                "val": [5.0, 8.0],
+            }
+        )
         idx = pd.date_range("2020-01-01", periods=120, freq="D")
         out = pit_daily_frame(ann, idx)
         assert pd.isna(out.loc["2020-01-09", "000001"]), "公告日前不得有值（防前视）"
@@ -244,11 +276,13 @@ class TestPitDailyFrame:
         idx = pd.date_range("2020-01-01", periods=5, freq="D")
         empty = pit_daily_frame(pd.DataFrame(columns=["announce_date", "symbol", "val"]), idx)
         assert empty.shape == (5, 0), "空公告=零列全 NaN"
-        ann = pd.DataFrame({
-            "announce_date": pd.to_datetime(["2020-01-02", "2020-01-03"]),
-            "symbol": ["000001", "000002"],
-            "val": [1.0, 2.0],
-        })
+        ann = pd.DataFrame(
+            {
+                "announce_date": pd.to_datetime(["2020-01-02", "2020-01-03"]),
+                "symbol": ["000001", "000002"],
+                "val": [1.0, 2.0],
+            }
+        )
         out = pit_daily_frame(ann, idx)
         assert out.loc["2020-01-01"].isna().all(), "首日无任何公告=全 NaN"
         assert out.loc["2020-01-04", "000001"] == 1.0 and out.loc["2020-01-04", "000002"] == 2.0

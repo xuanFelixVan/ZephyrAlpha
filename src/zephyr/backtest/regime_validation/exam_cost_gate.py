@@ -5,7 +5,7 @@
 # [CONSUMERS] scripts/backtest/f06_e4_wfa_exam.py（E4 正考档位扫描+换手门）；scripts/backtest/exam_cost_reexam.py（存活池重过成本门/批D 新鲜窗）；批F 三路搜索轨（F06Grid/E1C/LLM）
 # [STARTUP] imported
 # [MATURITY] experimental
-# [INVARIANTS] 纯函数零 IO 零重跑：净值档位序列由调用方注入（_c4_engine.daily_net_returns slippage_bp 档覆盖），本件只做判定；五档单调性=逐档 sharpe 非增（容差 tol）；全成本档存活=最高档 sharpe>=survival_floor；E7 换手上限门=年化单边换手<=cap（预注册默认 8x/年，Owner 通宵令批C 预注册档冻结后禁改）；fail-closed：证据缺失（档位<3/天数<min_days）判不通过非跳过；裁定#325 口径：出证禁"全绿"，逐条如实判档
+# [INVARIANTS] 纯函数零 IO 零重跑：净值档位序列由调用方注入（_c4_engine.daily_net_returns slippage_bp 档覆盖），本件只做判定；五档单调性=逐档 sharpe 非增（容差 tol）；全成本档存活=最高档 sharpe>=survival_floor；E7 换手上限门=年化单边换手<=cap（预注册默认 8x/年，Owner 通宵令批C 预注册档冻结后禁改）；fail-closed：证据缺失（档位<3/天数<min_days）判不通过非跳过；裁定#325 口径：出证禁"全绿"，逐条如实判档；扫描/判定两面分离（2026-09-24 方案①）：run_cost_tier_scan tiers_bp 子集覆盖仅供 T1 轻档粗筛扫描（validate_scan_tiers 两档合法），三门判定仍恒全档证据（<3 档 fail-closed 不通过）；nets_by_tier 预算档注入（st-ddup-20260925）：缺省 None=逐档 net_fn 行为零变化，注入缺档=ValueError fail-closed
 # [MODIFY-GUARD] tests/backtest/test_exam_cost_gate.py
 # [STABILITY] experimental
 # [SAFETY] L
@@ -50,6 +50,7 @@ DEFAULT_MIN_DAYS: int = 60
 __all__: Final = [
     "CostGateConfig",
     "CostGateVerdict",
+    "validate_scan_tiers",
     "run_cost_tier_scan",
     "evaluate_exam_cost_gate",
 ]
@@ -96,13 +97,36 @@ def _sharpe(net: pd.Series) -> float:
     return float(net.mean() / std * np.sqrt(244)) if std > 0 else 0.0
 
 
+def validate_scan_tiers(tiers_bp) -> tuple[float, ...]:
+    """扫描档位集校验（扫描面，非判定面）: 非空、严格升序、首档=0bp 零成本对照。
+
+    与 CostGateConfig 的判定不变量（≥3 档）分离：方案①两轮制 T1 轻档两档 [0,5]
+    只做粗筛扫描，不做三门判定（终审仍在 T2 全档 evaluate_exam_cost_gate）。
+    非法=ValueError（调用方 decide 去向；执行器预算闸侧转 SystemExit fail-closed）。
+    """
+    try:
+        tiers = tuple(float(t) for t in tiers_bp)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"档位集非法（须为数值序列）: {tiers_bp!r}") from exc
+    if not tiers:
+        raise ValueError("档位集为空——零成本对照档缺失（fail-closed）")
+    if any(tiers[i + 1] <= tiers[i] for i in range(len(tiers) - 1)):
+        raise ValueError(f"档位必须严格升序: {tiers}")
+    if tiers[0] != 0.0:
+        raise ValueError(f"首档必须为 0bp（零成本对照）: {tiers}")
+    return tiers
+
+
 def run_cost_tier_scan(
     weights: pd.DataFrame,
     px_close: pd.DataFrame,
     net_fn,
     config: CostGateConfig | None = None,
+    *,
+    tiers_bp=None,
+    nets_by_tier=None,
 ) -> dict[str, float]:
-    """五档滑点净值扫描（引擎口径唯一性由 net_fn 保证，本件零重实现）。
+    """档位滑点净值扫描（引擎口径唯一性由 net_fn 保证，本件零重实现）。
 
     Args:
         weights/px_close: 与引擎同构的权重/收盘价宽表。
@@ -114,12 +138,26 @@ def run_cost_tier_scan(
             位置传参 {0,5,10,20,40}bp→Sharpe 恒 10.6211；显式 kwargs→11.63/10.62/9.56/7.45/3.83。
             传 _c4_engine.daily_net_returns 即冻结土规口径档位覆盖。
         config: 档位等参数。
+        tiers_bp: 档位子集覆盖（方案①两轮制 2026-09-24，裁定#413 下一窗口升级案）——
+            None=用 config 档位（缺省，全档，行为零变化）；否则须过 validate_scan_tiers
+            （T1 轻档两档合法）。档位子集只影响扫描面；三门判定仍以 config 全档证据计。
+        nets_by_tier: 预算档净值注入（st-ddup-20260925 去重改造①，与本件"净值档位序列
+            由调用方注入"不变量同构）——None（缺省）=现行路径逐档调 net_fn（行为零变化）；
+            传入 {float(bp): net} 时跳过 net_fn，逐档 sharpe 只对注入序列计（引擎侧
+            net_returns_by_tiers 一趟派生，与逐档 daily_net_returns 逐位一致）。
+            缺档=ValueError（fail-closed，禁静默跳档）。
 
     Returns:
         {slippage_bp: sharpe}（含 0bp 零成本对照档）。
     """
     cfg = config or CostGateConfig()
-    return {float(bp): round(_sharpe(net_fn(weights, px_close, slippage_bp=bp)), 4) for bp in cfg.tiers_bp}
+    tiers = validate_scan_tiers(cfg.tiers_bp if tiers_bp is None else tiers_bp)
+    if nets_by_tier is None:
+        return {float(bp): round(_sharpe(net_fn(weights, px_close, slippage_bp=bp)), 4) for bp in tiers}
+    missing = [bp for bp in tiers if float(bp) not in nets_by_tier]
+    if missing:
+        raise ValueError(f"nets_by_tier 缺档: {missing}（fail-closed，禁静默跳档）")
+    return {float(bp): round(_sharpe(nets_by_tier[float(bp)]), 4) for bp in tiers}
 
 
 def evaluate_exam_cost_gate(

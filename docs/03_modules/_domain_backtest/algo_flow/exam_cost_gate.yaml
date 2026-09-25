@@ -20,6 +20,10 @@ algo_flow: |
     #   name: net_fn 净值引擎注入件
     #   fields: 必须以 slippage_bp **关键字**接收档位（生产真身 _c4_engine.daily_net_returns 第三位置参是 gate_limits，位置传参会把档值绑进 gate_limits → 五档恒等哑门）
     #   code: run_cost_tier_scan(net_fn=...) ← f06_e4_wfa_exam 注入 daily_net_returns
+    # - id: I5
+    #   name: tiers_bp 扫描档位子集（扫描面，非判定面）
+    #   fields: None=用 config 全档（行为零变化）；否则 validate_scan_tiers 校验（非空/严格升序/首档0bp）
+    #   code: run_cost_tier_scan(tiers_bp=...) ← factory_grid_executor 方案① T1 轻档 [0,5] 粗筛
     # - id: I4
     #   name: CostGateConfig 预注册冻结参数
     #   fields: tiers_bp/survival_floor/monotonic_tol/min_days/turnover_cap_annual_x/turnover_days_basis
@@ -28,8 +32,11 @@ algo_flow: |
     # - id: F1
     #   name_zh: 五档滑点净值 Sharpe 谱
     #   name_en: cost_tier_sharpe_spectrum
-    #   intro: 逐档以 net_fn(slippage_bp=bp) 复算净收益并年化 Sharpe，0bp 档作零成本对照
+    #   intro: 逐档以 net_fn(slippage_bp=bp) 复算净收益并年化 Sharpe，0bp 档作零成本对照；
+    #     nets_by_tier 注入路径（st-ddup-20260925 去重①）=引擎 net_returns_by_tiers 一趟
+    #     gross/turnover×标量成本线派生多档 net 后注入，与逐档 net_fn 逐位一致
     #   formula: sharpe(net_fn(weights, px_close, slippage_bp=bp)) for bp in tiers_bp
+    #     | nets_by_tier 注入: sharpe(nets_by_tier[bp]) for bp in tiers_bp（缺档 fail-closed）
     #   code: run_cost_tier_scan → {bp: sharpe}
     #   registry: factor_registry: 不适用（考试判据件，非选股因子）
     #   is_break: false

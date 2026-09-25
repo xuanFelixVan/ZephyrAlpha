@@ -101,3 +101,41 @@ class TestTierScan:
         assert calls == list(CFG.tiers_bp) and 0.0 in out
         vals = [out[b] for b in sorted(out)]
         assert vals == sorted(vals, reverse=True), "注入单调函数应产出单调递减 sharpe"
+
+    def test_nets_by_tier_injection_matches_net_fn_path(self):
+        """st-ddup-20260925 去重改造①证尺：注入预算档净值与逐档 net_fn 两路同值。"""
+        import sys as _sys
+        from pathlib import Path as _Path
+
+        _repo = _Path(__file__).resolve().parents[2]
+        _sys.path.insert(0, str(_repo / "scripts" / "backtest" / "translated"))
+        from _c4_engine import daily_net_returns as _dnr
+        from _c4_engine import net_returns_by_tiers as _nbt
+
+        idx = pd.bdate_range("2024-01-02", periods=150)
+        rng = np.random.default_rng(9)
+        px = pd.DataFrame(
+            100 * np.cumprod(1 + rng.normal(0, 0.02, size=(150, 3)), axis=0),
+            index=idx,
+            columns=[f"{600000 + i}" for i in range(3)],
+        )
+        w = pd.DataFrame(rng.uniform(0, 0.4, size=(150, 3)), index=idx, columns=px.columns)
+        tiers = tuple(CFG.tiers_bp)
+        nets = _nbt(w, px, tiers)
+        via_injection = run_cost_tier_scan(w, px, _dnr, CFG, tiers_bp=tiers, nets_by_tier=nets)
+        via_net_fn = run_cost_tier_scan(w, px, _dnr, CFG, tiers_bp=tiers)
+        assert via_injection == via_net_fn
+
+    def test_nets_by_tier_missing_tier_fail_closed(self):
+        idx = pd.date_range("2024-01-01", periods=80, freq="B")
+        weights = pd.DataFrame({"A": [0.5] * 80}, index=idx)
+        px = pd.DataFrame({"A": np.linspace(10, 11, 80)}, index=idx)
+        with pytest.raises(ValueError, match="缺档"):
+            run_cost_tier_scan(
+                weights,
+                px,
+                lambda w, p, *, slippage_bp=None: pd.Series(0.0, index=idx),
+                CFG,
+                tiers_bp=tuple(CFG.tiers_bp),
+                nets_by_tier={0.0: pd.Series(0.0, index=idx)},
+            )
