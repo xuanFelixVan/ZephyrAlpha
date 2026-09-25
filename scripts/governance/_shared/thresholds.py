@@ -81,6 +81,21 @@ def get(key_path: str, default: Any = None) -> Any:
     return node
 
 
+def get_int(key_path: str, default: int) -> int:
+    """fail-soft 整型阈值读取：缺键/真源缺失/损坏/类型异常一律回落 default。
+
+    与 get() 的差异：get 对真源损坏直接 raise（调用方自行兜底），本函数把兜底
+    内聚——供哨兵/黑匣子类值班脚本一行式调用（值班不可断语义）。
+    """
+    try:
+        value: Any = get_thresholds()
+        for part in key_path.split("."):
+            value = value.get(part) if isinstance(value, dict) else None
+        return int(value) if value is not None else default
+    except (OSError, ValueError, TypeError, KeyError, AttributeError, yaml.YAMLError):
+        return default
+
+
 def get_thresholds_safe() -> dict[str, Any]:
     """graceful 变体：thresholds.yaml 缺失时返回 {} 而非 raise FileNotFoundError。
 
