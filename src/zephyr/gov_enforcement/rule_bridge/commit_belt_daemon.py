@@ -349,6 +349,87 @@ def _check_daemon_offline_gap(qroot: Path) -> float | None:
     return offline_s
 
 
+# ── W-M1 投影漂移探针 + 双轨对账探针（st-wm1-buildB/wave0，丙号文 §2.6+派工令⑥）──
+# 事件驱动判定+既有循环（非新增 cron/sleep-loop）：探针只看本地两个便宜物
+# （盘上 sha vs 投影状态文件 sha）；D≠S 或到了兜底重扫间隔才进生成器全量判别
+# （四象限+PG wins 自愈）。未武装（状态文件不存在）=零动作零成本。
+_PROJECTION_PROBE_COOLDOWN_S = 300.0
+_projection_last_probe: dict = {}
+
+
+def _dualtrack_reconcile_if_armed(root: Path) -> None:
+    """W-M1 Phase 1 双轨对账探针（派工令⑥"YAML 写→PG 同写"挂接）。
+
+    事件驱动（落地方事件触发本探针，禁 cron）：.runtime/registry_ledger/dual_track.enabled
+    旗存在=双轨已启动；对 P0 七册跑 insert-only+吸收式对账（缺=补/异=按 YAML 吸收/
+    PG 独有=只记账），报告落同目录 dualtrack_<ts>.json。300s 冷却防每事件重跑。
+    PG 不可达/异常=告警行零阻断（fail-open，下一事件重试）。
+    """
+    import json as _json
+    import time as _time
+
+    try:
+        flag = root / ".runtime" / "registry_ledger" / "dual_track.enabled"
+        if not flag.exists():
+            return
+        now = _time.monotonic()
+        if now - _projection_last_probe.get("dt", 0.0) < _PROJECTION_PROBE_COOLDOWN_S:
+            return
+        _projection_last_probe["dt"] = now
+        from zephyr.governance.registry_ledger.baseline import (  # noqa: PLC0415
+            p0_physical_paths,
+            reconcile_registry,
+        )
+
+        out = root / ".runtime" / "registry_ledger"
+        out.mkdir(parents=True, exist_ok=True)
+        reports = []
+        for p in p0_physical_paths(root):
+            try:
+                reports.append(reconcile_registry(root, p, session_id="belt_daemon"))
+            except Exception:  # noqa: BLE001 — 单册失败不拖垮全景
+                reports.append({"physical_path": str(p), "error": "reconcile failed (see log)"})
+                logger.warning("dual-track reconcile %s failed", p, exc_info=True)
+        stamp = _time.strftime("%Y%m%d_%H%M%S")
+        (out / f"dualtrack_{stamp}.json").write_text(
+            _json.dumps(reports, ensure_ascii=False, indent=1, default=str), encoding="utf-8", newline="\n"
+        )
+    except Exception:  # noqa: BLE001 — 探针绝不阻断 daemon 主循环
+        logger.warning("dual-track reconcile probe fail（下一事件重试）", exc_info=True)
+
+
+def _projection_drift_probe(project_root: Path) -> None:
+    """投影册漂移兜底探针：陈旧象限静默再生成/私改象限自动纠正+留证。fail-open。"""
+    import time as _time
+
+    try:
+        from zephyr.governance.registry_projection.projection_generator import default_registry
+        from zephyr.governance.registry_projection.projection_generator import run as projection_run
+        from zephyr.governance.registry_projection.state import load_state
+
+        root = Path(project_root)
+        state = load_state(root)
+        if state is None:
+            _dualtrack_reconcile_if_armed(root)  # W-M1 Phase 1：双轨对账探针（旗文件启用）
+            return  # 投影未武装（cutover 前）：PG-wins 自愈零行为
+        now = _time.monotonic()
+        last = _projection_last_probe.get("t", 0.0)
+        disk_sha = ""
+        target = root / state.registry_path
+        if target.exists():
+            from zephyr.shared.io.file_utils import content_sha256
+
+            disk_sha = content_sha256(target.read_text(encoding="utf-8"))
+        local_match = disk_sha == state.content_sha256
+        if local_match and (now - last) < _PROJECTION_PROBE_COOLDOWN_S:
+            return  # 本地干净+冷却窗内：不进生成器（防每事件重渲）
+        _projection_last_probe["t"] = now
+        rid, phys = default_registry()
+        projection_run(root, mode="render", registry_id=rid, physical_path=phys, actor_session="belt_daemon")
+    except Exception:  # noqa: BLE001 — 探针绝不阻断 daemon 主循环
+        logger.warning("projection drift probe 异常（下一事件重试）", exc_info=True)
+
+
 def _scan_stale_pending(root: Path, alerted: set[str]) -> int:
     """pending 陈旧快照扫描：项龄 >_STALE_BASE_S 记账（进程内每 qid 一次）。
 
@@ -701,6 +782,7 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
     _check_ledger_backlog()  # 启动即自检积压
     _check_daemon_offline_gap(qroot)  # W5：启动即查离线缺口（上次心跳年龄，观测复活）
     _touch_heartbeat(qroot)  # W5：上线即打首个心跳
+    _projection_drift_probe(root)  # W-M1：投影漂移兜底探针（未武装零动作）
     stale_alerted: set[str] = set()
     _scan_stale_pending(root, stale_alerted)  # W5：启动即扫存量陈旧快照
     # 心跳线程化（st-k4-20260923）：独立线程 30s 续写，长 drain（池化单波更长）
@@ -753,6 +835,7 @@ def run_daemon(project_root: str | Path, *, max_events: int | None = None) -> in
                 _ledger_dead_letters(root, seen_dead)
                 _check_ledger_backlog()
                 _touch_heartbeat(qroot)  # W5：事件处理完即续心跳
+                _projection_drift_probe(root)  # W-M1：投影漂移兜底探针（事件驱动+冷却）
                 _scan_stale_pending(root, stale_alerted)
                 events += 1
                 # 裁定#281①：drain 已返回=lease 已释放=安全点；纪元变更即原地 re-exec
