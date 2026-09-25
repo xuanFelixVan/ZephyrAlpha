@@ -52697,4 +52697,9 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: metaq_exam_loop
   merge_evaluation: "ALGO_FLOW 出仓机生视图 yaml（externalize_algo_flow 官方管线产物第四批），锚随 src 件同袋"
+- file: docs/_working/fullflow_mining/92_chief_handover_card_wave2.md
+  token: fullflow-mining-92-chief-handover-card-wave2-20260925
+  created_by: st-commitspeed-tbl-20260924
+  capability: fullflow_mining
+  merge_evaluation: "挖矿作业簿：战役过程文档非生产真源，收录期后归档（四判据：非同源派生/复盘消费/无同域簇/跨域不适用——不并）"
 di_seam_exemptions: []
