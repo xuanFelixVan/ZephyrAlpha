@@ -50538,4 +50538,9 @@ creation_tokens:
   created_by: st-commitspeed-tbl-20260924
   capability: fullflow_mining
   merge_evaluation: "同真源不可派生（退役映射表真源=本计划，rpt_tf01/02/10 为审查快照非映射表）；零触发零消费不成立（裁定#376 指定落地物+后续 D2 退役 SOP 消费）；同域无重复簇（m1_data 01-06 册无迁移计划册）；跨域不同对象（架构库 issue 在案 vs 施工映射表）——四判据过，不并"
+- file: src/zephyr/gov_enforcement/derived_dirty_ledger.py
+  token: fullflow-mining-derived-dirty-ledger-20260924
+  created_by: st-commitspeed-tbl-20260924
+  capability: fullflow_mining
+  merge_evaluation: "新基建件：integrity 刷新意图账=B0/M1 治本唯一事件源，无可并旧件（四判据过：非同源派生/有消费/无同域簇/跨域不适用）"
 di_seam_exemptions: []
