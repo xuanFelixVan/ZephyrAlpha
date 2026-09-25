@@ -72061,3 +72061,28 @@ algo_submodules:
   desc_en: ""
   plain_zh: "门禁的名册有好几本，各记各的账总会对不上。这个工具把几本名册放在一起逐条对账，谁多了谁少了谁写错了，生成一张差异报告，让维护的人一眼看到哪里漂了，不用再靠人肉翻册子。"
   responsibility_layer: governance
+- module_path: scripts/governance/decision_chain_sentinel.py
+  domain_id: D_GOVERNANCE
+  name_zh: "决策链哨兵"
+  name_en: "Decision Chain Sentinel"
+  desc_zh: "每日检查 decision_daily 快照是否跟上数据面，滞后超阈值即告警"
+  desc_en: "Daily check that decision_daily keeps up with data feed"
+  plain_zh: "每天早上自动看一眼决策流水有没有断供，断了就报警，防止决策链悄悄停摆"
+  responsibility_layer: governance
+- module_path: scripts/governance/evaporation_blackbox.py
+  domain_id: D_GOVERNANCE
+  name_zh: "蒸发黑匣子"
+  name_en: "Evaporation Blackbox"
+  desc_zh: "定期快照仓库状态（暂存树/未跟踪计数/stash/reflog）供蒸发案取证与恢复指引"
+  desc_en: "Periodic repo state snapshot for evaporation forensics"
+  plain_zh: "每 5 分钟给仓库拍一张快照存黑匣子，文件再被悄悄删掉就能查出什么时候丢的、丢了什么"
+  responsibility_layer: governance
+- module_path: scripts/backtest/t0_material_line.py
+  domain_id: D_GOVERNANCE
+  name_zh: "做T材料线管线"
+  name_en: "T0 Material Line Pipeline"
+  desc_zh: "按 frozen 配对规则从分钟线构建做T对语料，多周期接口，内置审计门与闭卷硬拦"
+  desc_en: "Build T0 pair corpus from minute bars with frozen pairing rules"
+  plain_zh: "把分钟行情按考试规则做成一笔一笔的做T语料，供做T考试用，闭卷数据碰不到"
+  responsibility_layer: governance
+
