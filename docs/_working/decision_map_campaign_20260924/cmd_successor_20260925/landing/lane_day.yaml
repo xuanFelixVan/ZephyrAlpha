@@ -1,0 +1,106 @@
+lane: LANE-DAY
+session_id: st-qmine-20260925
+created: '2026-09-25'
+note: >-
+  P0 修复车道（LANE-DAY）落袋清单：L09 交案的"交易日整日跳过 + 哨兵报平安 + 告警死总线"三件。
+  结论先说：跳日前提被实测证伪（2026-09-25 沪深休市，非交易日），哨兵旧判据 max() 尺的结构性缺陷独立成立并已治掉，
+  alert_aggregator 判退役（零删除，死亡证明在案），09-28 行定性为合法产出（零处置）。
+  本车道全程零 git 操作（未 add/commit/push、未跑 git_commit.py/commit_queue.py、未调 qoder_cron），
+  主区 index 他人条目一律未碰；未起 GPU 作业、未杀进程、未跑全量测试（pytest 仅显式单文件路径）；
+  未碰 src/zephyr/ex_core/、scripts/ops_guard.py、scripts/governance/evaporation_blackbox.py、
+  docs/_working/gpu_rewrite/、D:\zephyr_t1_backup\。
+  DB 全部只读：CH 经 zephyr.infrastructure.database_service.get_clickhouse_conn(role="reader")（宪法 §9.1），
+  sqlite 经 zephyr.shared.io.sqlite_factory；"无数据"判定均用 reader 复核，未用 ch_writer.query 判空。
+  能力反查留审计：CapabilityLookup().find(...) 三关键词 session_id=st-qmine-20260925（零命中，见案卷 §③a）。
+  降级直改主区=显式登记（RULE-WORKTREE）：原因=任务书明令禁一切提交动作并指定待落清单路径，
+  施工面只有 1 个脚本 + 其自测，改完由总筹统一入袋；无 worktree 可落（禁 commit 即无 merge 通道）。
+files_modified:
+  - scripts/governance/decision_chain_sentinel.py  # 治尺：期望交易日口径（日历真源驱动，零硬编码节假日）
+  - tests/governance/test_decision_chain_sentinel.py  # FakeExecutor 升两腿 + 3 条新证尺 + 1 条边界测试改到降级轴
+files_new:
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/DAY_daily_loop_skip.md  # 本案卷（frontmatter 仅 ttl: task_bound，无 doc_type）
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_day.yaml  # 本清单
+creation_token_required:
+  # CREATE-GUARD：新建 .md/.yaml 须登记 creation_token（tests/ 豁免）
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/DAY_daily_loop_skip.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_day.yaml
+module_translation_required:
+  # 本车道未新建 .py 模块 ⇒ 无 add_module_translation 义务；但既有件描述随治尺漂移，须同批改（热文件，必走 safe_write_text）
+  - registry: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+    line_anchor: '60960 起 module_path=scripts/governance/decision_chain_sentinel.py'
+    old_desc_zh: 每日检查 decision_daily 快照是否跟上数据面，滞后超阈值即告警
+    new_desc_zh: 按交易日历算出本应产出的最新交易日，缺行即告警（超前行不参与判据）
+    writer: safe_write_text  # 宪法 §13 热文件 CAS，禁裸 Edit
+landing_blockers:
+  index_state_hazard: >-
+    实测（git status --porcelain，只读）本车道两件现处 `D `（index 记为已删除）+ `??`（工作区副本未跟踪）分裂态：
+    scripts/governance/decision_chain_sentinel.py、tests/governance/test_decision_chain_sentinel.py。
+    同批 index 共 533 A / 86 M / 27 D，D 列里还含 register_decision_chain_sentinel_task.ps1（哨兵三件的第三件）、
+    evaporation_blackbox.py（LANE-EV 产物）、replay_gate_verdicts.py、duckdb_runtime_gate.py、_tree_view.py、
+    多份 tests、5 个 vocabulary yaml、1 csv、1 blueprint.md——全部**无同名 A/R 对手条目**，
+    即不是改名袋，是"文件被抹后 cp -rn 回填、index 删除态无人翻"的残迹（非本车道造成，本车道未清任何人条目）。
+    后果：按现 index 直接落地=决策链哨兵三件连本车道治尺改动一起从 git 里删掉，盘上却留着"看起来在"的文件（假存活）。
+    落地批必做：①总筹在 GitCommitGateway 内显式重新收录本车道两件盘上版本（本车道禁 git add，未执行）；
+    ②27 条 D 逐条定性（回填残迹 vs 真退役），勿与退役袋混一次提交，复核命令
+    `git diff --cached --name-status | awk '$1=="D"{print $2}'` 对 `git ls-tree -r --name-only HEAD` 差集 + 盘上存在性；
+    ③哨兵 .py+ps1+tests 三件同批翻，别只翻两件。详见案卷 §⑥（落袋阻断风险）与 §⑦（复核命令）。
+same_batch_sync_required:
+  - 机生清单重生成：scripts/governance/script_manifest.yaml（generate_script_manifest.py，源=__manifest__ 块；描述已由本车道改，清单须重跑生成器）
+  - TDM 同步核查结论（如实报）：config/trading_decision_map.yaml 与 docs/03_modules/ 全量 grep
+    "decision_chain_sentinel" 均**零命中** ⇒ 本件无 TDM 节点、无 algo_flow yaml、无 algo_note_zh 可同步；
+    若落地批发现他册（L09 SKEL/13 号文 TRD-A01 段）仍写"连续 N 个交易日无新行"旧口径，属他会话资产，本车道未代改
+  - 文件改名：无 ⇒ generate_project_depgraph.py --force 不需要（本车道零改名、零新建 .py）
+verification_commands:  # 复核命令（全部只读；pytest 显式路径）
+  - python -m pytest tests/governance/test_decision_chain_sentinel.py -q    # 17 passed（含 3 条新证尺）
+  - python scripts/governance/decision_chain_sentinel.py --ref-date 2026-09-17 --alert-log .runtime/tmp/x.jsonl   # 新尺 exit 4 报警（实生产 CH 只读）
+  - python scripts/governance/decision_chain_sentinel.py --ref-date 2026-09-25 --alert-log .runtime/tmp/x.jsonl   # 新尺 exit 0 不误鸣（中秋跳档）
+  - python .runtime/tmp/lane_day_probe.py / lane_day_probe2.py               # 复证探针（若仍在盘；袋内件已按 temp_artifacts 处理）
+evidence_red:
+  old_ruler哑火_生产实跑: 'ref=2026-09-17 → "决策链在供（lag=0 < 2）" exit 0（HEAD 版件复述，源=git show HEAD:scripts/governance/decision_chain_sentinel.py）'
+  new_ruler报警_生产实跑: 'ref=2026-09-17 → "期望交易日 2026-09-17 无 decision_daily 行（最近实评日 2026-09-16, 缺勤 1 个交易日）" exit 4'
+  new_ruler不误鸣_生产实跑: 'ref=2026-09-25（中秋休市）→ "期望交易日 2026-09-28 已有决策行" exit 0'
+  合成红证: test_tail_skipped_trading_day_alerts_while_legacy_max_ruler_was_silent —— 同批事实新尺 alert(lag=1)/旧尺 ("ok",0) 被断言钉住
+findings_summary:
+  day_skip_verdict: >-
+    不成立。2026-09-25 在唯一真源 c1_market.trade_calendar（SSE，8797 行全 is_open=1，只存开市日，
+    覆盖 1990-12-19..2026-12-31）里无开市行，09-28 恢复开市；decision_daily 目标日序列
+    09-21/22/23/24/28 逐档"次开市日"连续，零跳日；last_audit.json 无 *:2026-09-25 键与 kline_index max=09-24
+    两条事实成立，但都是休市的正常后果。故"该交易日被整日跳过""监控报了平安=假绿"两条交案结论作废
+    （09-25 当晚哨兵判词本就正确）。外部公告旁证见案卷 §⑥。
+  ruler_cure: >-
+    旧尺 last=裸 max(trade_date) 无上界，任一"超前于当日"的行（09-25 晨批写 target=09-28 是合法形态）把 last
+    顶过 ref ⇒ lag 恒 0 ⇒ 尾部/中间整日缺失全被掩盖。新尺 E=日历 >=ref 首个开市日，act=max(trade_date WHERE trade_date<=E)，
+    act!=E 即"缺即告警"，lag=(act,E] 开市日数；超前行只以 decision_max_unclamped/rows_beyond_axis 露出。
+    --lag-days（真源 scripts/governance/_shared/thresholds.py，未动）继续管"日历期望日腿不可用"的降级轴，
+    阈值文件与其他判据文件零改动 ⇒ 治的是尺子选型，不是放松阈值。
+  alert_aggregator_verdict: >-
+    退役（非接线）。零生产 import 复证成立；在产唯一总线 OpsAlertFeed（板 531KB、09-25 22:23 仍在写，
+    端点 GET /api/ops-notifications → promotion 页；去重/严重度/解除语义齐，且飞书/SMTP 通道已裁 ⇒ 聚合器派发段无合法去处）；
+    内收判据"零触发零消费→退役"+"同域重复簇→收敛唯一"双命中。净删注册表属 high 门位（Owner），本车道未删任何件。
+    连带建议改判 L09-S6-G1：接线靶心应是 OpsAlertFeed，不是 alert_aggregator。
+  future_row_verdict: >-
+    09-28 行=合法产出，零处置。写侧 daily_decision_orchestrator.py:730-735 run_id 用数据日、trade_date 用日历次开市日，
+    行内 calendar_source="trade_calendar"、degrade_reasons、门快照 run_id=VAL-P0-20260924-164044 全为生产语义 ⇒
+    既非日期算错亦非测试写生产表（宪法 §9.6 假设不成立）。UPDATE/DELETE 过不了 RULE-DATA-OPS 三步验证，追加更正行也不需要。
+    残留观察：该行由 09-25 08:43 北京晨批产出（此前四行均为前一交易日 16:3x-16:5x 晚批），距 09:40 哨兵仅 57 分钟余量，
+    节拍漂移移交 L09-C01 一并看。
+  untouched_gaps:
+    - THD-TRD-001..004 仍 0/4 有消费代码、0/4 演练（消费者件=L09-C05，Owner 裁定项）
+    - attribution_results 仍 0 行（governance.db 只读复算=0；S7 车道领地）
+    - alert_aggregator 退役删除动作未执行（门位+禁 commit）
+    - L09 册内"跳日"表述需总筹侧回写更正（他会话资产，本车道未改）
+temp_artifacts_for_cleanup:
+  - .runtime/tmp/lane_day_probe.py
+  - .runtime/tmp/lane_day_probe2.py
+  - .runtime/tmp/lane_day_old_sentinel_head.py
+  - .runtime/tmp/lane_day_new_alert.jsonl
+  - .runtime/tmp/lane_day_new_alert2.jsonl
+  - .runtime/tmp/lane_day_old_alert.jsonl
+read_only_evidence_touched:
+  - CH c1_backtest.decision_daily（19 列全字段/目标日分布/两行全列 dump）· c1_market.kline_index max ·
+    c1_market.trade_calendar（is_open 分布/exchange 面/9 月开市日数组/2025 同期对照）
+  - data/databases/governance.db → attribution_results count(*)=0
+  - .runtime/strategy_pipeline/last_audit.json（35 记号只读，未写）
+  - .runtime/ops_notifications/notifications.jsonl（体积/mtime/末行只读）
+  - git show HEAD:scripts/governance/decision_chain_sentinel.py（旧尺复述，只读）
+  - docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml:961-1032（THD-TRD 四条 status=design）

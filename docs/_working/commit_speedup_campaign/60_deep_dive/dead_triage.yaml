@@ -1,0 +1,3574 @@
+# dead_triage.yaml - commit_queue dead letters four-state triage (read-only forensics)
+# generated: 2026-09-25 by dead-letter triage agent; scope: .runtime/commit_queue/dead/*.json (top-level, n=428)
+# head_same=blob sha256 identical at dev HEAD; head_diff=exists at HEAD w/ other content; head_missing=absent at dev HEAD
+# spot check: 12/12 head_same content hashes verified via git show; blob store 3/3 integrity ok
+meta:
+  total_letters: 428
+  total_file_entries: 5222
+  unique_paths: 1205
+  unique_missing_paths: 566
+  state_counts: {revived: 223, owner: 59, discard: 106, requeue: 27, review: 13}
+  file_status_counts: {head_same: 812, head_diff: 1742, head_missing: 2668}
+revived:  # 已复活
+  - qid: q-20260923-st-chainpile-20260922-0043
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T02:54:34+08:00"
+    files: 2
+    head: {same: 2, diff: 0, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    requeued_to: q-20260923-st-chainpile-20260922-0064 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260923-st-chainpile-20260922-0047
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T03:14:34+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    requeued_to: q-20260923-st-chainpile-20260922-0053 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-chainpile-20260922-0053
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T16:44:56+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: t"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-chainpile-20260922-0056
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T18:01:34+08:00"
+    files: 2
+    head: {same: 1, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff-format'])\n检测"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-deepclean-20260923-0002
+    session: st-deepclean-20260923
+    dead_at: "2026-09-23T15:52:00+08:00"
+    files: 3
+    head: {same: 2, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/registry_migration/04_mess_inventory.md']."
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-deepclean-20260923-0003
+    session: st-deepclean-20260923
+    dead_at: "2026-09-23T16:23:30+08:00"
+    files: 4
+    head: {same: 2, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'ruff-form"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-emomine-20260923-0005
+    session: st-emomine-20260923
+    dead_at: "2026-09-23T05:13:55+08:00"
+    files: 9
+    head: {same: 0, diff: 9, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-emomine-20260923-0006 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-emomine-20260923-0006
+    session: st-emomine-20260923
+    dead_at: "2026-09-23T17:24:40+08:00"
+    files: 9
+    head: {same: 0, diff: 9, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-algo-flow-ma"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-gpu-final-20260924-0001
+    session: st-gpu-final-20260924
+    dead_at: "2026-09-24T00:17:40+08:00"
+    files: 3
+    head: {same: 0, diff: 3, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml: ours 存在"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-gpu-final-20260924-0003
+    session: st-gpu-final-20260924
+    dead_at: "2026-09-24T00:15:52+08:00"
+    files: 11
+    head: {same: 8, diff: 3, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 ALGO-FLOW-LINK 阻断: ALGO-FLOW-LINK：2 处 ALGO_FLOW 锚/卡片链接断裂——external 锚指向的 yaml 必须存在且可解析，yaml 的 source_of_truth 必须实存（"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-k4-20260923-0001
+    session: st-k4-20260923
+    dead_at: "2026-09-23T17:25:49+08:00"
+    files: 5
+    head: {same: 2, diff: 3, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PERMANENT-SYSTEM-TRIGGER 阻断: [PERM-TRIGGER] 永久系统脚本使用时间触发模式但未注册事件订阅（违反'永久系统必须全自动事件触发'铁律）: scripts/governance/commit"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-k4-20260923-0002
+    session: st-k4-20260923
+    dead_at: "2026-09-23T18:04:45+08:00"
+    files: 5
+    head: {same: 2, diff: 3, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 COMPLEXITY-GUARD 阻断: [NO-HIGH-COMPLEXITY] NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），\n  违反 §5.158 循环复杂度反模式。\n  scripts/gov"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-k4-20260923-0003
+    session: st-k4-20260923
+    dead_at: "2026-09-23T18:30:02+08:00"
+    files: 5
+    head: {same: 2, diff: 3, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 IMPORT-INTEGRITY 阻断: IMPORT-INTEGRITY: 悬空 import（目标模块不可解析，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）\n  病根：commit 引入了对不存在"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-k4-20260923-0004
+    session: st-k4-20260923
+    dead_at: "2026-09-23T19:30:56+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MUTABLE-CONST-WITHOUT-FINAL 阻断: MUTABLE-CONST-WITHOUT-FINAL：检测到模块级可变常量缺 Final 标注（5.114 Final/@final 强制防复发），\n  src/"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-k4-20260923-0008
+    session: st-k4-20260923
+    dead_at: "2026-09-23T23:47:08+08:00"
+    files: 9
+    head: {same: 5, diff: 4, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml: ours"
+    requeued_to: q-20260923-st-k4-20260923-0009 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-k4-20260923-0009
+    session: st-k4-20260923
+    dead_at: "2026-09-23T23:52:49+08:00"
+    files: 9
+    head: {same: 5, diff: 4, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml: ours"
+    requeued_to: q-20260923-st-k4-20260923-0010 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-k4-20260923-0010
+    session: st-k4-20260923
+    dead_at: "2026-09-24T00:04:45+08:00"
+    files: 9
+    head: {same: 5, diff: 4, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml: ours"
+    requeued_to: q-20260924-st-k4-20260923-0012 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-library-final-20260924-0002
+    session: st-library-final-20260924
+    dead_at: "2026-09-23T23:48:12+08:00"
+    files: 7
+    head: {same: 0, diff: 7, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml: our"
+    requeued_to: q-20260924-st-library-final-20260924-0005 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-library-final-20260924-0003
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T00:00:19+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    requeued_to: q-20260924-st-library-final-20260924-0006 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-library-final-20260924-0004
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T00:06:28+08:00"
+    files: 4
+    head: {same: 1, diff: 3, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    requeued_to: q-20260924-st-library-final-20260924-0007 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-nightfix-20260923-0001
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T04:53:17+08:00"
+    files: 7
+    head: {same: 3, diff: 4, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NEW-FILE-DEPGRAPH-ENFORCEMENT 阻断: NEW-FILE-DEPGRAPH-ENFORCEMENT: 3 个新建 .py 文件在 depgraph (PostgreSQL) nodes 表无记录。L1"
+    requeued_to: q-20260923-st-nightfix-20260923-0002 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-nightfix-20260923-0002
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T05:02:52+08:00"
+    files: 7
+    head: {same: 3, diff: 4, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-nightfix-20260923-0003
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T05:03:36+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff'])\n检测未解决的合并冲"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-nightfix-20260923-0005
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T05:11:42+08:00"
+    files: 8
+    head: {same: 3, diff: 5, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    requeued_to: q-20260923-st-nightfix-20260923-0013 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260923-st-nightfix-20260923-0010
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T06:58:38+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-nightfix-20260923-0011 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-nightfix-20260923-0011
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T07:07:30+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff-format'])\n检测"
+    requeued_to: q-20260923-st-nightfix-20260923-0012 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260923-st-regfix-lane0b-20260923-0012
+    session: st-regfix-lane0b-20260923
+    dead_at: "2026-09-23T15:04:06+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：入队基底 66e6b31346ca 之后 dev 已推进且触及同路径 ['scripts/governance/meta/rules_integrity_db.json']——逐文件快进判定失败，死信回退属主会话（66 号 §6.4/§9.1）"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-regfix-lane0b-20260923-0014
+    session: st-regfix-lane0b-20260923
+    dead_at: "2026-09-23T15:40:07+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml: ours 存在身份判"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-sim-launch-20260923-0002
+    session: st-sim-launch-20260923
+    dead_at: "2026-09-23T18:44:41+08:00"
+    files: 17
+    head: {same: 5, diff: 12, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 COMPLEXITY-GUARD 阻断: [NO-HIGH-COMPLEXITY] NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），\n  违反 §5.158 循环复杂度反模式。\n  scripts/bac"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-statreplay-20260923-0001
+    session: st-statreplay-20260923
+    dead_at: "2026-09-23T21:57:15+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml: ours 同侧身份键重复:"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0001
+    session: st-stress-20260923
+    dead_at: "2026-09-23T17:28:14+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff-format'])\n检测"
+    requeued_to: q-20260923-st-stress-20260923-0002 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260923-st-stress-20260923-0033
+    session: st-stress-20260923
+    dead_at: "2026-09-24T17:42:16+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_08.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0034
+    session: st-stress-20260923
+    dead_at: "2026-09-24T17:44:30+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_01.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0035
+    session: st-stress-20260923
+    dead_at: "2026-09-24T17:46:02+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_23.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0036
+    session: st-stress-20260923
+    dead_at: "2026-09-24T17:47:47+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_05.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0037
+    session: st-stress-20260923
+    dead_at: "2026-09-24T17:50:12+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_20.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0038
+    session: st-stress-20260923
+    dead_at: "2026-09-24T17:52:39+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session 'st-stress-20260923' 已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTREE「并发与提交」）: ['D:\\\\ZephyrAlpha\\\\.runt"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0039
+    session: st-stress-20260923
+    dead_at: "2026-09-24T17:55:58+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_15.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0040
+    session: st-stress-20260923
+    dead_at: "2026-09-24T17:58:05+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_13.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0041
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:00:28+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_16.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0042
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:02:41+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_30.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0043
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:05:31+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_19.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0044
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:08:09+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_11.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0045
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:11:49+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_26.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0046
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:13:10+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_09.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0047
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:14:16+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_03.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0048
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:15:11+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_29.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0049
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:16:11+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_21.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0050
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:17:13+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_17.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0051
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:18:29+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_27.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0052
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:19:52+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_24.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0053
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:21:15+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_14.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0054
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:22:16+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_22.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0055
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:22:58+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_02.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0056
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:23:47+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_25.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0057
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:24:58+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_28.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0058
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:26:02+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_12.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0059
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:27:08+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_18.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0060
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:28:24+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_07.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0061
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:29:25+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_04.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-stress-20260923-0062
+    session: st-stress-20260923
+    dead_at: "2026-09-24T18:30:25+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['docs/_working/registry_migration/stress/lane_06.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-sweep-tail-20260923-0001
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T18:27:35+08:00"
+    files: 14
+    head: {same: 12, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 2 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-sweep-tail-20260923-0002
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T19:56:34+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-LOOKUP-REQUIRED 阻断: CAPABILITY-LOOKUP-REQUIRED: [no-lookup:] reason 不匹配白名单关键词——MUST 使用白名单 reason（如 gate"
+    requeued_to: q-20260923-st-sweep-tail-20260923-0040 (unknown_qid)
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0013
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T20:03:02+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-LOOKUP-REQUIRED 阻断: CAPABILITY-LOOKUP-REQUIRED: [no-lookup:] reason 不匹配白名单关键词——MUST 使用白名单 reason（如 gate"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-sweep-tail-20260923-0026
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:11:49+08:00"
+    files: 12
+    head: {same: 12, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 2 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260924-st-sweep-tail-20260923-0065 (dead_again)
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0027
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:13:41+08:00"
+    files: 19
+    head: {same: 13, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260923-st-sweep-tail-20260923-0051 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-sweep-tail-20260923-0041
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:14:27+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0042
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:15:17+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0043
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:17:01+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0044
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:17:46+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0045
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:18:39+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0046
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:19:37+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0047
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:20:36+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0048
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:24:11+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0049
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T22:25:56+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0050
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-23T23:52:35+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-sweep-tail-20260923-0051
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T00:17:01+08:00"
+    files: 19
+    head: {same: 13, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260924-st-sweep-tail-20260923-0054 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-sweep-tail-20260923-0052
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T00:08:32+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-tdm20-20260923-0026
+    session: st-tdm20-20260923
+    dead_at: "2026-09-23T10:38:12+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    requeued_to: q-20260923-st-tdm20-20260923-0043 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-tdm20-20260923-0043
+    session: st-tdm20-20260923
+    dead_at: "2026-09-23T17:32:43+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: t"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-ulib3c-20260923-0001
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-23T17:28:26+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REGISTRY-MASS-DELETION 阻断: REGISTRY-MASS-DELETION: 登记表净删行/条目数减少（2026-09-09 4703 行蒸发治本）\n  病根：批量编辑正则失配把插入变删除；登记表条目只应"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260923-st-ulib3c-20260923-0002
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-23T17:30:03+08:00"
+    files: 8
+    head: {same: 6, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 ORPHAN-MODULE 阻断: 孤儿模块在代码库中无任何 import 引用（死代码，违反新AI可发现性）: src/zephyr/library/collectors/logs_collector.py"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-ulib3c-20260923-0003
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-23T17:30:30+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-LOOKUP-REQUIRED 阻断: CAPABILITY-LOOKUP-REQUIRED: session 'st-ulib3c-20260923' 未调用 rule_discovery.discove"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-ulib3c-20260923-0005
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-23T22:15:00+08:00"
+    files: 8
+    head: {same: 7, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 IMPORT-INTEGRITY 阻断: IMPORT-INTEGRITY: 悬空 import（目标模块不可解析，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）\n  病根：commit 引入了对不存在"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-ulib3c-20260923-0007
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-23T22:16:44+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 ORPHAN-MODULE 阻断: 孤儿模块在代码库中无任何 import 引用（死代码，违反新AI可发现性）: src/zephyr/library/collectors/logs_collector.py"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-ulib3c-20260923-0010
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-23T22:17:55+08:00"
+    files: 7
+    head: {same: 0, diff: 7, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml: our"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-ulib3c-20260923-0012
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-23T22:19:02+08:00"
+    files: 39
+    head: {same: 0, diff: 39, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths (39 hit(s)): D:\\ZephyrAlpha\\.runtime\\com"
+    requeued_to: q-20260924-st-ulib3c-20260923-0019 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260923-st-ulib3c-20260923-0013
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-23T22:19:20+08:00"
+    files: 25
+    head: {same: 0, diff: 25, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths (25 hit(s)): D:\\ZephyrAlpha\\.runtime\\com"
+    requeued_to: q-20260924-st-ulib3c-20260923-0020 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260923-st-ulib3c-20260923-0014
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-23T22:19:54+08:00"
+    files: 22
+    head: {same: 0, diff: 22, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths (22 hit(s)): D:\\ZephyrAlpha\\.runtime\\com"
+    requeued_to: q-20260924-st-ulib3c-20260923-0021 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260923-st-xhs-full-20260922-0041
+    session: st-xhs-full-20260922
+    dead_at: "2026-09-23T03:07:48+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-xhs-full-20260922-0052 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260923-st-xhs-full-20260922-0052
+    session: st-xhs-full-20260922
+    dead_at: "2026-09-23T17:33:38+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: t"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0002
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T02:17:11+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0004
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T02:26:13+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0010
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T02:31:01+08:00"
+    files: 4
+    head: {same: 0, diff: 4, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml: ours"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0012
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T03:00:07+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session 'st-align-dirty-20260924' 已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTREE「并发与提交」）: ['D:\\\\ZephyrAlpha\\\\"
+    requeued_to: q-20260924-st-align-dirty-20260924-0016 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-align-dirty-20260924-0013
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T02:53:28+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml: ours 存在身份判"
+    requeued_to: q-20260924-st-align-dirty-20260924-0017 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0015
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T03:25:34+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 HOT-FILE-BASE-FRESHNESS 阻断: 目标热文件在 claim 后被上游 commit 修改（STALE_BASE_VIOLATION）: ['docs/01_policies_and_standards/_r"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0017
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T03:28:31+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml: ours 存在身份判"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0020
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T03:55:31+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：dev CAS 竞态（池化）——9ff96cc5c393..b906e95496e9 间同路径 ['config/strategy_production_map.yaml'] 被并发落地工推进（66 号 §6.4，死信回退人工）"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0021
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T03:55:13+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：dev CAS 竞态——293415130d63..b906e95496e9 间同路径 ['docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml']"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0022
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T04:00:41+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session 'st-align-dirty-20260924' 已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTREE「并发与提交」）: ['D:\\\\ZephyrAlpha\\\\"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0042
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T06:56:55+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml: ours 存在身份判"
+    requeued_to: q-20260924-st-align-dirty-20260924-0056 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-align-dirty-20260924-0056
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T12:29:27+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/fail_open_register.yaml: ours 存在身份判"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-all-20260924-0003
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T00:12:53+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml: ours 存在身份判不了的"
+    requeued_to: q-20260924-st-audit-all-20260924-0004 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-all-20260924-0004
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T00:57:55+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml: ours 存在身份判不了的"
+    requeued_to: q-20260924-st-audit-all-20260924-0011 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-audit-all-20260924-0005
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T01:02:31+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共 361 功能点）\n  - R4 F-BUDGET-PAGE: module 引"
+    requeued_to: q-20260924-st-audit-all-20260924-0006 (dead_again)
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-audit-all-20260924-0006
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T02:13:12+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: TimeoutExpired: Command '['git', 'commit', '--no-verify', '-F', 'C:\\\\Users\\\\fanzi\\\\AppData\\\\Local\\\\Temp\\\\gw_commit_msg_xjn00l1b."
+    requeued_to: q-20260924-st-audit-all-20260924-0007 (dead_again)
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-audit-all-20260924-0007
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T02:52:17+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共 361 功能点）\n  - R1 F-BUDGET-PAGE: backend_"
+    requeued_to: q-20260924-st-audit-all-20260924-0016 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-audit-all-20260924-0012
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T04:50:07+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [RULING-REFERENCE] 新增 裁定#NNN 悬空引用（RULING_REFERENCE_VIOLATION）——以下文件引用了 ruling_registry.yam"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-all-20260924-0028
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T07:41:45+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 FORGED-GW-MARKER 阻断: FORGED-GW-MARKER: commit message 含非本 session 的 [GW: 标记 ['sid']（本 session=st-audit-all-2026092"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-all-20260924-0030
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T08:16:01+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [RULING-REFERENCE] 新增 裁定#NNN 悬空引用（RULING_REFERENCE_VIOLATION）——以下文件引用了 ruling_registry.yam"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-all-20260924-0031
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T08:16:38+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [RULING-REFERENCE] 新增 裁定#NNN 悬空引用（RULING_REFERENCE_VIOLATION）——以下文件引用了 ruling_registry.yam"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-all-20260924-0047
+    session: st-audit-all-20260924
+    dead_at: "2026-09-24T14:08:57+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [DANGLING-REFERENCE] 新增 AGENTS.md 悬空引用（DANGLING_REFERENCE_VIOLATION）——以下文件引用了 AGENTS.md 中不"
+    requeued_to: q-20260924-st-audit-all-20260924-0048 (unknown_qid)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-fix-20260924-0002
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T15:29:20+08:00"
+    files: 4
+    head: {same: 1, diff: 3, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff-format'])\n检测"
+    requeued_to: q-20260924-st-audit-fix-20260924-0003 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-audit-fix-20260924-0004
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T16:05:00+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml']（stale_by=q-20260924-st-audit-fix-20260924"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-fix-20260924-0014
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T18:40:04+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'ruff-form"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-fix-20260924-0026
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T22:22:26+08:00"
+    files: 4
+    head: {same: 0, diff: 4, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "本包自撤（F-AUDITFIX-STALE-01 实效自证）：袋内 commit_queue_landing.py 派生自 7d8271c128，而 dev 已被 79ee5286c5（D4 幽灵 pending 治本）推进同文件 23+/1- ⇒ 落它会拿陈旧快照整覆他人已落地"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-audit-fix-20260924-0029
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T23:17:23+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：快照基底 27449507e1c4（与 dev 的共同祖先 27449507e1c4）之后 dev 已推进且触及同路径 ['docs/_working/audit_fix/audit_fix_ledger.md']——逐文件快进判定失败，死信回退属主会话（66 号 §6.4"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-backup-cold-20260924-0001
+    session: st-backup-cold-20260924
+    dead_at: "2026-09-24T00:58:08+08:00"
+    files: 223
+    head: {same: 0, diff: 223, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml: ours 存在"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-backup-cold-20260924-0003
+    session: st-backup-cold-20260924
+    dead_at: "2026-09-24T02:11:49+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-backup-cold-20260924-0004
+    session: st-backup-cold-20260924
+    dead_at: "2026-09-24T02:31:42+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml: ours "
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-backup-cold-20260924-0005
+    session: st-backup-cold-20260924
+    dead_at: "2026-09-24T03:09:35+08:00"
+    files: 5
+    head: {same: 3, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PERMANENT-SYSTEM-TRIGGER 阻断: [PERM-TRIGGER] 永久系统脚本使用时间触发模式但未注册事件订阅（违反'永久系统必须全自动事件触发'铁律）: scripts/backup/backup_rec"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-backup-cold-20260924-0008
+    session: st-backup-cold-20260924
+    dead_at: "2026-09-24T04:29:27+08:00"
+    files: 32
+    head: {same: 0, diff: 32, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共 361 功能点）\n  - R1 F-BUDGET-PAGE: backend_"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-backup-cold-20260924-0010
+    session: st-backup-cold-20260924
+    dead_at: "2026-09-24T04:19:20+08:00"
+    files: 3
+    head: {same: 0, diff: 3, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REGISTRY-MASS-DELETION 阻断: REGISTRY-MASS-DELETION: 登记表净删行/条目数减少（2026-09-09 4703 行蒸发治本）\n  病根：批量编辑正则失配把插入变删除；登记表条目只应"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-backup-cold-20260924-0018
+    session: st-backup-cold-20260924
+    dead_at: "2026-09-24T12:37:07+08:00"
+    files: 4
+    head: {same: 1, diff: 3, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml: ours 同侧"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-cleanup-final-20260924-0006
+    session: st-cleanup-final-20260924
+    dead_at: "2026-09-24T14:40:06+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff-format'])\n检测"
+    requeued_to: q-20260924-st-cleanup-final-20260924-0012 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-cleanup-final-20260924-0007
+    session: st-cleanup-final-20260924
+    dead_at: "2026-09-24T14:57:07+08:00"
+    files: 2
+    head: {same: 1, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff-format'])\n检测"
+    requeued_to: q-20260924-st-cleanup-final-20260924-0013 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-cleanup-final-20260924-0011
+    session: st-cleanup-final-20260924
+    dead_at: "2026-09-24T18:50:21+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'ruff-form"
+    requeued_to: q-20260924-st-cleanup-final-20260924-0015 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-cleanup-final-20260924-0018
+    session: st-cleanup-final-20260924
+    dead_at: "2026-09-24T19:45:32+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml']（stale_by=q-20260924-st"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-cleanup-final-20260924-0024
+    session: st-cleanup-final-20260924
+    dead_at: "2026-09-25T01:01:48+08:00"
+    files: 6
+    head: {same: 0, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: check_frontmatter_metadata.py execution failed: Command 'D:\\ZephyrAlpha\\.runtime\\commit_queue\\wor"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-cmd-20260923-0001
+    session: st-cmd-20260923
+    dead_at: "2026-09-24T00:21:01+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml: ours"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-cmd-20260924-0003
+    session: st-cmd-20260924
+    dead_at: "2026-09-24T19:18:14+08:00"
+    files: 39
+    head: {same: 0, diff: 39, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths (39 hit(s)): D:\\ZephyrAlpha\\.runtime\\com"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-cmd-20260924-0004
+    session: st-cmd-20260924
+    dead_at: "2026-09-24T19:58:41+08:00"
+    files: 25
+    head: {same: 0, diff: 25, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths (25 hit(s)): D:\\ZephyrAlpha\\.runtime\\com"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-cmd-20260924-0005
+    session: st-cmd-20260924
+    dead_at: "2026-09-24T20:09:03+08:00"
+    files: 22
+    head: {same: 0, diff: 22, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths (22 hit(s)): D:\\ZephyrAlpha\\.runtime\\com"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-cmd-20260924-0010
+    session: st-cmd-20260924
+    dead_at: "2026-09-24T20:11:47+08:00"
+    files: 3
+    head: {same: 3, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-LOOKUP-REQUIRED 阻断: CAPABILITY-LOOKUP-REQUIRED: session 'st-cmd-20260924' 未调用 rule_discovery.discover_a"
+    requeued_to: q-20260925-st-cmd-20260924-0028 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0001
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T20:20:34+08:00"
+    files: 7
+    head: {same: 1, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'ruff-form"
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0007 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0003
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T20:33:16+08:00"
+    files: 2
+    head: {same: 1, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff-format'])\n检测"
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0008 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0007
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T20:59:18+08:00"
+    files: 7
+    head: {same: 4, diff: 3, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：入队基底 af8852afa667 之后 dev 已推进且触及同路径 ['scripts/commit_queue.py', 'scripts/governance/commit_queue_landing.py', 'src/zephyr/gov_enforcement/"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0011
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T22:20:53+08:00"
+    files: 3
+    head: {same: 2, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktrees\\w2\\tests\\governance\\test_w4_env_no_residual.py missing requ"
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0025 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0015
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T22:41:02+08:00"
+    files: 3
+    head: {same: 2, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0018 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0018
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T22:47:31+08:00"
+    files: 3
+    head: {same: 2, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 BLUEPRINT-FORMAT 阻断: BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式不合规（裁定#214 Phase 0 防蔓延）\n  合规格式: # [BLUEPRINT] MO"
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0021 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0021
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T23:17:42+08:00"
+    files: 3
+    head: {same: 3, diff: 0, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0024 (unknown_qid)
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0025
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T23:33:56+08:00"
+    files: 3
+    head: {same: 3, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 IMPORT-INTEGRITY 阻断: IMPORT-INTEGRITY: 悬空 import（目标模块不可解析，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）\n  病根：commit 引入了对不存在"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0026
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-25T00:37:58+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktrees\\w3\\tests\\governance\\test_gate_stats_no_ms_floor.py invalid "
+    requeued_to: q-20260925-st-commitspeed-tbl-20260924-0033 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-commitsys-20260924-0001
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T01:00:46+08:00"
+    files: 11
+    head: {same: 0, diff: 11, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    requeued_to: q-20260924-st-commitsys-20260924-0003 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitsys-20260924-0003
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T01:16:08+08:00"
+    files: 11
+    head: {same: 0, diff: 11, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitsys-20260924-0004
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T03:34:03+08:00"
+    files: 11
+    head: {same: 4, diff: 6, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['scripts/governance/generators/generate_commit_guide.py']"
+    requeued_to: q-20260924-st-commitsys-20260924-0008 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-commitsys-20260924-0006
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T03:42:24+08:00"
+    files: 3
+    head: {same: 0, diff: 3, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/01_policies_and_standards/sop/governance_sop/commit"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitsys-20260924-0014
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T05:13:16+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/commit_system_opt/06_final_report.md']. co"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-commitsys-20260924-0016
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T05:45:14+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-OVERLAP 阻断: CloneGuard 检测到 extract 级代码克隆——必须合并而非新建:\n  - src/zephyr/gov_enforcement/rule_bridge/worktree"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitsys-20260924-0017
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T06:02:05+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-OVERLAP 阻断: CloneGuard 检测到 extract 级代码克隆——必须合并而非新建:\n  - src/zephyr/gov_enforcement/rule_bridge/worktree"
+    requeued_to: q-20260924-st-commitsys-20260924-0018 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitsys-20260924-0018
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T06:22:47+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 IMPORT-INTEGRITY 阻断: IMPORT-INTEGRITY: 悬空 import（目标模块不可解析，#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）\n  病根：commit 引入了对不存在"
+    requeued_to: q-20260924-st-commitsys-20260924-0019 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitsys-20260924-0019
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T07:48:39+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff'])\n检测未解决的合并冲"
+    requeued_to: q-20260924-st-commitsys-20260924-0020 (unknown_qid)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-commitsys-20260924-0021
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T08:17:56+08:00"
+    files: 3
+    head: {same: 2, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-OVERLAP 阻断: CloneGuard 检测到 extract 级代码克隆——必须合并而非新建:\n  - src/zephyr/gov_enforcement/rule_bridge/worktree"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-gpu-final-20260924-0004
+    session: st-gpu-final-20260924
+    dead_at: "2026-09-24T01:25:40+08:00"
+    files: 36
+    head: {same: 0, diff: 36, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml: ours 存在"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-gpu-final-20260924-0005
+    session: st-gpu-final-20260924
+    dead_at: "2026-09-24T01:26:08+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：入队基底 0f08f7a06c4f 之后 dev 已推进且触及同路径 ['scripts/governance/meta/rules_integrity_db.json']——逐文件快进判定失败，死信回退属主会话（66 号 §6.4/§9.1）"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-gpu-final-20260924-0006
+    session: st-gpu-final-20260924
+    dead_at: "2026-09-24T01:55:58+08:00"
+    files: 11
+    head: {same: 9, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 ORPHAN-MODULE 阻断: 孤儿模块在代码库中无任何 import 引用（死代码，违反新AI可发现性）: src/zephyr/backtest/regime_validation/exam_cost_gate.py"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-gpu-final-20260924-0008
+    session: st-gpu-final-20260924
+    dead_at: "2026-09-24T02:40:02+08:00"
+    files: 2
+    head: {same: 1, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-k4-20260923-0012
+    session: st-k4-20260923
+    dead_at: "2026-09-24T00:24:06+08:00"
+    files: 9
+    head: {same: 5, diff: 4, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml: ours"
+    requeued_to: q-20260924-st-k4-20260923-0013 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-k4-20260923-0013
+    session: st-k4-20260923
+    dead_at: "2026-09-24T01:01:32+08:00"
+    files: 9
+    head: {same: 5, diff: 4, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml: ours"
+    requeued_to: q-20260924-st-k4-20260923-0014 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-k4-20260923-0014
+    session: st-k4-20260923
+    dead_at: "2026-09-24T01:13:45+08:00"
+    files: 9
+    head: {same: 5, diff: 4, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml: ours"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0005
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T00:24:56+08:00"
+    files: 7
+    head: {same: 0, diff: 7, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml: our"
+    requeued_to: q-20260924-st-library-final-20260924-0009 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0006
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T00:26:39+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    requeued_to: q-20260924-st-library-final-20260924-0010 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0007
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T00:31:12+08:00"
+    files: 4
+    head: {same: 1, diff: 3, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    requeued_to: q-20260924-st-library-final-20260924-0011 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0008
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T01:24:01+08:00"
+    files: 2
+    head: {same: 2, diff: 0, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "网关落盘失败（COMMIT_FAILED）: git commit failed: On branch serializer/commit-queue-w0\nnothing to commit, working tree clean"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-library-final-20260924-0009
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T01:15:47+08:00"
+    files: 7
+    head: {same: 0, diff: 7, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml: our"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0010
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T01:25:32+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0011
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T01:25:30+08:00"
+    files: 4
+    head: {same: 1, diff: 3, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0013
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T02:27:12+08:00"
+    files: 3
+    head: {same: 0, diff: 3, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml: ours 存在"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0015
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T07:08:34+08:00"
+    files: 3
+    head: {same: 0, diff: 3, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REGISTRY-MASS-DELETION 阻断: REGISTRY-MASS-DELETION: 登记表净删行/条目数减少（2026-09-09 4703 行蒸发治本）\n  病根：批量编辑正则失配把插入变删除；登记表条目只应"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0018
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T07:41:16+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：入队基底 0fe090715ff0 之后 dev 已推进且触及同路径 ['scripts/governance/meta/rules_integrity_db.json']——逐文件快进判定失败，死信回退属主会话（66 号 §6.4/§9.1）"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0019
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T08:14:00+08:00"
+    files: 212
+    head: {same: 212, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共 361 功能点）\n  - R4 F-BUDGET-PAGE: module 引"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-library-final-20260924-0020
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T08:34:44+08:00"
+    files: 35
+    head: {same: 1, diff: 34, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共 361 功能点）\n  - R4 F-BUDGET-PAGE: module 引"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0026
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T11:43:56+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：入队基底 5471d43a52b6 之后 dev 已推进且触及同路径 ['scripts/governance/script_manifest.yaml']——逐文件快进判定失败，死信回退属主会话（66 号 §6.4/§9.1）"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0032
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T13:09:37+08:00"
+    files: 223
+    head: {same: 2, diff: 221, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['docs/03_modules/_domain_governance/algo_flow/data_governance/index.md']——逐文件快进判定失败，死信回退属主会话（66 号 §6."
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-library-final-20260924-0033
+    session: st-library-final-20260924
+    dead_at: "2026-09-24T13:10:02+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：入队基底 12b00068b547 之后 dev 已推进且触及同路径 ['scripts/governance/meta/rules_integrity_db.json']——逐文件快进判定失败，死信回退属主会话（66 号 §6.4/§9.1）"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-mapbuild-20260924-0006
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T20:59:19+08:00"
+    files: 6
+    head: {same: 0, diff: 6, missing: 0}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml', 'scripts/governance/d5"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-mapbuild-20260924-0011
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T22:26:00+08:00"
+    files: 6
+    head: {same: 0, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-LOOKUP-REQUIRED 阻断: CAPABILITY-LOOKUP-REQUIRED: session 'st-mapbuild-20260924' 未调用 rule_discovery.disco"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-mapcensus-20260924-0001
+    session: st-mapcensus-20260924
+    dead_at: "2026-09-24T04:41:16+08:00"
+    files: 2
+    head: {same: 1, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共 361 功能点）\n  - R1 F-BUDGET-PAGE: backend_"
+    requeued_to: q-20260924-st-mapcensus-20260924-0006 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-mapcensus-20260924-0002
+    session: st-mapcensus-20260924
+    dead_at: "2026-09-24T04:42:22+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [RULING-REFERENCE] 新增 裁定#NNN 悬空引用（RULING_REFERENCE_VIOLATION）——以下文件引用了 ruling_registry.yam"
+    requeued_to: q-20260924-st-mapcensus-20260924-0007 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-mapcensus-20260924-0003
+    session: st-mapcensus-20260924
+    dead_at: "2026-09-24T04:42:37+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/map_census/00_panorama_map_census_v1.md']."
+    requeued_to: q-20260924-st-mapcensus-20260924-0008 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-mapcensus-20260924-0004
+    session: st-mapcensus-20260924
+    dead_at: "2026-09-24T04:51:22+08:00"
+    files: 2
+    head: {same: 1, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共 361 功能点）\n  - R1 F-BUDGET-PAGE: backend_"
+    requeued_to: q-20260924-st-mapcensus-20260924-0005 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-metaq-20260923-0008
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T09:12:34+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-metaq-20260923-0009
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T09:13:36+08:00"
+    files: 29
+    head: {same: 6, diff: 23, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 FILE-PLACEMENT-TTL 阻断: FILE-PLACEMENT-TTL: docs/_working/meta_question_answers/results/results_all.yaml frontmatte"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-metaq-gc-20260924-0011
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:16:11+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/_working/meta_question_answers/02_final_ledger.md', 'docs/01_policies_and_standards/_registry/catalogs/module"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-metaq-gc-20260924-0013
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:17:19+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml']（stale_by=q-20260924-st"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-oddjobs-final-20260924-0001
+    session: st-oddjobs-final-20260924
+    dead_at: "2026-09-24T04:51:38+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共 361 功能点）\n  - R1 F-BUDGET-PAGE: backend_"
+    requeued_to: q-20260924-st-oddjobs-final-20260924-0002 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-pipeline-final-20260924-0001
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T01:02:46+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：入队基底 1cba19a9de52 之后 dev 已推进且触及同路径 ['src/zephyr/gov_enforcement/commit_gates/registry_mass_deletion_gate.py']——逐文件快进判定失败，死信回退属主会话（66 号 §6"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-pipeline-final-20260924-0002
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T01:11:55+08:00"
+    files: 11
+    head: {same: 9, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 ALGO-FLOW-LINK 阻断: ALGO-FLOW-LINK：1 处 ALGO_FLOW 锚/卡片链接断裂——external 锚指向的 yaml 必须存在且可解析，yaml 的 source_of_truth 必须实存（"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-pipeline-final-20260924-0004
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T01:58:46+08:00"
+    files: 8
+    head: {same: 5, diff: 3, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: TimeoutExpired: Command '['git', 'commit', '--no-verify', '-F', 'C:\\\\Users\\\\fanzi\\\\AppData\\\\Local\\\\Temp\\\\gw_commit_msg_p0do3r0f."
+    requeued_to: q-20260924-st-pipeline-final-20260924-0005 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-pipeline-final-20260924-0005
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T04:18:29+08:00"
+    files: 8
+    head: {same: 5, diff: 3, missing: 0}
+    reason_cat: base_conflict
+    reason: "冲突：dev CAS 竞态（池化）——84ec1ce85e5c..3ec72b6d0b71 间同路径 ['scripts/governance/_shared/thresholds.yaml', 'scripts/governance/commit_queue_landing.p"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-pipeline-final-20260924-0021
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T09:16:15+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-pipeline-final-20260924-0024
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T09:34:56+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    requeued_to: q-20260924-st-pipeline-final-20260924-0026 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-pipeline-final-20260924-0026
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T09:49:59+08:00"
+    files: 3
+    head: {same: 1, diff: 2, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sim-launch-20260923-0003
+    session: st-sim-launch-20260923
+    dead_at: "2026-09-24T22:16:11+08:00"
+    files: 17
+    head: {same: 15, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sim-launch-20260923-0004
+    session: st-sim-launch-20260923
+    dead_at: "2026-09-24T22:31:04+08:00"
+    files: 17
+    head: {same: 10, diff: 7, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 ALGO-NOTE-SYNC 阻断: ALGO-NOTE-SYNC：1 个节点的实现代码在本 commit 被触碰，但其大白话算法说明未同步——算法改了大白话必须跟着改（Owner 2026-09-09）。TDM-E-L4-10"
+    requeued_to: q-20260924-st-sim-launch-20260923-0005 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sim-launch-20260923-0005
+    session: st-sim-launch-20260923
+    dead_at: "2026-09-24T22:38:40+08:00"
+    files: 17
+    head: {same: 9, diff: 8, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 DEPGRAPH-ENFORCEMENT 阻断: [NEW-FILE-DEPGRAPH-ENFORCEMENT] NEW-FILE-DEPGRAPH-ENFORCEMENT: 1 个新建 .py 文件在 depgraph (Po"
+    requeued_to: q-20260924-st-sim-launch-20260923-0006 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sim-launch-20260923-0006
+    session: st-sim-launch-20260923
+    dead_at: "2026-09-24T22:46:28+08:00"
+    files: 17
+    head: {same: 9, diff: 8, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-algo-flow-ma"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sweep-tail-20260923-0053
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T03:50:43+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    requeued_to: q-20260924-st-sweep-tail-20260923-0056 (dead_again)
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-sweep-tail-20260923-0054
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T04:18:52+08:00"
+    files: 19
+    head: {same: 13, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TEST-SOURCE-CONSISTENCY 阻断: TEST-SOURCE-CONSISTENCY (§5.178)：检测到测试-源码符号漂移\n  测试文件 import 的符号在源码中不存在（名称漂移）。\n  tests/"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sweep-tail-20260923-0055
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T03:58:52+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-sweep-tail-20260923-0056
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T04:14:03+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    requeued_to: q-20260924-st-sweep-tail-20260923-0059 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-sweep-tail-20260923-0057
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T04:16:26+08:00"
+    files: 19
+    head: {same: 13, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TEST-SOURCE-CONSISTENCY 阻断: TEST-SOURCE-CONSISTENCY (§5.178)：检测到测试-源码符号漂移\n  测试文件 import 的符号在源码中不存在（名称漂移）。\n  tests/"
+    requeued_to: q-20260924-st-sweep-tail-20260923-0060 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sweep-tail-20260923-0058
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T04:20:36+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['AGENTS.md'])——应用静默丢失，死信回退重新入队（2026-09-15 q-0003 假落地事故防线）"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-sweep-tail-20260923-0059
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T04:22:41+08:00"
+    files: 1
+    head: {same: 1, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-sweep-tail-20260923-0060
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T04:24:18+08:00"
+    files: 19
+    head: {same: 13, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TEST-SOURCE-CONSISTENCY 阻断: TEST-SOURCE-CONSISTENCY (§5.178)：检测到测试-源码符号漂移\n  测试文件 import 的符号在源码中不存在（名称漂移）。\n  tests/"
+    requeued_to: q-20260924-st-sweep-tail-20260923-0061 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sweep-tail-20260923-0061
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T04:33:28+08:00"
+    files: 19
+    head: {same: 13, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 2 项 fail（共 361 功能点）\n  - R1 F-BUDGET-PAGE: backend_"
+    requeued_to: q-20260924-st-sweep-tail-20260923-0062 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sweep-tail-20260923-0062
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T05:31:38+08:00"
+    files: 19
+    head: {same: 13, diff: 6, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff-format'])\n检测"
+    requeued_to: q-20260924-st-sweep-tail-20260923-0063 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sweep-tail-20260923-0063
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T05:38:43+08:00"
+    files: 19
+    head: {same: 17, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NO-BARE-SQL 阻断: NO-BARE-SQL：检测到裸 SQL 字面量，\n  违反 §5.160.2 SQL 集中化原则。\n  src/zephyr/data/sector_state_pipeline.py:70: "
+    requeued_to: q-20260924-st-sweep-tail-20260923-0064 (dead_again)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sweep-tail-20260923-0064
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T05:53:32+08:00"
+    files: 19
+    head: {same: 17, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NO-BARE-SQL 阻断: NO-BARE-SQL：检测到裸 SQL 字面量，\n  违反 §5.160.2 SQL 集中化原则。\n  src/zephyr/data/sector_state_pipeline.py:71: "
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-sweep-tail-20260923-0065
+    session: st-sweep-tail-20260923
+    dead_at: "2026-09-24T09:23:51+08:00"
+    files: 12
+    head: {same: 12, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260924-st-sweep-tail-20260923-0066 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260924-st-t0-matrix-20260924-0019
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T09:28:20+08:00"
+    files: 10
+    head: {same: 10, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-t0-matrix-20260924-0030
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T21:47:09+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "landing 异常: RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 ef69739fee29^ 猜基底做合并（09-24 热册被吃病根）。修复通道：python scripts/commit_q"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-t0-matrix-20260924-0034
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-25T01:39:16+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: b"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-ulib3c-20260923-0016
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-24T21:49:58+08:00"
+    files: 39
+    head: {same: 39, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths (39 hit(s)): D:\\ZephyrAlpha\\.runtime\\com"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-ulib3c-20260923-0017
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-24T21:50:13+08:00"
+    files: 25
+    head: {same: 25, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths (25 hit(s)): D:\\ZephyrAlpha\\.runtime\\com"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-ulib3c-20260923-0018
+    session: st-ulib3c-20260923
+    dead_at: "2026-09-24T21:50:27+08:00"
+    files: 22
+    head: {same: 22, diff: 0, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protected paths (22 hit(s)): D:\\ZephyrAlpha\\.runtime\\com"
+    note: "all files at HEAD (content match)"
+  - qid: q-20260924-st-wm1-wave0-20260924-0001
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-24T21:51:55+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: base_conflict
+    reason: "landing 异常: RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 c0724304456f^ 猜基底做合并（09-24 热册被吃病根）。修复通道：python scripts/commit_q"
+    requeued_to: q-20260924-st-wm1-wave0-20260924-0009 (unknown_qid)
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260924-st-wm1-wave0-20260924-0002
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-24T21:50:50+08:00"
+    files: 3
+    head: {same: 2, diff: 1, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 FILE-PLACEMENT-TTL 阻断: FILE-PLACEMENT-TTL: docs/_working/registry_migration/10_wm1_laneA_build_report.md frontmatt"
+    requeued_to: q-20260924-st-wm1-wave0-20260924-0010 (landed_done)
+    note: "requeue-chain landed"
+  - qid: q-20260925-st-backup-cold-20260924-0029
+    session: st-backup-cold-20260924
+    dead_at: "2026-09-25T04:34:42+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: landing_anomaly
+    reason: "网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session 'st-backup-cold-20260924' 已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTREE「并发与提交」）: ['D:\\\\ZephyrAlpha\\\\"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260925-st-cleanup-final-20260924-0027
+    session: st-cleanup-final-20260924
+    dead_at: "2026-09-25T01:47:10+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/_working/cmd_ledger/overnight_decisions_20260924.md(head_reader 缺失无法重校验)']（stale_by=q-20260924-st-cleanup-fin"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260925-st-cmd-20260924-0030
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:18:42+08:00"
+    files: 1
+    head: {same: 0, diff: 1, missing: 0}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml']（stale_by=q-20260924-st"
+    note: "all files at HEAD (some superseded)"
+  - qid: q-20260925-st-wm1-wave0-20260924-0016
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-25T02:58:56+08:00"
+    files: 2
+    head: {same: 0, diff: 2, missing: 0}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: check_frontmatter_metadata.py execution failed: Command 'D:\\ZephyrAlpha\\.runtime\\commit_queue\\wor"
+    requeued_to: q-20260925-st-wm1-wave0-20260924-0022 (unknown_qid)
+    note: "all files at HEAD (some superseded)"
+requeue:  # 可回队
+  - qid: q-20260923-st-combine-20260923-0001
+    session: st-combine-20260923
+    dead_at: "2026-09-23T05:14:24+08:00"
+    files: 9
+    head: {same: 0, diff: 6, missing: 3}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-combine-20260923-0002 (dead_again)
+    note: "transient(landing_anomaly), 3 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0002
+    session: st-combine-20260923
+    dead_at: "2026-09-23T05:16:29+08:00"
+    files: 9
+    head: {same: 0, diff: 6, missing: 3}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-combine-20260923-0003 (dead_again)
+    note: "transient(landing_anomaly), 3 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0003
+    session: st-combine-20260923
+    dead_at: "2026-09-23T05:19:44+08:00"
+    files: 9
+    head: {same: 0, diff: 6, missing: 3}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    requeued_to: q-20260923-st-combine-20260923-0004 (dead_again)
+    note: "transient(landing_anomaly), 3 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0004
+    session: st-combine-20260923
+    dead_at: "2026-09-23T05:26:40+08:00"
+    files: 9
+    head: {same: 0, diff: 6, missing: 3}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    requeued_to: q-20260923-st-combine-20260923-0005 (dead_again)
+    note: "transient(landing_anomaly), 3 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0005
+    session: st-combine-20260923
+    dead_at: "2026-09-23T05:34:11+08:00"
+    files: 9
+    head: {same: 0, diff: 6, missing: 3}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-combine-20260923-0006 (dead_again)
+    note: "transient(landing_anomaly), 3 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0006
+    session: st-combine-20260923
+    dead_at: "2026-09-23T05:43:11+08:00"
+    files: 9
+    head: {same: 0, diff: 6, missing: 3}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-combine-20260923-0007 (dead_again)
+    note: "transient(landing_anomaly), 3 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0007
+    session: st-combine-20260923
+    dead_at: "2026-09-23T05:50:49+08:00"
+    files: 9
+    head: {same: 0, diff: 6, missing: 3}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    note: "transient(landing_anomaly), 3 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0014
+    session: st-combine-20260923
+    dead_at: "2026-09-23T06:36:22+08:00"
+    files: 12
+    head: {same: 0, diff: 8, missing: 4}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-combine-20260923-0015 (dead_again)
+    note: "transient(landing_anomaly), 4 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0015
+    session: st-combine-20260923
+    dead_at: "2026-09-23T06:42:26+08:00"
+    files: 12
+    head: {same: 0, diff: 8, missing: 4}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-combine-20260923-0016 (dead_again)
+    note: "transient(landing_anomaly), 4 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0016
+    session: st-combine-20260923
+    dead_at: "2026-09-23T06:51:18+08:00"
+    files: 12
+    head: {same: 0, diff: 8, missing: 4}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha\\.worktrees\\st-secbuild-20260923）: GateAutoRegistrationError: gat"
+    requeued_to: q-20260923-st-combine-20260923-0017 (dead_again)
+    note: "transient(landing_anomaly), 4 files missing at HEAD"
+  - qid: q-20260923-st-combine-20260923-0017
+    session: st-combine-20260923
+    dead_at: "2026-09-23T06:56:46+08:00"
+    files: 12
+    head: {same: 0, diff: 8, missing: 4}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-combine-20260923-0018 (dead_again)
+    note: "transient(landing_anomaly), 4 files missing at HEAD"
+  - qid: q-20260923-st-e2e-20260924-0003
+    session: st-e2e-20260924
+    dead_at: "2026-09-23T20:37:20+08:00"
+    files: 3
+    head: {same: 0, diff: 1, missing: 2}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml: ours 同侧身份键重复:"
+    note: "transient(landing_anomaly), 2 files missing at HEAD"
+  - qid: q-20260923-st-ibt-remedy-cf-20260923-0023
+    session: st-ibt-remedy-cf-20260923
+    dead_at: "2026-09-23T17:25:09+08:00"
+    files: 14
+    head: {same: 1, diff: 12, missing: 1}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml: ours 同侧身份键重复:"
+    note: "transient(landing_anomaly), 1 files missing at HEAD"
+  - qid: q-20260923-st-nightdata-20260923-0001
+    session: st-nightdata-20260923
+    dead_at: "2026-09-23T18:04:55+08:00"
+    files: 2
+    head: {same: 0, diff: 0, missing: 2}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: prestage 拒绝：以下快照路径被 .gitignore 忽略（再生产物区，禁入 git）：\n  - scripts/data/backfill_etf60min_depth.py\n修复：①把文件移到非忽略目录（如 scri"
+    note: "transient(landing_anomaly), 2 files missing at HEAD"
+  - qid: q-20260923-st-nightfix-20260923-0006
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T05:34:12+08:00"
+    files: 13
+    head: {same: 3, diff: 9, missing: 1}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    note: "transient(landing_anomaly), 1 files missing at HEAD"
+  - qid: q-20260923-st-nightfix-20260923-0007
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T05:41:19+08:00"
+    files: 12
+    head: {same: 3, diff: 8, missing: 1}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    note: "transient(landing_anomaly), 1 files missing at HEAD"
+  - qid: q-20260923-st-nightfix-20260923-0008
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T05:49:14+08:00"
+    files: 13
+    head: {same: 3, diff: 9, missing: 1}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml: o"
+    note: "transient(landing_anomaly), 1 files missing at HEAD"
+  - qid: q-20260923-st-xhs-full-20260922-0043
+    session: st-xhs-full-20260922
+    dead_at: "2026-09-23T03:07:49+08:00"
+    files: 16
+    head: {same: 3, diff: 9, missing: 4}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260923-st-xhs-full-20260922-0053 (dead_again)
+    note: "transient(landing_anomaly), 4 files missing at HEAD"
+  - qid: q-20260924-st-audit-fix-20260924-0007
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T16:05:13+08:00"
+    files: 23
+    head: {same: 7, diff: 9, missing: 7}
+    reason_cat: base_conflict
+    reason: "冲突：入队基底 f53316c6f9d6 之后 dev 已推进且触及同路径 ['scripts/commit_queue.py', 'scripts/git_commit.py', 'scripts/governance/commit_queue_landing.py', 'te"
+    requeued_to: q-20260924-st-audit-fix-20260924-0008 (dead_again)
+    note: "transient(base_conflict), 7 files missing at HEAD"
+  - qid: q-20260924-st-audit-fix-20260924-0018
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T19:24:56+08:00"
+    files: 12
+    head: {same: 3, diff: 2, missing: 7}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml']（stale_by=q-20260924-st"
+    note: "transient(base_conflict), 7 files missing at HEAD"
+  - qid: q-20260924-st-audit-fix-20260924-0020
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T19:45:32+08:00"
+    files: 12
+    head: {same: 3, diff: 2, missing: 7}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml']（stale_by=q-20260924-st"
+    note: "transient(base_conflict), 7 files missing at HEAD"
+  - qid: q-20260924-st-commitsys-20260924-0008
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T04:42:10+08:00"
+    files: 11
+    head: {same: 9, diff: 1, missing: 1}
+    reason_cat: base_conflict
+    reason: "冲突：dev CAS 竞态（池化）——5fe5f1a5faa2..9a760906ac95 间同路径 ['docs/01_policies_and_standards/sop/governance_sop/commit_guide_sources/death_cases_regi"
+    note: "transient(base_conflict), 1 files missing at HEAD"
+  - qid: q-20260924-st-gpu-final-20260924-0007
+    session: st-gpu-final-20260924
+    dead_at: "2026-09-24T02:38:19+08:00"
+    files: 23
+    head: {same: 12, diff: 10, missing: 1}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    note: "transient(landing_anomaly), 1 files missing at HEAD"
+  - qid: q-20260924-st-mapbuild-20260924-0012
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T22:24:41+08:00"
+    files: 6
+    head: {same: 0, diff: 0, missing: 6}
+    reason_cat: landing_anomaly
+    reason: "网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session 'st-mapbuild-20260924' 已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTREE「并发与提交」）: ['D:\\\\ZephyrAlpha\\\\.ru"
+    note: "transient(landing_anomaly), 6 files missing at HEAD"
+  - qid: q-20260924-st-mapbuild-20260924-0020
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T22:41:02+08:00"
+    files: 39
+    head: {same: 0, diff: 0, missing: 39}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    note: "transient(landing_anomaly), 39 files missing at HEAD"
+  - qid: q-20260924-st-mapbuild-20260924-0022
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T23:34:11+08:00"
+    files: 24
+    head: {same: 0, diff: 6, missing: 18}
+    reason_cat: base_conflict
+    reason: "冲突：快照基底 cb6b4bfc0e12（与 dev 的共同祖先 cb6b4bfc0e12）之后 dev 已推进且触及同路径 ['scripts/governance/d5_architecture/generators/align_all.py']——逐文件快进判定失败，死信回"
+    note: "transient(base_conflict), 18 files missing at HEAD"
+  - qid: q-20260924-st-metaq-20260923-0036
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T22:08:19+08:00"
+    files: 2
+    head: {same: 0, diff: 1, missing: 1}
+    reason_cat: base_conflict
+    reason: "landing 异常: RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 52dbd62a10f5^ 猜基底做合并（09-24 热册被吃病根）。修复通道：python scripts/commit_q"
+    note: "transient(base_conflict), 1 files missing at HEAD"
+discard:  # 应废弃
+  - qid: q-20260922-st-chainpile-20260922-0031
+    session: st-chainpile-20260922
+    dead_at: "2026-09-22T22:17:53+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260923-st-chainpile-20260922-0055 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260922-st-chainpile-20260922-0036
+    session: st-chainpile-20260922
+    dead_at: "2026-09-22T22:48:50+08:00"
+    files: 3
+    head: {same: 0, diff: 0, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260923-st-chainpile-20260922-0063 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-ailayer-p1-20260923-0028
+    session: st-ailayer-p1-20260923
+    dead_at: "2026-09-23T14:58:53+08:00"
+    files: 45
+    head: {same: 0, diff: 1, missing: 44}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 字段头部不完整（ARCH-031）: src/zephyr/ai_layer/cleaning/washer.py 缺失字段: ['TESTS', 'TTL']. 修复：在文件头部添加 '# ["
+    requeued_to: q-20260923-st-ailayer-p1-20260923-0030 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T04:47:30+08:00"
+  - qid: q-20260923-st-ailayer-p1-20260923-0029
+    session: st-ailayer-p1-20260923
+    dead_at: "2026-09-23T15:15:14+08:00"
+    files: 46
+    head: {same: 0, diff: 1, missing: 45}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 字段头部不完整（ARCH-031）: src/zephyr/ai_layer/heritage/heritage_events.py 缺失字段: ['TTL']. 修复：在文件头部添加 '# ["
+    requeued_to: q-20260923-st-ailayer-p1-20260923-0031 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T04:47:30+08:00"
+  - qid: q-20260923-st-ailayer-p1-20260923-0030
+    session: st-ailayer-p1-20260923
+    dead_at: "2026-09-23T15:26:48+08:00"
+    files: 45
+    head: {same: 0, diff: 1, missing: 44}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 字段头部不完整（ARCH-031）: src/zephyr/ai_layer/cleaning/washer.py 缺失字段: ['TESTS', 'TTL']. 修复：在文件头部添加 '# ["
+    note: "gate-block superseded by later landing 2026-09-23T04:47:30+08:00"
+  - qid: q-20260923-st-ailayer-p1-20260923-0031
+    session: st-ailayer-p1-20260923
+    dead_at: "2026-09-23T15:36:27+08:00"
+    files: 46
+    head: {same: 0, diff: 1, missing: 45}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 字段头部不完整（ARCH-031）: src/zephyr/ai_layer/heritage/store.py 缺失字段: ['TESTS']. 修复：在文件头部添加 '# [FIELD] v"
+    note: "gate-block superseded by later landing 2026-09-23T04:47:30+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0041
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T02:33:47+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    requeued_to: q-20260923-st-chainpile-20260922-0066 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0055
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T17:27:30+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 能力重复/basename碰撞(GATE-SSOT L2): src/zephyr/governance/meta_question/__init__.py: 新文件与已有文件 basename"
+    requeued_to: q-20260923-st-chainpile-20260922-0058 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0058
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T19:25:31+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 能力重复/basename碰撞(GATE-SSOT L2): src/zephyr/governance/meta_question/__init__.py: 新文件与已有文件 basename"
+    requeued_to: q-20260923-st-chainpile-20260922-0059 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0059
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T19:55:43+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 能力重复/basename碰撞(GATE-SSOT L2): src/zephyr/governance/meta_question/__init__.py: 新文件与已有文件 basename"
+    requeued_to: q-20260923-st-chainpile-20260922-0060 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0060
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T20:30:11+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 能力重复/basename碰撞(GATE-SSOT L2): src/zephyr/governance/meta_question/__init__.py: 新文件与已有文件 basename"
+    requeued_to: q-20260923-st-chainpile-20260922-0061 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0061
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T21:50:48+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 BLUEPRINT-FORMAT 阻断: BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式不合规（裁定#214 Phase 0 防蔓延）\n  合规格式: # [BLUEPRINT] MO"
+    requeued_to: q-20260923-st-chainpile-20260922-0062 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0062
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T22:03:08+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 BLUEPRINT-FORMAT 阻断: BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式不合规（裁定#214 Phase 0 防蔓延）\n  合规格式: # [BLUEPRINT] MO"
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0063
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T22:03:46+08:00"
+    files: 3
+    head: {same: 0, diff: 0, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 字段头部不完整（ARCH-031）: scripts/governance/check_meta_question_batch.py 缺失字段: ['BLUEPRINT', 'MODULE', "
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0065
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T22:06:06+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: .runtime\\commit_queue\\worktree\\scripts"
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0066
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T22:09:39+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-protected-pa"
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0067
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T22:35:25+08:00"
+    files: 8
+    head: {same: 0, diff: 2, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NOQA-VALIDATION 阻断: NOQA_VALIDATION_VIOLATION——检出未登记/无理由/密度超限的自定义 noqa 标记（ARCH-NOQA-GOV-001）：\nD:/ZephyrAlpha/.runt"
+    requeued_to: q-20260923-st-chainpile-20260922-0070 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0068
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T22:52:15+08:00"
+    files: 4
+    head: {same: 0, diff: 1, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NOQA-VALIDATION 阻断: NOQA_VALIDATION_VIOLATION——检出未登记/无理由/密度超限的自定义 noqa 标记（ARCH-NOQA-GOV-001）：\nD:/ZephyrAlpha/.runt"
+    requeued_to: q-20260923-st-chainpile-20260922-0071 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0069
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T23:11:15+08:00"
+    files: 8
+    head: {same: 0, diff: 2, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0070
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T23:57:41+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NOQA-VALIDATION 阻断: NOQA_VALIDATION_VIOLATION——检出未登记/无理由/密度超限的自定义 noqa 标记（ARCH-NOQA-GOV-001）：\nD:/ZephyrAlpha/.runt"
+    requeued_to: q-20260924-st-chainpile-20260922-0074 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-chainpile-20260922-0071
+    session: st-chainpile-20260922
+    dead_at: "2026-09-23T23:53:56+08:00"
+    files: 4
+    head: {same: 0, diff: 1, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    requeued_to: q-20260924-st-chainpile-20260922-0075 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260923-st-deepclean-20260923-0001
+    session: st-deepclean-20260923
+    dead_at: "2026-09-23T15:38:05+08:00"
+    files: 4
+    head: {same: 1, diff: 2, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止: docs/_working/registry_incident_20260922/ -> gov_doc_003_directory_semantics R5 禁"
+    note: "gate-block superseded by later landing 2026-09-23T17:11:27+08:00"
+  - qid: q-20260923-st-e2e-20260924-0001
+    session: st-e2e-20260924
+    dead_at: "2026-09-23T19:14:42+08:00"
+    files: 11
+    head: {same: 1, diff: 9, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 ORPHAN-MODULE 阻断: 孤儿模块在代码库中无任何 import 引用（死代码，违反新AI可发现性）: src/zephyr/backtest/regime_validation/exam_cost_gate.py"
+    note: "gate-block superseded by later landing 2026-09-23T22:09:18+08:00"
+  - qid: q-20260923-st-e2e-20260924-0004
+    session: st-e2e-20260924
+    dead_at: "2026-09-23T20:48:04+08:00"
+    files: 12
+    head: {same: 1, diff: 10, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 MUTABLE-CONST-WITHOUT-FINAL 阻断: MUTABLE-CONST-WITHOUT-FINAL：检测到模块级可变常量缺 Final 标注（5.114 Final/@final 强制防复发），\n  src/"
+    note: "gate-block superseded by later landing 2026-09-23T22:09:18+08:00"
+  - qid: q-20260923-st-e2e-20260924-0005
+    session: st-e2e-20260924
+    dead_at: "2026-09-23T20:55:08+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止: docs/_working/e2e_20260924/ -> gov_doc_003_directory_semantics R5 禁止 _NN 数字后缀（暗示多"
+    note: "gate-block superseded by later landing 2026-09-23T22:09:18+08:00"
+  - qid: q-20260923-st-e2e-20260924-0006
+    session: st-e2e-20260924
+    dead_at: "2026-09-23T21:54:22+08:00"
+    files: 12
+    head: {same: 3, diff: 8, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-algo-flow-ma"
+    note: "gate-block superseded by later landing 2026-09-23T22:09:18+08:00"
+  - qid: q-20260923-st-e2e-20260924-0008
+    session: st-e2e-20260924
+    dead_at: "2026-09-23T22:10:29+08:00"
+    files: 17
+    head: {same: 11, diff: 4, missing: 2}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/e2e_integration/cost_qualified_list_reexam"
+    note: "gate-block superseded by later landing 2026-09-23T22:09:18+08:00"
+  - qid: q-20260923-st-ibt-remedy-cf-20260923-0013
+    session: st-ibt-remedy-cf-20260923
+    dead_at: "2026-09-23T06:30:50+08:00"
+    files: 14
+    head: {same: 1, diff: 12, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 2 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260923-st-ibt-remedy-cf-20260923-0023 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T07:40:19+08:00"
+  - qid: q-20260923-st-k4-20260923-0006
+    session: st-k4-20260923
+    dead_at: "2026-09-23T21:57:11+08:00"
+    files: 10
+    head: {same: 3, diff: 6, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff-format'])\n检测"
+    note: "gate-block superseded by later landing 2026-09-24T00:43:55+08:00"
+  - qid: q-20260923-st-k4-20260923-0007
+    session: st-k4-20260923
+    dead_at: "2026-09-23T22:07:59+08:00"
+    files: 10
+    head: {same: 5, diff: 4, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 ORPHAN-MODULE 阻断: 孤儿模块在代码库中无任何 import 引用（死代码，违反新AI可发现性）: src/zephyr/gov_enforcement/commit_gates/registry_family/r"
+    note: "gate-block superseded by later landing 2026-09-24T00:43:55+08:00"
+  - qid: q-20260923-st-nightfix-20260923-0009
+    session: st-nightfix-20260923
+    dead_at: "2026-09-23T05:58:43+08:00"
+    files: 3
+    head: {same: 0, diff: 1, missing: 2}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止: docs/_working/registry_incident_20260922/ -> gov_doc_003_directory_semantics R5 禁"
+    note: "gate-block superseded by later landing 2026-09-23T13:42:32+08:00"
+  - qid: q-20260923-st-regfix-lane0b-20260923-0015
+    session: st-regfix-lane0b-20260923
+    dead_at: "2026-09-23T15:50:13+08:00"
+    files: 4
+    head: {same: 0, diff: 2, missing: 2}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 FILE-COPY 阻断: 新增 .py 文件与已有同名文件 AST 相似度>70%: D:\\ZephyrAlpha\\.runtime\\commit_queue\\worktree\\src\\zephyr\\gov_enforceme"
+    note: "gate-block superseded by later landing 2026-09-23T16:15:02+08:00"
+  - qid: q-20260923-st-regfix-lane0b-20260923-0017
+    session: st-regfix-lane0b-20260923
+    dead_at: "2026-09-23T19:42:09+08:00"
+    files: 2
+    head: {same: 0, diff: 1, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 ORPHAN-MODULE 阻断: 孤儿模块在代码库中无任何 import 引用（死代码，违反新AI可发现性）: src/zephyr/gov_enforcement/commit_gates/registry_family/r"
+    note: "gate-block superseded by later landing 2026-09-23T16:15:02+08:00"
+  - qid: q-20260923-st-xhs-full-20260922-0053
+    session: st-xhs-full-20260922
+    dead_at: "2026-09-23T17:35:44+08:00"
+    files: 16
+    head: {same: 3, diff: 9, missing: 4}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-23T05:06:35+08:00"
+  - qid: q-20260924-st-ailayer-final-20260924-0001
+    session: st-ailayer-final-20260924
+    dead_at: "2026-09-24T12:29:19+08:00"
+    files: 184
+    head: {same: 0, diff: 3, missing: 181}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 DIRECTORY-CONTRACT 阻断: [GATE-DIRECTORY-CONTRACT] 4 个发现（4 errors, 0 warnings）:\n  [error] DCR-005 docs/_working/ai_l"
+    note: "gate-block superseded by later landing 2026-09-24T14:20:50+08:00"
+  - qid: q-20260924-st-ailayer-final-20260924-0003
+    session: st-ailayer-final-20260924
+    dead_at: "2026-09-24T14:07:26+08:00"
+    files: 184
+    head: {same: 0, diff: 3, missing: 181}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/ai_layer_vision/LEDGER_final.md', 'docs/_w"
+    note: "gate-block superseded by later landing 2026-09-24T14:20:50+08:00"
+  - qid: q-20260924-st-ailayer-final-20260924-0005
+    session: st-ailayer-final-20260924
+    dead_at: "2026-09-24T17:05:27+08:00"
+    files: 185
+    head: {same: 0, diff: 4, missing: 181}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    note: "gate-block superseded by later landing 2026-09-24T14:20:50+08:00"
+  - qid: q-20260924-st-ailayer-final-20260924-0006
+    session: st-ailayer-final-20260924
+    dead_at: "2026-09-24T22:40:05+08:00"
+    files: 187
+    head: {same: 0, diff: 6, missing: 181}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    note: "gate-block superseded by later landing 2026-09-24T14:20:50+08:00"
+  - qid: q-20260924-st-ailayer-final-20260924-0007
+    session: st-ailayer-final-20260924
+    dead_at: "2026-09-25T00:27:57+08:00"
+    files: 187
+    head: {same: 0, diff: 6, missing: 181}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    note: "gate-block superseded by later landing 2026-09-24T14:20:50+08:00"
+  - qid: q-20260924-st-align-dirty-20260924-0041
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T06:56:40+08:00"
+    files: 3
+    head: {same: 0, diff: 2, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [DANGLING-REFERENCE] 新增 AGENTS.md 悬空引用（DANGLING_REFERENCE_VIOLATION）——以下文件引用了 AGENTS.md 中不"
+    requeued_to: q-20260924-st-align-dirty-20260924-0045 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T08:37:30+08:00"
+  - qid: q-20260924-st-align-dirty-20260924-0045
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T07:16:56+08:00"
+    files: 3
+    head: {same: 0, diff: 2, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REAL-KEY-REFERENCE-SCAN 阻断: REAL-KEY-REFERENCE-SCAN: own-diff 出现实盘密钥键名引用（NL-2 判据②，硬阻断无逃生）\n  AI 会话源码/脚本/配置/文档禁出现 QM"
+    requeued_to: q-20260924-st-align-dirty-20260924-0048 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T08:37:30+08:00"
+  - qid: q-20260924-st-align-dirty-20260924-0048
+    session: st-align-dirty-20260924
+    dead_at: "2026-09-24T07:41:11+08:00"
+    files: 3
+    head: {same: 0, diff: 2, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming'])\n检测"
+    note: "gate-block superseded by later landing 2026-09-24T08:37:30+08:00"
+  - qid: q-20260924-st-audit-fix-20260924-0008
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T16:22:17+08:00"
+    files: 23
+    head: {same: 7, diff: 9, missing: 7}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: check_frontmatter_metadata.py execution failed: Command 'D:\\ZephyrAlpha\\.runtime\\commit_queue\\wor"
+    note: "gate-block superseded by later landing 2026-09-24T23:22:04+08:00"
+  - qid: q-20260924-st-audit-fix-20260924-0009
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T17:06:47+08:00"
+    files: 3
+    head: {same: 0, diff: 0, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/audit_fix/LEDGER.md', 'docs/_working/audit"
+    note: "gate-block superseded by later landing 2026-09-24T23:22:04+08:00"
+  - qid: q-20260924-st-audit-fix-20260924-0015
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T18:46:19+08:00"
+    files: 10
+    head: {same: 2, diff: 1, missing: 7}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming'])\n检测"
+    note: "gate-block superseded by later landing 2026-09-24T23:22:04+08:00"
+  - qid: q-20260924-st-audit-fix-20260924-0016
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T18:48:52+08:00"
+    files: 11
+    head: {same: 2, diff: 2, missing: 7}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/audit_fix/00_skeleton.md', 'docs/_working/"
+    note: "gate-block superseded by later landing 2026-09-24T23:22:04+08:00"
+  - qid: q-20260924-st-audit-fix-20260924-0017
+    session: st-audit-fix-20260924
+    dead_at: "2026-09-24T19:08:42+08:00"
+    files: 12
+    head: {same: 2, diff: 3, missing: 7}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'gate-nami"
+    note: "gate-block superseded by later landing 2026-09-24T23:22:04+08:00"
+  - qid: q-20260924-st-chainpile-20260922-0072
+    session: st-chainpile-20260922
+    dead_at: "2026-09-24T00:40:33+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260924-st-chainpile-20260922-0073
+    session: st-chainpile-20260922
+    dead_at: "2026-09-24T00:41:38+08:00"
+    files: 4
+    head: {same: 0, diff: 1, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260924-st-chainpile-20260922-0074
+    session: st-chainpile-20260922
+    dead_at: "2026-09-24T00:57:34+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    requeued_to: q-20260924-st-chainpile-20260922-0076 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260924-st-chainpile-20260922-0076
+    session: st-chainpile-20260922
+    dead_at: "2026-09-24T03:30:27+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260924-st-chainpile-20260922-0077
+    session: st-chainpile-20260922
+    dead_at: "2026-09-24T03:32:58+08:00"
+    files: 4
+    head: {same: 0, diff: 1, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    note: "gate-block superseded by later landing 2026-09-23T22:04:21+08:00"
+  - qid: q-20260924-st-cleanup-final-20260924-0002
+    session: st-cleanup-final-20260924
+    dead_at: "2026-09-24T12:35:03+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/cleanup_final/LEDGER.md']. commit 新建 .md/."
+    requeued_to: q-20260924-st-cleanup-final-20260924-0014 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-25T00:32:55+08:00"
+  - qid: q-20260924-st-cleanup-final-20260924-0014
+    session: st-cleanup-final-20260924
+    dead_at: "2026-09-24T19:10:19+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming'])\n检测"
+    note: "gate-block superseded by later landing 2026-09-25T00:32:55+08:00"
+  - qid: q-20260924-st-cleanup-final-20260924-0017
+    session: st-cleanup-final-20260924
+    dead_at: "2026-09-24T19:30:37+08:00"
+    files: 2
+    head: {same: 0, diff: 1, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming'])\n检测"
+    note: "gate-block superseded by later landing 2026-09-25T00:32:55+08:00"
+  - qid: q-20260924-st-commitsys-20260924-0002
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T01:01:07+08:00"
+    files: 4
+    head: {same: 3, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/commit_system_opt/03_gate_health_audit.md'"
+    note: "gate-block superseded by later landing 2026-09-24T08:59:32+08:00"
+  - qid: q-20260924-st-commitsys-20260924-0005
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T03:34:25+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/commit_system_opt/LEDGER.md']. commit 新建 ."
+    requeued_to: q-20260924-st-commitsys-20260924-0009 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T08:59:32+08:00"
+  - qid: q-20260924-st-commitsys-20260924-0009
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T04:31:18+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [ARCH-REFERENCE] 新增 #ARCH-NNN 悬空引用（ARCH_REFERENCE_VIOLATION）——以下文件引用了 architecture_issue_r"
+    note: "gate-block superseded by later landing 2026-09-24T08:59:32+08:00"
+  - qid: q-20260924-st-commitsys-20260924-0010
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T04:40:58+08:00"
+    files: 4
+    head: {same: 1, diff: 2, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [ARCH-REFERENCE] 新增 #ARCH-NNN 悬空引用（ARCH_REFERENCE_VIOLATION）——以下文件引用了 architecture_issue_r"
+    requeued_to: q-20260924-st-commitsys-20260924-0011 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T08:59:32+08:00"
+  - qid: q-20260924-st-commitsys-20260924-0011
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T04:45:04+08:00"
+    files: 4
+    head: {same: 1, diff: 2, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REAL-KEY-REFERENCE-SCAN 阻断: REAL-KEY-REFERENCE-SCAN: own-diff 出现实盘密钥键名引用（NL-2 判据②，硬阻断无逃生）\n  AI 会话源码/脚本/配置/文档禁出现 QM"
+    requeued_to: q-20260924-st-commitsys-20260924-0012 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T08:59:32+08:00"
+  - qid: q-20260924-st-commitsys-20260924-0012
+    session: st-commitsys-20260924
+    dead_at: "2026-09-24T04:51:00+08:00"
+    files: 4
+    head: {same: 3, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming'])\n检测"
+    note: "gate-block superseded by later landing 2026-09-24T08:59:32+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0007
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T21:01:29+08:00"
+    files: 6
+    head: {same: 0, diff: 0, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0008
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T21:03:10+08:00"
+    files: 6
+    head: {same: 0, diff: 0, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0009
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T21:05:34+08:00"
+    files: 6
+    head: {same: 0, diff: 0, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0010
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T21:07:02+08:00"
+    files: 39
+    head: {same: 0, diff: 0, missing: 39}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktrees\\w2\\docs\\_working\\map_build\\fig14_construction\\03_验收与收尾段.md "
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0013
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T22:26:00+08:00"
+    files: 6
+    head: {same: 0, diff: 0, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0014
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T22:27:37+08:00"
+    files: 6
+    head: {same: 0, diff: 0, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0015
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T22:27:57+08:00"
+    files: 39
+    head: {same: 0, diff: 0, missing: 39}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/map_build/00_campaign_brief.md', 'docs/_wo"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0018
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T22:37:55+08:00"
+    files: 24
+    head: {same: 0, diff: 6, missing: 18}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 9 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0019
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T22:34:36+08:00"
+    files: 39
+    head: {same: 0, diff: 0, missing: 39}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/map_build/00_campaign_brief.md', 'docs/_wo"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-mapbuild-20260924-0021
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-24T22:48:00+08:00"
+    files: 39
+    head: {same: 0, diff: 0, missing: 39}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [ARCH-REFERENCE] 新增 #ARCH-NNN 悬空引用（ARCH_REFERENCE_VIOLATION）——以下文件引用了 architecture_issue_r"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260924-st-metaq-20260923-0002
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T05:22:59+08:00"
+    files: 15
+    head: {same: 0, diff: 3, missing: 12}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260924-st-metaq-20260923-0003 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0003
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T05:57:40+08:00"
+    files: 15
+    head: {same: 0, diff: 3, missing: 12}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 能力重复/basename碰撞(GATE-SSOT L2): src/zephyr/governance/meta_question/vocab_loader.py: 新文件是 vocabula"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0004
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T08:33:38+08:00"
+    files: 13
+    head: {same: 0, diff: 2, missing: 11}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 COMPLEXITY-GUARD 阻断: [NO-HIGH-COMPLEXITY] NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），\n  违反 §5.158 循环复杂度反模式。\n  src/zephyr/"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0005
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T09:04:49+08:00"
+    files: 3
+    head: {same: 0, diff: 0, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 COMPLEXITY-GUARD 阻断: [NO-HIGH-COMPLEXITY] NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），\n  违反 §5.158 循环复杂度反模式。\n  scripts/gov"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0006
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T09:06:49+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0007
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T09:11:40+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['scripts/governance/check_meta_question_status_band.py']."
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0011
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T10:17:57+08:00"
+    files: 13
+    head: {same: 2, diff: 0, missing: 11}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 类名跨模块冲突(ARCH-034 CLASS-UNIQUENESS): src/zephyr/governance/meta_question/registry.py 定义 class Audi"
+    requeued_to: q-20260924-st-metaq-20260923-0016 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0012
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T10:27:47+08:00"
+    files: 3
+    head: {same: 0, diff: 0, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'ruff-form"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0013
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T10:32:40+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 SSOT-REDEFINITION 阻断: SSoT 符号重复定义（硬阻断）：\nscripts/governance/check_meta_question_audit_reconcile.py: 重新定义 SSoT 符号 'R"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0014
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T10:48:07+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 SSOT-REDEFINITION 阻断: SSoT 符号重复定义（硬阻断）：\nscripts/governance/check_meta_question_status_band.py: 重新定义 SSoT 符号 'REPO_"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0016
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T11:01:43+08:00"
+    files: 13
+    head: {same: 2, diff: 0, missing: 11}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 COMPLEXITY-GUARD 阻断: [NO-GOD-CLASS] NO-GOD-CLASS：检测到 God Class（方法数>20），\n  违反 §5.150 God Class 反模式。\n  src/zephyr/go"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0017
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T11:26:13+08:00"
+    files: 3
+    head: {same: 0, diff: 0, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'ruff-form"
+    requeued_to: q-20260924-st-metaq-20260923-0021 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0018
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T11:53:57+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260924-st-metaq-20260923-0022 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0019
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T12:00:44+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260924-st-metaq-20260923-0023 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0020
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T21:11:33+08:00"
+    files: 14
+    head: {same: 2, diff: 0, missing: 12}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0021
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T21:58:45+08:00"
+    files: 3
+    head: {same: 0, diff: 0, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'ruff-form"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0022
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T22:00:07+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 SSOT-REDEFINITION 阻断: SSoT 符号重复定义（硬阻断）：\nscripts/governance/check_meta_question_audit_reconcile.py: 重新定义 SSoT 符号 'R"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-metaq-20260923-0023
+    session: st-metaq-20260923
+    dead_at: "2026-09-24T22:03:27+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 SSOT-REDEFINITION 阻断: SSoT 符号重复定义（硬阻断）：\nscripts/governance/check_meta_question_status_band.py: 重新定义 SSoT 符号 'REPO_"
+    note: "gate-block superseded by later landing 2026-09-24T22:10:02+08:00"
+  - qid: q-20260924-st-oddjobs-final-20260924-0004
+    session: st-oddjobs-final-20260924
+    dead_at: "2026-09-24T05:27:58+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REAL-KEY-REFERENCE-SCAN 阻断: REAL-KEY-REFERENCE-SCAN: own-diff 出现实盘密钥键名引用（NL-2 判据②，硬阻断无逃生）\n  AI 会话源码/脚本/配置/文档禁出现 QM"
+    note: "gate-block superseded by later landing 2026-09-24T09:14:59+08:00"
+  - qid: q-20260924-st-oddjobs-final-20260924-0005
+    session: st-oddjobs-final-20260924
+    dead_at: "2026-09-24T05:51:23+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming'])\n检测"
+    note: "gate-block superseded by later landing 2026-09-24T09:14:59+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0003
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T02:00:50+08:00"
+    files: 8
+    head: {same: 0, diff: 2, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    requeued_to: q-20260924-st-pipeline-final-20260924-0007 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0007
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T04:44:40+08:00"
+    files: 8
+    head: {same: 0, diff: 2, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    requeued_to: q-20260924-st-pipeline-final-20260924-0008 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0008
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T04:53:55+08:00"
+    files: 8
+    head: {same: 0, diff: 2, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: 词表硬编码违规（见 check_vocab_hardcode.py 输出）"
+    requeued_to: q-20260924-st-pipeline-final-20260924-0009 (unknown_qid)
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0012
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T05:04:18+08:00"
+    files: 8
+    head: {same: 0, diff: 2, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: .runtime\\commit_queue\\worktree\\scripts"
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0016
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T09:15:40+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/pipeline_final/LEDGER.md']. commit 新建 .md/"
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0022
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T09:17:31+08:00"
+    files: 8
+    head: {same: 0, diff: 0, missing: 8}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 DIRECTORY-CONTRACT 阻断: [GATE-DIRECTORY-CONTRACT] 9 个发现（9 errors, 0 warnings）:\n  [error] DCR-005 docs/_working/sect"
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0023
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T09:19:12+08:00"
+    files: 6
+    head: {same: 0, diff: 0, missing: 6}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 DIRECTORY-CONTRACT 阻断: [GATE-DIRECTORY-CONTRACT] 5 个发现（5 errors, 0 warnings）:\n  [error] DCR-005 docs/_working/sect"
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0025
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T09:36:37+08:00"
+    files: 12
+    head: {same: 0, diff: 0, missing: 12}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CH-FINAL-GATE 阻断: ClickHouse 读取未强制去重（裁定 #ARCH-CH-007）：直调 ch_writer.query() 应改 ch_reader.query()，硬编码 FROM <db>.<tbl"
+    requeued_to: q-20260924-st-pipeline-final-20260924-0027 (dead_again)
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0027
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T09:51:51+08:00"
+    files: 12
+    head: {same: 0, diff: 0, missing: 12}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CH-FINAL-GATE 阻断: ClickHouse 读取未强制去重（裁定 #ARCH-CH-007）：直调 ch_writer.query() 应改 ch_reader.query()，硬编码 FROM <db>.<tbl"
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260924-st-pipeline-final-20260924-0029
+    session: st-pipeline-final-20260924
+    dead_at: "2026-09-24T21:49:45+08:00"
+    files: 13
+    head: {same: 0, diff: 0, missing: 13}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 2 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "gate-block superseded by later landing 2026-09-24T21:51:51+08:00"
+  - qid: q-20260925-st-ailayer-final-20260924-0008
+    session: st-ailayer-final-20260924
+    dead_at: "2026-09-25T03:14:55+08:00"
+    files: 187
+    head: {same: 0, diff: 6, missing: 181}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: CREATE-GUARD CLASS-UNIQUENESS fail-closed: git grep 异常(TimeoutExpired: Command '['git', 'grep', '"
+    requeued_to: q-20260925-st-ailayer-final-20260924-0009 (still_pending)
+    note: "gate-block superseded by later landing 2026-09-24T14:20:50+08:00"
+  - qid: q-20260925-st-mapbuild-20260924-0025
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-25T02:26:44+08:00"
+    files: 14
+    head: {same: 0, diff: 0, missing: 14}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming'])\n检测"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260925-st-mapbuild-20260924-0026
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-25T02:29:19+08:00"
+    files: 9
+    head: {same: 0, diff: 0, missing: 9}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming'])\n检测"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260925-st-mapbuild-20260924-0027
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-25T02:31:20+08:00"
+    files: 8
+    head: {same: 0, diff: 0, missing: 8}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/map_build/fig12_datachain/11_消费端需求反查.md', "
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+  - qid: q-20260925-st-mapbuild-20260924-0028
+    session: st-mapbuild-20260924
+    dead_at: "2026-09-25T02:33:22+08:00"
+    files: 11
+    head: {same: 0, diff: 0, missing: 11}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/map_build/fig13_daycycle/10_外部对标三扫.md']. c"
+    note: "gate-block superseded by later landing 2026-09-25T02:32:30+08:00"
+owner:  # 需属主
+  - qid: q-20260924-st-cmd-20260924-0002
+    session: st-cmd-20260924
+    dead_at: "2026-09-24T19:16:29+08:00"
+    files: 4
+    head: {same: 0, diff: 3, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/ultimate_library/b_batch_sample_cards.md']"
+    requeued_to: q-20260925-st-cmd-20260924-0026 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-cmd-20260924-0008
+    session: st-cmd-20260924
+    dead_at: "2026-09-24T20:09:49+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/ultimate_library/library_final_ledger.md']"
+    requeued_to: q-20260925-st-cmd-20260924-0027 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-cmd-20260924-0013
+    session: st-cmd-20260924
+    dead_at: "2026-09-24T20:31:08+08:00"
+    files: 11
+    head: {same: 0, diff: 1, missing: 10}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml']（stale_by=q-20260924-st"
+    requeued_to: q-20260925-st-cmd-20260924-0029 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-cmd-20260924-0016
+    session: st-cmd-20260924
+    dead_at: "2026-09-24T22:20:14+08:00"
+    files: 10
+    head: {same: 0, diff: 1, missing: 9}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktrees\\w2\\docs\\_working\\decision_map_campaign_20260924\\README.md m"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0002
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T20:31:50+08:00"
+    files: 21
+    head: {same: 0, diff: 2, missing: 19}
+    reason_cat: base_conflict
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0006
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T20:59:12+08:00"
+    files: 20
+    head: {same: 0, diff: 1, missing: 19}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-naming'])\n检测"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0013
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T22:26:48+08:00"
+    files: 25
+    head: {same: 0, diff: 1, missing: 24}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/commit_speedup_campaign/00_skeleton/s2_sub"
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0016 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0014
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T22:32:14+08:00"
+    files: 9
+    head: {same: 0, diff: 5, missing: 4}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0017 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0016
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T22:46:50+08:00"
+    files: 25
+    head: {same: 0, diff: 1, missing: 24}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/commit_speedup_campaign/00_skeleton/s2_sub"
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0019 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0017
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T22:46:51+08:00"
+    files: 9
+    head: {same: 0, diff: 5, missing: 4}
+    reason_cat: base_conflict
+    reason: "landing 异常: RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 9de51e673f7d^ 猜基底做合并（09-24 热册被吃病根）。修复通道：python scripts/commit_q"
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0020 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0019
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T23:17:36+08:00"
+    files: 25
+    head: {same: 0, diff: 1, missing: 24}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0022 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0020
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T23:17:39+08:00"
+    files: 9
+    head: {same: 0, diff: 5, missing: 4}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: LandingEnvironmentError: landing 环境不可用（repo_root=D:\\ZephyrAlpha）: GateAutoRegistrationError: gate auto-registration fail-closed "
+    requeued_to: q-20260924-st-commitspeed-tbl-20260924-0023 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0022
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T23:24:19+08:00"
+    files: 25
+    head: {same: 0, diff: 1, missing: 24}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/commit_speedup_campaign/00_skeleton/s2_sub"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-commitspeed-tbl-20260924-0023
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-24T23:24:40+08:00"
+    files: 9
+    head: {same: 0, diff: 5, missing: 4}
+    reason_cat: base_conflict
+    reason: "landing 异常: RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 2ec2101febcc^ 猜基底做合并（09-24 热册被吃病根）。修复通道：python scripts/commit_q"
+    requeued_to: q-20260925-st-commitspeed-tbl-20260924-0034 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-metaq-gc-20260924-0001
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:14:19+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NOQA-VALIDATION 阻断: NOQA_VALIDATION_VIOLATION——检出未登记/无理由/密度超限的自定义 noqa 标记（ARCH-NOQA-GOV-001）：\nD:/ZephyrAlpha/.runt"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-metaq-gc-20260924-0003
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:15:15+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CH-FINAL-GATE 阻断: ClickHouse 读取未强制去重（裁定 #ARCH-CH-007）：直调 ch_writer.query() 应改 ch_reader.query()，硬编码 FROM <db>.<tbl"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-metaq-gc-20260924-0004
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:11:01+08:00"
+    files: 4
+    head: {same: 0, diff: 0, missing: 4}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'ruff-form"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-metaq-gc-20260924-0008
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:19:22+08:00"
+    files: 21
+    head: {same: 0, diff: 0, missing: 21}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CH-FINAL-GATE 阻断: ClickHouse 读取未强制去重（裁定 #ARCH-CH-007）：直调 ch_writer.query() 应改 ch_reader.query()，硬编码 FROM <db>.<tbl"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-metaq-gc-20260924-0009
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:17:19+08:00"
+    files: 47
+    head: {same: 0, diff: 0, missing: 47}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 DATETIME-NOW-FORBIDDEN 阻断: DATETIME-NOW-FORBIDDEN：检测到时间戳误用（5.46 时区处理防复发 + 宪法 L0 硬规则10 SCHEMA-TZ），\n  生成器代码禁止 dateti"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-metaq-gc-20260924-0010
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:21:53+08:00"
+    files: 20
+    head: {same: 0, diff: 0, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 能力重复/basename碰撞(GATE-SSOT L2): src/zephyr/governance/meta_question/exam_loop/state_machine.py: 新文"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-metaq-gc-20260924-0012
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:22:26+08:00"
+    files: 4
+    head: {same: 0, diff: 0, missing: 4}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NOQA-VALIDATION 阻断: NOQA_VALIDATION_VIOLATION——检出未登记/无理由/密度超限的自定义 noqa 标记（ARCH-NOQA-GOV-001）：\nD:/ZephyrAlpha/.runt"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-metaq-gc-20260924-0014
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-24T22:24:17+08:00"
+    files: 3
+    head: {same: 0, diff: 0, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 REFERENCE-INTEGRITY 阻断: [RULING-REFERENCE] 新增 裁定#NNN 悬空引用（RULING_REFERENCE_VIOLATION）——以下文件引用了 ruling_registry.yam"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0007
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T03:50:19+08:00"
+    files: 39
+    head: {same: 0, diff: 15, missing: 24}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry."
+    requeued_to: q-20260924-st-t0-matrix-20260924-0008 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0008
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T04:45:30+08:00"
+    files: 39
+    head: {same: 0, diff: 15, missing: 24}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktrees\\w3\\docs\\_working\\t0_matrix\\FINAL_REPORT_t0_matrix_reexam.md"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0009
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T05:12:01+08:00"
+    files: 35
+    head: {same: 0, diff: 15, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktrees\\w0\\docs\\_working\\t0_matrix\\FINAL_REPORT_t0_matrix_reexam.md"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0010
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T04:59:32+08:00"
+    files: 35
+    head: {same: 0, diff: 15, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 5 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0012
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T05:40:28+08:00"
+    files: 33
+    head: {same: 0, diff: 13, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 COMPLEXITY-GUARD 阻断: [NO-HIGH-COMPLEXITY] NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），\n  违反 §5.158 循环复杂度反模式。\n  scripts/aud"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0013
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T05:59:25+08:00"
+    files: 33
+    head: {same: 0, diff: 13, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NO-BARE-SQL 阻断: NO-BARE-SQL：检测到裸 SQL 字面量，\n  违反 §5.160.2 SQL 集中化原则。\n  scripts/audit/t0_conditional_e4_v3_exam.py:20"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0014
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T06:04:02+08:00"
+    files: 33
+    head: {same: 0, diff: 13, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TABLE-NAME-REGISTRY 阻断: TABLE-NAME-REGISTRY (block)：检测到硬编码表名绕过 TableRegistry 真源（#ARCH-CH-024 Phase 5 治本）\n  病根：SSoT"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0015
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T06:07:43+08:00"
+    files: 33
+    head: {same: 0, diff: 13, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 SSOT-REDEFINITION 阻断: SSOT-REDEFINITION gate fail-closed: capability registry 解析失败(ParserError: while parsing a bl"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0016
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T06:16:14+08:00"
+    files: 33
+    head: {same: 0, diff: 13, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['ruff', 'ruff-form"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0020
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T09:33:59+08:00"
+    files: 22
+    head: {same: 0, diff: 2, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NO-BARE-SQL 阻断: NO-BARE-SQL：检测到裸 SQL 字面量，\n  违反 §5.160.2 SQL 集中化原则。\n  scripts/backtest/auto_mount.py:192: f\"SELECT "
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-t0-matrix-20260924-0033
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-24T21:52:02+08:00"
+    files: 35
+    head: {same: 2, diff: 13, missing: 20}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-OVERLAP 阻断: CloneGuard 检测到 extract 级代码克隆——必须合并而非新建:\n  - scripts/audit/t0_gpu_condition_pack.py:_reg 与 s"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-wm1-wave0-20260924-0003
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-24T21:55:11+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 SSOT-REDEFINITION 阻断: SSoT 符号重复定义（硬阻断）：\nscripts/governance/registry_migration/wave0_phase0_gate.py: 重新定义 SSoT 符号 '"
+    requeued_to: q-20260924-st-wm1-wave0-20260924-0011 (dead_again)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-wm1-wave0-20260924-0004
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-24T21:58:56+08:00"
+    files: 10
+    head: {same: 0, diff: 1, missing: 9}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 能力重复/basename碰撞(GATE-SSOT L2): src/zephyr/governance/registry_projection/generator.py: 新文件成为 doma"
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-wm1-wave0-20260924-0005
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-24T21:58:38+08:00"
+    files: 11
+    head: {same: 0, diff: 1, missing: 10}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 BLUEPRINT-FORMAT 阻断: BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式不合规（裁定#214 Phase 0 防蔓延）\n  合规格式: # [BLUEPRINT] MO"
+    requeued_to: q-20260924-st-wm1-wave0-20260924-0012 (unknown_qid)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-wm1-wave0-20260924-0006
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-24T22:03:39+08:00"
+    files: 4
+    head: {same: 0, diff: 1, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 BLUEPRINT-FORMAT 阻断: BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式不合规（裁定#214 Phase 0 防蔓延）\n  合规格式: # [BLUEPRINT] MO"
+    requeued_to: q-20260924-st-wm1-wave0-20260924-0013 (unknown_qid)
+    note: "session alive pid=18780"
+  - qid: q-20260924-st-wm1-wave0-20260924-0011
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-25T01:35:45+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.yaml 动态加载）: .runtime\\commit_queue\\worktrees\\w3\\scr"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0022
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:16:23+08:00"
+    files: 7
+    head: {same: 0, diff: 0, missing: 7}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 DIRECTORY-CONTRACT 阻断: [GATE-DIRECTORY-CONTRACT] 1 个发现（1 errors, 0 warnings）:\n  [error] DCR-005 data/strategy_inta"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0023
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:16:52+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktrees\\w1\\docs\\_working\\decision_map_campaign_20260924\\10_evaporat"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0025
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:17:04+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止: docs/_working/decision_map_campaign_20260924/ -> gov_doc_003_directory_semantics "
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0026
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:18:41+08:00"
+    files: 4
+    head: {same: 0, diff: 3, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/ultimate_library/b_batch_sample_cards.md']"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0027
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:18:54+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/ultimate_library/library_final_ledger.md']"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0029
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:19:34+08:00"
+    files: 10
+    head: {same: 0, diff: 0, missing: 10}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 FILE-PLACEMENT-TTL 阻断: FILE-PLACEMENT-TTL: docs/_working/quant_methodology/01_caliber_law.md frontmatter.ttl=perma"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0033
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:22:28+08:00"
+    files: 5
+    head: {same: 0, diff: 2, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 DIRECTORY-CONTRACT 阻断: [GATE-DIRECTORY-CONTRACT] 2 个发现（2 errors, 0 warnings）:\n  [error] DCR-005 docs/_working/deci"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0034
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:20:51+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止: docs/_working/decision_map_campaign_20260924/ -> gov_doc_003_directory_semantics "
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0035
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:23:36+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktrees\\w1\\docs\\_working\\decision_map_campaign_20260924\\14_consumpt"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0036
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:36:19+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止: docs/_working/decision_map_campaign_20260924/ -> gov_doc_003_directory_semantics "
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0038
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T02:48:49+08:00"
+    files: 3
+    head: {same: 0, diff: 0, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 R5-DIGIT-SUFFIX 阻断: R5 数字后缀目录禁止: docs/_working/decision_map_campaign_20260924/ -> gov_doc_003_directory_semantics "
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0039
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T03:16:26+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: landing_anomaly
+    reason: "landing 异常: TimeoutExpired: Command '['git', 'rev-parse', '--git-path', 'MERGE_HEAD']' timed out after 15.0 seconds"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-cmd-20260924-0040
+    session: st-cmd-20260924
+    dead_at: "2026-09-25T03:58:59+08:00"
+    files: 5
+    head: {same: 0, diff: 0, missing: 5}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktrees\\w3\\docs\\_working\\decision_map_campaign_20260924\\11_integrat"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-commitspeed-tbl-20260924-0034
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-25T04:32:01+08:00"
+    files: 7
+    head: {same: 0, diff: 3, missing: 4}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-commitspeed-tbl-20260924-0035
+    session: st-commitspeed-tbl-20260924
+    dead_at: "2026-09-25T04:29:09+08:00"
+    files: 25
+    head: {same: 0, diff: 1, missing: 24}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/commit_speedup_campaign/00_skeleton/s2_sub"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-metaq-gc-20260924-0015
+    session: st-metaq-gc-20260924
+    dead_at: "2026-09-25T01:49:50+08:00"
+    files: 7
+    head: {same: 0, diff: 1, missing: 6}
+    reason_cat: base_conflict
+    reason: "cascade_stale: 基底重校验不适用 ['docs/_working/meta_question_answers/02_final_ledger.md(head_reader 缺失无法重校验)']（stale_by=q-20260924-st-cleanup-final"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-t0-matrix-20260924-0035
+    session: st-t0-matrix-20260924
+    dead_at: "2026-09-25T01:47:10+08:00"
+    files: 35
+    head: {same: 2, diff: 13, missing: 20}
+    reason_cat: base_conflict
+    reason: "冲突：快照基底 b3c52ff68ca2（与 dev 的共同祖先 03019f119b66）之后 dev 已推进且触及同路径 ['docs/_working/t0_matrix/FINAL_REPORT_t0_matrix_reexam.md', 'docs/_working/t"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-wm1-wave0-20260924-0017
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-25T03:55:52+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: landing_anomaly
+    reason: "网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session 'st-wm1-wave0-20260924' 已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTREE「并发与提交」）: ['D:\\\\ZephyrAlpha\\\\.r"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-wm1-wave0-20260924-0018
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-25T03:58:14+08:00"
+    files: 14
+    head: {same: 0, diff: 1, missing: 13}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-VOCAB 阻断: [VOCAB-CHAIN] 新增 .py 文件含 SSoT 路径硬编码（应通过 capability_canonical_file_registry 反查发现，非硬编码）: src/zephyr/g"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-wm1-wave0-20260924-0019
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-25T03:33:23+08:00"
+    files: 10
+    head: {same: 0, diff: 2, missing: 8}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "session alive pid=18780"
+  - qid: q-20260925-st-wm1-wave0-20260924-0021
+    session: st-wm1-wave0-20260924
+    dead_at: "2026-09-25T04:21:27+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 PERMANENT-SYSTEM-TRIGGER 阻断: [MANUAL-ONLY-PERMANENT] 永久系统脚本使用 manual 触发模式（argparse/input/__main__+argv）但未注册事件订阅/自动"
+    note: "session alive pid=18780"
+review:  # 废弃候选待人工
+  - qid: q-20260923-st-combine-20260923-0008
+    session: st-combine-20260923
+    dead_at: "2026-09-23T05:56:58+08:00"
+    files: 8
+    head: {same: 0, diff: 5, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 NO-HIGH-COMPLEXITY 阻断: NO-HIGH-COMPLEXITY：检测到高循环复杂度函数（>15），\n  违反 §5.158 循环复杂度反模式。\n  src/zephyr/pf_alloc/allocation"
+    note: "cat=gate_block requeue_state=None miss=3 sid_done=no"
+  - qid: q-20260923-st-combine-20260923-0009
+    session: st-combine-20260923
+    dead_at: "2026-09-23T06:03:10+08:00"
+    files: 8
+    head: {same: 0, diff: 5, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TEST-SOURCE-CONSISTENCY 阻断: TEST-SOURCE-CONSISTENCY (§5.178)：检测到测试-源码符号漂移\n  测试文件 import 的符号在源码中不存在（名称漂移）。\n  tests/"
+    note: "cat=gate_block requeue_state=None miss=3 sid_done=no"
+  - qid: q-20260923-st-combine-20260923-0010
+    session: st-combine-20260923
+    dead_at: "2026-09-23T06:10:39+08:00"
+    files: 8
+    head: {same: 0, diff: 5, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TEST-SOURCE-CONSISTENCY 阻断: TEST-SOURCE-CONSISTENCY (§5.178)：检测到测试-源码符号漂移\n  测试文件 import 的符号在源码中不存在（名称漂移）。\n  tests/"
+    note: "cat=gate_block requeue_state=None miss=3 sid_done=no"
+  - qid: q-20260923-st-combine-20260923-0011
+    session: st-combine-20260923
+    dead_at: "2026-09-23T06:16:09+08:00"
+    files: 8
+    head: {same: 0, diff: 5, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-OVERLAP 阻断: CloneGuard 检测到 extract 级代码克隆——必须合并而非新建:\n  - src/zephyr/pf_alloc/allocation_inputs.py:_defau"
+    note: "cat=gate_block requeue_state=None miss=3 sid_done=no"
+  - qid: q-20260923-st-combine-20260923-0012
+    session: st-combine-20260923
+    dead_at: "2026-09-23T06:21:21+08:00"
+    files: 9
+    head: {same: 0, diff: 6, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CAPABILITY-OVERLAP 阻断: CloneGuard 检测到 extract 级代码克隆——必须合并而非新建:\n  - src/zephyr/pf_alloc/allocation_inputs.py:_defau"
+    requeued_to: q-20260923-st-combine-20260923-0013 (dead_again)
+    note: "cat=gate_block requeue_state=dead_again miss=3 sid_done=no"
+  - qid: q-20260923-st-combine-20260923-0013
+    session: st-combine-20260923
+    dead_at: "2026-09-23T06:29:05+08:00"
+    files: 9
+    head: {same: 0, diff: 6, missing: 3}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#341 方案②，hook=['gate-algo-flow-ma"
+    note: "cat=gate_block requeue_state=None miss=3 sid_done=no"
+  - qid: q-20260923-st-combine-20260923-0018
+    session: st-combine-20260923
+    dead_at: "2026-09-23T17:32:13+08:00"
+    files: 12
+    head: {same: 0, diff: 8, missing: 4}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CH-FINAL-GATE 阻断: ClickHouse 读取未强制去重（裁定 #ARCH-CH-007）：直调 ch_writer.query() 应改 ch_reader.query()，硬编码 FROM <db>.<tbl"
+    note: "cat=gate_block requeue_state=None miss=4 sid_done=no"
+  - qid: q-20260923-st-datatail-20260923-0001
+    session: st-datatail-20260923
+    dead_at: "2026-09-23T17:22:05+08:00"
+    files: 2
+    head: {same: 0, diff: 0, missing: 2}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/03_modules/_domain_infrastructure_operations/disast"
+    note: "cat=gate_block requeue_state=None miss=2 sid_done=no"
+  - qid: q-20260923-st-emoreplay-20260923-0001
+    session: st-emoreplay-20260923
+    dead_at: "2026-09-23T20:21:49+08:00"
+    files: 11
+    head: {same: 0, diff: 4, missing: 7}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 DIRECTORY-CONTRACT 阻断: [GATE-DIRECTORY-CONTRACT] 2 个发现（2 errors, 0 warnings）:\n  [error] DCR-005 docs/_working/emot"
+    note: "cat=gate_block requeue_state=None miss=7 sid_done=no"
+  - qid: q-20260923-st-emoreplay-20260923-0002
+    session: st-emoreplay-20260923
+    dead_at: "2026-09-23T21:10:29+08:00"
+    files: 11
+    head: {same: 0, diff: 4, missing: 7}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源（module_translation_registry.yaml）缺合格 plain_zh 大白话"
+    note: "cat=gate_block requeue_state=None miss=7 sid_done=no"
+  - qid: q-20260923-st-nightdata-20260923-0002
+    session: st-nightdata-20260923
+    dead_at: "2026-09-23T18:31:07+08:00"
+    files: 1
+    head: {same: 0, diff: 0, missing: 1}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['docs/_working/datatail/2026-09-23-night-run-report.md']."
+    note: "cat=gate_block requeue_state=None miss=1 sid_done=no"
+  - qid: q-20260923-st-wm1-buildB-20260923-0001
+    session: st-wm1-buildB-20260923
+    dead_at: "2026-09-23T16:33:22+08:00"
+    files: 13
+    head: {same: 0, diff: 4, missing: 9}
+    reason_cat: gate_block
+    reason: "网关落盘失败（COMMIT_FAILED）: 门禁 TTL-METADATA 阻断: FAIL: .runtime\\commit_queue\\worktree\\src\\zephyr\\governance\\registry_projection\\__init__.py missin"
+    note: "cat=gate_block requeue_state=None miss=9 sid_done=no"
+  - qid: q-20260924-st-chainpile-20260922-0075
+    session: st-chainpile-20260922
+    dead_at: "2026-09-24T01:13:07+08:00"
+    files: 4
+    head: {same: 0, diff: 1, missing: 3}
+    reason_cat: other
+    reason: "NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: ['config/governance/noqa_exempt_registry.yaml', 'docs/_working/chain_piling_campaign/04_constr"
+    requeued_to: q-20260924-st-chainpile-20260922-0077 (dead_again)
+    note: "cat=other requeue_state=dead_again miss=3 sid_done=yes"

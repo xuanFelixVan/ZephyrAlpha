@@ -1,0 +1,13 @@
+lane: cmd
+session_id: st-qmine-20260925
+note: >
+  总筹自产件。三条随批前置义务请一并办：
+  (1) 本目录与全部 lane 案卷新建 .md 需 CREATE-GUARD creation_token（docs/_working 是否豁免请先按门禁实测定性，勿猜）；
+  (2) 战役包 README.md 的"文件导航"表增一行指向 cmd_successor_20260925/LEDGER.md（继任轮单入口），
+      并把 README 导航里 01~08、12 号文九件的状态标注为"缺失，内容由 19 号文承接"（若找回则改回）；
+      README 由你（落地车道）在同一袋内改，避免主区多份未落修改。
+  (3) HANDOVER.md 目前是未跟踪件（??），有被 landing clean 再抹一次的风险，优先随本袋落 HEAD。
+files:
+  - docs/_working/decision_map_campaign_20260924/HANDOVER.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/LEDGER.md
+  - docs/_working/decision_map_campaign_20260924/19_gpu_plan_and_master_backlog.md

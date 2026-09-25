@@ -1,0 +1,76 @@
+# LANE-DU881 待落清单（本车道零 git add / 零 commit，全部件现为未跟踪态 ??）
+lane: du881
+session_id: st-qmine-20260925
+created: "2026-09-26"
+note: >
+  【车道结论】DU-01/02 三判据复测：①板块数达成（729 码 / 近 5 交易日日均 728，ingest_ts 台账实证
+  2026-09-24 一次落 260 码＝881 段 128 + 8803/8804 段 132）；②历史深度"2020-03 起"经四通道实测为
+  源侧不可得（tqcenter 对 881/8803 段 count=600/1400/2600/4000 全档封顶 1250 根＝2021-08-02，
+  显式窗口 start=20150101 end=20210801 实回空帧，而同一批调用中 880 族 880881/880854/880844 回
+  627/1531/1602 根到 2015-01-05；tushare ths_daily/ths_index 六次请求全报"没有接口访问权限"；
+  akshare 同花顺行业指数虽有 2015 起深史，但同日收盘价与在库序列差 2.3×–31.4× 且只覆盖 18/128 码
+  → 判不同指数序列禁作补史源），故本判据不可达须重裁，未销口；③P1 对比报告已交付。
+  另：全库 729 码中到 2020-03-31 有数据的只有 1 码（880854.SH），880 族主体起点众数桶
+  ＝2021-08…2021-12（133 码）与 881 族（127 码 @2021-08-02）同窗——判据②字面线与 880 族现实互斥。
+
+
+  【随批前置义务（请落地车道在同一袋内办，勿拆袋：token/大白话与件必须同袋原子投）】
+  (1) CREATE-GUARD creation_token 需求：本袋新建件共 7 件——
+      scripts/backtest/p1_conditional_tables.py（.py 需 token）、
+      tests/backtest/test_p1_conditional_tables.py（tests/ 按任务书口径豁免，仍请实测定性勿猜）、
+      du881_verdict/casefile.md（docs/_working 下 .md 是否豁免请先按门禁实测定性，同 lane_cmd 袋同问）、
+      du881_verdict/constituent_expansion_manifest.yaml、du881_verdict/p1_v1v2_summary.yaml（.yaml）、
+      du881_verdict/p1_v1v2_cell_diff.csv、du881_verdict/p1_v1_universe_469codes.txt（.csv/.txt 是否属 7 格式请实测）。
+  (2) add_module_translation：新模块 `scripts/backtest/p1_conditional_tables.py` 须落
+      docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml 的 `entries:` 段（第 33 行起，
+      形如 `- module_path: scripts/backtest/p1_conditional_tables.py`），大白话简介建议：
+      "P1 板块×相位条件概率表生成器（从一次性临时脚本转正）：读板块日K与六段相位，算 T1 每格四元组
+      （样本数/原始胜率/Wilson 下界/均值收益），样本数不足 30 的格子留档但标为不可考；支持按代码清单
+      只重放指定板块宇宙，并提供两个产物目录的逐格对比子命令，用来出具扩宇宙前后的差异报告。"
+      同时 `scripts/` 静态清单禁手工维护：本袋须同批跑 generate_manifest.py /
+      generate_script_manifest.py 重出 script-manifest.yaml。
+  (3) RULE-DEPGRAPH：新增 .py 模块须登记后施工/落地；本袋无文件改名，故不触发 RENAME-DEPGRAPH-SYNC，
+      若落地侧另做重命名请同批 generate_project_depgraph.py --force。
+  (4) TDM 同步：本车道**未触碰 src/ 实现代码**（成分扩容只出待写清单未写库，见 (6)），
+      故本袋无需同步 algo_note_zh / algo_flow yaml。若总筹随后批准翻转成分宇宙（真源
+      src/zephyr/data/implementations/tqcenter_provider.py::_fetch_sector_constituent），
+      那一批属实现代码变更，必须同批同步 TDM 两件 + 配三消费端隔离。
+  (5) 净零/内收声明：`scripts/backtest/p1_conditional_tables.py` 是
+      `.runtime/tmp/p1_conditional_tables.py` 的**转正件（计算核逐行等值，仅加宇宙白名单/输出目录/diff
+      三参数）**，不是新算法：落 HEAD 后 .runtime/tmp 原件可删，同时消掉 L03-B8-G3"重算脚本未转正"债一条。
+      对照组实测：转正件按全宇宙重放与已入库 v2 产物逐格等值（4,362 格全共同、0 格单侧、
+      n/raw/wilson_lb/mean_bp 四列漂移 0），故"非重写"可机验。
+  (6) 成分扩容**刻意未写库**（非漏做）：881 族 128 码成分实测已于 2026-07-23 全量在表（5,538 行、
+      名称 100% 填充）→ 交接卡"881 成分未跟着挂"的前提被实测证伪；真缺 134 码＝8803 段 61 + 8804 段 71
+      + 8808 段 2，tqcenter 实测可采（132 板回 8,473 个成分对、键级重叠 0），但 sector_constituent 是
+      三处采集宇宙的唯一读取源（_fetch_kline_sector 的 DISTINCT 查询、tdx_provider._resolve_sector_symbols
+      的 1 分钟盘中路、sector_snapshot 轮询池），裸扩会同时改动遗留表 kline_sector 与已死 mootdx 腿的
+      采集面，且"四坐标系未裁"属 Owner 门位（L03-C04）→ 待写清单 constituent_expansion_manifest.yaml
+      （written_to_ch: false）随袋入库，翻转留待坐标系裁定 + 串行窗口。
+  (7) 即刻处置项（与本袋无关但必须报）：data/strategy_intake/conditional_tables/ 六件（README + 5 CSV，
+      含 DU-01 判据③的载体 p1_sector_by_phase.csv 4,363 行）在主区暂存区被标为 **staged deletion**
+      （git status --porcelain 显示 6 行 "D "），任何一次他队 commit 都会把它们从库中删除（本仓有 22 件
+      消失案先例）。盘上内容与 HEAD 一致。本车道按纪律未动他人暂存条目，请总筹在下次落地前定夺。
+  (8) 环境与安全留痕：全程零 git add/commit、零 GPU 作业、零删除式写入、零改 D:\zephyr_t1_backup\；
+      所有 CH 访问经 zephyr.infrastructure.database_service reader（含第二 slot 交叉复核），
+      未用 ch_writer.query 判"无数据"；探针与驱动脚本留 .runtime/tmp/lane_du881/（probe1-13 +
+      run_p1_compare + red_proof_p1），未登记 process_reaper_keep（无长批在跑，均为分钟级前台进程）。
+  (9) 门禁归属：本袋跨 D_DATA/docs 与 scripts+tests，若 COMMIT_SCOPE 误判请用 --allow-multi-domain 留痕
+      （生成器 + 自家证尺测试同批是合法组合，宪法 §2.4）。
+files:
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/casefile.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/p1_v1v2_cell_diff.csv
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/p1_v1v2_summary.yaml
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/constituent_expansion_manifest.yaml
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/du881_verdict/p1_v1_universe_469codes.txt
+  - scripts/backtest/p1_conditional_tables.py
+  - tests/backtest/test_p1_conditional_tables.py
+verification:
+  - cmd: python -m pytest tests/backtest/test_p1_conditional_tables.py -q
+    expect: "4 passed"
+  - cmd: python .runtime/tmp/lane_du881/du881_red_proof_p1.py
+    expect: "M1/M2/M3 三变异全 RED + restored file sha256 verified + baseline 4 passed（注意：.runtime/tmp 有 TTL 风险，落地后建议把该脚本转正进 tests/ 或 scripts/）"
+  - cmd: git log --oneline --all -- data/strategy_intake/conditional_tables/
+    expect: "仅 1 条 6fb93ebf39（＝v2 已入库；v1 原件从未单独入库）"
+  - cmd: git status --porcelain data/strategy_intake/conditional_tables/
+    expect: "六行 D （staged deletion）＝待总筹处置的蒸发风险；若已处置应转空"

@@ -1,56 +1,27 @@
 ---
 ttl: task_bound
-title: GPU 重写挖矿④——等价性验证框架设计（CPU 真源 vs GPU 被测）
+title: 【已并入】等价性验证框架（前一轮草稿指针）
 created: "2026-09-25"
 sid: st-gpu-rewrite-mining-20260925
+lane: LANE-GPU
 family_id: GPU-REWRITE
+superseded_by: docs/_working/gpu_rewrite/verification_framework.md
 ---
 
-# ④ 等价性验证框架设计（对拍红蓝）
+# 本文件已被并入 verification_framework.md
 
-> 定位：GPU 重写的**转正门**。没有本框架，L2/L3 禁止产出任何进入 manifest 的数字（红蓝纪律=方案①先例：`docs/_working/decision_map_campaign/17_quantified_acceptance.md:28` "Spearman≥0.99 且 top50 重合率≥0.9 且轻档单格≤8s → 可实施；任一不达标=草案作废"）。
-> 真源方向：**CPU 引擎（现行 `_c4_engine.py`）=真源蓝军；GPU/向量化实现=被测红军**。判定函数（exam_cost_gate 三门）两侧共用同一实现（扫描/判定分离既有纪律，`exam_cost_gate.py:8`）。
-
-## 一、对拍维度（三层，逐层口径）
-
-### 层1 · 逐位层（bitwise）——只对 L1
-- 对象：L1 hoisting/缓存改造前后，**同一 CPU 实现**的 net 序列。
-- 标准：**bitwise 全等（容差=0）**——L1 不改浮点运算顺序，任何一位漂移=实现错误（③文 L1 验证节）。
-- 证据：net 序列 sha256 对账 + sharpe/mdd/turnover 逐位 diff 表落 `data/strategy_intake/val_<ts>/bitwise_report.yaml`。
-
-### 层2 · 统计量层（tolerance）——对 L2/L3
-- 对象：同一格点 CPU-FP64 vs GPU 输出：net 序列、sharpe、ann_return、max_drawdown、avg_turnover、五档 tier_sharpes。
-- 容差标准（引用业界做法）：
-  - **GPU-CPU 不追求 bitwise**：NVIDIA 官方口径=bitwise 可复现仅在"同卡+同库版本+同形状"内成立（[cuFFT determinism docs](https://docs.nvidia.com/docs.cupy.dev) 口径，cuFFT 12.8 文档 2025-01：结果确定性以条件恒定为前提）；跨实现浮点求和顺序（并行归约）必然 ULP 级漂移，复利累积会放大。
-  - **离散量精确一致**：交易/持仓信号、持仓只数、调仓日集合、五档门 PASS/FAIL 判定——**必须 100% 一致**（业界通则：signals/trades exact match, floats tolerance——GPU 数值验证通行实践，见②文调研记录）。
-  - **浮点统计量**：net 序列逐日相对容差 ≤**1e-5**（FP32 路径）/ ≤1e-8（FP64 路径）；sharpe/ann_return 绝对差 ≤0.005；max_drawdown 相对差 ≤1e-4；期末净值差 ≤**2bp**。
-  - 依据：quant 工程实践通行的 1e-8~1e-6 returns 相对误差带 + 期末权益 bp 级带（GPU vs CPU 数值验证实践综述，②文 §7 引）；本项目侧无现成先例，此为**建议判据 (建议)** 标注，Owner 可调（17 号文判据两档纪律）。
-- FP32 累积误差的定量预检（施工前跑一次）：1,650 日 cumprod 的 FP32 vs FP64 期末净值差实测——若 >2bp，L2 精度策略升级为"关键累计段 FP64"（③文），容差表随之重签。
-
-### 层3 · 排名层（ordinal）——整批验收
-- 对象：整批格点的 cost_adjusted_sharpe 排名（搜索主目标函数，`factory_grid_executor.py:872-874` 口径）。
-- 标准（沿方案①先例加严，标注 (建议)）：**Spearman ≥0.999**（方案①线 0.99 是"不同口径"间的线，同口径不同实现应收得更紧）；**top50 重合 ≥0.98**；净收益符号一致率 100%（赚钱/亏钱判断不许翻转）；五档单调性破缺数=0（`exam_cost_gate.py:186` 门1 在两实现下同判）。
-
-## 二、测试格子集选择
-
-| 池 | 构成 | 数量 | 用途 |
-|---|---|---|---|
-| T0 主池 | 方案①红蓝标定既有的 T0 200 格（分层抽样，`03_gpu_campaign.md:34`） | 200 | 常规对拍 |
-| 边界格（手工构造，不进批产物） | ①全退市/ST 宇宙（掩码全遮）②单票宇宙（cols=1，`factory_grid_executor.py:745-749` cols<30 阴性线两侧各一格=29/30/31）③min_days 边界 59/60/61（`exam_cost_gate.py:48` DEFAULT_MIN_DAYS=60 两侧）④五档 sharpe 平坦（单调性容差 1e-9 贴线，`exam_cost_gate.py:46`）⑤insufficient_net（std=0）⑥涨跌停封板密集窗（gate 实际生效非平凡）⑦all_a 大宇宙列序乱序（稀疏 gather 索引错位猎杀） | ~20 | 回归雷区 |
-| 抽查池 | 每波 GPU 批次随机 5%（预注册种子） | 动态 | 防批量错位的持续哨兵 |
-
-## 三、通过判据与流程
-
-```
-L1 转正：层1 全绿（bitwise）+ T0 200 格 manifest 逐列 diff 全等 → 直接转正（同口径零风险）
-L2 转正：层2 全绿 + 层3 全绿 + 边界格零翻车 + 抽查池 3 个连续批次零失败
-       → fail-closed：任一 red = 停，产出打 degraded 标记禁入 manifest（`19_gpu_plan` 验收口径 backtest_dead/eval_dead/degraded=0 同精神）
-仲裁通道：容差边界争议格 → FP64 fallback 单格重算（③文 L2 精度开关）→ 仍不一致=实现 bug 非 FP 问题
-```
-
-- 产物：每轮对拍落 `data/strategy_intake/val_<ts>/`（bitwise_report.yaml / tolerance_report.yaml / rank_report.yaml / 边界格逐项表），报告头带两实现 git hash+库版本（GPU 可复现性以"同卡同版本"为前提，②文 §7）。
-- **衔接冗册多校纪律**：本框架是 `docs/_working/quant_methodology/02_overfitting_defense.md`（DSR/PBO/CSCV/WFA 多校链）的**工程实现层前置**——引擎本身不可信则多校全空转；GPU 成绩单沿用 17 号文 §一 GPU 成绩单判据（完成率/成本门真实性/负结果纪律三线不放松），本框架只增加"实现等价性"一维，**不替代、不稀释**多校。
-
-## 四、负决策条款（框架自身的止损）
-
-验证成本超过 L2 本体工程量的 50%（对拍脚本+修复 >1 周）即上报 Owner 重估：可能意味着实现语义分叉过深，应退回 L1+CPU 多进程扩展（②' 分片）而不是硬上 GPU——**等价性买不来就是不该上**。
+- 后继件：[`verification_framework.md`](./verification_framework.md)。
+- 继承有效：层1 逐位（只对不改浮点序的 L1）／层2 统计量容差／层3 排名严格 的三段制；边界格思路；fail-closed 与"争议格 FP64 仲裁"通道；"判定函数两侧共用同一实现"。
+- 本轮补强：①三层判据各配公开数值文献（CUDA FP v13.4／NVIDIA CCCL 2026-03-05／PyTorch Reproducibility），不再以工程偏好立线；②边界格由 7 类扩至 E-1…E-10 并给出实测料量（all_a 窗口封板 118,207/47,968 格、`stk_limit` NULL 0.058%、权重非零 47.9%）；③新增两条守护测试——"0bp 档与 5bp 档 net 必不同"与"滑点档禁位置传参"（后者是仓内真实事故：五档恒同值=门形同虚设）。
+- 未改项（纪律）：17 号文与 `config/exam_scale_cost_gate.yaml` 的口径、阈值、档位真源一律引用不改写；本框架只增"实现等价性"一维，不替代多校链。
+- 并入核账（2026-09-26 双版合并，本条为真销口的凭据）：本草稿的**对拍容差冻结值**已在后继件 **§一·补「对拍容差冻结值」表**逐条核账并全部在案——
+  net 序列逐日相对容差 ≤**1e-5**（FP32 路径）／≤**1e-8**（FP64 路径）、sharpe 与 **ann_return** 绝对差各 ≤**0.005**、max_drawdown 相对差 ≤1e-4、期末净值差 ≤**2bp**、离散量 **100% 精确一致**；
+  其中 **ann_return 的 0.005 在合并前于后继件 §二 层2 判据格里未单列**（只具名 sharpe）→ 已补入该行；
+  同节并入 **FP32 累积误差定量预检**（1,650 日 `cumprod` 的 FP32 vs FP64 期末净值差实测，**>2bp 即判 L2 方案不达标**、升级"关键累计段 FP64"并重签容差线）——
+  预检窗口以后继件①文实测 **1,622 评估日**为准，1,650 作历史口径存档（差＝窗口切法，非结论冲突）。
+  另：本框架的**硬件红线（3090 FP64=FP32 的 1/64）**在合并前只存在于③文，现已在后继件 §一·补落为容差线的"因"（同节并记 18GB 配额／单卡独占／`exclusive_group=gpu_default` 与本地 LLM 互斥三条）。
+- 全量并入判定：本路径（三层判据、边界格思路、fail-closed 与 FP64 仲裁通道、判定函数两侧共用同一实现、§四 框架自身止损线）证据全部在案；边界格由本稿 7 类扩为后继件 E-1…E-10 并配实测料量，属**超集非替换**；
+  本稿"业界标准 1e-8~1e-6 通行误差带"与"cuFFT determinism docs"两句系二手/含混引法，后继件已以三条一手来源替换（CUDA FP 文档 v13.4／NVIDIA CCCL 2026-03-05／PyTorch Reproducibility notes，见其 §一 表），
+  并在 §八 挖矿日志 R7 如实记"检索未见规范化公开协议（受阻/查无）"——**该两句不随本指针冒充依据，属取证升级非内容丢失**；逐字比对见 git 历史 **commit 37aeecedcd 的 `docs/_working/gpu_rewrite/validation_framework.md`**。
+- frontmatter 修正（2026-09-26）：本指针原带 `doc_type: index`、后继件原带 `doc_type: blueprint`，**一并清除为只带 `ttl: task_bound`**（豁免区新件禁 doc_type，EXEMPT-ZONE-FM 阻断门）。
+- 原文去向：见上条 commit 指针。

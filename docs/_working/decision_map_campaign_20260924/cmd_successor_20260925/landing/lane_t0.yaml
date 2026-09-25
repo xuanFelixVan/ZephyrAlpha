@@ -1,0 +1,127 @@
+---
+ttl: task_bound
+doc_type: manifest
+lane: LANE-T0
+session_id: st-qmine-20260925
+executor_sid: lane-t0-20260926
+created: "2026-09-25"
+---
+
+# LANE-T0 待落清单（本车道产物 → 总筹指定落地车道）
+
+lane: LANE-T0
+session_id: st-qmine-20260925
+executor_sid: lane-t0-20260926
+note: >-
+  本车道全程零 git 写操作（未 add / 未 commit / 未 push / 未跑 git_commit.py / 未 enqueue）。
+  下列为"已在工作树、等落地车道收口"的清单与处置建议。落地前必读同目录 T0_run_report.md
+  §7（含一条指令前提被实测证伪的纠偏，影响落地口径）。
+
+files:
+  # 一、代码改动（运维档 + 续跑一致性闸；判据与口径零改动）
+  - path: scripts/backtest/t0_rule_engine.py
+    change: modified
+    domain: D_BACKTEST
+    why: >-
+      ① 新增 --process-priority low（BELOW_NORMAL CPU 档 + IO 尽力项，回执入 manifest.ops）；
+      ② 新增 --mem-cap-mb / --mem-cap-hard（RSS 哨兵，默认 warn-only 只留证据不中断）；
+      ③ 补 --resume 切分面漂移闸（batch_size/rules/periods/window 任一变了即 SystemExit，
+      防同 tag 换批大小续跑导致批序号指向另一批 symbol 的静默漏算/重算）；
+      ④ 头注 [STARTUP] 与用法段同步改口径（禁 IDLE 托管，附实测 0.74 核证据）。
+    not_landing_risk: >-
+      任务书点名的 process_extrema.set_process_priority 在全仓 ripgrep 零命中（模块不存在），
+      等价能力暂落在本件内；是否抽共享件须治理裁，勿在落地时静默二实现。
+    evidence: 改前/改后各跑 36 例（test_t0_rule_engine + test_t0_state_match_matrix + test_t0_material_line）均 passed
+    red_proof: 调度档 GetPriorityClass 读回 NORMAL→BELOW_NORMAL→NORMAL 三态；mem-cap=1MB 探针只告警不自杀并落证据文件
+
+  # 二、案卷（新建件，须 creation_token）
+  - path: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/T0_run_report.md
+    change: added
+    doc_type: log
+    note: 断点勘查 + 冒烟双证 + 吞吐实测与 ETA + 分层触发申报 + 上游缺陷登记
+  - path: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_t0.yaml
+    change: added
+    doc_type: manifest
+    note: 本件
+
+  # 三、运行时登记（非 git 面：data/runtime/ 未被跟踪，勿入提交面）
+  - path: data/runtime/process_reaper_keep.txt
+    change: runtime_only_not_tracked
+    note: >-
+      补三条防误杀子串 t0_state_match_matrix / lanet0_ / r01_grid100bp_full_v1
+      （走 safe_write_text CAS，before 9b7df6f8… → after 2b3c9594…）。该文件 git 未跟踪
+      （git ls-files 无匹配），故**不进待落面**，仅在此留痕；跑完由收尾车道按政策清项。
+
+  # 四、语料产物（是否入库由总筹裁；体量大且属可重算面）
+  - path: data/backtest_artifacts/t0_rule_engine/t0_rule_manifest_r01_grid100bp_full_v1.yaml
+    change: generated
+    note: 逐批断点锚（含 4 卡哈希与 ops 回执）；消费禁 glob 的显式清单真源
+  - path: data/backtest_artifacts/t0_rule_engine/t0_rule_pairs_r01_grid100bp_full_v1_b*_r01_*min.parquet
+    change: generated
+    note: 全量语料批产物（271 批 × 5 周期）；未跑完前为部分集，落地车道勿按"全量齐"消费
+  - path: data/backtest_artifacts/t0_rule_engine/t0_memalert_r01_grid100bp_full_v1.log
+    change: generated_maybe_absent
+    note: 内存哨兵越线证据；文件不存在=全程未越线（这本身是正向证据，须核实而非默认）
+
+pending_decisions_for_coordinator:
+  - "分层申报：实测 52h CPU / 81.7h 墙钟已越 17 号文 §三.1 的 48h 预算线，走设计册 §4 预注册的方案 1（周期 {1,5} 先行）还是方案 2（向量化改造后重算）？本车道未自决。"
+  - "矩阵相位真源 six_phase_history_v1.csv 目前只在已死会话的 worktree（.worktrees/st-t0-matrix-20260924/…），主仓 docs/_working/t0_matrix/ 下无此件 ⇒ 须先归位 HEAD 再把 t0_state_match_matrix.py 的 SIX_PHASE_CSV 改指主仓，否则 worktree 一清矩阵即死。"
+  - "本车道是否继续占用 1 个 below-normal 核与 ~3.5GB，与 T1 共存到明晨？（实测 T1 未受影响：WS 4.2–5.6GB 波动非单调下滑）"
+  - >-
+    矩阵相位轴补格口径：ignition 全史 2 日（2019-04-08 / 2026-06-23）均在研究窗外，
+    窗内路由日=0 ⇒ groupby 不出行，矩阵与披露件里 ignition 静默缺席，
+    而设计册 §3.3 预期其"如实 INSUFFICIENT"不可实现。须裁：披露件按 PHASES_ORDER 补零行
+    还是 meta 显式记 0 routed_days；并纠设计册该句。证据=T0_run_report.md §6.1（含真源直查数）。
+
+
+# ---------------------------------------------------------------------------
+# 落地阻塞项（非本车道成因，须先修后落）
+# ---------------------------------------------------------------------------
+blocking_issues:
+  - id: R01-NOT-BITWISE-EQUAL-TO-M0
+    severity: highest
+    what: >-
+      等价复算抓出真实缺陷：t0_rule_engine 的 R01 与 t0_material_line 的 M0 在同源同窗同票上
+      **不逐位一致**（5 周期累计 58/56,634 pair 受影响 = 0.102%，净均 ≤+0.16bp）。
+      根因=run_batch 的全局 `bars[[OHLCV]].astype("float64")`（上一轮为修 r02/r03/r04 Decimal
+      向量算术炸而加）翻转了 `low <= base×0.99` 型边界判定。
+    proof: >-
+      可重放：对 4 个分歧 symbol-day 用同一个 run_model_m0 分别跑 Decimal 腿与 float64 腿，
+      两腿各自逐位复现对应一侧盘上产物（T0_run_report.md §4.3 表）；
+      并已排除源数据漂移（同 20 只同窗当前 CH count 与 uniqExact 均 =4,615,139，与预检记录全等）。
+      旁证：Decimal 腿 1min 净均 = −39.12bp，与预检报告写死值同值 ⇒ 预检未造料，差纯在引擎侧。
+    why_tests_missed_it: >-
+      12 例引擎测试只喂构造数据（本身即 float），从未覆盖"真库 Decimal → 强转"这条 dtype 路径。
+    needed_action: >-
+      二选一，勿静默：(A) 把 astype 改按规则分腿（r01 走 Decimal 腿恢复逐位一致）→ r01 结果会变，
+      今晚 float64 批不可混用，须换新 tag 全量重跑（若分层裁定走"向量化改造后重算"则同轮零额外代价并入）；
+      (B) 维持现跑，则头注与设计册 §1 的"同参同模型/逐位一致"声明须删改为
+      "float64 基线、边界 0.1% 已知偏差"，且矩阵 meta 须带该披露，禁下游当与预检同基线消费。
+    executor_stance: 本车道未自决、未夜改判定路径，仅定位+界量+上报。
+
+  - id: CREATE-GUARD-TOKEN-BLOCKED
+    severity: blocker
+    what: >-
+      本车道两件新建件（T0_run_report.md / landing/lane_t0.yaml，均落 CREATE-GUARD 覆盖面：
+      新 .md 与新非 rules .y*ml）的 creation_token **登记未成功**——
+      batch_creation_tokens.py 的"写前条目数守恒"闸拦下并 fail-safe 零写入。
+    why_not_mine: >-
+      成因=热册 capability_canonical_file_registry.yaml 盘上基底相对 HEAD 缺 4 条
+      他会话条目（commit-speedup 族）。零成本探针定性（只读）：
+      对 4 条各跑 `git show HEAD:<册>` vs 盘上 grep ⇒ HEAD=1 DISK=0 ×4；
+      册行数 HEAD=50897 / 盘=50876；且 `git status --porcelain` 显示该册**已被他会话 staged（M 在索引列）**。
+    why_i_did_not_fix: >-
+      三条同时不许可：① 该册正被他会话持有在途暂存面，主区改热册是本仓已知死法；
+      ② 政策 §3.4"他会话在途违规不代修：owner 责任制"；③ 任务书严禁本车道任何 git 写操作。
+      故只上报不代修（禁 `git checkout HEAD -- <册>` 整片覆盖，工具自身也明令禁此）。
+    needed_action: >-
+      落地车道/该册 owner 按工具手册 §4 分诊，把缺的 4 条**增量**补回盘上基底后，
+      重跑下面两条本车道登记命令（已 dry-run 验过单件定域、各恰 1 条，不牵连坐）：
+    rerun_commands:
+      - 'python scripts/governance/d3_metadata/batch_creation_tokens.py --prefix "docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/T0_run_report.md" --created-by lane-t0-20260926 --capability lanet0 --merge-evaluation "跨域不同对象→不并：LANE-T0 夜跑执行案卷，同目录 LEDGER.md 为总筹台账，零同真源可派生件"'
+      - 'python scripts/governance/d3_metadata/batch_creation_tokens.py --prefix "docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_t0.yaml" --created-by lane-t0-20260926 --capability lanet0 --merge-evaluation "跨域不同对象→不并：本车道待落清单，注册表类真源异体，零替代件"'
+    secondary_finding: >-
+      工具缺陷登记：batch_creation_tokens.py 只有 --prefix 无单件旗，按目录前缀跑会把
+      同目录他会话未登记件一并卷入并错挂 capability（本次实测该前缀扫到 23 条，其中本车道仅 2 条）。
+      现可用"文件全路径当路径前缀"绕过（已验证恰 1 条），但是否把该定域口径写进工具指路，交治理裁。
+

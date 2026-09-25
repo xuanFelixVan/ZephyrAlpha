@@ -1,0 +1,162 @@
+ttl: task_bound
+# B0_2 — 门禁 × 衍生工件 依赖矩阵（谁读衍生件、判据会不会变）
+# 复测口径：
+#   measured_ms = .runtime/audit/gate_execution_stats.jsonl 逐门 ms 字典（窗 2026-09-22 起，n_records=492）
+#   evidence:   read_site=已核到 file:line 真读点 / static_literal=仅路径字面量命中 / unverified=未证
+#   verdict_affecting: 该门 pass/fail 是否随"磁盘衍生件陈旧"而改变
+#   分类判据铁律：读 staged blob 或读 git tree ⇒ 免疫；读工作树磁盘件 ⇒ 陈旧可致假红/假绿；仅用于渲染报告 ⇒ report_only
+# 真源提醒：本表条目数勿写死进散文（102/121/180 三个口径并存，见 notes.counting_basis）
+
+meta:
+  lane: 40_b0_derived_offload
+  date: "2026-09-24"
+  counting_basis:
+    in_process_specs_observed_executing: 121   # gate_execution_stats.ms 键并集（本窗）
+    n_specs_field: 102                          # 每次链执行 flush 行的 n_specs（S1 同口径）
+    gate_registry_total_gates: 180              # gate_registry.yaml 字段（含 68 pre-commit hook + MANUAL）
+  derived_artifact_classes:
+    generated_docs_md:
+      producers: [navigation_index, panorama_registry, asset_catalog, capability_heatmap, contract_catalog, cross_domain_matrix, integration_topology, path_tree, domain_doc, domain_index, candidate_module_report, capacity_report, constraint_violations, design_vs_production, code_wiki_stats, blueprint_panorama, dataflow_diagram, data_acquisition_flow, data_inventory, decision_diagram, battle_map, trading_decision_map, library_index, library_coverage, module_algorithm_overview]
+      paths: ["docs/02_enterprise_architecture/**", "docs/03_modules/**/blueprint.md", "docs/library/**", "project_handbook/**"]
+      commit_policy: "禁入 git（check_no_commit_derived.py:100-107 fail-closed）"
+    generated_yaml:
+      producers: [rule_ai_perception_index, governance_map, policies, contracts, algo_flow_translation_sync]
+      paths: ["docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml", "config/governance_operations_map.yaml", "src/zephyr/data/config/policies.yaml", "src/zephyr/shared/contracts/*.py"]
+    snapshot_db:
+      paths: ["rules_integrity_db（golden hash 基线）", "depgraph nodes 表（Postgres）"]
+  cost_of_regeneration_cpu_seconds_mean: 97.3   # 逐生成器 elapsed_ms 求和，20 份 regen 日志中 15 份有数据
+
+gates:
+  - gate_id: GATE-RULES-INTEGRITY
+    channel: [pre-commit hook gate-rules-integrity, gateway reconciler]
+    impl: scripts/governance/meta/validate_rules_integrity.py
+    read_sites:
+      - "validate_rules_integrity.py:199-202 _hash_file(工作树)"
+      - "validate_rules_integrity.py:205-229 _hash_git_head(HEAD blob) — register 用 HEAD、check 用工作树"
+    derived_read: [rules_integrity_db]
+    evidence: read_site
+    verdict_affecting: true
+    staleness_mode: "基线滞后于 HEAD ⇒ 下一次 commit 判 TAMPERED 假红；这正是 per-item 同步 --register 存在的理由"
+    action: "repoint：check() 也走 HEAD blob 面（errcode 门 :45/:54 已示范 rglob→ls-tree 同类改造），随即可删 per-item 同步刷新（M1）"
+    measured_ms_mean: null
+
+  - gate_id: GATE-NO-COMMIT-DERIVED
+    channel: pre-commit
+    impl: scripts/governance/d11_compliance/check_no_commit_derived.py
+    read_sites: ["check_no_commit_derived.py:31 只读 staged 文件名", ":100-107 DERIVED_PATTERNS", ":153"]
+    derived_read: [仅路径名，不读内容]
+    evidence: read_site
+    verdict_affecting: false
+    staleness_mode: 免疫（判据=文件名集合，与磁盘件新旧无关）
+    action: 保留同步；**并升格为"衍生件根本不该进提交面"的机检真源**（B0_3 论证 M2 的依据）
+
+  - gate_id: BLUEPRINT-HEADER
+    impl: src/zephyr/gov_enforcement/commit_gates/blueprint_amodule_consistency_gate.py
+    read_sites: [":149 _read_staged_file(gateway, py_file)"]
+    derived_read: []
+    evidence: read_site
+    verdict_affecting: false
+    staleness_mode: 免疫（读暂存 blob）
+    action: "与再生解耦；本门是 top-2 慢门（16.6s mean / 26.0s p90），提速归 D 系车道"
+    measured_ms_mean: 16645
+    measured_ms_p90: 25968
+
+  - gate_id: BLUEPRINT-AMODULE-CONSISTENCY / BLUEPRINT-AMODULE-CROSS-CHECK
+    impl: 同上文件
+    verdict_affecting: false
+    evidence: read_site
+    action: 解耦（同走 staged blob）
+    measured_ms_mean: 4706
+
+  - gate_id: BLUEPRINT-FORMAT
+    impl: src/zephyr/gov_enforcement/commit_gates/blueprint_format_gate.py
+    derived_read: ["路径字面量含 docs/03_modules（未证真读点）"]
+    evidence: static_literal
+    verdict_affecting: unknown_treat_as_false_until_read_site
+    action: 补一次读点核验后归类（0.5 人时）
+    measured_ms_mean: 6494
+
+  - gate_id: MODULE-ID-CONSISTENCY
+    impl: src/zephyr/gov_enforcement/commit_gates/module_id_consistency_gate.py
+    read_sites: [":51 docs/03_modules/template_registry.yaml", ":52 _registry/catalogs/cross_module_dependency_registry.yaml"]
+    derived_read: ["docs/03_modules/template_registry.yaml（册件，生成/手编混合待裁）"]
+    evidence: read_site
+    verdict_affecting: true
+    staleness_mode: 磁盘册陈旧 ⇒ 一致性判定可用旧册放过/误拦
+    action: repoint 到 git blob 读（gateway 已有 `_read_blob_*` 原语），或纳入 revalidate 白名单
+    measured_ms_mean: 1204
+
+  - gate_id: GATE-DOMAIN-FK
+    impl: src/zephyr/gov_enforcement/commit_gates/domain_fk_gate.py
+    read_sites: [":79 functional_domain_registry.yaml"]
+    derived_read: ["真源 YAML（非生成件）"]
+    evidence: read_site
+    verdict_affecting: false
+    action: 解耦；慢门（7.5s/14.2s）属门内优化
+    measured_ms_mean: 7506
+
+  - gate_id: MAP-ALIGNMENT
+    impl: src/zephyr/gov_enforcement/commit_gates/industry_chain_map_gate.py
+    read_sites: [":110 yaml.safe_load(path.read_text(...)) — 磁盘 YAML"]
+    derived_read: ["config/industry_chain_map.yaml（真源，非生成）+ 生成的对齐报告面待证"]
+    evidence: read_site
+    verdict_affecting: partial
+    action: 真源侧不受影响；若对齐目标含生成 md 则必须 revalidate
+    measured_ms_mean: 5630
+
+  - gate_id: GATE-BATTLE-MAP-ALIGNMENT
+    impl: src/zephyr/gov_enforcement/commit_gates/battle_map_alignment_gate.py
+    derived_read: ["battle_map 生成面 + _registry/catalogs"]
+    evidence: static_literal
+    verdict_affecting: true_assumed
+    action: 必 stay_sync_or_revalidate——战斗地图对齐是本仓已知"生成件即判据对象"族
+    measured_ms_mean: 7180
+
+  - gate_id: DECISION-MAP
+    impl: src/zephyr/gov_enforcement/commit_gates/decision_map_gate.py
+    derived_read: ["决策图生成面（docs/02.../06_decision_architecture/decision_*.md）+ 源 YAML"]
+    evidence: static_literal
+    verdict_affecting: true
+    staleness_mode: "在案教训：hash-miss 回退分支曾以陈旧缓存产出假阳性——本车道的分类判据即以此为反面教材"
+    action: 禁止『陈旧件+静默回退』组合——repoint 源 YAML，或触发再生后二次读（revalidate）
+    measured_ms_mean: 5488
+
+  - gate_id: GATE-ERRCODE-CONSISTENCY
+    impl: src/zephyr/gov_enforcement/commit_gates/errcode_consistency_gate.py
+    read_sites: [":80 architecture_model/contracts/error_code_registry.yaml", ":45/:54 观测面已从工作树 rglob 改 git tree 批量读（实测 0.23s/640 文件）"]
+    evidence: read_site
+    verdict_affecting: false（已完成同类改造）
+    action: 作为 M1/M2 的**改造范式**引用
+    measured_ms_mean: 4650
+
+  - gate_id: DEPGRAPH-WRITE-PATH / DEPGRAPH-ENFORCEMENT / DEPGRAPH-FRESHNESS
+    impl: src/zephyr/gov_enforcement/commit_gates/depgraph_pre_registration_gate.py
+    read_sites: [":187/:233 get_depgraph_pg_connection(read_only=True) 查 nodes.build_status"]
+    derived_read: ["depgraph **DB**（apply_depgraph 事件直写，非文件生成扇出）"]
+    evidence: read_site
+    verdict_affecting: true_but_not_generator_side
+    action: 不受 B0 再生下线影响；但 RENAME-DEPGRAPH-SYNC 义务（改名后 --force 重建）仍须留在提交面，属『正确性要求同步』类
+    measured_ms_mean: 4676
+
+  - gate_id: CREATE-GUARD
+    impl: src/zephyr/gov_enforcement/commit_gates/create_guard.py
+    derived_read: ["tokens 册 + CapabilityLookup（册类），非文档生成件"]
+    evidence: read_site
+    verdict_affecting: false
+    action: 最慢门（21.3s/59.6s p90），提速归 D 系；B0 仅声明其不依赖再生扇出
+    measured_ms_mean: 21300
+
+  - gate_id: IMPORT-INTEGRITY / NO-IMPORT-SIDE-EFFECT / CH-BATCH-SIZE / GIT-CALL-BUDGET / REGISTRY-MASS-DELETION / CONSUMERS-ACCURACY / MUTABLE-CONST-WITHOUT-FINAL / CAPABILITY-OVERLAP / COMPLEXITY-GUARD / NO-LONG-PARAM-LIST
+    derived_read: ["无（staged blob / own-diff 面）"]
+    evidence: static_literal
+    verdict_affecting: false
+    action: 与再生解耦；列此仅为完备性（合计 mean 约 68.9s，是门禁链的主要构成）
+    measured_ms_mean: 68944
+
+report_only_consumers:
+  - "docs/02_enterprise_architecture/** 生成 md/html、path_tree、battle_map _zoomable_html、governance 报告：无任何在进程门禁以其内容作 pass/fail 判据（本轮核到的读取方是 worktree_drift_watchdog.py / write_audit_daemon.py 的路径字面量与 A3 报告渲染，属观测）"
+  - "结论：绝大多数衍生再生产物属 report_only ⇒ 下线零正确性代价，这正是 B0 命题成立的支点"
+
+unknowns:
+  - "gate_execution_stats.ms 未覆盖的门（121 观测 vs 180 登记）无法证明其不读衍生件——需静态 AST import 图补一遍（0.5 人时）"
+  - "pre-commit 68 hook 中仅 6 个与衍生/基线相关，其余 hook 是否间接读生成件未逐 opened 核（S3-GAP-02 同源）"

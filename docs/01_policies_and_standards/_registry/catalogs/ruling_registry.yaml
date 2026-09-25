@@ -5697,6 +5697,7 @@ entries:
   related_arch: []
   related_rulings: []
   superseded_by: null
+
 - ruling_id: "裁定#413"
   title: GPU 点火三件套（方案②朴素重排+预注册签发+提前开考）+分钟/tick 口径立法
   date: '2026-09-24'

@@ -7,7 +7,6 @@
 - 视图构造失败（git 异常）→ fail-safe 回退本体。
 - flag 直读嵌套键 immutable_tree（FlagRegistry 不收子键的在册陷阱）。
 """
-
 from __future__ import annotations
 
 import subprocess
@@ -25,7 +24,6 @@ def scratch_repo(tmp_path: Path) -> Path:
         r = subprocess.run(["git", "-C", str(tmp_path), *a], capture_output=True, text=True, errors="replace")
         assert r.returncode == 0, r.stderr
         return r.stdout.strip()
-
     git("init", "-q", "--initial-branch=main")
     git("config", "user.email", "t@t")
     git("config", "user.name", "t")
@@ -50,11 +48,11 @@ def test_flag_reads_nested_yaml_key(tmp_path, monkeypatch):
     (tmp_path / "config" / "flags.yaml").write_text(
         "flags:\n  git_operations:\n    immutable_tree: true\n", encoding="utf-8"
     )
+    import zephyr.gov_enforcement.rule_bridge.git_commit_gateway as g
+
     # 模块级函数内 _P(__file__).parents[3] 定根——monkeypatch _root 解析不可行，
     # 改为直接验证解析逻辑：临时 yaml 的语义
     import yaml
-
-    import zephyr.gov_enforcement.rule_bridge.git_commit_gateway as g
 
     data = yaml.safe_load((tmp_path / "config" / "flags.yaml").read_text(encoding="utf-8"))
     assert bool(((data.get("flags") or {}).get("git_operations") or {}).get("immutable_tree")) is True

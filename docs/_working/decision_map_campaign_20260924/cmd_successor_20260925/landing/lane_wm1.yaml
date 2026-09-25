@@ -1,0 +1,24 @@
+lane: wm1
+session_id: st-qmine-20260925
+note: >
+  LANE-WM1 双轨评估车道唯一产出（只读分析件，零代码零 flag 变更）。
+  落地前三条本车道实测信息，请 LANE-LAND 按门禁实测定性、勿凭记忆处置：
+  (1) CREATE-GUARD 覆盖面实测：src/zephyr/gov_enforcement/commit_gates/create_guard.py:168
+      _OTHER_FORMAT_EXTENSIONS = (".md", ".sh", ".ps1", ".mmd", ".json") ⇒ 本件 .md 在册，
+      新增须 creation_token（该 gate 的 INVARIANTS 明载：token 条目缺 merge_evaluation
+      字段=warn+审计不阻断，属内收判据首期 warn-only 过渡窗）；
+      token 册必须单批先行落 HEAD（配方真源=cmd_ledger/overnight_decisions_20260924.md:162）。
+  (2) TTL-METADATA 双字段已在件内（ttl: task_bound + doc_type: audit_report）；
+      doc_type 取值经词表核对（_registry/vocabularies/doc_type_vocabulary.yaml 九值之一，
+      其 ttl_default=task_bound 与本件一致）。
+      旁证提醒：同目录 cmd_successor_20260925/LEDGER.md 现用 doc_type: log，
+      "log" 不在九值词表内——由该件 owner 自修，本车道未动。
+  (3) 件内引用状态已逐件核 HEAD：17/HANDOVER/02/03/09/LEDGER_wave0 六件=IN-HEAD；
+      19_gpu_plan_and_master_backlog.md=NOT-IN-HEAD（仅 staged），案卷引用它处已标注，
+      勿因缺件而回改判据坐标。
+  (4) 文件名 WM1_24h_evaluation.md 不触 R5-DIGIT-SUFFIX（该规则拦 basename 以 _数字 结尾，
+      真源=scripts/governance/d5_architecture/validators/validate_directory_structure.py:237）。
+blocks_flip: true   # 本车道结论=不提请 Owner 翻转；见件内 §4 差额清单
+deadlines:
+  next_checkpoint: "72h 兜底点 2026-09-27 中午（判据真源=17 号文 §八 :76）"
+  reusable_command: "件内 §6 两条命令：写库版（reconcile+机械判绿）与零写旁证版（探针在岗证明）"

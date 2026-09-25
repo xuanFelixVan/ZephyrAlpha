@@ -4,6 +4,7 @@
 # [DEPENDENCIES] zephyr.pf_alloc.allocation_inputs(SQL_LATEST_REGIME_SNAPSHOT/validate_date_literal/resolve_reader，只 import 不改);
 #   schemas.categories.alloc_budget_daily(SQL_DAY_SLICE，只 import 不改);
 #   zephyr.signal_ashare.core.environment_switch(六段×四开关查表，只 import 不改);
+#   zephyr.signal_ashare.core.candidate_pool_snapshot(LK-04 通电侧带 lazy import，只 import 不改);
 #   zephyr.signal_ashare.sector.sector_gate(water_temp_response 查表，只 import 不改);
 #   zephyr.data.sector_state_pipeline(load_l2_admission 三原料供料，只 import 不改);
 #   zephyr.security.access_control.kill_switch(探针); zephyr.position.core.firm_risk_aggregator(约束栈默认面只读);
@@ -16,14 +17,17 @@
 #   L5 kill_switch 读态失败=按熔断保守侧处理（保命件方向不猜，D6）；
 #   L2 板块门=水温桥响应面（方案甲查表）+三原料门级三态（evaluated/insufficient/not_evaluated），
 #   admission_gate 放行判定不激活（归 G05 选股引擎），不伪造放行门态；
-#   所有读经注入 reader（默认 DatabaseService reader 角色），SQL 模板一律取 schemas/既有真源
+#   所有读经注入 reader（默认 DatabaseService reader 角色），SQL 模板一律取 schemas/既有真源；
+#   LK-04 通电侧带（L04-C02 最小侵入）：五层门快照契约不变（零写入/零判定维持），
+#   候选池采集经 candidate_pool_snapshot 生产者 ch_writer 正门落表，pool 为返回 dict
+#   附加键不进 absent_layers 降级矩阵，任何异常 fail-open 折 absent 留痕不炸门
 # [MODIFY-GUARD] none
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 本模块顶层函数永不外抛（缺席/异常全部折进返回结构 status=absent）；
 #   输入日期非法由 validate_date_literal 抛 ValueError（fail-closed，唯一例外）
-# [TESTS] tests/strategy_pipeline/test_decision_orchestrator.py; tests/strategy_pipeline/test_daily_gate_snapshot_l2.py
+# [TESTS] tests/strategy_pipeline/test_decision_orchestrator.py; tests/strategy_pipeline/test_daily_gate_snapshot_l2.py; tests/strategy_pipeline/test_daily_gate_snapshot_pool.py
 # [A_module] module_id=MOD-BT-213 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [CREATION-TOKEN] daily-gate-snapshot-mod-bt-213-20260916
@@ -44,12 +48,18 @@
         缺席→编排器 no_trade（D3 budget_run_missing）
     L5  kill_switch 读态（读态失败=按熔断保守侧，D6）+ drawdown/price_cage/t1_sellable
         可达性登记（v1 无持久化级位可读=absent 如实，保命件横切独立不受影响）
+    侧带 LK-04（L04-C02 最小侵入，SKEL:100/163）：L3 environment_switch 采集点旁
+        挂候选池日批（candidate_pool_snapshot.run_pool_batch_for_day）——收集当日
+        候选池并落 c1_market.stock_candidate_pool（M-41 载体）；只采不断言同款纪律，
+        结果进返回 dict "pool" 附加键，缺席/异常折 absent 不进 absent_layers。
 
 [ALGO_FLOW]
 输入: data_date（数据日 YYYY-MM-DD）+ 可选六段状态/成交额（L3 评估用）+ 注入式 reader
 前置检查: 日期字面量校验 fail-closed；其余全部 fail-open（缺席折进返回结构）
-执行: 逐层采集（L1 PIT 读 → L2 水温桥+三原料三态 → L3 查表 → L4 日切片 → L5 读态）
-输出: {"l1":..., "l2":..., "l3":..., "l4":..., "l5":..., "absent_layers": [...]}（JSON 可序列化）
+执行: 逐层采集（L1 PIT 读 → L2 水温桥+三原料三态 → L3 查表 → L4 日切片 → L5 读态
+    → 侧带候选池日批采集+落表）
+输出: {"l1":..., "l2":..., "l3":..., "l4":..., "l5":..., "pool":...,
+    "absent_layers": [...]}（JSON 可序列化）
 降级: 每层独立 fail-open，单层异常不炸其余层
 不变量: 零写入、零判定、零门模块改动
 [/ALGO_FLOW]
@@ -68,7 +78,12 @@ from zephyr.pf_alloc.allocation_inputs import (
 
 log = logging.getLogger(__name__)
 
-__all__: Final = ["collect_gate_snapshot", "read_latest_regime_snapshot", "read_market_turnover_yi", "resolve_table_name"]
+__all__: Final = [
+    "collect_gate_snapshot",
+    "read_latest_regime_snapshot",
+    "read_market_turnover_yi",
+    "resolve_table_name",
+]
 
 Reader = Callable[[str], Any]
 
@@ -116,11 +131,23 @@ def read_latest_regime_snapshot(data_date: str, *, reader: Reader | None = None)
     if not rows:
         return {"status": "absent", "error": "no_row", "layer": "L1"}
     cols = (
-        "run_id", "trade_date", "p_r1", "p_r2", "p_r3", "p_r4", "p_r10", "p_r11",
-        "p_r12", "dominant", "confidence", "confidence_signal", "risk_signal",
-        "shrinkage", "probs_json",
+        "run_id",
+        "trade_date",
+        "p_r1",
+        "p_r2",
+        "p_r3",
+        "p_r4",
+        "p_r10",
+        "p_r11",
+        "p_r12",
+        "dominant",
+        "confidence",
+        "confidence_signal",
+        "risk_signal",
+        "shrinkage",
+        "probs_json",
     )
-    row = dict(zip(cols, [str(x) if i in (0, 9) else x for i, x in enumerate(rows[0])]))
+    row = dict(zip(cols, [str(x) if i in (0, 9) else x for i, x in enumerate(rows[0])], strict=True))
     probs = {k: float(row[f"p_{k}"]) for k in ("r1", "r2", "r3", "r4", "r10", "r11", "r12")}
     return {
         "status": "ok",
@@ -245,16 +272,48 @@ def _collect_l2(
 def _collect_l3(market_state: str | None, turnover_yi: float | None) -> dict[str, Any]:
     """L3 采集：六段×四开关环境开关查表（evaluate_environment_switches，纯函数零改动）。"""
     if not market_state or turnover_yi is None:
-        return {"status": "absent", "layer": "L3",
-                "error": "state_or_turnover_missing", "layer_note": "六段状态或成交额代理缺席"}
+        return {
+            "status": "absent",
+            "layer": "L3",
+            "error": "state_or_turnover_missing",
+            "layer_note": "六段状态或成交额代理缺席",
+        }
     try:
         from zephyr.signal_ashare.core.environment_switch import evaluate_environment_switches
 
         switches = evaluate_environment_switches(market_state, turnover_yi)
-        return {"status": "ok", "layer": "L3", "switches": switches.to_dict(),
-                "turnover_yi_proxy": turnover_yi}
+        return {"status": "ok", "layer": "L3", "switches": switches.to_dict(), "turnover_yi_proxy": turnover_yi}
     except Exception as exc:  # noqa: BLE001 — 查表入参非法/模块异常=该层门关
         return {"status": "absent", "layer": "L3", "error": type(exc).__name__}
+
+
+def _collect_candidate_pool(
+    day: str,
+    *,
+    market_state: str | None = None,
+    turnover_yi: float | None = None,
+    l3: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """LK-04 通电侧带（L04-C02 最小侵入，SKEL:100/163）：候选池日批采集+落表。
+
+    在既有 L3 environment_switch 采集点旁（六段×四开关产物透传作来源标尺，不重算
+    不断言）驱动 candidate_pool_snapshot.run_pool_batch_for_day——收集当日候选池并
+    落 c1_market.stock_candidate_pool（M-41/D22 载体）。模块级函数=测试 monkeypatch
+    隔离位（宪法 §9.6，零生产写入）；独立 try/except fail-open，任何异常折
+    status=absent 留痕，不炸五层门快照（缺席语义与各层同款）。
+    """
+    try:
+        from zephyr.signal_ashare.core.candidate_pool_snapshot import (
+            PoolSnapshotParams,
+            run_pool_batch_for_day,
+        )
+
+        switches = l3.get("switches") if isinstance(l3, dict) else None
+        return run_pool_batch_for_day(
+            day, params=PoolSnapshotParams(market_state=market_state, turnover_yi=turnover_yi, switches=switches)
+        )
+    except Exception as exc:  # noqa: BLE001 — 侧带缺席不炸门（缺席语义同款）
+        return {"status": "absent", "error": type(exc).__name__, "sideband": "candidate_pool"}
 
 
 def _collect_l4(data_date: str, *, reader: Reader | None = None) -> dict[str, Any]:
@@ -266,12 +325,21 @@ def _collect_l4(data_date: str, *, reader: Reader | None = None) -> dict[str, An
     except Exception as exc:  # noqa: BLE001 — fail-open
         return {"status": "absent", "layer": "L4", "error": type(exc).__name__}
     if not rows:
-        return {"status": "absent", "layer": "L4", "error": "no_day_run",
-                "layer_note": "当日无 alloc run（预算无来源=不出预算，D3 由编排器接管）"}
+        return {
+            "status": "absent",
+            "layer": "L4",
+            "error": "no_day_run",
+            "layer_note": "当日无 alloc run（预算无来源=不出预算，D3 由编排器接管）",
+        }
     strategies = [
-        {"strategy_id": str(r[0]), "run_id": str(r[1]), "allocation": float(r[2]),
-         "global_shrinkage": float(r[3]), "effective_budget": float(r[4]),
-         "allocated_capital": float(r[5])}
+        {
+            "strategy_id": str(r[0]),
+            "run_id": str(r[1]),
+            "allocation": float(r[2]),
+            "global_shrinkage": float(r[3]),
+            "effective_budget": float(r[4]),
+            "allocated_capital": float(r[5]),
+        }
         for r in rows
     ]
     constraints: dict[str, Any] = {"status": "absent", "error": "not_wired_v1"}
@@ -310,8 +378,7 @@ def _collect_l5() -> dict[str, Any]:
         state = str(getattr(raw, "value", raw) or "").lower()
         out["kill_switch"] = {"status": "ok", "state": state or "unknown"}
     except Exception as exc:  # noqa: BLE001 — 读态失败=保守侧（D6）
-        out["kill_switch"] = {"status": "absent", "error": type(exc).__name__,
-                              "conservative_treatment": "tripped"}
+        out["kill_switch"] = {"status": "absent", "error": type(exc).__name__, "conservative_treatment": "tripped"}
     out["drawdown_state_machine"] = {"status": "absent", "error": "no_persisted_level_v1"}
     out["price_cage"] = {"status": "absent", "error": "per_symbol_config_v1"}
     out["t1_sellable"] = {"status": "builtin", "note": "纯函数语义件，无日度状态"}
@@ -334,8 +401,9 @@ def collect_gate_snapshot(
         reader: 注入式只读通道（None=DatabaseService reader 角色）。
 
     Returns:
-        JSON 可序列化 dict：{"l1".."l5", "absent_layers": [层名...]}。
+        JSON 可序列化 dict：{"l1".."l5", "pool", "absent_layers": [层名...]}。
         每层 status=ok|absent|builtin；absent 层由编排器降级矩阵接管（D2/D6）。
+        pool=LK-04 候选池侧带（status=ok|empty|absent，附加键不进降级矩阵）。
     """
     day = validate_date_literal(data_date)
     if turnover_yi is None:
@@ -345,14 +413,15 @@ def collect_gate_snapshot(
     # （consensus_climax 恒 False，双抑制触发器挂 28 号情绪周期桥，另卡）。
     l2 = _collect_l2(str(l1["dominant"]) if l1.get("status") == "ok" else None)
     l3 = _collect_l3(market_state, turnover_yi)
+    # LK-04 通电侧带（L04-C02 最小侵入）：L3 采集点旁挂候选池日批采集+落表。
+    # 五层门契约不变：pool 为附加键不进 absent_layers；异常折 absent（fail-open）。
+    pool = _collect_candidate_pool(day, market_state=market_state, turnover_yi=turnover_yi, l3=l3)
     l4 = _collect_l4(day, reader=reader)
     l5 = _collect_l5()
     absent_layers = [
-        layer for layer, snap in (("L1", l1), ("L2", l2), ("L3", l3), ("L4", l4))
-        if snap.get("status") == "absent"
+        layer for layer, snap in (("L1", l1), ("L2", l2), ("L3", l3), ("L4", l4)) if snap.get("status") == "absent"
     ]
     if out_ks := l5.get("kill_switch", {}):
         if out_ks.get("status") == "absent":
             absent_layers.append("L5")
-    return {"l1": l1, "l2": l2, "l3": l3, "l4": l4, "l5": l5,
-            "absent_layers": absent_layers}
+    return {"l1": l1, "l2": l2, "l3": l3, "l4": l4, "l5": l5, "pool": pool, "absent_layers": absent_layers}

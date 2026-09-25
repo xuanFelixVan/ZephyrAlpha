@@ -15,6 +15,7 @@
 # [TESTS] 手动冒烟：/api/health + /api/kline?symbol=600519
 # [A_module] module_id=MOD-L08-001 | layer=service | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: dashboard-heartbeat 为 api_server 服务进程内生遥测线程(daemon=True 随主进程退出,非独立常驻系统,60s 周期仅遥测写入),QMine F 批 PERM-TRIGGER 实弹裁定 st-qmine-20260925
 """Dashboard 数据 API 服务（只读）——8890 单端口一体服务页面+数据（W6-1，2026-09-19）。
 
 职责：把 ClickHouse 行情数据以 JSON 暴露给仪表盘前端；并经 StaticFiles mount（/api
@@ -34,6 +35,7 @@ serve_docs(8765) 回归文档本职。read-only，零写副作用。
 
 from __future__ import annotations
 
+import atexit
 import sys
 import socket
 import threading
@@ -41,7 +43,8 @@ import time
 import csv
 import json
 import logging
-from datetime import date, datetime
+import os
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any, Final
 
@@ -4333,13 +4336,16 @@ def promotion_advisories() -> dict[str, Any]:
     真源：promotion_advisory.list_advisories()（元素含 advisory_id/strategy_id/lifecycle_now/
     evidence{sim_pass_months,sim_breach_months,fw_backtest{run_id,sharpe,max_dd,total_return,
     panel_ok}}/recommendation/generated_at/decision?）。
-    模块未就绪/异常 → 200 + ok:false + 空列表 + error（前端渲染空态，不 500 硬崩）。
+    L6 S6 并入 kind=switch 切换审批卡（真源=approval_router.list_switch_advisories 投影，
+    元素形状=build_switch_advisory 产出 kind/switch_id/object_ref/a_vs_b/actions/
+    confirm_required/evidence_link，另含清单侧补的 advisory_id/observation/state）。
+    主源未就绪/异常 → 200 + ok:false + 空列表 + error（前端渲染空态，不 500 硬崩）；
+    切换建议源异常只降级本段（switch_error 留痕），不拖垮 strategy 主源。
     """
     try:
         from zephyr.strategy_pipeline import promotion_advisory
 
-        items = promotion_advisory.list_advisories() or []
-        return {"ok": True, "count": len(items), "data": items}
+        items = list(promotion_advisory.list_advisories() or [])
     except Exception as exc:  # noqa: BLE001 — 执行器缺位/异常一律降级空态（Y1 未落地属常态）
         return {
             "ok": False,
@@ -4347,6 +4353,26 @@ def promotion_advisories() -> dict[str, Any]:
             "count": 0,
             "data": [],
         }
+    switch_items: list[dict[str, Any]] = []
+    switch_error = ""
+    try:
+        from zephyr.ai_layer.switch_engine import approval_router
+
+        list_switch = getattr(approval_router, "list_switch_advisories", None)
+        if callable(list_switch):
+            switch_items = [
+                dict(x)
+                for x in (list_switch() or [])
+                if isinstance(x, dict) and x.get("kind") == approval_router.ADVISORY_KIND
+            ]
+        # list_switch_advisories 未就位（117 批后续件）=静默空列表，不算故障（同 Y1 降级语义）
+    except Exception as exc:  # noqa: BLE001 — 切换建议源异常只降级本段，留痕不阻断主源
+        switch_error = f"switch advisories unavailable: {str(exc)[:200]}"
+    items.extend(switch_items)
+    payload: dict[str, Any] = {"ok": True, "count": len(items), "data": items}
+    if switch_error:
+        payload["switch_error"] = switch_error
+    return payload
 
 
 @app.post("/api/promotion-decide")
@@ -4437,6 +4463,62 @@ if "pytest" not in sys.modules:
     threading.Thread(target=_ops_feed_loop, daemon=True, name="ops-alert-feed").start()
 
 
+# ── 仪表盘心跳（QMine 06 业务扶正②，2026-09-25）────────────────────────────
+# api_server 此前零心跳写入：面板"挂了几天无人知"（06 矿报②盲区）。本块常驻写
+# tmp/dashboard.heartbeat，管道格式 `ISO8601|<pid>|<pid>`——services_registry._read_heartbeat
+# 即认此格式（零新增解析器），deadman_switch.ps1 第 6 路条件门控通道消费（8890 有监听
+# 而心跳 stale>10min 才告警；面板未开=manual 常态，不假警）。
+HEARTBEAT_INTERVAL_S: Final[float] = 60.0
+HEARTBEAT_PATH: Final[Path] = _REPO / "tmp" / "dashboard.heartbeat"
+
+
+def _write_heartbeat() -> None:
+    """原子写一行心跳：tmp 落盘+os.replace 同卷原子替换（读端永不看到半行）。
+
+    双 pid 槽位按 guard|child 惯例同填本进程 pid（api_server 无 guard/child 分层，
+    services_registry 两槽位均取本值）。时区显式 UTC（RULE-SCHEMA-TZ）。
+    """
+    HEARTBEAT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    pid = os.getpid()
+    stamp = datetime.now(timezone.utc).isoformat()
+    tmp = HEARTBEAT_PATH.with_name(f".dashboard.heartbeat.{pid}.tmp")
+    tmp.write_text(f"{stamp}|{pid}|{pid}\n", encoding="utf-8")
+    os.replace(tmp, HEARTBEAT_PATH)
+
+
+def _cleanup_heartbeat() -> None:
+    """停机 best-effort 清除：仅当心跳文件仍记本进程 pid 才删（防误删后继实例心跳）。"""
+    try:
+        parts = HEARTBEAT_PATH.read_text(encoding="utf-8", errors="ignore").strip().split("|")
+        if len(parts) >= 2 and parts[1] == str(os.getpid()):
+            HEARTBEAT_PATH.unlink(missing_ok=True)
+    except OSError:
+        pass
+
+
+def _heartbeat_loop() -> None:
+    """常驻心跳线程体：启动首跳已写，此后每 60s 一跳；异常只记不抛（绝不带崩 api_server）。
+
+    QMine F（st-qmine-20260925）：本线程是 api_server 服务进程的内生遥测面（进程在即心跳在，
+    进程亡线程随亡），非独立常驻系统；有界活口=daemon 线程随主进程退出，与
+    live_strategy_adapter 的 M10 批准过渡形态同构，故行级豁免。
+    """
+    while True:  # noqa: m10-time-trigger  M10豁免: api_server 服务进程内生遥测线程,daemon=True随主进程退出,非独立永久系统(QMine F批 PERM-TRIGGER 实弹裁定)
+        time.sleep(HEARTBEAT_INTERVAL_S)
+        try:
+            _write_heartbeat()
+        except OSError as exc:
+            logger.warning("dashboard heartbeat write failed: %s", exc)
+
+
+# pytest 守卫（同 ops-alert-feed 惯例）：测试进程禁写生产 tmp/。生产两路入口
+# （python -m …/api_server 与 uvicorn 直跑）同经本模块导入，钩子均生效。
+if "pytest" not in sys.modules:
+    _write_heartbeat()
+    atexit.register(_cleanup_heartbeat)
+    threading.Thread(target=_heartbeat_loop, daemon=True, name="dashboard-heartbeat").start()
+
+
 # ── 静态页面一体化（W6-1，终极令 2026-09-19，Owner 已批：服务 2→1 故障面减半）────
 # 8890 单端口一体服务页面+数据。mount("/") 必须在全部 /api 路由注册之后（Starlette
 # 按注册序匹配：/api 先命中，其余路径落静态兜底）；html=True 使 / 与 /pages/xxx.html
@@ -4467,3 +4549,72 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
+
+# ── AI 层接线批路由（st-ailayer-final-20260924；promotion_advisories 同款降级惯例）──────────
+
+@app.get("/api/budget-advisories")
+def budget_advisories() -> dict[str, Any]:
+    """AI 层预算建议清单（budget 页数据源，只读）。
+
+    真源：zephyr.intelligence.budget_analyzer.analyze + render_budget_advisory_payload。
+    模块未就绪/异常 → 200 + ok:false + 空列表（前端渲染错误卡，不 500 硬崩）。
+    """
+    try:
+        from zephyr.intelligence import budget_analyzer
+
+        payload = budget_analyzer.render_budget_advisory_payload(budget_analyzer.analyze())
+        return {"ok": True, "data": payload}
+    except Exception as exc:  # noqa: BLE001 — 预算件缺位/异常降级空态（建议卡失败不拖垮仪表盘）
+        return {"ok": False, "error": f"budget_analyzer unavailable: {str(exc)[:200]}", "data": []}
+
+
+@app.get("/api/schedulegate-queue")
+def schedulegate_queue() -> dict[str, Any]:
+    """排产队列投影（schedulegate 页数据源，只读）。
+
+    真源：zephyr.ai_layer.scheduling.seed_writer.load_seeds + dispatcher.rank_pending
+    （score 降序+四读数挂起态；now 由服务端注入 tz-aware）。
+    """
+    try:
+        from datetime import datetime, timezone
+
+        from zephyr.ai_layer.scheduling import dispatcher
+        from zephyr.ai_layer.scheduling.seed_writer import load_seeds
+
+        doc = load_seeds()
+        orders = list(doc.get("orders") or doc.get("seeds") or [])
+        scored = dispatcher.rank_pending(orders, doc, datetime.now(timezone.utc))
+        return {"ok": True, "count": len(scored), "data": scored}
+    except Exception as exc:  # noqa: BLE001 — 排产件缺位降级空态
+        return {"ok": False, "error": f"scheduling unavailable: {str(exc)[:200]}", "count": 0, "data": []}
+
+
+@app.get("/api/schedulegate-skeletons")
+def schedulegate_skeletons() -> dict[str, Any]:
+    """骨架级提案包（利弊对照+两问打分展示；只读；owner_gate 提案不占自动派工队列）。"""
+    try:
+        from zephyr.ai_layer.scheduling.seed_writer import load_seeds
+
+        doc = load_seeds()
+        skeletons = [s for s in (doc.get("orders") or doc.get("seeds") or []) if s.get("owner_gate")]
+        return {"ok": True, "count": len(skeletons), "data": skeletons}
+    except Exception as exc:  # noqa: BLE001
+        return {"ok": False, "error": f"scheduling unavailable: {str(exc)[:200]}", "count": 0, "data": []}
+
+
+@app.post("/api/schedulegate-confirm")
+def schedulegate_confirm(payload: dict[str, Any] | None = None) -> dict[str, Any]:
+    """骨架级一键确认（本页唯一写路由）。
+
+    C9 判定落点（确认态写何处：seeds 状态机回写 or 审批事件账）无 DESIGN 定稿前，
+    本路由诚实拒执行（ok:false），不做假持久化；落点批文后单批接通。
+    """
+    body = payload or {}
+    return {
+        "ok": False,
+        "error": (
+            "schedulegate_confirm_not_wired: C9 确认态判定落点待批文"
+            f"（received order_id={str(body.get('order_id'))[:64]!r}），确认请求未生效"
+        ),
+    }

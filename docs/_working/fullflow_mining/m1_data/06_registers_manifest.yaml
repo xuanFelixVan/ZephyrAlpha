@@ -1,0 +1,79 @@
+# M1 数据链 · 注册表/真源清册（挖矿点快照，非常驻注册表）
+# 快照口径：2026-09-25 实测（st-commitspeed-tbl-20260924 挖矿班）
+# 纪律：本册是快照，常驻真源以 path 列指向的原件为准；计数禁止从本册引用做决策
+
+snapshot:
+  mined_at: "2026-09-25"
+  session: st-commitspeed-tbl-20260924
+  method: ls+grep+yaml 实解析+DatabaseService 只读 SELECT 交叉验证
+
+registries:
+  - {id: tasks, path: src/zephyr/data/config/tasks.yaml, role: 任务真源, count_field: task_count, count: 271, verified: yaml.safe_load 解析}
+  - {id: schedule, path: src/zephyr/data/config/schedule.yaml, role: 时段槽位真源, count_field: slot_count, count: 29, note: 文件头"16 个槽位"注释过期}
+  - {id: policies, path: src/zephyr/data/config/policies.yaml, role: 源策略(PolicyRegistry 初始态), count: null}
+  - {id: data_supply_sentinel, path: src/zephyr/data/config/data_supply_sentinel.yaml, role: 断供哨兵阈值真源, count_field: leg_count, count: 58}
+  - {id: quality_sentinel_tables, path: config/quality_sentinel_tables.yaml, role: 变异哨兵表册+wiring, count_field: table_count, count: 9}
+  - {id: known_data_gaps, path: src/zephyr/data/config/known_data_gaps.yaml, role: 数据缺口注册表, count_field: gap_count, count: 63, note: "#ARCH-CH-029 立，含 tick 通道 A/B 速查"}
+  - {id: resource_profile, path: config/resource_profile_registry.yaml, role: 槽位资源画像, count_field: data_slot_count, count: 29, note: 与 schedule 槽位一一对应}
+  - {id: business_data_categories, path: docs/03_modules/_cross_layer/database/business_data_categories.yaml, role: 表名/品类唯一真源, count_field: category_count, count: 338, note: 头注释"114 条(2026-08-15)"过期=文档矛盾}
+  - {id: data_asset_registry, path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml, role: TDM data_refs 值域, count_field: dataset_count, count: 295}
+  - {id: chain_registry, path: docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml, role: 传导链值域(机生禁手改), generator: scripts/governance/generate_chain_registry.py}
+  - {id: xref_axes_13, path: docs/01_policies_and_standards/_registry/catalogs/, role: TDM 13 轴注册表(见 05 册清单), count: 13}
+  - {id: infrastructure_registry, path: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml, role: INFRA-STORE-003 冷储条目锚, entry: INFRA-STORE-003}
+  - {id: storage_map_manual, path: docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/storage_map.md, role: 四盘地图永久手册(MOD-INF-043)}
+  - {id: data_retention_contract, path: docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml, role: 保留期/删除政策}
+  - {id: cleaning_policy, path: config/cleaning_policy.yaml, role: AI L3 清洗考尺真源(v0)}
+  - {id: architecture_issue_registry, path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml, role: 架构问题在案(#ARCH-351 等), entry_of_interest: "#ARCH-351 status=open"}
+
+live_databases:
+  clickhouse:
+    accessor: zephyr.infrastructure.database_service.get_db_service().get_clickhouse_conn(role, slot)
+    config_ssot: config/.env.clickhouse
+    databases:
+      - {db: c0_meta, tables: 1}
+      - {db: c1_backtest, tables: 16}
+      - {db: c1_market, tables: 201, note: 含 quarantine/legacy 影子表家族 8+ 张}
+      - {db: c3_fundamental, tables: 34}
+    key_tables_rowcount:
+      c1_market.tick_data: 8953165904
+      c1_market.kline_1min: 1486013551
+      c1_market.tick_depth_5: 103506452
+      c1_market.kline_daily: 10108926
+      c1_market.kline_daily_hfq: 10079242
+      c3_fundamental.news_data: 8249360
+      c1_market.l2_tick: 0
+    max_trade_date: "2026-09-24"
+  postgresql:
+    accessor: get_db_service().get_depgraph_conn(read_only=true)
+    role: depgraph 架构库（架构数据=DB 侧真源）
+  redis:
+    accessor: get_db_service().get_redis_conn()
+    config_ssot: config/.env.redis
+    partitions: {db0: 模拟盘, db1: 实盘, db2: 治理缓存}
+
+drives:
+  D: {role: 生产, content: 工作区+CH 热层}
+  F: {role: 冷储专项, root: F:/zephyr_cold, drawers: [00_manifest, 10_inbox, 20_raw, 30_corpus, 40_migration, 50_archive, 90_tmp, library], note: 10_inbox 与 20_raw/A_market 实查为空}
+  G: {role: 备份总仓, root: G:/backup, dirs: [ch_vm_backup, db_dumps, git_bundles, offrepo, predelete_deltas, working_vault]}
+  offsite: {role: Owner 月度离场盘, manual: docs/_working/disk_reorg_campaign/offsite_monthly_manual.md}
+
+scheduled_tasks_live:  # schtasks 2026-09-25 实测（数据链相关）
+  running: [ZephyrAlpha_DataScheduler, ZephyrAlpha_TickSubscriber, ZephyrAlpha_CHHealthProbe, ZephyrAlpha_BeltDaemon, ZephyrAlpha_ProcessReaper, ZephyrAlpha_WorktreeDriftWatchdog]
+  ready_relevant: [ZephyrAlpha-DailyBackup, ZephyrAlpha-WeeklyVMBackup, ZephyrAlpha-CH-OptimizeMerge-Weekly, ZEPHYR-RESTORE-DRILL, ZephyrAlpha_LibraryLedgerBackup, ZephyrAlpha_LibraryLedgerDrill, ZephyrAlpha_QMTWatchdog, ZephyrAlpha_IntradayFundFlow, ZephyrAlpha_IndexMinuteEOD, ZephyrAlpha_SectorSnapshot, ZephyrAlpha_RSSHub, ZephyrAlpha_AltFxECB, ZephyrAlpha_PostSettlement]
+  disabled_relevant: [ZephyrAlpha_TradingWatchdog, ZephyrAlpha_NightlySentiment, ZephyrAlpha_WeeklyRest]
+  retired_no_task: [ZephyrAlpha_BdpanTickWatch, RestartMiniQmt]
+
+hygiene_residues:  # CAS .tmp 残留（safe_write 中断残迹，点快照）
+  - scripts/ch/archiver.py.tmp.18276.22ca115b9ed9
+  - docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml.tmp.21732.70ad97c19748
+  - docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml.tmp.45444.0611b7de7ae2
+  - scripts/backtest/{factory_grid_executor,sim_daily_runner}.py.tmp.21732.*（多件）
+  - docs 全域 .tmp.* 计 2 件、scripts 全域更多（find 统计口径见 01-05 各册）
+
+# 环节覆盖对账（骨架册 D1-D12 vs 本车道分册）
+segment_coverage:
+  D1_D2_D3_D10: 01_ingest.md
+  D4_D5: 02_cleaning.md
+  D6_D7: 03_ch_warehouse.md
+  D8_D9: 04_cold_storage.md   # 骨架册标"未归属"，本册主张收编 M1
+  D11_D12: 05_tdm_crossaxis.md

@@ -1,0 +1,275 @@
+per_worker:
+  w0:
+    n_chains: 91
+    window_first: '2026-09-23T09:39:49.946538+00:00'
+    window_last: '2026-09-24T20:14:26.452917+00:00'
+    mean_chain_s: 204.2
+    median_chain_s: 84358.0
+    p90_chain_s: 607375.0
+    mean_n_specs: 92.8
+    mean_executed_gates: 55.6
+    mean_reused_gates: 24.5
+    reuse_ratio: 0.264
+    sum_chain_min: 309.8
+    n_failed_chains: 50
+  w1:
+    n_chains: 43
+    window_first: '2026-09-23T15:53:55.814254+00:00'
+    window_last: '2026-09-24T20:21:25.062195+00:00'
+    mean_chain_s: 207.7
+    median_chain_s: 65125.0
+    p90_chain_s: 418251.0
+    mean_n_specs: 79
+    mean_executed_gates: 47.1
+    mean_reused_gates: 22.2
+    reuse_ratio: 0.258
+    sum_chain_min: 148.9
+    n_failed_chains: 22
+  w2:
+    n_chains: 206
+    window_first: '2026-09-23T15:49:44.232191+00:00'
+    window_last: '2026-09-24T20:09:06.868555+00:00'
+    mean_chain_s: 140.5
+    median_chain_s: 56640.0
+    p90_chain_s: 333156.0
+    mean_n_specs: 99.5
+    mean_executed_gates: 58.3
+    mean_reused_gates: 27.1
+    reuse_ratio: 0.27
+    sum_chain_min: 482.4
+    n_failed_chains: 62
+  w3:
+    n_chains: 48
+    window_first: '2026-09-23T15:57:42.626584+00:00'
+    window_last: '2026-09-24T20:02:14.361224+00:00'
+    mean_chain_s: 212.2
+    median_chain_s: 80904.0
+    p90_chain_s: 450796.0
+    mean_n_specs: 86.0
+    mean_executed_gates: 52.1
+    mean_reused_gates: 22.4
+    reuse_ratio: 0.239
+    sum_chain_min: 169.7
+    n_failed_chains: 24
+top_slow_gates_per_worker:
+  w0:
+  - gate: CREATE-GUARD
+    cum_s: 7971.5
+    runs: 78
+    mean_s: 102.2
+  - gate: RECONCILER-HEALTH
+    cum_s: 1463.9
+    runs: 26
+    mean_s: 56.3
+  - gate: REGISTRY-MASS-DELETION
+    cum_s: 1422.9
+    runs: 91
+    mean_s: 15.6
+  - gate: CAPABILITY-OVERLAP
+    cum_s: 922.5
+    runs: 91
+    mean_s: 10.1
+  - gate: REFERENCE-INTEGRITY
+    cum_s: 706.8
+    runs: 71
+    mean_s: 10.0
+  - gate: SSOT-REDEFINITION
+    cum_s: 406.7
+    runs: 82
+    mean_s: 5.0
+  - gate: BLUEPRINT-HEADER
+    cum_s: 340.3
+    runs: 83
+    mean_s: 4.1
+  - gate: TTL-METADATA
+    cum_s: 307.8
+    runs: 75
+    mean_s: 4.1
+  - gate: REGISTRY-YAML-PARSE
+    cum_s: 301.1
+    runs: 78
+    mean_s: 3.9
+  - gate: IMPORT-INTEGRITY
+    cum_s: 254.3
+    runs: 88
+    mean_s: 2.9
+  - gate: FILE-COPY
+    cum_s: 247.2
+    runs: 84
+    mean_s: 2.9
+  - gate: COMPLEXITY-GUARD
+    cum_s: 232.9
+    runs: 83
+    mean_s: 2.8
+  w1:
+  - gate: CREATE-GUARD
+    cum_s: 4947.7
+    runs: 28
+    mean_s: 176.7
+  - gate: CAPABILITY-OVERLAP
+    cum_s: 540.7
+    runs: 43
+    mean_s: 12.6
+  - gate: REFERENCE-INTEGRITY
+    cum_s: 523.7
+    runs: 26
+    mean_s: 20.1
+  - gate: SSOT-REDEFINITION
+    cum_s: 248.4
+    runs: 31
+    mean_s: 8.0
+  - gate: REGISTRY-MASS-DELETION
+    cum_s: 224.9
+    runs: 39
+    mean_s: 5.8
+  - gate: RECONCILER-HEALTH
+    cum_s: 207.3
+    runs: 9
+    mean_s: 23.0
+  - gate: FOREIGN-CHANGE-DETECTION
+    cum_s: 168.2
+    runs: 25
+    mean_s: 6.7
+  - gate: COMPLEXITY-GUARD
+    cum_s: 150.2
+    runs: 36
+    mean_s: 4.2
+  - gate: SYNTAX-VALIDATION
+    cum_s: 148.7
+    runs: 11
+    mean_s: 13.5
+  - gate: FILE-COPY
+    cum_s: 113.0
+    runs: 35
+    mean_s: 3.2
+  - gate: BLUEPRINT-HEADER
+    cum_s: 84.8
+    runs: 35
+    mean_s: 2.4
+  - gate: REAL-KEY-REFERENCE-SCAN
+    cum_s: 83.4
+    runs: 38
+    mean_s: 2.2
+  w2:
+  - gate: CREATE-GUARD
+    cum_s: 8423.8
+    runs: 201
+    mean_s: 41.9
+  - gate: REFERENCE-INTEGRITY
+    cum_s: 1798.2
+    runs: 184
+    mean_s: 9.8
+  - gate: REGISTRY-MASS-DELETION
+    cum_s: 1779.1
+    runs: 205
+    mean_s: 8.7
+  - gate: CAPABILITY-OVERLAP
+    cum_s: 1576.6
+    runs: 206
+    mean_s: 7.7
+  - gate: RECONCILER-HEALTH
+    cum_s: 1259.0
+    runs: 70
+    mean_s: 18.0
+  - gate: COMPLEXITY-GUARD
+    cum_s: 985.8
+    runs: 201
+    mean_s: 4.9
+  - gate: SSOT-REDEFINITION
+    cum_s: 780.4
+    runs: 201
+    mean_s: 3.9
+  - gate: TTL-METADATA
+    cum_s: 720.0
+    runs: 200
+    mean_s: 3.6
+  - gate: IMPORT-INTEGRITY
+    cum_s: 560.3
+    runs: 201
+    mean_s: 2.8
+  - gate: BLUEPRINT-HEADER
+    cum_s: 492.9
+    runs: 198
+    mean_s: 2.5
+  - gate: REAL-KEY-REFERENCE-SCAN
+    cum_s: 448.0
+    runs: 203
+    mean_s: 2.2
+  - gate: FILE-PLACEMENT-TTL
+    cum_s: 441.0
+    runs: 201
+    mean_s: 2.2
+  w3:
+  - gate: CREATE-GUARD
+    cum_s: 3307.5
+    runs: 38
+    mean_s: 87.0
+  - gate: CAPABILITY-OVERLAP
+    cum_s: 674.3
+    runs: 48
+    mean_s: 14.0
+  - gate: IMPORT-INTEGRITY
+    cum_s: 425.0
+    runs: 43
+    mean_s: 9.9
+  - gate: RECONCILER-HEALTH
+    cum_s: 387.0
+    runs: 12
+    mean_s: 32.3
+  - gate: REFERENCE-INTEGRITY
+    cum_s: 364.0
+    runs: 31
+    mean_s: 11.7
+  - gate: MODULE-ID-CONSISTENCY
+    cum_s: 359.7
+    runs: 21
+    mean_s: 17.1
+  - gate: COMPLEXITY-GUARD
+    cum_s: 342.4
+    runs: 42
+    mean_s: 8.2
+  - gate: SSOT-REDEFINITION
+    cum_s: 312.1
+    runs: 38
+    mean_s: 8.2
+  - gate: REGISTRY-MASS-DELETION
+    cum_s: 303.5
+    runs: 43
+    mean_s: 7.1
+  - gate: ORPHAN-MODULE
+    cum_s: 205.2
+    runs: 41
+    mean_s: 5.0
+  - gate: DEPGRAPH-ENFORCEMENT
+    cum_s: 200.5
+    runs: 43
+    mean_s: 4.7
+  - gate: BLUEPRINT-HEADER
+    cum_s: 185.7
+    runs: 39
+    mean_s: 4.8
+same_window_20260924:
+  w0:
+    n_chains: 91
+    mean_chain_s: 204.2
+    median_chain_s: 84358.0
+    mean_n_specs: 92.8
+    mean_executed_gates: 55.6
+  w1:
+    n_chains: 43
+    mean_chain_s: 207.7
+    median_chain_s: 65125.0
+    mean_n_specs: 79
+    mean_executed_gates: 47.1
+  w2:
+    n_chains: 206
+    mean_chain_s: 140.5
+    median_chain_s: 56640.0
+    mean_n_specs: 99.5
+    mean_executed_gates: 58.3
+  w3:
+    n_chains: 48
+    mean_chain_s: 212.2
+    median_chain_s: 80904.0
+    mean_n_specs: 86.0
+    mean_executed_gates: 52.1

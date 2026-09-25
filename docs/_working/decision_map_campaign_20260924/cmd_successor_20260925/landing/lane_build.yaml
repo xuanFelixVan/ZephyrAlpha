@@ -1,0 +1,31 @@
+lane: build
+session_id: st-qmine-20260925
+written_by: 总筹（LANE-BUILD 撞 150 轮上限身亡且未及写本清单与案卷，此清单由总筹按盘上实证代拟）
+note: >
+  归属已逐件核实（git status + diff --stat）：
+  TRD-A10 桥两缺陷＝新建 bridge_instruction_kernel.py 抽核 + 4 件适配器/管理腿改动 + 新证尺测试；
+  红证实录在 .runtime/tmp/trd_a10_red_before_fix.log（7 failed, 24 passed＝修复前必红已成立）
+  与 trd_a10_broker_red_before_fix.log。
+  DU-11 daily_valuation 部分写入病根＝akshare_provider.py 改动，红证在
+  .runtime/tmp/du11_red_before_fix.log（1 failed, 5 passed）。
+  【不属本车道，勿随本袋提交】src/zephyr/simulation/deflated_sharpe_calculator.py
+  （+209 行，haircut Sharpe NaN fail-closed 语义）与 src/zephyr/data/macro_vintage.py
+  —— 前者判归 LANE-REEXAM（多重检验三件套面），后者判归 LANE-CNS（宏观消费面），
+  由各自清单认领；若两车道最终未认领，收尾时由总筹单独立袋。
+  落地前置义务：新建 .py 需 CREATE-GUARD token + add_module_translation（落 entries: 段）；
+  碰实现代码须同批同步 TDM algo_note_zh + algo_flow yaml（ALGO-NOTE-SYNC）；
+  本袋为 ex_core 执行域实现件，禁与文档袋混装（跨域需 --allow-multi-domain 留痕）。
+files:
+  - src/zephyr/ex_core/bridge_instruction_kernel.py
+  - src/zephyr/ex_core/adapters/qmt_file_bridge_broker.py
+  - src/zephyr/ex_core/adapters/qmt_file_bridge_integration.py
+  - src/zephyr/ex_core/order_manager.py
+  - src/zephyr/ex_core/trading_session.py
+  - tests/ex_core/test_bridge_instruction_kernel_trd_a10.py
+  - src/zephyr/data/implementations/akshare_provider.py
+  # ↓ LANE-BUILD2 验收车道追加（2026-09-26，只追加自己这两条，未改上面任何一条）
+  # 1) broker 尺：前任已改但总筹代拟清单时漏列（改了实现不带上尺=落地即红灯）；
+  #    本车道在其中新增 4 条用例（#FAIL 消费不炸＋告警降级三条），必须同袋原子落。
+  - tests/ex_core/adapters/test_qmt_file_bridge_broker.py
+  # 2) 本车道案卷（判据打分与红证索引，docs/_working 豁免区件，仅 ttl）
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/BUILD_trd_a10_du11.md

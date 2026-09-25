@@ -1,0 +1,34 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §model_intel
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 渐进披露：L0=本卡一句话；L1=src/zephyr/intelligence/model_intel/ + model_profiling/ 各模块 docstring；
+# L2=docs/_working/ai_layer_vision/OBJ_M_models/DESIGN.md；L3=P1_construction_review.md 复审记录。
+module_id: MOD-INF-037
+capability_id: obj_m_models
+category: obj_m_models
+description: OBJ_M 模型对象线——给模型建"考试制"让数据说话（M1-M5）：M1 模型情报扫描（源注册表→抓取→价快照 diff→情报卡四闸校验+simhash 查重，唯一网络出口 10s 超时）、M2 模型库三表 DDL（PostgreSQL ai_layer_model schema+双轴打分口径）、M3 同任务双跑执行器（五层分层抽样可复现+McNemar/Wilcoxon 手写统计+stratum_verdict 四态机检+判据冻结 fail-closed）、M5 预算分析器（判据全纯函数+日报告+ERROR 及以上告警路由 Alerter）+L4 venue_dual_run 薄封装（零考尺逻辑全转调 M3）；事件触发+周历窗口驱动码内零定时器，单测 LLM 调用面注入零真实调用，禁裸连库
+examples:
+- python scripts/ai_layer/apply_model_library_ddl.py（模型库三表幂等部署，ai_layer_model schema）
+- python -m pytest tests/intelligence/model_intel/ tests/intelligence/model_profiling/ tests/intelligence/test_budget_analyzer.py tests/ai_layer/test_model_library_ddl.py tests/ai_layer/test_model_scoring_policy.py（116 用例）
+input_schema:
+  properties: {}
+  type: object
+name: OBJ_M Models Object Pack
+output_schema:
+  properties: {}
+  type: object
+priority: P1
+registered_at: '2026-09-24T00:00:00+00:00'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- ai_layer
+- models
+- OBJ_M
+- model_library

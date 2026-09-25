@@ -6,10 +6,18 @@
 覆盖裁定矩阵全部分支（2026-08-28 裁定）：
 白名单/Trae 后代永不杀、DANGEROUS 即杀、.runtime 孤儿即杀、孤儿分级、
 非孤儿长命空转分级、自保。fail-safe 方向断言：边界条件一律偏向不杀。
+
+另覆盖 kill 日志可归因字段（处方 P-12，2026-09-26）：
+旧渲染只落 PID+reason→ 同 reason 的两个不同进程在日志里无法区分（红证），
+新渲染行尾追加 name+cmd 片段→ 可区分；并钉住行格式向后兼容
+（`KILLED PID=` / `reason=` 既有读法）、cmdline 硬截断、缺失字段不抛、
+疑似密钥实参脱敏、控制字符不拆行。
 """
 
 from __future__ import annotations
 
+import json
+import re
 import sys
 import time
 from pathlib import Path
@@ -21,15 +29,37 @@ _SRC = _REPO_ROOT / "src"
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+import zephyr.trading.process_reaper as pr  # noqa: E402
 from zephyr.trading.process_reaper import (  # noqa: E402
+    _CMD_SNIPPET_MAX,
     _DERIVED_ORPHAN_MARKERS,
     _GHOST_STRIKES_TO_KILL,
     _advance_ghost_state,
     _is_trae_child_cmdline,
+    _log_kill,
     _reap_derived_orphans,
     classify_process,
     classify_trae_process,
 )
+
+
+@pytest.fixture(autouse=True)
+def _isolate_kill_log(monkeypatch, tmp_path):
+    """测试隔离铁律（宪法 §9.6）：kill 日志一律落 tmp_path，禁写生产 data/runtime/。
+
+    本文件既有的 _reap_derived_orphans / _reap_incubated_expired 用例原先会经
+    _log_kill 写生产 data/runtime/reaper_kill.log（P-12 施工时发现的既有泄漏），
+    此处整册重定向，不改任何判定语义。
+    """
+    monkeypatch.setattr(pr, "_KILL_LOG", tmp_path / "reaper_kill.log")
+
+
+def _read_kill_lines():
+    p = pr._KILL_LOG
+    if not p.exists():
+        return []
+    return [l for l in p.read_text(encoding="utf-8").splitlines() if l]
+
 
 _BASE = dict(
     pid=1234,
@@ -409,6 +439,218 @@ class TestDerivedOrphans:
         joined = [rx.pattern for rx in _DERIVED_ORPHAN_MARKERS]
         assert any("llama-server" in p for p in joined)
         assert any("serve" in p for p in joined)
+
+
+# ============== kill 日志可归因字段（处方 P-12，2026-09-26 观测面修复）==============
+# 事故背景：09-25 10:37:34 那一刀（PID=18208, reason=runtime_dir_orphan:age=36min）
+# 在旧行格式下只能靠 .runtime/process_incubator/ledger.jsonl 反查 PID 才认出
+# owner=reconcile_runner（它正托管一轮备份，被 _KILL_CHILD_RECURSIVE 级联带走）。
+# 本组用例只钉观测字段，不触碰任何判定阈值/判据语义。
+
+
+# 修复前行格式的机械复刻：签名兼容（吸收新 kwargs）但**丢弃** name/cmdline——
+# 这正是"旧实现风格"，用于红证。
+def _install_legacy_renderer(monkeypatch) -> None:
+    def _legacy(pid, reason, dry_run, name="", cmdline=""):  # noqa: ANN001
+        path = pr._KILL_LOG
+        path.parent.mkdir(parents=True, exist_ok=True)
+        tag = "DRY-RUN" if dry_run else "KILLED"
+        with open(path, "a", encoding="utf-8") as f:
+            f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {tag} PID={pid} reason={reason}\n")
+
+    monkeypatch.setattr(pr, "_log_kill", _legacy)
+
+
+# 行格式向后兼容契约：既有 grep 口径（'KILLED PID=' / 'reason='）必须继续命中
+_LEGACY_LINE_RE = re.compile(r"^\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}\] (KILLED|DRY-RUN) PID=\d+ reason=\S+")
+
+
+def _derived_orphan_pair():
+    """两个同 reason（derived_orphan_aged:age=3.0h）但身份不同的孤儿——P-12 悬案原型。"""
+    aged = time.time() - 3 * 3600.0
+    return {
+        201: {
+            "name": "llama-server.exe",
+            "ppid": 1,
+            "cmdline": r"C:\Programs\Ollama\llama-server.exe --model qwen2.5 --host 0.0.0.0",
+            "create_time": aged,
+        },
+        202: {
+            "name": "ollama.exe",
+            "ppid": 1,
+            "cmdline": r"C:\Programs\Ollama\ollama.exe serve",
+            "create_time": aged,
+        },
+    }
+
+
+def _strip_pid(line: str) -> str:
+    return re.sub(r"PID=\d+", "PID=<n>", line)
+
+
+class TestKillLogAttribution:
+    """红证 + 新行为：kill 行必须能回答"杀的是谁"，同时不破既有行格式。"""
+
+    def test_red_proof_legacy_renderer_cannot_attribute(self, monkeypatch):
+        """红证：把渲染换回修复前实现，跑同一条窄路径（_reap_derived_orphans）——
+        两次收割的日志行去掉 PID 后逐字符相同，日志里没有任何身份字段。"""
+        import zephyr.trading.process_reaper as m
+
+        _install_legacy_renderer(monkeypatch)
+        monkeypatch.setattr(m, "_collect_metrics", lambda d: None)
+        monkeypatch.setattr(m, "_kill_pid_tree", lambda pid: True)
+        report = m.ReapReport()
+        m._reap_derived_orphans(_derived_orphan_pair(), False, report)
+        lines = _read_kill_lines()
+        assert len(lines) == 2, f"窄路径应落 2 行，实得 {lines}"
+        # 旧格式：无身份字段可读
+        assert all(" name=" not in l and " cmd=" not in l for l in lines), lines
+        # 旧格式：两条不同进程的收割在"身份"维度完全不可区分（除 PID 外逐字符同）
+        assert _strip_pid(lines[0]) == _strip_pid(lines[1]), lines
+
+    def test_new_renderer_distinguishes_same_reason_two_processes(self, monkeypatch):
+        import zephyr.trading.process_reaper as m
+
+        monkeypatch.setattr(m, "_collect_metrics", lambda d: None)
+        monkeypatch.setattr(m, "_kill_pid_tree", lambda pid: True)
+        report = m.ReapReport()
+        m._reap_derived_orphans(_derived_orphan_pair(), False, report)
+        lines = _read_kill_lines()
+        assert len(lines) == 2, lines
+        assert _strip_pid(lines[0]) != _strip_pid(lines[1]), lines
+        assert "name=llama-server.exe" in lines[0] and "llama-server.exe --model qwen2.5" in lines[0], lines[0]
+        assert "name=ollama.exe" in lines[1] and "ollama.exe serve" in lines[1], lines[1]
+        # 既有 grep 口径未破
+        assert all(_LEGACY_LINE_RE.match(l) for l in lines), lines
+
+    def test_dry_run_tag_and_reason_field_unchanged(self, monkeypatch):
+        import zephyr.trading.process_reaper as m
+
+        monkeypatch.setattr(m, "_collect_metrics", lambda d: None)
+        m._reap_derived_orphans(_derived_orphan_pair(), True, m.ReapReport())
+        line = _read_kill_lines()[0]
+        assert "] DRY-RUN PID=201 reason=derived_orphan_aged:age=3.0h " in line, line
+        assert " cmd=" in line and " name=llama-server.exe" in line, line
+
+    def test_failed_kill_marker_stays_in_reason_field(self, monkeypatch):
+        import zephyr.trading.process_reaper as m
+
+        monkeypatch.setattr(m, "_collect_metrics", lambda d: None)
+        monkeypatch.setattr(m, "_kill_pid_tree", lambda pid: False)
+        m._reap_derived_orphans(_derived_orphan_pair(), False, m.ReapReport())
+        line = _read_kill_lines()[0]
+        assert "[FAILED]" in line.split(" name=")[0], line  # [FAILED] 仍属 reason 段，不跑到行尾
+        assert line.count(" name=") == 1 and line.count(" cmd=") == 1, line
+
+    def test_cmdline_hard_truncated(self):
+        long_cmd = r"python D:\ZephyrAlpha\scripts\long_run.py --tag " + "A" * 500
+        _log_kill(7001, "orphan_aged:age=3.0h", dry_run=False, name="python.exe", cmdline=long_cmd)
+        line = _read_kill_lines()[-1]
+        cmd = line.split(" cmd=", 1)[1]
+        assert cmd.endswith("...") and len(cmd) <= _CMD_SNIPPET_MAX + 3, f"截断失效 len={len(cmd)}"
+        assert cmd[:_CMD_SNIPPET_MAX] == long_cmd[:_CMD_SNIPPET_MAX], cmd
+
+    def test_name_and_cmdline_missing_render_dash_and_never_raise(self):
+        # 老调用形状（三参数）继续可用，缺字段渲染为 '-'，不抛
+        _log_kill(7002, "ghost_only", dry_run=False)
+        # 显式空串 / None / 非字符串 / __str__ 抛异常的怪对象：一律不得反噬收割动作
+        _log_kill(7003, "ghost_only", dry_run=False, name="", cmdline="")
+        _log_kill(7004, "ghost_only", dry_run=True, name=None, cmdline=None)
+
+        class _Boom:
+            def __str__(self):
+                raise RuntimeError("畸形 name 对象")
+
+        _log_kill(7005, "ghost_only", dry_run=False, name=_Boom(), cmdline=12345)
+        lines = _read_kill_lines()
+        assert lines[0].endswith(" name=- cmd=-"), lines[0]
+        assert lines[1].endswith(" name=- cmd=-"), lines[1]
+        assert lines[2].endswith(" name=- cmd=-"), lines[2]
+        assert " name=- cmd=12345" in lines[3], lines[3]
+
+    def test_secret_args_redacted(self):
+        _log_kill(
+            7006,
+            "orphan_aged:age=2.1h",
+            dry_run=False,
+            name="python.exe",
+            cmdline=r"python job.py --password=Sup3rS3cret --token: abc.def.ghi",
+        )
+        line = _read_kill_lines()[-1]
+        assert "Sup3rS3cret" not in line and "abc.def.ghi" not in line, line
+        assert "password=***" in line and "token: ***" in line, line
+
+    def test_control_chars_cannot_split_log_line(self):
+        evil = "python ok.py\n[2026-09-26 00:00:00] KILLED PID=99999 reason=forged"
+        _log_kill(7007, "orphan_aged:age=2.0h", dry_run=False, name="python.exe", cmdline=evil)
+        lines = _read_kill_lines()
+        assert len(lines) == 1, f"一行一条目不变量被破坏: {lines}"
+        # 伪造串被压平进 cmd 字段内：行首仍是唯一合法条目，PID/reason/name 段不可被污染
+        assert re.match(_LEGACY_LINE_RE, lines[0]), lines[0]
+        head = lines[0].split(" cmd=", 1)[0]
+        assert "forged" not in head and "99999" not in head, head
+        assert lines[0].count("[2026-09-26 00:00:00]") == 1 or "00:00:00]" in lines[0].split(" cmd=", 1)[1]
+
+    def test_ghost_state_machine_carries_name(self):
+        """幽灵族窄路径的归因字段来源：状态机条目须带 name（旧状态文件缺键也不崩）。"""
+        current = {200: {"reason": "trae_orphan:ppid=100_gone", "cmdline": _RENDERER_CMD, "name": "Trae CN.exe"}}
+        state, _ = _advance_ghost_state({"version": 1, "suspects": {}}, current, _NOW)
+        assert state["suspects"]["200"]["name"] == "Trae CN.exe"
+        legacy_state = {
+            "version": 1,
+            "suspects": {"200": {"strikes": 1, "first_seen": _NOW, "reason": "r", "cmdline": "c"}},
+        }
+        state2, kill_ready = _advance_ghost_state(legacy_state, current, _NOW)
+        assert state2["suspects"]["200"]["name"] == "Trae CN.exe"
+        assert kill_ready == []
+        # 嫌疑集本身缺 name（历史/异常路径）→ 空串，kill 日志渲染 '-'
+        state3, _ = _advance_ghost_state({"version": 1, "suspects": {}}, {200: {"reason": "r", "cmdline": "c"}}, _NOW)
+        assert state3["suspects"]["200"]["name"] == ""
+
+
+class TestKillLogAttributionOtherLanes:
+    """其余 _log_kill 调用点（孵化收割 / 孤儿主循环）同批补齐。"""
+
+    def test_incubation_kill_log_carries_live_and_registered_name(self, monkeypatch, tmp_path):
+        ledger = tmp_path / "led" / "ledger.jsonl"
+        monkeypatch.setattr(pr, "_INCUBATOR_LEDGER_REL", ledger)  # 绝对路径：pathlib 取绝对侧
+        monkeypatch.setattr(pr, "_kill_pid_tree", lambda pid: True)
+        ledger.parent.mkdir(parents=True, exist_ok=True)
+        rec = {
+            "record_id": "r1",
+            "child_pid": 18208,
+            "name": "powershell.exe",
+            "cmd": r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -File scripts\backup\backup.ps1",
+            "spawned_at": time.time() - 3600,
+            "expected_lifetime_s": 60.0,
+            "owner": "reconcile_runner",
+        }
+        ledger.write_text(json.dumps(rec, ensure_ascii=False) + "\n", encoding="utf-8")
+        report = pr.ReapReport(dry_run=False)
+        pr._reap_incubated_expired({18208: {"name": "powershell.exe", "cmdline": rec["cmd"]}}, False, report)
+        line = _read_kill_lines()[-1]
+        assert _LEGACY_LINE_RE.match(line), line
+        assert "name=powershell.exe" in line and "backup.ps1" in line, line
+        assert "owner=reconcile_runner" in line, line  # reason 段格式未动
+
+    def test_incubation_kill_log_survives_nameless_records(self, monkeypatch, tmp_path):
+        """登记里没 name、进程表条目也没 name（孤儿矩阵外部输入）→ 渲染 '-' 不抛。"""
+        ledger = tmp_path / "led" / "ledger.jsonl"
+        monkeypatch.setattr(pr, "_INCUBATOR_LEDGER_REL", ledger)
+        monkeypatch.setattr(pr, "_kill_pid_tree", lambda pid: True)
+        ledger.parent.mkdir(parents=True, exist_ok=True)
+        rec = {
+            "record_id": "r2",
+            "child_pid": 18209,
+            "cmd": "",
+            "spawned_at": time.time() - 3600,
+            "expected_lifetime_s": 60.0,
+            "owner": "x",
+        }
+        ledger.write_text(json.dumps(rec) + "\n", encoding="utf-8")
+        pr._reap_incubated_expired({18209: {}}, False, pr.ReapReport(dry_run=False))
+        line = _read_kill_lines()[-1]
+        assert line.endswith(" name=- cmd=-"), line
 
 
 if __name__ == "__main__":

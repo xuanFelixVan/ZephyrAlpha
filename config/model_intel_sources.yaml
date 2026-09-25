@@ -1,0 +1,214 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §model_intel
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: L
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# ssot: M1 情报源唯一注册表（OBJ_M DESIGN §2.1 逐源照录）
+# --- 治理锚定结束 ---
+schema_version: 1.0.0
+ttl: permanent
+doc_type: registry
+title: M1 模型情报扫描源注册表
+status: active
+version: 1.0.0
+date: '2026-09-23'
+summary: OBJ_M M1 扫描器的 12 个情报源登记（轨道/URL/抓取方式/频率/配额/核验状态逐源写死，扫描器 fail-closed 统读）。
+# 防灌水闸（DESIGN §2.2）：情报卡进漏斗每日总量 ≤5 张（全局绑定上限）；
+# 各源 quota.cards_per_day_max 是该源单日产出上限（源活跃时的界，非全天必达）。
+funnel:
+  cards_per_day_max_total: 5
+sources:
+  # 1 价格轨：DeepSeek 官方价页（PEAK/OFF-PEAK 双列）——已核验，与仓内 model_pricing.yaml 2026-08-22 调价注释互证
+  - source_id: deepseek-pricing
+    track: 价格轨
+    name: DeepSeek 官方价页（PEAK/OFF-PEAK 双列）
+    url: https://api-docs.deepseek.com/quick_start/pricing/
+    publisher: DeepSeek 官方
+    fetch_method: webfetch_light
+    frequency:
+      tier: shallow
+      per_day_max: 1
+    quota:
+      cards_per_day_max: 2
+    verification: verified_2026_09
+    verification_note: 本班核验（2026-09），与仓内 model_pricing.yaml 2026-08-22 调价注释互证（2 独立来源）。
+    four_gates_required: true
+    notes: 谷时（00:30-08:30 UTC+8）OFF-PEAK 半价列是 M5 时段加权计费的官方依据。
+  # 2 价格轨：智谱 BigModel——线上核验 429×6 受阻，补核挂单（受阻≠查无，域名+免费档事实由仓内牌价表互证）
+  - source_id: zhipu-bigmodel-pricing
+    track: 价格轨
+    name: 智谱 BigModel 价页/模型广场
+    url: https://open.bigmodel.cn/pricing
+    publisher: 智谱官方
+    fetch_method: browser_manual
+    frequency:
+      tier: deep
+      per_week: 1
+    quota:
+      cards_per_day_max: 1
+    verification: blocked_429
+    verification_note: 线上核验受阻（429×6，60-130s 间隔重试仍限流）；2026-09-23 补核尝试：WebFetch 拉到页壳（未再现 429）但 SPA 动态渲染无价目文本，核验仍未完成；域名+免费档事实由仓内牌价表（glm-4.5-free=0，updated 2026_05_08）+Owner 通宵班实战互证；维持挂单，待 browser_manual 通道补核后升 verified。
+    four_gates_required: true
+    notes: 补核挂单源——扫描器遇该源只登记不产卡，直至 verification 升级。
+  # 3 聚合轨：OpenRouter——Models API 机器可读，浅扫主源（价格 diff）
+  - source_id: openrouter-models
+    track: 聚合轨
+    name: OpenRouter 模型广场+免费集合
+    url: https://openrouter.ai/models
+    publisher: OpenRouter
+    fetch_method: models_api
+    frequency:
+      tier: shallow
+      per_day_max: 1
+    quota:
+      cards_per_day_max: 8
+    verification: verified_2026_09
+    verification_note: 本班核验；/api/v1/models 机器可读（匿名可拉）；免费档限流 20rpm/200rpd 为次级源口径，官方限流数待核。
+    four_gates_required: true
+    notes: 免费集合 https://openrouter.ai/collections/free-models；仓内已有 OPENROUTER_API_KEY 通道；models_api 为 M1 首个自动化源。
+  # 4 价格轨：阿里云百炼——URL 锚点待核（牌价来源已在仓内）
+  - source_id: aliyun-bailian-pricing
+    track: 价格轨
+    name: 阿里云百炼计费页（qwen-flash 已在牌价表）
+    url: https://help.aliyun.com/zh/model-studio/
+    publisher: 阿里云官方
+    fetch_method: webfetch_light
+    frequency:
+      tier: deep
+      per_week: 1
+    quota:
+      cards_per_day_max: 1
+    verification: pending_verify
+    verification_note: URL 锚点施工时核验（计费节深层锚未定）；牌价来源已在仓内（qwen-flash 0.00015/0.0015，updated 2026_08_22）。
+    four_gates_required: true
+    notes: 华北2，输入≤128k 档，无峰谷。
+  # 5 价格轨：Anthropic 价页——通行 URL，C1 核验
+  - source_id: anthropic-pricing
+    track: 价格轨
+    name: Anthropic 价页
+    url: https://www.anthropic.com/pricing
+    publisher: Anthropic 官方
+    fetch_method: webfetch_light
+    frequency:
+      tier: deep
+      per_week: 1
+    quota:
+      cards_per_day_max: 1
+    verification: pending_verify
+    verification_note: 通行 URL，C1 核验挂单。
+    four_gates_required: true
+    notes: ''
+  # 6 价格轨：OpenAI 价页——通行 URL，C1 核验
+  - source_id: openai-pricing
+    track: 价格轨
+    name: OpenAI 价页
+    url: https://openai.com/api/pricing/
+    publisher: OpenAI 官方
+    fetch_method: webfetch_light
+    frequency:
+      tier: deep
+      per_week: 1
+    quota:
+      cards_per_day_max: 1
+    verification: pending_verify
+    verification_note: 通行 URL，C1 核验挂单。
+    four_gates_required: true
+    notes: ''
+  # 7 性能参照：Artificial Analysis——独立第三方客观测量，每周快照
+  - source_id: artificial-analysis
+    track: 性能参照
+    name: Artificial Analysis（智能/价格/速度客观测量）
+    url: https://artificialanalysis.ai
+    publisher: Artificial Analysis（独立第三方）
+    fetch_method: weekly_snapshot
+    frequency:
+      tier: deep
+      per_week: 1
+    quota:
+      cards_per_day_max: 3
+    verification: verified_2026_09
+    verification_note: 本班核验（独立测量型榜单）。
+    four_gates_required: true
+    notes: M2 外部参照轴数据源之一（aa_intelligence）；只做参照不直接决定路由（防外部榜单过拟合）。
+  # 8 性能参照：Arena.ai 榜（原 LMArena）——人偏好盲测，每周快照
+  - source_id: arena-leaderboard
+    track: 性能参照
+    name: Arena.ai 榜（原 LMArena，人偏好盲测）
+    url: https://arena.ai/leaderboard
+    publisher: Arena.ai（UC Berkeley SkyLab 系）
+    fetch_method: weekly_snapshot
+    frequency:
+      tier: deep
+      per_week: 1
+    quota:
+      cards_per_day_max: 2
+    verification: verified_2026_09
+    verification_note: 本班核验。
+    four_gates_required: true
+    notes: M2 外部参照轴数据源之一（arena_rank）；2023- 运行。
+  # 9 本地线：Ollama library——本地模型新上架/版本更新
+  - source_id: ollama-library
+    track: 本地线
+    name: Ollama library（新模型/版本更新）
+    url: https://ollama.com/library
+    publisher: Ollama
+    fetch_method: webfetch_light
+    frequency:
+      tier: deep
+      per_week: 1
+    quota:
+      cards_per_day_max: 1
+    verification: pending_verify
+    verification_note: 通行 URL（仓内 Ollama 在用：qwen3:8b 等），浅扫核验挂单。
+    four_gates_required: true
+    notes: 本地线情报喂 gguf_vram_budget 显存过滤链路。
+  # 10 本地线：Hugging Face trending——gguf 显存上限过滤
+  - source_id: huggingface-trending
+    track: 本地线
+    name: Hugging Face trending
+    url: https://huggingface.co/models?sort=trending
+    publisher: Hugging Face
+    fetch_method: webfetch_light
+    frequency:
+      tier: deep
+      per_week: 1
+    quota:
+      cards_per_day_max: 1
+    verification: pending_verify
+    verification_note: 通行 URL，浅扫核验挂单。
+    four_gates_required: true
+    notes: 抓取后须过 config/gguf_vram_budget.yaml 显存上限过滤，超上限条目不产卡。
+  # 11 活动轨：各厂 news/活动公告页——同源 1/2 域抓取，状态随源继承
+  - source_id: vendor-promo-pages
+    track: 活动轨
+    name: 各厂 news/活动公告页（DeepSeek news、智谱动态等）
+    url: https://api-docs.deepseek.com/news/
+    publisher: 各厂官方
+    fetch_method: webfetch_light
+    frequency:
+      tier: deep
+      per_week: 1
+    quota:
+      cards_per_day_max: 1
+    verification: pending_verify
+    verification_note: 同源 1/2 状态继承（源1 verified_2026_09、源2 blocked_429 补核中）；逐厂活动页锚点随深扫补核。
+    four_gates_required: true
+    notes: 随源 1/2 同域抓取；活动窗（降价/免费/促销）产 PROMO/FREE_WINDOW 候选卡。
+  # 12 手递轨：Owner 手递情报卡——实战在档（夜间 Flash 免费窗=Owner 自搜实战，支撑 2026-09-17 通宵班）
+  - source_id: owner-manual-card
+    track: 手递轨
+    name: Owner 手递情报卡（实战先例：夜间 Flash 免费窗）
+    url: ''
+    publisher: Owner
+    fetch_method: manual_card
+    frequency:
+      tier: event
+      per_day_max: 2
+    quota:
+      cards_per_day_max: 2
+    verification: verified_2026_09
+    verification_note: 在档实战（2026-09-17 通宵班由夜间 Flash 免费窗支撑，OBJ_M README 在档）。
+    four_gates_required: true
+    notes: 无固定 URL（人工通道）；事件驱动，随到随录，四闸照过（手递不豁免）。

@@ -1,0 +1,88 @@
+lane: LANE-MINE-L05
+session_id: st-qmine-20260925
+created: 2026-09-26
+scope: L05 个股做T 子模块级深挖（6 矿 × MINE.md + 总勾表）
+note: >-
+  本车道只读挖掘 + 写文档，零 git 操作（未 add/commit/push，未跑 git_commit.py / commit_queue.py），
+  零批算（LANE-T0 正在跑本环节全量计算，其产物 data/backtest_artifacts/t0_rule_engine/ 与
+  t0_state_match_matrix_*.csv 一律未读未写未碰其进程），零 GPU 作业，零进程杀死，未触碰
+  D:\zephyr_t1_backup\。ClickHouse 查询全部经 zephyr.infrastructure.database_service 只读探针，
+  且限于元数据面/边界值/小样本聚合（未做全表重扫）。判据与阈值零改动：31.2bp / ≥30bp / 30 对 /
+  WFE≥50% / Wilson LB 衰减≤30% / 周期集 {1,5,15,30,60}min / 5,853 只 / 研究窗 2021-09→2025-09-09
+  全部原样引用；一切"口径错配"类发现均收口为"须另立预注册卡或 Owner 门位"。
+  未新增规则卡、未改 rule_cards/、未改 SKEL.md 与他人件。
+files_new:
+  - docs/_working/decision_map_campaign_20260924/links/L05_t0/_INDEX_MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L05_t0/period_axis_semantics/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L05_t0/rule_card_candidate_surface/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L05_t0/tick_imbalance_material/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L05_t0/etf_t0_cost_and_pool/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L05_t0/news_dimension_pit/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L05_t0/state_match_downstream_surface/MINE.md
+files_modified: []
+temp_artifacts_not_to_land:
+  - .runtime/tmp/l05_mine_probe_20260926.py   # 只读探针脚本，可弃（禁入库）
+pending_for_landing_lane:
+  - "CREATE-GUARD：7 份新建 .md 需登记 creation_token（本车道禁 git，统一由落地班办）"
+  - "GATE 预核：目录名一律不以数字结尾（R5-DIGIT-SUFFIX）；frontmatter 全部 ttl: task_bound + doc_type（总勾表=index，六矿=audit_report）"
+  - "FK/REFERENCE-INTEGRITY 预核：正文未使用行首 '# [' 锚点注释；未新增任何未登记裁定号（仅引用既有文档路径与 17/09/05 号文条款）"
+  - "缺口编号归口：43 条新缺口使用车道内局部前缀 L05-{PA,CR,TK,ET,NW,DS}-G*，须由总筹统一并入 L05-Cxx/LK/DU/CNS 账本（防撞号）"
+findings_for_owner_or_commander:
+  - id: F1
+    from: news_dimension_pit
+    sev: high
+    text: >-
+      新闻轴根因改判：c3_fundamental.news_data 全表 8,188,768 行中 related_symbols 非空仅 80 行
+      （0.001%），related_symbol/short_name/security_type 三列全空；巨潮网（交易所披露平台，天然带
+      代码）982,508 行零归因 ⇒ 是"采集侧丢失"非"无料"。同时 publish→ingest 滞后 p50=398 小时，
+      且 crawl_time 仅覆盖 2026-07-02→2026-09-25 ⇒ 研究窗内"当时可见"永不可证。
+      解锁须两轨并行：归因回填 + 研究窗口径裁定（历史段不可补，须显式写死防后人重挖）。
+  - id: F2
+    from: etf_t0_cost_and_pool
+    sev: high
+    text: >-
+      17 §三.4"每只 ETF 成本独立实测"目前是零件：仓内并存两套 ETF 往返成本口径
+      （CST-T0-001 的 31.2bp 个股固定 vs ETFT0-SCREEN 用的 ADV 档位代理 ≈11.7bp，相差 2.7 倍），
+      且 ETFT0-SCREEN 的宇宙=frozen 关键词分类、非"近 60 日日均成交额 top100"。
+      另：真实买卖价差只在 tick_depth_5（研究窗 0 行）⇒ 价差腿实测在现有保留窗内结构性不可得。
+  - id: F3
+    from: tick_imbalance_material
+    sev: high
+    text: >-
+      tick 面研究窗交集仅约 165 交易日（tick_data 2025-01-02→2026-09-24，切点 2025-09-09 之后全属闭卷），
+      且分钟线独有的 enforce_closed_book 在 tick 面**没有对应闸门**——任何 tick 研究默认越闭卷线。
+      五档面 2026-07/08 仅 52 行残点、主体料集中在 2026-09，实测支持 L05-C13 的"D36 提级"建议。
+  - id: F4
+    from: state_match_downstream_surface
+    sev: medium
+    text: >-
+      做T 族试验数不入 DSR/PBO 分母：n_trial_ledger 自动发现只扫 data/strategy_intake/grid_*/summary.json，
+      而规则引擎产物在 data/backtest_artifacts/t0_rule_engine/、矩阵在 docs/_working ⇒ 5 规则×5 周期×
+      多维分格的构建对多重检验校正不可见。与既有"禁 summary.json 防虚增"纪律同向（防漏计），须显式声明。
+  - id: F5
+    from: rule_card_candidate_surface
+    sev: medium
+    text: >-
+      排除清单缺"跨日腿族结构性不可卡"一条：build_pairs 以 (symbol, trade_date) 为键
+      （cost_trio_exam.py:78-90）⇒ 3.4 尾盘动量次日出等被误诊断为"待料"，实为判据族不覆盖。
+      本矿只登记未加卡（授权边界）。
+  - id: F6
+    from: period_axis_semantics
+    sev: medium
+    text: >-
+      60min 档 min_bars=4/4=100% 满日筛，与其余四档 83-87.5% 不同样本底 ⇒ 跨周期格不完全可比
+      （只须加披露，禁改判据）；另仓内 bar 合成语义两套并存（研究侧序数分桶 vs 板块面 toStartOfInterval
+      钟面对齐），个股原生 kline_5/15/30/60min 表存在且含 amount，与 1min 派生从未对账。
+  - id: F7
+    from: _INDEX_MINE
+    sev: doc-conflict
+    text: >-
+      三处文档矛盾待对齐（本车道未改他件）：①SKEL §4 的 3.5/5.4 两行把 tick 时区前置写成 L05-C11，
+      而 §7 定义 L05-C08 才是该项、L05-C11=个股条件维；②SKEL §5 D5"tick 2 年偏牛市"与 C-F5"五档 14 日"
+      与 2026-09-26 实测量级不符；③研究窗新闻行数 readme 记 2,841,834 vs 探针 2,865,189（窗界秒/日口径未统一）。
+long_tail_for_successor:
+  - "LANE-T0 全量矩阵交付后：实测格分布/INSUFFICIENT 占比复核（本车道禁碰）"
+  - "分钟库质量画像三项（零成交 bar、缺 bar 日分布、kline_5min 对账）"
+  - "ETF 宇宙规模与申赎面普查、跨境 ETF 涨跌幅适配"
+  - "转债族独立开矿（真 T+0 主场，成本 1~8bp，L05 终局价值最高的外溢方向）"
+  - "publish_time vs full_publish_time 语义差抽样；quality_flag/direction 字典"

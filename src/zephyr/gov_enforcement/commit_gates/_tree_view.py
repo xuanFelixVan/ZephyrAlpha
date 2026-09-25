@@ -80,7 +80,7 @@ import sys
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Final, Iterable, TypeVar
+from typing import TypeVar, Any, Callable, Iterable, Final
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _parse_diff_with_line_numbers,

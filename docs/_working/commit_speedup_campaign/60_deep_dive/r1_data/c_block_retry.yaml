@@ -1,0 +1,128 @@
+total_blocks: 2038
+by_gate:
+  '-':
+    blocks: 324
+    mean_chain_s: 0.0
+    sum_chain_min: 0.0
+    mean_files: 23.5
+    top_reason_head: ''
+  GATE-PRECOMMIT-RUN:
+    blocks: 198
+    mean_chain_s: 0.0
+    sum_chain_min: 0.0
+    mean_files: 18.9
+    top_reason_head: ''
+  CREATE-GUARD:
+    blocks: 98
+    mean_chain_s: 80.4
+    sum_chain_min: 131.3
+    mean_files: 26.4
+    top_reason_head: '门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: ['
+  BLUEPRINT-FORMAT:
+    blocks: 95
+    mean_chain_s: 120.3
+    sum_chain_min: 190.5
+    mean_files: 14.1
+    top_reason_head: '门禁 BLUEPRINT-FORMAT 阻断: BLUEPRINT-FORMAT: [BLUEPRINT] 头部 mod'
+  WORKTREE-REQUIRED:
+    blocks: 80
+    mean_chain_s: 63.1
+    sum_chain_min: 84.2
+    mean_files: 3.5
+    top_reason_head: 非 worktree commit 且存在其他活跃 session（['st-commitspeed-20260916'
+  HELD-OVERLAP:
+    blocks: 61
+    mean_chain_s: 83.8
+    sum_chain_min: 85.2
+    mean_files: 13.6
+    top_reason_head: 目标文件被其他活跃 session 持有（搭便车防护 HELD_OVERLAP_VIOLATION（.ailocks 双
+  CLAIM-REQUIRED:
+    blocks: 57
+    mean_chain_s: 87.0
+    sum_chain_min: 82.6
+    mean_files: 14.6
+    top_reason_head: session 'st-chinfra-20260914' 已注册但目标文件未 claim（AGENTS.md §8 L
+  MUTABLE-CONST-WITHOUT-FINAL:
+    blocks: 53
+    mean_chain_s: 97.8
+    sum_chain_min: 86.4
+    mean_files: 12.9
+    top_reason_head: '门禁 MUTABLE-CONST-WITHOUT-FINAL 阻断: MUTABLE-CONST-WITHOUT-FIN'
+  ALGO-NOTE-SYNC:
+    blocks: 52
+    mean_chain_s: 82.1
+    sum_chain_min: 71.2
+    mean_files: 45.1
+    top_reason_head: '门禁 ALGO-NOTE-SYNC 阻断: ALGO-NOTE-SYNC：1 个节点的实现代码在本 commit 被触碰'
+  SSOT-REDEFINITION:
+    blocks: 48
+    mean_chain_s: 113.9
+    sum_chain_min: 91.1
+    mean_files: 3.5
+    top_reason_head: '门禁 SSOT-REDEFINITION 阻断: SSoT 符号重复定义（硬阻断）：
+
+      scripts/automatio'
+  DEPGRAPH-PRE-REGISTRATION:
+    blocks: 46
+    mean_chain_s: 65.8
+    sum_chain_min: 50.4
+    mean_files: 2.2
+    top_reason_head: '门禁 DEPGRAPH-PRE-REGISTRATION 阻断: DEPGRAPH-PRE-REGISTRATION：检'
+  FOREIGN-CHANGE:
+    blocks: 39
+    mean_chain_s: 102.9
+    sum_chain_min: 66.9
+    mean_files: 13.6
+    top_reason_head: '目标文件在 claim 时已有外来变更（FOREIGN_CHANGE_VIOLATION）: [''docs\\01_po'
+  NO-LONG-PARAM-LIST:
+    blocks: 37
+    mean_chain_s: 84.2
+    sum_chain_min: 51.9
+    mean_files: 4.1
+    top_reason_head: '门禁 NO-LONG-PARAM-LIST 阻断: NO-LONG-PARAM-LIST：检测到长参数列表（>7参数），'
+  TTL-METADATA:
+    blocks: 35
+    mean_chain_s: 71.8
+    sum_chain_min: 41.9
+    mean_files: 28.9
+    top_reason_head: '门禁 TTL-METADATA 阻断: FAIL: docs\_working\pipeline-research\re'
+  COMMIT-SCOPE:
+    blocks: 35
+    mean_chain_s: 76.9
+    sum_chain_min: 44.9
+    mean_files: 7.4
+    top_reason_head: 'commit 跨越多个功能域（COMMIT_SCOPE_VIOLATION）: 检测到 2 个域。一个 commit 应'
+by_session_top:
+  st-qoder-t1a-20260915: 97
+  st-chinfra-20260914: 89
+  st-backup-cold-20260924: 82
+  st-library-final-20260924: 79
+  st-oddjobs-20260923: 69
+  st-final3-20260919: 61
+  st-ailayer-p1-20260923: 60
+  st-gslim-20260923: 58
+  st-btfix-p17-20260916: 57
+  st-maxexec-20260920: 56
+retry_amplification:
+  unique_sid_gate_pairs: 852
+  pairs_blocked_2plus: 346
+  pairs_blocked_3plus: 201
+  pairs_blocked_5plus: 89
+  max_single_pair_blocks: 37
+  extra_attempts_from_retries: 1186
+wasted_chain_time:
+  sum_chain_min_all_blocks: 2574.1
+  mean_chain_s_per_block: 75.8
+root_cause_clusters: {}
+blocks_since_20260922: 485
+by_gate_since_20260922:
+  GATE-PRECOMMIT-RUN: 114
+  '-': 67
+  BLUEPRINT-FORMAT: 42
+  MUTABLE-CONST-WITHOUT-FINAL: 35
+  FOREIGN-CHANGE: 22
+  COMPLEXITY-GUARD: 20
+  SSOT-REDEFINITION: 16
+  HOT-FILE-BASE-FRESHNESS: 15
+  HELD-OVERLAP: 11
+  ORPHAN-MODULE: 10

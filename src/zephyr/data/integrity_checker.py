@@ -22,6 +22,8 @@
   - 新增表只要在 tasks.yaml 注册任务，自动纳入巡检覆盖范围
   - 只检测不补下载（补下载由 weekend_backfill / 手动触发负责）
   - 阈值来自历史7天日均行数×0.5（与 backfill_checker 一致）
+  - T+1 披露族（_T1_LAG_JUDGED_TABLES，现为 margin_trading）按"滞后≥2 开市日"判警
+    （DU-03 案治本，先例=decision_chain_sentinel），行数下限降为次要参考列
 
 调用方式：
   scheduler.run_schedule("integrity_check") → run_daily_check(scheduler)
@@ -48,6 +50,159 @@ log = logging.getLogger(__name__)
 
 # SQL 模板（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
 _SQL_COUNT_TODAY = "SELECT count() FROM {table} WHERE {date_col}=toDate('{d_str}')"
+
+# ---- T+1 披露族滞后判警（12 号文 DU-03 案，2026-09-25） ----
+# 病根：margin_trading 的披露源是 T+1（D 日数据 D+1 日早间披露），当日行数对"今日"恒为 0，
+# 按"当日行数 vs 7日均阈值"判警等于永久误报（data/failures 实证 42/42 全零 "0 < ~2052"，
+# 每交易日一件；真断 4 交易日与常态不可分辨）。判警口径改为：max(date_col) 距参照日滞后
+# >= _T1_LAG_ALERT_THRESHOLD 个开市日才告警（先例=scripts/governance/decision_chain_sentinel.py，
+# 参照日=min(日历最近开市日<=今日, kline_index max(trade_date)) 取小）；行数下限降为次要参考列。
+# 同族候选实测核对（"只动实测同病表"红线，逐表留档）：
+#   c1_market.block_trade / block_trade_detail / dragon_tiger / dragon_tiger_seat——
+#   failure 件仅 5/10 件且与真实抓取故障日（同日 *_incremental 失败件 09-02/09-16 等）完全聚簇，
+#   常态当日行数达标 → 非永久病，判警行为零改动。
+_T1_LAG_JUDGED_TABLES = frozenset({"c1_market.margin_trading"})
+_T1_LAG_ALERT_THRESHOLD = 2  # 滞后 >=2 开市日才告警（同 decision_chain_sentinel 默认 N=2）
+_CALENDAR_EXCHANGE = "SSE"  # 同 quality_sentinel/decision_chain_sentinel: 库内仅此一档
+_CH_DATE_ZERO = "1970-01-01"  # CH 空集聚合 Date 零值（视为全史零行）
+
+_SQL_T1_MAX_DATE = "SELECT max({date_col}) FROM {table}"
+_SQL_CALENDAR_LAST_OPEN = (
+    "SELECT max(cal_date) FROM {calendar} FINAL "
+    "WHERE exchange = '{exchange}' AND is_open = 1 AND cal_date <= toDate('{ref_date}')"
+)
+_SQL_KLINE_MAX_DATE = "SELECT max(trade_date) FROM {table}"
+_SQL_OPEN_DAYS_AFTER = (
+    "SELECT count() FROM {calendar} FINAL "
+    "WHERE exchange = '{exchange}' AND is_open = 1 "
+    "AND cal_date > toDate('{start}') AND cal_date <= toDate('{end}')"
+)
+
+_T1_REF_TABLES: tuple[str, str] | None = None  # (trade_calendar, kline_index) 惰性缓存
+
+
+def _t1_ref_tables() -> tuple[str, str]:
+    """参照双腿表名（TableRegistry 品类真源，禁硬编码；惰性解析防 import 期新增失败面）。"""
+    global _T1_REF_TABLES
+    if _T1_REF_TABLES is None:
+        from zephyr.data.table_registry import get_registry
+
+        reg = get_registry()
+        _T1_REF_TABLES = (reg.table("market_trade_calendar"), reg.table("market_index_kline"))
+    return _T1_REF_TABLES
+
+
+def _query_single_date(sql: str) -> datetime.date | None:
+    """ch_reader 单值日期查询。空串(查询失败)/"\\N"/CH 空集零值日期 → None。"""
+    out = (ch_reader.query(sql) or "").strip()
+    if not out or out.startswith("\\N") or out.split("\t")[0].split("\n")[0][:10] == _CH_DATE_ZERO:
+        return None
+    try:
+        return datetime.date.fromisoformat(out.split("\t")[0].split("\n")[0][:10])
+    except ValueError:
+        return None
+
+
+def _resolve_reference_day(today: datetime.date) -> datetime.date | None:
+    """参照日=min(日历最近开市日<=今日, kline_index max)（同 decision_chain_sentinel 取小口径：
+    日历超前于数据面时不虚计滞后）。单腿失败降级另一腿，双腿全废返回 None（由调用方降级）。"""
+    calendar_day: datetime.date | None = None
+    kline_day: datetime.date | None = None
+    try:
+        calendar_tbl, kline_tbl = _t1_ref_tables()
+    except Exception as e:  # noqa: BLE001 — 注册表不可用按双腿全废降级
+        log.warning("T+1 参照表名解析失败（按参照日不可用降级）: %s", e)
+        return None
+    try:
+        calendar_day = _query_single_date(
+            _SQL_CALENDAR_LAST_OPEN.format(
+                calendar=calendar_tbl, exchange=_CALENDAR_EXCHANGE, ref_date=today.isoformat()
+            )
+        )
+    except Exception as e:  # noqa: BLE001 — 单腿降级（同先例）
+        log.warning("T+1 参照日日历腿降级: %s", e)
+    try:
+        kline_day = _query_single_date(_SQL_KLINE_MAX_DATE.format(table=kline_tbl))
+    except Exception as e:  # noqa: BLE001
+        log.warning("T+1 参照日 kline 腿降级: %s", e)
+    candidates = [d for d in (calendar_day, kline_day) if d is not None]
+    return min(candidates) if candidates else None
+
+
+def _compute_open_day_lag(last: datetime.date, ref: datetime.date) -> tuple[int, str]:
+    """(last, ref] 内开市日数；日历查询失败降级为日历日差（保守偏大，同先例标注口径）。"""
+    try:
+        calendar_tbl, _ = _t1_ref_tables()
+        out = ch_reader.query(
+            _SQL_OPEN_DAYS_AFTER.format(
+                calendar=calendar_tbl, exchange=_CALENDAR_EXCHANGE,
+                start=last.isoformat(), end=ref.isoformat(),
+            )
+        )
+        return int(out.strip()), "trading_days"
+    except Exception as e:  # noqa: BLE001 — lag 腿降级（同先例）
+        log.warning("T+1 滞后交易日口径降级为日历日差: %s", e)
+        return (ref - last).days, "calendar_days"
+
+
+def _judge_t1_lag(table: str, date_col: str, threshold: int, count: int, today: datetime.date) -> dict:
+    """T+1 披露族判警：滞后开市日口径。行数下限保留为次要参考列（不参与判定）。"""
+    result: dict = {
+        "table": table,
+        "date_col": date_col,
+        "count": count,
+        "threshold": threshold,
+        "skipped": False,
+    }
+    last = _query_single_date(_SQL_T1_MAX_DATE.format(table=table, date_col=date_col))
+    ref_day = _resolve_reference_day(today)
+
+    if ref_day is None:
+        # 参照日双腿全废：fail-soft 降级回行数口径（不硬抛断全表巡检；
+        # calendar/kline_index 自身故障由其余表项巡检另行告警）
+        healthy = count >= threshold
+        result.update({
+            "healthy": healthy,
+            "last_date": last.isoformat() if last else None,
+            "reference_day": None,
+            "lag_trading_days": None,
+            "lag_basis": "degraded_rowcount",
+        })
+        if not healthy:
+            result["alert_message"] = (
+                f"表 {table} T+1披露判警降级(参照日不可用): 当日行数 {count} < 阈值 {threshold}"
+                f"（行数口径仅降级兜底，max({date_col})={last.isoformat() if last else '无'}）"
+            )
+        log.info("表 %s T+1判警降级行数口径: count=%d threshold=%d", table, count, threshold)
+        return result
+
+    result["reference_day"] = ref_day.isoformat()
+    result["last_date"] = last.isoformat() if last else None
+    if last is None:
+        # 全史零行=断供（比滞后超限更重的形态，同 decision_chain_sentinel 口径）
+        result.update({"healthy": False, "lag_trading_days": None, "lag_basis": None})
+        result["alert_message"] = (
+            f"表 {table} T+1披露断供: max({date_col}) 全史零行（{table} 无任何行）"
+        )
+        log.warning("表 %s T+1披露断供（全史零行）", table)
+        return result
+
+    lag, lag_basis = (0, "trading_days") if ref_day <= last else _compute_open_day_lag(last, ref_day)
+    healthy = lag < _T1_LAG_ALERT_THRESHOLD
+    result.update({"healthy": healthy, "lag_trading_days": lag, "lag_basis": lag_basis})
+    if healthy:
+        log.debug(
+            "表 %s T+1披露达标: max(%s)=%s 参照日=%s 滞后=%d", table, date_col, last.isoformat(),
+            ref_day.isoformat(), lag,
+        )
+    else:
+        result["alert_message"] = (
+            f"表 {table} T+1披露滞后: max({date_col})={last.isoformat()} 距参照日 {ref_day.isoformat()}"
+            f" 缺勤 {lag} 个{'交易日' if lag_basis == 'trading_days' else '日历日(降级口径)'}"
+            f" >= 阈值 {_T1_LAG_ALERT_THRESHOLD}（当日行数 {count} < {threshold}，行数仅参考）"
+        )
+        log.warning("%s", result["alert_message"])
+    return result
 
 #: P1-1 接线（2026-09-14 外部审查整改）：tick 真重复检查脚本正门路径。
 #: 单一真源=脚本本体（RULE-DATA-OPS/TRAE-063 DATA-OPS-INV-002 配套），
@@ -187,6 +342,10 @@ def _check_table_today(info: dict, today: datetime.date) -> dict | None:
     except ValueError:
         count = 0
 
+    # T+1 披露族改走滞后开市日口径（DU-03 案；其余表行为零改动）
+    if table in _T1_LAG_JUDGED_TABLES:
+        return _judge_t1_lag(table, date_col, threshold, count, today)
+
     healthy = count >= threshold
     if not healthy:
         log.warning("表 %s 当日数据不达标: %d < %d (阈值)", table, count, threshold)
@@ -295,9 +454,11 @@ def run_daily_check(scheduler=None) -> dict:
         try:
             alerter = scheduler._alerter
             for r in unhealthy:
+                # T+1 披露族自带滞后口径告警文案（alert_message）；其余表原文案零改动
                 alerter.notify(
                     f"integrity_check_{r['table']}",
-                    f"表 {r['table']} 当日数据不达标: {r['count']} < {r['threshold']}",
+                    r.get("alert_message")
+                    or f"表 {r['table']} 当日数据不达标: {r['count']} < {r['threshold']}",
                     level="ERROR",
                     source="integrity_check",
                 )
@@ -348,7 +509,10 @@ def run_daily_check(scheduler=None) -> dict:
         "healthy_count": healthy_count,
         "skipped_count": skipped_count,
         "unhealthy_tables": [
-            {"table": r["table"], "count": r["count"], "threshold": r["threshold"]} for r in unhealthy
+            # T+1 族附带滞后诊断列（last_date/reference_day/lag_*），其余表字段零改动
+            {k: r[k] for k in ("table", "count", "threshold", "last_date", "reference_day",
+                               "lag_trading_days", "lag_basis") if k in r}
+            for r in unhealthy
         ],
         # 任务级对账结果（新增维度）
         "task_should_run": recon["should_run"],

@@ -1,0 +1,60 @@
+# =============================================================================
+# tool_model_pairing_policy.yaml — OBJ_T T4 工具×模型配对策略【挂起态——D-T-06，解锁前禁派工】
+# =============================================================================
+# 治理锚定:
+# ttl: permanent
+#   blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_tools
+#   design_source: docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md §5（T4 配对实验）+§9.4（挂起清单 H1）
+# 落位依据（总包令 2026-09-23）:
+#   三 YAML 真源净零落位令与 DESIGN §5 裁定 D-T-06 的合成=本文件**只落格定义与触发器声明**，
+#   零执行面接线（§5 执行节奏三触发器与 §7 接线图 OBJ_M 行 9 格配对部分一并顺延）。
+#   解锁条件: **OBJ_M 路由表 v0 上线且双跑数据 >=1 窗**；解锁后按 OBJ_R 流水线提案排期（销账=H1）。
+# 净零声明:
+#   吸收 DESIGN §5 散文矩阵/触发器/回写字段为可机读声明；档位词表（economy/standard/premium）
+#   引用 OBJ_M M2 档词表不复制；dual_run 执行器=借用 OBJ_M（零新建执行器，解锁后接线）。
+# =============================================================================
+
+policy_id: tool_model_pairing_policy_v0
+ttl: permanent
+design_source: docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md
+status: suspended                # D-T-06：解锁前不派工（OBJ_T DESIGN §9.4 挂起清单 H1）
+suspend_reason: 9 格矩阵暂无主判消费方（tool_affinity 仅 tie-breaker 证词，路由主判据不消费 9 格数据）
+unlock_precondition: OBJ_M 路由表 v0 上线且双跑数据 >=1 窗
+unlock_path: OBJ_R 流水线提案排期（销账处=OBJ_T DESIGN §9.4 H1）
+
+matrix:
+  organs: [hand, eye, foot]                    # 3 器官（DESIGN §2.1 器官词表）
+  model_tiers: [economy, standard, premium]    # 3 模型档（OBJ_M M2 档词表，引用不复制）
+  cells: 9                                     # 3x3=9 格（计数用字段）
+  tasks_per_cell: 5                            # 每格任务=对应器官基准集子集 N=5（固定 seed）
+  task_suite_source: docs/_working/ai_layer_vision/OBJ_T_tools/tool_benchmark_suite_v0.yaml
+  executor_borrowed: zephyr.intelligence.model_profiling.dual_run   # 借 OBJ_M，零新建
+
+triggers:                                      # 事件触发（禁 cron/Timer，宪法 §9.3）；挂起期不接线
+  new_model_onboarded:
+    event: OBJ_M M3 考试工单完成
+    action: 触发 1 轮 9 格中该模型档所在列
+    wired: false
+  new_tool_activated:
+    event: 新工具转正（T3 四判据全过）
+    action: 触发该工具所在行
+    wired: false
+  quarterly_patrol:
+    cadence: 季度常巡 1 轮全矩阵（配额内进周历窗口）
+    wired: false
+
+conclusion_write:                              # 裁定 D-T-03（机检字段）
+  write_target: tool_affinity_only             # 只写 route_entry.tool_affinity 参考字段组
+  forbidden_targets: [preferred_model, preferred_tier]   # 路由主判据禁改（防"为工具迁模型"越权）
+  route_table_source: OBJ_M model_routing_policy.yaml（模型线主权，本线只供证词）
+
+pairing_record_schema:                         # 载荷=OBJ_M §7 已定义，原样复用
+  fields: [tool_id, model_id, task_ref, success_rate, cost_usd_unit]
+  experiment_id_format: "TP-<yyyymmdd>-<slug>"
+  affinity_entry_fields:
+    - tool_id
+    - experiment_id
+    - success_rate
+    - delta_vs_baseline
+    - cost_usd_unit
+    - updated_at                  # TIMESTAMPTZ（RULE-SCHEMA-TZ）

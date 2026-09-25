@@ -1,0 +1,116 @@
+# =============================================================================
+# checklist_seed_v0.yaml — L7 缺陷模式词表种子（checklist 首版内容的机读落位，数据文件）
+# =============================================================================
+# 真源设计稿: docs/_working/ai_layer_vision/L7_heredity/DESIGN.md §2.1（模式落 L7=机读真源、
+#             casebook/checklist 留引用）/§2.7（人读→机读单向补登=一次性迁移工单按 §2.5 登记闸补入）
+# BLUEPRINT : MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_heritage
+# 净零声明  : 本文件=docs/01_policies_and_standards/sop/review_sop/defect_pattern_checklist.md
+#             （v1.1.0，15 条）的 checklist_seed 通道数据投影，非第二真源——checklist 保持治理域
+#             policy 资产原样（人读消费面），其"增量登记纪律增补"条款属 L7-#2 治理立案保留项，
+#             本班不动（README §3.5）；模式真源迁移完成后以 L7 库为机读词表源头。
+# 边界声明  : 只承载数据（模式/锚点/审查问句/轴），不承载任何纪律条款；迁移由一次性迁移工单执行
+#             （source_kind='checklist_seed'，本文件为其输入），本班不代跑迁移。
+# slug 说明 : pattern_norm 由 checklist 模式名派生（slug 形态真源=config/heritage_policy.yaml
+#             registration.pattern_slug_re）。DESIGN §2.3 示例 slug `single_side_defense` 注
+#             "checklist #4 单侧防御"，与 checklist v1.1.0 #4 实名"双份承载漂移"不符（示例笔误），
+#             本种子按实际模式名派生，特此留痕。
+# =============================================================================
+
+seed_id: checklist_seed_v0
+ttl: task_bound
+design_source: docs/_working/ai_layer_vision/L7_heredity/DESIGN.md
+source_checklist: docs/01_policies_and_standards/sop/review_sop/defect_pattern_checklist.md
+source_version: "1.1.0"
+target: ai_heritage.ai_heritage_defect（source_kind='checklist_seed'，经 store.register 登记闸）
+
+patterns:
+  - line_no: 1
+    pattern_norm: stat_calibration_single_point_drift
+    title: 统计口径单点漂移
+    review_question: 统计量分母/窗口/阈值与真源账本同口径？存量重算过？
+    axis: A
+    anchors: [e58d28df99, 5548b45ca4]
+  - line_no: 2
+    pattern_norm: test_date_drift
+    title: 测试日期漂移
+    review_question: 断言依赖"今天"吗？拨钟到边界日还绿吗？
+    axis: A.3
+    anchors: [623e32b9c5]
+  - line_no: 3
+    pattern_norm: test_false_positive
+    title: 测试假阳性
+    review_question: stub 边界/断言强度/容差可达性？
+    axis: A.3
+    anchors: [e5df571ac9, f487d44acc]
+  - line_no: 4
+    pattern_norm: dual_carrier_drift
+    title: 双份承载漂移
+    review_question: 配置几处承载？改真源后副本同步？一致性红未搁置？
+    axis: D
+    anchors: [audit_prompts_20_ai.md_2_2]
+  - line_no: 5
+    pattern_norm: id_numbering_runaway
+    title: 编号失控
+    review_question: 新码新号全仓 grep 唯一入册？分配前查最大号？
+    axis: D
+    anchors: [127f12d82d, 5697da2892, 20065c08f1]
+  - line_no: 6
+    pattern_norm: data_source_silent_death
+    title: 数据源静默死亡
+    review_question: 每输入近 N 天有数？断供时报错还是恒 0？
+    axis: B
+    anchors: [91a3c77586, dd04d9d20c, bf7a8283cd]
+  - line_no: 7
+    pattern_norm: ashare_caliber_unit_pit
+    title: A 股口径/量纲/PIT
+    review_question: 数学四问逐项过？复权/单位/PIT 有实证？
+    axis: A
+    anchors: [818d676b3a, a89335642e, d9c5f4bb12, 56e9183b73]
+  - line_no: 8
+    pattern_norm: orphan_dead_code
+    title: 孤儿死码
+    review_question: grep 生产调用方≥1？空转多久没发现？
+    axis: C
+    anchors: [d57b379558, d9c5f4bb12]
+  - line_no: 9
+    pattern_norm: ghost_reference_unvalidated_write
+    title: 幽灵引用/写入口零校验
+    review_question: 写入端有存在性校验？id 形态唯一约定？
+    axis: B
+    anchors: [9005a38a7b]
+  - line_no: 10
+    pattern_norm: yaml_silent_defect
+    title: YAML 静默缺陷
+    review_question: 写后 parse+根键唯一断言？追加位置锚定？
+    axis: E
+    anchors: [ee6bc34aa8, 4cb9d58dd7]
+  - line_no: 11
+    pattern_norm: cache_process_race
+    title: 缓存/进程竞态
+    review_question: 修复落盘到生效窗口内谁带病运行？
+    axis: E
+    anchors: [558a4af0e2, bb4e2f9328, da6483a87f]
+  - line_no: 12
+    pattern_norm: fake_completion_status
+    title: 假完成状态
+    review_question: done 状态逐 blob/逐行核验过真落地？
+    axis: E
+    anchors: [36784c8a62, 4deb7b97de]
+  - line_no: 13
+    pattern_norm: external_api_contract_untested
+    title: 外部 API 契约未实测
+    review_question: 三方常量有官方值对照+实单 smoke？
+    axis: B
+    anchors: [ae289436aa]
+  - line_no: 14
+    pattern_norm: refactor_dropped_route
+    title: 重构丢边丢路由
+    review_question: 重构后路由表/依赖边/注册表全量对账？
+    axis: D
+    anchors: [74c25717a3, e5df571ac9]
+  - line_no: 15
+    pattern_norm: ruling_reference_unverified
+    title: 裁定引用不核真源
+    review_question: 引用的裁定号在 ruling_registry 存在吗？在册内容与引用语境一致吗？关键数字有底层产物锚吗？
+    axis: D
+    anchors: ["ruling_registry.yaml:3435-3441", f8002ed8]

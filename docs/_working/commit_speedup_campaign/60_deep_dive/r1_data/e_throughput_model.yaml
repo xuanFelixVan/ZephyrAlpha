@@ -1,0 +1,139 @@
+dead_subcauses:
+  COMMIT_FAILED:
+    '）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit run 在 staged 面（own-scope 临': 51
+    '）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060 §2）: [''docs/_': 23
+    '）: 门禁 GATE-VOCAB 阻断: [VOCAB-HARDCODE] 新增 .py 文件含词表硬编码（应从 *_vocabulary.': 16
+    '）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 1 个新建 .py 文件在翻译真源': 13
+    '）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE: 3 个新建 .py 文件在翻译真源': 9
+    '）: 门禁 PROTECTED-PATHS 阻断: PROTECTED-PATHS: staged files contain protec': 9
+    '）: 门禁 MAP-ALIGNMENT 阻断: [FRONTEND-MAP] FRONTEND-MAP：frontend_map 对齐校验 ': 9
+    '）: 门禁 CREATE-GUARD 阻断: 能力重复/basename碰撞(GATE-SSOT L2): src/zephyr/gover': 7
+    '）: 门禁 CAPABILITY-OVERLAP 阻断: CloneGuard 检测到 extract 级代码克隆——必须合并而非新建:': 6
+    '）: 门禁 ORPHAN-MODULE 阻断: 孤儿模块在代码库中无任何 import 引用（死代码，违反新AI可发现性）: src/zep': 6
+  landing异常:
+    'RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standa': 59
+    'LandingEnvironmentError: landing 环境不可用（repo_root=D:\ZephyrAlpha）: Gate': 18
+    超时: 3
+    'LandingEnvironmentError: landing 环境不可用（repo_root=D:\ZephyrAlpha\.workt': 1
+    'RuntimeError: prestage 拒绝：以下快照路径被 .gitignore 忽略（再生产物区，禁入 git）：': 1
+    'RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 9de51': 1
+    'RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 2ec21': 1
+    'RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 52dbd': 1
+    'RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 ef697': 1
+    'RuntimeError: [landing] 注册表项基底不可知（base_head 与 base_blob 皆无）——拒绝以 c0724': 1
+  基底漂移冲突:
+    'cascade_stale: 基底重校验不适用 [''docs/01_policies_and_standards/_registry/catalogs/capa': 7
+    'cascade_stale: 基底重校验不适用 [''docs/_working/meta_question_answers/02_final_ledger.md': 2
+    冲突：入队基底 66e6b31346ca 之后 dev 已推进且触及同路径 ['scripts/governance/meta/rules_integrity_: 1
+    冲突：dev CAS 竞态（池化）——9ff96cc5c393..b906e95496e9 间同路径 ['config/strategy_production_: 1
+    冲突：dev CAS 竞态——293415130d63..b906e95496e9 间同路径 ['docs/01_policies_and_standards/: 1
+    'cascade_stale: 基底重校验不适用 [''docs/01_policies_and_standards/_registry/catalogs/ruli': 1
+    冲突：入队基底 f53316c6f9d6 之后 dev 已推进且触及同路径 ['scripts/commit_queue.py', 'scripts/git_c: 1
+    冲突：快照基底 27449507e1c4（与 dev 的共同祖先 27449507e1c4）之后 dev 已推进且触及同路径 ['docs/_working/a: 1
+    冲突：入队基底 af8852afa667 之后 dev 已推进且触及同路径 ['scripts/commit_queue.py', 'scripts/gover: 1
+    冲突：dev CAS 竞态（池化）——5fe5f1a5faa2..9a760906ac95 间同路径 ['docs/01_policies_and_standa: 1
+  blob:
+    'NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: [''docs/_working/registry_migration': 29
+    本包自撤（F-AUDITFIX-STALE-01 实效自证）：袋内 commit_queue_landing.py 派生自 7d8271c128，而 dev 已: 1
+    'NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: [''config/governance/noqa_exempt_re': 1
+    'NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: [''AGENTS.md''])——应用静默丢失，死信回退重新入队（20': 1
+dead_requeued:
+  'True': 134
+  'False': 291
+dead_latency_hours:
+  COMMIT_FAILED:
+    n: 274
+    median_h: 0.5
+    mean_h: 1.5
+  landing异常:
+    n: 87
+    median_h: 0.2
+    mean_h: 0.7
+  基底漂移冲突:
+    n: 27
+    median_h: 0.6
+    mean_h: 0.9
+  blob:
+    n: 32
+    median_h: 22.7
+    mean_h: 20.6
+  other:
+    n: 5
+    median_h: 0.3
+    mean_h: 5.1
+pool_wave:
+  total: 8553
+  reasons:
+    claim_none: 8549
+    no_slot: 4
+  by_worker:
+    w1:
+      claim_none: 2129
+      no_slot: 1
+    w2:
+      claim_none: 2147
+      no_slot: 1
+    w3:
+      claim_none: 2148
+      no_slot: 1
+    w0:
+      claim_none: 2125
+      no_slot: 1
+git_cadence:
+  n_commits: 380
+  gap_p50_s: 343
+  gap_mean_s: 725
+  per_day:
+    '2026-09-22': 88
+    '2026-09-23': 87
+    '2026-09-24': 188
+    '2026-09-25': 17
+  commits_per_active_hour_p50: 4
+landing_cadence:
+  window:
+    w0:
+    - '2026-09-24T13:48:46.122823+00:00'
+    - '2026-09-24T20:11:01.759629+00:00'
+    w1:
+    - '2026-09-24T13:47:09.009369+00:00'
+    - '2026-09-24T20:21:27.190736+00:00'
+    w2:
+    - '2026-09-24T13:51:50.979033+00:00'
+    - '2026-09-24T19:58:14.257218+00:00'
+    w3:
+    - '2026-09-24T13:49:45.548543+00:00'
+    - '2026-09-24T20:23:30.426978+00:00'
+  gaps:
+    w0:
+      n: 25
+      gap_p50_s: 250
+      gap_mean_s: 519
+      busy_ratio_pct: 73.9
+    w1:
+      n: 32
+      gap_p50_s: 201
+      gap_mean_s: 379
+      busy_ratio_pct: 86.7
+    w2:
+      n: 25
+      gap_p50_s: 138
+      gap_mean_s: 483
+      busy_ratio_pct: 87.0
+    w3:
+      n: 35
+      gap_p50_s: 296
+      gap_mean_s: 695
+      busy_ratio_pct: 70.6
+belt_daemon_errors:
+  '[landing] 双锁统一：全局锁未取到（GatewayError: Cannot acquire global commit lock ': 32
+  raise GatewayError(: 32
+  'zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GatewayError: Ca': 32
+  '- [2026-09-24 12:16:35.107584+00:00] GATE-PANORAMA-ALIGNMENT: git diff': 11
+  'RECONCILER-HEALTH WARN: 10 critical reconciler failure(s) in last 24h:': 10
+  dual-track reconcile probe fail: 9
+  'NameError: name ''Final'' is not defined': 8
+  'FAIL: .runtime\commit_queue\worktrees\w2\docs\_working\decision_map_ca': 8
+  schema 演进时会触发 TypeError（5.147.5/5.147.12 同族债务）。: 4
+  堵点本积压超阈(维护班信号): 3
+  '2026-09-24 22:42:28 [ERROR] scripts.commit_queue: [drain] 队列项读取失败（疑似损坏': 3
+  Ruff Lint.............................................................: 2

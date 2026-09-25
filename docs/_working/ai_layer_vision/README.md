@@ -143,8 +143,8 @@ AI 层自己的尺子升级=OBJ_R（标准与规则线）。
 节拍+E0 实闸"属放宽宪法 §9.3 射程的 T3 语义级解释，按 OBJ_R"放松永不自动"自律须 **Owner 追认+
 裁定登记双前置**（追认后按 RULE-RULING 原子补进 ruling_registry，详见 L1 DESIGN 修复注记）；
 双前置齐前施工项 7 禁开工，其余施工项不受阻。
-**宪法挂接批次**：.runtime/ai_layer/perceive/search_orders/ 与 .runtime/ai_intake/ 两新路径
-按 .runtime/strategy_pipeline 先例镜像，列入下次宪法等长替换批次（§9.4 落点枚举增补）。
+**宪法挂接批次**：.runtime/ai_layer/perceive/search_orders/、.runtime/ai_intake/ 与 .runtime/ai_heritage/（heritage 事件账 pending_events，st-ailayer-final-20260924 接线批增补）
+三新路径按 .runtime/strategy_pipeline 先例镜像，列入下次宪法等长替换批次（§9.4 落点枚举增补）。
 **数值类待 Owner 项追认**：OBJ_R #1/#3/#4、L4 #1、L5 #1、OBJ_S #1 等数值初值按 Owner 夜批
 授权追认提案原值生效（红蓝 R2 复核）；治理立案类（OBJ_R #2/#5/#6、L4 gate 立案、L5 白名单
 等）保留待治理流程，不越权。逐条全量对账见 §3.5 处置总表。

@@ -1,0 +1,35 @@
+# 方案①两轮制 prereg 语义字段增补——草案 patch（【不应用】）
+#
+# 状态: DRAFT（裁定#413 登记的"下一窗口升级案"配套; Owner 2026-09-24 对话原则批准，
+#       正式生效须经裁定通道字段重签+红蓝对拍通过后由 Owner 门位投放）
+# 红线: 跑中禁改 prereg（grid_20260924-213246 T1 在跑，冻结语义: 改空间=作废重开）——
+#       本文件只是草案，禁 `git apply`/手工落地到 config/search_space_prereg.yaml。
+#       （git apply --check 已验证可干净应用——仅供审查，非投放许可。）
+# 前置: 红蓝标定（scripts/backtest/calibrate_cost_tier_redblue.py）须复现
+#       Spearman>=0.99 且 top50 重合率>=0.9（历史基准 1.0 / 50:50），不达标本草案作废。
+# 代码面: 消费方已就绪（scripts/backtest/factory_grid_executor.py T3:
+#       budget_caps.cost_gate_t1_tiers_bp 在场=分层语义启用，缺省=现行语义零变化;
+#       T1=本字段轻档，T0/T2 恒全档且真源=config/exam_scale_cost_gate.yaml）。
+# 容量账: 轻档 ≈6-7s/格（待红蓝 --timing 实测复核）→ T1 9,600 ≈ 17h +
+#       T2 1,920×35.33s ≈ 19h，59h 窗容纳。
+
+--- a/config/search_space_prereg.yaml
++++ b/config/search_space_prereg.yaml
+@@ -60,6 +60,17 @@
+   tier1_points: 3700                # T1 真 1% 分层粗扫（裁定#413 朴素重排：全档容量 4640 = T1 3700 + T2 900 留余量）
+   tier2_points: 900                 # T2 主效应前 20% 层参数展开+4440 型成本门复验（裁定#413）
+   cost_gate_in_every_tier: true     # Owner 采纳令：任何粗扫阶段禁跳成本门（跳=判死件回池）
++  # —— 方案①两轮制分层语义（裁定#413 下一窗口升级案; Owner 2026-09-24 原则批准，本行为重签占位）——
++  # 语义: cost_gate_in_every_tier 仍须为 true（分层只收窄 T1 扫描档位，不放松"每档必有成本门"）;
++  #   T1 阶段 per-point 成本门用本字段轻档粗筛（扫描面，不做三门判定）; T0/T2 恒全档
++  #   （全档真源=config/exam_scale_cost_gate.yaml cost_gate.tiers_bp，禁双头）;
++  #   三门判定（单调性/全成本档存活/E7 换手）仍以全档证据计，仅在 T2 终审执行。
++  # 兼容: 本字段缺省=现行语义零变化（fail-closed 不放松）; 字段在场但非法
++  #   （降序/缺 0bp 对照档/非全档子集/null）= SystemExit 禁开跑。
++  cost_gate_t1_tiers_bp: [0, 5]     # T1 轻档: 0bp 零成本对照 + 5bp 轻滑点（历史基准 Spearman≈1.0 / top50 重合 50:50）
++  # 容量重排（裁定#413 升级案目标）: 轻档 ≈6-7s/格 → T1 容量 4640→9,600（待红蓝实测复核后按裁定重签回填）
++  # tier1_points: 9600             # 【占位，禁在此草案中生效】T1 轻档扩容档位
++  # per_point_seconds_light: null  # 【占位】轻档单格耗时实测回填位（红蓝 --timing 产出后回填）
+   vram:
+     physical_gb: 24
+     train_quota_gb: 18

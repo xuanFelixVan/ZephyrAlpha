@@ -1,0 +1,23 @@
+lane: reexam
+session_id: st-qmine-20260925
+written_by: 总筹（LANE-REEXAM 撞 150 轮上限身亡且未及写本清单，此清单由总筹按盘上实证代拟）
+note: >
+  盘上实证：harness 与其测试已写就（尚未落 HEAD）；预注册卡已产出
+  （docs/_working/reexam_strategy_lane/pre_registration_card.md）；
+  首考批次进程仍存活（PID 34232，21:58 起，`--batch p1_translated_jq_out_pool --batch 30`），
+  已把 cmdline 子串 reexam_cpcv_harness 登记进 data/runtime/process_reaper_keep.txt 防误杀。
+  首考结果件（矩阵/报告/negatives）待该批完成后由续跑车道补写进本清单，勿提前入袋空壳。
+  落地前置义务：新建 .py 需 CREATE-GUARD token + add_module_translation（条目落 entries: 段）；
+  碰实现代码须同批同步 TDM algo_note_zh + algo_flow yaml；
+  本袋=研究面回测件，禁与文档袋混装。
+  判据口径：多重检验三件套（haircut Sharpe / DSR / PBO-CSCV）阈值一律引 17 号文与
+  config/exam_scale_cost_gate.yaml 冻结件，本袋不改任何阈值。
+files:
+  - scripts/backtest/reexam_cpcv_harness.py
+  - tests/backtest/test_reexam_cpcv_harness.py
+  - docs/_working/reexam_strategy_lane/pre_registration_card.md
+  # 以下为续跑车道（LANE-REEXAM-RESUME，2026-09-25 夜）追加，不动前四条：
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/REEXAM_first_exam.md
+  # 首考批产物（report.yaml/cells.csv/negatives.csv/state.yaml/ret_*.csv 于
+  # docs/_working/reexam_strategy_lane/runs/p1_translated_jq_outpool/）尚未生成——批未跑完，
+  # 不入空壳；批成后由落地前置核对 report 存在再追加。

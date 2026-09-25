@@ -1,0 +1,71 @@
+lane: mine_l06
+session_id: st-qmine-20260925
+parent_coordinator: st-qmine-20260925（总筹）
+role: 深挖车道 L06 策略考试与条件共振上岗
+note: >
+  本车道全程只读挖掘 + 写文档；**未跑任何 git/scripts/git_commit.py/commit_queue.py**（纪律）；
+  未触发 GPU 作业、未跑全量测试、未杀进程；未碰 LANE-AUTO（T1→T2 交接）/LANE-RB（红蓝）路径与判据；
+  冻结判据件（config/search_space_prereg.yaml、config/exam_scale_cost_gate.yaml、
+  scripts/audit/cost_trio_exam.py）仅实测现状、零改动——改动属判据变更须走裁定通道（见 pending_owner_rulings）。
+  落地义务（一件不可漏）：
+  (1) CREATE-GUARD：本车道新建 6 份 .md 均需登记 creation_token——
+      docs/_working 是否豁免以门禁实测定性（同 lane_auto/lane_cmd 口径，勿猜）；
+      建议 net_zero_note="细化 SKEL.md 八子块为 5 挖矿子模块（内收：不新立节点号、不改判据，仅子块级六向挖干）"。
+  (2) 纯文档车道，无新建 .py ⇒ 无 TRANSLATION-COVERAGE / 无 module_id 发号义务。
+  (3) 本清单为待落（landing）件登记，不代裁任何 D30/D31/LK-10 门位项。
+
+files:
+  - docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/exam_result_writeback/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/search_executor_prereg/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/exam_ruler_holdout/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/onboarding_rules_matrix/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/resonance_friction_assembly/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L06_exam_alloc/_INDEX.md
+
+# 子模块自审闸三态裁定摘要（详见各 MINE.md §⑤ 与 _INDEX.md §三）
+submodules:
+  - slug: exam_result_writeback
+    ruling: 施工 C11 + 挂起 C12/E01/C13
+    headline: 三处结构级漏洞坐实（旁路写口/裁决键空串/检测滞后）；读端已定位 build_closure_ledger+redblue R2/R4；283 问 exam_result=0 行零生产样本
+  - slug: search_executor_prereg
+    ruling: 施工 LK-08 + 挂起 LK-11/C16/C17
+    headline: prereg 预算实测 per_point_seconds=35.33（估 6.8s 的 5.2×）自注待裁定重排；T0 manifest 无 cost_adjusted_sharpe 列待核
+  - slug: exam_ruler_holdout
+    ruling: 施工 C18/F02 + 挂起 F01/E01/C19
+    headline: RB-STATS-01 自洽闸 + WFA 三维仅评一维 ⇒ E4 现况全落"存疑"不可"通过"；条件轴冰点档 0 日/板块维仅 17 交易日（数据不可得）
+  - slug: onboarding_rules_matrix
+    ruling: 挂起 LK-10/D30/D31 + 施工 LK-16
+    headline: 上岗规则 v1 稿已备待 Owner 追认（19 号文 C3/F3 实测，纠正 SKEL 旧判）；六空格 pending-owner-adoption；消费链虚挂（编排器不存在）
+  - slug: resonance_friction_assembly
+    ruling: 挂起 C01/IBT-C01 + 施工 LK-16 + 边界登记 C14/C15
+    headline: framework_composer:153-159 与 auto_mount:129 逐键一致；euphoria/distribution 无 r 态来源实证；mSPRT 成交流契约未建=晋升输入虚挂
+
+# 本车道新立缺口（均注"册内未见"，供总筹并入主 backlog）
+new_gaps:
+  - id: L06-C11
+    text: record_exam_result 公共旁路绕过 _conclusion_block，可写缺内层裁决键行（漏洞①）；下线/降私有或入口加 outcome∈{pass,fail,insufficient} 硬拦
+  - id: L06-C12
+    text: 合法入口 _conclusion_block:507 允许裁决键空串且 A1 六查不覆盖此键（漏洞③）；涉判据契约面须走裁定通道（只登记谁该改=writeback 契约件维护者）
+  - id: L06-C13
+    text: 写时无兜底、掉桶检测滞后到红蓝巡检（redblue_metaq_suite R2/R4）；写口 fail-closed 与巡检尺双闸；施工涉 LANE-RB 面只登记边界
+  - id: L06-C14
+    text: mSPRT champion/challenger 配对 ExecutionReport 契约未建（msprt:110-115），晋升 delta=占位虚挂；解锁属执行链 L07
+  - id: L06-C15
+    text: euphoria/distribution 覆盖空洞与 D30 填格互为前置（framework_composer:151-152 无 r 态来源）；须同批裁"新设防御档/微观相位源接入位点"
+  - id: L06-C16
+    text: search_space_prereg per_point_seconds_measured=35.33 vs 估 6.8s（5.2×）自注 T1/T2 配比待裁定重排；判据件只登记不擅改（Owner/裁定#413 附属通道）
+  - id: L06-C17
+    text: T0 run manifest.csv 无 cost_adjusted_sharpe/cost_tier_sharpes_json 列（与 SKEL L06-A 断言不符）；17 §一成本门真实性判据依赖此列，T1 manifest 落盘后必核
+  - id: L06-C18
+    text: WFA 过拟合三维仅评 1 维 + RB-STATS-01 自洽 ⇒ E4 现况不可判"通过"（全落存疑）；补参数扰动/跨时段二维属考尺能力面可起手
+  - id: L06-C19
+    text: 条件轴冰点档实测 0 日（四档非五档）、板块维仅 17 交易日 observational-only ⇒ 条件共振该二维无统计判据；解锁属 DU/情绪数据链
+
+# 呈总筹/Owner 待裁（本车道均未代裁、未改任何预注册值/判据）
+pending_owner_rulings:
+  - 冻结件 search_space_prereg.yaml 预算数值（tier1 3700/tier2 900 与实测 5.2× 单格耗时）须按 L06-C16 走裁定重排——本车道未动
+  - L06-C12 涉"六查是否纳入裁决键非空校验"的判据契约面，须裁定通道（writeback 契约件维护者）
+  - D30 六空格（ignition/euphoria/distribution）Owner 资金分配门位；L06-C15 防御档新设须与填格同批裁
+data_sampling_notes:
+  - GPU T1 grid_20260924-213246 跑批中、明晚完赛；本车道只用历史 run 采样（grid_20260924-080309 T0 标定 / grid_t0_conditional_v1 / grid_gpu_sectorcond），未起新作业
+  - 只读查库未执行（GPU 忙期避免连库，记为受阻非查无）；DB 行数结论以 11 号文 §5.3 实证（exam_result=0 行/283 问全 registered）为据

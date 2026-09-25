@@ -838,6 +838,30 @@ modules:
     handbook: [FEH-PC-020]
     status: active
 
+  - id: budget-page
+    name: 预算分析建议卡（AI 层 M5 建议卡；日消耗/30 天外推/四档告警/补足/免费窗节省）
+    file: features/budget/budget.js
+    page: budget
+    init: "registerFeature 登记+文件顶层自举（容器 #budget-body 就绪即首拉+刷新按钮；全局入口 budgetRefresh 供 onclick）"
+    destroy: "destroy()（清 30s 轮询+自注入样式）"
+    depends: [ZK.api]   # GET /api/budget-advisories（api_server AI 层接线批路由；执行器=zephyr.intelligence.budget_analyzer，st-ailayer-final-20260924 接线批）
+    toggle: none
+    styles: self-injected
+    acceptance: ACC-F-BUDGET-PAGE
+    handbook: []
+    status: active
+  - id: schedulegate-page
+    name: 排程骨架闸（L5 C9 队列可视+骨架级一键确认页）
+    file: features/schedulegate/schedulegate.js
+    page: schedulegate
+    init: "registerFeature 登记+文件顶层自举（容器 #schedulegate-body 就绪即首拉；全局入口 sgRefresh/sgConfirm 供 onclick）"
+    destroy: "destroy()（清轮询+自注入样式）"
+    depends: [ZK.api]   # GET /api/schedulegate-queue + GET /api/schedulegate-skeletons + POST /api/schedulegate-confirm（本页唯一写路由；执行器=zephyr.ai_layer.scheduling，st-ailayer-final-20260924 接线批）
+    toggle: none
+    styles: self-injected   # .sg-card 系随模块注入
+    acceptance: ACC-F-SCHEDULEGATE-PAGE
+    handbook: []
+    status: active
   - id: promotion-page
     name: 策略转正审批页（建议卡列表+Owner 拍板两段确认+决策回执）
     file: features/promotion/promotion.js

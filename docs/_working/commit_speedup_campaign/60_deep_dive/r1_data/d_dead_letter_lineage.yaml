@@ -1,0 +1,143 @@
+dead_json_count: 425
+top_level_fields:
+  qid: 425
+  session_id: 425
+  created_at: 425
+  branch: 425
+  base_head: 425
+  message: 425
+  files: 425
+  meta: 425
+  dead_at: 425
+  dead_reason: 425
+  requeued: 134
+  state: 1
+reason_clusters:
+  COMMIT_FAILED (落地 git commit 失败):
+    count: 219
+    examples:
+    - qid: q-20260922-st-chainpile-20260922-0031
+      created: '2026-09-22T22:13:42+08:00'
+      reason_head: '网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE:
+        3 个新建 .py 文件在翻译真源（module_translation_'
+    - qid: q-20260922-st-chainpile-20260922-0036
+      created: '2026-09-22T22:41:22+08:00'
+      reason_head: '网关落盘失败（COMMIT_FAILED）: 门禁 TRANSLATION-COVERAGE 阻断: TRANSLATION-COVERAGE:
+        1 个新建 .py 文件在翻译真源（module_translation_'
+  landing 异常:
+    count: 86
+    examples:
+    - qid: q-20260923-st-chainpile-20260922-0043
+      created: '2026-09-23T02:53:19+08:00'
+      reason_head: 'landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/capab'
+    - qid: q-20260923-st-chainpile-20260922-0047
+      created: '2026-09-23T03:13:07+08:00'
+      reason_head: 'landing 异常: RuntimeError: [landing] 注册表三向合并失败（死信回退人工）: docs/01_policies_and_standards/_registry/catalogs/modul'
+  基底漂移冲突 (入队后 dev 已推进触及同路径):
+    count: 69
+    examples:
+    - qid: q-20260923-st-chainpile-20260922-0041
+      created: '2026-09-23T02:29:23+08:00'
+      reason_head: '网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit
+        run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#34'
+    - qid: q-20260923-st-chainpile-20260922-0056
+      created: '2026-09-23T17:42:50+08:00'
+      reason_head: '网关落盘失败（COMMIT_FAILED）: 门禁 GATE-PRECOMMIT-RUN 阻断: 落地前 pre-commit
+        run 在 staged 面（own-scope 临时索引）发现本提交文件的违规（裁定#34'
+  blob 缺失/损坏:
+    count: 31
+    examples:
+    - qid: q-20260923-st-stress-20260923-0033
+      created: '2026-09-23T19:31:21+08:00'
+      reason_head: 'NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: [''docs/_working/registry_migration/stress/lane_08.md''])——应用静默丢失，'
+    - qid: q-20260923-st-stress-20260923-0034
+      created: '2026-09-23T19:31:21+08:00'
+      reason_head: 'NOTHING_TO_COMMIT 但快照未真应用 (blob 与 old_dev 不符: [''docs/_working/registry_migration/stress/lane_01.md''])——应用静默丢失，'
+  过期/stale:
+    count: 12
+    examples:
+    - qid: q-20260924-st-audit-fix-20260924-0004
+      created: '2026-09-24T15:52:05+08:00'
+      reason_head: 'cascade_stale: 基底重校验不适用 [''docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml'']（stale_by=q-'
+    - qid: q-20260924-st-audit-fix-20260924-0018
+      created: '2026-09-24T19:19:35+08:00'
+      reason_head: 'cascade_stale: 基底重校验不适用 [''docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry'
+  claim/FOREIGN-CHANGE 类:
+    count: 3
+    examples:
+    - qid: q-20260923-st-stress-20260923-0038
+      created: '2026-09-23T19:31:22+08:00'
+      reason_head: '网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session ''st-stress-20260923''
+        已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTREE「并发与'
+    - qid: q-20260924-st-align-dirty-20260924-0022
+      created: '2026-09-24T03:57:48+08:00'
+      reason_head: '网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session ''st-align-dirty-20260924''
+        已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTRE'
+  合并冲突:
+    count: 3
+    examples:
+    - qid: q-20260924-st-commitspeed-tbl-20260924-0013
+      created: '2026-09-24T22:17:05+08:00'
+      reason_head: '网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060
+        §2）: [''docs/_working/commit_speed'
+    - qid: q-20260924-st-commitspeed-tbl-20260924-0016
+      created: '2026-09-24T22:43:54+08:00'
+      reason_head: '网关落盘失败（COMMIT_FAILED）: 门禁 CREATE-GUARD 阻断: 无 creation_token，禁止造第二真源（trae_060
+        §2）: [''docs/_working/commit_speed'
+  门禁阻断致死:
+    count: 2
+    examples:
+    - qid: q-20260924-st-align-dirty-20260924-0012
+      created: '2026-09-24T02:44:21+08:00'
+      reason_head: '网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session ''st-align-dirty-20260924''
+        已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTRE'
+    - qid: q-20260924-st-mapbuild-20260924-0012
+      created: '2026-09-24T22:16:34+08:00'
+      reason_head: '网关落盘失败（CLAIM_REQUIRED_VIOLATION）: session ''st-mapbuild-20260924''
+        已注册但目标文件未 claim（claim 前移协议，宪法 RULE-WORKTREE「并'
+by_date:
+  '2026-09-22':
+    COMMIT_FAILED (落地 git commit 失败): 2
+  '2026-09-23':
+    COMMIT_FAILED (落地 git commit 失败): 63
+    基底漂移冲突 (入队后 dev 已推进触及同路径): 22
+    landing 异常: 38
+    blob 缺失/损坏: 29
+    claim/FOREIGN-CHANGE 类: 1
+  '2026-09-24':
+    COMMIT_FAILED (落地 git commit 失败): 136
+    landing 异常: 47
+    门禁阻断致死: 2
+    基底漂移冲突 (入队后 dev 已推进触及同路径): 43
+    claim/FOREIGN-CHANGE 类: 1
+    过期/stale: 9
+    blob 缺失/损坏: 2
+    合并冲突: 3
+  '2026-09-25':
+    基底漂移冲突 (入队后 dev 已推进触及同路径): 4
+    过期/stale: 3
+    COMMIT_FAILED (落地 git commit 失败): 18
+    landing 异常: 1
+    claim/FOREIGN-CHANGE 类: 1
+bottleneck_ledger_kinds:
+  dead_letter: 17261
+  alert: 1134
+  slow_item: 228
+  landing_staleness: 180
+  registry_drift: 30
+  derived_stuck: 1
+ledger_dead_letter_reasons:
+  COMMIT_FAILED (落地 git commit 失败): 10172
+  landing 异常: 3377
+  基底漂移冲突 (入队后 dev 已推进触及同路径): 2287
+  blob 缺失/损坏: 535
+  claim/FOREIGN-CHANGE 类: 378
+  index.lock 并发冲突: 247
+  超时: 148
+  过期/stale: 65
+  门禁阻断致死: 19
+  '其他: 网关落盘失败（PROMOTION_BLOCKED）: PROMOTION_BLOCKED: docs/03_module': 16
+  git 文件系统竞争 (unable to create/remove): 5
+  git 身份未配置 (Author identity unknown): 4
+  '其他: 网关落盘失败（COMMIT_SCOPE_VIOLATION）: commit 跨越多个功能域（COMMIT_SCOPE_': 4
+  '其他: 网关落盘失败（PROMOTION_BLOCKED）: PROMOTION_BLOCKED: docs/01_polici': 4

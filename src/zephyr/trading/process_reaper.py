@@ -5,12 +5,12 @@
 # [CONSUMERS] scripts/register_process_reaper_task.ps1; Windows Task Scheduler(ZephyrAlpha_ProcessReaper)
 # [STARTUP] scheduled_task
 # [MATURITY] production
-# [INVARIANTS] 白名单命中永不杀; Trae后代进程永不杀; kill操作必须日志记录; dry-run零副作用; one-shot执行完即退出无常驻
+# [INVARIANTS] 白名单命中永不杀; Trae后代进程永不杀; kill操作必须日志记录; dry-run零副作用; one-shot执行完即退出无常驻; kill日志行 PID/reason 在前、name+cmd 片段(≤120字符,仅argv不含环境变量)追加行尾（P-12 归因，改判据前须核既有 grep 口径）
 # [MODIFY-GUARD] MOD-RESOURCE_OPTIMIZATION_ENGINE §new-IDE
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] psutil不可用时仅执行幽灵窗口扫描并告警; kill对已退出PID不报错; keep文件损坏时忽略该行
+# [ERROR_CONTRACT] psutil不可用时仅执行幽灵窗口扫描并告警; kill对已退出PID不报错; keep文件损坏时忽略该行; kill日志的 name/cmdline 观测字段缺失/非法类型时降级为 '-' 且永不反噬收割动作
 # [TESTS] tests/zephyr/trading/test_process_reaper.py
 # [A_module] module_id=MOD-RESOURCE_OPTIMIZATION_ENGINE | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -51,6 +51,17 @@ process_reaper.py — 项目残留进程清理器（无状态 one-shot，Task Sc
 同时兼任（从 ide_health_daemon 迁移的治理能力）：
 - Trae 幽灵进程清理（2026-08-28 三次误杀事故后终审重构，见下方「幽灵判据治本」）
 - drift 指标：git stash>5 自动清理（cleanup_stash.py）、worktree 变更>50 告警记录
+
+kill 日志可归因字段（data/runtime/reaper_kill.log，处方 P-12 / 2026-09-26）：
+- 行格式 = `[ts] KILLED|DRY-RUN PID={pid} reason={reason}` + **行尾追加** ` name={进程名} cmd={命令行片段}`。
+  既有字段与顺序不变，`grep reason=` / `grep 'KILLED PID='` 的历史读法（LEDGER、
+  backup_cold_audit_sop 口径）不受影响；新字段只做加法。
+- 治本背景：09-25 10:37:34 那一刀（PID=18208）只记 PID+reason 时无法归因，只能拿 PID
+  去 .runtime/process_incubator/ledger.jsonl 反查孵化登记才认出 owner=reconcile_runner
+  （它正托管一轮备份，被级联杀子树带走）；未走孵化登记的进程一旦被杀即成悬案。
+- 隐私与体积：cmd 取自 psutil argv（本模块零 proc.environ() 调用，环境变量值天然不入日志）、
+  硬截断 120 字符、控制字符压平（守住"一行一条目"不变量）、疑似密钥实参脱敏。
+  体量策略沿用既有 retention=permanent（registry_of_logs LOG-TRD-001），本模块不做任何轮转/删除。
 
 收割职责三面互标（排班表 v2 §2.3 C-13，2026-09-17；另两面 =
 zephyr.shared.infra.process_incubator / scripts/start_scheduler.ps1，各自文件头有镜像注）：
@@ -441,13 +452,55 @@ def _is_self_ancestor(pid: int, all_procs: dict[int, dict]) -> bool:
 
 # ============== kill ==============
 
+# kill 日志观测字段常量（P-12）——只影响日志渲染，与任何判定阈值无关
+_CMD_SNIPPET_MAX = 120  # 命令行片段硬截断（与 report.killed[].cmdline 既有 120 口径一致）
+_NAME_MAX = 60  # 进程名理论短，截断只为防御畸形 name
+# 日志注入防线：「一行一条目」是既有不变量，字段内控制字符（含 CR/LF）必须压平
+_LOG_CTRL_RE = re.compile(r"[\x00-\x1f\x7f]")
+_LOG_MULTI_SPACE_RE = re.compile(r" {2,}")
+# 纵深防御：argv 里可能直接出现 `--password=xxx` 之类敏感实参，落盘前脱敏
+_LOG_SECRET_RE = re.compile(
+    r"(?i)\b(password|passwd|pwd|secret|token|api[_-]?key|access[_-]?key|authorization|bearer)\b(\s*[=:]\s*)\S+"
+)
 
-def _log_kill(pid: int, reason: str, dry_run: bool) -> None:
+
+def _log_field(raw: object, limit: int) -> str:
+    """kill 日志字段净化：缺失/非法类型一律渲染 '-'；压平控制字符 + 脱敏 + 硬截断。
+
+    隐私边界（P-12 要求「不得落环境变量值」）：cmd 唯一来源是 psutil 的 argv
+    （proc.cmdline() / 进程枚举的 cmdline 字段），本模块零 proc.environ() 调用，
+    环境变量值天然不在此路径上；此处只做 argv 自身的净化，不做环境遍历。
+    """
+    if raw is None:
+        return "-"
+    try:
+        s = str(raw)
+    except Exception:  # noqa: BLE001 — 观测字段净化永不反噬收割动作
+        return "-"
+    s = _LOG_CTRL_RE.sub(" ", s)
+    s = _LOG_SECRET_RE.sub(lambda m: f"{m.group(1)}{m.group(2)}***", s)
+    s = _LOG_MULTI_SPACE_RE.sub(" ", s).strip()
+    if not s:
+        return "-"
+    if len(s) > limit:
+        s = s[:limit].rstrip() + "..."
+    return s
+
+
+def _log_kill(pid: int, reason: str, dry_run: bool, name: str = "", cmdline: str = "") -> None:
+    """落一行 kill 日志：`[ts] TAG PID=.. reason=..` + 行尾 ` name=.. cmd=..`。
+
+    reason 由内部 f-string 生成（不含外部可控字符），刻意不改其渲染以保历史读法；
+    name/cmdline 是 P-12 追加的可归因字段，调用点拿不到时传空串即渲染 '-'，不抛。
+    """
     try:
         _KILL_LOG.parent.mkdir(parents=True, exist_ok=True)
         with open(_KILL_LOG, "a", encoding="utf-8") as f:
             tag = "DRY-RUN" if dry_run else "KILLED"
-            f.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {tag} PID={pid} reason={reason}\n")
+            f.write(
+                f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {tag} PID={pid} reason={reason}"
+                f" name={_log_field(name, _NAME_MAX)} cmd={_log_field(cmdline, _CMD_SNIPPET_MAX)}\n"
+            )
     except OSError as e:
         logger.warning("kill 日志写入失败: %s", e)
 
@@ -550,7 +603,8 @@ def _snapshot_all_processes() -> dict[int, dict]:
 def scan_ghost_windows() -> list[dict[str, Any]]:
     """扫描 Trae 幽灵嫌疑进程（子进程父死）。零副作用（只读），纯 psutil。
 
-    返回 [{pid, reason, cmdline}]。函数名保留（resource_optimization 消费 len() 做指标），
+    返回 [{pid, reason, cmdline, name}]（name/cmdline 供 kill 日志归因，P-12）。
+    函数名保留（resource_optimization 消费 len() 做指标），
     语义从「WMI 窗口观测」升级为「内核态拓扑嫌疑」——指标含义更准（真嫌疑数）。
     """
     if psutil is None:
@@ -567,7 +621,7 @@ def scan_ghost_windows() -> list[dict[str, Any]]:
             procs=procs,
         )
         if reason:
-            suspects.append({"pid": pid, "reason": reason, "cmdline": info["cmdline"][:120]})
+            suspects.append({"pid": pid, "reason": reason, "cmdline": info["cmdline"][:120], "name": info["name"]})
     return suspects
 
 
@@ -615,10 +669,18 @@ def _advance_ghost_state(
         key = str(pid)
         entry = suspects.get(key)
         if entry is None:
-            entry = {"strikes": 0, "first_seen": now, "reason": info["reason"], "cmdline": info["cmdline"]}
+            entry = {
+                "strikes": 0,
+                "first_seen": now,
+                "reason": info["reason"],
+                "cmdline": info["cmdline"],
+                # P-12 观测字段：旧状态文件无此键时 .get 降级空串（不抛，只少一份归因线索）
+                "name": info.get("name", ""),
+            }
         entry["strikes"] = int(entry.get("strikes", 0)) + 1
         entry["last_seen"] = now
         entry["reason"] = info["reason"]
+        entry["name"] = info.get("name", entry.get("name", ""))
         new_suspects[key] = entry
         if entry["strikes"] >= _GHOST_STRIKES_TO_KILL:
             kill_ready.append(pid)
@@ -690,13 +752,15 @@ def _reap_ghost_windows(dry_run: bool) -> dict[str, int]:
                     _GHOST_STRIKES_TO_KILL,
                 )
                 for pid in kill_ready:
-                    _log_kill(pid, state["suspects"][str(pid)]["reason"], dry_run=True)
+                    s = state["suspects"][str(pid)]
+                    _log_kill(pid, s["reason"], dry_run=True, name=s.get("name", ""), cmdline=s.get("cmdline", ""))
             else:
                 kill_list = [{**state["suspects"][str(pid)], "pid": pid} for pid in kill_ready]
                 killed = kill_ghost_windows(kill_list)
                 result["killed"] = len(killed)
                 for pid in killed:
-                    _log_kill(pid, state["suspects"][str(pid)]["reason"], dry_run=False)
+                    s = state["suspects"][str(pid)]
+                    _log_kill(pid, s["reason"], dry_run=False, name=s.get("name", ""), cmdline=s.get("cmdline", ""))
                     state["suspects"].pop(str(pid), None)  # 被杀的出列；未杀成的留列下轮复查
         _save_ghost_suspects(state)
     except Exception as e:  # noqa: BLE001 — 幽灵扫描异常不阻断主流程，fail-safe 方向=不动作
@@ -805,10 +869,16 @@ def _reap_derived_orphans(all_procs: dict[int, dict], dry_run: bool, report: Rea
             continue
         killed = False
         if dry_run:
-            _log_kill(pid, reason, dry_run=True)
+            _log_kill(pid, reason, dry_run=True, name=info.get("name", ""), cmdline=info.get("cmdline", ""))
         else:
             killed = _kill_pid_tree(pid)
-            _log_kill(pid, reason + ("" if killed else " [FAILED]"), dry_run=False)
+            _log_kill(
+                pid,
+                reason + ("" if killed else " [FAILED]"),
+                dry_run=False,
+                name=info.get("name", ""),
+                cmdline=info.get("cmdline", ""),
+            )
         report.killed.append(
             {
                 "pid": pid,
@@ -921,17 +991,23 @@ def _reap_incubated_expired(
             continue
         cmdline = str(rec.get("cmd", ""))
         if whitelist_res is not None and keep_subs is not None and _is_whitelisted(cmdline, whitelist_res, keep_subs):
-            report.reported.append(
-                {"pid": pid, "reason": "incubation_expired_whitelisted", "cmdline": cmdline[:120]}
-            )
+            report.reported.append({"pid": pid, "reason": "incubation_expired_whitelisted", "cmdline": cmdline[:120]})
             continue
         reason = f"incubation_expired:lifetime={lifetime:.0f}s owner={rec.get('owner', '-')}"
+        # P-12 归因字段：优先活体 name（进程表），退化用孵化登记时的 name；两处皆缺则 '-'
+        live_name = str(all_procs.get(pid, {}).get("name", "") or "") or str(rec.get("name", "") or "")
         killed = False
         if dry_run:
-            _log_kill(pid, reason, dry_run=True)
+            _log_kill(pid, reason, dry_run=True, name=live_name, cmdline=cmdline)
         else:
             killed = _kill_pid_tree(pid)
-            _log_kill(pid, reason + ("" if killed else " [FAILED]"), dry_run=False)
+            _log_kill(
+                pid,
+                reason + ("" if killed else " [FAILED]"),
+                dry_run=False,
+                name=live_name,
+                cmdline=cmdline,
+            )
             reaped_ids.append(str(rec.get("record_id")))
         report.killed.append(
             {
@@ -991,10 +1067,16 @@ def reap(dry_run: bool = False) -> ReapReport:
             if verdict.action == "kill":
                 if dry_run:
                     verdict.killed = False
-                    _log_kill(pid, verdict.reason, dry_run=True)
+                    _log_kill(pid, verdict.reason, dry_run=True, name=info.get("name", ""), cmdline=cmdline)
                 else:
                     verdict.killed = _kill_pid_tree(pid)
-                    _log_kill(pid, verdict.reason + ("" if verdict.killed else " [FAILED]"), dry_run=False)
+                    _log_kill(
+                        pid,
+                        verdict.reason + ("" if verdict.killed else " [FAILED]"),
+                        dry_run=False,
+                        name=info.get("name", ""),
+                        cmdline=cmdline,
+                    )
                 report.killed.append(
                     {
                         "pid": pid,

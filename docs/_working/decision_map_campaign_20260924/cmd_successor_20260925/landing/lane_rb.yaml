@@ -1,0 +1,44 @@
+ttl: task_bound
+doc_type: register
+title: LANE-RB 待落清单（红蓝标定收口）
+lane: LANE-RB
+session_id: st-qmine-20260925
+created: 2026-09-26
+note: >-
+  红蓝标定收口车道（判据真源=17 号文 §二，冻结未改）。本车道零 git add / 零 commit / 零 enqueue，
+  落地唯一出口=LANE-LAND。交付一份案卷（三判据实测 + 自裁 + 夭折验尸 + 重立前置）。
+  纪律声明：① 未杀未重启任何他人进程，GPU T1（PID 3584）全程未触碰，本车道自起的临时取数进程按 PID 精确停过一次；
+  ② 临时件全部在 .runtime/tmp/（gitignore，不入仓），项目根目录零临时文件；
+  ③ 唯一共享运行时写入=data/runtime/process_reaper_keep.txt 追加 2 行
+     （rb_extract2_20260925 / calibrate_cost_tier_redblue；该目录 gitignore，防守望器再次击杀对拍）；
+  ④ 案卷 doc_type 用词表合法值 audit_report（ttl: task_bound），规避 docs/_working strict-doctype 灰区；
+  ⑤ 案卷不出现裸"裁定#未登记号"写法，涉裁定一律"裁定编号 413（ruling_registry 已登记）"，
+     并如实登记 ruling_registry 实测最大编号=413、两轮制 prereg 重签的新裁定**尚未登记**（故本车道不签"可实施"）。
+files:
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/RB_redblue_verdict.md
+evidence_for_landing_verification:
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/RB_redblue_verdict.md 内 §三 三判据实测表（每行标本/口径与样本量）
+  - .runtime/tmp/rb_lane_rb_20260925/rb_report.json（report 模式机器产出，可复算）
+  - .runtime/tmp/rb_lane_rb_20260925/cells_scores.jsonl / cells_probe.jsonl / verify.json / chain.log（逐格原始证据，含每格耗时）
+  - data/runtime/reaper_kill.log 第 597 行（对拍 PID=5612 于 2026-09-25 20:27:44 被守望器 orphan_aged 击杀）
+landing_lane_attention:
+  - 归属现状（21:3x-22:3x 复测）=本车道两份交付在 `git status` 均为 `??`（未被自动吸收进主区暂存池）；主区 index 是多会话混合池（本案复测时全仓 porcelain 1131 条），
+    投袋时请以本 files 清单为认领凭据，提交后 `git log -1 --name-only` 核实归属；本车道全程零 git 写操作。
+  - 案卷内不可复核的外部指针已尽量避免：所有引用路径均为盘上实存件（17/19 号文、03_gpu_campaign.md、w3_w5_precheck_20260923.md、prereg、exam_scale_cost_gate、
+    ruling_registry、_c4_engine/factory_grid_executor/calibrate 脚本、reaper_kill.log 第 597 行、grid_20260924-080309 产物）；原始证据在 .runtime/tmp（gitignore，不落 HEAD），
+    若总筹要求证据随批走，可把 rb_report.json + verify.json + cells_scores.jsonl + cells_probe.jsonl 四件复制进 docs/_working/.../ 作为附件（本车道未擅自复制，避免造第二真源）。
+
+handoff_to_coordinator:
+  - 结论=**不达标（判据一 0.9618 < 0.99，判据三扫描口径 82.3-84.9 s ≫ 8 s；判据二 0.96 绿但 n=60 偏松只算未反证）**，方案①两轮制"本窗口即切"作废走裁定通道；
+    **不出具 T1 重启指令卡**（任务书第 5 条只在达标时出卡），裁定=T1 本跑不动、下一轮起用。
+  - 待裁项 A（须走裁定通道，本车道无权改判据）：判据三"轻档单格"口径歧义——冻结工具量的是扫描耗时（现引擎 82-85 s，去重复查询后 2-5 s 即跨线转绿），
+    预算表 6-7 s 说的是整格耗时（现引擎 115-142 s，去重复查询后仍 ≈13-33 s 不跨线）；重立草案前必须二选一并明文测量条件，否则同一份数据可被读成一红一绿。
+  - 待裁项 B（历史基准未复现）：03_gpu_campaign.md 三.4 与 19 号文所引"轻/全档 Spearman≈1.0（0.9998）、top50 50:50、信息近零损失"在真库真窗 60 格实测为
+    0.9618 / 48:50，且轻档排序对 40bp 结局的预测力**不优于毛 Sharpe**（0.9941 vs 0.9618）——粗筛口径本身需重设计（候选：20bp 档或 5→40bp 衰减率复合分），
+    这不是工程问题，是判据一的红。
+  - 施工前置（并入 19 号文 ② 热点向量化）：`_c4_engine._load_seal_masks` 每档重复 2 次全窗 ClickHouse 查询＝单档 55 s 的根因（实测其中 49.2 s 是掩码装载）；
+    批内去重实测可把五档扫描 186-315 s 压到 5-13 s。修完必须重跑对拍（本临时件 scores/timeprobe/report 三件套可复用，已落 60 格，`scores --total 200` 续跑补齐）。
+  - 程序性缺口上报：本轮对拍发车未登记 keep 册 → 2h04m 白烧且零产物（脚本只在末尾一次性落报告，无增量落盘）。
+    建议把"长批发车前登记 keep"从宪法散文升级为脚本级强制（发车即写、毕即销），否则同类事故必复发。
+  - 程序性缺口上报：本轮对拍发车未登记 keep 册 → 2h04m 白烧且零产物（脚本只在末尾一次性落报告，无增量落盘）。
+    建议把"长批发车前登记 keep"从宪法散文升级为脚本级强制（发车即写、毕即销），否则同类事故必复发。

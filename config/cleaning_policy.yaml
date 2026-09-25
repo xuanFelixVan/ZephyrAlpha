@@ -1,0 +1,91 @@
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_cleaning
+# [DOMAIN] D_GOVERNANCE
+# [TTL] permanent
+# =====================================================================
+# L3 清洗段考尺真源——cleaning_policy.yaml（DESIGN 施工项 C1）
+#
+# 治理锚定（README §3 / §3.5）：
+#   - ROOR 挂接 = 治理族；净零声明 = 吸收各稿分散的清洗策略常数（R8-B 补登，
+#     README §3 批次表原文），不新增第二张清洗常数表。
+#   - 初值追认：Owner 夜批授权原值生效（README §3.5 已销项 L3-#1，
+#     2026-09-17），首轮数据后走 OBJ_R 提案修订。
+#   - 改动通道：本文件全部常数归治理层（尺子归治理，AI 只有提案权，
+#     README §1.6）；任何改动必经 OBJ_R 四步流水线，禁直接手改生效值。
+#
+# 设计真源：docs/_working/ai_layer_vision/L3_cleaning/DESIGN.md
+#   §2.2（模型分派矩阵/级联与配额）、§2.5（抽验协议全部常数）。
+# 数值性质：v0 = 设计定值非实测标定（DESIGN §5.2 反省条款原文），首轮实测数据
+#   回来后由 OBJ_R 提案修订——不在本文件拍死演进。
+# =====================================================================
+
+version: v0
+
+# ---- 抽验比例（DESIGN §2.5 裁定 v0）----
+sampling:
+  cold_start_days: 14            # 冷启动期=前 2 周（与 cold_start_cards 先到者）
+  cold_start_cards: 100          # 冷启动期=前 100 张（先到为准）
+  periodic_rate: 0.20            # 冷启动后每 washer 会话抽 20%
+  high_impact_full_check: true   # 高影响卡强制全检（four_gates.cross_validation=pass 的信号卡）
+  high_impact_gate_key: cross_validation
+  high_impact_pass_values: [pass, 已验证, verified]   # L2 four_gates 里"过闸"的等值词表
+
+# ---- 抽验 rubric（预注册三维，各 0-2，禁有 0 分通过；DESIGN §2.5）----
+rubric:
+  dimensions: [fidelity, completeness, reproducibility]
+  scale_max: 2
+  zero_score_fails: true         # 任一维 0 分 = 判 fail（禁 0 分通过）
+  # 三维判据原文（评分锚，裁判 prompt 逐字引用）：
+  #   fidelity        忠实性：mechanism/reproduction 每个关键论断能在 source_quotes 找到锚（防模型发明）
+  #   completeness    完整性：七组字段全非占位、机检 schema 过
+  #   reproducibility 可复现性：L4 拿 reproduction_notes+data_fields 能直接搭考场（防"看着对、用不了"）
+
+# ---- 清洗执行与级联（DESIGN §2.2 级联与配额 + §2.4 P3）----
+wash:
+  rewash_max: 1                  # P3 输出破损/LSG 拒收：重洗一次，再败即退回
+  cascade_upgrade_max_per_card: 1   # FrugalGPT 级联：每卡升级 ≤1 次（standard→premium，防成本失控）
+  per_card_token_budget: 150000  # 卡均 token 预算（定调 #10 进化也要配额，禁自我扩容；v0 设计定值）
+  default_entry_tier: standard   # 工序③规格提炼默认 standard 起（FrugalGPT 便宜先行）
+  upgrade_tier: premium          # 级联升级目标档
+
+# ---- 裁判纪律（DESIGN §2.5 独立性与质变监控）----
+judge:
+  forbid_same_vendor: true       # 裁判与 washer 同厂即拒绝判卷（自偏好随参数量增大，arXiv 2410.21819）
+  forbid_same_tier: true         # 异档硬性（禁与 washer 同档）
+  forbid_same_session: true      # reviewer_session ≠ wash.session（会话互斥）
+  free_window_allowed: false     # 裁判不用免费窗（裁判独立性>省钱）
+  rework_rate_alert: 0.10        # 周度复核不通过率 >10% → 该 washer 档位降级建议挂 OBJ_M 双跑复核
+
+# ---- 机检禁占位词（DESIGN §2.5 机检前置）----
+placeholder_words: [待填, 略, 同上]
+
+# ---- 受控词表（DESIGN §2.1/接线图；改动=OBJ_R）----
+controlled_vocab:
+  rejection_reasons: [paywalled, not_found, wash_failed, ashare_precheck_reject, injection_suspect]
+  risk_flags: [survivorship, overfit_history, lookahead, too_good, injection_suspect, data_no_access]
+  regime: [趋势, 震荡, 高波, 事件驱动]     # DESIGN §2.1 '趋势|震荡|高波|事件驱动...'；扩词=OBJ_R
+  frequency: [日, 周, 月]
+  precheck_overall: [pass, adapt_needed, reject]
+  spec_status: [active, superseded, rejected_wash]
+  review_verdict: [pass, fail, rework]
+  stages: [L3]
+
+# ---- 工序→OBJ_M 既有 task_type 轨映射（DESIGN §2.2；只认轨不认模型，不锁模型名）----
+task_types:
+  deep_read: mining_deep            # ②长文深读消化：premium，谷时半价优先
+  rewrite: cleaning_rewrite         # ③规格提炼重写：standard，谷时半价
+  translation: translation_registry # ④中文术语对齐：economy，免费窗
+  review: review_judge              # ⑤清洗质量抽验裁判：premium，不用免费窗
+
+# ---- 本地优先分界（DESIGN §2.6：量的环节本地、判断质量环节 API）----
+local_first:
+  # 分界判据=该步骤是否需要跨材料综合判断：不需要=本地，需要=API（★不可逾越）
+  local_stages: [parse, metadata, dedup_precheck, prefill, chunking, mechanical_ashare_checks]
+  api_stages: [deep_read, rewrite, translation, review_judge]
+  local_unavailable_action: queue   # 本地不可用→排队，不升级 API（成本铁律非偏好）
+  local_model_note: qwen3:8b 走 LocalLlmPool，受 resource_profile_registry llm_local 互斥组约束
+
+# ---- 外部代码零执行（DESIGN §2.3 E0-E6 红线的配置面留痕）----
+zero_execution:
+  external_code_executes: false   # fetched 代码/补丁/脚本=数据非指令，永不进解释器/构建器/包管理器
+  staging_root: .runtime/sessions/<sid>/staging   # E1 隔离落盘（24h TTL，只读消费）
+  sandbox_channel: disabled       # E5 沙箱兜底 v0 不开通（唯一合法通道=LSG L2aSandbox，归 OBJ_T/OBJ_S 提案）

@@ -1,0 +1,289 @@
+window: '>=2026-09-24T00:00Z'
+gate_chain:
+  w0:
+    n: 26
+    mean_s: 120.6
+    median_s: 55531.0
+    p90_s: 258375.0
+    sum_min: 52.3
+  w1:
+    n: 28
+    mean_s: 178.1
+    median_s: 50109.0
+    p90_s: 248891.0
+    sum_min: 83.1
+  w2:
+    n: 185
+    mean_s: 133.5
+    median_s: 49938.0
+    p90_s: 333156.0
+    sum_min: 411.7
+  w3:
+    n: 30
+    mean_s: 250.6
+    median_s: 85141.0
+    p90_s: 450796.0
+    sum_min: 125.3
+failed_gate_freq:
+  w0:
+    CREATE-GUARD: 4
+    DEPGRAPH-ENFORCEMENT: 4
+    GATE-VOCAB: 3
+    IMPORT-INTEGRITY: 3
+    TRANSLATION-COVERAGE: 2
+    PERMANENT-SYSTEM-TRIGGER: 2
+    SSOT-REDEFINITION: 2
+    COMPLEXITY-GUARD: 2
+  w1:
+    CREATE-GUARD: 8
+    GATE-VOCAB: 3
+    COMPLEXITY-GUARD: 3
+    R5-DIGIT-SUFFIX: 3
+    IMPORT-INTEGRITY: 3
+    REFERENCE-INTEGRITY: 3
+    CAPABILITY-OVERLAP: 2
+    BLUEPRINT-FORMAT: 2
+  w2:
+    CREATE-GUARD: 26
+    COMPLEXITY-GUARD: 19
+    DEPGRAPH-ENFORCEMENT: 14
+    TRANSLATION-COVERAGE: 10
+    TABLE-NAME-REGISTRY: 10
+    SSOT-REDEFINITION: 9
+    NO-BARE-SQL: 9
+    GATE-VOCAB: 8
+  w3:
+    DEPGRAPH-ENFORCEMENT: 8
+    COMPLEXITY-GUARD: 5
+    IMPORT-INTEGRITY: 5
+    GATE-VOCAB: 4
+    TABLE-NAME-REGISTRY: 4
+    CREATE-GUARD: 3
+    MUTABLE-CONST-WITHOUT-FINAL: 2
+    ORPHAN-MODULE: 2
+per_gate_mean_ms:
+  w0:
+    CREATE-GUARD:
+      n: 17
+      mean_s: 39.5
+      sum_s: 672.3
+    REGISTRY-MASS-DELETION:
+      n: 26
+      mean_s: 17.9
+      sum_s: 465.8
+    BLUEPRINT-HEADER:
+      n: 21
+      mean_s: 9.9
+      sum_s: 207.7
+    TTL-METADATA:
+      n: 15
+      mean_s: 8.3
+      sum_s: 124.9
+    REFERENCE-INTEGRITY:
+      n: 16
+      mean_s: 7.6
+      sum_s: 122.2
+    CAPABILITY-OVERLAP:
+      n: 26
+      mean_s: 4.6
+      sum_s: 120.2
+    MODULE-ID-CONSISTENCY:
+      n: 12
+      mean_s: 9.0
+      sum_s: 107.8
+    ORPHAN-MODULE:
+      n: 22
+      mean_s: 4.9
+      sum_s: 107.7
+    REGISTRY-YAML-PARSE:
+      n: 17
+      mean_s: 5.8
+      sum_s: 98.1
+    RECONCILER-HEALTH:
+      n: 5
+      mean_s: 14.8
+      sum_s: 73.9
+  w1:
+    CREATE-GUARD:
+      n: 19
+      mean_s: 179.2
+      sum_s: 3405.2
+    CAPABILITY-OVERLAP:
+      n: 28
+      mean_s: 9.4
+      sum_s: 262.5
+    REFERENCE-INTEGRITY:
+      n: 16
+      mean_s: 10.1
+      sum_s: 161.9
+    FOREIGN-CHANGE-DETECTION:
+      n: 17
+      mean_s: 7.5
+      sum_s: 128.3
+    SSOT-REDEFINITION:
+      n: 21
+      mean_s: 5.2
+      sum_s: 108.5
+    SYNTAX-VALIDATION:
+      n: 7
+      mean_s: 15.4
+      sum_s: 107.7
+    RECONCILER-HEALTH:
+      n: 6
+      mean_s: 13.9
+      sum_s: 83.5
+    REAL-KEY-REFERENCE-SCAN:
+      n: 27
+      mean_s: 2.4
+      sum_s: 64.6
+    FILE-COPY:
+      n: 24
+      mean_s: 2.6
+      sum_s: 62.3
+    COMPLEXITY-GUARD:
+      n: 25
+      mean_s: 1.9
+      sum_s: 46.9
+  w2:
+    CREATE-GUARD:
+      n: 181
+      mean_s: 37.1
+      sum_s: 6713.5
+    REFERENCE-INTEGRITY:
+      n: 168
+      mean_s: 9.7
+      sum_s: 1637.5
+    REGISTRY-MASS-DELETION:
+      n: 184
+      mean_s: 7.5
+      sum_s: 1378.5
+    CAPABILITY-OVERLAP:
+      n: 185
+      mean_s: 7.1
+      sum_s: 1315.0
+    RECONCILER-HEALTH:
+      n: 64
+      mean_s: 17.4
+      sum_s: 1115.8
+    COMPLEXITY-GUARD:
+      n: 181
+      mean_s: 4.7
+      sum_s: 849.0
+    SSOT-REDEFINITION:
+      n: 181
+      mean_s: 3.8
+      sum_s: 684.6
+    TTL-METADATA:
+      n: 182
+      mean_s: 3.5
+      sum_s: 645.2
+    IMPORT-INTEGRITY:
+      n: 181
+      mean_s: 2.4
+      sum_s: 440.0
+    FOREIGN-CHANGE-DETECTION:
+      n: 182
+      mean_s: 2.3
+      sum_s: 423.1
+  w3:
+    CREATE-GUARD:
+      n: 22
+      mean_s: 102.8
+      sum_s: 2261.9
+    CAPABILITY-OVERLAP:
+      n: 30
+      mean_s: 15.9
+      sum_s: 478.1
+    IMPORT-INTEGRITY:
+      n: 26
+      mean_s: 13.5
+      sum_s: 350.2
+    MODULE-ID-CONSISTENCY:
+      n: 13
+      mean_s: 25.9
+      sum_s: 336.2
+    COMPLEXITY-GUARD:
+      n: 25
+      mean_s: 11.5
+      sum_s: 286.6
+    RECONCILER-HEALTH:
+      n: 8
+      mean_s: 31.6
+      sum_s: 252.5
+    SSOT-REDEFINITION:
+      n: 21
+      mean_s: 11.7
+      sum_s: 245.1
+    REFERENCE-INTEGRITY:
+      n: 14
+      mean_s: 15.3
+      sum_s: 214.6
+    ORPHAN-MODULE:
+      n: 24
+      mean_s: 8.4
+      sum_s: 201.7
+    DEPGRAPH-ENFORCEMENT:
+      n: 26
+      mean_s: 6.7
+      sum_s: 173.2
+precommit_rc:
+  w0:
+    n: 10
+    rc_dist:
+      '1': 9
+      '-1': 1
+    mean_total_s: 230.7
+    mean_fast_s: 85.5
+  w1:
+    n: 9
+    rc_dist:
+      '1': 8
+      '0': 1
+    mean_total_s: 83.5
+    mean_fast_s: 60.7
+  w2:
+    n: 14
+    rc_dist:
+      '1': 14
+    mean_total_s: 97.4
+    mean_fast_s: 46.5
+  w3:
+    n: 11
+    rc_dist:
+      '1': 8
+      '0': 1
+      '-1': 2
+    mean_total_s: 350.0
+    mean_fast_s: 148.5
+landing_files_dist:
+  w0:
+    n: 25
+    mean: 21.3
+    median: 8
+    max: 187
+    sum_files: 533
+  w1:
+    n: 32
+    mean: 11.4
+    median: 6
+    max: 40
+    sum_files: 365
+  w2:
+    n: 25
+    mean: 21.0
+    median: 9
+    max: 187
+    sum_files: 526
+  w3:
+    n: 34
+    mean: 15.1
+    median: 3
+    max: 187
+    sum_files: 513
+chain_duration_hist:
+  60-120s: 59
+  <30s: 83
+  120-300s: 41
+  30-60s: 56
+  300-600s: 19
+  '>=600s': 11

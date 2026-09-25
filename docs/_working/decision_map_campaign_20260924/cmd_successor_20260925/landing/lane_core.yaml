@@ -1,0 +1,86 @@
+lane: core
+session_id: st-qmine-20260925
+written_by: LANE-CORE（取证车道，零改运行态）
+note: >
+  本车道只出定性与方案，全程零执行：未启停任何计划任务、未改收割器白/黑名单、
+  未重启进程、未改代码、未 git add/commit、未碰 qoder_cron。产出=一份案卷+本清单。
+
+  【对总筹原始定性的三处更正（都带实测出处，非意见）】
+  (1) "收割器以 incubation_expired 处决交易核心 57 次"不成立：kill log 里
+      owner=auto_runtime_core 的 58 行命中，登记对象逐条实证为
+      name=ollama-serve / cmd=ollama.EXE serve（孵化账本 36 条 core-owner 记录全数如此），
+      owner 字段语义是"谁孵的"（登记点 src/zephyr/trading/auto_runtime_core.py:821-826
+      OllamaManager.ensure_running），不是"被杀者是谁"；36 条记录对 58 行日志的差额
+      ＝同一陈旧记录被反复命中，不是核心被杀 58 次。
+  (2) 真缺陷比原判更危险（P0 级、且此刻仍在膛）：孵化收割路径按 PID 认人不按身份认人
+      （process_reaper.py:909/916 只核 pid 是否存活，不比 create_time、不比活体 cmdline），
+      Windows 复用 PID ⇒ 陈旧记录=随机进程杀手。22:33/22:42 两次只读复演，
+      账本 1471 行中 1290 条超寿未销、当前 27~29 条与存活进程撞号且逐条 create_time
+      全部 MISMATCH，撞主含 svchost/conhost/sihost/NVIDIA Overlay/ZCode/WeChatAppEx/
+      WPS/同花顺 hxperformance/向日葵 AweSun/postgres/git/bash，以及三条白名单常驻服务
+      （ch_health_probe、zephyr.data.tick_subscriber、worktree_drift_watchdog）。
+      下一轮 ZephyrAlpha_ProcessReaper（下次 22:47:22）即会杀它们。
+      配套三条同族缺陷：白名单在这条路上查的是陈旧登记串而非活体 cmdline（:922-927）；
+      keep 子串匹配区分大小写致 keep 册第 41 行 `ollama.exe serve` 永配不上
+      `ollama.EXE serve`（:262-270）；登记端退出对账 incubator.sweep() 生产零调用方
+      （全仓 grep 仅 tests/shared/test_process_incubator.py:256 命中，账本
+      marked_exited=0/1471）——M3"孵化-收割闭环"只接了收割端，弹药因此常年满仓。
+  (3) "09-25 是交易日、该日被整日跳过"的前提被两处独立实测证伪：
+      zephyr.data.trading_calendar.is_trading_day 走 exchange_calendars XSHG，
+      2026-09-25 => False（09-23/09-24/09-28 均 True）；同夜旁证
+      .runtime/logs/paper_session.log:179 `2026-09-25 09:25:09 SKIP: (is_trading_day=False)`、
+      ZephyrAlpha_PostSettlement 09-25 15:30 实跑 exit 0 并把业务日回推成
+      trade_date=2026-09-24（data/runtime/post_settlement_last_run.log）、其下次运行为 09-28。
+      于是 L09 三条观测（kline_index 尾日 09-24、last_audit 当日零记号、
+      decision_daily 缺 09-25 而有 09-28）在"休市"单一前提下全部自洽解释
+      ⇒ 跳日与 6 次处决的因果判为**不成立**。
+      另附结构证据：auto_runtime_core.py 对 daily_loop/pipeline_events/strategy_pipeline/warroom
+      零引用 ⇒ 核心根本不在 16 钩子决策链上（链由 data/scheduler.py:373-404 唤起，
+      该任务此刻"正在运行"）；09-25 链上有活动留档
+      （PIPE-20260925-105718-d72441 sim_observe_daily，last_receipt 记 skipped/why=poison_held，
+      pending_left=6）——是"有事件但被毒丸留档"，不是"无人唤醒的静默断链"。
+      哨兵尺子 max() 致跳日哑火那条缺陷独立存在，归 LANE-DAY，本车道不碰其文件。
+
+  【盘后零实例定性】按现行排班=正常，不是断供：交易腿各有独立计划任务
+  （PaperSession 09:25、SimBridgeExecute 09:35、PostSettlement 15:30、QMTWatchdog 08:45/12:55、
+  DecisionChainSentinel 次日 09:40、DataScheduler/TickSubscriber/CHHealthProbe 在跑），
+  没有任何任务以 python -m zephyr.trading 为动作；__main__.py 头注自证 [STARTUP] manual；
+  13 号文前班已在案"TradingWatchdog 是裁定不是故障，交易主进程守护当前是空位"。
+  ⇒ 今晚不必为"恢复交易链"拉起核心。真正受创的是 LLM 腿：此刻 ollama.exe/llama-server.exe
+  进程数=0（psutil 实测），而 ZephyrAlpha_OllamaServe 只有"登陆时"触发器、无重入
+  ——被收割后无人重启，下次自愈要等登录。这是"重启职责无主"的实锤实例，需总筹单独拍。
+
+  【方案与推荐次序（详见案卷 §五，本车道一律未执行）】
+  E 止血（一次性清账 1290 条超寿未销，改前备份账本；属改运行态，且须避开 T1/做T全量/重考首考批
+  的运行窗口）→ A 治本（A1 撞号闸：create_time+cmdline 双身份核，不符只报不杀并销账；
+  A2 白名单改查活体 cmdline 且 keep 匹配 casefold；A3 _log_kill 补记活体 name/cmdline/create_time
+  以治好"无法归因"；A4 销账写后进程外回读核实。影响面锁在 process_reaper.py 一条路径，
+  必须同批改 tests/trading/test_process_reaper_incubation.py 双端契约测试；
+  _reap_derived_orphans 那条按真实 cmdline 匹配 llama-server/ollama serve 的防线不动，
+  故不会放开 09-15 内存耗尽事故所防的孤儿洪水；纯代码 revert 即回，门位低）
+  → B1 语义纠错（ollama-serve 不该登记 24h 超寿、其命已由 OllamaServe 任务管辖＝双头管理；
+  并给 _DEFAULT_WHITELIST 补 ollama serve 与 zephyr.trading 两条——核心目前在收割器面前零保护）
+  → B2 真续约（incubator.renew API；须先落 A1/A4，否则把续约写进同一张热册=加重蒸发）
+  → C 恢复 watchdog（Enable-ScheduledTask + schtasks /run，D3 裁定明写"启用=生产行为变更、
+  属 Owner 窗口"⇒ **必须 Owner 门位，AI 不可自决**；且顺序必须在 A 之后：
+  守卫是 while-true + 每 5 分钟重入的复活器，身份盲未修就启用＝"拉起→被收割→再拉起"抖动往复，
+  并把 27~29 个撞号靶子反复喂一遍；启用同窗必须按脚本头注自留作业把
+  tmp/trading.heartbeat 接入 deadman_switch 第 4 通道，否则一启用就 MISSING 假告警）。
+  D 只登记引用 LANE-DAY（"期望交易日未产出"硬闸），并供其一条口径：
+  硬闸输入必须取 SSOT 日历而非自然日，否则每个节假日必假告警。
+
+  【呈总筹待决三件（本车道未代裁）】
+  (i) 核心到底该不该常驻（决定 C 案是否有意义，并与 D3 裁定前提是否失效直接相关）；
+  (ii) LLM 腿今晚是否人工发车 ollama serve（现零实例，等登录才自愈）；
+  (iii) 是否授权 E 止血（唯一能立刻消掉在场弹药的动作，属改运行态）。
+
+  【落地前置义务】本车道产出=纯文档，零 .py/.yaml 实现件、零代码改动：
+  CREATE-GUARD：CORE_reaper_execution.md 与本 landing yaml 均为新建 .md/.yaml，
+  是否需登记 creation_token 以门禁实测定性（同其它车道口径，勿猜）；
+  docs/_working 为豁免区——本案卷 frontmatter **只写 ttl: task_bound、未写 doc_type**
+  （EXEMPT-ZONE-FM 前科在案）。案卷正文亦无裸 `裁定#<数字>`（D3/92 号均按文件名+锚点引用，
+  未借用总筹裁定号）。无新模块 ⇒ 免 add_module_translation；无改名/移动 ⇒ 免 depgraph 重建。
+  本车道全程禁 git：落地经 LANE-LAND 单出口。
+files:
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/CORE_reaper_execution.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_core.yaml

@@ -1,0 +1,33 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_comparator
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 渐进披露：L0=本卡一句话；L1=src/zephyr/ai_layer/comparator/ 各模块 docstring；
+# L2=docs/_working/ai_layer_vision/L4_compare/DESIGN.md；L3=P1_construction_review.md 复审记录。
+module_id: MOD-INF-037
+capability_id: ai_comparator_l4
+category: ai_layer_comparator
+description: AI 层 L4 比较段——实验执行器（executor）+DDL-as-Code 实验账本（experiment_store，frozen_criteria_immutable 触发器锁判据）+公平性三轴（fairness）+too_good 三查（过度优异怀疑）+四考场适配器（venue_c4/venue_replay/venue_dual_run/venue_tool_bench，考尺缺席即拒考 fail-closed）；判据冻结=config/comparison_policy.yaml 唯一真源
+examples:
+- python -m pytest tests/ai_layer/comparator/（红蓝考场全绿）
+- docs/_working/ai_layer_vision/OBJ_M_models/C6_routing_diff_proposal.md（M4 路由提案消费面）
+input_schema:
+  properties: {}
+  type: object
+name: AI Comparator L4 Comparison Exam Pack
+output_schema:
+  properties: {}
+  type: object
+priority: P1
+registered_at: '2026-09-23T16:49:58+00:00'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- ai_layer
+- comparator
+- L4

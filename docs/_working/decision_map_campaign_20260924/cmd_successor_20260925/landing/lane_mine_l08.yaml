@@ -1,0 +1,46 @@
+lane: LANE-MINE-L08
+session_id: st-qmine-20260925
+created: 2026-09-26
+note: >-
+  L08 风控环节 9 子块深挖落盘清单（只读挖掘 + 新建文档；零代码改动；零 git 操作；
+  全程未触发/未复位任何熔断或停机，含 sim/paper）。
+  本车道不施工：L08-C03（MOD-RK-049 三选一）与 L08-C18（重臂对象≠卡单对象）只出裁定材料。
+  待总指挥统一登记 CREATE-GUARD creation_token 后再 commit（本车道禁 commit）。
+  净零声明：本袋 10 件全部为既有 9 号骨架的下钻证据文件，不新增规则/gate/脚本/配置册；
+  新立缺口 L08-C12..C59 全部沿用 SKEL §4 既有编号段续号，无新建台账。
+files:
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/_INDEX_MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/s1_system_killswitch_agent_behavior/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/s2_five_level_circuit_breaker/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/s3_tdm_drawdown_state_machine/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/s4_drawdown_protocol_family/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/s5_tail_risk_evt_pot/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/s6_liquidity_monitoring/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/s7_systemic_risk_signals/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/s8_pledge_veto_unlock_pressure/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L08_risk/s9_order_veto_constraint_stack/MINE.md
+read_only_evidence_touched:
+  - data/runtime/trading_kill_switch_state.json（只读内容比对，未写）
+  - .runtime/audit/kill_switch_orchestrator.jsonl（14 行只读取数）
+  - .runtime/audit/killswitch_response_levels.jsonl（1 行只读取数）
+findings_summary:
+  skeleton_verdicts_overturned:
+    - "RSK-2④：rebuild_from_disk 零调用方 → 已于 2026-09-25 接线（trading_session.py:401/434-459）"
+    - "RSK-2⑤：'触发/落盘/逐单拦截=自动（在产）' → evaluate() 全仓零调用方；逐单闸探针真源=DefaultRiskValidator.kill_switch_active，非交易五级"
+    - "RSK-3②：'JsonStateStore 根目录未装配无可达落盘位' → persist/load_or_none 已完备（drawdown_state_machine.py:617-692），缺的是装配与 L5 读代码（daily_gate_snapshot.py:382 是硬编码常量）"
+    - "RSK-5⑤：battle_map BM-RC-06-B 自相矛盾 → 裁决为四段态（算法+注入 production；runner/前端/信号腿未施工）"
+    - "RSK-6③：LEVEL_3 逃生指令归属 MOD-RK-21 → 真源=MOD-RK-10 build_escape_directive（orchestrator:1062）"
+    - "RSK-8③：'质押否决器未建码/解禁逻辑零码' → 解禁检已建码（negative_veto.py MOD-SIG-137 六检之一），缺的是 unlock_ratio 生产者与 apply_negative_veto 调用方"
+    - "RSK-1/RSK-3/RSK-7：三处'已接电/零消费'口径以实测改判（详见各簿 ② 表）"
+  new_gap_ids: >-
+    L08-C12..L08-C60 共 47 条（C27 预留未用，不复用以避跨车道号段碰撞）；
+    其中 3 条自标"待复证"：C29（consecutive_loss→sizing 消费链）、C48（数据资产挂死模块是否同名不同域）、
+    C59（BudgetChanged 事件链三点连测）。P0 级候选 4 条：C18/C32+39+43（同根，建议并"盘中风控事件环"一包）/C54。
+    新增外部对表账 1 条：C60（RECOVERY 迟滞参数缺 V 型复苏敏感性回测，来源=Man Institute 2025）。
+  design_state_zero_consumer_blocks: "7/9（RSK-1/RSK-9 主链已接电；RSK-2/3/4/5/6/7/8 均含'实码在盘·无触发面'子件）"
+  drill_prerequisite_answer: >-
+    HALT 首演（TRD-A12/L08-C02）当前不可通过：重臂对象（交易五级模块）与卡单探针对象（DefaultRiskValidator）
+    不同源 = L08-C18；另有 evaluate() 旁路持久化（L08-C19）、影子缺 per-switch 时刻与交易日归属（L08-C20）、
+    损坏影子与干净影子不可分辨（L08-C21）、仓库级单影子文件串闸（L08-C22）四条 kill-9 恢复面代码洞。
+    本车道未执行任何真实/模拟演练（Owner high 门位）。
+pending_external_benchmark: "已做一轮最小对表（结果附于 _INDEX_MINE.md 末节）；RSK-3/4/5/6/8 的逐块细对表仍标'未做'"

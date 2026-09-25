@@ -1,0 +1,96 @@
+precommit_double_count_check: none
+precommit_central_tendency:
+  w0:
+    n: 10
+    median_s: 96.8
+    mean_s: 230.7
+    mean_excl_over300s: 95.0
+  w1:
+    n: 9
+    median_s: 53.5
+    mean_s: 83.5
+    mean_excl_over300s: 83.5
+  w2:
+    n: 14
+    median_s: 36.3
+    mean_s: 97.4
+    mean_excl_over300s: 54.3
+  w3:
+    n: 11
+    median_s: 164.3
+    mean_s: 350.0
+    mean_excl_over300s: 119.0
+precommit_tail_events:
+- worker: w0
+  ts: '2026-09-24T18:32:04.984435+00:00'
+  total_s: 346.5
+  rc: 1
+  infra: false
+  sid: st-mapbuild-20260924
+  files: 1
+- worker: w0
+  ts: '2026-09-24T20:08:19.023526+00:00'
+  total_s: 1201.2
+  rc: -1
+  infra: true
+  sid: st-ibt22-recovery-20260925
+  files: 24
+- worker: w2
+  ts: '2026-09-24T20:20:30.433390+00:00'
+  total_s: 657.6
+  rc: 1
+  infra: false
+  sid: st-t0-matrix-20260924
+  files: 1
+- worker: w3
+  ts: '2026-09-24T18:39:50.057268+00:00'
+  total_s: 1201.3
+  rc: -1
+  infra: true
+  sid: st-cmd-20260924
+  files: 3
+- worker: w3
+  ts: '2026-09-24T19:45:16.996819+00:00'
+  total_s: 496.8
+  rc: 1
+  infra: false
+  sid: st-wm1-wave0-20260924
+  files: 1
+- worker: w3
+  ts: '2026-09-24T20:22:17.590673+00:00'
+  total_s: 1200.7
+  rc: -1
+  infra: true
+  sid: st-commitspeed-tbl-20260924
+  files: 6
+recent_waste:
+  since: 2026-09-23T00:00Z
+  block_events: 383
+  block_wasted_chain_min: 723.2
+  failed_chain_rerun_est:
+    w0:
+      chains: 91
+      failed_chains: 50
+      fail_rate: 0.55
+      est_rerun_min: 170.2
+    w1:
+      chains: 43
+      failed_chains: 22
+      fail_rate: 0.51
+      est_rerun_min: 76.2
+    w2:
+      chains: 206
+      failed_chains: 62
+      fail_rate: 0.3
+      est_rerun_min: 145.2
+    w3:
+      chains: 48
+      failed_chains: 24
+      fail_rate: 0.5
+      est_rerun_min: 84.9
+  precommit_wasted_runs: 42
+  precommit_wasted_min: 134.5
+  precommit_timeout_infra_min: 60.1
+dead_not_requeued:
+  items: 291
+  files: 3915

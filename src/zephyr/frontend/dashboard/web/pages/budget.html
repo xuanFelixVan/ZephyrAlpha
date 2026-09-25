@@ -1,0 +1,9 @@
+<section class="page" id="p-budget">
+    <h2 class="page-title">预算分析建议卡（AI 层 M5） <span class="badge b-na">只读</span></h2>
+    <div class="page-sub">Intelligence · OBJ_M 模型线 M5：日消耗 / 30 天外推（两窗 7d+30d，B14 裁定）/ 四档告警（提示·警告·建议降档·熔断线）/ 补足建议 / 免费窗节省——数据真源 /api/budget-advisories（fetch 只读），由 budget_analyzer 从 usage_records 聚合生成，禁止手工造建议</div>
+
+    <!-- 建议卡列表（JS 渲染：引擎 features/budget/budget.js，真源 /api/budget-advisories） -->
+    <div id="budget-body"></div>
+
+    <div class="note">数据只读·支付动作永不代行：本页只展示建议文案与直达链接文本（URL 以纯文本展示，不承载任何提交控件）；页内唯一可交互控件是"刷新"（仅重拉数据）。账户类动作由 Owner 人工执行，AI 与页面均不代行。</div>
+  </section>

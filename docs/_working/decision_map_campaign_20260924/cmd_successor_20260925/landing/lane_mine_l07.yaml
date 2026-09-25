@@ -1,0 +1,32 @@
+lane: LANE-MINE-L07
+session_id: st-qmine-20260925
+created: 2026-09-26
+note: >-
+  L07 执行环节 9 子块深挖落盘清单。只读挖掘 + 新建文档，零代码改动、零 git 操作
+  （本车道禁 git add/commit/push/git_commit.py/commit_queue.py）。
+  CREATE-GUARD creation_token 与 commit 由总指挥统一登记；strict-doctype 已满足
+  （九册 doc_type: log，总勾表 doc_type: index），R5-DIGIT-SUFFIX 已满足
+  （目录名均以字母结尾 s1_signal_to_order … s9_sell_and_daban）。
+  移交项：EXE-3 册 §④ 全部 8 条桥侧静默丢失/回报断链路径（L07-S3-G1..G8）为
+  LANE-BUILD 在修两缺陷之外的增量，请转交其施工批；EXE-4 册 L07-S4-G1
+  （零成交行 slippage_bps=-10000 毒值）须排在 SKEL L07-C04 接读者之前。
+files:
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/_INDEX_MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/s1_signal_to_order/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/s2_order_pipeline/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/s3_qmt_bridge_client/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/s4_execution_report_chain/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/s5_cost_feedback_loop/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/s6_execution_algorithms/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/s7_slippage_calibration/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/s8_depth_and_imbalance/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L07_exec/s9_sell_and_daban/MINE.md
+read_only_artifacts:
+  - .runtime/tmp/l07_probe_er.py
+  - .runtime/tmp/l07_probe_er2.py
+  - .runtime/tmp/l07_probe_depth.py
+  - .runtime/tmp/l07_probe_depth2.py
+  - .runtime/tmp/l07_probe_cal.py
+  - .runtime/tmp/l07_probe_auc.py
+  - .runtime/tmp/l07_probe_t.py
+  - .runtime/tmp/l07_probe_selfcheck.py

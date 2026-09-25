@@ -88,10 +88,14 @@ P2 迁移后路径真源（2026-06-27 治本）
 from __future__ import annotations
 
 import atexit
+import logging
 import os
+import re
 import threading
 from pathlib import Path
-from typing import Any, Protocol, runtime_checkable
+from typing import Any, Callable, Iterable, Protocol, runtime_checkable
+
+log = logging.getLogger(__name__)
 from urllib.parse import unquote, urlparse
 
 import psycopg2
@@ -1873,3 +1877,83 @@ def build_pg_dsn(config, *, superuser, read_only) -> dict[str, Any]:
 def get_current_version(conn) -> int:
     """公共接口：get_current_version（Stage 4 公共化）。"""
     return _get_current_version(conn)
+
+
+# ── AI 层 DDL 登记器共享引擎（2026-09-24 st-ailayer-final-20260924 FUNCTION-DUP 治本：
+#    apply_ai_intake/ai_heritage/ai_layer_scheduling 三登记器同体 helper 收敛唯一实现）──
+
+
+def _ensure_safe_schema_name(schema: str) -> str:
+    """通用 schema 名安全字符校验（引擎层兜底；严格白名单由调用方真源执行）。"""
+    if not re.match(r"^[a-z][a-z0-9_]*$", schema or ""):
+        raise ValueError(f"schema 名含非法字符：{schema!r}")
+    return schema
+
+
+def q_list(values: tuple[str, ...]) -> str:
+    """把常量元组渲染成 SQL 单引号列表（值来源全是调用方模块常量，非外部输入）。"""
+    return ", ".join("'" + v.replace("'", "''") + "'" for v in values)
+
+
+def drop_test_schema(schema: str, *, test_schema_prefix: str) -> None:
+    """删除测试残留 schema（仅 test_schema_prefix 前缀允许；生产 schema 永不删）。"""
+    if not schema.startswith(test_schema_prefix):
+        raise ValueError(f"拒删非测试 schema：{schema!r}")
+    _ensure_safe_schema_name(schema)
+    conn = get_depgraph_pg_connection(superuser=True, read_only=False, autocommit=True)
+    try:
+        conn.cursor().execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE")
+    finally:
+        conn.close()
+
+
+def deploy_schema(
+    schema: str,
+    *,
+    conn: Any | None = None,
+    ddl_statements_fn: Callable[[str], Iterable[str]],
+    grant_statements_fn: Callable[[str], Iterable[str]],
+    seed_rows_fn: Callable[[str], Iterable[tuple[str, tuple]]] | None = None,
+) -> dict[str, int]:
+    """DDL 部署引擎（幂等）：按 组执行语句并返回计数。
+
+    :param schema: 目标 schema（白名单校验）
+    :param conn: 可选已存在连接（测试注入用）；缺省自建 admin 连接并负责关闭
+    :param ddl_statements: DDL 语句序列（调用方由本模块常量渲染）
+    :param grant_statements: GRANT 语句序列（SAVEPOINT 包裹逐条容错）
+    :param seed_rows: 可选种子行 (sql, params) 序列（行数按 rowcount 正值累计）
+    """
+    _ensure_safe_schema_name(schema)
+    own_conn = conn is None
+    if own_conn:
+        conn = get_depgraph_pg_connection(superuser=True, read_only=False, autocommit=False)
+    seed_rows = seed_rows_fn(schema) if seed_rows_fn is not None else None
+    counts = {"ddl": 0, "grant": 0} if seed_rows is None else {"ddl": 0, "seed": 0, "grant": 0}
+    try:
+        cur = conn.cursor()
+        for stmt in ddl_statements_fn(schema):
+            cur.execute(stmt)
+            counts["ddl"] += 1
+        if seed_rows is not None:
+            for sql, params in seed_rows:
+                cur.execute(sql, params)
+                counts["seed"] += cur.rowcount if cur.rowcount and cur.rowcount > 0 else 0
+        for stmt in grant_statements_fn(schema):
+            # SAVEPOINT 包裹：角色不存在（本地精简实例）时只回滚该条 GRANT，
+            # 不能整事务回滚（PG 的 DDL 是事务性的，rollback 会把表一起撤掉）。
+            cur.execute("SAVEPOINT sp_grant")
+            try:
+                cur.execute(stmt)
+                counts["grant"] += 1
+                cur.execute("RELEASE SAVEPOINT sp_grant")
+            except Exception as exc:  # noqa: BLE001——授权失败不阻断 DDL 主体，warning 留痕
+                log.warning("GRANT 跳过：%s", exc)
+                cur.execute("ROLLBACK TO SAVEPOINT sp_grant")
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        if own_conn:
+            conn.close()
+    return counts

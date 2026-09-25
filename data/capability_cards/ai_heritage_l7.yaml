@@ -1,0 +1,34 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_heritage
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 渐进披露：L0=本卡一句话；L1=src/zephyr/ai_layer/heritage/ 各模块 docstring；
+# L2=docs/_working/ai_layer_vision/L7_heredity/DESIGN.md；L3=P1_construction_review.md 复审记录。
+module_id: MOD-INF-037
+capability_id: ai_heritage_l7
+category: ai_layer_heritage
+description: AI 层 L7 传承段——经验结构化回流闭环的关键边（D-L7-01 传承库只进一个真源，下游全只读：L1 先验/L2 快照/L4 判据先验/L5 祖先分支）：登记闸（validate_draft 纯判据+sha 精确+simhash 汉明≤3 近似自查重）、三类条目状态机只降级不越级、三类差异化遗忘（删 auxiliary 保 pivotal，按竞争力贡献不按年龄）、关单机检与 JSONL 事件；零物理删除红线（遗忘=降 status+压缩留痕，compressed 10 年内可反查全量）；存储=PostgreSQL ai_heritage schema 四表五视图，读写必经 DatabaseService/depgraph 通道禁裸连接，记忆目录永不写入
+examples:
+- python scripts/ai_layer/apply_ai_heritage_ddl.py（传承库 DDL 幂等部署，ai_heritage schema）
+- python -m pytest tests/ai_layer/heritage/（70 用例，登记闸/状态机/三类遗忘全枚举）
+input_schema:
+  properties: {}
+  type: object
+name: AI Heritage L7 Heredity Pack
+output_schema:
+  properties: {}
+  type: object
+priority: P1
+registered_at: '2026-09-24T00:00:00+00:00'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- ai_layer
+- heritage
+- L7
+- heredity

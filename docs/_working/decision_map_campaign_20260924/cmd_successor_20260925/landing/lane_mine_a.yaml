@@ -1,0 +1,58 @@
+lane: LANE-MINE-A
+session_id: st-qmine-20260925
+created: 2026-09-26
+note: >-
+  环节 1/2/3（L01 大盘状态判定 / L02 大盘情绪 / L03 板块状态与轮动）子模块级深挖作业簿，
+  共 36 份新文件（全部 untracked，本车道零 git add / 零 commit / 零 enqueue，落地唯一出口=LANE-LAND）。
+  纪律声明：① 本车道只读挖掘 + 写文档，未改任何实现代码/注册表/DB（CH 查询全为只读探针）；
+  ② 新建 .md 需 creation_token 与模块翻译登记由总指挥/落地班统一办（CREATE-GUARD）；
+  ③ frontmatter 沿用本目录既有约定 ttl: task_bound + doc_type: log（子簿）/ index（总勾表），
+     与已落 HEAD 的 9 份 SKEL.md 一致，GATE-15 单文件实测 OK；
+  ④ 文件夹名一律不以数字结尾（R5-DIGIT-SUFFIX 合规）；
+  ⑤ 各簿内对 SKEL 的"改判"均附实测证据（commit 号 / CH 探针 / git status / import 实跑），
+     未改任何判据口径与阈值；涉口径项一律标"须预注册新卡或 Owner 门位"。
+files:
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/_INDEX.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s1_hmm_kernel/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s2_overlay_transition_engine/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s3_overlay_signal_suppliers/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s4_feature_pipeline/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s5_shrinkage_risk_signals/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s6_snapshot_production_slot/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s7_anchored_state_track/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s8_six_phase_truth_chain/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s9_alt_regime_channel/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s10_downstream_consumer_surface/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s11_validation_family/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L01_regime/s12_secondary_model_farm/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/_INDEX.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/a_builder_kernel/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/b_history_replay_line/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/c1_limitup_temperature/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/c2_promotion_rate/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/c3_breadth/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/c4_volume_energy/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/c5_leverage_margin/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/c6_news_sentiment/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/d_e_auction_and_rating_candidates/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/f_legacy_emotion_cluster/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/g_tomorrow_emotion_forecast/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L02_emotion/h_consumption_surface/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L03_sector/_INDEX.md
+  - docs/_working/decision_map_campaign_20260924/links/L03_sector/b1_index_data_foundation/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L03_sector/b2_state_aggregation_kernel/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L03_sector/b3_pipeline_slots_preference/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L03_sector/b4_fund_dimension/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L03_sector/b5_rotation_algorithm_family/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L03_sector/b6_l2_gate_wiring/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L03_sector/b7_constituent_and_coordinates/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L03_sector/b8_p1_conditional_tables/MINE.md
+handoff_to_owner_or_coordinator:
+  - 环节 1：regime_snapshot_history 口径终判（3,629 行=行数、1,819=真实日数、5 个 run）——涉及 01/12 号文数字修正，属 Owner 门位。
+  - 环节 2：L02-C01 范围已缩为"两个 .py 随车提交"（回放器与测试已在主区盘上、未跟踪）；L02-C03（D13）与环节 3 L03-C02（L2 门）实测已随 commit d27e0f0df3 落地，建议销口。
+  - 环节 3：881 补采验收线三条中②③未达（881 族史起点 2021-08-02 非 2020-03；P1 无 v1↔v2 对比报告），且成分表未随补采扩容（595 vs 729）——DU-01/02 暂不可销口。
+  - 三环节净新增缺口共 57 条（L01 21 / L02 22 / L03 14），全部带三态裁定与"册内未见"标注，待治理班收编入统一账本。
+landing_lane_attention:
+  - 状态异常通报（本车道未做任何 git 写操作）：本清单 36 份新文件在写完数分钟内已被外部进程自动 `git add`（`git status` 实测为 `A `，主区暂存区总条目 547，属 st-ailayer-final 等会话占用的共享索引）。
+    风险=宪法 §2.5"暂存区可能吸收他会话内容"反向情形（我方文件被他人提交吸收，归属混淆）。
+    处置建议：LANE-LAND 投袋时以本 yaml 的 files 清单为认领凭据；提交后 `git log -1 --name-only` 核实归属；如已被他会话吞入，请按 GW 标记与 session 目录路径（links/L0[123]_*/…**/MINE.md）识别。本车道不自行 unstage（避免干扰他人索引）。

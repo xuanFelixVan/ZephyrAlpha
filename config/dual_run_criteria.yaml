@@ -1,0 +1,128 @@
+# =====================================================================
+# dual_run_criteria.yaml — M3 同任务双跑 判据预注册冻结件（施工项 C5-A）
+# =====================================================================
+# 真源照录: docs/_working/ai_layer_vision/OBJ_M_models/DESIGN.md §4.2（抽样规则+
+#           判据预注册 YAML 原文+显著性门槛文字）+ §4.4（通过判据表）
+# 治理锚定: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §model_profiling
+# 冻结纪律: 本文件内容经 freeze_hash()（全量 sort_keys 稳定 JSON sha256）冻结；
+#           施工前冻结；变更判据=拒绝执行+强制新 experiment_id
+#           （判据自改=根约束禁区，主文档定调#8）。
+# 消费方:   zephyr.intelligence.model_profiling.dual_run (load_criteria /
+#           freeze_hash / verify_freeze，fail-closed 统读，禁码内第二真源)
+# =====================================================================
+
+dual_run_criteria:
+  # -- 实验标识 -------------------------------------------------------
+  # experiment_id 模板：DR-<yyyymmdd>-<slug>
+  #   <yyyymmdd>=预注册日期；<slug>=实验短名（如 deepseek-vs-glm）。
+  #   一旦登记，判据与本 experiment_id 绑定；改判据必须换新 experiment_id。
+  experiment_id: DR-<yyyymmdd>-<slug>
+
+  # -- 对阵双方（结构与身份字段，实跑前填具体值并随证据包留痕） --------
+  champion:
+    model_id: "<champion_model_id>"
+    passport_version: "<champion_passport_version>"
+  challenger:
+    model_id: "<challenger_model_id>"
+    passport_version: "<challenger_passport_version>"
+
+  # -- 分层抽样（DESIGN §4.2 表：任务类型×二维象限，五层每层 n=20，单轮 100 件） --
+  # 任务池=真实工单回放（脱敏+固定随机种子可复现）；seed 为预注册固定值。
+  strata:
+    - stratum: S1
+      task_type: 挖矿广度扫/枚举反查
+      quadrant: 低体积×低密度
+      tier: economy
+      n: 20
+      seed: 20301
+      task_pool_ref: data/ai_layer/task_pool/  # 真实工单回放池（脱敏）
+    - stratum: S2
+      task_type: 挖矿深读复现（规格重写）
+      quadrant: 高体积×高密度
+      tier: premium
+      n: 20
+      seed: 20302
+      task_pool_ref: data/ai_layer/task_pool/
+    - stratum: S3
+      task_type: 清洗管线规格化
+      quadrant: 中体积×中密度
+      tier: standard
+      n: 20
+      seed: 20303
+      task_pool_ref: data/ai_layer/task_pool/
+    - stratum: S4
+      task_type: 翻译/登记类（module_translation 族）
+      quadrant: 大体积×低密度
+      tier: economy
+      n: 20
+      seed: 20304
+      task_pool_ref: data/ai_layer/task_pool/
+    - stratum: S5
+      task_type: 审查判定（deep_review/红蓝裁定）
+      quadrant: 低体积×高密度
+      tier: premium
+      n: 20
+      seed: 20305
+      task_pool_ref: data/ai_layer/task_pool/
+
+  # -- 指标口径（四项） -------------------------------------------------
+  metrics:
+    success_rate:
+      definition: 一次通过验收判据的件数/层内件数
+      judge: 独立会话异档判定（judge 与被测异厂异档，裁判解耦由调用方保证）
+    latency_s:
+      definition: 端到端墙钟（秒）
+      judge: 执行器计时测量（perf_counter），不经裁判
+    rework_count:
+      definition: 返工次数
+      judge: 独立会话异档判定（judge 与被测异厂异档）
+    cost_usd_unit:
+      definition: 层内总成本(时段加权)/合格产出件
+      judge: 账单口径计算（DESIGN §4.3 单价口径），不经裁判
+
+  # -- 显著性检验配置（DESIGN §4.2 原文） -------------------------------
+  significance:
+    alpha: 0.05
+    test_binary: mcnemar
+    test_continuous: wilcoxon_signed_rank
+
+  # -- 冻结规则（DESIGN §4.2 freeze_rule 原文照录） ---------------------
+  freeze_rule: '施工前冻结；变更判据=拒绝执行+强制新 experiment_id（判据自改=根约束禁区，主文档定调#8）'
+
+# =====================================================================
+# 显著性门槛（照 DESIGN §4.2 文字）
+#   胜 = 成功率差 ≥ +5pp 且 McNemar p<0.05；
+#   成本主张需 ≥ −20% 且成功率非劣（≥ −5pp 且不显著）；
+#   时延中位差 ≥ −20% 且 Wilcoxon p<0.05；
+#   层内可判件 <10 = 该层记"未决"，不硬判（诚实条款）。
+# =====================================================================
+significance_thresholds:
+  challenger_win:
+    success_diff_pp_min: 5.0        # ≥ +5pp
+    alpha: 0.05                     # 且 McNemar p<0.05
+  non_inferior_cost_win:
+    cost_diff_ratio_max: -0.20      # 实测单价差 ≤ −20%
+    non_inferior_pp_min: -5.0       # 成功率 ≥ −5pp
+    alpha: 0.05                     # 且不显著（McNemar p ≥ alpha）
+  latency_win:
+    median_diff_ratio_max: -0.20    # 时延中位差 ≤ −20%
+    alpha: 0.05                     # 且 Wilcoxon p<0.05
+  undecided_rule:
+    min_judgeable: 10               # 层内可判件 <10 = 未决，不硬判（诚实条款）
+
+# =====================================================================
+# 通过判据表（照 DESIGN §4.4 五行表——B 换 A 的预注册结论）
+# 注：本表是实验级（跨层）结论表；层内四态判定由 stratum_verdict 按上节门槛机检，
+#     全实验结论（零回归/幻觉率等跨层项）由编排侧（接线批）汇总裁定。
+# =====================================================================
+pass_criteria_table:
+  - scenario: 换更便宜模型/档
+    criteria: 目标层成功率非劣（≥ −5pp 不显著）且 实测单价 ≥ −30% 且 幻觉率 ≤ champion+3pp
+  - scenario: 换更强模型/档
+    criteria: 目标层胜（+5pp 显著）且 其余层零回归（容忍 0pp）
+  - scenario: 免费窗时间差借用
+    criteria: 同模型仅切时段，免考；但该任务类型需 Quick 冒烟一次确认可用
+  - scenario: 任何切换
+    criteria: 走 L6 蓝绿：champion 保留墓碑，观察 1-3 个月，全程一键回切（主文档定调 #7）
+  - scenario: 好得反常
+    criteria: 强制 L4"好得不像真"三查（泄漏/钻营/运气）——模型考试尤防基准记忆（L4 卡迁移项⑥）

@@ -890,6 +890,41 @@ def write_tsv(
     return write_tsv_outcome(table, columns, tsv_bytes, timeout, create_fallback).is_ch_committed
 
 
+def _maybe_mirror_macro_vintage(result: FetchResult, cols: list[str] | None, rows: list[tuple]) -> None:
+    """[WO-B3 补丁] macro_data → macro_data_vintage 发布时戳/版次存证镜像（旁路，失败不阻断主写入）。
+
+    真源：scripts/governance/meta_question/wo_b3_macro/（工单 WO-B3，覆盖 PQ-0185/PQ-0191）。
+    口径：provider 未带发布时戳者一律记 pub_ts_basis='ingest_observed'（PIT 保守上界），
+    绝不伪造历史 pub_ts；版次由 macro_vintage.resolve_vintages 依库内现存值推导（同值重放不造伪版次）。
+    """
+    if not rows or not cols:
+        return
+    try:
+        from zephyr.data.macro_vintage import (  # noqa: PLC0415 — 环依赖：macro_vintage 写通道反向惰性引用本模块
+            is_macro_mirror_target,
+            mirror_from_legacy_rows,
+        )
+    except Exception as exc:  # noqa: BLE001 — 存证旁路不可用绝不可阻断入库主链路
+        log.warning("macro_vintage 镜像不可用（不阻断主写入）: %s", exc)
+        return
+    if not is_macro_mirror_target(result.table):
+        return
+    need = ["report_date", "indicator_name", "indicator_value", "unit", "frequency", "data_source"]
+    idx = {c: i for i, c in enumerate(cols)}
+    if any(c not in idx for c in need):
+        log.warning("macro_vintage 镜像跳过（列不全 %s）", [c for c in need if c not in idx])
+        return
+    try:
+        legacy = [tuple(row[idx[c]] for c in need) for row in rows]
+        info = mirror_from_legacy_rows(legacy)
+        if not info["ok"]:
+            log.warning("macro_vintage 镜像失败（不阻断主写入）: %s", info["error"])
+        elif info["written"]:
+            log.info("macro_vintage 镜像写入 %d 行 stats=%s", info["written"], info["stats"])
+    except Exception as exc:  # noqa: BLE001 — 存证旁路绝不可阻断入库主链路
+        log.warning("macro_vintage 镜像异常（不阻断主写入）: %s", exc)
+
+
 def write_result(
     result: FetchResult,
     columns: str | None = None,
@@ -995,7 +1030,11 @@ def write_result(
         tsv_lines.append("\t".join(tsv_escape(v) for v in row))
     tsv_bytes = "\n".join(tsv_lines).encode("utf-8")
 
-    return write_tsv(result.table, cols_clause, tsv_bytes, timeout=timeout)
+    ok = write_tsv(result.table, cols_clause, tsv_bytes, timeout=timeout)
+    # [WO-B3] 存证旁路镜像（只在主写入成功时执行；见 _maybe_mirror_macro_vintage）
+    if ok:
+        _maybe_mirror_macro_vintage(result, eff_cols, rows)
+    return ok
 
 
 def delete_where(

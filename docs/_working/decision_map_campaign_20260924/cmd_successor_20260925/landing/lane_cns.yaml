@@ -1,0 +1,23 @@
+lane: cns
+session_id: st-qmine-20260925
+written_by: 总筹（LANE-CNS 撞 150 轮上限身亡于"设计定稿、开始写文件"之后；实现件已在盘但无案卷无清单，本清单由总筹按盘上实证代拟并亲自复跑其一件证尺）
+note: >
+  盘上实证（总筹逐件核实）：src/zephyr/factor/indicator_reader.py 与
+  src/zephyr/governance/indicator_usage_audit.py 为改动件；新建包
+  src/zephyr/factor/technical_indicator_factors/（__init__.py/bridge.py/daily_job.py/recipes.py）；
+  src/zephyr/data/macro_vintage.py 为改动件（AM：index 与盘字节曾不一致，落地前须定唯一真源）；
+  新测试 tests/data/test_macro_vintage_mirror.py —— 总筹显式路径自跑 = 13 passed。
+  本清单为半成品登记：CNS-01 "首批 ≥20 指标接入"与 cn_macro "≥3 条消费代码"两条量化线
+  是否真达标，由续跑车道逐条复算后回填，未达标即写"未达标+差多少"，禁按设计意图充数。
+  落地前置义务：新建 .py 需 CREATE-GUARD token + add_module_translation（条目落 entries: 段）；
+  碰实现代码须同批同步 TDM algo_note_zh + algo_flow yaml（ALGO-NOTE-SYNC）；
+  接线必须达"生产可达"（实码＋生产事件链/消费实证），仅适配器无触发面者判"覆盖未接电"不得计入达标数。
+files:
+  - src/zephyr/factor/indicator_reader.py
+  - src/zephyr/factor/technical_indicator_factors/__init__.py
+  - src/zephyr/factor/technical_indicator_factors/bridge.py
+  - src/zephyr/factor/technical_indicator_factors/daily_job.py
+  - src/zephyr/factor/technical_indicator_factors/recipes.py
+  - src/zephyr/governance/indicator_usage_audit.py
+  - src/zephyr/data/macro_vintage.py
+  - tests/data/test_macro_vintage_mirror.py

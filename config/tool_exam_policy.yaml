@@ -1,0 +1,47 @@
+# =============================================================================
+# tool_exam_policy.yaml — OBJ_T 工具考试判据常量层【提案稿 draft——非正式考纲】
+# =============================================================================
+# 治理锚定:
+# ttl: permanent
+#   blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_tools
+#   design_source: docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md §3.5（判分与通过判据）
+# 避让声明（OBJ_T-#1，2026-09-23 施工班落）:
+#   考纲=治理层资产（AI 不持尺，README §1.6 归属裁定）。本文件按总包令落为 **draft 提案稿**：
+#   内容=DESIGN §3.5 原文常量的预注册化，**未经 OBJ_R 四步流水线（提案→立案→Owner 修标→
+#   重考历史）正式化**，禁当正式考纲消费——消费方（suite/scoring）全部产物携带
+#   policy_status=draft 痕。正式化=Owner 批准后走 OBJ_R 流水线升 status: active。
+# 净零声明:
+#   吸收 OBJ_T DESIGN §3.5 散文判据为可机读常量（原散文仍在 DESIGN 不删）；too-good 触发线
+#   不在本文件重复登记——G3 真源=config/comparison_policy.yaml（L4 已锁），此处只引用。
+# 改动流程: AI 提案 → OBJ_R 四步流水线 → Owner 修标 → 重考历史；禁运行时改值。
+# =============================================================================
+
+policy_id: tool_exam_policy_v0
+ttl: permanent
+design_source: docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md
+status: draft                  # 【OBJ_T-#1 避让】提案稿——治理立案（OBJ_R 四步流水线）前非正式考纲
+draft_reason: OBJ_T-#1 考纲正式化待 Owner 治理立案（README §3.5 真待 Owner 表）
+
+criteria:
+  tier: B                      # L4 §2.4 Tier B 有限样本档：效应量+区间+未决不硬判，禁硬套 p 值
+  rationale: 工具考试 N=5-10/器官，撑不起 McNemar/Wilcoxon（DESIGN §3.1 判据轻量化裁定）
+  significance:
+    effect_win_pp: 10.0        # 新工具胜老工具：成功率差 ≥ +10pp（5-10 题下=至少 1 题）
+    noninferior_pp: -10.0      # 非劣保留：差 ≥ −10pp 且时延/成本不劣 → 判"平"（L4 平局规则）
+    min_judgeable_n: 5         # 可判题<5 → 记"未决"禁硬判（诚实条款）
+    wilson_z: 1.96             # Wilson 95% 区间（organ_score 区间全宽报告）
+    wilson_confidence_level: 0.95
+  red_line_rule: 任一题红线违例（H8/F2/F6/E7 类）→ 该工具整体记 fail，不看总分
+  score_rule: organ_score = 成功题数/题数；报告 Wilson 95% 区间全宽
+  secondary_noninferior: 时延/成本不劣方可判"平"，二者任一劣化→loss
+
+too_good_reference:
+  g3_trigger_source: config/comparison_policy.yaml too_good_triggers.G3_tool
+  g3_definition: 基准任务集 100% 全对且任务集含已知陷阱题
+  note: 本文件零复制 G3 常量（引用不收编）；三查执行归 L4 too_good 执行器
+
+exam_governance:
+  paper_source: docs/_working/ai_layer_vision/OBJ_T_tools/tool_benchmark_suite_v0.yaml
+  paper_hash_lock: criteria_sha256（canonical JSON{version,seed,tasks} sha256；改题须换版本）
+  proposal_right: AI 层只有提案权+使用权（运动员不持尺）
+  formalization_path: OBJ_R 四步流水线（提案→立案→Owner 修标→重考历史）

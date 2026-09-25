@@ -1,0 +1,177 @@
+ttl: task_bound
+lane: IBT-D01
+sid: st-qmine-20260925
+created: 2026-09-26
+updated: 2026-09-26
+status: "MEASURED 13/13 维（含 D03b 归属登记、D05b 量纲风险位）——待测=0；D09 等价结论带红证；抽样对拍进行中（见 pairwise_report.md）"
+caliber_tolerance_rule: "同名格 sharpe 差 > 30% 即列口径差异清单（判据：docs/_working/decision_map_campaign_20260924/17_quantified_acceptance.md §一 解读纪律原文）"
+engine_sides:
+  exam:
+    grid_executor: scripts/backtest/factory_grid_executor.py
+    engine: scripts/backtest/translated/_c4_engine.py
+    cost_gate: src/zephyr/backtest/regime_validation/exam_cost_gate.py
+    prereg: config/exam_scale_cost_gate.yaml
+  integrated:
+    engine: src/zephyr/backtest/implementations/vectorized_engine.py
+    matching: src/zephyr/backtest/core/matching_logic.py
+    slip_calibration: src/zephyr/backtest/core/cost_model_calibration.py
+    metrics: src/zephyr/backtest/core/metrics.py
+    data: src/zephyr/backtest/core/data_handler.py
+field_legend:
+  verdict: "same | diff | partial | to_measure"
+dimensions:
+  - id: D01
+    name: 佣金口径
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:46,422
+      value: "COMMISSION_BP=2.5（双边各 2.5bp，写入统一成本式 (COMMISSION_BP*2+STAMP_BP+slip*2)）"
+      measured: "单边佣金 2.5bp=万2.5；无最低佣金地板（无 5 元 min_commission 概念）"
+    integrated:
+      at: src/zephyr/backtest/core/matching_logic.py:69,76,110,114
+      value: "COMMISSION_RATE=0.0000854（万0.854 双向）+ MIN_COMMISSION=5 元/笔（不免五）"
+      measured: "费率差 = 2.5bp vs 0.854bp = 2.93 倍；整装另有 5 元地板（小额单额外约束）"
+    verdict: diff
+  - id: D02
+    name: 印花税与过户费
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:47,422
+      value: "STAMP_BP=10.0，但在成本式里与佣金/滑点同括号乘在「单边换手」上 → 等效买卖双边各计"
+      measured: "名义万10（0.1%）；实际生效=每笔 leg 12.5bp 平摊（见 D03 measured），非卖出单边"
+    integrated:
+      at: src/zephyr/backtest/core/matching_logic.py:74,101,112-113
+      value: "STAMP_TAX_RATE=0.0005（万5，卖出单边，2023-08 起法定）+ TRANSFER_FEE_RATE 万0.1 双向"
+      measured: "印花 10bp/双边摊 vs 5bp/卖出单边；过户费考尺侧零计入"
+    verdict: diff
+  - id: D03
+    name: 滑点档与成本合成式
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:48,420-423
+      value: "SLIPPAGE_BP=5.0 平面常数；cost_t = (Σ|Δw|/2) × (2×2.5+10+2×slip)/1e4"
+      measured: "默认档每笔交易腿等效 12.5bp（买腿超计 +5bp、卖腿少计 −5bp，相对真值 7.5/17.5bp）；档位覆盖=slippage_bp kwarg（:403,411-413），五档 [0,5,10,20,40]（config/exam_scale_cost_gate.yaml:12）；正考传 None（冻结土规不改）"
+    integrated:
+      at: src/zephyr/backtest/core/cost_model_calibration.py:175-180,228-243,267-296 + matching_logic.py:73,110-111,134
+      value: "滑点=ADV 五分位分层：Q1 7.24 / Q2 5.69 / Q3 4.67 / Q4 4.00 / Q5 2.34 bp 单边；无流动性信息→3.79bp 全市场名义加权；LEGACY 一口价 1bp 仅对照禁默认；另加 Almgren-Chriss 尺寸相关冲击腿（与滑点腿互斥计费）"
+      measured: "考尺 5bp 平面 vs 整装 2.34-7.24bp 分层 + 冲击腿（尺寸相关，考尺侧无此腿）"
+    note_on_30bp: "任务书所指「前置≥30bp 土规」在两引擎与两配置内 grep 零命中（factory_grid_executor.py / exam_cost_gate.py / exam_scale_cost_gate.yaml 均无 30bp|≥30）；实体属 L05 做T 车道土规（docs/_working/decision_map_campaign_20260924/links/L05_t0/etf_t0_cost_and_pool/MINE.md:91，实测 31.2bp、前置 ≥30bp、30 对）——非本对照表两侧引擎口径，登记以免误并。"
+    verdict: diff
+  - id: D04
+    name: 撮合时点与成交价
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:405,419
+      value: "T 日收盘再平衡（隐含成交价=close_T），收益自 T+1 起算：gross=(w.shift(1)×rets)；rets=closes.pct_change()（:416）"
+      measured: "唯一价源=收盘价，无开盘价腿；权重→收益滞后 1 日（PIT：T 日执行用 ≤T-1 数据，:24 头注）"
+    integrated:
+      at: src/zephyr/backtest/implementations/vectorized_engine.py:123-129,250,285-300,514-516
+      value: "execution_lag_days 默认 1=信号次日成交；成交价优先当日开盘价（_get_day_opens），无 open 列才回退收盘；同根成交（lag=0）硬禁止"
+      measured: "考尺 close_T 定价 / 整装 open_{T+1} 定价——同一天两套价源，隔夜跳空全额落入不同侧"
+    verdict: diff
+  - id: D05
+    name: 成交量约束与参与率
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:417-423（volume 仅 load_px 可选字段，run_backtest 不消费）
+      value: "零成交量/流动性约束——目标权重全额成交"
+      measured: "无部分成交、无冲击、无拒单计数"
+    integrated:
+      at: src/zephyr/backtest/implementations/vectorized_engine.py:126-129,153,201-203
+      value: "max_participation_rate=Decimal('0.10') 单标的单日成交量参与率上限 + AC 冲击腿（复用 execution_simulation 真源）"
+      measured: "考尺侧无此轴；整装侧 10% 上限会造成部分成交/放弃量（未量化，见对拍）"
+    verdict: diff
+  - id: D06
+    name: T+1 与持仓结转
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:417-420
+      value: "由日频再平衡网格隐式满足（w 在 T 生效、T+1 才吃收益）；无持仓账本、无「买入当日不可卖」断言"
+      measured: "同标的同日先卖后买/反手在权重差分母上被计 2 倍换手，但不校验可卖量"
+    integrated:
+      at: vectorized_engine.py:95,346,374,490 + matching_logic.py:8,33
+      value: "显式 T+1 持仓锁定（portfolio.apply_fill(fill, allow_t_plus_1=False)），资金 T+0 可用；违规 fill 被拒并分类计数（现金缺口/T+1/持仓不足）"
+      measured: "考尺侧「不可能发生」= 未建模；整装侧「拒绝+计数」= 有账本"
+    verdict: diff
+  - id: D07
+    name: 涨跌停可成交性
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:65,353-369,372-396
+      value: "apply_fillability_gate：封涨停日买入不可成交（保持前值）、封跌停日卖出不可成交；判定用原始价 kline_daily.close vs stk_limit.limit_up/limit_down，容差 _LIMIT_SEAL_TOL=1e-4"
+      measured: "原料不可得（缺价/停牌/无限制 NULL/ETF 无行）→ 不闸（fail-open，:330-331 自披露）；gate_limits=False 仅供反例对照（:410）"
+    integrated:
+      at: src/zephyr/backtest/core/matching_engine.py:8,156-165,225-267 + implementations/vectorized_engine.py:259-263,274,339
+      value: "方向感知拒单：diff>0 且 _is_limit_up → 买单 continue（不生成委托）；diff<0 且 _is_limit_down → 卖单 continue；涨停日卖单放行（原买卖对称阻断被判缺陷，2026-08-19 阶段2 改方向感知）；持仓跌出信号 → 强制清仓卖单，仅跌停/无价跳过"
+      measured: "涨停价三级解析链=stk_limit 表 PIT 行 → _limit_pct_of 日期切片（主板 ST 2026-07-06 起 10%、此前 5%）→ 板块前缀推断（INVARIANTS 自陈禁造第四份口径）；判定基准价=exec 价（T+1 开盘优先），对照日 prev_close 逐日推进（vectorized_engine:274,363）；CH 不可达 provider 内 fail-open"
+    verdict: partial_same_family
+    residual_diff: "两侧闸语义同族（封板方向拒单 + 原料缺失 fail-open），但①判定基准价不同（考尺 close_T vs 整装 open_{T+1}，与 D04 同源）②封板判据不同（考尺仅 stk_limit 绝对价+1e-4 容差；整装 stk_limit 优先、缺行退化为涨跌幅比例链）③考尺无「出信号即强制清仓」腿。未证等价，故不判 same"
+  - id: D08
+    name: 停牌与缺行处理
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:415-417（+ 翻译件侧 wide(px,'close').ffill()，如 c4_1970782c2adb_ma_pullback.py:60-61）
+      value: "价格面板 closes.reindex(...).ffill() → 停牌日结转最后已知价 ⇒ 停牌期日收益恒 0；权重面板 w.reindex(closes.index).ffill().fillna(0.0) → 停牌期间目标权重继续持有"
+      measured: "实测口径=结转价 + 权重延续；无「停牌禁成交」闸（闸只认涨跌停，见 D07 fail-open 注记）"
+    integrated:
+      at: src/zephyr/backtest/core/portfolio.py:187-189,375-389 + implementations/vectorized_engine.py:284,363
+      value: "_resolve_price：当日无有效价（缺失/非正）→ 结转 _last_prices（显式反「按 0 估值致 NAV 幻视回撤」红队实证 P0）；portfolio.update_market_value(date, day_prices) 逐日记价"
+      measured: "两边 NAV/收益层的停牌语义等价（结转 last price ⇒ 停牌日 0 收益）；差异在权重侧：考尺 ffill 目标权重、整装逐日读信号面板不做 ffill（面板缺行=当日无目标权重→不调仓，非平仓）"
+    verdict: same_in_effect
+  - id: D09
+    name: 复权口径
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:58,71-74
+      value: "读后复权表 c1_market.kline_daily_hfq（registry key market_kline_daily_hfq）FINAL，close>0 过滤；引擎内零复权换算"
+      measured: "hfq/raw 乘子实测为阶跃非负常数序列：000001 2019-2024 由 108.031→127.784（13 个台阶）、600519 由 7.212→8.145（14 台阶）——台阶落在除权日，锚在上市日"
+      volume_unit: "同表 volume 实测=手（判据 amount/(volume×100×close) 中位数：600519=0.1308、000001=0.0088，恰等于 1/hfq 乘子；对照 c1_market.kline_daily 同判据=0.01001 即股）——见 D05b"
+    integrated:
+      at: src/zephyr/backtest/core/data_handler.py:396,419-430,279-303
+      value: "读原始表 kline_daily（registry key market_kline_daily）+ 由 ex_dividend_event 现算 adj_factor（if(dr is null or dr<=0,1,1/dr)），compute_qfq_close 前向连乘得**前复权** qfq_close"
+      measured: "前复权=close×cum[-1]/cum（data_handler:301-302 同式），窗口末端归一常数 C 在 pct_change 下相消 ⇒ 不产生前视也不改变收益序列"
+    verdict: "diff_in_expression_equivalent_in_effect"
+    equivalence_measurement:
+      rule: "除权日 |r_hfq - r_qfq| > 50bp 判红（窗 2020-01-01..2024-12-31，DB 实测）"
+      positive: "000001 n=5 红点0 max=0.04bp；600519 n=7 红点0 max=0.58bp；000002 n=3 红点0 max=7.9bp（均值4.8bp）；非除权日 max=0.6bp；全窗累计净值 4 位小数一致"
+      red_proof_1: "把 B 退化为不复权 raw close → 每票全红（000001 5/5 max=673.3bp，600519 7/7 max=204.4bp，000002 3/3 max=590.3bp）⇒ 量尺能红"
+      red_proof_2: "cum 方向取反（adj=dr 而非 1/dr）→ 每票全红（max 1301.7/404.6/1152.0bp）⇒ 非哑尺"
+      probe_files: ".runtime/tmp/d01_probe_adj3.py（正照）、.runtime/tmp/d01_redproof_adj.py（红证，运行副本 AppData/Temp/d01_redproof_run.py）"
+    dead_column_check: "c1_market.kline_daily.adj_factor 2024Q1 实测 rows=310,282、uniqExact=1、min=max=1.0 ⇒ 恒 1 死列确认；整装侧 adj_factor 由 ex_dividend_event 现算（data_handler:430），不消费该列，故死列不影响其正确性"
+    table_family: "hfq 是表族：system.tables 实测 c1_market 内 11 张含 hfq——kline_daily_hfq / kline_weekly_hfq / kline_monthly_hfq + legacy_20260924 / legacy_r1_20260924 / preversion_20260925 / quarantine_20260925 / recalc 变体 ⇒ 改一张须族内对拍"
+  - id: D10
+    name: 收益与年化基准日
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:425,431 + config/exam_scale_cost_gate.yaml:23-24
+      value: "years = len(net)/244.0；ann_return = equity_final^(1/years) − 1；days_basis: 244 显式预注册"
+      measured: "244 交易日/年（考尺族统一）"
+    integrated:
+      at: src/zephyr/backtest/core/metrics.py:49,28,108
+      value: "TRADING_DAYS_PER_YEAR=252；annual_return=(1+total_return)^(252/n_periods) − 1"
+      measured: "252 vs 244 = +3.27% 基准日差；对同一 ann_return 的换算式：(1+r_244)^(244/252)−1（差异 <1pct 量级，非主导误差源）"
+    verdict: diff
+  - id: D11
+    name: Sharpe 算法
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:426
+      value: "sharpe = net.mean()/net.std() × sqrt(244)，rf=0（不减无风险利率）；分母 pandas 默认 ddof=1"
+      measured: "无风险利率扣减=0；样本下限由调用方把关（factory_grid_executor.py:779 len(net.dropna())<60 判死）"
+    integrated:
+      at: src/zephyr/backtest/core/metrics.py:47,118-122 + :49
+      value: "excess = returns − 0.025/252；sharpe = excess.mean()/returns.std() × sqrt(252)；n_samples<MIN_SAMPLES_FOR_SHARPE 直接置 0"
+      measured: "两处系统性差：①rf=2.5%/年扣减（对净收益均值直接下压 0.025/252 per day）②√252 vs √244 缩放比 = 1.0164。rf 扣减项在日频≈ −0.0982 sharpe/（0.025/252×244=2.43pct/年）→ 对低均值策略可放大成 >30% 相对差"
+    verdict: diff
+  - id: D12
+    name: 样本对齐窗与 PIT 切点
+    exam:
+      at: scripts/backtest/factory_grid_executor.py:1028-1029,699（默认窗+预热）+ scripts/backtest/translated/_c4_engine.py:50-52（C4 批窗）+ config/search_space_prereg.yaml:41（冻结搜索窗）
+      value: "网格执行器默认 --start 2020-01-01 --end 2023-12-31，另向前多留 200 自然日做因子预热（warm_start）；C4 翻译件族同窗（ETF 族 2021-04-01 起）；预注册搜索窗 ['2019-01-04','2025-09-09']"
+      measured: "实测交易日：2020-01-01..2023-12-31 = 970 天（DB 探针 uniqExact(trade_date)）；2019-04-01..2025-09-09 = 1566 天；PIT 右端点=预注册窗终点 2025-09-09（闭卷切点，冻结件）"
+    integrated:
+      at: docs/_working/integrated_backtest/IBT-PROTOCOL-V1.md:56,58 + implementations/vectorized_engine.py:130-134,311-330
+      value: "W_IS=2019-04-01..2023-12-31（regime 快照起点约束）、W_HOLDOUT=2025-09-09..2026-09-08（单次烧毁）；运行时逐日 PIT 标的池过滤（剔未上市/已退市/ST/次新 <120 自然日），CH 不可达 fail-open"
+      measured: "窗左端不对齐：考尺搜索窗 2019-01-04 起（网格默认 2020-01-01 起）vs 整装 W_IS 2019-04-01 起；右端同为 2025-09-09 切点（闭卷纪律同源）；另日线 2019 前宇宙稀疏（回放诚实上限 2019-01-03）"
+    verdict: partial
+  - id: D13
+    name: 仓位与资金口径（满仓归一 vs 允许现金）
+    exam:
+      at: scripts/backtest/translated/_c4_engine.py:417,419,425
+      value: "权重面板 Σ 行值原样使用（Σ<1 的现金意图保留，Σ>1 不放大）；无初始资金概念、无整数股、无现金利息"
+      measured: "换手=Σ|Δw|/2（权重差分母），现金腿收益=0"
+    integrated:
+      at: implementations/vectorized_engine.py:228-231,143 + core/matching_logic.py:8,33
+      value: "_normalize_day_signals 强制归一至 Σ=1（满仓摊派；「Σ<1 的强度面板会被放大为满仓」头注自陈），现金仓位须经 shrinkage 层或目标权重 0 表达；initial_capital=1,000,000 元、100 股整数倍由调用方校验、现金 T+0 可用零息"
+      measured: "半仓/择时空仓意图在考尺侧保留、在整装侧被放大为满仓 → 直接改变收益与波动分母，是 sharpe 不可直译的结构性来源之一（对拍中量化）"
+    verdict: diff
+open_questions: []

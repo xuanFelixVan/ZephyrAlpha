@@ -1,0 +1,197 @@
+---
+ttl: task_bound
+title: L06 策略考试与条件共振上岗——挖干作业簿（六向台账+自审闸+施工项+标准件）
+created: 2026-09-25
+sid: st-mining-20260924（链路 L06 挖矿班）
+lane: decision_map_campaign
+status: SEALED（八子块六向全填；深读尾差 3 件见 §7 尾注，不阻骨架封矿）
+doc_version: v1.0
+skeleton_source: ../../09_link_skeletons.md 环节6（本簿=其挖干细化，禁作新增节点号出处）
+mining_sources: factory_grid_executor.py / calibrate_cost_tier_redblue.py / search_space_prereg.yaml / 战役 02·03·11·17·18 号文 / quant_methodology 01·02·04·06 册+routing_table_v1_draft / framework_composer.py / TDM yaml state_matrix 段 / IBT-PROTOCOL-V1 §7-10 / exam_policy.md / exam_cost_gate / condition_package / n_trial_ledger / deflated_sharpe_calculator / f06_e4_wfa_exam / daily-orchestrator-blueprint §二S4
+doc_type: log
+---
+
+# L06 · 策略考试与条件共振上岗（GPU 成绩单→选策略规则）挖干作业簿
+
+> **一句话**：考试机器实战在岗（预注册冻结+闭卷窗+五档成本门+DSR 浮动门槛全链有码有账，GPU T1 3,700 格跑批中）；
+> **上岗半边缺位**——"条件共振→选策略"在 TDM 无独立骨架节点（state_matrix=配置矩阵非节点）、
+> 上岗规则 v1 未立法（LK-10）、routing_table 仅设计稿、state_matrix 三格 pending-owner-adoption（D30）、
+> E8 组合装配层未建（IBT-C01）、治理级考试循环 283 题零样本（IBT-E01）。
+> 本簿骨架判读与 09_link_skeletons.md 环节6 一致，本文档不复制其总表职责，只做子块级六向挖干。
+
+## §0 子块全树（八子块）
+
+```
+L06 策略考试与条件共振上岗
+├─ L06-A 搜索执行器（factory_grid_executor · T1 粗扫→T2 晋级两轮制）
+├─ L06-B 预注册防线（prereg 冻结 · DSR 浮动门槛 · PBO/CPCV · n_trial_ledger · 负结果台账）
+├─ L06-C 考尺（f06 E4 三阶段正考 · exam_cost_gate 三道门 · 考试政策 exam_policy）
+├─ L06-D HOLDOUT 闭卷（四窗制 · 单次烧毁 · 批 D 新鲜窗 · 窗口状态账本缺位）
+├─ L06-E 成绩单→上岗规则（成绩单口径 · routing_table 设计稿 · state_matrix 填格）
+├─ L06-F 条件共振判定（r 态→六段折算唯一位点 · activation strict/lenient · 六段↔五态映射）
+├─ L06-G 切换摩擦治理（滞回带 0.60×0.5 · mSPRT 晋升 · 最短任职期 20 日/冷却 60 日提案 · 三行成本账）
+└─ L06-H 组合装配（E8 装配层 · 7 态×15 员权重矩阵 · PP-001 sleeves 配比 · 成绩单上板）
+```
+
+---
+
+## L06-A 搜索执行器
+
+| 向 | 内容 |
+|---|---|
+| ①上游输入 | 搜索空间机器真源 `config/position_recipe_grid_schema.yaml`（GridCompiler 消费，禁删维）；预注册预算钳制 `config/search_space_prereg.yaml`（`_apply_prereg_budget` fail-closed，factory_grid_executor.py:982-1008）；E0 算力窗问闸（factory_grid_executor.py:1011-1020，compute_window_gate.check_gate("f06_grid_batch","local_gpu")）；行情/市值/行业锚三数据面（c1_market 库经 TableRegistry，factory_grid_executor.py:88-111） |
+| ②数据原料 | 全 A 去 ST 宇宙/HS300/ZZ500（index_constituent 真源）、total_mv 宽表、c1_market.industry_class L1 快照+sws2021_l1 词表（io_sector_sws_map.yaml）、v1 三因子 f_mom20/f_lowvol20/f_ma_gap 现算（factory_grid_executor.py:111,242-249）；预热 200 日（:699） |
+| ③状态输出 | `data/strategy_intake/grid_<run_ts>/`：manifest.csv（出生证+degraded 维+cost_tier_sharpes_json/cost_adjusted_sharpe 两列）+negatives.csv（死亡层 eval/backtest/gate 三枚举+死因，NegativeRecord 校验拒绝缺死因行，:114-130）+summary.json（N_eff+窗口+seed）+net_returns.parquet（带日期索引，DSR 精确口径底料，:852-863）；现行 run=grid_20260924-213246（T1 3,700 格跑批中，产物目录已建、manifest 期末一次落盘——跑中目录空=代码预期行为 :889-914） |
+| ④下游消费 | T2 晋级（主效应前 20% 自动晋级+4440 型复验，03 号文 §一）；f06 幸存者正考（scripts/backtest/f06_e4_wfa_exam.py 经 SURVIVORS_CSV=data/strategy_intake/f06_survivors.csv）；factory_grid_anova（归因）；红蓝对拍参考 run（calibrate_cost_tier_redblue.load_reference_run 读 manifest+summary.window）；E2 四车道（挂接预留，MOD-BT-196 头注 CONSUMERS） |
+| ⑤自动化挂点 | **现状：半自动**——Owner 点火+后台守护（reaper keep 在册 data/runtime/process_reaper_keep.txt:18,34）；c4_exam×model_exam 周六 14:00/18:00 排程（02 号文 §一.3）；E0 问闸自动拒非窗；无常驻循环（#noqa m11 手动批处理合法性声明 :1071-1072）。缺位=T1→T2 自动接棒无代码（守望单人工发车，07 号文 B） |
+| ⑥缺口债 | **LK-11** T1 轻档成本路径——已解一半：T3 方案①代码已备（run_batch keyword-only cost_gate_tiers_bp + STAGED_TIERS_KEY="cost_gate_t1_tiers_bp" + _resolve_stage_cost_tiers 轻档须为全档子集 fail-closed，factory_grid_executor.py:46-55,918-1008），**红蓝对拍未跑**（calibrate_cost_tier_redblue.py 就绪待 GPU 空窗人工触发）+prereg 分层字段未冻结+重签未做（07 号文 C2#10=条件触发）；n_trial 记账 E1C/LLM 轨零实证（IBT-E02，11 号文 §5.6） |
+
+**自审闸：SEALED**（执行器全链已读：求值/抽样/预算闸/档位扫描/产物 schema；方案①代码现状与 03 号文 §三 清单逐条对上——清单 1/2 已在码，清单 3/4/5 待做）。
+
+## L06-B 预注册防线
+
+| 向 | 内容 |
+|---|---|
+| ①上游输入 | 裁定#413（预注册三字段签发 frozen_at=2026-09-24T22:00+08:00/frozen_by/owner_signoff，search_space_prereg.yaml:12-14）；裁定#306（N_eff 预注册族口径，ruling_registry.yaml:3795）；Owner 通宵令批 C（成本焊进考尺） |
+| ②数据原料 | 冻结册本体 `config/search_space_prereg.yaml`：budget_caps（T0 200/T1 3,700/T2 900、grid_points_cap 25,000、per_point_seconds_measured=35.33 实测回填 :57、cost_gate_in_every_tier=true :62）+e7_defense（dsr_denominator=n_trial_ledger cumulative_trials、dsr_floating、family_registry_required、ledger_required :68-75）+honesty 三条（烧毁条款/模拟盘三步/选族自纠 :76-80） |
+| ③状态输出 | 试次数账本 `src/zephyr/backtest/core/n_trial_ledger.py`（MOD-BT-200）：YAML 真源+CAS 写入、只算可审计机器回测次数（manual 只入 known_floor 禁入判定分母）、batch 幂等、n_trials_effective 披露位；执行器每批 set_effective_trials（factory_grid_executor.py:836-846）；阴性库 negatives.csv=负结果台账（prereg negative_result_promise :28） |
+| ④下游消费 | DSR 浮动门槛：`src/zephyr/simulation/deflated_sharpe_calculator.py`（MOD-SIM-024，全仓 DSR 唯一真源，样本<3 拒绝+退化 fail-closed，峰度超额口径唯一转换位）；f06 判定链（RB-STATS-01 证据充分性闸：N_eff 未复算+过拟合三维未评满⇒禁判"通过"，f06_e4_wfa_exam.py:8 头注）；G2 门 PBO>0.2/CPCV 路径稳定性立法（docs/_archive/62_business_registry_construction.md §4.13 :869-877） |
+| ⑤自动化挂点 | **现状：在产**（账本随跑批自动记；DSR 预计算注入 f06 fail-closed）。缺位：PBO/CPCV 引擎字段接线（G2 立法在册、f06/批量执行器不回填 pbo_value/cpcv_* 字段=**LK-08**，quant_methodology/02_overfitting_defense.md §3 落地顺序①"边际收益最大"） |
+| ⑥缺口债 | LK-08（PBO+CPCV 进考试验收链；CPCV purge/embargo 参数须入预注册禁跑中调，02 册 §4.3）；Soloviov 2026-07 试验相关→bootstrap 修复检查已落地 G2（trial_correlated+bootstrap_test_passed）但考试链未消费；多重检验正式判据三件套（haircut+DSR+PBO 逐格报告）入 17 号文 §一 待成绩单兑现 |
+
+**自审闸：SEALED**（11 层组合防线表 quant_methodology/02 册 §3 全层状态逐层核对过：✅7 层/◐3 层；◐ 的 3 层=CPCV/PBO/bootstrap 即 LK-08 施工项本体）。
+
+## L06-C 考尺
+
+| 向 | 内容 |
+|---|---|
+| ①上游输入 | L06-A 幸存者配方（f06_survivors.csv / 指定 recipe-id，缺省 38b453ca3683）；考试政策准入四条（docs/01_policies_and_standards/sop/backtest_system_sop/exam_policy.md §1：prereg 冻结/封闭族 N_eff/沙箱三关/负结果承诺）；预注册参数 `config/exam_scale_cost_gate.yaml`（五档 [0,5,10,20,40]bp、survival_floor 0.0、min_days 60、换手 8x/244 日、cost_adjusted_sharpe 主目标） |
+| ②数据原料 | 冻结土规 `_c4_engine.py`（COMMISSION_BP=2.5/STAMP_BP=10/SLIPPAGE_BP=5 平面常数，:46-48）；条件轴输入包 `src/zephyr/backtest/regime_validation/condition_package.py`（MOD-BT-COND-PACKAGE：情绪灰度五档×F4_BDI_MOMENTUM_Z20 三态、30 日地板、闭卷窗 1,622 交易日、板块腿 observational-only 禁入统计判据） |
+| ③状态输出 | E4 三线 verdict（通过/存疑/不通过，f06_e4_wfa_exam.py:62-64）+verdict.md+summary.json 落 data/backtest_artifacts/runs/E4-F06-*/；成本门判定 `src/zephyr/backtest/regime_validation/exam_cost_gate.py`（MOD-BT-IBT-COSTGATE）三道门逐条数字证据（裁定#325 禁"全绿"表述）；扫描/判定两面分离（run_cost_tier_scan tiers_bp 子集仅供 T1 轻档扫描，三门判定恒全档证据 <3 档 fail-closed） |
+| ④下游消费 | C4→注册表升降级（strategy_registry REG-STR-001，现册 161=19 active+139 candidate+3 deprecated，02 号文 §四）；TDM-E-L9-E2 结论回传（yaml:5204，red_reason=pending_gate）；C3-02 升降级管线与退役评审（yaml:3989）；成本合格名单→整装 v2 池基（IBT-B04） |
+| ⑤自动化挂点 | **现状：半自动**——F06Grid 周六 14:00 Task Scheduler 档+GPU 手工点火（11 号文 §5.5）；哑门事故四件已修（exam_cost_gate 位置传参滑点未入算等，commit 80880932d4，契约钉 tests/backtest/test_cost_gate_tier_wiring.py）。缺位：治理级考试循环（meta_question 283 题全 registered、answered=0、exam_result=0——11 号文 §5.3 PQ-0051-0058，=IBT-E01） |
+| ⑥缺口债 | IBT-E01（治理级考试循环落地）；IBT-E02（E1C/LLM 轨记账）；**LK-08** 的 f06 侧回填 pbo_value/cpcv_*；WFA 评估维上限=3 维中仅评 1 维（参数扰动/跨时段维未评，OVERFIT_DIMENSIONS_TOTAL=3 头注自述） |
+
+**自审闸：SEALED**（f06 头注 INVARIANTS+exam_policy §1+exam_cost_gate 头注三道门逐条读过；历史伤疤哑门/N_eff 手填病/E0 零接均已修并有防重复立案登记）。
+
+## L06-D HOLDOUT 闭卷
+
+| 向 | 内容 |
+|---|---|
+| ①上游输入 | 四窗制（IBT-PROTOCOL-V1.md §3：W_IS 可多次/W_OOS 准样本外/W_HOLDOUT 2025-09-09..2026-09-08 冻结单次烧毁/W_POSTD 前向）；D=2026-09-09 切点（TDMAP-001 §12）；GPU 闭卷窗 [2019-01-04, 2025-09-09]（prereg condition_stratification.search_window :41-42） |
+| ②数据原料 | 闭卷窗内 1,622 交易日条件包（condition_package 数字真源 w3_w5_precheck §2.4·甲）；窗外数据禁入=condition_package closed_book 纪律（禁校正/调参/定档）+批 D 用掉原 HOLDOUT 后"最终盲窗=2026-09 之后前向段"（max_remediation_plan §2-D 诚实条款） |
+| ③状态输出 | 烧毁记录：首跑 W_HOLDOUT 03:10-03:20 单次烧毁 IBT-A -12.24%/Sharpe -1.389→C 门不过（IBT-CAMPAIGN-LEDGER.md §3）；**窗口状态机（哪段已烧/在烧/未开）无机械账本，全靠文档纪律** |
+| ④下游消费 | 批 D 新鲜窗重考产"修后新名单"=GPU 第一轮搜索的池基（IBT-F01 **P0**：fresh 名单产物仓内未见、现网搜的是旧 15 员族谱系，11 号文 §6.3）；E1C-09 灾难折同窗重考（裁定#404 R2） |
+| ⑤自动化挂点 | **现状：全手工**（烧毁/重考=人工 CLI+协议纪律，11 号文 §6.5）。缺位=IBT-F02 窗口状态账本件（P1） |
+| ⑥缺口债 | IBT-F01（批 D 收口，池基悬空）；IBT-F02（窗口状态机械化）；E1C-09 重考结果仓内未见（§6.4） |
+
+**自审闸：SEALED**（纪律本体无伤疤：首跑对 HOLDOUT 无违规记录、W_OOS 自证窗风险已披露——11 号文 §6.2；三缺口全部立卡在案）。
+
+## L06-E 成绩单→上岗规则
+
+| 向 | 内容 |
+|---|---|
+| ①上游输入 | GPU 成绩单（每格 cost_adjusted_sharpe 主目标+毛夏普观察+DSR 门槛，03 号文 §二.6）；解读纪律=17 号文 §一（考尺口径相对排名；跨引擎绝对值翻译待 IBT-D01，同名格 sharpe 差>30% 列差异清单）；TDM state_matrix 只读（routing_table_v1_draft §2 "禁复制第二份"） |
+| ②数据原料 | `config/trading_decision_map.yaml:5556-5650` state_matrix 四节点×六段=24 格：TDM-E-L1 三格 filled proposed（capitulation→[STR-VREV-025/027]、accumulation→[STR-VREV-026/027]、expansion→[STR-MOMTREND-033]）+**三格空 pending-owner-adoption**（ignition/euphoria/distribution——euphoria/distribution 备注明示"PP-001 无防御型 sleeve"、distribution 预算带 0% 禁新开仓）；TDM-E-L4 三格 daban+三格 by-design-empty；TDM-P-P2 两格四策略+四格 by-design-empty；TDM-F-C1 六格全 by-design-empty（预算带连续插值非查表）。R41 空格封闭词表（pending-owner-adoption/by-design-empty/pending-evidence，缺键=DECISION-MAP gate 阻断） |
+| ③状态输出 | **缺位本体**：上岗规则 v1 未立法（**LK-10**）——唯一形态=设计稿 `docs/_working/daily_loop_campaign/routing_table_v1_draft.md`（Level0 六段→Level1 挂谁→Level2 配比 PP-001×预算带→Level3 因子面；落地三步全部待 Owner 批：映射常量入 plan_engine/ignition-euphoria 拆分阈值+60% 硬顶+过渡带系数入 config/空格填格）；编排器 S4 期望产出 PackageDecision（2026-09-16-daily-orchestrator-blueprint.md:29） |
+| ④下游消费 | 编排器 S4（本体不存在=BT-P1-031，消费链虚挂）；daily_decision_orchestrator.py（现产 BUDGET_BANDS 仓位上限+过渡带折减，:95-99,412-420）；pf_alloc 分配链；framework_composer activation（见 L06-F） |
+| ⑤自动化挂点 | **现状：休眠**——state_matrix 无程序化读端（编排器不存在）；fw_backtest 事件链存在但与 IBT 协议链未打通（断桥③，11 号文 §3.5）；routing_table config 零落地（Owner 批前零 config） |
+| ⑥缺口债 | **LK-10**（上岗规则 v1 未立，滞回带+任职期=提案）；**D30**（三空格 pending-owner-adoption=Owner 资金分配门位）；**D31**（预算带/过渡带数值 proposed→confirmed）；LK-16（六段↔五态映射未落地，routing_table §1"全仓无映射定义"）；成绩单↔面板断桥（IBT-G01：backtest_results 消费 BacktestResult 对象，GPU 成绩单无上板通道）；IBT-D01（成绩单口径仅考尺可判读的对照/声明，**P0**） |
+
+**自审闸：SEALED**（骨架空洞定性=09_link_skeletons §8.3 第 1 条，本簿逐格核过 24 格现状与两份设计稿口径；"缺位"是判定不是未挖）。
+
+## L06-F 条件共振判定
+
+| 向 | 内容 |
+|---|---|
+| ①上游输入 | RegimeSnapshot 7 态（c1_backtest.regime_snapshot_history 3,629 日 PIT）；六段折算唯一法定位点 `src/zephyr/pf_core/strategy_engine/framework_composer.py` REGIME_STATE_TO_ACTIVATION_PHASE（:153 区块：r10→capitulation、r4/r11→accumulation、r3→expansion、r12→ignition；r1/r2 震荡态不路由宁漏勿误）；同表镜像 scripts/backtest/auto_mount.py:129 R2SIX（两处必须同步，模块头注自述"候选落点 zephyr.shared.contracts 或 config 规则 YAML"未落） |
+| ②数据原料 | 六段词表=`src/zephyr/signal_ashare/core/environment_switch.py` SIX_STATES（经 _states_from_source 惰性加载+fail-closed，framework_composer.py:186-208）；情绪灰度（condition_package 消费 c1_market.emotion_index v0.1.0 冻结公式） |
+| ③状态输出 | activation 折算：PlanWeight.activation 六段子集（framework_composer.py:243-258 dataclass 字段）；当日折算态不在成员集内→α 强制 0（strict 政策=宁漏勿误；lenient=回退基准权重，ACTIVATION_POLICY_* :160-162）；**结构性如实披露：euphoria/distribution 无 r 态来源 ⇒ 只挂这两态的成员在整装口径下恒不激活**（framework_composer.py:147-150 头注） |
+| ④下游消费 | framework_composer compose_weight_panels（静态 :1002 等权 α=1/15/动态 :1244 regime 联动）；IBT-B 四层联动方案（L1 shrinkage 节流映射）；daily_decision_orchestrator 六段预算带 |
+| ⑤自动化挂点 | **现状：回测侧在用、生产侧虚挂**——合成全手工 runner 脚本（11 号文 §3.5）；fw_backtest emit 链存在未打通 |
+| ⑥缺口债 | 六段分叉两处实现未对齐真源（auto_mount R2SIX 法定 vs daily_decision_orchestrator.py:110 REGIME_TO_SEGMENT 产线占位 r4/r2/r1 三键冲突）——6 步修复=quant_methodology/appendix_C_six_state_truth_chain.md，**Owner 已批开工**（07 号文 C2#3）；LK-16 六段↔五态映射；euphoria/distribution 覆盖空洞与 D30 填格互为前置 |
+
+**自审闸：SEALED**（唯一位点+分叉两处+strict/lenient 双政策+无 r 态披露全部有行号实证；修复在飞不阻挖干）。
+
+## L06-G 切换摩擦治理
+
+| 向 | 内容 |
+|---|---|
+| ①上游输入 | 条件共振判定输出（L06-F）+成绩单档位（L06-C/E）；滞回带现行三零件：daily_decision_orchestrator.py:95 TRANSITION_THRESHOLD=0.60 / :96 TRANSITION_FACTOR=0.5（裁定#305：隶属度<60% 按保守下缘 0.5 折减）+ :99 BUDGET_BANDS 六段预算带连续区间 |
+| ②数据原料 | mSPRT 序贯晋升=`src/zephyr/pf_core/core/msprt_champion_challenger.py`（MOD-PF-008，证据持续累积到阈值才切换=统计版滞回）+晋升编排=`src/zephyr/governance/lifecycle_governance/msprt_promotion_channel.py`（ARCH-298 载体重裁定）；退役侧滞回=`src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py`（THD-RETIRE-001 滚动 20 日跑输>5%/THD-RETIRE-002 滚动 60 日 Sharpe<0，评审制铁律"触发器非自动关停"） |
+| ③状态输出 | **提案（未立法）**：quant_methodology/04_switch_friction.md §1-3——上岗门=挑战者 DSR 校正后 Sharpe+mSPRT 显著（已立法照用）；下岗=低于上任门+连任确认；**最短任职期 ≥20 交易日**（任职期内触发只记档不执行，对齐 memo55 月度复盘）；**下岗后冷却 ≥60 日**方可重选（对齐 refit 间隔 60 日现行值+exam min_days=60）；滞回带宽 ≥2×切换成本期望损耗、随成本档预注册；切换三行账（预估摩擦 bp 按 40bp 最高档/新配置五档存活证明/切换换手计入年度 8x 余量，缺任一行评审不受理） |
+| ④下游消费 | 上岗规则 v1（L06-E）的直接零件库；C3-02 退役评审；PP-001 sleeve 配比调整 |
+| ⑤自动化挂点 | **现状：零件在产、编排缺位**——三零件（过渡带折减/mSPRT/退役评审）全 production·evolving 在码；"任职期记档不执行"的评审输入挂点未建（04 册 §2 net-zero 对价：任职期=月度复盘编排加一条评审输入，禁新机制） |
+| ⑥缺口债 | LK-10 的零件面（提案→立法须 Owner 采纳，04 册 §2"未经裁定不施工"）；判据真源守卫前置（FINAL_REPORT_t0_matrix_reexam §五-6 宏观门误把低波当趋势的反面教材→无守卫映射不得驱动切换） |
+
+**自审闸：SEALED**（04 册三节+三个代码零件逐一读过；参数 0.60×0.5/20 日/60 日全部有真源，提案/立法边界清楚）。
+
+## L06-H 组合装配
+
+| 向 | 内容 |
+|---|---|
+| ①上游输入 | 成绩单幸存者（L06-C）；state_matrix 挂载格+PP-001 sleeves 配比（trading_decision_map.yaml portfolio_plan 段：16 sleeves Σ=1.0、daban/做T 三策略带 activation_state、STR-VREV 三件各 0.045 带单态激活）；L1 shrinkage 节流映射（IBT-B 方案） |
+| ②数据原料 | 合成算子 compose_weight_panels（framework_composer.py:1002 静态/:1244 动态）；IBT-A 静态整装（15 员等权 α=1/15）+IBT-B 四层联动=组合维度仅有的 2 配置（IBT-PROTOCOL-V1.md §7）；RSC-2 收缩节流（"剩余质量落现金禁再归一化"，裁定#270） |
+| ③状态输出 | **E8 装配层未建**（QuantCombine 三算法+矩阵=max_remediation_plan 批 G；**7 态×15 员 regime 权重矩阵 v1 预注册明确不做——"避免自造权重矩阵；留 E8 装配层"**，IBT-PROTOCOL-V1.md §7:96）=IBT-C01（P2，11 号文 §3.6） |
+| ④下游消费 | pf_alloc 生产链（allocation_orchestrator/batched_position_builder，日循环 16:45 圈已跑通 e2e_integration/LEDGER ④）；fw_backtest 组合完整性闸（DEAD_MEMBER_ALPHA_SHARE_LIMIT=0.25 唯一阈值真源，framework_composer.py:178-180） |
+| ⑤自动化挂点 | **现状：生产侧自动/回测侧手工**（11 号文 §3.5）；fw_backtest 事件触发链在码未接 IBT 协议链 |
+| ⑥缺口债 | IBT-C01（E8+矩阵+PP-001 生产配比）；IBT-C02（Σ<1 目标权重直通，R-022 数值回归对照）；满仓摊派语义（任意成员有信号即满仓，协议 §10.1 如实披露）；PP-001 sleeve 独立子账户五项交互丢失（协议 §10.5）；IBT-G01 成绩单上板桥（P1） |
+
+**自审闸：SEALED**（协议 §7/§10 逐条读过；"矩阵零格"是预注册决策不是遗漏——挖干结论=填格原料恰是本轮 GPU 成绩单，施工须随批 D 新名单+考试成绩驱动，禁自造）。
+
+---
+
+## §7 自审闸三态总表
+
+| 子块 | 三态 | 一句话 |
+|---|---|---|
+| L06-A 搜索执行器 | **SEALED** | 方案②在跑、方案①代码已备红蓝待跑 |
+| L06-B 预注册防线 | **SEALED** | 预注册/闭卷/成本门/DSR/账本/阴性库六件在役；PBO+CPCV 立法在册接线缺=LK-08（已立施工项） |
+| L06-C 考尺 | **SEALED** | E4 三阶段+三道门实战；治理级考试循环零样本=IBT-E01 |
+| L06-D HOLDOUT 闭卷 | **SEALED** | 纪律无伤疤；批 D 池基悬空=IBT-F01、状态账本缺=IBT-F02 |
+| L06-E 成绩单→上岗 | **SEALED** | 成绩单在途；上岗规则/填格/映射三缺全部定性+立卡 |
+| L06-F 条件共振判定 | **SEALED** | 唯一位点实证；分叉修复已批开工、LK-16 立卡 |
+| L06-G 切换摩擦 | **SEALED** | 三零件在产、三提案待采纳、参数全有真源 |
+| L06-H 组合装配 | **SEALED** | 两配置在跑；E8/矩阵=预注册留给成绩单驱动的施工 |
+
+**簿级裁定：SEALED**——八子块六向全填、使命指定指针文件全读（执行器/红蓝/prereg/两册方法论/02·03·17·18 号文/framework_composer/state_matrix 段/协议 §7-10/exam_policy/DSR 件/账本件/条件包件/晋升编排件/退役评估件/蓝本 S4/IBT 审计 §2-8）；算法对表完成（18 号文七成同构+两替换三升级 + 本簿 §9 全网最新检索二次对表）。深读尾差 3 件（不阻骨架封矿，随施工项前置消化）：① f06_e4_wfa_exam.py 折切纯函数区全文（施工 C03 时读）；② deflated_sharpe_calculator V[SR] 公式区全文（C04 对表时读）；③ mSPRT calibrate_tau 校准细节（C01 立法稿引用时读）。
+
+## §8 施工项（L06-C01 起；编号新立，既有账本号随附；净零对价必填）
+
+| # | 项 | 内容+判据 | 净零对价（替代/合并） | 前置/门位 | 优先 |
+|---|---|---|---|---|---|
+| **L06-C01** | **上岗规则 v1 立法稿** | 按 04_switch_friction 册零件拼装，零新机制：①上任=DSR 校正后 Sharpe+mSPRT 显著（现晋升通道照用）；②滞回带=TRANSITION_THRESHOLD 0.60×TRANSITION_FACTOR 0.5（daily_decision_orchestrator.py:95-96 现行值入册冻结）；③最短任职期 20 交易日（记档不执行，月度复盘加一条评审输入）；④冷却 60 日（复用 refit 间隔常数+exam min_days=60）；⑤切换三行账（40bp 压力问/五档存活/8x 余量）；⑥判据真源守卫前置（六段分叉 6 步修复完成才许驱动切换）。载体=routing_table_v1_draft §3 三步合批呈批 | 合并 routing_table_v1_draft §3+04 册 §1/§2 提案为单一立法件，禁另立第二切换册；新 gate=0 | 六段分叉修复（已批开工）；Owner 采纳门（D31 数值 confirmed 同批） | **P0** |
+| **L06-C02** | **state_matrix 六空格填报** | TDM-E-L1 ignition/euphoria/distribution 三格 pending-owner-adoption（trading_decision_map.yaml:5576-5587）；填格原料=GPU 成绩单条件格×策略族（本轮第一次有数据可填）；结构性前置=euphoria/distribution 无防御 sleeve 且无 r 态来源（framework_composer.py:147-150）——填格须同时裁定"是否新设防御档"或维持 by-design-empty 语义升级 | 沿用 R41 封闭词表（_EMPTY_CELL_REASONS），零新字段 | **Owner 资金分配门位（AI 禁自填，yaml 备注明文）**；成绩单+IBT-D01 出档后议 | **P0** |
+| **L06-C03** | **成绩单口径对照 IBT-D01** | 考尺 `_c4_engine`（2.5/10/5bp 平面）↔整装 matching_logic（万 0.854+ADV 分层+AC 冲击）双口径对照表或统一声明（"成绩单数字仅考尺口径可判读"）；判据=17 号文 §一（同名格 sharpe 差>30% 列差异清单）；成绩单周六出，对照表须先于解读存在 | 合并 IBT-D01（11 号文 §4.6，P0 原卡）入本簿执行，不新立 | 成绩单落盘（grid_20260924-213246 T1/T2 完赛） | **P0** |
+| L06-C04 | PBO+CPCV 接线考试验收链（LK-08） | f06/批量执行器回填 pbo_value/cpcv_* 字段消费 G2 立法门（62 号 §4.13）；CPCV purge/embargo 参数入预注册；沿用 n_trial_ledger 禁第二计数器（02 册 §4.2）；开源对表见 §9 skfolio CombinatorialPurgedCV | 替代"自造 CPCV"；G2 门字段接线（非新门） | 成绩单出来即用（07 号文 B2 排期"下周"） | P1 |
+| L06-C05 | 方案①红蓝跑批+prereg 重签（LK-11） | calibrate_cost_tier_redblue.py 对拍（判据 17 号文 §二：Spearman≥0.99 ∧ top50 重合≥0.9 ∧ 轻档≤8s/格）；达标→prereg 增补 cost_gate_t1_tiers_bp+三字段重签（07 号文 C2#10 条件触发已批）；预算复核 T1 9,600≈17h+T2≈19h（03 号文 §三.5） | 合并 IBT 清单 03 号文 §三 1-5（代码 1/2 已在码，本项=3/4/5 收口） | GPU 空窗+Owner 排期 | P1 |
+| L06-C06 | 退役重考开闸（LK-09） | 三纪律（02 号文 §五：同卷同纪重开预注册/限额分批封顶/机制门槛+模拟盘试用期）；三账本=appendix_A（c4_deferrals.csv 322 行 data/strategy_intake/c4_deferrals.csv） | 合并 05 号文 §二排期原卡 | GPU 第一轮条件骨架出后（下周）；重开预注册 | P1 |
+| L06-C07 | 治理级考试循环落地（IBT-E01） | meta_question 283 题全零样本（PQ-0051-0058）：exam_result 写入/reexam 到期/三取二裁定；L9-D2 入表 exam_plan 消费闭环（yaml:5160-5181） | 合并 IBT-E01 原卡；L9-Z1 状态机即载体禁另建 | C04 后 | P2 |
+| L06-C08 | E8 装配层+7态×15员权重矩阵（IBT-C01） | 批 G 三件（E8+矩阵+PP-001 生产配比）+IBT-C02 Σ<1 直通；填格数据源=本轮成绩单+批 D 新名单；算法参考 §9 Riskfolio-Lib/skfolio（禁自造=协议 §7 预注册原话） | 合并 IBT-C01/C02 原卡 | C03+C06（池基与口径先立） | P2 |
+| L06-C09 | 成绩单上板桥（IBT-G01） | BacktestResult 适配器或专用成绩单页，消费 grid_*/manifest+summary（src/zephyr/frontend/dashboard/components/backtest_results.py 现无此源） | 合并 IBT-G01 原卡 | 成绩单落盘 | P1 |
+| L06-C10 | 窗口状态账本+批 D 收口（IBT-F02/F01） | 四窗烧毁状态机械化（禁文档口传）；fresh 名单产出+IBT-v2 协议 v1.1 冻结+E1C-09 同窗重考 | 合并 IBT-F01/F02 原卡 | F01=P0 池基前置 C08 | P1（F02 本体 P1，F01 随批 P0） |
+
+## §9 标准件（全网搜 2026-09-25；"不自造"纪律=18 号文，引 Before 造）
+
+| 件 | 出处+许可证 | 对本簿落点 | 采用方式 |
+|---|---|---|---|
+| **skfolio**（CPCV/组合优化） | github.com/skfolio/skfolio；**BSD-3-Clause**；`skfolio.model_selection.CombinatorialPurgedCV`（purge+embargo+多测试路径重组合，官方文档 skfolio.org）；方法论论文 arXiv 2025（Nicolini et al.） | L06-C04 CPCV 接线的对表基准与参考实现（AFML ch.12 语义） | **对表+参考实现**（仓内 G2 门已立法，只接字段不引库，免新依赖） |
+| **mabwiser**（contextual bandit） | github.com/fidelity/mabwiser；**Apache-2.0**；context-free/参数与非参数 contextual（LinUCB 族），IJAIT 2021 | 上岗引擎 **v2**（07 号文 B2：contextual bandit 替代静态查表；"上下文"=六段/r 态，"臂"=sleeve 配比——06_institutional_benchmark §2 已备案 Chu 2011 LinUCB+Cartea 2023） | v1 验证一个交易日循环后再引入；前置=L06-C01 |
+| **Riskfolio-Lib**（CVaR/风险平价优化） | github.com/dcajasn/Riskfolio-Lib；**BSD-3-Clause**（LICENSE.txt；conda-forge 同口径）；docs riskfolio-lib.readthedocs.io v7.3 | L06-C08 E8 装配层算法参考（CVaR 约束/风险平价配比，替代自造权重矩阵——协议 §7 "避免自造"） | 算法对照+公式参考；引入与否随 C08 裁定 |
+| mlfinlab（meta-labeling 正典） | github.com/hudson-and-thames/mlfinlab；Triple-Barrier/Meta-Labeling/CPCV 齐备；**现商业订阅许可**（约 2021-2022 起转商用，社区旧 GPL 版 fork 流通——quant.stackexchange 2020-11 讨论在案） | **方法对照不引码**：本仓 meta-labeling=MOD-SIG-115 pattern_to_signal_mapper"证据×胜率"形态（06 册 §1③ 已判"语义同构、形态更简"，5,026 交易日撑不起 ML 二次模型） | 对照件（零引入） |
+| pypbo（PBO/CSCV） | github.com pypbo——Bailey et al CSCV 的 Python 实现，文档引 DSR 原论文 | L06-C04 PBO 字段回填参考 | 参考实现（许可证引入前须核，优先仓内 G2 公式自实现对表） |
+| deflated-sharpe（PyPI） | pypi.org/project/deflated-sharpe——DSR+统计门 | 仅对表 | **零引入**（仓内 MOD-SIM-024=全仓唯一真源，02 册 §2.1 铁律） |
+| regime 检测件 hmmlearn / statsmodels.tsa.regime_switching | 均 BSD-3 | 零引入（regime_detector 已自研 HMM+overlay，06 册 §1① 判"日频样本下 HMM 仍是机构主流"，DL 升级=暂缓件） | 已具备（06 册 §4） |
+| regime-switching allocation 近例 | github.com/I-am-Uchenna/regime-allocation-strategy（2026-01，VIX 衍生 regime 切换多资产配置；许可证未核验）；论文面：Regime-Aware Allocation for Robust Multi-Asset Portfolio（SSRN）、Explainable Regime-Aware Investing（arXiv 2026-02） | L06-G 滞回/任职期行业实践佐证（与 04 册已转引 LuxAlgo 2026-08/ArrowAlgo 2026-05/DeepTradeX 2026-07 三处"触发器+评审"主张一致） | 佐证引用（零引入） |
+| 多重检验判据族（已锁） | Harvey & Liu 2015 JPM haircut Sharpe／Bailey & LdP 2014 DSR／Bailey et al 2017 PBO/CSCV／LdP 2018 AFML CPCV／Nefedov 2025 SSRN（天真评估虚增 3.6×）／Arian 2024——出处全表=18 号文 §四 | L06-B/C 判据真源 | 已采纳（17 号文 §一正式判据行） |
+
+## §10 挖掘日志（skeleton_mining_policy §7）
+
+| 批 | 矿脉 | 证据源 | 判定 |
+|---|---|---|---|
+| B1 | 骨架真源+战役件 | links/README、09_link_skeletons 环节6、02/03/17/18 号文（另 07/11/06 号文涉 L06 节） | signal |
+| B2 | 执行器+红蓝+两冻结册 | factory_grid_executor.py 全文 1074 行 / calibrate_cost_tier_redblue.py 全文 315 行 / search_space_prereg.yaml / exam_scale_cost_gate.yaml | signal（方案① T3 代码在码实证 :46-55,918-1008） |
+| B3 | 考尺与防线件 | f06 头注 INVARIANTS+常量区 / exam_cost_gate 头注三道门 / condition_package 头注闭卷纪律 / n_trial_ledger 头注计数边界 / deflated_sharpe_calculator 头注唯一真源 / exam_policy §1 | signal |
+| B4 | 上岗侧代码件 | framework_composer.py activation 区（:147-258）/ state_matrix yaml:5556-5650 / daily_decision_orchestrator.py:95-99 / mSPRT 两件 / strategy_retirement_evaluator / routing_table_v1_draft / daily-orchestrator-blueprint:29 | signal |
+| B5 | 装配侧+口径债 | IBT-PROTOCOL-V1 §7-10 / 11 号文 §3-§5（IBT-C01/D01/E01/F01/F02/G01 原卡） | signal |
+| B6 | 全网标准件 | §9 九行检索（2026-09-25；skfolio/mabwiser/Riskfolio 许可证经检索确认，pypbo/Uchenna 仓库许可证未核已标注） | signal |

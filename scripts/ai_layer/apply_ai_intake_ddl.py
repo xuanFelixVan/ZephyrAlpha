@@ -46,6 +46,7 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import logging
 import re
 import sys
@@ -55,11 +56,26 @@ from typing import Any, Final
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # noqa: E402
+from zephyr.governance.depgraph_schema import (  # noqa: E402
+    deploy_schema as _deploy_schema_engine,
+    drop_test_schema as _drop_test_schema_engine,
+    q_list as _q_list,
+)
 
 log = logging.getLogger("ai_intake.ddl")
 
 SCHEMA_RE: Final = re.compile(r"^ai_intake(_test_[a-z0-9_]+)?$")
 TEST_SCHEMA_PREFIX: Final = "ai_intake_test_"
+
+
+# FUNCTION-DUP 治本（2026-09-24）：deploy/drop 引擎唯一实现收敛 depgraph_schema，本模块按自身 DDL/GRANT/种子源绑定
+deploy = functools.partial(
+    _deploy_schema_engine,
+    ddl_statements_fn=lambda schema: _ddl_statements(schema),
+    seed_rows_fn=lambda schema: _seed_statements(schema),
+    grant_statements_fn=lambda schema: _grant_statements(schema),
+)
+drop_test_schema = functools.partial(_drop_test_schema_engine, test_schema_prefix=TEST_SCHEMA_PREFIX)
 DEFAULT_SCHEMA: Final = "ai_intake"
 V0_DOMAINS: Final[tuple[tuple[str, str, str], ...]] = (
     ("governance", "治理学", "gate/registry/sop/宪法邻接件"),
@@ -87,11 +103,6 @@ FOUR_GATES_KEYS: Final[tuple[str, ...]] = (
     "ashare_adaptation",
     "backtestable",
 )
-
-
-def _q_list(values: tuple[str, ...]) -> str:
-    """把常量元组渲染成 SQL 单引号列表（值来源全是本模块常量，非外部输入）。"""
-    return ", ".join("'" + v.replace("'", "''") + "'" for v in values)
 
 
 _SQL_DOMAIN = """
@@ -212,6 +223,39 @@ CREATE TABLE IF NOT EXISTS {s}.ai_intake_source_quota (
 )
 """
 
+# L3 清洗段增补（2026-09-23 st-ailayer-p1-20260923 批次4：真源=spec_store._SQL_CREATE_SPEC 逐字复制，
+# DESIGN=docs/_working/ai_layer_vision/L3_cleaning/DESIGN.md §2.1；卡与 L2 候选卡 1:N 版本化，重洗不覆盖旧版）
+_SQL_CLEANING_SPEC: Final = """
+CREATE TABLE IF NOT EXISTS {s}.ai_cleaning_spec (
+    spec_id            TEXT PRIMARY KEY,
+    card_id            TEXT NOT NULL REFERENCES {s}.ai_intake_card(card_id),
+    version            SMALLINT NOT NULL,
+    mechanism_one_liner TEXT NOT NULL CHECK (length(btrim(mechanism_one_liner)) BETWEEN 1 AND 80),
+    mechanism_detail   TEXT NOT NULL CHECK (length(btrim(mechanism_detail)) > 0),
+    applicability      JSONB NOT NULL,
+    ashare_precheck    JSONB NOT NULL CHECK (ashare_precheck->>'overall' IN ('pass','adapt_needed','reject')),
+    risk_flags         JSONB NOT NULL DEFAULT '[]'::jsonb,
+    data_fields        JSONB NOT NULL DEFAULT '[]'::jsonb,
+    reproduction_notes TEXT NOT NULL CHECK (length(btrim(reproduction_notes)) > 0),
+    source_name        TEXT,
+    source_url         TEXT NOT NULL CHECK (length(btrim(source_url)) > 0),
+    source_publisher   TEXT,
+    source_year        SMALLINT,
+    source_quotes      JSONB NOT NULL DEFAULT '[]'::jsonb,
+    lsg                JSONB NOT NULL DEFAULT '{{}}'::jsonb,
+    wash               JSONB NOT NULL DEFAULT '{{}}'::jsonb,
+    review             JSONB,
+    status             TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active','superseded','rejected_wash')),
+    created_at         TIMESTAMPTZ NOT NULL DEFAULT now(),
+    UNIQUE (card_id, version)
+)
+"""
+
+_SQL_CLEANING_INDEXES: Final[tuple[str, ...]] = (
+    "CREATE INDEX IF NOT EXISTS ix_cleaning_spec_card ON {s}.ai_cleaning_spec (card_id)",
+    "CREATE INDEX IF NOT EXISTS ix_cleaning_spec_status ON {s}.ai_cleaning_spec (status)",
+)
+
 _SQL_INDEXES: Final[tuple[str, ...]] = (
     "CREATE INDEX IF NOT EXISTS ix_intake_card_stage ON {s}.ai_intake_card (domain_id, funnel_stage)",
     "CREATE INDEX IF NOT EXISTS ix_intake_card_cell ON {s}.ai_intake_card (elite_cell)",
@@ -281,7 +325,9 @@ def _ddl_statements(schema: str) -> list[str]:
     out.extend(tpl.format(**fmt) for tpl in _SQL_EXT_TABLES)
     out.append(_SQL_REF_SNAPSHOT.format(**fmt))
     out.append(_SQL_SOURCE_QUOTA.format(**fmt))
+    out.append(_SQL_CLEANING_SPEC.format(**fmt))
     out.extend(tpl.format(**fmt) for tpl in _SQL_INDEXES)
+    out.extend(tpl.format(**fmt) for tpl in _SQL_CLEANING_INDEXES)
     out.extend([
         _SQL_VIEW_ELITES.format(**fmt),
         _SQL_VIEW_NEGATIVE.format(**fmt),
@@ -308,6 +354,7 @@ def _grant_statements(schema: str) -> list[str]:
         "ai_intake_ext_cost_eng",
         "ai_intake_ref_snapshot",
         "ai_intake_source_quota",
+        "ai_cleaning_spec",
     )
     views = ("ai_intake_elites", "ai_intake_negative", "ai_intake_kpi_weekly")
     out = [
@@ -332,46 +379,6 @@ def check_schema_name(schema: str) -> str:
     return schema
 
 
-def deploy(schema: str = DEFAULT_SCHEMA, *, conn: Any | None = None) -> dict[str, int]:
-    """部署/刷新 schema（幂等）。返回各阶段执行计数。
-
-    :param schema: 目标 schema（白名单校验）
-    :param conn: 可选已存在连接（测试注入用）；缺省自建 admin 连接并负责关闭
-    """
-    check_schema_name(schema)
-    own_conn = conn is None
-    if own_conn:
-        conn = get_depgraph_pg_connection(superuser=True, read_only=False, autocommit=False)
-    counts = {"ddl": 0, "seed": 0, "grant": 0}
-    try:
-        cur = conn.cursor()
-        for stmt in _ddl_statements(schema):
-            cur.execute(stmt)
-            counts["ddl"] += 1
-        for sql, params in _seed_statements(schema):
-            cur.execute(sql, params)
-            counts["seed"] += cur.rowcount if cur.rowcount and cur.rowcount > 0 else 0
-        for stmt in _grant_statements(schema):
-            # SAVEPOINT 包裹：角色不存在（本地精简实例）时只回滚该条 GRANT，
-            # 不能整事务回滚（PG 的 DDL 是事务性的，rollback 会把表一起撤掉）。
-            cur.execute("SAVEPOINT sp_grant")
-            try:
-                cur.execute(stmt)
-                counts["grant"] += 1
-                cur.execute("RELEASE SAVEPOINT sp_grant")
-            except Exception as exc:  # noqa: BLE001——授权失败不阻断 DDL 主体，warning 留痕
-                log.warning("GRANT 跳过：%s", exc)
-                cur.execute("ROLLBACK TO SAVEPOINT sp_grant")
-        conn.commit()
-    except Exception:
-        conn.rollback()
-        raise
-    finally:
-        if own_conn:
-            conn.close()
-    return counts
-
-
 EXPECTED_TABLES: Final[tuple[str, ...]] = (
     "ai_intake_domain",
     "ai_intake_card",
@@ -382,6 +389,7 @@ EXPECTED_TABLES: Final[tuple[str, ...]] = (
     "ai_intake_ext_cost_eng",
     "ai_intake_ref_snapshot",
     "ai_intake_source_quota",
+    "ai_cleaning_spec",
 )
 EXPECTED_VIEWS: Final[tuple[str, ...]] = (
     "ai_intake_elites",
@@ -419,18 +427,6 @@ def verify(schema: str = DEFAULT_SCHEMA) -> tuple[bool, list[str]]:
     finally:
         conn.close()
     return (not missing), missing
-
-
-def drop_test_schema(schema: str) -> None:
-    """删除测试残留 schema（仅 ai_intake_test_ 前缀允许；生产 schema 永不删）。"""
-    if not schema.startswith(TEST_SCHEMA_PREFIX):
-        raise ValueError(f"拒删非测试 schema：{schema!r}")
-    check_schema_name(schema)
-    conn = get_depgraph_pg_connection(superuser=True, read_only=False, autocommit=True)
-    try:
-        conn.cursor().execute(f"DROP SCHEMA IF EXISTS {schema} CASCADE")
-    finally:
-        conn.close()
 
 
 def main(argv: list[str] | None = None) -> int:

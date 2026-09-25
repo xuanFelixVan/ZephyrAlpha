@@ -1,0 +1,133 @@
+# LANE-DU881 P1 v1<->v2 对比机读件（生成器 scripts/backtest/p1_conditional_tables.py diff 子命令产出）
+ttl: task_bound
+doc_type: register
+summary: "DU-01 判据③ v1(469码重放) 与 v2(729码) 的格子级对比汇总：共同格零漂移、新增 1556 格（可考 +1037）、T2 宇宙敏感面对拍"
+lane: LANE-DU881
+sid: st-qmine-20260925
+caliber: "区间宽 = raw_win_rate - wilson_lb（Wilson 95% 单侧下界距离）；n<30 分层统计禁并池"
+label_a: v1_replay_469
+label_b: v2_replay_729
+t1_cells_a: 2806
+t1_cells_b: 4362
+cells_common: 2806
+cells_only_b: 1556
+cells_only_a: 0
+codes_a: 469
+codes_b: 729
+cell_drift_by_column:
+- col: n
+  cells_compared: 2806
+  cells_equal: 2806
+  cells_drifted: 0
+- col: raw_win_rate
+  cells_compared: 2806
+  cells_equal: 2806
+  cells_drifted: 0
+- col: wilson_lb
+  cells_compared: 2806
+  cells_equal: 2806
+  cells_drifted: 0
+- col: mean_bp
+  cells_compared: 2806
+  cells_equal: 2806
+  cells_drifted: 0
+exam_floor: 30
+strata_no_pooling_across_n30:
+- side: v1_replay_469
+  family: 880fam
+  exam_ok: false
+  cells: 969
+  codes: 469
+  median_n: 7.0
+  median_ci_width_lb: 0.229176
+- side: v1_replay_469
+  family: 880fam
+  exam_ok: true
+  cells: 1837
+  codes: 468
+  median_n: 113.0
+  median_ci_width_lb: 0.09184699999999996
+- side: v2_replay_729
+  family: '8803_04'
+  exam_ok: false
+  cells: 264
+  codes: 132
+  median_n: 14.5
+  median_ci_width_lb: 0.18110300000000001
+- side: v2_replay_729
+  family: '8803_04'
+  exam_ok: true
+  cells: 528
+  codes: 132
+  median_n: 146.0
+  median_ci_width_lb: 0.07929949999999997
+- side: v2_replay_729
+  family: 880fam
+  exam_ok: false
+  cells: 969
+  codes: 469
+  median_n: 7.0
+  median_ci_width_lb: 0.229176
+- side: v2_replay_729
+  family: 880fam
+  exam_ok: true
+  cells: 1837
+  codes: 468
+  median_n: 113.0
+  median_ci_width_lb: 0.09184699999999996
+- side: v2_replay_729
+  family: '881'
+  exam_ok: false
+  cells: 255
+  codes: 128
+  median_n: 23.0
+  median_ci_width_lb: 0.18110300000000001
+- side: v2_replay_729
+  family: '881'
+  exam_ok: true
+  cells: 509
+  codes: 128
+  median_n: 137.0
+  median_ci_width_lb: 0.08122299999999999
+t2_universe_sensitive:
+- phase: accumulation
+  n_obs_a: 35921
+  corr_a: -0.0184
+  n_obs_b: 62857
+  corr_b: -0.0169
+  corr_delta: 0.0015
+- phase: capitulation
+  n_obs_a: 51286
+  corr_a: -0.0272
+  n_obs_b: 86787
+  corr_b: -0.0269
+  corr_delta: 0.0003
+- phase: distribution
+  n_obs_a: 48569
+  corr_a: -0.0237
+  n_obs_b: 87419
+  corr_b: -0.0241
+  corr_delta: -0.0004
+- phase: euphoria
+  n_obs_a: 7831
+  corr_a: -0.1037
+  n_obs_b: 15083
+  corr_b: -0.1049
+  corr_delta: -0.0012
+- phase: expansion
+  n_obs_a: 93251
+  corr_a: -0.0165
+  n_obs_b: 156724
+  corr_b: -0.0158
+  corr_delta: 0.0007
+- phase: ignition
+  n_obs_a: 468
+  corr_a: 0.6109
+  n_obs_b: 727
+  corr_b: 0.5664
+  corr_delta: -0.0445
+new_cells_by_family:
+  '8803_04': 792
+  '881': 764
+new_cells_exam_ok: 1037
+new_cells_below_floor: 519

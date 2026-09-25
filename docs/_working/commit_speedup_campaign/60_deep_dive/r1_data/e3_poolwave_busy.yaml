@@ -1,0 +1,32 @@
+span_first: '2026-09-24 22:34:36+08:00'
+span_last: '2026-09-25 03:14:55+08:00'
+span_h: 4.67
+workers:
+  w0:
+    polls: 2126
+    median_poll_interval_s: 1.0
+    p90_poll_interval_s: 1.0
+    busy_like_min: 232.7
+    busy_like_pct: 89.9
+    n_gaps_gt90s: 5
+  w1:
+    polls: 2130
+    median_poll_interval_s: 1.0
+    p90_poll_interval_s: 1.0
+    busy_like_min: 225.6
+    busy_like_pct: 89.6
+    n_gaps_gt90s: 6
+  w2:
+    polls: 2148
+    median_poll_interval_s: 1.0
+    p90_poll_interval_s: 1.0
+    busy_like_min: 250.8
+    busy_like_pct: 90.5
+    n_gaps_gt90s: 6
+  w3:
+    polls: 2149
+    median_poll_interval_s: 1.0
+    p90_poll_interval_s: 1.0
+    busy_like_min: 222.8
+    busy_like_pct: 89.0
+    n_gaps_gt90s: 5

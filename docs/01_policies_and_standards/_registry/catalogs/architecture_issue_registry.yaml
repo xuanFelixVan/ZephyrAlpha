@@ -50,7 +50,7 @@ entry_schema:
 entries:
 - issue_id: ARCH-QMTFB-001
   title: QMT文件桥连接器施工（miniQMT替代方案）
-  severity: P0
+  severity: P0致命
   adjudication: 基于93 playbook v1.4.0实证结论，新建QmtFileBridgeBroker（异步文件语义BrokerInterface实现）+ LocalOrderQueue（算法单本地排队）。双实例物理隔离（qmt_real/qmt_sim），3秒轮询柜台同步，两阶段文件状态机幂等。
   fix_phase: blueprint_approved
   status: decided
@@ -14819,7 +14819,7 @@ entries:
 - issue_id: '#ARCH-GIT-DEOBFUSCATOR'
   title: 'Shell 反混淆归一化层——防 GuardFall 5 大绕过类'
   category: git_safety
-  severity: P0
+  severity: P0致命
   adjudication: |-
     GuardFall（Adversa AI 2026-06-30）证明 10/11 开源 AI agent 可被 shell 注入绕过。
     AgentTrust 论文提出 9 策略反混淆归一化层（变量展开/hex/八进制/alias/命令替换/ANSI-C quoting/相邻引号拼接/Base64/$IFS）。
@@ -14835,7 +14835,7 @@ entries:
 - issue_id: '#ARCH-GIT-VAR-COLLISION'
   title: 'PowerShell 自动变量碰撞检测——防 Codex $home 事故重演'
   category: git_safety
-  severity: P0
+  severity: P0致命
   adjudication: |-
     Codex Issue #32684（2026-07-13）：$home 赋值碰撞只读 $HOME → %USERPROFILE% 递归删除 67,959 文件。
     65号 §7.17 施工项 17 已设计 30+ 只读自动变量清单 + _ZephyrCheckVarCollision 函数。
@@ -14850,7 +14850,7 @@ entries:
 - issue_id: '#ARCH-GIT-RISKCHAIN'
   title: 'Session 级多步攻击链追踪——防 CFD 跨调用拆分攻击'
   category: git_safety
-  severity: P1
+  severity: P1高
   adjudication: |-
     CFD 攻击（arXiv:2606.09084）：per-call guardrail 无法防御跨调用拆分（+28pp jailbreak）。
     AgentTrust RiskChain：order-aware session tracker 检测多步攻击链。
@@ -14866,7 +14866,7 @@ entries:
 - issue_id: '#ARCH-GIT-CVE-2026-44244'
   title: 'git config 注入防护（CVE-2026-44244/67326）'
   category: git_safety
-  severity: P0
+  severity: P0致命
   adjudication: |-
     CVE-2026-44244（2026-05-06）+ CVE-2026-67326（2026-08-01）：GitPython set_value() 换行符注入
     → core.hooksPath 重定向 → RCE。影响 GitPython < 3.1.50（DVC/MLflow/Kedro 依赖）。
@@ -14881,7 +14881,7 @@ entries:
 - issue_id: '#ARCH-GIT-CVE-2026-55607'
   title: 'git worktree 沙箱逃逸防护（CVE-2026-55607）'
   category: git_safety
-  severity: P0
+  severity: P0致命
   adjudication: |-
     CVE-2026-55607（2026-07-10）：worktree 名为 .git → gitdir 混淆 → 符号链接操纵
     → core.fsmonitor 执行 → 逃逸 macOS Seatbelt。Claude Code 2.1.38-2.1.162 受影响。
@@ -14896,7 +14896,7 @@ entries:
 - issue_id: '#ARCH-GIT-TOCTOU'
   title: 'symlink/junction + TOCTOU 防护——wrapper 结构性缺陷修复'
   category: git_safety
-  severity: P1
+  severity: P1高
   adjudication: |-
     CVE-2026-23988：PowerShell 脚本 TOCTOU 提权（Test-Path + Remove-Item 窗口期可被 mklink 替换）。
     65号 §7.24 施工项 24 已设计 Atomic Path Resolution 算法（P/Invoke CreateFile + FILE_FLAG_OPEN_REPARSE_POINT + handle 保留）。
@@ -15713,7 +15713,7 @@ entries:
 - issue_id: '#ARCH-GAP-001'
   title: '执行链中段空心化：BM-EXE-04/05/06 未建而下游 TCA/清算已"运营态"'
   category: architecture_gap
-  severity: P0
+  severity: P0致命
   adjudication: |-
     机构与社区共识：成交→持仓→PnL 是数据主动脉起点。当前 BM-EXE-04（合规闸）、BM-EXE-05（拆单）、
     BM-EXE-06（成交回报/费用/订单状态机）核心参数全 proposed，而下游 BM-EXE-03 TCA 与 BM-REC-01 清算
@@ -15732,7 +15732,7 @@ entries:
 - issue_id: '#ARCH-GAP-002'
   title: '订单幂等键 + 断线重连状态补齐四步（miniQMT 社区公认第一坑）'
   category: architecture_gap
-  severity: P0
+  severity: P0致命
   adjudication: |-
     miniQMT 社区公认：重连≠恢复，必须补做行情重订阅+query_stock_orders 委托全量同步+持仓同步+
     策略状态恢复四步；重试不得产生重复单（幂等键=strategy_id+信号日期+标的）。作战地图无独立环节承载。
@@ -15768,7 +15768,7 @@ entries:
 - issue_id: '#ARCH-GAP-004'
   title: 'CC-06 四模式开关落码（回测=实盘同一决策代码路径，Lean 社区基准）'
   category: architecture_gap
-  severity: P0
+  severity: P0致命
   adjudication: |-
     QuantConnect Lean 的核心承诺"回测=实盘同一份代码"是回测-实盘一致性地基。53_simulation_live_path.md
     已有 5 态 FSM 设计但未落码。它不定，回测与仿真的一切结论无法无损传导到实盘。
@@ -15876,7 +15876,7 @@ entries:
 - issue_id: '#ARCH-GAP-010'
   title: 'AI 金融代码高敏区门禁（下单/资金/风控/成本四类人审+边界单测+包名核对）'
   category: architecture_gap
-  severity: P0
+  severity: P0致命
   adjudication: |-
     CSA 2026 实证：45% AI 代码样本含 OWASP Top10 漏洞、漏洞率 2.74 倍、19.7% 概率幻觉不存在依赖包。
     作战地图 337 环节无任何一处承载"AI 生成金融代码专项门禁"。裁定：P0——下单/资金计算/风控规则/
@@ -16547,7 +16547,7 @@ entries:
 # --- #ARCH-WORKTREE-WIPE-GOV-001: worktree wipe 事故治本 S1-S6 专项（2026-08-14，AI-GIT-001 完工）---
 - issue_id: '#ARCH-WORKTREE-WIPE-GOV-001'
   title: '2026-08-14 worktree wipe 事故治本专项——S1 删除收敛/S2 清理四证/S3 观测层/S4 网关锚定/S5 锚点级联 + task_board 重建；施工中实证 GATE-ROOT-TEMP-SWEEP 扫走 worktree .git 指针新事故机制并修复'
-  severity: P0
+  severity: P0致命
   category: governance
   adjudication: |-
     2026-08-14 立项（用户裁定治理插队批 P0，优先于第 4/5 批；AI-GIT-001 承接）。
@@ -16628,7 +16628,7 @@ entries:
 # --- #ARCH-RECONCILER-AUTO-DELETE-GOV-001: reconciler 自动删除/归档失控族——GATE-WORKING-DOCS 误归档+I-GOV-2 架空+S1 覆盖面盲区（2026-08-14 统筹裁定）---
 - issue_id: '#ARCH-RECONCILER-AUTO-DELETE-GOV-001'
   title: 治理自动化代理删除能力失控——幽灵引用归档器误删统筹文件三波复发 + _commit_auto 架空 I-GOV-2 + ops_guard 对 worker 零覆盖
-  severity: P0
+  severity: P0致命
   category: governance
   adjudication: |
     事件：2026-08-14 主工作区三波非授权文件消失（潘潘 16 tracked 文件删除；
@@ -16668,7 +16668,7 @@ entries:
 # --- #ARCH-PRECOMMIT-STASH-ADAPT-001: pre-commit 框架 stash 适配（65 号 §10 登记项立项，#55 治本 T4-2）---
 - issue_id: '#ARCH-PRECOMMIT-STASH-ADAPT-001'
   title: pre-commit 框架 stash 适配——裸 commit 在干净工作区全过（65 号 §10 既有登记项落地）
-  severity: P1
+  severity: P1高
   category: governance
   adjudication: |
     背景：#55 实证——门禁运行向 tracked 文件（feature_flags.jsonl 51MB）追加
@@ -16698,7 +16698,7 @@ entries:
 # --- #ARCH-WORKTREE-DB-SPLIT-001: worktree governance.db 分裂致生成器双源振荡（治理批② T4-2 实证捕获）---
 - issue_id: '#ARCH-WORKTREE-DB-SPLIT-001'
   title: worktree governance.db 分裂——生成器按 cwd 锚定读不同 DB，派生统计双源振荡（126 蓝图工作区反复 dirty）
-  severity: P1
+  severity: P1高
   category: governance
   adjudication: |
     实证（2026-08-15 AI-RCN-001 治理批② T4-2 监视器捕获）：
@@ -16789,7 +16789,7 @@ entries:
   last_updated: '2026-08-15'
 - issue_id: '#ARCH-WORKTREE-WRITE-INTEGRITY-001'
   title: 工作区写层完整性治理——tracked 漂移看门狗+直写归因审计+CAS 防吞写+merge 默认分支修正（#68/#71/#75 陈旧覆写族治本）
-  severity: P1
+  severity: P1高
   category: governance
   adjudication: |-
     2026-08-15 用户裁定（AI-XCUT-001 取证分析→用户批准方案→AI-WDOG-001 施工）。
@@ -16918,7 +16918,7 @@ entries:
 # --- #ARCH-COMMIT-QUEUE-MVP-001: 提交队列 MVP A 段落码（66 号第一层，遗留 #67 施工）---
 - issue_id: '#ARCH-COMMIT-QUEUE-MVP-001'
   title: 提交队列串行化 MVP（A 段：队列协议+CLI+Serializer 自举排空+死信+compaction）
-  severity: P0
+  severity: P0致命
   category: ai_collaboration
   adjudication: |-
     真源：66 号备忘 §6（入队 schema/compaction/Serializer 主循环/冲突判定）+ 08 号文
@@ -16949,7 +16949,7 @@ entries:
   last_updated: '2026-08-21'
 - issue_id: '#ARCH-DAILY-CYCLE-GAP23-001'
   title: 57 号文 GAP-2/GAP-3 运营入口施工——盘后结算 CLI + 模拟盘交易日启动脚本（合并登记）
-  severity: P0
+  severity: P0致命
   category: trading_operations
   adjudication: |-
     真源：57 号文 §2（盘中模拟盘过渡形态=09:25 前手动拉起）+§3（收盘结算管线
@@ -18811,7 +18811,7 @@ entries:
 
 - issue_id: '#ARCH-171'
   title: capability 注册表 creation_tokens 段结构错位——131 条目被 YAML 解析吞入 di_seam_exemptions
-  severity: P1
+  severity: P1高
   category: 治理基建/注册表完整性
   adjudication: >-
     2026-08-23 长城任务取证：capability_canonical_file_registry.yaml 行 7651 处
@@ -18834,7 +18834,7 @@ entries:
 
 - issue_id: '#ARCH-172'
   title: 'MOD-PLAN-008~012 作战室波次2五件——预案落库回写/三维归因/Brier校准/今日计划/批量边界（GAP-F-07/09/02）'
-  severity: P0
+  severity: P0致命
   category: 功能施工
   adjudication: >-
     缺口总账波次2 P0 作战室核心链三件一次落码：①GAP-F-07 scenario_plan_recorder 接通
@@ -18860,7 +18860,7 @@ entries:
 
 - issue_id: '#ARCH-173'
   title: 波次0 regime 六件统一"规则判定优先+纯函数可测+DB注入隔离"架构
-  severity: P1
+  severity: P1高
   category: 架构决策
   adjudication: >-
     宪章§3约束三把 regime 识别列为命门环节；regime/ 域 12 态 HMM 已 production，
@@ -18881,7 +18881,7 @@ entries:
 
 - issue_id: '#ARCH-174'
   title: regime 三件套边界消歧在信号域的落地口径（state_sensor/change_detector/lifecycle 不抢 regime/ HMM 饭碗）
-  severity: P2
+  severity: P2中
   category: 架构决策
   adjudication: >-
     regime/ 域已有 MOD-REGIME-001（4态HMM+3overlay，Shrinkage 链源头）；signal_ashare 新增
@@ -18900,7 +18900,7 @@ entries:
 
 - issue_id: '#ARCH-175'
   title: 风控统一快照 RiskSnapshot 为风控消费唯一数据入口
-  severity: P1
+  severity: P1高
   category: 架构决策
   adjudication: >-
     MOD-RK-25/22/24 与 MOD-EX-024 四件同批落地，风控判定全链路改由 RiskSnapshot 单源喂数
@@ -18920,7 +18920,7 @@ entries:
 
 - issue_id: '#ARCH-176'
   title: 风控/合规新件全链路 Fail-Closed 语义统一
-  severity: P1
+  severity: P1高
   category: 架构决策
   adjudication: >-
     宪章 §6 安全性 P0 + C-004 默认拒绝原则的工程化口径统一：本批 8 件执行——真源缺失/
@@ -18939,7 +18939,7 @@ entries:
 
 - issue_id: '#ARCH-177'
   title: 'MOD-SIG-064/065 + MOD-DAT-limit_up_pool_ingest 板块链三件（GAP-F-12/30/13）'
-  severity: P0
+  severity: P0致命
   category: 功能施工
   adjudication: >-
     缺口总账波次3+波次1 C类落码：①GAP-F-12 mainline_probability 四因子合成主线概率
@@ -18963,7 +18963,7 @@ entries:
 
 - issue_id: '#ARCH-178'
   title: 仓位/卖出域消费"风格画像"而非具体策略（三维解耦红线工程化）
-  severity: P1
+  severity: P1高
   category: 架构决策
   adjudication: >-
     宪章 §3 约束四要求选股×权重×执行三维解耦。裁定：MOD-SELL-014 引入 StrategyProfile
@@ -18980,7 +18980,7 @@ entries:
 
 - issue_id: '#ARCH-179'
   title: T+1 约束在波次4四件中内生化（非外挂检查）
-  severity: P1
+  severity: P1高
   category: 架构决策
   adjudication: >-
     MOD-POS-018 复用 t1_sellable 盘中意图校验（卖出≤昨仓−今卖）；MOD-SELL-013 立即离场量=
@@ -18997,7 +18997,7 @@ entries:
 
 - issue_id: '#ARCH-180'
   title: BM-SEL-16/17/18 双域实现重叠——signal_fundamental 版 vs signal_ashare 版保留或归并
-  severity: P3
+  severity: P3低
   category: 架构议题
   adjudication: >-
     signal_fundamental/selection_funnel.py（MOD-L03-001 包内）已实现 BM-SEL-16/17/18 同口径
@@ -19016,7 +19016,7 @@ entries:
 
 - issue_id: '#ARCH-181'
   title: 设计态波次3 信号/因子 14 件落地（筛选漏斗三层/事件筛选/预测族/因果族/基本面路由/分布特征/数据连接器+归一化器）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     设计态账波次3 全量落码：MOD-SIG-046/047/048 筛选漏斗三层（先建）→ SIG-049 事件驱动筛选
@@ -19038,7 +19038,7 @@ entries:
 
 - issue_id: '#ARCH-182'
   title: 真单通道调用统一经 MOD-EX-058 通道管理器 Fail-Closed 闸门
-  severity: P1
+  severity: P1高
   category: 架构决策
   adjudication: >-
     约束三（miniQMT 唯一实盘通道）+ KS-L3 通道断开检测收敛单一工程落点：通道生命周期/心跳/
@@ -19056,7 +19056,7 @@ entries:
 
 - issue_id: '#ARCH-183'
   title: 执行算法集门禁降级为 {限价直发, TWAP, VWAP}（无 Level-2/IS 依赖）
-  severity: P1
+  severity: P1高
   category: 架构决策
   adjudication: >-
     EX-014 原门禁依赖 Level-2 订单簿深度撞硬边界约束三；EX-035 原门禁含 OKX/XTP/CTP 超约束三。
@@ -19077,7 +19077,7 @@ entries:
 
 - issue_id: '#ARCH-184'
   title: 'MOD-PLAN-013/014/015 + MOD-SIG-066/067 波次4五件——交易辩论/禁做清单/竞价命中/作战池/漏斗计数（GAP-F-03/05/06/08/11）'
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     缺口总账波次4 P1 作战室补全五件：①GAP-F-03 trading_debate 四角色链复用 agent_debate
@@ -19100,7 +19100,7 @@ entries:
 
 - issue_id: '#ARCH-185'
   title: 外盘 12 标的覆盖缺口 8 项 + kline_us_daily 垃圾数据处置（GAP-F-D3 实证）
-  severity: P2
+  severity: P2中
   category: 数据缺口
   adjudication: >-
     GAP-F-D3 只读核查（2026-08-23）：覆盖 4/12（DJI/IXIC/SPX us_index 各 29 行；A50 仅 08-22
@@ -19119,7 +19119,7 @@ entries:
 
 - issue_id: '#ARCH-186'
   title: sklearn 隐式依赖显式化裁定（lightgbm 缺失降级链）
-  severity: P2
+  severity: P2中
   category: 技术债
   adjudication: >-
     GAP-F-34 派单首选 LightGBM 分位数头；实测 lightgbm 无安装且 pyproject 无声明，按派单
@@ -19137,7 +19137,7 @@ entries:
 
 - issue_id: '#ARCH-187'
   title: MOD-SIG-066/067 并发撞号事件——片段登记编号预分配收归主代理
-  severity: P2
+  severity: P2中
   category: 治理教训
   adjudication: >-
     长城任务批3 并发施工中 GAPP1A（war_pool_generator/screening_funnel_report）与 GAPP1B
@@ -19155,7 +19155,7 @@ entries:
 
 - issue_id: '#ARCH-188'
   title: '波次6截图反推族九件落地（GAP-F-42/36/39/37/38/40/41/43/44）'
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     九件一次落码全 testing 封顶：GAP-F-42 证据链五字段强制结构化+填充校验 fail-closed 先建；
@@ -19178,7 +19178,7 @@ entries:
 
 - issue_id: '#ARCH-189'
   title: '波次7 P2 长尾十一件落地（GAP-F-10/16/17/18/19/20/22/24/26/29/33）'
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     11 件全观测层不接交易、testing 封顶：F-18 板块属性标注静态映射表+config yaml；F-19 昨涨停
@@ -19200,7 +19200,7 @@ entries:
 
 - issue_id: '#ARCH-190'
   title: MOD-INF-049 venra_double_lock_anchor 无蓝图最小语义施工（待 Owner 裁定补蓝图）
-  severity: P2
+  severity: P2中
   category: 架构议题
   adjudication: >-
     全库 grep venra/double_lock 零蓝图命中（仅 path_ownership_map 节点声明）。按派单最小语义
@@ -19217,7 +19217,7 @@ entries:
 
 - issue_id: '#ARCH-191'
   title: MOD-INF-033 behavioral_auditor 转候选库（CAND-CMP-001）+ EX-036 测试桩不存在实证
-  severity: P3
+  severity: P3低
   category: 架构议题
   adjudication: >-
     ①INF-033：behavioral_auditor/ 仅 __init__ 壳（gov_drift 符号再导出聚合非独立引擎），
@@ -19235,7 +19235,7 @@ entries:
 
 - issue_id: '#ARCH-192'
   title: 波次6大模型族五件按"接口契约+轻量占位"施工（真训练/推理属 B-007 闸门）
-  severity: P2
+  severity: P2中
   category: 架构决策
   adjudication: >-
     MOD-SIG-050/051/052/053/055（Kronos/Mamba/共形TCP/xLSTM/供应链GNN）大模型真依赖不引入；
@@ -19254,7 +19254,7 @@ entries:
 
 - issue_id: '#ARCH-193'
   title: 'MOD-PLAN-017 情景概率分布模型——作战室 W2 矩阵 9 格概率（GAP-F-01，总单标注最难）'
-  severity: P0
+  severity: P0致命
   category: 功能施工
   adjudication: >-
     9 格概率=三层融合：①基础率层 MOD-PLAN-008 落库 outcome.actual_scenario 经验频率
@@ -19279,7 +19279,7 @@ entries:
 
 - issue_id: '#ARCH-194'
   title: MOD-AU-003 Agentic Drift 防护四件套（15号文 S1.1~S1.3 Phase 1）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     双维度阈值（置信度×意图偏差度）Hard-Gate + S1.1 行为基线（复用 BM-RC-04-F 已落地
@@ -19299,7 +19299,7 @@ entries:
 
 - issue_id: '#ARCH-195'
   title: MOD-INF-053 自治运维闭环接线 + MOD-INF-055 成熟度状态机 + 涌现介入工单（16号文 P1/12号文 §4.4）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     ①incident_pipeline：统一事件流→failure_matcher 双件诊断→auto_fix_engine 三通道判决
@@ -19322,7 +19322,7 @@ entries:
 
 - issue_id: '#ARCH-196'
   title: MOD-INF-051 gateway 预算硬门 + MOD-INF-054 考试调度器 + MOD-MODEL_ROUTER_ORCH 级联路由（10/06/11号文 Phase 1）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     依赖序施工 1.3→1.5→1.4：①gateway 门面统一 BudgetEngine.pre_flight_check（DENY 阻断
@@ -19346,7 +19346,7 @@ entries:
 
 - issue_id: '#ARCH-197'
   title: CE inject 接线+压缩三档 + LSG 蓝图收尾（07/09号文 Phase 1；L6 复用裁定+Red Team 拦截率发现）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     ①CE inject：ContextInjector 经 VMSSearchProtocol 协议注入接 UnifiedMemoryAPI（跨域仅
@@ -19372,7 +19372,7 @@ entries:
 
 - issue_id: '#ARCH-198'
   title: MOD-REGIME-009 S2 评分重设计五子项核销——Step 0 勘探两路阻断降级+B4 翻 true 条件未成就（零调参）
-  severity: P1
+  severity: P1高
   category: 功能核销
   adjudication: >-
     五子项代码实证已在码（AI-NIGHT-001 包A commit 8f9a16af6e），本批完成 Step 0 勘探+验证+转态：
@@ -19394,7 +19394,7 @@ entries:
 
 - issue_id: '#ARCH-199'
   title: MOD-OBS-002 核销（五 adapters 已在码挂 MOD-OBS-001 §M4）+ MOD-PLAN-018 作战室日循环编排新建
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     ①五零件 experiment_tracking adapters 实证已在码（regime/feature/vectorized/strategy_runner/
@@ -19415,7 +19415,7 @@ entries:
 
 - issue_id: '#ARCH-200'
   title: MOD-CMP-011 盘中操纵检测三规则（43号）+ MOD-RK-027 核销（已在码）+ 测试卫生缺口登记
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     ①MOD-CMP-011 intraday_manipulation_detector：Spoofing/Layering/WashTrade 三规则离线批处理
@@ -19439,7 +19439,7 @@ entries:
 
 - issue_id: '#ARCH-201'
   title: 55号 §6 四件落地——sender 注册位/miniQMT 探针/MOD-RPT-031 偏离归因/MOD-RPT-032 模板外化
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     A. Email/WeChat sender 注册位实装（webhook/SMTP 走注入位凭据 Owner 窗口，未注入显式失败
@@ -19460,7 +19460,7 @@ entries:
 
 - issue_id: '#ARCH-202'
   title: 90号 P2 十一项清偿专项——2 落码（BHY FDR 嵌入/泄漏测试自动化）+ 9 核销
-  severity: P2
+  severity: P2中
   category: 功能核销
   adjudication: >-
     逐件二分闭环：#2 BHY FDR 嵌入 decay_monitor 落码（rolling_relative_quantile 前50%+
@@ -19482,7 +19482,7 @@ entries:
 
 - issue_id: '#ARCH-203'
   title: 15/17号数据治理核销与接线——DQ八维已码/Embargo 真日历补链/符号双向 gate 接线/manual 台账 12 类
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     A① DQ_SPECS 八维 check_func 核销（data_quality.py 8 函数族前期已落码，抽样跑通出报告）；
@@ -19507,7 +19507,7 @@ entries:
 
 - issue_id: '#ARCH-204'
   title: 52号四模块单测核销（141 例已在码）+ 66号死信标签 + 00_index v2.12.0 对齐 + 57号 RUN-05 SOP §9
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     A. 52 号四模块单测核销：walk_forward 31/decision_gate 46/overfitting_detector 32/
@@ -19531,7 +19531,7 @@ entries:
 
 - issue_id: '#ARCH-205'
   title: MOD-AU-004 KILLSWITCH 三级响应 + ReflCtrl 频率闸门 + PreFlect 失败模式库（含灾后重建）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     ①KILLSWITCH 三级响应策略层：level_1 自治降级+技能熔断（IM 模式读写分治）/level_2 单 Agent
@@ -19555,7 +19555,7 @@ entries:
 
 - issue_id: '#ARCH-206'
   title: MOD-INF-058 MCP Client 动态发现+漂移对账入遥测 + task_gate 护照 ID 口径统一
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     ①client_discovery：传输层闸门 fail-closed（STDIO/非 localhost 一律拒）；发现即校验（未知
@@ -19578,7 +19578,7 @@ entries:
 
 - issue_id: '#ARCH-207'
   title: 64号韧性三件+BM-RC-04-F 核销——清单滞后教训（AI-NIGHT-001 已在码）
-  severity: P3
+  severity: P3低
   category: 功能核销
   adjudication: >-
     Q8 parts>100 告警（ch_parts_monitor）/Q16 fetch_perf 被动记录（scheduler 四挂点）/Q17
@@ -19597,7 +19597,7 @@ entries:
 
 - issue_id: '#ARCH-208'
   title: boot watchdog 核销+冷启动 SLA breach 新发现（16_model_benchmark 同步跑分）+63号达标 68.0%
-  severity: P2
+  severity: P2中
   category: 架构议题
   adjudication: >-
     ①09a watchdog NoneType 修复已在码（lifecycle_manager.py:181-186 sys.modules 预注册），复测
@@ -19618,7 +19618,7 @@ entries:
 
 - issue_id: '#ARCH-209'
   title: NLP 管道断点接线（benchmark/metrics 生产者+离线批量件+验收报告落盘）+ P2-E8 mock 扫描
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     复核六环节：Phase 7 采集/推理/聚合在码，断点=benchmark.json 与 sft_metrics.json 无生产者、
@@ -19638,7 +19638,7 @@ entries:
 
 - issue_id: '#ARCH-210'
   title: A8 mSPRT Champion-Challenger 序贯晋升组件建成（MOD-PF-008）+ ExecutionReport delta 源阻塞链 BM-REC-02-B
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     61号 memo §3.3 mSPRT 序贯晋升组件施工完成；memo 伪代码 3 处歧义按统计第一性原理裁定（蓝图 §3.2 留痕）：
@@ -19660,7 +19660,7 @@ entries:
 
 - issue_id: '#ARCH-211'
   title: P-4 RL 执行层骨架建成（MOD-XS-008 新模块登记）+ B-007 真训练闸门留痕
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     gym 风格训练环境+硬边界包裹层（限价/限量/禁市价越界动作直接裁剪或拒绝，硬约束层独立于策略层不可绕过）
@@ -19681,7 +19681,7 @@ entries:
 
 - issue_id: '#ARCH-212'
   title: P-5 过拟合检测协议组件建成（MOD-BT-001 下 overfitting_adjudicator，门禁挂钩点预留）
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     三检验器建成：walk-forward 汇总（复用 backtest/core 既有件口径）+ Deflated Sharpe Ratio（López de Prado
@@ -19699,7 +19699,7 @@ entries:
 
 - issue_id: '#ARCH-213'
   title: GitCommitGateway run_git 管道治本——临时文件重定向+读回消除 Windows 管道假死族（T0FIX §0.5 裁定落地）
-  severity: P2
+  severity: P2中
   category: 技术债
   adjudication: >-
     run_git subprocess capture_output 匿名管道 → mkstemp 双临时文件重定向+读回（try/finally 必清理），
@@ -19719,7 +19719,7 @@ entries:
 
 - issue_id: '#ARCH-214'
   title: CTR-P1-007 ExecutionReport 数据契约层建成（GAP-L06-003 闭环）——BM-REC-02-B/A1③ 阻塞链解除条件达成
-  severity: P0
+  severity: P0致命
   category: 功能施工
   adjudication: >-
     CTR-P1-007 ExecutionReport 数据契约建设完成（D_SHARED / src/zephyr/shared/contracts/
@@ -19750,7 +19750,7 @@ entries:
 
 - issue_id: '#ARCH-215'
   title: A4 选股漏斗双域归并落地（SIGNAL-ARCH-001，MOD-SIG-086 骨架唯一真源）+ 047/048 迁移留裁定
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     BM-SEL-16/17/18 双域实现归并完成（2026-08-24 Owner 裁定 A4 落地）：共享四层骨架唯一真源=
@@ -19776,7 +19776,7 @@ entries:
 
 - issue_id: '#ARCH-216'
   title: 事件策略回测接线建成（runner 契约适配层 MOD-L05-001）+ STR-EVENT-001 真实回测 bt-2e42a507 根因裁定
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     4.1 runner 契约适配层建成：src/zephyr/pf_core/strategy_engine/event_sentiment_adapter.py
@@ -19807,7 +19807,7 @@ entries:
 
 - issue_id: '#ARCH-217'
   title: 调度器双实例并行根因钉死（四缺陷链）+ 单实例锁治本修复——线上收敛 runbook 留 Owner 窗口
-  severity: P1
+  severity: P1高
   category: 技术债
   adjudication: >-
     D1 遗留"每任务双份 task_runs"实证：08-22~08-24 双记录组 240/238/303（相邻 run_id+同刻
@@ -19834,7 +19834,7 @@ entries:
 
 - issue_id: '#ARCH-218'
   title: scaffold 功能域重叠门禁 alias 常用词误伤——W1 波 13 次硬阻断实证（工具债）
-  severity: P2
+  severity: P2中
   category: 技术债
   adjudication: >-
     DIGEST P0 W1 波 scaffold 共 13 次被 alias 模糊匹配误报阻断：'行情数据'→D_MKT_DATA、
@@ -19855,7 +19855,7 @@ entries:
 
 - issue_id: '#ARCH-219'
   title: depgraph 工具链口径三则——blueprint_path 机械推导误报 / MOD-DATA_ENG 蓝图缺失 / design→production 依赖边通道
-  severity: P3
+  severity: P3低
   category: 技术债
   adjudication: >-
     ①add-design-node blueprint_path 按 docs/03_modules/<BLUEPRINT_ID>/ 机械推导，与蓝图实际布局
@@ -19873,7 +19873,7 @@ entries:
 
 - issue_id: '#ARCH-220'
   title: DIGEST P0 W1a+W1b：D_DATA/D_DATA_ENG/D_FACTOR 6 候选晋升施工落地 + CAND-FAC-006/007 合并对处置
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     AUD-DRAFT-001-DIGEST P0 波：CAND-DAT-006（storage_tiering 冷热分层 TTL+分区+UFL 事实层）/
@@ -19898,7 +19898,7 @@ entries:
 
 - issue_id: '#ARCH-221'
   title: DIGEST P0 W1c：D_RISK 自适应风控族 5 候选晋升 + C-004 三层体系整合形态裁定（底座复用+薄装配）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     CAND-RSK-034/035/031/032/033 晋升施工闭环。整合裁定：①预判层 MOD-RK-28 adaptive_risk_forecast
@@ -19920,7 +19920,7 @@ entries:
 
 - issue_id: '#ARCH-222'
   title: DIGEST P0 W1d：D_RISK 风险模型族 5 候选晋升（MOD-RK-33~37）+ MOD 号段并行撞号改号裁定
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     CAND-RSK-036~040 晋升施工闭环：MOD-RK-33 copula_garch_joint（边缘 GARCH+DCC Q̄ 复用
@@ -19944,7 +19944,7 @@ entries:
 
 - issue_id: '#ARCH-223'
   title: 并行会话 scaffold __init__.py 交叉写坏与协调模式留痕（W1c/W1d D_RISK 同域并行）
-  severity: P2
+  severity: P2中
   category: 技术债
   adjudication: >-
     2026-08-25 W1c/W1d 并行施工期间，scaffold module 的 __init__ 注册器反复以非法语法
@@ -19964,7 +19964,7 @@ entries:
 
 - issue_id: '#ARCH-224'
   title: DIGEST P0 W2a：策略异常退出编排/盘前检查器/阈值拆分检测器三候选晋升（MOD-TRADING-008/MOD-EX-063/MOD-GOV-050）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     CAND-TRD-002 strategy_abnormal_exit_orchestrator（冻结新信号→优先级撤单/平仓→仓位核对→EXITED
@@ -19985,7 +19985,7 @@ entries:
 
 - issue_id: '#ARCH-225'
   title: DIGEST P0 W2b：H1FS 运行时族四候选晋升（MOD-INF-063~066）+ 系统级执行全留 Owner 窗口
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     CAND-H1FS-004 redis_state_layer_ssot（13 命名空间三层+TTL 矩阵收口+RDB/AOF 配置渲染）/
@@ -20005,7 +20005,7 @@ entries:
 
 - issue_id: '#ARCH-226'
   title: DIGEST P0 W2c：密钥层级/信号质量降级检测/A2A 检查网关/FailoverCoordinator 四候选晋升
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     CAND-SEC-004 key_hierarchy（既有 stub 原地实现：主密钥环境变量→KEK HKDF→DEK 按域派发
@@ -20028,7 +20028,7 @@ entries:
 
 - issue_id: '#ARCH-227'
   title: DIGEST P0 W2d：四级自治注册表/Per-Agent Gate/RiskManager Agent/合规规则引擎四候选晋升（MOD-AU-005~007/MOD-CMP-012）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     CAND-AUTONOMYCORE-004 autonomy_level_registry（L0~L3 四级自治声明入 Agent Card）/
@@ -20048,7 +20048,7 @@ entries:
 
 - issue_id: '#ARCH-228'
   title: DIGEST P0 W3 收尾：GPU 热交换/MaxDD 分配器/Focused Bayesian Loss/波动率体制预警四候选晋升——P0 37 条全部闭环
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     CAND-INFRAOPS-001 gpu_hot_swap_model（盘中推理 8-10GB/盘后训练 16-18GB 两档画像+热交换三步，
@@ -20071,7 +20071,7 @@ entries:
 
 - issue_id: '#ARCH-229'
   title: CAND-CYCLE-002（29 态市场状态判定引擎）REVIEW 豁免裁定——证伪方向不加细
-  severity: P2
+  severity: P2中
   category: 架构议题
   adjudication: >-
     候选 CAND-CYCLE-002（C-021 29 态判定引擎：三轴立方体+2 叠加态+仓位上限+策略激活矩阵）
@@ -20091,7 +20091,7 @@ entries:
 
 - issue_id: '#ARCH-230'
   title: DIGEST P1 R1W01/W06：信号域 7 候选+因子域 3 候选晋升（MOD-SIG-087~091 族/MOD-L02-001 复用）+ 两个 canonical 声明
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     P1 首批：signal_factory（C-028）/capital_behavior_orchestrator（C-011）/
@@ -20113,7 +20113,7 @@ entries:
 
 - issue_id: '#ARCH-231'
   title: DIGEST P1 R1W08：数据域 4 候选晋升 + C-001 多源数据接入 REVIEW 豁免（iFind 退役后缺口失效）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     format_transformer（D-INT-16）/sector_factor_manager（板块因子四件收口）/
@@ -20133,7 +20133,7 @@ entries:
 
 - issue_id: '#ARCH-232'
   title: DIGEST P1 R1W11：Agent 族 4 候选+API LLM 池晋升（MOD-AU-008~011）+ Researcher canonical 声明
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     researcher_agent/signal_analyst_agent/timing_analyst_agent/t0_trader_agent 四 Agent 晋升
@@ -20151,7 +20151,7 @@ entries:
 
 - issue_id: '#ARCH-233'
   title: DIGEST P1 R2W02：信号模型族 5 候选晋升（MOD-SIG-092~096）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     gap_fill_model（缺口回补概率）/intraday_volume_orderflow（日内量能订单流，与 MOD-SIG-089
@@ -20170,7 +20170,7 @@ entries:
 
 - issue_id: '#ARCH-234'
   title: DIGEST P1 R2W07：UFL 事实层/BMA 权重/OfflineStore 三候选晋升 + 因果验证层与工厂三兄弟 REVIEW 豁免
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     ufl_deterministic_layer（复用 storage_tiering 追加式语义做因子级标记，DDL human_only 不碰）/
@@ -20190,7 +20190,7 @@ entries:
 
 - issue_id: '#ARCH-235'
   title: DIGEST P1 R2W09：数据四件+LLMMarketInterpreter 五候选晋升（回填/参考数据/MTF/财报解析/三路解读）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     auto_backfiller（事件触发回填+分片+抽样+血缘，与 L10 backfill_checker 定时面向分工）/
@@ -20209,7 +20209,7 @@ entries:
 
 - issue_id: '#ARCH-236'
   title: DIGEST P1 R2W12：Non-AI Boundary Guard/AI 自治运维卡晋升（MOD-AU-012/013）+ 三归并豁免
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     non_ai_boundary_guard（AI/非AI 决策权重计量 >30% 硬顶 BLOCK_NEW_AI，非AI 恒放行）/
@@ -20228,7 +20228,7 @@ entries:
 
 - issue_id: '#ARCH-237'
   title: 候选注册表批量翻转 off-by-one 事故（P1 R1 合并 19 条错位）——块级脚本修复并加固流程
-  severity: P1
+  severity: P1高
   category: 治理流程
   adjudication: >-
     2026-08-25 P1 R1 主代理注册表合并脚本按 original_id 行定位后替换"下一行 status"，
@@ -20248,7 +20248,7 @@ entries:
 
 - issue_id: '#ARCH-238'
   title: DIGEST P1 R3W03：信号情绪族 5 候选晋升（MOD-SIG-097~101）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     limit_up_ecosystem_leadership（动量领导因子+涨停梯队，Granger F/OLS 纯 Python 零幽灵依赖）/
@@ -20267,7 +20267,7 @@ entries:
 
 - issue_id: '#ARCH-239'
   title: DIGEST P1 R3W13：因子敞口/操纵检测/买入后验证三候选晋升（MOD-RK-38/39/40）+ TCA 与 ATR 归并
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     factor_exposure_manager（载荷加权敞口矩阵+超限预警，RK-16/07/13 均不覆盖）/
@@ -20286,7 +20286,7 @@ entries:
 
 - issue_id: '#ARCH-240'
   title: DIGEST P1 R3W15：另类数据三件晋升（MOD-ALT-001~003，Filing NLP 为 canonical）+ 两条另类数据源归并
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     social_sentiment_collector（帖子级文本情绪日频聚合，与 stock_hot_rank 数值人气榜分工）/
@@ -20304,7 +20304,7 @@ entries:
 
 - issue_id: '#ARCH-241'
   title: DIGEST P1 R3W17：P2 进程规格/Warm 平面/大盘预测融合/压缩突破/血缘解析器五候选晋升（MOD-INF-070/071、MOD-REGIME-012/013、MOD-DATA_GOV-004）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     signal_engine_process_spec（P2 规格，与 MOD-INF-066 supervisor 注册行双向对账，恒
@@ -20323,7 +20323,7 @@ entries:
 
 - issue_id: '#ARCH-242'
   title: DIGEST P1 R4W04：涨停潜力评分/底部确认/次日概率门槛三候选晋升（MOD-SIG-102~104）+ 竞价与图形识别归并
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     limit_up_potential_scorer（IC 加权多因子评分，消费 MOD-SIG-097 梯队因子鸭子类型，与
@@ -20342,7 +20342,7 @@ entries:
 
 - issue_id: '#ARCH-243'
   title: DIGEST P1 R4W14：Risk-Signal 排序器/SentimentEngine/PolicyThemeMapper/37 概念映射四候选晋升（MOD-RK-41/MOD-ALT-004~006）+ FilingNLP 归并
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     risk_signal_sequencer（全序规则+乱序检测+冲突仲裁，与执行编排/消费处理器分工）/
@@ -20360,7 +20360,7 @@ entries:
 
 - issue_id: '#ARCH-244'
   title: DIGEST P1 R4W18：M8 血缘族四件+分层验证管线五候选晋升（MOD-DATA_GOV-005~008/MOD-BT-027）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     static_lineage_analyzer（S02 AST+SQL 静态抽取）/runtime_lineage_collector（S03 在线事件面）/
@@ -20379,7 +20379,7 @@ entries:
 
 - issue_id: '#ARCH-245'
   title: DIGEST P1 R4W19：CPCV 矩阵/情景对策/四轨融合/盘前工作流/仓位裁决五候选晋升（MOD-BT-028/MOD-PLAN-019~021/MOD-POS-024）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     strategy_cpcv_matrix（离线 CPCV 策略级打分，与 W-P1-05 在线 60 秒级漏斗=同名第五层双视图
@@ -20398,7 +20398,7 @@ entries:
 
 - issue_id: '#ARCH-246'
   title: DIGEST P1 R5W05：信号漏斗族 5 候选晋升（MOD-SIG-105~109）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     pattern_match_strategy_library（模块44 模式→执行策略映射，与 unified_pattern 图形库分工）/
@@ -20416,7 +20416,7 @@ entries:
 
 - issue_id: '#ARCH-247'
   title: DIGEST P1 R5W10：LLM 基本面/记忆架构/Agent 路由/情景记忆/本地 LLM 池五候选晋升（D_INTELLIGENCE）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     llm_fundamental_analysis（三 Agent 架构+定性定量加权融合）/agent_memory_architecture（四层
@@ -20435,7 +20435,7 @@ entries:
 
 - issue_id: '#ARCH-248'
   title: DIGEST P1 R5W16：竞价数据管理器/CTR-002 消费适配器/生产验证器三候选晋升（MOD-MKT-007/MOD-CON-001/002）+ 双 D-DATA-32 合并与 EX-55 归并
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     auction_data_manager（竞价供数管理面，miniQMT 源/3 秒节奏/尾盘窗口/字段校验，与 MOD-SIG-089
@@ -20454,7 +20454,7 @@ entries:
 
 - issue_id: '#ARCH-249'
   title: DIGEST P1 R5W20：资金管理扩展/日历约束扩展/核心-卫星/QNN 两阶段/PatchTST 五候选晋升（MOD-POS-025/MOD-ML-010/011）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     cash_manager 就地扩展（逆回购标的池+节假日连息+出入金台账 T+N，MOD-POS-006 stable 不动）/
@@ -20473,7 +20473,7 @@ entries:
 
 - issue_id: '#ARCH-250'
   title: DIGEST P1 R6W21：模型版本注册表/策略工厂/漏斗第六层/组合域敞口/容量估算五候选晋升（MOD-ML-012/MOD-PF-009~012）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     model_version_registry（Model 聚合+版本生命周期+INV-011 门，训练域泛条目切出独立缺口）/
@@ -20492,7 +20492,7 @@ entries:
 
 - issue_id: '#ARCH-251'
   title: DIGEST P1 R6W22：EOD 处理器/外部指令通道两候选晋升（MOD-TRADING-011/012）+ 三归并（买入后验证/双盘前检查器）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     eod_processor（D-TRADING-04 canonical：价格快照→NAV/P&L 确认→风险重估挂 15:30 链，
@@ -20511,7 +20511,7 @@ entries:
 
 - issue_id: '#ARCH-252'
   title: DIGEST P1 R6W23：TradingOrder/SettlementRecord 聚合+增量更新引擎三候选晋升（MOD-TRADING-009/010）+ EOD 撞名归并与域泛条目豁免
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     trading_order_aggregate（AGG-TRD-01 运营全生命周期状态机+幂等键+领域事件，执行段一行
@@ -20530,7 +20530,7 @@ entries:
 
 - issue_id: '#ARCH-253'
   title: DIGEST P1 R6W24：异常告警中心/分布漂移监控/告警可视化/策略灰度/SOR Agent 五候选晋升（MOD-DATENG-001/MOD-FBL-001/MOD-FE-003/MOD-INF-072/MOD-XS-015）
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     data_anomaly_alerter（告警中心检测/分级/抑制/路由，与 cleaning_anomaly_engine 修复闭环
@@ -20549,7 +20549,7 @@ entries:
 
 - issue_id: '#ARCH-254'
   title: DIGEST P1 R7W25 最终波：PEAD/trace 追踪/外部系统连接/模型漂移监控/分层指挥链五候选晋升——P1 125 条全闭环
-  severity: P1
+  severity: P1高
   category: 功能施工
   adjudication: >-
     pead_event_model（模块49 SUE+20 日漂移收益+财报季持仓标记，与解析/采集/日历三面分工）/
@@ -20569,7 +20569,7 @@ entries:
   last_updated: '2026-08-25'
 - issue_id: '#ARCH-255'
   title: DIGEST P2 W01 波：INFRA 全家桶 18 候选晋升——资源调度/零拷贝/HA-SLA/数据库层/ML管线/Cold平面/延迟预算/可复现包/三支柱/Agent追踪/延迟归因/WAL监控/存储成本/运行拓扑/Loki管道/级联仿真/战略总线/配置中心
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-INF-074/MOD-INF-075/MOD-INF-076/MOD-INF-077/MOD-INF-078/MOD-INF-079/MOD-INF-080/MOD-INF-081/MOD-INF-082/MOD-INF-083/MOD-INF-084/MOD-INF-085/MOD-INF-086/MOD-INF-087/MOD-INF-088/MOD-INF-089/MOD-INF-090/MOD-INF-091。18 模块纯内存/DI 落地，
@@ -20580,7 +20580,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W01）；模块清单: resource_scheduler/shared_memory_zero_copy/ha_sla_framework/database_layer/ml_pipeline_process/cold_plane_isolation/latency_budget_allocator/reproducibility_packager/observability_triad/agent_call_tracer/latency_attributor/wal_checkpoint_monitor/storage_cost_calculator/runtime_topology_visualizer/loki_log_pipeline/cascade_failure_simulator/strategic_message_bus/config_center'
 - issue_id: '#ARCH-256'
   title: DIGEST P2 W02 波：DATA 全家桶 20 候选晋升+1 REVIEW 归并——成本治理/Redis Streams/缓存一致性/压缩归档/tushare新闻/源SLA/冷归档/质量预测/流引擎/GPU管理/数据湖/聚合根/血缘变更/OpenLineage/列级血缘/ML血缘/资产发现/AI脱敏/访问审计/脱敏引擎
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-SHARED-003~005/MOD-DATA-064~066/MOD-DATENG-002~006/MOD-DATA_GOV-009~014/MOD-DATSEC-001~003。
@@ -20593,7 +20593,7 @@ entries:
 
 - issue_id: '#ARCH-257'
   title: 2026-08-23 src/zephyr 2936 文件误删事件治本——删除硬护栏四件套 + 观测期翻硬拦闭环
-  severity: P0
+  severity: P0致命
   category: 治理安全
   adjudication: >-
     肇事指令走未仪表化通道（主仓 session 经 python 一次性脚本渐进式 FS 删除），全部
@@ -20620,7 +20620,7 @@ entries:
 
 - issue_id: '#ARCH-258'
   title: gate_audit 审计 jsonl 无界增长——统一轮转写入助手 + 分级落盘治本（3.7GB/42h 实证）
-  severity: P1
+  severity: P1高
   category: 治理技术债
   adjudication: >-
     .runtime/gate_audit/ 11 个 jsonl 全部裸 open("a") 追加、零大小上限零轮转零采样，
@@ -20644,7 +20644,7 @@ entries:
   last_updated: '2026-08-26'
 - issue_id: '#ARCH-259'
   title: DIGEST P2 W03 波：KNOWLEDGE 域 14 候选晋升+5 REVIEW 归并——KB引擎/质量评估/金融图谱/工件库/因子KB/策略KB/AI提取/RAG/五层记忆/模式管理/研究聚合/研究目录/论文追踪/研究工作流
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-KNW-001~014。14 模块纯内存/DI 落地（新包 src/zephyr/knowledge/），375 新测全绿。
@@ -20655,7 +20655,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W03）'
 - issue_id: '#ARCH-260'
   title: DIGEST P2 W04 波：INTELLIGENCE+ALT_DATA 13 候选晋升+11 REVIEW 归并——另类接入/目录/研报/政策预期/源健康/隐私/信号网关/地缘/合规+人机信任/LLM自评估/事件因果/事实账本
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-ALT-007~015/MOD-INT-HUMAN-TRUST/LLM-SELFEVAL/EVENT-CHAIN/FACT-LEDGER。13 模块纯内存/DI 落地，
@@ -20667,7 +20667,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W04）'
 - issue_id: '#ARCH-261'
   title: DIGEST P2 W05 波：ASHARE_SIGNAL 前半 13 候选晋升+1 REVIEW 归并——事件因果/庄家模式/群体博弈/形态信号/Wyckoff/隔夜传导/供应链动量/板块拥挤/分时风格/亏钱扩散/日历效应/事件分布/假动作
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-SIG-112~124。13 模块纯内存/DI 落地，289 新测全绿（tests/signal_ashare 域合并 2179 含既有零回归）。
@@ -20677,7 +20677,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W05）'
 - issue_id: '#ARCH-262'
   title: DIGEST P2 W06 波：ASHARE_SIGNAL 后半 10 候选晋升+8 REVIEW 归并（含拓扑链 053→049、045+CYCLE-006→048）——产业链图谱/关系GNN/因果ML/保形预测/量能体制/风格体制/三维矩阵/权重调节/做T盈亏/共享内核
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-SIG-125~133/MOD-REGIME-014。10 模块纯内存/DI 落地，241 新测全绿（域合并 3079 零回归）。
@@ -20688,7 +20688,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W06）'
 - issue_id: '#ARCH-263'
   title: DIGEST P2 W07 波：FACTOR+ML_TRAIN+ML_SERVE 20 候选晋升+5 REVIEW 归并——特征发现/签名/GP/FactorMAD/联合评估/LLM进化/迭代升级+模型工厂/标注/增强/决策树/KAN/抗遗忘/研究数据四件+压缩/两适配
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-FAC-001~007/MOD-ML-013~022/MOD-MLS-002~004。20 模块纯内存/DI 落地，451 新测全绿（四域合并 1525 零回归）。
@@ -20699,7 +20699,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W07）'
 - issue_id: '#ARCH-264'
   title: 并发覆写事故取证与治本（drift watchdog"未登记写入方"）——reconciler 群派生写合规化+digest 脚本整文件覆写模式+CAS 热文件扩列 94号+秒级写取证能力缺口登记
-  severity: P1
+  severity: P1高
   category: 治理流程
   adjudication: >-
     2026-08-26 AI-CRYPTO-001 编辑 94号/00索引/候选注册表期间连遭 4 起并发覆写事故（提交后混合态/版本头回滚/
@@ -20727,7 +20727,7 @@ entries:
   last_updated: '2026-08-26'
 - issue_id: '#ARCH-265'
   title: DIGEST P2 W08 波：SIM/DIGITAL_TWIN/EXEC_SIM/EX_CORE/TRADING 6 候选晋升+4 REVIEW 归并——过拟合门禁/市场仿真/冲击模型/执行优化/三向对账/主数据
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-SIM-028/MOD-DT-001/MOD-EXSIM-001/MOD-EX-064/MOD-TRADING-013/014。6 模块纯内存/DI 落地，155 新测全绿。
@@ -20737,7 +20737,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W08）'
 - issue_id: '#ARCH-266'
   title: DIGEST P2 W09 波：PF/PLAN/RISK 11 候选晋升+3 REVIEW 归并——策略筛选/BMA权重/RL组合/成本拆解/偏差监控/盘前工序+对冲/预取/策略持久化/查询构建/传染建模
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-PA-014/015/MOD-PF-013/014/MOD-PLAN-022/023/MOD-RK-042~046。11 模块纯内存/DI 落地，
@@ -20747,7 +20747,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W09）'
 - issue_id: '#ARCH-267'
   title: DIGEST P2 W10 波：COMPLIANCE+REPORTING 8 候选晋升+1 REVIEW 归并——证据链/操纵检测/策略引擎/漂移检测/监管追踪+溯源链/审查引擎/可解释报告
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-CMP-013~017/MOD-RPT-033~035。8 模块纯内存/DI 落地，191 新测全绿（两域合并 950 零回归）。
@@ -20757,7 +20757,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W10）'
 - issue_id: '#ARCH-268'
   title: （占位作废——W10 重复登记误发，真条目为 #ARCH-267；2026-08-26 治理闭环）
-  severity: P3
+  severity: P3低
   category: 治理卫生
   adjudication: >-
     本号因 W10 波幂等重跑误登记（bump 逻辑在 #ARCH-267 已占用时取 268），
@@ -20768,7 +20768,7 @@ entries:
   fix_phase: '作废（2026-08-26）'
 - issue_id: '#ARCH-269'
   title: DIGEST P2 W11 波：FRONTEND 10 候选晋升+2 REVIEW 归并——通知路由/图渲染/域映射/价值流/血缘渲染/追踪瀑布/合规仪表盘/API代理/飞书/微信
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-FE-004~013。10 模块纯内存/DI 落地（后端数据器，呈现层页面接线仍归页面设计批），
@@ -20778,7 +20778,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W11）'
 - issue_id: '#ARCH-270'
   title: DIGEST P2 W12 波：GOV 全家桶 7 候选晋升+2 REVIEW 归并——DepMap/策略管理/审计追踪/文档同步/Agent稳定度/施工门禁/硬边界
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-GOV-051~057。7 模块落地（GOV-051/055 与并发会话同路径合流，含缺陷修复），174 测全绿。
@@ -20788,7 +20788,7 @@ entries:
   fix_phase: '已落地（2026-08-26，DIGEST P2 W12）'
 - issue_id: '#ARCH-271'
   title: DIGEST P2 W13 波：INTEGRATION/GATEWAY/OPS/ORCHESTRATOR 10 候选晋升——API文档/交互矩阵/AI路由/API网关/运维聚合/事件响应/资产盘点/全局状态/任务编排/Agent协调
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-INT-OPENAPI/MATRIX/AIROUTE/APIGW、MOD-OPS-001~003、MOD-ORCH-002~004。10 模块纯内存/DI 落地，
@@ -20798,7 +20798,7 @@ entries:
   fix_phase: '已落地（2026-08-27，DIGEST P2 W13）'
 - issue_id: '#ARCH-272'
   title: DIGEST P2 W14 波：AUTONOMY/FBL 4 候选晋升+5 REVIEW 归并——LLM研究助手/模块匹配/技能库/元优化（含 W04 漏处理 AISA-017 补施工）
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-INT-RESEARCH-AGENT/MOD-FBL-002~004。4 模块纯内存/DI 落地，98 新测全绿。
@@ -20810,7 +20810,7 @@ entries:
   fix_phase: '已落地（2026-08-27，DIGEST P2 W14）'
 - issue_id: '#ARCH-273'
   title: DIGEST P2 W15 波（收官施工波）：SIGQC+SECURITY 8 候选晋升——外发脱敏/SIEM关联/供应链扫描/谱幻觉检测+信号去重/退化监控/基准对比/可解释保障
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-SEC-024~026/MOD-SECLLM-002/MOD-SIGQC-003~006。8 模块纯内存/DI 落地，171 新测全绿（两域合并 257 零回归）。
@@ -20820,7 +20820,7 @@ entries:
   fix_phase: '已落地（2026-08-27，DIGEST P2 W15）'
 - issue_id: '#ARCH-274'
   title: DIGEST P2 W16 波（漏项补施工）：CAND-AUDITTES-001 晋升——质量保障自驱动器（D_AUDITTEST 域波次映射漏配，清零核验发现并补施工）
-  severity: P2
+  severity: P2中
   category: 功能施工
   adjudication: >-
     MOD-AUDITTEST-001 quality_assurance_selfdrive（测试骨架自生成/偏差自诊断/性能回归比对/准确率抽检），
@@ -20830,7 +20830,7 @@ entries:
   fix_phase: '已落地（2026-08-27，DIGEST P2 W16）'
 - issue_id: '#ARCH-275'
   title: B-007 规则终裁改写（Owner 2026-08-27）——「上线新策略模块需审批」收窄为「实盘操作需审批」，非实盘活动全部放开
-  severity: P1
+  severity: P1高
   category: 治理裁定
   adjudication: >-
     Owner 终裁：B-007 新定义=禁止 AI 在无人审批的情况下进行实盘操作，除此之外（回测/模拟盘/
@@ -20846,7 +20846,7 @@ entries:
   fix_phase: '宪章已改写（2026-08-27）；代码闸门松绑列后续施工批'
 - issue_id: '#ARCH-276'
   title: AUTPERM-001 逻辑归位落地（Owner 2026-08-27 批准）——11 目录元数据归域 D_AUTONOMY_PERM，物理迁移降 P3 可选远期项
-  severity: P2
+  severity: P2中
   category: 治理裁定
   adjudication: >-
     Owner 批准逻辑归位替代物理迁移：①architecture_model/index.yaml D_AUTONOMY_PERM 节点补
@@ -20863,7 +20863,7 @@ entries:
   fix_phase: '已落地（2026-08-27）'
 - issue_id: '#ARCH-277'
   title: 2026-08-27 三起 3500+ 文件误删定凶与治本闭环（Owner 裁定五）——pytest 授权泄漏致 guard_rmtree 真删 src/zephyr
-  severity: P1
+  severity: P1高
   category: 事故治本
   adjudication: >-
     定凶（ops_guard_delete.jsonl 实证）：三起误删（03:27/08:24/12:27，3513~3537 文件/起）=
@@ -20880,7 +20880,7 @@ entries:
   fix_phase: '已落地（2026-08-27）；残留两项报 Owner 裁定'
 - issue_id: '#ARCH-278'
   title: 313 模块运行时装配三层架构落地（Owner 裁定三 2026-08-27 批准）——台账 Layer1+需求驱动 Layer2+超期门禁 Layer3
-  severity: P2
+  severity: P2中
   category: 治理施工
   adjudication: >-
     Owner 批准三层全做且拒绝猜测性全量接线：
@@ -20896,7 +20896,7 @@ entries:
   fix_phase: '已落地（2026-08-27）'
 - issue_id: '#ARCH-279'
   title: 裁定五残留两项调研裁定——授权面收窄=语义剥离+继承收敛（替代直接令牌化）+WriteAudit 三层归因守护立项
-  severity: P1
+  severity: P1高
   category: 治理流程
   adjudication: >-
     Owner 指令调研裁定（docs/_archive/2026-08-27-authz-writeaudit-adjudication.md）。
@@ -20921,7 +20921,7 @@ entries:
   fix_phase: '批1 已落地（f2fd5056）；批2 已落地（06a36b5f，守护在线 pid 实证）；B3 已实机打通（6362d6a5：auditpol GUID 化+SeSecurityPrivilege+4663 十三槽位修正，冒烟写删精确归因落盘 user/pid/进程名/操作分明）；A3 观测收尾翻硬拦（2026-08-27：观测窗 would_block_if_narrowed 零命中+历史 39,642 条零合法消费方，GATEWAY_ENV 永久退出删除域，NARROWED 开关退役，135 全绿）——裁定五残留两项全量闭环'
 - issue_id: '#ARCH-280'
   title: GATE-REGENERATE 超时告警裁定=零工程（Owner 质疑过度工程，裁定认可）——并发期环境噪音，既有双级机制已够，不建任何升级/调优工程
-  severity: P3
+  severity: P3低
   category: 治理流程
   adjudication: >-
     2026-08-27 Owner 质疑「超时告警需要升级吗？感觉像过度工程」，裁定：**零工程，连升级机制都无需新建**。
@@ -20940,7 +20940,7 @@ entries:
     B-007 遗留治本——"机械通道不降级人工 lifecycle 态"全通道布防五修复（sync 双 UPDATE 剔除
     build_status 回写 / ghost 清理 `#` 锚点剥离 / diagnose 豁免对齐 / regen DELETE 目录粒度
     blueprint 节点豁免 / density 测试头 blueprint 号合规）
-  severity: P1
+  severity: P1高
   category: 治理基建
   adjudication: >-
     2026-08-28 裁定书（docs/_archive/2026-08-28-b007-leftover-adjudication.md §3+§3.4）：P0 确立的
@@ -20966,7 +20966,7 @@ entries:
   title: >-
     悬案——data/connectors/ 与 data/normalizers/ 两目录节点 planned→production 库外通道写入
     （无 B-007 清单/快照/日志留痕），终态正确已追认，写入通道待排查
-  severity: P2
+  severity: P2中
   category: 治理流程
   adjudication: >-
     2026-08-28 裁定书 §2.3-3：2026-08-21 备份（depgraph_backup_20260821_p06.sql）实证两节点=planned，
@@ -20982,7 +20982,7 @@ entries:
   title: >-
     IDE 工具链韧性裁定（100% AI 开发场景）——Trae 崩溃真凶=8-25 静默更新原生 bug 经 30 万文件
     工作区放大+ProcessReaper 旧判据误杀渲染进程；R1~R8 分 P0 应急/P1 制度化/P2 条件触发三档
-  severity: P1
+  severity: P1高
   category: 治理流程
   discovered: 2026-08-28 IDE 崩溃事故链取证（Windows 事件日志/WER 报告/崩溃转储/Trae 自有日志）
   adjudication: >-
@@ -21000,7 +21000,7 @@ entries:
 # --- #ARCH-283: 66号 landing 专用 worktree .git 链接丢失→git walk-up 打穿主仓（2026-08-29 主仓打穿事故）---
 - issue_id: '#ARCH-283'
   title: commit_queue 专用 worktree .git 链接丢失致 reset --hard/clean 打穿主工作区（30 分钟一对 6 次实证）
-  severity: P1
+  severity: P1高
   category: 技术债
   adjudication: >-
     2026-08-29 立项（当日事故，reflog 实证 6 次成对 reset --hard refs/heads/dev + clean -fd，
@@ -21028,7 +21028,7 @@ entries:
 # --- #ARCH-284: B17 追认——自治标尺统一 Owner 已裁定（裁定8）+ 15号文漂移文本修复（2026-08-29）---
 - issue_id: '#ARCH-284'
   title: B17 追认闭环——三套自治等级标尺统一已于 2026-08-18 由 Owner 裁定（裁定8/裁定#224），路线图/15号文误标"待人裁"漂移修复
-  severity: P2
+  severity: P2中
   category: 治理流程
   adjudication: >-
     2026-08-29 全链路实证：①git log 实证 commit 56319b2f42（2026-08-18 02:40，AI-ADJ-003）
@@ -21055,7 +21055,7 @@ entries:
 # --- #ARCH-285: B18 主裁定——GP1 排期批开门 + 13号文 Q1 批准 + 14号文 Q1/Q2/Q4 事实关闭（2026-08-29）---
 - issue_id: '#ARCH-285'
   title: B18 主裁定——GP1 排期批正式开门（I1-1~I1-3 全达成）+ 模块工厂 Phase 0→1 批准入第一波 + 14号文三问事实关闭
-  severity: P1
+  severity: P1高
   category: 治理流程
   adjudication: >-
     2026-08-29 Owner 授权架构师裁定（"全部裁定"授权，第一性原理分析）。一、GP1 开门判据
@@ -21090,7 +21090,7 @@ entries:
 # --- #ARCH-286: 13/14号文开放问题批量裁定——Q2 接口真源归 11号文 / Q3 双关关闭 / Q4-Q9 逐项 / doc_type 统一（2026-08-29）---
 - issue_id: '#ARCH-286'
   title: 13/14号文开放问题批量裁定（B18 配套）——接口真源裁定+六项逐项处置+09域目录 doc_type 统一 architecture_view
-  severity: P2
+  severity: P2中
   category: 治理流程
   adjudication: >-
     2026-08-29 同批裁定（Owner"全部裁定"授权）。①13号文 Q2（11号技能库接口）：
@@ -21126,7 +21126,7 @@ entries:
   last_updated: '2026-08-29'
 - issue_id: '#ARCH-287'
   title: GP1 分类器验收口径裁定（原代号 GP1-EVAL-CALIBER-001）——人判语义合理性口径甲 + 双指标 + 任务输入补全路径
-  severity: P1
+  severity: P1高
   adjudication: 验收口径=口径甲（人判语义合理性，回归 13号文 人评一致率 原文）；废弃注册表真值口径（策展意图不在文本孤本内，测量工具错误）。双指标：主=原样接受率（85% 门槛不降格），辅=可辩护率。当前成绩如实登记未过线（R3 严格 58%，标准复判 46%）。达标路径=PS-VOC-TAX-001 知识分类边界标准（22 类边界+裁决规则+主观术语锚定，Owner 口述+全网搜证）+分类器 prompt 注入；防过拟合铁律=教学集禁当考试集，复测新抽样。Owner 2026-08-30 逐题确认（含词不达意豁免条款 R6）。
   fix_phase: 已落地（2026-08-30：边界标准词表+分类器注入+#39/#45 注册表修正）；全量 309 条复测已跑完（deepseek-v4-flash，拦截率 78.3%→0.3%）
   status: decided
@@ -21217,7 +21217,7 @@ entries:
   last_updated: '2026-08-30'
 - issue_id: '#ARCH-298'
   title: A1 正式裁定——61号文 mSPRT 晋升编排层载体重裁定（MLflow 退役后载体归宿）
-  severity: P1
+  severity: P1高
   adjudication: '正式裁定：mSPRT Champion-Challenger 晋升/回滚/归档的落地载体 = 因子生命周期状态机 MOD-L02-013（注册表状态机等价物），替代已退役的 MLflow alias（@champion/@challenger/@archived，51号文 2026-08-16 裁定完全卸载）。语义不变：61号文 §3.3 纪律 1 的 mSPRT 序贯晋升判定逻辑不受载体切换影响，仅物理执行层由 MLflow alias 换为 FSM 状态转换。三件套已在库 production：统计内核 pf_core/core/msprt_champion_challenger.py（MOD-PF-008）+ 晋升编排层 governance/lifecycle_governance/msprt_promotion_channel.py + 消费方 governance/lifecycle_governance/factor_promotion_wiring.py（2026-08-24 ARCH-210 落地）。残余阻塞：ExecutionReport delta 产出逻辑（CTR-P1-007）未施工，delta 当前为合成/外部源——54号文 BM-REC-02-B 绩效归因待其解锁。'
   fix_phase: 已落地（载体裁定 2026-08-30 正式登记；三件套 2026-08-24 ARCH-210 已施工）；61号文结案报告同步回写
   status: resolved
@@ -21226,7 +21226,7 @@ entries:
   last_updated: '2026-08-30'
 - issue_id: '#ARCH-300'
   title: 63号文批次B/C补文档前置缺口——concept_sector/sector_list/convertible_bond_list 三表采集任务已配置但 0 行在库
-  severity: P2
+  severity: P2中
   adjudication: 'B7 评估实证（2026-08-30，ClickHouse system.tables+count 直查）：63号文 §6.2 批次 B/C 目标表中 concept_sector（c1_market，tasks.yaml concept_sector_refresh/monthly_static/akshare）、sector_list（c1_market，sector_list_refresh/monthly_static/miniqmt，trading_day_only）、convertible_bond_list（c1_market，convertible_bond_list_refresh/monthly_static/akshare）三张采集任务配置在位但库内 0 行，与 63号文 v2.1.0"代码活跃✓"（代码引用扫描口径）不矛盾但与"数据已落库可补文档"前提不符——按 §7.0.1 六字段模板补消费级文档时，"下游逻辑/消费频率"对空表无法通过 §7.0.6 L3 语义抽检。前置条件：排查三表月度任务执行链（miniqmt 月初遇周末跳过/akshare 接口变更/静默失败待定位）并实证灌数；灌数前三表仅可落最小文档+空表状态标注。其余 14 张批次 B/C 目标表在库有数据（本日实证行数），纯文档补全无此前置，清单见 docs/_working/2026-08-30-b7-batch-bc-doc-supplement-checklist.md。'
   fix_phase: 待排查采集执行链并实证灌数（三表月度任务）；灌数后回补 26/22 号对应六字段小节
   status: open
@@ -21234,7 +21234,7 @@ entries:
   last_updated: '2026-08-30'
 - issue_id: '#ARCH-301'
   title: A2 裁定——13号文 GP1 知识分类器验收通过（口径甲 40/40）+ production 翻转
-  severity: P1
+  severity: P1高
   adjudication: 'GP1 验收裁定（Owner 2026-08-31 授权 AI 架构师按口径甲代判）：全量 309 条（factor160+strategy149，deepseek-v4-flash，拦截率经治本修复 78.3%→0.3%）+ 分层抽样 40 条人评（20 match+20 mismatch）。结果：40/40 语义可接受（24 reasonable + 16 registry_truth_stale + 0 unreasonable），口径甲原样接受率 100% ≥ 85% 门槛 → 验收通过。关键实证：16 条 mismatch 全部是分类器比注册表真值更精准（如供应链动量 momentum 优于 event、研报分类 data_asset 优于 multifactor），零分类器错误——证明 PS-VOC-TAX-001 边界标准注入生效，且 mismatch 主因是注册表真值滞后（测量工具偏差，ARCH-287 已裁定）。动作：knowledge_classifier（MOD-FACTORY-001）+ llm_runtime_gateway（MOD-INF-051）[MATURITY]/design_maturity testing→production。'
   fix_phase: 已落地（2026-08-31：人评包裁定回填 + 双模块 production 翻转）
   status: resolved
@@ -21243,7 +21243,7 @@ entries:
   last_updated: '2026-08-31'
 - issue_id: '#ARCH-302'
   title: 裁定——06号文 生产端 dispatch 硬门（TaskGate）采用影子模式先行启用
-  severity: P2
+  severity: P2中
   adjudication: '裁定（Owner 2026-08-31 授权代判）：生产端 dispatch 门不按"直接硬门全开"也不"继续默认关闭"，采用专业机构金丝雀发布实践——先影子模式（shadow/observe-only：记录 would-block 决策但不真阻断）运行观察，确认 passport 覆盖率与误拦率后再晋升硬门。理由：硬门直开的风险是 passport 缺失/过期时误拦合法 dispatch（当前 7 份签名护照+quick_profiles 覆盖有限）；但永久关闭则考试调度器+TaskGate 形同虚设。影子模式零风险获得真实拦截画像，是第一性原理下的最优路径。'
   fix_phase: 观察期结论（2026-08-31 复核）：影子日志零记录——根因非"无误拦"而是"无流量"：全仓唯一消费者是测试，task_gate 硬门钩子（task_gate=True 且未设 ZEPHYR_TASK_GATE_SHADOW）已建成但无生产 dispatch 链接线，TaskGate.can_dispatch 无生产调用方。裁定维持：门保持"已建成未接线"状态——晋升硬门的前提=06号文 dispatch 链生产消费端落地，接线时按本裁定走影子先行（task_gate=True + ZEPHYR_TASK_GATE_SHADOW=1）收集画像后翻硬门；不主动接线生产消费者（生产端激活权属 Owner）。
   status: decided
@@ -21251,7 +21251,7 @@ entries:
   last_updated: '2026-08-31'
 - issue_id: '#ARCH-303'
   title: 裁定——预算硬门主维度由 token 数切换为元成本（对齐 Owner sanction 口径）
-  severity: P1
+  severity: P1高
   adjudication: '裁定（Owner 2026-08-31 授权代判）：预算硬门主维度 = COST（元），TOKEN 降为二级兜底。理由（第一性原理）：预算硬门的存在意义=防止花费失控，Owner 的真实约束是钱（¥50 sanction）不是 token；token 是代理变量，随模型/定价/推理 token 占比失真（2026-08-30 78.3% 拦截事故即 token 口径失真所致）。专业机构实践（OpenAI/Anthropic/云成本治理）一律按货币预算。施工：①COST 策略单位由美元口径校准为元（daily/hourly 限额按 sanction 规模与实测消耗标定）②llm_runtime_gateway 预检 estimated_cost 由 est_tokens×价表（峰时保守价）算出并传入 pre_flight_check ③成功调用回填真实 cost_yuan。TOKEN 策略保留为防跑飞的二级保险丝。'
   fix_phase: 施工中（成本维校准 + 网关 estimated_cost 接线）
   status: decided
@@ -21259,7 +21259,7 @@ entries:
   last_updated: '2026-08-31'
 - issue_id: '#ARCH-304'
   title: 裁定——claim 前移做进漂移看门狗：单活跃会话时自动认领替代回退（治本流程摩擦）
-  severity: P2
+  severity: P2中
   adjudication: '裁定（Owner 2026-08-31 授权代判）：GATE-WORKTREE-DRIFT-WATCHDOG 对"未登记写入方"的处置分级——当全项目恰好 1 个活跃注册会话时，漂移写入归属无歧义，自动 claim 到该会话 + 审计留痕，替代直接回退；多活跃会话（归属有歧义）时维持现状隔离+人工。理由（第一性原理）：看门狗目的是抓"无主的漂移"，单会话时归属确定，回退是误伤（2026-08-31 实证：本会话 registry/61号文编辑被回退一次）；把安全路径设为默认（pave the road）比靠 AI 自觉先 claim 更符合 100% AI 开发的工程现实。多会话歧义场景不放松（防互踩）。'
   fix_phase: 施工中（看门狗 auto-claim 改造）
   status: decided
@@ -21267,7 +21267,7 @@ entries:
   last_updated: '2026-08-31'
 - issue_id: '#ARCH-305'
   title: 裁定——STR-MULTIFACTOR-031 跨库迁移至 factor_registry（FCT-MOM-030）
-  severity: P2
+  severity: P2中
   adjudication: '裁定（Owner 2026-08-31 授权代判，ARCH-301 follow-up 遗留项闭环）：STR-MULTIFACTOR-031"4 分钟涨速资金异动"跨库迁移至 factor_registry（新条目 FCT-MOM-030，factor_class=momentum），strategy_registry 原条目 status→deprecated 并留迁移指针。理由（第一性原理）：①条目本质=单一可计算信号（4 分钟涨速持续排名），无完整买卖决策链（exit_logic/position_sizing/risk_rules 全空），GP1 人评裁定（relabel_proposal=factor/momentum）与分类器独立预测（factor/momentum，confidence=0.75）双重佐证；②注册表条目归属应由语义本质决定而非"先入的库"——strategy_class 取值域不含 factor 类，滞留 strategy 库只能委曲 multifactor（永久误标）；③零下游引用（全仓 grep 仅自身条目），迁移零破坏面。教训留痕：29号文人工抽取时"信号"与"策略"边界未执行 PS-VOC-TAX-001 标准，属测量工具滞后的同类（ARCH-287）。'
   fix_phase: 已落地（2026-08-31：FCT-MOM-030 入库 + STR-MULTIFACTOR-031 deprecated）
   status: resolved
@@ -21276,7 +21276,7 @@ entries:
   last_updated: '2026-08-31'
 - issue_id: '#ARCH-306'
   title: 治本——is_pid_alive Windows 句柄残留误判（死进程恒判存活）
-  severity: P1
+  severity: P1高
   adjudication: '实证（2026-08-31 长城任务清场）：强杀 3 个卡死 7 小时的治理进程（2 个 reconcile worker 在 GATE-RUNTIME-CLEANUP 空转烧 1600s+ CPU、1 个 git_commit 主线程死锁 7h 仅 8s CPU）后，session_registry 中条目仍判"活跃"——OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION) 对已终止但被持有句柄的进程对象仍返回非空（内核对象随句柄存续），旧实现单看 handle 非空即判存活 → 僵尸 session 永不收割 → 自动认领（#ARCH-304）被多会话假象阻塞、claim 被死 session 扣押。修法（process_pool.py is_pid_alive，全仓唯一真源）：handle 打开后加查 GetExitCodeProcess，退出码 != STILL_ACTIVE(259) 即判死；已知边角=真实以 259 退出的进程误判存活（MSDN 公认，可接受）。影响面：_GlobalCommitLock 僵尸锁检测 / ide_health_service daemon 清理 / ProcessLock stale 清理全部受益。配套观察：algoflow-gw session 被自身 heartbeat daemon 线程续命 7 小时（主线程死锁但 daemon 存活→PID+TTL 双判据全过）——heartbeat 保活死锁 session 的活性反转缺口已在 #ARCH-HEARTBEAT-002 以 last_activity 锚点治本，本次实证其有效性边界（git_commit 内嵌 daemon 的 last_activity 随 claim 刷新）。'
   fix_phase: 已落地（2026-08-31：GetExitCodeProcess 判据 + 56 项关联测试全绿）
   status: resolved
@@ -21284,7 +21284,7 @@ entries:
   last_updated: '2026-08-31'
 - issue_id: '#ARCH-307'
   title: WriteAudit MemoryError 修复 + O2 逃生通道升级阻断落地（#ARCH-264 裁定执行收口）
-  severity: P1
+  severity: P1高
   category: 治理流程
   adjudication: >-
     2026-08-31 AI-DRIFT-001 续作（Owner 指令处置两新发现+O2）。①MemoryError：write_audit_daemon
@@ -21310,7 +21310,7 @@ entries:
   last_updated: '2026-08-31'
 - issue_id: '#ARCH-308'
   title: 裁定——工作区孤儿 WIP 治本三件套（判读器/死会话清扫/派生自动收敛 + 遥测退库）
-  severity: P2
+  severity: P2中
   category: 治理流程
   adjudication: >-
     2026-09-03 Owner 当案裁定（对话授权"全套 A+B+C"）。病根：①死会话遗留（暂存区陈旧快照/
@@ -22123,7 +22123,7 @@ entries:
   last_updated: '2026-09-18'
 - issue_id: ARCH-VOCABCONSOL-DOMAIN-BACKFILL-001
   title: 裁定#335 W4c 全仓 [DOMAIN] 补标涉 architecture_model/ 受保护路径 11 件的审批标记授权
-  severity: P3
+  severity: P3低
   adjudication: >-
     补标为机械元数据标注：每文件治理锚定块纯插一行 domain_id/[DOMAIN]
     （+1 行，其余字节 sha256 核验零改动），非契约语义变更；architecture_model/
@@ -22426,7 +22426,7 @@ entries:
 - issue_id: '#ARCH-FINAL3-RULES-BATCH-001'
   title: 'final3 W1-F rules 统一批（裁定#372 判决执行）'
   status: open
-  severity: P2
+  severity: P2中
   category: governance
   created: '2026-09-20'
   last_updated: '2026-09-20'
@@ -22507,6 +22507,7 @@ entries:
   - data/governance/governance.db（删除，0 字节假库）
   - .runtime/tmp/governance.db（删除，0 字节假库）
   related_rulings: []
+
 - issue_id: '#ARCH-QCURE-APPROVAL-CHAIN-001'
   title: 'QCure 裁定适配器授权链闭环：裁定册纳入保护清单+approved_paths 机判通道（PROTECTED-PATHS 审批语言统一）'
   severity: P1高
@@ -22518,3 +22519,21 @@ entries:
   description: '问题背景：PROTECTED-PATHS 门只认 [ARCH-APPROVAL:ARCH-*] 标记语言，裁定号（如裁定#410 批准 rules/ 清道三袋）机械上不被消费，属主只能人肉把裁定翻译成 ARCH 议题。QCure M4 立 approval_resolver 双通道（marker 防伪：id 必须实存议题册/裁定册；裁定通道：status=active+未过 expires_at+approved_paths fnmatch 覆盖）。红队 P0-1 实证：ruling_registry.yaml 原不在保护清单，会话可无批文自铸 approved_paths＝自我授权闭环洞。治本：本册（裁定册）入 PROTECTED_PATTERNS，改册须 ARCH 议题批文（即本议题），与 rules/ 同门槛。#410 三失真修补（status/affected_files/approved_paths+expires 2026-10-08）随本议题原子落地。'
   impact: "['scripts/governance/d6_security/check_protected_paths.py（PROTECTED_PATTERNS+1）', 'src/zephyr/gov_enforcement/commit_gates/approval_resolver.py（新增）', 'src/zephyr/gov_enforcement/commit_gates/protected_paths_gate.py（复用 resolver）', 'docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml（#410 修补）']"
   related_rulings: '["裁定#410"]'
+- issue_id: '#ARCH-AGENTS-SSOT-DRIFT-001'
+  title: '宪法§7速查表三处漂移修正批文（数据集成器8子命令/commit_queue 6子命令/仪表盘真源api_server）'
+  severity: P2中
+  category: architecture_metadata
+  status: in_progress
+  created: '2026-09-25'
+  last_updated: '2026-09-25'
+  owner: 'st-qmine-20260925 总包授权'
+  description: >-
+    AGENTS.md §7 核心系统速查表三处与仓内实测漂移，本议题为修正批文（三处均以仓内代码实测为准）：
+    ①数据集成器写作"python -m zephyr.data（7 子命令）"，实测 src/zephyr/data/cli.py 注册 8 子命令
+    （status/list/run/rerun-failed/pause/resume/start/speed-test）；
+    ②提交队列写作"enqueue/status/drain/requeue"，实测 scripts/commit_queue.py 注册 6 子命令
+    （另含 cleanup/health）；③仪表盘真源写作 src/zephyr/frontend/dashboard/app_panel.py，
+    实测运行入口=同目录 api_server.py。AGENTS.md 三处修正由总包按本批文执行。
+  impact:
+  - AGENTS.md
+  related_rulings: []

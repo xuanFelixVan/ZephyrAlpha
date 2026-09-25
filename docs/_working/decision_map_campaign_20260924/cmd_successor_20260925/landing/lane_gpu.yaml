@@ -1,0 +1,45 @@
+lane: LANE-GPU
+session_id: st-qmine-20260925
+created: 2026-09-26
+written_by: LANE-GPU 双版合并收口车道（总筹 st-qmine-20260925 派；前一轮同名义执行人 st-gpu-rewrite-mining-20260925 撞轮次上限身亡）
+note: >-
+  本袋同时完成双版收敛，取代关系已在册。
+  事由：盘上 B 版五件（hotspot_census／industry_gpu_landscape／rewrite_architecture_three_tiers／
+  verification_framework／migration_roadmap）把已落 HEAD（commit 37aeecedcd）的 A 版五件改成了"已并入"指针，
+  但总筹复核指称取代声明部分不实。本车道逐条 grep 实测后判定：真缺口＝①LEAN 一家全缺、
+  ②hftbacktest"README 271 行零 GPU/CUDA＋PyPI v2.4.4 requires_dist 仅 numba"三连细证缺、
+  ③vectorbt 开源版 stars／NOASSERTION 许可证／Numba CPU JIT 口径缺、④容差真源位（④文）缺硬件红线
+  （3090 FP64=FP32 的 1/64＋18GB 配额＋单卡独占＋exclusive_group=gpu_default 与本地 LLM 互斥）、
+  ⑤①文缺"每格 7 次引擎 pass"构成与"83% 的一半是重复而非算力（hoisting 3-7x）"两条量化口径、
+  ⑥ann_return 的 0.005 绝对容差在层2 判据格未单列。指称中"五家全无""容差全无"两条经实测为过判，已在案卷如实记双面。
+  处置：以 B 版五件为唯一真源（文件名与章节结构不动），把 A 版证据并入（②文新增"结论 A 补"逐家实证表、
+  ④文新增"一·补 硬件红线与容差冻结值"、①文新增"二·补 重复计算结构的量化口径"），A 版五件维持指针形态但
+  逐件补"并入核账"并把 superseded_by 声明改为可核对的落位；其中 gpu_landscape 指针因有 3 条二手 benchmark
+  未并（本车道不为其补证），已按纪律改写为**部分并入＋余下见 commit 37aeecedcd 的 gpu_landscape.md:43,44,52**，不含糊。
+  附带防门死修正：EXEMPT-ZONE-FM（豁免区 docs/_working 新件 frontmatter 只带 ttl、禁 doc_type，fail-closed 阻断）
+  原会打死本袋——**十个 .md 的 doc_type 已一并清除**（A 版五件原 doc_type: index；B 版五件原 audit_report／blueprint／architecture_view），
+  内容未因该修正损失任何一行。案卷 GPU_merge_audit.md 亦按同规矩只带 ttl: task_bound。
+  纪律自证：全程只读分析＋写文档；零 git add/commit/push、未跑 git_commit.py／commit_queue.py（唯一落地出口＝LANE-LAND2）；
+  未跑测试、未起 GPU 作业、未碰 PID 3584 与 D:\zephyr_t1_backup\；未新建第六第七册（GPU 家族＝五件真源＋五件指针）；
+  未删 A 版任何内容（HEAD 可取回）；未伪造 Owner 署名或裁定号（正文以 commit 号与文件行号指代，不写裸"裁定#NNN"）。
+files:
+  - docs/_working/gpu_rewrite/hotspot_census.md
+  - docs/_working/gpu_rewrite/industry_gpu_landscape.md
+  - docs/_working/gpu_rewrite/rewrite_architecture_three_tiers.md
+  - docs/_working/gpu_rewrite/verification_framework.md
+  - docs/_working/gpu_rewrite/migration_roadmap.md
+  - docs/_working/gpu_rewrite/compute_inventory.md
+  - docs/_working/gpu_rewrite/gpu_landscape.md
+  - docs/_working/gpu_rewrite/rewrite_architecture.md
+  - docs/_working/gpu_rewrite/roadmap.md
+  - docs/_working/gpu_rewrite/validation_framework.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/GPU_merge_audit.md
+merge_ledger:
+  - A(compute_inventory.md:40,176 + rewrite_architecture.md:17-20,42) -> hotspot_census.md §二·补（7 pass 构成＋"重复而非算力"口径，含实测改判）
+  - A(gpu_landscape.md:16-33,60,64-70) -> industry_gpu_landscape.md §一「结论 A 补」（五家逐家实证表＋总结论一句话；LEAN 为唯一真缺口）
+  - A(validation_framework.md:26,28 + compute_inventory.md:14 + rewrite_architecture.md:12) -> verification_framework.md §一·补（容差冻结值＋FP32 预检＋硬件红线三条）
+  - A(roadmap.md §〇,N5,N6) -> migration_roadmap.md §〇/N5/N6/R6 本已在案（逐字核一致，未重复堆叠）
+landing_reminders:
+  - "本袋 11 件全为豁免区文档，CREATE-GUARD creation_token 由 LANE-LAND2 统一登记（A 版五件已在 HEAD，改写不属新建；B 版五件＋案卷属新建）"
+  - "roadmap.md 与 validation_framework.md 现 git 状态为『staged 删除＋盘上新文件』，落地须按现盘字节收录，勿只收删除态（否则指针消失、A 版正文复活）"
+  - "①文 §二·补 与 ④文 §一·补 内所有 A 版行号引文均指 commit 37aeecedcd 的 blob 行号，非盘面 22-26 行指针文件行号——复核命令见案卷 §四"

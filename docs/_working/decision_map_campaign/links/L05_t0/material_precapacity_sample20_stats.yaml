@@ -1,0 +1,128 @@
+# --- 治理锚定 ---
+# ttl: task_bound
+# --- 治理锚定结束 ---
+window:
+  start: '2021-09-01'
+  end: '2025-09-09'
+  closed_book_cutoff: '2025-09-09'
+  closed_book_ok: true
+universe:
+  n_symbols_requested: 20
+  bars_raw: 4615139
+  bars_after_dedup: 4615139
+  bars_deduped_away: 0
+  symbols:
+  - '000001'
+  - '000776'
+  - '002022'
+  - '002305'
+  - 002596
+  - 002896
+  - '300146'
+  - '300437'
+  - '300716'
+  - '301001'
+  - '301316'
+  - '600115'
+  - '600486'
+  - '600807'
+  - '601619'
+  - '603213'
+  - '603712'
+  - '688005'
+  - '688316'
+  - '688701'
+model_m0:
+  grid_bp: 100.0
+  notional_cny: 100000.0
+  min_bars_by_period:
+    1: 200
+    5: 40
+    15: 14
+    30: 7
+    60: 4
+criteria_source:
+  rt_cost_bp: 31.2
+  pair_gate: 30
+  edge_precondition_bp: 30.0
+  pairing_rule: cost_trio_exam.build_pairs import 复用（同票同日既买又卖，禁重写）
+periods:
+  1min:
+    n_symbol_days: 19150
+    reason_counts:
+      pair: 11342
+      no_touch: 7808
+    n_pairs_before_m4: 11342
+    n_pairs: 11332
+    material_audit:
+      m1_intraday_granularity: by_construction
+      m2_same_run_identity: by_construction
+      m3_fingerprint_dedup: not_applicable_generated_corpus
+      m4_rejected_price_limit: 10
+    edge_ge_30bp: 6688
+    net_positive: 6679
+    model_seconds: 11.663
+  5min:
+    n_symbol_days: 19150
+    reason_counts:
+      pair: 11342
+      no_touch: 7808
+    n_pairs_before_m4: 11342
+    n_pairs: 11332
+    material_audit:
+      m1_intraday_granularity: by_construction
+      m2_same_run_identity: by_construction
+      m3_fingerprint_dedup: not_applicable_generated_corpus
+      m4_rejected_price_limit: 10
+    edge_ge_30bp: 6543
+    net_positive: 6534
+    model_seconds: 162.229
+  15min:
+    n_symbol_days: 19150
+    reason_counts:
+      pair: 11342
+      no_touch: 7808
+    n_pairs_before_m4: 11342
+    n_pairs: 11328
+    material_audit:
+      m1_intraday_granularity: by_construction
+      m2_same_run_identity: by_construction
+      m3_fingerprint_dedup: not_applicable_generated_corpus
+      m4_rejected_price_limit: 14
+    edge_ge_30bp: 6335
+    net_positive: 6326
+    model_seconds: 69.639
+  30min:
+    n_symbol_days: 19150
+    reason_counts:
+      pair: 11342
+      no_touch: 7808
+    n_pairs_before_m4: 11342
+    n_pairs: 11325
+    material_audit:
+      m1_intraday_granularity: by_construction
+      m2_same_run_identity: by_construction
+      m3_fingerprint_dedup: not_applicable_generated_corpus
+      m4_rejected_price_limit: 17
+    edge_ge_30bp: 6069
+    net_positive: 6059
+    model_seconds: 39.091
+  60min:
+    n_symbol_days: 19150
+    reason_counts:
+      pair: 11342
+      no_touch: 7808
+    n_pairs_before_m4: 11342
+    n_pairs: 11317
+    material_audit:
+      m1_intraday_granularity: by_construction
+      m2_same_run_identity: by_construction
+      m3_fingerprint_dedup: not_applicable_generated_corpus
+      m4_rejected_price_limit: 25
+    edge_ge_30bp: 5711
+    net_positive: 5701
+    model_seconds: 28.139
+timing_seconds:
+  fetch: 27.574
+  total: 338.391
+run_id: t0mat-p1,5,15,30,60-g100-2021-09-01_2025-09-09

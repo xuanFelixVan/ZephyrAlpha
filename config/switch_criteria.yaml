@@ -1,0 +1,93 @@
+# =============================================================================
+# switch_criteria.yaml — L6 切换段判据预注册（S2 施工件，常数预注册真源）
+# -----------------------------------------------------------------------------
+# 治理锚定：
+#   真源设计稿 = docs/_working/ai_layer_vision/L6_ab_switch/DESIGN.md（§②-B/§②-C/§②-D/§②-G）
+#   净零声明   = 本文件是主文档 §五 切换判据的工程化形态（同一真源非新增条目），
+#                对应 ai_layer_vision/README.md §3 资产台账行
+#                "L6 switch_criteria.yaml | 治理族 | 主文档 §五 判据的工程化（同一真源非新增）"。
+# 冻结纪律（DESIGN §②-A.1-2 / §②-C）：
+#   改判据 = 新 switch_id（判据自改=根约束禁区）；运行时对本文件只读禁写。
+#   冻结哈希 = criteria: 键下全部内容做 canonical-JSON sha256
+#   （算法见 zephyr.intelligence.switch_engine.criteria.criteria_sha256，可验）。
+# 初值追认（DESIGN §⑤ 待 Owner #1 已销项记录）：
+#   min_months（1/3 个月）、T2 分歧率 5%、T3 +20%、T4 +15% 均为 Owner 夜批授权的
+#   设计定值原值生效，非实测标定；首轮数据回来后走 OBJ_R 提案流水线修订。
+# =============================================================================
+meta:
+  criteria_version: "1.0"
+  source_design: docs/_working/ai_layer_vision/L6_ab_switch/DESIGN.md
+  net_zero_note: 主文档 §五 判据的工程化，同一真源非新增（净零）
+  lock_rule: sha256(canonical_json(criteria))，冻结进 switch_registry.criteria_hash
+  revision_policy: 改判据=新 switch_id；数值修订走 OBJ_R 提案流水线+Owner 批
+  initial_values_note: Owner 夜批授权原值生效，首轮数据后按 OBJ_R 提案修订
+
+criteria:
+  observation:
+    unit: monthly_window          # 节拍裁定：月度（对齐 A 股月度结算+月度体检，DESIGN §②-C）
+    trading_days_per_month: [20, 22]
+    industry_floor_note: 业界下限 14-30 天（EX-R2）与本仓月度制相容；high 域 3 个月 ≥ 架构级下限
+  families:
+    code_module_low_medium:
+      shadow_min_months: 1
+      canary_min_months: 1
+    code_module_high:
+      shadow_min_months: 1
+      canary_min_months: 2        # 跨 2 个结算周期（high 九域保守缩放）
+    rule_obj_r:
+      mode: full_history_replay   # 不等日历：重放器全量历史重放即完成
+      reference: OBJ_R DESIGN §②-E P1-P4 一票否决
+    model_obj_m:
+      mode: obj_m_dual_run
+      reference: OBJ_M DESIGN §4.4 判据表
+      canary_min_months: 1        # 路由表灰度 1 个月
+    tool_obj_t:
+      mode: sandbox_benchmark
+      status: contract_reserved   # OBJ_T 挖矿后接线（DESIGN §③ 契约预留）
+  triggers:                       # T1-T6 自动提前回切触发器（预注册，机检执行人工只收报告）
+    t1_correctness_incidents_min: 1          # ≥1 起归因到 B 的事故 → 立即一键回切（RTO≤1 交易日）
+    t2_disagreement_rate_max: 0.05           # B vs A 分歧占比上界（影子期禁升 canary；canary 期回切审议）
+    t3_perf_delta_pct_max: 20                # 延迟/内存中位差 → 自动回切
+    t3_consecutive_trading_days: 5
+    t4_cost_increase_pct_max: 15             # 单位产出成本 → 回切审议（L4 复核）
+    t4_requires_compensating_benefit: true
+    t5_anomalous_gain_action: freeze_switch  # 好得反常 → 冻结切换 + L4 三查
+    t6_quota_action: pause_shadow            # 配额越限 → 暂停影子（非回切，窗口顺延）
+  corpus:                          # 冻结回放集（corpus）字段（DESIGN §②-A.1-2）
+    default_sample_size: 200       # 输入捕获器真实入参样本 N=200（脱敏）+ 现有 tests 全量
+    freeze_rule: 改 corpus=新 switch_id
+    manifest_fields: [manifest_ref, corpus_hash, seed, size, created_at]
+  promotion:
+    approved_by_values: [auto, independent_review, owner_one_click]
+  tombstone:                       # 墓碑规程（DESIGN §②-D）
+    retired_observation_windows: 1 # retired 复活观察窗 = 1 个月度体检窗
+    ttl_windows: 2                 # ⚠️ 待 Owner 确认（L6-#2 避让中，本批不建清理执行器，仅 schema 完整性记录）
+    ttl_months_equivalent: 6
+    git_tag_prefix: "tombstone/"
+    git_tag_policy: git_tag_never_deleted   # git tag 永不清
+    revival_triggers: [regime_recurrence, load_shape_shift, champion_same_failure, owner_manual]
+    revival_route: shadow_recheck  # 复活≠直提，一律回 shadow 重走对比
+    registry_policy: deprecated 链不删（墓碑合并法），计数含 deprecated 全量；全景图不保留墓碑（ARCH-046）
+  rollback_drill:                  # 回切演练（DESIGN §②-F）
+    success_rate_required: 1.0     # 演练成功率=100%，任一失败=事故立案
+    stale_after_monthly_windows: 2 # last_drill_date 超 2 个月度窗未演练 → 内监告警
+  rollout_tiers:                   # 灰度三档（DESIGN §②-G，EXEMPT-ZONE-FM 先例升格）
+    shadow:
+      min_monthly_windows: 1
+      behavior: record_only       # 只记录不动作（触发率/误报统计积累）
+    warn:
+      min_monthly_windows: 1
+      behavior: audit_notify_only
+      upgrade_requires:
+        false_positives: 0
+        owner_ack: true
+    block:
+      behavior: block             # 阻断（flag 出厂翻转）
+      upgrade_requires:
+        owner_gate: true          # Owner 门位（risk_tier high：flag 出厂翻转）
+        ruling_registered: true   # 裁定登记（ruling_registry）
+        grandfather_enforced: true # 渐进收敛 grandfather 条款强制（存量豁免）
+    downgrade_policy: 降档（放松）同走 Owner 门位；每档进出留 ruling 痕
+  correlation_gate:                # 红蓝 R5：多对象并行测试相关性闸（沿用业务层联赛规则）
+    max_correlation: 0.7           # 相关系数 >0.7 视为同一注押两次，合并算额度
+    registry_ref: OBJ_R 标准资产盘点

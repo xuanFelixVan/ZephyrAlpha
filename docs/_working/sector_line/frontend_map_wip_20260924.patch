@@ -1,0 +1,21 @@
+diff --git a/src/zephyr/frontend/dashboard/web/frontend_map.yaml b/src/zephyr/frontend/dashboard/web/frontend_map.yaml
+index a4b55c8046..623f4b6db5 100644
+--- a/src/zephyr/frontend/dashboard/web/frontend_map.yaml
++++ b/src/zephyr/frontend/dashboard/web/frontend_map.yaml
+@@ -12,14 +12,14 @@ features:
+   page: budget
+   module_id: budget-page
+   file: features/budget/budget.js
+-  backend_ref: [api:/api/budget-advisories, none:后端模块MOD-INF-037未入depgraph前端模块集（st-gpu-final-20260924代修解MAP-ALIGNMENT全树阻断；模块归位后dashboard线改回module:前缀）]
++  backend_ref: [api:/api/budget-advisories, module:MOD-INF-037]
+   status: active
+ - id: F-SCHEDULEGATE-PAGE
+   name: 排程骨架闸
+   page: schedulegate
+   module_id: schedulegate-page
+   file: features/schedulegate/schedulegate.js
+-  backend_ref: [api:/api/schedulegate-queue, api:/api/schedulegate-skeletons, api:/api/schedulegate-confirm, none:后端模块MOD-INF-037未入depgraph前端模块集（st-gpu-final-20260924代修解MAP-ALIGNMENT全树阻断；模块归位后dashboard线改回module:前缀）]
++  backend_ref: [api:/api/schedulegate-queue, api:/api/schedulegate-skeletons, api:/api/schedulegate-confirm, module:MOD-INF-037]
+   status: active
+ - id: F-STOCKQ-COSTLINE
+   name: 持仓成本线

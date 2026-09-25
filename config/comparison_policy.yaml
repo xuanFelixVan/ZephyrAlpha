@@ -1,0 +1,98 @@
+# =============================================================================
+# comparison_policy.yaml — L4 对比段判据常量层（尺子=治理层资产，AI 层不持尺）
+# =============================================================================
+# 真源设计稿: docs/_working/ai_layer_vision/L4_compare/DESIGN.md §2.3(D-L4-03)/§2.4(D-L4-04)/§2.5
+# BLUEPRINT : MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_comparator
+# ROOR 挂接 : 治理族（registry_of_registries.yaml 登记由主会话统一执行，README §3 批次清单行 2）
+# 净零声明  : 吸收各稿分散显著性判据口述（ai_layer_vision/README.md §3）。既有考尺件的自身常量
+#             （bhy_fdr.DEFAULT_Q / dual_run_criteria.yaml / rule_replay P1-P4 / c4 DSR 配置）仍为其
+#             考场内 SSOT，本文件登记同值并锚定出处——OBJ_R 修标时两处同批改，口径不分叉。
+# 初值追认  : Owner 夜批授权原值生效（README §3.5 L4-#1 已销项：按 DESIGN 提案原值预注册生效，
+#             首轮实考数据后走 OBJ_R 提案修订）。
+# 改动流程  : AI 提案 → 治理立案 → Owner 修标 → 重考历史（OBJ_R 四步流水线）；禁运行时改值。
+# =============================================================================
+
+policy_id: comparison_policy_v1
+ttl: permanent
+design_source: docs/_working/ai_layer_vision/L4_compare/DESIGN.md
+
+# -----------------------------------------------------------------------------
+# 显著性与效应量（§2.4 分级判据 A 档常数；逐值锚定现行真源）
+# -----------------------------------------------------------------------------
+significance:
+  alpha: 0.05                  # McNemar/Wilcoxon p 阈（OBJ_M DESIGN §4.2 现行）
+  fdr_q: 0.10                  # BHY FDR q（src/zephyr/factor/analysis/bhy_fdr.py DEFAULT_Q 现行；锦标赛选优后报告强制校正 §2.4）
+  icir_min: 0.5                # 因子硬门禁（bhy_fdr.py 现行真源，#2 因子 IC 双轨裁定）
+  effect_win_pp: 5.0           # 模型双跑"胜"=成功率差 ≥+5pp 且 p<alpha（OBJ_M §4.2）
+  effect_cost_cut: -0.20       # 成本主张 ≥−20% 且成功率非劣（OBJ_M §4.2）
+  noninferior_pp: -5.0         # 非劣线：成功率降幅 ≤5pp 且不显著（OBJ_M §4.2）
+  effect_latency_cut: -0.20    # 时延中位差 ≥−20% 且 Wilcoxon p<alpha（OBJ_M §4.2）
+  tier_b_min_n: 30             # N<30 走 B 档有限样本判据：效应量+CI 全宽+未决不硬判（§2.4 B 档）
+  bothwin_decay_max: 0.5       # 双窗终裁 OOS 衰减 <0.5（C4/S06 现行 bothwin 口径）
+  tournament:
+    shortlist_trigger_n: 5     # 同批 N≥5 触发截断（DESIGN §2.1）
+    shortlist_k: 10            # 按 IS 排名取前 K 进 OOS（DESIGN §2.1 未给数值，初值=IS 批 84 件
+                               # 已验证规模下的算力可行档；首轮数据后 OBJ_R 修订）
+    rounds: 2                  # 轮次=2 轮固定，不加赛（DESIGN §2.1）
+
+# -----------------------------------------------------------------------------
+# too-good 三查触发线 G1-G5（§2.5；初值=设计定值非实测标定，首轮数据后 OBJ_R 修订）
+# -----------------------------------------------------------------------------
+too_good_triggers:
+  G1_algo:
+    oos_is_decay_negative: true    # OOS 优于 IS（oos_years_decay<0）即触发
+    oos_sharpe_sigma: 3.0          # 或 OOS 夏普超 IS+3σ
+    batch_sigma: 3.0               # 或成绩超同批分布均值+3σ
+    dsr_line: 0.99                 # 或 DSR≥0.99
+  G2_model:
+    success_gain_pp: 20.0          # 成功率 ≥ champion+20pp
+    hallucination_zero: true       # 或幻觉率=0
+    price_cut: -0.50               # 或实测单价降幅 ≥50% 且成功率非劣（非劣线见 significance.noninferior_pp）
+  G3_tool:
+    pass_rate_perfect: 1.0         # 基准任务集 100% 全对
+    require_trap_items: true       # 且任务集含已知陷阱题（两条件同时成立才触发）
+  G4_replay:
+    jaccard_perfect: 1.0           # delta 全零完美=Jaccard 1.0 且零 new_block 零 new_pass（stub 失真嫌疑优先于庆祝）
+    new_block_zero: 0
+    new_pass_zero: 0
+  G5_generic:
+    borderline_streak: 3           # 连续 ≥3 场"恰好压线胜"（钻营预警）
+    epsilon: 0.01                  # 判定值与门槛差 <ε（判定值统一归一 [0,1] 量纲后比较）
+
+# -----------------------------------------------------------------------------
+# 公平性词表（§2.2 三轴机检字段取值域）
+# -----------------------------------------------------------------------------
+fairness:
+  compute_class_values: [local, api, local_gpu, mixed]   # 词表真源=scripts/backtest/compute_window_gate.py
+                                                         # NODE_CLASS_WEIGHT（引用不复制，E0 闸同源）
+  mutex_group_registry: config/resource_profile_registry.yaml   # 互斥组窗口真源
+  cost_accounting_version: tiered_weighted_v1            # 时段加权口径：谷时×0.5、免费窗×0（OBJ_M §4.3 同款）
+  starred_win_rule: resource_delta_nonzero_win_starred   # 新资源通道同等开放；delta 非零=带星胜 win*（L5 排产降优先级）
+
+# -----------------------------------------------------------------------------
+# 受控词表（裁定与阴性库口径）
+# -----------------------------------------------------------------------------
+verdict_values: [win, win_starred, draw, loss, rejected_too_good]
+status_flow: [frozen, running, verdict, archived]
+
+rejection_reasons:              # 阴性拒绝理由受控词表（L2 intake_reject_due 词表 + L4 增补两个）
+  - tie_no_gain                 # L4 平局（D-L4-05：维持现状入阴性视图，带可重考条件，非永久阴性）
+  - lost_to_champion            # L4 败者
+  - rejected_too_good           # too-good E3 驳回（必附 attribution 三选一）
+  - unfair_conditions           # 公平性对齐失败拒考（experiment 卡留痕，非阴性裁定）
+
+too_good_attribution: [leakage, hidden_risk, luck_or_gaming]   # E3 归因枚举三选一（§2.5 E3）
+
+tie_reexam_conditions:              # 平局可重考条件（D-L4-05；满足其一 L4 重开考）
+  - criteria_version_changed        # 考纲版本变更
+  - window_rolled_new_data          # 数据窗滚动进新数据
+  - fairness_params_changed         # 公平性参数变化
+
+# -----------------------------------------------------------------------------
+# 实验卡登记（§2.3 实例层口径；DB 落 ai_compare.ai_comparison_experiment）
+# -----------------------------------------------------------------------------
+experiment:
+  id_format: "EX-<yyyymmdd>-<slug>"
+  criteria_hash_algo: sha256        # 哈希锁：canonical YAML 文本 sha256（开考前重算比对，不匹配拒考）
+  frozen_immutable_fields: [criteria_yaml, criteria_hash]   # frozen 后 UPDATE 拒绝+审计告警
+  append_only_fields: [verdict]     # 旧裁定只增不改（§2.6-7）；变更判据=新 experiment_id

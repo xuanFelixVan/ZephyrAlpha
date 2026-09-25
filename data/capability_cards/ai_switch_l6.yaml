@@ -1,0 +1,34 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §l6_switch_engine
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 渐进披露：L0=本卡一句话；L1=src/zephyr/intelligence/switch_engine/ + src/zephyr/ai_layer/switch_engine/ 各模块 docstring；
+# L2=docs/_working/ai_layer_vision/L6_ab_switch/DESIGN.md；L3=P1_construction_review.md 复审记录。
+module_id: MOD-INF-037
+capability_id: ai_switch_l6
+category: ai_layer_switch
+description: AI 层 L6 切换段——A/B 蓝绿 champion/challenger 进化安全带（两棵树一体卡）：intelligence 侧状态机与注册表（switch_registry 七态规范枚举、criteria 判据 YAML 真源 config/switch_criteria.yaml、shadow_runner 影子运行、switch_engine 状态迁移 EVENT_EDGES 白名单表外一律拒+一键回切 RTO≤1 交易日）、ai_layer 侧治理四件（tombstone_manager 墓碑制退役不删+git tag 永不清、approval_router 审批分流、revert_drill 回切演练、rollout_tiers 灰度三档 shadow→warn→block 升降档走 Owner 门位）；铁律=B 组并行产出只写对比区永不回流生产决策路径（影子不下真决策），治理层禁绕过状态机直改库
+examples:
+- python -m pytest tests/intelligence/switch_engine/ tests/ai_layer/switch_engine/（71 用例：37 状态机+34 治理四件）
+- docs/_working/ai_layer_vision/L6_ab_switch/DESIGN.md §②-B（七态规范枚举定形裁定留痕）
+input_schema:
+  properties: {}
+  type: object
+name: AI Switch L6 A/B Switch Pack
+output_schema:
+  properties: {}
+  type: object
+priority: P1
+registered_at: '2026-09-24T00:00:00+00:00'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- ai_layer
+- switch_engine
+- L6
+- ab_switch

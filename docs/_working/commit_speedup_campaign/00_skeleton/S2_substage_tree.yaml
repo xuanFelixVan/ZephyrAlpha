@@ -1,0 +1,201 @@
+# S2 提交链子环节树（机器可读，封矿战役骨架）
+# 约定: evidence = "file:line|audit:<字段>|MISSING"；MISSING 必须进 S3 有归属
+# 行数/条数不写死：hook 数、n_specs、reconciler 数以运行时实测命令为准（见各 evidence 注）
+
+meta:
+  ttl: task_bound
+  date: "2026-09-24"
+  stage_count: 23
+  source_table: s1_stage_inventory.md
+  measurement_docks:
+    - .runtime/audit/gate_execution_stats.jsonl      # 逐门 ms + total_ms + n_specs + reused/failed
+    - .runtime/audit/preflight_events.jsonl          # 锁外预检 ms + path 分桶
+    - .runtime/audit/commit_block_events.jsonl       # gate_chain_ms / total_ms / commit_slow 阈值事件
+    - .runtime/audit/worktree_drift_watchdog.jsonl   # verdict 流
+    - .runtime/audit/write_audit.jsonl               # 热目录写归因
+
+stages:
+  ST-01:
+    name: 会话建立与 worktree 创建
+    children:
+      ST-01.1: {name: cmd_create 主入口, evidence: scripts/session_worktree.py:172}
+      ST-01.2: {name: SessionRegistry.register, evidence: src/zephyr/security/access_control/session_concurrency.py:333}
+      ST-01.3: {name: worktree 物理创建与分支命名, evidence: src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py（前缀 .aidrafts/ 与 session/ 见其 MODIFY-GUARD 行）}
+      ST-01.4: {name: pool 变体创建, evidence: src/zephyr/gov_enforcement/rule_bridge/worktree_pool.py:121}
+      ST-01.5: {name: 状态机约束, evidence: src/zephyr/gov_enforcement/rule_bridge/worktree_lifecycle.py:79 + worktree_state_machine.yaml}
+  ST-02:
+    name: 施工前置登记
+    children:
+      ST-02.1: {name: capability_lookup 反查留审计, evidence: src/zephyr/governance/capability_lookup（宪法冷启动第4步）}
+      ST-02.2: {name: clone_guard 写前预查, evidence: MISSING — 本次未定位其调用点在提交链的哪一拍}
+      ST-02.3: {name: creation_token 批量登记, evidence: scripts/governance/d3_metadata/batch_creation_tokens.py}
+      ST-02.4: {name: 模块大白话简介登记, evidence: scripts/governance/d3_metadata/add_module_translation.py（整覆坑在记忆卡）}
+      ST-02.5: {name: depgraph 设计节点登记与重建, evidence: scripts/governance/apply_depgraph.py + generate_project_depgraph.py}
+  ST-03:
+    name: 修改前 claim
+    children:
+      ST-03.1: {name: lock_files acquire/release/cleanup, evidence: scripts/lock_files.py:97-104}
+      ST-03.2: {name: Windows 全局 Mutex 序列化 registry.json RMW, evidence: scripts/lock_files.py:103}
+      ST-03.3: {name: 双登记处同步释放(.ailocks+SessionRegistry), evidence: scripts/lock_files.py:873 注释}
+      ST-03.4: {name: session_claim 冲突语义, evidence: src/zephyr/gov_enforcement/rule_bridge/session_claim.py（conflict=True 不抛）}
+      ST-03.5: {name: 死会话 stale claim 精准释放, evidence: scripts/git_commit.py:411 (_release_and_verify)}
+  ST-04:
+    name: 提交发起与模式分派
+    children:
+      ST-04.1: {name: main 分派与 exit codes, evidence: scripts/git_commit.py:943}
+      ST-04.2: {name: 纯 claim 分支, evidence: scripts/git_commit.py:476}
+      ST-04.3: {name: --reconciler-verify 豁免通道校验, evidence: scripts/git_commit.py:301}
+      ST-04.4: {name: staged delete 回退, evidence: scripts/git_commit.py:251}
+      ST-04.5: {name: emergency_commit 旁路, evidence: src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py:342（commit-tree 序列；手写 GW 标记判 forged）}
+      ST-04.6: {name: batched_auto_committer 缓冲, evidence: src/zephyr/gov_enforcement/rule_bridge/batched_auto_committer.py:107 — 归属存疑见 S3-GAP-09}
+  ST-05:
+    name: 锁外预检快败
+    children:
+      ST-05.1: {name: _run_preflight 编排, evidence: scripts/git_commit.py:775}
+      ST-05.2: {name: PREFLIGHT_GATES 白名单, evidence: src/zephyr/gov_enforcement/rule_bridge/commit_preflight.py（准入审计判据见其 MODIFY-GUARD）}
+      ST-05.3: {name: 指纹缓存, evidence: src/zephyr/gov_enforcement/rule_bridge/gate_cache_preflight.py:96}
+      ST-05.4: {name: 预检事件落盘, evidence: audit:preflight_events.jsonl ms 字段}
+  ST-06:
+    name: 全局提交锁
+    children:
+      ST-06.1: {name: _GlobalCommitLock 获取, evidence: src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:495 类 / :2503 获取点}
+      ST-06.2: {name: 锁等待超时改道, evidence: git_commit_gateway.py:219 (_LOCK_TIMEOUT_DEFAULT) / :2552 返回 LOCK_TIMEOUT}
+      ST-06.3: {name: 僵尸锁清理与损坏自清, evidence: git_commit_gateway.py:551 / :577}
+      ST-06.4: {name: OSError 无锁降级通道, evidence: git_commit_gateway.py:614}
+  ST-07:
+    name: 门禁链（in-process n_specs 门）
+    children:
+      ST-07.1: {name: CommitGateRegistry 装配, evidence: git_commit_gateway.py:1010-1013 (auto_register_gates)}
+      ST-07.2: {name: 逐门执行与 own-scope, evidence: src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py:298 (GateResult) + _diff_helpers._build_own_scope 模式}
+      ST-07.3: {name: trigger_skip/preflight_reused 复用, evidence: audit:gate_execution_stats.jsonl reused 字典}
+      ST-07.4: {name: 全树审计计划任务, evidence: scripts/register_gate_fulltree_audit_task.ps1 — 与链的关系 MISSING(S3-GAP-10)}
+      ST-07.5: {name: 阻断事件落盘, evidence: audit:commit_block_events.jsonl gate_chain_ms 字段}
+  ST-08:
+    name: pre-commit 子进程通道
+    children:
+      ST-08.1: {name: _run_precommit_channel 编排, evidence: git_commit_gateway.py:3189}
+      ST-08.2: {name: hook 清单真源, evidence: .pre-commit-config.yaml（数量以 grep -c 现测为准）}
+      ST-08.3: {name: modified-by-hook 重跑消解, evidence: git_commit_gateway.py:3189 段内注释（重跑 1 次）}
+      ST-08.4: {name: 外来违规 warn+审计不连坐, evidence: _audit_foreign_staged（宪法作用域条 1）}
+      ST-08.5: {name: 逐 hook 计时, evidence: MISSING — S3-GAP-02}
+  ST-09:
+    name: 暂存与真提交
+    children:
+      ST-09.1: {name: _commit_locked 主序, evidence: git_commit_gateway.py:2971}
+      ST-09.2: {name: pathspec 写入与 add/rm 分离, evidence: git_commit_gateway.py:3008 (_add_and_remove_normal_files)}
+      ST-09.3: {name: commit 结果解析(孤魂祖先链/slow 采样), evidence: git_commit_gateway.py:3453 (_resolve_commit_result)}
+      ST-09.4: {name: finalize(红蓝触发+index 复核), evidence: git_commit_gateway.py:3523 + :3559 (_post_commit_red_blue_trigger) + _verify_post_commit_index}
+      ST-09.5: {name: index 卫生事件审计, evidence: git_commit_gateway.py:638 注释（ita 清扫/post-commit 一致性）}
+  ST-10:
+    name: 锁忙改道入队
+    children:
+      ST-10.1: {name: 锁忙探测, evidence: scripts/git_commit.py:611 (_probe_commit_lock_busy)}
+      ST-10.2: {name: _enqueue_mode 改道, evidence: scripts/git_commit.py:818}
+      ST-10.3: {name: worktree 本地袋陷阱防御, evidence: MISSING — 现仅记忆卡在册，代码层无拦截(S3-GAP-07)}
+  ST-11:
+    name: 队列存储与幂等
+    children:
+      ST-11.1: {name: enqueue_item 快照入袋, evidence: scripts/commit_queue.py:643 (base_head=dev HEAD, deletes 通道)}
+      ST-11.2: {name: blob 内容寻址与体积校验, evidence: scripts/commit_queue.py:489 / :476}
+      ST-11.3: {name: 同 session pending 压实, evidence: scripts/commit_queue.py:548 (_compact_pending)}
+      ST-11.4: {name: qid 字典序与 _pick_head, evidence: scripts/commit_queue.py:1110}
+      ST-11.5: {name: 自动改道入队(flag), evidence: git_commit_gateway.py:3828 (_commit_auto 改道注释)}
+  ST-12:
+    name: 皮带守护驱动
+    children:
+      ST-12.1: {name: 事件 poke→_drain_once, evidence: src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py:112 + :808 Observer}
+      ST-12.2: {name: epoch 自检重执行, evidence: commit_belt_daemon.py:743 (_check_and_reexec；三 epoch :643/:666/:671/:695)}
+      ST-12.3: {name: 守护心跳, evidence: commit_belt_daemon.py:274}
+      ST-12.4: {name: main 常驻, evidence: commit_belt_daemon.py:855}
+  ST-13:
+    name: 串行器租约与出队
+    children:
+      ST-13.1: {name: SerializerLease 续租, evidence: scripts/commit_queue.py:779/:802 + commit_queue_landing.py:1975 (_pool_heartbeat_loop)}
+      ST-13.2: {name: drain_queue 单串行路径, evidence: scripts/commit_queue.py:1144}
+      ST-13.3: {name: bootstrap 自举排空, evidence: scripts/commit_queue.py:1314}
+      ST-13.4: {name: 租约快照, evidence: scripts/commit_queue.py:1587 (_lease_snapshot)}
+  ST-14:
+    name: Worktree 落地（串行器代际）
+    children:
+      ST-14.1: {name: WorktreeLanding.__call__, evidence: scripts/governance/commit_queue_landing.py:1501}
+      ST-14.2: {name: ensure_worktree/_sync_worktree, evidence: commit_queue_landing.py:885 / :940}
+      ST-14.3: {name: 注册表三方合并, evidence: commit_queue_landing.py:638 / :1113 / 冲突消息 :472}
+      ST-14.4: {name: _advance_dev CAS, evidence: commit_queue_landing.py:1268}
+      ST-14.5: {name: is_registry_mergeable 判定, evidence: commit_queue_landing.py:200}
+      ST-14.6: {name: 每路径锁, evidence: MISSING — 前轮战役在案，本轮未在代码行级重新锚定(S3-GAP-03)}
+  ST-15:
+    name: 池并发落地（k-worker 代际）
+    children:
+      ST-15.1: {name: drain_queue_pool 主编排, evidence: commit_queue_landing.py:2014}
+      ST-15.2: {name: _run_pool_wave 波次, evidence: commit_queue_landing.py:2089}
+      ST-15.3: {name: _pool_claim_item 抢占, evidence: commit_queue_landing.py:1988}
+      ST-15.4: {name: _pool_cas_replay 重放, evidence: commit_queue_landing.py:1761}
+      ST-15.5: {name: worker 数解析与 worktree 路径, evidence: commit_queue_landing.py:1894 / :1906}
+      ST-15.6: {name: 并发系数遥测, evidence: MISSING — 曾实测 1.000 但无持续遥测(S3-GAP-11)}
+  ST-16:
+    name: 主区工作区收敛
+    children:
+      ST-16.1: {name: _converge_main_workspace, evidence: commit_queue_landing.py:1390}
+      ST-16.2: {name: _converge_one(含 delete), evidence: commit_queue_landing.py:1361}
+      ST-16.3: {name: integrity 基线刷新, evidence: commit_queue_landing.py:1448}
+  ST-17:
+    name: 队列条目生命周期治理
+    children:
+      ST-17.1: {name: requeue_dead_item, evidence: scripts/commit_queue.py:1397}
+      ST-17.2: {name: dead 分类, evidence: scripts/commit_queue.py:1721}
+      ST-17.3: {name: dead-burst 聚合/阈值/台账/任务板, evidence: scripts/commit_queue.py:1904/:1921/:1941/:1966}
+      ST-17.4: {name: dead-letter 通知, evidence: scripts/commit_queue.py:940}
+      ST-17.5: {name: queue_status/health, evidence: scripts/commit_queue.py:1670/:1731 + emit_dead_backlog_alert :1789}
+  ST-18:
+    name: post-commit 同步钩链
+    children:
+      ST-18.1: {name: git lfs post-commit, evidence: .git/hooks/post-commit 头部}
+      ST-18.2: {name: YAML 重生成 async spawn, evidence: scripts/governance/git_hooks/post_commit_regen_yaml.py（钩内调用序见 post-commit 注释）}
+      ST-18.3: {name: POST-COMMIT-GUARD 回滚, evidence: scripts/governance/git_hooks/post_commit_guard.sh}
+      ST-18.4: {name: Qoder tracker 钩, evidence: .git/hooks/post-commit BEGIN/END Qoder 段（外部 node runtime，本机绝对路径硬编码）}
+      ST-18.5: {name: reference-transaction 守卫, evidence: .git/hooks/reference-transaction → scripts/governance/git_hooks/reference_transaction_guard.sh}
+      ST-18.6: {name: post-checkout/post-merge/pre-push 钩, evidence: .git/hooks/ 存在（pre-push 与提交链关系 MISSING，S3-GAP-12）}
+  ST-19:
+    name: post-commit reconciler 异步
+    children:
+      ST-19.1: {name: run_post_commit_reconcile 调度, evidence: git_commit_gateway.py:1063}
+      ST-19.2: {name: detached worker 异步 spawn, evidence: git_commit_gateway.py:1034/:1048}
+      ST-19.3: {name: 同步模式(测试用), evidence: git_commit_gateway.py:2183 (_run_post_commit_reconcile_sync) + env ZEPHYR_RECONCILE_SYNC}
+      ST-19.4: {name: ReconciliationRegistry.reconcile_for, evidence: src/zephyr/governance/audit/reconciliation_registry.py:688/:770}
+      ST-19.5: {name: 外部 spec 工厂合并, evidence: reconciliation_registry.py:666/:709}
+      ST-19.6: {name: reconciler 心跳循环, evidence: reconciliation_registry.py:870 (_hb_loop)}
+  ST-20:
+    name: 派生产物再生扇出
+    children:
+      ST-20.1: {name: reconcile(--stale) 入口, evidence: scripts/governance/reconcile_generators.py:605/:687}
+      ST-20.2: {name: mtime 过时判定, evidence: reconcile_generators.py:558 (_is_stale)}
+      ST-20.3: {name: regen 全局互斥锁, evidence: reconcile_generators.py:162 (_acquire_regen_lock / :229 release)}
+      ST-20.4: {name: 生成器清单真源, evidence: docs/01_policies_and_standards/_registry/catalogs/generator_registry.yaml（path_tree/domain_doc/decision/governance_map 等，条数勿背）}
+      ST-20.5: {name: subprocess 回退与超时上限, evidence: reconcile_generators.py:65 注释 + :280/:348}
+      ST-20.6: {name: 并行invoke能力(存在但链上默认位), evidence: reconcile_generators.py:396 (_invoke_parallel)}
+      ST-20.7: {name: 成功标记与 detached 修剪, evidence: reconcile_generators.py:237/:251/:489}
+  ST-21:
+    name: 治理记账回灌环
+    children:
+      ST-21.1: {name: 再生件→新提交放大, evidence: ST-20 产物 git status 脏 → 再入 ST-04（无独立行号；机制 MISSING 度量 S3-GAP-05）}
+      ST-21.2: {name: rules-integrity 注册, evidence: scripts/governance/meta/validate_rules_integrity.py --register}
+      ST-21.3: {name: ROOR 同步义务, evidence: docs/registry_of_registries.yaml（静态清单生成器纪律，宪法运维红线 5）}
+  ST-22:
+    name: 看门狗与收割者干扰
+    children:
+      ST-22.1: {name: process_reaper 计划任务扫描, evidence: src/zephyr/trading/process_reaper.py（keep 清单 :248-259；误杀提交进程历史在案）}
+      ST-22.2: {name: keep 登记防误杀, evidence: data/runtime/process_reaper_keep.txt}
+      ST-22.3: {name: drift watchdog 判定流, evidence: src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py（verdict 分流见其 MODIFY-GUARD；quarantine 快照目录格式同处）}
+      ST-22.4: {name: checker_supervisor 常驻合并执行, evidence: src/zephyr/gov_enforcement/rule_bridge/checker_supervisor.py:101（消子进程税，行为等价红线见性能方案）}
+      ST-22.5: {name: write_audit_daemon 热目录归因, evidence: src/zephyr/gov_enforcement/rule_bridge/write_audit_daemon.py:223 + audit:write_audit.jsonl}
+      ST-22.6: {name: heartbeat_daemon 会话锚, evidence: src/zephyr/gov_enforcement/rule_bridge/heartbeat_daemon.py（退出条件见其 MODIFY-GUARD）}
+      ST-22.7: {name: reaper×submitter 竞态事件账, evidence: MISSING — 无专账(S3-GAP-13)}
+  ST-23:
+    name: 会话收尾
+    children:
+      ST-23.1: {name: cmd_merge(实为主区直连 merge), evidence: scripts/session_worktree.py:293}
+      ST-23.2: {name: unmerged 证书校验, evidence: session_worktree.py:398}
+      ST-23.3: {name: cmd_abort + abort 审计, evidence: session_worktree.py:570 / :351}
+      ST-23.4: {name: claim 全释放(--release-only), evidence: scripts/git_commit.py:411}
+      ST-23.5: {name: SessionRegistry.unregister, evidence: session_concurrency.py:473}
+      ST-23.6: {name: staging promote/TTL, evidence: MISSING — .runtime/sessions 约定在宪法运维红线，代码执行点未锚定(S3-GAP-14)}

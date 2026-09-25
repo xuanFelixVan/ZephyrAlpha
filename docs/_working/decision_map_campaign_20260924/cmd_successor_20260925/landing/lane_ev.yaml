@@ -1,0 +1,32 @@
+lane: ev
+session_id: st-qmine-20260925
+written_by: 总筹（LANE-EV 撞 150 轮上限身亡且未及写本清单，此清单由总筹按盘上实证代拟并亲自复跑其证尺）
+note: >
+  实测根因（EV_root_cause_and_cure.md §5）：删除护栏唯一真源 scripts/ops_guard.py 的
+  _detect_primitive 把行首 `rm` 一律当 PowerShell 别名走 _extract_ps_targets，该解析器只认
+  PS 开关 ⇒ `-rf` 被当"未知 -前缀 token=目标"吞掉 ⇒ is_recursive 恒 False ⇒ 保护区 docs
+  根本没被判定 ⇒ `rm -rf docs/...` allowed=True 放行；第二条病根＝_normalize_path 不认
+  MSYS 盘符，`/d/ZephyrAlpha/...` 逃出仓内前缀匹配。
+  红队既有 INVARIANTS 写着"攻击向量 100% 被拦"，但向量清单里没有任何一条 POSIX sh `rm`
+  （只有 `rm -Recurse -Force` 这种 PS 拼写）——盲区是带着"100% 达标"的绿章活到今天的。
+  治本＝EV-07 全部内收进 ops_guard（零新 gate/零新脚本/零新册，符合宪法 §4 全资产净零）：
+  sh 原语识别＋find -delete 识别＋开关不可解析 fail-closed 按递归处置＋"删除动词+递归开关+
+  点名保护区"三条件兜底拦＋保护区批量删除必附 tracked_in_head 计数落审计。
+  EV-01 黑匣子同步补 per-path 删除见证（tracked_deleted_count/paths/sig，零新增 git 调用）。
+  【本夜全车道依赖本件】ops_guard 未落 HEAD 之前，任何新产出仍暴露在同一个盲区下，
+  故本袋优先级排在其它文档袋之前；但落地仍走队列正门，禁主区裸提交。
+  【落地前置义务】scripts/ops_guard.py 与 evaporation_blackbox.py 属实现件：
+  必须同批同步 TDM algo_note_zh + algo_flow yaml（ALGO-NOTE-SYNC 硬拦）；
+  两文件均已在 HEAD，无需 CREATE-GUARD token，但 tests/governance/test_evaporation_cure_lane_ev.py
+  是新 .py（tests/ 是否豁免 CREATE-GUARD 需按门禁实测定性，勿猜）；
+  改名/移动件（blackbox 呈 D+?? 形态）落地前须 `generate_project_depgraph.py --force` 复核。
+  【总筹已独立复核】python -m pytest tests/governance/test_evaporation_cure_lane_ev.py -q
+  → 7 passed（我亲自显式路径跑，非采信车道自述）。
+files:
+  - scripts/ops_guard.py
+  - tests/governance/test_ops_guard_red_team.py
+  - tests/governance/test_evaporation_cure_lane_ev.py
+  - scripts/governance/evaporation_blackbox.py
+  - docs/_working/decision_map_campaign/10_evaporation_forensics.md
+  - docs/_working/decision_map_campaign/15_evaporation_cure_plan.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/EV_root_cause_and_cure.md

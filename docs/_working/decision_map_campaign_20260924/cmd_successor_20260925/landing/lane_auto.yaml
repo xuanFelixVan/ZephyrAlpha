@@ -1,0 +1,44 @@
+lane: auto
+session_id: st-qmine-20260925
+note: >
+  LANE-AUTO 交付三件（守望器断链重建：T1 完赛自动验收→自动发 T2→防双发认领）。
+  落地随批前置义务（一件都不可漏）：
+  (1) CREATE-GUARD：新建 scripts/backtest/t1_t2_handover.py（.py）与
+      docs/_working/.../cmd_successor_20260925/AUTO_t1_t2_handover.md（.md）、
+      本 landing .yaml 均需登记 creation_token——用
+      `python scripts/governance/d3_metadata/batch_creation_tokens.py --merge-evaluation "替代03号文§二自然语言守望巡检（内收：仓内反查 handover/t2/promote 无同类件；MOD-BT-197/151 仅复用不新建判据）"`
+      登记；docs/_working 是否豁免请以门禁实测定性（同 lane_cmd.yaml 口径，勿猜）。
+      tests/ 豁免区（test_t1_t2_handover.py 无需 token）。
+  (2) 新建 .py 大白话简介：随本件 entries: 段执行
+      `python scripts/governance/d3_metadata/add_module_translation.py ...`（TRANSLATION-COVERAGE gate 拦截项）。
+  (3) TDM 同步：本车道新增文件、零改动既有实现代码（executor/anova/exam_cost_gate 均未触碰，
+      43 项邻域回归为旁证非改动）；但新模块自身=实现代码，同批须同步 TDM 登记
+      algo_note_zh/algo_flow yaml（module_id 现占位 MOD-BT-T1T2-HANDOVER，请按 TDM 正规发号回填，
+      勿沿用占位号）。
+  (4) 本车道全程禁 git/禁 qoder_cron：落地经 LANE-LAND 单出口；30 分钟薄壳自动化由总筹亲建
+      （可执行命令与退役判据=AUTO_t1_t2_handover.md §五）。
+  (5) 呈总筹待裁三件（案卷 §六/§七，本车道均未代裁、未改任何预注册值）：
+      prereg single_job_wall_clock_cap_hours=12 与 T1≈36h 手动直发绕过调度层时帽的口径矛盾；
+      17 号文"40bp 档 sharpe≥0"字面口径对粗扫总体抽查几乎必红；
+      prereg 缺 cost_gate_t1_tiers_bp 字段致在跑 T1 无五档扫描证据（验收走抽查重放腿兜住）。
+files:
+  - scripts/backtest/t1_t2_handover.py
+  - tests/backtest/test_t1_t2_handover.py
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/AUTO_t1_t2_handover.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_auto.yaml
+entries:
+  - module_path: scripts/backtest/t1_t2_handover.py
+    domain_id: D_BACKTEST
+    name_zh: T1到T2网格跑批守望交接器
+    name_en: T1 to T2 Grid Handover Watchdog
+    desc_zh: 断链重建件（LANE-AUTO 2026-09-25）：幂等一遍查状态机——定位最新 t1 run，核 manifest
+      存在性与进程生死（WAITING/T1_DIED 只报不处置）；完赛后逐条执行 17 号文 §一验收判据与垃圾触发线
+      落 handover_verdict.yaml；全绿则按"主效应前 20% 层参数展开"确定性构造 ≤tier2_points 的
+      T2 子空间 JSON；claim 文件 O_EXCL 原子认领防双发，GPU 独占探测+E0 问闸过后方可沿用
+      factory_grid_executor CLI 无窗发车并登记 reaper keep。
+    desc_en: Idempotent T1-to-T2 handover watchdog: locates the latest tier-1 grid run, waits or
+      reports death without remediation, runs the frozen acceptance criteria into a machine-readable
+      verdict, deterministically builds the tier-2 subspace JSON (top-20% main-effect layers with
+      parameter expansion, capped), and launches T2 through the existing executor CLI only after an
+      atomic claim, single-GPU exclusivity probe and E0 window gate all pass.
+    plain_zh: 交接班的哨兵。每半小时来看一眼第一批三千七百格跑完没有：跑完就照验收单逐条打勾，全合格才自动发出第二批九百格，并且先插一面"我发过了"的小旗，防止两个哨兵重复发同一批把显卡挤爆；没跑完或显卡正忙就下轮再看，第一批中途死了只报告位置、不自作主张重启。

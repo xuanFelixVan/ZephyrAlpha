@@ -1,0 +1,83 @@
+overall:
+  n_landings: 116
+  sum_total_min: 755.9
+  sum_accounted_min: 90.8
+  sum_residual_min: 665.1
+  mean_residual_s: 344.0
+  median_residual_s: 177078.0
+  p90_residual_s: 663437.0
+  residual_share_of_total: 0.88
+by_files_bucket:
+  '1':
+    n: 28
+    mean_files: 1
+    mean_total_s: 361.0
+    mean_residual_s: 325.5
+    median_residual_s: 181064.0
+    mean_accounted_s: 35.4
+  16-40:
+    n: 33
+    mean_files: 30.2
+    mean_total_s: 287.0
+    mean_residual_s: 235.2
+    median_residual_s: 95765.0
+    mean_accounted_s: 51.8
+  2-5:
+    n: 27
+    mean_files: 3.3
+    mean_total_s: 336.4
+    mean_residual_s: 277.4
+    median_residual_s: 182470.0
+    mean_accounted_s: 59.0
+  40+:
+    n: 4
+    mean_files: 152
+    mean_total_s: 1845.4
+    mean_residual_s: 1837.7
+    median_residual_s: 3201078.0
+    mean_accounted_s: 7.7
+  6-15:
+    n: 24
+    mean_files: 9
+    mean_total_s: 388.0
+    mean_residual_s: 341.3
+    median_residual_s: 181858.0
+    mean_accounted_s: 46.7
+phase_sums:
+  snapshot: 39.1
+  cas: 23.3
+  sync: 14.6
+  converge: 5.2
+  prestage: 3.7
+  baseline: 3.0
+  conflict: 1.1
+  worktree: 0.8
+residual_coverage:
+  n_landings: 116
+  n_with_gate_chain_in_window: 106
+  n_with_precommit_in_window: 42
+  gate_chain_share_of_residual: 0.482
+  precommit_share_of_residual: 0.161
+  gate_plus_precommit_share: 0.643
+  unexplained_residual_min: 237.8
+per_worker:
+  w0:
+    n: 25
+    mean_residual_s: 294.3
+    mean_gate_ms_in_window_s: 122.4
+    mean_precommit_ms_in_window_s: 92.3
+  w1:
+    n: 32
+    mean_residual_s: 272.9
+    mean_gate_ms_in_window_s: 155.9
+    mean_precommit_ms_in_window_s: 23.5
+  w2:
+    n: 25
+    mean_residual_s: 353.9
+    mean_gate_ms_in_window_s: 151.2
+    mean_precommit_ms_in_window_s: 28.2
+  w3:
+    n: 34
+    mean_residual_s: 440.2
+    mean_gate_ms_in_window_s: 217.6
+    mean_precommit_ms_in_window_s: 77.9

@@ -1,0 +1,50 @@
+# --- 治理锚定 ---
+# ttl: task_bound
+# --- 治理锚定结束 ---
+# [BLUEPRINT] SH-RULECARD-003 | docs/_working/decision_map_campaign/links/L05_t0/rule_cards/r03_vwap_reversion_band.yaml | T0_MATERIAL_EXAM_CARD_draft.md §4 骨架
+# [MODULE] t0_rule_card_r03（预注册规则卡，非代码；由 scripts/backtest/t0_rule_engine.py 消费）
+# [INVARIANTS] 参数 frozen 先于取数；VWAP 只用当日已收 bar（含触发 bar 当时点的累计量，构造性 PIT）；临场改参=作废重开
+# [MODIFY-GUARD] 本卡任何字段改动=作废重开；band_bp 属预注册面禁调参转绿
+# [CONSUMERS] scripts/backtest/t0_rule_engine.py（--rule r03）
+# [STABILITY] registered_not_precap
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 卡哈希与引擎 manifest 不一致=引擎 SystemExit
+# [TESTS] tests/backtest/test_t0_rule_engine.py（运行 VWAP 机械复算；零量 bar 沿用前值；首 bar 即触不买不卖同 bar）
+# [TTL] task_bound
+---
+rule_id: r03
+rule_name_zh: VWAP带反转（信号化）
+source_method: "34法 3.2 VWAP 带反转（T0_SCHEME_MATRIX §二 ✅可考；SKEL.md §4 C-F3 行2；与 1.2 强制消融义务在册——消融属后续方法卡考程，不阻断本卡注册）"
+family: C-F3 日内动量/回归族
+card_version: v1
+created: "2026-09-26"
+status: registered_not_precap
+
+registration_note: "本卡 v1 仅预注册不执行：全市场单规则单遍建模 ≈21.4h（material_precapacity_report §三 同量级外推），4 规则齐跑 ≈92h>48h 触发强制分层；跑前须先出独立容量预检报告"
+
+execution:
+  skeleton_ref: "T0_MATERIAL_EXAM_CARD_draft.md §4（成交模型 M0 公共骨架，逐字继承）：收盘强平=末根 close；单 T/票/日；整手 10 万；滑点唯一由 31.2bp 承担；M-4 板别门；MIN_BARS_BY_PERIOD 过滤；零价 bar 剔"
+  pairing_ref: "scripts/audit/cost_trio_exam.py build_pairs（31.2bp/≥30bp/30 对 import 复用禁重写）"
+  resample_ref: "t0_material_line.resample_period（序数分桶）"
+  window:
+    start: "2021-09-01"
+    end: "2025-09-09"
+    closed_book_cutoff: "2025-09-09"
+  periods: [1, 5, 15, 30, 60]
+
+params:
+  vwap_band_bp: 50.0
+  vwap_price: "typical=(high+low+close)/3（逐周期 bar）"
+
+vwap_definition:
+  running_vwap_t: "当日首根至第 t 根 bar 的 Σ(typical×volume)/Σ(volume)（累计含当前 bar）；Σ(volume)=0 或无有限前值时 vwap_t 沿用前一有效值，仍无则该 bar 不参与触发（如实计数 no_vwap）"
+
+trigger:
+  buy: "bar.low <= vwap_t * (1 - vwap_band_bp/1e4)（当日首个触档 bar；触发价=vwap_t×(1−band)，买腿成交价=min(bar.open, 触发价) 骨架同款）"
+  sell: "bar.high >= buy_fill * (1 + vwap_band_bp/1e4)（严格晚于买 bar 的首个触档 bar；卖腿成交价=max(bar.open, 触发价)；带宽对称——偏离带买入、等距带卖出，机械可比性优先于回归到 VWAP 本身的变体；末日未触发=末根 close 强平）"
+
+state_gate: none
+state_gate_note: "同 R01/R02：D-14 与自由度≈1 Owner 裁定前禁状态门展开"
+
+academic_anchor: "S5 Intraday Price Reversals（阈值法，SKEL §8.1 表 S5）；带宽 50bp 为写卡既定值与任何取数统计无关（零拟合声明）"

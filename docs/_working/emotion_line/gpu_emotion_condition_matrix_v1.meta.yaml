@@ -1,0 +1,72 @@
+# 原 .json 版（gpu_emotion_condition_matrix_v1.meta.json）已废弃——docs/_working 目录契约禁 .json；消费侧改读本 .meta.yaml
+generated: '2026-09-23T20:38:27'
+sid: st-emoreplay-20260923
+rows: 8613
+date_span:
+- '1991-06-10'
+- '2026-09-23'
+sources:
+  live: 17
+  replay: 8596
+state_axis:
+  table: c1_backtest.regime_state_anchored
+  start: '2017-07-11'
+  days_joined: 2238
+component_percentiles:
+- C1_limitup_temp
+- C2_promotion
+- C3_breadth
+- C4_volume
+- C5_margin
+- C6_news
+gpu_budget:
+  device: RTX 3090 24GB
+  window_hours: 59
+  pack_bytes_on_disk: 1204713
+  pack_dense_ram_mb: 1.8
+  vram_note: 输入包本身 8.6k 行×24 列≈1.6MB（float64 稠密），24GB 显存可整表驻留；预算瓶颈在回测前向次数而非包体积——每配置的情绪条件查表按
+    trade_date 索引 O(1)
+  closed_book:
+    cutoff: '2025-09-09'
+    rule: trade_date>cutoff 的行 closed_book_ok=0，只可作卷外观察，禁校正/调参
+    honest_floor: '2019-01-04'
+    rows_in_search_window: 1622
+    ok_n_distribution:
+      '2': 1513
+      '3': 109
+    rows_with_c5: 109
+    rows_with_c6: 0
+    band5_distribution:
+      warming: 655
+      mild: 594
+      cooling: 120
+      boiling: 253
+    search_space_implications:
+    - 闭卷窗 1622 日中 1513 日情绪轴为 C3+C4 二成分温度计（广度量能内核），带 C5 仅 109 日、带 C6 0 日——要求『多源情绪条件化』的搜索维度在闭卷窗内统计学不成立，只能作卷外观察
+    - 五档灰度在窗内实际 4 档有数（冰点档 0 日即空层）——按五档切分会留空维度
+    - 条件胞 31 个中 18 个达 30 日地板→ 情绪×状态联合维度的可用格数上限即此数，超出即碎片化（每格样本不足）
+  condition_cells:
+    definition: band3_emotion × band5 × vol_bucket3 × regime_dominant（闭卷窗内）
+    total: 31
+    ge_floor_30d: 18
+    min_days: 1
+    median_days: 33
+    max_days: 233
+    sample_floor_days: 30
+  discipline:
+  - 公式冻结：emotion_index 与六成分分位=v0.1.0 纯求值，搜索结果禁回改公式/权重（改=作废重开新卡）
+  - closed_book_ok=0 段禁参与任何阈值选择/调参/定档，只允许事后观察披露
+  - 每条件胞 <30 交易日不得进搜索空间（usable_as_dimension=0）
+  - 多重检验：进族格数须如实登记（裁定#325 判档表述，禁全绿）
+band_definitions:
+  band5: 骨架稿 §3 展示层五档（≤0.2 冰点/≤0.4 降温/≤0.6 温和/≤0.8 升温/>0.8 沸点）
+  band3_emotion: 板块线消费口径 low<0.40≤mid<0.70≤high（sector_state_aggregator 引用）
+  vol_bucket3: t0 卡 §2.1 frozen 边界 (0.328, 0.7)
+caveats:
+  universe_honest_floor: 2019-01-04 前 kline_daily 截面仅 ~237 只（实测 2018=233/2019=3563），C3/C4
+    跨该界不可比
+  ok_n_min: 1991-2025-04 仅 C3+C4 两成分 ok（降档等权），2025-04-03 起 +C5，2026-07-14 起 +C6；C1/C2
+    因 daban 史 16 日恒 insufficient
+  formula_version: v0.1.0 冻结（回放=同函数纯求值，PIT 10 天对拍逐位一致）
+deprecated_aliases:
+  gpu_emotion_condition_matrix_v1.meta.json: 原 .json 版已废弃（目录契约禁 .json），一律读本 .meta.yaml

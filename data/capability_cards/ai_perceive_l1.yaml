@@ -1,0 +1,33 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_perceive
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 渐进披露：L0=本卡一句话；L1=src/zephyr/ai_layer/perceive/ 各模块 docstring；
+# L2=docs/_working/ai_layer_vision/L1_perceive/DESIGN.md；L3=P1_construction_review.md 复审记录。
+module_id: MOD-INF-037
+capability_id: ai_perceive_l1
+category: ai_layer_perceive
+description: AI 层 L1 感知段——12 源注册表驱动的外部情报采集（source_registry 配额同步 quota sync）、搜索任务单登记（search_orders）、翻译器（translator，L7 先验消费接口挂起待 L7 定稿）、矿脉清单生成（gen_search_veins）与月度体检报告（gen_ai_layer_monthly_checkup）；禁常驻轮询，事件/手动点火制
+examples:
+- python scripts/ai_layer/gen_search_veins.py --dry-run（矿脉清单试算）
+- tests/ai_layer/perceive/（44 用例）
+input_schema:
+  properties: {}
+  type: object
+name: AI Perceive L1 Perception Pack
+output_schema:
+  properties: {}
+  type: object
+priority: P1
+registered_at: '2026-09-23T16:49:58+00:00'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- ai_layer
+- perceive
+- L1

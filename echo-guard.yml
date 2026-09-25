@@ -209,3 +209,157 @@ acknowledged:
   verdict: intentional
   stable_key: "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py:__init__||src/zephyr/shared/io/file_utils.py:__init__"
   note: 通用类初始化骨架同构（网关与共享 IO 工具类构造器，职责无交集），出仓批触碰网关侧暴露既有克隆，非本批引入（st-commitchain-20260922）
+- id: cg-ddl-main-uniform-20260924
+  verdict: intentional
+  stable_key: "scripts/ai_layer/apply_ai_heritage_ddl.py:main||scripts/ai_layer/apply_ai_intake_ddl.py:main"
+  note: DDL 部署器 CLI main 统一制式（argparse --schema/--verify/--drop-test-schema 同构；施工流 templates 家族设计一致性），归属 AI 层 P1 收官批（st-ailayer-final-20260924）
+
+- id: cg-ddl-main-sched-20260924
+  verdict: intentional
+  stable_key: "scripts/ai_layer/apply_ai_heritage_ddl.py:main||scripts/ai_layer/apply_ai_layer_scheduling_ddl.py:main"
+  note: 同上 DDL 部署器 main 制式（scheduling 变体）
+
+- id: cg-ddl-main-model-20260924
+  verdict: intentional
+  stable_key: "scripts/ai_layer/apply_ai_heritage_ddl.py:main||scripts/ai_layer/apply_model_library_ddl.py:main"
+  note: 同上 DDL 部署器 main 制式（model_library 变体）
+
+- id: cg-ddl-main-metaq-20260924
+  verdict: intentional
+  stable_key: "scripts/ai_layer/apply_ai_heritage_ddl.py:main||scripts/governance/apply_meta_question_ddl.py:main"
+  note: 同上 DDL 部署器 main 制式（meta_question 变体，会话外存量）
+
+- id: cg-policy-init-washer-20260924
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/cleaning/washer.py:__init__"
+  note: AI 层策略/引擎模块统一 load-config __init__ 模板（P1 八包设计一致性；st-ailayer-final-20260924）
+
+- id: cg-policy-init-comparator-20260924
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/comparator/policy.py:__init__"
+  note: 同上统一 __init__ 模板（comparator 变体）
+
+- id: cg-policy-init-heritage-20260924
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/heritage/policy.py:__init__"
+  note: 同上统一 __init__ 模板（heritage 变体）
+
+- id: cg-policy-init-source-20260924
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/perceive/source_registry.py:__init__"
+  note: 同上统一 __init__ 模板（source_registry 变体）
+
+- id: cg-init-dashboard-20260924
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/redline/dashboard_pipeline.py:__init__"
+  note: 同上统一 __init__ 模板（dashboard_pipeline 变体）
+
+- id: cg-init-nomanifest-20260924
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/redline/no_delete_manifest.py:__init__"
+  note: 同上统一 __init__ 模板（no_delete_manifest 变体）
+- id: cg-ailayer-p1-uniform-101-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/scheduling/dispatcher.py:__init__"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-102-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/scheduling/maturity.py:__init__"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-103-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/switch_engine/approval_router.py:__init__"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-104-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/ai_layer/tools/__init__.py:__init__"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-105-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/governance/standards_governance/standard_checkup.py:__init__"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-106-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/intelligence/model_intel/scanner.py:__init__"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-107-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/intelligence/model_profiling/dual_run.py:__init__"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-108-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/cleaning/policy.py:__init__||src/zephyr/intelligence/switch_engine/criteria.py:__init__"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-109-20260925
+  verdict: intentional
+  stable_key: "scripts/ai_layer/apply_model_library_ddl.py:deploy||scripts/governance/apply_meta_question_ddl.py:deploy"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-110-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/comparator/experiment_store.py:deploy||src/zephyr/ai_layer/tools/usage_stats.py:deploy"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-111-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/comparator/compare_events.py:to_json||src/zephyr/ai_layer/heritage/heritage_events.py:to_json"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-112-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/comparator/compare_events.py:to_json||src/zephyr/ai_layer/scheduling/scheduling_events.py:to_json"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-113-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/comparator/compare_events.py:from_line||src/zephyr/ai_layer/scheduling/scheduling_events.py:from_line"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-114-20260925
+  verdict: intentional
+  stable_key: "scripts/ai_layer/apply_model_library_ddl.py:drop_test_schema||scripts/governance/apply_meta_question_ddl.py:drop_test_schema"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-115-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/comparator/compare_events.py:__init__||src/zephyr/ai_layer/scheduling/scheduling_events.py:__init__"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-116-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/comparator/experiment_store.py:read_conn||src/zephyr/ai_layer/heritage/store.py:read_conn"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-117-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/comparator/experiment_store.py:read_conn||src/zephyr/ai_layer/tools/usage_stats.py:read_conn"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-118-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/comparator/experiment_store.py:close||src/zephyr/ai_layer/heritage/store.py:close"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-119-20260925
+  verdict: intentional
+  stable_key: "scripts/ai_layer/apply_model_library_ddl.py:_q_list||scripts/governance/apply_meta_question_ddl.py:_q_list"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-120-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/comparator/experiment_store.py:_row_str||src/zephyr/ai_layer/perceive/search_orders.py:_payload_str"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+
+- id: cg-ailayer-p1-uniform-121-20260925
+  verdict: intentional
+  stable_key: "src/zephyr/ai_layer/tools/inventory_generator.py:_canonical_server_id||src/zephyr/gov_enforcement/registry_alignment.py:_norm_mid"
+  note: AI 层 P1 八包统一制式模板同构（load-config __init__/DDL deploy/drop/q_list/events 序列化/读连接器；设计一致性使然非疏忽；st-ailayer-final-20260925 补挖波收口登记）
+

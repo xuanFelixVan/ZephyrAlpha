@@ -1,0 +1,49 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §obj_s_dual_metric_dashboard
+# module_id: CFG-obj-s-degradation
+# stability: new
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# [DOMAIN] D_GOVERNANCE
+# --- 治理锚定结束 ---
+# config/obj_s_degradation.yaml — OBJ_S 双指标降档阈值真源（施工项 S5）
+# ─────────────────────────────────────────────────────────────────────
+# 初值追认：Owner 夜批授权原值生效；OBJ_M 首月数据后 OBJ_R 定标
+#   （DESIGN §4 "待 Owner"项①的预注册处理——AI 只建管道，数值定标走 OBJ_R 四步流水线，
+#   修此文件=改降档判据，提案→治理立案→Owner 修标→重考历史）。
+#
+# 净零声明（README §3 / 宪法 §4.1）：本文件吸收 config/resource_optimization.yaml 阈值
+#   先例的降档语义（hysteresis 三件套 confirmation_count=2 / cooldown 60s / 每小时振荡
+#   上限 3 次——原值照抄不另立），预算软/硬限+action 词汇对齐 config/budget_policy.yaml
+#   （MOD-INF-024 既有口径）；不重复建阈值体系、不另造预算语义，只落 OBJ_S 双指标
+#   （日运行成本 × 模拟盘组合回撤）两条线的阈值真源。
+#
+# 热加载：文件 mtime 变化后下一监控周期生效（resource_optimization 先例同款，
+#   消费方=zephyr.ai_layer.redline.dashboard_pipeline.DegradationConfig.reload_if_changed）。
+
+module_id: CFG-obj-s-degradation
+schema_version: "1.0.0"
+
+cost_daily:
+  currency: CNY
+  soft_yuan: 200.0     # 注意线：日成本>软线 → 告警+看板黄灯（不停活）
+  hard_yuan: 500.0     # 降档线：日成本>硬线 → 重活停→便宜模型顶上→挖矿暂停
+
+drawdown_pct:
+  attention_pct: 5.0   # 注意线：组合回撤>注意线 → 告警+看板黄灯（不停活）
+  degrade_pct: 10.0    # 降档线：组合回撤>降档线 → 同上三步降档
+
+recovery:
+  consecutive_days: 3  # 连续 N 日回线 + hysteresis 才按序逆向恢复
+
+hysteresis:
+  confirmation_count: 2                # 连续确认次数（resource_optimization 先例原值）
+  cooldown_seconds: 60.0               # 档位切换冷却秒（同上）
+  oscillation_threshold_per_hour: 3    # 每小时振荡上限（同上，超限冻结切换）
+
+# 降档动作语义真源=DESIGN §4 越限降档联动表（按序生效）：
+#   ①重活停（L6 排产挂起语义，B 组暂停≠删除）
+#   ②便宜模型顶上（OBJ_M 路由表降档 flash/fallback，发 degrade_model_tier 事件）
+#   ③挖矿暂停（L1 外扫/挖矿频次归零，配额池冻结增量）
+# OBJ_S 不绕过 L6/OBJ_M 直改状态——只发事件与路由表，双向契约见 DESIGN ③接线图。

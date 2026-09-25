@@ -224,9 +224,8 @@ def _immutable_tree_enabled() -> bool:
     都回退现行为（门禁输入源不动）。
     """
     try:
-        from pathlib import Path as _P  # noqa: PLC0415
-
         import yaml  # type: ignore[import-untyped]  # noqa: PLC0415
+        from pathlib import Path as _P  # noqa: PLC0415
 
         _root = _P(__file__).resolve().parents[3]
         data = yaml.safe_load((_root / "config" / "flags.yaml").read_text(encoding="utf-8")) or {}
@@ -234,8 +233,6 @@ def _immutable_tree_enabled() -> bool:
         return bool(git_ops.get("immutable_tree", False))
     except Exception:  # noqa: BLE001 — fail-closed OFF
         return False
-
-
 _GW_MARKER_FMT = "[GW:{session_id}]"
 _GLOBAL_LOCK_FILE = "git_commit_global.lock"
 _LOCK_TTL_SECONDS = 1800

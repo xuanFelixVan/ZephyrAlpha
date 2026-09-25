@@ -1,0 +1,99 @@
+lane: mine_l04
+session_id: st-qmine-20260925
+parent_coordinator: st-qmine-20260925（总筹）
+role: 深挖车道 L04 板块→个股传导（选股/成分映射/因子）子层挖干
+
+note: >
+  本车道全程只读挖掘 + 写文档；**未跑 git add/commit/push、未跑 scripts/git_commit.py 与
+  commit_queue.py**（唯一落地出口=LANE-LAND）；未起任何 GPU 作业、未跑测试、未杀进程；
+  未修改一行实现代码（LANE-BUILD 在途的池三来源接线零触碰，只挖"接完之后还缺哪些下游"）；
+  未修改任何判据/阈值件（mining_sop §5/§6 四闸与终局量尺原样引用；17 号文 n≥30/Wilson LB、
+  15 号文 IC 四门禁、BM-SEL-16/22 阈值均只实测现状）。
+  只读查库一律走 zephyr.data.ch_reader（FINAL 自动注入），未裸 duckdb、未裸 connect；
+  ch_reader 空串当次的三个对象（kline_sector_881 不存在报错、sector_constituent_sw_history 查询空、
+  daily_valuation 覆盖率第二问空）一律记"受阻/未测"，未判"无数据"（本仓 CH 三坑处方）。
+  临时探针未落盘（heredoc 内执行），.runtime 根零写入。
+  落地义务（一件不可漏）：
+  (1) CREATE-GUARD：本车道新建 7 份 .md（6 份 MINE.md + 1 份 _INDEX.md）+ 本 landing .yaml
+      需登记 creation_token；docs/_working 是否豁免以门禁实测定性（同 lane_auto/lane_cmd 口径，勿猜）。
+      建议 net_zero_note="细化 SKEL.md 八子块 W0-W7 为 6 份子模块挖干簿（内收：不新立节点号、
+      不改判据、不改实现码，仅子块级六向挖干 + 12 处对父簿基线的实测改判）"。
+  (2) 纯文档车道，无新建 .py ⇒ 无 TRANSLATION-COVERAGE / 无 module_id 发号义务；
+      无文件重命名 ⇒ 无 depgraph --force 义务。
+  (3) **父簿 SKEL.md 未由本车道改写**（避免与 LANE-BUILD/L03 车道对同一热文件并写）：
+      §1 的"12 处改判清单"（见 _INDEX.md §1 末列与各册 §④）需由总筹或 LANE-LAND 决定回填方式，
+      尤其三处会影响他车道排期的：L04-C01/C02 状态（已落地待验收）、LK-05/C07（概率表范式已在库）、
+      DU-05/06（同根因=个股关联腿，处置动作从"补采"转"修关联"）。
+  (4) 新立施工项 L04-C09/C10/C11 三件为本车道净新增（各已作内收声明与合并对象标注），
+      入主 backlog 前请过 §4 全资产净零与内收判据铁律；余下缺口归并入既有 C01~C08（对照表见 _INDEX §2）。
+  (5) 本清单为待落（landing）件登记，不代裁任何 Owner 门位项（见 pending_owner_rulings）。
+
+files:
+  - docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s1_conduction_gate/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s2_constituent_mapping/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s3_candidate_pool_chain/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s4_factor_layer_and_news_dim/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s5_tradability_filters/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/s6_stock_state_axis/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L04_stock_wire/_INDEX.md
+
+submodules:
+  - slug: s1_conduction_gate
+    covers: SKEL W0（TDM-E-L2-06/06-1/06-2/06-3）
+    ruling: 施工 S1-G2/G4 + 挂起 S1-G1/G3 + 改判记档（载体在、值未填）
+    headline: 传导核零调用而载体列已建（conduction_adj=None 显式缺省）；admission_gate 零调用但同件 water_temp_response 在产=半接电；仓内两套"谁是龙头"（四档角色 vs Granger 系数）零对表
+  - slug: s2_constituent_mapping
+    covers: SKEL W1
+    ruling: 施工 S2-G1/G3 + 挂起 S2-G2/G5 + 移交 S2-G4
+    headline: 实测 595 板块 vs 板块层 729（成分腿落后 134）；SCD-2 仅 4 个 valid_from 版本（2026-07 起）=PIT 归属史不存在；000010.SH 零行系靶单未含而非漏采；快照表 10 日窗口仅 5 日有数
+  - slug: s3_candidate_pool_chain
+    covers: SKEL W2
+    ruling: 施工 S3-G1/G3/G6/G7 + 挂起 G2/G4/G5 + 待核 G8
+    headline: L04-C01/C02 已落地（表建在 CH、门快照侧带在产链）但实测 0 行——注入源未注册、下游 SELECT 消费码为 0；日内 stage 只产 close_final；机账 category 重复两条
+  - slug: s4_factor_layer_and_news_dim
+    covers: SKEL W3 ⊕ W6（合并理由=同一条因子生命周期）
+    ruling: 施工 S4-G2/G3/G5 + 挂起 G1/G4 + DU-05/06 改判移交
+    headline: 因子值存储层实测零施工（全库无特征表）；注册表 175 条中 code_path 18/code_fingerprint 0/ic 14 → 验收口径当前不可机查；新闻→个股关联字段近 30 日 100% 空（64,689 条零关联）＝DU-05（打分器活着、语料死）与 DU-06（symbol 腿日均仅 163.6 只）的共同根因
+  - slug: s5_tradability_filters
+    covers: SKEL W4 ⊕ W5（合并理由=同属"能不能买"）
+    ruling: 施工 S5-G1/G2/G4 + 挂起 G3/G6 + 移交 G5
+    headline: BM-SEL-16 三参数实测已实装（非 proposed）；输入侧 fail-open 默认值 1e12/0.0 使缺数即放行；suspend 三任务在册而表 0 行（"绝对排除停牌"当前不可执行）；ipo_schedule 实测 0 行 ⇒ CNS-10 接的是空表，替代源 stock_basic.list_date 有值；DU-11 阶梯恶化实测 5,570→5,002→2,504→1,500；涨跌停幅度表三处实现并存
+  - slug: s6_stock_state_axis
+    covers: SKEL W7
+    ruling: 施工 S6-G2/G3/G4/G5 + 移交+挂起 G1 + C07 挂起排期（三条件齐才开算）
+    headline: 被当作复用模板的 daban_engine_load 实测史深仅 16 交易日且止 09-22（先例本身断更）；LK-05 改判——仓内已在产条件胜率表 market_pattern_win_rate（4,239 行，五元组+n_events+low_sample+baseline）⇒ C07 是"换轴复用"非"从零立项"；池 PIT shift(1) 只活在 DDL 注释里
+
+new_gaps:
+  # 32 条净新增（+1 待核），编号与正文一致，逐条完整表述见各册 §④
+  - id: L04-S1-G1
+    text: 传导系数挂在"板块强度标量"而文献主机制是"领涨股→跟风股 lead-lag 溢出"（海通 2018 + CNKI 2025 两独立源）⇒ 缺"传导强度实证度量轴"；册内未见
+  - id: L04-S1-G2
+    text: sector_leader 四档角色与 limit_up_ecosystem_leadership.py:450 Granger 领导者系数两套"谁是龙头"真源并存零对表；册内未见
+  - id: L04-S1-G3
+    text: admission_gate 调用方 0 且节点 activation=intraday 无盘中挂点，而同件 water_temp_response 在产=半接电劈叉；册内未见
+  - id: L04-S1-G4
+    text: TDM L2-06 节点 data_refs 与 factor_refs 双空 ⇒ 强度调节分的输入契约未落图（DS-059 只挂 L2-06-1）；册内未见
+  - id: L04-S2-G1
+    text: 无"取 T 日成分"的库级 PIT 门面，≥3 处消费者各写 argMax/latest 取法；册内未见
+  - id: L04-S2-G2
+    text: sector_constituent 实测仅 4 个 valid_from 版本（2026-07-23..09-03）⇒ 2020-03..2026-06 板块归属不可取，跨期回测踩"今日成分回测过去"；册内未见
+  - id: L04-S3 组（G1~G8）
+    text: 池读方 0 / 注入源未注册（_BUNDLE_SOURCES=[]）/ 零行无哨兵 / 日内 stage 无产码 / 池变更流无事件表 / business_data_categories.yaml 同 category_id 重复两条（:3172 与 :5084）/ 漏斗阶段存活数不落库 / 挂点是否真在生产日循环待核；均册内未见
+  - id: L04-S4 组（G1~G5）
+    text: 因子值存储层零施工且无进度痕 / 注册表无"已算未算"权威机查字段（code_fingerprint 0/175、null_rate 0/175）/ 新闻关联腿三重静默（100% 空 + linker fail-open + 表不入 calendar_coverage_checker 默认名单）/ 因子构建件住在 scripts/governance/meta_question/wo_a2legs 一次性脚本目录 / 前端 api_server.py:1320 记 08:20 与 12 号文记 20:08 两口径并存；均册内未见
+  - id: L04-S5 组（G1~G6）
+    text: 硬过滤淘汰原因零落库（池表无 reject 腿）/ 涨跌停幅度表三处实现无对表（MOD-SIG-046、MOD-SIG-151、AkshareIngestProvider._limit_pct_of）/ 市值双真源（stock_daily_basic.circ_mv 与 stock_indicator.circ_mv）/ 输入 fail-open 默认值 1e12·0.0·False 静默放行 / suspend 零产出 / 绝对额门槛（2 亿、500 万）未随市场漂移相对化；均册内未见
+  - id: L04-S6 组（G1~G5）
+    text: 复用先例 daban_engine_load 自身断更（16 日、止 09-22、MATURITY=testing）/ 状态轴史深不对称（板块腿 4 年 vs 池腿 0 日）无"C07 最早可算日历"锚 / 零史期无回补路径（DDL 的 version 与 data_source 两列无人用）/ 概率表计算件归属包未指定（现成同类=MOD-SIG-145 家族）/ 池 PIT shift(1) 仅注释承载无单测钉住；均册内未见
+
+pending_owner_rulings:
+  - 板块腿流通市值加权（S2-G5）需先定"要不要引入板块权重"——涉板块层与个股层两侧口径，本车道未擅自判
+  - 市值真源方向（S5-G3：daily_basic vs stock_indicator vs daily_valuation）属 RULE-SSOT 判定面，宜入 trae_062 分类册后由 Owner/治理侧一句话钉死
+  - S5-G6"绝对额门槛相对化"=策略阈值变更，按宪法 §5 属 Owner 门位；本车道只登记"未相对化"事实与外部前提支撑，未改任何数
+  - S2/IBT-A02 的"补采上证180 还是把靶单改到 000985 中证全指（实测已有 5,126 码）"需数据靶单裁定；本车道未替 Owner 拍
+  - 板块线 G9（板块层独立化边界）追认状态影响 S1 强度原料的归属表述，本车道按"独立层"挖并记档冲突，未代裁
+
+data_measurement_notes:
+  - 全部 CH 数字为 2026-09-26 本车道只读实测量（ch_reader，FINAL 自动注入）；受阻项：kline_sector 与 kline_sector_880 大表统计、sector_constituent_sw_history 列/行数、daily_valuation 的 null 率二问——三项按 SOP §3 记"受阻"不记"查无"
+  - 本车道未跑任何回测/重算，故所有"可算性"结论建立在码件与字段实测之上，非结果实测
+  - 全网检索 6 轮，noise 全部记档并归因（营销页/百科/聚合站不可溯/主题漂移）；第 6 轮（小样本收缩）整轮降级为题录不入图，该向结论改由内部实证承载

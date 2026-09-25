@@ -1,0 +1,12 @@
+# [SEEDS] config/evolution_schedule_seeds.yaml — L5 排班登记接口种子文件（生成器新源 I7 消费）
+# 治理锚定：真源设计稿=docs/_working/ai_layer_vision/L5_schedule_gate/DESIGN.md §2.3（D-L5-04）
+# 净零声明：吸收进化任务散落排班需求（ai_layer_vision/README.md §3 台账行原文）——
+#           不建第二张排班表（排班一张真源裁定 README §1.6 不变）；本文件只做种子，
+#           GENERATED 注册表（resource_profile_registry.yaml）零手改。
+# 词表校验：zephyr.ai_layer.scheduling.seed_writer.validate_seed（幽灵池/空间维双禁令）。
+schema_version: 1.0.0
+doc_type: schedule_seeds
+ttl: permanent
+title: 进化任务排班种子（evolution schedule seeds）
+status: active
+seeds:

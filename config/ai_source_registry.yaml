@@ -1,0 +1,166 @@
+# =============================================================================
+# AI 层 L1 感知段——外部源注册表 v1（配额真源，L2 T5 ai_intake_source_quota 的上游）
+# =============================================================================
+# 设计真源：docs/_working/ai_layer_vision/L1_perceive/DESIGN.md §2.1（12 源定稿表，逐行照抄）
+# 净零声明（README §3 批次表原文）：本真源吸收"各班散落搜索源笔记 + 2026-09-13 甄别轮清单"，
+#   替代散落各处的源记录；不新增第二张源清单（静态清单禁手工维护=宪法 §9.5，本件由
+#   scripts/ai_layer/sync_ai_source_quota.py 消费 + 结构校验器把关，漂移即拦）。
+# ROOR 挂接（施工项 1 验收"挂 ROOR"，登记操作由主会话统一执行）：数据源族
+#   ——拟登记 registry_id=REG-AISRC-001，physical_path=config/ai_source_registry.yaml，
+#   maintenance=manual（生成器只消费不回写；降级修订走本文件），owned_by=ai_layer。
+# 初值追认：本表全部频率/配额/健康度初值按 DESIGN v1 原值生效（Owner 2026-09-17 夜批
+#   design_done；README §3.5 已销项先例=按提案原值追认），首轮数据后走 OBJ_R 修订。
+# 频率枚举映射（DESIGN 中文口径→机读枚举）：周=weekly｜月=monthly｜日（轻）=daily｜半年=semiannual
+# 健康度枚举：active / degraded / blocked / retired（墓碑不删除，只降级不清行）。
+# =============================================================================
+
+schema_version: '1.0'
+doc_type: register
+registry_id: REG-AISRC-001
+title: AI 层 L1 感知段外部源注册表 v1（12 源·四轨+治理轨）
+status: active
+version: '1.0.0'
+date: '2026-09-23'
+owner: ZephyrAlpha-Owner
+truth_source: docs/_working/ai_layer_vision/L1_perceive/DESIGN.md
+verify_date: '2026-09-17'
+
+# 治理轨三闸（DESIGN §2.1 定调 10 落点，配额真源=本文件）
+quota_governance:
+  total_daily_cap: 40            # ②总量闸：全注册表每日进漏斗候选 ≤40
+  per_source_floor: 1            # ③贫矿降级闸底线：quota 禁清零（多样性保底）
+  demotion:
+    pass_rate_below: 0.05        # 入考率 <5%（消费 L2 V3 ai_intake_kpi_weekly）
+    weeks_2: quota_halve         # 连续 2 周 → 配额减半
+    weeks_4: quota_to_longtail   # 连续 4 周 → quota=1 移长尾（禁清零）
+
+sources:
+  - slug: awesome-quant
+    track: github
+    url: https://github.com/wilsonfreitas/awesome-quant
+    fetch: WebFetch 抓 README，diff 监视新条目
+    frequency: weekly
+    daily_quota: 10
+    health: active
+    last_verified: '2026-09-17'
+    basis: 当日验证（29k stars；主文档 §0.5 与本稿 §2 在档分级复用）
+
+  - slug: qlib
+    track: github
+    url: https://github.com/microsoft/qlib
+    fetch: Releases/commits 监视+社区策略库扫描
+    frequency: monthly
+    daily_quota: 5
+    health: active
+    last_verified: '2026-09-17'
+    basis: 在档（2026-09-13 甄别轮+Kronos 官方 Qlib 微调管线依赖，config FAC-E1E）
+
+  - slug: rd-agent
+    track: github
+    url: https://github.com/microsoft/RD-Agent
+    fetch: Releases 监视（含 RD-Agent(Q) 产出流）
+    frequency: monthly
+    daily_quota: 5
+    health: active
+    last_verified: '2026-09-17'
+    basis: 在档复用（V2-R3，arXiv 2505.15155）
+
+  - slug: alphagen
+    track: github
+    url: https://github.com/ICT-FinD-Lab/alphagen
+    fetch: Issues/commits 监视
+    frequency: monthly
+    daily_quota: 5
+    health: active
+    last_verified: '2026-09-17'
+    basis: 当日验证（KDD 2023，arXiv 2306.12964；旧址 RL-MLDM/alphagen 已迁=换皮监测点，闸 5 防同名反复进货）
+
+  - slug: arxiv-qfin
+    track: academic
+    url: https://arxiv.org/list/q-fin/recent
+    fetch: WebFetch 抓题录，四闸预检后立卡（细分 q-fin.PM/current、q-fin.TR/current）
+    frequency: weekly
+    daily_quota: 20
+    health: active
+    last_verified: '2026-09-17'
+    basis: 当日验证（题录页族全可达）
+
+  - slug: ssrn-qf
+    track: academic
+    url: https://www.ssrn.com
+    fetch: WebSearch 站内搜，收费墙只登记题录（SOP 闸 1；论文页 papers.ssrn.com/sol3/papers.cfm?abstract_id=NNN）
+    frequency: weekly
+    daily_quota: 10
+    health: active
+    last_verified: '2026-09-17'
+    basis: 当日验证（题录模式+学科页）
+
+  - slug: joinquant
+    track: chinese_community
+    url: https://www.joinquant.com/
+    fetch: 精选帖人工+爬虫候选 Scrapling（config FAC-E1A 在档；C1 人工版已收 597 条）
+    frequency: weekly
+    daily_quota: 5
+    health: active
+    last_verified: '2026-09-17'
+    basis: 当日验证（官方站）
+
+  - slug: myquant
+    track: chinese_community
+    url: https://myquant.cn/
+    fetch: 精选帖扫描
+    frequency: weekly
+    daily_quota: 5
+    health: active
+    last_verified: '2026-09-17'
+    basis: 当日验证（官方站）
+
+  - slug: bigquant
+    track: chinese_community
+    url: https://bigquant.com/
+    fetch: 精选帖/量化 wiki 扫描
+    frequency: weekly
+    daily_quota: 5
+    health: active
+    last_verified: '2026-09-17'
+    basis: 当日验证（官方站）
+
+  - slug: kronos-baseline
+    track: baseline
+    url: https://github.com/shiyu-coder/Kronos
+    fetch: Releases/权重更新监视；角色=机器对手盘：任何候选先答"比 Kronos 基线强吗"（论文 arxiv.org/abs/2508.02739，config FAC-E1E）
+    frequency: monthly
+    daily_quota: 2
+    health: active
+    last_verified: '2026-09-17'
+    basis: 在档（MOD-BT-195 kronos_adapter 已登记接入件）
+
+  - slug: hf-papers
+    track: governance
+    url: https://huggingface.co/papers
+    fetch: WebFetch 抓日榜题录，只收治理/agent/工具族（趋势页 huggingface.co/papers/trending）
+    frequency: daily
+    daily_quota: 10
+    health: active
+    last_verified: '2026-09-17'
+    basis: 当日验证（含 429 退避实录，见 L1 DESIGN 受阻记录）
+
+  - slug: gcloud-mlops
+    track: governance
+    url: https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning
+    fetch: 半年重读比对（CT 触发器语义参照）
+    frequency: semiannual
+    daily_quota: 1
+    health: active
+    last_verified: '2026-09-17'
+    basis: 在档复用（V1-R2：MLOps CI/CD/CT Level 0-2）
+
+# 长尾待核验（不入 v1 配额，下次核验班升级；Vibe-Trading/QuantCode-Bench 产出流
+# 作为 rd-agent/qlib 的子项扫描不单列——config FAC-E1B design_refs 在档）
+longtail_candidates:
+  - slug: arxiv-cs-ai
+    url: https://arxiv.org/list/cs.AI/recent
+    note: 同模板推定未直连证实（L1-R6 受阻降级），核验通过前不入 sources
+  - slug: ricequant
+    url: https://www.ricequant.com/
+    note: 米筐官方站待核验

@@ -31,34 +31,53 @@ def _load_module():
 
 
 class FakeExecutor:
-    """CH 只读执行器替身：按 SQL 里的表名/谓词路由（与脚本 SQL 常量耦合=契约测试）。"""
+    """CH 只读执行器替身：按 SQL 里的表名/谓词路由（与脚本 SQL 常量耦合=契约测试）。
+
+    治尺后新增两腿：`min(cal_date)`=期望交易日腿（真源=日历, 故本替身由测试直接给 E）；
+    `WHERE trade_date <= toDate(...)`=带上界的实评日腿（超前行被上界挡掉, 与裸 max 区分）。
+    """
 
     def __init__(
         self,
         *,
         decision_max: date | None = None,
+        decision_dates: list[date] | None = None,
         calendar_max: date | None = None,
+        calendar_first_open: date | None = None,
         kline_max: date | None = None,
         open_days_after: int = 0,
         fail_predicate: str | None = None,
         fail_message: str = "connection refused",
     ):
         self.decision_max = decision_max
+        self.decision_dates = decision_dates
         self.calendar_max = calendar_max
+        self.calendar_first_open = calendar_first_open
         self.kline_max = kline_max
         self.open_days_after = open_days_after
         self.fail_predicate = fail_predicate
         self.fail_message = fail_message
         self.executed: list[str] = []
 
+    def _pool(self) -> list[date]:
+        if self.decision_dates is not None:
+            return list(self.decision_dates)
+        return [self.decision_max] if self.decision_max is not None else []
+
     def execute(self, sql: str) -> list:
         if self.fail_predicate and self.fail_predicate in sql:
             raise RuntimeError(self.fail_message)
         self.executed.append(sql)
         if "decision_daily" in sql:
-            return [[self.decision_max]]
+            if "WHERE trade_date <= toDate(" in sql:  # 带上界实评日腿（_SQL_DECISION_MAX_DATE_NOT_AFTER）
+                bound = date.fromisoformat(sql.split("WHERE trade_date <= toDate('")[1][:10])
+                pool = [d for d in self._pool() if d <= bound]
+                return [[max(pool) if pool else None]]
+            return [[self.decision_max if self.decision_dates is None else max(self._pool())]]  # 裸 max（超前行可见性）
         if "kline_index" in sql:
             return [[self.kline_max]]
+        if "min(cal_date)" in sql:  # 期望日腿（_SQL_CALENDAR_FIRST_OPEN_ON_OR_AFTER）——须先于 "cal_date >" 判
+            return [[self.calendar_first_open if self.calendar_first_open is not None else self.calendar_max]]
         if "cal_date >" in sql:  # 开市日计数腿（_SQL_OPEN_DAYS_AFTER）
             return [[self.open_days_after]]
         return [[self.calendar_max]]  # 日历最近开市日腿（_SQL_CALENDAR_LAST_OPEN）
@@ -161,6 +180,11 @@ def test_lag_over_threshold_main_exit_four(sent, tmp_path: Path, monkeypatch, ca
 
 
 def test_lag_boundary_equals_threshold_alerts_below_passes(sent, tmp_path: Path):
+    """--lag-days 阈值语义仍在位：日历"期望日腿"不可用而降级到参照日口径时，lag==N 鸣、lag<N 放行。
+
+    主判据（期望日在位/缺行）不看阈值——"该有而没有"是当日无计划，压它=自毁哨兵；
+    阈值继续管降级路径，故这里打挂 min(cal_date) 腿走参照日口径。
+    """
     alert_log = tmp_path / "alert.jsonl"
     for open_days, expect_alert in ((2, True), (1, False)):
         ex = FakeExecutor(
@@ -168,8 +192,11 @@ def test_lag_boundary_equals_threshold_alerts_below_passes(sent, tmp_path: Path)
             calendar_max=date(2026, 9, 18),
             kline_max=date(2026, 9, 18),
             open_days_after=open_days,
+            fail_predicate="min(cal_date)",
         )
         record = sent.run_sentinel(ex, ref_date=date(2026, 9, 18), alert_log=alert_log)
+        assert record["ruler"] == "reference_day_degraded", "期望日腿打挂必降级且留痕"
+        assert record["expected_trade_date"] is None
         assert (record["type"] == "alert") is expect_alert, f"open_days={open_days}"
     assert len(alert_log.read_text(encoding="utf-8").strip().splitlines()) == 1
 
@@ -296,3 +323,115 @@ def test_table_names_resolved_from_true_sources(sent):
     assert sent._TBL_DECISION_DAILY == "c1_backtest.decision_daily"
     assert sent._TBL_TRADE_CALENDAR == "c1_market.trade_calendar"
     assert sent._TBL_KLINE_INDEX == "c1_market.kline_index"
+
+
+# ============== 治尺证尺（DAY §②）：旧 max 尺哑火 vs 新期望日尺报警 ==============
+
+
+def _legacy_max_ruler(
+    *,
+    decision_dates: list[date],
+    calendar_last_open: date,
+    kline_max: date,
+    threshold: int,
+    open_days_after: int,
+) -> tuple[str, int]:
+    """治尺**前**判据的忠实复述（源=git HEAD 版 run_sentinel：last=裸 max(trade_date) 无上界、
+    ref=min(日历最近开市日, kline max)、仅 ref>last 时才查缺勤）。
+
+    只用于把"旧尺对跳日哑火"钉成回归事实，不参与生产判定（生产里不留旧尺副本=零第二真源）。
+    """
+    last = max(decision_dates) if decision_dates else None
+    ref = min(calendar_last_open, kline_max)
+    if last is None:
+        return "alert", 0
+    lag = open_days_after if ref > last else 0
+    return ("alert" if lag >= threshold else "ok"), lag
+
+
+def test_tail_skipped_trading_day_alerts_while_legacy_max_ruler_was_silent(sent, tmp_path: Path):
+    """合成场景（交案形状）：日历说 09-25 开市，台账有 09-22/23/24 加超前的 09-28，独缺 09-25。
+
+    新尺：期望日 09-25 缺行 ⇒ 报警（缺即告警，lag=1 记账）。
+    旧尺：同一批事实 ⇒ max=09-28 > ref=09-24 ⇒ lag=0 报平安 —— 哑火实锤，本例即红证。
+    """
+    decision_dates = [
+        date(2026, 9, 22),
+        date(2026, 9, 23),
+        date(2026, 9, 24),
+        date(2026, 9, 28),  # 超前于期望日的行（合法形态：09-25 晨批产出次开市日 09-28）
+    ]
+    ex = FakeExecutor(
+        decision_dates=decision_dates,
+        calendar_max=date(2026, 9, 25),  # <=ref 的最近开市日
+        calendar_first_open=date(2026, 9, 25),  # >=ref 的首个开市日 = 期望日 E
+        kline_max=date(2026, 9, 24),
+        open_days_after=1,
+    )
+    alert_log = tmp_path / "decision_chain_alert.jsonl"
+    record = sent.run_sentinel(ex, ref_date=date(2026, 9, 25), alert_log=alert_log)
+
+    assert record["ruler"] == "expected_open_day"
+    assert record["expected_trade_date"] == "2026-09-25"
+    assert record["type"] == "alert"
+    assert record["lag_trading_days"] == 1
+    assert record["lag_basis"] == "trading_days"
+    assert record["last_decision_date"] == "2026-09-24", "带上界 ⇒ 09-28 超前行不参与判据"
+    assert record["decision_max_unclamped"] == "2026-09-28"
+    assert record["rows_beyond_axis"] is True
+    assert "2026-09-25" in record["detail"]
+    assert json.loads(alert_log.read_text(encoding="utf-8").strip())["type"] == "alert"
+
+    assert _legacy_max_ruler(
+        decision_dates=decision_dates,
+        calendar_last_open=date(2026, 9, 25),
+        kline_max=date(2026, 9, 24),
+        threshold=2,
+        open_days_after=1,
+    ) == ("ok", 0), "旧尺在同一批事实上报平安=被掩盖，故此件必须报警"
+
+
+def test_holiday_gap_expected_day_jumps_to_next_open_day_and_stays_green(sent, tmp_path: Path):
+    """2026-09-25 实测形态（中秋休市）：期望日自动跳到次开市日 09-28 且行在 ⇒ 绿，不误鸣。
+
+    钉两件事：①节假日口径由日历真源给出，不靠人肉判"今天是不是交易日"；
+    ②上一轮"09-28=未来日异常"的误判不再可能——它是期望日本身，rows_beyond_axis=False。
+    """
+    ex = FakeExecutor(
+        decision_dates=[
+            date(2026, 9, 21),
+            date(2026, 9, 22),
+            date(2026, 9, 23),
+            date(2026, 9, 24),
+            date(2026, 9, 28),
+        ],
+        calendar_max=date(2026, 9, 24),
+        calendar_first_open=date(2026, 9, 28),
+        kline_max=date(2026, 9, 24),
+        open_days_after=0,
+    )
+    alert_log = tmp_path / "alert.jsonl"
+    record = sent.run_sentinel(ex, ref_date=date(2026, 9, 25), alert_log=alert_log)
+    assert record["expected_trade_date"] == "2026-09-28"
+    assert record["type"] == "ok"
+    assert record["lag_trading_days"] == 0
+    assert record["rows_beyond_axis"] is False
+    assert not alert_log.exists(), "休市日跳档不得写告警行"
+
+
+def test_expected_day_axis_comes_from_calendar_true_source(sent, tmp_path: Path):
+    """期望日必须问日历真源（表名=TableRegistry 品类），且件内零节假日硬编码副本。"""
+    ex = FakeExecutor(
+        decision_dates=[date(2026, 9, 28)],
+        calendar_max=date(2026, 9, 24),
+        calendar_first_open=date(2026, 9, 28),
+        kline_max=date(2026, 9, 24),
+        open_days_after=0,
+    )
+    sent.run_sentinel(ex, ref_date=date(2026, 9, 25), alert_log=tmp_path / "alert.jsonl")
+    axis_sql = [s for s in ex.executed if "min(cal_date)" in s]
+    assert axis_sql, "期望日腿必须真问日历"
+    assert sent._TBL_TRADE_CALENDAR in axis_sql[0]
+    assert "is_open = 1" in axis_sql[0]
+    for banned in ("_HOLIDAYS", "_HOLIDAY_DATES", "_CLOSED_DAYS", "holiday_list"):
+        assert not hasattr(sent, banned), f"日历真源之外禁立第二份节假日真源: {banned}"

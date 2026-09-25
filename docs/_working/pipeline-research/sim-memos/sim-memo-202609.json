@@ -1,0 +1,1252 @@
+{
+ "sim": [
+  {
+   "sid": "STR-E-TIMING-001",
+   "name": "恐慌反弹分布预测",
+   "cls": "value_reversal",
+   "code_path": "scripts/backtest/lane_e_quantile_baseline.py",
+   "evidence": "三窗口全绿：IS 2020-2023 Sharpe=+1.15 / OOS 2024-2026 Sharpe=+0.83 / S3 2016-2019 Sharpe=+0.98；年衰减11%；唯一三窗全绿策略（run=SCR-C4-OOS2-20260913/SCR-C4-2016-2019-sample3）；台账=C",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  },
+  {
+   "sid": "STR-VREV-025",
+   "name": null,
+   "cls": "value_reversal",
+   "code_path": "scripts/backtest/translated/c4_e3da6fa71af1_panic_rebound.py",
+   "evidence": "C4 三窗全绿：IS 2020-2023 Sharpe=1.15(DSR=0.53) / OOS 2024-2026H1 Sharpe=0.83(年衰减11%) / 2016-2019 Sharpe=0.98(DSR=0.98)；参数网格 81 格 77 正（95% 稳健，唯一退化区=10 日短持）；逐年全正；短板=十",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  }
+ ],
+ "candidate": [
+  {
+   "sid": "STR-MULTIFACTOR-027",
+   "name": "双底右侧确认四条件",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-001",
+   "name": "右侧确认三条件",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-002",
+   "name": "双均线交叉趋势策略",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "家族替身证据|窗口=IS 2020-2023|Sharpe=1.08|run=SCR-C4-20260913-002056|台账键=CAND-b1ab42050d68|同族=pilot_002 MA5/10金叉(沪深300池)|登记=2026-09-13 C5聚类对质报告",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-001",
+   "name": "板块内选股 5 步漏斗",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-002",
+   "name": "板块资金流入三日规则",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-003",
+   "name": "板块强度数量档",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-003",
+   "name": "板块启动/熄火条件库",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-028",
+   "name": "2:30 时间节点",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-004",
+   "name": "尾盘 2:57 竞价进场",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-029",
+   "name": "周末变量应对",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-005",
+   "name": "外围消息影响层级与应对",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-001",
+   "name": "情绪回暖干超跌",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "家族替身证据|窗口=IS 2020-2023|Sharpe=1.15|DSR=0.5309|run=SCR-C4-20260913-002056|台账键=CAND-e3da6fa71af1|同族=恐慌反弹持有19日(000852指数口径)|登记=2026-09-13 C5聚类对质报告",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-030",
+   "name": "大阴线次日\"该弱不弱\"",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-031",
+   "name": "4 分钟涨速资金异动",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-032",
+   "name": "主力游资打架与国家队操纵应对矩阵",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-006",
+   "name": "短趋势选股四步法",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-007",
+   "name": "波段选股四步法",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-033",
+   "name": "股票池建立与管住手",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-034",
+   "name": "空仓等主线",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-002",
+   "name": "下跌趋势不选/不抄底",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-035",
+   "name": "充分调整条件",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-036",
+   "name": "板块容量",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-037",
+   "name": "启动前不加速",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-038",
+   "name": "选股四要素",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-039",
+   "name": "孤立拉升规避",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-040",
+   "name": "老题材反抽不追",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-041",
+   "name": "估值分不适用于周期股",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-042",
+   "name": "选票九阶段 SOP",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-043",
+   "name": "全市场无偏扫描",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-044",
+   "name": "可交易池剔除规则",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-008",
+   "name": "短线池 5 分制打分",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-009",
+   "name": "波段池 5 分制打分",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-045",
+   "name": "双策略 5 分",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-046",
+   "name": "三维共振体检",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-047",
+   "name": "护盘蓝筹 ≠ 进攻标的",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-048",
+   "name": "板块内个股区间涨幅>板块指数",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-010",
+   "name": "辅助确认工具指定法",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-049",
+   "name": "ETF 多只对比四维选优法",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-050",
+   "name": "研报分类投研体系",
+   "cls": "data_asset",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-011",
+   "name": "波段调整 50% 趋势走坏阈值",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-012",
+   "name": "强中强双重共振筛选",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-013",
+   "name": "强趋势独立品种画像",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-004",
+   "name": "强势股首次回踩 5 日线先手",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-005",
+   "name": "缩量环境两策略",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-051",
+   "name": "次日溢价思维",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-006",
+   "name": "左侧先手成本规则",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-003",
+   "name": "抄底资金成本位法则",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-014",
+   "name": "机构评分模型",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-007",
+   "name": "连板潜力评分卡",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-015",
+   "name": "0-100 综合分排名与角色瑕疵标注体系",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-052",
+   "name": "\"中字头+资金流入\"双条件选股",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-016",
+   "name": "个股放量+超大单同向 B 类入选条件",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-017",
+   "name": "\"接飞刀\"判定标准",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-053",
+   "name": "\"单列观察\"中间分类",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-054",
+   "name": "庄股选股四标准与防范规则",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-008",
+   "name": "涨停板潜力 IC 加权评分",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-009",
+   "name": "风格体制-策略映射",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-010",
+   "name": "量能突变风险信号",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-055",
+   "name": "板块指数前置检验三判据",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-011",
+   "name": "大阳线/涨停板半分位以上横盘选股形态",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-012",
+   "name": "策略池管理体系",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-018",
+   "name": "策略模板库与默认参数组",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-019",
+   "name": "突破型第一买点",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "家族替身证据|窗口=IS 2020-2023|Sharpe=-0.308|DSR=0.0026|run=SCR-C4-20260913-002056|台账键=CAND-a4543012b464|同族=趋势交易5.0(HHV30+回归趋势,沪深300池)|登记=2026-09-13 C5聚类对质报告",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-020",
+   "name": "回踩确认第二买点",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "家族替身证据|窗口=IS 2020-2023|Sharpe=0.0|run=SCR-C4-20260913-002056|台账键=CAND-1970782c2adb|同族=回踩均线搏反弹(MA21/55回踩,全A池)|登记=2026-09-13 C5聚类对质报告",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-021",
+   "name": "加速第三买点",
+   "cls": "risk_rule",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-SECTOR-001",
+   "name": "震荡潜伏买点",
+   "cls": "sector_rotation",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-004",
+   "name": "超短尾盘套利买点",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-022",
+   "name": "分批建仓/金字塔加仓",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-005",
+   "name": "买反弹不买阴线",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-023",
+   "name": "ETF 定投/越跌越买",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-013",
+   "name": "双策略共振买入信号",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-056",
+   "name": "共振触发条件矩阵",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-057",
+   "name": "板块-个股一致性校验",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-058",
+   "name": "买点三档裁决",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-059",
+   "name": "盈亏比 <2:1 不做",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-006",
+   "name": "反弹概率分级",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-007",
+   "name": "三种开盘情形应对矩阵",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-014",
+   "name": "全仓四硬条件",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-008",
+   "name": "主案+备案双情景应对",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-009",
+   "name": "切换只活一天基率",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-015",
+   "name": "半路回踩均价线套利",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-060",
+   "name": "竞价弱转强买点",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-016",
+   "name": "回封打板金额确认",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-010",
+   "name": "筑底五原则",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-024",
+   "name": "多维底部确认与右侧入场",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-061",
+   "name": "开仓期望值门槛",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-011",
+   "name": "次日上涨概率门槛体系",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-062",
+   "name": "J 值极端超买降级 B 类等回调",
+   "cls": "risk_rule",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-017",
+   "name": "弱修复次日操作前置",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-018",
+   "name": "一进二节点与首板共振",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-025",
+   "name": "强势股分时突破买点精确口径",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-012",
+   "name": "分时五大经典卖点",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-063",
+   "name": "移动止盈法/移动挂单法",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-013",
+   "name": "新股上市首日卖出",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-026",
+   "name": "分时急反应卖法",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-027",
+   "name": "趋势对应卖点",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-064",
+   "name": "分批卖出法",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-028",
+   "name": "锚定法卖出",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-029",
+   "name": "板块见顶四特征预警",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-065",
+   "name": "解放套牢盘不卖",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-066",
+   "name": "共振卖出信号",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-014",
+   "name": "持仓处置规则",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-015",
+   "name": "弱资产换仓",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-019",
+   "name": "连板止盈三规则",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-016",
+   "name": "阶梯式减仓 SOP",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-067",
+   "name": "追踪止损与分批止盈参数",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-068",
+   "name": "目标价到达分批止盈",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-020",
+   "name": "前排股 10:00-10:30 不封板部分止盈",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-020",
+   "name": "筑底/极限施压正向 T+0 纪律",
+   "cls": "risk_rule",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-070",
+   "name": "行情三分仓位法",
+   "cls": "risk_rule",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-071",
+   "name": "宽基 ETF 配置 2-3 成",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-072",
+   "name": "资金体量差异化",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-030",
+   "name": "分仓管理",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-073",
+   "name": "首批+二批+现金机动仓位分配",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-074",
+   "name": "加仓路径预埋",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-075",
+   "name": "哑铃对冲",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-076",
+   "name": "相关性矩阵+敞口合并计算",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-077",
+   "name": "单板块上限 20%总资产",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-078",
+   "name": "共振等级→仓位映射",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-079",
+   "name": "共振策略首仓即终仓",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-080",
+   "name": "底仓+活仓模式",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-031",
+   "name": "放量阳线推仓位+次日多头思维切换",
+   "cls": "momentum_trend",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-081",
+   "name": "仓位双系数公式",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-021",
+   "name": "市场状态-策略-仓位动态映射",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-082",
+   "name": "策略分级标准",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-083",
+   "name": "止损\"用仓位换宽度\"策略",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-022",
+   "name": "情景预案三套应对",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-084",
+   "name": "因子 IC/IR 入库阈值",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-085",
+   "name": "回测绩效目标",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-086",
+   "name": "波动率体制转换预警",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-087",
+   "name": "买卖模式统计验证门槛",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-088",
+   "name": "动态信号权重",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-089",
+   "name": "交易计划偏差检测与异常机会评估",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-090",
+   "name": "策略生命周期八阶段与通过标准",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-091",
+   "name": "信号强度五级分级",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-092",
+   "name": "机构级量化标准与策略目标",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-093",
+   "name": "Barra 风格因子 A 股适配",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-DABAN-021",
+   "name": "扳机清单理念",
+   "cls": "daban",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MOMTREND-032",
+   "name": "竞价验证/盘中验证/盘后复核闭环",
+   "cls": "knowledge_only",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-VREV-023",
+   "name": "历史同形态胜率统计思维",
+   "cls": "value_reversal",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-094",
+   "name": "双策略共振统计独立性",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-MULTIFACTOR-095",
+   "name": "波段成功率预期心法",
+   "cls": "multifactor",
+   "code_path": "",
+   "evidence": "",
+   "stats": {}
+  },
+  {
+   "sid": "STR-TSMALL-001",
+   "name": null,
+   "cls": "multifactor",
+   "code_path": "scripts/backtest/translated/c4_dc5b80aa3614_tsmall100.py",
+   "evidence": "双窗及格（§8）：IS 2020-2023 Sharpe=1.066(DSR=0.888)/OOS 2024-2026 Sharpe=0.694；对照=纯市值排序无质量门同窗 IS=-1.22（CAND-21af8c66c15e 在账），质量过滤拉正即独特证据。run=SCR-C4-20260914-045225/SC",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  },
+  {
+   "sid": "STR-VAL-001",
+   "name": null,
+   "cls": "multifactor",
+   "code_path": "scripts/backtest/translated/c4_8d000bf3ccc3_pb_poe.py",
+   "evidence": "双窗及格（§8）：IS 2020-2023 Sharpe=0.563/OOS 2024-2026 Sharpe=1.173（样本外反超=两体制稳健）；dual_ma 变体（-0.751）已标 redundant（C5 v2 处置）。run=SCR-C4-20260914-034927/SCR-C4-20260914-0",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  },
+  {
+   "sid": "STR-MOMTREND-033",
+   "name": null,
+   "cls": "momentum_trend",
+   "code_path": "scripts/backtest/translated/c4_7f7e5f935dfc_dmi_timing.py",
+   "evidence": "双窗及格（§8）：IS 2020-2023 Sharpe=0.204(DSR=0.038)/OOS 2024-2026 Sharpe=0.552(DSR=0.078)；OOS 反超 IS=趋势体制适配（2024-2026 趋势市）。run=SCR-C4-20260913-002056/SCR-C4-20260913-0",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  },
+  {
+   "sid": "STR-VREV-026",
+   "name": null,
+   "cls": "value_reversal",
+   "code_path": "scripts/backtest/translated/c4_c72318f2da1c_bias_ql.py",
+   "evidence": "双窗及格（§8）：IS 2020-2023 Sharpe=0.160(DSR=0.031)/OOS 2024-2026 Sharpe=0.526(DSR=0.071)；簇首（bluechip_ma ρ=0.713/crash_dodge ρ=0.679 标 redundant 留档）。run=SCR-C4-202609",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  },
+  {
+   "sid": "STR-DABAN-023",
+   "name": null,
+   "cls": "daban",
+   "code_path": "scripts/backtest/translated/c4_4440d07f973f_ultrashort.py",
+   "evidence": "双窗及格（§8）：IS 2020-2023 Sharpe=0.070(DSR=0.021)/OOS 2024-2026 Sharpe=0.795(DSR=0.158)；IS 基线弱但 OOS 全窗正，按 §8 门槛转正并声明 IS 偏低（换手 0.37 高频族）。run=SCR-C4-20260913-002056/S",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  },
+  {
+   "sid": "STR-VREV-027",
+   "name": "蓝筹&均线多头持有（MA5>MA20 前 5）",
+   "cls": "value_reversal",
+   "code_path": "scripts/backtest/translated/c4_9ce75aa27ce5_bluechip_ma.py",
+   "evidence": "intake 批 C4-OOS-2024-2026 created_sids（intake-20260915-1136）+ auto_mount IS 2020-01-01..2023-12-31 states=accumulation+capitulation 分段证据 accumulation=+2.89(159d",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  },
+  {
+   "sid": "STR-MULTIFACTOR-097",
+   "name": "C4 公式轨多因子合成（rank_cs 动量残差×换手/波动）",
+   "cls": "multifactor",
+   "code_path": "scripts/backtest/translated/c4_fact_4db4c41e.py",
+   "evidence": "intake 批 C4-OOS-2024-2026 created_sids（intake-20260915-1136，FACT-4db4c41e 簇首）；补全注册=2026-09-16 通宵总包 GW4（intake 注册半边未落地的治本补齐，additive）。",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  },
+  {
+   "sid": "STR-MULTIFACTOR-098",
+   "name": "small_cap_hl",
+   "cls": "multifactor",
+   "code_path": "scripts/backtest/translated/c4_5301c5d9d7c8_small_cap_hl.py",
+   "evidence": "auto_intake C4-OOS-2024-2026：§8 双窗及格 IS SR=0.518；OOS C4-OOS-2024-2026:SR=0.156；BH-FDR 未过（candidate 留观，后续批次重检）；三轴（启发式初值）multifactor/波段/alpha。",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  },
+  {
+   "sid": "STR-MULTIFACTOR-099",
+   "name": "snake_cap",
+   "cls": "multifactor",
+   "code_path": "scripts/backtest/translated/c4_8664521af1a0_snake_cap.py",
+   "evidence": "auto_intake C4-OOS-2024-2026：§8 双窗及格 IS SR=0.397；OOS C4-OOS-2024-2026:SR=0.404；BH-FDR 未过（candidate 留观，后续批次重检）；三轴（启发式初值）multifactor/波段/alpha。",
+   "stats": {
+    "error": "CH TCP 客户端不可用（连接失败冷却期内）——稍后重试或跑 ch_writer.health_check() 诊断"
+   }
+  }
+ ]
+}

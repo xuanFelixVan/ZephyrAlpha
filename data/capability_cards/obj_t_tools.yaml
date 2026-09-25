@@ -1,0 +1,34 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_tools
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 渐进披露：L0=本卡一句话；L1=src/zephyr/ai_layer/tools/ 各模块 docstring；
+# L2=docs/_working/ai_layer_vision/OBJ_T_tools/DESIGN.md；L3=P1_construction_review.md 复审记录。
+module_id: MOD-INF-037
+capability_id: obj_t_tools
+category: obj_t_tools
+description: OBJ_T 工具对象线——给工具建"考试制"让数据说话：T1 五源聚合盘点生成器（产出 config/tool_inventory.yaml）+工具用量计量（ai_tools.tool_usage_stats 三源接线）、T2 工具基准考尺（考卷 21 题装载 fail-closed）+Tier B 判分（Wilson 区间/效应量门槛/红线一票否决，判据真源 tool_exam_policy.yaml）；考场接线=经 L4 venue_tool_bench 适配器同基准任务集版本号双跑（同工具族新 vs 老，判成功率/速度/成本），考尺缺席即拒考 fail-closed，绝不本地造考卷，词表外值一律拒收
+examples:
+- python -m pytest tests/ai_layer/tools/（52 用例，考卷装载 fail-closed/判分全枚举）
+- src/zephyr/ai_layer/comparator/venue_tool_bench.py（L4 工具考场消费面，RULER_MODULES 指针锁定本包 suite）
+input_schema:
+  properties: {}
+  type: object
+name: OBJ_T Tools Object Pack
+output_schema:
+  properties: {}
+  type: object
+priority: P1
+registered_at: '2026-09-24T00:00:00+00:00'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- ai_layer
+- tools
+- OBJ_T
+- tool_bench

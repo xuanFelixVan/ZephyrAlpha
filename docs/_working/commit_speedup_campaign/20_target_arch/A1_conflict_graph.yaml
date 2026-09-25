@@ -1,0 +1,454 @@
+# ttl: task_bound
+# A1 冲突实测图 —— 由 .runtime/tmp/ta_gen_a1.py 生成，禁手工维护
+title: A1 - 提交冲突实测图（分片键由数据导出，不按团队/组织拍）
+generated_at: '2026-09-24'
+produced_by: docs/_working/commit_speedup_campaign/20_target_arch (L5 目标架构车道)
+method:
+  sources:
+  - .runtime/commit_queue/{done,dead,pending}/*.json（只读）
+  window:
+    from: 2026-09-22T00:00+08:00
+    to: '2026-09-24T18:27:40+08:00'
+    hours_observed: 66.4
+  unit_of_work: logical change = (session_id, frozenset(files))；同件重投/死信重排计一件，避免 re-queue 放大冲突面
+  collision_definition: 两条**跨会话** logical change 的 files 交集非空 = 一次冲突；另给"派生注册表出窗后"口径
+  in_flight_interval: created_at -> landed_at（pending 用 created+40min 兜底），用于 5 分钟时间片并发度估算
+population:
+  queue_items: 688
+  states:
+    done: 326
+    dead: 285
+    pending: 77
+  sessions: 69
+  distinct_paths: 1862
+  logical_changes: 393
+  repeat_chains_gt_1: 115
+  items_touching_a_shared_registry: 257
+  items_whose_files_are_all_shared_registries: 139
+  pure_derived_share_pct: 20.2
+headline:
+  cross_session_collision_rate_at_file_path: 5.95%  (4581/77028 pairs)
+  collision_rate_after_derived_output_eviction: 1.68%  (1292/77028 pairs)  [派生整册重写出窗]
+  cross_session_collision_rate_after_full_eviction: 0.63%  (485/77028 pairs)  [再含手append册按条目键merge]
+  collision_pair_mass_removed_pct_by_full_eviction: 89.4
+  collision_mass_in_top1_path_pct: 53.4
+  collision_mass_in_top1_path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  collision_mass_in_top8_shared_files_pct: 71.0
+  temporally_overlapping_cross_session_pairs_pct: 0.11
+  achievable_parallelism:
+    today_one_global_serialization_point: 1.0
+    sharded_lanes_derived_still_in_submit_path: 3.33
+    sharded_lanes_derived_evicted_hand_regs_still_file_level: 3.69
+    sharded_lanes_derived_plus_registry_entry_key_merge: 3.89
+    exclusive_one_owner_per_domain_avg_distinct_lanes_touched: 14.23
+    max_simultaneous_independent_changes: 10
+    observed_in_flight_items:
+      median: 7.0
+      p90: 15
+      max: 38
+    time_slices: 516
+  same_lane_in_flight_pairs: 13012
+  same_lane_pairs_with_disjoint_files: 9732
+  same_lane_pairs_with_disjoint_files_pct: 74.8
+  queue_head_fairness:
+    pending_items_now: 77
+    qid_string_vs_arrival_inversion_pct: 27.8
+    anchor: scripts/commit_queue.py:1193 + _pick_head:1100（队首按 qid 字符串＝会话名字母序）
+top_contended_paths:
+- path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+  cross_session_collision_pairs: 3428
+  share_of_collision_weight_pct: 53.36
+  submitter_items_touching: 138
+  kind: derived_generator_output
+  note: 'derived: generator rewrites whole file every run'
+- path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  cross_session_collision_pairs: 547
+  share_of_collision_weight_pct: 8.51
+  submitter_items_touching: 80
+  kind: hand_additive_registry
+  note: hand-additive, key = module_path
+- path: docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+  cross_session_collision_pairs: 139
+  share_of_collision_weight_pct: 2.16
+  submitter_items_touching: 26
+  kind: derived_generator_output
+  note: 'derived: generator rewrites whole file every run'
+- path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
+  cross_session_collision_pairs: 118
+  share_of_collision_weight_pct: 1.84
+  submitter_items_touching: 22
+  kind: hand_additive_registry
+  note: append-only, key = ruling number
+- path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
+  cross_session_collision_pairs: 109
+  share_of_collision_weight_pct: 1.7
+  submitter_items_touching: 22
+  kind: hand_additive_registry
+  note: hand-additive, key = rule id
+- path: scripts/governance/script_manifest.yaml
+  cross_session_collision_pairs: 92
+  share_of_collision_weight_pct: 1.43
+  submitter_items_touching: 19
+  kind: derived_generator_output
+  note: 'derived: generator rewrites whole file every run'
+- path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
+  cross_session_collision_pairs: 71
+  share_of_collision_weight_pct: 1.11
+  submitter_items_touching: 22
+  kind: hand_additive_registry
+  note: hand-additive, key = gate_id
+- path: scripts/governance/commit_queue_landing.py
+  cross_session_collision_pairs: 57
+  share_of_collision_weight_pct: 0.89
+  submitter_items_touching: 26
+  kind: hand_authored_or_source
+  note: ''
+- path: scripts/governance/meta/rules_integrity_db.json
+  cross_session_collision_pairs: 45
+  share_of_collision_weight_pct: 0.7
+  submitter_items_touching: 24
+  kind: derived_generator_output
+  note: 'derived: generator rewrites whole file every run'
+- path: src/zephyr/backtest/regime_validation/__init__.py
+  cross_session_collision_pairs: 31
+  share_of_collision_weight_pct: 0.48
+  submitter_items_touching: 13
+  kind: hand_authored_or_source
+  note: ''
+- path: tests/library/test_library_smoke.py
+  cross_session_collision_pairs: 25
+  share_of_collision_weight_pct: 0.39
+  submitter_items_touching: 8
+  kind: hand_authored_or_source
+  note: ''
+- path: src/zephyr/gov_enforcement/rule_bridge/commit_belt_daemon.py
+  cross_session_collision_pairs: 25
+  share_of_collision_weight_pct: 0.39
+  submitter_items_touching: 18
+  kind: hand_authored_or_source
+  note: ''
+- path: scripts/backtest/ibt/ibt_runner.py
+  cross_session_collision_pairs: 24
+  share_of_collision_weight_pct: 0.37
+  submitter_items_touching: 11
+  kind: hand_authored_or_source
+  note: ''
+- path: scripts/backtest/ibt/ibt_mining_matrix.py
+  cross_session_collision_pairs: 24
+  share_of_collision_weight_pct: 0.37
+  submitter_items_touching: 11
+  kind: hand_authored_or_source
+  note: ''
+- path: tests/backtest/test_exam_cost_gate.py
+  cross_session_collision_pairs: 22
+  share_of_collision_weight_pct: 0.34
+  submitter_items_touching: 11
+  kind: hand_authored_or_source
+  note: ''
+- path: config/governance/noqa_exempt_registry.yaml
+  cross_session_collision_pairs: 17
+  share_of_collision_weight_pct: 0.26
+  submitter_items_touching: 18
+  kind: hand_authored_or_source
+  note: ''
+- path: tests/governance/meta_question/test_registry.py
+  cross_session_collision_pairs: 17
+  share_of_collision_weight_pct: 0.26
+  submitter_items_touching: 25
+  kind: hand_authored_or_source
+  note: ''
+- path: scripts/backtest/translated/_c4_engine.py
+  cross_session_collision_pairs: 17
+  share_of_collision_weight_pct: 0.26
+  submitter_items_touching: 10
+  kind: hand_authored_or_source
+  note: ''
+- path: config/exam_scale_cost_gate.yaml
+  cross_session_collision_pairs: 17
+  share_of_collision_weight_pct: 0.26
+  submitter_items_touching: 10
+  kind: hand_authored_or_source
+  note: ''
+- path: scripts/backtest/f06_e4_wfa_exam.py
+  cross_session_collision_pairs: 17
+  share_of_collision_weight_pct: 0.26
+  submitter_items_touching: 10
+  kind: hand_authored_or_source
+  note: ''
+- path: src/zephyr/backtest/regime_validation/exam_cost_gate.py
+  cross_session_collision_pairs: 17
+  share_of_collision_weight_pct: 0.26
+  submitter_items_touching: 10
+  kind: hand_authored_or_source
+  note: ''
+- path: scripts/backtest/exam_cost_reexam.py
+  cross_session_collision_pairs: 17
+  share_of_collision_weight_pct: 0.26
+  submitter_items_touching: 10
+  kind: hand_authored_or_source
+  note: ''
+- path: docs/_working/chain_piling_campaign/snapshots/registry_latest.yaml
+  cross_session_collision_pairs: 15
+  share_of_collision_weight_pct: 0.23
+  submitter_items_touching: 25
+  kind: hand_authored_or_source
+  note: ''
+- path: src/zephyr/library/collectors/fs_collector.py
+  cross_session_collision_pairs: 14
+  share_of_collision_weight_pct: 0.22
+  submitter_items_touching: 6
+  kind: hand_authored_or_source
+  note: ''
+- path: docs/_working/ultimate_library/COVERAGE.md
+  cross_session_collision_pairs: 14
+  share_of_collision_weight_pct: 0.22
+  submitter_items_touching: 6
+  kind: hand_authored_or_source
+  note: ''
+registry_entry_level_evidence:
+  docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml:
+    items_touching_registry: 80
+    bags_with_base_provenance: 1
+    bags_compared_at_key_level: 1
+    cross_session_entry_key_collisions: 0
+    cross_session_file_level_collisions: 547
+    stale_base_blob_suspects: 0
+    bags_without_base_provenance: 79
+    median_keys_in_base: 7839
+    median_keys_claimed_added: 14
+    measurement_caveat: 键级冲突需袋内 base_blob 作真前驱；本册 79/1 件袋未记 base（=已知"整册覆盖/base 兜底"缺陷的指纹）⇒ 键级数只能当上界看，不可作为"键级已够稀疏"的证明
+    verdict: 键级冲突不可测（袋缺 base 溯源）⇒ 条目键 merge 车道须先补 base（见 A4 S4 前置）；当前可断言的只有文件级冲突 547 对
+  docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml:
+    items_touching_registry: 22
+    bags_with_base_provenance: 1
+    bags_compared_at_key_level: 0
+    cross_session_entry_key_collisions: 0
+    cross_session_file_level_collisions: 109
+    stale_base_blob_suspects: 0
+    bags_without_base_provenance: 21
+    median_keys_in_base: 0
+    median_keys_claimed_added: 0
+    measurement_caveat: 键级冲突需袋内 base_blob 作真前驱；本册 21/1 件袋未记 base（=已知"整册覆盖/base 兜底"缺陷的指纹）⇒ 键级数只能当上界看，不可作为"键级已够稀疏"的证明
+    verdict: 键级冲突不可测（袋缺 base 溯源）⇒ 条目键 merge 车道须先补 base（见 A4 S4 前置）；当前可断言的只有文件级冲突 109 对
+  docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml:
+    items_touching_registry: 22
+    bags_with_base_provenance: 0
+    bags_compared_at_key_level: 0
+    cross_session_entry_key_collisions: 0
+    cross_session_file_level_collisions: 71
+    stale_base_blob_suspects: 0
+    bags_without_base_provenance: 22
+    median_keys_in_base: 0
+    median_keys_claimed_added: 0
+    measurement_caveat: 键级冲突需袋内 base_blob 作真前驱；本册 22/0 件袋未记 base（=已知"整册覆盖/base 兜底"缺陷的指纹）⇒ 键级数只能当上界看，不可作为"键级已够稀疏"的证明
+    verdict: 键级冲突不可测（袋缺 base 溯源）⇒ 条目键 merge 车道须先补 base（见 A4 S4 前置）；当前可断言的只有文件级冲突 71 对
+  docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml:
+    items_touching_registry: 22
+    bags_with_base_provenance: 1
+    bags_compared_at_key_level: 0
+    cross_session_entry_key_collisions: 0
+    cross_session_file_level_collisions: 118
+    stale_base_blob_suspects: 0
+    bags_without_base_provenance: 21
+    median_keys_in_base: 3
+    median_keys_claimed_added: 0
+    measurement_caveat: 键级冲突需袋内 base_blob 作真前驱；本册 21/1 件袋未记 base（=已知"整册覆盖/base 兜底"缺陷的指纹）⇒ 键级数只能当上界看，不可作为"键级已够稀疏"的证明
+    verdict: 键级冲突不可测（袋缺 base 溯源）⇒ 条目键 merge 车道须先补 base（见 A4 S4 前置）；当前可断言的只有文件级冲突 118 对
+conflict_domains:
+- domain:
+  - D
+  - docs/_working
+  items: 317
+  sessions: 54
+  residual_cross_session_collisions: 97
+  sample_paths: []
+- domain:
+  - D
+  - scripts/governance
+  items: 101
+  sessions: 24
+  residual_cross_session_collisions: 83
+  sample_paths: []
+- domain:
+  - D
+  - tests/governance
+  items: 94
+  sessions: 21
+  residual_cross_session_collisions: 29
+  sample_paths: []
+- domain:
+  - D
+  - docs/03_modules
+  items: 78
+  sessions: 23
+  residual_cross_session_collisions: 633
+  sample_paths: []
+- domain:
+  - D
+  - docs/01_policies_and_standards
+  items: 78
+  sessions: 25
+  residual_cross_session_collisions: 134
+  sample_paths: []
+- domain:
+  - D
+  - src/zephyr/gov_enforcement
+  items: 49
+  sessions: 18
+  residual_cross_session_collisions: 92
+  sample_paths: []
+- domain:
+  - D
+  - src/zephyr/governance
+  items: 43
+  sessions: 12
+  residual_cross_session_collisions: 44
+  sample_paths: []
+- domain:
+  - D
+  - scripts/backtest
+  items: 40
+  sessions: 10
+  residual_cross_session_collisions: 102
+  sample_paths: []
+- domain:
+  - D
+  - schemas/categories
+  items: 28
+  sessions: 12
+  residual_cross_session_collisions: 9
+  sample_paths: []
+- domain:
+  - D
+  - tests/backtest
+  items: 25
+  sessions: 9
+  residual_cross_session_collisions: 35
+  sample_paths: []
+- domain:
+  - D
+  - src/zephyr/pf_alloc
+  items: 23
+  sessions: 4
+  residual_cross_session_collisions: 13
+  sample_paths: []
+- domain:
+  - D
+  - src/zephyr/data
+  items: 22
+  sessions: 11
+  residual_cross_session_collisions: 33
+  sample_paths: []
+- domain:
+  - D
+  - src/zephyr/library
+  items: 21
+  sessions: 8
+  residual_cross_session_collisions: 59
+  sample_paths: []
+- domain:
+  - D
+  - tests/pf_alloc
+  items: 20
+  sessions: 3
+  residual_cross_session_collisions: 0
+  sample_paths: []
+- domain:
+  - D
+  - docs/02_enterprise_architecture
+  items: 20
+  sessions: 6
+  residual_cross_session_collisions: 0
+  sample_paths: []
+- domain:
+  - D
+  - scripts/audit
+  items: 20
+  sessions: 3
+  residual_cross_session_collisions: 12
+  sample_paths: []
+- domain:
+  - D
+  - AGENTS.md
+  items: 19
+  sessions: 1
+  residual_cross_session_collisions: 0
+  sample_paths: []
+- domain:
+  - D
+  - config/pf_alloc.yaml
+  items: 18
+  sessions: 1
+  residual_cross_session_collisions: 0
+  sample_paths: []
+- domain:
+  - D
+  - config/governance
+  items: 18
+  sessions: 4
+  residual_cross_session_collisions: 17
+  sample_paths: []
+- domain:
+  - D
+  - scripts/ch
+  items: 17
+  sessions: 7
+  residual_cross_session_collisions: 14
+  sample_paths: []
+- domain:
+  - D
+  - src/zephyr/backtest
+  items: 15
+  sessions: 6
+  residual_cross_session_collisions: 48
+  sample_paths: []
+- domain:
+  - D
+  - tests/library
+  items: 13
+  sessions: 7
+  residual_cross_session_collisions: 27
+  sample_paths: []
+- domain:
+  - D
+  - src/zephyr/signal_ashare
+  items: 13
+  sessions: 4
+  residual_cross_session_collisions: 1
+  sample_paths: []
+- domain:
+  - D
+  - tests/signal_ashare
+  items: 12
+  sessions: 3
+  residual_cross_session_collisions: 1
+  sample_paths: []
+- domain:
+  - D
+  - tests/audit
+  items: 12
+  sessions: 1
+  residual_cross_session_collisions: 0
+  sample_paths: []
+partition_decision:
+  observed_conflict_domains_total: 103
+  observed_domains_multi_session: 65
+  observed_domains_ge3_sessions: 41
+  sharding_key: 变更触及的路径集合（3 级前缀冲突域）+ 共享注册表按条目键 merge + 派生产物交唯一整合者；不按 functional_domain_registry、不按团队编制
+  why_not_org_or_hard_domain: 103 个实测冲突域中 65 个多会话、41 个 >=3 会话；同域在途件对里 75% 文件互不相交，按域独占＝白等
+  hard_one_worker_per_domain: 不需要（全域无例外）；唯一需要"单一写者"的是派生产物本身，见 A2 第 5 节
+  lanes:
+  - lane: domain:<3级前缀>（动态开，非固定编制）
+    serialization: 域内文件路径锁（非域锁）
+    items_pct: 63
+  - lane: registry-append（热注册表专用道）
+    serialization: 条目级键 merge；仅同键真冲突才串行
+    items_pct: 37
+  - lane: derived-consolidator（唯一写者，出提交者等待路径）
+    serialization: 1 条串行，但异步
+    items_pct: 20
+  - lane: ref-cas（git 真正需要的全局点）
+    serialization: commit-tree + 分支 CAS，预算 <5s
+    items_pct: 100
+reproduce: 本文件静态产出，禁手工维护：输入=只读 .runtime/commit_queue/{done,dead,pending}，脚本暂居 .runtime/tmp/ta_gen_a1.py，批1 装表时随冲突图口径迁入 scripts/governance/（登记
+  creation_token 后正式化）。

@@ -47,26 +47,27 @@ import subprocess
 import sys
 import time
 from collections import defaultdict
-
-from zephyr.shared.infra.process_pool import run_subprocess_hidden
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Final
 
+from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
 logger = logging.getLogger(__name__)
 
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402 — 仓库根正典真源（D-RR-03：禁自算，capability_lookup 同款）
+
 DEFAULT_OUT_DIR: Final = REPO_ROOT / ".runtime" / "tmp" / "replay"
 DEFAULT_SINCE_DAYS: Final = 90
 DEFAULT_STRATA: Final[dict] = {"blocked": 30, "passed": 50, "special": 10, "random": 10}
 
 # 通过判据 P1-P4（预注册，重放前锁定——OBJ_R DESIGN §②-E，R9 审计追认）
-P1_PASS_LEAK_ALLOWED: Final = 0          # 层① new_pass 数 = 0（一票否决）
-P2_NEW_BLOCK_RATE: Final = 0.02          # 新增拦截率 ≤ 2%
-P3_JACCARD_GLOBAL: Final = 0.98          # 全局拦截集合 Jaccard 下限
-P3_JACCARD_PER_GATE: Final = 0.95        # 单 gate 触发集合 Jaccard 下限
-ERROR_RATE_UNRELIABLE: Final = 0.10      # 错误率超过此值 → summary 判 unreliable
+P1_PASS_LEAK_ALLOWED: Final = 0  # 层① new_pass 数 = 0（一票否决）
+P2_NEW_BLOCK_RATE: Final = 0.02  # 新增拦截率 ≤ 2%
+P3_JACCARD_GLOBAL: Final = 0.98  # 全局拦截集合 Jaccard 下限
+P3_JACCARD_PER_GATE: Final = 0.95  # 单 gate 触发集合 Jaccard 下限
+ERROR_RATE_UNRELIABLE: Final = 0.10  # 错误率超过此值 → summary 判 unreliable
 
 DELTA_BOTH_PASS: Final = "both_pass"
 DELTA_BOTH_BLOCK: Final = "both_block"
@@ -175,18 +176,26 @@ def parse_diff_tree(patch_text: str) -> tuple[list[str], dict[str, str]]:
     return files, patches
 
 
-def list_commit_range(
-    repo_root: Path, since: str, until: str, limit: int = 2000
-) -> list[tuple[str, str]]:
+def list_commit_range(repo_root: Path, since: str, until: str, limit: int = 2000) -> list[tuple[str, str]]:
     """时间窗内 first-parent 非合并提交清单 [(hash, yyyy-mm-dd)]，时间升序。"""
     out = run_subprocess_hidden(
         [
-            "git", "log", "--first-parent", "--no-merges",
-            f"--since={since}", f"--until={until}",
-            "--date=short", "--pretty=%H|%ad", f"-n{limit}",
+            "git",
+            "log",
+            "--first-parent",
+            "--no-merges",
+            f"--since={since}",
+            f"--until={until}",
+            "--date=short",
+            "--pretty=%H|%ad",
+            f"-n{limit}",
             "--reverse",
         ],
-        cwd=repo_root, capture_output=True, text=True, encoding="utf-8", errors="replace",
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     if out.returncode != 0:
         raise RuntimeError(f"git log 失败: {out.stderr[:200]}")
@@ -200,9 +209,21 @@ def list_commit_range(
 
 def list_merge_commits(repo_root: Path, since: str, until: str, limit: int = 200) -> list[tuple[str, str]]:
     out = run_subprocess_hidden(
-        ["git", "log", "--merges", f"--since={since}", f"--until={until}",
-         "--date=short", "--pretty=%H|%ad", f"-n{limit}"],
-        cwd=repo_root, capture_output=True, text=True, encoding="utf-8", errors="replace",
+        [
+            "git",
+            "log",
+            "--merges",
+            f"--since={since}",
+            f"--until={until}",
+            "--date=short",
+            "--pretty=%H|%ad",
+            f"-n{limit}",
+        ],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     rows: list[tuple[str, str]] = []
     if out.returncode == 0:
@@ -252,10 +273,16 @@ def sample_commits(
             plan.append((h, d, stratum))
             taken += 1
 
-    take([(h, by_hash.get(h, "")) for h in (blocked_hashes or []) if h in by_hash or True],
-         "blocked", strata.get("blocked", 0))
-    take([(h, by_hash.get(h, "")) for h in (passed_hashes or []) if h in by_hash or True],
-         "passed", strata.get("passed", 0))
+    take(
+        [(h, by_hash.get(h, "")) for h in (blocked_hashes or []) if h in by_hash or True],
+        "blocked",
+        strata.get("blocked", 0),
+    )
+    take(
+        [(h, by_hash.get(h, "")) for h in (passed_hashes or []) if h in by_hash or True],
+        "passed",
+        strata.get("passed", 0),
+    )
     take(merges, "special", strata.get("special", 0))
     pool = all_commits[:]
     rng.shuffle(pool)
@@ -321,9 +348,7 @@ def _build_pair(
     new_mod = _load_module_copy(str(full_path), "new")
     for const_name, value in overrides.items():
         if not hasattr(new_mod, const_name):
-            raise RuntimeError(
-                f"阈值注入失败：{module_path} 无常量 {const_name}（D-RR-02：拼错即拒，fail-closed）"
-            )
+            raise RuntimeError(f"阈值注入失败：{module_path} 无常量 {const_name}（D-RR-02：拼错即拒，fail-closed）")
         setattr(new_mod, const_name, value)
     new_spec = getattr(new_mod, factory_name)()
     return _GatePair(gate_id, new_spec.priority, old_spec.check, new_spec.check, module_path)
@@ -385,10 +410,14 @@ def _digest(text: str) -> str:
 
 def replay_commit(ctx: ReplayContext, target: ReplayTarget) -> list[dict[str, Any]]:
     if ctx.diff_fetch is None:
+
         def ctx_diff_fetch(h: str) -> tuple[list[str], dict[str, str]]:
             diff_run = run_subprocess_hidden(
                 ["git", "diff-tree", "-p", "--no-commit-id", h],
-                cwd=ctx.repo_root, capture_output=True, text=True, encoding="utf-8",
+                cwd=ctx.repo_root,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
                 errors="replace",
             )
             return parse_diff_tree(diff_run.stdout)
@@ -411,55 +440,77 @@ def replay_commit(ctx: ReplayContext, target: ReplayTarget) -> list[dict[str, An
             else:
                 delta = DELTA_NEW_BLOCK
             row = {
-                "run_id": ctx.run_id, "commit_hash": target.commit_hash, "commit_date": target.commit_date,
-                "stratum": target.stratum, "files": files, "gate_id": pair.gate_id,
+                "run_id": ctx.run_id,
+                "commit_hash": target.commit_hash,
+                "commit_date": target.commit_date,
+                "stratum": target.stratum,
+                "files": files,
+                "gate_id": pair.gate_id,
                 "priority": pair.priority,
                 "old": {"passed": bool(old_passed), "detail_digest": _digest(old_detail)},
                 "new": {"passed": bool(new_passed), "detail_digest": _digest(new_detail)},
-                "delta": delta, "replay_ms": round((time.perf_counter() - t0) * 1000, 2),
-                "error": "", "out_of_scope_reason": "",
+                "delta": delta,
+                "replay_ms": round((time.perf_counter() - t0) * 1000, 2),
+                "error": "",
+                "out_of_scope_reason": "",
             }
         except Exception as exc:  # noqa: BLE001 — 单 gate 异常如实记档不计判据
             row = {
-                "run_id": ctx.run_id, "commit_hash": target.commit_hash, "commit_date": target.commit_date,
-                "stratum": target.stratum, "files": files, "gate_id": pair.gate_id,
-                "priority": pair.priority, "old": {"passed": None, "detail_digest": ""},
-                "new": {"passed": None, "detail_digest": ""}, "delta": DELTA_ERROR,
+                "run_id": ctx.run_id,
+                "commit_hash": target.commit_hash,
+                "commit_date": target.commit_date,
+                "stratum": target.stratum,
+                "files": files,
+                "gate_id": pair.gate_id,
+                "priority": pair.priority,
+                "old": {"passed": None, "detail_digest": ""},
+                "new": {"passed": None, "detail_digest": ""},
+                "delta": DELTA_ERROR,
                 "replay_ms": round((time.perf_counter() - t0) * 1000, 2),
-                "error": f"{type(exc).__name__}: {exc}", "out_of_scope_reason": "",
+                "error": f"{type(exc).__name__}: {exc}",
+                "out_of_scope_reason": "",
             }
         rows.append(row)
     for gate_id in ctx.out_of_scope:
-        rows.append({
-            "run_id": ctx.run_id, "commit_hash": target.commit_hash, "commit_date": target.commit_date,
-            "stratum": target.stratum, "files": files, "gate_id": gate_id, "priority": None,
-            "old": {"passed": None, "detail_digest": ""},
-            "new": {"passed": None, "detail_digest": ""}, "delta": DELTA_ERROR,
-            "replay_ms": 0.0, "error": "",
-            "out_of_scope_reason": "非内容扫描型（全局状态依赖），不进判据",
-        })
+        rows.append(
+            {
+                "run_id": ctx.run_id,
+                "commit_hash": target.commit_hash,
+                "commit_date": target.commit_date,
+                "stratum": target.stratum,
+                "files": files,
+                "gate_id": gate_id,
+                "priority": None,
+                "old": {"passed": None, "detail_digest": ""},
+                "new": {"passed": None, "detail_digest": ""},
+                "delta": DELTA_ERROR,
+                "replay_ms": 0.0,
+                "error": "",
+                "out_of_scope_reason": "非内容扫描型（全局状态依赖），不进判据",
+            }
+        )
     return rows
 
 
 def run_replay(req: ReplayRequest) -> Path:
     from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415 — SCHEMA-TZ 正典时钟
+
     run_id = f"replay-{now_utc().strftime('%Y%m%d-%H%M%S')}"
     pairs, out_of_scope = load_gate_pairs(req.repo_root, req.gates_filter, req.thresholds)
     if not pairs:
         raise RuntimeError("无可用内容扫描型 gate（检查 --gates 过滤与 whitelist）")
-    plan = sample_commits(req.repo_root, req.since, req.until, req.strata,
-                          req.blocked_hashes, req.passed_hashes, req.seed)
+    plan = sample_commits(
+        req.repo_root, req.since, req.until, req.strata, req.blocked_hashes, req.passed_hashes, req.seed
+    )
     if not plan:
         raise RuntimeError("抽样为空：时间窗内无提交（调整 --since/--until）")
     run_dir = req.out_dir / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
     report_path = run_dir / "report.jsonl"
     with report_path.open("w", encoding="utf-8") as fh:
-        ctx = ReplayContext(run_id=run_id, pairs=pairs, out_of_scope=out_of_scope,
-                            repo_root=req.repo_root)
+        ctx = ReplayContext(run_id=run_id, pairs=pairs, out_of_scope=out_of_scope, repo_root=req.repo_root)
         for commit_hash, commit_date, stratum in plan:
-            target = ReplayTarget(commit_hash=commit_hash, commit_date=commit_date,
-                                  stratum=stratum)
+            target = ReplayTarget(commit_hash=commit_hash, commit_date=commit_date, stratum=stratum)
             for row in replay_commit(ctx, target):
                 fh.write(json.dumps(row, ensure_ascii=False) + "\n")
     summary = summarize(report_path)
@@ -494,7 +545,9 @@ def _classify_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
     errors = [r for r in rows if r["delta"] == DELTA_ERROR and not r["out_of_scope_reason"]]
     error_rate = len(errors) / len(rows) if rows else 0.0
     return {
-        "judged": judged, "errors": errors, "error_rate": error_rate,
+        "judged": judged,
+        "errors": errors,
+        "error_rate": error_rate,
         "new_pass": [r for r in judged if r["delta"] == DELTA_NEW_PASS],
         "new_block_rows": [r for r in judged if r["delta"] == DELTA_NEW_BLOCK],
     }
@@ -502,13 +555,12 @@ def _classify_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
 
 def _leak_count(judged: list[dict[str, Any]]) -> int:
     """P1 口径：分层①（blocked）/③（special）中该拦放走的笔数。"""
-    return sum(1 for r in judged if r["stratum"] in ("blocked", "special")
-               and r["delta"] == DELTA_NEW_PASS)
+    return sum(1 for r in judged if r["stratum"] in ("blocked", "special") and r["delta"] == DELTA_NEW_PASS)
 
 
 def _jaccard_stats(judged: list[dict[str, Any]]) -> dict[str, Any]:
-    old_block = {f'{r["commit_hash"]}|{r["gate_id"]}' for r in judged if not r["old"]["passed"]}
-    new_block = {f'{r["commit_hash"]}|{r["gate_id"]}' for r in judged if not r["new"]["passed"]}
+    old_block = {f"{r['commit_hash']}|{r['gate_id']}" for r in judged if not r["old"]["passed"]}
+    new_block = {f"{r['commit_hash']}|{r['gate_id']}" for r in judged if not r["new"]["passed"]}
     per_gate: dict[str, float] = {}
     for g in sorted({r["gate_id"] for r in judged}):
         g_old = {r["commit_hash"] for r in judged if r["gate_id"] == g and not r["old"]["passed"]}
@@ -550,8 +602,12 @@ def summarize(report_path: Path) -> dict[str, Any]:
         },
         "p1_pass_leak": {"value": p1_leak, "threshold": P1_PASS_LEAK_ALLOWED, "pass": p1},
         "p2_new_block_rate": {"value": round(new_block_rate, 4), "threshold": P2_NEW_BLOCK_RATE, "pass": p2},
-        "p3_jaccard": {"global": round(j["global"], 4), "worst_gate": round(j["worst_gate"], 4),
-                       "thresholds": [P3_JACCARD_GLOBAL, P3_JACCARD_PER_GATE], "pass": p3},
+        "p3_jaccard": {
+            "global": round(j["global"], 4),
+            "worst_gate": round(j["worst_gate"], 4),
+            "thresholds": [P3_JACCARD_GLOBAL, P3_JACCARD_PER_GATE],
+            "pass": p3,
+        },
         "per_gate_jaccard": {g: round(v, 4) for g, v in sorted(j["per_gate"].items())},
         "p4_strata_note": "blocked/special 泄漏并入 P1 口径复检；special 独立 Jaccard 见 per_gate_jaccard",
     }
@@ -564,8 +620,7 @@ def diff_runs(path_a: Path, path_b: Path) -> dict[str, Any]:
         "a": {"report": a["report"], "verdict": a["verdict"]},
         "b": {"report": b["report"], "verdict": b["verdict"]},
         "verdict_changed": a["verdict"] != b["verdict"],
-        "jaccard_global_delta": round(
-            b["p3_jaccard"]["global"] - a["p3_jaccard"]["global"], 4),
+        "jaccard_global_delta": round(b["p3_jaccard"]["global"] - a["p3_jaccard"]["global"], 4),
         "new_pass_delta": b["counts"]["new_pass"] - a["counts"]["new_pass"],
         "new_block_delta": b["counts"]["new_block"] - a["counts"]["new_block"],
     }
@@ -575,16 +630,16 @@ def diff_runs(path_a: Path, path_b: Path) -> dict[str, Any]:
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="python -m zephyr.governance.rule_replay",
-                                     description="历史重放器——重考历史执行件（OBJ_R 流水线第 4 步）")
+    parser = argparse.ArgumentParser(
+        prog="python -m zephyr.governance.rule_replay", description="历史重放器——重考历史执行件（OBJ_R 流水线第 4 步）"
+    )
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p_replay = sub.add_parser("replay", help="跑重放落 report.jsonl + summary.json")
     p_replay.add_argument("--since", required=True)
     p_replay.add_argument("--until", required=True)
     p_replay.add_argument("--strata", default="blocked=30,passed=50,special=10,random=10")
-    p_replay.add_argument("--gates", default="ALL_CONTENT_SCAN",
-                          help="ALL_CONTENT_SCAN 或逗号分隔 gate_id 清单")
+    p_replay.add_argument("--gates", default="ALL_CONTENT_SCAN", help="ALL_CONTENT_SCAN 或逗号分隔 gate_id 清单")
     p_replay.add_argument("--new-thresholds", default=None, help="[{module,const,value}] yaml")
     p_replay.add_argument("--blocked-hashes", default=None, help="层①注入文件（每行一个 hash）")
     p_replay.add_argument("--passed-hashes", default=None, help="层②注入文件（每行一个 hash）")
@@ -609,13 +664,20 @@ def main(argv: list[str] | None = None) -> int:
             k, v = part.split("=")
             strata[k.strip()] = int(v)
         gates = None if args.gates == "ALL_CONTENT_SCAN" else set(args.gates.split(","))
-        report = run_replay(ReplayRequest(
-            repo_root=REPO_ROOT, since=args.since, until=args.until, strata=strata,
-            gates_filter=gates, thresholds=load_thresholds(args.new_thresholds),
-            blocked_hashes=_read_hash_file(args.blocked_hashes),
-            passed_hashes=_read_hash_file(args.passed_hashes),
-            out_dir=Path(args.out), seed=args.seed,
-        ))
+        report = run_replay(
+            ReplayRequest(
+                repo_root=REPO_ROOT,
+                since=args.since,
+                until=args.until,
+                strata=strata,
+                gates_filter=gates,
+                thresholds=load_thresholds(args.new_thresholds),
+                blocked_hashes=_read_hash_file(args.blocked_hashes),
+                passed_hashes=_read_hash_file(args.passed_hashes),
+                out_dir=Path(args.out),
+                seed=args.seed,
+            )
+        )
         print(json.dumps(summarize(report), ensure_ascii=False, indent=2))
         return 0
     if args.cmd == "report":

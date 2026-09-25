@@ -1,0 +1,64 @@
+ttl: task_bound
+lane: IBT-D01
+sid: st-qmine-20260925
+created: 2026-09-26
+purpose: 待落清单（本车道禁 git 写，落地由总筹走队列/网关）
+deliverables:
+  - path: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/engine_caliber_map/caliber_map.yaml
+    kind: 机读真源
+    note: 13 维全实测、待测=0；D09 等价结论带红证
+  - path: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/engine_caliber_map/caliber_map.md
+    kind: 人读投影
+    note: 冲突以 yaml 为准
+  - path: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/engine_caliber_map/pairwise_report.md
+    kind: 抽样对拍差值表与三态结论
+    note: 完成度与 >30% 清单见该件 §0/§2
+frontmatter_policy: "全部件只写 ttl: task_bound，未写 doc_type（避 EXEMPT-ZONE-FM 门）"
+naming_policy: "目录 engine_caliber_map；文件名 caliber_map / pairwise_report / lane_d01 均不以数字结尾（R5）"
+create_guard_note: >
+  本车道新建 .md/.yaml 未登记 creation_token——车道禁令覆盖（禁 git / 禁跑提交工具），
+  落地前请总筹按 CREATE-GUARD 补登记，或确认 docs/_working 面的豁免边界。
+readonly_evidence:
+  db_probes:
+    - ".runtime/tmp/d01_probe_adj.py（hfq 表族枚举 + kline_daily.adj_factor 恒 1 实测）"
+    - ".runtime/tmp/d01_probe_adj2.py（逐年真实交易日 244/243/243/242/242/242；窗交易日 970 与 1566）"
+    - ".runtime/tmp/d01_probe_adj3.py（除权日 hfq vs qfq 日收益对拍）"
+    - ".runtime/tmp/d01_redproof_adj.py（同尺注入已知错口径全红，证尺能红）"
+  harness:
+    - ".runtime/tmp/d01_pairwise.py（首版工装 v1）"
+    - "C:/Users/fanzi/AppData/Local/Temp/d01_pairwise_v3.py（正式 12 格对拍）"
+    - "C:/Users/fanzi/AppData/Local/Temp/d01_pairwise_v3.log（运行日志）"
+    - ".runtime/tmp/d01_pairwise_result_v2.json / _v3.json（机读结果）"
+  harness_path_note: >
+    长跑副本刻意放 AppData/Temp 而非 .runtime/tmp：记忆档 kline-volume-unit-cure-20260922 记
+    reaper 规则4 扫荡 cmdline 含 .runtime/ 的后台进程；首版作业 28 分钟零产出后自停即此症。
+process_trace: >
+  自停自作业 PID 18844（cmdline=python .runtime/tmp/d01_pairwise.py 12 600，选格循环无缓存致
+  CH 重查、零产出）；连带终止其 nohup 包装 PID 33380。他车道进程全程未触碰
+  （他车道 factory_grid_executor PID 3584 存活核实）。
+frozen_files_untouched:
+  - config/search_space_prereg.yaml
+  - config/exam_scale_cost_gate.yaml
+  - scripts/audit/cost_trio_exam.py
+  - 各预注册卡
+findings_to_register_only:
+  - id: D01-REG-01
+    text: >-
+      考尺成本式把印花与佣金/滑点同括号乘在单边换手（_c4_engine.py:422），买腿超计、卖腿少计；
+      将来若接整装标定须走新预注册卡显式声明。本车道零阈值改动。
+  - id: D01-REG-02
+    text: >-
+      整装 metrics 年化基准 252（metrics.py:49）与 A 股实测 242-244 不符；考尺族已预注册 244
+      （exam_scale_cost_gate.yaml:24）。两族不同尺是制度性分裂，统一侧推荐见 pairwise_report.md。
+  - id: D01-REG-03
+    text: >-
+      kline_daily_hfq.volume 实测为「手」、kline_daily.volume 为「股」；直喂 hfq 面板会把整装
+      10% 参与率收紧 100 倍（matching_engine.py:48-52,374 自警）。对拍已按 手→股 ×100 归一并留痕。
+  - id: D01-REG-04
+    text: >-
+      hook 假警报：本车道每次 Edit 后 PostToolUse useKnowledge 报 file_path=caliber_map.yaml
+      却引用 _c4_engine.py 行内容（该 yaml 内无这些行且 yaml.safe_load 通过）——归因错位，登记不代修。
+gate_checks_self:
+  - "yaml.safe_load 三件全通过"
+  - "grep 确认无行首 '# ['、无裸 '裁定#'、frontmatter 无 doc_type"
+  - "目录/文件名末字符非数字"

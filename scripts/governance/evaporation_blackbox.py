@@ -1,8 +1,9 @@
-# [BLUEPRINT] MOD-GOV | docs/_working/decision_map_campaign/15_evaporation_cure_plan.md | 治本施工项 EV-01 行（取证依据=10 号文）
+# [BLUEPRINT] MOD-GOV_SCRIPTS | docs/_working/decision_map_campaign_20260924/15_evaporation_cure_plan.md | 治本施工项 EV-01 行（取证依据=10 号文）
 # [MODULE] scripts.governance.evaporation_blackbox
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] scripts.governance._shared.constants, scripts.governance._shared.encoding
-# [CONSUMERS] schtasks ZephyrAlpha_EvaporationBlackbox（每 5 分钟）; Owner 手动 --restore 取证
+# [CONSUMERS] schtasks ZephyrAlpha_EvaporationBlackbox（每 5 分钟）; Owner 手动 --restore 取证;
+#             LANE-EV 蒸发案卷 `--lock-window` 分钟级现场定位
 # [STARTUP] scheduled_task
 # [MATURITY] testing
 # [INVARIANTS] 快照对 git 只读（write-tree 仅向对象库新增不可变对象，零 reset/clean/checkout/index 改写）；
@@ -10,6 +11,8 @@
 #              --restore 只打印人工恢复指引绝不自动执行（防二次事故）；
 #              防御性快照非 reconciler，不违宪法 §9.3 事件触发律（15 号文 EV-01 行 Owner 批明示）。
 # [MODIFY-GUARD] 快照字段清单增删须与 15 号文 EV-01 验收行对齐（index tree/untracked 计数/stash/reflog 尾巴）
+#                + LANE-EV 追加的 per-path 删除见证三字段（tracked_deleted_count/paths/sig，
+#                服务"精确定位分钟级现场"验收；增删须同步 tests/governance/test_evaporation_cure_lane_ev.py）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -36,6 +39,14 @@
     untracked_count   git status --porcelain 中 "??" 行数
     modified_count    其余 porcelain 行数（tracked 侧改动/暂存）
     porcelain_total   porcelain 总行数（对账冗余字段）
+    tracked_deleted_count   工作区侧缺失（porcelain XY 第二位='D'）的件数——蒸发案的
+                    判据特征（HEAD/index 在册而盘上消失）。LANE-EV 追加：聚合计数会
+                    被同期 commit/暂存变动完全抵消（2026-09-25 实测：40 件整目录蒸发
+                    在 modified_count 上只表现为 ±2 噪声），无 per-path 见证就锁不了窗口。
+    tracked_deleted_paths   上述缺失件的路径清单（posix 相对路径，封顶
+                    MAX_DELETED_PATHS_IN_RECORD 条，超出置 truncated 标志）
+    tracked_deleted_truncated  清单是否被截断
+    tracked_deleted_sig     缺失集合的 sha1（同集合相邻帧去重/对账用，不受封顶影响）
     stash_list    git stash list 行数（stash 消失本身也是线索，10 号文 §⑤）
     stash_entries git stash list 原始行（抢救链证据）
     reflog_tail_1 git reflog -1 原始行（短哈希+主题）
@@ -45,12 +56,14 @@ Usage:
     python scripts/governance/evaporation_blackbox.py                 # 快照一次（schtasks 载体）
     python scripts/governance/evaporation_blackbox.py --restore "2026-09-25 03:47"   # 打印当时状态清单+丢失窗口
     python scripts/governance/evaporation_blackbox.py --restore 2026-09-25T03:47:30  # 同上（ISO 亦可）
+    python scripts/governance/evaporation_blackbox.py --lock-window docs/_working/xxx_campaign   # 分钟级现场区间
 """
 
 from __future__ import annotations
 
 # noqa: m11-perm-manual-legitimate  M11豁免: ZephyrAlpha_EvaporationBlackbox 计划任务每 5 分钟系统级调度触发，非人工手动常驻
 import argparse
+import hashlib
 import json
 import os
 import subprocess
@@ -96,6 +109,11 @@ def _threshold_or(key: str, default: int) -> int:
 
 GIT_TIMEOUT_SEC = _threshold_or("git_operations.evaporation_blackbox_git_timeout_seconds", 30)
 
+#: per-path 删除见证清单封顶（防单帧膨胀——整仓蒸发时也只留前 N 条 + 截断标志 + 全集 sha）。
+#: 常量而非阈值：记录体积上限属本模块输出格式，不承载任何判据口径（不进 thresholds SSoT，
+#: 免得与在飞车道同册互踩）。
+MAX_DELETED_PATHS_IN_RECORD = 200
+
 # --restore 接受的时刻格式（均按本地时区解读；秒/时区缺省时向下兼容）
 _RESTORE_TS_FORMATS: tuple[str, ...] = (
     "%Y-%m-%dT%H:%M:%S%z",
@@ -128,6 +146,25 @@ def _git_ok(args: list[str]) -> str:
     return (proc.stdout or "").strip()
 
 
+def _porcelain_worktree_deleted(lines: list[str]) -> list[str]:
+    """从 porcelain 行提取"工作区侧缺失"件（XY 第二位='D'，含 ` D`/`AD`/`MD`）。
+
+    LANE-EV 取证实证：蒸发案的判据特征正是"HEAD/index 在册而盘上消失"，而
+    untracked/modified 聚合计数会被同期 commit·暂存变动完全抵消（2026-09-25 案例
+    40 件整目录蒸发在 modified_count 上只是 ±2 噪声）——所以见证必须落到路径面。
+    重命名行 `R  old -> new` 取 new；带引号的怪名去引号；封顶由调用方处理。
+    """
+    out: list[str] = []
+    for ln in lines:
+        if len(ln) < 4 or ln[1] != "D":
+            continue
+        path = ln[3:].strip()
+        if " -> " in path:
+            path = path.split(" -> ", 1)[1]
+        out.append(path.strip('"').replace("\\", "/"))
+    return out
+
+
 def _snapshot() -> dict[str, Any]:
     """构建一行快照记录。任何单字段 git 失败都降级为该字段 error 说明，绝不中断。"""
     now = datetime.now(UTC)
@@ -149,10 +186,22 @@ def _snapshot() -> dict[str, Any]:
     except Exception as exc:  # noqa: BLE001  快照逐字段取证 fail-soft：单腿失败降级记 _error 字段，禁盲抛中断值班
         record["index_tree_error"] = str(exc)
     try:
-        lines = [ln for ln in _git_ok(["status", "--porcelain"]).splitlines() if ln.strip()]
+        # 注意：不能用 _git_ok()——它 .strip() 会吃掉 porcelain 首行的前导空格，
+        # 而 XY 状态位就靠首字符（' D'/'??'）判定：首行恰为缺失/未跟踪件时旧实现
+        # 会把它错归为 modified（LANE-EV 单测实证，tracked_deleted_count 恒 0）。
+        proc = _git(["status", "--porcelain"])
+        if proc.returncode != 0:
+            raise RuntimeError(f"git status --porcelain rc={proc.returncode}: {(proc.stderr or '').strip()[:200]}")
+        lines = [ln for ln in (proc.stdout or "").splitlines() if ln.strip()]
         record["untracked_count"] = sum(1 for ln in lines if ln.startswith("??"))
         record["modified_count"] = len(lines) - record["untracked_count"]
         record["porcelain_total"] = len(lines)
+        # per-path 删除见证（LANE-EV，15 号文 EV-01 验收行"精确定位分钟级现场"的兑现面）
+        deleted = sorted(_porcelain_worktree_deleted(lines))
+        record["tracked_deleted_count"] = len(deleted)
+        record["tracked_deleted_paths"] = deleted[:MAX_DELETED_PATHS_IN_RECORD]
+        record["tracked_deleted_truncated"] = len(deleted) > MAX_DELETED_PATHS_IN_RECORD
+        record["tracked_deleted_sig"] = hashlib.sha1("\n".join(deleted).encode("utf-8")).hexdigest()[:12]
     except Exception as exc:  # noqa: BLE001  快照逐字段取证 fail-soft：单腿失败降级记 _error 字段，禁盲抛中断值班
         record["untracked_count_error"] = str(exc)
     try:
@@ -331,16 +380,76 @@ def _rec_ts(rec: dict[str, Any]) -> datetime | None:
         return None
 
 
-def main(argv: list[str] | None = None) -> int:
-    ensure_utf8_stdout()
-    parser = argparse.ArgumentParser(description="主仓蒸发黑匣子：只读快照 + 人工取证视图（15 号文 EV-01）")
+def _lock_window(records: list[dict[str, Any]], path_substr: str) -> list[str]:
+    """per-path 现场锁定：对命中 path_substr 的每件，报"存在→缺失"与"缺失→回填"区间。
+
+    语义（15 号文 EV-01 验收行"蒸发再发时可精确定位分钟级现场"）：
+      - 某帧 `tracked_deleted_paths` 含该件 = 该帧时刻盘上缺失；
+      - 不含 = 视为在位（clean 件不进 porcelain，故只能这样推断，界外误差 ≤ 一个采样周期）；
+      - 区间用相邻两帧时刻夹逼，即"删除发生在 (上一帧, 本帧] 内"。
+    旧帧（无 per-path 字段）不参与状态判定，只以计数旁证，并在输出里声明。
+    """
+    hits = [str(p) for r in records for p in (r.get("tracked_deleted_paths") or []) if path_substr in str(p)]
+    paths = sorted(set(hits))
+    if not paths:
+        legacy = [r for r in records if "tracked_deleted_paths" not in r]
+        note = f"（{len(legacy)} 帧为无 per-path 见证的旧帧）" if legacy else ""
+        return [f"[lock-window] 黑匣子中没有匹配 {path_substr!r} 的缺失见证{note}"]
+    lines: list[str] = []
+    for p in paths:
+        prev_ts: str | None = None
+        prev_state: bool | None = None  # True=缺失
+        for r in records:
+            if "tracked_deleted_paths" not in r:
+                continue
+            state = p in (r.get("tracked_deleted_paths") or [])
+            ts = str(r.get("ts_local") or r.get("ts") or "?")
+            if prev_state is None:
+                lines.append(f"[lock-window] {p} 首帧状态={'缺失' if state else '在位'} @{ts}")
+            elif state != prev_state:
+                kind = "存在→缺失（蒸发现场）" if state else "缺失→回填"
+                lines.append(
+                    f"[lock-window] {p} {kind}: 区间 ({prev_ts} , {ts}]  "
+                    f"UTC={r.get('ts', '?')} head={str(r.get('head_sha', '?'))[:10]}"
+                )
+            prev_ts, prev_state = ts, state
+        lines.append(f"[lock-window] {p} 终态={'缺失' if prev_state else '在位'}")
+    return lines
+
+
+def _print_lock_window(path_substr: str) -> int:
+    records = _load_records()
+    if not records:
+        print(f"[blackbox] 黑匣子不存在或为空: {BLACKBOX_FILE}")
+        return 1
+    for line in _lock_window(records, path_substr):
+        print(line)
+    return 0
+
+
+def _add_args(parser: argparse.ArgumentParser) -> None:
+    """参数面板（独立成函数便于测试装配，CLI 语义不变）。"""
     parser.add_argument(
         "--restore", metavar="TS", help="打印该时刻（含其前最近一次快照）的状态清单与丢失窗口，不自动恢复"
     )
+    parser.add_argument(
+        "--lock-window",
+        metavar="PATH_SUBSTR",
+        dest="lock_window",
+        help="按路径片段锁定'存在→缺失'分钟级区间（只读取证视图，不做任何恢复动作）",
+    )
+
+
+def main(argv: list[str] | None = None) -> int:
+    ensure_utf8_stdout()
+    parser = argparse.ArgumentParser(description="主仓蒸发黑匣子：只读快照 + 人工取证视图（15 号文 EV-01）")
+    _add_args(parser)
     args = parser.parse_args(argv)
 
     if args.restore:
         return _print_restore(args.restore)
+    if args.lock_window:
+        return _print_lock_window(args.lock_window)
 
     try:
         record = _snapshot()

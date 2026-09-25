@@ -1,0 +1,27 @@
+# ALGO_FLOW 外部真源——tools_pkg（_domain_ai_layer 域，真源 src/zephyr/ai_layer/tools/__init__.py）
+# 2026-09-25 P1 收官批 ALGO-FLOW-LINK 合规出仓：external 锚加载走 parse_algo_flow 管线；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: zephyr.ai_layer.tools
+source_of_truth: src/zephyr/ai_layer/tools/__init__.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 调用方注入（registry/事件/CLI）
+    #   fields: 见各函数签名（fail-closed 校验）
+    #   code: 模块公共入口
+    # 层: 算法
+    # - id: A1
+    #   name_zh: AI 层工具包入口：声明命名空间与公共重导出面（inventory_genera
+    #   name_en: tools_pkg
+    #   intro: AI 层工具包入口：声明命名空间与公共重导出面（inventory_generator/scoring/suite/usage_stats）
+    #   desc: AI 层工具包入口：声明命名空间与公共重导出面（inventory_generator/scoring/suite/usage_stats）
+    # 层: 输出
+    # - id: O1
+    #   name: 结构化返回/事件落账
+    #   fields: dict/异常 fail-closed
+    #   code: return/raise 契约见源码
+    # [/ALGO_FLOW]
+    # 边: I1 --> A1 ; A1 --> O1

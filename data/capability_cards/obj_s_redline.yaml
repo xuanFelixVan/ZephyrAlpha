@@ -1,0 +1,34 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §obj_s_perimeter
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 渐进披露：L0=本卡一句话；L1=src/zephyr/ai_layer/redline/ 各模块 docstring；
+# L2=docs/_working/ai_layer_vision/OBJ_S_perimeter/DESIGN.md；L3=P1_construction_review.md 复审记录。
+module_id: MOD-INF-037
+capability_id: obj_s_redline
+category: obj_s_redline
+description: OBJ_S 红线与自由域机检面（九件）——负面清单 NL-1..6 编号层常量与注册 helper、AI 会话 env deny-list 白名单启动器、三台负面清单提交 gate（挂 GitCommitGateway）、own-diff 破坏性 DDL 静态扫描门禁、禁删清单生成器×2（删没删看真源是否失 dereference）、"不亏钱"双指标看板数据链（日运行成本×模拟盘回撤，任一越限自动降档）、SEV 四类安全事件聚合分级路由、自由域透明度周报生成器、负面清单年审立案包流水线；本包只产扫描/聚合/生成器/建议性质机检件，红线语义归 Owner（变更走 OBJ_R 四步流水线），零新刹车（复用 immutable_core/KillSwitch/五级交易熔断等原生闸）
+examples:
+- python -m pytest tests/ai_layer/redline/（77 用例，NL 六条编号/三台 gate/删除红线全覆盖）
+- docs/_working/ai_layer_vision/OBJ_S_perimeter/DESIGN.md §1（NL-1..6 清单语义真源，变更走 OBJ_R）
+input_schema:
+  properties: {}
+  type: object
+name: OBJ_S Redline Perimeter Pack
+output_schema:
+  properties: {}
+  type: object
+priority: P1
+registered_at: '2026-09-24T00:00:00+00:00'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- ai_layer
+- redline
+- OBJ_S
+- perimeter

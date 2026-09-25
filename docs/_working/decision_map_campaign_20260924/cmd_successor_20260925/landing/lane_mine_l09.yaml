@@ -1,0 +1,111 @@
+lane: LANE-MINE-L09
+session_id: st-qmine-20260925
+created: 2026-09-26
+note: >-
+  L09 复盘与监控环节 7 子块深挖落盘清单（只读挖掘 + 新建文档；零代码改动；零 git 操作）。
+  全程未触发/未停止/未新建任何 schtasks 计划任务（仅 schtasks //query 与 Get-ScheduledTask 只读取态）；
+  未跑全量测试、未起 GPU 作业、未杀进程；D:\zephyr_t1_backup\ 未触碰。
+  DB 访问全部只读：CH 经 zephyr.infrastructure.database_service.get_clickhouse_conn(role="reader")（宪法 §9.1），
+  sqlite 经 zephyr.shared.io.sqlite_factory.get_db_connection + zephyr.shared.io.paths.DB_PATH（禁裸连）。
+  本车道不施工：L09-C01（编排器收拢 蓝图版 vs 双轨转正）与 L09-C02（计划vs实际落库=不可逆点）只出裁定材料；
+  TRD-A04（盘前三实现治理）材料齐但随 L09-C01。
+  宪法 §9.3 偏差仅如实登记（S1/S6 册 §9.3 段），未自行改任何代码或排班。
+  待落清单交总筹统一登记 CREATE-GUARD creation_token 后再 commit（本车道禁 commit）。
+  净零声明：本袋 8 件全部为既有 09 号骨架/SKEL 的下钻证据文件，不新增规则/gate/脚本/配置册；
+  新立缺口全部以 L09-S<n>-G<m> 册内编号续号（31 条），未新建台账、未占 L09-C** 号段（该段沿用 SKEL §四）。
+files:
+  - docs/_working/decision_map_campaign_20260924/links/L09_review/_INDEX_MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L09_review/s1_daily_loop_orchestrator/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L09_review/s2_premarket_chain/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L09_review/s3_judgment_ledger_settlement/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L09_review/s4_daily_publication_and_decision_snapshot/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L09_review/s5_warroom_operations/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L09_review/s6_monitoring_automation/MINE.md
+  - docs/_working/decision_map_campaign_20260924/links/L09_review/s7_attribution_engine_and_performance_reports/MINE.md
+temp_artifacts_for_cleanup:
+  - .runtime/tmp/l09_mine_probe.py
+  - .runtime/tmp/l09_mine_probe2.py
+read_only_evidence_touched:
+  - schtasks //query（CSV + //xml 单件定义）与 PowerShell Get-ScheduledTask.State（50 项 Zephyr 族状态级实测，未变更）
+  - src/zephyr/data/config/schedule.yaml（cron: 槽计数=29）
+  - data/runtime/（disabled 标记文件存在性实扫：daily_loop_master.disabled ABSENT）
+  - .runtime/strategy_pipeline/last_audit.json（35 记号只读，未写）
+  - CH c1_market.judgment_*（4 表行数/列全集/回填率）· c1_backtest.decision_daily / sim_platform_journal / sim_attribution_daily · c1_market.kline_index max
+  - data/databases/governance.db → prediction_log（35 行分布）· attribution_results（0 行 + 列全集）
+  - docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml:20-22,961-1032
+  - config/trading_decision_map.yaml:3782-4146（TDM-F-C3 段）
+findings_summary:
+  daily_loop_power_verdict: >-
+    S9-1 逐跳通电判定（总筹指定主交付，见 s1 册 §②·主证据表）：9 跳中 7 跳已接电
+    （H0 数据就绪 / H2 盘中判定 / H3 收盘验证 / H4 结算 / H5 台账 / H6 下单(观察记录模式) / H7 日刊）、
+    1 跳覆盖未接电（H1 盘前 T 日 08:00-09:15 晨间窗：schedule.yaml 晨间槽全为数据槽、schtasks 晨间段无编排件）、
+    1 跳部分接电（H8 监控告警：产报面通电、消费面断）。
+    双轨均在产：事件链 16 钩子（pipeline_events.py:1026-1117，宿主 ZephyrAlpha_DataScheduler=Running）
+    + 总扳手 16 段（daily_loop_master_switch.py:337-368，dloop_post 16:45，schedule.yaml:249-253）。
+  skeleton_verdicts_overturned:
+    - "SKEL §S9-1⑥/§S9-6⑤『L09-C04/TRD-A01 决策链哨兵未落地』→ 已落地并在产（scripts/governance/decision_chain_sentinel.py + register ps1 + tests；schtasks Ready 下次 09-26 09:40，XML 实读）"
+    - "SKEL §S9-6 摘要『NightlySentiment 已禁用由 08:20 槽接管』→ 实测状态 Ready 且与 08:20 槽同时在排 ⇒ TRD-A03 升级为实证双通道"
+    - "SKEL §S9-6 摘要『C4Exam 与 FactoryLaneC 一次性两件禁用』→ 基件均 Ready 在排，禁用者是 _Full0916/_OneShot0915 派生件"
+    - "SKEL §S9-2『双实现治理』→ 三实现（增 MOD-PLAN-023 premarket_workflow_engine.py，全仓 grep 仅 3 命中=自身/test/error_code_registry，零生产装配方）"
+    - "SKEL §S9-4/§二『decision_daily 深史≈10 日量级』→ 72 行中 66 行是 09-16 单次批量，自然日频仅 6 行 / 6 个目标日"
+    - "SKEL §S9-5『warroom 第三任务本体=新增件未建』→ intraday_l1_tracker 已建在产（20 行/5 日、结算满填），证据与尾盘预测已在 payload(evidence/rest_of_day) ⇒ L09-C08 靶心改写"
+    - "config/trading_decision_map.yaml:3803『D50 三项已由 TDM-F-C3-01 承接落位』→ 证伪：该引擎方法集 brinson/factor/risk/degradation/crowding，slippage/decision_price/fill_price/TCA/trade_pnl/position_pnl 零命中 ⇒ LK-15 三欠账仍活"
+  cross_lane_hard_evidence: >-
+    09-25（周五，交易日）全链事件面停摆三源对拍：(a) .runtime/strategy_pipeline/last_audit.json 无任何
+    *:2026-09-25 记号（末批=regime/judgment_settle/warroom/pf_alloc 的 2026-09-24）；(b) kline_index
+    max(trade_date)=2026-09-24 ⇒ 事件链 fail-closed 正确停摆；(c) decision_daily 缺 09-25 目标行却存在
+    09-28 目标行（asof_data_date=09-24，ingest 2026-09-25T00:43 UTC）⇒ 09-25 这个交易日在决策台账上被整日跳过。
+    而唯一哨兵 decision_chain_sentinel 判据 last=max(trade_date)=09-28 > ref=09-25 ⇒ lag=0 静默，
+    其告警文件 .runtime/logs/decision_chain_alert.jsonl 实测 ABSENT（上线以来零触发）。
+    ⇒ 净结论：『链通电』≠『链每天通电』，当前无组件负责区分二者。该条为 L09-C01 收拢 + L09-S1-G1/S5-G1/S6-G1 的共用硬证据。
+  orchestrator_consolidation_material: >-
+    齐（S1 册 §⑤）。含：两版实现各自代码位置；当前谁在真跑=两条都在跑；合并技术路径四步（先写双轨对账声明
+    →二选一→TRD-A04 随节拍表→最后一步才摘触发面）；保留两条的运维代价 4 条（故障归因查两处/节拍表维护两份/
+    新增段易漏一处成有名无实假通道/Owner 无单一视图）；不可逆点=事件链摘钩当日全链停摆且节拍不可追溯、
+    T4 落库新增列难回退；附三条必答子问题（盘前三实现、cron 二次驱动 reconciler 是否保留、晨间窗挂哪条节拍）。
+    S5 册补：蓝图 T3（盘中修订）基座已存在且有历史实证（plan_revision 17 行，全在 2026-08-21）⇒ 工时按复活非新建估。
+    本车道未拍板、未施工。
+  l09_c03_dual_ledger_answer: >-
+    账 A=decision_daily（决策复盘，72 行/6 目标日/19 列/2 读侧/72-72 全 degraded=1）；
+    账 B=sim_platform_journal（平台日刊，16 行/12 列/三健康检 16-16 满填/0 读侧/MATURITY=experimental）。
+    5 条实测冲突：trade_date 前瞻 vs 回顾时间轴、只交易日 vs 按日历日（09-19/09-20 周末有行）、
+    只增修订 vs 幂等替换（09-24 双行）、production vs experimental、2 读侧 vs 0 读侧。
+    合流要动谁：引入 expected_trade_date 主轴 + 账 B 补读侧并入 warroom 同页 + 连绿判定件 + 账 B 转正判据。
+    并主张解除『L09-C02 后串行』误置——四步中三步不依赖 L09-C02。
+  trd_a06_alert_acceptance_line: >-
+    17 号文 TRD-A06/15 验收线（四条交易告警各有消费代码 + 各演练触发一次）实测 = 0/4 有消费代码、0/4 演练。
+    THD-TRD-001..004 全 status=design（登记册 :21-22 头注自认『代码未落』），四条 consumer 字段同指一个
+    未建件『trading 运行时监控（G2b/G5 接线点）』⇒ L09-C05 正确靶心=建这一个件，非建四个。
+    结构性根因单点=src/zephyr/reporting/alert_aggregator.py（MOD-RPT-030，件已存在、testing、全仓零 import）
+    ⇒ 本仓监控形态=很多探头 + 一条没有终点的告警总线。
+  constitution_9_3_deviation_registry: >-
+    仅登记未改：(1) close_verify/settle/warroom 三段——事件链钩子头注明文自证 §9.3 合规（不建 cron/Timer/sleep，
+    节拍由 task_completed 唤醒）却又被 dloop_post 16:45 计划任务二次驱动 = 真偏差候选，移交 L09-C01 必答；
+    (2) DecisionChainSentinel 走 schtasks 日频 = 不构成偏差（检测对象是事件的缺席，缺席无法事件唤醒，
+    同 data_supply_sentinel/catchup_guard 先例），登记为已论证豁免防后续车道误当整改项。
+  design_state_power_summary: "7/7 子块均已接电（含覆盖未接电子件）——本环节『心脏未装』旧判已彻底作废；真实病灶从『没装』转为『装了没装配 / 接了没消费』：S3 账未满、S4 账 B 零读侧、S6 死总线、S7 归因表 0 行"
+  new_gap_ids: >-
+    L09-S1-G1..G3（3）／L09-S2-G1..G3（3）／L09-S3-G1..G5（5）／L09-S4-G1..G4（4）／
+    L09-S5-G1..G5（5）／L09-S6-G1..G6（6）／L09-S7-G1..G5（5）＝ 共 31 条新立，全部册内续号不占 L09-C** 段。
+    P0 候选 3 条：L09-S3-G1（unresolvable 显式化，不改则一切回填率含本批自给数字均带歧义）／
+    L09-S6-G1（接上 alert_aggregator，零新件纯接线、多路复用）／（随其）L09-S6-G2+G3 统一告警 schema + failures 覆写改追加。
+    P1 群 6 条：S1-G1、S3-C06、S4-G1、S5-G1、S7-G1、S7-G3。
+    联动不另立：S3-G3（样本饿→处方在 S2/L09-C01）、S6-G6（=S1-G1 同根）、S5-G3（=S4 时间轴冲突同源）。
+  pending_owner_adjudication: >-
+    L09-C01（编排器收拢 a 蓝图版完全体 / b 双轨转正）＝ Owner 一句话即解；
+    连带 L09-C09（盘前三实现复用/退役随批）、TRD-A04 后半（晨间窗施工或显式豁免，当前既未施工也未豁免=默许未接电）。
+    本车道未伪造任何 Owner 署名、未编造引用。
+  external_benchmark_status: >-
+    已在 7 份 MINE + _INDEX 全部落盘后补做一轮最小统一对表（3 次检索，2026-09-26），结果按条目定级并写入
+    _INDEX_MINE.md §五·未穷尽第 1 条：Grafana Apache-2.0→AGPLv3（2 独立源共证，但"2021-04"时点未本批复核）／
+    Brinson 三效应为正典（4 独立源共证，支持 S7『欠装配不欠算法』）／burn-rate 多窗告警为业界惯例
+    （3 独立源共证，支持 S6 §9.3 判语与 S1-G1『监控监控本身』）。
+    仍挂账 3 项：data-driven DAG（Airflow dataset triggers / Dagster assets）未检；
+    Brinson & Fachler 1985 JPM 与 BHB 1986 FAJ 仅获二手转述、无一手源；Grafana 时点。
+    新增线索但本批未据此改判：Goldman Sachs gs-quant 亦实现 Brinson —— 许可条款未查，查清前禁止引为依赖。
+    各册 §⑥ 原"未做外部对表"标注以 _INDEX 该条为准做增量覆盖，不回改各册（保留单册自足性）。
+  sealing_verdict: >-
+    本环节不转 SEALED，但硬阻塞已由两条收敛为一条：外部对表最小轮已完成（降为部分完成 + 3 项挂账），
+    唯一硬阻塞=L09-C01 待 Owner 裁定回来后补录（SKEL §六 封矿条件原文约定）。
+    七子块在『仓内实证』维度均已各自封口。
+    另：本批未发现任何以『现状规模小』为由的封矿申请；S4/S5/S7 三册明文拒绝以行数少封矿。

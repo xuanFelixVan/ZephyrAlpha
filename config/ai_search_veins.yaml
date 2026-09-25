@@ -1,0 +1,416 @@
+schema_version: '1.0'
+doc_type: register
+registry_id: REG-AIVEIN-001
+title: AI 层 L1 搜索矿脉清单（骨架即地图派生，生成器产出禁手改）
+status: active
+truth_source: docs/_working/ai_layer_vision/L1_perceive/DESIGN.md §2.5
+derived_from:
+  map: config\strategy_production_map.yaml (schema 0.2)
+  segment_cards: docs\_working\ai_layer_vision/{L*,OBJ_*}/DESIGN.md
+  domain_axis: docs\01_policies_and_standards\_registry\catalogs\functional_domain_registry.yaml
+total_veins: 27
+active_veins: 27
+archived_veins: 0
+veins:
+- vein_id: VEIN-AI-L1
+  vein_family: ai_layer
+  name_zh: L1 感知段真源设计稿 v1——外扫+内监（进化循环的点火器）
+  keyword_seed: L1 感知段真源设计稿 v1——外扫+内监（进化循环的点火器）
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#L1_perceive/DESIGN.md
+- vein_id: VEIN-AI-L2
+  vein_family: ai_layer
+  name_zh: L2 收集段——原材料库 真源设计稿 v1
+  keyword_seed: L2 收集段——原材料库 真源设计稿 v1
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#L2_intake_library/DESIGN.md
+- vein_id: VEIN-AI-L3
+  vein_family: ai_layer
+  name_zh: L3 清洗段——强模型消化 真源设计稿 v1
+  keyword_seed: L3 清洗段——强模型消化 真源设计稿 v1
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#L3_cleaning/DESIGN.md
+- vein_id: VEIN-AI-L4
+  vein_family: ai_layer
+  name_zh: L4 对比段——通用对比器真源设计稿 v1
+  keyword_seed: L4 对比段——通用对比器真源设计稿 v1
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#L4_compare/DESIGN.md
+- vein_id: VEIN-AI-L5
+  vein_family: ai_layer
+  name_zh: L5 排产段——门闸与派工编排真源设计稿 v1
+  keyword_seed: L5 排产段——门闸与派工编排真源设计稿 v1
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#L5_schedule_gate/DESIGN.md
+- vein_id: VEIN-AI-L6
+  vein_family: ai_layer
+  name_zh: L6 切换段——真源设计稿（模块级影子运行框架第一优先）
+  keyword_seed: L6 切换段——真源设计稿（模块级影子运行框架第一优先）
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#L6_ab_switch/DESIGN.md
+- vein_id: VEIN-AI-L7
+  vein_family: ai_layer
+  name_zh: L7 传承段——回流闭环 真源设计稿 v1
+  keyword_seed: L7 传承段——回流闭环 真源设计稿 v1
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#L7_heredity/DESIGN.md
+- vein_id: VEIN-AI-OBJ
+  vein_family: ai_layer
+  name_zh: OBJ_M 模型对象线——真源设计稿 v1（M1-M5 五件+接线图）
+  keyword_seed: OBJ_M 模型对象线——真源设计稿 v1（M1-M5 五件+接线图）
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#OBJ_M_models/DESIGN.md
+- vein_id: VEIN-AI-OBJ
+  vein_family: ai_layer
+  name_zh: OBJ_R 标准与规则线——真源设计稿（历史重放器第一优先）
+  keyword_seed: OBJ_R 标准与规则线——真源设计稿（历史重放器第一优先）
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#OBJ_R_rules_standards/DESIGN.md
+- vein_id: VEIN-AI-OBJ
+  vein_family: ai_layer
+  name_zh: OBJ_S 红线与自由域——真源设计稿 v1（负面清单机检化+删除分级+安全度量+双指标看板）
+  keyword_seed: OBJ_S 红线与自由域——真源设计稿 v1（负面清单机检化+删除分级+安全度量+双指标看板）
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#OBJ_S_perimeter/DESIGN.md
+- vein_id: VEIN-AI-OBJ
+  vein_family: ai_layer
+  name_zh: OBJ_T 工具对象线——真源设计稿 v1（T1-T6 六件+接线图）
+  keyword_seed: OBJ_T 工具对象线——真源设计稿 v1（T1-T6 六件+接线图）
+  note_excerpt: ''
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: ai_layer_segment_card#OBJ_T_tools/DESIGN.md
+- vein_id: VEIN-FAC-E0
+  vein_family: E0
+  name_zh: 算力调度心跳
+  keyword_seed: 现在能不能跑重算力任务？该跑哪条车道的活？
+  note_excerpt: '交易日白天只许轻任务（监控巡检），重算力（挖掘训练/批测/遗传优化）全排收盘后和休市日； trade_calendar '
+  module_ref: MOD-BT-151
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E0
+- vein_id: VEIN-FAC-E1
+  vein_family: E1
+  name_zh: 想法进货（六车道）
+  keyword_seed: 下一批策略想法从哪条车道进来？每条车道进什么货？
+  note_excerpt: 多车道并发进货（图节点 A-E+G；F=F06 网格仅代码车道，节点补挂=2.4 跨线欠账）， 所有货统一卸到策略入库台
+  module_ref: MOD-BT-154
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E1
+- vein_id: VEIN-FAC-E1A
+  vein_family: E1
+  name_zh: 车道A-社区货源
+  keyword_seed: 社区里有哪些新策略值得收？
+  note_excerpt: 聚宽/掘金等社区策略爬取与入库（C1 人工版已收 597 条）；扩容爬虫候选 Scrapling
+  module_ref: MOD-BT-035
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E1A
+- vein_id: VEIN-FAC-E1B
+  vein_family: E1
+  name_zh: 车道B-AI生成
+  keyword_seed: 自然语言能生成哪些新策略？
+  note_excerpt: 自然语言→策略生成，量产思路；货最便宜也最杂，靠 E2 预审把关。 注意：业界最强模型 NL→可执行策略单轮通过率仅 7
+  module_ref: MOD-BT-150
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E1B
+- vein_id: VEIN-FAC-E1C
+  vein_family: E1
+  name_zh: 车道C-公式挖掘机
+  keyword_seed: 公式空间里还有哪些未挖的因子组合？
+  note_excerpt: 强化学习拼公式（AlphaGen）/遗传规划（gplearn）；受控搜索空间防乱写代码； 组合协同思想=不追求单因子好看
+  module_ref: MOD-BT-155
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E1C
+- vein_id: VEIN-FAC-E1D
+  vein_family: E1
+  name_zh: 车道D-产业链三高
+  keyword_seed: 产业链图谱上哪些咽喉环节符合三高特征？
+  note_excerpt: BOM 拆解找高增长/高壁垒/高利润环节；ig_fact 供应链图谱为独家数据资产； 学术验证=图谱多跳结构比只用直接关
+  module_ref: MOD-BT-090
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E1D
+- vein_id: VEIN-FAC-E1E
+  vein_family: E1
+  name_zh: 车道E-模型基线
+  keyword_seed: 分布预测/机器学习这条线有没有肉？
+  note_excerpt: Kronos 论文本身做了 A 股实证（多头组合 AER/IR 跑赢 25 基线，官方 Qlib 微调管线）；深化方向=
+  module_ref: MOD-BT-084
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E1E
+- vein_id: VEIN-FAC-E1G
+  vein_family: E1
+  name_zh: 车道G-全网搜索进货
+  keyword_seed: 胃（搜索设备）消化出的情报里有哪些可检验策略假说值得进货？
+  note_excerpt: ⑥号车道（骨架 §4 P1"从胃点菜"）——只消化 L3 胃的收件箱摘要 （docs/_working/automati
+  module_ref: MOD-AUTO-E1G-001
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E1G
+- vein_id: VEIN-FAC-E2
+  vein_family: E2
+  name_zh: 假说预审逻辑门
+  keyword_seed: 这个想法在经济学上讲不讲得通？
+  note_excerpt: 防噪音总闸：讲不通的想法在此死，不花回测算力。前沿互证=FaVOR 框架 （回测前机制验证：假说拆成可观测市场条件+分布
+  module_ref: MOD-BT-091
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E2
+- vein_id: VEIN-FAC-E3
+  vein_family: E3
+  name_zh: 构造与翻译
+  keyword_seed: 外来策略怎么变成咱们的标准件？新想法怎么变成可执行代码？
+  note_excerpt: C3 翻译（原文→权重函数+D1-D5 差异声明+因子拆解）——模板已定型、 35 条人工翻译=验收集；QuantCod
+  module_ref: MOD-BT-041..075
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E3
+- vein_id: VEIN-FAC-E4
+  vein_family: E4
+  name_zh: 考试咽喉
+  keyword_seed: 这策略在没见过的考卷上还活着吗？
+  note_excerpt: 全厂唯一判定权（运动员不兼任裁判）。IS 2020-2023 冻结窗口+冻结土规成本 （2.5bp+10bp+5bp）→
+  module_ref: MOD-BT-039
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E4
+- vein_id: VEIN-FAC-E5
+  vein_family: E5
+  name_zh: 协同去重
+  keyword_seed: 单因子好看没用——加进池子能涨分吗？
+  note_excerpt: 正交化四法对照后选**对称正交化**（保可解释性最佳且不依赖收益数据， 天风金工）→对动量/波动/流动性基准因子正交化后
+  module_ref: MOD-BT-086
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E5
+- vein_id: VEIN-FAC-E6
+  vein_family: E6
+  name_zh: 入库监控
+  keyword_seed: 入库的策略还活着吗？为什么衰减了？
+  note_excerpt: 台账只增+判死行追加；oos_years_decay≥0.5 判存疑；decay_cause 枚举 （crowding/
+  module_ref: MOD-BT-078
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E6
+- vein_id: VEIN-FAC-E7
+  vein_family: E7
+  name_zh: 模拟盘前哨
+  keyword_seed: 过了考试的策略，用真行情跑还灵吗？
+  note_excerpt: registry 幸存者以 live 数据跑模拟盘 N 周，逐日对账预测 vs 实际 （分布校准的实盘版）+滑点/容量实
+  module_ref: ''
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E7
+- vein_id: VEIN-FAC-E8
+  vein_family: E8
+  name_zh: 组装与资金分配
+  keyword_seed: 资金怎么在各策略 sleeve 之间分配和轮动？
+  note_excerpt: 多策略 sleeve 装配=Owner 既定"多策略赛马"方针的赛道本体；regime 切换 选 sleeve（Mark
+  module_ref: MOD-PA-002..024
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E8
+- vein_id: VEIN-FAC-E9
+  vein_family: E9
+  name_zh: 实盘归因
+  keyword_seed: 实盘赚的钱/亏的钱，到底来自哪里？
+  note_excerpt: 影子组合工作流（实盘账本旁跑信号复刻影子组合做对照，可复用 C4 引擎）+ IS 分解（Perold 1988：延迟/执
+  module_ref: MOD-PF-007
+  priority: 1.0
+  status: active
+  derived_from: strategy_production_map#FAC-E9
+domain_axis:
+- domain: D_ALT_DATA
+  name_zh: 另类数据
+- domain: D_ARCHIVE_SCRIPTS
+  name_zh: 归档脚本
+- domain: D_ARCH_GUARD
+  name_zh: 架构守护脚本
+- domain: D_ARCH_SCRIPTS
+  name_zh: 架构治理脚本
+- domain: D_ASHARE_SIGNAL
+  name_zh: A股特色信号
+- domain: D_AUDITTEST
+  name_zh: 审计测试套件
+- domain: D_AUTONOMY_CORE
+  name_zh: 自治核心
+- domain: D_AUTONOMY_PERM
+  name_zh: 自治保护
+- domain: D_BACKTEST
+  name_zh: 回测
+- domain: D_CODE_SCRIPTS
+  name_zh: 代码质量脚本
+- domain: D_COMPLIANCE
+  name_zh: 合规
+- domain: D_COMPLIANCE_SCRIPTS
+  name_zh: 合规治理脚本
+- domain: D_CONTRACTS
+  name_zh: 共享契约
+- domain: D_CROSS_ASSET
+  name_zh: 跨资产
+- domain: D_DATA
+  name_zh: 数据接入层
+- domain: D_DATA_ENG
+  name_zh: 数据工程
+- domain: D_DATA_GOV
+  name_zh: 数据治理
+- domain: D_DATA_SCRIPTS
+  name_zh: 元数据治理脚本
+- domain: D_DATA_SEC
+  name_zh: 数据安全与契约
+- domain: D_DIGITAL_TWIN
+  name_zh: 数字孪生
+- domain: D_EXECUTION
+  name_zh: 执行
+- domain: D_EXEC_SIM
+  name_zh: 执行仿真
+- domain: D_EX_CORE
+  name_zh: 执行核心
+- domain: D_EX_SOR
+  name_zh: 执行路由
+- domain: D_FACTOR
+  name_zh: 因子
+- domain: D_FBL_DETECTORS
+  name_zh: 反馈检测器
+- domain: D_FBL_DIAGNOSERS
+  name_zh: 反馈诊断器
+- domain: D_FBL_VERIFICATION
+  name_zh: 反馈验证
+- domain: D_FEEDBACK_LOOP
+  name_zh: 反馈循环引擎
+- domain: D_FRONTEND
+  name_zh: 前端
+- domain: D_FUNDAMENTAL_SIGNAL
+  name_zh: 基本面信号
+- domain: D_GOVERNANCE
+  name_zh: 生命周期管理
+- domain: D_GOV_AUDIT
+  name_zh: 审计追踪
+- domain: D_GOV_CODE_QUALITY
+  name_zh: 代码质量治理
+- domain: D_GOV_DOCS
+  name_zh: 架构文档治理
+- domain: D_GOV_DRIFT
+  name_zh: 漂移检测
+- domain: D_GOV_ENFORCEMENT
+  name_zh: 规则执行
+- domain: D_GOV_OPS_RESILIENCE
+  name_zh: 运维弹性治理
+- domain: D_GOV_REPAIR
+  name_zh: 治理修复
+- domain: D_GOV_RULE
+  name_zh: 规则治理
+- domain: D_GOV_SCRIPTS
+  name_zh: 脚本治理
+- domain: D_INFRASTRUCTURE
+  name_zh: 跨层契约基础设施
+- domain: D_INFRA_A2A
+  name_zh: A2A通信
+- domain: D_INFRA_OPS
+  name_zh: 基础设施运维
+- domain: D_INFRA_RECOVERY
+  name_zh: 回滚恢复
+- domain: D_INFRA_RUNTIME
+  name_zh: 运行时集成
+- domain: D_INFRA_TELEMETRY
+  name_zh: 可观测性
+- domain: D_INTEGRATION
+  name_zh: 管线路由
+- domain: D_INTEGRATION_GATEWAY
+  name_zh: 集成网关
+- domain: D_INTELLIGENCE
+  name_zh: 上下文管理
+- domain: D_KNOWLEDGE
+  name_zh: 知识管理
+- domain: D_META_SCRIPTS
+  name_zh: 元治理脚本
+- domain: D_MKT_DATA
+  name_zh: 行情数据
+- domain: D_ML_SERVE
+  name_zh: 推理
+- domain: D_ML_TRAIN
+  name_zh: 训练
+- domain: D_OPS
+  name_zh: 反馈循环
+- domain: D_ORCHESTRATOR
+  name_zh: 代理编排器
+- domain: D_ORDER
+  name_zh: 订单
+- domain: D_PF_ALLOC
+  name_zh: 组合分配
+- domain: D_PF_CORE
+  name_zh: 组合核心
+- domain: D_PLAN
+  name_zh: 预案引擎
+- domain: D_PORTFOLIO
+  name_zh: 持仓
+- domain: D_POSITION
+  name_zh: 仓位管理
+- domain: D_REGIME
+  name_zh: 市场状态
+- domain: D_REPORTING
+  name_zh: 报告
+- domain: D_RESEARCH
+  name_zh: 研究域
+- domain: D_RISK
+  name_zh: 风控
+- domain: D_SECURITY
+  name_zh: 对抗验证
+- domain: D_SECURITY_LLM
+  name_zh: LLM防御
+- domain: D_SEC_SCRIPTS
+  name_zh: 安全治理脚本
+- domain: D_SELL_DECISION
+  name_zh: 卖出决策
+- domain: D_SHARED
+  name_zh: 共享服务
+- domain: D_SIGLEGACY
+  name_zh: 信号遗留设计态
+- domain: D_SIGNAL
+  name_zh: 信号
+- domain: D_SIGQC
+  name_zh: 信号质量控制
+- domain: D_SIMULATION
+  name_zh: 仿真
+- domain: D_STRUCT_SCRIPTS
+  name_zh: 结构治理脚本
+- domain: D_TEST
+  name_zh: 测试占位域
+- domain: D_TRADING
+  name_zh: 交易运营

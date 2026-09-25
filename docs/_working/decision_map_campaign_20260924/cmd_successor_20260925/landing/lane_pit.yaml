@@ -1,0 +1,92 @@
+lane: pit
+session_id: st-qmine-20260925
+dossier: docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/PIT_closed_book_and_dsr.md
+note: >
+  LANE-PIT 两件统计完整性修复（tick 面闭卷闸 + 做T 族入 DSR 分母），全程禁 git/禁
+  commit_queue/禁 qoder_cron，落地经 LANE-LAND 单出口。落地随批前置义务（不可漏）：
+  (1) CREATE-GUARD：新建 .py 一件 `src/zephyr/backtest/core/closed_book_gate.py`
+      与本 landing .yaml 需登记 creation_token（内收声明=替代关系：无被替件，
+      系在既有 enforce_closed_book 语义下补 tick 读口执行件；判据真源未新增）——
+      `python scripts/governance/d3_metadata/batch_creation_tokens.py --merge-evaluation
+      "tick 研究读口闭卷闸：复用既有派生切点真源，不新建常数不新建登记面；替代=无，
+      合并候选=scripts 侧 8 处切点字面量（另车道）"`；
+      tests/ 为豁免区（两新测试件无需 token）；docs/_working 是否豁免以门禁实测定性为准
+      （同 lane_auto.yaml 口径，勿猜）。
+  (2) 新建 .py 大白话简介：随本件 entries: 段执行
+      `python scripts/governance/d3_metadata/add_module_translation.py ...`
+      （TRANSLATION-COVERAGE gate 拦截项）。
+  (3) TDM/ALGO-NOTE-SYNC 实测口径：`grep -n "n_trial_ledger|ch_tick_replay|ch_tick_provider"
+      config/trading_decision_map.yaml` 零命中 ⇒ 三件被改实现文件均无 TDM 节点 module_ref
+      指向，本批按判据体不触发 algo_note_zh 硬拦；但新模块含判定逻辑，宜补
+      `docs/03_modules/_domain_backtest/algo_flow/closed_book_gate.yaml`
+      （现仅有 tick_replay.yaml，无 n_trial_ledger/closed_book_gate），由落地批按规范执行，
+      勿由车道自作主张改 TDM 总包面。
+  (4) 文件改名=无；新增 .py ⇒ 落地批须
+      `python scripts/governance/d5_architecture/generate_project_depgraph.py --force`
+      重建依赖图（RENAME-DEPGRAPH-SYNC/RULE-DEPGRAPH）。
+  (5) 账本落地动作（数据写，非代码）：
+      `python -c "from zephyr.backtest.core.n_trial_ledger import TrialLedger as T;
+      print(T().sync_screen_counts())"` —— 该 sync 会向
+      `docs/01_policies_and_standards/_registry/catalogs/trial_ledger_registry.yaml`
+      以 CAS 追加 1 条 t0 batch_records（当前实跑增量=+300，n_trials 20632→20932）。
+      做T r01 全量跑（271 批）在飞且属他车道资产：本车道未跑 sync、未动该册、未读生产库
+      之外任何写路径；sync 时机须与 L05 全量收尾同窗（案卷 §2.4 后半程分母偏松的风险）。
+      重算历史 DSR 存量走 `python scripts/backtest/dsr_recalc_backfill.py`（A3 件，本车道未跑）。
+  (6) 待落文件勿加外部条目：主区 index 是多会话混合池，本清单所列即本车道全部改动面。
+  (7) 交总筹裁三件见案卷 §4（sync 时机；scripts 侧切点字面量统一改派生；
+      类 6 重算后翻判件的复核程序）。
+files:
+  - src/zephyr/backtest/core/closed_book_gate.py
+  - src/zephyr/backtest/implementations/ch_tick_replay.py
+  - src/zephyr/governance/data_governance/ch_tick_provider.py
+  - src/zephyr/backtest/core/n_trial_ledger.py
+  - scripts/run_backtest.py
+  - tests/backtest/test_closed_book_tick_gate.py
+  - tests/backtest/test_n_trial_ledger_t0_family.py
+  - tests/backtest/test_n_trial_ledger.py
+  - tests/zephyr/backtest/test_ch_tick_replay.py
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/PIT_closed_book_and_dsr.md
+  - docs/_working/decision_map_campaign_20260924/cmd_successor_20260925/landing/lane_pit.yaml
+entries:
+  - module_path: src/zephyr/backtest/core/closed_book_gate.py
+    domain_id: D_BACKTEST
+    name_zh: 闭卷读取闸
+    name_en: Closed Book Read Gate
+    desc_zh: 研究/回测数据面的前视泄露 fail-closed 执行件（LANE-PIT 件一）：切点由
+      validation_method_registry.yaml 的 holdout_months 与 runner.ValidationConfig.finalized_at
+      经 holdout_cutoff 派生（本件禁落切点常数，真源缺位即 ClosedBookConfigError，禁放宽为全窗可读）；
+      enforce_closed_book_read 在查库之前判定——研究态 end>切点抛 ClosedBookViolation，
+      闭卷考试态必须显式 exam_ticket 且同批 CAS 追加一行审计到
+      data/backtest_artifacts/closed_book_exam_audit.jsonl，缺工单同样拒。消费方=
+      ch_tick_replay.fetch_historical 与 ChTickProvider.fetch_historical 两个 tick 统一读口。
+    desc_en: Fail-closed point-in-time gate for research/backtest tick reads. The holdout cutoff is
+      derived from the validation discipline registry plus the finalization anchor (no new constant),
+      reads whose window ends past it are rejected before any SQL, and an explicit closed-book exam
+      ticket is required to pass, which simultaneously appends an immutable audit line.
+    plain_zh: 考前试卷的封条检查员。任何人想调秒级行情做研究，先在打开柜子之前检查日期：
+      越过考试起点就当场拒绝，一行数据都不会被取出；确实是官方安排的闭卷考试，必须报工单号，
+      放行同时在本子上记一笔（谁、哪张卷、哪天到哪天），没工单照样不让开柜。
+  - module_path: tests/backtest/test_closed_book_tick_gate.py
+    domain_id: D_BACKTEST
+    name_zh: 闭卷读取闸证尺测试
+    name_en: Closed Book Read Gate Proof Tests
+    desc_zh: 件一证尺（红绿双证，CH 交互全 mock）：切点派生与"源码禁字面量"自证、真源缺位
+      fail-closed、两读口研究态拦截且 SQL 执行次数=0、考试态放行并落审计、缺工单拒、
+      切点当日边界放行/次日拦、在窗内正常读。零写生产 data/。
+    desc_en: Red/green proof suite for the tick closed-book gate with mocked ClickHouse.
+    plain_zh: 检查封条检查员的考卷：偷看要当场拦住、报了工单才放行且留记录、拦的时候柜子根本没开过。
+  - module_path: tests/backtest/test_n_trial_ledger_t0_family.py
+    domain_id: D_BACKTEST
+    name_zh: 做T族入分母证尺测试
+    name_en: T0 Family DSR Denominator Proof Tests
+    desc_zh: 件二证尺：t0 规则引擎 manifest 自动发现入 batch_records（只认 batches_done 实跑批、
+      畸形批不猜补值、幂等、出生证 note 可复核、空面零增），以及 DSR 随分母单调非增、
+      纳入 t0 后同一净值序列 n_trials 严格变大且 dsr 严格变小，并钉阈值常量未随本件改动。
+      全 tmp_path 注入，零写生产账本与 data/。
+    desc_en: Proof suite for counting t0 rule-engine trials in the DSR denominator plus DSR
+      monotonicity in n_trials, all on tmp_path fixtures.
+    plain_zh: 给"考了多少次试"的账本补漏：做T那几万次回测要计入分母，计了之后成绩分数只会更低不会更高，
+      及格线一个数字都没动。
+post_conditions:
+  - "落地批后复跑：python -m pytest tests/backtest/test_closed_book_tick_gate.py tests/backtest/test_n_trial_ledger_t0_family.py tests/backtest/test_n_trial_ledger.py tests/zephyr/backtest/test_ch_tick_replay.py -q（本车道实测 44 passed）"
+  - "全邻域 8 测试件实测 69 passed"

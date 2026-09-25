@@ -1,0 +1,34 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §ai_layer_scheduling
+# module_id: MOD-INF-037
+# stability: evolving
+# safety_level: M
+# ai_autonomy: ai_modifiable
+# ttl: permanent
+# --- 治理锚定结束 ---
+# 渐进披露：L0=本卡一句话；L1=src/zephyr/ai_layer/scheduling/ 各模块 docstring；
+# L2=docs/_working/ai_layer_vision/L5_schedule_gate/DESIGN.md；L3=P1_construction_review.md 复审记录。
+module_id: MOD-INF-037
+capability_id: ai_scheduling_l5
+category: ai_layer_scheduling
+description: AI 层 L5 排产段——进化排产的门闸与派工编排（D-L5-01 排班一张真源，不建新排班真源）：门闸判定（成熟度/配额/算力三条件 AND，阈值只读 config/schedule_gate_policy.yaml）、工单生成守护（胜者证据包→任务书自动套模板，events journal 唯一真源+offset 断点续读+单例锁僵尸接管）、三证据机检分流（R1 作用域/R2 风险/R3 自指，骨架级必 Owner）、进化量尺两问打分派工（问闸=纯拉式，修复工单独立队列）、种子登记；事件触发零定时器，禁 cron/Timer/sleep-loop，禁直改 resource_profile_registry.yaml（只写 evolution_schedule_seeds.yaml 种子文件由生成器再生）
+examples:
+- python -m pytest tests/ai_layer/scheduling/（104 用例，门闸三条件 AND/字段映射表/三证据机检全枚举）
+- docs/_working/ai_layer_vision/L5_schedule_gate/DESIGN.md §2.1（胜者证据包→任务书字段映射契约真源）
+input_schema:
+  properties: {}
+  type: object
+name: AI Scheduling L5 Schedule Gate Pack
+output_schema:
+  properties: {}
+  type: object
+priority: P1
+registered_at: '2026-09-24T00:00:00+00:00'
+requires_human: false
+runtime_plane: hot
+status: ACTIVE
+tags:
+- ai_layer
+- scheduling
+- L5
+- schedule_gate

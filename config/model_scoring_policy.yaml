@@ -1,0 +1,35 @@
+# [BLUEPRINT] MOD-INF-037 | docs/03_modules/_domain_governance/registry_governance/blueprint.md | §model_scoring
+# [DOC-GOVERNANCE] 常数预注册制：本文件是 OBJ_M M2 双轴打分（性能 P × 性价比 V → S/tier）全部常数的唯一真源。
+# [MODIFY-GUARD] docs/_working/ai_layer_vision/OBJ_M_models/DESIGN.md §3.3——改判据先改 DESIGN；
+#                常数改动=scoring.version 升新版本号+本文件修订留痕；首轮双跑数据后走 OBJ_R 提案修订。
+# [CONSUMERS] M2 评分回写器（后续批写 model_registry.perf_p/value_v/score_s/tier）；
+#             tests/ai_layer/test_model_scoring_policy.py（重算幂等验收）
+# [TESTS] tests/ai_layer/test_model_scoring_policy.py
+---
+schema_version: 1.0.0
+ttl: permanent
+doc_type: policy
+title: M2 双轴打分口径（常数预注册）
+status: active
+version: 1.0.0
+date: '2026-09-23'
+summary: >-
+  OBJ_M M2 模型库双轴打分口径：性能分 P=MCE 实测 0.5+JobMatcher 0.3+外部参照 0.2（外部缺失回流内部轴）；
+  性价比分 V=usd_per_pass_unit 在可胜任同岗位模型池内 min-max 归一（谷时×0.5、免费窗×0，免费节省单列不混入）；
+  合成 S=P^0.6×V^0.4；档界 P≥0.80=premium、P≥0.60=standard、其余=economy。常数预注册防漂移。
+scoring:
+  version: MSP-1.0
+  performance_weights: {mce_standard: 0.5, job_matcher: 0.3, external_ref: 0.2}
+  external_missing_remedy: mce_weight_becomes_0.8   # 外部参照缺失时 0.5+0.2=0.7 回流 MCE，权重归 0.8 归一化
+  value_formula:
+    cost_metric: usd_per_pass_unit                  # 近30天时段加权总成本/合格产出件数
+    time_weighting: {off_peak_discount: 0.5, free_window: 0.0}
+    normalization: min_max_within_same_job_pool     # 可胜任同岗位模型池内 min-max
+    free_saved_usd: separate_column_not_in_cost     # 免费节省单列不混入
+  composite: {alpha_p: 0.6, beta_v: 0.4}            # S = P^0.6 × V^0.4
+  tier_thresholds: {premium_min_p: 0.80, standard_min_p: 0.60}   # 低于= economy
+  revision_policy: 常数改动=新 version 号+改动留痕；首轮双跑数据后走 OBJ_R 提案修订
+
+# 修订记录
+# 2026-09-23 v1.0.0 (MSP-1.0) 初版预注册：常数照 OBJ_M DESIGN §3.3 原值落定
+#            （P 权重 0.5/0.3/0.2、合成 0.6/0.4、档界 0.80/0.60、谷时 0.5/免费窗 0.0）。
