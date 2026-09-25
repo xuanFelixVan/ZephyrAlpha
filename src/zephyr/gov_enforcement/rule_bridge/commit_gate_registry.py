@@ -108,7 +108,7 @@ def _stat_flush(gateway: object) -> None:
             "n_specs": len(acc),
             "failed": sorted(g for g, v in acc.items() if not v["passed"]),
             "reused": {g: v["state"] for g, v in acc.items() if v["state"] != "ran"},
-            "ms": {g: v["ms"] for g, v in acc.items() if v["ms"] >= 1.0},
+            "ms": {g: v["ms"] for g, v in acc.items()},
             "total_ms": round(sum(v["ms"] for v in acc.values()), 1),
         }
         with (audit_dir / "gate_execution_stats.jsonl").open("a", encoding="utf-8") as f:
