@@ -688,6 +688,9 @@ if ($Mode -eq "ch") {
         vault_base=$VaultBase; day_target=$dayTarget; prev_snapshot=$prevDay
         retention_days=$VaultRetentionDays; hardlinked=$linked; copied=$copied; failures=$linkFail; vanished=$vanished
         robocopy_exit=$rcCode; rotated=$rotated
+        # The failure detail used to live only on the console, which the scheduled
+        # task discards -> a "failures=1" verdict was unattributable after the fact.
+        error_sample=$(@($errors3 | Select-Object -First 10))
     }
 }
 

@@ -247,3 +247,29 @@ ews_text_2000_2024；产业链 P2语料 0.35G→50_archiveltdata_p2_corpus_2026
 | ④ | CH today()=UTC 日切 | **本轮复证实测**：22:16:33 本地时点，`SELECT today()`=2026-09-25，而 `countIf(event_time::date = today())`=**0**，`countIf(event_time>=now()-INTERVAL 26 HOUR)`=**1** —— 同一张表同一时刻两种"当日"口径给出 0/1 两个结论；当日 06:47 本地成功的备份其 `event_time` 落在 UTC 09-24。SOP §一.3 的 26h 窗判据**必须保留**，任何"当日已备份"判据禁写 today() | 🟢（判据正确，已留证） |
 | ⑤ | 60_mirror 对 C4 52.7G 追赶 | **结构层已完成**：`zephyr_cold_main/50_archive/by_project` 与源盘同名集合**全等**，C4 档在镜像内；顶层唯一差异 `AUDIT_SOP.md`＝今晨 21:12 新建（晚于 13:34 同步）属预期。**件数/字节级对拍**（60,245 件×两侧）待本轮 Stage 3d 跑完后执行，避免"边写边比"读到中间态（本轮曾因此调整次序） | 🟡（待字节级） |
 | ⑥ | g_mirror 摘 ch_vm_backup 后冻结档无自动更新 | **不是"无自动更新"这么轻——是更新通道根本不指向冻结档**：`G:/backup/README.md` 声称"CH 升级时由 backup_ch_vm.ps1 重做全量"，但 `backup_ch_vm.ps1` 全文 **0 处 G: 引用**，`$BackupRoot="F:\ch_vm_backup"`（robocopy boot.vhdx+**data.vhdx** → F 盘）。后果双重：(a) 冻结档 `G:/backup/ch_vm_backup`（591.57G，唯一全量镜像）**没有任何工具能刷新**，CH 一旦升级即成旧基座，而 `restore.ps1 vm` 会拿它回灌＝**恢复出旧库**；(b) 若哪个周六 config 漂移触发真跑，脚本会向已被 Owner 降为"配置级"的 F 侧再灌 ~591G（F free 766.7G→约 175G，直接击穿 SOP §一.1 的 F≥700G 红线并推翻 10-05 摘盘预算）。**本轮未动任何一处**（改任务=生产流转门位，改冻结档=591G 数据面），列处方 P-6 请 Owner 定向 | 🔴（新发现，最高优先移交） |
+
+### 六、灾备演练月检项（SOP §三.1 四级非破坏，2026-09-25 22:0x-22:4x）
+
+| 级 | 演练 | 实测 | 判 |
+|---|---|---|---|
+| T1 | git bundle **实 clone** 到 F 临时区 | `zephyralpha_full_20260921.bundle`(468,545,940B) → `git clone` rc=0 → **19,055 commits**、HEAD=1420128a70(09-21 20:31)、`AGENTS.md` 真实读出 7,883 字符。附带口径澄清：`git rev-list -1` 恒 HEAD 是本仓约定（仅 `git log` 过滤分支头），故判据用 rev-list | 🟢 |
+| T2 | SQLite 恢复 + `PRAGMA integrity_check` | 5 份库全 `integrity=ok`：`20260925/governance_backup.db` 45 表/201,895,936B、`20260925/session_backup.db` 1 表/12,288B，另 0921/0922 两日与旧 /MIR 根件同检全 ok | 🟢 |
+| T3 | PG dump `pg_restore` 进临时库 `depgraph_drill` | 走 `scripts/backup/restore_drill.py`（正门）+ 本轮自补细粒度复算：**表数 live=89 / drill=89 全等**；三表行数 drill≤live（lib_assets 44,524/44,565、lib_events 1,483,550/1,634,702、nodes 12,656/12,669，差量=dump 后活库继续写入，方向正确）；restore 耗时 233.7s。**`pg_restore rc=1` 已定性=3 条已知良性错**（`CREATE SCHEMA public` 已存在 + 2 条 `ALTER DEFAULT PRIVILEGES` 权限），非数据缺陷；演练结束临时库已 DROP（复查 `pg_database` 残留=0，含中途自杀清理一次） | 🟢（判据缺陷另立 P-3） |
+| T3 附 | **演练判据自身不可满足**（D-18 型恒红） | `scripts/backup/restore_drill.py:140` 用 `drill == live` **精确相等**裁决，而 dump 是历史时点、活库持续增长 → **任何非同一瞬间的演练必判红**；且 `pg_restore_rc` 被记录却不参与判定（rc=1 与 rc=0 同路）。上一班 T3 记"89/89 表一致"实为表数口径，本轮按行判据即翻红——**同一把尺两次量出不同结论，尺本身有问题**。处方 P-3：改判据为"表集合相等 ∧ drill 行数 ≤ live ∧ 抽样键集合对 live 的包含率 ≥ 阈值 ∧ 已知良性 restore 错白名单" | 🔴（尺缺陷） |
+| T4 | CH 验证层 | `state.last_ch_backup_verified=True` + `system.backup_log` 26h 窗 `BACKUP_CREATED`=1（max=09-24 22:47:25Z=本地 06:47）+ `system.backups` 唯一行 inc.zip total_size=408,952,156,962B/900,239 文件；全量 RESTORE 属破坏性，按月排 `ZEPHYR-RESTORE-DRILL`（下次 10-01 04:30 已在册） | 🟢 |
+
+### 七、9.1h 病理的**第一因**（本轮新实测，直接给出 B8 的具体内容）
+
+`code_backup` 源树枚举实测（`D:/ZephyrAlpha`，扣除 exclude 后）：
+
+| 顶层 | 件数 | GiB | 是否被 vault 排除 |
+|---|---|---|---|
+| **`.worktrees/`** | **470,314** | 5.27 | **否（未在册排除清单）** |
+| `.runtime/` | 313,697 | 17.44 | 是 ✓ |
+| `data/` | 20,746 | 4.96 | 部分（仅同名 `tmp` 目录） |
+| `docs/`+`src/`+`tests/`+`scripts/`+`config/`+`architecture_model/` | 17,841 | 0.30 | 否（本盘主体） |
+
+- **一轮备份要枚举 ~50.9 万条目，其中 92.4% 是 50 个 git worktree 的签出物**（平均 12KB 小件、mtime 常新），而 worktree 的已提交内容 git bundle 已灾难覆盖、未提交内容本属"尚不耐久"的在途工。
+- 这与 0600 轮的 `copied=187,513 / hardlinked=234,299` 完全对得上：**每日"变更量"几乎全是 worktree 抖动**，不是项目本体变更（本体全量才 1.7 万件/0.3G）。
+- 也解释了 09-24 审计表 `working_vault=1,328,858 件/239.9GiB` 的体积来源。
+- 处方 **P-2**：`code_backup.exclude_dirs` 增补 `.worktrees`（→ 单轮枚举从 ~50.9 万降到 ~3.9 万，预计小时级降到分钟级）。**代价=其他会话 worktree 内的未提交 WIP 不再进日快照**，属"备份覆盖面上收"，按人机门位归 Owner 签字，本班会不擅自改配置。次选（Owner 若判覆盖面不可收）= 保留采集但改判据为"按 git 提交面增量"，即 worktree 只存 `.git` 引用不存签出物。
