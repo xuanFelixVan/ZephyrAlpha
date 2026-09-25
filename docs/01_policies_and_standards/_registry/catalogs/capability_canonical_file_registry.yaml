@@ -50498,6 +50498,11 @@ creation_tokens:
   created_by: st-qcure-20260925
   capability: qcure_modules
   merge_evaluation: "QCure治本新模块,替代人肉搬运证据流程(对应死因族),净零:复用既有检测器零第二真源"
+- file: docs/03_modules/_domain_gov_enforcement/algo_flow/commit_gates/p/approval_resolver.yaml
+  token: qcure-modules-approval-resolver-20260925
+  created_by: st-qcure-20260925
+  capability: qcure_modules
+  merge_evaluation: "M4审批解析器的ALGO_FLOW外部卡(裁定#214出仓契约),与源码同批原子,无同域重复"
 - file: src/zephyr/data/macro_vintage.py
   token: macro-vintage-macro-vintage-20260924
   created_by: st-metaq-gc-20260924
@@ -50513,20 +50518,6 @@ creation_tokens:
   created_by: st-commitspeed-tbl-20260924
   capability: fullflow_mining
   merge_evaluation: "新拦截面对齐 runtime_interceptor 既有模式同域新建（非同真源可派生、有消费方 tests+引导链、唯一 duckdb.connect 运行时面、与 bare_sql_gate 门/运行时互补）——四判据过，不并"
-- file: src/zephyr/governance/registry_ledger/identity.py
-  token: registry-migration-identity-20260923
-  created_by: st-wm1-buildA-20260923
-  capability: registry_migration
-  merge_evaluation: W-M1 车道A 账本底座新对象：意图 API/部署器/身份模块，与 W2 合并器、门禁、claim 各司其职（02 号文 §5 收编表），净零=0 规则 0 gate
-- file: src/zephyr/governance/registry_ledger/schema.py
-  token: registry-migration-schema-20260923
-  created_by: st-wm1-buildA-20260923
-  capability: registry_migration
-- file: src/zephyr/infrastructure/duckdb_runtime_gate.py
-  token: fullflow-mining-duckdb-runtime-gate-20260924
-  created_by: st-commitspeed-tbl-20260924
-  capability: fullflow_mining
-  merge_evaluation: 新拦截面对齐 runtime_interceptor 既有模式同域新建（非同真源可派生、有消费方 tests+引导链、唯一 duckdb.connect 运行时面、与 bare_sql_gate 门/运行时互补）——四判据过，不并
 - file: src/zephyr/governance/registry_ledger/ledger_schema.py
   token: registry-migration-ledger-schema-20260925
   created_by: st-wm1-wave0-20260924
@@ -50537,4 +50528,9 @@ creation_tokens:
   created_by: st-wm1-wave0-20260924
   capability: registry_migration
   merge_evaluation: "identity.py 改名 ledger_identity.py（N-16 basename 唯一根治）换绑新增行；旧行待清理批退役"
+- file: src/zephyr/governance/registry_ledger/registry_ledger_ddl.py
+  token: registry-migration-registry-ledger-ddl-20260925
+  created_by: st-wm1-wave0-20260924
+  capability: registry_migration
+  merge_evaluation: "ledger_schema.py 二轮改名 registry_ledger_ddl.py（N-16 两轮撞名终名唯一）换绑新增行"
 di_seam_exemptions: []
