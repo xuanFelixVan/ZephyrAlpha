@@ -60190,7 +60190,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "大白话：四象限总调度——对比盘上文件、本地状态和最新渲染结果，干净就收工，私改就留证据再自动覆盖回来，账本前进了就静默重打，数据库挂了就降级观察不拦任何人"
+  plain_zh: "四象限总调度：对比盘上文件、本地状态和最新渲染结果，干净就收工，私改就留证据再自动覆盖回来，账本前进了就静默重打，数据库挂了就降级观察不拦任何人"
   responsibility_layer: governance
 - module_path: scripts/governance/registry_projection/registry_projection_generator.py
   domain_id: D_GOV_CODE_QUALITY
@@ -60867,6 +60867,63 @@ entries:
   desc_en: "Bridge to the canonical entry identity key with token composite suffix shared by gate and merger"
   plain_zh: "大白话：给每条登记发一张独一无二的身份证，名字规则和门卫手里那份一模一样，谁也造不出第二种叫法"
   responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_ledger/identity.py
+  domain_id: D_GOVERNANCE
+  name_zh: "注册表条目身份键"
+  name_en: "Registry Entry Identity Key"
+  desc_zh: "条目身份键唯一真源桥：门禁单键+token 复合升级，与合并器同规则防身份分叉"
+  desc_en: "Bridge to the canonical entry identity key with composite token suffix, shared by gate and merger"
+  plain_zh: "大白话：给每条注册表条目发身份证。规则只有一条：第一个字段是谁，它就是谁；有 token 的加上 token。门禁、合并器、账本三家认同一张证，不各发各的"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_ledger/schema.py
+  domain_id: D_GOVERNANCE
+  name_zh: "注册表账本DDL聚合"
+  name_en: "Registry Ledger DDL Aggregate"
+  desc_zh: "聚合 schemas/categories/registry_ledger 四表 DDL 真源并声明 _schema_version 台账与不可变守卫定义"
+  desc_en: "Aggregates the four-table DDL truth source plus schema version and append-only guard definitions"
+  plain_zh: "大白话：账本四张表的图纸集。图纸只放在一个抽屉里，施工队照图施工，谁也不许手画"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/meta_question/exam_loop/state_machine.py
+  domain_id: D_GOVERNANCE
+  name_zh: "题目状态流转拦截器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "规定题目只能按合法路径换状态（比如已登记→考试中→已作答），想跳步或走非法路径会被拦下并记账"
+  responsibility_layer: governance
+- module_path: scripts/governance/meta_question/wo001_003/generate_source_line_register.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "源线谱机器可读册生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把写在文档里的那张数据源线路表自动转成机器能查的册子，题目引用的每条线能不能核对，就查这本册。"
+  responsibility_layer: governance
+- module_path: scripts/governance/meta_question/wo001_003/intake_batch.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "入题批前置校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "一批新问题正式入库前先扫一遍：五要素填没填齐、枚举合不合法、数据源在不在册，不合格就挡下并记下挡下的原因。"
+  responsibility_layer: governance
+- module_path: scripts/governance/meta_question/wo001_003/replay_audit_to_jsonl.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "审计账双轨回放器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把数据库里的审计记录重新灌一份到追加式文本账，让两本账能逐日核对，防止只有一本账时被发现不了漏记。"
+  responsibility_layer: governance
+- module_path: src/zephyr/gov_enforcement/derived_dirty_ledger.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "派生刷新意图账"
+  name_en: "Derived Dirty Ledger"
+  desc_zh: "integrity 基线刷新意图的 append-only 账本，head 态下替代每件同步 register"
+  desc_en: ""
+  plain_zh: "以前每笔提交都要停下来等基线刷新跑完，现在改成留张字条说该刷了，提交的人不用等，后面有专门的守护按字条批量刷。这个模块就是管字条本子的：谁留条、什么时候留、按什么去重。"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
