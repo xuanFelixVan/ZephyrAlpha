@@ -1,0 +1,730 @@
+sector_code,sector_name,code_family,coverage_status,name_source,tdx_type,tdx_level,k880_rows_1d,k880_rows_before_cut,first_trade_date,last_trade_date
+880001.SH,,mkt_index,unresolved,,,,1009,756,2022-08-01,2026-09-24
+880002.SH,,mkt_index,unresolved,,,,1009,756,2022-08-01,2026-09-24
+880003.SH,,mkt_index,unresolved,,,,1009,756,2022-08-01,2026-09-24
+880004.SH,,mkt_index,unresolved,,,,1009,756,2022-08-01,2026-09-24
+880005.SH,,mkt_index,unresolved,,,,1009,756,2022-08-01,2026-09-24
+880006.SH,,mkt_index,unresolved,,,,1009,756,2022-08-01,2026-09-24
+880007.SH,,mkt_index,unresolved,,,,1010,757,2022-07-29,2026-09-24
+880008.SH,,mkt_index,unresolved,,,,1009,756,2022-08-01,2026-09-24
+880009.SH,,mkt_index,unresolved,,,,194,0,2025-12-10,2026-09-24
+880081.SH,轮动趋势,mkt_index,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880082.SH,板块趋势,mkt_index,named,tdxzs3.cfg,5,2,787,534,2023-07-03,2026-09-24
+880201.SH,黑龙江,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880202.SH,新疆板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880203.SH,吉林板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880204.SH,甘肃板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880205.SH,辽宁板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880206.SH,青海板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880207.SH,北京板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880208.SH,陕西板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880209.SH,天津板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880210.SH,广西板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880211.SH,河北板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880212.SH,广东板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880213.SH,河南板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880214.SH,宁夏板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880215.SH,山东板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880216.SH,上海板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880217.SH,山西板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880218.SH,深圳板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880219.SH,湖北板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880220.SH,福建板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880221.SH,湖南板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880222.SH,江西板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880223.SH,四川板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880224.SH,安徽板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880225.SH,重庆板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880226.SH,江苏板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880227.SH,云南板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880228.SH,浙江板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880229.SH,贵州板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880230.SH,海南板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880231.SH,西藏板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880232.SH,内蒙板块,region,named,tdxzs3.cfg,3,1,1009,756,2022-08-01,2026-09-24
+880301.SH,煤炭,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880302.SH,煤炭开采,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880303.SH,焦炭加工,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880305.SH,电力,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880306.SH,水力发电,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880307.SH,火力发电,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880308.SH,新型电力,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880310.SH,石油,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880311.SH,石油开采,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880312.SH,石油加工,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880313.SH,石油贸易,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880318.SH,钢铁,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880319.SH,普钢,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880320.SH,特种钢,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880321.SH,钢加工,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880324.SH,有色,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880325.SH,铜,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880326.SH,铝,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880327.SH,铅锌,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880328.SH,黄金,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880329.SH,小金属,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880330.SH,化纤,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880335.SH,化工,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880336.SH,化工原料,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880337.SH,农药化肥,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880338.SH,塑料,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880339.SH,橡胶,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880340.SH,染料涂料,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880344.SH,建材,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880345.SH,陶瓷,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880346.SH,水泥,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880347.SH,玻璃,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880348.SH,其他建材,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880350.SH,造纸,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880351.SH,矿物制品,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880355.SH,日用化工,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880360.SH,农林牧渔,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880361.SH,种植业,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880362.SH,渔业,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880363.SH,林业,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880364.SH,饲料,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880366.SH,农业综合,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880367.SH,纺织服饰,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880368.SH,纺织,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880369.SH,服饰,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880372.SH,食品饮料,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880373.SH,乳制品,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880374.SH,软饮料,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880375.SH,食品,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880380.SH,酿酒,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880381.SH,白酒,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880382.SH,啤酒,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880383.SH,红黄酒,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880387.SH,家用电器,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880390.SH,汽车类,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880391.SH,汽车整车,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880392.SH,汽车配件,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880393.SH,汽车服务,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880394.SH,摩托车,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880398.SH,医疗保健,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880399.SH,家居用品,industry_l1,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880400.SH,医药,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880401.SH,化学制药,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880402.SH,生物制药,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880403.SH,中成药,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880406.SH,商业连锁,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880407.SH,百货,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880408.SH,超市连锁,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880409.SH,电器连锁,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880410.SH,医药商业,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880411.SH,其他商业,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880412.SH,商品城,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880413.SH,批发业,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880414.SH,商贸代理,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880418.SH,传媒娱乐,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880419.SH,出版业,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880420.SH,影视音像,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880421.SH,广告包装,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880422.SH,文教休闲,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880423.SH,酒店餐饮,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880424.SH,旅游,industry_l2,named,tdxzs3.cfg,2,2,1250,997,2021-08-02,2026-09-24
+880425.SH,旅游服务,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880426.SH,旅游景点,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880430.SH,航空,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880431.SH,船舶,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880432.SH,运输设备,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880437.SH,通用机械,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880438.SH,机床制造,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880439.SH,机械基件,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880440.SH,工业机械,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880441.SH,化工机械,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880442.SH,轻工机械,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880443.SH,纺织机械,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880444.SH,农用机械,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880445.SH,专用机械,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880446.SH,电气设备,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880447.SH,工程机械,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880448.SH,电器仪表,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880452.SH,电信运营,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880453.SH,公共交通,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880454.SH,水务,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880455.SH,供气供热,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880456.SH,环境保护,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880459.SH,运输服务,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880460.SH,铁路,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880461.SH,水运,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880462.SH,空运,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880463.SH,公路,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880464.SH,仓储物流,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880465.SH,交通设施,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880466.SH,路桥,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880467.SH,机场,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880468.SH,港口,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880471.SH,银行,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880472.SH,证券,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880473.SH,保险,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880474.SH,多元金融,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880476.SH,建筑,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880477.SH,建筑工程,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880478.SH,装修装饰,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880482.SH,房地产,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880483.SH,全国地产,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880484.SH,区域地产,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880485.SH,园区开发,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880486.SH,房产服务,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880489.SH,IT设备,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880490.SH,通信设备,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880491.SH,半导体,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880492.SH,元器件,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880493.SH,软件服务,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880494.SH,互联网,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880497.SH,综合类,industry_l2,named,tdxzs3.cfg,2,1,1250,997,2021-08-02,2026-09-24
+880501.SH,含H股,concept_or_style,named,tdxzs3.cfg,4,1,1009,756,2022-08-01,2026-09-24
+880502.SH,含B股,concept_or_style,named,tdxzs3.cfg,4,1,1009,756,2022-08-01,2026-09-24
+880505.SH,稀缺资源,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880506.SH,5G概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880507.SH,国防军工,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880513.SH,海峡西岸,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880515.SH,通达信88,concept_or_style,named,tdxzs3.cfg,4,1,1009,756,2022-08-01,2026-09-24
+880516.SH,ST板块,concept_or_style,named,tdxzs3.cfg,4,1,1009,756,2022-08-01,2026-09-24
+880519.SH,碳中和,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880520.SH,智能电网,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880521.SH,黄金概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880522.SH,低空经济,concept_or_style,named,tdxzs3.cfg,4,2,618,365,2024-03-13,2026-09-24
+880523.SH,铜缆高速连接,concept_or_style,named,tdxzs3.cfg,4,2,610,357,2024-03-25,2026-09-24
+880524.SH,含可转债,concept_or_style,named,tdxzs3.cfg,4,1,1009,756,2022-08-01,2026-09-24
+880525.SH,高铁,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880526.SH,高分红股,concept_or_style,named,tdxzs3.cfg,5,2,607,354,2024-03-28,2026-09-24
+880527.SH,承诺不减,concept_or_style,named,tdxzs3.cfg,5,2,595,342,2024-04-17,2026-09-24
+880528.SH,军工信息化,concept_or_style,named,tdxzs3.cfg,4,2,589,336,2024-04-25,2026-09-24
+880529.SH,次新股,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880530.SH,合成生物,concept_or_style,named,tdxzs3.cfg,4,2,584,331,2024-05-07,2026-09-24
+880531.SH,低安全分,concept_or_style,named,tdxzs3.cfg,5,2,577,324,2024-05-16,2026-09-24
+880532.SH,整体上市,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880533.SH,物联网,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880534.SH,锂电池概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880535.SH,稀土永磁,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880536.SH,微盘精选,concept_or_style,named,tdxzs3.cfg,5,2,576,323,2024-05-17,2026-09-24
+880537.SH,核电核能,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880538.SH,参股金融,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880539.SH,股权激励,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880540.SH,创投概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880541.SH,AI手机PC,concept_or_style,named,tdxzs3.cfg,4,2,624,371,2024-03-05,2026-09-24
+880542.SH,水利建设,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880543.SH,外资背景,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880544.SH,光伏,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880545.SH,云计算,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880546.SH,卫星导航,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880547.SH,玻璃基板,concept_or_style,named,tdxzs3.cfg,4,2,575,322,2024-05-20,2026-09-24
+880548.SH,商业航天,concept_or_style,named,tdxzs3.cfg,4,2,567,314,2024-05-30,2026-09-24
+880549.SH,可燃冰,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880550.SH,PCB概念,concept_or_style,named,tdxzs3.cfg,4,2,561,308,2024-06-07,2026-09-24
+880551.SH,大基金持股,concept_or_style,named,tdxzs3.cfg,5,2,558,305,2024-06-13,2026-09-24
+880552.SH,车联网,concept_or_style,named,tdxzs3.cfg,4,2,555,302,2024-06-18,2026-09-24
+880553.SH,页岩气,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880554.SH,科创板次新,concept_or_style,named,tdxzs3.cfg,5,2,552,299,2024-06-21,2026-09-24
+880555.SH,财税数字化,concept_or_style,named,tdxzs3.cfg,4,2,544,291,2024-07-03,2026-09-24
+880556.SH,昨ST连板,concept_or_style,named,tdxzs3.cfg,5,2,517,264,2024-08-09,2026-09-24
+880557.SH,生物疫苗,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880558.SH,节能环保,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880559.SH,要约收购,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880560.SH,高端装备,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880561.SH,折叠屏,concept_or_style,named,tdxzs3.cfg,4,2,516,263,2024-08-12,2026-09-24
+880562.SH,高校背景,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880563.SH,食品安全,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880564.SH,白酒概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880565.SH,送转潜力,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880566.SH,AI眼镜,concept_or_style,named,tdxzs3.cfg,4,2,513,260,2024-08-15,2026-09-24
+880567.SH,海南自贸,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880568.SH,生物质能,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880569.SH,3D打印,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880570.SH,高应收款,concept_or_style,named,tdxzs3.cfg,5,2,474,221,2024-10-18,2026-09-24
+880571.SH,碳纤维概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880572.SH,新零售,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880573.SH,摘帽,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880574.SH,苹果概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880575.SH,地热能,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880576.SH,并购重组股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880577.SH,安防服务,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880578.SH,专项贷款,concept_or_style,named,tdxzs3.cfg,5,2,473,220,2024-10-21,2026-09-24
+880579.SH,智谱AI,concept_or_style,named,tdxzs3.cfg,4,2,467,214,2024-10-29,2026-09-24
+880580.SH,智能交通,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880581.SH,控制权变更,concept_or_style,named,tdxzs3.cfg,5,2,462,209,2024-11-05,2026-09-24
+880582.SH,风电,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880583.SH,充电桩,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880584.SH,石墨烯,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880585.SH,风沙治理,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880586.SH,土地流转,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880587.SH,聚氨酯,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880588.SH,MLCC概念,concept_or_style,named,tdxzs3.cfg,4,2,79,0,2026-06-05,2026-09-24
+880589.SH,智能穿戴,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880590.SH,网络游戏,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880591.SH,上海自贸,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880592.SH,互联金融,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880593.SH,婴童概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880594.SH,一带一路,concept_or_style,named,tdxzs3.cfg,4,1,1009,756,2022-08-01,2026-09-24
+880595.SH,,concept_or_style,unresolved,,,,28,0,2026-06-11,2026-07-21
+880596.SH,体育概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880597.SH,养老概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880598.SH,博彩概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880599.SH,民营医院,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880601.SH,智慧政务,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880602.SH,免税概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880603.SH,新进指标股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880604.SH,PVDF概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880605.SH,装配式建筑,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880606.SH,辅助生殖,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880607.SH,东数西算,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880608.SH,第三代半导体,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880609.SH,跨境支付CIPS,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880610.SH,中俄贸易,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880611.SH,核污染防治,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880612.SH,镍金属,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880613.SH,电子身份证,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880614.SH,绿色建筑,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880615.SH,家庭医生,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880616.SH,大飞机,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880617.SH,IP经济,concept_or_style,named,tdxzs3.cfg,4,2,446,193,2024-11-27,2026-09-24
+880618.SH,化肥概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880619.SH,业绩预增,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880620.SH,券商金股,concept_or_style,named,tdxzs3.cfg,5,2,1011,758,2022-07-28,2026-09-24
+880621.SH,NFT概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880622.SH,破增发价,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880623.SH,肝炎概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880624.SH,新型城镇,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880625.SH,主营变更,concept_or_style,named,tdxzs3.cfg,5,2,117,0,2026-04-09,2026-09-24
+880626.SH,粮食概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880627.SH,超临界发电,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880628.SH,钒电池,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880629.SH,MicroLED,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880630.SH,虚拟电厂,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880631.SH,一体压铸,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880632.SH,动力电池回收,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880633.SH,汽车热管理,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880634.SH,含GDR,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880635.SH,先进封装,concept_or_style,named,tdxzs3.cfg,4,2,1002,749,2022-08-10,2026-09-24
+880636.SH,热泵概念,concept_or_style,named,tdxzs3.cfg,4,2,1000,747,2022-08-12,2026-09-24
+880637.SH,EDA概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880638.SH,TOPCon电池,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880639.SH,光热发电,concept_or_style,named,tdxzs3.cfg,4,2,996,743,2022-08-18,2026-09-24
+880640.SH,历史新高,concept_or_style,named,tdxzs3.cfg,5,2,986,733,2022-09-01,2026-09-24
+880641.SH,历史新低,concept_or_style,named,tdxzs3.cfg,5,2,986,733,2022-09-01,2026-09-24
+880642.SH,供销社,concept_or_style,named,tdxzs3.cfg,4,2,947,694,2022-11-03,2026-09-24
+880643.SH,Web3概念,concept_or_style,named,tdxzs3.cfg,4,2,941,688,2022-11-11,2026-09-24
+880644.SH,DRG-DIP,concept_or_style,named,tdxzs3.cfg,4,2,941,688,2022-11-11,2026-09-24
+880645.SH,AIGC概念,concept_or_style,named,tdxzs3.cfg,4,2,937,684,2022-11-17,2026-09-24
+880646.SH,复合铜箔,concept_or_style,named,tdxzs3.cfg,4,2,933,680,2022-11-23,2026-09-24
+880647.SH,数据确权,concept_or_style,named,tdxzs3.cfg,4,2,924,671,2022-12-06,2026-09-24
+880648.SH,私募新进,concept_or_style,named,tdxzs3.cfg,5,2,432,179,2024-12-17,2026-09-24
+880649.SH,POE胶膜,concept_or_style,named,tdxzs3.cfg,4,2,909,656,2022-12-27,2026-09-24
+880650.SH,血氧仪,concept_or_style,named,tdxzs3.cfg,4,2,907,654,2022-12-29,2026-09-24
+880651.SH,旅游概念,concept_or_style,named,tdxzs3.cfg,4,2,906,653,2022-12-30,2026-09-24
+880652.SH,创新药,concept_or_style,named,tdxzs3.cfg,4,2,895,642,2023-01-17,2026-09-24
+880653.SH,私募重仓,concept_or_style,named,tdxzs3.cfg,5,2,432,179,2024-12-17,2026-09-24
+880654.SH,ChatGPT概念,concept_or_style,named,tdxzs3.cfg,4,2,889,636,2023-02-01,2026-09-24
+880655.SH,钙钛矿电池,concept_or_style,named,tdxzs3.cfg,4,2,888,635,2023-02-02,2026-09-24
+880656.SH,CPO概念,concept_or_style,named,tdxzs3.cfg,4,2,884,631,2023-02-08,2026-09-24
+880657.SH,数字水印,concept_or_style,named,tdxzs3.cfg,4,2,881,628,2023-02-13,2026-09-24
+880658.SH,高压快充,concept_or_style,named,tdxzs3.cfg,4,2,879,626,2023-02-15,2026-09-24
+880659.SH,毫米波雷达,concept_or_style,named,tdxzs3.cfg,4,2,873,620,2023-02-23,2026-09-24
+880660.SH,工业软件,concept_or_style,named,tdxzs3.cfg,4,2,871,618,2023-02-27,2026-09-24
+880661.SH,6G概念,concept_or_style,named,tdxzs3.cfg,4,2,867,614,2023-03-03,2026-09-24
+880662.SH,时空大数据,concept_or_style,named,tdxzs3.cfg,4,2,860,607,2023-03-14,2026-09-24
+880664.SH,机器视觉,concept_or_style,named,tdxzs3.cfg,4,2,860,607,2023-03-14,2026-09-24
+880665.SH,昨ST首板,concept_or_style,named,tdxzs3.cfg,5,2,430,177,2024-12-19,2026-09-24
+880666.SH,可控核聚变,concept_or_style,named,tdxzs3.cfg,4,2,860,607,2023-03-14,2026-09-24
+880667.SH,数据要素,concept_or_style,named,tdxzs3.cfg,4,2,839,586,2023-04-13,2026-09-24
+880668.SH,知识付费,concept_or_style,named,tdxzs3.cfg,4,2,838,585,2023-04-14,2026-09-24
+880669.SH,算力租赁,concept_or_style,named,tdxzs3.cfg,4,2,833,580,2023-04-21,2026-09-24
+880670.SH,光通信,concept_or_style,named,tdxzs3.cfg,4,2,833,580,2023-04-21,2026-09-24
+880671.SH,中特估,concept_or_style,named,tdxzs3.cfg,4,2,825,572,2023-05-08,2026-09-24
+880672.SH,存储芯片,concept_or_style,named,tdxzs3.cfg,4,2,815,562,2023-05-22,2026-09-24
+880673.SH,混合现实,concept_or_style,named,tdxzs3.cfg,4,2,814,561,2023-05-23,2026-09-24
+880674.SH,英伟达概念,concept_or_style,named,tdxzs3.cfg,4,2,808,555,2023-05-31,2026-09-24
+880675.SH,减速器,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880676.SH,活跃ETF,concept_or_style,named,tdxzs3.cfg,5,2,775,522,2023-07-19,2026-09-24
+880677.SH,活跃可转债,concept_or_style,named,tdxzs3.cfg,5,2,775,522,2023-07-19,2026-09-24
+880678.SH,陆股通重仓,concept_or_style,named,tdxzs3.cfg,5,2,766,513,2023-08-01,2026-09-24
+880679.SH,周期股,concept_or_style,named,tdxzs3.cfg,5,2,763,510,2023-08-04,2026-09-24
+880680.SH,非周期股,concept_or_style,named,tdxzs3.cfg,5,2,763,510,2023-08-04,2026-09-24
+880681.SH,减肥药,concept_or_style,named,tdxzs3.cfg,4,2,757,504,2023-08-14,2026-09-24
+880682.SH,华为海思,concept_or_style,named,tdxzs3.cfg,4,2,741,488,2023-09-05,2026-09-24
+880683.SH,星闪概念,concept_or_style,named,tdxzs3.cfg,4,2,735,482,2023-09-13,2026-09-24
+880684.SH,BC电池,concept_or_style,named,tdxzs3.cfg,4,2,735,482,2023-09-13,2026-09-24
+880685.SH,液冷服务器,concept_or_style,named,tdxzs3.cfg,4,2,734,481,2023-09-14,2026-09-24
+880686.SH,华为汽车,concept_or_style,named,tdxzs3.cfg,4,2,732,479,2023-09-18,2026-09-24
+880687.SH,活跃小盘非融,concept_or_style,named,tdxzs3.cfg,5,2,731,478,2023-09-19,2026-09-24
+880688.SH,新型工业化,concept_or_style,named,tdxzs3.cfg,4,2,726,473,2023-09-26,2026-09-24
+880689.SH,华为算力,concept_or_style,named,tdxzs3.cfg,4,2,713,460,2023-10-23,2026-09-24
+880690.SH,昨日强势,concept_or_style,named,tdxzs3.cfg,5,2,710,457,2023-10-26,2026-09-24
+880691.SH,昨日弱势,concept_or_style,named,tdxzs3.cfg,5,2,710,457,2023-10-26,2026-09-24
+880692.SH,短剧游戏,concept_or_style,named,tdxzs3.cfg,4,2,701,448,2023-11-08,2026-09-24
+880693.SH,多模态AI,concept_or_style,named,tdxzs3.cfg,4,2,678,425,2023-12-11,2026-09-24
+880694.SH,活跃小盘国企,concept_or_style,named,tdxzs3.cfg,5,1,673,420,2023-12-18,2026-09-24
+880695.SH,PEEK材料,concept_or_style,named,tdxzs3.cfg,4,2,671,418,2023-12-20,2026-09-24
+880696.SH,小米汽车概念,concept_or_style,named,tdxzs3.cfg,4,2,664,411,2023-12-29,2026-09-24
+880697.SH,飞行汽车,concept_or_style,named,tdxzs3.cfg,4,2,655,402,2024-01-12,2026-09-24
+880698.SH,宽基ETF,concept_or_style,named,tdxzs3.cfg,5,2,649,396,2024-01-22,2026-09-24
+880699.SH,最近情绪指数,concept_or_style,named,tdxzs3.cfg,5,2,639,386,2024-02-05,2026-09-24
+880702.SH,壳资源,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880703.SH,人形机器人,concept_or_style,named,tdxzs3.cfg,4,2,628,375,2024-02-28,2026-09-24
+880704.SH,工业大麻,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880705.SH,氢能源,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880706.SH,分散染料,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880707.SH,宠物经济,concept_or_style,named,tdxzs3.cfg,4,2,422,169,2024-12-31,2026-09-24
+880708.SH,台资背景,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880709.SH,人造肉,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880710.SH,种业,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880711.SH,操作系统,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880712.SH,微小盘股,concept_or_style,named,tdxzs3.cfg,5,1,413,160,2025-01-14,2026-09-24
+880713.SH,ETC概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880714.SH,氟概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880715.SH,磷概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880716.SH,光刻机,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880717.SH,C2M概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880718.SH,小红书概念,concept_or_style,named,tdxzs3.cfg,4,2,412,159,2025-01-15,2026-09-24
+880720.SH,抖音概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880721.SH,北上重仓,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880722.SH,华为鸿蒙,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880723.SH,发可转债,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880724.SH,地下管网,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880725.SH,MiniLED,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880726.SH,MCU芯片,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880727.SH,盐湖提锂,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880728.SH,航运概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880729.SH,CXO概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880730.SH,储能,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880731.SH,新材料,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880732.SH,AI智能体,concept_or_style,named,tdxzs3.cfg,4,2,404,151,2025-01-27,2026-09-24
+880733.SH,人脑工程,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880734.SH,工业气体,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880735.SH,专精特新,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880736.SH,工业母机,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880737.SH,HJT电池,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880738.SH,数字孪生,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880739.SH,边缘计算,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880740.SH,新型烟草,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880741.SH,代糖概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880742.SH,固态电池,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880743.SH,物业管理概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880744.SH,汽车拆解,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880745.SH,NMN概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880746.SH,国资云,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880747.SH,AI医疗概念,concept_or_style,named,tdxzs3.cfg,4,2,399,146,2025-02-11,2026-09-24
+880748.SH,元宇宙概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880749.SH,云游戏,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880750.SH,天然气,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880751.SH,昨日跌停,concept_or_style,named,tdxzs3.cfg,5,2,1031,778,2022-06-30,2026-09-24
+880752.SH,昨曾跌停,concept_or_style,named,tdxzs3.cfg,5,2,1017,764,2022-07-20,2026-09-24
+880753.SH,绿色电力,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880754.SH,培育钻石,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880755.SH,钠电池,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880756.SH,机构吸筹,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880757.SH,冷链物流,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880758.SH,汽车芯片,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880759.SH,换电概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880760.SH,预制菜,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880761.SH,锂矿,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880762.SH,信创,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880763.SH,自由现金流,concept_or_style,named,tdxzs3.cfg,5,2,391,138,2025-02-21,2026-09-24
+880764.SH,鸡肉,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880765.SH,海洋经济,concept_or_style,named,tdxzs3.cfg,4,2,376,123,2025-03-14,2026-09-24
+880766.SH,幽门螺杆菌,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880767.SH,电子纸,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880769.SH,股权集中,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880770.SH,昨日上榜,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880771.SH,MSCI中盘,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880774.SH,昨日首板,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880778.SH,次新预增,concept_or_style,named,tdxzs3.cfg,5,2,1216,963,2021-06-29,2026-09-24
+880779.SH,高融资盘,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880780.SH,融资增加,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880781.SH,QFII新进,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880782.SH,保险新进,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880783.SH,社保新进,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880784.SH,昨日较弱,concept_or_style,named,tdxzs3.cfg,5,2,1014,761,2022-07-25,2026-09-24
+880785.SH,最近多板,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880786.SH,海外业务,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880787.SH,高商誉,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880789.SH,昨成交20,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880790.SH,高负债率,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880791.SH,网红经济,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880792.SH,基金增仓,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880793.SH,基金减仓,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880794.SH,远程办公,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880795.SH,口罩防护,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880796.SH,医废处理,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880797.SH,虫害防治,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880798.SH,超级电容,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880799.SH,数据中心,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880801.SH,基金重仓,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880802.SH,QFII重仓,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880803.SH,券商重仓,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880804.SH,信托重仓,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880805.SH,保险重仓,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880806.SH,社保重仓,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880807.SH,股东增持,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880808.SH,股东减持,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880809.SH,基金独门,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880812.SH,昨日连板,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880813.SH,并购重组预案,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880814.SH,拟增持,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880815.SH,拟减持,concept_or_style,named,tdxzs3.cfg,5,1,1015,762,2022-07-22,2026-09-24
+880816.SH,密集调研,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880817.SH,商誉减值,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880818.SH,通达信热股,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880821.SH,大盘股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880822.SH,昨收活跃,concept_or_style,named,tdxzs3.cfg,5,2,1015,762,2022-07-22,2026-09-24
+880823.SH,微盘股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880824.SH,高市盈率,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880825.SH,预计转亏,concept_or_style,named,tdxzs3.cfg,5,1,1359,1106,2021-02-23,2026-09-24
+880826.SH,低市盈率,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880827.SH,高市净率,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880829.SH,低市净率,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880833.SH,亏损股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880834.SH,微利股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880835.SH,绩优股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880836.SH,配股股,concept_or_style,named,tdxzs3.cfg,5,1,154,29,2024-10-30,2026-09-24
+880837.SH,活跃股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880842.SH,业绩预升,concept_or_style,named,tdxzs3.cfg,5,2,1281,1028,2021-06-18,2026-09-24
+880843.SH,业绩预降,concept_or_style,named,tdxzs3.cfg,5,2,1386,1133,2021-01-08,2026-09-24
+880844.SH,预计扭亏,concept_or_style,named,tdxzs3.cfg,5,1,1423,1170,2020-11-17,2026-09-24
+880845.SH,高股息股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880846.SH,破净资产,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880847.SH,行业龙头,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880848.SH,被举牌,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880849.SH,回购计划,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880850.SH,定增预案,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880851.SH,已高送转,concept_or_style,named,tdxzs3.cfg,5,2,1195,942,2021-10-27,2026-09-24
+880852.SH,参股新股,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880853.SH,中字头,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880854.SH,预高送转,concept_or_style,named,tdxzs3.cfg,5,2,1549,1296,2020-03-17,2026-09-24
+880856.SH,定增股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880857.SH,证金汇金持股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880858.SH,国开持股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880859.SH,员工持股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880860.SH,扣非亏损,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880861.SH,连续亏损,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880863.SH,昨日涨停,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880864.SH,昨日振荡,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880865.SH,近期新高,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880866.SH,近期新低,concept_or_style,named,tdxzs3.cfg,5,2,1043,790,2022-06-14,2026-09-24
+880867.SH,昨高换手,concept_or_style,named,tdxzs3.cfg,5,2,1010,757,2022-07-29,2026-09-24
+880868.SH,高贝塔值,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880869.SH,股权转让,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880870.SH,两年新股,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880871.SH,股权分散,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880872.SH,近期复牌,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880873.SH,个人持股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880874.SH,昨曾涨停,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880875.SH,中小银行,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880876.SH,户数增加,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880877.SH,户数减少,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880878.SH,百元股,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880879.SH,低价股,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880880.SH,近期强势,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880881.SH,近期弱势,concept_or_style,named,tdxzs3.cfg,5,2,1039,786,2022-06-20,2026-09-24
+880882.SH,久不分红,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880883.SH,MSCI成份,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880884.SH,最近异动,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880885.SH,近端次新,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880886.SH,昨日较强,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880887.SH,次新超跌,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880889.SH,不活跃股,concept_or_style,named,tdxzs3.cfg,5,1,1035,782,2022-06-24,2026-09-24
+880890.SH,配股预案,concept_or_style,named,tdxzs3.cfg,5,1,1263,1010,2021-07-14,2026-09-24
+880891.SH,破发行价,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880892.SH,高质押股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880893.SH,送转超跌,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880894.SH,养老金持股,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880895.SH,持续增长,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880896.SH,风险提示,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880897.SH,即将解禁,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880898.SH,近已解禁,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880899.SH,钴金属,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880901.SH,信息安全,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880902.SH,特斯拉概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880903.SH,水产品,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880904.SH,机器人概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880905.SH,超导概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880906.SH,智能家居,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880908.SH,职业教育,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880909.SH,燃料电池,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880910.SH,草甘膦,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880911.SH,雄安新区,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880912.SH,外骨骼机器人,concept_or_style,named,tdxzs3.cfg,4,2,340,87,2025-05-09,2026-09-24
+880913.SH,基因概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880914.SH,军贸概念,concept_or_style,named,tdxzs3.cfg,4,2,340,87,2025-05-09,2026-09-24
+880915.SH,昨日突涨,concept_or_style,named,tdxzs3.cfg,5,2,320,67,2025-06-09,2026-09-24
+880916.SH,国产软件,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880919.SH,粤港澳,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880920.SH,免疫治疗,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880921.SH,阿里概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880922.SH,钛金属,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880923.SH,赛马概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880926.SH,垃圾分类,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880929.SH,维生素,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880930.SH,汽车电子,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880933.SH,智能医疗,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880936.SH,猪肉,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880939.SH,无人机,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880940.SH,PPP概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880941.SH,跨境电商,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880942.SH,虚拟现实,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880943.SH,量子科技,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880944.SH,无人驾驶,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880945.SH,OLED概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880946.SH,区块链,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880947.SH,化债AMC,concept_or_style,named,tdxzs3.cfg,5,2,1009,756,2022-08-01,2026-09-24
+880948.SH,人工智能,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880949.SH,智慧城市,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880950.SH,军民融合,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880951.SH,新能源车,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880952.SH,芯片,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880953.SH,租购同权,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880954.SH,大数据,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880955.SH,乡村振兴,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880956.SH,腾讯概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880957.SH,工业互联,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880958.SH,AI营销,concept_or_style,named,tdxzs3.cfg,4,2,173,0,2026-01-12,2026-09-24
+880959.SH,知识产权,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880960.SH,仿制药,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880961.SH,小米概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880962.SH,百度概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880963.SH,昨日断板,concept_or_style,named,tdxzs3.cfg,5,2,214,0,2025-11-12,2026-09-24
+880964.SH,特高压,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880965.SH,超清视频,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880966.SH,消费电子概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880967.SH,数字货币,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880968.SH,胎压监测,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880969.SH,无线耳机,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880970.SH,分拆上市预期,concept_or_style,named,tdxzs3.cfg,5,1,1009,756,2022-08-01,2026-09-24
+880971.SH,降解塑料,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880972.SH,雅江水电概念,concept_or_style,named,tdxzs3.cfg,4,2,289,36,2025-07-22,2026-09-24
+880973.SH,医美概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880974.SH,烟草概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880975.SH,有机硅概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880977.SH,BIPV概念,concept_or_style,named,tdxzs3.cfg,4,2,1009,756,2022-08-01,2026-09-24
+880978.SH,DeepSeek概念,concept_or_style,named,tdxzs3.cfg,4,2,403,150,2025-02-05,2026-09-24
+880979.SH,科创成长层,concept_or_style,named,tdxzs3.cfg,5,2,245,0,2025-09-22,2026-09-24
+881002.SH,煤炭开采,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881005.SH,焦炭加工,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881007.SH,油气开采,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881008.SH,油服工程,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881011.SH,石油化工,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881016.SH,日用化工,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881019.SH,化纤,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881026.SH,化学原料,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881034.SH,化学制品,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881044.SH,塑料,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881051.SH,橡胶,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881055.SH,农用化工,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881062.SH,冶钢原料,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881065.SH,普钢,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881069.SH,特钢,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881071.SH,工业金属,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881075.SH,贵金属,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881078.SH,能源金属,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881082.SH,稀有金属,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881087.SH,金属新材料,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881091.SH,水泥,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881094.SH,玻璃玻纤,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881097.SH,装饰建材,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881104.SH,非金属材料,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881106.SH,种植业,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881111.SH,养殖业,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881115.SH,林业,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881116.SH,渔业,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881119.SH,饲料,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881123.SH,农产品加工,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881127.SH,动物保健,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881130.SH,酿酒,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881136.SH,饮料乳品,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881139.SH,调味品,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881140.SH,休闲食品,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881144.SH,食品加工,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881151.SH,纺织制造,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881157.SH,服装家纺,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881162.SH,饰品,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881167.SH,造纸,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881171.SH,包装印刷,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881177.SH,家居用品,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881180.SH,文娱用品,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881184.SH,白色家电,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881187.SH,黑色家电,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881190.SH,小家电,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881194.SH,厨卫电器,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881198.SH,家电零部件,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881200.SH,一般零售,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881204.SH,商业物业经营,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881205.SH,专业连锁,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881206.SH,贸易,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881207.SH,电子商务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881212.SH,乘用车,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881215.SH,商用车,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881218.SH,汽车零部件,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881224.SH,汽车服务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881227.SH,摩托车及其他,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881231.SH,化学制药,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881234.SH,生物制品,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881241.SH,医疗器械,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881247.SH,医疗服务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881252.SH,医药商业,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881256.SH,中药,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881257.SH,医疗美容,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881261.SH,电机制造,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881262.SH,电池,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881268.SH,电网设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881275.SH,光伏设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881282.SH,风电设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881285.SH,其他发电设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881287.SH,地面兵装,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881288.SH,航空装备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881289.SH,航天装备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881290.SH,航海装备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881291.SH,军工电子,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881293.SH,轨交设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881294.SH,通用设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881303.SH,专用设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881310.SH,工程机械,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881313.SH,自动化设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881319.SH,半导体,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881326.SH,消费电子,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881329.SH,光学光电,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881333.SH,元器件,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881336.SH,其他电子,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881338.SH,通信设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881344.SH,电信服务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881347.SH,通信工程,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881352.SH,IT设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881355.SH,软件服务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881359.SH,云服务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881364.SH,产业互联网,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881369.SH,游戏,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881370.SH,广告营销,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881373.SH,影视院线,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881376.SH,数字媒体,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881380.SH,出版业,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881384.SH,广播电视,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881386.SH,全国性银行,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881389.SH,地方性银行,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881394.SH,证券,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881395.SH,保险,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881396.SH,多元金融,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881406.SH,房屋建设,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881407.SH,基础建设,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881410.SH,专业工程,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881415.SH,工程咨询服务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881416.SH,装修装饰,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881418.SH,房地产开发,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881422.SH,房产服务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881427.SH,体育,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881428.SH,教育培训,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881429.SH,酒店餐饮,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881432.SH,旅游,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881436.SH,专业服务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881442.SH,公路铁路,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881446.SH,航空机场,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881449.SH,航运港口,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881452.SH,物流,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881459.SH,电力,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881467.SH,燃气,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881468.SH,水务,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881470.SH,环保设备,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881471.SH,环境治理,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881476.SH,环境监测,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881478.SH,综合类,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,1250,997,2021-08-02,2026-09-24
+881479.SH,电子化学品,industry_ths,named,c1_market.sector_constituent(tqcenter get_stock_info),,,64,0,2026-06-29,2026-09-24

@@ -2379,7 +2379,7 @@ tasks:
   date_col: trade_date
   dependencies: []
   capability: kline_sector_880
-  symbols:         # null=全部880xxx板块（实测2026-07-22: 460只，tqcenter get_sector_list动态获取）+9只市场指数
+  symbols:         # null=扩面宇宙728码（DU-01/L03-C01 2026-09-25：get_sector_list 880/881段动态+9只mkt_index+TDX_INDUSTRY_BOARDS在册8803/8804段132；_get_kline880_universe 派生，禁虚构清单）
   extra:
     description: "880xxx板块指数日K线增量（tqcenter get_market_data，日K 30天）"
     period: 1d
@@ -3843,6 +3843,7 @@ tasks:
   capability: option_daily_stats
   symbols:
   extra:
+    disabled: true  # 2026-09-24 st-pipeline-final：#ARCH-CH-022 capability 契约校验正确拦截——akshare provider 无 option_daily_stats 能力实现（历史数据经 scripts/data/backfill_option_daily_stats.py 专项回补入库，定时管道从未跑通）。恢复=provider 实现 option_daily_stats fetch 后摘除本 disabled。
     description: "期权官方每日统计增量（akshare option_daily_stats_sse/szse 官方接口：认认购成交量/未平仓合约数/总成交额+成交量PCR/持仓量PCR；成交额拆分官方不提供，三列预留恒0）"
     trading_day_only: true
 

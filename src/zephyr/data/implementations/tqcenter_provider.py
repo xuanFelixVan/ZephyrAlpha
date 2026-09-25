@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] tqcenter SDK封装为IngestProviderBase；880xxx板块日K+成分股+快照；需通达信客户端运行；50只/批分批下载
+# [INVARIANTS] tqcenter SDK封装为IngestProviderBase；880xxx板块日K+成分股+快照；需通达信客户端运行；50只/批分批下载；kline_sector_880 宇宙=扩面口径 880+881+8803/8804（DU-01/L03-C01，_get_kline880_universe），constituent/snapshot 维持窄口径
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -56,6 +56,7 @@ from ..provider_base import (
     IngestProviderMeta,
 )
 from ..table_registry import get_registry
+from .sector_code_bridge import TDX_INDUSTRY_BOARDS  # 8803/8804 行业裸码 132 条（真源=tdxzs.cfg 主数据，在册常量）
 
 log = logging.getLogger(__name__)
 
@@ -245,15 +246,41 @@ class TQCenterProvider(IngestProviderBase):
         self._log.info(f"获取880xxx板块代码: {len(s880)} 只")
         return s880
 
+    def _get_kline880_universe(self) -> list[str]:
+        """kline_sector_880 采集宇宙（12 号文 DU-01 扩面，L03-C01 2026-09-25）。
+
+        880 族（get_sector_list 动态，含 mkt_index 兜底）+ 881 行业族（同源
+        get_sector_list 8810-8814 段 128 码，2026-09-25 实测在列，此前被
+        startswith('880') 过滤器排除）+ 8803/8804 行业裸码 132（TDX_INDUSTRY_BOARDS
+        在册常量，get_sector_list 不含此段；非虚构清单，库内 mootdx 真值 727 锚定）。
+        仅 kline_sector_880 capability 消费本宇宙；sector_constituent/快照维持原
+        窄口径（_get_sector_list）不受扩面影响。禁虚构清单：881 段以 get_sector_list
+        实回为准、8803/8804 以在册常量为准，均为库内/在册既有对象。
+        """
+        sectors = self._tq.get_sector_list() or []
+        strs = [s for s in sectors if isinstance(s, str)]
+        codes = {s for s in strs if s.startswith(("880", "881"))}
+        codes.update(_MKT_INDEX_CODES)
+        codes.update(f"{b.code}.SH" for b in TDX_INDUSTRY_BOARDS)
+        universe = sorted(codes)
+        n881 = sum(1 for c in universe if c.startswith("881"))
+        n8803_04 = sum(1 for c in universe if c.startswith(("8803", "8804")))
+        self._log.info(
+            f"kline_sector_880 扩面宇宙: {len(universe)} 只 "
+            f"(880 族 {len(universe) - n881 - n8803_04} / 881 行业族 {n881} / 8803-8804 {n8803_04})")
+        return universe
+
     def _fetch_kline_sector_880(self, payload: FetchPayload, policy: SourcePolicy) -> Iterator[FetchResult]:
         """获取880xxx板块指数日K线（tqcenter get_market_data）。
 
         50只/批分批下载，日K线写入 kline_sector_880 表。
+        2026-09-25 DU-01 扩面：symbols=None 时宇宙由 _get_sector_list（469 窄口径）
+        换为 _get_kline880_universe（880+881+8803/8804≈729，对齐库内真值 727）。
         """
         table = payload.table or _TBL_KLINE_SECTOR_880
         symbols = payload.symbols
         if not symbols:
-            symbols = self._get_sector_list()
+            symbols = self._get_kline880_universe()
         if not symbols:
             yield FetchResult(
                 table=table,
