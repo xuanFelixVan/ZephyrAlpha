@@ -224,8 +224,9 @@ def _immutable_tree_enabled() -> bool:
     都回退现行为（门禁输入源不动）。
     """
     try:
-        import yaml  # type: ignore[import-untyped]  # noqa: PLC0415
         from pathlib import Path as _P  # noqa: PLC0415
+
+        import yaml  # type: ignore[import-untyped]  # noqa: PLC0415
 
         _root = _P(__file__).resolve().parents[3]
         data = yaml.safe_load((_root / "config" / "flags.yaml").read_text(encoding="utf-8")) or {}
@@ -233,6 +234,8 @@ def _immutable_tree_enabled() -> bool:
         return bool(git_ops.get("immutable_tree", False))
     except Exception:  # noqa: BLE001 — fail-closed OFF
         return False
+
+
 _GW_MARKER_FMT = "[GW:{session_id}]"
 _GLOBAL_LOCK_FILE = "git_commit_global.lock"
 _LOCK_TTL_SECONDS = 1800
@@ -2915,6 +2918,70 @@ class GitCommitGateway:
         except OSError:
             pass  # 审计落盘失败不阻断（warn 已发）
 
+    def _build_own_tree_view(self, files: list[str] | None = None, session_id: str | None = None):
+        """S1 不可变树视图构造（出厂 flag OFF=返回本体，零行为变更；翻转属 Owner 门位）。
+
+        base_rev=门禁时刻 HEAD——门禁链在 ``git commit`` 之前跑，此刻 HEAD 即本件
+        父提交，对齐 CommitTreeView 契约"提交前仓库态=父提交"（修正首版接线
+        ``rev-parse HEAD~1`` 的 off-by-one：那会让 ``HEAD:p`` 读到父提交的父、
+        ``diff --cached`` 把上一笔提交的改动也算作 added——正是 S1 要防的静默
+        假绿形态）。head_rev=``git write-tree``（当前 index 冻结树；worktree
+        隔离下=本件内容）。任一 rev 取不到或构造异常 → fail-safe 返回本体
+        gateway（现行为，绝不因视图故障阻断提交）。
+
+        附带 A4 S1 新指标：树内外来 staged 文件数恒 0（worktree 隔离的结构性
+        保证；共享 index 污染进本件树时 warn+审计留痕，测量指标不阻断）。
+        """
+        if not _immutable_tree_enabled():
+            return self
+        try:
+            from zephyr.gov_enforcement.commit_gates._tree_view import (  # noqa: PLC0415
+                CommitTreeView,
+                WorktreeReadProbe,
+            )
+
+            base_rev = self.run_git(["git", "rev-parse", "HEAD"]).stdout.strip()
+            staged_tree = self.run_git(["git", "write-tree"]).stdout.strip()
+            if not (base_rev and staged_tree):
+                return self
+            view = CommitTreeView(
+                base_rev,
+                staged_tree,
+                gateway=self,
+                view_label="own_tree_gate_chain",
+                probe=WorktreeReadProbe(),
+            )
+            self._audit_own_tree_foreign(view, files, session_id)
+            return view
+        except Exception:  # noqa: BLE001 — 视图构造失败=回退本体 gateway（fail-safe 现行为）
+            return self
+
+    def _audit_own_tree_foreign(self, view, files: list[str] | None, session_id: str | None) -> None:
+        """树内外来 staged 文件指标（A4 S1 判据"恒 0"运行时面）：>0=warn+审计，不阻断。
+
+        外来=视图 own 清单（base..index 树 diff，AMD）中不在本提交声明清单内的
+        文件——共享 index 里他会话 staged 件漏进了本件不可变树。审计走
+        _audit_foreign_staged 惯例（.runtime/gate_audit/own_tree_scope_foreign_staged.jsonl，
+        gitignored 区），归 _audit_foreign_staged 既有失败不阻断口径。
+        """
+        try:
+            from zephyr.gov_enforcement.commit_gates._diff_helpers import (  # noqa: PLC0415
+                _audit_foreign_staged,
+                _norm_rel,
+            )
+
+            declared = {_norm_rel(self, f) for f in files or []}
+            foreign = [f for f in view.own_files() if _norm_rel(self, f) not in declared]
+            if foreign:
+                _audit_foreign_staged(self, session_id, foreign, gate_name="OWN-TREE-SCOPE")
+                logger.warning(
+                    "OWN-TREE-SCOPE: 本件不可变树含 %d 个清单外文件（共享 index 污染，A4 S1 指标应恒 0）: %s",
+                    len(foreign),
+                    foreign[:10],
+                )
+        except Exception:  # noqa: BLE001 — 指标失败不影响提交主流程
+            logger.debug("own-tree foreign metric failed (non-blocking)", exc_info=True)
+
     def _check_gates_with_drift_watch(
         self,
         existing,
@@ -2943,42 +3010,27 @@ class GitCommitGateway:
         # （run_git 侧置 None）。索引在窗口内不可变（锁内 + add 在链后），语义等价。
         self._git_read_cache = {}
         try:
-            # S1 不可变树接线（st-commitspeed-tbl-20260924，A3 改指矩阵执行件）：
-            # flag commit_immutable_tree=ON 时，门禁链跑在 CommitTreeView(HEAD^, index树)
+            # S1 不可变树接线（st-commitspeed-tbl-20260924，A3 改指矩阵执行件；
+            # 本包=包9 分道收口）：
+            # flag commit_immutable_tree=ON 时，门禁链跑在 CommitTreeView(HEAD, index树)
             # 替身上——四入口（_read_staged_file/_get_staged_py_files/_get_added_lines/
-            # _read_head_file）全经 gateway.run_git 同一咽喉，替身的 map_git_command 把
+            # _read_head_file）全经 gateway.run_git 同一咽喉（四入口已改视图代理，
+            # 有树读树、无树读旧路径），替身的 map_git_command 把
             # `:p`/`HEAD:p`/`diff --cached`/`ls-files --cached` 改指 base/head 两棵不可变树
             # ⇒ 72 台门一次改指，输入源不再读共享暂存区（并发作废链+等待随他人暂存涨的
-            # 病根）。等价性=出厂判据：replay 100 笔 verdict 逐笔全等（selfcheck 半场已满分：
-            # 100 笔/1522 文件/byte_mismatch=0/worktree_reads=0）；strict 缺省 False（工作树
-            # 直读透传+探针留痕，不阻断）——15 台"故意读全索引"门在测量模式行为不变，
-            # 分道校验改造归后批。
-            view_gateway = self
-            if _immutable_tree_enabled():
-                try:
-                    from zephyr.gov_enforcement.commit_gates._tree_view import (  # noqa: PLC0415
-                        CommitTreeView,
-                        WorktreeReadProbe,
-                    )
-
-                    head_rev = self.run_git(["git", "rev-parse", "HEAD~1"]).stdout.strip()
-                    staged_tree = self.run_git(["git", "write-tree"]).stdout.strip()
-                    if head_rev and staged_tree:
-                        view_gateway = CommitTreeView(
-                            head_rev,
-                            staged_tree,
-                            gateway=self,
-                            view_label="own_tree_gate_chain",
-                            probe=WorktreeReadProbe(),
-                        )
-                except Exception:  # noqa: BLE001 — 视图构造失败=回退本体 gateway（fail-safe 现行为）
-                    view_gateway = self
+            # 病根）。等价性=出厂判据：replay pinned 区间逐台 verdict/hits 全等
+            # （pkg8 协议）；strict 缺省 False（工作树直读透传+探针留痕，不阻断）。
+            # 15 台"故意读全索引"门（SHARED_INDEX_WITHOUT_OWN_SCOPE，A3 矩阵）经
+            # shared_index_gateway 逐台分道回本体 gateway——语义含他人噪声是设计，
+            # 一律不 own-tree（A4"风险最高的一档"缓解①，包9 落地）。
+            view_gateway = self._build_own_tree_view(existing, session_id)
             results = self._gate_registry.check_all(
                 view_gateway,
                 existing,
                 session_id=session_id,
                 skip_gates=skip_gates,
                 preflight_results=preflight_results,
+                shared_index_gateway=self,
                 **kwargs,
             )
         finally:

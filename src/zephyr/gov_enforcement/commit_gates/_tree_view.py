@@ -2,10 +2,10 @@
 # [MODULE] zephyr.gov_enforcement.commit_gates._tree_view
 # [DOMAIN] D_GOV_CODE_QUALITY
 # [DEPENDENCIES] zephyr.gov_enforcement.commit_gates._diff_helpers
-# [CONSUMERS] scripts/governance/replay_gate_verdicts.py（重放安全网，未接线进任何门禁）
+# [CONSUMERS] scripts/governance/replay_gate_verdicts.py（重放安全网）；zephyr.gov_enforcement.rule_bridge.git_commit_gateway（S1 接线：flag immutable_tree=ON 时门禁链跑 CommitTreeView 替身）；zephyr.gov_enforcement.rule_bridge.commit_gate_registry（分道名单 SHARED_INDEX_WITHOUT_OWN_SCOPE 消费方）；zephyr.gov_enforcement.commit_gates._diff_helpers（四入口视图代理，lazy import）
 # [STARTUP] manual
 # [MATURITY] prototype
-# [INVARIANTS] 只读观测面——四个入口语义逐一对齐 _diff_helpers（read_staged_file/staged_files/added_lines/read_head_file），fail-open 口径零改动；仓库态唯一经 git（cat-file/show/diff <rev> <rev>/ls-tree），本模块自身零工作树直读；内置 WorktreeReadProbe 双通道计数（git 命令分类 + 进程内文件系统直读归因）；SharedIndexCommitTreeView 仅用于"模拟今天共享 index"对照实验，不改变任何判据语义；本模块未被任何 gate 导入=零生产影响面
+# [INVARIANTS] 只读观测面——四个入口语义逐一对齐 _diff_helpers（read_staged_file/staged_files/added_lines/read_head_file），fail-open 口径零改动；仓库态唯一经 git（cat-file/show/diff <rev> <rev>/ls-tree），本模块自身零工作树直读；内置 WorktreeReadProbe 双通道计数（git 命令分类 + 进程内文件系统直读归因）；SharedIndexCommitTreeView 仅用于"模拟今天共享 index"对照实验，不改变任何判据语义；生产影响面=flag commit_immutable_tree 单点门控（出厂 OFF=零门禁导入路径；ON=门禁链整体跑替身，15 台全索引门经 SHARED_INDEX_WITHOUT_OWN_SCOPE 分道回本体 gateway）
 # [MODIFY-GUARD] 类 CommitTreeView(base_rev,head_rev,gateway=None).run_git(cmd,cwd=None)->CompletedProcess；四方法签名与 _diff_helpers 同名函数逐参对齐（gateway 位置换成 self）
 # [STABILITY] experimental
 # [SAFETY] L
@@ -80,7 +80,7 @@ import sys
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TypeVar, Any, Callable, Iterable, Final
+from typing import Any, Callable, Final, Iterable, TypeVar
 
 from zephyr.gov_enforcement.commit_gates._diff_helpers import (
     _parse_diff_with_line_numbers,
@@ -97,10 +97,40 @@ __all__: Final = [
     "CommitTreeView",
     "WorktreeReadBlocked",
     "WorktreeReadProbe",
+    "SHARED_INDEX_WITHOUT_OWN_SCOPE",
     "map_git_command",
 ]
 
 _THIS_MODULE = __name__
+
+# S1 分道名单（st-commitspeed-tbl-20260924，A3 改指矩阵执行件）：
+# `shared_index_without_own_scope`＝读共享暂存区却**没有** own-scope 收窄的 15 台——
+# 它们的语义里"看到别人的在途件"是**有意设计**（跨件断链/克隆检测/预算计数要全域
+# 视野），S1 一律**不 own-tree**（A4 阶梯"风险最高的一档"缓解①；真源=
+# docs/_working/commit_speedup_campaign/20_target_arch/A3_gate_repointing_matrix.yaml
+# 的 `reads_shared_index && !narrows_to_own_scope_in_code` 交集，静态产出勿手改名单）。
+# 生产链分道点＝CommitGateRegistry.check_all（shared_index_gateway 参数，逐台按
+# gate_id 分发本体 gateway）；重放器（replay_gate_verdicts）不受名单约束——它恰恰
+# 要把这 15 台放在视图上量漂移。
+SHARED_INDEX_WITHOUT_OWN_SCOPE: Final[frozenset[str]] = frozenset(
+    {
+        "ALGO-FLOW-LINK",
+        "ALGO-NOTE-SYNC",
+        "BLUEPRINT-FORMAT",
+        "BLUEPRINT-HEADER",
+        "BUSINESS-REGISTRY",
+        "CH-BATCH-SIZE",
+        "COMMIT-SCOPE",
+        "CONSUMERS-ACCURACY",
+        "GATE-DOMAIN-FK",
+        "GATE-ERRCODE-CONSISTENCY",
+        "GIT-CALL-BUDGET",
+        "MUTABLE-CONST-WITHOUT-FINAL",
+        "NO-IMPORT-SIDE-EFFECT",
+        "SCHEMA-FILE-EXISTS",
+        "TABLE-NAME-REGISTRY",
+    }
+)
 
 # 归因时跳过的"不算读者"的帧（标准库内部转发 + 本模块自身）
 _ATTRIBUTION_SKIP_PREFIXES = (

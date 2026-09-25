@@ -28,6 +28,13 @@
 - _get_staged_py_files: 获取 staged .py 文件列表
 - _get_added_lines: 获取文件 added 行列表
 
+S1 不可变树代理（st-commitspeed-tbl-20260924）：_read_staged_file /
+_get_staged_py_files / _get_added_lines / _read_head_file 四入口为视图代理——
+gateway 为 CommitTreeView 替身（flag commit_immutable_tree=ON 的门禁链内注入）
+时读不可变树（有树读树），否则逐字走旧共享暂存区路径（无树读旧路径）。
+分派原语 _own_tree_view 对视图/本体二值分派；15 台全索引门的分道真源在
+CommitGateRegistry.check_all（不在本模块）。flag OFF 下无视图存在＝零行为变更。
+
 Usage::
 
     from zephyr.gov_enforcement.commit_gates._diff_helpers import (
@@ -229,8 +236,38 @@ def _parse_diff_with_line_numbers(diff_stdout: str) -> list[tuple[int, str]]:
     return result
 
 
+def _own_tree_view(gateway):
+    """S1 视图感知分派原语（st-commitspeed-tbl-20260924，A4 阶梯"四入口改代理"执行件）。
+
+    gateway 即 CommitTreeView 替身（只在 flag ``commit_immutable_tree``=ON 的门禁链
+    内由 git_commit_gateway._build_own_tree_view 构造并经 check_all 注入，或重放器
+    直注）→ 返回该视图，四入口走"读不可变树"快速路径；gateway 是本体
+    GitCommitGateway（flag OFF 的全部现行为/测试直调/工具链路径）→ 返回 None，
+    四入口逐字走旧路径。视图不存在处零分派成本（一次 lazy import 查表＋isinstance）。
+
+    fail-open：import 失败一律 None（旧路径），永不影响现行为；15 台
+    ``SHARED_INDEX_WITHOUT_OWN_SCOPE`` 分道门不在此处判定——它们的分道真源在
+    check_all 逐台 gateway 分发（生产链里名单门拿到的本来就是本体 gateway），
+    本原语对"视图作 gateway"与"本体作 gateway"二值分派，不持名单。
+    """
+    try:
+        from zephyr.gov_enforcement.commit_gates._tree_view import (  # noqa: PLC0415
+            CommitTreeView,
+        )
+    except Exception:  # noqa: BLE001 — 设施缺失=旧路径（fail-open 口径不变）
+        return None
+    return gateway if isinstance(gateway, CommitTreeView) else None
+
+
 def _read_staged_file(gateway, py_file: str) -> str | None:
-    """读取 staged 文件内容（index 版本，``git show :path``）。"""
+    """读取 staged 文件内容（index 版本，``git show :path``）。
+
+    S1 代理：gateway 为不可变树视图时＝``git show <head_rev>:path``（视图域直读，
+    字节口径与 ``git show :path`` 的视图改写结果逐字节一致——同一 head 树）。
+    """
+    view = _own_tree_view(gateway)
+    if view is not None:
+        return view.read_staged_file(py_file)
     try:
         result = gateway.run_git(["git", "show", ":" + py_file])
         if result.returncode == 0:
@@ -249,10 +286,19 @@ def _get_staged_py_files(gateway, gate_name: str = "gate", include_renamed: bool
     "import 目标存在性"类检查必须看到 R 新路径，否则同批 rename+consumer 必误报悬空
     （2026-09-13 src/signal_ashare 拆分批实证；内容扫描型 gate 勿开——R 文件全文
     进扫描会误报存量克隆）。
+
+    S1 代理：gateway 为不可变树视图时＝视图 ``staged_files``（``git diff
+    <base> <head> --name-only``；共享 index 模拟视图则并噪声集）。集合语义与旧
+    路径逐台等价；模拟视图的合并清单按字节序排序（仅重放仪器面顺序差异，
+    verdict/hits 集合语义不变）。
     """
+    view = _own_tree_view(gateway)
+    if view is not None:
+        return view.staged_files(gate_name=gate_name, include_renamed=include_renamed)
     try:
-        result = gateway.run_git(["git", "diff", "--cached", "--name-only",
-                                  "--diff-filter=AMR" if include_renamed else "--diff-filter=AM"])
+        result = gateway.run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=AMR" if include_renamed else "--diff-filter=AM"]
+        )
         if result.returncode != 0:
             logger.warning(
                 "%s fail-open: git diff 失败(rc=%d)。",
@@ -276,7 +322,13 @@ def _get_added_lines(gateway, py_file: str, gate_name: str = "gate") -> list[tup
     """获取文件的 added 行列表（fail-open）。
 
     失败时返回空列表并记录 warning。
+
+    S1 代理：gateway 为不可变树视图时＝视图 ``added_lines``（``git diff <base>
+    <head> --unified=0 --ignore-cr-at-eol -- path``，行号解析同一真源）。
     """
+    view = _own_tree_view(gateway)
+    if view is not None:
+        return view.added_lines(py_file, gate_name=gate_name)
     try:
         # --ignore-cr-at-eol：EOL 规范化提交（CRLF→LF 机械翻转）全文件行伪"added"，
         # 会把存量违规误报为新增——按内容判定 added，行尾差异不计（2026-08-16 EOL 批实证）
@@ -298,7 +350,13 @@ def _read_head_file(gateway, py_file: str) -> str | None:
     本函数读取 HEAD 版本，供 gate 判断函数是否已存在。
 
     fail-open：文件不存在于 HEAD（新增文件）或 git 命令失败时返回 None。
+
+    S1 代理：gateway 为不可变树视图时＝``git show <base_rev>:path``（base=
+    门禁时刻 HEAD=本件父提交，对齐 CommitTreeView 契约"提交前仓库态"）。
     """
+    view = _own_tree_view(gateway)
+    if view is not None:
+        return view.read_head_file(py_file)
     try:
         result = gateway.run_git(["git", "show", "HEAD:" + py_file])
         if result.returncode == 0:
@@ -320,8 +378,7 @@ def _repo_state_has_file(gateway, rel_path: str, rev: str = "") -> bool:
     git 失败（rc!=0，环境故障）时退回磁盘 ``os.path.exists`` 并**告警留痕**
     （禁静默换口径——磁盘=本机暂态，非仓库态）。
     """
-    args = (["git", "ls-tree", rev, "--", rel_path] if rev
-            else ["git", "ls-files", "--cached", "--", rel_path])
+    args = ["git", "ls-tree", rev, "--", rel_path] if rev else ["git", "ls-files", "--cached", "--", rel_path]
     root = getattr(gateway, "project_root", None)
     try:
         result = gateway.run_git(args)
@@ -334,12 +391,15 @@ def _repo_state_has_file(gateway, rel_path: str, rev: str = "") -> bool:
             return bool(root) and (Path(root) / rel_path).exists()
         logger.warning(
             "_repo_state_has_file: git rc=%d（%s %s）——退回磁盘观测面（降级留痕，裁定#279）",
-            result.returncode, args[1], rel_path,
+            result.returncode,
+            args[1],
+            rel_path,
         )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(
             "_repo_state_has_file: git 异常（%s: %s）——退回磁盘观测面（降级留痕，裁定#279）",
-            type(e).__name__, e,
+            type(e).__name__,
+            e,
         )
     return bool(root) and (Path(root) / rel_path).exists()
 
@@ -515,9 +575,7 @@ def _attribute_foreign(gateway, session_id: str | None, foreign_staged: list[str
     return attribution
 
 
-def _audit_foreign_staged(
-    gateway, session_id: str | None, foreign_staged: list[str], *, gate_name: str
-) -> None:
+def _audit_foreign_staged(gateway, session_id: str | None, foreign_staged: list[str], *, gate_name: str) -> None:
     """外来 session staged 文件落审计（jsonl append；fail-open：写失败不阻断）。
 
     审计文件名由 gate_name 派生（NO-HIGH-COMPLEXITY → no_high_complexity_foreign_staged.jsonl），
@@ -623,11 +681,7 @@ def _ast_semantic_fingerprint(src: str) -> str | None:
         if not body:
             continue
         first = body[0]
-        if (
-            isinstance(first, ast.Expr)
-            and isinstance(first.value, ast.Constant)
-            and isinstance(first.value.value, str)
-        ):
+        if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant) and isinstance(first.value.value, str):
             node.body = body[1:] or [ast.Pass()]
     try:
         return ast.dump(tree, annotate_fields=True, include_attributes=False)

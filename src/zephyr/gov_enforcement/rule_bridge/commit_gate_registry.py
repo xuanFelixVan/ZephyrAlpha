@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway; zephyr.governance.audit.reconciliation_registry.make_in_process_gate_registry_drift_reconciler (调用 list_gate_ids 进行 YAML↔内存双向校验, #ARCH-GATE-REGISTRY-AUTO-001 Phase 6)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] CommitGateRegistry.register 幂等（同 gate_id 覆盖旧 spec）；同 priority 不同 gate_id 抛 GateRegistrationError 阻断（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2 fail-closed 治本）；check_all 按 priority 升序执行所有 gate；单个 gate 异常降级为 fail-closed（passed=False，安全优先），不阻断后续 gate 执行
+# [INVARIANTS] CommitGateRegistry.register 幂等（同 gate_id 覆盖旧 spec）；同 priority 不同 gate_id 抛 GateRegistrationError 阻断（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2 fail-closed 治本）；check_all 按 priority 升序执行所有 gate；单个 gate 异常降级为 fail-closed（passed=False，安全优先），不阻断后续 gate 执行；S1 分道面（st-commitspeed-tbl-20260924）＝shared_index_gateway 非 None 且非 gateway 时仅 SHARED_INDEX_WITHOUT_OWN_SCOPE 名单内 15 台逐台改发本体 gateway，缺省/同对象=零分派零行为变更
 # [MODIFY-GUARD] GateSpec 字段结构；GateResult 语义；TEST_EXEMPT_PREFIXES / is_test_exempt（tests/ 豁免真源）
 # [STABILITY] evolving
 # [SAFETY] M
@@ -395,6 +395,7 @@ class CommitGateRegistry:
         files: list[str],
         skip_gates: frozenset[str] = frozenset(),
         preflight_results: dict[str, tuple[bool, str]] | None = None,
+        shared_index_gateway: object | None = None,
         **kwargs: Any,
     ) -> list[GateResult]:
         """按 priority 升序执行所有 gate，返回结果列表。
@@ -410,8 +411,27 @@ class CommitGateRegistry:
         preflight_results: P2⑦（2026-09-11，st-perf-plan-20260910）锁外预跑已验
         gate 的结果表（调用方负责指纹 F′==F 校验后才传入）；命中的 gate 复用预跑
         结果不再现算。None=未启用/指纹不一致（现行全量路径，正确性永不依赖预跑）。
+
+        shared_index_gateway: S1 分道面（st-commitspeed-tbl-20260924，A4 阶梯）。
+        gateway 为不可变树视图替身时，``SHARED_INDEX_WITHOUT_OWN_SCOPE`` 名单内
+        的 15 台"故意读全索引"门（语义含他人在途件是设计，A3 改指矩阵）逐台改
+        分发本参数指向的本体 gateway——名单门彻底不 own-tree。None（缺省）或
+        与 gateway 同对象（flag OFF 链）＝零分派，全部 gate 跑 gateway（现行为）。
         """
         _audit_allow_overlap_usage(gateway, files, kwargs)
+        # S1 分道真源（15 台名单唯一判定点；懒加载且仅 flag ON 链产生成本）：
+        # shared_index_gateway 缺省/与 gateway 同对象→不加载名单（零行为变更）。
+        _shared_index_gw: object | None = None
+        if shared_index_gateway is not None and shared_index_gateway is not gateway:
+            try:
+                from zephyr.gov_enforcement.commit_gates._tree_view import (  # noqa: PLC0415
+                    SHARED_INDEX_WITHOUT_OWN_SCOPE,
+                )
+
+                _shared_index_gw = shared_index_gateway
+                _shared_index_exempt = SHARED_INDEX_WITHOUT_OWN_SCOPE
+            except Exception:  # noqa: BLE001 — 名单设施缺失=不分道（退回全视图链，fail-open）
+                _shared_index_gw = None
         # P2⑧ 持久结果缓存（方案 §2.2-A3）：flag OFF（出厂默认）时 cache_ctx=None
         # 行为不变；ON 时仅白名单（纯 staged 内容扫描型）查/存，只缓存 passed=True，
         # key 五元组任一变化即全失效（详见 gate_cache_preflight 模块 docstring）。
@@ -462,9 +482,7 @@ class CommitGateRegistry:
                     results.append(GateResult(gate_id=spec.gate_id, passed=True, detail=f"cache-hit: {hit}"))
                     _stat_ms(spec.gate_id, 0.0, True, "cache_hit")
                     continue
-            _preflight_hit = (
-                preflight_results.get(spec.gate_id) if preflight_results else None
-            )
+            _preflight_hit = preflight_results.get(spec.gate_id) if preflight_results else None
             if _preflight_hit is not None:
                 passed, detail = _preflight_hit
                 results.append(GateResult(gate_id=spec.gate_id, passed=passed, detail=f"preflight: {detail}"))
@@ -472,7 +490,14 @@ class CommitGateRegistry:
                 continue
             _t_gate = time.monotonic()
             try:
-                passed, detail = spec.check(gateway, files, **kwargs)
+                # S1 分道：名单内的 15 台全索引门拿本体 gateway（读真共享暂存区，
+                # 语义含他人噪声是设计）；其余拿 gateway（flag ON 链=视图替身）。
+                _gate_gw = (
+                    _shared_index_gw
+                    if _shared_index_gw is not None and spec.gate_id in _shared_index_exempt
+                    else gateway
+                )
+                passed, detail = spec.check(_gate_gw, files, **kwargs)
                 results.append(GateResult(gate_id=spec.gate_id, passed=passed, detail=detail))
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 logger.warning("CommitGateRegistry: gate %s 异常降级为 fail-closed: %s", spec.gate_id, e, exc_info=True)
