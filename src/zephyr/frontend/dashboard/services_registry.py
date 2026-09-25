@@ -6,7 +6,9 @@
 * 四态灯 DS-12：green=正常 / yellow=延迟 / red=断线 / gray=未启动
 * 控制：分级开关（free=自由 / confirm=二次确认 / guard=保命禁操作 / external=外部程序禁操作 / self=本页宿主）
 * 日志：tmp/services_control_log.jsonl（谁几点开了/关了什么，审计可查）
+# [ALGO_FLOW] external: docs/03_modules/_domain_frontend/algo_flow/services_registry.yaml
 """
+
 from __future__ import annotations
 
 import json
@@ -18,9 +20,12 @@ import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any, Final
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+if TYPE_CHECKING:  # pragma: no cover — 仅供类型标注；运行时 psutil 仍在函数内延迟导入（缺库=状态页降级）
+    import psutil
 
 _REPO = Path(__file__).resolve().parents[4]
 _TMP = _REPO / "tmp"
@@ -32,147 +37,359 @@ _LOG = _TMP / "services_control_log.jsonl"
 # start: 拉起命令（argv 列表，cwd=仓库根）；stop: how=tree(kill 进程树)/heartbeat(kill guard+child)/port(kill 监听进程)
 SERVICE_CATALOG: list[dict[str, Any]] = [
     # ── 服务域（本仓库可自由开关）──
-    {"id": "api_server", "group": "services", "tier": "self", "name": "面板 API 服务",
-     "desc": "本页的宿主：面板页面+所有数据的总后厨（端口 8890 一体服务页面+数据，2026-09-19 W6 起）——不能停（停了页面就死），可一键重启（改完代码生效用）",
-     "detect": {"type": "self"}},
-    {"id": "panel", "group": "services", "tier": "free", "name": "Panel 治理大屏",
-     "desc": "旧版治理大屏（10-Tab 治理+交易+回测，端口 5006）——和新桌面面板并存，用不用随你",
-     "detect": {"type": "port", "port": 5006},
-     "start": ["python", "-m", "panel", "serve", "src/zephyr/frontend/dashboard/app_panel.py", "--port", "5006"],
-     "stop": {"how": "port", "port": 5006}},
-    {"id": "docs_serve", "group": "services", "tier": "free", "name": "本地文档服务",
-     "desc": "文档本职：架构图里「可缩放 HTML 版」等文档页的通道（端口 8765）——面板页面已改由 8890 一体服务（2026-09-19 W6），此处只管文档；打开面板自动拉起，这里可手动启停；全量重生成用 python scripts/serve_docs.py --regen-only",
-     "detect": {"type": "port", "port": 8765},
-     "start": ["python", "scripts/serve_docs.py", "--no-regen"],
-     "stop": {"how": "port", "port": 8765}},
-    {"id": "llm_dash", "group": "services", "tier": "free", "name": "LLM 安全网关面板",
-     "desc": "AI 防护墙的监控面板（提示词注入拦截/安全事件记录）——streamlit 起的网页",
-     "detect": {"type": "port", "port": 8501},
-     "start": ["python", "-m", "streamlit", "run", "src/zephyr/security/llm_defense/llm_security/dashboard/app.py"],
-     "stop": {"how": "port", "port": 8501}},
-    {"id": "mcp", "group": "services", "tier": "free", "name": "MCP 服务器簇",
-     "desc": "AI 干活的工具箱后台（规则查询/任务管理/网关等 9 件套）——AI 会话依赖它",
-     "detect": {"type": "proc", "pattern": r"rule_discovery_server|scripts[\\/]mcp[\\/]launcher"},
-     "start": ["python", "scripts/mcp/launcher.py"],
-     "stop": {"how": "proc"}},
-    {"id": "proto8010", "group": "services", "tier": "free", "name": "原型页静态服务",
-     "desc": "docs/_working 原型页的浏览通道（端口 8010，掉线有看门狗 30 秒自愈）",
-     "detect": {"type": "port", "port": 8010},
-     "start": ["python", "-m", "http.server", "8010", "--directory", "docs/_working"],
-     "stop": {"how": "port", "port": 8010}},
+    {
+        "id": "api_server",
+        "group": "services",
+        "tier": "self",
+        "name": "面板 API 服务",
+        "desc": "本页的宿主：面板页面+所有数据的总后厨（端口 8890 一体服务页面+数据，2026-09-19 W6 起）——不能停（停了页面就死），可一键重启（改完代码生效用）",
+        "detect": {"type": "self"},
+    },
+    {
+        "id": "panel",
+        "group": "services",
+        "tier": "free",
+        "name": "Panel 治理大屏",
+        "desc": "旧版治理大屏（10-Tab 治理+交易+回测，端口 5006）——和新桌面面板并存，用不用随你",
+        "detect": {"type": "port", "port": 5006},
+        "start": ["python", "-m", "panel", "serve", "src/zephyr/frontend/dashboard/app_panel.py", "--port", "5006"],
+        "stop": {"how": "port", "port": 5006},
+    },
+    {
+        "id": "docs_serve",
+        "group": "services",
+        "tier": "free",
+        "name": "本地文档服务",
+        "desc": "文档本职：架构图里「可缩放 HTML 版」等文档页的通道（端口 8765）——面板页面已改由 8890 一体服务（2026-09-19 W6），此处只管文档；打开面板自动拉起，这里可手动启停；全量重生成用 python scripts/serve_docs.py --regen-only",
+        "detect": {"type": "port", "port": 8765},
+        "start": ["python", "scripts/serve_docs.py", "--no-regen"],
+        "stop": {"how": "port", "port": 8765},
+    },
+    {
+        "id": "llm_dash",
+        "group": "services",
+        "tier": "free",
+        "name": "LLM 安全网关面板",
+        "desc": "AI 防护墙的监控面板（提示词注入拦截/安全事件记录）——streamlit 起的网页",
+        "detect": {"type": "port", "port": 8501},
+        "start": ["python", "-m", "streamlit", "run", "src/zephyr/security/llm_defense/llm_security/dashboard/app.py"],
+        "stop": {"how": "port", "port": 8501},
+    },
+    {
+        "id": "mcp",
+        "group": "services",
+        "tier": "free",
+        "name": "MCP 服务器簇",
+        "desc": "AI 干活的工具箱后台（规则查询/任务管理/网关等 9 件套）——AI 会话依赖它",
+        "detect": {"type": "proc", "pattern": r"rule_discovery_server|scripts[\\/]mcp[\\/]launcher"},
+        "start": ["python", "scripts/mcp/launcher.py"],
+        "stop": {"how": "proc"},
+    },
+    {
+        "id": "proto8010",
+        "group": "services",
+        "tier": "free",
+        "name": "原型页静态服务",
+        "desc": "docs/_working 原型页的浏览通道（端口 8010，掉线有看门狗 30 秒自愈）",
+        "detect": {"type": "port", "port": 8010},
+        "start": ["python", "-m", "http.server", "8010", "--directory", "docs/_working"],
+        "stop": {"how": "port", "port": 8010},
+    },
     # ── 数据域（关=丢数据，需二次确认）──
-    {"id": "scheduler", "group": "data", "tier": "confirm", "name": "数据调度器",
-     "desc": "8 个数据源的下载总管：每天自动下 K 线/财务/新闻/板块进数据库（61 个任务）",
-     "detect": {"type": "heartbeat", "file": "scheduler.heartbeat", "task": "ZephyrAlpha_DataScheduler"},
-     "start": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/start_scheduler.ps1"],
-     "stop": {"how": "heartbeat", "task": "ZephyrAlpha_DataScheduler",
-              "kill_patterns": [r"start_scheduler\.ps1", r"zephyr\.data\.scheduler"]}},
-    {"id": "tick_sub", "group": "data", "tier": "confirm", "name": "Tick 订阅器",
-     "desc": "盘中每 3 秒抓一笔实时行情存库——模拟盘和做T 策略的口粮，盘中关掉会漏数据",
-     "detect": {"type": "heartbeat", "file": "tick_subscriber.heartbeat", "biz": "tick_subscriber_biz.heartbeat",
-                "task": "ZephyrAlpha_TickSubscriber"},
-     "start": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/start_tick_subscriber.ps1"],
-     "stop": {"how": "heartbeat", "task": "ZephyrAlpha_TickSubscriber",
-              "kill_patterns": [r"start_tick_subscriber\.ps1", r"zephyr\.data\.tick_subscriber"]}},
+    {
+        "id": "scheduler",
+        "group": "data",
+        "tier": "confirm",
+        "name": "数据调度器",
+        "desc": "8 个数据源的下载总管：每天自动下 K 线/财务/新闻/板块进数据库（61 个任务）",
+        "detect": {"type": "heartbeat", "file": "scheduler.heartbeat", "task": "ZephyrAlpha_DataScheduler"},
+        "start": ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "scripts/start_scheduler.ps1"],
+        "stop": {
+            "how": "heartbeat",
+            "task": "ZephyrAlpha_DataScheduler",
+            "kill_patterns": [r"start_scheduler\.ps1", r"zephyr\.data\.scheduler"],
+        },
+    },
+    {
+        "id": "tick_sub",
+        "group": "data",
+        "tier": "confirm",
+        "name": "Tick 订阅器",
+        "desc": "盘中每 3 秒抓一笔实时行情存库——模拟盘和做T 策略的口粮，盘中关掉会漏数据",
+        "detect": {
+            "type": "heartbeat",
+            "file": "tick_subscriber.heartbeat",
+            "biz": "tick_subscriber_biz.heartbeat",
+            "task": "ZephyrAlpha_TickSubscriber",
+        },
+        "start": [
+            "powershell",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-File",
+            "scripts/start_tick_subscriber.ps1",
+        ],
+        "stop": {
+            "how": "heartbeat",
+            "task": "ZephyrAlpha_TickSubscriber",
+            "kill_patterns": [r"start_tick_subscriber\.ps1", r"zephyr\.data\.tick_subscriber"],
+        },
+    },
     # 开关型软服务（非进程）：调度器内的 nightly_sentiment 时段（08:20 日频）标记文件闸——
     # 停=写 data/runtime/nightly_sentiment.disabled（下一次触发起跳过），启=删标记；调度器无需重启
-    {"id": "nightly_sentiment", "group": "data", "tier": "free", "name": "情绪打分",
-     "desc": "每天 08:20 自动给昨夜新闻打情绪分入「新闻情绪窗口」表（本地规则法零成本）——开关即停/复，历史数据不动",
-     "detect": {"type": "flag", "file": "nightly_sentiment.disabled"},
-     "stop": {"how": "flag", "file": "nightly_sentiment.disabled"},
-     "start": {"how": "flag", "file": "nightly_sentiment.disabled"}},
-    {"id": "sector_collector", "group": "data", "tier": "confirm", "name": "板块快照采集器",
-     "desc": "盘中每分钟存一张板块涨跌快照进库（板块排名/轮动分析的数据底料）",
-     "detect": {"type": "proc", "pattern": r"sector_snapshot_collector"},
-     "start": ["python", "-m", "zephyr.data.sector_snapshot_collector"],
-     "stop": {"how": "proc"}},
-    {"id": "ch_probe", "group": "data", "tier": "guard", "name": "CH 健康探针",
-     "desc": "数据库哨兵：每 3 秒探一次 ClickHouse 死活，断连 6 秒就拉警报——保命进程不许关",
-     "detect": {"type": "heartbeat", "file": "ch_health_probe.heartbeat"}},
+    {
+        "id": "nightly_sentiment",
+        "group": "data",
+        "tier": "free",
+        "name": "情绪打分",
+        "desc": "每天 08:20 自动给昨夜新闻打情绪分入「新闻情绪窗口」表（本地规则法零成本）——开关即停/复，历史数据不动",
+        "detect": {"type": "flag", "file": "nightly_sentiment.disabled"},
+        "stop": {"how": "flag", "file": "nightly_sentiment.disabled"},
+        "start": {"how": "flag", "file": "nightly_sentiment.disabled"},
+    },
+    {
+        "id": "sector_collector",
+        "group": "data",
+        "tier": "confirm",
+        "name": "板块快照采集器",
+        "desc": "盘中每分钟存一张板块涨跌快照进库（板块排名/轮动分析的数据底料）",
+        "detect": {"type": "proc", "pattern": r"sector_snapshot_collector"},
+        "start": ["python", "-m", "zephyr.data.sector_snapshot_collector"],
+        "stop": {"how": "proc"},
+    },
+    {
+        "id": "ch_probe",
+        "group": "data",
+        "tier": "guard",
+        "name": "CH 健康探针",
+        "desc": "数据库哨兵：每 3 秒探一次 ClickHouse 死活，断连 6 秒就拉警报——保命进程不许关",
+        "detect": {"type": "heartbeat", "file": "ch_health_probe.heartbeat"},
+    },
     # ── 交易域 ──
-    {"id": "paper_session", "group": "trading", "tier": "confirm", "name": "模拟盘会话",
-     "desc": "交易日 09:25~15:05 的模拟盘值守进程（实盘前的彩排场），挂着策略接行情",
-     "detect": {"type": "proc", "pattern": r"start_paper_session"},
-     "start": ["python", "scripts/start_paper_session.py"],
-     "stop": {"how": "proc"}},
-    {"id": "qmt", "group": "trading", "tier": "external", "name": "QMT 终端",
-     "desc": "券商交易终端：行情+交易+文件桥（持仓/盘口数据的生产者）——无法自动登录，只能你手动启动",
-     "detect": {"type": "proc", "pattern": r"xtminiqmt|xtitclient|xiadan|qmt", "name_only": True}},
-     # ↑ 迁移台账 F4（2026-09-09）：+xtitclient（大QMT 主程序 XtItClient.exe，93 备忘 §2.3 实地辨识）；
-     #   9/18 miniQMT 退役后 pattern 命中全靠它，缺失=服务总闸假死。⚠ 实测待复核：夜班时本机
-     #   仅有 XtMiniQmt 进程，大QMT 客户端未开——Owner 开真实终端后核对任务管理器进程名
-     #   是否为 XtItClient（台账 §8.2 前置动作），不符则更新本 pattern。
-    {"id": "tdx", "group": "trading", "tier": "external", "name": "通达信客户端",
-     "desc": "行情源之一（十源里的老牌选手）——手动启动，这里只看它的死活",
-     "detect": {"type": "proc", "pattern": r"^tdx", "name_only": True}},
+    {
+        "id": "paper_session",
+        "group": "trading",
+        "tier": "confirm",
+        "name": "模拟盘会话",
+        "desc": "交易日 09:25~15:05 的模拟盘值守进程（实盘前的彩排场），挂着策略接行情",
+        "detect": {"type": "proc", "pattern": r"start_paper_session"},
+        "start": ["python", "scripts/start_paper_session.py"],
+        "stop": {"how": "proc"},
+    },
+    {
+        "id": "qmt",
+        "group": "trading",
+        "tier": "external",
+        "name": "QMT 终端",
+        "desc": "券商交易终端：行情+交易+文件桥（持仓/盘口数据的生产者）——无法自动登录，只能你手动启动",
+        "detect": {"type": "proc", "pattern": r"xtminiqmt|xtitclient|xiadan|qmt", "name_only": True},
+    },
+    # ↑ 迁移台账 F4（2026-09-09）：+xtitclient（大QMT 主程序 XtItClient.exe，93 备忘 §2.3 实地辨识）；
+    #   9/18 miniQMT 退役后 pattern 命中全靠它，缺失=服务总闸假死。⚠ 实测待复核：夜班时本机
+    #   仅有 XtMiniQmt 进程，大QMT 客户端未开——Owner 开真实终端后核对任务管理器进程名
+    #   是否为 XtItClient（台账 §8.2 前置动作），不符则更新本 pattern。
+    {
+        "id": "tdx",
+        "group": "trading",
+        "tier": "external",
+        "name": "通达信客户端",
+        "desc": "行情源之一（十源里的老牌选手）——手动启动，这里只看它的死活",
+        "detect": {"type": "proc", "pattern": r"^tdx", "name_only": True},
+    },
     # ── 基础设施（外部程序，只读）──
-    {"id": "clickhouse", "group": "infra", "tier": "external", "name": "ClickHouse 数据库",
-     "desc": "111 亿行行情数据的老窝（Hyper-V 虚拟机里）——所有页面取数的地基，开机自启+180 秒延迟",
-     "detect": {"type": "ch"}},
-    {"id": "redis", "group": "infra", "tier": "external", "name": "Redis 热缓存",
-     "desc": "盘中因子链的口粮仓（和 ClickHouse 同一台虚拟机）——挂了盘中自动降级带病运行，必须有人知道",
-     "detect": {"type": "env_tcp", "env": ".env.redis", "host_key": "REDIS_HOST", "port_key": "REDIS_PORT"}},
-    {"id": "postgres", "group": "infra", "tier": "external", "name": "PostgreSQL 治理库",
-     "desc": "项目地图/依赖图的老家（depgraph 唯一真源）——挂了整个 AI 治理链瞎眼",
-     "detect": {"type": "env_tcp", "env": ".env.postgres", "host_key": "POSTGRES_HOST", "port_key": "POSTGRES_PORT"}},
-    {"id": "cold_archive", "group": "infra", "tier": "external", "name": "E 盘冷存储",
-     "desc": "老分区数据搬进 parquet 的冷备仓（E:\\zephyr_cold_archive，111 亿行的老窝的后悔药）——库炸了靠它重演历史",
-     "detect": {"type": "cold_archive", "dir": "E:\\zephyr_cold_archive", "manifest": "archive_manifest.jsonl"}},
-    {"id": "code_backup", "group": "infra", "tier": "external", "name": "F 盘代码备份仓",
-     "desc": "每日六阶段备份的落盘终点（F:\\code_backup）——任务 Ready 不等于产物在位，这里看真东西",
-     "detect": {"type": "daily_fresh", "dir": "F:\\code_backup"}},
-    {"id": "rsshub", "group": "infra", "tier": "external", "name": "RSSHub 新闻源",
-     "desc": "新闻/舆情抓取的输送管道（pm2 托管）——情绪分析和新闻页的口粮，开机自启",
-     "detect": {"type": "port", "port": 1200}},
+    {
+        "id": "clickhouse",
+        "group": "infra",
+        "tier": "external",
+        "name": "ClickHouse 数据库",
+        "desc": "111 亿行行情数据的老窝（Hyper-V 虚拟机里）——所有页面取数的地基，开机自启+180 秒延迟",
+        "detect": {"type": "ch"},
+    },
+    {
+        "id": "redis",
+        "group": "infra",
+        "tier": "external",
+        "name": "Redis 热缓存",
+        "desc": "盘中因子链的口粮仓（和 ClickHouse 同一台虚拟机）——挂了盘中自动降级带病运行，必须有人知道",
+        "detect": {"type": "env_tcp", "env": ".env.redis", "host_key": "REDIS_HOST", "port_key": "REDIS_PORT"},
+    },
+    {
+        "id": "postgres",
+        "group": "infra",
+        "tier": "external",
+        "name": "PostgreSQL 治理库",
+        "desc": "项目地图/依赖图的老家（depgraph 唯一真源）——挂了整个 AI 治理链瞎眼",
+        "detect": {"type": "env_tcp", "env": ".env.postgres", "host_key": "POSTGRES_HOST", "port_key": "POSTGRES_PORT"},
+    },
+    {
+        "id": "cold_archive",
+        "group": "infra",
+        "tier": "external",
+        "name": "F 盘冷归档仓",
+        "desc": "老分区数据搬进 parquet 的冷备仓（F:\\zephyr_cold\\50_archive\\by_project\\zephyralpha，"
+        "111 亿行的老窝的后悔药；2026-09-20 自 E 盘迁入，E:\\zephyr_cold_archive 09-24 验冗余后已删）"
+        "——库炸了靠它重演历史，在位性按 archive_manifest.jsonl 逐件核对",
+        "detect": {
+            "type": "cold_archive",
+            "cfg_key": "cold_archive",
+            "dir": "F:\\zephyr_cold\\50_archive\\by_project\\zephyralpha",
+            "manifest": "archive_manifest.jsonl",
+        },
+    },
+    {
+        "id": "code_backup",
+        "group": "infra",
+        "tier": "external",
+        "name": "G 盘代码备份仓",
+        "desc": "每日六阶段备份的代码快照落盘终点（G:\\backup\\working_vault\\<yyyyMMdd> 版本化快照；"
+        "09-14 弃 /MIR 单镜像、09-21 a3 阶段4.2 自 F:\\code_backup 迁 G）"
+        "——任务 Ready 不等于产物在位，这里看最新快照的关键件是否真在盘上",
+        "detect": {
+            "type": "daily_fresh",
+            "cfg_key": "working_vault",
+            "dir": "G:\\backup\\working_vault",
+            "key_files": [
+                "AGENTS.md",
+                "pyproject.toml",
+                "config/.env.postgres",
+                "config/.env.ch_backup",
+                "config/.env.clickhouse",
+            ],
+        },
+    },
+    {
+        "id": "rsshub",
+        "group": "infra",
+        "tier": "external",
+        "name": "RSSHub 新闻源",
+        "desc": "新闻/舆情抓取的输送管道（pm2 托管）——情绪分析和新闻页的口粮，开机自启",
+        "detect": {"type": "port", "port": 1200},
+    },
     # ── 守护域（保命进程，禁操作）──
-    {"id": "drift_watchdog", "group": "guard", "tier": "guard", "name": "漂移看门狗",
-     "desc": "仓库保安+清道夫：盯文件被偷偷改动（存证+报警）、清死会话遗留、夜间派生缓存自动归档——保命进程不许关",
-     "detect": {"type": "proc", "pattern": r"worktree_drift_watchdog"}},
-    {"id": "deadman", "group": "guard", "tier": "guard", "name": "死人开关",
-     "desc": "最后的哨兵：核心服务心跳停超 10 分钟，自动给你飞书发警报（计划任务每 5 分钟查一次）",
-     "detect": {"type": "task", "task": "ZephyrAlpha_DeadmanSwitch"}},
-    {"id": "reaper", "group": "guard", "tier": "guard", "name": "进程收割者",
-     "desc": "开机清道夫：清理项目残留的 python 僵尸进程和幽灵窗口（登录后跑一次就退出）",
-     "detect": {"type": "task", "task": "ZephyrAlpha_ProcessReaper"}},
+    {
+        "id": "drift_watchdog",
+        "group": "guard",
+        "tier": "guard",
+        "name": "漂移看门狗",
+        "desc": "仓库保安+清道夫：盯文件被偷偷改动（存证+报警）、清死会话遗留、夜间派生缓存自动归档——保命进程不许关",
+        "detect": {"type": "proc", "pattern": r"worktree_drift_watchdog"},
+    },
+    {
+        "id": "deadman",
+        "group": "guard",
+        "tier": "guard",
+        "name": "死人开关",
+        "desc": "最后的哨兵：核心服务心跳停超 10 分钟，自动给你飞书发警报（计划任务每 5 分钟查一次）",
+        "detect": {"type": "task", "task": "ZephyrAlpha_DeadmanSwitch"},
+    },
+    {
+        "id": "reaper",
+        "group": "guard",
+        "tier": "guard",
+        "name": "进程收割者",
+        "desc": "开机清道夫：清理项目残留的 python 僵尸进程和幽灵窗口（登录后跑一次就退出）",
+        "detect": {"type": "task", "task": "ZephyrAlpha_ProcessReaper"},
+    },
     # ── 二期补充（Owner 2026-09-02「全面盘点补全」）：盘中运行时/文件桥/定时任务族 ──
-    {"id": "intraday_main", "group": "trading", "tier": "confirm", "name": "盘中运行时",
-     "desc": "tick→Redis→因子→端到端盘中编排（AGENTS 348）——交易日盘中核心，依赖 QMT 先就绪",
-     "detect": {"type": "proc", "pattern": r"intraday_main"},
-     "start": ["python", "-m", "zephyr.runtime.intraday_main"],
-     "stop": {"how": "proc"}},
-    {"id": "qmt_bridge", "group": "trading", "tier": "external", "name": "QMT 文件桥",
-     "desc": "QMT 自动导出的实盘数据通道（持仓/委托/成交 CSV，10 秒一茬）——QMT 开着它就活着",
-     "detect": {"type": "file_fresh", "dir": "E:\\qmt_bridge"}},
-    {"id": "qmt_bridge_sim", "group": "trading", "tier": "external", "name": "模拟盘文件桥",
-     "desc": "模拟盘 QMT 的数据桥（E:\\qmt_bridge_sim）——模拟盘会话开着它就活着，收盘后停属正常",
-     "detect": {"type": "file_fresh", "dir": "E:\\qmt_bridge_sim"}},
-    {"id": "write_audit_daemon", "group": "guard", "tier": "guard", "name": "写审计守护",
-     "desc": "给每次文件改动记台账的书记员（防「改了没人知道」）——保命进程不许关",
-     "detect": {"type": "proc", "pattern": r"write_audit_daemon"}},
-    {"id": "post_settlement", "group": "guard", "tier": "guard", "name": "盘后结算",
-     "desc": "每天 15:30 自动结算+对账+审计写账（交易日才干活）——计划任务只读监控",
-     "detect": {"type": "task", "task": "ZephyrAlpha_PostSettlement"}},
-    {"id": "daily_backup", "group": "guard", "tier": "guard", "name": "每日灾备",
-     "desc": "每天 06:00 六阶段备份保底（库+配置+代码打包）——备份断了必须有人知道",
-     "detect": {"type": "task", "task": "ZephyrAlpha-DailyBackup"}},
-    {"id": "weekly_vm_backup", "group": "guard", "tier": "guard", "name": "每周 VM 备份",
-     "desc": "每周五 06:00 虚拟机整体快照（ClickHouse 老窝的后悔药）",
-     "detect": {"type": "task", "task": "ZephyrAlpha-WeeklyVMBackup"}},
-    {"id": "ch_optimize_weekly", "group": "guard", "tier": "guard", "name": "CH 周维护",
-     "desc": "每周六 03:30 ClickHouse 合并优化（表碎片整理，保查询速度）",
-     "detect": {"type": "task", "task": "ZephyrAlpha-CH-OptimizeMerge-Weekly"}},
-    {"id": "ttl_rejudge", "group": "guard", "tier": "guard", "name": "TTL 日重判",
-     "desc": "每天 18:05 数据生命周期重判（过期数据自动降级/清理的裁判）",
-     "detect": {"type": "task", "task": "ZephyrAlpha_TTLRejudgeDaily"}},
-    {"id": "trae_cache", "group": "guard", "tier": "guard", "name": "Trae 缓存清理",
-     "desc": "开机清 Trae 编辑器缓存（防缓存膨胀吃满 C 盘）",
-     "detect": {"type": "task", "task": "ZephyrAlpha_TraeCacheCleanup"}},
-    {"id": "ai_wrapper_inject", "group": "guard", "tier": "guard", "name": "AI 通道防护注入",
-     "desc": "每分钟给新 AI 进程打 git 安全补丁（防 AI 误操作 git）——它停了 AI 通道防护裸奔",
-     "detect": {"type": "task", "task": "ZephyrAlpha-AI-Wrapper-Inject"}},
-    {"id": "trading_watchdog", "group": "guard", "tier": "guard", "name": "交易看门狗",
-     "desc": "盯交易主进程崩了自动拉起——92 号裁定 D3 备而未启（上实盘无人值守时你再来开）",
-     "detect": {"type": "task", "task": "ZephyrAlpha_TradingWatchdog"}},
+    {
+        "id": "intraday_main",
+        "group": "trading",
+        "tier": "confirm",
+        "name": "盘中运行时",
+        "desc": "tick→Redis→因子→端到端盘中编排（AGENTS 348）——交易日盘中核心，依赖 QMT 先就绪",
+        "detect": {"type": "proc", "pattern": r"intraday_main"},
+        "start": ["python", "-m", "zephyr.runtime.intraday_main"],
+        "stop": {"how": "proc"},
+    },
+    {
+        "id": "qmt_bridge",
+        "group": "trading",
+        "tier": "external",
+        "name": "QMT 文件桥",
+        "desc": "QMT 自动导出的实盘数据通道（持仓/委托/成交 CSV，10 秒一茬）——QMT 开着它就活着",
+        "detect": {"type": "file_fresh", "dir": "E:\\qmt_bridge"},
+    },
+    {
+        "id": "qmt_bridge_sim",
+        "group": "trading",
+        "tier": "external",
+        "name": "模拟盘文件桥",
+        "desc": "模拟盘 QMT 的数据桥（E:\\qmt_bridge_sim）——模拟盘会话开着它就活着，收盘后停属正常",
+        "detect": {"type": "file_fresh", "dir": "E:\\qmt_bridge_sim"},
+    },
+    {
+        "id": "write_audit_daemon",
+        "group": "guard",
+        "tier": "guard",
+        "name": "写审计守护",
+        "desc": "给每次文件改动记台账的书记员（防「改了没人知道」）——保命进程不许关",
+        "detect": {"type": "proc", "pattern": r"write_audit_daemon"},
+    },
+    {
+        "id": "post_settlement",
+        "group": "guard",
+        "tier": "guard",
+        "name": "盘后结算",
+        "desc": "每天 15:30 自动结算+对账+审计写账（交易日才干活）——计划任务只读监控",
+        "detect": {"type": "task", "task": "ZephyrAlpha_PostSettlement"},
+    },
+    {
+        "id": "daily_backup",
+        "group": "guard",
+        "tier": "guard",
+        "name": "每日灾备",
+        "desc": "每天 06:00 六阶段备份保底（库+配置+代码打包）——备份断了必须有人知道",
+        "detect": {"type": "task", "task": "ZephyrAlpha-DailyBackup"},
+    },
+    {
+        "id": "weekly_vm_backup",
+        "group": "guard",
+        "tier": "guard",
+        "name": "每周 VM 备份",
+        "desc": "每周五 06:00 虚拟机整体快照（ClickHouse 老窝的后悔药）",
+        "detect": {"type": "task", "task": "ZephyrAlpha-WeeklyVMBackup"},
+    },
+    {
+        "id": "ch_optimize_weekly",
+        "group": "guard",
+        "tier": "guard",
+        "name": "CH 周维护",
+        "desc": "每周六 03:30 ClickHouse 合并优化（表碎片整理，保查询速度）",
+        "detect": {"type": "task", "task": "ZephyrAlpha-CH-OptimizeMerge-Weekly"},
+    },
+    {
+        "id": "ttl_rejudge",
+        "group": "guard",
+        "tier": "guard",
+        "name": "TTL 日重判",
+        "desc": "每天 18:05 数据生命周期重判（过期数据自动降级/清理的裁判）",
+        "detect": {"type": "task", "task": "ZephyrAlpha_TTLRejudgeDaily"},
+    },
+    {
+        "id": "trae_cache",
+        "group": "guard",
+        "tier": "guard",
+        "name": "Trae 缓存清理",
+        "desc": "开机清 Trae 编辑器缓存（防缓存膨胀吃满 C 盘）",
+        "detect": {"type": "task", "task": "ZephyrAlpha_TraeCacheCleanup"},
+    },
+    {
+        "id": "ai_wrapper_inject",
+        "group": "guard",
+        "tier": "guard",
+        "name": "AI 通道防护注入",
+        "desc": "每分钟给新 AI 进程打 git 安全补丁（防 AI 误操作 git）——它停了 AI 通道防护裸奔",
+        "detect": {"type": "task", "task": "ZephyrAlpha-AI-Wrapper-Inject"},
+    },
+    {
+        "id": "trading_watchdog",
+        "group": "guard",
+        "tier": "guard",
+        "name": "交易看门狗",
+        "desc": "盯交易主进程崩了自动拉起——92 号裁定 D3 备而未启（上实盘无人值守时你再来开）",
+        "detect": {"type": "task", "task": "ZephyrAlpha_TradingWatchdog"},
+    },
 ]
 
 _GROUP_META = {
@@ -183,11 +400,16 @@ _GROUP_META = {
     "guard": {"title": "守护域", "sub": "保命进程——不许关"},
 }
 
-_TIER_LABEL = {"free": "可自由开关", "confirm": "需二次确认", "guard": "保命·禁操作",
-               "external": "外部程序·只读", "self": "本页宿主·可重启"}
+_TIER_LABEL: Final = {
+    "free": "可自由开关",
+    "confirm": "需二次确认",
+    "guard": "保命·禁操作",
+    "external": "外部程序·只读",
+    "self": "本页宿主·可重启",
+}
 
-_SCHTASKS_CACHE: dict[str, tuple[float, str]] = {}   # task_name → (ts, status)
-_GPU_CACHE: dict[str, tuple[float, Any]] = {}        # gpu 查询缓存（nvidia-smi 子进程 ~150ms，15s 复用）
+_SCHTASKS_CACHE: dict[str, tuple[float, str]] = {}  # task_name → (ts, status)
+_GPU_CACHE: dict[str, tuple[float, Any]] = {}  # gpu 查询缓存（nvidia-smi 子进程 ~150ms，15s 复用）
 
 
 # ── 探测原语 ──────────────────────────────────────────────────────────────
@@ -202,6 +424,7 @@ def _port_open(port: int) -> bool:
 def _port_listener_pid(port: int) -> int | None:
     try:
         import psutil
+
         for c in psutil.net_connections(kind="tcp"):
             if c.status == psutil.CONN_LISTEN and c.laddr and c.laddr.port == port and c.pid:
                 return c.pid
@@ -215,6 +438,7 @@ def _find_all_pids(rx: re.Pattern) -> list[int]:
     out: list[int] = []
     try:
         import psutil
+
         me = os.getpid()
         for p in psutil.process_iter(["pid", "name", "cmdline"]):
             try:
@@ -230,16 +454,20 @@ def _find_all_pids(rx: re.Pattern) -> list[int]:
     return out
 
 
-def _find_proc(pattern: str, name_only: bool = False) -> Any:
+def _find_proc(pattern: str, name_only: bool = False) -> psutil.Process | None:
     import psutil
+
     rx = re.compile(pattern, re.IGNORECASE)
     me = os.getpid()
     for p in psutil.process_iter(["pid", "name", "cmdline"]):
         try:
             if p.info["pid"] == me:
                 continue
-            hay = (p.info["name"] or "") if name_only else (
-                (p.info["name"] or "") + " " + " ".join(p.info["cmdline"] or []))
+            hay = (
+                (p.info["name"] or "")
+                if name_only
+                else ((p.info["name"] or "") + " " + " ".join(p.info["cmdline"] or []))
+            )
             if rx.search(hay):
                 return p
         except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
@@ -255,8 +483,11 @@ def _read_heartbeat(fname: str) -> dict[str, Any] | None:
     try:
         parts = f.read_text(encoding="utf-8-sig", errors="ignore").strip().lstrip("\ufeff").split("|")
         ts = datetime.fromisoformat(parts[0]).timestamp()
-        return {"ts": ts, "guard_pid": int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else None,
-                "child_pid": int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else None}
+        return {
+            "ts": ts,
+            "guard_pid": int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else None,
+            "child_pid": int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else None,
+        }
     except Exception:  # noqa: BLE001 — 半行/损坏按无心跳
         return None
 
@@ -268,6 +499,7 @@ def _proc_stats(pid: int | None) -> dict[str, Any]:
         return {"alive": False, "cpu": None, "mem": None}
     try:
         import psutil
+
         p = psutil.Process(pid)
         if p.status() == psutil.STATUS_ZOMBIE:
             return {"alive": False, "cpu": None, "mem": None}
@@ -280,6 +512,7 @@ def _proc_stats(pid: int | None) -> dict[str, Any]:
 def _kill_tree(pid: int) -> None:
     """先杀子进程再杀本体（taskkill /T /F 等价，psutil 实现）。"""
     import psutil
+
     try:
         parent = psutil.Process(pid)
         for c in parent.children(recursive=True):
@@ -313,10 +546,10 @@ def _do_stop(item: dict[str, Any]) -> str:
         ended = ""
         if task:
             try:
-                run_subprocess_hidden(["schtasks", "/end", "/tn", task], capture_output=True,
-                                      text=True, timeout=5)
-                run_subprocess_hidden(["schtasks", "/change", "/tn", task, "/disable"],
-                                      capture_output=True, text=True, timeout=5)
+                run_subprocess_hidden(["schtasks", "/end", "/tn", task], capture_output=True, text=True, timeout=5)
+                run_subprocess_hidden(
+                    ["schtasks", "/change", "/tn", task, "/disable"], capture_output=True, text=True, timeout=5
+                )
                 # 失效 schtasks 60s 缓存——否则状态灯最长 1 分钟仍显示旧"运行中"（Owner 实证"点了没反应"）
                 _SCHTASKS_CACHE.pop(task, None)
                 ended = "task ended+disabled; "
@@ -325,7 +558,7 @@ def _do_stop(item: dict[str, Any]) -> str:
         hb = _read_heartbeat(item["detect"]["file"])
         killed = []
         if hb:
-            for pid in (hb.get("guard_pid"), hb.get("child_pid")):   # 先杀 guard 防复活，再杀 child
+            for pid in (hb.get("guard_pid"), hb.get("child_pid")):  # 先杀 guard 防复活，再杀 child
                 if pid and _proc_stats(pid)["alive"]:
                     _kill_tree(pid)
                     killed.append(str(pid))
@@ -372,23 +605,22 @@ def _do_start(item: dict[str, Any]) -> str:
     task = (item.get("stop") or {}).get("task")
     if task:
         try:
-            run_subprocess_hidden(["schtasks", "/change", "/tn", task, "/enable"],
-                                  capture_output=True, timeout=5)
-            _SCHTASKS_CACHE.pop(task, None)   # 清缓存，状态页立即反映 Ready（否则 60s 内仍显 Disabled 灰）
+            run_subprocess_hidden(["schtasks", "/change", "/tn", task, "/enable"], capture_output=True, timeout=5)
+            _SCHTASKS_CACHE.pop(task, None)  # 清缓存，状态页立即反映 Ready（否则 60s 内仍显 Disabled 灰）
         except Exception:  # noqa: BLE001 — enable 失败不阻断手动拉起
             pass
         # 带 watchdog 任务的服必须走任务通道拉起（2026-09-03 实证：直接 spawn ps1 的 guard
         # 随宿主终端死，schtasks /run 脱离作业对象才存活——start_scheduler.ps1 头部明文纪律）
         try:
-            run_subprocess_hidden(["schtasks", "/run", "/tn", task],
-                                  capture_output=True, timeout=5)
+            run_subprocess_hidden(["schtasks", "/run", "/tn", task], capture_output=True, timeout=5)
             return "task run: " + task
         except Exception as e:  # noqa: BLE001 — /run 失败回退直接 spawn
             return f"task run failed ({e}); fallback spawn"
     svc_log = str(_TMP / f"svc_{item['id']}.log")
     exe = cmd[0]
-    if exe == "python":   # 用 api_server 同一解释器，防 PATH 漂移
+    if exe == "python":  # 用 api_server 同一解释器，防 PATH 漂移
         import sys
+
         cmd = [sys.executable, *cmd[1:]]
     # M1 治理战役（2026-09-16）：服务孵化走统一孵化入口——孵化即登记（父 PID/预期寿命/
     # 进程树，reaper M3 超寿可收割）+水位门禁；stdout 落盘改 path 形态（兼治句柄泄漏：
@@ -499,18 +731,59 @@ def _file_fresh_scan(dirpath: str) -> tuple[str, str]:
         if age < 300:
             return "green", f"桥活着：{n} 个文件，最新 {round(age)}s 前"
         if age < 1800:
-            return "yellow", f"桥延迟：最新一茬 {round(age/60)} 分钟前"
-        return "gray", f"桥停摆：最新一茬 {round(age/3600)} 小时前（QMT 没开？）"
+            return "yellow", f"桥延迟：最新一茬 {round(age / 60)} 分钟前"
+        return "gray", f"桥停摆：最新一茬 {round(age / 3600)} 小时前（QMT 没开？）"
     except Exception as e:  # noqa: BLE001 — 目录不可达
         return "gray", "桥目录不可达：" + str(e)[:60]
 
 
-_COLD_CACHE: dict[str, tuple[float, dict[str, Any]]] = {}   # 冷备统计缓存（rglob 2000+ 文件 ~数百 ms，5min 复用）
+_COLD_CACHE: dict[str, tuple[float, dict[str, Any]]] = {}  # 冷备统计缓存（manifest 逐件 stat ~0.2s，5min 复用）
+
+# ── 备份落点真源（处方 P-13 治本，2026-09-26 夜班实测）────────────────────────
+# 病根：本文件曾在 catalog 里独立抄一份盘符路径当判据对象，备份侧两次迁盘
+# （冷归档 09-20 E→F、代码快照 09-21 a3 阶段4.2 F:\code_backup→G:\backup\working_vault）
+# 都没惊动这里，两行探针从此恒红——「狼来了」会训练 Owner 忽略真红。
+# 治本：盘符只在 backup_config.yaml 一处真源，运行时跟随（读不到才回落 catalog 字面量）；
+# 读法与 backup.ps1/restore.ps1 同口径（正则取段，不引 YAML 库，避免跨域依赖）。
+_BACKUP_CFG = _REPO / "scripts" / "backup" / "backup_config.yaml"
+_BACKUP_PATH_CACHE: dict[str, str] = {}
+_BACKUP_PATH_RX: Final[dict[str, str]] = {
+    "working_vault": r'working_vault:[\s\S]*?base:\s*"([^"]+)"',
+    "cold_archive": r'-\s*id:\s*cold_archive\s*\n\s*source:\s*"([^"]+)"',
+}
+
+
+def _backup_cfg_path(cfg_key: str, fallback: str) -> str:
+    """解析备份落点（cfg_key=_BACKUP_PATH_RX 键）；配置缺失/无该段则回落 fallback 字面量。"""
+    hit = _BACKUP_PATH_CACHE.get(cfg_key)
+    if hit is not None:
+        return hit or fallback
+    resolved = ""
+    try:
+        rx = _BACKUP_PATH_RX.get(cfg_key)
+        txt = _BACKUP_CFG.read_text(encoding="utf-8-sig")
+        m = re.search(rx, txt) if rx else None
+        if m:
+            resolved = m.group(1).replace("\\\\", "\\")
+    except OSError:  # noqa: BLE001 — 配置读不到用 catalog 字面量，判据仍 fail-visible
+        resolved = ""
+    _BACKUP_PATH_CACHE[cfg_key] = resolved
+    return resolved or fallback
+
+
+def _det_dir(det: dict[str, Any]) -> str:
+    """detect 的判据对象目录：配了 cfg_key 就跟随备份配置真源，否则用 dir 字面量。"""
+    return _backup_cfg_path(det["cfg_key"], det["dir"]) if det.get("cfg_key") else det["dir"]
 
 
 def _cold_archive(dirpath: str, manifest_name: str) -> tuple[str, str]:
-    """冷备仓探测 → (light, detail)。在位=green；manifest/目录丢失=red（灾备事故）。
-    归档节奏未知（可能分区满才触发），归档停滞天数只如实展示不判灯。"""
+    """冷备仓探测 → (light, detail)。在位=green；manifest/目录/归档件丢失=red（灾备事故）。
+
+    P-13（2026-09-26）：在位性由「rglob 归档根数文件」改为「按 manifest 逐件核对
+    parquet_path 存在+字节数相符」——清单本身是归档动作的唯一真源，逐件核对更严
+    （能查出丢件/尺寸漂移）且不比 rglob 贵（实测 F 盘 2,515 件全量 stat 0.15-0.35s）。
+    归档节奏未知（可能分区满才触发），归档停滞天数只如实展示不判灯。
+    """
     now = time.time()
     hit = _COLD_CACHE.get(dirpath)
     if hit and now - hit[0] < 300:
@@ -521,64 +794,165 @@ def _cold_archive(dirpath: str, manifest_name: str) -> tuple[str, str]:
         if not manifest.exists():
             result = {"light": "red", "detail": "归档清单丢失（灾备事故）：" + manifest_name}
         else:
-            last_archived = ""
-            with manifest.open("r", encoding="utf-8") as f:
+            recs: list[dict[str, Any]] = []
+            latest_ts = 0.0
+            with manifest.open("r", encoding="utf-8-sig") as f:  # utf-8-sig：旧 utf-8 读法首行 BOM 白丢一条
                 for line in f:
                     line = line.strip()
-                    if line:
+                    if not line:
+                        continue
+                    try:
+                        rec = json.loads(line)
+                    except json.JSONDecodeError:
+                        continue
+                    recs.append(rec)
+                    at = rec.get("archived_at")
+                    if at:
                         try:
-                            last_archived = json.loads(line).get("archived_at") or last_archived
-                        except json.JSONDecodeError:
+                            latest_ts = max(latest_ts, datetime.fromisoformat(at).timestamp())
+                        except ValueError:
                             continue
-            s = 0
-            n = 0
-            for p in Path(dirpath).rglob("*"):
-                if p.is_file():
+            rows = len(recs)
+            if not rows:
+                result = {"light": "red", "detail": "归档清单为空（灾备事故）：" + manifest_name}
+            else:
+                n = 0
+                s = 0
+                bad = 0
+                for rec in recs:
+                    p = rec.get("parquet_path")
+                    if not p:
+                        bad += 1
+                        continue
+                    try:
+                        size = os.stat(p).st_size
+                    except OSError:
+                        bad += 1
+                        continue
+                    want = rec.get("parquet_size_bytes")
+                    if isinstance(want, int) and want != size:
+                        bad += 1
+                        continue
                     n += 1
-                    s += p.stat().st_size
-            days = ""
-            if last_archived:
-                age_d = round((now - datetime.fromisoformat(last_archived).timestamp()) / 86400)
-                days = f" · 最新归档 {age_d} 天前"
-            result = {"light": "green",
-                      "detail": f"在位 {n} 个文件 / {s/1073741824:.1f} GB{days}"}
+                    s += size
+                days = ""
+                if latest_ts:
+                    days = f" · 最新归档 {round((now - latest_ts) / 86400)} 天前"
+                if bad:
+                    result = {
+                        "light": "red",
+                        "detail": f"归档清单 {rows} 件中 {bad} 件不在位/尺寸不符（灾备事故）{days}",
+                    }
+                else:
+                    result = {"light": "green", "detail": f"清单 {n} 件在位 / {s / 1073741824:.1f} GB{days}"}
     except Exception as e:  # noqa: BLE001 — 冷备不可达=事故
         result = {"light": "red", "detail": "冷备不可达：" + str(e)[:60]}
     _COLD_CACHE[dirpath] = (now, result)
     return result["light"], result["detail"]
 
 
-def _daily_fresh(dirpath: str) -> tuple[str, str]:
-    """日频备份产物目录探测 → (light, detail)。<36h 绿（每日 06:00 允许一天）/ <8d 黄 / 更久红。"""
+def _daily_fresh(dirpath: str, key_files: tuple[str, ...] = ()) -> tuple[str, str]:
+    """日频备份产物目录探测 → (light, detail)。<36h 绿（每日 06:00 允许一天）/ <8d 黄 / 更久红。
+
+    key_files 非空 ⇒ 判据对象是版本化快照仓（<dir>/<yyyyMMdd>/…）：不扫盘，只看最新日期
+    目录的落盘钟 + 少量关键件在位（P-13，2026-09-26——G 盘 USB-HDD 全盘扫实测单日子目录
+    816,873 件/373s，容器 1,328,858 件/239.9GiB，做仪表盘轮询不可接受）。
+    """
     now = time.time()
-    hit = _DIRFRESH_CACHE.get(dirpath)
+    cache_key = dirpath if not key_files else dirpath + "|kf:" + ",".join(key_files)
+    hit = _DIRFRESH_CACHE.get(cache_key)
     if hit and now - hit[0] < 60.0:
         return hit[1]
-    r = _daily_fresh_scan(dirpath)
-    _DIRFRESH_CACHE[dirpath] = (now, r)
+    r = _daily_fresh_scan(dirpath, key_files)
+    _DIRFRESH_CACHE[cache_key] = (now, r)
     return r
 
 
-def _daily_fresh_scan(dirpath: str) -> tuple[str, str]:
+def _vault_snapshot_probe(dirpath: str, key_files: tuple[str, ...], lookback: int = 3) -> dict[str, Any]:
+    """版本化快照仓探测 → {snaps, newest, chosen, mtime, entries, missing_newest}。
+
+    落盘钟=所选快照目录自身 mtime：备份每日新开一个日期目录、逐条在其下写入，写顶层条目
+    即刷新该目录 mtime（实测 20260925 目录 mtime=09-26 00:30，与 backup_state.json
+    last_backup_time 00:33 同批）。目录名不能当时钟（backup.ps1 STAGE 注释：vault 快照
+    按 day_target 命名，比跑批日晚一天）。关键件 mtime 也不能当时钟（robocopy 保留源
+    时间戳，实测 config/.env.postgres mtime=07-15——拿它判新鲜度会假红，那正是本车道
+    在修的病）。
+
+    chosen=从最新日期目录往回数、第一个"非空且关键件齐全"的快照（最多回看 lookback 个）。
+    回看不是护短：实测跑批会先建当日空壳目录（09-26 01:35 建的 20260926 长时间 0 条目），
+    拿它判=每天给 Owner 一次假红；真断了则回看选中的旧快照会随年龄自然翻黄（36h）/翻红
+    （8d），阈值一条没动。绝不递归（实测递归=373s/单日子目录），每目录只 listdir + 少量
+    exists + 1 次 stat。
+    """
+    out: dict[str, Any] = {
+        "snaps": [],
+        "newest": "",
+        "chosen": None,
+        "mtime": 0.0,
+        "entries": 0,
+        "missing_newest": None,
+    }
+    try:
+        out["snaps"] = sorted(
+            (n for n in os.listdir(dirpath) if re.fullmatch(r"\d{8}", n) and (Path(dirpath) / n).is_dir()),
+            reverse=True,
+        )
+    except OSError:
+        return out
+    if not out["snaps"]:
+        return out
+    out["newest"] = out["snaps"][0]
+    for name in out["snaps"][:lookback]:
+        lp = Path(dirpath) / name
+        try:
+            top = list(lp.iterdir())
+            missing = [k for k in key_files if not (lp / k).exists()]
+            mtime = lp.stat().st_mtime
+        except OSError:
+            continue
+        if out["missing_newest"] is None and (missing or not top):
+            out["missing_newest"] = (name, missing, len(top))
+        if not missing and top:
+            out["chosen"], out["mtime"], out["entries"] = name, mtime, len(top)
+            break
+    return out
+
+
+def _daily_fresh_scan(dirpath: str, key_files: tuple[str, ...] = ()) -> tuple[str, str]:
     try:
         if not Path(dirpath).exists():
             return "red", "备份产物目录不存在（灾备事故）"
-        latest = 0.0
-        n = 0
-        for root, _dirs, files in os.walk(dirpath):   # os.walk 默认跳过无权限子目录（F 盘 ACL 文件实证），不整体炸
-            for f in files:
-                try:
-                    m = (Path(root) / f).stat().st_mtime
-                    n += 1
-                    if m > latest:
-                        latest = m
-                except OSError:
-                    continue
-        if not n:
-            return "red", "备份产物目录为空（灾备事故）"
+        if key_files:
+            probe = _vault_snapshot_probe(dirpath, key_files)
+            if not probe["snaps"]:
+                return "red", "备份产物目录无日期快照（灾备事故）"
+            if probe["chosen"] is None:
+                name, missing, _e = probe["missing_newest"] or (probe["newest"], list(key_files), 0)
+                return "red", (
+                    f"最新快照 {name} 缺关键件 {len(missing)}/{len(key_files)}（灾备事故）：" + ",".join(missing[:3])
+                )
+            name, latest, n = probe["chosen"], probe["mtime"], probe["entries"]
+            back = "" if name == probe["newest"] else f"（更新快照 {probe['newest']} 未落齐，回看取 {name}）"
+            head = f"快照 {name} · {n} 个顶层条目 · 关键件 {len(key_files)}/{len(key_files)} 在位{back}"
+        else:
+            latest = 0.0
+            n = 0
+            # os.walk 默认跳过无权限子目录（F 盘 ACL 文件实证），不整体炸
+            for root, _dirs, files in os.walk(dirpath):
+                for f in files:
+                    try:
+                        m = (Path(root) / f).stat().st_mtime
+                        n += 1
+                        if m > latest:
+                            latest = m
+                    except OSError:
+                        continue
+            if not n:
+                return "red", "备份产物目录为空（灾备事故）"
+            head = f"{n} 个文件"
         age_h = (time.time() - latest) / 3600
         when = datetime.fromtimestamp(latest).strftime("%m-%d %H:%M")
-        detail = f"{n} 个文件 · 最新 {when}（{round(age_h)} 小时前）"
+        detail = f"{head} · 最新 {when}（{round(age_h)} 小时前）"
         if age_h < 36:
             return "green", detail
         if age_h < 8 * 24:
@@ -604,15 +978,18 @@ def _env_tcp_alive(env_file: str, host_key: str, port_key: str) -> tuple[bool, s
         return False, str(e)[:80]
 
 
+_SQL_CH_SPACE_DISKS = (
+    "SELECT name, round(total_space/1e9,1), round(free_space/1e9,1) FROM system.disks WHERE name='default'"  # noqa: E501
+)
+
+
 def _ch_space() -> dict[str, float] | None:
     """CH 库内空间实况（system.disks）——Owner 口径：宿主盘水位≠库内真况，库里的数才是数。"""
     try:
         sys.path.insert(0, str(_REPO / "src"))
         from zephyr.data import ch_reader
 
-        rows = ch_reader.query(
-            "SELECT name, round(total_space/1e9,1), round(free_space/1e9,1) "
-            "FROM system.disks WHERE name='default'")
+        rows = ch_reader.query(_SQL_CH_SPACE_DISKS)
         parts = rows.strip().split("\t")
         if len(parts) >= 3:
             return {"total_gb": float(parts[1]), "free_gb": float(parts[2])}
@@ -629,8 +1006,9 @@ def _gpu_stats() -> dict[str, Any] | None:
     stats: dict[str, Any] | None = None
     try:
         r = _run_decoded(
-            ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used,memory.total",
-             "--format=csv,noheader,nounits"], timeout=4)
+            ["nvidia-smi", "--query-gpu=utilization.gpu,memory.used,memory.total", "--format=csv,noheader,nounits"],
+            timeout=4,
+        )
         if r.returncode == 0 and r.stdout.strip():
             utils, used, total = [], 0.0, 0.0
             for line in r.stdout.strip().splitlines():
@@ -640,9 +1018,13 @@ def _gpu_stats() -> dict[str, Any] | None:
                     used += float(parts[1])
                     total += float(parts[2])
             if total > 0:
-                stats = {"util": round(max(utils), 1), "mem_used_gb": round(used / 1024, 1),
-                         "mem_total_gb": round(total / 1024, 1),
-                         "mem_pct": round(used / total * 100, 1), "gpus": len(utils)}
+                stats = {
+                    "util": round(max(utils), 1),
+                    "mem_used_gb": round(used / 1024, 1),
+                    "mem_total_gb": round(total / 1024, 1),
+                    "mem_pct": round(used / total * 100, 1),
+                    "gpus": len(utils),
+                }
     except Exception:  # noqa: BLE001 — 无 nvidia-smi/超时=无 GPU 杆
         stats = None
     _GPU_CACHE["stats"] = (time.time(), stats)
@@ -658,10 +1040,20 @@ def get_services_status() -> dict[str, Any]:
     out: list[dict[str, Any]] = []
     for item in SERVICE_CATALOG:
         det = item["detect"]
-        st: dict[str, Any] = {"id": item["id"], "name": item["name"], "group": item["group"],
-                              "tier": item["tier"], "tier_label": _TIER_LABEL[item["tier"]],
-                              "desc": item["desc"], "light": "gray", "cpu": None, "mem": None,
-                              "pid": None, "beat_age": None, "detail": ""}
+        st: dict[str, Any] = {
+            "id": item["id"],
+            "name": item["name"],
+            "group": item["group"],
+            "tier": item["tier"],
+            "tier_label": _TIER_LABEL[item["tier"]],
+            "desc": item["desc"],
+            "light": "gray",
+            "cpu": None,
+            "mem": None,
+            "pid": None,
+            "beat_age": None,
+            "detail": "",
+        }
         if det["type"] == "self":
             s = _proc_stats(os.getpid())
             st.update(light="green", pid=os.getpid(), cpu=s["cpu"], mem=s["mem"], detail="本服务运行中")
@@ -692,9 +1084,11 @@ def get_services_status() -> dict[str, Any]:
                 # 任务禁用态（Owner 主动停止后）优先：灰灯"已停止"——不误报"重启中/延迟"
                 ti = _task_info(det["task"]) if det.get("task") else None
                 if ti and ti.get("status") == "Disabled":
-                    st["light"] = "gray"; st["detail"] = "已停止（任务禁用，点启动即恢复）"
+                    st["light"] = "gray"
+                    st["detail"] = "已停止（任务禁用，点启动即恢复）"
                 elif age < 120 and child["alive"]:
-                    st["light"] = "green"; st["detail"] = f"心跳 {round(age)}s 前" + (f" · {mode_zh}" if mode_zh else "")
+                    st["light"] = "green"
+                    st["detail"] = f"心跳 {round(age)}s 前" + (f" · {mode_zh}" if mode_zh else "")
                 elif age < 120:
                     # 心跳新鲜但 child 不在 = 正在被拉起/刚被停止的瞬态（Owner 实证"延迟 29s"实为重启竞态）
                     st["light"] = "yellow"
@@ -704,11 +1098,13 @@ def get_services_status() -> dict[str, Any]:
                     g = _proc_stats(hb.get("guard_pid"))
                     if g["alive"]:
                         st["light"] = "yellow"
-                        st["detail"] = f"guard 在岗 · 等待就绪（心跳停 {round(age/60)} 分）"
+                        st["detail"] = f"guard 在岗 · 等待就绪（心跳停 {round(age / 60)} 分）"
                     else:
-                        st["light"] = "red"; st["detail"] = f"心跳停 {round(age/60)} 分钟"
+                        st["light"] = "red"
+                        st["detail"] = f"心跳停 {round(age / 60)} 分钟"
                 else:
-                    st["light"] = "red"; st["detail"] = f"心跳停 {round(age/60)} 分钟"
+                    st["light"] = "red"
+                    st["detail"] = f"心跳停 {round(age / 60)} 分钟"
             else:
                 st["detail"] = "无心跳文件"
         elif det["type"] == "flag":
@@ -734,7 +1130,7 @@ def get_services_status() -> dict[str, Any]:
                 status = info["status"]
                 if status == "Disabled":
                     st["light"] = "red"
-                    st["detail"] = f"计划任务已停用（启用=Owner 窗口）"
+                    st["detail"] = "计划任务已停用（启用=Owner 窗口）"
                 elif status in ("Ready", "Running"):
                     st["light"] = "green"
                     nxt = info["next_run"]
@@ -743,7 +1139,8 @@ def get_services_status() -> dict[str, Any]:
                     st["light"] = "yellow"
                     st["detail"] = f"计划任务 {status}"
             else:
-                st["light"] = "yellow"; st["detail"] = "计划任务查询失败"
+                st["light"] = "yellow"
+                st["detail"] = "计划任务查询失败"
         elif det["type"] == "file_fresh":
             light, msg = _file_fresh(det["dir"])
             st["light"] = light
@@ -751,27 +1148,31 @@ def get_services_status() -> dict[str, Any]:
         elif det["type"] == "env_tcp":
             alive, msg = _env_tcp_alive(det["env"], det["host_key"], det["port_key"])
             if alive:
-                st["light"] = "green"; st["detail"] = msg
+                st["light"] = "green"
+                st["detail"] = msg
             else:
-                st["light"] = "red"; st["detail"] = "断连：" + msg
+                st["light"] = "red"
+                st["detail"] = "断连：" + msg
         elif det["type"] == "cold_archive":
-            light, msg = _cold_archive(det["dir"], det["manifest"])
+            light, msg = _cold_archive(_det_dir(det), det["manifest"])
             st["light"] = light
             st["detail"] = msg
         elif det["type"] == "daily_fresh":
-            light, msg = _daily_fresh(det["dir"])
+            light, msg = _daily_fresh(_det_dir(det), tuple(det.get("key_files") or ()))
             st["light"] = light
             st["detail"] = msg
         elif det["type"] == "ch":
             alive, msg = _ch_alive()
             if alive:
-                st["light"] = "green"; st["detail"] = msg
+                st["light"] = "green"
+                st["detail"] = msg
                 space = _ch_space()
                 if space:
                     st["ch_space"] = space
                     st["detail"] = msg + f" · 库内余 {space['free_gb']} GB / 总 {space['total_gb']} GB"
             else:
-                st["light"] = "red"; st["detail"] = "数据库断连：" + msg
+                st["light"] = "red"
+                st["detail"] = "数据库断连：" + msg
         # 缺省灯语义：external 灰=未启动（等 Owner，正常）；可控制灰=未启动；guard 灰=异常（该活着）
         if st["light"] == "gray" and item["tier"] == "guard":
             st["light"] = "red"
@@ -786,10 +1187,13 @@ def get_services_status() -> dict[str, Any]:
     host: dict[str, Any] = {}
     try:
         import psutil
-        host = {"cpu": round(psutil.cpu_percent(None), 1),
-                "mem": round(psutil.virtual_memory().percent, 1),
-                "mem_used_gb": round(psutil.virtual_memory().used / 1073741824, 1),
-                "mem_total_gb": round(psutil.virtual_memory().total / 1073741824, 1)}
+
+        host = {
+            "cpu": round(psutil.cpu_percent(None), 1),
+            "mem": round(psutil.virtual_memory().percent, 1),
+            "mem_used_gb": round(psutil.virtual_memory().used / 1073741824, 1),
+            "mem_total_gb": round(psutil.virtual_memory().total / 1073741824, 1),
+        }
         du = psutil.disk_usage("D:\\")
         host["disk"] = round(du.percent, 1)
         host["disk_free_gb"] = round(du.free / 1073741824, 1)
@@ -797,8 +1201,9 @@ def get_services_status() -> dict[str, Any]:
         for label, root in (("C", "C:\\"), ("D", "D:\\"), ("E", "E:\\"), ("F", "F:\\")):
             try:
                 d2 = psutil.disk_usage(root)
-                disks.append({"label": label + " 盘", "pct": round(d2.percent, 1),
-                              "free_gb": round(d2.free / 1073741824, 1)})
+                disks.append(
+                    {"label": label + " 盘", "pct": round(d2.percent, 1), "free_gb": round(d2.free / 1073741824, 1)}
+                )
             except Exception:  # noqa: BLE001 — 盘不在则跳过
                 continue
         host["disks"] = disks
@@ -807,12 +1212,19 @@ def get_services_status() -> dict[str, Any]:
             host["gpu"] = gpu
         ch_item = next((s for s in out if s["id"] == "clickhouse"), None)
         if ch_item and ch_item.get("ch_space"):
-            host["ch"] = ch_item["ch_space"]   # 总闸区水位条消费（库内余量和四盘并排）
+            host["ch"] = ch_item["ch_space"]  # 总闸区水位条消费（库内余量和四盘并排）
     except Exception:  # noqa: BLE001
         pass
 
-    return {"ok": True, "services": out, "groups": _GROUP_META, "counts": counts,
-            "overall": overall, "host": host, "generated_at": datetime.now().isoformat(" ", "seconds")}
+    return {
+        "ok": True,
+        "services": out,
+        "groups": _GROUP_META,
+        "counts": counts,
+        "overall": overall,
+        "host": host,
+        "generated_at": datetime.now(timezone.utc).astimezone().isoformat(" ", "seconds"),
+    }
 
 
 def control_service(sid: str, action: str, confirm: bool = False) -> dict[str, Any]:
@@ -829,8 +1241,11 @@ def control_service(sid: str, action: str, confirm: bool = False) -> dict[str, A
         if tier != "self":
             return {"ok": False, "error": f"「{item['name']}」不支持重启（restart 仅本页宿主）——请走 停止/启动"}
         if not confirm:
-            return {"ok": False, "need_confirm": True,
-                    "error": "重启面板 API 服务？页面将断开约 20~40 秒后自动恢复，进行中的请求会中断"}
+            return {
+                "ok": False,
+                "need_confirm": True,
+                "error": "重启面板 API 服务？页面将断开约 20~40 秒后自动恢复，进行中的请求会中断",
+            }
         try:
             msg = _do_restart_self(item)
             result = {"ok": True, "id": sid, "action": "restart", "msg": msg, "restarting": True}
@@ -839,10 +1254,16 @@ def control_service(sid: str, action: str, confirm: bool = False) -> dict[str, A
         _audit(sid, item["name"], "restart", result)
         return result
     if tier in ("guard", "external", "self"):
-        return {"ok": False, "error": f"「{item['name']}」是{_TIER_LABEL[tier]}，不允许在此{'停止' if action == 'stop' else '操作'}"}
+        return {
+            "ok": False,
+            "error": f"「{item['name']}」是{_TIER_LABEL[tier]}，不允许在此{'停止' if action == 'stop' else '操作'}",
+        }
     if action == "stop" and tier == "confirm" and not confirm:
-        return {"ok": False, "need_confirm": True,
-                "error": f"「{item['name']}」{item['desc'][:40]}…——关掉有代价，请确认"}
+        return {
+            "ok": False,
+            "need_confirm": True,
+            "error": f"「{item['name']}」{item['desc'][:40]}…——关掉有代价，请确认",
+        }
     if action == "start" and tier == "confirm" and not confirm:
         return {"ok": False, "need_confirm": True, "error": f"确认启动「{item['name']}」？"}
     try:
@@ -858,11 +1279,20 @@ def _audit(sid: str, name: str, action: str, result: dict[str, Any]) -> None:
     """控制动作审计落盘 tmp/services_control_log.jsonl（谁几点动了什么，可查）。"""
     try:
         with _LOG.open("a", encoding="utf-8") as f:
-            f.write(json.dumps({"ts": datetime.now().isoformat(" ", "seconds"),
-                                "id": sid, "name": name, "action": action,
-                                "ok": result.get("ok", False),
-                                "msg": result.get("msg") or result.get("error", "")},
-                               ensure_ascii=False) + "\n")
+            f.write(
+                json.dumps(
+                    {
+                        "ts": datetime.now(timezone.utc).astimezone().isoformat(" ", "seconds"),
+                        "id": sid,
+                        "name": name,
+                        "action": action,
+                        "ok": result.get("ok", False),
+                        "msg": result.get("msg") or result.get("error", ""),
+                    },
+                    ensure_ascii=False,
+                )
+                + "\n"
+            )
     except OSError:
         pass
 
@@ -921,11 +1351,14 @@ def _do_restart_self(item: dict[str, Any]) -> str:
     """
     logp = _REPO / "data" / "runtime" / "api_server_desktop.log"
     logp.parent.mkdir(parents=True, exist_ok=True)
-    cmd = [sys.executable, "-c", _RESTARTER_SRC,
-           str(os.getpid()), "8890", str(_REPO), str(logp)]
-    subprocess.Popen(cmd, cwd=str(_REPO),
-                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                     creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)  # noqa: S603 — 内联白名单源码
+    cmd = [sys.executable, "-c", _RESTARTER_SRC, str(os.getpid()), "8890", str(_REPO), str(logp)]
+    subprocess.Popen(
+        cmd,
+        cwd=str(_REPO),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
+    )  # noqa: S603 — 内联白名单源码
     return "重启代理已排定：3 秒后断开，约 20~40 秒内自动拉起（端口 8890）"
 
 
