@@ -2325,11 +2325,16 @@ class WorktreeLanding:
                     )
                 try:
                     replay = self._replay_commit_without_gates(item, queue_root, commit_sha, base_dev, new_dev)
-                except cq.LandingEnvironmentError:
+                except cq.LandingEnvironmentError as exc:
                     # 红队 R2-P1-1（QCure st-qcure-20260925）：快照自验专类
                     # （SnapshotVerifyError←LandingEnvironmentError）不得被下方
                     # RuntimeError 兜底吞成死信——重放支与主支同享"首两跳退 pending
                     # 自愈 +3 次升级"闸，交还外层 env 处理（计数+退 pending）。
+                    # 红队 R3-P2-1：耗尽态（已携 dead_result=精确快照处方）直接采信，
+                    # 防止转 env 分支后无 retried_key 再计 env_retry、处方失真为笼统 env。
+                    dead_result = getattr(exc, "dead_result", None)
+                    if dead_result is not None:
+                        return dead_result
                     raise
                 except RuntimeError as exc:
                     return cq.LandingResult(ok=False, reason=f"冲突重放失败（死信回退人工）: {exc}")

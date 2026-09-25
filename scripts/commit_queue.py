@@ -2229,6 +2229,11 @@ _DEAD_PRESCRIPTIONS: tuple[tuple[str, str], ...] = (
     ("快照未真应用", "快照未真应用：核对 worktree 文件实际内容与快照差异后重投"),
     ("冲突标记", "快照含未解决合并冲突标记：回会话 worktree 解决合并后重新入队，勿直接重投"),
     ("cascade_stale", "级联基底失效：前置项已落盘，重投前先按当前 dev 重取基底（--base-head）"),
+    (
+        "env_retry",
+        "环境失败重试耗尽：排除环境故障（daemon 纪元/worktree/锁）后重投；纪元陈旧重启 ZephyrAlpha_BeltDaemon 自愈",
+    ),
+    ("session_id", "会话标识非法：修正袋 session_id（[A-Za-z0-9._-] ≤64）后重投"),
 )
 _DEAD_PRESCRIPTION_FALLBACK = {
     "env": "环境性失败（物品无辜）：直接 requeue 重投即可（瞬态环境争用类，requeue 即愈）",
