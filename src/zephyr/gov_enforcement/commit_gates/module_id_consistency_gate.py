@@ -250,6 +250,34 @@ def _format_module_id_violations(violations: list[str]) -> tuple[bool, str]:
     )
 
 
+# st-commitspeed-pkg8-20260925 T8簇2 闭包提级：原 make_module_id_consistency_gate 内层 _check 闭包体，行为逐字节保留；
+# 模块级化供 DOC-HEADER-SUITE 聚合器同调（gslim P4 合并先例：吸收台闭包提级）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    project_root = gateway.project_root
+    violations: list[str] = []
+    for f in files:
+        if not os.path.isfile(f):
+            continue
+        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+        if (
+            rel != _REGISTRY_REL
+            and rel != _TEMPLATE_REGISTRY_REL
+            and rel != _DEP_REGISTRY_REL
+            and not rel.startswith(_CONTRACTS_DIR)
+        ):
+            continue
+        try:
+            content = Path(f).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        violations.extend(_check_track_consistency(rel, content))
+        violations.extend(_check_count_derivation(rel, content))
+    violations.extend(_check_cross_file_collision(gateway, files, project_root))
+    if violations:
+        return _format_module_id_violations(violations)
+    return True, "module_id consistency check passed"
+
+
 def make_module_id_consistency_gate() -> GateSpec:
     """构造 module_id 一致性门禁 GateSpec（fail-closed 阻断型）。
 
@@ -257,30 +285,5 @@ def make_module_id_consistency_gate() -> GateSpec:
         GateSpec(gate_id="MODULE-ID-CONSISTENCY", priority=88)。
         priority=88——在 EXEMPT-ZONE-FM(87) 之后。
     """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        project_root = gateway.project_root
-        violations: list[str] = []
-        for f in files:
-            if not os.path.isfile(f):
-                continue
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            if (
-                rel != _REGISTRY_REL
-                and rel != _TEMPLATE_REGISTRY_REL
-                and rel != _DEP_REGISTRY_REL
-                and not rel.startswith(_CONTRACTS_DIR)
-            ):
-                continue
-            try:
-                content = Path(f).read_text(encoding="utf-8", errors="replace")
-            except OSError:
-                continue
-            violations.extend(_check_track_consistency(rel, content))
-            violations.extend(_check_count_derivation(rel, content))
-        violations.extend(_check_cross_file_collision(gateway, files, project_root))
-        if violations:
-            return _format_module_id_violations(violations)
-        return True, "module_id consistency check passed"
 
     return GateSpec(gate_id="MODULE-ID-CONSISTENCY", check=_check, priority=88)

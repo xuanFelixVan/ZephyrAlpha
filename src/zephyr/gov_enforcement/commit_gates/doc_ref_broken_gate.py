@@ -316,6 +316,49 @@ def _detect_md_file_violation(abs_path: str, wt_root: str, gateway=None) -> str 
     return f"文档引用断裂 {rel_name}: {refs_str}"
 
 
+# st-commitspeed-pkg8-20260925 T8簇2 闭包提级：原 make_doc_ref_broken_gate 内层 _check 闭包体，行为逐字节保留；
+# 模块级化供 DOC-HEADER-SUITE 聚合器同调（gslim P4 合并先例：吸收台闭包提级）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    # 1. 获取 staged 新增 .md 文件（None 表示 fail-open 检测器失效）
+    new_md_files = _get_staged_new_md_files(gateway)
+    if not new_md_files:
+        return True, ""
+    # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
+    new_md_files = _split_own_foreign(
+        gateway, new_md_files, files, kwargs.get("session_id"), gate_name="DOC-REF-BROKEN"
+    )[0]
+    if not new_md_files:
+        return True, ""
+
+    # 1b. 过滤跳过目录（草稿/归档区豁免，#ARCH-DOC-REF-BROKEN-SKIP, 2026-08-05）
+    # 复用 N-16 skip_dirs_docs SSoT：草稿可能引用待创建文件，不应被断链门禁扫描
+    new_md_files = [f for f in new_md_files if not _is_in_skip_dir(f, _DOC_REF_BROKEN_SKIP_DIRS)]
+    if not new_md_files:
+        return True, ""
+
+    # 2. 获取 worktree root
+    wt_root = _get_worktree_root(gateway)
+
+    # 3. 解析为绝对路径
+    abs_files = _resolve_abs_md_files(new_md_files, wt_root, gateway=gateway)
+    if not abs_files:
+        return True, ""
+
+    # 4. 检测每个 .md 文件的断裂引用（观测面=git 仓库态，裁定#279 同盲区家族
+    # 清偿 2026-09-17：内容读 staged blob、目标存在性走 index/HEAD——磁盘只作
+    # 降级补充。基线差分豁免理由：本门只测 --diff-filter=A **新增** .md，文件
+    # 内容整体属本次提交，违规必然由本次引入，HEAD 基线差分无增量信息）
+    all_violations: list[str] = []
+    for abs_path in abs_files:
+        violation = _detect_md_file_violation(abs_path, wt_root, gateway=gateway)
+        if violation:
+            all_violations.append(violation)
+
+    if all_violations:
+        return False, "; ".join(all_violations[:5])
+    return True, ""
+
+
 def make_doc_ref_broken_gate() -> GateSpec:
     """构造文档相对路径断裂引用阻断门禁 GateSpec（硬阻断型）。
 
@@ -323,43 +366,5 @@ def make_doc_ref_broken_gate() -> GateSpec:
         GateSpec(gate_id="DOC-REF-BROKEN", priority=91)。
         priority=91——在 FUNCTION-DUP(90) 之后、NO-HIGH-COMPLEXITY(92) 之前。
     """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 获取 staged 新增 .md 文件（None 表示 fail-open 检测器失效）
-        new_md_files = _get_staged_new_md_files(gateway)
-        if not new_md_files:
-            return True, ""
-        # own 化（st-gslim-20260923 P2）：只扫本 session staged，外来 warn+审计不阻断
-        new_md_files = _split_own_foreign(gateway, new_md_files, files, kwargs.get("session_id"), gate_name="DOC-REF-BROKEN")[0]
-        if not new_md_files:
-            return True, ""
-
-        # 1b. 过滤跳过目录（草稿/归档区豁免，#ARCH-DOC-REF-BROKEN-SKIP, 2026-08-05）
-        # 复用 N-16 skip_dirs_docs SSoT：草稿可能引用待创建文件，不应被断链门禁扫描
-        new_md_files = [f for f in new_md_files if not _is_in_skip_dir(f, _DOC_REF_BROKEN_SKIP_DIRS)]
-        if not new_md_files:
-            return True, ""
-
-        # 2. 获取 worktree root
-        wt_root = _get_worktree_root(gateway)
-
-        # 3. 解析为绝对路径
-        abs_files = _resolve_abs_md_files(new_md_files, wt_root, gateway=gateway)
-        if not abs_files:
-            return True, ""
-
-        # 4. 检测每个 .md 文件的断裂引用（观测面=git 仓库态，裁定#279 同盲区家族
-        # 清偿 2026-09-17：内容读 staged blob、目标存在性走 index/HEAD——磁盘只作
-        # 降级补充。基线差分豁免理由：本门只测 --diff-filter=A **新增** .md，文件
-        # 内容整体属本次提交，违规必然由本次引入，HEAD 基线差分无增量信息）
-        all_violations: list[str] = []
-        for abs_path in abs_files:
-            violation = _detect_md_file_violation(abs_path, wt_root, gateway=gateway)
-            if violation:
-                all_violations.append(violation)
-
-        if all_violations:
-            return False, "; ".join(all_violations[:5])
-        return True, ""
 
     return GateSpec(gate_id="DOC-REF-BROKEN", check=_check, priority=91)

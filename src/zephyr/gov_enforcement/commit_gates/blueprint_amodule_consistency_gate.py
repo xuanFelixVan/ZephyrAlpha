@@ -238,33 +238,45 @@ def make_blueprint_amodule_consistency_gate() -> GateSpec:
     )
 
 
+def _header_union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    """BLUEPRINT-HEADER 聚合判定体（st-gslim-20260923 P4 原闭包体，pkg8 闭包提级逐字节保留）。
+
+    st-commitspeed-pkg8-20260925 T8簇2：自 make_blueprint_header_gate 闭包提级为模块级，
+    供 DOC-HEADER-SUITE 聚合器同调（吸收台闭包提级先例）；判定行为零变化。
+    """
+    failures: list[str] = []
+    subs = [
+        ("BLUEPRINT-AMODULE-CONSISTENCY", None, "_check"),
+        ("BLUEPRINT-AMODULE-CROSS-CHECK", "blueprint_amodule_cross_check_gate", "_check"),
+    ]
+    for sgid, mod, impl_name in subs:
+        try:
+            if mod is None:
+                fn = globals()["_check"]  # globals 解析=取模块级本件判定体，避免绑定聚合器自身闭包（递归爆栈修）
+            else:
+                import importlib  # noqa: PLC0415
+
+                fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
+        except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
+            failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
+            continue
+        ok, detail = fn(gateway, files, **kwargs)
+        if not ok:
+            failures.append(f"[{sgid}] " + detail)
+    if failures:
+        return False, "\n".join(failures)
+    return True, ""
+
+
 def make_blueprint_header_gate() -> GateSpec:
     """构造 BLUEPRINT-HEADER 聚合门禁（st-gslim-20260923 P4 合并，gate_audit_report_v1 §C2/Owner E 全批）。
 
     聚合子检查（各自独立判定，违规聚合呈现带 [源台名] 前缀，任一失败即阻断）：
     - BLUEPRINT-HEADER（本文件 _check_impl）
     - BLUEPRINT-AMODULE-CROSS-CHECK（blueprint_amodule_cross_check_gate._check_impl）
+
+    st-commitspeed-pkg8-20260925 T8簇2：判定体闭包提级为模块级 _header_union_check，
+    本工厂保留薄壳（gate_id/priority 引用兼容），并作为 DOC-HEADER-SUITE 七判据之一
+    被聚合器同调。
     """
-    def _union_check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        failures: list[str] = []
-        subs = [
-            ("BLUEPRINT-AMODULE-CONSISTENCY", None, "_check"),
-            ("BLUEPRINT-AMODULE-CROSS-CHECK", "blueprint_amodule_cross_check_gate", "_check"),
-        ]
-        for sgid, mod, impl_name in subs:
-            try:
-                if mod is None:
-                    fn = globals()["_check"]  # globals 解析=取模块级本件判定体，避免绑定聚合器自身闭包（递归爆栈修）
-                else:
-                    import importlib  # noqa: PLC0415
-                    fn = getattr(importlib.import_module(f"zephyr.gov_enforcement.commit_gates.{mod}"), impl_name)
-            except Exception as exc:  # noqa: BLE001 — 子检查缺失=聚合面残缺，fail-closed 呈报
-                failures.append(f"[{sgid}] 子检查不可加载: {type(exc).__name__}")
-                continue
-            ok, detail = fn(gateway, files, **kwargs)
-            if not ok:
-                failures.append(f"[{sgid}] " + detail)
-        if failures:
-            return False, "\n".join(failures)
-        return True, ""
-    return GateSpec(gate_id="BLUEPRINT-HEADER", check=_union_check, priority=79)
+    return GateSpec(gate_id="BLUEPRINT-HEADER", check=_header_union_check, priority=79)

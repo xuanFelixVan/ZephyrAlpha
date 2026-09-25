@@ -7,7 +7,7 @@ generated_at: '2026-09-22T22:18:47Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 174
+total_gates: 181
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -755,16 +755,18 @@ gates:
   own_scope: false
   enforcement_channel: commit-gate
 - gate_id: BLUEPRINT-FORMAT
-  name: 'BLUEPRINT-FORMAT: BLUEPRINT-FORMAT（CommitGate, priority=77）'
-  entry: in-process (GitCommitGateway)
-  description: BLUEPRINT-FORMAT
+  name: 'BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式检测（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925
+    T8簇2）'
+  entry: N/A (merged into DOC-HEADER-SUITE, see redirect_to)
+  description: 【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。本条目为重定向锚点保留 gate_id
+    供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。
   files_trigger: ''
   always_run: false
   category: commit_gate
-  status: active
-  source: commit-gate
-  own_scope: false
-  enforcement_channel: commit-gate
+  status: deprecated
+  source: manual
+  enforcement_channel: manual
+  redirect_to: DOC-HEADER-SUITE
 - gate_id: BLUEPRINT-NODE-ID-HARDCODE
   name: 'BLUEPRINT-NODE-ID-HARDCODE: BLUEPRINT-NODE-ID-HARDCODE（CommitGate, priority=57）'
   entry: in-process (GitCommitGateway)
@@ -1093,7 +1095,8 @@ gates:
   name: 'FILE-COPY: FILE-COPY（CommitGate, priority=85）'
   entry: in-process (GitCommitGateway)
   description: FILE-COPY
-  files_trigger: ''
+  files_trigger:
+  - .py
   always_run: false
   category: commit_gate
   status: active
@@ -1172,7 +1175,8 @@ gates:
   name: 'FUNCTION-DUP: FUNCTION-DUP（CommitGate, priority=90）'
   entry: in-process (GitCommitGateway)
   description: FUNCTION-DUP
-  files_trigger: ''
+  files_trigger:
+  - .py
   always_run: false
   category: commit_gate
   status: active
@@ -2059,7 +2063,8 @@ gates:
   name: 'COMPLEXITY-GUARD: COMPLEXITY-GUARD（CommitGate, priority=92）'
   entry: in-process (GitCommitGateway)
   description: COMPLEXITY-GUARD
-  files_trigger: ''
+  files_trigger:
+  - .py
   always_run: false
   category: commit_gate
   status: active
@@ -2090,4 +2095,15 @@ gates:
   status: active
   source: commit-gate
   own_scope: true
+  enforcement_channel: commit-gate
+- gate_id: DOC-HEADER-SUITE
+  name: 'DOC-HEADER-SUITE: DOC-HEADER-SUITE（CommitGate, priority=77）'
+  entry: in-process (GitCommitGateway)
+  description: DOC-HEADER-SUITE
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+  own_scope: false
   enforcement_channel: commit-gate

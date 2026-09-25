@@ -79,6 +79,63 @@ __all__ = ["make_ttl_gate"]
 _MAX_INLINE_FILES = 500
 
 
+# st-commitspeed-pkg8-20260925 T8簇2 闭包提级：原 make_ttl_gate 内层 _check 闭包体，行为逐字节保留；
+# 模块级化供 DOC-HEADER-SUITE 聚合器同调（gslim P4 合并先例：吸收台闭包提级）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    # 1. 转相对路径（check_frontmatter_metadata.py 接受相对路径）
+    project_root = gateway.project_root
+    rel_files: list[str] = []
+    for f in files:
+        if not os.path.isfile(f):
+            continue  # deletion commit：文件不存在，跳过（无法校验 ttl）
+        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+        rel_files.append(rel)
+    if not rel_files:
+        return True, "no files to check (all deletions or missing)"
+
+    # 2. 定位 check_frontmatter_metadata.py（真源）
+    check_script = project_root / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
+    if not check_script.is_file():
+        # fail-closed：checker 缺失是环境异常，必须阻断
+        return False, f"check_frontmatter_metadata.py not found: {check_script}"
+
+    # 3. 构造命令——文件数过多时改用 --all-files（避免 WinError 206）
+    # --strict-doctype：启用 doc_type hard block（阶段 4 治本，ARCH-TTL-DOC-001）
+    if len(rel_files) > _MAX_INLINE_FILES:
+        cmd_args = ["--all-files", "--strict-doctype"]
+    else:
+        cmd_args = ["--strict-doctype"] + rel_files
+
+    # 4. subprocess 调用复用真源
+    try:
+        result = run_checker_script(
+            check_script,
+            cmd_args,
+            cwd=project_root,
+            timeout=60,
+            text=False,
+        )
+    except (subprocess.TimeoutExpired, OSError) as e:
+        # fail-closed：执行失败阻断（ttl 是强制字段）
+        return False, f"check_frontmatter_metadata.py execution failed: {e}"
+
+    # 5. 解析结果——exit 0=通过，1=有违规，2=脚本异常
+    if result.returncode == 0:
+        return True, "ttl metadata check passed"
+
+    # 兼容 str/bytes：run_subprocess_hidden 的 setdefault("errors","replace")
+    # 会强制 text 模式（即使 text=False），导致 stderr 为 str 而非 bytes
+    def _decode(s: object) -> str:
+        if isinstance(s, bytes):
+            return s.decode("utf-8", errors="replace").strip()
+        return str(s).strip() if s else ""
+
+    detail = _decode(result.stderr)
+    if not detail:
+        detail = _decode(result.stdout)
+    return False, detail or "ttl metadata violation (unknown detail)"
+
+
 def make_ttl_gate() -> GateSpec:
     """构造 ttl 字段校验门禁 GateSpec（fail-closed，阻断型）。
 
@@ -87,59 +144,5 @@ def make_ttl_gate() -> GateSpec:
         priority=32——在 DIRECTORY-CONTRACT(30) 之后、R5-DIGIT-SUFFIX(35) 之前执行
         （先校验目录契约，再校验 ttl 元数据）。
     """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        # 1. 转相对路径（check_frontmatter_metadata.py 接受相对路径）
-        project_root = gateway.project_root
-        rel_files: list[str] = []
-        for f in files:
-            if not os.path.isfile(f):
-                continue  # deletion commit：文件不存在，跳过（无法校验 ttl）
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            rel_files.append(rel)
-        if not rel_files:
-            return True, "no files to check (all deletions or missing)"
-
-        # 2. 定位 check_frontmatter_metadata.py（真源）
-        check_script = project_root / "scripts" / "governance" / "d3_metadata" / "check_frontmatter_metadata.py"
-        if not check_script.is_file():
-            # fail-closed：checker 缺失是环境异常，必须阻断
-            return False, f"check_frontmatter_metadata.py not found: {check_script}"
-
-        # 3. 构造命令——文件数过多时改用 --all-files（避免 WinError 206）
-        # --strict-doctype：启用 doc_type hard block（阶段 4 治本，ARCH-TTL-DOC-001）
-        if len(rel_files) > _MAX_INLINE_FILES:
-            cmd_args = ["--all-files", "--strict-doctype"]
-        else:
-            cmd_args = ["--strict-doctype"] + rel_files
-
-        # 4. subprocess 调用复用真源
-        try:
-            result = run_checker_script(
-                check_script,
-                cmd_args,
-                cwd=project_root,
-                timeout=60,
-                text=False,
-            )
-        except (subprocess.TimeoutExpired, OSError) as e:
-            # fail-closed：执行失败阻断（ttl 是强制字段）
-            return False, f"check_frontmatter_metadata.py execution failed: {e}"
-
-        # 5. 解析结果——exit 0=通过，1=有违规，2=脚本异常
-        if result.returncode == 0:
-            return True, "ttl metadata check passed"
-
-        # 兼容 str/bytes：run_subprocess_hidden 的 setdefault("errors","replace")
-        # 会强制 text 模式（即使 text=False），导致 stderr 为 str 而非 bytes
-        def _decode(s: object) -> str:
-            if isinstance(s, bytes):
-                return s.decode("utf-8", errors="replace").strip()
-            return str(s).strip() if s else ""
-
-        detail = _decode(result.stderr)
-        if not detail:
-            detail = _decode(result.stdout)
-        return False, detail or "ttl metadata violation (unknown detail)"
 
     return GateSpec(gate_id="TTL-METADATA", check=_check, priority=32)

@@ -220,6 +220,79 @@ def _check_rule3_root_subdir_admission(rel, is_new_file, allowed_root_subdirs):
     return None
 
 
+# st-commitspeed-pkg8-20260925 T8簇2 闭包提级：原 make_file_placement_ttl_gate 内层 _check 闭包体，行为逐字节保留；
+# 模块级化供 DOC-HEADER-SUITE 聚合器同调（gslim P4 合并先例：吸收台闭包提级）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    allow_promote = kwargs.get("allow_promote", False)
+    project_root = gateway.project_root
+
+    # 1. 动态加载真源（fail-closed：加载失败阻断）
+    try:
+        (
+            permanent_paths,
+            temporary_paths,
+            neutral_paths,
+            exempt_subdirs,
+            process_subdir_segments,
+            allowed_root_subdirs,
+            ttl_legal_values,
+        ) = _load_placement_ssot(project_root)
+    except (FileNotFoundError, OSError, yaml.YAMLError) as e:
+        return False, f"FILE-PLACEMENT-TTL 真源加载失败（fail-closed）: {e}"
+
+    # TTL 合法值校验（动态加载，治本词表硬编码 ARCH-049 审查问题6）
+    # ttl_legal_values 从 ttl_vocabulary.yaml values 派生；fail-closed：必需值缺失则阻断
+    if "permanent" not in ttl_legal_values or "task_bound" not in ttl_legal_values:
+        return False, (
+            f"FILE-PLACEMENT-TTL: ttl_vocabulary.yaml values 缺少必需值"
+            f" permanent/task_bound（fail-closed，got={ttl_legal_values}）"
+        )
+
+    # 2. 逐文件校验
+    violations: list[str] = []
+    for f in files:
+        if not os.path.isfile(f):
+            continue  # deletion commit：跳过
+        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+
+        # tests/ 豁免
+        if is_test_exempt(rel):
+            continue
+
+        # 判定 zone 归属
+        in_permanent = any(rel.startswith(p) for p in permanent_paths)
+        in_temporary = any(rel.startswith(p) for p in temporary_paths)
+        # 过程性子目录（Q1 contains 判定，如 /changes/ /reports/ /delivery/）
+        in_process = any(seg in rel for seg in process_subdir_segments)
+
+        # 提取 frontmatter.ttl
+        ttl = _extract_ttl(f)
+
+        # 判断是否新增文件（未 git tracked = 新增；tracked = 修改）
+        # 规则1/3 只对新增文件检查（永久区准入和根目录子目录准入是"新文件进入"约束）
+        # 规则2 对所有文件检查（TTL↔zone 一致性是持续约束）
+        is_new_file = not gateway.is_git_tracked(rel)
+
+        # 规则1：永久区新文件准入（PROMOTION_BLOCKED）——只对新增文件
+        v1 = _check_rule1_permanent_admission(rel, is_new_file, in_permanent, exempt_subdirs, allow_promote)
+        if v1 is not None:
+            violations.append(v1)
+
+        # 规则2：TTL↔zone 一致性（对所有文件，TTL 合法值已通过 fail-closed 校验）
+        v2 = _check_rule2_ttl_zone_consistency(rel, ttl, in_permanent, in_temporary)
+        if v2 is not None:
+            violations.append(v2)
+
+        # 规则3：根目录子目录准入（防止 audit_assignment/ 这类乱建子目录）——只对新增文件
+        v3 = _check_rule3_root_subdir_admission(rel, is_new_file, allowed_root_subdirs)
+        if v3 is not None:
+            violations.append(v3)
+
+    if violations:
+        return False, "\n".join(violations)
+    return True, "file placement ttl check passed"
+
+
 def make_file_placement_ttl_gate() -> GateSpec:
     """构造 FILE-PLACEMENT-TTL 门禁 GateSpec（fail-closed，阻断型）。
 
@@ -228,75 +301,5 @@ def make_file_placement_ttl_gate() -> GateSpec:
         priority=33——在 TTL-METADATA(32) 之后、R5-DIGIT-SUFFIX(35) 之前
         （先校验 ttl 字段合法，再校验 ttl↔路径一致）。
     """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        allow_promote = kwargs.get("allow_promote", False)
-        project_root = gateway.project_root
-
-        # 1. 动态加载真源（fail-closed：加载失败阻断）
-        try:
-            (
-                permanent_paths,
-                temporary_paths,
-                neutral_paths,
-                exempt_subdirs,
-                process_subdir_segments,
-                allowed_root_subdirs,
-                ttl_legal_values,
-            ) = _load_placement_ssot(project_root)
-        except (FileNotFoundError, OSError, yaml.YAMLError) as e:
-            return False, f"FILE-PLACEMENT-TTL 真源加载失败（fail-closed）: {e}"
-
-        # TTL 合法值校验（动态加载，治本词表硬编码 ARCH-049 审查问题6）
-        # ttl_legal_values 从 ttl_vocabulary.yaml values 派生；fail-closed：必需值缺失则阻断
-        if "permanent" not in ttl_legal_values or "task_bound" not in ttl_legal_values:
-            return False, (
-                f"FILE-PLACEMENT-TTL: ttl_vocabulary.yaml values 缺少必需值"
-                f" permanent/task_bound（fail-closed，got={ttl_legal_values}）"
-            )
-
-        # 2. 逐文件校验
-        violations: list[str] = []
-        for f in files:
-            if not os.path.isfile(f):
-                continue  # deletion commit：跳过
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-
-            # tests/ 豁免
-            if is_test_exempt(rel):
-                continue
-
-            # 判定 zone 归属
-            in_permanent = any(rel.startswith(p) for p in permanent_paths)
-            in_temporary = any(rel.startswith(p) for p in temporary_paths)
-            # 过程性子目录（Q1 contains 判定，如 /changes/ /reports/ /delivery/）
-            in_process = any(seg in rel for seg in process_subdir_segments)
-
-            # 提取 frontmatter.ttl
-            ttl = _extract_ttl(f)
-
-            # 判断是否新增文件（未 git tracked = 新增；tracked = 修改）
-            # 规则1/3 只对新增文件检查（永久区准入和根目录子目录准入是"新文件进入"约束）
-            # 规则2 对所有文件检查（TTL↔zone 一致性是持续约束）
-            is_new_file = not gateway.is_git_tracked(rel)
-
-            # 规则1：永久区新文件准入（PROMOTION_BLOCKED）——只对新增文件
-            v1 = _check_rule1_permanent_admission(rel, is_new_file, in_permanent, exempt_subdirs, allow_promote)
-            if v1 is not None:
-                violations.append(v1)
-
-            # 规则2：TTL↔zone 一致性（对所有文件，TTL 合法值已通过 fail-closed 校验）
-            v2 = _check_rule2_ttl_zone_consistency(rel, ttl, in_permanent, in_temporary)
-            if v2 is not None:
-                violations.append(v2)
-
-            # 规则3：根目录子目录准入（防止 audit_assignment/ 这类乱建子目录）——只对新增文件
-            v3 = _check_rule3_root_subdir_admission(rel, is_new_file, allowed_root_subdirs)
-            if v3 is not None:
-                violations.append(v3)
-
-        if violations:
-            return False, "\n".join(violations)
-        return True, "file placement ttl check passed"
 
     return GateSpec(gate_id="FILE-PLACEMENT-TTL", check=_check, priority=33)

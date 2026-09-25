@@ -110,9 +110,12 @@ _RE_DOCSTRING_FIRST_LINE = re.compile(r'^"""[^\n]*?—\s*(.+?)$', re.MULTILINE)
 
 def _roster_triggers() -> dict:
     """in_process 名册的 files_trigger 字段（P5 条件触发真源），供统一册贯通。"""
-    roster_path = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "in_process_gate_registry.yaml"
+    roster_path = (
+        REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "in_process_gate_registry.yaml"
+    )
     try:
         import yaml as _yaml  # noqa: PLC0415
+
         data = _yaml.safe_load(roster_path.read_text(encoding="utf-8"))
         return {g.get("gate_id"): g.get("files_trigger") for g in data.get("gates", []) if g.get("files_trigger")}
     except Exception:  # noqa: BLE001 — 名册不可得时统一册退回空触发面
@@ -492,7 +495,6 @@ MANUAL_GATES: list[dict] = [
         "enforcement_channel": "manual",
         "redirect_to": "COMPLEXITY-GUARD",
     },
-
     {
         # 裁定#347/#372：临界区锁机制实名登记（in-process 机制非钩子，生成器三源合并会漏——
         # 不入此清单则全量重跑会删该条，P9c3 附带发现②治本 2026-09-20）
@@ -575,6 +577,104 @@ MANUAL_GATES: list[dict] = [
         "source": "manual",
         "enforcement_channel": "manual",
         "redirect_to": "gate_audit_report_v1.md#C1",
+    },
+    {
+        "gate_id": "BLUEPRINT-FORMAT",
+        "name": "BLUEPRINT-FORMAT: [BLUEPRINT] 头部 module_id 格式检测（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925 T8簇2）",
+        "entry": "N/A (merged into DOC-HEADER-SUITE, see redirect_to)",
+        "description": "【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DOC-HEADER-SUITE",
+    },
+    {
+        "gate_id": "BLUEPRINT-HEADER",
+        "name": "BLUEPRINT-HEADER: A_module 头声明一致性聚合（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925 T8簇2）",
+        "entry": "N/A (merged into DOC-HEADER-SUITE, see redirect_to)",
+        "description": "【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DOC-HEADER-SUITE",
+    },
+    {
+        "gate_id": "MODULE-ID-CONSISTENCY",
+        "name": "MODULE-ID-CONSISTENCY: module_id 三声明轨道一致性（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925 T8簇2）",
+        "entry": "N/A (merged into DOC-HEADER-SUITE, see redirect_to)",
+        "description": "【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DOC-HEADER-SUITE",
+    },
+    {
+        "gate_id": "TTL-METADATA",
+        "name": "TTL-METADATA: TTL 元数据硬阻断（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925 T8簇2）",
+        "entry": "N/A (merged into DOC-HEADER-SUITE, see redirect_to)",
+        "description": "【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DOC-HEADER-SUITE",
+    },
+    {
+        "gate_id": "FILE-PLACEMENT-TTL",
+        "name": "FILE-PLACEMENT-TTL: 文件放置 TTL 三重校验（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925 T8簇2）",
+        "entry": "N/A (merged into DOC-HEADER-SUITE, see redirect_to)",
+        "description": "【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DOC-HEADER-SUITE",
+    },
+    {
+        "gate_id": "EXEMPT-ZONE-FM",
+        "name": "EXEMPT-ZONE-FM: 豁免区 frontmatter doc_type（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925 T8簇2）",
+        "entry": "N/A (merged into DOC-HEADER-SUITE, see redirect_to)",
+        "description": "【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DOC-HEADER-SUITE",
+    },
+    {
+        "gate_id": "DOC-REF-BROKEN",
+        "name": "DOC-REF-BROKEN: 文档相对路径断裂引用（已合并至 DOC-HEADER-SUITE，st-commitspeed-pkg8-20260925 T8簇2）",
+        "entry": "N/A (merged into DOC-HEADER-SUITE, see redirect_to)",
+        "description": "【已合并/重定向】T8 簇2 文档头七台合一（Owner 令：只合并不删门，7 判据零退役）。"
+        "本条目为重定向锚点保留 gate_id 供历史引用可追溯，实际执行入口见 DOC-HEADER-SUITE。",
+        "files_trigger": "",
+        "always_run": False,
+        "category": "commit_gate",
+        "status": "deprecated",
+        "source": "manual",
+        "enforcement_channel": "manual",
+        "redirect_to": "DOC-HEADER-SUITE",
     },
 ]
 

@@ -82,6 +82,57 @@ def _extract_doc_type(content: str, is_markdown: bool) -> str:
     return ""
 
 
+# st-commitspeed-pkg8-20260925 T8簇2 闭包提级：原 make_exempt_zone_frontmatter_gate 内层 _check 闭包体，行为逐字节保留；
+# 模块级化供 DOC-HEADER-SUITE 聚合器同调（gslim P4 合并先例：吸收台闭包提级）。
+def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+    project_root = gateway.project_root
+    violations: list[str] = []
+    historical: list[str] = []
+
+    for f in files:
+        if not os.path.isfile(f):
+            continue
+        rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
+        matched_zone = ""
+        for zone in _EXEMPT_ZONE_PREFIXES:
+            if rel.startswith(zone):
+                matched_zone = zone
+                break
+        if not matched_zone:
+            continue
+        if not rel.endswith(_FRONTMATTER_EXTS):
+            continue
+
+        # 历史违规豁免：git ls-tree HEAD 判断文件是否已存在
+        try:
+            result = run_subprocess_hidden(
+                ["git", "ls-tree", "HEAD", rel], capture_output=True, cwd=str(project_root), timeout=10, text=False
+            )
+            if result.stdout.strip():
+                historical.append(rel)
+                continue
+        except (subprocess.TimeoutExpired, OSError):
+            pass  # git 失败时不豁免，继续检查
+
+        try:
+            content = Path(f).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            continue
+        doc_type = _extract_doc_type(content, rel.endswith(".md"))
+        if doc_type:
+            violations.append(f"{rel} (doc_type={doc_type}, zone={matched_zone})")
+
+    if violations:
+        return False, (
+            f"EXEMPT-ZONE-FM: {len(violations)} exempt-zone file(s) with frontmatter doc_type "
+            f"(should be in formal directory): {'; '.join(violations)}"
+        )
+    return True, (
+        "no exempt-zone frontmatter violations"
+        + (f" (historical skipped: {', '.join(historical)})" if historical else "")
+    )
+
+
 def make_exempt_zone_frontmatter_gate() -> GateSpec:
     """构造豁免区 frontmatter 门禁 GateSpec（fail-closed 阻断型，含历史违规豁免）。
 
@@ -89,53 +140,5 @@ def make_exempt_zone_frontmatter_gate() -> GateSpec:
         GateSpec(gate_id="EXEMPT-ZONE-FM", priority=87)。
         priority=87——在 ID-UNIQUENESS(86) 之后。
     """
-
-    def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
-        project_root = gateway.project_root
-        violations: list[str] = []
-        historical: list[str] = []
-
-        for f in files:
-            if not os.path.isfile(f):
-                continue
-            rel = os.path.relpath(f, str(project_root)).replace("\\", "/")
-            matched_zone = ""
-            for zone in _EXEMPT_ZONE_PREFIXES:
-                if rel.startswith(zone):
-                    matched_zone = zone
-                    break
-            if not matched_zone:
-                continue
-            if not rel.endswith(_FRONTMATTER_EXTS):
-                continue
-
-            # 历史违规豁免：git ls-tree HEAD 判断文件是否已存在
-            try:
-                result = run_subprocess_hidden(
-                    ["git", "ls-tree", "HEAD", rel], capture_output=True, cwd=str(project_root), timeout=10, text=False
-                )
-                if result.stdout.strip():
-                    historical.append(rel)
-                    continue
-            except (subprocess.TimeoutExpired, OSError):
-                pass  # git 失败时不豁免，继续检查
-
-            try:
-                content = Path(f).read_text(encoding="utf-8", errors="replace")
-            except OSError:
-                continue
-            doc_type = _extract_doc_type(content, rel.endswith(".md"))
-            if doc_type:
-                violations.append(f"{rel} (doc_type={doc_type}, zone={matched_zone})")
-
-        if violations:
-            return False, (
-                f"EXEMPT-ZONE-FM: {len(violations)} exempt-zone file(s) with frontmatter doc_type "
-                f"(should be in formal directory): {'; '.join(violations)}"
-            )
-        return True, (
-            "no exempt-zone frontmatter violations"
-            + (f" (historical skipped: {', '.join(historical)})" if historical else "")
-        )
 
     return GateSpec(gate_id="EXEMPT-ZONE-FM", check=_check, priority=87)

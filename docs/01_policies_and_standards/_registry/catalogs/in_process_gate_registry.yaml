@@ -213,6 +213,7 @@ gates:
   register_line: 436
   enabled: true
 - gate_id: FILE-COPY
+  files_trigger: [".py"]  # T8簇3 条件触发（st-commitspeed-pkg8-20260925；台内只检 staged 新增 .py，无 .py 提交短路）
   module_path: zephyr.gov_enforcement.commit_gates.file_copy_gate
   factory_function: make_file_copy_gate
   source: in_process
@@ -268,6 +269,7 @@ gates:
   register_line: 448
   enabled: true
 - gate_id: FUNCTION-DUP
+  files_trigger: [".py"]  # T8簇3 条件触发（st-commitspeed-pkg8-20260925；台内只检 staged 新增 .py，无 .py 提交短路）
   module_path: zephyr.gov_enforcement.commit_gates.function_dup_gate
   factory_function: make_function_dup_gate
   source: in_process
@@ -331,6 +333,7 @@ gates:
   register_line: 459
   enabled: true
 - gate_id: COMPLEXITY-GUARD
+  files_trigger: [".py"]  # T8簇3 条件触发（st-commitspeed-pkg8-20260925；P4 合并丢子台触发面→无条件全跑补回；三子台均 .py-only）
   module_path: zephyr.gov_enforcement.commit_gates.high_complexity_gate
   factory_function: make_complexity_guard_gate
   source: in_process
@@ -722,3 +725,9 @@ gates:
   source: in_process
   register_line: 0  # priority=151；2026-09-24 OBJ_S S2 挂载：AGENTS.md ≤300 行硬上限断言（NL-3 判据②，宪法 §6）；测试 tests/ai_layer/redline/test_negative_list_gates.py；二次重插
   enabled: false # 09-26 总指挥暂禁用（落地环境解封）：module 在 st-ailayer-final 245 件批内未落 HEAD，名册先行=同源断裂致全部 landing 死信；AI 层批落地同批翻回 enabled: true
+- gate_id: DOC-HEADER-SUITE
+  module_path: zephyr.gov_enforcement.commit_gates.blueprint_format_gate
+  factory_function: make_doc_header_suite_gate
+  source: in_process
+  register_line: 0  # priority=77（T8簇2 七台合一 st-commitspeed-pkg8-20260925：BLUEPRINT-FORMAT(77)/BLUEPRINT-HEADER(79)/MODULE-ID-CONSISTENCY(88)/TTL-METADATA(32)/FILE-PLACEMENT-TTL(33)/EXEMPT-ZONE-FM(87)/DOC-REF-BROKEN(91) 吸收入聚合门，7 判据零退役；吸收台薄工厂保留出册）
+  enabled: true
