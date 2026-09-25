@@ -72036,3 +72036,11 @@ algo_submodules:
   name_zh: ① 包命名空间初始化 空导出
   name_en: __all__空列表
   plain_zh: 包级init不聚合再导出任何符号，消费者须显式导入具体子模块
+- module_path: scripts/governance/d3_metadata/reconcile_gate_rosters.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "门禁名册对账器"
+  name_en: "Gate Roster Reconciler"
+  desc_zh: "对账模块册/in_process 册/统一册三册门禁清单漂移并机生对账报告"
+  desc_en: ""
+  plain_zh: "门禁的名册有好几本，各记各的账总会对不上。这个工具把几本名册放在一起逐条对账，谁多了谁少了谁写错了，生成一张差异报告，让维护的人一眼看到哪里漂了，不用再靠人肉翻册子。"
+  responsibility_layer: governance
