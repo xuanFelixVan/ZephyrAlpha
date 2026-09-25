@@ -184,3 +184,10 @@ st-cleanup-final 侧不可忠实代再生，故留此通知。给 st-cleanup-fin
 - [DU-03 结案] margin_trading 断 4 日查因=**调度器 heavy 池饿死**（nightly_financial 三晚未 fire；heavy 双线程被 16:30 daily_kline+17:00 daily_valuation ~11h 补下载占满；09-24 起调度器叠加崩溃循环）。数据源侧排除（正门补跑 09-21/22/23 全量 +12,317 行分毫不差，09-14→09-23 无缺口）。09-24 有意拒写 SSE-only 半日防污染。
 - [系统性三处方移交工单] ①11h 估值刷新移出 17:00 heavy 槽或池 2→4 ②job 到期未启动 N 分钟饿死告警 ③integrity_check 的 margin 判警改 max(trade_date) 滞后口径（现行当日行数比对=永久误报，掩盖真断 4 日）。
 - [施工小件] integrity_check margin 口径修正班已发车；L02C03+L09C02 已落队（q-0054 状态轴合并批 9 件）；881xxx 七件已落队（q-0050）。
+
+## 指挥官 Round 48 · 2026-09-25 午间（T1 事故+队列恢复 v2 轮）
+
+- [T1 事故+重启] T1（grid_20260924-213246）01:49:57 死亡——01:49:46 他班 token 纯插入落地→47 秒 post_commit_regen→T1 停（无 traceback=外击杀，10 号文元凶签名）；运行目录部分幸存。**九小时无人发现**（守望器盲区：只盯 manifest 行数未盯进程存活——教训入册）。11:07 重启被 E0 问闸拒（gate_deny_calendar_unknown）→**问闸 bug 治本**：中秋休市日真源无行被误判 calendar_unknown，修=覆盖内无行=休市日 False 放行（实弹复验 heavy_ok）；11:15 重启成功在算+**仓外备份护甲**（D:/zephyr_t1_backup 10 分钟 robocopy 镜像）。
+- [队列恢复 v2] 夜批 9 批在 QCure 队列重整+我的误触 drain 中全灭（内容三保全：盘面/worktree/死信袋）。九死因全修后按依赖序重投：①注册册先行 q-0072（4 翻译重放+候选池 2 token）②复职/状态轴/哨兵+黑匣子+导入修复/材料线/881（build 复杂度 12→达标重构+CRLF 感知 CAS 配方：safe_write 的 base 必须按 read_text 归一 LF 口径算）/P1 v2（txt→csv 合规化）/战役文档 31 件 q-0079。③桥批押后：sim_daily_runner 三函数超复杂度（bridge_execute 22/settle 18）重构班在飞。
+- [ALGO-NOTE-SYNC 配方] order_manager 撤单传本地 id 的实现变化须同批同步两处注记（algo_flow yaml A3 节点 desc+TDM L4-10 algo_note_zh）——已同步随桥批。
+- [macro_data] metaq-gc 班已正修（61528 行可读，非我 DETACH 路径）；我的 DETACH 尝试被其覆盖，处置正确。
