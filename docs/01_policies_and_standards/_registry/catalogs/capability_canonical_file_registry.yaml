@@ -51529,4 +51529,54 @@ creation_tokens:
   created_by: st-qmine-20260925
   capability: backtest
   merge_evaluation: "T1->T2 交接守望器：内收替代 03号文§二自然语言巡检（反查无同类件，仅复用不新建判据）"
+- file: docs/_working/qmine_campaign/00_skeleton_overview.md
+  token: qmine-campaign-00-skeleton-overview-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_campaign
+  merge_evaluation: "QMine战役挖矿作业簿与总谱(task_bound),单一真源战役记录,结案随TTL归档,无同域重复"
+- file: docs/_working/qmine_campaign/01_hot_registry_merge/workbook.md
+  token: qmine-campaign-workbook-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_campaign
+  merge_evaluation: "QMine战役挖矿作业簿与总谱(task_bound),单一真源战役记录,结案随TTL归档,无同域重复"
+- file: docs/_working/qmine_campaign/02_registry_hygiene/workbook.md
+  token: qmine-campaign-workbook-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_campaign
+  merge_evaluation: "QMine战役挖矿作业簿与总谱(task_bound),单一真源战役记录,结案随TTL归档,无同域重复"
+- file: docs/_working/qmine_campaign/03_queue_robust/workbook.md
+  token: qmine-campaign-workbook-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_campaign
+  merge_evaluation: "QMine战役挖矿作业簿与总谱(task_bound),单一真源战役记录,结案随TTL归档,无同域重复"
+- file: docs/_working/qmine_campaign/04_blobs_gc/workbook.md
+  token: qmine-campaign-workbook-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_campaign
+  merge_evaluation: "QMine战役挖矿作业簿与总谱(task_bound),单一真源战役记录,结案随TTL归档,无同域重复"
+- file: docs/_working/qmine_campaign/05_observability/workbook.md
+  token: qmine-campaign-workbook-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_campaign
+  merge_evaluation: "QMine战役挖矿作业簿与总谱(task_bound),单一真源战役记录,结案随TTL归档,无同域重复"
+- file: docs/_working/qmine_campaign/06_business_revive/workbook.md
+  token: qmine-campaign-workbook-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_campaign
+  merge_evaluation: "QMine战役挖矿作业簿与总谱(task_bound),单一真源战役记录,结案随TTL归档,无同域重复"
+- file: scripts/governance/registry_dedup_audit.py
+  token: qmine-modules-registry-dedup-audit-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_modules
+  merge_evaluation: "QMine治本新模块,内收原则零第二真源:复用既有分类器/真源清单/门禁判据"
+- file: scripts/governance/blob_gc.py
+  token: qmine-modules-blob-gc-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_modules
+  merge_evaluation: "QMine治本新模块,内收原则零第二真源:复用既有分类器/真源清单/门禁判据"
+- file: scripts/governance/scheduled_task_reconcile.py
+  token: qmine-modules-scheduled-task-reconcile-20260925
+  created_by: st-qmine-20260925
+  capability: qmine_modules
+  merge_evaluation: "QMine治本新模块,内收原则零第二真源:复用既有分类器/真源清单/门禁判据"
 di_seam_exemptions: []

@@ -61008,6 +61008,31 @@ entries:
   desc_en: ""
   plain_zh: "把 PG 里 meta_question_audit 表的流水按 id 顺序补抄一份到追加式 JSONL 双轨账，默认只演不写，真跑时缺口当天就要报出来不让两本账悄悄分叉"
   responsibility_layer: governance
+- module_path: scripts/governance/registry_dedup_audit.py
+  domain_id: D_GOV_RULE
+  name_zh: "登记册对账器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把七十多个登记册全部翻一遍，找出重复条目、撞号、写错的枚举值。能自动修的重复才动手，真冲突只报告等人裁。修前先演练，修错可回滚。"
+  responsibility_layer: governance
+- module_path: scripts/governance/blob_gc.py
+  domain_id: D_GOV_RULE
+  name_zh: "内容块回收器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "提交队列的仓库里堆了两万多个历史内容块，大部分再也没人用。这个工具把没人引用超过七天的块搬到归档区（不是删除），搬前记账、可随时搬回来。"
+  responsibility_layer: governance
+- module_path: scripts/governance/scheduled_task_reconcile.py
+  domain_id: D_GOV_RULE
+  name_zh: "计划任务对账器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把登记册里声明的定时任务和系统里真实存在的任务对着查一遍：绿的正常跑，黄的要注意，红的就是断了或没建。只查不改。"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
