@@ -54,7 +54,8 @@ nav/trades csv×16），未列全名。逐件清单取自四窗目录自带的 `
 ## §3 内容完整性核验（34 项对账 + 双向红证）
 
 恢复口径=袋内 `blob_sha256` 与落盘字节的 sha256 逐件相等（22/22 相等，非"看起来对"）。
-对账尺把 csv 明细与 yaml 汇总互为对手（脚本 `.runtime/tmp/ibt22_recovery/verify_22.py`）：
+对账尺把 csv 明细与 yaml 汇总互为对手（一次性暂存脚本，结案时已删；下表每行即完整判据，
+容差与比对对象都写死，任何班次可照表重实现）：
 
 | 核验项 | 口径 | 结果 |
 |---|---|---|
@@ -168,4 +169,42 @@ Owner 选项原话=「豁免补丁→原位入库」，取向是写成通则而�
   且该窗净值只有 8 个交易日；两变体在该窗无差异是否合法，属回测语义问题非本案取证问题，
   已登记为 IBT-B03 复核线索，不在抢救批内裁。
 
+## §8 落地终态复核（本件成稿于 01:3x，当时状态=已入队；04:09 已落 HEAD，此处记终态）
+
+| 项 | 实测 |
+|---|---|
+| 队列项 | `q-20260925-st-ibt22-recovery-20260925-0001` → done |
+| 落地 commit | `4c00b9607d`（09-25 04:09） |
+| 归属 | 该 commit 实带 **24 文件**，与本批清单逐一对齐，**零连坐**（`git show --name-only 4c00b9607d` 减去本批 24 件＝空集） |
+| 字节闭环 | HEAD 内 22 件 sha256 与当初袋内登记 `blob_sha256` **22/22 相等**——落地链未改一个字节 |
+| 门禁治本 | `git show HEAD:scripts/governance/d3_metadata/check_naming_convention.py` 内 `_in_n16_skip_dir` 3 处命中；永久尺随批在 HEAD |
+| 工作区 | `git status --porcelain docs/_working/integrated_backtest/ <两码件>` 除 `artifacts_v2/`（IBT-F01 旧悬案，非本批）外为空＝无未提交、无回退 |
+| 案卷 token | capability 册 HEAD 面 `16_missing22_recovery.md` 命中 1 条（随他批次册变更同窗落地，本袋未夹带他人未落地条目） |
+
+任何人可重放的三命令（不需要本批脚本）：
+
+```bash
+git ls-tree -r --name-only HEAD \
+  | grep -cE "integrated_backtest/artifacts/W_.*(run_summary|sensitivity|nav_IBT|trades_IBT)"   # 期望 22
+git show HEAD:docs/_working/integrated_backtest/artifacts/W_IS/run_summary.yaml | sha256sum
+#   期望 640e584d803f280230e1606aaf2f8b5fe9eee44e3305e22e23e4cef692d260c0（＝袋登记值）
+python -m pytest tests/governance/d3_metadata/test_n16_skip_working.py -q                        # 期望 3 passed
+```
+
+## §9 运维自纠（本批踩到并当场修好的两处，写下来给后续班次）
+
+1. **主区临时注册会话必须 `register(pid=0)`**。默认 `pid=os.getpid()` 会把注册绑到那条短命
+   命令；命令一退，心跳 daemon 判"session not in registry"直接退出，而 registry 里条目看着
+   仍在（`_load()` 查得到）——极易误判成 daemon 另有问题。本批第一次就是这么错的。
+2. **心跳断 >90 秒＝会话判死＝本会话全部 claim 被系统自动收回**（`pid=0` 轨的判据是心跳
+   新鲜度，不是 TTL；本批 02:0x 实测锁数掉到 0，已按上述口径重注册＋二次 claim 24/24）。
+   判活只看一件事：隔 >30s 复算 `time.time()-last_heartbeat` 是否回落，别信 pid 文件存在与否。
+   **实测修正（勿传播未经检验的推断）**：本批袋最终落地的 04:09 时点，生产者会话早已随
+   daemon `idle timeout=1800s`（02:34）判死、claim 亦已释放——队列落地侧并未因此报
+   SESSION-REQUIRED，袋照常落账 24 件零连坐。所以"会话判死必致袋死信"是**本批曾写下但未成立
+   的判断**；claim 的真正价值在落地前的防连坐/防搭便车窗口，不在于落地时点必须存活。
+   深队列（本批 29→41 袋、约 2.5 小时）若依赖 claim 守护，须自行按 idle 周期续心跳。
+
 —— st-ibt22-recovery-20260925，2026-09-25（取证只读；写盘面=22 件复原 + 1 处门禁治本 + 1 把永久尺 + 本件）
+
+
