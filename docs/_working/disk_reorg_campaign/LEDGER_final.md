@@ -378,3 +378,33 @@ _（待回填）_
 【灾备演练月检 09-25（SOP §三.1 四级非破坏，提前执行）】T1 git bundle 实 clone→19,055 commits/AGENTS.md 7,883 字符可读 ✅｜T2 SQLite 5 份 `integrity=ok`（45+1 表）✅｜T3 `pg_restore` 进临时库 depgraph_drill→**表 89/89 全等**、三表行数 drill≤live、rc=1 定性为 3 条已知良性错（CREATE SCHEMA public 已存在+2 条 ALTER DEFAULT PRIVILEGES）、临时库已 DROP 且复查 pg_database 残留=0 ✅｜T4 CH 验证层 `verified=True`+`system.backup_log` 26h 窗=1+`system.backups` 408,952,156,962B/900,239 文件 ✅｜附 `restore.ps1 verify` 15 项 ALL CHECKS PASSED ✅。**四条恢复路径（git/SQLite/PG/CH）本班会全部真实走通＝月检项达成**；CH 全量 RESTORE 与 VM 导入属破坏性演练，仍按 `ZEPHYR-RESTORE-DRILL`（下次 10-01 04:30）执行。**唯一红项不在恢复链而在尺**：`scripts/backup/restore_drill.py:140` 精确相等判据在增长库上恒红（处方 P-3）。
 【第二链日检 09-26 前置读数（09-25 22:4x 实采）】VM 内 `stat`：`/mnt/chbackup2/inc.zip` = 88,580,255,288B @ epoch 1790290045 与第一链 `/mnt/chbackup_local/inc.zip` **字节+时戳双同**，换算=本地 09-25 06:47:25（与 `system.backups` end_time 同秒）；market.zip 266,634,034,420B@09-15 重基线后稳定；inc/market=0.332≥0.15、时距 15.8h≤26h → **PASS，第 2/14 天**（10-05 摘盘证据链）。09-26 06:00 轮后再读一次即累计第 3 天。
 【本班会收口状态】sid=st-backup-cold-20260925-audit｜冷启动 21:25，收口 09-26 00:4x｜两笔提交 `5aef239f7c`+`b7c668cc` 均入 HEAD｜四探针全绿｜处方 15 条（P-1..P-15）全带坐标，其中 **P-6/P-10/P-2 待 Owner 表态**，余归维护班｜本班自造件（F 侧演练 clone 810.5MiB/16,250 件）已自清，临时 PG 库已 DROP，reaper keep 册新增本班心跳一行（他班可据 dead-sid 处方精准回收）｜零删除项目数据、零实盘触碰、零绕门。
+
+## 十四、修复波终态（Owner 令"12 条不要归维护班"→ 本会话开 7 条车道并发执行）
+
+> 车道文件严格隔离；台账/结论由本会话单点 CAS 写；每条任务书含四条硬约束（禁删除、禁绕门、禁伪造 Owner 裁定、禁改判据阈值凑绿，前提被证伪即停手上报）。所有数字均经本会话**独立第二实现**复核。
+
+| 处方 | 车道 | 终态 | 凭据要点（本会话已复算） |
+|---|---|---|---|
+| P-1 manifest 漂移 | 总包亲手 | ✅ 已闭 | 2,515/2,515 行 path 存在+字节相等（改前 2,210 假红）；仅前缀替换、其余字段逐行 byte 不变；BOM/CRLF 口径不变；改前全量副本 + sha256 已登记 drawers 第 11 行；动手前先证实"无程序读者"（archiver 恢复走再推导） |
+| P-5 报告 BOM | A | ✅ 已闭 | commit `ef1d6cc73a`；报告与 lock-skip 记录同治；读者清点三处（reconciler 用 utf-8-sig / retire 只匹配文件名 / 测试自带无 BOM fixture）→ 无一要求 BOM |
+| P-15 跨零点撕裂 | A | ✅ 已闭 | `$RunAt` 单次锚点，报告/vault/dumps/bundle 四处同号；轮转与 cadence 仍取实时钟（阈值零改动）；真时钟回放：旧=TORN 两套日期、新=COHERENT，且与盘面实况（00:30/00:31 两个日目录＋其间仅一条 lock-skip）吻合 |
+| P-8b bundle ≥2 | A | ✅ 已闭 | 份数闸补"<2 即重建"一支；实补 `zephyralpha_full_20260926.bundle` 484,105,013B，本会话独立 `list-heads` 两份 rc=0、`verify` rc=0，旧份未删＝零删除 |
+| P-4 SOP 死指针/死探针 | G | ✅ 已闭 | `F:/zephyr_cold/AUDIT_SOP.md` v1.0→v1.1，净增 ≈1 行；红证＝改前 `grep 期望清单` 仅命中其自身、§四 无清单；新探针当日命中 6 条 vs 旧文案查 powershell 击杀 0 命中 |
+| P-14 logs 轮转 | J | 🔵 **改判（前提被证伪）** | 复算＝report 362 份仅 2,054,595B(1.96MB)、skipped 49 份 10,916B、90 天口径命中 0；`git ls-files logs`=0 且 `.gitignore:262 /*` 覆盖 → **磁盘唯一副本**。结论：**不做删除式轮转**（省 1.96MB 换掉不可再生的逐轮全链路校验真源，不划算）；如需减量应改"归档压缩到 G/F + 双副本 sha256"。附带查出工具真实缺口：`collect_logs_stale` 只匹配 `backup_report_` 与 `.log`，**49 份 `backup_skipped_*.json` 永不退役**（而 SOP §一.2 恰要读它）。批准包留 `.runtime/tmp/st_bca_j_retire_20260926/` |
+| P-16 嵌套旧根清理包 | 总包亲手 | 🟡 **拆批不并签** | 三方差分实测：`offrepo/offrepo_backup` 136.6GiB **独有件=0**（1,968+43+44+2,230 全在现行镜像）共有键尺寸差=0、sha256 抽 16/16 全等，唯一异寸键=`archive_manifest.jsonl`（嵌套=改锚前态，本会话已另存 .bak）→ **可批**；`db_dumps/db_dumps` 0.36GiB 有 **2 件独有**（`governance_backup.db` 193,933,312B / 194,093,056B 在全部日期目录与活 dump 目录均无同尺寸对应）→ **禁并入删除批**；`git_bundles/git_bundles` 853,725,965B（09-14/09-15）＝09-24 那次"已删旧导出件"只覆盖了一处路径，同族第二处仍存活 → 单列待裁 |
+
+**车道并发副作用如实记**：车道 A 提交期出现 `GATE-TRACKED-DRIFT VIOLATION`，漂移文件正是同批车道 C 在改的 `scripts/backup/restore_drill.py`（与其清单零交集）→ 自动降级 warn 放行；多车道并行时该门禁的"漂移"读数会互相污染，归属仍以 `git log -1 --name-only` 为准。另：车道 G 报 F 盘 SOP 出现过第二写者（当前盘上为 v1.1 本版，无外来标记残留）。
+
+### 十五、修复波续（D/I/E/B 四车道 + 本班自挖三条 + 自我更正两条）
+
+**P-12 收割日志可归因**（车道 D，无独立 commit＝被他会话吸收）：`_log_kill()` 增 `name`+`cmdline(≤120)` 行尾追加（旧 grep 口径不破），8 处调用点 4 组全补，另加净化器 `_log_field`（控制符压平＋密钥脱敏＋硬截断）；本会话独立核 HEAD：`def _log_field` / `name: str = ""` / `cmdline: str = ""` / `kill 日志可归因字段` 四标记俱在。**归属事故如实记**：车道 D 提交两次撞 `LOCK_TIMEOUT`，其间他的 678 件 emergency 批 `30505c93f6`（01:15）把这两文件整体吸收＝本项改动落账在他人 commit 名下。附带既有泄漏修治：整册 kill 日志重定向 tmp_path（此前该测试册用例会写生产 `data/runtime/reaper_kill.log`，违宪法 §9.6 测试隔离）。
+**P-9 ps1 侧锁语义常驻尺**（车道 I，commit `ac1df94d42`，1 文件 487 行）：正则从 `backup.ps1` 抽 `Test-BackupLock` 真函数体实跑六案（含"内容不可读退回 4h 规则"两案），红侧＝旧 age-only 版 CASE1 判"抢锁"（09-25 断链复现）；旧版实现按 git blob `a389773a4c` 自定位核账，不写死 HEAD~k；11 passed，同目录既有 `test_backup_lock_stale.py` 11 passed 未牵连。
+**P-11 更正（我的前提被车道 E 证伪）**：心跳守护不是"pythonw 无声杀死"。真因＝**设计自退**：`_MAX_IDLE_SECONDS=1800`（会话 30 分钟无活动判死，900 秒宽限后从活跃册摘除），退出原因写在 `heartbeat.jsonl` 而非 stderr（pythonw 本无 stderr，"查无日志"是我找错地方）；第二次"能常驻"是因为我一直在产生活动。落点改在入口层：无控制台时把 `None` 流降级为丢弃型＋入口任何异常写 `fatal` 带栈落盘（commit `714981aa55`，46 passed，正规调用点 `_spawn_heartbeat_daemon` 本就用 python.exe+DEVNULL，未改）。**本会话随后被同一机制现场复证**：约 25 分钟无会话活动后，提交被 `SESSION-REQUIRED` 判"未注册"。
+**P-7 灾备点火/托管分离**（车道 B，bag `q-20260926-st-bca-b-recon-20260926-0001` pending，pos_ahead 1 待落地）：`reconcile()` 重写为"先结算上轮点火→主动锁自查（自备 `PID:` 正则；实测 ps1 锁文件是 `PID:<n> START:<iso>` 文本非 JSON，故 `backup_runtime_state._read_lock_holder_pid` 不适用，这条车道自己发现并绕开）→经瞬时装载器脱离点火→只记 `last_backup_launch_time/ignited_pending_verification`"，三条 stdout 语义改从落盘日志 `utf-8-sig` 解析，INV-11 决策树原样搬进延后裁决；免疫论证＝`_kill_pid_tree` 沿**活 PPID 链**取后代，装载器即退→真备份 PPID 指向已亡装载器，不在 worker 活树内。红绿＝旧实现跑新断言 **24 failed/10 passed**，新实现 **34 passed**，目录级 47 passed。
+
+**本班自挖三条（原处方集之外）**
+- **P-19（已治本，commit `bce9d7a80a`，58 passed）**：见 §"守门进程瞎 23.5h"。要点＝`reap()` 拆外层兜底＋`_reap_cycle` 主体，主体任何一步爆炸都"记 `reap_aborted`＋finally 落快照＋异常照抛"，尾段三步各自独立 try（`ghost_stage_failed`/`drift_stage_failed` 分因）；阈值/判据零改动。下一次计划触发的实测由观察器回收。
+- **P-20（已自愈，只记不修）**：车道 B 见 pre-commit 横幅"09-25 起 `reconcile_worker boot failed: roster entries 102 != declared total_gates 99`"。本会话复测＝`in_process_gate_registry.yaml` 现 **gates=102 / total_gates=102 已对齐**（该硬对账真源即此文件，见 `gate_auto_registrar.py:8` INVARIANTS），故 reconciler 起不来的断链**已在他班落地中自愈**，横幅是 09-25 的陈旧读数——不据此立案。
+- **P-21（活缺陷，未修，给坐标）**：同一口径下 `gate_registry.yaml` 现 **gates=180 而声明 total_gates=174**（差 6）。该字段是"计数用字段不写死散文"的机器真源，漂移＝文档面失真；修法不是手改标量（本仓已证"派生标量经队列合并恒取 ours，永远进不了 HEAD"，正解＝跑该册生成器按段长度重算再随批落）。归维护班同批收敛，本班会不抢这张热册（8 路车道并发时段动热册＝蒸发病复现条件）。
+
+**归属与安全的一处正面证据**：我那份"内容已被更新提交超越"的陈旧袋 `q-...-0002` 被队列**判死而非强行回退**——`dead_reason="dev CAS 竞态：714981aa..bce9d7a8 间同路径被并发落地工推进"`。这正是队列作为正门的价值：它宁可死信也不覆盖更新的 HEAD。此死信**不应 requeue**（requeue 会按当前工作区重建＝与 HEAD 同内容，纯 noop），留档即可。
