@@ -60080,7 +60080,7 @@ entries:
   desc_en: "Idempotent deployer for registry_ledger tables with append-only triggers and schema version bookkeeping"
   plain_zh: "大白话：给账本装账本的师傅。建四张表和保险锁，装错了或重复装都不出事——跑一百遍结果和跑一遍一模一样"
   responsibility_layer: governance
-- module_path: src/zephyr/governance/registry_ledger/identity.py
+- module_path: src/zephyr/governance/registry_ledger/ledger_identity.py
   domain_id: D_GOVERNANCE
   name_zh: "注册表条目身份键"
   name_en: "Registry Entry Identity Key"
@@ -60088,7 +60088,7 @@ entries:
   desc_en: "Bridge to the canonical entry identity key with composite token suffix, shared by gate and merger"
   plain_zh: "大白话：给每条注册表条目发身份证。规则只有一条：第一个字段是谁，它就是谁；有 token 的加上 token。门禁、合并器、账本三家认同一张证，不各发各的"
   responsibility_layer: governance
-- module_path: src/zephyr/governance/registry_ledger/schema.py
+- module_path: src/zephyr/governance/registry_ledger/ledger_schema.py
   domain_id: D_GOVERNANCE
   name_zh: "注册表账本DDL聚合"
   name_en: "Registry Ledger DDL Aggregate"
@@ -60190,7 +60190,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "四象限总调度：对比盘上文件、本地状态和最新渲染结果，干净就收工，私改就留证据再自动覆盖回来，账本前进了就静默重打，数据库挂了就降级观察不拦任何人"
+  plain_zh: "大白话：四象限总调度——对比盘上文件、本地状态和最新渲染结果，干净就收工，私改就留证据再自动覆盖回来，账本前进了就静默重打，数据库挂了就降级观察不拦任何人"
   responsibility_layer: governance
 - module_path: scripts/governance/registry_projection/registry_projection_generator.py
   domain_id: D_GOV_CODE_QUALITY
@@ -60312,14 +60312,6 @@ entries:
   desc_en: ""
   plain_zh: "把考试流程里发生的每件事写成一条可回溯的流水账，事后能查谁在何时把哪道题改成了什么"
   responsibility_layer: governance
-- module_path: src/zephyr/governance/meta_question/exam_loop/state_machine.py
-  domain_id: D_GOVERNANCE
-  name_zh: "题目状态流转拦截器"
-  name_en: ""
-  desc_zh: ""
-  desc_en: ""
-  plain_zh: "规定题目只能按合法路径换状态（比如已登记→考试中→已作答），想跳步或走非法路径会被拦下并记账"
-  responsibility_layer: governance
 - module_path: src/zephyr/governance/meta_question/exam_loop/reexam_scheduler.py
   domain_id: D_GOVERNANCE
   name_zh: "新鲜窗复考调度器"
@@ -60408,7 +60400,7 @@ entries:
   desc_en: ""
   plain_zh: "提供复考要用的统计量：相关性、自相关稳健的检验值、断点检验、自助法置信区间，保证同一份数据每次算出同一个数。"
   responsibility_layer: business
-- module_path: scripts/governance/meta_question/wo001_003/generate_source_line_register.py
+- module_path: scripts/governance/meta_question/wo_intake_reconcile/generate_source_line_register.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: "源线谱机器可读册生成器"
   name_en: ""
@@ -60416,7 +60408,7 @@ entries:
   desc_en: ""
   plain_zh: "把写在文档里的那张数据源线路表自动转成机器能查的册子，题目引用的每条线能不能核对，就查这本册。"
   responsibility_layer: governance
-- module_path: scripts/governance/meta_question/wo001_003/intake_batch.py
+- module_path: scripts/governance/meta_question/wo_intake_reconcile/intake_batch.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: "入题批前置校验器"
   name_en: ""
@@ -60424,7 +60416,7 @@ entries:
   desc_en: ""
   plain_zh: "一批新问题正式入库前先扫一遍：五要素填没填齐、枚举合不合法、数据源在不在册，不合格就挡下并记下挡下的原因。"
   responsibility_layer: governance
-- module_path: scripts/governance/meta_question/wo001_003/replay_audit_to_jsonl.py
+- module_path: scripts/governance/meta_question/wo_intake_reconcile/replay_audit_to_jsonl.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: "审计账双轨回放器"
   name_en: ""
@@ -60809,7 +60801,7 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "四象限总调度：对比盘上文件、本地状态和最新渲染结果，干净就收工，私改就留证据再自动覆盖回来，账本前进了就静默重打，数据库挂了就降级观察不拦任何人"
+  plain_zh: "大白话：四象限总调度——对比盘上文件、本地状态和最新渲染结果，干净就收工，私改就留证据再自动覆盖回来，账本前进了就静默重打，数据库挂了就降级观察不拦任何人"
   responsibility_layer: governance
 - module_path: scripts/governance/enqueue_preflight.py
   domain_id: D_GOV_RULE
@@ -60843,15 +60835,38 @@ entries:
   desc_en: "backfill 881/8803/8804 daily bars into kline_sector_880"
   plain_zh: "给 881 行业板块和 8803/8804 行业板块补历史日K线数据的小工具，默认只看不写，加 --execute 才真正入库"
   responsibility_layer: business
+- module_path: src/zephyr/data/macro_vintage.py
+  domain_id: D_DATA
+  name_zh: "宏数时点存证入库镜像"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "宏观指标每写一次现值，就另抄一份带存证时戳的历史快照，回测时能问出那一天我们实际知道什么"
+  responsibility_layer: business
 - module_path: src/zephyr/infrastructure/duckdb_runtime_gate.py
   domain_id: D_INFRA_RUNTIME
   name_zh: "裸duckdb运行时拦截门"
   name_en: "Bare DuckDB Runtime Gate"
   desc_zh: "运行时拦截裸 duckdb.connect：白名单豁免+审计 jsonl 落账，warn/block 双模式，补齐 bare_sql_gate 的运行时侧防线"
   desc_en: ""
-  plain_zh: "以前只在你提交代码时检查有没有绕过数据库服务直连数据库，但程序跑起来之后直连是管不住的。这个门装上后，谁在运行中偷偷直连数据库就会被记一笔账（严重的模式可以直接拒绝），而走正规数据库服务的调用完全不受打扰。"
+  plain_zh: "以前只在你提交代码时检查有没有绕过数据库服务直连数据库，但程序跑起来之后直连是管不住的。这个门装上后，谁在运行中偷偷直连就会被记一笔账（严重的模式可以直接拒绝），走正规数据库服务的调用完全不受打扰。"
   responsibility_layer: infrastructure
-
+- module_path: src/zephyr/governance/registry_ledger/ledger_schema.py
+  domain_id: D_GOVERNANCE
+  name_zh: "账本 DDL 聚合"
+  name_en: "Ledger DDL Aggregate"
+  desc_zh: "registry_ledger 四表 DDL 常量按依赖序聚合+_schema_version 台账，幂等可重跑"
+  desc_en: "Aggregates registry_ledger table DDL constants in dependency order with idempotent version bookkeeping"
+  plain_zh: "大白话：把建账本四张表的图纸按先后顺序整理成一叠，照着念一遍就能把表建好，念一百遍也不会建错"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/registry_ledger/ledger_identity.py
+  domain_id: D_GOVERNANCE
+  name_zh: "账本条目身份桥"
+  name_en: "Ledger Identity Bridge"
+  desc_zh: "条目身份键唯一真源桥：门禁单键+token 复合升级，与合并器同规则防身份分叉"
+  desc_en: "Bridge to the canonical entry identity key with token composite suffix shared by gate and merger"
+  plain_zh: "大白话：给每条登记发一张独一无二的身份证，名字规则和门卫手里那份一模一样，谁也造不出第二种叫法"
+  responsibility_layer: governance
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
