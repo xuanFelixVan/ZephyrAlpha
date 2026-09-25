@@ -163,3 +163,24 @@ st-cleanup-final 侧不可忠实代再生，故留此通知。给 st-cleanup-fin
 - [大盘] 死信 266→393（+131）：我方 8，其余=各班收宫潮/级联 stale 族，归各班自行重投（§3.4）；done 907（+34 深夜吞吐健康）。
 - [里程碑确认] q-0014（#413 裁定+prereg 三字段签发）已落 HEAD——GPU 点火合法性正式入册。
 - [Owner 问询立卡×2] 881xxx 行业指数补采（469 vs 800+ 宇宙差值）；"全用了吗"消费面账本（14 号文在挖）。
+
+## 指挥官 Round 45 · 2026-09-25 深夜（总筹开工轮——九车道+配方三连）
+
+- [总筹开工] Owner 授权总筹全权：九环节骨架文件夹建立（links/L01-L09+README 六向台账/自审闸标准）；九挖矿车道发车（限流击落 L01/L07 各一次已递补，在飞 L01/L04/L07/L09，已封矿交卷 L02/L03/L05/L06/L08/L09）；施工车道 EV-01 黑匣子交付上线（schtasks 实弹首跑验证+演练命中 1 秒窗口）+六段统一交付（切源唯一位点+三键行为修正+490 回归零新增）+做T材料线班在飞。
+- [t0 甲位裁定：BLOCKED] 三版本分叉（主区 61,143B/worktree 64,573B/0033 袋 64,581B），甲位所述 63374B 恰差 7B 版本盘面不存在；死因实为 CloneGuard 非 ruff。六段命脉文件不盲写——待版本确认（候 t0 班或二次取证），期间 0033 暂缓重投。
+- [配方三连] ①代码件入队正门=会话 worktree 内跑 enqueue+ZEPHYR_COMMIT_QUEUE_DIR 指主队列（q-0041 实证；--worktree-root 旗不被 WORKTREE-REQUIRED 检查认，认的是 cwd）；②跨调用 cd 后必须 pwd 自检（又中一次）；③文档件入队免 worktree 限制，代码件必须 worktree 生产。
+- [自动化] T1→T2 交接守望器（30 分钟，T1 完赛自动验收+发 T2+自删）+正午评估折叠（W-M1 24h 三判据+AI 广播判据+token 波自愈）——原独立一次性表因"会话已属计划任务"限制被折叠进守望器。
+- [在飞] 挖矿 L01/L07/L09+施工 做T材料线+哨兵+六段已交；队列 pending 47 消化中；GPU T1 健康。
+
+## 指挥官 Round 46 · 2026-09-25 凌晨（P1 v2+CH 事故处置轮）
+
+- [里程碑·P1 v2] 881xxx 补采落地后概率表重跑：宇宙 469→**729 板块**，T1 4,362 格（可考 2,874），行业族首入；经济结论 v1 复现稳定（退潮/分化/亢奋=高低切，expansion≈0）。产物覆盖更新 data/strategy_intake/conditional_tables/。
+- [CH 事故处置] c1_market.macro_data 187 broken parts（0.00B）阻塞整库装载（ASYNC_LOAD_WAIT_FAILED，881 班预告的间歇故障全面爆发）→ 按三步验证执行 DETACH 摘除，整库恢复可查（kline_sector_880 count 通过）。**遗留**：macro_data 本体数据需修复评估（DETACH 后 ATTACH 前须清理 broken parts 或重 ingest；akshare 源通道在册）——立 DU-16 卡，修复归数据车道，Owner 知会。
+- [881 批落队] q-0050 七件（provider 扩面/tasks.yaml/名称映射三件/登记册两件）；gitignore 裁定=沿 880 前例留盘，立卡注记。
+- [在飞] L09 尾差补读/881 下游（sector_state 重放/P1 已抢先做 v2）/队列消化（q-0041~0050 十批在队，token 册先行批在队，正午自愈器兜底阵亡波）。
+
+## 指挥官 Round 47 · 2026-09-25 凌晨（DU-03 结案+调度器饿死病根轮）
+
+- [DU-03 结案] margin_trading 断 4 日查因=**调度器 heavy 池饿死**（nightly_financial 三晚未 fire；heavy 双线程被 16:30 daily_kline+17:00 daily_valuation ~11h 补下载占满；09-24 起调度器叠加崩溃循环）。数据源侧排除（正门补跑 09-21/22/23 全量 +12,317 行分毫不差，09-14→09-23 无缺口）。09-24 有意拒写 SSE-only 半日防污染。
+- [系统性三处方移交工单] ①11h 估值刷新移出 17:00 heavy 槽或池 2→4 ②job 到期未启动 N 分钟饿死告警 ③integrity_check 的 margin 判警改 max(trade_date) 滞后口径（现行当日行数比对=永久误报，掩盖真断 4 日）。
+- [施工小件] integrity_check margin 口径修正班已发车；L02C03+L09C02 已落队（q-0054 状态轴合并批 9 件）；881xxx 七件已落队（q-0050）。
