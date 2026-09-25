@@ -6,7 +6,8 @@
 # [STARTUP] python -m pytest tests/governance/test_audit_fix_lanes_rulers.py
 # [MATURITY] testing
 # [INVARIANTS] 三条尺各配"阳性=构造违规必红 / 阴性=合规必绿"双控制组，恒绿或恒红都判尺无效；
-#              全 tmp 隔离——monkeypatch 模块内 _REPO_ROOT / git 取数口，绝不写生产路径、绝不起子进程写盘
+#              全 tmp 隔离——monkeypatch 模块内 _REPO_ROOT / git 取数口，绝不写生产路径；
+#              只允许在 tmp_path 里 git init 真仓库做"提交绑定面"端到端取证（生产仓零触碰）
 # [MODIFY-GUARD] st-audit-fix-20260924 三件（L3 派生件 HEAD 基 / L4 册内自洽 / L5 双锚读数）的永久回归闸
 # [STABILITY] volatile
 # [SAFETY] L
@@ -127,6 +128,149 @@ def test_selfcheck_reports_missing_book_rather_than_silence(drift, monkeypatch, 
     monkeypatch.setattr(drift, "_REPO_ROOT", tmp_path)
     out = drift._run_selfcheck({"selfcheck": {"path": "docs/nope.yaml", "pairs": {"total_gates": "gates"}}})
     assert out and "不存在" in out
+
+
+# --- L4 补刀：自洽台必须判"提交绑定面"，不得被主区脏盘装绿（F-AUDITFIX-SELFREAD-01）---
+
+
+def _book_item(tmp_path: Path, drift, monkeypatch, declared: int, actual: int):
+    """把工作树面摆成自洽（180==180），只留"在册面"这一个变量。"""
+    rel = _write_book(tmp_path, declared=actual, actual=actual)
+    monkeypatch.setattr(drift, "_REPO_ROOT", tmp_path)
+    monkeypatch.setattr(
+        drift,
+        "_book_surface",
+        lambda _rel: ("head", _BOOK.format(n=declared, body="".join(f"  - gate_id: G{i}\n" for i in range(actual)))),
+    )
+    return {"selfcheck": {"path": str(rel), "pairs": {"total_gates": "gates"}}}
+
+
+def test_selfcheck_book_drift_is_red_while_disk_is_clean(drift, monkeypatch, tmp_path: Path) -> None:
+    """阳性=盘自洽而册失真必须红（这正是主区装绿的形态）；阴性=两面自洽必须绿。"""
+    item = _book_item(tmp_path, drift, monkeypatch, declared=174, actual=180)
+    bad = drift._run_selfcheck(item)
+    assert bad and "在册面" in bad and "174" in bad and "180" in bad, f"在册面失真必须报红，实得 {bad!r}"
+
+    item_ok = _book_item(tmp_path, drift, monkeypatch, declared=180, actual=180)
+    assert drift._run_selfcheck(item_ok) is None, "两面自洽必须放行（证明上一条红不是恒红）"
+
+
+def test_selfcheck_staged_bytes_win_over_head(drift, monkeypatch, tmp_path: Path) -> None:
+    """修册那一笔在门禁时刻只存在于 index：暂存面自洽即放行，否则"失真既拦不住也修不掉"。"""
+    rel = _write_book(tmp_path, declared=180, actual=180)
+    monkeypatch.setattr(drift, "_REPO_ROOT", tmp_path)
+    good = _BOOK.format(n=180, body="".join(f"  - gate_id: G{i}\n" for i in range(180)))
+    stale = _BOOK.format(n=174, body="".join(f"  - gate_id: G{i}\n" for i in range(180)))
+    monkeypatch.setattr(drift, "_git_probe", lambda args: (0, ""))
+    monkeypatch.setattr(drift, "_git_show_text", lambda _rel, ref: good if ref == "" else stale)
+    assert drift._run_selfcheck({"selfcheck": {"path": str(rel), "pairs": {"total_gates": "gates"}}}) is None
+
+    # 反向控制：暂存面没有字节时回到在册面，失真必须红（尺不是恒绿）
+    monkeypatch.setattr(drift, "_git_show_text", lambda _rel, ref: None if ref == "" else stale)
+    out = drift._run_selfcheck({"selfcheck": {"path": str(rel), "pairs": {"total_gates": "gates"}}})
+    assert out and "在册面" in out, f"回落到在册面后必须红，实得 {out!r}"
+
+
+def test_selfcheck_probe_failure_is_red_not_silence(drift, monkeypatch, tmp_path: Path) -> None:
+    """提交绑定面取数失败＝无从判定，不得读成"已判定为绿"（探测失败报红铁律）。"""
+    rel = _write_book(tmp_path, declared=180, actual=180)
+    monkeypatch.setattr(drift, "_REPO_ROOT", tmp_path)
+    monkeypatch.setattr(drift, "_book_surface", lambda _rel: ("probe-fail", None))
+    out = drift._run_selfcheck({"selfcheck": {"path": str(rel), "pairs": {"total_gates": "gates"}}})
+    assert out and "取数失败" in out, f"探测失败必须报红，实得 {out!r}"
+
+
+def test_selfcheck_no_book_state_passes_with_loud_note(drift, monkeypatch, tmp_path: Path, capsys) -> None:
+    """非仓库/册外新件是合法状态：放行但必须打 NOTE，禁静默。"""
+    rel = _write_book(tmp_path, declared=180, actual=180)
+    monkeypatch.setattr(drift, "_REPO_ROOT", tmp_path)
+    monkeypatch.setattr(drift, "_book_surface", lambda _rel: ("no-book", None))
+    assert drift._run_selfcheck({"selfcheck": {"path": str(rel), "pairs": {"total_gates": "gates"}}}) is None
+    assert "NOTE[自洽台]" in capsys.readouterr().out, "无从判定必须留痕"
+
+
+@pytest.mark.parametrize(
+    ("probe_side", "show_side", "expect"),
+    [
+        (lambda args: (1, "fatal: needed a single revision"), lambda rel, ref: None, "no-book"),
+        (lambda args: (-1, "OSError"), lambda rel, ref: None, "probe-fail"),
+        (lambda args: (0, ""), lambda rel, ref: "x" if ref == "" else None, "staged"),
+        (lambda args: (0, ""), lambda rel, ref: None if ref == "" else "x", "head"),
+        (lambda args: (0, ""), lambda rel, ref: None, "probe-fail"),
+        (lambda args: (0, ""), lambda rel, ref: None, "untracked"),
+    ],
+)
+def test_book_surface_five_states(drift, monkeypatch, probe_side, show_side, expect) -> None:
+    """新口径的分支表逐态实测：ls-files 的返回值决定最后两态（已跟踪却取不到字节＝probe-fail）。"""
+    monkeypatch.setattr(drift, "_git_probe", probe_side)
+    monkeypatch.setattr(drift, "_git_show_text", show_side)
+    if expect == "untracked":
+        monkeypatch.setattr(
+            drift,
+            "_git_probe",
+            lambda args: (0, "") if args[0] == "rev-parse" else (1, "error: pathspec 'x' did not match any file(s)"),
+        )
+    elif expect == "probe-fail":
+        monkeypatch.setattr(
+            drift, "_git_probe", lambda args: (0, "") if args[0] == "rev-parse" else (1, "fatal: unable to read")
+        )
+    got, _text = drift._book_surface("docs/a.yaml")
+    assert got == expect, f"_book_surface 态判定漂移：期望 {expect} 实得 {got}"
+
+
+def test_selfcheck_wired_to_commit_bound_surface() -> None:
+    """接线守卫：自洽台必须经共享 git 取数口读提交绑定面（防退回只读工作树字节）。"""
+    src = (REPO_ROOT / DRIFT_REL).read_text(encoding="utf-8")
+    assert "git_show_file" in src, "不再经共享件取 HEAD/index 字节＝主区脏盘又能装绿"
+    assert "_book_surface" in src and "NOTE[自洽台]" in src, "提交绑定面半边被摘除＝同上"
+
+
+def test_selfcheck_commit_bound_surface_end_to_end(drift, monkeypatch, tmp_path: Path) -> None:
+    """端到端取证（真 git 仓库，只在 tmp 内）：装绿必须不可能，而修册那一笔必须能自证清白。
+
+    monkeypatch 只能证分支表，证不了 git show :path / HEAD:path 的真实语义——两口径
+    差一个字节就会把"在册面失真"读成绿（本案第一因）或把自愈通道锁死（次生灾害）。
+    """
+    import subprocess
+
+    root = tmp_path / "repo"
+    (root / "docs" / "catalogs").mkdir(parents=True)
+    rel = Path("docs/catalogs/probe_registry.yaml")
+
+    def _write(declared: int) -> None:
+        (root / rel).write_text(
+            _BOOK.format(n=declared, body="".join(f"  - gate_id: G{i}\n" for i in range(180))),
+            encoding="utf-8",
+        )
+
+    def _git(*args: str) -> None:
+        subprocess.run(
+            ["git", "-c", "user.email=t@t", "-c", "user.name=t", *args],
+            cwd=str(root),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            check=True,
+            timeout=60,
+        )
+
+    _write(174)
+    _git("init", "-q", ".")
+    _git("add", "-A")
+    _git("commit", "-qm", "drifted book")
+    monkeypatch.setattr(drift, "_REPO_ROOT", root)
+    item = {"selfcheck": {"path": str(rel), "pairs": {"total_gates": "gates"}}}
+
+    bad = drift._run_selfcheck(item)
+    assert bad and "174" in bad and "180" in bad, f"三面同失真必须红，实得 {bad!r}"
+
+    _write(180)  # 只改工作树（=旧口径唯一能"修绿"的手法）：必须仍然红
+    still = drift._run_selfcheck(item)
+    assert still and "174" in still, f"盘修绿而提交绑定面未修＝装绿，必须仍红，实得 {still!r}"
+
+    _git("add", str(rel).replace("\\", "/"))  # 本包将提交的字节已自洽 → 必须放行（否则自愈通道被锁死）
+    assert drift._run_selfcheck(item) is None, "暂存面已修好必须绿（证明上一条红不是恒红）"
 
 
 # ---------------------------------------------------------------------------

@@ -539,8 +539,7 @@ def load_responsibility_layer_map(
     data = _load_vocab_data(
         p,
         strict,
-        f"responsibility_layer 映射真源不存在: {p}\n"
-        "提示：裁定#335 结论⑥ 要求层字段只能从本映射推导；误拼会静默丢层。",
+        f"responsibility_layer 映射真源不存在: {p}\n提示：裁定#335 结论⑥ 要求层字段只能从本映射推导；误拼会静默丢层。",
         f"responsibility_layer 映射顶层非 dict 结构: {p}",
     )
     if data is None:
@@ -725,3 +724,52 @@ def _eval_criterion(
             return str(dt) == value
         return False
     return False
+
+
+def heal_derived_scalars(text: str, pairs: dict[str, str]) -> tuple[str, list[tuple[str, int, int]]]:
+    """按"同名段实际长度"就地重算派生计数标量；返回 (新文本, [(标量, 旧值, 新值)…])。
+
+    为什么需要它（提交链全流通战役 20260925 lane_derived_books 定性，口径承接
+    docs/_working/audit_fix/audit_fix_ledger.md S-24）：派生标量在**两处**被结构性吃掉——
+    ① 队列条目级合并器对标量/头部行恒取 ours（防陈旧快照吃热册头部的正确设计），
+    ② GATE-21 `--auto-fix` 若靠"重跑整册生成器"来修标量，就会连带重排条目块＝在热册上
+    制造百行级 churn（实测 gate_registry 143 增/143 删）。两者都要求"只改那一行"，
+    所以把行级改写收敛成一个共享真源，落地侧（commit_queue_landing._heal_derived_totals）
+    与检测侧（validate_static_manifest_drift --heal-derived-totals）同调，禁各写一份。
+
+    保守面（与落地侧原实现逐条对齐，不放松）：
+    - 只认"顶层『键: 整数』"行，且该键在顶层**必须恰好一行**：YAML 重复顶层键时
+      safe_load 取最后一个而改写取第一个 ⇒ 多行时宁可不动，交检测器判红（禁在这里猜
+      哪行是真，否则把"改错行"伪装成自愈成功并造成永红振荡）；
+    - 段不是 list/dict、标量不是 int、计数已一致 ⇒ 不动；
+    - 原样保留该行行尾（CRLF 仓里把一行改成 LF＝制造混合行尾，是另一种失真）。
+    """
+    try:
+        data = yaml.safe_load(text)
+    except Exception:  # noqa: BLE001 — 解析不了由调用方定策略（改判红/只 log，绝不猜）
+        return text, []
+    if not isinstance(data, dict):
+        return text, []
+    out = text
+    changes: list[tuple[str, int, int]] = []
+    lf = "\n"
+    cr = "\r"
+    for scalar, section in pairs.items():
+        declared = data.get(scalar)
+        actual = data.get(section)
+        if not isinstance(actual, (list, dict)) or not isinstance(declared, int) or isinstance(declared, bool):
+            continue
+        if declared == len(actual):
+            continue
+        prefix = f"{scalar}:"
+        lines = out.split(lf)
+        bodies = [ln[:-1] if ln.endswith(cr) else ln for ln in lines]
+        idxs = [i for i, b in enumerate(bodies) if b.startswith(prefix) and b == b.lstrip()]
+        if len(idxs) != 1:
+            continue  # 重复键/缺位 ⇒ 不动（调用方按 changes 为空自行判红）
+        i = idxs[0]
+        tail_cr = lines[i].endswith(cr)
+        lines[i] = f"{scalar}: {len(actual)}" + (cr if tail_cr else "")
+        out = lf.join(lines)
+        changes.append((scalar, declared, len(actual)))
+    return out, changes
