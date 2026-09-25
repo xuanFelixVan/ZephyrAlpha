@@ -36,6 +36,7 @@
 from __future__ import annotations
 
 import json
+import sys
 import time
 from pathlib import Path
 from unittest.mock import patch
@@ -51,6 +52,8 @@ from zephyr.gov_enforcement.rule_bridge.emergency_commit import (
 )
 from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import (
     _append_heartbeat_log,
+    _ensure_usable_streams,
+    _run_cli,
     _session_in_registry,
     cleanup_heartbeat_file,
     heartbeat_file_path,
@@ -665,6 +668,154 @@ def test_run_daemon_anchor_present_no_false_exit(tmp_path: Path) -> None:
     assert exited and exited[0]["reason"] == "session not in registry", (
         "退出原因必须是 registry 注销，不得是 worktree anchor lost"
     )
+
+
+# ---------------------------------------------------------------------------
+# 处方 P-11（2026-09-26 车道E）：无控制台（pythonw / sys.stdout is None）健壮性
+# + 入口崩溃必落盘留痕（禁无痕死亡）
+#   实测背景：pythonw.exe + Start-Process -WindowStyle Hidden 启动时 sys.stdout/
+#   stderr 均为 None（已用最小复现证实），旧入口把任何循环外/usage 异常直冲
+#   sys.stderr=None → 静默消失零痕迹。以下用例锁死新行为。
+# ---------------------------------------------------------------------------
+
+
+def test_ensure_usable_streams_replaces_only_none(monkeypatch: pytest.MonkeyPatch) -> None:
+    """sys.stdout/stderr 为 None 时替换成可写非 None 流；正常流不动（零行为变更）。"""
+    import io
+
+    sentinel_out = io.StringIO()
+    sentinel_err = io.StringIO()
+    monkeypatch.setattr(sys, "stdout", None)
+    monkeypatch.setattr(sys, "stderr", None)
+    monkeypatch.setattr(sys, "stdin", None)
+
+    _ensure_usable_streams()
+
+    assert sys.stdout is not None, "None stdout 应被替换为非 None（否则 sys.stdout.write 抛 AttributeError）"
+    assert sys.stderr is not None, "None stderr 应被替换为非 None"
+    assert sys.stdin is not None, "None stdin 应被替换为非 None"
+    # 替换后直接 .write 不得抛异常——实测 3.12.8：print 到 None 流是静默 no-op，但
+    # sys.stderr.write(...) 在 None 上抛 AttributeError（logging StreamHandler/
+    # traceback.print_exc 走的就是 .write），这才是守护无控制台崩溃的真实面。
+    # 若兜底失效，下面两行会直接抛 AttributeError 使本用例失败（无需 try/except 吞异常）。
+    sys.stderr.write("hello")
+    sys.stdout.write("hello")
+
+    # 非 None 时保持原对象（幂等/零副作用）
+    monkeypatch.setattr(sys, "stdout", sentinel_out)
+    monkeypatch.setattr(sys, "stderr", sentinel_err)
+    _ensure_usable_streams()
+    assert sys.stdout is sentinel_out, "已有正常 stdout 时不得替换"
+    assert sys.stderr is sentinel_err, "已有正常 stderr 时不得替换"
+
+
+def test_run_daemon_survives_when_stdout_is_none(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """心跳循环在 sys.stdout=None（pythonw 无控制台）下不崩：正常写 alive 直至注销退出。
+
+    锁死实测结论：run_daemon 循环只写文件、不依赖 stdout——此用例把 sys.stdout 强制
+    置 None 复现 pythonw 条件，断言守护仍能完整走完 started→alive→exited 并 rc=0。
+    """
+    calls = {"get": 0}
+
+    class _FakeRegistry:
+        def __init__(self, root):
+            pass
+
+        def get_session(self, sid):
+            calls["get"] += 1
+            if calls["get"] >= 3:
+                return None
+            return {"session_id": sid, "last_activity": time.time()}
+
+        def heartbeat(self, sid):
+            pass
+
+    monkeypatch.setattr(sys, "stdout", None)
+    monkeypatch.setattr(sys, "stderr", None)
+    with (
+        patch(
+            "zephyr.security.access_control.session_concurrency.SessionRegistry",
+            _FakeRegistry,
+        ),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05),
+    ):
+        rc = run_daemon("sess-nostdout-001", tmp_path, interval=0.05)
+
+    assert rc == 0, "无 stdout 环境下守护仍应正常退出（rc=0），不得因缺控制台崩溃"
+    hb = heartbeat_file_path(tmp_path, "sess-nostdout-001")
+    recs = [json.loads(line) for line in hb.read_text(encoding="utf-8").strip().splitlines()]
+    statuses = [r["status"] for r in recs]
+    assert "started" in statuses and "alive" in statuses, "无 stdout 下仍应有 started/alive 落盘"
+    assert recs[-1]["status"] == "exited" and recs[-1]["reason"] == "session not in registry"
+
+
+def test_run_cli_usage_with_no_console_streams_does_not_crash(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """_run_cli 缺参数走 usage 分支：pythonw（stdout/stderr=None）下不崩溃，返回 2。
+
+    _run_cli 先调 _ensure_usable_streams 兜底 None 标准流，usage print 与任何
+    .write 均为无害空操作，只返回退出码 2（旧裸入口无任何标准流兜底与异常落盘）。
+    """
+    monkeypatch.setattr(sys, "stdout", None)
+    monkeypatch.setattr(sys, "stderr", None)
+    rc = _run_cli(["heartbeat_daemon"])  # argv 只有程序名，len<2 → usage 分支
+    assert rc == 2, "缺 session_id 参数应返回用法错误码 2"
+
+
+def test_run_cli_records_fatal_trace_on_unhandled_exception(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    """入口捕获未预期异常：即使 run_daemon 崩溃，也必须落盘 fatal(带 traceback) 记录。
+
+    红证：旧入口 `sys.exit(run_daemon(...))` 不包异常——run_daemon 抛出即直冲
+    sys.stderr=None（pythonw）→ heartbeat.jsonl 零记录（无痕死亡）。新 _run_cli
+    兜底 BaseException 并把 traceback 写入 fatal 记录。
+    """
+    monkeypatch.setattr(sys, "stdout", None)
+    monkeypatch.setattr(sys, "stderr", None)
+
+    def _boom(*_a, **_k):
+        raise RuntimeError("simulated entrypoint crash")
+
+    monkeypatch.setattr("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon.run_daemon", _boom)
+    sid = "sess-fatal-trace-001"
+    rc = _run_cli(["heartbeat_daemon", sid, str(tmp_path)])
+    assert rc == 1, "入口兜底后异常应返回致命码 1"
+
+    hb = heartbeat_file_path(tmp_path, sid)
+    assert hb.exists(), "崩溃必须留下 heartbeat.jsonl 落盘痕迹（禁无痕死亡）"
+    recs = [json.loads(line) for line in hb.read_text(encoding="utf-8").strip().splitlines()]
+    fatal = [r for r in recs if r["status"] == "fatal"]
+    assert fatal, "应有 fatal 记录"
+    assert "simulated entrypoint crash" in fatal[0]["error"]
+    assert "RuntimeError" in fatal[0]["traceback"], "fatal 记录须带 traceback 供事后定位"
+
+
+def test_run_daemon_exits_immediately_when_session_never_registered(tmp_path: Path) -> None:
+    """会话不在册的现状语义（锁死，勿顺手改）：首轮即 reason=session not in registry 退出，无 alive。"""
+
+    class _EmptyRegistry:
+        def __init__(self, root):
+            pass
+
+        def get_session(self, sid):
+            return None  # 始终不在册
+
+        def heartbeat(self, sid):
+            raise AssertionError("不在册时不得进入心跳刷新")
+
+    with (
+        patch(
+            "zephyr.security.access_control.session_concurrency.SessionRegistry",
+            _EmptyRegistry,
+        ),
+        patch("zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05),
+    ):
+        rc = run_daemon("sess-absent-001", tmp_path, interval=0.05)
+
+    assert rc == 0, "不在册 daemon 正常退出（rc=0，非报错码）"
+    hb = heartbeat_file_path(tmp_path, "sess-absent-001")
+    recs = [json.loads(line) for line in hb.read_text(encoding="utf-8").strip().splitlines()]
+    statuses = [r["status"] for r in recs]
+    assert statuses == ["started", "exited"], f"仅 started→exited，不得有 alive，got {statuses}"
+    assert recs[-1]["reason"] == "session not in registry"
 
 
 if __name__ == "__main__":

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 文件 IO 失败→log warning 不退出；registry 查询失败→continue 下次循环；signal 中断→写 interrupted 记录后退出
+# [ERROR_CONTRACT] 文件 IO 失败→log warning 不退出；registry 查询失败→continue 下次循环；signal 中断→写 interrupted 记录后退出；无控制台(pythonw)启动→_ensure_usable_streams 先兜底 None 标准流；入口 _run_cli 任何未预期异常→写 fatal(带 traceback) 到 heartbeat.jsonl 落盘留痕(禁无痕死亡)
 # [TESTS] tests/governance/rule_bridge/test_heartbeat_daemon.py
 # [A_module] module_id=MOD-GOV_HEARTBEAT_DAEMON | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] task_bound
@@ -90,6 +90,7 @@ import logging
 import signal
 import sys
 import time
+import traceback
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -156,6 +157,58 @@ def _safe_getpid() -> int:
         return os.getpid()
     except Exception:  # noqa: BLE001 — 极端兜底，不应发生
         return 0
+
+
+class _NullWriter:
+    """丢弃所有写入的最小流对象（无控制台启动时替换 None 标准流）。
+
+    用内存对象而非 ``open(os.devnull)`` 是为规避测试内 sys.stdout 被反复替换时的
+    未关闭文件句柄 ResourceWarning（本仓 pytest filterwarnings=error 会把它转成测试
+    失败）。仅需满足 print / logging.StreamHandler 用到的 write/flush/isatty 接口。
+    """
+
+    __slots__ = ("encoding",)
+
+    def __init__(self) -> None:
+        self.encoding = "utf-8"
+
+    def write(self, *_args, **_kwargs) -> int:  # noqa: ANN002, ANN003
+        return 0
+
+    def flush(self) -> None:
+        return None
+
+    def isatty(self) -> bool:
+        return False
+
+    def fileno(self) -> int:  # 供极少数探测 fd 的三方库使用（-1=无真实描述符）
+        return -1
+
+
+_NULL_STREAM = _NullWriter()
+
+
+def _ensure_usable_streams() -> None:
+    """无控制台启动（pythonw / Start-Process -WindowStyle Hidden）时兜底标准流。
+
+    处方 P-11 夜巡实证（2026-09-25/26）：用 ``pythonw.exe`` + PowerShell
+    ``Start-Process -WindowStyle Hidden``（无重定向）启动守护进程时，
+    ``sys.stdout`` / ``sys.stderr`` 均为 ``None``（实测复现）。此函数把 ``None`` 标准流
+    替换成丢弃型 ``_NullWriter``，使任何意外的屏显写入（入口 usage print、第三方 import
+    期 print、logging StreamHandler 默认流）变成无害空操作，而非抛异常让守护进程静默
+    死亡、异常无痕。
+
+    心跳循环本身只写文件（heartbeat.jsonl）、不依赖 stdout（已实测：pythonw 下循环
+    连续写 alive 记录不崩）；此处保护的是"入口 + 任何调用方"的健壮性下限——不论谁、
+    用什么方式启动都不会因缺控制台而崩溃。正常有控制台时标准流非 None，本函数为空
+    操作，零行为变更。
+    """
+    if sys.stdout is None:
+        sys.stdout = _NULL_STREAM
+    if sys.stderr is None:
+        sys.stderr = _NULL_STREAM
+    if sys.stdin is None:
+        sys.stdin = _NULL_STREAM
 
 
 def cleanup_heartbeat_file(project_root: str | Path, session_id: str) -> bool:
@@ -396,16 +449,47 @@ def run_daemon(
             time.sleep(_REGISTRY_ERROR_BACKOFF)
 
 
-if __name__ == "__main__":  # pragma: no cover
-    # 命令行入口：python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <sid> [root] [interval] [worktree_path]
-    if len(sys.argv) < 2:
+def _run_cli(argv: list[str]) -> int:
+    """命令行入口主体（可测：`python -m ... <sid> [root] [interval] [worktree]`）。
+
+    健壮性下限（处方 P-11 治本，2026-09-26）：
+      1. 先调 ``_ensure_usable_streams()`` 兜底无控制台（pythonw）下的 None 标准流；
+      2. 用 ``try/except BaseException`` 包住 ``run_daemon``——循环外（Path.resolve /
+         signal 注册 / 首次落盘之前的任何导入或调用）抛出的异常原本直冲 ``sys.stderr``
+         （pythonw 下为 None）→ 进程静默消失、零痕迹；此处无论何种崩溃，都强制把带
+         traceback 的 ``fatal`` 记录写入 heartbeat.jsonl，使"守护为什么没了"永远有
+         落盘证据可查（心跳循环内已有 error/fatal 记录，本层补的是循环外/入口的缺口）。
+
+    Returns: 与 run_daemon 语义一致（0=正常，1=致命），usage 错误返回 2。
+    """
+    _ensure_usable_streams()
+    if len(argv) < 2:
         print(
             "Usage: python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <session_id> [project_root] [interval] [worktree_path]",
             file=sys.stderr,
         )
-        sys.exit(2)
-    _sid = sys.argv[1]
-    _root = sys.argv[2] if len(sys.argv) > 2 else "."
-    _interval = int(sys.argv[3]) if len(sys.argv) > 3 else _HEARTBEAT_INTERVAL
-    _wt = sys.argv[4] if len(sys.argv) > 4 else None
-    sys.exit(run_daemon(_sid, _root, _interval, worktree_path=_wt))
+        return 2
+    sid = argv[1]
+    root = argv[2] if len(argv) > 2 else "."
+    interval = int(argv[3]) if len(argv) > 3 else _HEARTBEAT_INTERVAL
+    wt = argv[4] if len(argv) > 4 else None
+    try:
+        return run_daemon(sid, root, interval, worktree_path=wt)
+    except BaseException as e:  # noqa: BLE001 — 入口级兜底：守护进程崩溃绝不许无痕
+        try:
+            _append_heartbeat_log(
+                heartbeat_file_path(root, sid),
+                "fatal",
+                {
+                    "reason": "unhandled exception in entrypoint",
+                    "error": str(e)[:200],
+                    "traceback": traceback.format_exc()[-2000:],
+                },
+            )
+        except BaseException:  # noqa: BLE001 — 落痕本身失败也绝不回抛（否则又是无痕）
+            pass
+        return 1
+
+
+if __name__ == "__main__":  # pragma: no cover
+    sys.exit(_run_cli(sys.argv))
