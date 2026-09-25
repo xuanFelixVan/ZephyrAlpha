@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L09-S7 子模块挖矿簿 · 归因引擎与绩效归因报告（Brinson 族）
 created: 2026-09-26
 sid: st-qmine-20260925

@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: L08 RISK MINE INDEX
+doc_type: index
 ---
 
 # L08 风控 · 深挖簿总勾表（9 子块）+ 本环节穷尽性声明

@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: RSK-7 MINE
+doc_type: log
 ---
 
 # RSK-7 系统性风险五信号 + 绿黄橙红黑五级 — 深挖簿

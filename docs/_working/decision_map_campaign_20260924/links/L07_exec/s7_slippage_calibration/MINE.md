@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L07-EXE7 子块挖矿簿 · 滑点/成本标定真源（cost_model_calibration）
 created: 2026-09-26
 sid: st-qmine-20260925

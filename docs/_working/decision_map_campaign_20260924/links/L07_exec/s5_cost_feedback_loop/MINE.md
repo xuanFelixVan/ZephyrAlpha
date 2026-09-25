@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L07-EXE5 子块挖矿簿 · 成本反馈 L4-14（三零件 + 回写断链）
 created: 2026-09-26
 sid: st-qmine-20260925

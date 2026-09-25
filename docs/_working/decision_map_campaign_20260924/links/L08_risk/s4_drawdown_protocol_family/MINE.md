@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: RSK-4 MINE
+doc_type: log
 ---
 
 # RSK-4 35 号回撤协议族（现役闭环 + 设计件并行）— 深挖簿

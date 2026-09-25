@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L07-EXE9 子块挖矿簿 · 卖出执行 X-S2 + 打板执行
 created: 2026-09-26
 sid: st-qmine-20260925

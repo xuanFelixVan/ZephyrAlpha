@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L07-EXE6 子块挖矿簿 · 执行算法 TWAP/VWAP/IS（双层并存）
 created: 2026-09-26
 sid: st-qmine-20260925

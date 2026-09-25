@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: RSK-2 MINE
+doc_type: log
 ---
 
 # RSK-2 交易五级熔断 + 磁盘影子 — 深挖簿

@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: RSK-8 MINE
+doc_type: log
 ---
 
 # RSK-8 质押否决器 + S41 解禁压力（设计态零消费）— 深挖簿

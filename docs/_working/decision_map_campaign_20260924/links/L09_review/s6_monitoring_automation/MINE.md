@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L09-S6 子模块挖矿簿 · 监控自动化（现存清单实证）
 created: 2026-09-26
 sid: st-qmine-20260925

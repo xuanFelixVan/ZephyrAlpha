@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L09-S2 子模块挖矿簿 · 盘前链
 created: 2026-09-26
 sid: st-qmine-20260925

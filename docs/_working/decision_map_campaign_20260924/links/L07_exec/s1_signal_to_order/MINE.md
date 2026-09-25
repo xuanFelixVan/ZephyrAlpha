@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L07-EXE1 子块挖矿簿 · 信号→订单映射（姿态→动作翻译层）
 created: 2026-09-26
 sid: st-qmine-20260925

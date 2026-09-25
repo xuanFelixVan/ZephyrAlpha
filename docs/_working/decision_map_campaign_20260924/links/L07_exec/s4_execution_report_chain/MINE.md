@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L07-EXE4 子块挖矿簿 · 成交回报链（ExecutionReport 生产端）
 created: 2026-09-26
 sid: st-qmine-20260925

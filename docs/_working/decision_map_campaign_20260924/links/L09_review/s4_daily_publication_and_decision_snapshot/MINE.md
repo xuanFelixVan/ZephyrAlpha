@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L09-S4 子模块挖矿簿 · 日刊与 decision_daily 拍板快照（双账）
 created: 2026-09-26
 sid: st-qmine-20260925

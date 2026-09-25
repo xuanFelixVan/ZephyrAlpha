@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: RSK-3 MINE
+doc_type: log
 ---
 
 # RSK-3 TDM 熔断五级 L0-L4 状态机（X-R1-01/02/03）— 深挖簿

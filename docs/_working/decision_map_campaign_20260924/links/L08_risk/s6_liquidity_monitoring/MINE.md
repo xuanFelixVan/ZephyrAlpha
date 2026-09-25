@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: RSK-6 MINE
+doc_type: log
 ---
 
 # RSK-6 流动性监控 BM-RC-04-E + 37 号危机协议 — 深挖簿

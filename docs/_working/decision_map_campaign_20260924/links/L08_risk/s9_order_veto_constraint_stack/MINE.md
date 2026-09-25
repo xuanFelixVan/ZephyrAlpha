@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: RSK-9 MINE
+doc_type: log
 ---
 
 # RSK-9 逐单否决与组合约束栈 — 深挖簿

@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: SKEL
+doc_type: log
 ---
 
 # L07 执行链路挖矿作业簿（环节 7 · 下单/滑点/盘口）

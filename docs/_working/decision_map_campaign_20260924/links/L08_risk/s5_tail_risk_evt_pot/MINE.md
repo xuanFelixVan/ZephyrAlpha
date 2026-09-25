@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: RSK-5 MINE
+doc_type: log
 ---
 
 # RSK-5 尾部风险 EVT/POT + UP-5 对冲信号 — 深挖簿

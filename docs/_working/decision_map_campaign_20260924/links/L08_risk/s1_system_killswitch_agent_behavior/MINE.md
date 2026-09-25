@@ -1,6 +1,7 @@
 ---
 ttl: task_bound
 title: RSK-1 MINE
+doc_type: log
 ---
 
 # RSK-1 系统级 KillSwitch（AI Agent 行为熔断）— 深挖簿

@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: index
 title: L07 执行环节深挖总勾表（9 子块 MINE 索引 + 穷尽性声明）
 created: 2026-09-26
 sid: st-qmine-20260925

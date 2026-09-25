@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L09-S3 子模块挖矿簿 · 判定台账与结算
 created: 2026-09-26
 sid: st-qmine-20260925

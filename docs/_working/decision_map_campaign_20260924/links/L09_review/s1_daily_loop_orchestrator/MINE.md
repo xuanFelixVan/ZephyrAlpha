@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L09-S1 子模块挖矿簿 · 日循环编排（全链心脏）
 created: 2026-09-26
 sid: st-qmine-20260925

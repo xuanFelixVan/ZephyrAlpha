@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: index
 title: L09 复盘与监控 · 挖矿总勾表（_INDEX_MINE）
 created: 2026-09-26
 sid: st-qmine-20260925

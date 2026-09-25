@@ -1,5 +1,6 @@
 ---
 ttl: task_bound
+doc_type: log
 title: L07-EXE8 子块挖矿簿 · 五档深度与盘口失衡（执行时机信号原料面）
 created: 2026-09-26
 sid: st-qmine-20260925
