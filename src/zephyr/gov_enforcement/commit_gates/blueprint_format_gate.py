@@ -176,10 +176,12 @@ def make_blueprint_format_gate() -> GateSpec:
     """构造 [BLUEPRINT] 头部格式门禁 GateSpec（硬阻断型）。
 
     Returns:
-        GateSpec(gate_id="BLUEPRINT-FORMAT", priority=77)。
+        GateSpec(gate_id="BLUEPRINT-FORMAT", priority=130)。
     """
 
-    return GateSpec(gate_id="BLUEPRINT-FORMAT", check=_check, priority=77)
+    # priority=130：原 77 让位给 DOC-HEADER-SUITE 聚合门（后到者让位先例；本薄工厂已出名册，
+    # 仅 fresh-import 注册路径会与 suite 撞号——M5.2 确定性判别实证，2026-09-26 st-metaq-gc-20260924）
+    return GateSpec(gate_id="BLUEPRINT-FORMAT", check=_check, priority=130)
 
 
 # ═══ T8 簇2 聚合门（st-commitspeed-pkg8-20260925，对齐 gslim P4 union 家工厂先例）═══

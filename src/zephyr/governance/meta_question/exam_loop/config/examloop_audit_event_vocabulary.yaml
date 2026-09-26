@@ -1,0 +1,48 @@
+# 载体：WO-B1 考试循环簇（B 类载体簇 1）审计事件码扩展册
+# 真源关系：本册 = AUDIT_WHAT_VOCAB（20§2.1 四族词表，现字面量驻于 exam_ops.py/registry.py/
+#           apply_meta_question_ddl.py 三处）的**待落地增补**增量清单；落地后本册退役为别名册。
+# 过渡期载体（本册存在的理由）：PG meta_question_audit.what 有 CHECK 枚举约束（23 值），
+#   扩展值在 CHECK 未放宽前无法入库 → 写入器以 what='update'（登记族已落地值）落账，
+#   event_code 同时进 after JSONB 与 evidence 前缀（双轨同键，不破坏 20§2.2 差集对账）。
+#   判据读取口径恒为：(what = <code> OR after->>'event_code' = <code>)，两种 regime 通吃。
+# 落地补丁：PENDING_ENUM_PATCH.md（同目录）——总包按行改 registry.py/exam_ops.py/
+#   apply_meta_question_ddl.py，并把本册 values 并入 SSOT（建议新建
+#   docs/01_policies_and_standards/_registry/vocabularies/meta_question_audit_what_vocabulary.yaml
+#   消三处字面量重复——上一班四次死亡的同型病根）。
+module_id: MOD-METAQ-EXAMLOOP
+ttl: permanent
+description: meta_question 审计 what 枚举增补册（考试循环簇非法流转/越权/冲突/降阈值/补录事件码）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-wo-b1-examloop
+date: '2026-09-24'
+# 过渡期载体约定（机读）：landed=False 的事件码以 base_what 落账 + event_code 进载荷
+carriage:
+  base_what: update
+  evidence_prefix: 'event_code='
+  payload_key: event_code
+values:
+  - value: illegal_transition
+    label: 非法状态流转拦截
+    question: PQ-0060/PQ-0051/PQ-0055
+    note: 13§1.5 状态机拦截器的拒收痕；registry.transition 抛错零副作用=零痕，本码补"拦截即落账"
+  - value: claim_mismatch
+    label: 越权回写拦截（认领人不匹配）
+    question: PQ-0103
+    note: 13§1 回写鉴权句；与 10§7.2 错误码同名，落账后可按事件计拦截率
+  - value: claim_missing
+    label: 无认领回写拒收
+    question: PQ-0103
+    note: 13§1"无认领或认领不匹配的回写拒收"（10§7.2 码 claim_missing），冻结件 _check_claim 对无认领放行，本簇收紧
+  - value: version_conflict
+    label: 乐观锁冲突留痕（题面称 conflict）
+    question: PQ-0061
+    note: 20§3.2 零行命中=冲突；事件载荷带 expected/actual version 与重放结果，供重读重放成功率复考
+  - value: threshold_lowered
+    label: 降阈值（题面中文原词）
+    question: PQ-0098
+    note: 判据阈值低于 exam_plan 预锁值即落本码并按 §3.1 延期（outcome=reexam）处置，禁降阈值凑通过
+  - value: supplement
+    label: 同窗重复回写补录
+    question: PQ-0057
+    note: 13§2.1 同 exam_plan_version 且数据窗口交叠的重复回写标 supplement，不入矛盾检测（防伪仲裁）

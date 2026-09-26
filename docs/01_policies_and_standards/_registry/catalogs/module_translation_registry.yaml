@@ -61018,6 +61018,39 @@ entries:
   plain_zh: "好几个检查门都要读同一个两兆多的大注册表，以前每个门各读各的、白白重复解析好几秒；现在改成大家共用一次解析结果，注册表一变就自动重读，检查结论一根手指头都不动"
   responsibility_layer: governance
 
+- module_path: scripts/data/audit_news_publish_time.py
+  domain_id: D_DATA
+  name_zh: 新闻发布时间口径审计器
+  name_en: News Publish Time Auditor
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 抽样比对新闻库里记录声称的发布时间和实际采集入库时间，识别拿采集时间冒充发布时间的假时间戳和整点吸附记录，给回测能不能直接信这列出可信度结论
+  responsibility_layer: business
+- module_path: scripts/data/audit_technical_indicator_columns.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "技术指标全列审计台账"
+  name_en: "Technical Indicator Column Audit"
+  desc_zh: "technical_indicator 表 210 列非空审计台账工具：summary 单次聚合扫描出全列台账，sample 轻查询抽验"
+  desc_en: ""
+  plain_zh: "批10 筹码族上表后，technical_indicator 大表新增 chips_winner、scr、cyc_inf 这类列，全市场回填跑没跑全靠这张台账说话。它有两种用法：sample 模式白天就能用，挑 000852、000001 几只股票打印最近几天筹码列的数值，确认链路是通的；summary 模式把两百一十列从早数到晚数出每列有多少空值，空列就是回填漏洞。因为 summary 要整表扫描一百多 GiB，白天跑会把 ClickHouse 内存顶爆，必须等收盘后低峰再跑，还要避开凌晨两点半的夜跑批次。"
+  responsibility_layer: governance
+- module_path: scripts/backtest/t1_t2_handover.py
+  domain_id: D_BACKTEST
+  name_zh: "T1到T2交接守望器"
+  name_en: "t1_t2_handover"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "它像一个交班哨兵：盯着T1网格考试跑没跑完，跑完就按冻结判据验收成绩单，合格就自动组卷并发车T2终审考试，不合格或不满足条件就登记原因等下一轮。用原子claim锁保证绝不重复发车，永远不杀正在跑的作业。"
+  responsibility_layer: business
+- module_path: src/zephyr/governance/meta_question/meta_question_registry.py
+  domain_id: D_GOVERNANCE
+  name_zh: "原问题中央登记表"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "283 个治理考题的中央登记处：新考题进来先验五要素、重了就拒、每步流转都留审计，是整个 meta_question 册子唯一的写入窗口"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
@@ -72138,6 +72171,22 @@ algo_submodules:
   plain_zh: "每 5 分钟给仓库拍一张快照存黑匣子，文件再被悄悄删掉就能查出什么时候丢的、丢了什么"
   responsibility_layer: governance
 - module_path: scripts/backtest/t0_material_line.py
+- module_path: scripts/audit_news_publish_time.py
+  domain_id: D_DATA
+  name_zh: 新闻发布时间口径审计器
+  name_en: News Publish Time Auditor
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 抽样比对新闻库里记录声称的发布时间和实际采集入库时间，识别拿采集时间冒充发布时间的假时间戳和整点吸附记录，给回测能不能直接信这列出可信度结论
+  responsibility_layer: business
+- module_path: scripts/audit_technical_indicator_columns.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "技术指标全列审计台账"
+  name_en: "Technical Indicator Column Audit"
+  desc_zh: "technical_indicator 表 210 列非空审计台账工具：summary 单次聚合扫描出全列台账，sample 轻查询抽验"
+  desc_en: ""
+  plain_zh: "批10 筹码族上表后，technical_indicator 大表新增 chips_winner、scr、cyc_inf 这类列，全市场回填跑没跑全靠这张台账说话。它有两种用法：sample 模式白天就能用，挑 000852、000001 几只股票打印最近几天筹码列的数值，确认链路是通的；summary 模式把两百一十列从早数到晚数出每列有多少空值，空列就是回填漏洞。因为 summary 要整表扫描一百多 GiB，白天跑会把 ClickHouse 内存顶爆，必须等收盘后低峰再跑，还要避开凌晨两点半的夜跑批次。"
+  responsibility_layer: governance
   domain_id: D_GOVERNANCE
   name_zh: "做T材料线管线"
   name_en: "T0 Material Line Pipeline"

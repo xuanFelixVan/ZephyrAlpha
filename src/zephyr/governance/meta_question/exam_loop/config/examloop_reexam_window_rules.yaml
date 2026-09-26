@@ -1,0 +1,61 @@
+# 载体：WO-B1 复考调度窗册（13§3.1 各 frequency 的复考窗口与逾期判定的机读表达）
+# 真源关系：frequency 枚举真源=docs/01_policies_and_standards/_registry/vocabularies/
+#   meta_question_frequencies_vocabulary.yaml；本册键集必须与之全等（加载即断言，漂移 fail-closed）。
+# 语义口径：
+#   kind=trading_days   —— 以交易日历日计数（本簇实现=自然日近似 + 显式降级痕，交易日历接入=待裁项 T-3）
+#   kind=natural_period —— 跨自然周期未考即逾期（monthly/quarterly，13§3.1 原文）
+#   kind=event          —— 无固定窗口，逾期不适用；event_driven 必须有 event_source_ref，realtime 由事件触发
+#   kind=none           —— static：无复考，answered 即终态（除非裁定重开）
+#   fresh_window_trading_days —— 新鲜窗窗长（PQ-0108 月度滚动 20 日=组合因子新鲜窗硬前置第三件）
+#   grace_days —— 逾期判定宽限（0=窗长用尽即逾期；PQ-0054 逾期挂起率判据的分母口径）
+module_id: MOD-METAQ-EXAMLOOP
+ttl: permanent
+description: meta_question 复考窗口与逾期判定窗册（frequency → 窗长/窗型/新鲜窗/宽限）
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-wo-b1-examloop
+date: '2026-09-24'
+frequency_vocab_file: meta_question_frequencies_vocabulary.yaml
+values:
+  - value: realtime
+    kind: event
+    horizon_days: 0
+    fresh_window_trading_days: 0
+    grace_days: 0
+    note: 13§3.1 实时档=事件驱动档，复考由事件触发，逾期判定不适用
+  - value: daily
+    kind: trading_days
+    horizon_days: 1
+    fresh_window_trading_days: 1
+    grace_days: 0
+    note: 每交易日一次；last_exam 距今 >1 交易日=逾期
+  - value: weekly
+    kind: trading_days
+    horizon_days: 5
+    fresh_window_trading_days: 5
+    grace_days: 0
+    note: 每 5 交易日（13§3.1 待裁项=交易日 vs 自然日，本簇采推荐口径=交易日历）
+  - value: monthly
+    kind: natural_period
+    horizon_days: 31
+    fresh_window_trading_days: 20
+    grace_days: 0
+    note: 跨自然月未考=逾期；新鲜窗=月度滚动 20 日（PQ-0108 硬前置第三件同一窗长）
+  - value: quarterly
+    kind: natural_period
+    horizon_days: 92
+    fresh_window_trading_days: 63
+    grace_days: 0
+    note: 跨自然季未考=逾期
+  - value: event_driven
+    kind: event
+    horizon_days: 0
+    fresh_window_trading_days: 0
+    grace_days: 0
+    note: 无固定窗口；无 event_source_ref 引用者=不合格，回填 API 拒收（13§3.1 P6）
+  - value: static
+    kind: none
+    horizon_days: 0
+    fresh_window_trading_days: 0
+    grace_days: 0
+    note: 静态事实问无复考，answered 即终态（13§3.1）

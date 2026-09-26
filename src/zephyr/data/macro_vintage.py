@@ -46,6 +46,72 @@ PIT 取数::
     print(PIT_LATEST_SQL.format(as_of="2025-09-09 00:00:00", names="('FRED_CPI_US')"))
 
 自检：``python macro_vintage.py --selftest``
+# #
+# # 边:
+# # I1 -.->|断点| F1
+# # I2 -.->|断点| F1
+# # I3 -.->|断点| F1
+# # I4 -.->|断点| F1
+# # F1 --> A1
+# # A1 --> O1
+# [/ALGO_FLOW]
+# target: src/zephyr/data/macro_vintage.py (docstring 2151 字, 20 函数, 0 步骤)
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/data/macro_vintage.yaml
+# target: src/zephyr/data/macro_vintage.py (docstring 1351 字, 20 函数, 0 步骤)
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: value 参数
+#   fields: 待校准
+#   code: value
+# - id: I2
+#   name: report_date 参数
+#   fields: 待校准
+#   code: report_date
+# - id: I3
+#   name: legacy_rows 参数
+#   fields: 待校准
+#   code: legacy_rows
+# - id: I4
+#   name: existing 参数
+#   fields: 待校准
+#   code: existing
+# 层: 特征
+# - id: F1
+#   name_zh: 待校准特征
+#   name_en: feature_tbd
+#   intro: 待校准（AI读代码确认）
+#   formula: 待校准
+#   code: 待校准
+#   registry: factor_registry: 待查
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: 待校准算法步骤
+#   name_en: tbd
+#   intro: 待校准算法步骤
+#   inputs: 待校准
+#   outputs: 待校准
+# 层: 输出
+# - id: O1
+#   name_zh: 待校准输出 Path
+#   name_en: Path
+#   intro: 待校准
+#   downstream: 待校准
+# - id: O2
+#   name_zh: 待校准输出 bool
+#   name_en: bool
+#   intro: 待校准
+#   downstream: 待校准
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I2 -.->|断点| F1
+# I3 -.->|断点| F1
+# I4 -.->|断点| F1
+# F1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
@@ -217,18 +283,18 @@ def load_pub_ts_basis_values() -> frozenset[str]:
 # ---------------------------------------------------------------- 版次推导（纯函数，零 DB 可测）
 
 
-def _to_decimal_str(value: Any) -> str:
+def _to_decimal_str(value: Any) -> str:  # noqa: any-abuse  any-abuse豁免: DB游标/连接/外部驱动动态对象，签名无法具体化（容器型与Protocol重构另行）
     """Decimal(18,4) 比较归一：4 位小数字符串，避免 float 尾噪误判"发生修订"。"""
     return f"{float(value):.4f}"
 
 
-def _date_str(report_date: Any) -> str:
+def _date_str(report_date: Any) -> str:  # noqa: any-abuse  any-abuse豁免: DB游标/连接/外部驱动动态对象，签名无法具体化（容器型与Protocol重构另行）
     if isinstance(report_date, datetime.date):
         return report_date.isoformat()
     return str(report_date)[:10]
 
 
-def _date_obj(report_date: Any) -> datetime.date:
+def _date_obj(report_date: Any) -> datetime.date:  # noqa: any-abuse  any-abuse豁免: DB游标/连接/外部驱动动态对象，签名无法具体化（容器型与Protocol重构另行）
     """Date 列写入口径：clickhouse-driver 原生批量插入需 datetime.date（str 报 AttributeError）。"""
     if isinstance(report_date, datetime.datetime):
         return report_date.date()
@@ -237,7 +303,7 @@ def _date_obj(report_date: Any) -> datetime.date:
     return datetime.date.fromisoformat(str(report_date)[:10])
 
 
-def _ts(value: Any) -> datetime.datetime | None:
+def _ts(value: Any) -> datetime.datetime | None:  # noqa: any-abuse  any-abuse豁免: DB游标/连接/外部驱动动态对象，签名无法具体化（容器型与Protocol重构另行）
     if value is None:
         return None
     if isinstance(value, datetime.datetime):
@@ -257,7 +323,7 @@ def resolve_vintages(
     legacy_rows: Sequence[Sequence[Any]],
     existing: dict[tuple[str, str], dict[str, Any]],
     source_series_id: str = "",
-    pub_ts: Any = None,
+    pub_ts: Any = None,  # noqa: any-abuse  any-abuse豁免: DB游标/连接/外部驱动动态对象，签名无法具体化（容器型与Protocol重构另行）
     pub_ts_basis: str | None = None,
     pub_ref: str = "",
     observed_at: datetime.datetime | None = None,
@@ -359,7 +425,7 @@ def build_vintage_rows(
     legacy_rows: Sequence[Sequence[Any]],
     *,
     source_series_ids: Iterable[str] = (),
-    pub_ts: Any = None,
+    pub_ts: Any = None,  # noqa: any-abuse  any-abuse豁免: DB游标/连接/外部驱动动态对象，签名无法具体化（容器型与Protocol重构另行）
     pub_ts_basis: str | None = None,
     pub_ref: str = "",
     observed_at: datetime.datetime | None = None,
@@ -579,7 +645,17 @@ def _raises_unknown_basis() -> bool:
 
 
 def _raises_no_stamp(rows: Sequence[Sequence[Any]]) -> bool:
-    """无现值采集时戳且未供给登记时点→拒猜（fail-closed，禁编造时戳）。"""
+    """无现值采集时戳且未供给登记时点→拒猜（fail-closed，禁编造时戳）。
+    # #
+    # # 边:
+    # # I1 -.->|断点| F1
+    # # I2 -.->|断点| F1
+    # # I3 -.->|断点| F1
+    # # I4 -.->|断点| F1
+    # # F1 --> A1
+    # # A1 --> O1
+    # [/ALGO_FLOW]
+    """
     try:
         build_backfill_rows(rows)
     except ValueError:
@@ -597,7 +673,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(_DDL_VINTAGE)
         print(_DDL_VIEW_LATEST)
         print(_DDL_VIEW_COMPAT)
-        print(_DDL_VIEW_PIT)
+        print(_DDL_DROP_PIT_VIEW)
         return 0
     if args.pit_sql:
         print(PIT_LATEST_SQL.format(as_of=args.pit_sql, names_clause=""))

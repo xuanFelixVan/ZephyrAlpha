@@ -147,6 +147,10 @@ _WHITELIST: frozenset[str] = frozenset(
         #   backfill_pledge_event_version.py  = 事件版本回填器（depgraph_writer，只写本载体两表，无 DELETE/TRUNCATE 路径）
         "scripts/governance/meta_question/wo009/apply_pledge_event_version_ddl.py",
         "scripts/governance/meta_question/wo009/backfill_pledge_event_version.py",
+        #   registry.py = meta_question 主表登记/状态机写入口（本 schema 唯一写者）
+        #   exam_ops.py = 考试生命周期写操作（claim/answer/复考状态流转）
+        "src/zephyr/governance/meta_question/meta_question_registry.py",
+        "src/zephyr/governance/meta_question/exam_ops.py",
     }
 )
 
@@ -223,6 +227,8 @@ def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
             "    - src/zephyr/governance/meta_question/exam_loop/exam_lifecycle.py (版本冲突有界重放)\n"
             "    - scripts/governance/meta_question/wo009/apply_pledge_event_version_ddl.py (质押事件版本 DDL 部署器)\n"
             "    - scripts/governance/meta_question/wo009/backfill_pledge_event_version.py (质押事件版本回填器)\n"
+            "    - src/zephyr/governance/meta_question/meta_question_registry.py (meta_question 主表写入口)\n"
+            "    - src/zephyr/governance/meta_question/exam_ops.py (考试生命周期写操作)\n"
             "  白名单扩展规则：所有直接写 depgraph 表（nodes/edges/arch_directory_tree\n"
             "  等）的脚本必须加入白名单，扩展三步——(a) 脚本传 read_only=False\n"
             "  (b) 更新本白名单+错误信息 (c) 更新 architecture_issue_registry.yaml 裁定文档\n"
