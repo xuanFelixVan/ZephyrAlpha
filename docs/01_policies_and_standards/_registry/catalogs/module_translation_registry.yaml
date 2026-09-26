@@ -61507,6 +61507,79 @@ entries:
   plain_zh: "这个文件是给策略工厂看仪表盘的：它去读两本账（一本记着哪些策略在考试中掉队了，一本记着每天赚亏多少钱），然后把这些情况用大白话汇总成一行提示，告诉进货环节和假说审核环节最近市场的真实反馈。它自己不记账不打分，账本读不到就安静跳过，绝不拖累主流程。"
   responsibility_layer: business
 
+- module_path: scripts/governance/d5_architecture/validators/validate_construction_steps.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "施工步骤锚校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "逐条核对施工流程图的步骤锚与政策文档行位是否互指，报悬空与缺锚"
+  responsibility_layer: governance
+- module_path: scripts/governance/d5_architecture/validators/validate_trading_day_cycle_map.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "交易日循环校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "核对交易日循环图的段界与夜窗贯穿边是否闭合，开口即报红"
+  responsibility_layer: governance
+- module_path: scripts/governance/data_supply/__init__.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "__init__"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "供__init__使用：把本役实测口径固化为可复跑命令，产出机读证据供案卷引用"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave11/w178_universe_facts_gen.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "板块宇宙事实生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用双通道独立探测板块代码宇宙与成分表口径差，产出 W-178 宇宙事实机读件并保留失败原文"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave1a/ch_read_shape_ruler.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "读数形状扫描尺"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扫出把查询字符串按下标取值的调用点防首位数字冒充行数"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave1a/store_liveness_probe.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "库存活普查器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "逐个数据库数清字节与引用者把零字节死库点名出来"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave1b/claim_gate_repro.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "claim 门复算探针"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "只读复算 claim 门的路径归一与在册集合差，用来定性一次连死三袋的 claim 报错到底出自哪一面"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave1b/dead_letter_prescriptions.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "死信处方生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把队列死信按死因聚成处方族并给出入队前可自检的清单，输出机读矩阵与案卷表"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave3/recheck_empty_tables.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "recheck_empt"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "供recheck_empt使用：把本役实测口径固化为可复跑命令，产出机读证据供案卷引用"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
