@@ -49,7 +49,7 @@ flags:
     # S1 不可变树接线（st-commitspeed-tbl-20260924）：门禁链输入源改读 CommitTreeView
     # 两棵不可变树（HEAD^/index 树），出厂 OFF=现行为；ON=重放 verdict 全等判据达标后
     # 由 Owner 门位翻转（宪法 §5）。
-    immutable_tree: false
+    immutable_tree: true
     # regen_scope 语义（M2/T5 衍生再生出窗，B0_3 设计）：
     #   any_worktree=出厂态（现行为）：post-commit 触发照旧 spawn，但锁/账/产物根已钉主区；
     #   main_only=worktree 语境只记账不 spawn，消费归主区事件。
