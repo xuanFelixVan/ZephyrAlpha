@@ -53366,4 +53366,19 @@ creation_tokens:
   created_by: st-chief3-20260926
   capability: wave13_chief_command
   merge_evaluation: "波13 总筹三案卷（字节归账/队列撞号定性/登记载荷），同域重复簇收敛：替代散文交接书，机读表 byte_matrix.yaml 为唯一待落面真源"
+- file: docs/_working/three_piece_infra/HANDOFF_collision_chief3.md
+  token: three-piece-infra-handoff-collision-chief3-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "双总筹碰撞的唯一指挥位声明；不改写 chief3 新册也不改两本总册，位点声明而非互相覆盖"
+- file: docs/_working/three_piece_infra/scope_convergence/CASE.md
+  token: scope-convergence-case-20260926
+  created_by: st-p7-scope
+  capability: scope_convergence
+  merge_evaluation: "波13 §3.4 单一口径三处副本收敛为一个真源的裁决案卷；不新增册族"
+- file: docs/_working/three_piece_infra/scope_convergence/register_manifest.md
+  token: scope-convergence-register-manifest-20260926
+  created_by: st-p7-scope
+  capability: scope_convergence
+  merge_evaluation: "波13 §3.4 单一口径三处副本收敛为一个真源的裁决案卷；不新增册族"
 di_seam_exemptions: []
