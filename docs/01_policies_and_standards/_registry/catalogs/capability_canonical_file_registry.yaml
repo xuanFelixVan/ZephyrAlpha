@@ -53381,4 +53381,14 @@ creation_tokens:
   created_by: st-p7-scope
   capability: scope_convergence
   merge_evaluation: "波13 §3.4 单一口径三处副本收敛为一个真源的裁决案卷；不新增册族"
+- file: config/cleaning_rules.yaml
+  token: ailayer-wave2-realbody-cleaning-rules-20260926
+  created_by: st-chief3b-20260926
+  capability: ailayer_wave2_realbody
+  merge_evaluation: "波2 真身归位（该道 index 抢救），登记在册而本体蒸发＝账实归位非新增能力；跨域不同对象不并"
+- file: scripts/backtest/weight_ssot.py
+  token: ailayer-wave2-realbody-weight-ssot-20260926
+  created_by: st-chief3b-20260926
+  capability: ailayer_wave2_realbody
+  merge_evaluation: "波2 真身归位（该道 index 抢救），登记在册而本体蒸发＝账实归位非新增能力；跨域不同对象不并"
 di_seam_exemptions: []

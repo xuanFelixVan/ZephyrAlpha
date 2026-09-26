@@ -61116,6 +61116,52 @@ entries:
   plain_zh: "自动清点图形形态里哪些真接进了考试条件轴、哪些仍然没人用，清单由机器出不再手填"
   responsibility_layer: governance
 
+- module_path: src/zephyr/ai_layer/scheduling/confirm_gate.py
+  domain_id: D_AI_ENGINE
+  name_zh: "排产工单人工确认闸"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "AI 排出来要先经人点头的那道工单闸门：谁批、批到什么状态、过期多久作废、拒绝后往哪回，全部在这里判，不放行就下不去"
+- module_path: src/zephyr/ai_layer/redline/ai_secret_exposure.py
+  domain_id: D_AI_ENGINE
+  name_zh: "密钥外泄红线扫描器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "扫新代码里有没有把真实密钥名、token 值或连接串硬写进去的扫描件：命中就出红线事件，是让『别把密钥写进仓库』这条规矩真跑起来的那只手"
+- module_path: src/zephyr/ai_layer/switch_engine/tombstone_ttl_proposer.py
+  domain_id: D_AI_ENGINE
+  name_zh: "墓碑策略有效期提议器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "给双跑切换引擎里那些『已退役要留档』的墓碑提议该留多久：按引用与新鲜度算到期时间，到期才真清，不清就留痕"
+- module_path: src/zephyr/shared/lifecycle/registry_state_vocab.py
+  domain_id: D_GOVERNANCE
+  name_zh: "注册表状态词表校验器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把各注册表里『这条现在是 active/promoted/退役 哪一格』的用词统一起来并校验越界写法，防止同一个状态在两个册里叫两个名"
+  responsibility_layer: governance
+- module_path: src/zephyr/data/cleaning_rules_hosting.py
+  domain_id: D_DATA
+  name_zh: "清洗规则托管载体"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把『清洗规则该由谁来跑』这件事收成一个可托管的载体：外部数据腿只要挂上它就能拿到同一套清洗判定，不用每条腿各抄一份规则"
+  responsibility_layer: business
+- module_path: scripts/backtest/weight_ssot.py
+  domain_id: D_BACKTEST
+  name_zh: "权重唯一真源与写图权柄闸"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "管因子权重的唯一出处并卡住谁有资格往地图上写权重：不在权柄清单里的路径想写就直接拒绝，防止两套权重各说各话"
+  responsibility_layer: business
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04
