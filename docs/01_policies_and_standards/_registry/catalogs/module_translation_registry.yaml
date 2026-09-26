@@ -61051,6 +61051,71 @@ entries:
   plain_zh: "283 个治理考题的中央登记处：新考题进来先验五要素、重了就拒、每步流转都留审计，是整个 meta_question 册子唯一的写入窗口"
   responsibility_layer: governance
 
+- module_path: src/zephyr/governance/consumption_census.py
+  domain_id: D_GOV
+  name_zh: "消费面九族普查引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把九族数据资产到底有没有人用这件事，机器自己扫一遍并列出没人认领的孤岛清单，不再靠人写文档"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/consumption_census_reconciler.py
+  domain_id: D_GOV
+  name_zh: "消费面普查事件触发对账器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每次落地之后自动重跑一遍普查，新出现的无人认领资产当场点名报警，不用人惦记着跑批"
+  responsibility_layer: governance
+- module_path: src/zephyr/governance/scan_scope_converged.py
+  domain_id: D_GOV
+  name_zh: "消费者扫描口径唯一真源"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "统一规定到底哪些文件算真的用了某个资产，免得各处各算一套得出两个互相矛盾的结论"
+  responsibility_layer: governance
+- module_path: src/zephyr/frontend/dashboard/components/connection_matrix.py
+  domain_id: D_FRONTEND
+  name_zh: "全连接矩阵仪表盘组件"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把哪些该连没连的清单搬到仪表盘上，让人打开页面就能看见断线在哪"
+  responsibility_layer: business
+- module_path: src/zephyr/backtest/regime_validation/chart_condition_package.py
+  domain_id: D_BACKTEST
+  name_zh: "图形信号考试条件包"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把已经算好的图形形态事件变成考试可用的第三个条件轴，并且严禁偷看未来数据"
+  responsibility_layer: business
+- module_path: scripts/governance/d3_metadata/generate_wiring_registry.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "接线名册生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把接线名册改成机器生成的，条目和计数不再靠人手维护而漂移"
+  responsibility_layer: governance
+- module_path: scripts/governance/d5_architecture/generators/generate_connection_matrix.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "全连接矩阵生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把该连的、已连的、还有声明都缺失的三种情况一次算清楚，产出一张能查的矩阵"
+  responsibility_layer: governance
+- module_path: scripts/governance/chart_wiring/generate_chart_wiring_inventory.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: "图形接线覆盖清单生成器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "自动清点图形形态里哪些真接进了考试条件轴、哪些仍然没人用，清单由机器出不再手填"
+  responsibility_layer: governance
+
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
 - step_id: BM-BUY-04

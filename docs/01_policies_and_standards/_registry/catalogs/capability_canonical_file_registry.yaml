@@ -52986,4 +52986,354 @@ creation_tokens:
   created_by: st-zmaster2-20260926
   capability: three_piece_infra
   merge_evaluation: "波13唯一施工实况位与方案册；total_command_closeout 两本总册此刻被他道 claim 在途，故本役单列不成第二真源，落 HEAD 后按 00 册 §六 一次性并回族15/波13"
+- file: docs/_working/three_piece_infra/mining/_MASTER_INDEX.md
+  token: three-piece-infra--master-index-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family01_finished_goods_rescue/W-10.md
+  token: three-piece-infra-w-10-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family01_finished_goods_rescue/W-11.md
+  token: three-piece-infra-w-11-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family01_finished_goods_rescue/W-13.md
+  token: three-piece-infra-w-13-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family02_commit_chain_detox/W-20.md
+  token: three-piece-infra-w-20-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family02_commit_chain_detox/W-20b.md
+  token: three-piece-infra-w-20b-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family02_commit_chain_detox/W-23.md
+  token: three-piece-infra-w-23-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family02_commit_chain_detox/W-25.md
+  token: three-piece-infra-w-25-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family02_commit_chain_detox/W-26.md
+  token: three-piece-infra-w-26-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family02_commit_chain_detox/W-29.md
+  token: three-piece-infra-w-29-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family03_data_business_chain/W-30.md
+  token: three-piece-infra-w-30-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family03_data_business_chain/W-31.md
+  token: three-piece-infra-w-31-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family03_data_business_chain/W-32.md
+  token: three-piece-infra-w-32-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family03_data_business_chain/W-34.md
+  token: three-piece-infra-w-34-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family03_data_business_chain/W-36.md
+  token: three-piece-infra-w-36-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family03_data_business_chain/W-40.md
+  token: three-piece-infra-w-40-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family04_dr_cold_storage/W-41.md
+  token: three-piece-infra-w-41-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family05_governance_registries/W-52.md
+  token: three-piece-infra-w-52-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family05_governance_registries/W-55.md
+  token: three-piece-infra-w-55-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family05_governance_registries/W-56.md
+  token: three-piece-infra-w-56-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family11_endgame_capability/W-116.md
+  token: three-piece-infra-w-116-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family11_endgame_capability/W-117.md
+  token: three-piece-infra-w-117-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family11_endgame_capability/W-118.md
+  token: three-piece-infra-w-118-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family11_endgame_capability/W-119.md
+  token: three-piece-infra-w-119-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family12_field_discovered_new_cases/W-120.md
+  token: three-piece-infra-w-120-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family12_field_discovered_new_cases/W-121.md
+  token: three-piece-infra-w-121-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family12_field_discovered_new_cases/W-122.md
+  token: three-piece-infra-w-122-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family12_field_discovered_new_cases/W-124.md
+  token: three-piece-infra-w-124-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family12_field_discovered_new_cases/W-127.md
+  token: three-piece-infra-w-127-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family12_field_discovered_new_cases/W-131.md
+  token: three-piece-infra-w-131-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/family13_redteam_backfill/W-140.md
+  token: three-piece-infra-w-140-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/L01_regime.md
+  token: three-piece-infra-l01-regime-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/L02_emotion.md
+  token: three-piece-infra-l02-emotion-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/L03_sector.md
+  token: three-piece-infra-l03-sector-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/L04_stock_wire.md
+  token: three-piece-infra-l04-stock-wire-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/L05_t0.md
+  token: three-piece-infra-l05-t0-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/L06_exam_alloc.md
+  token: three-piece-infra-l06-exam-alloc-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/L07_exec.md
+  token: three-piece-infra-l07-exec-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/L08_risk.md
+  token: three-piece-infra-l08-risk-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/L09_review.md
+  token: three-piece-infra-l09-review-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/_VERDICT.md
+  token: three-piece-infra--verdict-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/mining/seal_audit/_W_COUNT.md
+  token: three-piece-infra--w-count-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/p0_bridge/CASE.md
+  token: three-piece-infra-case-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/p0_bridge/register_manifest.md
+  token: three-piece-infra-register-manifest-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/p0_chart/CASE.md
+  token: three-piece-infra-case-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/p0_chart/chart_wiring_inventory.csv
+  token: three-piece-infra-chart-wiring-inventory-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/p0_chart/chart_wiring_summary.yaml
+  token: three-piece-infra-chart-wiring-summary-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/p0_chart/register_manifest.md
+  token: three-piece-infra-register-manifest-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/p0_t1_analysis/FINDINGS.md
+  token: three-piece-infra-findings-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/p0_t1_analysis/register_manifest.md
+  token: three-piece-infra-register-manifest-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/p0_t1_analysis/state_matrix_input.yaml
+  token: three-piece-infra-state-matrix-input-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/piece1_gate/CASE.md
+  token: three-piece-infra-case-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/piece1_gate/register_manifest.md
+  token: three-piece-infra-register-manifest-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/piece1b_library/CASE.md
+  token: three-piece-infra-case-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/piece1b_library/register_manifest.md
+  token: three-piece-infra-register-manifest-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/piece2_census/CASE.md
+  token: three-piece-infra-case-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/piece2_census/register_manifest.md
+  token: three-piece-infra-register-manifest-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/piece2_census/wiring_registry.machine_view.yaml
+  token: three-piece-infra-wiring-registrymachine-view-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/piece3_matrix/CASE.md
+  token: three-piece-infra-case-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/three_piece_infra/piece3_matrix/register_manifest.md
+  token: three-piece-infra-register-manifest-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13 案卷与挖矿叶子层唯一归档位（六包案卷+族叶簿+封矿复核），受控真源；与 total_command_closeout 两本总册不重叠（他道 claim 中），落 HEAD 后并回不另立"
+- file: docs/_working/decision_map_campaign_20260924/connection_matrix.csv
+  token: connection-matrix-connection-matrix-20260926
+  created_by: st-p3-matrix
+  capability: connection_matrix
+  merge_evaluation: "波13 包13.4 全连接矩阵唯一产物位（即 W-154 的落地物），生成器产出禁手改；与 14 号文消费普查互补（普查=资产面，本件=边面）"
+- file: src/zephyr/frontend/dashboard/components/connection_matrix.py
+  token: connection-matrix-connection-matrix-20260926
+  created_by: st-zmaster2-20260926
+  capability: connection_matrix
+  merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
+- file: src/zephyr/governance/audit/library_new_module_reconciler.py
+  token: library-new-module-reconciler-library-new-module-reconciler-20260926
+  created_by: st-zmaster2-20260926
+  capability: library_new_module_reconciler
+  merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
+- file: src/zephyr/governance/consumption_census.py
+  token: consumption-census-consumption-census-20260926
+  created_by: st-zmaster2-20260926
+  capability: consumption_census
+  merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
+- file: src/zephyr/governance/consumption_census_reconciler.py
+  token: consumption-census-reconciler-consumption-census-reconciler-20260926
+  created_by: st-zmaster2-20260926
+  capability: consumption_census_reconciler
+  merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
+- file: src/zephyr/governance/scan_scope_converged.py
+  token: scan-scope-converged-scan-scope-converged-20260926
+  created_by: st-zmaster2-20260926
+  capability: scan_scope_converged
+  merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
+- file: src/zephyr/backtest/regime_validation/chart_condition_package.py
+  token: chart-condition-package-chart-condition-package-20260926
+  created_by: st-zmaster2-20260926
+  capability: chart_condition_package
+  merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
+- file: scripts/governance/d3_metadata/generate_wiring_registry.py
+  token: generate-wiring-registry-generate-wiring-registry-20260926
+  created_by: st-zmaster2-20260926
+  capability: generate_wiring_registry
+  merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
+- file: scripts/governance/d5_architecture/generators/generate_connection_matrix.py
+  token: generate-connection-matrix-generate-connection-matrix-20260926
+  created_by: st-zmaster2-20260926
+  capability: generate_connection_matrix
+  merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
+- file: scripts/governance/chart_wiring/generate_chart_wiring_inventory.py
+  token: generate-chart-wiring-inventory-generate-chart-wiring-inventory-20260926
+  created_by: st-zmaster2-20260926
+  capability: generate_chart_wiring_inventory
+  merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
 di_seam_exemptions: []
