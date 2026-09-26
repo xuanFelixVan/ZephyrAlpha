@@ -756,7 +756,9 @@ class TestCascadeStale:
         assert "head_reader" in dead["dead_reason"]
 
     def test_stale_mark_persisted_on_disk_before_processing(self, queue_root: Path) -> None:
-        """级联标记落盘留痕：max_items=1 仅处理 X，Y 留 pending 且盘上带 stale 标。"""
+        """级联标记落盘留痕：max_items=1 仅处理 X，Y 留 pending 且盘上带 stale 标
+        （矿③ 影子化后=旁路指令 pending/.stale/<qid>.json 持久化，袋体 append-only
+        零改写；拾取侧经 _read_item 双读合并取到同一 stale 视图）。"""
         ix = _enqueue(queue_root, "AI-X", "mx", [("x.txt", b"x")])
         iy = cq.enqueue_item(
             "AI-Y",
@@ -767,10 +769,13 @@ class TestCascadeStale:
         )
         stats = cq.drain_queue(queue_root, max_items=1)
         assert stats["done"] == 1 and stats["cascade_marked"] == 1
-        pending_y = json.loads((queue_root / "pending" / f"{iy['qid']}.json").read_text(encoding="utf-8"))
-        assert pending_y["meta"]["stale"] is True
-        assert pending_y["meta"]["stale_by"] == ix["qid"]
-        assert pending_y["meta"]["stale_at"]
+        bag_path = queue_root / "pending" / f"{iy['qid']}.json"
+        shadow = cq._read_stale_shadow(queue_root, iy["qid"])
+        assert shadow is not None and shadow["stale"] is True, "级联标记 MUST 落盘（影子指令）"
+        assert shadow["stale_by"] == ix["qid"] and shadow["stale_at"]
+        pending_y = json.loads(bag_path.read_text(encoding="utf-8"))
+        assert "stale" not in pending_y["meta"], "append-only：袋体不被级联标记改写"
+        assert cq._read_item(bag_path)["meta"]["stale"] is True, "拾取侧双读视图含 stale 标"
 
 
 # ---------------------------------------------------------------------------
