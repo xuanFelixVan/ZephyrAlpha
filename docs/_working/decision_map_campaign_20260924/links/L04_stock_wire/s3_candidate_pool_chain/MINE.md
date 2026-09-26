@@ -18,7 +18,7 @@ status: MINE 完成（六向封口）；本册边界=只挖"LANE-BUILD 接完之
 | 项 | 实测值 | 出处 |
 |---|---|---|
 | 载体表存在性 | **实测：`c1_market.stock_candidate_pool` 在 CH 中已建表（system.tables 命中 1），行数 0、交易日 0（min/max 返回 1970-01-01 哨兵）** | 本册 CH 查询 |
-| DDL 真源 | `schemas/categories/market/market_stock_candidate_pool.py` **NOT_IN_HEAD**(未落地字节=主区盘上未跟踪件 111L，本册 `:25-75` 在该稿内成立；HEAD 判空经 `git cat-file -e HEAD:…` 复核于 2026-09-27)：16 列，`trade_date/stage/symbol(+MATERIALIZED exchange, symbol_canonical)/sleeve/...`，ReplacingMergeTree 按 (trade_date,stage,symbol) 同键替换；**PIT 消费契约明写在文件头**："决策日 T 取 max(trade_date) < T 的分区（shift(1) 防未来函数，对齐 daban_engine_load 先例）"；`calc_mode: lazy` | 文件 :25-75 本册 Read |
+| DDL 真源 | `schemas/categories/market/market_stock_candidate_pool.py`：16 列，`trade_date/stage/symbol(+MATERIALIZED exchange, symbol_canonical)/sleeve/...`，ReplacingMergeTree 按 (trade_date,stage,symbol) 同键替换；**PIT 消费契约明写在文件头**："决策日 T 取 max(trade_date) < T 的分区（shift(1) 防未来函数，对齐 daban_engine_load 先例）"；`calc_mode: lazy` | 文件 :25-75 本册 Read |
 | 注册进 DDL 应用链 | `scripts/ch/apply_market_tables_ddl.py:474,556` 已 import 并注册目标表 | 本册 grep |
 | 注册进机账 | `docs/03_modules/_cross_layer/database/business_data_categories.yaml:3172-3177` 与 `:5084-5089`（同一 category_id 出现两次，见 G6） | 本册 grep |
 | 生产者 | `signal_ashare/core/candidate_pool_snapshot.py`（MOD-SIG-152，MATURITY=testing，CREATION-TOKEN `candidate-pool-snapshot-l04c01-20260925`）：`_TARGET_TABLE` :75、`POOL_INSERT_COLUMNS` 16 列 :97、`DEFAULT_STAGE: Final = "close_final"` :80-81（**pre_open/intraday_vN 仅注释预留，无产码**）、`run_pool_batch_for_day` | 本册 grep |
