@@ -89,7 +89,10 @@ eq_rows = [
 
 | 袋 | 内容 | qid | commit |
 |---|---|---|---|
-| EC1 主袋 | src/.../chainmap_equity_graph.py + tests/.../test_chainmap_equity_graph.py + 本台账 + algo_flow yaml + 两共册（token/翻译登记面，append-only 随批，含他会话在途条目随批披露） | q-20260927-st-ec1-equity-0005 | （落地后回填） |
+| EC1 主袋 | src/.../chainmap_equity_graph.py + tests/.../test_chainmap_equity_graph.py + 本台账 + algo_flow yaml + 两共册（token/翻译登记面，HEAD 纯追加零删行机检证明，含他会话在途条目随批披露） | 直连正门（allow-overlap+adopt 通道，无 qid） | **9fa01551f0** |
+
+落地核账（git log -1 --name-only）：恰 6 文件零搭便车；会话无遗留 claim；队列 -0001..-0004 死信
+payload 均已由 9fa01551f0 覆盖落地（q-0040 先例口径：payload 已落地=留档作废，不 requeue）。
 
 落地波折全录（读 dead json 全文后修正非盲 requeue，q-0005 先例口径）：
 1. -0001 预检三拦：SESSION 未注册（session_worktree_start 注册解决）/CREATE-GUARD+TRANSLATION 读落地

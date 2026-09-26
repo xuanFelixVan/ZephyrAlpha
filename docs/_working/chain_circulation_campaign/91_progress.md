@@ -26,3 +26,17 @@ ttl: task_bound
 4. kline_sector_intraday 断供起点 09-23（tdx provider 全服务器取 K 线失败；TCP 取证 3/6 现存可达）——数据链 09-28 盘中复测。
 5. 空表三件：edb_data（FRED fetch 恒 0 行）/ etf_benchmark（catchup 日日补跑失败；已有 P3 批 b9c2a69005 修 date_col 声明——并行处置中）/ account_nav_daily（57 号文 GAP）。
 6. tilib exit 0 终验：09-28 02:30 后看 LastTaskResult（晨检一行流）。
+
+## EC1 股权穿透接线（st-ec1-equity）
+
+| # | qid | commit | 内容 | 归属核验 |
+|---|---|---|---|---|
+| 1 | 直连正门（allow-overlap 通道，前置死信 -0001..-0004 payload 已覆盖=留档作废） | `9fa01551f0` | entity_graph 六表查询模块 chainmap_equity_graph.py（现行版本聚合+3跳穿透 pg_function 优先/42883 降级 WITH RECURSIVE+ACC-F-CHAINMAP-EQUITY-BADGE 契约兼容件+独立冒烟 CLI+ALGO_FLOW 外置块）+ tests/frontend/test_chainmap_equity_graph.py 15 例全绿 + ec1_equity_wire_ledger.md 台账（含 R1-R7 销账/实弹证据/接线补丁）+ algo_flow yaml | `git log -1 --name-only`=恰 6 文件 ✓ 零搭便车 |
+| 2 | token/翻译共册随批 | 同袋 `9fa01551f0` | capability 册 +80 行（本车道 3 token + 他会话在途 15 条随批披露+metaq 16 条治伤补回）；翻译册 +312 行（本车道 1 条 + 他会话在途 38 条随批披露）——均 HEAD 纯追加零删行机检证明 | 归属核验 ✓ |
+
+### 端点切换登记跳过（R3，诚实口径）
+- api_server.py 共享热文件存在 1079 行非本会话外来未提交改动（作者不可归因，无人 claim），按车道纪律只在独立模块实现+测试；**接线补丁（2 处小改）已备好在台账 §3**，api_server 空闲后施用即完成六表切换，前端 js 零改动。
+- 实弹验收已用"直接调函数"（切换后同代码路径）完成：600566/600927 三跳穿透非空、20 边对源 20/20 PASS。
+
+### 未落地依赖（诚实注记）
+- 无。本车道袋全落地。
