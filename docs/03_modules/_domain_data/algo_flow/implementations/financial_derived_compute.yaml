@@ -1,0 +1,50 @@
+# ALGO_FLOW 外部真源——financial_derived_compute（_domain_data 域，真源 src/zephyr/data/implementations/financial_derived_compute.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.implementations.financial_derived_compute
+source_of_truth: src/zephyr/data/implementations/financial_derived_compute.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 三大报表版本
+    #   fields: (announce_date, 值列) 版本列表 per (symbol, statement, report_period)
+    #   code: load_versions 读 c3_fundamental.{income_statement,balance_sheet,cashflow_statement}
+    # - id: I2
+    #   name: 公告日窗口 start/end
+    #   fields: iso str 或 datetime.date（norm_boundary_date 规整，两端含端点）
+    #   code: scheduler FetchPayload（夜间派生）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 窗口边界规整
+    #   name_en: norm_boundary_date
+    #   intro: start/end 统一 ISO 串（str/date 双型容差）——#30 混比 TypeError 共因修复点
+    #   inputs: start end
+    #   outputs: start end（ISO 串）
+    # - id: A2
+    #   name_zh: ② 对齐+派生
+    #   name_en: build_symbol_rows
+    #   intro: 哨兵守卫（announce_date<=1970-01-02 不可见）→ 三方公告日并集成事件 → as-of 取可见最新版本 → 单季拆分/TTM/同比/比率
+    #   inputs: symbol per_stmt
+    #   outputs: rows（INSERT_COLUMNS 序宽表行）
+    # - id: A3
+    #   name_zh: ③ 窗口过滤分批产出
+    #   name_en: run_compute
+    #   intro: announce_date 落 [start,end] 事件行按 batch_size 切 FetchResult 批
+    #   inputs: rows start end
+    #   outputs: FetchResult 批
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 派生宽表
+    #   name_en: c3_fundamental.financial_derived
+    #   intro: ReplacingMergeTree 同键全量重算幂等
+    #   downstream: ch_writer → 估值因子读新季（随计算断的主要受害者）
+    # 边:
+    # I2 --> A1
+    # A1 --> A3
+    # I1 --> A2
+    # A2 --> A3
+    # A3 --> O1
+    # [/ALGO_FLOW]

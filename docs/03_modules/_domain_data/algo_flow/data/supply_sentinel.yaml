@@ -1,0 +1,53 @@
+# ALGO_FLOW 外部真源——supply_sentinel（_domain_data 域，真源 src/zephyr/data/supply_sentinel.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.supply_sentinel
+source_of_truth: src/zephyr/data/supply_sentinel.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 哨兵条目配置
+    #   fields: table/date_col/max_lag_days/past_only/row_filter/lag_basis/cadence/
+    #   fields: min_rows_in_window/column_fill_ratio/heartbeat_leg（未知键报错防静默空转）
+    #   code: _load_config 读 data_supply_sentinel.yaml
+    # - id: I2
+    #   name: 巡检参照日
+    #   fields: 业务时区今日（Asia/Shanghai，now_utc 唯一入口）
+    #   code: _business_today
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 业务新鲜度腿
+    #   name_en: _check_date_leg
+    #   intro: max(date_col) 恒剔除前瞻日期（P4：restricted_shares 2035 前瞻解禁不得垫高）后判 lag vs max_lag_days
+    #   inputs: entry today runner
+    #   outputs: max_date/lag_days/breached
+    # - id: A2
+    #   name_zh: ② 行数地板腿
+    #   name_en: _check_row_floor_leg
+    #   intro: 回看窗行数 vs min_rows（治"任务活着、零产出"）
+    #   inputs: entry today runner
+    #   outputs: rows/breached
+    # - id: A3
+    #   name_zh: ③ 关键列填充率腿
+    #   name_en: _check_fill_ratio_leg
+    #   intro: 列非零/非空占比 vs min_ratio（治 N-1 型：非 Nullable 列把无值写成 0）
+    #   inputs: entry today runner
+    #   outputs: ratios/breached
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 停更告警
+    #   name_en: Alerter
+    #   intro: 违规经 Alerter 外发，失败落 failures/ 留痕
+    #   downstream: 运维值班/周审收口
+    # 边:
+    # I1 --> A1
+    # I1 --> A2
+    # I1 --> A3
+    # I2 --> A1
+    # A1 --> O1
+    # A2 --> O1
+    # A3 --> O1
+    # [/ALGO_FLOW]

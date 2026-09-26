@@ -53779,4 +53779,14 @@ creation_tokens:
   token: auto-ext-algoflow-20260927
   created_by: externalize_algo_flow.py (zc-lane-p-20260927)
   capability: architecture_view
+- file: docs/_working/fullconnect_campaign/lane_p_notes.md
+  token: auto-lane-notes-20260927
+  created_by: zc-lane-p-20260927
+  capability: architecture_view
+  merge_evaluation: 战役施工台账，task_bound 随归档退役，无第二真源（91_progress 互链不重复记账）
+- file: docs/_working/fullconnect_campaign/99_skipped_for_owner.md
+  token: auto-skipped-owner-20260927
+  created_by: zc-lane-p-20260927（战役共有件，Orchestrator 建册）
+  capability: architecture_view
+  merge_evaluation: Owner 门位台账，task_bound 随战役归档，唯一登记面无第二真源
 di_seam_exemptions: []

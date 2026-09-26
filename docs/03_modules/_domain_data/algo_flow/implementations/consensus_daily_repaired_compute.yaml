@@ -1,0 +1,55 @@
+# ALGO_FLOW 外部真源——consensus_daily_repaired_compute（_domain_data 域，真源 src/zephyr/data/implementations/consensus_daily_repaired_compute.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.data.implementations.consensus_daily_repaired_compute
+source_of_truth: src/zephyr/data/implementations/consensus_daily_repaired_compute.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: PDF 发布时点证据
+    #   fields: report_id/symbol/publish_date/(year,eps) 槽位（0<eps<=50 守卫）
+    #   code: load_pdf_evidence 读 c3_fundamental.pdf_forecast_extracted + research_report
+    # - id: I2
+    #   name: segment B 官方快照
+    #   fields: report_date/symbol/fy/eps/pe/rating/analyst_count
+    #   code: ch_reader 读 analyst_forecast（SEGMENT_B_START 起，不受 start 下界约束）
+    # - id: I3
+    #   name: 快照区间 start/end
+    #   fields: iso str 或 datetime.date（norm_boundary_date 规整）——#34 第三实例修复点
+    #   code: scheduler FetchPayload（按需触发重建，未挂夜间档）
+    # 层: 算法
+    # - id: A1
+    #   name_zh: ① 边界规整+A 段合成
+    #   name_en: run_compute_repaired → build_segment_a
+    #   intro: lo/hi 先规整；PDF 槽位合成回生产核期望的研报行形态，委托 build_consensus_rows（DS-229 同源）
+    #   inputs: start end
+    #   outputs: rows_a（22 列）
+    # - id: A2
+    #   name_zh: ② B 段官方快照映射
+    #   name_en: build_segment_b
+    #   intro: 聚合值不经窗口（window_days=1），非交易日快照丢弃（禁前向填充）
+    #   inputs: trade_dates b_end
+    #   outputs: rows_b（22 列同构）
+    # - id: A3
+    #   name_zh: ③ 两段合流分批产出
+    #   name_en: run_compute_repaired
+    #   intro: A+B 排序合流按 batch_size 切 FetchResult 批
+    #   inputs: rows_a rows_b
+    #   outputs: FetchResult 批
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 修复双轨表
+    #   name_en: c3_fundamental.consensus_daily_repaired
+    #   intro: 双轨与主表物理隔离（生产读路径切换=Owner 门位，DS-275）
+    #   downstream: ch_writer → 双轨对照验收/评估协议
+    # 边:
+    # I3 --> A1
+    # I1 --> A1
+    # A1 --> A3
+    # I2 --> A2
+    # A2 --> A3
+    # A3 --> O1
+    # [/ALGO_FLOW]
