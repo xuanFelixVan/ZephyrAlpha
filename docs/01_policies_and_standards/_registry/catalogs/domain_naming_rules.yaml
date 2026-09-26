@@ -65,3 +65,43 @@ entries:
   example_bad: D_SIGQC 对应 domain_name="数据质量"（中文名与ID语义不一致）
   example_good: D_SIGQC 对应 domain_name="信号质量控制"（中文名与ID语义一致）
   source_doc: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml §gov_doc_003_naming_ssot 域ID语义完整性condition
+- rule_id: NR-006
+  rule_name: 镜像映射函数
+  rule_text: 模块文档物理路径由映射函数 M(src/zephyr/<pkg>/.../mod.py) = docs/03_modules/<pkg>/.../mod.<kind>.yaml|md 唯一决定——首段=src 包名原样、逐段对应，禁止任何改名/翻译层（隐性改名典如 market_data→_domain_mkt_data、ml_train→_domain_machine_learning_train 停止新增消费，存量偏差入 R0-R5 渐进棘轮迁移，迁移后波另列）；__init__.py 对应 <seg>__init__.yaml；_domain_* 目录降维为生成视图（归 S7 regen-clean），_cross_layer/_master_blueprint/_system_master 保留为显式叠层。单写者=共享 resolver 的 resolve_doc_path(module_path)（锚行生成/校验/lookup 三方唯一调用点，接线另行落地）；映射覆盖率与漂移清单由只读检查器 scripts/governance/d1_structure/check_mirror_tree.py 计量产出，禁止手工维护包↔域改名清单。
+  applies_to: both
+  severity: error
+  example_bad: src/zephyr/market_data/quote.py 的文档放 docs/03_modules/_domain_mkt_data/algo_flow/quote.yaml（经隐性改名典翻译的非镜像位）
+  example_good: src/zephyr/market_data/quote.py 的文档放 docs/03_modules/market_data/quote.yaml（首段=包名原样，逐段对应）
+  source_doc: docs/_working/fms_overhaul/S3_taxonomy_naming/README.md §4.1 镜像树规则（本条目即规格真源）
+- rule_id: NR-007
+  rule_name: 路径段 ASCII 强制
+  rule_text: 全仓路径段（目录名+文件名）必须为 ASCII snake_case，禁止 kebab-case、大写字母、中文及其他非 ASCII 字符。存量 126 条非 ASCII 路径（基线清单 docs/_working/fms_overhaul/_data/non_ascii_paths.txt，移交 S1 FMS-HYGIENE 作生成基线豁免输入）只减不增；存量文件被触碰（promote/归档/迁移）时同批改 ASCII 名。口径备注：与 TRAE-028 §doc_001 一致；总骨架 §6.1 "ASCII kebab-case" 口径冲突已上报总筹裁定，裁定前按本条 snake_case 执行。
+  applies_to: both
+  severity: error
+  example_bad: docs/_working/fullflow_mining/同花顺资料/（中文路径段）
+  example_good: docs/_archive/dependency_graph/architecture_diagram.png（ASCII snake_case）
+  source_doc: docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml §doc_001 + docs/_working/fms_overhaul/S3_taxonomy_naming/README.md §4.2
+- rule_id: NR-008
+  rule_name: 路径深度帽
+  rule_text: 文件全路径段数 ≤7（≤6 层目录）。新路径硬拦；存量超限（当前 ≥8 段 226 件，98% 为 frontend 静态资产）入棘轮基线，触碰时收敛，不强制立即迁移。
+  applies_to: create
+  severity: error
+  example_bad: src/zephyr/frontend/dashboard/web/assets/media/img/brand/logo.png（10 段）
+  example_good: docs/03_modules/market_data/quote.yaml（4 段）
+  source_doc: docs/_working/fms_overhaul/S3_taxonomy_naming/README.md §4.1 深度帽
+- rule_id: NR-009
+  rule_name: 目录扇出帽
+  rule_text: 单目录条目数上限——手写区 ≤50、生成镜像区（docs/03_modules 镜像树）≤150；超限必须按 src 子包继续分层（镜像规则天然提供分层轴）。生成区扇出与 src 包文件数线性同构，150 对应"该拆包"的架构信号。
+  applies_to: create
+  severity: warning
+  example_bad: 生成镜像区单目录 160 件仍继续平铺新增
+  example_good: 按 src 子包拆分为 docs/03_modules/<pkg>/<sub>/ 两层收纳
+  source_doc: docs/_working/fms_overhaul/S3_taxonomy_naming/README.md §4.1 扇出帽
+- rule_id: NR-010
+  rule_name: 目录保留文件名
+  rule_text: index.md 与 blueprint.md 为模块目录保留文件名，禁止挪作他用（非索引/非蓝图语义的文件不得占用保留名）。执法=新检查器或 check_blueprint_automation_sync 接线后一并（移交 B9/S7）。
+  applies_to: create
+  severity: error
+  example_bad: 在模块目录放 index.md 但内容为数据表导出（挪用保留名）
+  example_good: 模块目录内 index.md 仅承载目录索引语义
+  source_doc: docs/_working/fms_overhaul/S3_taxonomy_naming/README.md §4.2 保留文件名
