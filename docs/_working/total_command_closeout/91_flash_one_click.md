@@ -246,5 +246,5 @@ done < .runtime/tmp/total_command_closeout/test_dirs.txt
 遇到本指令没覆盖的情况：登记进 docs/_working/total_command_closeout/pending_owner_items.md（一行一案：问题/已试/选项/建议）然后跳过继续，禁猜禁停。
 每袋落地判据只认 git show HEAD:<path> 的实现符号计数；每袋后 git log -1 --name-only 核归属。
 终态七条：波1A 全绿（卡数==W 数、VERIFIED 判据生效）+ 件数逐件命中 + 落地面两轮回归问题 0 + 红蓝两轮零 FAIL + 热件键集合差 0 + 临时件/claim/车道清零 + 三清单汇报（含证据等级 E1–E4）。
-中途不问 Owner、不停手，直到终态六条全中才汇报。
+中途不问 Owner、不停手，直到终态七条全中才汇报。
 ```
