@@ -127,14 +127,17 @@ D:\ZephyrAlpha\docs\_working\total_command_closeout\dossier_H_ruling_candidates_
 ### 波 7 —— 终验（1 道，先冻结车道）
 ```bash
 # 逐目录跑（单进程 pytest tests/ 必然收集失败）
-for d in <129 个 tests/ 子目录>; do
+find tests -type f -name 'test_*.py' | sed 's|/[^/]*$||' | sort -u > .runtime/tmp/total_command_closeout/test_dirs.txt
+# 实测 258 个『含测试文件的目录』；车道纪律册说的『129 个 tests/ 子目录』是另一口径（顶层+次层目录数），两数勿混用
+while read -r d; do
   python -m pytest "$d" -q -W "ignore::pytest.PytestConfigWarning" \
     --basetemp=.runtime/tmp/f7_$(basename "$d") 2>&1 | tail -3 | tee -a LEDGER_execution.md
-done
+done < .runtime/tmp/total_command_closeout/test_dirs.txt
 ```
 ⚠ **实测回退分支（X-41）**：本仓 pyproject 里的 `cache_dir` 与 `-p no:cacheprovider` **互斥**——带该旗标跑会 INTERNALERROR 且显示"0 跑"，极易被误读成"该文件收集失败"。正解：**先不带 `-p no:cacheprovider`**；若某目录仍报 cache 类 INTERNALERROR，则改 `-o cache_dir=/tmp/...`（也别用，车道纪律册说它会诱发 INTERNALERROR）⇒ 唯一稳的口径是"去掉 cacheprovider 旗标 + 独占 basetemp + 带 `-W ignore::pytest.PytestConfigWarning`"，并用 `--collect-only -q | wc -l` 独立互证件数。
 重点五目录：`tests/ai_layer`、`tests/intelligence`、`tests/governance/fullflow`、`tests/gov_enforcement`、`tests/shared`（20 个 Redis skip 记为**覆盖洞不是绿**）。
 红蓝补测：图14/图15（从未被独立红队打过）、提交链场景⑦跨道连坐、灾备锁语义已有一轮可复用；攻击面＝伪造节点/断链引用/越域挂载/INV-1 复制侵权/冒充 verified/绕过禁止边/PID 复用/热册整覆。发现即修。
+⚠ 波 7 里发现的修复件**仍要走 R-2 配方落地**（含 `--allow-non-worktree --allow-multi-domain`，实测 `git_commit.py --help` 确有 `--session/--files/--enqueue/--allow-non-worktree/--allow-multi-domain/--adopt-prior-work/--no-auto-enqueue/--claim-only/--release-only`，但**确无 `--base-head`**）。
 **表述纪律**：禁写"全绿"；只写"本轮检出 N 件通过 + 已证明能红的证据"。
 
 ### 波 8 —— 清洁与交付（1 道）

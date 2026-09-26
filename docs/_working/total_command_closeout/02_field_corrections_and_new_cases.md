@@ -109,3 +109,31 @@ completes_when: 本册每条改判都被 00/01/10 三册引用为唯一口径且
 | **E3 盘上单一来源** | 只有一处盘面证据，无第二方 | X-18（备份 mtime）、X-19（PID 表） |
 | **E4 交接书转述** | 只有叙述，盘面拿不到 | 旧"VERDICT_RED"、"132 定档"、"469→728"、"11 册 quant_methodology" ⇒ **一律禁用作施工依据** |
 > 用 `ch_writer.query` 取来的读数（异常返回 `""`）不论如何都**降一级**（X-27）。凡"某物不存在"的判定，必须附**带限定的第二探测**（X-26）。
+
+## §六 红队回流（对抗测试后的处置：X-59..X-66）
+
+> 两路独立红队攻击本班产出（RT1＝命令可执行性/危险动作；RT2＝覆盖率/裁定越界）。**红队每条 P0 我都二次复验**——两路都含假 P0。教训写死：**红队结论也不自证，照抄红队＝新的单点故障**。
+
+| # | 事实 | 处置 |
+|---|---|---|
+| X-59 | RT1 命中真缺陷 9 条：一键册曾引用 5 个只存在于 `.runtime/tmp`（受 24h TTL）的一次性脚本；`<129 个 tests/ 子目录>` 是假数（实测"含 `test_*.py` 的目录"＝**258**）；`gate_prerun` 要求 message-file **实存**否则直接 FAIL；`commit_queue status` 的 stdout **尾部混一行 `ALERT:{...}`** 令 `json.load` 崩；复核命令写了不存在的模块路径；把脚本输出标签写错（实际打印 `missing=N disk_only=M`） | 已全部改入 91/94/11 册；波 7 的目录枚举改成**自含 find 命令**，并把"比尺寸会漏判等长改动"写进 94 |
+| X-60 | **驳回 RT1 假 P0 三条**：①"`--session` 可选/`--adopt-prior-work` 不存在"——`git_commit.py --help` 实测列出 `--session/--files/--enqueue/--allow-non-worktree/--allow-multi-domain/--adopt-prior-work/--no-auto-enqueue/--claim-only/--release-only`（只确无 `--base-head`，那条它说对了）；②"`lane_ff_mine` 不存在"——实存（`.aidrafts/lane_ff_*` 共 10 个）；③"`status --session` 不是 JSON"——stdout 首字节即 `{\r\n"queue_root"`，崩因在**尾部** | 驳回项写死在此，防下一班被红队报告二次误导 |
+| X-61 | 实盘合规门"零接线"经**逐闸**反查成立但表述要换：`programmatic_trading_guard`、`regulatory_report_generator` 的非自身引用文件数＝**0**；`manipulation_realtime_monitor` 仅被 `order_manager.py:81` 以 **TYPE_CHECKING 预接线**引用；`compliance_rule_engine` 引用文件数＝1 | ⚑-1 第①项从"12 闸零接线"改**逐闸口径**；新增 **W-140**＝先出"逐闸接线表＋零消费者清单"再据表定序，禁一句"零接线"打包 |
+| X-62 | RT2 判"C3 盘后结算双入口分叉不成立"（两区 `run_post_settlement_daily.ps1` 都在） | 本班未能独立复验（`schtasks /query /v` 输出 GBK 化，取不到 ACTION 原文）⇒ ⚑-1 第②项**降为待复验**，新增 **W-141**＝用 `schtasks /query /tn <task> /xml` 取原文；若确为单入口则**撤销该项呈裁** |
+| X-63 | RT2 的 12 条"越界"里成立两条：①被他道禁用的门**不得自裁恢复**；②判定书是否入版本控制其实**已有在册裁定覆盖** | ①改判为"只登记零触发归因案卷，不判恢复也不判保持关闭"；②从"我的安全默认"改标"**已裁事项的执行核对项**"，不再当待裁默认条呈现 |
+| X-64 | 波2 役 12 项已批项的映射覆盖不足（E/F/G/H/I/J/K/L/M/O 十项无 W 位） | 新增 **W-142..W-151** 逐项映射；并把"逐件映射表"设为波 2.2 的**出口判据**（无表不算完成） |
+| X-65 | 真漏 11 类：HMAC 立项文档、红蓝场景⑦、四向对账表、负结果台账落点、孤儿件治理、28 处硬编码引用改道、13 条代裁追认单、15 门 P4 标注、T14 十七条、L18 六册口径互斥、arbiter ④⑥ 项 | 全部成立 → 入 **波 9**（见 `10_wave_plan.md`），编号 W-152..W-162 |
+| X-66 | RT2 两条不实：①"图12/13 校验器 `--map` 必死"——本班在该道 `PYTHONPATH` 自证后实跑 **rc=0**；②"上岗规则 v1／图形技术库／CNS／退役重考全缺"——四件在 `00` 册有 W-116..W-119，只是未进波次表 | ①驳回；②改判为"**编目有、排产无**"→ 波 9 显式排产 |
+
+### 结构性结论（红队教给我的）
+
+**我的覆盖体系是"编目完整、排产有洞"**：`00` 册能收进绝大多数环节，但 `10` 册波次表只排了约一半——而 **Flash 只照 `91/10` 动手**。⇒ 已补波 9，并在 `92` 册新增 **G-70**：任何 W-xx 若在波次表无归位，施工队必须停下先登记"未排产"再继续（把"编目≠排产"变成可检出的尺）。
+
+## §七 波 0 由本班代做后的实测结果（15:42 固化，非计划）
+
+- 固化范围：`.aidrafts/*` 与 `.worktrees/*` 共 **76 条车道**，凡有脏项者逐道落 `status.txt / tracked_stat.txt / tracked_names.txt / worktree_vs_HEAD.patch / index_vs_HEAD.patch / untracked_manifest.json / churn_lines.txt / untracked 副本`。
+- 体量：本地 `.runtime/tmp/total_command_closeout/lane_rescue/`（约 140MB，含两轮）；**冷库镜像 `G:\zephyr_cold\30_corpus\zmaster_lane_rescue_0926` 文件数 673 == 本地 673**（已双向核）。
+- **硬结论（这条改变优先级判断）**：**25 条车道 dirty 数百项而自有 commit 数＝0**，含 `.aidrafts/lane_ff_*` 全部 10 条、`st-mapbuild-20260924`、`st-audit-fix-20260924`、`st-qmine-20260925`、`.worktrees/st-ailayer-final-20260924`（dirty **169**、untracked 0、ahead 0、补丁 2031KB）、`st-wm1-buildA`（230）、`st-combine-2023`（235）、`st-t0-matrix-2024`（254，ahead 4）。
+  ⇒ 这些道**一次 `git checkout`/reconciler 还原就全丢**，且丢后无人知道丢了什么。现补丁＋清单已双存，波 2 落地按表逐道销号。
+- 附带读数（会漂移，引用带时刻）：`worktree_changes=460`、staged 删除 141、`commit_pct` 56.72%、ram_used 55.6%。
+- 工具坑（写进 R-6 族）：把该固化脚本用 `run_in_background` 跑时，**日志与报告全空但退出码 0**（孵化/会话生命周期把子进程收了，stdout 缓冲未落）；改前台 `python -u` 才拿到完整报告 ⇒ **长任务"exit 0"不等于跑完，必须验产出文件实存**。

@@ -7,6 +7,18 @@ completes_when: 本册三清单被终报引用且每条凭据可复跑
 
 > 本班职责=**裁定 + 施工方案**（施工交 Flash 执行）。本册只记"我做了什么、怎么复核、证据几级"，不记叙述。
 
+## §〇 交付落地记录（本班全部件已入 HEAD，逐件字节等值）
+
+| 袋 | 落地 commit | 件数 | 内容 |
+|---|---|---|---|
+| q-20260926-st-zmaster-20260926-0001 | `0f832185b7`（15:28:52） | 18 | 骨架/裁定/X 更正/八波排产/配方/一键指令/验收尺/Owner 菜单/台账 + 案卷 A–H + 热册 token 17 条同袋 |
+| q-20260926-st-zmaster-20260926-0002 | `7cd3589619`（15:31:52） | 2 | 配方册补 R-6..R-8 三条本班新踩坑 + 一键册引用改号 |
+
+**验真（两轮同命令，结果一致）**：`.runtime/tmp/total_command_closeout/verify_head_bytes.py`（⚠ 该脚本在 `.runtime/tmp` 下受 24h TTL 清理，波 8 前可能已消失；重建口径＝逐件比 `sha256(盘 bytes.replace(CRLF,LF))` 与 `sha256(git show HEAD:<path>)`，**比尺寸会漏判等长改动**） → `件数: 17 / 与 HEAD 不等件数: 0`（sha256 口径，非尺寸口径——第一版用尺寸比较把 91 册的等长改动误判成 same，已改）。
+**token 在册核**：`git show HEAD:...capability_canonical_file_registry.yaml | grep -c governance-total-command-closeout` = **17**。
+**顺带落地的他人在途条目**（已在 commit message 具名披露，非本役主张）：`docs/_working/decision_map_campaign_20260924/HANDOVER_FINAL.md` 的 1 条 token。
+**顺带修复的公共基底**：热册补回被陈旧快照抹掉的 **16 条** HEAD token、合并重复顶层根键 `di_seam_exemptions`（`REGISTRY-YAML-PARSE` 拦点）、index 陈旧快照回正（B 型 `git restore --staged`）。修复前备份 `.runtime/tmp/total_command_closeout/backup/capability_registry.pre_repair.yaml`（sha256 前缀 `525004b1d240fac3`）。
+
 ## §一 复核命令（Owner 或下一班可直接照抄）
 
 ```bash
@@ -14,19 +26,22 @@ export PATH="/c/Users/fanzi/AppData/Local/Programs/Python/Python312:$PATH"; cd /
 # 1) 基线读数（本班全部判断的分母）
 python --version
 python -m zephyr.trading.process_reaper --status | grep -o "watermark=.*"
-python scripts/commit_queue.py status | python -c "import sys,json;d=json.load(sys.stdin);print(d['counts'])"
+# 注意：stdout 末尾另有一行 ALERT:{...} 且是 CRLF ⇒ 直接 json.load 必崩；取首尾大括号之间再解
+python scripts/commit_queue.py status 2>/dev/null | python -c "import sys,json;r=sys.stdin.read();print(json.loads(r[r.index('{'):r.rindex('}')+1])['counts'])"
 git log -1 --format="%h %ci %s"
 # 2) 热册三态分诊（本班救回 16 条被陈旧快照抹掉的 token，配方 R-1）
 R=docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
 git diff --numstat -- $R; git diff --cached --numstat -- $R
-python .runtime/tmp/total_command_closeout/repair_capability_tokens_v3.py     # 只读分诊，missing=0 即已收敛
+python .runtime/tmp/total_command_closeout/repair_capability_tokens_v3.py     # 只读分诊；输出行标签是 "missing=N disk_only=M"（不是"盘缺HEAD="）
+python .runtime/tmp/total_command_closeout/check_registry_faces.py           # 三态键集合差；标签是 "HEAD - DISK = N"
 # 3) 在册 vs 声称（三条最有杀伤力的抽查，均为"声称在册、实测不在"）
 git ls-tree -r --name-only HEAD | grep -c "scripts/governance/next_ruling_id.py"                      # 0
 git cat-file -e HEAD:scripts/governance/fullflow/generate_fullflow_crosscheck.py 2>&1 | head -1       # 不存在
 git ls-tree -r --name-only HEAD | grep -cE "config/(dev_delivery_map|data_supply_chain_map|trading_day_cycle_map|construction_workflow_map|strategy_card_lifecycle_map)\.yaml"   # 0
 # 4) 门禁装载守恒（名册 vs 实载）
-python -c "import sys;sys.path.insert(0,'src');from zephyr.gov_enforcement.commit_gates.registry_in_process import AutoRegisterGates" 2>/dev/null; \
+mkdir -p .runtime/tmp/<SID> && echo probe > .runtime/tmp/<SID>/msg_probe.md   # 预跑器要求 message-file 实存，否则直接 FAIL
 python scripts/governance/meta/gate_prerun.py --session <SID> --files "AGENTS.md" --message-file .runtime/tmp/<SID>/msg_probe.md 2>&1 | tail -6
+# 装载守恒自查：名册条数 vs 预跑器报的 "注册 GateSpec 总数"（本窗实测 99）
 # 5) 本班交付物是否真在 HEAD（落地后）
 git show HEAD:docs/_working/total_command_closeout/02_field_corrections_and_new_cases.md | head -20
 ```

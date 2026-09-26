@@ -52896,4 +52896,14 @@ creation_tokens:
   created_by: st-zmaster-20260926
   capability: governance_total_command_closeout
   merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/redteam_1_plan_operability.md
+  token: governance-total-command-closeout-redteam-1-plan-operability-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "红队对抗报告：唯一归档位（与案卷同目录），无第二真源"
+- file: docs/_working/total_command_closeout/redteam_2_adjudication_coverage.md
+  token: governance-total-command-closeout-redteam-2-adjudication-coverage-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "红队对抗报告：唯一归档位（与案卷同目录），无第二真源"
 di_seam_exemptions: []

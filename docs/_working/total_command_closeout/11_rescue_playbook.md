@@ -48,7 +48,7 @@ git diff --cached --numstat -- $R # index vs HEAD（内容门禁读的是这个�
 7. 连拒两次即停手（不要造第二套重放器，不要强行放行）。
 
 ⚠ 口径坑（本班踩过，写下来给后面的人）：**别用"条目数"当"键集合"**。HEAD 块 11391 而 token 唯一键 11391→盘 11378 之间，用 `(file,token)` 做键会因多条块共用同一 token（重复认领）而"看起来不缺"，用**块原文**做集合差才抓得准；反查缺失条数时优先信工具自述的 N 与 `grep -c <token串>`，两者一致才动手。
-**实跑凭据**：v1 误判 missing=2 → v3 正确判 missing=16、disk_only=1；写后 `HEAD tokens=11391 DISK tokens=11394 盘缺HEAD=0 盘外来=3`（外来=他人 1 条 + 我班 2 条），`yaml OK; creation_tokens entries=11394`。
+**实跑凭据（时点读数，勿当常量——施工期每登记一件 token 这些数都会涨）**：v1 误判 missing=2 → v3 正确判 missing=16、disk_only=1；写后 `HEAD tokens=11391 DISK tokens=11394 盘缺HEAD=0 盘外来=3`（外来=他人 1 条 + 我班 2 条），`yaml OK; creation_tokens entries=11394`。
 
 ## R-2 新建件落地配方（本班实跑：两册从零拦端到硬阻断 0）
 
@@ -98,6 +98,7 @@ git log -1 --name-only ; git show HEAD:<path> | grep -c <实现符号>
 `requeue` 只在"死因已在工作树修好"时用（它取工作树现字节重建快照，但**不吸收新 staged 文件**，钥匙件必须单独成批先落靠 FIFO 保序）；重投带 `--adopt-prior-work`；同 payload 禁双 requeue。
 
 ## R-4 车道现场抢救（波 0 专用，零门禁风险）
+> ⚠ 两条实测纠错：① 本机 Git Bash **无 `rsync`**（整树拷贝方案必卡死）——正解＝只固化「未落地字节」：`git diff --binary HEAD` 补丁 + 未跟踪文件副本 + sha 清单（本班实跑 76 道、73MB，产出 `_rescue_report.json`）；② 镜像到冷库**禁用 `/MIR`**（其语义含目标侧删除，打错路径＝删备份），只用 `/E` 且目标必须是本役专用新目录。
 
 ```bash
 # 逐道出清单+双镜像（不改道、不 add、不 commit）
@@ -107,15 +108,15 @@ for W in .aidrafts/lane_ff_* .aidrafts/st-mapbuild-20260924 .aidrafts/st-audit-f
   git -C "$W" status --porcelain > .runtime/tmp/total_command_closeout/snapshot/$b/status.txt
   git -C "$W" rev-parse HEAD      > .runtime/tmp/total_command_closeout/snapshot/$b/head.txt
   git -C "$W" diff --name-only dev...HEAD > .runtime/tmp/total_command_closeout/snapshot/$b/branchdiff.txt 2>/dev/null
-  rsync -a --exclude='.git' --exclude='__pycache__' --exclude='.venv' "$W"/ \
+  python D:/ZephyrAlpha/.runtime/tmp/total_command_closeout/rescue_lanes.py   # 本机无 rsync；本班实跑版＝补丁+未跟踪副本+sha 清单
         .runtime/tmp/total_command_closeout/snapshot/$b/payload/ 2>/dev/null
   ( cd .runtime/tmp/total_command_closeout/snapshot/$b/payload && find . -type f -print0 | xargs -0 sha256sum > ../sha256.txt )
 done
 tar -czf .runtime/tmp/total_command_closeout/snapshot.tgz -C .runtime/tmp/total_command_closeout snapshot
 # 冷库镜像（G 侧实测可用 1454 GiB；F 167.6 GiB；E 296.0 GiB）
-powershell -NoProfile -Command "robocopy 'D:\ZephyrAlpha\.runtime\tmp\total_command_closeout' 'G:\zephyr_cold\30_corpus\total_command_closeout' /MIR /R:1 /W:1 /XD __pycache__"   # robocopy exit 1=成功
+powershell -NoProfile -Command "robocopy 'D:\ZephyrAlpha\.runtime\tmp\total_command_closeout\lane_rescue' 'G:\zephyr_cold\30_corpus\zmaster_lane_rescue_0926' /E /R:1 /W:1 /XD __pycache__"   # ★只用 /E，禁 /MIR（/MIR 含目标侧删除）；exit 1=成功
 ```
-**判据**：快照件数 == `status.txt` 行数；`sha256.txt` 可复算；G 侧镜像文件数一致。
+**出口判据（机械可验，原写法「快照件数==status 行数」恒不成立——删除项/折叠目录/排除项会让两边永不相等）**：`_rescue_report.json` 存在且 `lanes` == 脏项道数；每道 5 件套齐（`status.txt / tracked_stat.txt / tracked_names.txt / *.patch / untracked_manifest.json`）；冷库镜像与本地 `find -type f | wc -l` 等值。
 **删除判据（波 8 才用）**：逐文件 `git hash-object <f>` == `git rev-parse dev:<f>` 才 `git worktree remove --force`；任一不等或不在 dev ⇒ 禁删。多会话并发期禁 `rm`。
 
 ## R-5 能红判据模板（每条新尺必自带，否则尺不算存在）
@@ -130,7 +131,8 @@ powershell -NoProfile -Command "robocopy 'D:\ZephyrAlpha\.runtime\tmp\total_comm
    ⚠ 盘上 CRLF 会被归一成 LF 入库，所以"字节不等"可能是行尾而非内容——先 `replace(b"\r\n", b"\n")` 再比，或用 `git ls-files --eol` 看 `w/` 段。
 2. **热册"根键唯一性"必查**（`REGISTRY-YAML-PARSE` 硬拦，PyYAML 自己**不报**）。陈旧快照会把尾部压成两条 `di_seam_exemptions: []` 根键，此时往"最后一个根键之前"插条目＝插进被忽略的那段，**写进去但解析层看不见**，条目数照样对，门禁却判你少了几百条。
    **正解**：R-1 的写后复验里加一条 `根键重复检测`（正则 `^[A-Za-z_][A-Za-z0-9_]*:` 取行首键名计数>1 即红）；修法＝保留第一处、删多余的重复行（两处值都是空列表时零损失），并断言 `creation_tokens` 条目数只增不减。
-   附带：**"未跟踪 N 件"的读数只能来自 `git status --porcelain --untracked-files=all` 的 `??` 行**，用 `ls | wc -l` 会把子目录名当文件（本窗两路案卷因此得出相反结论，见 X-54）。
+   ⚠ 门禁提示里给的"嵌套同名键在 L883"这类**行号会随册内容漂移**（本窗复测顶格 `di_seam_exemptions:` 在 52908 行、正文里另有描述性提及），判定一律按"行首顶格键名"，不按行号。
+附带：**"未跟踪 N 件"的读数只能来自 `git status --porcelain --untracked-files=all` 的 `??` 行**，用 `ls | wc -l` 会把子目录名当文件（本窗两路案卷因此得出相反结论，见 X-54）。
 3. **预跑器自身会顺带打印全局诊断**（`files_trigger 超宽/死触发`、`外来 staged 未检查 warn`），这些**不是本批违规**，别去找它们修复；但它们是极好的观测料：本窗就是靠它们直接看到"密钥三门触发面是路径子串匹配"（X-50）与"R5-DIGIT-SUFFIX 命中 8067+1342+4020 文件近 always-fire"（W-23 的量化依据）。
 
 ## R-7 归属披露姿势（热册必须随袋、而基底里躺着别人在途条目时）
