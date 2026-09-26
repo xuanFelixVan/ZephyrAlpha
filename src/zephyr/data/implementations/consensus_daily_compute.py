@@ -32,6 +32,8 @@ PIT 语义（本模块的灵魂）：
 调度增量语义（C1.5，internal provider 夜间档）：
     起点不取任务 last_key 而按表内实况推断（infer_incremental_start）：
     最新快照日回退重叠窗重算——迟到入库的同日研报被吸收，重建幂等（ReplacingMergeTree）。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/implementations/consensus_daily_compute.yaml
 """
 
 from __future__ import annotations
@@ -41,7 +43,7 @@ import statistics
 import time
 from collections.abc import Iterator
 
-from zephyr.data.provider_base import FetchResult
+from zephyr.data.provider_base import FetchResult, norm_boundary_date
 
 log = logging.getLogger(__name__)
 
@@ -63,6 +65,7 @@ def _schema() -> tuple[str, list[str]]:
         _COLUMNS_LIST = [c.strip() for c in INSERT_COLUMNS.strip("()").split(",")]
     return _TBL, _COLUMNS_LIST
 
+
 # 评级分映射（华泰基本面量化之二口径：买入7/增持5/中性3/减持2/卖出1；持有≈中性、回避≈减持）
 RATING_SCORE_MAP: dict[str, int] = {
     "买入": 7,
@@ -81,6 +84,7 @@ _INCREMENTAL_OVERLAP_DAYS = 3
 # ============================================================================
 # 纯函数核（无 IO，tests/scripts/test_build_consensus_daily.py 直测）
 # ============================================================================
+
 
 def rating_score(rating: str) -> int | None:
     """评级文本→分数；空/未知评级返回 None（不计入均值，计入 n_unrated）。"""
@@ -127,7 +131,8 @@ def build_consensus_rows(
                  pe_fy{0,1,2}/org_name/rating
         trade_dates: 交易日 date 对象升序列表（真源=c1_market.trade_calendar）
         window_days: 窗宽（自然日）
-        start/end: 只输出 [start, end] 区间内的 trade_date 行（iso str，None=不限）
+        start/end: 只输出 [start, end] 区间内的 trade_date 行（iso str 或 datetime.date，
+                   经 norm_boundary_date 规整；None=不限）
 
     Returns:
         行元组列表（20 元组，与 INSERT_COLUMNS 对齐），按 (symbol, trade_date, forecast_year) 排序。
@@ -143,8 +148,10 @@ def build_consensus_rows(
         by_symbol.setdefault(rep["symbol"], []).append(rep)
 
     dates_sorted = sorted(trade_dates)
-    lo_iso = start or ""
-    hi_iso = end or ""
+    # 边界先规整（str/date 双型容差）：FetchPayload.start/end 实测 datetime.date，
+    # 直入 td_iso(str) 比较即崩 '>'（#34 共因，C1 一处规整覆盖三实例）
+    lo_iso = norm_boundary_date(start) or ""
+    hi_iso = norm_boundary_date(end) or ""
     rows: list[tuple] = []
 
     for symbol, reps in by_symbol.items():
@@ -189,28 +196,30 @@ def build_consensus_rows(
                 eps_vals = [e for e, _p in eps_pe]
                 pe_vals = [p for _e, p in eps_pe if p is not None]
                 mean, med, std, lo_v, hi_v = _stats(eps_vals)
-                rows.append((
-                    td_iso,
-                    symbol,
-                    year,
-                    round(mean, 6),
-                    round(med, 6),
-                    round(std, 6),
-                    round(lo_v, 6),
-                    round(hi_v, 6),
-                    round(sum(pe_vals) / len(pe_vals), 6) if pe_vals else None,
-                    len(eps_vals),
-                    len(cur_orgs),
-                    round(rating_mean, 6) if rating_mean is not None else None,
-                    n_buy,
-                    n_add,
-                    n_neu,
-                    n_neg,
-                    n_unr,
-                    last_rep,
-                    window_days,
-                    "research_report",
-                ))
+                rows.append(
+                    (
+                        td_iso,
+                        symbol,
+                        year,
+                        round(mean, 6),
+                        round(med, 6),
+                        round(std, 6),
+                        round(lo_v, 6),
+                        round(hi_v, 6),
+                        round(sum(pe_vals) / len(pe_vals), 6) if pe_vals else None,
+                        len(eps_vals),
+                        len(cur_orgs),
+                        round(rating_mean, 6) if rating_mean is not None else None,
+                        n_buy,
+                        n_add,
+                        n_neu,
+                        n_neg,
+                        n_unr,
+                        last_rep,
+                        window_days,
+                        "research_report",
+                    )
+                )
     rows.sort(key=lambda r: (r[1], r[0], r[2]))
     return rows
 
@@ -218,6 +227,7 @@ def build_consensus_rows(
 # ============================================================================
 # IO 边缘（读取/推断/产出）
 # ============================================================================
+
 
 def load_reports(symbols: list[str] | None = None) -> list[dict]:
     """读研报明细（FINAL 去重），展开前的原始行。"""
@@ -250,21 +260,23 @@ def load_reports(symbols: list[str] | None = None) -> list[dict]:
             except (TypeError, ValueError):
                 return 0
 
-        reports.append({
-            "symbol": parts[0],
-            "publish_date": parts[1][:10],
-            "fy0_year": _i(parts[2]),
-            "eps_fy0": _f(parts[3]),
-            "pe_fy0": _f(parts[4]),
-            "fy1_year": _i(parts[5]),
-            "eps_fy1": _f(parts[6]),
-            "pe_fy1": _f(parts[7]),
-            "fy2_year": _i(parts[8]),
-            "eps_fy2": _f(parts[9]),
-            "pe_fy2": _f(parts[10]),
-            "org_name": parts[11] if len(parts) > 11 else "",
-            "rating": parts[12] if len(parts) > 12 else "",
-        })
+        reports.append(
+            {
+                "symbol": parts[0],
+                "publish_date": parts[1][:10],
+                "fy0_year": _i(parts[2]),
+                "eps_fy0": _f(parts[3]),
+                "pe_fy0": _f(parts[4]),
+                "fy1_year": _i(parts[5]),
+                "eps_fy1": _f(parts[6]),
+                "pe_fy1": _f(parts[7]),
+                "fy2_year": _i(parts[8]),
+                "eps_fy2": _f(parts[9]),
+                "pe_fy2": _f(parts[10]),
+                "org_name": parts[11] if len(parts) > 11 else "",
+                "rating": parts[12] if len(parts) > 12 else "",
+            }
+        )
     log.info("研报明细 %d 行", len(reports))
     return reports
 
@@ -295,7 +307,7 @@ def infer_incremental_start(overlap_days: int = _INCREMENTAL_OVERLAP_DAYS) -> st
     from zephyr.data import ch_reader
 
     tbl, _ = _schema()
-    tsv = ch_reader.query(f"SELECT max(trade_date) FROM {tbl} FINAL")
+    tsv = ch_reader.query(f"SELECT max(trade_date) FROM {tbl} FINAL")  # noqa: bare-sql  只读 max 探针（infer_incremental_start），单行聚合无集中化收益
     line = (tsv or "").strip().split("\n")[0].strip() if (tsv or "").strip() else ""
     if not line or line.startswith("\\N"):
         return None
@@ -314,8 +326,9 @@ def run_compute(
 
     Args:
         symbols: 标的子集（None=全市场）。
-        start/end: 快照区间（iso str，含）。start=None=研报最早 publish_date 起（全量）；
-                   end=None=今天（本地日期）。
+        start/end: 快照区间（iso str 或 datetime.date——provider 传 FetchPayload 同名
+                   字段实测为 date，边界经 norm_boundary_date 规整，含）。start=None=
+                   研报最早 publish_date 起（全量）；end=None=今天（本地日期）。
         window_days: 窗宽自然日（华泰口径 90）。
         batch_size: 单批 FetchResult 行数。
 
@@ -357,9 +370,7 @@ def run_check() -> int:
     from zephyr.data import ch_reader
 
     tbl, _ = _schema()
-    tsv = ch_reader.query(
-        f"SELECT max(trade_date), uniqExact(symbol), count() FROM {tbl} FINAL"
-    )
+    tsv = ch_reader.query(f"SELECT max(trade_date), uniqExact(symbol), count() FROM {tbl} FINAL")  # noqa: bare-sql  只读 PIT 交叉验证探针（run_check），单点诊断查询
     if not tsv or not tsv.strip():
         log.error("CHECK FAIL: %s 无数据", tbl)
         return 1

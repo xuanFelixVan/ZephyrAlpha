@@ -75,6 +75,24 @@ class FetchPayload:
     extra: dict = None
 
 
+def norm_boundary_date(v: datetime.date | str | None) -> str | None:
+    """增量窗边界统一规整为 ISO 日期串（str/date 双型容差，#30/#34 共因修复）。
+
+    FetchPayload.start/end 注记为 datetime.date，而 compute 核行字段一律 ISO str
+    ——类型契约在 provider→compute 交接处无人执行，date 直入边界比较即崩
+    ``'>'/'<' not supported between instances of 'str' and 'datetime.date'``
+    （consensus_daily/financial_derived/consensus_daily_repaired 三实例同一共因）。
+    一处规整覆盖三实例：None/空串→None；str→截前 10 位（容忍 iso datetime 串）；
+    date→isoformat()。比较语义不变（两端含端点）。安全样板=backfill_checker.py
+    （边界先 fromisoformat 再参与运算）。
+    """
+    if v is None:
+        return None
+    if isinstance(v, str):
+        return v[:10] or None
+    return v.isoformat()
+
+
 @dataclass
 class FetchResult:
     """下载结果（一批）。

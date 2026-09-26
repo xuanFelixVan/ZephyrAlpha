@@ -27,14 +27,15 @@ _spec.loader.exec_module(_mod)
 # G1 量纲守卫
 # ---------------------------------------------------------------------------
 
+
 def test_guard_pass_boundaries():
     """eps∈(0,50] 放行；0/负数/50 以上/None/NaN 拒绝（>50 段实证为营业收入行串列）。"""
-    assert _mod.guard_pass(0.08) is True      # 苏宁云商 2017E=0.08 案：低值可为真值
-    assert _mod.guard_pass(41.8) is True      # 茅台 2021 实际 EPS，域内上界内
+    assert _mod.guard_pass(0.08) is True  # 苏宁云商 2017E=0.08 案：低值可为真值
+    assert _mod.guard_pass(41.8) is True  # 茅台 2021 实际 EPS，域内上界内
     assert _mod.guard_pass(50.0) is True
     assert _mod.guard_pass(50.01) is False
-    assert _mod.guard_pass(99.0) is False     # 跨标的重复哨兵值
-    assert _mod.guard_pass(4696.2) is False   # 002563 案：营业收入(百万元)串成 EPS
+    assert _mod.guard_pass(99.0) is False  # 跨标的重复哨兵值
+    assert _mod.guard_pass(4696.2) is False  # 002563 案：营业收入(百万元)串成 EPS
     assert _mod.guard_pass(0.0) is False
     assert _mod.guard_pass(-1.5) is False
     assert _mod.guard_pass(None) is False
@@ -44,6 +45,7 @@ def test_guard_pass_boundaries():
 # ---------------------------------------------------------------------------
 # G2 槽位选取规则 S1
 # ---------------------------------------------------------------------------
+
 
 def test_pick_slots_prefers_forward_years():
     """四个年度含发布年前一年时，取当年/次年/两年后，丢最远年（对齐 fy0/fy1/fy2 三槽）。"""
@@ -59,9 +61,7 @@ def test_pick_slots_keeps_prior_year_legitimate_forecast():
 
 def test_pick_slots_backfill_order_is_nearest_first():
     """前瞻槽不足三位时，按"离发布年最近"降序补上一年，且整体截断到 SLOT_MAX。"""
-    picked = _mod.pick_slots(
-        [(2015, 1.0), (2016, 1.1), (2018, 1.3), (2019, 1.4)], 2017
-    )
+    picked = _mod.pick_slots([(2015, 1.0), (2016, 1.1), (2018, 1.3), (2019, 1.4)], 2017)
     assert picked == [(2018, 1.3), (2019, 1.4), (2016, 1.1)]
     assert len(_mod.pick_slots([(2018 + i, 1.0) for i in range(9)], 2018)) == _mod.SLOT_MAX
 
@@ -70,9 +70,9 @@ def test_pick_slots_backfill_order_is_nearest_first():
 # 槽位打包
 # ---------------------------------------------------------------------------
 
+
 def test_to_report_row_packs_three_slots_and_nulls_pe():
-    row = _mod.to_report_row("600519", "2019-04-25", "华泰", "买入",
-                             [(2019, 32.8), (2020, 37.2), (2021, 41.8)])
+    row = _mod.to_report_row("600519", "2019-04-25", "华泰", "买入", [(2019, 32.8), (2020, 37.2), (2021, 41.8)])
     assert row["fy0_year"] == 2019 and row["eps_fy0"] == 32.8
     assert row["fy1_year"] == 2020 and row["eps_fy1"] == 37.2
     assert row["fy2_year"] == 2021 and row["eps_fy2"] == 41.8
@@ -91,6 +91,7 @@ def test_to_report_row_missing_slots_become_zero_year():
 # ---------------------------------------------------------------------------
 # 适配层 × 生产核：口径逐列不变的性质测试
 # ---------------------------------------------------------------------------
+
 
 def _dates():
     return [date(2019, 3, 1), date(2019, 3, 20), date(2019, 6, 30)]
@@ -116,13 +117,13 @@ def test_rating_stats_use_all_reports_not_only_eps_bearers():
     rows = [
         _mod.to_report_row("600519", "2019-02-01", "东吴", "买入", [(2019, 30.0)]),
         _mod.to_report_row("600519", "2019-02-05", "国泰", "增持", []),  # 无 high 置信提取
-        _mod.to_report_row("600519", "2019-02-09", "申万", "", []),      # 无评级
+        _mod.to_report_row("600519", "2019-02-09", "申万", "", []),  # 无评级
     ]
     out = _mod.build_consensus_rows(rows, [date(2019, 3, 1)], window_days=90)
     row = next(r for r in out if r[2] == 2019)
-    assert row[9] == 1        # n_reports 只数有该年预测的（1 份）
-    assert row[10] == 3       # n_orgs 数窗口内全部机构（3 家）
-    assert row[16] == 1       # n_unrated 记无评级那份
+    assert row[9] == 1  # n_reports 只数有该年预测的（1 份）
+    assert row[10] == 3  # n_orgs 数窗口内全部机构（3 家）
+    assert row[16] == 1  # n_unrated 记无评级那份
     assert row[3] == 30.0
 
 
@@ -130,14 +131,38 @@ def test_provenance_columns_appended_without_breaking_column_count():
     """A 段行在 DS-229 二十列后追加 data_source/eps_source/build_batch 三值=22 列。"""
     rows = [_mod.to_report_row("600519", "2019-02-01", "东吴", "买入", [(2019, 30.0)])]
     base = _mod.build_consensus_rows(rows, [date(2019, 3, 1)], window_days=90)
-    wrapped = [r[:19] + ("pdf_forecast_extracted", _mod.EPS_SOURCE_PDF_HIGH, _mod.BUILD_BATCH)
-               for r in base]
+    wrapped = [r[:19] + ("pdf_forecast_extracted", _mod.EPS_SOURCE_PDF_HIGH, _mod.BUILD_BATCH) for r in base]
     assert len(wrapped[0]) == 22
     assert wrapped[0][19] == "pdf_forecast_extracted"
     assert wrapped[0][21] == _mod.BUILD_BATCH
     # INSERT_COLUMNS 必须与行宽一致（否则写入静默错位）
     from schemas.categories.fundamental.consensus_daily_repaired import INSERT_COLUMNS
+
     assert len(INSERT_COLUMNS.strip("()").split(",")) == 22
+
+
+def test_run_compute_repaired_accepts_date_window(monkeypatch):
+    """C1 第三实例回归（mine_pipe_blockage §3/§7 C1，#34 _repaired 旁表）。
+
+    provider 路由 `_fetch_consensus_daily_repaired` 传 FetchPayload.start/end
+    （datetime.date）直入 run_compute_repaired：A 段委托 build_consensus_rows
+    （同核崩点），入口 lo/hi 先规整后端到端不崩、产出 22 列行。
+    IO 全部 monkeypatch，零生产路径。
+    """
+    from zephyr.data.implementations import consensus_daily_compute as core
+    from zephyr.data.implementations import consensus_daily_repaired_compute as impl
+
+    report_a = _mod.to_report_row("600519", "2019-02-01", "东吴", "买入", [(2019, 30.0)])
+    report_b = _mod.to_report_row("600519", "2019-05-01", "华泰", "增持", [(2019, 33.0)])
+    monkeypatch.setattr(impl, "load_pdf_evidence", lambda: ([report_a, report_b], {}))
+    monkeypatch.setattr(core, "load_trade_dates", lambda start, end: [date(2019, 3, 1), date(2019, 6, 30)])
+
+    # date 双型（调度真实形态）：修复前 A 段在同核崩 '>'
+    batches = list(impl.run_compute_repaired(start=date(2019, 1, 1), end=date(2019, 12, 31), skip_segment_b=True))
+    rows = [r for b in batches for r in b.rows]
+    assert rows, "date 边界不得崩且须产出"
+    assert len(rows[0]) == 22
+    assert {r[0] for r in rows} == {"2019-03-01", "2019-06-30"}, "窗口含端点"
 
 
 # ---------------------------------------------------------------------------
@@ -160,7 +185,7 @@ def test_primary_protocol_judgement_criteria_are_frozen():
     assert p["oos"] == ("2024-01-01", "2026-09-11")
     assert (p["ic_min"], p["sig_rule"], p["coverage_min"]) == (0.02, "t_p<0.05", 0.60)
     assert p["promotion_authority"] == "authoritative"
-    assert _ev._IS == p["is"] and _ev._OOS == p["oos"] and _ev._PANEL_HI == p["oos"][1]
+    assert p["is"] == _ev._IS and p["oos"] == _ev._OOS and p["oos"][1] == _ev._PANEL_HI
 
 
 def test_r36_protocol_tightens_not_loosens():
@@ -215,6 +240,7 @@ def test_cli_exp02_on_repaired_source_is_not_evaluable(monkeypatch, capsys):
 # narrow_top50 腿全部出不了证，且零测试覆盖 ⇒ 本段是该缺陷的复发钉）
 # ---------------------------------------------------------------------------
 
+
 def _synth_panel(n_syms: int, n_months: int):
     """合成面板（n_months 个月末 × n_syms 只票），够驱动 _narrow 全流程，不连任何 IO。
 
@@ -229,12 +255,11 @@ def _synth_panel(n_syms: int, n_months: int):
     idx = pd.to_datetime(sorted(set(mes) | set(fwd)))
     rng = np.random.default_rng(20260916)
     px = pd.DataFrame(
-        100.0 * np.cumprod(1.0 + rng.normal(0.0005, 0.02, (len(idx), len(syms))), axis=0),
-        index=idx, columns=syms)
-    fac = pd.DataFrame(rng.normal(0, 1, (len(mes), len(syms))),
-                       index=pd.to_datetime(mes), columns=syms)
+        100.0 * np.cumprod(1.0 + rng.normal(0.0005, 0.02, (len(idx), len(syms))), axis=0), index=idx, columns=syms
+    )
+    fac = pd.DataFrame(rng.normal(0, 1, (len(mes), len(syms))), index=pd.to_datetime(mes), columns=syms)
     bench = pd.Series(3000.0 * np.cumprod(1.0 + rng.normal(0, 0.01, len(idx))), index=idx)
-    return fac, px, bench, mes, {m: f for m, f in zip(mes, fwd)}
+    return fac, px, bench, mes, {m: f for m, f in zip(mes, fwd, strict=False)}
 
 
 def test_narrow_degenerate_panel_degrades_to_none_not_typeerror():
@@ -245,12 +270,13 @@ def test_narrow_degenerate_panel_degrades_to_none_not_typeerror():
     报错，而"该窗广度不足"本该是一张能读懂的 None 出证。
     """
     fac, px, bench, mes, fwd_map = _synth_panel(n_syms=4, n_months=4)
-    assert 4 < _ev._MIN_NAMES, "面板必须真的够不着广度闸门，否则本测试测不到退化路径"
+    assert _ev._MIN_NAMES > 4, "面板必须真的够不着广度闸门，否则本测试测不到退化路径"
     out = _ev._narrow(fac, px, bench, mes, fwd_map)
     assert set(out) == {"slip_cfgbp", "slip_20bp", "slip_40bp", "slip_80bp"}
     for leg, vals in out.items():
-        assert vals == {"excess_sharpe_is": None, "excess_sharpe_oos": None,
-                        "oos_over_is": None}, f"{leg} 广度不足须降级 None，不得崩也不得伪造数值"
+        assert vals == {"excess_sharpe_is": None, "excess_sharpe_oos": None, "oos_over_is": None}, (
+            f"{leg} 广度不足须降级 None，不得崩也不得伪造数值"
+        )
 
 
 def test_narrow_base_slip_leg_consumes_calibrated_cost():
@@ -273,9 +299,8 @@ def test_narrow_base_slip_leg_consumes_calibrated_cost():
     )
 
     fac, px, bench, mes, fwd_map = _synth_panel(n_syms=120, n_months=8)
-    out = _ev._narrow(fac, px, bench, mes, fwd_map)   # 修复前此处 TypeError
-    sharpes = [out[k]["excess_sharpe_is"] for k in
-               ("slip_cfgbp", "slip_20bp", "slip_40bp", "slip_80bp")]
+    out = _ev._narrow(fac, px, bench, mes, fwd_map)  # 修复前此处 TypeError
+    sharpes = [out[k]["excess_sharpe_is"] for k in ("slip_cfgbp", "slip_20bp", "slip_40bp", "slip_80bp")]
     assert all(v is not None for v in sharpes), f"够广面板须出数，实得 {sharpes}"
     assert sharpes[0] > sharpes[1] > sharpes[2] > sharpes[3], (
         f"四档超额 Sharpe 须随滑点严格递减（cfg={base_bps}bp < 20 < 40 < 80），实得 {sharpes}"
@@ -297,15 +322,19 @@ def test_narrow_pinned_slip_legs_are_returned_verbatim():
 
 # ── T5 口径治本钉（2026-09-17）：coverage 门可比数=月覆盖率，coverage_mean=计数 ──
 
+
 def _synth_ic_df(n_months=33, n_val=920.0):
-    import pandas as pd
     import numpy as np
-    return pd.DataFrame({
-        "td": [f"20{19 + i // 12}-{(i % 12) * 3 + 1:02d}-28" for i in range(n_months)],
-        "n": np.full(n_months, n_val),
-        "ic": np.linspace(0.01, 0.05, n_months),
-        "mom_ic": np.full(n_months, np.nan),
-    })
+    import pandas as pd
+
+    return pd.DataFrame(
+        {
+            "td": [f"20{19 + i // 12}-{(i % 12) * 3 + 1:02d}-28" for i in range(n_months)],
+            "n": np.full(n_months, n_val),
+            "ic": np.linspace(0.01, 0.05, n_months),
+            "mom_ic": np.full(n_months, np.nan),
+        }
+    )
 
 
 def test_seg_coverage_ratio_is_month_fraction():
@@ -330,9 +359,11 @@ def test_seg_without_total_months_has_no_ratio_key():
 
 def test_is_total_months_denominator_follows_protocol(monkeypatch):
     """分母随协议窗：exp_r36 IS' 2019-2021=36 个月末（非主协议 60）。"""
-    cal = [f"2019-{m:02d}-28" for m in range(1, 13)] + \
-          [f"20{y}-{m:02d}-28" for y in (20, 21) for m in range(1, 13)] + \
-          [f"20{y}-{m:02d}-28" for y in (22, 23) for m in range(1, 13)]
+    cal = (
+        [f"2019-{m:02d}-28" for m in range(1, 13)]
+        + [f"20{y}-{m:02d}-28" for y in (20, 21) for m in range(1, 13)]
+        + [f"20{y}-{m:02d}-28" for y in (22, 23) for m in range(1, 13)]
+    )
     monkeypatch.setattr(_ev, "_IS", ("2019-01-01", "2021-12-31"))
     assert _ev._is_total_months(cal) == 36
     monkeypatch.setattr(_ev, "_IS", ("2019-01-01", "2023-12-31"))

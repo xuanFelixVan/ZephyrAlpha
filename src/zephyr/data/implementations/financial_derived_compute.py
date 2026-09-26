@@ -37,6 +37,8 @@ PIT 语义（本模块的灵魂，全部实现为纯函数便于单测）：
     python scripts/ch/build_financial_derived.py --full      # 历史全量回补（幂等）
     python scripts/ch/build_financial_derived.py --check     # 实库 PIT 交叉验证
     scheduler → InternalComputeProvider → run_compute()     # 夜间派生（nightly_financial 后）
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/implementations/financial_derived_compute.yaml
 """
 
 from __future__ import annotations
@@ -54,7 +56,7 @@ _REPO_ROOT = str(Path(__file__).resolve().parents[3])
 if _REPO_ROOT not in sys.path:
     sys.path.insert(0, _REPO_ROOT)
 
-from zephyr.data.provider_base import FetchResult
+from zephyr.data.provider_base import FetchResult, norm_boundary_date
 
 log = logging.getLogger(__name__)
 
@@ -67,21 +69,43 @@ _BATCH_SIZE = 100_000
 # 各语句加载列（键 3 列 + 派生所需字段；列名经 system.columns 核实 2026-09-13）
 _LOAD_COLS: dict[str, list[str]] = {
     "income_statement": [
-        "symbol", "report_period", "announce_date",
-        "operating_revenue", "operating_cost", "operating_profit", "total_profit",
-        "income_tax", "net_profit_incl_minority", "net_profit_excl_minority",
-        "eps_basic", "rd_expense",
+        "symbol",
+        "report_period",
+        "announce_date",
+        "operating_revenue",
+        "operating_cost",
+        "operating_profit",
+        "total_profit",
+        "income_tax",
+        "net_profit_incl_minority",
+        "net_profit_excl_minority",
+        "eps_basic",
+        "rd_expense",
     ],
     "balance_sheet": [
-        "symbol", "report_period", "announce_date",
-        "total_assets", "total_liabilities", "total_current_assets",
-        "total_current_liabilities", "accounts_receivable", "inventory", "goodwill",
-        "equity_incl_minority", "retained_earnings", "short_term_loan", "long_term_loan",
+        "symbol",
+        "report_period",
+        "announce_date",
+        "total_assets",
+        "total_liabilities",
+        "total_current_assets",
+        "total_current_liabilities",
+        "accounts_receivable",
+        "inventory",
+        "goodwill",
+        "equity_incl_minority",
+        "retained_earnings",
+        "short_term_loan",
+        "long_term_loan",
         "total_shares",
     ],
     "cashflow_statement": [
-        "symbol", "report_period", "announce_date",
-        "ocf_net", "icf_net", "fcff",
+        "symbol",
+        "report_period",
+        "announce_date",
+        "ocf_net",
+        "icf_net",
+        "fcff",
     ],
 }
 
@@ -122,6 +146,7 @@ _STMTS = ("income_statement", "balance_sheet", "cashflow_statement")
 # ============================================================================
 # 纯函数核（无 IO；tests/zephyr/data/test_financial_derived_compute.py 直测）
 # ============================================================================
+
 
 def parse_float(v) -> float | None:
     """TSV 值/原始值 → float；''/'\\N'/NaN/不可解析 → None。"""
@@ -224,8 +249,7 @@ def build_symbol_rows(symbol: str, store: dict[str, dict[dt.date, list]]) -> lis
     return rows
 
 
-def _build_event_row(symbol: str, p: dt.date, a: dt.date,
-                     inc: dict, bal: dict, cfs: dict) -> dict | None:
+def _build_event_row(symbol: str, p: dt.date, a: dt.date, inc: dict, bal: dict, cfs: dict) -> dict | None:
     """单个对齐事件的派生行（as-of a 取三方可见版本；任一侧尚不可见→None 不成行）。"""
     i0 = visible(inc[p], a)
     b0 = visible(bal[p], a)
@@ -317,12 +341,12 @@ def _build_event_row(symbol: str, p: dt.date, a: dt.date,
     row["eff_tax_rate_ttm"] = safe_div(row["income_tax_ttm"], row["total_profit_ttm"])
     row["debt_ratio"] = safe_div(row["total_liabilities"], row["total_assets"])
     return row
-    return rows
 
 
 # ============================================================================
 # IO 边缘（加载/写批）
 # ============================================================================
+
 
 def load_versions(symbols: list[str] | None = None) -> VersionStore:
     """读三大报表全部有效版本（哨兵过滤在 SQL 层完成）→ 版本 store。
@@ -380,8 +404,14 @@ def run_compute(
 
     Args:
         symbols: 标的子集（None=全市场）。
-        start/end: 衍生公告日窗口（含，iso str）。None=不限（历史全量回补）。
+        start/end: 衍生公告日窗口（含，iso str 或 datetime.date——provider 传
+                   FetchPayload 同名字段实测为 date，入口经 norm_boundary_date
+                   规整再比）。None=不限（历史全量回补）。
     """
+    # 边界先规整：announce_date 为 iso str，date 直入比较即崩 '<'（#30 共因，
+    # C1 一处规整覆盖三实例）
+    start = norm_boundary_date(start)
+    end = norm_boundary_date(end)
     store = load_versions(symbols)
     n_symbols = len(set().union(*(set(store[s]) for s in _STMTS))) if store else 0
     if n_symbols == 0:

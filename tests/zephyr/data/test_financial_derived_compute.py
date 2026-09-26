@@ -52,29 +52,56 @@ def _v(ann: str, **vals) -> tuple[dt.date, dict]:
 def store_600519() -> dict:
     """四季跨年 fixture（值即期望的算术基底，断言内显式写出算式）。"""
     inc = {
-        _d("2024-03-31"): [_v("2024-04-18", operating_revenue="90", operating_cost="54",
-                              net_profit_incl_minority="18")],
-        _d("2024-06-30"): [_v("2024-08-20", operating_revenue="200", operating_cost="120",
-                              net_profit_incl_minority="40", total_profit="48", income_tax="6")],
-        _d("2024-09-30"): [_v("2024-10-25", operating_revenue="350", operating_cost="210",
-                              net_profit_incl_minority="70")],
-        _d("2024-12-31"): [_v("2025-04-10", operating_revenue="500", operating_cost="300",
-                              net_profit_incl_minority="100", total_profit="120", income_tax="15")],
+        _d("2024-03-31"): [
+            _v("2024-04-18", operating_revenue="90", operating_cost="54", net_profit_incl_minority="18")
+        ],
+        _d("2024-06-30"): [
+            _v(
+                "2024-08-20",
+                operating_revenue="200",
+                operating_cost="120",
+                net_profit_incl_minority="40",
+                total_profit="48",
+                income_tax="6",
+            )
+        ],
+        _d("2024-09-30"): [
+            _v("2024-10-25", operating_revenue="350", operating_cost="210", net_profit_incl_minority="70")
+        ],
+        _d("2024-12-31"): [
+            _v(
+                "2025-04-10",
+                operating_revenue="500",
+                operating_cost="300",
+                net_profit_incl_minority="100",
+                total_profit="120",
+                income_tax="15",
+            )
+        ],
         # Q1-2025 带 09-15 修正公告（PIT 语义主考题）
-        _d("2025-03-31"): [_v("2025-04-20", operating_revenue="100", operating_cost="60",
-                              net_profit_incl_minority="20"),
-                           _v("2025-09-15", operating_revenue="105", operating_cost="63",
-                              net_profit_incl_minority="21")],
+        _d("2025-03-31"): [
+            _v("2025-04-20", operating_revenue="100", operating_cost="60", net_profit_incl_minority="20"),
+            _v("2025-09-15", operating_revenue="105", operating_cost="63", net_profit_incl_minority="21"),
+        ],
         # H1-2025 带 09-01 修正公告
-        _d("2025-06-30"): [_v("2025-08-20", operating_revenue="260", operating_cost="150",
-                              net_profit_incl_minority="52", total_profit="60", income_tax="8"),
-                           _v("2025-09-01", operating_revenue="270", operating_cost="155",
-                              net_profit_incl_minority="54")],
-        _d("2025-09-30"): [_v("2025-10-20", operating_revenue="400", operating_cost="230",
-                              net_profit_incl_minority="80")],
+        _d("2025-06-30"): [
+            _v(
+                "2025-08-20",
+                operating_revenue="260",
+                operating_cost="150",
+                net_profit_incl_minority="52",
+                total_profit="60",
+                income_tax="8",
+            ),
+            _v("2025-09-01", operating_revenue="270", operating_cost="155", net_profit_incl_minority="54"),
+        ],
+        _d("2025-09-30"): [
+            _v("2025-10-20", operating_revenue="400", operating_cost="230", net_profit_incl_minority="80")
+        ],
         # 非季末期（历史脏数据形态）：宽表成行但不拆分
-        _d("2025-05-31"): [_v("2025-06-18", operating_revenue="180", operating_cost="100",
-                              net_profit_incl_minority="36")],
+        _d("2025-05-31"): [
+            _v("2025-06-18", operating_revenue="180", operating_cost="100", net_profit_incl_minority="36")
+        ],
     }
     bal = {
         _d("2024-06-30"): [_v("2024-08-22", total_assets="900", total_liabilities="450")],
@@ -100,6 +127,7 @@ def store_600519() -> dict:
 # 助手纯函数
 # ---------------------------------------------------------------------------
 
+
 def test_shift_quarter_keeps_quarter_end():
     assert shift_quarter(_d("2026-03-31"), -1) == _d("2025-12-31")
     assert shift_quarter(_d("2026-03-31"), -4) == _d("2025-03-31")
@@ -112,15 +140,15 @@ def test_shift_quarter_non_quarter_end_clamps_day():
 
 
 def test_fiscal_prev():
-    assert fiscal_prev(_d("2026-03-31")) is None          # Q1 无同年上期
+    assert fiscal_prev(_d("2026-03-31")) is None  # Q1 无同年上期
     assert fiscal_prev(_d("2026-06-30")) == _d("2026-03-31")
     assert fiscal_prev(_d("2026-12-31")) == _d("2026-09-30")
-    assert fiscal_prev(_d("2026-05-31")) is None          # 非季末不拆分
+    assert fiscal_prev(_d("2026-05-31")) is None  # 非季末不拆分
 
 
 def test_growth_abs_base():
     assert growth(160.0, 110.0) == pytest.approx(50 / 110)
-    assert growth(10.0, -50.0) == pytest.approx(1.2)      # |base| 防负值翻转
+    assert growth(10.0, -50.0) == pytest.approx(1.2)  # |base| 防负值翻转
     assert growth(None, 10.0) is None
     assert growth(10.0, None) is None
     assert growth(10.0, 0.0) is None
@@ -134,8 +162,8 @@ def test_safe_div_zero_and_none():
 
 def test_visible_as_of_picks_latest_not_later():
     versions = [_v("2025-04-20", x="1"), _v("2025-09-15", x="2")]
-    assert visible(versions, _d("2025-08-01"))["x"] == "1"   # 修正版尚未公告
-    assert visible(versions, _d("2025-09-15"))["x"] == "2"   # 已到修正时点
+    assert visible(versions, _d("2025-08-01"))["x"] == "1"  # 修正版尚未公告
+    assert visible(versions, _d("2025-09-15"))["x"] == "2"  # 已到修正时点
     assert visible(versions, _d("2025-01-01")) is None
     assert visible(None, _d("2025-09-15")) is None
 
@@ -143,6 +171,7 @@ def test_visible_as_of_picks_latest_not_later():
 # ---------------------------------------------------------------------------
 # build_symbol_rows：对齐事件 + PIT 语义主场景
 # ---------------------------------------------------------------------------
+
 
 def test_alignment_events_and_row_count(store_600519):
     rows = build_symbol_rows("600519", store_600519)
@@ -154,10 +183,9 @@ def test_alignment_events_and_row_count(store_600519):
 
 
 def test_single_quarter_split(store_600519):
-    by = {(r["report_period"], r["announce_date"]): r
-          for r in build_symbol_rows("600519", store_600519)}
+    by = {(r["report_period"], r["announce_date"]): r for r in build_symbol_rows("600519", store_600519)}
     q1 = by[("2025-03-31", "2025-04-22")]
-    assert q1["rev_q"] == pytest.approx(100)             # Q1=累计本身
+    assert q1["rev_q"] == pytest.approx(100)  # Q1=累计本身
     h1 = by[("2025-06-30", "2025-08-25")]
     assert h1["rev_q"] == pytest.approx(260 - 100)
     assert h1["cost_q"] == pytest.approx(150 - 60)
@@ -166,14 +194,13 @@ def test_single_quarter_split(store_600519):
 
 
 def test_ttm_rolling_four_quarters(store_600519):
-    by = {(r["report_period"], r["announce_date"]): r
-          for r in build_symbol_rows("600519", store_600519)}
+    by = {(r["report_period"], r["announce_date"]): r for r in build_symbol_rows("600519", store_600519)}
     h1 = by[("2025-06-30", "2025-08-25")]
     assert h1["rev_ttm"] == pytest.approx(500 + 260 - 200)
     assert h1["np_ttm"] == pytest.approx(100 + 52 - 40)
     assert h1["ocf_ttm"] == pytest.approx(80 + 150 - 30)
     fy = by[("2024-12-31", "2025-04-12")]
-    assert fy["rev_ttm"] == pytest.approx(500)           # FY 期 TTM=累计本身
+    assert fy["rev_ttm"] == pytest.approx(500)  # FY 期 TTM=累计本身
     q3 = by[("2025-09-30", "2025-10-22")]
     assert q3["rev_ttm"] == pytest.approx(500 + 400 - 350)
     # 历史缺失 → NULL（2024H1 事件时点无 FY2023）
@@ -182,10 +209,9 @@ def test_ttm_rolling_four_quarters(store_600519):
 
 
 def test_ratios(store_600519):
-    by = {(r["report_period"], r["announce_date"]): r
-          for r in build_symbol_rows("600519", store_600519)}
+    by = {(r["report_period"], r["announce_date"]): r for r in build_symbol_rows("600519", store_600519)}
     h1 = by[("2025-06-30", "2025-08-25")]
-    assert h1["accrual_ttm"] == pytest.approx((112 - 200) / 1100)      # (np_ttm-ocf_ttm)/ta
+    assert h1["accrual_ttm"] == pytest.approx((112 - 200) / 1100)  # (np_ttm-ocf_ttm)/ta
     assert h1["gpoa_ttm"] == pytest.approx((560 - 330) / 1100)
     assert h1["gross_margin_q"] == pytest.approx((160 - 90) / 160)
     assert h1["eff_tax_rate_ttm"] == pytest.approx(17 / 132)
@@ -193,20 +219,18 @@ def test_ratios(store_600519):
 
 
 def test_growth_fields(store_600519):
-    by = {(r["report_period"], r["announce_date"]): r
-          for r in build_symbol_rows("600519", store_600519)}
+    by = {(r["report_period"], r["announce_date"]): r for r in build_symbol_rows("600519", store_600519)}
     h1 = by[("2025-06-30", "2025-08-25")]
-    assert h1["rev_q_yoy"] == pytest.approx((160 - 110) / 110)   # 去年同期单季=200-90
+    assert h1["rev_q_yoy"] == pytest.approx((160 - 110) / 110)  # 去年同期单季=200-90
     assert h1["np_q_yoy"] == pytest.approx((32 - 22) / 22)
     assert h1["ocf_q_yoy"] == pytest.approx((90 - 18) / 18)
-    assert h1["rev_q_qoq"] == pytest.approx((160 - 100) / 100)   # 上季=Q1 累计
+    assert h1["rev_q_qoq"] == pytest.approx((160 - 100) / 100)  # 上季=Q1 累计
     assert h1["np_q_qoq"] == pytest.approx((32 - 20) / 20)
 
 
 def test_pit_no_lookahead_from_later_restatement(store_600519):
     """期后修正公告不得污染已公告时点（D1/D2 PIT 铁律）。"""
-    by = {(r["report_period"], r["announce_date"]): r
-          for r in build_symbol_rows("600519", store_600519)}
+    by = {(r["report_period"], r["announce_date"]): r for r in build_symbol_rows("600519", store_600519)}
     # H1 原版事件（08-25）：Q1 修正版（09-15）不可见 → 单季按原版 Q1=100 拆分
     h1_orig = by[("2025-06-30", "2025-08-25")]
     assert h1_orig["rev_q"] == pytest.approx(160)
@@ -222,9 +246,46 @@ def test_pit_no_lookahead_from_later_restatement(store_600519):
 
 
 def test_non_quarter_end_period_wide_only(store_600519):
-    by = {(r["report_period"], r["announce_date"]): r
-          for r in build_symbol_rows("600519", store_600519)}
+    by = {(r["report_period"], r["announce_date"]): r for r in build_symbol_rows("600519", store_600519)}
     odd = by[("2025-05-31", "2025-06-18")]
     assert odd["revenue_cum"] == pytest.approx(180)
     assert odd["rev_q"] is None
     assert odd["rev_ttm"] is None
+
+
+def test_run_compute_window_accepts_date_objects(store_600519, monkeypatch):
+    """C1 共因回归（mine_pipe_blockage §3/§7 C1，#30 financial 腿）。
+
+    scheduler 传 FetchPayload.start/end（datetime.date）直入 run_compute 窗口比较
+    `row["announce_date"](str) < start(date)` 即崩
+    ``'<' not supported between instances of 'str' and 'datetime.date'``。
+    修复后：date/str 双型皆不崩，窗口语义不变（两端含端点，事件粒度）。
+    """
+    from zephyr.data.implementations import financial_derived_compute as fd
+
+    # run_compute 的 load_versions 返回 stmt→symbol→period 三层；fixture 是 stmt→period
+    # （build_symbol_rows 形态），补 symbol 层
+    monkeypatch.setattr(
+        fd,
+        "load_versions",
+        lambda symbols: {stmt: {"600519": periods} for stmt, periods in store_600519.items()},
+    )
+    cols = fd.columns_list()
+    ann_idx = cols.index("announce_date")
+
+    def _anns(start, end):
+        batches = list(fd.run_compute(start=start, end=end))
+        return {r[ann_idx] for batch in batches for r in batch.rows}
+
+    # date 双型（调度真实形态）：修复前此处抛 TypeError
+    anns_date = _anns(dt.date(2025, 9, 1), dt.date(2025, 9, 15))
+    assert anns_date == {"2025-09-01", "2025-09-15"}, "窗口两端含端点，事件粒度过滤"
+
+    # str 原形态：与 date 形态结果一致
+    anns_str = _anns("2025-09-01", "2025-09-15")
+    assert anns_str == anns_date
+
+    # 单边 date 下界：早于窗口的事件被剔除
+    anns_lo = _anns(dt.date(2025, 9, 2), None)
+    assert "2025-09-01" not in anns_lo
+    assert "2025-09-15" in anns_lo

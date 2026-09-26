@@ -26,7 +26,9 @@ _spec.loader.exec_module(_mod)
 TD = [date(2026, 8, 10), date(2026, 8, 11), date(2026, 8, 12)]
 
 
-def _rep(symbol: str, pub: str, fy0: int = 2026, eps0: float | None = 1.0, rating: str = "买入", org: str = "A证券") -> dict:
+def _rep(
+    symbol: str, pub: str, fy0: int = 2026, eps0: float | None = 1.0, rating: str = "买入", org: str = "A证券"
+) -> dict:
     return {
         "symbol": symbol,
         "publish_date": pub,
@@ -117,3 +119,29 @@ def test_rating_score_map():
     assert _mod.rating_score("卖出") == 1
     assert _mod.rating_score("") is None
     assert _mod.rating_score("未知评级") is None
+
+
+def test_window_boundary_accepts_date_objects():
+    """C1 共因回归（mine_pipe_blockage §3/§7 C1，#30/#34）。
+
+    FetchPayload.start/end 注记实测 = datetime.date（R6 钉死），而边界比较在
+    td_iso(str) 与 hi_iso/lo_iso 之间——date 直入即崩
+    ``'>'/'<' not supported between instances of 'str' and 'datetime.date'``。
+    修复后：date/str 双型皆不崩，且窗口语义不变（两端含端点）。
+    """
+    reports = [_rep("600519", "2026-08-11")]
+
+    # date 双型（调度真实形态）：修复前此处抛 TypeError
+    rows_date = _mod.build_consensus_rows(reports, TD, window_days=90, start=date(2026, 8, 11), end=date(2026, 8, 12))
+    days = sorted({r[0] for r in rows_date})
+    assert days == ["2026-08-11", "2026-08-12"], "窗口两端须含端点"
+
+    # str 原形态：语义与 date 形态完全一致
+    rows_str = _mod.build_consensus_rows(reports, TD, window_days=90, start="2026-08-11", end="2026-08-12")
+    assert rows_str == rows_date
+
+    # 单边 date 边界：hi 收口生效（08-13 被截除）
+    rows_hi = _mod.build_consensus_rows(reports, TD, window_days=90, end=date(2026, 8, 12))
+    assert sorted({r[0] for r in rows_hi}) == ["2026-08-11", "2026-08-12"]
+    rows_lo = _mod.build_consensus_rows(reports, TD, window_days=90, start=date(2026, 8, 12))
+    assert sorted({r[0] for r in rows_lo}) == ["2026-08-12"]

@@ -39,6 +39,8 @@
 两段数据源（见 schema 模块覆盖边界声明）：
     segment A  2017-01-02~2021-12-31  pdf_forecast_extracted(high) + research_report(评级/计数干净列)
     segment B  2026-07-22~最新        analyst_forecast（同花顺官方一致预期日度快照，§9.2 认定干净源）
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/implementations/consensus_daily_repaired_compute.yaml
 """
 
 from __future__ import annotations
@@ -50,7 +52,7 @@ from zephyr.data.implementations.consensus_daily_compute import (
     build_consensus_rows,
     rating_score,
 )
-from zephyr.data.provider_base import FetchResult
+from zephyr.data.provider_base import FetchResult, norm_boundary_date
 from zephyr.data.table_registry import get_registry
 
 log = logging.getLogger(__name__)
@@ -58,10 +60,10 @@ log = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # 预注册守卫参数（方案 §6/§9.3 铁律的机读形态；改这些值=挪判据，须裁定）
 # ---------------------------------------------------------------------------
-GUARD_CONFIDENCE = "high"          # 铁律：high-only 入聚合，mid 留档待复核升级、low 排除
-GUARD_EPS_GT = 0.0                 # G1 下界：非正 EPS 不入（提取无负值行，防御性）
-GUARD_EPS_LE = 50.0                # G1 上界：域内不可能值（见 INVARIANTS 依据）
-SLOT_MAX = 3                       # G2：研报槽位数上限（对齐 fy0/fy1/fy2）
+GUARD_CONFIDENCE = "high"  # 铁律：high-only 入聚合，mid 留档待复核升级、low 排除
+GUARD_EPS_GT = 0.0  # G1 下界：非正 EPS 不入（提取无负值行，防御性）
+GUARD_EPS_LE = 50.0  # G1 上界：域内不可能值（见 INVARIANTS 依据）
+SLOT_MAX = 3  # G2：研报槽位数上限（对齐 fy0/fy1/fy2）
 
 # 重建批次标识（写入 build_batch 列；守卫参数与源行数写台账，不塞进数据列）
 BUILD_BATCH = "c4-repair-20260916"
@@ -86,11 +88,7 @@ _SQL_REPORT_ROWS = (
     "FROM {tbl} FINAL "
     "WHERE publish_date >= toDate('{lo}') AND publish_date <= toDate('{hi}')"
 )
-_SQL_PDF_EPS = (
-    "SELECT report_id, forecast_year, eps "
-    "FROM {tbl} FINAL "
-    "WHERE confidence = '{confidence}'"
-)
+_SQL_PDF_EPS = "SELECT report_id, forecast_year, eps FROM {tbl} FINAL WHERE confidence = '{confidence}'"
 _SQL_ANALYST_ROWS = (
     "SELECT toString(report_date), symbol, forecast_year, forecast_eps, forecast_pe, rating, "
     "analyst_count FROM {tbl} FINAL "
@@ -102,6 +100,7 @@ _SQL_ANALYST_MAX_DATE = "SELECT max(report_date) FROM {tbl} FINAL"
 # ---------------------------------------------------------------------------
 # segment A 证据适配（PDF 提取行 → build_consensus_rows 的研报行形态）
 # ---------------------------------------------------------------------------
+
 
 def pick_slots(years_eps: list[tuple[int, float]], publish_year: int) -> list[tuple[int, float]]:
     """G2 槽位选取规则 S1：从一份研报的 (forecast_year, eps) 集合里选出至多 SLOT_MAX 个年度。
@@ -201,9 +200,7 @@ def load_pdf_evidence() -> tuple[list[dict], dict[str, list[tuple[int, float]]],
     """
     from zephyr.data import ch_reader
 
-    rr_tsv = ch_reader.query(
-        _SQL_REPORT_ROWS.format(tbl=_TBL_RESEARCH_REPORT, lo=SEGMENT_A_START, hi=SEGMENT_A_END)
-    )
+    rr_tsv = ch_reader.query(_SQL_REPORT_ROWS.format(tbl=_TBL_RESEARCH_REPORT, lo=SEGMENT_A_START, hi=SEGMENT_A_END))
     if not (rr_tsv or "").strip():
         raise RuntimeError("research_report segment A 区间为空（源表不可达），拒绝产出空派生层")
 
@@ -242,8 +239,11 @@ def load_pdf_evidence() -> tuple[list[dict], dict[str, list[tuple[int, float]]],
     }
     log.info(
         "segment A 证据：%d 研报行（其中 %d 携带 EPS），EPS 行 %d，守卫剔除 %d，槽位截断 %d",
-        stats["reports_in_window"], stats["reports_with_eps"], stats["eps_rows_kept"],
-        stats["eps_rows_dropped_by_guard"], stats["slot_rows_trimmed"],
+        stats["reports_in_window"],
+        stats["reports_with_eps"],
+        stats["eps_rows_kept"],
+        stats["eps_rows_dropped_by_guard"],
+        stats["slot_rows_trimmed"],
     )
     return report_rows, stats
 
@@ -262,20 +262,16 @@ def build_segment_a(
     if symbols:
         keep = set(symbols)
         report_rows = [r for r in report_rows if r["symbol"] in keep]
-    base = build_consensus_rows(
-        report_rows, trade_dates, window_days=window_days, start=start, end=end
-    )
+    base = build_consensus_rows(report_rows, trade_dates, window_days=window_days, start=start, end=end)
     # 现核第 20 列硬编码 'research_report'（=DS-229 口径），双轨表须如实标 EPS 证据源
-    out = [
-        r[:19] + ("pdf_forecast_extracted", EPS_SOURCE_PDF_HIGH, BUILD_BATCH)
-        for r in base
-    ]
+    out = [r[:19] + ("pdf_forecast_extracted", EPS_SOURCE_PDF_HIGH, BUILD_BATCH) for r in base]
     return out, stats
 
 
 # ---------------------------------------------------------------------------
 # segment B（官方一致预期快照，非窗口聚合）
 # ---------------------------------------------------------------------------
+
 
 def _rating_counts(sc: float | None) -> tuple[int, int, int, int, int]:
     """评级分档：买入≥7 / 增持 5-6 / 中性·持有 3-4 / 消极 <3 / 未评（sc 为 None）。"""
@@ -317,11 +313,28 @@ def _segment_b_row(parts: list[str], eps_source: str) -> tuple | None:
     sc = rating_score(rating)
     n_buy, n_add, n_neu, n_neg, n_unrated = _rating_counts(sc)
     return (
-        d, symbol, int(float(fy)), round(eps, 6), round(eps, 6), 0.0, round(eps, 6), round(eps, 6),
-        pe, n_analysts, 0, float(sc) if sc is not None else None,
-        n_buy, n_add, n_neu, n_neg, n_unrated,
-        dt.date.fromisoformat(d).isoformat(), 1,
-        "analyst_forecast", eps_source, BUILD_BATCH,
+        d,
+        symbol,
+        int(float(fy)),
+        round(eps, 6),
+        round(eps, 6),
+        0.0,
+        round(eps, 6),
+        round(eps, 6),
+        pe,
+        n_analysts,
+        0,
+        float(sc) if sc is not None else None,
+        n_buy,
+        n_add,
+        n_neu,
+        n_neg,
+        n_unrated,
+        dt.date.fromisoformat(d).isoformat(),
+        1,
+        "analyst_forecast",
+        eps_source,
+        BUILD_BATCH,
     )
 
 
@@ -333,16 +346,14 @@ def build_segment_b(trade_dates: list, end: str | None) -> list[tuple]:
     n_orgs 结构性不可得记 0，eps_std 恒 0，eps_min=eps_max=eps_consensus。
     非交易日的 report_date 丢弃（禁前向填充）。
     """
-    from zephyr.data import ch_reader
     from schemas.categories.fundamental.consensus_daily_repaired import (
         EPS_SOURCE_ANALYST_FORECAST,
     )
+    from zephyr.data import ch_reader
 
     trade_set = {d if isinstance(d, str) else d.isoformat() for d in trade_dates}
     hi = end or max(trade_set)
-    tsv = ch_reader.query(
-        _SQL_ANALYST_ROWS.format(tbl=_TBL_ANALYST_FORECAST, lo=SEGMENT_B_START, hi=hi)
-    )
+    tsv = ch_reader.query(_SQL_ANALYST_ROWS.format(tbl=_TBL_ANALYST_FORECAST, lo=SEGMENT_B_START, hi=hi))
     rows: list[tuple] = []
     n_offcal = 0
     for line in (tsv or "").strip().split("\n"):
@@ -365,6 +376,7 @@ def build_segment_b(trade_dates: list, end: str | None) -> list[tuple]:
 # 主流程
 # ---------------------------------------------------------------------------
 
+
 def run_compute_repaired(
     symbols: list[str] | None = None,
     start: str | None = None,
@@ -381,14 +393,16 @@ def run_compute_repaired(
     Raises:
         RuntimeError: 源表不可达或区间无交易日。
     """
-    from zephyr.data.implementations.consensus_daily_compute import load_trade_dates
     from schemas.categories.fundamental.consensus_daily_repaired import (
         INSERT_COLUMNS,
         TABLE_NAME,
     )
+    from zephyr.data.implementations.consensus_daily_compute import load_trade_dates
 
-    lo = start or SEGMENT_A_START
-    hi = end or SEGMENT_A_END
+    # 边界先规整（str/date 双型容差）：provider 传 FetchPayload.start/end 实测 date，
+    # 直入 A 段同核边界比较即崩 '>'（#34 _repaired 旁表实例，C1 一处规整覆盖三实例）
+    lo = norm_boundary_date(start) or SEGMENT_A_START
+    hi = norm_boundary_date(end) or SEGMENT_A_END
     trade_dates = load_trade_dates(lo, hi)
     if not trade_dates:
         raise RuntimeError(f"区间 {lo}~{hi} 无交易日，拒绝产出")
@@ -409,8 +423,11 @@ def run_compute_repaired(
     log.info("合计产出 %d 行（A=%d, B=%d）", len(all_rows), len(rows_a), len(all_rows) - len(rows_a))
     for i in range(0, len(all_rows), batch_size):
         yield FetchResult(
-            table=tbl, columns=columns, rows=all_rows[i : i + batch_size],
-            last_key="", elapsed_sec=0.0,
+            table=tbl,
+            columns=columns,
+            rows=all_rows[i : i + batch_size],
+            last_key="",
+            elapsed_sec=0.0,
         )
 
 
