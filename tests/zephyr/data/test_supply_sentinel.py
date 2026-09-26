@@ -16,6 +16,7 @@
 
 from __future__ import annotations
 
+import re
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Any
@@ -443,3 +444,61 @@ def test_shipped_config_covers_every_measured_table_with_a_row_floor_or_fill_leg
     assert floored and floored[0]["row_filter"] == "data_source = 'tdx'", (
         "行数地板腿必须切在真值源上，否则 synth_* 合成行自己就能把地板填满而过关"
     )
+
+
+# ============== P4 前瞻日期污染新鲜度尺（restricted_shares max=2035-10-29 案） ==============
+
+
+class _ForwardAwareRunner:
+    """模拟含前瞻日期行的表：尊重 SQL 里的 `{col} <= toDate('X')` 上界（无上界=不过滤）。
+
+    restricted_shares 的 unlock_date 合法地含未来解禁排期——新鲜度腿若不强制上界，
+    max() 返 2035 → lag 为负 → 判据永绿失明。
+    """
+
+    def __init__(self, rows: list[str]) -> None:
+        self._rows = sorted(date.fromisoformat(r) for r in rows)
+        self.sqls: list[str] = []
+
+    def __call__(self, sql: str) -> str:
+        self.sqls.append(sql)
+        m = re.search(r"<=\s*toDate\('(\d{4}-\d{2}-\d{2})'\)", sql)
+        hi = date.fromisoformat(m.group(1)) if m else None
+        visible = [d for d in self._rows if hi is None or d <= hi]
+        return max(visible).isoformat() if visible else "\\N"
+
+
+def test_forward_dated_rows_cannot_masquerade_as_fresh(tmp_path: Path) -> None:
+    """P4（census §5 字段向）：past_only 未开时，前瞻行不得垫高 max(date_col) 骗绿。
+
+    restricted_shares 案实形：unlock_date 真实最新过去值 2026-06-01（lag 已超限），
+    但表内混 2035-10-29 前瞻解禁排期——修复前无上界，max=2035 → lag=-2782 → 永绿。
+    """
+    entry = {
+        "table": "c3_fundamental.restricted_shares",
+        "date_col": "unlock_date",
+        "max_lag_days": 30,
+        "past_only": False,  # 该表语义未开 past_only（未来行在行数地板腿合法计数）
+    }
+    runner = _ForwardAwareRunner(["2026-06-01", "2035-10-29"])
+    summary = _run(tmp_path, [entry], runner, today=date(2026, 9, 27))
+    max_sql = next(s for s in runner.sqls if "max(unlock_date)" in s)
+    assert "unlock_date <= toDate('2026-09-27')" in max_sql, "新鲜度 max() 查询缺今日上界"
+    red = [r for r in summary["results"] if r["breached"]]
+    assert len(red) == 1, "前瞻行垫高 max 后真实停更被判绿 = 新鲜度尺仍是假的"
+    assert red[0]["max_date"] == "2026-06-01", "max 必须剔前瞻后取最近过去值"
+    assert red[0]["lag_days"] == 118
+
+
+def test_forward_pollution_reported_not_falsely_green(tmp_path: Path) -> None:
+    """前瞻污染但过去侧真新鲜时：不得因剔除前瞻行误报停更（剔除≠判停更）。"""
+    entry = {
+        "table": "c3_fundamental.restricted_shares",
+        "date_col": "unlock_date",
+        "max_lag_days": 30,
+    }
+    runner = _ForwardAwareRunner(["2026-09-20", "2035-10-29"])
+    summary = _run(tmp_path, [entry], runner, today=date(2026, 9, 27))
+    assert summary["breached"] == 0, "过去侧有新鲜行（lag=7d）被前瞻剔除误伤=新噪音"
+    ok = summary["results"][0]
+    assert ok["max_date"] == "2026-09-20" and ok["lag_days"] == 7

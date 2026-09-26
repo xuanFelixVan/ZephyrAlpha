@@ -68,6 +68,8 @@
                                                      # 运维一次性巡检（无 argparse 入口：
                                                      # MANUAL-ONLY-PERMANENT 门禁禁 permanent 模块
                                                      # 带 manual 触发模式）
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_data/algo_flow/data/supply_sentinel.yaml
 """
 
 from __future__ import annotations
@@ -109,10 +111,22 @@ HEARTBEAT_DATE_COLS: Final = frozenset(
 #: 条目允许的键（未知键=报错，防拼错的阈值名让检查静默空转）
 _ALLOWED_KEYS: Final = frozenset(
     {
-        "table", "date_col", "max_lag_days", "past_only", "allow_empty",
-        "rationale_zh", "reviewed_at", "reviewed_by", "gap_id",
-        "row_filter", "lag_basis", "cadence", "heartbeat_leg", "leg_name",
-        "min_rows_in_window", "column_fill_ratio",
+        "table",
+        "date_col",
+        "max_lag_days",
+        "past_only",
+        "allow_empty",
+        "rationale_zh",
+        "reviewed_at",
+        "reviewed_by",
+        "gap_id",
+        "row_filter",
+        "lag_basis",
+        "cadence",
+        "heartbeat_leg",
+        "leg_name",
+        "min_rows_in_window",
+        "column_fill_ratio",
     }
 )
 _LAG_BASES: Final = frozenset({"calendar_days", "trading_days"})
@@ -160,9 +174,7 @@ def _load_config(config_path: Path | None = None) -> list[dict[str, Any]]:
             raise _config_error("断供哨兵配置条目非映射", path=str(path), entry_index=i)
         for field in ("table", "date_col", "max_lag_days"):
             if field not in entry:
-                raise _config_error(
-                    "断供哨兵配置条目缺必备字段", path=str(path), entry_index=i, missing_field=field
-                )
+                raise _config_error("断供哨兵配置条目缺必备字段", path=str(path), entry_index=i, missing_field=field)
         _validate_entry(entry, path=path, index=i)
     return tables
 
@@ -189,7 +201,7 @@ def _validate_entry(entry: dict[str, Any], *, path: Path, index: int) -> None:
     _validate_fill_ratio(entry.get("column_fill_ratio"), loc=loc)
 
 
-def _validate_row_filter(row_filter: Any, *, loc: dict) -> None:
+def _validate_row_filter(row_filter: str | None, *, loc: dict) -> None:
     """维度谓词字符集护栏：只拦语句级逃逸（分号/注释/UNION），比较表达式放行。"""
     if row_filter is None:
         return
@@ -201,7 +213,7 @@ def _validate_row_filter(row_filter: Any, *, loc: dict) -> None:
             raise _config_error(f"row_filter 含禁用片段 {banned!r}", **loc)
 
 
-def _validate_min_rows(spec: Any, *, loc: dict) -> None:
+def _validate_min_rows(spec: dict | None, *, loc: dict) -> None:
     """min_rows_in_window 结构校验（window_days=0 即全表行数地板）。"""
     if spec is None:
         return
@@ -215,7 +227,7 @@ def _validate_min_rows(spec: Any, *, loc: dict) -> None:
         raise _config_error("min_rows_in_window 的 window_days/min_rows 须为非负/正整数", **loc)
 
 
-def _validate_fill_ratio(spec: Any, *, loc: dict) -> None:
+def _validate_fill_ratio(spec: dict | None, *, loc: dict) -> None:
     """column_fill_ratio 结构校验（cols 非空 + min_ratio∈(0,1] + 列名白名单）。"""
     if spec is None:
         return
@@ -240,7 +252,7 @@ def _validate_fill_ratio(spec: Any, *, loc: dict) -> None:
         raise _config_error("column_fill_ratio.window_days 须为非负整数", **loc)
 
 
-def _as_pos_int(value: Any) -> int | None:
+def _as_pos_int(value: object) -> int | None:
     """非负整数解析（bool 拒收——YAML `true` 投毒成 1 是静默失效的老坑）。"""
     if isinstance(value, bool) or value is None:
         return None
@@ -305,24 +317,32 @@ def _default_calendar():
 # ============== 三类判据腿 ==============
 
 
-def _check_date_leg(
-    entry: dict[str, Any], today: date, runner: QueryRunner, calendar_cache: dict
-) -> dict[str, Any]:
+def _check_date_leg(entry: dict[str, Any], today: date, runner: QueryRunner, calendar_cache: dict) -> dict[str, Any]:
     """业务新鲜度腿：max(date_col) 落后天数 vs max_lag_days（含维度切片/交易日口径/回填档位）。"""
     table = str(entry["table"])
     date_col = str(entry["date_col"])
     max_lag = int(entry["max_lag_days"])
     result: dict[str, Any] = {
-        "table": table, "date_col": date_col, "leg": entry.get("leg_name"),
-        "max_date": None, "lag_days": None, "max_lag_days": max_lag,
-        "breached": False, "detail": "ok",
+        "table": table,
+        "date_col": date_col,
+        "leg": entry.get("leg_name"),
+        "max_date": None,
+        "lag_days": None,
+        "max_lag_days": max_lag,
+        "breached": False,
+        "detail": "ok",
     }
     if entry.get("cadence") == "static_backfill":
         result["detail"] = "cadence=static_backfill（无日更语义，新鲜度腿让位于行数地板）"
         return result
-    sql = _SQL_MAX_DATE.format(
-        date_col=date_col, table=table, where_clause=_where(_predicates(entry, today))
-    )
+    preds = _predicates(entry, today)
+    # 新鲜度腿强制剔除前瞻日期（>今日）：restricted_shares max(unlock_date)=2035-10-29
+    # 前瞻解禁行实证——未来行混入 max() 得负 lag，判据永绿失明（P4，census §5 字段向）。
+    # past_only 只约束行数地板/填充率腿的口径；新鲜度腿语义上恒取"最近过去"。
+    bound = f"{date_col} <= toDate('{today.isoformat()}')"
+    if bound not in preds:
+        preds.append(bound)
+    sql = _SQL_MAX_DATE.format(date_col=date_col, table=table, where_clause=_where(preds))
     raw = _scalar(runner, sql)
     if _is_empty_max(raw):
         if entry.get("allow_empty"):
@@ -373,7 +393,10 @@ def _check_row_floor_leg(entry: dict[str, Any], today: date, runner: QueryRunner
     sql = _SQL_WINDOW_COUNT.format(table=entry["table"], where_clause=_where(preds))
     rows = int(_scalar(runner, sql))
     outcome = {
-        "kind": "row_floor", "window_days": window_days, "min_rows": min_rows, "rows": rows,
+        "kind": "row_floor",
+        "window_days": window_days,
+        "min_rows": min_rows,
+        "rows": rows,
         "breached": rows < min_rows,
         "detail": f"rows={rows} < floor {min_rows}" if rows < min_rows else f"rows={rows}",
     }
@@ -394,7 +417,8 @@ def _check_fill_ratio_leg(entry: dict[str, Any], today: date, runner: QueryRunne
     treat_zero_missing = bool(spec.get("treat_zero_as_missing", True))
     exprs = "".join(f", countIf({_fill_expr(c, treat_zero_missing)})" for c in cols)
     sql = _SQL_FILL_RATIO.format(
-        count_expr=exprs, table=entry["table"],
+        count_expr=exprs,
+        table=entry["table"],
         where_clause=_where(_predicates(entry, today, window_days=window_days)),
     )
     values = _scalar(runner, sql).split("\t")
@@ -404,12 +428,22 @@ def _check_fill_ratio_leg(entry: dict[str, Any], today: date, runner: QueryRunne
     total = int(values[0])
     if total == 0:
         # 窗口内 0 行属"空表/断供"语义，由新鲜度腿与行数地板腿负责，此处不重复鸣（避免一因双告）
-        return {"kind": "fill_ratio", "cols": cols, "rows": 0, "breached": False,
-                "detail": "fill_ratio skipped: window has 0 rows（空窗由新鲜度/地板腿判定）"}
-    ratios = {c: int(v.strip() or 0) / total for c, v in zip(cols, values[1:])}
+        return {
+            "kind": "fill_ratio",
+            "cols": cols,
+            "rows": 0,
+            "breached": False,
+            "detail": "fill_ratio skipped: window has 0 rows（空窗由新鲜度/地板腿判定）",
+        }
+    # strict=False：上方 len(values) != len(cols)+1 守卫已保证等长（防御性豁免）
+    ratios = {c: int(v.strip() or 0) / total for c, v in zip(cols, values[1:], strict=False)}
     low = {c: round(r, 4) for c, r in ratios.items() if r < min_ratio}
     return {
-        "kind": "fill_ratio", "cols": cols, "rows": total, "ratios": ratios, "min_ratio": min_ratio,
+        "kind": "fill_ratio",
+        "cols": cols,
+        "rows": total,
+        "ratios": ratios,
+        "min_ratio": min_ratio,
         "breached": bool(low),
         "detail": f"低填充列 {low}" if low else f"{len(cols)} 列填充率均 >= {min_ratio}",
     }
@@ -426,13 +460,20 @@ def _check_one_entry(entry: dict[str, Any], today: date, runner: QueryRunner, ca
     """单条目全腿判定（任一条腿抛异常=该条目违规，宁报不漏，不阻断其余表）。"""
     try:
         result = _check_date_leg(entry, today, runner, calendar_cache)
-        extras = [o for o in (_check_row_floor_leg(entry, today, runner),
-                              _check_fill_ratio_leg(entry, today, runner)) if o]
+        extras = [
+            o for o in (_check_row_floor_leg(entry, today, runner), _check_fill_ratio_leg(entry, today, runner)) if o
+        ]
     except Exception as exc:  # noqa: BLE001 — 单表查询异常按违规计，不阻断其余表
         return {
-            "table": entry["table"], "date_col": entry.get("date_col"), "leg": entry.get("leg_name"),
-            "max_date": None, "lag_days": None, "max_lag_days": entry.get("max_lag_days"),
-            "breached": True, "detail": f"query error: {str(exc)[:120]}", "checks": [],
+            "table": entry["table"],
+            "date_col": entry.get("date_col"),
+            "leg": entry.get("leg_name"),
+            "max_date": None,
+            "lag_days": None,
+            "max_lag_days": entry.get("max_lag_days"),
+            "breached": True,
+            "detail": f"query error: {str(exc)[:120]}",
+            "checks": [],
         }
     result["checks"] = extras
     failing = [o for o in extras if o["breached"]]
@@ -494,8 +535,7 @@ def _alert_breaches(alerter: Alerter, summary: dict[str, Any]) -> None:
         try:
             alerter.notify(
                 "data_supply_sentinel",
-                f"断供嫌疑: {leg}{r['table']} max({r.get('date_col')})={r.get('max_date')} "
-                f"停更 [{r['detail']}]",
+                f"断供嫌疑: {leg}{r['table']} max({r.get('date_col')})={r.get('max_date')} 停更 [{r['detail']}]",
                 level=LEVEL_ERROR,
                 source="supply_sentinel",
             )
@@ -521,13 +561,17 @@ def run_supply_sentinel(alerter: Alerter | None = None) -> dict[str, Any]:
         summary = check_tables()
     except SupplySentinelError as e:
         log.error("断供哨兵配置错误: %s", e)
-        alerter.notify("data_supply_sentinel", f"哨兵配置错误（检测未执行）: {e}", level=LEVEL_ERROR,
-                       source="supply_sentinel")
+        alerter.notify(
+            "data_supply_sentinel", f"哨兵配置错误（检测未执行）: {e}", level=LEVEL_ERROR, source="supply_sentinel"
+        )
         return {"ok": False, "config_error": str(e)}
     _alert_breaches(alerter, summary)
     log.info(
         "断供哨兵巡检完成: checked=%d breached=%d blind_spots=%d ok=%s",
-        summary["checked"], summary["breached"], summary["heartbeat_blind"], summary["ok"],
+        summary["checked"],
+        summary["breached"],
+        summary["heartbeat_blind"],
+        summary["ok"],
     )
     # 托管变异巡检（quality_sentinel 三类检测）：本槽位是 L13 哨兵唯一排班正门，
     # 不为第二个哨兵另开空档期（空档期=静默假通道，R-021）。自身故障只出声不改写断供结论。
