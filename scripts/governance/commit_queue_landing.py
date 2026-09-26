@@ -940,6 +940,7 @@ def _emit_landing_phase_stat(landing: object, item: dict, total_ms: float) -> No
 
 
 _POOL_WAVE_LOG: Final = "pool_wave.log"
+_POOL_WAVE_LOG_LOCK = threading.Lock()  # 包14 S1 红蓝实测：并发工 append 竞态丢行（39≠40）
 
 
 def _pool_wave_log(root: Path, line: str) -> None:
@@ -948,9 +949,11 @@ def _pool_wave_log(root: Path, line: str) -> None:
     必落文件而非 logger 的原因（实测取证）：belt 守护只 getLogger、不装任何 handler，
     其 logger.error 全走 lastResort→stderr→被丢弃——所以"三路工为何不再认领"在盘上
     至今零证据（调查 R6 判 UNPROVABLE 的直接原因）。只记不判：不改任何认领/中止语义。
+    包14 F-14-5：k 工并发 append 无锁=行丢失（GIVEUP 计数 39/40 实证），取证面失真
+    ——加进程内锁（只记不判语义不变；多进程各写各的队列根，无跨进程共享面）。
     """
     try:
-        with open(Path(root) / _POOL_WAVE_LOG, "a", encoding="utf-8") as f:
+        with _POOL_WAVE_LOG_LOCK, open(Path(root) / _POOL_WAVE_LOG, "a", encoding="utf-8") as f:
             f.write(time.strftime("%Y-%m-%dT%H:%M:%S%z ") + line + "\n")
     except OSError:
         pass
