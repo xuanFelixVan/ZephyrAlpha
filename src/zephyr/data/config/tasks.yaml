@@ -2331,6 +2331,7 @@ tasks:
   source: akshare
   schedule: monthly_static
   incremental: false
+  date_col: publish_date    # P3（census FALSE_GREEN 案）：新鲜度探针锚列，实读 DESC 核名（publish_date=公告日为新鲜度锚，base_date=指数基日非新鲜度）
   dependencies: ["etf_list_refresh"]
   capability: etf_benchmark
   symbols:
