@@ -3,6 +3,7 @@
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_chat（内嵌 LSG）; urllib; xml.etree; yaml（PyYAML）
 # [CONSUMERS] docs/_working/automation/inbox/（情报收件箱）; AI 层对话⑥（未来接管方）;
+#   scripts/backtest/lane_g_stomach_intake.py（F20 事件沿：落新班→车道G消化，fire-and-forget）;
 #   config/intel_sources.yaml + config/intel_keywords.yaml（本件消费的两注册表）
 # [STARTUP] manual
 # [MATURITY] testing
@@ -16,7 +17,8 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 源全败→RuntimeError; Ollama 不可达→摘要降级为原文标题列表（不阻断收件箱产出）
+# [ERROR_CONTRACT] 源全败→RuntimeError; Ollama 不可达→摘要降级为原文标题列表（不阻断收件箱产出）;
+#   车道G消化沿触发失败→仅返回错误串（fire-and-forget，不反噬搜索班退出码）
 # [TESTS] tests/automation/test_intel_harvester.py
 # [A_module] module_id=MOD-AUTO-L3-001 | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -32,6 +34,7 @@ RSSHub 等扩展 kind 允许注册，enabled=false 跳过）。词表：config/i
     python scripts/automation/intel_harvester.py                 # 采集+摘要+收件箱
     python scripts/automation/intel_harvester.py --no-llm        # 跳过摘要（快扫模式）
 """
+
 from __future__ import annotations
 
 import argparse
@@ -40,9 +43,9 @@ import re
 import sys
 import urllib.request
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import yaml
-from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
@@ -60,19 +63,61 @@ SUPPORTED_KINDS = ("rss", "rsshub")
 
 # 内置降级默认（注册表缺失/损坏→warn 降级，班不炸）——必须与两 YAML 现役内容一致
 FALLBACK_SOURCES = [
-    {"source_id": "arxiv-qfin-rm", "kind": "rss", "url": "http://rss.arxiv.org/rss/q-fin.RM",
-     "enabled": True, "politeness": DEFAULT_UA, "category": "风险管理"},
-    {"source_id": "arxiv-qfin-pm", "kind": "rss", "url": "http://rss.arxiv.org/rss/q-fin.PM",
-     "enabled": True, "politeness": DEFAULT_UA, "category": "组合管理"},
-    {"source_id": "arxiv-qfin-tr", "kind": "rss", "url": "http://rss.arxiv.org/rss/q-fin.TR",
-     "enabled": True, "politeness": DEFAULT_UA, "category": "交易"},
+    {
+        "source_id": "arxiv-qfin-rm",
+        "kind": "rss",
+        "url": "http://rss.arxiv.org/rss/q-fin.RM",
+        "enabled": True,
+        "politeness": DEFAULT_UA,
+        "category": "风险管理",
+    },
+    {
+        "source_id": "arxiv-qfin-pm",
+        "kind": "rss",
+        "url": "http://rss.arxiv.org/rss/q-fin.PM",
+        "enabled": True,
+        "politeness": DEFAULT_UA,
+        "category": "组合管理",
+    },
+    {
+        "source_id": "arxiv-qfin-tr",
+        "kind": "rss",
+        "url": "http://rss.arxiv.org/rss/q-fin.TR",
+        "enabled": True,
+        "politeness": DEFAULT_UA,
+        "category": "交易",
+    },
 ]
 # 关键词（命中=高亮标记；feed 已限定 q-fin，词表做标记不做硬剔除——未命中条目进兜底段）
 FALLBACK_KEYWORD_STEMS = [
-    "factor", "alpha", "momentum", "regime", "risk parit", "drawdown", "backtest",
-    "overfitting", "reinforcement", "LLM", "agent", "microstructure", "liquidity",
-    "volatil", "hedg", "portfolio", "markowitz", "extreme value", "option", "derivative",
-    "trading", "market mak", "skew", "tail", "sentiment", "crypto", "seasonality", "forecast",
+    "factor",
+    "alpha",
+    "momentum",
+    "regime",
+    "risk parit",
+    "drawdown",
+    "backtest",
+    "overfitting",
+    "reinforcement",
+    "LLM",
+    "agent",
+    "microstructure",
+    "liquidity",
+    "volatil",
+    "hedg",
+    "portfolio",
+    "markowitz",
+    "extreme value",
+    "option",
+    "derivative",
+    "trading",
+    "market mak",
+    "skew",
+    "tail",
+    "sentiment",
+    "crypto",
+    "seasonality",
+    "forecast",
 ]
 
 _SUMMARY_MAX = 600
@@ -118,7 +163,9 @@ def _normalize_source(e: dict, i: int, seen_ids: set[str]) -> dict | None:
         "url": url if isinstance(url, str) else "",
         "route": e.get("route") if isinstance(e.get("route"), str) else "",
         "enabled": enabled,
-        "politeness": e.get("politeness") if isinstance(e.get("politeness"), str) and e.get("politeness") else DEFAULT_UA,
+        "politeness": e.get("politeness")
+        if isinstance(e.get("politeness"), str) and e.get("politeness")
+        else DEFAULT_UA,
         "category": e.get("category") if isinstance(e.get("category"), str) else "",
     }
 
@@ -229,8 +276,9 @@ def _parse_feed(xml_text: str, source: str) -> list[dict]:
         date = get("pubDate") or (published[:10] if published else "")
         summary = get("description") or get("summary")
         if title:
-            items.append({"source": source, "title": title, "link": link,
-                          "date": (date or "")[:24], "summary": summary[:800]})
+            items.append(
+                {"source": source, "title": title, "link": link, "date": (date or "")[:24], "summary": summary[:800]}
+            )
     return items
 
 
@@ -251,8 +299,7 @@ def fetch_all_sources() -> list[dict]:
         name, url = src["source_id"], src["url"]
         attempts += 1
         try:
-            req = urllib.request.Request(
-                url, headers={"User-Agent": src.get("politeness") or DEFAULT_UA})
+            req = urllib.request.Request(url, headers={"User-Agent": src.get("politeness") or DEFAULT_UA})
             with urllib.request.urlopen(req, timeout=30) as resp:  # noqa: S310 白名单域
                 items.extend(_parse_feed(resp.read().decode("utf-8", errors="replace"), name))
         except Exception as exc:  # noqa: BLE001 — 单源失败降级
@@ -307,17 +354,22 @@ def summarize_with_ollama(items: list[dict], model: str | None) -> list[dict]:
 def render_inbox(items: list[dict]) -> str:
     now = now_utc_str()
     lines = [
-        "---", "ttl: task_bound",
+        "---",
+        "ttl: task_bound",
         "completes_when: 情报被人工消费（入册/上架/归档）后可清理",
-        "---", "",
+        "---",
+        "",
         f"# 情报收件箱 {now}",
         "",
         f"> 只搜不自动入册（Owner 红线）。命中 {len(items)} 条（arXiv q-fin 近期+关键词）。",
         "",
     ]
     for i, it in enumerate(items, 1):
-        lines += [f"## {i}. {it['title']}", "",
-                  f"- 链接: {it['link']}  |  日期: {it['date']}  |  命中词: `{it.get('hit','')}`"]
+        lines += [
+            f"## {i}. {it['title']}",
+            "",
+            f"- 链接: {it['link']}  |  日期: {it['date']}  |  命中词: `{it.get('hit', '')}`",
+        ]
         if it.get("llm_summary"):
             lines.append(f"- 摘要: {it['llm_summary']}")
         lines.append("")
@@ -330,9 +382,39 @@ def render_unmatched(unmatched: list[dict]) -> str:
         return ""
     lines = ["## 兜底：未命中关键词的 q-fin 条目", ""]
     for it in unmatched:
-        lines.append(f"- [{it['title']}]({it['link']}) ({it.get('source','')})")
+        lines.append(f"- [{it['title']}]({it['link']}) ({it.get('source', '')})")
     lines.append("")
     return "\n".join(lines)
+
+
+def trigger_lane_g_intake(inbox_path: Path, hits: int) -> dict:
+    """收件箱落新班→车道G消化的事件沿接线（F20 断点②，2026-09-27 st-ec2-p0）。
+
+    "新文件到达"=合法事件（宪法 §9.3 口径：零 cron/Timer/sleep——本沿由胃搜索班
+    落盘动作本身触发，下一棒=lane_g_stomach_intake run 消化卸台账）。fire-and-forget：
+    子进程 Popen 即返回不等（LLM 消化分钟级，失败自愈=条目不标 seen 下一班重消化），
+    任何异常只返回错误串不反噬搜索班（消化是增益不是依赖）。
+    红线不变：只搜不入册——本沿触发的是"消化"（假说落 lane_g_candidates 候选台账，
+    距注册表仍隔 E2 生杀门/E6 CAS+Owner 数道闸），非注册/上架。
+    """
+    if hits <= 0:
+        return {"triggered": False, "reason": "zero_hits"}
+    try:
+        import subprocess as _sp
+        import sys as _sys
+
+        repo = Path(__file__).resolve().parents[2]
+        creationflags = getattr(_sp, "CREATE_NO_WINDOW", 0)  # Windows 防闪窗；POSIX=0
+        proc = _sp.Popen(
+            [_sys.executable, str(repo / "scripts/backtest/lane_g_stomach_intake.py"), "run"],
+            stdout=_sp.DEVNULL,
+            stderr=_sp.DEVNULL,
+            cwd=str(repo),
+            creationflags=creationflags,
+        )
+        return {"triggered": True, "pid": proc.pid}
+    except Exception as exc:  # noqa: BLE001 — 触发失败不反噬搜索班（下一班重试）
+        return {"triggered": False, "reason": f"{type(exc).__name__}: {exc}"[:160]}
 
 
 def main() -> int:
@@ -356,8 +438,13 @@ def main() -> int:
     out = INBOX_DIR / f"intel-{stamp}.md"
     text = render_inbox(hits) + render_unmatched(unmatched)
     out.write_text(text, encoding="utf-8")
-    print(json.dumps({"ok": True, "out": str(out), "hits": len(hits),
-                      "unmatched": len(unmatched)}, ensure_ascii=False))
+    fired = trigger_lane_g_intake(out, len(hits))  # F20 事件沿：落新班→车道G消化（fire-and-forget）
+    print(
+        json.dumps(
+            {"ok": True, "out": str(out), "hits": len(hits), "unmatched": len(unmatched), "lane_g_intake": fired},
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 
