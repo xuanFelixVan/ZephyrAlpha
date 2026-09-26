@@ -731,3 +731,9 @@ gates:
   source: in_process
   register_line: 0  # priority=77（T8簇2 七台合一 st-commitspeed-pkg8-20260925：BLUEPRINT-FORMAT(77)/BLUEPRINT-HEADER(79)/MODULE-ID-CONSISTENCY(88)/TTL-METADATA(32)/FILE-PLACEMENT-TTL(33)/EXEMPT-ZONE-FM(87)/DOC-REF-BROKEN(91) 吸收入聚合门，7 判据零退役；吸收台薄工厂保留出册）
   enabled: true
+- gate_id: FMS-HYGIENE
+  module_path: zephyr.gov_enforcement.commit_gates.read_side.fms_hygiene_gate
+  factory_function: make_fms_hygiene_gate
+  source: in_process
+  register_line: 0  # priority=138；2026-09-27 FMS 战役 B1（st-fms-chief-20260927）：读侧执法门四查类（DEADREF-NEW 棘轮/ASCII-NEW/PERM-EPHEMERAL/CAS-RESIDUE），own-scope，FMS_HYGIENE_GATE_MODE=warn 起步一行翻 block，与 DOC-REF-BROKEN 净零分工；测试 tests/gov_enforcement/read_side/test_fms_hygiene_gate.py
+  enabled: true
