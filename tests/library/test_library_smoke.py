@@ -7,7 +7,6 @@ from __future__ import annotations
 import pytest
 
 from zephyr.library.collectors.mcp_collector import _server_tools
-from zephyr.library.librarian import Librarian
 from zephyr.library.ledger_schema import (
     _SQL_ENSURE_ASSETS,
     _SQL_ENSURE_EVENTS,
@@ -16,6 +15,7 @@ from zephyr.library.ledger_schema import (
     derive_asset_id,
     validate_action,
 )
+from zephyr.library.librarian import Librarian
 
 
 def test_derive_asset_id_deterministic_and_normalized() -> None:
@@ -64,16 +64,15 @@ def test_ddl_ensure_assets_contains_potential_consumers() -> None:
 
 def test_upsert_protects_potential_consumers_from_ingest_clobber() -> None:
     """回填保护（#410②批1 实测事故）：采集器全量再采集不携 potential_consumers，
-    INSERT 缺省必须 COALESCE 到 '{}'、冲突路径 NULL=保留存量，否则人工回填被冲回空数组
-    （实证：图书馆班回填 31 资产被 post-commit reconciler 再采集清零）。"""
+    INSERT 缺省必须 COALESCE 到 '{}'；冲突路径必须引用裸参数——引用 EXCLUDED 无效
+    （VALUES COALESCE 已把 NULL 预空成 '{}'，EXCLUDED 恒非 NULL；实证裁-07：
+    09-24~27 三轮全量 ingest 清零回填 68 资产）。细归 test_potential_consumers_guard。"""
     from zephyr.library.ledger_schema import _SQL_UPSERT_ASSET
 
     assert "COALESCE(%s::text[], '{}')" in _SQL_UPSERT_ASSET
     conflict_clause = _SQL_UPSERT_ASSET.split("ON CONFLICT", 1)[1]
-    assert (
-        "potential_consumers = COALESCE(EXCLUDED.potential_consumers, lib_assets.potential_consumers)"
-        in conflict_clause
-    )
+    assert "potential_consumers = COALESCE(%s::text[], lib_assets.potential_consumers)" in conflict_clause
+    assert "EXCLUDED.potential_consumers" not in conflict_clause
 
 
 def test_act_without_potential_consumers_passes_null() -> None:
@@ -83,7 +82,7 @@ def test_act_without_potential_consumers_passes_null() -> None:
         def __init__(self) -> None:
             self.calls: list[tuple] = []
 
-        def __enter__(self) -> "_RecordingCur":
+        def __enter__(self) -> _RecordingCur:
             return self
 
         def __exit__(self, *args: object) -> bool:
@@ -119,7 +118,7 @@ def test_lookup_by_feeds_filters_and_respects_limit() -> None:
         def __init__(self, rows: list[tuple]) -> None:
             self._rows = rows
 
-        def __enter__(self) -> "_StubCur":
+        def __enter__(self) -> _StubCur:
             return self
 
         def __exit__(self, *args: object) -> bool:

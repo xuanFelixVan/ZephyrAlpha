@@ -101,9 +101,13 @@ CREATE TABLE IF NOT EXISTS lib_events (
 CREATE INDEX IF NOT EXISTS lib_events_asset_idx ON lib_events (asset_id);
 """
 
-# potential_consumers 语义：NULL（字段缺省）=保留存量——采集器再采集不携此字段，
-# COALESCE 防全量 ingest 把人工回填冲回空数组（#410②批1 实测事故：回填 31→被
-# post-commit reconciler 再采集清零）；显式空数组=有意清空。
+# potential_consumers 语义：NULL（字段缺省）=保留存量——采集器再采集不携此字段；
+# 显式空数组=有意清空。
+# 冲突分支 MUST 引用裸参数 %s 而非 EXCLUDED.potential_consumers：VALUES 的
+# COALESCE(%s::text[], '{}') 在 INSERT 求值期已把 NULL 预空成 '{}'，EXCLUDED 恒非
+# NULL，引用 EXCLUDED 的守卫形同虚设（实证：09-24~27 三轮全量 ingest 把 #410② 回填
+# 68 资产清零，总筹裁-07 取证；影子表探针复现 head_conflict_none='[]'）。
+# 占位共 15 个——potential_consumers 参数须传两次（VALUES 位+冲突位）。
 _SQL_UPSERT_ASSET = """
 INSERT INTO lib_assets (
   asset_id, kind, home, fingerprint_sha256, fingerprint_aux, status,
@@ -122,9 +126,14 @@ ON CONFLICT (asset_id) DO UPDATE SET
   status = EXCLUDED.status,
   title = COALESCE(EXCLUDED.title, lib_assets.title),
   one_liner = COALESCE(EXCLUDED.one_liner, lib_assets.one_liner),
-  potential_consumers = COALESCE(EXCLUDED.potential_consumers, lib_assets.potential_consumers),
+  potential_consumers = COALESCE(%s::text[], lib_assets.potential_consumers),
   ai_contract = COALESCE(EXCLUDED.ai_contract, lib_assets.ai_contract),
   tags = EXCLUDED.tags
+"""
+
+# 供数反查轴守卫计数（总筹裁-07）：非空 potential_consumers 行数，全量入账前后快照对比
+_SQL_COUNT_NONEMPTY_CONSUMERS = """
+SELECT count(*) FROM lib_assets WHERE cardinality(potential_consumers) > 0
 """
 
 _SQL_FEEDS_LOOKUP = """

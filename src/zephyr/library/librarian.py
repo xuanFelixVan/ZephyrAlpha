@@ -185,6 +185,9 @@ class Librarian:
                         ai_contract,
                         tags_list,
                         actor,
+                        # 冲突分支裸参数重传（第 15 占位）：VALUES COALESCE 已把 NULL
+                        # 预空成 '{}'，EXCLUDED 恒非 NULL——守卫只能引用裸参数（裁-07）
+                        potential_consumers,
                     ),
                 )
             if action == "delete":
@@ -230,6 +233,8 @@ class Librarian:
                         asset.get("ai_contract"),
                         asset.get("tags") or [],
                         actor,
+                        # 冲突分支裸参数重传（第 15 占位，裁-07 根因修复）
+                        asset.get("potential_consumers"),
                     ),
                 )
                 count += 1
