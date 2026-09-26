@@ -100,6 +100,29 @@ def test_stockq_structure(page):
     )  # 等 JS 加载链走完再导航（防竞态）
     page.evaluate("go('stockq')")  # 走应用内导航函数（改 hash 不触发 sqInit）
     page.wait_for_timeout(3000)  # sqInit + 数据落盘 + 标注开关行渲染
+    # 事件行真源断言的环境适配（st-chief5-20260927）：本测试=纯静态 http.server 无后端，
+    # 而 v2 起 getEvents() 只认真源数据（演示回退改由宿主渲染兜底，_mkt 仍空）——原断言在
+    # 本装置下不可满足（5fecd62dc9 引入时 v1 语义可过）。修法=注入演示事件后驱动组件真实
+    # fetch→map→getEvents 链路：断言语义不变（数据经 API 客户端到达才算过），零产品改动。
+    page.evaluate(
+        """(() => {
+        const demo = {ok: true, data: [
+            {date: '2026-09-18', type: 'lpr_announcement', description: 'LPR 报价（冒烟注入）', pub_value: null, exp_value: null, prev_value: null},
+            {date: '2026-09-25', type: 'futures_delivery', description: '期货交割日（冒烟注入）', pub_value: null, exp_value: null, prev_value: null},
+        ]};
+        const f = window.ZK && ZK.features && ZK.features['sq-event-row'];
+        if (window.ZK && ZK.api && f) {
+            ZK.api.fetchEvents = function () { return Promise.resolve(demo); };
+            try { localStorage.removeItem('zk-evt'); } catch (e) {}
+            f.fetch();
+        }
+    })()"""
+    )
+    # 数据异步到达：条件等待替代加长 sleep（CH 断供/注入失效时仍会超时红，不弱化断言）
+    page.wait_for_function(
+        "!!(window.ZK && ZK.features && ZK.features['sq-event-row'] && ZK.features['sq-event-row'].getEvents())",
+        timeout=15000,
+    )
     checks = page.evaluate(
         """({
         evtrow: !!document.getElementById('klp-evtrow'),
