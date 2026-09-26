@@ -158,6 +158,7 @@ TRADING_DAY_GUARDED_SCHEDULES = frozenset(
         "nightly_financial",  # L7 夜间财务层
         "daily_backfill",  # L10.5 每日盘后补下载层（非交易日无当日数据可补）
         "integrity_check",  # L11 每日完整性巡检层
+        "cross_validation",  # L11.5 多源交叉校验层（非交易日无当日 tick 可比对，2026-09-27 F04 接线）
         "auction_highfreq",  # L0 集合竞价高频层
     }
 )

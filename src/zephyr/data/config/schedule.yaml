@@ -156,6 +156,17 @@ schedules:
     executor: default
     description: "每日完整性巡检层——动态发现全表检测当日数据是否达标，不达标告警"
 
+  # L11.5 多源交叉校验层：23:15 周一至周五（integrity_check 23:00 之后错峰；
+  # F04 断链接线 2026-09-27，st-chief4x-promo2-20260927）。CrossSourceValidator 内容级
+  # QMT 主源 vs TDX 备源 tick 比对（校验器头注 CONSUMERS=run_schedule("cross_validation")）。
+  # 与 L11 行数阈值巡检分工：本层=内容级两源一致性（价格/成交量/缺失标的），
+  # 只校验不阻断，结果落 c1_market.cross_validation_log，fail 经 Alerter 告警。
+  cross_validation:
+    cron: "15 23 * * 0-4"
+    executor: default
+    max_instances: 1
+    description: "多源交叉校验层——QMT 主源 vs TDX 备源 tick 内容级比对（价格/成交量/缺失标的），结果落 cross_validation_log"
+
   # L10.7 调度对账补跑层：05:30 每日（含周末；#ARCH-DATA-CATCHUP-001, 2026-09-03）
   # 治本：monthly_static(月初09:00) 等 cron 错过无补跑——9/1 调度器 10:37 才被守护拉起，
   #   整月静态表批次错过空缺 32 小时（sector_list/index_list/hk_stock_list 等 8 表）。

@@ -332,13 +332,13 @@ nodes:
       IS 分解（Perold 1988）为其方法论底座
     compute_class: local
     data_refs: [c1_market.realtime_snapshot, c1_market.execution_report]
-    module_ref: null
-    build_status: pending
+    module_ref: MOD-BT-225
+    build_status: built
     design_refs:
       - QuantConnect 对账框架 quantconnect.com/docs/v2/writing-algorithms/live-trading/reconciliation
       - Lime Trading 模拟盘价值 lime.co/news/The-Value-of-Simulation-Why-Paper-Trading-Still-Matters/
     store_refs:
-      - {artifact: 前哨对账报告, location: 待定（E7 施工时定）, key: strategy_id+前哨批次, retention: 永久}
+      - {artifact: 前哨对账报告, location: data/backtest_artifacts/runs/, key: strategy_id+前哨批次, retention: 永久}
 
   - node_id: FAC-E8
     name_zh: 组装与资金分配

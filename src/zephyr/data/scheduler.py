@@ -72,6 +72,10 @@ log = logging.getLogger(__name__)
 # 连续排水到清空（100 文件/30 分钟追不上盘中新增的实证修正）
 _REPLAY_CATCHUP_THRESHOLD = 200
 
+# L11.5 cross_validation 槽的 tick 对账窗口（分钟）：23:15 盘后跑，14h 回看覆盖
+# 9:10 起的全天 tick（含集合竞价前余量）——单次 argMax 聚合，非盘中高频全量
+_CROSS_VALIDATION_WINDOW_MINUTES = 840
+
 _DEFAULT_CONFIG_DIR = Path(__file__).parent / "config"
 _DEFAULT_JOBS_DB = "sqlite:///" + str(REPO_ROOT / "data" / "integrator_jobs.db")
 # 单实例锁默认路径（#SCHED-DUAL-INSTANCE 治本，2026-08-25）
@@ -227,6 +231,32 @@ def _run_special_schedule(
 
         result = run_daily_check(scheduler)
         return {"integrity_check_daily": result.get("success", False)}
+    # L11.5 多源交叉校验层（F04 断链接线 2026-09-27 st-chief4x-promo2-20260927）：
+    # CrossSourceValidator 内容级 QMT 主源 vs TDX 备源 tick 比对——其头注 CONSUMERS 即本槽
+    # run_schedule("cross_validation")。挂 23:15（integrity_check 23:00 之后错峰），盘后单次
+    # argMax 聚合、窗口 14h 覆盖全天 tick——非盘中高频全量跑，无性能地雷；只校验不阻断
+    # （INVARIANTS），结果落 c1_market.cross_validation_log；fail 经 Alerter 告警。
+    if schedule_name == "cross_validation":
+        from zephyr.data.cross_source_validator import CrossSourceValidator
+
+        try:
+            report = CrossSourceValidator().validate(time_window_minutes=_CROSS_VALIDATION_WINDOW_MINUTES)
+        except Exception as exc:  # noqa: BLE001 — 接线故障降级告警，不炸调度器（同族先例）
+            scheduler._alerter.notify(
+                "cross_validation",
+                f"多源交叉校验执行异常: {str(exc)[:200]}",
+                level="ERROR",
+                source="cross_source_validator",
+            )
+            return {"cross_validation": False}
+        if not report.is_healthy:
+            scheduler._alerter.notify(
+                "cross_validation",
+                f"多源交叉校验存在 fail: {report.summary()}",
+                level="WARN",
+                source="cross_source_validator",
+            )
+        return {"cross_validation": report.is_healthy}
     # L10.7 调度对账补跑层：任务档期对账 + 空表兜底 + 自动补跑（#ARCH-DATA-CATCHUP-001）
     if schedule_name == "catchup_guard":
         from zephyr.data.catchup_guard import run_catchup_guard
