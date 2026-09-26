@@ -1,0 +1,49 @@
+# ALGO_FLOW 外部真源——chainmap_equity_graph（_domain_frontend 域，真源 src/zephyr/frontend/dashboard/chainmap_equity_graph.py）
+# 2026-09-27 业务链流通战役 EC1 车道（st-ec1-equity）：entity_graph 六表→chainmap 股权查询接线件；
+# docstring 内联块按 drafter 产出落此，extractor 经 external 锚加载走同一 parse_algo_flow 管线；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.frontend.dashboard.chainmap_equity_graph
+source_of_truth: src/zephyr/frontend/dashboard/chainmap_equity_graph.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 公司键（代码裸码/带后缀/entity_id/规范名）+ 跳数 + 观测窗下沿
+    #   fields: company_key/max_depth/min_valid_from + chain_ids（簇徽章面）
+    #   code: chainmap_equity_graph.py normalize_company_key/_symbol_variants
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 实体解析
+    #   name_en: resolve_entity
+    #   intro: 四键变体（entity_id/symbol×后缀候选/name_norm）命中 node_entity 唯一锚
+    #   desc: ANY 多变体精确匹配走唯一索引，上市代码锚优先排序
+    # - id: A2
+    #   name_zh: 现行版本股权聚合
+    #   name_en: company_equity_summary
+    #   intro: edge_holding valid_to IS NULL 双向（控 from=本司/被控 to=本司）计数+明细
+    #   desc: LEFT JOIN node_company/node_person 富化行业/出生年；stake 两位小数
+    # - id: A3
+    #   name_zh: N 跳向上穿透（函数优先+SQL 兜底）
+    #   name_en: penetrate_upstream
+    #   intro: 优先 PG equity_penetration(TEXT,INT,DATE)；sqlstate 42883 降级等价 WITH RECURSIVE
+    #   desc: path 数组防环（NOT from_entity = ANY(path)）；深度护栏 1..8；路径重构 DFS visited 防环
+    # - id: A4
+    #   name_zh: 契约整形（公司卡/簇徽章）
+    #   name_en: equity_domain_for_company/cluster_equity_badge_rows
+    #   intro: ACC-F-CHAINMAP-EQUITY-BADGE 逐键兼容行形；非上市对手方 symbol='' 靠 name 展示
+    #   desc: verification←source 诚实标注数据系；簇级 LIMIT 800 防大簇；异常独立降级空结构
+    # 层: 输出
+    # - id: O1
+    #   name: 股权域响应（holdings_in/held_by/计数+source）/ 徽章行集 / 穿透链路径
+    #   fields: dict 行集 + engine 标注（pg_function/sql_fallback）
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> A1
+    # A1 --> A2
+    # A1 --> A3
+    # A2 --> A4
+    # A3 --> A4
+    # A4 --> O1

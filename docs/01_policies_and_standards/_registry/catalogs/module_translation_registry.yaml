@@ -31,6 +31,22 @@ entry_schema:
   desc_en: str
   plain_zh: str
 entries:
+- module_path: scripts/governance/migrations/add_library_successor_of.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 图书馆successor_of增枝迁移
+  name_en: library successor_of column migration
+  desc_zh: lib_assets 表幂等加列 successor_of（墓碑去向指针）：ADD COLUMN IF NOT EXISTS + 列注释两态纪律，dry-run 零副作用，纯增量可回滚
+  desc_en: ''
+  plain_zh: 给资产总账补一列登记：一样东西作废后搬去了哪里。脚本反复跑都不会出错，先空跑验证再真跑，删掉这一列就能完全回退。
+  responsibility_layer: governance
+- module_path: scripts/governance/generators/check_library_tri_consistency.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 图书馆三层一致性检查器
+  name_en: library tri-layer consistency checker
+  desc_zh: 总账↔生成视图↔盘面三层只读断言：INDEX/七馆页计数与逐行复核、regen-clean 再生成零漂移、home 确定性抽样存在性；DB 不可达独立退出码
+  desc_en: ''
+  plain_zh: 定期核对图书馆的三样东西是否对得上：账本、图书卡片、真实书架。卡片说有这本书，账本里和书架上是不是真的有；谁被手改过或丢了就列成报告，只查不改。
+  responsibility_layer: governance
 - module_path: src/zephyr/ex_core/eod_reconciliation.py
   domain_id: D_EX_CORE
   name_zh: 盘后全量对账器
@@ -61474,6 +61490,22 @@ entries:
   desc_en: ""
   plain_zh: "按规矩分七步送走一个模块：先确认没人用了再断链搜索、打退役标、写明继任者、留九十天观察期，每步都记账可反悔，没有 Owner 批文一步真动作都不做"
   responsibility_layer: governance
+- module_path: src/zephyr/strategy_pipeline/paper_outpost.py
+  domain_id: D_BACKTEST
+  name_zh: "模拟盘前哨考核器"
+  name_en: "paper outpost assessor"
+  desc_zh: "E7 前哨：registry sim/paper 幸存者 N 周逐日账实对账+期末判定建议"
+  desc_en: ""
+  plain_zh: "每天把模拟盘账本跟真实行情对一遍账，对不上的策略建议降级"
+  responsibility_layer: business
+- module_path: scripts/backtest/feedback_prior.py
+  domain_id: D_BACKTEST
+  name_zh: "回灌边消费端读数件"
+  name_en: "feedback loop prior reader"
+  desc_zh: "法定回灌边FL1(E9归因到E2预审先验)与FL2(E6衰减到E1进货方向)的最小消费端：读衰减台账与归因日账产方向面读数与预审先验注记，纯读零写fail-open"
+  desc_en: ""
+  plain_zh: "这个文件是给策略工厂看仪表盘的：它去读两本账（一本记着哪些策略在考试中掉队了，一本记着每天赚亏多少钱），然后把这些情况用大白话汇总成一行提示，告诉进货环节和假说审核环节最近市场的真实反馈。它自己不记账不打分，账本读不到就安静跳过，绝不拖累主流程。"
+  responsibility_layer: business
 
 battle_map_steps:
 # [DEDUP 2026-09-23 st-ailayer-p1-20260923] battle_map_steps 段 step_id=BM-BUY-05 同段双登记摘短留全（本段下方的长版含 AI-AUDIT21 2026-09-05 补叙事=权威版；同 section 同 step_id=机械可证重复，合并器身份唯一性死信根因）
