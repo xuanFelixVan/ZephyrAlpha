@@ -147,6 +147,8 @@ _WHITELIST: frozenset[str] = frozenset(
         #   backfill_pledge_event_version.py  = 事件版本回填器（depgraph_writer，只写本载体两表，无 DELETE/TRUNCATE 路径）
         "scripts/governance/meta_question/wo009/apply_pledge_event_version_ddl.py",
         "scripts/governance/meta_question/wo009/backfill_pledge_event_version.py",
+        # 待落地（2026-09-26, st-metaq-gc-20260924）：DS 复考回写臂（writeback 唯一合法入口同族）
+        "scripts/governance/meta_question/reexam/dsrhythm/writeback_dsrhythm.py",
         #   registry.py = meta_question 主表登记/状态机写入口（本 schema 唯一写者）
         #   exam_ops.py = 考试生命周期写操作（claim/answer/复考状态流转）
         "src/zephyr/governance/meta_question/meta_question_registry.py",
