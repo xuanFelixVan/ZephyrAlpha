@@ -182,6 +182,53 @@ def test_cli_enqueue_records_base_head_and_blob(cq, repo: Path, tmp_path: Path) 
 # ---------------------------------------------------------------------------
 
 
+def test_cli_enqueue_with_explicit_base_head_still_fills_blob(cq, repo: Path, tmp_path: Path) -> None:
+    """W17 判别尺：显式 `--base-head` 也必须填 base_blob（见证层素材不得随传法消失）。
+
+    `cascade_stale` 的死信处方原文就教人传 `--base-head`，而修复前 base_blobs 躲在
+    `if base_head is None` 分支里 ⇒ **按处方操作＝关掉新见证**：同一袋在两种传法下
+    快照自洽见证读数 [] vs ['hot.yaml']，在册旧面被回退。
+    阳性=传 --base-head 时 base_blob 必须非空且等于该基底树上的 blob；
+    阴性控制=上一条（不传旗）读数逐字节同值，证明本条红不是恒红。
+    """
+    head = _commit(repo, "docs/x.md", "one\n", "seed")
+    want_blob = _git(repo, "rev-parse", f"{head}:docs/x.md")
+    qr = tmp_path / "queue_cli_basehead"
+    r = subprocess.run(
+        [
+            sys.executable,
+            str(REPO_ROOT / "scripts" / "commit_queue.py"),
+            "--queue-root",
+            str(qr),
+            "enqueue",
+            "--worktree-root",
+            str(repo),
+            "--session",
+            "probe-w17",
+            "--files",
+            "docs/x.md",
+            "--message",
+            "w17",
+            "--base-head",
+            head,
+            "--no-bootstrap",
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        timeout=300,
+    )
+    assert r.returncode == 0, r.stdout[-400:] + r.stderr[-400:]
+    item = json.loads(next(qr.glob("pending/*.json")).read_text(encoding="utf-8"))
+    assert item["base_head"] == head
+    entry = item["files"][0]
+    assert entry["base_blob"] == want_blob, (
+        f"显式 --base-head 时 base_blob 仍须落袋：期望 {want_blob} 实得 {entry['base_blob']!r}"
+        "（None＝见证层素材被处方操作清空，W17 复发）"
+    )
+
+
 def test_maindoor_enqueue_channel_passes_base(cq) -> None:
     src = (REPO_ROOT / "scripts" / "git_commit.py").read_text(encoding="utf-8")
     assert "resolve_base_head(" in src and "base_head=base_head" in src, (

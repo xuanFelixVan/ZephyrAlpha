@@ -1482,6 +1482,53 @@ class WorktreeLanding:
             git_blob_of[rel] = _git_blob_sha(data)
         return {rel for rel, sha in git_blob_of.items() if sha is not None and dev_blobs.get(rel) == sha}
 
+    def _witness_stale_carry(self, item: dict, queue_root: Path | str, current_dev: str) -> cq.LandingResult | None:
+        """快照自洽见证消费端（ATK-3 判据层补面，st-ff-snapself-20260926）。
+
+        活性护栏实测（tests/governance/test_commit_queue_snapshot_selfconsistency.py
+        L 组）：等值即拒（不看 dev 现态、整袋按携带档死信）会误杀正常并行——同会话
+        同步后连投与多文件正常改动都会被自家前袋/单枚携带拖死。故判据收紧到
+        stale-path 级：部分命中=剥除危险携带路径后其余照常落地（meta 留痕+日志
+        点名）；全部命中=袋内已无任何属于本包的改动，拒落整袋死信回属主并点名
+        "这不是你的改动"。注册表族与 delete 项不经此通道（条目级合并语义零变更，
+        其携带不复活闸在 _plan_insert_splices 以同一见证判据落地）。
+        """
+        dangerous, safe = assert_snapshot_selfconsistent(
+            item, queue_root=queue_root, repo_root=self.repo_root, current_dev=current_dev
+        )
+        if safe:
+            logger.info(
+                "[landing] qid=%s 快照自洽见证：%s 为安全携带（袋==基底==dev，写=noop），不拦",
+                item.get("qid"),
+                safe,
+            )
+        if not dangerous:
+            return None
+        hit = set(dangerous)
+        keep = [f for f in (item.get("files") or []) if f.get("path") not in hit]
+        meta = item.get("meta")
+        if not isinstance(meta, dict):
+            meta = item["meta"] = {}
+        meta["witness_stale_carry"] = sorted(hit)
+        if keep:
+            item["files"] = keep
+            logger.warning(
+                "[landing] qid=%s 快照自洽见证剥除陈旧携带路径 %s（袋字节恰等其自身基底——"
+                "这不是你的改动，且 dev 已推进）；其余文件照常落地",
+                item.get("qid"),
+                sorted(hit),
+            )
+            return None
+        return cq.LandingResult(
+            ok=False,
+            reason=(
+                f"快照自洽见证（stale-carry）：袋内路径 {sorted(hit)} 字节恰等其自身基底"
+                f"（本包没改它=纯陈旧携带）且 dev 已在这些路径上推进——落地必回退在册内容，"
+                f"这不是你的改动，拒落回属主（66 号 §6.4；解法=同步工作区后只重新入队"
+                f"真实改动的文件）"
+            ),
+        )
+
     def _heal_derived_totals(self, rel: str, merged: str) -> str:
         """条目合并后重算"声明计数"标量——派生值不得靠"某人恰好直提"才对。
 
@@ -2292,6 +2339,12 @@ class WorktreeLanding:
             reason = self._conflict_reason(item, old_dev)
             if reason:
                 return cq.LandingResult(ok=False, reason=reason)
+            # 快照自洽见证层（ATK-3 补面，st-ff-snapself-20260926）：快进判定之后、
+            # claim/快照应用之前——判定分工清晰（他包漂移归快进判定，陈旧携带归见证），
+            # 先于 claim 免无谓占锁。部分命中=stale-path 级剥除，全袋命中=拒落死信点名。
+            stale_verdict = self._witness_stale_carry(item, queue_root, old_dev)
+            if stale_verdict is not None:
+                return stale_verdict
 
             # 3) claim（净树基线）→ 快照应用 → 全门禁 commit → 释放 claim
             wt_files = [str(self.worktree_path / p) for p in sorted(self._item_paths(item))]
@@ -3222,6 +3275,70 @@ def resolve_base_blobs(repo_root: Path | str, base_head: str | None, paths: list
             if sep and len(parts) == 3 and parts[1] == "blob":
                 found[path] = parts[2]
     return {p: found.get(p) for p in uniq}
+
+
+def _stale_carry_candidate_blobs(item: dict, queue_root: Path | str) -> dict[str, str]:
+    """见证前段（assert_snapshot_selfconsistent 拆件，COMPLEXITY-GUARD 处方）：收集
+    「非注册表 modify 且袋字节 git-blob==其 base_blob」的路径。
+
+    不判面（保守放行，与主函数 docstring 口径同源）：delete 项/注册表族/base_blob
+    缺失（历史项未填、真新增件）/blob_ref 缺失/袋内字节读不到——拿不到证据不动手。
+    """
+    candidates: dict[str, str] = {}
+    root = Path(queue_root)
+    for entry in item.get("files") or []:
+        rel = entry.get("path") or ""
+        base_blob = entry.get("base_blob")
+        if not rel or not base_blob or str(entry.get("action") or "modify") != "modify":
+            continue
+        if is_registry_mergeable(rel):
+            continue
+        ref = entry.get("blob_ref") or ""
+        if not ref:
+            continue
+        try:
+            data = (root / ref).read_bytes()
+        except OSError:
+            continue
+        if _git_blob_sha(data) == base_blob:
+            candidates[rel] = str(base_blob)
+    return candidates
+
+
+def assert_snapshot_selfconsistent(
+    item: dict,
+    *,
+    queue_root: Path | str,
+    repo_root: Path | str,
+    current_dev: str,
+) -> tuple[list[str], list[str]]:
+    """快照自洽见证：袋字节 × 袋自身基底树（案卷 lane_stale_channel_repro ATK-3 判据层补层）。
+
+    既有四机制（逐文件快进/基底重校验/注册表合并器/同会话豁免）的判据集恒为
+    「dev 移动 × 袋路径集」，没有任何一层比较「袋内 blob 字节 vs 袋记录的
+    base_blob」——「盘/袋字节陈旧而 dev 未被判到移动」遂成自由通道：同会话豁免
+    盲区里陈旧携带回退自家前袋在册内容（ATK-3 形态），from-bag 错误基底把旧字节
+    洗成"本包改动"吃非注册表热件（ATK-2 形态，其基底口径已在 requeue_dead_item
+    同批治掉）。本函数把这层比较升为独立见证，消费端=WorktreeLanding._witness_stale_carry。
+
+    口径：
+    - 仅非注册表 modify 条目——注册表族维持条目级三向合并语义不回归，其同判据的
+      加侧闸（陈旧携带条目不得复活 dev 已落地的删除，ATK-1）在 _plan_insert_splices；
+    - 袋字节 git blob id == 条目 base_blob（resolve_base_blobs 填充的基底树 blob，
+      同 id 空间，_git_blob_sha 唯一换算点）⇒ 本包没改该路径＝纯陈旧携带；
+    - 两档输出（活性护栏实测等值即杀误伤正常并行，消费端只拒危险档）：
+        dangerous: 携带且 dev 现字节≠袋字节 ⇒ 落地必回退在册内容，拒落对象；
+        safe:      携带且 dev 现字节==袋字节 ⇒ 写=无操作，仅审计不拦；
+    - base_blob 缺失（历史项未填/真新增件）一律不判——见证只比有底可证的条目；
+      袋内 blob 字节读不到同样不判（拿不到证据不动手，与保守放行口径同源）。
+    """
+    candidates = _stale_carry_candidate_blobs(item, queue_root)
+    if not candidates:
+        return [], []
+    dev_blobs = resolve_base_blobs(repo_root, current_dev, sorted(candidates))
+    dangerous = sorted(rel for rel, sha in candidates.items() if dev_blobs.get(rel) != sha)
+    safe = sorted(rel for rel, sha in candidates.items() if dev_blobs.get(rel) == sha)
+    return dangerous, safe
 
 
 # ---------------------------------------------------------------------------

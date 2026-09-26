@@ -299,6 +299,7 @@ _DEAD_REASON_ITEM_MARKERS = (
     "COMMIT_SCOPE",
     "cascade_stale",
     "基底重校验",
+    "快照自洽见证",
     "TRACKED-DRIFT-READONLY",
     "网关落盘失败",
     # QCure M3.3 标记表补族（st-qcure-20260925）：落地侧已产生但三分类归 other 的盲区——
@@ -2018,12 +2019,20 @@ def requeue_dead_item(
     # 合并 fail-closed 死信面未闭合。口径与 _cmd_enqueue 同源（resolve_base_head/
     # resolve_base_blobs）；非 git 目录（tmp 隔离测试）取不到→None/全 None，行为与
     # 修复前一致。
+    # ATK-2 治本（st-ff-snapself-20260926，案卷 lane_stale_channel_repro S2 复现背书，
+    # E 队 T-4 原案）：--from-bag 的内容真源=原袋，基底必须同步取**原袋基底**而非
+    # 重投时刻的工作区 HEAD（主区形态=当下 dev 尖）——否则旧袋字节相对"比它还新"的
+    # 声称基底被洗成本包改动，diff(base,dev) 恒空、快进判定结构性失明，陈旧覆盖直落
+    # 吃非注册表热件。取回后陈旧覆盖在快进判定现红（死信闭环＝同步后重建快照重投）。
+    # 非 from_bag（工作区重建快照）口径零变更：基底仍=重建工作区自己的 HEAD。
     if base_blobs is None:
         from scripts.governance.commit_queue_landing import (  # noqa: PLC0415
             resolve_base_blobs,
             resolve_base_head,
         )
 
+        if from_bag and base_head is None:
+            base_head = old_item.get("base_head") or None
         if base_head is None:
             base_head = resolve_base_head(wt)
         base_blobs = resolve_base_blobs(wt, base_head, [p for p, _ in payload] + list(deletes))
@@ -2370,6 +2379,11 @@ _DEAD_PRESCRIPTIONS: tuple[tuple[str, str], ...] = (
     ("快照未真应用", "快照未真应用：核对 worktree 文件实际内容与快照差异后重投"),
     ("冲突标记", "快照含未解决合并冲突标记：回会话 worktree 解决合并后重新入队，勿直接重投"),
     ("cascade_stale", "级联基底失效：前置项已落盘，重投前先按当前 dev 重取基底（--base-head）"),
+    (
+        "快照自洽见证",
+        "stale-carry：袋内该路径字节恰等其自身基底（这不是你的改动）——同步工作区至 dev 后"
+        "只重新入队真实改动的文件（勿把未动路径列入 --files；确需回写请显式新建一袋写明理由）",
+    ),
     (
         "env_retry",
         "环境失败重试耗尽：排除环境故障（daemon 纪元/worktree/锁）后重投；纪元陈旧重启 ZephyrAlpha_BeltDaemon 自愈",
@@ -2801,7 +2815,11 @@ def _cmd_enqueue(args: argparse.Namespace) -> int:
             raise QueueReject(pf_prescription)
         depends_on = [d.strip() for d in (args.depends_on or "").split(",") if d.strip()]
         base_head = args.base_head
-        base_blobs: dict | None = None
+        from scripts.governance.commit_queue_landing import (  # noqa: PLC0415
+            resolve_base_blobs,
+            resolve_base_head,
+        )
+
         if base_head is None:
             # B 段接通（F-AUDIT-QUEUE-04，2026-09-24）：裸 CLI 与交互正门同口径自取
             # 基底——此前只有 --base-head 显式传入才有，缺省即 None（两套入口不一致）。
@@ -2812,7 +2830,11 @@ def _cmd_enqueue(args: argparse.Namespace) -> int:
             )
 
             base_head = resolve_base_head(worktree_root)
-            base_blobs = resolve_base_blobs(worktree_root, base_head, [p for p, _ in files])
+        # W17 治本（案卷 mine_snapshot_selfconsistency_witness W17）：base_blobs 必须对
+        # **生效基底**恒取——此前躲在 `if base_head is None` 分支里，于是显式传 --base-head
+        # 反而把见证层素材置空，而死信 cascade_stale 的官方处方原文就教人这么传。
+        # 现与 requeue 侧同源；非 git 目录返全 None＝逐字节旧行为。
+        base_blobs = resolve_base_blobs(worktree_root, base_head, [p for p, _ in files])
         item = enqueue_item(
             args.session,
             message or "",
