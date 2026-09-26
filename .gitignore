@@ -273,6 +273,7 @@ docs/_working/analysis/
 !CONTRIBUTING.md
 !docker-compose.yml
 !Dockerfile
+!/llms.txt
 !LICENSE
 !MANIFEST.in
 !py.ini

@@ -2794,9 +2794,9 @@ entries:
     - PIT 查询仍可用（announce_date/report_period 列未变）
     - apply_fundamental_tables_ddl.py --verify：[OK] 引擎 + 53 金额字段 Decimal 精度全部一致
   impact:
-  - schemas/categories/fundamental_income_statement.py（新建——DDL 真源）
-  - schemas/categories/fundamental_balance_sheet.py（新建——DDL 真源）
-  - schemas/categories/fundamental_cashflow_statement.py（新建——DDL 真源）
+  - schemas/categories/fundamental/fundamental_income_statement.py（新建——DDL 真源）
+  - schemas/categories/fundamental/fundamental_balance_sheet.py（新建——DDL 真源）
+  - schemas/categories/fundamental/fundamental_cashflow_statement.py（新建——DDL 真源）
   - scripts/ch/apply_fundamental_tables_ddl.py（新建——apply + verify，audit 1.2 防回退）
   - ClickHouse c3_fundamental.{income_statement,balance_sheet,cashflow_statement}（53 字段 Float64→Decimal）
   fix_phase: 'Phase 1 完成（DB 迁移 + DDL 真源 + verify 防回退）'
@@ -2880,7 +2880,7 @@ entries:
     裁定：market_type 前缀（#ARCH-CH-020 安全）> symbol 前缀裁剪，
     通过 set(10000) 数据跳过索引缓解单标的查询性能。
   impact:
-    - schemas/categories/market_tick.py DDL 新增 INDEX idx_symbol
+    - schemas/categories/intraday/market_tick.py DDL 新增 INDEX idx_symbol
     - ClickHouse c1_market.tick_data 已 ADD INDEX（新数据自动生效）
   fix_phase: production
   status: resolved
@@ -2911,7 +2911,7 @@ entries:
     - 注册表是运行时配置（table_registry.py 内存加载），改后重启即生效
 
     治本方案（2026-07-23）：
-    1. 新建 src/zephyr/data/config/known_data_gaps.yaml 注册表
+    1. 新建 src/zephyr/data/docs/01_policies_and_standards/_registry/catalogs/known_data_gaps.yaml 注册表
        - gap_type: date_range（指定日期范围行数低于阈值）
        - gap_type: empty_table（整表为空）
        - status: registered → in_progress → completed / accepted
@@ -2930,7 +2930,7 @@ entries:
     - tick_data 2026-06 缺口检测: 22/22 天缺失 → 触发 backfill（QMT 下载）
     - edb_data 空表检测: row_count=0, status=accepted
   impact:
-    - src/zephyr/data/config/known_data_gaps.yaml 新建
+    - src/zephyr/data/docs/01_policies_and_standards/_registry/catalogs/known_data_gaps.yaml 新建
     - src/zephyr/data/backfill_checker.py 新增 known gap 检测函数
   fix_phase: production
   status: resolved
@@ -3126,7 +3126,7 @@ entries:
     - 75 个 producer 测试 + 17 个 backtest 测试全部通过
     - 端到端实弹验证：load_kline + load_history 均正常工作
   impact:
-    - schemas/categories/market_kline_daily.py adj_factor 改为 Nullable(Decimal(18,8))
+    - schemas/categories/kline/market_kline_daily.py adj_factor 改为 Nullable(Decimal(18,8))
     - src/zephyr/market_data/normalized_market_data_producer/producer.py adj_factor=0→None + \N 处理
     - src/zephyr/factor/core/evaluation/backtest.py _tsv_to_dataframe 增加 na_values=["\\N"]
     - ClickHouse c1_market.kline_daily 表 schema 已变更 + 704K 行已 backfill
@@ -3886,7 +3886,7 @@ entries:
   - src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml（G8 条目删除，总数 94→93）
   - docs/03_modules/blueprint_registry.yaml（词表块+61 per-entry 字段+summary 块删除）
   - 58 个 docs/03_modules/**/*.md（frontmatter construction_progress 字段删除）
-  - tests/test_align_panoramas.py（_make_node/test calls/test method 移除）
+  - tests/governance/test_align_panoramas.py（_make_node/test calls/test method 移除）
   - src/zephyr/gov_enforcement/rule_enforcement/sys_master_compliance.py/.yaml + test（check_construction_progress_consistency 删除）
   - src/zephyr/gov_enforcement/rule_enforcement/triple_alignment.py + test + g9.yaml + gct_024_budget_enforcer.yaml（_check_construction_progress 删除）
   - scripts/governance/d3_metadata/check_blueprint_compliance.py（REQUIRED_FRONTMATTER 删除字段）
@@ -8232,7 +8232,7 @@ entries:
         根因：sys.path 仅含 _GOV_DIR 不含 REPO_ROOT，参照 line 121-128 模式加 try/except ImportError fallback
       - business_data_categories.yaml schema_file 修复（sector_snapshot + auction_book 从 null → 实际路径）
         根因：schema 文件已存在但 YAML 声明层 schema_file=null，违反 SSoT 三层一致性（声明层→存在层断裂）
-        修复：schema_file: null → schemas/categories/market_sector_snapshot.py + schemas/categories/market_auction_book.py
+        修复：schema_file: null → schemas/categories/market/market_sector_snapshot.py + schemas/categories/market_auction_book.py
         验证：10/10 schema_file 引用全部有效，0 broken refs，0 TABLE_NAME mismatches
       - sync_yaml_to_depgraph.py 同步范围核查（2026-07-23 循环检查发现）：
         根因：项目记忆规则错误声称"business_data_categories.yaml 改后需运行 sync_yaml_to_depgraph.py 同步到 DB"
@@ -8799,7 +8799,7 @@ entries:
     - cls/eastmoney_news 登记：DS-CLS/DS-EASTMONEY_NEWS。本子项 resolved。
     - l2_tick：表不存在但 miniqmt_provider.py:3483 已实现 fetch_l2_tick，registry 已注册
       market_l2_tick→c1_market.l2_tick，audit评P0（微观结构回测不可做）。裁定建表治本（数据源就绪，
-      摘除是回避）。新建 schemas/categories/market_l2_tick.py DDL真源+部署链路+引擎验证。
+      摘除是回避）。新建 schemas/categories/intraday/market_l2_tick.py DDL真源+部署链路+引擎验证。
       已完成（commit 07a7f85650）。本子项 resolved。
     - 卡死 RUNNING>24h 治理：检测+重置已有（progress_store.reap_stale_runs: RUNNING>阈值→STALE，
       调度器启动24h+周期6h双触发）。告警打通（本次施工）：reap_stale_runs 返回 list[dict] 含 task_id，
@@ -13655,7 +13655,7 @@ entries:
        /成交量(OBV/MFI/VWAP/VR/AD)/反转(K线形态/RSI背离/BOLL突破)。
     2. 实现：纯自实现 pandas/numpy（不引入 TA-Lib 等第三方库，避免 C 依赖+Windows 编译问题）。
     3. 存储：ClickHouse c1_market.technical_indicator 宽表（40列 Nullable(Float64)），
-       DDL-as-Code 真源 schemas/categories/market_technical_indicator.py。
+       DDL-as-Code 真源 schemas/categories/market/market_technical_indicator.py。
     4. 计算：TechnicalIndicatorBase 基类（输出多列 DataFrame，区别于 FactorBase 单 Series），
        internal_compute_provider 接入调度器（source=internal，preload 模式盘后预计算）。
     5. 调度：盘后 daily_kline 时段增量计算（dependencies=["kline_daily_incremental"]），
@@ -13669,7 +13669,7 @@ entries:
     纯技术实现（模块新建+数据品类扩展），AI 直接标 decided。
   impact:
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md（新建，骨架清单文档）'
-    - 'schemas/categories/market_technical_indicator.py（新建，DDL宽表真源）'
+    - 'schemas/categories/market/market_technical_indicator.py（新建，DDL宽表真源）'
     - 'src/zephyr/factor/technical_indicators/{__init__,base,trend,momentum,volatility,volume,reversal}.py（新建，基类+5类stub）'
     - 'src/zephyr/data/implementations/internal_compute_provider.py（新建，内部计算provider）'
     - 'src/zephyr/data/scheduler.py（编辑，+internal source 分支）'
@@ -17224,7 +17224,7 @@ entries:
     (1) fetcher 独立新文件 src/zephyr/data/implementations/northbound_hold_fetcher.py，
         tushare_provider 仅加 capability 路由（避让 akshare_provider.py 并行施工 JOB077-001）；
     (2) 新表 c1_market.northbound_hold_snapshot（ReplacingMergeTree，ORDER BY (ts_code, trade_date)，
-        全量覆盖幂等；DDL-as-Code schemas/categories/market_northbound_hold_snapshot.py）；
+        全量覆盖幂等；DDL-as-Code schemas/categories/market/market_northbound_hold_snapshot.py）；
     (3) memo §9 分页风险（hk_hold 单次 4200 行上限，2026Q2 官方 3958 只逼近）构造性消除——
         exchange SH/SZ 拆分双调用，单侧 <2100 行，上限余量翻倍；
     (4) PIT 纪律：官方季度后第 5 个沪深股通交易日发布，fetcher 内 PIT 守卫=季度末+20 自然日
@@ -17238,9 +17238,9 @@ entries:
   impact:
   - 'src/zephyr/data/implementations/northbound_hold_fetcher.py（新建）'
   - 'src/zephyr/data/implementations/tushare_provider.py（capability 路由 3 行叠加）'
-  - 'schemas/categories/market_northbound_hold_snapshot.py（新建 DDL-as-Code）'
+  - 'schemas/categories/market/market_northbound_hold_snapshot.py（新建 DDL-as-Code）'
   - 'src/zephyr/data/config/tasks.yaml（northbound_hold_snapshot_refresh 任务）'
-  - 'src/zephyr/data/config/known_data_gaps.yaml（三接口失效登记）'
+  - 'src/zephyr/data/docs/01_policies_and_standards/_registry/catalogs/known_data_gaps.yaml（三接口失效登记）'
   fix_phase: '2026-08-15 AI-NORTH-001 施工完成（单测+联调实证拉取→落库→回读）；status 候选转正待生产调度首季度实证'
   status: decided
   confirmed_by_user: '2026-08-15 用户任务书（AI-NORTH-001 施工指令）'
@@ -17558,7 +17558,7 @@ entries:
     ④施工实证修正——独食判定加 buyer_count≥3 前置（2 席买方时 top2 恒 100% 为假阳性）。
     对标：EasyQuant 涨停复盘龙虎榜模块/数据宝龙虎榜回测（seat_registry 既有对标声明）。
   impact:
-    - 'src/zephyr/signal_ashare/seat_pattern_analyzer.py（新建，413 行）'
+    - 'src/zephyr/signal_ashare/limit_up/seat_pattern_analyzer.py（新建，413 行）'
     - 'tests/signal_ashare/test_seat_pattern_analyzer.py（新建，17 用例两轮全绿）'
     - 'docs/03_modules/_domain_signal/seat_pattern_analyzer/blueprint.md（新建，v0.1.0 Draft）'
     - 'depgraph design 节点 node_id=9823087（planned，merge 后统筹重扫转 production）'
@@ -18193,7 +18193,7 @@ entries:
     纪律：三件套权重≤0.10（少而精）；PCR 低×Skew 高背离=多空分歧最大警示；期权到期
     日输出 m1_threshold_scale=0.8（防伽马挤压假情绪，2026-08-21 实证）。
   impact:
-    - 'src/zephyr/signal_ashare/option_sentiment.py（新建，testing 封顶）'
+    - 'src/zephyr/signal_ashare/sentiment/option_sentiment.py（新建，testing 封顶）'
     - 'tests/signal_ashare/test_option_sentiment.py（19 用例）'
   fix_phase: '已落地（2026-08-22）：19 新用例全绿+域收口零新增红；CH 端到端 smoke 待 VM 稳定后补留痕'
   status: decided
@@ -18218,7 +18218,7 @@ entries:
     且 close<limit_up 联算；板块属性标签真源=config/sector_attribute_labels.yaml
     （防御族/进攻族逐条锚定实证）。
   impact:
-    - 'src/zephyr/signal_ashare/sector_divergence.py（新建，testing 封顶）'
+    - 'src/zephyr/signal_ashare/sector/sector_divergence.py（新建，testing 封顶）'
     - 'config/sector_attribute_labels.yaml（新建，M1-②c 标签真源）'
     - 'tests/signal_ashare/test_sector_divergence.py（30 用例）'
   fix_phase: '已落地（2026-08-22）：30 新用例全绿+域收口零新增红'
@@ -18242,7 +18242,7 @@ entries:
     sector_constituent 重复行按 (sector,stock) 去重修复+回归。
   impact:
     - 'src/zephyr/data/sector_report_builder.py + src/zephyr/data/sector_intraday_aggregator.py'
-    - 'src/zephyr/signal_ashare/sector_leader.py + src/zephyr/signal_ashare/mainline_candidates.py'
+    - 'src/zephyr/signal_ashare/sector/sector_leader.py + src/zephyr/signal_ashare/mainline_candidates.py'
     - '测试 4 文件 74 用例；真实数据 E2E 留痕（2026-08-20 报告落盘+全宇宙 593 板块/165 板块出龙头）'
   fix_phase: '已落地（2026-08-22）：74 新用例全绿+两域收口零新增红；报告产物落 .runtime/reports/（不入 git）'
   status: decided
@@ -18334,7 +18334,7 @@ entries:
     自动停用开关（数据期校准）。数据地基=market_breadth_snapshot（#ARCH-154 同批建表），
     零积累期恒走先验兜底分支，随数据积累自动升级。
   impact:
-    - 'src/zephyr/signal_ashare/similar_day_inference.py（新建，testing 封顶）'
+    - 'src/zephyr/signal_ashare/ml_forecast/similar_day_inference.py（新建，testing 封顶）'
     - 'tests/signal_ashare/test_similar_day_inference.py（8 用例）'
   fix_phase: '已落地（2026-08-22）：8 新用例全绿+signal_ashare 763 passed 零新增红'
   status: decided
@@ -20130,7 +20130,7 @@ entries:
     storage_tiering 收口——新建即重复（注册表 review_note 留痕）。54 新测全绿，
     tests/zephyr/data 1381 零回归。
   impact:
-    - 'src/zephyr/data/normalizers/format_transformer.py + data/sector_factor_manager.py + data/redundant_source/sina_tencent_provider.py + data/implementations/announcement_provider.py'
+    - 'src/zephyr/data/normalizers/format_transformer.py + src/zephyr/data/sector_factor_manager.py + data/redundant_source/sina_tencent_provider.py + data/implementations/announcement_provider.py'
   fix_phase: '已落地（2026-08-25，P1 R1W08）；C-001 豁免同批'
   status: resolved
   related_rules: ['AUD-DRAFT-001-DIGEST', '#ARCH-DATA-IFIND-RETIRE-001']
@@ -22543,3 +22543,20 @@ entries:
   impact:
   - AGENTS.md
   related_rulings: []
+- issue_id: '#ARCH-360'
+  title: 'FMS 战役门口文件与嵌套导航审批登记（FRONT-DOOR/llms.txt/嵌套AGENTS×5/宪法L114+§9.4等长修订）——PROTECTED-PATHS [ARCH-APPROVAL] 正门标记载体'
+  status: decided
+  severity: P3低
+  category: governance
+  created: '2026-09-27'
+  last_updated: '2026-09-27'
+  owner: 'Owner（2026-09-27 总筹令全权授权，晨报追溯确认）'
+  description: >-
+    Owner 2026-09-27 深夜令授总筹全权："对全套文件/文件夹管理体系大改造……授予你所有权力"，并点名采纳外部审查建议
+    （路径禁凭记忆立法、嵌套 AGENTS.md、llms.txt/FRONT-DOOR 门口文件、生命周期隔离条款）。PROTECTED-PATHS gate 的
+    [ARCH-APPROVAL] 标记正则仅认 ARCH-* 议题号，本议题即本批正门标记的登记载体：B56 批 commit message 挂
+    [ARCH-APPROVAL:#ARCH-360]，审批真源=Owner 总筹令原文（2026-09-27 会话在案），gate 逃生审计+本登记双留痕。
+    内容=宪法 §8L114/§9.4 两处等长替换（140 行硬上限不变）+ 新增 5 个目录级 AGENTS.md（11-12 行纯导航）+
+    docs/library/FRONT_DOOR.md（52 行生成物）+ 根 llms.txt（26 行生成物，.gitignore 与 directory_contract 根白名单各+1 行）。
+  related_rulings: []
+

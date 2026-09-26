@@ -111,8 +111,8 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 
 ## 8. 词汇与对齐
 
-- 全图全库对齐：`alignment_checklist.md`（对齐键=module_id/step_id；`align_all.py` 单入口）。
-- 业务资产库 16 表挂 TDM 交叉轴（`_XREF_SPECS` 表驱动）；新库/新图挂接义务见该表 §4。
+- 路径禁凭记忆：文档/代码书写任何资产路径前，必须经 `python -m zephyr.library.lookup` 或 ROOR 解析核实；新路径一律 ASCII 且循 TRAE-028 命名。
+- 全图全库对齐：`alignment_checklist.md`（对齐键=module_id/step_id；`align_all.py` 单入口）；业务资产库 16 表挂 TDM 交叉轴（`_XREF_SPECS` 表驱动，挂接义务见其 §4）。
 - 术语三层：terminology_glossary.yaml（术语）/ functional_domain_registry.yaml（域）/
   module_translation_registry.yaml（模块）——生成器输出经 loader，禁硬编码翻译。
 
@@ -121,7 +121,7 @@ CREATE-GUARD（新建 .py/.yaml/.md 等 7 格式须登记 creation_token，tests
 1. **数据库访问**：禁裸 `duckdb.connect`/裸 SQL 散落——一律 `DatabaseService`（`zephyr.infrastructure.database_service`）。
 2. **LLM 调用**：所有 LLM API 调用必经 `LSGSecurityGateway`（裸调被 GATE-20+运行时拦截器双捕）。
 3. **永久系统四要素**：自动触发/自动运行/自动维护/自动关闭；reconciler 必须**事件触发**，禁 cron/Timer/sleep-loop。
-4. **.runtime 卫生**：禁向 `.runtime` 根直写——暂存走 `.runtime/sessions/<sid>/staging/`（24h TTL，成果须 promote 到 docs/_working/ 才算交付）；临时脚本/输出走 `.runtime/tmp/`；**项目根目录零临时文件**。
+4. **生命周期隔离**：禁向 `.runtime` 根直写——暂存走 `.runtime/sessions/<sid>/staging/`（24h TTL，成果须 promote 到 docs/_working/ 才算交付）；临时脚本/输出走 `.runtime/tmp/`；永久区（ttl: permanent）禁引临时区（docs/_working/、.runtime/）；**项目根目录零临时文件**。
 5. **静态清单禁手工维护**：凡"条目列表+计数"清单必须生成器产出，手工维护必然漂移。
 6. **测试隔离**：测试禁写生产路径（`data/` 业务目录），输出一律 `tmp_path` fixture。
 7. **.ps1 必须纯 ASCII**：PowerShell 5.1 无 BOM 按 GBK 解码，中文注释导致假语法错误。
