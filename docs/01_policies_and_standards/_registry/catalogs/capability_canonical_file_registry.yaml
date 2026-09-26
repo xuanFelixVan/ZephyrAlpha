@@ -52936,4 +52936,44 @@ creation_tokens:
   created_by: st-zmaster-20260926
   capability: governance_total_command_closeout
   merge_evaluation: "外部审查案卷：与裁定书同目录、唯一归档位、无第二真源（净零）"
+- file: docs/_working/total_command_closeout/final_review_chartlib/dossier_academic_papers.md
+  token: final-review-chartlib-dossier-academic-papers-20260926
+  created_by: st-final-build-20260926
+  capability: final_review_chartlib
+  merge_evaluation: "唯一归档位：外部终审卷首次入仓（此前只存在于桌面交付目录，桌面非受控真源且无备份证据）；不替代也不合并既有 27 册任何条目，本目录只打补丁不改写正文，净零新增真源"
+- file: docs/_working/total_command_closeout/final_review_chartlib/dossier_github_ecosystem.md
+  token: final-review-chartlib-dossier-github-ecosystem-20260926
+  created_by: st-final-build-20260926
+  capability: final_review_chartlib
+  merge_evaluation: "唯一归档位：外部终审卷首次入仓（此前只存在于桌面交付目录，桌面非受控真源且无备份证据）；不替代也不合并既有 27 册任何条目，本目录只打补丁不改写正文，净零新增真源"
+- file: docs/_working/total_command_closeout/final_review_chartlib/dossier_institution_practice.md
+  token: final-review-chartlib-dossier-institution-practice-20260926
+  created_by: st-final-build-20260926
+  capability: final_review_chartlib
+  merge_evaluation: "唯一归档位：外部终审卷首次入仓（此前只存在于桌面交付目录，桌面非受控真源且无备份证据）；不替代也不合并既有 27 册任何条目，本目录只打补丁不改写正文，净零新增真源"
+- file: docs/_working/total_command_closeout/final_review_chartlib/ext_00_final_review_report.md
+  token: final-review-chartlib-ext-00-final-review-report-20260926
+  created_by: st-final-build-20260926
+  capability: final_review_chartlib
+  merge_evaluation: "唯一归档位：外部终审卷首次入仓（此前只存在于桌面交付目录，桌面非受控真源且无备份证据）；不替代也不合并既有 27 册任何条目，本目录只打补丁不改写正文，净零新增真源"
+- file: docs/_working/total_command_closeout/final_review_chartlib/ext_01_revised_construction_plan.md
+  token: final-review-chartlib-ext-01-revised-construction-plan-20260926
+  created_by: st-final-build-20260926
+  capability: final_review_chartlib
+  merge_evaluation: "唯一归档位：外部终审卷首次入仓（此前只存在于桌面交付目录，桌面非受控真源且无备份证据）；不替代也不合并既有 27 册任何条目，本目录只打补丁不改写正文，净零新增真源"
+- file: docs/_working/total_command_closeout/final_review_chartlib/ext_02_one_click_directive_revised.md
+  token: final-review-chartlib-ext-02-one-click-directive-revised-20260926
+  created_by: st-final-build-20260926
+  capability: final_review_chartlib
+  merge_evaluation: "唯一归档位：外部终审卷首次入仓（此前只存在于桌面交付目录，桌面非受控真源且无备份证据）；不替代也不合并既有 27 册任何条目，本目录只打补丁不改写正文，净零新增真源"
+- file: docs/_working/total_command_closeout/final_review_chartlib/ext_03_schedule_completeness_audit.md
+  token: final-review-chartlib-ext-03-schedule-completeness-audit-20260926
+  created_by: st-final-build-20260926
+  capability: final_review_chartlib
+  merge_evaluation: "唯一归档位：外部终审卷首次入仓（此前只存在于桌面交付目录，桌面非受控真源且无备份证据）；不替代也不合并既有 27 册任何条目，本目录只打补丁不改写正文，净零新增真源"
+- file: docs/_working/total_command_closeout/final_review_chartlib/ext_04_full_directive_self_contained.md
+  token: final-review-chartlib-ext-04-full-directive-self-contained-20260926
+  created_by: st-final-build-20260926
+  capability: final_review_chartlib
+  merge_evaluation: "唯一归档位：外部终审卷首次入仓（此前只存在于桌面交付目录，桌面非受控真源且无备份证据）；不替代也不合并既有 27 册任何条目，本目录只打补丁不改写正文，净零新增真源"
 di_seam_exemptions: []
