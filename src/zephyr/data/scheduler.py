@@ -491,6 +491,39 @@ def _run_special_schedule(
                 pass
             return {schedule_name: False}
         return {schedule_name: ok}
+    # F20 车道G 胃收件箱兜底扫描槽（全流通断链 b_factory_inbound F20，2026-09-27
+    # st-chief4x-gut-20260927）：生产侧事件沿（intel_harvester.trigger_lane_g_intake，
+    # EC2-P0批4）=快路径 fire-and-forget；本槽=慢路径兜底，吸收三类漏触发（Popen 触发
+    # 静默失败/子进程崩溃于处理前/inbox 他途落盘）。游标=lane_g_seen_urls.csv（url_md5），
+    # run_intake 未见条目才过本地 LLM——增量消化禁全量重跑（挖矿簿口径）。研究情报与
+    # 交易日历零依赖，不进 TRADING_DAY_GUARDED_SCHEDULES（同 nightly_sentiment 全周先例）。
+    # 失败降级=告警不反噬调度器（同族 cross_validation/nightly_sentiment 先例）。
+    # 总闸 data/runtime/lane_g_intake_sweep.disabled 存在=停用（服务总闸惯例，即时生效）。
+    if schedule_name == "lane_g_intake_sweep":
+        _flag = Path(__file__).resolve().parents[3] / "data" / "runtime" / "lane_g_intake_sweep.disabled"
+        if _flag.exists():
+            log.info("时段 %s 跳过：总闸 lane_g_intake_sweep.disabled 存在", schedule_name)
+            return {"lane_g_intake_sweep": False}
+        try:
+            import sys as _sys
+
+            if str(REPO_ROOT) not in _sys.path:
+                _sys.path.insert(0, str(REPO_ROOT))  # scripts.* 命名空间导入需仓库根在径
+            from scripts.backtest.lane_g_stomach_intake import run_intake_sweep
+
+            result = run_intake_sweep(alerter=scheduler._alerter)
+        except Exception as exc:  # noqa: BLE001 — 接线故障降级告警，不炸调度器（同族先例）
+            try:
+                scheduler._alerter.notify(
+                    "lane_g_intake_sweep",
+                    f"车道G兜底扫描执行异常: {str(exc)[:200]}",
+                    level="ERROR",
+                    source="lane_g_intake_sweep",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+                pass
+            return {"lane_g_intake_sweep": False}
+        return {"lane_g_intake_sweep": bool(result.get("ok", False))}
     return None
 
 

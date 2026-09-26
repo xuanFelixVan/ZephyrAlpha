@@ -116,6 +116,22 @@ schedules:
     executor: heavy
     description: "夜间财务层——财报/财务指标/十大股东/融资融券(T+1)"
 
+  # F20 车道G 胃收件箱兜底扫描层：22:30 每日（research_nightly 20:30 / nightly_financial
+  # 22:00 之后、integrity_check 23:00 之前错峰空窗；全流通断链 b_factory_inbound F20，
+  # 2026-09-27 st-chief4x-gut-20260927）。生产侧事件沿（intel_harvester 落新班
+  # fire-and-forget 触发 lane_g run，EC2-P0批4）为快路径，本槽=慢路径兜底（触发静默失败/
+  # 子进程崩溃于处理前/inbox 他途落盘三类漏触发吸收）。游标=lane_g_seen_urls.csv（url_md5），
+  # 未见条目才过本地 LLM（经 LSG）——增量消化禁全量重跑。研究情报与交易日历零依赖，
+  # 不进 TRADING_DAY_GUARDED_SCHEDULES（同 nightly_sentiment 全周先例）。特殊槽编排型
+  # 调用（scheduler._run_special_schedule 硬编码白名单两侧同挂，防 R-021 假通道——
+  # data_supply_sentinel 槽前注先例）；失败降级=Alerter 告警不反噬主链；
+  # 总闸=data/runtime/lane_g_intake_sweep.disabled（每次触发实查，即时生效）。
+  lane_g_intake_sweep:
+    cron: "30 22 * * *"
+    executor: default
+    max_instances: 1
+    description: "车道G胃收件箱兜底扫描——增量消化未见收件箱条目（游标=seen log）经本地 LLM 抽假说卸 lane_g_candidates.csv，失败告警经 Alerter"
+
   # L8 周末后校准层：周一 03:00（周末后首个工作日，QMT服务器可用；与L10补下载02:00错峰1小时）
   # 原周六02:00已废弃：miniqmt源任务周末连不上QMT服务器(error 10061 WSAECONNREFUSED)
   weekend_calibration:

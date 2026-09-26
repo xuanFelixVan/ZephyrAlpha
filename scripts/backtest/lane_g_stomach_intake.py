@@ -4,7 +4,9 @@
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] pandas; scripts.backtest.lane_b_idea_generator (parse_ideas 复用); zephyr.integration.local_model.ollama_chat
 # [CONSUMERS] 策略生产全景图 FAC-E1G 车道G-全网搜索进货；scripts/backtest/factory_intake_pipeline.py（E1 编排）；
-#   data/strategy_intake/lane_g_candidates.csv（进货台账）
+#   data/strategy_intake/lane_g_candidates.csv（进货台账）;
+#   scripts/automation/intel_harvester.py（生产侧事件沿，落新班 fire-and-forget 触发本件 run）;
+#   src/zephyr/data/scheduler.py（lane_g_intake_sweep 兜底槽 22:30 每日，2026-09-27 st-chief4x-gut-20260927）
 # [STARTUP] manual
 # [MATURITY] experimental
 # [MODIFY-GUARD] none
@@ -17,11 +19,12 @@
 # [STABILITY] experimental
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] 单条目 LLM 失败/解析空 → 记 failed 清单继续（不抛）；台账读写损坏 → 按空集处理宁可重写不误删
-# [TESTS] tests/backtest/test_lane_g_stomach_intake.py
+# [ERROR_CONTRACT] 单条目 LLM 失败/解析空 → 记 failed 清单继续（不抛）；台账读写损坏 → 按空集处理宁可重写不误删;
+#   run_intake_sweep 整体异常 → 降级 alerter ERROR 告警返回 ok=False（不反噬调度器，同族 Alerter 模式）
+# [TESTS] tests/backtest/test_lane_g_stomach_intake.py; tests/zephyr/data/test_lane_g_intake_sweep_wiring.py
 # [A_module] module_id=MOD-AUTO-E1G-001 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# noqa: m11-perm-manual-legitimate  手动 CLI 进货件非常驻服务：由 E1 进货编排事件调用（接线前人工/会话触发），无常驻循环
+# noqa: m11-perm-manual-legitimate  手动 CLI 进货件非常驻服务：触发沿=胃落新班事件沿（harvester fire-and-forget）+ lane_g_intake_sweep 调度兜底槽 + E1 进货编排/人工，本件无常驻循环
 """FAC-E1G 车道G-全网搜索进货（⑥号车道，"从胃点菜"）——收件箱情报→策略假说卸台账（图9 FAC-E1G）。
 
 原理（骨架 §1 工段⑥ + §4 P1"⑥号车道"工单）：AI 层胃（L3 intel_harvester，MOD-AUTO-L3-001）
@@ -33,6 +36,7 @@ A 股策略假说，带出生证（渠道 G+批次+原文链接）卸到策略�
   python scripts/backtest/lane_g_stomach_intake.py run --limit 5 --dry-run
   python scripts/backtest/lane_g_stomach_intake.py run
 """
+
 from __future__ import annotations
 
 import argparse
@@ -79,12 +83,14 @@ def parse_inbox_entries(md_text: str) -> list[dict]:
         if not m:
             continue
         kw = re.findall(r"`([^`]+)`", link_line)
-        entries.append({
-            "title": title,
-            "url": m.group(1),
-            "keywords": kw,
-            "summary": summary_line.removeprefix("- 摘要:").strip(),
-        })
+        entries.append(
+            {
+                "title": title,
+                "url": m.group(1),
+                "keywords": kw,
+                "summary": summary_line.removeprefix("- 摘要:").strip(),
+            }
+        )
     return entries
 
 
@@ -104,7 +110,7 @@ def build_extraction_prompt(entry: dict) -> str:
 
 def make_candidate_id(hypothesis_zh: str) -> str:
     """候选 id：CAND-<md5_12>，对假说全文内容寻址（E1G 域前缀，跨批同假说不换 id）。"""
-    digest = hashlib.md5(f"E1G:{hypothesis_zh.strip()}".encode("utf-8")).hexdigest()[:12]
+    digest = hashlib.md5(f"E1G:{hypothesis_zh.strip()}".encode()).hexdigest()[:12]
     return f"CAND-{digest}"
 
 
@@ -130,8 +136,9 @@ def collect_inbox_entries(inbox_dir: Path) -> list[dict]:
     return entries
 
 
-def _build_rows(entry: dict, ideas: list[dict], batch_id: str, prompt_fp: str,
-                existing: set[str]) -> tuple[list[dict], int]:
+def _build_rows(
+    entry: dict, ideas: list[dict], batch_id: str, prompt_fp: str, existing: set[str]
+) -> tuple[list[dict], int]:
     """假说 → 台账行（内容寻址跨批去重，existing 就地更新）。返回 (行, 去重跳过数)。"""
     rows: list[dict] = []
     skipped = 0
@@ -144,35 +151,35 @@ def _build_rows(entry: dict, ideas: list[dict], batch_id: str, prompt_fp: str,
             skipped += 1
             continue
         existing.add(cid)
-        rows.append({
-            "candidate_id": cid,
-            "theme": "、".join(entry["keywords"]) or "全网搜索",
-            "hypothesis_zh": hyp,
-            "mechanism_hint": str(x.get("mechanism_hint", "")),
-            "horizon": str(x.get("horizon", "")),
-            "universe": str(x.get("universe", "")),
-            "birth_channel": BIRTH_CHANNEL,
-            "birth_batch": batch_id,
-            "birth_source": (
-                f"llm:{MODEL} src_md5={prompt_fp} url={entry['url']} title={entry['title']}"
-            ),
-        })
+        rows.append(
+            {
+                "candidate_id": cid,
+                "theme": "、".join(entry["keywords"]) or "全网搜索",
+                "hypothesis_zh": hyp,
+                "mechanism_hint": str(x.get("mechanism_hint", "")),
+                "horizon": str(x.get("horizon", "")),
+                "universe": str(x.get("universe", "")),
+                "birth_channel": BIRTH_CHANNEL,
+                "birth_batch": batch_id,
+                "birth_source": (f"llm:{MODEL} src_md5={prompt_fp} url={entry['url']} title={entry['title']}"),
+            }
+        )
     return rows, skipped
 
 
-def run_intake(limit: int | None = None, dry_run: bool = False,
-               chat=None) -> dict:
+def run_intake(limit: int | None = None, dry_run: bool = False, chat=None) -> dict:
     """主流程：收件箱条目（未消化过）→ LLM 抽取 → 去重 → 出生证 → 卸台账 + seen log。
 
     chat 参数为测试注入位（缺省现场构造 OllamaChat，经 LSG）。
     单条目失败记 failed_urls 不阻断其余；失败条目不写 seen（下一班自愈重试）。
     """
-    from zephyr.shared.utils.time_utils import now_utc
     # 台账 id 读取复用 B 车道实现防双真源（CLONE-GUARD 决议=委托）
     from scripts.backtest.lane_b_idea_generator import load_existing_ids
+    from zephyr.shared.utils.time_utils import now_utc
 
     if chat is None:
         from zephyr.integration.local_model.ollama_chat import OllamaChat
+
         chat = OllamaChat(model=MODEL)
 
     batch_id = now_utc().strftime("E1G-%Y%m%d-%H%M%S")
@@ -199,8 +206,7 @@ def run_intake(limit: int | None = None, dry_run: bool = False,
             ideas = _parse_ideas(raw)
         except Exception as exc:  # noqa: BLE001 — LLM 不可达/被闸：该条记失败不标 seen，下一班重试
             failed.append(entry["url"])
-            print(f"WARN 消化失败 {entry['url']}: {type(exc).__name__}: {exc}",
-                  file=sys.stderr)
+            print(f"WARN 消化失败 {entry['url']}: {type(exc).__name__}: {exc}", file=sys.stderr)
             continue
         if "[" not in (raw or ""):
             # 回包无 JSON 数组痕迹=截断/跑题，按失败处理（不误标 seen 吞条目）
@@ -211,27 +217,32 @@ def run_intake(limit: int | None = None, dry_run: bool = False,
         skipped_dup += skipped
         rows.extend(new_rows)
         # 空数组=诚实消化过（该研究给不出假说），同样记账不重考
-        seen_rows.append({
-            "url_md5": url_md5, "url": entry["url"], "title": entry["title"],
-            "batch": batch_id, "n_candidates": len(new_rows),
-        })
+        seen_rows.append(
+            {
+                "url_md5": url_md5,
+                "url": entry["url"],
+                "title": entry["title"],
+                "batch": batch_id,
+                "n_candidates": len(new_rows),
+            }
+        )
 
     record = {
-        "batch": batch_id, "processed_entries": processed, "generated": len(rows),
-        "skipped_dup": skipped_dup, "failed_urls": failed,
-        "items": [{k: r[k] for k in ("candidate_id", "theme", "hypothesis_zh")}
-                  for r in rows],
+        "batch": batch_id,
+        "processed_entries": processed,
+        "generated": len(rows),
+        "skipped_dup": skipped_dup,
+        "failed_urls": failed,
+        "items": [{k: r[k] for k in ("candidate_id", "theme", "hypothesis_zh")} for r in rows],
     }
     if not dry_run and (rows or seen_rows or failed):
         _INTAKE_CSV.parent.mkdir(parents=True, exist_ok=True)
         if rows:
             header = not _INTAKE_CSV.exists()
-            pd.DataFrame(rows).to_csv(_INTAKE_CSV, mode="a", header=header,
-                                      index=False, encoding="utf-8-sig")
+            pd.DataFrame(rows).to_csv(_INTAKE_CSV, mode="a", header=header, index=False, encoding="utf-8-sig")
         if seen_rows:
             header = not _SEEN_CSV.exists()
-            pd.DataFrame(seen_rows).to_csv(_SEEN_CSV, mode="a", header=header,
-                                           index=False, encoding="utf-8-sig")
+            pd.DataFrame(seen_rows).to_csv(_SEEN_CSV, mode="a", header=header, index=False, encoding="utf-8-sig")
         record["written_to"] = str(_INTAKE_CSV.relative_to(_ROOT))
     return record
 
@@ -239,12 +250,56 @@ def run_intake(limit: int | None = None, dry_run: bool = False,
 def _parse_ideas(raw: str) -> list[dict]:
     """JSON 数组强解析（复用 B 车道解析器防双真源；CLONE-GUARD 决议=委托）。"""
     from scripts.backtest.lane_b_idea_generator import parse_ideas
+
     return parse_ideas(raw)
 
 
+def run_intake_sweep(alerter=None, chat=None) -> dict:
+    """lane_g_intake_sweep 调度兜底槽入口（慢路径）——inbox 增量扫描，游标=seen log。
+
+    生产侧事件沿（intel_harvester.trigger_lane_g_intake，EC2-P0批4）为快路径；
+    本兜底吸收三类漏触发：Popen 触发失败静默／子进程崩溃于处理前／inbox 他途落盘。
+    增量语义由 run_intake 既有 seen log 保证（未见条目才过 LLM，禁全量重跑——挖矿簿口径）。
+    降级=告警不抛（同族 Alerter 模式）：整体异常→ERROR 告警返回 ok=False；
+    单条目 LLM 失败（不标 seen 下一班自愈）→WARN 告警。
+    alerter/chat=None 为 CLI 手跑与测试注入位（零真 LLM、零真告警通道）。
+    """
+    try:
+        record = run_intake(chat=chat)
+    except Exception as exc:  # noqa: BLE001 — 兜底扫描故障降级告警，不反噬调度器
+        if alerter is not None:
+            try:
+                alerter.notify(
+                    "lane_g_intake_sweep",
+                    f"车道G收件箱兜底扫描异常: {type(exc).__name__}: {str(exc)[:160]}",
+                    level="ERROR",
+                    source="lane_g_intake_sweep",
+                )
+            except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+                pass
+        return {"ok": False, "error": f"{type(exc).__name__}: {exc}"[:200]}
+    failed = record.get("failed_urls") or []
+    if failed and alerter is not None:
+        try:
+            alerter.notify(
+                "lane_g_intake_sweep",
+                f"车道G消化失败条目 {len(failed)} 条（不标 seen，下一班自愈重试） first={str(failed[0])[:120]}",
+                level="WARN",
+                source="lane_g_intake_sweep",
+            )
+        except Exception:  # noqa: BLE001 — 告警通道自身故障不再上抛
+            pass
+    return {
+        "ok": True,
+        "batch": record.get("batch"),
+        "processed_entries": record.get("processed_entries"),
+        "generated": record.get("generated"),
+        "failed_urls": failed,
+    }
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(
-        description="FAC-E1G 车道G-全网搜索进货（消化胃收件箱→策略假说，经 LSG）")
+    ap = argparse.ArgumentParser(description="FAC-E1G 车道G-全网搜索进货（消化胃收件箱→策略假说，经 LSG）")
     sub = ap.add_subparsers(dest="cmd", required=True)
     g = sub.add_parser("run", help="消化未读收件箱条目并卸货")
     g.add_argument("--limit", type=int, default=None, help="本班最多消化条目数")
