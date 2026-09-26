@@ -52721,4 +52721,9 @@ creation_tokens:
   created_by: st-commitspeed-tbl-20260924
   capability: commit_speedup_campaign_rb14
   merge_evaluation: "包14红蓝对抗报告=提交通道性能战役证尺交付物，唯一归档位在战役90_verification目录，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/qmine_campaign/HANDOVER.md
+  token: qmine-campaign-handover-20260926
+  created_by: st-qmine-20260925
+  capability: qmine_campaign
+  merge_evaluation: "QMine交接书(task_bound),下一班第一读单一真源,接手完成后随TTL归档"
 di_seam_exemptions: []
