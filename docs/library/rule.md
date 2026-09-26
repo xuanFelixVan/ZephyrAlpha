@@ -6,7 +6,7 @@ doc_type: "index"
 
 # 制度馆（生成视图，构建于总账 lib_assets；真源在资产本体）
 
-- 条目数（本页列出）：85｜馆内总数：85
+- 条目数（本页列出）：86｜馆内总数：86
 - 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`
 
 | asset_id | kind | status | home |
@@ -30,6 +30,7 @@ doc_type: "index"
 | REG:docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml |
+| REG:docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/chain_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml |
 | REG:docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml | registry | active | docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml |
