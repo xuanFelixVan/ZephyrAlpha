@@ -5113,7 +5113,7 @@ nodes:
   decay_scan_frequency: monthly
   tags: ["tdm20", "state-var", "V3"]
 - node_id: TDM-E-L9-AGG
-  note_confirmed: 2026-09-23  # st-tdm20 新增：本节点算法说明与新增同批确认
+  note_confirmed: 2026-09-26  # st-chief4x-know-20260927：实件化（module_ref 回填+读数生产者）同批确认
   name_zh: 知识供给汇聚
   market: cn_a
   flow: entry_flow
@@ -5123,12 +5123,12 @@ nodes:
   decision_question: "知识供给轴（源线/图谱/状态变量）的覆盖与健康总览？"
   activation: continuous
   algo_note_zh: >-
-    知识供给汇聚：29源线+5图谱+3状态变量快照的汇聚点：供给健康读数喂建仓流根（数据就绪度输入）；本节点只承载结构与指向，不存实时数据。
+    知识供给汇聚：29源线+5图谱+3状态快照的就绪度读数生产者（纯读取聚合零采集，f34册最小件）；daily_kline系SUCCESS事件唤醒+同日60min节流，逐线绿/黄/红与挂起/跳过读数落c1_market.l9_readiness_daily，T日聚合读数喂次日数据就绪度；本节点只承载结构与指向，不存实时数据。
   factor_refs: []
   data_refs: []
   algo_refs: []
-  module_ref: null
-  red_reason: structural
+  module_ref: src/zephyr/data/l9_readiness_aggregator.py  # st-chief4x-know-20260927 回填：f34 册 P0 最小件（就绪度读数生产者，纯读取聚合零采集）
+  module_id: MOD-DATA-L9AGG
   doc_ref: docs/_working/chain_piling_campaign/01_layer_charter.md
   strategy_mounts: []
   materiality: normal

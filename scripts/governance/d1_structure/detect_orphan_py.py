@@ -97,6 +97,10 @@ def find_orphan_py_files() -> list[Path]:
         # 修复前主区实测 339,043 条发现里 339,013 条出自这两棵子树，真孤儿 0）。
         ".aidrafts",
         ".aidrafts_pool",
+        # .qoder=外部代理工具 worktree 影子（2026-09-26 22:30 出现，git-ignored，
+        # 111,416 个 .py 副本触发 GATE-17 全仓 110,781 假孤儿=同 CF1 病根；
+        # st-chief4x-know-20260927 按 CF1 同款先例补豁免）
+        ".qoder",
         ".worktrees",
     }  # agent_inbox=会话草稿投箱豁免区（2026-09-02 Owner 裁定：草稿 .py 在箱合法，晋升时才迁入合法目录）
     try:

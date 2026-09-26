@@ -18,9 +18,11 @@
 #   单条事件重试超 MAX_ATTEMPTS 判毒丸留档+告警，不再自动重试；drain 幂等（消费成功=出队，重放零副作用）；
 #   模拟盘件（S08/S09/S10 C1C2）：sim_wallet_due/sim_ledger_daily/sim_journal_daily/sim_deviation_monthly
 #   归轻 kind（幂等写/分钟级子进程，月频或日频；sim_deviation_monthly 归轻=无人值守自动消费的显式裁定）；
-#   attribution_daily（WO-1 归因日账，TC-08 段2/裁定#392 之 D5 批代落）=SIM_DAILY_KINDS FIFO 末位：
-#   deps=sim 账本当日行（FIFO 末位次序=账本/日刊先行），--day 业务日=resolve_pf_alloc_trade_date
+#   attribution_daily（WO-1 归因日账，TC-08 段2/裁定#392 之 D5 批代落）=SIM_DAILY_KINDS 末位次段：
+#   deps=sim 账本当日行（FIFO 次序=账本/日刊先行），--day 业务日=resolve_pf_alloc_trade_date
 #   （禁墙钟猜日；payload 可显式带 trade_date 覆盖供人工重跑），无行=执行体抛错进 attempts；
+#   sim_observe_daily（观察面日件）=SIM_DAILY_KINDS FIFO 末位：观察面 deps=账本/日刊/归因
+#   当日行，四平面判定→重放→日报→结算串行（09-24 契约回归补落）；
 #   pf_alloc_daily（车道 D 分配链）归轻 kind：payload 必带 trade_date（禁墙钟猜业务日）、
 #   trade_date 级 marker 防同日双写（alloc 三表只增不改）、子进程超时 PF_ALLOC_TIMEOUT_S 有界、
 #   失败/超时抛错进 attempts 计数（MAX_ATTEMPTS=3 后毒丸留档）；
@@ -82,9 +84,11 @@
     且先于其入队。清单 #15 前该 kind 只有派发/执行体没有发射方=分配链恒 0 行的真断点；
     危机闸 crisis_block_check 在发射侧与执行侧双挂短路，crisis/判读异常 fail-closed
     均跳过且不落 marker——解除后同日可重放，TC-08 段1/裁定#392 之 D5）；
-  attribution_daily（WO-1 收益归因日账，TC-08 段2/裁定#392 之 D5）：SIM_DAILY_KINDS FIFO 末位
+  attribution_daily（WO-1 收益归因日账，TC-08 段2/裁定#392 之 D5）：SIM_DAILY_KINDS 末位次段
     （账本→日刊→归因），--day 业务日=resolve_pf_alloc_trade_date 禁墙钟猜日，产出口=
     scripts/backtest/sim_attribution_report.py --day <D>（run_daily 交付签名的子进程同款）；
+  sim_observe_daily（观察面日件，09-24 契约回归补落）：SIM_DAILY_KINDS FIFO 末位
+    （账本→日刊→归因→观察面），sim_daily_runner 四平面判定→重放→日报→结算串行；
   fw_backtest_due / promotion_advisory_due（预埋派发，实现模块由 S12/S13 批次交付，缺失跳过）；
   regime_snapshot_history 日序台账（S11 §5 施工项 4 挂点 A，挖矿节点 F3 治本）：唯一自动产出者
     =本模块 maybe_refresh_regime_snapshot，与 pf_alloc 同一 daily_kline SUCCESS 唤醒点、且先于
@@ -133,17 +137,27 @@ LIGHT_KINDS = frozenset(
         "sim_deviation_monthly",
         "pf_alloc_daily",
         "attribution_daily",
+        "sim_observe_daily",
     }
 )
 HEAVY_KINDS = frozenset({"c4_batch_due"})
 # 模拟盘日件（S09 C2）：顺序=journal 依赖账本日账先行（drain FIFO 天然串行）
-# attribution_daily 为 FIFO 末位（TC-08 段2/裁定#392 之 D5 批代落）：归因 deps=账本当日行，
-# 消费次序账本→日刊→归因由本元组次序唯一保证，追加只许在尾部
-SIM_DAILY_KINDS = ("sim_ledger_daily", "sim_journal_daily", "attribution_daily")
+# attribution_daily 为 FIFO 末位次段（TC-08 段2/裁定#392 之 D5 批代落）：归因 deps=账本当日行，
+# sim_observe_daily（观察面日件）为 FIFO 末位：观察面 deps=账本/日刊/归因当日行（09-24 契约
+# 在 tests 钉死、执行体接线于快照回退事故丢失，st-ec2-p0 按 HEAD 测试契约补落），
+# 消费次序账本→日刊→归因→观察面由本元组次序唯一保证，追加只许在尾部
+SIM_DAILY_KINDS = ("sim_ledger_daily", "sim_journal_daily", "attribution_daily", "sim_observe_daily")
 # 归因日账执行体（WO-1 产出口交付时注明的接线预期：超时/幂等/marker 照抄 run_sim_ledger_daily
 # 子进程款——CH 撞窗重试加固留在子进程；--day 单参即产出口 run_daily 的 CLI 正门）
 ATTRIBUTION_DAILY_SCRIPT = "sim_attribution_report.py"
 ATTRIBUTION_DAILY_TIMEOUT_S = 900
+# 观察面日件执行体：sim_daily_runner 观察平面四子命令（判定→重放→日报→结算）串行；
+# --day 业务日=resolve_pf_alloc_trade_date（禁墙钟猜日，payload 可覆盖供人工重跑）；
+# 任一步失败即停并告警（各步幂等可重入，跨唤醒重试自失败步续跑）；超时下限覆盖四步
+# 子进程串行（每步各有界），照抄 run_sim_ledger_daily 子进程款（重活不进主进程）。
+SIM_OBSERVE_DAILY_SCRIPT = "sim_daily_runner.py"
+SIM_OBSERVE_STEPS = ("plan-bridge", "e4-replay", "report", "settle")
+SIM_OBSERVE_TIMEOUT_S = 1800
 # 日件唤醒任务（task_completed task_id 子串匹配）：daily_kline 时段键/kline_daily_incremental
 # 主任务/kline_index_incremental（账本直读指数行情）。DAG 并行竞态由 journal 失败重试兜底
 # （行情未齐→账本 RuntimeError→留队，下个数据任务完成唤醒重试）。
@@ -273,6 +287,10 @@ def _default_handler(evt: dict[str, Any]) -> dict[str, Any]:
     if kind == "attribution_daily":  # WO-1 归因日账（TC-08 段2/裁定#392 之 D5）：消费成功才落 marker
         out = run_attribution_daily(evt["payload"])
         _touch_marker("attribution_daily")
+        return out
+    if kind == "sim_observe_daily":  # 观察面日件（09-24 契约回归补落）：消费成功才落 marker
+        out = run_sim_observe_daily(evt["payload"])
+        _touch_marker("sim_observe_daily")
         return out
     if kind == "sim_deviation_monthly":
         out = run_sim_deviation_monthly(evt["payload"])
@@ -489,6 +507,26 @@ def run_attribution_daily(payload: dict[str, Any]) -> dict[str, Any]:
     if rc != 0:
         alert(f"模拟盘归因日账失败 rc={rc} day={day}: {err}", level="ERROR")
     return {"rc": rc, "day": day}
+
+
+def run_sim_observe_daily(payload: dict[str, Any]) -> dict[str, Any]:
+    """观察面日跑（09-24 契约回归补落，st-ec2-p0）：sim_daily_runner 判定/重放/日报/结算四平面。
+
+    deps=sim 账本/日刊/归因当日行（SIM_DAILY_KINDS FIFO 末位次序保证前三件先行）；
+    --day 业务日=resolve_pf_alloc_trade_date()（数据驱动禁墙钟猜日，与归因执行体同真源；
+    payload 显式带 trade_date/biz_date 时覆盖——人工重跑逃生口）；四步串行（判定→重放→
+    日报→结算），任一步失败即停（各步幂等可重入：判定列 asof 落行/重放同键覆盖/结算
+    T+1 回填同键幂等），失败语义=留队跨唤醒重试（run_sim_ledger_daily 同款）。
+    """
+    day = str(payload.get("trade_date") or payload.get("biz_date") or "").strip() or resolve_pf_alloc_trade_date()
+    for step in SIM_OBSERVE_STEPS:
+        rc, err = _run_sim_script(
+            SIM_OBSERVE_DAILY_SCRIPT, [step, "--day", day], int(payload.get("timeout_s", SIM_OBSERVE_TIMEOUT_S))
+        )
+        if rc != 0:
+            alert(f"模拟盘观察面日跑失败 rc={rc} step={step} day={day}: {err}", level="ERROR")
+            return {"rc": rc, "day": day, "step": step}
+    return {"rc": 0, "day": day}
 
 
 def _pf_alloc_brief(stdout: str) -> str:
@@ -1079,6 +1117,17 @@ def wire_data_scheduler(scheduler) -> None:
                 maybe_run_daily_decision(**_kwargs)
             except Exception:  # noqa: BLE001  导入级故障与模块内异常同待遇：出声不反噬
                 log.warning("[DAILY-DECISION] 编排器唤醒失败（不影响唤醒链）", exc_info=True)
+            # L9 知识供给汇聚就绪度读数（2026-09-27 st-chief4x-know，f34 册 P0 最小件，
+            # TDM-E-L9-AGG 实件）：纯读取聚合（禁采集），daily_kline 系 SUCCESS=行情到位
+            # 自然唤醒（judgment 链同款唤醒词，内部自过滤+同日 60min 节流）。置于唤醒链
+            # **最末**（治理读数不占分配/拍板时序）；内部全捕获永不反噬（fail-open：
+            # 探测失败≠读数为零，error 行出声），导入失败独立吞掉（读数件是增益不是依赖）
+            try:
+                from zephyr.data.l9_readiness_aggregator import maybe_emit_l9_readiness
+
+                maybe_emit_l9_readiness(**_kwargs)
+            except Exception:  # noqa: BLE001  导入级故障与模块内异常同待遇：出声不反噬
+                log.warning("[L9-AGG] 就绪度读数唤醒失败（不影响后续链）", exc_info=True)
         except Exception:  # noqa: BLE001  钩子永不反噬调度器
             log.debug("pipeline 唤醒钩子异常", exc_info=True)
 
