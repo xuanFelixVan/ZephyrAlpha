@@ -22,11 +22,14 @@
 3. fail-closed 行为：import 失败/getattr 失败/缺字段 → 抛 GateAutoRegistrationError（报 gate_id+错误）
 4. 装载数对账硬告警：条数↔total_gates 不一致 / 重复 gate_id / 声明未注册 → 抛错
 5. 全链路：单门 import 被断 → GitCommitGateway() 构造失败（提交阻断）；全健康 → 构造放行
+6. priority 撞号回归：同 priority 异 gate_id 对 → register 抛 GateRegistrationError 整链 FAIL-CLOSED
+   （2026-09-26 实障：DOC-HEADER-SUITE vs BLUEPRINT-FORMAT 同=77 ⇒ 入队预检整体 disable）
 """
 
 from __future__ import annotations
 
 import sys
+import types
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -303,6 +306,54 @@ class TestAutoRegisterGates:
         registry = CommitGateRegistry()
         with pytest.raises(GateAutoRegistrationError, match="declared but not registered"):
             auto_register_gates(registry, tmp_path)
+
+    def test_priority_conflict_pair_raises_fail_closed(self, tmp_path: Path) -> None:
+        """priority 撞号回归（2026-09-26 实障：DOC-HEADER-SUITE vs BLUEPRINT-FORMAT 同=77）。
+
+        tmp yaml 两 enabled 门指向同 priority 异 gate_id 工厂 → register 抛
+        GateRegistrationError（#ARCH-GATE-PRIORITY-UNIQUENESS-001 Phase 2 fail-closed）→
+        auto_register_gates 整链抛 GateAutoRegistrationError；失败归属=名册在后的门
+        （后到 register 撞先到），先到者 gate_id 在冲突详情中可定位。"""
+        fake = types.ModuleType("zephyr._test_priority_conflict_pair")
+        fake.make_gate_a = lambda: GateSpec(  # type: ignore[attr-defined]
+            gate_id="TEST-PRI-A", check=lambda gw, f, **kw: (True, ""), priority=77
+        )
+        fake.make_gate_b = lambda: GateSpec(  # type: ignore[attr-defined]
+            gate_id="TEST-PRI-B", check=lambda gw, f, **kw: (True, ""), priority=77
+        )
+        saved = sys.modules.get(fake.__name__, ...)  # 测试体内 try/finally 自恢复（同下文全链路红证惯例）
+        sys.modules[fake.__name__] = fake
+        try:
+            self._make_registry_yaml(
+                tmp_path,
+                [
+                    {
+                        "gate_id": "TEST-PRI-A",
+                        "module_path": fake.__name__,
+                        "factory_function": "make_gate_a",
+                        "enabled": True,
+                    },
+                    {
+                        "gate_id": "TEST-PRI-B",
+                        "module_path": fake.__name__,
+                        "factory_function": "make_gate_b",
+                        "enabled": True,
+                    },
+                ],
+            )
+            registry = CommitGateRegistry()
+            with pytest.raises(GateAutoRegistrationError) as ei:
+                auto_register_gates(registry, tmp_path)
+        finally:
+            if saved is ...:
+                sys.modules.pop(fake.__name__, None)
+            else:
+                sys.modules[fake.__name__] = saved
+        msg = str(ei.value)
+        assert "1/2" in msg  # 失败数/名册数：仅后到者注册失败
+        assert "TEST-PRI-B" in msg  # 失败归属=名册在后者
+        assert "TEST-PRI-A" in msg  # 先到者在冲突详情可定位
+        assert "priority" in msg and "77" in msg
 
 
 # ========== 全链路 fail-closed / 放行测试（GitCommitGateway 构造链）==========
