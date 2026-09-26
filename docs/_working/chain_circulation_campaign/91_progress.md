@@ -40,3 +40,19 @@ ttl: task_bound
 
 ### 未落地依赖（诚实注记）
 - 无。本车道袋全落地。
+
+## EC2 P0 断链处置（st-ec2-p0）
+
+| # | qid | commit | 内容 | 归属核验 |
+|---|-----|--------|------|----------|
+| 1 | q-20260927-st-ec2-p0-0001 | `3522eb8c6d`（chief 双归属袋吸收）+0009 残件 | F34 知识汇聚落地（聚合器+DDL+16 测+TDM module_ref 回填，死会话 st-chief4x-know 遗产核验落地；主袋与 chief 3522eb8c6d 内容重合已防回退弃用）+sim_observe_daily 回归补落（09-24 契约在 tests 钉死、执行体快照回退丢失）+L9 钩子测试隔离（残件 q-0009） | `git log -1 --name-only` 3522eb8c6d=8 文件恰含五件+chief 增强版 ✓；0009 残件落地后回填 |
+| 2 | q-20260927-st-ec2-p0-0002（v3袋=q-0014） | 落地后回填（v3 补 ALGO_FLOW 锚+F821 治本）| F74 堵点1+2：combo v2 frozen 尺（STD-SIM-ACCESS-002/裁定#337，dsr 0.5+ρ̄+换手腿+suspect 注记）+combo 事件入口（advisory due 执行体尾传动渲染） | 待 drain 后核 |
+| 3 | q-20260927-st-ec2-p0-0003（v2袋=0013） | 落地后回填（v2 修 SSOT-REDEFINITION+NO-BARE-SQL）| FL1/FL2 回灌边消费端 MOD-BT-223 feedback_prior（E6/E9 digest→E2 先验注记+E1 方向面）+两消费端接线+翻译/token 共册随批 | 待 drain 后核 |
+| 4 | q-20260927-st-ec2-p0-0004（v2袋=4ce7dd9ced） | F20 事件沿落地 | F20 车道G 事件沿：intel_harvester 落新班 fire-and-forget 触发 lane_g 消化（零 cron 事件沿） | 待 drain 后核 |
+
+### 九项销账（证据全录=ec2_p0_breaks_ledger.md）
+F34 本役落地｜F74 本役修（堵点3 Owner/堵点4 自然时间）｜F20 本役修（胃停摆属 F96）｜F26/F04 **他线已落地**（88f62e893e，本役让位+重复件内收全撤净）｜
+st-chief4x-promo2-20260927（MOD-BT-225 活跃施工，本役重复件已按内收全撤净）｜F62 **Owner 门位登记跳过**
+（broker_ack 人工报送前置，99_skipped SKIP-1）｜F82 已销账（判据"保持不存在"成立=EC3 row11 同判）｜
+F04 他线已落地（88f62e893e，本役让位）｜FL1/FL2 本役修。超计划：sim_observe_daily 接线回归修复
+（HEAD 即红 5 测，快照回退事故丢件）。测试累计：126 绿（七套件）+54 绿（回归复验）。

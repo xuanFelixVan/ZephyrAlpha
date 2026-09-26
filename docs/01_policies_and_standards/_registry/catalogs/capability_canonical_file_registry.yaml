@@ -54754,4 +54754,19 @@ creation_tokens:
   created_by: st-final-build-20260926
   capability: campaign_books
   merge_evaluation: "唯一归档位：本役终报与待裁清单，不替代既有册条目（既有宿主无此观测面）"
+- file: docs/_working/chain_circulation_campaign/99_skipped_for_owner.md
+  token: chain-circulation-99-skipped-for-owner-20260926
+  created_by: st-ec2-p0
+  capability: chain_circulation
+  merge_evaluation: "内收：EC2 九项销账台账单册承载（作业簿复核命令逐项复用不另立口径），Owner 跳过登记并入既有 99 文件族不建第二通道"
+- file: docs/_working/chain_circulation_campaign/ec2_p0_breaks_ledger.md
+  token: chain-circulation-ec2-p0-breaks-ledger-20260926
+  created_by: st-ec2-p0
+  capability: chain_circulation
+  merge_evaluation: "内收：EC2 九项销账台账单册承载（作业簿复核命令逐项复用不另立口径），Owner 跳过登记并入既有 99 文件族不建第二通道"
+- file: docs/03_modules/_domain_strategy_pipeline/algo_flow/paper_outpost.yaml
+  token: paper-outpost-algo-flow-view-paper-outpost-20260926
+  created_by: st-chief4x-promo2-20260927
+  capability: paper-outpost-algo-flow-view
+  merge_evaluation: "内收对价=前哨考核器算法视图外锚出仓，drafter+externalizer 官方管线产物，零手写块"
 di_seam_exemptions: []
