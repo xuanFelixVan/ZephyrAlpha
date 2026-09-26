@@ -10,7 +10,8 @@ completes_when: 八波全部落地且落地面连续两轮回归零问题+红蓝
 > **本方案与交接书叙事的三处关键改道**（全部由实测驱动，非偏好）：
 > 1. **撤下"own-scope 治本是落地前置"**——六图役 7 袋实测死于 13 类不同死因（TRANSLATION-COVERAGE 11、CREATE-GUARD 8、GATE-PRECOMMIT-RUN 2、基底不可知 2、RULING-REFERENCE 2…），被点名的两袋一个是 `WorktreePunchThroughError`（EV-02 reset 打穿主仓）、一个的死因文件就在它自己的 38 件清单内。全 dead 文本含"外来 staged"仅 2 封。⇒ 波 1 不再花预算改 own-scope，改为"新建件三件套补齐 + 悬空裁定号清除"这条机械通道（Z-07 降级为观察项 W-22）。
 > 2. **新增一条 P0 执法洞**——进程内 `auto_register_gates` 实载 **99** 台，名册声明 **103**：**4 台门静默不装载**＝提交面空转（与"配置只被一条路径消费"同族病）。这比任何提速都优先。
-> 3. **抢救优先级高于一切施工**——六图车道分支基点落后 dev 237 个 commit、**零自有 commit**、脏项 272；波2 车道 169 件同理。它们一旦被外部重置抹掉就是永久损失（本仓已发生多次）。故波 0 只做一件事：把全部在途字节固化成"清单+sha256+双镜像"。
+> 3. **（外部审查新增）先建"可信层"再施工**：审查判定本仓的系统性病是**声明面与强制面脱钩**（状态用散文承载、规则在册却无门禁或指向死库、门在名册却不在装载面/触发面）。故新增 **波 1A**（交付状态迁回既有 73 列机读 `tasks` 表、交付判据从 `COMPLETED` 改 `VERIFIED`、触发面三列对账、规则↔执法面对账、死库与死指针清理、散文交接书退役），排在一切施工之前；原波 1 顺延为 **波 1B**。详见 `review_ext_verdict.md`。
+> 4. **抢救优先级高于一切施工**——六图车道分支基点落后 dev 237 个 commit、**零自有 commit**、脏项 272；波2 车道 169 件同理。它们一旦被外部重置抹掉就是永久损失（本仓已发生多次）。故波 0 只做一件事：把全部在途字节固化成"清单+sha256+双镜像"。
 
 ## 波 0 · 现场固化与安全垫（1 道，串行，最先做，零门禁风险）
 
@@ -24,7 +25,23 @@ completes_when: 八波全部落地且落地面连续两轮回归零问题+红蓝
 
 **出口判据**：任何一条车道的字节都有可复算清单+双镜像；六册键集合差为 0；波 1 可开工。
 
-## 波 1 · 提交链解毒（2 道并行，串行于波 0）
+## 波 1A · 可信层（外部审查后新增，**排在一切施工之前**）
+
+> **为什么插这一波**：外部审查（`review_ext_verdict.md`）判定本仓的系统性病是**"声明面与强制面脱钩"**——规则/名册/判据/状态/交接全都写下来了，但缺少让它们必然被执行、被消费、被对账的那一层。原方案 122 个 W-xx 绝大多数在治**表现**（某册漂移、某门未装载、某件未落地），没有一条在治**脱钩本身**；照原方案做完，下一轮仍会长出第 12、13 份互相矛盾的交接书。
+> **本波只做三件事，全部内收（不新造册、不新造库、不新增门禁台数）**：
+
+| 包 | 内容 | 出口判据（可机械复算） |
+|---|---|---|
+| 1A.1 | **交付状态迁回既有机读真源**：`data/databases/governance.db` 的 `tasks` 表（实测 **73 列 / 2546 行**，最近 5 行是 09-23 测试夹具、近 7 日仅 41 行变动）已含 `acceptance / deliverables / artifact_paths / files_in_scope / depends_on / blocked_by / claimed_by / session_id / verification_status / construction_status / completed_gates / blocked_gates / rollback_instructions / allowed_touch / forbidden_touch / approval_required / requires_rb_check / safety_level / ai_autonomy_level / idempotent / root_cause_analysis` 等列 ⇒ 把 122 个 W-xx **逐条建卡**（入口＝`TaskRepository.create_and_ready()`，`task_repo.py:1290`；`DB_PATH` 实测＝`data/databases/governance.db`）。**Owner 门位项一律 `approval_required=True`**，从源头杜绝 AI 自裁高险项 | 卡数 == W 数；`PYTHONPATH=scripts/governance python scripts/governance/_tasks/task_summary.py --by-status` 能一条命令出分布 |
+| 1A.2 | **交付判据从 COMPLETED 改 VERIFIED**：`TaskStatus` 实测 14 态里**早已区分** `COMPLETED`（自称完成）与 `VERIFIED`（独立核验）⇒ 规定：`COMPLETED` 不算交付；升 `VERIFIED` 必须①`artifact_paths` 非空②逐件 `git cat-file -e HEAD:<path>` 为真③涉判据者 `requires_rb_check` 有红蓝证据锚。这把 `92` 册的 G-05 从"散尺"升级为**状态机约束**（净零对价：G-05 并入，不另立） | 抽 20 张 `COMPLETED` 卡复算：无 HEAD 证据锚者必须**升不了** `VERIFIED`（红证） |
+| 1A.3 | **触发面三列对账表**（生成器产出，禁手工维护）：每台门一行＝`名册声明 / 进程内实载 / files_trigger 在 HEAD 树的命中文件数`；任何"声明有、实载 0 或命中 0"的门自动进红名单。**一张表同时收敛三个悬案**：名册 103 vs 实载 99、`CREATE-GUARD` 因 `files_trigger=''` 每链全跑（实测 1519 次/19186s）、三台密钥门因 `files_trigger` 是**路径子串**匹配而恒零命中（预跑器自己就打印 `files_trigger 死触发（HEAD 树零命中）`） | 表可复算；红名单非空即报；新增门必须三列齐才准入 |
+| 1A.4 | **规则↔执法面对账尺**：规则号有两种写法（册内 `TRAE-060`／门禁文案 `trae_060`）⇒ 别名归一后覆盖率实测 **80/86＝93.0%**（naive grep 只给 76.7%，不可用）；6 条零匹配＝`trae_057/066/074/076/078/083`，其中 **074 worktree 基底新鲜度、076 worktree 提交持久化**正是本战役反复失血的域。二级判定必须区分"被提及"与"真执法"（进程内调它的判据函数能否改变结果） | 覆盖率进 ROOR 派生字段；6 条逐条定性（补执法面／改判据面／退役） |
+| 1A.5 | **死库与死指针清理**：`data/zalpha_metadata.db`（`trae_034` 永久规则明文指向它）实测 **0 字节**，而活库是 `governance.db`（203MB，今日 16:01 仍在写）⇒ **同批改规则里的库路径**（禁留死指针）；`data/databases/` 下另有 `depgraph.db`（0 字节但被 **34 个 .py 引用**）、`integrator_progress.db`、`progress.db`、`scheduler_progress.db` 全 0 字节 ⇒ 逐个判"复活／改指活库／退役"，判据＝消费者数 + 有无活替代；`data/backups/zalpha_metadata_*_pre_close.db` 有 6+ 份 6–7 月备份（该层被反复 pre_close 过，取证时读它） | 0 字节库数 → 0（复活或退役）；34 处 `depgraph.db` 引用逐条有归属；读侧探针失败必抛（禁静默降级） |
+| 1A.6 | **交接书退役**：自 1A.1 落地起，跨会话交接＝"卡集合 + 一条查询命令"（按 `session_id`/`blocked_by`/`verification_status` 出视图）；散文只允许承载**为什么**（裁定理由），不允许承载**是什么状态** | 下一次多会话合并的人工归并工时 ≤1 小时（本轮实测约 3.5 小时、40+ 处叙述与盘面不符、21 簇重复立案） |
+
+**本波与"内收原则"的关系**：1A 全部复用既有资产（`tasks` 表、`TaskStatus.VERIFIED`、`task_summary.py`、ROOR、既有门），**净增脚本 1 个**（触发面/规则面两张对账表的生成器，可合一），**净零对价**＝替代 G-05 散尺 + 替代 11 份散文交接书这一整类工件 + 替代三处各自为政的门禁排查。
+
+## 波 1B · 提交链解毒（原波 1，2 道并行，串行于波 1A）
 
 | 包 | 内容 | 死因对症 / 判据（先证能红） | 车道 |
 |---|---|---|---|
@@ -94,7 +111,7 @@ completes_when: 八波全部落地且落地面连续两轮回归零问题+红蓝
 
 | 包 | 内容 |
 |---|---|
-| 6.1 | 700 封死信内容驱动四态处置（Z-13，全程零删除）+ 归档后统计入终报 |
+| 6.1 | **（审查后降级）** 700 封死信**不做归档/废弃工程**——本仓挖矿 SOP §6 已有封矿先例：dead/ 的审计报告本就自动产出、Owner 对 dead/ 零参与，归档机制不消灭任何人工环节，反而要动「dead/ 永不清理」这条钉死不变量。本包**只保留一件事**：从死信袋与 `.runtime/commit_queue/blobs` 里**捞回"从未落地"的字节**（＝波 1B 的 1.8 与骨架 W-15），捞完即止；`blob_gc` 只允许 `--archive` 且必须排在捞回之后（blobs 是未落地字节的唯一存活处） |
 | 6.2 | 283 问三态守恒复核（Z-44）；candidate 007 重编号（与 1.2 同根，须先后依赖）；api_server 心跳清障批 + 路由死代码一行修（Z-45）；snapself/EV 护栏按现 HEAD 重放（Z-46）；blob_gc `--archive`（Z-47）；VM/root 与临时目录按三段式隔离（Z-48） |
 
 ## 波 7 · 终验（1 道，冻结车道后）
@@ -119,7 +136,7 @@ completes_when: 八波全部落地且落地面连续两轮回归零问题+红蓝
 |---|---|---|---|
 | 9.1 | **W-140 逐闸合规表**：把 12 个合规闸逐闸列"实现符号 / 消费者数 / 触发路径 / 是否 fail-closed"，已知起点：`programmatic_trading_guard` 与 `regulatory_report_generator` 非自身引用＝0，`manipulation_realtime_monitor` 仅 `order_manager.py:81` 的 TYPE_CHECKING 预接线，`compliance_rule_engine` 引用 1 | 先于 ⚑-1 | 表成文且每行给 grep 命令；"零消费者"清单可复算 |
 | 9.2 | **W-141 盘后任务实态**：`schtasks /query /tn <task> /xml` 取 ACTION 原文，判"双入口分叉"真伪；伪则撤销该呈裁项 | 先于 ⚑-1 | 原文入台账（GBK 坑：取 xml 而非 csv） |
-| 9.3 | **W-142..W-151 波2 役 12 项逐件映射**：E 双真源收敛／F 状态词表／G 价格笼子／H 清洗三引擎／I 权重单源／J Fill 写者／K confirm_gate 三雷／L 对账尺改硬／M 测试面／O 声明行归一，逐项给"实现件 / 在册态 / 消费者 / 缺口" | 波 2.2 前置 | 映射表 == 12 行；无表不算波 2.2 完成 |
+| 9.3 | ~~**W-142..W-151 波2 役 12 项逐件映射**~~ **（审查后删除：它是 G-05/R-I 对账器的一次性人工投影，对账器机生后这十二行自动产出，手工做＝造第二真源）** 原条目：波2 役 12 项逐件映射：E 双真源收敛／F 状态词表／G 价格笼子／H 清洗三引擎／I 权重单源／J Fill 写者／K confirm_gate 三雷／L 对账尺改硬／M 测试面／O 声明行归一，逐项给"实现件 / 在册态 / 消费者 / 缺口" | 波 2.2 前置 | 映射表 == 12 行；无表不算波 2.2 完成 |
 | 9.4 | **W-152 HMAC 归属载体立项文档**（工程方案＋量级评估，非实施），落 `docs/_working/commit_speedup_campaign/80_hmac_proposal/proposal.md` | 新增 | 文件在 HEAD 且含量级评估节 |
 | 9.5 | **W-153 红蓝场景⑦跨道连坐补跑**（两会话同域文件并发提交合并正确性，沙盘隔离，尺先证能红） | 波 7 追加 | 场景报告成文 |
 | 9.6 | **W-154 机生 L↔F↔TDM 四向对账表**（治"环节两套编号并存"的手工漂移） | 新增 | 生成器产出＋`--check` rc=0 |

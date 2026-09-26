@@ -52906,4 +52906,9 @@ creation_tokens:
   created_by: st-zmaster-20260926
   capability: governance_total_command_closeout
   merge_evaluation: "红队对抗报告：唯一归档位（与案卷同目录），无第二真源"
+- file: docs/_working/total_command_closeout/review_ext_verdict.md
+  token: governance-total-command-closeout-review-ext-verdict-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "外部审查裁定书：与 02 册同族但对象不同（02=事实改判，本册=方案级根因裁定），无第二真源"
 di_seam_exemptions: []
