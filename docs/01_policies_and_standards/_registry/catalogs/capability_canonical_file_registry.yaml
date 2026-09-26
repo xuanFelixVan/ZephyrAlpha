@@ -53336,4 +53336,14 @@ creation_tokens:
   created_by: st-zmaster2-20260926
   capability: generate_chart_wiring_inventory
   merge_evaluation: "波13 三件机械基建实现件（收编既有资产，净新增门禁台数 0；详见 docs/_working/three_piece_infra 案卷）"
+- file: docs/_working/wave13_chief3/LEDGER_chief3.md
+  token: wave13-chief-command-ledger-chief3-20260926
+  created_by: st-chief3-20260926
+  capability: wave13_chief_command
+  merge_evaluation: "波13 继任总筹指挥位与前总筹在途字节固化证据；替代=散文交接书（同域重复簇收敛唯一，不新建第二真源）"
+- file: docs/_working/wave13_chief3/lane_snapshot_manifest_20260926T222605.yaml
+  token: wave13-chief-command-lane-snapshot-manifest-20260926t222605-20260926
+  created_by: st-chief3-20260926
+  capability: wave13_chief_command
+  merge_evaluation: "波13 继任总筹指挥位与前总筹在途字节固化证据；替代=散文交接书（同域重复簇收敛唯一，不新建第二真源）"
 di_seam_exemptions: []
