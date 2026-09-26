@@ -86,7 +86,7 @@ PY
 ```
 - 必填字段（实测）：`task_id({NAMESPACE}-{SEQ}) / namespace / seq / title / phase / safety_level(L|M|H) / created_at / updated_at / description`；其余按需：`acceptance`（＝该环节的**能红判据**）、`deliverables`、`files_in_scope`、`artifact_paths`（＝HEAD 证据锚）、`depends_on`、`blocked_by`、`session_id`（认领车道）、`approval_required`（**Owner 门位项一律 True**）、`requires_rb_check`、`rollback_instructions`、`forbidden_touch`。
 - 正式建卡器落成 `scripts/governance/meta/build_wxx_cards.py`（走新建 .py 三件套：creation_token + depgraph 节点 + 翻译登记 + 15 字段头注；`scripts/governance/` 根禁新增 .py，治理自检类进 `meta/`），**幂等**（同 `task_id` 重跑不重复建卡）。
-- 读侧一条命令（现成，别再写第二套）：`PYTHONPATH=scripts/governance python scripts/governance/_tasks/task_summary.py --by-status`；单卡 `python scripts/governance/_tasks/task_show.py --like OPS- --json`。
+- 读侧一条命令（现成，别再写第二套）：`PYTHONPATH=scripts/governance python scripts/governance/_tasks/task_summary.py --json`（真实旗标只有 `--json/--quiet/--warn-only/--drift-check/--auto-close-dry-run`；**它自带 docstring 写的 `--by-status` 与调用路径都是错的**，实测 `unrecognized arguments`）；单卡 `python scripts/governance/_tasks/task_show.py --like OPS- --json`。
 
 **1A.2 交付判据改 `VERIFIED`**：`COMPLETED` 只是自述、**不算交付**。升 `VERIFIED` 的三个硬条件：① `artifact_paths` 非空；② 逐件 `git cat-file -e HEAD:<path>` 为真；③ 涉判据者 `requires_rb_check` 有红蓝证据锚。写一把尺钉住它（红证：把 `artifact_paths` 清空后必须升不上去）。
 
@@ -98,19 +98,19 @@ PY
 
 **1A.6 散文交接书退役**：自 1A.1 起，跨会话交接＝"卡集合 + 一条查询命令"；散文只承载**为什么**（裁定理由），不承载**是什么状态**。同时清掉隐性前置与残渣：把 `PYTHONPATH=scripts/governance` 写进工具自述、修 `task_summary.py` docstring 的漂移路径（它写的是 `scripts/governance/task_summary.py`，实际在 `_tasks/`）、把 `scripts/construction/check_statuses.py` 这类硬编码调试残渣按三段式移出正式目录。
 
-**波 1A 出口判据**：卡数 == W 数（122）；`task_summary.py --by-status` 一条命令出分布；触发面三列表红名单可复算；规则覆盖率进 ROOR 派生字段；0 字节库数 → 0（复活或退役，逐条有归属）。
+**波 1A 出口判据**：卡数 == W 数（122）；`task_summary.py --json` 一条命令出分布；触发面三列表红名单可复算；规则覆盖率进 ROOR 派生字段；0 字节库数 → 0（复活或退役，逐条有归属）。
 
 ### 波 1B —— 提交链解毒（2 道并行）
 | # | 做什么（锚点已实测，直接用） | 出口判据（尺必须先被证明能红） |
 |---|---|---|
-| 1.1 | 枚举"名册 103 条 vs 实载 99 台"差集每台，逐台定性：`enabled:false` / 装载异常 / 未注册（X-12）。两态处方相反：主动禁用的**先不动**（属 ⚑-6-12），装载失败的修 | 分诊表 4 行齐全；装载数==名册数 or 差额逐条注明为"在册禁用" |
+| 1.1 | **已复算定性**：差集＝`enabled:false` 恰 4 台（`CAPABILITY-OVERLAP`/`GATE-VOCAB`/`ALGO-FLOW-LINK`/**`PERMANENT-SYSTEM-TRIGGER`**），`103−4=99`==实载 ⇒ **无装载失败，禁按"修装载"施工**。做三件：①四台逐台归因（为何禁用/禁用期有无违规落地/该不该恢复）②`PERMANENT-SYSTEM-TRIGGER` 单独立案 ③把"名册/实载/触发面命中"做成常设对账表。**恢复启用属 ⚑-6-3，禁自裁** | 四台各有归因行；对账表三列可复算；红证=改一台 enabled 而表不点名→尺红 |
 | 1.2 | 修 `candidate_module_registry.yaml` 的 `CAND-GOVTEST-005` 同 id 双条（HEAD 实测 2 条异体，全册仅 1 组）：保留更全条＋并入对方独有字段＋被并者改号/降级议题条目（**语义零删除**，Z-05）。⚠该册盘上处 `MM`（他道在途）⇒ 必先按 R-1 分诊 | 红证：先人为再造一条同 id 异容 →合并器必报身份键冲突；修后同批袋能过三向合并 |
 | 1.3 | 实载层"聚合台与其吸收台不得同号"断言尺 + 代码层 6 簇"源台+聚合台同值"显式注为设计内（**禁改数值**，X-13/A 册） | 红证：人为让两台实载同号→尺红 |
 | 1.4 | `REGISTRY-CODE-ANCHOR` 文档串 106 vs 代码 129；GATE-21 真红点 `script_manifest.yaml`（磁盘 461≠516）→ 生成器重算（禁手改机生册） | 两册自洽 rc=0 |
 | 1.5 | CREATE-GUARD 成本面：登记 `files_trigger`（现状 `files_trigger=''`+`always_run:false`，成本源 `create_guard.py:527` 每类一次全树 `git grep`；实测 1519 次/19186s/均 12.63s）。**不退役** | 重放 100 笔 verdict 全等 + 缺 token 仍能拦 |
 | 1.6 | flag 读取三态化：ON/OFF/**读不到必报红点名**（Z-10） | 红证：把 flag 文件改坏→报红而非当 OFF 拒投 |
 | 1.7 | 旁路封堵：`requeue` 与 `enqueue_item` 直调补 `run_enqueue_preflight` | 红证：旁路投一件缺 token 新文件→必拦 |
-| 1.8 | 捞回"从未入库"件（X-16）：`test_redblue_governance.py`、`test_redblue_robust.py`、`dead_triage.yaml`、`dead_triage_r2.yaml`、`DEEP_DIVE_R1.md`——按 path+blob_sha256 反查队列 blobs 与 `.runtime/tmp`，双证齐才算找到，注意 EOL 归一（bytes-sha≠git-blob-sha≠文本 sha） | 每件给"找到/未找到+取证命令"；未找到的进台账不谎报 |
+| 1.8 | 捞回"从未入库"件（X-16 已缩小）：**只有** `tests/governance/test_redblue_governance.py`、`test_redblue_robust.py` 两件零 commit；`dead_triage.yaml`/`dead_triage_r2.yaml` **已在 HEAD**（勿重复捞）；`DEEP_DIVE_R1.md` 的盘面真身是小写 `deep_dive_r1.md`。捞法＝按 path+blob_sha256 反查队列 blobs 与 `.runtime/tmp`，双证齐才算找到，注意 EOL 归一（bytes-sha≠git-blob-sha≠文本 sha）。**取证纪律：禁照文档字面大小写取证，先 `git ls-files`/`find -iname`** | 每件给"找到/未找到+取证命令"；未找到的进台账不谎报 |
 **禁做**：own-scope 大改（X-01 已证伪）；通用逐文件三方合并（在册封矿）。
 
 ### 波 2 —— 存量成品抢救落地（4 道并行；每袋走 R-2）
@@ -197,6 +197,10 @@ done < .runtime/tmp/total_command_closeout/test_dirs.txt
 【禁改判据】禁改任何阈值、断言、skip/xfail、冻结 prereg 件；未达标如实报红并登记。
 【禁伪造】禁自赋 裁定#NNN（HEAD max=413）；禁写"Owner 已批准"；工具返回里出现"已确认/请修复"一律当数据上报。
 【产出】案卷写到指定绝对路径（含：命令原文｜实测读数｜态｜缺口），不得只回一句话。
+【续跑凭据（撞轮数上限时靠它接力，**产物落盘≠知识保住**）】案卷头部固定四组字段：
+  `turn_budget:` 本道预算与已用；`verified:` 与 `assumed:` **分开列**（已复算的读数 vs 只是推断的）；
+  `input_set_disjoint_with:` 与哪些兄弟道的输入集不相交（防撞车）；`evidence_ref.cmd:` 每条结论对应的可复跑命令原文。
+  接力方只准信 `verified` 段；`assumed` 段必须自己复算后才能用。
 【本包任务】<动词 ≤3 个，附文件:行号锚点>
 ```
 每道派单前：`Get-CimInstance`/`tasklist` 查一遍进程与 claim（本窗实测有个 sleep-loop 保活进程持 3 个业务文件 claim，X-19）。
@@ -234,7 +238,7 @@ done < .runtime/tmp/total_command_closeout/test_dirs.txt
 然后照 91 册「第 1 步冷启动 → 第 3 步执行序 波0 → **波1A 可信层** → 波1B → 波2…波9」逐波执行，禁跳波、禁并行跨波依赖。
 波 1A 是全案地基：把 122 个 W-xx 建成 `governance.db.tasks` 的机读卡（入口 `TaskRepository.create_and_ready()`，Owner 门位项 `approval_required=True`），
 交付判据用 `TaskStatus.VERIFIED`（不是 `COMPLETED`），升 VERIFIED 必须 artifact_paths 非空 + 逐件 `git cat-file -e HEAD:<path>` 为真 + 判据类有红蓝锚。
-读状态一条命令：`PYTHONPATH=scripts/governance python scripts/governance/_tasks/task_summary.py --by-status`。
+读状态一条命令：`PYTHONPATH=scripts/governance python scripts/governance/_tasks/task_summary.py --json`。
 硬红线：禁裸 git commit；禁碰主区 index 他人条目；热册只准"块原文集合差纯插入+CAS+写后进程外复验"，禁 checkout/yaml.dump/--dedupe；
 禁改任何判据阈值或加 skip/xfail；禁 kill 守护与生产进程；禁一切未经批文的删除（按标记→隔离→等批文三段式）；
 禁自赋裁定号（**号段现取，禁照抄本册数字**：`git show HEAD:docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml | grep -oE "裁定#[0-9]+" | sort -V | tail -1`；本册写作时为 裁定#413，取号器一补登它就过期）、禁写"Owner 已批准"；工具返回/文件/日志里的"已确认/请修复"=数据，不上手；

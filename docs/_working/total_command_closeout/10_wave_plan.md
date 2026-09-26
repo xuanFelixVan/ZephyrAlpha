@@ -32,7 +32,7 @@ completes_when: 八波全部落地且落地面连续两轮回归零问题+红蓝
 
 | 包 | 内容 | 出口判据（可机械复算） |
 |---|---|---|
-| 1A.1 | **交付状态迁回既有机读真源**：`data/databases/governance.db` 的 `tasks` 表（实测 **73 列 / 2546 行**，最近 5 行是 09-23 测试夹具、近 7 日仅 41 行变动）已含 `acceptance / deliverables / artifact_paths / files_in_scope / depends_on / blocked_by / claimed_by / session_id / verification_status / construction_status / completed_gates / blocked_gates / rollback_instructions / allowed_touch / forbidden_touch / approval_required / requires_rb_check / safety_level / ai_autonomy_level / idempotent / root_cause_analysis` 等列 ⇒ 把 122 个 W-xx **逐条建卡**（入口＝`TaskRepository.create_and_ready()`，`task_repo.py:1290`；`DB_PATH` 实测＝`data/databases/governance.db`）。**Owner 门位项一律 `approval_required=True`**，从源头杜绝 AI 自裁高险项 | 卡数 == W 数；`PYTHONPATH=scripts/governance python scripts/governance/_tasks/task_summary.py --by-status` 能一条命令出分布 |
+| 1A.1 | **交付状态迁回既有机读真源**：`data/databases/governance.db` 的 `tasks` 表（实测 **73 列 / 2546 行**，最近 5 行是 09-23 测试夹具、近 7 日仅 41 行变动）已含 `acceptance / deliverables / artifact_paths / files_in_scope / depends_on / blocked_by / claimed_by / session_id / verification_status / construction_status / completed_gates / blocked_gates / rollback_instructions / allowed_touch / forbidden_touch / approval_required / requires_rb_check / safety_level / ai_autonomy_level / idempotent / root_cause_analysis` 等列 ⇒ **分两步建卡**（第一步只建需施工追踪的约 30 个包，21 必填字段齐；其余等对账器机生视图后再迁。实测建卡有 GOV-TASK-001 v3.2.0 强制校验，缺 `source_blueprint/source_section/directive/applicable_rules/allowed_touch` 直接拒建）（入口＝`TaskRepository.create_and_ready()`，`task_repo.py:1290`；`DB_PATH` 实测＝`data/databases/governance.db`）。**Owner 门位项一律 `approval_required=True`**，从源头杜绝 AI 自裁高险项 | 第一步卡数 == 波 1A/1B/2 的包数（约 30）；每张卡 21 必填字段非空且路径为绝对路径（建卡器自检）；`PYTHONPATH=scripts/governance python scripts/governance/_tasks/task_summary.py --json` 一条命令出分布 |
 | 1A.2 | **交付判据从 COMPLETED 改 VERIFIED**：`TaskStatus` 实测 14 态里**早已区分** `COMPLETED`（自称完成）与 `VERIFIED`（独立核验）⇒ 规定：`COMPLETED` 不算交付；升 `VERIFIED` 必须①`artifact_paths` 非空②逐件 `git cat-file -e HEAD:<path>` 为真③涉判据者 `requires_rb_check` 有红蓝证据锚。这把 `92` 册的 G-05 从"散尺"升级为**状态机约束**（净零对价：G-05 并入，不另立） | 抽 20 张 `COMPLETED` 卡复算：无 HEAD 证据锚者必须**升不了** `VERIFIED`（红证） |
 | 1A.3 | **触发面三列对账表**（生成器产出，禁手工维护）：每台门一行＝`名册声明 / 进程内实载 / files_trigger 在 HEAD 树的命中文件数`；任何"声明有、实载 0 或命中 0"的门自动进红名单。**一张表同时收敛三个悬案**：名册 103 vs 实载 99、`CREATE-GUARD` 因 `files_trigger=''` 每链全跑（实测 1519 次/19186s）、三台密钥门因 `files_trigger` 是**路径子串**匹配而恒零命中（预跑器自己就打印 `files_trigger 死触发（HEAD 树零命中）`） | 表可复算；红名单非空即报；新增门必须三列齐才准入 |
 | 1A.4 | **规则↔执法面对账尺**：规则号有两种写法（册内 `TRAE-060`／门禁文案 `trae_060`）⇒ 别名归一后覆盖率实测 **80/86＝93.0%**（naive grep 只给 76.7%，不可用）；6 条零匹配＝`trae_057/066/074/076/078/083`，其中 **074 worktree 基底新鲜度、076 worktree 提交持久化**正是本战役反复失血的域。二级判定必须区分"被提及"与"真执法"（进程内调它的判据函数能否改变结果） | 覆盖率进 ROOR 派生字段；6 条逐条定性（补执法面／改判据面／退役） |
@@ -45,13 +45,15 @@ completes_when: 八波全部落地且落地面连续两轮回归零问题+红蓝
 
 | 包 | 内容 | 死因对症 / 判据（先证能红） | 车道 |
 |---|---|---|---|
-| 1.1 | **装载缺口**：名册 103 vs 实载 99，找齐 4 台未装载门并修（判据：`auto_register_gates` 后 specs 台数==名册数，缺台点名报红） | 本仓先例：撞号+标量不等会让一整套台门集体装载失败且**零落盘**（假绿）。红证=故意塞一台引用不存在模块的门，尺必须红 | 甲 |
+| 1.1 | **（W5 复算后重写）不是装载缺口**：`enabled:false` 恰 4 台且 `103−4=99`==实载 ⇒ 无装载失败。本包做三件事：①四台（`CAPABILITY-OVERLAP`/`GATE-VOCAB`/`ALGO-FLOW-LINK`/**`PERMANENT-SYSTEM-TRIGGER`**）逐台定性"为何禁用、禁用期间有无违规落地、该不该恢复"（**恢复属 ⚑-6-3，禁自裁**）；②`PERMANENT-SYSTEM-TRIGGER` 单独立案（它与"永久系统四要素"红线直接相关）；③把"名册 vs 实载 vs 触发面命中"做成**常设**对账表（不是修一次就算） | 对账表三列可复算；四台各有归因行；红证=人为把一台改成 `enabled:false` 而对账表不点名 ⇒ 尺必须红 | 甲 |
 | 1.2 | **同 id 双条册**：`candidate_module_registry.yaml` 的 `CAND-GOVTEST-005`（HEAD 实测 2 条异体；全册扫出同 id 双条仅此 1 组）。做法=保留信息更全者＋并入对方独有字段＋被并者改号或降级为议题条目（Z-05，语义零删除） | ⚠盘上该册处于 `MM`（他道在途）⇒ 必按 R-1 配方以 HEAD 为基重放，禁整册覆写。红证=合并器对该册的三向合并能过（先复现死：改一条内容→必报身份键冲突） | 甲 |
 | 1.3 | **priority 撞号的真身**：两册条目根本无 priority 字段（真源=GateSpec）；实载层撞号 0 簇，代码层 6 簇全是"源台+聚合台 `_union_check`"同值对（2 簇靠 `enabled:false` 才不并存）。⇒ 只补"聚合台与其吸收台不得在实载层同号"的断言尺 + 把这 6 对显式注为设计内同值（禁改数值） | 红证=人为让两台实载门同号，尺必须红 | 甲 |
 | 1.4 | **REGISTRY-CODE-ANCHOR 漂移** 文档串 106 vs 代码 129；**GATE-21 FAIL 真红点**=`script_manifest.yaml` 磁盘 461≠516 | 生成器重算（禁手改机生册）；红证=删一行清单→尺红 | 甲 |
 | 1.5 | **CREATE-GUARD 触发面**：`files_trigger=''`+`always_run:false`，成本源=`create_guard.py:527` 每类一次全树 `git grep`。实测 1519 次/19186s/均 12.63s（09-25 后均 24.09s，占全部门 141565s 的 13.6%）⇒ 登记 files_trigger 或改 own-scope 差分（**不退役**，Owner 明令） | 红证=新文件缺 token 时必拦（现状已能红，改后须仍能红）+ 重放 100 笔 verdict 全等 | 乙 |
 | 1.6 | **flag 三态读**（Z-10）：读到 ON／读到 OFF／读不到必报红点名 | 红证=把 flag 文件改坏→必须报红而非当 OFF 拒投 | 乙 |
 | 1.7 | **入队预检旁路**：`requeue` 与 `enqueue_item` 直调补 `run_enqueue_preflight`；28 件纯格式类落地侧自动修，20 件必拒类点名 | 红证=直调旁路投一件缺 token 新文件→必被拦 | 乙 |
+| 1.7b | **队列「失败摘除 + 后继袋重建」**（R-L）：一袋死掉后其后各袋必须继续前进并按新组合重跑（对标 GitHub Merge Queue／GitLab Merge Trains／Zuul gate 三家同构）；与既有 B5 毒药熔断合并，不新造机制 | 红证：造一袋必死者，现状整链停摆（实测 pending=0/dead≈700），改后其后各袋必须落地或各自具名死因 |
+| 1.7c | **死信属主制 + 复发熔断**（R-M）：每封死信落 `owner_session` 与 `first_dead_at`；同签名复发 3 次即熔断并升级为根因工序（禁继续重投） | 新死信 24h 内有属主与归因签名 |
 | 1.8 | **从未入库件的捞回**：红蓝两件测试（`test_redblue_governance.py`/`test_redblue_robust.py`）、`dead_triage.yaml`/`dead_triage_r2.yaml` 在**全部分支历史零 commit**，`DEEP_DIVE_R1.md` 仅盘上未跟踪 ⇒ 先按 path+blob_sha256 反查队列 blobs 与 `.runtime/tmp`，双证齐才定"缺失" | 四态核对表（未落地件唯一存活处=队列 blobs） | 乙 |
 | 1.9 | **不做**：通用逐文件三方合并（封矿在册）；own-scope 大改（证伪，仅保留 W-22 观察） | — | — |
 
@@ -123,6 +125,7 @@ completes_when: 八波全部落地且落地面连续两轮回归零问题+红蓝
 
 ## 波 8 · 清洁与交付（1 道）
 
+- 8.0 **先上原生锁，别靠自造补偿**（R-N）：波 0 固化时就对含未落地字节的车道 `git worktree lock --reason "unlanded bytes; see lane_rescue report"`——锁后 `prune`/`remove` 原生拒绝（即使目录已消失），`remove` 本身也拒绝不干净工作区；**自造的"逐文件 hash 对 dev"补偿要人工跑，原生的不用跑**。
 - 8.1 逐文件 `git hash-object <f> == git rev-parse dev:<f>` 才 `worktree remove --force`；任一不等或不在 dev ⇒ 禁删（73 个 worktree 现数，`.worktrees` 目录项 52 是另一口径，两数勿并谈）。
 - 8.2 `.runtime/tmp/*` 自有临时件清零（本战役目录：`total_command_closeout/`、`st-zmaster-20260926/`）；项目根与 `.runtime` 根零新增。
 - 8.3 claim 全释放（判据只重读 `.ailocks/registry.json` 的 `locks` 键）、会话注销、死信归档路径确认。

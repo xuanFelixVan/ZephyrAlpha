@@ -52911,4 +52911,29 @@ creation_tokens:
   created_by: st-zmaster-20260926
   capability: governance_total_command_closeout
   merge_evaluation: "外部审查裁定书：与 02 册同族但对象不同（02=事实改判，本册=方案级根因裁定），无第二真源"
+- file: docs/_working/total_command_closeout/review_ext_ci_and_mergequeue.md
+  token: governance-total-command-closeout-review-ext-ci-and-mergequeue-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "外部审查案卷：与裁定书同目录、唯一归档位、无第二真源（净零）"
+- file: docs/_working/total_command_closeout/review_ext_data_and_backtest.md
+  token: governance-total-command-closeout-review-ext-data-and-backtest-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "外部审查案卷：与裁定书同目录、唯一归档位、无第二真源（净零）"
+- file: docs/_working/total_command_closeout/review_ext_autonomy_and_agents.md
+  token: governance-total-command-closeout-review-ext-autonomy-and-agents-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "外部审查案卷：与裁定书同目录、唯一归档位、无第二真源（净零）"
+- file: docs/_working/total_command_closeout/review_int_first_principles.md
+  token: governance-total-command-closeout-review-int-first-principles-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "外部审查案卷：与裁定书同目录、唯一归档位、无第二真源（净零）"
+- file: docs/_working/total_command_closeout/review_int_number_audit.md
+  token: governance-total-command-closeout-review-int-number-audit-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "外部审查案卷：与裁定书同目录、唯一归档位、无第二真源（净零）"
 di_seam_exemptions: []

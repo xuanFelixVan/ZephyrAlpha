@@ -49,7 +49,8 @@ git cat-file -e HEAD:scripts/governance/fullflow/generate_fullflow_crosscheck.py
 git ls-tree -r --name-only HEAD | grep -cE "config/(dev_delivery_map|data_supply_chain_map|trading_day_cycle_map|construction_workflow_map|strategy_card_lifecycle_map)\.yaml"   # 0
 # 4) 门禁装载守恒（名册 vs 实载）
 mkdir -p .runtime/tmp/<SID> && echo probe > .runtime/tmp/<SID>/msg_probe.md   # 预跑器要求 message-file 实存，否则直接 FAIL
-python scripts/governance/meta/gate_prerun.py --session <SID> --files "AGENTS.md" --message-file .runtime/tmp/<SID>/msg_probe.md 2>&1 | tail -6
+# 注意：硬阻断项**随 --files 清单而变**（用 AGENTS.md 探会报 PROTECTED-PATHS，用本班案卷探会报 CREATE-GUARD）⇒ 复核时必须同时贴出所用的 --files 清单
+python scripts/governance/meta/gate_prerun.py --session <SID> --files "<与本批同值的清单>" --message-file .runtime/tmp/<SID>/msg_probe.md 2>&1 | tail -6
 # 装载守恒自查：名册条数 vs 预跑器报的 "注册 GateSpec 总数"（本窗实测 99）
 # 5) 本班交付物是否真在 HEAD（落地后）
 git show HEAD:docs/_working/total_command_closeout/02_field_corrections_and_new_cases.md | head -20

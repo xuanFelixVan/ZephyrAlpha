@@ -30,8 +30,8 @@ completes_when: 五路审查回流完毕且修正后的施工方案与一键指�
 | **状态视图 CLI 的可用性问题（复验后修正口径）** | 初判"三个里两个坏了"，复验后更准确：①`task_show.py --help` 正常；②`task_summary.py` 直接跑报 `ModuleNotFoundError: _shared`，但 **`PYTHONPATH=scripts/governance python scripts/governance/_tasks/task_summary.py --help` 正常**（它还有 `--drift-check/--auto-close-dry-run/--by-status` 等现成旗标），而其**自带 docstring 写的调用路径是 `scripts/governance/task_summary.py`（少了 `_tasks/`）＝文档路径漂移**；③`scripts/construction/check_statuses.py` 崩在 `c.status.value`（`repo.get('OPS-006')` 返回 None）——读其源码可知它是**一次性调试脚本**（硬编码 `OPS-006..009`、注释写着 "was IN_PROGRESS from earlier test"）却留在正式目录里。⇒ 真正的病不是"工具坏"，是**读侧要口口相传的隐性前置（PYTHONPATH）+ 自述路径漂移 + 调试残渣混入正式目录**，三者合起来足以让人退回写散文 |
 
 **由此得到的 R-A 可执行形态（写进修正版一键指令）**：
-1. **让"查状态"一条命令可用**（这是让人愿意用机读卡的前提，不是可选项）：把 `PYTHONPATH=scripts/governance` 写进工具自述与一键指令、修 `task_summary.py` docstring 的漂移路径、把 `scripts/construction/check_statuses.py` 这类硬编码调试残渣移出正式目录（按三段式：标记→隔离→等批文删）。现成可用的读侧旗标：`task_summary.py --by-status / --drift-check / --json`、`task_show.py --like <前缀> --json`。
-2. 用 `TaskRepository.create_and_ready()` 把 122 个 W-xx 逐条建卡：`acceptance`=该环节的能红判据、`deliverables`/`files_in_scope`=计划落地面、`depends_on`=波次依赖、`session_id`=认领车道、`safety_level`/`approval_required`=门位（Owner 门位项直接 `approval_required=True`，从源头杜绝"AI 自裁高险项"）。
+1. **让"查状态"一条命令可用**（这是让人愿意用机读卡的前提，不是可选项）：把 `PYTHONPATH=scripts/governance` 写进工具自述与一键指令、修 `task_summary.py` docstring 的漂移路径、把 `scripts/construction/check_statuses.py` 这类硬编码调试残渣移出正式目录（按三段式：标记→隔离→等批文删）。现成可用的读侧旗标：`task_summary.py --json / --drift-check / --json`、`task_show.py --like <前缀> --json`。
+2. 用 `TaskRepository.create_and_ready()` **分两步建卡**（实弹验证后修正：一次性建 122 张半填卡＝新的人工债。第一步只建需施工追踪的约 30 个包，**21 必填字段齐**——实测 GOV-TASK-001 v3.2.0 强制校验，缺 `source_blueprint/source_section/directive/applicable_rules/allowed_touch` 直接 ValueError 拒建，路径字段须绝对路径，`description` 需含「根因/治根/施工步骤/验收标准」结构词；第二步等 R-I 对账器机生视图后其余 W-xx 再迁）：`acceptance`=该环节的能红判据、`deliverables`/`files_in_scope`=计划落地面、`depends_on`=波次依赖、`session_id`=认领车道、`safety_level`/`approval_required`=门位（Owner 门位项直接 `approval_required=True`，从源头杜绝"AI 自裁高险项"）。
 3. 交付判据从"文档里写已完成"改为 **`status=VERIFIED` + `artifact_paths` 逐件 `git cat-file -e HEAD:<p>` 为真**；`COMPLETED` 只是自述，**不算交付**（这正是本仓 40+ 处"叙述与 HEAD 不符"的机械解药）。
 4. 散文册（00/10/91）改为**生成视图**：由卡出，禁手工维护（宪法第 9 节第 5 条）。
 
@@ -68,6 +68,14 @@ completes_when: 五路审查回流完毕且修正后的施工方案与一键指�
 | **R-J** | **死信分诊改事件触发**：`registry_dedup_audit` 的头注已声明 landing 死信钩，**实测未接线**（又一处"声明在、面不在"）⇒ 接上它，让死信落地即自动归因入册；原波 6.1 的"手工 70 批处置"降为一次性回填 | 替代手工分诊批（原计划 ≤10 封/批 × 70 批） | 造一封死信 → 归因记录自动出现 |
 | **R-K** | **避让判据从「活会话」改「活 claim + 产物 mtime」**：本轮实测唯一的"活会话"是个 sleep-loop 保活进程（每 300s re-register，真身 PID 早已亡），它会让所有并发判断失真；而宪法第 9 节第 3 条禁 sleep-loop | 替代"注册与提交同链"这条口口相传的配方（仍保留，但不再是唯一防线） | 杀掉真身后保活进程仍在注册 → 尺必须判"假活体" |
 
+| **R-L** | **队列改「失败摘除 + 后继袋重建」**：GitHub Merge Queue／GitLab Merge Trains／Zuul gate 三家一手同构——失败者出队，其后各袋按新组合重跑。我方现状是"失败→dead→队列停摆"（实测 pending=0 而 dead≈700，即一袋死掉后整条链不再前进） | 替代原波 6.1 的"人工 70 批清库"（已按 R-G 撤回）；与既有 B5 毒药熔断（同 payload 重投 2 次即拒）合并，不新造机制 | 造一袋必死者 → 其后各袋必须继续前进且被重跑（红证：现状会停摆） |
+| **R-M** | **死信属主制 + 复发熔断**（Google Build Cop 口径：不论谁弄坏，当天有人负责修；重试有上限、禁无限期隔离）：每封死信落 `owner_session` 与 `first_dead_at`，同签名复发 N 次即熔断并升级为**根因工序**（而不是继续重投） | 与 R-L 的熔断合并为同一机制；替代"死信堆到 700 封才做一次大清理" | 新死信 24h 内必须有属主与归因签名；同签名第 3 次出现即熔断 |
+| **R-N** | **用原生 `git worktree lock --reason` 替代自造 hash 补偿**：锁后该 worktree 永不被 prune/remove（即使目录已消失），且 `git worktree remove` 原生就拒绝不干净工作区。我方波 8.1 反而默认上 `--force` 再自造"逐文件 hash 对 dev"补偿——**自造的要人工跑、原生的不用跑** | 净零对价：删掉自造补偿尺（内收）；正对痛点"73 个悬挂 worktree + 车道成品零 commit 就消失" | 对一条含未落地字节的车道上锁后，`prune`/`remove` 必须拒绝（红证：不上锁则会被清掉） |
+| **R-O** | **触发面改造必须带「召回下界」**：Google TAP「run the minimal set」与 Bazel `--test_tag_filters/--build_tests_only` 是我方 R-E 的同族；但 Meta 的成对判据才是关键——**成本下降 ⇔ >99.9% 的坏变更仍被报出**。我方原判据"重放 100 笔 verdict 全等"**只测一致性、不测漏检** | 补进 R-E 与 `92` 册 G-08/G-70 族；替代"重放全等即达标"这个不完整判据 | 注入 N 个已知坏变更，触发面收窄后检出率必须 ≥ 阈值（阈值先按 100% 起，放宽要留痕） |
+
+| **R-P** | **会话判死必须加 fencing（单调 epoch），TTL 只管回收不管正确性**：现制＝心跳断 90s 即判死并**自动收回全部 claim**，被四家独立来源一致否定为安全机制（Kleppmann 2016 fencing token 对 Redlock 的批评／etcd lease／ZooKeeper ephemeral／K8s Lease 都只把 TTL 当回收，不当授权）。处方＝`session_registry` 增 `session_epoch` 单调号，**写入侧与提交侧校验 epoch**：旧 epoch 的写入被拒（而不是"判死后它的字节被别人接管"）。副产品：`session_keeper` 这类 sleep-loop 旁路的**动机自然消失**（判死不再是破坏性事件），Z-14 只治了合规性、没治正确性 | 替代 Z-14 的"注册与提交同链"口口相传配方（保留为兜底，不再是唯一防线）；与 R-K 合并为同一工程 | 红证：拿旧 epoch 的会话写入必须被拒；判死后原会话复活写入不得污染新持有者的 claim |
+| **R-Q** | **装载守恒提到波 0，且"死面"要物理隔离而非零删除**：SEC 行政令 3-15703（Knight Capital，2013-10-16）与本仓"名册 103 vs 实载 99"**完全同型**——8 台生产服务器有 1 台没装新代码、仍跑 8 年前的死代码并被意外激活，45 分钟亏 4.4 亿美元，SEC 点名"无自动化部署与部署后验证"。⇒ ①装载守恒（名册==实载，差额逐台具名）从波 1B **提到波 0**；②**落地后逐台对账常设化**（不是修一次就算）；③我方 Z-00-C 的"零删除三段式"**不足以消除致命性**——死代码/死死信袋/167+ 条永久免死条目/含"四门临时禁用"的 51 件，危险都在"**被意外激活**"，第②段必须是**物理隔离（移出可执行路径/可加载面）**，不是留在原位改指针 | 修正 Z-00-C（三段式的第②段定义收紧）；与 R-E 触发面三列表合并为同一张对账表 | 红证：把一台门从装载面摘掉 → 对账表必须点名；把一份死代码留在可加载路径 → 隔离尺必须红 |
+
 ## §三-B 审查员的"只留 5 个工序"选择（按挖矿 SOP §6 主判据：是否消灭一段人工参与）
 
 > 判据不是我发明的：挖矿 SOP §6 明写"主判据（一票放行）＝这个东西是否**消灭一段人工参与**、把项目向终局全貌推进"，且"封矿单问＝终局全貌里有没有它的位置"，还明写"**现状规模小/频次低禁作封矿理由**"。
@@ -103,9 +111,42 @@ completes_when: 五路审查回流完毕且修正后的施工方案与一键指�
 | "D 盘 41G / F 盘 92%" | 备份轮与落地批都会动它 | 熔断线（<25G 停大批、<15G 停写批）是常量，读数现取 |
 | "⚑ 5 件待 Owner" | Owner 回一次话即变 | 回帖后把结论写进卡的 `approval_required`/`directive`，不再改散文 |
 
-## §四 外部对标（W1/W2/W3 回流后填）
+## §四 外部对标（三路调研回流；每条都过了"A 股/本仓适配闸"与"可度量闸"）
 
-〔待回填：CI/合并队列、数据质量与回测完整性、自治运维与多代理编排三路的对标结论，逐条过"A 股/本仓适配闸"与"可度量闸"〕
+> 案卷：`review_ext_ci_and_mergequeue.md`（W1：29 条发现 / 15 条差异 / 13 条受阻）、`review_ext_data_and_backtest.md`（W2b：§一 主题4 共 18 条带 URL 出处、§三 判据级建议 11 节）、`review_ext_autonomy_and_agents.md`（W3：37 条一手发现 / 六痛点对标 / T-1..T-4 机读契约字段草案）。
+> **调研诚实注记**：W2 首路中途失败（只留骨架），已由窄口径重投路 W2b 补齐主题 4/5；W3 记 4 项一手来源查无（GitLab 2017-01-31 复盘、Veeam SureBackup、Netflix ChAP、restic `check --read-data`，403/405），受影响结论已在案卷内降级标注；W1 记 Meta Landcastle/Sapien、Launchable、Terraform 一手文档查无或 403/404，未据其下结论。
+
+### 4.1 三路共同指认的**同一个缺口**（三家一手来源同构，这是本轮最强的外部信号）
+
+| 我方现状 | 业界标准 | 采纳为 |
+|---|---|---|
+| 一袋失败 → 进 dead → **整条链停摆**（实测 pending=0 而 dead≈700） | GitHub Merge Queue／GitLab Merge Trains／Zuul gate：**失败者出队，其后各袋按新组合重跑** | **R-L** |
+| 死信堆到 700 封才考虑一次性清库 | Google Build Cop：**不论谁弄坏，当天有属主去修**；重试有上限、禁无限期隔离 | **R-M** |
+| 触发面改造的判据是"重放 100 笔 verdict 全等" | Google TAP「run the minimal set」/ Bazel `--test_tag_filters`，但 Meta 的**成对判据**才是关键：成本下降 ⇔ **>99.9% 的坏变更仍被报出** | **R-O**（"全等"只测一致性、不测漏检） |
+| 波 8 用 `--force` + 自造"逐文件 hash 对 dev"补偿 | `git worktree lock --reason`（git 官方）：锁后 `prune`/`remove` 原生拒绝，`remove` 本身也拒绝不干净工作区 | **R-N**（自造的要人工跑，原生的不用跑＝内收） |
+| 心跳断 90s 即判死并**自动收回全部 claim** | Kleppmann 2016 fencing token／etcd lease／ZooKeeper ephemeral／K8s Lease：**TTL 只管回收，不管正确性** | **R-P**（补 `session_epoch` 单调号，写入侧校验；判死从破坏性动作降为可观测事件） |
+| 子代理撞 150 轮上限就没了（历史 8 条车道全失） | Anthropic rainbow deployments / durable execution（"写进度笔记以便状态重置后恢复"）、OpenHands event stream：**产物落盘 ≠ 知识保住** | 派单模板补 `turn_budget`/`verified` 与 `assumed` 分离/`input_set_disjoint_with`/`evidence_ref.cmd` 四组字段（已写进 `91` 册第 4 步） |
+| "已完成"只能**抽样**验证（本轮 40+ 处不符是抽出来的） | Pact 契约测试：**期望由声称方自产留痕、提供方独立验证** | **G-73**（`ran_by ≠ claimed_by` 硬字段）+ **G-74**（`not_applicable` 第三态，禁不适用算绿） |
+| 名册 103 vs 实载 99 排在波 1、判据只有"台数相等" | **SEC 行政令 3-15703（Knight Capital，2013-10-16）**：8 台生产服务器 1 台未装新代码、跑 8 年前死代码被意外激活，45 分钟亏 4.4 亿美元，SEC 点名"无自动化部署与**部署后验证**" | **R-Q**（对账提到波 0 + 落地后逐台对账**常设化** + 死面**物理隔离**：零删除不消除"被意外激活"的致命性） |
+
+### 4.2 判据级：⚑-2 第①项被外部证据**两次改写**（本轮对 Owner 菜单最实质的修正）
+
+原建议＝"追认幸存者分层抽"。W2b 的统计学复算证明**问题不在抽样方式，而在这把尺量不出它声称要量的东西**：
+`n=50`、`p̂=0.5` 时 95% 置信区间 `±1.96·√(0.25/50)=±0.1386`；两班实测 33% 与 56% 相差 23 个百分点，而 `p_true=0.10` 时观测到 ≥50% 的概率约 **0.36** ⇒ **10% 与 50% 不可分辨**。
+⇒ 正解改判据**对象**：对每个过了成本初筛的幸存者，二分解出使 `Sharpe(c)=0` 的 **盈亏平衡成本 `c*`**，要求**幸存者 `c*` 的中位数 ≥ 40bp**；样本量按功效定（80% 功效分辨 ±10pp 需 **n≈82**）。
+优点：40bp 锚不动、"Sharpe≥0"语义不动、无抽样即无抽样误差与幸存者偏差之争。已写进 `93` 菜单（选项 A/B/C，推荐 B）。
+
+**第二刀（W2b 终版，18 条带 URL 出处，案卷 §一主题4／§三）**：连"幸存者分层抽"这个改法本身也**不成立**——
+① "通过 40bp 初筛"是对**已实现 Sharpe（含噪声）**做条件筛选 ⇒ 胜者诅咒（`kozak-nagel-santosh-2020-jfe.pdf` 的 multiple-testing 框架正指此类）；
+② 在 `SR*=0` 处 `P(观测 SR ≥ 0) = 0.5` ⇒ 原门是**功效约 50% 的硬币**，"恒红"是设计后果而非口径写错；
+③ 两班 33% vs 56% 之差用两比例检验**不可分辨**（同一个真值下都会出现）⇒ "两班互证字面口径永不可过"这句本身也只对了一半：**它对"这把尺量不出东西"是对的，对"真实负比例很高"是不足的**。
+行业标准替代（可直接落）：**盈亏平衡成本 `c*` 的全体分布（不抽样）+ DSR（显式 N=3700）+ PBO/CSCV**。
+公式锚：`Var[SR̂] ≈ (1 + 0.5·SR²)/T`；`DSR = Φ[(SR̂ − SR₀)·√(T−1) / √(1 − γ₃·SR̂ + (γ₄−1)/4·SR̂²)]`，
+`SR₀ = √Var[SR]·((1−γ)Φ⁻¹(1−1/N) + γΦ⁻¹(1−1/N·e⁻¹))`，`γ≈0.5772`；功效示例：`δ=0.10、n=82、单侧 α=0.05 → power=0.80`（`z₀.₉₅+z₀.₈₀=1.645+0.842=2.487≈√8.2`）。
+开源可读实现：`skfolio`（BSD-3，`model_selection.py` 内 `combinatorial_purged_cv` / `probability_of_backtest_overfitting`）、
+`differenced-sharpe-ratio`（MIT，滚动 DSR）、`Triple-Barrier-Method`（MIT，三重障碍标签）；`mlfinlab` 自 2020 起闭源商业化 ⇒ 只作概念参照、不引代码。
+A 股适配必须同批写进判据：T+1 持仓风险不可当日对冲／10%·20% 涨跌停的不可成交必须显式建模／集合竞价与连续竞价冲击形态不同／
+后复权口径错配会**同时污染分子分母**／日内 U 型成交量使同规模冲击差数倍（`kang-etal-2020-intraday-impact-cost-achina.pdf`）／散户主导下 alpha 衰减更快（`hou-xue-zhang-2020-jf-replication.pdf`）。
 
 ## §五 内部攻击回流
 

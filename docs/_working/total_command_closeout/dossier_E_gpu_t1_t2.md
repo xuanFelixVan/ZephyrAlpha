@@ -40,7 +40,7 @@ ttl: task_bound
 | 33160 | 09-26 13:38 | `python -m …commit_belt_daemon D:\ZephyrAlpha` |
 | 32312 | — | 未在 Get-CimInstance 输出中出现（tasklist 有、命令行查询未列出），待复核 |
 
-注：37548 是 **sleep-loop 常驻进程**，占用 `st-ddup-20260925` 会话名并对 3 个业务文件持续持有 claim 语义——与宪法 §9.3「永久系统禁 cron/Timer/sleep-loop」是事实对撞，仅登记不裁定。
+注：37548 是 **sleep-loop 常驻进程**，占用 `st-ddup-20260925` 会话名并对 3 个业务文件持续持有 claim 语义——与宪法 第 9 节第 3 条「永久系统禁 cron/Timer/sleep-loop」是事实对撞，仅登记不裁定。
 
 ### B. 哨兵自判结论（`handover_verdict.yaml` 原文摘要，88 行起）
 
