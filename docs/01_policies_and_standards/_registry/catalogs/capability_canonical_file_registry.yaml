@@ -52716,4 +52716,9 @@ creation_tokens:
   created_by: st-metaq-gc-20260924
   capability: metaq_exam_loop
   merge_evaluation: "N-16 文件名唯一性改名：registry.py 改 meta_question_registry.py，路径变更重新登记（原 77 槽位撞号前就未落地，非退役）"
+- file: docs/_working/commit_speedup_campaign/90_verification/red_blue_pkg14_report.md
+  token: commit-speedup-campaign-rb14-red-blue-pkg14-report-20260925
+  created_by: st-commitspeed-tbl-20260924
+  capability: commit_speedup_campaign_rb14
+  merge_evaluation: "包14红蓝对抗报告=提交通道性能战役证尺交付物，唯一归档位在战役90_verification目录，无第二真源，无可并旧条目（净零）"
 di_seam_exemptions: []
