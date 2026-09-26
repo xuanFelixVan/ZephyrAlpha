@@ -52976,4 +52976,14 @@ creation_tokens:
   created_by: st-final-build-20260926
   capability: final_review_chartlib
   merge_evaluation: "唯一归档位：外部终审卷首次入仓（此前只存在于桌面交付目录，桌面非受控真源且无备份证据）；不替代也不合并既有 27 册任何条目，本目录只打补丁不改写正文，净零新增真源"
+- file: docs/_working/three_piece_infra/00_plan_and_ownership.md
+  token: three-piece-infra-00-plan-and-ownership-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13唯一施工实况位与方案册；total_command_closeout 两本总册此刻被他道 claim 在途，故本役单列不成第二真源，落 HEAD 后按 00 册 §六 一次性并回族15/波13"
+- file: docs/_working/three_piece_infra/LEDGER_three_piece.md
+  token: three-piece-infra-ledger-three-piece-20260926
+  created_by: st-zmaster2-20260926
+  capability: three_piece_infra
+  merge_evaluation: "波13唯一施工实况位与方案册；total_command_closeout 两本总册此刻被他道 claim 在途，故本役单列不成第二真源，落 HEAD 后按 00 册 §六 一次性并回族15/波13"
 di_seam_exemptions: []
