@@ -52726,4 +52726,84 @@ creation_tokens:
   created_by: st-qmine-20260925
   capability: qmine_campaign
   merge_evaluation: "QMine交接书(task_bound),下一班第一读单一真源,接手完成后随TTL归档"
+- file: docs/_working/chain_fullflow_closeout/business_pipeline_skeleton.md
+  token: chain-fullflow-closeout-business-pipeline-skeleton-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/lane_pipe_auto_runtime_trading.md
+  token: chain-fullflow-closeout-lane-pipe-auto-runtime-trading-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/lane_pipe_consensus_daily.md
+  token: chain-fullflow-closeout-lane-pipe-consensus-daily-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/lane_pipe_financial_derived.md
+  token: chain-fullflow-closeout-lane-pipe-financial-derived-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/lane_pipe_llm_backend_ollama.md
+  token: chain-fullflow-closeout-lane-pipe-llm-backend-ollama-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/lane_pipe_news_sentiment_score.md
+  token: chain-fullflow-closeout-lane-pipe-news-sentiment-score-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/lane_pipe_pattern_win_rate.md
+  token: chain-fullflow-closeout-lane-pipe-pattern-win-rate-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/lane_pipe_realtime_snapshot.md
+  token: chain-fullflow-closeout-lane-pipe-realtime-snapshot-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/lane_pipe_reconciliation_differences.md
+  token: chain-fullflow-closeout-lane-pipe-reconciliation-differences-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/mine_door_registration_completion.md
+  token: chain-fullflow-closeout-mine-door-registration-completion-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/mine_guard_wiring_census.md
+  token: chain-fullflow-closeout-mine-guard-wiring-census-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/mine_pipe_blockage_substages.md
+  token: chain-fullflow-closeout-mine-pipe-blockage-substages-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/mine_pipe_false_green_census.md
+  token: chain-fullflow-closeout-mine-pipe-false-green-census-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/mine_queue_liveness_and_trigger_mass.md
+  token: chain-fullflow-closeout-mine-queue-liveness-and-trigger-mass-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/mine_snapshot_selfconsistency_witness.md
+  token: chain-fullflow-closeout-mine-snapshot-selfconsistency-witness-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/chain_fullflow_closeout/mining_closeout_and_adjudication.md
+  token: chain-fullflow-closeout-mining-closeout-and-adjudication-20260926
+  created_by: st-audit-fix-20260924
+  capability: chain_fullflow_closeout
+  merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
 di_seam_exemptions: []
