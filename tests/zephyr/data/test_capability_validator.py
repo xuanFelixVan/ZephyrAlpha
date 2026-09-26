@@ -619,3 +619,64 @@ class TestCapabilityContractSemanticFields:
         assert cc.supports_symbols_null is True
         assert cc.supports_incremental is True
         assert cc.expected_variety is None
+
+
+# ============== 真实 tasks.yaml 全量一致性回归（P2 长尾钉死） ==============
+
+
+class TestRealTasksYamlConsistency:
+    """真实 tasks.yaml × 真实 provider meta 全量契约回归（validator 单测本体全用合成任务，
+    真配置漂移无护栏——P2 根因案例：l2_tick_snapshot 曾声明 capability=tick_snapshot
+    （miniqmt provider 未登记）→ FAILED '未知 capability: tick_snapshot'、
+    c1_market.l2_tick 0 行（2026-09-09 8981a53f29 改名 l2_tick 修复）。
+    本类把该漂移类钉死：任何 task 引用未登记 capability 即红。零 IO（只读 yaml+类属性）。
+    """
+
+    REPO = Path(__file__).resolve().parents[3]
+    TASKS_YAML = REPO / "src" / "zephyr" / "data" / "config" / "tasks.yaml"
+    SOURCE_TO_META = {
+        "akshare": ("zephyr.data.implementations.akshare_provider", "AkshareIngestProvider"),
+        "miniqmt": ("zephyr.data.implementations.miniqmt_provider", "MiniQmtIngestProvider"),
+        "qmt_bridge": ("zephyr.data.implementations.qmt_bridge_provider", "QmtBridgeIngestProvider"),
+    }
+
+    def _load(self):
+        import yaml
+
+        data = yaml.safe_load(self.TASKS_YAML.read_text(encoding="utf-8")) or {}
+        return data.get("tasks", [])
+
+    def _metas(self):
+        import importlib
+
+        metas = {}
+        for source, (module_path, class_name) in self.SOURCE_TO_META.items():
+            mod = importlib.import_module(module_path)
+            cls = getattr(mod, class_name)
+            if getattr(cls, "meta", None) is not None:
+                metas[source] = cls.meta
+        return metas
+
+    def test_real_tasks_yaml_zero_error_violations(self):
+        """全量任务过 validate_task_capability_contracts：ERROR=0（启动即阻断同判据）。"""
+        import yaml  # noqa: F401 — 保证依赖在场
+
+        tasks = self._load()
+        assert len(tasks) >= 200, "tasks.yaml 加载异常（任务数骤减=配置损坏）"
+        violations = validate_task_capability_contracts(tasks, self._metas())
+        errors = [v for v in violations if v.severity == "ERROR"]
+        assert errors == [], f"真实 tasks.yaml 存在未登记 capability（CAP-NOT-FOUND）: {errors[:5]}"
+
+    def test_l2_tick_snapshot_capability_registered(self):
+        """P2 根因钉死：l2_tick_snapshot 的 capability 必须在 miniqmt provider 登记。
+
+        该任务 disabled=true（L2 权限+miniQMT 退役冻结）会被 validator 跳过——
+        本测试补上这颗盲钉，防止解冻/改名时漂移复发。
+        """
+        tasks = [t for t in self._load() if t.get("task_id") == "l2_tick_snapshot"]
+        assert tasks, "l2_tick_snapshot 任务在册（退役冻结=disabled，非删除）"
+        cap = tasks[0].get("capability")
+        miniqmt_meta = self._metas()["miniqmt"]
+        assert miniqmt_meta.get_capability_contract(cap) is not None, (
+            f"l2_tick_snapshot.capability='{cap}' 未在 miniqmt provider 登记（tick_snapshot 未知 capability 事故回归）"
+        )
