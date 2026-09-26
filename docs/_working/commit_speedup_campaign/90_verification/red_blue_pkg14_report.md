@@ -74,6 +74,8 @@ ttl: task_bound
 | F-14-2 | 状态勘察（非新缺陷） | 本 worktree（csx-pkg5b）基于 df8507ac9b，**未含包7收口件 cb3c13b74f**（spec_sha/GATE_INPUT_MANIFEST 缺席）→ S5 三连毒的前两毒在该形态上不设防（仅本分支意义；dev 已封） | S5 蓝方以 dev blob 为真源验证通过；worktree 与 dev 的同步属会话收尾 merge 义务，本包不越权代并；知会总包 |
 | F-14-3 | 观察项（未修） | `drain_queue_pool(max_items=N)` 的预算预扣语义：认领异常重试每次也预扣名额，持续异常会把预算耗光、提前收工留 pending（S1 调参时实测 done<件数现象）。产品语义=软上限+下轮自举自愈，未见内容丢失 | 登记 观察项；如需收敛可在后续包把"异常重试不预扣"与"预算耗光留 pending 告警"立项 |
 | F-14-4 | 观察项（未修） | S2 实证跨会话同路径=死信回人工（解法=同步工作区后重新入队），路径锁只保证"互踩不可能"，不合并语义冲突——按 66 号 §6.4 属正确行为 | 无需修；处方链路已在（S2 断言 prescription 在册） |
+| F-14-5 | 缺陷（已修已落地） | `_pool_wave_log` k 工并发 append 无锁=行丢失（S1 giveup 尺跑出 GIVEUP 计数 39/40，A3 装表取证面失真；只记不判语义不受影响） | 已修并落地 dev=**0a5b0569b9**（进程内锁 4 行；修复后 S1 giveup 连跑 6/6 全绿） |
+| F-14-6 | 可移植性处置 | 证尺 7 例与检出基底绑定：S4 六尺依赖 D2 步1/2/5（在途=csx-pkg5b 未提交件）、S5 中间形态红证依赖 df8507ac9b 基——dev tip 直跑会 7 失败 | 已改 skipif 基座探针（D2 三标足迹/`_spec_sha` 在场探针），skip 原因均指认属主批；D2/包7 落地后自动启用 |
 
 ## 3. 红线遵守声明
 
@@ -92,8 +94,10 @@ ttl: task_bound
 | （工作树账实复原） | registry | 本 worktree 的 in_process_gate_registry.yaml `total_gates: 99→102`（safe_write_text CAS；仅修本工作树环境，**不入袋**——dev 名册已自洽 103，落本件反成回退） | 环境复健 ✅ |
 | 0156 | scripts | 同修复（旧基底快照） | 死信：基底 9120a7aafc 落后 dev（F1 等已在 dev 推进同路径）＝逐文件快进判定按设计拦下 |
 | 0157 | scripts | scripts/commit.py 同修复，改以 **dev tip 快照**（一次性 detached worktree@dev，修复后 S6 4/4+B5 14/14 预验）入队 | **已落地 dev=bd8ba4d85a**（恰 6 行） |
-| tests 袋 | tests（token 豁免） | tests/governance/red_blue_pkg14/ 全件（10 文件） | 见 status |
-| docs 袋 | docs | docs/_working/commit_speedup_campaign/90_verification/red_blue_pkg14_report.md（本文件） | 见 status |
+| 0160 | tests（token 豁免） | tests/governance/red_blue_pkg14/ 全件（10 文件） | **已落地 dev=8b6c351c58** |
+| 0161 | docs | 本报告+token 先行（commit_speedup_campaign_rb14） | **已落地 dev=ee02f45b66** |
+| 0162 | scripts | F-14-5 记档锁修复 | **已落地 dev=0a5b0569b9** |
+| 尾袋 | tests+docs | 证尺基座自适应（F-14-6 skipif）+本报告 F-14-5/F-14-6 补记 | 见 status |
 
 死信处置实录：0154→换新袋 0155（复健册账后仍死＝判明第二因基底落后）→0156（换 dev
 tip 快照源）落地。全程零改门禁判据、零插队、零触碰生产活体。
