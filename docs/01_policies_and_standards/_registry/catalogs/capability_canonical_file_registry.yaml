@@ -53725,4 +53725,29 @@ creation_tokens:
   created_by: st-fms-chief-20260927
   capability: fms_retirement
   merge_evaluation: "MLC-003退役七步首个可执行真身：四路机械探测+原子执行器+转换门，替代零自动化现状"
+- file: docs/_working/chain_circulation_campaign/ec3_water_health_ledger.md
+  token: chain-circulation-ec3-water-health-ledger-20260926
+  created_by: st-ec3-water
+  capability: chain_circulation
+  merge_evaluation: "内收：一次性任务_bound 体检台账（05 健康表重探交付面），无新增规则/gate/脚本，无可替代合并项，回收期=战役归档"
+- file: src/zephyr/data/l9_readiness_aggregator.py
+  token: mod-data-l9agg-l9-readiness-aggregator-20260926
+  created_by: st-chief4x-know-20260927
+  capability: mod-data-l9agg
+  merge_evaluation: "f34册P0缺位件:AGG原module_ref=null无生产者,本件为首件非替代;读数口径合并f34§五三处(AGG边+decay巡检+晨报供给健康段)防三套freshness口径,图谱侧复用reconcile判据禁第三套"
+- file: schemas/categories/l9_readiness_daily.py
+  token: mod-data-l9agg-l9-readiness-daily-20260926
+  created_by: st-chief4x-know-20260927
+  capability: mod-data-l9agg
+  merge_evaluation: "f34册P0缺位件配套表:读数此前无落地载体,首件非替代;ReplacingMergeTree同日刷新复用sector_state版本列latest-wins先例禁另立引擎口径"
+- file: scripts/ch/apply_l9_readiness_ddl.py
+  token: mod-data-l9agg-apply-l9-readiness-ddl-20260926
+  created_by: st-chief4x-know-20260927
+  capability: mod-data-l9agg
+  merge_evaluation: "部署范式复用apply_decision_daily_ddl单表件先例,禁在apply_market_tables_ddl大册追加造成双域混杂;DDL真源单点在schemas"
+- file: scripts/register_tilib_backfill_task.ps1
+  token: tilib-night-backfill-register-tilib-backfill-task-20260926
+  created_by: st-ec3-water
+  capability: tilib_night_backfill
+  merge_evaluation: "内收：替代任务计划程序手工重指 hack（fe40146a2b 第一批的唯一激活步），零新规则/gate；与既有 register_*.ps1 同族同型"
 di_seam_exemptions: []
