@@ -35,6 +35,8 @@ import sys
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 import zephyr.gov_enforcement.rule_bridge.gate_cache_preflight as gcp_wt  # worktree 现行形态
 from governance.red_blue_pkg14._common import git
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import GitCommitGateway
@@ -168,6 +170,9 @@ def test_s5_blue_worktree_key_head_advance_still_hits(tmp_path):
 # ── 红证：worktree 现行中间形态（df8507ac9b）——门源码毒不判失 ───────────────
 
 
+@pytest.mark.skipif(
+    hasattr(gcp_wt, "_spec_sha"), reason="本检出已含包7收口件（新键在场）——中间形态红证仅对 df8507ac9b 基有意义"
+)
 def test_s5_red_worktree_intermediate_key_gate_source_poison_still_hits(tmp_path):
     """红方战果：中间形态键缺 spec_sha 分量——门源码修复/篡改后 10min TTL 内
     旧 passed=True 判定继续放行（投毒窗）。此即包7收口件 cb3c13b74f 要拔的刺。"""

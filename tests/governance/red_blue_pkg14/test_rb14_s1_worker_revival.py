@@ -114,10 +114,19 @@ def test_s1_blue_giveup_only_after_20_consecutive_errors(sb_repo, sb_queue, monk
     log = read_wave_log(sb_queue)
     raised = [ln for ln in log.splitlines() if "claim_raised" in ln]
     gives = [ln for ln in raised if "GIVEUP" in ln]
-    assert len(raised) == _K * cql._WORKER_ERR_STREAK, f"每工连错恰 {cql._WORKER_ERR_STREAK} 次记档: {raised[-4:]}"
+    # D3 契约断言（对并发记档的行级丢失鲁棒——见对抗报告 F-14-5）：
+    # 每工 GIVEUP 恰一次、必挂 streak=20、且每工 streak 必须爬到 20（20 前不收工）。
     assert len(gives) == _K, f"每工恰一次 GIVEUP: {gives}"
     assert all("streak=20" in ln for ln in gives), "GIVEUP 必须挂在第 20 连错上"
-    assert all("GIVEUP" not in ln for ln in raised if "streak=19" in ln), "streak=19 不得 GIVEUP"
+    for w in range(_K):
+        w_lines = [ln for ln in raised if f" w{w} " in ln]
+        streaks = [int(ln.rsplit("streak=", 1)[1].split(" GIVEUP")[0]) for ln in w_lines]
+        assert streaks and max(streaks) == cql._WORKER_ERR_STREAK, (
+            f"w{w} 连错必须爬满 {cql._WORKER_ERR_STREAK} 才收工: {streaks}"
+        )
+        assert "GIVEUP" not in [ln for ln in w_lines if f"streak={cql._WORKER_ERR_STREAK - 1}" in ln][0], (
+            "streak=19 不得 GIVEUP"
+        )
 
 
 # ── 蓝方 ③：成功重置连错计数（19 错+成功+19 错 → 无 GIVEUP）────────────────
