@@ -221,3 +221,31 @@ date: 2026-09-24
      因 heartbeat_daemon 自身不刷 last_activity，#ARCH-HEARTBEAT-002），起后 list_active 复验为 True 再重投。
   5) 现态：战役测试 188 passed 连续通过、全战役面 ruff 0 error、红蓝 `--scan` EXIT=0（五尺自证 5/5）；
      九袋重投在跑，落地结果与死信以 `python scripts/commit_queue.py status --session st-metaq-gc-20260924` 为准。
+
+## ⑬ 接手班终局（st-metaq-gc-20260924 接手班，2026-09-25 夜～09-26 晨）
+
+前班上下文耗尽停于"入队未落地"，本班唯一使命=收尾落地。终态：**106 件战役面全部进 HEAD**，
+本会话四态 pending/processing=0 且 dead=0（89 封历史死信归档 dead_archive_metaq_gc_20260926/）；
+连续两轮 188 passed + ruff 0 + 红蓝 --scan EXIT=0（三态 151/46/86=283 守恒）。
+
+八袋死因对症（接手令 a-e 全闭环）+ 落地途中新揭层（洋葱序）：
+- a) REEXAM-FAILS 裁定引用：他班已落 HEAD，免重投；b) 两处 m11 noqa 补理由；
+- c) 翻译册三度拉锯：盘面修复版→QMine-R 旧基快照冲回 share=2→add_module_translation 再写独有句；
+- d) 0052 同袋修复生效；e) 0040 ValueError 以"热册先行+串行分袋"结构性绕开，未再复现；
+- PERM-TRIGGER（新台）：while True 版本冲突重试改显式有界 while（语义逐字节等价，188 实证）；
+  macro_vintage argparse 自检走 m11 合规豁免（PERM-TRIGGER 无 noqa，m10 仅门自豁免）；
+- ORPHAN-MODULE grep 带  按行匹配：正解=PEP 484 冗余别名重导出 `from . import x as x`
+  （isort 不合并/ruff 免 F401/逐名命中；ruff --fix 折行会让 grep 失明，须单行）；
+- 守护波次僵死两例（心跳新鲜×lease 刷新×processing 全占×工作树零活动）：杀→PT1M 自启→孤儿回收，
+  实证两次复活；ch_writer 惰性 import 块再遭热写蒸发，git diff HEAD 补回；
+- N-16：registry.py 撞 3 名改名 meta_question_registry.py（16 引面+翻译册+ALGO yaml+depgraph 白名单联动）；
+- COMPLEXITY-GUARD（>15 硬拦无豁免）：9 函数拆分（4 路子代理并行，行为等价差分实证 0 差异）
+  + NO-LONG-PARAM-LIST（>7 参）provenance/acc 束收敛；
+- MSG-EXPOSURE 三处去 path 插值（FileNotFoundError 走 errno 三参形态）；MSG-STYLE 两处 Unicode 箭头；
+- DEPGRAPH 三步规程扩白名单 8 路径（exam_loop 四件+wo009 两件+dsrhythm+registry/exam_ops），
+  裁定文档 (c) 步同步；M5.2 fresh-import 掀出 DOC-HEADER-SUITE/BLUEPRINT-FORMAT 77 撞号
+  （薄工厂让位 110→130，两处名册外代码自报占用逐一枚举避让）+ in_process_gate_registry 标量 102→103；
+- ALGO_FLOW 六件出仓（drafter+externalize 官方管线，13 yaml token 先行）；
+- 热册竞态根律：净删告警=他会话 staged 基线落后于 HEAD 的恒常现象，disk∪HEAD 并集+诚实 marker 为正解。
+遗留给 Owner（4 件，详见 GC-FINAL-REPORT §终局）：①翻译册 3 条 wo001_003 悬空旧条目净删门位；
+②VM /root 两件证据处置；③WO-009 白名单 8 行已随本轮 DEPGRAPH 白名单袋落地核销；④D 盘 93%。

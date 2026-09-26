@@ -380,3 +380,23 @@ REPO_ROOT 重复定义、非法 `# noqa` 书写形导致抑制静默失效、蓝
 **给下一班的硬判据**：报"完成"之前必须查 `commit_queue.py status --session <sid>` 的**四态**，
 pending 不等于 done；袋落地后要 `git log -1 --name-only` 核归属。
 本轮我自己的量错了一次分母（把"入袋数"当"落地数"），这类错在本仓已有先例记录。
+
+
+## 终局·接手班交付（2026-09-26 晨，st-metaq-gc-20260924 接手班）
+
+上一节"给下一班的硬判据"已执行完毕：四态 pending/processing=0 且 dead=0（89 封历史死信
+归档 dead_archive_metaq_gc_20260926/），**106 件战役面全部进 HEAD**，连续两轮 188 passed +
+ruff 0 + 红蓝 --scan EXIT=0（三态 151/46/86=283 守恒，R1-R5 五尺自证 5/5）。逐袋 git log
+归属抽查通过（writeback/build_io_sector_map 样本+新旧 registry 路径核验）。
+
+§十一所列八袋死因全部对症闭环，落地途中另揭九层洋葱并逐一根治（详见 02_final_ledger §⑬）：
+PERM-TRIGGER 有界重放改写、ORPHAN 别名重导出、ALGO_FLOW 六件出仓、COMPLEXITY 九函数拆分
+（4 路子代理行为等价差分实证）、MSG-EXPOSURE/MSG-STYLE、N-16 registry.py 改名级联、
+DEPGRAPH 白名单三步规程扩面八路径（含 WO-009 两件——§八遗留③就此核销）、
+M5.2 fresh-import 掀出门册 77 撞号与标量 102→103 两处存量账实差。
+
+**遗 Owner 四件**（本班不代裁）：
+1. 翻译册 3 条 wo001_003 悬空旧条目净删门位（账实不符退役，宪法 §5 high tier）；
+2. VM(172.24.30.100) /root/macro_data_broken_parts_bak_20260925 与 /root/macro_data.sql.bak_metaqgc_20260925 可删确认；
+3. ~~WO-009 白名单 8 行投放时机~~ → 已按其 apply_prerequisite 前置（st-ailayer 20 行先落）执行落地，核销；
+4. D 盘 93%（剩 56G），worktree 与队列 blob 持续增长。
