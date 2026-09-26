@@ -27,7 +27,7 @@ _SUITE_MOD = "blueprint_format_gate"
 _CASES = [
     (_SUITE_MOD, "make_doc_header_suite_gate", "DOC-HEADER-SUITE", 77),
     # 7 吸收台薄工厂（gate_id/priority 保真——判据零退役的身份锚）
-    ("blueprint_format_gate", "make_blueprint_format_gate", "BLUEPRINT-FORMAT", 77),
+    ("blueprint_format_gate", "make_blueprint_format_gate", "BLUEPRINT-FORMAT", 130),
     ("blueprint_amodule_consistency_gate", "make_blueprint_header_gate", "BLUEPRINT-HEADER", 79),
     ("module_id_consistency_gate", "make_module_id_consistency_gate", "MODULE-ID-CONSISTENCY", 88),
     ("ttl_gate", "make_ttl_gate", "TTL-METADATA", 32),
