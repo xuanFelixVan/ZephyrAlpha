@@ -16,7 +16,7 @@ D:\ZephyrAlpha\docs\_working\total_command_closeout\00_master_skeleton.md       
 D:\ZephyrAlpha\docs\_working\total_command_closeout\02_field_corrections_and_new_cases.md   # ★唯一口径：实测更正 X-xx
 D:\ZephyrAlpha\docs\_working\total_command_closeout\01_adjudication_master.md   # 裁定书 Z-xx（含 Owner 门位项）
 D:\ZephyrAlpha\docs\_working\total_command_closeout\10_wave_plan.md             # 八波排产（本指令的骨架）
-D:\ZephyrAlpha\docs\_working\total_command_closeout\11_rescue_playbook.md       # 配方 R-0..R-6（照抄可用）
+D:\ZephyrAlpha\docs\_working\total_command_closeout\11_rescue_playbook.md       # 配方 R-0..R-8（照抄可用）
 D:\ZephyrAlpha\docs\_working\total_command_closeout\92_acceptance_rulers.md     # 每包的验收尺
 D:\ZephyrAlpha\docs\_working\total_command_closeout\dossier_A_commit_chain.md   # 证据层（按需查）
 D:\ZephyrAlpha\docs\_working\total_command_closeout\dossier_B_backup_and_cold_storage.md
@@ -182,7 +182,7 @@ done
   D:\ZephyrAlpha\docs\_working\total_command_closeout\91_flash_one_click.md   ← 本指令，含全部波次与红线
   D:\ZephyrAlpha\docs\_working\total_command_closeout\02_field_corrections_and_new_cases.md  ← 唯一口径（冲突时以此为准）
   D:\ZephyrAlpha\docs\_working\total_command_closeout\10_wave_plan.md         ← 八波排产
-  D:\ZephyrAlpha\docs\_working\total_command_closeout\11_rescue_playbook.md   ← 照抄可用的配方 R-0..R-6
+  D:\ZephyrAlpha\docs\_working\total_command_closeout\11_rescue_playbook.md   ← 照抄可用的配方 R-0..R-8
   D:\ZephyrAlpha\docs\_working\total_command_closeout\92_acceptance_rulers.md ← 每包验收尺
   D:\ZephyrAlpha\docs\_working\total_command_closeout\01_adjudication_master.md（读 §2 §3 即可）
 然后照 91 册「第 1 步冷启动 → 第 3 步执行序 波0→波8」逐波执行，禁跳波、禁并行跨波依赖。
