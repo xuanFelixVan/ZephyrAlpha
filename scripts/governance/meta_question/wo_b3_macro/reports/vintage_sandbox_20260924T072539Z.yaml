@@ -1,0 +1,28 @@
+# 原 .json 已废弃：scripts/ 目录契约不收 .json（DCR-005/006），按本仓 json→yaml 先例转换（见 G6 先例）。
+ok: true
+pit_2026_08_31_returns_only_v1:
+- - 1
+  - 318.0
+pit_2026_09_20_returns_v2:
+- - 2
+  - 318.4
+same_value_replay_skip: 1
+stats_v1:
+  new_key: 1
+  revised: 0
+  skipped_no_value: 0
+  unchanged_skip: 0
+  unknown_basis: 0
+stats_v2:
+  new_key: 0
+  revised: 1
+  skipped_no_value: 0
+  unchanged_skip: 0
+  unknown_basis: 0
+stored_versions:
+- - 1
+  - '2026-08-06 02:00:00+00:00'
+  - 318.0
+- - 2
+  - '2026-09-06 02:00:00+00:00'
+  - 318.4

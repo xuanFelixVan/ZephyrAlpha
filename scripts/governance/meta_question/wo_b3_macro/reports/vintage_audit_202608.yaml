@@ -1,0 +1,42 @@
+carrier_table: c1_market.macro_data_vintage
+month_window: 2026-08
+sampled_keys: 30
+sampled_rows: 30
+totals:
+  rows: 16091
+  keys: 16091
+  by_basis:
+  - - backfill_final
+    - 16091
+C1_vintage_monotonic:
+  keys: 30
+  multi_vintage_keys: 0
+  monotonic_no_gap: true
+  violations: {}
+  ok: true
+C2_evidence_consistency:
+  rows: 30
+  by_basis:
+    backfill_final: 30
+  ok: true
+  violations: []
+C3_no_fabrication:
+  backfill_rows_with_pub_ts: 0
+  non_backfill_rows_without_pub_ts: 0
+  ok: true
+C4_pit_no_lookahead:
+  as_of_points:
+  - '2025-09-09'
+  - '2026-07-02'
+  - '2026-08-31'
+  rows_returned_last_point: 0
+  future_timestamp_rows: 0
+  violations: []
+  ok: true
+  note: 历史全为 backfill_final（pub_ts NULL）时 PIT 返回空=正确行为：宁缺勿假；非空返回须逐点等于暴力重算（本判据在 --sandbox
+    多版通路上亦跑）
+C5_structure:
+  vintage_sorting_key: indicator_name, report_date, vintage
+  legacy_sorting_key: indicator_name, report_date
+  ok: true
+verdict: PASS

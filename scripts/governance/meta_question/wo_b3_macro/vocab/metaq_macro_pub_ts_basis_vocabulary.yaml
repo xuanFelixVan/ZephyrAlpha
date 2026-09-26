@@ -1,0 +1,25 @@
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | 工单 WO-B3（PQ-0185/PQ-0191 宏观发布快照存证）
+# [A_config] module_id=MOD-CHAINPILE-METAQ | layer=config | stability=new | safety=L | ai_autonomy=ai_modifiable
+# 真源说明：本词表是 c1_market.macro_data_vintage.pub_ts_basis 的枚举唯一真源。
+# 消费方 scripts/governance/meta_question/wo_b3_macro/macro_vintage.py 经
+# zephyr.shared.io.yaml_utils.load_vocabulary_values(vocab_dir=<本目录>) 动态加载，
+# 禁在代码里写字面量列表（RULE-VOCAB 治本处方：上一班四次死亡换来的硬规则）。
+module_id: MOD-CHAINPILE-METAQ
+ttl: permanent
+description: 宏观数据 vintage 存证表的发布时戳依据（pub_ts_basis）枚举——谁给出 pub_ts、可信度几何
+doc_type: vocabulary
+owner: ZephyrAlpha-Owner
+registered_by: st-metaq-gc-20260924
+date: '2026-09-24'
+values:
+- value: official_release
+  definition: 发布时戳=上游官方发布日历时点（FRED releases/dates、EIA 发布排期、国家统计局公布日等）。
+    唯一可直接用于历史 PIT 取数的档；pub_ts 可早于本仓 first_seen_ts（真实公开发布在前）。
+- value: ingest_observed
+  definition: 发布时戳=本仓首次观测到该观测值的时点（first_seen_ts 同值）。PIT 保守上界：
+    不谎称早于观测可得，故 as_of < pub_ts 的历史时点取不到该值（宁可缺、不可假）。
+    自本工单落地起生效（"自积起生效"档）。
+- value: backfill_final
+  definition: 一次性回补终值（如 2026-08 FRED_/EIA_ 批灌）。pub_ts 恒为 NULL，
+    不参与任何 PIT（as_of）取数，仅作现值参考。此档的存在=历史不可回补的如实登记，
+    禁止为其伪造发布时戳。
