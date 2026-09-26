@@ -52806,4 +52806,94 @@ creation_tokens:
   created_by: st-audit-fix-20260924
   capability: chain_fullflow_closeout
   merge_evaluation: "内收：并入既有 fullflow 战役登记面，不立平行册（同一战役挖矿产物，无独立消费方；目录名去数字后缀以过 R5）"
+- file: docs/_working/decision_map_campaign_20260924/HANDOVER_FINAL.md
+  token: decision-map-campaign-20260924-handover-final-20260926
+  created_by: st-cmd-20260924
+  capability: decision_map_campaign_20260924
+  merge_evaluation: "总筹终版交接书（Owner 令交接）：项目背景+Owner愿景+已完成+在飞+剩余全量清单+Owner裁决单+血泪配方十条+关键路径速查+批次索引"
+- file: docs/_working/total_command_closeout/00_master_skeleton.md
+  token: governance-total-command-closeout-00-master-skeleton-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/01_adjudication_master.md
+  token: governance-total-command-closeout-01-adjudication-master-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/02_field_corrections_and_new_cases.md
+  token: governance-total-command-closeout-02-field-corrections-and-new-cases-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/10_wave_plan.md
+  token: governance-total-command-closeout-10-wave-plan-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/11_rescue_playbook.md
+  token: governance-total-command-closeout-11-rescue-playbook-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/91_flash_one_click.md
+  token: governance-total-command-closeout-91-flash-one-click-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/92_acceptance_rulers.md
+  token: governance-total-command-closeout-92-acceptance-rulers-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/93_owner_menu.md
+  token: governance-total-command-closeout-93-owner-menu-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/94_ledger.md
+  token: governance-total-command-closeout-94-ledger-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/dossier_A_commit_chain.md
+  token: governance-total-command-closeout-dossier-a-commit-chain-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/dossier_B_backup_and_cold_storage.md
+  token: governance-total-command-closeout-dossier-b-backup-and-cold-storage-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/dossier_C_six_maps.md
+  token: governance-total-command-closeout-dossier-c-six-maps-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/dossier_D_ai_layer_wave2.md
+  token: governance-total-command-closeout-dossier-d-ai-layer-wave2-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/dossier_E_gpu_t1_t2.md
+  token: governance-total-command-closeout-dossier-e-gpu-t1-t2-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/dossier_F_metaq_and_qmine.md
+  token: governance-total-command-closeout-dossier-f-metaq-and-qmine-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/dossier_G_business_chain.md
+  token: governance-total-command-closeout-dossier-g-business-chain-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
+- file: docs/_working/total_command_closeout/dossier_H_ruling_candidates_merge.md
+  token: governance-total-command-closeout-dossier-h-ruling-candidates-merge-20260926
+  created_by: st-zmaster-20260926
+  capability: governance_total_command_closeout
+  merge_evaluation: "11 班交付合并的总包册与案卷：唯一归档位，无第二真源，无可并旧条目（净零）"
 di_seam_exemptions: []
