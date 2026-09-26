@@ -53346,4 +53346,24 @@ creation_tokens:
   created_by: st-chief3-20260926
   capability: wave13_chief_command
   merge_evaluation: "波13 继任总筹指挥位与前总筹在途字节固化证据；替代=散文交接书（同域重复簇收敛唯一，不新建第二真源）"
+- file: docs/_working/wave13_chief3/inbox/byte_ledger/01_byte_ledger.md
+  token: wave13-chief-command-01-byte-ledger-20260926
+  created_by: st-chief3-20260926
+  capability: wave13_chief_command
+  merge_evaluation: "波13 总筹三案卷（字节归账/队列撞号定性/登记载荷），同域重复簇收敛：替代散文交接书，机读表 byte_matrix.yaml 为唯一待落面真源"
+- file: docs/_working/wave13_chief3/inbox/byte_ledger/byte_matrix.yaml
+  token: wave13-chief-command-byte-matrix-20260926
+  created_by: st-chief3-20260926
+  capability: wave13_chief_command
+  merge_evaluation: "波13 总筹三案卷（字节归账/队列撞号定性/登记载荷），同域重复簇收敛：替代散文交接书，机读表 byte_matrix.yaml 为唯一待落面真源"
+- file: docs/_working/wave13_chief3/inbox/byte_ledger/register_manifest.md
+  token: wave13-chief-command-register-manifest-20260926
+  created_by: st-chief3-20260926
+  capability: wave13_chief_command
+  merge_evaluation: "波13 总筹三案卷（字节归账/队列撞号定性/登记载荷），同域重复簇收敛：替代散文交接书，机读表 byte_matrix.yaml 为唯一待落面真源"
+- file: docs/_working/wave13_chief3/inbox/registry_collision/01_case_file.md
+  token: wave13-chief-command-01-case-file-20260926
+  created_by: st-chief3-20260926
+  capability: wave13_chief_command
+  merge_evaluation: "波13 总筹三案卷（字节归账/队列撞号定性/登记载荷），同域重复簇收敛：替代散文交接书，机读表 byte_matrix.yaml 为唯一待落面真源"
 di_seam_exemptions: []
