@@ -153,6 +153,8 @@ _WHITELIST: frozenset[str] = frozenset(
         #   exam_ops.py = 考试生命周期写操作（claim/answer/复考状态流转）
         "src/zephyr/governance/meta_question/meta_question_registry.py",
         "src/zephyr/governance/meta_question/exam_ops.py",
+        # FMS 战役 B3 图书馆 successor_of 迁移脚本，2026-09-27 st-fms-chief-20260927，裁定#ARCH-DEPGRAPH_ACCESS_CONTROL 白名单扩展
+        "scripts/governance/migrations/add_library_successor_of.py",
     }
 )
 
