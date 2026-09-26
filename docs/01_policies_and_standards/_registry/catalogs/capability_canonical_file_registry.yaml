@@ -53571,6 +53571,11 @@ creation_tokens:
   created_by: st-fms-chief-20260927
   capability: fms_frontdoor
   merge_evaluation: "门口文件+嵌套AGENTS：替代904行ROOR直读与520行project_rules全量注入，检索阶梯6跳降到1跳"
+- file: scripts/governance/generators/generate_front_door.py
+  token: fms-frontdoor-generate-front-door-20260926
+  created_by: st-fms-chief-20260927
+  capability: fms_frontdoor
+  merge_evaluation: "FRONT-DOOR双投生成器：ROOR瘤切后门口文件唯一真源，替代904行直读"
 - file: scripts/governance/d1_structure/check_mirror_tree.py
   token: auto-scaffold-governance_d1_structure_check_mirror_tree-20260927
   created_by: scaffold.py
@@ -53580,11 +53585,6 @@ creation_tokens:
   created_by: st-chief5-20260927
   capability: chain_circulation
   merge_evaluation: "内收：与 fullconnect_campaign 挖矿线互补的业务链施工台账，无同真源重复"
-- file: scripts/governance/generators/generate_front_door.py
-  token: fms-frontdoor-generate-front-door-20260926
-  created_by: st-fms-chief-20260927
-  capability: fms_frontdoor
-  merge_evaluation: "FRONT-DOOR双投生成器：ROOR瘤切后门口文件唯一真源，替代904行直读"
 - file: src/zephyr/frontend/dashboard/chainmap_equity_graph.py
   token: chain-circulation-chainmap-equity-graph-20260926
   created_by: st-ec1-equity
@@ -53595,6 +53595,11 @@ creation_tokens:
   created_by: st-ec1-equity
   capability: chain_circulation
   merge_evaluation: "内收：车道台账并入战役台账族（00/91/99 同目录），不另开平行台账体系"
+- file: docs/_working/chain_circulation_campaign/ec3_water_health_ledger.md
+  token: chain-circulation-ec3-water-health-ledger-20260926
+  created_by: st-ec3-water
+  capability: chain_circulation
+  merge_evaluation: "内收：一次性任务_bound 体检台账（05 健康表重探交付面），无新增规则/gate/脚本，无可替代合并项，回收期=战役归档"
 - file: src/zephyr/gov_enforcement/commit_gates/read_side/__init__.py
   token: fms-hygiene-gate---init---20260926
   created_by: st-fms-chief-20260927
@@ -53725,11 +53730,6 @@ creation_tokens:
   created_by: st-fms-chief-20260927
   capability: fms_retirement
   merge_evaluation: "MLC-003退役七步首个可执行真身：四路机械探测+原子执行器+转换门，替代零自动化现状"
-- file: docs/_working/chain_circulation_campaign/ec3_water_health_ledger.md
-  token: chain-circulation-ec3-water-health-ledger-20260926
-  created_by: st-ec3-water
-  capability: chain_circulation
-  merge_evaluation: "内收：一次性任务_bound 体检台账（05 健康表重探交付面），无新增规则/gate/脚本，无可替代合并项，回收期=战役归档"
 - file: src/zephyr/data/l9_readiness_aggregator.py
   token: mod-data-l9agg-l9-readiness-aggregator-20260926
   created_by: st-chief4x-know-20260927
@@ -53750,4 +53750,9 @@ creation_tokens:
   created_by: st-ec3-water
   capability: tilib_night_backfill
   merge_evaluation: "内收：替代任务计划程序手工重指 hack（fe40146a2b 第一批的唯一激活步），零新规则/gate；与既有 register_*.ps1 同族同型"
+- file: docs/_working/fullconnect_campaign/lane_l_replay_ledger.md
+  token: fullconnect-lane-l-lane-l-replay-ledger-20260926
+  created_by: zc-lane-l-20260927
+  capability: fullconnect_lane_l
+  merge_evaluation: "不并：战役L线唯一台账，事件性留痕非能力资产，TTL 随战役归档"
 di_seam_exemptions: []
