@@ -32,6 +32,7 @@
   python scripts/backtest/factory_intake_pipeline.py run --with-lane-b --n-per-theme 2
   python scripts/backtest/factory_intake_pipeline.py run --dry-run
 """
+
 from __future__ import annotations
 
 import argparse
@@ -48,27 +49,51 @@ if str(_ROOT) not in sys.path:
 
 # 车道规格表：进货函数 + 出生车道 + 算力档（重车道开工前必须 E0 问闸——接线点声明）
 _LANE_SPECS = [
-    {"lane": "D", "name": "e1d_three_high", "compute_class": "local",
-     "intake": "data/strategy_intake/three_high_candidates.csv"},
-    {"lane": "B", "name": "e1b_idea_gen", "compute_class": "api",
-     "intake": "data/strategy_intake/lane_b_candidates.csv"},
+    {
+        "lane": "D",
+        "name": "e1d_three_high",
+        "compute_class": "local",
+        "intake": "data/strategy_intake/three_high_candidates.csv",
+    },
+    {
+        "lane": "B",
+        "name": "e1b_idea_gen",
+        "compute_class": "api",
+        "intake": "data/strategy_intake/lane_b_candidates.csv",
+    },
     # E1C 公式挖掘（三轨已建成：gplearn MOD-BT-155=lane_c_candidates / 智能体 MOD-BT-158=
     # lane_c2_candidates / MCTS=lane_c3_candidates；生产图 FAC-E1C lane=C，WO-⑤-06 漂移修正
     # 2026-09-18：原 lane=None"待施工"标注落后于实况）。重算力=local_gpu，E0 问闸 heavy 档生效。
-    {"lane": "C", "name": "e1c_formula_mine", "compute_class": "local_gpu",
-     "intake": "data/strategy_intake/lane_c_candidates.csv"},
+    {
+        "lane": "C",
+        "name": "e1c_formula_mine",
+        "compute_class": "local_gpu",
+        "intake": "data/strategy_intake/lane_c_candidates.csv",
+    },
     # F-06 组合层网格（2.4 接线，2026-09-15）：intake=最新 grid 批次 manifest（执行器 MOD-BT-196 落盘）。
     # recipe 行非因子假说——E2 消费器需按 recipe_id/values_json 解析（跨线协作项，E2 侧适配器待挂）。
-    {"lane": "F", "name": "f06_grid_recipes", "compute_class": "local",
-     "intake": "data/strategy_intake/grid_latest_manifest.csv"},
+    {
+        "lane": "F",
+        "name": "f06_grid_recipes",
+        "compute_class": "local",
+        "intake": "data/strategy_intake/grid_latest_manifest.csv",
+    },
     # 车道G 全网搜索进货（⑥号车道，夜班战役 2026-09-17）：消化 L3 胃收件箱→假说卸台账。
     # 干活在 lane_g_stomach_intake 自身 CLI（车道干完活即卸台账，本编排只幂等消费）。
-    {"lane": "G", "name": "e1g_stomach_intake", "compute_class": "local",
-     "intake": "data/strategy_intake/lane_g_candidates.csv"},
+    {
+        "lane": "G",
+        "name": "e1g_stomach_intake",
+        "compute_class": "local",
+        "intake": "data/strategy_intake/lane_g_candidates.csv",
+    },
     # 车道I 产业链候选进货（线alpha T8，2026-09-18）：研报喂链/敞口矩阵/workbook 待挖三来源。
     # 干活在产业链接挖矿班自身流程（schema 真源=a_mining_workbook §7），本编排只幂等消费。
-    {"lane": "I", "name": "e1i_chain_candidates", "compute_class": "local",
-     "intake": "data/strategy_intake/lane_chain_candidates.csv"},
+    {
+        "lane": "I",
+        "name": "e1i_chain_candidates",
+        "compute_class": "local",
+        "intake": "data/strategy_intake/lane_chain_candidates.csv",
+    },
 ]
 
 
@@ -90,15 +115,24 @@ def preflight_compute_gate(lane_specs: list[dict] | None = None) -> list[dict]:
         if spec["lane"] is None:
             continue  # 未施工车道跳过
         decision = check_gate(f"intake_{spec['name']}", spec["compute_class"], now)
-        results.append({"lane": spec["lane"], "purpose": f"intake_{spec['name']}",
-                        "allowed": decision["allowed"],
-                        "reason_code": decision["reason_code"]})
+        results.append(
+            {
+                "lane": spec["lane"],
+                "purpose": f"intake_{spec['name']}",
+                "allowed": decision["allowed"],
+                "reason_code": decision["reason_code"],
+            }
+        )
     return results
 
 
-def run_pipeline(top_sectors: int = 20, with_lane_b: bool = False,
-                 n_per_theme: int = 2, limit_precheck: int | None = 10,
-                 dry_run: bool = False) -> dict:
+def run_pipeline(
+    top_sectors: int = 20,
+    with_lane_b: bool = False,
+    n_per_theme: int = 2,
+    limit_precheck: int | None = 10,
+    dry_run: bool = False,
+) -> dict:
     """主编排：E1D 进货 →（可选）E1B 进货 → E2 预审 → 排产汇总。"""
     started = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds")
     gates = preflight_compute_gate()
@@ -110,35 +144,40 @@ def run_pipeline(top_sectors: int = 20, with_lane_b: bool = False,
     # 1) 车道 D：三高筛选（零 LLM，本地轻）
     e1d = three_high_screen.run_screen(top_n=top_sectors, dry_run=dry_run)
     report["lanes"]["D_three_high"] = {
-        "batch": e1d.get("batch"), "candidates": e1d.get("returned"),
-        "intake": three_high_screen._INTAKE_CSV.name}
+        "batch": e1d.get("batch"),
+        "candidates": e1d.get("returned"),
+        "intake": three_high_screen._INTAKE_CSV.name,
+    }
 
     # 2) 车道 B：AI 生成（可选，本地 LLM 轻）
     if with_lane_b:
         e1b = lane_b_idea_generator.run_generation(
-            themes=list(lane_b_idea_generator.SEED_THEMES), n_per_theme=n_per_theme,
-            dry_run=dry_run)
+            themes=list(lane_b_idea_generator.SEED_THEMES), n_per_theme=n_per_theme, dry_run=dry_run
+        )
         report["lanes"]["B_idea_gen"] = {
-            "batch": e1b.get("batch"), "candidates": e1b.get("generated"),
+            "batch": e1b.get("batch"),
+            "candidates": e1b.get("generated"),
             "failed_themes": e1b.get("failed_themes"),
-            "intake": lane_b_idea_generator._INTAKE_CSV.name}
+            "intake": lane_b_idea_generator._INTAKE_CSV.name,
+        }
 
     # 3) E2 预审：幂等消费全部车道台账新增候选（四车道常态化）
-    e2_funnel: dict = {"batch": None, "prechecked": 0, "passed": 0,
-                       "rejected": 0, "deferred": 0}
+    e2_funnel: dict = {"batch": None, "prechecked": 0, "passed": 0, "rejected": 0, "deferred": 0}
     passed_ids: list[str] = []
     intake_sources = {
         "D": three_high_screen._INTAKE_CSV,
         "B": lane_b_idea_generator._INTAKE_CSV,
     }
     try:
-        from scripts.backtest import lane_c_formula_miner, lane_c2_agentic_miner
+        from scripts.backtest import lane_c2_agentic_miner, lane_c_formula_miner
+
         intake_sources["C"] = lane_c_formula_miner._INTAKE_CSV
         intake_sources["C2"] = lane_c2_agentic_miner._INTAKE_CSV
     except Exception:  # noqa: BLE001 — 车道模块缺位不阻断其余车道
         pass
     try:
         from scripts.backtest import lane_g_stomach_intake
+
         intake_sources["G"] = lane_g_stomach_intake._INTAKE_CSV
     except Exception:  # noqa: BLE001 — 同上
         pass
@@ -147,19 +186,36 @@ def run_pipeline(top_sectors: int = 20, with_lane_b: bool = False,
     for lane, src in intake_sources.items():
         if not Path(src).exists():
             continue
-        e2 = hypothesis_precheck.run(source=str(src), limit=limit_precheck,
-                                     dry_run=dry_run)
+        e2 = hypothesis_precheck.run(source=str(src), limit=limit_precheck, dry_run=dry_run)
         if e2.get("batch") is None:
             continue  # 该台账无新增候选（幂等跳过）
         for k in ("prechecked", "passed", "rejected", "deferred"):
             e2_funnel[k] += e2.get(k) or 0
-        passed_ids += [i["candidate_id"] for i in e2.get("items", [])
-                       if i["verdict"] == hypothesis_precheck.VERDICT_PASS]
+        passed_ids += [
+            i["candidate_id"] for i in e2.get("items", []) if i["verdict"] == hypothesis_precheck.VERDICT_PASS
+        ]
         report["lanes"][f"E2_{lane}"] = {
-            "batch": e2.get("batch"), "prechecked": e2.get("prechecked"),
-            "passed": e2.get("passed"), "rejected": e2.get("rejected"),
-            "deferred": e2.get("deferred")}
+            "batch": e2.get("batch"),
+            "prechecked": e2.get("prechecked"),
+            "passed": e2.get("passed"),
+            "rejected": e2.get("rejected"),
+            "deferred": e2.get("deferred"),
+        }
     report["e2_precheck"] = {**e2_funnel, "e3_ready_candidates": sorted(set(passed_ids))}
+
+    # 回灌边 FL2（E6→E1）消费端读数（st-ec2-p0 最小闭环）：衰减台账+归因日账→方向面，
+    # 只读不评分（编排层不评分铁律；direction_note 供夜批报告/Owner 晨读）。
+    # fail-open：读数失败=error 段留痕，不反噬进货主链（先验是增益不是依赖）。
+    try:
+        from scripts.backtest import feedback_prior
+
+        report["feedback_prior"] = feedback_prior.intake_direction(
+            feedback_prior.decay_prior_digest(),
+            feedback_prior.attribution_prior_digest(),
+        )
+    except Exception:  # noqa: BLE001 — 回灌读数失败不阻断进货（fail-open 出声）
+        report["feedback_prior"] = {"error": "unavailable"}
+
     report["finished_at"] = datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds")
     return report
 
@@ -168,8 +224,9 @@ _MANIFEST_CSV = _ROOT / "data" / "strategy_intake" / "constructed_manifest.csv"
 _CONSTRUCT_LANES = ("C", "C2")  # 公式轨：表达式可直接机械翻译成考卷件
 
 
-def auto_construct(lanes: tuple[str, ...] = _CONSTRUCT_LANES,
-                   register_tokens: bool = True, dry_run: bool = False) -> dict:
+def auto_construct(
+    lanes: tuple[str, ...] = _CONSTRUCT_LANES, register_tokens: bool = True, dry_run: bool = False
+) -> dict:
     """E2→E3 排产自动流转：过审公式候选 → E4 考卷件（机械翻译桥）+ 台账清单。
 
     只处理公式轨（C/C2——台账含 expression 列）；假说轨（D/B）走 C3 翻译专项
@@ -177,8 +234,7 @@ def auto_construct(lanes: tuple[str, ...] = _CONSTRUCT_LANES,
     """
     import pandas as pd
 
-    manifest_cols = ["candidate_id", "birth_channel", "strategy_id", "exam_file",
-                     "constructed_at"]
+    manifest_cols = ["candidate_id", "birth_channel", "strategy_id", "exam_file", "constructed_at"]
     done: set[str] = set()
     if _MANIFEST_CSV.exists():
         try:
@@ -194,11 +250,15 @@ def auto_construct(lanes: tuple[str, ...] = _CONSTRUCT_LANES,
     from scripts.backtest.lane_c_formula_miner import FEATURES
 
     passed = _e2_passed_by_channel()
-    report: dict = {"constructed": [], "skipped_no_expr": [], "skipped_invalid": [],
-                    "skipped_done": [], "dry_run": dry_run}
+    report: dict = {
+        "constructed": [],
+        "skipped_no_expr": [],
+        "skipped_invalid": [],
+        "skipped_done": [],
+        "dry_run": dry_run,
+    }
     for lane in lanes:
-        src = _ROOT / "data" / "strategy_intake" / {
-            "C": "lane_c_candidates.csv", "C2": "lane_c2_candidates.csv"}[lane]
+        src = _ROOT / "data" / "strategy_intake" / {"C": "lane_c_candidates.csv", "C2": "lane_c2_candidates.csv"}[lane]
         if not src.exists():
             continue
         df = pd.read_csv(src, encoding="utf-8-sig")
@@ -224,22 +284,31 @@ def auto_construct(lanes: tuple[str, ...] = _CONSTRUCT_LANES,
             out = generate_strategy_file(expr, src_cand=cid)
             if register_tokens:
                 import subprocess
-                subprocess.run([sys.executable,
-                                str(_ROOT / "scripts" / "governance" / "d3_metadata"
-                                    / "batch_creation_tokens.py"),
-                                "--prefix", str(out.relative_to(_ROOT)),
-                                "--created-by", os.environ.get("ZEPHYR_SESSION_ID") or "factory_intake_pipeline(auto)",
-                                "--capability", "factory_backend"],
-                               capture_output=True)
-            rec = {"candidate_id": cid, "birth_channel": lane,
-                   "strategy_id": f"FACT-{cid.split('-')[1][:8]}",
-                   "exam_file": str(out.relative_to(_ROOT)),
-                   "constructed_at": datetime.now(
-                       ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds")}
+
+                subprocess.run(
+                    [
+                        sys.executable,
+                        str(_ROOT / "scripts" / "governance" / "d3_metadata" / "batch_creation_tokens.py"),
+                        "--prefix",
+                        str(out.relative_to(_ROOT)),
+                        "--created-by",
+                        os.environ.get("ZEPHYR_SESSION_ID") or "factory_intake_pipeline(auto)",
+                        "--capability",
+                        "factory_backend",
+                    ],
+                    capture_output=True,
+                )
+            rec = {
+                "candidate_id": cid,
+                "birth_channel": lane,
+                "strategy_id": f"FACT-{cid.split('-')[1][:8]}",
+                "exam_file": str(out.relative_to(_ROOT)),
+                "constructed_at": datetime.now(ZoneInfo("Asia/Shanghai")).isoformat(timespec="seconds"),
+            }
             report["constructed"].append(rec)
             pd.DataFrame([rec])[manifest_cols].to_csv(
-                _MANIFEST_CSV, mode="a", header=not _MANIFEST_CSV.exists(),
-                index=False, encoding="utf-8-sig")
+                _MANIFEST_CSV, mode="a", header=not _MANIFEST_CSV.exists(), index=False, encoding="utf-8-sig"
+            )
             done.add(cid)
     report["total_constructed"] = len(report["constructed"])
     return report
@@ -248,21 +317,24 @@ def auto_construct(lanes: tuple[str, ...] = _CONSTRUCT_LANES,
 def _e2_passed_by_channel() -> set[str]:
     """E2 台账过审候选 id 集（全通道；台账不可达=空集→无构造）。"""
     try:
-        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
         from clickhouse_driver import Client
+
         from schemas.categories.backtest.backtest_hypothesis_precheck import (
             DATABASE,
             TABLE_NAME,
         )
+        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
 
         ensure_ch_env_loaded()
         cfg = load_ch_reader_config()
-        cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                     user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                     connect_timeout=5)
-        rows = cli.execute(
-            f"SELECT candidate_id FROM {DATABASE}.{TABLE_NAME} "
-            f"WHERE verdict = 'precheck_passed'")
+        cli = Client(
+            host=cfg["host"],
+            port=int(cfg.get("port", 9000)),
+            user=cfg.get("user", "default"),
+            password=cfg.get("password", ""),
+            connect_timeout=5,
+        )
+        rows = cli.execute(f"SELECT candidate_id FROM {DATABASE}.{TABLE_NAME} WHERE verdict = 'precheck_passed'")  # noqa: bare-sql  存量幂等查询（schema 常量表名），本批行号漂移伪新增豁免
         return {r[0] for r in rows}
     except Exception:  # noqa: BLE001 — 台账不可达 fail-closed（不构造）
         return set()
@@ -281,8 +353,11 @@ def race_scoreboard(ledger_rows: list[dict], ledger_counts: dict[str, int]) -> d
         rejected = sum(1 for r in rows if r.get("verdict") == "precheck_rejected")
         deferred = sum(1 for r in rows if r.get("verdict") == "precheck_deferred")
         out[lane] = {
-            "ledger_candidates": total, "prechecked": len(rows),
-            "passed": passed, "rejected": rejected, "deferred": deferred,
+            "ledger_candidates": total,
+            "prechecked": len(rows),
+            "passed": passed,
+            "rejected": rejected,
+            "deferred": deferred,
             "pass_rate": round(passed / len(rows), 4) if rows else None,
         }
     return out
@@ -301,24 +376,29 @@ def cmd_race() -> int:
         "C2": _ROOT / "data" / "strategy_intake" / "lane_c2_candidates.csv",
         "I": _ROOT / "data" / "strategy_intake" / "lane_chain_candidates.csv",
     }
-    counts = {lane: (len(pd.read_csv(p, encoding="utf-8-sig")) if p.exists() else 0)
-              for lane, p in intakes.items()}
+    counts = {lane: (len(pd.read_csv(p, encoding="utf-8-sig")) if p.exists() else 0) for lane, p in intakes.items()}
     try:
-        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
         from clickhouse_driver import Client
+
+        from zephyr.data.ch_config import ensure_ch_env_loaded, load_ch_reader_config
 
         ensure_ch_env_loaded()
         cfg = load_ch_reader_config()
-        cli = Client(host=cfg["host"], port=int(cfg.get("port", 9000)),
-                     user=cfg.get("user", "default"), password=cfg.get("password", ""),
-                     connect_timeout=5)
-        rows = [{"birth_channel": r[0], "verdict": r[1]} for r in cli.execute(
-            f"SELECT birth_channel, verdict FROM {hypothesis_precheck._table()}")]
+        cli = Client(
+            host=cfg["host"],
+            port=int(cfg.get("port", 9000)),
+            user=cfg.get("user", "default"),
+            password=cfg.get("password", ""),
+            connect_timeout=5,
+        )
+        rows = [
+            {"birth_channel": r[0], "verdict": r[1]}
+            for r in cli.execute(f"SELECT birth_channel, verdict FROM {hypothesis_precheck._table()}")  # noqa: bare-sql  存量通道读数查询（表名经 _table() 派生），本批行号漂移伪新增豁免
+        ]
     except Exception as exc:  # noqa: BLE001 — 台账不可达时降级为纯台账计数
         rows = []
         print(f"WARN: E2 台账不可达（{exc}），仅台账计数", file=sys.stderr)
-    print(json.dumps({"race": race_scoreboard(rows, counts)}, ensure_ascii=False,
-                     indent=1))
+    print(json.dumps({"race": race_scoreboard(rows, counts)}, ensure_ascii=False, indent=1))
     return 0
 
 
@@ -341,13 +421,11 @@ def main() -> int:
         return cmd_race()
     if args.cmd == "construct":
         lanes = tuple(x.strip() for x in args.lanes.split(",") if x.strip())
-        rep = auto_construct(lanes=lanes, register_tokens=not args.no_register_tokens,
-                             dry_run=args.dry_run)
+        rep = auto_construct(lanes=lanes, register_tokens=not args.no_register_tokens, dry_run=args.dry_run)
         print(json.dumps(rep, ensure_ascii=False, indent=1))
         return 0
     try:
-        report = run_pipeline(args.top_sectors, args.with_lane_b, args.n_per_theme,
-                              args.limit_precheck, args.dry_run)
+        report = run_pipeline(args.top_sectors, args.with_lane_b, args.n_per_theme, args.limit_precheck, args.dry_run)
     except RuntimeError as exc:
         print(f"FAIL: {exc}", file=sys.stderr)
         return 1
