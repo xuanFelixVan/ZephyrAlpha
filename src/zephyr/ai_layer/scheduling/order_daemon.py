@@ -2,6 +2,8 @@
 # [MODULE] zephyr.ai_layer.scheduling.order_daemon
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.ai_layer.scheduling.scheduling_events (SchedulingJournal/SchedulingEvent);
+#                zephyr.ai_layer.scheduling.confirm_gate (ConfirmGate.reconcile——order_confirmed_due
+#                消费=事件触发型确认半写自愈对账，确认≠派工零派工动作);
 #                zephyr.shared.io.paths (REPO_ROOT); zephyr.shared.utils.time_utils (now_utc);
 #                zephyr.shared.infra.process_pool (is_pid_alive——belt 同款僵尸检测)
 # [CONSUMERS] 排产值守入口（journal 唯一真源消费者，非施工会话所有——对标 belt 常驻消费者设计）;
@@ -35,6 +37,34 @@
 字段映射表（DESIGN §2.1，胜者证据包→任务书附录 A schema v0）逐字段在
 :func:`build_task_order` 实现；``provenance`` 独立字段=真待 Owner（L5-#3，附录级变更），
 本版按 DESIGN 两可方案退化为 objective 内嵌引用（experiment_id/evidence_ref 进 objective 尾注）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: journal 事件流（evolution_winner_due/order_confirmed_due）
+#   fields: SchedulingEvent 载荷；last_read_offset 断点续读
+#   code: OrderDaemon.process_once（SchedulingJournal 尾随消费）
+# 层: 算法
+# - id: A1
+#   name_zh: 胜者证据包→任务书套模板
+#   name_en: build_task_order
+#   intro: DESIGN §2.1 映射表逐字段实现；必填机检缺失=held_incomplete+堵点本；criteria_hash 不匹配拒派
+#   inputs: I1
+#   outputs: O1
+# - id: A2
+#   name_zh: 事件触发型确认半写自愈对账
+#   name_en: OrderDaemon._handle_order_confirmed
+#   intro: order_confirmed_due 到达即调 ConfirmGate.reconcile（零轮询）；单例锁 PID+TTL+僵尸检测
+#   inputs: I1
+#   outputs: O1
+# 层: 输出
+# - id: O1
+#   name: 任务书工单/事件出队位移
+#   fields: WO-YYYYMMDD-NNN 工单（next_order_id）；offset 断点
+#   code: OrderDaemon.handle_winner
+#   downstream: zephyr.ai_layer.scheduling.dispatcher（dispatched 段消费 order_dispatch_due）
+# 边: I1 --> A1 ; I1 --> A2 ; A1 --> O1 ; A2 --> O1
+# [/ALGO_FLOW]
 """
 
 from __future__ import annotations
@@ -46,8 +76,10 @@ import time
 from pathlib import Path
 from typing import Any, Callable, Final, Mapping
 
+from zephyr.ai_layer.scheduling.confirm_gate import ConfirmGate
 from zephyr.ai_layer.scheduling.scheduling_events import (
     KIND_EVOLUTION_WINNER_DUE,
+    KIND_ORDER_CONFIRMED_DUE,
     SchedulingJournal,
 )
 from zephyr.shared.io.paths import REPO_ROOT
@@ -120,7 +152,9 @@ def _build_red_lines(evidence: Mapping[str, Any]) -> dict[str, Any]:
     }
 
 
-def _build_budget(dispatch: Mapping[str, Any], compute_class: str, resource_class: str, policy: Mapping[str, Any]) -> dict[str, Any]:
+def _build_budget(
+    dispatch: Mapping[str, Any], compute_class: str, resource_class: str, policy: Mapping[str, Any]
+) -> dict[str, Any]:
     """预算块：时限/算力档/提交帽/子代理配额。"""
     return {
         "timebox_hours": int(dispatch["timebox_by_class_hours"].get(resource_class, 4)),
@@ -189,9 +223,7 @@ def build_task_order(
         "labor_killed": str(evidence.get("labor_killed") or ""),
         "starred": str(evidence.get("verdict")) == "win_starred",
         "state": "pending",
-        "audit_log": [
-            {"ts": "", "action": "order_created", "detail": f"source={evidence['evidence_ref']}"}
-        ],
+        "audit_log": [{"ts": "", "action": "order_created", "detail": f"source={evidence['evidence_ref']}"}],
     }
 
 
@@ -268,11 +300,9 @@ class OrderDaemon:
                 if pid > 0 and pp.is_pid_alive(pid) and (time.monotonic() - ts) < LOCK_TTL_SECONDS:
                     return False
             self.lock_path.parent.mkdir(parents=True, exist_ok=True)
-            self.lock_path.write_text(
-                json.dumps({"pid": os.getpid(), "ts": time.monotonic()}), encoding="utf-8"
-            )
+            self.lock_path.write_text(json.dumps({"pid": os.getpid(), "ts": time.monotonic()}), encoding="utf-8")
             return True
-        except Exception:  # noqa: BLE001——锁设施异常=放弃本轮启动（fail-safe，belt 同款）
+        except Exception:  # noqa: BLE001  -- 锁设施异常=放弃本轮启动（fail-safe，belt 同款）
             log.warning("order_daemon 单例锁异常", exc_info=True)
             return False
 
@@ -352,8 +382,23 @@ class OrderDaemon:
             self._release_singleton()
 
     def _route_event(self, raw: dict[str, Any]) -> dict[str, Any]:
-        """journal drain 路由：winner→建单；其余 kind 交 journal 缺省消费体（回执线留痕）。"""
+        """journal drain 路由：winner→建单；owner 确认→确认消费体（半写自愈对账）；
+        其余 kind 交 journal 缺省消费体（回执线留痕）。"""
         kind = str(raw.get("kind") or "")
         if kind == KIND_EVOLUTION_WINNER_DUE:
             return self.handle_winner(dict(raw.get("payload") or {}))
+        if kind == KIND_ORDER_CONFIRMED_DUE:
+            return self._handle_order_confirmed(dict(raw.get("payload") or {}))
         return self.journal.default_handler(raw)
+
+    def _handle_order_confirmed(self, payload: Mapping[str, Any]) -> dict[str, Any]:
+        """order_confirmed_due 消费体（confirm_gate 头注设计消费者=本守护，事件唤醒零轮询）。
+
+        动作=触发确认半写自愈对账：ConfirmGate.reconcile 即其 docstring 自述
+        "供事件触发型 reconciler 挂"的设计挂点（同一 receipt 补齐缺腿/实读复验）。
+        零派工动作——确认≠派工（DESIGN §2.4），派工仍走 T1 双预检+E0 拉式闸。
+        自愈失败上抛 ConfirmPersistError → 事件保留 attempts+1（既有事务语义）。
+        """
+        order_id = str(payload.get("order_id") or "")
+        receipt = ConfirmGate(state_dir=self.journal.state_dir).reconcile(order_id or None)
+        return {"confirmed_order": order_id, "reconcile": receipt}
