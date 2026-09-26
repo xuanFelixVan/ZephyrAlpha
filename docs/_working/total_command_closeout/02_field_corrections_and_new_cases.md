@@ -131,9 +131,11 @@ completes_when: 本册每条改判都被 00/01/10 三册引用为唯一口径且
 
 ## §七 波 0 由本班代做后的实测结果（15:42 固化，非计划）
 
-- 固化范围：`.aidrafts/*` 与 `.worktrees/*` 共 **76 条车道**，凡有脏项者逐道落 `status.txt / tracked_stat.txt / tracked_names.txt / worktree_vs_HEAD.patch / index_vs_HEAD.patch / untracked_manifest.json / churn_lines.txt / untracked 副本`。
-- 体量：本地 `.runtime/tmp/total_command_closeout/lane_rescue/`（约 140MB，含两轮）；**冷库镜像 `G:\zephyr_cold\30_corpus\zmaster_lane_rescue_0926` 文件数 673 == 本地 673**（已双向核）。
-- **硬结论（这条改变优先级判断）**：**25 条车道 dirty 数百项而自有 commit 数＝0**，含 `.aidrafts/lane_ff_*` 全部 10 条、`st-mapbuild-20260924`、`st-audit-fix-20260924`、`st-qmine-20260925`、`.worktrees/st-ailayer-final-20260924`（dirty **169**、untracked 0、ahead 0、补丁 2031KB）、`st-wm1-buildA`（230）、`st-combine-2023`（235）、`st-t0-matrix-2024`（254，ahead 4）。
+- 固化范围：`.aidrafts/*` 与 `.worktrees/*` 逐道落 `status.txt / tracked_stat.txt / tracked_names.txt / worktree_vs_HEAD.patch / index_vs_HEAD.patch / untracked_manifest.json / churn_lines.txt / untracked 副本`。
+**⚠ 本段读数曾出错，已修正（W5 数字审计抓到，本班脚本自己的 bug）**：首版固化脚本没做 worktree 守卫，对 `.aidrafts/*` 里 **25 个并非 worktree 的普通目录**跑 `git -C <dir> status` 时，git 向上解析到主仓 ⇒ 这 25 条得到**完全相同**的 `dirty_total=463`（恰等于当时主区 porcelain 行数）与 `patch_bytes=2725405`，于是"25 条车道零自有 commit"是**测量伪影**、冷库里存了 25 份同一份主区补丁。加守卫（`git rev-parse --show-toplevel` 必须等于该目录）重跑后的**真读数**：
+真车道 **51** 条（`.aidrafts/*` + `.worktrees/*` 中确为 worktree 者）；补丁总量 **8.7MB**（不是 73MB）；**零自有 commit 且有脏内容＝44 条**（比伪影版的 25 条**更多**，方向也反了）。关键车道逐条核实：`.aidrafts/st-mapbuild-20260924` dirty=**272**（238 tracked + 34 untracked）/ahead=0；`.worktrees/st-ailayer-final-20260924` dirty=**169**/ahead=0/补丁 2.08MB；`.aidrafts/st-audit-fix-20260924` dirty=**27**/ahead=0；`.aidrafts/st-qmine-20260925` dirty=80（51 untracked）；`.worktrees/st-combine-20260923` 235、`st-wm1-buildA-20260923` 230、`st-t0-matrix-20260924` 254（ahead=4）。
+- 体量：本地 `.runtime/tmp/total_command_closeout/lane_rescue/`（守卫版重跑后 **8.7MB 补丁** + 未跟踪副本）；冷库镜像改为**新目录** `G:\zephyr_cold\30_corpus\zmaster_lane_rescue_0926_v2`（旧目录 `_0926` 含伪影版 25 份重复主区补丁，按三段式**只标注不删**，留作本 bug 的取证物）。
+- **硬结论（这条改变优先级判断；数字为守卫版重跑后的真值）**：**44 条真车道 dirty 有内容而自有 commit 数＝0**，含 `st-mapbuild-20260924`(272)、`st-ailayer-final-20260924`(169)、`st-combine-20260923`(235)、`st-wm1-buildA-20260923`(230)、`st-t0-matrix-20260924`(254，ahead=4 属例外)、`st-qmine-20260925`(80)、`st-audit-fix-20260924`(27)、`lane_reland_final`(37)、`lane_docs_bag`(17)、`ff_j_master`(16) 等。
   ⇒ 这些道**一次 `git checkout`/reconciler 还原就全丢**，且丢后无人知道丢了什么。现补丁＋清单已双存，波 2 落地按表逐道销号。
 - 附带读数（会漂移，引用带时刻）：`worktree_changes=460`、staged 删除 141、`commit_pct` 56.72%、ram_used 55.6%。
 - 工具坑（写进 R-6 族）：把该固化脚本用 `run_in_background` 跑时，**日志与报告全空但退出码 0**（孵化/会话生命周期把子进程收了，stdout 缓冲未落）；改前台 `python -u` 才拿到完整报告 ⇒ **长任务"exit 0"不等于跑完，必须验产出文件实存**。

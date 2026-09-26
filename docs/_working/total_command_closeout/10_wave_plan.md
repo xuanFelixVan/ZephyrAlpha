@@ -17,7 +17,7 @@ completes_when: 八波全部落地且落地面连续两轮回归零问题+红蓝
 
 | 包 | 内容 | 判据（可跑） | 车道 |
 |---|---|---|---|
-| 0.1 | 11 条车道现场快照：对 `.aidrafts/lane_ff_*`、`.aidrafts/st-mapbuild-20260924`、`.aidrafts/st-audit-fix-20260924`、`.worktrees/st-ailayer-final-20260924` 等逐个出"文件清单+每文件 sha256+`git status --porcelain`+落后 dev 的 commit 数"，落 `docs/_working/total_command_closeout/snapshot/`（机生禁手改）并镜像 `.runtime/tmp/` + `G:\zephyr_cold\`（G 侧实测 1454 GiB 可用） | 快照件数 == 各道脏项数；抽 3 件 `sha256sum` 复算一致 | 1 |
+| 0.1 | 车道现场快照（**必带 worktree 守卫**：`git rev-parse --show-toplevel` 必须等于该目录，否则 git 向上解析到主仓、把主区脏面记成车道脏面——本班首版就踩了这个，25 个 `.aidrafts/*` 普通目录全被染成同一组数）| 原 11 条车道现场快照：对 `.aidrafts/lane_ff_*`、`.aidrafts/st-mapbuild-20260924`、`.aidrafts/st-audit-fix-20260924`、`.worktrees/st-ailayer-final-20260924` 等逐个出"文件清单+每文件 sha256+`git status --porcelain`+落后 dev 的 commit 数"，落 `docs/_working/total_command_closeout/snapshot/`（机生禁手改）并镜像 `.runtime/tmp/` + `G:\zephyr_cold\`（G 侧实测 1454 GiB 可用） | 快照件数 == 各道脏项数；抽 3 件 `sha256sum` 复算一致 | 1 |
 | 0.2 | 热件盘-HEAD 键集合差自检（capability/ruling/issue/gate/translation/ROOR 六册）：缺即按"HEAD 为基纯插入"修（本册 §配方 R-1，已实跑：capability 册补回 16 条被陈旧快照抹掉的条目、他人 1 条在途保留、YAML 复解析过） | 六册 `盘缺HEAD == 0`；写后进程外 `yaml.safe_load` + 条目数复算 | 1 |
 | 0.3 | 磁盘安全垫：D 现 41G/95%。零风险回收=git worktree prune + dead 归档 tar（不删）+ pack gc；**定熔断阈值**：可用 <25G 停大批落地、<15G 停一切写批（Owner 默认已生效，见 ⚑-6-9） | 回收前后 `df` 读数入台账；无删除动作 | 1 |
 | 0.4 | 登记"备份护甲落后"新案：`D:\zephyr_t1_backup` 侧 `strategy_intake` mtime=02:49 早于 T1 产物 07:47 ⇒ 声称的 10 分钟 robocopy 镜像未覆盖后段（E 册）；只登记不定性 | 镜像 mtime vs 产物 mtime 对比表 | 1 |

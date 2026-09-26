@@ -98,6 +98,7 @@ git log -1 --name-only ; git show HEAD:<path> | grep -c <实现符号>
 `requeue` 只在"死因已在工作树修好"时用（它取工作树现字节重建快照，但**不吸收新 staged 文件**，钥匙件必须单独成批先落靠 FIFO 保序）；重投带 `--adopt-prior-work`；同 payload 禁双 requeue。
 
 ## R-4 车道现场抢救（波 0 专用，零门禁风险）
+> **★守卫（本班实测踩坑，必抄）**：枚举 `.aidrafts/*`、`.worktrees/*` 时**先验 `git -C <dir> rev-parse --show-toplevel` 是否等于该目录**；不等＝它不是 worktree，git 会**向上解析到主仓**，于是 `git status`/`git diff` 报的是**主区**脏面。本班首版因此把 25 个普通目录当成 25 条车道，全部得到同一组 `dirty_total=463 / patch_bytes=2725405`，并据此对外说了"25 条车道零自有 commit"——**加守卫重跑后真值是 51 条真车道、44 条零自有 commit、补丁 8.7MB（不是 73MB）**。**自检式红旗：只要有多条"车道"的 `dirty_total` 与 `patch_bytes` 完全相同，几乎必然是这个 bug**（真实车道不可能字节级同值）。
 > ⚠ 两条实测纠错：① 本机 Git Bash **无 `rsync`**（整树拷贝方案必卡死）——正解＝只固化「未落地字节」：`git diff --binary HEAD` 补丁 + 未跟踪文件副本 + sha 清单（本班实跑 76 道、73MB，产出 `_rescue_report.json`）；② 镜像到冷库**禁用 `/MIR`**（其语义含目标侧删除，打错路径＝删备份），只用 `/E` 且目标必须是本役专用新目录。
 
 ```bash

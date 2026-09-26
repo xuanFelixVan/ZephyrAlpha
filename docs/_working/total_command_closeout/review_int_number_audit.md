@@ -10,6 +10,21 @@ ttl: task_bound
 > 本审计只报"一致 / 不一致 / 无法复算"，不做裁定、不提建议、不改仓库文件（本案卷除外）。
 > 环境：分支 `dev`，HEAD=`9a422d474d2bc1d955cd35224e496cfebe55d27c`（2026-09-26 16:01:15 +0800），Python 3.12.8。
 
+## 复算总账（126 条主表行，A–I 九组）
+
+| 判定 | 条数 | 行号 |
+|---|---|---|
+| 一致 | **79** | A2 A4 A5 A6 A7 A11 A12 A14 A16 / B1 B3 B4 B5 B6 B7 B8 / C1 C2 C3 C4 C5 C9 / D1 D2 D3 D4 D5 D7 D9 D10 D14 / E1 E2 E3 E7 E8 / F1 F2 F4 F5 F6 F7 F8 F9 F10 F11 F12 F13 / G1 G3 G4 G9 G10 G11 G13 G14 G15 G16 / H2 H3 H5 H6 H7 H9 H10 H12 H14 H15 H16 H17 H18 H19 H20 H25 / I2 I3 I4 I5 I7 |
+| 不一致 | **15** | A1 A3 A9 **C6** C10 **C11** **D8** D12 D13 E6 **F3** G7 G8 **G12** H22 |
+| 部分不一致 | **17** | **A8** A13 A15 **C7** D6 D11 E5 F14 F15 G5 **H1** H4 **H8** **H13** **H21** **I1** I6 |
+| 无法复算 | **9** | A10 F16 G2 G6 H23 H24 H26 I9 I10 |
+| 无法判定（文档未对该件作断言） | **5** | B2 C8 E4 H11 I8 |
+| 转引（判定落在别组行） | **1** | B9（→G14/G15） |
+
+> 加粗行号＝§一 档 A（会导致错误施工）所引的行。
+> §一 的档 A／档 B 分类**不按上表的字面判定**，而按"照册施工会不会做出与事实相反或对象错误的动作"重排：因此 `A8/H13/H21/C7/H1/H4/H8/I1`（字面为"部分不一致"）升入档 A，而 `A1/A3/D12/D13/E6/H22`（字面为"不一致"）留在档 B（纯活面漂移，文档已自标"引用带时刻"）。
+> 数据面（F 组）16 行里 13 行一致、1 行部分不一致（F14 脏态已消）、1 行不一致（F3 X-26 未复现）、1 行无法复算（F16 ch_writer）；业务链（G 组）16 行里 10 行一致、4 行不一致（G7/G8/G12 + G5 部分）、2 行无法复算。
+
 ## A 组 · 队列与门禁
 
 | # | 文档:行号 | 原文断言 | 复算命令 | 实测读数 | 判定 | 备注（口径差异） |
@@ -158,7 +173,7 @@ ttl: task_bound
 | H17 | 02:47 (X-28) / 91:110 (波5.5) / 10:141 | "地图 **182** 节点仅 **121** 有 `module_ref`"；"该门自身在 `fail_open_register.yaml:**2354**/:**5997**` 登记为 fail-open" | `from zephyr.trading.decision_map import load_decision_map; dm=load_decision_map(Path('config/trading_decision_map.yaml'))` → `len(dm.nodes)`／`sum(1 for n in dm.nodes if n.module_ref)`；`sed -n '2352,2356p;5995,5999p' <fail_open_register.yaml>` | nodes＝**182**、有 `module_ref`＝**121**、无＝**61**；`:2354`＝`- file: "src/zephyr/gov_enforcement/commit_gates/algo_note_sync_gate.py"`（下接 `line: 44`／`stage: FF-14`）；`:5997`＝同文件条目（下接 `count: 6`） | 一致 | 三个数全中。⚠两处口径坑：①地图真源是 `config/trading_decision_map.yaml`（gate 内 `_MAP_REL`，`:68`），**不是** `architecture_model/index.yaml`（后者 `node_id:`/`module_ref:` 字面命中均为 0）；②fail_open 册按**文件路径**登记，`grep 'ALGO-NOTE-SYNC'` 命中 **0**（本审计一开始也误判为查无），须按 gate 源文件路径查 |
 | H18 | 02:49 (X-30) | "HEAD 版词表门 grep `official_ontology\|values_locked`＝**0**，两面出厂皆 `warn`" | `git show HEAD:src/zephyr/gov_enforcement/commit_gates/library/state_vocab_registry_gate.py \| grep -c 'official_ontology\|values_locked'` | **0** | 一致（前半） | "两面出厂皆 warn"未复算（需读该门 action 面）；另 A 组实测 `STATE-VOCAB-REGISTRY` 在进程内实载且 `enabled=True`、`files_trigger=['src/','.py']` |
 | H19 | 02:56 (X-37) | "`62898892ed` 验真且为 HEAD 祖先、`EQUIVALENCE_VERDICT_T0_200.md` 在 HEAD" | `git merge-base --is-ancestor 62898892ed HEAD`；`git log -1 --format='%h %ci %s'`；`git cat-file -e HEAD:docs/_working/decision_map_campaign_20260924/EQUIVALENCE_VERDICT_T0_200.md` | **是 HEAD 祖先**；commit 时点 **2026-09-26 00:22:07 +0800**、署名 `[st-ddup-20260925][去重改造]`；该 verdict 件 **IN_HEAD**（capability 册 HEAD 面 `:52530` 一带亦有其 token 条目） | 一致 | "628 行"数字文档已自判"盘面无锚、禁引"，本审计不复算 |
-| H20 | 02:85 (X-52) / 10:132 (波9.13) | "AGENTS.md 行 **109**'7 子命令'实测 **8**（漂移仍在）" | `sed -n '107,111p' AGENTS.md`；`grep -rn 'add_parser(' --include=*.py src/zephyr/data/` | `:**109**`＝`| 数据集成器 | \`python -m zephyr.data\`（7 子命令） |`；实际 `sub.add_parser` 命中 **8**：`status`(`cli.py:342`)、`list`(:346)、`run`(:350)、`rerun-failed`(:354)、`pause`(:357)、`resume`(:361)、`start`(:365)、`speed-test`(:368) | 一致 | 真源在 `src/zephyr/data/**cli.py**`；`src/zephyr/data/__main__.py` 内 `add_parser` 命中 **0**（按文档只找 `__main__` 会误判"无子命令"） |
+| H20 | 02:85 (X-52) / 10:132 (波9.13) | "AGENTS.md 行 **109**'7 子命令'实测 **8**（漂移仍在）" | `sed -n '107,111p' AGENTS.md`；`grep -rn 'add_parser(' --include=*.py src/zephyr/data/` | `:**109**`＝`\| 数据集成器 \| \`python -m zephyr.data\`（7 子命令） \|`（表行）；实际 `sub.add_parser` 命中 **8**：`status`(`cli.py:342`)、`list`(:346)、`run`(:350)、`rerun-failed`(:354)、`pause`(:357)、`resume`(:361)、`start`(:365)、`speed-test`(:368) | 一致 | 真源在 `src/zephyr/data/**cli.py**`；`src/zephyr/data/__main__.py` 内 `add_parser` 命中 **0**（按文档只找 `__main__` 会误判"无子命令"） |
 | H21 | 91:175 (第6步) / 94:76 | "主区 `config/governance_operations_map.yaml`（+1568/−1562）与 **`docs/03_modules/architecture_model/index.yaml`**（+1/−1）两处脏面" | `git status --porcelain \| grep index.yaml`；`git diff --numstat --`；`find docs -maxdepth 3 -type d -name architecture_model` | 真实路径是**仓根** `architecture_model/index.yaml`（13123 B，mtime 09-26 04:49），`docs/03_modules/architecture_model/` 目录**不存在**；numstat＝**1 / 1** | 部分不一致 | 数量（+1/−1）一致；**路径错**（多写 `docs/03_modules/` 前缀）⇒ 施工队按文档路径 `git diff` 会得**空输出**，误判"脏面已消失"，进而在波8 清洁时按"已干净"处置。见 §三 N-10 |
 | H22 | 91:175 / 94:76 | "`config/governance_operations_map.yaml`（**+1568/−1562**）" | `git diff --numstat -- config/governance_operations_map.yaml`；`git diff --cached --numstat --` | 未暂存面＝**1567 / 1561**；暂存面＝无输出 | 不一致（−1/−1 漂移） | 活面；文档已声明"成因不可归因、禁 revert 禁吸收、只登记"，处置面不受这 1 行差影响 |
 | H23 | 10:52 (波2.4) / 91:81 | "哨兵 **cc=52/31/16** 三函数 >15（'52 层嵌套'是口径错名，实测最大嵌套深度 **5**）" | 未复算 | — | 无法复算 | 缺：Z-40 明令"用门禁**自己的** `_cyclomatic_complexity` 尺复算，禁第三方读数"，本审计不自造尺；且对象件 `scripts/backtest/t1_t2_handover.py` **NOT_HEAD**（仅 index `AM`，见 C4），无 HEAD 面可锚 |
