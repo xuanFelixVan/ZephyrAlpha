@@ -53755,4 +53755,28 @@ creation_tokens:
   created_by: zc-lane-l-20260927
   capability: fullconnect_lane_l
   merge_evaluation: "不并：战役L线唯一台账，事件性留痕非能力资产，TTL 随战役归档"
+- file: docs/_working/chain_circulation_campaign/91_progress.md
+  token: chain-circulation-91-progress-20260926
+  created_by: st-ec3-water
+  capability: chain_circulation
+  merge_evaluation: "内收：战役统一落地哈希账（宪章 §三.4 点名件），替代各车道散落哈希清单，无新增规则/gate"
+- file: docs/03_modules/_domain_data/algo_flow/implementations/consensus_daily_compute.yaml
+  token: auto-ext-algoflow-20260927
+  created_by: externalize_algo_flow.py (zc-lane-p-20260927)
+  capability: architecture_view
+
+- file: docs/03_modules/_domain_data/algo_flow/implementations/financial_derived_compute.yaml
+  token: auto-ext-algoflow-20260927
+  created_by: externalize_algo_flow.py (zc-lane-p-20260927)
+  capability: architecture_view
+
+- file: docs/03_modules/_domain_data/algo_flow/implementations/consensus_daily_repaired_compute.yaml
+  token: auto-ext-algoflow-20260927
+  created_by: externalize_algo_flow.py (zc-lane-p-20260927)
+  capability: architecture_view
+
+- file: docs/03_modules/_domain_data/algo_flow/data/supply_sentinel.yaml
+  token: auto-ext-algoflow-20260927
+  created_by: externalize_algo_flow.py (zc-lane-p-20260927)
+  capability: architecture_view
 di_seam_exemptions: []
