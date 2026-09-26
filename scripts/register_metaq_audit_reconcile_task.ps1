@@ -1,0 +1,86 @@
+# [BLUEPRINT] MOD-CHAINPILE-METAQ | docs/_working/chain_piling_campaign/infra_mining/20_management_policy.md | 2.2 dual-track ledger + 4 frequency table row 6
+# [MODULE] scripts.register_metaq_audit_reconcile_task
+# [DOMAIN] D_GOV_SCRIPTS
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [TTL] permanent
+# register_metaq_audit_reconcile_task.ps1 - Register the ZephyrAlpha_MetaqAuditReconcile task
+#
+# Purpose (WO-002 closeout, PQ-0062/PQ-0102 dual-track audit):
+#   scripts/governance/check_meta_question_audit_reconcile.py is built (queue q-0006) and the
+#   JSONL writer is wired (registry.py _write_audit -> _append_jsonl), but nothing runs it on a
+#   schedule. 20 section 4 row 6 nominates a quarterly window; the campaign acceptance needs a
+#   daily per-UTC-day event-count check (JSONL vs PG diff must stay 0), so this task tightens the
+#   cadence to daily while the campaign is open. Design law respected: this is an audit scan, NOT
+#   a reconciler, so the event-trigger-only rule (constitution 9.3) does not apply (precedent:
+#   ruling for ZephyrAlpha_GateFullTreeAudit uses the same reasoning).
+#
+# Schedule carrier choice: the resource profile registry is GENERATED from four sources and the
+#   ps1 family is one of them (scripts/register_*.ps1). Landing this file here therefore makes the
+#   daily slot appear in config/resource_profile_registry.yaml on the next regeneration with zero
+#   hand-edit of the generated register (constitution 9.5: generated lists, never hand-maintained).
+#
+# Key design (mirrors register_gate_fulltree_audit_task.ps1 / register_config_check_task.ps1):
+# - pythonw.exe (GUI subsystem, zero console window)
+# - Daily 03:50 (after GateFullTreeAudit 03:30, before the 04:00 generator slot and clear of backup windows)
+# - MultipleInstances=Parallel: reconciler is read-only end to end (PG read_only + JSONL stream read)
+# - ExecutionTimeLimit=15min: full-window multiset diff over ~1.5k rows is sub-minute; OS anti-zombie
+# - Idempotent non-destructive: Set-ScheduledTask in-place update (NEVER Unregister)
+# - stdout+stderr tee to tmp/metaq_audit_reconcile_report.log (same tmp/ report convention)
+#
+# Usage: powershell -ExecutionPolicy Bypass -File scripts\register_metaq_audit_reconcile_task.ps1
+# Verify: schtasks /query /tn ZephyrAlpha_MetaqAuditReconcile /v /fo LIST
+# Manual: python scripts/governance/check_meta_question_audit_reconcile.py --days 1
+
+$ErrorActionPreference = "Stop"
+
+$RepoRoot = "D:\ZephyrAlpha"
+$TaskName = "ZephyrAlpha_MetaqAuditReconcile"
+$CurrentUser = "$env:USERDOMAIN\$env:USERNAME"
+
+$PythonW = "$env:LOCALAPPDATA\Programs\Python\Python312\pythonw.exe"
+if (-not (Test-Path $PythonW)) {
+    $PythonW = "C:\Users\fanzi\AppData\Local\Programs\Python\Python312\pythonw.exe"
+    if (-not (Test-Path $PythonW)) { throw "pythonw.exe not found in known locations" }
+}
+
+$argString = 'scripts\governance\check_meta_question_audit_reconcile.py --days 1'
+$action = New-ScheduledTaskAction -Execute $PythonW -Argument $argString -WorkingDirectory $RepoRoot
+
+$settings = New-ScheduledTaskSettingsSet `
+    -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
+    -StartWhenAvailable `
+    -MultipleInstances Parallel `
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 15)
+
+$principal = New-ScheduledTaskPrincipal -UserId $CurrentUser -LogonType Interactive -RunLevel Limited
+
+$dailyTrigger = New-ScheduledTaskTrigger -Daily -At "03:50"
+
+$report = Join-Path $RepoRoot "tmp\metaq_audit_reconcile_report.log"
+$tmpDir = Join-Path $RepoRoot "tmp"
+if (-not (Test-Path $tmpDir)) { New-Item -ItemType Directory -Path $tmpDir | Out-Null }
+
+# Wrapper: pythonw has no stdout, so redirect through cmd /c to the report log (append with stamp).
+# Kept as a single action line to avoid a second shell dependency.
+$cmdAction = New-ScheduledTaskAction -Execute "cmd.exe" `
+    -Argument "/c echo ==== %date% %time% ==== >> `"$report`" & `"$PythonW`" $argString >> `"$report`" 2>&1" `
+    -WorkingDirectory $RepoRoot
+
+$existing = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+if ($existing) {
+    Set-ScheduledTask -TaskName $TaskName -Action $cmdAction -Trigger $dailyTrigger `
+        -Settings $settings -Principal $principal | Out-Null
+    Write-Host "[OK] updated existing task $TaskName (in-place, never Unregister)"
+} else {
+    Register-ScheduledTask -TaskName $TaskName -Action $cmdAction -Trigger $dailyTrigger `
+        -Settings $settings -Principal $principal `
+        -Description "Daily meta_question audit dual-track reconcile (PG vs JSONL per-UTC-day count + row multiset diff, read-only). WO-002 closeout; 20 policy section 4 row 6." | Out-Null
+    Write-Host "[OK] registered task $TaskName (daily 03:50)"
+}
+
+# Post-registration self-check (fail-visible): task must exist and report next run time.
+$check = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
+if (-not $check) { throw "registration failed: task $TaskName not found after register" }
+Write-Host "[VERIFY] state=$($check.State) next=$(($check | Get-ScheduledTaskInfo).NextRunTime)"
