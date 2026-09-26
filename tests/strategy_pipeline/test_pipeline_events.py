@@ -15,6 +15,7 @@
 # [A_module] module_id=MOD-BT-190 | layer=module | stability=experimental | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """pipeline_events 测试——事件不丢/KillSwitch 停留/毒丸/重 kind 延迟/扫描幂等（交接清单①⑬验收）。"""
+
 from __future__ import annotations
 
 import json
@@ -40,15 +41,25 @@ def _isolate_phase2a_judgment_hooks(monkeypatch):
     """
     monkeypatch.setattr(
         "zephyr.plan_engine.intraday_l1_tracker.maybe_track_intraday_state",
-        lambda *a, **k: {"action": "skipped_test_isolation"})
+        lambda *a, **k: {"action": "skipped_test_isolation"},
+    )
     monkeypatch.setattr(
         "zephyr.plan_engine.next_day_forecaster.maybe_emit_next_day_forecast",
-        lambda *a, **k: {"action": "skipped_test_isolation"})
+        lambda *a, **k: {"action": "skipped_test_isolation"},
+    )
     # BT-P1-031 编排器末棒挂点同款隔离（2026-09-17 st-orchp3 二次事故修复：wire 测试
     # 触发 maybe_run_daily_decision 走真库拍板写生产 decision_daily 8 行）——autouse 拦源头
     monkeypatch.setattr(
         "zephyr.strategy_pipeline.daily_decision_orchestrator.maybe_run_daily_decision",
-        lambda *a, **k: {"action": "skipped_test_isolation"})
+        lambda *a, **k: {"action": "skipped_test_isolation"},
+    )
+    # L9 就绪度读数末棒挂点同款隔离（2026-09-27 st-ec2-p0：wire 测试触发
+    # maybe_emit_l9_readiness 走真 CH 连接（ unclosed socket ResourceWarning 升级 ERROR+
+    # 拖慢全文件 70s））——autouse 拦源头；读数件自身回归归 tests/data/test_l9_readiness_aggregator.py
+    monkeypatch.setattr(
+        "zephyr.data.l9_readiness_aggregator.maybe_emit_l9_readiness",
+        lambda *a, **k: {"action": "skipped_test_isolation"},
+    )
 
 
 @pytest.fixture()
@@ -140,8 +151,7 @@ class TestWiring:
             def subscribe(self, event, handler):
                 self.h = handler
 
-        monkeypatch.setattr(pe, "scan_translated_backlog",
-                            lambda: (_ for _ in ()).throw(RuntimeError("ch down")))
+        monkeypatch.setattr(pe, "scan_translated_backlog", lambda: (_ for _ in ()).throw(RuntimeError("ch down")))
         s = FakeScheduler()
         pe.wire_data_scheduler(s)
         s.h()  # 扫描炸了也不反噬调度器
@@ -161,6 +171,7 @@ class TestScanBacklog:
                 return [("scripts/backtest/translated/c4_known.py",)]
 
         import zephyr.data.ch_writer as cw
+
         monkeypatch.setattr(cw, "get_client_strict", lambda: FakeClient())
         monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": None)
         r1 = pe.scan_translated_backlog()
@@ -233,8 +244,7 @@ class TestMonthlyMarker:
         pe._rewrite(evts)
         r = pe.maybe_emit_monthly()
         assert "sim_memo_monthly" in r["emitted"]  # 毒丸堵不死，重发可消费
-        assert any(not e.get("poison") for e in pe.pending()
-                   if e["kind"] == "sim_memo_monthly")
+        assert any(not e.get("poison") for e in pe.pending() if e["kind"] == "sim_memo_monthly")
 
     def test_sim_memo_handler_touches_marker(self, state, marker, monkeypatch):
         monkeypatch.setattr(pe, "run_sim_memo", lambda: {"ok": True})
@@ -288,6 +298,7 @@ class TestSimDailyWiring:
 
     def test_wire_hook_enqueues_daily_and_drains(self, state, marker, monkeypatch):
         """端到端（执行体全 stub）：唤醒→入队 FIFO→drain 串行消费→date-marker 落盘。"""
+
         class FakeScheduler:
             def subscribe(self, event, handler):
                 self.h = handler
@@ -324,12 +335,17 @@ class TestSimDailyWiring:
         s.h(task_id="kline_daily_incremental", success=True)
         assert order == ["ledger", "journal", "attribution", "observe"]  # FIFO 串行=账本→日刊→归因→观察面
         data = json.loads(marker.read_text(encoding="utf-8"))
-        assert ("sim_ledger_daily" in data and "sim_journal_daily" in data
-                and "attribution_daily" in data and "sim_observe_daily" in data)  # 消费成功才落 marker
+        assert (
+            "sim_ledger_daily" in data
+            and "sim_journal_daily" in data
+            and "attribution_daily" in data
+            and "sim_observe_daily" in data
+        )  # 消费成功才落 marker
         # 全部轻 kind 消费完毕（月度件 marker 未到期不再发/或被 stub handler 消费）
-        assert all(e["kind"] not in ("sim_ledger_daily", "sim_journal_daily", "attribution_daily",
-                                     "sim_observe_daily")
-                   for e in pe.pending())
+        assert all(
+            e["kind"] not in ("sim_ledger_daily", "sim_journal_daily", "attribution_daily", "sim_observe_daily")
+            for e in pe.pending()
+        )
 
 
 class TestSimHandlers:
@@ -343,8 +359,9 @@ class TestSimHandlers:
             return {"opened": ["S1"]}
 
         monkeypatch.setattr(pe, "run_sim_wallet_due", fake_run)
-        out = pe._default_handler({"id": "X", "kind": "sim_wallet_due",
-                                   "payload": {"strategies": [{"strategy_id": "S1", "code_path": "a"}]}})
+        out = pe._default_handler(
+            {"id": "X", "kind": "sim_wallet_due", "payload": {"strategies": [{"strategy_id": "S1", "code_path": "a"}]}}
+        )
         assert out == {"opened": ["S1"]} and seen["p"]["strategies"][0]["strategy_id"] == "S1"
 
     def test_daily_handlers_touch_date_markers_on_success(self, state, marker, monkeypatch):
@@ -355,8 +372,7 @@ class TestSimHandlers:
         pe._default_handler({"id": "Y", "kind": "sim_journal_daily", "payload": {}})
         pe._default_handler({"id": "Z", "kind": "attribution_daily", "payload": {}})
         data = json.loads(marker.read_text(encoding="utf-8"))
-        assert ("sim_ledger_daily" in data and "sim_journal_daily" in data
-                and "attribution_daily" in data)
+        assert "sim_ledger_daily" in data and "sim_journal_daily" in data and "attribution_daily" in data
 
     def test_optional_due_missing_module_skips(self, state, marker, monkeypatch):
         """契约预埋：实现模块缺失=log-and-skip（不抛、可出队，不占 attempts）。
@@ -364,10 +380,16 @@ class TestSimHandlers:
         S12 C4 交付后 promotion_advisory 模块已存在（真派发会读真仓写真盘）——本用例按原意
         改指缺失桩模块验证 skip 语义（适配留痕：Y1 st-fullauto-20260915）。
         """
-        monkeypatch.setitem(pe.OPTIONAL_DUE_KINDS, "fw_backtest_due",
-                            ("zephyr.strategy_pipeline._definitely_missing_xyz", "run_fw_backtest_due"))
-        monkeypatch.setitem(pe.OPTIONAL_DUE_KINDS, "promotion_advisory_due",
-                            ("zephyr.strategy_pipeline._definitely_missing_xyz", "run_promotion_advisory_due"))
+        monkeypatch.setitem(
+            pe.OPTIONAL_DUE_KINDS,
+            "fw_backtest_due",
+            ("zephyr.strategy_pipeline._definitely_missing_xyz", "run_fw_backtest_due"),
+        )
+        monkeypatch.setitem(
+            pe.OPTIONAL_DUE_KINDS,
+            "promotion_advisory_due",
+            ("zephyr.strategy_pipeline._definitely_missing_xyz", "run_promotion_advisory_due"),
+        )
         out = pe._default_handler({"id": "X", "kind": "fw_backtest_due", "payload": {}})
         assert out["skipped"] == "module_not_ready"
         out2 = pe._default_handler({"id": "Y", "kind": "promotion_advisory_due", "payload": {}})
@@ -398,8 +420,10 @@ class TestEmitSimWalletDue:
     def test_emit_drain_failure_keeps_event(self, state, monkeypatch):
         alerts = []
         monkeypatch.setattr(pe, "alert", lambda msg, level="WARN": alerts.append(msg))
+
         def boom(allow_heavy):
             raise RuntimeError("ch down")
+
         monkeypatch.setattr(pe, "drain", boom)
         out = pe.emit_sim_wallet_due([{"strategy_id": "S1"}])
         assert out["drained"] is False and pe.pending()
@@ -432,8 +456,8 @@ class TestCrisisBlockWiring:
         self._patch_gate(monkeypatch, skip=True, state="crisis", reason="crisis_block：dominant=r10")
         r = pe.maybe_emit_pf_alloc_daily(task_id="kline_daily_incremental", success=True)
         assert r["emitted"] == [] and r["skipped"] == "crisis_block"
-        assert pe.pending() == []           # 阻断=跳过本轮 pf_alloc 入队
-        assert not marker.exists()          # 不落 marker（解除后同日可重放=调用方条款）
+        assert pe.pending() == []  # 阻断=跳过本轮 pf_alloc 入队
+        assert not marker.exists()  # 不落 marker（解除后同日可重放=调用方条款）
         assert any(lv == "WARN" and "危机闸" in m for lv, m in alerts)  # WARN 留痕
 
     def test_emit_passes_on_normal(self, state, marker, monkeypatch):
@@ -507,8 +531,9 @@ class TestAttributionDailyWiring:
         assert seen["args"] == ["--day", "2026-09-18"]  # --day 业务日=resolve 真源，禁墙钟猜日
 
     def test_handler_payload_day_overrides_resolve(self, monkeypatch):
-        monkeypatch.setattr(pe, "resolve_pf_alloc_trade_date",
-                            lambda: (_ for _ in ()).throw(AssertionError("payload 带日时禁 resolve")))
+        monkeypatch.setattr(
+            pe, "resolve_pf_alloc_trade_date", lambda: (_ for _ in ()).throw(AssertionError("payload 带日时禁 resolve"))
+        )
 
         def fake_script(script, args, timeout_s):
             return 0, ""
@@ -573,8 +598,8 @@ class TestCrisisGateShortCircuit:
         import zephyr.pf_alloc.crisis_gate as cg
 
         monkeypatch.setattr(
-            cg, "crisis_block_check",
-            lambda *a, **k: cg.CrisisBlock(skip=True, state="crisis", reason=reason))
+            cg, "crisis_block_check", lambda *a, **k: cg.CrisisBlock(skip=True, state="crisis", reason=reason)
+        )
         return cg
 
     def test_emission_side_crisis_blocks_enqueue(self, state, monkeypatch):
@@ -626,8 +651,8 @@ class TestCrisisGateShortCircuit:
         assert pe.maybe_emit_pf_alloc_daily(task_id="daily_kline", success=True)["skipped"] == "crisis_block"
         # 危机解除（skip=False）→ 同日恢复发射（重放契约蓝向回归）
         monkeypatch.setattr(
-            cg, "crisis_block_check",
-            lambda *a, **k: cg.CrisisBlock(skip=False, state="normal", reason="解除"))
+            cg, "crisis_block_check", lambda *a, **k: cg.CrisisBlock(skip=False, state="normal", reason="解除")
+        )
         r = pe.maybe_emit_pf_alloc_daily(task_id="daily_kline", success=True)
         assert r == {"emitted": [pe.PF_ALLOC_KIND], "trade_date": "2026-09-23"}
         assert len(pe.pending()) == 1 and pe.pending()[0]["payload"]["trade_date"] == "2026-09-23"
