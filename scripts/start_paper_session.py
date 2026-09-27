@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-SCRIPT-start_paper_session | scripts/start_paper_session.py | §
 # [MODULE] scripts.start_paper_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession/TradingSessionConfig 真源）；zephyr.ex_core.live_strategy_adapter（--service 常驻服务模式：LiveStrategyAdapter/StrategySlot）；zephyr.ex_core.adapters.miniqmt_broker（延迟 import）；zephyr.ex_core.order_manager；zephyr.ex_core.signal_providers；zephyr.ex_core.risk_layer_orchestrator+position_reconciler+position_tracker.tracker（H5-P0 风控接线批）；zephyr.ex_core.async_fill_dispatcher（成交入账离回调线程，stop 排空）；zephyr.governance.adapters.risk_validation_bridge；zephyr.risk.implementations.default_risk_validator；zephyr.risk.core.drawdown_tracker/var_calculator/tail_risk_monitor；zephyr.position.core.drawdown_controller；zephyr.shared.state_store（JsonStateStore+AppendOnlyDedupSet Crash-only 外部化）；zephyr.governance.strategies.strategy_base；zephyr.pf_core.topn_momentum_strategy（--strategy 可选）；zephyr.shared.infra.process_pool（run_subprocess_hidden SSoT）；zephyr.ex_core.pre_execution_checker（MOD-EX-024 执行前四级闸门，经 TradingSession.attach_pre_execution_gate 挂载）
+# [DEPENDENCIES] stdlib；zephyr.ex_core.trading_session（TradingSession/TradingSessionConfig 真源）；zephyr.ex_core.live_strategy_adapter（--service 常驻服务模式：LiveStrategyAdapter/StrategySlot）；zephyr.ex_core.adapters.miniqmt_broker（延迟 import）；zephyr.ex_core.order_manager；zephyr.ex_core.signal_providers；zephyr.ex_core.risk_layer_orchestrator+position_reconciler+position_tracker.tracker（H5-P0 风控接线批）；zephyr.ex_core.async_fill_dispatcher（成交入账离回调线程，stop 排空）；zephyr.governance.adapters.risk_validation_bridge；zephyr.risk.implementations.default_risk_validator；zephyr.risk.core.drawdown_tracker/var_calculator/tail_risk_monitor；zephyr.position.core.drawdown_controller；zephyr.shared.state_store（JsonStateStore+AppendOnlyDedupSet Crash-only 外部化）；zephyr.governance.strategies.strategy_base；zephyr.pf_core.topn_momentum_strategy（--strategy 可选）；zephyr.shared.infra.process_pool（run_subprocess_hidden SSoT）；zephyr.ex_core.pre_execution_checker（MOD-EX-024 执行前四级闸门，经 TradingSession.attach_pre_execution_gate 挂载）；zephyr.compliance.discipline_prohibition_checker（C-004 纪律闸补仓腿 + KillSwitchLite 策略级熔断，F62 诚实起点批）；zephyr.compliance.compliance_log（合规证据日志注入点，测试用 tmp_path）；zephyr.shared.contracts.position（补仓腿现价派生读 PositionSnapshot）
 # [CONSUMERS] 57 号文 §2 盘中模拟盘——交易日 09:25 前人工拉起；--service=LiveStrategyAdapter 常驻服务模式（GAP-2 残余① CLI 接线已落）；挂计划任务/调度=Owner 窗口
 # [STARTUP] manual
 # [MATURITY] testing
-# [INVARIANTS] 仅连 QMT 模拟账户（config/.env.qmt QMT_SIM_*，实盘 QMT_REAL_* 永不触碰）；默认纯会话保活不自动 rebalance（--strategy 缺省=安全默认）；--dry-run 只连不打任何单；有界保活循环 15:05 自动 stop；KeyboardInterrupt 优雅 stop（stop 自动撤未成交单语义保留）；--service 模式 assemble_session 包 StrategySlot 交 LiveStrategyAdapter 监督（异常隔离+退避重启熔断+biz 心跳 tmp/live_strategy_biz.heartbeat），adapter.run(close_at) 有界收场；**风控层必装配**——DrawdownTracker 基线只取券商实时净值（读不到/非正=拒绝装配会话 exit 1，禁兜底常量猜基线）；Kill Switch 状态经 JsonStateStore 外部化（重启存活熔断，#ARCH-QUANT-002 生产零注入治本）；成交经 OrderManager 回调**只入队** AsyncFillDispatcher（回调线程零耗时，落账在派发线程），会话 stop() MUST 排空派发队列（含 --service 退避重启路径，排不掉=CRITICAL 出声）供盘中对账冻结；**执行前四级闸门必装配**（H5-P0 决策门零接线清偿）——探针真源=DefaultRiskValidator.kill_switch_active，禁静默退化为"熔断级不判定"
+# [INVARIANTS] 仅连 QMT 模拟账户（config/.env.qmt 只读 QMT_SIM_* 两键，实盘前缀键永不触碰——键名真源见 SECRETS.md；NL-2 判据②故此处不落其实盘键名字样）；默认纯会话保活不自动 rebalance（--strategy 缺省=安全默认）；--dry-run 只连不打任何单；有界保活循环 15:05 自动 stop；KeyboardInterrupt 优雅 stop（stop 自动撤未成交单语义保留）；--service 模式 assemble_session 包 StrategySlot 交 LiveStrategyAdapter 监督（异常隔离+退避重启熔断+biz 心跳 tmp/live_strategy_biz.heartbeat），adapter.run(close_at) 有界收场；**风控层必装配**——DrawdownTracker 基线只取券商实时净值（读不到/非正=拒绝装配会话 exit 1，禁兜底常量猜基线）；Kill Switch 状态经 JsonStateStore 外部化（重启存活熔断，#ARCH-QUANT-002 生产零注入治本）；成交经 OrderManager 回调**只入队** AsyncFillDispatcher（回调线程零耗时，落账在派发线程），会话 stop() MUST 排空派发队列（含 --service 退避重启路径，排不掉=CRITICAL 出声）供盘中对账冻结；**执行前四级闸门必装配**（H5-P0 决策门零接线清偿）——探针真源=DefaultRiskValidator.kill_switch_active，禁静默退化为"熔断级不判定"
 # [MODIFY-GUARD] 57_daily_cycle_sop.md §2/§7 GAP-2；#ARCH-DAILY-CYCLE-GAP23-001
 # [STABILITY] evolving
 # [SAFETY] M
@@ -75,6 +75,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import math
 import sys
@@ -93,6 +94,12 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT / "src") not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT / "src"))
 
+from zephyr.compliance.compliance_log import ComplianceLogger  # noqa: E402
+from zephyr.compliance.discipline_prohibition_checker import (  # noqa: E402
+    DisciplineContext,
+    DisciplineGuard,
+    KillSwitchLite,
+)
 from zephyr.ex_core.async_fill_dispatcher import AsyncFillDispatcher  # noqa: E402
 from zephyr.ex_core.live_strategy_adapter import LiveStrategyAdapter, StrategySlot  # noqa: E402
 from zephyr.ex_core.order_manager import OrderManager  # noqa: E402
@@ -100,7 +107,7 @@ from zephyr.ex_core.position_reconciler import PositionReconciler  # noqa: E402
 from zephyr.ex_core.position_tracker.tracker import PositionTracker  # noqa: E402
 from zephyr.ex_core.risk_layer_orchestrator import RiskLayerConfig, RiskLayerOrchestrator  # noqa: E402
 from zephyr.ex_core.signal_providers import make_mock_price_provider, make_mock_signal_provider  # noqa: E402
-from zephyr.ex_core.trading_session import TradingSession, TradingSessionConfig  # noqa: E402
+from zephyr.ex_core.trading_session import DisciplineCtxProvider, TradingSession, TradingSessionConfig  # noqa: E402
 from zephyr.governance.adapters.risk_validation_bridge import RiskValidationBridge  # noqa: E402
 from zephyr.governance.strategies.strategy_base import StrategyBase  # noqa: E402
 from zephyr.position.core.drawdown_controller import DrawdownController  # noqa: E402
@@ -110,13 +117,15 @@ from zephyr.risk.core.var_calculator import VaRCalculator  # noqa: E402
 from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator  # noqa: E402
 from zephyr.shared.contracts.fill import Fill  # noqa: E402
 from zephyr.shared.contracts.order import Order  # noqa: E402
+from zephyr.shared.contracts.position import PositionSnapshot  # noqa: E402
 from zephyr.shared.contracts.risk_limits import RiskLimits  # noqa: E402
 from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: E402
 from zephyr.shared.state_store import AppendOnlyDedupSet, JsonStateStore  # noqa: E402
 
 _logger = logging.getLogger(__name__)
 
-#: QMT 模拟盘配置文件（只读 QMT_SIM_* 两键；QMT_REAL_* 实盘键本脚本永不触碰）
+#: QMT 模拟盘配置文件（只读 QMT_SIM_* 两键；实盘前缀键本脚本永不读取，键名真源见 SECRETS.md
+#: ——NL-2 判据② 禁 AI 侧文件出现实盘密钥键名字样）
 _ENV_QMT_PATH = _REPO_ROOT / "config" / ".env.qmt"
 #: A 股交易时刻口径=北京时区（与 trading_session._SHANGHAI_TZ 同口径）
 _SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
@@ -473,7 +482,156 @@ def assemble_risk_layer(
     ), dispatcher
 
 
-def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Path | None = None) -> TradingSession:
+# ── C-004 合规闸：诚实起点两把（纪律闸补仓腿 + 策略级熔断）───────────────────
+# 判据口径（43 号 §4.3，MOD-CMP-002）：四条严禁腿里**只有真源可派生的那条**才装；
+# 未装的腿必须在装配现场可见地宣告，不许用静默默认值伪装成已防。
+
+#: 盘上无源的 20 日双基线哨兵值。**故意不用 0**：
+#: ``DisciplineGuard._check_revenge`` 的判据带 ``freq/size_baseline_20d > 0`` 前置
+#: （discipline_prohibition_checker.py:268/:270 实测），0 与"无数据"行为一致，
+#: 却会被下游读成"基线确实测得为 0"——那是静默假闸的伪装面。负值不可能充当基线，
+#: 只表达"无源"，且报复腿的未激活态由装配横幅 + DISCIPLINE_LEG_ARMING 显式宣告。
+#: 真源侧实测：对口历史表 c1_market.execution_report 仅 1 行，20 日窗从未被积累。
+_NO_SOURCE_BASELINE: float = -1.0
+
+#: 四条严禁腿在本正门的真实激活态（值口径 armed / not_armed_*）。
+#: 本表是装配横幅与测试断言的**同一真源**，禁另抄一份散文清单。
+DISCIPLINE_LEG_ARMING: dict[str, str] = {
+    "ADDING_TO_LOSER": "armed",  # 被套补仓：position_pnl_pct 可由 tracker 均价 + 现价派生
+    "CHASING": "not_armed_no_signal_anchor",  # 踏空追高：无信号参考价/30min 拉升源
+    "REVENGE_TRADING": "not_armed_no_20d_baseline",  # 亏损报复：20 日双基线盘上无源
+    "OVERCONFIDENCE": "not_armed_no_win_streak",  # 盈利骄傲：连盈笔数盘上无源（仅 Warning 级）
+}
+
+#: 人话注解（启动横幅逐腿打印，与 DISCIPLINE_LEG_ARMING 同键）。
+_LEG_ARMING_NOTES: dict[str, str] = {
+    "ADDING_TO_LOSER": "真装：浮亏=现价/均价-1，均价源=PositionTracker.avg_costs（CTR-006 无成本字段，"
+    "故必须走 tracker 侧），现价源=券商快照派生价，退化=本单申报价",
+    "CHASING": "追高腿未激活：signal_ref_price/surge_30min_pct 传 None=MOD-CMP-002 官方"
+    '"无锚不可判"跳过口（设计内语义，不是降级凑数）',
+    "REVENGE_TRADING": "报复腿未激活：freq_baseline_20d/size_baseline_20d 盘上无源（哨兵 -1，"
+    "禁 0 占位）+daily_pnl_pct/projected_daily_freq 亦无源→该腿本会话恒不判",
+    "OVERCONFIDENCE": "骄傲腿未激活：win_streak 盘上无源恒 0（该腿仅 Warning 不阻断）",
+}
+
+
+def _discipline_leg_arming_status(tracker: PositionTracker | None) -> dict[str, str]:
+    """按装配现场实际可用的供数面产出腿状态表（tracker 取不到时补仓腿也明示未装）。"""
+    status = dict(DISCIPLINE_LEG_ARMING)
+    if tracker is None:
+        status["ADDING_TO_LOSER"] = "not_armed_no_position_cost_source"
+    return status
+
+
+def _position_current_price(order: Order, positions: PositionSnapshot) -> float | None:
+    """现价：优先券商持仓快照派生价（市值/数量），退化用本单申报价。
+
+    两路都是本会话已有的供数面，不新增行情依赖。快照缺市值/数量时用申报价——
+    限价单申报价即委托人认可的现价，口径写在这里供审阅，不静默猜数。
+    """
+    qty = positions.holdings.get(order.symbol)
+    market_value = positions.market_values.get(order.symbol)
+    if qty is not None and market_value is not None and qty > 0 and market_value > 0:
+        return float(market_value / qty)
+    if order.limit_price is not None and order.limit_price > 0:
+        return float(order.limit_price)
+    return None
+
+
+def _position_pnl_pct(
+    tracker: PositionTracker | None,
+    order: Order,
+    positions: PositionSnapshot,
+) -> float | None:
+    """该标的持仓浮盈（小数）；任一环节无源返回 None（补仓腿不判，由调用处出声）。"""
+    if tracker is None:
+        return None
+    try:
+        avg_cost = tracker.avg_costs.get(order.symbol)
+        if avg_cost is None or avg_cost <= 0:
+            return None
+        current = _position_current_price(order, positions)
+        if current is None:
+            return None
+        return float(current) / float(avg_cost) - 1.0
+    except Exception:  # noqa: BLE001 — 失效类型不可枚举，降级为"不可判"而非上抛
+        _logger.warning("[DISCIPLINE] 浮亏取数失效（本单不判补仓）: symbol=%s", order.symbol, exc_info=True)
+        return None
+
+
+def _make_discipline_ctx_provider(
+    tracker: PositionTracker | None,
+    *,
+    normal_exposure: float,
+) -> DisciplineCtxProvider:
+    """C-004 纪律闸上下文提供器（就地闭包；OrderRequest 由会话侧 _make_order_request 代做）。
+
+    诚实起点=本批只装补仓腿，其余三腿明示未装（键值见 DISCIPLINE_LEG_ARMING）：
+      - 追高腿 signal_ref_price/surge_30min_pct=None（官方无锚跳过口）；
+      - 报复腿双基线=_NO_SOURCE_BASELINE 哨兵、daily_pnl/projected_freq 无源；
+      - 骄傲腿 win_streak=0（无源，且该腿仅 Warning）。
+    每个字段自带失效降级（返回 None/哨兵），绝不因取数失败上抛——会话侧对
+    provider 异常是**逐单 Fail-Closed 全拒**，那是失效面而非判据面（有测钉住）。
+    """
+    blind_announced: set[str] = set()
+
+    def _provide(order: Order, positions: PositionSnapshot) -> DisciplineContext:
+        pnl = _position_pnl_pct(tracker, order, positions)
+        if (
+            pnl is None
+            and tracker is not None
+            and positions.holdings.get(order.symbol, Decimal("0")) > 0
+            and order.symbol not in blind_announced
+        ):
+            blind_announced.add(order.symbol)
+            _logger.warning(
+                "[DISCIPLINE] 补仓腿盲区: symbol=%s 有持仓但均价底档缺失（隔夜仓未经本会话成交派生）"
+                "——该标的本会话不判补仓，这是明示盲区不是放行判据",
+                order.symbol,
+            )
+        return DisciplineContext(
+            signal_ref_price=None,
+            surge_30min_pct=None,
+            position_pnl_pct=pnl,
+            win_streak=0,
+            normal_exposure=normal_exposure,
+            daily_pnl_pct=0.0,
+            projected_daily_freq=0.0,
+            freq_baseline_20d=_NO_SOURCE_BASELINE,
+            size_baseline_20d=_NO_SOURCE_BASELINE,
+        )
+
+    return _provide
+
+
+def _print_discipline_declaration(leg_status: dict[str, str]) -> None:
+    """装配现场大声宣告"装了什么/没装什么"（横幅与 DISCIPLINE_LEG_ARMING 同源）。
+
+    未激活的腿必须在此可见——判据的一部分，不是免责声明。
+    """
+    print("[DISCIPLINE] 纪律闸（MOD-CMP-002）已装配，逐腿激活态如下：")
+    for behavior, state in leg_status.items():
+        print(f"[DISCIPLINE]   {behavior}: {state} —— {_LEG_ARMING_NOTES[behavior]}")
+    print(f"[DISCIPLINE][STATUS] {json.dumps(leg_status, ensure_ascii=False, sort_keys=True)}")
+    print(
+        "[DISCIPLINE] 策略级熔断 KillSwitchLite 已装配：state_path=默认主仓锚定"
+        "（data/compliance_log/kill_switch_lite_state.json，恒锚主仓故 worktree 无路径歧义）"
+        " 语义=文件不存在→is_blocked 放行；文件存在但 JSON 读不出→全拒（Fail-Closed）；"
+        "熔断状态由报复腿触发（本批报复腿未激活，故本会话不会自行触发）"
+    )
+    _logger.warning(
+        "[DISCIPLINE] 明示未装（本批口径=诚实起点只装两把，其余腿缺真源不凑数）："
+        "追高腿/报复腿/骄傲腿未激活，只装补仓腿 + 策略级熔断锁"
+    )
+
+
+def assemble_session(
+    args: argparse.Namespace,
+    broker: object,
+    *,
+    state_dir: Path | None = None,
+    compliance_log_path: Path | None = None,
+) -> TradingSession:
     """装配 TradingSession（57 号文 §2 过渡形态编排）。
 
     默认（--strategy 空）：_KeepAliveStrategy + 空 universe
@@ -488,6 +646,16 @@ def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Pat
     ``risk_layer=``——此前全仓无任何生产装配点，回撤/VaR/尾部信号产而不消
     （编排器测试全绿但生产零实例化=消防栓装了没接水管）。风控基线只取券商
     实时净值，读不到即抛（main 转 exit 1），绝不带着猜出来的基线开盘。
+
+    F62 诚实起点批：C-004 合规闸只装**两把**——纪律闸补仓腿（position_pnl_pct 由
+    PositionTracker 均价面 + 现价派生）与策略级熔断 KillSwitchLite；追高/报复/骄傲
+    三腿盘上无真源，**明示未装**（逐腿状态打印 + 机生 JSON 行 + DISCIPLINE_LEG_ARMING
+    常量三处同源，测试可断）。guard 与 ctx_provider 必须成对注入（会话装配期 fail-fast）。
+
+    Args:
+        state_dir: 风控状态外部化根目录（None=生产路径，测试 MUST 注入 tmp_path）。
+        compliance_log_path: 合规证据日志落点（None=生产 data/compliance_log；
+            测试 MUST 注入 tmp_path——根宪法 §9 第 6 条禁测试写生产 data/）。
     """
     order_manager = OrderManager()
     order_manager.register_broker(_BROKER_ID, broker)
@@ -552,6 +720,21 @@ def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Pat
             max_single_position=max(args.max_single, 0.01),
         ),
     )
+    # ── C-004 合规闸（43 号 §4.3，MOD-CMP-002）：诚实起点两把 ──────────────────
+    # 均价真源＝PositionTracker 只读 avg_costs 性质（CTR-006 PositionSnapshot 无
+    # 成本字段，故成本只能从 tracker 侧取；本批不改 CTR-006 契约、不给 tracker
+    # 加新公共 API）。RiskLayerOrchestrator 无公开 position_tracker 访问器，此处
+    # 直读它自己持有的那个实例（同仓既有先例＝tests/scripts/test_start_paper_session.py
+    # 里 session._risk_layer._position_tracker 的同一条路）；读不到≠静默降级，
+    # 由 _discipline_leg_arming_status 把补仓腿一并宣告为未装。
+    discipline_tracker = risk_layer._position_tracker
+    compliance_logger = ComplianceLogger(path=compliance_log_path)
+    kill_switch_lite = KillSwitchLite(logger=compliance_logger)
+    discipline_guard = DisciplineGuard(kill_switch=kill_switch_lite, logger=compliance_logger)
+    discipline_ctx_provider = _make_discipline_ctx_provider(
+        discipline_tracker,
+        normal_exposure=float(config.risk_limits.max_single_position),
+    )
     session = TradingSession(
         broker=broker,
         strategy=strategy,
@@ -561,6 +744,15 @@ def assemble_session(args: argparse.Namespace, broker: object, *, state_dir: Pat
         order_manager=order_manager,
         config=config,
         risk_layer=risk_layer,
+        kill_switch=kill_switch_lite,
+        discipline_guard=discipline_guard,
+        discipline_ctx_provider=discipline_ctx_provider,
+    )
+    _print_discipline_declaration(_discipline_leg_arming_status(discipline_tracker))
+    print(
+        "[DISCIPLINE] 未装清单（本批明示）：清单闸 ChecklistCompletionChecker / 交易合规检测 "
+        "TradingComplianceDetector / ProgrammaticTradingGuard 均未注入本正门——"
+        "清单三项 INTRADAY key 全仓零生产写侧，接上即每轮整批拒单（那是另一种假闸）"
     )
     session.attach_pre_execution_gate(kill_switch_probe=lambda: validator.kill_switch_active)
     print(
