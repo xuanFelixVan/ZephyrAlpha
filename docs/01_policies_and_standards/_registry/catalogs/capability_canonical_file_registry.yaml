@@ -54934,4 +54934,9 @@ creation_tokens:
   created_by: st-fms-tc-20260927
   capability: library_ledger_cache
   merge_evaluation: "净零：本件是 store_collector.py 的 ALGO_FLOW 机器块外部真源（同族六路采集器各有一份 collectors/*.yaml），非新册非新视图类型，无同域条目可并"
+- file: docs/03_modules/_domain_library/algo_flow/snapshot_store.yaml
+  token: library-ledger-cache-snapshot-store-20260927
+  created_by: st-fms-tc-20260927
+  capability: library_ledger_cache
+  merge_evaluation: "净零声明：拆分为职责件，零新增真源——本 yaml 系 GATE-ALGO-FLOW 要求的机生视图（externalize_algo_flow 产出），非第二真源，真源仍是 src/zephyr/library/snapshot_store.py"
 di_seam_exemptions: []
