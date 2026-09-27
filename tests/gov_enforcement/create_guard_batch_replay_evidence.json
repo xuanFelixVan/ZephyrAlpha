@@ -1,0 +1,2286 @@
+{
+ "head": "3eeb9357437997468fa1e987b61597f990c38a6b",
+ "n_samples": 120,
+ "n_classes_total": 328,
+ "non_ascii_names": [],
+ "old": {
+  "passed": false,
+  "detail": "类名跨模块冲突(ARCH-034 CLASS-UNIQUENESS): src/zephyr/ex_sor/risk_redline.py 定义 class Action 与已有 ['src/zephyr/simulation/strategy_simulator.py'] 同名; src/zephyr/infra_runtime/runtime_admission.py 定义 class AdmissionResult 与已有 ['src/zephyr/gov_audit/audit_admission_controller.py', 'src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py', 'src/zephyr/trading/admission_controller.py'] 同名; src/zephyr/backtest/core/cost_attribution.py 定义 class CostAttribution 与已有 ['src/zephyr/governance/ops_governance/cost_attributor.py'] 同名; src/zephyr/pf_alloc/allocation_config.py 定义 class AllocationConfig 与已有 ['src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py'] 同名; src/zephyr/pf_alloc/allocation_orchestrator.py 定义 class StrategyAllocation 与已有 ['src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py'] 同名; src/zephyr/regime/validation/wyckoff_walkforward.py 定义 class LayerResult 与已有 ['src/zephyr/backtest/services/layered_validation_pipeline.py', 'src/zephyr/governance/lifecycle_governance/drift_observatory_orchestrator.py', 'src/zephyr/security/access_control/orphan_judge/decision_table.py', 'src/zephyr/security/access_control/orphan_judge/judge.py'] 同名. 同名不同义是 AI 开发幻觉温床（后导入覆盖前导入，不报错）。修复：①改名区分（如 Managed* 前缀）②若是合法 re-export，在 class 定义前加 '# class-name-alias: <理由>' 标记豁免。",
+  "grep_calls": 328,
+  "grep_elapsed_s": 34.639,
+  "name_map": {
+   "Action": [
+    "src/zephyr/ex_sor/risk_redline.py",
+    "src/zephyr/simulation/strategy_simulator.py"
+   ],
+   "AdmissionResult": [
+    "src/zephyr/gov_audit/audit_admission_controller.py",
+    "src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py",
+    "src/zephyr/infra_runtime/runtime_admission.py",
+    "src/zephyr/trading/admission_controller.py"
+   ],
+   "AdmissionVerdict": [
+    "src/zephyr/ai_layer/intake/gate.py"
+   ],
+   "AlertWebhookConfig": [
+    "src/zephyr/data/alert_webhook_dispatch.py"
+   ],
+   "AlertWebhookDispatcher": [
+    "src/zephyr/data/alert_webhook_dispatch.py"
+   ],
+   "AlertWebhookEndpoint": [
+    "src/zephyr/data/alert_webhook_dispatch.py"
+   ],
+   "AlertWebhookError": [
+    "src/zephyr/data/alert_webhook_dispatch.py"
+   ],
+   "AllocationConfig": [
+    "src/zephyr/pf_alloc/allocation_config.py",
+    "src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py"
+   ],
+   "AllocationConfigError": [
+    "src/zephyr/pf_alloc/allocation_config.py"
+   ],
+   "AllocationInputError": [
+    "src/zephyr/pf_alloc/allocation_inputs.py"
+   ],
+   "AllocationPersistenceError": [
+    "src/zephyr/pf_alloc/allocation_persistence.py"
+   ],
+   "AllocationRunResult": [
+    "src/zephyr/pf_alloc/allocation_orchestrator.py"
+   ],
+   "AnchoredCap": [
+    "src/zephyr/pf_alloc/allocation_inputs.py"
+   ],
+   "AnnualReviewInput": [
+    "src/zephyr/ai_layer/redline/annual_review.py"
+   ],
+   "AnnualReviewInputError": [
+    "src/zephyr/ai_layer/redline/annual_review.py"
+   ],
+   "AntiIncestPolicy": [
+    "src/zephyr/ai_layer/heritage/policy.py"
+   ],
+   "ApprovalRoutingDecision": [
+    "src/zephyr/ai_layer/switch_engine/approval_router.py"
+   ],
+   "ApprovalVerdict": [
+    "src/zephyr/gov_enforcement/commit_gates/approval_resolver.py"
+   ],
+   "AuditOutcome": [
+    "src/zephyr/ai_layer/cleaning/auditor.py"
+   ],
+   "AuditorDeps": [
+    "src/zephyr/ai_layer/cleaning/auditor.py"
+   ],
+   "BareDuckDBConnectError": [
+    "src/zephyr/infrastructure/duckdb_runtime_gate.py"
+   ],
+   "BaseWeightTable": [
+    "src/zephyr/pf_alloc/allocation_inputs.py"
+   ],
+   "BreadthFreshnessAlerts": [
+    "src/zephyr/data/implementations/breadth_freshness_alerts.py"
+   ],
+   "BudgetAnalyzerError": [
+    "src/zephyr/intelligence/budget_analyzer.py"
+   ],
+   "BudgetExhaustedError": [
+    "src/zephyr/ai_layer/perceive/translator.py"
+   ],
+   "BudgetLedger": [
+    "src/zephyr/ai_layer/perceive/translator.py"
+   ],
+   "CHIP_CONC_70": [
+    "src/zephyr/factor/technical_indicators/chips.py"
+   ],
+   "CHIP_CONC_90": [
+    "src/zephyr/factor/technical_indicators/chips.py"
+   ],
+   "CYC": [
+    "src/zephyr/factor/technical_indicators/chips.py"
+   ],
+   "CYQ": [
+    "src/zephyr/factor/technical_indicators/chips.py"
+   ],
+   "CalibratedImpactLevel": [
+    "src/zephyr/backtest/core/cost_model_calibration.py"
+   ],
+   "CalibrationProvenance": [
+    "src/zephyr/backtest/core/cost_model_calibration.py"
+   ],
+   "CardDraft": [
+    "src/zephyr/ai_layer/intake/card_store.py"
+   ],
+   "CardKind": [
+    "src/zephyr/intelligence/model_intel/intel_card.py"
+   ],
+   "CardStore": [
+    "src/zephyr/ai_layer/intake/card_store.py"
+   ],
+   "Carriage": [
+    "src/zephyr/governance/meta_question/exam_loop/event_codes.py"
+   ],
+   "CashSeat": [
+    "src/zephyr/pf_alloc/allocation_orchestrator.py"
+   ],
+   "ChangeLogCollector": [
+    "src/zephyr/pf_alloc/allocation_orchestrator.py"
+   ],
+   "CheckConclusion": [
+    "src/zephyr/ai_layer/comparator/too_good.py"
+   ],
+   "CheckupError": [
+    "src/zephyr/governance/standards_governance/standard_checkup.py"
+   ],
+   "Claimed": [
+    "src/zephyr/intelligence/model_intel/intel_card.py"
+   ],
+   "CleaningJudgeResult": [
+    "src/zephyr/ai_layer/cleaning/auditor.py"
+   ],
+   "CleaningPolicy": [
+    "src/zephyr/ai_layer/cleaning/policy.py"
+   ],
+   "CleaningPolicyError": [
+    "src/zephyr/ai_layer/cleaning/policy.py"
+   ],
+   "ClickHouseDabanBoardEventSource": [
+    "src/zephyr/ex_core/daban_load_producer.py"
+   ],
+   "ClickHouseDabanEngineLoadSource": [
+    "src/zephyr/ex_core/daban_load_producer.py"
+   ],
+   "CloseVerifier": [
+    "src/zephyr/plan_engine/close_verifier.py"
+   ],
+   "ClosurePolicy": [
+    "src/zephyr/ai_layer/heritage/policy.py"
+   ],
+   "ClosureViolation": [
+    "src/zephyr/ai_layer/heritage/closure_check.py"
+   ],
+   "CommitTreeView": [
+    "src/zephyr/gov_enforcement/commit_gates/_tree_view.py"
+   ],
+   "CompareCheckResult": [
+    "src/zephyr/ai_layer/comparator/__init__.py"
+   ],
+   "CompareEvent": [
+    "src/zephyr/ai_layer/comparator/compare_events.py"
+   ],
+   "CompareJournal": [
+    "src/zephyr/ai_layer/comparator/compare_events.py"
+   ],
+   "ComparePolicyError": [
+    "src/zephyr/ai_layer/comparator/policy.py"
+   ],
+   "ComparePreflightReport": [
+    "src/zephyr/ai_layer/comparator/executor.py"
+   ],
+   "ComparisonExperimentRecord": [
+    "src/zephyr/ai_layer/comparator/experiment_store.py"
+   ],
+   "ComputeGateUnavailable": [
+    "src/zephyr/ai_layer/scheduling/dispatcher.py"
+   ],
+   "ConditionPack": [
+    "src/zephyr/backtest/regime_validation/condition_package.py"
+   ],
+   "CostAlert": [
+    "src/zephyr/backtest/core/cost_attribution.py"
+   ],
+   "CostAttribution": [
+    "src/zephyr/backtest/core/cost_attribution.py",
+    "src/zephyr/governance/ops_governance/cost_attributor.py"
+   ],
+   "CostAttributionError": [
+    "src/zephyr/backtest/core/cost_attribution.py"
+   ],
+   "CostCalibrationError": [
+    "src/zephyr/backtest/core/cost_model_calibration.py"
+   ],
+   "CostGateConfig": [
+    "src/zephyr/backtest/regime_validation/exam_cost_gate.py"
+   ],
+   "CostGateVerdict": [
+    "src/zephyr/backtest/regime_validation/exam_cost_gate.py"
+   ],
+   "CoverageGap": [
+    "src/zephyr/infra_ops/config_effect_checker.py"
+   ],
+   "CoverageRow": [
+    "src/zephyr/data/calendar_coverage_checker.py"
+   ],
+   "CrisisBlock": [
+    "src/zephyr/pf_alloc/crisis_gate.py"
+   ],
+   "CrisisGate": [
+    "src/zephyr/pf_alloc/crisis_gate.py"
+   ],
+   "CrisisGateConfig": [
+    "src/zephyr/pf_alloc/crisis_gate.py"
+   ],
+   "CrisisGateError": [
+    "src/zephyr/pf_alloc/crisis_gate.py"
+   ],
+   "CrisisState": [
+    "src/zephyr/pf_alloc/crisis_gate.py"
+   ],
+   "CriteriaError": [
+    "src/zephyr/intelligence/model_profiling/dual_run.py"
+   ],
+   "CriteriaFrozenError": [
+    "src/zephyr/intelligence/model_profiling/dual_run.py"
+   ],
+   "CrossValidation": [
+    "src/zephyr/intelligence/model_intel/intel_card.py"
+   ],
+   "DabanEngineLoadSource": [
+    "src/zephyr/ex_core/daban_load_producer.py"
+   ],
+   "DabanEventSource": [
+    "src/zephyr/ex_core/daban_load_producer.py"
+   ],
+   "DailyPlanner": [
+    "src/zephyr/plan_engine/daily_plan.py"
+   ],
+   "DailySchedule": [
+    "src/zephyr/strategy_factory/owner_regime_switcher/switcher.py"
+   ],
+   "DayRecord": [
+    "src/zephyr/ex_sor/risk_redline.py"
+   ],
+   "DecisionDeps": [
+    "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py"
+   ],
+   "DedupHit": [
+    "src/zephyr/ai_layer/intake/dedup.py"
+   ],
+   "DedupReport": [
+    "src/zephyr/ai_layer/intake/dedup.py"
+   ],
+   "DegradationConfig": [
+    "src/zephyr/ai_layer/redline/dashboard_pipeline.py"
+   ],
+   "DegradationConfigError": [
+    "src/zephyr/ai_layer/redline/dashboard_pipeline.py"
+   ],
+   "DegradationVerdict": [
+    "src/zephyr/ai_layer/redline/dashboard_pipeline.py"
+   ],
+   "DemotionDecision": [
+    "src/zephyr/ai_layer/heritage/forget.py"
+   ],
+   "DerivedDabanBoardEventSource": [
+    "src/zephyr/ex_core/daban_load_producer.py"
+   ],
+   "DetectorSignal": [
+    "src/zephyr/ai_layer/perceive/translator.py"
+   ],
+   "DrawdownReport": [
+    "src/zephyr/ai_layer/redline/dashboard_pipeline.py"
+   ],
+   "EmergencyTrackConfig": [
+    "src/zephyr/governance/resilience_governance/emergency_track_guardian.py"
+   ],
+   "EmergencyTrackConfigError": [
+    "src/zephyr/governance/resilience_governance/emergency_track_guardian.py"
+   ],
+   "EmergencyTrackGuardian": [
+    "src/zephyr/governance/resilience_governance/emergency_track_guardian.py"
+   ],
+   "EmergencyTrackVerdict": [
+    "src/zephyr/governance/resilience_governance/emergency_track_guardian.py"
+   ],
+   "EmitResult": [
+    "src/zephyr/plan_engine/judgment_ledger.py"
+   ],
+   "EngineConfig": [
+    "src/zephyr/strategy_factory/owner_regime_switcher/engine.py"
+   ],
+   "EntrySpec": [
+    "src/zephyr/ai_layer/tools/inventory_generator.py"
+   ],
+   "EnvScreenVerdict": [
+    "src/zephyr/ai_layer/redline/session_env_guard.py"
+   ],
+   "ExamLoopLedger": [
+    "src/zephyr/governance/meta_question/exam_loop/ledger.py"
+   ],
+   "ExamLoopStateMachine": [
+    "src/zephyr/governance/meta_question/exam_loop/exam_lifecycle.py"
+   ],
+   "ExamLoopWriteback": [
+    "src/zephyr/governance/meta_question/exam_loop/writeback.py"
+   ],
+   "ExcludedMember": [
+    "src/zephyr/pf_alloc/allocation_orchestrator.py"
+   ],
+   "ExecutionReportProducer": [
+    "src/zephyr/ex_core/execution_report_producer.py"
+   ],
+   "ExitRoute": [
+    "src/zephyr/ai_layer/comparator/too_good.py"
+   ],
+   "ExperimentDraft": [
+    "src/zephyr/ai_layer/comparator/experiment_store.py"
+   ],
+   "ExperimentStore": [
+    "src/zephyr/ai_layer/comparator/experiment_store.py"
+   ],
+   "ExperimentTransitionError": [
+    "src/zephyr/ai_layer/comparator/experiment_store.py"
+   ],
+   "FairnessReport": [
+    "src/zephyr/ai_layer/comparator/fairness.py"
+   ],
+   "FairnessSpec": [
+    "src/zephyr/ai_layer/comparator/fairness.py"
+   ],
+   "ForgetFieldPolicy": [
+    "src/zephyr/ai_layer/heritage/policy.py"
+   ],
+   "ForgetPolicy": [
+    "src/zephyr/ai_layer/heritage/policy.py"
+   ],
+   "FourGates": [
+    "src/zephyr/intelligence/model_intel/intel_card.py"
+   ],
+   "FrozenCriteriaError": [
+    "src/zephyr/ai_layer/comparator/experiment_store.py"
+   ],
+   "FxEcbProvider": [
+    "src/zephyr/data/implementations/fx_ecb_provider.py"
+   ],
+   "GatewayReply": [
+    "src/zephyr/ai_layer/cleaning/washer.py"
+   ],
+   "GitCommandMap": [
+    "src/zephyr/gov_enforcement/commit_gates/_tree_view.py"
+   ],
+   "GrandfatherResult": [
+    "src/zephyr/ai_layer/switch_engine/rollout_tiers.py"
+   ],
+   "HeritageAction": [
+    "src/zephyr/ai_layer/heritage/heritage_events.py"
+   ],
+   "HeritageDraft": [
+    "src/zephyr/ai_layer/heritage/store.py"
+   ],
+   "HeritageEvent": [
+    "src/zephyr/ai_layer/heritage/heritage_events.py"
+   ],
+   "HeritageForget": [
+    "src/zephyr/ai_layer/heritage/forget.py"
+   ],
+   "HeritageJournal": [
+    "src/zephyr/ai_layer/heritage/heritage_events.py"
+   ],
+   "HeritagePolicy": [
+    "src/zephyr/ai_layer/heritage/policy.py"
+   ],
+   "HeritagePolicyError": [
+    "src/zephyr/ai_layer/heritage/policy.py"
+   ],
+   "HeritagePriors": [
+    "src/zephyr/ai_layer/heritage/priors.py"
+   ],
+   "HeritageSignatureMatch": [
+    "src/zephyr/ai_layer/heritage/closure_check.py"
+   ],
+   "HeritageStore": [
+    "src/zephyr/ai_layer/heritage/store.py"
+   ],
+   "HyperliquidProvider": [
+    "src/zephyr/data/implementations/hyperliquid_provider.py"
+   ],
+   "IndexBreadthComputeProvider": [
+    "src/zephyr/data/implementations/index_breadth_compute.py"
+   ],
+   "IndexNoiseSource": [
+    "src/zephyr/gov_enforcement/commit_gates/_tree_view.py"
+   ],
+   "IntakeCandidate": [
+    "src/zephyr/ai_layer/intake/gate.py"
+   ],
+   "IntakeCard": [
+    "src/zephyr/ai_layer/intake/card_store.py"
+   ],
+   "IntakeDedup": [
+    "src/zephyr/ai_layer/intake/dedup.py"
+   ],
+   "IntakeEvent": [
+    "src/zephyr/ai_layer/intake/intake_events.py"
+   ],
+   "IntakeGate": [
+    "src/zephyr/ai_layer/intake/gate.py"
+   ],
+   "IntakeJournal": [
+    "src/zephyr/ai_layer/intake/intake_events.py"
+   ],
+   "IntakeKpi": [
+    "src/zephyr/ai_layer/intake/kpi.py"
+   ],
+   "IntelCard": [
+    "src/zephyr/intelligence/model_intel/intel_card.py"
+   ],
+   "IntelGateVerdict": [
+    "src/zephyr/intelligence/model_intel/intel_card.py"
+   ],
+   "IntelSourceError": [
+    "src/zephyr/intelligence/model_intel/scanner.py"
+   ],
+   "IntradayL1Tracker": [
+    "src/zephyr/plan_engine/intraday_l1_tracker.py"
+   ],
+   "InventoryError": [
+    "src/zephyr/ai_layer/tools/inventory_generator.py"
+   ],
+   "IrmProvider": [
+    "src/zephyr/data/implementations/irm_provider.py"
+   ],
+   "ItemComparison": [
+    "src/zephyr/intelligence/switch_engine/shadow_runner.py"
+   ],
+   "JudgeRequest": [
+    "src/zephyr/ai_layer/cleaning/auditor.py"
+   ],
+   "Judgment5State": [
+    "src/zephyr/plan_engine/intraday_l1_tracker.py"
+   ],
+   "JudgmentDraft": [
+    "src/zephyr/plan_engine/judgment_ledger.py"
+   ],
+   "JudgmentEmitHook": [
+    "src/zephyr/plan_engine/judgment_ledger.py"
+   ],
+   "KpiAlert": [
+    "src/zephyr/ai_layer/intake/kpi.py"
+   ],
+   "KpiThresholds": [
+    "src/zephyr/ai_layer/intake/kpi.py"
+   ],
+   "L4StoreUnavailable": [
+    "src/zephyr/ai_layer/heritage/store.py"
+   ],
+   "LayerResult": [
+    "src/zephyr/backtest/services/layered_validation_pipeline.py",
+    "src/zephyr/governance/lifecycle_governance/drift_observatory_orchestrator.py",
+    "src/zephyr/regime/validation/wyckoff_walkforward.py",
+    "src/zephyr/security/access_control/orphan_judge/decision_table.py",
+    "src/zephyr/security/access_control/orphan_judge/judge.py"
+   ],
+   "LayeringViolation": [
+    "src/zephyr/governance/meta_question/exam_loop/exam_plan.py"
+   ],
+   "LedgerStrategyBook": [
+    "src/zephyr/pf_alloc/allocation_orchestrator.py"
+   ],
+   "LegCtx": [
+    "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py"
+   ],
+   "LegReading": [
+    "src/zephyr/governance/resilience_governance/emergency_track_guardian.py"
+   ],
+   "LegResult": [
+    "src/zephyr/strategy_factory/owner_regime_switcher/engine.py"
+   ],
+   "Librarian": [
+    "src/zephyr/library/librarian.py"
+   ],
+   "LongtailCandidate": [
+    "src/zephyr/ai_layer/perceive/source_registry.py"
+   ],
+   "ManifestInputError": [
+    "src/zephyr/ai_layer/redline/no_delete_manifest.py"
+   ],
+   "MarketPanelReport": [
+    "src/zephyr/shared/utils/market_units.py"
+   ],
+   "MarketState": [
+    "src/zephyr/signal_ashare/sector/sector_state_aggregator.py"
+   ],
+   "MeasureCalibrator": [
+    "src/zephyr/infrastructure/system_telemetry/measure_calibration.py"
+   ],
+   "MemoryNoiseSource": [
+    "src/zephyr/gov_enforcement/commit_gates/_tree_view.py"
+   ],
+   "MetaQuestionAuditEvent": [
+    "src/zephyr/governance/meta_question/exam_ops.py"
+   ],
+   "MetaQuestionExamMixin": [
+    "src/zephyr/governance/meta_question/exam_ops.py"
+   ],
+   "MetaQuestionRegistry": [
+    "src/zephyr/governance/meta_question/meta_question_registry.py"
+   ],
+   "Mismatch": [
+    "src/zephyr/infra_ops/config_effect_checker.py"
+   ],
+   "NextDayForecaster": [
+    "src/zephyr/plan_engine/next_day_forecaster.py"
+   ],
+   "OrderDaemon": [
+    "src/zephyr/ai_layer/scheduling/order_daemon.py"
+   ],
+   "OrderDaemonError": [
+    "src/zephyr/ai_layer/scheduling/order_daemon.py"
+   ],
+   "PaperHedgeConfig": [
+    "src/zephyr/risk/paper_hedge_leg.py"
+   ],
+   "PaperHedgeLeg": [
+    "src/zephyr/risk/paper_hedge_leg.py"
+   ],
+   "PaperHedgeLegError": [
+    "src/zephyr/risk/paper_hedge_leg.py"
+   ],
+   "PerceiveTranslator": [
+    "src/zephyr/ai_layer/perceive/translator.py"
+   ],
+   "PerformanceInput": [
+    "src/zephyr/pf_alloc/allocation_inputs.py"
+   ],
+   "PerformanceScoreTable": [
+    "src/zephyr/pf_alloc/allocation_inputs.py"
+   ],
+   "PgConnection": [
+    "src/zephyr/library/librarian.py"
+   ],
+   "PgCursor": [
+    "src/zephyr/library/librarian.py"
+   ],
+   "PolicyConstants": [
+    "src/zephyr/ai_layer/tools/scoring.py"
+   ],
+   "PoolQuota": [
+    "src/zephyr/infra_runtime/runtime_admission.py"
+   ],
+   "PowerVerdict": [
+    "src/zephyr/governance/meta_question/exam_loop/exam_plan.py"
+   ],
+   "PreferenceResult": [
+    "src/zephyr/signal_ashare/sector/sector_state_aggregator.py"
+   ],
+   "PrefillError": [
+    "src/zephyr/ai_layer/cleaning/local_prefill.py"
+   ],
+   "PrefillResult": [
+    "src/zephyr/ai_layer/cleaning/local_prefill.py"
+   ],
+   "PriorFactorOutOfRange": [
+    "src/zephyr/ai_layer/heritage/priors.py"
+   ],
+   "ProbeEvent": [
+    "src/zephyr/gov_enforcement/commit_gates/_tree_view.py"
+   ],
+   "ProducerStats": [
+    "src/zephyr/ex_core/execution_report_producer.py"
+   ],
+   "ProjectionReport": [
+    "src/zephyr/governance/registry_projection/projection_generator.py"
+   ],
+   "ProjectionSnapshot": [
+    "src/zephyr/governance/registry_projection/model.py"
+   ],
+   "ProjectionState": [
+    "src/zephyr/governance/registry_projection/state.py"
+   ],
+   "ProjectionUnavailable": [
+    "src/zephyr/governance/registry_projection/pg_source.py"
+   ],
+   "QualitySentinelError": [
+    "src/zephyr/data/quality_sentinel.py"
+   ],
+   "QueryExecutor": [
+    "src/zephyr/data/quality_sentinel.py"
+   ],
+   "QuestionValidationError": [
+    "src/zephyr/governance/meta_question/exam_ops.py"
+   ],
+   "QuotaReadings": [
+    "src/zephyr/ai_layer/scheduling/dispatcher.py"
+   ],
+   "RealIndexNoiseSource": [
+    "src/zephyr/gov_enforcement/commit_gates/_tree_view.py"
+   ],
+   "RedlineConfig": [
+    "src/zephyr/ex_sor/risk_redline.py"
+   ],
+   "ReexamScheduler": [
+    "src/zephyr/governance/meta_question/exam_loop/reexam_scheduler.py"
+   ],
+   "RefuseExam": [
+    "src/zephyr/ai_layer/comparator/__init__.py"
+   ],
+   "RegimeInput": [
+    "src/zephyr/pf_alloc/allocation_inputs.py"
+   ],
+   "RegistrationPolicy": [
+    "src/zephyr/ai_layer/heritage/policy.py"
+   ],
+   "RegistrationRefused": [
+    "src/zephyr/ai_layer/heritage/store.py"
+   ],
+   "ReplayBuffer": [
+    "src/zephyr/ex_sor/services/rl_trainer/trainer.py"
+   ],
+   "ReplayContext": [
+    "src/zephyr/governance/standards_governance/rule_replay.py"
+   ],
+   "ReplayGateway": [
+    "src/zephyr/governance/standards_governance/rule_replay.py"
+   ],
+   "ReplayRequest": [
+    "src/zephyr/governance/standards_governance/rule_replay.py"
+   ],
+   "ReplayTarget": [
+    "src/zephyr/governance/standards_governance/rule_replay.py"
+   ],
+   "Report": [
+    "src/zephyr/infra_ops/config_effect_checker.py"
+   ],
+   "Result": [
+    "src/zephyr/governance/registry_ledger/api.py"
+   ],
+   "RiskTierRegistryError": [
+    "src/zephyr/ai_layer/switch_engine/approval_router.py"
+   ],
+   "RouteDirective": [
+    "src/zephyr/ai_layer/redline/sev_router.py"
+   ],
+   "RouteNotResolvedError": [
+    "src/zephyr/ai_layer/cleaning/washer.py"
+   ],
+   "RouteTarget": [
+    "src/zephyr/ai_layer/cleaning/washer.py"
+   ],
+   "RuntimeAdmissionCoordinator": [
+    "src/zephyr/infra_runtime/runtime_admission.py"
+   ],
+   "RuntimeAdmissionError": [
+    "src/zephyr/infra_runtime/runtime_admission.py"
+   ],
+   "RuntimeQuotas": [
+    "src/zephyr/infra_runtime/runtime_admission.py"
+   ],
+   "SCR": [
+    "src/zephyr/factor/technical_indicators/chips.py"
+   ],
+   "SampleDecision": [
+    "src/zephyr/ai_layer/cleaning/auditor.py"
+   ],
+   "SamplingAuditor": [
+    "src/zephyr/ai_layer/cleaning/auditor.py"
+   ],
+   "ScenarioClassifier": [
+    "src/zephyr/plan_engine/scenario_classifier.py"
+   ],
+   "SchedulingEvent": [
+    "src/zephyr/ai_layer/scheduling/scheduling_events.py"
+   ],
+   "SchedulingGateVerdict": [
+    "src/zephyr/ai_layer/scheduling/maturity.py"
+   ],
+   "SchedulingJournal": [
+    "src/zephyr/ai_layer/scheduling/scheduling_events.py"
+   ],
+   "SchedulingPolicyError": [
+    "src/zephyr/ai_layer/scheduling/maturity.py"
+   ],
+   "SchedulingRouteDecision": [
+    "src/zephyr/ai_layer/scheduling/router.py"
+   ],
+   "ScoringError": [
+    "src/zephyr/ai_layer/tools/scoring.py"
+   ],
+   "SearchOrder": [
+    "src/zephyr/ai_layer/perceive/search_orders.py"
+   ],
+   "SearchOrderDraft": [
+    "src/zephyr/ai_layer/perceive/search_orders.py"
+   ],
+   "SearchOrderError": [
+    "src/zephyr/ai_layer/perceive/search_orders.py"
+   ],
+   "SearchOrderJournal": [
+    "src/zephyr/ai_layer/perceive/search_orders.py"
+   ],
+   "Section": [
+    "src/zephyr/governance/registry_projection/model.py"
+   ],
+   "SectorPanelInputs": [
+    "src/zephyr/signal_ashare/sector/sector_state_aggregator.py"
+   ],
+   "SectorStateRow": [
+    "src/zephyr/signal_ashare/sector/sector_state_aggregator.py"
+   ],
+   "SeedDraft": [
+    "src/zephyr/ai_layer/scheduling/seed_writer.py"
+   ],
+   "SeedValidationError": [
+    "src/zephyr/ai_layer/scheduling/seed_writer.py"
+   ],
+   "SemanticMismatch": [
+    "src/zephyr/governance/registry_projection/renderer.py"
+   ],
+   "SentinelFinding": [
+    "src/zephyr/data/quality_sentinel.py"
+   ],
+   "SentinelOutput": [
+    "src/zephyr/data/quality_sentinel.py"
+   ],
+   "SettleReport": [
+    "src/zephyr/plan_engine/judgment_settler.py"
+   ],
+   "SettleRowResult": [
+    "src/zephyr/plan_engine/judgment_settler.py"
+   ],
+   "SevSignal": [
+    "src/zephyr/ai_layer/redline/sev_router.py"
+   ],
+   "ShadowGateError": [
+    "src/zephyr/intelligence/switch_engine/shadow_runner.py"
+   ],
+   "ShadowRunConfig": [
+    "src/zephyr/intelligence/switch_engine/shadow_runner.py"
+   ],
+   "ShadowRunReport": [
+    "src/zephyr/intelligence/switch_engine/shadow_runner.py"
+   ],
+   "ShadowRunner": [
+    "src/zephyr/intelligence/switch_engine/shadow_runner.py"
+   ],
+   "SharedIndexCommitTreeView": [
+    "src/zephyr/gov_enforcement/commit_gates/_tree_view.py"
+   ],
+   "SideOutcome": [
+    "src/zephyr/intelligence/switch_engine/shadow_runner.py"
+   ],
+   "SourceRecord": [
+    "src/zephyr/ai_layer/perceive/source_registry.py"
+   ],
+   "SourceRef": [
+    "src/zephyr/intelligence/model_intel/intel_card.py"
+   ],
+   "SourceRegistry": [
+    "src/zephyr/ai_layer/perceive/source_registry.py"
+   ],
+   "SourceRegistryError": [
+    "src/zephyr/ai_layer/perceive/source_registry.py"
+   ],
+   "SpecCard": [
+    "src/zephyr/ai_layer/cleaning/spec_store.py"
+   ],
+   "SpecDraft": [
+    "src/zephyr/ai_layer/cleaning/spec_store.py"
+   ],
+   "SpecStore": [
+    "src/zephyr/ai_layer/cleaning/spec_store.py"
+   ],
+   "SpecStoreError": [
+    "src/zephyr/ai_layer/cleaning/spec_store.py"
+   ],
+   "StatsError": [
+    "src/zephyr/ai_layer/tools/usage_stats.py"
+   ],
+   "StrategyAllocation": [
+    "src/zephyr/pf_alloc/allocation_orchestrator.py",
+    "src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py"
+   ],
+   "StrategyConfig": [
+    "src/zephyr/strategy_factory/owner_band_t/engine.py"
+   ],
+   "SuiteError": [
+    "src/zephyr/ai_layer/tools/suite.py"
+   ],
+   "SupplySentinelError": [
+    "src/zephyr/data/supply_sentinel.py"
+   ],
+   "SwitchCriteriaError": [
+    "src/zephyr/intelligence/switch_engine/criteria.py"
+   ],
+   "SwitchEngine": [
+    "src/zephyr/intelligence/switch_engine/switch_engine.py"
+   ],
+   "SwitchRegistryRecord": [
+    "src/zephyr/intelligence/switch_engine/switch_registry.py"
+   ],
+   "SwitchRegistryStore": [
+    "src/zephyr/intelligence/switch_engine/switch_registry.py"
+   ],
+   "SwitchTransitionError": [
+    "src/zephyr/intelligence/switch_engine/switch_engine.py"
+   ],
+   "SwitchTriggerVerdict": [
+    "src/zephyr/intelligence/switch_engine/switch_engine.py"
+   ],
+   "SwitcherConfig": [
+    "src/zephyr/strategy_factory/owner_regime_switcher/switcher.py"
+   ],
+   "SymbolPlan": [
+    "src/zephyr/pf_alloc/allocation_orchestrator.py"
+   ],
+   "TD3Agent": [
+    "src/zephyr/ex_sor/services/rl_trainer/td3_agent.py"
+   ],
+   "TableSpec": [
+    "src/zephyr/data/quality_sentinel.py"
+   ],
+   "TaskOutcome": [
+    "src/zephyr/ai_layer/tools/scoring.py"
+   ],
+   "Thresholds": [
+    "src/zephyr/ai_layer/redline/dashboard_pipeline.py"
+   ],
+   "TierLedger": [
+    "src/zephyr/ai_layer/switch_engine/rollout_tiers.py"
+   ],
+   "TooGoodChecklistItem": [
+    "src/zephyr/ai_layer/comparator/too_good.py"
+   ],
+   "ToolBenchError": [
+    "src/zephyr/ai_layer/tools/__init__.py"
+   ],
+   "ToolUsageStore": [
+    "src/zephyr/ai_layer/tools/usage_stats.py"
+   ],
+   "TrackLeg": [
+    "src/zephyr/governance/resilience_governance/emergency_track_guardian.py"
+   ],
+   "TrainerConfig": [
+    "src/zephyr/ex_sor/services/rl_trainer/trainer.py"
+   ],
+   "TranslateOutcome": [
+    "src/zephyr/ai_layer/perceive/translator.py"
+   ],
+   "TriggerHit": [
+    "src/zephyr/ai_layer/comparator/too_good.py"
+   ],
+   "TriggerReport": [
+    "src/zephyr/ai_layer/comparator/too_good.py"
+   ],
+   "TriggerSyntaxError": [
+    "src/zephyr/plan_engine/daily_plan.py"
+   ],
+   "VenueUnavailable": [
+    "src/zephyr/ai_layer/comparator/__init__.py"
+   ],
+   "VerdictAppendOnlyError": [
+    "src/zephyr/ai_layer/comparator/experiment_store.py"
+   ],
+   "VerdictCard": [
+    "src/zephyr/ai_layer/comparator/executor.py"
+   ],
+   "VerdictRuling": [
+    "src/zephyr/ai_layer/comparator/executor.py"
+   ],
+   "VersionConflictError": [
+    "src/zephyr/governance/meta_question/exam_ops.py"
+   ],
+   "VolumeUnitProbe": [
+    "src/zephyr/shared/utils/market_units.py"
+   ],
+   "WalkFold": [
+    "src/zephyr/regime/validation/wyckoff_walkforward.py"
+   ],
+   "WashBudgetExceededError": [
+    "src/zephyr/ai_layer/cleaning/washer.py"
+   ],
+   "WashOutcome": [
+    "src/zephyr/ai_layer/cleaning/washer.py"
+   ],
+   "Washer": [
+    "src/zephyr/ai_layer/cleaning/washer.py"
+   ],
+   "WasherDeps": [
+    "src/zephyr/ai_layer/cleaning/washer.py"
+   ],
+   "WasherError": [
+    "src/zephyr/ai_layer/cleaning/washer.py"
+   ],
+   "WatchSpec": [
+    "src/zephyr/data/calendar_coverage_checker.py"
+   ],
+   "WeeklyInput": [
+    "src/zephyr/ai_layer/redline/freedom_weekly_report.py"
+   ],
+   "WindowResult": [
+    "src/zephyr/strategy_factory/owner_regime_switcher/exam.py"
+   ],
+   "WorktreeReadBlocked": [
+    "src/zephyr/gov_enforcement/commit_gates/_tree_view.py"
+   ],
+   "WorktreeReadProbe": [
+    "src/zephyr/gov_enforcement/commit_gates/_tree_view.py"
+   ],
+   "WritebackOutcome": [
+    "src/zephyr/governance/meta_question/exam_loop/writeback.py"
+   ],
+   "YAMLExtractError": [
+    "src/zephyr/governance/registry_projection/model.py"
+   ],
+   "_AlerterPort": [
+    "src/zephyr/pf_alloc/crisis_gate.py"
+   ],
+   "_AttemptRequest": [
+    "src/zephyr/governance/meta_question/exam_loop/writeback.py"
+   ],
+   "_AttemptState": [
+    "src/zephyr/governance/meta_question/exam_loop/writeback.py"
+   ],
+   "_CardContext": [
+    "src/zephyr/intelligence/model_intel/scanner.py"
+   ],
+   "_ChipConcBase": [
+    "src/zephyr/factor/technical_indicators/chips.py"
+   ],
+   "_ChipGrid": [
+    "src/zephyr/factor/technical_indicators/chips.py"
+   ],
+   "_ChipsValidateMixin": [
+    "src/zephyr/factor/technical_indicators/chips.py"
+   ],
+   "_CohortReader": [
+    "src/zephyr/alt_data/cohort_daily_writer.py"
+   ],
+   "_Conn": [
+    "src/zephyr/governance/registry_ledger/api.py"
+   ],
+   "_DailyState": [
+    "src/zephyr/strategy_factory/owner_band_t/engine.py"
+   ],
+   "_DuckDBGateFinder": [
+    "src/zephyr/infrastructure/duckdb_runtime_gate.py"
+   ],
+   "_DuckDBGateLoader": [
+    "src/zephyr/infrastructure/duckdb_runtime_gate.py"
+   ],
+   "_FillLedger": [
+    "src/zephyr/ex_core/execution_report_producer.py"
+   ],
+   "_GatePair": [
+    "src/zephyr/governance/standards_governance/rule_replay.py"
+   ],
+   "_GitResult": [
+    "src/zephyr/governance/standards_governance/rule_replay.py"
+   ],
+   "_HeritageStoreLifecycleMixin": [
+    "src/zephyr/ai_layer/heritage/store.py"
+   ],
+   "_HeritageStoreQueriesMixin": [
+    "src/zephyr/ai_layer/heritage/store.py"
+   ],
+   "_HeritageStoreRegistrationMixin": [
+    "src/zephyr/ai_layer/heritage/store.py"
+   ],
+   "_LayerFacts": [
+    "src/zephyr/pf_alloc/allocation_orchestrator.py"
+   ],
+   "_LegState": [
+    "src/zephyr/risk/paper_hedge_leg.py"
+   ],
+   "_MissingFeature": [
+    "src/zephyr/plan_engine/daily_plan.py"
+   ],
+   "_Parser": [
+    "src/zephyr/plan_engine/daily_plan.py"
+   ],
+   "_Reader": [
+    "src/zephyr/alt_data/emotion_index_builder.py"
+   ],
+   "_TableSpec": [
+    "src/zephyr/plan_engine/judgment_ledger.py"
+   ],
+   "_TokenMeter": [
+    "src/zephyr/ai_layer/cleaning/washer.py"
+   ],
+   "_Vocab": [
+    "src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py"
+   ],
+   "_WriterPort": [
+    "src/zephyr/pf_alloc/crisis_gate.py"
+   ]
+  }
+ },
+ "new": {
+  "passed": false,
+  "detail": "类名跨模块冲突(ARCH-034 CLASS-UNIQUENESS): src/zephyr/ex_sor/risk_redline.py 定义 class Action 与已有 ['src/zephyr/simulation/strategy_simulator.py'] 同名; src/zephyr/infra_runtime/runtime_admission.py 定义 class AdmissionResult 与已有 ['src/zephyr/gov_audit/audit_admission_controller.py', 'src/zephyr/gov_enforcement/behavioral_admission/admission_controller.py', 'src/zephyr/trading/admission_controller.py'] 同名; src/zephyr/backtest/core/cost_attribution.py 定义 class CostAttribution 与已有 ['src/zephyr/governance/ops_governance/cost_attributor.py'] 同名; src/zephyr/pf_alloc/allocation_config.py 定义 class AllocationConfig 与已有 ['src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py'] 同名; src/zephyr/pf_alloc/allocation_orchestrator.py 定义 class StrategyAllocation 与已有 ['src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py'] 同名; src/zephyr/regime/validation/wyckoff_walkforward.py 定义 class LayerResult 与已有 ['src/zephyr/backtest/services/layered_validation_pipeline.py', 'src/zephyr/governance/lifecycle_governance/drift_observatory_orchestrator.py', 'src/zephyr/security/access_control/orphan_judge/decision_table.py', 'src/zephyr/security/access_control/orphan_judge/judge.py'] 同名. 同名不同义是 AI 开发幻觉温床（后导入覆盖前导入，不报错）。修复：①改名区分（如 Managed* 前缀）②若是合法 re-export，在 class 定义前加 '# class-name-alias: <理由>' 标记豁免。",
+  "grep_calls": 1,
+  "elapsed_s": 0.838,
+  "batch_calls": [
+   {
+    "returncode": 0,
+    "pattern_len": 5177,
+    "chunk": [
+     "Carriage",
+     "ExamLoopStateMachine",
+     "PowerVerdict",
+     "LayeringViolation",
+     "ExamLoopLedger",
+     "ReexamScheduler",
+     "_AttemptRequest",
+     "_AttemptState",
+     "WritebackOutcome",
+     "ExamLoopWriteback",
+     "QuestionValidationError",
+     "VersionConflictError",
+     "MetaQuestionAuditEvent",
+     "MetaQuestionExamMixin",
+     "MetaQuestionRegistry",
+     "JudgeRequest",
+     "CleaningJudgeResult",
+     "SampleDecision",
+     "AuditOutcome",
+     "AuditorDeps",
+     "SamplingAuditor",
+     "PrefillError",
+     "PrefillResult",
+     "CleaningPolicyError",
+     "CleaningPolicy",
+     "SpecStoreError",
+     "SpecDraft",
+     "SpecCard",
+     "SpecStore",
+     "WasherError",
+     "WashBudgetExceededError",
+     "RouteNotResolvedError",
+     "GatewayReply",
+     "RouteTarget",
+     "WashOutcome",
+     "WasherDeps",
+     "Washer",
+     "_TokenMeter",
+     "VenueUnavailable",
+     "RefuseExam",
+     "CompareCheckResult",
+     "CompareEvent",
+     "CompareJournal",
+     "ComparePreflightReport",
+     "VerdictCard",
+     "VerdictRuling",
+     "FrozenCriteriaError",
+     "VerdictAppendOnlyError",
+     "ExperimentTransitionError",
+     "ComparisonExperimentRecord",
+     "ExperimentDraft",
+     "ExperimentStore",
+     "FairnessSpec",
+     "FairnessReport",
+     "ComparePolicyError",
+     "TriggerHit",
+     "TriggerReport",
+     "TooGoodChecklistItem",
+     "CheckConclusion",
+     "ExitRoute",
+     "HeritageSignatureMatch",
+     "ClosureViolation",
+     "DemotionDecision",
+     "HeritageForget",
+     "HeritageAction",
+     "HeritageEvent",
+     "HeritageJournal",
+     "HeritagePolicyError",
+     "RegistrationPolicy",
+     "AntiIncestPolicy",
+     "ForgetFieldPolicy",
+     "ForgetPolicy",
+     "ClosurePolicy",
+     "HeritagePolicy",
+     "PriorFactorOutOfRange",
+     "HeritagePriors",
+     "L4StoreUnavailable",
+     "RegistrationRefused",
+     "HeritageDraft",
+     "_HeritageStoreRegistrationMixin",
+     "_HeritageStoreQueriesMixin",
+     "_HeritageStoreLifecycleMixin",
+     "HeritageStore",
+     "SearchOrderError",
+     "SearchOrder",
+     "SearchOrderDraft",
+     "SearchOrderJournal",
+     "SourceRegistryError",
+     "SourceRecord",
+     "LongtailCandidate",
+     "SourceRegistry",
+     "DetectorSignal",
+     "TranslateOutcome",
+     "BudgetExhaustedError",
+     "BudgetLedger",
+     "PerceiveTranslator",
+     "AnnualReviewInputError",
+     "AnnualReviewInput",
+     "DegradationConfigError",
+     "Thresholds",
+     "DegradationConfig",
+     "DrawdownReport",
+     "DegradationVerdict",
+     "WeeklyInput",
+     "ManifestInputError",
+     "EnvScreenVerdict",
+     "SevSignal",
+     "RouteDirective",
+     "ComputeGateUnavailable",
+     "QuotaReadings",
+     "SchedulingPolicyError",
+     "SchedulingGateVerdict",
+     "OrderDaemonError",
+     "OrderDaemon",
+     "SchedulingRouteDecision",
+     "SchedulingEvent",
+     "SchedulingJournal",
+     "SeedValidationError",
+     "SeedDraft",
+     "RiskTierRegistryError",
+     "ApprovalRoutingDecision",
+     "TierLedger",
+     "GrandfatherResult",
+     "ToolBenchError",
+     "InventoryError",
+     "EntrySpec",
+     "ScoringError",
+     "PolicyConstants",
+     "TaskOutcome",
+     "SuiteError",
+     "StatsError",
+     "ToolUsageStore",
+     "CheckupError",
+     "BudgetAnalyzerError",
+     "CardKind",
+     "SourceRef",
+     "Claimed",
+     "CrossValidation",
+     "IntelGateVerdict",
+     "FourGates",
+     "IntelCard",
+     "IntelSourceError",
+     "_CardContext",
+     "CriteriaError",
+     "CriteriaFrozenError",
+     "SwitchCriteriaError",
+     "ShadowGateError",
+     "ShadowRunConfig",
+     "SideOutcome",
+     "ItemComparison",
+     "ShadowRunReport",
+     "ShadowRunner",
+     "SwitchTransitionError",
+     "SwitchTriggerVerdict",
+     "SwitchEngine",
+     "SwitchRegistryRecord",
+     "SwitchRegistryStore",
+     "WorktreeReadBlocked",
+     "GitCommandMap",
+     "ProbeEvent",
+     "WorktreeReadProbe",
+     "CommitTreeView",
+     "IndexNoiseSource",
+     "RealIndexNoiseSource",
+     "MemoryNoiseSource",
+     "SharedIndexCommitTreeView",
+     "YAMLExtractError",
+     "Section",
+     "ProjectionSnapshot",
+     "ProjectionUnavailable",
+     "ProjectionReport",
+     "SemanticMismatch",
+     "ProjectionState",
+     "Result",
+     "_Conn",
+     "BareDuckDBConnectError",
+     "_DuckDBGateLoader",
+     "_DuckDBGateFinder",
+     "ApprovalVerdict",
+     "SectorPanelInputs",
+     "SectorStateRow",
+     "MarketState",
+     "PreferenceResult",
+     "ConditionPack",
+     "CostGateConfig",
+     "CostGateVerdict",
+     "_Vocab",
+     "_CohortReader",
+     "_Reader",
+     "TD3Agent",
+     "TrainerConfig",
+     "ReplayBuffer",
+     "PgCursor",
+     "PgConnection",
+     "Librarian",
+     "_ChipGrid",
+     "_ChipsValidateMixin",
+     "CYQ",
+     "SCR",
+     "_ChipConcBase",
+     "CHIP_CONC_90",
+     "CHIP_CONC_70",
+     "CYC",
+     "WatchSpec",
+     "CoverageRow",
+     "CardDraft",
+     "IntakeCard",
+     "CardStore",
+     "DedupHit",
+     "DedupReport",
+     "IntakeDedup",
+     "IntakeCandidate",
+     "AdmissionVerdict",
+     "IntakeGate",
+     "IntakeEvent",
+     "IntakeJournal",
+     "KpiThresholds",
+     "KpiAlert",
+     "IntakeKpi",
+     "PaperHedgeLegError",
+     "PaperHedgeConfig",
+     "_LegState",
+     "PaperHedgeLeg",
+     "AlertWebhookError",
+     "AlertWebhookEndpoint",
+     "AlertWebhookConfig",
+     "AlertWebhookDispatcher",
+     "EngineConfig",
+     "LegResult",
+     "WindowResult",
+     "SwitcherConfig",
+     "DailySchedule",
+     "_WriterPort",
+     "_AlerterPort",
+     "CrisisGateError",
+     "CrisisGateConfig",
+     "CrisisState",
+     "CrisisBlock",
+     "CrisisGate",
+     "_FillLedger",
+     "ProducerStats",
+     "ExecutionReportProducer",
+     "EmergencyTrackConfigError",
+     "TrackLeg",
+     "EmergencyTrackConfig",
+     "LegReading",
+     "EmergencyTrackVerdict",
+     "EmergencyTrackGuardian",
+     "QualitySentinelError",
+     "QueryExecutor",
+     "TableSpec",
+     "SentinelFinding",
+     "SentinelOutput",
+     "IrmProvider",
+     "HyperliquidProvider",
+     "ReplayGateway",
+     "ReplayTarget",
+     "ReplayContext",
+     "ReplayRequest",
+     "_GitResult",
+     "_GatePair",
+     "SupplySentinelError",
+     "Mismatch",
+     "CoverageGap",
+     "Report",
+     "FxEcbProvider",
+     "DecisionDeps",
+     "LegCtx",
+     "CloseVerifier",
+     "TriggerSyntaxError",
+     "_Parser",
+     "_MissingFeature",
+     "DailyPlanner",
+     "ScenarioClassifier",
+     "Judgment5State",
+     "IntradayL1Tracker",
+     "NextDayForecaster",
+     "MeasureCalibrator",
+     "RedlineConfig",
+     "DayRecord",
+     "Action",
+     "_TableSpec",
+     "EmitResult",
+     "JudgmentDraft",
+     "JudgmentEmitHook",
+     "SettleRowResult",
+     "SettleReport",
+     "RuntimeAdmissionError",
+     "PoolQuota",
+     "RuntimeQuotas",
+     "AdmissionResult",
+     "RuntimeAdmissionCoordinator",
+     "StrategyConfig",
+     "_DailyState",
+     "CostAttributionError",
+     "CostAlert",
+     "CostAttribution",
+     "CostCalibrationError",
+     "CalibrationProvenance",
+     "CalibratedImpactLevel",
+     "AllocationConfigError",
+     "AllocationConfig",
+     "AllocationInputError",
+     "BaseWeightTable",
+     "PerformanceInput",
+     "PerformanceScoreTable",
+     "RegimeInput",
+     "AnchoredCap",
+     "ExcludedMember",
+     "CashSeat",
+     "SymbolPlan",
+     "StrategyAllocation",
+     "AllocationRunResult",
+     "LedgerStrategyBook",
+     "_LayerFacts",
+     "ChangeLogCollector",
+     "AllocationPersistenceError",
+     "DabanEventSource",
+     "ClickHouseDabanBoardEventSource",
+     "DerivedDabanBoardEventSource",
+     "DabanEngineLoadSource",
+     "ClickHouseDabanEngineLoadSource",
+     "VolumeUnitProbe",
+     "MarketPanelReport",
+     "WalkFold",
+     "LayerResult",
+     "BreadthFreshnessAlerts",
+     "IndexBreadthComputeProvider"
+    ],
+    "stdout": "src/zephyr/ai_layer/cleaning/auditor.py:84:class JudgeRequest:\nsrc/zephyr/ai_layer/cleaning/auditor.py:93:class CleaningJudgeResult:\nsrc/zephyr/ai_layer/cleaning/auditor.py:104:class SampleDecision:\nsrc/zephyr/ai_layer/cleaning/auditor.py:112:class AuditOutcome:\nsrc/zephyr/ai_layer/cleaning/auditor.py:125:class AuditorDeps:\nsrc/zephyr/ai_layer/cleaning/auditor.py:287:class SamplingAuditor:\nsrc/zephyr/ai_layer/cleaning/local_prefill.py:73:class PrefillError(ValueError):\nsrc/zephyr/ai_layer/cleaning/local_prefill.py:78:class PrefillResult:\nsrc/zephyr/ai_layer/cleaning/policy.py:69:class CleaningPolicyError(RuntimeError):\nsrc/zephyr/ai_layer/cleaning/policy.py:81:class CleaningPolicy:\nsrc/zephyr/ai_layer/cleaning/spec_store.py:145:class SpecStoreError(RuntimeError):\nsrc/zephyr/ai_layer/cleaning/spec_store.py:150:class SpecDraft:\nsrc/zephyr/ai_layer/cleaning/spec_store.py:173:class SpecCard:\nsrc/zephyr/ai_layer/cleaning/spec_store.py:314:class SpecStore:\nsrc/zephyr/ai_layer/cleaning/washer.py:69:class WasherError(RuntimeError):\nsrc/zephyr/ai_layer/cleaning/washer.py:80:class WashBudgetExceededError(WasherError):\nsrc/zephyr/ai_layer/cleaning/washer.py:84:class RouteNotResolvedError(WasherError):\nsrc/zephyr/ai_layer/cleaning/washer.py:89:class GatewayReply:\nsrc/zephyr/ai_layer/cleaning/washer.py:102:class RouteTarget:\nsrc/zephyr/ai_layer/cleaning/washer.py:110:class WashOutcome:\nsrc/zephyr/ai_layer/cleaning/washer.py:123:class WasherDeps:\nsrc/zephyr/ai_layer/cleaning/washer.py:234:class Washer:\nsrc/zephyr/ai_layer/cleaning/washer.py:465:class _TokenMeter:\nsrc/zephyr/ai_layer/comparator/__init__.py:54:class VenueUnavailable(Exception):\nsrc/zephyr/ai_layer/comparator/__init__.py:74:class RefuseExam(Exception):\nsrc/zephyr/ai_layer/comparator/__init__.py:83:class CompareCheckResult:\nsrc/zephyr/ai_layer/comparator/compare_events.py:83:class CompareEvent:\nsrc/zephyr/ai_layer/comparator/compare_events.py:122:class CompareJournal:\nsrc/zephyr/ai_layer/comparator/executor.py:152:class ComparePreflightReport:\nsrc/zephyr/ai_layer/comparator/executor.py:229:class VerdictCard:\nsrc/zephyr/ai_layer/comparator/executor.py:244:class VerdictRuling:\nsrc/zephyr/ai_layer/comparator/experiment_store.py:100:class FrozenCriteriaError(Exception):\nsrc/zephyr/ai_layer/comparator/experiment_store.py:104:class VerdictAppendOnlyError(Exception):\nsrc/zephyr/ai_layer/comparator/experiment_store.py:108:class ExperimentTransitionError(Exception):\nsrc/zephyr/ai_layer/comparator/experiment_store.py:363:class ComparisonExperimentRecord:\nsrc/zephyr/ai_layer/comparator/experiment_store.py:430:class ExperimentDraft:\nsrc/zephyr/ai_layer/comparator/experiment_store.py:447:class ExperimentStore:\nsrc/zephyr/ai_layer/comparator/fairness.py:57:class FairnessSpec:\nsrc/zephyr/ai_layer/comparator/fairness.py:135:class FairnessReport:\nsrc/zephyr/ai_layer/comparator/policy.py:63:class ComparePolicyError(Exception):\nsrc/zephyr/ai_layer/comparator/too_good.py:110:class TriggerHit:\nsrc/zephyr/ai_layer/comparator/too_good.py:119:class TriggerReport:\nsrc/zephyr/ai_layer/comparator/too_good.py:304:class TooGoodChecklistItem:\nsrc/zephyr/ai_layer/comparator/too_good.py:313:class CheckConclusion:\nsrc/zephyr/ai_layer/comparator/too_good.py:351:class ExitRoute:\nsrc/zephyr/ai_layer/heritage/closure_check.py:67:class HeritageSignatureMatch:\nsrc/zephyr/ai_layer/heritage/closure_check.py:181:class ClosureViolation:\nsrc/zephyr/ai_layer/heritage/forget.py:80:class DemotionDecision:\nsrc/zephyr/ai_layer/heritage/forget.py:198:class HeritageForget:\nsrc/zephyr/ai_layer/heritage/heritage_events.py:117:class HeritageAction:\nsrc/zephyr/ai_layer/heritage/heritage_events.py:132:class HeritageEvent:\nsrc/zephyr/ai_layer/heritage/heritage_events.py:338:class HeritageJournal:\nsrc/zephyr/ai_layer/heritage/policy.py:50:class HeritagePolicyError(ValueError):\nsrc/zephyr/ai_layer/heritage/policy.py:62:class RegistrationPolicy:\nsrc/zephyr/ai_layer/heritage/policy.py:75:class AntiIncestPolicy:\nsrc/zephyr/ai_layer/heritage/policy.py:89:class ForgetFieldPolicy:\nsrc/zephyr/ai_layer/heritage/policy.py:100:class ForgetPolicy:\nsrc/zephyr/ai_layer/heritage/policy.py:109:class ClosurePolicy:\nsrc/zephyr/ai_layer/heritage/policy.py:117:class HeritagePolicy:\nsrc/zephyr/ai_layer/heritage/priors.py:56:class PriorFactorOutOfRange(ValueError):\nsrc/zephyr/ai_layer/heritage/priors.py:130:class HeritagePriors:\nsrc/zephyr/ai_layer/heritage/store.py:173:class L4StoreUnavailable(LookupError):\nsrc/zephyr/ai_layer/heritage/store.py:177:class RegistrationRefused(Exception):\nsrc/zephyr/ai_layer/heritage/store.py:193:class HeritageDraft:\nsrc/zephyr/ai_layer/heritage/store.py:398:class _HeritageStoreRegistrationMixin:\nsrc/zephyr/ai_layer/heritage/store.py:569:class _HeritageStoreQueriesMixin:\nsrc/zephyr/ai_layer/heritage/store.py:623:class _HeritageStoreLifecycleMixin:\nsrc/zephyr/ai_layer/heritage/store.py:774:class HeritageStore(\nsrc/zephyr/ai_layer/intake/card_store.py:182:class CardDraft:\nsrc/zephyr/ai_layer/intake/card_store.py:213:class IntakeCard:\nsrc/zephyr/ai_layer/intake/card_store.py:270:class CardStore:\nsrc/zephyr/ai_layer/intake/dedup.py:156:class DedupHit:\nsrc/zephyr/ai_layer/intake/dedup.py:166:class DedupReport:\nsrc/zephyr/ai_layer/intake/dedup.py:208:class IntakeDedup:\nsrc/zephyr/ai_layer/intake/gate.py:181:class IntakeCandidate:\nsrc/zephyr/ai_layer/intake/gate.py:241:class AdmissionVerdict:\nsrc/zephyr/ai_layer/intake/gate.py:257:class IntakeGate:\nsrc/zephyr/ai_layer/intake/intake_events.py:89:class IntakeEvent:\nsrc/zephyr/ai_layer/intake/intake_events.py:142:class IntakeJournal:\nsrc/zephyr/ai_layer/intake/kpi.py:78:class KpiThresholds:\nsrc/zephyr/ai_layer/intake/kpi.py:88:class KpiAlert:\nsrc/zephyr/ai_layer/intake/kpi.py:166:class IntakeKpi:\nsrc/zephyr/ai_layer/perceive/search_orders.py:99:class SearchOrderError(ValueError):\nsrc/zephyr/ai_layer/perceive/search_orders.py:125:class SearchOrder:\nsrc/zephyr/ai_layer/perceive/search_orders.py:270:class SearchOrderDraft:\nsrc/zephyr/ai_layer/perceive/search_orders.py:288:class SearchOrderJournal:\nsrc/zephyr/ai_layer/perceive/source_registry.py:90:class SourceRegistryError(ValueError):\nsrc/zephyr/ai_layer/perceive/source_registry.py:102:class SourceRecord:\nsrc/zephyr/ai_layer/perceive/source_registry.py:118:class LongtailCandidate:\nsrc/zephyr/ai_layer/perceive/source_registry.py:127:class SourceRegistry:\nsrc/zephyr/ai_layer/perceive/translator.py:144:class DetectorSignal:\nsrc/zephyr/ai_layer/perceive/translator.py:161:class TranslateOutcome:\nsrc/zephyr/ai_layer/perceive/translator.py:170:class BudgetExhaustedError(Exception):\nsrc/zephyr/ai_layer/perceive/translator.py:174:class BudgetLedger:\nsrc/zephyr/ai_layer/perceive/translator.py:245:class PerceiveTranslator:\nsrc/zephyr/ai_layer/redline/annual_review.py:68:class AnnualReviewInputError(RuntimeError):\nsrc/zephyr/ai_layer/redline/annual_review.py:217:class AnnualReviewInput:\nsrc/zephyr/ai_layer/redline/dashboard_pipeline.py:83:class DegradationConfigError(RuntimeError):\nsrc/zephyr/ai_layer/redline/dashboard_pipeline.py:95:class Thresholds:\nsrc/zephyr/ai_layer/redline/dashboard_pipeline.py:135:class DegradationConfig:\nsrc/zephyr/ai_layer/redline/dashboard_pipeline.py:186:class DrawdownReport:\nsrc/zephyr/ai_layer/redline/dashboard_pipeline.py:274:class DegradationVerdict:\nsrc/zephyr/ai_layer/redline/freedom_weekly_report.py:65:class WeeklyInput:\nsrc/zephyr/ai_layer/redline/no_delete_manifest.py:136:class ManifestInputError(RuntimeError):\nsrc/zephyr/ai_layer/redline/session_env_guard.py:69:class EnvScreenVerdict:\nsrc/zephyr/ai_layer/redline/sev_router.py:84:class SevSignal:\nsrc/zephyr/ai_layer/redline/sev_router.py:95:class RouteDirective:\nsrc/zephyr/ai_layer/scheduling/dispatcher.py:74:class ComputeGateUnavailable(Exception):\nsrc/zephyr/ai_layer/scheduling/dispatcher.py:175:class QuotaReadings:\nsrc/zephyr/ai_layer/scheduling/maturity.py:84:class SchedulingPolicyError(Exception):\nsrc/zephyr/ai_layer/scheduling/maturity.py:120:class SchedulingGateVerdict:\nsrc/zephyr/ai_layer/scheduling/order_daemon.py:81:class OrderDaemonError(Exception):\nsrc/zephyr/ai_layer/scheduling/order_daemon.py:240:class OrderDaemon:\nsrc/zephyr/ai_layer/scheduling/router.py:79:class SchedulingRouteDecision:\nsrc/zephyr/ai_layer/scheduling/scheduling_events.py:117:class SchedulingEvent:\nsrc/zephyr/ai_layer/scheduling/scheduling_events.py:156:class SchedulingJournal:\nsrc/zephyr/ai_layer/scheduling/seed_writer.py:88:class SeedValidationError(Exception):\nsrc/zephyr/ai_layer/scheduling/seed_writer.py:93:class SeedDraft:\nsrc/zephyr/ai_layer/switch_engine/approval_router.py:104:class RiskTierRegistryError(RuntimeError):\nsrc/zephyr/ai_layer/switch_engine/approval_router.py:116:class ApprovalRoutingDecision:\nsrc/zephyr/ai_layer/switch_engine/rollout_tiers.py:57:class TierLedger:\nsrc/zephyr/ai_layer/switch_engine/rollout_tiers.py:171:class GrandfatherResult:\nsrc/zephyr/ai_layer/tools/__init__.py:55:class ToolBenchError(Exception):\nsrc/zephyr/ai_layer/tools/inventory_generator.py:140:class InventoryError(ToolBenchError):\nsrc/zephyr/ai_layer/tools/inventory_generator.py:145:class EntrySpec:\nsrc/zephyr/ai_layer/tools/scoring.py:65:class ScoringError(ToolBenchError):\nsrc/zephyr/ai_layer/tools/scoring.py:70:class PolicyConstants:\nsrc/zephyr/ai_layer/tools/scoring.py:106:class TaskOutcome:\nsrc/zephyr/ai_layer/tools/suite.py:106:class SuiteError(ToolBenchError):\nsrc/zephyr/ai_layer/tools/usage_stats.py:100:class StatsError(ToolBenchError):\nsrc/zephyr/ai_layer/tools/usage_stats.py:423:class ToolUsageStore:\nsrc/zephyr/alt_data/cohort_daily_writer.py:102:class _CohortReader(Protocol):\nsrc/zephyr/alt_data/emotion_index_builder.py:130:class _Reader(Protocol):\nsrc/zephyr/backtest/core/cost_attribution.py:65:class CostAttributionError(Exception):\nsrc/zephyr/backtest/core/cost_attribution.py:115:class CostAlert:\nsrc/zephyr/backtest/core/cost_attribution.py:148:class CostAttribution:\nsrc/zephyr/backtest/core/cost_model_calibration.py:53:class CostCalibrationError(Exception):\nsrc/zephyr/backtest/core/cost_model_calibration.py:77:class CalibrationProvenance:\nsrc/zephyr/backtest/core/cost_model_calibration.py:343:class CalibratedImpactLevel:\nsrc/zephyr/backtest/regime_validation/condition_package.py:67:class ConditionPack:\nsrc/zephyr/backtest/regime_validation/exam_cost_gate.py:60:class CostGateConfig:\nsrc/zephyr/backtest/regime_validation/exam_cost_gate.py:83:class CostGateVerdict:\nsrc/zephyr/backtest/services/layered_validation_pipeline.py:91:class LayerResult:\nsrc/zephyr/data/alert_webhook_dispatch.py:108:class AlertWebhookError(ValueError):\nsrc/zephyr/data/alert_webhook_dispatch.py:125:class AlertWebhookEndpoint:\nsrc/zephyr/data/alert_webhook_dispatch.py:147:class AlertWebhookConfig:\nsrc/zephyr/data/alert_webhook_dispatch.py:380:class AlertWebhookDispatcher:\nsrc/zephyr/data/calendar_coverage_checker.py:70:class WatchSpec:\nsrc/zephyr/data/calendar_coverage_checker.py:80:class CoverageRow:\nsrc/zephyr/data/implementations/breadth_freshness_alerts.py:108:class BreadthFreshnessAlerts:\nsrc/zephyr/data/implementations/fx_ecb_provider.py:93:class FxEcbProvider(IngestProviderBase):\nsrc/zephyr/data/implementations/hyperliquid_provider.py:122:class HyperliquidProvider(IngestProviderBase):\nsrc/zephyr/data/implementations/index_breadth_compute.py:338:class IndexBreadthComputeProvider(IngestProviderBase):\nsrc/zephyr/data/implementations/irm_provider.py:123:class IrmProvider(IngestProviderBase):\nsrc/zephyr/data/quality_sentinel.py:175:class QualitySentinelError(Exception):\nsrc/zephyr/data/quality_sentinel.py:186:class QueryExecutor(Protocol):\nsrc/zephyr/data/quality_sentinel.py:194:class TableSpec:\nsrc/zephyr/data/quality_sentinel.py:232:class SentinelFinding:\nsrc/zephyr/data/quality_sentinel.py:604:class SentinelOutput:\nsrc/zephyr/data/supply_sentinel.py:132:class SupplySentinelError(Exception):\nsrc/zephyr/ex_core/daban_load_producer.py:350:class DabanEventSource(Protocol):\nsrc/zephyr/ex_core/daban_load_producer.py:359:class ClickHouseDabanBoardEventSource:\nsrc/zephyr/ex_core/daban_load_producer.py:457:class DerivedDabanBoardEventSource:\nsrc/zephyr/ex_core/daban_load_producer.py:633:class DabanEngineLoadSource(Protocol):\nsrc/zephyr/ex_core/daban_load_producer.py:639:class ClickHouseDabanEngineLoadSource:\nsrc/zephyr/ex_core/execution_report_producer.py:100:class _FillLedger:\nsrc/zephyr/ex_core/execution_report_producer.py:112:class ProducerStats:\nsrc/zephyr/ex_core/execution_report_producer.py:152:class ExecutionReportProducer:\nsrc/zephyr/ex_sor/risk_redline.py:32:class RedlineConfig:\nsrc/zephyr/ex_sor/risk_redline.py:42:class DayRecord:\nsrc/zephyr/ex_sor/risk_redline.py:49:class Action:\nsrc/zephyr/ex_sor/services/rl_trainer/td3_agent.py:49:class TD3Agent:\nsrc/zephyr/ex_sor/services/rl_trainer/trainer.py:78:class TrainerConfig:\nsrc/zephyr/ex_sor/services/rl_trainer/trainer.py:91:class ReplayBuffer:\nsrc/zephyr/factor/technical_indicators/chips.py:125:class _ChipGrid:\nsrc/zephyr/factor/technical_indicators/chips.py:273:class _ChipsValidateMixin(TechnicalIndicatorBase):\nsrc/zephyr/factor/technical_indicators/chips.py:290:class CYQ(_ChipsValidateMixin):\nsrc/zephyr/factor/technical_indicators/chips.py:331:class SCR(_ChipsValidateMixin):\nsrc/zephyr/factor/technical_indicators/chips.py:375:class _ChipConcBase(_ChipsValidateMixin):\nsrc/zephyr/factor/technical_indicators/chips.py:401:class CHIP_CONC_90(_ChipConcBase):\nsrc/zephyr/factor/technical_indicators/chips.py:422:class CHIP_CONC_70(_ChipConcBase):\nsrc/zephyr/factor/technical_indicators/chips.py:443:class CYC(_ChipsValidateMixin):\nsrc/zephyr/gov_audit/audit_admission_controller.py:57:class AdmissionResult(BaseModel):\nsrc/zephyr/gov_enforcement/behavioral_admission/admission_controller.py:79:class AdmissionResult(BaseModel):\nsrc/zephyr/gov_enforcement/commit_gates/_tree_view.py:237:class WorktreeReadBlocked(RuntimeError):\nsrc/zephyr/gov_enforcement/commit_gates/_tree_view.py:244:class GitCommandMap:\nsrc/zephyr/gov_enforcement/commit_gates/_tree_view.py:386:class ProbeEvent:\nsrc/zephyr/gov_enforcement/commit_gates/_tree_view.py:395:class WorktreeReadProbe:\nsrc/zephyr/gov_enforcement/commit_gates/_tree_view.py:586:class CommitTreeView:\nsrc/zephyr/gov_enforcement/commit_gates/_tree_view.py:776:class IndexNoiseSource:\nsrc/zephyr/gov_enforcement/commit_gates/_tree_view.py:800:class RealIndexNoiseSource(IndexNoiseSource):\nsrc/zephyr/gov_enforcement/commit_gates/_tree_view.py:847:class MemoryNoiseSource(IndexNoiseSource):\nsrc/zephyr/gov_enforcement/commit_gates/_tree_view.py:884:class SharedIndexCommitTreeView(CommitTreeView):\nsrc/zephyr/gov_enforcement/commit_gates/approval_resolver.py:81:class ApprovalVerdict:\nsrc/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py:78:class _Vocab:\nsrc/zephyr/governance/lifecycle_governance/drift_observatory_orchestrator.py:120:class LayerResult:\nsrc/zephyr/governance/meta_question/exam_loop/event_codes.py:113:class Carriage:\nsrc/zephyr/governance/meta_question/exam_loop/exam_lifecycle.py:71:class ExamLoopStateMachine:\nsrc/zephyr/governance/meta_question/exam_loop/exam_plan.py:217:class PowerVerdict:\nsrc/zephyr/governance/meta_question/exam_loop/exam_plan.py:337:class LayeringViolation:\nsrc/zephyr/governance/meta_question/exam_loop/ledger.py:76:class ExamLoopLedger:\nsrc/zephyr/governance/meta_question/exam_loop/reexam_scheduler.py:196:class ReexamScheduler:\nsrc/zephyr/governance/meta_question/exam_loop/writeback.py:115:class _AttemptRequest:\nsrc/zephyr/governance/meta_question/exam_loop/writeback.py:132:class _AttemptState:\nsrc/zephyr/governance/meta_question/exam_loop/writeback.py:154:class WritebackOutcome:\nsrc/zephyr/governance/meta_question/exam_loop/writeback.py:181:class ExamLoopWriteback:\nsrc/zephyr/governance/meta_question/exam_ops.py:157:class QuestionValidationError(Exception):\nsrc/zephyr/governance/meta_question/exam_ops.py:166:class VersionConflictError(Exception):\nsrc/zephyr/governance/meta_question/exam_ops.py:176:class MetaQuestionAuditEvent:\nsrc/zephyr/governance/meta_question/exam_ops.py:269:class MetaQuestionExamMixin:\nsrc/zephyr/governance/meta_question/meta_question_registry.py:335:class MetaQuestionRegistry(MetaQuestionExamMixin):\nsrc/zephyr/governance/ops_governance/cost_attributor.py:31:class CostAttribution:\nsrc/zephyr/governance/registry_ledger/api.py:112:class Result:\nsrc/zephyr/governance/registry_ledger/api.py:144:class _Conn:\nsrc/zephyr/governance/registry_projection/model.py:50:class YAMLExtractError(ValueError):\nsrc/zephyr/governance/registry_projection/model.py:55:class Section:\nsrc/zephyr/governance/registry_projection/model.py:63:class ProjectionSnapshot:\nsrc/zephyr/governance/registry_projection/pg_source.py:47:class ProjectionUnavailable(RuntimeError):\nsrc/zephyr/governance/registry_projection/projection_generator.py:91:class ProjectionReport:\nsrc/zephyr/governance/registry_projection/renderer.py:49:class SemanticMismatch(AssertionError):\nsrc/zephyr/governance/registry_projection/state.py:58:class ProjectionState:\nsrc/zephyr/governance/resilience_governance/emergency_track_guardian.py:121:class EmergencyTrackConfigError(ValueError):\nsrc/zephyr/governance/resilience_governance/emergency_track_guardian.py:126:class TrackLeg:\nsrc/zephyr/governance/resilience_governance/emergency_track_guardian.py:135:class EmergencyTrackConfig:\nsrc/zephyr/governance/resilience_governance/emergency_track_guardian.py:156:class LegReading:\nsrc/zephyr/governance/resilience_governance/emergency_track_guardian.py:168:class EmergencyTrackVerdict:\nsrc/zephyr/governance/resilience_governance/emergency_track_guardian.py:316:class EmergencyTrackGuardian:\nsrc/zephyr/governance/standards_governance/rule_replay.py:82:class ReplayGateway:\nsrc/zephyr/governance/standards_governance/rule_replay.py:111:class ReplayTarget:\nsrc/zephyr/governance/standards_governance/rule_replay.py:120:class ReplayContext:\nsrc/zephyr/governance/standards_governance/rule_replay.py:131:class ReplayRequest:\nsrc/zephyr/governance/standards_governance/rule_replay.py:147:class _GitResult:\nsrc/zephyr/governance/standards_governance/rule_replay.py:297:class _GatePair:\nsrc/zephyr/governance/standards_governance/standard_checkup.py:87:class CheckupError(RuntimeError):\nsrc/zephyr/infra_ops/config_effect_checker.py:102:class Mismatch:\nsrc/zephyr/infra_ops/config_effect_checker.py:117:class CoverageGap:\nsrc/zephyr/infra_ops/config_effect_checker.py:129:class Report:\nsrc/zephyr/infra_runtime/runtime_admission.py:86:class RuntimeAdmissionError(Exception):\nsrc/zephyr/infra_runtime/runtime_admission.py:93:class PoolQuota:\nsrc/zephyr/infra_runtime/runtime_admission.py:104:class RuntimeQuotas:\nsrc/zephyr/infra_runtime/runtime_admission.py:120:class AdmissionResult:\nsrc/zephyr/infra_runtime/runtime_admission.py:178:class RuntimeAdmissionCoordinator:\nsrc/zephyr/infrastructure/duckdb_runtime_gate.py:121:class BareDuckDBConnectError(RuntimeError):\nsrc/zephyr/infrastructure/duckdb_runtime_gate.py:285:class _DuckDBGateLoader(importlib.abc.Loader):\nsrc/zephyr/infrastructure/duckdb_runtime_gate.py:304:class _DuckDBGateFinder(importlib.abc.MetaPathFinder):\nsrc/zephyr/infrastructure/system_telemetry/measure_calibration.py:232:class MeasureCalibrator:\nsrc/zephyr/intelligence/budget_analyzer.py:86:class BudgetAnalyzerError(RuntimeError):\nsrc/zephyr/intelligence/model_intel/intel_card.py:59:class CardKind(str, Enum):\nsrc/zephyr/intelligence/model_intel/intel_card.py:74:class SourceRef:\nsrc/zephyr/intelligence/model_intel/intel_card.py:84:class Claimed:\nsrc/zephyr/intelligence/model_intel/intel_card.py:96:class CrossValidation:\nsrc/zephyr/intelligence/model_intel/intel_card.py:104:class IntelGateVerdict:\nsrc/zephyr/intelligence/model_intel/intel_card.py:112:class FourGates:\nsrc/zephyr/intelligence/model_intel/intel_card.py:122:class IntelCard:\nsrc/zephyr/intelligence/model_intel/scanner.py:94:class IntelSourceError(Exception):\nsrc/zephyr/intelligence/model_intel/scanner.py:220:class _CardContext:\nsrc/zephyr/intelligence/model_profiling/dual_run.py:103:class CriteriaError(Exception):\nsrc/zephyr/intelligence/model_profiling/dual_run.py:112:class CriteriaFrozenError(CriteriaError):\nsrc/zephyr/intelligence/switch_engine/criteria.py:54:class SwitchCriteriaError(RuntimeError):\nsrc/zephyr/intelligence/switch_engine/shadow_runner.py:68:class ShadowGateError(RuntimeError):\nsrc/zephyr/intelligence/switch_engine/shadow_runner.py:73:class ShadowRunConfig:\nsrc/zephyr/intelligence/switch_engine/shadow_runner.py:86:class SideOutcome:\nsrc/zephyr/intelligence/switch_engine/shadow_runner.py:93:class ItemComparison:\nsrc/zephyr/intelligence/switch_engine/shadow_runner.py:101:class ShadowRunReport:\nsrc/zephyr/intelligence/switch_engine/shadow_runner.py:154:class ShadowRunner:\nsrc/zephyr/intelligence/switch_engine/switch_engine.py:99:class SwitchTransitionError(RuntimeError):\nsrc/zephyr/intelligence/switch_engine/switch_engine.py:117:class SwitchTriggerVerdict:\nsrc/zephyr/intelligence/switch_engine/switch_engine.py:187:class SwitchEngine:\nsrc/zephyr/intelligence/switch_engine/switch_registry.py:101:class SwitchRegistryRecord:\nsrc/zephyr/intelligence/switch_engine/switch_registry.py:139:class SwitchRegistryStore:\nsrc/zephyr/library/librarian.py:31:class PgCursor(Protocol):\nsrc/zephyr/library/librarian.py:61:class PgConnection(Protocol):\nsrc/zephyr/library/librarian.py:101:class Librarian:\nsrc/zephyr/pf_alloc/allocation_config.py:70:class AllocationConfigError(ValueError):\nsrc/zephyr/pf_alloc/allocation_config.py:77:class AllocationConfig:\nsrc/zephyr/pf_alloc/allocation_inputs.py:109:class AllocationInputError(ValueError):\nsrc/zephyr/pf_alloc/allocation_inputs.py:165:class BaseWeightTable:\nsrc/zephyr/pf_alloc/allocation_inputs.py:260:class PerformanceInput:\nsrc/zephyr/pf_alloc/allocation_inputs.py:274:class PerformanceScoreTable:\nsrc/zephyr/pf_alloc/allocation_inputs.py:375:class RegimeInput:\nsrc/zephyr/pf_alloc/allocation_inputs.py:648:class AnchoredCap:\nsrc/zephyr/pf_alloc/allocation_orchestrator.py:155:class ExcludedMember:\nsrc/zephyr/pf_alloc/allocation_orchestrator.py:175:class CashSeat:\nsrc/zephyr/pf_alloc/allocation_orchestrator.py:209:class SymbolPlan:\nsrc/zephyr/pf_alloc/allocation_orchestrator.py:224:class StrategyAllocation:\nsrc/zephyr/pf_alloc/allocation_orchestrator.py:301:class AllocationRunResult:\nsrc/zephyr/pf_alloc/allocation_orchestrator.py:342:class LedgerStrategyBook(StrategyBook):\nsrc/zephyr/pf_alloc/allocation_orchestrator.py:378:class _LayerFacts:\nsrc/zephyr/pf_alloc/allocation_orchestrator.py:552:class ChangeLogCollector:\nsrc/zephyr/pf_alloc/allocation_persistence.py:65:class AllocationPersistenceError(RuntimeError):\nsrc/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py:79:class AllocationConfig:\nsrc/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py:124:class StrategyAllocation:\nsrc/zephyr/pf_alloc/crisis_gate.py:108:class _WriterPort(Protocol):\nsrc/zephyr/pf_alloc/crisis_gate.py:114:class _AlerterPort(Protocol):\nsrc/zephyr/pf_alloc/crisis_gate.py:120:class CrisisGateError(ValueError):\nsrc/zephyr/pf_alloc/crisis_gate.py:143:class CrisisGateConfig:\nsrc/zephyr/pf_alloc/crisis_gate.py:190:class CrisisState:\nsrc/zephyr/pf_alloc/crisis_gate.py:275:class CrisisBlock:\nsrc/zephyr/pf_alloc/crisis_gate.py:435:class CrisisGate:\nsrc/zephyr/plan_engine/close_verifier.py:284:class CloseVerifier:\nsrc/zephyr/plan_engine/daily_plan.py:157:class TriggerSyntaxError(ValueError):\nsrc/zephyr/plan_engine/daily_plan.py:199:class _Parser:\nsrc/zephyr/plan_engine/daily_plan.py:294:class _MissingFeature(Exception):\nsrc/zephyr/plan_engine/daily_plan.py:810:class DailyPlanner:\nsrc/zephyr/plan_engine/intraday_l1_tracker.py:188:class Judgment5State:\nsrc/zephyr/plan_engine/intraday_l1_tracker.py:617:class IntradayL1Tracker:\nsrc/zephyr/plan_engine/judgment_ledger.py:121:class _TableSpec:\nsrc/zephyr/plan_engine/judgment_ledger.py:346:class EmitResult:\nsrc/zephyr/plan_engine/judgment_ledger.py:356:class JudgmentDraft:\nsrc/zephyr/plan_engine/judgment_ledger.py:484:class JudgmentEmitHook:\nsrc/zephyr/plan_engine/judgment_settler.py:188:class SettleRowResult:\nsrc/zephyr/plan_engine/judgment_settler.py:198:class SettleReport:\nsrc/zephyr/plan_engine/next_day_forecaster.py:414:class NextDayForecaster:\nsrc/zephyr/plan_engine/scenario_classifier.py:441:class ScenarioClassifier:\nsrc/zephyr/regime/validation/wyckoff_walkforward.py:267:class WalkFold:\nsrc/zephyr/regime/validation/wyckoff_walkforward.py:557:class LayerResult:\nsrc/zephyr/risk/paper_hedge_leg.py:142:class PaperHedgeLegError(ValueError):\nsrc/zephyr/risk/paper_hedge_leg.py:162:class PaperHedgeConfig:\nsrc/zephyr/risk/paper_hedge_leg.py:316:class _LegState:\nsrc/zephyr/risk/paper_hedge_leg.py:356:class PaperHedgeLeg:\nsrc/zephyr/security/access_control/orphan_judge/decision_table.py:39:class LayerResult(BaseModel):\nsrc/zephyr/security/access_control/orphan_judge/judge.py:124:class LayerResult(BaseModel):\nsrc/zephyr/shared/utils/market_units.py:112:class VolumeUnitProbe:\nsrc/zephyr/shared/utils/market_units.py:146:class MarketPanelReport:\nsrc/zephyr/signal_ashare/sector/sector_state_aggregator.py:98:class SectorPanelInputs:\nsrc/zephyr/signal_ashare/sector/sector_state_aggregator.py:111:class SectorStateRow:\nsrc/zephyr/signal_ashare/sector/sector_state_aggregator.py:127:class MarketState:\nsrc/zephyr/signal_ashare/sector/sector_state_aggregator.py:141:class PreferenceResult:\nsrc/zephyr/simulation/strategy_simulator.py:108:class Action(str, Enum):\nsrc/zephyr/strategy_factory/owner_band_t/engine.py:53:class StrategyConfig:\nsrc/zephyr/strategy_factory/owner_band_t/engine.py:80:class _DailyState:\nsrc/zephyr/strategy_factory/owner_regime_switcher/engine.py:44:class EngineConfig:\nsrc/zephyr/strategy_factory/owner_regime_switcher/engine.py:61:class LegResult:\nsrc/zephyr/strategy_factory/owner_regime_switcher/exam.py:62:class WindowResult:\nsrc/zephyr/strategy_factory/owner_regime_switcher/switcher.py:52:class SwitcherConfig:\nsrc/zephyr/strategy_factory/owner_regime_switcher/switcher.py:88:class DailySchedule:\nsrc/zephyr/strategy_pipeline/daily_decision_orchestrator.py:135:class DecisionDeps:\nsrc/zephyr/strategy_pipeline/daily_decision_orchestrator.py:148:class LegCtx:\nsrc/zephyr/trading/admission_controller.py:82:class AdmissionResult(BaseModel):\n",
+    "elapsed_s": 0.183
+   }
+  ],
+  "n_chunks": 1
+ },
+ "verdict_byte_equal": true,
+ "attribution_mismatch_names": [],
+ "samples": [
+  {
+   "file": "src/zephyr/governance/meta_question/exam_loop/event_codes.py",
+   "classes": [
+    "Carriage"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/meta_question/exam_loop/exam_lifecycle.py",
+   "classes": [
+    "ExamLoopStateMachine"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/meta_question/exam_loop/exam_plan.py",
+   "classes": [
+    "PowerVerdict",
+    "LayeringViolation"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/meta_question/exam_loop/ledger.py",
+   "classes": [
+    "ExamLoopLedger"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/meta_question/exam_loop/reexam_scheduler.py",
+   "classes": [
+    "ReexamScheduler"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/meta_question/exam_loop/writeback.py",
+   "classes": [
+    "_AttemptRequest",
+    "_AttemptState",
+    "WritebackOutcome",
+    "ExamLoopWriteback"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/meta_question/exam_ops.py",
+   "classes": [
+    "QuestionValidationError",
+    "VersionConflictError",
+    "MetaQuestionAuditEvent",
+    "MetaQuestionExamMixin"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/meta_question/meta_question_registry.py",
+   "classes": [
+    "MetaQuestionRegistry"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/cleaning/auditor.py",
+   "classes": [
+    "JudgeRequest",
+    "CleaningJudgeResult",
+    "SampleDecision",
+    "AuditOutcome",
+    "AuditorDeps",
+    "SamplingAuditor"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/cleaning/local_prefill.py",
+   "classes": [
+    "PrefillError",
+    "PrefillResult"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/cleaning/policy.py",
+   "classes": [
+    "CleaningPolicyError",
+    "CleaningPolicy"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/cleaning/spec_store.py",
+   "classes": [
+    "SpecStoreError",
+    "SpecDraft",
+    "SpecCard",
+    "SpecStore"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/cleaning/washer.py",
+   "classes": [
+    "WasherError",
+    "WashBudgetExceededError",
+    "RouteNotResolvedError",
+    "GatewayReply",
+    "RouteTarget",
+    "WashOutcome",
+    "WasherDeps",
+    "Washer",
+    "_TokenMeter"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/comparator/__init__.py",
+   "classes": [
+    "VenueUnavailable",
+    "RefuseExam",
+    "CompareCheckResult"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/comparator/compare_events.py",
+   "classes": [
+    "CompareEvent",
+    "CompareJournal"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/comparator/executor.py",
+   "classes": [
+    "ComparePreflightReport",
+    "VerdictCard",
+    "VerdictRuling"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/comparator/experiment_store.py",
+   "classes": [
+    "FrozenCriteriaError",
+    "VerdictAppendOnlyError",
+    "ExperimentTransitionError",
+    "ComparisonExperimentRecord",
+    "ExperimentDraft",
+    "ExperimentStore"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/comparator/fairness.py",
+   "classes": [
+    "FairnessSpec",
+    "FairnessReport"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/comparator/policy.py",
+   "classes": [
+    "ComparePolicyError"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/comparator/too_good.py",
+   "classes": [
+    "TriggerHit",
+    "TriggerReport",
+    "TooGoodChecklistItem",
+    "CheckConclusion",
+    "ExitRoute"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/heritage/closure_check.py",
+   "classes": [
+    "HeritageSignatureMatch",
+    "ClosureViolation"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/heritage/forget.py",
+   "classes": [
+    "DemotionDecision",
+    "HeritageForget"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/heritage/heritage_events.py",
+   "classes": [
+    "HeritageAction",
+    "HeritageEvent",
+    "HeritageJournal"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/heritage/policy.py",
+   "classes": [
+    "HeritagePolicyError",
+    "RegistrationPolicy",
+    "AntiIncestPolicy",
+    "ForgetFieldPolicy",
+    "ForgetPolicy",
+    "ClosurePolicy",
+    "HeritagePolicy"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/heritage/priors.py",
+   "classes": [
+    "PriorFactorOutOfRange",
+    "HeritagePriors"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/heritage/store.py",
+   "classes": [
+    "L4StoreUnavailable",
+    "RegistrationRefused",
+    "HeritageDraft",
+    "_HeritageStoreRegistrationMixin",
+    "_HeritageStoreQueriesMixin",
+    "_HeritageStoreLifecycleMixin",
+    "HeritageStore"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/perceive/search_orders.py",
+   "classes": [
+    "SearchOrderError",
+    "SearchOrder",
+    "SearchOrderDraft",
+    "SearchOrderJournal"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/perceive/source_registry.py",
+   "classes": [
+    "SourceRegistryError",
+    "SourceRecord",
+    "LongtailCandidate",
+    "SourceRegistry"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/perceive/translator.py",
+   "classes": [
+    "DetectorSignal",
+    "TranslateOutcome",
+    "BudgetExhaustedError",
+    "BudgetLedger",
+    "PerceiveTranslator"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/redline/annual_review.py",
+   "classes": [
+    "AnnualReviewInputError",
+    "AnnualReviewInput"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/redline/dashboard_pipeline.py",
+   "classes": [
+    "DegradationConfigError",
+    "Thresholds",
+    "DegradationConfig",
+    "DrawdownReport",
+    "DegradationVerdict"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/redline/freedom_weekly_report.py",
+   "classes": [
+    "WeeklyInput"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/redline/no_delete_manifest.py",
+   "classes": [
+    "ManifestInputError"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/redline/session_env_guard.py",
+   "classes": [
+    "EnvScreenVerdict"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/redline/sev_router.py",
+   "classes": [
+    "SevSignal",
+    "RouteDirective"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/scheduling/dispatcher.py",
+   "classes": [
+    "ComputeGateUnavailable",
+    "QuotaReadings"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/scheduling/maturity.py",
+   "classes": [
+    "SchedulingPolicyError",
+    "SchedulingGateVerdict"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/scheduling/order_daemon.py",
+   "classes": [
+    "OrderDaemonError",
+    "OrderDaemon"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/scheduling/router.py",
+   "classes": [
+    "SchedulingRouteDecision"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/scheduling/scheduling_events.py",
+   "classes": [
+    "SchedulingEvent",
+    "SchedulingJournal"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/scheduling/seed_writer.py",
+   "classes": [
+    "SeedValidationError",
+    "SeedDraft"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/switch_engine/approval_router.py",
+   "classes": [
+    "RiskTierRegistryError",
+    "ApprovalRoutingDecision"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/switch_engine/rollout_tiers.py",
+   "classes": [
+    "TierLedger",
+    "GrandfatherResult"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/tools/__init__.py",
+   "classes": [
+    "ToolBenchError"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/tools/inventory_generator.py",
+   "classes": [
+    "InventoryError",
+    "EntrySpec"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/tools/scoring.py",
+   "classes": [
+    "ScoringError",
+    "PolicyConstants",
+    "TaskOutcome"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/tools/suite.py",
+   "classes": [
+    "SuiteError"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/tools/usage_stats.py",
+   "classes": [
+    "StatsError",
+    "ToolUsageStore"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/standards_governance/standard_checkup.py",
+   "classes": [
+    "CheckupError"
+   ]
+  },
+  {
+   "file": "src/zephyr/intelligence/budget_analyzer.py",
+   "classes": [
+    "BudgetAnalyzerError"
+   ]
+  },
+  {
+   "file": "src/zephyr/intelligence/model_intel/intel_card.py",
+   "classes": [
+    "CardKind",
+    "SourceRef",
+    "Claimed",
+    "CrossValidation",
+    "IntelGateVerdict",
+    "FourGates",
+    "IntelCard"
+   ]
+  },
+  {
+   "file": "src/zephyr/intelligence/model_intel/scanner.py",
+   "classes": [
+    "IntelSourceError",
+    "_CardContext"
+   ]
+  },
+  {
+   "file": "src/zephyr/intelligence/model_profiling/dual_run.py",
+   "classes": [
+    "CriteriaError",
+    "CriteriaFrozenError"
+   ]
+  },
+  {
+   "file": "src/zephyr/intelligence/switch_engine/criteria.py",
+   "classes": [
+    "SwitchCriteriaError"
+   ]
+  },
+  {
+   "file": "src/zephyr/intelligence/switch_engine/shadow_runner.py",
+   "classes": [
+    "ShadowGateError",
+    "ShadowRunConfig",
+    "SideOutcome",
+    "ItemComparison",
+    "ShadowRunReport",
+    "ShadowRunner"
+   ]
+  },
+  {
+   "file": "src/zephyr/intelligence/switch_engine/switch_engine.py",
+   "classes": [
+    "SwitchTransitionError",
+    "SwitchTriggerVerdict",
+    "SwitchEngine"
+   ]
+  },
+  {
+   "file": "src/zephyr/intelligence/switch_engine/switch_registry.py",
+   "classes": [
+    "SwitchRegistryRecord",
+    "SwitchRegistryStore"
+   ]
+  },
+  {
+   "file": "src/zephyr/gov_enforcement/commit_gates/_tree_view.py",
+   "classes": [
+    "WorktreeReadBlocked",
+    "GitCommandMap",
+    "ProbeEvent",
+    "WorktreeReadProbe",
+    "CommitTreeView",
+    "IndexNoiseSource",
+    "RealIndexNoiseSource",
+    "MemoryNoiseSource",
+    "SharedIndexCommitTreeView"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/registry_projection/model.py",
+   "classes": [
+    "YAMLExtractError",
+    "Section",
+    "ProjectionSnapshot"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/registry_projection/pg_source.py",
+   "classes": [
+    "ProjectionUnavailable"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/registry_projection/projection_generator.py",
+   "classes": [
+    "ProjectionReport"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/registry_projection/renderer.py",
+   "classes": [
+    "SemanticMismatch"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/registry_projection/state.py",
+   "classes": [
+    "ProjectionState"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/registry_ledger/api.py",
+   "classes": [
+    "Result",
+    "_Conn"
+   ]
+  },
+  {
+   "file": "src/zephyr/infrastructure/duckdb_runtime_gate.py",
+   "classes": [
+    "BareDuckDBConnectError",
+    "_DuckDBGateLoader",
+    "_DuckDBGateFinder"
+   ]
+  },
+  {
+   "file": "src/zephyr/gov_enforcement/commit_gates/approval_resolver.py",
+   "classes": [
+    "ApprovalVerdict"
+   ]
+  },
+  {
+   "file": "src/zephyr/signal_ashare/sector/sector_state_aggregator.py",
+   "classes": [
+    "SectorPanelInputs",
+    "SectorStateRow",
+    "MarketState",
+    "PreferenceResult"
+   ]
+  },
+  {
+   "file": "src/zephyr/backtest/regime_validation/condition_package.py",
+   "classes": [
+    "ConditionPack"
+   ]
+  },
+  {
+   "file": "src/zephyr/backtest/regime_validation/exam_cost_gate.py",
+   "classes": [
+    "CostGateConfig",
+    "CostGateVerdict"
+   ]
+  },
+  {
+   "file": "src/zephyr/gov_enforcement/commit_gates/library/tag_vocab_gate.py",
+   "classes": [
+    "_Vocab"
+   ]
+  },
+  {
+   "file": "src/zephyr/alt_data/cohort_daily_writer.py",
+   "classes": [
+    "_CohortReader"
+   ]
+  },
+  {
+   "file": "src/zephyr/alt_data/emotion_index_builder.py",
+   "classes": [
+    "_Reader"
+   ]
+  },
+  {
+   "file": "src/zephyr/ex_sor/services/rl_trainer/td3_agent.py",
+   "classes": [
+    "TD3Agent"
+   ]
+  },
+  {
+   "file": "src/zephyr/ex_sor/services/rl_trainer/trainer.py",
+   "classes": [
+    "TrainerConfig",
+    "ReplayBuffer"
+   ]
+  },
+  {
+   "file": "src/zephyr/library/librarian.py",
+   "classes": [
+    "PgCursor",
+    "PgConnection",
+    "Librarian"
+   ]
+  },
+  {
+   "file": "src/zephyr/factor/technical_indicators/chips.py",
+   "classes": [
+    "_ChipGrid",
+    "_ChipsValidateMixin",
+    "CYQ",
+    "SCR",
+    "_ChipConcBase",
+    "CHIP_CONC_90",
+    "CHIP_CONC_70",
+    "CYC"
+   ]
+  },
+  {
+   "file": "src/zephyr/data/calendar_coverage_checker.py",
+   "classes": [
+    "WatchSpec",
+    "CoverageRow"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/intake/card_store.py",
+   "classes": [
+    "CardDraft",
+    "IntakeCard",
+    "CardStore"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/intake/dedup.py",
+   "classes": [
+    "DedupHit",
+    "DedupReport",
+    "IntakeDedup"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/intake/gate.py",
+   "classes": [
+    "IntakeCandidate",
+    "AdmissionVerdict",
+    "IntakeGate"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/intake/intake_events.py",
+   "classes": [
+    "IntakeEvent",
+    "IntakeJournal"
+   ]
+  },
+  {
+   "file": "src/zephyr/ai_layer/intake/kpi.py",
+   "classes": [
+    "KpiThresholds",
+    "KpiAlert",
+    "IntakeKpi"
+   ]
+  },
+  {
+   "file": "src/zephyr/risk/paper_hedge_leg.py",
+   "classes": [
+    "PaperHedgeLegError",
+    "PaperHedgeConfig",
+    "_LegState",
+    "PaperHedgeLeg"
+   ]
+  },
+  {
+   "file": "src/zephyr/data/alert_webhook_dispatch.py",
+   "classes": [
+    "AlertWebhookError",
+    "AlertWebhookEndpoint",
+    "AlertWebhookConfig",
+    "AlertWebhookDispatcher"
+   ]
+  },
+  {
+   "file": "src/zephyr/strategy_factory/owner_regime_switcher/engine.py",
+   "classes": [
+    "EngineConfig",
+    "LegResult"
+   ]
+  },
+  {
+   "file": "src/zephyr/strategy_factory/owner_regime_switcher/exam.py",
+   "classes": [
+    "WindowResult"
+   ]
+  },
+  {
+   "file": "src/zephyr/strategy_factory/owner_regime_switcher/switcher.py",
+   "classes": [
+    "SwitcherConfig",
+    "DailySchedule"
+   ]
+  },
+  {
+   "file": "src/zephyr/pf_alloc/crisis_gate.py",
+   "classes": [
+    "_WriterPort",
+    "_AlerterPort",
+    "CrisisGateError",
+    "CrisisGateConfig",
+    "CrisisState",
+    "CrisisBlock",
+    "CrisisGate"
+   ]
+  },
+  {
+   "file": "src/zephyr/ex_core/execution_report_producer.py",
+   "classes": [
+    "_FillLedger",
+    "ProducerStats",
+    "ExecutionReportProducer"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/resilience_governance/emergency_track_guardian.py",
+   "classes": [
+    "EmergencyTrackConfigError",
+    "TrackLeg",
+    "EmergencyTrackConfig",
+    "LegReading",
+    "EmergencyTrackVerdict",
+    "EmergencyTrackGuardian"
+   ]
+  },
+  {
+   "file": "src/zephyr/data/quality_sentinel.py",
+   "classes": [
+    "QualitySentinelError",
+    "QueryExecutor",
+    "TableSpec",
+    "SentinelFinding",
+    "SentinelOutput"
+   ]
+  },
+  {
+   "file": "src/zephyr/data/implementations/irm_provider.py",
+   "classes": [
+    "IrmProvider"
+   ]
+  },
+  {
+   "file": "src/zephyr/data/implementations/hyperliquid_provider.py",
+   "classes": [
+    "HyperliquidProvider"
+   ]
+  },
+  {
+   "file": "src/zephyr/governance/standards_governance/rule_replay.py",
+   "classes": [
+    "ReplayGateway",
+    "ReplayTarget",
+    "ReplayContext",
+    "ReplayRequest",
+    "_GitResult",
+    "_GatePair"
+   ]
+  },
+  {
+   "file": "src/zephyr/data/supply_sentinel.py",
+   "classes": [
+    "SupplySentinelError"
+   ]
+  },
+  {
+   "file": "src/zephyr/infra_ops/config_effect_checker.py",
+   "classes": [
+    "Mismatch",
+    "CoverageGap",
+    "Report"
+   ]
+  },
+  {
+   "file": "src/zephyr/data/implementations/fx_ecb_provider.py",
+   "classes": [
+    "FxEcbProvider"
+   ]
+  },
+  {
+   "file": "src/zephyr/strategy_pipeline/daily_decision_orchestrator.py",
+   "classes": [
+    "DecisionDeps",
+    "LegCtx"
+   ]
+  },
+  {
+   "file": "src/zephyr/plan_engine/close_verifier.py",
+   "classes": [
+    "CloseVerifier"
+   ]
+  },
+  {
+   "file": "src/zephyr/plan_engine/daily_plan.py",
+   "classes": [
+    "TriggerSyntaxError",
+    "_Parser",
+    "_MissingFeature",
+    "DailyPlanner"
+   ]
+  },
+  {
+   "file": "src/zephyr/plan_engine/scenario_classifier.py",
+   "classes": [
+    "ScenarioClassifier"
+   ]
+  },
+  {
+   "file": "src/zephyr/plan_engine/intraday_l1_tracker.py",
+   "classes": [
+    "Judgment5State",
+    "IntradayL1Tracker"
+   ]
+  },
+  {
+   "file": "src/zephyr/plan_engine/next_day_forecaster.py",
+   "classes": [
+    "NextDayForecaster"
+   ]
+  },
+  {
+   "file": "src/zephyr/infrastructure/system_telemetry/measure_calibration.py",
+   "classes": [
+    "MeasureCalibrator"
+   ]
+  },
+  {
+   "file": "src/zephyr/ex_sor/risk_redline.py",
+   "classes": [
+    "RedlineConfig",
+    "DayRecord",
+    "Action"
+   ]
+  },
+  {
+   "file": "src/zephyr/plan_engine/judgment_ledger.py",
+   "classes": [
+    "_TableSpec",
+    "EmitResult",
+    "JudgmentDraft",
+    "JudgmentEmitHook"
+   ]
+  },
+  {
+   "file": "src/zephyr/plan_engine/judgment_settler.py",
+   "classes": [
+    "SettleRowResult",
+    "SettleReport"
+   ]
+  },
+  {
+   "file": "src/zephyr/infra_runtime/runtime_admission.py",
+   "classes": [
+    "RuntimeAdmissionError",
+    "PoolQuota",
+    "RuntimeQuotas",
+    "AdmissionResult",
+    "RuntimeAdmissionCoordinator"
+   ]
+  },
+  {
+   "file": "src/zephyr/strategy_factory/owner_band_t/engine.py",
+   "classes": [
+    "StrategyConfig",
+    "_DailyState"
+   ]
+  },
+  {
+   "file": "src/zephyr/backtest/core/cost_attribution.py",
+   "classes": [
+    "CostAttributionError",
+    "CostAlert",
+    "CostAttribution"
+   ]
+  },
+  {
+   "file": "src/zephyr/backtest/core/cost_model_calibration.py",
+   "classes": [
+    "CostCalibrationError",
+    "CalibrationProvenance",
+    "CalibratedImpactLevel"
+   ]
+  },
+  {
+   "file": "src/zephyr/pf_alloc/allocation_config.py",
+   "classes": [
+    "AllocationConfigError",
+    "AllocationConfig"
+   ]
+  },
+  {
+   "file": "src/zephyr/pf_alloc/allocation_inputs.py",
+   "classes": [
+    "AllocationInputError",
+    "BaseWeightTable",
+    "PerformanceInput",
+    "PerformanceScoreTable",
+    "RegimeInput",
+    "AnchoredCap"
+   ]
+  },
+  {
+   "file": "src/zephyr/pf_alloc/allocation_orchestrator.py",
+   "classes": [
+    "ExcludedMember",
+    "CashSeat",
+    "SymbolPlan",
+    "StrategyAllocation",
+    "AllocationRunResult",
+    "LedgerStrategyBook",
+    "_LayerFacts",
+    "ChangeLogCollector"
+   ]
+  },
+  {
+   "file": "src/zephyr/pf_alloc/allocation_persistence.py",
+   "classes": [
+    "AllocationPersistenceError"
+   ]
+  },
+  {
+   "file": "src/zephyr/ex_core/daban_load_producer.py",
+   "classes": [
+    "DabanEventSource",
+    "ClickHouseDabanBoardEventSource",
+    "DerivedDabanBoardEventSource",
+    "DabanEngineLoadSource",
+    "ClickHouseDabanEngineLoadSource"
+   ]
+  },
+  {
+   "file": "src/zephyr/shared/utils/market_units.py",
+   "classes": [
+    "VolumeUnitProbe",
+    "MarketPanelReport"
+   ]
+  },
+  {
+   "file": "src/zephyr/regime/validation/wyckoff_walkforward.py",
+   "classes": [
+    "WalkFold",
+    "LayerResult"
+   ]
+  },
+  {
+   "file": "src/zephyr/data/implementations/breadth_freshness_alerts.py",
+   "classes": [
+    "BreadthFreshnessAlerts"
+   ]
+  },
+  {
+   "file": "src/zephyr/data/implementations/index_breadth_compute.py",
+   "classes": [
+    "IndexBreadthComputeProvider"
+   ]
+  }
+ ]
+}

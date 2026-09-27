@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)
+# [INVARIANTS] 硬阻断——staged 新增 .py 文件无 creation_token 时阻断 commit（passed=False）；tests/ 豁免（测试非能力真源，真源：commit_gate_registry.is_test_exempt）；非 rules/ 新增 .yaml 无 creation_token 亦硬阻断（扩展 CREATE-GUARD 到 .yaml，防造第二配置真源，.yaml 是 YAML->DB 单向同步真源）；rules/ .yaml 不走 token 检查（已有命名检查 L232-278）；YAML 不可达时 fail-closed 阻断（registry 故障是环境异常，禁止放行以防删 registry 绕过 token 检查）；git diff 失败亦 fail-closed；token 匹配按相对路径精确比对（路径归一化为正斜杠）；rules/ 新增(A)+rename(R) .yaml 两类命名违规硬阻断（ARCH-037 DIM-5 commit-time 强制：①非trae命名 ②单段name，--no-verify 绕不过）；token 检测通过后追加 check_capability_duplicates 调用（ARCH-031 门禁缺口治本：L3 pre-commit hook 被 --no-verify 绕过->L2 create_guard 追加 basename 碰撞检测，含未注册 basename 碰撞 _check_unregistered_basename_collision，收窄 governance/ 前缀+排除 _archive/，CapabilityLookup 不可用时 fail-open 不阻断）；新建 .py 文件头部 30 行内 MUST 含 14 字段标注（ARCH-031 14字段治本：# [FIELD] value 格式，BLUEPRINT/MODULE/DOMAIN/DEPENDENCIES/CONSUMERS/STARTUP/MATURITY/INVARIANTS/MODIFY-GUARD/STABILITY/SAFETY/AI_AUTONOMY/ERROR_CONTRACT/TESTS，缺字段硬阻断）；codegen 文件豁免（含 BEGIN CODEGEN/BEGIN CODGEN 标记，字段由模板注入）；__init__.py 最低 3 字段（BLUEPRINT/MODULE/DOMAIN，包标记可省 CONSUMERS 等）；14字段规范真源在 AGENTS.md + governance/__init__.py docstring；governance/ 根禁止新增 .py 文件（ARCH-031 防复发2026-07-02：治本后仅保留 6 个高风险核心模块，2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后降至 6，新模块 MUST 放入子目录，path.count("/")==3 匹配 src/zephyr/governance/<name>.py 硬阻断）；新建 .py/.yaml 资产（非 tests/，own-scope=本提交文件面）token 条目缺 merge_evaluation 字段→warn+审计不阻断（裁定#375 内收判据门禁化首期 warn-only——硬阻断会把存量 token 全打红，留过渡窗由季度审计评估升级）；own 化 2026-09-23(st-gslim P2)：staged_new 获取后即按本 session 拆分，外来 staged warn+审计不阻断(_split_own_foreign；governance 根 R-rename 反绕过检测保持全暂存)；波13·包13.1（2026-09-26）新建 .py 查功能关键词：对每个新建 .py 取查询面（文件名 stem+模块 docstring 首段+顶层类/函数名）切探针，逐探针调既有 CapabilityLookup.find()，命中>0（canonical 指向本文件或同批新建者除外）⇒硬阻断，逃生标记 '# create-guard-not-dup: <一句话理由>' 按文件豁免，命中=0 ⇒ 放行且由 find() 既有审计通道 .runtime/lookup_audit/<sid>.jsonl 的 result_count=0 行做漂移日志（不新建日志文件）；find 故障 fail-closed；取代 L827-848 fail-open basename 尺的判重角色（后者降为冗余后备）与 capability_overlap_gate stage-1 文件名词元启发式（见其 docstring 注释）；同批 CLASS-UNIQUENESS git grep 批量化为每批一次 -E alternation 调用+Python 侧按类名归因（非 ASCII 类名回退逐名查询，判据与逐名版全等，100+样本重放见 docs/_working/three_piece_infra/piece1_gate/CASE.md）
 # [MODIFY-GUARD] gate_id="CREATE-GUARD"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -174,6 +174,29 @@ _RULES_DIR_PREFIX = "docs/01_policies_and_standards/rules/"
 _GOVERNANCE_ROOT_PREFIX = "src/zephyr/governance/"
 _ALIAS_MARKER = "class-name-alias"
 _OTHER_FORMAT_EXTENSIONS = (".md", ".sh", ".ps1", ".mmd", ".json")
+
+# === 波13·包13.1 CREATE-GUARD 查功能关键词（2026-09-26） ===
+# 逃生标记确切字面量（声明"确非重复"才放行，按文件豁免；spec 真源=本常量+案卷）：
+#     # create-guard-not-dup: <一句话理由>
+# （行首 #、冒号后必须跟非空理由；作用域=仅该新建 .py 自身；grep 面=git grep -rn "create-guard-not-dup"）
+_KEYWORD_DUP_MARKER = "create-guard-not-dup"
+_KEYWORD_DUP_MARKER_RE = re.compile(rf"^#\s*{re.escape(_KEYWORD_DUP_MARKER)}:\s*(\S.*)$", re.MULTILINE)
+# 每文件探针上限（查询面=stem+docstring 首段+顶层类/函数名；上限防大 docstring 爆炸——
+# 每次 find() 均落一条 lookup_audit 且有图书馆查重探针，实测 find 首轮开销不可忽略）
+_MAX_KEYWORD_PROBES = 8
+_CJK_RUN_RE = re.compile(r"[\u4e00-\u9fff]{3,}")
+_ASCII_DOC_WORD_RE = re.compile(r"[A-Za-z][A-Za-z0-9]*")
+# bigram 词对噪声门：docstring 通用词不成"功能关键词"（仅作用于④bigram 探针，
+# 不作用于 stem/标识符探针——后者本身即功能语义面）
+_BIGRAM_STOPWORDS = frozenset(
+    {
+        "this", "that", "with", "from", "these", "those", "will", "would", "could",
+        "have", "has", "had", "been", "being", "into", "over", "under", "about",
+        "above", "they", "them", "their", "there", "then", "than", "when", "where",
+        "which", "what", "while", "because", "should", "must", "not", "only",
+        "such", "also", "each", "other", "others", "either", "neither", "every",
+    }
+)
 
 # === B1 registry 撕裂读重试（2026-09-16） ===
 # 病根：并发会话写 capability registry 时存在瞬态撕裂读（读半个写入窗口），
@@ -494,13 +517,65 @@ def _check_governance_root(gateway, new_py_files: list[str]) -> tuple[bool, str]
     return True, ""
 
 
+def _chunk_class_names(names: list[str], max_pattern_len: int = 6000) -> list[list[str]]:
+    """把类名列表切成若干批，使 alternation 正则长度 ≤max_pattern_len。
+
+    Windows CreateProcess 命令行硬上限 32767 字符——一次 commit 千级 class 时单条
+    alternation 会爆；切批后仍是"每批一次 grep"（成本 O(批数) ≪ O(类名数)）。
+    各批名字互斥，归因结果直接合并，判据与逐名版全等。
+    """
+    chunks: list[list[str]] = []
+    cur: list[str] = []
+    cur_len = len("^class ()\\b")
+    for n in names:
+        if cur and cur_len + len(n) + 1 > max_pattern_len:
+            chunks.append(cur)
+            cur, cur_len = [], len("^class ()\\b")
+        cur.append(n)
+        cur_len += len(n) + 1
+    if cur:
+        chunks.append(cur)
+    return chunks
+
+
+def _attribute_class_grep_lines(grep_stdout: str, names: list[str]) -> dict[str, list[str]]:
+    """把 `git grep -n -E "^class (A|B|...)\\b"` 的行级输出归因回类名→文件清单（纯函数）。
+
+    波13·包13.1 L527 批量化：原版对每个类名各跑一次全树 `git grep -l`（成本源），
+    批量为每批一次 `-n` alternation 调用后，本函数按行内容用与 grep 等价的
+    `^class NAME\b` 逐名归因，产出与逐名 `-l` 全等的 {类名: [文件…]}（文件顺序=
+    git grep 的树序分组，逐名去重）。行格式 `path:lineno:content` 按前两个冒号切分。
+    """
+    compiled = {n: re.compile(r"^class " + re.escape(n) + r"\b") for n in names}
+    result: dict[str, list[str]] = {n: [] for n in names}
+    for line in grep_stdout.splitlines():
+        parts = line.split(":", 2)
+        if len(parts) < 3:
+            continue
+        path = parts[0].replace("\\", "/")
+        content = parts[2]
+        for name, pat in compiled.items():
+            if pat.search(content):
+                files = result[name]
+                if not files or files[-1] != path:
+                    files.append(path)
+    return result
+
+
 def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str]:
     """ARCH-034 P3 遗留2治本：类名跨模块唯一性检测。
 
     豁免：class 定义前3行内有 '# class-name-alias: <理由>' 标记（合法 re-export 场景）。
-    fail-closed：git grep 故障时阻断（防漏放同名 class）。
+    fail-closed：git grep 故障（异常）时阻断（防漏放同名 class）。
+    波13·包13.1 L527 成本面批量化：ASCII 类名一批一次 `git grep -n -E
+    "^(class (A|B|C))\\b"`（原为每新文件每 class 一次全树 grep，实测 1519 次/19186s
+    的成本源），行级输出经 `_attribute_class_grep_lines` 按类名归因；非 ASCII 类名
+    回退逐名 `git grep -l`（POSIX \\b 与 Python \\b 对非 ASCII 语义可能分叉，回退
+    保证判据与逐名版全等）。违规组装顺序与消息格式与逐名版一致；
+    等价性由 100+ 真实样本重放自证（CASE 见 three_piece_infra/piece1_gate/CASE.md）。
     """
-    _class_violations = []
+    file_classes: list[tuple[str, list[str]]] = []
+    all_names: list[str] = []
     for _py_file in new_py_files:
         _abs_path = str(gateway.project_root / _py_file)
         try:
@@ -510,6 +585,7 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             continue  # 语法错误由其他 gate 检测，此处 fail-open
         _lines = _src.splitlines()
+        _names: list[str] = []
         for _node in ast.walk(_tree):
             if not isinstance(_node, ast.ClassDef):
                 continue
@@ -521,25 +597,58 @@ def _check_class_uniqueness(gateway, new_py_files: list[str]) -> tuple[bool, str
                     break
             if _has_marker:
                 continue
-            # git grep 搜索同名 class 在 src/zephyr/ 下（排除当前文件）
-            # ARCH-034 遗留3治本：git grep 故障改 fail-closed
+            _names.append(_node.name)
+        if _names:
+            file_classes.append((_py_file, _names))
+            all_names.extend(_names)
+    if not all_names:
+        return True, ""
+
+    name_files: dict[str, list[str]] = {}
+    ascii_names = [n for n in dict.fromkeys(all_names) if n.isascii()]
+    non_ascii_names = [n for n in dict.fromkeys(all_names) if not n.isascii()]
+
+    # 批量路径：每批一次 -n alternation grep（批切防命令行上限；ARCH-034 遗留3治本：
+    # 故障 fail-closed 语义不变）
+    if ascii_names:
+        for _chunk in _chunk_class_names(ascii_names):
+            _pattern = "^class (" + "|".join(_chunk) + ")\\b"
             try:
-                _grep_res = gateway.run_git(["git", "grep", "-l", f"^class {_node.name}\\b", "--", "src/zephyr/"])
+                _grep_res = gateway.run_git(["git", "grep", "-n", "-E", _pattern, "--", "src/zephyr/"])
                 if _grep_res.returncode == 0:
-                    _existing = [
-                        f.replace("\\", "/")
-                        for f in _grep_res.stdout.strip().splitlines()
-                        if f.replace("\\", "/") != _py_file
-                    ]
-                    if _existing:
-                        _class_violations.append((_py_file, _node.name, _existing))
+                    name_files.update(_attribute_class_grep_lines(_grep_res.stdout, _chunk))
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                _shown = ", ".join(_chunk[:5]) + ("..." if len(_chunk) > 5 else "")
                 return False, (
                     f"CREATE-GUARD CLASS-UNIQUENESS fail-closed: git grep 异常"
-                    f"({type(e).__name__}: {e})，无法检测 class '{_node.name}' 跨模块冲突。"
+                    f"({type(e).__name__}: {e})，无法检测 class '{_shown}' 跨模块冲突。"
                     f"禁止放行——检测器失效时漏放同名 class（AI 开发幻觉温床）。"
                     f"修复：检查 git 状态（git status）确认仓库可用后重试。"
                 )
+
+    # 回退路径：非 ASCII 类名逐名 -l（与原实现同命令同语义）
+    for _node_name in non_ascii_names:
+        try:
+            _grep_res = gateway.run_git(["git", "grep", "-l", f"^class {_node_name}\\b", "--", "src/zephyr/"])
+            if _grep_res.returncode == 0:
+                name_files[_node_name] = [
+                    f.replace("\\", "/") for f in _grep_res.stdout.strip().splitlines() if f.strip()
+                ]
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            return False, (
+                f"CREATE-GUARD CLASS-UNIQUENESS fail-closed: git grep 异常"
+                f"({type(e).__name__}: {e})，无法检测 class '{_node_name}' 跨模块冲突。"
+                f"禁止放行——检测器失效时漏放同名 class（AI 开发幻觉温床）。"
+                f"修复：检查 git 状态（git status）确认仓库可用后重试。"
+            )
+
+    # 违规组装（文件序→类名序；existing 排除自身——与逐名版逐字一致）
+    _class_violations = []
+    for _py_file, _names in file_classes:
+        for _node_name in _names:
+            _existing = [f for f in name_files.get(_node_name, []) if f != _py_file]
+            if _existing:
+                _class_violations.append((_py_file, _node_name, _existing))
     if _class_violations:
         _detail = "; ".join(f"{f} 定义 class {name} 与已有 {existing} 同名" for f, name, existing in _class_violations)
         return False, (
@@ -824,10 +933,24 @@ def _check_field_header(gateway, new_py_files: list[str]) -> tuple[bool, str]:
     return True, ""
 
 
-def _check_basename_collision(gateway, new_py_files: list[str]) -> tuple[bool, str]:
+def _build_capability_lookup():
+    """CapabilityLookup 构造缝（唯一构造点，供 basename 碰撞与查功能关键词共享）。
+
+    实测本仓构造一次 ~86s（磁盘头部扫描+派生，另有首次 find 的 removed 派生 ~15s，
+    冷缓存读数）——一次 commit 只允许构造一次，两处检测共享同一实例。
+    测试可用 monkeypatch 本缝注入小型 lookup（禁在测试里跑全库扫描）。
+    """
+    from zephyr.governance.capability_lookup import CapabilityLookup
+
+    return CapabilityLookup()
+
+
+def _check_basename_collision(gateway, new_py_files: list[str], lookup=None) -> tuple[bool, str]:
     """ARCH-031 门禁缺口治本：磁盘 basename 碰撞检测（GATE-SSOT L2）。
 
     fail-open：CapabilityLookup 不可用时 warning 并跳过。
+    波13·包13.1：lookup 传入时复用共享实例（判重尺角色已被
+    _check_capability_keyword_overlap 取代，本检测降为冗余后备，行为数值不动）。
     """
     if not new_py_files:
         return True, ""
@@ -837,7 +960,7 @@ def _check_basename_collision(gateway, new_py_files: list[str]) -> tuple[bool, s
             CapabilityLookup,
         )
 
-        _lookup = CapabilityLookup()
+        _lookup = lookup if lookup is not None else CapabilityLookup()
         _new_py_tuples = [(str(gateway.project_root / f), f) for f in new_py_files]
         _dups = _lookup.check_capability_duplicates(_new_py_tuples)
         if _dups:
@@ -845,6 +968,172 @@ def _check_basename_collision(gateway, new_py_files: list[str]) -> tuple[bool, s
             return False, (f"能力重复/basename碰撞(GATE-SSOT L2): {_details}. {CAPABILITY_DUPLICATE_FIX_HINT}")
     except Exception as _e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning("CREATE-GUARD: capability_lookup 不可用，跳过 basename 碰撞检测: %s", _e, exc_info=True)
+    return True, ""
+
+
+def _keyword_identifier_words(name: str) -> list[str]:
+    """标识符切词（snake/camel/kebab/数字段），返回小写字母词（长度≥2，去纯数字）。
+
+    真源探针构造的唯一切词点——stem 与顶层类/函数名共用。数字段（如日期戳）是
+    测试唯一名惯例不是功能语义，剔除；<2 字词（如 a/b）是噪声剔除。
+    """
+    s = re.sub(r"(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])|[_\-\s]+", " ", name)
+    return [w.lower() for w in s.split() if len(w) >= 2 and w.isalpha()]
+
+
+def _build_keyword_probes(rel_path: str, tree: ast.Module) -> list[str]:
+    """构建一个新建 .py 的关键词查询面探针列表（波13·包13.1）。
+
+    查询面 = 文件名 stem + 模块 docstring 首段 + 顶层 class/function 名，切成探针：
+      ① stem 与②每个顶层类/函数名 → 切词后 ≥2 词 AND 查询（单词查询=过宽子串噪声，弃）；
+      ③ docstring 首段 CJK 连续段（≥3 字，find() 的 ≥_CJK_MIN_SUBSTRING 滑窗语义面）；
+      ④ docstring 首段相邻 ASCII 词对（bigram，两词 AND，防单词全命中）。
+    上限 _MAX_KEYWORD_PROBES（排序即优先级：stem > 类名 > 函数名 > CJK > bigram）。
+    只调既有 CapabilityLookup.find() 判重，禁在本函数外另起匹配器（§2.1 收编令）。
+    """
+    probes: list[str] = []
+    seen: set[str] = set()
+
+    def _add(query: str) -> None:
+        query = query.strip().lower()
+        if len(query) < 3 or query in seen:
+            return
+        # 纯 ASCII 探针必须 ≥2 词：单词查询走 find() 的精确子串分支（实测 find("gate")
+        # 命中 181/388——单 ASCII 词=全库噪声，不成"功能关键词"）；CJK 探针 ≥3 字
+        # 由 find() 滑窗语义（_CJK_MIN_SUBSTRING=3）保证窄度，单词可放行。
+        if query.isascii() and len(query.split()) < 2:
+            return
+        seen.add(query)
+        probes.append(query)
+
+    stem = rel_path.rsplit("/", 1)[-1]
+    if stem.endswith(".py"):
+        stem = stem[:-3]
+    _add(" ".join(_keyword_identifier_words(stem)))
+    classes: list[str] = []
+    functions: list[str] = []
+    for node in tree.body:
+        if isinstance(node, ast.ClassDef):
+            classes.append(node.name)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            functions.append(node.name)
+    for name in classes + functions:
+        _add(" ".join(_keyword_identifier_words(name)))
+    doc = ast.get_docstring(tree) or ""
+    first_para = re.split(r"\n[ \t]*\r?\n", doc, maxsplit=1)[0]
+    for run in _CJK_RUN_RE.findall(first_para):
+        _add(run)
+    ascii_words = [
+        w.lower()
+        for w in _ASCII_DOC_WORD_RE.findall(first_para)
+        if len(w) >= 4 and w.lower() not in _BIGRAM_STOPWORDS
+    ]
+    for prev, nxt in zip(ascii_words, ascii_words[1:]):
+        if len(probes) >= _MAX_KEYWORD_PROBES:
+            break
+        _add(f"{prev} {nxt}")
+    return probes[:_MAX_KEYWORD_PROBES]
+
+
+def _scan_file_for_keyword_dupes(lookup, rel: str, src: str, batch_paths: set[str], session_id: str | None) -> list[tuple[str, str, str, list[str]]]:
+    """单文件面：探针→find()→命中归并（返回该文件的违规条目列表；异常向上抛=外层 fail-closed）。
+
+    命中过滤：canonical 指向该文件自身或同批新建文件 ⇒ 自引用/同批登记，非重复信号。
+    逃生标记命中 ⇒ 该文件整体豁免（空列表）。语法错误 ⇒ 豁免（由其他 gate 检测）。
+    """
+    if _KEYWORD_DUP_MARKER_RE.search(src):
+        return []
+    try:
+        tree = ast.parse(src)
+    except (SyntaxError, ValueError):
+        return []
+    hits: dict[str, dict] = {}
+    hit_tokens: dict[str, list[str]] = {}
+    for probe in _build_keyword_probes(rel, tree):
+        for entry in lookup.find(probe, session_id=session_id):
+            cap_id = str(entry.get("capability_id", "") or "")
+            canon = str(entry.get("canonical_file", "") or "").replace("\\", "/")
+            if not cap_id or not canon:
+                continue
+            if canon == rel or canon in batch_paths:
+                continue
+            hits.setdefault(cap_id, entry)
+            hit_tokens.setdefault(cap_id, []).append(probe)
+    return [
+        (rel, cap_id, str(entry.get("canonical_file", "") or ""), sorted(set(hit_tokens[cap_id])))
+        for cap_id, entry in hits.items()
+    ]
+
+
+def _check_capability_keyword_overlap(
+    gateway,
+    new_py_files: list[str],
+    session_id: str | None = None,
+    lookup=None,
+    lookup_error: str = "",
+) -> tuple[bool, str]:
+    """波13·包13.1：新建 .py 查功能关键词（Owner 授权：从查文件名升级到查功能关键词）。
+
+    对每个新建 .py：构建查询面探针（_build_keyword_probes），逐探针调用既有
+    ``CapabilityLookup.find()``（检索面=capability_id+description+canonical_file+
+    module_id+aliases，capability_lookup.py L924-930；禁重写匹配器）。
+    - 命中>0 ⇒ 硬阻断，消息逐条给出 capability_id / canonical（派生面，
+      canonical_override=其优先级 1 真源）/ 命中探针词 / 逃生标记确切字面量
+      ``# create-guard-not-dup: <一句话理由>``（带非空理由即按文件豁免本检测）。
+    - 命中=0 ⇒ 放行；漂移日志=find() 既有审计 .runtime/lookup_audit/<sid>.jsonl
+      的 result_count=0 行（不新建日志文件）。
+    - fail-closed：lookup 构造失败/find 异常 ⇒ 阻断（检测器失效禁止放行，对标 token
+      检查 fail-closed 哲学）；语法错误文件 fail-open（由其他 gate 检测）。
+    - lookup 由调用方（_run_file_registration_checks）经 _build_capability_lookup
+      单例共享——本仓实测一次构造 ~86s，禁止双载。
+    - 取代申报（#ARCH-310 §4）：本检测取代 _check_basename_collision（fail-open
+      basename 尺）的判重角色与 capability_overlap_gate stage-1 文件名词元启发式；
+      两者降为冗余后备/禁用态，本道不删不改其数值。
+    """
+    if not new_py_files:
+        return True, ""
+    if lookup is None:
+        return False, (
+            f"CREATE-GUARD 查功能关键词 fail-closed: CapabilityLookup 构造失败"
+            f"（{lookup_error or '未提供且构造未执行'}），无法判定新建 .py 是否与在册能力重复。"
+            f"禁止放行——检测器失效时漏放第二真源。"
+            f"修复：确认 capability registry 可达后重试。"
+        )
+    try:
+        batch_paths = set(new_py_files)
+        violations: list[tuple[str, str, str, list[str]]] = []
+        for rel in new_py_files:
+            abs_path = gateway.project_root / rel
+            if not abs_path.exists():
+                continue
+            try:
+                src = abs_path.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue  # 读不到由下游检测面兜底，此处不造新判据
+            violations.extend(_scan_file_for_keyword_dupes(lookup, rel, src, batch_paths, session_id))
+    except Exception as _e:  # noqa: BLE001 — fail-closed：检测器失效禁止放行
+        return False, (
+            f"CREATE-GUARD 查功能关键词 fail-closed: CapabilityLookup 异常"
+            f"({type(_e).__name__}: {_e})，无法判定新建 .py 是否与在册能力重复。"
+            f"禁止放行——检测器失效时漏放第二真源。"
+            f"修复：确认 capability registry 可达后重试。"
+        )
+    if violations:
+        _lines = "; ".join(
+            f"{rel} → capability_id={cap_id} | canonical_override={canon} | 命中词={tokens}"
+            for rel, cap_id, canon, tokens in violations
+        )
+        return False, (
+            f"新建 .py 查功能关键词命中在册能力（波13·包13.1，判为第二真源）: {_lines}. "
+            f"查询面=文件名 stem+模块 docstring 首段+顶层类/函数名，检索器=CapabilityLookup.find()"
+            f"（既有真源，禁另起匹配器）。"
+            f"修复：优先扩展上述 canonical 文件而非新建（RULE-CAPABILITY-LOOKUP / trae_060 §2）。"
+            f"若确非重复，在该 .py 内任意注释行写逃生标记（冒号后必须跟一句话理由，逐字格式）: "
+            f"# create-guard-not-dup: <一句话理由>"
+            f"（例: '# create-guard-not-dup: 本模块只做 X 域只读展示，非 Y 能力的第二实现'；"
+            f"可 grep 审计: git grep -rn '{_KEYWORD_DUP_MARKER}'）。"
+            f"零命中漂移日志=find() 既有审计 .runtime/lookup_audit/<session_id>.jsonl 的 result_count=0 行，不新建日志。"
+        )
     return True, ""
 
 
@@ -892,8 +1181,23 @@ def _run_file_registration_checks(
     if not passed:
         return False, detail
 
-    # ARCH-031：basename 碰撞检测
-    return _check_basename_collision(gateway, new_py_files)
+    # ARCH-031：basename 碰撞检测 + 波13·包13.1 查功能关键词（链尾追加，既有各步
+    # 先后语义不动）。CapabilityLookup 经 _build_capability_lookup 单次构造共享
+    # （实测 ~86s/实例，禁双载）；构造失败时 basename 保持 fail-open 原语义
+    # （内部再构造→同败→warning 跳过），关键词检测 fail-closed（检测器失效禁放行）。
+    _lookup = None
+    _lookup_err = ""
+    if new_py_files:
+        try:
+            _lookup = _build_capability_lookup()
+        except Exception as _e:  # noqa: BLE001 — 交由两检测各自按其 fail 语义处置
+            _lookup_err = f"{type(_e).__name__}: {_e}"
+    passed, detail = _check_basename_collision(gateway, new_py_files, lookup=_lookup)
+    if not passed:
+        return False, detail
+    return _check_capability_keyword_overlap(
+        gateway, new_py_files, session_id=session_id, lookup=_lookup, lookup_error=_lookup_err
+    )
 
 
 def make_create_guard() -> GateSpec:
@@ -959,7 +1263,8 @@ def make_create_guard() -> GateSpec:
         if not passed:
             return False, detail
 
-        # 文件登记类检测链（creation_token / #375 merge_evaluation warn / 字段头部 / basename 碰撞）
+        # 文件登记类检测链（creation_token / #375 merge_evaluation warn / 字段头部 / basename 碰撞
+        # / 波13·包13.1 查功能关键词——链尾追加，不改既有各步先后语义）
         return _run_file_registration_checks(
             gateway, new_py_files, new_yaml_files, new_other_files, kwargs.get("session_id")
         )
