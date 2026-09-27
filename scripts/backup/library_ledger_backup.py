@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-043 | docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md | §3
 # [MODULE] scripts.backup.library_ledger_backup
 # [DOMAIN] D_INFRASTRUCTURE
-# [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection)
+# [DEPENDENCIES] zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.library.snapshot_store (备份成功尾步刷快照，懒加载)
 # [CONSUMERS] schtasks ZephyrAlpha_LibraryLedgerBackup/ZephyrAlpha_LibraryLedgerDrill; scripts/register_library_ledger_backup_task.ps1
 # [STARTUP] scheduled_task
 # [MATURITY] production
-# [INVARIANTS] 全程只读 PG（get_depgraph_pg_connection 默认 read_only）；备份=双链落位（G:/backup 主 + F:/zephyr_cold 镜像）；滚动保留 30 天且每月 1 日留档不清；恢复演练=纯 Python CSV 流式核验（零 PG 写、零裸 duckdb）产出 PASS/FAIL 报告
+# [INVARIANTS] 全程只读 PG（get_depgraph_pg_connection 默认 read_only）；备份=双链落位（G:/backup 主 + F:/zephyr_cold 镜像）；滚动保留 30 天且每月 1 日留档不清；恢复演练=纯 Python CSV 流式核验（零 PG 写、零裸 duckdb）产出 PASS/FAIL 报告；快照刷新挂 backup 成功尾步（既有 schtasks 事件链，零新增计划任务）且 fail-open——快照故障不得改备份退出码
 # [MODIFY-GUARD] gate_id 不适用
 # [STABILITY] evolving
 # [SAFETY] M
@@ -246,6 +246,23 @@ def _latest_drill_verdict() -> str | None:
     return json.loads(reports[-1].read_text(encoding="utf-8")).get("verdict")
 
 
+def _refresh_snapshot_quietly() -> dict:
+    """备份成功尾步刷本地快照（S3 案 A：搭既有 schtasks 事件链，零新增计划任务）。
+
+    fail-open：快照层任何异常（含 R1 世代指纹件未落地、磁盘不可写）只记 stderr 警告，
+    不改备份退出码——快照是可派生镜像非真源，炸了不影响备份双链落位语义。
+    """
+    try:
+        from zephyr.library.snapshot_store import refresh_snapshot  # noqa: PLC0415 — 懒加载：备份链不背 pyarrow 依赖
+
+        result = refresh_snapshot()
+    except Exception as exc:  # noqa: BLE001 — fail-open 明文豁免：快照非真源，禁连坐备份链
+        print(f"[snapshot][warn] 快照刷新失败（不影响备份）：{type(exc).__name__}: {exc}", file=sys.stderr)
+        return {"status": "failed", "reason": f"{type(exc).__name__}: {exc}"}
+    print(f"[snapshot] {json.dumps(result, ensure_ascii=False)}", file=sys.stderr)
+    return result
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="图书馆 PG 账本双链备份+恢复演练")
     parser.add_argument("command", choices=["backup", "drill", "status"])
@@ -253,6 +270,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.command == "backup":
         run_backup()
+        _refresh_snapshot_quietly()  # 双链落位成功=事件；fail-open 不改退出码
     elif args.command == "drill":
         run_drill(day=args.date)
     else:

@@ -1,17 +1,17 @@
 # [BLUEPRINT] MOD-LIB-003 | docs/03_modules/_domain_library/blueprint.md | §3
 # [MODULE] zephyr.library.lookup
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.library.registry; zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.shared.io.yaml_utils (load_vocabulary_alias_map)
+# [DEPENDENCIES] zephyr.library.registry; zephyr.governance.depgraph_schema (get/release_depgraph_pg_connection); zephyr.library.librarian; zephyr.library.ledger_cache (世代缓存读侧); zephyr.shared.io.yaml_utils (load_vocabulary_alias_map)
 # [CONSUMERS] scripts/governance/generators/generate_library_index.py; tests/library/test_library_smoke.py
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 只读查询；查询入口统一（总口：API+CLI；T5 两轴过滤器 kind/owner_domain/tags/status/home 前缀组合筛选+回测产物查询面）；G15-① 别名轴=查询词先过词表归一（近似词→标准词→match_tokens 资产 token）再匹配，fail-open 词表不可用退原词；MCP server W+1 挂接
+# [INVARIANTS] 只读查询；查询入口统一（总口：API+CLI；T5 两轴过滤器 kind/owner_domain/tags/status/home 前缀组合筛选+回测产物查询面）；G15-① 别名轴=查询词先过词表归一（近似词→标准词→match_tokens 资产 token）再匹配，fail-open 词表不可用退原词；MCP server W+1 挂接；读侧接入世代缓存（lib_ram_campaign R1）：命中即零账本数据 SQL，水位翻代才重建，LIBRAM_DIRECT=1 逃生直查——供数反查面 --feeds 恒现读（未携 potential_consumers 列，禁跨代拼装）；连接借还成对（get→release，禁 close 弃池）
 # [MODIFY-GUARD] gate_id 不适用
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DB 异常原样上抛；CLI 无结果返回 1
-# [TESTS] tests/library/test_library_smoke.py; tests/library/test_lookup_alias.py
+# [TESTS] tests/library/test_library_smoke.py; tests/library/test_lookup_alias.py; tests/library/test_ledger_cache.py
 # [A_module] module_id=MOD-LIB-003 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  M11豁免: 总目查询 CLI（python -m zephyr.library.lookup）人工按需调用是设计形态，非常驻系统
@@ -32,7 +32,9 @@ import argparse
 import sys
 from typing import Any, Final
 
-from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+from zephyr.governance.depgraph_schema import get_depgraph_pg_connection, release_depgraph_pg_connection
+from zephyr.library import ledger_cache
+from zephyr.library.ledger_cache import LedgerFilters
 from zephyr.library.librarian import Librarian
 
 __all__ = ["lookup_assets"]  # noqa: n114-final  n114-final豁免: __all__是Python导出约定，非可变常量，无需Final标注（先例=asyncio_run_in_context_gate.py L77）
@@ -102,6 +104,45 @@ def _expand_query(query: str) -> list[str]:
 _alias_expansion_enabled = True
 
 
+def _lookup_terms_via_sql(terms: list[str], limit: int, filters: LedgerFilters) -> list[list[dict[str, Any]]]:
+    """直查真源腿（缓存旁路/无缓存位走这里）：一条池化连接借还一次，用毕**归还**而非 close。
+
+    conn.close() 会让 per-role 池（min1/max5）反复回收槽位、失去复用收益（§5.64.1 反模式，
+    归还接口 release_depgraph_pg_connection）；tags 空元组按 None 透传（=SQL 侧无该过滤器）。
+    """
+    conn = get_depgraph_pg_connection()
+    try:
+        lib = Librarian(conn)
+        return [
+            lib.lookup(
+                term,
+                limit=limit,
+                kind=filters.kind,
+                owner_domain=filters.owner_domain,
+                tags=list(filters.tags) or None,
+                status=filters.status,
+                home_prefix=filters.home_prefix,
+            )
+            for term in terms
+        ]
+    finally:
+        release_depgraph_pg_connection(conn)
+
+
+def _merge_per_term(per_term: list[list[dict[str, Any]]], limit: int) -> list[dict[str, Any]]:
+    """逐深度轮转合并：同深度上原词（terms[0]）优先，展开词首命中不被原词长尾挤掉。"""
+    merged: dict[str, dict[str, Any]] = {}
+    for depth in range(limit):
+        for rows in per_term:
+            if depth >= len(rows):
+                continue
+            row = rows[depth]
+            merged.setdefault(row["asset_id"], row)
+            if len(merged) >= limit:
+                return list(merged.values())[:limit]
+    return list(merged.values())[:limit]
+
+
 def lookup_assets(
     query: str,
     limit: int = 20,
@@ -112,36 +153,25 @@ def lookup_assets(
     status: str | None = None,
     home_prefix: str | None = None,
 ) -> list[dict[str, Any]]:
-    """连接资产总线并执行借阅查询（T5 组合过滤器透传；G15-① 别名轴默认展开，模块开关可关）。"""
-    conn = get_depgraph_pg_connection()
-    try:
-        lib = Librarian(conn)
-        terms = _expand_query(query)
-        per_term = [
-            lib.lookup(
-                term,
-                limit=limit,
-                kind=kind,
-                owner_domain=owner_domain,
-                tags=tags,
-                status=status,
-                home_prefix=home_prefix,
-            )
-            for term in terms
-        ]
-        # 逐深度轮转合并：同深度上原词（terms[0]）优先，展开词首命中不被原词长尾挤掉
-        merged: dict[str, dict[str, Any]] = {}
-        for depth in range(limit):
-            for rows in per_term:
-                if depth >= len(rows):
-                    continue
-                row = rows[depth]
-                merged.setdefault(row["asset_id"], row)
-                if len(merged) >= limit:
-                    return list(merged.values())[:limit]
-        return list(merged.values())[:limit]
-    finally:
-        conn.close()
+    """连接资产总线并执行借阅查询（T5 组合过滤器透传；G15-① 别名轴默认展开，模块开关可关）。
+
+    读侧世代缓存（lib_ram_campaign R1）：水位未变即纯内存匹配（零账本数据 SQL，仅 1 次
+    O(1) 水位探测），水位翻代才 single-flight 重建；``LIBRAM_DIRECT=1`` 逃生旁路直查真源。
+    写侧与对账面（Librarian 注入连接 / _SQL_* 直查）不经本函数，故 S4 §⑤ 不可缓存位天然隔离。
+    """
+    filters = LedgerFilters(
+        kind=kind,
+        owner_domain=owner_domain,
+        tags=tuple(tags or ()),
+        status=status,
+        home_prefix=home_prefix,
+    )
+    terms = _expand_query(query)
+    if ledger_cache.cache_enabled():
+        per_term = [ledger_cache.search(term, limit, filters) for term in terms]
+    else:
+        per_term = _lookup_terms_via_sql(terms, limit, filters)
+    return _merge_per_term(per_term, limit)
 
 
 def _query_commit_guide(topic: str) -> int:
@@ -243,13 +273,17 @@ def _tombstone_tail(row: dict[str, Any]) -> str:
 
 
 def _run_feeds_query(keyword: str, limit: int) -> int:
-    """供数反查面（裁定#410）：potential_consumers 含关键词的资产清单。"""
+    """供数反查面（裁定#410）：potential_consumers 含关键词的资产清单。
+
+    恒现读真源（不经世代缓存）：potential_consumers 属写侧对账轴，世代快照未携该列
+    ——宁可多一次查询，也不让供数反查读到旧代（S4 §⑤ 不可缓存位；同代化留 R2 判）。
+    """
     conn = get_depgraph_pg_connection()
     try:
         lib = Librarian(conn)
         rows = lib.lookup_by_feeds(keyword, limit=limit)
     finally:
-        conn.close()
+        release_depgraph_pg_connection(conn)
     if not rows:
         print(f"(no assets feeding {keyword!r})")
         return 1

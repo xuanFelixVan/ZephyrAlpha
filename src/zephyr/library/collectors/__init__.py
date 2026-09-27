@@ -32,6 +32,7 @@ def collect_all(names: list[str] | None = None) -> dict[str, list[dict[str, Any]
     from zephyr.library.collectors.mcp_collector import collect as mcp_collect
     from zephyr.library.collectors.pg_collector import collect as pg_collect
     from zephyr.library.collectors.schtasks_collector import collect as sch_collect
+    from zephyr.library.collectors.store_collector import collect as store_collect
 
     registry: dict[str, Any] = {
         "fs": fs_collect,
@@ -40,6 +41,7 @@ def collect_all(names: list[str] | None = None) -> dict[str, list[dict[str, Any]
         "schtasks": sch_collect,
         "mcp": mcp_collect,
         "logs": logs_collect,
+        "store": store_collect,
     }
     selected = {k: v for k, v in registry.items() if names is None or k in names}
     out: dict[str, list[dict[str, Any]]] = {}
