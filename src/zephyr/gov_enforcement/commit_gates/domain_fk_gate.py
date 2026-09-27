@@ -85,6 +85,104 @@ _DOMAIN_HEADER_RE = re.compile(r"^#\s*\[DOMAIN\]\s*(\S+)")
 # 仅匹配 "- domain:" 行（entry_schema 中的 "  domain: str" 缩进不同不会误匹配）
 _YAML_DOMAIN_ENTRY_RE = re.compile(r"^-\s*domain:\s*(\S+)", re.MULTILINE)
 
+# ── 真域错挂归属判据（wave7.3 红蓝 2026-09-28，st-zc8-lane-rb2）──────────────────
+# 病根：本门原本只拦"假域"（FK 存在性），同一真实域错挂到无关包的 module 无判据
+# （st-c7-rb-20260927 V3b 在案发现）。本表为内嵌判据（不动注册名册）：
+# src/zephyr/<pkg>/ 下 .py 的 [DOMAIN] 声明必须命中所属包的域族规则。
+# 派生方式：机械扫描 src/zephyr 全库现有 (包, 域) 头分布（2026-09-28 快照），
+# 每个现库 (包, 域) 对均放行——零误伤基线；匹配语义 = domain == rule 或
+# domain.startswith(rule)（域族前缀，如 D_GOV 覆盖 D_GOV_*/D_GOVERNANCE）。
+# 包不在表内（新增包/非 src 树）= 不判（fail-open，误伤代价高于漏拦）。
+_PKG_DOMAIN_RULES: dict[str, tuple[str, ...]] = {
+    "ai_layer": ("D_GOVERNANCE",),
+    "alt_data": ("D_ALT_DATA",),
+    "autonomy_core": ("D_AUTONOMY_CORE",),
+    "backtest": ("D_BACKTEST", "D_DATA"),
+    "clone_guard": ("D_GOV_CODE_QUALITY",),
+    "compliance": ("D_COMPLIANCE", "D_GOVERNANCE"),
+    "cross_asset": ("D_CROSS_ASSET",),
+    "data": ("D_DATA", "D_MKT_DATA", "D_ALT_DATA", "D_INFRA_RUNTIME", "D_GOVERNANCE"),
+    "data_eng": ("D_DATA_ENG",),
+    "data_governance": ("D_DATA_GOV",),
+    "data_security": ("D_DATA_SEC",),
+    "digital_twin": ("D_DIGITAL_TWIN",),
+    "execution_simulation": ("D_EXEC_SIM",),
+    "experiment_tracking": ("D_INFRA_TELEMETRY",),
+    "ex_core": ("D_EX_CORE", "D_EXECUTION_CORE"),
+    "ex_sor": ("D_EX_SOR",),
+    "factor": ("D_FACTOR",),
+    "feedback_loop": ("D_FEEDBACK_LOOP", "D_FBL_DETECTORS", "D_FBL_DIAGNOSERS", "D_FBL_VERIFICATION"),
+    "frontend": ("D_FRONTEND",),
+    "governance": ("D_GOV", "D_OPS", "D_SECURITY", "D_BACKTEST", "D_EX_CORE", "D_AUTONOMY_CORE", "D_INFRA_RECOVERY"),
+    "gov_audit": ("D_GOV_AUDIT", "D_GOV_DRIFT"),
+    "gov_code_quality": ("D_GOV_CODE_QUALITY",),
+    "gov_drift": ("D_GOV_DRIFT", "D_SECURITY"),
+    "gov_enforcement": ("D_GOV",),
+    "gov_rule": ("D_GOV_RULE",),
+    "infrastructure": ("D_INFRA", "D_GOVERNANCE", "D_AUTONOMY_CORE", "D_OPS"),
+    "infra_ops": ("D_INFRA_OPS",),
+    "infra_runtime": ("D_INFRA_RUNTIME",),
+    "integration": ("D_INTEGRATION", "D_GOVERNANCE", "D_AUTONOMY_CORE"),
+    "intelligence": ("D_INTELLIGENCE", "D_GOVERNANCE", "D_AUTONOMY_CORE"),
+    "knowledge": ("D_KNOWLEDGE",),
+    "library": ("D_GOVERNANCE",),
+    "market_data": ("D_MKT_DATA",),
+    "ml_serve": ("D_ML_SERVE",),
+    "ml_train": ("D_ML_TRAIN",),
+    "nlp": ("D_DATA",),
+    "orchestrator": ("D_ORCHESTRATOR",),
+    "pf_alloc": ("D_PF_ALLOC", "D_BACKTEST"),
+    "pf_core": ("D_PF_CORE",),
+    "plan_engine": ("D_PLAN", "D_TRADING"),
+    "position": ("D_POSITION",),
+    "red_blue_validator": ("D_SECURITY",),
+    "regime": ("D_REGIME",),
+    "reporting": ("D_REPORTING",),
+    "research": ("D_FACTOR", "D_KNOWLEDGE", "D_RESEARCH"),
+    "risk": ("D_RISK",),
+    "runtime": ("D_INFRA_RUNTIME",),
+    "security": ("D_SECURITY", "D_AUTONOMY_CORE"),
+    "sell_decision": ("D_SELL_DECISION",),
+    "shared": (
+        "D_SHARED",
+        "D_AUTONOMY_CORE",
+        "D_GOVERNANCE",
+        "D_INTEGRATION",
+        "D_INFRASTRUCTURE",
+        "D_CONTRACTS",
+        "D_INFRA_RUNTIME",
+        "D_INFRA_OPS",
+    ),
+    "signal_ashare": ("D_ASHARE_SIGNAL", "D_SIGNAL_ASHARE", "D_SIGNAL"),
+    "signal_fundamental": ("D_FUNDAMENTAL_SIGNAL",),
+    "signal_quality": ("D_SIGQC",),
+    "simulation": ("D_SIMULATION", "D_AUDITTEST"),
+    "strategy_factory": ("D_ASHARE_SIGNAL",),
+    "strategy_pipeline": ("D_BACKTEST",),
+    "trading": ("D_TRADING", "D_INFRA_RUNTIME"),
+}
+
+
+def _package_of(py_file: str) -> str:
+    """取 src/zephyr/<pkg>/ 的包名；非 src 树或包根散文件返回 ""（不判）。"""
+    norm = py_file.replace("\\", "/")
+    marker = "src/zephyr/"
+    i = norm.find(marker)
+    if i < 0:
+        return ""
+    rest = norm[i + len(marker):]
+    if "/" not in rest:
+        return ""
+    return rest.split("/", 1)[0]
+
+
+def _domain_family_allows(pkg: str, domain: str) -> bool | None:
+    """归属判据：True=域族放行；False=真域错挂；None=包不在册（不判，fail-open）。"""
+    rules = _PKG_DOMAIN_RULES.get(pkg)
+    if rules is None:
+        return None
+    return any(domain == r or domain.startswith(r) for r in rules)
+
 
 def _load_valid_domains(gateway) -> set[str] | None:
     """从 functional_domain_registry.yaml（staged 版本）加载有效域集合。
@@ -134,13 +232,25 @@ def _check_domain_fk(gateway, py_files: list[str], valid_domains: set[str]) -> l
             domain = m.group(1)
             if domain not in valid_domains:
                 violations.append(f"  {py_file}:{line_no}: [DOMAIN] {domain} 不在 functional_domain_registry.yaml 中")
+                continue
+            # 真域错挂归属判据（wave7.3）：域真实存在但与所在包域族不符 → 同样阻断。
+            pkg = _package_of(py_file)
+            if not pkg:
+                continue
+            allowed = _domain_family_allows(pkg, domain)
+            if allowed is False:
+                violations.append(
+                    f"  {py_file}:{line_no}: [DOMAIN] {domain} 真域错挂——包 zephyr.{pkg} "
+                    f"的声明域族 {_PKG_DOMAIN_RULES.get(pkg, ())} 不含该域"
+                    "（GATE-DOMAIN-FK 归属判据；改声明为所属域族，或将文件移入对应包）"
+                )
     return violations
 
 
 def _format_domain_fk_violations(violations: list[str]) -> tuple[bool, str]:
-    """格式化域 FK 违规为阻断消息。"""
+    """格式化域 FK / 真域错挂违规为阻断消息。"""
     return False, (
-        "GATE-DOMAIN-FK：[DOMAIN] 头部声明的域不在注册表中\n"
+        "GATE-DOMAIN-FK：[DOMAIN] 头部声明未通过域校验（存在性 FK 或包归属判据）\n"
         "  真源：docs/01_policies_and_standards/_registry/catalogs/"
         "functional_domain_registry.yaml\n"
         "  修复方式（二选一）：\n"
