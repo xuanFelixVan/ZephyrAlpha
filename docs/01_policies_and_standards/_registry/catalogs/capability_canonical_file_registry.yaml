@@ -54769,4 +54769,9 @@ creation_tokens:
   created_by: st-chief4x-promo2-20260927
   capability: paper-outpost-algo-flow-view
   merge_evaluation: "内收对价=前哨考核器算法视图外锚出仓，drafter+externalizer 官方管线产物，零手写块"
+- file: docs/_working/fullconnect_campaign/lane_v_notes.md
+  token: architecture-view-lane-v-notes-20260926
+  created_by: zc-lane-v-20260927
+  capability: architecture_view
+  merge_evaluation: "战役V线施工台账，task_bound 随归档退役，无第二真源（与91_progress互链不重复记账）"
 di_seam_exemptions: []

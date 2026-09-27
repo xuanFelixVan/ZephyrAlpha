@@ -61529,16 +61529,16 @@ entries:
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "供__init__使用：把本役实测口径固化为可复跑命令，产出机读证据供案卷引用"
+  plain_zh: "为__init__所在波次产出可复算机读证据：把本窗实测口径固化成一条命令，人工命令行调用而非驻留调度"
   responsibility_layer: governance
 - module_path: scripts/governance/wave11/w178_universe_facts_gen.py
-  domain_id: D_GOV_CODE_QUALITY
+  domain_id: D_DATA
   name_zh: "板块宇宙事实生成器"
   name_en: ""
   desc_zh: ""
   desc_en: ""
-  plain_zh: "用双通道独立探测板块代码宇宙与成分表口径差，产出 W-178 宇宙事实机读件并保留失败原文"
-  responsibility_layer: governance
+  plain_zh: "两条独立通道各自数一遍 880/881 板块代码与成分表行数并互相印证，把 W-178 的板块宇宙缺口算成可复跑机读件；探测失败必须留原文并记 fail，禁止降级成 0 或空表"
+  responsibility_layer: business
 - module_path: scripts/governance/wave1a/ch_read_shape_ruler.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: "读数形状扫描尺"
@@ -61578,6 +61578,39 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "供recheck_empt使用：把本役实测口径固化为可复跑命令，产出机读证据供案卷引用"
+  responsibility_layer: governance
+
+- module_path: scripts/governance/wave1b/dead_letter_prescriptions.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "dead_letter_"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把队列里 730 封死信按死因聚成处方族，逐族给出入队前可自检的命令与豁免位，输出机读矩阵与案卷表"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave1a/ch_read_shape_ruler.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "ch_read_shap"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "为ch_read_shap所在波次产出可复算机读证据：把本窗实测口径固化成一条命令，人工命令行调用而非驻留调度"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave1a/store_liveness_probe.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "store_livene"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "为store_livene所在波次产出可复算机读证据：把本窗实测口径固化成一条命令，人工命令行调用而非驻留调度"
+  responsibility_layer: governance
+- module_path: scripts/governance/wave1b/claim_gate_repro.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "claim_gate_r"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "为claim_gate_r所在波次产出可复算机读证据：把本窗实测口径固化成一条命令，人工命令行调用而非驻留调度"
   responsibility_layer: governance
 
 battle_map_steps:

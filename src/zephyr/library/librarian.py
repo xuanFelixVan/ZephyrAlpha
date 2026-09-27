@@ -135,7 +135,8 @@ class Librarian:
             asset_id: 资产身份证号。
             actor: 执行会话标识。
             fields: 户籍字段字典（kind/home/fingerprint_sha256/fingerprint_aux/
-                title/ai_contract/owner_domain/retention_class/status/tags）。
+                title/ai_contract/owner_domain/retention_class/status/tags；
+                delete 可携 successor_of=墓碑去向指针，None=未评估/''=无后继/后继 asset_id）。
             authority: 处置预授权（delete 必填，死亡证明）。
             detail: 事件 detail 附加信息。
 
@@ -191,7 +192,9 @@ class Librarian:
                     ),
                 )
             if action == "delete":
-                cur.execute(_SQL_MARK_DECEASED, (authority, asset_id))
+                # 墓碑去向（08 §6 增枝）：successor_of 两态——None=未评估（历史存量兼容），
+                # ''=确认无后继，非空=后继资产 asset_id；与死亡证明同事务落账。
+                cur.execute(_SQL_MARK_DECEASED, (authority, f.get("successor_of"), asset_id))
         self._conn.commit()
         return event_id
 

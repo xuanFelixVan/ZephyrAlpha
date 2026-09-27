@@ -220,6 +220,80 @@ def _query_backtest(strategy: str | None, since: str | None, until: str | None, 
     return 0
 
 
+def _successor_display(row: dict[str, Any]) -> str:
+    """墓碑去向渲染（08 词典 §6 successor_of 两态纪律）。
+
+    非空串=后继资产 asset_id（照直显示）；''=确认无后继；NULL=未评估→退显
+    disposition_authority 前 40 字符作墓志铭（无批文则示"去向未评估"）。
+    行键缺失（旧调用方/旧快照）一律按未评估处理，永不抛异常。
+    """
+    successor = row.get("successor_of")
+    if successor is None:
+        authority = str(row.get("disposition_authority") or "").strip()
+        return f"去向未评估｜墓志:{authority[:40]}" if authority else "去向未评估"
+    text = str(successor).strip()
+    return text if text else "(无后继)"
+
+
+def _tombstone_tail(row: dict[str, Any]) -> str:
+    """deceased 行尾墓碑尾巴（``\\t-> 去向``）；非 deceased 行恒返回空串。"""
+    if row.get("status") != "deceased":
+        return ""
+    return f"\t-> {_successor_display(row)}"
+
+
+def _run_feeds_query(keyword: str, limit: int) -> int:
+    """供数反查面（裁定#410）：potential_consumers 含关键词的资产清单。"""
+    conn = get_depgraph_pg_connection()
+    try:
+        lib = Librarian(conn)
+        rows = lib.lookup_by_feeds(keyword, limit=limit)
+    finally:
+        conn.close()
+    if not rows:
+        print(f"(no assets feeding {keyword!r})")
+        return 1
+    for row in rows:
+        consumers = ",".join(row.get("potential_consumers") or [])
+        print(f"{row['asset_id']}	{row['kind']}	{consumers}")
+    return 0
+
+
+def _run_main_query(args: argparse.Namespace, parser: argparse.ArgumentParser) -> int:
+    """主查询面：别名展开提示 + lookup_assets 结果表 + 墓碑去向升级提示。"""
+    if not args.query:
+        parser.print_usage()
+        return 1
+    limit = args.limit_pos if args.limit_pos is not None else args.limit
+    limit = max(1, min(limit, 10000))
+    tags = [t.strip() for t in args.tags.split(",") if t.strip()] if args.tags else None
+    if args.no_alias:
+        globals()["_alias_expansion_enabled"] = False
+    else:
+        expanded = _expand_query(args.query)
+        if expanded != [args.query]:
+            print(f"[alias] {args.query!r} -> {' -> '.join(expanded)}", file=sys.stderr)
+    rows = lookup_assets(
+        args.query,
+        limit=limit,
+        kind=args.kind,
+        owner_domain=args.owner_domain,
+        tags=tags,
+        status=args.status,
+        home_prefix=args.home_prefix,
+    )
+    if not rows:
+        print(f"(no results for {args.query!r})")
+        return 1
+    for row in rows:
+        print(f"{row['asset_id']}\t{row['kind']}\t{row['status']}\t{row['home']}{_tombstone_tail(row)}")
+    # 墓碑卡升级：全结果无 active 命中但有 deceased 命中=路径已迁移，报去向而非死账
+    if not any(r.get("status") == "active" for r in rows) and any(r.get("status") == "deceased" for r in rows):
+        dead = next(r for r in rows if r.get("status") == "deceased")
+        print(f"(moved: {dead['asset_id']} -> {_successor_display(dead)})")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     """CLI 入口：打印查询结果表。
 
@@ -249,50 +323,11 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.backtest:
         return _query_backtest(args.strategy, args.since, args.until, max(1, min(args.limit, 10000)))
-
     if args.feeds:
-        conn = get_depgraph_pg_connection()
-        try:
-            lib = Librarian(conn)
-            rows = lib.lookup_by_feeds(args.feeds, limit=max(1, min(args.limit, 10000)))
-        finally:
-            conn.close()
-        if not rows:
-            print(f"(no assets feeding {args.feeds!r})")
-            return 1
-        for row in rows:
-            consumers = ",".join(row.get("potential_consumers") or [])
-            print(f"{row['asset_id']}	{row['kind']}	{consumers}")
-        return 0
+        return _run_feeds_query(args.feeds, max(1, min(args.limit, 10000)))
     if args.query.startswith(_COMMIT_GUIDE_PREFIX):
         return _query_commit_guide(args.query[len(_COMMIT_GUIDE_PREFIX) :])
-    if not args.query:
-        parser.print_usage()
-        return 1
-    limit = args.limit_pos if args.limit_pos is not None else args.limit
-    limit = max(1, min(limit, 10000))
-    tags = [t.strip() for t in args.tags.split(",") if t.strip()] if args.tags else None
-    if args.no_alias:
-        globals()["_alias_expansion_enabled"] = False
-    else:
-        expanded = _expand_query(args.query)
-        if expanded != [args.query]:
-            print(f"[alias] {args.query!r} -> {' -> '.join(expanded)}", file=sys.stderr)
-    rows = lookup_assets(
-        args.query,
-        limit=limit,
-        kind=args.kind,
-        owner_domain=args.owner_domain,
-        tags=tags,
-        status=args.status,
-        home_prefix=args.home_prefix,
-    )
-    if not rows:
-        print(f"(no results for {args.query!r})")
-        return 1
-    for row in rows:
-        print(f"{row['asset_id']}\t{row['kind']}\t{row['status']}\t{row['home']}")
-    return 0
+    return _run_main_query(args, parser)
 
 
 if __name__ == "__main__":

@@ -36,6 +36,9 @@ __all__ = ["generate"]
 
 _OUT_DIR: Final[Path] = Path("docs/library")
 
+# 馆页表格展示上限（tri-consistency 检查器 import 此常量做同口径断言，禁复制字面量）
+_DISPLAY_CAP: Final[int] = 300
+
 _SQL_ALL = (
     "SELECT asset_id, kind, home, status, title, fingerprint_sha256, built_at"
     " FROM lib_assets WHERE status NOT IN ('deceased','archived') ORDER BY kind, home"
@@ -75,7 +78,13 @@ def _classify(kind: str, home: str) -> str:
 
 
 def _write_page(path: Path, asset_id: str, title: str, rows: list[dict[str, Any]], total: int) -> None:
-    """写单馆页（自带索书号 frontmatter）。"""
+    """写单馆页（自带索书号 frontmatter）。
+
+    计数口径（S5 计数失真修复）：表格固定截前 _DISPLAY_CAP 行，"本页列出"必须报表格实际行数
+    （min(len(rows),_DISPLAY_CAP)），"馆内总数"报 total；截断提示在 total>已列行数时才出现
+    （旧条件 total>len(rows) 在调用处恒 False=死代码、"本页列出"误报馆内总数）。
+    """
+    displayed = rows[:_DISPLAY_CAP]
     lines = [
         "---",
         f'asset_id: "{asset_id}"',
@@ -85,16 +94,16 @@ def _write_page(path: Path, asset_id: str, title: str, rows: list[dict[str, Any]
         "",
         f"# {title}（生成视图，构建于总账 lib_assets；真源在资产本体）",
         "",
-        f"- 条目数（本页列出）：{len(rows)}｜馆内总数：{total}",
+        f"- 条目数（本页列出）：{len(displayed)}｜馆内总数：{total}",
         "- 索书号使用法：本页 asset_id 即本页身份；查任意资产用 `python -m zephyr.library.lookup <关键词>`",
         "",
         "| asset_id | kind | status | home |",
         "|---|---|---|---|",
     ]
-    for row in rows[:300]:
+    for row in displayed:
         lines.append(f"| {row['asset_id']} | {row['kind']} | {row['status']} | {row['home']} |")
-    if total > len(rows):
-        lines.append(f"\n（仅列前 {len(rows)} 条，共 {total} 条——全量请走总口查询）")
+    if total > len(displayed):
+        lines.append(f"\n（仅列前 {len(displayed)} 条，共 {total} 条——全量请走总口查询）")
     path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 

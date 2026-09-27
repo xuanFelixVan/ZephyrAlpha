@@ -77,6 +77,7 @@ CREATE TABLE IF NOT EXISTS lib_assets (
   owner_domain text,
   retention_class text NOT NULL DEFAULT 'long',
   disposition_authority text,
+  successor_of text,
   registered_at timestamptz NOT NULL DEFAULT now(),
   registered_by text,
   title text,
@@ -144,8 +145,10 @@ ORDER BY asset_id
 LIMIT %s
 """
 
+# 墓碑去向（08 词典 §6 增枝，v1.2）：successor_of 两态纪律对标 potential_consumers——
+# NULL=未评估（默认，历史 deceased 存量）；''=确认无后继；非空=后继资产 asset_id。
 _SQL_MARK_DECEASED = """
-UPDATE lib_assets SET status = 'deceased', disposition_authority = %s
+UPDATE lib_assets SET status = 'deceased', disposition_authority = %s, successor_of = %s
 WHERE asset_id = %s
 """
 
@@ -155,7 +158,7 @@ VALUES (%s, %s, %s, %s, %s::jsonb)
 """
 
 _SQL_LOOKUP = """
-SELECT asset_id, kind, home, status, title, built_at
+SELECT asset_id, kind, home, status, title, built_at, disposition_authority, successor_of
 FROM lib_assets
 WHERE asset_id ILIKE %s OR home ILIKE %s OR title ILIKE %s
 ORDER BY asset_id
@@ -166,7 +169,7 @@ LIMIT %s
 # 传入过滤器拼接在 _SQL_LOOKUP 的 WHERE 之后；limit 占位符由 _SQL_LOOKUP 自带时不可
 # 拼接，故过滤态改用 _SQL_LOOKUP_COMPOSED 基座）
 _SQL_LOOKUP_COMPOSED: Final[str] = """
-SELECT asset_id, kind, home, status, title, built_at
+SELECT asset_id, kind, home, status, title, built_at, disposition_authority, successor_of
 FROM lib_assets
 WHERE (asset_id ILIKE %s OR home ILIKE %s OR title ILIKE %s)
 """
