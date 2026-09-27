@@ -78,3 +78,9 @@ F04 他线已落地（88f62e893e，本役让位）｜FL1/FL2 本役修。超计�
 
 ### 零遗留声明
 七断链+两回灌边：5 修（F34/F74/F20 本役线+F26/F04 chief4x）+1 设计态销账（F82）+1 Owner 门位带处方（F62=99_skipped SKIP-1）+2 回灌边消费端落地（MOD-BT-223）。移交项全部登记 99_skipped_for_owner.md（6+2 项）。tests/frontend 三个预存潜病（收集死锁/冒烟装置/哨兵漂移）全部治本。无待裁定、无悬空 claim、临时件已清。
+
+### 更正（EC2 终报到账后）
+- **F82 order_daemon 状态升级**：终局段所记"设计态销账"已被超越——chief4x-cplx 线会末落地接线 `d0257693f1`（六件捞回+order_daemon 接线，COMPLEXITY-GUARD 治理）。七断链终态改判：**6 修 + 1 Owner 门位（F62）**。
+- **F74 q-0021（v9 袋，5 文件）**在队列 pending，内容门全过待 drain——EC2 车道自收尾中。
+- ⚠️ **死袋禁 requeue 清单**（内容均被取代，requeue=回退事故）：q-20260927-st-ec2-p0-0002/0006/0010/0011/0014/0017/0019/0020。
+- 超计划修复：promotion_combo_gate F821 潜伏 bug（_safe_id 未定义）治本；sim_observe_daily 5 长红测复绿。
