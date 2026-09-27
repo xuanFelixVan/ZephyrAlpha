@@ -2,7 +2,7 @@
 # [MODULE] zephyr.signal_ashare.tradability_preflight
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES] zephyr.ex_core.price_cage(check_price_cage); zephyr.ex_core.board_lot(classify_board); zephyr.shared.contracts.enums.order_enums(OrderSide); zephyr.data.instrument_master(口径对齐:停牌/prev_close/申报单位——快照注入不直连)
-# [CONSUMERS] TDM-E-L3-10 可交易性预检（候选池日频过滤）；TDM-E-L3-08 候选池输出（上游）
+# [CONSUMERS] TDM-E-L3-10 可交易性预检（候选池日频过滤）；TDM-E-L3-08 候选池输出（上游）；plan_engine.premarket_workflow（L04-C02 盘前腿：default_stages "tradability_preflight" 工序→run_premarket_pool_preflight，读 stock_candidate_pool PIT 分区）
 # [STARTUP] imported
 # [MATURITY] testing
 # [INVARIANTS] 纯函数零 DB/CH（行情/账户快照全注入）；fail-closed（关键字段缺失=不可交易+DATA_MISSING，不猜）；五查独立标签（SUSPENDED/LIMIT_UP/PERMISSION/LOT_CASH/DATA_MISSING）+笼子建议价（夹边语义非拒单，节点"会被拒"按 ex_core 实装口径修正为给出夹边价）；金额一律 Decimal；板块判定唯一真源=board_lot.classify_board；权限词表 {STAR,CHINEXT,BSE}，账户上下文缺失时权限查降级为 detail 不阻断（下单层 L4-12 会再查）
@@ -29,17 +29,23 @@ Owner 2026-09-16 裁定开工接通。
 大白话：每天候选池生成后过一遍"今天谁根本买不进"——停牌的、一字涨停封死的、
 没有板块交易权限的、钱不够买一手的，全部标记跳过；价格超笼子的不拦，
 给出夹边后的建议价（真拒单发生在下单层预检，那里有实时盘口）。
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_signal/algo_flow/tradability_preflight.yaml
 """
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
+from typing import Callable, Mapping, Sequence
 
 from zephyr.ex_core.board_lot import classify_board
 from zephyr.ex_core.price_cage import CageStatus, check_price_cage
 from zephyr.shared.contracts.enums.order_enums import OrderSide
+
+_logger = logging.getLogger(__name__)
 
 __all__ = [
     "BlockedReason",
@@ -47,6 +53,7 @@ __all__ = [
     "AccountContext",
     "TradabilityVerdict",
     "preflight_tradability",
+    "run_premarket_pool_preflight",
 ]
 
 _: Decimal = Decimal("0")  # Decimal 字面量哨兵（float 禁用口径自省）
@@ -123,9 +130,7 @@ def _check_suspended(snap: InstrumentSnapshot) -> tuple[bool, str]:
     return False, ""
 
 
-def _check_limit_up(
-    snap: InstrumentSnapshot, intended_price: Decimal | None
-) -> tuple[bool, str, Decimal | None]:
+def _check_limit_up(snap: InstrumentSnapshot, intended_price: Decimal | None) -> tuple[bool, str, Decimal | None]:
     """一字涨停封死或意图价触板=买不进。返回 (blocked, reason, limit_up)。"""
     if snap.prev_close is None or snap.prev_close <= 0:
         return True, "DATA_MISSING:prev_close（无法算涨停价，fail-closed）", None
@@ -182,9 +187,7 @@ def _check_lot_cash(
     return False, ""
 
 
-def _cage_suggestion(
-    snap: InstrumentSnapshot, intended_price: Decimal | None
-) -> tuple[Decimal | None, str]:
+def _cage_suggestion(snap: InstrumentSnapshot, intended_price: Decimal | None) -> tuple[Decimal | None, str]:
     """笼子为夹边语义非拒单：CLAMPED 给建议价，UNKNOWN 跳过（无基准价）。"""
     if intended_price is None or snap.prev_close is None:
         return None, ""
@@ -237,11 +240,7 @@ def preflight_tradability(
 
     hit, why, _limit = _check_limit_up(snap, intended_price)
     if hit:
-        reason = (
-            BlockedReason.DATA_MISSING
-            if why.startswith("DATA_MISSING")
-            else BlockedReason.LIMIT_UP_UNBUYABLE
-        )
+        reason = BlockedReason.DATA_MISSING if why.startswith("DATA_MISSING") else BlockedReason.LIMIT_UP_UNBUYABLE
         blocked.append(reason)
         details[reason.value] = why
 
@@ -254,11 +253,7 @@ def preflight_tradability(
 
     hit, why = _check_lot_cash(snap, intended_price, intended_qty, account)
     if hit:
-        reason = (
-            BlockedReason.DATA_MISSING
-            if why.startswith("DATA_MISSING")
-            else BlockedReason.LOT_CASH
-        )
+        reason = BlockedReason.DATA_MISSING if why.startswith("DATA_MISSING") else BlockedReason.LOT_CASH
         blocked.append(reason)
         details[reason.value] = why
     elif why:
@@ -275,3 +270,91 @@ def preflight_tradability(
         cage_suggested_price=cage_price,
         details=details,
     )
+
+
+# ---------------------------------------------------------------------------
+# 盘前池预检 runner（L04-C02 盘前腿，SKEL:164 验收"tradability_preflight 调用方 0→≥1"；
+# premarket_workflow default_stages "tradability_preflight" 工序执行体）
+# ---------------------------------------------------------------------------
+
+
+def run_premarket_pool_preflight(
+    day: str,
+    *,
+    snapshot_provider: Callable[[str], InstrumentSnapshot | None] | None = None,
+    account: AccountContext | None = None,
+    pool_rows: Sequence[Mapping[str, object]] | None = None,
+    reader: Callable[[str], object] | None = None,
+) -> dict[str, object]:
+    """候选池盘前可买性预检（读池→逐票五查→JSON 裁决面；fail-open 不炸盘前工序）。
+
+    L04-C02 接线体：默认经 candidate_pool_snapshot.load_pool_snapshot(mode="pit")
+    读 c1_market.stock_candidate_pool 最近分区（shift(1) 防未来函数）；池行/行情快照
+    均可注入（pool_rows/snapshot_provider——测试隔离与生产快照源两用，宪法 §9.6）。
+    否决行照查不剔除（留痕口径同聚合器），vetoed 原因随行透传。行情快照源未接线
+    （snapshot_provider=None）→ status="absent" 如实缺席，不伪造裁决。
+
+    Returns:
+        {"status": "ok"|"absent", "trade_date", "checked", "tradable": [symbol...],
+         "blocked": {symbol: [reason...]}, "cage": {symbol: "建议价"},
+         "vetoed_pool": [symbol...], "notes": [...]}（JSON 可序列化）。
+    """
+    import datetime as _dt
+
+    d = _dt.date.fromisoformat(str(day)[:10]).isoformat()
+    notes: list[str] = []
+    try:
+        if pool_rows is not None:
+            rows = list(pool_rows)
+        else:
+            from zephyr.signal_ashare.core.candidate_pool_snapshot import load_pool_snapshot
+
+            snap = load_pool_snapshot(d, mode="pit", reader=reader)  # type: ignore[arg-type]
+            if snap.get("status") != "ok":
+                return {
+                    "status": "absent",
+                    "error": "pool_absent",
+                    "trade_date": d,
+                    "detail": snap.get("error"),
+                }
+            rows = snap["pool"]  # type: ignore[assignment]
+        if snapshot_provider is None:
+            return {"status": "absent", "error": "snapshot_provider_unwired", "trade_date": d}
+        tradable: list[str] = []
+        blocked: dict[str, list[str]] = {}
+        cage: dict[str, str] = {}
+        vetoed_pool: list[str] = []
+        checked = 0
+        for row in rows:
+            symbol = str(row.get("symbol", ""))
+            if not symbol:
+                continue
+            checked += 1
+            if int(row.get("vetoed") or 0):
+                vetoed_pool.append(symbol)
+                continue
+            snap_obj = snapshot_provider(symbol)
+            if snap_obj is None:
+                notes.append(f"{symbol}: 行情快照缺席跳五查（DATA_MISSING 保守侧）")
+                blocked[symbol] = [BlockedReason.DATA_MISSING.value]
+                continue
+            verdict = preflight_tradability(snap_obj, account=account)
+            if verdict.tradable:
+                tradable.append(symbol)
+            else:
+                blocked[symbol] = [b.value for b in verdict.blocked]
+            if verdict.cage_suggested_price is not None:
+                cage[symbol] = str(verdict.cage_suggested_price)
+        return {
+            "status": "ok",
+            "trade_date": d,
+            "checked": checked,
+            "tradable": tradable,
+            "blocked": blocked,
+            "cage": cage,
+            "vetoed_pool": vetoed_pool,
+            "notes": notes,
+        }
+    except Exception as exc:  # noqa: BLE001 — 盘前预检缺席不炸工序（fail-open 同门快照语义）
+        _logger.warning("tradability_preflight: %s 盘前池预检异常折 absent: %s", day, exc)
+        return {"status": "absent", "error": type(exc).__name__, "trade_date": str(day)}

@@ -56,10 +56,13 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from decimal import Decimal
 from enum import Enum
-from typing import Final, Protocol
+from typing import TYPE_CHECKING, Callable, Final, Protocol
 
 from zephyr.shared.contracts.enums.order_enums import OrderSide
 from zephyr.shared.foundation.errors import ZephyrBaseError
+
+if TYPE_CHECKING:
+    from zephyr.ex_sor.core.algo_trading_engine import AlgoType
 
 __all__: Final = [
     "QualityDimension",
@@ -72,6 +75,7 @@ __all__: Final = [
     "QualityScorerError",
     "InvalidWeightsError",
     "InsufficientMetricsError",
+    "ScorerBackedQualityPrior",
 ]
 
 logger = logging.getLogger(__name__)
@@ -530,3 +534,42 @@ class ExecutionQualityScorer:
 
     def clear_history(self) -> None:
         self._history.clear()
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# L4-14 反馈环评分侧适配器（G41-1，zc-lane-t-20260927）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+class ScorerBackedQualityPrior:
+    """执行质量评分 → 算法质量先验（core.AlgoExecutionSelector 的 QualityPriorProvider 实现）。
+
+    L4-14 断链最后一段（G41-1，2026-09-27）：选择器此前零消费评分器输出——本适配器
+    把评分历史按 order_id→算法归因回调 join，产出每算法 overall_score 均值作先验
+    [0,1]，喂 AlgoExecutionSelector(quality_prior_provider=...)。归因回调由调用方
+    注入（订单→算法台账属编排层，本件不持上游）；无历史/样本不足 → None（中性，
+    不调制选择总分——禁拍 0.5 假先验冒充有数据）。
+    """
+
+    def __init__(
+        self,
+        scorer: ExecutionQualityScorer,
+        algo_of_order: Callable[[str], AlgoType | None],
+        min_samples: int = 1,
+    ) -> None:
+        if min_samples < 1:
+            raise QualityScorerError("min_samples 须 ≥1", details={"min_samples": min_samples})
+        self._scorer = scorer
+        self._algo_of_order = algo_of_order
+        self._min_samples = min_samples
+
+    def quality_prior(self, algo: AlgoType) -> float | None:
+        """单算法历史执行质量均值 [0,1]；样本不足/无归因返回 None（中性）。"""
+        scores = [
+            r.overall_score
+            for r in self._scorer.get_history()
+            if (a := self._algo_of_order(r.order_id)) is not None and a == algo
+        ]
+        if len(scores) < self._min_samples:
+            return None
+        return sum(scores) / len(scores)

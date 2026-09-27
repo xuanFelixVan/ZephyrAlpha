@@ -75,6 +75,7 @@ __all__: Final = [
     "AlgoEvaluator",
     "DefaultAlgoEvaluator",
     "ExecutionOutcome",
+    "QualityPriorProvider",
     "SelectorError",
     "NoAlgoAvailableError",
     "InvalidFeaturesError",
@@ -198,7 +199,9 @@ class AlgoScoreBreakdown:
         size_score: 订单大小适配度 [0,1]
         urgency_score: 紧急度适配度 [0,1]
         liquidity_score: 流动性适配度 [0,1]
-        total: 加权总分 [0,1]
+        total: 加权总分 [0,1]（接入质量先验时=调制后总分，原分存 raw_total）
+        quality_prior: 执行质量先验 [0,1]（None=未接反馈/该算法无历史）
+        raw_total: 调制前三维加权总分（None=未调制）
     """
 
     algo: AlgoType
@@ -206,6 +209,8 @@ class AlgoScoreBreakdown:
     urgency_score: float
     liquidity_score: float
     total: float
+    quality_prior: float | None = None
+    raw_total: float | None = None
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -214,6 +219,8 @@ class AlgoScoreBreakdown:
             "urgency": round(self.urgency_score, 4),
             "liquidity": round(self.liquidity_score, 4),
             "total": round(self.total, 4),
+            "quality_prior": None if self.quality_prior is None else round(self.quality_prior, 4),
+            "raw_total": None if self.raw_total is None else round(self.raw_total, 4),
         }
 
 
@@ -319,6 +326,20 @@ class AlgoEvaluator(Protocol):
         """评估单次执行效果。"""
 
 
+class QualityPriorProvider(Protocol):
+    """算法质量先验提供者（L4-14 反馈环最后一段：执行质量评分 → 选择输入）。
+
+    G41-1（2026-09-27 zc-lane-t-20260927）：选择器此前零消费评分器输出
+    （ex_sor 反馈断链实证=algo_execution_selector 内 scorer/quality 零命中）。
+    本协议=选择器侧的评分输入面：按算法返回历史执行质量先验 [0,1]；
+    None=该算法无评分历史（中性，不调制总分）。
+    评分侧适配器见 services/execution_quality_scorer.ScorerBackedQualityPrior。
+    """
+
+    def quality_prior(self, algo: AlgoType) -> float | None:
+        """单算法质量先验 [0,1]；无历史返回 None（中性）。"""
+
+
 class DefaultAlgoEvaluator:
     """默认效果评估器——Implementation Shortfall + 成交率打分 (Phase 1)。
 
@@ -378,22 +399,27 @@ class AlgoExecutionSelector:
         sel = selector.select(order, ctx, urgency=Decimal("0.3"))
         # sel.selected_algo → AlgoType (交由 XS-05 generate_plan)
 
-    评分模型 (三维加权):
+    评分模型 (三维加权 + 质量先验调制):
         size_score      — 订单大小 (adv_fraction) 适配度
         urgency_score   — 紧急度适配度
         liquidity_score — 流动性 (spread) 适配度
         total = 0.4×size + 0.35×urgency + 0.25×liquidity
+        接入 QualityPriorProvider 时：total ×= 1 + FEEDBACK_GAIN×(2q−1)
+        （L4-14 反馈环 G41-1：q=历史执行质量先验，q=0.5 中性不改总分）
     """
 
     # 评分权重 (§2.2 XS-11 多维加权)
     SIZE_WEIGHT: Final[float] = 0.40
     URGENCY_WEIGHT: Final[float] = 0.35
     LIQUIDITY_WEIGHT: Final[float] = 0.25
+    #: 质量先验调制增益（G41-1，q∈{0,1} 时总分 ±20%，q=0.5 恒等）
+    FEEDBACK_GAIN: Final[float] = 0.20
 
     def __init__(
         self,
         engine: AlgoTradingEngine,
         weights: tuple[float, float, float] | None = None,
+        quality_prior_provider: QualityPriorProvider | None = None,
     ) -> None:
         self._engine = engine
         if weights is not None:
@@ -404,6 +430,7 @@ class AlgoExecutionSelector:
                 self.URGENCY_WEIGHT,
                 self.LIQUIDITY_WEIGHT,
             )
+        self._quality_provider = quality_prior_provider
         self._selections: list[AlgoSelection] = []  # 审计日志 (内存)
 
     @staticmethod
@@ -485,17 +512,31 @@ class AlgoExecutionSelector:
     # ── 评分 ──
 
     def _score_algo(self, algo: AlgoType, f: OrderFeatures) -> AlgoScoreBreakdown:
-        """对单算法评分 (三维 + 加权)。"""
+        """对单算法评分 (三维 + 加权 + 质量先验调制)。
+
+        G41-1 L4-14 反馈环：provider 在册且该算法有先验 q 时，总分乘
+        (1 + FEEDBACK_GAIN×(2q−1))——好历史上调、差历史上调为负、q=0.5 恒等；
+        先验越界 [0,1] 夹边留痕（夹边值入明细，不炸选择）。
+        """
         size_s = self._size_score(algo, f)
         urg_s = self._urgency_score(algo, f)
         liq_s = self._liquidity_score(algo, f)
-        total = self._size_w * size_s + self._urg_w * urg_s + self._liq_w * liq_s
+        raw_total = self._size_w * size_s + self._urg_w * urg_s + self._liq_w * liq_s
+        total = raw_total
+        prior: float | None = None
+        if self._quality_provider is not None:
+            raw_q = self._quality_provider.quality_prior(algo)
+            if raw_q is not None:
+                prior = max(0.0, min(1.0, float(raw_q)))
+                total = raw_total * (1.0 + self.FEEDBACK_GAIN * (2.0 * prior - 1.0))
         return AlgoScoreBreakdown(
             algo=algo,
             size_score=size_s,
             urgency_score=urg_s,
             liquidity_score=liq_s,
             total=total,
+            quality_prior=prior,
+            raw_total=None if prior is None else raw_total,
         )
 
     def _size_score(self, algo: AlgoType, f: OrderFeatures) -> float:
@@ -642,11 +683,17 @@ class AlgoExecutionSelector:
             else "large"
         )
         urg_tag = "low" if f.urgency < Decimal("0.33") else "mid" if f.urgency < Decimal("0.66") else "high"
+        feedback_tag = ""
+        if best.quality_prior is not None and best.raw_total is not None:
+            feedback_tag = (
+                f" | 质量反馈: 先验={best.quality_prior:.2f} 原分={best.raw_total:.4f}→调制分={best.total:.4f}"
+            )
         return (
             f"选 {selected.value}: 总分 {best.total:.4f} "
             f"(size={best.size_score:.2f} urgency={best.urgency_score:.2f} "
             f"liquidity={best.liquidity_score:.2f}) | "
             f"订单={size_tag}({float(f.adv_fraction):.4f} ADV) 紧急度={urg_tag}"
+            f"{feedback_tag}"
         )
 
     # ── 审计查询 ──

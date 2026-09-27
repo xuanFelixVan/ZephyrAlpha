@@ -1,0 +1,40 @@
+# ALGO_FLOW 外部真源——tradability_preflight（_domain_signal 域，真源 src/zephyr/signal_ashare/tradability_preflight.py）
+# 2026-09-27 zc-lane-t-20260927 L04-C02 盘前腿施工批出仓（P2-1 口径：docstring 只留 external 锚）；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.tradability_preflight
+source_of_truth: src/zephyr/signal_ashare/tradability_preflight.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 单票当日静态快照（InstrumentSnapshot，instrument_master 口径注入，本模块不查库）
+    #   fields: symbol/suspended/prev_close/is_st/min_order_unit/open/high/low
+    # - id: I2
+    #   name: 账户上下文（AccountContext，可缺省——权限/资金查降级为 detail 不阻断）
+    #   fields: available_cash/permissions{STAR,CHINEXT,BSE}
+    # - id: I3
+    #   name: 意图价量（可缺省；缺省按最小申报单位估一手）
+    #   fields: intended_price/intended_qty
+    # - id: I4
+    #   name: 候选池行（run_premarket_pool_preflight 注入位：pool_rows 或 stock_candidate_pool PIT 读回）
+    #   fields: symbol/vetoed/pool_rank/veto_reasons
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 五查聚合（fail-closed）
+    #   desc: 停牌/涨跌停一字（买不进）/板块权限（缺账户上下文降级 detail）/整手资金/关键字段缺失=DATA_MISSING 不猜——blocked 封闭枚举逐项留痕
+    # - id: A2
+    #   name_zh: 价格笼子夹边建议
+    #   desc: _cage_suggestion 按 ex_core price_cage 实装口径——超笼子给夹边建议价（CLAMPED）非拒单，真拒单在下单层预检（有实时盘口）
+    # - id: A3
+    #   name_zh: 盘前池预检编排
+    #   desc: run_premarket_pool_preflight——读池（pit shift(1)）逐票五查出 JSON 裁决面；快照源未接线=absent 如实缺席；个别票快照缺=DATA_MISSING 保守侧；vetoed 行只留痕不进五查；异常折 absent（fail-open 不炸盘前工序）
+    # 层: 输出
+    # - id: O1
+    #   name_zh: TradabilityVerdict 逐票裁决
+    #   intro: symbol/tradable/blocked（BlockedReason 封闭枚举）/cage_suggested_price/details（逐查证据）
+    # - id: O2
+    #   name_zh: 盘前裁决 dict
+    #   intro: status=ok|absent + trade_date/checked/tradable/blocked/cage 建议价/vetoed_pool/notes（JSON 可序列化）
+    # [/ALGO_FLOW]

@@ -175,3 +175,12 @@ class TestTracker:
         t2 = PremarketWorkflowTracker(trading_date="2026-08-26", stages=default_stages(), state_sink=_boom)
         t2.mark_running("data_sync")  # sink 异常不阻断
         assert t2.progress()["by_stage"]["data_sync"] == StageStatus.RUNNING.value
+
+    def test_tradability_preflight_stage_wired(self) -> None:
+        """L04-C02 盘前腿（zc-lane-t-20260927）：preflight 工序在册、段3、非必备、依赖就绪核查。"""
+        stages = {s.stage_id: s for s in default_stages()}
+        stage = stages["tradability_preflight"]
+        assert stage.phase == 3 and stage.mandatory is False
+        assert stage.depends_on == ("premarket_check",)
+        assert stage.capability_id == "signal_ashare.tradability_preflight.run_premarket_pool_preflight"
+        assert "09:00" <= stage.scheduled_at <= stage.deadline <= "09:15"

@@ -204,6 +204,20 @@ def default_stages() -> tuple[StageSpec, ...]:
             mandatory=True,
             depends_on=("scenario_plan",),
         ),
+        # L04-C02 盘前腿（zc-lane-t-20260927，SKEL:164）：候选池盘前可买性预检
+        # （MOD-SIG-151 五查）。mandatory=False——预检阻断=逐票不出手，非整日停机
+        # （裁决在票级不在日级，readiness_confirm 不被其硬拦）；执行体=
+        # signal_ashare.tradability_preflight.run_premarket_pool_preflight
+        StageSpec(
+            stage_id="tradability_preflight",
+            name="候选池盘前可买性预检(MOD-SIG-151)",
+            phase=3,
+            scheduled_at="09:10",
+            deadline="09:12",
+            capability_id="signal_ashare.tradability_preflight.run_premarket_pool_preflight",
+            mandatory=False,
+            depends_on=("premarket_check",),
+        ),
         StageSpec(
             stage_id="readiness_confirm",
             name="就绪确认(人工在环)",

@@ -1,0 +1,46 @@
+# ALGO_FLOW 外部真源——candidate_pool_snapshot（_domain_signal 域，真源 src/zephyr/signal_ashare/core/candidate_pool_snapshot.py）
+# 2026-09-27 zc-lane-t-20260927 L04-C01/C02 施工批出仓（P2-1 口径：docstring 只留 external 锚）；
+# 算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.signal_ashare.core.candidate_pool_snapshot
+source_of_truth: src/zephyr/signal_ashare/core/candidate_pool_snapshot.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 三来源候选束（PoolBundleSource 注册制注入，零 import 上游）
+    #   fields: dual_pool_candidates/strategy_chain_candidates/veto_marks/notes
+    # - id: I2
+    #   name: 快照产线参数束（PoolSnapshotParams，8 旋钮显式缺省）
+    #   fields: stage/conduction_adj/score_components_by_symbol/market_state/turnover_yi/switches/version/data_source
+    # - id: I3
+    #   name: 落表/读回通道（writer/reader 注入位；生产=ch_writer 正门）
+    #   fields: FetchResult/SQL 行
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 注册制来源采集
+    #   desc: collect_bundles 逐注册源 fetch_bundles 确定序合并；单源异常折空束+注记留痕（fail-open 不炸整批）；无源=空池如实缺省
+    # - id: A2
+    #   name_zh: 聚合器纯函数复用
+    #   desc: aggregate_candidate_pool（零改）——同 symbol 顺位最优去重/未否决前排序/vetoed 沉底留痕/容量 10-20 截断
+    # - id: A3
+    #   name_zh: 快照行物化
+    #   desc: pool_to_rows——pool_rank=1-based 位置、JSON 确定性序列化（sort_keys）、不可产字段显式缺省（tier_slot/conduction_adj=None 禁拍假值）、零时钟（ingest_ts 归 DDL DEFAULT）
+    # - id: A4
+    #   name_zh: 日批编排落表
+    #   desc: run_pool_batch_for_day——空池零行 fail-visible warning；落表经 persist（ch_writer.write_result，失败 warning 不抛）；异常折 status=absent（侧带不炸门快照）
+    # - id: A5
+    #   name_zh: PIT 读回
+    #   desc: load_pool_snapshot——exact=当日回放/pit=max(trade_date)<T shift(1) 防未来函数；JSON 四列反序列化解析失败保原串；无行/通道故障=absent 如实缺席
+    # 层: 输出
+    # - id: O1
+    #   name_zh: 快照 FetchResult
+    #   intro: table=c1_market.stock_candidate_pool；16 列与 DDL INSERT_COLUMNS 严格同序；last_key=day|stage
+    # - id: O2
+    #   name_zh: 日批报告 dict
+    #   intro: status=ok|empty|absent + trade_date/stage/pool_size/actual_size/vetoed/rows/persisted/version/notes（JSON 可序列化）
+    # - id: O3
+    #   name_zh: 读回 dict
+    #   intro: status=ok（trade_date/stage/pool 行列表，JSON 已反序列化）|absent（no_pool_row/通道异常类型留痕）
+    # [/ALGO_FLOW]

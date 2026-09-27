@@ -15,6 +15,7 @@ from zephyr.signal_ashare.tradability_preflight import (
     BlockedReason,
     InstrumentSnapshot,
     preflight_tradability,
+    run_premarket_pool_preflight,
 )
 
 _D2 = Decimal("0.01")
@@ -159,3 +160,49 @@ def test_zero_prev_close_fail_closed() -> None:
     v = preflight_tradability(_snap(prev_close=Decimal("0")), _AC_FULL)
     assert not v.tradable
     assert BlockedReason.DATA_MISSING in v.blocked
+
+
+# ── L04-C02 盘前池预检 runner（zc-lane-t-20260927：调用方 0→≥1 接线验收）────────
+def _pool_row(symbol: str, vetoed: int = 0) -> dict:
+    return {"symbol": symbol, "vetoed": vetoed, "pool_rank": 1, "veto_reasons": "[]"}
+
+
+class TestPremarketPoolPreflight:
+    def test_ok_tradable_and_blocked_split(self) -> None:
+        """注入池行+快照源：可买/阻断分流，vetoed 行只留痕不进 checked 五查。"""
+        snaps = {
+            "600001.SH": _snap(symbol="600001.SH"),
+            "000002.SZ": _snap(symbol="000002.SZ", suspended=True),
+        }
+        out = run_premarket_pool_preflight(
+            "2026-09-25",
+            snapshot_provider=lambda s: snaps.get(s),
+            pool_rows=[_pool_row("600001.SH"), _pool_row("000002.SZ"), _pool_row("300003.SZ", vetoed=1)],
+        )
+        assert out["status"] == "ok" and out["checked"] == 3
+        assert out["tradable"] == ["600001.SH"]
+        assert out["blocked"] == {"000002.SZ": [BlockedReason.SUSPENDED.value]}
+        assert out["vetoed_pool"] == ["300003.SZ"]
+
+    def test_snapshot_provider_unwired_absent(self) -> None:
+        """快照源未接线 → absent 如实缺席（不伪造裁决）。"""
+        out = run_premarket_pool_preflight("2026-09-25", pool_rows=[_pool_row("600001.SH")])
+        assert out["status"] == "absent" and out["error"] == "snapshot_provider_unwired"
+
+    def test_snapshot_missing_folds_data_missing(self) -> None:
+        """个别票快照缺席 → DATA_MISSING 保守侧留痕，不炸整批。"""
+        out = run_premarket_pool_preflight(
+            "2026-09-25", snapshot_provider=lambda s: None, pool_rows=[_pool_row("600001.SH")]
+        )
+        assert out["status"] == "ok" and out["tradable"] == []
+        assert out["blocked"]["600001.SH"] == [BlockedReason.DATA_MISSING.value]
+
+    def test_cage_suggestion_carried(self) -> None:
+        """笼子夹边建议价透传（夹边语义非拒单）。"""
+        out = run_premarket_pool_preflight(
+            "2026-09-25",
+            snapshot_provider=lambda s: _snap(symbol=s),
+            pool_rows=[_pool_row("600001.SH")],
+        )
+        assert out["status"] == "ok"
+        assert isinstance(out["cage"], dict)

@@ -1881,7 +1881,7 @@ nodes:
   materiality: normal
   decay_scan_frequency: semiannual
 - node_id: TDM-E-L3-10
-  note_confirmed: 2026-09-16
+  note_confirmed: 2026-09-27
   name_zh: 可交易性预检
   market: cn_a
   flow: entry_flow
@@ -1894,6 +1894,9 @@ nodes:
     买不进的标记跳过，防止下单层空转报错。
     三查专件已落地（2026-09-16 MOD-SIG-151 tradability_preflight 五查聚合：停牌/一字/权限/资金一手 fail-closed+笼子建议价；笼子按
     ex_core 实装=夹边建议非拒单）；instrument_master 为数据口径锚（停牌/昨收/申报单位）。
+    （2026-09-27 L04-C02 盘前腿通电 zc-lane-t-20260927：新增 run_premarket_pool_preflight——读
+    c1_market.stock_candidate_pool PIT 分区逐票五查出 JSON 裁决，快照/池行双注入位 fail-open；已挂
+    plan_engine.premarket_workflow default_stages tradability_preflight 工序 09:10-09:12，mandatory=False）
     （2026-09-15 ALGO_FLOW 块出仓至 docs/03_modules/_domain_data/algo_flow/instrument_master.yaml：算法推导图外迁，算法口径不变）
   parent_node: TDM-E-L3
   factor_refs: []
@@ -2308,7 +2311,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-06
-  note_confirmed: 2026-09-16  # grp6p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
+  note_confirmed: 2026-09-27  # T袋（全流通 F41）：选择器新增执行质量先验调制——算法口径已变，非逐字未变
   name_zh: 执行算法
   market: cn_a
   flow: entry_flow
@@ -2320,6 +2323,9 @@ nodes:
   algo_note_zh: >-
     大单拆分选型表：TWAP（时间均匀，常规）、VWAP（跟量，流动性好时）、ICEBERG（隐藏，防暴露）、IS（急单，前重后轻）。
     >500 万单必拆；单笔≤盘口一档 50%；冲击成本预算 0.3%。
+    2026-09-27 起接执行质量反馈环：选型总分按 total*(1+0.20*(2q-1)) 调制，q=该算法历史实测质量评分均值
+    （q=0.5 恒等不加偏、样本不足返 None 走中性不造假先验、越界夹边留痕），breakdown 增
+    quality_prior/raw_total 两审计字段，reason 附反馈段——先验唯一来源=盘后实测评分（TDM-E-L4-14）。
   parent_node: TDM-E-L4
   factor_refs: []
   data_refs: []
@@ -2534,7 +2540,7 @@ nodes:
   decay_scan_frequency: semiannual
 
 - node_id: TDM-E-L4-14
-  note_confirmed: 2026-09-16  # grp6p1s1 出仓复核：机器块搬 yaml，算法口径逐字未变
+  note_confirmed: 2026-09-27  # T袋（全流通 F41）：断链已闭合、先验生产者落地——算法口径已变
   name_zh: 执行成本反馈与选型回写
   market: cn_a
   flow: entry_flow
@@ -2547,7 +2553,9 @@ nodes:
     与 L4-09 发单前的成本预估比对；偏差按执行算法分桶累积，喂执行算法选择器当评分输入——
     某算法连续实测比预估差就降它的权重，下批同类单换算法（Almgren-Chriss 2000 经典：执行=冲击成本与时机风险的权衡）。
     三零件全在且 production（滑点分析器+质量评分器+算法选择器），缺把三者接成环的接线——
-    质量评分器的消费者行写着"选择器反馈环"，但选择器代码还没消费它（断链实证 2026-09-10）。
+    2026-09-27 该断链闭合（L4-14 最后一米）：ScorerBackedQualityPrior 经 order_id 到算法归因回调把评分
+    历史 join 成每算法 overall_score 均值先验，喂给 L4-06 选择器调制总分；样本不足给 None 中性（禁拍假先验）。
+    判别尺=tests/ex_sor 反馈 3 新测 + scorer 适配器 5 新测（断环时必红）。
     RL 执行为远期候选（A 股 T+1/涨跌停/拆单限制需改造，挂晨审）。
   parent_node: TDM-E-L4
   factor_refs: []

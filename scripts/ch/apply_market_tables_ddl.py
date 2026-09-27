@@ -468,6 +468,9 @@ from schemas.categories.market.market_road_freight_index import ROAD_FREIGHT_IND
 from schemas.categories.market.market_sector_fund_flow import MARKET_SECTOR_FUND_FLOW_DDL
 from schemas.categories.market.market_sentiment_panel import SENTIMENT_PANEL_DDL
 from schemas.categories.market.market_stk_limit import STK_LIMIT_DDL
+
+# 板块层两表 DDL（st-secbuild-20260923 批2，骨架 v0 §5）：sector_state/sector_preference
+from schemas.categories.market.market_stock_candidate_pool import STOCK_CANDIDATE_POOL_DDL
 from schemas.categories.market.market_suspend import SUSPEND_DDL
 from schemas.categories.market.market_typhoon_landfall_history import MARKET_TYPHOON_LANDFALL_HISTORY_DDL
 from schemas.categories.market.market_typhoon_names import MARKET_TYPHOON_NAMES_DDL
@@ -475,8 +478,6 @@ from schemas.categories.market.market_us_futures_intraday import US_FUTURES_INTR
 from schemas.categories.meta.meta_stock_profile_ths import STOCK_PROFILE_THS_DDL
 from schemas.categories.meta.meta_stock_profile_ths import TABLE_NAME as _THS_PROFILE_TABLE
 from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
-
-# 板块层两表 DDL（st-secbuild-20260923 批2，骨架 v0 §5）：sector_state/sector_preference
 from schemas.categories.sector_preference import SECTOR_PREFERENCE_DDL
 from schemas.categories.sector_state import SECTOR_STATE_DDL
 from schemas.categories.sim_attribution_daily import SIM_ATTRIBUTION_DAILY_DDL
@@ -604,6 +605,10 @@ _ALL_DDL: list[tuple[str, str]] = [
     # 表落 c1_market；排序键含 stage（契约四态），ReplacingMergeTree 幂等重跑
     ("c1_market.sector_state", SECTOR_STATE_DDL),
     ("c1_market.sector_preference", SECTOR_PREFERENCE_DDL),
+    # 个股候选池快照表（zc-lane-t-20260927 L04-C01，M-41/D22 载体；SKEL:163）：producer=
+    # signal_ashare.core.candidate_pool_snapshot（ch_writer 正门），日批按
+    # (trade_date, stage, symbol) 同键重放幂等替换；决策日 T PIT 只读 max(trade_date)<T
+    ("c1_market.stock_candidate_pool", STOCK_CANDIDATE_POOL_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -1193,6 +1198,8 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "hl_liquidation_raw": "ReplacingMergeTree",
     # D5 跨资产·H4 中债收益率曲线（2026-09-18 夜班 st-datapack-20260918）：期限点长表同键替换幂等
     "market_china_bond_yield": "ReplacingMergeTree",
+    # 个股候选池快照（zc-lane-t-20260927 L04-C01）：日批按 (trade_date, stage, symbol) 同键替换幂等
+    "stock_candidate_pool": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"
