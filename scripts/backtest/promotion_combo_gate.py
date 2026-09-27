@@ -7,7 +7,8 @@
 # [MATURITY] testing
 # [INVARIANTS] 只读生成（注册表/台账/CH 零写触碰）;
 #   单策略证据缺失降级不阻断（沿 sim_promotion_memo 范式）;
-#   组合门阈值预注册冻结（改阈值走标准库重考历史，见骨架 §8）;
+#   组合门阈值预注册冻结（改阈值走标准库重考历史，见骨架 §8）——2026-09-27 v1→v2 尺切换
+#   （STD-SIM-ACCESS-002 frozen 裁定#337，重考历史前置已满足=E6 双尺重考 81 覆盖/55 翻转零不可解释）;
 #   建议≠决定——promote_ready 仍须 Owner 门
 # [MODIFY-GUARD] 阈值变更须同步 tests 钉值+标准库登记
 # [STABILITY] evolving
@@ -22,15 +23,17 @@
 消费已有件零重建：data/strategy_intake/promotion_advisories/*.json（MOD-BT-199 产出）
 + c1_backtest.strategy_screen（E4/SCR 考试成绩）+ c1_backtest.sim_pocket_daily / sim_trade_log（纸面账本）。
 
-组合门阈值（Owner 草案预注册，出处 docs/_working/trading_vision/2026-09-16-owner-vision-system-mapping.md L57；
-改阈值=修标，走标准库重考历史）：
-  ①OOS Sharpe ≥ 1.5   ②最大回撤 ≤ 15%   ③容量证明（纸面成交≥30 笔且成本真实计提）   ④DSR > 0。
-四条全过=promote_ready；任一硬败=reject；证据缺失（无法判定）=borderline（不冤枉也不放水）。
+组合门阈值（v2 frozen 预注册=STD-SIM-ACCESS-002，裁定#337；修标=修标须重考历史）：
+  ①OOS Sharpe ≥ 1.5   ②最大回撤 ≤ 15%   ③容量证明（纸面成交≥30 笔且成本真实计提）
+  ④DSR ≥ 0.5（族 N_eff 口径）  ⑤组合内 ρ̄ ≤ 0.7  ⑥年化单边换手 ≤ 12×。
+硬败=promote_ready 之外；任一硬败=reject；证据缺失（无法判定）=borderline（不冤枉也不放水）。
+v1 尺（STD-SIM-ACCESS-001）已判 suspect（裁定#306），v1→v2 切换见 THRESHOLD_SOURCE 注记。
 
 用法:
   python scripts/backtest/promotion_combo_gate.py                # 全量扫描 advisory
   python scripts/backtest/promotion_combo_gate.py --strategy-id S-XXX
 """
+
 from __future__ import annotations
 
 import argparse
@@ -51,14 +54,29 @@ logger = logging.getLogger(__name__)
 
 ADVISORY_DIR = REPO_ROOT / "data" / "strategy_intake" / "promotion_advisories"
 OUT_DIR = REPO_ROOT / "docs" / "_working" / "pipeline-research" / "promotion-reports"
-THRESHOLD_SOURCE = "docs/_working/trading_vision/2026-09-16-owner-vision-system-mapping.md#L57"
+# v1→v2 尺切换（2026-09-27 st-ec2-p0，F74 堵点1/原 WO-08-01 残件+WO-08-04）：
+# v1（STD-SIM-ACCESS-001，Owner 草案）2026-09-17 起判 suspect（裁定#306：DSR>0 在累计
+# N=4562 口径下需年化 SR≥2.68 与 OOS≥1.5 数学互斥=不可过）。v2=STD-SIM-ACCESS-002
+# frozen 2026-09-18（裁定#337），重考历史前置已满足（E6 双尺重考：81 全量覆盖/55 翻转
+# 零不可解释）——本件按 v2 frozen 尺打分，报告带 suspect 注记防 v1 口径误读。
+THRESHOLD_SOURCE = "config/standards.yaml#STD-SIM-ACCESS-002（v2 frozen 2026-09-18，裁定#337）"
 
 THRESHOLDS = {
     "oos_sharpe_min": 1.5,
     "max_drawdown_max": 0.15,
     "min_trades": 30,
-    "dsr_min": 0.0,
+    "dsr_min": 0.5,  # v2：由 >0 提到 ≥0.5；N 口径=预注册族 N_eff（非累计棘轮）
+    "combo_corr_max": 0.7,  # v2 新增腿①：组合内 ρ̄≤0.7（超者合并算一档，骨架 §7 先例）
+    "ann_turnover_1side_max": 12.0,  # v2 新增腿③：年化单边换手上限（超限=成本分层重估义务非判死）
 }
+# v2 capacity_evidence="required" 由 capacity_trades 腿承载（语义修正：30 笔=容量与成本
+# 计提证明位；显著性归 DSR 腿——笔数不能当统计门）。ρ̄ 证据源=联赛（F73）未建，常缺证
+# → 该腿 evidence gap=borderline（不冤枉不放水），advisory 包可显式带 avg_pairwise_corr。
+
+
+def _safe_id(raw: str) -> str:
+    """CLI --strategy-id 入参消毒（仅用于等值匹配）：去首尾空白与路径分隔符。"""
+    return str(raw).strip().replace("\\", "").replace("/", "")
 
 
 def load_advisories(advisory_dir: Path | None = None) -> list[dict]:
@@ -142,24 +160,61 @@ def score_candidate(adv: dict, screen: dict | None, pocket: dict | None) -> dict
     checks: list[dict] = []
 
     def add(name: str, ok: bool | None, value, threshold, src: str, note: str = "") -> None:
-        checks.append({"name": name, "ok": ok, "value": value, "threshold": threshold,
-                       "source": src, "note": note})
+        checks.append({"name": name, "ok": ok, "value": value, "threshold": threshold, "source": src, "note": note})
 
     oos = _num((screen or {}).get("oos_sharpe")) or _num(adv.get("oos_sharpe"))
-    add("oos_sharpe", (oos >= THRESHOLDS["oos_sharpe_min"]) if oos is not None else None,
-        oos, THRESHOLDS["oos_sharpe_min"], "strategy_screen/advisory")
+    add(
+        "oos_sharpe",
+        (oos >= THRESHOLDS["oos_sharpe_min"]) if oos is not None else None,
+        oos,
+        THRESHOLDS["oos_sharpe_min"],
+        "strategy_screen/advisory",
+    )
 
     dd = _num((pocket or {}).get("max_drawdown"))
-    add("max_drawdown", (dd <= THRESHOLDS["max_drawdown_max"]) if dd is not None else None,
-        dd, THRESHOLDS["max_drawdown_max"], "sim_pocket_daily")
+    add(
+        "max_drawdown",
+        (dd <= THRESHOLDS["max_drawdown_max"]) if dd is not None else None,
+        dd,
+        THRESHOLDS["max_drawdown_max"],
+        "sim_pocket_daily",
+    )
 
     trades = _num((pocket or {}).get("trades"))
-    add("capacity_trades", (trades >= THRESHOLDS["min_trades"]) if trades is not None else None,
-        trades, THRESHOLDS["min_trades"], "sim_trade_log")
+    add(
+        "capacity_trades",
+        (trades >= THRESHOLDS["min_trades"]) if trades is not None else None,
+        trades,
+        THRESHOLDS["min_trades"],
+        "sim_trade_log",
+    )
 
     dsr = _num((screen or {}).get("deflated_sharpe")) or _num(adv.get("deflated_sharpe"))
-    add("dsr", (dsr > THRESHOLDS["dsr_min"]) if dsr is not None else None,
-        dsr, f"> {THRESHOLDS['dsr_min']}", "strategy_screen")
+    add(
+        "dsr",
+        (dsr >= THRESHOLDS["dsr_min"]) if dsr is not None else None,
+        dsr,
+        f"≥ {THRESHOLDS['dsr_min']}（v2：族 N_eff 口径）",
+        "strategy_screen",
+    )
+
+    rho = _num(adv.get("avg_pairwise_corr")) or _num(adv.get("combo_corr"))
+    add(
+        "combo_corr",
+        (rho <= THRESHOLDS["combo_corr_max"]) if rho is not None else None,
+        rho,
+        f"≤ {THRESHOLDS['combo_corr_max']}（v2 新增腿①）",
+        "advisory/联赛（F73 未建常缺证）",
+    )
+
+    to = _num((screen or {}).get("turnover")) or _num(adv.get("ann_turnover_1side"))
+    add(
+        "ann_turnover",
+        (to <= THRESHOLDS["ann_turnover_1side_max"]) if to is not None else None,
+        to,
+        f"≤ {THRESHOLDS['ann_turnover_1side_max']}（v2 新增腿③）",
+        "strategy_screen.turnover/advisory",
+    )
 
     if any(c["ok"] is False for c in checks):
         verdict = "reject"
@@ -182,10 +237,12 @@ def render_report(results: list[dict]) -> str:
         "",
         f"- 生成: {now}（机生禁手改）",
         f"- 阈值出处: {THRESHOLD_SOURCE}（预注册冻结，修标走标准库重考历史）",
+        "- v1 尺注记: STD-SIM-ACCESS-001=suspect（裁定#306：累计 N 口径 DSR>0 需 SR≥2.68 与"
+        " OOS≥1.5 数学互斥）——本报告按 v2 frozen 尺打分，历史 v1 对照见 config/standards.yaml",
         f"- 扫描候选: {len(results)}",
         "",
-        "| 候选 | OOS Sharpe | 最大回撤 | 成交笔数 | DSR | 裁定 |",
-        "|------|-----------|---------|---------|-----|------|",
+        "| 候选 | OOS Sharpe | 最大回撤 | 成交笔数 | DSR | ρ̄ | 年化换手 | 裁定 |",
+        "|------|-----------|---------|---------|-----|---|---------|------|",
     ]
     for r in results:
         cells = []
@@ -198,7 +255,9 @@ def render_report(results: list[dict]) -> str:
         lines.append(f"## {r['strategy_id']} — {r['verdict']}")
         for c in r["checks"]:
             state = {True: "PASS", False: "FAIL", None: "GAP"}[c["ok"]]
-            lines.append(f"- [{state}] {c['name']}: value={c['value']} threshold={c['threshold']} (source={c['source']})")
+            lines.append(
+                f"- [{state}] {c['name']}: value={c['value']} threshold={c['threshold']} (source={c['source']})"
+            )
         if r["evidence_gaps"]:
             lines.append(f"- 证据缺口: {','.join(r['evidence_gaps'])}（borderline=继续观察，不冤枉不放水）")
         rec = {
@@ -222,8 +281,7 @@ def main() -> int:
     advisories = load_advisories(args.advisory_dir)
     if args.strategy_id:
         target = _safe_id(args.strategy_id)
-        advisories = [a for a in advisories
-                      if str(a.get("strategy_id") or a.get("str_id") or "") == target]
+        advisories = [a for a in advisories if str(a.get("strategy_id") or a.get("str_id") or "") == target]
     results = []
     for adv in advisories:
         sid = str(adv.get("strategy_id") or adv.get("str_id") or adv.get("_file") or "unknown")
@@ -238,8 +296,17 @@ def main() -> int:
     out = out_dir / f"promotion-report-{stamp}.md"
     expected = content_sha256(out.read_text(encoding="utf-8")) if out.exists() else None
     safe_write_text(out, report, expected_base_sha256=expected)
-    print(json.dumps({"ok": True, "out": str(out), "candidates": len(results),
-                      "verdicts": {r["strategy_id"]: r["verdict"] for r in results}}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                "ok": True,
+                "out": str(out),
+                "candidates": len(results),
+                "verdicts": {r["strategy_id"]: r["verdict"] for r in results},
+            },
+            ensure_ascii=False,
+        )
+    )
     return 0
 
 

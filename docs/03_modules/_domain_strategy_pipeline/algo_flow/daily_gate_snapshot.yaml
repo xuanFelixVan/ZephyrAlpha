@@ -1,0 +1,78 @@
+# ALGO_FLOW 外部真源——promotion_advisory（_domain_strategy_pipeline 域，真源 src/zephyr/strategy_pipeline/promotion_advisory.py）
+# 2026-09-27 st-ec2-p0 补锚（F74 堵点2 批）：P2-1 契约头减负出仓形态，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+# 2026-09-27 st-chief6-20260927 补形：原块缺 # [/ALGO_FLOW] 收标记与 # 边: 段、层名误用
+# "处理"（canonical=输入/算法/输出）→ ALGO-FLOW-LINK 判红；本版按 validate_graph 补齐，
+# 并按 validate_file 补 算法/输出 层必填字段（新件不欠字段账）。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.strategy_pipeline.promotion_advisory
+source_of_truth: src/zephyr/strategy_pipeline/promotion_advisory.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: 四路证据源（SCR-SIMGOV 治理建议/SCR-DEV 月度偏离/fw-auto 整装/sim_memo 月档）
+    #   fields: 待校准
+    #   code: build_advisories
+    # - id: I2
+    #   name: PA-1 预授权三条件（双窗/BH-FDR/无未决衰减）
+    #   fields: 待校准
+    #   code: promotion_precheck
+    # 层: 算法
+    # - id: P1
+    #   name_zh: ① 建议词表归一兜底判定
+    #   name_en: _decide_recommendation
+    #   intro: governance 建议优先，缺失时按月度判定史兜底出建议词
+    #   desc: governance_action 命中 _GOV_REC_MAP 即直译；否则按连续 pass/breach 月数判（规则真源=SOP-C §8 连续 2 月门槛），兜不出=hold
+    #   inputs: I1
+    #   outputs: recommendation 词（promote/hold/demote/reject 族）
+    #   invariant: 禁硬编码 True——证据缺位只能落 hold，不许猜放行
+    # - id: P2
+    #   name_zh: ② 建议包合成与幂等落盘
+    #   name_en: build_advisories
+    #   intro: 四路证据+PA-1 预授权合成 ADV-*.json，同日重跑覆盖不堆文件
+    #   desc: 读治理建议/月度偏离/整装证据/sim_memo 月档 → 按 lifecycle∈_OBSERVING_LIFECYCLES 选 sid → _compose_advisory → recommendation==hold 不产包 → safe_write_text 落 ADVISORY_DIR
+    #   inputs: I1 I2 P1
+    #   outputs: data/strategy_intake/promotion_advisories/ADV-*.json
+    # - id: P3
+    #   name_zh: ③ promote 包推送 Owner
+    #   name_en: run_promotion_advisory_due
+    #   intro: 只对 recommendation==promote 的包经 Alerter 真通道推送
+    #   desc: Alerter().notify(level=ERROR)；webhook 未配置=alerter 自降级 data/failures/ 本地告警文件；推送异常只 warning 不抛（包已在盘，通道故障不反噬建议产出）
+    #   inputs: P2
+    #   outputs: pushed  advisory_id 清单 + combo_rc 事件返回体
+    # - id: P4
+    #   name_zh: ④ 组合门一页报告传动（F74 堵点2）
+    #   name_en: run_promotion_combo_gate
+    #   intro: 建议包落盘后子进程传动 combo gate 渲染一页报告，接通汇总器最后一跳
+    #   desc: 目录空或无 ADV-*.json=静默跳过返回 skipped；否则 run_subprocess_hidden 起 scripts/backtest/promotion_combo_gate.py（重活不进主进程），rc≠0 只 warning
+    #   inputs: P2
+    #   outputs: docs/_working/pipeline-research/promotion-reports/promotion-report-*.md
+    #   invariant: 事件传动非 cron（宪法 §9.3）；失败不反噬建议产出——跨事件可重渲染
+    # - id: P5
+    #   name_zh: ⑤ Owner 拍板执行器
+    #   name_en: decide_advisory
+    #   intro: Owner token + KillSwitch 校验后按拍板做 lifecycle 手术流转
+    #   desc: hmac 比 token（未配置=fail-closed）→ KillSwitch 闸 → lifecycle_fsm 判合法迁移 → _update_registry_lifecycle 单条目 CAS 改写 + 写后集合/字段双复核 → decision 台账 + 回执推送
+    #   inputs: P2
+    #   outputs: 流转结果 + decision 台账行 + Owner 回执
+    #   invariant: 建议≠决定——未经 Owner token 不得流转；注册表只改目标条目两字段，越界即抛
+    # 层: 输出
+    # - id: O1
+    #   name: 注册表 lifecycle_status 流转+decision 台账+组合门报告
+    #   intro: 三处落盘面——strategy_registry lifecycle 单条目、promotion_decision 台账、一页式组合门报告
+    #   fields: 待校准
+    #   code: decide_advisory
+    # [/ALGO_FLOW]
+    #
+    # 边:
+    # I1 --> P1
+    # I1 --> P2
+    # P1 --> P2
+    # I2 --> P2
+    # P2 --> P3
+    # P2 --> P4
+    # P2 --> P5
+    # P4 --> O1
+    # P5 --> O1

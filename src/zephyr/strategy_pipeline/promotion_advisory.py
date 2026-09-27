@@ -66,6 +66,8 @@ token=None 时服务端自取配置密钥（前端拍板=Owner 点击即授权�
 demote 目标态低于 sim，走 candidate→shelved 无守卫合法边，不被晋升预授权反向阻断。
 
 CLI 自检：python -m zephyr.strategy_pipeline.promotion_advisory [build|list|preauth <STR-ID>]
+
+# [ALGO_FLOW] external: docs/03_modules/_domain_strategy_pipeline/algo_flow/daily_gate_snapshot.yaml
 """
 
 from __future__ import annotations
@@ -197,8 +199,7 @@ def _read_registry_entries(registry_path: Path | None = None) -> dict[str, dict[
 
 def _read_registry_lifecycle(registry_path: Path | None = None) -> dict[str, str]:
     """注册表当前 lifecycle 快照 {sid: lifecycle_status}（只读）。"""
-    return {sid: str(e.get("lifecycle_status") or "")
-            for sid, e in _read_registry_entries(registry_path).items()}
+    return {sid: str(e.get("lifecycle_status") or "") for sid, e in _read_registry_entries(registry_path).items()}
 
 
 # ---------- PA-1：candidate→sim 预授权三条件实据评估（缺证据=不通过，禁硬编码 True） ----------
@@ -237,19 +238,19 @@ def _load_decay_states() -> dict[str, str]:
     try:
         doc = json.loads(DECAY_LEDGER.read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        logger.warning("衰减台账读取失败（no_pending_decay_alert 按证据缺位判）: %s", DECAY_LEDGER,
-                       exc_info=True)
+        logger.warning("衰减台账读取失败（no_pending_decay_alert 按证据缺位判）: %s", DECAY_LEDGER, exc_info=True)
         return {}
-    return {str(sid): str(e.get("state") or "")
-            for sid, e in (doc.get("strategies") or {}).items() if isinstance(e, dict)}
+    return {
+        str(sid): str(e.get("state") or "") for sid, e in (doc.get("strategies") or {}).items() if isinstance(e, dict)
+    }
 
 
-def _file_base(path: Any) -> str:
+def _file_base(path: str | Path | None) -> str:
     """文件名（Windows 反斜杠/POSIX 正斜杠统一；空值安全）。"""
     return str(path or "").replace("\\", "/").rstrip("/").rsplit("/", 1)[-1]
 
 
-def _rel(path: Any) -> str:
+def _rel(path: str | Path) -> str:
     """仓根相对显示（不在仓内=原样绝对路径——测试 tmp 树注入同样可用）。"""
     p = Path(path)
     try:
@@ -279,7 +280,7 @@ def _screen_sid(entry: dict[str, Any] | None, item: dict | None) -> str | None:
     """屏侧候选 id（CAND-*）：双窗行优先，回退注册表 aliases（衰减台账与 fdr 名单都按它建行）。"""
     if item and item.get("strategy_id"):
         return str(item["strategy_id"])
-    for a in ((entry or {}).get("aliases") or []):
+    for a in (entry or {}).get("aliases") or []:
         if str(a).startswith("CAND-"):
             return str(a)
     return None
@@ -298,10 +299,12 @@ def _cond_dual_window(entry: dict | None, item: dict | None) -> dict[str, Any]:
         return _fail("注册表条目无 code_path，无法与 §8 双窗台账联查", "strategy_registry")
     if item is None:
         return _fail(f"双窗及格集无 code_path∈{sorted(_anchor_names(entry))} 行（未跑或双窗未过）", source)
-    return {"ok": True,
-            "reason": f"双窗及格行在位 {item.get('key')}：IS SR={item.get('is_sharpe')} ∧ "
-                      f"{len(item.get('segments') or [])} 段 OOS 逐段正且衰减未越线",
-            "source": source}
+    return {
+        "ok": True,
+        "reason": f"双窗及格行在位 {item.get('key')}：IS SR={item.get('is_sharpe')} ∧ "
+        f"{len(item.get('segments') or [])} 段 OOS 逐段正且衰减未越线",
+        "source": source,
+    }
 
 
 def _cond_bh_fdr(entry: dict | None, item: dict | None, fdr_keys: set[str]) -> dict[str, Any]:
@@ -317,16 +320,14 @@ def _cond_bh_fdr(entry: dict | None, item: dict | None, fdr_keys: set[str]) -> d
         return _fail(f"无批报告 fdr_keep 名单（键={key}）=无 BH-FDR 判定记录，判不了不放行", source)
     if key not in fdr_keys:
         return _fail(f"键 {key} 不在任一批 fdr_keep 名单（BH-FDR 未过或该批未跑）", source)
-    return {"ok": True, "reason": f"键 {key} 在 intake 批报告 fdr_keep 名单（q≤0.10 批内通过）",
-            "source": source}
+    return {"ok": True, "reason": f"键 {key} 在 intake 批报告 fdr_keep 名单（q≤0.10 批内通过）", "source": source}
 
 
 def _cond_no_pending_decay(screen_sid: str | None, states: dict[str, str]) -> dict[str, Any]:
     """衰减闸：MOD-SIG-150 台账无 failed/retired 未决建议才免检放行（本件是台账的下游消费端）。"""
     source = _rel(DECAY_LEDGER)
     if not states:
-        return _fail(f"衰减台账空或缺席（{source}）=无衰减巡检记录，须先跑 run_strategy_decay_certify",
-                     source)
+        return _fail(f"衰减台账空或缺席（{source}）=无衰减巡检记录，须先跑 run_strategy_decay_certify", source)
     if screen_sid is None:
         return _fail("无法定位屏侧候选 id（衰减台账按 CAND-* 建行）=查无巡检记录", source)
     state = states.get(screen_sid)
@@ -334,8 +335,11 @@ def _cond_no_pending_decay(screen_sid: str | None, states: dict[str, str]) -> di
         return _fail(f"衰减台账无 {screen_sid} 行（该策略未被周扫覆盖）", source)
     if state in _DECAY_PENDING_STATES:
         return _fail(f"衰减闸门未决建议 state={state}（判死/退役在案）不许晋升", source)
-    return {"ok": True, "reason": f"衰减台账 state={state}，无 {'/'.join(_DECAY_PENDING_STATES)} 未决建议",
-            "source": source}
+    return {
+        "ok": True,
+        "reason": f"衰减台账 state={state}，无 {'/'.join(_DECAY_PENDING_STATES)} 未决建议",
+        "source": source,
+    }
 
 
 def evaluate_sim_preauthorization(
@@ -369,14 +373,11 @@ def evaluate_sim_preauthorization(
     failed = [k for k in _PREAUTH_KEYS if not conditions[k]["ok"]]
     ctx = SimPromotionContext(**{k: bool(conditions[k]["ok"]) for k in _PREAUTH_KEYS})
     if failed:
-        logger.warning("SIM 预授权未成立 %s: %s", sid,
-                       "; ".join(f"{k}={conditions[k]['reason']}" for k in failed))
-    return {"ok": not failed, "conditions": conditions, "failed": failed,
-            "context": ctx, "screen_sid": screen_sid}
+        logger.warning("SIM 预授权未成立 %s: %s", sid, "; ".join(f"{k}={conditions[k]['reason']}" for k in failed))
+    return {"ok": not failed, "conditions": conditions, "failed": failed, "context": ctx, "screen_sid": screen_sid}
 
 
-def _decide_recommendation(governance_action: str | None, pass_months: int,
-                           breach_months: int) -> str:
+def _decide_recommendation(governance_action: str | None, pass_months: int, breach_months: int) -> str:
     """建议词表归一：governance 优先，判定史兜底（规则真源=SOP-C §8 连续 2 月门槛）。"""
     if governance_action in _GOV_REC_MAP:
         return _GOV_REC_MAP[governance_action]
@@ -388,9 +389,14 @@ def _decide_recommendation(governance_action: str | None, pass_months: int,
 
 
 # ---------- 建议包生成 ----------
-def _compose_advisory(sid: str, gov: dict[str, Any] | None, dev: dict[str, Any] | None,
-                      fw: dict[str, Any] | None, memo_ref: str | None,
-                      lifecycle_now: str) -> dict[str, Any]:
+def _compose_advisory(
+    sid: str,
+    gov: dict[str, Any] | None,
+    dev: dict[str, Any] | None,
+    fw: dict[str, Any] | None,
+    memo_ref: str | None,
+    lifecycle_now: str,
+) -> dict[str, Any]:
     dev = dev or {}
     pass_months, breach_months = int(dev.get("pass", 0)), int(dev.get("breach", 0))
     governance_action = (gov or {}).get("recommendation")
@@ -419,12 +425,10 @@ def build_advisories(advisory_dir: Path | None = None) -> list[dict]:
     fw = _read_fw_evidence()
     memo_ref = _read_memo_ref()
     lifecycle = _read_registry_lifecycle()
-    sids = sorted({s for s in (set(gov) | set(dev))
-                   if lifecycle.get(s) in _OBSERVING_LIFECYCLES})
+    sids = sorted({s for s in (set(gov) | set(dev)) if lifecycle.get(s) in _OBSERVING_LIFECYCLES})
     out: list[dict] = []
     for sid in sids:
-        adv = _compose_advisory(sid, gov.get(sid), dev.get(sid), fw, memo_ref,
-                                lifecycle.get(sid, ""))
+        adv = _compose_advisory(sid, gov.get(sid), dev.get(sid), fw, memo_ref, lifecycle.get(sid, ""))
         if adv["recommendation"] == "hold":
             continue
         out.append(adv)
@@ -442,10 +446,43 @@ def build_advisories(advisory_dir: Path | None = None) -> list[dict]:
 
 
 # ---------- 事件入口（pipeline_events OPTIONAL_DUE_KINDS 契约） ----------
+def run_promotion_combo_gate(payload: dict | None = None) -> dict:
+    """组合门一页报告传动（F74 堵点2，2026-09-27 st-ec2-p0）：建议包落盘后接通
+    "汇总器两半"的最后一跳——combo gate 渲染一页报告。
+
+    挂 promotion_advisory_due 执行体尾（接线处方=03_promotion_gate.md §五堵点2），
+    事件传动非 cron（宪法 §9.3）；子进程隔离照抄 run_sim_ledger_daily 款（重活不进
+    主进程）。advisory 目录空/缺=静默跳过（处女链零建议包不告警不白跑）；
+    失败只告警不反噬——包已在盘，重跑 advisory 或手跑 combo 皆可补渲染。
+    """
+    import sys as _sys
+
+    target = ADVISORY_DIR
+    if not target.exists() or not any(target.glob("ADV-*.json")):
+        return {"rc": 0, "skipped": "advisory_dir_empty_or_missing"}
+    from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+    timeout_s = int((payload or {}).get("timeout_s", 600))
+    proc = run_subprocess_hidden(
+        [_sys.executable, str(ROOT / "scripts/backtest/promotion_combo_gate.py")],
+        capture_output=True,
+        text=True,
+        timeout=timeout_s,
+        cwd=str(ROOT),
+        encoding="utf-8",
+        errors="replace",
+    )
+    if proc.returncode != 0:
+        logger.warning("combo gate 一页报告渲染失败 rc=%s: %s", proc.returncode, (proc.stderr or "")[-200:])
+    return {"rc": proc.returncode, "tail": (proc.stdout or "")[-300:]}
+
+
 def run_promotion_advisory_due(event: dict) -> dict:
     """promotion_advisory_due 执行体：生成建议包；promote 包经 data/alerter 真通道推送 Owner。
 
     webhook 未配置=alerter 自降级本地告警文件（data/failures/），通道故障不抛不反噬。
+    尾部接通 combo gate 一页报告（堵点2：汇总器两半"建议包→报告"最后一跳，
+    失败不反噬建议产出——包已在盘，跨事件可重渲染）。
     """
     advisories = build_advisories()
     pushed: list[str] = []
@@ -453,22 +490,35 @@ def run_promotion_advisory_due(event: dict) -> dict:
         if adv["recommendation"] != "promote":
             continue
         fw = adv["evidence"].get("fw_backtest") or {}
-        msg = (f"转正建议 {adv['advisory_id']}: {adv['strategy_id']}"
-               f"（{adv['lifecycle_now']}）建议批准进整装；"
-               f"fw={fw.get('run_id')} sharpe={fw.get('sharpe')} panel_ok={fw.get('panel_ok')}；"
-               f"前端拍板: 页面 #promotion")
+        msg = (
+            f"转正建议 {adv['advisory_id']}: {adv['strategy_id']}"
+            f"（{adv['lifecycle_now']}）建议批准进整装；"
+            f"fw={fw.get('run_id')} sharpe={fw.get('sharpe')} panel_ok={fw.get('panel_ok')}；"
+            f"前端拍板: 页面 #promotion"
+        )
         try:
             from zephyr.data.alerter import Alerter
 
-            Alerter().notify(f"promotion_advisory-{adv['advisory_id']}", msg,
-                             level="ERROR", source="promotion_advisory")
+            Alerter().notify(
+                f"promotion_advisory-{adv['advisory_id']}", msg, level="ERROR", source="promotion_advisory"
+            )
             pushed.append(adv["advisory_id"])
-        except Exception:  # noqa: BLE001——推送通道故障不反噬建议产出（包已在盘上）
-            logger.warning("转正建议推送失败（本地告警文件未落，包已在盘）: %s",
-                           adv["advisory_id"], exc_info=True)
-    logger.info("转正建议包 %d 份（推送 %d）", len(advisories), len(pushed))
-    return {"event_id": event.get("id"), "built": len(advisories),
-            "advisories": [a["advisory_id"] for a in advisories], "pushed": pushed}
+        except Exception:  # noqa: BLE001  推送通道故障不反噬建议产出（包已在盘上）
+            logger.warning("转正建议推送失败（本地告警文件未落，包已在盘）: %s", adv["advisory_id"], exc_info=True)
+    try:
+        combo = run_promotion_combo_gate()
+    except Exception:  # noqa: BLE001  传动故障不反噬建议产出（包已在盘上，跨事件可重渲染）
+        logger.warning("combo gate 传动失败（包已在盘）", exc_info=True)
+        combo = {"rc": -1}
+    logger.info("转正建议包 %d 份（推送 %d）combo_rc=%s", len(advisories), len(pushed), combo.get("rc"))
+    return {
+        "event_id": event.get("id"),
+        "built": len(advisories),
+        "advisories": [a["advisory_id"] for a in advisories],
+        "pushed": pushed,
+        "combo_rc": combo.get("rc"),
+        "combo_skipped": combo.get("skipped"),
+    }
 
 
 # ---------- 查询（S13 GET 契约真源） ----------
@@ -507,21 +557,19 @@ def _locate_registry_block(lines: list[str], sid: str) -> tuple[int, int]:
         m = _SID_LINE_RE.match(line.rstrip("\n"))
         if m and m.group("sid") == sid:
             indent = m.group(1)
-            end = next((j for j in range(i + 1, len(lines))
-                        if lines[j].startswith(f"{indent}- ")), len(lines))
+            end = next((j for j in range(i + 1, len(lines)) if lines[j].startswith(f"{indent}- ")), len(lines))
             return i, end
     raise RuntimeError(f"注册表未找到条目: {sid}")
 
 
-def _rewrite_lifecycle_fields(lines: list[str], start: int, end: int, sid: str,
-                              new_state: str) -> None:
+def _rewrite_lifecycle_fields(lines: list[str], start: int, end: int, sid: str, new_state: str) -> None:
     """块内只改 lifecycle_status + updated_at 两行（原地改 lines；两行任一不唯一=异常上抛）。"""
     n_lc = n_upd = 0
     for j in range(start, end):
-        if (lc := _LC_LINE_RE.match(lines[j])):
-            lines[j] = f"{lc.group('indent')}lifecycle_status: \"{new_state}\"\n"
+        if lc := _LC_LINE_RE.match(lines[j]):
+            lines[j] = f'{lc.group("indent")}lifecycle_status: "{new_state}"\n'
             n_lc += 1
-        elif (upd := _UPD_LINE_RE.match(lines[j])):
+        elif upd := _UPD_LINE_RE.match(lines[j]):
             lines[j] = f"{upd.group('indent')}updated_at: {now_utc().strftime('%Y-%m-%d')}\n"
             n_upd += 1
     if n_lc != 1 or n_upd != 1:
@@ -537,17 +585,15 @@ def _verify_registry_surgery(before: str, after: str, sid: str) -> None:
     a_list = a.get("strategies", [])
     assert [e["strategy_id"] for e in a_list] == list(b_map), "写后复核失败：条目集合被触碰"
     changed = []
-    for old, new in zip(b.get("strategies", []), a_list):
+    for old, new in zip(b.get("strategies", []), a_list, strict=False):
         diff = {k for k in set(old) | set(new) if old.get(k) != new.get(k)}
         if diff:
             changed.append((new["strategy_id"], diff))
     assert [c[0] for c in changed] == [sid], f"写后复核失败：非目标条目被触碰 {changed}"
-    assert {"lifecycle_status", "updated_at"} >= changed[0][1], \
-        f"写后复核失败：目标条目越界改动 {changed[0][1]}"
+    assert {"lifecycle_status", "updated_at"} >= changed[0][1], f"写后复核失败：目标条目越界改动 {changed[0][1]}"
 
 
-def _update_registry_lifecycle(sid: str, new_state: str,
-                               registry_path: Path | None = None) -> dict[str, Any]:
+def _update_registry_lifecycle(sid: str, new_state: str, registry_path: Path | None = None) -> dict[str, Any]:
     """单条目 lifecycle_status 手术更新（safe_write_text CAS+写后复核：仅目标条目两字段变化）。"""
     import yaml
 
@@ -558,18 +604,20 @@ def _update_registry_lifecycle(sid: str, new_state: str,
     _rewrite_lifecycle_fields(lines, start, end, sid, new_state)
     after = "".join(lines)
     _verify_registry_surgery(before, after, sid)
-    r = safe_write_text(path, after,
-                        expected_base_sha256=hashlib.sha256(before.encode("utf-8")).hexdigest(),
-                        newline="\n")
+    r = safe_write_text(
+        path, after, expected_base_sha256=hashlib.sha256(before.encode("utf-8")).hexdigest(), newline="\n"
+    )
     if not getattr(r, "written", True):
         raise RuntimeError("safe_write_text 未确认写入（CAS 竞争?）——fail-closed")
     back = yaml.safe_load(path.read_text(encoding="utf-8"))
-    back_lc = {e["strategy_id"]: str(e.get("lifecycle_status") or "")
-               for e in back.get("strategies", [])}
+    back_lc = {e["strategy_id"]: str(e.get("lifecycle_status") or "") for e in back.get("strategies", [])}
     if back_lc.get(sid) != new_state:
         raise RuntimeError("写后磁盘复核失败：lifecycle 未生效——fail-closed")
-    return {"strategy_id": sid, "lifecycle_status": new_state,
-            "sha256": hashlib.sha256(path.read_bytes()).hexdigest()[:12]}
+    return {
+        "strategy_id": sid,
+        "lifecycle_status": new_state,
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest()[:12],
+    }
 
 
 # ---------- Owner 拍板执行器（S13 POST 契约真源） ----------
@@ -585,8 +633,8 @@ def _token_check(provided: str | None) -> tuple[str | None, str | None]:
     if provided is None:
         return secret, None
     if not hmac.compare_digest(
-            hashlib.sha256(provided.encode("utf-8")).hexdigest(),
-            hashlib.sha256(secret.encode("utf-8")).hexdigest()):
+        hashlib.sha256(provided.encode("utf-8")).hexdigest(), hashlib.sha256(secret.encode("utf-8")).hexdigest()
+    ):
         return None, "invalid_token"
     return provided, None
 
@@ -595,8 +643,9 @@ def _kill_switch_clear() -> tuple[bool, str]:
     """总闸探针（与 intake 同款 fail-closed）：非 normal/探测失败=不清除，转正流转一律拒。"""
     try:
         from zephyr.strategy_pipeline.pipeline_events import kill_switch_clear
+
         return kill_switch_clear()
-    except Exception:  # noqa: BLE001——探针不可达同样 fail-closed
+    except Exception:  # noqa: BLE001  探针不可达同样 fail-closed
         return False, "probe_unavailable"
 
 
@@ -604,17 +653,21 @@ class _PreauthDenied(Exception):
     """PA-1：candidate→sim 预授权实据不齐（仅 decide 内部消费，不外抛——契约=返回拒绝 dict）。"""
 
     def __init__(self, pre: dict[str, Any]) -> None:
-        super().__init__("; ".join(f"{k}={v['reason']}" for k, v in pre["conditions"].items()
-                                   if not v["ok"]))
+        super().__init__("; ".join(f"{k}={v['reason']}" for k, v in pre["conditions"].items() if not v["ok"]))
         self.conditions = pre["conditions"]
         self.failed = pre["failed"]
         self.screen_sid = pre.get("screen_sid")
 
 
-def _transition_lifecycle(sid: str, target_state: str, effective_token: str, *,
-                          lifecycle_now: str = "",
-                          registry_path: Path | None = None,
-                          sim_evidence: dict[str, Any] | None = None) -> tuple[dict, dict]:
+def _transition_lifecycle(
+    sid: str,
+    target_state: str,
+    effective_token: str,
+    *,
+    lifecycle_now: str = "",
+    registry_path: Path | None = None,
+    sim_evidence: dict[str, Any] | None = None,
+) -> tuple[dict, dict]:
     """FSM 定位+流转到决策目标态，返回 (fsm 回执, 预授权留痕)。
 
     FSM 每台以 candidate 起步（注册表才是状态真源），lifecycle_now 留痕进审计字段说明落差。
@@ -639,12 +692,19 @@ def _transition_lifecycle(sid: str, target_state: str, effective_token: str, *,
             raise _PreauthDenied(pre)
         if fsm.current_state == CANDIDATE:
             fsm.transition(SIM, {"sim_promotion": pre["context"]})
-        preauth = {"mode": "evidence", "lifecycle_now": lifecycle_now,
-                   "screen_sid": pre["screen_sid"], "conditions": pre["conditions"]}
+        preauth = {
+            "mode": "evidence",
+            "lifecycle_now": lifecycle_now,
+            "screen_sid": pre["screen_sid"],
+            "conditions": pre["conditions"],
+        }
     else:
-        preauth = {"mode": "not_required", "lifecycle_now": lifecycle_now,
-                   "reason": f"目标态 {target_state} 低于 sim（在册 {lifecycle_now}）："
-                             f"降档走 candidate→{SHELVED} 无守卫合法边，不复核晋升预授权"}
+        preauth = {
+            "mode": "not_required",
+            "lifecycle_now": lifecycle_now,
+            "reason": f"目标态 {target_state} 低于 sim（在册 {lifecycle_now}）："
+            f"降档走 candidate→{SHELVED} 无守卫合法边，不复核晋升预授权",
+        }
     fsm_target = PRODUCTION if target_state == "production" else SHELVED
     ctx: dict[str, Any] = {"owner_token": effective_token} if target_state == "production" else {}
     from_state = fsm.current_state
@@ -652,10 +712,15 @@ def _transition_lifecycle(sid: str, target_state: str, effective_token: str, *,
     return {"from": from_state, "to": target_state}, preauth
 
 
-def decide(advisory_id: str, decision: str, token: str | None = None,
-           via: str = "api", advisory_dir: Path | None = None,
-           registry_path: Path | None = None,
-           sim_evidence: dict[str, Any] | None = None) -> dict[str, Any]:
+def decide(
+    advisory_id: str,
+    decision: str,
+    token: str | None = None,
+    via: str = "api",
+    advisory_dir: Path | None = None,
+    registry_path: Path | None = None,
+    sim_evidence: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Owner 拍板：token 校验→FSM 流转→注册表 CAS 更新→decision 台账→alerter 回执。
 
     幂等：已决 advisory（台账存在）重复 decide=拒绝（{"ok": false, "reason": "already_decided"}）。
@@ -668,8 +733,11 @@ def decide(advisory_id: str, decision: str, token: str | None = None,
     ks_ok, _ks_why = _kill_switch_clear()
     if not ks_ok:
         logger.warning("拍板拒绝（kill_switch_active）: %s", advisory_id)
-        return {"ok": False, "advisory_id": advisory_id,
-                "reason": "kill_switch_active（总闸激活，转正流转暂停；恢复后重试）"}
+        return {
+            "ok": False,
+            "advisory_id": advisory_id,
+            "reason": "kill_switch_active（总闸激活，转正流转暂停；恢复后重试）",
+        }
     target_dir = advisory_dir or ADVISORY_DIR
     adv_path = target_dir / f"{advisory_id}.json"
     if not adv_path.is_file():
@@ -693,19 +761,32 @@ def decide(advisory_id: str, decision: str, token: str | None = None,
     if target_state is not None:
         lifecycle_now = _read_registry_lifecycle(registry_path).get(sid, "")
         if lifecycle_now not in _OBSERVING_LIFECYCLES:
-            return {"ok": False, "advisory_id": advisory_id,
-                    "reason": "invalid_lifecycle", "lifecycle_now": lifecycle_now}
+            return {
+                "ok": False,
+                "advisory_id": advisory_id,
+                "reason": "invalid_lifecycle",
+                "lifecycle_now": lifecycle_now,
+            }
         try:
             fsm_state, preauth_audit = _transition_lifecycle(
-                sid, target_state, effective, lifecycle_now=lifecycle_now,
-                registry_path=registry_path, sim_evidence=sim_evidence)
+                sid,
+                target_state,
+                effective,
+                lifecycle_now=lifecycle_now,
+                registry_path=registry_path,
+                sim_evidence=sim_evidence,
+            )
         except _PreauthDenied as exc:  # PA-1：预授权实据不齐=拒批，不落墓碑（补证后可重试）
-            logger.warning("拍板拒绝（sim_preauthorization_not_established）: %s %s",
-                           advisory_id, exc)
-            return {"ok": False, "advisory_id": advisory_id, "strategy_id": sid,
-                    "reason": "sim_preauthorization_not_established",
-                    "failed": exc.failed, "conditions": exc.conditions,
-                    "screen_sid": exc.screen_sid}
+            logger.warning("拍板拒绝（sim_preauthorization_not_established）: %s %s", advisory_id, exc)
+            return {
+                "ok": False,
+                "advisory_id": advisory_id,
+                "strategy_id": sid,
+                "reason": "sim_preauthorization_not_established",
+                "failed": exc.failed,
+                "conditions": exc.conditions,
+                "screen_sid": exc.screen_sid,
+            }
         registry_receipt = _update_registry_lifecycle(sid, target_state, registry_path)
 
     receipt = {
@@ -720,27 +801,28 @@ def decide(advisory_id: str, decision: str, token: str | None = None,
         "sim_preauthorization": preauth_audit,
         "registry": registry_receipt,
     }
-    r = safe_write_text(decision_path,
-                        json.dumps(receipt, ensure_ascii=False, indent=1) + "\n", newline="\n")
+    r = safe_write_text(decision_path, json.dumps(receipt, ensure_ascii=False, indent=1) + "\n", newline="\n")
     if not getattr(r, "written", True):
         raise RuntimeError(f"decision 台账写入未确认: {advisory_id}")
     _notify_decision(receipt)
-    logger.info("拍板落账: %s %s via=%s token=%s", advisory_id, decision, via,
-                receipt["token_fingerprint"])
+    logger.info("拍板落账: %s %s via=%s token=%s", advisory_id, decision, via, receipt["token_fingerprint"])
     return {"ok": True, **receipt}
 
 
 def _notify_decision(receipt: dict[str, Any]) -> None:
     """拍板回执推 Owner（ERROR 级触达飞书+failure 文件；通道故障不抛不反噬拍板）。"""
-    msg = (f"转正拍板回执 {receipt['advisory_id']}: {receipt['strategy_id']} "
-           f"{receipt['decision']}（via={receipt['via']}）"
-           f" fsm={receipt['fsm']} token={receipt['token_fingerprint']}")
+    msg = (
+        f"转正拍板回执 {receipt['advisory_id']}: {receipt['strategy_id']} "
+        f"{receipt['decision']}（via={receipt['via']}）"
+        f" fsm={receipt['fsm']} token={receipt['token_fingerprint']}"
+    )
     try:
         from zephyr.data.alerter import Alerter
 
-        Alerter().notify(f"promotion_decision-{receipt['advisory_id']}", msg,
-                         level="ERROR", source="promotion_advisory")
-    except Exception:  # noqa: BLE001——回执通道故障不影响拍板结果（台账已在盘）
+        Alerter().notify(
+            f"promotion_decision-{receipt['advisory_id']}", msg, level="ERROR", source="promotion_advisory"
+        )
+    except Exception:  # noqa: BLE001  回执通道故障不影响拍板结果（台账已在盘）
         logger.warning("拍板回执推送失败（台账已在盘）: %s", receipt["advisory_id"], exc_info=True)
 
 
