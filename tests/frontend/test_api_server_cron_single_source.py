@@ -221,16 +221,19 @@ def dow_field_values(field: str) -> set[int]:
     return out
 
 
-def test_dow_bearing_slots_are_the_17_expected() -> None:
-    """受 dow 口径影响面基线（17/24）——真源扩缩容时提醒对拍覆盖面复核。
+def test_dow_bearing_slots_are_the_22_expected() -> None:
+    """受 dow 口径影响面基线（22/31）——真源扩缩容时提醒对拍覆盖面复核。
 
+    2026-09-27 追认（17/24→22/31）：今夜多车道排班扩容 +cross_validation（F04 交叉校验，
+    88f62e893e）+lane_g_intake_sweep（F20 兜底扫描，7d81f8b1bd）+dloop_post/research_nightly/
+    auction_highfreq/consensus_crosscheck 等七槽（09-26/27 各线批次）。
     2026-09-21 追认（15/21→17/24）：+daily_alt_fx（4058b7b1e0）、
     +data_supply_sentinel（85ef0962d0，无 dow 不计 bearing）、
     +eod_reconciliation（R-015 日终对账，全流通战役排班批）。
     """
     bearing = {k for k, v in RAW.items() if v.split()[-1] != "*"}
-    assert len(RAW) == 24, f"schedule.yaml 时段数漂移：{len(RAW)}"
-    assert len(bearing) == 17, sorted(bearing)
+    assert len(RAW) == 31, f"schedule.yaml 时段数漂移：{len(RAW)}"
+    assert len(bearing) == 22, sorted(bearing)
 
 
 def test_croniter_available() -> None:
@@ -347,18 +350,25 @@ def test_weekday_bearing_slots_now_land_on_intended_weekdays() -> None:
         assert old_days != want_days, (
             f"{name} 旧实现触发日集与真源原意相同 → 本测试失效（真源口径变了？请复核 C-4 裁定）"
         )
-    assert checked == 17, f"带 dow 时段数漂移：{checked}"  # 2026-09-21 追认 15→17（+daily_alt_fx/+eod_reconciliation）
+    assert checked == 22, f"带 dow 时段数漂移：{checked}"  # 2026-09-27 追认 17→22（今夜多车道七槽，见 22/31 追认注）
 
 
 def test_legacy_weekend_slots_reported_sunday_new_reports_monday() -> None:
-    """具体事故形态：weekend_calibration（真源 '00 3 * * 0'，APScheduler 0=周一）。"""
+    """具体事故形态：weekend_calibration 历史真源 '00 3 * * 0'（APScheduler 0=周一，被旧匹配器当周日）。
+
+    2026-09-27 改合成表达式：真源已于历史修复中改 '00 3 * * 1'（诚实修法，两种解读同结果），
+    读活值则本回归测试永久红且语义漂移——回归测试钉的是事故形态本身，改用字面量合成，
+    免疫未来排班扩缩容（今夜 22/31 追认同因）。
+    """
     base = dt.datetime(2026, 9, 9, 12, 0)  # 周三
-    old = legacy_next_cron_run(RAW["weekend_calibration"], base)  # 直读真源，0 被当周日
-    new = api_server._next_cron_run(REG["weekend_calibration"], base)  # 注册表 1=周一
+    accident_expr = "00 3 * * 0"  # 历史事故形态（修复前真源）
+    fixed_expr = "00 3 * * 1"  # 历史修复后真源
+    old = legacy_next_cron_run(accident_expr, base)  # 0 被旧匹配器当周日
+    new = api_server._next_cron_run(fixed_expr, base)  # 1=周一（两解读一致）
     assert old == "3 天后（09-13 03:00）", old  # 09-13=周日（面板比周历早一天）
     assert new == "4 天后（09-14 03:00）", new  # 09-14=周一 ✓ 与周历/闸一致
     sunday = dt.datetime(2026, 9, 13, 2, 0)
-    assert api_server._next_cron_run(REG["weekend_calibration"], base=sunday) == "1 天后（09-14 03:00）"
+    assert api_server._next_cron_run(fixed_expr, base=sunday) == "1 天后（09-14 03:00）"
 
 
 def test_wildcard_dow_slots_output_unchanged_after_fix() -> None:
