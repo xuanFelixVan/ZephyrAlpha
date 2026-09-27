@@ -76,7 +76,7 @@ def _make_pg(hung: int = 0, unreachable: bool = False):
             return ((873,),)
         if "ig_fact" in sql:
             return ((4654,),)
-        if "ig_equity_edge" in sql:
+        if "edge_holding" in sql:  # ig_equity_edge 退役第一步：G3 新真源=entity_graph 六表 edge_holding
             return ((804,),)
         if "stock_concept" in sql:
             return ((61053,),)
