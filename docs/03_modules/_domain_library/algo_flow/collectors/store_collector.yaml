@@ -1,0 +1,44 @@
+# ALGO_FLOW 外部真源——store_collector（真源 src/zephyr/library/collectors/store_collector.py）
+doc_type: architecture_view
+ttl: permanent
+module: src/zephyr/library/collectors/store_collector
+source_of_truth: src/zephyr/library/collectors/store_collector.py
+algo_flow: |
+    # [ALGO_FLOW]
+    # 层: 输入
+    # - id: I1
+    #   name: root
+    #   fields: 仓库根（默认 "."，测试注入 tmp_path）
+    #   code: root
+    # - id: I2
+    #   name_zh: 三本真源（infrastructure_registry 存储族 / asset_inventory offrepo_assets / backup_config 盘位键）
+    #   name_en: truth sources
+    #   intro: 只读 YAML；任一缺档即抛，由 collect 折叠为单条 error（不静默）。
+    # 层: 算法
+    # - id: A1
+    #   name_zh: 条目派生（三源各一路，族级一条目一资产）
+    #   name_en: derive entries
+    #   intro: kind 规则映射——登记册存储族=infra、备份落点与 offrepo 镜像位=backup、offrepo 无备份覆盖=infra。
+    #   outputs: _Spec 列表
+    # - id: A2
+    #   name_zh: 盘位四态判定（present/ghost_registered/disk_unreachable/no_physical_location）
+    #   name_en: observe locations
+    #   intro: 只 stat 不读写；拔盘优先——不可观测不得判成缺失。
+    #   outputs: obs_state / missing / unreachable
+    # - id: A3
+    #   name_zh: 条目锚定 home + 真源指针（file:line）组账
+    #   name_en: assemble asset
+    #   intro: home=<真源相对路径>#<条目号>（仓外绝对路径永不进 home，防 coverage ghost 自裁）；判定态同落 status+tags+aux。
+    # 层: 输出
+    # - id: O1
+    #   name_zh: INF:/BAK: 资产列表（ingest_all 入总账 → 基建与备份馆入馆）
+    #   name_en: assets
+    #   intro: 盘不可达时照常返回并标 degraded，绝不抛穿拖垮整馆。
+    #   downstream: collect_all / ingest_all / generate_library_index.py
+    # [/ALGO_FLOW]
+    #
+    # I1 --> A1
+    # I2 --> A1
+    # A1 --> A2
+    # A2 --> A3
+    # A3 --> O1

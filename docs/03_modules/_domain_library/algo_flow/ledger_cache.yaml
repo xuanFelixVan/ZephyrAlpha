@@ -1,0 +1,45 @@
+# ALGO_FLOW 外部真源——ledger_cache（_domain_library 域，真源 src/zephyr/library/ledger_cache.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.library.ledger_cache
+source_of_truth: src/zephyr/library/ledger_cache.py
+algo_flow: |
+        # [ALGO_FLOW]
+        # 层: 输入
+        # - id: I1
+        #   name: term / limit / filters
+        #   name_zh: 查询串 + 上限 + T5 五轴过滤器
+        #   name_en: query term, limit, filters
+        #   intro: filters=LedgerFilters(kind/owner_domain/tags/status/home_prefix)，与 Librarian.lookup 关键字同义；dataclass 打包避参数蔓延。
+        #   code: search(term, limit, filters)
+        # - id: I2
+        #   name_zh: 真源与开关
+        #   name_en: truth source & switches
+        #   intro: PG lib_assets 整表（SQL_LEDGER_GENERATION_LOAD 单语句装载）+ lib_events 世代水位（import R1 件 ledger_fingerprint）；逃生开关 LIBRAM_DIRECT / LIBRAM_STRICT_FRESH。
+        # 层: 算法
+        # - id: A1
+        #   name_zh: 读时水位比对（裁判现读，水位未变即纯内存匹配）
+        #   name_en: fingerprint compare on read
+        #   intro: acquire_generation 每次现读指纹与在代比对——命中零账本 SQL；不等才进 A2；失效只由读触发，禁 cron/Timer/sleep-loop 轮询。
+        #   inputs: I1, I2
+        #   outputs: 在代命中 or 重建信号
+        # - id: A2
+        #   name_zh: single-flight 双检重建 + 原子换代（至多两代并存）
+        #   name_en: single-flight rebuild and atomic publish
+        #   intro: _Slots 只有"服务代+在途加载代"两格⇒第三代并存结构性不可能（上界常量 _MAX_GENERATIONS=2）；切换点唯一=_publish 的 serving 引用赋值；PG 不可达有旧代则打 degraded 旗+logger.warning，无旧代或 STRICT_FRESH 原样上抛（禁把旧代伪装真源）。
+        #   inputs: A1
+        #   outputs: LedgerGeneration（不可变代对象，含 by_id 索引）
+        # 层: 输出
+        # - id: O1
+        #   name_zh: 投影行列表（行键与直查真源恒等）
+        #   name_en: public asset rows
+        #   intro: 行键=LEDGER_PROJECTION_COLUMNS（由 _SQL_LOOKUP 投影列单源派生），过滤器附加列不外泄；降级态经 cache_status().degraded 可见，永不静默。
+        #   downstream: zephyr.library.lookup
+        # [/ALGO_FLOW]
+        #
+        # I1 --> A1
+        # I2 --> A1
+        # A1 --> A2
+        # A2 --> O1

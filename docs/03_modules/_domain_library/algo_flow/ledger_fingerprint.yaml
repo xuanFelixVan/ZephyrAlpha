@@ -1,0 +1,33 @@
+# ALGO_FLOW 外部真源——ledger_fingerprint（_domain_library 域，真源 src/zephyr/library/ledger_fingerprint.py）
+# 2026-09-15 P2-1 契约头减负批量出仓：docstring 内联块逐字节副本，extractor 经
+# external 锚加载走同一 parse_algo_flow 管线；算法公共面变化时同步更新本块。
+doc_type: architecture_view
+ttl: permanent
+module: src.zephyr.library.ledger_fingerprint
+source_of_truth: src/zephyr/library/ledger_fingerprint.py
+algo_flow: |
+        # [ALGO_FLOW]
+        # 层: 输入
+        # - id: I1
+        #   name: conn
+        #   name_zh: depgraph PG 连接（调用方注入）
+        #   name_en: injected pg connection
+        #   intro: 形态由 librarian.PgConnection Protocol 描述；池化借还在调用方，本件不建连不关连。
+        #   code: conn
+        # 层: 算法
+        # - id: A1
+        #   name_zh: 世代水位现读（max(event_id) 走 lib_events PK btree）
+        #   name_en: read ledger fingerprint
+        #   intro: SQL 恒取共享常量 SQL_LEDGER_FINGERPRINT（S2 世代缓存与 S3 快照同 import 本常量，禁分头写指纹 SQL）；空表→0；DB 异常原样上抛，禁吞成 0。
+        #   inputs: conn
+        #   outputs: int 世代水位
+        # 层: 输出
+        # - id: O1
+        #   name_zh: 账本级世代指纹（缓存失效判定的唯一原料）
+        #   name_en: ledger generation fingerprint
+        #   intro: 恒现读——它是缓存层的裁判而非客户，本件之上不得再加一层缓存（S4 §⑤ 不可缓存位）。
+        #   downstream: zephyr.library.ledger_cache.acquire_generation
+        # [/ALGO_FLOW]
+        #
+        # I1 --> A1
+        # A1 --> O1
