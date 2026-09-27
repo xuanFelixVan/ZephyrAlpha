@@ -55299,4 +55299,179 @@ creation_tokens:
   created_by: st-chiefzc-rescue-20260928
   capability: ai_l1_scan_task_registrar
   merge_evaluation: "AI L1 扫描计划任务注册器（T3 双前置门控件），宿主 run_ai_l1_scan_tick.py 的配套注册面，无同域重复条目"
+- file: scripts/governance/d11_compliance/gate_replay_selfproof.py
+  token: gate-replay-selfproof-gate-replay-selfproof-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: gate_replay_selfproof
+  merge_evaluation: "死信捞回分区A唯一新增py：只读门禁重放自证harness，无同真源重复实现，零触发面外消费，保留"
+- file: docs/_working/audit_fix/00_skeleton.md
+  token: surge-rescue-00-skeleton-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/audit_fix/AUDIT_FIX_00_skeleton.md
+  token: surge-rescue-audit-fix-00-skeleton-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/audit_fix/LEDGER.md
+  token: surge-rescue-ledger-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/audit_fix/lanes/L1_commit_base/00_overview.md
+  token: surge-rescue-00-overview-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/audit_fix/lanes/L2_ruling_resurrection/00_overview.md
+  token: surge-rescue-00-overview-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/audit_fix/lanes/L3_dangling_py_gomap/00_overview.md
+  token: surge-rescue-00-overview-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/audit_fix/lanes/L4_registry_counts/00_overview.md
+  token: surge-rescue-00-overview-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/audit_fix/lanes/L5_align_head_anchor/00_overview.md
+  token: surge-rescue-00-overview-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260925/chain_fullflow_skeleton.md
+  token: surge-rescue-chain-fullflow-skeleton-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260925/lane_gate_autofix.md
+  token: surge-rescue-lane-gate-autofix-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260925/lane_gate_business_flowthrough.md
+  token: surge-rescue-lane-gate-business-flowthrough-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260925/lane_gate_derived_books.md
+  token: surge-rescue-lane-gate-derived-books-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260925/lane_gate_door_provenance.md
+  token: surge-rescue-lane-gate-door-provenance-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260925/lane_gate_liveness.md
+  token: surge-rescue-lane-gate-liveness-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260925/lane_gate_replay_selfproof.md
+  token: surge-rescue-lane-gate-replay-selfproof-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/business_pipeline_skeleton.md
+  token: surge-rescue-business-pipeline-skeleton-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/lane_pipe_auto_runtime_trading.md
+  token: surge-rescue-lane-pipe-auto-runtime-trading-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/lane_pipe_consensus_daily.md
+  token: surge-rescue-lane-pipe-consensus-daily-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/lane_pipe_financial_derived.md
+  token: surge-rescue-lane-pipe-financial-derived-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/lane_pipe_llm_backend_ollama.md
+  token: surge-rescue-lane-pipe-llm-backend-ollama-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/lane_pipe_news_sentiment_score.md
+  token: surge-rescue-lane-pipe-news-sentiment-score-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/lane_pipe_pattern_win_rate.md
+  token: surge-rescue-lane-pipe-pattern-win-rate-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/lane_pipe_realtime_snapshot.md
+  token: surge-rescue-lane-pipe-realtime-snapshot-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/lane_pipe_reconciliation_differences.md
+  token: surge-rescue-lane-pipe-reconciliation-differences-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/mine_door_registration_completion.md
+  token: surge-rescue-mine-door-registration-completion-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/mine_guard_wiring_census.md
+  token: surge-rescue-mine-guard-wiring-census-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/mine_pipe_blockage_substages.md
+  token: surge-rescue-mine-pipe-blockage-substages-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/mine_pipe_false_green_census.md
+  token: surge-rescue-mine-pipe-false-green-census-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/mine_queue_liveness_and_trigger_mass.md
+  token: surge-rescue-mine-queue-liveness-and-trigger-mass-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/mine_snapshot_selfconsistency_witness.md
+  token: surge-rescue-mine-snapshot-selfconsistency-witness-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/chain_fullflow_20260926/mining_closeout_and_adjudication.md
+  token: surge-rescue-mining-closeout-and-adjudication-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/commit_speedup_campaign/60_deep_dive/dead_triage_r2.yaml
+  token: surge-rescue-dead-triage-r2-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/commit_speedup_campaign/60_deep_dive/deep_dive_r1.md
+  token: surge-rescue-deep-dive-r1-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
+- file: docs/_working/commit_speedup_campaign/99_FINAL_REPORT.md
+  token: surge-rescue-99-final-report-20260927
+  created_by: chiefzc-surgeon-20260928
+  capability: surge_rescue
+  merge_evaluation: "死信捞回分区A真新文件，blob sha256 自校验取回，登记以过 CREATE-GUARD"
 di_seam_exemptions: []
